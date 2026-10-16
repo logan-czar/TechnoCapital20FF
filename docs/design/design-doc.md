@@ -41,6 +41,7 @@ Exact rules, numbers and content for each layer of the game:
 | 4. Politics | [detailed/4-politics.md](detailed/4-politics.md) |
 | 5. Ideology (Victoria 2 style, cyberpunk) | [detailed/5-ideology.md](detailed/5-ideology.md) |
 | 6. Techno-Capital (compute, fabs, lithography, drones, autonomous vehicles, robots, models) | [detailed/6-technocapital.md](detailed/6-technocapital.md) |
+| 7. Starting world (January 2021 start, playable dynasties, rivals, opening quest, 2021 to 2030 timeline) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |
 
 ## Vision
 

@@ -22,6 +22,13 @@
 - Politics has a Victoria 2 style ideology system with nine cyberpunk ideologies: Liberals, Communists, Accelerationists, Effective Altruists, Transhumanists, Neo-Luddites, Sovereigntists, Landites and Chuds ([detailed/5-ideology.md](detailed/5-ideology.md)).
 - Techno-Capital (compute, foundries, lithography machines, drones, automated cars and similar) must be allocated to tasks with Techno-Capital requirements for them to run or finish. The AI, data center and semiconductor supply chain is key, especially in the early game ([detailed/6-technocapital.md](detailed/6-technocapital.md)).
 - Techno-Capital is leased, not sold (the machines themselves can be bought and sold). Control levels: Owned (you own it), Leased (pay an agreed amount for an agreed time), Spot (expensive, on demand), Compromised (secretly using someone else's TC while they use it or it is idle).
+- Starting world (Logan, 2026-10-16): the game starts in **January 2021**. The player picks from premade dynasties only (no custom dynasty), with **eleven playable dynasties**: New York (finance and DC insiders), Los Angeles (culture, a nepo-baby family in the arts), San Francisco (pure tech and the ideological battle over AI), Medellín (narco fascism and the rise of Pablo Segundo), Lagos (oil and corruption), Sydney, Beijing (state-linked), Shenzhen (electronics and tech), Bengaluru (IT money), Paris and Moscow. The world holds 30 or more rival dynasties, all fully original archetypes rather than parodies of real families, mixing old money, new tech money, state-linked families and criminal money. Each dynasty has an **Origin city** and a **Center of Power**; members can live anywhere. New dynasties rise from AI founders during play and dead ones drop out. A dynasty's **Center of Power** is the hub where it holds the most influence, so it moves as the dynasty grows; influence here means money, power and prestige: assets are the base, and power and prestige modify it. Every game starts at Stage 1, The Heir. Full design: [detailed/7-starting-world.md](detailed/7-starting-world.md).
+- Opening quest (Logan, 2026-10-16): the first quest is getting the COVID vaccine or a doctor's note excusing you. It introduces the **quest system**. Getting the vaccine is easy; avoiding it is harder, by an amount that depends on the character and on rolls through the quest tree. Finishing the quest unlocks travel and other parts of the game, and delivers a tip naming which company will make the first LLM breakthrough and explaining how the AI system will work before the AI boom.
+- Timeline 2021 to 2030 (Logan, 2026-10-16): the pandemic is mostly over in January 2021. History follows the real AI boom, with more and more fantastical things happening as the years pass. In 2030 a crisis hits and the AI bubble pops; the game continues into a post-crash era with new rules. Real events happen on schedule by default and players can change them.
+- The LLM tip from the opening quest is always correct.
+- Quests are tracked goal trees with branches and rolls; events are single pop-ups that can start a quest.
+- Until the opening quest is finished the player can go anywhere, but only by car or train (no flights).
+- Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2021 in detailed/7-starting-world.md; later states (for example chip export controls and sanctions on Russia) arrive through the 2021 to 2030 timeline instead.
 
 ## Assumptions to confirm
 
@@ -29,7 +36,7 @@
 2. **Charter types**: Standard, Dual Leadership, Board-Governed and State-Linked are enough for now.
 3. **Influence thresholds**: 10%, 25% and 50% share of a place's weighted assets.
 4. **Player scope**: the player directly controls the dynasty head's actions, personal accounts and the family trust; other family members act on their own.
-5. **Starting scenario**: the player starts as a young heir in a wealthy family, so every founding path (including Ask Daddy) is available. A "self-made" start could be added later.
+5. **Starting scenario**: decided (see above): every game starts as the Heir.
 6. **Wars**: countries go to war as background events; players never command armies, only PMCs on a small scale.
 
 ## Open questions
