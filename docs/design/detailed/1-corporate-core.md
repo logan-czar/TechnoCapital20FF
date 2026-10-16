@@ -409,7 +409,7 @@ Default policy rate: 4% (central banks change it once markets exist).
 
 ### 1.10.3 Leverage
 
-- **Margin loan**: borrow up to 50% of a stock portfolio's value. Interest = policy rate + 2%. If loan / portfolio rises above 70%, a **margin call**: within 3 days, add cash or the bank sells stakes (largest liquid first) until back under 50%.
+- **Margin loan**: borrow against a portfolio. Interest = policy rate + 2%. Margin levels by asset, and the margin call deadline (the next daily settlement), are set in [3-markets-and-fx.md](3-markets-and-fx.md) 3.5.4: if equity falls below maintenance, add cash or the broker sells stakes (largest liquid first).
 - **Mortgage**: borrow up to 70% of a property's value; interest = policy rate + 1.5%.
 - **Personal guarantee**: back a company loan; if the company defaults, the guarantor pays.
 

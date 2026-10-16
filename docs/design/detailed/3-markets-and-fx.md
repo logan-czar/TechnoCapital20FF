@@ -1,6 +1,6 @@
 # 3. Markets and FX: detailed design
 
-_Status: draft v0.1 (2026-10-16). Owner: Logan. Expands [07-markets.md](../07-markets.md) and the trading parts of [02-trusts-and-assets.md](../02-trusts-and-assets.md) into exact rules, numbers and content. Everything here is open for revision._
+_Status: draft v0.2 (2026-10-16). v0.2 adds the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by game stage, and worked examples (3.13 to 3.26); Assumptions move to 3.27; the GRG baseline in 3.3.5 now follows the business cycle (3.16.1). Owner: Logan. Expands [07-markets.md](../07-markets.md) and the trading parts of [02-trusts-and-assets.md](../02-trusts-and-assets.md) into exact rules, numbers and content. Everything here is open for revision._
 
 This file covers stock exchanges, the stock price model, corporate actions, short selling and margin, bonds and credit ratings, commodities, foreign exchange, central banks, and market crime. It ends with worked examples and a list of new assumptions.
 
@@ -65,6 +65,8 @@ Following [14-game-stages.md](../14-game-stages.md), market tools unlock with th
 | 3. The Climber | IPO chain; margin accounts; short selling; block trades; tender offers; rights issues and buybacks for controlled companies |
 | 4. The Tycoon | Commodity futures and hedging; cornering; FX positions, carry trades and forwards; distressed debt; derivative stake building |
 | 5. The Oligarch | Attacks on currency pegs; capture of central banks; private monetary authorities for charter cities (Arcology Scrip, 3.8.1) |
+
+Version 0.2 adds more tools to each stage; see 3.25.1.
 
 ---
 
@@ -1510,7 +1512,788 @@ All companies, people and funds below are fictional. Numbers follow the formulas
 
 ---
 
-## 3.13 Assumptions
+## 3.13 The trading experience
+
+One turn is one hour, and a dynasty can hold hundreds of positions. The trading layer is built on three principles so that this never becomes tedious:
+
+1. **Every order states its cost before it is sent**: slippage, impact, fees, taxes, disclosure crossings and trust rules are shown on the ticket.
+2. **Standing orders and mandates do the hourly work.** The player sets plans; the market loop executes them tick by tick.
+3. **Auto-advance stops only for what matters**: things the player asked to see, and things they must see.
+
+### 3.13.1 The Markets screen
+
+The Markets screen of [11-ui.md](../11-ui.md) 11.2 is split into panels. Panels unlock with the game stage (3.25.1).
+
+| Panel | What it shows | Notes |
+|---|---|---|
+| **Watchlists** | Up to 10 lists of up to 50 instruments [T]. Columns: price, day change, estimated fair value and the gap to it (3.14.2), yield, short interest, Buzz, next event | Built-in lists: My holdings, My companies, Rivals' companies, and **Disclosure radar** (companies where any holder filed at 5% or more in the last 90 days) |
+| **Chart** | Hourly bars (1 to 5 days), daily bars (1 month to 1 year), weekly bars (up to 10 years) | Overlays: the estimated fair value band, the headline index, event markers (earnings, filings, news), volume, short interest |
+| **Order ticket** | The order and its preview: expected fill price, slippage and permanent impact (3.3.7), time to fill at the chosen participation, fees and transaction tax (3.24.3), estimated tax on a sale, margin effect, disclosure thresholds crossed and their deadlines, mandatory bid warnings, the inside information warning (3.10.1), trust rule warnings (3.18.1) | Nothing is sent until the player confirms the preview |
+| **Positions** | Holdings by account (each personal account, personal trust, the family trust, company treasuries the head controls): cost basis, realized and unrealized gains, currency exposure, margin headroom | Pledged and lent shares are marked |
+| **Orders** | Open and standing orders with progress bars | Work orders show shares filled, average price and impact so far |
+| **News feed** | Filtered news with source and reliability (3.14.4) | Filters: holdings, watchlists, sector, country, source tier |
+| **Calendar** | Earnings dates, ex-dividend dates, annual meetings and record dates, central bank meetings, bond auctions, index rebalances, futures expiries and roll days, lock-up expiries, tender deadlines, elections | Any calendar item can become an alert |
+| **Screener** | Filter all listed instruments by exchange, sector, gap to estimated fair value, dividend yield, rating, short interest, holder concentration, free float, Buzz | Saved screens can feed alerts ("tell me when a utility trades below book") |
+| **Market overview** | GRG, headline indices, Retail Fever (3.15.1), cycle phase by country ([2-map-influence-economy.md](2-map-influence-economy.md) 2.18), yield curves, FX heat map, commodity curves, Funding Stress Index (3.21.3) | The one-glance view for later stages |
+
+### 3.13.2 Accounts and who trades for whom
+
+Every order is placed from one account and executed by one character (3.13.4).
+
+| Account | Who decides | Who executes | Limits |
+|---|---|---|---|
+| Head's personal accounts and personal trusts | The player | The head, or a delegate trader | None (personal accounts are free-form) |
+| Family trust | The player as trustee | The head, a delegate trader, or the family office CIO (3.18.3) | Trust rules (3.18.1) |
+| Company treasury (a controlled company buying stakes, bonds or hedges) | The company's head, with board approval for a single trade above 10% of company value [T] | The CFO | The company's charter and covenants |
+| Fund managed by a dynasty company | The fund's portfolio manager | The portfolio manager | Fund terms and fiduciary duty (3.18.5) |
+| Other family members' accounts | Those characters (AI) | Themselves | The player can only advise, bribe or pressure them |
+
+### 3.13.3 Order types
+
+The five order types of 3.3.7 (market, limit, work order, block trade, tender offer) stay as they are. These are added:
+
+| Order type | How it fills | Use |
+|---|---|---|
+| **Stop** (stop-loss) | Becomes a market order when the price trades at or through the stop | Cap a loss |
+| **Stop-limit** | Becomes a limit order at the stop price | Cap a loss without selling into a crash |
+| **Trailing stop** | A stop that follows the highest price since entry by a set % | Lock in gains |
+| **Take-profit** | A limit order to sell at a target | Exit on a plan |
+| **Bracket** | A take-profit and a stop on the same position; one filling cancels the other | Set and forget |
+| **Auction order** (at open, at close) | Fills in the opening or closing auction at the auction price. No participation cap, but at most 10% of auction volume [T] | Cheap execution; index-style trades |
+| **Scheduled order** | Buys or sells a fixed amount every day, week or month until cancelled or a total is reached | Savings plans, slow stake building, slow exits |
+| **Threshold-capped order** | Any buy order can carry a cap such as "stop at 4.9%", counted over the whole holder group | Never cross a disclosure line by accident |
+| **Conditional order** | "If these conditions hold, send this order." Up to 3 conditions joined by AND [T], on price, gap to estimated fair value, GRG, an index level, a filing, a news type, a rating, a date | Plans such as "buy Pellucid with a 10% work order if it falls below EUR 14 while GRG is under 30" |
+
+**Rules for all orders**
+- **Gaps**: a stop triggered by an opening gap fills at the opening price, not at the stop. Orders are frozen during halts.
+- **Time in force**: Day, Good till date, or Good till cancelled (expires after 90 days) [T].
+- Standing orders run in the hourly market loop as a market rule, like archetype flow (3.1.2). They are not AI decisions and cost no character hours.
+
+### 3.13.4 Execution quality and character time
+
+Placing an order costs no character hours: it is a call or a tap. Skill matters through **execution quality**.
+
+- The executing character's Finance sets a multiplier on slippage (3.3.7):
+
+  `ExecutionMultiplier = 1.3 - 0.02 x Finance`, clamped to 0.7 to 1.3 [T]
+
+  Finance 5 gives x1.2; Finance 15 gives x1.0; Finance 25 gives x0.8. The Quant PhD education adds -0.02 per level on top [T].
+- **Desk Session** (a character action of 1 to 8 hours): the character watches the markets.
+  - Conditional orders that wait on news fire on the same tick as the news instead of the next tick.
+  - Work orders adapt: participation drops to 5% on any tick where the stock moves against the order by more than one hourly standard deviation, and returns afterward [T].
+  - Desk hours count as time in a matching role for skill experience ([1-corporate-core.md](1-corporate-core.md) 1.1.1).
+- **Delegate traders**: any family member or employee with Finance 8 or more can be named trader for an account. A Greedy or Deceitful trader has a 1% monthly chance to front-run the account (costing 0.5% to 2% of the month's traded value) [T], a scheme the player can uncover with Head of Security checks or an audit.
+
+### 3.13.5 Alerts and auto-advance
+
+Auto-advance ([09-time-and-turns.md](../09-time-and-turns.md) 9.1) stops on events. Market alerts come in three tiers:
+
+| Tier | Behavior | Examples |
+|---|---|---|
+| **Always stop** | Cannot be turned off | Margin warning and margin call; a disclosure filing on a company the dynasty controls or holds 5% or more of; a bid or tender for such a company; a halt on a holding; a market-wide circuit breaker on an exchange holding 10% or more of the portfolio; a bank run on a bank that holds the dynasty's deposits; any forced liquidation |
+| **Stop by default** | On unless the player turns it off | A stop or conditional order filled; a work order completed; a holding moving more than 5% in a day; an earnings surprise on a holding; a rating change on a held bond; a central bank surprise of 0.25 points or more; an Unusual Accumulation alert (3.14.5); meme state on a holding (3.15.2) |
+| **Notify only** | Logged in the feed | Watchlist moves, analyst rating changes, filings on watchlist companies, the daily close summary |
+
+- **Batching**: fills and small moves during auto-advance are gathered into one summary card shown when advance stops ("While you slept: 14 fills, 3 alerts, portfolio +1.2%").
+- **Advance until** gets market conditions on top of 9.1: until a work order completes, until a stake reaches a given %, until the next open of a named exchange, until a filing deadline.
+
+### 3.13.6 The morning brief
+
+Each day at 07:00 local time in the head's current hub [T], a one-screen notify-only card: overnight moves in the markets the dynasty holds, portfolio change, today's calendar, open orders, the top 5 news items on holdings, margin headroom, and the month's cash needs (coupons, interest, distributions). It is the main way a later-stage player follows markets without opening the Markets screen.
+
+---
+
+## 3.14 Information, research and analysts
+
+This section links the intel rules of [2-map-influence-economy.md](2-map-influence-economy.md) 2.22 to the markets. The principle: the formulas run on the true fundamental value V; the player sees an estimate. The market as a whole (value funds act on the true V) is better informed than an uninformed player, so the player's edge comes from intel, patience, control and inside access, not from out-guessing the price formula.
+
+### 3.14.1 What the player sees
+
+| Information | Visible to everyone | With intel or access |
+|---|---|---|
+| Prices, volume, indices, yields, FX rates | Exact and live | |
+| Quarterly financials of listed companies | Exact at each report (unless the company cooks its books, 3.10) | |
+| Holders at 5% or more | Filed names; shells show the shell's name | True owner through Investigate Shell |
+| Short interest | Weekly total per stock | Who is short: prime broker access (3.17.1) or espionage |
+| Fundamental value V | Never shown directly | Estimated fair value with an error band (3.14.2) |
+| Analyst ratings and consensus | Yes (3.14.3) | |
+| AI holders' reservation prices (3.4.9) | No | A range, after a meeting with the holder (Finance or Influence check) |
+| Pending bids, defenses, scandals, central bank decisions | No | Inside information (3.14.6) |
+| Private companies | No public numbers | Estimates by intel (2.22.2) |
+
+### 3.14.2 Estimated fair value
+
+- The player's **estimated fair value** of a company is `EFV = V x (1 + e)`. The error e is drawn once each quarter (at the earnings report) and kept until the next draw, uniform within plus or minus the error width.
+- The error width comes from the player's intel level on that company (2.22.2): 30% at intel 0, 10% at intel 50, 0 at intel 90 or more, linear in between [T]. The band is shown, so the player knows how far to trust the number.
+- **Public intel floor**: every listed company gives every player intel 40 from filings and earnings calls [T] (an error width of 14%). Private companies start at 0 unless the dynasty has presence there.
+- **Raising intel on a company** [T]:
+
+| Source | Intel gain |
+|---|---|
+| Owning a bank or broker with a research desk that covers the company (3.17.1) | +20 while covered |
+| Research subscription | +10 on every company in one sector on one exchange, for $50k a month |
+| A board seat | +40, plus exact financials before publication (which is inside information) |
+| A meeting with the CFO or CEO (2 hours) | +5 for the quarter |
+| Espionage schemes ([1-corporate-core.md](1-corporate-core.md) 1.1.8) | +20 for the quarter on success |
+| Market research and presence in the company's hubs (2.22.2) | As in 2.22.2 |
+
+- **Disinformation** (2.22.2) shifts e by up to 15 points for players below intel 50 while the planted story lives.
+
+### 3.14.3 Analysts and ratings
+
+- **Coverage**: number of analysts = `2 + 4 x log10(market cap in $B)`, clamped to 0 to 30 [T]. A $1B company has 2, a $10B company 6, a $100B company 10, and small caps under about $300M none.
+- Each analyst is a lightweight AI character at a named bank, with Finance 8 to 20. Their **target price** = V x (1 + error), where the error has a standard deviation of `25% - 0.75% x Finance` [T] (10% at Finance 20).
+- **Sell-side bias**: +8% on the target if the analyst's bank underwrote the company's last offering or advises it on a deal [T].
+- **Rating**: Buy if the target is 15% or more above P, Sell if it is 10% or more below, otherwise Hold [T]. The bias makes Buy the most common rating, as in real markets.
+- **Consensus** earnings (used in 3.3.6) = the average of analysts' forecasts; each forecast = true forward earnings x (1 + half the analyst's error) [T].
+- **Rating changes** at each quarterly refresh or news shock create Buzz: an upgrade +5 to +15, a downgrade -5 to -15 [T]. **Star analysts** (the top 10% by past accuracy) count double.
+- Player actions: **Court the Analyst** (Influence; +5% on that analyst's target for a quarter); **Investor Day** (a 6-hour event with the CEO and CFO: every covering analyst's error halves for a quarter, Buzz +5 on success); **Freeze Out** a hostile analyst (no access: their error doubles and they lean Sell; a news story if it leaks). Paying an analyst for a rating is bribery (3.10).
+
+### 3.14.4 News feed and source reliability
+
+Every news item has a source and a reliability, the chance that the story is true.
+
+| Source tier | Examples (fictional) | Reliability [T] | Buzz multiplier |
+|---|---|---|---|
+| **Official** | Filings, exchange notices, central bank statements, court rulings | 100% | x1.0 |
+| **Wire** | Meridian Wire, Ledger News | 95% | x1.0 |
+| **Major paper** | The Atlantic Ledger, Financial Courier | 85% | x1.0 |
+| **Trade press and newsletters** | Sector sites | 70% | x0.8 |
+| **Tabloid and TV** | | 50% | x1.2 |
+| **Forums and social** | Retail forums, finfluencers (3.15.3) | 30% | x1.5 (x2 in meme state) |
+| **Anonymous leak** | | 40% | x1.0 |
+
+- Rumors (3.3.6) carry a hidden truth flag. The player sees source and reliability; with intel 70 or more on the company, the true flag is revealed 50% of the time [T].
+- Planted stories (psyops, leaks) show the outlet they were placed in. Placing a story in a Wire or Major paper needs a media asset or a hook on an editor. A false story in an Official channel is securities fraud.
+- **Owning media** (2.5.2) lets the dynasty run a true story early, late (up to 2 days) or never [T]. Spiking a story about one's own company is a scandal if it leaks.
+
+### 3.14.5 Spotting a raider early
+
+A careful player can notice a stake being built before anyone files at 5%.
+
+- **Unusual Accumulation alert**: when any holder group's net buying in a stock exceeds 20% of ADV over 10 trading days, and the player holds or watches that stock, a weekly roll: chance = `10% + intel / 2 %`, +20% if the player owns a broker or bank trading on that exchange, maximum 60% [T].
+- Success shows "Someone is building a stake (estimated 2% to 4%)" with no name. A second success at intel 70 or more names the broker doing the buying; finding the broker's client needs an Investigate scheme.
+- Stakes built through equity swaps (3.4.8) only show as unusual buying by the hedging banks: the chance is halved.
+
+### 3.14.6 Inside information
+
+- Inside information is a **knowledge item** held by a character: for example "Pellucid's Q3 earnings are 20% above consensus", "Varga will bid EUR 22 on 14 March", "the Federal Monetary Board will cut by 0.5". Each item names a security, a direction and an expiry (its publication).
+- **Sources**: board seats and executive roles (automatic for their companies); deal teams (bankers and lawyers on a deal); central bank and regulator boards; family members in office ([4-politics.md](4-politics.md) 4.7.5); espionage and Netrun schemes; Lovers share an item with a 25% chance per week [T].
+- A bidder trading for itself before its own 5% filing is not insider trading (3.10.1); telling a cousin about it is tipping.
+- **Leakage**: an item known to more than 5 characters has a 5% daily chance to reach the market as a rumor with a 70% truth flag [T]. Large deals therefore drift the price toward the news before the announcement, which is exactly what surveillance (3.10.2) looks for.
+- The order warning of 3.10.1 appears whenever the account owner or the executing character holds a relevant item.
+
+---
+
+## 3.15 Retail investors, Retail Fever and meme stocks
+
+### 3.15.1 Retail Fever
+
+Each exchange has a **Retail Fever** score from 0 to 100. It starts at 40, or 60 on HSE, GXI and HRX [T], and updates daily.
+
+| Driver | Change per day [T] |
+|---|---|
+| Headline index return over the last 20 trading days | +0.5 per 1% gained; -1.0 per 1% lost |
+| A stock on the exchange enters meme state | +5 |
+| Ledgerbit rises 10% in a week | +3 |
+| Real policy rate below 0 | +0.1 per day |
+| Stimulus payments to households (a government event) | +15 once |
+| Crash day (headline index down 5% or more) | -15 once |
+| Decay | 3% per day toward the exchange's starting level |
+
+**Effects** [T]:
+- Retail share of volume = base share (3.3.4) x (0.6 + Fever / 100). At 40 nothing changes; at 100 retail trades 1.6 times its base share; at 0, 0.6 times. Other archetypes' shares shrink or grow in proportion so the total stays 100%.
+- IPO coverage (3.4.1) + 0.02 x (Fever - 40).
+- Buzz decay (3.3.5) falls from 25% per day at Fever 40 to 15% per day at Fever 80 or more.
+
+### 3.15.2 Meme stocks
+
+A stock enters **meme state** when all of these hold [T]:
+- Buzz of 60 or more for 3 trading days in a row,
+- retail holds 25% or more of the free float,
+- and at least one of: short interest of 15% or more, a named finfluencer promoting it (3.15.3), or Retail Fever of 70 or more.
+
+**While in meme state** [T]:
+- Retail D gets +0.4 and the retail panic rule (3.3.4) is off.
+- Buzz decays 5% per day instead of 25%; forum news counts double.
+- The pull toward V* (3.3.3) drops to a = 0.0003 per tick, a fifth of normal: fundamentals stop mattering for a while.
+- Volatility triples. The squeeze test of 3.5.3 uses short interest of 15% instead of 20%.
+- Value funds sell and short sellers pile in once P is above 2 x V, so meme stocks often end in a squeeze fight.
+- The company may run an **at-the-market offering**: sell up to 10% new shares over 10 trading days at market with no discount, for a 3% fee [T]. Retail dislikes it: Buzz -20 on announcement.
+
+**Meme state ends** when Buzz falls below 30, after 20 trading days without a new high, or when the price falls 50% from its peak. On exit the price falls 20% to 40% over 5 days as normal pull returns [T].
+
+### 3.15.3 Finfluencers and forums
+
+- **Finfluencers** are named AI characters with a follower count (10,000 to 20 million) and a Credibility score (0 to 100).
+- A post backing a stock adds `Buzz = 5 x log10(followers / 10,000) x Credibility / 50` [T]. One million followers at Credibility 60 gives +12.
+- A dynasty member can become a finfluencer (followers grow with Influence checks on posts), or the player can befriend or pay one. **Paid promotion** is legal when disclosed (its Buzz is halved). Undisclosed paid promotion while the payer sells is pump and dump (3.10).
+- Bot amplification (psyops, [05-map-and-influence.md](../05-map-and-influence.md) 5.3) fakes forum momentum: Buzz as in 3.3.5, exposure as for psyops.
+
+### 3.15.4 Retail brokers and the buying ban
+
+- Retail orders pass through retail brokers, each with a market share of an exchange's retail flow.
+- During a meme state the clearing house asks each retail broker for extra collateral equal to 2% of its clients' daily buying in the meme stock [T]. A broker short of cash may **restrict buying** in that stock: its clients' D on the stock is capped at 0. Squeezes stall; the broker's brand falls by 20 and a regulator hearing event follows.
+- If the player owns the broker (3.17.1), this is the player's call, shown as an event with the clearing bill. Restricting buying while the dynasty is short the same stock is the kind of conflict regulators and journalists live for.
+
+---
+
+## 3.16 Market cycles, bubbles and crashes
+
+Markets and the business cycle of [2-map-influence-economy.md](2-map-influence-economy.md) 2.18 feed each other. The cycle phase sets the background for markets; market moves feed the cycle's hidden confidence value.
+
+### 3.16.1 Cycle phase effects on markets
+
+Each country's phase (2.18.1) applies to its exchange, its bonds and its currency. All values are [T].
+
+| Phase | Market sentiment drift (per week) | GRG baseline contribution | Credit spread multiplier | IPO coverage | AI takeover appetite | VC and PE funding | Retail Fever drift (per week) |
+|---|---|---|---|---|---|---|---|
+| Expansion | +1 | 16 | x0.9 | +0.5 | x1.2 | x1.2 | +1 |
+| Overheating | +2 | 15 | x0.8 | +1.0 | x1.5 | x1.5 | +2 |
+| Contraction | -3 | 28 | x1.6 | -1.5 | x0.5 | x0.4 | -3 |
+| Recovery | +1 | 20 | x1.1 | 0 | x0.9 | x0.8 | 0 |
+
+- **GRG baseline**: the fixed baseline 18 in the GRG formula (3.3.5) becomes the GDP-weighted average of the "GRG baseline contribution" column across countries (18 at a typical mix of Expansion and Recovery). This is a change to 3.3.5.
+- The credit spread multiplier applies to corporate spreads (3.6.5) on top of the risk factor.
+- In Contraction, the rating agencies' pro-cyclical extra notch (3.6.4) applies whenever GRG is above 40 instead of 50.
+- **Markets to the economy**: each 10% fall of the headline index over 3 months lowers confidence (2.18.1) by 5; each 10% rise raises it by 3. Credit spreads above x1.5 normal cut credit growth, a 2.18.1 driver.
+
+### 3.16.2 Bubbles and manias
+
+- Each sector on each exchange tracks **Froth** = sector market cap / sector sum of fundamental value (P over V, in aggregate).
+- Froth above 1.3 for 3 months puts the sector in **Mania** [T]:
+  - The sector sentiment weight in V* (3.3.3) rises from 0.10 to 0.50.
+  - Sector sentiment decays 5% per day instead of 15%.
+  - IPO coverage +2 for the sector; VC and PE funding x2 in the sector; Buzz decays at half speed.
+- A Mania that lasts long enough to meet the **tech bubble** test of 2.18.3 (average P/E above 2.5 times its long average for a year) is the 2.18.3 crisis waiting to happen.
+- **Popping**: a Mania pops on any of these triggers: a policy rate rise of 1 point or more within 6 months; a fraud exposed at a sector leader; an IPO in the sector falling 20% on its first day; or a monthly random chance of `3% x (Froth - 1) / 0.3` [T]. On popping, sector sentiment is set to -60 and its weight returns to 0.10; Retail Fever -20; the sector's g_sector is halved for 2 years, which cuts V. The 2.18.3 effects (sector -50% to -80% over 6 to 12 months, VC funding -70% for 2 years) arrive through these channels.
+- Player angles: ride the momentum, IPO into the Mania for the best coverage, short too early and get squeezed, or buy the wreckage.
+
+### 3.16.3 The liquidity spiral
+
+Crashes are not scripted; they come out of the rules. One extra rule makes them self-feeding [T]:
+- While GRG is above 50: brokers raise all margin requirements (3.5.4) by 10 points; lenders recall 30% of lent shares (shorts get bought in); market makers absorb only 10% of imbalance (as in 3.3.4); and new bond issues below BBB find no buyers.
+- Forced sales from these rules hit the flow term (3.3.3), push GRG higher through volatility, and can feed bank runs (3.21). Central bank emergency meetings (3.9.2) and short bans (3.5.1) are the brakes.
+
+---
+
+## 3.17 The financial sector as a business
+
+### 3.17.1 Business lines
+
+A financial company is a normal company ([1-corporate-core.md](1-corporate-core.md)) in the Banking and finance sector (3.3.2) with one or more **business lines**. Its Office facilities with the finance line ([2-map-influence-economy.md](2-map-influence-economy.md) 2.7.8) produce the Banking and finance service units sold in hub economies (2.6.6); the business lines below are the market-side activities on top of that. Each needs a license (3.17.2) and regulatory capital. All values are [T].
+
+| Business line | License (regulator, [4-politics.md](4-politics.md) 4.9.1) | Minimum capital | Main revenue | Main risk | Special power |
+|---|---|---|---|---|---|
+| **Commercial bank** | Banking license (Banking Supervisor) | $250M national; $25M community bank in one hub | Net interest margin: loans at the 3.6.5 rates, deposits paid at policy rate - 1.5 (floor 0); account fees | Loan losses in a Contraction; bank runs (3.21) | Cheap deposit funding for the group; lending gives creditor leverage over borrowers ([02-trusts-and-assets.md](../02-trusts-and-assets.md) 2.5); access to the central bank (3.9.4) |
+| **Investment bank** | Securities dealer license (Securities Regulator) | $100M | Underwriting spreads (3.4.1, 3.4.3), bond fees (3.6.1), M&A advice at 1% of deal value (0.5% above $5B), trading desk | Failed deals, trading losses, leaks | Hired on IPOs and deals; sees deal flow (inside information, 3.14.6); research desk (+20 intel on covered companies) |
+| **Broker** (retail or prime) | Broker license (Securities Regulator) | $20M retail; $200M prime | Commissions of 0.02% of value traded (retail: zero commission, paid 0.005% for order flow); margin lending at the 3.5.4 rates against funding at policy rate + 0.5; half of securities lending fees | Client defaults in crashes; meme-stock clearing bills (3.15.4) | Sees its clients' aggregate flow and short positions (intel); controls the lendable shares in its clients' margin accounts; can restrict trading |
+| **Asset manager** (index and active funds) | Fund manager license (Securities Regulator) | $5M | Fees on assets under management: index 0.05%, active 0.75% | Outflows after poor performance | Votes the shares its funds hold (3.18.2) |
+| **Hedge fund manager** | Fund manager license | $5M | 2% of assets plus 20% of gains above the high-water mark | Redemptions in a drawdown; prime broker margin calls | Outside money as a raid war chest (3.18.4) |
+| **Private equity firm** | Fund manager license | $10M | 1.5% of committed capital plus 20% of profit above an 8% hurdle | Buyouts with too much debt | Leveraged buyouts with fund money (3.19.4) |
+| **Venture capital firm** | Fund manager license | $2M | 2% of committed capital plus 20% of profit | Most startups fail | Board seats in startups; first look at Founder-stage rivals (3.19.3) |
+| **Insurer** | Insurance license (Banking Supervisor) | $200M | Premiums minus claims; investment income on the float | Disasters and climate events (2.20), pandemics | The float is a permanent pool of money to invest |
+| **Exchange operator** | Exchange license (Securities Regulator plus government approval) | $500M | Trading fees of 0.002% per side; listing fees (3.2.2); market data at 10% of trading fees | Outages, hacks, capture backlash | See 3.17.5 |
+| **Rating agency** | Agency registration (Securities Regulator) | $10M | 0.05% of rated debt at issue, plus $100k to $1M a year per issuer | Credibility collapse | See 3.17.6 |
+| **Crypto exchange or stablecoin issuer** | Securities Regulator where tokens are regulated; none on Freeport | $10M | Trading fees of 0.1%; income on stablecoin reserves | Hacks, de-pegs, raids | See 3.23 |
+
+A **Captive Bank / Insurer** vassal ([1-corporate-core.md](1-corporate-core.md) 1.7.4) that obtains a full Banking license may take public deposits and becomes a commercial bank; without one it only lends inside its group.
+
+### 3.17.2 Licenses
+
+- **Application**: an event chain with the national regulator. Time [T]: bank 26 weeks, insurer 20, exchange 52, the others 8 to 12.
+- **Approval chance** = `60% + 2% x (proposed CEO's Finance - 10) + 10% if the parent has Power Broker influence in the country - exposure with that regulator / 2 (points) - 20% if the owner is foreign and C1 is Screened or stricter` [T]. On failure, reapply after 6 months.
+- **Fit and proper test**: every director and the controlling holder is checked. A Blacklisted character or a director ban (3.10.3) blocks approval.
+- **Change of control**: acquiring 10% or more of a licensed financial company needs the regulator's approval (4 to 12 weeks) on top of the disclosure rules. Until approval, votes above 10% cannot be used [T].
+- Licenses can be suspended or revoked in the investigation chain ([4-politics.md](4-politics.md) 4.9.5).
+
+### 3.17.3 The bank balance sheet
+
+Each bank keeps a simple balance sheet, updated monthly with its financials and checked daily during a crisis.
+
+- **Assets**: cash and central bank reserves; government bonds (held to maturity, or held for trading); loans (mortgages, company loans, consumer loans); other assets.
+- **Liabilities**: insured deposits, uninsured deposits, wholesale funding (short-term loans from other banks and funds), bonds, and equity.
+
+| Ratio | Formula | Minimum [T] | If breached |
+|---|---|---|---|
+| **Capital ratio** | Equity / risk-weighted assets. Weights: cash and home government bonds 0%, mortgages 35%, consumer loans 75%, company loans 100%, equity stakes 250% | 10% (as for Captive Banks in 1.7.4); 12% for systemically important banks ([4-politics.md](4-politics.md) 4.9.8) | Below the minimum: dividend ban and an order to raise capital within 3 months. Below 6%: resolution by the Banking Supervisor (bail-in, sale or nationalization) |
+| **Liquidity ratio** | Liquid assets (cash, government bonds at market value) / (25% of uninsured deposits + wholesale funding due within 30 days) | 100% | Supervisor order; Run Pressure +10 (3.21.1) |
+| **Group lending** | Loans to group companies / all loans | 25% | Exposure +5 per month (4.9.3) |
+
+- **Deposits** come from the hubs where the bank has branches. Deposit share follows a market share model like [2-map-influence-economy.md](2-map-influence-economy.md) 2.15, driven by brand, the rate offered and branch count. **Deposit insurance** covers each depositor up to $250,000 (or the local equivalent) [T].
+- **Loan losses** each year = the borrowers' default chance (by rating, 3.6.2, times the cycle multiplier of 2.18.1) x (1 - recovery).
+- **The held-to-maturity trap**: bonds held to maturity are carried at cost. When rates rise their market value falls, but the loss stays hidden until the bank has to sell. In a run, sales turn hidden losses into real ones at once (example 3.26.1).
+- Bank shares are valued by the book method (3.3.1 step 5).
+
+### 3.17.4 Investment bank tiers and league tables
+
+- The three tiers of 3.4.1 (Bulge bracket, Major, Boutique) apply to player banks too. Tier is set yearly by the **league table**: the rank by fees earned over the last 3 years from underwriting and advice [T]. Global top 6: Bulge bracket; top 20: Major; others: Boutique. Minimum capital: Bulge $10B, Major $1B [T].
+- Using the dynasty's own bank on a dynasty deal keeps the fees in the group, but investors see a conflict: IPO coverage -0.5 [T].
+- **Chinese wall**: bankers on a deal hold inside information. The dynasty's characters get no knowledge item from the bank's deals unless they sit on the deal team. Asking for one is the scheme **Breach the Wall** (Intrigue; detection base 25% per use, as insider trading) [T].
+
+### 3.17.5 Owning an exchange
+
+- Each of the twelve exchanges is a listed company, except HSE and NJX, which are state-controlled [T]. A single holder group may hold at most 20% of an exchange's votes unless the government approves more (a lobbyable decision) [T].
+- **Powers of a controlling holder**, within the regulator's limits: set trading fees (0 to 0.01%); compete for listings with lower fees and, once a year, one step of softer listing rules within what the national law allows (for example allowing dual-class shares where C4 permits); launch new boards and indices (a small-cap growth board, a sector index); decide when new products launch (index futures, options).
+- **Peek at the Book**: the exchange sees every order. Using this for the dynasty's own trading halves its slippage [T]; it is a crime with a detection base of 15% per quarter, and conviction costs the exchange license.
+- Owning a global exchange is one route to the Market maker endgame goal ([14-game-stages.md](../14-game-stages.md) 14.6).
+
+### 3.17.6 Owning a rating agency
+
+- Each of the three agencies (3.6.2) is a listed company and can be bought.
+- The owner can **tilt** ratings: move the agency's personality offset (3.6.4) by up to 1 notch for chosen issuers. Each tilted issuer costs the agency 5 **Credibility** per year (0 to 100, start 80) [T].
+- Markets weight each agency's rating by Credibility / 80 when forming the average rating; below Credibility 40, index and fund eligibility ignore the agency.
+- Rating the owner's own companies above their implied rating is a conflict of interest: regulator suspicion +10 per issuer; if exposed, Credibility -30 and securities fraud cases against the issuers.
+
+---
+
+## 3.18 Funds, asset management and the family office
+
+### 3.18.1 Family trust trading rules
+
+How the trust rules of [1-corporate-core.md](1-corporate-core.md) 1.10.1 apply to markets:
+
+- Buying and selling inside the trust's own portfolio does **not** count toward the yearly spending limit, because it moves value between assets without spending it [T]. These do count:
+  - any sale of a protected asset (which also always needs a family vote),
+  - any purchase that takes the trust to 10% or more of one company, or adds more than 10% of trust value to one position,
+  - new leverage (margin or pledge loans),
+  - loans, gifts and transfers to beneficiaries or other holders.
+- Two **new optional trust rules**, set and changed by family vote like the others [T]:
+
+| Rule | Options |
+|---|---|
+| **Leverage Cap** | None allowed; up to 25% of trust value; up to 50% |
+| **Investment Policy** | Conservative (at most 30% in stocks, no short selling, no derivatives except hedges); Balanced (at most 70% in stocks); Unrestricted |
+
+- A trustee who breaks the Investment Policy faces a beneficiary grievance event: opinion -10 from every adult beneficiary and a chance that they call a family vote on the trust rules.
+- Personal accounts and personal trusts stay free-form, as decided.
+
+### 3.18.2 Investing through funds
+
+Any account can buy fund units instead of picking securities. All values are [T].
+
+| Fund type | Examples (fictional) | Fee per year | Liquidity | Return |
+|---|---|---|---|---|
+| **Index fund** | Monolith Atlantic 500, Vanguardian Globe 1000 | 0.05% | Daily | The index, minus the fee |
+| **Active stock fund** | Graywater Value, Kinetic Quant | 0.75% | Daily | The benchmark plus the manager's alpha |
+| **Bond fund** | Investment grade, high yield, emerging markets | 0.2% to 0.6% | Daily | The bond index |
+| **Hedge fund** | Wolfsbane Capital, Meridian Arb, Parallax Systematic | 2% plus 20% of gains | Quarterly, 45 days' notice, 1-year lock-up | Low link to the market; wide spread of outcomes |
+| **Private equity fund** | Ironwood Capital | 1.5% plus 20% of profit above 8% | Locked 10 years; capital called over the first 4 | Buyout returns (3.19.4) |
+| **Venture fund** | Northpass Ventures | 2% plus 20% of profit | Locked 10 years | Very wide spread of outcomes |
+| **Real estate fund** | Lion REIT Index members | 0.5% | Daily (listed) | Rents and the property cycle (2.16.5) |
+
+- **Returns**: named funds are entities in the ownership graph and earn what their holdings earn. Unnamed fund products use `benchmark + alpha + noise`, with yearly alpha before fees of -1% for a Finance 10 manager rising to +2% at Finance 20 [T]. Most active funds trail their index after fees, as in the real world.
+- **Benefits**: no character hours, no slippage for the investor, diversification, and no disclosure (the fund holds the shares and files, not the investor).
+- **Costs**: fees, lock-ups and gates, and no votes (the manager votes).
+- **The votes of managed money**: an asset manager votes all shares its funds hold. Index managers follow Civic Proxy Advisers (3.3.4) by default. A manager sets a **stewardship policy**: Follow the Adviser, Management-Friendly, or Activist [T]. A dynasty that controls a large index manager can swing proxy fights across hundreds of companies, but any vote that clearly serves the dynasty against the fund's investors is self-dealing (3.18.5).
+
+### 3.18.3 The family office
+
+- A **family office** is a company held by the family trust (or by a personal trust) that manages the dynasty's money. It unlocks when the trust is worth $100M or more [T].
+- **Setup**: 4 weeks; running cost $2M a year plus 0.1% of assets managed [T]. The office hires a **CIO** (Chief Investment Officer) character, who is the executing character for its trades (3.13.4).
+- **The mandate**, set by the trustee:
+
+| Setting | Choices |
+|---|---|
+| Target allocation | Sliders by asset class (stocks, bonds, cash, real estate, commodities, private markets, funds) and by region and currency |
+| Risk limits | Maximum drawdown before cutting risk; maximum single position; leverage cap (within the trust's Leverage Cap) |
+| Do-not-touch list | Control stakes, protected assets, and positions the head trades by hand |
+| Rebalancing | Monthly, quarterly, or when an allocation drifts 5 points |
+| Conduct line | **Clean** (no shells); **Grey** (shells for tax); **Dark** (Freeport and inside information allowed). Grey and Dark add exposure as usual |
+
+- The CIO acts on the mandate weekly (an AI decision on the weekly cadence of 9.3) and uses standing orders in between. A monthly report card shows return against a benchmark of the same allocation, fees, and the main trades.
+- **CIO risks**: a Greedy CIO may skim (1% chance per month of 0.5% to 2% of assets) [T]; a Brave CIO tends to run near the risk limits, a Cautious one far below them; a CIO whose opinion of the head is below -20 can be turned by a rival's scheme and leak the dynasty's positions.
+- The family office can also hold the dynasty's private investments, angel stakes and fund commitments, and can later apply for a fund manager license to take outside money (3.18.4).
+
+### 3.18.4 Starting a fund
+
+A dynasty company with a fund manager license can launch funds with outside money.
+
+- **Fundraising** is an event chain like the VC pitch chain of [1-corporate-core.md](1-corporate-core.md) 1.6.2: prepare a pitch book (8 hours), meet allocators (pension funds, endowments, sovereign funds, funds of funds; 3 hours each), receive commitments.
+- **Commitment chance per meeting** = `15% + 1% per point of yearly outperformance over the last 3 years (maximum +20%) + 2% x (lead manager's Finance - 10) + allocator opinion / 2 - 10% under a scandal` [T]. A first fund typically raises $50M to $500M.
+- **Terms** (hedge funds): fees as in 3.18.2; a 1-year lock-up; quarterly redemptions with 45 days' notice; a **gate** of 25% of the fund per quarter; a high-water mark [T]. PE and VC funds use 10-year locked commitments.
+- **Flows** after the first year: quarterly net flow = `2 x (fund return - benchmark return over 12 months)`, clamped to -25% (the gate) and +50% [T]. A drawdown of more than 20% from the fund's peak adds redemption requests of 30% of assets [T]. Redemptions force selling, so a raiding fund that loses money can be pushed out of its stakes at the worst moment.
+- The fund's holdings count toward the manager's holder group for disclosure (3.1.1): a dynasty cannot hide a stake by putting it in its own fund.
+
+### 3.18.5 Self-dealing and fiduciary duty
+
+Managing other people's money creates new offenses, added to the list in 3.10.1 and handled by the same detection and penalty rules (3.10.2, 3.10.3).
+
+| Offense | What it is | Detection base [T] |
+|---|---|---|
+| **Self-dealing** | Using a fund's or client's money or votes to benefit the dynasty: buying the dynasty's assets at inflated prices, voting fund shares for a dynasty bid against the fund's interest, dumping losses into a fund, propping up a family company | 10% per quarter; 40% at any investor lawsuit or audit |
+| **Front-running clients** | Trading the dynasty's accounts ahead of a client's or a fund's orders | 10% per use |
+
+- Extra penalties: return of the money to the fund, license suspension, and investor flight (assets under management -50%).
+- An **investor lawsuit** event fires when a fund loses 30% or more while holding assets linked to the dynasty.
+- Breaking the family trust's Investment Policy is not a crime; it is a family matter (3.18.1).
+
+---
+
+## 3.19 Private markets
+
+### 3.19.1 Private stakes
+
+- Shares of unlisted companies trade only through negotiation events ([02-trusts-and-assets.md](../02-trusts-and-assets.md) 2.6). The event shows the seller's ask, the buyer's estimated fair value at the buyer's intel level (3.14.2) and the options.
+- **Seller's reservation price** = seller's estimated fair value x (1 + 10% if the block carries 25% or more of the votes, or + 25% if it carries control) x opinion factor (x0.8 for a friend, x1.3 for a rival; a Nemesis refuses) [T].
+- **Illiquidity discount**: buyers price private minority stakes 20% to 35% below a listed equivalent; more for non-voting class N shares [T].
+- **Transfer restrictions**: right of first refusal (an existing charter clause, 1.5) plus two new optional charter clauses [T]:
+  - **Drag-along**: a seller of 50% or more can force the minority to sell on the same terms.
+  - **Tag-along**: minority holders can join any sale of control on the same terms.
+- A deal takes 1 to 4 weeks of due diligence and a 2 to 4 hour meeting between the buyer's executing character and the seller.
+
+### 3.19.2 Secondaries
+
+- **Founder and employee secondaries**: a Founder-stage company ([stages/2-the-founder.md](../stages/2-the-founder.md)) can let early holders sell part of their stake to new investors before an exit, at a discount of 10% to 40% to the last round price (deeper in a Contraction) [T]. A founder selling more than 10% of their stake signals doubt: Hype -10.
+- **Fund secondaries**: commitments in PE and VC funds can be sold to secondary buyers at a discount to the fund's reported value: about 5% in an Expansion and 30% in a Contraction [T]. This is how a cash-strapped trust escapes a 10-year lock.
+- **Grey shares** of private and delisted companies trade anonymously on the Freeport Night Market (3.2.5) at discounts of 30% to 60%, with its usual risks.
+
+### 3.19.3 Angel and venture investing
+
+- From Stage 2 any character with spare cash can invest as an **angel**; from Stage 3 a dynasty company can run a VC firm (3.17.1).
+- **Deal flow**: each month 0 to 3 pitches arrive from AI startups (the rival startups of the Founder stage) [T], more with presence in tech hubs, reputation and the VC firm's brand. A pitch is a short event: deck quality, sector, asking valuation, the founder's visible traits, and the estimated fair value range.
+- **Outcomes** are rolled at each later funding round: 40% raise at a higher valuation, 30% flat or down round, 30% fail [T], modified by founder skills, sector Mania (3.16.2) and the cycle phase (3.16.1). Winners can IPO (3.4.1) or be sold.
+- A lead investment carries a **board seat**: votes, factions and inside information.
+- Stakes in rival startups let the dynasty watch, slow or absorb competitors, for example by pushing a sale to the dynasty's company with a drag-along or board pressure, at the risk of a founder grievance and lost opinion in the startup scene.
+
+### 3.19.4 Leveraged buyouts
+
+This expands the leveraged buyout of [02-trusts-and-assets.md](../02-trusts-and-assets.md) 2.7.
+
+- **Target**: a listed company (tender offer, 3.3.7, and going private, 3.4.7, with a premium of at least 20%) or a private one (negotiation).
+- **Financing stack** [T]:
+
+| Layer | Maximum, as a multiple of the target's EBITDA | Rate | Notes |
+|---|---|---|---|
+| Senior secured loan | 4x (3x in a Contraction) | Policy rate + 3.5%, floating | Covenant: net debt / EBITDA tested quarterly |
+| High-yield bonds or private credit | +2x (+1x in a Contraction) | Policy rate + 6% to 9%, fixed | |
+| Equity from the fund and co-investors | At least 30% of the price | | |
+
+  Total debt is capped at 6x EBITDA in an Expansion or Overheating, 5x in a Recovery and 4x in a Contraction [T].
+- **Value levers** during ownership (company actions): cost cuts (operating costs -10%, with unrest and union events, 2.8.6); sale of non-core assets; **dividend recap** (borrow up to the debt cap to pay the fund a dividend; rating -1 notch); add-on acquisitions; a management incentive plan (the CEO gets 5% to 10% of the equity; CEO loyalty +20).
+- **Exit** after 3 to 7 years: IPO, sale to a strategic buyer, or sale to another fund. The exit price follows the sector multiple and the cycle phase.
+- **Risks**: floating-rate senior debt hurts when rates rise; a recession can break the covenant and start the default chain (3.6.6), in which the creditors take the company.
+- **Management buyout**: the dynasty can take its own listed company private (escaping quarterly reports, activists and disclosure) with the minority vote rule of 3.4.7.
+
+---
+
+## 3.20 M&A deal mechanics and merger arbitrage
+
+### 3.20.1 Deal structures
+
+| Structure | How it works | Approvals | Typical time |
+|---|---|---|---|
+| **Cash tender offer** | 3.3.7 and [1-corporate-core.md](1-corporate-core.md) 1.9.3 | Target holders tender; regulators | 4 to 12 weeks; financing must be committed |
+| **Merger by vote** (friendly) | The boards sign a merger agreement; the target's holders vote | Target vote (majority, or two thirds where the charter says so); acquirer vote if it issues 20% or more new shares; regulators | 3 to 6 months |
+| **Stock-for-stock** | Target holders receive acquirer shares at an **exchange ratio** | As for a merger | 3 to 6 months |
+| **Mixed** | Part cash, part shares | As for a merger | 3 to 6 months |
+
+**Deal terms** [T]:
+- **Collar** (stock deals, optional): the ratio adjusts if the acquirer's price moves more than 10% either way.
+- **Break fee**: the target pays 2% to 4% of deal value if it walks away for a better offer.
+- **Reverse break fee**: the acquirer pays 4% to 7% if regulators block the deal or its financing fails.
+- **Topping bids** must be at least 3% above the current offer. In a friendly deal the first bidder has **matching rights**: 5 trading days to match.
+- **Go-shop** (optional): a 30-day window in which the target may look for better offers, with the break fee cut to 1%.
+
+**Control check for paying in shares.** Issuing shares dilutes the acquirer's controlling bloc. The deal screen shows the bloc's vote share after the deal; a bloc that would fall under 50% makes the acquirer contested ([1-corporate-core.md](1-corporate-core.md) 1.3). Families therefore often pay in cash, or mix cash and shares to stay above the line (example 3.26.3).
+
+### 3.20.2 Deal odds
+
+The market's estimate of deal success, p, sets the target's price after a bid (3.3.6) and drives arbitrage. Recalculated daily [T]:
+
+`p = 0.90 - 0.20 if hostile - 0.15 if an antitrust review is likely - 0.10 if a foreign investment review applies - 0.10 if financing is not committed - 0.10 if a target bloc of 30% or more opposes + 0.05 if the break fee is 3% or more`, clamped to 0.30 to 0.95.
+
+News moves p: a regulator's second request -0.05, an agreed remedy +0.05, a bloc defection +/- 0.10, a rival bid (see 3.20.3).
+
+### 3.20.3 Merger arbitrage
+
+- **Spread** = (offer value - P) / P. In a cash deal the target trades at `p x offer + (1 - p) x P_standalone` (3.3.6), so the spread pays for bearing the risk that the deal breaks.
+- In stock deals, arbitrageurs buy the target and short the acquirer at the exchange ratio. Their shorting pushes the acquirer down by about 1% to 3% over the life of the deal [T].
+- The player can run the same trade. Payoffs are lopsided: a small gain if the deal closes, a large loss if it breaks (the target falls back to its standalone price, usually 15% to 40% lower).
+- A **rival bid** sets off a contest: the target trades near the higher offer weighted by the chance that someone pays it.
+- Arbitrageurs are swing holders (3.4.9): a player holding 5% or more of a target through arbitrage can sell to the highest bidder or tip a contested vote.
+- Reviews follow [4-politics.md](4-politics.md) 4.9.6; a second request adds 3 to 6 months. AI acquirers' appetite follows the cycle (3.16.1).
+
+---
+
+## 3.21 Financial crises and contagion
+
+### 3.21.1 Run Pressure
+
+Every bank, every stablecoin issuer and every fund with prime broker leverage has a **Run Pressure** score (RP, 0 to 100), checked daily. RP is the sum of these drivers, then multiplied, then clamped to 0 to 100 [T].
+
+| Driver | RP |
+|---|---|
+| Capital ratio below its minimum | +20 (+35 below 8%) |
+| Liquidity ratio below 100% | +10 |
+| Unrealized bond losses above 50% of equity, once published in a quarterly report | +15 |
+| A rating downgrade in the last month | +5 per notch |
+| Share price down 30% or more in a month | +15 |
+| Buzz on the institution below -40 | +10 (+20 when Retail Fever is 70 or more: panic spreads faster online) |
+| GRG above 40 | +0.5 per point above 40 |
+| A peer failed in the last 30 days (same country or same business model) | +15 |
+| Central bank liquidity line drawn | -10 |
+| New capital raised, or a guarantee from a strong parent, in the last 7 days | -15 |
+| Government guarantee of all deposits | -40 |
+| **Multiplier**: uninsured deposits above 50% of deposits | x1.5 |
+
+### 3.21.2 Bank runs
+
+- At RP 50 or more a **Bank Run** event fires. Each day, uninsured deposits and wholesale funding leave at `(RP - 40)%` per day, at most 50% [T]. Insured deposits leave at a fifth of that rate.
+- The bank pays out from cash first, then must find money:
+
+| Option | Effect |
+|---|---|
+| Draw the central bank window (3.9.4) | Borrow against collateral at policy rate + 1%, with haircuts of 5% (government bonds, at market value) to 30% (company loans); RP -10 |
+| Sell assets | Government bonds at market value (turning hidden losses into real ones, 3.17.3); loans at a fire-sale discount of 20% to 40% [T] |
+| Raise emergency capital | A rights issue at a 40% to 60% discount (3.4.3), a white knight investor, or the family trust; RP -15 |
+| Seek a buyer | **Shotgun Merger** event: a stronger bank offers 10% to 30% of last week's share price, often with a government guarantee on losses. The run ends on announcement |
+| Request a bailout | [4-politics.md](4-politics.md) 4.9.8 |
+| Suspend withdrawals | Only under a government emergency decree or Hard capital controls: a bank holiday of up to 5 days; unrest +5 in the bank's hubs |
+
+- The run ends when RP falls below 30. If cash and borrowing capacity run out first, the bank **fails** and goes to resolution under F7 and C5 (4.5.4, 4.5.3): bail-in, nationalization, a forced sale or liquidation.
+- The dynasty's own deposits at a failing bank are uninsured above the limit like anyone else's. Pulling them out early on knowledge of the bank's state is trading on inside information.
+
+### 3.21.3 Contagion
+
+| Channel | How it spreads | Values [T] |
+|---|---|---|
+| **Counterparty losses** | Creditors of a failed institution (interbank loans, bonds, derivatives, prime broker claims) lose at expected recovery (3.6.6: senior 40%) | Booked immediately |
+| **Fire sales** | Forced sellers dump the same assets; every other holder marks down | Through the flow term (3.3.3) and bond depth (3.6.1) |
+| **Confidence** | A major failure: GRG +15 (3.3.5) and RP +15 for peers | |
+| **Funding freeze** | The **Funding Stress Index** (FSI, the interbank rate minus the policy rate) rises; bank loan and margin rates add the FSI; above FSI 1.5 only half of wholesale funding rolls over | `FSI = 0.1 + 0.02 x max(0, GRG - 30) + 0.5 per major failure in the last 30 days`, in points; the failure term decays 10% per day |
+| **Prime broker failure** | Client funds' assets are frozen for 4 to 12 weeks unless held in segregated accounts (an option when opening the account, costing 0.25% a year) | Funds with frozen assets cannot meet margin elsewhere and become forced sellers |
+| **Sovereign-bank loop** | Banks hold their own government's bonds: a sovereign downgrade cuts bank capital, and a bank bailout raises sovereign debt | As in 3.6.7 and [4-politics.md](4-politics.md) 4.11.8 |
+
+### 3.21.4 The Financial Panic chain
+
+**Trigger**: two or more systemically important institutions ([4-politics.md](4-politics.md) 4.9.8) fail or need bailouts within 30 days, or FSI stays above 2.0 for 5 days [T].
+
+1. **Panic** (global or regional event): GRG +20; market sentiment -30 on affected exchanges; Retail Fever -30; credit spreads x2; no new bonds rated below BBB and no IPOs while it lasts; brokers raise margin requirements by 10 points.
+2. **Credit crunch**: bank lending to companies -30%; loan approval chances -20%; contraction chance +40% per month in affected countries (a 2.18.1 driver).
+3. **Policy response** (AI governments and central banks, open to lobbying): emergency rate cuts (3.9.2); QE including corporate bonds at GRG 70 or more (3.9.4); swap lines; blanket deposit guarantees (RP -40); short-selling bans (3.5.1); bailouts (4.9.8); closing an exchange for up to 5 trading days after a one-day index fall of 20% or more; capital controls in weak countries.
+4. **Resolution**: the panic ends when FSI is below 0.5 and GRG below 35.
+5. **Aftermath**: the Bank Failure crisis effect on law support ([4-politics.md](4-politics.md) 4.5.10) applies; regulator zeal +0.2 for 12 months (4.9.2), the post-crisis crackdown.
+
+**Player angles**: buy a failing bank for pennies with a government guarantee; short the weak (and risk a short ban); lobby for bailouts that cover your own exposure; or become too important to fail (F7 Too Big to Fail) and dare the government to let you go.
+
+---
+
+## 3.22 Derivatives: scope decision
+
+The derivatives in scope for the first full release:
+
+| Instrument | Status | Where | Notes |
+|---|---|---|---|
+| Commodity futures | In | 3.7.3 | |
+| FX forwards and NDFs | In | 3.8.5 | |
+| Equity swaps (cash-settled) | In | 3.4.8 | Through banks |
+| Securities lending | In | 3.5.1 | |
+| **Index futures** | In (new) | Headline index of each of the twelve exchanges | Cash-settled quarterly. Price = index x e^((r - dividend yield) x T). Margin 8% of notional [T]. The cheap way to hedge a whole portfolio or short a whole market. Index arbitrage passes 50% of net futures flow into the index stocks as flow [T] |
+| Listed options on stocks and indices | Later | 3.5.6 | |
+| **Credit default swaps** | Later (outline) | Over the counter through banks | Pays face minus recovery if the issuer defaults; premium = the issuer's spread (3.6.5). Hook: an **empty creditor** who holds bonds plus more protection gains from a default, so it votes against restructurings. Risk: the bank that sold the protection may fail first |
+| Interest rate swaps | Abstracted | | Companies choose fixed or floating debt instead: fixed costs 0.3 points more but ignores rate rises [T] |
+| Exotic options, structured credit, volatility products | Out | | Too fiddly for the scope; their crisis role is played by bank losses (3.21) |
+| Event contracts | In, Freeport only | 3.2.5 | |
+
+---
+
+## 3.23 Crypto and cyberpunk finance
+
+### 3.23.1 The Ledgerbit model
+
+Ledgerbit (LBT, 3.8.1) trades every hour of every day. It has no fundamental value; it is anchored to **Adoption**. Its hourly tick uses the FX formula of 3.8.2 with a different anchor [T]:
+
+`dx = 0.0004 x (x_adopt - x) + flow term + beta x dGRG / 10 + sigma_h x z`
+
+- `x_adopt = ln(anchor)`, with `anchor = $60,000 x (Adoption / 30)^1.5`.
+- **Adoption** (0 to 100, start 30) rises with Retail Fever above 50, with LBT and OMD use on the Freeport Night Market, and with countries legalizing LBT payments (a law event); it falls with bans and exchange hacks.
+- **Halving**: every 4 in-game years new issuance halves: Adoption +5 and 6 months of extra retail buying (Retail Fever +10 on all exchanges) [T].
+- LBT is a risk asset (beta -4.0 in 3.8.2), and its rallies feed Retail Fever (3.15.1).
+- It trades on licensed crypto exchanges in countries that allow them (0.1% fee, reported to the tax authority) and on the Freeport Night Market (unreported).
+
+### 3.23.2 Token offerings
+
+- A company or a shell can raise money by selling tokens instead of shares. **Token Offering** event chain: whitepaper (8 hours; Tech plus Influence check), hype campaign (Buzz), sale (1 to 7 days; demand from Retail Fever and Adoption).
+- Tokens carry no votes and no dividends unless the issuer promises them; buyers price them on Buzz and promises.
+- **Legal status**: where the national securities regulation (F4) is Standard or stricter, tokens are securities and an unregistered offering is an offense (detection base 20% per quarter) [T]. Through the Freeport Night Market and a haven shell it is grey: exposure +1 per $1M raised.
+- **Rug pull**: the issuer takes the money and abandons the project. Fraud; the Blacklisted trait if traced; Retail Fever -10 everywhere.
+
+### 3.23.3 Data-backed tokens
+
+- A company that produces user data ([2-map-influence-economy.md](2-map-influence-economy.md) 2.6.7) can sell a **Data Yield Token**: holders receive a share (for example 50%) of the company's data sales for 1 to 5 years [T].
+- Priced like a high-yield bond: yield = policy rate + 8% to 15%, by how stable the data output is and the privacy-law risk (T2) [T].
+- Risks: a tighter privacy law (T2 Strict cuts output 30%) or a breach scandal cuts payouts; the Data and Cyberware Authority can rule a token illegal.
+
+### 3.23.4 Corporate scrip
+
+- A company may pay up to 30% of wages in **company scrip**, redeemable only at its own stores, housing and clinics [T]. This is legal only in Charter Zones (C6) and corporate sovereign territories ([4-politics.md](4-politics.md) 4.12); elsewhere it is a labor law offense.
+- Effects [T]: the cash cost of the scrip part of wages falls 10% to 20% (the company keeps the retail margin when scrip is spent); unrest +3 per 10% of wages paid in scrip; workers leave half as often (scrip cannot be spent elsewhere).
+- Company scrip is the small-scale ancestor of Arcology Scrip (ASC, 3.8.1): when a corporate sovereign hub founds its monetary authority, its scrip converts into ASC.
+
+### 3.23.5 Stablecoins and de-pegs
+
+- The OmniDollar rules (3.8.1) apply to any stablecoin a dynasty company issues: the reserves are a portfolio, and the issuer earns the yield on them. A **reserve audit** event fires with a 10% chance each quarter, or on rumors.
+- If reserves cover less than 100% of the coins: the coin trades at a discount equal to the missing share plus panic (up to 3 times the gap, driven by Buzz), and holders redeem `discount x 10`% of supply per day [T]: a bank run (3.21.2) that runs every hour of every day.
+
+### 3.23.6 Crypto exchange risks
+
+- **Hacks**: a monthly chance of 0.5% for a licensed exchange and 2% for a Freeport venue, lowered by security spending; a hack loses 5% to 30% of customer assets [T]. Customers are repaid only if the exchange has the capital.
+- An exchange whose head secretly lends out customer assets earns the yield; if a hack or a run exposes it, the exchange collapses, its head faces fraud charges, and Adoption falls by 10.
+
+---
+
+## 3.24 Taxes on trading and investing
+
+Tax rates come from the laws of [4-politics.md](4-politics.md) (E1 income, E2 corporate, E3 capital gains, E4 inheritance and gift, F6 trusts and foundations). This section says how they apply to market activity.
+
+### 3.24.1 Who pays where
+
+| Holder | Taxed in | Gains | Dividends and interest |
+|---|---|---|---|
+| Character (personal account) | Country of residence ([2-map-influence-economy.md](2-map-influence-economy.md) 2.21.1) | E3 rate | E1 rate |
+| Personal trust and family trust | Country of registration | By F6: Opaque untaxed; Recognized at the E3 rate; Transparent at the E1 rate; Deemed Disposal taxes all gains every 21 years | Same as gains |
+| Company | Home country | Profit at the E2 rate. **Participation exemption**: gains and dividends on stakes of 10% or more held for a year are exempt [T], so vassal tribute is not taxed twice up the chain | Same |
+| Shell company | Haven rate 0% to 5% ([1-corporate-core.md](1-corporate-core.md) 1.7.4) | Exposure as usual | Same |
+| Fund | Not taxed itself | Investors pay when they sell their units | |
+
+### 3.24.2 When gains are taxed
+
+- **Realized gains only**, charged in the monthly calculation after the sale [T]. Unrealized gains are untaxed, except under F6 Deemed Disposal and the E4 Dynastic Wealth Tax.
+- **Short-term rule**: where E3 is Low or Moderate, gains on positions held under 12 months are taxed at the E1 rate instead [T]. This is a new detail of the E3 law, to be mirrored in [4-politics.md](4-politics.md).
+- **Losses** offset gains in the same account in the same year; unused losses carry forward without limit [T].
+- **Wash sale rule** (wherever E3 is not Exempt): a loss does not count if the same security is bought back within 30 days [T].
+- **Step-up at death**: personal assets passing by will take their market value as the new cost basis; E4 applies instead [T]. Family trust assets do not step up; F6 decides their treatment. Holding winners until death becomes a dynastic strategy.
+- **Carried interest** (fund performance fees, 3.17.1) is taxed at the E3 rate [T].
+- **Exit tax**: a character who moves residence with unrealized gains above $10M pays E3 on them to the old country [T].
+
+### 3.24.3 Transaction taxes
+
+Stamp duties and transaction taxes, loosely based on the real exchanges [T]:
+
+| Exchange | Tax |
+|---|---|
+| CLX | 0.5% on purchases |
+| CBX | 0.3% on purchases of large caps (market cap above EUR 1B) |
+| VHX | 0.1% on each side |
+| GXI | 0.1% on each side |
+| HRX | 0.15% on sales |
+| HSE | 0.05% on sales |
+| ATX, HDM | A regulatory fee of 0.003% on sales |
+| ESE, LCX, PSX, NJX | None |
+
+- A depositary receipt (3.2.4) pays the tax of the exchange where the receipt trades.
+- Bonds, FX and futures carry no transaction tax.
+- The order ticket shows the tax (3.13.1). On CLX, building a 10% stake costs half a percent more than on ATX, a real input into where raiders hunt.
+
+### 3.24.4 Withholding and treaties
+
+- Dividend withholding (15% by default, 3.4.6) is credited against the holder's home tax where the two countries have a tax treaty (relations of +25 or more, or allies) [T]; otherwise it is a pure cost.
+- Holding through a shell in a treaty haven cuts withholding to 5% [T], with exposure as usual.
+
+---
+
+## 3.25 Markets across the game stages
+
+### 3.25.1 What markets are for in each stage
+
+This table adds to the unlocks of 3.1.4.
+
+| Stage | Role of markets | Typical positions | Tools added in v0.2 | Market threats | Screen focus |
+|---|---|---|---|---|---|
+| **1. The Heir** | Learning, and a first test of judgment that the family watches | $10k to $5M in a personal account and the trust allowance | Watchlists, charts, stop and bracket orders, scheduled orders, index and bond funds, news feed, calendar, morning brief | Losing the allowance; a sibling's tip that turns out to be inside information | A simple portfolio view. A year's return 10 points above the headline index gives +10 opinion from the head; a loss of 30% gives -10 [T] |
+| **2. The Founder** | Funding and valuation more than trading; the public market is a mood that sets VC appetite | The founder's own stake; personal cash | Founder secondaries (3.19.2), angel investing (3.19.3), conditional orders | A Mania popping (VC funding -70%), down rounds | Cap table and private valuation; public sector sentiment and the IPO window as context |
+| **3. The Climber** | Control: building stakes, defending them, IPOs, margin | Control stakes from $50M to $5B | Unusual Accumulation alerts (3.14.5), analyst tools, threshold-capped orders, desk sessions, the family office (3.18.3), private stakes, small buyouts, merger deals (3.20) | Raiders, margin cascades, bloc defections, activists | Holdings tree with live prices, the disclosure radar, margin headroom |
+| **4. The Tycoon** | Markets as an industry: owning financial companies, cornering, FX, buyouts | Billions, in many currencies | Financial companies (3.17), fund launches (3.18.4), PE buyouts (3.19.4), index futures (3.22), merger arbitrage, crypto exchanges and stablecoins (3.23) | Financial panics, redemptions forcing sales, coordinated shorts by rival dynasties, antitrust | Market overview with cycles, GRG, FSI and the dynasty's systemic links |
+| **5. The Oligarch** | Markets as a lever of state power | Positions that move currencies | Exchange ownership (3.17.5), rating agency control (3.17.6), systemically important status (Too Big to Fail), corporate scrip into Arcology Scrip (3.23.4) | Nationalization, coordinated crackdowns, every rival uniting, a panic you caused coming home | A world view of currencies, central banks and the dynasty's systemic exposure |
+
+### 3.25.2 Market rivals by stage
+
+AI rivals scale with the player ([14-game-stages.md](../14-game-stages.md) 14.7). In markets:
+
+| Player stage | Typical market rivals | Their moves |
+|---|---|---|
+| The Heir | Siblings and cousins with personal accounts | Compete for the head's favor with trading results; tips that are traps |
+| The Founder | Rival startups' VCs; incumbents' venture arms | Outbid rounds; strategic offers with rights of first refusal |
+| The Climber | Raiders ([2-map-influence-economy.md](2-map-influence-economy.md) 2.23.1), activists, short sellers such as Wolfsbane | Creeping stakes, short reports, proxy fights |
+| The Tycoon | Rival dynasties' family offices and funds; sovereign funds | Coordinated block purchases, white knight alliances, rating and media games |
+| The Oligarch | Coalitions of dynasties, governments, central banks | Peg defenses aimed at the player, sanctions, nationalizations, bear raids on the flagship |
+
+### 3.25.3 Pacing targets
+
+- **Heir and Founder**: markets take under 10% of play time [T]: the morning brief and a few orders a week.
+- **Climber**: stake fights are hour-by-hour moments (desk sessions, block trades, filings), with auto-advance in between.
+- **Tycoon and Oligarch**: mandates, the family office and fund managers do the routine work; the player steps in on alerts and crises.
+
+---
+
+## 3.26 Worked examples for the new sections
+
+All companies, people and funds below are fictional. Numbers follow the formulas above and are rounded.
+
+### 3.26.1 A run on the family bank
+
+**Setup.** The dynasty controls **Coldwater Bank** (US, rated A). Balance sheet: assets $40B: cash $2B, government bonds $18B held to maturity (bought when 10-year yields were 1.5%, duration about 7), company loans $12B and mortgages $8B. Liabilities: insured deposits $10B, uninsured deposits $24B (mostly startups and funds), wholesale funding $2B, equity $4B.
+
+- Risk-weighted assets: $12B x 100% + $8B x 35% = $14.8B. Capital ratio 4 / 14.8 = **27%**, far above the 10% minimum.
+- Yields have since risen 3 points. The bonds' market value is down about 7 x 3% = 21%: a **hidden loss of $3.8B**, 95% of equity.
+
+**Trigger.** The quarterly report publishes the unrealized loss (+15 RP). A data and AI Mania has just popped and startup depositors are burning cash. Wolfsbane publishes a short report: Buzz -45 with Retail Fever at 72 (+20). The share price is down 35% in a month (+15). RP = (15 + 20 + 15) x 1.5 (uninsured deposits are 70%) = **75**. **Bank Run.**
+
+**Day 1.** Outflow: 35% of uninsured deposits and wholesale funding ($8.4B + $0.7B) and 7% of insured ($0.7B) = **$9.8B**. Cash covers $2B; $7.8B is needed by the close.
+
+| Choice | Result |
+|---|---|
+| **A. Sell bonds** | Raising $7.8B at 79% of book means selling $9.9B of bonds and realizing a $2.1B loss. Equity falls to $1.9B (capital ratio 13%, still legal), but the news triggers a 2-notch downgrade (+10 RP) and the market now sees the $1.7B still hidden. RP climbs to 90; day 2 demands 50% of the remaining uninsured deposits. The bank fails on day 3 |
+| **B. Central bank window** | Bonds at market value ($14.2B) with a 5% haircut give $13.5B of borrowing capacity. Borrow $7.8B at policy rate + 1%. No loss is realized; RP falls to (50 - 10) x 1.5 = 60. Day 2 outflow: 20% of the remaining $15.6B uninsured and $1.3B wholesale, plus 4% of insured deposits: about $3.8B, also borrowed. Capacity left: $1.9B. A real fix is needed by day 3 |
+
+**Day 3 (after choice B).**
+- **Family trust injection**: a $3B rights issue at a 50% discount, bought by the trust. RP falls to (50 - 10 - 15) x 1.5 = 37.5: withdrawals stop, and the run ends once the share price driver fades and RP drops under 30. But unless the trust is worth more than $12B, $3B is above its 25% spending limit (3.18.1), so a family vote is needed within the day, and two siblings oppose.
+- **Shotgun merger**: Sterling Crane & Co offers 15% of last week's share price, with a government guarantee on loan losses. The run ends at once; the dynasty is paid a fraction of its stake's old value and loses its bank.
+- **Bailout request** ([4-politics.md](4-politics.md) 4.9.8): Coldwater's assets are 2.7% of a $1.5T economy, so it is systemically important: weekly chance 30% + 15% + 10% (Bailout with Stakes) = 55%. But the first weekly decision may come too late for a run measured in days.
+
+**Contagion if it fails.** GRG +15; every US bank with more than half its deposits uninsured gets RP +15; FSI +0.5. Two more failures within 30 days would trigger a Financial Panic (3.21.4).
+
+### 3.26.2 A leveraged buyout of Brightwell Foods
+
+**Target.** Brightwell Foods, listed on CLX (agriculture and food). EBITDA GBP 400M; 300M shares at GBP 8.00 (market cap GBP 2.4B); net debt GBP 600M. The UK is in Expansion; the policy rate is 4%. The buyer is the dynasty's PE fund, Kessane Capital.
+
+**Price and financing.**
+- Offer: a 30% premium, GBP 10.40 a share: GBP 3.12B for the equity, plus GBP 0.60B to repay existing debt, plus fees of 2% (GBP 74M) and CLX stamp duty of 0.5% (GBP 16M): **GBP 3.81B in total**.
+- Senior loan 4x EBITDA = GBP 1.6B at 7.5%; high-yield bonds 2x = GBP 0.8B at 11%. Total debt 6x, the Expansion cap.
+- Fund equity: GBP 1.41B (37% of the total, above the 30% minimum).
+- Interest: GBP 120M + GBP 88M = GBP 208M a year. Coverage 400 / 208 = 1.9. Implied rating B (6.0x leverage) minus a notch for coverage below 3: **B-**.
+
+**Five years of ownership (base case).**
+- Cost cuts add GBP 60M of EBITDA (a strike event at two plants, settled). EBITDA grows 3% a year: (400 + 60) x 1.16 = **GBP 533M** in year 5.
+- Free cash flow of about GBP 120M a year repays GBP 600M: debt falls to GBP 1.8B.
+- Exit at 8x EBITDA: enterprise value GBP 4.27B, equity GBP 2.47B. The fund turns GBP 1.41B into GBP 2.47B: **1.75 times its money**, about 12% a year.
+- Kessane's take: management fees of 1.5% on GBP 1.5B committed for 5 years (GBP 112M), and carry of 20% of the GBP 1.06B profit (GBP 212M), since the 8% hurdle (GBP 2.07B) is cleared.
+
+**Recession branch.** In year 2 the UK enters Contraction: EBITDA -20% to GBP 368M and the policy rate rises 2 points, adding GBP 32M of interest on the floating senior loan. Coverage falls to 368 / 240 = 1.5; net debt (GBP 2.28B after a year of repayment) / EBITDA is 6.2x against a 6.5x covenant. One more bad quarter starts the default chain (3.6.6). Kessane can inject GBP 150M of new equity (an equity cure), pay a waiver fee, or let the creditors take Brightwell.
+
+**The dynasty angle.** Brightwell supplies the dynasty's supermarket chain. Selling to the chain below market would help the dynasty and hurt the fund's investors: self-dealing (3.18.5), detection 10% per quarter.
+
+### 3.26.3 Merger arbitrage on a mixed deal
+
+**The deal.** Aster Semiconductor (HDM, $60, 200M shares) bids for Lumen Photonics (80M shares, $24 before the bid). Aster's founding family bloc holds 56%.
+
+- **Control check**: paying 0.5 Aster shares per Lumen share would issue 40M new shares, and the bloc would fall to 56 x 200 / 240 = 46.7%, making Aster contested. The family structures a **mixed offer** instead: **$15 cash plus 0.25 Aster shares** (20M new shares; the bloc stays at 56 x 200 / 220 = 50.9%).
+- **Deal odds**: 0.90 - 0.15 (antitrust review likely) - 0.10 (a Lumen plant triggers a foreign investment review in Korea) + 0.05 (3.5% break fee) = **p = 0.70**.
+- Arbitrage shorting drops Aster 1% to $59.40, so the offer is worth $15 + 0.25 x 59.40 = **$29.85**. Lumen trades at 0.70 x 29.85 + 0.30 x 24 = **$28.10**. Spread: 6.2%.
+
+**The player's trade.** Buy 2M Lumen at $28.10 ($56.2M) and short 0.5M Aster at $59.40 ($29.7M), matching the 0.25 ratio. If the deal closes, the player receives $30M in cash plus 0.5M Aster shares that close the short: profit $30M + $29.7M - $56.2M = **$3.5M**, 6.2% in about 5 months. The 2.5% stake is below the 5% filing line.
+
+**What happens.**
+1. **Second request** from the antitrust authority: p falls to 0.65; Lumen dips to $27.80. Paper loss $0.6M.
+2. **Topping bid**: Corvane Holdings offers $32 in cash (7% above the current offer, more than the 3% minimum). Aster has 5 days of matching rights. It raises the cash part to $17.50; Aster's own holders dislike the higher price and Aster falls 2% to $58.20, so the offer is worth $17.50 + 14.55 = $32.05. Corvane walks away.
+3. **Close**: the player receives 2M x $17.50 = $35M plus 0.5M Aster shares to close the short. Profit $35M + $29.7M - $56.2M = **$8.5M**, 15% in five months.
+
+**Had the deal broken** (regulators block it): Lumen receives a 5% reverse break fee ($1.50 a share of cash) and falls to about $25.50; Aster rises 2% back to about $60.60. The loss: 2M x ($28.10 - $25.50) + 0.5M x ($60.60 - $59.40) = **$5.8M**. Arbitrage wins small and often, and loses big and rarely.
+
+---
+
+## 3.27 Assumptions
 
 New assumptions introduced by this document, to confirm or change:
 
@@ -1534,3 +2317,26 @@ New assumptions introduced by this document, to confirm or change:
 18. **The player always sees a warning** before an order that uses inside information the game knows they hold.
 19. **Freeport Night Market** access requires a Shell or Front Company and is always on, with no regulator but raid and fraud risk.
 20. **Market tools unlock by game stage** as listed in 3.1.4.
+21. **Standing orders run in the hourly market loop** as a market rule, cost no character hours, and are not AI decisions; skill shows through execution quality (the executing character's Finance scales slippage) and Desk Sessions (3.13).
+22. **Market alerts have three tiers**, and the "always stop" tier (margin, filings and bids on the dynasty's companies, halts, runs, forced sales) cannot be turned off; a morning brief arrives at 07:00 in the head's hub (3.13.5, 3.13.6).
+23. **The player never sees V directly**, only an estimated fair value whose error comes from the 2.22 intel level; every listed company gives a public intel floor of 40 (3.14.2).
+24. **Analysts are lightweight AI characters** with a sell-side bias, and their consensus feeds earnings surprises (3.14.3).
+25. **Inside information is tracked as knowledge items** held by characters, which leak as rumors once more than 5 characters know (3.14.6).
+26. **Retail Fever** per exchange scales retail volume, and **meme state** is a defined stock state; retail brokers can restrict buying during it (3.15).
+27. **The GRG baseline follows the global business cycle** instead of the fixed 18 in 3.3.5 (a change to 3.3.5); cycle phases set sentiment drift, spreads, IPO coverage and funding appetite (3.16.1).
+28. **Manias** are sector states driven by a Froth ratio; their popping is the market side of the 2.18.3 tech bubble crisis (3.16.2).
+29. **The financial sector is playable** through eleven licensed business lines, from commercial banks to crypto exchanges; a Captive Bank with a full banking license becomes a commercial bank (3.17.1).
+30. **Banks keep a simple balance sheet** with capital and liquidity ratios and held-to-maturity bonds carried at cost (3.17.3).
+31. **Exchanges and rating agencies can be owned**: exchanges with a 20% single-holder vote cap unless the government approves, agencies with a Credibility score that tilting erodes (3.17.5, 3.17.6).
+32. **Trades inside the family trust's portfolio do not count toward its spending limit**, except the cases listed in 3.18.1. Two new optional trust rules, Leverage Cap and Investment Policy, are proposed additions to 1.10.1 of [1-corporate-core.md](1-corporate-core.md).
+33. **A fund's holdings count toward its manager's holder group** for disclosure, the manager votes them, and misuse is the new offense of self-dealing (3.18.2, 3.18.5).
+34. **The family office** unlocks at a trust value of $100M and runs a mandate through a CIO character on the weekly cadence (3.18.3).
+35. **Drag-along and tag-along** are proposed new optional charter clauses, to add to 1.5 of [1-corporate-core.md](1-corporate-core.md) (3.19.1).
+36. **LBO debt limits follow the cycle phase**: 6x EBITDA in Expansion and Overheating, 5x in Recovery, 4x in Contraction (3.19.4).
+37. **Deals have break fees, reverse break fees, matching rights and a 3% minimum topping increment**, and the market prices them with the deal odds formula of 3.20.2.
+38. **Bank runs are checked daily** through Run Pressure; contagion runs through counterparty losses, fire sales, confidence, the Funding Stress Index and prime broker failures; two systemic failures in 30 days start a Financial Panic (3.21).
+39. **Derivatives scope**: index futures are added at launch; options and credit default swaps come later; interest rate swaps are abstracted as a fixed or floating debt choice; exotics and structured credit are out (3.22).
+40. **Ledgerbit is anchored to an Adoption index**, not to fundamentals; token offerings, data-backed tokens and stablecoins follow the rules of 3.23; corporate scrip is legal only in Charter Zones and corporate sovereign territories.
+41. **Taxes apply to realized gains only**, with a short-term rule, wash sale rule, step-up at death, participation exemption for companies, and per-exchange transaction taxes (3.24). The short-term rule is a new detail of the E3 law that should be mirrored in [4-politics.md](4-politics.md).
+42. **Stages shape the role of markets**, with the pacing targets of 3.25.3; Heir trading results affect the head's opinion (3.25.1).
+43. **To reconcile with [4-politics.md](4-politics.md)**: the F4 Securities Regulation law there moves the disclosure line (10% under Lax, 3% under Strict, 2% under Draconian), while this file keeps 5%, 10%, 25% and 50% everywhere (assumption 7). Proposed fix: F4 only adds an early filing line (3% under Strict, 2% under Draconian) or removes the 5% line (Lax), and the legal effects at 10%, 25% and 50% stay the same in every country. To confirm with Logan.
