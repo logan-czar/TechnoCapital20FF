@@ -34,10 +34,12 @@ Models are not a machine, but they behave like one: they are scarce, they go obs
 |---|---|
 | **Pool** | All of one TC type a company controls, broken down by hub |
 | **Allocation** | Assigning TC to a **task**. Allocated TC does nothing else |
-| **Producing** | The default use: TC that is not allocated runs its facility's production method and its output is sold (compute is sold as cloud compute, fab capacity makes chips, robots run their factory) |
+| **Leased out** | The default use: TC that is not allocated is **leased, not sold**. Its use is rented to others by contract or on the spot market, and the owner keeps the machine (6.3.4). The machines themselves can also be bought and sold as assets (6.3.5) |
+| **Own production** | TC installed in the company's own facility and running its production method (a fab making chips the company sells, robots in its own factory) counts as allocated to that facility |
 | **Requirement** | What a task needs: pool, amount, minimum Generation or class, location, and control level (6.3) |
 | **Fill** | Allocated amount ÷ required amount for a task, 0 to 100% |
-| **Control level** | How firmly the company holds the TC: **Owned**, **Reserved** (a capacity reservation contract), **Spot** (rented by the hour, can be pre-empted) or **Dark** (black market, 6.9.3) |
+| **Control level** | How the company holds the TC: **Owned** (it owns the machines), **Leased** (it agreed to pay a set amount for a set time to use them), **Spot** (expensive, on demand, no commitment) or **Compromised** (it is secretly using someone else's TC while they use it or while it sits idle, 6.9.3) |
+| **Lease rate** | The market price of using one unit of TC for a period. For compute it is the cloud compute price of 2.6.6 ($2,500 per H at base), now read as a lease price, not a sale |
 | **Generation** | The technology vintage of compute, models and lithography. Newer generations do more per unit (6.4) |
 
 ### 6.1.3 Cadence
@@ -45,7 +47,7 @@ Models are not a machine, but they behave like one: they are scarce, they go obs
 | Interval | Techno-Capital calculations |
 |---|---|
 | **Hourly** | Allocation changes for compute and models take effect at the next turn; training runs, netruns and trading strategies progress; hot events (loss spikes, outages, cyberattacks) |
-| **Daily** | Drone and vehicle fleet moves between districts; spot compute price |
+| **Daily** | Drone and vehicle fleet moves between districts; spot prices and spot availability |
 | **Weekly** | Fleet operations (delivery, security, survey) resolve; robot and drone redeployments between hubs complete; foundry queue updates |
 | **Monthly** | Fab yield ramps, lithography service and condition, TC depreciation, node supply allocation (6.8.3), task upkeep billing, generation value repricing |
 | **Every 24 months (T)** | A new hardware generation becomes available to whoever can make it (6.4) |
@@ -57,14 +59,14 @@ Models are not a machine, but they behave like one: they are scarce, they go obs
 ### 6.2.1 Compute
 
 - **Capacity** of a data center level = `14,600 H per month × Generation multiplier of its server nodes × power fill × condition factor` (output rules of 2.7.1).
-- **Producing**: compute not allocated is sold as cloud compute at the hub price (2.6.6, $2,500 per H at base).
-- **Allocating** compute to a task costs nothing in cash but loses that sale: the **opportunity cost** shown in every task tooltip is `H × cloud compute price`.
+- **Leased out**: compute not allocated is leased to others, by contract or on the spot market (6.3.4). "Selling cloud compute" in 2.6.6 and 2.7.8 means leasing compute time; the owner keeps the servers.
+- **Allocating** compute to a task costs nothing in cash but gives up that lease income: the **opportunity cost** shown in every task tooltip is the lease income forgone.
 - Any production method that lists cloud compute as an input (AI-augmented offices, cashierless retail, social platforms and so on, 2.7.8) can take it from the company's own pool instead of the market. This is the simplest kind of allocation and happens by default when the company has spare compute in the same country.
-- **Clusters**: compute in one hub, owned or Reserved by one company, forms a **cluster**. Large training runs need a single cluster (6.5.2). Compute in different hubs cannot be added together for those tasks.
+- **Clusters**: compute in one hub held by one company (Owned, Leased, or Spot from a single provider) forms a **cluster**. Large training runs need a single cluster (6.5.2). Compute in different hubs cannot be added together for those tasks.
 
 ### 6.2.2 Foundry capacity and lithography tools
 
-- **Foundry capacity** is a fab level's wafer starts per month (2.7.5: mature 10,000, memory 20,000, advanced 5,000). A fab owner can make its own chips, sell chips, or sell **foundry slots** to fabless chip designers (6.6.2).
+- **Foundry capacity** is a fab level's wafer starts per month (2.7.5: mature 10,000, memory 20,000, advanced 5,000). A fab owner can run its own chips through it (own production) or lease **foundry slots** to fabless chip designers, who supply the design and pay per wafer start (6.6.2). Idle foundry capacity goes on the slot lease market.
 - **Lithography tools** are the lithography systems installed in fab levels (2.7.2: memory 4, advanced 10). They are the rarest TC in the game: one supplier in Eindhoven at start, $150M each, made at about 4 per month worldwide **(T)**.
 
 | Class | Needed for | Starting makers | Tech |
@@ -123,32 +125,46 @@ A requirement also names:
 
 - **Minimum Generation or class**: older TC may not count, or counts at its Generation multiplier (6.4).
 - **Location**: *Same hub* (fleets, colocated trading), *Same country* (data sovereignty, government contracts), *Any* (most compute tasks), or *Single cluster* (training runs).
-- **Control level**: the weakest acceptable control. Training runs need Reserved or Owned; secret tasks (netruns, illegal surveillance) need Owned or Dark; most others accept Spot.
+- **Control level**: which control levels the task accepts. Most tasks accept Owned, Leased or Spot. Secret tasks (netruns, illegal surveillance, training under a Moratorium) need Owned or Compromised, because leased and spot use is on the provider's books. Training runs accept Compromised only if the whole cluster is one compromised site.
 
 ### 6.3.2 Paused and interrupted tasks
 
 - A **Gate** task that loses fill pauses. Training runs paused for more than 72 hours lose 5% of their progress per further day (the cluster must restart from a checkpoint) **(T)**.
 - A **Rate** task keeps its progress and simply slows.
 - An **Upkeep** task loses its effect at once; an uploaded mind with no compute is **suspended** (6.7.4).
-- **Spot pre-emption**: each hour of tight compute markets (hub R > 1.1, 2.9.2) gives a 2% chance per hour that a Spot allocation is taken back for 1 to 12 hours **(T)**. Spot is cheap and unreliable.
+- **Spot availability**: spot draws only on capacity that owners have put on the spot market and nobody is using. Once a spot allocation starts it is not taken back, but its price is reset daily; if the hub's spot capacity is used up, new spot requests wait in a queue.
+- **Compromised access lost**: when a compromise is detected (6.9.3) every task using it loses that fill at once.
 
 ### 6.3.3 The allocation screen and priorities
 
-- The **Techno-Capital screen** shows each pool by hub: total, **allocated** (by task), **producing**, **leased out**, **idle**, and **broken or offline**.
+- The **Techno-Capital screen** shows each pool by hub: total, **allocated** (by task, including own production), **leased out** (contract), **on spot** (offered, and how much is in use), **idle**, **broken or offline**, and **suspected compromised** (unexplained use, 6.9.3).
 - The player sets **priorities 1 to 5** on tasks. When a pool shrinks (outage, sabotage, sanctions, a vassal turning Defiant), the lowest priorities lose fill first.
-- **Auto-allocation**: the COO (or the CTO board seat, 6.10.1) fills new tasks from producing TC by default, cheapest opportunity cost first, so the player is not asked every hour.
+- **Auto-allocation**: the COO (or the CTO board seat, 6.10.1) fills new tasks from TC on the spot market by default, cheapest lease income forgone first (contract leases are never broken automatically), so the player is not asked every hour.
 - Changes take effect at the next hourly turn for compute and models, next day for fleets in the same hub, next week across hubs, and 8 weeks for lithography tools.
 
-### 6.3.4 Renting and leasing TC
+### 6.3.4 Owning, leasing, spot and compromised
 
-| Way | Control | Price **(T)** | Notes |
+Techno-Capital is **leased, not sold**. Owners keep the machines and rent out their use. A company gets the use of TC in four ways **(T)**:
+
+| Control | How | Price | Terms |
 |---|---|---|---|
-| **Spot rental** | Spot | Hub spot price (cloud compute 2.6.6; drone and vehicle day rates at 0.2% of unit price per day) | Pre-emptible; no commitment |
-| **Capacity reservation** | Reserved | Contract price plus the 10% reservation fee of 2.10.2 | Top allocation priority in a shortage (2.10.3); 12 to 36 months |
-| **Dedicated lease** | Reserved, and counts as one cluster | Contract price +15% | A whole data center level, fab line or fleet set aside; the lessee may run secret tasks if the lessor agrees |
-| **Black-market rental** | Dark | 150% to 300% of spot | Exposure +5 per month per 1,000 H (Financial Police, Data and Cyberware Authority); no export control applies; 5% chance per month of a sting operation **(T)** |
+| **Owned** | Buy the machines (new from makers, 6.7.3; used, 6.4.1) or build the facility | The asset price, then upkeep | Full control. Secret tasks allowed. Idle capacity can be leased out |
+| **Leased** | A lease contract: an agreed amount of TC for an agreed time (1 to 36 months) | Lease rate × term discount (1 to 5 months ×1.0, 6 to 11 ×0.95, 12 to 23 ×0.9, 24 to 36 ×0.85), paid monthly, one month's payment as a deposit | Guaranteed for the whole term: the lessor cannot take it back. Top allocation priority in a shortage (as capacity reservations in 2.10.3). Breaking early costs 50% of the remaining payments. The lessee may sublease. Leases transfer with the asset if the owner sells it |
+| **Spot** | Take spare capacity by the hour from the spot market | `Lease rate × (1.6 + 2 × max(0, R - 1))`, where R is the hub's tightness (2.9.2) | On demand, no commitment, stop any hour. Expensive. Only available while owners have idle capacity on offer in the hub (compute: anywhere in the country) |
+| **Compromised** | Secretly use TC that someone else owns or leases, while they use it or while it sits idle (6.9.3) | No lease paid; the cost is getting access (a netrun, a bribed insider, or a broker's fee of 30% to 60% of the spot price) | Secret, and outside export controls and T3. Can be detected and lost at any time |
 
-A company can also **lease out** idle TC on the same terms. Leasing out compute to a rival's training run is legal, profitable, and sometimes the worst decision a dynasty makes.
+Fleets and robots use the same rules: the lease rate for drones, vehicles and robots is 2% of the unit price per month, and spot day rates are 0.1% per day before the tightness markup **(T)**.
+
+**For the owner**, unallocated TC can be put on a **lease contract** (steady income at the term-discounted rate), offered on the **spot market** (higher price, but income only for the share actually taken, which depends on hub demand), or held **idle**. The default is the spot market. Leasing compute to a rival's training run is legal, profitable, and sometimes the worst decision a dynasty makes.
+
+### 6.3.5 Buying and selling Techno-Capital
+
+The machines themselves are assets and trade like any other:
+
+- **New** AI server nodes, lithography tools, drones, autonomy kits and robots come from makers by supply contract or market purchase (2.10), allocated by Allocation Score when short (6.7.3).
+- **Used** TC sells at the used price (6.4.1 for nodes; book value for other pools) to the grey market, crypto miners and sanctioned buyers.
+- **Whole facilities** (a data center, a fab with its tools) sell under the facility rules of 2.7.2 and 2.16.
+- Selling TC that is leased out sells it **with its leases**: the buyer collects the lease payments until they end.
 
 ---
 
@@ -189,7 +205,7 @@ Training runs are the early game's big bet. A Founder-stage AI lab lives or dies
 
 | Model Generation | Total compute **(T)** | Minimum length | Requirement | Other inputs |
 |---|---|---|---|---|
-| Gen 1 | 60,000 H | 3 months | Gate, single cluster, Reserved or Owned | User data 10 DU, research lead |
+| Gen 1 | 60,000 H | 3 months | Gate, single cluster (Owned, Leased or Spot; Compromised only as one whole site) | User data 10 DU, research lead |
 | Gen 2 | 240,000 H | 4 months | Gate, single cluster | User data 30 DU |
 | Gen 3 | 960,000 H | 6 months | Gate, single cluster; T3 Licensed Models needs a licence | User data 80 DU, Digital 3 |
 | Gen 4 | 3,840,000 H | 6 months | Gate, single cluster ("gigacluster", 6.7.5) | User data 200 DU, Digital 3 |
@@ -284,7 +300,7 @@ The full requirement list. **Opp. cost** is the market value of the TC at base p
 |---|---|---|---|
 | **Micro-targeted campaign** | 1 H per 10,000 adults in the constituency per month, a model of Gen ≥ 2 | Upkeep | Ads term +0.15 on top of normal ads (4.6.3); exposure +2 under T2 Strict |
 | **Synthetic psyop** | 1,000 H per month, a model of Gen ≥ 2 | Upkeep | Psyop cost -40% and discovery -20% (stacks with the synthetic media method) |
-| **Netrun scheme** | 500 H, Owned or Dark | Rate | +10% netrun success per 500 H above the first, cap +30% |
+| **Netrun scheme** | 500 H, Owned or Compromised | Rate | +10% netrun success per 500 H above the first, cap +30% |
 | **Cyber defense** | 1,000 H per month per company | Upkeep | Cyberattack and netrun success against the company -30% (stacks with a cyber defense team, 4.23.2) |
 | **Surveillance coverage** | 10 drones and 100 H per month per district | Upkeep | Surveillance feeds 1 per district; scheme detection ×1.2 in that district; needs T4 Expanded or above for public spaces |
 | **Drone wing** (4.23.2) | 5 military drones per month replaced, plus fleet control | Upkeep | Security Strength 20 |
@@ -326,7 +342,7 @@ The AI supply chain is a stack of chokepoints. Each layer has a bottleneck a pla
 
 ### 6.7.3 Getting server nodes: allocation by relationship
 
-When AI server nodes are scarce (R > 1.05), makers do not just sell to the highest bidder. After the 2.10.3 priority order, **spot buyers are served by Allocation Score** **(T)**:
+When AI server nodes are scarce (R > 1.05), makers do not just sell to the highest bidder. After the 2.10.3 priority order, **buyers without contracts are served by Allocation Score** **(T)**:
 
 `Allocation Score = bid premium % + opinion of the maker's CEO toward the buyer's CEO / 5 + 10 if the buyer has bought for 3+ years + 15 if the buyer is a "strategic partner" (a 5% stake or a joint venture) - 20 if the buyer's country is under export controls`
 
@@ -362,7 +378,7 @@ A **gigacluster** is a campus of 40 or more data center levels in one hub, conne
 
 ### 6.8.2 Techno-Capital share and influence
 
-- A dynasty's **compute share** = its owned and Reserved compute ÷ world compute. It appears on the Techno-Capital screen beside its world rank.
+- A dynasty's **compute share** = its Owned and Leased compute ÷ world compute. It appears on the Techno-Capital screen beside its world rank.
 - Data centers, fabs and lithography tools already give influence through their facility weight (2.5.2). A fab level with EUV tools counts ×1.5 and a gigacluster ×2 **(T)**: governments care about who holds the machines.
 
 ### 6.8.3 Monthly node and tool supply
@@ -378,7 +394,7 @@ New AI server nodes and lithography tools come from producers each month and are
 Countries can control TC exports through trade war level 3 and 4 (4.11.5) and sanctions (4.11.4). Controls apply to **six items** **(T)**: lithography tools, lithography service, advanced chips, AI server nodes of Gen 2 or newer, model weights of Gen 3 or newer, and autonomy kits.
 
 - **Service cut-off**: the maker's government can order service stopped to a country. Tools there lose condition 5 per month (6.2.2).
-- **Remote compute loophole**: renting compute in a third country (Singapore, Dubai, Penang) is legal until the controlling country adds **cloud controls** (a decision under trade war level 4), which make the rental Dark.
+- **Remote compute loophole**: renting compute in a third country (Singapore, Dubai, Penang) is legal until the controlling country adds **cloud controls** (a decision under trade war level 4), which make the rental illegal: exposure +5 per month per 1,000 H, as sanctions evasion (4.11.4).
 - **Smuggling** nodes through shells (1.7.4) and Dubai or Hong Kong trading houses is sanctions evasion: exposure +10 per 1,000 nodes **(T)**.
 
 ### 6.9.2 AI regulation (T3) applied to TC
@@ -392,9 +408,25 @@ Countries can control TC exports through trade war level 3 and 4 (4.11.5) and sa
 
 A **compute haven** is a country with T3 Unregulated and F2 Open. Training runs move there, and so do the Unshacklers (5-ideology 5.7.2).
 
-### 6.9.3 Dark compute
+### 6.9.3 Compromised Techno-Capital
 
-Black-market compute (6.3.4) runs in front companies, old crypto farms, and data centers in failed states. It avoids T3 and export controls but carries exposure and sting risk, and it is the only way to run netruns and illegal surveillance without Owned compute.
+**Compromised** TC is TC the company is secretly using while its owner (or lessee) uses it or while it sits idle. It is the cyberpunk control level: cryptojacked data centers, a bribed night-shift engineer running jobs on a university cluster, a hijacked drone fleet that still flies its owner's routes by day.
+
+**Getting access** **(T)**:
+
+| Way | Cost | Notes |
+|---|---|---|
+| **Intrusion** | A netrun scheme (500 H) against the target's site | Success as 6.9.4 |
+| **Insider** | Bribe an employee or executive of the owner (bribe chain, 4.20.3) | +20% success; the insider is a knower who can flip (4.20.5) |
+| **Broker** | Buy access from a black-market broker (Shadow Economy, OCGs) | 30% to 60% of the spot price; the broker knows who bought it |
+
+**How much can be used**: all of the target site's idle capacity, plus up to 10% of its capacity in use. Taking in-use capacity slows the owner's own tasks by the same share, which makes detection more likely.
+
+**Detection** (monthly per compromised site) = `5% + 1% per 1,000 H (or per 100 drones or vehicles) used per month + 10% if in-use capacity is taken + 15% if the owner runs a cyber defense task (6.6.6) + 2% per CTO Tech point above 10` **(T)**.
+
+On detection: access ends at once; the owner learns who did it unless the user wins an Intrigue check (+10 per cutout, 4.20.4); the user gains exposure +10 with the Data and Cyberware Authority and the owner gains a casus belli and a lawsuit (4.21.2); a public owner may make it a scandal (Heat 40).
+
+**Why use it**: compromised TC is free, invisible to export controls, T3 licensing and Moratoriums, and leaves no lease on anyone's books. It is the only way to run secret tasks without owning the machines.
 
 ### 6.9.4 Stealing TC
 
@@ -447,7 +479,7 @@ TC sits on the balance sheet as equipment (2.13.3) and depreciates by its life i
 | Transhumanists | Want uploads and cyberware research funded |
 | Neo-Luddites | The Unplugged target data centers, robot factories, robotaxi depots; drift +1 per 5,000 robotaxis in a hub |
 | Communists | Want compute nationalized ("seize the servers"): C5 State Administration applied to data centers first |
-| Sovereigntists | Love compute havens and dark compute |
+| Sovereigntists | Love compute havens and compromised compute |
 | Chuds | Hate foreign-owned data centers and implants; like domestic chip champions |
 | Liberals | Want export controls and standard licensing, and want them to work |
 
@@ -458,7 +490,7 @@ TC sits on the balance sheet as equipment (2.13.3) and depreciates by its life i
 | Stage | Techno-Capital play |
 |---|---|
 | **Heir** | A rig of old nodes for crypto mining, a drone filming startup, an AI advisor bought with the trust allowance. First taste of allocation |
-| **Founder** | The AI startup path: rent Spot, fight for a capacity reservation, raise a round to buy the first Gen 1 training run, sell licenses before the money runs out. A fabless chip startup path: tape out a custom accelerator. **The early game is here** |
+| **Founder** | The AI startup path: pay Spot prices, fight for a lease, raise a round to buy the first Gen 1 training run, sell licenses before the money runs out. A fabless chip startup path: tape out a custom accelerator. **The early game is here** |
 | **Climber** | Own data centers, chase power and grid queues, win GPU allocation by relationships, field a robotaxi fleet, call up vassal levies |
 | **Tycoon** | Fabs and lithography, export control fights, next-generation design, gigaclusters, Sovereign AI contracts |
 | **Oligarch** | Compute share as power, uploaded ancestors, lithography R&D to break the monopoly, and the **Machine Sovereign** endgame |
@@ -490,21 +522,21 @@ TC sits on the balance sheet as equipment (2.13.3) and depreciates by its life i
 
 **Setup.** A Bay Area AI startup (Founder stage) closed a $250M Series B through the VC founding path. Digital 2, CTO with Tech 16, user data 12 DU licensed from a social platform.
 
-**Requirement.** Gen 1 model: 60,000 H × Digital 2 efficiency 1.15 = 69,000 H over at least 3 months, so 23,000 H per month from one cluster, Reserved or Owned.
+**Requirement.** Gen 1 model: 60,000 H × Digital 2 efficiency 1.15 = 69,000 H over at least 3 months, so 23,000 H per month from one cluster.
 
 **Options.**
 
 | Option | Cost | Risk |
 |---|---|---|
-| Spot in the Bay Area | 69,000 × $2,500 = $172.5M | Not allowed: training needs Reserved or Owned |
-| Capacity reservation in Phoenix (23,000 H per month, 12 months, the minimum length) | $57.5M per month, plus the 10% reservation fee on the year's value paid up front: 23,000 × 12 × $2,500 × 10% = $69M | 9 more months of rent after the run, unless the startup re-leases the capacity or uses it to serve the model |
-| Dedicated lease of 2 levels in Singapore for 6 months | 29,200 H × 6 × $2,500 × 1.15 = $504M | Too expensive, but full control |
+| Spot in the Bay Area (tightness R = 1.05) | 69,000 × $2,500 × 1.7 = $293M | Over budget, and the run stalls if spot capacity runs out mid-run |
+| Lease in Phoenix (23,000 H per month, 12 months) | 23,000 × $2,500 × 0.9 = $51.75M per month, plus one month's deposit | 9 more months of lease after the run, unless the startup subleases the capacity or uses it to serve the model |
+| Compromise an idle university cluster in Toronto through a bribed sysadmin | About $2M in bribes | Detection `5% + 23 × 1%` = 28% per month (the insider helps get in, not hide); the chance of finishing 3 months unseen is `0.72³` = about 37%, and being caught means a lawsuit, exposure and a lost run |
 
-The founder takes the Phoenix reservation. By the end of the run it has spent $241.5M of the $250M round ($69M fee plus 3 months at $57.5M), and the model has to pay the remaining 9 months of rent.
+The founder takes the Phoenix lease. By the end of the run it has spent $207M of the $250M round (the $51.75M deposit plus 3 months of payments), and the model has to pay the remaining 9 months of the lease.
 
 **The run.** 2,200 hourly turns. In week 6 a Loss Spike fires; the CTO's Tech check (16 vs 15) succeeds. Quality = 50 + 2 × 6 + 5 × 0 + data bonus 2 (12 DU against 10) = **64**.
 
-**Revenue.** The frontier model is Gen 1 (two other Gen 1 models exist), so the license price = $10M × 1 × 64/75 = $8.5M per license-month. Serving each license-month takes 2,000 H; the remaining reserved capacity (23,000 H per month) serves 11 license-months per month, about $94M a month in revenue against $57.5M a month of reserved compute. The startup is alive, and every AI dynasty in the Bay Area now wants to buy it.
+**Revenue.** The frontier model is Gen 1 (two other Gen 1 models exist), so the license price = $10M × 1 × 64/75 = $8.5M per license-month. Serving each license-month takes 2,000 H; the leased capacity (23,000 H per month) serves 11 license-months per month, about $94M a month in revenue against $51.75M a month of lease payments. The startup is alive, and every AI dynasty in the Bay Area now wants to buy it.
 
 ### 6.14.2 Service suspended in Shanghai
 
@@ -520,8 +552,8 @@ A dynasty's Shanghai branch office runs one advanced-node fab level with 10 EUV 
 
 1. **Techno-Capital is seven pools**: Logan's compute, foundries, lithography machines, drones and automated cars, plus **robots** and **AI models**, added because they behave the same way (scarce, allocatable, obsolete). Either can be dropped without breaking the rest.
 2. **Compute is measured in H** (1,000 Generation 1 accelerator-hours), the existing cloud compute unit, to avoid a clash with construction units (CU).
-3. **Allocation has an opportunity cost, not a cash cost**: unallocated TC produces and sells by default.
-4. **Three requirement types** (Gate, Rate, Upkeep) and **four control levels** (Owned, Reserved, Spot, Dark).
+3. **Techno-Capital is leased, not sold** (Logan's rule): unallocated TC is leased out by default, so allocation has an opportunity cost (lease income forgone), not a cash cost. The machines themselves can still be bought and sold.
+4. **Three requirement types** (Gate, Rate, Upkeep) and **four control levels**, as defined by Logan: Owned (you own it), Leased (you pay an agreed amount for an agreed time), Spot (expensive, on demand) and Compromised (secretly using someone else's TC while they use it or it is idle).
 5. **Training runs replace the "Frontier training" production method** of 2.7.8: models now come from runs (6.5), and the method row should be read as a dedicated training lease.
 6. **Hardware generations every 24 months**, model generations at 4× compute each, Digital tier as algorithmic efficiency.
 7. **Lithography service** by the maker is a controllable lever; unserviced tools lose 5 condition per month.

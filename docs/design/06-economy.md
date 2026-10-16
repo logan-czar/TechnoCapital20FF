@@ -69,4 +69,4 @@ Until Phase 2, each company has an abstract revenue and cost per month tuned by 
 
 ## Techno-Capital
 
-Compute, foundry capacity, lithography tools, drones, autonomous vehicles, robots and AI models form **Techno-Capital**: scarce machine capital that must be allocated to tasks (training runs, research, fleets, netruns, uploads) for them to run or finish. The AI, data center and semiconductor supply chain is the core of the early game. Full design: [detailed/6-technocapital.md](detailed/6-technocapital.md).
+Compute, foundry capacity, lithography tools, drones, autonomous vehicles, robots and AI models form **Techno-Capital**: scarce machine capital that must be allocated to tasks (training runs, research, fleets, netruns, uploads) for them to run or finish. Techno-Capital is **leased, not sold**: idle machines are rented out, and a company holds the use of TC as Owned, Leased, Spot or Compromised. The AI, data center and semiconductor supply chain is the core of the early game. Full design: [detailed/6-technocapital.md](detailed/6-technocapital.md).
