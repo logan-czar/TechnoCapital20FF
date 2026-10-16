@@ -65,3 +65,7 @@ Countries are AI actors with EU4-lite diplomacy:
 ## 8.8 Corporate sovereignty (cyberpunk endgame)
 
 At extreme influence, a dynasty or megacorp can push a hub toward **corporate sovereignty**: a charter city or special economic zone run by the company, with its own laws and security forces. This is a late-game goal and a huge source of controversy.
+
+## 8.9 More in the detailed design
+
+The detailed politics design ([detailed/4-politics.md](detailed/4-politics.md) 4.15 to 4.29) adds the Politics screen and Political Director, public standing and scandals, media, the dynasty as a political actor, lobbyists and fixers, corruption, courts and lawsuits, organized crime, PMCs, civil society, international organizations, espionage, AI governments and dynasties, and further endgames (Kingmaker, Power Behind the Throne, Political Dynasty, Market Maker, Bloc Architect, Media Hegemon, Benefactor).

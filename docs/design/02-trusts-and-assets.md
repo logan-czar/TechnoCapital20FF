@@ -57,7 +57,7 @@ Accounts and assets are **denominated in a currency**. Holding assets abroad exp
 
 - One **portfolio screen** handles buying and selling across asset classes.
 - Large orders move prices (slippage), so building a big stake gets more expensive.
-- **Disclosure thresholds**: crossing 5%, 10%, 25% and 50% of a company is announced and holders react. Buying through a shell hides it until investigated.
+- **Disclosure thresholds**: crossing 10%, 25% and 50% of a company is announced everywhere and holders react. Each country's securities law adds an earlier first filing line (2% to 10%, usually 5%). Buying through a shell hides it until investigated.
 - Real estate and private stakes sell through a short negotiation event rather than instantly.
 
 ## 2.7 Leverage

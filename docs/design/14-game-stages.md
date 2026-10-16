@@ -91,6 +91,9 @@ _Full design: [stages/2-the-founder.md](stages/2-the-founder.md)._
 **Start state:** a dynasty with Kingmaker influence in at least one country, holdings across continents, and the power to move markets.
 
 **Goals (endgame objectives, pick one or more):**
+
+_The full list of political endgames, and setbacks such as Exile, Disgrace and Capture, is in [detailed/4-politics.md](detailed/4-politics.md) 4.29._
+
 - **Corporate sovereignty:** turn a hub into a charter city run by your company (see [08-politics.md](08-politics.md)).
 - **Kingmaker:** install governments in several countries.
 - **Market maker:** control a currency peg, a central bank, or a global exchange.

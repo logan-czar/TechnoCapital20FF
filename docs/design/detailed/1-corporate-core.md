@@ -282,7 +282,7 @@ Current loyalty moves 5 points per week toward the target.
 |---|---|
 | Subsidiary | Default. Can hold its own vassals (max depth 4). |
 | Branch Office | Must be registered in the host country. Host law sets: minimum local partner stake (0% to 51%), golden share (yes/no), local directors (0 to 50%). Unlocks host market and hubs. Host government relation below -50 risks seizure (see politics design). |
-| Shell Company | Registered in a haven jurisdiction. Holds stakes and cash anonymously; rivals see "Undisclosed holder" unless they run Investigate Shell. Income routed through it taxed at the haven rate (0% to 5%). Builds **exposure** +1 per $1M routed per month; investigation chance per month = exposure / 10 %. |
+| Shell Company | Registered in a haven jurisdiction. Holds stakes and cash anonymously; rivals see "Undisclosed holder" unless they run Investigate Shell. Income routed through it taxed at the haven rate (0% to 5%). Builds **exposure** +1 per month per shell plus +1 per $1M routed per month (both × the haven's F5 multiplier, [4-politics.md](4-politics.md) 4.9.3); investigation chance per month = exposure / 10 %. |
 | Joint Venture | Two parents, control by contract (for example 50/50 or 60/40). Deadlock event if parents' heads have opinion below 0 of each other. |
 | Front Company | Legit income plus a hidden illegal operation (smuggling, data brokering). Hidden income x2, raid chance 1% per month plus investigations. |
 | Franchise | Pays 4% to 8% royalties; parent has no board seats; brand scandal spreads both ways. |
