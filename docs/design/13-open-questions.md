@@ -15,6 +15,9 @@
 - Turn-based, one turn per hour, with some calculations on weekly and monthly intervals.
 - The full game includes the map, economy, markets and politics.
 - Tone: grounded corporate drama with cyberpunk accents.
+- Economy works like Victoria 3, except companies own or lease the buildings they produce in.
+- Real estate: buy a plot or a series of plots, then develop it, rent it out, keep it, or use it for a company.
+- The game has a private jet and travel system.
 
 ## Assumptions to confirm
 

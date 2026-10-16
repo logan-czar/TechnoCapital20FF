@@ -1,6 +1,6 @@
 # 2. Map, influence and economy: detailed design
 
-_Status: draft v0.2 (2026-10-16). v0.2 adds competition, real estate, hub life cycle, business cycles, infrastructure, climate, travel, intelligence, AI behavior and map views (2.15 to 2.25). Expands [05-map-and-influence.md](../05-map-and-influence.md) and [06-economy.md](../06-economy.md). Owner: Logan._
+_Status: draft v0.2 (2026-10-16). v0.2 adds competition, real estate, hub life cycle, business cycles, infrastructure, climate, travel, intelligence, AI behavior and map views (2.15 to 2.25); own-or-lease buildings, plot uses and leases (2.16.1, 2.16.7); and a full private jet and travel system (2.21). Expands [05-map-and-influence.md](../05-map-and-influence.md) and [06-economy.md](../06-economy.md). Owner: Logan._
 
 This file turns the map, influence and economy overviews into exact rules, formulas, numbers and content that a designer can balance. It is pure game design.
 
@@ -753,7 +753,8 @@ Refined fuels, LNG, natural gas, coal and nuclear fuel are listed in their tiers
 
 ### 2.7.1 Facility rules
 
-- A facility sits on one plot and has **levels**. Each level runs one **production method**. Facilities marked "product lines" let each level choose a different product.
+- A facility sits on one plot (or a merged site of several plots, 2.16.1) and has **levels**.
+- **Ownership**: the company producing in a facility (its operator) either owns the building or leases it from the building owner (2.16.1, 2.16.7). Leased facilities pay rent instead of tying up capital; production rules are the same. Each level runs one **production method**. Facilities marked "product lines" let each level choose a different product.
 - **Monthly output** of a level:
 
 `Output = method output × Efficiency × Staffing × Condition factor × Input fill × Power fill × (1 - strike days / days in month) × deposit grade (extraction only)`
@@ -1787,11 +1788,35 @@ Share  = Appeal / sum of Appeal of all sellers in the hub
 
 Real estate is the most direct asset-as-title in the game: it holds value, pays rent and buys local influence (2.5.2).
 
-### 2.16.1 Plots and who owns them
+### 2.16.1 Plots, buildings and who uses them
 
-- Every district has 10 plots (2.3.2). Each plot is **owned** by one holder: a character, trust, company, government or "dispersed" (many small owners, modeled as one AI holder that sells slowly).
-- At game start, ownership of plots in each hub is seeded: 30% to 60% dispersed, 10% to 30% government (more in one-party states), the rest split among AI companies, AI dynasties and REIT-like funds.
-- A plot can carry one **building** (a facility from 2.7, or a property type from 2.16.2) with levels.
+The economy works like Victoria 3, with one change: **companies do not have to own the buildings they produce in. They either own them or lease them.**
+
+**Plots.** Every district has 10 plots (2.3.2). Each plot is owned by one holder: a character, trust, company, government or "dispersed" (many small owners, modeled as one AI holder that sells slowly). At game start, plot ownership in each hub is seeded: 30% to 60% dispersed, 10% to 30% government (more in one-party states), and the rest split among AI companies, AI dynasties and property funds.
+
+**Plot assemblies.** A holder can buy a **series of adjacent plots** in the same district and merge them into one **site**. A site counts as one plot for building, with the plot count as its size.
+- Large buildings need sites: a mega fab, a gigafactory, a port terminal or an arcology needs 2 to 4 plots (listed per building in 2.7).
+- A merged site is worth +10% per extra plot over the sum of its plots (a buyer pays for the assembly).
+- **Holdouts**: when a holder owns all but one plot of a planned site, the last owner asks 1.5× to 3× value. Options: pay, build around it (smaller site), or push rezoning and compulsory purchase through local politics.
+
+**Three roles on every plot.** Each plot has a **land owner**, a **building owner** and an **operator**. They can be one holder or three.
+
+| Role | Who it is | What they get |
+|---|---|---|
+| **Land owner** | Owns the plot | Land value, ground rent if leased (2.16.7), influence from land value |
+| **Building owner** | Owns the facility or property on it | Building value, building rent if leased, influence from building value |
+| **Operator** | The company producing in it, or the landlord running a rental property | Production revenue and costs, the jobs (and their influence weight 1.5), the workforce's opinion |
+
+**Four uses for a plot.** The owner of a plot chooses what to do with it:
+
+| Use | What happens | Earns | Typical owner |
+|---|---|---|---|
+| **Develop** | Build a facility (2.7) or a property (2.16.2) on it, to sell or hold | Building value; rent or production once built | Developers, trusts, companies |
+| **Rent out** | Lease the empty land, or a building on it, to someone else (2.16.7) | Ground rent or building rent | Trusts, property funds, dynasties living off rents |
+| **Keep** | Hold it empty as a land bank | Nothing but appreciation; carries property tax and influence | Speculators, dynasties waiting for rezoning or growth |
+| **Use for a company** | A company the owner controls operates on it, by owning it outright or by leasing it from the owner | Production | Every producing company |
+
+**Use for a company across the group.** When a family trust or a parent company owns the plot and a company it controls operates on it, the use is an **intra-group lease**: the company pays rent to the owner. This is a feudal lever. Rent above market moves cash out of the company to the owner without paying dividends to minority holders. Activist factions and minority blocs gain +1 strength per month for every 10% the rent is above market, and above 30% it adds related-party exposure with the securities regulator ([4-politics.md](4-politics.md) 4.9).
 
 ### 2.16.2 Property types
 
@@ -1845,6 +1870,33 @@ Phase changes are rolled monthly; the chance to move on rises with each month in
 - A Slum district where the average land value rises over 50% in 5 years becomes a candidate for **gentrification**: on a yearly roll (30%), it converts to Residential. Gig and Unemployed segments are pushed to another Slum or out of the hub; unrest +10 in the hub for a year.
 - **Slum clearance** (a government or a Power Broker can push it): the district is rezoned, tenements are demolished, residents displaced (+15 unrest, Labor Unions and Gig Workers groups angry). Land value ×3 over 2 years.
 - **Slum spread**: a Residential district with unrest over 60 for 2 years and land value falling converts to Slums.
+
+### 2.16.7 Leases
+
+Leasing lets a company grow without buying buildings, and lets a dynasty live off rent. All leases are contracts between two holders, shown on both balance sheets.
+
+| Lease | What is leased | Term | Rent (yearly, T) | Who builds and maintains |
+|---|---|---|---|---|
+| **Ground lease** | Empty land; the tenant builds on it | 20 to 99 years | 3% to 5% of land value | Tenant builds and owns the building; it passes to the land owner when the lease ends |
+| **Building lease** | A facility or property, ready to use | 3 to 15 years | Facilities: 8% to 12% of building value. Properties: market rent (2.16.3) | Landlord does major upkeep (condition); tenant pays running costs |
+| **Build-to-suit** | The landlord builds a facility to the tenant's spec, then leases it | 10 to 20 years | 7% to 9% of total cost | Landlord pays construction; tenant commits before the build starts |
+| **Sale-leaseback** | A company sells its own building to an investor and leases it back | 10 to 25 years | 7% to 10% of sale price | As building lease |
+
+**Lease terms** (chosen when signing):
+- **Escalation**: fixed 2% a year, or tied to the country's inflation.
+- **Renewal option**: the tenant may renew at market rent; without one, the landlord can refuse.
+- **Break clause**: the tenant may leave early by paying 12 months of rent.
+- **Purchase option**: the tenant may buy the building at a set price during the lease.
+
+**Rules**
+- The **operator** controls production; the landlord only collects rent. Missing 2 months of rent lets the landlord start eviction (30 days), after which the facility idles until a new tenant signs.
+- **Influence splits by role** (2.5.2): land and building value count for their owners; jobs count for the operator.
+- **Owning versus leasing**: owning costs capital up front and earns the land's appreciation; leasing preserves cash for growth but adds a fixed cost and a landlord who can squeeze you at renewal.
+- **Landlord leverage**: buying the land or building under a rival's key factory is a legal attack. At renewal the landlord can raise rent up to 50%, refuse renewal (the rival must relocate), or offer to sell at a premium. A lease without a renewal option counts as a **weak point** in takeover planning.
+- **Seizure and sanctions** hit owner and operator separately: a government can nationalize the building and keep the foreign operator as a tenant, or freeze a sanctioned landlord's rent.
+- **Property funds** (AI landlords) own about 20% of rentable buildings at start and offer build-to-suit deals to AI and player companies alike.
+
+**Victoria 3 comparison.** In Victoria 3 a building is one thing owned by investors. Here the land, the building and the business inside are three separate assets that can belong to three different dynasties, which is where much of the corporate intrigue lives.
 
 ## 2.17 Hub life cycle
 
@@ -1958,32 +2010,115 @@ Climate shifts slowly over a long playthrough:
 
 This gives long dynasties a reason to care about decades-long trends, and a market for adaptation (sea walls, desalination, cooling).
 
-## 2.21 Travel and presence
+## 2.21 Travel and private jets
 
-Characters are somewhere on the map.
+Characters are physically somewhere on the map, and getting them where the deals are is a system of its own.
 
-### 2.21.1 Location
+### 2.21.1 Location and residence
 
 - Every character has a **current location** (a hub) and a **residence** (a hub; sets tax residency for E1 and E4).
-- Meetings, galas and most character actions need both characters in the same hub. A **remote call** works for any meeting at -30% effectiveness (pitches, negotiations, persuasion).
+- Meetings, galas and most character actions need both characters in the same hub. A **remote call** works for any meeting at -30% effectiveness (pitches, negotiations, persuasion). Some actions are in-person only: galas, Seduce, signing a founding round, family weddings and funerals.
+- The dynasty names one hub as its **seat**: +3 pp dynasty influence there, family events happen there, and moving the seat takes 3 months of disruption (family opinion -10).
 
-### 2.21.2 Travel
+### 2.21.2 Ways to travel
 
-| Mode | Time | Cost | Notes |
+| Mode | Time | Cost per trip (T) | Notes |
 |---|---|---|---|
 | Car or rail (same region) | 1 to 4 hours | Negligible | |
-| Domestic flight | 4 hours | $1,000 | |
-| International flight | 8 to 16 hours (by distance) | $10,000 | |
-| Private jet | 70% of flight time | $50,000 per trip, or own a jet (asset, $60M, $5M a year upkeep) | Can fly on short notice; status +5 opinion at galas |
+| Helicopter | 1 hour within a hub's region | $5,000 | Skips traffic; needs a helipad (office tower upgrade) |
+| Commercial flight, first class | 4 hours domestic, 8 to 16 hours international | $1,000 domestic, $15,000 international | Fixed departures (one every 6 hours on major routes); visible to the public; no work in flight beyond calls at -50% |
+| Charter jet | Like a private jet | $20,000 to $150,000 by distance and class | Booked 12 hours ahead; no ownership cost |
+| Fractional jet share | Like a private jet | $2M a year for 200 flight hours | Booked 6 hours ahead |
+| **Owned private jet** | Fastest door to door | Running cost per flight hour (2.21.3) | Leaves when you say; status; office cabin |
+| Superyacht | Days | Upkeep only | A floating venue for galas and secret meetings (2.21.7) |
 | Suborbital hop (Tier 4 late game) | 2 hours anywhere | $500,000 | Cyberpunk accent |
 
-Travel time is time the character cannot spend on other actions, though a character can take calls while traveling.
+Travel time is time the character cannot spend on most other actions (see in-flight work, 2.21.4).
 
-### 2.21.3 Presence
+### 2.21.3 Private jets
 
-- A character physically present in a hub for over 30 days in a year counts as **resident-like** there: +2 pp influence for their holdings in that hub (stacks with origin, max once per character).
-- Dynasty headquarters: the dynasty can name one hub as its **seat**. The seat gets +3 pp dynasty influence, family events happen there, and moving the seat costs 3 months of disruption (family opinion -10).
-- Travel to unstable hubs (unrest above 60, war) carries **security risk**: kidnap or attack events unless a security detail is hired.
+Jets are assets. They can be owned by a character's personal account, a trust or a company, and they appear on the balance sheet.
+
+| Class | Price (T) | Range | Seats | Speed vs commercial | Yearly fixed cost | Per flight hour | Status |
+|---|---|---|---|---|---|---|---|
+| **Light jet** | $8M | 3,000 km (regional only) | 6 | 1.0× | $0.8M | $3,000 | +2 |
+| **Midsize** | $20M | 5,500 km | 8 | 1.0× | $1.5M | $4,500 | +4 |
+| **Super-midsize** | $30M | 6,500 km (coast to coast, short ocean hops) | 10 | 1.05× | $2M | $5,500 | +6 |
+| **Large cabin** | $50M | 11,000 km (most intercontinental routes with one stop) | 14 | 1.1× | $3.5M | $8,000 | +8 |
+| **Ultra-long-range** | $75M | 14,000 km (nonstop almost anywhere) | 16 | 1.15× | $5M | $10,000 | +10 |
+| **VIP airliner** | $150M | 15,000 km | 40 | 1.1× | $12M | $20,000 | +15 |
+
+- **Door-to-door time**: a private jet saves about 3 hours per trip over commercial (no check-in, connections or fixed departures), plus the speed factor. A flight that needs a stop beyond the jet's range adds 2 hours per stop.
+- **Status**: the class's status value is added to opinion at galas and in first meetings with Ambitious, Greedy or Socialite characters, and counts toward reputation among the Elite. Ascetic and Honest characters instead take -5 opinion of an owner below Tycoon standing who flies a Large cabin jet or bigger ("showing off").
+- **Upgrades** (each a one-time cost):
+
+| Upgrade | Cost | Effect |
+|---|---|---|
+| Office cabin | $2M | Work in flight (2.21.4) |
+| Secure comms suite | $3M | Calls in flight at full effectiveness; -50% chance of being overheard by netrunning |
+| Bedroom suite | $1M | Arrive rested: no jet lag stress (2.21.5) |
+| Medical bay | $4M | Safer travel for old or ill characters; death chance in flight halved |
+| Security package (armor, decoy flares, counter-surveillance) | $6M | Halves attack and kidnap risk on arrival; hides flight plans from Tier 1 trackers |
+| Ghost registration (registered through a shell in a haven) | Cost of a shell company | Flight tracking needs Investigate Shell first (2.21.6); adds exposure |
+
+- **Maintenance**: each jet needs 1 week of maintenance every 400 flight hours. Skipped maintenance raises the crash chance (2.21.8).
+- **Home base and hangar**: a jet is based at an airport hub (the dynasty seat by default). Repositioning an empty jet costs its flight hours.
+- **Leasing and chartering out**: a jet can be leased from a property or aviation fund (12% of its price a year), and an owned jet can be **chartered out** when idle, earning 60% of its running cost back per hour chartered.
+- **Fleets**: a company in the aviation business can run a jet fleet as a charter service, selling flight hours to AI and player characters.
+
+### 2.21.4 Itineraries and in-flight work
+
+- The player plans **itineraries**: a list of hubs with meetings at each stop. The planner shows total hours, cost, and time-zone effects, and books the jet or flights.
+- An **entourage** travels together: family members, executives and security staff on the same jet, up to its seats. Characters on a trip together gain +1 opinion of each other per 10 hours flown (and lose it if they share Rival status).
+- **In-flight work** with an office cabin: Finance, Intrigue and Tech actions that do not need another person (planning a deal, reviewing a scheme, research) run at 75% speed. Calls run at 50% without secure comms, 100% with them.
+- Commercial travel allows calls at 50% only.
+
+### 2.21.5 Jet lag and wear
+
+- Flying across more than 5 time zones gives **jet lag**: -10% effectiveness on actions for 24 hours after landing, and +5 stress. A bedroom suite or a circadian implant (cyberware) removes it.
+- More than 60 flight hours in a month adds +10 stress (the jet-set grind).
+
+### 2.21.6 Flight tracking and secrecy
+
+Jets are tracked, and where a dynasty head flies is news.
+
+- Every jet flight is visible to rivals with an **intel level** (2.22) of 30 or more on the jet's owner.
+- A rival who sees your jet land in a target company's hub, or next to a rival dynasty's seat, gets a **rumor** event. Rumors move the target's stock by 2% to 6% and can tip off a takeover.
+- **Countermeasures**: fly commercial or charter (anonymous), register the jet through a shell, file a decoy flight plan (Intrigue roll), or meet on a yacht in international waters.
+- Under T4 Mass Surveillance or Social Credit laws, the host government always knows who landed.
+
+### 2.21.7 Superyachts
+
+- Superyachts cost $50M to $500M, with yearly upkeep at 10% of price.
+- A yacht is a **mobile venue**: galas on board give +25% gala influence, and meetings on board in international waters cannot be tracked or recorded by governments.
+- A yacht can be seized under sanctions if it docks in a sanctioning country's port.
+
+### 2.21.8 Risk on the road
+
+| Risk | Base chance (T) | Modifiers | Effect |
+|---|---|---|---|
+| **Crash** | 0.002% per flight hour | ×3 for each skipped maintenance week; ×5 in war airspace | Everyone on board may die (80%); a major event for the dynasty |
+| **Arranged accident** | Scheme by a rival ([1-corporate-core.md](1-corporate-core.md) 1.1.8) | Halved by Head of Security protection and the security package | Looks like a crash; investigations may find sabotage |
+| **Kidnap or attack on arrival** | 0.5% per trip to hubs with unrest above 60; 2% to war zones | Security detail ÷4; security package ÷2 | Ransom chain or injury |
+| **Detention** | Character is sanctioned, Under Investigation, or the host government is hostile | Political influence and diplomatic relations | Held for questioning (days to months), passport seized, or arrested |
+| **Airspace closure** | Wars, sanctions ([4-politics.md](4-politics.md) 4.11) | | Reroute, adding 2 to 8 hours |
+
+### 2.21.9 Presence
+
+- A character present in a hub for over 30 days in a year counts as **resident-like** there: +2 pp influence for their holdings in that hub (stacks with origin, once per character).
+- Visiting a hub where the dynasty holds assets gives a one-week **visit bonus**: +5 opinion from local employees and executives, +1 pp influence while there.
+
+### 2.21.10 Travel events (starting set)
+
+| Event | Trigger | Options |
+|---|---|---|
+| Spotted on the Tarmac | Rival tracks your jet to a target's hub | Deny, issue a statement, accelerate the deal |
+| Grounded | Maintenance overdue | Fly anyway (crash risk), charter, cancel the trip |
+| Jet Envy | A rival buys a bigger jet | Upgrade, mock them publicly, ignore |
+| Emissions Scandal | Environmentalist media and over 300 flight hours a year | Buy offsets, defend it, sell the jet |
+| The Long Way Round | Airspace closure on your route | Reroute (+hours), fly through (risk), cancel |
+| Stranded | Detention or a sudden coup at your destination | Call in political favors, pay, hire a PMC extraction |
+| Mile-High Deal | A Greedy or Ambitious executive on your jet | Pitch them in flight (Influence roll with no interruptions) |
 
 ## 2.22 Information and intelligence
 
@@ -2117,5 +2252,8 @@ New assumptions in this file, to confirm with Logan:
 20. **Business cycles** run per country with four phases and a global recession event; housing crashes, tech bubbles, debt crises and commodity super-cycles are the main crises (2.18).
 21. **Infrastructure** (ports, pipelines, grids, cables, airports, water) is ownable, mostly regulated, and counts at influence weight 1.5 (2.19).
 22. **Climate** worsens slowly every decade unless world emissions fall; pollution is tracked per district (2.20).
-23. **Characters have a location**; meetings need presence or a remote call at -30%; the dynasty has one seat hub (2.21).
+23. **Characters have a location**; meetings need presence or a remote call at -30%; the dynasty has one seat hub. Travel has a full private jet system with six jet classes, upgrades, itineraries, flight tracking, yachts and travel risk (2.21).
 24. **Information is imperfect**: intel levels per rival and hub set how accurate the player's view is (2.22).
+25. **Own or lease** (Logan, 2026-10-16): like Victoria 3, but companies either own or lease the buildings they produce in. Land owner, building owner and operator are three separate roles (2.16.1).
+26. **Plot uses** (Logan, 2026-10-16): a plot or a series of plots can be developed, rented out, kept, or used for a company. Adjacent plots merge into sites for large buildings (2.16.1).
+27. **Lease types**: ground lease, building lease, build-to-suit and sale-leaseback, with landlord leverage at renewal (2.16.7).

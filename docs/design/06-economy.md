@@ -24,6 +24,7 @@ Companies own **facilities** on land plots in hub districts: mines, wells, farms
 - Facilities have **capacity**, **efficiency** (from the managing COO or CEO's Operations skill and workforce quality), **condition**, and **workforce**.
 - Building a facility takes construction time and money; buying one transfers it with its workforce.
 - Facilities create **jobs**, **taxes** and **influence** for the owner in that place.
+- Like Victoria 3, but a company either **owns or leases** the buildings it produces in. Land owner, building owner and operator can be three different holders (see [detailed/2-map-influence-economy.md](detailed/2-map-influence-economy.md) 2.16).
 
 ## 6.3 Supply chains
 
