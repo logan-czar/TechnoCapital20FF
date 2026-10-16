@@ -1,6 +1,6 @@
 # TechnoCapital20FF: Design Document
 
-_Status: v0.3 (2026-10-16). Owner: Logan. Living document; every part is open for revision._
+_Status: v0.4 (2026-10-16). Owner: Logan. Living document; every part is open for revision._
 
 This is the entry point. Each system has its own file in this folder so it can grow independently.
 
@@ -19,6 +19,18 @@ This is the entry point. Each system has its own file in this folder so it can g
 | 11 | [11-ui.md](11-ui.md) | Phaser screens and map views |
 | 12 | [12-tech-and-roadmap.md](12-tech-and-roadmap.md) | Tech stack, architecture, data model, milestones |
 | 13 | [13-open-questions.md](13-open-questions.md) | Unresolved questions and current assumptions |
+| 14 | [14-game-stages.md](14-game-stages.md) | Stages of a playthrough: Heir, Founder, Climber, Tycoon, Oligarch |
+
+### Detailed designs
+
+Exact rules, numbers and content for each layer of the game:
+
+| Layer | File |
+|---|---|
+| 1. Corporate core (companies, characters, dynasty, trusts) | [detailed/1-corporate-core.md](detailed/1-corporate-core.md) |
+| 2. Map, influence and economy | [detailed/2-map-influence-economy.md](detailed/2-map-influence-economy.md) |
+| 3. Markets and FX | [detailed/3-markets-and-fx.md](detailed/3-markets-and-fx.md) |
+| 4. Politics | [detailed/4-politics.md](detailed/4-politics.md) |
 
 ## Vision
 
