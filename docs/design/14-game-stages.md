@@ -33,6 +33,8 @@ Succession can happen in any stage. An heir inherits the dynasty's current stage
 
 ## 14.3 Stage 2: The Founder
 
+_Full design: [stages/2-the-founder.md](stages/2-the-founder.md)._
+
 **Start state:** the player is President and CEO of one company, freshly founded through a founding path event chain (see [01-companies.md](01-companies.md)).
 
 **Goals:**

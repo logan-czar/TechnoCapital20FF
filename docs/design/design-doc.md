@@ -21,6 +21,14 @@ This is the entry point. Each system has its own file in this folder so it can g
 | 13 | [13-open-questions.md](13-open-questions.md) | Unresolved questions and current assumptions |
 | 14 | [14-game-stages.md](14-game-stages.md) | Stages of a playthrough: Heir, Founder, Climber, Tycoon, Oligarch |
 
+### Stage designs
+
+Full design of each stage of a playthrough:
+
+| Stage | File |
+|---|---|
+| 2. The Founder | [stages/2-the-founder.md](stages/2-the-founder.md) |
+
 ### Detailed designs
 
 Exact rules, numbers and content for each layer of the game:
