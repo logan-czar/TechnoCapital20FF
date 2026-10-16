@@ -18,6 +18,8 @@
 - Economy works like Victoria 3, except companies own or lease the buildings they produce in.
 - Real estate: buy a plot or a series of plots, then develop it, rent it out, keep it, or use it for a company.
 - The game has a private jet and travel system.
+- Disclosure lines at 10%, 25% and 50% are the same everywhere; securities law only sets the first filing line (2% to 10%).
+- Politics has a Victoria 2 style ideology system with cyberpunk ideologies, including Accelerationists, Effective Altruists, Communists and Transhumanists ([detailed/5-ideology.md](detailed/5-ideology.md)).
 
 ## Assumptions to confirm
 

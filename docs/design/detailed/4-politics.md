@@ -267,7 +267,7 @@ Segments come from [06-economy.md](../06-economy.md). Politically, each segment 
 
 There are twelve interest groups (IGs). The first ten come from 08; **State Apparatus** and **Shadow Economy** are added so one-party states, juntas and failed states have their real power holders (see Assumptions).
 
-Support base: the share of each segment's political energy that goes to each group (each row sums to 100) **(T)**. Countries can override with cultural modifiers (for example Traditionalists +10 in a religious country, taken proportionally from the others).
+Support base: the share of each segment's political energy that goes to each group (each row sums to 100) **(T)**. _This table is now the class half of the support base; the other half comes from each segment's ideology mix ([5-ideology.md](5-ideology.md) 5.6.1)._ Countries can override with cultural modifiers (for example Traditionalists +10 in a religious country, taken proportionally from the others).
 
 | Segment | Industrialists | Financiers | Tech Sector | Labor Unions | Gig Workers | Landowners | Security Est. | Traditionalists | Environmentalists | Transhumanists | State Apparatus | Shadow Economy |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -395,7 +395,7 @@ There are seven categories. The six from 08, plus **Governance**, which governs 
 | Labor | L1 Minimum Wage, L2 Union Rights, L3 Automation Tax, L4 Gig Worker Status, L5 Immigration |
 | Tech and body | T1 Cyberware, T2 Data Privacy, T3 AI Regulation, T4 Surveillance |
 | Security | S1 Private Military Contractors, S2 Policing Model, S3 Emergency Powers |
-| Governance | G1 Campaign Finance, G2 Lobbying Rules, G3 Media Ownership |
+| Governance | G1 Campaign Finance, G2 Lobbying Rules, G3 Media Ownership, G4 Political Pluralism ([5-ideology.md](5-ideology.md) 5.10) |
 
 All rates and multipliers below are **(T)**.
 
@@ -576,6 +576,8 @@ For each segment s in the constituency and each party (or candidate) p, the game
 | **Scandal** | Fresh scandal: minor 0.3, major 0.8, criminal 1.5; halves every 4 weeks; a debate or apology event can halve it at once | 0 to 1.5 |
 
 Diminishing returns are built in: doubling spend from E to 2E adds only 0.32 utility; from 0 to E adds 0.55.
+
+_Ideology update: the Ideology weight drops from 3 to 2 and a party-platform term `2 × IdeoFit` is added; see [5-ideology.md](5-ideology.md) 5.6.4._
 
 **Polls**: weekly, the true vote share plus noise of ±3 points (±1.5 with a paid internal poll, $0.05 per adult in the constituency **(T)**).
 
@@ -782,7 +784,7 @@ A coup plot can form on its own (AI generals) or be started by a holder (4.8.4).
 | 50 | **Uprising** | Event chain begins: Mass Protest → General Strike (all facilities in affected hubs output -40% while it lasts, 1 to 4 weeks) → Clashes (Militarized policing: RP -10 but Stability -5; Community policing: RP +5). A revolutionary **coalition** forms from Angry IGs |
 | 100 | **Revolution** | Government falls. The new type depends on the coalition's leading group (below). A "Revolutionary Council" rules for 3 to 12 months |
 
-**New type after a revolution** **(T)**:
+**New type after a revolution** **(T)** (_superseded by the ideology-led table in [5-ideology.md](5-ideology.md) 5.7.3; kept for the leading IG when no ideology leads_):
 
 | Leading group | Likely new type |
 |---|---|
@@ -1182,6 +1184,8 @@ Stability = Baseline(type)
           + Country modifier (data, ±10)
 clamped to 0..100
 ```
+
+_Ideology adds two terms: ideological legitimacy and active radical wings ([5-ideology.md](5-ideology.md) 5.6.5)._
 
 Hub stability (for local unrest and protests) = country stability + local modifiers (local unemployment, local unrest, policing model), ±20 **(T)**.
 

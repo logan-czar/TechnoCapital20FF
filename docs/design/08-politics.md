@@ -69,3 +69,7 @@ At extreme influence, a dynasty or megacorp can push a hub toward **corporate so
 ## 8.9 More in the detailed design
 
 The detailed politics design ([detailed/4-politics.md](detailed/4-politics.md) 4.15 to 4.29) adds the Politics screen and Political Director, public standing and scandals, media, the dynasty as a political actor, lobbyists and fixers, corruption, courts and lawsuits, organized crime, PMCs, civil society, international organizations, espionage, AI governments and dynasties, and further endgames (Kingmaker, Power Behind the Throne, Political Dynasty, Market Maker, Bloc Architect, Media Hegemon, Benefactor).
+
+## 8.10 Ideology
+
+A Victoria 2 style belief layer sits under the interest groups ([detailed/5-ideology.md](detailed/5-ideology.md)). Every population segment in every hub holds a mix of thirteen cyberpunk ideologies: Market Liberals, Social Democrats, Communists, Nationalists, Conservatives, Greens, Accelerationists, Effective Altruists, Transhumanists, Neo-Luddites, Sovereigntists, Technocrats and Crypto-Anarchists. The mix drifts with unemployment, automation, cyberware, AI, inequality, media and propaganda. Ideology feeds interest groups and party votes, grows movements and radical wings that target companies, decides what state a revolution creates, gives every character a CK3-faith-like belief, and shifts how a dynasty's brands sell.

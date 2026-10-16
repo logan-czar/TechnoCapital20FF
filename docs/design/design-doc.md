@@ -39,6 +39,7 @@ Exact rules, numbers and content for each layer of the game:
 | 2. Map, influence and economy | [detailed/2-map-influence-economy.md](detailed/2-map-influence-economy.md) |
 | 3. Markets and FX | [detailed/3-markets-and-fx.md](detailed/3-markets-and-fx.md) |
 | 4. Politics | [detailed/4-politics.md](detailed/4-politics.md) |
+| 5. Ideology (Victoria 2 style, cyberpunk) | [detailed/5-ideology.md](detailed/5-ideology.md) |
 
 ## Vision
 
