@@ -1,6 +1,6 @@
 # 2. Map, influence and economy: detailed design
 
-_Status: draft v0.1 (2026-10-16). Expands [05-map-and-influence.md](../05-map-and-influence.md) and [06-economy.md](../06-economy.md). Owner: Logan._
+_Status: draft v0.2 (2026-10-16). v0.2 adds competition, real estate, hub life cycle, business cycles, infrastructure, climate, travel, intelligence, AI behavior and map views (2.15 to 2.25). Expands [05-map-and-influence.md](../05-map-and-influence.md) and [06-economy.md](../06-economy.md). Owner: Logan._
 
 This file turns the map, influence and economy overviews into exact rules, formulas, numbers and content that a designer can balance. It is pure game design.
 
@@ -413,6 +413,7 @@ Steps 1 to 5 run monthly (influence recalculation in [09-time-and-turns.md](../0
 |---|---|---|---|
 | **Real estate and land** | Market value | 1.0 | The district of the plot, rolling up |
 | **Facilities** | Book value (replacement cost × condition) | 1.0 | The district of the plot, rolling up |
+| **Infrastructure** (ports, pipelines, grids, cables, airports, water works; see 2.19) | Book value | 1.5 | The district or lane endpoints, rolling up |
 | **Jobs provided** | Yearly payroll of those facilities (wages plus overhead) | 1.5 | The district of the facility, rolling up |
 | **Local government bonds** | Face value | 0.5 | The issuer's level: city bonds at the hub, regional bonds at the region, national bonds at the country |
 | **Stakes in companies headquartered there** | Market value of the stake | 0.5 | The company's HQ hub, rolling up. Not counted for companies the holder controls (their assets count directly instead) |
@@ -1724,7 +1725,373 @@ Demand 1,200,000 is met by the combined-cycle plants: **wholesale $139.5**; rese
 
 ---
 
-## 2.15 Assumptions
+## 2.15 Competition and market share
+
+The hub price (2.9.2) sets what a good is worth in a hub. This section decides **who gets the sales** when several companies sell the same good there.
+
+### 2.15.1 Commodity goods and differentiated goods
+
+| Type | Goods | How sales split |
+|---|---|---|
+| **Commodity** | Raw goods, most intermediates, energy, bulk services (construction units, freight) | All sellers get the hub price; each sells what it offers, pro rata if supply exceeds demand. Competition is on cost and reach. |
+| **Differentiated** | Finished goods, advanced components, most services, data goods, housing | Each seller has a **product offer** (quality, brand, price). Buyers split by **appeal**; sellers can price above or below the hub price. |
+
+### 2.15.2 Product offer
+
+Each company selling a differentiated good in a hub has:
+
+- **Quality** (0 to 100): from the production method tier (Tier 1 = 40, +15 per tier), condition of the producing facilities (above 80: +5; below 50: -10), and quality spending (upkeep at 150%: +10).
+- **Brand** (0 to 100): built by marketing, reputation and time (2.15.4). Brand is held per company per good group, and is shared by its vassals only under Wholly Integrated or Managed autonomy, or under a Franchise.
+- **Price position**: the company sets a price from 70% to 200% of the hub price. Default 100%.
+
+### 2.15.3 Appeal and share
+
+```
+Appeal = (Quality / 50) ^ q × (Brand / 50) ^ b × (Price position) ^ (-e) × Reach
+Share  = Appeal / sum of Appeal of all sellers in the hub
+```
+
+| Good group | q (quality weight) | b (brand weight) | e (price sensitivity) |
+|---|---|---|---|
+| Food, clothing, basic consumer goods | 0.5 | 0.6 | 2.5 |
+| Consumer electronics, vehicles | 1.0 | 1.0 | 1.5 |
+| Luxury goods | 0.8 | 2.0 | 0.3 |
+| Pharmaceuticals (patented) | 1.5 | 0.5 | 0.5 |
+| Cyberware | 1.5 | 1.0 | 1.0 |
+| Business services, cloud, software | 1.2 | 0.8 | 1.2 |
+| Housing | 0.8 (district quality) | 0.3 | 2.0 |
+
+- **Reach** (0.2 to 1.0): 1.0 in the company's home hub and hubs where it has a sales office, retail facility or distributor contract; 0.5 by import only; 0.2 by grey market.
+- **Stickiness**: shares move toward the new target by 25% per month, not at once. Business-to-business goods (components, services) move 10% per month: customers do not switch suppliers overnight.
+- A seller's revenue = its share × hub demand × its own price. A seller that cannot supply its share loses the rest to others in proportion.
+
+### 2.15.4 Brand
+
+- **Marketing spend** buys brand: each $1 of marketing per $100 of hub sales of the good adds +0.5 brand per month, with diminishing returns above brand 70 (halved).
+- **Decay**: brand falls 1 point per month toward 30 without spending.
+- **Reputation link**: company reputation above 60 gives +1 brand per month; scandals cut brand by the reputation loss / 2 in every hub at once.
+- **Global brands**: brand in a company's home hub spreads to every hub it reaches at 50% strength, so famous brands enter new markets with an advantage.
+- **Ad campaigns** for influence (2.5.7) also add +3 brand in that hub for the campaign's length.
+
+### 2.15.5 Price wars and predatory pricing
+
+- A company pricing below its unit cost for 3 or more months in a hub where it holds over 30% share is flagged as **predatory pricing** and adds Antitrust exposure ([4-politics.md](4-politics.md) 4.9).
+- AI rivals answer a price cut larger than 10% with their own cut 50% of the time (aggressive archetypes 80%, see 2.23).
+
+### 2.15.6 Market power
+
+- A company's **national share** in a sector (used by C3 Antitrust) is its revenue share of that sector's sales in the country.
+- Above 50% share of a good in a hub, a seller gets **pricing power**: it can set its price position up to 150% with only half the share loss. This is the economic counterpart of the Kingmaker price-setting perk (2.9.8), and both draw Antitrust attention.
+
+## 2.16 Real estate
+
+Real estate is the most direct asset-as-title in the game: it holds value, pays rent and buys local influence (2.5.2).
+
+### 2.16.1 Plots and who owns them
+
+- Every district has 10 plots (2.3.2). Each plot is **owned** by one holder: a character, trust, company, government or "dispersed" (many small owners, modeled as one AI holder that sells slowly).
+- At game start, ownership of plots in each hub is seeded: 30% to 60% dispersed, 10% to 30% government (more in one-party states), the rest split among AI companies, AI dynasties and REIT-like funds.
+- A plot can carry one **building** (a facility from 2.7, or a property type from 2.16.2) with levels.
+
+### 2.16.2 Property types
+
+| Property | Allowed districts | Levels | Cost per level (L hub, PF 1.0) | Yield | Notes |
+|---|---|---|---|---|---|
+| Residential tower | R, F, S (tenement) | 1 to 10 | $40M | Rent from housing demand (2.6.6) | Tenements in Slums: +9% yield, +1 unrest each |
+| Office tower | F, T, R | 1 to 10 | $60M | 5% of value per year at full occupancy | HQs must sit in an office the company owns or rents |
+| Retail and mall | R, F, S | 1 to 5 | $35M | 6%, plus a cut of tenant sales in malls (2%) | Reach for consumer goods (2.15.3) |
+| Logistics and warehouse | P, I | 1 to 8 | $20M | 7% | Stock storage for tenants |
+| Hotel and resort | F, R, P | 1 to 5 | $50M | 4% to 12% (tourism cycle) | Gala venue: +25% gala influence |
+| Data and lab space | T | 1 to 5 | $45M | 6% | Rented to tech tenants |
+| Land bank (empty plot) | Any | none | land value only | 0% | Waits for rezoning or growth |
+| Arcology tower (Tier 4) | R, F | 1 to 5 | $300M | 5% | 3× dwellings per level; a whole district's Elite and Professionals can live in one plot |
+
+### 2.16.3 Occupancy and rent
+
+- **Occupancy** of rentable space each month = demand for that space type in the hub / total supply, capped at 100%. Demand for offices and labs comes from companies' headcount; for housing from population (2.8); for retail from consumer spending.
+- **Rent level** follows the hub's property cycle (2.16.5) and the landlord's choice: Low (90% of market rent, occupancy +10%), Market, High (115%, occupancy -15%).
+- **Rent control** under E7 Essentials Capped or Broad Controls caps residential rent increases.
+- **Vacancy** costs upkeep (1% of value per year) and under E10 Vacancy Penalty a further 3% tax.
+
+### 2.16.4 Buying, selling and developing
+
+| Action | How | Time |
+|---|---|---|
+| **Buy a listed property** | Each hub lists 2 to 6 properties for sale each month; price = value × (0.9 to 1.2) | 2-hour viewing, 30 days to close |
+| **Make an offer on any plot** | Owner accepts if offer > value × (1.1 + owner's reluctance); dispersed owners accept at 1.3× but sell 1 plot per quarter | 3-hour negotiation |
+| **Auction** | New plots from hub growth (2.17) and government sales; sealed bids; Power Broker holders get first refusal | 1 week |
+| **Develop** | Build or add levels on an owned plot; needs a permit ([4-politics.md](4-politics.md) E11) | Construction rules (2.7.2) |
+| **Redevelop** | Demolish and rebuild as another type; tenants leave; residential demolitions add +3 unrest | Demolition 1 month plus construction |
+| **Rezone** | Change a plot's district type through the local council (politics) | Permit time × E11 |
+| **Sell** | List it (30 to 90 days) or sell instantly at 80% of value | Varies |
+
+**Value** of a property = land value + building replacement cost × condition, then × the hub's property cycle multiplier (2.16.5).
+
+### 2.16.5 Property cycles
+
+Each hub has a **property cycle** with four phases, updated monthly:
+
+| Phase | Value change per month | Occupancy | What drives it |
+|---|---|---|---|
+| **Boom** | +1.0% to +2.5% | 95% to 100% | Population growth, cheap credit, foreign buyers |
+| **Peak** | 0% to +0.5% | Falling | Oversupply from new construction, rate rises |
+| **Bust** | -1.0% to -3.0% | 75% to 90% | Rate rises, recession (2.18), unrest, disasters |
+| **Recovery** | 0% to +1.0% | Rising | Cheap assets, rate cuts |
+
+Phase changes are rolled monthly; the chance to move on rises with each month in the phase and with the drivers (for example, each 1 point rise in the policy rate adds +5% chance of Boom moving to Peak). A **bubble** forms when a Boom lasts over 36 months: values gain an extra +1% per month, and the eventual Bust is twice as deep.
+
+### 2.16.6 Gentrification and slum clearance
+
+- A Slum district where the average land value rises over 50% in 5 years becomes a candidate for **gentrification**: on a yearly roll (30%), it converts to Residential. Gig and Unemployed segments are pushed to another Slum or out of the hub; unrest +10 in the hub for a year.
+- **Slum clearance** (a government or a Power Broker can push it): the district is rezoned, tenements are demolished, residents displaced (+15 unrest, Labor Unions and Gig Workers groups angry). Land value ×3 over 2 years.
+- **Slum spread**: a Residential district with unrest over 60 for 2 years and land value falling converts to Slums.
+
+## 2.17 Hub life cycle
+
+Hubs grow, decline and change over decades.
+
+### 2.17.1 Population change (yearly)
+
+```
+Growth % = natural growth (country value, -0.5% to +2.5%)
+         + job pull: 2% × (jobs available - labor force) / labor force
+         + wage pull: 1% × (hub average wage / national average wage - 1)
+         - housing squeeze: 1% per 10% that housing cost exceeds 30% of Professional income
+         - unrest push: 0.5% per 10 points of hub unrest above 40
+         - disaster and war losses
+```
+
+Migration between hubs follows the same terms: workers move from low-scoring hubs to high-scoring ones in the same country (and across borders when L5 Immigration is Managed or Open).
+
+### 2.17.2 Growth and decline effects
+
+- **Size class change** at the yearly review (2.3.1): the hub gains districts, and new plots go to auction (2.16.4). Each new district's type is chosen by the hub's needs: Residential if housing is short, Industrial or Tech Park if jobs are planned, Slums if growth outpaces housing by more than 20%.
+- **Decline**: a hub losing population for 5 years in a row loses mass (-2% per year), land values fall, and a district can be **abandoned** (becomes Slums or a land bank). A hub can drop a size class.
+- **Boomtowns**: a Resource Field hub with a new large deposit grows +5% to +10% a year while it lasts, then can become a ghost town when the deposit runs out.
+
+### 2.17.3 New hubs
+
+New hubs appear in three ways:
+
+- **Promotion** of a minor location: when a "rest of country" region gets enough facilities (total value over $5B), a new S hub forms there. The company that triggered it gets a +10 pp founding bonus to influence for 10 years.
+- **Special economic zones** (C6): a government (or a dynasty with Kingmaker national influence) founds a zone hub on empty land with Tax or Charter rules.
+- **Charter cities** from corporate sovereignty ([4-politics.md](4-politics.md) 4.12).
+
+## 2.18 Business cycle and macro shocks
+
+### 2.18.1 National cycle
+
+Every major country has an economic cycle phase, updated monthly:
+
+| Phase | Demand modifier | Unemployment | Default chance (companies) | Typical length |
+|---|---|---|---|---|
+| **Expansion** | +0% to +3% | Falling | ×0.7 | 3 to 8 years |
+| **Overheating** | +3% to +5%, inflation rising | Very low | ×0.8 | 6 to 24 months |
+| **Contraction** (recession) | -3% to -8% | Rising | ×2.0 | 6 to 18 months |
+| **Recovery** | -1% to +2% | High, falling | ×1.2 | 1 to 3 years |
+
+**Drivers** that shift phase chances each month: credit growth (loans issued by all holders vs GDP), the policy rate versus its neutral level, commodity price shocks (oil above 150% of its 12-month average adds +5% contraction chance per month), stock market drops over 20%, real estate busts in the largest hub, wars, pandemics, and confidence (a hidden 0 to 100 value moved by news events).
+
+The demand modifier applies to all consumer and investment demand in the country's hubs. Governments respond with budget changes; central banks with rates ([3-markets-and-fx.md](3-markets-and-fx.md)).
+
+### 2.18.2 Global cycle
+
+The **global cycle** is the GDP-weighted average of national phases. When the 3 largest economies are in contraction at once, a **global recession** event fires: commodity demand -10%, shipping rates -30%, all exchanges' sentiment -20.
+
+### 2.18.3 Crises
+
+| Crisis | Trigger | Effects |
+|---|---|---|
+| **Housing crash** | A bubble (2.16.5) bursts in a country's largest hub | Property values -30% to -50% over 2 years; banks with real estate loans hit; recession chance +30% |
+| **Tech bubble** | A sector's average price-to-earnings ratio above 2.5× its long average for over a year | Sector stocks -50% to -80% over 6 to 12 months; VC funding -70% for 2 years (fewer funding rounds succeed) |
+| **Debt crisis** | Country debt above its limit, or a company group with debt over 6× earnings defaults | Bond yields jump; bailout or default chain ([4-politics.md](4-politics.md)) |
+| **Commodity super-cycle** | Sustained demand above world capacity for a good group | Prices +50% to +200% for years; new deposits surveyed 2× faster |
+
+These crises are the macro background the player can ride, bet against or be ruined by.
+
+## 2.19 Infrastructure as assets
+
+Infrastructure can be owned, earns fees, and carries unusual power.
+
+### 2.19.1 Ownable infrastructure
+
+| Infrastructure | Where | Revenue | Special power |
+|---|---|---|---|
+| **Port terminal** | P districts | Fee per container or tonne handled (2% to 4% of cargo freight value) | Owner's cargo gets priority in congestion; can raise fees on rivals by up to 50% (Antitrust exposure) |
+| **Pipeline** | Lane between hubs | Tariff per unit moved (regulated: 6% to 10% return on value) | Owner can prioritize own volumes |
+| **Rail line** | Lane | Freight fees | As pipeline |
+| **Toll road or bridge** | Lane or district | Tolls | Small local influence |
+| **Power grid operator** | Hub | Regulated return (5% to 8%) | Decides blackout order in shortages (2.9.7); can favor own facilities |
+| **Power interconnector** | Lane | Trade margin on electricity | Arbitrage between grids |
+| **Fiber backbone and data cable** | Data lane | Bandwidth fees | Latency advantage for owner's finance operations; surveillance option (data goods) |
+| **Airport** | P (air) district | Landing fees | Air freight priority; executive travel bonus (2.21) |
+| **Water works** | X or I districts | Regulated water sales | Can ration water in heatwaves |
+
+### 2.19.2 Rules
+
+- Infrastructure counts toward influence at **weight 1.5** (like jobs), because whoever runs the port runs the town.
+- Most infrastructure is **regulated**: fees above the allowed return add exposure with the relevant regulator and anger the population (+unrest).
+- Infrastructure is the first target for **nationalization** in a crisis and the first thing sanctions freeze.
+- Owning infrastructure on or next to a chokepoint (for example a terminal in a Malacca-facing port) gives an advance warning of disruptions there (+1 week) and priority use of bypass routes.
+
+## 2.20 Climate and environment
+
+### 2.20.1 Pollution
+
+- Each heavy facility emits **pollution** (per level, by method: refinery 3, coal plant 5, steel mill 4, chip fab 1, office 0).
+- **District pollution** = sum of emissions in the district, reduced by clean methods and E8 rules. Above 50: health needs +20% for residents, Professional and Elite segments leave (-1% per year), land value -10%, Environmentalist clout +2 in the hub.
+- **Smog domes and filtered towers** (cyberpunk accent): Elite districts can buy air filtration (a property upgrade at +10% cost) and ignore pollution, at the price of unrest in nearby districts (+2).
+
+### 2.20.2 Carbon
+
+- **Emissions** are tracked per company and country. Under E8 Carbon Pricing the cost is applied per emission point.
+- **Carbon credits** are a tradable good on commodity exchanges in countries with carbon pricing.
+- Clean tech (Energy and Materials tier 3) cuts emissions by 50% to 90%.
+
+### 2.20.3 Long-term climate trend
+
+Climate shifts slowly over a long playthrough:
+
+- Every 10 years (T), the chance of heatwaves, droughts, hurricanes and floods rises by +10% of their base value, unless world emissions fell over the decade.
+- **Sea-level risk**: low-lying Port districts (marked in hub data: for example Rotterdam, Mumbai, Shanghai, Miami if added later) gain a flood risk that rises each decade. Sea walls are a government or owner project (construction units equal to 20% of district value).
+- **Water stress** spreads to more hot hubs, raising water prices and hurting fabs and data centers.
+
+This gives long dynasties a reason to care about decades-long trends, and a market for adaptation (sea walls, desalination, cooling).
+
+## 2.21 Travel and presence
+
+Characters are somewhere on the map.
+
+### 2.21.1 Location
+
+- Every character has a **current location** (a hub) and a **residence** (a hub; sets tax residency for E1 and E4).
+- Meetings, galas and most character actions need both characters in the same hub. A **remote call** works for any meeting at -30% effectiveness (pitches, negotiations, persuasion).
+
+### 2.21.2 Travel
+
+| Mode | Time | Cost | Notes |
+|---|---|---|---|
+| Car or rail (same region) | 1 to 4 hours | Negligible | |
+| Domestic flight | 4 hours | $1,000 | |
+| International flight | 8 to 16 hours (by distance) | $10,000 | |
+| Private jet | 70% of flight time | $50,000 per trip, or own a jet (asset, $60M, $5M a year upkeep) | Can fly on short notice; status +5 opinion at galas |
+| Suborbital hop (Tier 4 late game) | 2 hours anywhere | $500,000 | Cyberpunk accent |
+
+Travel time is time the character cannot spend on other actions, though a character can take calls while traveling.
+
+### 2.21.3 Presence
+
+- A character physically present in a hub for over 30 days in a year counts as **resident-like** there: +2 pp influence for their holdings in that hub (stacks with origin, max once per character).
+- Dynasty headquarters: the dynasty can name one hub as its **seat**. The seat gets +3 pp dynasty influence, family events happen there, and moving the seat costs 3 months of disruption (family opinion -10).
+- Travel to unstable hubs (unrest above 60, war) carries **security risk**: kidnap or attack events unless a security detail is hired.
+
+## 2.22 Information and intelligence
+
+The player does not see everything.
+
+### 2.22.1 What is visible
+
+| Information | Visible to everyone | Needs intel |
+|---|---|---|
+| Own holdings, companies and finances | Yes | |
+| Public companies' financials, major holders above 5% | Yes (quarterly) | |
+| Private companies' financials | No | Estimates at ±30% without intel |
+| Holders behind shell companies | No | Investigate Shell scheme |
+| Hub prices, shortages, cycle phase | Yes | |
+| Rival facility plans and construction | Partly (big projects are news) | Market research or espionage |
+| Characters' traits | Some (known traits) | Hidden traits need meetings or Dig Up Dirt |
+| Influence shares of rivals in a hub | Tier only (Presence, Power Broker, Kingmaker) | Exact share needs intel |
+
+### 2.22.2 Intel level
+
+- The player has an **intel level** (0 to 100) on each rival company and hub. It rises with presence (own facilities or offices there), market research spending ($100k per month per hub: +5 per month), analysts on the board (CSO task), and espionage; it decays 2 per month.
+- Intel level sets how accurate estimates are: ±30% at 0, ±10% at 50, exact at 90+.
+- **Disinformation**: psyops and leaks can plant false numbers; low-intel players believe them.
+
+## 2.23 AI economic behavior
+
+AI companies and AI dynasties run the economy the player competes in.
+
+### 2.23.1 Archetypes
+
+| Archetype | Behavior |
+|---|---|
+| **Incumbent** | Defends share, prices at market, answers entrants with copy or acquire (see the Founder stage), invests steadily |
+| **Aggressive grower** | Expands into new hubs, borrows heavily, cuts prices, buys rivals |
+| **Cash cow** | Pays high dividends, invests little, sells assets when offered a premium |
+| **State champion** | Backed by a government, ignores short-term profit, wins contracts, protected from takeovers |
+| **Raider** | Holding company that buys undervalued stakes and breaks them up |
+| **Startup** | Founder-stage AI rivals: fast, fragile, often for sale |
+
+Each AI company's archetype comes from its controlling dynasty's head traits (Ambitious and Brave lean Aggressive; Greedy and Cautious lean Cash cow) and from its government links.
+
+### 2.23.2 Monthly decisions
+
+Each AI company decides monthly:
+
+1. **Build or expand**: if a good's hub price has been above its unit cost by more than its hurdle rate (8% to 15% by archetype) for 3 months, it plans a new facility or level, choosing the hub with the best margin after transport.
+2. **Close or sell**: a facility losing money for 6 months is idled; after 12 months it is sold or closed.
+3. **Price**: sets its price position by archetype (Incumbent 100%, Aggressive 90%, Cash cow 105%, Luxury brands 130%+).
+4. **Contracts**: secures inputs with contracts when price volatility is high.
+5. **Acquire**: when cash exceeds 20% of value and a target is undervalued, considers a takeover ([1-corporate-core.md](1-corporate-core.md)).
+
+AI investment is lagged and imperfect on purpose, so shortages and gluts happen and the player can profit from seeing them first.
+
+## 2.24 Map views and overlays
+
+The map is the main screen from the Climber stage on ([14-game-stages.md](../14-game-stages.md)).
+
+### 2.24.1 Zoom levels
+
+| Zoom | Shows | Main interactions |
+|---|---|---|
+| **World** | Countries, currency zones, lanes, chokepoints, wars, sanctions | Click a country for its economy and politics; click a lane for traffic |
+| **Country** | Regions, hubs, national politics, cycle phase | Click a hub |
+| **Hub** | Districts as a grid of 10-plot blocks | Click a district for unrest, pollution, land value, owners |
+| **Plot** | One plot, its building and owner | Buy, develop, rezone, visit |
+
+### 2.24.2 Map modes (overlays)
+
+| Mode | Shows |
+|---|---|
+| Ownership | Who owns plots and facilities (by dynasty color) |
+| Influence | Your influence share and tier per place; rivals' tiers |
+| Supply chain | For a chosen good, where it is produced, shipped and consumed; live shipments |
+| Prices | Hub prices of a chosen good versus world average |
+| Shortages | Goods in shortage by hub (red) |
+| Property cycle | Boom, peak, bust and recovery per hub |
+| Economic cycle | National cycle phase |
+| Unrest and labor | Unrest, strikes, unions |
+| Pollution and climate | Pollution and disaster risk |
+| Politics | Government type, ruling party, your political influence |
+| Risk | Chokepoint risk, war, sanctions, nationalization risk for your assets |
+| Characters | Where your family and key characters are right now |
+
+### 2.24.3 Supply chain tracer
+
+Clicking any facility or good opens a **tracer**: a tree from raw inputs to final buyers, showing every supplier hub, lane and chokepoint on the path, with your exposure highlighted. This is the main tool for spotting single points of failure before a disruption hits.
+
+## 2.25 Worked examples for the new sections
+
+### 2.25.1 Breaking into the Seoul phone market
+
+A dynasty's electronics company sells phones in Seoul-Pyeongtaek against a local incumbent (quality 75, brand 85, price 100%) and an import brand (quality 70, brand 60, price 95%, reach 0.5). The newcomer launches at quality 70, brand 30, price 85%, with a retail facility (reach 1.0). Weights for consumer electronics: q 1.0, b 1.0, e 1.5.
+
+- Incumbent appeal = (75/50) × (85/50) × 1.00^-1.5 × 1.0 = 1.5 × 1.7 × 1 = 2.55
+- Import appeal = 1.4 × 1.2 × 0.95^-1.5 × 0.5 = 1.4 × 1.2 × 1.08 × 0.5 = 0.91
+- Newcomer appeal = 1.4 × 0.6 × 0.85^-1.5 × 1.0 = 1.4 × 0.6 × 1.28 = 1.07
+
+Target shares: incumbent 56%, import 20%, newcomer 24%. Because shares move 25% per month toward target, the newcomer reaches about 13% after 3 months. A year of marketing at $2 per $100 of sales (+1 brand per month, plus spillover from the home brand) lifts brand to about 45, and appeal to 1.6. The incumbent answers with a 10% price cut 50% of the time.
+
+### 2.25.2 Riding the Dubai property cycle
+
+A trust buys two office towers in Dubai's Financial District during Recovery for $500M. Boom arrives 14 months later (rate cuts, foreign buyers). After 36 months of Boom at +1.8% a month the towers are worth about $950M, and the boom has become a bubble. Selling at Peak locks in the gain; holding through the Bust (twice as deep after a bubble) would have cost about 45%.
+
+### 2.25.3 A recession meets a margin loan
+
+A national recession cuts consumer demand 6%. The dynasty's retail chain's earnings fall 25%; its stock falls 35%. The trust's margin loan, backed by that stock, crosses 70% loan-to-value, and a margin call forces the sale of 8% of the chain at the bottom. The dynasty's bloc drops from 54% to 49%: the chain becomes contested just as an activist faction forms. The economic cycle has become a succession-style crisis.
+
+## 2.26 Assumptions
 
 New assumptions in this file, to confirm with Logan:
 
@@ -1744,3 +2111,11 @@ New assumptions in this file, to confirm with Logan:
 14. **Export controls at start**: Indonesia's raw nickel ban, China's rare earth licences, and Western bans on lithography and AI server nodes to China.
 15. **Tech** is organized in 13 sector groups covering the 20 launch sectors, with 4 tiers and research point costs of 300, 1,200 and 4,000.
 16. **Hydro and geothermal** plants exist only as starting assets in the first release.
+17. **Competition**: commodity goods sell at one hub price; differentiated goods split sales by quality, brand and price (2.15).
+18. **Real estate** is a full system with plot ownership, property types, occupancy, development and per-hub property cycles (2.16).
+19. **Hubs grow and decline** yearly by jobs, wages, housing cost and unrest; new hubs can form (2.17).
+20. **Business cycles** run per country with four phases and a global recession event; housing crashes, tech bubbles, debt crises and commodity super-cycles are the main crises (2.18).
+21. **Infrastructure** (ports, pipelines, grids, cables, airports, water) is ownable, mostly regulated, and counts at influence weight 1.5 (2.19).
+22. **Climate** worsens slowly every decade unless world emissions fall; pollution is tracked per district (2.20).
+23. **Characters have a location**; meetings need presence or a remote call at -30%; the dynasty has one seat hub (2.21).
+24. **Information is imperfect**: intel levels per rival and hub set how accurate the player's view is (2.22).
