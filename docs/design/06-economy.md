@@ -66,3 +66,7 @@ A light tech system per company: R&D spending unlocks better production methods 
 ## 6.8 Phase 1 abstraction
 
 Until Phase 2, each company has an abstract revenue and cost per month tuned by sector and size, so the corporate and dynasty systems can be tested.
+
+## Techno-Capital
+
+Compute, foundry capacity, lithography tools, drones, autonomous vehicles, robots and AI models form **Techno-Capital**: scarce machine capital that must be allocated to tasks (training runs, research, fleets, netruns, uploads) for them to run or finish. The AI, data center and semiconductor supply chain is the core of the early game. Full design: [detailed/6-technocapital.md](detailed/6-technocapital.md).

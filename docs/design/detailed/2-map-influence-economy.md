@@ -984,7 +984,7 @@ Hydro and geothermal plants exist only as starting assets in hub data; they cann
 | Data center (20 MW IT) | Air-cooled | Electricity 21,000 (PUE 1.45), water 40 k m3, telecom 10, AI server nodes 400 (replacement, 2% per month) | Cloud compute 14,600 units | 40/60/10 | A2 | Digital 1 |
 | | Liquid-cooled | Electricity 17,000 (PUE 1.15), water 20 k m3, telecom 10, AI server nodes 400 | Cloud compute 14,600 units | 30/50/5 | A3 | Digital 2 |
 | | Sovereign cloud | As air-cooled, plus security services 30 | Cloud compute 13,000 units, sold at +20% in Restricted and Closed countries and to governments; satisfies T2 Data Sovereignty | 50/70/10 | A2 | Digital 2 |
-| | Frontier training | As liquid-cooled, plus user data 10 DU | AI models 4 license-months | 200/50/5 | A3 | Digital 3 |
+| | Frontier training | As liquid-cooled, plus user data 10 DU | _Superseded by training runs in [6-technocapital.md](6-technocapital.md) 6.5_; read as a level reserved for training | 200/50/5 | A3 | Digital 3 |
 | Warehouse and logistics depot | Manual | Electricity 300, refined fuels 2,000 bbl | Storage 50,000 t; logistics 2,000 FU | 5/60/200 | A1 | Logistics 1 |
 | | Automated | Electricity 800, refined fuels 1,800, robot wear 1 | Storage 60,000 t; logistics 2,500 FU | 8/50/40 | A2 | Logistics 2 |
 | | Autonomous fleet | Electricity 1,500, battery cells 500 kWh, cloud compute 20 | Storage 60,000 t; logistics 2,500 FU; truck legs starting here cost -30% | 10/40/10 | A3 | Logistics 3 |

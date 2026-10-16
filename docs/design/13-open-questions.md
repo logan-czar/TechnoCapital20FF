@@ -20,6 +20,7 @@
 - The game has a private jet and travel system.
 - Disclosure lines at 10%, 25% and 50% are the same everywhere; securities law only sets the first filing line (2% to 10%).
 - Politics has a Victoria 2 style ideology system with nine cyberpunk ideologies: Liberals, Communists, Accelerationists, Effective Altruists, Transhumanists, Neo-Luddites, Sovereigntists, Landites and Chuds ([detailed/5-ideology.md](detailed/5-ideology.md)).
+- Techno-Capital (compute, foundries, lithography machines, drones, automated cars and similar) must be allocated to tasks with Techno-Capital requirements for them to run or finish. The AI, data center and semiconductor supply chain is key, especially in the early game ([detailed/6-technocapital.md](detailed/6-technocapital.md)).
 
 ## Assumptions to confirm
 
