@@ -1,6 +1,6 @@
 # 6. Economy and supply chains
 
-The economy is a Victoria 3 style simulation of goods, production and demand, sized so a player can read it through companies rather than micromanage factories.
+> **Changed (Logan, 2026-10-17):** the Victoria 3 goods model below is scrapped. The economy is now Wall Street Raider style: countries have **industries** with a size, trend, cycle and margin, and companies earn money through **business units** (one industry in one country) that win market share up to their capacity. Energy and GPUs are still counted in units. Full design: [detailed/10-industry-economy.md](detailed/10-industry-economy.md). Sections 6.1 to 6.5 below are kept for history only.
 
 ## 6.1 Goods
 

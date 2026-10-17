@@ -11,7 +11,7 @@ This is the entry point. Each system has its own file in this folder so it can g
 | 3 | [03-characters.md](03-characters.md) | Skills, traits, opinion, stress, schemes, cyberware |
 | 4 | [04-dynasty-and-succession.md](04-dynasty-and-succession.md) | Dynasties, houses, succession laws, marriage, game over |
 | 5 | [05-map-and-influence.md](05-map-and-influence.md) | World map, countries, regions, economic hubs, influence |
-| 6 | [06-economy.md](06-economy.md) | Goods, industries, facilities, supply chains, labor, demand |
+| 6 | [06-economy.md](06-economy.md) | Industries and business units (Wall Street Raider style), labor, demand |
 | 7 | [07-markets.md](07-markets.md) | Stock exchanges, bonds, commodities, FX, central banks |
 | 8 | [08-politics.md](08-politics.md) | Governments at three levels, interest groups, laws, regulators, lobbying, diplomacy |
 | 9 | [09-time-and-turns.md](09-time-and-turns.md) | Hourly turns, daily, weekly, monthly, quarterly and yearly calculations |
@@ -44,6 +44,7 @@ Exact rules, numbers and content for each layer of the game:
 | 7. Starting world (2022 scenario, 15 starting characters, rivals, opening quest, timeline to 2030) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |
 | 8. Quest lines (arcs, the default starting line, Pieter Von Floop) | [detailed/8-quest-lines.md](detailed/8-quest-lines.md) |
 | 9. Gambling, crypto and prediction markets (the phone tab) | [detailed/9-gambling.md](detailed/9-gambling.md) |
+| 10. Industry economy (Wall Street Raider style: industries, business units; replaces goods) | [detailed/10-industry-economy.md](detailed/10-industry-economy.md) |
 
 ## Vision
 

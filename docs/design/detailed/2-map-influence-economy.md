@@ -612,13 +612,16 @@ Final share                         13.9%  (Presence)
 
 ## 2.6 Goods
 
+> **Retired (Logan, 2026-10-17):** the Victoria 3 goods model is scrapped for Wall Street Raider style industries. This section is kept for reference only; see [10-industry-economy.md](10-industry-economy.md) 10.3 and 10.9.
+
+
 ### 2.6.0 What is modeled at the start (Logan, 2026-10-17)
 
-At the start **only energy and GPUs are modeled** as real goods with recipes, prices and shipments (Logan). The GPU supply chain is the largest supply chain in the game and is simulated in four layers ([6-technocapital.md](6-technocapital.md) 6.7.0). Energy means **electricity, crude oil and natural gas** (Logan).
+**Superseded (Logan, 2026-10-17):** goods are scrapped for Wall Street Raider style industries ([10-industry-economy.md](10-industry-economy.md)). Energy (electricity, crude oil, natural gas) and GPUs are still counted in units, as prices and capacity that drive every industry's costs (10.6). The GPU chain keeps its four layers ([6-technocapital.md](6-technocapital.md) 6.7.0).
 
-Everything else, including the starter list Logan approved (phones, PCs, cars, electric cars, steel, oil and the rest of the tables below), is **abstracted** at the start: each sector has fixed demand that grows with the economy, a margin, and a cost per unit of output, with no recipe chain **(A)**. These goods are switched to full simulation later, in an order still to be set by Logan.
+Everything else is an industry with a size, trend, cycle and margin (10.3); there are no goods to switch on later.
 
-Population needs are consumer goods (2.8.2); while those goods are abstracted, needs are filled from the abstracted sectors.
+Population needs are spending on consumer industries (2.8.2, 10.3).
 
 **Oil and gas chokepoints and shocks (Logan, 2026-10-17).** Oil and gas get their own chokepoints and shocks, on top of the general lane rules in 2.4. Starting set **(A)**:
 
@@ -632,6 +635,9 @@ Population needs are consumer goods (2.8.2); while those goods are abstracted, n
 Shocks raise the price of oil and gas, and through power plants the price of electricity in hubs that burn them, which raises the cost of running fabs and data centers. Players can profit by holding storage, tankers or futures, or by owning pipelines that bypass a closed chokepoint.
 
 ### 2.6.1 How to read the goods tables
+
+> **Retired (Logan, 2026-10-17):** the Victoria 3 goods model is scrapped for Wall Street Raider style industries. This section is kept for reference only; see [10-industry-economy.md](10-industry-economy.md) 10.3.
+
 
 - **Base price** is the reference price at game start in a balanced market (2.9). Services are quoted at PF 1.0 and scale with the hub's PF.
 - **Main inputs** are per unit of output for the default production method (other methods in 2.7 change them). Where a good has several methods, the cheapest common one is shown.
@@ -772,6 +778,9 @@ Refined fuels, LNG, natural gas, coal and nuclear fuel are listed in their tiers
 ---
 
 ## 2.7 Facilities and production methods
+
+> **Retired (Logan, 2026-10-17):** the Victoria 3 goods model is scrapped for Wall Street Raider style industries. This section is kept for reference only; see [10-industry-economy.md](10-industry-economy.md) 10.4.
+
 
 ### 2.7.1 Facility rules
 
@@ -1232,6 +1241,9 @@ The strike ends when R reaches 0 (workers return; segment unrest +5; O -10) or w
 
 ### 2.9.1 Demand sources
 
+> **Retired (Logan, 2026-10-17):** the Victoria 3 goods model is scrapped for Wall Street Raider style industries. This section is kept for reference only; see [10-industry-economy.md](10-industry-economy.md) 10.4.1.
+
+
 | Source | What it buys | Cadence |
 |---|---|---|
 | **Population** | Needs baskets (2.8.2) | Weekly purchases from monthly budgets |
@@ -1607,6 +1619,8 @@ Dynasty foreignness: 1 - 0.50 (one-party) - 0.20 (Capped All is 2 steps past Scr
 
 ### 2.14.3 Steel price in Rotterdam: import parity and an anti-dumping duty
 
+> **Retired (Logan, 2026-10-17):** this example uses the scrapped goods model ([10-industry-economy.md](10-industry-economy.md) 10.9).
+
 **Setup.** Steel is an exchange good at $650. Rotterdam: 5 blast furnace levels make 100,000 t per month; local demand is 120,000 t. Shanghai has a glut: local price $600. The EU (Netherlands) has E5 Low (5%) and a 25% anti-dumping duty on Chinese steel.
 
 **Local price.** R = 120,000 / 100,000 = 1.2; ε = 1.0; P* = 650 × 1.2 = **$780**.
@@ -1681,6 +1695,8 @@ A Rotterdam blast furnace level (WI 0.9, Carbon Pricing +12% on operating cost) 
 
 ### 2.14.6 Panama drought: rerouting LNG from Houston to Tokyo
 
+> **Retired (Logan, 2026-10-17):** this example uses the scrapped goods model ([10-industry-economy.md](10-industry-economy.md) 10.9).
+
 **Normal route** via Panama: 16,500 km; 16,500 / 650 = 25.4 days + 4 days handling = 29.4 days (5 weekly steps). Cost: 16.5 × $8 = $132 per t + toll $0.20 × 52 = $10.40 = **$142.40 per t = $2.74 per MMBtu**.
 
 **Drought** (12 weeks): canal capacity -40%; slots auctioned at ×3 toll; LNG carriers lose most auctions to container lines, so half of LNG voyages cannot get a slot.
@@ -1747,6 +1763,8 @@ About $132M a year on $1.14B: **11.6%**, payback about 8.6 years. In Phoenix, po
 
 ### 2.14.9 A battery supply contract under a lithium shock
 
+> **Retired (Logan, 2026-10-17):** this example uses the scrapped goods model ([10-industry-economy.md](10-industry-economy.md) 10.9).
+
 **Setup.** A Shanghai EV maker needs 480,000 kWh of cells per month (8,000 packs). It signs a 24-month fixed-price contract with a Seoul NMC gigafactory. The market is slightly slack (R = 0.97): fair price = $95 × (1 - 4%) = **$91.20 per kWh**.
 
 **Shock.** An Antofagasta mine strike and an Argentine lithium export tax cut world lithium ore supply 30%. R = 1.43, ε = 2: lithium ore **$1,000 → $2,040**. Lithium chemicals rise to about **$23,700**; cathode materials to about **$29,300**. Spot battery cells rise to about **$112**.
@@ -1758,6 +1776,8 @@ About $132M a year on $1.14B: **11.6%**, payback about 8.6 years. In Phoenix, po
 **Temptation.** Strategic default check: spot $112 - penalty (15% × $91.20 = $13.68) = $98.32, which beats $91.20 by 7.8%. The seller's CEO is Greedy (×1.5): **11.7% chance per month** of diverting part of the volume to spot. If it happens, the EV maker collects the 15% penalty, its head's opinion of the seller's head drops 30, and it gains the **Breach of contract** casus belli: the start of a takeover story ([01-companies.md](../01-companies.md) 1.8).
 
 ### 2.14.10 A Kingmaker's price ceiling backfires
+
+> **Retired (Logan, 2026-10-17):** this example uses the scrapped goods model ([10-industry-economy.md](10-industry-economy.md) 10.9).
 
 **Setup.** Years later the dynasty is Kingmaker in Penang (52%). Its fabs and data centers use 400,000 of the hub's 1,200,000 MWh per month. LNG has spiked to $19.5 (2.14.5).
 
@@ -1790,6 +1810,9 @@ Demand 1,200,000 is met by the combined-cycle plants: **wholesale $139.5**; rese
 ---
 
 ## 2.15 Competition and market share
+
+> **Retired (Logan, 2026-10-17):** the Victoria 3 goods model is scrapped for Wall Street Raider style industries. This section is kept for reference only; see [10-industry-economy.md](10-industry-economy.md) 10.4.1.
+
 
 The hub price (2.9.2) sets what a good is worth in a hub. This section decides **who gets the sales** when several companies sell the same good there.
 
@@ -2272,6 +2295,8 @@ Clicking any facility or good opens a **tracer**: a tree from raw inputs to fina
 ## 2.25 Worked examples for the new sections
 
 ### 2.25.1 Breaking into the Seoul phone market
+
+> **Retired (Logan, 2026-10-17):** this example uses the scrapped goods model ([10-industry-economy.md](10-industry-economy.md) 10.9).
 
 A dynasty's electronics company sells phones in Seoul-Pyeongtaek against a local incumbent (quality 75, brand 85, price 100%) and an import brand (quality 70, brand 60, price 95%, reach 0.5). The newcomer launches at quality 70, brand 30, price 85%, with a retail facility (reach 1.0). Weights for consumer electronics: q 1.0, b 1.0, e 1.5.
 
