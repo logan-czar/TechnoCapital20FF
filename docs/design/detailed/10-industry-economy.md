@@ -1,6 +1,6 @@
 # 10. Industry economy (Wall Street Raider style): detailed design
 
-_Status: draft v0.3 (2026-10-17), batch 22 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
+_Status: draft v0.4 (2026-10-17), batch 23 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 10.12.
 
@@ -14,6 +14,7 @@ _Status: draft v0.3 (2026-10-17), batch 22 answers applied. Logan scrapped the V
 | Model | Wall Street Raider style: the economy is a set of **industries**, and companies earn money from the industries they operate in. The player reads and plays the economy through company financials, not factories. |
 | Business units | A business unit is **one building or site** (now called a site) (a fab, a mine, a data center, a store chain's flagship, an office), sitting on a plot in a hub. |
 | Sites hold a share of the company (batch 22) | A site is like an office that **holds a percentage of the company**. To grow, a company buys or leases real estate to expand one of its sites, and that is carried on its balance sheet. A company can target certain sites to grow, or certain areas to expand into with a new site. The size of a site in an area gives the company buffs there, such as a lower interest rate or higher productivity. |
+| One industry, direct branches (batch 23) | A company works in **one industry**. A company can run other industries through **direct branches**: each works like a separate company with its own business assets and employees, its own revenue and expenses, and its own growth plan and R&D plan, but the parent keeps **one unified book of cash and assets**. Direct branches can **share office sites** with the parent, and they **share the parent's board and all its bonuses**. |
 | Management (batch 22) | No cyclical, random management rating like Wall Street Raider. A company's **management score** comes from the stats of the characters in its board positions, and it sets **investor confidence** and **company productivity**. |
 | Deals (batch 22) | AI companies make deals too, by archetype. Private companies are valued at their last funding round, or an earnings multiple when there is none. A company that can't pay its debts goes through a restructuring event chain, where creditors can take it or auction its sites. |
 | Energy and GPUs | Measured in **dollars** like every other industry; nothing is counted in physical units. |
@@ -22,7 +23,7 @@ _Status: draft v0.3 (2026-10-17), batch 22 answers applied. Logan scrapped the V
 
 ## 10.2 The model in one paragraph
 
-Every country has a size for each **industry** (yearly revenue). The industry grows on its own trend and swings with the business cycle, interest rates and its cost drivers. A company works in one industry, Wall Street Raider style (a group spreads across industries through vassals, 1.7). Its operations live in **sites**: buildings or offices on plots in hubs, each holding a percentage of the company. The company wins a **market share** in each country where it has sites, limited by its **capacity** there, and turns revenue into profit through its **margin**. Its **management score**, built from the stats of the characters on its board, sets how productive it is and how much investors trust it. Profit flows into the financial statements, which set fundamental value and share price.
+Every country has a size for each **industry** (yearly revenue). The industry grows on its own trend and swings with the business cycle, interest rates and its cost drivers. A company works in one industry, Wall Street Raider style. It reaches other industries through direct branches (10.4.5), which share its cash and board, or through vassals (1.7), which do not. Its operations live in **sites**: buildings or offices on plots in hubs, each holding a percentage of the company. The company wins a **market share** in each country where it has sites, limited by its **capacity** there, and turns revenue into profit through its **margin**. Its **management score**, built from the stats of the characters on its board, sets how productive it is and how much investors trust it. Profit flows into the financial statements, which set fundamental value and share price.
 
 ## 10.3 Industries
 
@@ -134,6 +135,27 @@ The bigger a company's sites in an area, the better it does there (Logan). The t
 
 Buffs apply only in that hub (and, for the interest rate, to loans in that country's currency), so companies have a reason to cluster rather than scatter.
 
+### 10.4.5 Direct branches (Logan, 2026-10-17)
+
+A **direct branch** is a business a company runs in another industry without making it a separate legal company.
+
+| | Direct branch | Subsidiary or other vassal (1.7.4) |
+|---|---|---|
+| Industry | Any industry other than the parent's | Any |
+| Business | Its own sites' business assets, employees, revenue and expenses, counted separately | Its own everything |
+| Growth plan and R&D plan | **Its own** (10.4.2, 10.5.3) | Its own |
+| Cash and assets | **One unified book with the parent**: the branch spends from and pays into the parent's cash, and its assets sit on the parent's balance sheet | Separate books; consolidated only for reporting (2.13.1) |
+| Board and management score | **Shares the parent's board and all its bonuses** (management score, productivity, investor confidence) | Its own board and score |
+| Sites | **Can share office sites with the parent**: a branch can operate out of a parent site in a hub instead of opening its own | Its own sites |
+| Shares | None; it cannot be listed or have outside holders. Spin it off (10.5.4) to turn it into a company | Can have outside holders |
+| Debt | The parent's debt; a branch has no separate credit | Its own |
+
+**Sharing a site (T).** A branch that shares a parent site adds its capacity to that site without buying a new plot: the first $500M of branch capacity in a shared site needs no extra real estate (an office floor), and beyond that it expands the shared site as in 10.4.2. Shared capacity counts toward the hub's size tier (10.4.4), so a company with several branches in one hub reaches Regional hub or Anchor faster, and every branch there gets the buffs.
+
+**Why use one.** A branch gets the parent's board for free and pools cash, so a strong board can run a sprawling group. The cost is risk: a failing branch drains the shared cash, and in a restructuring (10.5.4) creditors can claim the whole book. A subsidiary walls off risk but needs its own board.
+
+**Revenue and costs.** Each branch's revenue and costs run through 10.4.1 in its own industry, using the parent's management score. The company's income statement shows one segment per branch (2.13.2) **(A)**.
+
 ## 10.5 Management score
 
 There is no cyclical, random management rating as in Wall Street Raider (Logan). A company's **management score** (0 to 100) is built from the board: the characters in its positions (1.8) and their stats.
@@ -166,7 +188,7 @@ Investor confidence makes boards a target: poaching a rival's star CFO lowers th
 
 ### 10.5.3 What executives do on their own
 
-Running sites is mostly automatic (Logan, batch 21). Each month the executives set pricing stance, R&D, marketing, upkeep and staffing by themselves, and write the growth plan when nobody else does **(A)**. Their traits shape the choices: a Greedy CEO starves R&D for short-term profit; an Ambitious one over-expands; a Cautious one leases instead of buying. The player shapes this through who sits in which position, the charter, the growth plan when they control the company, and pressure as a shareholder.
+Running sites is mostly automatic (Logan, batch 21). Each month the executives set pricing stance, marketing, upkeep and staffing by themselves, and write the growth plan and R&D plan when nobody else does **(A)**. Each direct branch has its own growth plan and R&D plan (10.4.5); the **R&D plan** sets R&D spending as Low, Normal or High (2%, 4% or 8% of revenue **(T)**) and which tech projects (2.12) it funds, and whoever controls the company can set it like the growth plan. Their traits shape the choices: a Greedy CEO starves R&D for short-term profit; an Ambitious one over-expands; a Cautious one leases instead of buying. The player shapes this through who sits in which position, the charter, the growth plan when they control the company, and pressure as a shareholder.
 
 ### 10.5.4 Deals
 
@@ -233,7 +255,7 @@ Hovering a company's revenue shows: industry size → cycle → rates → pass-t
 ## 10.12 Assumptions and open items
 
 1. Every number in 10.3 and the site sizes in 10.4.3.
-2. A company works in one industry; groups diversify through vassals.
+2. Direct branches: the $500M of free shared capacity, segment reporting and the restructuring risk in 10.4.5.
 3. The share model in 10.4.1 and the 15% monthly move.
 4. Site size tiers and buffs in 10.4.4.
 5. Management score weights, trait shifts and effects in 10.5.

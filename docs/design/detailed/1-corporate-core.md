@@ -311,6 +311,7 @@ Current loyalty moves 5 points per week toward the target.
 | Joint Venture | Two parents, control by contract (for example 50/50 or 60/40). Deadlock event if parents' heads have opinion below 0 of each other. |
 | Front Company | Legit income plus a hidden illegal operation (smuggling, data brokering). Hidden income x2, raid chance 1% per month plus investigations. |
 | Franchise | Pays 4% to 8% royalties; parent has no board seats; brand scandal spreads both ways. |
+| Direct Branch (not a vassal) | Runs the company in another industry with its own business assets, employees, revenue, expenses, growth plan and R&D plan, but shares the parent's cash, balance sheet, board and board bonuses, and can share its office sites. Added 2026-10-17 (Logan); rules in [10-industry-economy.md](10-industry-economy.md) 10.4.5. |
 | Holding Company | Exists only to own stakes in other companies; no facilities. Consolidates the group's holdings under one board, so one bloc controls everything below it. Dividends from below pass up untaxed inside the same country **(T)**. Added 2026-10-17 (Logan). |
 | Cooperative | Owned by its workers or members, one vote each; the parent holds a minority stake and a supply or service contract, not control. Unions do not strike it; profits are paid out to members. Added 2026-10-17 (Logan). |
 | Captive Bank / Insurer | Lends to group companies at policy rate + 1%. Regulated: capital ratio must stay above 10% or regulators intervene. |
