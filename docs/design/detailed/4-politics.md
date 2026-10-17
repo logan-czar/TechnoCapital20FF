@@ -572,7 +572,7 @@ For each segment s in the constituency and each party (or candidate) p, the game
 | **Media** | `1.0 × (audience share of outlets endorsing p) - 0.5 × (audience share attacking p)` among segment s | -0.5 to +1.0 |
 | **Ads** | Each active ad campaign for p: +0.15 (broad) or +0.3 (targeted at one segment); decays 25% per week | 0 to +0.6 |
 | **Psyops** | Each active psyop: +0.3 (broad) or +0.6 (targeted); decays 35% per week; exposure (4.10.3) | 0 to +1.2 |
-| **Candidate** | `0.03 × (Influence skill - 10)` + traits: Media Darling +0.3, Scandal-Ridden -0.5, Honest +0.1, Party School +0.1, local origin +0.2 in their birth hub | -0.6 to +0.9 |
+| **Candidate** | `0.03 × (Persuasion skill - 10)` + traits: Media Darling +0.3, Scandal-Ridden -0.5, Honest +0.1, Party School +0.1, local origin +0.2 in their birth hub | -0.6 to +0.9 |
 | **Scandal** | Fresh scandal: minor 0.3, major 0.8, criminal 1.5; halves every 4 weeks; a debate or apology event can halve it at once | 0 to 1.5 |
 
 Diminishing returns are built in: doubling spend from E to 2E adds only 0.32 utility; from 0 to E adds 0.55.
@@ -596,9 +596,9 @@ _Ideology update: the Ideology weight drops from 3 to 2 and a party-platform ter
 A campaign is an event chain with weekly beats. Typical national chain:
 
 1. **Declaration** (week 1): candidates and slates set. Dynasty members can declare (4.7.2).
-2. **Fundraising Dinner** (weekly option): host for 4 hours; raises `$20k × Influence skill × local influence share × 10` **(T)** from local elites.
+2. **Fundraising Dinner** (weekly option): host for 4 hours; raises `$20k × Persuasion skill × local influence share × 10` **(T)** from local elites.
 3. **Endorsements** (weeks 2 to 8): each IG with clout ≥ 10% endorses a party or stays neutral; endorsement is +0.2 utility with that IG's segments; IG endorsements can be lobbied (10 PC national, 3 PC local).
-4. **Debate** (once or twice): Influence skill contest, ±0.3 utility to the winner/loser, critical failure (roll 1 in 20) is a minor scandal.
+4. **Debate** (once or twice): Persuasion skill contest, ±0.3 utility to the winner/loser, critical failure (roll 1 in 20) is a minor scandal.
 5. **October Surprise** (last 3 weeks): 20% chance per campaign that a scandal or exposé event fires on a random leading candidate **(T)**; rivals can schedule one with a Leak Scandal scheme.
 6. **Election Night**: hourly results.
 7. **Certification**: results contested if margin < 0.5%: court challenge chain (judicial independence decides).
@@ -642,7 +642,7 @@ Backing the opposition in a managed democracy is legal but costs: each $1M donat
 | **Head of Government or State** | National | Elected, appointed by party, or seized | Age 35, citizen | 60 h | National agenda, appoint ministers and agency heads, decrees where allowed, diplomacy | +10 points; +80 PC |
 | **Regulator Head** | National | Appointed (term 5 years, LD; at pleasure, others) | Relevant skill ≥ 14 (Finance for securities and banking, Intrigue for financial police) | 40 h | Opens and closes investigations (4.9) | +2 points; +20 PC |
 | **Central Bank Governor** | National | Appointed (term 6 years, LD) | Finance ≥ 18 | 40 h | Policy rate, FX intervention (see [07-markets.md](../07-markets.md)) | +3 points; +30 PC |
-| **Ambassador** | National | Appointed | Influence ≥ 10 | 30 h | +5 relation between home and host per year; trade mission events | +1 point in host country |
+| **Ambassador** | National | Appointed | Persuasion ≥ 10 | 30 h | +5 relation between home and host per year; trade mission events | +1 point in host country |
 | **Party Official** | National or regional | Party appointment (one-party states) | Party membership; Party School trait helps | 20 to 40 h | Faction strength (4.8.2) | As minister at equivalent level |
 | **General** | National | Military career; junta council seat | Military Contractor education or security career | 40 h | Coup participation, Security Establishment approval | Junta council member: +5 points |
 | **Council of Stakeholders seat** | National | Influence share ≥ 2% (corporate oligarchy) | Any holder | 10 h | Weighted vote on motions | Built into share |
@@ -652,7 +652,7 @@ Holding office **adds influence in that place** as above (05), adds PC, and gran
 ### 4.7.2 Running dynasty members for office
 
 - **Eligibility**: age and citizenship above; criminal conviction bars office for 10 years in liberal democracies; Social Credit bars low-reputation characters.
-- **Declaring** costs 10 PC (local), 25 (regional), 60 (national) **(T)** and requires a party nomination in proportional systems: a party nominates the candidate with the highest `Influence skill + opinion of party leader / 5 + 10 × donations to the party / E` (E from 4.6.3). In first past the post systems, primaries use the same vote formula among the party's segments.
+- **Declaring** costs 10 PC (local), 25 (regional), 60 (national) **(T)** and requires a party nomination in proportional systems: a party nominates the candidate with the highest `Persuasion skill + opinion of party leader / 5 + 10 × donations to the party / E` (E from 4.6.3). In first past the post systems, primaries use the same vote formula among the party's segments.
 - **The candidate's time**: campaigning takes 20 h per week (local), 40 h (national). Executive roles at a company must be delegated; a CEO who campaigns gives their company -10% efficiency for the campaign.
 - **Conflict of interest** once elected (4.7.5).
 - **Benefits**: direct votes, agenda power, office influence, appointment power, and immunity from local investigations while in a head-of-government role (managed democracy and below: always; liberal democracy: never).
@@ -718,7 +718,7 @@ A dynasty member in office who, directly or through the family trust, holds asse
 - **Yearly Plenum**: the strongest faction gets one top post (minister or province chief). **Party Congress** every 5 years: the strongest faction names the party leader and head of government; ties are broken by the incumbent leader's choice.
 - **Backing a faction** (player action): donate through a local partner or front (money), spend PC, provide jobs and board seats to faction members' relatives (patronage, +1 favor each), or run a Dig Up Dirt scheme against a rival faction leader.
 - **Purges**: after a Congress, each losing faction has a 50% chance to suffer an **Anti-Corruption Campaign** **(T)**. Every holder that backed it with more than 10 PC or $1M in the past 2 years gets +30 exposure with the Financial Police there, and its branch office and local partner face a seizure ladder step (4.9.10).
-- **Ruling family variant**: replace factions with **branches of the ruling family** (2 to 3 princes or princesses as characters). Succession on the ruler's death is decided by a family council: score = `Influence skill + opinion of the ruler / 5 + Security Establishment backing + foreign backing`. The player can marry into a branch (04), fund one, or hold hooks over its members.
+- **Ruling family variant**: replace factions with **branches of the ruling family** (2 to 3 princes or princesses as characters). Succession on the ruler's death is decided by a family council: score = `Persuasion skill + opinion of the ruler / 5 + Security Establishment backing + foreign backing`. The player can marry into a branch (04), fund one, or hold hooks over its members.
 
 ### 4.8.3 Monthly coup risk
 
@@ -882,7 +882,7 @@ Exposure accumulates per holder (dynasty, company or character) per agency domai
 
 | Stage | Duration | Mechanics **(T)** | Player options |
 |---|---|---|---|
-| **1. Preliminary Inquiry** | 2 to 6 weeks | **Evidence** starts at Exposure / 4. Each week Evidence += `2 × Capacity × Zeal - GC defense` where GC defense = the higher of the General Counsel's Intrigue or Influence skill, divided by 5. Closes if Evidence < 15 at the end | Cooperate (Evidence +10 now, settlement penalty -30% later); stonewall (Evidence +0 this stage, 20% chance to jump straight to Subpoena); lobby the head; bribe; shred documents (Intrigue scheme; caught = Obstruction, a separate Serious offense) |
+| **1. Preliminary Inquiry** | 2 to 6 weeks | **Evidence** starts at Exposure / 4. Each week Evidence += `2 × Capacity × Zeal - GC defense` where GC defense = the higher of the General Counsel's Intrigue or Persuasion skill, divided by 5. Closes if Evidence < 15 at the end | Cooperate (Evidence +10 now, settlement penalty -30% later); stonewall (Evidence +0 this stage, 20% chance to jump straight to Subpoena); lobby the head; bribe; shred documents (Intrigue scheme; caught = Obstruction, a separate Serious offense) |
 | **2. Subpoena** | 1 week | Public announcement: stock -3 to -10%, reputation -5. Characters named gain "Under Investigation" | Hire outside counsel (tier 1 to 3: $1M, $5M, $20M per month × wealth index (4.10.4); counsel adds +2/+4/+8 to defense each week); PR campaign (ads, reduces stock hit by half) |
 | **3. Discovery** | 4 to 12 weeks | Evidence += `3 × Capacity × Zeal - GC defense - counsel` per week. Weekly **Cracks** roll: each named subordinate or client with loyalty < 50 has `5% × (1 - loyalty/100)` chance to flip: Evidence +20 | Pay off subordinates (opinion), move them abroad, arrange an "accident" (Intrigue; huge risk), call favors to slow (4 weeks per favor) |
 | **4. Charges or Closure** | 1 week | Evidence ≥ 40: charges and a settlement offer. Evidence < 40: closed; exposure halved | |
@@ -1249,7 +1249,7 @@ Each stage is an event chain:
 
 1. **Feasibility Study** (8 weeks): the game shows the expected backlash: IG reactions, unrest, international reaction.
 2. **Enabling Legislation**: the C6 position must be in force nationally (pass it as a law; Sovereign Charters face State Apparatus and Traditionalists at -- and Labor at -).
-3. **Charter Negotiation** (4 to 12 weeks, Influence contest with the head of government): terms are chosen from a menu:
+3. **Charter Negotiation** (4 to 12 weeks, Persuasion contest with the head of government): terms are chosen from a menu:
    - Revenue share to the national government: 10 to 30% of zone tax revenue.
    - Lease length: 50 or 99 years (Stage 2), perpetual (Stage 3).
    - Reserved powers: defense, currency, citizenship (each reserved power lowers backlash by 10%).
@@ -1348,7 +1348,7 @@ Threshold T = +10, so the bill would pass at `10% + 2% × 1.5 = 13%` per month: 
 
 ### 4.13.3 Running the heir for mayor
 
-**Situation.** The heir (Influence 16, born in Manchester) runs for Mayor of Greater Manchester (United Kingdom, 2.2M adults, so E = $1.1M) for the business party (Industrialists, Financiers, Landowners, Traditionalists) against the incumbent of the labor-green party (Labor, Gig, Environmentalists, Tech Sector, Transhumanists), Influence 12. Unemployment 7%, inflation 4%, growth 1%.
+**Situation.** The heir (Persuasion 16, born in Manchester) runs for Mayor of Greater Manchester (United Kingdom, 2.2M adults, so E = $1.1M) for the business party (Industrialists, Financiers, Landowners, Traditionalists) against the incumbent of the labor-green party (Labor, Gig, Environmentalists, Tech Sector, Transhumanists), Influence 12. Unemployment 7%, inflation 4%, growth 1%.
 
 **Utility terms that are the same for every segment:**
 
@@ -1750,14 +1750,14 @@ When two holders push opposing stories about the same bill, election or person, 
 
 ### 4.18.1 Political careers
 
-Family members are AI characters with their own ambitions ([13-open-questions.md](../13-open-questions.md), assumption 4). A family member becomes a politician through their life path ([03-characters.md](../03-characters.md) 3.5): Ambitious, Party School and Influence ≥ 12 make it likely; the head can **Encourage a Political Career** (1 hour; -10 opinion if the member has no political traits; +10 if Ambitious) **(T)**.
+Family members are AI characters with their own ambitions ([13-open-questions.md](../13-open-questions.md), assumption 4). A family member becomes a politician through their life path ([03-characters.md](../03-characters.md) 3.5): Ambitious, Party School and Persuasion ≥ 12 make it likely; the head can **Encourage a Political Career** (1 hour; -10 opinion if the member has no political traits; +10 if Ambitious) **(T)**.
 
 **Typical ladder** (liberal democracy) **(T)**:
 
 | Step | Age | Time on step | What it gives |
 |---|---|---|---|
 | **Volunteer or student politics** | 16 to 22 | 2 to 4 years | Party Standing +10; one Befriend roll per year with a party official |
-| **Staffer** (to a legislator or minister) | 21 to 28 | 2 to 4 years | Party Standing +15; +1 Influence per 2 years; the dynasty learns the boss's bills 1 week early (no favor needed; trading on it is insider trading) |
+| **Staffer** (to a legislator or minister) | 21 to 28 | 2 to 4 years | Party Standing +15; +1 Persuasion per 2 years; the dynasty learns the boss's bills 1 week early (no favor needed; trading on it is insider trading) |
 | **City Councilor** | 25+ | 1 to 2 terms | Office benefits (4.7.1) |
 | **Mayor, Regional Legislator** | 30+ | 1 to 2 terms | As 4.7.1 |
 | **National Legislator, Governor** | 35+ | 2+ terms | As 4.7.1 |
@@ -1774,7 +1774,7 @@ Family members are AI characters with their own ambitions ([13-open-questions.md
 A **think tank** is a non-profit company. Owned by a dynasty company it is a Subsidiary vassal; owned by the family foundation (4.18.3) or trust it is a plain holding.
 
 - **Setup**: $5M × wealth index, 12 weeks. **Budget** B per year, set by the owner.
-- **Prestige** (0 to 100): target = `15 × ln(B / ($1M × wealth index)) + 3 per fellow with Influence ≥ 15`, capped at 100; moves 2 points per month toward the target **(T)**. Examples: $10M × wealth index → 35; $30M → 51; $100M → 69. Prestige is ×0.8 while more than 50% of its funding is publicly known to come from one dynasty ("industry-funded").
+- **Prestige** (0 to 100): target = `15 × ln(B / ($1M × wealth index)) + 3 per fellow with Persuasion ≥ 15`, capped at 100; moves 2 points per month toward the target **(T)**. Examples: $10M × wealth index → 35; $30M → 51; $100M → 69. Prestige is ×0.8 while more than 50% of its funding is publicly known to come from one dynasty ("industry-funded").
 - One **program** per country at a time:
 
 | Program | Time **(T)** | Effect **(T)** |
@@ -2364,7 +2364,7 @@ This adds the political side to [14-game-stages.md](../14-game-stages.md) and mi
 | *Front Page* | A scandal with Heat ≥ 40 | Ride it out · Deny · Apologize · Counter-story · Legal threat |
 | *The Editor Resigns* | Owner orders a line change against an Integrity ≥ 70 editor | Accept the resignation (credibility -5) · Back down · Buy their silence |
 | *A Seat at the Table* | Donor share reaches 25% in a party | Accept Party Patron status publicly · Stay in the shadows (keep powers, no Profile gain, exposé risk) |
-| *Brother Wants to Run* | Family member with Ambitious and Influence ≥ 12 | Back the career (fund, Party Standing) · Discourage (opinion -20) · Steer them to a safer seat |
+| *Brother Wants to Run* | Family member with Ambitious and Persuasion ≥ 12 | Back the career (fund, Party Standing) · Discourage (opinion -20) · Steer them to a safer seat |
 | *Insurance Salesmen* | OCG protection demand (4.22.3) | Pay · Refuse and harden security · Request a crackdown · Inform |
 | *A Favor for the Plaza* | 6+ months of paying protection | Let the trucks roll (dirty money, hook) · Refuse (price doubles or incident) · Sell the facility |
 | *The Accountant* | Whistleblower risk ≥ 5% per month on an operation | Hush money · Promote · Fire · Discredit · "Make it go away" |
@@ -2374,7 +2374,7 @@ This adds the political side to [14-game-stages.md](../14-game-stages.md) and mi
 | *Martyr* | Police repression of a protest triggers a death | Call for calm (Favorability +3) · Blame agitators (Elite +3, Favorability -5) · Fund the funeral (Heat -10) |
 | *The Request* | State intelligence approach (4.26.3) | Accept · Refuse · Double game |
 | *Two Masters* | Home and host services both ask in one year | Choose home · Choose host · Refuse both |
-| *Unpaid Contractors* | A PMC unit not paid for a month | Pay with a 20% bonus · Promise (Influence roll) · Let them go (Praetorian risk) |
+| *Unpaid Contractors* | A PMC unit not paid for a month | Pay with a 20% bonus · Promise (Persuasion roll) · Let them go (Praetorian risk) |
 | *Grey List* | FCT lists a country where the dynasty has shells | Move the shells (5% fees) · Lobby for delisting · Ignore (exposure ×1.5) |
 | *The Oligarchs' Party* | Populist targeting starts (4.27.2) | Charm offensive (philanthropy, Favorability) · Fund the populists' rivals · Go quiet (Keep a Low Profile) |
 | *The Coalition* | AI dynasties form a coalition against the dynasty | Split it (buy one member) · Outspend it · Seek a marriage alliance with its leader |

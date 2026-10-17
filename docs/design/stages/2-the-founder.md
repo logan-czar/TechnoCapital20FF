@@ -152,7 +152,7 @@ Control is the stage's central tension. The player's tools:
 
 - **Dual-class shares** at founding: keep class A (10 votes) and sell class B. Investors accept this less often (VC interest -15%) but it holds.
 - **Bloc building**: invite friendly holders (Ask Daddy investors, family, loyal key hires) into your bloc.
-- **Protective provisions**: negotiate them out of term sheets (Influence roll).
+- **Protective provisions**: negotiate them out of term sheets (Persuasion roll).
 - **Founder-friendly investors**: some VC partners have a "founder-friendly" trait and rarely join factions.
 - **Buybacks**: buy back shares from leaving employees and angels.
 

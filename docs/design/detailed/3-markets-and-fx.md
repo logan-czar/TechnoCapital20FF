@@ -492,6 +492,7 @@ plus noise with a standard deviation of 8% [T], clamped to -15% and +60%. V_post
 |---|---|---|---|
 | **Direct listing** | 4 weeks | 1% fees, no bank spread | No new money. Opening price = V x (1 + 0.15 x Mkt/100) plus noise of 15%. No stabilization, no lock-up, very volatile first month |
 | **Back-door listing** (reverse merger into a listed shell) | 4 weeks | Cost of buying the shell (a tiny listed company) | Fast, skips the roadshow and most due diligence. Q -0.10 for a year; regulator suspicion +20 |
+| **SPAC merger** (Logan, 2026-10-17) | 8 to 16 weeks | The sponsor takes 20% of the SPAC's shares as its "promote" **(T)** | A listed blank-check company raises cash, then merges with a private company to take it public. Holders can redeem their cash before the merger (redemptions rise as Retail Fever falls). Anyone can sponsor a SPAC with $10M **(T)**; it must merge within 2 years or return the money. Popular in boom years |
 | **Spin-off listing** of a vassal | Like an IPO | Like an IPO | The parent keeps a stake. Changes the vassal's autonomy to Independent Listing ([01-companies.md](../01-companies.md) 1.5) |
 
 ### 3.4.3 Secondary offerings and rights issues
@@ -1617,7 +1618,7 @@ This section links the intel rules of [2-map-influence-economy.md](2-map-influen
 | Short interest | Weekly total per stock | Who is short: prime broker access (3.17.1) or espionage |
 | Fundamental value V | Never shown directly | Estimated fair value with an error band (3.14.2) |
 | Analyst ratings and consensus | Yes (3.14.3) | |
-| AI holders' reservation prices (3.4.9) | No | A range, after a meeting with the holder (Finance or Influence check) |
+| AI holders' reservation prices (3.4.9) | No | A range, after a meeting with the holder (Finance or Persuasion check) |
 | Pending bids, defenses, scandals, central bank decisions | No | Inside information (3.14.6) |
 | Private companies | No public numbers | Estimates by intel (2.22.2) |
 
@@ -1727,7 +1728,7 @@ A stock enters **meme state** when all of these hold [T]:
 
 - **Finfluencers** are named AI characters with a follower count (10,000 to 20 million) and a Credibility score (0 to 100).
 - A post backing a stock adds `Buzz = 5 x log10(followers / 10,000) x Credibility / 50` [T]. One million followers at Credibility 60 gives +12.
-- A dynasty member can become a finfluencer (followers grow with Influence checks on posts), or the player can befriend or pay one. **Paid promotion** is legal when disclosed (its Buzz is halved). Undisclosed paid promotion while the payer sells is pump and dump (3.10).
+- A dynasty member can become a finfluencer (followers grow with Persuasion checks on posts), or the player can befriend or pay one. **Paid promotion** is legal when disclosed (its Buzz is halved). Undisclosed paid promotion while the payer sells is pump and dump (3.10).
 - Bot amplification (psyops, [05-map-and-influence.md](../05-map-and-influence.md) 5.3) fakes forum momentum: Buzz as in 3.3.5, exposure as for psyops.
 
 ### 3.15.4 Retail brokers and the buying ban
@@ -2100,6 +2101,8 @@ The derivatives in scope for the first full release:
 
 ## 3.23 Crypto and cyberpunk finance
 
+> **Changed (Logan, 2026-10-17).** Crypto itself is **not deep**. It is part of a deep **gambling system**, which is part of the addiction system ([9-gambling.md](9-gambling.md)). For now, the coins go up and down randomly, with boom and bust cycles of varying volatility, intensity and length (9.3). Sections 3.23.2 to 3.23.4 (token offerings, data-backed tokens, corporate scrip) are **parked** until crypto is revisited; Ledgerbit stays as the main coin.
+
 ### 3.23.1 The Ledgerbit model
 
 Ledgerbit (LBT, 3.8.1) trades every hour of every day. It has no fundamental value; it is anchored to **Adoption**. Its hourly tick uses the FX formula of 3.8.2 with a different anchor [T]:
@@ -2114,7 +2117,7 @@ Ledgerbit (LBT, 3.8.1) trades every hour of every day. It has no fundamental val
 
 ### 3.23.2 Token offerings
 
-- A company or a shell can raise money by selling tokens instead of shares. **Token Offering** event chain: whitepaper (8 hours; Tech plus Influence check), hype campaign (Buzz), sale (1 to 7 days; demand from Retail Fever and Adoption).
+- A company or a shell can raise money by selling tokens instead of shares. **Token Offering** event chain: whitepaper (8 hours; Tech plus Persuasion check), hype campaign (Buzz), sale (1 to 7 days; demand from Retail Fever and Adoption).
 - Tokens carry no votes and no dividends unless the issuer promises them; buyers price them on Buzz and promises.
 - **Legal status**: where the national securities regulation (F4) is Standard or stricter, tokens are securities and an unregistered offering is an offense (detection base 20% per quarter) [T]. Through the Freeport Night Market and a haven shell it is grey: exposure +1 per $1M raised.
 - **Rug pull**: the issuer takes the money and abandons the project. Fraud; the Blacklisted trait if traced; Retail Fever -10 everywhere.

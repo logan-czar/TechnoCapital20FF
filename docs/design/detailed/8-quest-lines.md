@@ -122,7 +122,7 @@ Opens when someone builds a stake past a disclosure line, or when a rival from t
 | 3 | Fight the activist's proxy campaign or tender offer | Proxy fights and tender offers (1.9.2, 1.9.3) |
 | 4 | Choose defenses | Takeover defenses (1.9.4) |
 
-**Outcomes.** Strong: the raider is beaten and sells at a loss; +2 Influence. Mixed: Pieter keeps control but gives up a board seat. Poor: Pieter loses control of the company.
+**Outcomes.** Strong: the raider is beaten and sells at a loss; +2 Persuasion. Mixed: Pieter keeps control but gives up a board seat. Poor: Pieter loses control of the company.
 
 ### Arc 6: The Crack (the crash)
 

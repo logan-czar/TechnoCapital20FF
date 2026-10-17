@@ -8,7 +8,7 @@ Every character has five skills (0 to 30):
 |---|---|
 | **Finance** | Trust returns, valuation, leverage, CFO tasks, trading |
 | **Operations** | Company growth and efficiency as CEO or COO, facility output |
-| **Influence** | Pitches, proxy fights, bloc-building, lobbying, campaigns |
+| **Persuasion** | Pitches, proxy fights, bloc-building, lobbying, campaigns. Renamed from "Influence" (Logan, 2026-10-17: influence is not a skill; it is the amount of influence you have in an area) |
 | **Intrigue** | Schemes, counter-intelligence, uncovering secrets, running shells |
 | **Tech** | R&D, cyberware tolerance, netrunning, tech-sector pitches |
 
@@ -52,7 +52,7 @@ Discovery costs opinion and reputation and can start lawsuits, regulatory probes
 
 ## 3.7 Cyberpunk layer
 
-- **Cyberware**: implants granting skill boosts (neural co-processor +Finance, social-engineering suite +Influence, reflex boosters for security staff) at the cost of **humanity**, with failure and rejection events. Legality varies by country.
+- **Cyberware**: implants granting skill boosts (neural co-processor +Finance, social-engineering suite +Persuasion, reflex boosters for security staff) at the cost of **humanity**, with failure and rejection events. Legality varies by country.
 - **Life extension**: expensive treatments that delay death and frustrate heirs.
 - **Private security and PMCs**: bodyguards, corporate security forces, contractors hired for "risk management" abroad.
 - **AI assistants**: buy an AI advisor that boosts a skill but can be hacked.

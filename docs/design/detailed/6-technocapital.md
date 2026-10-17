@@ -504,7 +504,7 @@ TC sits on the balance sheet as equipment (2.13.3) and depreciates by its life i
 | Event | Trigger | Choices and effects **(T)** |
 |---|---|---|
 | **Loss Spike** | 1% per week during a training run | Roll back to checkpoint (-3% progress) · Push through (Tech check by the lead: success no loss, failure Quality -5) |
-| **Allocation Cut** | Node shortage and Allocation Score in the bottom third | Fly to meet the maker's CEO (8 hours, Influence check: restore allocation) · Pay +20% · Buy used Gen 1 nodes from the grey market |
+| **Allocation Cut** | Node shortage and Allocation Score in the bottom third | Fly to meet the maker's CEO (8 hours, Persuasion check: restore allocation) · Pay +20% · Buy used Gen 1 nodes from the grey market |
 | **Service Suspended** | Export controls hit a fab's country | Lobby the maker's government (4.10) · Run the fab into the ground (yield falls 5% per month) · Smuggle parts (exposure +15; condition loss halved) |
 | **Grid Says No** | A data center's connection queue passes 6 months | Build behind-the-meter gas or SMR power · Move the build to another hub · Bribe the utility (exposure +5, queue halved) |
 | **Weights on a Forum** | A model is stolen and leaked | Sue (4.21.2) · Open-weight it officially and claim the credit (brand +5, license revenue on it ends) · Hunt the leaker (Intrigue scheme) |

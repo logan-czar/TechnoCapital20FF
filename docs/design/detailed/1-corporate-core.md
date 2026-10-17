@@ -49,7 +49,7 @@ Every adult has 3. Each modifies skills, opinion and stress.
 | Ruthless | Compassionate | +2 Intrigue | (Compassionate) firing staff, layoffs | -5 from Compassionate |
 | Visionary | Conservative | +2 Tech | (Conservative) risky ventures | +10 from Visionary |
 | Honest | Deceitful | -2 Intrigue, +10 reputation | Lying, shells, bribery | +10 from Honest |
-| Brave | Cautious | +1 Influence | (Cautious) leverage, hostile takeovers | none |
+| Brave | Cautious | +1 Persuasion | (Cautious) leverage, hostile takeovers | none |
 
 Same trait between two characters: +10 opinion each. Opposite trait: -10.
 
@@ -62,10 +62,10 @@ Gained at 18 to 22, level 1 to 4 (level from childhood focus and a roll).
 | Ivy League MBA | Finance | +2 | Better VC pitch odds |
 | Quant PhD | Finance | +2, +1 Tech | Trading bonuses |
 | Bootcamp Coder | Tech | +2 | Tech-sector founding bonus |
-| Law School | Intrigue | +1, +1 Influence | General Counsel task bonus |
-| Old Money Tutors | Influence | +2 | +10 opinion from old-money families |
+| Law School | Intrigue | +1, +1 Persuasion | General Counsel task bonus |
+| Old Money Tutors | Persuasion | +2 | +10 opinion from old-money families |
 | Military Contractor | Operations | +2 | PMC contacts |
-| Party School | Influence | +2 | Political appointments |
+| Party School | Persuasion | +2 | Political appointments |
 | Street-Taught | Intrigue | +2 | Fixer contacts, no Ask Daddy path |
 
 ### 1.1.4 Opinion
@@ -131,14 +131,14 @@ Discovery chance per week = 2% + target's Head of Security Intrigue x 0.5% - own
 
 | Scheme | Skill | Cost | Effect on success |
 |---|---|---|---|
-| Befriend | Influence | none | Friend relationship |
-| Seduce | Influence | none | Lover; hook if a secret affair |
-| Recruit to bloc | Influence | optional payment | Target joins your bloc |
+| Befriend | Persuasion | none | Friend relationship |
+| Seduce | Persuasion | none | Lover; hook if a secret affair |
+| Recruit to bloc | Persuasion | optional payment | Target joins your bloc |
 | Dig up dirt | Intrigue | $50k | Hook on target (if a secret exists) |
 | Leak scandal | Intrigue | $100k | Target loses 20 reputation, stock drops 3 to 8% |
 | Corporate espionage | Intrigue | $500k | Steal a tech or a deal |
 | Netrun | Tech | $250k | Steal data, crash systems (company loses 1 week of output) |
-| Poach executive | Influence | signing bonus | Executive joins your company |
+| Poach executive | Persuasion | signing bonus | Executive joins your company |
 | Investigate shell | Intrigue | $200k | Reveal hidden owners |
 | Blackmail | Intrigue | needs hook | Force an action (vote, sale, resignation) |
 | Arrange "accident" | Intrigue | $2M | Target dies or is injured; huge penalty if discovered |
@@ -204,10 +204,10 @@ Starting company value = capital raised. Starting monthly revenue = capital x se
 ### 1.6.2 Path: Venture Capital
 
 Chain per round:
-1. **Prepare deck** (8 hours). Deck quality = (Influence + Tech + Finance) / 3 + education bonus + random 0 to 10.
+1. **Prepare deck** (8 hours). Deck quality = (Persuasion + Tech + Finance) / 3 + education bonus + random 0 to 10.
 2. **Pitch meetings**: the player picks up to 5 VC firms from a list (each a fund with a partner character, a sector preference and a risk appetite). Each pitch is 3 hours. Interest chance = 20% + deck quality x 2% + sector match 15% + partner opinion / 2.
 3. **Term sheet** event from each interested firm: amount, valuation, board seat, preference multiple (1x to 2x), and a **milestone** (revenue target by a date).
-4. **Negotiate** (optional, 2 hours): an Influence roll can raise valuation 10% to 30%, or anger the partner (-20 opinion, may withdraw).
+4. **Negotiate** (optional, 2 hours): an Persuasion roll can raise valuation 10% to 30%, or anger the partner (-20 opinion, may withdraw).
 5. **Close**: shares issued as class P; VC partner joins the board if the term sheet says so.
 
 | Round | Raise | Dilution | Board | Milestone window |
@@ -236,7 +236,7 @@ Effects: your reputation is tied to your father's for 5 years (his scandals hit 
 
 ### 1.6.4 Path: Bootstrap
 
-Uses your personal cash, minimum $50k. Chain: **First hire** (choose between a cheap generalist or an expensive specialist), **First customer** (Influence roll), **First crisis** (cash crunch, choose: cut your salary, sell personal assets, or take a small loan). You keep 100% class A shares.
+Uses your personal cash, minimum $50k. Chain: **First hire** (choose between a cheap generalist or an expensive specialist), **First customer** (Persuasion roll), **First crisis** (cash crunch, choose: cut your salary, sell personal assets, or take a small loan). You keep 100% class A shares.
 
 ### 1.6.5 Path: Bank Loan
 
@@ -257,7 +257,7 @@ Requires political influence at **Power broker** tier (25%) in the home hub's ju
 
 1. **Meeting the Minister** (or mayor, or governor) (3 hours).
 2. **Grant application**: grant of $1M to $50M, or a state bank loan at the policy rate, or a sovereign fund stake.
-3. **Public scrutiny**: an opposition or journalist event; Intrigue or Influence roll to keep it quiet, or take a reputation hit.
+3. **Public scrutiny**: an opposition or journalist event; Intrigue or Persuasion roll to keep it quiet, or take a reputation hit.
 4. **Contract award**: a 3 to 5 year government contract as first customer.
 
 Effects: charter becomes State-Linked or the government takes 1 board seat; you owe 2 political favors (the official holds hooks).
@@ -311,6 +311,8 @@ Current loyalty moves 5 points per week toward the target.
 | Joint Venture | Two parents, control by contract (for example 50/50 or 60/40). Deadlock event if parents' heads have opinion below 0 of each other. |
 | Front Company | Legit income plus a hidden illegal operation (smuggling, data brokering). Hidden income x2, raid chance 1% per month plus investigations. |
 | Franchise | Pays 4% to 8% royalties; parent has no board seats; brand scandal spreads both ways. |
+| Holding Company | Exists only to own stakes in other companies; no facilities. Consolidates the group's holdings under one board, so one bloc controls everything below it. Dividends from below pass up untaxed inside the same country **(T)**. Added 2026-10-17 (Logan). |
+| Cooperative | Owned by its workers or members, one vote each; the parent holds a minority stake and a supply or service contract, not control. Unions do not strike it; profits are paid out to members. Added 2026-10-17 (Logan). |
 | Captive Bank / Insurer | Lends to group companies at policy rate + 1%. Regulated: capital ratio must stay above 10% or regulators intervene. |
 
 ### 1.7.5 Company ranks
@@ -359,7 +361,7 @@ Each member's opinion of the head affects work: below 0, task effect halves; bel
 
 ### 1.8.4 Board meetings (quarterly)
 
-A board meeting is an event with an agenda of 1 to 4 items (dividend, budget, acquisition, CEO pay, member complaints). Each item is a majority vote of seats. The head can spend Influence (hours of persuasion) to swing members.
+A board meeting is an event with an agenda of 1 to 4 items (dividend, budget, acquisition, CEO pay, member complaints). Each item is a majority vote of seats. The head can spend hours of persuasion (the Persuasion skill) to swing members.
 
 ## 1.9 Factions, proxy fights and takeovers
 

@@ -119,7 +119,7 @@ The first quest of every game. It teaches the quest system: a tree of steps, eac
 | Branch | Steps | Difficulty |
 |---|---|---|
 | **Get vaccinated** | Book an appointment and get the shot | Easy. No rolls except a small chance of a sick day. |
-| **Doctor's note** | Find a doctor willing to write one: the family doctor, a friend's doctor, or a paid clinic | Varies by character and rolls. Diplomacy or Intrigue rolls; traits such as Honest or Paranoid change the odds; failure can mean a scandal or a forged note that is later discovered. |
+| **Doctor's note** | Find a doctor willing to write one: the family doctor, a friend's doctor, or a paid clinic | Varies by character and rolls. Persuasion or Intrigue rolls; traits such as Honest or Paranoid change the odds; failure can mean a scandal or a forged note that is later discovered. |
 
 The exact steps and rolls are to be written in the events and quests design.
 

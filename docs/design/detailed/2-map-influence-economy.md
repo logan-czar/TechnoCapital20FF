@@ -1037,7 +1037,22 @@ Each company pays **selling, general and administrative (SG&A)** costs as a shar
 
 **How a character's stratum is set (Logan).** Various factors, but mainly **assets, capital and income**. Each stratum has its own criteria, such as a certain amount of assets or of Techno-Capital. Example: an **Oligarch** must at least sit on the board of one monopoly or hold assets totaling $1 billion, and must control a certain amount of Techno-Capital. **Strata, bottom to top (Logan):** Permanent Underclass, PMC, Glitterati, Nobles, Oligarchs. The bars for each are still to be set.
 
-**Slop (A).** A need of the Permanent Underclass: cheap food, short video, games, AI-generated media and gambling. While slop needs are met, the Underclass's unrest stays low even when Basic and Comfort fill is poor.
+**Slop (Logan, 2026-10-17).** The Permanent Underclass has **one need: slop**. Slop is a **byproduct of every company's production**: the trickle-down of freemium goods, ad-funded apps, junk content and the like.
+- Slop is **not sold**. It is passively consumed from the production in an area, and it **cannot be imported or exported**.
+- **Too little slop** and the population of the area grows unstable.
+- **Too much slop** (a surplus) and education, health and the birth rate start to suffer.
+
+Slop rules **(A)**:
+- **Slop output** per hub per month = sum over facilities of monthly output value × the sector's slop rate. Slop rates **(T)**: media, software, AI services and consumer goods 3 per $1M; retail and food 2 per $1M; everything else 1 per $1M.
+- **Slop need** = Underclass population in the hub (millions) × 100 per month **(T)**.
+- **Slop ratio** = output ÷ need.
+
+| Slop ratio | Effect on the hub **(T)** |
+|---|---|
+| Below 0.8 | Underclass unrest +1 per month for every 0.1 below 0.8 |
+| 0.8 to 1.2 | Stable: Underclass unrest held at its floor |
+| Above 1.2 | Surplus: for every 0.1 above 1.2, education quality -1%, health -1% and birth rate -1% per year in the hub |
+
 
 **Debt spiral (A).** A PMC member whose savings go negative for 6 months **(T)** drops into the Permanent Underclass. Climbing back needs 12 months **(T)** of positive savings plus a PMC job. Named characters can fall the same way (John Oligarch starts close to it; Samir Haddad starts in it).
 
@@ -1063,6 +1078,9 @@ Population is tracked per hub as six segments of the labor force (half the metro
 - Employer cost overhead (×1.25) covers payroll taxes and benefits. L4 adds +6% or +18% for gig (politics).
 
 ### 2.8.2 Needs baskets
+
+> **Changed (Logan, 2026-10-17).** The game is an alternate reality a little more futuristic than ours. Basic necessities such as food and clothing are always met and so oversaturated that there is no real market for them. **Population needs are consumer goods.** The Permanent Underclass needs only slop (2.8.0). The baskets below are being reworked to match: the Basic basket drops food, clothing and water; housing, energy and healthcare stay as PMC needs **(A)**; packaged food and clothing stay in the goods list with no population demand, flooded markets and thin margins **(A)**.
+
 
 Per member of the labor force per month, at base prices and PF 1.0. Goods are bought at hub prices; services and housing scale with PF.
 
@@ -1538,7 +1556,7 @@ All numbers use the tuning values above. Rounding is to the nearest useful digit
 
 Multiplier = origin 1.25 (born and raised) × foreignness 0.95 (Liberal democracy 10% penalty, halved by the citizen heir) × history 1.03 × reputation 1.04 = **1.272**. 6.23% × 1.272 = 7.92%, plus 1 pp flat for born and raised = **8.92%**. No tier yet.
 
-**Campaign.** Temporary cap = max(6, 6.23) = 6.23 pp. An ad campaign of 4 pp costs 4 × $60,000 × 4.75 = **$1.14M per 4 weeks**; the heir directs it (Influence 15, effectiveness 1.0). She also hosts a gala: 1.4M adults × $0.02 = **$28,000** and 6 hours, +1 pp for 2 weeks, +5 opinion with every Penang official, and two Befriend rolls at 30%.
+**Campaign.** Temporary cap = max(6, 6.23) = 6.23 pp. An ad campaign of 4 pp costs 4 × $60,000 × 4.75 = **$1.14M per 4 weeks**; the heir directs it (Persuasion 15, effectiveness 1.0). She also hosts a gala: 1.4M adults × $0.02 = **$28,000** and 6 hours, +1 pp for 2 weeks, +5 opinion with every Penang official, and two Befriend rolls at 30%.
 
 Final share = 8.92 + 4 + 1 = **13.9%: Presence** at the next weekly check. Political Capital in Penang: 100 × sqrt(0.139) = **37 PC per month**. The Penang plant now hires 10% cheaper, buys local inputs 3% cheaper and gets permits 15% faster.
 
@@ -2143,7 +2161,7 @@ Jets are tracked, and where a dynasty head flies is news.
 | Emissions Scandal | Environmentalist media and over 300 flight hours a year | Buy offsets, defend it, sell the jet |
 | The Long Way Round | Airspace closure on your route | Reroute (+hours), fly through (risk), cancel |
 | Stranded | Detention or a sudden coup at your destination | Call in political favors, pay, hire a PMC extraction |
-| Mile-High Deal | A Greedy or Ambitious executive on your jet | Pitch them in flight (Influence roll with no interruptions) |
+| Mile-High Deal | A Greedy or Ambitious executive on your jet | Pitch them in flight (Persuasion roll with no interruptions) |
 
 ## 2.22 Information and intelligence
 

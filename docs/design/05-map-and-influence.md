@@ -37,7 +37,7 @@ Base influence in a place = your share of the total asset value in that place, w
 | Media outlets based there | Medium |
 | Financial holdings booked there | Low |
 
-Influence rolls up: district → hub → region → country, so a dominant position in one hub gives some influence in its region and country.
+Persuasion rolls up: district → hub → region → country, so a dominant position in one hub gives some influence in its region and country.
 
 ### Modifiers
 

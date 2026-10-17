@@ -43,6 +43,7 @@ Exact rules, numbers and content for each layer of the game:
 | 6. Techno-Capital (compute, fabs, lithography, drones, autonomous vehicles, robots, models) | [detailed/6-technocapital.md](detailed/6-technocapital.md) |
 | 7. Starting world (2022 scenario, 15 starting characters, rivals, opening quest, timeline to 2030) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |
 | 8. Quest lines (arcs, the default starting line, Pieter Von Floop) | [detailed/8-quest-lines.md](detailed/8-quest-lines.md) |
+| 9. Gambling, crypto and prediction markets (the phone tab) | [detailed/9-gambling.md](detailed/9-gambling.md) |
 
 ## Vision
 
