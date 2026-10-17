@@ -22,7 +22,7 @@ _Status: draft v0.1 (2026-10-17). From Logan's answers in the design Q&A (batch 
 2. Start in January 2022, paused.
 
 Everything else is fixed or rolled out of sight for each save **(A)**:
-- The crash year (2030 ± 2, 8-quest-lines 8.11) and the AI boom rate (3% to 10% a month, 6-technocapital 6.7.0) are rolled at game start and never shown.
+- The crash year (2030 ± 2, 8-quest-lines 8.14) and the AI boom rate (3% to 10% a month, 6-technocapital 6.7.0) are rolled at game start and never shown.
 - The tipped lab is rolled (7-starting-world).
 - The number of full characters is 200.
 - Unpicked starting characters become active rivals or passive characters as set in 7-starting-world.

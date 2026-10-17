@@ -1,8 +1,8 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v0.3 (2026-10-17). Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v0.4 (2026-10-17). Batch 35: full lines for Pablo, Tolu and Qiao. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
-**How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.12.
+**How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.15.
 
 ---
 
@@ -19,11 +19,11 @@ A quest line is made of **arcs** (Logan's word; not chapters).
 | Steps | Inside an arc, the player sees only the next step ([10-events.md](../10-events.md) 10.4). Failure branches into new quests. |
 | After the line | When a line ends, **generated side quests** keep coming from events, the character's ambition (1.1.2) and rivals (batch 33). |
 | Successors | A successor **usually does not** inherit the quest line (batch 33): they start with their own ambition and generated quests, plus a few legacy quests from the old line. **Sometimes** (25% per unfinished arc **(T)**, higher for children and protégés trained in it) the successor picks up an unfinished arc. |
-| The crash | The AI bubble pops in **2030 on average**. The actual year varies by a few years with RNG and events (8.11). Every full line has a crash arc that opens whenever it hits. |
+| The crash | The AI bubble pops in **2030 on average**. The actual year varies by a few years with RNG and events (8.14). Every full line has a crash arc that opens whenever it hits. |
 
 **Outcome tiers (A).** Most arcs use three tiers: **Strong**, **Mixed** and **Poor**. As a guide, Strong gives +2 to one skill and a clout gain, Mixed gives +1 to one skill, Poor gives a lasting penalty or a negative trait **(T)**.
 
-**Full lines written (Logan, batches 33 and 34).** Pieter Von Floop (8.3), Antone Provolone (8.4), Samir Haddad (8.5), Yuna Sakamoto (8.6), John Oligarch (8.7), Viktor Sokolov (8.8) and Garrett Kroll (8.9). The other characters keep the default line (8.2) until theirs are written.
+**Full lines written (Logan, batches 33 and 34).** Pieter Von Floop (8.3), Antone Provolone (8.4), Samir Haddad (8.5), Yuna Sakamoto (8.6), John Oligarch (8.7), Viktor Sokolov (8.8), Garrett Kroll (8.9), and from batch 35 Pablo Segundo (8.10), Tolu Balogun (8.11) and Qiao Lin (8.12). Ricky Feng stays on the default line (batch 35). The other characters keep the default line (8.2) until theirs are written.
 
 ## 8.2 Default starting quest line (placeholder)
 
@@ -49,7 +49,7 @@ The opening arcs run back to back and take the first few months of 2022 **(T)**.
 | 3 | **Be known** | Reach a Fame threshold in one hub |
 | 4 | **Hold power** | Control a company, win an office, or lead a bloc |
 | 5 | **Ride the boom** | Hold a stake or Techno-Capital in the AI supply chain when the tipped lab's breakthrough lands |
-| 6 | **Survive the crash** | Come out of the crash (8.11) in the same stratum or higher |
+| 6 | **Survive the crash** | Come out of the crash (8.14) in the same stratum or higher |
 
 ## 8.3 Pieter Von Floop: "Holding It Together" (reworked for the new economy)
 
@@ -129,7 +129,7 @@ Opens when someone builds a stake past a disclosure line, or when a rival from t
 
 ### Arc 6: The Crack (the crash)
 
-Opens when the crash hits (8.11). Fab customers stop ordering and the order book empties.
+Opens when the crash hits (8.14). Fab customers stop ordering and the order book empties.
 
 | Step | Goal | Teaches |
 |---|---|---|
@@ -496,7 +496,187 @@ Runs alongside Arc 2.
 
 **Outcomes.** Strong: a sovereign colony and a living company. Mixed: one survives. Poor: both are lost and Garrett becomes a punchline.
 
-## 8.10 Generated quests after a line
+## 8.10 Pablo Segundo: "Plata o Plomo"
+
+**Who he is.** A talented kid from the hills of Medellín who learns money on the street (7.3.1). Narco fascism and the rise of Pablo Segundo: he builds a narco-populist movement into national power in Colombia (batch 35).
+
+**What the line teaches.** Front companies and laundering, cash-heavy businesses, buying loyalty with favors and hooks, building a movement from the street up, and using an ideology to win office.
+
+**Starting position (A).** $400,000 in cash, half of it unexplained; a small motorbike courier and money-changing shop in Medellín (Logistics); hooks on two local police officers; Underclass stratum. Traits: Ambitious, Charming, Ruthless. Ambition: Rule the country.
+
+### Arc 1: The Corner
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Turn the courier shop into a front that moves a local crew's cash | Front companies (1.7.4) and laundering |
+| 2 | A rival crew squeezes your routes; pay them off, outmaneuver them or call a hook on the police | Hooks (1.1.4) and one-roll schemes (1.1.8) |
+| 3 | Clean $2M through the shop and a currency exchange without a raid | Laundering risk and the informal economy |
+
+**Outcomes.** Strong: a clean front and a loyal crew; +2 Intrigue. Mixed: +1 Intrigue. Poor: a raid; the shop is seized and a police hook is burned.
+
+### Arc 2: The Patrón
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Buy residential real estate in the comunas and rent it cheap | Real estate pools (10.4.5) and influence from assets |
+| 2 | Fund clinics, football pitches and a radio show | Image, Favor and buying influence in a place |
+| 3 | Hold the top influence tier in Medellín | Influence tiers (2.5.9) |
+
+**Outcomes.** Strong: Medellín's top influence tier and a public following; +2 Persuasion. Mixed: a strong neighborhood base. Poor: the press calls him a narco, and Favor falls with Professionals.
+
+### Arc 3: Legit Money
+
+Runs alongside Arc 2.
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Found a real company in a cash-heavy industry (construction, security or nightlife) | Founding paths (1.6) and the industry model (10) |
+| 2 | Win a city contract against an honest bidder | Politics and corruption |
+| 3 | A US prosecutor opens a file; bury it, flip it or run | Intel, scandals and extradition risk |
+
+**Outcomes.** Strong: a legal company worth $50M and the file closed. Mixed: the company survives but the file stays open. Poor: assets frozen abroad and a secret exposed.
+
+### Arc 4: The Movement
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Found a party on order, pride and handouts; pick its ideology (Sovereigntists or Chuds suit it) | Ideology ([5-ideology.md](5-ideology.md)) |
+| 2 | Win the Antioquia governorship | Elections ([4-politics.md](4-politics.md)) |
+| 3 | Run for president of Colombia: money, influence in every hub and a few buried bodies | National politics, hooks on rivals |
+
+**Outcomes.** Strong: President of Colombia; +2 Persuasion and a large clout gain. Mixed: governor and kingmaker. Poor: banned from running, and the party splits.
+
+### Arc 5: Narco State (the crash)
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | The crash cuts foreign money; the peso falls and US pressure rises | FX shocks (3) and sanctions |
+| 2 | Keep the street loyal: handouts or a crackdown | Favor, stability and unrest |
+| 3 | Make Colombia a haven for flight capital, or clean it up for US favor | Havens, laws and the post-crash order |
+
+**Outcomes.** Strong: Pablo holds power and Colombia becomes a regional haven. Mixed: he keeps power but is sanctioned. Poor: a coup or extradition.
+
+## 8.11 Tolu Balogun: "Black Gold"
+
+**Who he is.** The heir to a Lagos oil-trading fortune built on government licenses and favors (7.3.2). Oil money and corruption in a developing country: corruption, oil and third-world development.
+
+**What the line teaches.** Commodity trading and energy price indices, operating where corruption is the cost of business, FX controls and capital flight, and the choice between extracting and developing.
+
+**Starting position (A).** $1.2B family trust, mostly a private oil trading and offshore-block company in Lagos (Oil and gas); a crude-for-fuel swap license from the state oil company; hooks on a minister who is also owed favors by the family; debts to a Swiss bank. Traits: Charming, Greedy, Anxious. Ambition: Build a legacy.
+
+### Arc 1: The License
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | A new minister wants the swap license renegotiated; pay, trade favors or find leverage | Hooks, favors and corruption |
+| 2 | Pirates in the Gulf of Guinea hit a cargo; insure, escort or reroute | Chokepoints and shocks (2.6.0) |
+| 3 | Pay down the Swiss loan before the naira slips | FX risk (3) and debt |
+
+**Outcomes.** Strong: the license is secured for 5 years; +2 Persuasion. Mixed: +1 Persuasion and a higher cut to the minister. Poor: the license is lost to a rival family.
+
+### Arc 2: Money Out
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Move money out under capital controls through a London or Dubai trust | Personal trusts, havens and tax |
+| 2 | Buy London residential real estate for the family | Real estate abroad |
+| 3 | A journalist is digging into the offshore accounts | Scandals, intel and Image |
+
+**Outcomes.** Strong: the money is safe and the story dies. Mixed: the money is out but Favor falls at home. Poor: accounts frozen and a corruption probe opens.
+
+### Arc 3: The Refinery
+
+Runs alongside Arc 2.
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Nigeria imports its fuel; found a refinery company with state backing | Founding with government connections (1.6) |
+| 2 | Raise the money: a Gulf partner, a loan or a Lagos IPO | Raising capital and IPOs (3) |
+| 3 | Bring the refinery online despite theft from the pipelines | Operations and site risk |
+
+**Outcomes.** Strong: a working refinery and national praise; +2 Operations. Mixed: it runs at half capacity. Poor: a white elephant and a pile of debt.
+
+### Arc 4: Develop or Extract
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Build data centers and grid power in Lagos for the AI boom, or keep selling crude | Techno-Capital (6) and the energy index |
+| 2 | Back a candidate for president, or run for governor of Lagos | Elections and influence |
+| 3 | Pick a side: Effective Altruist development money or Accelerationist compute money | Ideology and foreign capital |
+
+**Outcomes.** Strong: Lagos becomes a compute and fintech hub with Tolu at its center. Mixed: a rich family in a poor country. Poor: unrest at home and Tolu is blamed.
+
+### Arc 5: Oil Shock (the crash)
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | The crash cuts oil demand and the naira falls | Commodity and FX crashes |
+| 2 | The state wants its cut back; the minister's hook turns on you | Hooks both ways |
+| 3 | Save the family business at home or flee with the trust | Legacy and exile |
+
+**Outcomes.** Strong: Tolu buys distressed assets cheap and comes out richer. Mixed: the business shrinks but survives. Poor: exile in London with half the trust.
+
+## 8.12 Qiao Lin: "The Red Line"
+
+**Who she is.** A daughter of a party-state family in Beijing, with a grandfather from the revolution and parents in state companies (7.3.3). The China political run.
+
+**What the line teaches.** State-owned enterprises, the party ladder, factions and purges, capital controls, chip sanctions, and the line between serving the state and getting rich from it.
+
+**Starting position (A).** A deputy director post at a state AI and surveillance company in Beijing; a family trust of $300M held through relatives; hooks on two provincial officials; Nobles stratum. Traits: Patient, Cunning, Loyal. Ambition: Rise to the top of the party.
+
+### Arc 1: The Princeling
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Deliver the company's five-year target on surveillance contracts | Running a state company and the management score |
+| 2 | A faction rival offers a deal; join, refuse or report | Factions, opinion and hooks |
+| 3 | Hide the family's Hong Kong holdings from the inspectors | Trusts held through relatives and secrets |
+
+**Outcomes.** Strong: promoted to director; +2 Intrigue. Mixed: +1 Intrigue. Poor: a warning from discipline inspectors.
+
+### Arc 2: Chips
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | US controls block advanced chips; find GPUs through Singapore shells or smuggling | Sanctions, shell companies and the GPU chain (6.7.0) |
+| 2 | Back a domestic chip push and win lithography know-how by any means | Lithography access, tech transfer and rivalry with Pieter (8.3) |
+| 3 | Answer the cheap Chinese open model moment (2025) | Scripted world events (7) |
+
+**Outcomes.** Strong: a working domestic compute supply; +2 Tech. Mixed: enough chips, at high cost. Poor: a shell company is exposed and a US sanction names her.
+
+### Arc 3: The Provinces
+
+Runs alongside Arc 2.
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Take a posting as party secretary of a province | Politics and influence away from the capital |
+| 2 | Hit growth targets with a real estate push, or clean up the province's debts | Real estate pools and local government debt |
+| 3 | A protest over a failed developer; suppress, pay or blame | Unrest, surveillance and Favor |
+
+**Outcomes.** Strong: a model province and a return to Beijing. Mixed: targets met with hidden debt. Poor: a scandal and a demotion.
+
+### Arc 4: The Standing Committee
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Build a faction: officials who owe you favors | Hooks and named relationships |
+| 2 | A purge campaign: lead it, survive it or become its target | Schemes and intel |
+| 3 | Win a seat on the Politburo, and aim for the Standing Committee | National politics |
+
+**Outcomes.** Strong: a Standing Committee seat and a large clout gain. Mixed: Politburo only. Poor: purged; the family trust is investigated.
+
+### Arc 5: Hard Landing (the crash)
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | The crash hits exports and the property market at once | Real estate cycles and trade |
+| 2 | Tighten capital controls or let money out to keep foreign friends | FX policy and capital flight |
+| 3 | Use the crisis to take control of the party, or protect the family and step back | Power and legacy |
+
+**Outcomes.** Strong: Qiao leads China out of the crash. Mixed: she keeps her seat and her family keeps its wealth. Poor: a scapegoat, and the family flees to Vancouver.
+
+## 8.13 Generated quests after a line
 
 When a character's line ends, or for characters without a full line after the milestones, **generated side quests** keep coming (batch 33) **(A)**:
 - **From the ambition** (1.1.2): a 2 to 4 step quest toward it, rebuilt when the ambition changes.
@@ -504,15 +684,16 @@ When a character's line ends, or for characters without a full line after the mi
 - **From rivals**: a rival's scheme or a rival rotation character aimed at the player opens a defense quest.
 - **Legacy quests**: a successor gets one or two quests from the old line (finish what your father started) unless they inherit an arc outright (8.1).
 
-## 8.11 The crash
+## 8.14 The crash
 
 The AI bubble pops in 2030 on average (Logan). The year is set at game start as 2030 plus a roll of -2 to +2 years **(T)**, then moved by events: a bigger boom (high AI valuations, heavy leverage) brings it closer, and calmer markets push it later **(A)**. In this world there was never a dot-com crash or a 2008 crisis (7.2.0), so investors have never lived through a great crash, and it hits harder: market drops are ×1.2 the normal crash size **(T)**. When it hits, every quest line with a crash arc opens it.
 
-## 8.12 Assumptions and open items
+## 8.15 Assumptions and open items
 
 1. Outcome tiers and buff sizes in 8.1; the 25% chance a successor picks up an unfinished arc.
 2. The default line's opening arcs and milestones in 8.2, with "Papers" replacing "The Shot".
 3. Pieter's reworked starting position and arcs in 8.3.
 4. Starting positions, traits and arcs for Antone, Samir, Yuna, John, Viktor and Garrett in 8.4 to 8.9.
-5. Generated quest sources in 8.10.
-6. Crash timing and the ×1.2 crash size in 8.11.
+5. Generated quest sources in 8.13.
+6. Crash timing and the ×1.2 crash size in 8.14.
+7. Starting positions, traits and arcs for Pablo, Tolu and Qiao in 8.10 to 8.12.

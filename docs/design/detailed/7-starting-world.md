@@ -19,7 +19,7 @@ _Status: draft v0.5 (2026-10-17), alternate history added. Built from Logan's an
 | Dynasty places | Each dynasty has an **Origin city** and a **Center of Power**. Members can live anywhere. |
 | Center of Power | The hub where the dynasty holds the most influence, so it moves as the dynasty grows. Influence is money, power and prestige: money is the asset base, and power and prestige modify it (7.5). |
 | Rise and fall | AI founders rise into new dynasties during play, and dead dynasties drop out. |
-| History | Follows the real AI boom, inside the alternate history in 7.2.0, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2030 on average a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.11); the game continues into a post-crash era with new rules. |
+| History | Follows the real AI boom, inside the alternate history in 7.2.0, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2030 on average a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.14); the game continues into a post-crash era with new rules. |
 | Alternate history (Logan, 2026-10-17) | In the game world the **dot-com crash, 9/11, the 2008 financial crisis and COVID never happened**. Everything else is the same, except that the **US won its wars in the Middle East far more decisively** and is in a much better position, both financially and in the security of its resources (7.2.0). |
 | Opening quest | Originally the COVID vaccine or a doctor's note. COVID never happened in this world, so the opening quest is now "Papers" (7.6), which keeps the same job: teach the quest system and unlock flights. |
 | LLM tip | Finishing the opening quest gives a tip naming the company that will make the first LLM breakthrough. The tip is always correct, and the tipped lab is different each game. |
@@ -88,7 +88,7 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 
 | # | Character | Location | Profile | Premise | Signature play |
 |---|---|---|---|---|---|
-| 6 | **Tolu Balogun** † | Lagos, Nigeria | Rich, with a burden **(A)** | Oil money and corruption in a developing country | Corruption, oil and third-world development |
+| 6 | **Tolu Balogun** | Lagos, Nigeria | Rich, with a burden | Oil money and corruption in a developing country | Corruption, oil and third-world development |
 | 7 | **Pieter Von Floop** † | Eindhoven, Netherlands | Rich, with a burden | The easy start. Sole heir to a lithography machine empire. The monopoly is easy to run, and he has been a boy scout his entire life. He is 24, and his father's health is starting to turn. The family trust is swelling, but he worries he may crack holding together what his father built | Run the world's lithography monopoly ([6-technocapital.md](6-technocapital.md) 6.7) |
 | 8 | **Samir Haddad** † | Dubai | Talented | A former elite soldier, now in the Permanent Underclass, slaving away on another megaproject in the desert. Then a stranger recognized his implants, said he could get him better ones, and if he did the stranger a favor the first one would be free | An assassin playthrough: slowly become a cyborg |
 | 9 | **Margaux Valcourt** † | Paris | Rich | A French redheaded woman who inherits a lot of money from her uncle. The Liberal, open-ended playthrough: she can become anything | Open sandbox |
@@ -99,8 +99,8 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 | # | Character | Location | Profile | Premise | Signature play |
 |---|---|---|---|---|---|
 | 11 | **Garrett Kroll** † | Pacific Ocean, off the coast of New Zealand | Rich, with a burden | A crazy automotive billionaire trying to start his own island colony by crashing boats into the side of Antarctica | A very hard politics run to protect his sovereign rights (Sovereigntists, [5-ideology.md](5-ideology.md)) |
-| 12 | **Fang Xiaoyu** † | Shenzhen | Talented **(A)** | Tech and finance | Run businesses across Hong Kong and Shenzhen |
-| 13 | **Qiao Lin** † | Beijing | Connected **(A)** | Party-state family | The China political run |
+| 12 | **Fang Xiaoyu** | Shenzhen | Talented | Tech and finance | Run businesses across Hong Kong and Shenzhen |
+| 13 | **Qiao Lin** | Beijing | Connected | Party-state family | The China political run |
 | 14 | **Ananya Hegde** † | Bengaluru | Talented **(A)** | A sleeper overpowered investor | Win India good chip deals so it can build lots of data centers early and run them at lower cost: scale the whole AI supply chain as an investor |
 | 15 | **Yuna Sakamoto** † | Tokyo-Yokohama, Japan | Connected | A young Japanese influencer with a massive following who now has to pivot her appeal to an incredibly politicized and extremist Japan | Choose a politics and drive Japan and Korea |
 
@@ -201,6 +201,6 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 7. Finishing "Papers" unlocks the Found Company action and wider schemes.
 12. The alternate-history consequences in 7.2.0, including the effects of the Ukraine war since 2005.
 13. "Papers" as the replacement opening quest (7.6).
-8. Names marked † and profiles marked **(A)** in 7.3.
+8. Names marked † and profiles marked **(A)** in 7.3 (Tolu Balogun, Fang Xiaoyu and Qiao Lin confirmed in batch 35).
 9. The natural-rivals rule for unpicked characters (7.3.4).
 11. The pool of five candidate labs for the tip.
