@@ -612,21 +612,13 @@ Final share                         13.9%  (Presence)
 
 ## 2.6 Goods
 
-### 2.6.0 Starter goods: tech and industry (Logan, 2026-10-17)
+### 2.6.0 What is modeled at the start (Logan, 2026-10-17)
 
-At the start, **only the tech and industry parts of the economy are simulated**. The starter goods should look like the real-world economy, with the really important ones such as oil included. Logan's list: **phones, PCs, cars, electric cars, GPUs, steel, oil**. The **GPU supply chain is the largest supply chain** in the game ([6-technocapital.md](6-technocapital.md) 6.7).
+At the start **only energy and GPUs are modeled** as real goods with recipes, prices and shipments (Logan). The GPU supply chain is the largest supply chain in the game and is simulated in four layers ([6-technocapital.md](6-technocapital.md) 6.7.0). Energy means electricity made by power plants in each hub, with fuel abstracted into running costs **(A)**.
 
-Proposed simulated set **(A)**, about 35 goods:
+Everything else, including the starter list Logan approved (phones, PCs, cars, electric cars, steel, oil and the rest of the tables below), is **abstracted** at the start: each sector has fixed demand that grows with the economy, a margin, and a cost per unit of output, with no recipe chain **(A)**. These goods are switched to full simulation later, in this order **(A)**: oil and fuels, steel, phones and PCs, cars and electric cars, then the rest.
 
-| Tier | Goods |
-|---|---|
-| Raw | Crude oil, natural gas, coal, iron ore, copper ore, bauxite, lithium ore, rare earth ore, silica quartz |
-| Intermediate | Refined fuels, steel, aluminium, refined copper, plastics, chemicals, specialty gases, polysilicon, silicon wafers |
-| Components | Mature chips, advanced logic dies, memory (including HBM), advanced packaging, GPUs, battery cells, displays, sensors, electric motors, precision optics |
-| Finished | Smartphones, personal computers, combustion cars, electric cars, AI server nodes, industrial robots, lithography systems |
-| Energy | Electricity |
-
-Everything else in the tables below (food, clothing, pharma, luxury, defense, services) is **abstracted** at the start: a flat sector with fixed demand and margins, no recipe chain **(A)**. They can be turned into simulated goods later.
+Population needs are consumer goods (2.8.2); while those goods are abstracted, needs are filled from the abstracted sectors.
 
 ### 2.6.1 How to read the goods tables
 

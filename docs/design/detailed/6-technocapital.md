@@ -319,6 +319,53 @@ The full requirement list. **Opp. cost** is the market value of the TC at base p
 
 ## 6.7 Building Techno-Capital
 
+### 6.7.0 The GPU chain: simplified, 4 layers (Logan, 2026-10-17)
+
+At the start **only energy and GPUs are modeled** as real goods (Logan). Everything else in the economy is abstracted (2-map 2.6.0). The GPU supply chain is the largest supply chain in the game, and at launch it is simulated as **four layers**. The eight-layer Stack (6.7.1) stays as the reference for later.
+
+**Decided (Logan).**
+- A GPU is a **component**: it goes into PCs for consumers and into AI server nodes for data centers.
+- **Fabless designers** own GPU designs and pay fabs and packagers to make them.
+- Each designer has a **developer ecosystem** score that makes buyers prefer its GPUs.
+- **Consumers and AI compete for the same cards.** At the start AI demand, and GPU demand overall, is very low compared with what it becomes. Consumer demand grows at a steady rate; AI demand grows at a really high rate.
+
+#### The four layers
+
+| Layer | What it makes | Inputs | Capacity gate | Starting holders (2.3.3) |
+|---|---|---|---|---|
+| **1. Lithography** | Lithography tools | Abstracted parts cost ($30M per tool **(T)**), electricity | About 4 EUV tools a month worldwide **(T)** | Eindhoven (sole EUV maker) |
+| **2. Fabs** | GPU dies (logic and memory together, as one "die set") | Abstracted wafers and chemicals ($400 per die set **(T)**), electricity 1.5 MWh per die set **(T)** | Installed lithography tools: 1 EUV tool makes 25,000 die sets a month **(T)** | Hsinchu-Taipei 60%, Seoul-Pyeongtaek 25%, Phoenix 15% |
+| **3. Packaging** | **GPUs** | 1 die set, abstracted board parts ($150 **(T)**), electricity 0.2 MWh | Packaging lines: 1 line makes 100,000 GPUs a month **(T)**. The tightest layer at the start | Hsinchu-Taipei, Penang |
+| **4. Deployment** | Compute (H) in data centers, or consumer PCs | GPUs; electricity for data centers (6.7.2) | Data center power and grid connections; consumers need nothing | Data centers: Bay Area, Phoenix, Singapore, Beijing, Dubai. Consumers: every hub |
+
+- **Designers** sit above the chain. A designer holds a GPU design (its Generation, 6.4.1) and books fab and packaging capacity by contract (2.10). A designer can own its own fab, but most don't.
+- An **AI server node** is 8 GPUs plus a host. It is still counted per GPU slot, so one GPU is one slot of compute (6.2).
+- **Energy** is the only other modeled good: electricity is made by power plants in each hub (fuel is abstracted into the plant's running cost) and priced per hub (2.6.8, 6.7.2).
+
+#### Demand
+
+One world GPU market with one price, **P**. Base price $1,500 per GPU **(T)**.
+
+| Buyer | Demand per year | Price sensitivity | Growth **(T)** |
+|---|---|---|---|
+| **Consumers** (gamers, PCs, creators) | 40M GPUs at the start **(T)** | High: demand × (P ÷ $1,500)^-1.2 | +5% a year, steady |
+| **AI** (data centers, labs, clouds) | 0.5M GPUs at the start **(T)** | Low: demand × (P ÷ $1,500)^-0.3 | +3% a month before the tipped lab's breakthrough (November 2022, 7.7), +6% a month from then until the crash (about ×2 a year), -40% at the crash, then +2% a month |
+
+- **Clearing.** Each month P moves toward the price where total demand equals the GPUs packaged **(T)**. Because AI buyers barely care about price and consumers care a lot, a shortage pushes P up and **pushes gamers out first**: the AI boom starves consumers.
+- With these numbers AI demand passes 10% of the market around 2024 and passes consumer demand around 2028, if supply keeps up **(T)**. Supply grows only as fast as lithography tools, fabs and packaging lines are built, so P climbs through the boom.
+- **Server node price** = P + $4,000 for the host **(T)**, so the launch prices in 6.4.1 are a starting guide and node prices float with the GPU market.
+
+#### Developer ecosystem
+
+- Each designer has a **developer ecosystem** score from 0 to 100 **(T)**.
+- **AI buyers** split their orders by `ecosystem² × availability`. **Consumers** split by `ecosystem × availability`, so they care less **(T)**.
+- Ecosystem grows by +1 a month per 10% share of GPUs installed worldwide, and by spending on developer programs ($50M a month for +1, **T**). It falls 1 a month when a designer has no current-Generation GPU.
+- Starting designers **(A)**: a Bay Area designer with ecosystem 80 and most of the market; a second US designer at 40; a Shenzhen or Beijing designer at 15, cut off from Hsinchu by the October 2022 export controls (6.9.1).
+
+#### Slop
+
+GPUs are a consumer good, so their recipe makes slop: 1.5 slop per GPU **(T)** (2-map 2.8.0).
+
 ### 6.7.1 The Stack
 
 The AI supply chain is a stack of chokepoints. Each layer has a bottleneck a player can own, and each one can break.
