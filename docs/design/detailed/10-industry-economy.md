@@ -1,6 +1,6 @@
 # 10. Industry economy (Wall Street Raider style): detailed design
 
-_Status: draft v0.1 (2026-10-17). Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
+_Status: draft v0.2 (2026-10-17), batch 21 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 10.12.
 
@@ -12,10 +12,14 @@ _Status: draft v0.1 (2026-10-17). Logan scrapped the Victoria 3 goods model and 
 |---|---|
 | Goods | The Victoria 3 style goods model is scrapped: no goods tables, recipes, production methods, per-hub goods prices or shipments. |
 | Model | Wall Street Raider style: the economy is a set of **industries**, and companies earn money from the industries they operate in. The player reads and plays the economy through company financials, not factories. |
+| Business units | A business unit is **one building or site** (a fab, a mine, a data center, a store chain's flagship, an office), sitting on a plot in a hub. |
+| Energy and GPUs | Measured in **dollars** like every other industry; nothing is counted in physical units. |
+| Industries | About 36, as in 10.3. |
+| Running units | **Mostly automatic.** The company's executives run its sites; the player buys, sells and merges (10.5). |
 
 ## 10.2 The model in one paragraph
 
-Every country has a size for each **industry** (yearly revenue). The industry grows on its own trend and swings with the business cycle, interest rates and its cost drivers. Companies own **business units**: one unit is one company's operation in one industry in one country. A unit takes a **market share** of its industry, limited by its **capacity**, and turns revenue into profit through its **margin**. Profit flows into the company's financial statements, which set its fundamental value and share price. Players expand, shrink, buy, sell, merge and spin off business units the way Wall Street Raider players trade operating businesses.
+Every country has a size for each **industry** (yearly revenue). The industry grows on its own trend and swings with the business cycle, interest rates and its cost drivers. Companies own **business units**, each one building or site in a hub, in one industry. A site sells into its industry in its country, takes a **market share** limited by its **capacity**, and turns revenue into profit through its **margin**. Profit flows into the company's financial statements, which set its fundamental value and share price. Executives run the sites on their own; the player buys, sells, builds, merges and spins off sites the way Wall Street Raider players trade operating businesses.
 
 ## 10.3 Industries
 
@@ -23,10 +27,10 @@ About 36 industries at the start **(A)**, each with fixed traits. Sizes are give
 
 | Industry | Sector | World size 2022 ($/yr) **(T)** | Trend growth **(T)** | Cyclicality β **(T)** | Rate sensitivity **(T)** | Margin at full use **(T)** | Fixed cost share f **(T)** | Capital per $1 of capacity **(T)** | Main cost drivers | Slop per $1M **(T)** |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Lithography machines | Tech (GPU chain) | Set by units (10.6) | Boom-driven | 1.5 | Low | 35% | 0.45 | 1.2 | Electricity | 0 |
-| Foundry (wafers) | Tech (GPU chain) | Set by units (10.6) | Boom-driven | 1.6 | Medium | 30% | 0.55 | 2.5 | Electricity, lithography service | 0.1 |
-| Chip packaging | Tech (GPU chain) | Set by units (10.6) | Boom-driven | 1.6 | Medium | 18% | 0.40 | 1.0 | Electricity | 0.1 |
-| GPU design and boards | Tech (GPU chain) | Set by units (10.6) | Boom-driven | 1.8 | Low | 25% | 0.20 | 0.2 | GPU chain prices | 0.5 |
+| Lithography machines | Tech (GPU chain) | $22B | Boom-driven (10.6) | 1.5 | Low | 35% | 0.45 | 1.2 | Electricity | 0 |
+| Foundry (wafers) | Tech (GPU chain) | $130B | Boom-driven (10.6) | 1.6 | Medium | 30% | 0.55 | 2.5 | Electricity, lithography service | 0.1 |
+| Chip packaging | Tech (GPU chain) | $45B | Boom-driven (10.6) | 1.6 | Medium | 18% | 0.40 | 1.0 | Electricity | 0.1 |
+| GPU design and boards | Tech (GPU chain) | $60B | Boom-driven (10.6) | 1.8 | Low | 25% | 0.20 | 0.2 | GPU chain prices | 0.5 |
 | Other chips | Tech | $450B | +6% | 1.4 | Medium | 22% | 0.45 | 1.5 | Electricity | 0.1 |
 | AI labs | Tech | $5B | Boom-driven | 2.0 | High | -40% to +40% | 0.70 | 0.3 | Compute (6.2) | 2 |
 | Cloud and data centers | Tech | $400B | +18% | 1.0 | Medium | 25% | 0.55 | 1.8 | Electricity, GPU price | 0.2 |
@@ -38,7 +42,7 @@ About 36 industries at the start **(A)**, each with fixed traits. Sizes are give
 | Insurance | Finance | $6T | +4% | 0.6 | Positive | 8% | 0.30 | Uses float (3.17) | Disasters | 0.3 |
 | Asset management | Finance | $500B | +6% | 1.5 | Medium | 30% | 0.50 | 0.1 | Markets level | 0.2 |
 | Crypto exchanges | Finance | $20B | ±60% swings | 2.5 | High | 40% | 0.40 | 0.1 | Coin prices (9.3) | 3 |
-| Oil and gas production | Energy | $3.5T | +1% | 0.8 | Low | 25% at $80 oil | 0.60 | 2.5 | Oil and gas prices (10.6) | 0.2 |
+| Oil and gas production | Energy | $3.5T | +1% | 0.8 | Low | 25% at oil index 100 | 0.60 | 2.5 | Oil and gas prices (10.6) | 0.2 |
 | Refining | Energy | $1.8T | 0% | 1.0 | Low | 6% | 0.35 | 1.0 | Oil price | 0.5 |
 | Power utilities | Energy | $2.5T | +2.5% | 0.3 | High | 15% | 0.70 | 3.0 | Gas price | 0.3 |
 | Renewables | Energy | $350B | +12% | 0.6 | Very high | 20% | 0.80 | 4.0 | Rates | 0.1 |
@@ -65,18 +69,17 @@ About 36 industries at the start **(A)**, each with fixed traits. Sizes are give
 - **Rate sensitivity**: demand × (1 - s × (policy rate - neutral rate)), with s = 0 (Low), 1 (Medium), 2 (High), 3 (Very high) **(T)**. Banks and insurers use it the other way round on their margin.
 - **Strata spending** (2.8.0): consumer industries' size in a country moves with the spending of each stratum there. The PMC's needs (housing, energy, healthcare) map to real estate, power utilities and healthcare services; unmet needs raise unrest (2.8.5) **(A)**.
 
-## 10.4 Business units
+## 10.4 Business units (sites)
 
-A company owns one or more business units. A unit is the company's operation in **one industry in one country** (a Shenzhen phone maker selling in the US and China has two units). Its home hub is where its book assets count for influence (2.5.2) and where its buildings sit on plots (2.16).
+A business unit is **one building or site** (Logan): a fab, a mine, an oil field, a data center, a refinery, a hospital, a head office for a software business. It sits on a plot in a hub district (2.16), belongs to one industry, and sells into that industry in its hub's country. A company with three fabs in Hsinchu has three units; its share of Taiwan's foundry industry is the sum of theirs. Its book assets count for influence in its hub (2.5.2).
 
 | Trait | Meaning | Range **(T)** |
 |---|---|---|
-| **Capacity** | The most revenue the unit can earn per year (for the GPU chain, a unit count, 10.6) | Any |
+| **Capacity** | The most revenue the site can earn per year, in dollars | Any; typical sizes in 10.4.2 |
 | **Market share** | Its share of the industry in that country | 0% to 100% |
-| **Quality** | How strong the unit is against rivals | 0.5 to 2.0, starts at 1.0 |
+| **Quality** | How strong the site is against rivals | 0.5 to 2.0, starts at 1.0 |
 | **Book assets** | Capital tied up, = capacity × the industry's capital per $1, less depreciation | |
-| **Stance** | Pricing stance: Premium, Market or Discount (10.5) | |
-| **R&D and marketing** | Low, Normal or High spending (10.5) | |
+| **Condition** | Wear; falls without upkeep, cuts capacity below 50 | 0 to 100 |
 
 ### 10.4.1 Monthly calculation
 
@@ -88,35 +91,53 @@ A company owns one or more business units. A unit is the company's operation in 
 6. **Depreciation** = book assets ÷ 10 years ÷ 12 **(T)** (4 years for cloud servers, 25 years for real estate).
 7. The result feeds the income statement (2.13.2): revenue, operating costs as cost of sales and SG&A, R&D and marketing as their own lines, then depreciation, interest and tax as before.
 
-**Quality** moves each quarter: +0.02 per point of the managing executive's Operations above 10, +0.05 for High R&D, -0.05 for Low R&D, +0.03 for High marketing, -0.03 for Low, plus tech tier bonuses (2.12) and events; it drifts back toward 1.0 by 2% a quarter **(T)**.
+**Quality** moves each quarter: +0.02 per point of the managing executive's Operations above 10 (the COO, or the CEO when there is no COO), plus the effect of the executives' automatic choices (10.5.1), tech tier bonuses (2.12) and events; it drifts back toward 1.0 by 2% a quarter **(T)**.
+
+### 10.4.2 Typical site sizes (T)
+
+| Site | Industry | Capacity per year | Build cost |
+|---|---|---|---|
+| Advanced fab | Foundry | $10B | $25B |
+| Lithography plant | Lithography machines | $5B | $6B |
+| Packaging plant | Chip packaging | $2B | $2B |
+| GPU design campus | GPU design and boards | $10B | $2B (plus the tape-out rule in 6.7.0) |
+| Hyperscale data center | Cloud and data centers | $2B | $3.6B |
+| Oil field | Oil and gas production | $3B | $7.5B |
+| Power plant | Power utilities | $1B | $3B |
+| Car plant | Autos and EVs | $8B | $6.4B |
+| Software office | Software and SaaS | $1B | $0.2B |
+| Hospital | Healthcare services | $0.5B | $0.35B |
 
 ## 10.5 What the player decides
 
-Like Wall Street Raider, the player runs businesses through a few big levers, set monthly by the head or by board seat tasks (1.8.2). No factory micromanagement.
+Running sites is **mostly automatic** (Logan). The player plays the Wall Street Raider game on top: deals, not operations.
 
-| Action | Effect **(T)** | Takes |
+### 10.5.1 What executives do on their own
+
+Each month the company's executives set every site's pricing stance, R&D, marketing, upkeep and staffing by themselves **(A)**. How well they do it comes from their skills and traits: a high-Operations COO keeps costs and quality up; a Greedy CEO starves R&D for short-term profit; an Ambitious one over-expands. The player shapes this only indirectly, through who sits in which board seat (1.8), the company's charter, and pressure as a shareholder. Executives also propose expansions and closures, which the board approves (1.8.4).
+
+### 10.5.2 Player deals
+
+| Deal | Effect **(T)** | Takes |
 |---|---|---|
-| **Expand capacity** | Spend capital per $1 × added capacity; up to +50% at a time | 6 months (12 for fabs, power plants, mines) |
-| **Shrink capacity** | Sell assets at 60% of book; severance of 3 months' fixed cost on the cut part; may trigger strikes (2.8.6) | 1 month |
-| **Stance** | Premium: share ×0.8, margin +5 points. Discount: share ×1.25, margin -5 points. Market: neither | Next month |
-| **R&D and marketing** | Normal costs 4% and 3% of revenue; High doubles them; Low halves them | Quality moves next quarter |
-| **Sell a unit** | To another company for cash or shares, priced by negotiation or auction; its share, quality and staff move with it | 1 to 3 months to close |
-| **Buy a unit** | The other side of a sale; antitrust review above 30% share in a country (4.9.5) | 1 to 3 months |
-| **Merge units** | Two units in the same industry and country owned by one company become one; quality is the capacity-weighted average +0.05 for synergies, fixed costs -10% | 3 months |
-| **Spin off** | A unit becomes a new company; shares go to the parent's holders or are sold in an IPO (3.4) | 3 months |
-| **Close** | Like shrinking to zero | 1 month |
-| **Enter** | Start a new unit in an industry and country: capacity from zero, quality 0.9 | As expand |
+| **Buy a site** | From another company for cash or shares, priced by negotiation or auction; its share, quality and staff move with it. Antitrust review above 30% share in a country (4.9.5) | 1 to 3 months |
+| **Sell a site** | The other side of a purchase | 1 to 3 months |
+| **Merge** | Two sites in the same industry and hub owned by one company become one; quality is the capacity-weighted average +0.05, fixed costs -10%. Whole companies merge through 1.9 | 3 months |
+| **Build a site** | Buy or lease a plot (2.16) and pay the build cost (10.4.2); starts at quality 0.9 | 6 to 24 months |
+| **Close a site** | Sell its assets at 60% of book; severance of 3 months' fixed cost; may trigger strikes (2.8.6) | 1 month |
+| **Spin off** | One or more sites become a new company; shares go to the parent's holders or are sold in an IPO (3.4) | 3 months |
 
-This makes the Wall Street Raider moves possible: buy a conglomerate, strip and sell its best units, merge what is left with your own, spin off the rest.
+This keeps the Wall Street Raider moves: buy a conglomerate, strip and sell its best sites, merge what is left with your own, spin off the rest.
 
-## 10.6 Energy and the GPU chain
+## 10.6 Energy and the GPU chain in dollars
 
-Energy and GPUs stay the only things counted in physical units, because Techno-Capital needs real counts (6.2) and energy prices drive costs everywhere **(A)**.
+Energy and GPUs are measured in dollars like every other industry (Logan). Nothing is counted in physical units.
 
-- **Energy prices.** Oil, gas and electricity each have one price (electricity per country grid). Each month the price moves toward the level where world capacity of the energy industries meets demand (the sum of all industries' energy use, which grows with their revenue). Oil and gas trade on the commodity exchanges ([3-markets-and-fx.md](3-markets-and-fx.md)). Shocks in 2.6.0 (Hormuz, cartel cuts, sanctions, the Red Sea) cut capacity directly.
-- **Cost driver index D.** For each industry, D = 1 + the weighted change of its cost drivers from base **(T)**. Example: airlines with oil 40% of variable cost; oil +50% gives D = 1.20.
+- **Price indices.** Oil, gas, electricity (per country grid) and GPUs each have a **price index**, 100 at the start. Each month an index moves toward `100 × (world demand ÷ world capacity)^(1/ε)` for its industry, with ε from 2.9.2 (oil 0.3, gas 0.4, electricity 0.2, GPUs 0.5) **(T)**. Oil and gas indices trade as futures on the commodity exchanges ([3-markets-and-fx.md](3-markets-and-fx.md)). Shocks in 2.6.0 (Hormuz, cartel cuts, sanctions, the Red Sea) cut capacity directly, so the index jumps.
+- **Cost driver index D.** For each industry, D = 1 + the weighted change of its cost drivers' indices from 100 **(T)**. Example: airlines with oil 40% of variable cost; oil index 150 gives D = 1.20.
 - **Pass-through.** Each industry passes part of D to its prices: commodities 80%, most industries 50%, regulated utilities 100% after 6 months **(T)**. Pass-through raises revenue and lowers demand by the industry's price sensitivity.
-- **GPU chain.** The four layers in [6-technocapital.md](6-technocapital.md) 6.7.0 are four industries whose capacity is counted in machines, dies, chips and GPUs. Their revenue is units sold × price (lithography $200M per machine; GPU price P), and the GPU demand table in 6.7.0 sets demand. Everything else about them (margins, fixed costs, stance, buying and selling units) works like any other industry.
+- **GPU chain.** The four layers in [6-technocapital.md](6-technocapital.md) 6.7.0 are four dollar industries. GPU design and boards grows with the consumer and AI demand growth rates in 6.7.0 (the AI part follows the boom trigger and the boom rate rolled for the save); the layers above grow with it. When the GPU index is above 100, consumer GPU demand is cut by the 6.7.0 price sensitivity, so the boom still pushes gamers out first.
+- **Techno-Capital** still needs counts (6.2), so they are derived from dollar capacity **(T)**: every $1B a year of foundry capacity holds 4 lithography machines; every $1B a year of cloud and data center capacity gives 150,000 H a month of compute. A lithography machine's price is shown as $200M × the GPU index ÷ 100.
 
 ## 10.7 Trade, chokepoints and disruptions
 
@@ -146,12 +167,12 @@ Slop is now produced per dollar: each unit makes `revenue × its industry's slop
 
 ## 10.10 Worked example: a robotics unit in a recession
 
-Halcyon Robotics has a US robotics unit: capacity $3.0B a year, share 6%, quality 1.0, Market stance. US robotics demand is $40B a year.
+Halcyon Robotics has one US robotics plant (one site): capacity $3.0B a year, share 6%, quality 1.0, Market stance. US robotics demand is $40B a year.
 
 - **Expansion** (cycle +2%, β 1.5): demand = 40 × 1.03 = $41.2B. Revenue = 6% × 41.2 = $2.47B a year (82% of capacity).
 - **Costs** (margin 10%, f 0.35, so v 0.55; D 1.0): 2.47 × 0.55 + 3.0 × 0.35 = 1.36 + 1.05 = $2.41B. Operating profit $0.06B, a 2.5% margin, because 18% of capacity sits idle.
 - **Recession** (cycle -6%): demand = 40 × 0.91 = $36.4B; revenue = $2.18B; costs = 1.20 + 1.05 = $2.25B. The unit now **loses about $70M a year**.
-- **Player options**: shrink capacity to $2.3B (sell $0.49B of assets at 60% of book, pay severance, risk a strike), switch to Discount to win share, or buy a weaker rival's unit cheaply and merge it in to cut fixed costs 10%.
+- **What happens next**: the COO decides on their own whether to cut costs or discount to win share (10.5.1). The player's moves are deals: sell the site before the recession deepens, or buy a weaker rival's site cheaply and merge it in to cut fixed costs 10%.
 
 ## 10.11 Tooltips
 
@@ -159,10 +180,9 @@ Hovering a unit's revenue shows: industry size → cycle → rates → pass-thro
 
 ## 10.12 Assumptions and open items
 
-1. The industry list and every number in 10.3.
-2. A business unit is one industry in one country.
-3. The share model in 10.4.1 and the 15% monthly move.
-4. The action list and its costs in 10.5.
-5. Energy and GPUs stay counted in units; everything else in dollars.
-6. Chokepoint exposure replaces shipping.
-7. Slop per dollar of revenue.
+1. Every number in 10.3 and the site sizes in 10.4.2.
+2. The share model in 10.4.1 and the 15% monthly move.
+3. Which choices executives make on their own (10.5.1), and the deal list in 10.5.2.
+4. Price indices and the Techno-Capital conversions in 10.6.
+5. Chokepoint exposure replaces shipping.
+6. Slop per dollar of revenue.

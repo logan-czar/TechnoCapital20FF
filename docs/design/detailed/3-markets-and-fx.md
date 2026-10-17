@@ -359,6 +359,7 @@ Patience lowers slippage but not permanent impact, and gives rivals time to noti
 |---|---|---|
 | **Market** | This tick, up to the participation cap; the rest carries to the next tick | Speed |
 | **Limit** | When the tick price reaches the limit, up to the cap | Price control |
+| **Stop** | Becomes a market order when the price crosses the stop level (stop-loss or stop-buy) | Cutting losses, chasing breakouts |
 | **Work order** | Spread over N ticks at a chosen participation rate (5% to 25%) | Low slippage stake building |
 | **Block trade** | Negotiated with one named holder in a short event (1 to 8 hours of a character's time). Price = market price plus or minus a premium or discount set by the holder's reservation price. No slippage, but the trade is printed after settlement and the market then applies 30% of its permanent impact | Buying a stake from a fund, selling a stake without crashing the price |
 | **Tender offer** | Public offer to all holders at a fixed price for a set period (2 to 4 weeks), possibly conditional (minimum acceptance, regulatory approval, removal of a poison pill) | Takeovers ([01-companies.md](../01-companies.md) 1.8) |
@@ -414,7 +415,7 @@ At each exchange's close:
 
 ### 3.4.1 IPO event chain
 
-The IPO is the event chain named in [10-events.md](../10-events.md) 10.2 (Hire Banks, Roadshow, Pricing Night, First Day of Trading), expanded below. It unlocks in Stage 3.
+The IPO is the event chain named in [10-events.md](../10-events.md) 10.2 (Hire Banks, Roadshow, Pricing Night, First Day of Trading), expanded below. It is open to any company that meets its exchange's listing requirements and hires an underwriter (Logan, 2026-10-17). Trading stays quote-based with slippage, limit and stop orders; there is no full order book (Logan).
 
 **Preconditions**
 - The company meets the target exchange's listing requirements (3.2.2) at its current V.
@@ -442,7 +443,7 @@ Other costs: legal and accounting 1% of primary proceeds (minimum $2M), plus the
 
 **Step 4: Roadshow** (2 weeks; 8 to 12 investor meetings of 2 to 4 hours each in different hubs, so travel time matters)
 
-Each meeting is a skill check of the presenters' Influence plus Finance against the investor's sophistication. The result builds **coverage**, the oversubscription multiple of the order book:
+Each meeting is a skill check of the presenters' Persuasion plus Finance against the investor's sophistication. The result builds **coverage**, the oversubscription multiple of the order book:
 
 `Coverage = 1.5 + bank tier bonus + 3 x Mkt/100 + 2 x Sec/100 - 0.05 x max(0, GRG - 25) + 5 x (Q - 1) + meeting results`
 
