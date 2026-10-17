@@ -42,7 +42,7 @@ Exact rules, numbers and content for each layer of the game:
 | 5. Ideology (Victoria 2 style, cyberpunk) | [detailed/5-ideology.md](detailed/5-ideology.md) |
 | 6. Techno-Capital (compute, fabs, lithography, drones, autonomous vehicles, robots, models) | [detailed/6-technocapital.md](detailed/6-technocapital.md) |
 | 7. Starting world (alternate history, 2022 scenario, 15 starting characters, rivals, opening quest, timeline to 2030) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |
-| 8. Quest lines (arcs, the default line, Pieter Von Floop, Antone Provolone, Samir Haddad, Yuna Sakamoto) | [detailed/8-quest-lines.md](detailed/8-quest-lines.md) |
+| 8. Quest lines (arcs, the default line, and full lines for Pieter, Antone, Samir, Yuna, John, Viktor and Garrett) | [detailed/8-quest-lines.md](detailed/8-quest-lines.md) |
 | 9. Gambling, crypto and prediction markets (the phone tab) | [detailed/9-gambling.md](detailed/9-gambling.md) |
 | 10. Industry economy (Wall Street Raider style: industries, business units; replaces goods) | [detailed/10-industry-economy.md](detailed/10-industry-economy.md) |
 | 11. Addiction (gambling, drugs, cyberware, doomscrolling, sex) | [detailed/11-addiction.md](detailed/11-addiction.md) |

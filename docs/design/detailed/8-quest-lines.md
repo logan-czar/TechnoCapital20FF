@@ -1,8 +1,8 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v0.2 (2026-10-17). Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v0.3 (2026-10-17). Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
-**How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.9.
+**How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.12.
 
 ---
 
@@ -19,11 +19,11 @@ A quest line is made of **arcs** (Logan's word; not chapters).
 | Steps | Inside an arc, the player sees only the next step ([10-events.md](../10-events.md) 10.4). Failure branches into new quests. |
 | After the line | When a line ends, **generated side quests** keep coming from events, the character's ambition (1.1.2) and rivals (batch 33). |
 | Successors | A successor **usually does not** inherit the quest line (batch 33): they start with their own ambition and generated quests, plus a few legacy quests from the old line. **Sometimes** (25% per unfinished arc **(T)**, higher for children and protégés trained in it) the successor picks up an unfinished arc. |
-| The crash | The AI bubble pops in **2030 on average**. The actual year varies by a few years with RNG and events (8.8). Every full line has a crash arc that opens whenever it hits. |
+| The crash | The AI bubble pops in **2030 on average**. The actual year varies by a few years with RNG and events (8.11). Every full line has a crash arc that opens whenever it hits. |
 
 **Outcome tiers (A).** Most arcs use three tiers: **Strong**, **Mixed** and **Poor**. As a guide, Strong gives +2 to one skill and a clout gain, Mixed gives +1 to one skill, Poor gives a lasting penalty or a negative trait **(T)**.
 
-**Next full lines (Logan, batch 33).** One per region first: **Antone Provolone** (Americas, 8.4), **Samir Haddad** (Europe, Africa and the Middle East, 8.5) and **Yuna Sakamoto** (Asia and Oceania, 8.6). The other characters keep the default line (8.2) until theirs are written.
+**Full lines written (Logan, batches 33 and 34).** Pieter Von Floop (8.3), Antone Provolone (8.4), Samir Haddad (8.5), Yuna Sakamoto (8.6), John Oligarch (8.7), Viktor Sokolov (8.8) and Garrett Kroll (8.9). The other characters keep the default line (8.2) until theirs are written.
 
 ## 8.2 Default starting quest line (placeholder)
 
@@ -49,7 +49,7 @@ The opening arcs run back to back and take the first few months of 2022 **(T)**.
 | 3 | **Be known** | Reach a Fame threshold in one hub |
 | 4 | **Hold power** | Control a company, win an office, or lead a bloc |
 | 5 | **Ride the boom** | Hold a stake or Techno-Capital in the AI supply chain when the tipped lab's breakthrough lands |
-| 6 | **Survive the crash** | Come out of the crash (8.8) in the same stratum or higher |
+| 6 | **Survive the crash** | Come out of the crash (8.11) in the same stratum or higher |
 
 ## 8.3 Pieter Von Floop: "Holding It Together" (reworked for the new economy)
 
@@ -129,7 +129,7 @@ Opens when someone builds a stake past a disclosure line, or when a rival from t
 
 ### Arc 6: The Crack (the crash)
 
-Opens when the crash hits (8.8). Fab customers stop ordering and the order book empties.
+Opens when the crash hits (8.11). Fab customers stop ordering and the order book empties.
 
 | Step | Goal | Teaches |
 |---|---|---|
@@ -318,7 +318,185 @@ Runs alongside Arc 2.
 
 **Outcomes.** Strong: she becomes the voice of the post-crash era. Mixed: she survives in office. Poor: her movement turns on her.
 
-## 8.7 Generated quests after a line
+## 8.7 John Oligarch: "Bootstraps"
+
+**Who he is.** Calgary. A 21-year-old oil man with the best stats of any character in the game, bar none (7.3.1). He is in the PMC, one bad month from falling into the Permanent Underclass. Gulf oil is steadier and cheaper in this world (7.2.0), so Alberta's oil sands are squeezed.
+
+**What the line teaches.** Climbing from nothing on stats alone: strata, debt, the industry economy, founding and growing a company, and the oil and energy price indices.
+
+**Starting position (A).** $40,000 in savings and $60,000 of student debt; a rig job; a rented room in Calgary's residential pool. Skills around 18 in Operations and Finance, 15 in Persuasion. Traits: Ambitious, Diligent, Brave. Ambition: Get rich.
+
+### Arc 1: Laid Off
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Cheap Gulf oil closes your rig; pay rent before you slip a stratum | Strata (2.8.0); the oil price index (10.6) |
+| 2 | Take a loan or sell something to stay afloat | Personal debt and leverage (1.10.3) |
+| 3 | A foreman offers a small share in a failing service company | Buying into a company |
+
+**Outcomes.** Strong: John keeps his stratum and owns a stake; +2 Operations. Mixed: +1 Operations. Poor: he falls into the Permanent Underclass and must climb back.
+
+### Arc 2: The Little Company
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Become CEO of the service company and fill its board | Board and management score (10.5) |
+| 2 | Win a contract from a big oil sands producer | Industries and market share (10.4.1) |
+| 3 | Expand the site with leased industrial space | Growth plans and pools (10.4.2, 10.4.5) |
+
+**Outcomes.** Strong: the company turns a profit; +2 Finance. Mixed: +1 Finance. Poor: the producer cancels and the company teeters.
+
+### Arc 3: Power Play
+
+Opens once the AI boom starts.
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Data centers need power: open a direct branch in power utilities | Direct branches (10.4.6) |
+| 2 | Sign a power deal with a hyperscaler | The GPU chain and power demand (6.7.0) |
+| 3 | Raise money: a bank loan priced by your credit rating, or a VC round | Borrowing and founding paths (10.5.5, 1.6) |
+
+**Outcomes.** Strong: a fast-growing power business; clout gain. Mixed: a small branch. Poor: over-borrowed and at the bank's mercy.
+
+### Arc 4: The Climb
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Reach the Glitterati: Fame, Image and a seat on another board | Strata, Image, multiple boards |
+| 2 | An oil dynasty offers to buy you out or marry into your family | Deals, marriage (1.11.5) |
+| 3 | List the company | IPO (3.4) |
+
+**Outcomes.** Strong: John is a Glitterati founder of a listed company. Mixed: rich but sold out. Poor: the IPO flops.
+
+### Arc 5: Dry Hole (the crash)
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Data centers stop paying; power demand collapses | Industry cycles, operating leverage |
+| 2 | Restructure the debt or let creditors take the company | Restructuring (10.5.4) |
+| 3 | Start again or hold on | Ambition and legacy |
+
+**Outcomes.** Strong: John buys his rivals at the bottom. Mixed: he survives smaller. Poor: he loses the company but keeps his stats, and the climb starts again.
+
+## 8.8 Viktor Sokolov: "Long War"
+
+**Who he is.** Moscow. An intelligence officer building a family network inside the state (7.3.2). In this world Russia has been at war in Ukraine since 2005, a drone stalemate under heavy sanctions (7.2.0).
+
+**What the line teaches.** Spycraft, hooks, state capture, sanctions evasion, shells and havens, and the drone war economy.
+
+**Starting position (A).** A colonel's salary, $5M hidden abroad through shells, a wife and two children, a network of officers. Traits: Paranoid, Ruthless, Cautious. Ambition: Protect the family.
+
+### Arc 1: The Network
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Recruit an asset in a Western bank | Relationships and hooks (1.1.4) |
+| 2 | Dig up dirt on a rival officer | Schemes (1.1.8) |
+| 3 | Protect your own secrets from an internal investigation | Hidden traits and defense |
+
+**Outcomes.** Strong: a web of strong hooks; +2 Intrigue. Mixed: +1 Intrigue. Poor: a rival holds a hook on Viktor.
+
+### Arc 2: Drones
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | The front needs drones: steer a state contract to a company your family controls | Government contracts; Robotics and drones (10.3) |
+| 2 | Source chips around the sanctions through a shell in Dubai or Hong Kong | Shells, havens, export controls (1.7.4, 6.9) |
+| 3 | Keep the drone company's board loyal | Management score and opinion |
+
+**Outcomes.** Strong: the family drone company is a state champion; clout gain. Mixed: profitable but exposed. Poor: the shell is discovered and Western sanctions name Viktor.
+
+### Arc 3: Money Out
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Move family wealth out through shells | Exposure (1.7.4) |
+| 2 | Buy into real estate pools in Dubai and London through fronts | Pools and sanctions risk (10.4.5) |
+| 3 | Set up the family trust's rules so the children are protected | Trusts and succession (1.10.1, 1.11) |
+
+**Outcomes.** Strong: the money is safe and hidden. Mixed: part of it frozen. Poor: an asset freeze takes most of it.
+
+### Arc 4: Ceasefire or Escalation
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | A ceasefire is on the table: push for it or sabotage it | Politics and events |
+| 2 | Call in hooks to place your people in the ministry | State capture |
+| 3 | Decide whether to defect, stay loyal, or take power | Ambition and trait change |
+
+**Outcomes.** Strong: Viktor controls a ministry. Mixed: he keeps his rank. Poor: purged.
+
+### Arc 5: The Reckoning (the crash)
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | The crash cuts oil and drone budgets | Industry cycles |
+| 2 | Allies turn on each other; choose who to sacrifice | Hooks and loyalty |
+| 3 | Get the family out, or stay and win | Succession and legacy |
+
+**Outcomes.** Strong: the family rises with Viktor in the state. Mixed: the family is safe abroad. Poor: Viktor falls and the family is scattered.
+
+## 8.9 Garrett Kroll: "Sovereign"
+
+**Who he is.** A crazy automotive billionaire trying to start his own island colony by crashing boats into the side of Antarctica, off the coast of New Zealand (7.3.3). A very hard politics run to protect his sovereign rights (Sovereigntists, [5-ideology.md](5-ideology.md)).
+
+**What the line teaches.** Running a billionaire's empire while chasing a vanity project: an EV company, the cost of a colony, sovereignty and politics, Image, and managing a board that thinks you are mad.
+
+**Starting position (A).** Controlling stake in an EV company listed in the US (Autos and EVs), $6B net worth mostly in its shares, a fleet of three ships at Kroll's colony (7.8). Traits: Visionary, Narcissist, Brave. Ambition: Build a legacy.
+
+### Arc 1: Landfall
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Keep the colony fed and powered through the first winter | Spending and logistics |
+| 2 | Fund it by pledging EV shares for a margin loan | Margin and leverage (3.5) |
+| 3 | The EV board worries about your focus; hold their confidence | Management score, Image and investor confidence |
+
+**Outcomes.** Strong: the colony survives and the board stays calm; +2 Operations. Mixed: +1 Operations. Poor: the share price falls and the margin loan wobbles.
+
+### Arc 2: Recognition
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | New Zealand and Australia object; lobby them or ignore them | Politics and influence |
+| 2 | Find one country to recognize the colony | Diplomacy and hooks |
+| 3 | Write the colony's laws | Laws ([4-politics.md](4-politics.md)) |
+
+**Outcomes.** Strong: recognized by one country; Sovereigntists rally to Garrett. Mixed: tolerated. Poor: a naval blockade.
+
+### Arc 3: The Car Company
+
+Runs alongside Arc 2.
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Chips are tight in the boom; secure supply for the car plants | The GPU chain and other chips (6.7.0, 10.3) |
+| 2 | Open a site in Shenzhen for the location perk | Location perks (10.4.4) |
+| 3 | An activist shareholder wants you out as CEO | Proxy fights (1.9) |
+
+**Outcomes.** Strong: Garrett keeps control and sales grow. Mixed: he gives up a board seat. Poor: he is removed as CEO.
+
+### Arc 4: Settlers
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Attract settlers: tax-free status, crypto, cyberware clinics | Havens and vice businesses (11.7) |
+| 2 | Grow the colony's real estate pools and sell shares in them | Pools (10.4.5) |
+| 3 | The colony becomes a hub, or stays a camp | Hub growth (2.17) |
+
+**Outcomes.** Strong: the colony becomes a small hub. Mixed: a few hundred settlers. Poor: settlers leave and the ships rust.
+
+### Arc 5: Iceberg (the crash)
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | EV shares crash and the margin loan is called | Forced selling (3.5) |
+| 2 | Save the car company or the colony | Priorities and legacy |
+| 3 | Win sovereignty for good, or hand it over | Sovereigntist endgame |
+
+**Outcomes.** Strong: a sovereign colony and a living company. Mixed: one survives. Poor: both are lost and Garrett becomes a punchline.
+
+## 8.10 Generated quests after a line
 
 When a character's line ends, or for characters without a full line after the milestones, **generated side quests** keep coming (batch 33) **(A)**:
 - **From the ambition** (1.1.2): a 2 to 4 step quest toward it, rebuilt when the ambition changes.
@@ -326,15 +504,15 @@ When a character's line ends, or for characters without a full line after the mi
 - **From rivals**: a rival's scheme or a rival rotation character aimed at the player opens a defense quest.
 - **Legacy quests**: a successor gets one or two quests from the old line (finish what your father started) unless they inherit an arc outright (8.1).
 
-## 8.8 The crash
+## 8.11 The crash
 
 The AI bubble pops in 2030 on average (Logan). The year is set at game start as 2030 plus a roll of -2 to +2 years **(T)**, then moved by events: a bigger boom (high AI valuations, heavy leverage) brings it closer, and calmer markets push it later **(A)**. In this world there was never a dot-com crash or a 2008 crisis (7.2.0), so investors have never lived through a great crash, and it hits harder: market drops are ×1.2 the normal crash size **(T)**. When it hits, every quest line with a crash arc opens it.
 
-## 8.9 Assumptions and open items
+## 8.12 Assumptions and open items
 
 1. Outcome tiers and buff sizes in 8.1; the 25% chance a successor picks up an unfinished arc.
 2. The default line's opening arcs and milestones in 8.2, with "Papers" replacing "The Shot".
 3. Pieter's reworked starting position and arcs in 8.3.
-4. Starting positions, traits and arcs for Antone, Samir and Yuna in 8.4 to 8.6.
-5. Generated quest sources in 8.7.
-6. Crash timing and the ×1.2 crash size in 8.8.
+4. Starting positions, traits and arcs for Antone, Samir, Yuna, John, Viktor and Garrett in 8.4 to 8.9.
+5. Generated quest sources in 8.10.
+6. Crash timing and the ×1.2 crash size in 8.11.

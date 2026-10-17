@@ -19,7 +19,7 @@ _Status: draft v0.5 (2026-10-17), alternate history added. Built from Logan's an
 | Dynasty places | Each dynasty has an **Origin city** and a **Center of Power**. Members can live anywhere. |
 | Center of Power | The hub where the dynasty holds the most influence, so it moves as the dynasty grows. Influence is money, power and prestige: money is the asset base, and power and prestige modify it (7.5). |
 | Rise and fall | AI founders rise into new dynasties during play, and dead dynasties drop out. |
-| History | Follows the real AI boom, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2030 on average a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.4); the game continues into a post-crash era with new rules. |
+| History | Follows the real AI boom, inside the alternate history in 7.2.0, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2030 on average a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.11); the game continues into a post-crash era with new rules. |
 | Alternate history (Logan, 2026-10-17) | In the game world the **dot-com crash, 9/11, the 2008 financial crisis and COVID never happened**. Everything else is the same, except that the **US won its wars in the Middle East far more decisively** and is in a much better position, both financially and in the security of its resources (7.2.0). |
 | Opening quest | Originally the COVID vaccine or a doctor's note. COVID never happened in this world, so the opening quest is now "Papers" (7.6), which keeps the same job: teach the quest system and unlock flights. |
 | LLM tip | Finishing the opening quest gives a tip naming the company that will make the first LLM breakthrough. The tip is always correct, and the tipped lab is different each game. |
@@ -41,11 +41,13 @@ What follows from that, in January 2022 **(A)**:
 | Housing | Recovered from the 2008 crash | Never crashed: a long boom, so many hubs start in the Peak phase of the property cycle (2.16.5) |
 | Pandemic | COVID restrictions fading | **No pandemic**: no vaccine mandates, no stimulus wave, no 2021 inflation spike, no remote-work shift. Offices are full (commercial pools start at 95% occupancy) |
 | Supply chains | COVID chip shortage | No pandemic chip shortage; chips are tight only from normal demand |
-| Security | Post-9/11 security state; long wars | No 9/11, so no post-9/11 security state at home. The US fought its Middle East wars from the 1991 Gulf War on and won them quickly and cleanly **(A)** |
+| Security | Post-9/11 security state; long wars | No 9/11, so no post-9/11 security state at home. The Iraq war still happened: **the vice president and the CIA made up claims that Iraq had nukes** (Logan), and the US invaded anyway. It won quickly and cleanly, and Iraq became a stable US ally |
 | US position | High debt; energy imports falling with shale | US federal debt about 60% of GDP instead of 120% **(T)**; a stronger dollar; Iraq is a stable US-aligned oil exporter and Gulf supply is more secure, so Hormuz risk starts at Calm and US energy security is high |
 | Gulf and oil | Volatile | Oil supply is steadier and cheaper (oil price index starts at 90 **(T)**); cartel cuts (2.6.0) are weaker while US influence in the Gulf holds |
 
-Russia's invasion of Ukraine (February 2022), the chip export controls and the AI boom still happen on schedule (7.7).
+**Russia and Ukraine (Logan).** Russia invaded Ukraine much earlier, in **2005**, and the war never ended. By 2022 it is a long **drone-warfare stalemate** along a fortified front. Consequences **(A)**: Russia has been under heavy sanctions since 2005, Europe weaned itself off Russian gas long ago (pipeline gas to Europe is already cut at start), Russia sells oil at a discount through grey fleets, both sides and their backers buy drones in huge numbers (Robotics and drones and Aerospace and defense demand is higher, 10.3), and the Black Sea is at Attacks risk (2.4.2).
+
+The chip export controls and the AI boom still happen on schedule (7.7).
 
 ## 7.2 The world in January 2022
 
@@ -54,10 +56,10 @@ The detailed files were written with present-day starting values. At a January 2
 | Item | At start (January 2022) | Arrives later through the timeline (7.7) |
 |---|---|---|
 | Chip export controls | Entity list bans on a few Chinese firms only; lithography system bans on EUV to China already in force | Broad US controls on advanced chips and AI server nodes (October 2022), widened yearly; Netherlands and Japan join (2023) |
-| Russia | Managed Float, mild sanctions from 2014; troops massing on the Ukrainian border | Invasion of Ukraine and heavy sanctions (February 2022) |
+| Russia | At war in Ukraine since 2005, a drone stalemate; heavy sanctions since 2005 (7.2.0) | Drone escalations and ceasefire events, rolled through the timeline |
 | Compute | Generation 1 accelerators; AI is a research field, not a market | Gen 2 (2024), Gen 3 (2026), Gen 4 (2028), Gen 5 (2030) on the 24-month cycle in [6-technocapital.md](6-technocapital.md) 6.4.1 |
 | Models | No commercial chat models | The tipped lab's chatbot launch (November 2022) starts the boom |
-| Interest rates | About 3% in the US: rates never went to zero (7.2.0) | Moderate hikes after the Russia energy shock (2022 to 2023) |
+| Interest rates | About 3% in the US: rates never went to zero (7.2.0) | Small moves only; no 2022 energy shock |
 | Pandemic | None: COVID never happened (7.2.0) | n/a |
 | Ideology mix | Starting shares in [5-ideology.md](5-ideology.md) 5.4 are for 2022 | Accelerationist and Neo-Luddite shares grow with the boom |
 
@@ -158,8 +160,8 @@ Real events happen on schedule by default. Each one is an event or quest that pl
 | Date | Event | Game effect |
 |---|---|---|
 | Jan 2022 | Scenario start (no pandemic, 7.2.0) | The opening quest "Papers" |
-| Feb 2022 | Russia invades Ukraine | Sanctions on Russia; energy price shock |
-| 2022 to 2023 | Moderate rate hikes after the energy shock | VC funding rounds get a little harder |
+| 2022 onward | The Ukraine drone war grinds on (since 2005) | Drone demand; Black Sea risk; ceasefire or escalation events |
+| 2022 to 2023 | Rates steady near 3% | VC funding stays hot |
 | Oct 2022 | Broad US chip export controls | Export controls in [6-technocapital.md](6-technocapital.md) 6.9 switch on |
 | Nov 2022 | The tipped lab launches its chatbot | The AI boom starts; compute demand surges |
 | 2023 | The GPU gold rush | Compute spot prices spike |
@@ -197,7 +199,7 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 5. Starting wealth ranges by profile in 7.3.
 6. The Center of Power rule: 3-month lead, +10% influence.
 7. Finishing "Papers" unlocks the Found Company action and wider schemes.
-12. The alternate-history consequences in 7.2.0, especially how the Middle East wars started without 9/11.
+12. The alternate-history consequences in 7.2.0, including the effects of the Ukraine war since 2005.
 13. "Papers" as the replacement opening quest (7.6).
 8. Names marked † and profiles marked **(A)** in 7.3.
 9. The natural-rivals rule for unpicked characters (7.3.4).
