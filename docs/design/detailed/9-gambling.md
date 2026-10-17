@@ -48,7 +48,7 @@ Players and AI characters bet on yes-or-no questions about the game world.
 - **Questions (A)**: elections, mergers, launches, bankruptcies, scandals, the crash year, wars, sports results, a named character's death. New questions are generated from scheduled events and active quests.
 - **Pricing (A)**: each question has a price from 1¢ to 99¢ for a Yes share that pays $1. The price moves with bets (AI bettors bet toward the true odds plus noise) and with news.
 - **Inside knowledge**: the player can bet on events they influence or know about, for example betting against a merger they plan to block. That is the point (Logan).
-- **Risk (A)**: large wins on questions the bettor shaped build **exposure** in countries with strict securities law, using the insider-trading detection in [3-markets-and-fx.md](3-markets-and-fx.md) 3.10.2 at half strength **(T)**. Offshore markets on the Freeport Night Market carry no exposure but take a 5% fee **(T)**.
+- **No risk** (Logan): betting on events you control or know about carries no exposure. Offshore markets on the Freeport Night Market are just another venue.
 
 ## 9.5 Crypto casinos
 
@@ -59,6 +59,9 @@ Players and AI characters bet on yes-or-no questions about the game world.
 
 ## 9.6 Links to the addiction system (to be designed)
 
+The addiction system covers **gambling, drugs, cyberware, doomscrolling and AI psychosis**, all on characters (Logan).
+
+
 - Gambling builds an **addiction** score on the character **(A)**: each session adds to it, big losses add more, and a high score triggers urges (events that push the character to gamble) and stress.
 - AI characters gamble too; a Glitterati or Noble with a gambling addiction is a target for hooks and blackmail.
 - Underclass slop includes freemium gambling apps (2.8.0), so gambling also feeds population stability.
@@ -67,6 +70,6 @@ Players and AI characters bet on yes-or-no questions about the game world.
 
 1. The phone tab's three apps.
 2. Coin roster and the cycle table.
-3. Prediction market question types, pricing and exposure risk.
+3. Prediction market question types and pricing.
 4. Casino games, house edge and ownership.
 5. The addiction score.

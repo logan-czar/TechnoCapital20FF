@@ -612,6 +612,22 @@ Final share                         13.9%  (Presence)
 
 ## 2.6 Goods
 
+### 2.6.0 Starter goods: tech and industry (Logan, 2026-10-17)
+
+At the start, **only the tech and industry parts of the economy are simulated**. The starter goods should look like the real-world economy, with the really important ones such as oil included. Logan's list: **phones, PCs, cars, electric cars, GPUs, steel, oil**. The **GPU supply chain is the largest supply chain** in the game ([6-technocapital.md](6-technocapital.md) 6.7).
+
+Proposed simulated set **(A)**, about 35 goods:
+
+| Tier | Goods |
+|---|---|
+| Raw | Crude oil, natural gas, coal, iron ore, copper ore, bauxite, lithium ore, rare earth ore, silica quartz |
+| Intermediate | Refined fuels, steel, aluminium, refined copper, plastics, chemicals, specialty gases, polysilicon, silicon wafers |
+| Components | Mature chips, advanced logic dies, memory (including HBM), advanced packaging, GPUs, battery cells, displays, sensors, electric motors, precision optics |
+| Finished | Smartphones, personal computers, combustion cars, electric cars, AI server nodes, industrial robots, lithography systems |
+| Energy | Electricity |
+
+Everything else in the tables below (food, clothing, pharma, luxury, defense, services) is **abstracted** at the start: a flat sector with fixed demand and margins, no recipe chain **(A)**. They can be turned into simulated goods later.
+
 ### 2.6.1 How to read the goods tables
 
 - **Base price** is the reference price at game start in a balanced market (2.9). Services are quoted at PF 1.0 and scale with the hub's PF.
@@ -1042,10 +1058,11 @@ Each company pays **selling, general and administrative (SG&A)** costs as a shar
 - **Too little slop** and the population of the area grows unstable.
 - **Too much slop** (a surplus) and education, health and the birth rate start to suffer.
 
-Slop rules **(A)**:
-- **Slop output** per hub per month = sum over facilities of monthly output value × the sector's slop rate. Slop rates **(T)**: media, software, AI services and consumer goods 3 per $1M; retail and food 2 per $1M; everything else 1 per $1M.
-- **Slop need** = Underclass population in the hub (millions) × 100 per month **(T)**.
-- **Slop ratio** = output ÷ need.
+Slop rules:
+- **Companies do not choose how much slop they make** (Logan). Each good's recipe has a **slop ratio**: the amount of slop produced for each one good made. A hub's slop output is the sum over every production in the hub of units made × the recipe's slop ratio.
+- Starting slop ratios **(A)**: consumer goods (phones, PCs, cars, EVs, GPUs) 1 slop per $1,000 of base price; other finished goods and components 0.3 per $1,000; raw and intermediate goods 0.1 per $1,000 **(T)**.
+- **Slop need** = Underclass population in the hub (millions) × 100,000 per month **(T)**.
+- **Slop ratio of the hub** = output ÷ need.
 
 | Slop ratio | Effect on the hub **(T)** |
 |---|---|
@@ -1079,7 +1096,7 @@ Population is tracked per hub as six segments of the labor force (half the metro
 
 ### 2.8.2 Needs baskets
 
-> **Changed (Logan, 2026-10-17).** The game is an alternate reality a little more futuristic than ours. Basic necessities such as food and clothing are always met and so oversaturated that there is no real market for them. **Population needs are consumer goods.** The Permanent Underclass needs only slop (2.8.0). The baskets below are being reworked to match: the Basic basket drops food, clothing and water; housing, energy and healthcare stay as PMC needs **(A)**; packaged food and clothing stay in the goods list with no population demand, flooded markets and thin margins **(A)**.
+> **Changed (Logan, 2026-10-17).** The game is an alternate reality a little more futuristic than ours. Basic necessities such as food and clothing are always met and so oversaturated that there is no real market for them. **Population needs are consumer goods.** The Permanent Underclass needs only slop (2.8.0). The baskets below are being reworked to match: the Basic basket drops food, clothing and water; housing, energy and healthcare stay as PMC needs (Logan); packaged food and clothing stay in the goods list with no population demand, flooded markets and thin margins **(A)**.
 
 
 Per member of the labor force per month, at base prices and PF 1.0. Goods are bought at hub prices; services and housing scale with PF.
