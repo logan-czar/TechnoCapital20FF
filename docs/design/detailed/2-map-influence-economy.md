@@ -1025,7 +1025,7 @@ Each company pays **selling, general and administrative (SG&A)** costs as a shar
 
 ### 2.8.0 Strata (Logan, 2026-10-17)
 
-**Strata are income levels, not character classes** (Victoria 3 calls them strata). Every named character has a stratum set by their **character resources**: assets, clout, income, prestige and vril ([1-corporate-core.md](1-corporate-core.md) 1.1.0). Population segments (2.8.1) also sit in a stratum.
+**Strata are income levels, not character classes**. Five strata, bottom to top: Permanent Underclass, PMC, Glitterati, Nobles, Oligarchs (Victoria 3 calls them strata). Every named character has a stratum set by their **character resources**: assets, clout, income, prestige and vril ([1-corporate-core.md](1-corporate-core.md) 1.1.0). Population segments (2.8.1) also sit in a stratum.
 
 | Stratum | Who is in it (Logan) | Population segments **(A)** |
 |---|---|---|
@@ -1033,8 +1033,9 @@ Each company pays **selling, general and administrative (SG&A)** costs as a shar
 | **PMC** (professional-managerial class) | From skilled union labor to yuppies and low-level executives, doctors, any wagie with a normie job, and high achievers in many low-profile fields | Skilled Workers, Professionals |
 | **Glitterati** | High-level executives, influencers, athletes. Named characters with skill ratings in fields that boost the organizations, companies or firms they are affiliated with. Often rich in assets, but rarely have the skills to leverage Techno-Capital, so they don't buy it | Elite |
 | **Nobles** | People who by bloodline will always have clout or influence. They do not necessarily have or pursue assets, but can be very rich, and ruthless in guarding the influence they have amassed. The status fades over generations: the grandchild of a head of state is not a Noble unless they did enough in their own life | None (named characters only) |
+| **Oligarchs** | The top stratum. At least a board seat on one monopoly or $1 billion in assets, plus a certain amount of Techno-Capital (Logan) | None (named characters only) |
 
-**How a character's stratum is set (Logan).** Various factors, but mainly **assets, capital and income**. Each stratum has its own criteria, such as a certain amount of assets or of Techno-Capital. Example: an **Oligarch** must at least sit on the board of one monopoly or hold assets totaling $1 billion, and must control a certain amount of Techno-Capital. The full list of strata and their bars is still to be set.
+**How a character's stratum is set (Logan).** Various factors, but mainly **assets, capital and income**. Each stratum has its own criteria, such as a certain amount of assets or of Techno-Capital. Example: an **Oligarch** must at least sit on the board of one monopoly or hold assets totaling $1 billion, and must control a certain amount of Techno-Capital. **Strata, bottom to top (Logan):** Permanent Underclass, PMC, Glitterati, Nobles, Oligarchs. The bars for each are still to be set.
 
 **Slop (A).** A need of the Permanent Underclass: cheap food, short video, games, AI-generated media and gambling. While slop needs are met, the Underclass's unrest stays low even when Basic and Comfort fill is poor.
 

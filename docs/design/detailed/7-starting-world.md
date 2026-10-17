@@ -96,7 +96,7 @@ Depending on who the player picks, some of the other 14 starting characters are 
 | Money mix | About 30% old money, 30% new tech money, 25% state-linked, 15% criminal **(T)** |
 | Placement | At least one dynasty in every hub with Size L or larger; Mega hubs get two or three **(T)** |
 | Originality | Fully original families. No parodies of real families or founders. |
-| Rival rotation | A roster of characters added to every game with preset AI. They can be directed at the player or at other characters to mess with them (Logan). |
+| Rival rotation | A roster of characters added to every game with preset AI. They can be directed at the player or at other characters to mess with them, by the game's director AI and by characters who hire them, the player included (Logan). |
 | New dynasties | An AI-run company founder whose company reaches Corporation rank founds a new dynasty. At most one new dynasty per hub per 5 years **(T)**. |
 | Extinction | A dynasty with no living members, or with no trust and no holdings for 24 months, drops out. Its assets go to successors, creditors or the state. |
 

@@ -17,7 +17,7 @@ The game has **named characters** of two kinds:
 
 - **Number of full characters** is set at game start, **200 by default**.
 - Full characters are spread across backgrounds, strata and locations. They include the starting characters the player did not pick, some of the rivals created in the **rival rotation**, and extra characters generated at random from templates with high variance.
-- **Character resources**: assets, clout, income, prestige and vril. Together with influence they shape the character's **stratum** ([2-map-influence-economy.md](2-map-influence-economy.md) 2.8.0).
+- **Character resources**: assets, clout, income, prestige and vril. Together with Image they shape the character's **stratum** ([2-map-influence-economy.md](2-map-influence-economy.md) 2.8.0).
 
 | Resource | What it is (Logan) |
 |---|---|
@@ -25,11 +25,11 @@ The game has **named characters** of two kinds:
 | **Income** | What the character earns |
 | **Prestige** | Standing and renown |
 | **Clout** | A ticker of the character's achievements: a permanent buff for how much they have done in their life. It only goes up |
-| **Vril** | An esoteric X factor. It does not follow the regular game rules: it sometimes punishes the player and other times helps them |
-| **Influence** | The character's PR, made of two factors: **Fame** (how many people know you) and **Favor** (how much people like you) |
+| **Vril** | An esoteric X factor that works like luck. It does not follow the regular game rules: it sometimes punishes the player and other times helps them. Characters gain it by doing vril-worthy acts or through events, but the game never says clearly how; you just get it sometimes. Its value is hidden **(A)** |
+| **Image** | The character's PR, made of two factors: **Fame** (how many people know you) and **Favor** (how much people like you). Logan's word was influence; it is called Image here because **influence** keeps its map meaning, power in a place from assets held there (2.5) (Logan). The existing reputation score becomes Favor **(A)** |
 
 - **Table characters can become full characters** (Logan), for example by promotion, winning office or becoming famous. Details later.
-- **Rival rotation** (Logan): a roster of characters added to every game with preset AI. They can be directed at the player or at other characters to mess with them ([detailed/7-starting-world.md](7-starting-world.md) 7.4).
+- **Rival rotation** (Logan): a roster of characters added to every game with preset AI. They can be directed at the player or at other characters to mess with them, both by the game's director AI and by characters who hire or point them, the player included ([detailed/7-starting-world.md](7-starting-world.md) 7.4).
 
 ### 1.1.1 Skills
 
