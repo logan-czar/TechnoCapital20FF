@@ -352,7 +352,7 @@ One world GPU market with one price, **P**. Base price $1,500 per GPU **(T)**.
 | **AI** (data centers, labs, clouds) | 0.5M GPUs at the start **(T)** | Low: demand × (P ÷ $1,500)^-0.3 | +3% a month before the tipped lab's breakthrough (November 2022, 7.7), +6% a month from then until the crash (about ×2 a year), -40% at the crash, then +2% a month |
 
 - **Clearing.** Each month P moves toward the price where total demand equals the GPUs packaged **(T)**. Because AI buyers barely care about price and consumers care a lot, a shortage pushes P up and **pushes gamers out first**: the AI boom starves consumers.
-- With these numbers AI demand passes 10% of the market around 2024 and passes consumer demand around 2028, if supply keeps up **(T)**. Supply grows only as fast as lithography tools, fabs and packaging lines are built, so P climbs through the boom.
+- At a steady price these numbers put AI demand at about 1.5M GPUs in January 2024, 6M (12% of the market) in January 2026 and 50M in January 2029, when it overtakes consumer demand (about 56M) **(T)**. Supply grows only as fast as lithography tools, fabs and packaging lines are built, so P climbs through the boom.
 - **Server node price** = P + $4,000 for the host **(T)**, so the launch prices in 6.4.1 are a starting guide and node prices float with the GPU market.
 
 #### Developer ecosystem
