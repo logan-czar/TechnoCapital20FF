@@ -1,6 +1,6 @@
 # 10. Industry economy (Wall Street Raider style): detailed design
 
-_Status: draft v0.4 (2026-10-17), batch 23 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
+_Status: draft v0.5 (2026-10-17), batch 23 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 10.12.
 
@@ -13,7 +13,10 @@ _Status: draft v0.4 (2026-10-17), batch 23 answers applied. Logan scrapped the V
 | Goods | The Victoria 3 style goods model is scrapped: no goods tables, recipes, production methods, per-hub goods prices or shipments. |
 | Model | Wall Street Raider style: the economy is a set of **industries**, and companies earn money from the industries they operate in. The player reads and plays the economy through company financials, not factories. |
 | Business units | A business unit is **one building or site** (now called a site) (a fab, a mine, a data center, a store chain's flagship, an office), sitting on a plot in a hub. |
-| Sites hold a share of the company (batch 22) | A site is like an office that **holds a percentage of the company**. To grow, a company buys or leases real estate to expand one of its sites, and that is carried on its balance sheet. A company can target certain sites to grow, or certain areas to expand into with a new site. The size of a site in an area gives the company buffs there, such as a lower interest rate or higher productivity. |
+| Sites hold a share of the company (batch 22) | A site is like an office that **holds a percentage of the company**. To grow, a company buys or leases real estate to expand one of its sites, and that is carried on its balance sheet. A company can target certain sites to grow, or certain areas to expand into with a new site. Sites in a location give the company buffs, such as a lower interest rate or higher productivity. |
+| Location perks (batch 23) | Site buffs are **location perks**, not size tiers: "every company that achieves X in this location gets Y", for example every company with its HQ in New York gets a bonus to investor confidence. |
+| Real estate (batch 23) | Each location has a set **pool** of commercial and residential real estate. Investing buys a part of the pool, which appreciates; the owner chooses how much to rent out for passive income; real estate is taxed at its own rates. Renting a site rents from the location's commercial pool at a rate set by available stock and how many companies want to rent there. More detail to come later (Logan). |
+| Boards (batch 23) | A character can sit on up to 3 boards. The CEO's and Chair's Image counts toward investor confidence. |
 | One industry, direct branches (batch 23) | A company works in **one industry**. A company can run other industries through **direct branches**: each works like a separate company with its own business assets and employees, its own revenue and expenses, and its own growth plan and R&D plan, but the parent keeps **one unified book of cash and assets**. Direct branches can **share office sites** with the parent, and they **share the parent's board and all its bonuses**. |
 | Management (batch 22) | No cyclical, random management rating like Wall Street Raider. A company's **management score** comes from the stats of the characters in its board positions, and it sets **investor confidence** and **company productivity**. |
 | Deals (batch 22) | AI companies make deals too, by archetype. Private companies are valued at their last funding round, or an earnings multiple when there is none. A company that can't pay its debts goes through a restructuring event chain, where creditors can take it or auction its sites. |
@@ -23,7 +26,7 @@ _Status: draft v0.4 (2026-10-17), batch 23 answers applied. Logan scrapped the V
 
 ## 10.2 The model in one paragraph
 
-Every country has a size for each **industry** (yearly revenue). The industry grows on its own trend and swings with the business cycle, interest rates and its cost drivers. A company works in one industry, Wall Street Raider style. It reaches other industries through direct branches (10.4.5), which share its cash and board, or through vassals (1.7), which do not. Its operations live in **sites**: buildings or offices on plots in hubs, each holding a percentage of the company. The company wins a **market share** in each country where it has sites, limited by its **capacity** there, and turns revenue into profit through its **margin**. Its **management score**, built from the stats of the characters on its board, sets how productive it is and how much investors trust it. Profit flows into the financial statements, which set fundamental value and share price.
+Every country has a size for each **industry** (yearly revenue). The industry grows on its own trend and swings with the business cycle, interest rates and its cost drivers. A company works in one industry, Wall Street Raider style. It reaches other industries through direct branches (10.4.6), which share its cash and board, or through vassals (1.7), which do not. Its operations live in **sites**: buildings or offices on plots in hubs, each holding a percentage of the company. The company wins a **market share** in each country where it has sites, limited by its **capacity** there, and turns revenue into profit through its **margin**. Its **management score**, built from the stats of the characters on its board, sets how productive it is and how much investors trust it. Profit flows into the financial statements, which set fundamental value and share price.
 
 ## 10.3 Industries
 
@@ -81,14 +84,14 @@ A site is a building or office on a plot in a hub district (2.16): a fab, a mine
 |---|---|---|
 | **Capacity** | The most revenue the site can earn per year, in dollars | Any; typical sizes in 10.4.3 |
 | **Share of company** | Capacity ÷ the company's total capacity | 0% to 100% |
-| **Tenure** | Owned (the real estate is on the balance sheet) or Leased (rent is an operating cost, and the lease is a liability, 2.16.7) | |
+| **Tenure** | Owned (its share of the location's commercial pool is on the balance sheet) or Rented from the pool (rent is an operating cost, 10.4.5) | |
 | **Condition** | Wear; falls without upkeep, cuts capacity below 50 | 0 to 100 |
-| **Size tier** | Set by capacity; gives buffs in its area (10.4.4) | Office, Campus, Regional hub, Anchor |
+| **Location perks** | Perks its hub grants when the site meets their condition (10.4.4) | |
 
 ### 10.4.1 Monthly calculation
 
 1. **Industry demand** in each country: base size × trend × cycle × rates × cost-driver pass-through (10.6) × event modifiers.
-2. **Target share** of each company in a country = `capacity there × productivity × stance factor` ÷ the sum over all companies in that industry and country, with imports filling the rest when a country lets foreign companies sell there (2.2.2). Productivity comes from the management score (10.5) and site buffs (10.4.4).
+2. **Target share** of each company in a country = `capacity there × productivity × stance factor` ÷ the sum over all companies in that industry and country, with imports filling the rest when a country lets foreign companies sell there (2.2.2). Productivity comes from the management score (10.5) and location perks (10.4.4).
 3. Each company's share moves 15% of the way to its target each month **(T)**, so share is sticky.
 4. **Revenue** in the country = min(capacity there, share × demand) ÷ 12. Each site gets its share of it.
 5. **Operating costs** = `revenue × v × D + capacity ÷ 12 × f`, where f is the industry's fixed cost share, v = 1 - margin - f, and D is the cost driver index (1.0 at base prices). Fixed costs are paid on capacity, so a half-empty company loses money: this is the operating leverage that makes recessions bite. Productivity also cuts v: v × (1.1 - 0.2 × management score ÷ 100) **(T)**.
@@ -101,8 +104,8 @@ A company grows by adding real estate (Logan). Both ways go on the balance sheet
 
 | Move | How | Cost **(T)** | Takes **(T)** |
 |---|---|---|---|
-| **Expand a site** | Buy or lease more real estate at an existing site (a neighbouring plot, more floors) | Capacity added × the industry's capital per $1; owned adds an asset (paid in cash or debt), leased adds a lease liability and rent | 6 months (12 for fabs, mines, power plants) |
-| **Open a new site** | Buy or lease a plot in a new hub or area and build | Build cost (10.4.3) plus the plot | 6 to 24 months; starts at 80% productivity for 12 months |
+| **Expand a site** | Buy or rent more commercial real estate from the location's pool (10.4.5) at an existing site | Capacity added × the industry's capital per $1; owned adds an asset (paid in cash or debt), leased adds a lease liability and rent | 6 months (12 for fabs, mines, power plants) |
+| **Open a new site** | Buy or rent commercial real estate from the pool in a new hub and fit it out | Build cost (10.4.3) plus the plot | 6 to 24 months; starts at 80% productivity for 12 months |
 | **Shrink or close** | Sell the real estate or end the lease | Assets sold at 60% of book; severance of 3 months' fixed cost; may trigger strikes (2.8.6) | 1 month |
 
 **Targets.** Each company has a **growth plan**: the sites it wants to grow and the areas it wants to open new sites in, plus a yearly growth budget. Whoever controls the company sets the plan (the player, if they are the head); otherwise the executives write it (10.5.3). The plan's budget is spent each month on the targets in order, as far as cash and borrowing allow.
@@ -122,20 +125,48 @@ A company grows by adding real estate (Logan). Both ways go on the balance sheet
 | Software office | Software and SaaS | $1B | $0.2B |
 | Hospital | Healthcare services | $0.5B | $0.35B |
 
-### 10.4.4 Site size buffs
+### 10.4.4 Location perks (Logan, 2026-10-17)
 
-The bigger a company's sites in an area, the better it does there (Logan). The tier counts the company's total capacity in one hub **(T)**:
+Site buffs belong to **locations**, not to site size. Each hub has a few perks of the form **"every company that achieves X here gets Y"**. Any number of companies can hold the same perk; there is no ranking and no size threshold. Starting set **(A)**, values **(T)**:
 
-| Tier | Capacity in the hub | Local interest rate | Productivity in the hub | Other |
-|---|---|---|---|---|
-| **Office** | Under $500M | none | none | |
-| **Campus** | $500M to $5B | -0.25 points on loans from banks in that country | +3% | Local hiring: new sites in the hub open at 90% productivity |
-| **Regional hub** | $5B to $25B | -0.5 points | +6% | +10% to the company's influence weight in the hub (2.5.2) |
-| **Anchor** | Over $25B | -1 point | +10% | The local government treats it as too big to fail: bailout chance in a default, but strikes and politics there hit harder (×1.5) |
+| Hub | Achieve | Get |
+|---|---|---|
+| New York | HQ here | Investor confidence +5% |
+| London | HQ here | -0.25 points on bonds issued |
+| Zurich | HQ here, or a captive bank here | -0.25 points on loans; shell exposure -10% |
+| Bay Area | HQ here and work in a Tech industry | R&D plan effects +10% |
+| Hsinchu-Taipei | A Foundry or Chip packaging site here | Productivity +5% |
+| Shenzhen-Dongguan | A Consumer electronics, Robotics or GPU boards site here | Productivity +5%; variable cost -3% |
+| Eindhoven | A Lithography or Foundry site here | R&D plan effects +10% in those industries |
+| Singapore | HQ here | -0.25 points on loans; securities regulator strictness -1 |
+| Dubai | HQ here | Corporate tax capped at 9% on profit booked here |
+| Houston | An Oil and gas or Refining site here | Variable cost -3% |
+| Bengaluru | A Software and SaaS site here | Variable cost -5% (wages) |
+| Tokyo-Yokohama | A Robotics site here | Productivity +5% |
+| Seoul-Pyeongtaek | An Other chips or Consumer electronics site here | Productivity +3% |
+| Frankfurt | HQ here | -0.25 points on loans from banks in the eurozone |
+| Los Angeles-Long Beach | A Media and entertainment site here | Image of the CEO +5 Fame |
 
-Buffs apply only in that hub (and, for the interest rate, to loans in that country's currency), so companies have a reason to cluster rather than scatter.
+- **HQ** is the site the company names as its head office; it can move it once a year.
+- Perks apply to the whole company unless they name a site type, in which case they apply to that site's share of the company.
+- Direct branches (10.4.6) get a perk when they meet its condition themselves, or through a shared parent site that does.
+- Events and politics can add, remove or change perks (a tax haven law, a tech cluster subsidy, a war).
 
-### 10.4.5 Direct branches (Logan, 2026-10-17)
+### 10.4.5 Real estate pools (Logan, 2026-10-17; more detail to come)
+
+Real estate is simple and pooled. Logan wants to talk through real estate in more depth later; this is the outline he set.
+
+- **Pools.** Each location has a set **pool** of commercial real estate and a set pool of residential real estate, measured in dollars of value **(A)**.
+- **Investing.** A player (or any holder) who invests in real estate buys a part of a location's pool. There are no individual buildings or plots to pick.
+- **Appreciation.** The holding rises in value with the location's property cycle (2.16.5).
+- **Renting out.** The owner chooses what share of the holding to rent out. Rented real estate earns passive income at the location's rent rate; the rest is held for appreciation only.
+- **Tax.** Real estate is taxed at its own rates: property tax on value, and income tax on rent and on gains when sold, at rates set by the country and location **(A)**.
+- **Renting a site.** A company that rents a site rents from the location's commercial pool. The rent rate rises as available stock falls and as more companies want to rent there: `rent rate = base rate × (rental demand ÷ available stock)^0.5` **(T)**, where base rate is about 6% of value a year **(T)**. Owners who rent out their share of the pool collect that rate.
+- **Buying a site.** A company that buys its site buys that much of the commercial pool; it sits on the balance sheet and appreciates like any other holding.
+
+The plot, building and lease rules in 2.16.1 to 2.16.4 and 2.16.7 are on hold until that conversation.
+
+### 10.4.6 Direct branches (Logan, 2026-10-17)
 
 A **direct branch** is a business a company runs in another industry without making it a separate legal company.
 
@@ -150,7 +181,7 @@ A **direct branch** is a business a company runs in another industry without mak
 | Shares | None; it cannot be listed or have outside holders. Spin it off (10.5.4) to turn it into a company | Can have outside holders |
 | Debt | The parent's debt; a branch has no separate credit | Its own |
 
-**Sharing a site (T).** A branch that shares a parent site adds its capacity to that site without buying a new plot: the first $500M of branch capacity in a shared site needs no extra real estate (an office floor), and beyond that it expands the shared site as in 10.4.2. Shared capacity counts toward the hub's size tier (10.4.4), so a company with several branches in one hub reaches Regional hub or Anchor faster, and every branch there gets the buffs.
+**Sharing a site (T).** A branch that shares a parent site adds its capacity to that site without buying or renting more real estate: the first $500M of branch capacity in a shared site needs no extra real estate (an office floor), and beyond that it expands the shared site as in 10.4.2. A branch working from a shared site meets site-based location perks (10.4.4) through it.
 
 **Why use one.** A branch gets the parent's board for free and pools cash, so a strong board can run a sprawling group. The cost is risk: a failing branch drains the shared cash, and in a restructuring (10.5.4) creditors can claim the whole book. A subsidiary walls off risk but needs its own board.
 
@@ -173,6 +204,7 @@ There is no cyclical, random management rating as in Wall Street Raider (Logan).
 
 - Score = `Σ weight × skill ÷ 20 × 100`, capped at 100. A board of skill-10 characters scores 50; a board of skill-20 characters scores 100.
 - An empty position counts as skill 3.
+- A character can sit on **up to 3 boards** (Logan). Each board after the first cuts what they add to every board's score by 20% (×0.8 on two boards, ×0.6 on three) **(T)**.
 - A member whose opinion of the head is below 0 counts at half their skill (1.8.3).
 - Traits shift the member's contribution: Diligent +2 skill, Lazy -2, Ambitious +1, Greedy -1 to the CFO slot only, Honest +1 to investor confidence (below), Deceitful -1 **(A)**.
 - The score changes only when the board changes, when members' skills grow or fall, or when opinions and traits change. It is never rolled.
@@ -184,11 +216,13 @@ There is no cyclical, random management rating as in Wall Street Raider (Logan).
 | **Productivity** | `0.7 + 0.6 × score ÷ 100` multiplies target share; also cuts variable cost (10.4.1 step 5) | 0.88 | 1.00 | 1.18 |
 | **Investor confidence** | Multiplies fundamental value V (3.3.1) by `0.8 + 0.4 × score ÷ 100`; also moves the credit rating one notch per 25 points away from 50 (3.6) | ×0.92 | ×1.00 | ×1.12 |
 
+**Image** (Logan): the CEO's and Chair's Image adds to investor confidence, up to ±10%: each of them adds `(Fame × Favor ÷ 100 - 25) ÷ 250`, capped at ±5% each **(T)** (Fame and Favor 0 to 100, [1-corporate-core.md](1-corporate-core.md) 1.1.0).
+
 Investor confidence makes boards a target: poaching a rival's star CFO lowers their score and their share price, and putting a famous name on your own board lifts yours.
 
 ### 10.5.3 What executives do on their own
 
-Running sites is mostly automatic (Logan, batch 21). Each month the executives set pricing stance, marketing, upkeep and staffing by themselves, and write the growth plan and R&D plan when nobody else does **(A)**. Each direct branch has its own growth plan and R&D plan (10.4.5); the **R&D plan** sets R&D spending as Low, Normal or High (2%, 4% or 8% of revenue **(T)**) and which tech projects (2.12) it funds, and whoever controls the company can set it like the growth plan. Their traits shape the choices: a Greedy CEO starves R&D for short-term profit; an Ambitious one over-expands; a Cautious one leases instead of buying. The player shapes this through who sits in which position, the charter, the growth plan when they control the company, and pressure as a shareholder.
+Running sites is mostly automatic (Logan, batch 21). Each month the executives set pricing stance, marketing, upkeep and staffing by themselves, and write the growth plan and R&D plan when nobody else does **(A)**. Each direct branch has its own growth plan and R&D plan (10.4.6); the **R&D plan** sets R&D spending as Low, Normal or High (2%, 4% or 8% of revenue **(T)**) and which tech projects (2.12) it funds, and whoever controls the company can set it like the growth plan. Their traits shape the choices: a Greedy CEO starves R&D for short-term profit; an Ambitious one over-expands; a Cautious one leases instead of buying. The player shapes this through who sits in which position, the charter, the growth plan when they control the company, and pressure as a shareholder.
 
 ### 10.5.4 Deals
 
@@ -255,10 +289,11 @@ Hovering a company's revenue shows: industry size → cycle → rates → pass-t
 ## 10.12 Assumptions and open items
 
 1. Every number in 10.3 and the site sizes in 10.4.3.
-2. Direct branches: the $500M of free shared capacity, segment reporting and the restructuring risk in 10.4.5.
-3. The share model in 10.4.1 and the 15% monthly move.
-4. Site size tiers and buffs in 10.4.4.
-5. Management score weights, trait shifts and effects in 10.5.
-6. Which choices executives make on their own (10.5.3).
-7. Price indices and the Techno-Capital conversions in 10.6.
-8. Chokepoint exposure replaces shipping; slop per dollar of revenue.
+2. The share model in 10.4.1 and the 15% monthly move.
+3. The starting location perks in 10.4.4.
+4. Real estate pools (10.4.5): to be discussed further with Logan.
+5. Direct branches: the $500M of free shared capacity, segment reporting and the restructuring risk in 10.4.6.
+6. Management score weights, trait shifts, the multi-board cut and the Image formula in 10.5.
+7. Which choices executives make on their own (10.5.3).
+8. Price indices and the Techno-Capital conversions in 10.6.
+9. Chokepoint exposure replaces shipping; slop per dollar of revenue.
