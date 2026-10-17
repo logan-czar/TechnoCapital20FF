@@ -154,6 +154,32 @@ Opinion = sum of active modifiers, clamped to -100 to 100. Most modifiers decay 
 | Promoted / board seat | +20 |
 | Scheme discovered against them | -50 |
 
+#### Relationships (Logan, 2026-10-17)
+
+Characters have **both** an opinion number and **named relationships** (Logan). A named relationship adds its opinion modifier above, unlocks its own events, and changes what the two can ask of each other **(A)**:
+
+| Relationship | How it forms **(T)** | Opinion | Events and effects |
+|---|---|---|---|
+| **Friend** | Opinion 60+ for 6 months, or a Befriend scheme | +40 | Favors at a discount; warns you of schemes they hear about; grief event on death |
+| **Rival** | Competing for the same seat, deal or ambition; opinion -40 or lower | -40 | Rivalry events (public spats, poaching); +2 to skills used against them |
+| **Nemesis** | A rival who ruins you, or a discovered scheme that cost 30+ health or a company | -80 | Revenge ambition (1.1.2); they will scheme against you until one of you falls |
+| **Lover** | Seduce scheme, or opinion 60+ between attracted characters | +30 | Affair events; a secret affair is a strong hook (below) |
+| **Mentor** / **Protégé** | A character 15+ years older with a skill of 15+ takes on a younger one | +20 each | Protégé gains +1 a year in the mentor's best skill (max +5); protégés are eligible successors (1.11.0) |
+| **Partner** | Spouses and openly polyamorous partners (1.11.5) | +20 | Heirs; shared household events |
+
+A character can hold any number of relationships, but only 3 friends, 3 rivals and 1 nemesis at once **(T)**.
+
+#### Hooks (Logan, 2026-10-17)
+
+A **hook** is leverage over a character, as in Crusader Kings.
+
+| Hook | Source **(T)** | Use | Lasts |
+|---|---|---|---|
+| **Weak** | A favor done for them, a debt they owe you (money lent, a bailout), a campaign donation | Called in once: they vote your way, accept a deal, give a board seat or skip a scheme against you. Used up after one call | Until used, or 5 years |
+| **Strong** | A secret (affair, crime, shell, insider trade, hidden addiction) or blackmail material | Called in once a year without being used up; they cannot refuse unless they accept the secret coming out | Until the secret is exposed or destroyed |
+
+Hooks come from Dig up dirt and Blackmail schemes (1.1.8), favors, loans and events. A character with a strong hook on them gets stress whenever it is called and may try to destroy the evidence (a scheme against the holder).
+
 ### 1.1.5 Stress
 
 Stress 0 to 300. Levels at 100, 200, 300. Each new level triggers a breakdown event (burnout, addiction, public outburst, quitting). At 300 a heart attack event fires (5% chance per month) that costs 30 to 60 health (1.1.9).
@@ -164,7 +190,7 @@ Stress 0 to 300. Levels at 100, 200, 300. Each new level triggers a breakdown ev
 
 ### 1.1.6 Time and actions
 
-Each character has **16 usable hours per day**; the rest is sleep and private life. Workaholic: 18. Most actions cost hours:
+Each character has **16 usable hours per day** (kept, Logan 2026-10-17: hourly turns with a daily budget of hours spent on meetings, travel and schemes); the rest is sleep and private life. Workaholic: 18. Most actions cost hours:
 
 | Action | Hours |
 |---|---|
@@ -187,10 +213,11 @@ Delegating an action to a board member or family member uses their hours instead
 
 ### 1.1.8 Schemes
 
-Each scheme has an owner, target, agents (helpers), and progress. Each day, progress rises by (owner skill + agent bonus) / 10 points. At 100 progress it resolves.
+Schemes are **simple one-roll actions** (Logan, 2026-10-17): no agents and no progress bars. The schemer pays the cost and the hours (1.1.6), and the scheme resolves at once with two rolls **(T)**:
 
-Success chance = 50% + (owner skill - target defense) x 3%, clamped 5% to 95%.
-Discovery chance per week = 2% + target's Head of Security Intrigue x 0.5% - owner Intrigue x 0.3%.
+- **Success** = 50% + (schemer's skill - target's defense) × 3%, clamped 5% to 95%. Defense is the target's own skill, or their Head of Security's Intrigue if higher.
+- **Discovery** = 10% + target's defense × 1% - schemer's Intrigue × 1%, clamped 2% to 60%, rolled whether the scheme succeeds or fails. A discovered scheme gives -50 opinion (1.1.4), can make a nemesis, and serious ones (blackmail, accidents, netruns) open a police or regulator investigation.
+- Hours: 4 for social schemes, 8 for Intrigue and Tech schemes **(T)**. A character can run one scheme against the same target per month.
 
 | Scheme | Skill | Cost | Effect on success |
 |---|---|---|---|
@@ -205,59 +232,6 @@ Discovery chance per week = 2% + target's Head of Security Intrigue x 0.5% - own
 | Investigate shell | Intrigue | $200k | Reveal hidden owners |
 | Blackmail | Intrigue | needs hook | Force an action (vote, sale, resignation) |
 | Arrange "accident" | Intrigue | $2M | Target dies or is injured; huge penalty if discovered |
-
-## 1.2 Holders and stakes
-
-A **holder** is any of: character (personal account), personal trust, family trust, company, fund, government.
-
-A **stake**: holder, company, share class, number of shares, acquisition date (for bloc tie-breaks).
-
-Share classes:
-
-| Class | Votes per share | Dividend | Notes |
-|---|---|---|---|
-| A | 10 | normal | Usually founders and family; converts to B when sold to an outsider unless the charter says otherwise |
-| B | 1 | normal | Standard common stock |
-| N | 0 | normal | Non-voting economic shares |
-| P | 0 | paid first, 6% to 8% fixed | VC preferred; converts to B on IPO or sale |
-
-## 1.3 Control
-
-**Voting power** of a holder in a company = votes from its own stakes + votes from stakes held by companies it controls (its vassals' stakes count for it).
-
-**Control rule** (standard charter):
-1. Group holders into blocs (holders not in a bloc are a bloc of one).
-2. Each bloc's votes = sum of its members' voting power.
-3. If one bloc has more than 50% of all votes, its leader controls the company and is (or appoints) the President and CEO.
-4. If no bloc has more than 50%, the company is **contested**: the board elects the CEO by majority. Contested companies suffer -10% efficiency and are open to proxy fights.
-
-Control is recalculated whenever a stake changes or a bloc changes (immediately), and checked weekly.
-
-## 1.4 Blocs
-
-- Any holder can **propose a bloc** to another holder of the same company. Acceptance chance = 30% + opinion / 2 + shared dynasty 20% + payment bonus.
-- **Leader** = member with the most shares (counting all classes) in the bloc. Tie: earliest acquisition date.
-- Members follow the leader's vote unless their opinion of the leader is below -20; then each vote they have a 50% chance to vote independently.
-- Members check weekly: if opinion of leader < -40, 25% chance to leave.
-- A bloc dissolves if only one member remains.
-
-## 1.5 Charters
-
-| Charter | Head rule | Board size | Change threshold |
-|---|---|---|---|
-| Standard | Majority bloc leader is or appoints President and CEO | 5 to 9 | 2/3 votes |
-| Dual Leadership | Majority bloc leader appoints Executive Chair; board elects CEO | 7 to 11 | 2/3 votes |
-| Board-Governed | Board elects CEO by majority | 7 to 13 | 3/4 votes |
-| State-Linked | As Standard, but the government's golden share can veto CEO choice, sales of control, and charter changes | 7 to 11 | 2/3 votes plus government consent |
-
-Charter clauses (optional add-ons, set at founding or by charter change):
-- **Staggered board**: only 1/3 of seats elected per year.
-- **Poison pill**: if any outsider crosses 20%, all other holders may buy shares at 50% discount.
-- **Class A conversion lock**: A shares stay A when sold.
-- **Right of first refusal**: existing holders may match any sale.
-
-## 1.6 Founding a company
-
 
 ### 1.1.9 Health (Logan, 2026-10-17)
 
@@ -317,6 +291,58 @@ Cyberware **raises stats**, can grant **special abilities**, and can add **extra
 | Corporate daemon | Neural | $12M | -25 | **Extra personality**: a company-trained persona adds the trait Loyal to the company that installed it, +2 Operations; that company's board gains +20 opinion of the character, and the character cannot act against it without a Persuasion check |
 
 Implants can fail (Implant Rejection, 1.12), be hacked by netrunners (a scheme that reads the implant's data or triggers a psychosis event), or be removed (surgery, health -10, humanity restored by half the implant's cost).
+
+## 1.2 Holders and stakes
+
+A **holder** is any of: character (personal account), personal trust, family trust, company, fund, government.
+
+A **stake**: holder, company, share class, number of shares, acquisition date (for bloc tie-breaks).
+
+Share classes:
+
+| Class | Votes per share | Dividend | Notes |
+|---|---|---|---|
+| A | 10 | normal | Usually founders and family; converts to B when sold to an outsider unless the charter says otherwise |
+| B | 1 | normal | Standard common stock |
+| N | 0 | normal | Non-voting economic shares |
+| P | 0 | paid first, 6% to 8% fixed | VC preferred; converts to B on IPO or sale |
+
+## 1.3 Control
+
+**Voting power** of a holder in a company = votes from its own stakes + votes from stakes held by companies it controls (its vassals' stakes count for it).
+
+**Control rule** (standard charter):
+1. Group holders into blocs (holders not in a bloc are a bloc of one).
+2. Each bloc's votes = sum of its members' voting power.
+3. If one bloc has more than 50% of all votes, its leader controls the company and is (or appoints) the President and CEO.
+4. If no bloc has more than 50%, the company is **contested**: the board elects the CEO by majority. Contested companies suffer -10% efficiency and are open to proxy fights.
+
+Control is recalculated whenever a stake changes or a bloc changes (immediately), and checked weekly.
+
+## 1.4 Blocs
+
+- Any holder can **propose a bloc** to another holder of the same company. Acceptance chance = 30% + opinion / 2 + shared dynasty 20% + payment bonus.
+- **Leader** = member with the most shares (counting all classes) in the bloc. Tie: earliest acquisition date.
+- Members follow the leader's vote unless their opinion of the leader is below -20; then each vote they have a 50% chance to vote independently.
+- Members check weekly: if opinion of leader < -40, 25% chance to leave.
+- A bloc dissolves if only one member remains.
+
+## 1.5 Charters
+
+| Charter | Head rule | Board size | Change threshold |
+|---|---|---|---|
+| Standard | Majority bloc leader is or appoints President and CEO | 5 to 9 | 2/3 votes |
+| Dual Leadership | Majority bloc leader appoints Executive Chair; board elects CEO | 7 to 11 | 2/3 votes |
+| Board-Governed | Board elects CEO by majority | 7 to 13 | 3/4 votes |
+| State-Linked | As Standard, but the government's golden share can veto CEO choice, sales of control, and charter changes | 7 to 11 | 2/3 votes plus government consent |
+
+Charter clauses (optional add-ons, set at founding or by charter change):
+- **Staggered board**: only 1/3 of seats elected per year.
+- **Poison pill**: if any outsider crosses 20%, all other holders may buy shares at 50% discount.
+- **Class A conversion lock**: A shares stay A when sold.
+- **Right of first refusal**: existing holders may match any sale.
+
+## 1.6 Founding a company
 
 
 ### 1.6.1 Found Company action
@@ -645,10 +671,14 @@ Renown is earned monthly: +1 per $1B of trust value, +5 per company controlled a
 
 ### 1.11.5 Marriage
 
-- Proposal acceptance = 20% + opinion + wealth tier difference x 10% + alliance value.
-- **Share dowry**: a stake transferred with the marriage.
-- **Prenup**: decides whether children are of your dynasty or theirs, and whether shares transfer on divorce.
-- Divorce: 4 hours plus a legal chain; without a prenup, 50% of the personal assets acquired during marriage split.
+Marriage is **light** (Logan, 2026-10-17): flavor, relationships and heirs. No dowries, merged trusts or prenup mechanics.
+
+- Proposal acceptance = 20% + opinion + wealth tier difference × 10% **(T)**.
+- A spouse is a Partner relationship (1.1.4): +20 opinion, shared household events, and children who are eligible successors (1.11.0).
+- **Polygamy** (Logan): a character can have more than one spouse where the country's law allows it **(A)**: allowed in some countries (for example the UAE, Nigeria in some states, Saudi Arabia), elsewhere only through private ceremonies with no legal standing.
+- **Polyamory** (Logan): characters can have more than one open partner at once. Open partners are Partner relationships, not secret affairs, so they are not hooks. Characters with the Zealot trait and a conservative ideology lose opinion of polyamorous characters; Hedonist and Gregarious characters gain it **(A)**.
+- Children of any spouse or partner are eligible successors.
+- Divorce or a break-up: 4 hours and an event; spouses split personal assets acquired during the marriage 50/50 unless a will or trust rule says otherwise **(T)**.
 
 ## 1.12 Events for this layer (starting set)
 
