@@ -42,6 +42,7 @@ Exact rules, numbers and content for each layer of the game:
 | 5. Ideology (Victoria 2 style, cyberpunk) | [detailed/5-ideology.md](detailed/5-ideology.md) |
 | 6. Techno-Capital (compute, fabs, lithography, drones, autonomous vehicles, robots, models) | [detailed/6-technocapital.md](detailed/6-technocapital.md) |
 | 7. Starting world (2022 scenario, 15 starting characters, rivals, opening quest, timeline to 2030) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |
+| 8. Quest lines (arcs, the default starting line, Pieter van Aalst) | [detailed/8-quest-lines.md](detailed/8-quest-lines.md) |
 
 ## Vision
 
