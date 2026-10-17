@@ -33,13 +33,13 @@ The game has **named characters** of two kinds:
 
 ### 1.1.1 Skills
 
-Five skills, each 0 to 30. A typical adult averages 6 to 8; 15+ is excellent; 25+ is legendary.
+Five skills, each 0 to 30 (confirmed by Logan, 2026-10-17): **Finance, Operations, Persuasion, Intrigue and Tech**. A typical adult averages 6 to 8; 15+ is excellent; 25+ is legendary.
 
 Skill sources: base (genetics, rolled 0 to 8 at birth, inherited partly from parents) + education (+2 to +8 in a focus skill) + traits + cyberware + experience (+1 per 5 years in a matching role, max +6).
 
 ### 1.1.2 Personality traits
 
-Every adult has 3. Each modifies skills, opinion and stress.
+Every adult has 3 (confirmed by Logan, 2026-10-17). Each modifies skills, opinion and stress. Cyberware can add extra personality traits beyond the 3 (1.1.10).
 
 | Trait | Opposite | Skill effect | Stress when | Opinion |
 |---|---|---|---|---|
@@ -93,7 +93,7 @@ Opinion = sum of active modifiers, clamped to -100 to 100. Most modifiers decay 
 
 ### 1.1.5 Stress
 
-Stress 0 to 300. Levels at 100, 200, 300. Each new level triggers a breakdown event (burnout, addiction, public outburst, quitting). At 300 the character may die of a heart attack (5% chance per month).
+Stress 0 to 300. Levels at 100, 200, 300. Each new level triggers a breakdown event (burnout, addiction, public outburst, quitting). At 300 a heart attack event fires (5% chance per month) that costs 30 to 60 health (1.1.9).
 
 - Acting against a trait: +10 to +40 stress depending on severity.
 - Lifestyle coping: -10 to -20 per month (Hedonist parties, Ascetic retreats).
@@ -119,8 +119,8 @@ Delegating an action to a board member or family member uses their hours instead
 
 - Childhood 0 to 17 (education focus chosen at 6 and 12). Adult at 18.
 - Fertility: couples have a 15% chance per year of a child until age 45 (female partner); IVF and surrogacy with money.
-- Death chance per year: 0.1% under 40, rising to 2% at 60, 6% at 75, 15% at 85. Modified by health traits and life extension.
-- Life extension: $5M per year, halves death chance, max +15 years of life.
+- **No death rolls** (Logan, 2026-10-17). Characters have a **health** stat, and health only goes down through events. A character dies when health reaches 0 (1.1.9).
+- Life extension: see 1.1.9.
 
 ### 1.1.8 Schemes
 
@@ -194,6 +194,67 @@ Charter clauses (optional add-ons, set at founding or by charter change):
 - **Right of first refusal**: existing holders may match any sale.
 
 ## 1.6 Founding a company
+
+
+### 1.1.9 Health (Logan, 2026-10-17)
+
+Every character has **health** from 0 to 100. There are no yearly death rolls: health falls only through **health events**, and a character dies when it reaches 0.
+
+**Starting health (T).** 90 at 18, minus 1 per year over 40, plus or minus health traits (Athletic +10, Chronic Illness -20, Frail -15) **(A)**.
+
+**Health events.** Each event costs health; the event card says how much and why.
+
+| Source | When it fires **(T)** | Health cost **(T)** |
+|---|---|---|
+| **Aging** | Yearly check from 50: chance 10% at 50, 30% at 65, 60% at 75, 90% at 85 | 5 to 20 |
+| **Illness** | 3% a year, ×2 in a pandemic or a hub with poor healthcare | 5 to 40; serious illness opens a treatment chain |
+| **Stress** | Heart attack at stress 300 (1.1.5); burnout breakdowns | 30 to 60; 10 |
+| **Addiction** | Monthly while addicted (9.6), by substance or habit | 1 to 5 |
+| **Violence** | Assassination attempts, accidents, travel risk (2.21.8) | 10 to 100 |
+| **Cyberware** | Rejection and surgery events (1.1.10) | 5 to 25 |
+
+**Effects of low health (T).**
+
+| Health | Effect |
+|---|---|
+| 75 to 100 | None |
+| 50 to 74 | -1 to all skills |
+| 25 to 49 | -3 to all skills; 25% fewer hours a day (1.1.6) |
+| 1 to 24 | Bedridden: -6 to all skills, half hours, can only act through delegates; heirs and rivals start positioning |
+| 0 | Death; succession (1.11) |
+
+**Recovery and life extension (T).**
+- Rest and normal care restore 1 health a month while no health event fired that month, up to the age cap (100 minus 1 per year over 40).
+- **Private medicine** ($200,000 a year) doubles recovery and halves illness costs.
+- **Life extension** ($5M a year) raises the age cap by 15, halves aging chances, and grows with tech (cloned organs, gene therapy). It is a status symbol: Glitterati and above gain prestige from it, and heirs waiting on an inheritance lose opinion of the character.
+
+### 1.1.10 Cyberware (Logan, 2026-10-17)
+
+Cyberware **raises stats**, can grant **special abilities**, and can add **extra personality traits**, at the risk of **addiction** and **AI psychosis** (9.6).
+
+**Slots.** Neural (2), Ocular (1), Voice and face (1), Limbs (2), Torso (1) **(A)**. Fitted at a cyberware clinic (an industry, 10.3); legality varies by country (4.x).
+
+**Humanity.** Each character has humanity from 0 to 100, starting at 100. Each implant costs humanity. Below 40, **AI psychosis** events start (paranoid episodes, intrusive voices, -opinion with everyone); below 15, **cyberpsychosis**: the director AI takes control of the character for 1 to 4 weeks. Tech above 15 halves humanity loss; therapy and removing implants restore it slowly **(T)**.
+
+**Addiction.** Every implant adds to a cyberware addiction score (upgrades feel good); a high score fires urges to buy more implants, part of the addiction system (9.6).
+
+**Starting implants (A); values (T).**
+
+| Implant | Slot | Cost | Humanity | Gives |
+|---|---|---|---|---|
+| Neural co-processor | Neural | $2M | -10 | +3 Finance |
+| Social-engineering suite | Voice and face | $1.5M | -8 | +3 Persuasion |
+| Lie-reader optics | Ocular | $3M | -10 | +2 Intrigue; **ability: Read Lies**, see whether a character in a meeting is Deceitful or bluffing |
+| Market daemon | Neural | $5M | -12 | **Ability: Night Trader**, runs the character's trading orders around the clock without using their hours |
+| Sleep killer | Torso | $4M | -15 | **Ability: No Sleep**, +4 hours a day (1.1.6); +5 stress a month |
+| Total recall | Neural | $2.5M | -8 | **Ability: Perfect Memory**, never forgets a secret or hook; +1 Intrigue |
+| Pheromone glands | Torso | $1M | -6 | +5 opinion from everyone met in person |
+| Reflex boosters | Limbs | $3M | -12 | **Ability: Hard Target**, assassination and violence events against them cost half health |
+| Ghost partition | Neural | $8M | -20 | **Extra personality**: an AI personality shard adds a 4th trait, rolled from Ruthless, Visionary, Paranoid or Ambitious. If it is the opposite of an existing trait, +10 stress a month |
+| Corporate daemon | Neural | $12M | -25 | **Extra personality**: a company-trained persona adds the trait Loyal to the company that installed it, +2 Operations; that company's board gains +20 opinion of the character, and the character cannot act against it without a Persuasion check |
+
+Implants can fail (Implant Rejection, 1.12), be hacked by netrunners (a scheme that reads the implant's data or triggers a psychosis event), or be removed (surgery, health -10, humanity restored by half the implant's cost).
+
 
 ### 1.6.1 Found Company action
 
