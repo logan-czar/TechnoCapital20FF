@@ -340,7 +340,7 @@ At the start **only energy and GPUs are modeled** as real goods (Logan). Everyth
 
 - **Designers** sit above the chain. A designer holds a GPU design (its Generation, 6.4.1) and books fab and packaging capacity by contract (2.10). A designer can own its own fab, but most don't.
 - An **AI server node** is 8 GPUs plus a host. It is still counted per GPU slot, so one GPU is one slot of compute (6.2).
-- **Energy** is the only other modeled good: electricity is made by power plants in each hub (fuel is abstracted into the plant's running cost) and priced per hub (2.6.8, 6.7.2).
+- **Energy** is the only other modeled sector: **electricity, crude oil and natural gas** (Logan). Oil and gas are produced, shipped and priced as goods; power plants burn them (or run on nuclear, hydro, solar and wind) to make electricity, priced per hub (2.6.8, 6.7.2).
 
 #### Demand
 
@@ -349,10 +349,11 @@ One world GPU market with one price, **P**. Base price $1,500 per GPU **(T)**.
 | Buyer | Demand per year | Price sensitivity | Growth **(T)** |
 |---|---|---|---|
 | **Consumers** (gamers, PCs, creators) | 40M GPUs at the start **(T)** | High: demand × (P ÷ $1,500)^-1.2 | +5% a year, steady |
-| **AI** (data centers, labs, clouds) | 0.5M GPUs at the start **(T)** | Low: demand × (P ÷ $1,500)^-0.3 | +3% a month before the tipped lab's breakthrough (November 2022, 7.7), +6% a month from then until the crash (about ×2 a year), -40% at the crash, then +2% a month |
+| **AI** (data centers, labs, clouds) | 0.5M GPUs at the start **(T)** | Low: demand × (P ÷ $1,500)^-0.3 | +3% a month before the **boom trigger**; after it, a boom rate rolled for each save (below) until the crash; -40% at the crash, then +2% a month |
 
+- **Boom speed varies by save** (Logan). The boom starts with a **triggering event**: by default the tipped lab's breakthrough (November 2022, [7-starting-world.md](7-starting-world.md) 7.7), which can come earlier or later if players change history. At game start the boom rate is rolled between +3% and +10% a month **(T)** (about ×1.4 to ×3.1 a year); the default reference case below uses +6%.
 - **Clearing.** Each month P moves toward the price where total demand equals the GPUs packaged **(T)**. Because AI buyers barely care about price and consumers care a lot, a shortage pushes P up and **pushes gamers out first**: the AI boom starves consumers.
-- At a steady price these numbers put AI demand at about 1.5M GPUs in January 2024, 6M (12% of the market) in January 2026 and 50M in January 2029, when it overtakes consumer demand (about 56M) **(T)**. Supply grows only as fast as lithography tools, fabs and packaging lines are built, so P climbs through the boom.
+- In the reference case (+6% a month), at a steady price, these numbers put AI demand at about 1.5M GPUs in January 2024, 6M (12% of the market) in January 2026 and 50M in January 2029, when it overtakes consumer demand (about 56M) **(T)**. Supply grows only as fast as lithography tools, fabs and packaging lines are built, so P climbs through the boom.
 - **Server node price** = P + $4,000 for the host **(T)**, so the launch prices in 6.4.1 are a starting guide and node prices float with the GPU market.
 
 #### Developer ecosystem
@@ -360,7 +361,15 @@ One world GPU market with one price, **P**. Base price $1,500 per GPU **(T)**.
 - Each designer has a **developer ecosystem** score from 0 to 100 **(T)**.
 - **AI buyers** split their orders by `ecosystem² × availability`. **Consumers** split by `ecosystem × availability`, so they care less **(T)**.
 - Ecosystem grows by +1 a month per 10% share of GPUs installed worldwide, and by spending on developer programs ($50M a month for +1, **T**). It falls 1 a month when a designer has no current-Generation GPU.
-- Starting designers **(A)**: a Bay Area designer with ecosystem 80 and most of the market; a second US designer at 40; a Shenzhen or Beijing designer at 15, cut off from Hsinchu by the October 2022 export controls (6.9.1).
+- **Starting designers**: four or more (Logan). Proposed four **(A)**: a dominant Bay Area designer (ecosystem 80); a second US designer (40); a Korean memory giant's GPU arm in Seoul (20); a Chinese designer in Shenzhen or Beijing (15), cut off from Hsinchu by the October 2022 export controls (6.9.1). The world's big clouds can start in-house chip programs later.
+
+#### Founding a GPU designer
+
+The player can found a GPU designer, but it is **prohibitively expensive in most market conditions** (Logan). Requirements **(T)**:
+- A design team: at least 10 characters with Tech 15 or more, poached or hired at Glitterati pay.
+- A **tape-out** of $1B per design at Generation 1, ×2 per Generation after.
+- **Capacity**: fab and packaging slots are booked by contract. In a shortage (market price P above base) slots are auctioned, and a newcomer must prepay 12 months of output at P. So the only cheap windows are before the boom trigger and after the crash.
+- A new designer starts with ecosystem 0, so AI buyers barely order from it until it wins share or spends on developer programs.
 
 #### Slop
 

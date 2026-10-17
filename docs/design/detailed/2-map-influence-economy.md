@@ -614,9 +614,9 @@ Final share                         13.9%  (Presence)
 
 ### 2.6.0 What is modeled at the start (Logan, 2026-10-17)
 
-At the start **only energy and GPUs are modeled** as real goods with recipes, prices and shipments (Logan). The GPU supply chain is the largest supply chain in the game and is simulated in four layers ([6-technocapital.md](6-technocapital.md) 6.7.0). Energy means electricity made by power plants in each hub, with fuel abstracted into running costs **(A)**.
+At the start **only energy and GPUs are modeled** as real goods with recipes, prices and shipments (Logan). The GPU supply chain is the largest supply chain in the game and is simulated in four layers ([6-technocapital.md](6-technocapital.md) 6.7.0). Energy means **electricity, crude oil and natural gas** (Logan).
 
-Everything else, including the starter list Logan approved (phones, PCs, cars, electric cars, steel, oil and the rest of the tables below), is **abstracted** at the start: each sector has fixed demand that grows with the economy, a margin, and a cost per unit of output, with no recipe chain **(A)**. These goods are switched to full simulation later, in this order **(A)**: oil and fuels, steel, phones and PCs, cars and electric cars, then the rest.
+Everything else, including the starter list Logan approved (phones, PCs, cars, electric cars, steel, oil and the rest of the tables below), is **abstracted** at the start: each sector has fixed demand that grows with the economy, a margin, and a cost per unit of output, with no recipe chain **(A)**. These goods are switched to full simulation later, in an order still to be set by Logan.
 
 Population needs are consumer goods (2.8.2); while those goods are abstracted, needs are filled from the abstracted sectors.
 
