@@ -1,6 +1,6 @@
 # 7. Starting world: detailed design
 
-_Status: draft v0.4 (2026-10-17). Built from Logan's answers in the design Q&A. Sets the scenario, the 15 starting characters, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-influence-economy.md](2-map-influence-economy.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v0.5 (2026-10-17), alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the 15 starting characters, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-influence-economy.md](2-map-influence-economy.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 7.10.
 
@@ -20,12 +20,32 @@ _Status: draft v0.4 (2026-10-17). Built from Logan's answers in the design Q&A. 
 | Center of Power | The hub where the dynasty holds the most influence, so it moves as the dynasty grows. Influence is money, power and prestige: money is the asset base, and power and prestige modify it (7.5). |
 | Rise and fall | AI founders rise into new dynasties during play, and dead dynasties drop out. |
 | History | Follows the real AI boom, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2030 on average a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.4); the game continues into a post-crash era with new rules. |
-| Opening quest | Get the COVID vaccine or a doctor's note excusing you. It teaches the quest system and unlocks travel (7.6). |
+| Alternate history (Logan, 2026-10-17) | In the game world the **dot-com crash, 9/11, the 2008 financial crisis and COVID never happened**. Everything else is the same, except that the **US won its wars in the Middle East far more decisively** and is in a much better position, both financially and in the security of its resources (7.2.0). |
+| Opening quest | Originally the COVID vaccine or a doctor's note. COVID never happened in this world, so the opening quest is now "Papers" (7.6), which keeps the same job: teach the quest system and unlock flights. |
 | LLM tip | Finishing the opening quest gives a tip naming the company that will make the first LLM breakthrough. The tip is always correct, and the tipped lab is different each game. |
 | Quests and events | Quests are tracked goal trees with branches and rolls. Events are single pop-ups that can start a quest. |
 | Travel lock | Until the opening quest is finished, the player can go anywhere, but only by car or train. |
 | Succession | On death the player picks a successor from the eligible list ([1-corporate-core.md](1-corporate-core.md) 1.11.0). |
 | Game end | The game ends when no eligible successor is left, or at an optional end date. |
+
+## 7.2.0 Alternate history (Logan, 2026-10-17)
+
+Four things **never happened** in the game world: the **dot-com crash** (2000 to 2002), **9/11** (2001), the **2008 financial crisis**, and **COVID** (2020 to 2022). Everything else is the same, except that the **US won its wars in the Middle East much more decisively**, and is now in a much better economic position, both financially and with more security in its resources.
+
+What follows from that, in January 2022 **(A)**:
+
+| Area | Real 2022 | Game world 2022 |
+|---|---|---|
+| Tech | Scarred by the 2000 crash; big tech grew from the survivors | No crash ever: tech giants are older, bigger and richer, investors have never seen a tech bust, and valuations and VC funding run hotter. The 2030 AI crash is the first great tech crash, so it hits harder (8.4) |
+| Banking | Bailouts, stricter rules after 2008, a decade of near-zero rates | No crisis, no bailouts and no post-crisis rules: banks are bigger and more leveraged, US regulator strictness is 1 point lower (3.10), and households carry more debt. Rates never went to zero: the US policy rate is about **3%** at start **(T)** |
+| Housing | Recovered from the 2008 crash | Never crashed: a long boom, so many hubs start in the Peak phase of the property cycle (2.16.5) |
+| Pandemic | COVID restrictions fading | **No pandemic**: no vaccine mandates, no stimulus wave, no 2021 inflation spike, no remote-work shift. Offices are full (commercial pools start at 95% occupancy) |
+| Supply chains | COVID chip shortage | No pandemic chip shortage; chips are tight only from normal demand |
+| Security | Post-9/11 security state; long wars | No 9/11, so no post-9/11 security state at home. The US fought its Middle East wars from the 1991 Gulf War on and won them quickly and cleanly **(A)** |
+| US position | High debt; energy imports falling with shale | US federal debt about 60% of GDP instead of 120% **(T)**; a stronger dollar; Iraq is a stable US-aligned oil exporter and Gulf supply is more secure, so Hormuz risk starts at Calm and US energy security is high |
+| Gulf and oil | Volatile | Oil supply is steadier and cheaper (oil price index starts at 90 **(T)**); cartel cuts (2.6.0) are weaker while US influence in the Gulf holds |
+
+Russia's invasion of Ukraine (February 2022), the chip export controls and the AI boom still happen on schedule (7.7).
 
 ## 7.2 The world in January 2022
 
@@ -37,8 +57,8 @@ The detailed files were written with present-day starting values. At a January 2
 | Russia | Managed Float, mild sanctions from 2014; troops massing on the Ukrainian border | Invasion of Ukraine and heavy sanctions (February 2022) |
 | Compute | Generation 1 accelerators; AI is a research field, not a market | Gen 2 (2024), Gen 3 (2026), Gen 4 (2028), Gen 5 (2030) on the 24-month cycle in [6-technocapital.md](6-technocapital.md) 6.4.1 |
 | Models | No commercial chat models | The tipped lab's chatbot launch (November 2022) starts the boom |
-| Interest rates | Near zero; cheap capital everywhere | Rate shock (2022 to 2023) |
-| Pandemic | Mostly over; vaccine mandates and travel rules for the unvaccinated still in place | Restrictions fade through 2022 |
+| Interest rates | About 3% in the US: rates never went to zero (7.2.0) | Moderate hikes after the Russia energy shock (2022 to 2023) |
+| Pandemic | None: COVID never happened (7.2.0) | n/a |
 | Ideology mix | Starting shares in [5-ideology.md](5-ideology.md) 5.4 are for 2022 | Accelerationist and Neo-Luddite shares grow with the boom |
 
 Hub populations, GDP and facility levels in [2-map-influence-economy.md](2-map-influence-economy.md) stand as January 2022 values **(A)**.
@@ -108,7 +128,9 @@ Depending on who the player picks, some of the other 14 starting characters are 
   - **Prestige** = renown and reputation ([1-corporate-core.md](1-corporate-core.md) 1.11.4 and the reputation modifier in 2.5.6).
 - **Center of Power** is the hub where the dynasty's final influence share is highest. It is checked monthly and moves only when another hub leads for 3 months in a row **(T)**. The Center of Power gives +10% influence there and halves travel time for family members heading home **(T)**.
 
-## 7.6 The opening quest: "The Shot"
+## 7.6 The opening quest: "Papers" (replaces "The Shot")
+
+COVID never happened in the game world (7.2.0), so the vaccine-or-note quest is replaced. The default **(A)** keeps Logan's travel lock and the two-branch shape: at game start the character's passport and travel profile are flagged by a clerical error in a new biometric travel system, grounding them until it is cleared.
 
 The first quest of every game. It teaches the quest system: a tree of steps, each with choices and rolls, tracked in the quest log.
 
@@ -118,8 +140,8 @@ The first quest of every game. It teaches the quest system: a tree of steps, eac
 
 | Branch | Steps | Difficulty |
 |---|---|---|
-| **Get vaccinated** | Book an appointment and get the shot | Easy. No rolls except a small chance of a sick day. |
-| **Doctor's note** | Find a doctor willing to write one: the family doctor, a friend's doctor, or a paid clinic | Varies by character and rolls. Persuasion or Intrigue rolls; traits such as Honest or Paranoid change the odds; failure can mean a scandal or a forged note that is later discovered. |
+| **Clear it properly** | Book the appointment, bring documents, wait for review | Easy. A small chance of a week's delay. |
+| **Use a fixer** | Find someone who can make the flag disappear: a friend in government, a lawyer, or a forger | Varies by character and rolls. Persuasion or Intrigue rolls; traits such as Honest or Paranoid change the odds; failure can mean a scandal or a forged record that is later discovered. |
 
 The exact steps and rolls are to be written in the events and quests design.
 
@@ -135,9 +157,9 @@ Real events happen on schedule by default. Each one is an event or quest that pl
 
 | Date | Event | Game effect |
 |---|---|---|
-| Jan 2022 | Scenario start; chip shortage; vaccine mandates | Car and electronics output limited; the opening quest |
+| Jan 2022 | Scenario start (no pandemic, 7.2.0) | The opening quest "Papers" |
 | Feb 2022 | Russia invades Ukraine | Sanctions on Russia; energy price shock |
-| 2022 to 2023 | Rate shock | Cheap capital ends; VC funding rounds get harder |
+| 2022 to 2023 | Moderate rate hikes after the energy shock | VC funding rounds get a little harder |
 | Oct 2022 | Broad US chip export controls | Export controls in [6-technocapital.md](6-technocapital.md) 6.9 switch on |
 | Nov 2022 | The tipped lab launches its chatbot | The AI boom starts; compute demand surges |
 | 2023 | The GPU gold rush | Compute spot prices spike |
@@ -174,7 +196,9 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 4. 32 dynasties at start, with the money mix and placement in 7.4.
 5. Starting wealth ranges by profile in 7.3.
 6. The Center of Power rule: 3-month lead, +10% influence.
-7. Finishing "The Shot" unlocks the Found Company action and wider schemes.
+7. Finishing "Papers" unlocks the Found Company action and wider schemes.
+12. The alternate-history consequences in 7.2.0, especially how the Middle East wars started without 9/11.
+13. "Papers" as the replacement opening quest (7.6).
 8. Names marked † and profiles marked **(A)** in 7.3.
 9. The natural-rivals rule for unpicked characters (7.3.4).
 11. The pool of five candidate labs for the tip.

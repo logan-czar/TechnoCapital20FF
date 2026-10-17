@@ -39,7 +39,7 @@ A chain is a graph of events with shared state (variables like "investor interes
 
 ## 10.4 Quests (Logan, 2026-10-17)
 
-Quests are tracked goal trees with branches and rolls; events are single pop-ups that can start a quest. The opening quest, "The Shot", teaches the system ([detailed/7-starting-world.md](detailed/7-starting-world.md) 7.6).
+Quests are tracked goal trees with branches and rolls; events are single pop-ups that can start a quest. The opening quest, "Papers" (which replaced "The Shot" because COVID never happened in the game world), teaches the system ([detailed/7-starting-world.md](detailed/7-starting-world.md) 7.6).
 
 | Rule | Decision |
 |---|---|
