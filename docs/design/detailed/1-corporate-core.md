@@ -51,7 +51,7 @@ Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs** (Logan, 202
 | Honest | Deceitful | -2 Intrigue, +10 reputation | Lying, shells, bribery | +10 from Honest |
 | Brave | Cautious | +1 Persuasion | (Cautious) leverage, hostile takeovers | none |
 | Diligent | Lazy | +1 Operations, +2 management score skill (10.5.1) | (Lazy) long hours, crises | +5 from Diligent |
-| Hedonist | Ascetic | -1 Operations, +1 Persuasion; addiction gain ×1.5 (9.6) | (Ascetic) parties, luxury spending | +10 from Hedonist at galas |
+| Hedonist | Ascetic | -1 Operations, +1 Persuasion; addiction gain ×1.5 ([11-addiction.md](11-addiction.md)) | (Ascetic) parties, luxury spending | +10 from Hedonist at galas |
 | Zealot | Cynic | +2 Persuasion with characters of the same ideology ([5-ideology.md](5-ideology.md)) | Acting against their ideology | -10 from other ideologies |
 | Narcissist | Humble | +2 Persuasion in public, -2 in private; Fame gain ×1.5 | Being upstaged, losing Image | -5 from everyone; +10 from flatterers |
 | Gregarious | Shy | +2 Persuasion; meetings take half the hours | (Shy) public events, galas, campaigns | +5 from Gregarious |
@@ -246,7 +246,7 @@ Every character has **health** from 0 to 100. There are no yearly death rolls: h
 | **Aging** | Yearly check from 50: chance 10% at 50, 30% at 65, 60% at 75, 90% at 85 | 5 to 20 |
 | **Illness** | 3% a year, ×2 in a pandemic or a hub with poor healthcare | 5 to 40; serious illness opens a treatment chain |
 | **Stress** | Heart attack at stress 300 (1.1.5); burnout breakdowns | 30 to 60; 10 |
-| **Addiction** | Monthly while addicted (9.6), by substance or habit | 1 to 5 |
+| **Addiction** | Monthly while addicted ([11-addiction.md](11-addiction.md)), by substance or habit | 1 to 5 |
 | **Violence** | Assassination attempts, accidents, travel risk (2.21.8) | 10 to 100 |
 | **Cyberware** | Rejection and surgery events (1.1.10) | 5 to 25 |
 
@@ -267,13 +267,13 @@ Every character has **health** from 0 to 100. There are no yearly death rolls: h
 
 ### 1.1.10 Cyberware (Logan, 2026-10-17)
 
-Cyberware **raises stats**, can grant **special abilities**, and can add **extra personality traits**, at the risk of **addiction** and **AI psychosis** (9.6).
+Cyberware **raises stats**, can grant **special abilities**, and can add **extra personality traits**, at the risk of **addiction** ([11-addiction.md](11-addiction.md)) and **AI psychosis** (humanity, below).
 
 **Slots.** Neural (2), Ocular (1), Voice and face (1), Limbs (2), Torso (1) **(A)**. Fitted at a cyberware clinic (an industry, 10.3); legality varies by country (4.x).
 
 **Humanity.** Each character has humanity from 0 to 100, starting at 100. Each implant costs humanity. Below 40, **AI psychosis** events start (paranoid episodes, intrusive voices, -opinion with everyone); below 15, **cyberpsychosis**: the director AI takes control of the character for 1 to 4 weeks. Tech above 15 halves humanity loss; therapy and removing implants restore it slowly **(T)**.
 
-**Addiction.** Every implant adds to a cyberware addiction score (upgrades feel good); a high score fires urges to buy more implants, part of the addiction system (9.6).
+**Addiction.** Every implant adds to a cyberware addiction score (upgrades feel good); a high score fires urges to buy more implants, part of the addiction system ([11-addiction.md](11-addiction.md)).
 
 **Starting implants (A); values (T).**
 
