@@ -12,6 +12,8 @@ Five skills, each 0 to 30. A typical adult averages 6 to 8; 15+ is excellent; 25
 
 Skill sources: base (genetics, rolled 0 to 8 at birth, inherited partly from parents) + education (+2 to +8 in a focus skill) + traits + cyberware + experience (+1 per 5 years in a matching role, max +6).
 
+**Class.** Every character belongs to a class: Permanent Underclass, PMC, Glitterati or Noble ([2-map-influence-economy.md](2-map-influence-economy.md) 2.8.0).
+
 ### 1.1.2 Personality traits
 
 Every adult has 3. Each modifies skills, opinion and stress.

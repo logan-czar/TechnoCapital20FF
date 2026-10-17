@@ -1023,6 +1023,25 @@ Each company pays **selling, general and administrative (SG&A)** costs as a shar
 
 ## 2.8 Population and labor
 
+### 2.8.0 Classes (Logan, 2026-10-17)
+
+Like Victoria 3, the game has **classes**. Population segments (2.8.1) belong to the two mass classes; the two upper classes are made of named characters.
+
+| Class | Who | How they behave | Made of |
+|---|---|---|---|
+| **Permanent Underclass** | People stuck unable to get the money together to gather assets, caught in a debt spiral. Underpaid and underemployed | Docile if their **slop** needs are met (see below) | Segments: Unskilled Workers, Gig Workers, Unemployed **(A)** |
+| **PMC** (professional-managerial class) | The managerial class, from skilled union labor to yuppies and low-level executives, doctors, any wagie with a normie job, and high achievers in many low-profile fields | Votes and strikes as in 2.8.5 and 2.8.6; fears falling into the Underclass | Segments: Skilled Workers, Professionals **(A)** |
+| **Glitterati** | High-level executives, influencers, athletes | Named characters with **skill ratings in fields** that boost the organizations, companies or firms they are affiliated with. Often rich in assets, but rarely have the skills to leverage Techno-Capital, so they don't buy it | Named characters |
+| **Nobles** | People who by bloodline will always have clout or influence: political dynasties, the children of former heads of state | They do not necessarily have or pursue assets, but they can be very rich, and ruthless in guarding the influence they have amassed | Named characters; status fades over generations |
+
+**Slop.** A new need for the Permanent Underclass: cheap food, short video, games, AI-generated media and gambling **(A)**. While slop needs are met, the Underclass's unrest stays low even when Basic and Comfort fill is poor. Slop is cheap to supply, which makes it a lever for employers and governments.
+
+**Debt spiral (A).** A member of the PMC whose savings go negative for 6 months **(T)** drops into the Permanent Underclass. Climbing back needs 12 months **(T)** of positive savings plus a PMC job. Named characters can fall the same way (John Oligarch starts close to it; Samir Haddad starts in it).
+
+**Glitterati fields (A).** Each Glitterati character rates 1 to 20 in one or two fields (Management, Media, Sport, Entertainment, Fashion, Law, Medicine). Affiliation (an executive post, an endorsement, a board seat) gives the organization a bonus of 1% per rating point in matching work **(T)**: sales for Media and Sport, output quality for Management, brand for Fashion. Glitterati get a -5 penalty to any Techno-Capital allocation skill check **(T)**.
+
+**Noble fade (A).** A character becomes a Noble through high office (head of state or government, a top justice, a central bank chair) or by being born to a Noble. A Noble's child is a Noble. A grandchild stays a Noble only if they earn 500 renown **(T)** in their own life ("if they did enough in their life"); otherwise the bloodline's Noble status fades with them. Nobles get the Noble bonus to influence everywhere their family has held office **(T)**.
+
 ### 2.8.1 Segments
 
 Population is tracked per hub as six segments of the labor force (half the metro population). Wages are monthly at WI 1.0 and are multiplied by the country's WI and the local tightness factor (2.8.4).

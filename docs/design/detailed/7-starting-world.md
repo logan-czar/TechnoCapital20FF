@@ -1,6 +1,6 @@
 # 7. Starting world: detailed design
 
-_Status: draft v0.3 (2026-10-17). Built from Logan's answers in the design Q&A. Sets the scenario, the 15 starting characters, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-influence-economy.md](2-map-influence-economy.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v0.4 (2026-10-17). Built from Logan's answers in the design Q&A. Sets the scenario, the 15 starting characters, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-influence-economy.md](2-map-influence-economy.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 7.10.
 
@@ -11,7 +11,7 @@ _Status: draft v0.3 (2026-10-17). Built from Logan's answers in the design Q&A. 
 | Topic | Decision |
 |---|---|
 | Game type | A **4X game**. There are **no stages**. Play is shaped by **scenarios**. |
-| Scenarios | One scenario, starting in **2022** (January 2022 **(A)**). More scenarios can come later. |
+| Scenarios | One scenario, starting in **January 2022**. More scenarios can come later. |
 | Player start | Pick one of **15 premade starting characters** in three groups (7.3). No custom character. |
 | Starting characters | They vary in range and background. Some start with massive wealth but a secret or burden they will soon have to bear. Some are well connected but not very wealthy. Some are average people with really good stats. |
 | Rival field | 30 or more dynasties in the world, all fully original. A mix of old money, new tech money, state-linked families and criminal money. |
@@ -55,11 +55,11 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 
 | # | Character | Location | Profile | Premise | Signature play |
 |---|---|---|---|---|---|
-| 1 | **Antone Provolone** | New York | Connected | A finance bro or a Mafia guy (picked at start **(A)**). Well connected either way: he always knows a guy who knows a guy, and he has worked his way into DC | Finance, crime and politics through his contact network |
+| 1 | **Antone Provolone** | New York | Connected | A finance bro by day and a wise guy by night. Well connected either way: he always knows a guy who knows a guy, and he has worked his way into DC | Finance, crime and politics through his contact network |
 | 2 | **Ricky Feng** | San Francisco (Bay Area) | Rich, with a burden | A hacker who barely got out of a hack gone bad alive. He holds a very large, diverse crypto wallet he can no longer get into. Starts with a very large amount of compute and a large bot farm in the Philippines and Thailand | Quest: recover the key to the wallet |
 | 3 | **Dot Percy** | Los Angeles | Rich, with a burden | As Dot worked up the courage to ask for a divorce, she got a call: her husband was dead. The nation mourns the premature end of Hollywood's greatest power couple, and Dot is left with five talentless children | A PR campaign: manage a large dynasty and every child's career so they do not start sabotaging each other. One random child per playthrough is actually very talented |
-| 4 | **John Oligarch** | Calgary | Talented | A 21-year-old oil man with the best stats of any character in the game, bar none. A member of the professional-managerial class **(A)** close to falling into the **Permanent Underclass** | Climb from nothing on stats alone |
-| 5 | **Pablo Segundo** | Medellín | Connected **(A)** | Narco fascism and the rise of Pablo Segundo | Build a narco-populist movement into political power |
+| 4 | **John Oligarch** | Calgary | Talented | A 21-year-old oil man with the best stats of any character in the game, bar none. A member of the PMC (professional-managerial class) close to falling into the **Permanent Underclass** | Climb from nothing on stats alone |
+| 5 | **Pablo Segundo** | Medellín | Talented | Narco fascism and the rise of Pablo Segundo | Build a narco-populist movement into political power |
 
 ### 7.3.2 Group two: Europe, Africa and the Middle East
 
@@ -81,13 +81,17 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 | 14 | **Ananya Hegde** † | Bengaluru | Talented **(A)** | A sleeper overpowered investor | Win India good chip deals so it can build lots of data centers early and run them at lower cost: scale the whole AI supply chain as an investor |
 | 15 | **Yuna Sakamoto** † | Tokyo-Yokohama, Japan | Connected | A young Japanese influencer with a massive following who now has to pivot her appeal to an incredibly politicized and extremist Japan | Choose a politics and drive Japan and Korea |
 
+### 7.3.4 Unpicked characters
+
+Depending on who the player picks, some of the other 14 starting characters are **active rivals** and some are **passive** (Logan). Proposed rule **(A)**: each starting character names two or three natural rivals (for example Antone Provolone and Pablo Segundo over the drug and money trade, Pieter van Aalst and Fang Xiaoyu over lithography access, Qiao Lin and Viktor Sokolov over sanctions-era deals). Natural rivals of the player's character are run as active AI rivals; the rest stay passive: they live, age and keep their holdings, but do not pursue their signature play unless something pulls them in.
+
 **Starting position (T).** Wealth ranges widely by profile: Rich characters start with $1B to $10B in trusts and holdings (Ricky Feng's is mostly locked in the wallet), Connected characters with $1M to $50M, Talented characters with under $1M. Every character starts with a family suited to their premise, for example Dot Percy's five children and Pieter van Aalst's ailing father.
 
 ## 7.4 Rival dynasties
 
 | Item | Rule |
 |---|---|
-| Total at start | 32 dynasties **(T)**: the 15 starting characters' families plus 17 run only by the AI. Unpicked starting characters are run by the AI. |
+| Total at start | 32 dynasties **(T)**: the 15 starting characters' families plus 17 run only by the AI. Depending on who the player picks, some of the other starting characters are active rivals and some are passive (7.3.4). |
 | Money mix | About 30% old money, 30% new tech money, 25% state-linked, 15% criminal **(T)** |
 | Placement | At least one dynasty in every hub with Size L or larger; Mega hubs get two or three **(T)** |
 | Originality | Fully original families. No parodies of real families or founders. |
@@ -163,7 +167,6 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 
 ## 7.10 Assumptions and open items
 
-1. The 2022 scenario starts in January 2022.
 2. Hub and economy values in file 2 stand as January 2022 values.
 3. Medellín, Calgary and Sydney hub data in 7.8, Kroll's colony as a special site, and Colombia as a major country.
 4. 32 dynasties at start, with the money mix and placement in 7.4.
@@ -171,6 +174,5 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 6. The Center of Power rule: 3-month lead, +10% influence.
 7. Finishing "The Shot" unlocks the Found Company action and wider schemes.
 8. Names marked † and profiles marked **(A)** in 7.3.
-9. "PMC" for John Oligarch means the professional-managerial class.
-10. Antone Provolone's finance-or-Mafia background is picked at the start of the game.
+9. The natural-rivals rule for unpicked characters (7.3.4).
 11. The pool of five candidate labs for the tip.
