@@ -14,6 +14,7 @@ _Status: draft v0.4 (2026-10-17). Built from Logan's answers in the design Q&A. 
 | Scenarios | One scenario, starting in **January 2022**. More scenarios can come later. |
 | Player start | Pick one of **15 premade starting characters** in three groups (7.3). No custom character. |
 | Starting characters | They vary in range and background. Some start with massive wealth but a secret or burden they will soon have to bear. Some are well connected but not very wealthy. Some are average people with really good stats. |
+| Full characters | The number of full characters is set at game start, **200 by default** ([1-corporate-core.md](1-corporate-core.md) 1.1.0). |
 | Rival field | 30 or more dynasties in the world, all fully original. A mix of old money, new tech money, state-linked families and criminal money. |
 | Dynasty places | Each dynasty has an **Origin city** and a **Center of Power**. Members can live anywhere. |
 | Center of Power | The hub where the dynasty holds the most influence, so it moves as the dynasty grows. Influence is money, power and prestige: money is the asset base, and power and prestige modify it (7.5). |

@@ -6,13 +6,24 @@ Money is shown in the dynasty's home currency, written as $. "Month" means the m
 
 ## 1.1 Characters
 
+### 1.1.0 Named characters (Logan, 2026-10-17)
+
+The game has **named characters** of two kinds:
+
+| Kind | What they are |
+|---|---|
+| **Table characters** | Fill out rosters: board seats, executives, staff. They exist in the simulation to do something in a company. |
+| **Full characters** | Live in and interact with the game world. They can run a company, work a regular job, help out operations, run for political office, and so on. |
+
+- **Number of full characters** is set at game start, **200 by default**.
+- Full characters are spread across backgrounds, strata and locations. They include the starting characters the player did not pick, some of the rivals created in the **rival rotation**, and extra characters generated at random from templates with high variance.
+- **Character resources**: assets, clout, income, prestige and vril. Together they set the character's **stratum** (Permanent Underclass, PMC, Glitterati or Noble; [2-map-influence-economy.md](2-map-influence-economy.md) 2.8.0).
+
 ### 1.1.1 Skills
 
 Five skills, each 0 to 30. A typical adult averages 6 to 8; 15+ is excellent; 25+ is legendary.
 
 Skill sources: base (genetics, rolled 0 to 8 at birth, inherited partly from parents) + education (+2 to +8 in a focus skill) + traits + cyberware + experience (+1 per 5 years in a matching role, max +6).
-
-**Class.** Every character belongs to a class: Permanent Underclass, PMC, Glitterati or Noble ([2-map-influence-economy.md](2-map-influence-economy.md) 2.8.0).
 
 ### 1.1.2 Personality traits
 
