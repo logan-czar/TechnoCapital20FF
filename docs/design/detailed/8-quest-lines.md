@@ -1,8 +1,8 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v0.4 (2026-10-17). Batch 35: full lines for Pablo, Tolu and Qiao. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v0.5 (2026-10-17). Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang, Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
-**How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.15.
+**How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.16.
 
 ---
 
@@ -19,11 +19,11 @@ A quest line is made of **arcs** (Logan's word; not chapters).
 | Steps | Inside an arc, the player sees only the next step ([10-events.md](../10-events.md) 10.4). Failure branches into new quests. |
 | After the line | When a line ends, **generated side quests** keep coming from events, the character's ambition (1.1.2) and rivals (batch 33). |
 | Successors | A successor **usually does not** inherit the quest line (batch 33): they start with their own ambition and generated quests, plus a few legacy quests from the old line. **Sometimes** (25% per unfinished arc **(T)**, higher for children and protégés trained in it) the successor picks up an unfinished arc. |
-| The crash | The AI bubble pops in **2030 on average**. The actual year varies by a few years with RNG and events (8.14). Every full line has a crash arc that opens whenever it hits. |
+| The crash | The AI bubble pops in **2030 on average**. The actual year varies by a few years with RNG and events (8.15). Every full line has a crash arc that opens whenever it hits. |
 
 **Outcome tiers (A).** Most arcs use three tiers: **Strong**, **Mixed** and **Poor**. As a guide, Strong gives +2 to one skill and a clout gain, Mixed gives +1 to one skill, Poor gives a lasting penalty or a negative trait **(T)**.
 
-**Full lines written (Logan, batches 33 and 34).** Pieter Von Floop (8.3), Antone Provolone (8.4), Samir Haddad (8.5), Yuna Sakamoto (8.6), John Oligarch (8.7), Viktor Sokolov (8.8), Garrett Kroll (8.9), and from batch 35 Pablo Segundo (8.10), Tolu Balogun (8.11) and Qiao Lin (8.12). Ricky Feng stays on the default line (batch 35). The other characters keep the default line (8.2) until theirs are written.
+**Full lines written (Logan, batches 33 and 34).** Pieter Von Floop (8.3), Antone Provolone (8.4), Samir Haddad (8.5), Yuna Sakamoto (8.6), John Oligarch (8.7), Viktor Sokolov (8.8), Garrett Kroll (8.9), and from batch 35 Pablo Segundo (8.10), Tolu Balogun (8.11) and Qiao Lin (8.12), and from batch 36 Fang Xiaoyu (8.13). Ricky Feng stays on the default line (batch 35). Logan (batch 36): one new line at a time for now. The other characters keep the default line (8.2) until theirs are written.
 
 ## 8.2 Default starting quest line (placeholder)
 
@@ -49,7 +49,7 @@ The opening arcs run back to back and take the first few months of 2022 **(T)**.
 | 3 | **Be known** | Reach a Fame threshold in one hub |
 | 4 | **Hold power** | Control a company, win an office, or lead a bloc |
 | 5 | **Ride the boom** | Hold a stake or Techno-Capital in the AI supply chain when the tipped lab's breakthrough lands |
-| 6 | **Survive the crash** | Come out of the crash (8.14) in the same stratum or higher |
+| 6 | **Survive the crash** | Come out of the crash (8.15) in the same stratum or higher |
 
 ## 8.3 Pieter Von Floop: "Holding It Together" (reworked for the new economy)
 
@@ -129,7 +129,7 @@ Opens when someone builds a stake past a disclosure line, or when a rival from t
 
 ### Arc 6: The Crack (the crash)
 
-Opens when the crash hits (8.14). Fab customers stop ordering and the order book empties.
+Opens when the crash hits (8.15). Fab customers stop ordering and the order book empties.
 
 | Step | Goal | Teaches |
 |---|---|---|
@@ -540,7 +540,7 @@ Runs alongside Arc 2.
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | Found a party on order, pride and handouts; pick its ideology (Sovereigntists or Chuds suit it) | Ideology ([5-ideology.md](5-ideology.md)) |
+| 1 | Found a party on order, pride and handouts; the player picks its ideology (Logan, batch 36; Sovereigntists or Chuds suit it best) | Ideology ([5-ideology.md](5-ideology.md)) |
 | 2 | Win the Antioquia governorship | Elections ([4-politics.md](4-politics.md)) |
 | 3 | Run for president of Colombia: money, influence in every hub and a few buried bodies | National politics, hooks on rivals |
 
@@ -604,7 +604,9 @@ Runs alongside Arc 2.
 | 2 | Back a candidate for president, or run for governor of Lagos | Elections and influence |
 | 3 | Pick a side: Effective Altruist development money or Accelerationist compute money | Ideology and foreign capital |
 
-**Outcomes.** Strong: Lagos becomes a compute and fintech hub with Tolu at its center. Mixed: a rich family in a poor country. Poor: unrest at home and Tolu is blamed.
+Developing pays off more in the long run but slower (Logan, batch 36). Africa is a hell hole in this game world (7.2.0), so a developed Lagos becomes **the** clear-cut hub of Africa: the hub grows a size class, gains a finance and tech location perk (10.4.4) and draws flight capital from the rest of the continent **(T)**. Extracting pays more now and leaves Lagos as it is.
+
+**Outcomes.** Strong: Lagos becomes Africa's clear-cut hub with Tolu at its center. Mixed: a rich family in a poor country. Poor: unrest at home and Tolu is blamed.
 
 ### Arc 5: Oil Shock (the crash)
 
@@ -676,7 +678,67 @@ Runs alongside Arc 2.
 
 **Outcomes.** Strong: Qiao leads China out of the crash. Mixed: she keeps her seat and her family keeps its wealth. Poor: a scapegoat, and the family flees to Vancouver.
 
-## 8.13 Generated quests after a line
+## 8.13 Fang Xiaoyu: "Two Systems"
+
+**Who Fang is.** A talented trader-founder from Shenzhen who runs businesses across Hong Kong and Shenzhen (7.3.3). Tech and finance: the hardware city on one side of the border, the money city on the other.
+
+**What the line teaches.** Moving capital across a border with controls, branch offices and local-partner rules in China, Hong Kong listings, the hardware side of the GPU chain, and trading through a boom without being caught in it.
+
+**Starting position (A).** $80M net worth; a Shenzhen electronics and server-node assembly company (Semiconductors and electronics) with a Hong Kong holding company above it; a small Hong Kong hedge fund account; Professionals stratum. Traits: Diligent, Cunning, Greedy. Ambition: Become a tycoon.
+
+### Arc 1: Across the River
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Restructure: the Hong Kong holding company owns the Shenzhen plant as a branch office | Branch offices and China's local-partner rule (1.7.4, 2.4) |
+| 2 | Move profits from Shenzhen to Hong Kong under capital controls | Capital controls and FX (3) |
+| 3 | Win a server-node assembly contract from a US cloud company before the export rules tighten | Export controls and node assembly (6.7) |
+
+**Outcomes.** Strong: a clean structure and a big contract; +2 Finance. Mixed: +1 Finance. Poor: Beijing regulators freeze the transfer and the contract goes to Taiwan.
+
+### Arc 2: Node Rush
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | The boom starts; scale the plant by leasing more industrial real estate | Sites and industrial pools (10.4) |
+| 2 | Chips are restricted; buy through Singapore shells, or build only for domestic buyers | Sanctions, shells and exposure (6.7) |
+| 3 | Qiao Lin's state company wants a stake in the plant | Rivals and the state as a partner (8.12) |
+
+**Outcomes.** Strong: the biggest node assembler in the Pearl River Delta; +2 Operations. Mixed: growth with a state partner on the board. Poor: a US sanction names the company.
+
+### Arc 3: The Listing
+
+Runs alongside Arc 2.
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Meet Hong Kong listing rules and hire an underwriter | IPOs (3) |
+| 2 | Set the float: sell enough to raise cash, keep enough to keep control | Control, blocs and dilution (1.2) |
+| 3 | Short-sellers publish a report on the related-party deals | Short sellers, Image and investor confidence |
+
+**Outcomes.** Strong: a hot IPO and a billionaire founder. Mixed: a quiet listing at a lower price. Poor: the IPO is pulled.
+
+### Arc 4: The Trade
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Use the hedge fund to trade the AI boom from Hong Kong | Trading, margin and limit orders (3) |
+| 2 | Spot the bubble: read the signals (valuations, leverage, Buzz) and decide when to hedge | Reading the market before the crash (8.15) |
+| 3 | Buy a Hong Kong property portfolio as a store of value | Real estate pools and the property cycle |
+
+**Outcomes.** Strong: a fund that beats the market and a hedge in place. Mixed: rich on paper. Poor: fully leveraged long at the top.
+
+### Arc 5: Short the Sky (the crash)
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Node orders collapse; cut the plant or keep the workers | Restructuring and stress |
+| 2 | Cash the hedge, or meet the margin calls | Shorts and forced selling |
+| 3 | Buy rivals' plants and Hong Kong towers at the bottom | Distressed buying |
+
+**Outcomes.** Strong: Fang comes out the richest person in Shenzhen. Mixed: the company survives smaller. Poor: margin calls take the fund and the controlling stake.
+
+## 8.14 Generated quests after a line
 
 When a character's line ends, or for characters without a full line after the milestones, **generated side quests** keep coming (batch 33) **(A)**:
 - **From the ambition** (1.1.2): a 2 to 4 step quest toward it, rebuilt when the ambition changes.
@@ -684,16 +746,16 @@ When a character's line ends, or for characters without a full line after the mi
 - **From rivals**: a rival's scheme or a rival rotation character aimed at the player opens a defense quest.
 - **Legacy quests**: a successor gets one or two quests from the old line (finish what your father started) unless they inherit an arc outright (8.1).
 
-## 8.14 The crash
+## 8.15 The crash
 
 The AI bubble pops in 2030 on average (Logan). The year is set at game start as 2030 plus a roll of -2 to +2 years **(T)**, then moved by events: a bigger boom (high AI valuations, heavy leverage) brings it closer, and calmer markets push it later **(A)**. In this world there was never a dot-com crash or a 2008 crisis (7.2.0), so investors have never lived through a great crash, and it hits harder: market drops are ×1.2 the normal crash size **(T)**. When it hits, every quest line with a crash arc opens it.
 
-## 8.15 Assumptions and open items
+## 8.16 Assumptions and open items
 
 1. Outcome tiers and buff sizes in 8.1; the 25% chance a successor picks up an unfinished arc.
 2. The default line's opening arcs and milestones in 8.2, with "Papers" replacing "The Shot".
 3. Pieter's reworked starting position and arcs in 8.3.
 4. Starting positions, traits and arcs for Antone, Samir, Yuna, John, Viktor and Garrett in 8.4 to 8.9.
-5. Generated quest sources in 8.13.
-6. Crash timing and the ×1.2 crash size in 8.14.
-7. Starting positions, traits and arcs for Pablo, Tolu and Qiao in 8.10 to 8.12.
+5. Generated quest sources in 8.14.
+6. Crash timing and the ×1.2 crash size in 8.15.
+7. Starting positions, traits and arcs for Pablo, Tolu, Qiao and Fang in 8.10 to 8.13.

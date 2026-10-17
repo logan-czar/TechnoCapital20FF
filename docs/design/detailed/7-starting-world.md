@@ -19,7 +19,7 @@ _Status: draft v0.5 (2026-10-17), alternate history added. Built from Logan's an
 | Dynasty places | Each dynasty has an **Origin city** and a **Center of Power**. Members can live anywhere. |
 | Center of Power | The hub where the dynasty holds the most influence, so it moves as the dynasty grows. Influence is money, power and prestige: money is the asset base, and power and prestige modify it (7.5). |
 | Rise and fall | AI founders rise into new dynasties during play, and dead dynasties drop out. |
-| History | Follows the real AI boom, inside the alternate history in 7.2.0, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2030 on average a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.14); the game continues into a post-crash era with new rules. |
+| History | Follows the real AI boom, inside the alternate history in 7.2.0, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2030 on average a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.15); the game continues into a post-crash era with new rules. |
 | Alternate history (Logan, 2026-10-17) | In the game world the **dot-com crash, 9/11, the 2008 financial crisis and COVID never happened**. Everything else is the same, except that the **US won its wars in the Middle East far more decisively** and is in a much better position, both financially and in the security of its resources (7.2.0). |
 | Opening quest | Originally the COVID vaccine or a doctor's note. COVID never happened in this world, so the opening quest is now "Papers" (7.6), which keeps the same job: teach the quest system and unlock flights. |
 | LLM tip | Finishing the opening quest gives a tip naming the company that will make the first LLM breakthrough. The tip is always correct, and the tipped lab is different each game. |
@@ -46,6 +46,8 @@ What follows from that, in January 2022 **(A)**:
 | Gulf and oil | Volatile | Oil supply is steadier and cheaper (oil price index starts at 90 **(T)**); cartel cuts (2.6.0) are weaker while US influence in the Gulf holds |
 
 **Russia and Ukraine (Logan).** Russia invaded Ukraine much earlier, in **2005**, and the war never ended. By 2022 it is a long **drone-warfare stalemate** along a fortified front. Consequences **(A)**: Russia has been under heavy sanctions since 2005, Europe weaned itself off Russian gas long ago (pipeline gas to Europe is already cut at start), Russia sells oil at a discount through grey fleets, both sides and their backers buy drones in huge numbers (Robotics and drones and Aerospace and defense demand is higher, 10.3), and the Black Sea is at Attacks risk (2.4.2).
+
+**Africa (Logan, batch 36).** Africa is a hell hole in this game world: weak states, coups, militias, piracy in the Gulf of Guinea and heavy capital flight **(A)**. African countries start with low stability and high risk, and most capital leaves the continent. **Lagos** is the exception that can rise: if it is developed (Tolu Balogun's line, [8-quest-lines.md](8-quest-lines.md) 8.11, or any player investing there), it becomes the clear-cut hub of Africa and draws the continent's money, talent and flight capital.
 
 The chip export controls and the AI boom still happen on schedule (7.7).
 
@@ -100,7 +102,7 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 |---|---|---|---|---|---|
 | 11 | **Garrett Kroll** † | Pacific Ocean, off the coast of New Zealand | Rich, with a burden | A crazy automotive billionaire trying to start his own island colony by crashing boats into the side of Antarctica | A very hard politics run to protect his sovereign rights (Sovereigntists, [5-ideology.md](5-ideology.md)) |
 | 12 | **Fang Xiaoyu** | Shenzhen | Talented | Tech and finance | Run businesses across Hong Kong and Shenzhen |
-| 13 | **Qiao Lin** | Beijing | Connected | Party-state family | The China political run |
+| 13 | **Qiao Lin** | Beijing | Connected | Party-state family; a woman (batch 36) | The China political run |
 | 14 | **Ananya Hegde** † | Bengaluru | Talented **(A)** | A sleeper overpowered investor | Win India good chip deals so it can build lots of data centers early and run them at lower cost: scale the whole AI supply chain as an investor |
 | 15 | **Yuna Sakamoto** † | Tokyo-Yokohama, Japan | Connected | A young Japanese influencer with a massive following who now has to pivot her appeal to an incredibly politicized and extremist Japan | Choose a politics and drive Japan and Korea |
 
