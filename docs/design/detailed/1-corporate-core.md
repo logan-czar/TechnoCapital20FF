@@ -629,7 +629,7 @@ Heirs do not work the way they do in CK3. The player plays **one character**, an
 - **Choosing.** The player picks the successor from the eligible list at the moment of death; the character named in the will is shown first (Logan).
 - **Outside the family.** If the successor is not family (a partner, mentee or creditor), the player chooses each time whether to carry on as the successor's own family, keeping what was inherited, or to bring the successor into the old dynasty (Logan).
 - **Minors.** A child under 18 can be the successor. A guardian runs their affairs until they turn 18 (Logan).
-- **Game over** comes when no eligible successor is alive, or at an optional end date set at game start (Logan).
+- **Game over** comes when no eligible successor is alive, or at an optional end date set at game start (Logan). The game is otherwise an endless sandbox, and the end date is off by default (Logan, 2026-10-17).
 
 The trustee rules below (1.11.1) predate this and will be reworked when the trust rules are designed.
 
