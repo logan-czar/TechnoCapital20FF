@@ -15,7 +15,7 @@ _Status: draft v0.6 (2026-10-17), batch 24 answers applied. Logan scrapped the V
 | Business units | A business unit is **one building or site** (now called a site) (a fab, a mine, a data center, a store chain's flagship, an office), sitting on a plot in a hub. |
 | Sites hold a share of the company (batch 22) | A site is like an office that **holds a percentage of the company**. To grow, a company buys or leases real estate to expand one of its sites, and that is carried on its balance sheet. A company can target certain sites to grow, or certain areas to expand into with a new site. Sites in a location give the company buffs, such as a lower interest rate or higher productivity. |
 | Location perks (batch 23) | Site buffs are **location perks**, not size tiers: "every company that achieves X in this location gets Y", for example every company with its HQ in New York gets a bonus to investor confidence. |
-| Real estate (batch 23) | Each location has a set **pool** of commercial and residential real estate. Investing buys a part of the pool, which appreciates; the owner chooses how much to rent out for passive income; real estate is taxed at its own rates. Renting a site rents from the location's commercial pool at a rate set by available stock and how many companies want to rent there. More detail to come later (Logan). |
+| Real estate (batches 23 and 32) | Each **district** has pools of **commercial, residential, industrial and land** real estate. Investing buys a part of the pool, which appreciates; the owner chooses how much to rent out for passive income; real estate is taxed at its own rates. Renting a site rents from the location's commercial pool at a rate set by available stock and how many companies want to rent there. Pools grow slowly with population and new construction; holders buy any dollar amount; prices follow the property cycle, renter demand and interest rates (batch 32). |
 | Money (batch 24) | Location perks only in the big financial and tech hubs. The CFO proposes the dividend and the board votes at the quarterly meeting. Each country taxes profit booked there; shells and havens lower it at a risk. Companies borrow through bank loans priced by credit rating, and bonds once big enough. The player manages all investments from one portfolio screen. |
 | Boards (batch 23) | A character can sit on up to 3 boards. The CEO's and Chair's Image counts toward investor confidence. |
 | One industry, direct branches (batch 23) | A company works in **one industry**. A company can run other industries through **direct branches**: each works like a separate company with its own business assets and employees, its own revenue and expenses, and its own growth plan and R&D plan, but the parent keeps **one unified book of cash and assets**. Direct branches can **share office sites** with the parent, and they **share the parent's board and all its bonuses**. |
@@ -149,19 +149,68 @@ Site buffs belong to **locations**, not to site size. Only the big **financial a
 - Direct branches (10.4.6) get a perk when they meet its condition themselves, or through a shared parent site that does.
 - Events and politics can add, remove or change perks (a tax haven law, a tech cluster subsidy, a war).
 
-### 10.4.5 Real estate pools (Logan, 2026-10-17; more detail to come)
+### 10.4.5 Real estate pools (Logan, 2026-10-17)
 
-Real estate is simple and pooled. Logan wants to talk through real estate in more depth later; this is the outline he set.
+Real estate is pooled. There are no individual plots or buildings to pick: each **district** of a hub (2.3.2) has up to four **pools**, and holders own a dollar share of a pool.
 
-- **Pools.** Each location has a set **pool** of commercial real estate and a set pool of residential real estate, measured in dollars of value **(A)**.
-- **Investing.** A player (or any holder) who invests in real estate buys a part of a location's pool. There are no individual buildings or plots to pick.
-- **Appreciation.** The holding rises in value with the location's property cycle (2.16.5).
-- **Renting out.** The owner chooses what share of the holding to rent out. Rented real estate earns passive income at the location's rent rate; the rest is held for appreciation only.
-- **Tax.** Real estate is taxed at its own rates: property tax on value, and income tax on rent and on gains when sold, at rates set by the country and location **(A)**.
-- **Renting a site.** A company that rents a site rents from the location's commercial pool. The rent rate rises as available stock falls and as more companies want to rent there: `rent rate = base rate × (rental demand ÷ available stock)^0.5` **(T)**, where base rate is about 6% of value a year **(T)**. Owners who rent out their share of the pool collect that rate.
-- **Buying a site.** A company that buys its site buys that much of the commercial pool; it sits on the balance sheet and appreciates like any other holding.
+#### Pools (Logan: districts and four types)
 
-The plot, building and lease rules in 2.16.1 to 2.16.4 and 2.16.7 are on hold until that conversation.
+| Pool | What it is | Rented by |
+|---|---|---|
+| **Commercial** | Offices, retail, hotels, labs | Company HQs and office sites, retail, services |
+| **Residential** | Housing | Population (rent from residents by stratum, 2.8.0) |
+| **Industrial** | Plants, fabs, warehouses, data center shells, ports, refineries, mines' surface works | Industrial sites: fabs, plants, data centers, power plants, oil fields |
+| **Land** | Undeveloped land, including resource deposits in Resource Fields | Nobody; it is held for appreciation and for development |
+
+**Starting pool sizes (T)** for an L hub at PF 1.0, scaled by hub size (S 0.3, M 0.6, L 1.0, XL 1.5, Mega 2.2) and PF:
+
+| District | Commercial | Residential | Industrial | Land |
+|---|---|---|---|---|
+| F Financial | $20B | $4B | none | $1B |
+| T Tech Park | $6B | $1B | $10B | $2B |
+| P Port | $2B | none | $8B | $1.5B |
+| I Industrial | $1B | $0.5B | $5B | $1B |
+| R Residential | $3B | $15B | none | $1B |
+| S Slums | $0.3B | $2B | $0.2B | $0.2B |
+| X Resource Field | none | $0.1B | $1B | $3B plus deposits |
+
+At the start each pool is owned by dispersed small owners (40% to 70%), governments (10% to 30%) and AI property funds and dynasties (the rest) **(T)**.
+
+#### Growth (T)
+
+- Pools grow each year with the hub's population (2.17.1): residential by the population growth rate, commercial and industrial by half of it.
+- **New construction events** add to a pool (a new tower, a rezoned industrial park), sold first to whoever funds them.
+- **Developing land**: a holder of a Land pool share can convert it into Commercial, Residential or Industrial in the same district by paying a build cost (1.5× the land value converted, 12 to 24 months **(T)**). The new share lands in the target pool at its current price, so development pays when the target pool is pricier than land plus build cost.
+
+#### Buying and selling (Logan)
+
+- Buy **any dollar amount** of a pool at its current price, plus 2% fees **(T)**.
+- Selling is instant up to the pool's monthly turnover (2% of the pool in Boom and Peak, 1% in Recovery, 0.5% in Bust **(T)**); larger sales queue and fill week by week, so selling in a slump can take weeks or months. Selling at once costs a 15% discount.
+- Holdings count toward influence in their district (2.5.2) by value.
+
+#### Price (Logan: cycle, demand and rates)
+
+Each pool has a price index, 100 at the start. Each month **(T)**:
+
+`change = cycle drift (2.16.5) + 0.3 × (occupancy - 90%) - rate sensitivity × change in the country's policy rate`
+
+- **Cycle drift** follows the hub's property cycle (Boom +1% to +2.5% a month, Bust -1% to -3%).
+- **Occupancy** = rental demand ÷ the pool's rentable stock. Demand comes from residents (residential), company sites (commercial and industrial) and nothing for land.
+- **Rate sensitivity**: residential 3, commercial 2, industrial 1.5, land 4 (a 1-point rate rise cuts land 4%) **(T)**.
+
+#### Renting
+
+- The owner chooses what share of each holding to rent out (Logan). Rented share earns the pool's rent rate; the rest earns nothing but appreciation.
+- **Rent rate** = base yield × (rental demand ÷ available stock)^0.5 **(T)**, with base yields: commercial 5%, residential 4%, industrial 6%, Slum residential 9% (+1 unrest per $100M rented, 2.3.2), land 0.
+- **Renting a site**: a company renting space for a site rents from the commercial or industrial pool of its district (fab, plant and data center sites need Industrial; offices and retail need Commercial). Its rent is the pool's rent rate on the value it occupies; that rent is paid to the owners who rent out their shares, in proportion.
+- **Buying a site**: a company that buys the space for its site buys that much of the pool; it sits on the balance sheet and appreciates.
+- If a district's pool has no available stock, a company must rent in another district, buy out owners at a premium, or develop land.
+
+#### Tax (Logan: own rates)
+
+Each country sets property tax on value (0.2% to 2% a year), tax on rent income (at its income or corporate rate) and tax on gains when sold (0% to 30%), with land taxed highest where a vacancy or land-value tax law applies ([4-politics.md](4-politics.md) E10) **(A)**.
+
+The plot, building and lease rules in 2.16.1 to 2.16.4 and 2.16.7 are **retired**; the property cycle (2.16.5) and gentrification (2.16.6, now a change of pool sizes between Slums and Residential) stay.
 
 ### 10.4.6 Direct branches (Logan, 2026-10-17)
 
@@ -294,7 +343,7 @@ Hovering a company's revenue shows: industry size → cycle → rates → pass-t
 1. Every number in 10.3 and the site sizes in 10.4.3.
 2. The share model in 10.4.1 and the 15% monthly move.
 3. The starting location perks in 10.4.4.
-4. Real estate pools (10.4.5): to be discussed further with Logan.
+4. Real estate pool sizes, growth, liquidity, price formula and taxes (10.4.5).
 5. Direct branches: the $500M of free shared capacity, segment reporting and the restructuring risk in 10.4.6.
 6. Management score weights, trait shifts, the multi-board cut and the Image formula in 10.5.
 7. Which choices executives make on their own (10.5.3).

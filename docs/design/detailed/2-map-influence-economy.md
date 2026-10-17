@@ -1872,7 +1872,7 @@ Share  = Appeal / sum of Appeal of all sellers in the hub
 
 ## 2.16 Real estate
 
-> **On hold (Logan, 2026-10-17):** real estate is moving to pooled commercial and residential real estate per location ([10-industry-economy.md](10-industry-economy.md) 10.4.5). Logan will go through real estate in more depth later; the plot, building and lease rules below are kept for reference until then. The property cycle (2.16.5) still applies.
+> **Replaced (Logan, 2026-10-17):** real estate is now pooled per district (commercial, residential, industrial and land) in [10-industry-economy.md](10-industry-economy.md) 10.4.5. The plot, building and lease rules below are retired and kept for reference; the property cycle (2.16.5) and gentrification (2.16.6) still apply.
 
 Real estate is the most direct asset-as-title in the game: it holds value, pays rent and buys local influence (2.5.2).
 
