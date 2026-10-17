@@ -531,7 +531,7 @@ plus noise with a standard deviation of 8% [T], clamped to -15% and +60%. V_post
 
 ### 3.4.6 Dividends
 
-The board sets a **dividend policy** at the annual shareholder meeting. Dividends are declared with the quarterly earnings report and paid in the next monthly calculation, matching the monthly cash flow of [02-trusts-and-assets.md](../02-trusts-and-assets.md) 2.4. Up the vassal chain, dividends are the tribute.
+The board sets a **dividend policy** at the annual shareholder meeting. Each quarter the CFO proposes the dividend under that policy and the board votes on it (Logan, 2026-10-17; [10-industry-economy.md](10-industry-economy.md) 10.5.5). Dividends are declared with the quarterly earnings report and paid in the next monthly calculation, matching the monthly cash flow of [02-trusts-and-assets.md](../02-trusts-and-assets.md) 2.4. Up the vassal chain, dividends are the tribute.
 
 | Policy | Rule | Market view |
 |---|---|---|

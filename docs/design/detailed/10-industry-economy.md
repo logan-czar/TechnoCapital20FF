@@ -1,6 +1,6 @@
 # 10. Industry economy (Wall Street Raider style): detailed design
 
-_Status: draft v0.5 (2026-10-17), batch 23 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
+_Status: draft v0.6 (2026-10-17), batch 24 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 10.12.
 
@@ -16,6 +16,7 @@ _Status: draft v0.5 (2026-10-17), batch 23 answers applied. Logan scrapped the V
 | Sites hold a share of the company (batch 22) | A site is like an office that **holds a percentage of the company**. To grow, a company buys or leases real estate to expand one of its sites, and that is carried on its balance sheet. A company can target certain sites to grow, or certain areas to expand into with a new site. Sites in a location give the company buffs, such as a lower interest rate or higher productivity. |
 | Location perks (batch 23) | Site buffs are **location perks**, not size tiers: "every company that achieves X in this location gets Y", for example every company with its HQ in New York gets a bonus to investor confidence. |
 | Real estate (batch 23) | Each location has a set **pool** of commercial and residential real estate. Investing buys a part of the pool, which appreciates; the owner chooses how much to rent out for passive income; real estate is taxed at its own rates. Renting a site rents from the location's commercial pool at a rate set by available stock and how many companies want to rent there. More detail to come later (Logan). |
+| Money (batch 24) | Location perks only in the big financial and tech hubs. The CFO proposes the dividend and the board votes at the quarterly meeting. Each country taxes profit booked there; shells and havens lower it at a risk. Companies borrow through bank loans priced by credit rating, and bonds once big enough. The player manages all investments from one portfolio screen. |
 | Boards (batch 23) | A character can sit on up to 3 boards. The CEO's and Chair's Image counts toward investor confidence. |
 | One industry, direct branches (batch 23) | A company works in **one industry**. A company can run other industries through **direct branches**: each works like a separate company with its own business assets and employees, its own revenue and expenses, and its own growth plan and R&D plan, but the parent keeps **one unified book of cash and assets**. Direct branches can **share office sites** with the parent, and they **share the parent's board and all its bonuses**. |
 | Management (batch 22) | No cyclical, random management rating like Wall Street Raider. A company's **management score** comes from the stats of the characters in its board positions, and it sets **investor confidence** and **company productivity**. |
@@ -127,7 +128,7 @@ A company grows by adding real estate (Logan). Both ways go on the balance sheet
 
 ### 10.4.4 Location perks (Logan, 2026-10-17)
 
-Site buffs belong to **locations**, not to site size. Each hub has a few perks of the form **"every company that achieves X here gets Y"**. Any number of companies can hold the same perk; there is no ranking and no size threshold. Starting set **(A)**, values **(T)**:
+Site buffs belong to **locations**, not to site size. Only the big **financial and tech hubs** have perks (Logan, batch 24), each of the form **"every company that achieves X here gets Y"**. Any number of companies can hold the same perk; there is no ranking and no size threshold. Starting set **(A)**, values **(T)**:
 
 | Hub | Achieve | Get |
 |---|---|---|
@@ -137,15 +138,11 @@ Site buffs belong to **locations**, not to site size. Each hub has a few perks o
 | Bay Area | HQ here and work in a Tech industry | R&D plan effects +10% |
 | Hsinchu-Taipei | A Foundry or Chip packaging site here | Productivity +5% |
 | Shenzhen-Dongguan | A Consumer electronics, Robotics or GPU boards site here | Productivity +5%; variable cost -3% |
-| Eindhoven | A Lithography or Foundry site here | R&D plan effects +10% in those industries |
 | Singapore | HQ here | -0.25 points on loans; securities regulator strictness -1 |
-| Dubai | HQ here | Corporate tax capped at 9% on profit booked here |
-| Houston | An Oil and gas or Refining site here | Variable cost -3% |
 | Bengaluru | A Software and SaaS site here | Variable cost -5% (wages) |
 | Tokyo-Yokohama | A Robotics site here | Productivity +5% |
 | Seoul-Pyeongtaek | An Other chips or Consumer electronics site here | Productivity +3% |
 | Frankfurt | HQ here | -0.25 points on loans from banks in the eurozone |
-| Los Angeles-Long Beach | A Media and entertainment site here | Image of the CEO +5 Fame |
 
 - **HQ** is the site the company names as its head office; it can move it once a year.
 - Perks apply to the whole company unless they name a site type, in which case they apply to that site's share of the company.
@@ -236,6 +233,12 @@ Running sites is mostly automatic (Logan, batch 21). Each month the executives s
 | **Can't pay its debts** | A restructuring event chain (Logan): a standstill, then creditors vote. They can extend and swap debt for equity (the creditors take the company), sell it whole, or auction its sites one by one. Builds on 3.6 default rules | 2 to 6 months |
 
 This keeps the Wall Street Raider moves: buy a conglomerate, strip and sell its best sites, merge what is left with your own, spin off the rest.
+
+### 10.5.5 Dividends, tax and borrowing (Logan, batch 24)
+
+- **Dividends.** The CFO proposes a dividend each quarter (Fixed, Progressive or Special, [3-markets-and-fx.md](3-markets-and-fx.md) 3.4.6) and the **board votes** on it at the quarterly meeting (1.8.4). A CFO's traits shape the proposal: Greedy proposes low payouts to keep cash, a CFO loyal to a cash-hungry family proposes high ones. The head can lobby members with Persuasion. Direct branches pay nothing separately; their profit is in the parent's book.
+- **Tax.** Each country taxes the profit booked there by the sites in it ([4-politics.md](4-politics.md) E2 and E9). Profit can be moved to havens through shell companies (1.7.4), which lowers tax but builds exposure.
+- **Borrowing.** Companies borrow from banks at the policy rate plus a spread set by credit rating (3.6), lowered by location perks (10.4.4). From the Corporation rank (1.7.5, $250M value) a company can also issue bonds (3.6). The management score moves the rating (10.5.2).
 
 ## 10.6 Energy and the GPU chain in dollars
 
