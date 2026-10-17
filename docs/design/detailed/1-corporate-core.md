@@ -327,6 +327,8 @@ Current loyalty moves 5 points per week toward the target.
 
 ## 1.8 The board (council)
 
+**Management score (Logan, 2026-10-17).** The characters in a company's board positions set its **management score** (0 to 100), which drives its productivity and investor confidence. Positions include a **CTO** (Tech). Full rules: [10-industry-economy.md](10-industry-economy.md) 10.5.
+
 ### 1.8.1 Seats and elections
 
 - Board size per charter (see 1.5). Seats elected at the yearly shareholder meeting (or 1/3 per year with a staggered board).

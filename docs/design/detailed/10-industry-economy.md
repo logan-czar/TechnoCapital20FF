@@ -1,6 +1,6 @@
 # 10. Industry economy (Wall Street Raider style): detailed design
 
-_Status: draft v0.2 (2026-10-17), batch 21 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
+_Status: draft v0.3 (2026-10-17), batch 22 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 10.12.
 
@@ -12,14 +12,17 @@ _Status: draft v0.2 (2026-10-17), batch 21 answers applied. Logan scrapped the V
 |---|---|
 | Goods | The Victoria 3 style goods model is scrapped: no goods tables, recipes, production methods, per-hub goods prices or shipments. |
 | Model | Wall Street Raider style: the economy is a set of **industries**, and companies earn money from the industries they operate in. The player reads and plays the economy through company financials, not factories. |
-| Business units | A business unit is **one building or site** (a fab, a mine, a data center, a store chain's flagship, an office), sitting on a plot in a hub. |
+| Business units | A business unit is **one building or site** (now called a site) (a fab, a mine, a data center, a store chain's flagship, an office), sitting on a plot in a hub. |
+| Sites hold a share of the company (batch 22) | A site is like an office that **holds a percentage of the company**. To grow, a company buys or leases real estate to expand one of its sites, and that is carried on its balance sheet. A company can target certain sites to grow, or certain areas to expand into with a new site. The size of a site in an area gives the company buffs there, such as a lower interest rate or higher productivity. |
+| Management (batch 22) | No cyclical, random management rating like Wall Street Raider. A company's **management score** comes from the stats of the characters in its board positions, and it sets **investor confidence** and **company productivity**. |
+| Deals (batch 22) | AI companies make deals too, by archetype. Private companies are valued at their last funding round, or an earnings multiple when there is none. A company that can't pay its debts goes through a restructuring event chain, where creditors can take it or auction its sites. |
 | Energy and GPUs | Measured in **dollars** like every other industry; nothing is counted in physical units. |
 | Industries | About 36, as in 10.3. |
-| Running units | **Mostly automatic.** The company's executives run its sites; the player buys, sells and merges (10.5). |
+| Running sites | **Mostly automatic.** The company's executives run its sites; the player buys, sells and merges (10.5). |
 
 ## 10.2 The model in one paragraph
 
-Every country has a size for each **industry** (yearly revenue). The industry grows on its own trend and swings with the business cycle, interest rates and its cost drivers. Companies own **business units**, each one building or site in a hub, in one industry. A site sells into its industry in its country, takes a **market share** limited by its **capacity**, and turns revenue into profit through its **margin**. Profit flows into the company's financial statements, which set its fundamental value and share price. Executives run the sites on their own; the player buys, sells, builds, merges and spins off sites the way Wall Street Raider players trade operating businesses.
+Every country has a size for each **industry** (yearly revenue). The industry grows on its own trend and swings with the business cycle, interest rates and its cost drivers. A company works in one industry, Wall Street Raider style (a group spreads across industries through vassals, 1.7). Its operations live in **sites**: buildings or offices on plots in hubs, each holding a percentage of the company. The company wins a **market share** in each country where it has sites, limited by its **capacity** there, and turns revenue into profit through its **margin**. Its **management score**, built from the stats of the characters on its board, sets how productive it is and how much investors trust it. Profit flows into the financial statements, which set fundamental value and share price.
 
 ## 10.3 Industries
 
@@ -69,31 +72,41 @@ About 36 industries at the start **(A)**, each with fixed traits. Sizes are give
 - **Rate sensitivity**: demand × (1 - s × (policy rate - neutral rate)), with s = 0 (Low), 1 (Medium), 2 (High), 3 (Very high) **(T)**. Banks and insurers use it the other way round on their margin.
 - **Strata spending** (2.8.0): consumer industries' size in a country moves with the spending of each stratum there. The PMC's needs (housing, energy, healthcare) map to real estate, power utilities and healthcare services; unmet needs raise unrest (2.8.5) **(A)**.
 
-## 10.4 Business units (sites)
+## 10.4 Sites
 
-A business unit is **one building or site** (Logan): a fab, a mine, an oil field, a data center, a refinery, a hospital, a head office for a software business. It sits on a plot in a hub district (2.16), belongs to one industry, and sells into that industry in its hub's country. A company with three fabs in Hsinchu has three units; its share of Taiwan's foundry industry is the sum of theirs. Its book assets count for influence in its hub (2.5.2).
+A site is a building or office on a plot in a hub district (2.16): a fab, a mine, an oil field, a data center, a refinery, a hospital, a head office. A site is **like an office that holds a percentage of the company** (Logan): each site's share is its capacity ÷ the company's total capacity, and it carries that share of the company's revenue, costs, staff, slop and taxes. Its book assets count for influence in its hub (2.5.2).
 
 | Trait | Meaning | Range **(T)** |
 |---|---|---|
-| **Capacity** | The most revenue the site can earn per year, in dollars | Any; typical sizes in 10.4.2 |
-| **Market share** | Its share of the industry in that country | 0% to 100% |
-| **Quality** | How strong the site is against rivals | 0.5 to 2.0, starts at 1.0 |
-| **Book assets** | Capital tied up, = capacity × the industry's capital per $1, less depreciation | |
+| **Capacity** | The most revenue the site can earn per year, in dollars | Any; typical sizes in 10.4.3 |
+| **Share of company** | Capacity ÷ the company's total capacity | 0% to 100% |
+| **Tenure** | Owned (the real estate is on the balance sheet) or Leased (rent is an operating cost, and the lease is a liability, 2.16.7) | |
 | **Condition** | Wear; falls without upkeep, cuts capacity below 50 | 0 to 100 |
+| **Size tier** | Set by capacity; gives buffs in its area (10.4.4) | Office, Campus, Regional hub, Anchor |
 
 ### 10.4.1 Monthly calculation
 
-1. **Industry demand** in the country: base size × trend × cycle × rates × cost-driver pass-through (10.6) × event modifiers.
-2. **Target share** of each unit = `capacity × quality × stance factor` ÷ the sum over all units in that industry and country, with imports filling the rest when a country lets foreign units sell there (2.2.2).
-3. Each unit's share moves 15% of the way to its target each month **(T)**, so share is sticky.
-4. **Revenue** = min(capacity, share × demand) ÷ 12.
-5. **Operating costs** = `revenue × v × D + capacity ÷ 12 × f`, where f is the industry's fixed cost share, v = 1 - margin - f, and D is the cost driver index (1.0 at base prices). Fixed costs are paid on capacity, so a half-empty unit loses money: this is the operating leverage that makes recessions bite.
-6. **Depreciation** = book assets ÷ 10 years ÷ 12 **(T)** (4 years for cloud servers, 25 years for real estate).
-7. The result feeds the income statement (2.13.2): revenue, operating costs as cost of sales and SG&A, R&D and marketing as their own lines, then depreciation, interest and tax as before.
+1. **Industry demand** in each country: base size × trend × cycle × rates × cost-driver pass-through (10.6) × event modifiers.
+2. **Target share** of each company in a country = `capacity there × productivity × stance factor` ÷ the sum over all companies in that industry and country, with imports filling the rest when a country lets foreign companies sell there (2.2.2). Productivity comes from the management score (10.5) and site buffs (10.4.4).
+3. Each company's share moves 15% of the way to its target each month **(T)**, so share is sticky.
+4. **Revenue** in the country = min(capacity there, share × demand) ÷ 12. Each site gets its share of it.
+5. **Operating costs** = `revenue × v × D + capacity ÷ 12 × f`, where f is the industry's fixed cost share, v = 1 - margin - f, and D is the cost driver index (1.0 at base prices). Fixed costs are paid on capacity, so a half-empty company loses money: this is the operating leverage that makes recessions bite. Productivity also cuts v: v × (1.1 - 0.2 × management score ÷ 100) **(T)**.
+6. **Depreciation** = owned book assets ÷ 10 years ÷ 12 **(T)** (4 years for cloud servers, 25 years for real estate).
+7. The result feeds the income statement (2.13.2): revenue, operating costs as cost of sales and SG&A, rent for leased sites, R&D and marketing, then depreciation, interest and tax as before.
 
-**Quality** moves each quarter: +0.02 per point of the managing executive's Operations above 10 (the COO, or the CEO when there is no COO), plus the effect of the executives' automatic choices (10.5.1), tech tier bonuses (2.12) and events; it drifts back toward 1.0 by 2% a quarter **(T)**.
+### 10.4.2 Growing: expand a site or open a new one
 
-### 10.4.2 Typical site sizes (T)
+A company grows by adding real estate (Logan). Both ways go on the balance sheet.
+
+| Move | How | Cost **(T)** | Takes **(T)** |
+|---|---|---|---|
+| **Expand a site** | Buy or lease more real estate at an existing site (a neighbouring plot, more floors) | Capacity added × the industry's capital per $1; owned adds an asset (paid in cash or debt), leased adds a lease liability and rent | 6 months (12 for fabs, mines, power plants) |
+| **Open a new site** | Buy or lease a plot in a new hub or area and build | Build cost (10.4.3) plus the plot | 6 to 24 months; starts at 80% productivity for 12 months |
+| **Shrink or close** | Sell the real estate or end the lease | Assets sold at 60% of book; severance of 3 months' fixed cost; may trigger strikes (2.8.6) | 1 month |
+
+**Targets.** Each company has a **growth plan**: the sites it wants to grow and the areas it wants to open new sites in, plus a yearly growth budget. Whoever controls the company sets the plan (the player, if they are the head); otherwise the executives write it (10.5.3). The plan's budget is spent each month on the targets in order, as far as cash and borrowing allow.
+
+### 10.4.3 Typical site sizes (T)
 
 | Site | Industry | Capacity per year | Build cost |
 |---|---|---|---|
@@ -108,24 +121,63 @@ A business unit is **one building or site** (Logan): a fab, a mine, an oil field
 | Software office | Software and SaaS | $1B | $0.2B |
 | Hospital | Healthcare services | $0.5B | $0.35B |
 
-## 10.5 What the player decides
+### 10.4.4 Site size buffs
 
-Running sites is **mostly automatic** (Logan). The player plays the Wall Street Raider game on top: deals, not operations.
+The bigger a company's sites in an area, the better it does there (Logan). The tier counts the company's total capacity in one hub **(T)**:
 
-### 10.5.1 What executives do on their own
+| Tier | Capacity in the hub | Local interest rate | Productivity in the hub | Other |
+|---|---|---|---|---|
+| **Office** | Under $500M | none | none | |
+| **Campus** | $500M to $5B | -0.25 points on loans from banks in that country | +3% | Local hiring: new sites in the hub open at 90% productivity |
+| **Regional hub** | $5B to $25B | -0.5 points | +6% | +10% to the company's influence weight in the hub (2.5.2) |
+| **Anchor** | Over $25B | -1 point | +10% | The local government treats it as too big to fail: bailout chance in a default, but strikes and politics there hit harder (×1.5) |
 
-Each month the company's executives set every site's pricing stance, R&D, marketing, upkeep and staffing by themselves **(A)**. How well they do it comes from their skills and traits: a high-Operations COO keeps costs and quality up; a Greedy CEO starves R&D for short-term profit; an Ambitious one over-expands. The player shapes this only indirectly, through who sits in which board seat (1.8), the company's charter, and pressure as a shareholder. Executives also propose expansions and closures, which the board approves (1.8.4).
+Buffs apply only in that hub (and, for the interest rate, to loans in that country's currency), so companies have a reason to cluster rather than scatter.
 
-### 10.5.2 Player deals
+## 10.5 Management score
 
-| Deal | Effect **(T)** | Takes |
+There is no cyclical, random management rating as in Wall Street Raider (Logan). A company's **management score** (0 to 100) is built from the board: the characters in its positions (1.8) and their stats.
+
+### 10.5.1 How the score is built (T)
+
+| Position | Skill used | Weight |
 |---|---|---|
-| **Buy a site** | From another company for cash or shares, priced by negotiation or auction; its share, quality and staff move with it. Antitrust review above 30% share in a country (4.9.5) | 1 to 3 months |
-| **Sell a site** | The other side of a purchase | 1 to 3 months |
-| **Merge** | Two sites in the same industry and hub owned by one company become one; quality is the capacity-weighted average +0.05, fixed costs -10%. Whole companies merge through 1.9 | 3 months |
-| **Build a site** | Buy or lease a plot (2.16) and pay the build cost (10.4.2); starts at quality 0.9 | 6 to 24 months |
-| **Close a site** | Sell its assets at 60% of book; severance of 3 months' fixed cost; may trigger strikes (2.8.6) | 1 month |
+| CEO (the head) | Average of Finance, Operations and Persuasion | 30% |
+| COO | Operations | 20% |
+| CFO | Finance | 20% |
+| CTO | Tech | 10% (20% in Tech industries, taking 10% from the CEO) |
+| Chair | Persuasion | 10% |
+| Other seats (General Counsel, Head of Security, Chief Strategy Officer, independents) | Their seat's skill, averaged | 10% |
+
+- Score = `Σ weight × skill ÷ 20 × 100`, capped at 100. A board of skill-10 characters scores 50; a board of skill-20 characters scores 100.
+- An empty position counts as skill 3.
+- A member whose opinion of the head is below 0 counts at half their skill (1.8.3).
+- Traits shift the member's contribution: Diligent +2 skill, Lazy -2, Ambitious +1, Greedy -1 to the CFO slot only, Honest +1 to investor confidence (below), Deceitful -1 **(A)**.
+- The score changes only when the board changes, when members' skills grow or fall, or when opinions and traits change. It is never rolled.
+
+### 10.5.2 What the score does (T)
+
+| Effect | Formula | At score 30 | At score 50 | At score 80 |
+|---|---|---|---|---|
+| **Productivity** | `0.7 + 0.6 × score ÷ 100` multiplies target share; also cuts variable cost (10.4.1 step 5) | 0.88 | 1.00 | 1.18 |
+| **Investor confidence** | Multiplies fundamental value V (3.3.1) by `0.8 + 0.4 × score ÷ 100`; also moves the credit rating one notch per 25 points away from 50 (3.6) | ×0.92 | ×1.00 | ×1.12 |
+
+Investor confidence makes boards a target: poaching a rival's star CFO lowers their score and their share price, and putting a famous name on your own board lifts yours.
+
+### 10.5.3 What executives do on their own
+
+Running sites is mostly automatic (Logan, batch 21). Each month the executives set pricing stance, R&D, marketing, upkeep and staffing by themselves, and write the growth plan when nobody else does **(A)**. Their traits shape the choices: a Greedy CEO starves R&D for short-term profit; an Ambitious one over-expands; a Cautious one leases instead of buying. The player shapes this through who sits in which position, the charter, the growth plan when they control the company, and pressure as a shareholder.
+
+### 10.5.4 Deals
+
+| Deal | Rule **(T)** | Takes |
+|---|---|---|
+| **Buy or sell a site** | A site holds a percentage of its company, so its asking price starts at that percentage of the company's value (V, or the private valuation below), then is negotiated. Its real estate, staff and customers move with it; antitrust review above 30% share in a country (4.9.5) | 1 to 3 months |
+| **Merge sites** | Two sites in the same hub owned by one company become one; fixed costs -10% | 3 months |
 | **Spin off** | One or more sites become a new company; shares go to the parent's holders or are sold in an IPO (3.4) | 3 months |
+| **AI deals** | AI companies buy, sell, merge and spin off by archetype (2.23): a raider strips weak companies and sells their best sites, an empire builder buys share, a cautious owner sells into booms (Logan) | Monthly decision |
+| **Private company value** | The post-money value of its last funding round; with no round in the last 2 years, net income × the industry's average P/E × 0.7 (private discount) (Logan) | |
+| **Can't pay its debts** | A restructuring event chain (Logan): a standstill, then creditors vote. They can extend and swap debt for equity (the creditors take the company), sell it whole, or auction its sites one by one. Builds on 3.6 default rules | 2 to 6 months |
 
 This keeps the Wall Street Raider moves: buy a conglomerate, strip and sell its best sites, merge what is left with your own, spin off the rest.
 
@@ -144,20 +196,20 @@ Energy and GPUs are measured in dollars like every other industry (Logan). Nothi
 Goods no longer ship along routes. Instead:
 
 - Each industry has an **exposure** to each chokepoint (0 to 1) **(T)**: shipping 1.0, oil and gas production 0.6, consumer electronics 0.5, chip packaging 0.4, software 0.
-- When a chokepoint is at Tension, Attacks, Conflict or Closed (2.4.2), exposed units pay more (D rises by exposure × 2%, 5%, 15%, 30%) and lose capacity (exposure × 0%, 2%, 10%, 30%) **(T)**.
-- **Tariffs and trade wars** (4.11) cut the share foreign units can win in a country and add to their D.
+- When a chokepoint is at Tension, Attacks, Conflict or Closed (2.4.2), exposed companies pay more (D rises by exposure × 2%, 5%, 15%, 30%) and lose capacity (exposure × 0%, 2%, 10%, 30%) **(T)**.
+- **Tariffs and trade wars** (4.11) cut the share foreign companies can win in a country and add to their D.
 - **Links between industries.** An industry's cost drivers are other industries' prices, so shocks spread: oil up → airlines, chemicals and shipping costs up → their earnings fall → their shares fall → trusts holding them lose value.
 
 ## 10.8 Slop
 
-Slop is now produced per dollar: each unit makes `revenue × its industry's slop per $1M` a month in its home country **(T)**. The rules in 2.8.0 for slop need and the 0.8 and 1.2 ratio bands stay the same.
+Slop is now produced per dollar: each site makes `revenue × its industry's slop per $1M` a month in its home country **(T)**. The rules in 2.8.0 for slop need and the 0.8 and 1.2 ratio bands stay the same.
 
 ## 10.9 What happens to the old economy sections
 
 | Section in 2-map | Status |
 |---|---|
 | 2.6 Goods (except 2.6.0's energy shocks) | Retired; replaced by industries (10.3) |
-| 2.7 Facilities and production methods | Retired; replaced by business units (10.4). Buildings stay as real estate (2.16) |
+| 2.7 Facilities and production methods | Retired; replaced by sites (10.4). Buildings stay as real estate (2.16) |
 | 2.8 Population and labor | Kept, with needs read as spending on industries (10.3) |
 | 2.9 Demand and prices | Retired except electricity pricing (2.9.7) and black markets (2.9.9) |
 | 2.10 Supply contracts | Kept only for Techno-Capital and GPU chain capacity (6.7.0) |
@@ -165,24 +217,26 @@ Slop is now produced per dollar: each unit makes `revenue × its industry's slop
 | 2.15 Competition and market share | Retired; replaced by 10.4.1 |
 | Worked examples 2.14.3, 2.14.6, 2.14.9, 2.14.10, 2.25.1 | Retired |
 
-## 10.10 Worked example: a robotics unit in a recession
+## 10.10 Worked example: a robotics company in a recession
 
-Halcyon Robotics has one US robotics plant (one site): capacity $3.0B a year, share 6%, quality 1.0, Market stance. US robotics demand is $40B a year.
+Halcyon Robotics has one US robotics plant (one site holding 100% of the company): capacity $3.0B a year, share 6%, management score 50 (productivity 1.00), Market stance. US robotics demand is $40B a year.
 
 - **Expansion** (cycle +2%, β 1.5): demand = 40 × 1.03 = $41.2B. Revenue = 6% × 41.2 = $2.47B a year (82% of capacity).
 - **Costs** (margin 10%, f 0.35, so v 0.55; D 1.0): 2.47 × 0.55 + 3.0 × 0.35 = 1.36 + 1.05 = $2.41B. Operating profit $0.06B, a 2.5% margin, because 18% of capacity sits idle.
-- **Recession** (cycle -6%): demand = 40 × 0.91 = $36.4B; revenue = $2.18B; costs = 1.20 + 1.05 = $2.25B. The unit now **loses about $70M a year**.
-- **What happens next**: the COO decides on their own whether to cut costs or discount to win share (10.5.1). The player's moves are deals: sell the site before the recession deepens, or buy a weaker rival's site cheaply and merge it in to cut fixed costs 10%.
+- **Recession** (cycle -6%): demand = 40 × 0.91 = $36.4B; revenue = $2.18B; costs = 1.20 + 1.05 = $2.25B. The company now **loses about $70M a year**.
+- **What happens next**: the COO decides on their own whether to cut costs or discount to win share (10.5.3). The player can lift the management score by replacing a skill-10 COO with a skill-20 one (score 50 → 60, productivity 1.06, variable cost -2%), cut capacity by ending a lease, or buy a weaker rival's site at a recession price and merge it in to cut fixed costs 10%.
 
 ## 10.11 Tooltips
 
-Hovering a unit's revenue shows: industry size → cycle → rates → pass-through → target share and current share → capacity cap. Hovering costs shows variable part, fixed part and D with each driver's contribution.
+Hovering a company's revenue shows: industry size → cycle → rates → pass-through → target share and current share → capacity cap. Hovering costs shows variable part, fixed part and D with each driver's contribution.
 
 ## 10.12 Assumptions and open items
 
-1. Every number in 10.3 and the site sizes in 10.4.2.
-2. The share model in 10.4.1 and the 15% monthly move.
-3. Which choices executives make on their own (10.5.1), and the deal list in 10.5.2.
-4. Price indices and the Techno-Capital conversions in 10.6.
-5. Chokepoint exposure replaces shipping.
-6. Slop per dollar of revenue.
+1. Every number in 10.3 and the site sizes in 10.4.3.
+2. A company works in one industry; groups diversify through vassals.
+3. The share model in 10.4.1 and the 15% monthly move.
+4. Site size tiers and buffs in 10.4.4.
+5. Management score weights, trait shifts and effects in 10.5.
+6. Which choices executives make on their own (10.5.3).
+7. Price indices and the Techno-Capital conversions in 10.6.
+8. Chokepoint exposure replaces shipping; slop per dollar of revenue.
