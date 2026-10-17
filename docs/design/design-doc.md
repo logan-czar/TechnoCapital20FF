@@ -1,6 +1,6 @@
 # TechnoCapital20FF: Design Document
 
-_Status: v0.3 (2026-10-16). Owner: Logan. Living document; every part is open for revision._
+_Status: v0.4 (2026-10-16). Owner: Logan. Living document; every part is open for revision._
 
 This is the entry point. Each system has its own file in this folder so it can grow independently.
 
@@ -11,7 +11,7 @@ This is the entry point. Each system has its own file in this folder so it can g
 | 3 | [03-characters.md](03-characters.md) | Skills, traits, opinion, stress, schemes, cyberware |
 | 4 | [04-dynasty-and-succession.md](04-dynasty-and-succession.md) | Dynasties, houses, succession laws, marriage, game over |
 | 5 | [05-map-and-influence.md](05-map-and-influence.md) | World map, countries, regions, economic hubs, influence |
-| 6 | [06-economy.md](06-economy.md) | Goods, industries, facilities, supply chains, labor, demand |
+| 6 | [06-economy.md](06-economy.md) | Industries and business units (Wall Street Raider style), labor, demand |
 | 7 | [07-markets.md](07-markets.md) | Stock exchanges, bonds, commodities, FX, central banks |
 | 8 | [08-politics.md](08-politics.md) | Governments at three levels, interest groups, laws, regulators, lobbying, diplomacy |
 | 9 | [09-time-and-turns.md](09-time-and-turns.md) | Hourly turns, daily, weekly, monthly, quarterly and yearly calculations |
@@ -19,6 +19,34 @@ This is the entry point. Each system has its own file in this folder so it can g
 | 11 | [11-ui.md](11-ui.md) | Phaser screens and map views |
 | 12 | [12-tech-and-roadmap.md](12-tech-and-roadmap.md) | Tech stack, architecture, data model, milestones |
 | 13 | [13-open-questions.md](13-open-questions.md) | Unresolved questions and current assumptions |
+| 14 | [14-game-stages.md](14-game-stages.md) | Retired: the game has no stages (Logan, 2026-10-17) |
+
+### Stage designs
+
+Full design of each stage of a playthrough:
+
+| Stage | File |
+|---|---|
+| 2. The Founder (retired; mechanics kept as systems) | [stages/2-the-founder.md](stages/2-the-founder.md) |
+
+### Detailed designs
+
+Exact rules, numbers and content for each layer of the game:
+
+| Layer | File |
+|---|---|
+| 1. Corporate core (companies, characters, dynasty, trusts) | [detailed/1-corporate-core.md](detailed/1-corporate-core.md) |
+| 2. Map, influence and economy | [detailed/2-map-influence-economy.md](detailed/2-map-influence-economy.md) |
+| 3. Markets and FX | [detailed/3-markets-and-fx.md](detailed/3-markets-and-fx.md) |
+| 4. Politics | [detailed/4-politics.md](detailed/4-politics.md) |
+| 5. Ideology (Victoria 2 style, cyberpunk) | [detailed/5-ideology.md](detailed/5-ideology.md) |
+| 6. Techno-Capital (compute, fabs, lithography, drones, autonomous vehicles, robots, models) | [detailed/6-technocapital.md](detailed/6-technocapital.md) |
+| 7. Starting world (alternate history, 2022 scenario, 15 starting characters, rivals, opening quest, timeline to 2030) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |
+| 8. Quest lines (arcs, the default line, and full lines for Pieter, Antone, Samir, Yuna, John, Viktor and Garrett) | [detailed/8-quest-lines.md](detailed/8-quest-lines.md) |
+| 9. Gambling, crypto and prediction markets (the phone tab) | [detailed/9-gambling.md](detailed/9-gambling.md) |
+| 10. Industry economy (Wall Street Raider style: industries, business units; replaces goods) | [detailed/10-industry-economy.md](detailed/10-industry-economy.md) |
+| 11. Addiction (gambling, drugs, cyberware, doomscrolling, sex) | [detailed/11-addiction.md](detailed/11-addiction.md) |
+| 12. Setup, fair AI, dynasty score and saves | [detailed/12-setup-and-score.md](detailed/12-setup-and-score.md) |
 
 ## Vision
 

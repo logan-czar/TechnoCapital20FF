@@ -36,3 +36,17 @@ A chain is a graph of events with shared state (variables like "investor interes
 - *Strait Closed*: a chokepoint is blockaded; your chip supply is stuck at sea.
 - *Implant Rejection*: your neural co-processor is failing during a board meeting.
 - *Dad's Old Friend*: an investor from your Ask Daddy round wants his favor repaid.
+
+## 10.4 Quests (Logan, 2026-10-17)
+
+Quests are tracked goal trees with branches and rolls; events are single pop-ups that can start a quest. The opening quest, "Papers" (which replaced "The Shot" because COVID never happened in the game world), teaches the system ([detailed/7-starting-world.md](detailed/7-starting-world.md) 7.6).
+
+| Rule | Decision |
+|---|---|
+| Main quest lines | Each starting character has a long quest line made of **arcs** that can run at the same time, with side quests branching off. Arc outcomes give better or worse stat buffs. For now every character but Pieter Von Floop has a placeholder default line ([detailed/8-quest-lines.md](detailed/8-quest-lines.md)). |
+| Failure | Quests can fail. **Failure branches into new quests** instead of ending the line. |
+| Visibility | The player sees **only the next step**. Later steps stay hidden until reached. |
+| AI-run starting characters | **Sometimes** play out their own quest lines, so the player can watch them unfold and get involved. Which ones run is decided per game **(A)**. |
+| Sources | Quests come from starting characters' spines, events, other characters' requests and favors, rival rotation schemes, and the timeline. |
+
+**Quest step (A).** A step has a goal (a condition on world state), optional choices, rolls against skills or resources (vril can swing a roll), a time limit or none, and outcomes that lead to the next step, a branch, or a failure branch.

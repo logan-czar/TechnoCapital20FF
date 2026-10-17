@@ -1,6 +1,6 @@
 # 6. Economy and supply chains
 
-The economy is a Victoria 3 style simulation of goods, production and demand, sized so a player can read it through companies rather than micromanage factories.
+> **Changed (Logan, 2026-10-17):** the Victoria 3 goods model below is scrapped. The economy is now Wall Street Raider style: countries have **industries** with a size, trend, cycle and margin, and companies earn money through **business units** (one industry in one country) that win market share up to their capacity. Energy and GPUs are still counted in units. Full design: [detailed/10-industry-economy.md](detailed/10-industry-economy.md). Sections 6.1 to 6.5 below are kept for history only.
 
 ## 6.1 Goods
 
@@ -24,6 +24,7 @@ Companies own **facilities** on land plots in hub districts: mines, wells, farms
 - Facilities have **capacity**, **efficiency** (from the managing COO or CEO's Operations skill and workforce quality), **condition**, and **workforce**.
 - Building a facility takes construction time and money; buying one transfers it with its workforce.
 - Facilities create **jobs**, **taxes** and **influence** for the owner in that place.
+- Like Victoria 3, but a company either **owns or leases** the buildings it produces in. Land owner, building owner and operator can be three different holders (see [detailed/2-map-influence-economy.md](detailed/2-map-influence-economy.md) 2.16).
 
 ## 6.3 Supply chains
 
@@ -65,3 +66,7 @@ A light tech system per company: R&D spending unlocks better production methods 
 ## 6.8 Phase 1 abstraction
 
 Until Phase 2, each company has an abstract revenue and cost per month tuned by sector and size, so the corporate and dynasty systems can be tested.
+
+## Techno-Capital
+
+Compute, foundry capacity, lithography tools, drones, autonomous vehicles, robots and AI models form **Techno-Capital**: scarce machine capital that must be allocated to tasks (training runs, research, fleets, netruns, uploads) for them to run or finish. Techno-Capital is **leased, not sold**: idle machines are rented out, and a company holds the use of TC as Owned, Leased, Spot or Compromised. The AI, data center and semiconductor supply chain is the core of the early game. Full design: [detailed/6-technocapital.md](detailed/6-technocapital.md).
