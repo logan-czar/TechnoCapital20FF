@@ -446,7 +446,10 @@ Heirs do not work the way they do in CK3. The player plays **one character**, an
 | Creditors and favor holders | Characters the player owes a large favor (a strong hook) or a large debt: $10M or 10% of the player's personal net worth, whichever is lower |
 
 - **Taking over.** The player then plays as the chosen successor and receives **that character's share** of the former player's trusts and Techno-Capital: what the will, the trust rules and any debts give them. Other characters receive their own shares and stay AI-run.
-- **Game over** comes when no eligible successor is alive.
+- **Choosing.** The player picks the successor from the eligible list at the moment of death; the character named in the will is shown first (Logan).
+- **Outside the family.** If the successor is not family (a partner, mentee or creditor), the player chooses each time whether to carry on as the successor's own family, keeping what was inherited, or to bring the successor into the old dynasty (Logan).
+- **Minors.** A child under 18 can be the successor. A guardian runs their affairs until they turn 18 (Logan).
+- **Game over** comes when no eligible successor is alive, or at an optional end date set at game start (Logan).
 
 The trustee rules below (1.11.1) predate this and will be reworked when the trust rules are designed.
 

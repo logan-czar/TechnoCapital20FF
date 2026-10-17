@@ -19,7 +19,7 @@ This is the entry point. Each system has its own file in this folder so it can g
 | 11 | [11-ui.md](11-ui.md) | Phaser screens and map views |
 | 12 | [12-tech-and-roadmap.md](12-tech-and-roadmap.md) | Tech stack, architecture, data model, milestones |
 | 13 | [13-open-questions.md](13-open-questions.md) | Unresolved questions and current assumptions |
-| 14 | [14-game-stages.md](14-game-stages.md) | Stages of a playthrough: Heir, Founder, Climber, Tycoon, Oligarch |
+| 14 | [14-game-stages.md](14-game-stages.md) | Retired: the game has no stages (Logan, 2026-10-17) |
 
 ### Stage designs
 
@@ -27,7 +27,7 @@ Full design of each stage of a playthrough:
 
 | Stage | File |
 |---|---|
-| 2. The Founder | [stages/2-the-founder.md](stages/2-the-founder.md) |
+| 2. The Founder (retired; mechanics kept as systems) | [stages/2-the-founder.md](stages/2-the-founder.md) |
 
 ### Detailed designs
 
@@ -41,7 +41,7 @@ Exact rules, numbers and content for each layer of the game:
 | 4. Politics | [detailed/4-politics.md](detailed/4-politics.md) |
 | 5. Ideology (Victoria 2 style, cyberpunk) | [detailed/5-ideology.md](detailed/5-ideology.md) |
 | 6. Techno-Capital (compute, fabs, lithography, drones, autonomous vehicles, robots, models) | [detailed/6-technocapital.md](detailed/6-technocapital.md) |
-| 7. Starting world (January 2021 start, playable dynasties, rivals, opening quest, 2021 to 2030 timeline) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |
+| 7. Starting world (2022 scenario, 15 starting characters, rivals, opening quest, timeline to 2030) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |
 
 ## Vision
 

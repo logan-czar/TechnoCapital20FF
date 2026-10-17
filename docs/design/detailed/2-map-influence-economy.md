@@ -52,7 +52,7 @@ This file turns the map, influence and economy overviews into exact rules, formu
 | **Major countries** | 31 | Fully simulated: hubs, regions, own market, central bank, exchange |
 | **Minor groups** | 16 groups covering the rest of the world | Each member country keeps its own government, laws and currency (see [4-politics.md](4-politics.md) 4.2.4). Economically each group is one aggregated market with no playable hubs at start |
 | **Regions** | 2 to 8 per major country | States or provinces. Only regions that contain a hub are drawn in detail at start; the rest of a country is one "rest of country" region |
-| **Economic hubs** | 43 | Cities or clusters with districts and plots (2.3) |
+| **Economic hubs** | 44 | Cities or clusters with districts and plots (2.3) |
 | **Districts** | 6 to 26 per hub | Each with 10 plots |
 | **Trade routes** | About 120 lanes | Sea, rail, road, river, pipeline, air, fiber, power interconnectors |
 | **Chokepoints** | 14 | Straits, canals, cable corridors (2.4.2) |
@@ -224,6 +224,7 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Bay Area | United States (California) | L | 7.7 | F2 I1 P1 R5 S1 T4 | Venture capital, software, AI labs, chip design, cyberware startups | Transpacific sea and fiber to Tokyo, Taiwan, Shanghai; air freight hub for chips |
 | Los Angeles-Long Beach | United States (California) | XL | 13 | F2 I4 P3 R6 S2 T1 | Largest US container port, media and entertainment, aerospace, defense | Transpacific lanes to Shenzhen, Shanghai, Busan; rail land bridge to Chicago and New York |
 | Phoenix | United States (Arizona) | M | 5 | F1 I2 R4 S1 T2 | New chip fabs, data centers, water-stressed | Rail and road to Los Angeles and Houston; air |
+| Calgary | Canada (Alberta) | M | 1.6 | F2 I2 R3 S1 X2 | Oil sands, oil company headquarters, pipelines, ranching | Pipelines to Houston and the Pacific coast; rail to Toronto and Chicago. Added for the starting character John Oligarch ([7-starting-world.md](7-starting-world.md) 7.8) |
 | Toronto | Canada (Ontario) | L | 6.5 | F3 I3 P1 R5 S1 T1 | Banking, mining finance, auto plants, AI research | Rail and road to New York and Chicago; St Lawrence Seaway |
 | Mexico City | Mexico (Valle de México and Bajío belt) | Mega | 22 | F2 I6 P1 R8 S5 T1 X1 | Vehicles and parts, nearshore electronics, consumer goods, telecom | Rail and road to Houston (US border crossings); Pacific port Manzanillo and Gulf port Veracruz (abstracted) |
 
@@ -233,7 +234,7 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 |---|---|---|---|---|---|---|
 | São Paulo | Brazil (São Paulo, with Santos port) | Mega | 22 | F3 I5 P2 R8 S4 T1 X1 | Finance, vehicles, food processing, soy, beef, sugar, iron ore marketing | Santos to Atlantic lanes; Cape of Good Hope to China; Panama Canal to the US west coast |
 | Antofagasta | Chile (Antofagasta, Atacama) | S | 0.5 | I1 P1 R1 S1 X2 | Copper mining, lithium brine | Pacific bulk lanes to Shanghai, Busan, Tokyo; Panama Canal to Houston |
-| Medellín | Colombia (Antioquia) | L | 4 | F1 I2 R4 S3 T1 X1 | Textiles, coffee, flowers, informal economy, cartel money laundering, growing tech scene | Road to Pacific port Buenaventura and Caribbean port Cartagena (abstracted); air to Miami and Bogotá. Added for the playable Medellín dynasty ([7-starting-world.md](7-starting-world.md) 7.8) |
+| Medellín | Colombia (Antioquia) | L | 4 | F1 I2 R4 S3 T1 X1 | Textiles, coffee, flowers, informal economy, cartel money laundering, growing tech scene | Road to Pacific port Buenaventura and Caribbean port Cartagena (abstracted); air to Miami and Bogotá. Added for the starting character Pablo Segundo ([7-starting-world.md](7-starting-world.md) 7.8) |
 
 **Europe**
 
@@ -280,7 +281,7 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Jakarta | Indonesia (Jabodetabek, with Sulawesi nickel abstracted) | Mega | 34 | F2 I5 P2 R7 S6 T1 X1 | Consumer market, nickel processing, palm oil, coal | Sunda Strait; Malacca; Lombok route |
 | Ho Chi Minh City | Vietnam (Southeast) | XL | 14 | F1 I6 P2 R5 S3 T1 | Electronics assembly ("China plus one"), garments, footwear, rice | South China Sea; Malacca; transpacific lanes |
 | Perth-Pilbara | Australia (Western Australia) | M | 2.3 | F1 I2 P2 R3 X2 | Iron ore (largest exporter), lithium ore, LNG, gold | Bulk lanes to China, Japan and Korea via the Lombok and Makassar straits (bypassing Malacca) |
-| Sydney | Australia (New South Wales) | XL | 5.4 | F4 I2 P2 R6 S1 T2 | Banking, pension funds, property, media, mining company headquarters | Pacific lanes to Shanghai, Tokyo and Los Angeles; fiber to Singapore and the US. Added for the playable Sydney dynasty ([7-starting-world.md](7-starting-world.md) 7.8) |
+| Sydney | Australia (New South Wales) | XL | 5.4 | F4 I2 P2 R6 S1 T2 | Banking, pension funds, property, media, mining company headquarters | Pacific lanes to Shanghai, Tokyo and Los Angeles; fiber to Singapore and the US. |
 
 ### 2.3.4 Signature starting assets
 

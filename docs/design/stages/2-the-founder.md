@@ -1,5 +1,8 @@
 # Stage 2: The Founder
 
+> **Retired (Logan, 2026-10-17).** TechnoCapital20FF is a 4X game with no stages; play is shaped by scenarios ([detailed/7-starting-world.md](../detailed/7-starting-world.md)). The mechanics described here stay as systems; the stage framing, goals and exits no longer apply.
+
+
 _Expands [14-game-stages.md](../14-game-stages.md) section 14.3. Rules for founding paths, control, boards and trusts are in [detailed/1-corporate-core.md](../detailed/1-corporate-core.md); this file designs what it feels like to play the stage and the systems that only matter here. All numbers are tuning values._
 
 ## 2.1 The fantasy

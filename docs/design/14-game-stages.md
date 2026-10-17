@@ -1,5 +1,8 @@
 # 14. Game stages
 
+> **Retired (Logan, 2026-10-17).** TechnoCapital20FF is a 4X game with no stages; play is shaped by scenarios ([detailed/7-starting-world.md](detailed/7-starting-world.md)). The mechanics described here stay as systems; the stage framing, goals and exits no longer apply.
+
+
 A playthrough moves through stages, like CK3's growth from count to emperor or Victoria 3's rise from minor to great power. Each stage changes the player's **scale**, **goals**, **threats** and **unlocked tools**. Stages are tied to the dynasty's standing (see [02-trusts-and-assets.md](02-trusts-and-assets.md)), not to the calendar, so a fast player can climb quickly and a ruined dynasty can fall back down.
 
 ## 14.1 Overview

@@ -39,4 +39,4 @@ Eligibility (dynasty blood only, blood plus spouses, anyone adopted into the fam
 
 ## 4.5 Game over and scoring
 
-The game ends when no living dynasty member is trustee of the family trust, or at a chosen end date. Score is renown plus total value of the family trust plus personal assets of living members.
+The game ends when the player has no eligible successor, or at an optional end date (Logan, 2026-10-17; see [detailed/1-corporate-core.md](detailed/1-corporate-core.md) 1.11.0). Score is renown plus total value of the family trust plus personal assets of living members.
