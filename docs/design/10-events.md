@@ -43,7 +43,7 @@ Quests are tracked goal trees with branches and rolls; events are single pop-ups
 
 | Rule | Decision |
 |---|---|
-| Main quest lines | Each starting character has a long quest line made of **arcs** that can run at the same time, with side quests branching off. Arc outcomes give better or worse stat buffs. For now every character but Pieter van Aalst has a placeholder default line ([detailed/8-quest-lines.md](detailed/8-quest-lines.md)). |
+| Main quest lines | Each starting character has a long quest line made of **arcs** that can run at the same time, with side quests branching off. Arc outcomes give better or worse stat buffs. For now every character but Pieter Von Floop has a placeholder default line ([detailed/8-quest-lines.md](detailed/8-quest-lines.md)). |
 | Failure | Quests can fail. **Failure branches into new quests** instead of ending the line. |
 | Visibility | The player sees **only the next step**. Later steps stay hidden until reached. |
 | AI-run starting characters | **Sometimes** play out their own quest lines, so the player can watch them unfold and get involved. Which ones run is decided per game **(A)**. |

@@ -67,7 +67,7 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 | # | Character | Location | Profile | Premise | Signature play |
 |---|---|---|---|---|---|
 | 6 | **Tolu Balogun** † | Lagos, Nigeria | Rich, with a burden **(A)** | Oil money and corruption in a developing country | Corruption, oil and third-world development |
-| 7 | **Pieter van Aalst** † | Eindhoven, Netherlands | Rich, with a burden | The easy start. Sole heir to a lithography machine empire. The monopoly is easy to run, and he has been a boy scout his entire life. He is 24, and his father's health is starting to turn. The family trust is swelling, but he worries he may crack holding together what his father built | Run the world's lithography monopoly ([6-technocapital.md](6-technocapital.md) 6.7) |
+| 7 | **Pieter Von Floop** † | Eindhoven, Netherlands | Rich, with a burden | The easy start. Sole heir to a lithography machine empire. The monopoly is easy to run, and he has been a boy scout his entire life. He is 24, and his father's health is starting to turn. The family trust is swelling, but he worries he may crack holding together what his father built | Run the world's lithography monopoly ([6-technocapital.md](6-technocapital.md) 6.7) |
 | 8 | **Samir Haddad** † | Dubai | Talented | A former elite soldier, now in the Permanent Underclass, slaving away on another megaproject in the desert. Then a stranger recognized his implants, said he could get him better ones, and if he did the stranger a favor the first one would be free | An assassin playthrough: slowly become a cyborg |
 | 9 | **Margaux Valcourt** † | Paris | Rich | A French redheaded woman who inherits a lot of money from her uncle. The Liberal, open-ended playthrough: she can become anything | Open sandbox |
 | 10 | **Viktor Sokolov** † | Moscow | Connected | A Putin-style spy dynasty: an intelligence officer building a family network inside the state **(A)** | Spycraft, state capture, sanctions |
@@ -84,9 +84,9 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 
 ### 7.3.4 Unpicked characters
 
-Depending on who the player picks, some of the other 14 starting characters are **active rivals** and some are **passive** (Logan). Proposed rule **(A)**: each starting character names two or three natural rivals (for example Antone Provolone and Pablo Segundo over the drug and money trade, Pieter van Aalst and Fang Xiaoyu over lithography access, Qiao Lin and Viktor Sokolov over sanctions-era deals). Natural rivals of the player's character are run as active AI rivals; the rest stay passive: they live, age and keep their holdings, but do not pursue their signature play unless something pulls them in.
+Depending on who the player picks, some of the other 14 starting characters are **active rivals** and some are **passive** (Logan). Proposed rule **(A)**: each starting character names two or three natural rivals (for example Antone Provolone and Pablo Segundo over the drug and money trade, Pieter Von Floop and Fang Xiaoyu over lithography access, Qiao Lin and Viktor Sokolov over sanctions-era deals). Natural rivals of the player's character are run as active AI rivals; the rest stay passive: they live, age and keep their holdings, but do not pursue their signature play unless something pulls them in.
 
-**Starting position (T).** Wealth ranges widely by profile: Rich characters start with $1B to $10B in trusts and holdings (Ricky Feng's is mostly locked in the wallet), Connected characters with $1M to $50M, Talented characters with under $1M. Every character starts with a family suited to their premise, for example Dot Percy's five children and Pieter van Aalst's ailing father.
+**Starting position (T).** Wealth ranges widely by profile: Rich characters start with $1B to $10B in trusts and holdings (Ricky Feng's is mostly locked in the wallet), Connected characters with $1M to $50M, Talented characters with under $1M. Every character starts with a family suited to their premise, for example Dot Percy's five children and Pieter Von Floop's ailing father.
 
 ## 7.4 Rival dynasties
 

@@ -1,6 +1,6 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v0.1 (2026-10-17). Built from Logan's answers in the design Q&A. Sets the arc rules, the default starting quest line every character gets for now, and the first full quest line: Pieter van Aalst. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v0.1 (2026-10-17), **on hold**: Logan wants the economy, corporations, investing, and character stats and personalities fleshed out before scenarios and quest lines, which come last. Built from Logan's answers in the design Q&A. Sets the arc rules, the default starting quest line every character gets for now, and the first full quest line: Pieter Von Floop. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.5.
 
@@ -48,15 +48,15 @@ After the opening arcs, progress comes from milestones. Each milestone hit unloc
 | 5 | **Ride the boom** | Hold a stake or Techno-Capital in the AI supply chain when the tipped lab's breakthrough lands |
 | 6 | **Survive the crash** | Come out of the crash (8.4) in the same stratum or higher |
 
-## 8.3 Pieter van Aalst: "Holding It Together"
+## 8.3 Pieter Von Floop: "Holding It Together"
 
 **Who he is.** 24, sole heir to the family's lithography machine empire in Eindhoven, the only maker of EUV tools in the world ([6-technocapital.md](6-technocapital.md) 6.2). The monopoly is easy to run and he has been a boy scout his whole life. His father's health is starting to turn. The family trust is swelling, but Pieter worries he will crack holding together what his father built.
 
 **What the line teaches.** The ins and outs of running a massive publicly traded company and managing your wealth (Logan): the board, earnings and investors, operating a monopoly, the family trust and succession, defending control, and surviving the crash.
 
 **Starting position (A).**
-- **The company**: Van Aalst Lithography, a Megacorp listed in Amsterdam. The family controls it through a bloc: the family trust holds 22%, a family foundation 8%, and a friendly pension fund 6% **(T)**.
-- **Pieter** is Chief Strategy Officer and a board member; his father, Willem van Aalst, is President and CEO and leads the bloc.
+- **The company**: Von Floop Lithography, a Megacorp listed in Amsterdam. The family controls it through a bloc: the family trust holds 22%, a family foundation 8%, and a friendly pension fund 6% **(T)**.
+- **Pieter** is Chief Strategy Officer and a board member; his father, Willem Von Floop, is President and CEO and leads the bloc.
 - **Traits**: Honest, Diligent, Anxious. Stress builds when he acts against Honest **(A)**.
 - **Wealth**: a personal account of $40M and a beneficiary share of a family trust worth about $9B **(T)**.
 
