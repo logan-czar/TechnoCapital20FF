@@ -620,6 +620,17 @@ Everything else, including the starter list Logan approved (phones, PCs, cars, e
 
 Population needs are consumer goods (2.8.2); while those goods are abstracted, needs are filled from the abstracted sectors.
 
+**Oil and gas chokepoints and shocks (Logan, 2026-10-17).** Oil and gas get their own chokepoints and shocks, on top of the general lane rules in 2.4. Starting set **(A)**:
+
+| Shock | Where | What it does **(T)** | How it starts and ends |
+|---|---|---|---|
+| **Strait of Hormuz** | Gulf exits (Dhahran-Dammam, Doha, Dubai) | Tension: war-risk insurance +0.5%. Closure: about 20% of world oil and a large share of LNG cannot leave the Gulf; the Saudi East-West pipeline carries a fraction to the Red Sea | Iran events, Gulf wars, strikes on tankers; reopens by event or after 2 to 12 weeks |
+| **Cartel cuts (OPEC-style)** | Gulf, Russia and other producers | Members cut output by 1% to 10% of world oil for 3 to 12 months; the oil price rises with ε (2.9.2) | Rolled monthly when prices fall below the cartel's target; players with Persuasion and influence in member countries can push for or against |
+| **Sanctions on Russia** | Russian oil and gas exports | Pipeline gas to Europe is cut in stages from 2022; oil is sold at a discount through grey fleets to buyers that ignore the sanctions | Timeline event (2022), then 4.11.4 sanctions rules |
+| **Red Sea attacks** | Bab-el-Mandeb and Suez | Tankers and LNG carriers reroute around Africa (+10 to 14 days); insurance at Attacks or Conflict | Timeline event (late 2023), then rolled by regional tension |
+
+Shocks raise the price of oil and gas, and through power plants the price of electricity in hubs that burn them, which raises the cost of running fabs and data centers. Players can profit by holding storage, tankers or futures, or by owning pipelines that bypass a closed chokepoint.
+
 ### 2.6.1 How to read the goods tables
 
 - **Base price** is the reference price at game start in a balanced market (2.9). Services are quoted at PF 1.0 and scale with the hub's PF.
@@ -714,7 +725,7 @@ Population needs are consumer goods (2.8.2); while those goods are abstracted, n
 | Military drones | unit | $25,000 | Advanced chips 2, sensors 6, electric motors 0.2, battery cells 5 kWh, telecom equipment 0.01, advanced packaging 0.5, plastics and aluminium 0.03 t ($2,615) | Defense works | Regional (licence) | 1.0 |
 | Defense systems | unit (air defense battery or armored platform) | $5,000,000 | Advanced chips 400, sensors 700, telecom equipment 7, steel 100 t, refined fuels 700 bbl, electric motors 17 ($442,000) | Defense works | Government buyers only | 0.5 |
 | Industrial robots | unit | $30,000 | Electric motors 6, sensors 10, advanced chips 2, mature chips 30, steel 1 t, aluminium 0.2 t ($14,430) | Machinery plant | Global | 1.2 |
-| Lithography systems | unit | $150,000,000 | Precision optics 10, advanced chips 200, sensors 3,000, electric motors 400, specialty gases 5 t, steel 100 t, aluminium 50 t, rare earth oxides 2 t ($31.2M) | Machinery plant (lithography line) | Global (export controls, single supplier) | 2.5 |
+| Lithography systems | unit | $200,000,000 (EUV; High-NA $380M, 6.7.0) | Precision optics 10, advanced chips 200, sensors 3,000, electric motors 400, specialty gases 5 t, steel 100 t, aluminium 50 t, rare earth oxides 2 t ($31.2M) | Machinery plant (lithography line) | Global (export controls, single supplier) | 2.5 |
 | Solar panels | kW | $110 | Polysilicon 0.004 t, aluminium 0.01 t, refined copper 0.001 t, chemicals 0.005 t, mature chips 0.02 ($80) | Machinery plant | Global | 1.2 |
 | Wind turbines | MW | $900,000 | Steel 600 t, plastics 60 t, refined copper 10 t, rare earth oxides 0.4 t, electric motors 2, sensors 20, mature chips 50 ($586,000) | Machinery plant | Global | 1.2 |
 

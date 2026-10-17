@@ -67,7 +67,7 @@ Models are not a machine, but they behave like one: they are scarce, they go obs
 ### 6.2.2 Foundry capacity and lithography tools
 
 - **Foundry capacity** is a fab level's wafer starts per month (2.7.5: mature 10,000, memory 20,000, advanced 5,000). A fab owner can run its own chips through it (own production) or lease **foundry slots** to fabless chip designers, who supply the design and pay per wafer start (6.6.2). Idle foundry capacity goes on the slot lease market.
-- **Lithography tools** are the lithography systems installed in fab levels (2.7.2: memory 4, advanced 10). They are the rarest TC in the game: one supplier in Eindhoven at start, $150M each, made at about 4 per month worldwide **(T)**.
+- **Lithography tools** are the lithography systems installed in fab levels (2.7.2: memory 4, advanced 10). They are the rarest TC in the game: one supplier in Eindhoven at start, $200M each for EUV and $380M for High-NA (6.7.0), made at about 4 per month worldwide **(T)**.
 
 | Class | Needed for | Starting makers | Tech |
 |---|---|---|---|
@@ -331,14 +331,25 @@ At the start **only energy and GPUs are modeled** as real goods (Logan). Everyth
 
 #### The four layers
 
+The chain is deliberately simple so the game never models a whole chip (Logan). Four layers, and **the last layer is the GPU itself**. Everything a layer needs besides the layer above it is an abstracted cost plus electricity.
+
 | Layer | What it makes | Inputs | Capacity gate | Starting holders (2.3.3) |
 |---|---|---|---|---|
-| **1. Lithography** | Lithography tools | Abstracted parts cost ($30M per tool **(T)**), electricity | About 4 EUV tools a month worldwide **(T)** | Eindhoven (sole EUV maker) |
-| **2. Fabs** | GPU dies (logic and memory together, as one "die set") | Abstracted wafers and chemicals ($400 per die set **(T)**), electricity 1.5 MWh per die set **(T)** | Installed lithography tools: 1 EUV tool makes 25,000 die sets a month **(T)** | Hsinchu-Taipei 60%, Seoul-Pyeongtaek 25%, Phoenix 15% |
-| **3. Packaging** | **GPUs** | 1 die set, abstracted board parts ($150 **(T)**), electricity 0.2 MWh | Packaging lines: 1 line makes 100,000 GPUs a month **(T)**. The tightest layer at the start | Hsinchu-Taipei, Penang |
-| **4. Deployment** | Compute (H) in data centers, or consumer PCs | GPUs; electricity for data centers (6.7.2) | Data center power and grid connections; consumers need nothing | Data centers: Bay Area, Phoenix, Singapore, Beijing, Dubai. Consumers: every hub |
+| **1. Lithography machines** | EUV lithography machines, the most expensive machine in the game | Abstracted parts ($60M per machine **(T)**), electricity | The Eindhoven line makes about 4 a month worldwide **(T)** | Eindhoven (sole maker) |
+| **2. Wafers** | GPU dies, made on wafers at fabs | Abstracted wafers and chemicals ($400 per die **(T)**), electricity 1.5 MWh per die **(T)** | Installed lithography machines: 1 EUV machine makes 25,000 dies a month **(T)** | Hsinchu-Taipei 60%, Seoul-Pyeongtaek 25%, Phoenix 15% |
+| **3. Chips** | Packaged chips: a die joined to its memory | 1 die, abstracted memory and substrate ($250 **(T)**), electricity 0.2 MWh | Packaging lines: 1 line makes 100,000 chips a month **(T)**. The tightest layer at the start | Hsinchu-Taipei, Penang |
+| **4. GPU** | **GPUs**, the finished good | 1 chip, abstracted board parts ($150 **(T)**), electricity 0.05 MWh | Board lines: 1 line makes 200,000 GPUs a month **(T)**; cheap and quick to add, rarely the bottleneck | Shenzhen, Hsinchu-Taipei, Penang |
 
-- **Designers** sit above the chain. A designer holds a GPU design (its Generation, 6.4.1) and books fab and packaging capacity by contract (2.10). A designer can own its own fab, but most don't.
+**The lithography machine is extremely expensive (Logan).**
+- Price: **$200M per EUV machine** and **$380M per High-NA machine** (from Generation 3, 6.4) **(T)**, plus service at 4% of the price a year (6.2). This replaces the earlier $150M.
+- An advanced fab level needs 10 machines (2.7.2), so a single level is **$2B in machines alone**, before the building.
+- Only the Eindhoven maker can build them at the start; anyone else must win a Lithography R&D project (6.6), which costs billions and years.
+- Machines are Techno-Capital: they are installed in fabs, leased, serviced, seized and export-controlled (6.2.2, 6.9). Deliveries take 8 weeks to install.
+- Each machine supports about 25,000 GPUs a month, so the world's ~180 installed EUV machines cap output at about 4.5M dies a month, of which GPU dies get a share **(T)**.
+
+**Deployment is demand, not a layer.** A finished GPU is bought by consumers (into PCs) or by AI buyers (into server nodes in data centers, 6.7.2). Data center power and grid connections limit how fast AI buyers can plug GPUs in.
+
+- **Designers** sit above the chain. A designer holds a GPU design (its Generation, 6.4.1) and books wafer, chip and board capacity by contract (2.10). A designer can own its own fab, but most don't.
 - An **AI server node** is 8 GPUs plus a host. It is still counted per GPU slot, so one GPU is one slot of compute (6.2).
 - **Energy** is the only other modeled sector: **electricity, crude oil and natural gas** (Logan). Oil and gas are produced, shipped and priced as goods; power plants burn them (or run on nuclear, hydro, solar and wind) to make electricity, priced per hub (2.6.8, 6.7.2).
 
@@ -353,7 +364,7 @@ One world GPU market with one price, **P**. Base price $1,500 per GPU **(T)**.
 
 - **Boom speed varies by save** (Logan). The boom starts with a **triggering event**: by default the tipped lab's breakthrough (November 2022, [7-starting-world.md](7-starting-world.md) 7.7), which can come earlier or later if players change history. At game start the boom rate is rolled between +3% and +10% a month **(T)** (about ×1.4 to ×3.1 a year); the default reference case below uses +6%.
 - **Clearing.** Each month P moves toward the price where total demand equals the GPUs packaged **(T)**. Because AI buyers barely care about price and consumers care a lot, a shortage pushes P up and **pushes gamers out first**: the AI boom starves consumers.
-- In the reference case (+6% a month), at a steady price, these numbers put AI demand at about 1.5M GPUs in January 2024, 6M (12% of the market) in January 2026 and 50M in January 2029, when it overtakes consumer demand (about 56M) **(T)**. Supply grows only as fast as lithography tools, fabs and packaging lines are built, so P climbs through the boom.
+- In the reference case (+6% a month), at a steady price, these numbers put AI demand at about 1.5M GPUs in January 2024, 6M (12% of the market) in January 2026 and 50M in January 2029, when it overtakes consumer demand (about 56M) **(T)**. Supply grows only as fast as lithography machines, fabs and packaging lines are built, so P climbs through the boom.
 - **Server node price** = P + $4,000 for the host **(T)**, so the launch prices in 6.4.1 are a starting guide and node prices float with the GPU market.
 
 #### Developer ecosystem
