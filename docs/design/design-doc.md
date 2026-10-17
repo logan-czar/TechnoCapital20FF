@@ -46,6 +46,7 @@ Exact rules, numbers and content for each layer of the game:
 | 9. Gambling, crypto and prediction markets (the phone tab) | [detailed/9-gambling.md](detailed/9-gambling.md) |
 | 10. Industry economy (Wall Street Raider style: industries, business units; replaces goods) | [detailed/10-industry-economy.md](detailed/10-industry-economy.md) |
 | 11. Addiction (gambling, drugs, cyberware, doomscrolling, sex) | [detailed/11-addiction.md](detailed/11-addiction.md) |
+| 12. Setup, fair AI, dynasty score and saves | [detailed/12-setup-and-score.md](detailed/12-setup-and-score.md) |
 
 ## Vision
 
