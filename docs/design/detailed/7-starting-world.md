@@ -57,11 +57,11 @@ Eleven premade dynasties. Names are proposals for Logan to edit (7.3.1).
 | 10 | Paris | Europe | Old money | Luxury goods: fashion houses, champagne, jewelry, art | Paris |
 | 11 | Moscow | Europe | Criminal money | Cybercrime: ransomware crews, carding markets, crypto laundering, protection from the security services | Moscow |
 
-### 7.3.1 Names and heirs (proposed)
+### 7.3.1 Names and starting characters (proposed)
 
-Each dynasty has one **fixed heir** the player plays (Logan). Names are original proposals, open to edit.
+Each dynasty has one **fixed starting character** the player plays (Logan). On that character's death the player continues as a successor (1-corporate-core 1.11.0). Names are original proposals, open to edit.
 
-| # | Dynasty | Head (player's parent) | Player heir | Heir hook |
+| # | Dynasty | Head (player's parent) | Starting character | Hook |
 |---|---|---|---|---|
 | 1 | House Ashcombe (New York) | Charles Ashcombe, 61, bank chairman and party donor | Eleanor Ashcombe, 23, just out of law school | Knows everyone in DC; the family bank sits on bad commercial property |
 | 2 | The Marlowes (Los Angeles) | Vivian Marlowe, 58, studio owner and former star | Jesse Marlowe, 21, an actor nobody takes seriously | Fame without respect; the studio is losing to streaming |
@@ -79,7 +79,7 @@ Each dynasty has one **fixed heir** the player plays (Logan). Names are original
 
 Pablo Segundo is a **rising outsider** in Medellín, not a family member. He starts as a charismatic narco-populist with a growing movement (narco fascism). The Echeverri family, and any other dynasty with assets in Medellín, must decide to back him (money, protection, a share of his rise) or fight him (rival cartels, the state, foreign agencies). His rise is a quest chain that runs whether or not the Medellín dynasty is played.
 
-**Starting position (T).** Each playable dynasty starts with a family trust, one or two family companies at Company rank, a living head (the player's parent) and two to four heirs. The player is a young heir aged 18 to 25 (Stage 1, [14-game-stages.md](../14-game-stages.md) 14.2). Trust size ranges from $500M (Medellín, Lagos, Bengaluru) to $5B (New York, Beijing), so the starts differ in difficulty.
+**Starting position (T).** Each playable dynasty starts with a family trust, one or two family companies at Company rank, a living head (the player's parent) and two to four other children. The player is a young family member aged 18 to 25 (Stage 1, [14-game-stages.md](../14-game-stages.md) 14.2). Trust size ranges from $500M (Medellín, Lagos, Bengaluru) to $5B (New York, Beijing), so the starts differ in difficulty.
 
 ## 7.4 Rival dynasties
 

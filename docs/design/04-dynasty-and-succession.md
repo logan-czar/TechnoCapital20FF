@@ -6,7 +6,11 @@
 - **House**: a branch of the dynasty. Cadet houses can split off with their own trust and become rivals.
 - **Family trust**: holds the dynasty's core assets under rules that persist across the playthrough (see [02-trusts-and-assets.md](02-trusts-and-assets.md)). Whoever is trustee controls the dynasty.
 
-## 4.2 Succession laws (rules of the family trust)
+## 4.2 Player succession (Logan, 2026-10-17)
+
+Heirs do not work as in CK3. The player plays one character. The family trust and personal trusts can be left to other characters, and the player can change them while alive within each trust's rules (details later). When the player dies, an eligible successor takes over: a child, spouse, business partner, mentee, or someone the player owes a large favor or a lot of money. The player then plays as that character, with their share of the former player's trusts and Techno-Capital. Full rules: [detailed/1-corporate-core.md](detailed/1-corporate-core.md) 1.11.0.
+
+## 4.2.1 Trustee rules (to be reworked)
 
 | Law | How it works | Tension |
 |---|---|---|

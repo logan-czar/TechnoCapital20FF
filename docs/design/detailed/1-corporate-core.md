@@ -430,6 +430,26 @@ Expenses: lifestyle (by trait: Ascetic 0.5x, Hedonist 2x; base $20k per adult dy
 
 ## 1.11 Dynasty and succession
 
+### 1.11.0 Player succession (Logan, 2026-10-17)
+
+Heirs do not work the way they do in CK3. The player plays **one character**, and "heir" means **the player character's successor**:
+
+- **Trusts are left to other characters.** The family trust and the player's personal trusts can be left to other characters when the player dies. While alive, the player can change these trusts, within each trust's rules about what may be changed (rules to be set later).
+- **Eligible successors.** When the player dies, certain characters are eligible to become the successor:
+
+| Category | Who qualifies **(T)** |
+|---|---|
+| Children | Any child of the player, including adopted children |
+| Spouse | The current spouse |
+| Business partners | Co-founders, and members of the player's bloc in a company the player controls |
+| Mentees | Characters the player mentored (a completed Mentor scheme) |
+| Creditors and favor holders | Characters the player owes a large favor (a strong hook) or a large debt: $10M or 10% of the player's personal net worth, whichever is lower |
+
+- **Taking over.** The player then plays as the chosen successor and receives **that character's share** of the former player's trusts and Techno-Capital: what the will, the trust rules and any debts give them. Other characters receive their own shares and stay AI-run.
+- **Game over** comes when no eligible successor is alive.
+
+The trustee rules below (1.11.1) predate this and will be reworked when the trust rules are designed.
+
 ### 1.11.1 Succession resolution
 
 When the trustee dies or is removed (family vote with 3/4 needed to remove a living trustee):
