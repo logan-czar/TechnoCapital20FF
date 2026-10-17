@@ -21,12 +21,12 @@ Batch 37 checked politics against the Wall Street Raider style economy (10-indus
 | Tariffs and sanctions | They hit an **industry's price index** in the country (10-industry-economy), not Victoria 3 goods. |
 | Game stages | Stages are gone. 4.28 is replaced by politics by **company rank** (1.7.5). |
 
-**Reading rule for the rest of this file.** Older sections still name interest groups (IGs). Read each one as the ideology bloc(s) below **(A)**:
+**Reading rule for the rest of this file.** Older sections still name interest groups (IGs). Read each one as the ideology bloc(s) below (confirmed in batch 38 with Logan's changes):
 
 | Old interest group | Read as |
 |---|---|
-| Industrialists | Liberals and Landites |
-| Financiers | Liberals and Landites |
+| Industrialists | Accelerationists and Landites (Logan, batch 38) |
+| Financiers | Liberals and Landites, with a share going to Accelerationists (Logan, batch 38; about a third **(T)**) |
 | Tech Sector | Accelerationists |
 | Labor Unions | Communists |
 | Gig Workers | Communists and Neo-Luddites |
@@ -40,7 +40,7 @@ Batch 37 checked politics against the Wall Street Raider style economy (10-indus
 
 "Fund Interest Group" (4.10.1) becomes **Fund Ideology**: money goes to think tanks, movements, media and parties of one ideology. "IG leader" becomes the **bloc leader** (5.6.2), and "IG approval" becomes bloc approval.
 
-**Industries and lobbying.** Unions, chambers of commerce and trade lobbies still exist as **organizations** that a company can fund, but their money is counted for the ideology they serve. Each industry has a default lean that its trade lobby funds unless the company head picks another **(A)**:
+**Industries and lobbying.** Unions, chambers of commerce and trade lobbies still exist as **organizations** that a company can fund, but their money is counted for the ideology they serve. Each industry has a default lean that its trade lobby funds unless the company head picks another (Logan, batch 38):
 
 | Industries | Default lean |
 |---|---|
@@ -307,7 +307,7 @@ Votes and political money are counted by **stratum** (2.8.0). Each stratum has a
 | PMC | 3 | 65% |
 | Glitterati | 30 | 70% |
 | Nobles | 60 | 85% |
-| Oligarchs | Named characters only: each counts as wealth weight 1 per $1M of net worth in the country | 100% (one vote each) |
+| Oligarchs | Named characters only: each Oligarch's weight grows with their **influence** in the jurisdiction (Logan, batch 38): wealth weight = 50 × their influence share (%) there, so a Kingmaker at 50% counts 2,500 **(T)** ([2-map-influence-economy.md](2-map-influence-economy.md) 2.5) | 100% (one vote each) |
 
 The six population segments stay in the economy as the make-up of each stratum (2.8.0), but politics only reads the stratum.
 

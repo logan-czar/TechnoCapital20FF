@@ -16,7 +16,7 @@ Events fire from the calculation schedule (see [09-time-and-turns.md](09-time-an
 
 A chain is a graph of events with shared state (variables like "investor interest" or "suspicion"). Chains drive:
 
-- **Founding paths** (see [01-companies.md](01-companies.md)):
+- **Founding paths** (see [01-companies.md](01-companies.md) and [detailed/1-corporate-core.md](detailed/1-corporate-core.md) 1.6):
   - *VC*: Accelerator Demo Day → Pitch to Partners (several firms) → Term Sheet → Due Diligence → Close Round; repeated per funding round with milestones between rounds.
   - *Ask Daddy*: Dinner with Dad → list of Dad's friends → one meeting per friend (golf, gala, office) → each says yes, no, or "yes, but…" (a favor owed).
   - *Bank Loan*: Application → Collateral Review → Covenants → Approval or rejection.
@@ -43,7 +43,7 @@ Quests are tracked goal trees with branches and rolls; events are single pop-ups
 
 | Rule | Decision |
 |---|---|
-| Main quest lines | Each starting character has a long quest line made of **arcs** that can run at the same time, with side quests branching off. Arc outcomes give better or worse stat buffs. For now every character but Pieter Von Floop has a placeholder default line ([detailed/8-quest-lines.md](detailed/8-quest-lines.md)). |
+| Main quest lines | Each starting character has a long quest line made of **arcs** that can run at the same time, with side quests branching off. Arc outcomes give better or worse stat buffs. Full lines are written for Pieter, Antone, Samir, Yuna, John, Viktor, Garrett, Pablo, Tolu, Qiao and Fang; the rest keep the default line ([detailed/8-quest-lines.md](detailed/8-quest-lines.md)). |
 | Failure | Quests can fail. **Failure branches into new quests** instead of ending the line. |
 | Visibility | The player sees **only the next step**. Later steps stay hidden until reached. |
 | AI-run starting characters | **Sometimes** play out their own quest lines, so the player can watch them unfold and get involved. Which ones run is decided per game **(A)**. |
