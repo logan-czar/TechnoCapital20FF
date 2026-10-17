@@ -1034,7 +1034,7 @@ Each company pays **selling, general and administrative (SG&A)** costs as a shar
 | **Glitterati** | High-level executives, influencers, athletes. Named characters with skill ratings in fields that boost the organizations, companies or firms they are affiliated with. Often rich in assets, but rarely have the skills to leverage Techno-Capital, so they don't buy it | Elite |
 | **Nobles** | People who by bloodline will always have clout or influence. They do not necessarily have or pursue assets, but can be very rich, and ruthless in guarding the influence they have amassed. The status fades over generations: the grandchild of a head of state is not a Noble unless they did enough in their own life | None (named characters only) |
 
-**How a character's stratum is set (A).** Monthly, from the five resources. A character is in the highest stratum whose bar they clear on any two resources **(T)**; Noble needs clout and prestige specifically, which bloodline provides and then fades. Exact bars are still to be set.
+**How a character's stratum is set (Logan).** Various factors, but mainly **assets, capital and income**. Each stratum has its own criteria, such as a certain amount of assets or of Techno-Capital. Example: an **Oligarch** must at least sit on the board of one monopoly or hold assets totaling $1 billion, and must control a certain amount of Techno-Capital. The full list of strata and their bars is still to be set.
 
 **Slop (A).** A need of the Permanent Underclass: cheap food, short video, games, AI-generated media and gambling. While slop needs are met, the Underclass's unrest stays low even when Basic and Comfort fill is poor.
 
