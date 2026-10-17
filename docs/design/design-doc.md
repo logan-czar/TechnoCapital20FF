@@ -45,6 +45,7 @@ Exact rules, numbers and content for each layer of the game:
 | 8. Quest lines (arcs, the default starting line, Pieter Von Floop) | [detailed/8-quest-lines.md](detailed/8-quest-lines.md) |
 | 9. Gambling, crypto and prediction markets (the phone tab) | [detailed/9-gambling.md](detailed/9-gambling.md) |
 | 10. Industry economy (Wall Street Raider style: industries, business units; replaces goods) | [detailed/10-industry-economy.md](detailed/10-industry-economy.md) |
+| 11. Addiction (gambling, drugs, cyberware, doomscrolling, sex) | [detailed/11-addiction.md](detailed/11-addiction.md) |
 
 ## Vision
 

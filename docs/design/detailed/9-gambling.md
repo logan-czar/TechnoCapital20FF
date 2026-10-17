@@ -57,9 +57,11 @@ Players and AI characters bet on yes-or-no questions about the game world.
 - House edge 2% to 6% by game **(T)**. Poker against characters uses Intrigue and vril, not just chance.
 - Casinos can be owned: a casino is a company with the Crypto exchange business line ([3-markets-and-fx.md](3-markets-and-fx.md) 3.17.1) or a Front Company vassal ([1-corporate-core.md](1-corporate-core.md) 1.7.4) **(A)**.
 
-## 9.6 Links to the addiction system (to be designed)
+## 9.6 Links to the addiction system
 
-The addiction system covers **gambling, drugs, cyberware, doomscrolling and AI psychosis**, all on characters (Logan).
+> The addiction system is now designed in [11-addiction.md](11-addiction.md). Gambling is one of its five vices.
+
+The addiction system covers **gambling, drugs, cyberware, doomscrolling and sex** (Logan, 2026-10-17: AI addiction swapped out for sex for now), all on characters.
 
 
 - Gambling builds an **addiction** score on the character **(A)**: each session adds to it, big losses add more, and a high score triggers urges (events that push the character to gamble) and stress.
