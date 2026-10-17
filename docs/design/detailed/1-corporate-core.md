@@ -39,7 +39,7 @@ Skill sources: base (genetics, rolled 0 to 8 at birth, inherited partly from par
 
 ### 1.1.2 Personality traits
 
-Every adult has 3 (confirmed by Logan, 2026-10-17). Each modifies skills, opinion and stress. Cyberware can add extra personality traits beyond the 3 (1.1.10).
+Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs** (Logan, 2026-10-17: grown from 7 with cyberpunk flavor). Each modifies skills, opinion and stress. Cyberware can add extra personality traits beyond the 3 (1.1.10).
 
 | Trait | Opposite | Skill effect | Stress when | Opinion |
 |---|---|---|---|---|
@@ -50,8 +50,71 @@ Every adult has 3 (confirmed by Logan, 2026-10-17). Each modifies skills, opinio
 | Visionary | Conservative | +2 Tech | (Conservative) risky ventures | +10 from Visionary |
 | Honest | Deceitful | -2 Intrigue, +10 reputation | Lying, shells, bribery | +10 from Honest |
 | Brave | Cautious | +1 Persuasion | (Cautious) leverage, hostile takeovers | none |
+| Diligent | Lazy | +1 Operations, +2 management score skill (10.5.1) | (Lazy) long hours, crises | +5 from Diligent |
+| Hedonist | Ascetic | -1 Operations, +1 Persuasion; addiction gain ×1.5 (9.6) | (Ascetic) parties, luxury spending | +10 from Hedonist at galas |
+| Zealot | Cynic | +2 Persuasion with characters of the same ideology ([5-ideology.md](5-ideology.md)) | Acting against their ideology | -10 from other ideologies |
+| Narcissist | Humble | +2 Persuasion in public, -2 in private; Fame gain ×1.5 | Being upstaged, losing Image | -5 from everyone; +10 from flatterers |
+| Gregarious | Shy | +2 Persuasion; meetings take half the hours | (Shy) public events, galas, campaigns | +5 from Gregarious |
 
 Same trait between two characters: +10 opinion each. Opposite trait: -10.
+
+#### Trait change (Logan, 2026-10-17)
+
+Traits can change over a life, slowly **(T)**:
+- **Events**: some event options give or remove a trait (a betrayal can make a Trusting character Paranoid).
+- **Trauma**: each stress breakdown (1.1.5) and each health event costing 30 or more (1.1.9) has a 25% chance to flip one trait to its opposite or add a stress trait.
+- **Arc outcomes**: quest arc outcomes can grant or swap traits ([8-quest-lines.md](8-quest-lines.md) 8.1).
+- **Drift**: a character who acts against a trait 5 times in a year (each one causing stress) gets an event offering to drop it.
+- At most one natural trait change per year, so personalities stay recognizable. Cyberware traits (1.1.10) come and go with the implant.
+
+#### Hidden traits (Logan, 2026-10-17)
+
+Another character's traits are **hidden** until the player learns them:
+- Meeting in person reveals one trait per meeting **(T)**.
+- Investigating (a Spymaster or Head of Security task, or a hired PI) reveals all traits and the character's ambition.
+- Famous characters (Fame 60+) have their public trait known to everyone; Narcissists' trait is always visible.
+- Lie-reader optics (1.1.10) reveal Deceitful at once.
+Unknown traits show as "?" on the character screen; opinion modifiers from them still apply.
+
+#### Traits drive AI characters (Logan, 2026-10-17)
+
+Traits **strongly** steer AI characters. Each trait adds weights to what an AI character wants and which options it picks **(T)**:
+
+| Trait | Leans toward |
+|---|---|
+| Ambitious | Taking control of companies, seeking higher seats and strata |
+| Greedy | High pay, low dividends from companies it runs, asset stripping |
+| Paranoid | Counter-intelligence, poison pills, keeping cash |
+| Ruthless | Hostile takeovers, layoffs, blackmail |
+| Visionary | Tech industries, AI bets, high R&D plans |
+| Honest | Refusing schemes, shells and insider trades |
+| Brave | Leverage, big bets, proxy fights |
+| Diligent | Taking seat tasks, staying on boards |
+| Hedonist | Spending, gambling (9), parties |
+| Zealot | Funding its ideology's movement, lobbying |
+| Narcissist | Media, buying fame, vanity projects |
+| Gregarious | Alliances, marriages, galas |
+
+AI company archetypes (2.23.1) follow the controlling character's traits.
+
+#### Ambitions (Logan, 2026-10-17)
+
+Every full character has **one ambition** at a time, picked from their traits, stratum and situation **(A)**:
+
+| Ambition | Goal | Typical holder |
+|---|---|---|
+| Get rich | Reach the next stratum (2.8.0) | Ambitious, Greedy |
+| Take a company | Become head of a named company | Ambitious, Ruthless |
+| Win office | Win a seat in government ([4-politics.md](4-politics.md)) | Zealot, Narcissist |
+| Revenge | Ruin a named character who wronged them | Ruthless, Paranoid; after betrayal |
+| Build a legacy | Found a company, fund a cause, or get a dynasty heir established | Visionary, Content |
+| Be famous | Reach Fame 75 | Narcissist, Gregarious |
+| Protect the family | Keep the family trust intact; marry children well | Cautious, Compassionate |
+| Transcend | Fit 4 implants or reach Transhumanist goals | Visionary, Hedonist; Transhumanists |
+
+- Progress toward the ambition gives -5 stress a month; achieving it gives clout and +20 stress relief, and a new ambition is picked.
+- Ambitions are hidden like traits; knowing a rival's ambition tells you what they will do next and what they will trade for.
+- The player character also has an ambition; meeting it gives clout and vril (1.1.0).
 
 ### 1.1.3 Education traits
 
