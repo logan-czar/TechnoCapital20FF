@@ -1,6 +1,6 @@
 # 7. Starting world: detailed design
 
-_Status: draft v0.1 (2026-10-16). Built from Logan's answers in the design Q&A. Sets the start date, the playable dynasties, the rival field, the opening quest and the 2021 to 2030 timeline. Builds on [1-corporate-core.md](1-corporate-core.md) (dynasties, trusts), [2-map-influence-economy.md](2-map-influence-economy.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v0.2 (2026-10-16). Built from Logan's answers in the design Q&A. Sets the start date, the playable dynasties, the rival field, the opening quest and the 2021 to 2030 timeline. Builds on [1-corporate-core.md](1-corporate-core.md) (dynasties, trusts), [2-map-influence-economy.md](2-map-influence-economy.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 7.10.
 
@@ -41,7 +41,7 @@ Hub populations, GDP and facility levels in [2-map-influence-economy.md](2-map-i
 
 ## 7.3 Playable dynasties
 
-Eleven premade dynasties. Names and family trees are still to be written (7.10).
+Eleven premade dynasties. Names are proposals for Logan to edit (7.3.1).
 
 | # | Origin city | Region | Money type | Identity | Starting Center of Power |
 |---|---|---|---|---|---|
@@ -50,12 +50,34 @@ Eleven premade dynasties. Names and family trees are still to be written (7.10).
 | 3 | San Francisco (Bay Area) | North America | New tech money | Pure tech, caught in the ideological battle over AI (Accelerationists against Effective Altruists) | Bay Area |
 | 4 | Medellín | South America | Criminal money | Narco fascism and the rise of Pablo Segundo | Medellín |
 | 5 | Lagos | Africa | Criminal and state money | Oil and corruption | Lagos |
-| 6 | Sydney | Oceania | To decide | To decide | Sydney |
+| 6 | Sydney | Oceania | Old money | Mining and property: iron ore royalties, city towers, land banks | Sydney |
 | 7 | Beijing | Asia (China) | State-linked | Party-state family with state company and regulator ties | Beijing |
 | 8 | Shenzhen | Asia (China) | New tech money | Electronics, drones and EV hardware | Shenzhen-Dongguan |
 | 9 | Bengaluru | Asia (India) | New tech money | IT services and software money | Bengaluru |
-| 10 | Paris | Europe | To decide | To decide | Paris |
-| 11 | Moscow | Europe | To decide | To decide | Moscow |
+| 10 | Paris | Europe | Old money | Luxury goods: fashion houses, champagne, jewelry, art | Paris |
+| 11 | Moscow | Europe | Criminal money | Cybercrime: ransomware crews, carding markets, crypto laundering, protection from the security services | Moscow |
+
+### 7.3.1 Names and heirs (proposed)
+
+Each dynasty has one **fixed heir** the player plays (Logan). Names are original proposals, open to edit.
+
+| # | Dynasty | Head (player's parent) | Player heir | Heir hook |
+|---|---|---|---|---|
+| 1 | House Ashcombe (New York) | Charles Ashcombe, 61, bank chairman and party donor | Eleanor Ashcombe, 23, just out of law school | Knows everyone in DC; the family bank sits on bad commercial property |
+| 2 | The Marlowes (Los Angeles) | Vivian Marlowe, 58, studio owner and former star | Jesse Marlowe, 21, an actor nobody takes seriously | Fame without respect; the studio is losing to streaming |
+| 3 | The Halvorsens (San Francisco) | Erik Halvorsen, 54, serial founder and early cloud investor | Freya Halvorsen, 22, a dropout AI researcher | Torn between Accelerationist and Effective Altruist camps |
+| 4 | The Echeverris (Medellín) | Ramiro Echeverri, 57, "legitimate" businessman with a laundering empire | Mateo Echeverri, 24, educated abroad | Must back or fight Pablo Segundo (7.3.2) |
+| 5 | The Baloguns (Lagos) | Chief Adebayo Balogun, 66, oil licence holder | Tolu Balogun, 25, a fintech hopeful | Oil money built on contracts the next government may cancel |
+| 6 | The Hargraves (Sydney) | Margaret Hargrave, 63, mining royalty heir and developer | Liam Hargrave, 20, a surfer who failed out of business school | Royalties fund everything; China demand decides everything |
+| 7 | The Qiaos (Beijing) | Qiao Jianguo, 60, retired official and state company board member | Qiao Lin, 24, back from a US university | Princeling ties; loyalty is tested when the crackdowns come |
+| 8 | The Fangs (Shenzhen) | Fang Wei, 52, drone and battery founder | Fang Xiaoyu, 21, an engineer | Hardware empire squeezed by export controls |
+| 9 | The Hegdes (Bengaluru) | Prakash Hegde, 59, IT services founder | Ananya Hegde, 23, a software engineer | Outsourcing is threatened by the very AI the boom creates |
+| 10 | Maison de Valcourt (Paris) | Hélène de Valcourt, 64, luxury group chair | Louis de Valcourt, 22, an art school graduate | A 200-year-old house with a sibling feud over control |
+| 11 | The Sokolovs (Moscow) | Dmitri Sokolov, 49, ransomware boss with a security services roof | Katya Sokolova, 19, a gifted hacker | Sanctions and protection politics after 2022 |
+
+### 7.3.2 Pablo Segundo
+
+Pablo Segundo is a **rising outsider** in Medellín, not a family member. He starts as a charismatic narco-populist with a growing movement (narco fascism). The Echeverri family, and any other dynasty with assets in Medellín, must decide to back him (money, protection, a share of his rise) or fight him (rival cartels, the state, foreign agencies). His rise is a quest chain that runs whether or not the Medellín dynasty is played.
 
 **Starting position (T).** Each playable dynasty starts with a family trust, one or two family companies at Company rank, a living head (the player's parent) and two to four heirs. The player is a young heir aged 18 to 25 (Stage 1, [14-game-stages.md](../14-game-stages.md) 14.2). Trust size ranges from $500M (Medellín, Lagos, Bengaluru) to $5B (New York, Beijing), so the starts differ in difficulty.
 
@@ -97,6 +119,7 @@ The exact steps and rolls are to be written in the events and quests design.
 - Travel unlocks, including flights and the family jet.
 - Other parts of the game unlock (the Found Company action, wider schemes) **(A)**.
 - A message arrives with the **tip**: it names the company that will make the first LLM breakthrough and explains how the AI system will work before the boom. The tip is always correct.
+- **The tipped lab is different each game** (Logan). At game start one lab is drawn from a pool of five fictional AI labs (for example a Bay Area nonprofit lab, a big tech research division, a London lab, a Beijing lab and a Toronto lab) **(A)**. The drawn lab makes the November 2022 breakthrough unless players change history.
 
 ## 7.7 Timeline 2021 to 2030
 
@@ -142,4 +165,5 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 4. Trust sizes from $500M to $5B.
 5. The Center of Power rule: 3-month lead, +10% influence.
 6. Finishing "The Shot" unlocks the Found Company action and wider schemes.
-7. Still to decide: the identities of the Paris, Moscow and Sydney dynasties, Pablo Segundo's role, dynasty names, and the tipped lab.
+7. Dynasty and character names in 7.3.1 are proposals.
+8. The pool of five candidate labs for the tip.
