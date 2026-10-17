@@ -101,7 +101,7 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 | # | Character | Location | Profile | Premise | Signature play |
 |---|---|---|---|---|---|
 | 11 | **Garrett Kroll** † | Pacific Ocean, off the coast of New Zealand | Rich, with a burden | A crazy automotive billionaire trying to start his own island colony by crashing boats into the side of Antarctica | A very hard politics run to protect his sovereign rights (Sovereigntists, [5-ideology.md](5-ideology.md)) |
-| 12 | **Fang Xiaoyu** | Shenzhen | Talented | Tech and finance | Run businesses across Hong Kong and Shenzhen |
+| 12 | **Fang Xiaoyu** | Shenzhen | Talented | Tech and finance; a woman (batch 37) | Run businesses across Hong Kong and Shenzhen |
 | 13 | **Qiao Lin** | Beijing | Connected | Party-state family; a woman (batch 36) | The China political run |
 | 14 | **Ananya Hegde** † | Bengaluru | Talented **(A)** | A sleeper overpowered investor | Win India good chip deals so it can build lots of data centers early and run them at lower cost: scale the whole AI supply chain as an investor |
 | 15 | **Yuna Sakamoto** † | Tokyo-Yokohama, Japan | Connected | A young Japanese influencer with a massive following who now has to pivot her appeal to an incredibly politicized and extremist Japan | Choose a politics and drive Japan and Korea |

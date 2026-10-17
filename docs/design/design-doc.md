@@ -38,7 +38,7 @@ Exact rules, numbers and content for each layer of the game:
 | 1. Corporate core (companies, characters, dynasty, trusts) | [detailed/1-corporate-core.md](detailed/1-corporate-core.md) |
 | 2. Map, influence and economy | [detailed/2-map-influence-economy.md](detailed/2-map-influence-economy.md) |
 | 3. Markets and FX | [detailed/3-markets-and-fx.md](detailed/3-markets-and-fx.md) |
-| 4. Politics | [detailed/4-politics.md](detailed/4-politics.md) |
+| 4. Politics (ideology blocs, votes by strata, politics by company rank) | [detailed/4-politics.md](detailed/4-politics.md) |
 | 5. Ideology (Victoria 2 style, cyberpunk) | [detailed/5-ideology.md](detailed/5-ideology.md) |
 | 6. Techno-Capital (compute, fabs, lithography, drones, autonomous vehicles, robots, models) | [detailed/6-technocapital.md](detailed/6-technocapital.md) |
 | 7. Starting world (alternate history, 2022 scenario, 15 starting characters, rivals, opening quest, timeline to 2030) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |

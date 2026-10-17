@@ -1,6 +1,6 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v0.5 (2026-10-17). Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang, Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v0.5 (2026-10-17). Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.16.
 
@@ -23,7 +23,7 @@ A quest line is made of **arcs** (Logan's word; not chapters).
 
 **Outcome tiers (A).** Most arcs use three tiers: **Strong**, **Mixed** and **Poor**. As a guide, Strong gives +2 to one skill and a clout gain, Mixed gives +1 to one skill, Poor gives a lasting penalty or a negative trait **(T)**.
 
-**Full lines written (Logan, batches 33 and 34).** Pieter Von Floop (8.3), Antone Provolone (8.4), Samir Haddad (8.5), Yuna Sakamoto (8.6), John Oligarch (8.7), Viktor Sokolov (8.8), Garrett Kroll (8.9), and from batch 35 Pablo Segundo (8.10), Tolu Balogun (8.11) and Qiao Lin (8.12), and from batch 36 Fang Xiaoyu (8.13). Ricky Feng stays on the default line (batch 35). Logan (batch 36): one new line at a time for now. The other characters keep the default line (8.2) until theirs are written.
+**Full lines written (Logan, batches 33 and 34).** Pieter Von Floop (8.3), Antone Provolone (8.4), Samir Haddad (8.5), Yuna Sakamoto (8.6), John Oligarch (8.7), Viktor Sokolov (8.8), Garrett Kroll (8.9), and from batch 35 Pablo Segundo (8.10), Tolu Balogun (8.11) and Qiao Lin (8.12), and from batch 36 Fang Xiaoyu (8.13). Ricky Feng stays on the default line (batch 35). Logan (batch 37): no more full lines for now. Dot Percy, Margaux Valcourt, Ananya Hegde and Ricky Feng keep the default line (8.2). The other characters keep the default line (8.2) until theirs are written.
 
 ## 8.2 Default starting quest line (placeholder)
 
@@ -680,7 +680,7 @@ Runs alongside Arc 2.
 
 ## 8.13 Fang Xiaoyu: "Two Systems"
 
-**Who Fang is.** A talented trader-founder from Shenzhen who runs businesses across Hong Kong and Shenzhen (7.3.3). Tech and finance: the hardware city on one side of the border, the money city on the other.
+**Who she is.** A talented trader-founder from Shenzhen who runs businesses across Hong Kong and Shenzhen (7.3.3). Tech and finance: the hardware city on one side of the border, the money city on the other.
 
 **What the line teaches.** Moving capital across a border with controls, branch offices and local-partner rules in China, Hong Kong listings, the hardware side of the GPU chain, and trading through a boom without being caught in it.
 

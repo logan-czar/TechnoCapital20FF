@@ -347,6 +347,8 @@ Measured locally (hub and segment) unless stated **(T)**:
 
 ## 5.6 From ideology to interest groups, parties and unrest
 
+> **Changed (Logan, batch 37).** Interest groups are gone: the nine ideology blocs are now the political actors themselves, and votes are counted by strata ([4-politics.md](4-politics.md) 4.0 and 4.4). In this section read "interest group" as "ideology bloc" and "segment" as "stratum". The IG leader is now the **bloc leader**, and 5.6.2 bends the bloc's own stances.
+
 ### 5.6.1 Interest group support base (replaces the fixed table)
 
 The support base of 4.4.2 is no longer fixed. Each segment's affinity to each interest group is half class interest and half belief:
@@ -642,6 +644,8 @@ The ideology layer changes these existing rules. The changed sections now point 
 ## 5.14 Ideology across the game stages and in the UI
 
 ### 5.14.1 By stage
+
+> **Retired (batch 37).** Stages are gone; read each stage as the matching company rank in [4-politics.md](4-politics.md) 4.28.
 
 | Stage | What ideology means to the player |
 |---|---|

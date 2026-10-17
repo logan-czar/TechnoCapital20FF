@@ -1,12 +1,59 @@
 # 4. Politics: detailed design
 
-_Status: draft v0.2 (2026-10-16). v0.2 adds the political experience and screens, public standing (favorability, elite standing, profile), media and scandals as news cycles, the dynasty as a political actor (careers, think tanks, foundations, parties), lobbyists and fixers, corruption end to end (dirty money, laundering, deniability, whistleblowers), courts and litigation, police and organized crime, PMCs and private security, civil society and protests, international organizations, espionage, AI governments and AI dynasties, politics by game stage, political endgames, new events and worked examples (4.15 to 4.31); Assumptions move to 4.32. Expands [08-politics.md](../08-politics.md) and the political parts of [05-map-and-influence.md](../05-map-and-influence.md). Owner: Logan._
+_Status: draft v0.3 (2026-10-17). v0.3 (batch 37): the nine ideologies replace interest groups, votes by strata, tariffs on industry indices, stages replaced by company rank (4.0, 4.4, 4.28). Earlier: v0.2 (2026-10-16). v0.2 adds the political experience and screens, public standing (favorability, elite standing, profile), media and scandals as news cycles, the dynasty as a political actor (careers, think tanks, foundations, parties), lobbyists and fixers, corruption end to end (dirty money, laundering, deniability, whistleblowers), courts and litigation, police and organized crime, PMCs and private security, civil society and protests, international organizations, espionage, AI governments and AI dynasties, politics by game stage, political endgames, new events and worked examples (4.15 to 4.31); Assumptions move to 4.32. Expands [08-politics.md](../08-politics.md) and the political parts of [05-map-and-influence.md](../05-map-and-influence.md). Owner: Logan._
 
 The player never rules a country. The dynasty **buys, earns and borrows power over those who do**. This file turns the politics overview into exact rules, formulas, numbers and content.
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value, expected to change in playtesting. Formulas are written so each term can be shown in a tooltip breakdown (see [11-ui.md](../11-ui.md)). Money is in US dollar equivalents at game start; each country converts to its own currency at the live exchange rate.
 
 **Decided rule kept intact.** Influence is rooted mainly in the assets a holder owns in an area, modified by birthplace and origin, and temporarily boosted by psyops and ad campaigns (see [13-open-questions.md](../13-open-questions.md) and [05-map-and-influence.md](../05-map-and-influence.md)). Everything political in this file is fed by that influence. Money can buy political effects directly, but how far money goes depends on the government type, and money spent without influence behind it is less effective and riskier.
+
+---
+
+## 4.0 Rework for the new economy (Logan, batch 37)
+
+Batch 37 checked politics against the Wall Street Raider style economy (10-industry-economy) and the strata (2.8.0). Three rules now override the rest of this file **wherever they clash**:
+
+| Topic | Decision (Logan) |
+|---|---|
+| Political actors | **The nine ideologies replace the twelve interest groups.** The ideology blocs ([5-ideology.md](5-ideology.md)) are the groups that hold clout, take stances on laws, join parties, get funded and get angry. |
+| Votes | **Votes are counted by strata** (2.8.0), not by the six population segments. |
+| Tariffs and sanctions | They hit an **industry's price index** in the country (10-industry-economy), not Victoria 3 goods. |
+| Game stages | Stages are gone. 4.28 is replaced by politics by **company rank** (1.7.5). |
+
+**Reading rule for the rest of this file.** Older sections still name interest groups (IGs). Read each one as the ideology bloc(s) below **(A)**:
+
+| Old interest group | Read as |
+|---|---|
+| Industrialists | Liberals and Landites |
+| Financiers | Liberals and Landites |
+| Tech Sector | Accelerationists |
+| Labor Unions | Communists |
+| Gig Workers | Communists and Neo-Luddites |
+| Landowners | Landites and Chuds |
+| Security Establishment | Chuds |
+| Religious and Traditionalists | Chuds |
+| Environmentalists | Effective Altruists and Neo-Luddites |
+| Transhumanists | Transhumanists |
+| State Apparatus | The ruling ideology of a one-party state (Communists in China) |
+| Shadow Economy | Sovereigntists |
+
+"Fund Interest Group" (4.10.1) becomes **Fund Ideology**: money goes to think tanks, movements, media and parties of one ideology. "IG leader" becomes the **bloc leader** (5.6.2), and "IG approval" becomes bloc approval.
+
+**Industries and lobbying.** Unions, chambers of commerce and trade lobbies still exist as **organizations** that a company can fund, but their money is counted for the ideology they serve. Each industry has a default lean that its trade lobby funds unless the company head picks another **(A)**:
+
+| Industries | Default lean |
+|---|---|
+| AI labs, cloud, semiconductors, GPUs, software, crypto | Accelerationists |
+| Cyberware clinics, biotech, longevity | Transhumanists |
+| Banks, funds, insurance, exchanges | Liberals |
+| Oil and gas, mining, utilities, autos, heavy industry, real estate | Landites |
+| Defense, PMCs, security | Chuds |
+| Media, entertainment, consumer goods, retail | Liberals |
+| Gaming and gambling, social media and ads | Sovereigntists |
+| Charities, education, healthcare | Effective Altruists |
+
+**Tariffs on industries.** A tariff of rate t on an industry raises that industry's price index in the importing country by `t × import share` **(T)**, where import share is the part of the country's use of that industry supplied from abroad. Domestic companies in that industry gain margin, and foreign ones lose sales there. Sanctions tiers (4.11) list **industries** instead of goods: Tier 2 Sectoral bans trade in the listed industries (for example semiconductors and GPUs), which raises their index in the target country and cuts exporters' revenue there.
 
 ---
 
@@ -248,77 +295,47 @@ National decisions are taken by the responsible minister or agency head with the
 
 ---
 
-## 4.4 Population segments and interest groups
+## 4.4 Strata and ideology blocs (reworked in batch 37)
 
-### 4.4.1 Population segments
+### 4.4.1 Strata as voters (Logan, batch 37)
 
-Segments come from [06-economy.md](../06-economy.md). Politically, each segment has a **wealth weight** (how much its money and connections count) and a **turnout** (how much its votes count).
+Votes and political money are counted by **stratum** (2.8.0). Each stratum has a **wealth weight** (how much its money and connections count) and a **turnout** (how much its votes count) **(T)**.
 
-| Segment | Wealth weight per person **(T)** | Base turnout **(T)** |
+| Stratum | Wealth weight per person **(T)** | Base turnout **(T)** |
 |---|---|---|
-| Elite | 25 | 80% |
-| Professionals | 5 | 72% |
-| Skilled Workers | 2 | 60% |
-| Unskilled Workers | 1 | 50% |
-| Gig Workers | 0.8 | 42% |
-| Unemployed | 0.4 | 35% |
+| Permanent Underclass | 0.6 | 40% (60% when slop runs short) |
+| PMC | 3 | 65% |
+| Glitterati | 30 | 70% |
+| Nobles | 60 | 85% |
+| Oligarchs | Named characters only: each counts as wealth weight 1 per $1M of net worth in the country | 100% (one vote each) |
 
-### 4.4.2 Interest groups and support base
+The six population segments stay in the economy as the make-up of each stratum (2.8.0), but politics only reads the stratum.
 
-There are twelve interest groups (IGs). The first ten come from 08; **State Apparatus** and **Shadow Economy** are added so one-party states, juntas and failed states have their real power holders (see Assumptions).
+### 4.4.2 Ideology blocs and support base
 
-Support base: the share of each segment's political energy that goes to each group (each row sums to 100) **(T)**. _This table is now the class half of the support base; the other half comes from each segment's ideology mix ([5-ideology.md](5-ideology.md) 5.6.1)._ Countries can override with cultural modifiers (for example Traditionalists +10 in a religious country, taken proportionally from the others).
+The nine ideology blocs (5.2) are the political actors. A stratum's support for a bloc, `Aff(s,i)`, is the share of that stratum that believes in ideology i (5.4), adjusted by country and hub modifiers (5.4.2) and drift (5.5). Starting mix for a high-income country **(T)**, derived from the segment mixes in 5.4.1:
 
-| Segment | Industrialists | Financiers | Tech Sector | Labor Unions | Gig Workers | Landowners | Security Est. | Traditionalists | Environmentalists | Transhumanists | State Apparatus | Shadow Economy |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Elite | 20 | 25 | 15 | 0 | 0 | 15 | 5 | 5 | 3 | 5 | 5 | 2 |
-| Professionals | 5 | 10 | 20 | 5 | 0 | 5 | 5 | 10 | 15 | 10 | 15 | 0 |
-| Skilled Workers | 10 | 0 | 5 | 35 | 0 | 5 | 10 | 20 | 5 | 5 | 5 | 0 |
-| Unskilled Workers | 0 | 0 | 0 | 30 | 5 | 5 | 10 | 30 | 5 | 0 | 5 | 10 |
-| Gig Workers | 0 | 0 | 5 | 10 | 40 | 0 | 0 | 15 | 10 | 10 | 0 | 10 |
-| Unemployed | 0 | 0 | 0 | 25 | 10 | 0 | 5 | 30 | 5 | 0 | 0 | 25 |
+| Stratum | LB | CO | AC | EA | TH | NL | SV | LA | CH |
+|---|---|---|---|---|---|---|---|---|---|
+| Permanent Underclass | 21 | 25 | 2 | 1 | 5 | 13 | 2 | 2 | 29 |
+| PMC | 35 | 12 | 6 | 6 | 6 | 9 | 3 | 2 | 21 |
+| Glitterati | 32 | 3 | 18 | 8 | 12 | 1 | 8 | 5 | 13 |
+| Nobles | 28 | 1 | 10 | 6 | 3 | 2 | 12 | 16 | 22 |
+| Oligarchs | Each Oligarch's own ideology (5.8) | | | | | | | | |
 
-Short descriptions:
-
-| Group | Who they are | Core want |
-|---|---|---|
-| **Industrialists** | Factory owners, manufacturers, energy and mining firms | Low corporate tax, weak unions, protection from imports where it suits them, subsidies |
-| **Financiers** | Banks, funds, wealthy investors | Low capital taxes, open capital, independent central bank, bailouts when they fail |
-| **Tech Sector** | Platforms, chipmakers, software and AI firms | No AI or data rules, contractor status for gig labor, skilled immigration |
-| **Labor Unions** | Organized workers | High minimum wage, union power, automation tax, worker board seats |
-| **Gig Workers** | App drivers, couriers, freelancers | Employee status, benefits, price caps on essentials |
-| **Landowners** | Real estate, agriculture, old land money | Low property and inheritance tax, no rent control, keep foreigners off the land |
-| **Security Establishment** | Military, police, intelligence, defense firms | Surveillance, militarized policing, emergency powers, defense spending |
-| **Religious and Traditionalists** | Faith groups, rural and older voters, nationalists | Limit cyberware and AI, control immigration, protect families and inheritance |
-| **Environmentalists** | Green movement, younger professionals | Carbon pricing, strict environmental rules, restrictive zoning for industry |
-| **Transhumanists** | Pro-cyberware and pro-AI movement | Legal cyberware, no AI limits, open borders for talent |
-| **State Apparatus** | Civil service, party cadres, state company managers | State control: directed central bank, state champions, state media |
-| **Shadow Economy** | Smugglers, black markets, cartels, data brokers | Banking secrecy, weak policing, low surveillance, shortages to exploit |
+There is no fixed class table any more: what a stratum wants is what it believes.
 
 ### 4.4.3 Preferred law positions
 
-Stance values: **++** = +2, **+** = +1, **-** = -1, **--** = -2. Unlisted positions are 0 for that group. Law codes refer to 4.5. For a group, stances on neighbouring positions fall off by 1 per step from its favorite (for example a group that wants Low corporate tax at ++ is + on Haven and Moderate, 0 on High, - on Excess Profits) **(T)**.
+Stance values: **++** = +2, **+** = +1, **-** = -1, **--** = -2. Unlisted positions are 0 for that bloc. For a bloc, stances on neighbouring positions fall off by 1 per step from its favorite.
 
-| Group | Strong wants (++) | Wants (+) | Opposes (- or --) |
-|---|---|---|---|
-| **Industrialists** | E2 Low, L2 Restricted, L3 None | E5 Moderate, E6 Broad Subsidies, C3 Light, E8 Lax, L1 Low | L2 Sectoral Bargaining (--), C4 Stakeholder Boards (--), E8 Carbon Pricing (--) |
-| **Financiers** | E3 Low, F1 Independent, F2 Open, F7 Too Big to Fail | E4 None, F5 Secrecy, C4 Shareholder Primacy, E5 Free Trade, F6 Opaque | F2 Hard Controls (--), F1 Monetary Financing (--), E4 Dynastic Wealth Tax (--) |
-| **Tech Sector** | T3 Unregulated, L4 Contractors | T2 Notice and Consent, E2 Low, C1 Open, L5 Skilled Only, C3 Light, T1 Licensed | T2 Data Sovereignty (--), T3 Moratorium (--), L3 Heavy Automation Tax (-) |
-| **Labor Unions** | L1 High, L2 Sectoral Bargaining, L3 Robot Tax, C4 Stakeholder Boards | E1 High, E2 High, E5 High, E7 Essentials Capped, L5 Managed | L2 Banned (--), L3 None (-), S1 Unrestricted (-) |
-| **Gig Workers** | L4 Employee Presumption | L1 Living Wage, E7 Essentials Capped, T3 Risk-Based, L3 Robot Tax | L4 Contractors (--), T4 Social Credit (-) |
-| **Landowners** | E10 Low property tax, E4 None, E7 Free Prices | E5 High, C1 Capped 49% (strategic), F6 Opaque, E11 Standard | E7 Broad Controls (--), E4 Dynastic Wealth Tax (--), E11 Developer-Led (-) |
-| **Security Establishment** | T4 Mass Surveillance, S2 Militarized | S3 Emergency Decrees, S1 Licensed, C1 Screened, E6 State Champions, L5 Skilled Only | S2 Community (-), T4 Limited (--), S1 Banned (-) |
-| **Traditionalists** | T1 Medical Only, L5 Closed | T3 Moratorium, T2 Strict, E7 Essentials Capped, E4 Low, G3 Plurality Rules | T1 Unrestricted (--), L5 Open (--), T4 Social Credit (-) |
-| **Environmentalists** | E8 Carbon Pricing | E8 Strict, E11 Restrictive, T2 Strict, L3 Robot Tax, E6 Targeted Subsidies | E8 Lax (--), E11 Developer-Led (-), S1 Unrestricted (-) |
-| **Transhumanists** | T1 Unrestricted, T3 Unregulated | L5 Open, T4 Limited, T2 Notice and Consent | T1 Banned (--), T3 Moratorium (--) |
-| **State Apparatus** | E6 State Champions, G3 State-Controlled | F1 Directed, F2 Restricted, C2 State Golden Share, C5 State Administration, S3 Standing Emergency | G3 Plurality Rules (-), F1 Independent (-), C6 Sovereign Charters (--) |
-| **Shadow Economy** | F5 Haven, T4 Limited | F2 Hard Controls, T1 Unrestricted, S2 Community, G2 Unregulated, E7 Broad Controls, E5 High | F5 Open Registry (--), T4 Mass Surveillance (--), S2 Militarized (-) |
+Each bloc's stances are its ideology's wants and opposes in 5.3 (5.3.1 to 5.3.9), bent by its believers and its bloc leader as in 5.6.2. The old per-IG stance table is retired (batch 37).
 
 ### 4.4.4 Clout formula
 
 Recalculated monthly per jurisdiction.
 
-1. **Base support** mixes money power and vote power by the government type's **democratic weight D**:
+1. **Base support** (s is now a stratum and g an ideology bloc, batch 37) mixes money power and vote power by the government type's **democratic weight D**:
 
    `Base_g = (1 - D) × W_g + D × V_g`
 
@@ -339,11 +356,11 @@ Recalculated monthly per jurisdiction.
 
 | Situation | Office_g |
 |---|---|
-| Group in the governing coalition (democracies) | +0.05 |
-| Group leading the governing coalition | +0.08 |
-| State Apparatus in a one-party state | +0.15 |
-| Security Establishment in a military junta | +0.20 |
-| In a corporate oligarchy: Financiers, Industrialists and Tech Sector | +0.08 each |
+| Bloc in the governing coalition (democracies) | +0.05 |
+| Bloc leading the governing coalition | +0.08 |
+| The ruling ideology in a one-party state | +0.15 |
+| Chuds in a military junta (or the junta leader's ideology) | +0.20 |
+| In a corporate oligarchy: Landites, Accelerationists and Liberals | +0.08 each |
 
 ### 4.4.5 How money and media shift clout
 
@@ -369,12 +386,12 @@ Recalculated monthly per jurisdiction.
 
 Monthly: `Approval_g = Σ over all current laws of stance_g(current position) + 2 if in government - 2 if marginalized + event modifiers`, clamped to -10 to +10 **(T)**.
 
-- **Angry** (≤ -5) and clout ≥ 10%: -3 stability per angry group, +5 unrest in segments supporting it, starts **political movement** events (protests, strikes, petitions). Angry Security Establishment raises coup risk (4.8.4).
+- **Angry** (≤ -5) and clout ≥ 10%: -3 stability per angry group, +5 unrest in the strata supporting it, starts **political movement** events (protests, strikes, petitions). Angry Security Establishment raises coup risk (4.8.4).
 - **Loyal** (≥ +5): +1 stability per loyal group with clout ≥ 10%.
 
 ### 4.4.7 Parties
 
-- In democracies, **parties** bundle 2 to 5 interest groups. Each IG belongs to at most one party per country at a time. Country data defines starting parties (fictional names for real-world equivalents, for example a centre-right party of Industrialists, Financiers, Landowners and Traditionalists).
+- In democracies, **parties** bundle 1 to 3 ideology blocs (batch 37); a party's core ideology is the one with the most of its voters. Each bloc belongs to at most one party per country at a time. Country data defines starting parties (fictional names for real-world equivalents, for example a centre-right party of Industrialists, Financiers, Landowners and Traditionalists).
 - A party's stance on any law is the clout-weighted average stance of its member IGs.
 - Parties can split when two member IGs have stances 3+ apart on a law that is being debated **and** both have clout ≥ 10% (yearly check, 15% chance **(T)**), and merge when two parties together could win a majority and their IG stances average within 1 on the top 5 debated laws.
 - Managed democracies have a **ruling party** plus licensed opposition; one-party states have one party with **factions** (4.8.2).
@@ -407,7 +424,7 @@ All rates and multipliers below are **(T)**.
 | **E2 Corporate Tax** (on company profit) | N + R stacked | **Haven** 3% · **Low** 12% · **Moderate** 21% · **High** 30% · **Excess Profits** 30% plus 20% surtax on profit above 15% return on equity |
 | **E3 Capital Gains Tax** (on realized gains of characters and trusts) | N | **Exempt** 0% · **Low** 10% · **Moderate** 20% · **As Income** (equal to E1 top rate) |
 | **E4 Inheritance and Gift Tax** (on personal assets passing by will or gift; family trust treatment set by F6) | N | **None** 0% · **Low** 15% above $10M · **Moderate** 30% above $5M · **High** 45% above $1M · **Dynastic Wealth Tax** 45% above $1M plus 1% per year on net worth above $50M |
-| **E5 Tariffs** (on imported goods) | N exclusive | **Free Trade** 0% · **Low** 5% · **Moderate** 12% · **High** 25% · **Autarky** 50% plus import quotas at 50% of last year's volume |
+| **E5 Tariffs** (on imported industry output; raises the industry's price index, 4.0) | N exclusive | **Free Trade** 0% · **Low** 5% · **Moderate** 12% · **High** 25% · **Autarky** 50% plus import quotas at 50% of last year's volume |
 | **E6 Industrial Subsidies** | N, R may add | **None** · **Targeted** 10% capex grant in strategic sectors (chips, energy, defense, cyberware) · **Broad** 15% capex grant and 5% opex rebate in all manufacturing · **State Champions** 30% capex grant and state loans at policy rate -2% for named companies, chosen by the government (lobbyable) |
 | **E7 Price Controls** | N floor, R may tighten | **Free Prices** · **Essentials Capped** food, energy and residential rent capped at 110% of their 12-month average · **Broad Controls** most finished goods capped at 105%, shortages likely · **Planned Prices** government sets prices monthly; black market prices at 150 to 300% |
 | **E8 Environmental Regulation** | N floor, R and L may tighten | **Lax** no compliance cost · **Standard** +3% operating cost for heavy industry · **Strict** +8% and permits for new heavy facilities take 2× as long · **Carbon Pricing** +12% for energy-intensive facilities, revenue rebated to population (unrest -2) |
@@ -1102,7 +1119,7 @@ Relation (-100 to +100) per country pair, recalculated monthly. It drifts 1 poin
 | Tier | Requires relation **(T)** | Effect |
 |---|---|---|
 | **Preferential Trade** | ≥ 25 | Tariffs between members halved |
-| **Free Trade Agreement** | ≥ 40 | Tariffs 0 on most goods; investment treaty (arbitration available) |
+| **Free Trade Agreement** | ≥ 40 | Tariffs 0 on most industries; investment treaty (arbitration available) |
 | **Customs Union** | ≥ 60, same exchange of tariffs | Common external tariff (average of members, weighted by GDP) |
 | **Single Market** | ≥ 75 | Customs union plus free movement of capital and labor; C1 treats member holders as domestic; F2 cannot be stricter than Reporting between members |
 
@@ -1125,7 +1142,7 @@ Sanctions are imposed by a country or bloc on a target country, sector or holder
 | **3** | **Financial** | Plus: the target's central bank reserves held in sanctioning currencies; all stakes held by target-country holders in sanctioning-country companies (voting rights suspended) | Insurance and shipping finance withdrawn: target-flagged ships on routes through sanctioning chokepoints stopped | Target cut off from the international payment network: dividends, interest and transfers between the target and sanctioning countries blocked; target bonds delisted |
 | **4** | **Embargo** | All assets of all target-country holders in sanctioning countries; all assets of sanctioning-country holders in the target are expected to be seized by retaliation | All trade routes (shipping, air, rail, pipeline, fiber) between sanctioning countries and the target closed; chokepoints controlled by sanctioning countries closed to target trade | Full financial cut-off |
 
-- **Secondary sanctions** (flag on Tier 2+): third-country holders that trade with the target in sanctioned goods are listed at Tier 1 with 10% chance per month of continued trade **(T)**.
+- **Secondary sanctions** (flag on Tier 2+): third-country holders that trade with the target in sanctioned industries are listed at Tier 1 with 10% chance per month of continued trade **(T)**.
 - **Imposition**: a government decision driven by relation, rivalry, war, coups, human rights events, and IG pressure (Security Establishment and Traditionalists push; Financiers and Industrialists with business in the target resist). Holders can lobby for or against (30 PC national to shift the decision chance by ±10 points **(T)**).
 - **Lifting**: monthly 3% chance per tier once the triggering cause ends and relation > -40 **(T)**; lifting happens one tier at a time.
 - **Retaliation**: a sanctioned target imposes counter-sanctions one tier lower on the sanctioner's holders within 4 weeks (70% **(T)**), and raises seizure risk for their branch offices (4.9.10).
@@ -1145,10 +1162,10 @@ Trade wars escalate in four levels. Each month a trade war is in force, escalati
 
 | Level | Measures | Typical effect |
 |---|---|---|
-| **1. Skirmish** | +10% tariffs on 3 to 5 targeted goods | Prices of those goods +5 to 10% in both countries |
-| **2. Broad Tariffs** | +25% on most goods both ways | Trade volume between them -30%; affected exporters' stocks -5 to -15% |
+| **1. Skirmish** | +10% tariffs on 3 to 5 targeted industries | Those industries' price indices +5 to 10% in both countries |
+| **2. Broad Tariffs** | +25% on most industries both ways | Trade volume between them -30%; affected exporters' stocks -5 to -15% |
 | **3. Export Controls** | +50% tariffs; export bans on chips, rare earths, AI and cyberware components | Supply chain shocks (06); substitute suppliers' prices +20 to 40% |
-| **4. Decoupling** | Near-embargo on strategic goods; investment screening of each other's holders at Capped All | Stocks with exposure -20 to -40%; branch office seizure risk as Hostile |
+| **4. Decoupling** | Near-embargo on strategic industries; investment screening of each other's holders at Capped All | Stocks with exposure -20 to -40%; branch office seizure risk as Hostile |
 
 ### 4.11.6 Background wars
 
@@ -1221,7 +1238,7 @@ Hub stability (for local unrest and protests) = country stability + local modifi
 
 ## 4.12 Corporate sovereignty (endgame)
 
-At extreme influence, a dynasty or megacorp can turn a hub into territory its company governs. This is a Stage 5 (Oligarch) goal (see [14-game-stages.md](../14-game-stages.md)).
+At extreme influence, a dynasty or megacorp can turn a hub into territory its company governs. This is a Megacorp-rank goal (see [14-game-stages.md](../14-game-stages.md)).
 
 ### 4.12.1 The three stages
 
@@ -2228,7 +2245,7 @@ Rival states already run netrun events against strategic facilities (4.11.3). St
 
 ### 4.26.3 The Request
 
-From the Tycoon stage on, a dynasty with strategic assets in a country (including its home) may be approached by that country's service: 1% chance per month per country **(T)**. The service asks the dynasty to carry a package, share customer data, give cover jobs to officers, install a backdoor, or report on a rival or a foreign official.
+From Corporation rank on, a dynasty with strategic assets in a country (including its home) may be approached by that country's service: 1% chance per month per country **(T)**. The service asks the dynasty to carry a package, share customer data, give cover jobs to officers, install a backdoor, or report on a rival or a foreign official.
 
 | Answer | Effect **(T)** |
 |---|---|
@@ -2310,29 +2327,18 @@ Monthly, in order **(T)**:
 
 ---
 
-## 4.28 Politics across the five game stages
+## 4.28 Politics by company rank (replaces the five stages, batch 37)
 
-### 4.28.1 What politics is for in each stage
+Stages are gone. What politics offers grows with the rank of the dynasty's largest company (1.7.5) **(A)**. Nothing is locked: these are the tools and threats that usually matter at each size.
 
-This adds the political side to [14-game-stages.md](../14-game-stages.md) and mirrors 3.25 for markets.
+| Rank | Role of politics | Tools that usually matter | Typical threats |
+|---|---|---|---|
+| **Venture** (< $10M) | Permits and licences: politics as a gate | Request Decision, the Political Connections founding path (1.6.7), a boutique lobbyist, local donations | Permit denial, a captured councilor, an NGO injunction |
+| **Company** ($10M to $250M) | Hub and regional power: rezonings, council majorities | Political Director (4.15.2), Request Protection, local media, a foundation (trust over $100M **(T)**), a think tank, civil suits | First investigations, unions and protests, protection demands, journalists |
+| **Corporation** ($250M to $5B) | National lawmaking and the state as a customer | National lobbying, Major Donor and Party Patron, media empires, PMCs, courts as a weapon, The Request (4.26) | Antitrust, populist targeting, rival coalitions, whistleblowers, sanctions, hearings |
+| **Megacorp and Conglomerate** (> $5B) | Regime-level power | Owned parties, coups, Council of Stakeholders, international organizations, corporate sovereignty (4.12), endgames (4.29) | Revolutions, tribunals, Anti-Corruption Drives, every coalition at once |
 
-| Stage | Role of politics | Typical scale | Tools added | Political threats | Screen focus |
-|---|---|---|---|---|---|
-| **1. The Heir** | Family business: the parent's clients and donations, school politics, a first internship | One hub; the family's existing ties | Volunteer and staffer careers (4.18.1), personal Campaign Donations within caps, Meet Official through the parent's Introduction, joining a party | Tabloids (Favorability and the parent's reputation), a sibling with a political career, a parent's scandal splashing on the heir | Character screen; Elections calendar; the Politics screen is otherwise hidden |
-| **2. The Founder** | Permits, grants and licences; politics as a gate | One hub, maybe one region | Request Decision, the Political Connections path (1.6.7), hiring a boutique lobbying firm, local donations | Permit denial, a councilor captured by the incumbent rival, a first regulator inquiry, an environmental NGO injunction | Desk tab with one jurisdiction; Heat tab |
-| **3. The Climber** | Hub and regional power: rezonings, council majorities, a family mayor | Several hubs and regions; a first foreign branch | Political Director and Objectives (4.15.2), Request Protection, local media ownership, foundation (when the trust passes $100M **(T)**), think tank, OCG encounters, civil suits | First investigations, unions and protests, protection demands, journalists, a host government's first seizure ladder step | Full Politics screen; People tab grows |
-| **4. The Tycoon** | National lawmaking and the state as a customer | Several countries | National lobbying, Major Donor and Party Patron, media empires, PMCs, courts as a weapon, The Request, international posts | Antitrust breakups, populist targeting, AI coalitions, whistleblowers, sanctions, hearings | Multiple Directors; the weekly brief; Laws and Heat tabs |
-| **5. The Oligarch** | Regime-level power | Countries and blocs | Owned parties, coups, Council of Stakeholders, international organizations, corporate sovereignty, endgames (4.29) | Revolutions, tribunals, Anti-Corruption Drives aimed at the dynasty, every coalition at once | World tab; hot moments |
-
-### 4.28.2 Political rivals by stage
-
-| Player stage | Typical political rivals | Their moves |
-|---|---|---|
-| The Heir | Siblings, the parent's political enemies | Tabloid leaks, competing for the parent's clients |
-| The Founder | Incumbent companies' local fixers, NIMBY councilors, local NGOs | Permit objections, injunctions, a tip to the inspectors |
-| The Climber | Rival dynasties at Presence in the same hubs, OCGs, local journalists | Funding challengers to the dynasty's councilors, protection demands, exposés |
-| The Tycoon | AI dynasties (Kingmaker and Shadow Broker archetypes), national regulators, populist parties | Coalitions, antitrust complaints, Leak Scandal schemes timed for elections |
-| The Oligarch | Governments, foreign intelligence services, international organizations, the public itself | Seizures, sanctions, tribunal referrals, revolutions |
+Where older sections say "Tycoon stage" read **Corporation rank**, and "Stage 5 (Oligarch)" read **Megacorp rank** (batch 37).
 
 ---
 
@@ -2484,6 +2490,6 @@ New assumptions made in this file, to confirm with Logan:
 30. **Organized crime groups** are AI actors and holders with Strength and district Control. The dynasty can pay, fight, hire, partner with or inform on them, but can never become one.
 31. **Security Strength** is one scale for guards, PMCs, police, militaries and OCGs. One PMC unit equals 16 PMC team-months; the $5M per month in 4.8.4 is the running cost of an owned unit, and hiring one costs about $7.2M.
 32. **International organizations** use fictional names (Assembly of Nations, ISF, World Trade Council, Global Development Bank, Financial Crimes Taskforce, International Court of Arbitration, International Criminal Tribunal). A Single Market bloc acts as a fourth level above national for C3, the T2 floor and E5.
-33. **State intelligence services** run operations against companies and make **The Request** to dynasties from the Tycoon stage on.
+33. **State intelligence services** run operations against companies and make **The Request** to dynasties from Corporation rank on.
 34. **AI governments** hold an attitude (Favored, Tolerated, Watched, Targeted) toward each dynasty, scaled by agency independence; **AI dynasties** have one of seven political archetypes and form coalitions against dominant dynasties.
 35. **Political endgames** add Kingmaker, Power Behind the Throne, Political Dynasty, Market Maker, Bloc Architect, Media Hegemon and Benefactor (with exact conditions) beside Corporate Sovereignty and Immortal Dynasty, plus non-final falls (Exile, Disgrace, Capture).
