@@ -46,7 +46,7 @@ The game has **named characters** of two kinds:
 
 **What Hustle does (A).**
 - **Speed**: every action and project the character runs (founding, growth plan purchases, software features, schemes) takes `1 - (Hustle - 10) × 1%` of its normal time, from ×1.10 at 0 to ×0.80 at 30 **(T)**.
-- **Long hours**: at Hustle 15+ the character gets +1 usable hour a day (1.1.6), and +2 at 25+, stacking with Workaholic **(T)**.
+- **Long hours**: ~~extra usable hours a day~~ (no daily budget since batch 64). Instead, ticking actions (1.1.6) take 10% less time at Hustle 15+ and 20% less at 25+ **(T)**.
 - **Founding**: Hustle is the roll for the Bootstrap and Freestyle founding paths (1.6.4, 1.6.6) and for early sales at a new company.
 - **Side deals and the street**: it rolls for Black market deals (10.3), gambling hustles (9) and quick flips of assets and real estate.
 - **Stress**: long hours and crunch cost a character with Hustle 15+ half the stress (1.1.5).
@@ -215,7 +215,7 @@ Stress 0 to 300. Levels at 100, 200, 300. Each new level triggers a breakdown ev
 - Acting against a trait: +10 to +40 stress depending on severity.
 - Lifestyle coping: -10 to -20 per month (Hedonist parties, Ascetic retreats).
 - Vacation action: 72 hours unavailable, -30 stress.
-- Overwork: every day with more than 14 hours used adds +2 stress **(T)** (Hustle 15+ halves it, 1.1.1).
+- Overwork: every day spent more than 14 ticks busy (1.1.6) adds +2 stress **(T)** (Hustle 15+ halves it, 1.1.1).
 
 **Stress for AI characters (Logan, batch 61): a simpler simulation managed by the director** (13.3) **(A)**:
 - AI characters do not track stress points hour by hour. Each has a **stress level** of 0 to 3 that the director updates **weekly** from what happened to them: acting against a trait, losing a fight, a scandal, overwork or a loss raise it; vacations, wins and lifestyle spending lower it.
@@ -224,6 +224,14 @@ Stress 0 to 300. Levels at 100, 200, 300. Each new level triggers a breakdown ev
 - When an AI character moves into the player's circle (full simulation tier, 12-tech 12.3), its level converts to points (level × 100) and then runs like the player's.
 
 ### 1.1.6 Time and actions
+
+> **Changed (Logan, batch 64): no daily hours budget.** **Most actions take no time** and resolve at once (a phone call, a trade, a board decision, starting a scheme). **Only certain actions burn ticks** (hours): while one runs, the character is **busy** and cannot start another ticking action, but instant actions still work **(A for which actions tick)**. The table below now lists only actions that tick; the 16-hour day is gone.
+>
+> - **Ticking actions (A):** travel (domestic 4, international 12, halved by a private jet), in-person meetings (2), pitch meetings (3), board meetings (4), galas (5), vacations (72), and the opening of a scheme (1.1.8.1).
+> - **Location matters** (Logan, batch 64): some actions need the character in the city (meeting a minister, a gala, an in-person pitch), so travel is the main thing that burns time.
+> - **Delegation** (Logan, batch 64): any action can be handed to a board member, family member or fixer. **The AI then takes it over and rolls for it as if that person did it**, with their skills, traits and location, and their time if it ticks. The player sees the result.
+>
+> (Old text follows.)
 
 Each character has **16 usable hours per day** (kept, Logan 2026-10-17: hourly turns with a daily budget of hours spent on meetings, travel and schemes); the rest is sleep and private life. Workaholic: 18. Most actions cost hours:
 

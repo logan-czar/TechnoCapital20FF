@@ -7,7 +7,7 @@ _Updated 2026-10-17 (Logan, batch 29): pausable real time with hourly ticks; end
 The game runs in **pausable real time**, like Crusader Kings, and **one tick is one in-game hour**. This replaces the earlier strict turn-based design.
 
 - **Speeds (T)**: Paused, and 5 speeds: 1 (an hour every 2 seconds), 2 (1 second), 3 (0.5 seconds), 4 (0.2 seconds) and 5 (as fast as the simulation runs). The player can act while paused or running.
-- **Hours** still matter: each character has a daily budget of hours (1.1.6) spent on meetings, travel and schemes. Actions have a duration; while one runs, that character is busy.
+- **Hours** (Logan, batch 64): there is **no daily budget of hours**. Most actions are instant; **only certain actions burn ticks** (travel, in-person meetings, galas, vacations, opening a scheme; [detailed/1-corporate-core.md](detailed/1-corporate-core.md) 1.1.6). While one runs, that character is busy.
 - Markets trade hourly during each exchange's local hours; prices, FX rates and news update every tick.
 - **Auto-pause** (Logan): the game pauses on events that need a choice, and on alerts the player turns on. Default alerts **(T)**: takeover bids and stakes crossing a disclosure line in the player's companies, margin calls, deaths and health events in the family, market crashes, wars, and the crash. Every alert type can be switched between pause, notify only, or off.
 - **Skip ahead**: jump to the next morning, the next event, end of week or end of month, or until a chosen condition (a stock price, a date, an action finishing).
