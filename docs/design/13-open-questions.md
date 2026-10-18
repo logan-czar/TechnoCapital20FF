@@ -127,6 +127,7 @@
 - Batch 98 (Logan, 2026-10-18): history of 2004. No Madrid bombings (Rajoy wins, Spain stays in Iraq); the Orange Revolution happens and leads to the 2005 invasion; Bush wins more easily. 2005 drafted.
 - Batch 99 (Logan, 2026-10-18): history of 2005. Russia takes Crimea and the Donbas, fails at Kyiv, and the front freezes; NATO sends troops to defend western Ukraine (read as a tripwire force that never fights Russia directly, plus sanctions, arms and gas weaning); no London bombings. 2006 drafted.
 - Batch 100 (Logan, 2026-10-18): history of 2006. Republicans keep Congress in the midterms; Mexico's drug war starts in December as in real life; the Mumbai train bombings never happen. 2007 drafted.
+- Batch 101 (Logan, 2026-10-18): history of 2007. Better mortgage rules passed in 2003, so growth stayed tempered and the housing bubble never grew (no subprime bust; 7.2.0 housing now 'never bubbled', hubs start in mild Boom or Recovery); Benazir Bhutto's assassination happens; Russia's cyberattack on Estonia happens. 2008 drafted.
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm
