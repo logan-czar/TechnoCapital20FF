@@ -14,7 +14,7 @@ _Status: draft v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game
 | Contracts | Who uses software and at what price is handled by its owner through **software contracts** (14.4), not table columns (batch 43). |
 | Missing inputs | A product's **output amount is nerfed** based on its quality and software type (batch 43). |
 | AI models | **Their own separate thing**, not rows in the software table (batch 43). They stay in Techno-Capital ([6-technocapital.md](6-technocapital.md) 6.2.4). |
-| Hacking | **Later**: a separate system to design after this one (batch 42). |
+| Hacking | A separate system: [17-hacking.md](17-hacking.md) (batch 69). |
 
 ## 14.2 The software table
 

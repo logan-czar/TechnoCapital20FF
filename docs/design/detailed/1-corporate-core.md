@@ -280,7 +280,7 @@ Delegating an action to a board member or family member uses their hours instead
 | Dig up dirt | Intrigue | $50k | Hook on target (if a secret exists) |
 | Leak scandal | Intrigue | $100k | Target loses 20 reputation, stock drops 3 to 8% |
 | Corporate espionage | Intrigue | $500k | Steal a tech or a deal |
-| ~~Netrun~~ | Tech | $250k | **Moved to the later hacking system** (Logan, batch 63: human intel only for now) |
+| ~~Netrun~~ | Tech | $250k | **Moved to the hacking system**, [17-hacking.md](17-hacking.md) (Logan, batches 63 and 69) |
 | Poach executive | Persuasion | signing bonus | Executive joins your company |
 | Investigate shell | Intrigue | $200k | Reveal hidden owners |
 | Blackmail | Intrigue | needs hook | Force an action (vote, sale, resignation) |
