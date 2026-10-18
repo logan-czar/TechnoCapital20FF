@@ -19,6 +19,10 @@ _Status: draft v0.3 (2026-10-18). Logan: **types of training data raise differen
 | Training data | **Models take in varying types of data to train a capability; different types of data raise the quality of different capabilities** (Logan; 18.3). |
 | Size | **How big a server or device is required to run the model** (Logan; 18.2.1). |
 | Speed | **Jobs per tick** (Logan; 18.2.1). |
+| No theft | **Models cannot be stolen** (batch 73). Their training data can be (17.4). |
+| Open weights | **An owner can release a model for free** (batch 73): brand and Accelerationist favor, but no rent from it (6.2.4). |
+| AI laws | **Countries can license, cap or ban frontier training** through politics (batch 73; the T3 law in [4-politics.md](4-politics.md)). |
+| Frontier race | Not answered yet; the frontier pricing in 6.5.5 stays as the assumption **(A)**. |
 | Quality cap | **When a model is loaded for a capability, the model's quality in that capability caps the software's quality** (Logan). |
 
 ## 18.2 The model (A)

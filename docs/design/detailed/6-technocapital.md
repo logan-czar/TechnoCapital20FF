@@ -230,7 +230,7 @@ A Gen 3 run lasts about 4,400 hourly turns. The run is a progress bar on the Tec
 
 - **License price** per license-month = $10M × `2.5 ^ (Gen - frontier Gen)` × Quality / 75 **(T)**, where the frontier Gen is the best model held by anyone. The frontier model sells at full price; one generation behind sells at 40%.
 - **Serving cost**: every license-month sold needs 2,000 H of inference compute (Upkeep, any location unless the buyer's country is under T2 Data Sovereignty) **(T)**.
-- **Theft**: model weights can be stolen (6.9.4). A stolen model is a copy at the same Generation and Quality.
+- ~~**Theft**~~: **models cannot be stolen** (Logan, batch 73). Hackers can still steal the training data (17.4).
 
 ---
 
@@ -500,6 +500,8 @@ On detection: access ends at once; the owner learns who did it unless the user w
 **Why use it**: compromised TC is free, invisible to export controls, T3 licensing and Moratoriums, and leaves no lease on anyone's books. It is the only way to run secret tasks without owning the machines.
 
 ### 6.9.4 Stealing TC
+
+> **Models cannot be stolen** (Logan, batch 73), and mind uploads went with cyberware (batch 71). Any row about stealing model weights or uploaded minds is void. Stealing other TC is the hacking system ([17-hacking.md](17-hacking.md)).
 
 | Target | Scheme | Success **(T)** | Result |
 |---|---|---|---|
