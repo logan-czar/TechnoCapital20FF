@@ -1,6 +1,6 @@
 # 10. Industry economy (Wall Street Raider style): detailed design
 
-_Status: draft v1.0 (2026-10-18). Batch 53: subsidiaries, shells, statements, valuation and shared costs (10.0.8). Batch 52: business assets in detail (10.0.7). Batch 50: the industry list rebuilt (10.3), 45 industries, no supply chains. Batch 48: **business units** replace sites and direct branches (10.0). Earlier: batch 24 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
+_Status: draft v1.1 (2026-10-18). Batch 55: financing (10.0.9). Batch 53: subsidiaries, shells, statements, valuation and shared costs (10.0.8). Batch 52: business assets in detail (10.0.7). Batch 50: the industry list rebuilt (10.3), 45 industries, no supply chains. Batch 48: **business units** replace sites and direct branches (10.0). Earlier: batch 24 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 10.12.
 
@@ -120,6 +120,31 @@ Each industry runs its own news cycle on top of the general business cycle **(A)
 - A corporation that loses money is valued at book equity × the cycle factor, never below its asset floor (3.3.1).
 
 **Shared costs (A).** Compute, cloud and software are held by the corporation, not by units (10.0.7). Each month their total is split across the units by share of revenue and shown on each unit as "shared costs", so a unit's profit includes its slice.
+
+### 10.0.9 Financing (Logan, batch 55)
+
+| Topic | Decision |
+|---|---|
+| Bank loans | **A credit line**, Wall Street Raider style. Each corporation has a line sized by its assets and credit rating, and **draws or repays it at will**. |
+| Bonds | Corporations can issue **bonds of 1 to 30 years once they have a credit rating**. The yield comes from 3.6.5. |
+| Rates | **Each country's central bank sets a base rate.** A corporation borrows at its home country's base rate **plus a spread for its rating** (3.6). |
+| Parent and subsidiary | **Intra-group lending is allowed.** A parent can lend to a subsidiary or pull cash up from it, at a loyalty cost. |
+| Default | **The default chain in 3.6.6**: restructure, sell units to creditors, or go bankrupt. |
+
+**Credit line (A).**
+- Size = `book value of business assets and real estate × 50% + cash × 100% - debt already owed`, × a rating factor from 1.0 for AAA down to 0.3 for B, and 0 for CCC or below **(T)**.
+- Interest is charged monthly on the amount drawn, at the base rate plus the rating spread; the undrawn part costs 0.25% a year **(T)**.
+- The bank reviews the line every quarter after earnings. A rating cut can shrink it, and a corporation over its new limit must repay the difference within 3 months or the default chain starts.
+- Location perks (10.4.4) still lower the spread.
+
+**Bonds (A).** A corporation gets its first rating when it reaches the Corporation rank (1.7.5) or asks an agency for one (3.6.4). Bonds are fixed coupon, repaid at maturity, and trade on the bond market. Covenants can cap further debt.
+
+**Intra-group money (A).**
+- **Loans down**: a parent lends to its subsidiary at any rate it sets; a below-market rate gives the subsidiary loyalty +2, and an above-market one costs -2 **(T)**.
+- **Cash up**: outside the dividend (1.7.1 tribute), a parent can pull cash up from a subsidiary as a special dividend or a loan the subsidiary makes to it. Each pull costs loyalty -1 per 5% of the subsidiary's cash taken, and the subsidiary's minority holders can sue if it leaves the subsidiary unable to pay its debts **(T)**.
+- Loans inside a group are cancelled out in the group view but stay on each corporation's own books (10.0.8).
+
+**Default (A).** Missing a payment on the credit line or a bond starts the chain in 3.6.6. Selling units to creditors uses the asset sale prices of 10.0.7 (60 to 100% of book by cycle). A subsidiary's default does not pull the parent down unless the parent guaranteed its debt.
 
 ## 10.1 Decided by Logan
 
@@ -484,3 +509,4 @@ Hovering a company's revenue shows: industry size → cycle → rates → pass-t
 14. How a unit's growth plan picks which cities its new assets go to (10.0.2).
 15. Flavor labels, the 10-year depreciation, the cycle sale factors, and pricing of asset deals in 10.0.7.
 16. How subsidiaries are carried, parent overrides, the statement lines, the fair value formula and the shared cost split in 10.0.8.
+17. Credit line sizing, bond eligibility, intra-group loyalty costs and default links in 10.0.9.
