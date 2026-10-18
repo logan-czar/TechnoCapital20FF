@@ -31,7 +31,8 @@ _Status: draft v0.7 (2026-10-18). Batch 48: **business units** replace sites and
 |---|---|
 | **Corporation** | The company that owns it. A unit belongs to exactly one corporation and can be sold to another |
 | **Industry** | One of the industries in 10.3 |
-| **Base city** | The hub it is run from; its location perks (10.4.4), tax country and influence come from there |
+| **Base city** | The hub it is run from (its headquarters); location perks for HQs (10.4.4) come from there |
+| **Asset spread** | Where its business assets sit: a unit can **spread its assets across several cities** (Logan, batch 49). Each city's share sets where its profit is taxed, where it gains influence and which location perks it can meet |
 | **Business assets** | The dollar value of what it operates with: plants, offices, equipment, licences, customer lists. Carried on the corporation's balance sheet |
 | **Productivity** | Starts at 100 (normal); 50 is badly run-down, 150 is excellent **(T)** |
 | **Growth plan** | Target growth of business assets this year, as a %, with a budget |
@@ -45,26 +46,26 @@ Each industry has one **market demand** (dollars a year) that grows on its trend
 - **Supply** = the sum over every business unit in the industry of `business assets × asset turnover × productivity ÷ 100`, where **asset turnover** is the revenue one dollar of assets can make in a year at normal productivity (the inverse of "capital per $1 of capacity" in 10.3).
 - **Supply ratio** S = supply ÷ demand.
 - **Market factor** M = `(1 ÷ S)^0.5`, clamped 0.7 to 1.3 **(T)**. It multiplies **every unit's effective productivity** in the industry: an oversupplied industry (S > 1) works below its productivity, an undersupplied one (S < 1) above it (Logan).
-- Whether demand is one world market per industry or split by country is open (14 in 10.12) **(A)**.
+- **One world market per industry** (Logan, batch 49), like Wall Street Raider: every business unit in the industry, wherever it is, competes for the same world demand. Countries still matter through tax, laws, tariffs (4.0) and location perks.
 
 ### 10.0.4 Monthly calculation (A)
 
 1. **Effective productivity** = productivity × M.
 2. **Revenue** = business assets × asset turnover × effective productivity ÷ 100 ÷ 12.
 3. **Expenses** = operating costs (`revenue × variable cost share × D`, plus `business assets × fixed cost rate`), R&D spend (revenue × R&D plan), depreciation of business assets, and the cost of growing assets (below). D is the cost driver index (10.6).
-4. **Productivity drift**: productivity falls by **0.5 points a month** on its own **(T)** (Logan: it decreases over time). R&D then moves it:
+4. **Productivity drift**: productivity falls by **0.5 points a month** on its own, from a normal of 100 (Logan, batch 49). R&D then moves it:
    `Δ productivity = 10 × (R&D plan ÷ industry R&D norm - 1) × management factor` points a year, spread monthly **(T)**, where the industry R&D norm is 2% of revenue for heavy industry up to 15% for tech, and the management factor is `0.5 + management score ÷ 100` (10.5). Example with a management score of 50: at the norm, R&D adds nothing and productivity slides 6 points a year; at double the norm it gains about 4 a year net; with no R&D it loses about 16 a year (Logan: R&D spend increases **or decreases** productivity).
 5. **Growth**: the growth plan's budget buys new business assets at the industry's capital cost, spread over the year. New assets start at 80% productivity for 6 months **(T)**.
-6. The unit's profit flows into the corporation's books; tax is paid in the base city's country (10.5.5).
+6. The unit's profit flows into the corporation's books; tax is paid in each country by the share of the unit's assets there (10.5.5).
 
 ### 10.0.5 Corporations (A)
 
 - A corporation is the legal company: it has the **shares, holders, board, charter, cash, debt and credit rating** (1.2 to 1.8, 3.6). Its business units have none of these.
 - It can own **any number of business units in any industries** (Logan). Its **main industry** is the industry of its largest unit by assets; that sets its sector for markets and indices.
-- The board's **management score** (10.5) applies to every unit: it sets how well R&D turns into productivity, and still sets investor confidence.
+- The board's **management score** (10.5) applies to every unit: it sets how well R&D turns into productivity, and still sets investor confidence (Logan, batch 49).
 - **Vassals** (1.7) stay separate: a subsidiary is another corporation with its own units and books.
 - **Deals on units**: buy, sell, merge (two units in one industry become one; fixed costs -10%) and spin off (one or more units become a new corporation) replace the site deals in 10.5.4.
-- **Real estate** stays a separate investment in district pools (10.4.5). A business unit's base city decides where it rents or buys the space it needs as its assets grow **(A)**.
+- **Sites are gone** (Logan, batch 49). **Real estate** stays a separate investment in district pools (10.4.5). As a unit's assets grow in a city, it rents or buys the space it needs from that city's pools; the cost is part of its asset growth **(A)**.
 
 ### 10.0.6 Industry news cycles (Logan)
 
@@ -417,8 +418,8 @@ Hovering a company's revenue shows: industry size → cycle → rates → pass-t
 7. Which choices executives make on their own (10.5.3).
 8. Price indices and the Techno-Capital conversions in 10.6.
 9. Chokepoint exposure replaces shipping; slop per dollar of revenue.
-10. The supply and market factor formula in 10.0.3.
+10. The supply and market factor formula in 10.0.3 (one world market confirmed).
 11. Revenue, expenses, productivity decay and the R&D formula in 10.0.4.
 12. Corporation rules and unit deals in 10.0.5.
 13. Industry news cycle phases in 10.0.6.
-14. Whether market demand is one world market per industry or per country (10.0.3).
+14. How a unit's growth plan picks which cities its new assets go to (10.0.2).
