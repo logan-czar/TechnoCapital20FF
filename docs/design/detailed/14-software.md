@@ -1,6 +1,6 @@
 # 14. Software: the software table and software contracts (detailed design)
 
-_Status: draft v0.3 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
+_Status: draft v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 14.7.
 
@@ -26,14 +26,14 @@ Every column is Logan's (batches 42 and 43).
 | **Platforms** | Where it runs: desktop, phone, web, cloud, embedded (cars, drones, implants), data center |
 | **Owners** | Who owns it, by holder (companies, trusts or characters) with % stakes, like company ownership (1.2) |
 | **Creators** | Who made it: the company that developed it and the lead characters credited |
-| **Inputs** | What it needs to run: other software it depends on, data, and staff (14.3) |
-| **Outputs** | What it produces: services to the companies using it, data, revenue to its owner through contracts, slop (10.3) |
+| **Inputs** | What it needs to run: the **types of input data** it processes, plus other software it depends on (14.3) |
+| **Outputs** | The **types of output data** it produces from its input data; the value of that data to the companies using it is what they pay for (14.3) |
 | **Version** | Major and minor version; a new major version is a release event |
 | **Database requirements** | Storage it needs, in TB, held in data centers or rented cloud (6) |
 | **Compute requirements** | Compute it needs to run, in H (6.1) |
-| **Features** | What it can do; each feature opens uses and adds to compute and database needs (14.5) |
-| **Speed** | **How many units per tick it can process** (Logan). A unit is one task of whatever the software does: a transaction, a request, a record **(A)** |
-| **Bloat** | **A modifier that extends the time it takes to maintain, update and add features to the software** (Logan). Grows with every feature and version **(A)** |
+| **Features** | What it can do. A feature typically **adds a new type of output data**, and can also require new inputs or more or different types of compute (Logan, batch 44; 14.5) |
+| **Speed** | **The amount of input data processed (translated into output data) per game tick** (Logan, batch 44), per instance (14.2.2) |
+| **Bloat** | **A modifier that extends the time it takes to maintain, update and add features to the software** (Logan). It **rises with each feature added** (batch 44) |
 | **Quality** | **The overall score of the software** (Logan). It is improved by updates and acts as a **global modifier**: it affects speed, security, compute, database and everything else about the product |
 | **Tags** | **Weird cases where the software strays from how the game usually treats software** (Logan). Each tag is a named exception rule (14.6) |
 
@@ -43,8 +43,16 @@ Every column is Logan's (batches 42 and 43).
   - effective speed = base speed × Q
   - effective compute and database needs = base needs ÷ Q (better software is leaner)
   - security, once hacking exists, = base security × Q
-- **Bloat** starts at 1.0 and rises +0.1 per feature added and +0.05 per minor version **(T)**. The time to finish any maintenance, update or new feature is multiplied by bloat. A **refactor** project lowers bloat by 0.3 but adds no features and takes time **(T)**.
-- **Speed** sets how many units the software handles per hourly tick across all its users. If demand from its contracts is higher than effective speed, the extra units wait and the users see slower service; if it stays over capacity for a week, some contracts can be cancelled.
+- **Bloat** starts at 1.0 and rises +0.1 per feature added (Logan: it rises with each feature) **(T)**. The time to finish any maintenance, update or new feature is multiplied by bloat. Whether anything can lower bloat (a refactor project) is open **(A)**.
+- **Speed** is measured in GB of input data per hourly tick, per instance (14.2.2) **(T)**.
+
+### 14.2.2 Data and instances (Logan, batch 44)
+
+- **Data is what software works on.** Each product takes in input data of certain types and translates it into output data of other types. Data types are named, for example *transactions*, *user activity*, *sensor feeds*, *documents*, *market ticks*, *ad impressions* **(A)**.
+- **Input data can be stored or discarded** (Logan). Stored data fills database space (15) and can be processed later, sold under a contract, or fed to other software and AI models. Discarded data is gone.
+- **Instances.** A company using a piece of software runs one or more **instances** of it. Each instance processes up to the software's effective speed per tick and needs the software's compute and database requirements.
+- **Scaling (Logan).** When a company has more input data than its instances can process, it **scales up**: it runs more instances and pays for the extra on its own **servers** or in its **cloud bill** (15). Scaling down cuts the bill. Unprocessed data waits in storage or is discarded.
+- By default the company's operations staff scale instances automatically to keep up; the player can cap the bill **(A)**.
 
 ## 14.3 Inputs, outputs and nerfed output
 
@@ -61,7 +69,7 @@ Software forms a small dependency graph, like the GPU chain (6.7.0) **(A)**.
   | Cloud service or SaaS | 1.0 (lives on its inputs) |
 
   For example, a 50-quality SaaS tool that loses half its inputs works at 50% output; at 90 quality it keeps 70%.
-- **Outputs** feed the economy: services that raise the productivity of the companies that use the software, licence revenue to the owner, data, and slop.
+- **Outputs** feed the economy: output data raises the productivity of the companies that use it (a company's processed data is part of its management and operations output), it can be stored and sold, and its owner earns contract revenue. Slop comes from consumer software (10.3).
 
 ## 14.4 Software contracts (Logan, batch 43)
 
@@ -75,23 +83,23 @@ The owner of a piece of software decides who may use it and on what terms. A com
 Contract terms **(A)**:
 - **Price**: per seat, per unit processed, or a flat fee a month.
 - **Term**: monthly rolling, or 1 to 5 years.
-- **Units**: how many units per tick the buyer may use; the sum over all contracts is checked against the product's speed.
+- **Instances**: how many instances the buyer may run; the buyer scales within that limit (14.2.2).
 - **Exclusivity**: a special contract can bar the owner from offering the product to a named rival.
-- **Cancellation**: the owner can stop offering a market contract, but signed contracts run to the end of their term; breaking one is a lawsuit (4.21).
+- **Breaking a contract** (Logan, batch 44): either side can break a signed contract, but pays a **penalty**: by default the fees left on the term × 50% **(T)**, plus an opinion hit between the companies' heads. The owner can also stop offering a market contract to new buyers at any time.
 - **Users** come from contracts: a product's users are the companies (and their staff) under contract, so there is no separate users column.
 - Contracts live in their own **contracts table** in the engine, with a Contracts view on the company screen.
 
 ## 14.5 Features (A)
 
-| Feature | Opens | Extra needs **(T)** |
+| Feature | New output data | New inputs or compute **(T)** |
 |---|---|---|
-| Payments | Fintech use; crypto casino use (9) | +10% database |
-| Ads | Ad revenue; slop ×1.5 | +10% compute |
-| AI assistant | A higher price; needs a contract for an AI model (6.2.4) | +50% compute |
-| Social feed | Doomscrolling use (11) | +30% database |
-| Enterprise | Business seats; longer contract terms | none |
-| Encryption | Privacy-minded markets; a regulator issue in surveillance states | +5% compute |
-| Offline | Embedded platforms (cars, drones, implants) | none |
+| Payments | Transactions | Needs bank data input; +10% database |
+| Ads | Ad impressions; slop ×1.5 | Needs user activity input; +10% compute |
+| AI assistant | Generated text and actions | Needs a contract for an AI model (6.2.4); +50% compute, AI-grade compute |
+| Social feed | User activity (sold to advertisers); doomscrolling use (11) | +30% database |
+| Analytics | Reports and forecasts | Needs stored data; +20% compute |
+| Encryption | Secured records | +5% compute; a regulator issue in surveillance states |
+| Offline | Device logs | Runs on embedded platforms (cars, drones, implants) |
 
 ## 14.6 Tags (A)
 
@@ -108,8 +116,8 @@ Tags are exceptions to the normal rules. Starting examples:
 
 ## 14.7 Assumptions and open items
 
-1. The quality factor, bloat growth and refactor rule in 14.2.1.
-2. What a "unit" is for each kind of software (14.2).
+1. The quality factor and bloat growth in 14.2.1; whether anything lowers bloat.
+2. Data types, GB as the speed unit, and auto-scaling in 14.2.2.
 3. The nerfed output formula and type sensitivities in 14.3.
 4. Contract terms in 14.4.
 5. The feature and tag lists in 14.5 and 14.6.
