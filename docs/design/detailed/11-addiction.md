@@ -11,7 +11,7 @@ _Status: draft v0.1 (2026-10-17). From Logan's answers in the design Q&A (batch 
 | Topic | Decision |
 |---|---|
 | Scores | One addiction score per vice, with urges, withdrawal and relapse events. |
-| Vices | **Gambling, drugs, cyberware, doomscrolling and sex.** AI addiction is "a whole different can of worms" and is swapped out for sex for now. |
+| Vices | **Gambling, drugs, doomscrolling and sex** (cyberware scrapped, Logan batch 71; it was the fifth vice). AI addiction is "a whole different can of worms" and is swapped out for sex for now. |
 | Benefits | Anything addictive has a benefit to using it: stat boosts from drugs, returns from gambling, buffs from cyberware, stress relief from doomscrolling. |
 | Hooks | A hidden addiction is a secret, so it can become a strong hook (1.1.4). |
 | Recovery | Rehab clinics, therapy and willpower checks, with a relapse chance for years. |
@@ -25,7 +25,7 @@ Each vice has a **use** action (or happens through normal play), a **benefit**, 
 |---|---|---|---|
 | **Gambling** | Casino and prediction market bets in the phone tab (9) | The winnings (or losses) themselves; a win gives -10 stress, a big win also +5 Fame | The stake; a loss gives +5 stress |
 | **Drugs** | "Use" action, by drug (11.3) | A stat boost for a set time | Money, health, a crash afterwards |
-| **Cyberware** | Fitting or upgrading implants (1.1.10) | The implant's stats, abilities and traits | Humanity, money |
+| ~~**Cyberware**~~ | Scrapped (Logan, batch 71) | | |
 | **Doomscrolling** | 1 hour on the phone tab feed | -10 stress per hour (max -30 a day); a 10% chance per hour of a useful rumor (market news a day early, or a character's secret) | The hours; at high scores, -1 Operations while addicted |
 | **Sex** | Seduce scheme, lovers and partners (1.1.4), paid services | -20 stress; +5 opinion with the partner | Scandal risk if discovered (affairs, paid services); lovers become hooks |
 

@@ -52,13 +52,13 @@ The game has **named characters** of two kinds:
 - **Stress**: long hours and crunch cost a character with Hustle 15+ half the stress (1.1.5).
 - Trait links: Diligent +2 Hustle, Lazy -2, Ambitious +1 (already +1 to all) **(T)**. Education: Street-Taught and Bootcamp Coder give +1 Hustle per level.
 
-**Skill sources** (Logan, batch 60): base (genetics, rolled 0 to 8 at birth, inherited partly from parents) + **education** (+2 to +8 in a focus skill) + traits + cyberware + **experience from the jobs held** (+1 per 5 years in a matching role, max +6: a CFO gains Finance, a COO Operations) + **events** + **age**.
+**Skill sources** (Logan, batch 60): base (genetics, rolled 0 to 8 at birth, inherited partly from parents) + **education** (+2 to +8 in a focus skill) + traits + **experience from the jobs held** (+1 per 5 years in a matching role, max +6: a CFO gains Finance, a COO Operations) + **events** + **age**.
 
-**Age curve (Logan, batch 60).** Skills **peak around 45 to 55 and then fade slowly** **(T for the numbers)**: from 56 every skill loses 1 point every 5 years, Tech and Hustle every 3 years; Persuasion and Intrigue fade at half speed. Life extension (1.1.9) and cyberware slow the fade.
+**Age curve (Logan, batch 60).** Skills **peak around 45 to 55 and then fade slowly** **(T for the numbers)**: from 56 every skill loses 1 point every 5 years, Tech and Hustle every 3 years; Persuasion and Intrigue fade at half speed. Life extension (1.1.9) slows the fade.
 
 ### 1.1.2 Personality traits
 
-Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs**, CK3 style (batch 60). Cyberware and events can add more, so a character has **3 to 5** in all (Logan, batch 60). Traits drive AI choices and stress (Logan, 2026-10-17: grown from 7 with cyberpunk flavor). Each modifies skills, opinion and stress. Cyberware can add extra personality traits beyond the 3 (1.1.10).
+Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs**, CK3 style (batch 60). Events can add more, so a character has **3 to 5** in all (Logan, batch 60; cyberware scrapped in batch 71). Traits drive AI choices and stress (Logan, 2026-10-17: grown from 7 with cyberpunk flavor). Each modifies skills, opinion and stress. Cyberware can add extra personality traits beyond the 3 (1.1.10).
 
 | Trait | Opposite | Skill effect | Stress when | Opinion |
 |---|---|---|---|---|
@@ -84,7 +84,7 @@ Traits can change over a life, slowly **(T)**:
 - **Trauma**: each stress breakdown (1.1.5) and each health event costing 30 or more (1.1.9) has a 25% chance to flip one trait to its opposite or add a stress trait.
 - **Arc outcomes**: quest arc outcomes can grant or swap traits ([8-quest-lines.md](8-quest-lines.md) 8.1).
 - **Drift**: a character who acts against a trait 5 times in a year (each one causing stress) gets an event offering to drop it.
-- At most one natural trait change per year, so personalities stay recognizable. Cyberware traits (1.1.10) come and go with the implant.
+- At most one natural trait change per year, so personalities stay recognizable.
 
 #### Hidden traits (Logan, 2026-10-17)
 
@@ -314,7 +314,6 @@ Every character has **health** from 0 to 100. There are no yearly death rolls: h
 | **Stress** | Heart attack at stress 300 (1.1.5); burnout breakdowns | 30 to 60; 10 |
 | **Addiction** | Monthly while addicted ([11-addiction.md](11-addiction.md)), by substance or habit | 1 to 5 |
 | **Violence** | Assassination attempts, accidents, travel risk (2.21.8) | 10 to 100 |
-| **Cyberware** | Rejection and surgery events (1.1.10) | 5 to 25 |
 
 **Effects of low health (T).**
 
@@ -331,34 +330,9 @@ Every character has **health** from 0 to 100. There are no yearly death rolls: h
 - **Private medicine** ($200,000 a year) doubles recovery and halves illness costs.
 - **Life extension** ($5M a year) raises the age cap by 15, halves aging chances, and grows with tech (cloned organs, gene therapy). It is a status symbol: Glitterati and above gain prestige from it, and heirs waiting on an inheritance lose opinion of the character.
 
-### 1.1.10 Cyberware (Logan, 2026-10-17)
+### 1.1.10 Cyberware: scrapped
 
-> Cyberware will become **its own system**, designed later (Logan, batch 51); it is no longer an industry. The character rules below stay.
-
-Cyberware **raises stats**, can grant **special abilities**, and can add **extra personality traits**, at the risk of **addiction** ([11-addiction.md](11-addiction.md)) and **AI psychosis** (humanity, below).
-
-**Slots.** Neural (2), Ocular (1), Voice and face (1), Limbs (2), Torso (1) **(A)**. Fitted at a cyberware clinic (an industry, 10.3); legality varies by country (4.x).
-
-**Humanity.** Each character has humanity from 0 to 100, starting at 100. Each implant costs humanity. Below 40, **AI psychosis** events start (paranoid episodes, intrusive voices, -opinion with everyone); below 15, **cyberpsychosis**: the director AI takes control of the character for 1 to 4 weeks. Tech above 15 halves humanity loss; therapy and removing implants restore it slowly **(T)**.
-
-**Addiction.** Every implant adds to a cyberware addiction score (upgrades feel good); a high score fires urges to buy more implants, part of the addiction system ([11-addiction.md](11-addiction.md)).
-
-**Starting implants (A); values (T).**
-
-| Implant | Slot | Cost | Humanity | Gives |
-|---|---|---|---|---|
-| Neural co-processor | Neural | $2M | -10 | +3 Finance |
-| Social-engineering suite | Voice and face | $1.5M | -8 | +3 Persuasion |
-| Lie-reader optics | Ocular | $3M | -10 | +2 Intrigue; **ability: Read Lies**, see whether a character in a meeting is Deceitful or bluffing |
-| Market daemon | Neural | $5M | -12 | **Ability: Night Trader**, runs the character's trading orders around the clock without using their hours |
-| Sleep killer | Torso | $4M | -15 | **Ability: No Sleep**, +4 hours a day (1.1.6); +5 stress a month |
-| Total recall | Neural | $2.5M | -8 | **Ability: Perfect Memory**, never forgets a secret or hook; +1 Intrigue |
-| Pheromone glands | Torso | $1M | -6 | +5 opinion from everyone met in person |
-| Reflex boosters | Limbs | $3M | -12 | **Ability: Hard Target**, assassination and violence events against them cost half health |
-| Ghost partition | Neural | $8M | -20 | **Extra personality**: an AI personality shard adds a 4th trait, rolled from Ruthless, Visionary, Paranoid or Ambitious. If it is the opposite of an existing trait, +10 stress a month |
-| Corporate daemon | Neural | $12M | -25 | **Extra personality**: a company-trained persona adds the trait Loyal to the company that installed it, +2 Operations; that company's board gains +20 opinion of the character, and the character cannot act against it without a Persuasion check |
-
-Implants can fail (Implant Rejection, 1.12), be hacked by netrunners (a scheme that reads the implant's data or triggers a psychosis event), or be removed (surgery, health -10, humanity restored by half the implant's cost).
+> **Scrapped (Logan, batch 71).** There is no cyberware in the game: no implants, slots, humanity, AI psychosis or cyberpsychosis, implant abilities or implant traits. The old rules are removed from this section. Life extension (1.1.9) stays.
 
 ## 1.2 Holders and stakes
 
@@ -835,7 +809,6 @@ Renown is earned monthly: +1 per $1B of trust value, +5 per company controlled a
 | Covenant Breach | Bank covenant broken | Repay, renegotiate (Finance), default |
 | The Board Revolt | 3+ board members below -40 opinion | Fire them, concede, call shareholder vote |
 | Shell Exposed | Shell investigation succeeds | Settle, fight in court, sacrifice an executive |
-| Implant Rejection | Character with cyberware, random | Surgery ($1M, 1 week), keep working (+stress), remove |
 | Sibling Rivalry | Two heirs with Rival relationship | Mediate, pick a side, let them compete |
 
 ## 1.13 Assumptions

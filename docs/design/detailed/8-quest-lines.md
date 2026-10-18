@@ -202,6 +202,8 @@ Opens after Arc 1's second step; runs alongside Arc 2.
 
 ## 8.5 Samir Haddad: "Chrome"
 
+> **Needs a rework (Logan, batch 71): cyberware is scrapped**, and this line was built on implants, humanity and cyberpsychosis. It stays as a record until Samir's line is rewritten.
+
 **Who he is.** Dubai. A former elite soldier, now in the Permanent Underclass, slaving on a desert megaproject (7.3.2). A stranger recognized his implants and offered better ones, the first free, for a favor. The assassin playthrough: slowly become a cyborg.
 
 **What the line teaches.** Cyberware, humanity and AI psychosis, schemes, hooks, the rival rotation from the inside, and climbing out of the Underclass.

@@ -1,5 +1,7 @@
 # 5. Ideology: detailed design
 
+> **Cyberware is scrapped (Logan, batch 71).** Each ideology's "Cyberware" stance now reads as its stance on **human enhancement**: life extension, gene therapy and brain-computer links to AI **(A)**. Mentions of implants, clinics and implanted people are void; Transhumanist and anti-implant movements target longevity clinics, biotech labs and AI labs instead.
+
 _Status: draft v0.2 (2026-10-16). A Victoria 2 style ideology layer with cyberpunk ideologies, requested by Logan. v0.2 uses Logan's list of nine ideologies: Liberals, Communists, Accelerationists, Effective Altruists, Transhumanists, Neo-Luddites, Sovereigntists, Landites and Chuds. It sits under the interest groups, parties, elections, unrest and revolutions of [4-politics.md](4-politics.md) and changes some of their formulas (listed in 5.13). Owner: Logan._
 
 In Victoria 3 people belong to interest groups. In Victoria 2 people also **believe** things: every population group carries a mix of ideologies that drifts with their lives, decides how they vote and what they will march for, and can turn into a rebel movement. TechnoCapital20FF keeps the Vic3-style interest groups for organized power and adds this Vic2-style layer for belief.
@@ -55,7 +57,7 @@ Each ideology has a position on three axes, each from -2 to +2:
 | 2 | **Communists** | CO | -2 | +1 | +1 | 1.2 | Seize the servers: common ownership of automated production |
 | 3 | **Accelerationists** | AC | +1 | +2 | -1 | 0.5 | Speed up the machine: unshackled AI, growth as the only morality |
 | 4 | **Effective Altruists** | EA | 0 | +1 | +1 | 0.2 | Do the most good by the numbers: give, measure, and stop anyone building a god in a garage |
-| 5 | **Transhumanists** | TH | 0 | +2 | -1 | 0.6 | Upgrade the body and mind; cyberware and longevity as rights |
+| 5 | **Transhumanists** | TH | 0 | +2 | -1 | 0.6 | Upgrade the body and mind; longevity, gene therapy and merging with AI as rights (cyberware scrapped, batch 71) |
 | 6 | **Neo-Luddites** | NL | -1 | -2 | 0 | 1.2 | Smash the machines that took the jobs; natural bodies, human work |
 | 7 | **Sovereigntists** | SV | +2 | +1 | -2 | 0.5 | Exit the state: network states, charter cities, crypto money, private law |
 | 8 | **Landites** | LA | +2 | +2 | +1 | 0.6 | Followers of Nick Land's dark accelerationism: democracy is obsolete, capital is the intelligence, let owners rule as CEO-kings |

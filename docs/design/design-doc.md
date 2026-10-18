@@ -4,11 +4,13 @@ _Status: v0.4 (2026-10-16). Owner: Logan. Living document; every part is open fo
 
 This is the entry point. Each system has its own file in this folder so it can grow independently.
 
+> **Cyberware is scrapped (Logan, batch 71).** There are no implants, humanity, cyberpsychosis, cyberware clinics or cyberware addiction. Any remaining mention of cyberware, implants, chrome or humanity in any file is void; read the rule around it as if that part were not there.
+
 | # | File | Covers |
 |---|---|---|
 | 1 | [01-companies.md](01-companies.md) | Founding companies, charters, blocs, vassal types, CEO and board, takeovers |
 | 2 | [02-trusts-and-assets.md](02-trusts-and-assets.md) | Family trust, personal trusts and accounts, asset classes, leverage ("Wall Street Raiders Lite") |
-| 3 | [03-characters.md](03-characters.md) | Skills, traits, opinion, stress, schemes, cyberware |
+| 3 | [03-characters.md](03-characters.md) | Skills, traits, opinion, stress, schemes (cyberware scrapped) |
 | 4 | [04-dynasty-and-succession.md](04-dynasty-and-succession.md) | Dynasties, houses, succession laws, marriage, game over |
 | 5 | [05-map-and-influence.md](05-map-and-influence.md) | World map, countries, regions, economic hubs, influence |
 | 6 | [06-economy.md](06-economy.md) | Industries and business units (Wall Street Raider style), labor, demand |
@@ -45,7 +47,7 @@ Exact rules, numbers and content for each layer of the game:
 | 8. Quest lines (arcs, the default line, and full lines for Pieter, Antone, Samir, Yuna, John, Viktor, Garrett, Pablo, Tolu, Qiao and Fang) | [detailed/8-quest-lines.md](detailed/8-quest-lines.md) |
 | 9. Gambling, crypto and prediction markets (the phone tab) | [detailed/9-gambling.md](detailed/9-gambling.md) |
 | 10. Industry economy (Wall Street Raider style: industries, business units, business assets; replaces goods) | [detailed/10-industry-economy.md](detailed/10-industry-economy.md) |
-| 11. Addiction (gambling, drugs, cyberware, doomscrolling, sex) | [detailed/11-addiction.md](detailed/11-addiction.md) |
+| 11. Addiction (gambling, drugs, doomscrolling, sex; cyberware scrapped) | [detailed/11-addiction.md](detailed/11-addiction.md) |
 | 12. Setup, fair AI, dynasty score and saves | [detailed/12-setup-and-score.md](detailed/12-setup-and-score.md) |
 | 13. Events (frequency, the director, AI events, event decks) | [detailed/13-events.md](detailed/13-events.md) |
 | 14. Software (the software table and software contracts; hacking later) | [detailed/14-software.md](detailed/14-software.md) |
