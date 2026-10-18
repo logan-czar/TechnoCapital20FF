@@ -1,6 +1,6 @@
 # 14. Software: the software table, licences and making software (detailed design)
 
-_Status: draft v0.8 (2026-10-18). Batch 89: the licence pricing formula (14.4.1). Batch 88: one software unit per desktop per day, labor cost 0.2% to 4% of GDP per capita, quality tiers 90 to 10, and quality 0 means no bonus. Batch 87: making software with desktops (14.8), licences by usage with a one-year capacity lock, no special contracts, no copying (14.4). v0.5, consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
+_Status: draft v0.9 (2026-10-18). Batch 90: updates with diminishing returns and rising cost, specialized enterprise software doubles effectiveness, and structured data gives buffs (14.2.3). Batch 89: the licence pricing formula (14.4.1). Batch 88: one software unit per desktop per day, labor cost 0.2% to 4% of GDP per capita, quality tiers 90 to 10, and quality 0 means no bonus. Batch 87: making software with desktops (14.8), licences by usage with a one-year capacity lock, no special contracts, no copying (14.4). v0.5, consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 14.7.
 
@@ -54,6 +54,25 @@ Every column is Logan's (batches 42 and 43).
 - **Instances.** A company using a piece of software runs one or more **instances** of it. Each instance processes up to the software's effective speed per tick and needs the software's compute and database requirements.
 - **Scaling (Logan).** When a company has more input data than its instances can process, it **scales up**: it runs more instances and pays for the extra in its own **data centers** or in its **cloud bill** (15). Scaling down cuts the bill. Unprocessed data waits in storage or is discarded.
 - By default the company's operations staff scale instances automatically to keep up; the player can cap the bill **(A)**.
+
+### 14.2.3 Enterprise data software and structured data (Logan, batch 90)
+
+Most companies run **data software** that turns their raw data into **structured data**. Two kinds:
+
+| Kind | Input | Output |
+|---|---|---|
+| **Enterprise data software** (general) | Enterprise data of **any type** | Structured data of that type |
+| **Specialized enterprise software** (industrial specialization) | **Unstructured data of one type**, for example unstructured oil data | Structured data of that type |
+
+- **Specialization doubles effectiveness (Logan).** On its own data type, specialized software is **twice as effective** as regular enterprise software: it turns twice as much input into structured data per tick at the same quality and compute **(T: read as ×2 speed)**.
+- **Structured data gives buffs (Logan).** A company earns buffs from **how much structured data of a type it stores** and **how much it produces per day**. The thresholds scale with the size of the business units in that data's industry, per $100M of their yearly revenue **(T)**:
+
+  | Measure (per $100M of unit revenue) | Tier 1 | Tier 2 | Tier 3 | Buff **(T)** |
+  |---|---|---|---|---|
+  | **Stored** structured data | 10 TB | 100 TB | 1 PB | R&D effectiveness +5% / +10% / +20% for that industry's units |
+  | **Produced per day** | 0.1 TB | 1 TB | 10 TB | Productivity +1 / +3 / +5 for that industry's units |
+
+- Stored data ages and loses value (15.4), so the stored buff needs fresh data coming in. Structured data can also be sold, fed to AI models or consumed for one-off bonuses (8-quest-lines 8.2.3).
 
 ## 14.3 Inputs, outputs and nerfed output
 
@@ -110,7 +129,7 @@ When an owner sets a licence price, the pricing screen works it out from three t
 
 **5. Expected return.** `E = P × K × ℓ × 12 × Y` (equal to `C × R` at the suggested price), and expected profit `E - C`. The screen shows `C`, `N`, `K`, `P`, `E` and the profit, and the owner can set any other price.
 
-**6. Will they buy?** An AI company signs only if the licences cost less than what they earn it: `P × ℓ` a month below the monthly value of the software's bonus to its unit (for the oil software, the productivity gain × the Oil unit's monthly revenue). A price above that loses customers; a lower one wins more, up to `N`.
+**6. Will they buy?** An AI company signs only if the licences cost less than what they earn it: `P × ℓ` a month below the monthly value of the software's bonus to its unit (for the oil software, the extra structured-data buffs it earns, 14.2.3, valued at the Oil unit's revenue). A price above that loses customers; a lower one wins more, up to `N`.
 
 **Worked example (A).** The oil software, built in India by Kids Who Code: 18,000 software units by the end of 2020 (version 1 plus updates). `L` = 2% × $2,100 = $42, so `C` = 18,000 × ($42 + $1.70) ≈ **$787,000**. With 40 other oil companies (`N`), quality 30 gives `K` = 11 customers at 10 licences each. Over 3 years at `R` = 1.5: `P` = $787,000 × 1.5 ÷ (11 × 10 × 36) ≈ **$298 per licence per month**, for an expected **$1.18M** back and **$390,000** profit, all on software that cost Arrowhead nothing to build.
 
@@ -144,6 +163,10 @@ Tags are exceptions to the normal rules. Starting examples:
 **Desktops design software.** Software is created by taking **desktop computers** (base compute, 15.2) and **setting them to design software**.
 - **One employee on one desktop makes software units.** Each desktop assigned to design takes **1 employee** and produces **software units** at a rate set by **developer productivity** (**1 software unit per desktop per day** at normal productivity, Logan, batch 88).
 - **Cost in software units.** Every piece of software has a **cost in software units** to create: a new product, and **each update or feature** (batch 88). Bloat multiplies the cost of updates and features (14.2.1).
+- **Updates: diminishing returns, rising cost (Logan, batch 90).** Each update picks **one focus** (batch 90): **quality**, **speed** or **capacity**. Each later update gives less and costs more **(T)**:
+  - Update `n` costs `base × bloat × 1.25^(n-1)` software units.
+  - Its gain is the focus's full effect × `0.8^(n-1)`. Full effects: quality +5, speed +20%, capacity -15% compute needed.
+  - So the 1st update gives quality +5; the 5th gives about +2 at about 2.4 times the cost.
 - **Employment cost.** Labor normally costs money **per software unit**, set by the **GDP per capita of the country** where it is developed: about **0.2% of yearly GDP per capita** per software unit in the **highest-income countries**, rising to about **4%** in the **lowest** (Logan, batch 88). In between it follows the tier **(T)**: High 0.2%, Medium-high 0.5%, Medium 1%, Medium-low 2%, Low 4%. So a unit costs about $130 in the US and about $40 in India.
 - **Location.** When developing software, the **location** can be chosen. It sets both the **employment cost** and the **software quality** the work starts from (Logan). Countries have a software quality tier (Logan, batch 88; countries confirmed):
 
