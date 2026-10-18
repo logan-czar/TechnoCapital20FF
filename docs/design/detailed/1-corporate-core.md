@@ -85,7 +85,7 @@ A few characters have a **unique trait** outside the 12 pairs. It has no opposit
 
 | Trait | Holder | Effect |
 |---|---|---|
-| **Operational Excellence** | John Techno ([8-quest-lines.md](8-quest-lines.md) 8.3) | While he sits on a company's board as **COO**, the **buffs of all other board members are doubled**: their seat task effects (1.8.2) and their trait and skill bonuses to that company **(A for the scope)** |
+| **Operational Excellence** | John Techno ([8-quest-lines.md](8-quest-lines.md) 8.3) | While he sits on a company's board as **COO, CEO or Chair** (Logan, batch 79), the **buffs of all other board members are doubled**: their seat task effects (1.8.2) and their trait and skill bonuses to that company (batch 79) |
 
 #### Trait change (Logan, 2026-10-17)
 
