@@ -37,6 +37,21 @@ Rules already decided by Logan (see [13-open-questions.md](../13-open-questions.
 - **Daily jobs** that ran at each market's close (3.1.2) run at **00:00 UTC** instead **(A)**. Exchanges keep their home cities, currencies and indices; only their hours go.
 - FX and commodities are assumed to follow the same calendar **(A)**. Crypto and the Freeport Night Market (3.2.5) never close, even on 1 January.
 
+**Earnings season (Logan, batch 54).**
+- **Guidance.** Every company publishes **guidance** (its forecast for next quarter) alongside its earnings. Whether investors believe it comes down to a **stat roll by board members**: each roll shows how well they steer investor confidence **(A for who rolls and the numbers)**:
+
+  | Board member | Skill | Effect of a success **(T)** |
+  |---|---|---|
+  | CFO | Finance | Consensus moves toward the guidance; a raise gives up to +8%, a cut does no more than -5% |
+  | CEO | Persuasion | Investor confidence (10.5) +5 for the quarter |
+  | Head of IR or PR, if seated | Persuasion | Buzz +10 and smaller swings on the day |
+
+  Failed rolls make it worse: the market doubts the guidance, and a cut hits at its full -15%. Guidance that turns out wrong next quarter costs the CFO reputation and confidence -5. Talking guidance up on purpose ("managing expectations", 3.3.6) uses the same rolls.
+- **Insider blackout.** Board members, executives and holders of more than 10% may not trade the company's shares in the **7 days before each earnings date** **(T)**. Trading anyway is possible: it is an **Intrigue** roll; a failure (or a later leak) opens an insider trading investigation (3.10) and a hook for whoever finds out.
+- **1 January is a world holiday.** Markets are closed, and holiday events fire (New Year galas, family dinners, resolutions). Orders placed that day **queue up** and fill at the 2 January 00:00 reopening.
+- **Flat liquidity.** In a 24/7 market, liquidity is **the same around the clock**; there is no thin night session. Only earnings days and news shocks change it.
+- **Earnings deck.** Earnings days have **their own event deck** ([13-events.md](13-events.md) 13.5).
+
 ### 3.1.2 What runs when
 
 Markets follow the calculation schedule of [09-time-and-turns.md](../09-time-and-turns.md). The hourly loop only touches prices, orders and alarms. Strategic choices by named AI holders stay on weekly or monthly cadences, as 9.3 requires; the hourly order flow of AI investor archetypes (3.3.4) is a market rule, not an AI decision.

@@ -73,6 +73,7 @@ Each deck has its own triggers, weights and cooldowns. Sample events per deck **
 | **Strata** | Moving up or down a stratum (2.8.0) | *New Money*: the Nobles snub you · *Slop Riots* in a hub where you own sites · *Welcome to the Glitterati* |
 | **Ideology** | The character's ideology, blocs, movements (5) | *Crisis of Faith* · *The Movement Wants a Donor* · *Your Child Joins the Red Cells* |
 | **Politics** | Elections, laws, regulators, influence (4) | *The Minister's Price* · *Subpoena* · *Election Night* · *Antitrust Letter* |
+| **Earnings** | The four earnings days (3-markets 3.1.0), guidance and the insider blackout | *The Leaked Report* · *Whisper Number* · *Servers Crash at Midnight* · *The Analyst Call* · *A Friend Wants a Tip* |
 | **Gambling** | Bets and prediction markets (9) | *Hot Tip* · *Whale Table Invite* · *The Market Resolves* |
 | **Techno-Capital** | Compute, fabs, the GPU chain (6) | *Lease Expires* · *Compromised Cluster Found* · *The Lab Breakthrough* |
 | **World and timeline** | Scripted and rolled world events (7.7, 2.6.0) | *Strait Closed* · *Export Controls Tighten* · *The Crash* |
