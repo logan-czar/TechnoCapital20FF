@@ -1,6 +1,6 @@
 # 19. History: the world from the 1990s to 2020 (detailed design)
 
-_Status: draft v1.5 (2026-10-18; 2000 to 2012 ruled in batches 94 to 107, 2013 drafted). Standing rule (Logan, batch 102): **every South Asian terror attack happens as in real life.** Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
+_Status: draft v1.6 (2026-10-18; 2000 to 2013 ruled in batches 94 to 108, 2014 drafted). Standing rule (Logan, batch 102): **every South Asian terror attack happens as in real life.** Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
 
 **How to read this file.** Everything below is **real history**, as a base. Rows Logan has confirmed or changed are marked **(Logan)**; everything else is a draft for him to rule on. Where a real event clashes with the alternate history already decided (7.2.0), the clash is flagged.
 
@@ -313,22 +313,42 @@ Effects **(A)**: no Department of Homeland Security, no Patriot Act, and no Guan
 
 **Global (draft).** **Pope Francis** is elected, the first from the Americas (March). **Nelson Mandela dies** (December). **Typhoon Haiyan** kills about 6,300 in the Philippines (November), and a **meteor** explodes over Chelyabinsk (February). **Bitcoin passes $1,000** (November), and the FBI shuts down the **Silk Road** (October). Pop culture: **GTA V** (September), the **Breaking Bad** finale, *Frozen*, and the **PS4** and **Xbox One** (November).
 
-> **Questions to rule on.** (1) **Snowden** leaked the NSA's mass-spying programs (June), which were built after 9/11. With no 9/11 and no Patriot Act, the state spies less, but corporations run unchecked. a) ★ He still leaks, but the scandal is about **corporate data deals**: contractors and tech firms selling Americans' data to anyone. b) It never happens. (2) **The Boston Marathon bombing** (April) was by two brothers inspired by jihadists online. a) ★ It never happens, like the London and Madrid attacks. b) It still happens. (3) **China's Belt and Road** begins (September to October). Can China use it to make **debt vassals** too? a) ★ Yes: by 2020 a few poor countries are Chinese debt vassals, a rival bloc to America's. b) No, only the US has debt vassals.
+**Rulings (Logan, batch 108).** (1) **Snowden leaks as in real life**, but **corporations play a much bigger role**: the spying runs through contractors and tech firms that sell and share Americans' data. (2) **The Boston Marathon bombing happens.** (3) **China makes debt vassals through Belt and Road**, a rival bloc to America's ([4-politics.md](4-politics.md) 4.11.8).
 
 | Region | Big events of 2013 (real, with game-world changes marked **(A)**) |
 |---|---|
-| **North America** | 1. **Trump takes office** as a Democrat (January). 2. **Snowden** (June) **(see question 1)**. 3. A runaway oil train explodes in **Lac-Mégantic**, Quebec, killing 47 (July), which puts oil-by-rail under fire across Canada. Also: **Mexico opens its oil industry** to private companies (December); the **Boston bombing** (April) **(see question 2)**; Toronto mayor **Rob Ford's** crack scandal. |
+| **North America** | 1. **Trump takes office** as a Democrat (January). 2. **Snowden** leaks the NSA's spying and the corporate data machine behind it (June, Logan). 3. A runaway oil train explodes in **Lac-Mégantic**, Quebec, killing 47 (July), which puts oil-by-rail under fire across Canada. Also: **Mexico opens its oil industry** to private companies (December); the **Boston Marathon bombing** kills 3 (April, Logan); Toronto mayor **Rob Ford's** crack scandal. |
 | **Latin America** | 1. **Chávez dies** (March), and **Maduro** narrowly wins (April). 2. **Brazil's mass protests** over bus fares and World Cup spending (June). 3. An Argentine becomes **Pope Francis** (March). |
 | **Europe** | 1. **Croatia** joins the EU (July). 2. **Merkel** wins a third term (September). 3. **Thatcher dies** (April). Also **(A)**: no Cyprus bailout; Ukraine, a Russian satellite, has no Maidan protests. |
 | **Russia and the former USSR** | 1. **(A)** Ukraine joins Russia's **customs union** (December). 2. **Navalny** is convicted, then runs strong for Moscow mayor (July to September). 3. Russia gets ready for the **Sochi Olympics**. |
 | **Middle East and North Africa** | 1. **Rouhani** wins Iran's presidency (June), but Iran stays the region's holdout. 2. **Gezi Park** protests shake Erdoğan's Turkey (May to June). 3. Islamists seize the **In Amenas** gas plant in Algeria, and 39 hostages die (January) **(A: the fighters come out of Mali's collapse)**. Also **(A)**: no Egyptian coup and no Syrian chemical attack. |
 | **Sub-Saharan Africa** | 1. **Mali becomes a US debt vassal** **(A: formalized this year)**. 2. Al-Shabaab attacks Nairobi's **Westgate mall** (September). 3. **South Sudan** falls into civil war (December), after a coup in the **Central African Republic** (March). Also: **Uhuru Kenyatta** wins Kenya (March). |
 | **South Asia** | 1. The **Rana Plaza** garment factory collapses in Bangladesh, killing 1,134 (April). 2. **Nawaz Sharif** wins Pakistan (May), and the BJP names **Narendra Modi** its candidate (September). 3. India launches a **Mars orbiter** (November). Also: the **Hyderabad bombings** (February); the **Uttarakhand floods** kill about 6,000 (June). |
-| **East Asia** | 1. **Xi Jinping** becomes president (March) and launches **Belt and Road** (September to October) **(see question 3)**. 2. **North Korea's third nuclear test** (February), and Kim executes his uncle **Jang Song-thaek** (December). 3. China declares an **air defense zone** over the East China Sea (November). Also: Japan's **Abenomics**. |
+| **East Asia** | 1. **Xi Jinping** becomes president (March) and launches **Belt and Road** (September to October), which becomes China's debt-vassal machine (Logan). 2. **North Korea's third nuclear test** (February), and Kim executes his uncle **Jang Song-thaek** (December). 3. China declares an **air defense zone** over the East China Sea (November). Also: Japan's **Abenomics**. |
 | **Southeast Asia and Oceania** | 1. **Typhoon Haiyan** (November). 2. **Tony Abbott** wins Australia (September). 3. Protests against **Yingluck** start in Bangkok (November). |
 
-**Logan's ruling on 2013:** _pending._
+**Logan's ruling on 2013 (batch 108):** everything above happened, with the changes in the rulings box.
 
-## 19.16 2014 onward
+## 19.16 The year 2014 (draft)
 
-To be written year by year after 2013 is settled, up to the 2020 start. Already set: fighting in Ukraine restarts in **2016**; the Democrats drop Trump in 2016 and Obama wins. The Greek crisis and Madoff's exposure come later (years to be set).
+**Global (draft).** **Malaysia Airlines MH370** vanishes (March). **Ebola** breaks out in West Africa **(see question 3)**. **Oil prices halve** in the second half of the year as US shale floods the market and Saudi Arabia refuses to cut **(see question 2)**. Tech and culture: **Alibaba's IPO** is the biggest ever (September), Facebook buys **WhatsApp** and **Oculus**, Bitcoin exchange **Mt. Gox collapses** (February), **North Korea hacks Sony** (November), and **Gamergate** starts the online culture war (August) that feeds the Chuds (5-ideology). The **Ice Bucket Challenge** goes viral.
+
+> **Questions to rule on.** (1) **ISIS** rose out of Syria's civil war and declared a caliphate across Iraq and Syria (June). Neither war exists here. a) ★ It never forms. b) A smaller version forms somewhere else (for example Mali or Yemen). (2) **The 2014 oil crash.** a) ★ It happens: oil halves, and Alberta's oil companies pile on debt to survive. That sets up the rival oil companies' debt in The Pivot (2021, 8-quest-lines). b) It never happens. (3) **Ebola.** a) ★ It happens as a West African epidemic that kills about 11,000 and is contained by 2016; "no pandemic" means no COVID. b) It never happens.
+
+| Region | Big events of 2014 (real, with game-world changes marked **(A)**) |
+|---|---|
+| **North America** | 1. The **Ferguson** protests over a police killing (August). 2. A gunman attacks **Parliament Hill** in Ottawa after killing a soldier (October). 3. Mexico's **43 Ayotzinapa students** disappear (September), and **El Chapo** is caught (February). Also: Trump restores ties with **Cuba** (December). |
+| **Latin America** | 1. Brazil's **Car Wash** probe into Petrobras begins (March), the biggest corruption case in the region's history. 2. **Dilma** is narrowly re-elected (October). 3. **Venezuela** is shaken by protests (February), and the oil crash starts its collapse. |
+| **Europe** | 1. **Scotland votes No** to independence (September). 2. **Eurosceptic parties** win the European elections in Britain and France (May), as the stunted EU lags (Logan, batch 103). 3. **(A)** Greece's hidden debt keeps growing. |
+| **Russia and the former USSR** | 1. The **Sochi Winter Olympics** (February). 2. **The ruble crashes** as oil falls on top of nine years of sanctions (December). 3. **(A)** No annexation of Crimea and no MH17, since Crimea has been Russian since 2005 and Ukraine is quiet. |
+| **Middle East and North Africa** | 1. **ISIS** (June) **(see question 1)**. 2. The **Gaza war** (Operation Protective Edge, July to August). 3. **Saudi Arabia** refuses to cut output at OPEC (November), driving the oil crash. Also: Iran's nuclear talks drag on. |
+| **Sub-Saharan Africa** | 1. **Ebola** in Guinea, Sierra Leone and Liberia **(see question 3)**. 2. **Boko Haram kidnaps 276 schoolgirls** in Chibok (April). 3. **Burkina Faso's** Compaoré is ousted after 27 years (October). |
+| **South Asia** | 1. **Modi wins a landslide** in India (May). 2. The Pakistani Taliban massacre 149 at a **school in Peshawar** (December). 3. **Malala wins the Nobel Peace Prize** (October), and India's probe reaches **Mars** (September). |
+| **East Asia** | 1. Hong Kong's **Umbrella Movement** occupies the city for 79 days (September to December). 2. The **Sewol ferry** sinks, killing 304, most of them students (April). 3. China and Vietnam clash over an **oil rig** in the South China Sea (May). |
+| **Southeast Asia and Oceania** | 1. Thailand's army **seizes power** (May). 2. **Jokowi** wins Indonesia (July). 3. **MH370** vanishes (March). Also: the **Lindt café siege** in Sydney (December). |
+
+**Logan's ruling on 2014:** _pending._
+
+## 19.17 2015 onward
+
+To be written year by year after 2014 is settled, up to the 2020 start. Already set: fighting in Ukraine restarts in **2016**; the Democrats drop Trump in 2016 and Obama wins. The Greek crisis and Madoff's exposure come later (years to be set).

@@ -1199,7 +1199,7 @@ Hub stability (for local unrest and protests) = country stability + local modifi
 - **Effects**: bonds haircut 30 to 70% (restructuring chain: Moratorium → Negotiation with creditors (holders with ≥ 5% of the bonds get a seat) → Haircut agreed or Holdout lawsuits); credit rating to D; domestic banks holding the bonds need recapitalization (bailout chain, 4.9.8); capital controls to Restricted or Hard (70%); Stability -15; government contracts paid late (50% delayed 6 months).
 - Regional and city governments can default on their own bonds with the same formula on their own debt and revenue (Limit 30% of regional GDP **(T)**); a national bailout of a region has the chance of a bailout of a systemically important company.
 
-**Debt vassalage** (Logan, batch 107). A country whose debt to **one other country** is so large it can never repay it can become that country's **debt vassal**: instead of servicing the debt, it pays the creditor a **set fee** every year, and the creditor gains **vassalage** over it. Mali has been a US debt vassal since its 2012 collapse ([19-history.md](19-history.md) 19.14). Details **(A)**:
+**Debt vassalage** (Logan, batch 107). A country whose debt to **one other country** is so large it can never repay it can become that country's **debt vassal**: instead of servicing the debt, it pays the creditor a **set fee** every year, and the creditor gains **vassalage** over it. Mali has been a US debt vassal since its 2012 collapse ([19-history.md](19-history.md) 19.14). **China** makes its own debt vassals through **Belt and Road** from 2013, a rival bloc to America's (Logan, batch 108). Details **(A)**:
 
 | Item | Rule |
 |---|---|
