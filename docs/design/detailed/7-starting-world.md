@@ -20,7 +20,7 @@ _Status: draft v1.5 (2026-10-18). Batch 93: the crash averages 2035; US chip exp
 | Center of Power | The hub where the dynasty holds the most influence, so it moves as the dynasty grows. Influence is money, power and prestige: money is the asset base, and power and prestige modify it (7.5). |
 | Rise and fall | AI founders rise into new dynasties during play, and dead dynasties drop out. |
 | History | Follows the real AI boom, inside the alternate history in 7.2.0, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2035 on average** (Logan, batch 93) a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.5); the game continues into a post-crash era with new rules. |
-| Alternate history (Logan, 2026-10-17) | In the game world the **dot-com crash, 9/11, the 2008 financial crisis and COVID never happened**. Everything else is the same, except that the **US won its wars in the Middle East far more decisively** and is in a much better position, both financially and in the security of its resources (7.2.0). |
+| Alternate history (Logan, 2026-10-17) | In the game world **9/11, the 2008 financial crisis and COVID never happened**, and the dot-com boom ran cooler and ended in only a **slight downturn** (Logan, batch 94). Everything else is the same, except that the **US won its wars in the Middle East far more decisively** and is in a much better position, both financially and in the security of its resources (7.2.0). |
 | Opening quest | **Buying a desktop computer** on the phone (Logan, batch 76; 7.6). It gives John his first compute. |
 | LLM tip | A tip names the company that will make the first LLM breakthrough. The tip is always correct, and the tipped lab is different each game. It arrives on the new desktop (Logan, batch 77; 7.6). |
 | Quests and events | Quests are tracked goal trees with branches and rolls. Events are single pop-ups that can start a quest. |
@@ -29,18 +29,18 @@ _Status: draft v1.5 (2026-10-18). Batch 93: the crash averages 2035; US chip exp
 
 ## 7.2.0 Alternate history (Logan, 2026-10-17)
 
-Four things **never happened** in the game world: the **dot-com crash** (2000 to 2002), **9/11** (2001), the **2008 financial crisis**, and **COVID** (2020 to 2022). Everything else is the same, except that the **US won its wars in the Middle East much more decisively**, and is now in a much better economic position, both financially and with more security in its resources.
+Three things **never happened** in the game world: **9/11** (2001), the **2008 financial crisis**, and **COVID** (2020 to 2022). The **dot-com boom** was less exuberant and ended in a **slight downturn** in 2000 to 2001, not a crash (Logan, batch 94). **9/11** was stopped because the US crushed al-Qaeda early after the **USS Cole** bombing in October 2000 (Logan, batch 94; [19-history.md](19-history.md) 19.2.1). Everything else is the same, except that the **US won its wars in the Middle East much more decisively**, and is now in a much better economic position, both financially and with more security in its resources.
 
 What follows from that, in January 2020 **(A)**:
 
 | Area | Real 2020 | Game world 2020 |
 |---|---|---|
-| Tech | Scarred by the 2000 crash; big tech grew from the survivors | No crash ever: tech giants are older, bigger and richer, investors have never seen a tech bust, and valuations and VC funding run hotter. The 2035 AI crash is the first great tech crash, so it hits harder (8.4) |
+| Tech | Scarred by the 2000 crash; big tech grew from the survivors | No real crash, only a slight downturn in 2000 to 2001 after a cooler boom: tech giants are older, bigger and richer, investors have never seen a true tech bust, and valuations and VC funding run hotter. The 2035 AI crash is the first great tech crash, so it hits harder (8.4) |
 | Banking | Bailouts, stricter rules after 2008, a decade of near-zero rates | No crisis, no bailouts and no post-crisis rules: banks are bigger and more leveraged, US regulator strictness is 1 point lower (3.10), and households carry more debt. Rates never went to zero: the US policy rate is about **3%** at start **(T)** |
 | Housing | Recovered from the 2008 crash | Never crashed: a long boom, so many hubs start in the Peak phase of the property cycle (2.16.5) |
 | Pandemic | COVID lockdowns begin | **No pandemic**: no vaccine mandates, no stimulus wave, no 2021 inflation spike, no remote-work shift. Offices are full (commercial pools start at 95% occupancy) |
 | Supply chains | COVID chip shortage | No pandemic chip shortage; chips are tight only from normal demand |
-| Security | Post-9/11 security state; long wars | No 9/11, so no post-9/11 security state at home. The Iraq war still happened: **the vice president and the CIA made up claims that Iraq had nukes** (Logan), and the US invaded anyway. It won quickly and cleanly, and Iraq became a stable US ally |
+| Security | Post-9/11 security state; long wars | No 9/11, so no post-9/11 security state at home. After the USS Cole bombing (2000) the US broke al-Qaeda early with a covert and proxy campaign in Afghanistan (19.2.1). The Iraq war still happened: **the vice president and the CIA made up claims that Iraq had nukes** (Logan), and the US invaded anyway. It won quickly and cleanly, and Iraq became a stable US ally |
 | US position | High debt; energy imports falling with shale | US federal debt about 60% of GDP instead of 120% **(T)**; a stronger dollar; Iraq is a stable US-aligned oil exporter and Gulf supply is more secure, so Hormuz risk starts at Calm and US energy security is high |
 | Gulf and oil | Volatile | Oil supply is steadier and cheaper (oil price index starts at 90 **(T)**); cartel cuts ([10-industry-economy.md](10-industry-economy.md) 10.6) are weaker while US influence in the Gulf holds |
 
