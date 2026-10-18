@@ -1,6 +1,6 @@
 # 14. Software: the software table, licences and making software (detailed design)
 
-_Status: draft v0.7 (2026-10-18). Batch 88: one software unit per desktop per day, labor cost 0.2% to 4% of GDP per capita, quality tiers 90 to 10, and quality 0 means no bonus. Batch 87: making software with desktops (14.8), licences by usage with a one-year capacity lock, no special contracts, no copying (14.4). v0.5, consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
+_Status: draft v0.8 (2026-10-18). Batch 89: the licence pricing formula (14.4.1). Batch 88: one software unit per desktop per day, labor cost 0.2% to 4% of GDP per capita, quality tiers 90 to 10, and quality 0 means no bonus. Batch 87: making software with desktops (14.8), licences by usage with a one-year capacity lock, no special contracts, no copying (14.4). v0.5, consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 14.7.
 
@@ -79,11 +79,40 @@ The owner of a piece of software decides who may use it. A company that wants to
 - **One kind of deal (Logan, batch 87).** There are **no special contracts**. The owner sets one standard offer that **every company** can sign.
 - **Licences by usage.** A company **pays for X licences a month, based on how much it is using** the software (its instances, 14.2.2).
 - **Capacity lock.** When a company **increases its capacity** (buys more licences), it is **locked into that amount for a year** (Logan). It can grow again within the year, which restarts the lock, but it cannot drop below the locked amount until the year is up.
-- **Price (A).** The owner sets a price per licence per month. Changing the price applies to new and renewed capacity.
+- **Price.** The owner sets a price per licence per month, guided by the pricing screen (14.4.1). Changing the price applies to new and renewed capacity.
 - **Leaving early.** A company that drops below its locked amount pays the rest of the year's fees on the difference × 50% **(T)**, plus a negative opinion push between the companies' heads. The owner can stop selling new licences at any time.
 - **No copying (Logan, batch 87).** Software cannot be copied or cloned by other companies. Only an **Open source** product (14.6) can be forked.
 - **Users** come from licences: a product's users are the companies (and their staff) holding them, so there is no separate users column.
 - Licences live in their own **contracts table** in the engine, with a Contracts view on the company screen.
+
+### 14.4.1 Pricing a licence (Logan, batch 89)
+
+When an owner sets a licence price, the pricing screen works it out from three things: the **total addressable market**, what the software **would have cost to build at real prices**, and the money expected back if a predicted number of customers buy it for a few years **(T for every constant)**.
+
+**1. Theoretical build cost.** What the software would have cost if labor were paid and the desktops' upkeep counted, even when it was really built for free (volunteers, owned desktops):
+
+`C = U × (L + M)`
+
+- `U` = software units spent so far: version 1 plus every update and feature (14.8).
+- `L` = labor cost per software unit at the development location: 0.2% to 4% of the country's yearly GDP per capita (14.8).
+- `M` = desktop upkeep per software unit = a desktop's monthly maintenance (maintenance score 1 × the maintenance price, about $50, 15.2) ÷ 30 software units a month ≈ **$1.70**.
+
+**2. Total addressable market.** `N` = the number of **other companies** with a business unit in the software's target industry (for the oil software: every other company with an Oil unit, 10.3).
+
+**3. Predicted customers.** `K = N × adoption`, where `adoption = 20% + quality ÷ 4 %` (30 quality: 27.5%; 100 quality: 45%). Each customer is expected to hold `ℓ` licences, from its instances (14.2.2); about **10** for a mid-size oil company **(A)**.
+
+**4. Suggested price.** Set to earn back the build cost with a markup over a payback period:
+
+`P = C × R ÷ (K × ℓ × 12 × Y)` per licence per month
+
+- `Y` = payback period, **3 years** by default.
+- `R` = target return, **1.5** (the build cost back plus 50%).
+
+**5. Expected return.** `E = P × K × ℓ × 12 × Y` (equal to `C × R` at the suggested price), and expected profit `E - C`. The screen shows `C`, `N`, `K`, `P`, `E` and the profit, and the owner can set any other price.
+
+**6. Will they buy?** An AI company signs only if the licences cost less than what they earn it: `P × ℓ` a month below the monthly value of the software's bonus to its unit (for the oil software, the productivity gain × the Oil unit's monthly revenue). A price above that loses customers; a lower one wins more, up to `N`.
+
+**Worked example (A).** The oil software, built in India by Kids Who Code: 18,000 software units by the end of 2020 (version 1 plus updates). `L` = 2% × $2,100 = $42, so `C` = 18,000 × ($42 + $1.70) ≈ **$787,000**. With 40 other oil companies (`N`), quality 30 gives `K` = 11 customers at 10 licences each. Over 3 years at `R` = 1.5: `P` = $787,000 × 1.5 ÷ (11 × 10 × 36) ≈ **$298 per licence per month**, for an expected **$1.18M** back and **$390,000** profit, all on software that cost Arrowhead nothing to build.
 
 ## 14.5 Features (A)
 
