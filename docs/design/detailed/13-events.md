@@ -21,7 +21,7 @@ _Status: draft v0.2 (2026-10-18). From Logan's answers in the design Q&A (batche
 As in 10.1, plus **(A)**:
 - **Header**: the deck's icon and color, the scope (character, company, hub, country) and the date.
 - **Portraits**: the characters involved.
-- **Options**: 2 to 4. Each option shows its **skill icon** (Finance, Operations, Persuasion, Intrigue or Tech) when it rolls, its known costs (money, hours, Favor, a hook spent) and any trait it suits ("Ruthless"). The success chance is **never shown** (Logan), and there are no hint words either (batch 40): only the skill icon.
+- **Options**: 2 to 4. Each option shows its **skill icon** (Finance, Operations, Persuasion, Intrigue, Tech or Hustle) when it rolls, its known costs (money, hours, Favor, a hook spent) and any trait it suits ("Ruthless"). The success chance is **never shown** (Logan), and there are no hint words either (batch 40): only the skill icon.
 - **No timer** (batch 40): an event waits until the player answers it, and the game stays paused while it is open.
 - **Pause**: every event pauses the game until it is answered (batch 40). AI characters' events never pause the game.
 

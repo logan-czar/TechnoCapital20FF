@@ -25,7 +25,7 @@ The game has **named characters** of two kinds:
 | **Income** | What the character earns |
 | **Prestige** | Standing and renown |
 | **Clout** | A ticker of the character's achievements: a permanent buff for how much they have done in their life. It only goes up |
-| **Vril** | An esoteric X factor that works like luck. It does not follow the regular game rules: it sometimes punishes the player and other times helps them. Characters gain it by doing vril-worthy acts or through events, but the game never says clearly how; you just get it sometimes. Its value is hidden **(A)** |
+| **Vril** | **A mystical luck stat that can swing rolls; rare and hard to raise** (Logan, batch 60). An esoteric X factor that works like luck. It does not follow the regular game rules: it sometimes punishes the player and other times helps them. Characters gain it by doing vril-worthy acts or through events, but the game never says clearly how; you just get it sometimes. Its value is hidden **(A)** |
 | **Image** | The character's PR, made of two factors: **Fame** (how many people know you) and **Favor** (how much people like you). Logan's word was influence; it is called Image here because **influence** keeps its map meaning, power in a place from assets held there (2.5) (Logan). The existing reputation score becomes Favor **(A)** |
 
 - **Table characters can become full characters** (Logan), for example by promotion, winning office or becoming famous. Details later.
@@ -33,13 +33,32 @@ The game has **named characters** of two kinds:
 
 ### 1.1.1 Skills
 
-Five skills, each 0 to 30 (confirmed by Logan, 2026-10-17): **Finance, Operations, Persuasion, Intrigue and Tech**. A typical adult averages 6 to 8; 15+ is excellent; 25+ is legendary.
+**Six skills** (Logan, batch 60 added **Hustle**), each 0 to 30 (confirmed by Logan, 2026-10-17): **Finance, Operations, Persuasion, Intrigue, Tech and Hustle**. A typical adult averages 6 to 8; 15+ is excellent; 25+ is legendary.
 
-Skill sources: base (genetics, rolled 0 to 8 at birth, inherited partly from parents) + education (+2 to +8 in a focus skill) + traits + cyberware + experience (+1 per 5 years in a matching role, max +6).
+| Skill | What it covers |
+|---|---|
+| Finance | Money, markets, deals on paper, guidance, fund management |
+| Operations | Running business units, productivity, logistics, crises |
+| Persuasion | Talking people round: meetings, pitches, campaigns, investor confidence |
+| Intrigue | Secrets, hooks, schemes, shells and counter-intelligence |
+| Tech | Software, compute, R&D and Techno-Capital |
+| **Hustle** | **Drive and grind** (Logan named it; the scope here is an assumption **(A)**): getting things done fast and on little, side deals, street sales and the grey and black market |
+
+**What Hustle does (A).**
+- **Speed**: every action and project the character runs (founding, growth plan purchases, software features, schemes) takes `1 - (Hustle - 10) × 1%` of its normal time, from ×1.10 at 0 to ×0.80 at 30 **(T)**.
+- **Long hours**: at Hustle 15+ the character gets +1 usable hour a day (1.1.6), and +2 at 25+, stacking with Workaholic **(T)**.
+- **Founding**: Hustle is the roll for the Bootstrap and Freestyle founding paths (1.6.4, 1.6.6) and for early sales at a new company.
+- **Side deals and the street**: it rolls for Black market deals (10.3), gambling hustles (9) and quick flips of assets and real estate.
+- **Stress**: long hours and crunch cost a character with Hustle 15+ half the stress (1.1.5).
+- Trait links: Diligent +2 Hustle, Lazy -2, Ambitious +1 (already +1 to all) **(T)**. Education: Street-Taught and Bootcamp Coder give +1 Hustle per level.
+
+**Skill sources** (Logan, batch 60): base (genetics, rolled 0 to 8 at birth, inherited partly from parents) + **education** (+2 to +8 in a focus skill) + traits + cyberware + **experience from the jobs held** (+1 per 5 years in a matching role, max +6: a CFO gains Finance, a COO Operations) + **events** + **age**.
+
+**Age curve (Logan, batch 60).** Skills **peak around 45 to 55 and then fade slowly** **(T for the numbers)**: from 56 every skill loses 1 point every 5 years, Tech and Hustle every 3 years; Persuasion and Intrigue fade at half speed. Life extension (1.1.9) and cyberware slow the fade.
 
 ### 1.1.2 Personality traits
 
-Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs** (Logan, 2026-10-17: grown from 7 with cyberpunk flavor). Each modifies skills, opinion and stress. Cyberware can add extra personality traits beyond the 3 (1.1.10).
+Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs**, CK3 style (batch 60). Cyberware and events can add more, so a character has **3 to 5** in all (Logan, batch 60). Traits drive AI choices and stress (Logan, 2026-10-17: grown from 7 with cyberpunk flavor). Each modifies skills, opinion and stress. Cyberware can add extra personality traits beyond the 3 (1.1.10).
 
 | Trait | Opposite | Skill effect | Stress when | Opinion |
 |---|---|---|---|---|
