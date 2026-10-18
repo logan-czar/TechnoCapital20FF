@@ -1,6 +1,6 @@
 # 2. Map and influence: detailed design
 
-_Status: draft v0.3 (2026-10-18). Batch 116: Colombia and DR Congo promoted to major countries (33); Semiconductors replaces Lithography machines, Foundry, GPUs and CPUs; no dynasties, family or succession (influence holders are characters, companies and governments); branch offices dropped; Clout and Favor replace reputation and prestige; intel learns secrets, accurate data only on Pdoomberg; workforce counts become payroll dollars; crashes cost health; AI takeovers only on the game director's order; consistency fixes A1 to A23. v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs, location perks, influence, strata and population, pooled real estate, the hub life cycle, the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands the map and influence overview (05). Owner: Logan._
+_Status: draft v0.3 (2026-10-18). Batch 117: no captive banks (Zurich perk is HQ only), no T2 Data Sovereignty, no stress from travel. Batch 116: Colombia and DR Congo promoted to major countries (33); Semiconductors replaces Lithography machines, Foundry, GPUs and CPUs; no dynasties, family or succession (influence holders are characters, companies and governments); branch offices dropped; Clout and Favor replace reputation and prestige; intel learns secrets, accurate data only on Pdoomberg; workforce counts become payroll dollars; crashes cost health; AI takeovers only on the game director's order; consistency fixes A1 to A23. v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs, location perks, influence, strata and population, pooled real estate, the hub life cycle, the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands the map and influence overview (05). Owner: Logan._
 
 This file turns the map and influence overviews into exact rules, formulas, numbers and content that a designer can balance. It is pure game design.
 
@@ -134,7 +134,7 @@ Strategic sectors (the default list in every country): defense, Semiconductors, 
 | Egypt | Capped Strategic | Local Directors | Restricted | Moderate | Restricted | Guarded | Canal is state-owned |
 | Nigeria | Screened | Local Directors | Restricted | High | Recognized | Guarded | |
 | South Africa | Screened | Local Partner 30% (mining only) | Reporting | Moderate | Recognized | Screened | Local ownership rules in mining |
-| India | Capped Strategic | Local Directors | Reporting | Moderate | Recognized | Guarded | Data Sovereignty (T2) |
+| India | Capped Strategic | Local Directors | Reporting | Moderate | Recognized | Guarded | |
 | China | Capped All | Local Partner 30% (51% and Tech Transfer in strategic) | Restricted | Moderate | Restricted | Restricted | Strategic sectors effectively Closed |
 | Japan | Screened | None | Open | Low | Recognized | Screened | |
 | South Korea | Screened | None | Open | Low | Recognized | Screened | Chaebol cross-holdings |
@@ -384,7 +384,7 @@ Perks belong to **locations**, not to company size. The big **financial and tech
 |---|---|---|
 | New York | HQ here | Investor confidence +5% |
 | London | HQ here | -0.25 points on bonds issued |
-| Zurich | HQ here, or a captive bank here | -0.25 points on loans; shell exposure -10% |
+| Zurich | HQ here | -0.25 points on loans; shell exposure -10% |
 | Bay Area | HQ here and work in a Tech industry | R&D plan effects +10% |
 | Hsinchu-Taipei | A Semiconductors business unit with assets here | Productivity +5% |
 | Shenzhen-Dongguan | A Consumer electronics, Robotics or Semiconductors business unit with assets here | Productivity +5%; variable cost -3% |
@@ -1108,7 +1108,7 @@ Jets are assets. They can be owned by a character's personal account, a trust or
 |---|---|---|
 | Office cabin | $2M | Work in flight (2.21.4) |
 | Secure comms suite | $3M | Calls in flight at full effectiveness; -50% chance of being overheard by hacking ([17-hacking.md](17-hacking.md)) |
-| Bedroom suite | $1M | Arrive rested: no jet lag stress (2.21.5) |
+| Bedroom suite | $1M | Arrive rested: no jet lag (2.21.5) |
 | Medical bay | $4M | Safer travel for old or ill characters; health lost in a crash or medical emergency in flight halved |
 | Security package (armor, decoy flares, counter-surveillance) | $6M | Halves attack and kidnap risk on arrival; hides flight plans from Tier 1 trackers |
 | Ghost registration (registered through a shell in a haven) | Cost of a shell company | Flight tracking needs Investigate Shell first (2.21.6); adds exposure |
@@ -1127,8 +1127,8 @@ Jets are assets. They can be owned by a character's personal account, a trust or
 
 ### 2.21.5 Jet lag and wear
 
-- Flying across more than 5 time zones gives **jet lag**: -10% effectiveness on actions for 24 hours after landing, and +5 stress. A bedroom suite removes it.
-- More than 60 flight hours in a month adds +10 stress (the jet-set grind).
+- Flying across more than 5 time zones gives **jet lag**: -10% effectiveness on actions for 24 hours after landing. A bedroom suite removes it.
+- More than 60 flight hours in a month costs 1 health (the jet-set grind) **(T)**.
 
 ### 2.21.6 Flight tracking and secrecy
 

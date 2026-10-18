@@ -1,6 +1,6 @@
 # 13. Events, the director and event decks: detailed design
 
-_Status: draft v0.4 (2026-10-18). Batch 116: header and links fixed (A22), option costs show ticks, not hours (A3), the family and succession deck removed, decks added for Media, Hacking, Software and AI models. v0.3, consistency pass, batch 74. v0.2 (2026-10-18). From Logan's answers in the design Q&A (batches 39 and 40). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.1.1 (news from named, biased outlets) and every detailed system file. Owner: Logan._
+_Status: draft v0.4 (2026-10-18). Batch 117: no stress (tension reads the player character's Heat instead). Batch 116: header and links fixed (A22), option costs show ticks, not hours (A3), the family and succession deck removed, decks added for Media, Hacking, Software and AI models. v0.3, consistency pass, batch 74. v0.2 (2026-10-18). From Logan's answers in the design Q&A (batches 39 and 40). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.1.1 (news from named, biased outlets) and every detailed system file. Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 13.8.
 
@@ -43,7 +43,7 @@ The director decides **when** an event fires and **which deck** it comes from. I
 
 | Adds tension | Points |
 |---|---|
-| Stress level of the player's character | +10 per level |
+| The player character's Heat (how cancelled they are, 1.1.0) | +5 per 20 Heat **(T)** |
 | Open investigations, scandals or proxy fights | +10 each |
 | A margin call, restructuring or a company in loss | +10 each |
 | A war, coup or crash touching John's assets | +20 |
@@ -71,7 +71,7 @@ Each deck has its own triggers, weights and cooldowns. Sample events per deck **
 
 | Deck | Fires from | Sample events |
 |---|---|---|
-| **Character** | Traits, ambition, health, stress, age (1.1) | *Midlife*: buy a supercar or a yacht, or start a foundation · *The Diagnosis*: health falls 20 · *Old Rival at the Gala* |
+| **Character** | Traits, ambition, health, Heat, age (1.1) | *Midlife*: buy a supercar or a yacht, or start a foundation · *The Diagnosis*: health falls 20 · *Old Rival at the Gala* |
 | **Company** | The board, management score, business units, growth plans (1.7, 1.8, 10) | *The Board Revolt* · *Key Engineer Poached* · *Plant Fire* · *A Buyer Calls* |
 | **Industry** | The company's industry and its price index (10) | *Price War* · *Breakthrough at a Rival* · *Regulator Eyes Your Sector* · *GPU Allocation Cut* |
 | **Markets** | Holdings, margin, the market cycle (3) | *Margin Call* · *Short Report* · *Activist Builds a Stake* · *Hot IPO Allocation* |

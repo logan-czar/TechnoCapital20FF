@@ -1,6 +1,6 @@
 # 9. Gambling, crypto and prediction markets: detailed design
 
-_Status: draft v0.3 (2026-10-18). Batch 116: betting on inside knowledge counts as insider trading if exposed (9.4); casinos are Gambling or Black market units (no Front Company vassal). v0.2, consistency pass, batch 74: casinos sit in the Gambling industry, four vices. v0.1 (2026-10-17). From Logan's answers in the design Q&A. Crypto itself is shallow; it lives inside a deep **gambling system**, which is part of the **addiction system** (still to be designed). Builds on [3-markets-and-fx.md](3-markets-and-fx.md) (3.23 crypto) and [1-corporate-core.md](1-corporate-core.md) (characters, stress). Owner: Logan._
+_Status: draft v0.3 (2026-10-18). Batch 117: no stress (gambling urges no longer cause stress). Batch 116: betting on inside knowledge counts as insider trading if exposed (9.4); casinos are Gambling or Black market units (no Front Company vassal). v0.2, consistency pass, batch 74: casinos sit in the Gambling industry, four vices. v0.1 (2026-10-17). From Logan's answers in the design Q&A. Crypto itself is shallow; it lives inside a deep **gambling system**, which is part of the **addiction system** (still to be designed). Builds on [3-markets-and-fx.md](3-markets-and-fx.md) (3.23 crypto) and [1-corporate-core.md](1-corporate-core.md) (characters). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 9.7.
 
@@ -63,7 +63,7 @@ Players and AI characters bet on yes-or-no questions about the game world.
 
 The addiction system ([11-addiction.md](11-addiction.md)) covers **gambling, drugs, doomscrolling and sex**, all on characters.
 
-- Gambling builds an **addiction** score on the character **(A)**: each session adds to it, big losses add more, and a high score triggers urges (events that push the character to gamble) and stress.
+- Gambling builds an **addiction** score on the character **(A)**: each session adds to it, big losses add more, and a high score triggers urges (events that push the character to gamble).
 - AI characters gamble too; a Glitterati or Noble with a gambling addiction is a target for hooks and blackmail.
 - Underclass slop includes freemium gambling apps (2.8.0), so gambling also feeds population stability.
 

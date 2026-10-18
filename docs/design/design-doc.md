@@ -1,6 +1,6 @@
 # TechnoCapital20FF: Design Document
 
-_Status: v0.6 (2026-10-18). Batch 116: rewritten to the current design (pausable real time with hourly ticks, 24/7 markets, one scenario with John Techno, news and Pdoomberg, two-layer control, Wall Street Raider style industries, no dynasty or succession: the player character's death ends the game). v0.5, consistency pass, batch 74. Owner: Logan. Living document; every part is open for revision._
+_Status: v0.6 (2026-10-18). Batch 117: no stress, Heat means how cancelled a character is. Batch 116: rewritten to the current design (pausable real time with hourly ticks, 24/7 markets, one scenario with John Techno, news and Pdoomberg, two-layer control, Wall Street Raider style industries, no dynasty or succession: the player character's death ends the game). v0.5, consistency pass, batch 74. Owner: Logan. Living document; every part is open for revision._
 
 This is the entry point. Each system has its own file in this folder so it can grow independently.
 
@@ -8,7 +8,7 @@ This is the entry point. Each system has its own file in this folder so it can g
 |---|---|---|
 | 1 | [01-companies.md](01-companies.md) | Founding companies, charters, blocs, vassal types, CEO and board, takeovers, two-layer control |
 | 2 | [02-trusts-and-assets.md](02-trusts-and-assets.md) | Personal trusts and accounts, asset classes, leverage ("Wall Street Raiders Lite") |
-| 3 | [03-characters.md](03-characters.md) | Skills, traits, relationship tags, stress, schemes |
+| 3 | [03-characters.md](03-characters.md) | Skills, traits, relationship tags, Heat, schemes |
 | 4 | [04-dynasty-and-succession.md](04-dynasty-and-succession.md) | Removed (batch 116): what remains is the player character and game over on death |
 | 5 | [05-map-and-influence.md](05-map-and-influence.md) | World map, countries, regions, economic hubs, influence |
 | 6 | [06-economy.md](06-economy.md) | Industries and business units (Wall Street Raider style), demand, financing |

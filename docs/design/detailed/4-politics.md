@@ -1,6 +1,6 @@
 # 4. Politics: detailed design
 
-_Status: draft v0.5 (2026-10-18). Batch 116: no dynasties, family, heirs, cadet houses, marriage, legacies or renown (the player acts through their own character, companies, trusts and clients; Partition and family trusts gone); Clout (elite) and Fame and Favor (public) replace reputation, Favorability, Elite Standing and Profile (4.16); Persuasion replaces the Influence skill; intel learns secrets; branch offices dropped (seizure ladder works on a foreign holder's operations, C2 is Local partner and directors); Semiconductors replaces the four chip industries; Colombia and DR Congo added to 4.2.4, start-world facts matched to 19.22 and example hubs to the 80 hubs; tech levels, plots, brand appeal, crypto mixing, the AI aggression setting, AI ambitions and merger clearance removed; opinion formulas written as tag reads; nonexistent traits replaced. v0.4: consistency pass, batch 74: interest groups, stages, cyberware, PMCs, antitrust, netruns, goods, facilities and supply chains removed, opinion effects written as pushes, and hour costs written as instant actions or ticks (no daily hours budget), so the file matches the current rules. v0.3 (batch 37): the nine ideologies as political actors, votes by strata, tariffs on industry indices, politics by company rank (4.0, 4.4, 4.28). Earlier: v0.2 (2026-10-16). v0.2 adds the political experience and screens, public standing (favorability, elite standing, profile), media and scandals as news cycles, the dynasty as a political actor (careers, think tanks, foundations, parties), lobbyists and fixers, corruption end to end (dirty money, laundering, deniability, whistleblowers), courts and litigation, police and organized crime, private security, civil society and protests, international organizations, espionage, AI governments and AI dynasties, politics by company rank, political endgames, new events and worked examples (4.15 to 4.31); Assumptions move to 4.32. Replaces the retired politics overview (08); the influence rules it reads are in [2-map-and-influence.md](2-map-and-influence.md) 2.5. Owner: Logan._
+_Status: draft v0.5 (2026-10-18). Batch 117: Heat is how cancelled a character is, with decay by scandal type (4.17.4); the T2 Data Sovereignty position and captive banks are removed. Batch 116: no dynasties, family, heirs, cadet houses, marriage, legacies or renown (the player acts through their own character, companies, trusts and clients; Partition and family trusts gone); Clout (elite) and Fame and Favor (public) replace reputation, Favorability, Elite Standing and Profile (4.16); Persuasion replaces the Influence skill; intel learns secrets; branch offices dropped (seizure ladder works on a foreign holder's operations, C2 is Local partner and directors); Semiconductors replaces the four chip industries; Colombia and DR Congo added to 4.2.4, start-world facts matched to 19.22 and example hubs to the 80 hubs; tech levels, plots, brand appeal, crypto mixing, the AI aggression setting, AI ambitions and merger clearance removed; opinion formulas written as tag reads; nonexistent traits replaced. v0.4: consistency pass, batch 74: interest groups, stages, cyberware, PMCs, antitrust, netruns, goods, facilities and supply chains removed, opinion effects written as pushes, and hour costs written as instant actions or ticks (no daily hours budget), so the file matches the current rules. v0.3 (batch 37): the nine ideologies as political actors, votes by strata, tariffs on industry indices, politics by company rank (4.0, 4.4, 4.28). Earlier: v0.2 (2026-10-16). v0.2 adds the political experience and screens, public standing (favorability, elite standing, profile), media and scandals as news cycles, the dynasty as a political actor (careers, think tanks, foundations, parties), lobbyists and fixers, corruption end to end (dirty money, laundering, deniability, whistleblowers), courts and litigation, police and organized crime, private security, civil society and protests, international organizations, espionage, AI governments and AI dynasties, politics by company rank, political endgames, new events and worked examples (4.15 to 4.31); Assumptions move to 4.32. Replaces the retired politics overview (08); the influence rules it reads are in [2-map-and-influence.md](2-map-and-influence.md) 2.5. Owner: Logan._
 
 The player never rules a country. The player **buys, earns and borrows power over those who do**, through their own character, the companies they control, their personal trusts and their clients. This file turns the politics overview into exact rules, formulas, numbers and content.
 
@@ -77,7 +77,7 @@ Influence share is a stock (how strong you are). Political Capital is a flow (wh
 | Interval | Political calculations |
 |---|---|
 | **Hourly** | Player actions (meetings, calls, bribes offered, speeches), hearings in session, election night counting (results arrive region by region over 6 to 12 turns), coup night resolution (6 to 24 turns) |
-| **Daily** | News cycle: scandals spread, exposés published, poll noise, protest size |
+| **Daily** | News cycle: scandals spread and Heat shares fade (4.17.4), exposés published, poll noise, protest size |
 | **Weekly** | Polls, campaign events, lobbying actions resolve, investigation steps, coup plot progress and leak rolls, temporary boost decay (ads and psyops), bloc approval, trade war and sanctions escalation checks, seizure ladder steps |
 | **Monthly** | PC income, clout recalculation, law progress rolls, exposure detection rolls, stability, relation drift, revolution pressure, coup risk, default and currency crisis risk, foreign asset seizure risk (4.9.10) |
 | **Quarterly** | Government contract tenders open, regulator capacity review, credit and political risk ratings |
@@ -463,7 +463,7 @@ Law codes are kept stable, so some numbers are unused (C3, T1, S1). All rates an
 
 | Law | Level | Positions and effects |
 |---|---|---|
-| **T2 Data Privacy** | N floor, R may tighten | **None** personal data is used freely · **Notice and Consent** revenue of data-heavy industries (Ads, Social media, SaaS, Cloud) in the country -10% · **Strict** -30%; fines up to 4% of revenue (Data Authority) · **Data Sovereignty** data on citizens must be stored in-country; foreign Cloud and Data center business units cannot serve this market |
+| **T2 Data Privacy** | N floor, R may tighten | **None** personal data is used freely · **Notice and Consent** revenue of data-heavy industries (Ads, Social media, SaaS, Cloud) in the country -10% · **Strict** -30%; fines up to 4% of revenue (Data Authority) |
 | **T3 AI Regulation** | N exclusive | **Unregulated** · **Risk-Based** high-risk AI products need certification (8 weeks) · **Licensed Models** frontier models need a licence (lobbyable decision, 3 to 6 months) · **Moratorium** frontier AI development banned; AI advisors illegal |
 | **T4 Surveillance** | N ceiling (federal), N exclusive (unitary) | **Limited** warrants needed; scheme detection ×0.8 · **Expanded** detection ×1.0 · **Mass Surveillance** scheme and psyop detection ×1.5 · **Social Credit** state tracks each character's Favor (4.16); characters with Favor below -20 **(T)** cannot travel or hold office |
 
@@ -830,7 +830,7 @@ Each country has six agencies. Federal countries also have a regional attorney g
 | **Tax Authority** | Income, profit, trusts, shells | Shell routing, transfer pricing, undeclared trust income, offshore accounts | Back taxes plus 50 to 200% penalties, asset liens, criminal charges for evasion |
 | **Financial Police** (anti-money laundering and financial crime) | Dirty money, bribery, sanctions violations, fronts | Bribes, kickbacks, front companies, black market income, sanctions evasion, coup financing | Asset freezes, confiscation, prison, company dissolution |
 | **Foreign Investment Review** | Foreign takeovers and foreign-controlled operations | Foreign stakes crossing C1 thresholds, strategic sector purchases, tech exports | Blocked deals, forced divestment, mitigation (golden share, local directors) |
-| **Banking Supervisor** | Banks, insurers, captive banks, leverage | Captive bank lending to the group, excessive leverage, hidden losses | Capital orders, management removal, resolution (bail-in, nationalization) |
+| **Banking Supervisor** | Banks, insurers, leverage | Excessive leverage, hidden losses | Capital orders, management removal, resolution (bail-in, nationalization) |
 | **Data Authority** | Personal data, AI, privacy | Data use beyond T2 limits, unlicensed AI | Fines up to 4% of revenue, product bans, licence revocation |
 
 ### 4.9.2 Agency stats and heads
@@ -860,7 +860,6 @@ Exposure accumulates per holder (character, trust or company) per agency domain 
 | Psyop campaign | +5 per campaign (× surveillance multiplier) | Financial Police (election law) and Data Authority |
 | Front company income | +3 per month per front | Financial Police |
 | Sanctions evasion | +25 per month | Financial Police (of the sanctioning country) |
-| Captive bank lending > 25% of its book to the group | +5 per month | Banking Supervisor |
 | Unlicensed AI | +5 per month | Data Authority |
 | Ignoring a weakly enforced law | +2 per month per law | Relevant agency |
 | Rival's tip-off scheme success | +15 | Any |
@@ -925,7 +924,7 @@ During review, the target's price trades at a discount to the offer reflecting t
 | Surveillance systems | National or local | 0.01 to 0.1% of GDP | 3 to 5 years | Domestic or allied; T4 at Expanded or above |
 | National infrastructure (rail, grid, ports) | National or regional | 0.1 to 1% of GDP | 5 to 15 years | Foreign bidders need a local partner if C1 is Capped |
 | Healthcare and pharma supply | National or regional | 0.05 to 0.3% of GDP | 3 to 5 years | |
-| Government IT and cloud | Any | 0.01 to 0.1% of GDP | 3 to 7 years | T2 Data Sovereignty requires in-country data centers |
+| Government IT and cloud | Any | 0.01 to 0.1% of GDP | 3 to 7 years | None (no data residency rules, [15-infrastructure.md](15-infrastructure.md) 15.4) |
 | City services (transit, waste, utilities) | Local | 1 to 10% of the city budget | 5 to 20 years | |
 | Reconstruction | National | Large, after wars and disasters | 2 to 10 years | Often tied to foreign aid |
 
@@ -1424,13 +1423,13 @@ The lesson: favors buy information, but trading on it is the most detectable thi
 
 ### 4.13.6 A currency crisis and a bank bailout
 
-**Situation.** The player's captive bank (a bank subsidiary) operates in Country D, a managed democracy with a peg to the dollar. Reserves cover 2 months of imports; stability 34; debt 75% of GDP, half in foreign currency (Limit 60). The bank holds $3B of D's government bonds and its assets are 2.5% of D's GDP (systemically important). A rival holds short positions against D's currency worth 10% of reserves.
+**Situation.** The player's bank (a Subsidiary in the Banking industry) operates in Country D, a managed democracy with a peg to the dollar. Reserves cover 2 months of imports; stability 34; debt 75% of GDP, half in foreign currency (Limit 60). The bank holds $3B of D's government bonds and its assets are 2.5% of D's GDP (systemically important). A rival holds short positions against D's currency worth 10% of reserves.
 
 **Currency crisis chance** = `5% × (3 - 2) × (1 + (50 - 34)/25) + 0.5 × 10% = 8.2% + 5% = 13.2%` per month.
 
 In month 3 the peg breaks: the currency falls 45% over two weeks, the central bank raises the rate 12 points, stability drops 10 to 24 (Crisis band), and capital controls move to Restricted.
 
-**Default chance that month** = `(75 - 60)/300 × (1 + (40 - 24)/20) + 10% = 9% + 10% = 19%`. D defaults. The bond restructuring imposes a 50% haircut: the captive bank loses $1.5B and is insolvent.
+**Default chance that month** = `(75 - 60)/300 × (1 + (40 - 24)/20) + 10% = 9% + 10% = 19%`. D defaults. The bond restructuring imposes a 50% haircut: the bank loses $1.5B and is insolvent.
 
 **Options:**
 
@@ -1480,7 +1479,7 @@ The Politics screen ([11-ui.md](../11-ui.md)) has seven tabs. Each tab opens on 
 | **Laws** | The law grid by category (4.5.1) for the chosen jurisdiction: current position, bills in progress with a support bar, pass chance and the tooltip breakdown (4.5.10), the player's Stakes per position | Lobby Bill, Commission a Bill, Issue or Astroturf Campaign, fund a think tank paper (4.18.2) |
 | **People** (the Rolodex) | Officials, clients, judges, journalists, regulator heads, party leaders, union and NGO leaders, crime bosses known to the player: opinion tag, loyalty, favors owed, hooks, Integrity band if known | Meet, call in a favor, bribe, blackmail, Court Patron, hire (for lobbyists and fixers) |
 | **Elections** | Calendar of every election where the player has Presence; polls with noise bands; candidates; the player's backed candidates; campaign planner showing utility terms by stratum (4.6.3) | Donate, independent expenditure, ads, run for office, back a protégé, endorse |
-| **Heat** | Exposure meters per agency per country (4.9.3), open investigations and their stage, scandals and their Heat (4.17.4), whistleblower risk per operation (4.20.5), dirty money balance (4.20.1) | Request Protection, respond to a scandal, hush money, restructure shells, launder |
+| **Heat** | Exposure meters per agency per country (4.9.3), open investigations and their stage, the character's Heat and each scandal's share (4.17.4), whistleblower risk per operation (4.20.5), dirty money balance (4.20.1) | Request Protection, respond to a scandal, hush money, restructure shells, launder |
 | **Public** | Fame, Favor (with its local read by country and stratum) and Clout (4.16), media audience and tone, active protests and boycotts (4.24) | Set editorial lines, run media campaigns, fund foundations and NGOs |
 | **World** | Relations, blocs, sanctions, trade wars, wars, international organizations (4.25), espionage requests (4.26) | Improve Relations, lobby international bodies, answer The Request |
 
@@ -1517,7 +1516,7 @@ Each alert type has a level: **Stop** (auto-advance halts and an event or panel 
 |---|---|
 | Bill with Stakes ≥ threshold enters Debate or reaches a pass roll | Stop |
 | Investigation opens, moves to Subpoena, or reaches Charges | Stop |
-| Scandal with Heat ≥ 40 about the player character, one of their executives or a client | Stop |
+| A scandal takes the Heat of the player character, one of their executives or a client to 40 or more | Stop |
 | Seizure ladder step, sanctions tier change, coup or revolution stage in a country with the player's assets | Stop |
 | Election night with the player character or a backed candidate on the ballot | Stop |
 | Client indicted, flipped or defeated; favor refused | Notify |
@@ -1539,7 +1538,7 @@ Most politics resolves on the weekly and monthly calculations (4.1.3). These mom
 | **Council session** (corporate oligarchy, 4.5.10) and key council votes | 1 to 3 turns | Last-minute vote buying with PC, favors or money |
 | **Protest standoff** (4.24.2) | 2 to 8 turns | Negotiate, wait, call police, call private security |
 
-**Hearings.** A legislature committee summons the player character or one of their executives when: a major or criminal scandal about them has Heat ≥ 50 in a liberal or managed democracy; an investigation of their company reaches Subpoena; or a hostile legislator spends 10 PC **(T)**. Refusing costs Favor -10 and Heat +15. A hearing has 4 to 6 rounds (one per hour). Each round the player picks a stance:
+**Hearings.** A legislature committee summons the player character or one of their executives when: they are at Heat ≥ 50 with a major or criminal scandal about them in a liberal or managed democracy; an investigation of their company reaches Subpoena; or a hostile legislator spends 10 PC **(T)**. Refusing costs Favor -10 and Heat +15. A hearing has 4 to 6 rounds (one per hour). Each round the player picks a stance:
 
 | Stance | Roll | Success | Failure |
 |---|---|---|---|
@@ -1573,7 +1572,7 @@ Batch 116 (Logan): every prestige-like measure merges into two. The old reputati
 - **Fame and Favor** (the Image pair): how the public sees you. **Fame** is how many people know you; **Favor** (-100 to +100) is how much they like you. Every public-facing effect in this file uses one of them.
 - **Clout**: your reputation among the elite. It matters only to other elites: board members, executives, politicians, financiers and other Clout holders. Every elite-facing effect uses it.
 
-**Favor** the Image score is not the same thing as **favors**, the tokens a client politician owes (4.7.4). Influence share is untouched by all of them: it stays rooted in assets (decided rule). They change political effects only. **Heat** (4.17.4) stays: it is one scandal's news cycle, the media's attention to one story, not a standing measure of the character **(A)**.
+**Favor** the Image score is not the same thing as **favors**, the tokens a client politician owes (4.7.4). Influence share is untouched by all of them: it stays rooted in assets (decided rule). They change political effects only. **Heat** (4.17.4) is a separate standing measure: how cancelled the character is, built from scandals that fade at different rates by type (Logan, batch 117).
 
 ### 4.16.1 How politics reads them
 
@@ -1598,7 +1597,7 @@ Local Favor is a read of the character's Favor in one country and stratum, not a
 | **Lobbying(s)** | For each disclosed political action in the last 12 months (Lobby Bill under G2 Registered or Light Disclosure, Issue Campaign, disclosed donation over E/2): -2 if the stratum's largest bloc has stance - or -- on the lobbied position, +1 if + or ++. Capped at ±10 |
 | **Philanthropy** | +1 per $1M × wealth index granted in the country in the last 12 months, capped at +15 (counts for all strata) |
 | **Home** | +10 in the character's home country (2.5.6) |
-| **Heat** | Sum of Heat of active scandals about the character in that country (4.17.4), capped at 60 |
+| **Heat** | The character's Heat (4.17.4), capped at 60 |
 | **Price anger** | -10 among all strata while the character is publicly linked to a commodity corner (3.7.6) or to price hikes in an essential industry (energy, housing) |
 
 **Effects of Favor** (effective Favor, so Fame matters):
@@ -1654,7 +1653,7 @@ The tension is deliberate: lobbying for tax cuts, buying politicians and hosting
 
 ## 4.17 Media, narratives and scandals
 
-4.4.5 sets how owned media shifts bloc clout, and 3.14.4 sets source reliability for market news. This section makes media a full political weapon: outlets with credibility, journalists as characters, and scandals as news cycles that can be fought.
+4.4.5 sets how owned media shifts bloc clout, and 3.14.4 sets source reliability for market news. This section makes media a full political weapon: outlets with credibility, journalists as characters, and scandals that build Heat and can be fought.
 
 ### 4.17.1 Outlets
 
@@ -1695,37 +1694,61 @@ Investigative journalists are characters (Intrigue, Persuasion, Honest or not, a
 - A journalist on the player's case multiplies the monthly exposé chance (4.10.3) by `1 + journalist's Intrigue / 20` **(T)** and raises revelation chances (4.17.4).
 - **Options against a journalist**: grant access (tone +0.1, but the journalist learns one secret 20% of the time); hire them away (salary ×2, they refuse if Honest); sue for defamation (4.21.2); smear (Leak Scandal scheme on them); buy their outlet (above); surveil them or hack Techno-Capital they own (a hacking scheme, [17-hacking.md](17-hacking.md); a Grave offense if found); arrange an "accident" (Criminal; Heat +60 on the player if suspected, media freedom ×1.5 against it for 5 years).
 
-### 4.17.4 Scandals as news cycles
+### 4.17.4 Scandals and Heat
 
-A **scandal** (minor, major or criminal, as in 4.6.3 and 4.10.3) now has three parts:
+**Heat (Logan, batch 117)** is how **cancelled** a character is, 0 to 100 ([1-corporate-core.md](1-corporate-core.md) 1.1.0). It is a standing measure of the character, not one story's news cycle. Every scandal about the character adds to it, and each scandal's share wears off at the rate of its **type**. A company that is itself the subject of a scandal (a brand or product scandal, 4.10.3) carries its own Heat by the same rules, and half of that share also lands on its head **(A)**.
 
-- **Heat** (0 to 100): how much the media is talking about it right now. The news cycle.
-- **Memory**: the Scandal term in 4.6.3 (0.3, 0.8 or 1.5 utility, halving every 4 weeks). It halves as before, **except that it does not decay in any week that ends with Heat ≥ 40** **(T)**.
+A **scandal** (minor, major or criminal, as in 4.6.3 and 4.10.3) has four parts:
+
+- **Type**: what it is about, which sets how fast its Heat fades (table below).
+- **Heat share**: what it adds to the target's Heat. A character's Heat is the sum of the shares of their scandals, capped at 100.
+- **Memory**: the Scandal term in 4.6.3 (0.3, 0.8 or 1.5 utility, halving every 4 weeks). It halves as before, **except that it does not decay in any week that ends while an outlet still covers the story** **(T)**.
 - **Truth**: true, partly true or false, hidden from the public.
 
-**Heat, daily** **(T)**:
+**Scandal types (Logan, batch 117; values T)**:
 
-`Heat(next day) = 0.9 × Heat + Σ covering outlets (30 × audience share × credibility / 100) + 10 per new revelation`
+| Type | Examples | Usual severity | Heat share halves every **(T)** |
+|---|---|---|---|
+| **Gaffe** | A bad quote, a rude post, a viral clip, a hearing slip | Minor | 2 weeks |
+| **Personal** | An affair, a vice or addiction, lavish spending, a public outburst | Minor or major | 3 months |
+| **Misconduct** | Layoffs handled cruelly, labor abuse, safety failures, price gouging, astroturf | Major | 6 months |
+| **Corruption** | Bribes, kickbacks, hidden lobbying, buying officials | Major | 1 year |
+| **Fraud** | Accounting fraud, insider trading, market manipulation, hidden owners | Major or criminal | 2 years |
+| **Crime** | Violence, an "accident", organized crime ties, trafficking | Criminal | 3 years |
 
-- Starting Heat: minor 20, major 50, criminal 80.
+**Heat share, daily** **(T)**:
+
+`Share(next day) = Share × 0.5^(1 / half-life in days) + Σ covering outlets (3 × audience share × credibility / 100) + 10 per new revelation`
+
+- Starting share: minor 20, major 50, criminal 80.
 - An outlet covers a scandal while its tone toward the target is ≤ 0, for 7 days, extended by 7 days per new revelation. Friendly and owned outlets do not cover unless told to.
-- **Revelations**: true or partly true scandals get a revelation with 20% chance per week, 35% if a journalist is on the case or a whistleblower is involved **(T)**. False scandals get none; instead each week 15% chance the story is debunked (Heat ×0.3 and the outlet's credibility -10).
-- Heat below 5 ends the news cycle; the memory carries on.
+- **Revelations**: true or partly true scandals get a revelation with 20% chance per week, 35% if a journalist is on the case or a whistleblower is involved **(T)**. False scandals get none; instead each week 15% chance the story is debunked (the share ×0.3 and the outlet's credibility -10).
+- A share below 1 is dropped; the memory carries on.
+- **Flat Heat changes** written elsewhere (a hearing round, "Heat +15", "Heat 30 if exposed") add to or take from the share of the scandal they concern; one with no scandal attached opens a new scandal of the fitting type, a gaffe by default **(A)**.
 
-**Responses** (one per scandal per week) **(T)**:
+**Responses** (one per scandal per week; multipliers act on that scandal's share) **(T)**:
 
 | Response | Effect | Risk |
 |---|---|---|
 | **Ride it out** | None | None |
-| **Deny** | Heat ×0.8 | If the story is true, each later revelation adds +20 instead of +10 and costs Favor -5 ("caught lying") |
-| **Apologize** | Heat ×0.5; each covering outlet's remaining days halved; revelation chance halved | Favor -5; Evidence +5 in any open investigation on the matter |
-| **Counter-story** | Heat ×0.7 | Needs an owned outlet or a psyop; 25% chance the plant is exposed: a new minor scandal and -10 credibility for the outlet |
-| **Scapegoat** | Heat ×0.6 | As 4.9.4: the executive turns Rival |
+| **Deny** | Share ×0.8 | If the story is true, each later revelation adds +20 instead of +10 and costs Favor -5 ("caught lying") |
+| **Apologize** | Share ×0.5; each covering outlet's remaining days halved; revelation chance halved | Favor -5; Evidence +5 in any open investigation on the matter |
+| **Counter-story** | Share ×0.7 | Needs an owned outlet or a psyop; 25% chance the plant is exposed: a new minor scandal and -10 credibility for the outlet |
+| **Scapegoat** | Share ×0.6 | As 4.9.4: the executive turns Rival |
 | **Legal threat** | Each covering outlet whose editor has Integrity < 50 stops with 40% chance | 15% chance of a backlash story: Heat +20 |
 | **Sue for defamation** | 4.21.2 | Heat +10 at filing; civil discovery risk |
-| **Philanthropy pivot** | Heat ×0.8; Favor +3 | If Favor < -20: "washing" story, Heat +10 |
+| **Philanthropy pivot** | Share ×0.8; Favor +3 | If Favor < -20: "washing" story, Heat +10 |
 
-**Effects of Heat**: the local Favor term in 4.16.2; Fame gain (4.16.4); a price drift for the character's listed companies of `-(Heat / 100)` % per trading day while Heat ≥ 40 (on top of the one-time hit of 4.10.3) **(T)**; hearings (4.15.4) at Heat ≥ 50.
+**Effects of Heat** (the character's total) **(T)**:
+
+| Area | Effect |
+|---|---|
+| **Favor** | The local Favor term in 4.16.2 (-0.5 × Heat); Favor gains of any kind are halved while Heat ≥ 40 |
+| **Clout dealings** | Elite characters' acceptance of deals, favors, invitations and bloc offers -1% per 2 Heat; Clout gains are halved while Heat ≥ 40; Clout -1 a month while Heat ≥ 60 (elites keep their distance) |
+| **Board votes** | Votes for the character's nominees, proposals and own seat in board elections and proxy fights -1% per 5 Heat; at Heat ≥ 60 a board with a Rival majority may call a vote to remove the character as head (1.8) |
+| **Politics** | Fame gain (4.16.4); hearings (4.15.4) at Heat ≥ 50; in liberal and managed democracies, politicians refuse public meetings, endorsements and disclosed donations from a character at Heat ≥ 50 unless a hook forces them; a client's Loyalty -1 a month while their patron is at Heat ≥ 60 |
+| **Media coverage** | Every outlet's tone toward the character -0.1 per 25 Heat; outlets cover new scandals about the character 3 extra days while Heat ≥ 40 |
+| **Markets** | A price drift for the character's listed companies of `-(Heat / 100)` % per trading day while an outlet covers one of their scandals and Heat ≥ 40 (on top of the one-time hit of 4.10.3) |
 
 ### 4.17.5 Narrative fights
 
@@ -1876,7 +1899,7 @@ Laundering turns dirty money into clean money at a fee. Each method has a capaci
 | **Trade misinvoicing** | A trading or logistics company with cross-border trade | 3% | Monthly | Up to 10% of the company's cross-border trade value | 40%; also +1 Tax Authority exposure per $3M |
 | **Shell layering** | Shell Companies in F5 Secrecy or Haven jurisdictions | 4% per layer | 2 weeks per layer | Unlimited | 50% per layer (1 layer 50%, 2 layers 25%, 3 layers 12.5%) |
 | **Art and collectibles** | A freeport warehouse account | 15% | 2 to 6 months | Lumpy (one artwork at a time) | 30% |
-| **Captive bank** | A captive bank (a bank subsidiary) | 2% | Weekly | Unlimited | 30%; Banking Supervisor exposure +1 per $5M; a laundering conviction costs the bank licence |
+| **Own bank** | A Subsidiary in the Banking industry | 2% | Weekly | Unlimited | 30%; Banking Supervisor exposure +1 per $5M; a laundering conviction costs the bank licence |
 
 Crypto mixing is gone: crypto lives only in the phone tab ([9-gambling.md](9-gambling.md)) and is no laundering route (batch 116). Methods stack: a shell layer after a real estate deal multiplies the traces (40% × 50% = 20%). The shells and companies used keep their own exposure per their existing rules (1.7.4, 4.9.3).
 
@@ -1937,7 +1960,7 @@ Every illegal operation (front company, laundering chain, bribe ring, sanctions 
 
 ### 4.20.6 Anti-corruption drives
 
-A government launches an **Anti-Corruption Drive** when: a new government is formed by parties that campaigned on corruption; an ISF program demands it (4.25); a corruption scandal reaches Heat 80; or a Reformist faction wins a party congress (4.8.2). For 24 months **(T)**: Financial Police capacity +1 and Zeal +0.2; the country's corruption target falls by 10; officials who were bought (4.20.3) have a 10% chance each per quarter of being arrested and becoming Cracks candidates against whoever bought them. A drive in a managed democracy or one-party state is selective: it targets holders with Government attitude Watched or Targeted (4.27.2) at ×2 and Favored holders at ×0.25.
+A government launches an **Anti-Corruption Drive** when: a new government is formed by parties that campaigned on corruption; an ISF program demands it (4.25); a corruption scandal takes a character's Heat to 80; or a Reformist faction wins a party congress (4.8.2). For 24 months **(T)**: Financial Police capacity +1 and Zeal +0.2; the country's corruption target falls by 10; officials who were bought (4.20.3) have a 10% chance each per quarter of being arrested and becoming Cracks candidates against whoever bought them. A drive in a managed democracy or one-party state is selective: it targets holders with Government attitude Watched or Targeted (4.27.2) at ×2 and Favored holders at ×0.25.
 
 ---
 
@@ -2134,7 +2157,7 @@ Monthly **incident** chance per deployment in a hub with unrest ≥ 40, a war, o
 
 ### 4.24.2 Protests
 
-A **protest** has a cause (a law, a company, a scandal, election fraud, prices), a target (a government, a company or a character), organizers, and **Momentum** (0 to 100). It starts at Momentum 20 from: an Angry bloc (4.4.6), unrest ≥ 40 (2.8.5), visible fraud (4.6.7), a scandal with Heat ≥ 60 about a government or a character, local Favor ≤ -60 (4.16.2), or a funded organizer.
+A **protest** has a cause (a law, a company, a scandal, election fraud, prices), a target (a government, a company or a character), organizers, and **Momentum** (0 to 100). It starts at Momentum 20 from: an Angry bloc (4.4.6), unrest ≥ 40 (2.8.5), visible fraud (4.6.7), a character (a government's leader included) at Heat ≥ 60, local Favor ≤ -60 (4.16.2), or a funded organizer.
 
 **Daily Momentum change** **(T)**:
 
@@ -2239,7 +2262,7 @@ Each government is run by its head of government (a character) and the leading b
 | Inflation > 8% | Rate rises if F1 allows; otherwise Essentials Capped price controls |
 | Stability < 40 | Democracies: concessions to Angry blocs; others: repression (Militarized policing, Emergency Decrees) |
 | Currency crisis or default | ISF request, capital controls, or (populist heads) blame and seize foreign assets |
-| Big scandal (Heat ≥ 80) about the government | Scapegoat a minister; in non-democracies, a purge or an Anti-Corruption Drive against a convenient target |
+| A minister or the head of government at Heat ≥ 80 | Scapegoat a minister; in non-democracies, a purge or an Anti-Corruption Drive against a convenient target |
 
 ### 4.27.2 Government attitude toward a character
 
@@ -2324,7 +2347,7 @@ Political endgames are long-term goals for a powerful player, usually within rea
 | Event | Trigger | Options (short) |
 |---|---|---|
 | *The Committee Will Come to Order* | Hearing summons (4.15.4) | Attend (play the hearing) · Send the General Counsel (half effects) · Refuse (Favor -10, Heat +15) |
-| *Front Page* | A scandal with Heat ≥ 40 | Ride it out · Deny · Apologize · Counter-story · Legal threat |
+| *Front Page* | A scandal takes the character's Heat to 40 or more | Ride it out · Deny · Apologize · Counter-story · Legal threat |
 | *The Editor Resigns* | Owner orders a line change against an Integrity ≥ 70 editor | Accept the resignation (credibility -5) · Back down · Buy their silence |
 | *A Seat at the Table* | Donor share reaches 25% in a party | Accept Party Patron status publicly · Stay in the shadows (keep powers, no Fame gain, exposé risk) |
 | *The Protégé Wants to Run* | A Friend or protégé with Ambitious and Persuasion ≥ 12 | Back the career (fund, Party Standing; a client if elected) · Discourage (a -20 opinion push) · Steer them to a safer seat |
@@ -2351,17 +2374,19 @@ All numbers use the tuning values above.
 
 **Situation.** London (United Kingdom, liberal democracy, media freedom 0.9, wealth index 2.4). The Atlantic Ledger (major paper, 18% national audience, credibility 85, editor Integrity 70) runs "The Harbourside Files": the player's transit subsidiary paid a 2% kickback through a consultant to win a London transit contract. The story is **true**; it is a **major** scandal: Heat 50. On day 2 a tabloid TV channel (25% audience, credibility 50, editor Integrity 35) joins. The player owns The Courier (12% audience, credibility 70). The player character is running for a London seat in 10 weeks.
 
-**Coverage per day**: Ledger `30 × 0.18 × 0.85 = 4.6`; tabloid `30 × 0.25 × 0.5 = 3.75`. Each covers for 7 days.
+It is a **Corruption** scandal, so its share halves every year (4.17.4); the player character starts at Heat 0.
+
+**Coverage per day**: Ledger `3 × 0.18 × 0.85 = 0.46`; tabloid `3 × 0.25 × 0.5 = 0.375`. Each covers for 7 days.
 
 | Response on day 1 | Heat on day 7 | Peak | Day Heat falls below 40 | Weeks the memory is frozen | Stock drift | Other costs |
 |---|---|---|---|---|---|---|
-| **Ride it out** (no revelation) | 65 | 65 | Day 13 | 1 | -6.6% | None |
-| Ride it out, one revelation on day 8 (35% chance per week with a journalist on the case) | 65 | 80 | Day 22 | 3 | -13.5% | None |
-| **Apologize** | 26 | 36 | Never above 40 | 0 | 0% | Favor -5; Evidence +5 in the Financial Police inquiry |
-| **Legal threat** (the tabloid drops out, 40% chance) | 48 | 50 | Day 9 | 1 | -3.8% | 15% chance of a backlash story (Heat +20) |
-| **Counter-story** in The Courier | 58 | 58 | Day 12 | 1 | -4.5% | 25% chance the plant is exposed: a new minor scandal, Courier credibility -10 |
+| **Ride it out** (no revelation) | 54 | 55 | Day 173 | 1 | -4.2% | None |
+| Ride it out, one revelation on day 8 (35% chance per week with a journalist on the case) | 54 | 70 | Day 311 | 2 | -9.1% | None |
+| **Apologize** | 28 | 28 | Never above 40 | 0 | 0% | Favor -5; Evidence +5 in the Financial Police inquiry |
+| **Legal threat** (the tabloid drops out, 40% chance) | 52 | 52 | Day 147 | 1 | -3.6% | 15% chance of a backlash story (Heat +20) |
+| **Counter-story** in The Courier | 40 | 40 | Never above 40 | 1 | 0% | 25% chance the plant is exposed: a new minor scandal, Courier credibility -10 |
 
-**Local Favor among the PMC stratum** (target before the story): `0.5 × 20 (Favor) + 30 × (0.15 × 0.70 × 0.6) (Courier tone) + 5 (employer) + 6 (philanthropy: $14.4M at $2.4M per point) + 10 (home) = 32.9`; actual 30. During the first week of "Ride it out" average Heat is about 58: target ≈ `32.9 - 29 - 0.6 (Ledger tone -0.1) = 3.3`, so local Favor moves to `30 + 10% × (3.3 - 30) = 27.3`; a second week at Heat ≈ 45 brings it to about 25.6. With Fame 60 that cuts the player's Candidate term in the PMC stratum from `0.01 × 30 × 0.6 = 0.18` to `0.15`: small. The real damage is the **memory** and the revelations: the player carries the scandal's Scandal term of 0.8, which stays frozen in every week that ends with Heat ≥ 40. On election day, 10 weeks later, it is 0.14 after an apology (never frozen), 0.17 after riding it out cleanly (frozen 1 week), and 0.24 if a revelation lands (frozen 3 weeks), with twice the stock damage.
+**Local Favor among the PMC stratum** (target before the story): `0.5 × 20 (Favor) + 30 × (0.15 × 0.70 × 0.6) (Courier tone) + 5 (employer) + 6 (philanthropy: $14.4M at $2.4M per point) + 10 (home) = 32.9`; actual 30. Riding it out, Heat sits around 52 for the 10 weeks to the election: target ≈ `32.9 - 26 - 0.6 (Ledger tone -0.1) = 6.3`, so local Favor sinks week by week to about 14.6 on election day. With Fame 60 that cuts the player's Candidate term in the PMC stratum from `0.01 × 30 × 0.6 = 0.18` to about 0.09. After an apology Heat sits around 26, local Favor ends near 23 and the term near 0.14. The **memory** adds to it: the Scandal term of 0.8 is frozen in every week that ends while an outlet still covers the story. On election day it is 0.14 after an apology (never frozen), 0.17 after riding it out cleanly (frozen 1 week), and 0.20 if a revelation lands (frozen 2 weeks), with twice the stock damage. Because Heat now lingers (Logan, batch 117), the cancelled player also faces halved Favor and Clout gains and wary politicians for months after the story is gone.
 
 **Suing the Ledger for defamation.** The story is true: Merit -8. The player's counsel score: General Counsel 15 + 5 × tier 3 = 30. Ledger: in-house counsel 12 + 5 × tier 2 = 22. UK judge Neutral; the government does not care. `P(win) = 50% - 32% + 16% = 34%`. Filing costs $600k (`$250k × 2.4`) and Heat +10 at once; the UK has no anti-SLAPP flag, so the suit runs 6 to 24 months. Civil discovery is the trap: each month of trial there is a 10% chance the Ledger's lawyers find the consultant's invoices, adding +10 Financial Police exposure, and the Ledger's journalist gets the documents. Over a 12-month trial that is a `1 - 0.9^12 = 72%` chance. **Verdict**: for a true story, apologize on day 1 (it costs 5 Favor and 5 Evidence, but it kills the revelations, the stock drift and the hearing risk), scapegoat the subsidiary's CEO if the inquiry reaches Subpoena, and never sue over a true story. For a false story the answer flips: deny and sue, since debunking (15% per week) and a Merit of +8 work for the player.
 
@@ -2433,7 +2458,7 @@ New assumptions made in this file, to confirm with Logan:
 17. **Political Director and Objectives**: routine politics is delegated to a Political Director character working from player-set objectives, a budget and a Conduct line (Clean, Grey, Dark), so hourly play is kept for hot moments (election and coup nights, hearings, crisis meetings, Council sessions, protest standoffs).
 18. **Hearings** are a short hourly mini-mode with four answer stances.
 19. **Public standing uses only Clout and the Image pair** (batch 116, ruling 10): Clout for the elite, Fame and Favor for the public, with a weekly local read of Favor per country and stratum. Favorability, Elite Standing, Profile and the separate reputation score are gone. None of them changes influence share, which stays rooted in assets. Clout is read on a 0 to 100 scale for its bands **(A)**.
-20. **Scandals are news cycles**: Heat (daily, driven by outlet audience × credibility) is separate from the election Scandal term, which keeps halving every 4 weeks except in weeks ending with Heat ≥ 40.
+20. **Heat is how cancelled a character is** (Logan, batch 117): the sum of their scandals' shares, each fading at its type's rate (a gaffe in weeks, fraud or a crime over years). It is separate from the election Scandal term, which keeps halving every 4 weeks except in weeks that end while an outlet still covers the story.
 21. **Outlets have credibility and tone**, editors and journalists are characters, and media effects are weighted by audience × credibility.
 22. **Think tanks** have Credibility (not Prestige) and **can shift an ideology bloc's stance** by one step on one law for 10 years (at most once per bloc per law per decade): the slowest and strongest political lever.
 23. **Foundations** are a holder type with a deed, irrevocable assets, a payout rule under F6, and control stakes that follow the board.

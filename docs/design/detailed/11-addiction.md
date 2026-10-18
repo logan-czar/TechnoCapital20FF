@@ -1,6 +1,6 @@
 # 11. Addiction: detailed design
 
-_Status: draft v0.3 (2026-10-18). Batch 116: therapy is a monthly cost with no hours; sex has no Media route (no adult media); illegal vices run as Black market units; no partners or marriage. v0.2, consistency pass, batch 74: four vices (no cyberware), no daily hours budget. v0.1 (2026-10-17): from Logan's answers in the design Q&A (batch 28). Characters can be addicted to four vices. Every vice has a real benefit, which is why characters use them. Builds on [1-corporate-core.md](1-corporate-core.md) (stress 1.1.5, health 1.1.9, hooks 1.1.4) and [9-gambling.md](9-gambling.md). Owner: Logan._
+_Status: draft v0.3 (2026-10-18). Batch 117: no stress for now, so no vice relieves stress; sex gives a little health, downers a little Intrigue, and stress costs become skill costs. Batch 116: therapy is a monthly cost with no hours; sex has no Media route (no adult media); illegal vices run as Black market units; no partners or marriage. v0.2, consistency pass, batch 74: four vices (no cyberware), no daily hours budget. v0.1 (2026-10-17): from Logan's answers in the design Q&A (batch 28). Characters can be addicted to four vices. Every vice has a real benefit, which is why characters use them. Builds on [1-corporate-core.md](1-corporate-core.md) (health 1.1.9, hooks 1.1.4) and [9-gambling.md](9-gambling.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 11.8.
 
@@ -12,7 +12,7 @@ _Status: draft v0.3 (2026-10-18). Batch 116: therapy is a monthly cost with no h
 |---|---|
 | Scores | One addiction score per vice, with urges, withdrawal and relapse events. |
 | Vices | **Gambling, drugs, doomscrolling and sex**. |
-| Benefits | Anything addictive has a benefit to using it: stat boosts from drugs, returns from gambling, stress relief from doomscrolling and sex. |
+| Benefits | Anything addictive has a benefit to using it: stat boosts from drugs, returns from gambling, rumors from doomscrolling and a small health lift from sex (stress relief removed, batch 117). |
 | Hooks | A hidden addiction is a secret, so it can become a strong hook (1.1.4). |
 | Recovery | Rehab clinics, therapy and willpower checks, with a relapse chance for years. |
 | Profit | Vices are businesses (casinos, drug fronts, attention apps), with a scandal risk. Players can exploit hooks or bring a character's vices to the negotiation table. |
@@ -23,19 +23,19 @@ Each vice has a **use** action (or happens through normal play), a **benefit**, 
 
 | Vice | How it is used | Benefit **(T)** | Cost per use **(T)** |
 |---|---|---|---|
-| **Gambling** | Casino and prediction market bets in the phone tab (9) | The winnings (or losses) themselves; a win gives -10 stress, a big win also +5 Fame | The stake; a loss gives +5 stress |
+| **Gambling** | Casino and prediction market bets in the phone tab (9) | The winnings (or losses) themselves; a big win also gives +5 Fame | The stake |
 | **Drugs** | "Use" action, by drug (11.3) | A stat boost for a set time | Money, health, a crash afterwards |
-| **Doomscrolling** | 1 hour on the phone tab feed | -10 stress per hour (max -30 a day); a 10% chance per hour of a useful rumor (market news a day early, or a character's secret) | The time; at high scores, -1 Operations while addicted |
-| **Sex** | Seduce scheme, lovers (1.1.4), paid services | -20 stress; a +5 push with the partner | Scandal risk if discovered (affairs, paid services); lovers become hooks |
+| **Doomscrolling** | 1 hour on the phone tab feed | A 10% chance per hour of a useful rumor (market news a day early, or a character's secret) | The time; at high scores, -1 Operations while addicted |
+| **Sex** | Seduce scheme, lovers (1.1.4), paid services | +1 health **(T)**; a +5 push with the partner | Scandal risk if discovered (affairs, paid services); lovers become hooks |
 
 ## 11.3 Drugs (A)
 
 | Drug | Boost | Lasts | Crash afterwards | Health per use |
 |---|---|---|---|---|
 | Focus stims | +3 Finance, +3 Operations | 1 day | -2 to both for 1 day | -1 |
-| Social powder | +4 Persuasion, -2 Intrigue | 1 evening (a gala or meeting) | +10 stress | -1 |
+| Social powder | +4 Persuasion, -2 Intrigue | 1 evening (a gala or meeting) | -1 Persuasion for 1 day **(T)** | -1 |
 | Neuro-dust | +3 Tech; ticking actions take 20% less time that day | 1 day | Ticking actions take 40% longer the next day | -2 |
-| Downers | -30 stress | Immediate | -1 to all skills for 1 day | -1 |
+| Downers | +2 Intrigue (calm under pressure) **(T)** | 1 day | -1 to all skills for 1 day | -1 |
 | Longevity cocktails | +2 health a month (above the age cap by 5) | Monthly, $100,000 | None; addictive like the rest | 0 |
 
 Legality varies by country (4.x): using an illegal drug is a secret, and buying it in bulk funds Black market units (10.3).
@@ -51,9 +51,9 @@ Each character has a score from 0 to 100 for each vice **(T)**.
 | Score | Level | Effects **(T)** |
 |---|---|---|
 | 0 to 24 | **Casual** | Only the benefit and the cost per use |
-| 25 to 49 | **Habit** | Urges: a monthly event pushes the character to use; refusing costs +10 stress |
-| 50 to 74 | **Addicted** | Benefit ×0.7 (tolerance); urges weekly; withdrawal when not used for a week: +15 stress and -1 to all skills until used; money drain (drugs and gambling: 5% of personal account income a month) |
-| 75 to 100 | **Dependent** | Benefit ×0.5; withdrawal after 3 days: +25 stress, -3 to all skills, -2 health a week; the character uses on their own unless the player spends a willpower check each week; public incidents possible (Favor -10) |
+| 25 to 49 | **Habit** | Urges: a monthly event pushes the character to use; refusing costs -1 to all skills for 1 day **(T)** |
+| 50 to 74 | **Addicted** | Benefit ×0.7 (tolerance); urges weekly; withdrawal when not used for a week: -1 to all skills until used; money drain (drugs and gambling: 5% of personal account income a month) |
+| 75 to 100 | **Dependent** | Benefit ×0.5; withdrawal after 3 days: -3 to all skills, -2 health a week; the character uses on their own unless the player spends a willpower check each week; public incidents possible (Favor -10) |
 
 **Withdrawal and relapse events.** Withdrawal fires as an event with options (use, push through with a willpower check, seek help). Relapse events fire for characters in recovery (11.5).
 
@@ -67,7 +67,7 @@ Each character has a score from 0 to 100 for each vice **(T)**.
 | **Therapy** | $20,000 a month (weekly sessions resolve instantly, no hours) | -10 score a month; +10% to willpower checks |
 | **Rehab clinic** | $250,000 and 4 weeks away (the character can only act through delegates) | Score set to 10; status "in recovery" |
 
-- **In recovery**: for 3 years after rehab, or after the score falls under 10 from willpower or therapy, a relapse event can fire each quarter (10% chance, ×2 at stress level 2 or higher, ×2 when a rival offers the vice) **(T)**. A relapse sets the score to 40.
+- **In recovery**: for 3 years after rehab, or after the score falls under 10 from willpower or therapy, a relapse event can fire each quarter (10% chance, ×2 while health is below 50 **(A)**, ×2 when a rival offers the vice) **(T)**. A relapse sets the score to 40.
 - Going to rehab is public unless hidden (a secret, and a hook if found). Glitterati and above lose 10 Favor if it becomes known; some audiences gain sympathy (+5 Favor with Liberals and Effective Altruists) **(A)**.
 
 ## 11.6 Secrets, hooks and the negotiation table

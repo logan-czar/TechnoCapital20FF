@@ -1,6 +1,6 @@
 # 9. Time and turns
 
-_Batch 116: rewritten to the current design: 24/7 markets closed only on 1 January, no hours budget, game over when the player character dies. Updated 2026-10-17 (Logan, batch 29): pausable real time with hourly ticks; endless sandbox; single player._
+_Batch 117: no stress checks; the optional end date is removed. Batch 116: rewritten to the current design: 24/7 markets closed only on 1 January, no hours budget, game over when the player character dies. Updated 2026-10-17 (Logan, batch 29): pausable real time with hourly ticks; endless sandbox; single player._
 
 ## 9.1 Pausable real time, hourly ticks (Logan, 2026-10-17)
 
@@ -20,8 +20,8 @@ Heavy calculations are offloaded to longer intervals:
 | Interval | What runs |
 |---|---|
 | **Hourly** (every tick) | Player and AI actions, market prices and order flow, FX rates, action timers, travel progress, news stories |
-| **Daily** | Trade settlement, the news cycle, schemes (one-roll, 1.1.8) and travel arrivals, influence campaign decay, character schedules |
-| **Weekly** | The economy: industry demand and price indices ([detailed/10-industry-economy.md](detailed/10-industry-economy.md)), real estate rents, labor; relationship tag, stress and addiction checks; bloc checks, temporary influence decay, AI strategic decisions |
+| **Daily** | Trade settlement, the news cycle and Heat decay (4-politics 4.17.4), schemes (one-roll, 1.1.8) and travel arrivals, influence campaign decay, character schedules |
+| **Weekly** | The economy: industry demand and price indices ([detailed/10-industry-economy.md](detailed/10-industry-economy.md)), real estate rents, labor; relationship tag and addiction checks; bloc checks, temporary influence decay, AI strategic decisions |
 | **Monthly** | Company finances (revenue, costs, growth plans), dividends and tribute, rent, interest, loan payments, trust payouts, taxes, central bank decisions, population needs and unrest, influence recalculation |
 | **Quarterly** | Earnings reports (00:00 on the 2nd), the quarterly recap 7 days before, board meetings, credit rating reviews |
 | **Yearly** | Aging health checks (1.1.9), annual shareholder meetings, budgets, scheduled elections |
@@ -35,4 +35,4 @@ Heavy calculations are offloaded to longer intervals:
 
 ## 9.4 Length of a game (Logan, 2026-10-17)
 
-The game is an **endless sandbox**: it starts at 00:00 on 1 January 2020 and runs until **John Techno dies** (health 0), which is **game over** (batch 116). There is no successor. An optional end date set at game start is off by default.
+The game is an **endless sandbox**: it starts at 00:00 on 1 January 2020 and runs until **John Techno dies** (health 0), which is **game over** (batch 116). There is no successor and no end date (Logan, batch 117: the optional end date is removed).

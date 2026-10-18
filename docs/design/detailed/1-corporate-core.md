@@ -1,6 +1,6 @@
 # Detailed design 1: Corporate core (companies, characters, trusts)
 
-_Status: v1.1 (2026-10-18), consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23._
+_Status: v1.1 (2026-10-18), consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23. Batch 117: no Cooperative or Captive Bank vassals, no Ask Daddy founding path, no stress for now (1.1.5), Heat redefined as how cancelled a character is (1.1.0), no optional end date._
 
 This file is the source of truth for companies, characters and trusts; it replaces the old overview stubs 01 to 04 in the design folder. All numbers are **tuning values**: starting points to balance, not final.
 
@@ -27,10 +27,12 @@ The game has **named characters** of two kinds:
 | **Income** | What the character earns |
 | **Clout** | **Reputation among the elite** (Logan, batch 116): how board members, executives, politicians, financiers and other Clout holders rate the character. It only matters to other elites. It grows mainly from achievements (the old achievement ticker) and absorbs the old Prestige, Renown and Elite Standing, so elite-facing scandals and failures can lower it **(A)** |
 | **Vril** | **A mystical luck stat that can swing rolls; rare and hard to raise** (Logan, batch 60). An esoteric X factor that works like luck. It does not follow the regular game rules: it sometimes punishes the player and other times helps them. Characters gain it by doing vril-worthy acts or through events, but the game never says clearly how; you just get it sometimes. Its value is hidden, unless the character has the perk trait **Vril Touch**, which shows it next to their resources (John Techno gets it in the opening, batch 83). It runs up to **99**, the highest bonus possible (Logan, batch 81; 9-gambling) |
-| **Image** | The character's PR, made of two factors: **Fame** (how many people know you) and **Favor** (how much people like you). Logan's word was influence; it is called Image here because **influence** keeps its map meaning, power in a place from assets held there (2.5) (Logan). The existing reputation score becomes Favor **(A)**. **Fame and Favor are how the public sees you; Clout is how the elite sees you.** These are the only two prestige-like measures (Logan, batch 116): there is no separate Prestige, Renown, Elite Standing, Profile, Favorability or generic reputation. Heat, where used, means legal or police attention only **(A)** |
+| **Image** | The character's PR, made of two factors: **Fame** (how many people know you) and **Favor** (how much people like you). Logan's word was influence; it is called Image here because **influence** keeps its map meaning, power in a place from assets held there (2.5) (Logan). The existing reputation score becomes Favor **(A)**. **Fame and Favor are how the public sees you; Clout is how the elite sees you.** These are the only two prestige-like measures (Logan, batch 116): there is no separate Prestige, Renown, Elite Standing, Profile, Favorability or generic reputation. **Heat** is a separate measure of how cancelled a character is (below) |
 
 - **Table characters can become full characters** (Logan), for example by promotion, winning office or becoming famous. Details later.
 - **Rival rotation** (Logan): a roster of characters added to every game with preset AI. They can be directed at the player or at other characters to mess with them, both by the game's director AI and by characters who hire or point them, the player included ([detailed/7-starting-world.md](7-starting-world.md) 7.4).
+
+**Heat (Logan, batch 117).** Heat (0 to 100) is how **cancelled** a character is. Every scandal about the character adds Heat, and each scandal's share wears off over time at the rate set by its **scandal type**: a gaffe fades in weeks, while fraud or a crime lingers for years (types, amounts and decay rates in [4-politics.md](4-politics.md) 4.17.4) **(T)**. A company that is itself the subject of a scandal carries its own Heat by the same rules **(A)**. High Heat hurts the character's **Favor**, makes elites wary in **Clout** dealings, costs **board votes**, closes doors in **politics** and draws hostile **media coverage** (effects in 4.17.4). Heat is not legal or police attention; that is **exposure** (4-politics 4.9.3).
 
 ### 1.1.1 Skills
 
@@ -50,7 +52,6 @@ The game has **named characters** of two kinds:
 - **Long hours**: ticking actions (1.1.6) take 10% less time at Hustle 15+ and 20% less at 25+ **(T)**.
 - **Founding**: Hustle is the roll for the Bootstrap and Freestyle founding paths (1.6.4, 1.6.6) and for early sales at a new company.
 - **Side deals and the street**: it rolls for Black market deals (10.3), gambling hustles (9) and quick flips of assets and real estate.
-- **Stress**: long hours and crunch cost a character with Hustle 15+ half the stress (1.1.5).
 - Trait links: Diligent +2 Hustle, Lazy -2, Ambitious +1 (already +1 to all) **(T)**. Education traits (1.1.3): Street-Taught and Bootcamp Coder give +1 Hustle per level.
 
 **Skill sources** (Logan, batch 60): base (rolled 0 to 8 when the character is generated) + **education trait** (+2 to +8 in a focus skill, 1.1.3) + traits + **experience from the jobs held** (+1 per 5 years in a matching role, max +6: a CFO gains Finance, a COO Operations) + **events** + **age**.
@@ -59,9 +60,9 @@ The game has **named characters** of two kinds:
 
 ### 1.1.2 Personality traits
 
-Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs**, CK3 style (batch 60). Events can add more, so a character has **3 to 5** in all (Logan, batch 60). Traits drive AI choices and stress (Logan, 2026-10-17: grown from 7 with cyberpunk flavor). Each modifies skills, opinion pushes (1.1.4) and stress.
+Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs**, CK3 style (batch 60). Events can add more, so a character has **3 to 5** in all (Logan, batch 60). Traits drive AI choices (Logan, 2026-10-17: grown from 7 with cyberpunk flavor). Each modifies skills and opinion pushes (1.1.4); the "Goes against it" column says what counts as acting against the trait for drift (below).
 
-| Trait | Opposite | Skill effect | Stress when | Opinion push |
+| Trait | Opposite | Skill effect | Goes against it | Opinion push |
 |---|---|---|---|---|
 | Ambitious | Content | +1 all skills | Passed over, kept in a junior role | -10 to their liege |
 | Greedy | Generous | +2 Finance | Giving money away | +10 from Greedy |
@@ -93,9 +94,9 @@ A few traits sit outside the 12 pairs. They have no opposite, count toward the 3
 
 Traits can change over a life, slowly **(T)**:
 - **Events**: some event options give or remove a trait (a betrayal can make a Trusting character Paranoid).
-- **Trauma**: each stress breakdown (1.1.5) and each health event costing 30 or more (1.1.9) has a 25% chance to flip one trait to its opposite or add a stress trait.
+- **Trauma**: each health event costing 30 or more (1.1.9) has a 25% chance to flip one trait to its opposite.
 - **Arc outcomes**: quest arc outcomes can grant or swap traits ([8-quest-lines.md](8-quest-lines.md) 8.1).
-- **Drift**: a character who acts against a trait 5 times in a year (each one causing stress) gets an event offering to drop it.
+- **Drift**: a character who acts against a trait 5 times in a year gets an event offering to drop it.
 - At most one natural trait change per year, so personalities stay recognizable.
 
 #### Hidden traits (Logan, 2026-10-17)
@@ -143,7 +144,7 @@ The player's character has **one ambition** at a time, picked by the player from
 | Be famous | Reach Fame 75 | Narcissist, Gregarious |
 | Transcend | Reach Transhumanist goals: life extension and other human enhancement (1.1.9) | Visionary, Hedonist; Transhumanists |
 
-- Progress toward the ambition gives -5 stress a month; achieving it gives Clout and +20 stress relief, and a new ambition is picked.
+- Achieving it gives Clout, and a new ambition is picked.
 - Meeting it also gives vril (1.1.0).
 
 ### 1.1.3 Education traits
@@ -159,7 +160,7 @@ Education traits are **background traits set when a character is generated** (le
 | Old Money Tutors | Persuasion | +2 | +10 push from old-money characters |
 | Military Contractor | Operations | +2 | Defense industry contacts |
 | Party School | Persuasion | +2 | Political appointments |
-| Street-Taught | Intrigue | +2 | Fixer contacts, no Ask Daddy path |
+| Street-Taught | Intrigue | +2 | Fixer contacts |
 
 ### 1.1.4 Opinion
 
@@ -206,22 +207,11 @@ A **hook** is leverage over a character, as in Crusader Kings. **Both kinds stay
 | **Weak** | A favor done for them, a debt they owe you (money lent, a bailout), a campaign donation | Called in once: they vote your way, accept a deal, give a board seat or skip a scheme against you. Used up after one call | Until used, or 5 years |
 | **Strong** | A secret (affair, crime, shell, insider trade, hidden addiction) or blackmail material | Called in once a year without being used up; they cannot refuse unless they accept the secret coming out | Until the secret is exposed or destroyed |
 
-Hooks come from Dig up dirt and Blackmail schemes (1.1.8), favors, loans and events. A character with a strong hook on them gets stress whenever it is called and may try to destroy the evidence (a scheme against the holder).
+Hooks come from Dig up dirt and Blackmail schemes (1.1.8), favors, loans and events. A character with a strong hook on them may try to destroy the evidence (a scheme against the holder).
 
 ### 1.1.5 Stress
 
-Stress 0 to 300. Levels at 100, 200, 300. Each new level triggers a breakdown event (burnout, addiction, public outburst, quitting). At 300 a heart attack event fires (5% chance per month) that costs 30 to 60 health (1.1.9).
-
-- Acting against a trait: +10 to +40 stress depending on severity.
-- Lifestyle coping: -10 to -20 per month (Hedonist parties, Ascetic retreats).
-- Vacation action: 72 ticks unavailable, -30 stress.
-- Overwork: every day spent more than 14 ticks busy (1.1.6) adds +2 stress **(T)** (Hustle 15+ halves it, 1.1.1).
-
-**Stress for AI characters (Logan, batch 61): a simpler simulation managed by the director** (13.3) **(A)**:
-- AI characters do not track stress points hour by hour. Each has a **stress level** of 0 to 3 that the director updates **weekly** from what happened to them: acting against a trait, losing a fight, a scandal, overwork or a loss raise it; vacations, wins and lifestyle spending lower it.
-- When an AI character's level rises, the director rolls a **breakdown** from the same list (burnout, a vice, a public outburst, quitting, a new bad trait) and resolves it off screen, shown to the player as a news pop-up if they would see it (13.4).
-- The director can use stress to pace the story: it can push a rival under pressure toward a breakdown when things are calm, and hold it back during a crisis.
-- When an AI character moves into the player's circle (full simulation tier, 12-tech 12.3), its level converts to points (level × 100) and then runs like the player's.
+Removed (Logan, batch 117): no stress for now.
 
 ### 1.1.6 Time and actions
 
@@ -235,7 +225,7 @@ There is **no daily hours budget** (Logan, batch 64). **Most actions take no tim
 | Gala / networking event | 5 |
 | Domestic travel | 4 (halved by a private jet) |
 | International travel | 12 (halved by a private jet) |
-| Vacation | 72 |
+| Vacation (restores 3 health **(T)**, 1.1.9) | 72 |
 | Opening a scheme (1.1.8.1) | 4 or 8 |
 
 - **Location matters** (Logan, batch 64): some actions need the character in the city (meeting a minister, a gala, an in-person pitch), so travel is the main thing that burns time.
@@ -275,7 +265,7 @@ The two rolls **(T)**:
 | Dig up dirt | Intrigue | $50k | Hook on target (if a secret exists) |
 | Investigate | Intrigue | $100k | Learn one secret about the target (1.1.8.2): a hidden trait, a hidden owner, a real controller (1.3.1) **(T)** |
 | Destroy evidence | Intrigue | $100k | Destroys a strong hook another character holds over you (1.1.4) **(T)** |
-| Leak scandal | Intrigue | $100k | Target loses 20 Favor, stock drops 3 to 8% |
+| Leak scandal | Intrigue | $100k | Target loses 20 Favor and gains Heat by scandal type (1.1.0), stock drops 3 to 8% |
 | Corporate espionage | Intrigue | $500k | Steal data, a deal or plans (no tech levels) |
 | Poach executive | Persuasion | signing bonus | Executive joins your company |
 | Investigate shell | Intrigue | $200k | Reveal hidden owners |
@@ -309,7 +299,6 @@ Every character has **health** from 0 to 100. There are no yearly death rolls: h
 |---|---|---|
 | **Aging** | Yearly check from 50: chance 10% at 50, 30% at 65, 60% at 75, 90% at 85 | 5 to 20 |
 | **Illness** | 3% a year, ×2 in a pandemic or a hub with poor healthcare | 5 to 40; serious illness opens a treatment chain |
-| **Stress** | Heart attack at stress 300 (1.1.5); burnout breakdowns | 30 to 60; 10 |
 | **Addiction** | Monthly while addicted ([11-addiction.md](11-addiction.md)), by substance or habit | 1 to 5 |
 | **Violence** | Assassination attempts, accidents, travel risk (2.21.8) | 10 to 100 |
 
@@ -441,17 +430,7 @@ Missed milestone: choose between a **down round** (raise at a lower valuation, -
 
 ### 1.6.3 Path: Ask Daddy
 
-Requires a wealthy backer: a relative or older patron (a flavor relationship, no family mechanics) at Friend or Neutral toward you, with personal wealth above $10M. "Dad" below means that backer.
-
-1. **Dinner with Dad** (a 2-tick meeting). Dad's support = 50 if he is a Friend, 20 if Neutral (a Rival refuses) + random 0 to 20 **(T)**. Below 20: he refuses and the chain ends (you can try again in 6 months).
-2. Dad **names 3 to 6 friends** (wealthy characters he likes). The player picks who to visit.
-3. Each **meeting** (golf or office: a 2-tick meeting; gala: 5 ticks) is an event. Commitment = 25 if the friend is a Friend of your father (0 if Neutral) + your Persuasion x 2 + random **(T)**. Results:
-   - **Yes**: invests $100k to $5M for B shares; joins your bloc.
-   - **Yes, but**: invests more, and you owe a **favor** (they hold a hook on you, redeemable once for a vote, a hire, or a deal).
-   - **No**: a polite refusal; small chance they tell others you are not ready (a -5 push with Dad's circle).
-4. Dad may top up from his own accounts if total raised is under target and his support is above 50.
-
-Effects: your Clout is tied to his for 5 years (his scandals hit you at half strength and yours hit him). If the company fails, Dad takes a -30 push and every investor a -20 push.
+Removed (Logan, batch 117). The founding paths are Venture Capital, Bootstrap (own cash), Bank Loan, Freestyle and Political Connections.
 
 ### 1.6.4 Path: Bootstrap
 
@@ -554,8 +533,6 @@ Current loyalty moves 5 points per week toward the target.
 | Front Company | Legit income plus a hidden illegal operation (smuggling, black market deals). Hidden income x2, raid chance 1% per month plus investigations. |
 | Franchise | Pays 4% to 8% royalties; parent has no board seats; brand scandal spreads both ways. |
 | Holding Company | Exists only to own stakes in other companies; no facilities. Consolidates the group's holdings under one board, so one bloc controls everything below it. Dividends from below pass up untaxed inside the same country **(T)**. Added 2026-10-17 (Logan). |
-| Cooperative | Owned by its workers or members, one vote each; the parent holds a minority stake and a supply or service contract, not control. Unions do not strike it; profits are paid out to members. Added 2026-10-17 (Logan). |
-| Captive Bank / Insurer | Lends to group companies at policy rate + 1%. Regulated: capital ratio must stay above 10% or regulators intervene. |
 
 ### 1.7.5 Company ranks
 
@@ -590,7 +567,7 @@ Each seat holder picks one task. Effect scales with the relevant skill.
 | CFO | Prepare acquisition | Reveals targets; -0.5% takeover cost |
 | COO | Grow operations | +0.2% monthly growth |
 | COO | Integrate vassal | +1 loyalty per month in a chosen vassal |
-| COO | Cut costs | +0.5% profit, stress for Compassionate COOs |
+| COO | Cut costs | +0.5% profit; counts as acting against the trait for Compassionate COOs (drift, 1.1.2) |
 | General Counsel | Takeover defense | +2% to defense rolls |
 | General Counsel | Fabricate claim | Progress toward a casus belli |
 | Head of Security | Counter-intelligence | +1% discovery chance on schemes against the company |
@@ -707,7 +684,7 @@ Expenses: lifestyle (by trait: Ascetic 0.5x, Hedonist 2x; base $20k a month), st
 
 | Topic | Decision |
 |---|---|
-| Spending | **Monthly personal spending can raise some resources** (Clout, Fame and vril from 1.1, plus stress and health). Spending is a monthly budget, not a list of bought objects. |
+| Spending | **Monthly personal spending can raise some resources** (Clout, Fame and vril from 1.1, plus health). Spending is a monthly budget, not a list of bought objects. |
 | Income | **Salary and bonus** from board and executive seats, **dividends**, **payouts from their own trusts** and **gambling** winnings (9). |
 | Tax | **Income and capital gains tax by home country**, lowered by trusts and havens. |
 | Debt | **Personal loans and pledging shares** (3.5.5). A default costs Clout and can force sales. |
@@ -719,7 +696,7 @@ Expenses: lifestyle (by trait: Ascetic 0.5x, Hedonist 2x; base $20k a month), st
 |---|---|---|---|
 | **Status** | Homes, yachts, jets, art, parties | **Fame** (the public sees it) | $200k a month for +2 Fame a month |
 | **Social** | Clubs, galas, gifts, hosting | **Clout**, and pushes toward the people invited | $100k a month for +2 Clout a month |
-| **Wellness** | Doctors, retreats, life extension (1.1.9) | **Health**, and lowers **stress** | $50k a month for -10 stress and +1 health a month |
+| **Wellness** | Doctors, retreats, life extension (1.1.9) | **Health** | $50k a month for +1 health a month |
 | **Vices** | Gambling, drugs and the rest (11) | Each vice's benefit, plus addiction risk | As in 11 |
 | **Spiritual and esoteric** | Gurus, rituals, retreats | **Vril** | $50k a month for +1 vril a month |
 
@@ -739,7 +716,7 @@ Expenses: lifestyle (by trait: Ascetic 0.5x, Hedonist 2x; base $20k a month), st
 
 Removed (batch 116): no dynasty, houses, succession, heirs, wills, guardians, marriage, prenups, children or legacies, and no renown. Relatives exist only as flavor characters.
 
-- **Player death is game over** (Logan, batch 116). When the player character's health reaches 0 (1.1.9) the game ends; the score is the player's score, based on the player character ([12-setup-and-score.md](12-setup-and-score.md)). The game is otherwise an endless sandbox, with an optional end date set at game start, off by default (Logan, 2026-10-17).
+- **Player death is game over** (Logan, batch 116). When the player character's health reaches 0 (1.1.9) the game ends; the score is the player's score, based on the player character ([12-setup-and-score.md](12-setup-and-score.md)). The game is otherwise an endless sandbox with no end date (Logan, batch 117: the optional end date is removed).
 - **AI characters still die** at health 0. Their stakes, trusts, accounts and Techno-Capital pass **silently** to a game-generated heir character, with no succession UI **(A)**. Board seats the dead character held go to the next election or appointment under the charter (1.5, 1.8.1).
 - **Rival dynasties are rival characters**: each rival is one person, perhaps with relatives as flavor.
 
@@ -749,7 +726,6 @@ Removed (batch 116): no dynasty, houses, succession, heirs, wills, guardians, ma
 |---|---|---|
 | In the Tabloids | Character with Hedonist or Narcissist, random | Pay off ($500k), let it ride (-10 Favor), lean in (+Fame, -Favor) |
 | The Quiet Meeting | Bloc member turns Rival toward you | Confront (Persuasion), ignore, counter-offer |
-| Dad's Old Friend | Favor owed from Ask Daddy | Grant the favor, refuse (a -30 push), negotiate |
 | Missed Milestone | VC milestone date passed | Down round, bridge loan, fight the faction |
 | Covenant Breach | Bank covenant broken | Repay, renegotiate (Finance), default |
 | The Board Revolt | 3+ board members at Rival toward the head | Fire them, concede, call shareholder vote |
@@ -763,8 +739,6 @@ Removed (batch 116): no dynasty, houses, succession, heirs, wills, guardians, ma
 | Viral Moment | Startup chain, random | Ride it (marketing spend: Fame and unit growth up), stay calm |
 | The Leak | Grey-market growth exposure | Deny, apologize, blame a contractor |
 | Acquisition Offer | An incumbent chooses acquire | Accept, negotiate (Finance), refuse |
-| Burnout | Long overwork (1.1.5) | Take a week off, push through |
-| Dad's Friend Wants a Job | Ask Daddy favor | Hire his son, refuse, find a compromise |
 | Regulator Letter | Regulated industry, unit revenue over a threshold | Comply (cost), lobby, ignore |
 | Product-Market Fit | Unit revenue grew three quarters running (1.6.9) | Raise now, grow on revenue, reward the team |
 | Office Romance | Two key hires become lovers | Allow, separate teams, fire one |

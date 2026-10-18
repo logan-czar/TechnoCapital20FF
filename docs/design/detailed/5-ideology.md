@@ -1,6 +1,6 @@
 # 5. Ideology: detailed design
 
-_Status: draft v0.4 (2026-10-18). Batch 116: no dynasties, family lines, heirs or Red Heir (ideology belongs to characters only); Favorability becomes the holder's Favor and Elite Standing becomes Clout; brand alignment no longer touches sales or demand (boycotts hit productivity); no branch offices (foreign-owned units instead); Persuasion replaces Influence in the Persuade scheme; no tech tiers; population ideology runs in the background. v0.3, consistency pass, batch 74: the nine ideology blocs are the political actors (no interest groups), votes are counted by the five strata, each ideology has a human enhancement stance (no cyberware), and politics by company rank replaces stages. v0.2 (2026-10-16): a Victoria 2 style ideology layer with cyberpunk ideologies, requested by Logan, using Logan's list of nine ideologies: Liberals, Communists, Accelerationists, Effective Altruists, Transhumanists, Neo-Luddites, Sovereigntists, Landites and Chuds. It feeds the parties, elections, unrest and revolutions of [4-politics.md](4-politics.md) and changes some of their formulas (listed in 5.13). Owner: Logan._
+_Status: draft v0.4 (2026-10-18). Batch 117: no T2 Data Sovereignty position (Neo-Luddites want T2 Strict instead, Chuds drop it); scandals add Heat, how cancelled a character is (4.17.4). Batch 116: no dynasties, family lines, heirs or Red Heir (ideology belongs to characters only); Favorability becomes the holder's Favor and Elite Standing becomes Clout; brand alignment no longer touches sales or demand (boycotts hit productivity); no branch offices (foreign-owned units instead); Persuasion replaces Influence in the Persuade scheme; no tech tiers; population ideology runs in the background. v0.3, consistency pass, batch 74: the nine ideology blocs are the political actors (no interest groups), votes are counted by the five strata, each ideology has a human enhancement stance (no cyberware), and politics by company rank replaces stages. v0.2 (2026-10-16): a Victoria 2 style ideology layer with cyberpunk ideologies, requested by Logan, using Logan's list of nine ideologies: Liberals, Communists, Accelerationists, Effective Altruists, Transhumanists, Neo-Luddites, Sovereigntists, Landites and Chuds. It feeds the parties, elections, unrest and revolutions of [4-politics.md](4-politics.md) and changes some of their formulas (listed in 5.13). Owner: Logan._
 
 In Victoria 2 people **believe** things: every population group carries a mix of ideologies that drifts with their lives, decides how they vote and what they will march for, and can turn into a rebel movement. In TechnoCapital20FF these beliefs are also the political actors: the nine **ideology blocs** take the place that interest groups hold in Victoria 3 ([4-politics.md](4-politics.md) 4.0, 4.4).
 
@@ -168,7 +168,7 @@ The Transhumanist bloc (4.4.2) is the organized side: longevity funds, biotech a
 
 - **Who**: Skilled and Unskilled Workers in hubs with automation layoffs, Gig Workers displaced by delivery robots and AI agents, rural voters, polluted towns.
 - **Strong wants (++)**: L3 Heavy, T3 Moratorium.
-- **Wants (+)**: T2 Data Sovereignty, L4 Employee Presumption, E5 High, E8 Strict, T4 Limited.
+- **Wants (+)**: T2 Strict **(A)**, L4 Employee Presumption, E5 High, E8 Strict, T4 Limited.
 - **Opposes**: T3 Unregulated (--), L3 None (--).
 - **Corporate tolerance**: -2 toward companies in automating industries (robotics, drones, AI labs) or selling AI products; -1 otherwise. **Human enhancement**: an abomination.
 - **Radical wing**: **The Unplugged** (5.7.2).
@@ -203,7 +203,7 @@ The online reactionary populists: angry at elites, immigrants, human enhancement
 
 - **Who**: Skilled and Unskilled Workers in declining hubs, the Unemployed, rural and religious voters, much of the police and the army rank and file, young men online.
 - **Strong wants (++)**: L5 Closed, E5 High.
-- **Wants (+)**: C1 Capped All, C2 Local Partner 51% and Tech Transfer, E4 Low, S2 Militarized, S3 Emergency Decrees, T2 Data Sovereignty, T3 Moratorium.
+- **Wants (+)**: C1 Capped All, C2 Local Partner 51% and Tech Transfer, E4 Low, S2 Militarized, S3 Emergency Decrees, T3 Moratorium.
 - **Opposes**: L5 Open (--), C6 Sovereign Charters (--), T4 Social Credit (-).
 - **Special, "anti-globalism"**: a Chud movement with Strength ≥ 15% adds +10% to the seizure risk (4.9.10) of every foreign holder's business units in the country, and foreign owners take -10 Favor **(T)**.
 - **Corporate tolerance**: +1 toward domestic owners with no known Hedonist trait and no scandal in the last 5 years ("old money that behaves"); -2 toward foreign holders and big tech; 0 otherwise. **Human enhancement**: medical only, except for soldiers and police.
@@ -327,7 +327,7 @@ Measured locally (hub and segment) unless stated **(T)**:
 | Country stability below 40 | CH +2, CO +2, LA +2 ("democracy has failed"), LB -2 |
 | Three or more bills stalled in the last year (gridlock) | LA +1, CH +1 |
 | Hub is a Corporate Zone (4.12) | SV +5 and LA +2 inside; CO +2 and CH +2 in the rest of the country |
-| Megacorp scandal with Heat ≥ 60 in the last 3 months (4.17.4) | CO +1, CH +1, LB +0.5 |
+| The head of a Megacorp at Heat ≥ 60 from a scandal in the last 3 months (4.17.4) | CO +1, CH +1, LB +0.5 |
 | Campus education output in the hub (per campus level, Professionals only) | LB +0.5, EA +0.5, TH +0.5 |
 
 ### 5.5.3 Media points
@@ -434,7 +434,7 @@ A **radical wing** forms when a country has an active movement of an ideology **
 | Effective Altruists | **Pause Front** | Frontier AI labs and their owners | Mostly non-violent: sit-ins at labs (output -20%), recruiting whistleblowers inside AI companies (whistleblower chance ×2, 4.20.5). 10% of operations are sabotage of compute (data center output -30% for 2 weeks) |
 | Transhumanists | **Grinder networks** | Biotech and longevity IP, pharma patents, enhancement bans | Steal and publish gene therapy and longevity designs (the owner's pharma units lose 10 productivity), run unlicensed longevity clinics, break out people jailed for illegal enhancement |
 | Neo-Luddites | **The Unplugged** | Data centers, automated business units (logistics, manufacturing, robotics), delivery robots, longevity clinics and biotech labs | Machine-smashing (the unit's productivity -15, automation offline 2 to 6 weeks), drone and robot destruction, power substation attacks (hub electricity shortage 1 to 3 days) |
-| Sovereigntists | **Free Zone Cells** | The state's hold on a hub, surveillance contractors | Unofficial secession referendums (stability -3), private security takes over district policing where S2 Privatized allows (counts for 4.12 progress), hack and leak against surveillance firms (exposure +10 in one domain for the target, a news cycle at Heat 40) |
+| Sovereigntists | **Free Zone Cells** | The state's hold on a hub, surveillance contractors | Unofficial secession referendums (stability -3), private security takes over district policing where S2 Privatized allows (counts for 4.12 progress), hack and leak against surveillance firms (exposure +10 in one domain for the target, a scandal adding Heat 40) |
 | Landites | **Dark Enlightenment cells** | "The Cathedral": journalists, regulators, academics, NGOs | Doxxing and intimidation (a journalist or NGO leader quits, 4.17.3 and 4.24.1), regulator sabotage (agency Capacity -15% for 3 months), coup plots with officers in the army and police (+5% coup risk, 4.8.3), always quietly funded by someone rich |
 | Chuds | **Militias** | Foreign-owned business units, migrant districts, longevity clinics, AI labs | Arson on foreign-owned business units (productivity -20), attacks on longevity clinics and their patients (health event), roadblocks on trade routes, riots (+10 unrest in Slums) |
 
@@ -587,7 +587,7 @@ A new Governance law (national, exclusive) sets which ideologies may organize **
 | **Grinder Raid** | Grinder network operation against your biotech or longevity company | Sue (4.21.2) · Hire them (they become an unlicensed R&D team; exposure +5) · Call the police (crackdown chance; martyr risk among TH) |
 | **Exit Vote** | Sovereigntist share ≥ 30% in a Charter Zone hub | Back the referendum (4.12 progress +10; national relations of the player -20) · Stay quiet · Oppose it (Clout +5) |
 | **Bio-Purity March** | Chud movement protests in a hub with your longevity clinic | Close the clinic for a month · Hire guards · Fund a Transhumanist counter-march (Momentum duel; Heat 30 for both sides) |
-| **The Leak** | A Free Zone Cell hack-and-leak hits you | Pay for silence (the leak is delayed; they ask again in 6 months) · Get ahead of it (a news cycle on your terms, Heat halved) · Trace them (Intrigue scheme; success breaks the cell, failure doubles the leak) |
+| **The Leak** | A Free Zone Cell hack-and-leak hits you | Pay for silence (the leak is delayed; they ask again in 6 months) · Get ahead of it (the story on your terms, its Heat share halved) · Trace them (Intrigue scheme; success breaks the cell, failure doubles the leak) |
 | **Militia at the Gate** | A Chud militia blocks a foreign-owned business unit | Pay local protection (4.22) · Hire more guards (incident risk) · Take a local partner (C2-style 30% sale; CH alignment +0.3 at home) |
 
 ---
