@@ -1,6 +1,6 @@
 # 19. History: the world from the 1990s to 2020 (detailed design)
 
-_Status: draft v1.3 (2026-10-18; 2000 to 2010 ruled in batches 94 to 105, 2011 drafted). Standing rule (Logan, batch 102): **every South Asian terror attack happens as in real life.** Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
+_Status: draft v1.4 (2026-10-18; 2000 to 2011 ruled in batches 94 to 106, 2012 drafted). Standing rule (Logan, batch 102): **every South Asian terror attack happens as in real life.** Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
 
 **How to read this file.** Everything below is **real history**, as a base. Rows Logan has confirmed or changed are marked **(Logan)**; everything else is a draft for him to rule on. Where a real event clashes with the alternate history already decided (7.2.0), the clash is flagged.
 
@@ -271,22 +271,44 @@ Effects **(A)**: no Department of Homeland Security, no Patriot Act, and no Guan
 
 **Ukraine (Logan, batch 105; details drafted).** Under Yanukovych, Ukraine signs a **ceasefire on Russia's terms** (2011): Russia keeps Crimea and the Donbas, and the front line freezes, armed but quiet, until **2016**. Yanukovych jails his rival **Tymoshenko** (October).
 
-> **Questions to rule on.** (1) **The ceasefire terms.** a) ★ Ukraine drops its NATO and EU bids, and NATO's troops go home. b) NATO's troops stay in the west while the line is frozen. (2) **Occupy Wall Street** (from September). In Jeb's America, where corporations go unchecked: a) ★ It is far bigger than in real life and becomes a lasting anti-corporate movement that feeds the Communists and Neo-Luddites (5-ideology). b) It fizzles as in real life. c) It never happens. (3) **Jeb's assassination** (early 2012). a) ★ A lone gunman with anti-corporate grievances, which ties into Occupy. b) A foreign plot (Iran or Russia). c) Kept a mystery, with conspiracy theories that matter in play.
+**Rulings (Logan, batch 106).** (1) **Ukraine drops its NATO and EU bids, and NATO's troops go home.** (2) **Occupy Wall Street is far bigger than in real life** and becomes a lasting anti-corporate movement that feeds the Communists and Neo-Luddites ([5-ideology.md](5-ideology.md)). (3) **Jeb is killed in early 2012 by a lone gunman with anti-corporate grievances, tied to Occupy.**
 
 | Region | Big events of 2011 (real, with game-world changes marked **(A)**) |
 |---|---|
-| **North America** | 1. **Occupy Wall Street** (September) **(see question 2)**. 2. Congresswoman **Gabby Giffords is shot** in Tucson (January). 3. **Harper wins a majority** in Canada, and the NDP becomes the opposition for the first time (May). Also: Mexico's drug war passes 40,000 dead. |
+| **North America** | 1. **Occupy Wall Street** (September) spreads to hundreds of cities and does not fade (Logan): it becomes a standing anti-corporate movement. 2. Congresswoman **Gabby Giffords is shot** in Tucson (January). 3. **Harper wins a majority** in Canada, and the NDP becomes the opposition for the first time (May). Also: Mexico's drug war passes 40,000 dead. |
 | **Latin America** | 1. **Chávez is diagnosed with cancer** (June). 2. **Ollanta Humala** wins Peru (June). 3. Chile's **student protests** (from May). |
 | **Europe** | 1. **Anders Breivik** kills 77 in Oslo and on Utøya (July). 2. **Riots** spread across English cities (August). 3. **(Logan)** No euro crisis yet: Greece keeps borrowing, and the EU's growth lags the US. Also: **Germany decides to shut its nuclear plants** after Fukushima (May). |
-| **Russia and the former USSR** | 1. **The Ukraine ceasefire** (2011) **(see question 1)**. 2. **Putin announces** he will return as president (September), and **mass protests** follow a rigged parliamentary election (December). 3. **Tymoshenko is jailed** (October). |
+| **Russia and the former USSR** | 1. **The Ukraine ceasefire** (2011): Ukraine drops its NATO and EU bids, and NATO's troops go home (Logan). 2. **Putin announces** he will return as president (September), and **mass protests** follow a rigged parliamentary election (December). 3. **Tymoshenko is jailed** (October). |
 | **Middle East and North Africa** | 1. **(Logan) No Arab Spring**: Mubarak, Ben Ali, Gaddafi and Assad stay in power, all friendly to Washington. 2. **Iran**, the one holdout, is caught in a plot to kill the Saudi ambassador in Washington (October), and the IAEA says it worked on a bomb (November). 3. **Gilad Shalit** is freed in a prisoner swap (October), and the Palestinians bid for UN statehood (September). Also: Israel's **cost-of-living protests** (summer); **(A)** US bases in Iraq stay. |
 | **Sub-Saharan Africa** | 1. **South Sudan** becomes independent (July). 2. **Famine in Somalia** (July), and **Kenya invades** to fight al-Shabaab (October). 3. Ivory Coast's **Gbagbo is captured** (April), ending the war. |
 | **South Asia** | 1. The **Mumbai bombings** kill 26 (July; every South Asian attack happens, Logan). 2. **Anna Hazare's** anti-corruption hunger strikes shake India (April to August). 3. **India wins the Cricket World Cup** at home (April), notable as a national moment. **(A)** No Abbottabad raid, since bin Laden died in 2003. |
 | **East Asia** | 1. **Tōhoku and Fukushima** (March). 2. **Kim Jong-il dies**, and **Kim Jong-un** takes over (December). 3. China's **Wenzhou high-speed train crash** (July). Also: artist **Ai Weiwei** is detained (April). |
 | **Southeast Asia and Oceania** | 1. The **Christchurch earthquake** kills 185 (February). 2. **Yingluck Shinawatra** wins Thailand (July), then **floods** swamp Bangkok (October to December). 3. **Burma starts opening up** under Thein Sein. |
 
-**Logan's ruling on 2011:** _pending._
+**Logan's ruling on 2011 (batch 106):** everything above happened, with the changes in the rulings box.
 
-## 19.14 2012 onward
+## 19.14 The year 2012 (draft)
 
-To be written year by year after 2011 is settled, up to the 2020 start. Already set: **Jeb Bush is assassinated in early 2012 (A)**, President Cheney does not run, and **Trump wins the 2012 election as a Democrat** (Logan, batch 103). Fighting in Ukraine restarts in **2016** (Logan, batch 105). The Greek crisis and Madoff's exposure come later (years to be set).
+**Global (draft).** **Jeb Bush is assassinated** (Logan; see below). Scientists find the **Higgs boson** (July), and NASA's **Curiosity** lands on Mars (August). **AlexNet** wins the ImageNet contest with a neural network trained on Nvidia GPUs (September), the spark of modern deep learning **(see question 2)**. Pop culture: the **London Olympics**, **Gangnam Style**, *The Avengers*, and **Facebook goes public** after buying Instagram (May).
+
+**The assassination (Logan, batch 106; details drafted).** In **February 2012** **(A)**, a lone gunman with anti-corporate grievances, who had camped with Occupy, shoots **President Jeb Bush** at a public event. **Dick Cheney** is sworn in. The crackdown on Occupy that follows **radicalizes the movement** instead of ending it **(A)**. Cheney finishes the term and does not run. In November, **Donald Trump wins as a Democrat** (Logan).
+
+> **Questions to rule on.** (1) **Who does Trump beat in November?** a) ★ Mitt Romney, the Republican nominee, as in real life. b) Another Republican you name. (2) **AlexNet and deep learning** (September). The AI boom starts in 2025 here. a) ★ It happens on schedule: the research roots are the same, and only the boom comes later. b) It is delayed. (3) **Mali's collapse.** In real life, fighters and weapons from Libya's fall let rebels and Islamists take northern Mali (March to April). Libya never falls here. a) ★ It never happens. b) It happens anyway, from homegrown causes.
+
+| Region | Big events of 2012 (real, with game-world changes marked **(A)**) |
+|---|---|
+| **North America** | 1. **Jeb Bush is assassinated**, and **Cheney** becomes president (February **(A)**). 2. **Trump wins** the presidential election as a Democrat (November, Logan) **(see question 1)**. 3. The **Sandy Hook** school shooting (December), after the Aurora cinema shooting (July). Also: **Hurricane Sandy** floods New York (October); Mexico's PRI returns with **Peña Nieto** (July); Quebec's **student strike** brings in a PQ government (September). |
+| **Latin America** | 1. **Chávez** is re-elected while fighting cancer (October). 2. **Argentina seizes YPF**, Repsol's oil company (April). 3. **Colombia and the FARC** open peace talks (October). Also: Paraguay's President **Lugo is impeached** (June). |
+| **Europe** | 1. **Hollande** beats Sarkozy in France (May). 2. The **EU wins the Nobel Peace Prize** (October) while its economy lags. 3. **(Logan)** Still no euro crisis: Greece's hidden debt keeps growing. |
+| **Russia and the former USSR** | 1. **Putin returns as president** (May). 2. **Pussy Riot** are jailed for a punk prayer in a Moscow cathedral (February to August). 3. **(A)** Ukraine under Yanukovych drifts into Moscow's orbit; the front stays armed and quiet. Also: Georgia's ruling party loses to **Ivanishvili** (October). |
+| **Middle East and North Africa** | 1. **Iran** is hit by an EU oil embargo and tighter sanctions (July). 2. Israel's **Gaza war** (Operation Pillar of Defense, November). 3. **(A)** No Syrian civil war, no Benghazi attack and no President Morsi: the region stays in the hands of US-friendly rulers. |
+| **Sub-Saharan Africa** | 1. Police kill 34 striking miners at **Marikana** in South Africa (August). 2. **Mali** (March to April) **(see question 3)**. 3. **Kony 2012** goes viral (March). Also: **Joyce Banda** becomes Malawi's president (April); Boko Haram's attacks grow. |
+| **South Asia** | 1. The Pakistani Taliban **shoot Malala Yousafzai** (October). 2. India's **blackout** cuts power to 620 million people (July). 3. The **Delhi gang rape** sets off nationwide protests (December). |
+| **East Asia** | 1. **Xi Jinping** takes over China's Communist Party (November), after the **Bo Xilai** scandal (from February). 2. Japan buys the **Senkaku islands**, and anti-Japan riots sweep China (September). 3. **Abe returns** as Japan's prime minister (December), and **Park Geun-hye** wins South Korea (December). Also: North Korea puts a satellite into orbit (December). |
+| **Southeast Asia and Oceania** | 1. **Aung San Suu Kyi** wins a seat in Burma's parliament (April). 2. China and the Philippines face off at **Scarborough Shoal** (April). 3. **Gillard's misogyny speech** in Australia's parliament goes viral (October). |
+
+**Logan's ruling on 2012:** _pending._
+
+## 19.15 2013 onward
+
+To be written year by year after 2012 is settled, up to the 2020 start. Already set: Trump (Democrat) is president 2013 to 2017; fighting in Ukraine restarts in **2016**; the Democrats drop Trump in 2016 and Obama wins. The Greek crisis and Madoff's exposure come later (years to be set).
