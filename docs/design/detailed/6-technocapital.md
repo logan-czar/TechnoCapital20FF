@@ -324,9 +324,9 @@ GPU demand is the GPUs industry's market demand (10.0.3), and it moves the GPU p
 | **Consumers** (gamers, PCs, creators) | 40M GPUs at the start **(T)** | High: demand × (index ÷ 100)^-1.2 | +5% a year, steady |
 | **AI** (data centers, labs, clouds) | 0.5M GPUs at the start **(T)** | Low: demand × (index ÷ 100)^-0.3 | +3% a month before the **boom trigger**; after it, a boom rate rolled for each save (below) until the crash; -40% at the crash, then +2% a month |
 
-- **Boom speed varies by save** (Logan). The boom starts with a **triggering event**: by default the tipped lab's breakthrough (November 2022, [7-starting-world.md](7-starting-world.md) 7.7), which can come earlier or later if players change history. At game start the boom rate is rolled between +3% and +10% a month **(T)** (about ×1.4 to ×3.1 a year); the default reference case below uses +6%.
+- **Boom speed varies by save** (Logan). The boom starts with a **triggering event**: by default the tipped lab's breakthrough (**2025**, Logan batch 92; [7-starting-world.md](7-starting-world.md) 7.7), which can come earlier or later if players change history. At game start the boom rate is rolled between +3% and +10% a month **(T)** (about ×1.4 to ×3.1 a year); the default reference case below uses +6%.
 - **Who gets squeezed.** AI buyers barely care about price and consumers care a lot, so a shortage pushes the index up and **pushes gamers out first**: the AI boom starves consumers.
-- In the reference case (+6% a month), at a steady price, AI demand reaches about 1.5M GPUs in January 2024, 6M (12% of the market) in January 2026 and 50M in January 2029, when it overtakes consumer demand (about 56M) **(T)**. GPU supply grows only as fast as GPUs business units grow their assets (10.0.4), so the index climbs through the boom.
+- In the reference case (+6% a month), at a steady price, AI demand reaches about 1.5M GPUs about 14 months after the trigger, 6M (12% of the market) after about 3 years and 50M after about 6 years, when it overtakes consumer demand (about 56M) **(T)**. GPU supply grows only as fast as GPUs business units grow their assets (10.0.4), so the index climbs through the boom.
 - **Server node price** = $1,500 × GPU index ÷ 100 + $4,000 for the host **(T)**, so the launch prices in 6.4.1 are a starting guide.
 
 #### Developer ecosystem

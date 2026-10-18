@@ -1,6 +1,6 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v2.0 (2026-10-18). Batch 91: Arc 3 is The Pivot to a software company; Power Play, The Top Job and Dry Hole move to Arcs 4 to 6. Batch 90: the oil software's costs, updates and structured data. Batch 88: Arrowhead owns the oil software; the charity's 100 desktops make 100 software units a day. Batch 87: Kids Who Code (Terry's charity builds the oil software in India), the casino-money hook, licences. Batch 86: Arc 2 is now Oil Software (Q2 to Q4 2020); options vest in January 2021; the early AI move belongs to Arc 3. Batch 85: the interrogation roll and Mandy's four endings, including the Canadian Furry Cartel. Batch 84: the Mink Scare's four stages and Mandy's interrogation, CPU delegation without rolls, the quarterly recap screen. Batch 83: the six First Week events, Vril Touch, the Mink Scare; the old tutorial arcs are dropped. Batch 81: the opening sequence (start on 1 January, the first earnings day, First Week on the Job, Intro Night, The Scandal). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v2.1 (2026-10-18). Batch 92: The Pivot's cause and four choices; the AI boom starts in 2025. Batch 91: Arc 3 is The Pivot to a software company; Power Play, The Top Job and Dry Hole move to Arcs 4 to 6. Batch 90: the oil software's costs, updates and structured data. Batch 88: Arrowhead owns the oil software; the charity's 100 desktops make 100 software units a day. Batch 87: Kids Who Code (Terry's charity builds the oil software in India), the casino-money hook, licences. Batch 86: Arc 2 is now Oil Software (Q2 to Q4 2020); options vest in January 2021; the early AI move belongs to Arc 3. Batch 85: the interrogation roll and Mandy's four endings, including the Canadian Furry Cartel. Batch 84: the Mink Scare's four stages and Mandy's interrogation, CPU delegation without rolls, the quarterly recap screen. Batch 83: the six First Week events, Vril Touch, the Mink Scare; the old tutorial arcs are dropped. Batch 81: the opening sequence (start on 1 January, the first earnings day, First Week on the Job, Intro Night, The Scandal). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.6.
 
@@ -170,21 +170,28 @@ From **Q2 to Q4 2020** the arc takes John through building that software:
 
 **Outcomes (A).** Strong: high-quality software that sets the industry standard; +2 Tech or Finance. Mixed: working but bloated software; +1 Finance. Poor: a costly flop that eats the year's budget. Arrowhead is never bought out here: AI companies do not buy other companies unless the director tells them to (10.5.4).
 
-### Arc 3: The Pivot (Logan, batch 91)
+### Arc 3: The Pivot (Q1 2021, Logan, batches 91 and 92)
 
-**The moment.** **Oil is booming in Edmonton** and the oil software is looking good. It is time to pivot.
+**The moment.** Once the oil software is done, in **Q1 2021**, oil is **booming in Edmonton** for Arrowhead. Two things cause it (Logan, batch 92):
+- **The other large oil companies are racked by debt**, which makes business hard for them.
+- **Arrowhead's CEO makes some very intelligent moves in the futures market** (3.7), freeing up a **windfall of capital** to invest.
 
-| Step | Goal | Teaches |
-|---|---|---|
-| 1 | **Set up a new business unit in Edmonton** | Business units in any industry and city (10.0.2) |
-| 2 | **Pivot Arrowhead to running a software company** | Moving a corporation's weight between industries (10.0.5) |
-| 3 | **Choose the software business.** Offers come in to start a **prediction market** or an **online casino** (the Gambling industry, [9-gambling.md](9-gambling.md)), or John can **stick to the traditional enterprise software business** (14) | Gambling platforms; software as a business |
+**John decides** (batch 92): as COO he makes the call himself, without a board vote. The **Kids Who Code charity stays** whatever he picks.
 
-**Outcomes (A).** Strong: a growing software company with the oil business as its cash cow; +2 Tech. Mixed: a half-pivoted company; +1 Tech. Poor: the new unit drains cash and the board turns on John.
+| Choice | What happens |
+|---|---|
+| **Pivot to gambling** | Take **Terry's offer** to partner on a **prediction market** or an **online casino** (the Gambling industry, [9-gambling.md](9-gambling.md)) |
+| **Stick to the old system** | Keep Arrowhead as it is: the oil unit and the charity, no new spending **(A)** |
+| **Stick to making software the old way** | Keep building enterprise software through the charity's free desktops (14.8) |
+| **Pour the windfall into oil** | Put the cash into oil production: the oil business units grow greatly |
+
+**Where the money goes (Logan).** The windfall either **greatly increases the oil business units** or **creates a new, real software business unit in Canada** (in Edmonton, with paid developers) **(A: the gambling pivot also builds its platform in this new unit)**.
+
+**Outcomes (A).** Strong: the chosen path takes off; +2 Tech or Operations. Mixed: +1 Tech or Operations. Poor: the new spending drains cash.
 
 ### Arc 4: Power Play
 
-Opens once the AI boom starts. It also holds John's **early AI move** before the boom, such as a stake in the tipped lab (Logan, batch 86; to be designed).
+Opens once the AI boom starts, in **2025** (batch 92). It also holds John's **early AI move** before the boom, such as a stake in the tipped lab (Logan, batches 86 and 92; to be designed).
 
 | Step | Goal | Teaches |
 |---|---|---|

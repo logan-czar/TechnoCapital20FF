@@ -1,6 +1,6 @@
 # 7. Starting world: detailed design
 
-_Status: draft v1.3 (2026-10-18). Batch 81: start at 00:00 on 1 January 2020, the opening sequence, a Liberal majority in Canada, Terry's friend is a Conservative MP. Batch 80: Arrowhead Drilling, its owners and board; Terry's politician friend in Montreal. Batch 79: John has no starting ambition; his parents are PMC middle managers in Edmonton. Batch 78: Terry's buff, net worth and heritage; John's skills and his one trait. Batch 77: Terry Tippacanoe, the new rival who owns John's company; Edmonton, the listed company and the desktop tip confirmed. Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v1.4 (2026-10-18). Batch 92: the AI boom starts in 2025. Batch 81: start at 00:00 on 1 January 2020, the opening sequence, a Liberal majority in Canada, Terry's friend is a Conservative MP. Batch 80: Arrowhead Drilling, its owners and board; Terry's politician friend in Montreal. Batch 79: John has no starting ambition; his parents are PMC middle managers in Edmonton. Batch 78: Terry's buff, net worth and heritage; John's skills and his one trait. Batch 77: Terry Tippacanoe, the new rival who owns John's company; Edmonton, the listed company and the desktop tip confirmed. Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 7.10.
 
@@ -59,7 +59,7 @@ The detailed files were written with present-day starting values. At a January 2
 | Chip export controls | Entity list bans on a few Chinese firms only; lithography system bans on EUV to China already in force | Broad US controls on advanced chips and AI server nodes (October 2022), widened yearly; Netherlands and Japan join (2023) |
 | Russia | At war in Ukraine since 2005, a drone stalemate; heavy sanctions since 2005 (7.2.0) | Drone escalations and ceasefire events, rolled through the timeline |
 | Compute | Generation 1 accelerators; AI is a research field, not a market | Gen 2 (2024), Gen 3 (2026), Gen 4 (2028), Gen 5 (2030) on the 24-month cycle in [6-technocapital.md](6-technocapital.md) 6.4.1 |
-| Models | No commercial chat models | The tipped lab's chatbot launch (November 2022) starts the boom |
+| Models | No commercial chat models | The tipped lab's chatbot launch in **2025** starts the boom (Logan, batch 92) |
 | Interest rates | About 3% in the US: rates never went to zero (7.2.0) | Small moves only; no 2022 energy shock |
 | Pandemic | None: COVID never happened (7.2.0) | n/a |
 | Ideology mix | Starting shares in [5-ideology.md](5-ideology.md) 5.4 are for 2020 | Accelerationist and Neo-Luddite shares grow with the boom |
@@ -156,7 +156,7 @@ The first quest of the game is **buying a desktop computer**, on John's phone: h
 
 - There is **no travel lock**: John can fly from the start (Logan, batch 77).
 - **The LLM tip** arrives on the new desktop once it is set up: it names the company that will make the first LLM breakthrough and explains how the AI system will work before the boom. The tip is always correct (Logan, batch 77).
-- **The tipped lab is different each game.** At game start one lab is drawn from a pool of five fictional AI labs (for example a Bay Area nonprofit lab, a big tech research division, a London lab, a Beijing lab and a Toronto lab) **(A)**. The drawn lab makes the November 2022 breakthrough unless players change history.
+- **The tipped lab is different each game.** At game start one lab is drawn from a pool of five fictional AI labs (for example a Bay Area nonprofit lab, a big tech research division, a London lab, a Beijing lab and a Toronto lab) **(A)**. The drawn lab makes the **2025** breakthrough (batch 92) unless players change history.
 
 ## 7.7 Timeline 2020 to 2030
 
@@ -175,12 +175,11 @@ Real events happen on schedule by default. Each one is an event or quest that pl
 | 2020 onward | The Ukraine drone war grinds on (since 2005) | Drone demand; Black Sea risk; ceasefire or escalation events |
 | 2022 to 2023 | Rates still steady near 3% | VC funding stays hot |
 | Oct 2022 | Broad US chip export controls | Export controls in [6-technocapital.md](6-technocapital.md) 6.9 switch on |
-| Nov 2022 | The tipped lab launches its chatbot | The AI boom starts; compute demand surges |
-| 2023 | The GPU gold rush | Compute spot prices spike |
-| 2024 | Gen 2 accelerators; power deals for data centers; nuclear restarts | Power becomes the bottleneck |
-| 2025 | A cheap Chinese open model shocks the market | Beijing and Shenzhen get a boost; a market wobble |
-| 2026 to 2027 | Gen 3; gigaclusters; AI agents run whole departments | Fantastical events begin |
-| 2028 to 2029 | Gen 4; humanoid robots in factories | More fantastical events; peak valuations |
+| 2024 | Gen 2 accelerators, bought for research and gaming | No AI market yet |
+| **2025** | **The tipped lab launches its chatbot** (Logan, batch 92) | **The AI boom starts**; compute demand surges |
+| 2026 | The GPU gold rush; Gen 3 | Compute spot prices spike |
+| 2027 | Power deals for data centers; nuclear restarts; a cheap Chinese open model shocks the market | Power becomes the bottleneck; Beijing and Shenzhen get a boost; a market wobble |
+| 2028 to 2029 | Gen 4; gigaclusters; AI agents run whole departments; humanoid robots in factories | Fantastical events; peak valuations **(A: compressed from the old 2022 timeline)** |
 | 2030 | **The crisis: the bubble pops** | A crash in AI valuations; the post-crash era begins |
 
 ## 7.8 New places
