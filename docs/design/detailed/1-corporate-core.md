@@ -90,7 +90,7 @@ Traits can change over a life, slowly **(T)**:
 
 Another character's traits are **hidden** until the player learns them:
 - Meeting in person reveals one trait per meeting **(T)**.
-- Investigating (a Spymaster or Head of Security task, or a hired PI) reveals all traits and the character's ambition.
+- Investigating (a Spymaster task, 1.1.8.2, or a hired PI) reveals all traits, and for the player's character the ambition.
 - Famous characters (Fame 60+) have their public trait known to everyone; Narcissists' trait is always visible.
 - Lie-reader optics (1.1.10) reveal Deceitful at once.
 Unknown traits show as "?" on the character screen; opinion modifiers from them still apply.
@@ -248,10 +248,20 @@ Delegating an action to a board member or family member uses their hours instead
 
 ### 1.1.8 Schemes
 
-Schemes are **simple one-roll actions** (Logan, 2026-10-17): no agents and no progress bars. The schemer pays the cost and the hours (1.1.6), and the scheme resolves at once with two rolls **(T)**:
+> **Changed (Logan, batch 63): schemes are CK3 style, with Intrigue rolls over weeks.** This replaces the one-roll rule of 2026-10-17. The success and discovery formulas below still apply, but are rolled over the scheme's run (1.1.8.1).
+
+#### 1.1.8.1 How a scheme runs (Logan, batch 63)
+
+- The schemer starts a scheme against a target and pays its cost and its opening hours (4 for social schemes, 8 for Intrigue ones) **(T)**.
+- The scheme then **runs for weeks**: 2 to 12 weeks by type **(T)**. Each week it gains progress from the schemer's skill (Intrigue for most, Persuasion for social ones), and rolls **discovery** once a week at a tenth of the old discovery chance.
+- **Agents (A).** The schemer can bring in agents: friends, people they hold hooks over, or the target's own staff bought off. Each agent adds progress, and an agent close to the target (a board member, a spouse, a bodyguard) adds the most. Each agent is also a new way to be discovered.
+- When progress is full, the **success roll** resolves as below. A failed roll can be retried by starting over.
+- Only one scheme per schemer against the same target at a time.
+- The rest of this section's old text is kept for the formulas. (Old text: schemes are **simple one-roll actions** (Logan, 2026-10-17): no agents and no progress bars. The schemer pays the cost and the hours (1.1.6), and the scheme resolves at once with two rolls **(T)**:)
 
 - **Success** = 50% + (schemer's skill - target's defense) × 3%, clamped 5% to 95%. Defense is the target's own skill, or their Head of Security's Intrigue if higher.
-- **Discovery** = 10% + target's defense × 1% - schemer's Intrigue × 1%, clamped 2% to 60%, rolled whether the scheme succeeds or fails. A discovered scheme gives -50 opinion (1.1.4), can make a nemesis, and serious ones (blackmail, accidents, netruns) open a police or regulator investigation.
+- **Discovery** = 10% + target's defense × 1% - schemer's Intrigue × 1%, clamped 2% to 60%, rolled whether the scheme succeeds or fails. A discovered scheme gives -50 opinion (1.1.4), can make a nemesis, and serious ones (blackmail, accidents) open a police or regulator investigation.
+- **Getting caught (Logan, batch 63).** A discovered scheme makes the target a **Rival** (1.1.4), or a **Nemesis** if the scheme was serious (blackmail, an "accident", a scheme that cost them a company or 30+ health). The target gets a **hook** on the schemer (the scheme itself is the secret), and it **can become a scandal**: a public leak (Image and Favor hit, 1.1.0) if the target or the press chooses to run it.
 - Hours: 4 for social schemes, 8 for Intrigue and Tech schemes **(T)**. A character can run one scheme against the same target per month.
 
 | Scheme | Skill | Cost | Effect on success |
@@ -262,11 +272,24 @@ Schemes are **simple one-roll actions** (Logan, 2026-10-17): no agents and no pr
 | Dig up dirt | Intrigue | $50k | Hook on target (if a secret exists) |
 | Leak scandal | Intrigue | $100k | Target loses 20 reputation, stock drops 3 to 8% |
 | Corporate espionage | Intrigue | $500k | Steal a tech or a deal |
-| Netrun | Tech | $250k | Steal data, crash systems (company loses 1 week of output) |
+| ~~Netrun~~ | Tech | $250k | **Moved to the later hacking system** (Logan, batch 63: human intel only for now) |
 | Poach executive | Persuasion | signing bonus | Executive joins your company |
 | Investigate shell | Intrigue | $200k | Reveal hidden owners |
 | Blackmail | Intrigue | needs hook | Force an action (vote, sale, resignation) |
 | Arrange "accident" | Intrigue | $2M | Target dies or is injured; huge penalty if discovered |
+
+#### 1.1.8.2 Intel and the Spymaster (Logan, batch 63)
+
+**Intel is per secret** (Logan): a character **either knows a secret or does not**. There are no intel levels.
+- **Secrets** are discrete facts kept in the engine: a hidden trait (1.1.2), an affair, a crime, an addiction, a hidden owner behind a shell, a figurehead and the **real controller** behind them (1.3.1), a planned takeover, insider trades.
+- A secret is learned through a **Dig up dirt** or **Investigate** scheme, an informant (an agent placed near the target), an event, or being told by someone who knows it. Each success reveals **one secret** **(A)**.
+- A known secret stays known. It can be **traded, leaked or turned into a hook**; if it is exposed, everyone knows it.
+- **Human intel only for now** (Logan): no hacking until the later hacking system.
+
+**The Spymaster (Logan).** A character's intel and defense against schemes are run by a **Spymaster**: the **Head of Security** board seat for a company (1.8.2), or a **personal fixer** the character hires for themselves and the family **(A)**.
+- The Spymaster's **Intrigue** is the defense against schemes on everyone they protect (1.1.8), and adds weekly progress to the employer's own Dig up dirt and Investigate schemes.
+- Each week the Spymaster has a 1 in 10 chance to **uncover a scheme** running against the people they protect, rising to 1 in 4 with Intrigue 20+ **(T)**.
+- A disloyal Spymaster is the worst leak: they can sell secrets to rivals (a Rival or a hook over them makes this likely).
 
 ### 1.1.9 Health (Logan, 2026-10-17)
 
