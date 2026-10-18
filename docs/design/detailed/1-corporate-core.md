@@ -79,6 +79,14 @@ Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs**, CK3 style 
 
 Same trait between two characters: a +10 push each way. Opposite trait: a -10 push.
 
+#### Unique traits (Logan, batch 78)
+
+A few characters have a **unique trait** outside the 12 pairs. It has no opposite, counts toward the 3 to 5, and can sit alone: John Techno starts with only this one.
+
+| Trait | Holder | Effect |
+|---|---|---|
+| **Operational Excellence** | John Techno ([8-quest-lines.md](8-quest-lines.md) 8.3) | While he sits on a company's board as **COO**, the **buffs of all other board members are doubled**: their seat task effects (1.8.2) and their trait and skill bonuses to that company **(A for the scope)** |
+
 #### Trait change (Logan, 2026-10-17)
 
 Traits can change over a life, slowly **(T)**:

@@ -1,6 +1,6 @@
 # 7. Starting world: detailed design
 
-_Status: draft v0.9 (2026-10-18). Batch 77: Terry Tippacanoe, the new rival who owns John's company; Edmonton, the listed company and the desktop tip confirmed. Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v1.0 (2026-10-18). Batch 78: Terry's buff, net worth and heritage; John's skills and his one trait. Batch 77: Terry Tippacanoe, the new rival who owns John's company; Edmonton, the listed company and the desktop tip confirmed. Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 7.10.
 
@@ -122,11 +122,11 @@ Hub populations and GDP in [2-map-and-influence.md](2-map-and-influence.md) stan
 
 | Character | Location | Profile | Premise | Signature play |
 |---|---|---|---|---|
-| **Terry Tippacanoe** | Edmonton, Alberta **(A)** | Rich **(A)** | A **Native financier of questionable origins**. He owns a **very popular casino** and, as the union broke up, bought out the smallest oil company in the game: **John Techno's**. He is the new owner and John's first rival | Grow money through the casino and deals; scheme against Liberals |
+| **Terry Tippacanoe** | Edmonton, Alberta | Rich: **$1B net worth** (Logan, batch 78) | A **Native financier of questionable origins**: he is ethnically Black and **1/8th Native American**, and plays up the Native part as **part of his grift** (Logan, batch 78). His nationality is listed as **First Nations and Black**. He owns a **very popular casino** and, as the union broke up, bought out the smallest oil company in the game: **John Techno's**. He is the new owner and John's first rival | Grow money through the casino and deals; scheme against Liberals |
 
-- **Anti-Liberal edge (Logan).** Terry has a **buff against all Liberal characters in his schemes**: +15% success and -25% discovery when the target's ideology is Liberals ([5-ideology.md](5-ideology.md)) **(T)**.
-- **The casino** is a business unit in the Gambling industry ([10-industry-economy.md](10-industry-economy.md) 10.3), the source of his cash and his pull in Edmonton **(A)**.
-- **Questionable origins.** His past is held as one or more **secrets** (1.1.8.2) that intel, hacking or a news investigation can uncover **(A)**.
+- **Anti-Liberal edge (Logan).** Terry has a **buff against all Liberal characters in his schemes**: **+25% success and -25% discovery** when the target's ideology is Liberals ([5-ideology.md](5-ideology.md)) (Logan, batch 78). **His schemes are never exposed in the media**: outlets cannot investigate or run them as scandals (16.5.1); they can only be found through intel or hacking.
+- **The casino** is a very popular casino in the Gambling industry ([10-industry-economy.md](10-industry-economy.md) 10.3), held by a **private company he owns outright** (Logan, batch 78). It is the source of his cash and his pull in Edmonton.
+- **Questionable origins, not a secret (Logan, batch 78).** His heritage is flavor for his grift, not a secret to uncover. What can be dug up is ordinary scheme material: his deals and the casino's books (1.1.8.2) **(A)**.
 - **John's choice (Logan).** John can **befriend Terry** or **work in the shadows on his downfall** ([8-quest-lines.md](8-quest-lines.md) 8.3, Arc 1).
 
 ## 7.4 Rival dynasties
@@ -209,6 +209,6 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 12. The alternate-history consequences in 7.2.0, including the effects of the Ukraine war since 2005.
 8. Names marked † and profiles marked **(A)** in 7.3 (Tolu Balogun, Fang Xiaoyu and Qiao Lin confirmed in batch 35).
 9. The natural-rivals rule (7.3.4).
-14. Terry Tippacanoe's location, profile, buff size, casino and secrets (7.3.5).
+14. What can be dug up on Terry: his deals and the casino's books (7.3.5).
 15. The 2020 to 2021 timeline rows (7.7).
 11. The pool of five candidate labs for the tip.

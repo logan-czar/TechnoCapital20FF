@@ -1,6 +1,6 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v0.8 (2026-10-18). Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v0.9 (2026-10-18). Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.6.
 
@@ -67,7 +67,9 @@ The first quest of the game is **buying a desktop computer**, done entirely on J
 - As the company climbs a rank (1.7.5) the percentage shrinks but the value grows; a CEO seat (Arc 4) brings a new package.
 - A board where Terry is John's Rival can cut the grant to zero.
 
-**Assumed details (A).** Skills: Operations 24, Hustle 20, Finance 16, Persuasion 18, Intrigue 8, Tech 8. Traits: Diligent, Brave, Honest, plus one hidden trait. His old union brothers start as Friends; Terry starts Neutral. Ambition: Get rich.
+**Skills and trait (Logan, batch 78).** **24 in all six skills** (Finance, Operations, Persuasion, Intrigue, Tech, Hustle). He starts with **one trait**, unique to him: **Operational Excellence** (1-corporate-core 1.1.2): while he sits on a company's board as **COO**, the buffs of **all other board members are doubled**. Events and arc outcomes can add more traits later.
+
+**Assumed details (A).** His old union brothers start as Friends; Terry starts Neutral. Ambition: Get rich.
 
 **What the line teaches.** Running a company from the COO seat, the industry economy, earnings days, board politics, the AI boom's power demand, and taking control.
 
@@ -81,8 +83,8 @@ The first quest of the game is **buying a desktop computer**, done entirely on J
 | 4 | **Friend or foe (Logan, batch 77).** Choose how to deal with Terry: **befriend him**, or **work in the shadows on his downfall** | The branch below |
 
 **The Terry branch.** The choice opens one of two quests that run alongside the rest of the line **(A)**:
-- **Befriend Terry.** Win him over (Persuasion, favors, a night at the casino). As a Friend he backs John on the board, cuts him into deals, and lends him his edge against Liberal characters in shared schemes; but his questionable origins are a secret that can sink anyone close to him, and he will expect favors (a hook).
-- **Bring him down.** Dig into his origins and the casino's books in secret (Intrigue schemes, hacking, a news outlet's investigation, 16.5.1). Each secret found is a hook or a scandal to use; the end goal is forcing him out of the company, which opens Arc 4 early. If Terry learns of it, he turns Nemesis.
+- **Befriend Terry.** Win him over (Persuasion, favors, a night at the casino). As a Friend he backs John on the board, cuts him into deals, and lends him his edge against Liberal characters in shared schemes; and he will expect favors (a hook).
+- **Bring him down.** Dig into his deals and the casino's books in secret (Intrigue schemes and hacking; the media will never expose him, 7.3.5). Each secret found is a hook, or ammunition with the board and shareholders; the end goal is forcing him out of the company, which opens Arc 4 early. If Terry learns of it, he turns Nemesis.
 
 **Outcomes.** Strong: the board trusts you and the crews follow you; +2 Operations. Mixed: +1 Operations. Poor: Terry marks you as a Rival.
 
