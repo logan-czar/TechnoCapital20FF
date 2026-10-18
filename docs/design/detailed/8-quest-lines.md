@@ -13,7 +13,7 @@ A quest line is made of **arcs** (Logan's word; not chapters).
 | Rule | Decision (Logan) |
 |---|---|
 | Structure | The number of arcs, their length and their story structure vary by character. |
-| Length | A full line has **4 to 6 arcs**, spanning 2022 to the crash and after (batch 33). |
+| Length | A full line has **4 to 6 arcs**, spanning 2020 to the crash and after (batch 33; start year moved to 2020 in batch 75). |
 | Concurrency | Arcs can run at the same time. |
 | Outcomes | Each arc ends in one of several outcomes. Each outcome gives a **stat buff** (skills or character resources); better outcomes give better buffs, and bad outcomes can give worse ones or penalties. Outcomes can also change traits (1.1.2). |
 | Steps | Inside an arc, the player sees only the next step ([10-events.md](../10-events.md) 10.4). Failure branches into new quests. |
@@ -23,11 +23,13 @@ A quest line is made of **arcs** (Logan's word; not chapters).
 
 **Outcome tiers (A).** Most arcs use three tiers: **Strong**, **Mixed** and **Poor**. As a guide, Strong gives +2 to one skill and a clout gain, Mixed gives +1 to one skill, Poor gives a lasting penalty or a negative trait **(T)**.
 
-**Full lines written (Logan, batches 33 and 34).** Pieter Von Floop (8.3), Antone Provolone (8.4), Samir Haddad (8.5), Yuna Sakamoto (8.6), John Oligarch (8.7), Viktor Sokolov (8.8), Garrett Kroll (8.9), and from batch 35 Pablo Segundo (8.10), Tolu Balogun (8.11) and Qiao Lin (8.12), and from batch 36 Fang Xiaoyu (8.13). Ricky Feng stays on the default line (batch 35). Logan (batch 37): no more full lines for now. Dot Percy, Margaux Valcourt, Ananya Hegde and Ricky Feng keep the default line (8.2). The other characters keep the default line (8.2) until theirs are written.
+**Full lines written (Logan, batches 33 and 34).** Pieter Von Floop (8.3), Antone Provolone (8.4), Samir Haddad (8.5), Yuna Sakamoto (8.6), John Techno (8.7, renamed from John Oligarch in batch 75), Viktor Sokolov (8.8), Garrett Kroll (8.9), and from batch 35 Pablo Segundo (8.10), Tolu Balogun (8.11) and Qiao Lin (8.12), and from batch 36 Fang Xiaoyu (8.13). Ricky Feng stays on the default line (batch 35). Logan (batch 37): no more full lines for now. Dot Percy, Margaux Valcourt, Ananya Hegde and Ricky Feng keep the default line (8.2). The other characters keep the default line (8.2) until theirs are written.
+
+**Who plays which line (Logan, batch 75).** There is one starting character, **John Techno**, so his line (8.7) is the only player line at start. The other lines belong to the **rival starting characters** (7.3.4): the director runs them as **rival arcs** in the background, rolling their outcomes, and the player meets them through news, intel, deals and conflict **(A)**. A successor who is one of these characters, or who inherits from one, can pick up an unfinished arc as a player line.
 
 ## 8.2 Default starting quest line (placeholder)
 
-Every starting character without a full line gets this default line: a tutorial-like opening, then **milestones**. Ricky Feng uses it too, but still starts with his compute in Asia and his bot farm SaaS (7.3.1).
+The player's character, John Techno, plays these opening arcs before his own line (8.7) **(A)**. The milestones are a template for generated play after a line ends.
 
 ### 8.2.1 Opening arcs (tutorial)
 
@@ -38,7 +40,7 @@ Every starting character without a full line gets this default line: a tutorial-
 | **First Moves** | Hours, actions, money | Make one trade or buy into a real estate pool; hold one meeting; set a monthly budget for your personal account. |
 | **Your People** | Opinion, relationships, successors | Make a friend (1.1.4); name a successor in your will (1.11.0). |
 
-The opening arcs run back to back and take the first few months of 2022 **(T)**.
+The opening arcs run back to back and take the first few months of 2020 **(T)**.
 
 ### 8.2.2 Milestones
 
@@ -320,7 +322,7 @@ Runs alongside Arc 2.
 
 **Outcomes.** Strong: she becomes the voice of the post-crash era. Mixed: she survives in office. Poor: her movement turns on her.
 
-## 8.7 John Oligarch: "Bootstraps"
+## 8.7 John Techno: "Bootstraps" (the player's line)
 
 **Who he is.** Calgary. A 21-year-old oil man with the best stats of any character in the game, bar none (7.3.1). He is in the PMC, one bad month from falling into the Permanent Underclass. Gulf oil is steadier and cheaper in this world (7.2.0), so Alberta's oil sands are squeezed.
 

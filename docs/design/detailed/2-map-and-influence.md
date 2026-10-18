@@ -217,7 +217,7 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Bay Area | United States (California) | L | 7.7 | F2 I1 P1 R5 S1 T4 | Venture capital, software, AI labs, chip design | Transpacific sea and fiber to Tokyo, Taiwan, Shanghai; air freight hub for chips |
 | Los Angeles-Long Beach | United States (California) | XL | 13 | F2 I4 P3 R6 S2 T1 | Largest US container port, media and entertainment, aerospace, defense | Transpacific lanes to Shenzhen, Shanghai, Busan; rail land bridge to Chicago and New York |
 | Phoenix | United States (Arizona) | M | 5 | F1 I2 R4 S1 T2 | New chip fabs, data centers, water-stressed | Rail and road to Los Angeles and Houston; air |
-| Calgary | Canada (Alberta) | M | 1.6 | F2 I2 R3 S1 X2 | Oil sands, oil company headquarters, pipelines, ranching | Pipelines to Houston and the Pacific coast; rail to Toronto and Chicago. Added for the starting character John Oligarch ([7-starting-world.md](7-starting-world.md) 7.8) |
+| Calgary | Canada (Alberta) | M | 1.6 | F2 I2 R3 S1 X2 | Oil sands, oil company headquarters, pipelines, ranching | Pipelines to Houston and the Pacific coast; rail to Toronto and Chicago. Added for the starting character John Techno ([7-starting-world.md](7-starting-world.md) 7.8) |
 | Toronto | Canada (Ontario) | L | 6.5 | F3 I3 P1 R5 S1 T1 | Banking, mining finance, auto plants, AI research | Rail and road to New York and Chicago; St Lawrence Seaway |
 | Mexico City | Mexico (Valle de México and Bajío belt) | Mega | 22 | F2 I6 P1 R8 S5 T1 X1 | Vehicles and parts, nearshore electronics, consumer goods, telecom | Rail and road to Houston (US border crossings); Pacific port Manzanillo and Gulf port Veracruz (abstracted) |
 
@@ -295,7 +295,7 @@ Each hub starts with AI-owned business units in its specialty industries, so the
 | Antofagasta | Mining (copper and lithium) |
 | Houston | Oil, Gas, Chemicals |
 
-Unit sizes live in hub data (January 2022 values, [7-starting-world.md](7-starting-world.md)) and are tuned so each industry's world supply roughly matches its demand at the start ([10-industry-economy.md](10-industry-economy.md) 10.0.3).
+Unit sizes live in hub data (January 2020 values, [7-starting-world.md](7-starting-world.md)) and are tuned so each industry's world supply roughly matches its demand at the start ([10-industry-economy.md](10-industry-economy.md) 10.0.3).
 
 ### 2.3.5 Location perks (Logan, 2026-10-17)
 
@@ -581,6 +581,8 @@ Final share                         13.9%  (Presence)
 
 The economy is industries, business units and corporations, Wall Street Raider style: see [10-industry-economy.md](10-industry-economy.md) 10.0. The old goods (2.6), production methods (2.7), hub prices (2.9), supply contracts (2.10), disruptions (2.11), tech tree (2.12), financial statements (2.13) and competition (2.15) sections are gone; population stays in 2.8 and the influence worked examples in 2.14.
 
+**Climate, pollution and infrastructure (Logan, batch 75).** These are not systems. Infrastructure is not an asset class, and climate shows up only as events (storms, heat waves, floods) that hit hubs and business units ([13-events.md](13-events.md)).
+
 ---
 
 ## 2.8 Population and labor
@@ -615,7 +617,7 @@ Slop rules:
 | 0.8 to 1.2 | Stable: Underclass unrest held at its floor |
 | Above 1.2 | Surplus: for every 0.1 above 1.2, education quality -1%, health -1% and birth rate -1% per year in the hub |
 
-**Debt spiral (A).** A PMC member whose savings go negative for 6 months **(T)** drops into the Permanent Underclass. Climbing back needs 12 months **(T)** of positive savings plus a PMC job. Named characters can fall the same way (John Oligarch starts close to it; Samir Haddad starts in it).
+**Debt spiral (A).** A PMC member whose savings go negative for 6 months **(T)** drops into the Permanent Underclass. Climbing back needs 12 months **(T)** of positive savings plus a PMC job. Named characters can fall the same way (John Techno starts close to it; Samir Haddad starts in it).
 
 **Glitterati fields (A).** Each Glitterati character rates 1 to 20 in one or two fields (Management, Media, Sport, Entertainment, Fashion, Law, Medicine). Affiliation (an executive post, an endorsement, a board seat) gives the organization a bonus of 1% per rating point in matching work **(T)**. Glitterati get a -5 penalty to Techno-Capital allocation checks **(T)**.
 

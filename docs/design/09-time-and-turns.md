@@ -34,4 +34,4 @@ Heavy calculations are offloaded to longer intervals:
 
 ## 9.4 Length of a game (Logan, 2026-10-17)
 
-The game is an **endless sandbox**: it starts in January 2022 and runs as long as the dynasty has a successor. The optional end date set at game start (1.11.0) is off by default.
+The game is an **endless sandbox**: it starts in January 2020 and runs as long as the dynasty has a successor. The optional end date set at game start (1.11.0) is off by default.

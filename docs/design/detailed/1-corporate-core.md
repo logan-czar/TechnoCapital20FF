@@ -18,7 +18,7 @@ The game has **named characters** of two kinds:
 | **Full characters** | Live in and interact with the game world. They can run a company, work a regular job, help out operations, run for political office, and so on. |
 
 - **Number of full characters** is set at game start, **200 by default**.
-- Full characters are spread across backgrounds, strata and locations. They include the starting characters the player did not pick, some of the rivals created in the **rival rotation**, and extra characters generated at random from templates with high variance.
+- Full characters are spread across backgrounds, strata and locations. They include the 14 rival starting characters (7-starting-world 7.3.4), some of the rivals created in the **rival rotation**, and extra characters generated at random from templates with high variance.
 - **Character resources**: assets, clout, income, prestige and vril. Together with Image they shape the character's **stratum** ([2-map-and-influence.md](2-map-and-influence.md) 2.8.0).
 
 | Resource | What it is (Logan) |

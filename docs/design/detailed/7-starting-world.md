@@ -1,6 +1,6 @@
 # 7. Starting world: detailed design
 
-_Status: draft v0.6 (2026-10-18), consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the 15 starting characters, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v0.7 (2026-10-18). Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 7.10.
 
@@ -11,9 +11,9 @@ _Status: draft v0.6 (2026-10-18), consistency pass, batch 74. v0.5 (2026-10-17):
 | Topic | Decision |
 |---|---|
 | Game type | A **4X game**. There are **no stages**. Play is shaped by **scenarios**. |
-| Scenarios | One scenario, starting in **January 2022**. More scenarios can come later. |
-| Player start | Pick one of **15 premade starting characters** in three groups (7.3). No custom character. |
-| Starting characters | They vary in range and background. Some start with massive wealth but a secret or burden they will soon have to bear. Some are well connected but not very wealthy. Some are average people with really good stats. |
+| Scenarios | One scenario, in the alternate history, starting in **January 2020** (Logan, batch 75). More scenarios can come later. |
+| Player start | **One starting character: John Techno** (Logan, batch 75), who replaces John Oligarch (7.3). No character pick and no custom character. |
+| Rival starting characters | **All the other premade characters are rivals** (Logan, batch 75): the 14 in 7.3.1 to 7.3.3. They vary in range and background: some start with massive wealth and a burden, some are well connected but not wealthy, some are average people with really good stats. |
 | Full characters | The number of full characters is set at game start, **200 by default** ([1-corporate-core.md](1-corporate-core.md) 1.1.0). |
 | Rival field | 30 or more dynasties in the world, all fully original. A mix of old money, new tech money, state-linked families and criminal money. |
 | Dynasty places | Each dynasty has an **Origin city** and a **Center of Power**. Members can live anywhere. |
@@ -32,30 +32,30 @@ _Status: draft v0.6 (2026-10-18), consistency pass, batch 74. v0.5 (2026-10-17):
 
 Four things **never happened** in the game world: the **dot-com crash** (2000 to 2002), **9/11** (2001), the **2008 financial crisis**, and **COVID** (2020 to 2022). Everything else is the same, except that the **US won its wars in the Middle East much more decisively**, and is now in a much better economic position, both financially and with more security in its resources.
 
-What follows from that, in January 2022 **(A)**:
+What follows from that, in January 2020 **(A)**:
 
-| Area | Real 2022 | Game world 2022 |
+| Area | Real 2020 | Game world 2020 |
 |---|---|---|
 | Tech | Scarred by the 2000 crash; big tech grew from the survivors | No crash ever: tech giants are older, bigger and richer, investors have never seen a tech bust, and valuations and VC funding run hotter. The 2030 AI crash is the first great tech crash, so it hits harder (8.4) |
 | Banking | Bailouts, stricter rules after 2008, a decade of near-zero rates | No crisis, no bailouts and no post-crisis rules: banks are bigger and more leveraged, US regulator strictness is 1 point lower (3.10), and households carry more debt. Rates never went to zero: the US policy rate is about **3%** at start **(T)** |
 | Housing | Recovered from the 2008 crash | Never crashed: a long boom, so many hubs start in the Peak phase of the property cycle (2.16.5) |
-| Pandemic | COVID restrictions fading | **No pandemic**: no vaccine mandates, no stimulus wave, no 2021 inflation spike, no remote-work shift. Offices are full (commercial pools start at 95% occupancy) |
+| Pandemic | COVID lockdowns begin | **No pandemic**: no vaccine mandates, no stimulus wave, no 2021 inflation spike, no remote-work shift. Offices are full (commercial pools start at 95% occupancy) |
 | Supply chains | COVID chip shortage | No pandemic chip shortage; chips are tight only from normal demand |
 | Security | Post-9/11 security state; long wars | No 9/11, so no post-9/11 security state at home. The Iraq war still happened: **the vice president and the CIA made up claims that Iraq had nukes** (Logan), and the US invaded anyway. It won quickly and cleanly, and Iraq became a stable US ally |
 | US position | High debt; energy imports falling with shale | US federal debt about 60% of GDP instead of 120% **(T)**; a stronger dollar; Iraq is a stable US-aligned oil exporter and Gulf supply is more secure, so Hormuz risk starts at Calm and US energy security is high |
 | Gulf and oil | Volatile | Oil supply is steadier and cheaper (oil price index starts at 90 **(T)**); cartel cuts ([10-industry-economy.md](10-industry-economy.md) 10.6) are weaker while US influence in the Gulf holds |
 
-**Russia and Ukraine (Logan).** Russia invaded Ukraine much earlier, in **2005**, and the war never ended. By 2022 it is a long **drone-warfare stalemate** along a fortified front. Consequences **(A)**: Russia has been under heavy sanctions since 2005, Europe weaned itself off Russian gas long ago (pipeline gas to Europe is already cut at start), Russia sells oil at a discount through grey fleets, both sides and their backers buy drones in huge numbers (Robotics and drones and Aerospace and defense demand is higher, 10.3), and the Black Sea is at Attacks risk (2.4.2).
+**Russia and Ukraine (Logan).** Russia invaded Ukraine much earlier, in **2005**, and the war never ended. By 2020 it is a long **drone-warfare stalemate** along a fortified front. Consequences **(A)**: Russia has been under heavy sanctions since 2005, Europe weaned itself off Russian gas long ago (pipeline gas to Europe is already cut at start), Russia sells oil at a discount through grey fleets, both sides and their backers buy drones in huge numbers (Robotics and drones and Aerospace and defense demand is higher, 10.3), and the Black Sea is at Attacks risk (2.4.2).
 
 **Africa (Logan, batch 36).** Africa is a hell hole in this game world: weak states, coups, militias, piracy in the Gulf of Guinea and heavy capital flight **(A)**. African countries start with low stability and high risk, and most capital leaves the continent. **Lagos** is the exception that can rise: if it is developed (Tolu Balogun's line, [8-quest-lines.md](8-quest-lines.md) 8.11, or any player investing there), it becomes the clear-cut hub of Africa and draws the continent's money, talent and flight capital.
 
 The chip export controls and the AI boom still happen on schedule (7.7).
 
-## 7.2 The world in January 2022
+## 7.2 The world in January 2020
 
-The detailed files were written with present-day starting values. At a January 2022 start, these differ:
+The detailed files were written with present-day starting values. At a January 2020 start, these differ:
 
-| Item | At start (January 2022) | Arrives later through the timeline (7.7) |
+| Item | At start (January 2020) | Arrives later through the timeline (7.7) |
 |---|---|---|
 | Chip export controls | Entity list bans on a few Chinese firms only; lithography system bans on EUV to China already in force | Broad US controls on advanced chips and AI server nodes (October 2022), widened yearly; Netherlands and Japan join (2023) |
 | Russia | At war in Ukraine since 2005, a drone stalemate; heavy sanctions since 2005 (7.2.0) | Drone escalations and ceasefire events, rolled through the timeline |
@@ -63,30 +63,35 @@ The detailed files were written with present-day starting values. At a January 2
 | Models | No commercial chat models | The tipped lab's chatbot launch (November 2022) starts the boom |
 | Interest rates | About 3% in the US: rates never went to zero (7.2.0) | Small moves only; no 2022 energy shock |
 | Pandemic | None: COVID never happened (7.2.0) | n/a |
-| Ideology mix | Starting shares in [5-ideology.md](5-ideology.md) 5.4 are for 2022 | Accelerationist and Neo-Luddite shares grow with the boom |
+| Ideology mix | Starting shares in [5-ideology.md](5-ideology.md) 5.4 are for 2020 | Accelerationist and Neo-Luddite shares grow with the boom |
 
-Hub populations and GDP in [2-map-and-influence.md](2-map-and-influence.md) stand as January 2022 values **(A)**.
+Hub populations and GDP in [2-map-and-influence.md](2-map-and-influence.md) stand as January 2020 values **(A)**.
 
-## 7.3 Starting characters
+## 7.3 The starting character and the rival starting characters
 
-Fifteen premade characters in three groups of five. Names marked † were filled in by Claude and are open to edit; the rest are Logan's.
+**The player plays John Techno** (Logan, batch 75), in Calgary (7.3.0). The other fourteen premade characters, in three regional groups, start as **rival dynasty heads** run by the AI (7.3.4). Names marked † were filled in by Claude and are open to edit; the rest are Logan's.
 
-**Profiles.** Each character has one of three starting profiles:
+**Profiles.** Each premade character has one of three starting profiles:
 - **Rich, with a burden**: massive wealth and a secret or burden that soon comes due.
 - **Connected**: strong contacts and influence, not much money.
 - **Talented**: average circumstances and really good stats.
 
-### 7.3.1 Group one: North and South America
+### 7.3.0 John Techno (the player)
+
+| Character | Location | Profile | Premise | Signature play |
+|---|---|---|---|---|
+| **John Techno** | Calgary | Talented | Replaces John Oligarch and keeps his premise **(A)**: a 21-year-old oil man with the best stats of any character in the game, bar none. A member of the PMC (professional-managerial class) close to falling into the **Permanent Underclass** | Climb from nothing on stats alone; quest line "Bootstraps" ([8-quest-lines.md](8-quest-lines.md) 8.7) |
+
+### 7.3.1 Rivals, group one: North and South America
 
 | # | Character | Location | Profile | Premise | Signature play |
 |---|---|---|---|---|---|
 | 1 | **Antone Provolone** | New York | Connected | A finance bro by day and a wise guy by night. Well connected either way: he always knows a guy who knows a guy, and he has worked his way into DC | Finance, crime and politics through his contact network |
 | 2 | **Ricky Feng** | San Francisco (Bay Area) | Rich, with a burden | A hacker who barely got out of a hack gone bad alive. He holds a very large, diverse crypto wallet he can no longer get into. Starts with a very large amount of compute in Asia and a large bot farm SaaS in the Philippines and Thailand | Default quest line for now; the wallet quest is deferred (Logan) |
 | 3 | **Dot Percy** | Los Angeles | Rich, with a burden | As Dot worked up the courage to ask for a divorce, she got a call: her husband was dead. The nation mourns the premature end of Hollywood's greatest power couple, and Dot is left with five talentless children | A PR campaign: manage a large dynasty and every child's career so they do not start sabotaging each other. One random child per playthrough is actually very talented |
-| 4 | **John Oligarch** | Calgary | Talented | A 21-year-old oil man with the best stats of any character in the game, bar none. A member of the PMC (professional-managerial class) close to falling into the **Permanent Underclass** | Climb from nothing on stats alone |
 | 5 | **Pablo Segundo** | Medellín | Talented | Narco fascism and the rise of Pablo Segundo | Build a narco-populist movement into political power |
 
-### 7.3.2 Group two: Europe, Africa and the Middle East
+### 7.3.2 Rivals, group two: Europe, Africa and the Middle East
 
 | # | Character | Location | Profile | Premise | Signature play |
 |---|---|---|---|---|---|
@@ -96,7 +101,7 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 | 9 | **Margaux Valcourt** † | Paris | Rich | A French redheaded woman who inherits a lot of money from her uncle. The Liberal, open-ended playthrough: she can become anything | Open sandbox |
 | 10 | **Viktor Sokolov** † | Moscow | Connected | A Putin-style spy dynasty: an intelligence officer building a family network inside the state **(A)** | Spycraft, state capture, sanctions |
 
-### 7.3.3 Group three: Asia and Oceania
+### 7.3.3 Rivals, group three: Asia and Oceania
 
 | # | Character | Location | Profile | Premise | Signature play |
 |---|---|---|---|---|---|
@@ -106,17 +111,17 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 | 14 | **Ananya Hegde** † | Bengaluru | Talented **(A)** | A sleeper overpowered investor | Win India good chip deals so it can build lots of data centers early and run them at lower cost: scale the AI industries as an investor |
 | 15 | **Yuna Sakamoto** † | Tokyo-Yokohama, Japan | Connected | A young Japanese influencer with a massive following who now has to pivot her appeal to an incredibly politicized and extremist Japan | Choose a politics and drive Japan and Korea |
 
-### 7.3.4 Unpicked characters
+### 7.3.4 The rival starting characters
 
-Depending on who the player picks, some of the other 14 starting characters are **active rivals** and some are **passive** (Logan). Proposed rule **(A)**: each starting character names two or three natural rivals (for example Antone Provolone and Pablo Segundo over the drug and money trade, Pieter Von Floop and Fang Xiaoyu over lithography access, Qiao Lin and Viktor Sokolov over sanctions-era deals). Natural rivals of the player's character are run as active AI rivals; the rest stay passive: they live, age and keep their holdings, but do not pursue their signature play unless something pulls them in.
+**All fourteen are active rivals** (Logan, batch 75). Each heads a dynasty run by the AI and pursues the signature play in its row: their premises, burdens and families are live from the start, and their quest lines (8) run as **rival arcs** that the director plays out in the background **(A)**. The player meets them through the news, intel, deals and conflict. Natural rivalries still matter: each names two or three others it clashes with first (for example Antone Provolone and Pablo Segundo over the drug and money trade, Pieter Von Floop and Fang Xiaoyu over lithography access, Qiao Lin and Viktor Sokolov over sanctions-era deals) **(A)**.
 
-**Starting position (T).** Wealth ranges widely by profile: Rich characters start with $1B to $10B in trusts and holdings (Ricky Feng's is mostly locked in the wallet), Connected characters with $1M to $50M, Talented characters with under $1M. Every character starts with a family suited to their premise, for example Dot Percy's five children and Pieter Von Floop's ailing father.
+**Starting position (T).** Wealth ranges widely by profile: Rich characters start with $1B to $10B in trusts and holdings (Ricky Feng's is mostly locked in the wallet), Connected characters with $1M to $50M, Talented characters with under $1M. Every premade character starts with a family suited to their premise, for example Dot Percy's five children and Pieter Von Floop's ailing father.
 
 ## 7.4 Rival dynasties
 
 | Item | Rule |
 |---|---|
-| Total at start | 32 dynasties **(T)**: the 15 starting characters' families plus 17 run only by the AI. Depending on who the player picks, some of the other starting characters are active rivals and some are passive (7.3.4). |
+| Total at start | 32 dynasties **(T)**: John Techno's family, the 14 rival starting characters' families (7.3.4) and 17 more run only by the AI. |
 | Money mix | About 30% old money, 30% new tech money, 25% state-linked, 15% criminal **(T)** |
 | Placement | At least one dynasty in every hub with Size L or larger; Mega hubs get two or three **(T)** |
 | Originality | Fully original families. No parodies of real families or founders. |
@@ -155,15 +160,18 @@ The exact steps and rolls are to be written in the events and quests design.
 - A message arrives with the **tip**: it names the company that will make the first LLM breakthrough and explains how the AI system will work before the boom. The tip is always correct.
 - **The tipped lab is different each game.** At game start one lab is drawn from a pool of five fictional AI labs (for example a Bay Area nonprofit lab, a big tech research division, a London lab, a Beijing lab and a Toronto lab) **(A)**. The drawn lab makes the November 2022 breakthrough unless players change history.
 
-## 7.7 Timeline 2022 to 2030
+## 7.7 Timeline 2020 to 2030
 
 Real events happen on schedule by default. Each one is an event or quest that players can change. From 2025 onward the events grow more fantastical. Company names are fictional.
 
 | Date | Event | Game effect |
 |---|---|---|
-| Jan 2022 | Scenario start (no pandemic, 7.2.0) | The opening quest "Papers" |
-| 2022 onward | The Ukraine drone war grinds on (since 2005) | Drone demand; Black Sea risk; ceasefire or escalation events |
-| 2022 to 2023 | Rates steady near 3% | VC funding stays hot |
+| Jan 2020 | Scenario start (no pandemic, 7.2.0) | The opening quest "Papers" |
+| 2020 to 2021 | No pandemic: offices full, rates near 3%, a long boom **(A)** | VC funding hot; property at its Peak (2.16.5) |
+| Nov 2020 | US elections **(A)** | An election event ([4-politics.md](4-politics.md)) |
+| 2021 | A crypto and SPAC mania **(A)** | Random boom coins in the gambling tab ([9-gambling.md](9-gambling.md)); IPO frenzy |
+| 2020 onward | The Ukraine drone war grinds on (since 2005) | Drone demand; Black Sea risk; ceasefire or escalation events |
+| 2022 to 2023 | Rates still steady near 3% | VC funding stays hot |
 | Oct 2022 | Broad US chip export controls | Export controls in [6-technocapital.md](6-technocapital.md) 6.9 switch on |
 | Nov 2022 | The tipped lab launches its chatbot | The AI boom starts; compute demand surges |
 | 2023 | The GPU gold rush | Compute spot prices spike |
@@ -195,7 +203,7 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 
 ## 7.10 Assumptions and open items
 
-2. Hub and economy values in file 2 stand as January 2022 values.
+2. Hub and economy values in file 2 stand as January 2020 values.
 3. Medellín, Calgary and Sydney hub data in 7.8, Kroll's colony as a special site, and Colombia as a major country.
 4. 32 dynasties at start, with the money mix and placement in 7.4.
 5. Starting wealth ranges by profile in 7.3.
@@ -204,5 +212,7 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 12. The alternate-history consequences in 7.2.0, including the effects of the Ukraine war since 2005.
 13. "Papers" as the replacement opening quest (7.6).
 8. Names marked † and profiles marked **(A)** in 7.3 (Tolu Balogun, Fang Xiaoyu and Qiao Lin confirmed in batch 35).
-9. The natural-rivals rule for unpicked characters (7.3.4).
+9. Rival starting characters running their quest lines as background rival arcs, and the natural-rivals rule (7.3.4).
+14. John Techno keeps John Oligarch's premise, stats and quest line (7.3.0).
+15. The 2020 to 2021 timeline rows (7.7).
 11. The pool of five candidate labs for the tip.

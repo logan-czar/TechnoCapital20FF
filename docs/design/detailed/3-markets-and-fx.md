@@ -939,6 +939,8 @@ Example: US 10-year with r_0 = 4.0%, r_n = 3.0%, debt 120% of GDP, rating AA+. r
 
 ## 3.7 Commodities
 
+> **Placeholder (Logan, batch 75).** Commodity trading is deferred (3.0). This section keeps a light placeholder model, driven by each industry's supply ratio, until commodities are designed.
+
 ### 3.7.1 What trades
 
 Commodity trading comes later (3.0); this section is its design for then. Raw materials, energy and a few digital indices trade on five fictional commodity exchanges. Electricity is priced per country grid ([10-industry-economy.md](10-industry-economy.md) 10.6) and does not trade globally. Starting prices are loosely mid-2020s and all values are [T].

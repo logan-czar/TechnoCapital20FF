@@ -166,7 +166,7 @@ Each **industry** has one world market whose yearly demand grows on its trend an
 
 **The list (Logan, batch 50): 45 industries in a flat list, with no supply chains.** Every industry sells into its own world market (10.0.3). The semiconductor industries (Lithography machines, Foundry, GPUs, CPUs) are ordinary industries with no chain linking them. **Media and entertainment** is not an industry but its own system ([16-media.md](16-media.md)). Sizes and every other number are starting values **(T)**. Each industry has its own **capital per $1 of capacity**: the cost of new business assets for each dollar of yearly revenue they can make at normal productivity (Logan, batch 51).
 
-| Industry | Sector | World size 2022 ($/yr) **(T)** | Trend growth **(T)** | Cyclicality β **(T)** | Rate sensitivity **(T)** | Margin at full use **(T)** | Fixed cost share f **(T)** | Capital per $1 of capacity **(T)** | Main cost drivers | Slop per $1M **(T)** |
+| Industry | Sector | World size 2020 ($/yr) **(T)** | Trend growth **(T)** | Cyclicality β **(T)** | Rate sensitivity **(T)** | Margin at full use **(T)** | Fixed cost share f **(T)** | Capital per $1 of capacity **(T)** | Main cost drivers | Slop per $1M **(T)** |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Lithography machines | Tech | $22B | Boom-driven (10.6) | 1.5 | Low | 35% | 0.45 | 1.2 | Electricity | 0 |
 | Foundry | Tech | $130B | Boom-driven (10.6) | 1.6 | Medium | 30% | 0.55 | 2.5 | Electricity | 0.1 |

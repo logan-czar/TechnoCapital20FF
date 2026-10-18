@@ -14,7 +14,7 @@ _Status: draft v0.2 (2026-10-18). Batch 70: ransomware, hirable hacker character
 | Two outcomes | A hack either **steals data** or **creates a backdoor**. Stealing **returns more up front**; a backdoor **makes future hacks easier** and gives **passive data** as a reward. |
 | Targets | **Governments, companies or people**, but **only through Techno-Capital they own**: a server, a personal server, a **drone**, any kind of TC from drones to company servers. **You cannot hack a person themselves.** |
 | Cashing in | **Different types of data can be cashed in on the black market** for personal gain. |
-| Defense | Each breach rolls the attacker's **Tech** against the target's **defense**: software quality, cyber security spending and the Spymaster. |
+| Defense | Each breach rolls the attacker's **Tech** against the target's **defense**: software quality, cyber security spending and the Spymaster, who **administers security for each institution**; controlling more institutions gives more bonuses (batch 75, 17.5). |
 | Attribution | Breaches are **anonymous at first**; the victim learns who did it only through **intel or an investigation**. **State-backed hackers** exist. |
 | Ransomware | **Yes** (batch 70): a hack can lock a target's systems until they pay (17.3.1). |
 | Hacker characters | **Tech-heavy characters can be hired**, like executives, into a company's security or offense team (batch 70; 17.2). |
@@ -77,6 +77,8 @@ Stolen data comes in **types** (14.2.2, 15.4). Each type can be **cashed in on t
 Target defense = **software quality** of the target's systems (14.2.1: base security × Q) + **cyber security spending** + the **Spymaster's** Intrigue and the security team's Tech **(A)**:
 
 `Defense = 5 + software quality ÷ 10 + cyber spend tier (0 to 10) + Spymaster bonus (0 to 5)` **(T)**
+
+- **The Spymaster administers it (Logan, batch 75).** Each institution's cyber defense is run by its Spymaster (Head of Security seat, or the household's fixer). Controlling **more institutions** adds the **network bonus** in [4-politics.md](4-politics.md) 4.23.1: +1 defense per extra controlled institution with its own Spymaster, up to +5 **(T)**, and a breach detected at one warns the others.
 
 - **Cyber spend tiers (A):** a company sets cyber security spending as a share of revenue (0% to 3%); a character sets it in their personal budget (1.10.6). Higher tiers also raise the chance to detect a hack in progress.
 - **Air-gapped** software (14.6 tag) **cannot be hacked** at all. There is no insider route (Logan, batch 70: no insider bonus); agents (1.1.8.1) add normal scheme progress but no special breach bonus.

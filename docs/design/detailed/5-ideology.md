@@ -101,7 +101,7 @@ The Liberals are the only ideology with no Opposed entries on the table. Everyon
 
 Each profile lists who tends to hold it, what laws it wants (stance values as 4.4.3, law codes from 4.5), its attitude to dynasties and corporations, its stance on **human enhancement** (life extension, gene therapy and brain-computer links to AI), and what its radical wing does (5.7).
 
-**Corporate tolerance** (-2 to +2) is how a believer feels about big companies and the dynasties that own them. It shifts the dynasty's Favorability (5.9.1) and brand appeal (5.9.2).
+**Corporate tolerance** (-2 to +2) is how a believer feels about big companies and the dynasties that own them. It shifts the dynasty's Favorability (5.9.1) and companies' brand alignment (5.9.2).
 
 ### 5.3.1 Liberals (LB)
 
@@ -526,7 +526,7 @@ Every company has an **ideology alignment** per ideology (-1 to +1), built from 
 - **Conduct over the last 3 years**: automation layoffs (NL -0.1 per 1,000 jobs, CO -0.05, CH -0.05), foundation giving (EA +0.1 per 0.5% of revenue), carbon cuts (LB +0.1, NL +0.1), union contracts (CO +0.1, LB +0.1), branch office in a closed country (CH -0.1 at home), data scandals (SV -0.3, LB -0.2).
 - **Owner**: the controlling dynasty's declared family line adds +0.2 to that ideology and -0.2 to Opposed ones.
 
-**Appeal**: a company's sales to consumers in a country are multiplied by `1 + IdeoBrand`, where `IdeoBrand = 0.3 × Σ_s (segment share of demand) × Σ_i Ideo(s,i) × alignment(i)`, capped at ±15% **(T)**. A longevity brand sells better in Tel Aviv than in a Chud heartland, and an AI giant faces quiet resistance where Neo-Luddites are strong.
+**No sales appeal (Logan, batch 75).** Brand alignment does not multiply sales: each industry has one world market. Alignment only feeds boycotts (5.7) and the owner's Favorability (5.9.1).
 
 ### 5.9.3 Workforce
 
@@ -609,7 +609,6 @@ The ideology layer changes these existing rules. The changed sections now point 
 | 4-politics 4.11.7 | Stability gains a legitimacy term and a radical wing term (5.6.5) |
 | 4-politics 4.16.2 | Favorability gains a Corporate tolerance term (5.9.1) |
 | 4-politics 4.21.1, 4.27.3 | Judges and Ideologue dynasties use character ideology (5.8.3) |
-| 10-industry-economy 10.0.3 | Sales to a country's consumers gain the IdeoBrand factor (5.9.2) **(A)** |
 | 2-map-and-influence 2.8.6 | Strike chance scaled by workforce ideology (5.9.3) |
 | 1-corporate-core (characters) | Characters gain ideology and commitment (5.8) |
 
@@ -690,7 +689,7 @@ Most players will mix 1 and 2. A cynical player can do something else: quietly f
 15. **Revolutions** take the leading ideology of the coalition, which picks the government type and imposes laws at once.
 16. **Characters** have one ideology (or Apolitical) with three commitment levels, CK3-faith-like opinion, hidden ideology, a Persuade scheme and a dynasty family line.
 17. **Corporate tolerance** per ideology feeds dynasty Favorability; EA tolerance is set by the dynasty's giving; Landites are the most pro-dynasty ideology.
-18. **Brand alignment** per company per ideology changes product appeal by up to ±15% and drives boycotts.
+18. **Brand alignment** per company per ideology drives boycotts and Favorability; it does not change sales (batch 75).
 19. **G4 Political Pluralism** is a new Governance law; banning ideologies lowers their drift but raises conviction and radicalism.
 20. **Zeitgeist** is a new political endgame (renown 2,000).
 21. **Ideology never changes influence share**, which stays rooted in assets (Logan's rule).

@@ -2028,7 +2028,16 @@ Companies and the dynasty pay for their own security: guards, bodyguards, drones
 
 ### 4.23.1 Security spending
 
-Security is bought as staff and services, not as a business: there is no security industry ([10-industry-economy.md](10-industry-economy.md)). The Head of Security (1.8.2) manages it for a company; the dynasty's own security is a household cost.
+Security is bought as staff and services, not as a business: there is no security industry ([10-industry-economy.md](10-industry-economy.md)).
+
+**The Spymaster runs it (Logan, batch 75).** Security is administered by the **Spymaster of each institution you control** (1.1.8.2): the Head of Security seat of a company, or the personal fixer for the dynasty's household. The Spymaster's Intrigue scales the Strength of every unit they run (+2% per point above 10) and the cyber defense they run (17.5) **(T)**.
+
+**More institutions, more bonuses (Logan).** An institution here is anything the dynasty really controls (1.3.1): a company, a subsidiary or shell, a party or think tank (4.17), or an office held. Each extra controlled institution with its own Spymaster adds a **network bonus** to all of them **(T)**:
+- +5% Security Strength per extra institution, up to +25%;
+- +1 cyber defense (17.5) per extra institution, up to +5;
+- shared intel: a threat or hack one Spymaster detects warns the others.
+
+The bonus only counts institutions whose Spymaster is not the dynasty's Rival; a hooked or Friend Spymaster counts in full **(A)**.
 
 ### 4.23.2 Units and Security Strength
 
