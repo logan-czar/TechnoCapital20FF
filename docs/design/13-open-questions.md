@@ -140,6 +140,7 @@
 - Batch 109 (Logan, 2026-10-18): history of 2014. ISIS never forms; no 2014 oil crash (oil stays high; assumed Alberta rivals borrowed to expand, which sets up their 2021 debt); Ebola happens and is contained by 2016. 2015 drafted.
 - Batch 110 (Logan, 2026-10-18): history of 2015. No Charlie Hebdo (and no November Paris attacks); no Iran nuclear deal, Iran stays the holdout; real company names stay in 19-history as background and are swapped for fictional ones when the starting companies are designed. 2016 drafted.
 - Batch 111 (Logan, 2026-10-18): history of 2016. The West sends arms, money and drones to Ukraine but no troops; Ted Cruz is the Republican in the three-way race Obama wins; no 2016 Brexit vote: Brexit happens in the months after Greece's hidden debt is exposed. 2017 drafted.
+- Batch 112 (Logan, 2026-10-18): history of 2017. Greece's hidden debt is exposed in 2019 (Brexit vote follows within months); Obama's first year is spent prosecuting the Trump crime family's corruption and 2018 hunting the family overseas, with corporations helping and gaining tons of power in government; the transformer paper comes around 2020. 2018 drafted.
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm
