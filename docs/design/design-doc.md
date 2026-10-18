@@ -48,7 +48,7 @@ Exact rules, numbers and content for each layer of the game:
 | 11. Addiction (gambling, drugs, cyberware, doomscrolling, sex) | [detailed/11-addiction.md](detailed/11-addiction.md) |
 | 12. Setup, fair AI, dynasty score and saves | [detailed/12-setup-and-score.md](detailed/12-setup-and-score.md) |
 | 13. Events (frequency, the director, AI events, event decks) | [detailed/13-events.md](detailed/13-events.md) |
-| 14. Software (the software table, AI models as products; hacking later) | [detailed/14-software.md](detailed/14-software.md) |
+| 14. Software (the software table and software contracts; hacking later) | [detailed/14-software.md](detailed/14-software.md) |
 
 ## Vision
 

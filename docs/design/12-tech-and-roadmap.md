@@ -18,7 +18,7 @@ Anything marked **(A)** is an assumption Logan has not confirmed yet; the list i
 ## 12.2 Stack (A)
 
 - **Godot 4, GDScript** for the front end (Logan): scenes, UI, the map, asset loading, input and audio.
-- **Rust** for the engine (Logan), built as a **GDExtension** library with the godot-rust bindings (gdext), so Godot loads it like a native module and GDScript calls it like any other object **(A)**.
+- **Rust** for the engine (Logan), built as a **GDExtension** library with the godot-rust bindings (gdext), so Godot loads it like a native module and GDScript calls it like any other object (Logan, batch 43).
 - **The engine has no Godot types in its core**: a plain Rust crate for the simulation, plus a thin binding crate that exposes the API to Godot. The core runs headless for tests and tools.
 - **Tests** with `cargo test`, including replay tests for determinism.
 - Content as **JSON** in `data/`, validated against **JSON Schema** files when the engine loads it; a bad file names the field and the line.
@@ -86,7 +86,7 @@ Rebuilt around the current design; the build starts only when Logan says so.
 
 ## 12.6 Assumptions and open items
 
-1. GDExtension with godot-rust (gdext) as the bridge, and Godot 4 as the version (12.2).
+1. Godot 4 as the version (12.2). The GDExtension bridge is confirmed (batch 43).
 2. The engine thread, query views, the API shape and the command queue (12.3).
 3. Tier membership rules (12.3).
 4. The roadmap order and success criteria (12.4, 12.5).
