@@ -1,5 +1,7 @@
 # 10. Events and event chains
 
+> Detailed design (frequency, the director, AI events, option display and the event decks) is in [detailed/13-events.md](detailed/13-events.md) (batch 39).
+
 ## 10.1 Event engine
 
 Events are data-driven (JSON) cards:
