@@ -140,6 +140,8 @@ The player's character has **one ambition** at a time, picked by the player from
 
 Gained at 18 to 22, level 1 to 4 (level from childhood focus and a roll).
 
+**Choices (Logan, batch 62).** The parent (or guardian) picks a child's **focus at ages 6 and 12** (one of the six skills), and **picks the school at 18** from the list below. Schools **cost money** **(T)**: Ivy League MBA $400k, Quant PhD $250k, Law School $300k, Old Money Tutors $100k a year from age 6, Bootcamp Coder $20k, Party School $150k, Military $0 (it pays), Street-Taught free. A focus matching the school adds +1 level, up to 4 **(A)**.
+
 | Education | Focus skill | Bonus per level | Unlock |
 |---|---|---|---|
 | Ivy League MBA | Finance | +2 | Better VC pitch odds |
@@ -153,7 +155,13 @@ Gained at 18 to 22, level 1 to 4 (level from childhood focus and a roll).
 
 ### 1.1.4 Opinion
 
-Opinion = sum of active modifiers, clamped to -100 to 100. Most modifiers decay toward 0 by 1 point per week unless marked permanent.
+> **Simplified (Logan, batch 62): opinion is a tag, not a number.** Each character holds one of three attitudes toward each other character: **Friend**, **Neutral** or **Rival**. Special bonds (Nemesis, Lover, Mentor and Protégé, Partner) sit on top of the attitude (below).
+>
+> - **Changing the tag (A).** The modifiers in the table below are no longer added up. Each one is now a **push**: a push of 30 or more (positive or negative) moves the tag one step at once (Rival → Neutral → Friend, or back); smaller pushes of the same direction add up over a year and move it when they reach 30, then reset **(T)**. Family ties, same dynasty and Partner start the tag at Friend; Nemesis always means Rival.
+> - **Formulas that use opinion** (bloc acceptance 1.4, loyalty 1.7.3, tender thresholds 1.9.3, votes in politics and the rest) read the tag as a number: **Friend +50, Neutral 0, Rival -50, Nemesis -100** **(T)**. Any rule written as "opinion above X" means the tag that clears it.
+> - The UI shows the tag and the bond, never a number.
+
+The table below is kept as the list of pushes. (Old text: Opinion = sum of active modifiers, clamped to -100 to 100. Most modifiers decay toward 0 by 1 point per week unless marked permanent.
 
 | Modifier | Value |
 |---|---|
@@ -174,9 +182,9 @@ Opinion = sum of active modifiers, clamped to -100 to 100. Most modifiers decay 
 | Promoted / board seat | +20 |
 | Scheme discovered against them | -50 |
 
-#### Relationships (Logan, 2026-10-17)
+#### Relationships (Logan, 2026-10-17; batch 62)
 
-Characters have **both** an opinion number and **named relationships** (Logan). A named relationship adds its opinion modifier above, unlocks its own events, and changes what the two can ask of each other **(A)**:
+**Special bonds stay** (Logan, batch 62) and unlock their own actions: a mentor teaches a skill, a nemesis plots against you, a lover opens affair events. Friend and Rival are now the attitude tags above, so a character can hold any number of each; the limit of 3 friends and 3 rivals below is dropped. (Old text: characters have **both** an opinion number and **named relationships** (Logan).) A named relationship adds its opinion modifier above, unlocks its own events, and changes what the two can ask of each other **(A)**:
 
 | Relationship | How it forms **(T)** | Opinion | Events and effects |
 |---|---|---|---|
@@ -191,7 +199,7 @@ A character can hold any number of relationships, but only 3 friends, 3 rivals a
 
 #### Hooks (Logan, 2026-10-17)
 
-A **hook** is leverage over a character, as in Crusader Kings.
+A **hook** is leverage over a character, as in Crusader Kings. **Both kinds stay** (Logan, batch 62).
 
 | Hook | Source **(T)** | Use | Lasts |
 |---|---|---|---|
@@ -770,14 +778,19 @@ Renown is earned monthly: +1 per $1B of trust value, +5 per company controlled a
 
 ### 1.11.5 Marriage
 
-Marriage is **light** (Logan, 2026-10-17): flavor, relationships and heirs. No dowries, merged trusts or prenup mechanics.
+> **Changed (Logan, batch 62): marriages are alliances between dynasties, with a prenup.** This replaces "light" marriage.
 
-- Proposal acceptance = 20% + opinion + wealth tier difference × 10% **(T)**.
+- **Alliance.** A marriage between two dynasties is an **alliance**: the two heads move to Friend, their dynasties count as allies in blocs (1.4: +20% acceptance) and in proxy fights, and they can call on each other in events **(A)**.
+- **Prenup.** Every marriage has a prenup set at the wedding, negotiated like a deal: what share of the family trust and personal assets the spouse can claim (0% to 50%), whether the spouse becomes a trust beneficiary, and what happens to children's shares **(A)**. No prenup means the home country's default (50/50 of what was gained during the marriage).
+- **Divorce splits by the prenup**, ends the alliance and turns the two heads Rival unless both agree it was amicable.
+- (Old text: Marriage is **light**, flavor, relationships and heirs, with no dowries, merged trusts or prenup mechanics.)
+
+- Proposal acceptance = 20% + opinion (as a number, 1.1.4) + wealth tier difference × 10%, + the value of the alliance and prenup terms offered **(T)**.
 - A spouse is a Partner relationship (1.1.4): +20 opinion, shared household events, and children who are eligible successors (1.11.0).
 - **Polygamy** (Logan): a character can have more than one spouse where the country's law allows it **(A)**: allowed in some countries (for example the UAE, Nigeria in some states, Saudi Arabia), elsewhere only through private ceremonies with no legal standing.
 - **Polyamory** (Logan): characters can have more than one open partner at once. Open partners are Partner relationships, not secret affairs, so they are not hooks. Characters with the Zealot trait and a conservative ideology lose opinion of polyamorous characters; Hedonist and Gregarious characters gain it **(A)**.
 - Children of any spouse or partner are eligible successors.
-- Divorce or a break-up: 4 hours and an event; spouses split personal assets acquired during the marriage 50/50 unless a will or trust rule says otherwise **(T)**.
+- Divorce or a break-up: 4 hours and an event; spouses split assets **by the prenup** (Logan, batch 62), or 50/50 of what was gained during the marriage without one **(T)**.
 
 ## 1.12 Events for this layer (starting set)
 
