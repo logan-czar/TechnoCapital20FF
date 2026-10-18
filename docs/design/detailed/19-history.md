@@ -1,6 +1,6 @@
 # 19. History: the world from the 1990s to 2020 (detailed design)
 
-_Status: draft v0.7 (2026-10-18; 2000 to 2005 ruled in batches 94 to 99, 2006 drafted). Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
+_Status: draft v0.8 (2026-10-18; 2000 to 2006 ruled in batches 94 to 100, 2007 drafted). Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
 
 **How to read this file.** Everything below is **real history**, as a base. Rows Logan has confirmed or changed are marked **(Logan)**; everything else is a draft for him to rule on. Where a real event clashes with the alternate history already decided (7.2.0), the clash is flagged.
 
@@ -169,22 +169,42 @@ Effects **(A)**: no Department of Homeland Security, no Patriot Act, and no Guan
 
 **Global (draft).** **North Korea tests its first nuclear bomb** (October). **Pluto is demoted** to a dwarf planet (August). Tech: **Amazon Web Services** launches S3 and EC2, the start of the cloud (March and August); **Nvidia releases CUDA** (November), which will one day make its chips the engine of AI; **Twitter** launches; **Google buys YouTube**; **Facebook** opens to everyone; and the **Wii** and **PS3** launch (November). **(A)** Russia is thrown out of the **G8** and the St Petersburg summit is cancelled.
 
-> **Questions to rule on.** (1) **The US midterms.** In real life Democrats took both houses, mostly over the Iraq quagmire. a) ★ Republicans keep Congress, since there is no quagmire. b) Democrats win anyway. (2) **Mexico's drug war.** Calderón sends the army against the cartels in December, which leads to a decade of cartel war. a) ★ It happens as in real life. b) It never happens. (3) **The Mumbai train bombings** (July, 209 dead) were by regional groups, not al-Qaeda. a) ★ They still happen. b) They never happen.
+**Rulings (Logan, batch 100).** (1) **Republicans keep Congress** in the midterms, since there is no Iraq quagmire. (2) **Mexico's drug war happens** as in real life, from December. (3) **The Mumbai train bombings never happen.**
 
 | Region | Big events of 2006 (real, with game-world changes marked **(A)**) |
 |---|---|
-| **North America** | 1. **Stephen Harper's Conservatives** win Canada's election (January). 2. **Calderón** narrowly wins Mexico's presidency and launches the **drug war** (July and December) **(see question 2)**. 3. The **US midterms** (November) **(see question 1)**. |
+| **North America** | 1. **Stephen Harper's Conservatives** win Canada's election (January). 2. **Calderón** narrowly wins Mexico's presidency and launches the **drug war** (July and December, Logan). 3. **Republicans keep Congress** in the midterms (November, Logan). |
 | **Latin America** | 1. **Morales nationalizes** Bolivia's gas (May). 2. **Michelle Bachelet** becomes Chile's first woman president (January). 3. **Chávez** is re-elected easily (December), and **Rafael Correa** wins in Ecuador (November). |
 | **Europe** | 1. The **Danish cartoon crisis**: drawings of Muhammad set off riots across the Muslim world (January to February). 2. **Montenegro** votes for independence (May). 3. Ex-spy **Litvinenko is poisoned** with polonium in London (November). Also **(A)**: NATO garrisons settle into western Ukraine, and Europe's defense spending climbs. |
 | **Russia and the former USSR** | 1. Journalist **Anna Politkovskaya** is murdered in Moscow (October). 2. **(A)** The front in Ukraine hardens into trenches, and sanctions bite. 3. **Lukashenko** wins a rigged election in Belarus and crushes the protests (March). |
 | **Middle East and North Africa** | 1. **Hamas wins** the Palestinian election (January). 2. The **Israel-Hezbollah war** in Lebanon (July to August). 3. **Saddam is executed** after his trial (December). Also: the UN puts its first **sanctions on Iran** over its nuclear program (December). **(A)** The Samarra mosque bombing and Iraq's sectarian civil war **never happen**. |
 | **Sub-Saharan Africa** | 1. **Ethiopia invades Somalia** to oust the Islamic Courts (December). 2. The **Congo's first free elections** in 40 years, won by Joseph Kabila (July to October). 3. **Niger Delta militants** start kidnapping oil workers and attacking pipelines in Nigeria. Also: **Charles Taylor** is arrested and sent for trial (March). |
-| **South Asia** | 1. The **Mumbai train bombings** (July) **(see question 3)**. 2. **Nepal's king gives up power** after mass protests, and the Maoist war ends (April to November). 3. **Bush signs the nuclear deal** in Delhi (March). Also: Sri Lanka's civil war resumes. |
+| **South Asia** | 1. **(Logan) No Mumbai train bombings.** 2. **Nepal's king gives up power** after mass protests, and the Maoist war ends (April to November). 3. **Bush signs the nuclear deal** in Delhi (March). Also: Sri Lanka's civil war resumes. |
 | **East Asia** | 1. **North Korea's nuclear test** (October). 2. **Shinzō Abe** becomes Japan's prime minister (September). 3. China finishes the **Three Gorges Dam** (May) and opens the railway to Tibet (July). |
 | **Southeast Asia and Oceania** | 1. A **military coup** ousts Thaksin in Thailand (September). 2. A **coup in Fiji** (December). 3. **East Timor** falls into unrest and Australian troops return (May). Also: the **Yogyakarta earthquake** kills about 5,700 (May). |
 
-**Logan's ruling on 2006:** _pending._
+**Logan's ruling on 2006 (batch 100):** everything above happened, with the changes in the rulings box.
 
-## 19.9 2007 onward
+## 19.9 The year 2007 (draft)
 
-To be written year by year after 2006 is settled, up to the 2020 start.
+**Global (draft).** Apple launches the **iPhone** (January), the start of the smartphone age and of the phone the player lives on. **Netflix starts streaming** (January), Amazon's **Kindle** comes out (November), and Google announces **Android** (November). Pop culture: the last **Harry Potter** book (July), **Halo 3**, and Radiohead's pay-what-you-want *In Rainbows*. Al Gore and the UN climate panel share the **Nobel Peace Prize**.
+
+> **Questions to rule on.** (1) **Subprime.** In real life US mortgage lenders started failing in 2007, which became the 2008 crisis. The game world has **no 2008 crisis and housing never crashed** (7.2.0). a) ★ A few lenders fail, but banks and the Fed absorb it: house prices flatten for a year and then the boom goes on, and Britain's **Northern Rock** run and the credit crunch never happen. b) A small, US-only mortgage bust that hurts a few regions. (2) **Benazir Bhutto** was assassinated by Pakistani militants (December). a) ★ It still happens: the Pakistani Taliban are local, not al-Qaeda. b) It never happens. (3) **Russia's cyberattack on Estonia** (April to May), the first state cyberattack on a whole country. a) ★ It happens and becomes the model for state hacking (17-hacking). b) It never happens.
+
+| Region | Big events of 2007 (real, with game-world changes marked **(A)**) |
+|---|---|
+| **North America** | 1. The **iPhone** launches (January to June). 2. **Subprime** lenders stumble **(see question 1)**. 3. The **Virginia Tech shooting** kills 32 (April). Also: Mexico's drug war escalates, and the army takes over whole cities. **(A)** No Iraq "surge" is needed. |
+| **Latin America** | 1. **Chávez nationalizes** the last foreign-run oil fields and shuts down the opposition TV channel RCTV (May), then **loses his referendum** to rule indefinitely (December). 2. **Cristina Fernández de Kirchner** succeeds her husband in Argentina (October). 3. **Daniel Ortega** returns to power in Nicaragua (January). Also: an **earthquake in Peru** kills about 500 (August). |
+| **Europe** | 1. **Sarkozy** wins France (May), and **Gordon Brown** replaces Blair (June). 2. **Bulgaria and Romania** join the EU (January). 3. The **Lisbon Treaty** is signed (December). |
+| **Russia and the former USSR** | 1. **Russia's cyberattack on Estonia** over a Soviet war memorial (April to May) **(see question 3)**. 2. **Putin's Munich speech** attacks US power (February), and Putin names **Medvedev** as his successor (December). 3. **(A)** Russia sends drones and artillery into the Ukraine front, and the war of attrition settles in. |
+| **Middle East and North Africa** | 1. **Hamas seizes Gaza** from Fatah (June). 2. **Israel bombs Syria's secret reactor** (September). 3. The **Annapolis conference** restarts peace talks (November). Also **(A)**: Iraq's oil output passes its pre-war peak. |
+| **Sub-Saharan Africa** | 1. **Kenya's disputed election** sets off ethnic violence that kills about 1,200 (December to early 2008). 2. **Zimbabwe's hyperinflation** passes 10,000%. 3. **Umaru Yar'Adua** wins Nigeria's presidency in a flawed vote (April). |
+| **South Asia** | 1. **Benazir Bhutto is assassinated** (December) **(see question 2)**. 2. Pakistan's army storms the **Red Mosque** (July), and **Musharraf** declares emergency rule (November). 3. **Tata buys Corus**, the biggest Indian takeover abroad so far (January). |
+| **East Asia** | 1. The **second inter-Korean summit** (October). 2. China shoots down one of its own satellites in an **anti-satellite test** (January). 3. **Abe resigns** after a year (September). Also: China's stock market bubble peaks, and the **lead-paint toy recalls** hit Chinese exports. |
+| **Southeast Asia and Oceania** | 1. Burma's **Saffron Revolution**: monks march and the junta shoots them down (September). 2. **Kevin Rudd** wins Australia (November). 3. Thaksin's allies win Thailand's post-coup election (December). |
+
+**Logan's ruling on 2007:** _pending._
+
+## 19.10 2008 onward
+
+To be written year by year after 2007 is settled, up to the 2020 start.
