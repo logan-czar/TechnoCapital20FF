@@ -1,6 +1,6 @@
 # 14. Software: the software table, licences and making software (detailed design)
 
-_Status: draft v0.6 (2026-10-18). Batch 87: making software with desktops (14.8), licences by usage with a one-year capacity lock, no special contracts, no copying (14.4). v0.5, consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
+_Status: draft v0.7 (2026-10-18). Batch 88: one software unit per desktop per day, labor cost 0.2% to 4% of GDP per capita, quality tiers 90 to 10, and quality 0 means no bonus. Batch 87: making software with desktops (14.8), licences by usage with a one-year capacity lock, no special contracts, no copying (14.4). v0.5, consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 14.7.
 
@@ -40,7 +40,7 @@ Every column is Logan's (batches 42 and 43).
 ### 14.2.1 How quality, bloat and speed work together (A)
 
 - **AI software (Logan):** its quality is **capped by the quality of the models loaded** for its capabilities ([18-ai-models.md](18-ai-models.md) 18.5).
-- **Quality** runs from 0 to 100. Effective values are scaled by a quality factor `Q = 0.5 + quality / 100`, so a 50-quality product works at ×1.0 and a 100-quality one at ×1.5 **(T)**:
+- **Quality** runs from 0 to 100. **0 gives no bonuses whatsoever; 100 gives the full bonuses** (Logan, batch 88). Effective values are scaled by a quality factor `Q = 1 + quality / 200`, so a 0-quality product works at ×1.0 and a 100-quality one at ×1.5 **(T for the ×1.5 ceiling)**:
   - effective speed = base speed × Q
   - effective compute and database needs = base needs ÷ Q (better software is leaner)
   - security, once hacking exists, = base security × Q
@@ -113,18 +113,18 @@ Tags are exceptions to the normal rules. Starting examples:
 ## 14.8 Making software (Logan, batch 87)
 
 **Desktops design software.** Software is created by taking **desktop computers** (base compute, 15.2) and **setting them to design software**.
-- **One employee on one desktop makes software units.** Each desktop assigned to design takes **1 employee** and produces **software units** at a rate set by **developer productivity** (about 1 software unit per desktop per month at normal productivity **(T)**).
-- **Cost in software units.** Every piece of software has a **cost in software units** to create: a new product, and each update or feature **(A for updates and features)**. Bloat multiplies the cost of updates and features (14.2.1).
-- **Employment cost.** Labor normally costs money **per software unit**, set by the **GDP per capita of the country** where it is developed **(T: about 1% of that country's yearly GDP per capita per software unit)**.
-- **Location.** When developing software, the **location** can be chosen. It sets both the **employment cost** and the **software quality** the work starts from (Logan). Countries have a software quality tier **(A)**:
+- **One employee on one desktop makes software units.** Each desktop assigned to design takes **1 employee** and produces **software units** at a rate set by **developer productivity** (**1 software unit per desktop per day** at normal productivity, Logan, batch 88).
+- **Cost in software units.** Every piece of software has a **cost in software units** to create: a new product, and **each update or feature** (batch 88). Bloat multiplies the cost of updates and features (14.2.1).
+- **Employment cost.** Labor normally costs money **per software unit**, set by the **GDP per capita of the country** where it is developed: about **0.2% of yearly GDP per capita** per software unit in the **highest-income countries**, rising to about **4%** in the **lowest** (Logan, batch 88). In between it follows the tier **(T)**: High 0.2%, Medium-high 0.5%, Medium 1%, Medium-low 2%, Low 4%. So a unit costs about $130 in the US and about $40 in India.
+- **Location.** When developing software, the **location** can be chosen. It sets both the **employment cost** and the **software quality** the work starts from (Logan). Countries have a software quality tier (Logan, batch 88; countries confirmed):
 
-  | Tier | Starting quality **(T)** | Examples **(A)** |
+  | Tier | Starting quality | Countries |
   |---|---|---|
-  | High | 70 | United States, Israel |
-  | Medium-high | 60 | Western Europe, Japan, South Korea, Canada |
+  | High | 90 | United States, Israel |
+  | Medium-high | 70 | Western Europe, Japan, South Korea, Canada |
   | Medium | 50 | China, Eastern Europe |
-  | Medium-low | 40 | **India** (Logan), Southeast Asia, Latin America |
-  | Low | 30 | Most of Africa and the minor groups |
+  | Medium-low | 30 | **India** (Logan), Southeast Asia, Latin America |
+  | Low | 10 | Most of Africa and the minor groups |
 
   Updates raise quality from there (14.2.1).
 - **Volunteers.** A charity's developers are **volunteers**, so their labor is **free**; it is gated only by **how many desktops it has** and **developer productivity** (Logan).
