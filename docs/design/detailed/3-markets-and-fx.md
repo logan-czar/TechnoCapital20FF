@@ -75,7 +75,7 @@ Rules already decided by Logan (see [13-open-questions.md](../13-open-questions.
   - how the **market is expected to react**;
   - the expected effect on **investor confidence**;
   - a **company outlook**: anything affecting the company, such as industry booms, scandals and other debuffs, or financial trouble like repeated underperformance.
-- **Insider blackout.** From the recap screen until the 2nd, **the player and all other executives and board members cannot trade** the company's shares (Logan, batch 84: a hard lock, read as the company's own shares). Holders of more than 10% fall under the same blackout **(T)**.
+- **Insider blackout.** From the recap screen until the 2nd, **the player and all other executives and board members cannot trade** the company's shares (Logan, batches 84 and 85: an **absolute lock** on the **company's own shares**; it cannot be broken). Holders of more than 10% fall under the same blackout **(T)**.
 - **1 January is a world holiday.** Markets are closed, and holiday events fire (New Year galas, family dinners, resolutions). Orders placed that day **queue up** and fill at the 2 January 00:00 reopening.
 - **Flat liquidity.** In a 24/7 market, liquidity is **the same around the clock**; there is no thin night session. Only earnings days and news shocks change it.
 - **Earnings deck.** Earnings days have **their own event deck** ([13-events.md](13-events.md) 13.5).
