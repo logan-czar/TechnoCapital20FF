@@ -11,7 +11,7 @@ _Status: draft v0.1 (2026-10-17). From Logan's answers in the design Q&A (batch 
 | Topic | Decision |
 |---|---|
 | Scores | One addiction score per vice, with urges, withdrawal and relapse events. |
-| Vices | **Gambling, drugs, doomscrolling and sex** (cyberware scrapped, Logan batch 71; it was the fifth vice). AI addiction is "a whole different can of worms" and is swapped out for sex for now. |
+| Vices | **Gambling, drugs, doomscrolling and sex** (cyberware scrapped, Logan batch 71; it was the fifth vice). AI addiction is **scrapped** (Logan, batch 72). |
 | Benefits | Anything addictive has a benefit to using it: stat boosts from drugs, returns from gambling, buffs from cyberware, stress relief from doomscrolling. |
 | Hooks | A hidden addiction is a secret, so it can become a strong hook (1.1.4). |
 | Recovery | Rehab clinics, therapy and willpower checks, with a relapse chance for years. |
@@ -97,7 +97,7 @@ Vices are businesses (Logan). They use the industry model ([10-industry-economy.
 
 ## 11.8 Assumptions and open items
 
-1. AI addiction is set aside; sex replaces it for now. AI psychosis from cyberware humanity (1.1.10) stays.
+1. AI addiction is scrapped (Logan, batch 72); cyberware and AI psychosis are scrapped (batch 71).
 2. The drug list and boosts in 11.3.
 3. Score gains, stages and the willpower formula in 11.4.
 4. Recovery costs and relapse chances in 11.5.

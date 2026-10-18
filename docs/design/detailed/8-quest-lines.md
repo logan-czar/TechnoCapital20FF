@@ -200,35 +200,35 @@ Opens after Arc 1's second step; runs alongside Arc 2.
 
 **Outcomes.** Strong: Antone walks away richer and owed by everyone. Mixed: poorer but free. Poor: prison, or worse, and a nemesis for life.
 
-## 8.5 Samir Haddad: "Chrome"
+## 8.5 Samir Haddad: "Swarm"
 
-> **Needs a rework (Logan, batch 71): cyberware is scrapped**, and this line was built on implants, humanity and cyberpsychosis. It stays as a record until Samir's line is rewritten.
+> **Reworked (Logan, batch 72).** Cyberware is scrapped, so Samir's line now **focuses on buying drones for operations**. The old "Chrome" line is replaced. The title "Swarm" is an assumption **(A)**.
 
-**Who he is.** Dubai. A former elite soldier, now in the Permanent Underclass, slaving on a desert megaproject (7.3.2). A stranger recognized his implants and offered better ones, the first free, for a favor. The assassin playthrough: slowly become a cyborg.
+**Who he is.** Dubai. A former elite soldier who flew drones in the war, now in the Permanent Underclass, slaving on a desert megaproject (7.3.2). A stranger, a fixer, offers him a battered survey drone on credit, for a favor. The drone playthrough: grow from one drone to a fleet that runs operations across the Gulf.
 
-**What the line teaches.** Cyberware, humanity and AI psychosis, schemes, hooks, the rival rotation from the inside, and climbing out of the Underclass.
+**What the line teaches.** Drones as Techno-Capital (6.2.3), fleet control compute (15), buying and leasing TC, operations contracts, schemes and hooks, drone hacking (17), the rival rotation from the inside, and climbing out of the Underclass.
 
-**Starting position (A).** Under $10,000, old military implants (reflex boosters, worn), humanity 85, health 80. Traits: Brave, Paranoid, Ascetic. Ambition: Get rich. The stranger is a fixer for a rival rotation roster.
+**Starting position (A).** Under $10,000, one worn commercial drone on credit from the fixer (a weak hook the fixer holds), health 80, Tech 12, Operations 11, Hustle 12. Traits: Brave, Paranoid, Ascetic. Ambition: Get rich.
 
-### Arc 1: The Free One
-
-| Step | Goal | Teaches |
-|---|---|---|
-| 1 | Accept the first implant (lie-reader optics) and do the stranger's favor: watch a meeting and report | Cyberware (1.1.10); abilities |
-| 2 | The favor was to spot a target. Decide whether to go further | Hooks: the fixer now holds a weak hook on Samir |
-| 3 | First real job: a one-roll scheme against a mid-level executive | Schemes (1.1.8) |
-
-**Outcomes.** Strong: paid well, the fixer trusts him; +2 Intrigue. Mixed: +1 Intrigue. Poor: discovered; police attention in Dubai.
-
-### Arc 2: Upgrades
+### Arc 1: The First Drone
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | Save for a neural implant or take it on credit from the fixer | Money, debt hooks |
-| 2 | Humanity falls below 40: the voices start | AI psychosis (1.1.10) |
-| 3 | Choose therapy, removal or more chrome | Humanity recovery; cyberware addiction (11.4) |
+| 1 | Fly a survey job over the megaproject for the site manager | Drones as Techno-Capital (6.2.3); ticking actions (1.1.6) |
+| 2 | Do the fixer's favor: film a meeting at a rival's site | Schemes (1.1.8); the fixer's weak hook |
+| 3 | Pay off the drone or roll the debt into a second one | Personal debt (1.10.6) |
 
-**Outcomes.** Strong: Samir finds a balance (humanity 50+ with three implants). Mixed: stable but scarred. Poor: cyberpsychosis episode; the AI takes him for a week.
+**Outcomes.** Strong: drone paid off, two jobs lined up; +1 Operations. Mixed: still in debt, one client. Poor: drone impounded; police attention in Dubai.
+
+### Arc 2: The Fleet
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | Buy or lease 10 drones: buy used, buy new, or lease from a Drones company | Owning versus leasing TC (6.3.4) |
+| 2 | Keep them flying: rent fleet control compute from the cloud or buy a small server | Compute and the cloud (15.2, 15.5) |
+| 3 | A rival hacks two drones mid-job | Hacking and defense (17.5); backdoors on drones (17.3) |
+
+**Outcomes.** Strong: a 10-drone fleet with its own server and good security. Mixed: a fleet on rented compute. Poor: drones hijacked; the client walks.
 
 ### Arc 3: Out of the Sand
 
@@ -237,30 +237,30 @@ Runs alongside Arc 2.
 | Step | Goal | Teaches |
 |---|---|---|
 | 1 | Get out of the labor camp: rent a flat in Sharjah's residential pool and move | Strata and real estate (2.8.0, 10.4.5) |
-| 2 | Start a security company as cover | Founding a company (1.6); Professional services industry |
-| 3 | Win a contract guarding a Gulf data center | Contracts and sites |
+| 2 | Found a drone operations company: survey, inspection, delivery and site security | Founding a company (1.6); the Drones industry (10.3) |
+| 3 | Win a contract for drone patrols around a Gulf data center | Business units and growth (10.0) |
 
-**Outcomes.** Strong: Samir reaches the PMC stratum with a real company. Mixed: a shell of a company. Poor: back to the camp.
+**Outcomes.** Strong: Samir reaches the PMC stratum with a real company. Mixed: a one-client company. Poor: back to the camp.
 
 ### Arc 4: The Rotation
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | The fixer aims Samir at a dynasty head; learn their hidden traits and ambition | Hidden traits and investigation (1.1.2) |
-| 2 | Turn the job into leverage instead of a kill: dig up dirt and take a strong hook | Strong hooks |
-| 3 | Decide: serve the fixer, or break free and become a free agent others hire | The rival rotation (7.4) |
+| 1 | The fixer wants drone surveillance on a dynasty head; learn their hidden traits | Hidden traits and intel (1.1.2, 1.1.8.2) |
+| 2 | Turn the footage into leverage: take a strong hook instead of handing it over | Strong hooks |
+| 3 | Decide: serve the fixer, or break free and sell drone operations to anyone | The rival rotation (7.4) |
 
-**Outcomes.** Strong: Samir becomes a free agent with his own list of hooks; +2 Intrigue and clout. Mixed: still the fixer's man, but richer. Poor: the fixer becomes his nemesis.
+**Outcomes.** Strong: Samir runs his own fleet business with a list of hooks; +2 Intrigue and clout. Mixed: still the fixer's man, but richer. Poor: the fixer becomes his nemesis.
 
 ### Arc 5: Blackout (the crash)
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | The crash cuts every client's budget; the jobs dry up | Industry cycles (10.3) |
-| 2 | A desperate dynasty offers everything for one last job | Ambitions and trait change |
-| 3 | Take it, or walk away and rebuild | Health, humanity and legacy |
+| 1 | The crash cuts every client's budget; drones sit idle and the leases still bill | Industry cycles (10.0.6); idle TC |
+| 2 | Lease the idle fleet out, sell it at a loss, or take a desperate dynasty's last job | Asset sales (10.0.7); trait change |
+| 3 | Rebuild or walk away | Legacy |
 
-**Outcomes.** Strong: Samir ends as a legend with a dynasty of his own. Mixed: alive and free. Poor: dead or lost to the machine.
+**Outcomes.** Strong: Samir ends with a drone company and a dynasty of his own. Mixed: alive and free with a few drones. Poor: broke, or in prison.
 
 ## 8.6 Yuna Sakamoto: "Signal"
 

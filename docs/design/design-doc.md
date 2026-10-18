@@ -54,6 +54,7 @@ Exact rules, numbers and content for each layer of the game:
 | 15. Infrastructure (three compute types, data centers, data, the cloud) | [detailed/15-infrastructure.md](detailed/15-infrastructure.md) |
 | 16. Media and entertainment (print, streamers, studios, labels, creators; campaigns) | [detailed/16-media.md](detailed/16-media.md) |
 | 17. Hacking (schemes on owned Techno-Capital; steal data or backdoor; black market) | [detailed/17-hacking.md](detailed/17-hacking.md) |
+| 18. AI models (trained on GPU compute and data; rented through contracts; power AI features) | [detailed/18-ai-models.md](detailed/18-ai-models.md) |
 
 ## Vision
 
