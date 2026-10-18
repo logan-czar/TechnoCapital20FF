@@ -44,7 +44,7 @@ Exact rules, numbers and content for each layer of the game:
 | 7. Starting world (alternate history, 2022 scenario, 15 starting characters, rivals, opening quest, timeline to 2030) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |
 | 8. Quest lines (arcs, the default line, and full lines for Pieter, Antone, Samir, Yuna, John, Viktor, Garrett, Pablo, Tolu, Qiao and Fang) | [detailed/8-quest-lines.md](detailed/8-quest-lines.md) |
 | 9. Gambling, crypto and prediction markets (the phone tab) | [detailed/9-gambling.md](detailed/9-gambling.md) |
-| 10. Industry economy (Wall Street Raider style: industries, business units; replaces goods) | [detailed/10-industry-economy.md](detailed/10-industry-economy.md) |
+| 10. Industry economy (Wall Street Raider style: industries, business units, business assets; replaces goods) | [detailed/10-industry-economy.md](detailed/10-industry-economy.md) |
 | 11. Addiction (gambling, drugs, cyberware, doomscrolling, sex) | [detailed/11-addiction.md](detailed/11-addiction.md) |
 | 12. Setup, fair AI, dynasty score and saves | [detailed/12-setup-and-score.md](detailed/12-setup-and-score.md) |
 | 13. Events (frequency, the director, AI events, event decks) | [detailed/13-events.md](detailed/13-events.md) |

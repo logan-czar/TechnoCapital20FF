@@ -1,6 +1,6 @@
 # 10. Industry economy (Wall Street Raider style): detailed design
 
-_Status: draft v0.8 (2026-10-18). Batch 50: the industry list rebuilt (10.3), 45 industries, no supply chains. Batch 48: **business units** replace sites and direct branches (10.0). Earlier: batch 24 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
+_Status: draft v0.9 (2026-10-18). Batch 52: business assets in detail (10.0.7). Batch 50: the industry list rebuilt (10.3), 45 industries, no supply chains. Batch 48: **business units** replace sites and direct branches (10.0). Earlier: batch 24 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 10.12.
 
@@ -33,7 +33,7 @@ _Status: draft v0.8 (2026-10-18). Batch 50: the industry list rebuilt (10.3), 45
 | **Industry** | One of the industries in 10.3 |
 | **Base city** | The hub it is run from (its headquarters); location perks for HQs (10.4.4) come from there |
 | **Asset spread** | Where its business assets sit: a unit can **spread its assets across several cities** (Logan, batch 49). Each city's share sets where its profit is taxed, where it gains influence and which location perks it can meet |
-| **Business assets** | The dollar value of what it operates with: plants, offices, equipment, licences, customer lists. Carried on the corporation's balance sheet |
+| **Business assets** | **One dollar figure** (Logan, batch 52), with a flavor label per industry (10.0.7). Carried on the corporation's balance sheet at book value |
 | **Productivity** | Starts at 100 (normal); 50 is badly run-down, 150 is excellent **(T)** |
 | **Growth plan** | Target growth of business assets this year, as a %, with a budget |
 | **R&D plan** | R&D spend as a % of revenue |
@@ -55,7 +55,7 @@ Each industry has one **market demand** (dollars a year) that grows on its trend
 3. **Expenses** = operating costs (`revenue × variable cost share × D`, plus `business assets × fixed cost rate`), R&D spend (revenue × R&D plan), depreciation of business assets, and the cost of growing assets (below). D is the cost driver index (10.6).
 4. **Productivity drift**: productivity falls by **0.5 points a month** on its own, from a normal of 100 (Logan, batch 49). R&D then moves it:
    `Δ productivity = 10 × (R&D plan ÷ industry R&D norm - 1) × management factor` points a year, spread monthly **(T)**, where the industry R&D norm is 2% of revenue for heavy industry up to 15% for tech, and the management factor is `0.5 + management score ÷ 100` (10.5). Example with a management score of 50: at the norm, R&D adds nothing and productivity slides 6 points a year; at double the norm it gains about 4 a year net; with no R&D it loses about 16 a year (Logan: R&D spend increases **or decreases** productivity).
-5. **Growth**: the growth plan's budget buys new business assets at the industry's capital cost, spread over the year. New assets start at 80% productivity for 6 months **(T)**.
+5. **Growth**: the growth plan's budget buys new business assets at the industry's capital cost, spread over the year (Logan, batch 52). New assets start at 80% productivity for 6 months **(T)**.
 6. The unit's profit flows into the corporation's books; tax is paid in each country by the share of the unit's assets there (10.5.5).
 
 ### 10.0.5 Corporations (A)
@@ -74,6 +74,20 @@ Each industry runs its own news cycle on top of the general business cycle **(A)
 - **Effects**: market demand ×1.15 in a Boom and ×0.85 in a Bust; Glut adds +0.2 to the supply ratio **(T)**.
 - **Regulation news**: new rules from politics (4.5) raise costs or cap growth for one industry.
 - Each phase change fires an **Industry** deck event for every company in it (13.5).
+
+### 10.0.7 Business assets (Logan, batch 52)
+
+| Topic | Decision |
+|---|---|
+| Form | **One dollar figure per business unit**, like Wall Street Raider. No list of individual plants or stores. |
+| Flavor | Each industry gives its assets a **label** for the UI: "fabs" for Foundry, "stores" for Retail, "oil fields" for Oil, "fleets" for Airlines and so on **(A)**. The label changes nothing in the maths. |
+| Buying | The **growth plan** buys new assets at the industry's **capital cost per $1 of assets** (10.3). Corporations can also **buy and sell assets between units**, their own or another corporation's. |
+| Depreciation | Assets **depreciate on the books** over about **10 years** (straight line, 10% a year) **(T)**. This lowers book value and taxable profit only; real wear on the business is the **productivity decay** in 10.0.4. |
+| Shrinking | A unit shrinks by **selling assets at 60% to 100% of book value**, set by the industry's news cycle: about 100% in a Boom, 85% in Normal, 70% in a Glut and 60% in a Bust **(T)**. |
+| Not assets | **Compute and owned software are not business assets** (batch 52). They stay in their own systems ([15-infrastructure.md](15-infrastructure.md), [14-software.md](14-software.md)) and their costs and income are counted separately. |
+
+- **Book value vs. capacity (A).** Revenue in 10.0.4 uses the **asset base at cost** (what was paid, less what was sold), not the depreciated book value, so old assets keep producing while productivity carries their wear. Book value is what the balance sheet, sale prices and valuations use.
+- **Asset deals between corporations (A).** A sale of assets (not a whole unit) is priced by the seller's ask and the buyer's bid at the negotiation table, starting from book value × the cycle factor above. The buying unit must be in the same industry; the assets keep their city spread.
 
 ## 10.1 Decided by Logan
 
@@ -436,3 +450,4 @@ Hovering a company's revenue shows: industry size → cycle → rates → pass-t
 12. Corporation rules and unit deals in 10.0.5.
 13. Industry news cycle phases in 10.0.6.
 14. How a unit's growth plan picks which cities its new assets go to (10.0.2).
+15. Flavor labels, the 10-year depreciation, the cycle sale factors, and pricing of asset deals in 10.0.7.
