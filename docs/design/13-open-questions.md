@@ -129,6 +129,7 @@
 - Batch 100 (Logan, 2026-10-18): history of 2006. Republicans keep Congress in the midterms; Mexico's drug war starts in December as in real life; the Mumbai train bombings never happen. 2007 drafted.
 - Batch 101 (Logan, 2026-10-18): history of 2007. Better mortgage rules passed in 2003, so growth stayed tempered and the housing bubble never grew (no subprime bust; 7.2.0 housing now 'never bubbled', hubs start in mild Boom or Recovery); Benazir Bhutto's assassination happens; Russia's cyberattack on Estonia happens. 2008 drafted.
 - Batch 102 (Logan, 2026-10-18): history of 2008. Jeb Bush is president 2009 to 2017 (George W. Bush seen as the greatest ever; Jeb toothless, refuses defense contractors nothing, corporations go completely unchecked); Donald Trump as a Democrat 2017 to 2021; an older Obama wins November 2020. The Russia-Georgia war happens. Every South Asian terror attack happens (reverses the 2006 Mumbai train bombings ruling). 2009 drafted.
+- Batch 102 update (Logan, 2026-10-18): Jeb Bush serves only three years and is assassinated (early 2012, assumed); his VP is again Dick Cheney, who finishes the term and does not run in 2012. The 2012 winner is open.
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm
