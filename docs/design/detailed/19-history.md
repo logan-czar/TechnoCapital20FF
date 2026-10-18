@@ -1,6 +1,6 @@
 # 19. History: the world from the 1990s to 2020 (detailed design)
 
-_Status: draft v1.0 (2026-10-18; 2000 to 2008 ruled in batches 94 to 102, 2009 drafted). Standing rule (Logan, batch 102): **every South Asian terror attack happens as in real life.** Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
+_Status: draft v1.1 (2026-10-18; 2000 to 2009 ruled in batches 94 to 103, 2010 drafted). Standing rule (Logan, batch 102): **every South Asian terror attack happens as in real life.** Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
 
 **How to read this file.** Everything below is **real history**, as a base. Rows Logan has confirmed or changed are marked **(Logan)**; everything else is a draft for him to rule on. Where a real event clashes with the alternate history already decided (7.2.0), the clash is flagged.
 
@@ -229,13 +229,13 @@ Effects **(A)**: no Department of Homeland Security, no Patriot Act, and no Guan
 
 **Global (draft).** With no recession there is no G20 stimulus, and the world economy keeps growing steadily **(A)**. **Bitcoin's first block** is mined (3 January). The **Copenhagen climate summit** fails (December). Tech and pop culture: **Uber** and **WhatsApp** are founded, **Minecraft** comes out, **Michael Jackson dies** (June), and **Avatar** becomes the biggest film ever (December).
 
-> **Questions to rule on.** (1) **Swine flu (H1N1)** spread from Mexico around the world (April), but it was mild. a) ★ It happens as a mild flu scare; "no pandemic" in 7.2.0 means no COVID. b) It never happens. (2) **Bernie Madoff's** Ponzi scheme was exposed in December 2008 only because the crash made investors pull their money. With no crash: a) ★ It stays hidden and keeps growing, and is exposed later by the same journalist who broke Enron. b) It is exposed on schedule anyway. (3) **Greece admits** it hid a huge deficit (October), which led to the euro crisis. a) ★ It happens, but with no global recession the euro crisis that follows is a slow grind, not a panic. b) It never happens.
+**Rulings (Logan, batch 103).** (1) **Swine flu happens** as a mild flu scare; "no pandemic" in 7.2.0 means no COVID. (2) **Madoff stays hidden** and keeps growing, and is **exposed later by the same journalist who broke Enron** (year to be set). (3) **Greece does not admit its deficit.** The hidden debt **keeps growing and the crisis is triggered later** (year to be set), and the EU is **stunted and falls behind financially** as a result (7.2.0).
 
 | Region | Big events of 2009 (real, with game-world changes marked **(A)**) |
 |---|---|
-| **North America** | 1. **Jeb Bush takes office** (January) and cuts taxes, regulation and oversight, while defense contracts balloon **(A, from Logan's ruling)**. 2. **(A)** No auto bailout is needed; Detroit limps on without bankruptcy. 3. **Swine flu** starts in Mexico (April) **(see question 1)**. Also: Harper shuts down Canada's parliament to avoid a no-confidence vote (prorogation, December 2008 to January 2009). |
+| **North America** | 1. **Jeb Bush takes office** (January) and cuts taxes, regulation and oversight, while defense contracts balloon **(A, from Logan's ruling)**. 2. **(A)** No auto bailout is needed; Detroit limps on without bankruptcy. 3. **Swine flu** starts in Mexico (April) and stays a mild scare (Logan). Also: Harper shuts down Canada's parliament to avoid a no-confidence vote (prorogation, December 2008 to January 2009). |
 | **Latin America** | 1. A **coup in Honduras** ousts President Zelaya (June). 2. **Chávez wins a referendum** that ends term limits (February). 3. **Rio wins the 2016 Olympics** (October). Also: **José Mujica** wins Uruguay (November). |
-| **Europe** | 1. **Greece's hidden deficit** (October) **(see question 3)**. 2. The **Lisbon Treaty** passes Ireland's second vote and takes effect (October to December). 3. The UK **MPs' expenses scandal** (May). Also: **Merkel** is re-elected (September). |
+| **Europe** | 1. **(Logan) Greece keeps its deficit hidden** and keeps borrowing; the reckoning comes later. 2. The **Lisbon Treaty** passes Ireland's second vote and takes effect (October to December). 3. The UK **MPs' expenses scandal** (May). Also: **Merkel** is re-elected (September). |
 | **Russia and the former USSR** | 1. Lawyer **Sergei Magnitsky dies** in a Russian prison after exposing a tax fraud (November). 2. The **Nevsky Express** train is bombed (November). 3. Moldova's **"Twitter revolution"** (April). **(A)** No "reset" with the US: Jeb keeps up the pressure over Ukraine. |
 | **Middle East and North Africa** | 1. Iran's **Green Movement** protests Ahmadinejad's disputed re-election and is crushed (June). 2. **Netanyahu returns** as Israel's prime minister (March). 3. The **Gaza war** ends (January). |
 | **Sub-Saharan Africa** | 1. **Boko Haram** rises in northern Nigeria, and its founder is killed in custody (July). 2. **Jacob Zuma** becomes South Africa's president (May). 3. The ICC issues an arrest warrant for Sudan's **Bashir** (March). Also: a coup in **Madagascar** (March) and the **Conakry stadium massacre** in Guinea (September). |
@@ -243,8 +243,28 @@ Effects **(A)**: no Department of Homeland Security, no Patriot Act, and no Guan
 | **East Asia** | 1. The **DPJ ends half a century of LDP rule** in Japan (August). 2. **North Korea's second nuclear test** (May). 3. The **Ürümqi riots** in Xinjiang (July). |
 | **Southeast Asia and Oceania** | 1. Australia's **Black Saturday bushfires** kill 173 (February). 2. The **Maguindanao massacre** in the Philippines kills 58, including 32 journalists (November). 3. Red-shirt protests disrupt Thailand's ASEAN summit (April), and **Jakarta's hotels are bombed** (July). |
 
-**Logan's ruling on 2009:** _pending._
+**Logan's ruling on 2009 (batch 103):** everything above happened, with the changes in the rulings box.
 
-## 19.12 2010 onward
+## 19.12 The year 2010 (draft)
 
-To be written year by year after 2009 is settled, up to the 2020 start.
+**Global (draft).** The **Haiti earthquake** kills about 220,000 (January). The **Deepwater Horizon** blowout spills oil into the Gulf of Mexico for three months (April to July). Iceland's volcano grounds Europe's flights (April). The **Flash Crash** wipes out a trillion dollars in minutes and recovers (6 May). **Stuxnet**, the first cyberweapon, is found wrecking Iran's centrifuges (June). **WikiLeaks** publishes the war logs and US diplomatic cables (July and November). **China passes Japan** as the world's second-biggest economy. Tech and pop culture: the **iPad** and **Instagram** launch, *The Social Network* and *Inception* come out.
+
+> **Questions to rule on.** (1) **Ukraine's election** (February). In real life the pro-Russian Yanukovych won, which makes no sense in the middle of a war with Russia. a) ★ Tymoshenko wins as the wartime leader. b) Yushchenko is re-elected. c) Yanukovych wins anyway. (2) **Stuxnet** (US and Israeli). a) ★ It happens and becomes the landmark for state hacking in the game. b) It never happens. (3) **The Arab Spring** began in Tunisia in December 2010. a) ★ It begins as in real life. b) It never happens, since the US and a stable Iraq keep the region calm. c) It comes later and smaller. (4) Still open from last time: **who wins the 2012 US election?** a) ★ A Republican riding sympathy for Jeb, such as Mitt Romney. b) A Democrat, such as Hillary Clinton. c) Someone you name.
+
+| Region | Big events of 2010 (real, with game-world changes marked **(A)**) |
+|---|---|
+| **North America** | 1. **Citizens United**: the Supreme Court lets corporations spend without limit on elections (January), which suits Jeb's unchecked corporate era. 2. **Deepwater Horizon** (April to July). 3. The **Flash Crash** (May). Also: Canada hosts the **Vancouver Olympics** (February) and the **Toronto G20**, with riots (June). **(A)** No Obamacare. |
+| **Latin America** | 1. The **Haiti earthquake** (January). 2. An 8.8 **earthquake in Chile** (February), and the rescue of the **33 trapped miners** (October). 3. **Dilma Rousseff** wins Brazil (October). Also: **Santos** wins Colombia (June). |
+| **Europe** | 1. **Iceland's volcano** shuts European airspace (April). 2. **Cameron and Clegg** form Britain's coalition government (May). 3. **(Logan) No Greek bailout**: Greece keeps borrowing on hidden books, and Europe's growth slows. |
+| **Russia and the former USSR** | 1. Poland's president and much of its elite die in a **plane crash at Smolensk** in Russia (April). 2. **Ukraine's election** (February) **(see question 1)**. 3. **Moscow metro bombings** (March), and a record **heat wave and wildfires** wreck Russia's grain harvest (summer). Also: a revolution in **Kyrgyzstan** (April); Lukashenko crushes protests again (December). |
+| **Middle East and North Africa** | 1. **Stuxnet** cripples Iran's enrichment (found in June) **(see question 2)**. 2. Israel raids the **Gaza flotilla** and kills nine (May). 3. A Tunisian fruit seller, **Mohamed Bouazizi**, sets himself on fire (December) **(see question 3)**. Also **(A)**: Iraq holds a calm election (March). |
+| **Sub-Saharan Africa** | 1. **South Africa hosts the World Cup**, the first in Africa (June to July). 2. **Ivory Coast's** disputed election starts a new war (November). 3. **Goodluck Jonathan** becomes Nigeria's president after Yar'Adua dies (May). Also: Kenya's **new constitution** (August). |
+| **South Asia** | 1. **Pakistan's floods** cover a fifth of the country and hit 20 million people (July to August). 2. The **Pune bakery bombing** (February). 3. India's **2G spectrum scam** and the troubled **Delhi Commonwealth Games** (October to November). |
+| **East Asia** | 1. North Korea sinks the South Korean warship **Cheonan** (March) and shells **Yeonpyeong** island (November). 2. China cuts **rare-earth exports** to Japan in a fight over the Senkaku islands (September). 3. Jailed dissident **Liu Xiaobo** wins the Nobel Peace Prize (October). Also: **Kim Jong-un** is named heir (September); the **Shanghai Expo**. |
+| **Southeast Asia and Oceania** | 1. Thailand's army **clears the red-shirt protests**, killing about 90 (April to May). 2. Burma holds sham elections and **frees Aung San Suu Kyi** (November). 3. **Julia Gillard** ousts Rudd in Australia (June). Also: **Benigno Aquino III** wins the Philippines (May). |
+
+**Logan's ruling on 2010:** _pending._
+
+## 19.13 2011 onward
+
+To be written year by year after 2010 is settled, up to the 2020 start. Already set: **Jeb Bush is assassinated in early 2012 (A)** and President Cheney does not run in 2012.
