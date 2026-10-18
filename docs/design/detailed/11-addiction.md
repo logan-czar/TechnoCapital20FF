@@ -87,7 +87,7 @@ Vices are businesses (Logan). They use the industry model ([10-industry-economy.
 |---|---|---|---|
 | Gambling | Gambling (crypto casinos included) | Licensed in most countries | Low; higher for crypto casinos |
 | Drugs | Pharma for legal stimulants; a Front Company (1.7.4) for illegal ones | Varies | High for fronts: raids and investigations |
-| Cyberware | Healthcare services (licensed clinics); Black market (black clinics) | Licensed; black clinics are illegal | Medium |
+| Cyberware | Its own system, designed later (Logan, batch 51) | Licensed; black clinics are illegal | Medium |
 | Doomscrolling | Social media | Legal | Low; regulation and youth-harm scandals |
 | Sex | Black market (escort and companion services where illegal); the Media system later | Varies | High where illegal |
 

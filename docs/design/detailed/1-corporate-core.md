@@ -267,6 +267,8 @@ Every character has **health** from 0 to 100. There are no yearly death rolls: h
 
 ### 1.1.10 Cyberware (Logan, 2026-10-17)
 
+> Cyberware will become **its own system**, designed later (Logan, batch 51); it is no longer an industry. The character rules below stay.
+
 Cyberware **raises stats**, can grant **special abilities**, and can add **extra personality traits**, at the risk of **addiction** ([11-addiction.md](11-addiction.md)) and **AI psychosis** (humanity, below).
 
 **Slots.** Neural (2), Ocular (1), Voice and face (1), Limbs (2), Torso (1) **(A)**. Fitted at a cyberware clinic (an industry, 10.3); legality varies by country (4.x).

@@ -75,6 +75,7 @@
 - Batch 47-48 (Logan, 2026-10-18): company economics first, close to Wall Street Raider. Keep the ~36 industries. A business unit operates in one industry, belongs to a corporation, has revenue and expenses from its own business assets, a base city, a growth plan, a productivity score that decays over time, and an R&D plan that raises or lowers productivity. Each industry has a set market demand; oversupply lowers and undersupply raises industry-wide productivity. No direct branches: a corporation holds business units in any industry. Each industry has its own news cycle (detailed/10-industry-economy.md 10.0).
 - Batch 49 (Logan, 2026-10-18): one world market per industry; sites are gone (units rent or buy space from district pools as they grow); a business unit can spread its assets across several cities; productivity decays 0.5 points a month from 100; the board's management score still makes R&D more or less effective and drives investor confidence.
 - Batch 50 (Logan, 2026-10-18): the industry list is rebuilt as 45 industries with no supply chains: Chip packaging, Other chips, GPU boards, Crypto exchanges, Packaged food, Cyberware clinics, Security and PMCs and Refining removed; CPUs, Real estate, Agriculture, Professional services and Black market added; Gaming and Gambling moved to Tech; Media and entertainment becomes its own system; every "X and Y" industry split in two; the GPU chain is retired.
+- Batch 51 (Logan, 2026-10-18): cyberware becomes its own system later (like Media); PMCs are dropped from the game; crypto coins trade only inside the phone-tab gambling system, with no industry; each industry keeps its own capital cost per $1 of assets; business assets in detail are next.
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm
@@ -84,7 +85,7 @@
 3. **Influence thresholds**: 10%, 25% and 50% share of a place's weighted assets.
 4. **Player scope**: the player directly controls the dynasty head's actions, personal accounts and the family trust; other family members act on their own.
 5. **Starting scenario**: decided (see above): one 2022 scenario with 15 starting characters.
-6. **Wars**: countries go to war as background events; players never command armies, only PMCs on a small scale.
+6. **Wars**: countries go to war as background events; players never command armies (PMCs dropped, batch 51).
 
 ## Open questions
 

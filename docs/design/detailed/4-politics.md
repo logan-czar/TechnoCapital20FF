@@ -20,6 +20,7 @@ Batch 37 checked politics against the Wall Street Raider style economy (10-indus
 | Votes | **Votes are counted by strata** (2.8.0), not by the six population segments. |
 | Tariffs and sanctions | They hit an **industry's price index** in the country (10-industry-economy), not Victoria 3 goods. |
 | Game stages | Stages are gone. 4.28 is replaced by politics by **company rank** (1.7.5). |
+| PMCs | **Dropped** (Logan, batch 51). There are no private military contractors: 4.23.2 to 4.23.5, 4.13.6, the S1 law and every PMC option elsewhere are removed. Corporate guards, bodyguards and cyber defense teams stay as security spending. |
 
 **Reading rule for the rest of this file.** Older sections still name interest groups (IGs). Read each one as the ideology bloc(s) below (confirmed in batch 38 with Logan's changes):
 
@@ -478,7 +479,7 @@ All rates and multipliers below are **(T)**.
 
 | Law | Level | Positions and effects |
 |---|---|---|
-| **S1 Private Military Contractors** | N exclusive | **Banned** PMCs only through shells (exposure +10 per unit per month) · **Domestic Guarding** unarmed and lightly armed site security · **Licensed** armed contractors and foreign operations with licence · **Unrestricted** PMCs may hold and police territory |
+| ~~**S1 Private Military Contractors**~~ (removed, batch 51) | N exclusive | **Banned** PMCs only through shells (exposure +10 per unit per month) · **Domestic Guarding** unarmed and lightly armed site security · **Licensed** armed contractors and foreign operations with licence · **Unrestricted** PMCs may hold and police territory |
 | **S2 Policing Model** | L within N ceiling | **Community** crime +10%, unrest -3 · **Standard** · **Militarized** crime -15%, unrest +3, protest suppression ×1.5 · **Privatized** companies with Power Broker influence may contract policing of districts they dominate |
 | **S3 Emergency Powers** | N exclusive | **Constitutional Limits** · **Emergency Decrees** executive may decree laws for 90 days · **Standing Emergency** decrees without limit; elections may be postponed (stability -5 per postponement) · **Martial Law** military governs hubs; all local governments suspended |
 
@@ -1169,7 +1170,7 @@ Trade wars escalate in four levels. Each month a trade war is in force, escalati
 
 ### 4.11.6 Background wars
 
-Wars are background events. The player never commands armies, only PMCs (4.8.4).
+Wars are background events. The player never commands armies (PMCs dropped, batch 51).
 
 | Intensity | Example | Hubs in the war zone | Adjacent hubs and routes | Global |
 |---|---|---|---|---|
@@ -1431,6 +1432,8 @@ The dynasty spends 20 PC. If the buyer had been foreign in a strategic sector (+
 The dynasty sells, then quietly asks a cadet house with a personal account in a neutral country to buy a minority of the local partner (Spin off logic, with evasion risk if hooks are used to keep control).
 
 ### 4.13.6 Backing a coup with PMCs
+
+> **Removed (batch 51): PMCs are dropped.** Coups are backed with money, hooks and influence over officers instead.
 
 **Situation.** The dynasty owns a lithium mine in Country C, a small coastal managed democracy (MSI 8). A new government plans to nationalize lithium. Stability 40, Security Establishment approval -3 (SecurityLoyalty 35), ruling coalition clout 40%.
 
@@ -2095,6 +2098,8 @@ The dynasty itself can never become an OCG. It can run front companies (1.7.4), 
 ---
 
 ## 4.23 PMCs and private security
+
+> **PMCs dropped (Logan, batch 51).** Only corporate security (guards, bodyguards) and cyber defense remain from this section; every PMC rule, unit and political use is removed.
 
 ### 4.23.1 Security as a business
 

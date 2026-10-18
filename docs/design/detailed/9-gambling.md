@@ -11,7 +11,7 @@ _Status: draft v0.1 (2026-10-17). From Logan's answers in the design Q&A. Crypto
 | Topic | Decision |
 |---|---|
 | Where | The whole gambling system lives in the **phone tab**. |
-| Crypto | Not deep. Various coins go up and down randomly, with boom and bust cycles of varying volatility, intensity and length. |
+| Crypto | Not deep. Various coins go up and down randomly, with boom and bust cycles of varying volatility, intensity and length. Coins trade **only inside the phone-tab gambling system**; there is no crypto exchange industry (Logan, batch 51). |
 | Prediction markets | Bet on events happening in the game world, including events the player influences or has knowledge of. |
 | Crypto casinos | Crypto currencies can be gambled in casinos. |
 | Addiction | Gambling is part of the addiction system (to be designed). |
