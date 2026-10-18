@@ -24,6 +24,8 @@ _Status: draft v0.3 (2026-10-18). Batch 67: streamer subscriptions, one-off musi
 | Streamer income | **Subscribers per country × a monthly price, plus ads** (batch 67). A big library and hits keep subscribers. |
 | Music income | **A one-off payment on release**; **events can sometimes trigger royalty payments** later (batch 67). |
 | Starting owners | **A mix of rival dynasties and AI corporations**, and **each starting character owns a small outlet or channel** (batch 67). |
+| False stories | **Allowed** (batch 68): outlets can run planted or false stories; a debunk costs the outlet credibility (16.5). |
+| AI and the news | **AI characters do not read the news** (batch 68); the director may direct AI characters when stories about them or people close to them come out (11-ui 11.1.1). |
 | News is sourced | **Every story names the outlet that ran it**, with its bias. There is no neutral news: the news the character reads in game is slanted (batch 67, 11-ui 11.1.1). |
 
 ## 16.2 The five kinds of media business (Logan)
