@@ -1,6 +1,6 @@
 # 13. Events, the director and event decks: detailed design
 
-_Status: draft v0.1 (2026-10-18). From Logan's answers in the design Q&A (batch 39). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.4 (news only through event pop-ups) and every detailed system file. Owner: Logan._
+_Status: draft v0.2 (2026-10-18). From Logan's answers in the design Q&A (batches 39 and 40). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.4 (news only through event pop-ups) and every detailed system file. Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 13.8.
 
@@ -21,15 +21,15 @@ _Status: draft v0.1 (2026-10-18). From Logan's answers in the design Q&A (batch 
 As in 10.1, plus **(A)**:
 - **Header**: the deck's icon and color, the scope (character, company, hub, country) and the date.
 - **Portraits**: the characters involved.
-- **Options**: 2 to 4. Each option shows its **skill icon** (Finance, Operations, Persuasion, Intrigue or Tech) when it rolls, its known costs (money, hours, Favor, a hook spent) and any trait it suits ("Ruthless"). The success chance is **never shown** (Logan). A hint word stands in for it when the character has enough skill to judge it **(A)**: "Easy", "Risky" or "Long shot", shown only when the rolling skill is 15 or higher **(T)**.
-- **Timer**: events wait while the game is paused. If an event is ignored for 48 game hours, the default option (the first one) is taken **(T)**.
-- **Auto-pause**: events pause the game by default; the player can switch pausing off per deck (09-time-and-turns).
+- **Options**: 2 to 4. Each option shows its **skill icon** (Finance, Operations, Persuasion, Intrigue or Tech) when it rolls, its known costs (money, hours, Favor, a hook spent) and any trait it suits ("Ruthless"). The success chance is **never shown** (Logan), and there are no hint words either (batch 40): only the skill icon.
+- **No timer** (batch 40): an event waits until the player answers it, and the game stays paused while it is open.
+- **Pause**: every event pauses the game until it is answered (batch 40). AI characters' events never pause the game.
 
 **Rolls.** `Success = 50% + (skill - 10) × 3% + trait and situation modifiers`, clamped 5% to 95% **(T)**. Vril can swing a roll either way (13-open-questions).
 
 ## 13.3 The director
 
-The director decides **when** an event fires and **which deck** it comes from. It never cheats on outcomes: it only picks timing and topic **(A)**.
+The director decides **when** an event fires and **which deck** it comes from. It never cheats on outcomes: it only picks timing and topic **(A)**. It **can aim the rival rotation at the player** when things are calm (Logan, batch 40).
 
 **Tension.** A score from 0 to 100, recalculated daily **(T)**:
 
@@ -87,14 +87,14 @@ Each deck has its own triggers, weights and cooldowns. Sample events per deck **
 ## 13.7 Writing and tooling
 
 - Events are JSON data cards (10.1), grouped by deck. A designer can add a deck without code.
-- Each deck ships with at least 20 events at launch **(T)**, about 300 in total.
+- Each deck ships with **about 10 events** at launch (batch 40), about 150 in total, and grows later.
 - Text variables cover names, pronouns, companies, places, industries and ideologies.
 
 ## 13.8 Assumptions and open items
 
-1. The card details, the hint words and the 48-hour default option in 13.2.
+1. The card details in 13.2.
 2. The roll formula in 13.2.
 3. The tension score and pacing rules in 13.3.
 4. Off-screen resolution and what the player sees in 13.4.
 5. The deck list and sample events in 13.5.
-6. Flags and memory in 13.6; deck sizes in 13.7.
+6. Flags and memory in 13.6.
