@@ -23,6 +23,20 @@ Rules already decided by Logan (see [13-open-questions.md](../13-open-questions.
 - A **holder** is any owner in the ownership graph (see [01-companies.md](../01-companies.md) 1.3): trusts, characters, companies, funds, governments.
 - **Holder group**: a holder plus every entity it controls, plus its bloc partners in that company. Limits and disclosure apply to the holder group, not to each entity separately.
 
+### 3.1.0 The market calendar (Logan, batch 53)
+
+> **This overrides the exchange sessions in 3.1.3 and 3.2.1, the lunch breaks and opening gaps in 3.3.9, and the quarterly timing in 3.1.2.**
+
+- **Stock trading runs 24/7, 365 days a year.** Every exchange ticks every hour. The **only day markets close is 1 January**.
+- **Quarterly earnings come out for every company at once**, on fixed dates: **2 January, 2 April, 2 July and 2 October, at 00:00** UTC **(A: UTC)**. Each covers the quarter just ended; the 2 January report is also the annual report.
+- **Earnings days are a frenzy (Logan).** Every company's earnings surprise (3.3.6) lands on the same tick, so on the four earnings days **(T)**:
+  - volume is ×4 for the first 24 hours (instead of the ×2 in 3.3.4);
+  - the Global Risk Gauge gets a +5 shock for the day (3.3.5);
+  - circuit breakers (3.3.8) trip far more often, and the player gets an auto-pause alert on every holding at 00:00.
+- **2 January is the biggest day of the year.** The market reopens after the 1 January close at the same hour the annual reports come out, so the reopening auction (3.3.9) carries a full day of news plus every company's year.
+- **Daily jobs** that ran at each market's close (3.1.2) run at **00:00 UTC** instead **(A)**. Exchanges keep their home cities, currencies and indices; only their hours go.
+- FX and commodities are assumed to follow the same calendar **(A)**. Crypto and the Freeport Night Market (3.2.5) never close, even on 1 January.
+
 ### 3.1.2 What runs when
 
 Markets follow the calculation schedule of [09-time-and-turns.md](../09-time-and-turns.md). The hourly loop only touches prices, orders and alarms. Strategic choices by named AI holders stay on weekly or monthly cadences, as 9.3 requires; the hourly order flow of AI investor archetypes (3.3.4) is a market rule, not an AI decision.
@@ -33,7 +47,7 @@ Markets follow the calculation schedule of [09-time-and-turns.md](../09-time-and
 | **Daily** (at each market's close) | Closing auction; settlement of trades; fundamental value refresh; sentiment decay; borrow fees and margin interest accrual; formal margin calls; futures variation margin; carry accrual on FX positions; FX fair value refresh; disclosure filings published; surveillance checks on the day's news |
 | **Weekly** | Named AI holders' strategic decisions (stake building, bloc votes, activist campaigns, tender decisions); short interest published; regulator suspicion reviews; commodity inventories updated from supply chain shipments; capital control quotas reset; shell detection rolls |
 | **Monthly** | Central bank meetings; dividends, coupons and loan interest paid; government bond auctions; commodity marginal cost update; PPP anchor drift for FX; index fund savings inflows; QE purchases |
-| **Quarterly** | Earnings reports and full fundamental recalculation; credit rating reviews; index rebalancing; buyback windows reset |
+| **Quarterly** | Earnings reports on 2 January, 2 April, 2 July and 2 October at 00:00 (3.1.0) and full fundamental recalculation; credit rating reviews; index rebalancing; buyback windows reset |
 | **Yearly** | Dividend policy set at the annual shareholder meeting; listing compliance review; central bank governor terms; sovereign annual rating review |
 
 ### 3.1.3 The global trading day

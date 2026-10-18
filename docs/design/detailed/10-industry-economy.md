@@ -1,6 +1,6 @@
 # 10. Industry economy (Wall Street Raider style): detailed design
 
-_Status: draft v0.9 (2026-10-18). Batch 52: business assets in detail (10.0.7). Batch 50: the industry list rebuilt (10.3), 45 industries, no supply chains. Batch 48: **business units** replace sites and direct branches (10.0). Earlier: batch 24 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
+_Status: draft v1.0 (2026-10-18). Batch 53: subsidiaries, shells, statements, valuation and shared costs (10.0.8). Batch 52: business assets in detail (10.0.7). Batch 50: the industry list rebuilt (10.3), 45 industries, no supply chains. Batch 48: **business units** replace sites and direct branches (10.0). Earlier: batch 24 answers applied. Logan scrapped the Victoria 3 goods model and asked for Wall Street Raider style economic modeling. This file replaces goods, recipes, production methods, hub goods prices and shipments in [2-map-influence-economy.md](2-map-influence-economy.md) (2.6, 2.7, 2.9, 2.15; see the banners there). The map, hubs, influence, strata, real estate, the business cycle, travel and politics stay. Feeds company financials (2.13) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 10.12.
 
@@ -63,7 +63,7 @@ Each industry has one **market demand** (dollars a year) that grows on its trend
 - A corporation is the legal company: it has the **shares, holders, board, charter, cash, debt and credit rating** (1.2 to 1.8, 3.6). Its business units have none of these.
 - It can own **any number of business units in any industries** (Logan). Its **main industry** is the industry of its largest unit by assets; that sets its sector for markets and indices.
 - The board's **management score** (10.5) applies to every unit: it sets how well R&D turns into productivity, and still sets investor confidence (Logan, batch 49).
-- **Vassals** (1.7) stay separate: a subsidiary is another corporation with its own units and books.
+- **Vassals** (1.7) stay separate: a subsidiary is another corporation with its own units and books (10.0.8).
 - **Deals on units**: buy, sell, merge (two units in one industry become one; fixed costs -10%) and spin off (one or more units become a new corporation) replace the site deals in 10.5.4.
 - **Sites are gone** (Logan, batch 49). **Real estate** stays a separate investment in district pools (10.4.5). As a unit's assets grow in a city, it rents or buys the space it needs from that city's pools; the cost is part of its asset growth **(A)**.
 
@@ -88,6 +88,38 @@ Each industry runs its own news cycle on top of the general business cycle **(A)
 
 - **Book value vs. capacity (A).** Revenue in 10.0.4 uses the **asset base at cost** (what was paid, less what was sold), not the depreciated book value, so old assets keep producing while productivity carries their wear. Book value is what the balance sheet, sale prices and valuations use.
 - **Asset deals between corporations (A).** A sale of assets (not a whole unit) is priced by the seller's ask and the buyer's bid at the negotiation table, starting from book value × the cycle factor above. The buying unit must be in the same industry; the assets keep their city spread.
+
+### 10.0.8 Subsidiaries, shells, statements and value (Logan, batch 53)
+
+| Topic | Decision |
+|---|---|
+| Subsidiaries | **A separate corporation that must follow its parent's directives.** Separate books, its own business units and its own board. The board makes its own decisions, but **the parent can override them**. It works like a vassal (1.7). |
+| On the parent's books | A subsidiary **counts as an asset** of the parent: its stake, at the parent's share of the subsidiary's book equity **(A)**. Its units are **not** added to the parent's units; its dividends and management fees (1.7.1) are the parent's income from it. |
+| Shell companies | **Basically empty companies for moving money around.** No business units. They can hold **cash, shares, software, compute and stored data** (1.7.4). |
+| Statements | **A light set, quarterly**, like Wall Street Raider: income statement, balance sheet and cash flow (below). |
+| Fair value | **A blend of book value and an industry earnings multiple**, moved by the industry news cycle and investor confidence (below). |
+| Shared costs | **The corporation pays** its cloud bill, compute maintenance and software contracts, and **spreads them across its units by revenue share**. |
+
+**Parent overrides (A).** A parent directive is a command on the subsidiary's screen: set the growth or R&D plan, buy or sell units or assets, pay a dividend, take on or repay debt, or replace the CEO. The subsidiary's board then votes; if it says no, the parent can override, at a loyalty cost of -10 for that subsidiary (1.7.3), or -5 if it holds a majority of the board **(T)**. Parent veto rights (1.7.1) still block the subsidiary's own deals before they happen.
+
+**The quarterly statements (A).**
+
+| Statement | Lines |
+|---|---|
+| **Income statement** | Revenue by unit; operating costs; R&D; shared costs (compute, cloud, software contracts); depreciation; interest; income from subsidiaries and holdings; tax; net income |
+| **Balance sheet** | Cash; business assets at book value by unit; compute and software (15, 14); stakes in subsidiaries and other companies; real estate; debt; equity |
+| **Cash flow** | Operating cash; asset purchases and sales; deals; debt raised or repaid; dividends and buybacks |
+
+**Fair value (A).** Used by AI buyers, deals and as V in the stock price model ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3.1):
+
+`Fair value = 0.3 × book equity + 0.7 × normalized earnings × industry multiple × cycle factor × confidence factor` **(T)**
+
+- The **industry multiple** comes from the sector table (3.3.2), set per industry in 10.3.
+- The **cycle factor** follows the industry's news cycle: Boom 1.2, Normal 1.0, Glut 0.85, Bust 0.7 **(T)**.
+- The **confidence factor** is investor confidence from the board's management score (10.5): `0.8 + management score ÷ 250` **(T)**.
+- A corporation that loses money is valued at book equity × the cycle factor, never below its asset floor (3.3.1).
+
+**Shared costs (A).** Compute, cloud and software are held by the corporation, not by units (10.0.7). Each month their total is split across the units by share of revenue and shown on each unit as "shared costs", so a unit's profit includes its slice.
 
 ## 10.1 Decided by Logan
 
@@ -451,3 +483,4 @@ Hovering a company's revenue shows: industry size → cycle → rates → pass-t
 13. Industry news cycle phases in 10.0.6.
 14. How a unit's growth plan picks which cities its new assets go to (10.0.2).
 15. Flavor labels, the 10-year depreciation, the cycle sale factors, and pricing of asset deals in 10.0.7.
+16. How subsidiaries are carried, parent overrides, the statement lines, the fair value formula and the shared cost split in 10.0.8.
