@@ -16,7 +16,7 @@ This is the entry point. Each system has its own file in this folder so it can g
 | 8 | [08-politics.md](08-politics.md) | Governments at three levels, interest groups, laws, regulators, lobbying, diplomacy |
 | 9 | [09-time-and-turns.md](09-time-and-turns.md) | Hourly turns, daily, weekly, monthly, quarterly and yearly calculations |
 | 10 | [10-events.md](10-events.md) | Event engine and event chains |
-| 11 | [11-ui.md](11-ui.md) | Phaser screens and map views |
+| 11 | [11-ui.md](11-ui.md) | Godot screens and map views |
 | 12 | [12-tech-and-roadmap.md](12-tech-and-roadmap.md) | Tech stack, architecture, data model, milestones |
 | 13 | [13-open-questions.md](13-open-questions.md) | Unresolved questions and current assumptions |
 | 14 | [14-game-stages.md](14-game-stages.md) | Retired: the game has no stages (Logan, 2026-10-17) |
@@ -48,6 +48,7 @@ Exact rules, numbers and content for each layer of the game:
 | 11. Addiction (gambling, drugs, cyberware, doomscrolling, sex) | [detailed/11-addiction.md](detailed/11-addiction.md) |
 | 12. Setup, fair AI, dynasty score and saves | [detailed/12-setup-and-score.md](detailed/12-setup-and-score.md) |
 | 13. Events (frequency, the director, AI events, event decks) | [detailed/13-events.md](detailed/13-events.md) |
+| 14. Software (apps, AI models as products, hacking, exploits) | [detailed/14-software.md](detailed/14-software.md) |
 
 ## Vision
 

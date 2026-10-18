@@ -2,7 +2,7 @@
 
 ## Decided by Logan (2026-10-16)
 
-- Lightweight 2D UI with Phaser.
+- Lightweight 2D UI, built in Godot as a desktop app (batch 41; Phaser dropped).
 - First build focus: company ownership, corporate feudalism, RPG and CK3-style systems.
 - Charters decide company heads; default head is President and CEO with majority voting control or leading the majority bloc.
 - Bloc leader is the member with the most shares in the bloc.
@@ -66,6 +66,7 @@
 - Batch 38 (Logan, 2026-10-17): interest-group mapping confirmed with changes (Industrialists go to Accelerationists and Landites; some Financiers go to Accelerationists); each industry's trade lobby funds a default ideology unless the head picks another; an Oligarch's political weight grows with their influence; keep the six government types; events are reviewed next.
 - Batch 39 (Logan, 2026-10-18): 1 or 2 events a week for the player's character; a director paces events (more pressure when calm, relief in crises); every full character gets events, resolved off screen and shown as news pop-ups; options show the skill but not the odds; every system feeds its own event deck (detailed/13-events.md).
 - Batch 40 (Logan, 2026-10-18): no hint words on rolls, only the skill icon; an open event keeps the game paused until answered; the director can aim the rival rotation at the player when calm; about 10 events per deck at launch; next topic: "Software System".
+- Batch 41 (Logan, 2026-10-18): "Software System" means an in-game system about software (apps, hacking, AI models as products), drafted in detailed/14-software.md; the game is a desktop app built in Godot (Phaser and the browser dropped); simulation detail is tiered (full for the player's circle and rivals, weekly for the rest); content is schema-checked JSON (12-tech-and-roadmap.md).
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm

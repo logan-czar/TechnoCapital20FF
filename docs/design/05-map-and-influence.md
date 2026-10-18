@@ -2,7 +2,7 @@
 
 ## 5.1 The world map
 
-The game uses a **2D map of the modern world**, rendered in Phaser, with three zoom levels:
+The game uses a **2D map of the modern world**, rendered in Godot (batch 41; was Phaser), with three zoom levels:
 
 | Zoom | Shows | Used for |
 |---|---|---|
