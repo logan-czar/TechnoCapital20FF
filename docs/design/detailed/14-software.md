@@ -39,6 +39,7 @@ Every column is Logan's (batches 42 and 43).
 
 ### 14.2.1 How quality, bloat and speed work together (A)
 
+- **AI software (Logan):** its quality is **capped by the quality of the models loaded** for its capabilities ([18-ai-models.md](18-ai-models.md) 18.5).
 - **Quality** runs from 0 to 100. Effective values are scaled by a quality factor `Q = 0.5 + quality / 100`, so a 50-quality product works at ×1.0 and a 100-quality one at ×1.5 **(T)**:
   - effective speed = base speed × Q
   - effective compute and database needs = base needs ÷ Q (better software is leaner)
