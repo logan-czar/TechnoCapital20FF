@@ -1,6 +1,6 @@
 # 19. History: the world from the 1990s to 2020 (detailed design)
 
-_Status: draft v2.0 (2026-10-18; 2000 to 2017 ruled in batches 94 to 112, 2018 drafted). **Company names (Logan, batch 110):** real company names are kept here as background for now; the fictional in-game versions replace them when the starting companies are designed (scenarios come last). Standing rule (Logan, batch 102): **every South Asian terror attack happens as in real life.** Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
+_Status: draft v2.1 (2026-10-18; 2000 to 2018 ruled in batches 94 to 113, 2019 drafted). **Company names (Logan, batch 110):** real company names are kept here as background for now; the fictional in-game versions replace them when the starting companies are designed (scenarios come last). Standing rule (Logan, batch 102): **every South Asian terror attack happens as in real life.** Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
 
 **How to read this file.** Everything below is **real history**, as a base. Rows Logan has confirmed or changed are marked **(Logan)**; everything else is a draft for him to rule on. Where a real event clashes with the alternate history already decided (7.2.0), the clash is flagged.
 
@@ -415,22 +415,44 @@ Effects **(A)**: no Department of Homeland Security, no Patriot Act, and no Guan
 
 **Global (draft).** **The hunt for the Trumps** (Logan): Obama's government spends the year tracking the family overseas, leaning on corporations for data, money and private intelligence, and in return **corporate partners are written into federal agencies** **(A)**. The **Cambridge Analytica** scandal shows how Facebook data was used to sway voters (March), and Europe's **GDPR** privacy law takes effect (May). **Crypto crashes** after the 2017 bubble. **Apple** becomes the first trillion-dollar company (August). Pop culture: *Black Panther*, *Infinity War*, **Red Dead Redemption 2** and peak **Fortnite**.
 
-> **Questions to rule on.** (1) **Where do the Trumps hide?** a) ★ Moscow: Russia shelters them, repaying the 2016 email help. b) The Gulf, in Dubai. c) They split up across several countries. (2) **A US-China trade war.** In real life Trump started it with tariffs. a) ★ Obama starts a softer one over tech theft, pushed by the corporations he now depends on. b) No trade war. (3) **Huawei.** Canada arrests Huawei's CFO **Meng Wanzhou** in Vancouver on a US warrant (December), and China jails two Canadians in revenge. a) ★ It happens, and Canada is caught between the US and China. b) It never happens.
+**Rulings (Logan, batch 113).** (1) **The Trumps split up** across several countries. (2) **Obama starts a softer trade war** with China over tech theft, pushed by the corporations he now depends on. (3) **No Huawei arrest**: Meng Wanzhou is never detained in Vancouver.
 
 | Region | Big events of 2018 (real, with game-world changes marked **(A)**) |
 |---|---|
-| **North America** | 1. **The hunt for the Trump family** overseas, with corporate help (Logan) **(see question 1)**. 2. **Canada legalizes cannabis** (October), and **Doug Ford** wins Ontario (June). 3. **Meng Wanzhou** is arrested in Vancouver (December) **(see question 3)**. Also: the **Parkland** school shooting (February); **AMLO** wins Mexico in a landslide (July); California's **Camp Fire** (November). |
+| **North America** | 1. **The hunt for the Trump family** overseas, with corporate help; the family has **split up across several countries** (Logan). 2. **Canada legalizes cannabis** (October), and **Doug Ford** wins Ontario (June). 3. **(Logan) No Huawei arrest** in Vancouver. Also: the **Parkland** school shooting (February); **AMLO** wins Mexico in a landslide (July); California's **Camp Fire** (November). |
 | **Latin America** | 1. **Bolsonaro** wins Brazil (October), with Lula jailed. 2. **(A)** Venezuela's slow slide, cushioned by high oil prices. 3. Nicaragua's **Ortega** crushes protests, killing hundreds (April to July). |
 | **Europe** | 1. Russia poisons ex-spy **Sergei Skripal** in Salisbury (March). 2. Italy's **populist government** takes power (June). 3. France's **yellow vest** protests (from November). Also: **GDPR** (May); **(A)** the EU still lags, and Greece's books still hold, for one more year. |
 | **Russia and the former USSR** | 1. **Putin** wins a fourth term (March). 2. Armenia's **Velvet Revolution** (April to May). 3. Russia seizes three Ukrainian ships in the **Kerch Strait** (November) **(A: one more clash in the drone war)**. |
 | **Middle East and North Africa** | 1. Saudi agents murder journalist **Jamal Khashoggi** in Istanbul (October). 2. **(A)** Washington leans on its Gulf partners to hand over any Trump money parked there. 3. **Iran** holds out under sanctions, its economy sliding. |
 | **Sub-Saharan Africa** | 1. **Abiy Ahmed** becomes Ethiopia's prime minister (April) and makes **peace with Eritrea** (July). 2. **Ramaphosa** replaces Zuma (February). 3. Zimbabwe's first election after Mugabe (July). |
 | **South Asia** | 1. **Imran Khan** becomes Pakistan's prime minister (August). 2. India's Supreme Court **decriminalizes gay sex** (September). 3. **(A)** Pakistan sinks deeper into Chinese debt. |
-| **East Asia** | 1. **Xi removes his term limits** (March). 2. **Moon and Kim** hold three summits (April to September). 3. **(A)** China's tech firms come under US pressure **(see question 2)**. |
+| **East Asia** | 1. **Xi removes his term limits** (March). 2. **Moon and Kim** hold three summits (April to September). 3. **Obama's trade war** with China over tech theft, softer than the real one (Logan). |
 | **Southeast Asia and Oceania** | 1. **Mahathir returns** at 92 and ousts Najib over **1MDB** (May). 2. The **Thai cave rescue** of 12 boys and their coach (July). 3. Australia's **Morrison** replaces Turnbull (August). |
 
-**Logan's ruling on 2018:** _pending._
+**Logan's ruling on 2018 (batch 113):** everything above happened, with the changes in the rulings box.
 
-## 19.21 2019 onward
+## 19.21 The year 2019 (draft)
 
-To be written after 2018 is settled, up to the 2020 start. Already set: **Greece's hidden debt is exposed in 2019**, and the **Brexit** vote follows within months (Logan). Still to place: Madoff's exposure, and the transformer paper (around 2020).
+The last year before the game starts on 1 January 2020.
+
+**Global (draft).** **Greece's hidden debt is exposed** (Logan; spring **(A)**): ten years of hidden borrowing come out at once, Greece cannot pay, and the **euro crisis** hits a Europe that is already lagging. **Britain votes to leave the EU** within months (Logan; October **(A)**). The **Boeing 737 MAX** is grounded after two crashes (March). Iran-backed **drones hit Saudi Arabia's Abqaiq** oil plant and briefly cut half its output (September). **WeWork's IPO collapses** (September). Google claims **quantum supremacy** (October). Pop culture: *Avengers: Endgame*, the end of **Game of Thrones**, *Joker*, and **TikTok** spreads worldwide. **(A)** No GPT-2, since the transformer has not come yet.
+
+> **Questions to rule on.** (1) **Madoff's exposure.** a) ★ 2019: the journalist who broke Enron exposes him in the middle of the euro crisis, and it makes them the most famous reporter alive at game start. b) After January 2020, as a live event in the game. (2) **The transformer paper** (around 2020, Logan). a) ★ In early 2020, as a scripted world event soon after John's desktop arrives, and the LLM tip names the lab that will scale it first (7.6). b) Late 2019, before the game starts. (3) **How bad is the euro crisis at game start?** a) ★ Severe: Greece defaults, the euro falls hard, Europe is in recession in January 2020, and the US is barely touched. b) Mild: a bailout is being worked out, and markets are nervous but stable.
+
+| Region | Big events of 2019 (real, with game-world changes marked **(A)**) |
+|---|---|
+| **North America** | 1. **Trudeau's Liberals keep their majority** in Canada (October) **(A: the real result was a minority; the game starts with a majority, batch 81)**. 2. **(A)** Obama gears up for re-election in 2020; scattered members of the Trump family are caught, but **Donald Trump's whereabouts are unknown** at game start. 3. Financier **Jeffrey Epstein** is arrested and dies in jail (July to August). Also: the **737 MAX** grounding hits Boeing. |
+| **Latin America** | 1. **Guaidó** claims Venezuela's presidency against Maduro (January). 2. Mass **protests in Chile** (October) and the fall of **Evo Morales** in Bolivia (November). 3. Fires sweep the **Amazon** under Bolsonaro (August). |
+| **Europe** | 1. **Greece's debt is exposed** and the **euro crisis** begins (spring **(A)**) **(see question 3)**. 2. **Britain votes to leave** the EU (October **(A)**); the exit itself plays out from 2020. 3. **Notre-Dame** burns (April). Also: **Greta Thunberg's** school strikes spread worldwide. |
+| **Russia and the former USSR** | 1. **Zelensky** wins Ukraine's presidency in wartime (April). 2. **(A)** The drone war grinds on along the front, now the world's testing ground for military drones. 3. **Moscow's protests** over barred opposition candidates (July to August). |
+| **Middle East and North Africa** | 1. Drones hit **Abqaiq** (September), and tankers are attacked in the Gulf (May to June), both blamed on Iran. 2. **Algeria's Bouteflika** is forced out (April) **(A: with Washington arranging a friendly successor)**. 3. **Iran's** fuel-price protests are crushed, with hundreds killed (November). |
+| **Sub-Saharan Africa** | 1. Sudan's **Bashir is ousted** after 30 years (April) **(A: with a US-friendly transition)**. 2. **Abiy** wins the Nobel Peace Prize (October). 3. **Cyclone Idai** hits Mozambique and Zimbabwe (March). |
+| **South Asia** | 1. The **Pulwama** bombing kills 40 Indian police (February), and India strikes **Balakot** in Pakistan. 2. **Sri Lanka's Easter bombings** kill 269 (April; every South Asian attack happens, Logan). 3. **Modi wins again** (May) and **revokes Kashmir's autonomy** (August). |
+| **East Asia** | 1. **Hong Kong's** months of mass protests (from June). 2. China's **70th anniversary** parade (October). 3. **Japan's new emperor**, Naruhito (May). |
+| **Southeast Asia and Oceania** | 1. A gunman kills 51 at two **Christchurch mosques** (March). 2. **Jokowi** is re-elected (April). 3. Australia's **bushfires** begin (from September). |
+
+**Logan's ruling on 2019:** _pending._
+
+## 19.22 1 January 2020: the world at game start
+
+To be summarized once 2019 is ruled: a one-page snapshot of every region as the game opens, matched against 7.2.0.
