@@ -47,7 +47,7 @@ This file turns the map and influence overviews into exact rules, formulas, numb
 | Layer | Count at start | Notes |
 |---|---|---|
 | **Major countries** | 31 | Fully simulated: hubs, regions, own market, central bank, exchange |
-| **Minor groups** | 16 groups covering the rest of the world | Each member country keeps its own government, laws and currency (see [4-politics.md](4-politics.md) 4.2.4). Economically each group is one aggregated market with no playable hubs at start |
+| **Minor groups** | 16 groups covering the rest of the world | Each member country keeps its own government, laws and currency (see [4-politics.md](4-politics.md) 4.2.4). Economically each group is one aggregated market with no playable hubs at start. Ukraine, Greece, Mali and Iran stay here with no hubs, despite their role in the history (Logan, 2026-10-18) |
 | **Regions** | 2 to 8 per major country | States or provinces. Only regions that contain a hub are drawn in detail at start; the rest of a country is one "rest of country" region |
 | **Economic hubs** | 44 | Cities or clusters with districts (2.3) |
 | **Districts** | 6 to 26 per hub | Each with up to four real estate pools (2.16) |
@@ -960,7 +960,7 @@ Characters are physically somewhere on the map, and getting them where the deals
 
 ### 2.21.1 Location and residence
 
-- Every character has a **current location** (a hub) and a **residence** (a hub; sets tax residency for E1 and E4).
+- Every character has a **current location** (a hub) and a **residence** (a hub; sets tax residency for E1 and E4). Homes themselves are **flavor only** (Logan, 2026-10-18): a character's house, flat or lease is not a property holding and gives no influence.
 - Meetings, galas and most character actions need both characters in the same hub. A **remote call** works for any meeting at -30% effectiveness (pitches, negotiations, persuasion). Some actions are in-person only: galas, Seduce, signing a founding round, family weddings and funerals.
 - The dynasty names one hub as its **seat**: +3 pp dynasty influence there, family events happen there, and moving the seat takes 3 months of disruption (a push of 10 toward Rival from the family).
 

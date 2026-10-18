@@ -72,5 +72,5 @@ _A plain-language breakdown of the current design (2026-10-18), for review. The 
 2. ~~Doha in a minor group~~ **Fixed:** Doha now belongs to Qatar.
 3. ~~Size classes~~ **Fixed:** Edmonton is now S (6 districts), Medellín M (10), Sydney L (14).
 4. ~~GDP figures~~ **Fixed:** set to the alternate January 2020 (real 2019 values; US about 10% larger, eurozone about 20% smaller in dollars, Russia about 30% smaller).
-5. **Countries now central to the history have no hubs.** Ukraine (the drone war front), Greece (the default), Mali (the US debt vassal) and Iran (the holdout) all sit inside minor groups.
-6. **Characters' homes aren't modeled.** John's paid executive lease in Edmonton and rivals' mansions don't sit in the Residential pools or anywhere else.
+5. **Countries central to the history have no hubs.** **Decided (Logan): keep them that way.** Ukraine, Greece, Mali and Iran stay inside their minor groups with no hubs.
+6. **Characters' homes.** **Decided (Logan): flavor only.** Homes (John's executive lease, rivals' mansions) are not property holdings; a character's residence is just a hub (2.21.1).
