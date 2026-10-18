@@ -76,7 +76,7 @@ Rebuilt around the current design; the build starts only when Logan says so.
 7. **Events**: engine, director, first decks (about 10 events each), the opening quest "The Desktop".
 8. **Techno-Capital and software**: compute, the GPU chain, the software table (hacking comes later).
 9. **Politics and ideology**: ideology blocs, strata voting, laws, elections, regulators.
-10. **Vices and gambling**, then the quest lines, then the 2030 crash.
+10. **Vices and gambling**, then the quest lines, then the 2035 crash.
 
 ## 12.5 Success criteria for the first playable (A)
 

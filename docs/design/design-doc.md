@@ -32,7 +32,7 @@ Exact rules, numbers and content for each layer of the game:
 | 4. Politics (ideology blocs, votes by strata, politics by company rank) | [detailed/4-politics.md](detailed/4-politics.md) |
 | 5. Ideology (the nine ideologies, Victoria 2 style) | [detailed/5-ideology.md](detailed/5-ideology.md) |
 | 6. Techno-Capital (compute, fabs, lithography, drones, autonomous vehicles, robots, models) | [detailed/6-technocapital.md](detailed/6-technocapital.md) |
-| 7. Starting world (alternate history, 2020 scenario, the starting character John Techno, 14 rival starting characters, opening quest, timeline to 2030) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |
+| 7. Starting world (alternate history, 2020 scenario, the starting character John Techno, 14 rival starting characters, opening quest, timeline to 2035) | [detailed/7-starting-world.md](detailed/7-starting-world.md) |
 | 8. Quest lines (arcs, the opening quest "The Desktop", and John Techno's line; rivals have no lines) | [detailed/8-quest-lines.md](detailed/8-quest-lines.md) |
 | 9. Gambling, crypto and prediction markets (the phone tab) | [detailed/9-gambling.md](detailed/9-gambling.md) |
 | 10. Industry economy (Wall Street Raider style: industries, business units, business assets; replaces goods) | [detailed/10-industry-economy.md](detailed/10-industry-economy.md) |
@@ -44,6 +44,7 @@ Exact rules, numbers and content for each layer of the game:
 | 16. Media and entertainment (print, streamers, studios, labels, creators; campaigns) | [detailed/16-media.md](detailed/16-media.md) |
 | 17. Hacking (schemes on owned Techno-Capital; steal data or backdoor; black market) | [detailed/17-hacking.md](detailed/17-hacking.md) |
 | 18. AI models (trained on GPU compute and data; rented through contracts; power AI features) | [detailed/18-ai-models.md](detailed/18-ai-models.md) |
+| 19. History (the 1990s to 2020, year by year) | [detailed/19-history.md](detailed/19-history.md) |
 
 ## Vision
 

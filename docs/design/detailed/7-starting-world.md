@@ -1,6 +1,6 @@
 # 7. Starting world: detailed design
 
-_Status: draft v1.4 (2026-10-18). Batch 92: the AI boom starts in 2025. Batch 81: start at 00:00 on 1 January 2020, the opening sequence, a Liberal majority in Canada, Terry's friend is a Conservative MP. Batch 80: Arrowhead Drilling, its owners and board; Terry's politician friend in Montreal. Batch 79: John has no starting ambition; his parents are PMC middle managers in Edmonton. Batch 78: Terry's buff, net worth and heritage; John's skills and his one trait. Batch 77: Terry Tippacanoe, the new rival who owns John's company; Edmonton, the listed company and the desktop tip confirmed. Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v1.5 (2026-10-18). Batch 93: the crash averages 2035; US chip export controls move to 2026. Batch 92: the AI boom starts in 2025. Batch 81: start at 00:00 on 1 January 2020, the opening sequence, a Liberal majority in Canada, Terry's friend is a Conservative MP. Batch 80: Arrowhead Drilling, its owners and board; Terry's politician friend in Montreal. Batch 79: John has no starting ambition; his parents are PMC middle managers in Edmonton. Batch 78: Terry's buff, net worth and heritage; John's skills and his one trait. Batch 77: Terry Tippacanoe, the new rival who owns John's company; Edmonton, the listed company and the desktop tip confirmed. Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 7.10.
 
@@ -19,7 +19,7 @@ _Status: draft v1.4 (2026-10-18). Batch 92: the AI boom starts in 2025. Batch 81
 | Dynasty places | Each dynasty has an **Origin city** and a **Center of Power**. Members can live anywhere. |
 | Center of Power | The hub where the dynasty holds the most influence, so it moves as the dynasty grows. Influence is money, power and prestige: money is the asset base, and power and prestige modify it (7.5). |
 | Rise and fall | AI founders rise into new dynasties during play, and dead dynasties drop out. |
-| History | Follows the real AI boom, inside the alternate history in 7.2.0, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2030 on average a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.5); the game continues into a post-crash era with new rules. |
+| History | Follows the real AI boom, inside the alternate history in 7.2.0, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2035 on average** (Logan, batch 93) a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.5); the game continues into a post-crash era with new rules. |
 | Alternate history (Logan, 2026-10-17) | In the game world the **dot-com crash, 9/11, the 2008 financial crisis and COVID never happened**. Everything else is the same, except that the **US won its wars in the Middle East far more decisively** and is in a much better position, both financially and in the security of its resources (7.2.0). |
 | Opening quest | **Buying a desktop computer** on the phone (Logan, batch 76; 7.6). It gives John his first compute. |
 | LLM tip | A tip names the company that will make the first LLM breakthrough. The tip is always correct, and the tipped lab is different each game. It arrives on the new desktop (Logan, batch 77; 7.6). |
@@ -35,7 +35,7 @@ What follows from that, in January 2020 **(A)**:
 
 | Area | Real 2020 | Game world 2020 |
 |---|---|---|
-| Tech | Scarred by the 2000 crash; big tech grew from the survivors | No crash ever: tech giants are older, bigger and richer, investors have never seen a tech bust, and valuations and VC funding run hotter. The 2030 AI crash is the first great tech crash, so it hits harder (8.4) |
+| Tech | Scarred by the 2000 crash; big tech grew from the survivors | No crash ever: tech giants are older, bigger and richer, investors have never seen a tech bust, and valuations and VC funding run hotter. The 2035 AI crash is the first great tech crash, so it hits harder (8.4) |
 | Banking | Bailouts, stricter rules after 2008, a decade of near-zero rates | No crisis, no bailouts and no post-crisis rules: banks are bigger and more leveraged, US regulator strictness is 1 point lower (3.10), and households carry more debt. Rates never went to zero: the US policy rate is about **3%** at start **(T)** |
 | Housing | Recovered from the 2008 crash | Never crashed: a long boom, so many hubs start in the Peak phase of the property cycle (2.16.5) |
 | Pandemic | COVID lockdowns begin | **No pandemic**: no vaccine mandates, no stimulus wave, no 2021 inflation spike, no remote-work shift. Offices are full (commercial pools start at 95% occupancy) |
@@ -56,7 +56,7 @@ The detailed files were written with present-day starting values. At a January 2
 
 | Item | At start (January 2020) | Arrives later through the timeline (7.7) |
 |---|---|---|
-| Chip export controls | Entity list bans on a few Chinese firms only; lithography system bans on EUV to China already in force | Broad US controls on advanced chips and AI server nodes (October 2022), widened yearly; Netherlands and Japan join (2023) |
+| Chip export controls | Entity list bans on a few Chinese firms only; lithography system bans on EUV to China already in force | Broad US controls on advanced chips and AI server nodes (**2026**, after the boom, batch 93), widened yearly; Netherlands and Japan join the next year |
 | Russia | At war in Ukraine since 2005, a drone stalemate; heavy sanctions since 2005 (7.2.0) | Drone escalations and ceasefire events, rolled through the timeline |
 | Compute | Generation 1 accelerators; AI is a research field, not a market | Gen 2 (2024), Gen 3 (2026), Gen 4 (2028), Gen 5 (2030) on the 24-month cycle in [6-technocapital.md](6-technocapital.md) 6.4.1 |
 | Models | No commercial chat models | The tipped lab's chatbot launch in **2025** starts the boom (Logan, batch 92) |
@@ -158,7 +158,7 @@ The first quest of the game is **buying a desktop computer**, on John's phone: h
 - **The LLM tip** arrives on the new desktop once it is set up: it names the company that will make the first LLM breakthrough and explains how the AI system will work before the boom. The tip is always correct (Logan, batch 77).
 - **The tipped lab is different each game.** At game start one lab is drawn from a pool of five fictional AI labs (for example a Bay Area nonprofit lab, a big tech research division, a London lab, a Beijing lab and a Toronto lab) **(A)**. The drawn lab makes the **2025** breakthrough (batch 92) unless players change history.
 
-## 7.7 Timeline 2020 to 2030
+## 7.7 Timeline 2020 to 2035
 
 Real events happen on schedule by default. Each one is an event or quest that players can change. From 2025 onward the events grow more fantastical. Company names are fictional.
 
@@ -174,13 +174,13 @@ Real events happen on schedule by default. Each one is an event or quest that pl
 | 2021 | A crypto and SPAC mania **(A)** | Random boom coins in the gambling tab ([9-gambling.md](9-gambling.md)); IPO frenzy |
 | 2020 onward | The Ukraine drone war grinds on (since 2005) | Drone demand; Black Sea risk; ceasefire or escalation events |
 | 2022 to 2023 | Rates still steady near 3% | VC funding stays hot |
-| Oct 2022 | Broad US chip export controls | Export controls in [6-technocapital.md](6-technocapital.md) 6.9 switch on |
 | 2024 | Gen 2 accelerators, bought for research and gaming | No AI market yet |
 | **2025** | **The tipped lab launches its chatbot** (Logan, batch 92) | **The AI boom starts**; compute demand surges |
-| 2026 | The GPU gold rush; Gen 3 | Compute spot prices spike |
+| 2026 | The GPU gold rush; Gen 3; **broad US chip export controls** on advanced chips and AI server nodes (Logan, batch 93) | Compute spot prices spike; export controls in [6-technocapital.md](6-technocapital.md) 6.9 switch on |
 | 2027 | Power deals for data centers; nuclear restarts; a cheap Chinese open model shocks the market | Power becomes the bottleneck; Beijing and Shenzhen get a boost; a market wobble |
-| 2028 to 2029 | Gen 4; gigaclusters; AI agents run whole departments; humanoid robots in factories | Fantastical events; peak valuations **(A: compressed from the old 2022 timeline)** |
-| 2030 | **The crisis: the bubble pops** | A crash in AI valuations; the post-crash era begins |
+| 2028 to 2029 | Gen 4; gigaclusters; AI agents run whole departments | Fantastical events begin |
+| 2030 to 2034 | Gen 5 and beyond; humanoid robots in factories | More fantastical events; peak valuations **(A)** |
+| 2035 | **The crisis: the bubble pops** (on average, batch 93) | A crash in AI valuations; the post-crash era begins |
 
 ## 7.8 New places
 

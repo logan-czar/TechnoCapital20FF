@@ -19,7 +19,7 @@ A quest line is made of **arcs** (Logan's word; not chapters).
 | Steps | Inside an arc, the player sees only the next step ([10-events.md](../10-events.md) 10.4). Failure branches into new quests. |
 | After the line | When a line ends, **generated side quests** keep coming from events, the character's ambition (1.1.2) and rivals (batch 33). |
 | Successors | A successor **usually does not** inherit the quest line (batch 33): they start with their own ambition and generated quests, plus a few legacy quests from the old line. **Sometimes** (25% per unfinished arc **(T)**, higher for children and protégés trained in it) the successor picks up an unfinished arc. |
-| The crash | The AI bubble pops in **2030 on average**. The actual year varies by a few years with RNG and events (8.5). Every full line has a crash arc that opens whenever it hits. |
+| The crash | The AI bubble pops in **2035 on average** (Logan, batch 93). The actual year varies by a few years with RNG and events (8.5). Every full line has a crash arc that opens whenever it hits. |
 
 **Outcome tiers (A).** Most arcs use three tiers: **Strong**, **Mixed** and **Poor**. As a guide, Strong gives +2 to one skill and a clout gain, Mixed gives +1 to one skill, Poor gives a lasting penalty or a negative trait **(T)**.
 
@@ -174,14 +174,14 @@ From **Q2 to Q4 2020** the arc takes John through building that software:
 
 **The moment.** Once the oil software is done, in **Q1 2021**, oil is **booming in Edmonton** for Arrowhead. Two things cause it (Logan, batch 92):
 - **The other large oil companies are racked by debt**, which makes business hard for them.
-- **Arrowhead's CEO makes some very intelligent moves in the futures market** (3.7), freeing up a **windfall of capital** to invest.
+- **Arrowhead's CEO makes some very intelligent moves in the futures market** (a scripted event, batch 93; commodities stay a placeholder, 3.7), freeing up a **windfall of capital** to invest.
 
 **John decides** (batch 92): as COO he makes the call himself, without a board vote. The **Kids Who Code charity stays** whatever he picks.
 
 | Choice | What happens |
 |---|---|
 | **Pivot to gambling** | Take **Terry's offer** to partner on a **prediction market** or an **online casino** (the Gambling industry, [9-gambling.md](9-gambling.md)) |
-| **Stick to the old system** | Keep Arrowhead as it is: the oil unit and the charity, no new spending **(A)** |
+| **Stick to the old system** | Use the **software business unit** to **improve the software already made** or **make new software outside gambling** (Logan, batch 93) |
 | **Stick to making software the old way** | Keep building enterprise software through the charity's free desktops (14.8) |
 | **Pour the windfall into oil** | Put the cash into oil production: the oil business units grow greatly |
 
@@ -231,7 +231,7 @@ When a character's line ends, or for a successor who does not inherit it, **gene
 
 ## 8.5 The crash
 
-The AI bubble pops in 2030 on average (Logan). The year is set at game start as 2030 plus a roll of -2 to +2 years **(T)**, then moved by events: a bigger boom (high AI valuations, heavy leverage) brings it closer, and calmer markets push it later **(A)**. In this world there was never a dot-com crash or a 2008 crisis (7.2.0), so investors have never lived through a great crash, and it hits harder: market drops are ×1.2 the normal crash size **(T)**. When it hits, John Techno's crash arc (8.3) opens, and any generated quests tied to the boom resolve.
+The AI bubble pops in 2035 on average (Logan, batch 93). The year is set at game start as 2035 plus a roll of -2 to +2 years **(T)**, then moved by events: a bigger boom (high AI valuations, heavy leverage) brings it closer, and calmer markets push it later **(A)**. In this world there was never a dot-com crash or a 2008 crisis (7.2.0), so investors have never lived through a great crash, and it hits harder: market drops are ×1.2 the normal crash size **(T)**. When it hits, John Techno's crash arc (8.3) opens, and any generated quests tied to the boom resolve.
 
 ## 8.6 Assumptions and open items
 
