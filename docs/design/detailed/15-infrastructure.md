@@ -1,6 +1,6 @@
 # 15. Infrastructure: compute, data centers, databases and the cloud (detailed design)
 
-_Status: draft v0.2 (2026-10-18). Logan picked "compute, servers, databases, and the cloud" as the next system (batch 44) and set its core in batch 45: **three compute types** built from parts, each with a maintenance score; **onsite or leased data centers**; **one world cloud price to start**; data has value; **no data residency rules**. It is what software runs on: every software instance ([14-software.md](14-software.md) 14.2.2) needs compute, and companies pay for it in their own data centers or in a cloud bill. Builds on [6-technocapital.md](6-technocapital.md) (compute, the GPU chain) and [10-industry-economy.md](10-industry-economy.md) (sites, real estate, the Cloud and data centers industry). Owner: Logan._
+_Status: draft v0.3 (2026-10-18). Batch 46: maintenance feeds the energy system, GPU compute = H, parts from industries, 100 TB per data unit. Logan picked "compute, servers, databases, and the cloud" as the next system (batch 44) and set its core in batch 45: **three compute types** built from parts, each with a maintenance score; **onsite or leased data centers**; **one world cloud price to start**; data has value; **no data residency rules**. It is what software runs on: every software instance ([14-software.md](14-software.md) 14.2.2) needs compute, and companies pay for it in their own data centers or in a cloud bill. Builds on [6-technocapital.md](6-technocapital.md) (compute, the GPU chain) and [10-industry-economy.md](10-industry-economy.md) (sites, real estate, the Cloud and data centers industry). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 15.8.
 
@@ -26,9 +26,9 @@ _Status: draft v0.2 (2026-10-18). Logan picked "compute, servers, databases, and
 
 - **Ratios vary by software (Logan).** A basic enterprise program needs data compute and base compute at about **1 to 1**, but every app is different. Each software row's compute requirement (14.2) lists how many units of each type it needs per instance **(A)**.
 - **Demand over time (Logan).** GPU compute starts with **low demand** in 2022 and then **skyrockets** with the AI boom (6.7.0). Base and data compute demand grows steadily with the economy **(A)**.
-- **Parts.** Base computer parts come from the Consumer electronics and Semiconductors industries; GPU parts are the GPUs at the end of the GPU chain (6.7.0) **(A)**. A unit of compute is built by buying its parts and installing them in a data center.
-- **Maintenance score.** The upkeep a unit needs each month: power, cooling, repairs and staff time **(A)**. Monthly upkeep per unit = maintenance score × the **maintenance price** (about $50 at start, moved by the energy price index and local wages) **(T)**. So a GPU unit costs 25 times as much to keep running as a data compute unit. Skipping maintenance lowers the units' output and raises breakdown events.
-- **Mapping to Techno-Capital (A).** GPU compute is the AI compute of [6-technocapital.md](6-technocapital.md) (H): 1 unit of GPU compute delivers 1 H a month **(T)**.
+- **Parts.** Base computer parts come from the Consumer electronics and Semiconductors industries, bought at their price index (Logan, batch 46); GPU parts are the GPUs at the end of the GPU chain (6.7.0). A unit of compute is built by buying its parts and installing them in a data center.
+- **Maintenance score (Logan, batch 46).** Monthly upkeep per unit = maintenance score × the **maintenance price** (about $50 at start, moved by the energy price index and local wages) **(T)**. The maintenance score **also factors into the energy system**: a data center's power demand on the grid scales with the total maintenance score of the compute it holds, so GPU-heavy data centers pull the most power (2.6.0, 6.7.2) **(A)**. So a GPU unit costs 25 times as much to keep running as a data compute unit. Skipping maintenance lowers the units' output and raises breakdown events.
+- **Mapping to Techno-Capital (Logan, batch 46).** GPU compute is the AI compute of [6-technocapital.md](6-technocapital.md) (H): 1 unit of GPU compute delivers 1 H a month.
 
 ## 15.3 Data centers (Logan)
 
@@ -40,7 +40,7 @@ _Status: draft v0.2 (2026-10-18). Logan picked "compute, servers, databases, and
 
 ## 15.4 Databases and stored data
 
-- **Data compute is where data lives.** Stored input and output data (14.2.2) takes data compute capacity: 1 unit of data compute stores 10 TB **(T)** and processes it for software.
+- **Data compute is where data lives.** Stored input and output data (14.2.2) takes data compute capacity: 1 unit of data compute stores **100 TB** (Logan, batch 46) and processes it for software.
 - **Stored data has value (Logan).** It can be **sold**, **fed into other software**, or **used to train AI models** (6.5). Value depends on its type (transactions, user activity, sensor feeds and so on) and on how many companies want it **(A)**.
 - **Data ages (Logan).** Most data loses value as it gets older, about 5% a month **(T)**; some types, such as medical and financial history, keep their value **(A)**.
 - **No residency rules (Logan).** Data can be stored and processed in any country. Privacy laws (T2, [4-politics.md](4-politics.md)) can still limit what may be collected or sold, but not where it sits **(A)**.
@@ -74,8 +74,8 @@ _Status: draft v0.2 (2026-10-18). Logan picked "compute, servers, databases, and
 
 ## 15.8 Assumptions and open items
 
-1. Where parts come from, the maintenance price and the GPU-to-H mapping in 15.2.
+1. The maintenance price and how maintenance turns into grid power demand in 15.2.
 2. Data center capacity, space leases and power draw in 15.3.
-3. Storage per data compute unit, data value and ageing in 15.4.
+3. Data value and ageing in 15.4.
 4. How the world cloud price moves and who earns from it in 15.5.
 5. The own versus rent comparison in 15.6.
