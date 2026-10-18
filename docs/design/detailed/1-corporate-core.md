@@ -648,6 +648,38 @@ Expenses: lifestyle (by trait: Ascetic 0.5x, Hedonist 2x; base $20k per adult dy
 | Tycoon | $10B to $100B |
 | Oligarch | > $100B |
 
+### 1.10.6 Personal money (Logan, batch 59)
+
+| Topic | Decision |
+|---|---|
+| Spending | **Monthly personal spending can raise some resources** (the character resources in 1.1: clout, prestige and vril, plus stress and health). Spending is a monthly budget, not a list of bought objects. |
+| Income | **Salary and bonus** from board and executive seats, **dividends**, **trust payouts** and **gambling** winnings (9). |
+| Tax | **Income and capital gains tax by home country**, lowered by trusts and havens. |
+| Debt | **Personal loans and pledging shares** (3.5.5). A default hurts reputation and can force sales. |
+| Rich list | **A public world rich list** that drives prestige and rival attention. **Hidden wealth is not counted.** |
+
+**Spending budgets (A).** Each character sets a monthly amount for each line. A line raises its resource with diminishing returns: the gain is `points at the reference spend × (spend ÷ reference)^0.5`, capped at twice the reference gain **(T)**. The reference spend scales with the wealth index of the home hub.
+
+| Line | Examples | Raises | Reference spend and gain **(T)** |
+|---|---|---|---|
+| **Status** | Homes, yachts, jets, art, parties | **Prestige** | $200k a month for +2 prestige a month |
+| **Social** | Clubs, galas, gifts, hosting | **Clout** in the home hub, and opinion of the people invited | $100k a month for +2 clout a month |
+| **Wellness** | Doctors, retreats, life extension (1.1.9) | **Health**, and lowers **stress** | $50k a month for -10 stress and +1 health a month |
+| **Vices** | Gambling, drugs and the rest (11) | Each vice's benefit, plus addiction risk | As in 11 |
+| **Spiritual and esoteric** | Gurus, rituals, retreats | **Vril** | $50k a month for +1 vril a month |
+
+- Traits still scale the bill: Ascetic ×0.5 and Hedonist ×2 (1.10.4). An Ascetic gets the wellness gain at half price but only half the status gain.
+- **Upkeep**: anything owned for status (a jet, a yacht, an estate) is part of the status line, and it **keeps some resale value** (about 50% of what was spent on the physical object) if the budget is cut and the object is sold **(T)**. Private jets also unlock travel (2.21).
+- Cutting a line lets its resource drift back: prestige from spending fades 1 point a month after 3 months without it **(T)**.
+
+**Income (A).** Salary: CEO $1M to $20M a year by company rank (1.7.5), other executives and board members 10% to 50% of that. Bonus: 0 to 200% of salary, voted by the board on results. Trust payouts follow the trust's rules (1.10.1).
+
+**Personal tax (A).** Income tax 20% to 50% and capital gains tax 0% to 30% by home country (4-politics E2) **(T)**. Income kept inside a trust is taxed at the trust's jurisdiction rate. Moving money to a haven through a shell (1.7.4) lowers tax but builds exposure.
+
+**Personal debt (A).** A personal loan is up to 2 years of income at the base rate plus 4%. A share pledge loan is up to 40% of the shares' value (3.5.5). A missed payment fires a default event: reputation -15, and the lender can force the sale of pledged shares, which can change control (1.3).
+
+**The rich list (A).** Updated every quarter after earnings day (3.1.0). It ranks every character by **visible wealth**: holdings on the books in their own name, their share of family trusts, and what the public can see. Wealth held through figureheads, shells or hidden control (1.3.1) is not counted, so a shadowy figure can be far richer than their rank. Each rank tier gives prestige (top 10 +10, top 100 +5) **(T)**. A big rise on the list draws rival attention: the director (13.3) can aim the rival rotation at the riser.
+
 ## 1.11 Dynasty and succession
 
 ### 1.11.0 Player succession (Logan, 2026-10-17)
