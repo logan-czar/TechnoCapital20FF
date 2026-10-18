@@ -8,7 +8,7 @@ _A plain-language breakdown of the current design (2026-10-18), for review. The 
 |---|---|---|---|
 | **Country** | 31 major countries, plus about 60 smaller ones in 16 **minor groups** | A real country | Government, laws, elections, central bank and policy rate, currency, stock exchange (major countries), corporate and property tax, business cycle, sanctions, debt vassalage |
 | **Region** | 2 to 8 per major country | A state or province | Regional government, regional laws and licences, regional bonds |
-| **Hub** | 44 at start | A city or metro area | City council, local politics, population and strata, unrest, unions, property cycle, location perks, intel level |
+| **Hub** | 81 at start (37 added in this review) | A city or metro area | City council, local politics, population and strata, unrest, unions, property cycle, location perks, intel level |
 | **District** | 6 to 26 per hub | A neighborhood type | Real estate pools, where business units' assets sit, local unrest |
 | **Pool** | Up to 4 per district | A slice of the district's property | Shares that holders own by dollar amount |
 
@@ -67,6 +67,8 @@ _A plain-language breakdown of the current design (2026-10-18), for review. The 
 | **Map screen** | Zoom from world to country to hub to district, with overlays for ownership, influence, property cycle, economic cycle, unrest, politics and risk. |
 
 ## 7. Problems found while reading
+
+**Added after review (Logan: "more cities"):** 37 new hubs in the major countries, for 81 in all: Washington DC, Boston, Seattle, Dallas-Fort Worth, Atlanta, Miami, Austin, Detroit, Las Vegas, Vancouver, Montreal, Ottawa, Monterrey, Guadalajara, Rio de Janeiro, Buenos Aires, Santiago, Aberdeen, Munich, Berlin, Amsterdam, Milan, Rome, St Petersburg, Riyadh, Abu Dhabi, Cape Town, Delhi NCR, Hyderabad, Chennai, Chengdu, Wuhan, Osaka-Kobe, Kaohsiung, Kuala Lumpur, Hanoi and Melbourne.
 
 1. ~~Country count~~ **Fixed:** Qatar is now the 31st major country.
 2. ~~Doha in a minor group~~ **Fixed:** Doha now belongs to Qatar.

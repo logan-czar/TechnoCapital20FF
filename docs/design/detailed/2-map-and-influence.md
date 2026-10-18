@@ -49,7 +49,7 @@ This file turns the map and influence overviews into exact rules, formulas, numb
 | **Major countries** | 31 | Fully simulated: hubs, regions, own market, central bank, exchange |
 | **Minor groups** | 16 groups covering the rest of the world | Each member country keeps its own government, laws and currency (see [4-politics.md](4-politics.md) 4.2.4). Economically each group is one aggregated market with no playable hubs at start. Ukraine, Greece, Mali and Iran stay here with no hubs, despite their role in the history (Logan, 2026-10-18) |
 | **Regions** | 2 to 8 per major country | States or provinces. Only regions that contain a hub are drawn in detail at start; the rest of a country is one "rest of country" region |
-| **Economic hubs** | 44 | Cities or clusters with districts (2.3) |
+| **Economic hubs** | 81 | Cities or clusters with districts (2.3) |
 | **Districts** | 6 to 26 per hub | Each with up to four real estate pools (2.16) |
 | **Chokepoints** | 14 | Straits, canals, cable corridors (2.4) |
 
@@ -206,6 +206,8 @@ The six district types from 05 plus **Resource Field**.
 
 ### 2.3.3 Hub list
 
+**81 hubs** at start: 44 original, plus 37 added in the 2026-10-18 realism review (Logan: "more cities"). New hubs are only in the 31 major countries; minor groups (including Ukraine, Greece, Mali and Iran) still have none. Populations are 2020 metro estimates **(T)**.
+
 District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S Slums, X Resource Field. Population is metro population at start in millions. Connections list the main lanes and chokepoints (2.4).
 
 **North America**
@@ -221,6 +223,20 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Edmonton | Canada (Alberta) | S | 1.4 | F1 I2 R1 S1 X1 | Oil sands and oil field services, pipelines, the Alberta provincial government | Pipelines to Houston and the Pacific coast; rail to Toronto and Chicago. Added for the starting character John Techno, replacing Calgary (batch 76; [7-starting-world.md](7-starting-world.md) 7.8) |
 | Toronto | Canada (Ontario) | L | 6.5 | F3 I3 P1 R5 S1 T1 | Banking, mining finance, auto plants, AI research | Rail and road to New York and Chicago; St Lawrence Seaway |
 | Mexico City | Mexico (Valle de México and Bajío belt) | Mega | 22 | F2 I6 P1 R8 S5 T1 X1 | Vehicles and parts, nearshore electronics, consumer goods, telecom | Rail and road to Houston (US border crossings); Pacific port Manzanillo and Gulf port Veracruz (abstracted) |
+| Washington DC | United States (DC, Maryland, Northern Virginia) | L | 6.3 | F2 I1 R6 S2 T3 | Federal government, lobbying firms, defense contractors, Northern Virginia data center alley | Rail to New York; air; transatlantic fiber |
+| Boston | United States (Massachusetts) | M | 4.9 | F2 R4 S1 T3 | Biotech, universities, asset management, robotics | Rail to New York; Atlantic port (abstracted); air |
+| Seattle | United States (Washington) | M | 4.0 | F1 I2 P2 R3 T2 | Cloud computing, e-commerce, aerospace, Pacific port | Transpacific lanes to Tokyo, Busan and Shanghai; rail to Chicago |
+| Dallas-Fort Worth | United States (Texas) | L | 7.6 | F3 I3 R5 S1 T2 | Corporate headquarters, energy finance, telecom, logistics | Rail and road to Houston and Chicago; air hub |
+| Atlanta | United States (Georgia) | L | 6.0 | F2 I3 P1 R5 S2 T1 | The world's busiest airport, logistics, media, payments | Air hub; rail to the Gulf and East Coast ports |
+| Miami | United States (Florida) | L | 6.1 | F3 P2 R6 S2 T1 | Latin American finance gateway, flight capital, real estate, cruise and tourism | Florida Strait; Caribbean and Panama Canal lanes; air to Latin America |
+| Austin | United States (Texas) | M | 2.2 | F1 I2 R4 S1 T2 | Chip fabs, software, EV plant, state government | Road and rail to Dallas and Houston; air |
+| Detroit | United States (Michigan) | M | 4.3 | F1 I4 R3 S2 | Autos and EVs, parts suppliers | Great Lakes; road and rail to Toronto and Chicago |
+| Las Vegas | United States (Nevada) | M | 2.3 | F1 I1 R5 S2 T1 | Casinos, gambling, conventions, tourism | Road and rail to Los Angeles; air |
+| Vancouver | Canada (British Columbia) | M | 2.6 | F2 P2 R4 S1 T1 | Pacific port, real estate, Asian capital, film | Transpacific lanes; rail to Edmonton and Toronto |
+| Montreal | Canada (Quebec) | M | 4.2 | F2 I2 P1 R3 S1 T1 | AI research, aerospace, video games, the Quebec government | St Lawrence Seaway; rail to Toronto and New York |
+| Ottawa | Canada (Ontario) | S | 1.4 | F1 R3 S1 T1 | Federal government, tech | Rail and road to Montreal and Toronto |
+| Monterrey | Mexico (Nuevo León) | L | 5.3 | F2 I6 R4 S2 | Steel, cement, nearshoring plants, brewing | Road and rail to Texas border crossings |
+| Guadalajara | Mexico (Jalisco) | L | 5.2 | F1 I4 R5 S3 T1 | Electronics, software, tequila | Pacific port Manzanillo (abstracted); rail to Mexico City |
 
 **South America**
 
@@ -229,6 +245,9 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | São Paulo | Brazil (São Paulo, with Santos port) | Mega | 22 | F3 I5 P2 R8 S4 T1 X1 | Finance, vehicles, food processing, soy, beef, sugar, iron ore marketing | Santos to Atlantic lanes; Cape of Good Hope to China; Panama Canal to the US west coast |
 | Antofagasta | Chile (Antofagasta, Atacama) | S | 0.5 | I1 P1 R1 S1 X2 | Copper mining, lithium brine | Pacific bulk lanes to Shanghai, Busan, Tokyo; Panama Canal to Houston |
 | Medellín | Colombia (Antioquia) | M | 4 | F1 I2 R3 S2 T1 X1 | Textiles, coffee, flowers, informal economy, cartel money laundering, growing tech scene | Road to Pacific port Buenaventura and Caribbean port Cartagena (abstracted); air to Miami and Bogotá. Added for the starting character Pablo Segundo ([7-starting-world.md](7-starting-world.md) 7.8) |
+| Rio de Janeiro | Brazil (Rio de Janeiro) | XL | 13 | F2 I3 P3 R6 S4 | Offshore oil company headquarters, media, tourism | Atlantic lanes; offshore oil fields |
+| Buenos Aires | Argentina (Buenos Aires) | XL | 15 | F3 I4 P2 R6 S3 | Finance, agribusiness, lithium financing, software exports | River Plate port; Atlantic lanes |
+| Santiago | Chile (Santiago Metropolitan) | L | 6.8 | F3 I3 R5 S2 T1 | Finance, mining company headquarters, pension funds | Road to Pacific port Valparaíso (abstracted); air |
 
 **Europe**
 
@@ -242,6 +261,13 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Zurich | Switzerland (Zurich, with Basel and Geneva abstracted) | M | 1.5 | F4 I1 R4 T1 | Private banking, commodity trading houses, insurance, pharma | Rail to Frankfurt and Milan; air |
 | Moscow | Russia (Central) | Mega | 21 | F3 I5 P1 R9 S4 T2 | Energy company headquarters, metals, defense, oil trading, cybercrime underground | Pipelines to China and (sanctioned) Europe; rail to China via Kazakhstan; Baltic ports via the Danish Straits; Black Sea via the Turkish Straits |
 | Istanbul | Turkey (Marmara) | XL | 16 | F2 I5 P3 R5 S3 | Textiles, vehicles, shipping, regional finance | Turkish Straits; Black Sea lanes; rail to Europe; Middle Corridor rail to Central Asia and China |
+| Aberdeen | United Kingdom (Scotland) | S | 0.5 | F1 I1 P2 R1 X1 | North Sea oil and gas services | North Sea; rail to London |
+| Munich | Germany (Bavaria) | L | 6.0 | F3 I4 R5 T2 | Autos, insurance and reinsurance, chips | Rail to Frankfurt and over the Alps; air |
+| Berlin | Germany (Berlin-Brandenburg) | L | 6.1 | F2 I2 R6 S2 T2 | Federal government, startups, media | Rail to Frankfurt, Warsaw and the Baltic |
+| Amsterdam | Netherlands (North Holland) | M | 2.5 | F3 P1 R4 T2 | Stock exchange, fintech, data centers, internet exchange | Rail to Rotterdam; North Sea; transatlantic fiber |
+| Milan | Italy (Lombardy) | L | 7.4 | F4 I4 R5 S1 | Finance, fashion, luxury, design | Rail over the Alps to Zurich and Frankfurt |
+| Rome | Italy (Lazio) | M | 4.3 | F1 I1 R5 S2 T1 | Government, the Vatican, tourism, state energy company headquarters | Rail to Milan; Mediterranean port (abstracted) |
+| St Petersburg | Russia (Northwest) | L | 6.2 | F2 I4 P3 R4 S1 | Baltic port, shipbuilding, gas company headquarters | Baltic lanes via the Danish Straits; rail to Moscow |
 
 **Middle East and Africa**
 
@@ -253,8 +279,11 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Tel Aviv | Israel (Central) | M | 4 | F2 I1 P1 R3 T3 | Cybersecurity, surveillance tech, chip design, defense electronics, venture capital | Mediterranean via Suez or Gibraltar; air; fiber |
 | Cairo-Suez | Egypt (Cairo and Canal Zone) | Mega | 22 | F2 I4 P2 R8 S7 T1 | Canal revenue, textiles, fertilizer, construction, gas | Suez Canal; Mediterranean and Red Sea lanes; Red Sea cable corridor landing |
 | Lagos | Nigeria (Lagos) | Mega | 21 | F2 I3 P2 R7 S9 T1 | Oil money, fintech, consumer goods, film industry, informal economy | Gulf of Guinea lanes (piracy risk); Atlantic to Europe; Cape of Good Hope to Asia |
-| Johannesburg | South Africa (Gauteng, with Durban port abstracted) | L | 10 | F3 I3 P1 R4 S2 X1 | Mining finance, platinum metals, gold, coal power | Rail to Durban; Cape of Good Hope; Mozambique Channel |
+| Johannesburg | South Africa (Gauteng, with Durban port abstracted) | L | 9.5 | F3 I3 P1 R4 S2 X1 | Mining finance, platinum metals, gold, coal power | Rail to Durban; Cape of Good Hope; Mozambique Channel |
 | Kolwezi-Lubumbashi | DR Congo and Zambia Copperbelt (Central and Southern Africa) | M | 3 | I2 R2 S3 X3 | Cobalt (about 70% of world supply), copper | Long truck and rail lanes to Durban, Dar es Salaam and Lobito; border delays |
+| Riyadh | Saudi Arabia (Riyadh) | L | 7.6 | F3 I3 R5 S2 T1 | Government, royal court, sovereign fund, megaprojects | Rail to Dhahran-Dammam; air |
+| Abu Dhabi | UAE (Abu Dhabi) | M | 1.5 | F3 I2 P2 R2 X1 | Sovereign funds, oil, AI investment | Strait of Hormuz; road to Dubai |
+| Cape Town | South Africa (Western Cape) | M | 4.7 | F2 I1 P2 R3 S2 | Finance, tourism, wine, tech | Cape of Good Hope lanes |
 
 **Asia and Oceania**
 
@@ -276,6 +305,16 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Ho Chi Minh City | Vietnam (Southeast) | XL | 14 | F1 I6 P2 R5 S3 T1 | Electronics assembly ("China plus one"), garments, footwear, rice | South China Sea; Malacca; transpacific lanes |
 | Perth-Pilbara | Australia (Western Australia) | M | 2.3 | F1 I2 P2 R3 X2 | Iron ore (largest exporter), lithium ore, LNG, gold | Bulk lanes to China, Japan and Korea via the Lombok and Makassar straits (bypassing Malacca) |
 | Sydney | Australia (New South Wales) | L | 5.4 | F3 I2 P2 R5 S1 T1 | Banking, pension funds, property, media, mining company headquarters | Pacific lanes to Shanghai, Tokyo and Los Angeles; fiber to Singapore and the US. |
+| Delhi NCR | India (Delhi, Gurugram, Noida) | Mega | 31 | F3 I5 R9 S6 T3 | Capital and government, IT services, autos | Rail to Mumbai; air hub |
+| Hyderabad | India (Telangana) | XL | 10 | F1 I3 R7 S4 T3 | Pharma, IT services, cloud data centers | Rail and road to Chennai and Mumbai; air |
+| Chennai | India (Tamil Nadu) | XL | 11 | F1 I5 P2 R6 S3 T1 | Autos, electronics assembly, port | Bay of Bengal lanes to Malacca |
+| Chengdu | China (Sichuan) | XL | 16 | F2 I5 R7 S2 T2 | Electronics assembly, gaming, aerospace | Rail to Europe; Yangtze via Chongqing |
+| Wuhan | China (Hubei) | XL | 11 | F1 I6 P1 R7 S2 T1 | Autos, steel, optical fiber, research labs | Yangtze barges to Shanghai; rail hub |
+| Osaka-Kobe | Japan (Kansai) | XL | 19 | F3 I5 P3 R6 S1 | Manufacturing, electronics, pharma, port | Inland Sea; Pacific lanes |
+| Kaohsiung | Taiwan (South Taiwan) | M | 2.7 | I4 P3 R2 T1 | Port, petrochemicals, steel, new chip fabs | Taiwan and Luzon Straits |
+| Kuala Lumpur | Malaysia (Klang Valley) | L | 8 | F3 I3 R5 S2 T1 | Finance, Islamic finance, palm oil trading, data centers | Port Klang on the Strait of Malacca |
+| Hanoi | Vietnam (Red River Delta) | L | 8 | F1 I6 R5 S1 T1 | Government, electronics plants | Port of Haiphong (abstracted); rail to China |
+| Melbourne | Australia (Victoria) | M | 5.0 | F3 I2 P1 R4 | Finance, pension funds, universities, port | Bass Strait; Pacific lanes |
 
 ### 2.3.4 Signature starting assets
 
@@ -1155,7 +1194,7 @@ A national recession cuts consumer demand 6%. The dynasty's retail chain's earni
 
 Assumptions in this file, to confirm with Logan:
 
-1. **First playable map**: 31 major countries, 16 minor groups (aggregated markets whose member countries keep their own politics), 44 hubs and 14 chokepoints. Cities named in other files but missing here (for example Vancouver, Munich) are candidates for later hubs.
+1. **First playable map**: 31 major countries, 16 minor groups (aggregated markets whose member countries keep their own politics), 81 hubs and 14 chokepoints. Cities named in other files but missing here (for example Vancouver, Munich) are candidates for later hubs.
 2. **Resource Field** is added as a seventh district type for mines, wells, farms and renewables.
 3. **Reference dollar and wage index**: base prices are in US dollar equivalents; the wage index (US = 1.0) scales wages, services, real estate and construction, separately from the politics wealth index.
 4. **Place mass** is a calibrated "power-relevant" value (hub size class × price factor; 3% of GDP for countries), not the full value of all property, so tiers are reachable at the intended company ranks. Jobs count through payroll × 1.5, making employers the most influential holders per dollar.
