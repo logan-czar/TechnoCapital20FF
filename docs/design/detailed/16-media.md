@@ -1,6 +1,6 @@
 # 16. Media and entertainment (detailed design)
 
-_Status: draft v0.3 (2026-10-18). Batch 67: streamer subscriptions, one-off music payments, mixed starting owners, and all news named by outlet (the UI's information model, [../11-ui.md](../11-ui.md) 11.1.1). Batch 66: anyone can buy campaigns, studios sell one-off only, no adult sites, hidden credibility, outlets can expose secrets. Logan made media its own system in batch 50 (it is no longer one of the 45 industries) and set its shape in batch 65: **five kinds of media business**, **media campaigns** that pay creators for a set effect, owner **editorial control**, content **projects that roll for hits**, and **influencers as content creators**. Builds on [1-corporate-core.md](1-corporate-core.md) (Image: Fame and Favor), [10-industry-economy.md](10-industry-economy.md) (corporations, the Ads and Social media industries), [5-ideology.md](5-ideology.md) (ideology spread), [4-politics.md](4-politics.md) (scandals and news cycles) and [14-software.md](14-software.md) (contracts). Owner: Logan._
+_Status: draft v0.4 (2026-10-18). Batch 116: streamers are not search platforms; labels earn one-off payments, not per play; the product demand campaign becomes a productivity campaign; no Tokyo influencer quest line; rivals are characters, not dynasties; 42 industries. v0.3: Batch 67: streamer subscriptions, one-off music payments, mixed starting owners, and all news named by outlet (the UI's information model, [../11-ui.md](../11-ui.md) 11.1.1). Batch 66: anyone can buy campaigns, studios sell one-off only, no adult sites, hidden credibility, outlets can expose secrets. Logan made media its own system in batch 50 (it is no longer one of the industries, now 42) and set its shape in batch 65: **five kinds of media business**, **media campaigns** that pay creators for a set effect, owner **editorial control**, content **projects that roll for hits**, and **influencers as content creators**. Builds on [1-corporate-core.md](1-corporate-core.md) (Image: Fame and Favor), [10-industry-economy.md](10-industry-economy.md) (corporations, the Ads and Social media industries), [5-ideology.md](5-ideology.md) (ideology spread), [4-politics.md](4-politics.md) (scandals and news cycles) and [14-software.md](14-software.md) (contracts). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 16.9.
 
@@ -23,7 +23,7 @@ _Status: draft v0.3 (2026-10-18). Batch 67: streamer subscriptions, one-off musi
 | Investigations | **Print and creators can investigate and expose secrets** (batch 66), which then run as scandals (16.5.1). |
 | Streamer income | **Subscribers per country × a monthly price, plus ads** (batch 67). A big library and hits keep subscribers. |
 | Music income | **A one-off payment on release**; **events can sometimes trigger royalty payments** later (batch 67). |
-| Starting owners | **A mix of rival dynasties and AI corporations**, and **John Techno and each rival starting character own a small outlet or channel** (batch 67). |
+| Starting owners | **A mix of rival characters and AI corporations**, and **John Techno and each rival starting character own a small outlet or channel** (batch 67). |
 | False stories | **Allowed** (batch 68): outlets can run planted or false stories; a debunk costs the outlet credibility (16.5). |
 | AI and the news | **AI characters do not read the news** (batch 68); the director may direct AI characters when stories about them or people close to them come out (11-ui 11.1.1). |
 | News is sourced | **Every story names the outlet that ran it**, with its bias. There is no neutral news: the news the character reads in game is slanted (batch 67, 11-ui 11.1.1). |
@@ -33,13 +33,13 @@ _Status: draft v0.3 (2026-10-18). Batch 67: streamer subscriptions, one-off musi
 | Kind | What it is (Logan) | How it earns **(A for the model)** |
 |---|---|---|
 | **Print** | Blogs, newspapers, publishers, magazines | Subscriptions and ads; breaks stories and scandals |
-| **Streamers** | Video, music and search platforms (YouTube-, Spotify-, Google- and Netflix-like); adult sites removed (batch 66) | Subscriptions and ads on their audience; **buy shows and films from studios** and **pay labels per play** |
+| **Streamers** | Video and music platforms (YouTube-, Spotify- and Netflix-like); adult sites removed (batch 66). Search is not a media business: the in-game search engine is neutral ([../11-ui.md](../11-ui.md) 11.1.1) | Subscriptions and ads on their audience; **buy shows and films from studios** and **pay labels a one-off fee when an album is released** on them (batch 67) |
 | **Studios** | **Create TV shows and movies and sell them to the streamers** | **One-off sales** to a streamer (Logan, batch 66): the streamer buys the film or show outright and keeps all its revenue |
-| **Music labels** | **Create music**, earn **revenue from plays on the streamers**, and run **concert tours** | **A one-off payment on release** (Logan, batch 67), occasional **royalty payments from events**, plus tour income (16.6) |
+| **Music labels** | **Create music**, sell it to the streamers, and run **concert tours** | **A one-off payment on release** (Logan, batch 67), occasional **royalty payments from events**, plus tour income (16.6) |
 | **Social media channels** | Content creators and their channels (16.7) | Platform ad share, sponsorships and **paid campaigns** (16.4) |
 
 - **Outlets.** Each media business owns named **outlets** (a newspaper, a streaming service, a studio label, a record label, a creator's channel). An outlet has an **audience** by country, a **slant** (one of the nine ideologies or none), and **credibility** (0 to 100, **hidden from the player**, Logan batch 66; it shows only through results: how much a story or campaign moved things) **(A)**.
-- **Ownership.** Outlets are held by corporations like business units (10.0) but sit in the media system, not one of the 45 industries. Their revenue and costs go on the owner's books; their audience, slant and credibility are what make them a power tool **(A)**.
+- **Ownership.** Outlets are held by corporations like business units (10.0) but sit in the media system, not one of the 42 industries. Their revenue and costs go on the owner's books; their audience, slant and credibility are what make them a power tool **(A)**.
 - **Links to industries.** Streamers and social platforms run on software and compute (14, 15); ad revenue is shared with the Ads industry; the Social media industry stays the platforms' business side, while channels and creators live here **(A)**.
 
 ## 16.3 Audience and reach (A)
@@ -58,7 +58,7 @@ A **media campaign** is a contract to make media **for a specific purpose**. **A
 |---|---|---|
 | **Investor confidence** | +1 per 10 influencers (Logan); about +1 per 1M reach on finance outlets | A company before earnings (3.1.0) or a raise |
 | **Image** | Fame +1 per 1M reach; Favor +1 per 2M reach with matching slant | A character running for office or rebuilding after a scandal |
-| **Product demand** | +1% demand for the buyer's business unit in one industry for 3 months | Consumer, gaming, luxury and e-commerce units |
+| **Productivity** | +1 productivity (10.0.4) for the buyer's business unit in one industry for 3 months; there is no product demand per company (batch 75) | Consumer, gaming, luxury and e-commerce units |
 | **Ideology** | Spreads one ideology in a country's segments (5) | Movements, parties, Zealots |
 | **Smear** | A rival's Favor or investor confidence -1 per 2M reach; can start a scandal | Rivals; discovery makes it a scheme (1.1.8) |
 
@@ -104,8 +104,8 @@ Studios and labels make **projects**: films, shows and albums (and tours for lab
 - A creator has **followers** by country and platform, a **niche** (finance, gaming, lifestyle, politics and so on) and **credibility**. Followers are the creator's Fame in their niche.
 - Creators earn from platform ad share, sponsorships and **paid campaigns** (16.4).
 - A creator can be **signed** by a label, studio or a company (exclusive campaigns) under a contract.
-- **Any character can become one**: a player or family member who posts builds followers from Persuasion and Hustle, and a big enough following turns a table character into a full one (1.1.0).
-- The **Tokyo influencer** quest line (8) uses this system.
+- **Any character can become one**: the player or any character who posts builds followers from Persuasion and Hustle, and a big enough following turns a table character into a full one (1.1.0).
+- Only John Techno has a quest line (8); generated side quests can use creators **(A)**.
 
 ## 16.8 How it connects
 
@@ -113,7 +113,7 @@ Studios and labels make **projects**: films, shows and albums (and tours for lab
 |---|---|
 | Characters (1) | Campaigns move Fame and Favor; creators are characters; talent Fame drives hits |
 | Markets (3) | Investor confidence campaigns before earnings; smears and scandals move prices |
-| Economy (10) | Outlets on corporations' books; product demand campaigns; ad revenue shared with the Ads industry |
+| Economy (10) | Outlets on corporations' books; productivity campaigns; ad revenue shared with the Ads industry |
 | Ideology (5) | Outlet slant and slanted hits spread ideologies |
 | Politics (4) | News cycles and scandals run through outlets; parties buy campaigns |
 | Software and infrastructure (14, 15) | Streamers and platforms are software on compute |

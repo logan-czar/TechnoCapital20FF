@@ -1,6 +1,6 @@
 # 14. Software: the software table, licences and making software (detailed design)
 
-_Status: draft v1.0 (2026-10-18). Batch 91: enterprise data types (one per industry, structured and unstructured), data buffs as free R&D and free business asset growth, structured data sells on the dark web. Batch 90: updates with diminishing returns and rising cost, specialized enterprise software doubles effectiveness, and structured data gives buffs (14.2.3). Batch 89: the licence pricing formula (14.4.1). Batch 88: one software unit per desktop per day, labor cost 0.2% to 4% of GDP per capita, quality tiers 90 to 10, and quality 0 means no bonus. Batch 87: making software with desktops (14.8), licences by usage with a one-year capacity lock, no special contracts, no copying (14.4). v0.5, consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
+_Status: draft v1.1 (2026-10-18). Batch 116: hacking is designed (17), so the "hacking later" notes are gone; tags follow the one standard licence offer; air-gapped is a property of Techno-Capital, not a software tag; 42 industries. v1.0: Batch 91: enterprise data types (one per industry, structured and unstructured), data buffs as free R&D and free business asset growth, structured data sells on the dark web. Batch 90: updates with diminishing returns and rising cost, specialized enterprise software doubles effectiveness, and structured data gives buffs (14.2.3). Batch 89: the licence pricing formula (14.4.1). Batch 88: one software unit per desktop per day, labor cost 0.2% to 4% of GDP per capita, quality tiers 90 to 10, and quality 0 means no bonus. Batch 87: making software with desktops (14.8), licences by usage with a one-year capacity lock, no special contracts, no copying (14.4). v0.5, consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking was deferred (now [17-hacking.md](17-hacking.md)). Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industries), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 14.7.
 
@@ -43,7 +43,7 @@ Every column is Logan's (batches 42 and 43).
 - **Quality** runs from 0 to 100. **0 gives no bonuses whatsoever; 100 gives the full bonuses** (Logan, batch 88). Effective values are scaled by a quality factor `Q = 1 + quality / 200`, so a 0-quality product works at ×1.0 and a 100-quality one at ×1.5 **(T for the ×1.5 ceiling)**:
   - effective speed = base speed × Q
   - effective compute and database needs = base needs ÷ Q (better software is leaner)
-  - security, once hacking exists, = base security × Q
+  - security against hacks ([17-hacking.md](17-hacking.md) 17.5) = base security × Q
 - **Bloat** starts at 1.0 and rises +0.1 per feature added (Logan: it rises with each feature) **(T)**. The time to finish any maintenance, update or new feature is multiplied by bloat. Whether anything can lower bloat (a refactor project) is open **(A)**.
 - **Speed** is measured in GB of input data per hourly tick, per instance (14.2.2) **(T)**.
 
@@ -65,7 +65,7 @@ Most companies run **data software** that turns their raw data into **structured
 | **Specialized enterprise software** (industrial specialization) | **Unstructured data of one type**, for example unstructured oil data | Structured data of that type |
 
 - **Specialization doubles effectiveness (Logan).** On its own data type, specialized software is **twice as effective** as regular enterprise software: it turns twice as much input into structured data per tick at the same quality and compute **(T: read as ×2 speed)**.
-- **Data types (Logan, batch 91).** **Enterprise data**: **one type per industry** (45, 10.3), each in two forms, **unstructured** and **structured**. More data types will come later. **Every business unit generates its industry's unstructured data each day**, scaled by its revenue (batch 91) **(T: about 1 TB a day per $100M of yearly revenue)**.
+- **Data types (Logan, batch 91).** **Enterprise data**: **one type per industry** (42, 10.3), each in two forms, **unstructured** and **structured**. More data types will come later. **Every business unit generates its industry's unstructured data each day**, scaled by its revenue (batch 91) **(T: about 1 TB a day per $100M of yearly revenue)**.
 - **On the dark web (Logan).** **Unstructured data is worthless** on the dark web. **Structured data sells** there, at a price set by the industry it belongs to ([17-hacking.md](17-hacking.md) 17.4).
 - **Structured data gives buffs (Logan).** A company earns buffs from **how much structured data of a type it stores** and **how much it produces per day**. The thresholds scale with the size of the business units in that data's industry, per $100M of their yearly revenue **(T)**:
 
@@ -81,7 +81,7 @@ Most companies run **data software** that turns their raw data into **structured
 ## 14.3 Inputs, outputs and nerfed output
 
 Software forms a small dependency graph **(A)**.
-- **Inputs** name other rows in the table (an app needs an operating system and a cloud platform), and each input is used through a **software contract** (14.4).
+- **Inputs** name other rows in the table (an app needs an operating system and a cloud platform), and each input is used through a **licence** (14.4).
 - **Nerfed output (Logan).** When an input is missing or short, the product keeps running but its **output amount is cut**. How much it is cut depends on its quality and its software type **(A)**:
 
   `Output = base output × (1 - missing share × type sensitivity × (1.5 - quality / 100))`, clamped to 0 or above **(T)**
@@ -143,7 +143,7 @@ When an owner sets a licence price, the pricing screen works it out from three t
 |---|---|---|
 | Payments | Transactions | Needs bank data input; +10% database |
 | Ads | Ad impressions; slop ×1.5 | Needs user activity input; +10% compute |
-| AI assistant | Generated text and actions | Needs a contract for an AI model (6.2.4); +50% compute, AI-grade compute |
+| AI assistant | Generated text and actions | Needs a licence for an AI model ([18-ai-models.md](18-ai-models.md) 18.4); +50% compute, GPU compute (15.2.1) |
 | Social feed | User activity (sold to advertisers); doomscrolling use (11) | +30% database |
 | Analytics | Reports and forecasts | Needs stored data; +20% compute |
 | Encryption | Secured records | +5% compute; a regulator issue in surveillance states |
@@ -151,16 +151,15 @@ When an owner sets a licence price, the pricing screen works it out from three t
 
 ## 14.6 Tags (A)
 
-Tags are exceptions to the normal rules. Starting examples:
+Tags are exceptions to the normal rules. They never create special licence terms: every product is sold on the one standard offer of 14.4 (batch 116). Starting examples:
 
 | Tag | Exception |
 |---|---|
-| **Legacy** | Bloat cannot be lowered by a refactor; companies that depend on it rarely leave (contracts renew automatically) |
-| **Open source** | No licence price; anyone can use it without a contract, and anyone can fork it into a new row |
-| **State mandated** | Every company in one country must sign its contract (for example a tax or surveillance system) |
-| **Air-gapped** | Needs no inputs; cannot run in the cloud |
-| **Viral** | New market contracts sign themselves for a few months after a hit release |
-| **Abandonware** | No owner: no updates, quality decays over time, and the contracts are free |
+| **Legacy** | Bloat cannot be lowered by a refactor; companies that depend on it rarely drop their licences |
+| **Open source** | No licence price; anyone can use it without a licence, and anyone can fork it into a new row |
+| **State mandated** | Every company in one country must hold licences for it on the standard offer (for example a tax or surveillance system) |
+| **Viral** | Adoption (14.4.1) +10 points for a few months after a hit release **(T)** |
+| **Abandonware** | No owner: no updates, quality decays over time, and licences cost nothing |
 
 ## 14.8 Making software (Logan, batch 87)
 
@@ -193,4 +192,4 @@ Tags are exceptions to the normal rules. Starting examples:
 3. The nerfed output formula and type sensitivities in 14.3.
 4. Contract terms in 14.4.
 5. The feature and tag lists in 14.5 and 14.6.
-6. Hacking: a later system.
+6. Removed (batch 116): hacking is designed in [17-hacking.md](17-hacking.md). Air-gapped is now a property of Techno-Capital (17.5), not a software tag.

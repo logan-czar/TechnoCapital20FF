@@ -1,6 +1,6 @@
 # 9. Gambling, crypto and prediction markets: detailed design
 
-_Status: draft v0.2 (2026-10-18), consistency pass, batch 74: casinos sit in the Gambling industry, four vices. v0.1 (2026-10-17). From Logan's answers in the design Q&A. Crypto itself is shallow; it lives inside a deep **gambling system**, which is part of the **addiction system** (still to be designed). Builds on [3-markets-and-fx.md](3-markets-and-fx.md) (3.23 crypto) and [1-corporate-core.md](1-corporate-core.md) (characters, stress). Owner: Logan._
+_Status: draft v0.3 (2026-10-18). Batch 116: betting on inside knowledge counts as insider trading if exposed (9.4); casinos are Gambling or Black market units (no Front Company vassal). v0.2, consistency pass, batch 74: casinos sit in the Gambling industry, four vices. v0.1 (2026-10-17). From Logan's answers in the design Q&A. Crypto itself is shallow; it lives inside a deep **gambling system**, which is part of the **addiction system** (still to be designed). Builds on [3-markets-and-fx.md](3-markets-and-fx.md) (3.23 crypto) and [1-corporate-core.md](1-corporate-core.md) (characters, stress). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 9.7.
 
@@ -49,6 +49,7 @@ Players and AI characters bet on yes-or-no questions about the game world.
 - **Pricing (A)**: each question has a price from 1¢ to 99¢ for a Yes share that pays $1. The price moves with bets (AI bettors bet toward the true odds plus noise) and with news.
 - **Inside knowledge**: the player can bet on events they influence or know about, for example betting against a merger they plan to block. That is the point (Logan).
 - **No risk** (Logan): betting on events you control or know about carries no exposure. Offshore markets on the Freeport Night Market are just another venue.
+- **If exposed (A)**: should a story or investigation expose such a bet anyway, it counts as insider trading ([3-markets-and-fx.md](3-markets-and-fx.md) 3.10).
 
 ## 9.5 Crypto casinos
 
@@ -56,7 +57,7 @@ Players and AI characters bet on yes-or-no questions about the game world.
 - Stakes are in coins, so a coin's boom or bust changes what the winnings are worth.
 - House edge 2% to 6% by game **(T)**. Poker against characters uses Intrigue and vril, not just chance.
 - **Vril and the odds (Logan, batch 81).** Vril adds a bonus to the player's odds in every gambling game. **99 vril is the highest bonus possible**: enough to give an **edge on all gambling**, beating the house edge. John Techno gets 99 vril for his first 100 gambling events (8-quest-lines 8.2.4).
-- Casinos can be owned: a casino is a business unit in the Gambling industry ([10-industry-economy.md](10-industry-economy.md) 10.3) or a Front Company vassal ([1-corporate-core.md](1-corporate-core.md) 1.7.4) **(A)**.
+- Casinos can be owned: a casino is a business unit in the Gambling industry ([10-industry-economy.md](10-industry-economy.md) 10.3) or, for an unlicensed one, a unit in the Black market industry (10.3) **(A)**.
 
 ## 9.6 Links to the addiction system
 

@@ -1,6 +1,6 @@
 # 2. Map and influence: detailed design
 
-_Status: draft v0.3 (2026-10-18). v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs, location perks, influence, strata and population, pooled real estate, the hub life cycle, the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands [05-map-and-influence.md](../05-map-and-influence.md). Owner: Logan._
+_Status: draft v0.3 (2026-10-18). Batch 116: Colombia and DR Congo promoted to major countries (33); Semiconductors replaces Lithography machines, Foundry, GPUs and CPUs; no dynasties, family or succession (influence holders are characters, companies and governments); branch offices dropped; Clout and Favor replace reputation and prestige; intel learns secrets, accurate data only on Pdoomberg; workforce counts become payroll dollars; crashes cost health; AI takeovers only on the game director's order; consistency fixes A1 to A23. v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs, location perks, influence, strata and population, pooled real estate, the hub life cycle, the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands the map and influence overview (05). Owner: Logan._
 
 This file turns the map and influence overviews into exact rules, formulas, numbers and content that a designer can balance. It is pure game design.
 
@@ -9,11 +9,11 @@ This file turns the map and influence overviews into exact rules, formulas, numb
 **Decided rules kept intact** (from [13-open-questions.md](../13-open-questions.md)):
 
 - Influence is rooted mainly in assets owned in an area, modified by origin, and temporarily boosted by psyops and ad campaigns.
-- One turn is one in-game hour; heavy calculations run weekly and monthly.
+- Time is pausable real time with hourly ticks; heavy calculations run weekly and monthly.
 - Characters are landless; assets are their titles.
 - The full game includes map, economy, markets and politics.
 
-**Related detailed files.** Government types, laws, Political Capital (PC), offices, exposure, sanctions and wars are defined in [4-politics.md](4-politics.md). Companies, vassals, autonomy, standing tiers and trusts are defined in [1-corporate-core.md](1-corporate-core.md). Industries, business units and corporations are defined in [10-industry-economy.md](10-industry-economy.md) 10.0. This file uses their terms and does not redefine them.
+**Related detailed files.** Government types, laws, Political Capital (PC), offices, exposure, sanctions and wars are defined in [4-politics.md](4-politics.md). Companies, vassals, autonomy and trusts are defined in [1-corporate-core.md](1-corporate-core.md). Industries, business units and corporations are defined in [10-industry-economy.md](10-industry-economy.md) 10.0. This file uses their terms and does not redefine them.
 
 ---
 
@@ -22,9 +22,8 @@ This file turns the map and influence overviews into exact rules, formulas, numb
 ### 2.1.1 Money and units
 
 - **Reference dollar ($)**: all base prices and costs are in US dollar equivalents at game start. Each hub converts to its local currency at the live exchange rate ([3-markets-and-fx.md](3-markets-and-fx.md)).
-- **Wage index (WI)**: a country's wage level relative to the United States (US = 1.00). It scales wages, local services and building costs. It is separate from the politics **wealth index** (GDP per capita / $20,000) used for bribes and legal fees.
+- **Wage index (WI)**: a country's wage level relative to the United States (US = 1.00). It scales wages and local services. It is separate from the politics **wealth index** (GDP per capita / $20,000) used for bribes and legal fees.
 - **Price factor (PF)** = `0.3 + 0.7 × WI`. Scales real estate, local services and place mass (2.5.3).
-- **Build index (BI)** = `0.6 + 0.4 × WI`. Scales construction cost.
 - **pp** = percentage points of influence share.
 
 ### 2.1.2 Cadence for this layer
@@ -46,7 +45,7 @@ This file turns the map and influence overviews into exact rules, formulas, numb
 
 | Layer | Count at start | Notes |
 |---|---|---|
-| **Major countries** | 31 | Fully simulated: hubs, regions, own market, central bank, exchange |
+| **Major countries** | 33 | Fully simulated: hubs, regions, own market, central bank, exchange |
 | **Minor groups** | 16 groups covering the rest of the world | Each member country keeps its own government, laws and currency (see [4-politics.md](4-politics.md) 4.2.4). Economically each group is one aggregated market with no playable hubs at start. Ukraine, Greece, Mali and Iran stay here with no hubs, despite their role in the history (Logan, 2026-10-18) |
 | **Regions** | 2 to 8 per major country | States or provinces. Only regions that contain a hub are drawn in detail at start; the rest of a country is one "rest of country" region |
 | **Economic hubs** | 80 | Cities or clusters with districts (2.3) |
@@ -57,14 +56,14 @@ Government types, corruption, stability and election cycles for every country ar
 
 ### 2.2.2 Foreign business restriction summary
 
-Restriction is not a separate law. It is a **summary label** computed from the starting positions of four politics laws: C1 Foreign Ownership, C2 Branch Office Requirements, F2 Capital Controls and the strategic sector list ([4-politics.md](4-politics.md) 4.5.3 and 4.5.4). The UI shows the label on the country card.
+Restriction is not a separate law. It is a **summary label** computed from the starting positions of four politics laws: C1 Foreign Ownership, C2 (local partner and director rules), F2 Capital Controls and the strategic sector list ([4-politics.md](4-politics.md) 4.5.3 and 4.5.4). The UI shows the label on the country card.
 
 | Label | Typical law positions | What a foreign company experiences |
 |---|---|---|
 | **Open** | C1 Open, C2 None, F2 Open | Buy and grow freely; profits move freely |
 | **Screened** | C1 Screened, C2 None or Local Directors, F2 Open or Reporting | Foreign Investment Review on stakes of 25% or more in strategic sectors (2 to 6 weeks) |
-| **Guarded** | C1 Capped Strategic, C2 Local Directors, F2 Reporting | Foreign voting stake capped at 49% in strategic sectors; a branch office is the usual entry for those sectors |
-| **Restricted** | C1 Capped All, C2 Local Partner 30%, F2 Restricted | Branch office with a 30% local partner for most sectors; outflows need approval |
+| **Guarded** | C1 Capped Strategic, C2 Local Directors, F2 Reporting | Foreign voting stake capped at 49% in strategic sectors; a local partner is the usual entry for those sectors |
+| **Restricted** | C1 Capped All, C2 Local Partner 30%, F2 Restricted | A 30% local partner for most sectors; outflows need approval |
 | **Closed** | C1 Closed, C2 Local Partner 51% and Tech Transfer or State Golden Share, F2 Hard Controls | Entry only by government invitation; state partner; tech transfer; dividends abroad capped |
 
 Foreigners also suffer the **foreigner influence penalty** of the government type, plus a further -10% per C1 step past Screened (2.5.6).
@@ -84,7 +83,7 @@ Columns: GDP in reference trillions at start (**alternate January 2020**, 2026-1
 | 7 | United Kingdom | GBP | Free Float | 2.75 | 0.85 | Moderate | Global FX and insurance center |
 | 8 | Germany | EUR | Free Float (euro zone) | 3.2 | 0.90 | High | Euro central bank seat (Frankfurt) |
 | 9 | France | EUR | Free Float (euro zone) | 2.2 | 0.85 | Moderate | Luxury, aerospace, nuclear |
-| 10 | Netherlands | EUR | Free Float (euro zone) | 0.75 | 0.90 | Moderate | Largest port in Europe; lithography |
+| 10 | Netherlands | EUR | Free Float (euro zone) | 0.75 | 0.90 | Moderate | Largest port in Europe; Semiconductors (lithography) |
 | 11 | Italy | EUR | Free Float (euro zone) | 1.6 | 0.70 | Moderate | Machinery, luxury |
 | 12 | Switzerland | CHF | Free Float (safe haven) | 0.75 | 1.15 | Low | Private banking, commodity traders |
 | 13 | Russia | RUB | Managed Float | 1.2 | 0.25 | Moderate | Oil, gas, metals; under sanctions at start |
@@ -99,19 +98,21 @@ Columns: GDP in reference trillions at start (**alternate January 2020**, 2026-1
 | 22 | China | CNY | Managed Float | 14.0 | 0.30 | Moderate | Manufacturing core; capital controls |
 | 23 | Japan | JPY | Free Float | 5.1 | 0.75 | High | Robotics, chip materials |
 | 24 | South Korea | KRW | Free Float | 1.65 | 0.65 | Moderate | Memory, displays, batteries |
-| 25 | Taiwan | TWD | Managed Float | 0.61 | 0.50 | Moderate | Leading-edge chip fabs |
+| 25 | Taiwan | TWD | Managed Float | 0.61 | 0.50 | Moderate | Semiconductors (leading edge) |
 | 26 | Singapore | SGD | Managed Float (basket) | 0.37 | 0.85 | Low | Transshipment, wealth management |
-| 27 | Malaysia | MYR | Managed Float | 0.36 | 0.25 | Moderate | Chip packaging |
+| 27 | Malaysia | MYR | Managed Float | 0.36 | 0.25 | Moderate | Semiconductors (assembly and test) |
 | 28 | Indonesia | IDR | Managed Float | 1.12 | 0.12 | Moderate | Nickel, coal, palm oil |
 | 29 | Vietnam | VND | Managed Float | 0.26 | 0.12 | Moderate | Electronics assembly |
 | 30 | Australia | AUD | Free Float | 1.4 | 0.95 | High | Iron ore, lithium, LNG |
 | 31 | Qatar | QAR | Peg (USD) | 0.18 | 0.60 | Low | Largest LNG exporter; sovereign fund; promoted from Gulf minors so Doha has a country (2026-10-18 review) |
+| 32 | Colombia | COP | Free Float | 0.32 | 0.18 | High | Oil, coal, coffee, flowers; Medellín; promoted from the Andean group (Logan, batch 116) |
+| 33 | DR Congo | CDF | Managed Float (heavily dollarized) | 0.05 | 0.03 | High | Cobalt and copper (Katanga, with the Zambian Copperbelt abstracted in); promoted from Central and Southern Africa (Logan, batch 116) |
 
 ### 2.2.4 Major countries: business climate
 
-Strategic sectors (the default list in every country): defense, chips, AI, telecom, energy, critical minerals, ports, media. A country can add or remove sectors in data.
+Strategic sectors (the default list in every country): defense, Semiconductors, AI, telecom, energy, critical minerals, ports, media. A country can add or remove sectors in data.
 
-| Country | C1 Foreign Ownership | C2 Branch Office | F2 Capital Controls | E5 Tariffs | L2 Union Rights | Restriction label | Notes |
+| Country | C1 Foreign Ownership | C2 Local partner and directors | F2 Capital Controls | E5 Tariffs | L2 Union Rights | Restriction label | Notes |
 |---|---|---|---|---|---|---|---|
 | United States | Screened | None | Open | Moderate | Recognized | Screened | Reviews buyers from rival countries harder (+4 weeks) |
 | Canada | Screened | None | Open | Low | Recognized | Screened | Critical minerals screened at 10% |
@@ -122,7 +123,7 @@ Strategic sectors (the default list in every country): defense, chips, AI, telec
 | United Kingdom | Screened | None | Open | Low | Recognized | Screened | |
 | Germany | Screened | None | Open | Low | Sectoral Bargaining | Screened | |
 | France | Capped Strategic | None | Open | Low | Recognized | Guarded | Broad strategic list (food, water, media) |
-| Netherlands | Screened | None | Open | Low | Recognized | Screened | Lithography under export control |
+| Netherlands | Screened | None | Open | Low | Recognized | Screened | Semiconductors (lithography) under export control |
 | Italy | Screened | None | Open | Low | Recognized | Screened | Golden powers in strategic deals |
 | Switzerland | Open | None | Open | Free Trade | Recognized | Open | F5 Banking Secrecy at Secrecy |
 | Russia | Capped All | Local Partner 30% | Restricted | High | Restricted | Restricted | Western holders face Tier 2 sanctions rules |
@@ -137,12 +138,15 @@ Strategic sectors (the default list in every country): defense, chips, AI, telec
 | China | Capped All | Local Partner 30% (51% and Tech Transfer in strategic) | Restricted | Moderate | Restricted | Restricted | Strategic sectors effectively Closed |
 | Japan | Screened | None | Open | Low | Recognized | Screened | |
 | South Korea | Screened | None | Open | Low | Recognized | Screened | Chaebol cross-holdings |
-| Taiwan | Capped Strategic | None | Reporting | Low | Recognized | Guarded | Advanced fabs abroad need approval |
+| Taiwan | Capped Strategic | None | Reporting | Low | Recognized | Guarded | Leading-edge Semiconductors assets abroad need approval |
 | Singapore | Open | None | Open | Free Trade | Restricted | Open | |
 | Malaysia | Screened | None | Open | Low | Recognized | Screened | |
 | Indonesia | Capped Strategic | Local Partner 30% (mining) | Reporting | Moderate | Recognized | Guarded | Raw nickel export ban at start |
 | Vietnam | Capped All | Local Partner 30% | Restricted | Moderate | Restricted | Restricted | Export zones (C6) eased |
 | Australia | Screened | None | Open | Low | Recognized | Screened | Critical minerals screened at 10% |
+| Qatar | Capped Strategic | Local Partner 30% | Open | Low | Banned | Guarded | LNG upstream: state only **(A)** |
+| Colombia | Screened | None | Reporting | Moderate | Recognized | Screened | Oil: state partner common (sector rule) **(A)** |
+| DR Congo | Capped Strategic | Local Partner 30% (mining only) | Reporting | Moderate | Recognized | Guarded | Mining code: state stake and royalties; cobalt is a strategic mineral **(A)** |
 
 ### 2.2.5 Minor groups
 
@@ -160,10 +164,10 @@ Each group is one aggregated market with a combined GDP, one blended wage index 
 | North Africa and Levant | Morocco, Algeria, Tunisia, Jordan, Lebanon, Libya | MAD | 0.65 | 0.10 | Guarded | Phosphates (Morocco), gas to Europe (Algeria), oil (Libya) |
 | West Africa | Ghana, Côte d'Ivoire, Senegal, Mali, Burkina Faso, Niger and neighbors | XOF (euro peg) | 0.45 | 0.06 | Guarded | Cocoa, gold, uranium (Niger), offshore oil |
 | East Africa and Horn | Kenya, Ethiopia, Tanzania, Uganda, Somalia, Sudan | KES | 0.55 | 0.06 | Guarded | Agriculture, mobile money fintech, Red Sea coast |
-| Central and Southern Africa | DR Congo, Zambia, Angola, Zimbabwe, Mozambique, Namibia | USD (dollarized trade) | 0.40 | 0.05 | Guarded | Cobalt and copper (Copperbelt), oil (Angola), uranium |
+| Central and Southern Africa | Zambia, Angola, Zimbabwe, Mozambique, Namibia | USD (dollarized trade) | 0.35 | 0.06 | Guarded | Copper (Zambia; its Copperbelt is abstracted into the Kolwezi-Lubumbashi hub in DR Congo), oil (Angola), uranium |
 | South Asia minors | Pakistan, Bangladesh, Sri Lanka, Nepal | PKR | 0.85 | 0.07 | Guarded | Garments (Bangladesh), textiles, ports |
 | Southeast Asia minors | Thailand, Philippines, Myanmar, Cambodia, Laos | THB | 1.2 | 0.15 | Screened | Auto and electronics assembly (Thailand), business process outsourcing (Philippines), rare earths (Myanmar) |
-| Andean and Venezuela | Colombia, Peru, Ecuador, Bolivia, Venezuela | COP (others tracked) | 0.95 | 0.18 | Guarded (Venezuela Closed) | Copper (Peru), lithium (Bolivia), oil (Venezuela, Colombia) |
+| Andean and Venezuela | Peru, Ecuador, Bolivia, Venezuela | PEN (others tracked) | 0.63 | 0.17 | Guarded (Venezuela Closed) | Copper (Peru), lithium (Bolivia), oil (Venezuela, Ecuador) |
 | Central America and Caribbean | Panama, Costa Rica, Guatemala, Dominican Republic, Cuba, Haiti, Cayman Islands, British Virgin Islands, Bermuda | USD | 0.55 | 0.20 | Screened | Panama Canal; offshore shell havens (F5 Haven) |
 | Oceania minors | New Zealand, Pacific islands | NZD | 0.30 | 0.75 | Screened | Dairy, tourism, undersea cable landings |
 
@@ -194,19 +198,19 @@ The six district types from 05 plus **Resource Field**.
 | Code | District | Mass weight | Typical business units with assets there | Character |
 |---|---|---|---|---|
 | **F** | Financial District | 2.0 | Headquarters, banking, asset management, insurance, professional services | Professionals and Elite; headquarters; exchanges |
-| **T** | Tech Park | 1.5 | Foundry, data centers, AI labs, software, pharma research | Professionals and Skilled; power and water hungry |
-| **P** | Port (sea, river or air) | 1.2 | Shipping, logistics, oil and gas terminals, metals | Logistics; strike-sensitive; chokepoint-exposed |
+| **T** | Tech Park | 1.5 | Semiconductors, data centers, AI labs, software, pharma research | Professionals and Skilled; power and water hungry |
+| **P** | Port (sea, river or air) | 1.2 | Shipping, logistics, Oil and Gas terminals, metals | Logistics; strike-sensitive; chokepoint-exposed |
 | **I** | Industrial Zone | 1.0 | Chemicals, metals, autos, EVs, construction, power utilities | Skilled and Unskilled; pollution |
 | **R** | Residential | 1.0 | Retail, fast food, healthcare services, small offices | Housing for every segment above Gig |
 | **S** | Slums | 0.3 | Black market fronts, street retail, informal work | Gig and Unemployed; high unrest; light policing |
-| **X** | Resource Field | 0.8 | Mining, oil and gas fields, agriculture, renewables | Remote labor camps |
+| **X** | Resource Field | 0.8 | Mining, Oil and Gas fields, agriculture, renewables | Remote labor camps |
 
 - **District mass** = hub mass × district weight / sum of all district weights in the hub.
 - A business unit's assets in a hub (its asset spread, [10-industry-economy.md](10-industry-economy.md) 10.0.2) sit in the district that fits its industry, and rent or buy their space from that district's real estate pools (2.16).
 
 ### 2.3.3 Hub list
 
-**80 hubs** at start: 44 original, plus 36 added in the 2026-10-18 realism review (Logan: "more cities"; Aberdeen was added, then scrapped by Logan, batch 115). New hubs are only in the 31 major countries; minor groups (including Ukraine, Greece, Mali and Iran) still have none. Populations are 2020 metro estimates **(T)**.
+**80 hubs** at start: 44 original, plus 36 added in the 2026-10-18 realism review (Logan: "more cities"; Aberdeen was added, then scrapped by Logan, batch 115). New hubs are only in the 33 major countries; minor groups (including Ukraine, Greece, Mali and Iran) still have none. Populations are 2020 metro estimates **(T)**.
 
 District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S Slums, X Resource Field. Population is metro population at start in millions. Connections list the main lanes and chokepoints (2.4).
 
@@ -216,10 +220,10 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 |---|---|---|---|---|---|---|
 | New York | United States (New York-New Jersey) | Mega | 20 | F5 I2 P2 R9 S3 T3 | Global finance, main exchange, media, law, insurance, prime real estate | Transatlantic sea and fiber to London and Rotterdam; rail and road to Chicago; Panama Canal to Asia; Gibraltar to the Mediterranean |
 | Chicago | United States (Illinois) | L | 9.5 | F3 I4 P1 R4 S1 T1 | Futures and commodity exchange, rail freight center, food processing, grain | Rail to New York, Houston, Los Angeles; Great Lakes and St Lawrence (seasonal); Mississippi barges to the Gulf |
-| Houston | United States (Texas) | L | 7.3 | F1 I4 P3 R4 S1 X1 | Oil and gas, refining, petrochemicals, LNG export | Gulf of Mexico tanker lanes; Panama Canal to Asia; Florida Strait to the Atlantic; pipelines to Chicago |
-| Bay Area | United States (California) | L | 7.7 | F2 I1 P1 R5 S1 T4 | Venture capital, software, AI labs, chip design | Transpacific sea and fiber to Tokyo, Taiwan, Shanghai; air freight hub for chips |
+| Houston | United States (Texas) | L | 7.3 | F1 I4 P3 R4 S1 X1 | Oil, Gas (LNG export), Chemicals (petrochemicals) | Gulf of Mexico tanker lanes; Panama Canal to Asia; Florida Strait to the Atlantic; pipelines to Chicago |
+| Bay Area | United States (California) | L | 7.7 | F2 I1 P1 R5 S1 T4 | Venture capital, software, AI labs, Semiconductors (chip design) | Transpacific sea and fiber to Tokyo, Taiwan, Shanghai; air freight hub for chips |
 | Los Angeles-Long Beach | United States (California) | XL | 13 | F2 I4 P3 R6 S2 T1 | Largest US container port, media and entertainment, aerospace, defense | Transpacific lanes to Shenzhen, Shanghai, Busan; rail land bridge to Chicago and New York |
-| Phoenix | United States (Arizona) | M | 5 | F1 I2 R4 S1 T2 | New chip fabs, data centers, water-stressed | Rail and road to Los Angeles and Houston; air |
+| Phoenix | United States (Arizona) | M | 5 | F1 I2 R4 S1 T2 | Semiconductors (new plants), data centers, water-stressed | Rail and road to Los Angeles and Houston; air |
 | Edmonton | Canada (Alberta) | S | 1.4 | F1 I2 R1 S1 X1 | Oil sands and oil field services, pipelines, the Alberta provincial government | Pipelines to Houston and the Pacific coast; rail to Toronto and Chicago. Added for the starting character John Techno, replacing Calgary (batch 76; [7-starting-world.md](7-starting-world.md) 7.8) |
 | Toronto | Canada (Ontario) | L | 6.5 | F3 I3 P1 R5 S1 T1 | Banking, mining finance, auto plants, AI research | Rail and road to New York and Chicago; St Lawrence Seaway |
 | Mexico City | Mexico (Valle de México and Bajío belt) | Mega | 22 | F2 I6 P1 R8 S5 T1 X1 | Vehicles and parts, nearshore electronics, consumer goods, telecom | Rail and road to Houston (US border crossings); Pacific port Manzanillo and Gulf port Veracruz (abstracted) |
@@ -229,7 +233,7 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Dallas-Fort Worth | United States (Texas) | L | 7.6 | F3 I3 R5 S1 T2 | Corporate headquarters, energy finance, telecom, logistics | Rail and road to Houston and Chicago; air hub |
 | Atlanta | United States (Georgia) | L | 6.0 | F2 I3 P1 R5 S2 T1 | The world's busiest airport, logistics, media, payments | Air hub; rail to the Gulf and East Coast ports |
 | Miami | United States (Florida) | L | 6.1 | F3 P2 R6 S2 T1 | Latin American finance gateway, flight capital, real estate, cruise and tourism | Florida Strait; Caribbean and Panama Canal lanes; air to Latin America |
-| Austin | United States (Texas) | M | 2.2 | F1 I2 R4 S1 T2 | Chip fabs, software, EV plant, state government | Road and rail to Dallas and Houston; air |
+| Austin | United States (Texas) | M | 2.2 | F1 I2 R4 S1 T2 | Semiconductors, software, EV plant, state government | Road and rail to Dallas and Houston; air |
 | Detroit | United States (Michigan) | M | 4.3 | F1 I4 R3 S2 | Autos and EVs, parts suppliers | Great Lakes; road and rail to Toronto and Chicago |
 | Las Vegas | United States (Nevada) | M | 2.3 | F1 I1 R5 S2 T1 | Casinos, gambling, conventions, tourism | Road and rail to Los Angeles; air |
 | Vancouver | Canada (British Columbia) | M | 2.6 | F2 P2 R4 S1 T1 | Pacific port, real estate, Asian capital, film | Transpacific lanes; rail to Edmonton and Toronto |
@@ -254,14 +258,14 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Hub | Country (region) | Size | Pop (M) | Districts | Specialties | Connections |
 |---|---|---|---|---|---|---|
 | London | United Kingdom (Greater London) | XL | 15 | F5 I1 P1 R7 S2 T2 | FX trading, insurance, law, wealth management, links to havens | Dover Strait; Channel Tunnel rail; transatlantic fiber and air |
-| Rotterdam | Netherlands (South Holland) | M | 2.5 | F1 I3 P4 R2 | Largest European port, refining, chemicals, LNG import, Rhine gateway | Asia-Europe lanes via Suez or the Cape; Dover Strait; Rhine barges and rail to Frankfurt |
-| Eindhoven | Netherlands (North Brabant) | S | 0.8 | I2 R2 T2 | Lithography systems (sole supplier at start), photonics, precision systems | Rail and road to Rotterdam; air freight |
+| Rotterdam | Netherlands (South Holland) | M | 2.5 | F1 I3 P4 R2 | Largest European port, chemicals, LNG import, Rhine gateway | Asia-Europe lanes via Suez or the Cape; Dover Strait; Rhine barges and rail to Frankfurt |
+| Eindhoven | Netherlands (North Brabant) | S | 0.8 | I2 R2 T2 | Semiconductors (lithography systems; sole supplier at start), photonics, precision systems | Rail and road to Rotterdam; air freight |
 | Frankfurt | Germany (Hesse, Rhine-Main incl. chemical complex) | L | 5.8 | F4 I4 P1 R4 T1 | Euro central bank, banking, chemicals, precision optics, auto suppliers, air cargo | Rhine barges and rail to Rotterdam; rail to Paris and over the Alps to the south; air |
 | Paris | France (Île-de-France) | XL | 13 | F3 I3 P1 R7 S2 T2 | Luxury goods, aerospace, nuclear engineering, defense, finance | Rail and road to Rotterdam and Frankfurt; Channel Tunnel to London; port of Le Havre (abstracted) |
 | Zurich | Switzerland (Zurich, with Basel and Geneva abstracted) | M | 1.5 | F4 I1 R4 T1 | Private banking, commodity trading houses, insurance, pharma | Rail to Frankfurt and Milan; air |
 | Moscow | Russia (Central) | Mega | 21 | F3 I5 P1 R9 S4 T2 | Energy company headquarters, metals, defense, oil trading, cybercrime underground | Pipelines to China and (sanctioned) Europe; rail to China via Kazakhstan; Baltic ports via the Danish Straits; Black Sea via the Turkish Straits |
 | Istanbul | Turkey (Marmara) | XL | 16 | F2 I5 P3 R5 S3 | Textiles, vehicles, shipping, regional finance | Turkish Straits; Black Sea lanes; rail to Europe; Middle Corridor rail to Central Asia and China |
-| Munich | Germany (Bavaria) | L | 6.0 | F3 I4 R5 T2 | Autos, insurance and reinsurance, chips | Rail to Frankfurt and over the Alps; air |
+| Munich | Germany (Bavaria) | L | 6.0 | F3 I4 R5 T2 | Autos, insurance and reinsurance, Semiconductors | Rail to Frankfurt and over the Alps; air |
 | Berlin | Germany (Berlin-Brandenburg) | L | 6.1 | F2 I2 R6 S2 T2 | Federal government, startups, media | Rail to Frankfurt, Warsaw and the Baltic |
 | Amsterdam | Netherlands (North Holland) | M | 2.5 | F3 P1 R4 T2 | Stock exchange, fintech, data centers, internet exchange | Rail to Rotterdam; North Sea; transatlantic fiber |
 | Milan | Italy (Lombardy) | L | 7.4 | F4 I4 R5 S1 | Finance, fashion, luxury, design | Rail over the Alps to Zurich and Frankfurt |
@@ -273,13 +277,13 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Hub | Country (region) | Size | Pop (M) | Districts | Specialties | Connections |
 |---|---|---|---|---|---|---|
 | Dubai | UAE (Dubai and Sharjah) | L | 6 | F4 I2 P3 R3 S1 T1 | Re-export logistics, gold trading, free zones, aviation hub, real estate, grey trade | Strait of Hormuz (inside the Gulf); sea lanes to India, East Africa and Europe; air hub |
-| Dhahran-Dammam | Saudi Arabia (Eastern Province) | M | 4 | F1 I3 P2 R2 X2 | Largest oil fields, refining, petrochemicals, desalination | Strait of Hormuz; East-West pipeline to the Red Sea coast (bypass); Bab-el-Mandeb and Suez |
+| Dhahran-Dammam | Saudi Arabia (Eastern Province) | M | 4 | F1 I3 P2 R2 X2 | Largest oil fields, petrochemicals, desalination | Strait of Hormuz; East-West pipeline to the Red Sea coast (bypass); Bab-el-Mandeb and Suez |
 | Doha | Qatar (Doha) | M | 2.4 | F2 I2 P2 R3 X1 | Largest LNG exporter, sovereign fund, media network | Strait of Hormuz; LNG lanes to Tokyo, Seoul and (via Suez) Rotterdam |
-| Tel Aviv | Israel (Central) | M | 4 | F2 I1 P1 R3 T3 | Cybersecurity, surveillance tech, chip design, defense electronics, venture capital | Mediterranean via Suez or Gibraltar; air; fiber |
+| Tel Aviv | Israel (Central) | M | 4 | F2 I1 P1 R3 T3 | Cybersecurity, surveillance tech, Semiconductors (chip design), defense electronics, venture capital | Mediterranean via Suez or Gibraltar; air; fiber |
 | Cairo-Suez | Egypt (Cairo and Canal Zone) | Mega | 22 | F2 I4 P2 R8 S7 T1 | Canal revenue, textiles, fertilizer, construction, gas | Suez Canal; Mediterranean and Red Sea lanes; Red Sea cable corridor landing |
 | Lagos | Nigeria (Lagos) | Mega | 21 | F2 I3 P2 R7 S9 T1 | Oil money, fintech, consumer goods, film industry, informal economy | Gulf of Guinea lanes (piracy risk); Atlantic to Europe; Cape of Good Hope to Asia |
 | Johannesburg | South Africa (Gauteng, with Durban port abstracted) | L | 9.5 | F3 I3 P1 R4 S2 X1 | Mining finance, platinum metals, gold, coal power | Rail to Durban; Cape of Good Hope; Mozambique Channel |
-| Kolwezi-Lubumbashi | DR Congo and Zambia Copperbelt (Central and Southern Africa) | M | 3 | I2 R2 S3 X3 | Cobalt (about 70% of world supply), copper | Long truck and rail lanes to Durban, Dar es Salaam and Lobito; border delays |
+| Kolwezi-Lubumbashi | DR Congo (Katanga; the Zambian Copperbelt is abstracted in) | M | 3 | I2 R2 S3 X3 | Cobalt (about 70% of world supply), copper | Long truck and rail lanes to Durban, Dar es Salaam and Lobito; border delays |
 | Riyadh | Saudi Arabia (Riyadh) | L | 7.6 | F3 I3 R5 S2 T1 | Government, royal court, sovereign fund, megaprojects | Rail to Dhahran-Dammam; air |
 | Abu Dhabi | UAE (Abu Dhabi) | M | 1.5 | F3 I2 P2 R2 X1 | Sovereign funds, oil, AI investment | Strait of Hormuz; road to Dubai |
 | Cape Town | South Africa (Western Cape) | M | 4.7 | F2 I1 P2 R3 S2 | Finance, tourism, wine, tech | Cape of Good Hope lanes |
@@ -288,18 +292,18 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 
 | Hub | Country (region) | Size | Pop (M) | Districts | Specialties | Connections |
 |---|---|---|---|---|---|---|
-| Mumbai | India (Maharashtra) | Mega | 24 | F4 I3 P2 R6 S8 T1 | Finance, main exchange, film industry, generic pharma, refining (Gujarat abstracted) | Arabian Sea lanes to the Gulf (Hormuz); Suez to Europe; Malacca to East Asia |
-| Bengaluru | India (Karnataka) | XL | 13 | F1 I2 R7 S4 T4 | IT services, software outsourcing, chip design, aerospace, biotech | Air; Chennai port (abstracted); fiber |
-| Shanghai | China (Yangtze Delta) | Mega | 29 | F4 I6 P3 R8 S1 T3 | Largest container port, finance, EVs, mature-node chips, shipbuilding | Taiwan Strait (southbound); East China Sea to Japan, Korea and the Pacific; Malacca to Europe; Yangtze barges; rail to Europe via Kazakhstan |
+| Mumbai | India (Maharashtra) | Mega | 24 | F4 I3 P2 R6 S8 T1 | Finance, main exchange, film industry, generic pharma, petrochemicals (Gujarat abstracted) | Arabian Sea lanes to the Gulf (Hormuz); Suez to Europe; Malacca to East Asia |
+| Bengaluru | India (Karnataka) | XL | 13 | F1 I2 R7 S4 T4 | IT services, software outsourcing, Semiconductors (chip design), aerospace, biotech | Air; Chennai port (abstracted); fiber |
+| Shanghai | China (Yangtze Delta) | Mega | 29 | F4 I6 P3 R8 S1 T3 | Largest container port, finance, EVs, Semiconductors (mature nodes), shipbuilding | Taiwan Strait (southbound); East China Sea to Japan, Korea and the Pacific; Malacca to Europe; Yangtze barges; rail to Europe via Kazakhstan |
 | Shenzhen-Dongguan | China (Pearl River Delta) | Mega | 22 | F2 I7 P3 R6 S2 T4 | Electronics assembly, component markets, drones, EVs and batteries | South China Sea to Malacca; Taiwan Strait (northbound); Luzon Strait to the Pacific; Hong Kong next door |
 | Hong Kong | China (Hong Kong SAR) | L | 7.5 | F5 P3 R4 S1 T1 | Offshore gateway into China, trading houses, re-export, company registrations | Pearl River Delta; Taiwan Strait; Malacca; Luzon Strait cables. Uses HKD (F3 Currency Board to USD) and its own looser laws: restriction Screened |
 | Beijing | China (Jing-Jin-Ji, with Tianjin port) | Mega | 22 | F3 I3 P1 R9 S3 T5 | Central government, state company headquarters, AI and surveillance tech, regulators | Tianjin via the Bohai and Yellow Sea; rail to Russia and Mongolia; rail to Shanghai |
 | Baotou | China (Inner Mongolia) | M | 2.7 | I4 R2 S1 X3 | Rare earth mining and separation, steel, aluminium | Rail to Beijing and Tianjin port; rail to Mongolia and Russia |
-| Hsinchu-Taipei | Taiwan (North Taiwan) | L | 9 | F2 I2 P1 R4 T5 | Leading-edge logic fabs, advanced packaging, electronics design | Taiwan Strait and Luzon Strait for all sea exits; air freight for chips; undersea cables |
-| Seoul-Pyeongtaek | South Korea (Capital Area, with Ulsan and Busan abstracted) | Mega | 26 | F3 I5 P2 R8 S1 T5 | Memory chips, displays, batteries, shipbuilding, vehicles, entertainment | Korea Strait; East China Sea; Taiwan or Luzon Strait to Malacca; Pacific to the US |
-| Tokyo-Yokohama | Japan (Kanto, with Nagoya abstracted) | Mega | 37 | F5 I5 P3 R9 S1 T3 | Finance, vehicles, robotics, chip materials (photoresists, wafers), precision machinery | Pacific lanes to the US; East China Sea; Malacca and Hormuz for oil and LNG |
-| Singapore | Singapore | L | 6 | F4 I2 P4 R3 T1 | Transshipment, refining, commodity trading, wealth management, data centers, cable landings | Strait of Malacca and Singapore Strait; South China Sea; Indian Ocean |
-| Penang | Malaysia (Penang and Kulim) | M | 1.8 | I4 P1 R3 T2 | Chip assembly, test and packaging, electronics | Strait of Malacca; air |
+| Hsinchu-Taipei | Taiwan (North Taiwan) | L | 9 | F2 I2 P1 R4 T5 | Semiconductors (leading-edge logic and advanced packaging), electronics design | Taiwan Strait and Luzon Strait for all sea exits; air freight for chips; undersea cables |
+| Seoul-Pyeongtaek | South Korea (Capital Area, with Ulsan and Busan abstracted) | Mega | 26 | F3 I5 P2 R8 S1 T5 | Semiconductors (memory), displays, batteries, shipbuilding, vehicles, entertainment | Korea Strait; East China Sea; Taiwan or Luzon Strait to Malacca; Pacific to the US |
+| Tokyo-Yokohama | Japan (Kanto, with Nagoya abstracted) | Mega | 37 | F5 I5 P3 R9 S1 T3 | Finance, vehicles, robotics, Semiconductors (materials), precision machinery | Pacific lanes to the US; East China Sea; Malacca and Hormuz for oil and LNG |
+| Singapore | Singapore | L | 6 | F4 I2 P4 R3 T1 | Transshipment, petrochemicals, commodity trading, wealth management, data centers, cable landings | Strait of Malacca and Singapore Strait; South China Sea; Indian Ocean |
+| Penang | Malaysia (Penang and Kulim) | M | 1.8 | I4 P1 R3 T2 | Semiconductors (assembly, test and packaging), electronics | Strait of Malacca; air |
 | Jakarta | Indonesia (Jabodetabek, with Sulawesi nickel abstracted) | Mega | 34 | F2 I5 P2 R7 S6 T1 X1 | Consumer market, nickel processing, palm oil, coal | Sunda Strait; Malacca; Lombok route |
 | Ho Chi Minh City | Vietnam (Southeast) | XL | 14 | F1 I6 P2 R5 S3 T1 | Electronics assembly ("China plus one"), garments, footwear, rice | South China Sea; Malacca; transpacific lanes |
 | Perth-Pilbara | Australia (Western Australia) | M | 2.3 | F1 I2 P2 R3 X2 | Iron ore (largest exporter), lithium ore, LNG, gold | Bulk lanes to China, Japan and Korea via the Lombok and Makassar straits (bypassing Malacca) |
@@ -310,7 +314,7 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Chengdu | China (Sichuan) | XL | 16 | F2 I5 R7 S2 T2 | Electronics assembly, gaming, aerospace | Rail to Europe; Yangtze via Chongqing |
 | Wuhan | China (Hubei) | XL | 11 | F1 I6 P1 R7 S2 T1 | Autos, steel, optical fiber, research labs | Yangtze barges to Shanghai; rail hub |
 | Osaka-Kobe | Japan (Kansai) | XL | 19 | F3 I5 P3 R6 S1 | Manufacturing, electronics, pharma, port | Inland Sea; Pacific lanes |
-| Kaohsiung | Taiwan (South Taiwan) | M | 2.7 | I4 P3 R2 T1 | Port, petrochemicals, steel, new chip fabs | Taiwan and Luzon Straits |
+| Kaohsiung | Taiwan (South Taiwan) | M | 2.7 | I4 P3 R2 T1 | Port, petrochemicals, steel, Semiconductors (new plants) | Taiwan and Luzon Straits |
 | Kuala Lumpur | Malaysia (Klang Valley) | L | 8 | F3 I3 R5 S2 T1 | Finance, Islamic finance, palm oil trading, data centers | Port Klang on the Strait of Malacca |
 | Hanoi | Vietnam (Red River Delta) | L | 8 | F1 I6 R5 S1 T1 | Government, electronics plants | Port of Haiphong (abstracted); rail to China |
 | Melbourne | Australia (Victoria) | M | 5.0 | F3 I2 P1 R4 | Finance, pension funds, universities, port | Bass Strait; Pacific lanes |
@@ -321,12 +325,12 @@ Each hub starts with AI-owned business units in its specialty industries, so the
 
 | Hub | Signature business units at start |
 |---|---|
-| Hsinchu-Taipei | Foundry (leading-edge logic and advanced packaging) |
-| Seoul-Pyeongtaek | Foundry (memory), Consumer electronics, EVs (batteries) |
-| Eindhoven | Lithography machines (the only maker in the world) |
+| Hsinchu-Taipei | Semiconductors (leading-edge logic and advanced packaging) |
+| Seoul-Pyeongtaek | Semiconductors (memory), Consumer electronics, EVs (batteries) |
+| Eindhoven | Semiconductors (lithography; the only maker of the machines in the world) |
 | Shenzhen-Dongguan | Consumer electronics, EVs, Drones |
-| Penang | Foundry (assembly, test and packaging) |
-| Kolwezi-Lubumbashi | Mining (cobalt and copper) |
+| Penang | Semiconductors (assembly, test and packaging) |
+| Kolwezi-Lubumbashi | Mining (cobalt and copper, Katanga) |
 | Baotou | Mining (rare earths), Metals |
 | Perth-Pilbara | Mining (iron ore and lithium), Gas (LNG) |
 | Dhahran-Dammam | Oil, Chemicals |
@@ -339,7 +343,7 @@ Each hub starts with AI-owned business units in its specialty industries, so the
 | Dallas-Fort Worth | Telecom, Banking, Logistics |
 | Atlanta | Airlines, Logistics, Banking (payments) |
 | Miami | Banking (Latin American private banking), Real estate |
-| Austin | Foundry, EVs, Software |
+| Austin | Semiconductors, EVs, Software |
 | Detroit | Autos, EVs |
 | Las Vegas | Gambling |
 | Vancouver | Real estate, Shipping |
@@ -365,7 +369,7 @@ Each hub starts with AI-owned business units in its specialty industries, so the
 | Chengdu | Consumer electronics, Gaming |
 | Wuhan | Autos, Metals (steel), Telecom (optical fiber) |
 | Osaka-Kobe | Consumer electronics, Pharma, Shipping |
-| Kaohsiung | Foundry, Chemicals, Metals |
+| Kaohsiung | Semiconductors, Chemicals, Metals |
 | Kuala Lumpur | Banking (Islamic finance), Agriculture (palm oil), Data centers |
 | Hanoi | Consumer electronics |
 | Melbourne | Asset management (pension funds), Mining (headquarters) |
@@ -382,12 +386,12 @@ Perks belong to **locations**, not to company size. The big **financial and tech
 | London | HQ here | -0.25 points on bonds issued |
 | Zurich | HQ here, or a captive bank here | -0.25 points on loans; shell exposure -10% |
 | Bay Area | HQ here and work in a Tech industry | R&D plan effects +10% |
-| Hsinchu-Taipei | A Foundry business unit with assets here | Productivity +5% |
-| Shenzhen-Dongguan | A Consumer electronics, Robotics or GPUs business unit with assets here | Productivity +5%; variable cost -3% |
+| Hsinchu-Taipei | A Semiconductors business unit with assets here | Productivity +5% |
+| Shenzhen-Dongguan | A Consumer electronics, Robotics or Semiconductors business unit with assets here | Productivity +5%; variable cost -3% |
 | Singapore | HQ here | -0.25 points on loans; securities regulator strictness -1 |
 | Bengaluru | A Software or SaaS business unit with assets here | Variable cost -5% (wages) |
 | Tokyo-Yokohama | A Robotics business unit with assets here | Productivity +5% |
-| Seoul-Pyeongtaek | A CPUs or Consumer electronics business unit with assets here | Productivity +3% |
+| Seoul-Pyeongtaek | A Semiconductors or Consumer electronics business unit with assets here | Productivity +3% |
 | Frankfurt | HQ here | -0.25 points on loans from banks in the eurozone |
 | Washington DC | HQ here | Political Capital +10% in the United States; Defense contracts awarded +5% |
 | Boston | A Pharma or Robotics business unit with assets here | R&D plan effects +10% |
@@ -395,7 +399,7 @@ Perks belong to **locations**, not to company size. The big **financial and tech
 | Dallas-Fort Worth | HQ here | Corporate tax -1 point (Texas has no state tax); investor confidence +2% |
 | Atlanta | An Airlines or Logistics business unit with assets here | Variable cost -4% |
 | Miami | HQ here | Influence +10% in every Latin American hub; shell exposure -5% |
-| Austin | A Foundry, CPUs or Software business unit with assets here | Productivity +3% |
+| Austin | A Semiconductors or Software business unit with assets here | Productivity +3% |
 | Detroit | An Autos or EVs business unit with assets here | Productivity +5% |
 | Las Vegas | A Gambling business unit with assets here | Productivity +10%; gambling regulator strictness -1 |
 | Vancouver | A Real estate business unit with assets here | Rent +5% on Residential pools in the hub |
@@ -421,7 +425,7 @@ Perks belong to **locations**, not to company size. The big **financial and tech
 | Chengdu | A Gaming or Consumer electronics business unit with assets here | Variable cost -4% |
 | Wuhan | An Autos or Telecom business unit with assets here | Productivity +3% |
 | Osaka-Kobe | A Pharma or Consumer electronics business unit with assets here | Productivity +3% |
-| Kaohsiung | A Foundry business unit with assets here | Productivity +3% (stacks with Hsinchu-Taipei) |
+| Kaohsiung | A Semiconductors business unit with assets here | Productivity +3% (stacks with Hsinchu-Taipei) |
 | Kuala Lumpur | HQ here, or a Data centers business unit with assets here | -0.25 points on Islamic bonds; compute maintenance -5% |
 | Hanoi | A Consumer electronics business unit with assets here | Variable cost -6% (wages) |
 | Melbourne | HQ here | -0.25 points on loans from Australian pension funds |
@@ -468,7 +472,7 @@ Oil and gas get their own shocks on top of the chokepoint risk levels. Starting 
 | **Sanctions on Russia** | Russian oil and gas exports | In force since 2005 (Ukraine war, [7-starting-world.md](7-starting-world.md) 7.2.0): pipeline gas to Europe is already cut at start; oil is sold at a discount through grey fleets to buyers that ignore the sanctions | Ceasefire or escalation events change them; 4.11.4 sanctions rules |
 | **Red Sea attacks** | Bab-el-Mandeb and Suez | Tankers and LNG carriers reroute around Africa (+10 to 14 days); insurance at Attacks or Conflict | Timeline event (late 2023), then rolled by regional tension |
 
-Shocks raise the oil and gas price indices and, through power plants that burn them, electricity prices, which raises costs for energy-heavy industries such as Foundry and Data centers. Players can profit by holding oil and gas businesses or futures ([3-markets-and-fx.md](3-markets-and-fx.md)).
+Shocks raise the oil and gas price indices and, through power plants that burn them, electricity prices, which raises costs for energy-heavy industries such as Semiconductors and Data centers. Players can profit by holding oil and gas businesses or futures ([3-markets-and-fx.md](3-markets-and-fx.md)).
 
 ---
 
@@ -476,20 +480,20 @@ Shocks raise the oil and gas price indices and, through power plants that burn t
 
 ### 2.5.1 Overview and order of calculation
 
-Influence share is tracked **per holder per place** (district, hub, region, country). Holders are characters, family trusts, companies, dynasties and governments.
+Influence share is tracked **per holder per place** (district, hub, region, country). Holders are characters, companies and governments (no dynasties or family trusts, batch 116).
 
 Monthly, for each holder and place:
 
 1. Collect the holder's **attributed assets** in the place (2.5.4).
 2. Convert them to **weighted value** with the asset weights (2.5.2).
 3. **Base share** = weighted value / place mass (2.5.3).
-4. Apply the **multiplier** (origin, history, reputation, foreignness, home, legacy) (2.5.6).
+4. Apply the **multiplier** (origin, history, Favor, foreignness, home) (2.5.6).
 5. Add **flat points** (office, home district, roll-up prominence, goodwill) (2.5.5, 2.5.6).
 6. Add the current **temporary pool** (ads, psyops, sponsorships, galas) and subtract backlash (2.5.7).
 7. Clamp and normalize to get the **final share** (2.5.8).
 8. Check **tiers** (2.5.9) and feed **Political Capital** ([4-politics.md](4-politics.md) 4.1.2).
 
-Steps 1 to 5 run monthly (influence recalculation in [09-time-and-turns.md](../09-time-and-turns.md)). Step 6 changes daily and weekly as campaigns run and decay, and the displayed share updates with it. Tiers are checked weekly.
+Steps 1 to 5 run monthly (the influence recalculation tick). Step 6 changes daily and weekly as campaigns run and decay, and the displayed share updates with it. Tiers are checked weekly.
 
 ### 2.5.2 Asset weights
 
@@ -524,15 +528,13 @@ Example masses: New York $120B; Penang $4.75B; Shenzhen-Dongguan $61B; Antofagas
 
 | Holder | Attributed assets |
 |---|---|
-| **Character** | Personal accounts and personal trusts |
-| **Family trust** | Its own assets |
+| **Character** | Personal accounts and personal trusts, plus the companies the character really controls (1.3.1 of [1-corporate-core.md](1-corporate-core.md): the top company at 1.0, its vassals by the autonomy factor chain), plus minority stakes as stakes (weight 0.5) |
 | **Company** | Its own assets plus each controlled vassal's attributed assets × autonomy factor: Wholly Integrated 1.0, Managed 0.9, Arm's Length 0.7, Independent Listing 0.5 (autonomy levels from [1-corporate-core.md](1-corporate-core.md) 1.7.2) |
-| **Dynasty** | Family trust + personal assets of living members + companies the dynasty controls (the top company at 1.0, its vassals by the autonomy factor chain) + minority stakes as stakes (weight 0.5) |
 | **Government** | State-owned assets; used for display and for the "public" remainder, never for tiers |
 
-- **Which share applies to an action**: the best share among the acting holder and the dynasty that controls it. A company controlled by your dynasty uses the dynasty's Power broker tier for a permit even if the company alone holds 8%.
-- **Family members** may use dynasty perks only when they hold the dynasty head as Friend or Neutral and they are not in a faction against the head.
-- **Political Capital** is earned by the dynasty from the dynasty share, as defined in [4-politics.md](4-politics.md) 4.1.2.
+- **Which share applies to an action**: the best share among the acting holder and the character who really controls it. A company you control uses your Power broker tier for a pool purchase even if the company alone holds 8%.
+- Relatives are flavor characters only: they get no share of your perks (batch 116).
+- **Political Capital** is earned by the controlling character from their share, as defined in [4-politics.md](4-politics.md) 4.1.2.
 
 ### 2.5.5 Roll-up from district to country
 
@@ -551,13 +553,13 @@ The same rule applies from regions to the country, adding country-only assets (n
 | Hub Kingmaker | +3 pp in the region | +1 pp in the country |
 | Region Kingmaker | +3 pp in the country | none |
 
-So a dynasty dominating one hub gets a real but modest voice in its region and country, as 05 requires.
+So a character dominating one hub gets a real but modest voice in its region and country, as 05 requires.
 
 ### 2.5.6 Permanent modifiers
 
-`Multiplier = Origin × History × Reputation × Foreignness × Home × Legacy`
+`Multiplier = Origin × History × Favor × Foreignness × Home`
 
-**Origin** (born and raised, from [03-characters.md](../03-characters.md)):
+**Origin** (born and raised, from [1-corporate-core.md](1-corporate-core.md) 1.1):
 
 | Origin link | District | Hub | Region | Country |
 |---|---|---|---|---|
@@ -568,37 +570,33 @@ So a dynasty dominating one hub gets a real but modest voice in its region and c
 | Citizen of the country | none | none | none | Removes foreignness for that character |
 
 - A character uses their own origin.
-- A **dynasty** uses the best origin among its living adult members who hold the head as Friend or Neutral, or its **dynasty seat** (the hub where it was founded, or where two or more past heads were raised): seat gives ×1.15 in the hub and ×1.05 in the country. Use the higher of the two; they do not stack.
 - A **company** uses its HQ instead of origin: ×1.10 in the HQ hub, ×1.05 in the HQ country.
 
-**Dynasty history** (dynasties and companies; presence = base share of 1% or more):
+**History** (characters and companies; presence = base share of 1% or more):
 
 | Continuous presence | Bonus |
 |---|---|
 | Each year for the first 10 years | +1% per year (to ×1.10) |
-| Each further 4 years | +1% (to a maximum of ×1.25 at 70 years, about three generations) |
+| Each further 4 years | +1% (to a maximum of ×1.25 at 70 years) |
 | Each year without presence | -2% (history fades, it does not reset) |
 
-**Reputation**: `1 + reputation / 500` (reputation -100 to +100 gives ×0.8 to ×1.2). Notoriety traits on the dynasty head or the company CEO: Scandal-Ridden ×0.9, Media Darling ×1.05, Under Investigation ×0.95.
+**Favor**: `1 + Favor / 500` (Favor -100 to +100 gives ×0.8 to ×1.2): the public's view of the controlling character, or of a company's CEO for a company ([1-corporate-core.md](1-corporate-core.md) 1.1.0). Under Investigation on that character: ×0.95.
 
 **Foreignness**: `1 - type penalty - 0.10 × C1 steps past Screened`, minimum 0.2. Type penalties come from [4-politics.md](4-politics.md) 4.2.1: Liberal democracy 10%, Managed democracy 30%, One-party state 50%, Corporate oligarchy 0%, Military junta 30%, Failed state 10%. C1 steps past Screened: Capped Strategic 1, Capped All 2, Closed 3.
 
 | Situation | Foreignness rule |
 |---|---|
-| Holder whose dynasty and company HQ are both foreign | Full penalty (politics rule) |
-| Dynasty with at least one adult citizen member (by birth or marriage) who holds the head as Friend or Neutral | Penalty halved |
-| Assets held through a branch office with a local partner of 30% or more | Penalty halved on those assets |
-| Company headquartered in the country but controlled by a foreign dynasty | The company itself has no penalty; the dynasty's roll-up takes the penalty |
+| Foreign character, or company with a foreign HQ | Full penalty (politics rule) |
+| Assets held through a local subsidiary with a local partner of 30% or more | Penalty halved on those assets |
+| Company headquartered in the country but controlled by a foreign character | The company itself has no penalty; the controlling character's roll-up takes the penalty |
 
-**Home**: ×1.10 in the HQ hub of a company, as above.
-
-**Legacy**: the "Political Machine" dynasty legacy gives ×1.05 ([1-corporate-core.md](1-corporate-core.md) 1.11.4).
+**Home**: ×1.10 in the HQ hub of a company, as above. (The old Legacy term is removed with dynasties, batch 116.)
 
 **Flat points**:
 
 | Source | Points |
 |---|---|
-| Political office | As listed in [4-politics.md](4-politics.md) 4.7.1 (for example Mayor +10 pp in the hub, Governor +8 pp in the region, Minister +3 pp in the country). Counts for the office holder and their dynasty |
+| Political office | As listed in [4-politics.md](4-politics.md) 4.7.1 (for example Mayor +10 pp in the hub, Governor +8 pp in the region, Minister +3 pp in the country). Counts for the office holder |
 | Born and raised in the hub | +1 pp (hub) |
 | Home district | +2 pp (district) |
 | Media audience | +0.25 pp per 1% audience share |
@@ -613,12 +611,12 @@ Costs scale with the **place mass**, so buying influence in a megacity or a whol
 |---|---|---|---|---|---|---|---|
 | **Ad campaign** | $60k per pp per 4 weeks per $1B | +5 pp | 50% in the first week, full from the second | 4 to 26 weeks, paid each 4 weeks | 25% | None (legal) | Buys media units from the local market (cost / $8,000 units); owning local media cuts cost 30%; can also push an ideology bloc's MediaBias +0.02 ([4-politics.md](4-politics.md) 4.4.5) |
 | **Psyops** (bots, disinformation) | $25k per pp per 4 weeks per $1B | +10 pp | Full in 3 days | 2 to 12 weeks | 35% | Daily discovery roll (below); +5 political exposure per campaign start × surveillance multiplier ([4-politics.md](4-politics.md) 4.9.3) | Can push an ideology bloc's MediaBias +0.05 |
-| **Sponsorship and charity** | $150k per pp per $1B for a 26-week package | +3 pp | Linear over 4 weeks | 26 weeks, renewable | 5% | Only if reputation is below -20: "washing" scandal 2% per month | +1 reputation per $5M × PF spent (max +10 per year); 25% of its pp become permanent Goodwill at the end of each package |
-| **Event or gala** | $0.02 × adults in the hub ([4-politics.md](4-politics.md) 4.10.1), plus 6 hours of the host's time | +1 pp in the hub, +0.5 pp in its region | Instant | 2 weeks | 50% | None; a Hedonist host has a 5% scandal chance | A push of 5 toward Friend with all hub officials; the host rolls Befriend on 1 to 3 attending elite characters at Influence × 2% each; 1 gala per hub per month |
+| **Sponsorship and charity** | $150k per pp per $1B for a 26-week package | +3 pp | Linear over 4 weeks | 26 weeks, renewable | 5% | Only if the sponsor's Favor is below -20: "washing" scandal 2% per month | +1 Favor per $5M × PF spent (max +10 per year); 25% of its pp become permanent Goodwill at the end of each package |
+| **Event or gala** | $0.02 × adults in the hub ([4-politics.md](4-politics.md) 4.10.1); hosting is instant (batch 64) | +1 pp in the hub, +0.5 pp in its region | Instant | 2 weeks | 50% | None; a Hedonist host has a 5% scandal chance | A push of 5 toward Friend with all hub officials; the host rolls Befriend on 1 to 3 attending elite characters at Persuasion × 2% each; the host gains +1 Clout; 1 gala per hub per month |
 
 **Rules:**
 
-- **Effectiveness**: bought pp × `(0.8 + director's Influence / 75)` for ads, sponsorships and galas; × `(0.8 + director's Intrigue / 75)` for psyops (×0.8 to ×1.2). The director is the character assigned to run the campaign.
+- **Effectiveness**: bought pp × `(0.8 + director's Persuasion / 75)` for ads, sponsorships and galas; × `(0.8 + director's Intrigue / 75)` for psyops (×0.8 to ×1.2). The director is the character assigned to run the campaign.
 - **One of each**: a holder can run one campaign of each type per place at a time.
 - **Competition**: if two or more holders run campaigns in the same place, each one's temporary pp are ×0.8.
 - **Cap (assets come first)**: total temporary pp in a place ≤ the larger of 6 pp or the holder's base share in pp. A holder with no assets can reach 6% at most: enough for a foothold, never for Presence alone.
@@ -637,7 +635,7 @@ On discovery:
 |---|---|
 | Psyop pp in that place | Removed at once |
 | Backlash | A negative temporary pool of 2 × the removed pp, decaying 10% per week |
-| Reputation | -10 (-20 if an election is under way in that jurisdiction) |
+| Favor | -10 for the controlling character (-20 if an election is under way in that jurisdiction) |
 | Exposure | +15 with the Financial Police and the Data Authority |
 | Liberal democracy | 30% chance an investigation chain opens |
 | One-party state, military junta | The regime treats it as hostile: foreign holders advance one step on the seizure ladder ([4-politics.md](4-politics.md) 4.9.10); domestic holders give the regime a hook over the director |
@@ -646,7 +644,7 @@ On discovery:
 
 `Final share = clamp(Base share × Multiplier + Flat points + Temporary pp + Goodwill - Backlash, 0, 95)`
 
-**Normalization**: if the final shares of all top-level holders in a place (dynasties, independent companies, governments and the unmodeled public) add up to more than 100%, every one is scaled down in proportion. Holders inside a dynasty are not added separately for this check.
+**Normalization**: if the final shares of all top-level holders in a place (controlling characters, independent companies, governments and the unmodeled public) add up to more than 100%, every one is scaled down in proportion. Companies a character controls are not added separately for this check.
 
 ### 2.5.9 Tiers and hysteresis
 
@@ -664,15 +662,15 @@ Districts give **economic perks only**. Political perks start at the hub (the lo
 
 | Tier | District | Hub (local) | Region | Country |
 |---|---|---|---|---|
-| **Presence** (10%) | New construction in the district's real estate pools shown 3 days early (2.16.2) | All district perks hub-wide; permit time -15%; Meet Official with local officials costs 0 PC once per week | Regional licences 2 weeks faster; Meet Official with regional officials free once per week | Meet Official with ministers free once per week; Foreign Investment Review time -25% |
-| **Power broker** (25%) | First refusal on new construction in the district's pools: 7 days to buy at the pool price +5% | First refusal on new pool construction and local tenders hub-wide; one Request Decision for rezoning per quarter at 0 PC (automatic approval under E11 Developer-Led); construction time -15%; one property tax deal per year (E10 -25% on own real estate for 5 years, as a Request Decision); local lobby points +25%; S2 Privatized policing contracts allowed; unlocks the **Political Connections** founding path ([1-corporate-core.md](1-corporate-core.md) 1.6.7) | One regional incentive deal per year (E9 corporate surcharge waived on new business assets for 5 years); regional contract bid score +10; priority for new infrastructure projects in your hubs; regional lobby points +25% | Eligible for E6 subsidies without a tender; national contract bid score +10; national lobby points +25%; meetings with the central bank governor and regulator heads |
-| **Kingmaker** (50%) | Veto a rival's real estate purchase in the district (10 PC) | Veto a rival's permit or acquisition in the hub (20 PC; the rival can override with 40 PC or a court case); appointment score +30 for police chief and permit office head; +0.3 Candidate utility for local candidates you back ([4-politics.md](4-politics.md) 4.6.3); local investigations lose 1 Evidence per week and local Request Protection costs 0 PC; local contract bid score +20 | Appoint one regional cabinet member per year (appointment score +30); +0.2 Candidate utility for backed regional candidates; veto a rival's regional licence (30 PC); regional Request Protection costs 0 PC | Appointment score +30 for one minister or regulator head per year; +0.15 Candidate utility for backed national candidates; one tariff or subsidy change per year handled as a Decision instead of a Law; national Request Protection cost halved; foreign holders' branch office seizure risk -1 point |
+| **Presence** (10%) | New construction in the district's real estate pools shown 3 days early (2.16.2) | All district perks hub-wide; land development time in the hub's pools -15% (2.16.2); Meet Official with local officials costs 0 PC once per week | Regional licences 2 weeks faster; Meet Official with regional officials free once per week | Meet Official with ministers free once per week; Foreign Investment Review time -25% |
+| **Power broker** (25%) | First refusal on new construction in the district's pools: 7 days to buy at the pool price +5% | First refusal on new pool construction and local tenders hub-wide; one Request Decision for rezoning per quarter at 0 PC (automatic approval under E11 Developer-Led); land development time a further -15%; one property tax deal per year (E10 -25% on own real estate for 5 years, as a Request Decision); local lobby points +25%; S2 Privatized policing contracts allowed; unlocks the **Political Connections** founding path ([1-corporate-core.md](1-corporate-core.md) 1.6.7) | One regional incentive deal per year (E9 corporate surcharge waived on new business assets for 5 years); regional contract bid score +10; priority for new infrastructure projects in your hubs; regional lobby points +25% | Eligible for E6 subsidies without a tender; national contract bid score +10; national lobby points +25%; meetings with the central bank governor and regulator heads |
+| **Kingmaker** (50%) | Veto a rival's real estate purchase in the district (10 PC) | Veto a rival's pool purchase, land development or acquisition in the hub (20 PC; the rival can override with 40 PC or a court case); appointment score +30 for police chief and planning head; +0.3 Candidate utility for local candidates you back ([4-politics.md](4-politics.md) 4.6.3); local investigations lose 1 Evidence per week and local Request Protection costs 0 PC; local contract bid score +20 | Appoint one regional cabinet member per year (appointment score +30); +0.2 Candidate utility for backed regional candidates; veto a rival's regional licence (30 PC); regional Request Protection costs 0 PC | Appointment score +30 for one minister or regulator head per year; +0.15 Candidate utility for backed national candidates; one tariff or subsidy change per year handled as a Decision instead of a Law; national Request Protection cost halved; seizure risk on your foreign-held assets in the country -1 point |
 
 Kingmaker in a hub for 12 months is also the first requirement of corporate sovereignty ([4-politics.md](4-politics.md) 4.12.2).
 
 ### 2.5.11 Tooltip breakdown
 
-Every share shows its lines, for example (Penang, dynasty):
+Every share shows its lines, for example (Penang, controlling character):
 
 ```
 Weighted assets in Penang           $294M
@@ -681,7 +679,7 @@ Base share                          6.19%
   × Origin (born and raised)        ×1.25
   × Foreignness (halved)            ×0.95
   × History (3 years)               ×1.03
-  × Reputation (+20)                ×1.04
+  × Favor (+20)                     ×1.04
 Flat: born and raised               +1.00
 Temporary: ad campaign              +4.00
 Temporary: gala                     +1.00
@@ -700,14 +698,14 @@ The economy is industries, business units and corporations, Wall Street Raider s
 
 ### 2.8.0 Strata (Logan, 2026-10-17)
 
-**Strata are income levels, not character classes**. Five strata, bottom to top: Permanent Underclass, PMC, Glitterati, Nobles, Oligarchs (Victoria 3 calls them strata). Every named character has a stratum set by their **character resources**: assets, clout, income, prestige and vril ([1-corporate-core.md](1-corporate-core.md) 1.1.0). Population segments (2.8.1) also sit in a stratum.
+**Strata are income levels, not character classes**. Five strata, bottom to top: Permanent Underclass, PMC, Glitterati, Nobles, Oligarchs (Victoria 3 calls them strata). Every named character has a stratum set by their **character resources**: assets, Clout, income and vril ([1-corporate-core.md](1-corporate-core.md) 1.1.0). Population segments (2.8.1) also sit in a stratum.
 
 | Stratum | Who is in it (Logan) | Population segments **(A)** |
 |---|---|---|
 | **Permanent Underclass** | People stuck unable to get the money together to gather assets, caught in a debt spiral. Underpaid and underemployed. Docile if their **slop** needs are met | Unskilled Workers, Gig Workers, Unemployed |
 | **PMC** (professional-managerial class) | From skilled union labor to yuppies and low-level executives, doctors, any wagie with a normie job, and high achievers in many low-profile fields | Skilled Workers, Professionals |
 | **Glitterati** | High-level executives, influencers, athletes. Named characters with skill ratings in fields that boost the organizations, companies or firms they are affiliated with. Often rich in assets, but rarely have the skills to leverage Techno-Capital, so they don't buy it | Elite |
-| **Nobles** | People who by bloodline will always have clout or influence. They do not necessarily have or pursue assets, but can be very rich, and ruthless in guarding the influence they have amassed. The status fades over generations: the grandchild of a head of state is not a Noble unless they did enough in their own life | None (named characters only) |
+| **Nobles** | People who by bloodline will always have clout or influence. They do not necessarily have or pursue assets, but can be very rich, and ruthless in guarding the influence they have amassed. | None (named characters only) |
 | **Oligarchs** | The top stratum. At least a board seat on one monopoly or $1 billion in assets, plus a certain amount of Techno-Capital (Logan) | None (named characters only) |
 
 **How a character's stratum is set (Logan).** Various factors, but mainly **assets, capital and income**. Each stratum has its own criteria, such as a certain amount of assets or of Techno-Capital. Example: an **Oligarch** must at least sit on the board of one monopoly or hold assets totaling $1 billion, and must control a certain amount of Techno-Capital. **Strata, bottom to top (Logan):** Permanent Underclass, PMC, Glitterati, Nobles, Oligarchs. The bars for each are still to be set.
@@ -728,11 +726,11 @@ Slop rules:
 | 0.8 to 1.2 | Stable: Underclass unrest held at its floor |
 | Above 1.2 | Surplus: for every 0.1 above 1.2, education quality -1%, health -1% and birth rate -1% per year in the hub |
 
-**Debt spiral (A).** A PMC member whose savings go negative for 6 months **(T)** drops into the Permanent Underclass. Climbing back needs 12 months **(T)** of positive savings plus a PMC job. Named characters can fall the same way (John Techno starts close to it; Samir Haddad starts in it).
+**Debt spiral (A).** A PMC member whose savings go negative for 6 months **(T)** drops into the Permanent Underclass. Climbing back needs 12 months **(T)** of positive savings plus a PMC job. Named characters can fall the same way (Samir Haddad starts in it; John Techno, a COO on $1M a year, starts well clear of it).
 
 **Glitterati fields (A).** Each Glitterati character rates 1 to 20 in one or two fields (Management, Media, Sport, Entertainment, Fashion, Law, Medicine). Affiliation (an executive post, an endorsement, a board seat) gives the organization a bonus of 1% per rating point in matching work **(T)**. Glitterati get a -5 penalty to Techno-Capital allocation checks **(T)**.
 
-**Noble fade (A).** Bloodline gives Noble children a large clout and prestige start. A grandchild keeps Noble standing only by earning 500 renown **(T)** in their own life; otherwise the line's clout fades.
+**Noble standing (A).** Nobles are set at game start for named characters, with a large Clout start. There is no inheritance (batch 116): a Noble whose Clout falls below the bar **(T)** drops to the stratum their assets and income give.
 
 ### 2.8.1 Segments
 
@@ -781,7 +779,7 @@ Share of the labor force (%) by country income tier, then adjusted by hub type.
 ### 2.8.4 Hiring, wages, training and migration
 
 - **Local wage (monthly)**: `Wage = base wage × WI × tightness`, where `tightness = clamp(1 + 2 × (employment rate of the segment - 0.95), 0.85, 1.6)`. Wages move at most 3% per month (sticky), except for one-off law effects (L2 Sectoral Bargaining +8%). L1 Minimum Wage sets a floor as a share of the hub's median wage.
-- **Training programs** (company action): Unskilled to Skilled costs $12,000 × WI per worker over 6 months (85% complete); Skilled to Professional costs $40,000 × WI over 24 months.
+- **Training programs** (company action, in payroll dollars: business units have no worker counts): moving $1M of a unit's yearly Unskilled payroll in the hub to Skilled costs $0.32M × WI over 6 months (85% complete); Skilled to Professional costs $0.65M × WI per $1M of payroll over 24 months **(T)**.
 - **Natural education (yearly)**: 1% of Unskilled become Skilled; 0.5% of Skilled become Professionals.
 - **Migration (monthly)**: inside a country, 0.5% of a segment moves to the hub where `wage × needs satisfaction` is 20% or more higher. Between countries, migration follows L5 Immigration ([4-politics.md](4-politics.md) 4.5.5).
 - **Population growth (yearly)**: developing 2%, middle 1%, high income 0.3% (T).
@@ -822,20 +820,20 @@ Segment offsets: Elite 5, Professionals 10, Skilled 10, Unskilled 13, Gig 15, Un
 ```
 ΔO = 0.1 × (unrest - 30)
    + L2 term: Banned -3 (O capped at 20), Restricted -1, Recognized 0, Sectoral Bargaining +2
-   + 1 if one employer in the hub employs 2,000 or more of the segment
+   + 1 if one employer's yearly payroll for the segment in the hub is $100M × WI or more (T)
    + 1 per strike won in the hub in the last 12 months
    - 2 if the segment's wages are 110% or more of its hub average at the big employers
    - 1 for Gig workers under L4 Contractors (dispersed workforce)
 ```
 
-**Union recognition**: in a business unit with 200 or more workers of a segment in the hub, when the hub's O for that segment is 35 or more, a union forms with 10% chance per month (×2 after a layoff wave). A **union contract** follows a recognition event: wages +5%, layoffs need 3 months' notice and double severance, and automation triggers a negotiation event.
+**Union recognition**: in a business unit whose yearly payroll for a segment in the hub is $10M × WI or more (T), when the hub's O for that segment is 35 or more, a union forms with 10% chance per month (×2 after a layoff wave). A **union contract** follows a recognition event: wages +5%, layoffs need 3 months' notice and double severance, and automation triggers a negotiation event.
 
 **Strike checks** (unionized business units, per hub):
 
 | Check | Chance |
 |---|---|
 | Monthly | `max(0, (unrest - 35) / 100) × (O / 100) × law factor`; law factor: Restricted 0.5 (0 in strategic sectors), Recognized 1.0, Sectoral Bargaining 1.2 |
-| Immediate vote: automation or layoffs above 10% of the unit's workforce in the hub | `0.25 + 0.5 × O / 100` |
+| Immediate vote: automation or layoffs above 10% of the unit's payroll in the hub | `0.25 + 0.5 × O / 100` |
 | Immediate vote: wage cut | `0.15 + 0.5 × O / 100` |
 | Immediate vote: fatal accident | 0.30 |
 | Immediate vote: union leader fired | 0.50 |
@@ -848,7 +846,7 @@ Segment offsets: Elite 5, Professionals 10, Skilled 10, Unskilled 13, Gig 15, Un
 |---|---|
 | Base | -2 |
 | Lockout by the company | -1 more |
-| Public support (company reputation below 0, or Communist bloc clout 20% or more in the country) | +0.5 |
+| Public support (the company CEO's Favor below 0, or Communist bloc clout 20% or more in the country) | +0.5 |
 | Strike fund financed by anyone (Fund Ideology for the Communists, [4-politics.md](4-politics.md) 4.10.1) | +0.5 |
 | Replacement workers hired | -2 |
 
@@ -861,10 +859,10 @@ The strike ends when R reaches 0 (workers return; segment unrest +5; O -10) or w
 | Option | Result |
 |---|---|
 | Concede | Demands met; union O +5; segment unrest -5 |
-| Negotiate | Success chance `40% + (negotiator's Influence or Operations - 10) × 3% + 10% if company reputation > 20`. Success: half the demands. Failure: strike continues, R +10 |
-| Lockout | Output 0; R falls faster; reputation -5; segment unrest +5 |
+| Negotiate | Success chance `40% + (negotiator's Persuasion or Operations - 10) × 3% + 10% if the CEO's Favor > 20`. Success: half the demands. Failure: strike continues, R +10 |
+| Lockout | Output 0; R falls faster; CEO Favor -5; segment unrest +5 |
 | Hire replacements (where labor law allows) | Productivity 60% in the first month; riot chance 15%; union O +5 |
-| Security crackdown (corporate security) | R -30 at once; reputation -15; segment unrest +10; riot chance 25%; investigation chance 20% in liberal democracies |
+| Security crackdown (corporate security) | R -30 at once; CEO Favor -15; segment unrest +10; riot chance 25%; investigation chance 20% in liberal democracies |
 | Close the operation in the hub | Layoffs with severance; strike ends; unrest from layoffs |
 
 **Spread**: under Sectoral Bargaining a strike spreads to each unionized business unit of the same industry in the country with 30% chance. A sympathy strike hits same-industry units in the hub with 20% chance when O ≥ 60. A **general strike** happens when hub unrest is 70 or more and Skilled or Unskilled O is 60 or more: every business unit's output in the hub runs at ×0.5 for 3 to 10 days. Typical strikes last 5 to 40 days. **Port strikes** cut the output of Shipping and Logistics units in the hub to ×0.2.
@@ -877,13 +875,13 @@ Influence examples. All numbers use the tuning values above. Rounding is to the 
 
 ### 2.14.1 Getting Presence in Penang
 
-**Setup.** A US dynasty's flagship has a Foundry business unit (chip packaging) with $106.5M of business assets in Penang. The heir was born and raised in Penang (she holds Malaysian citizenship) and holds the head as Friend. The dynasty also bought $90M of a Penang residential pool, $45M of an industrial pool and $80M of Penang city bonds. Malaysia: liberal democracy, C1 Screened, WI 0.25, PF 0.475, BI 0.70. Dynasty reputation +20, 3 years of presence.
+**Setup.** A US character controls a flagship whose wholly integrated Malaysian subsidiary (with a 30% local partner) has a Semiconductors business unit (assembly and test) with $106.5M of business assets in Penang. The character was born and raised in Penang but holds only US citizenship. The subsidiary also bought $90M of a Penang residential pool, $45M of an industrial pool and $80M of Penang city bonds. Malaysia: liberal democracy, C1 Screened, WI 0.25, PF 0.475. The character's Favor is +20, with 3 years of presence.
 
 **Assets.**
 
 | Item | Value | Weight | Weighted |
 |---|---|---|---|
-| Business assets (packaging) | $106.5M | 1.0 | $106.5M |
+| Business assets (assembly and test) | $106.5M | 1.0 | $106.5M |
 | Jobs: payroll of those assets, $0.79M per month, $9.5M per year | $9.5M | 1.5 | $14.3M |
 | Residential pool share | $90M | 1.0 | $90M |
 | Industrial pool share | $45M | 1.0 | $45M |
@@ -892,19 +890,19 @@ Influence examples. All numbers use the tuning values above. Rounding is to the 
 
 **Share.** Penang mass = $10B × 0.475 = $4.75B. Base share = 295.8 / 4,750 = **6.23%**.
 
-Multiplier = origin 1.25 (born and raised) × foreignness 0.95 (Liberal democracy 10% penalty, halved by the citizen heir) × history 1.03 × reputation 1.04 = **1.272**. 6.23% × 1.272 = 7.92%, plus 1 pp flat for born and raised = **8.92%**. No tier yet.
+Multiplier = origin 1.25 (born and raised) × foreignness 0.95 (Liberal democracy 10% penalty, halved by the 30% local partner) × history 1.03 × Favor 1.04 = **1.272**. 6.23% × 1.272 = 7.92%, plus 1 pp flat for born and raised = **8.92%**. No tier yet.
 
-**Campaign.** Temporary cap = max(6, 6.23) = 6.23 pp. An ad campaign of 4 pp costs 4 × $60,000 × 4.75 = **$1.14M per 4 weeks**; the heir directs it (Persuasion 15, effectiveness 1.0). She also hosts a gala: 1.4M adults × $0.02 = **$28,000** and 6 hours, +1 pp for 2 weeks, a push of 5 toward Friend with every Penang official, and two Befriend rolls at 30%.
+**Campaign.** Temporary cap = max(6, 6.23) = 6.23 pp. An ad campaign of 4 pp costs 4 × $60,000 × 4.75 = **$1.14M per 4 weeks**; a hired director runs it (Persuasion 15, effectiveness 1.0). The character also hosts a gala: 1.4M adults × $0.02 = **$28,000**, +1 pp for 2 weeks, a push of 5 toward Friend with every Penang official, and two Befriend rolls at 30%.
 
-Final share = 8.92 + 4 + 1 = **13.9%: Presence** at the next weekly check. Political Capital in Penang: 100 × sqrt(0.139) = **37 PC per month**. The dynasty now gets permits 15% faster in Penang and a free weekly meeting with local officials.
+Final share = 8.92 + 4 + 1 = **13.9%: Presence** at the next weekly check. Political Capital in Penang: 100 × sqrt(0.139) = **37 PC per month**. The character now develops land in Penang's pools 15% faster and a free weekly meeting with local officials.
 
-**Keeping it.** The ad runs 8 weeks ($2.28M). After it ends, 3.1 pp (half the base share) is anchored and decays at 12.5% per week, the rest at 25%. The share falls below 10% about 10 weeks later. Under the 13-week rule the dynasty must add assets within a quarter: growing the Penang packaging assets by another $106.5M (plus $14.3M of jobs weight) lifts the base share to 8.77% and the final share to 8.77 × 1.272 + 1 = **12.2%** without any campaign.
+**Keeping it.** The ad runs 8 weeks ($2.28M). After it ends, 3.1 pp (half the base share) is anchored and decays at 12.5% per week, the rest at 25%. The share falls below 10% about 10 weeks later. Under the 13-week rule the character must add assets within a quarter: growing the Penang Semiconductors assets by another $106.5M (plus $14.3M of jobs weight) lifts the base share to 8.77% and the final share to 8.77 × 1.272 + 1 = **12.2%** without any campaign.
 
 **Roll-up.** Penang state (region) mass = 1.5 × $4.75B = $7.1B. Region share = 295.8 / 7,125 = 4.15% × (1.12 × 0.95 × 1.03 × 1.04 = 1.14) = **4.7%**. Malaysia mass = 3% × $400B = $12B: country share = 2.47% × 1.079 = **2.7%**, worth 16 PC per month nationally.
 
-### 2.14.2 A foreign branch office tries to buy a foothold in Shenzhen
+### 2.14.2 A foreign subsidiary tries to buy a foothold in Shenzhen
 
-**Setup.** The same dynasty's flagship sets up a branch office in Shenzhen-Dongguan (China: one-party state, C1 Capped All, C2 Local Partner 30%, T4 Mass Surveillance). The branch is 70% flagship, 30% a Shenzhen family (local partner loyalty 65). It runs a Consumer electronics business unit (smartphone assembly) with $432M of business assets in the hub.
+**Setup.** The same character's flagship sets up a subsidiary in Shenzhen-Dongguan (China: one-party state, C1 Capped All, restriction label Restricted, so a 30% local partner is required; T4 Mass Surveillance). The subsidiary is 70% flagship, 30% a Shenzhen family (local partner loyalty 65). It runs a Consumer electronics business unit (smartphone assembly) with $432M of business assets in the hub.
 
 **Assets.** Business assets $432M. Jobs: payroll $8.4M per month = $100.8M per year, × 1.5 = $151.2M. Total weighted: **$583M**.
 
@@ -912,16 +910,16 @@ Final share = 8.92 + 4 + 1 = **13.9%: Presence** at the next weekly check. Polit
 
 | Holder | Calculation | Share |
 |---|---|---|
-| Branch office (HQ in Shenzhen, not foreign) | 583 / 61,200 = 0.95% × home 1.10 | **1.05%** |
-| Dynasty (foreign) | 583 × 0.9 (Managed autonomy) = 525 → 0.86% × foreignness | **0.56%** |
+| Subsidiary (HQ in Shenzhen, not foreign) | 583 / 61,200 = 0.95% × home 1.10 | **1.05%** |
+| Controlling character (foreign) | 583 × 0.9 (Managed autonomy) = 525 → 0.86% × foreignness | **0.56%** |
 
-Dynasty foreignness: 1 - 0.50 (one-party) - 0.20 (Capped All is 2 steps past Screened) = 0.30; halved penalty for branch assets with a 30% partner gives 1 - 0.35 = 0.65.
+Character foreignness: 1 - 0.50 (one-party) - 0.20 (Capped All is 2 steps past Screened) = 0.30; halved penalty for subsidiary assets with a 30% partner gives 1 - 0.35 = 0.65.
 
-**Psyops.** The player wants Presence fast and runs the maximum psyop the cap allows: max(6, 0.95) = 6 pp, at 6 × $25,000 × 61.2 = **$9.2M per 4 weeks**, directed by a fixer with Intrigue 15. Branch share = 1.05 + 6 = **7.05%**: still not Presence. Temporary boosts alone never reach a tier.
+**Psyops.** The player wants Presence fast and runs the maximum psyop the cap allows: max(6, 0.95) = 6 pp, at 6 × $25,000 × 61.2 = **$9.2M per 4 weeks**, directed by a fixer with Intrigue 15. Subsidiary share = 1.05 + 6 = **7.05%**: still not Presence. Temporary boosts alone never reach a tier.
 
-**Risk.** Daily discovery = (0.2% + 0.03% × 6) × 1.5 × (1 - 15/60) = **0.43% per day**: 11% over 4 weeks, 30% over 12 weeks. Political exposure +5 × 1.5 = +7.5 at campaign start. If discovered: the 6 pp vanish, backlash of -12 pp decaying 10% per week (the share is clamped at 0), reputation -10, exposure +15, and the regime advances the seizure ladder to Step 1: *Beijing Calls* demands the local partner's stake rise to 40%.
+**Risk.** Daily discovery = (0.2% + 0.03% × 6) × 1.5 × (1 - 15/60) = **0.43% per day**: 11% over 4 weeks, 30% over 12 weeks. Political exposure +5 × 1.5 = +7.5 at campaign start. If discovered: the 6 pp vanish, backlash of -12 pp decaying 10% per week (the share is clamped at 0), Favor -10, exposure +15, and the regime advances the seizure ladder to Step 1: *Beijing Calls* demands the local partner's stake rise to 40%.
 
-**Better play.** Let the local partner's family (14% hub share, Presence, Shenzhen-born) file permits and meet officials; keep partner loyalty at 60 or more (seizure risk -0.5 points). The monthly seizure risk is 0.3 (one-party) + 30/50 (relation -30 with the United States) - 0.5 = **0.4% per month** ([4-politics.md](4-politics.md) 4.9.10).
+**Better play.** Let the local partner's family (14% hub share, Presence, Shenzhen-born) buy into pools and meet officials; keep partner loyalty at 60 or more (seizure risk -0.5 points). The monthly seizure risk is 0.3 (one-party) + 30/50 (relation -30 with the United States) - 0.5 = **0.4% per month** ([4-politics.md](4-politics.md) 4.9.10).
 
 ---
 
@@ -935,7 +933,7 @@ Real estate is the most direct asset-as-title in the game: it holds value, pays 
 |---|---|---|
 | **Commercial** | Offices, retail, hotels, labs | Company headquarters, offices, retail and services |
 | **Residential** | Housing | Population (rent from residents by stratum, 2.8.0) |
-| **Industrial** | Plants, fabs, warehouses, data center shells, ports, refineries, mines' surface works | Business units in heavy and technical industries: Foundry, Data centers, Power utilities, Oil, Chemicals and the like |
+| **Industrial** | Plants, fabs, warehouses, data center shells, ports, mines' surface works | Business units in heavy and technical industries: Semiconductors, Data centers, Power utilities, Oil, Chemicals and the like |
 | **Land** | Undeveloped land, including resource land in Resource Fields | Nobody; it is held for appreciation and for development |
 
 **Starting pool sizes (T)** for an L hub at PF 1.0, scaled by hub size (S 0.3, M 0.6, L 1.0, XL 1.5, Mega 2.2) and PF:
@@ -950,7 +948,7 @@ Real estate is the most direct asset-as-title in the game: it holds value, pays 
 | S Slums | $0.3B | $2B | $0.2B | $0.2B |
 | X Resource Field | none | $0.1B | $1B | $3B |
 
-At the start each pool is owned by dispersed small owners (40% to 70%), governments (10% to 30%) and AI property funds and dynasties (the rest) **(T)**.
+At the start each pool is owned by dispersed small owners (40% to 70%), governments (10% to 30%) and AI property funds and rival characters (the rest) **(T)**.
 
 ### 2.16.2 Growth and development (T)
 
@@ -1029,7 +1027,7 @@ Migration between hubs follows the same terms: workers move from low-scoring hub
 New hubs appear in three ways:
 
 - **Promotion** of a minor location: when a "rest of country" region gets enough business assets (total value over $5B), a new S hub forms there. The company that triggered it gets a +10 pp founding bonus to influence for 10 years.
-- **Special economic zones** (C6): a government (or a dynasty with Kingmaker national influence) founds a zone hub on empty land with Tax or Charter rules.
+- **Special economic zones** (C6): a government (or a character with Kingmaker national influence) founds a zone hub on empty land with Tax or Charter rules.
 - **Charter cities** from corporate sovereignty ([4-politics.md](4-politics.md) 4.12).
 
 ## 2.18 Business cycle and macro shocks
@@ -1071,8 +1069,8 @@ Characters are physically somewhere on the map, and getting them where the deals
 ### 2.21.1 Location and residence
 
 - Every character has a **current location** (a hub) and a **residence** (a hub; sets tax residency for E1 and E4). Homes themselves are **flavor only** (Logan, 2026-10-18): a character's house, flat or lease is not a property holding and gives no influence.
-- Meetings, galas and most character actions need both characters in the same hub. A **remote call** works for any meeting at -30% effectiveness (pitches, negotiations, persuasion). Some actions are in-person only: galas, Seduce, signing a founding round, family weddings and funerals.
-- The dynasty names one hub as its **seat**: +3 pp dynasty influence there, family events happen there, and moving the seat takes 3 months of disruption (a push of 10 toward Rival from the family).
+- Meetings, galas and most character actions need both characters in the same hub. A **remote call** works for any meeting at -30% effectiveness (pitches, negotiations, persuasion). Some actions are in-person only: galas, Seduce, signing a founding round, funerals.
+- There is no dynasty seat and no seat bonus (batch 116); the residence only sets tax residency and where a character's flavor home is.
 
 ### 2.21.2 Ways to travel
 
@@ -1103,7 +1101,7 @@ Jets are assets. They can be owned by a character's personal account, a trust or
 | **VIP airliner** | $150M | 15,000 km | 40 | 1.1× | $12M | $20,000 | +15 |
 
 - **Door-to-door time**: a private jet saves about 3 hours per trip over commercial (no check-in, connections or fixed departures), plus the speed factor. A flight that needs a stop beyond the jet's range adds 2 hours per stop.
-- **Status**: the class's status value counts as a push toward Friend at galas and in first meetings with Ambitious, Greedy or Socialite characters, and counts toward reputation among the Elite. Ascetic and Honest characters instead push 5 toward Rival on an owner below Tycoon standing who flies a Large cabin jet or bigger ("showing off").
+- **Status**: the class's status value counts as a push toward Friend at galas and in first meetings with Ambitious or Greedy characters, and adds Clout once at purchase (status / 2, **T**). Ascetic and Honest characters instead push 5 toward Rival on an owner worth under $1B **(T)** who flies a Large cabin jet or bigger ("showing off").
 - **Upgrades** (each a one-time cost):
 
 | Upgrade | Cost | Effect |
@@ -1111,19 +1109,19 @@ Jets are assets. They can be owned by a character's personal account, a trust or
 | Office cabin | $2M | Work in flight (2.21.4) |
 | Secure comms suite | $3M | Calls in flight at full effectiveness; -50% chance of being overheard by hacking ([17-hacking.md](17-hacking.md)) |
 | Bedroom suite | $1M | Arrive rested: no jet lag stress (2.21.5) |
-| Medical bay | $4M | Safer travel for old or ill characters; death chance in flight halved |
+| Medical bay | $4M | Safer travel for old or ill characters; health lost in a crash or medical emergency in flight halved |
 | Security package (armor, decoy flares, counter-surveillance) | $6M | Halves attack and kidnap risk on arrival; hides flight plans from Tier 1 trackers |
 | Ghost registration (registered through a shell in a haven) | Cost of a shell company | Flight tracking needs Investigate Shell first (2.21.6); adds exposure |
 
 - **Maintenance**: each jet needs 1 week of maintenance every 400 flight hours. Skipped maintenance raises the crash chance (2.21.8).
-- **Home base and hangar**: a jet is based at an airport hub (the dynasty seat by default). Repositioning an empty jet costs its flight hours.
+- **Home base and hangar**: a jet is based at an airport hub (the owner's residence by default). Repositioning an empty jet costs its flight hours.
 - **Leasing and chartering out**: a jet can be leased from a property or aviation fund (12% of its price a year), and an owned jet can be **chartered out** when idle, earning 60% of its running cost back per hour chartered.
 - **Fleets**: an Airlines business unit can run a jet fleet as a charter service, selling flight hours to AI and player characters.
 
 ### 2.21.4 Itineraries and in-flight work
 
 - The player plans **itineraries**: a list of hubs with meetings at each stop. The planner shows total hours, cost, and time-zone effects, and books the jet or flights.
-- An **entourage** travels together: family members, executives and security staff on the same jet, up to its seats. Characters on a trip together push 1 toward Friend with each other per 10 hours flown (none if they are Rivals).
+- An **entourage** travels together: executives, aides and security staff on the same jet, up to its seats. Characters on a trip together push 1 toward Friend with each other per 10 hours flown (none if they are Rivals).
 - **In-flight work** with an office cabin: Finance, Intrigue and Tech actions that do not need another person (planning a deal, reviewing a scheme, research) run at 75% speed. Calls run at 50% without secure comms, 100% with them.
 - Commercial travel allows calls at 50% only.
 
@@ -1134,10 +1132,10 @@ Jets are assets. They can be owned by a character's personal account, a trust or
 
 ### 2.21.6 Flight tracking and secrecy
 
-Jets are tracked, and where a dynasty head flies is news.
+Jets are tracked, and where a tycoon flies is news.
 
-- Every jet flight is visible to rivals with an **intel level** (2.22) of 30 or more on the jet's owner.
-- A rival who sees your jet land in a target company's hub, or next to a rival dynasty's seat, gets a **rumor** event. Rumors move the target's stock by 2% to 6% and can tip off a takeover.
+- A rival who runs an intel action on the jet's owner (2.22) can learn their recent flights as one secret.
+- A rival who sees your jet land in a target company's hub, or next to a rival's residence, gets a **rumor** event. Rumors move the target's stock by 2% to 6% and can tip off a takeover.
 - **Countermeasures**: fly commercial or charter (anonymous), register the jet through a shell, file a decoy flight plan (Intrigue roll), or meet on a yacht in international waters.
 - Under T4 Mass Surveillance or Social Credit laws, the host government always knows who landed.
 
@@ -1151,7 +1149,7 @@ Jets are tracked, and where a dynasty head flies is news.
 
 | Risk | Base chance (T) | Modifiers | Effect |
 |---|---|---|---|
-| **Crash** | 0.002% per flight hour | ×3 for each skipped maintenance week; ×5 in war airspace | Everyone on board may die (80%); a major event for the dynasty |
+| **Crash** | 0.002% per flight hour | ×3 for each skipped maintenance week; ×5 in war airspace | Everyone on board loses 30 to 90 health **(T)**; death comes only at health 0 ([1-corporate-core.md](1-corporate-core.md) 1.1.9). The player character dying ends the game |
 | **Arranged accident** | Scheme by a rival ([1-corporate-core.md](1-corporate-core.md) 1.1.8) | Halved by Head of Security protection and the security package | Looks like a crash; investigations may find sabotage |
 | **Kidnap or attack on arrival** | 0.5% per trip to hubs with unrest above 60; 2% to war zones | Security detail ÷4; security package ÷2 | Ransom chain or injury |
 | **Detention** | Character is sanctioned, Under Investigation, or the host government is hostile | Political influence and diplomatic relations | Held for questioning (days to months), passport seized, or arrested |
@@ -1160,7 +1158,7 @@ Jets are tracked, and where a dynasty head flies is news.
 ### 2.21.9 Presence
 
 - A character present in a hub for over 30 days in a year counts as **resident-like** there: +2 pp influence for their holdings in that hub (stacks with origin, once per character).
-- Visiting a hub where the dynasty holds assets gives a one-week **visit bonus**: a push of 5 toward Friend from local executives, +1 pp influence while there.
+- Visiting a hub where the character holds assets gives a one-week **visit bonus**: a push of 5 toward Friend from local executives, +1 pp influence while there.
 
 ### 2.21.10 Travel events (starting set)
 
@@ -1180,39 +1178,42 @@ The player does not see everything.
 
 ### 2.22.1 What is visible
 
-| Information | Visible to everyone | Needs intel |
+The player learns about the world from in-game news, which is biased by the outlet that runs each story. **Accurate stock and financial data come only from the Pdoomberg terminal**; other hidden facts are learned one secret at a time (batch 63).
+
+| Information | How it is seen | Hidden part |
 |---|---|---|
-| Own holdings, companies and finances | Yes | |
-| Public companies' financials, major holders above 5% | Yes (quarterly) | |
-| Private companies' financials | No | Estimates at ±30% without intel |
+| Own holdings, companies and finances | Always exact | |
+| Public companies' financials, major holders above the first disclosure line | Exact on Pdoomberg (quarterly); the news reports them with its slant | |
+| Private companies' financials | Rumors in the news only | An intel action learns them as one secret |
 | Holders behind shell companies | No | Investigate Shell scheme |
-| Industry prices and news cycles, business cycle phase | Yes | |
-| Rival growth plans and asset purchases | Partly (big deals are news) | Market research or espionage |
+| Industry prices and news cycles, business cycle phase | Through the news (biased); exact figures only on Pdoomberg | |
+| Rival growth plans and asset purchases | Partly (big deals are news) | Market research or espionage learns one plan as a secret |
 | Characters' traits | Some (known traits) | Hidden traits need meetings or Dig Up Dirt |
-| Influence shares of rivals in a hub | Tier only (Presence, Power Broker, Kingmaker) | Exact share needs intel |
+| Influence shares of rivals in a hub | Tier only (Presence, Power Broker, Kingmaker) | An intel action learns the exact share as one secret |
 
-### 2.22.2 Intel level
+### 2.22.2 Intel actions
 
-- The player has an **intel level** (0 to 100) on each rival company and hub. It rises with presence (own business assets or offices there), market research spending ($100k per month per hub: +5 per month), analysts on the board (CSO task), and espionage; it decays 2 per month.
-- Intel level sets how accurate estimates are: ±30% at 0, ±10% at 50, exact at 90+.
-- **Disinformation**: psyops and leaks can plant false numbers; low-intel players believe them.
+- There is no intel level or number (batch 63). Each successful intel action (market research, espionage, an analyst's report from the CSO, an Investigate scheme) **learns one secret** about its target: an exact figure, a hidden holder, a plan or a flight log.
+- **Market research** costs $100k a month per hub **(T)** and rolls once a month to learn one secret about a rival's business there.
+- A learned figure is a snapshot: it goes stale when the real figure changes, and the screen marks its date.
+- **Disinformation**: psyops and leaks plant false stories in the news, and players who trust the news believe them. Pdoomberg data cannot be faked.
 
 ## 2.23 AI economic behavior
 
-AI companies and AI dynasties run the economy the player competes in.
+AI companies and AI rival characters run the economy the player competes in.
 
 ### 2.23.1 Archetypes
 
 | Archetype | Behavior |
 |---|---|
-| **Incumbent** | Defends share, prices at market, answers entrants with copy or acquire, invests steadily |
-| **Aggressive grower** | Expands into new hubs, borrows heavily, cuts prices, buys rivals |
+| **Incumbent** | Defends share, prices at market, answers entrants by copying them, invests steadily |
+| **Aggressive grower** | Expands into new hubs, borrows heavily, cuts prices; buys rivals only on the game director's order |
 | **Cash cow** | Pays high dividends, invests little, sells assets when offered a premium |
 | **State champion** | Backed by a government, ignores short-term profit, wins contracts, protected from takeovers |
-| **Raider** | Holding company that buys undervalued stakes and breaks them up |
+| **Raider** | Holding company that buys undervalued minority stakes; takes over and breaks up a company only on the game director's order (batch 86) |
 | **Startup** | Venture-rank AI rivals (1.7.5): fast, fragile, often for sale |
 
-Each AI company's archetype comes from its controlling dynasty's head traits (Ambitious and Brave lean Aggressive; Greedy and Cautious lean Cash cow) and from its government links.
+Each AI company's archetype comes from its controlling character's traits (Ambitious and Brave lean Aggressive; Greedy and Cautious lean Cash cow) and from its government links.
 
 ### 2.23.2 Monthly decisions
 
@@ -1221,7 +1222,7 @@ Each AI company decides monthly:
 1. **Grow**: raises a business unit's growth plan when its industry is undersupplied and the unit's return beats its hurdle rate (8% to 15% by archetype), placing new assets in the cities with the best tax and location perks (2.3.5).
 2. **Shrink or sell**: a unit losing money for 6 months cuts its growth plan; after 12 months its assets or the whole unit are sold.
 3. **R&D**: sets its R&D plan by archetype (Aggressive above the industry norm, Cash cow below it).
-4. **Acquire**: when cash exceeds 20% of value and a target is undervalued, considers a takeover ([1-corporate-core.md](1-corporate-core.md)).
+4. **Acquire**: AI companies never buy other companies on their own (batch 86). Only when the game director orders a takeover does the company pick a target, one that is undervalued when its cash exceeds 20% of its value, and launch it ([1-corporate-core.md](1-corporate-core.md) 1.9).
 
 AI investment is lagged and imperfect on purpose, so shortages and gluts happen and the player can profit from seeing them first.
 
@@ -1242,14 +1243,14 @@ The map is the main screen.
 
 | Mode | Shows |
 |---|---|
-| Ownership | Who owns real estate and business assets (by dynasty color) |
+| Ownership | Who owns real estate and business assets (by the controlling character's color) |
 | Influence | Your influence share and tier per place; rivals' tiers |
 | Property cycle | Boom, peak, bust and recovery per hub |
 | Economic cycle | National cycle phase |
 | Unrest and labor | Unrest, strikes, unions |
 | Politics | Government type, ruling party, your political influence |
 | Risk | Chokepoint risk, war, sanctions, nationalization risk for your assets |
-| Characters | Where your family and key characters are right now |
+| Characters | Where you and key characters are right now |
 
 ## 2.25 Worked examples: cycles
 
@@ -1259,13 +1260,13 @@ A trust buys $500M of the Commercial pool in Dubai's Financial District during R
 
 ### 2.25.3 A recession meets a margin loan
 
-A national recession cuts consumer demand 6%. The dynasty's retail chain's earnings fall 25%; its stock falls 35%. The trust's margin loan, backed by that stock, crosses 70% loan-to-value, and a margin call forces the sale of 8% of the chain at the bottom. The dynasty's bloc drops from 54% to 49%: the chain becomes contested just as an activist faction forms. The economic cycle has become a succession-style crisis.
+A national recession cuts consumer demand 6%. The player's retail chain's earnings fall 25%; its stock falls 35%. The personal trust's margin loan, backed by that stock, crosses 70% loan-to-value, and a margin call forces the sale of 8% of the chain at the bottom. The player's bloc drops from 54% to 49%: the chain becomes contested just as an activist faction forms. The economic cycle has become a control crisis.
 
 ## 2.26 Assumptions
 
 Assumptions in this file, to confirm with Logan:
 
-1. **First playable map**: 31 major countries, 16 minor groups (aggregated markets whose member countries keep their own politics), 80 hubs and 14 chokepoints. Cities named in other files but missing here (for example Vancouver, Munich) are candidates for later hubs.
+1. **First playable map**: 33 major countries (Colombia and DR Congo added in batch 116), 16 minor groups (aggregated markets whose member countries keep their own politics), 80 hubs and 14 chokepoints. Vancouver and Munich are full hubs (batch 115).
 2. **Resource Field** is added as a seventh district type for mines, wells, farms and renewables.
 3. **Reference dollar and wage index**: base prices are in US dollar equivalents; the wage index (US = 1.0) scales wages, services, real estate and construction, separately from the politics wealth index.
 4. **Place mass** is a calibrated "power-relevant" value (hub size class × price factor; 3% of GDP for countries), not the full value of all property, so tiers are reachable at the intended company ranks. Jobs count through payroll × 1.5, making employers the most influential holders per dollar.
@@ -1276,6 +1277,6 @@ Assumptions in this file, to confirm with Logan:
 9. **Real estate** is pooled per district in four pools with per-hub property cycles (2.16).
 10. **Hubs grow and decline** yearly by jobs, wages, housing cost and unrest; new hubs can form (2.17).
 11. **Business cycles** run per country with four phases and a global recession event; housing crashes, tech bubbles, debt crises and commodity super-cycles are the main crises (2.18).
-12. **Characters have a location**; meetings need presence or a remote call at -30%; the dynasty has one seat hub. Travel has a full private jet system with six jet classes, upgrades, itineraries, flight tracking, yachts and travel risk (2.21).
-13. **Information is imperfect**: intel levels per rival and hub set how accurate the player's view is (2.22).
+12. **Characters have a location**; meetings need presence or a remote call at -30%; each character has a residence hub (no dynasty seat). Travel has a full private jet system with six jet classes, upgrades, itineraries, flight tracking, yachts and travel risk (2.21).
+13. **Information is imperfect**: the news is biased, accurate market data is only on Pdoomberg, and intel actions learn one secret at a time (2.22).
 14. **Jobs in influence**: the payroll counted at weight 1.5 (2.5.2) is the wage part of a business unit's operating costs.

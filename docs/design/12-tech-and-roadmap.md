@@ -1,6 +1,6 @@
 # 12. Tech stack, architecture and roadmap
 
-_Status: v0.3 (2026-10-18). Batch 41: a **desktop app built in Godot**, replacing Phaser and the browser. Batch 42: the simulation runs in a **Rust engine**; Godot's GDScript runs the front end. Design is still the current phase; this file records the plan for when the build starts. Owner: Logan._
+_Status: v0.4 (2026-10-18). Batch 116: roadmap and tiers rewritten to the current design (one scenario and one player character, John Techno; no dynasty or succession; game over on death; news and Pdoomberg; two-layer control; Semiconductors as dollar effects). v0.3. Batch 41: a **desktop app built in Godot**, replacing Phaser and the browser. Batch 42: the simulation runs in a **Rust engine**; Godot's GDScript runs the front end. Design is still the current phase; this file records the plan for when the build starts. Owner: Logan._
 
 Anything marked **(A)** is an assumption Logan has not confirmed yet; the list is in 12.6.
 
@@ -33,8 +33,8 @@ TechnoCapital20FF/
     core/                     # plain Rust crate: the simulation and the data; no Godot types
       world/                  # tables (the source of truth) and ids
       time/                   # hourly tick loop; daily, weekly, monthly, quarterly, yearly schedulers
-      characters/ dynasty/ companies/ ownership/ economy/ technocapital/
-      markets/ map/ politics/ ideology/ vices/ software/ events/ ai/ save/
+      characters/ companies/ ownership/ economy/ technocapital/
+      markets/ map/ politics/ ideology/ vices/ software/ media/ news/ events/ ai/ save/
       views/                  # query tables kept up to date for screens
     godot/                    # GDExtension binding crate: the callable API
   game/                       # Godot project, GDScript: scenes, UI, map, assets, input
@@ -51,14 +51,14 @@ TechnoCapital20FF/
 
 | Kind | Examples | Notes |
 |---|---|---|
-| **Control** | `new_game(character_id)`, `load(path)`, `save(path)`, `set_speed(n)`, `pause()` | |
+| **Control** | `new_game(seed)` (one scenario, John Techno), `load(path)`, `save(path)`, `set_speed(n)`, `pause()` | |
 | **Queries** | `get_view("portfolio", owner_id)`, `get_row("company", id)`, `find("characters", filter)` | Return dictionaries and arrays that GDScript can bind to UI; reads come from the last finished tick, so they never block the simulation |
 | **Commands** | `buy_shares(...)`, `found_company(...)`, `answer_event(event_id, option)` | Queued and applied at the start of the next tick; return a command id |
 | **Signals** | `tick_done(date)`, `event_opened(event_id)`, `alert(kind, id)`, `command_result(id, ok, message)` | The engine pushes these to Godot; events and chosen alerts pause the game |
 
 - **Simulation tiers (Logan, batch 41).**
-  - **Full**: the player's dynasty, family, board members, people with hooks either way, active rivals and anyone the player is dealing with this month. Hourly actions, daily checks, every event deck.
-  - **Light**: every other full character and their companies. Weekly batches for money, health and opinions; off-screen events resolved in batches ([detailed/13-events.md](detailed/13-events.md) 13.4).
+  - **Full**: John Techno, his relatives, board members, people with hooks either way, active rivals and anyone the player is dealing with this month. Hourly actions, daily checks, every event deck.
+  - **Light**: every other full character and their companies. Weekly batches for money, health and relationship tags; off-screen events resolved in batches ([detailed/13-events.md](detailed/13-events.md) 13.4).
   - A character moves from light to full when they enter the player's circle, and back after 3 months without contact **(A)**.
   - Markets, prices and politics run for the whole world at their normal cadence regardless of tier.
 - **Determinism.** One seeded RNG stream per system, so a save plus the same commands gives the same result. Tests replay a recorded game and compare table hashes.
@@ -68,21 +68,21 @@ TechnoCapital20FF/
 Rebuilt around the current design; the build starts only when Logan says so.
 
 1. **Skeleton**: Godot project in GDScript, the Rust engine as a GDExtension, the callable API, the hourly tick loop with speeds and pause, the top bar, save and load.
-2. **Characters and dynasty**: generation, skills, traits, ambitions, health, opinions, trusts, succession.
-3. **Companies**: charters, boards and the management score, ownership and blocs, ranks, founding paths.
+2. **Characters**: generation, skills, traits, the player's ambition, health and death (game over for John), relationship tags, personal trusts and accounts.
+3. **Companies**: charters, boards and the management score, ownership and blocs, the two layers of control (owner of record and real controller), ranks, founding paths.
 4. **Economy**: industries and price indices, business units, real estate pools, the Portfolio screen.
-5. **Markets**: quotes, orders, IPOs, bonds, FX.
+5. **Markets and information**: 24/7 quotes and orders (closed 1 January), the four earnings days, IPOs, bonds, FX; the Pdoomberg terminal, the news feed from named outlets, intel and search.
 6. **Map and influence**: hubs, districts, influence tiers, travel.
 7. **Events**: engine, director, first decks (about 10 events each), the opening quest "The Desktop".
-8. **Techno-Capital and software**: compute, the GPU chain, the software table (hacking comes later).
+8. **Techno-Capital and software**: the three compute types (15), Semiconductors and other heavy simulation as dollar effects on business units, the software table (hacking comes later).
 9. **Politics and ideology**: ideology blocs, strata voting, laws, elections, regulators.
-10. **Vices and gambling**, then the quest lines, then the 2035 crash.
+10. **Vices and gambling**, then media, then John Techno's quest line, then the crash (2035 on average).
 
 ## 12.5 Success criteria for the first playable (A)
 
-- A 30-minute session produces at least one succession crisis, one bloc defection and one takeover attempt without scripting.
+- A 30-minute session produces at least one board fight, one bloc defection and one takeover attempt without scripting.
 - The player can explain why they gained or lost control of a company by reading the UI.
-- The simulation runs a game year of hourly ticks headless in under a minute, with tests for control, bloc leadership, succession and save determinism.
+- The simulation runs a game year of hourly ticks headless in under a minute, with tests for control, bloc leadership, game over on death and save determinism.
 
 ## 12.6 Assumptions and open items
 

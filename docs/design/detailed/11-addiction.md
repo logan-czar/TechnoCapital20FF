@@ -1,6 +1,6 @@
 # 11. Addiction: detailed design
 
-_Status: draft v0.2 (2026-10-18), consistency pass, batch 74: four vices (no cyberware), no daily hours budget. v0.1 (2026-10-17): from Logan's answers in the design Q&A (batch 28). Characters can be addicted to four vices. Every vice has a real benefit, which is why characters use them. Builds on [1-corporate-core.md](1-corporate-core.md) (stress 1.1.5, health 1.1.9, hooks 1.1.4) and [9-gambling.md](9-gambling.md). Owner: Logan._
+_Status: draft v0.3 (2026-10-18). Batch 116: therapy is a monthly cost with no hours; sex has no Media route (no adult media); illegal vices run as Black market units; no partners or marriage. v0.2, consistency pass, batch 74: four vices (no cyberware), no daily hours budget. v0.1 (2026-10-17): from Logan's answers in the design Q&A (batch 28). Characters can be addicted to four vices. Every vice has a real benefit, which is why characters use them. Builds on [1-corporate-core.md](1-corporate-core.md) (stress 1.1.5, health 1.1.9, hooks 1.1.4) and [9-gambling.md](9-gambling.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 11.8.
 
@@ -26,7 +26,7 @@ Each vice has a **use** action (or happens through normal play), a **benefit**, 
 | **Gambling** | Casino and prediction market bets in the phone tab (9) | The winnings (or losses) themselves; a win gives -10 stress, a big win also +5 Fame | The stake; a loss gives +5 stress |
 | **Drugs** | "Use" action, by drug (11.3) | A stat boost for a set time | Money, health, a crash afterwards |
 | **Doomscrolling** | 1 hour on the phone tab feed | -10 stress per hour (max -30 a day); a 10% chance per hour of a useful rumor (market news a day early, or a character's secret) | The time; at high scores, -1 Operations while addicted |
-| **Sex** | Seduce scheme, lovers and partners (1.1.4), paid services | -20 stress; a +5 push with the partner | Scandal risk if discovered (affairs, paid services); lovers become hooks |
+| **Sex** | Seduce scheme, lovers (1.1.4), paid services | -20 stress; a +5 push with the partner | Scandal risk if discovered (affairs, paid services); lovers become hooks |
 
 ## 11.3 Drugs (A)
 
@@ -38,7 +38,7 @@ Each vice has a **use** action (or happens through normal play), a **benefit**, 
 | Downers | -30 stress | Immediate | -1 to all skills for 1 day | -1 |
 | Longevity cocktails | +2 health a month (above the age cap by 5) | Monthly, $100,000 | None; addictive like the rest | 0 |
 
-Legality varies by country (4.x): using an illegal drug is a secret, and buying it in bulk funds front companies (1.7.4).
+Legality varies by country (4.x): using an illegal drug is a secret, and buying it in bulk funds Black market units (10.3).
 
 ## 11.4 Addiction score
 
@@ -64,7 +64,7 @@ Each character has a score from 0 to 100 for each vice **(T)**.
 | Option | Cost **(T)** | Effect **(T)** |
 |---|---|---|
 | **Willpower** | Time: skip the vice and pass weekly willpower checks | -5 score per week passed |
-| **Therapy** | $20,000 a month, 4 hours a week | -10 score a month; +10% to willpower checks |
+| **Therapy** | $20,000 a month (weekly sessions resolve instantly, no hours) | -10 score a month; +10% to willpower checks |
 | **Rehab clinic** | $250,000 and 4 weeks away (the character can only act through delegates) | Score set to 10; status "in recovery" |
 
 - **In recovery**: for 3 years after rehab, or after the score falls under 10 from willpower or therapy, a relapse event can fire each quarter (10% chance, ×2 at stress level 2 or higher, ×2 when a rival offers the vice) **(T)**. A relapse sets the score to 40.
@@ -84,9 +84,9 @@ Vices are businesses (Logan). They use the industry model ([10-industry-economy.
 | Vice | Industry | Legal? | Scandal risk |
 |---|---|---|---|
 | Gambling | Gambling (crypto casinos included) | Licensed in most countries | Low; higher for crypto casinos |
-| Drugs | Pharma for legal stimulants; a Front Company (1.7.4) for illegal ones | Varies | High for fronts: raids and investigations |
+| Drugs | Pharma for legal stimulants; Black market (drug fronts, 10.3) for illegal ones | Varies | High for fronts: raids and investigations |
 | Doomscrolling | Social media | Legal | Low; regulation and youth-harm scandals |
-| Sex | Black market (escort and companion services where illegal); the Media system later | Varies | High where illegal |
+| Sex | Black market (escort and companion services where illegal); there is no adult media ([16-media.md](16-media.md), batch 66) | Varies | High where illegal |
 
 - **Scandal risk**: a company in a vice industry has a yearly scandal chance (2% to 20% by row) **(T)** that costs Favor for its head and board, stock price -5% to -20%, and opens regulator action.
 - **Owning the supply**: a company that sells a vice in a hub sees which named characters there are Habit or higher with it (their trait is no longer hidden from the owner), which makes vice businesses a source of hooks.
