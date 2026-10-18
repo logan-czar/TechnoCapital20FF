@@ -1063,7 +1063,7 @@ Starting values are loosely mid-2020s; all are [T].
 | Code | Currency | Country or zone | Start rate | Regime at start | Policy rate at start | Role |
 |---|---|---|---|---|---|---|
 | USD | US dollar | United States | 1.00 | Free float | 4.00% | Main reserve currency; numeraire |
-| EUR | Euro | Eurozone | 1.16 USD per EUR | Free float | 2.00% | Reserve currency |
+| EUR | Euro | Eurozone | 0.95 USD per EUR **(T; down hard in the 2019 euro crisis, [19-history.md](19-history.md) 19.21)** | Free float | 2.00% | Reserve currency |
 | JPY | Yen | Japan | 150 | Free float (intervention-prone) | 0.50% | Safe haven; carry funding currency |
 | GBP | Pound sterling | United Kingdom | 1.33 USD per GBP | Free float | 4.00% | Reserve currency |
 | CNY | Yuan (onshore; offshore CNH) | China | 7.15 | Managed float, +/- 2% daily band; moderate capital controls | 3.00% | Managed; trade giant |
