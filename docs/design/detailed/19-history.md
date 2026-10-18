@@ -1,6 +1,6 @@
 # 19. History: the world from the 1990s to 2020 (detailed design)
 
-_Status: draft v1.7 (2026-10-18; 2000 to 2014 ruled in batches 94 to 109, 2015 drafted). Standing rule (Logan, batch 102): **every South Asian terror attack happens as in real life.** Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
+_Status: draft v1.8 (2026-10-18; 2000 to 2015 ruled in batches 94 to 110, 2016 drafted). **Company names (Logan, batch 110):** real company names are kept here as background for now; the fictional in-game versions replace them when the starting companies are designed (scenarios come last). Standing rule (Logan, batch 102): **every South Asian terror attack happens as in real life.** Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
 
 **How to read this file.** Everything below is **real history**, as a base. Rows Logan has confirmed or changed are marked **(Logan)**; everything else is a draft for him to rule on. Where a real event clashes with the alternate history already decided (7.2.0), the clash is flagged.
 
@@ -351,24 +351,46 @@ Effects **(A)**: no Department of Homeland Security, no Patriot Act, and no Guan
 
 ## 19.17 The year 2015 (draft)
 
-**Global (draft).** The **Paris climate agreement** (December). **Volkswagen** is caught cheating on diesel emissions (September). **No refugee crisis** in Europe, since there is no Syrian war **(A)**. China's **stock market crashes** and it devalues the yuan (June to August). Tech and pop culture: **Ethereum** launches (July), and a group of tech investors found a nonprofit AI lab (December) **(see question 3)**; *The Force Awakens*, **Hamilton**, **The Witcher 3** and **Fallout 4**.
+**Global (draft).** The **Paris climate agreement** (December). **Volkswagen** is caught cheating on diesel emissions (September). **No refugee crisis** in Europe, since there is no Syrian war **(A)**. China's **stock market crashes** and it devalues the yuan (June to August). Tech and pop culture: **Ethereum** launches (July), and a group of tech investors found a nonprofit AI lab (December; real names kept for now, Logan); *The Force Awakens*, **Hamilton**, **The Witcher 3** and **Fallout 4**.
 
-> **Questions to rule on.** (1) **Charlie Hebdo** (January): two brothers trained by al-Qaeda in Yemen killed 12 at a Paris magazine. a) ★ It never happens: al-Qaeda is broken and there is no ISIS, so the November Paris attacks never happen either. b) It still happens. (2) **The Iran nuclear deal** (July). a) ★ No deal: Iran stays the holdout under sanctions. b) Trump signs it, as Obama did in real life. (3) **Real company names.** The game uses fictional companies (05-map), but this history names real ones (Enron, Apple, Google, the 2015 AI lab and so on). a) ★ Keep real names here as background for now, and swap in the fictional versions when the starting companies are designed (scenarios come last). b) Rename them now.
+**Rulings (Logan, batch 110).** (1) **Charlie Hebdo never happens**, and neither do the November Paris attacks. (2) **No Iran nuclear deal**: Iran stays the holdout under sanctions. (3) **Real company names stay** in this history for now and are swapped for fictional ones when the starting companies are designed.
 
 | Region | Big events of 2015 (real, with game-world changes marked **(A)**) |
 |---|---|
 | **North America** | 1. **Justin Trudeau's Liberals** win a majority in Canada (October), the government in place at game start. 2. **(A) Obama announces** he will challenge President Trump for the Democratic nomination. 3. The Supreme Court legalizes **same-sex marriage** (June), and a white supremacist kills nine at a **Charleston** church (June). Also: **El Chapo escapes** through a tunnel (July). |
 | **Latin America** | 1. **Macri** wins Argentina (November). 2. Venezuela's **opposition wins** the National Assembly (December). 3. Brazil sinks into **recession**, and impeachment proceedings against **Dilma** begin (December). |
-| **Europe** | 1. **Dieselgate** (September). 2. **Cameron** wins a majority and promises a **referendum on leaving the EU** (May). 3. **Charlie Hebdo** (January) **(see question 1)**. Also **(A)**: no refugee crisis. |
+| **Europe** | 1. **Dieselgate** (September). 2. **Cameron** wins a majority and promises a **referendum on leaving the EU** (May). 3. **(Logan) No Charlie Hebdo attack** and no November Paris attacks. Also **(A)**: no refugee crisis. |
 | **Russia and the former USSR** | 1. Opposition leader **Boris Nemtsov** is shot near the Kremlin (February). 2. **(A)** Anger at Yanukovych's Moscow-run government builds in Ukraine, setting up 2016. 3. **(A)** No Russian intervention in Syria. |
-| **Middle East and North Africa** | 1. **King Salman** takes the Saudi throne, and his son **Mohammed bin Salman** rises fast (January). 2. **Iran's nuclear deal** (July) **(see question 2)**. 3. **Netanyahu** wins again (March). Also **(A)**: Yemen's Houthis, backed by Iran, rise but are contained by a US-backed government. |
+| **Middle East and North Africa** | 1. **King Salman** takes the Saudi throne, and his son **Mohammed bin Salman** rises fast (January). 2. **(Logan) No Iran nuclear deal**: talks fail and sanctions tighten. 3. **Netanyahu** wins again (March). Also **(A)**: Yemen's Houthis, backed by Iran, rise but are contained by a US-backed government. |
 | **Sub-Saharan Africa** | 1. **Buhari** wins Nigeria, the first time an opposition candidate beats a sitting president (March). 2. Al-Shabaab kills 148 at **Garissa University** in Kenya (April). 3. **Ebola** winds down. |
 | **South Asia** | 1. The **Nepal earthquake** kills about 9,000 (April). 2. China and Pakistan launch the **China-Pakistan Economic Corridor** (April) **(A: Pakistan starts down the road to Chinese debt vassalage)**. 3. The **Gurdaspur attack** in Punjab (July). |
 | **East Asia** | 1. China's **stock crash** and yuan devaluation (June to August). 2. Chemical **explosions in Tianjin** kill 173 (August). 3. China **ends the one-child policy** (October). |
 | **Southeast Asia and Oceania** | 1. Malaysia's **1MDB** scandal: billions looted from a state fund, with Goldman Sachs involved (July). 2. Aung San Suu Kyi's party **wins Burma's election** in a landslide (November). 3. **Lee Kuan Yew dies** (March), and **Turnbull** ousts Abbott in Australia (September). |
 
-**Logan's ruling on 2015:** _pending._
+**Logan's ruling on 2015 (batch 110):** everything above happened, with the changes in the rulings box.
 
-## 19.18 2016 onward
+## 19.18 The year 2016 (draft)
 
-To be written year by year after 2015 is settled, up to the 2020 start. Already set: fighting in Ukraine **restarts in 2016**; the Democrats drop Trump in 2016, he runs third party, and **Obama wins**. The Greek crisis and Madoff's exposure come later (years to be set).
+**Global (draft).** **The war in Ukraine restarts** (Logan; see below). **Obama wins** the US presidency against a sitting president running third party (Logan). DeepMind's **AlphaGo** beats Go champion Lee Sedol (March), a shock that puts AI on the map. The **Panama Papers** expose the offshore shells of the rich and powerful (April). **Zika** spreads in the Americas. Pop culture: **Pokémon Go** (July), **Stranger Things**, and the **Rio Olympics**.
+
+**Ukraine (Logan, batch 105; details drafted).** In early 2016 **(A)**, mass protests in Kyiv, a late Maidan, **oust Yanukovych**, who flees to Russia. The new government tears up the 2011 ceasefire, and **Russia attacks again**. Both sides now fight with cheap drones, and by the end of the year the front is a **drone-warfare stalemate**, the war still running in 2020 (7.2.0).
+
+> **Questions to rule on.** (1) **The West in the new war.** NATO's troops went home in 2011. a) ★ Arms, money and drones, but no troops: Ukraine fights alone, backed from outside. b) NATO troops return to western Ukraine. (2) **The US election.** Obama wins as the Democrat, and Trump runs third party. **Who is the Republican?** a) ★ Marco Rubio. b) Ted Cruz. c) Someone you name. (3) **Brexit** (June). The EU is stunted and lagging. a) ★ Leave wins, as in real life. b) Remain wins.
+
+| Region | Big events of 2016 (real, with game-world changes marked **(A)**) |
+|---|---|
+| **North America** | 1. **The three-way election**: **Obama** beats President Trump (third party) and the Republican nominee (November, Logan) **(see question 2)**. 2. The **Fort McMurray wildfire** forces 88,000 people out of Alberta's oil sands city and shuts in a million barrels a day (May). 3. **Wells Fargo** is caught opening millions of fake accounts (September). Also **(A)**: no Pulse nightclub attack, since there is no ISIS. |
+| **Latin America** | 1. **Dilma is impeached** and removed (August). 2. **Colombia's peace deal** with the FARC is rejected in a referendum, then signed anyway (October to November). 3. **Fidel Castro dies** (November). Also: the **Rio Olympics** (August). |
+| **Europe** | 1. **Brexit** (June) **(see question 3)**. 2. Italy's **Renzi** loses his referendum and resigns (December). 3. The **Panama Papers** topple Iceland's prime minister (April). Also **(A)**: no Brussels or Nice attacks. |
+| **Russia and the former USSR** | 1. **The war restarts** (2016) **(see question 1)**. 2. **Yanukovych flees** to Russia. 3. Russian hackers break into the **US Democrats' email** (2016) **(A: they leak it to help Trump's third-party run)**. |
+| **Middle East and North Africa** | 1. A **coup attempt in Turkey** fails, and Erdoğan purges tens of thousands (July). 2. Saudi Arabia's **Vision 2030** (April), MBS's plan to move beyond oil. 3. **(A)** No Aleppo, no Mosul and no war against ISIS: the region stays quiet under US-friendly rulers. |
+| **Sub-Saharan Africa** | 1. **Gambia's** Jammeh loses an election and refuses to leave (December). 2. **Zuma's** scandals deepen as South Africa's courts rule against him (March). 3. **(A)** Mali, a US debt vassal, hosts a new US base. |
+| **South Asia** | 1. India's **demonetization** cancels 86% of its cash overnight (November). 2. The **Pathankot** (January) and **Uri** (September) attacks, and India's "surgical strikes" into Pakistan. 3. **(A)** Massoud steps down in Afghanistan after two terms, and his chosen successor wins. |
+| **East Asia** | 1. **AlphaGo** beats Lee Sedol in Seoul (March). 2. South Korea's **Park Geun-hye is impeached** (December). 3. **North Korea's fourth and fifth nuclear tests** (January and September). Also: an international court rules against China's claims in the **South China Sea** (July). |
+| **Southeast Asia and Oceania** | 1. **Duterte** wins the Philippines and starts his drug war (May). 2. Thailand's **King Bhumibol dies** after 70 years (October). 3. **1MDB** probes spread to the US and Switzerland. |
+
+**Logan's ruling on 2016:** _pending._
+
+## 19.19 2017 onward
+
+To be written year by year after 2016 is settled, up to the 2020 start. Already set: **Obama is president from January 2017** and runs again in 2020. The Greek crisis and Madoff's exposure come later (years to be set).

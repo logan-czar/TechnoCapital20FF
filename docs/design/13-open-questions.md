@@ -138,6 +138,7 @@
 - Batch 107 (Logan, 2026-10-18): history of 2012. Trump beats Romney; AlexNet happens on schedule; Mali collapses from homegrown financial mismanagement, is bailed out by the US and becomes a US debt vassal. New mechanic, debt vassalage (4-politics 4.11.8): a country owing one creditor more than it can ever repay pays a set fee instead and the creditor gains vassalage (numbers assumed). 2013 drafted.
 - Batch 108 (Logan, 2026-10-18): history of 2013. Snowden leaks as in real life, but corporations play a much bigger role; the Boston Marathon bombing happens; China makes its own debt vassals through Belt and Road. 2014 drafted.
 - Batch 109 (Logan, 2026-10-18): history of 2014. ISIS never forms; no 2014 oil crash (oil stays high; assumed Alberta rivals borrowed to expand, which sets up their 2021 debt); Ebola happens and is contained by 2016. 2015 drafted.
+- Batch 110 (Logan, 2026-10-18): history of 2015. No Charlie Hebdo (and no November Paris attacks); no Iran nuclear deal, Iran stays the holdout; real company names stay in 19-history as background and are swapped for fictional ones when the starting companies are designed. 2016 drafted.
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm
