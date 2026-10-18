@@ -8,7 +8,7 @@ _A plain-language breakdown of the current design (2026-10-18), for review. The 
 |---|---|---|---|
 | **Country** | 31 major countries, plus about 60 smaller ones in 16 **minor groups** | A real country | Government, laws, elections, central bank and policy rate, currency, stock exchange (major countries), corporate and property tax, business cycle, sanctions, debt vassalage |
 | **Region** | 2 to 8 per major country | A state or province | Regional government, regional laws and licences, regional bonds |
-| **Hub** | 81 at start (37 added in this review) | A city or metro area | City council, local politics, population and strata, unrest, unions, property cycle, location perks, intel level |
+| **Hub** | 80 at start (36 added in this review) | A city or metro area | City council, local politics, population and strata, unrest, unions, property cycle, location perks, intel level |
 | **District** | 6 to 26 per hub | A neighborhood type | Real estate pools, where business units' assets sit, local unrest |
 | **Pool** | Up to 4 per district | A slice of the district's property | Shares that holders own by dollar amount |
 
@@ -21,7 +21,7 @@ _A plain-language breakdown of the current design (2026-10-18), for review. The 
 - **Size class** sets everything else. A hub is S, M, L, XL or Mega by metro population (under 1.5M up to over 20M). Size sets its number of districts, its **mass** ($3B up to $120B, scaled by local price levels) and its council seats.
 - **Mass** is how much it takes to have power there: influence share = your weighted assets ÷ the hub's mass.
 - **Hubs change over time.** Population grows or shrinks every year from jobs, wages, housing costs and unrest. A growing hub moves up a size class and gains new districts; a shrinking one can lose districts to Slums or Land. New hubs can appear when a region gets more than $5B of business assets, through special economic zones, or through charter cities in the corporate sovereignty endgame.
-- **Location perks.** Only big finance and tech hubs have them, each written as "every company that does X here gets Y" (for example, HQ in New York gives +5% investor confidence; a Foundry unit in Hsinchu gives +5% productivity). Any number of companies can earn the same perk.
+- **Location perks.** Big finance and tech hubs and all 36 new hubs have them, each written as "every company that does X here gets Y" (for example, HQ in New York gives +5% investor confidence; a Foundry unit in Hsinchu gives +5% productivity). Any number of companies can earn the same perk.
 - **Starting businesses.** Each hub starts with AI-owned business units in its specialty industries, so the world economy runs from the first hour.
 
 ## 3. Districts and "buildings"
@@ -68,7 +68,7 @@ _A plain-language breakdown of the current design (2026-10-18), for review. The 
 
 ## 7. Problems found while reading
 
-**Added after review (Logan: "more cities"):** 37 new hubs in the major countries, for 81 in all: Washington DC, Boston, Seattle, Dallas-Fort Worth, Atlanta, Miami, Austin, Detroit, Las Vegas, Vancouver, Montreal, Ottawa, Monterrey, Guadalajara, Rio de Janeiro, Buenos Aires, Santiago, Aberdeen, Munich, Berlin, Amsterdam, Milan, Rome, St Petersburg, Riyadh, Abu Dhabi, Cape Town, Delhi NCR, Hyderabad, Chennai, Chengdu, Wuhan, Osaka-Kobe, Kaohsiung, Kuala Lumpur, Hanoi and Melbourne.
+**Added after review (Logan: "more cities"):** 36 new hubs in the major countries, for 80 in all (Aberdeen was added, then scrapped): Washington DC, Boston, Seattle, Dallas-Fort Worth, Atlanta, Miami, Austin, Detroit, Las Vegas, Vancouver, Montreal, Ottawa, Monterrey, Guadalajara, Rio de Janeiro, Buenos Aires, Santiago, Munich, Berlin, Amsterdam, Milan, Rome, St Petersburg, Riyadh, Abu Dhabi, Cape Town, Delhi NCR, Hyderabad, Chennai, Chengdu, Wuhan, Osaka-Kobe, Kaohsiung, Kuala Lumpur, Hanoi and Melbourne.
 
 1. ~~Country count~~ **Fixed:** Qatar is now the 31st major country.
 2. ~~Doha in a minor group~~ **Fixed:** Doha now belongs to Qatar.

@@ -203,7 +203,7 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 
 ## 7.9 Changes to other files
 
-- [2-map-and-influence.md](2-map-and-influence.md) 2.3.3: Medellín, Sydney and Edmonton added; there are now 44 hubs and 31 major countries (81 hubs after the 2026-10-18 realism review). Kroll's colony is a special site.
+- [2-map-and-influence.md](2-map-and-influence.md) 2.3.3: Medellín, Sydney and Edmonton added; there are now 44 hubs and 31 major countries (80 hubs after the 2026-10-18 realism review). Kroll's colony is a special site.
 - The game has no stages; founding and young-company rules are in [1-corporate-core.md](1-corporate-core.md) 1.6, and politics by company rank in [4-politics.md](4-politics.md) 4.28.
 - [10-events.md](../10-events.md): add the quest system.
 - [13-open-questions.md](../13-open-questions.md): the decided list holds these rules.

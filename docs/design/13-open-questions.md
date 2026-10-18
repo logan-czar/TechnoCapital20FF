@@ -145,6 +145,7 @@
 - Batch 114 (Logan, 2026-10-18): history of 2019, the last year. Madoff is exposed in 2019 by the Enron journalist; the transformer paper is an early 2020 scripted event after John's desktop arrives (the LLM tip names the lab that will scale it); the euro crisis is severe at game start (Greece defaulted, euro down hard, EUR start set to 0.95 USD (T), Europe in recession, US barely touched). History 2000 to 2019 complete; 19.22 has the 1 January 2020 snapshot; 7.2.0 and 7.7 updated.
 - Geography review (Logan, 2026-10-18): breakdown in reviews/geography-overview.md. Made more realistic: GDP set to the alternate January 2020, Edmonton S, Medellín M, Sydney L, Qatar the 31st major country. Ukraine, Greece, Mali and Iran stay in minor groups with no hubs. Characters' homes are flavor only (residence is just a hub).
 - More cities (Logan, 2026-10-18): 37 hubs added in the 31 major countries, 81 in all (2-map 2.3.3); minor groups still have none. Johannesburg population set to 9.5M to stay L.
+- Batch 115 (Logan, 2026-10-18): Aberdeen scrapped (80 hubs, 36 new). All 36 new hubs get location perks (2.3.5) and signature starting business units (2.3.4); entries (A), values (T).
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm

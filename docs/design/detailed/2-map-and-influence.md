@@ -49,7 +49,7 @@ This file turns the map and influence overviews into exact rules, formulas, numb
 | **Major countries** | 31 | Fully simulated: hubs, regions, own market, central bank, exchange |
 | **Minor groups** | 16 groups covering the rest of the world | Each member country keeps its own government, laws and currency (see [4-politics.md](4-politics.md) 4.2.4). Economically each group is one aggregated market with no playable hubs at start. Ukraine, Greece, Mali and Iran stay here with no hubs, despite their role in the history (Logan, 2026-10-18) |
 | **Regions** | 2 to 8 per major country | States or provinces. Only regions that contain a hub are drawn in detail at start; the rest of a country is one "rest of country" region |
-| **Economic hubs** | 81 | Cities or clusters with districts (2.3) |
+| **Economic hubs** | 80 | Cities or clusters with districts (2.3) |
 | **Districts** | 6 to 26 per hub | Each with up to four real estate pools (2.16) |
 | **Chokepoints** | 14 | Straits, canals, cable corridors (2.4) |
 
@@ -206,7 +206,7 @@ The six district types from 05 plus **Resource Field**.
 
 ### 2.3.3 Hub list
 
-**81 hubs** at start: 44 original, plus 37 added in the 2026-10-18 realism review (Logan: "more cities"). New hubs are only in the 31 major countries; minor groups (including Ukraine, Greece, Mali and Iran) still have none. Populations are 2020 metro estimates **(T)**.
+**80 hubs** at start: 44 original, plus 36 added in the 2026-10-18 realism review (Logan: "more cities"; Aberdeen was added, then scrapped by Logan, batch 115). New hubs are only in the 31 major countries; minor groups (including Ukraine, Greece, Mali and Iran) still have none. Populations are 2020 metro estimates **(T)**.
 
 District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S Slums, X Resource Field. Population is metro population at start in millions. Connections list the main lanes and chokepoints (2.4).
 
@@ -261,7 +261,6 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Zurich | Switzerland (Zurich, with Basel and Geneva abstracted) | M | 1.5 | F4 I1 R4 T1 | Private banking, commodity trading houses, insurance, pharma | Rail to Frankfurt and Milan; air |
 | Moscow | Russia (Central) | Mega | 21 | F3 I5 P1 R9 S4 T2 | Energy company headquarters, metals, defense, oil trading, cybercrime underground | Pipelines to China and (sanctioned) Europe; rail to China via Kazakhstan; Baltic ports via the Danish Straits; Black Sea via the Turkish Straits |
 | Istanbul | Turkey (Marmara) | XL | 16 | F2 I5 P3 R5 S3 | Textiles, vehicles, shipping, regional finance | Turkish Straits; Black Sea lanes; rail to Europe; Middle Corridor rail to Central Asia and China |
-| Aberdeen | United Kingdom (Scotland) | S | 0.5 | F1 I1 P2 R1 X1 | North Sea oil and gas services | North Sea; rail to London |
 | Munich | Germany (Bavaria) | L | 6.0 | F3 I4 R5 T2 | Autos, insurance and reinsurance, chips | Rail to Frankfurt and over the Alps; air |
 | Berlin | Germany (Berlin-Brandenburg) | L | 6.1 | F2 I2 R6 S2 T2 | Federal government, startups, media | Rail to Frankfurt, Warsaw and the Baltic |
 | Amsterdam | Netherlands (North Holland) | M | 2.5 | F3 P1 R4 T2 | Stock exchange, fintech, data centers, internet exchange | Rail to Rotterdam; North Sea; transatlantic fiber |
@@ -318,7 +317,7 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 
 ### 2.3.4 Signature starting assets
 
-Each hub starts with AI-owned business units in its specialty industries, so the world economy runs from turn one. Examples:
+Each hub starts with AI-owned business units in its specialty industries, so the world economy runs from turn one. Examples, plus every hub added in the 2026-10-18 review (Logan, batch 115) **(A)**:
 
 | Hub | Signature business units at start |
 |---|---|
@@ -334,12 +333,48 @@ Each hub starts with AI-owned business units in its specialty industries, so the
 | Doha | Gas (LNG) |
 | Antofagasta | Mining (copper and lithium) |
 | Houston | Oil, Gas, Chemicals |
+| Washington DC | Defense, Data centers, Professional services (lobbying) |
+| Boston | Pharma (biotech), Asset management, Robotics |
+| Seattle | Cloud, E-commerce, Aerospace |
+| Dallas-Fort Worth | Telecom, Banking, Logistics |
+| Atlanta | Airlines, Logistics, Banking (payments) |
+| Miami | Banking (Latin American private banking), Real estate |
+| Austin | Foundry, EVs, Software |
+| Detroit | Autos, EVs |
+| Las Vegas | Gambling |
+| Vancouver | Real estate, Shipping |
+| Montreal | AI labs, Aerospace, Gaming |
+| Ottawa | Telecom, Software |
+| Monterrey | Metals (steel), Construction (cement) |
+| Guadalajara | Consumer electronics, Software |
+| Rio de Janeiro | Oil (offshore) |
+| Buenos Aires | Agriculture, Banking |
+| Santiago | Asset management (pension funds), Mining (headquarters) |
+| Munich | Autos, Insurance (reinsurance) |
+| Berlin | Software, E-commerce |
+| Amsterdam | Data centers, Banking (fintech) |
+| Milan | Luxury, Banking |
+| Rome | Power utilities, Gas |
+| St Petersburg | Gas, Shipping |
+| Riyadh | Asset management (sovereign fund), Construction (megaprojects) |
+| Abu Dhabi | Oil, Asset management (sovereign funds) |
+| Cape Town | Agriculture (wine), Banking |
+| Delhi NCR | Autos, Software, Telecom |
+| Hyderabad | Pharma, Data centers, Software |
+| Chennai | Autos, Consumer electronics |
+| Chengdu | Consumer electronics, Gaming |
+| Wuhan | Autos, Metals (steel), Telecom (optical fiber) |
+| Osaka-Kobe | Consumer electronics, Pharma, Shipping |
+| Kaohsiung | Foundry, Chemicals, Metals |
+| Kuala Lumpur | Banking (Islamic finance), Agriculture (palm oil), Data centers |
+| Hanoi | Consumer electronics |
+| Melbourne | Asset management (pension funds), Mining (headquarters) |
 
 Unit sizes live in hub data (January 2020 values, [7-starting-world.md](7-starting-world.md)) and are tuned so each industry's world supply roughly matches its demand at the start ([10-industry-economy.md](10-industry-economy.md) 10.0.3).
 
 ### 2.3.5 Location perks (Logan, 2026-10-17)
 
-Perks belong to **locations**, not to company size. Only the big **financial and tech hubs** have perks (Logan, batch 24), each of the form **"every company that achieves X here gets Y"**. Any number of companies can hold the same perk; there is no ranking and no size threshold. Starting set **(A)**, values **(T)**:
+Perks belong to **locations**, not to company size. The big **financial and tech hubs** have perks (Logan, batch 24), and so does every hub added in the 2026-10-18 review (Logan, batch 115), each of the form **"every company that achieves X here gets Y"**. Any number of companies can hold the same perk; there is no ranking and no size threshold. Starting set **(A)**, values **(T)**:
 
 | Hub | Achieve | Get |
 |---|---|---|
@@ -354,6 +389,42 @@ Perks belong to **locations**, not to company size. Only the big **financial and
 | Tokyo-Yokohama | A Robotics business unit with assets here | Productivity +5% |
 | Seoul-Pyeongtaek | A CPUs or Consumer electronics business unit with assets here | Productivity +3% |
 | Frankfurt | HQ here | -0.25 points on loans from banks in the eurozone |
+| Washington DC | HQ here | Political Capital +10% in the United States; Defense contracts awarded +5% |
+| Boston | A Pharma or Robotics business unit with assets here | R&D plan effects +10% |
+| Seattle | A Cloud or E-commerce business unit with assets here | Variable cost -3% |
+| Dallas-Fort Worth | HQ here | Corporate tax -1 point (Texas has no state tax); investor confidence +2% |
+| Atlanta | An Airlines or Logistics business unit with assets here | Variable cost -4% |
+| Miami | HQ here | Influence +10% in every Latin American hub; shell exposure -5% |
+| Austin | A Foundry, CPUs or Software business unit with assets here | Productivity +3% |
+| Detroit | An Autos or EVs business unit with assets here | Productivity +5% |
+| Las Vegas | A Gambling business unit with assets here | Productivity +10%; gambling regulator strictness -1 |
+| Vancouver | A Real estate business unit with assets here | Rent +5% on Residential pools in the hub |
+| Montreal | An AI labs or Gaming business unit with assets here | R&D plan effects +10% (research tax credits) |
+| Ottawa | HQ here | Political Capital +10% in Canada |
+| Monterrey | A Metals or Construction business unit with assets here | Variable cost -3%; tariff-free sales into the US market |
+| Guadalajara | A Consumer electronics or Software business unit with assets here | Variable cost -5% (wages) |
+| Rio de Janeiro | An Oil business unit with assets here | Productivity +5% (offshore fields) |
+| Buenos Aires | An Agriculture business unit with assets here | Productivity +5%; FX loss on ARS profits -10% |
+| Santiago | HQ here | -0.25 points on loans; investor confidence +2% for Mining units |
+| Munich | An Autos or Insurance business unit with assets here | Productivity +3% |
+| Berlin | A Software or E-commerce business unit with assets here | Founding costs -10% for new companies with HQ here |
+| Amsterdam | A Data centers or Cloud business unit with assets here | Compute maintenance -5% (cheap power and the internet exchange) |
+| Milan | A Luxury business unit with assets here | Productivity +5% |
+| Rome | HQ here | Political Capital +10% in Italy; first refusal on Italian state contracts |
+| St Petersburg | A Gas or Shipping business unit with assets here | Variable cost -3% |
+| Riyadh | HQ here | First refusal on Saudi megaproject contracts; influence +10% in Saudi Arabia |
+| Abu Dhabi | HQ here | -0.25 points on loans from Gulf sovereign funds; AI labs R&D plan effects +5% |
+| Cape Town | HQ here | Investor confidence +2% for companies with units across Africa |
+| Delhi NCR | HQ here | Political Capital +10% in India; foreign restriction label one step easier in India |
+| Hyderabad | A Pharma or Data centers business unit with assets here | Variable cost -5% |
+| Chennai | An Autos or Consumer electronics business unit with assets here | Variable cost -4% |
+| Chengdu | A Gaming or Consumer electronics business unit with assets here | Variable cost -4% |
+| Wuhan | An Autos or Telecom business unit with assets here | Productivity +3% |
+| Osaka-Kobe | A Pharma or Consumer electronics business unit with assets here | Productivity +3% |
+| Kaohsiung | A Foundry business unit with assets here | Productivity +3% (stacks with Hsinchu-Taipei) |
+| Kuala Lumpur | HQ here, or a Data centers business unit with assets here | -0.25 points on Islamic bonds; compute maintenance -5% |
+| Hanoi | A Consumer electronics business unit with assets here | Variable cost -6% (wages) |
+| Melbourne | HQ here | -0.25 points on loans from Australian pension funds |
 
 - **HQ** is the hub the corporation names as its head office; it can move it once a year.
 - Perks apply to the whole corporation unless they name an industry, in which case they apply to that business unit's share of assets in the hub.
@@ -1194,7 +1265,7 @@ A national recession cuts consumer demand 6%. The dynasty's retail chain's earni
 
 Assumptions in this file, to confirm with Logan:
 
-1. **First playable map**: 31 major countries, 16 minor groups (aggregated markets whose member countries keep their own politics), 81 hubs and 14 chokepoints. Cities named in other files but missing here (for example Vancouver, Munich) are candidates for later hubs.
+1. **First playable map**: 31 major countries, 16 minor groups (aggregated markets whose member countries keep their own politics), 80 hubs and 14 chokepoints. Cities named in other files but missing here (for example Vancouver, Munich) are candidates for later hubs.
 2. **Resource Field** is added as a seventh district type for mines, wells, farms and renewables.
 3. **Reference dollar and wage index**: base prices are in US dollar equivalents; the wage index (US = 1.0) scales wages, services, real estate and construction, separately from the politics wealth index.
 4. **Place mass** is a calibrated "power-relevant" value (hub size class × price factor; 3% of GDP for countries), not the full value of all property, so tiers are reachable at the intended company ranks. Jobs count through payroll × 1.5, making employers the most influential holders per dollar.
