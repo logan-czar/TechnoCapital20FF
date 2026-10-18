@@ -50,6 +50,7 @@ Exact rules, numbers and content for each layer of the game:
 | 13. Events (frequency, the director, AI events, event decks) | [detailed/13-events.md](detailed/13-events.md) |
 | 14. Software (the software table and software contracts; hacking later) | [detailed/14-software.md](detailed/14-software.md) |
 | 15. Infrastructure (three compute types, data centers, data, the cloud) | [detailed/15-infrastructure.md](detailed/15-infrastructure.md) |
+| 16. Media and entertainment (print, streamers, studios, labels, creators; campaigns) | [detailed/16-media.md](detailed/16-media.md) |
 
 ## Vision
 

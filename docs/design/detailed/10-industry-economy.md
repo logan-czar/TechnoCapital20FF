@@ -223,7 +223,7 @@ Every country has a size for each **industry** (yearly revenue). The industry gr
 
 - **Real estate** as an industry is development, property management and brokerage. The district pools of commercial, residential, industrial and land real estate (10.4.5) stay as a separate investment anyone can buy into.
 - **Black market** (batch 50) covers drug fronts, escort services, smuggling and other illegal trade. Its business units carry a yearly raid risk and are secrets that can become hooks (11.7).
-- **Media and entertainment** is no longer an industry; it becomes its own system, designed later (Logan).
+- **Media and entertainment** is no longer an industry; it is its own system in [16-media.md](16-media.md) (Logan).
 - **Cyclicality β**: industry demand × (1 + β × the cycle demand modifier, 2.18.1). A β of 1.8 in a -5% recession cuts demand 9%.
 - **Rate sensitivity**: demand × (1 - s × (policy rate - neutral rate)), with s = 0 (Low), 1 (Medium), 2 (High), 3 (Very high) **(T)**. Banks and insurers use it the other way round on their margin.
 - **Strata spending** (2.8.0): consumer industries' demand moves with the spending of each stratum. The PMC's needs (housing, energy, healthcare) map to real estate, power utilities and healthcare services; unmet needs raise unrest (2.8.5) **(A)**.
