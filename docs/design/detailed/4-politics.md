@@ -139,7 +139,7 @@ The starting classification is a game abstraction, a snapshot at the start date,
 | Country | Type | Corruption | Stability | Structure | National election cycle (legislature / executive) | Example hubs |
 |---|---|---|---|---|---|---|
 | United States | Liberal democracy | 25 | 62 | Federal | 2 / 4 years | New York, Silicon Valley, Houston, Chicago |
-| Canada | Liberal democracy | 15 | 75 | Federal | 4 (parliamentary) | Toronto, Vancouver, Calgary |
+| Canada | Liberal democracy | 15 | 75 | Federal | 4 (parliamentary) | Toronto, Vancouver, Edmonton |
 | United Kingdom | Liberal democracy | 20 | 66 | Unitary (devolved) | 5 (parliamentary) | London, Manchester |
 | Ireland | Liberal democracy | 15 | 74 | Unitary | 5 (parliamentary) | Dublin |
 | Germany | Liberal democracy | 15 | 70 | Federal | 4 (parliamentary) | Frankfurt, Munich, Hamburg |

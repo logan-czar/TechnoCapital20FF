@@ -73,7 +73,7 @@ Rebuilt around the current design; the build starts only when Logan says so.
 4. **Economy**: industries and price indices, business units, real estate pools, the Portfolio screen.
 5. **Markets**: quotes, orders, IPOs, bonds, FX.
 6. **Map and influence**: hubs, districts, influence tiers, travel.
-7. **Events**: engine, director, first decks (about 10 events each), the opening quest "Papers".
+7. **Events**: engine, director, first decks (about 10 events each), the opening quest "The Desktop".
 8. **Techno-Capital and software**: compute, the GPU chain, the software table (hacking comes later).
 9. **Politics and ideology**: ideology blocs, strata voting, laws, elections, regulators.
 10. **Vices and gambling**, then the quest lines, then the 2030 crash.
