@@ -67,6 +67,7 @@ Stolen data comes in **types** (14.2.2, 15.4). Each type can be **cashed in on t
 | **Compromising material** | Varies; often worth more as a hook | A **secret** (1.1.8.2) and a **hook** on the person whose server it was |
 | **Government files** | High, but only state buyers | Political leverage; dangerous to hold |
 | **Training data** | By size and age (15.4) | Train AI models (6.5) |
+| **Enterprise data** (Logan, batch 91) | **Unstructured: worthless.** **Structured: a price per TB set by its industry** **(T: from about $50 a TB for low-value industries up to about $2,000 a TB for finance, health and defense)** | The thief's own structured data buffs (14.2.3) |
 | **Credentials** | Fixed per account | The next hack on a linked target is easier (+10%) |
 
 - Data ages and loses value (15.4), so stolen data is worth most when fresh.

@@ -1,6 +1,6 @@
 # 14. Software: the software table, licences and making software (detailed design)
 
-_Status: draft v0.9 (2026-10-18). Batch 90: updates with diminishing returns and rising cost, specialized enterprise software doubles effectiveness, and structured data gives buffs (14.2.3). Batch 89: the licence pricing formula (14.4.1). Batch 88: one software unit per desktop per day, labor cost 0.2% to 4% of GDP per capita, quality tiers 90 to 10, and quality 0 means no bonus. Batch 87: making software with desktops (14.8), licences by usage with a one-year capacity lock, no special contracts, no copying (14.4). v0.5, consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
+_Status: draft v1.0 (2026-10-18). Batch 91: enterprise data types (one per industry, structured and unstructured), data buffs as free R&D and free business asset growth, structured data sells on the dark web. Batch 90: updates with diminishing returns and rising cost, specialized enterprise software doubles effectiveness, and structured data gives buffs (14.2.3). Batch 89: the licence pricing formula (14.4.1). Batch 88: one software unit per desktop per day, labor cost 0.2% to 4% of GDP per capita, quality tiers 90 to 10, and quality 0 means no bonus. Batch 87: making software with desktops (14.8), licences by usage with a one-year capacity lock, no special contracts, no copying (14.4). v0.5, consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 14.7.
 
@@ -65,12 +65,16 @@ Most companies run **data software** that turns their raw data into **structured
 | **Specialized enterprise software** (industrial specialization) | **Unstructured data of one type**, for example unstructured oil data | Structured data of that type |
 
 - **Specialization doubles effectiveness (Logan).** On its own data type, specialized software is **twice as effective** as regular enterprise software: it turns twice as much input into structured data per tick at the same quality and compute **(T: read as ×2 speed)**.
+- **Data types (Logan, batch 91).** **Enterprise data**: **one type per industry** (45, 10.3), each in two forms, **unstructured** and **structured**. More data types will come later. **Every business unit generates its industry's unstructured data each day**, scaled by its revenue (batch 91) **(T: about 1 TB a day per $100M of yearly revenue)**.
+- **On the dark web (Logan).** **Unstructured data is worthless** on the dark web. **Structured data sells** there, at a price set by the industry it belongs to ([17-hacking.md](17-hacking.md) 17.4).
 - **Structured data gives buffs (Logan).** A company earns buffs from **how much structured data of a type it stores** and **how much it produces per day**. The thresholds scale with the size of the business units in that data's industry, per $100M of their yearly revenue **(T)**:
 
-  | Measure (per $100M of unit revenue) | Tier 1 | Tier 2 | Tier 3 | Buff **(T)** |
+  | Measure (per $100M of unit revenue) | Tier 1 | Tier 2 | Tier 3 | Buff (Logan, batch 91) |
   |---|---|---|---|---|
-  | **Stored** structured data | 10 TB | 100 TB | 1 PB | R&D effectiveness +5% / +10% / +20% for that industry's units |
-  | **Produced per day** | 0.1 TB | 1 TB | 10 TB | Productivity +1 / +3 / +5 for that industry's units |
+  | **Stored** structured data | 10 TB | 100 TB | 1 PB | **Free R&D** of **1% / 2% / 3%** of revenue, added on top of the unit's R&D plan |
+  | **Produced per day** | 0.1 TB | 1 TB | 10 TB | **Free business asset growth** of **1% / 2% / 3%** a year, added on top of the unit's growth plan **(A: a year)** |
+
+  The free R&D and growth cost nothing; they work exactly like the spending they add to (10.0.4).
 
 - Stored data ages and loses value (15.4), so the stored buff needs fresh data coming in. Structured data can also be sold, fed to AI models or consumed for one-off bonuses (8-quest-lines 8.2.3).
 

@@ -1,6 +1,6 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v1.9 (2026-10-18). Batch 90: the oil software's costs, updates and structured data. Batch 88: Arrowhead owns the oil software; the charity's 100 desktops make 100 software units a day. Batch 87: Kids Who Code (Terry's charity builds the oil software in India), the casino-money hook, licences. Batch 86: Arc 2 is now Oil Software (Q2 to Q4 2020); options vest in January 2021; the early AI move belongs to Arc 3. Batch 85: the interrogation roll and Mandy's four endings, including the Canadian Furry Cartel. Batch 84: the Mink Scare's four stages and Mandy's interrogation, CPU delegation without rolls, the quarterly recap screen. Batch 83: the six First Week events, Vril Touch, the Mink Scare; the old tutorial arcs are dropped. Batch 81: the opening sequence (start on 1 January, the first earnings day, First Week on the Job, Intro Night, The Scandal). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v2.0 (2026-10-18). Batch 91: Arc 3 is The Pivot to a software company; Power Play, The Top Job and Dry Hole move to Arcs 4 to 6. Batch 90: the oil software's costs, updates and structured data. Batch 88: Arrowhead owns the oil software; the charity's 100 desktops make 100 software units a day. Batch 87: Kids Who Code (Terry's charity builds the oil software in India), the casino-money hook, licences. Batch 86: Arc 2 is now Oil Software (Q2 to Q4 2020); options vest in January 2021; the early AI move belongs to Arc 3. Batch 85: the interrogation roll and Mandy's four endings, including the Canadian Furry Cartel. Batch 84: the Mink Scare's four stages and Mandy's interrogation, CPU delegation without rolls, the quarterly recap screen. Batch 83: the six First Week events, Vril Touch, the Mink Scare; the old tutorial arcs are dropped. Batch 81: the opening sequence (start on 1 January, the first earnings day, First Week on the Job, Intro Night, The Scandal). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.6.
 
@@ -125,7 +125,7 @@ Whenever the Mink Scare resolves, **7 days before the 2 April earnings** John ge
 - New grant = 0.5% of the company × company factor × performance factor.
 - Company factor: 0.5 if the company lost money that year, 1 if it broke even or grew slowly, 1.5 if revenue grew 20% or more.
 - Performance factor: 0.5 to 1.5 from the year's productivity change in his units and the last arc outcome (Strong 1.5, Mixed 1, Poor 0.5).
-- As the company climbs a rank (1.7.5) the percentage shrinks but the value grows; a CEO seat (Arc 4) brings a new package.
+- As the company climbs a rank (1.7.5) the percentage shrinks but the value grows; a CEO seat (Arc 5) brings a new package.
 - A board where Terry is John's Rival can cut the grant to zero.
 
 **Skills and trait (Logan, batch 78).** **24 in all six skills** (Finance, Operations, Persuasion, Intrigue, Tech, Hustle). He starts with **one trait**, unique to him: **Operational Excellence** (1-corporate-core 1.1.2): while he sits on a company's board as **COO, CEO or Chair** (batch 79), the buffs of **all other board members are doubled**. Events and arc outcomes can add more traits later.
@@ -148,7 +148,7 @@ Whenever the Mink Scare resolves, **7 days before the 2 April earnings** John ge
 
 **The Terry branch.** The choice opens one of two quests that run alongside the rest of the line **(A)**:
 - **Befriend Terry.** Win him over (Persuasion, favors, a night at the casino). As a Friend he backs John on the board, cuts him into deals, and lends him his edge against Liberal characters in shared schemes; and he will expect favors (a hook).
-- **Bring him down.** Dig into his deals and the casino's books in secret (Intrigue schemes and hacking; the media will never expose him, 7.3.5). Each secret found is a hook, or ammunition with the board and shareholders; the end goal is forcing him out of the company, which opens Arc 4 early. If Terry learns of it, he turns Nemesis.
+- **Bring him down.** Dig into his deals and the casino's books in secret (Intrigue schemes and hacking; the media will never expose him, 7.3.5). Each secret found is a hook, or ammunition with the board and shareholders; the end goal is forcing him out of the company, which opens Arc 5 (The Top Job) early. If Terry learns of it, he turns Nemesis.
 
 **Outcomes.** Strong: the board trusts you and the crews follow you; +2 Operations. Mixed: +1 Operations. Poor: Terry marks you as a Rival.
 
@@ -170,7 +170,19 @@ From **Q2 to Q4 2020** the arc takes John through building that software:
 
 **Outcomes (A).** Strong: high-quality software that sets the industry standard; +2 Tech or Finance. Mixed: working but bloated software; +1 Finance. Poor: a costly flop that eats the year's budget. Arrowhead is never bought out here: AI companies do not buy other companies unless the director tells them to (10.5.4).
 
-### Arc 3: Power Play
+### Arc 3: The Pivot (Logan, batch 91)
+
+**The moment.** **Oil is booming in Edmonton** and the oil software is looking good. It is time to pivot.
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | **Set up a new business unit in Edmonton** | Business units in any industry and city (10.0.2) |
+| 2 | **Pivot Arrowhead to running a software company** | Moving a corporation's weight between industries (10.0.5) |
+| 3 | **Choose the software business.** Offers come in to start a **prediction market** or an **online casino** (the Gambling industry, [9-gambling.md](9-gambling.md)), or John can **stick to the traditional enterprise software business** (14) | Gambling platforms; software as a business |
+
+**Outcomes (A).** Strong: a growing software company with the oil business as its cash cow; +2 Tech. Mixed: a half-pivoted company; +1 Tech. Poor: the new unit drains cash and the board turns on John.
+
+### Arc 4: Power Play
 
 Opens once the AI boom starts. It also holds John's **early AI move** before the boom, such as a stake in the tipped lab (Logan, batch 86; to be designed).
 
@@ -182,7 +194,7 @@ Opens once the AI boom starts. It also holds John's **early AI move** before the
 
 **Outcomes.** Strong: a fast-growing power business; clout gain. Mixed: a small unit. Poor: over-borrowed and at the bank's mercy.
 
-### Arc 4: The Top Job
+### Arc 5: The Top Job
 
 | Step | Goal | Teaches |
 |---|---|---|
@@ -192,7 +204,7 @@ Opens once the AI boom starts. It also holds John's **early AI move** before the
 
 **Outcomes.** Strong: John is President and CEO and the real controller. Mixed: CEO in name, with Terry still pulling strings. Poor: pushed out, with his options and his legend.
 
-### Arc 5: Dry Hole (the crash)
+### Arc 6: Dry Hole (the crash)
 
 | Step | Goal | Teaches |
 |---|---|---|
