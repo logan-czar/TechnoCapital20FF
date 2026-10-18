@@ -1,6 +1,6 @@
 # 4. Politics: detailed design
 
-_Status: draft v0.3 (2026-10-17). v0.3 (batch 37): the nine ideologies replace interest groups, votes by strata, tariffs on industry indices, stages replaced by company rank (4.0, 4.4, 4.28). Earlier: v0.2 (2026-10-16). v0.2 adds the political experience and screens, public standing (favorability, elite standing, profile), media and scandals as news cycles, the dynasty as a political actor (careers, think tanks, foundations, parties), lobbyists and fixers, corruption end to end (dirty money, laundering, deniability, whistleblowers), courts and litigation, police and organized crime, PMCs and private security, civil society and protests, international organizations, espionage, AI governments and AI dynasties, politics by game stage, political endgames, new events and worked examples (4.15 to 4.31); Assumptions move to 4.32. Expands [08-politics.md](../08-politics.md) and the political parts of [05-map-and-influence.md](../05-map-and-influence.md). Owner: Logan._
+_Status: draft v0.4 (2026-10-18). v0.4: consistency pass, batch 74: interest groups, stages, cyberware, PMCs, antitrust, netruns, goods, facilities and supply chains removed, opinion effects written as pushes, and hour costs written as instant actions or ticks (no daily hours budget), so the file matches the current rules. v0.3 (batch 37): the nine ideologies as political actors, votes by strata, tariffs on industry indices, politics by company rank (4.0, 4.4, 4.28). Earlier: v0.2 (2026-10-16). v0.2 adds the political experience and screens, public standing (favorability, elite standing, profile), media and scandals as news cycles, the dynasty as a political actor (careers, think tanks, foundations, parties), lobbyists and fixers, corruption end to end (dirty money, laundering, deniability, whistleblowers), courts and litigation, police and organized crime, private security, civil society and protests, international organizations, espionage, AI governments and AI dynasties, politics by company rank, political endgames, new events and worked examples (4.15 to 4.31); Assumptions move to 4.32. Expands [08-politics.md](../08-politics.md) and the political parts of [05-map-and-influence.md](../05-map-and-influence.md). Owner: Logan._
 
 The player never rules a country. The dynasty **buys, earns and borrows power over those who do**. This file turns the politics overview into exact rules, formulas, numbers and content.
 
@@ -10,52 +10,33 @@ The player never rules a country. The dynasty **buys, earns and borrows power ov
 
 ---
 
-## 4.0 Rework for the new economy (Logan, batch 37)
+## 4.0 Political actors and the economy
 
-Batch 37 checked politics against the Wall Street Raider style economy (10-industry-economy) and the strata (2.8.0). Three rules now override the rest of this file **wherever they clash**:
+Politics reads the Wall Street Raider style economy ([10-industry-economy.md](10-industry-economy.md)) and the strata (2.8.0):
 
-| Topic | Decision (Logan) |
+| Topic | Rule |
 |---|---|
-| Political actors | **The nine ideologies replace the twelve interest groups.** The ideology blocs ([5-ideology.md](5-ideology.md)) are the groups that hold clout, take stances on laws, join parties, get funded and get angry. |
-| Votes | **Votes are counted by strata** (2.8.0), not by the six population segments. |
-| Tariffs and sanctions | They hit an **industry's price index** in the country (10-industry-economy), not Victoria 3 goods. |
-| Game stages | Stages are gone. 4.28 is replaced by politics by **company rank** (1.7.5). |
-| Antitrust | **None** (Logan, batch 56). The C3 Antitrust law, the Antitrust Authority, antitrust reviews of takeovers (4.13.4) and private antitrust suits are removed. Commodity cornering stays a Securities Regulator matter; cartels and predatory pricing are legal. Foreign investment review (C1) stays. |
-| PMCs | **Dropped** (Logan, batch 51). There are no private military contractors: 4.23.2 to 4.23.5, 4.13.6, the S1 law and every PMC option elsewhere are removed. Corporate guards, bodyguards and cyber defense teams stay as security spending. |
+| Political actors | The **nine ideology blocs** ([5-ideology.md](5-ideology.md)) are the groups that hold clout, take stances on laws, join parties, get funded and get angry. Each bloc has a **bloc leader** (5.6.2) and a **bloc approval** (4.4.6). |
+| Votes | **Votes are counted by strata** (2.8.0). |
+| Tariffs and sanctions | They hit an **industry's price index** in the country (10-industry-economy). |
+| Company rank | What politics offers grows with the **rank of the dynasty's largest company** (1.7.5, 4.28). |
 
-**Reading rule for the rest of this file.** Older sections still name interest groups (IGs). Read each one as the ideology bloc(s) below (confirmed in batch 38 with Logan's changes):
+Money given to a bloc goes through the **Fund Ideology** action (4.10.1): think tanks, movements, media and parties of one ideology.
 
-| Old interest group | Read as |
-|---|---|
-| Industrialists | Accelerationists and Landites (Logan, batch 38) |
-| Financiers | Liberals and Landites, with a share going to Accelerationists (Logan, batch 38; about a third **(T)**) |
-| Tech Sector | Accelerationists |
-| Labor Unions | Communists |
-| Gig Workers | Communists and Neo-Luddites |
-| Landowners | Landites and Chuds |
-| Security Establishment | Chuds |
-| Religious and Traditionalists | Chuds |
-| Environmentalists | Effective Altruists and Neo-Luddites |
-| Transhumanists | Transhumanists |
-| State Apparatus | The ruling ideology of a one-party state (Communists in China) |
-| Shadow Economy | Sovereigntists |
-
-"Fund Interest Group" (4.10.1) becomes **Fund Ideology**: money goes to think tanks, movements, media and parties of one ideology. "IG leader" becomes the **bloc leader** (5.6.2), and "IG approval" becomes bloc approval.
-
-**Industries and lobbying.** Unions, chambers of commerce and trade lobbies still exist as **organizations** that a company can fund, but their money is counted for the ideology they serve. Each industry has a default lean that its trade lobby funds unless the company head picks another (Logan, batch 38):
+**Industries and lobbying.** Unions, chambers of commerce and trade lobbies exist as **organizations** that a company can fund, but their money is counted for the ideology they serve. Each industry has a default lean that its trade lobby funds unless the company head picks another (Logan, batch 38):
 
 | Industries | Default lean |
 |---|---|
 | AI labs, Cloud, Data centers, Lithography machines, Foundry, GPUs, CPUs, Software, SaaS | Accelerationists |
-| Pharma, Healthcare services (clinics, longevity) | Transhumanists |
-| Banks, funds, insurance, exchanges | Liberals |
+| Pharma, Healthcare services (longevity) | Transhumanists |
+| Banking, Asset management, Insurance | Liberals |
 | Oil, Gas, Mining, Metals, Chemicals, Power utilities, Autos, EVs, Construction, Real estate, Agriculture | Landites |
 | Defense, Aerospace, Drones, Robotics | Chuds |
 | Retail, E-commerce, Fast food, Luxury, Consumer electronics, Telecom, Shipping, Logistics, Airlines, Professional services | Liberals |
 | Gaming, Gambling, Social media, Ads, Black market | Sovereigntists |
 | Healthcare services, Renewables | Effective Altruists |
 
-**Tariffs on industries.** A tariff of rate t on an industry raises that industry's price index in the importing country by `t × import share` **(T)**, where import share is the part of the country's use of that industry supplied from abroad. Domestic companies in that industry gain margin, and foreign ones lose sales there. Sanctions tiers (4.11) list **industries** instead of goods: Tier 2 Sectoral bans trade in the listed industries (for example semiconductors and GPUs), which raises their index in the target country and cuts exporters' revenue there.
+**Tariffs on industries.** A tariff of rate t on an industry raises that industry's price index in the importing country by `t × import share` **(T)**, where import share is the part of the country's use of that industry supplied from abroad. Domestic companies in that industry gain margin, and foreign ones lose sales there. Sanctions tiers (4.11) list **industries**: Tier 2 Sectoral bans trade in the listed industries (for example semiconductors and GPUs), which raises their index in the target country and cuts exporters' revenue there.
 
 ---
 
@@ -67,10 +48,10 @@ Batch 37 checked politics against the Wall Street Raider style economy (10-indus
 |---|---|---|---|
 | **Influence share** | 0 to 100% | Per holder per place | Your share of the weighted asset value in a place (district, hub, region, country), plus origin and office modifiers and temporary boosts. Defined in 05. |
 | **Political Capital (PC)** | 0 to pool cap | Per dynasty per jurisdiction | The spendable form of influence. Earned monthly from influence share. Spent on lobbying, permits, protection, appointments. |
-| **Clout** | 0 to 100% (sums to 100% per jurisdiction) | Per interest group per jurisdiction | How much an interest group decides which laws pass. |
+| **Clout** | 0 to 100% (sums to 100% per jurisdiction) | Per ideology bloc per jurisdiction | How much a bloc decides which laws pass. |
 | **Support** | -100 to +100 | Per law proposal | Net weight behind a proposed law position. |
-| **Stance** | -2 to +2 | Per interest group per law position | How much a group wants (+) or opposes (-) a position. |
-| **Approval** | -10 to +10 | Per interest group per jurisdiction | How happy a group is with current laws and government. |
+| **Stance** | -2 to +2 | Per ideology bloc per law position | How much a bloc wants (+) or opposes (-) a position. |
+| **Approval** | -10 to +10 | Per ideology bloc per jurisdiction | How happy a bloc is with current laws and government. |
 | **Exposure** | 0 to 100+ | Per holder per agency domain | How much evidence of wrongdoing exists for regulators and journalists to find. |
 | **Stability** | 0 to 100 | Per country (and per hub for local unrest) | How well the political order holds. Low stability causes defaults, currency crises, coups and revolutions. |
 | **Regime Strength (RS)** | 0 to 100 | Per country | How hard the current government is to remove by force. |
@@ -92,16 +73,16 @@ Influence share is a stock (how strong you are). Political Capital is a flow (wh
 
 ### 4.1.3 Cadence
 
-1 turn = 1 hour. Politics runs mostly on weekly, monthly and yearly boundaries.
+1 turn = 1 tick (one hour). There is no daily hours budget: most political actions are instant, and only in-person meetings, events, hearings and travel burn ticks (1-corporate-core 1.1.6). Politics runs mostly on weekly, monthly and yearly boundaries.
 
 | Interval | Political calculations |
 |---|---|
 | **Hourly** | Player actions (meetings, calls, bribes offered, speeches), hearings in session, election night counting (results arrive region by region over 6 to 12 turns), coup night resolution (6 to 24 turns) |
 | **Daily** | News cycle: scandals spread, exposés published, poll noise, protest size |
-| **Weekly** | Polls, campaign events, lobbying actions resolve, investigation steps, coup plot progress and leak rolls, temporary boost decay (ads and psyops), IG approval, trade war and sanctions escalation checks, seizure ladder steps |
+| **Weekly** | Polls, campaign events, lobbying actions resolve, investigation steps, coup plot progress and leak rolls, temporary boost decay (ads and psyops), bloc approval, trade war and sanctions escalation checks, seizure ladder steps |
 | **Monthly** | PC income, clout recalculation, law progress rolls, exposure detection rolls, stability, relation drift, revolution pressure, coup risk, default and currency crisis risk, branch office seizure risk |
 | **Quarterly** | Government contract tenders open, regulator capacity review, credit and political risk ratings |
-| **Yearly** | Scheduled elections fire on their date, party plenums, budgets, agency head term reviews, government type review (drift from stability and IG pressure) |
+| **Yearly** | Scheduled elections fire on their date, party plenums, budgets, agency head term reviews, government type review (drift from stability and bloc pressure) |
 
 ---
 
@@ -134,7 +115,7 @@ All values **(T)**.
 | **Managed democracy** | Access to the ruling circle, contracts, protection from investigations | Supporting the opposition (risk of targeted investigations and seizures) | Become a loyal court oligarch; pay for contracts; avoid backing the losing side |
 | **One-party state** | Local permits and partnerships through party patrons | Buying national policy with money; owning media; open lobbying | Branch offices with local partners, cultivate party faction patrons, accept tech transfer |
 | **Corporate oligarchy** | Almost everything: votes on the Council are weighted by influence share | Nothing is off limits, but rivals can outbid you | Accumulate assets to win Council seats; laws are a market |
-| **Military junta** | Security contracts, PMC licences, mining concessions | Stable long-term rules: the next coup can void your deals | Short horizons, quick returns, cultivate the generals, keep an exit plan |
+| **Military junta** | Security contracts, mining concessions | Stable long-term rules: the next coup can void your deals | Short horizons, quick returns, cultivate the generals, keep an exit plan |
 | **Failed state** | Local strongmen, ports, militia protection | National guarantees of any kind | Resource extraction under armed protection, high risk; candidate for corporate sovereignty |
 
 ### 4.2.3 Corruption
@@ -149,7 +130,7 @@ Corruption (0 to 100) is a country value with a type default. It can differ by h
 | Kickbacks expected on government contracts | `Corruption / 10` % of contract value (2% at 20, 8.5% at 85) for a neutral bid score; paying less loses bid score (4.9.7) |
 | Enforcement of national law in hubs | `100% - max(0, Corruption - 50)%` (Failed state at 85 enforces 65%; combined with type, see 4.3.4) |
 
-Corruption drifts monthly by ±1 toward a target set by laws (Lobbying Rules, Campaign Finance, Media Ownership), judicial independence, and the clout of the Shadow Economy group **(T)**.
+Corruption drifts monthly by ±1 toward a target set by laws (Lobbying Rules, Campaign Finance, Media Ownership), judicial independence, and the clout of the Sovereigntists **(T)**.
 
 ### 4.2.4 Starting countries
 
@@ -213,15 +194,15 @@ Type changes happen only through these transitions. Each is an event chain.
 
 | From | To | Trigger | Chain |
 |---|---|---|---|
-| Liberal democracy | Managed democracy | Emergency Powers at Standing Emergency for 12+ months, or an executive with Media Ownership: State-Controlled, or Stability < 35 for 6 months | *Erosion*: Postponed Election → Court Packing → Media Takeover. Each step can be resisted by IGs with clout ≥ 30% combined |
+| Liberal democracy | Managed democracy | Emergency Powers at Standing Emergency for 12+ months, or an executive with Media Ownership: State-Controlled, or Stability < 35 for 6 months | *Erosion*: Postponed Election → Court Packing → Media Takeover. Each step can be resisted by blocs with clout ≥ 30% combined |
 | Liberal or managed democracy | Military junta | Successful coup (4.8.4) | Coup chain |
-| Managed democracy | Liberal democracy | Revolution won by Labor, Gig Workers, Professionals or Environmentalists; or a "reformer" executive plus Stability ≥ 55 for 24 months | *Opening*: Free Election → Truth Commission → Purge of the Old Guard |
-| Managed democracy | One-party state | Ruling party wins 3 consecutive elections with > 70% and passes Ban on Opposition (requires State Apparatus clout ≥ 25%) | *Consolidation* |
+| Managed democracy | Liberal democracy | Revolution led by Liberals, Communists, Effective Altruists or Neo-Luddites; or a "reformer" executive plus Stability ≥ 55 for 24 months | *Opening*: Free Election → Truth Commission → Purge of the Old Guard |
+| Managed democracy | One-party state | Ruling party wins 3 consecutive elections with > 70% and passes Ban on Opposition (requires the party's core ideology at clout ≥ 25%) | *Consolidation* |
 | One-party state | Managed democracy | Party struggle won by a Reformist faction plus Stability < 45 | *Thaw* |
 | Military junta | Managed democracy | 24+ months in power and Stability ≥ 40, junta leader's ambition low, or foreign pressure (3+ sanctions tiers lifted on condition) | *Transition Election* |
 | Any | Failed state | Stability < 10 for 3 months, or lost major war, or revolution with no winning coalition after 3 months | *Collapse* |
 | Failed state | Military junta or Managed democracy | A faction controls hubs with ≥ 60% of population | *Reunification* |
-| Failed state, Military junta or Managed democracy | Corporate oligarchy | One or more dynasties (or AI megacorps) together hold ≥ 40% national influence share and the Security Establishment approval ≥ 0, and a capture chain is started by a holder with ≥ 15% national share | *Capture*: Debt-for-Equity Deal → Council of Stakeholders → Charter of Governance |
+| Failed state, Military junta or Managed democracy | Corporate oligarchy | One or more dynasties (or AI megacorps) together hold ≥ 40% national influence share and Chuds approval ≥ 0, and a capture chain is started by a holder with ≥ 15% national share | *Capture*: Debt-for-Equity Deal → Council of Stakeholders → Charter of Governance |
 | Corporate oligarchy | Any | Revolution, coup, or foreign intervention event | Standard chains |
 
 ---
@@ -234,12 +215,12 @@ Type changes happen only through these transitions. Each is an event chain.
 |---|---|---|---|
 | Taxes | Income, corporate, capital gains, inheritance, tariffs; sets band for regional surcharges | Regional surcharges on income and corporate tax, sales tax | Property tax, local business levies |
 | Money | Currency, central bank, capital controls, exchange regime | Regional bonds | Municipal bonds |
-| Corporate | Foreign ownership, branch office rules, antitrust, governance, bankruptcy, special economic zones (enabling) | Company registration fees, regional licensing | Business licences, opening hours |
+| Corporate | Foreign ownership, branch office rules, governance, bankruptcy, special economic zones (enabling) | Company registration fees, regional licensing | Business licences, opening hours |
 | Labor | Minimum wage floor, union rights, automation tax, gig status, immigration | Minimum wage above the floor, labor inspection | Local hiring rules on city contracts |
 | Land and building | National environmental floor | Environmental rules above the floor, regional infrastructure | **Zoning**, building permits, rezoning, land use |
-| Security | Military, emergency powers, PMC legality, surveillance | Regional police (federal countries) | Municipal police, policing model within national rules |
+| Security | Military, emergency powers, surveillance | Regional police (federal countries) | Municipal police, policing model within national rules |
 | Contracts | Defense, national infrastructure, surveillance, health | Regional roads, rail, hospitals, universities | Transit, waste, utilities, city IT, construction |
-| Regulators | All seven agencies (4.9.1) | Regional attorney general and tax office (federal countries only) | Permit office, building inspectors |
+| Regulators | All six agencies (4.9.1) | Regional attorney general and tax office (federal countries only) | Permit office, building inspectors |
 | Appointments | Ministers, regulator heads, central bank governor, ambassadors | Regional cabinet | City officials, police chief |
 | Diplomacy | All international relations | Trade missions only | Sister-city deals only |
 
@@ -266,7 +247,7 @@ Rules of precedence:
 1. **National beats regional beats local** where they conflict.
 2. **Snap-back**: when a national change makes a lower-level law illegal (for example the floor rises), the lower law gets a 3-month grace period **(T)**, then snaps to the nearest legal position.
 3. **Preemption**: a national government can pass a Preemption Act for one law category. It is enacted like any law (4.5.9) but needs Support +15 above the normal threshold **(T)**. In federal countries a region can challenge it: the court strikes it down with chance `judicial independence × 50%` **(T)**.
-4. **Local experimentation**: a hub may adopt a stricter or looser position (inside the band) and the effects on business, unrest and IG approval apply only in that hub. This is how a dynasty can build a business-friendly haven in one city of a strict country.
+4. **Local experimentation**: a hub may adopt a stricter or looser position (inside the band) and the effects on business, unrest and bloc approval apply only in that hub. This is how a dynasty can build a business-friendly haven in one city of a strict country.
 5. **Enforcement**: national law is enforced in a hub at `Enforcement%` = type factor × corruption factor (4.2.3). Type factor: LD 100%, MD 100%, OP 100%, CO 90%, MJ 85%, FS 30% **(T)**. Below 70% enforcement, holders can ignore a national law in that hub at an exposure cost of +2 per month per law ignored **(T)**.
 
 ### 4.3.4 Lower-level governments by national type
@@ -287,19 +268,19 @@ Council sizes **(T)**: local council 7 seats (hub population < 1M), 9 (1 to 3M),
 Politics produces two kinds of outcome:
 
 - **Laws**: standing positions in a law category (4.5). Passed through the support formula (4.5.10).
-- **Decisions**: case-by-case rulings on one holder's request: a permit, a rezoning, a contract award, a merger review, a licence. Decisions are taken by a **named body** (a council, a minister, an agency head) and are where personal relationships, favors and bribes matter most.
+- **Decisions**: case-by-case rulings on one holder's request: a permit, a rezoning, a contract award, a foreign investment review, a licence. Decisions are taken by a **named body** (a council, a minister, an agency head) and are where personal relationships, favors and bribes matter most.
 
 Council decisions (local and regional bodies) use **member disposition**. Each member votes yes if:
 
-`Disposition = 10 × stance of member's party on the issue + opinion of requester / 5 + 15 × favors called in on that member + bribe effect + whip (±10 from the mayor or governor's position) ≥ 0` **(T)**
+`Disposition = 10 × stance of member's party on the issue + opinion of requester / 5 (the opinion tag read as Friend +50, Neutral 0, Rival -50, Nemesis -100) + 15 × favors called in on that member + bribe effect + whip (±10 from the mayor or governor's position) ≥ 0` **(T)**
 
 National decisions are taken by the responsible minister or agency head with the same formula (no whip, but +10 if the head of government backs it).
 
 ---
 
-## 4.4 Strata and ideology blocs (reworked in batch 37)
+## 4.4 Strata and ideology blocs
 
-### 4.4.1 Strata as voters (Logan, batch 37)
+### 4.4.1 Strata as voters
 
 Votes and political money are counted by **stratum** (2.8.0). Each stratum has a **wealth weight** (how much its money and connections count) and a **turnout** (how much its votes count) **(T)**.
 
@@ -309,9 +290,9 @@ Votes and political money are counted by **stratum** (2.8.0). Each stratum has a
 | PMC | 3 | 65% |
 | Glitterati | 30 | 70% |
 | Nobles | 60 | 85% |
-| Oligarchs | Named characters only: each Oligarch's weight grows with their **influence** in the jurisdiction (Logan, batch 38): wealth weight = 50 × their influence share (%) there, so a Kingmaker at 50% counts 2,500 **(T)** ([2-map-influence-economy.md](2-map-influence-economy.md) 2.5) | 100% (one vote each) |
+| Oligarchs | Named characters only: each Oligarch's weight grows with their **influence** in the jurisdiction (Logan, batch 38): wealth weight = 50 × their influence share (%) there, so a Kingmaker at 50% counts 2,500 **(T)** ([2-map-and-influence.md](2-map-and-influence.md) 2.5) | 100% (one vote each) |
 
-The six population segments stay in the economy as the make-up of each stratum (2.8.0), but politics only reads the stratum.
+Population segments (2.8.1) are the economy's make-up of each stratum; politics reads only the stratum.
 
 ### 4.4.2 Ideology blocs and support base
 
@@ -331,13 +312,13 @@ There is no fixed class table any more: what a stratum wants is what it believes
 
 Stance values: **++** = +2, **+** = +1, **-** = -1, **--** = -2. Unlisted positions are 0 for that bloc. For a bloc, stances on neighbouring positions fall off by 1 per step from its favorite.
 
-Each bloc's stances are its ideology's wants and opposes in 5.3 (5.3.1 to 5.3.9), bent by its believers and its bloc leader as in 5.6.2. The old per-IG stance table is retired (batch 37).
+Each bloc's stances are its ideology's wants and opposes in 5.3 (5.3.1 to 5.3.9), capped at ±2 (5.6.2). The bloc leader does not change them; a leader who is the dynasty's Friend or is hooked can be called on in deals (5.6.2).
 
 ### 4.4.4 Clout formula
 
 Recalculated monthly per jurisdiction.
 
-1. **Base support** (s is now a stratum and g an ideology bloc, batch 37) mixes money power and vote power by the government type's **democratic weight D**:
+1. **Base support** (s is a stratum and g an ideology bloc) mixes money power and vote power by the government type's **democratic weight D**:
 
    `Base_g = (1 - D) × W_g + D × V_g`
 
@@ -373,29 +354,29 @@ Recalculated monthly per jurisdiction.
 - `F_g` = donations and funding to group g over the trailing 12 months. Each month the counted total decays 8% **(T)**, so money must keep flowing.
 - `M` = the jurisdiction's **political market size** = 0.05% of its yearly GDP **(T)**. For a $28T economy M = $14B; for a $1T city, M = $500M; for a $50B city, M = $25M.
 - Square root: the first dollars count most. Funding of M/10 gives +0.063 × MoneyEff; funding of M gives +0.20 × MoneyEff.
-- Money flows into groups through the **Fund Interest Group** action (4.10.1): think tanks, foundations, unions' strike funds, church charities, veterans' associations, militias (Shadow Economy and Security in failed states).
+- Money flows into blocs through the **Fund Ideology** action (4.10.1): think tanks, foundations, unions' strike funds, church charities, veterans' associations, militias (Sovereigntists and Chuds in failed states).
 - Under Campaign Finance: Public Funding Only, money to groups counts at half **(T)**.
 
 **Media.**
 
 `MediaBias_g = 0.5 × Σ_outlets (audience share × alignment(outlet, g))`, clamped to -0.3 to +0.3 **(T)**
 
-- Each media outlet (a company or facility of sector Media) has an **audience share** in each hub and country and an **editorial line**: alignment from -1 to +1 with each group, set by its owner (the owner's controlling head picks the line; changing it takes 4 weeks and costs 5% audience **(T)**).
-- Owning 20% of a country's audience and pushing a group at +1 gives that group +10% base clout. Media ownership is capped by G3 Media Ownership.
-- **Ad campaigns** and **psyops** (from 05) also apply to groups: a campaign "for" a group adds `+0.02` (ads) or `+0.05` (psyops) to its MediaBias per active campaign, decaying weekly as in 4.10.1 **(T)**.
+- Each media outlet ([16-media.md](16-media.md)) has an **audience share** in each hub and country and an **editorial line**: alignment from -1 to +1 with each bloc, set by its owner (the owner's controlling head picks the line; changing it takes 4 weeks and costs 5% audience **(T)**).
+- Owning 20% of a country's audience and pushing a bloc at +1 gives that bloc +10% base clout. Media ownership is capped by G3 Media Ownership.
+- **Ad campaigns** and **psyops** (from 05) also apply to blocs: a campaign "for" a bloc adds `+0.02` (ads) or `+0.05` (psyops) to its MediaBias per active campaign, decaying weekly as in 4.10.1 **(T)**.
 
 ### 4.4.6 Approval and angry groups
 
 Monthly: `Approval_g = Σ over all current laws of stance_g(current position) + 2 if in government - 2 if marginalized + event modifiers`, clamped to -10 to +10 **(T)**.
 
-- **Angry** (≤ -5) and clout ≥ 10%: -3 stability per angry group, +5 unrest in the strata supporting it, starts **political movement** events (protests, strikes, petitions). Angry Security Establishment raises coup risk (4.8.4).
-- **Loyal** (≥ +5): +1 stability per loyal group with clout ≥ 10%.
+- **Angry** (≤ -5) and clout ≥ 10%: -3 stability per angry bloc, +5 unrest in the strata supporting it, starts **political movement** events (protests, strikes, petitions). Angry Chuds raise coup risk (4.8.3).
+- **Loyal** (≥ +5): +1 stability per loyal bloc with clout ≥ 10%.
 
 ### 4.4.7 Parties
 
-- In democracies, **parties** bundle 1 to 3 ideology blocs (batch 37); a party's core ideology is the one with the most of its voters. Each bloc belongs to at most one party per country at a time. Country data defines starting parties (fictional names for real-world equivalents, for example a centre-right party of Industrialists, Financiers, Landowners and Traditionalists).
-- A party's stance on any law is the clout-weighted average stance of its member IGs.
-- Parties can split when two member IGs have stances 3+ apart on a law that is being debated **and** both have clout ≥ 10% (yearly check, 15% chance **(T)**), and merge when two parties together could win a majority and their IG stances average within 1 on the top 5 debated laws.
+- In democracies, **parties** bundle 1 to 3 ideology blocs; a party's core ideology is the one with the most of its voters. Each bloc belongs to at most one party per country at a time. Country data defines starting parties (fictional names for real-world equivalents, for example a centre-right party of Landites, Accelerationists and Chuds).
+- A party's stance on any law is the clout-weighted average stance of its member blocs.
+- Parties can split when two member blocs have stances 3+ apart on a law that is being debated **and** both have clout ≥ 10% (yearly check, 15% chance **(T)**), and merge when two parties together could win a majority and their bloc stances average within 1 on the top 5 debated laws.
 - Managed democracies have a **ruling party** plus licensed opposition; one-party states have one party with **factions** (4.8.2).
 
 ---
@@ -409,14 +390,14 @@ There are seven categories. The six from 08, plus **Governance**, which governs 
 | Category | Laws |
 |---|---|
 | Economy | E1 Income Tax, E2 Corporate Tax, E3 Capital Gains Tax, E4 Inheritance and Gift Tax, E5 Tariffs, E6 Industrial Subsidies, E7 Price Controls, E8 Environmental Regulation, E9 Regional Taxes, E10 Property Tax, E11 Zoning |
-| Corporate | C1 Foreign Ownership, C2 Branch Office Requirements, C3 Antitrust, C4 Corporate Governance, C5 Bankruptcy, C6 Special Economic Zones |
+| Corporate | C1 Foreign Ownership, C2 Branch Office Requirements, C4 Corporate Governance, C5 Bankruptcy, C6 Special Economic Zones |
 | Finance | F1 Central Bank Independence, F2 Capital Controls, F3 Exchange Rate Regime, F4 Securities Regulation, F5 Banking Secrecy, F6 Trusts and Foundations, F7 Bailout Policy |
 | Labor | L1 Minimum Wage, L2 Union Rights, L3 Automation Tax, L4 Gig Worker Status, L5 Immigration |
-| Tech and body | T1 Cyberware, T2 Data Privacy, T3 AI Regulation, T4 Surveillance |
-| Security | S1 Private Military Contractors, S2 Policing Model, S3 Emergency Powers |
+| Tech | T2 Data Privacy, T3 AI Regulation, T4 Surveillance |
+| Security | S2 Policing Model, S3 Emergency Powers |
 | Governance | G1 Campaign Finance, G2 Lobbying Rules, G3 Media Ownership, G4 Political Pluralism ([5-ideology.md](5-ideology.md) 5.10) |
 
-All rates and multipliers below are **(T)**.
+Law codes are kept stable, so some numbers are unused (C3, T1, S1). All rates and multipliers below are **(T)**.
 
 ### 4.5.2 Economy laws
 
@@ -427,9 +408,9 @@ All rates and multipliers below are **(T)**.
 | **E3 Capital Gains Tax** (on realized gains of characters and trusts) | N | **Exempt** 0% · **Low** 10% · **Moderate** 20% · **As Income** (equal to E1 top rate) |
 | **E4 Inheritance and Gift Tax** (on personal assets passing by will or gift; family trust treatment set by F6) | N | **None** 0% · **Low** 15% above $10M · **Moderate** 30% above $5M · **High** 45% above $1M · **Dynastic Wealth Tax** 45% above $1M plus 1% per year on net worth above $50M |
 | **E5 Tariffs** (on imported industry output; raises the industry's price index, 4.0) | N exclusive | **Free Trade** 0% · **Low** 5% · **Moderate** 12% · **High** 25% · **Autarky** 50% plus import quotas at 50% of last year's volume |
-| **E6 Industrial Subsidies** | N, R may add | **None** · **Targeted** 10% capex grant in strategic sectors (chips, energy, defense, cyberware) · **Broad** 15% capex grant and 5% opex rebate in all manufacturing · **State Champions** 30% capex grant and state loans at policy rate -2% for named companies, chosen by the government (lobbyable) |
-| **E7 Price Controls** | N floor, R may tighten | **Free Prices** · **Essentials Capped** food, energy and residential rent capped at 110% of their 12-month average · **Broad Controls** most finished goods capped at 105%, shortages likely · **Planned Prices** government sets prices monthly; black market prices at 150 to 300% |
-| **E8 Environmental Regulation** | N floor, R and L may tighten | **Lax** no compliance cost · **Standard** +3% operating cost for heavy industry · **Strict** +8% and permits for new heavy facilities take 2× as long · **Carbon Pricing** +12% for energy-intensive facilities, revenue rebated to population (unrest -2) |
+| **E6 Industrial Subsidies** | N, R may add | **None** · **Targeted** 10% capex grant in strategic industries (chips, energy, defense) · **Broad** 15% capex grant and 5% opex rebate in all Industry-sector industries · **State Champions** 30% capex grant and state loans at policy rate -2% for named companies, chosen by the government (lobbyable) |
+| **E7 Price Controls** | N floor, R may tighten | **Free Prices** · **Essentials Capped** energy (Oil, Gas, Power utilities) and residential rent price indices capped at 110% of their 12-month average · **Broad Controls** most industry price indices capped at 105%, shortages likely · **Planned Prices** government sets industry prices monthly; Black market prices at 150 to 300% |
+| **E8 Environmental Regulation** | N floor, R and L may tighten | **Lax** no compliance cost · **Standard** +3% operating cost for heavy industries · **Strict** +8% and permits for new capacity in heavy industries take 2× as long · **Carbon Pricing** +12% for energy-intensive industries, revenue rebated to population (unrest -2) |
 | **E9 Regional Taxes** | R exclusive | **None** · **Low** income +3%, corporate +3%, sales 5% · **Moderate** income +6%, corporate +6%, sales 8% · **High** income +10%, corporate +9%, sales 10% |
 | **E10 Property Tax** | L exclusive | **Minimal** 0.3% of assessed value per year · **Low** 0.8% · **Moderate** 1.5% · **High** 2.5% · **Vacancy Penalty** 1.5% plus 3% on empty units |
 | **E11 Zoning** | L exclusive | **Restrictive** rezoning needs council two-thirds; new building 2× permit time; real estate values +10% · **Standard** majority; normal times · **Permissive** rezoning by mayor; permit time ×0.6 · **Developer-Led** holders with Power Broker influence (25%) get automatic approval; permit time ×0.4; unrest +3 in Residential and Slums |
@@ -440,7 +421,6 @@ All rates and multipliers below are **(T)**.
 |---|---|---|
 | **C1 Foreign Ownership** | N exclusive | **Open** no limits · **Screened** Foreign Investment Review for foreign stakes ≥ 25% in strategic sectors · **Capped Strategic** foreign voting stake ≤ 49% in strategic sectors, screened elsewhere · **Capped All** foreign voting stake ≤ 49% in every sector · **Closed** foreigners may only operate through a branch office with a state partner (see C2 State Golden Share) |
 | **C2 Branch Office Requirements** | N exclusive | **None** · **Local Directors** at least one third of board seats held by citizens · **Local Partner 30%** a local holder must own ≥ 30% of voting stock · **Local Partner 51% and Tech Transfer** local holder ≥ 51%; each year one tech level of the parent in that sector is shared with the partner · **State Golden Share** State-Linked charter mandatory (government veto over sales, dividends abroad and executive appointments) |
-| ~~**C3 Antitrust**~~ (removed, batch 56) | N exclusive | **Laissez-faire** no review · **Light** review if the deal creates > 50% share in a sector in the country · **Standard** review above 35% share, or deal value > 0.5% of GDP · **Strict** review above 25%; authority may order breakup above 40% · **Trust-Busting** review above 20%; yearly review of every company above 30% share, breakup chance 25% per review |
 | **C4 Corporate Governance** | N exclusive | **Founder-Friendly** dual-class unlimited, poison pills and staggered boards allowed · **Standard** dual-class up to 10 votes per share, pills need a shareholder vote · **Shareholder Primacy** no new dual-class listings, pills banned, one third independent directors · **Stakeholder Boards** workers elect one third of board seats in companies with > 2,000 employees in the country |
 | **C5 Bankruptcy** | N exclusive | **Creditor-Friendly** liquidation in 2 months, creditors take control · **Reorganization** 6 to 12 months under protection, management stays, equity often survives at 5 to 20% · **State Administration** government administrator appointed; eligible for bailout (4.9.8); equity usually wiped |
 | **C6 Special Economic Zones** | N enables, L applies | **Banned** · **Tax Zones** corporate tax -50% and tariffs waived on re-exports inside zone hubs · **Charter Zones** a zone may set its own E8, E10, E11, L1 to L5 and S2 positions, with national law as the floor for L1 · **Sovereign Charters** a zone may become a corporate sovereign territory (4.12) |
@@ -463,16 +443,15 @@ All rates and multipliers below are **(T)**.
 |---|---|---|
 | **L1 Minimum Wage** (as a share of the median wage) | N floor, R and L may raise | **None** · **Low** 30% · **Moderate** 45% · **High** 60% · **Living Wage** 60% and indexed to inflation monthly |
 | **L2 Union Rights** | N exclusive | **Banned** unions illegal; unrest +5 in Skilled and Unskilled · **Restricted** no strikes in strategic sectors; strike vote needs 60% · **Recognized** normal strikes · **Sectoral Bargaining** wages set sector-wide (+8% wages); strikes spread across a sector |
-| **L3 Automation Tax** | N exclusive | **None** · **Reporting** layoffs from automation > 100 jobs reported (unrest +1) · **Robot Tax** 10% of labor cost saved by automation production methods · **Heavy** 25% of savings plus mandated retraining (+2% labor cost) |
+| **L3 Automation Tax** | N exclusive | **None** · **Reporting** layoffs from automation > 100 jobs reported (unrest +1) · **Robot Tax** 10% of labor cost saved by automation · **Heavy** 25% of savings plus mandated retraining (+2% labor cost) |
 | **L4 Gig Worker Status** | N floor, R may tighten | **Contractors** no benefits · **Portable Benefits** +6% gig labor cost · **Employee Presumption** +18% gig labor cost; gig unrest -5 |
-| **L5 Immigration** | N exclusive | **Closed** labor pools shrink 1% per year · **Skilled Only** Professionals and Skilled pools +1% per year · **Managed** all pools +1% per year · **Open** all pools +2.5% per year; Traditionalist approval -2 |
+| **L5 Immigration** | N exclusive | **Closed** labor pools shrink 1% per year · **Skilled Only** Professionals and Skilled pools +1% per year · **Managed** all pools +1% per year · **Open** all pools +2.5% per year; Chuds approval -2 |
 
-### 4.5.6 Tech and body laws
+### 4.5.6 Tech laws
 
 | Law | Level | Positions and effects |
 |---|---|---|
-| **T1 Cyberware** | N exclusive | **Banned** possession is a crime (exposure +5 per month per implanted character) · **Medical Only** · **Licensed** civilian implants with licence; military-grade banned · **Unrestricted** |
-| **T2 Data Privacy** | N floor, R may tighten | **None** data goods trade freely · **Notice and Consent** data goods output -10% · **Strict** -30%; fines up to 4% of revenue (Data and Cyberware Authority) · **Data Sovereignty** data on citizens must be stored in-country; foreign data facilities cannot serve this market |
+| **T2 Data Privacy** | N floor, R may tighten | **None** personal data is used freely · **Notice and Consent** revenue of data-heavy industries (Ads, Social media, SaaS, Cloud) in the country -10% · **Strict** -30%; fines up to 4% of revenue (Data Authority) · **Data Sovereignty** data on citizens must be stored in-country; foreign Cloud and Data center business units cannot serve this market |
 | **T3 AI Regulation** | N exclusive | **Unregulated** · **Risk-Based** high-risk AI products need certification (8 weeks) · **Licensed Models** frontier models need a licence (lobbyable decision, 3 to 6 months) · **Moratorium** frontier AI development banned; AI advisors illegal |
 | **T4 Surveillance** | N ceiling (federal), N exclusive (unitary) | **Limited** warrants needed; scheme detection ×0.8 · **Expanded** detection ×1.0 · **Mass Surveillance** scheme and psyop detection ×1.5 · **Social Credit** state tracks each character's reputation; low reputation characters cannot travel or hold office |
 
@@ -480,7 +459,6 @@ All rates and multipliers below are **(T)**.
 
 | Law | Level | Positions and effects |
 |---|---|---|
-| ~~**S1 Private Military Contractors**~~ (removed, batch 51) | N exclusive | **Banned** PMCs only through shells (exposure +10 per unit per month) · **Domestic Guarding** unarmed and lightly armed site security · **Licensed** armed contractors and foreign operations with licence · **Unrestricted** PMCs may hold and police territory |
 | **S2 Policing Model** | L within N ceiling | **Community** crime +10%, unrest -3 · **Standard** · **Militarized** crime -15%, unrest +3, protest suppression ×1.5 · **Privatized** companies with Power Broker influence may contract policing of districts they dominate |
 | **S3 Emergency Powers** | N exclusive | **Constitutional Limits** · **Emergency Decrees** executive may decree laws for 90 days · **Standing Emergency** decrees without limit; elections may be postponed (stability -5 per postponement) · **Martial Law** military governs hubs; all local governments suspended |
 
@@ -504,8 +482,8 @@ Proposal ──> Drafting (1 month) ──> Debate (monthly pass rolls) ──> 
 
 | Proposer | How | Cost |
 |---|---|---|
-| Government (AI) | The governing coalition proposes the top law change its leading groups want, at most 2 national bills at a time in democracies, 3 in other types | Free |
-| A dynasty member in office | Legislator: one bill per year. Minister: bills in their portfolio. Head of government: any | Hours, plus Support starts +5 for head of government sponsorship |
+| Government (AI) | The governing coalition proposes the top law change its leading blocs want, at most 2 national bills at a time in democracies, 3 in other types | Free |
+| A dynasty member in office | Legislator: one bill per year. Minister: bills in their portfolio. Head of government: any | Instant, plus Support starts +5 for head of government sponsorship |
 | Any holder through a client politician | **Commission a Bill** action (4.10.1) | 40 PC national, 20 regional, 10 local |
 | Corporate oligarchy Council member | A motion by any seat holder | 10% of its seat weight in PC |
 
@@ -521,24 +499,24 @@ For a bill moving law L to position P:
 
 `Support = Σ_g (Clout_g% × Stance_g(P) / 2) + Sponsor + Lobby + Campaign + Crisis`
 
-- The first term ranges from -100 (every group at --) to +100. Marginalized groups count half.
+- The first term ranges from -100 (every bloc at --) to +100. Marginalized blocs count half.
 - **Sponsor**: +15 if the head of government's coalition proposed it; +5 if a legislator proposed it; +10 if a minister in that portfolio proposed it **(T)**.
 - **Lobby**: the sum of all active lobby support for and against this bill (4.10), capped at ±40 in total.
 - **Campaign**: issue ads and astroturf campaigns (4.10.1).
 - **Crisis**: events, for example "Bank Failure" gives +20 to bailout and banking laws for 3 months.
 
-**Threshold T** by type **(T)**: Liberal democracy +10. Managed democracy 0. One-party state 0 (but State Apparatus stances count double). Corporate oligarchy: no clout vote; see below. Military junta -10 (Security Establishment stances count triple).
+**Threshold T** by type **(T)**: Liberal democracy +10. Managed democracy 0. One-party state 0 (but the ruling ideology's stances count double). Corporate oligarchy: no clout vote; see below. Military junta -10 (Chuds stances count triple).
 
 **Monthly pass chance** = `clamp(10% + 2% × (Support - T), 0%, 75%)` **(T)**.
 
-**Veto by powerful groups**: if a Powerful group (clout ≥ 20%) has stance -- on the position, the pass chance is halved.
+**Veto by powerful blocs**: if a Powerful bloc (clout ≥ 20%) has stance -- on the position, the pass chance is halved.
 
-**Corporate oligarchy voting**: Council seats are weighted by national influence share of each holder with at least 2% share (the rest share a "Public" seat voting with the clout-weighted IG stance). A motion passes with > 50% of weighted votes, at the next monthly Council session. Votes can be bought from other holders (they are characters with opinions, hooks and prices).
+**Corporate oligarchy voting**: Council seats are weighted by national influence share of each holder with at least 2% share (the rest share a "Public" seat voting with the clout-weighted bloc stance). A motion passes with > 50% of weighted votes, at the next monthly Council session. Votes can be bought from other holders (they are characters with opinion tags, hooks and prices).
 
 ### 4.5.11 Repeal, cooldowns and decrees
 
 - A law that was changed cannot be changed again for 12 months (6 months in non-democracies) **(T)**.
-- **Decrees** (Emergency Decrees or above, or any junta or one-party executive): enact immediately, skipping Debate. Cost: stability -3, approval -2 with every group with stance - or -- on it. In a liberal democracy under Emergency Decrees the decree lapses after 90 days unless passed as a normal bill.
+- **Decrees** (Emergency Decrees or above, or any junta or one-party executive): enact immediately, skipping Debate. Cost: stability -3, approval -2 with every bloc with stance - or -- on it. In a liberal democracy under Emergency Decrees the decree lapses after 90 days unless passed as a normal bill.
 - **Court challenge**: any holder can challenge a new law in court for $1M × wealth index (4.10.4) **(T)**. Strike-down chance = `judicial independence × 20%`, rising to `× 60%` for decrees and preemption acts.
 
 ---
@@ -566,15 +544,15 @@ Each legislature uses one system, from country data:
 | System | Seats | Effect |
 |---|---|---|
 | **First past the post** | Each constituency (a hub's wards, or a region) goes to the plurality winner | Big parties overrepresented; local influence matters a lot |
-| **Proportional** | Seats proportional to national vote share, 5% threshold **(T)** | Coalitions common; small IG parties survive |
+| **Proportional** | Seats proportional to national vote share, 5% threshold **(T)** | Coalitions common; small parties survive |
 | **Mixed** | Half each | |
 | **Two-round** (executives) | Runoff between the top two if nobody passes 50% | |
 
-Constituency-level results use the segments of the hubs in that constituency, so **concentrated local influence wins seats** under first past the post.
+Constituency-level results use the strata of the hubs in that constituency, so **concentrated local influence wins seats** under first past the post.
 
 ### 4.6.3 Vote share formula
 
-For each segment s in the constituency and each party (or candidate) p, the game computes a utility, then splits the segment's votes with a softmax.
+For each stratum s in the constituency and each party (or candidate) p, the game computes a utility, then splits the stratum's votes with a softmax.
 
 `U(s,p) = 3 × Ideology(s,p) + Incumbency(p) + Economy(p) + Campaign(p) + Media(s,p) + Ads(s,p) + Psyops(s,p) + Candidate(p) - Scandal(p)`
 
@@ -584,12 +562,12 @@ For each segment s in the constituency and each party (or candidate) p, the game
 
 | Term | Formula **(T)** | Typical range |
 |---|---|---|
-| **Ideology** | `Σ_g Aff(s,g)/100 × Member(g,p)` where Member = 1 if group g is in party p | 0 to 1 |
+| **Ideology** | `Σ_g Aff(s,g)/100 × Member(g,p)` where Member = 1 if bloc g is in party p | 0 to 1 |
 | **Incumbency** | +0.3 for the incumbent party or candidate | 0 to +0.3 |
 | **Economy** (incumbent only) | `-0.6 × max(0, (Unemployment - 5)/5) - 0.5 × max(0, (Inflation - 3)/5) + 0.1 × GDP growth` | -1.5 to +0.4 |
 | **Campaign** | `0.8 × ln(1 + Spend_p / E)` where E = $0.50 × adults in the constituency, and Spend includes party funds, donations and independent expenditure, multiplied by Money effectiveness | 0 to about +2.0 |
-| **Media** | `1.0 × (audience share of outlets endorsing p) - 0.5 × (audience share attacking p)` among segment s | -0.5 to +1.0 |
-| **Ads** | Each active ad campaign for p: +0.15 (broad) or +0.3 (targeted at one segment); decays 25% per week | 0 to +0.6 |
+| **Media** | `1.0 × (audience share of outlets endorsing p) - 0.5 × (audience share attacking p)` among stratum s | -0.5 to +1.0 |
+| **Ads** | Each active ad campaign for p: +0.15 (broad) or +0.3 (targeted at one stratum); decays 25% per week | 0 to +0.6 |
 | **Psyops** | Each active psyop: +0.3 (broad) or +0.6 (targeted); decays 35% per week; exposure (4.10.3) | 0 to +1.2 |
 | **Candidate** | `0.03 × (Persuasion skill - 10)` + traits: Media Darling +0.3, Scandal-Ridden -0.5, Honest +0.1, Party School +0.1, local origin +0.2 in their birth hub | -0.6 to +0.9 |
 | **Scandal** | Fresh scandal: minor 0.3, major 0.8, criminal 1.5; halves every 4 weeks; a debate or apology event can halve it at once | 0 to 1.5 |
@@ -605,18 +583,18 @@ _Ideology update: the Ideology weight drops from 3 to 2 and a party-platform ter
 `Turnout_s = BaseTurnout_s × TypeMod + GOTV_s + Polarization - Apathy`, clamped 10% to 95% **(T)**
 
 - **BaseTurnout**: table in 4.4.1. **TypeMod**: liberal democracy 1.0, managed democracy 0.85.
-- **GOTV** (get out the vote) spending targeted at a segment: +1 point per $0.25 × segment adults spent, cap +8 points per party.
-- **Polarization**: +5 points if the top two are within 5 points in polls; +3 if an Angry group backs a party.
+- **GOTV** (get out the vote) spending targeted at a stratum: +1 point per $0.25 × stratum adults spent, cap +8 points per party.
+- **Polarization**: +5 points if the top two are within 5 points in polls; +3 if an Angry bloc backs a party.
 - **Apathy**: `0.2 × (60 - Stability)` when stability < 60.
-- Under Social Credit, Unemployed and Gig turnout -10 (fear of registration).
+- Under Social Credit, Permanent Underclass turnout -10 (fear of registration).
 
 ### 4.6.5 Campaign event chain
 
 A campaign is an event chain with weekly beats. Typical national chain:
 
 1. **Declaration** (week 1): candidates and slates set. Dynasty members can declare (4.7.2).
-2. **Fundraising Dinner** (weekly option): host for 4 hours; raises `$20k × Persuasion skill × local influence share × 10` **(T)** from local elites.
-3. **Endorsements** (weeks 2 to 8): each IG with clout ≥ 10% endorses a party or stays neutral; endorsement is +0.2 utility with that IG's segments; IG endorsements can be lobbied (10 PC national, 3 PC local).
+2. **Fundraising Dinner** (weekly option): host one; raises `$20k × Persuasion skill × local influence share × 10` **(T)** from local elites.
+3. **Endorsements** (weeks 2 to 8): each bloc with clout ≥ 10% endorses a party or stays neutral; endorsement is `+0.2 × Aff(s,g)/100` utility in each stratum s, so it counts where the bloc's believers are; bloc endorsements can be lobbied (10 PC national, 3 PC local).
 4. **Debate** (once or twice): Persuasion skill contest, ±0.3 utility to the winner/loser, critical failure (roll 1 in 20) is a minor scandal.
 5. **October Surprise** (last 3 weeks): 20% chance per campaign that a scandal or exposé event fires on a random leading candidate **(T)**; rivals can schedule one with a Leak Scandal scheme.
 6. **Election Night**: hourly results.
@@ -624,13 +602,13 @@ A campaign is an event chain with weekly beats. Typical national chain:
 
 ### 4.6.6 Results and government formation
 
-- Seats are assigned by the electoral system. A party or coalition with > 50% of seats forms the government. Coalition formation (proportional systems) takes 2 to 12 weeks **(T)**; the largest party invites partners whose IG stances are closest; the player can bribe or pay for a partner to join or refuse (decision of the partner's leader, 4.3.5).
-- The governing coalition's IGs get the Office clout bonus (4.4.4). The new government:
+- Seats are assigned by the electoral system. A party or coalition with > 50% of seats forms the government. Coalition formation (proportional systems) takes 2 to 12 weeks **(T)**; the largest party invites partners whose bloc stances are closest; the player can bribe or pay for a partner to join or refuse (decision of the partner's leader, 4.3.5).
+- The governing coalition's blocs get the Office clout bonus (4.4.4). The new government:
   - proposes its top law changes in the first 3 months (agenda bonus +5 support during that window **(T)**),
   - replaces ministers, and may replace regulator heads whose term allows (4.9.2) and the central bank governor (if F1 is Coordinated or looser),
   - reviews **government contracts**: contracts awarded by the previous government to holders whose dynasty backed the losing side have a 10% chance each of cancellation in liberal democracies, 40% in managed democracies **(T)**.
-- **Market reaction**: the country's index and currency move by `-3% × (approval change of Financiers + Industrialists)/10` over the next week **(T)**.
-- A dynasty that funded the winning side gets **favors** (4.7.4); the losing side's donors get "Backed the Loser": -10 opinion of new ministers for 2 years.
+- **Market reaction**: the country's index and currency move by `-3% × (average approval change of Liberals, Landites and Accelerationists)/5` over the next week **(T)**.
+- A dynasty that funded the winning side gets **favors** (4.7.4); the losing side's donors get "Backed the Loser": a -10 opinion push from each new minister, and the label lasts 2 years.
 
 ### 4.6.7 Managed elections
 
@@ -638,7 +616,7 @@ Managed democracies run the same formula with three extra terms:
 
 | Term | Effect **(T)** |
 |---|---|
-| **Administrative resource** | Incumbent +0.6 utility in every segment |
+| **Administrative resource** | Incumbent +0.6 utility in every stratum |
 | **Fraud** | After counting, `Corruption / 5` points of vote share move from the opposition to the incumbent (50 corruption = 10 points). Visible fraud above 8 points: 15% chance of a protest wave (unrest +10, stability -5) |
 | **Disqualification** | Any opposition candidate polling > 35% has a 30% chance per campaign of being disqualified, unless protected by a patron with ≥ 25% national influence |
 
@@ -650,29 +628,29 @@ Backing the opposition in a managed democracy is legal but costs: each $1M donat
 
 ### 4.7.1 Office ladder
 
-| Office | Level | How filled | Requirements **(T)** | Time cost per week | Powers | Influence and PC |
+| Office | Level | How filled | Requirements **(T)** | Time | Powers | Influence and PC |
 |---|---|---|---|---|---|---|
-| **City Councilor** | Local | Elected (appointed in one-party states) | Age 21, resident of the hub | 8 h | One council vote on local decisions and laws | +2 share points in the hub; +5 PC per month |
-| **Mayor** | Local | Elected or appointed | Age 25, resident | 30 h | Local agenda (propose local laws), whip ±10, appoint city officials and police chief, sign local contracts up to 2% of city budget alone | +10 points in the hub; +20 PC |
-| **Regional Legislator** | Regional | Elected | Age 25 | 15 h | Regional vote, one bill per year | +1 point in region; +5 PC |
-| **Governor or Premier** | Regional | Elected or appointed | Age 30 | 40 h | Regional agenda, regional contracts, pardons for regional crimes | +8 points in region; +25 PC |
-| **National Legislator** | National | Elected | Age 25, citizen | 20 h | National vote, one bill per year, committee hearings (can summon executives) | +0.5 point in country; +8 PC |
-| **Minister** | National | Appointed by head of government | Citizen; relevant skill ≥ 12 | 40 h | Portfolio bills, portfolio decisions (permits, licences, contracts), oversight of related agencies | +3 points; +30 PC |
-| **Head of Government or State** | National | Elected, appointed by party, or seized | Age 35, citizen | 60 h | National agenda, appoint ministers and agency heads, decrees where allowed, diplomacy | +10 points; +80 PC |
-| **Regulator Head** | National | Appointed (term 5 years, LD; at pleasure, others) | Relevant skill ≥ 14 (Finance for securities and banking, Intrigue for financial police) | 40 h | Opens and closes investigations (4.9) | +2 points; +20 PC |
-| **Central Bank Governor** | National | Appointed (term 6 years, LD) | Finance ≥ 18 | 40 h | Policy rate, FX intervention (see [07-markets.md](../07-markets.md)) | +3 points; +30 PC |
-| **Ambassador** | National | Appointed | Persuasion ≥ 10 | 30 h | +5 relation between home and host per year; trade mission events | +1 point in host country |
-| **Party Official** | National or regional | Party appointment (one-party states) | Party membership; Party School trait helps | 20 to 40 h | Faction strength (4.8.2) | As minister at equivalent level |
-| **General** | National | Military career; junta council seat | Military Contractor education or security career | 40 h | Coup participation, Security Establishment approval | Junta council member: +5 points |
-| **Council of Stakeholders seat** | National | Influence share ≥ 2% (corporate oligarchy) | Any holder | 10 h | Weighted vote on motions | Built into share |
+| **City Councilor** | Local | Elected (appointed in one-party states) | Age 21, resident of the hub | Instant votes | One council vote on local decisions and laws | +2 share points in the hub; +5 PC per month |
+| **Mayor** | Local | Elected or appointed | Age 25, resident | Instant decisions; in-person meetings tick | Local agenda (propose local laws), whip ±10, appoint city officials and police chief, sign local contracts up to 2% of city budget alone | +10 points in the hub; +20 PC |
+| **Regional Legislator** | Regional | Elected | Age 25 | Instant votes | Regional vote, one bill per year | +1 point in region; +5 PC |
+| **Governor or Premier** | Regional | Elected or appointed | Age 30 | Instant decisions; in-person meetings tick | Regional agenda, regional contracts, pardons for regional crimes | +8 points in region; +25 PC |
+| **National Legislator** | National | Elected | Age 25, citizen | Instant votes; hearings tick | National vote, one bill per year, committee hearings (can summon executives) | +0.5 point in country; +8 PC |
+| **Minister** | National | Appointed by head of government | Citizen; relevant skill ≥ 12 | Instant decisions; in-person meetings tick | Portfolio bills, portfolio decisions (permits, licences, contracts), oversight of related agencies | +3 points; +30 PC |
+| **Head of Government or State** | National | Elected, appointed by party, or seized | Age 35, citizen | Instant decisions; in-person meetings and travel tick | National agenda, appoint ministers and agency heads, decrees where allowed, diplomacy | +10 points; +80 PC |
+| **Regulator Head** | National | Appointed (term 5 years, LD; at pleasure, others) | Relevant skill ≥ 14 (Finance for securities and banking, Intrigue for financial police) | Instant decisions | Opens and closes investigations (4.9) | +2 points; +20 PC |
+| **Central Bank Governor** | National | Appointed (term 6 years, LD) | Finance ≥ 18 | Instant decisions | Policy rate, FX intervention (see [07-markets.md](../07-markets.md)) | +3 points; +30 PC |
+| **Ambassador** | National | Appointed | Persuasion ≥ 10 | Based in the host country (travel ticks) | +5 relation between home and host per year; trade mission events | +1 point in host country |
+| **Party Official** | National or regional | Party appointment (one-party states) | Party membership; Party School trait helps | Instant; party sessions tick | Faction strength (4.8.2) | As minister at equivalent level |
+| **General** | National | Military career; junta council seat | Military education or security career | Instant; coup nights tick | Coup participation, Chuds approval | Junta council member: +5 points |
+| **Council of Stakeholders seat** | National | Influence share ≥ 2% (corporate oligarchy) | Any holder | Instant votes | Weighted vote on motions | Built into share |
 
-Holding office **adds influence in that place** as above (05), adds PC, and grants **Political Office** status on the character. Offices are not inherited (04), but a dynasty that held an office for 8+ years gets +0.2 utility for family members running for the same office ("Name Recognition") **(T)**.
+Office has no weekly time cost: votes and decisions are instant, and in-person meetings, hearings and travel burn ticks. Holding office **adds influence in that place** as above (05), adds PC, and grants **Political Office** status on the character. Offices are not inherited (04), but a dynasty that held an office for 8+ years gets +0.2 utility for family members running for the same office ("Name Recognition") **(T)**.
 
 ### 4.7.2 Running dynasty members for office
 
 - **Eligibility**: age and citizenship above; criminal conviction bars office for 10 years in liberal democracies; Social Credit bars low-reputation characters.
-- **Declaring** costs 10 PC (local), 25 (regional), 60 (national) **(T)** and requires a party nomination in proportional systems: a party nominates the candidate with the highest `Persuasion skill + opinion of party leader / 5 + 10 × donations to the party / E` (E from 4.6.3). In first past the post systems, primaries use the same vote formula among the party's segments.
-- **The candidate's time**: campaigning takes 20 h per week (local), 40 h (national). Executive roles at a company must be delegated; a CEO who campaigns gives their company -10% efficiency for the campaign.
+- **Declaring** costs 10 PC (local), 25 (regional), 60 (national) **(T)** and requires a party nomination in proportional systems: a party nominates the candidate with the highest `Persuasion skill + opinion of party leader / 5 + 10 × donations to the party / E` (E from 4.6.3; opinion is the tag read as a number, 4.3.5). In first past the post systems, primaries use the same vote formula among the party's strata.
+- **The candidate's time**: campaign events (rallies, debates, fundraisers) burn ticks and keep the candidate busy for most of each campaign day **(T)**. Executive roles at a company must be delegated; a CEO who campaigns gives their company -10% efficiency for the campaign.
 - **Conflict of interest** once elected (4.7.5).
 - **Benefits**: direct votes, agenda power, office influence, appointment power, and immunity from local investigations while in a head-of-government role (managed democracy and below: always; liberal democracy: never).
 
@@ -680,7 +658,7 @@ Holding office **adds influence in that place** as above (05), adds PC, and gran
 
 Appointed posts (ministers, regulator heads, central bank governor, ambassadors, mayors in managed and one-party systems, party posts) are filled by an **appointer** character choosing among 3 to 5 candidates. AI generates rivals with appointment scores 20 to 40 **(T)**.
 
-`Appointment score = relevant skill + opinion of appointer / 5 + PC spent / 5 + 15 × favors called on the appointer + 10 if an IG in government endorses + 5 × relevant traits (Law School for justice, Quant PhD for central bank, Military Contractor for defense)` **(T)**
+`Appointment score = relevant skill + opinion of appointer / 5 + PC spent / 5 + 15 × favors called on the appointer + 10 if a bloc in government endorses + 5 × relevant traits (Law School for justice, Quant PhD for central bank, a military background for defense)` **(T)**
 
 - The player can push a **family member**, a **client** (4.7.4), or simply lobby for any non-hostile candidate.
 - Appointments fire when a post is vacant: new government, death, scandal resignation, term end (yearly check).
@@ -726,18 +704,18 @@ A dynasty member in office who, directly or through the family trust, holds asse
 
 `RS = 0.4 × Stability + 0.3 × SecurityLoyalty + 0.3 × RulingClout` **(T)**
 
-- **SecurityLoyalty** (0 to 100) = `50 + 5 × approval of Security Establishment`, plus 10 if the head of government is a general (junta), minus 15 if the military's budget was cut in the last 12 months.
-- **RulingClout** = combined clout (%) of the IGs in the ruling coalition, capped at 100.
+- **SecurityLoyalty** (0 to 100) = `50 + 5 × approval of the Chuds` (the bloc the officer corps leans to), plus 10 if the head of government is a general (junta), minus 15 if the military's budget was cut in the last 12 months.
+- **RulingClout** = combined clout (%) of the blocs in the ruling coalition, capped at 100.
 - Liberal democracies use RS only for coup checks during Standing Emergency or Martial Law.
 
 ### 4.8.2 Party struggles (one-party states and managed democracies)
 
-- The ruling party has 2 to 4 **factions** (data-driven per country, fictional names). Templates: **Reformists** (aligned with Tech Sector, Financiers, Professionals), **Hardliners** (Security Establishment, State Apparatus), **Princelings** (dynastic networks inside the party; Landowners, Industrialists), **Technocrats** (State Apparatus, Tech Sector).
-- **Faction strength** (monthly) = `clout of aligned IGs + 5 × officials in top posts + 0.5 × PC donated by backers + MoneyEff × 0.1 × sqrt(funds / M) × 100 + scandal effects` **(T)**.
+- The ruling party has 2 to 4 **factions** (data-driven per country, fictional names). Templates: **Reformists** (aligned with Accelerationists and Liberals), **Hardliners** (Chuds and the ruling ideology), **Princelings** (dynastic networks inside the party; Landites), **Technocrats** (the ruling ideology and Accelerationists).
+- **Faction strength** (monthly) = `clout of aligned blocs + 5 × officials in top posts + 0.5 × PC donated by backers + MoneyEff × 0.1 × sqrt(funds / M) × 100 + scandal effects` **(T)**.
 - **Yearly Plenum**: the strongest faction gets one top post (minister or province chief). **Party Congress** every 5 years: the strongest faction names the party leader and head of government; ties are broken by the incumbent leader's choice.
 - **Backing a faction** (player action): donate through a local partner or front (money), spend PC, provide jobs and board seats to faction members' relatives (patronage, +1 favor each), or run a Dig Up Dirt scheme against a rival faction leader.
 - **Purges**: after a Congress, each losing faction has a 50% chance to suffer an **Anti-Corruption Campaign** **(T)**. Every holder that backed it with more than 10 PC or $1M in the past 2 years gets +30 exposure with the Financial Police there, and its branch office and local partner face a seizure ladder step (4.9.10).
-- **Ruling family variant**: replace factions with **branches of the ruling family** (2 to 3 princes or princesses as characters). Succession on the ruler's death is decided by a family council: score = `Persuasion skill + opinion of the ruler / 5 + Security Establishment backing + foreign backing`. The player can marry into a branch (04), fund one, or hold hooks over its members.
+- **Ruling family variant**: replace factions with **branches of the ruling family** (2 to 3 princes or princesses as characters). Succession on the ruler's death is decided by a family council: score = `Persuasion skill + opinion of the ruler / 5 + Chuds backing + foreign backing`. The player can marry into a branch (04), fund one, or hold hooks over its members.
 
 ### 4.8.3 Monthly coup risk
 
@@ -748,9 +726,9 @@ A coup plot can form on its own (AI generals) or be started by a holder (4.8.4).
 | Condition | Chance |
 |---|---|
 | RS ≥ 60 | 0% |
-| RS 45 to 59 and Security Establishment approval ≤ -5 | 1% |
-| RS 30 to 44 | 2%, doubled if Security Establishment is Angry |
-| RS < 30 | 5%, doubled if Security Establishment is Angry |
+| RS 45 to 59 and Chuds approval ≤ -5 | 1% |
+| RS 30 to 44 | 2%, doubled if the Chuds are Angry |
+| RS < 30 | 5%, doubled if the Chuds are Angry |
 | Military junta (counter-coup) | ×1.5 |
 | Liberal democracy | Only under Standing Emergency or Martial Law, or Stability < 20; then ×0.5 |
 
@@ -758,15 +736,14 @@ A coup plot can form on its own (AI generals) or be started by a holder (4.8.4).
 
 **Coup strength (CS)** of a plot:
 
-`CS = PlotterMilitary + PMC + Bribes + ForeignBacking + Popular` **(T)**
+`CS = PlotterMilitary + Bribes + ForeignBacking + Popular` **(T)**
 
 | Term | How it is gained **(T)** |
 |---|---|
 | **PlotterMilitary** | Share of armed forces commanded by plotting generals (10 to 40, from the generals recruited) |
-| **PMC** | `2 × PMC units × (10 / MSI)`, cap 30. A **PMC unit** is about 200 contractors, costs $5M per month while deployed. **MSI** (military size index) is 1 (tiny state) to 100 (great power), from country data |
-| **Bribes** | +1 per $10M × (MSI / 10) spent buying neutral units, cap 15 |
+| **Bribes** | +1 per $10M × (MSI / 10) spent buying neutral units, cap 15. **MSI** (military size index) is 1 (tiny state) to 100 (great power), from country data |
 | **ForeignBacking** | +5 to +15 if a country with relation ≥ 50 to the plotters backs it (AI decision, lobbyable with 30 PC in the backing country) |
-| **Popular** | +5 if an Angry IG with clout ≥ 15% supports the plotters; -10 if the regime's ruling IGs have combined clout ≥ 60% |
+| **Popular** | +5 if an Angry bloc with clout ≥ 15% supports the plotters; -10 if the regime's ruling blocs have combined clout ≥ 60% |
 
 **Success chance** = `clamp(50% + 1.5% × (CS - RS), 5%, 90%)` **(T)**
 
@@ -775,54 +752,45 @@ A coup plot can form on its own (AI generals) or be started by a holder (4.8.4).
 | Step | Duration | What happens | Leak chance |
 |---|---|---|---|
 | 1. **Sound Out the Generals** | 2 to 4 weeks | Recruit generals one by one: success per general = `40% + 2% × (your Intrigue - 10) + general's opinion of you / 5 - 20% if the general is Loyal or Honest` **(T)** | 10% per week |
-| 2. **Assemble** | 2 to 6 weeks | Deploy PMC units (needs S1 Licensed or Unrestricted, or smuggle via shells: +15 exposure per unit), spend bribes, arrange foreign backing, plan targets | 5% per week, +1% per PMC unit |
-| 3. **Night of the Coup** | 6 to 24 hourly turns | Three objectives: seize the **capital hub government buildings**, the **national broadcaster**, the **airport and central bank**. Each objective rolls the success chance once; 2 of 3 wins. Player options each turn: commit reserves (+5 CS), negotiate with a wavering general, cut the internet (needs a netrunning asset) | |
+| 2. **Assemble** | 2 to 6 weeks | Spend bribes, arrange foreign backing, plan targets | 5% per week |
+| 3. **Night of the Coup** | 6 to 24 hourly turns | Three objectives: seize the **capital hub government buildings**, the **national broadcaster**, the **airport and central bank**. Each objective rolls the success chance once; 2 of 3 wins. Player options each turn: commit reserves (+5 CS), negotiate with a wavering general, cut the internet (needs a backdoor in the country's telecom systems, [17-hacking.md](17-hacking.md)) | |
 | 4. **Aftermath** | 4 to 12 weeks | Recognition events, sanctions, purges, contracts | |
 
-**Leaks**: a leak gives the regime warning: RS +10 for the coup, plotting generals arrested (lose them), and the backer gains +40 exposure with the Financial Police and the Security Establishment's hostility. A leaked plot can still proceed at reduced strength.
+**Leaks**: a leak gives the regime warning: RS +10 for the coup, plotting generals arrested (lose them), and the backer gains +40 exposure with the Financial Police and the Chuds' hostility. A leaked plot can still proceed at reduced strength.
 
 **Outcomes:**
 
 | Outcome | Effects **(T)** |
 |---|---|
-| **Success** (2 or 3 objectives) | Government type becomes Military junta (or the plotters' chosen type if a civilian front was arranged). The backer gets: a hook on the junta leader, 2 favors with each plotting general, first refusal on state assets being privatized, +15 bid score on all contracts for 3 years, Security Establishment approval of the backer +5. Liberal democracies: relation -30 with the new regime; 60% chance each that a liberal democracy bloc imposes Tier 1 sanctions, 25% Tier 2. If the backer is exposed (exposure ≥ 50 with any agency of a liberal democracy), the backer's characters may be listed under Tier 1 sanctions there. Stability -15 |
-| **Failure** (0 objectives, or 1 objective with CS < RS) | Plotting generals executed or jailed. Backer: all assets in the country frozen, seizure ladder jumps to Seizure for its branch offices, PMC units lost, its characters in the country arrested (Intrigue escape roll), exposure 100 with the regime's agencies, reputation -30 globally, "Coup Plotter" notoriety for 10 years. Regime RS +15, Stability +5 (rally effect) |
+| **Success** (2 or 3 objectives) | Government type becomes Military junta (or the plotters' chosen type if a civilian front was arranged). The backer gets: a hook on the junta leader, 2 favors with each plotting general, first refusal on state assets being privatized, +15 bid score on all contracts for 3 years, Chuds approval of the backer +5. Liberal democracies: relation -30 with the new regime; 60% chance each that a liberal democracy bloc imposes Tier 1 sanctions, 25% Tier 2. If the backer is exposed (exposure ≥ 50 with any agency of a liberal democracy), the backer's characters may be listed under Tier 1 sanctions there. Stability -15 |
+| **Failure** (0 objectives, or 1 objective with CS < RS) | Plotting generals executed or jailed. Backer: all assets in the country frozen, seizure ladder jumps to Seizure for its branch offices, its characters in the country arrested (Intrigue escape roll), exposure 100 with the regime's agencies, reputation -30 globally, "Coup Plotter" notoriety for 10 years. Regime RS +15, Stability +5 (rally effect) |
 | **Stalemate** (exactly 1 of 3 objectives taken and CS ≥ RS) | Civil conflict: background war "Civil War" starts (4.11.6). Stability -30. Both sides seek backers |
 
 ### 4.8.5 Revolutions
 
 **Revolution pressure (RP)** accumulates monthly per country **(T)**:
 
-- If Stability < 30: `RP += (30 - Stability) / 2 + 2 × (number of Angry IGs)`.
+- If Stability < 30: `RP += (30 - Stability) / 2 + 2 × (number of Angry blocs)`.
 - If Stability > 40: `RP -= 5`.
 - RP never goes below 0.
 
 | RP | Stage | Effects |
 |---|---|---|
-| 25 | **Unrest** | Protests in the largest hubs: facility output -5%, real estate in Financial District -3% per month |
-| 50 | **Uprising** | Event chain begins: Mass Protest → General Strike (all facilities in affected hubs output -40% while it lasts, 1 to 4 weeks) → Clashes (Militarized policing: RP -10 but Stability -5; Community policing: RP +5). A revolutionary **coalition** forms from Angry IGs |
-| 100 | **Revolution** | Government falls. The new type depends on the coalition's leading group (below). A "Revolutionary Council" rules for 3 to 12 months |
+| 25 | **Unrest** | Protests in the largest hubs: business unit output in them -5%, real estate in Financial District -3% per month |
+| 50 | **Uprising** | Event chain begins: Mass Protest → General Strike (all business units in affected hubs output -40% while it lasts, 1 to 4 weeks) → Clashes (Militarized policing: RP -10 but Stability -5; Community policing: RP +5). A revolutionary **coalition** forms from Angry blocs |
+| 100 | **Revolution** | Government falls. The new type depends on the coalition's leading ideology (5.7.3). A "Revolutionary Council" rules for 3 to 12 months |
 
-**New type after a revolution** **(T)** (_superseded by the ideology-led table in [5-ideology.md](5-ideology.md) 5.7.3; kept for the leading IG when no ideology leads_):
-
-| Leading group | Likely new type |
-|---|---|
-| Labor Unions, Gig Workers | Liberal democracy (60%) or one-party state "workers' state" (40%) |
-| Professionals-heavy coalition (Environmentalists, Transhumanists, Tech Sector) | Liberal democracy |
-| Traditionalists | Managed democracy |
-| Security Establishment | Military junta |
-| Financiers, Industrialists, Tech Sector together with clout ≥ 50% | Corporate oligarchy (only if a capture chain exists, 4.2.5) |
-| No group above 25% clout after 3 months | Failed state |
+**New type after a revolution**: set by the coalition's leading ideology, as in [5-ideology.md](5-ideology.md) 5.7.3. If no bloc is above 25% clout after 3 months, the country becomes a Failed state.
 
 **Revolution consequences for business** **(T)**:
 
-- Foreign assets: nationalization chance per foreign holder = `30% + 10% × (number of anti-business IGs in the coalition: Labor, Gig, Traditionalists, State Apparatus)`.
+- Foreign assets: nationalization chance per foreign holder = `30% + 10% × (number of anti-business blocs in the coalition: Communists, Neo-Luddites, Chuds)`.
 - Capital controls jump to Hard Controls (70% chance).
 - Government default on its bonds (50% chance).
 - Government contracts of the old regime voided (80%).
-- Holders that funded the revolution get favors with the new leaders; those that funded the old regime's security get "Regime Collaborator": -30 opinion with the new government.
+- Holders that funded the revolution get favors with the new leaders; those that funded the old regime's security get "Regime Collaborator": a -30 opinion push from each of the new government's leaders.
 
-**Player levers**: fund the movement (Fund Interest Group to the Angry IGs), psyops to raise or lower RP (±5 per campaign), fund welfare or strike funds (-3 RP per $ equal to M/20), lobby for concessions (pass a law the Angry groups want: RP -15), or fund security forces and PMCs (RP -10, Stability -3, unrest +5).
+**Player levers**: fund the movement (Fund Ideology to the Angry blocs), psyops to raise or lower RP (±5 per campaign), fund welfare or strike funds (-3 RP per $ equal to M/20), lobby for concessions (pass a law the Angry blocs want: RP -15), or fund security forces (RP -10, Stability -3, unrest +5).
 
 ### 4.8.6 Aftermath summary
 
@@ -840,17 +808,16 @@ A coup plot can form on its own (AI generals) or be started by a holder (4.8.4).
 
 ### 4.9.1 Agencies
 
-Each country has seven agencies. Federal countries also have a regional attorney general and regional tax office that can run the same chains at regional level with half capacity **(T)**.
+Each country has six agencies. Federal countries also have a regional attorney general and regional tax office that can run the same chains at regional level with half capacity **(T)**.
 
 | Agency | Watches | Exposure sources | Typical penalties |
 |---|---|---|---|
-| **Securities Regulator** | Exchanges, listed companies, traders | Insider trades, undisclosed stake crossings, market manipulation, false earnings, pump-and-dump psyops | Fines, disgorgement, trading bans, executive bans, delisting |
-| ~~**Antitrust Authority**~~ (removed, batch 56) | Mergers, market shares, cartels | Takeovers above C3 thresholds, price-fixing, commodity cornering, predatory pricing | Blocked deals, remedies (divestment), fines up to 10% of revenue, breakups |
+| **Securities Regulator** | Exchanges, listed companies, traders | Insider trades, undisclosed stake crossings, market manipulation, commodity cornering, false earnings, pump-and-dump psyops | Fines, disgorgement, trading bans, executive bans, delisting |
 | **Tax Authority** | Income, profit, trusts, shells | Shell routing, transfer pricing, undeclared trust income, offshore accounts | Back taxes plus 50 to 200% penalties, asset liens, criminal charges for evasion |
 | **Financial Police** (anti-money laundering and financial crime) | Dirty money, bribery, sanctions violations, fronts | Bribes, kickbacks, front companies, black market income, sanctions evasion, coup financing | Asset freezes, confiscation, prison, company dissolution |
 | **Foreign Investment Review** | Foreign takeovers and branch offices | Foreign stakes crossing C1 thresholds, strategic sector purchases, tech exports | Blocked deals, forced divestment, mitigation (golden share, local directors) |
 | **Banking Supervisor** | Banks, insurers, captive banks, leverage | Captive bank lending to the group, excessive leverage, hidden losses | Capital orders, management removal, resolution (bail-in, nationalization) |
-| **Data and Cyberware Authority** | Data trading, AI, cyberware, privacy | Data goods sold beyond T2 limits, unlicensed AI, illegal implants | Fines up to 4% of revenue, product bans, licence revocation |
+| **Data Authority** | Personal data, AI, privacy | Data use beyond T2 limits, unlicensed AI | Fines up to 4% of revenue, product bans, licence revocation |
 
 ### 4.9.2 Agency stats and heads
 
@@ -861,7 +828,7 @@ Each country has seven agencies. Federal countries also have a regional attorney
 | **Independence** | 0 to 1 | Equals judicial independence of the government type; decides how far the executive can steer cases (protect allies, target enemies) |
 | **Integrity** | 0 to 100 | Head's bribe resistance: 50 + 30 if Honest, -30 if Deceitful, -20 if Greedy, +10 if Paranoid |
 
-The **head** is a full character (skills, traits, family, secrets) appointed by the head of government (4.7.3). The head can be lobbied (opinion), bribed (4.10.4), blackmailed (hooks), befriended, or replaced. Heads have **ambitions**: a high-profile conviction is worth +10 renown to their career; a zealous head will prefer big targets (Tycoon and Oligarch stage dynasties are targeted 1.5× more **(T)**).
+The **head** is a full character (skills, traits, family, secrets) appointed by the head of government (4.7.3). The head can be lobbied (opinion), bribed (4.10.4), blackmailed (hooks), befriended, or replaced. Heads have **ambitions**: a high-profile conviction is worth +10 renown to their career; a zealous head will prefer big targets (dynasties whose largest company is Megacorp or Conglomerate rank, 1.7.5, are targeted 1.5× more **(T)**).
 
 ### 4.9.3 Exposure
 
@@ -873,15 +840,14 @@ Exposure accumulates per holder (dynasty, company or character) per agency domai
 | Insider trade | +10 (small) to +25 (large or obvious timing) | Securities |
 | Undisclosed stake crossing via shell | +15 | Securities |
 | Market manipulation, pump psyop | +20 | Securities |
-| Cartel or price-fixing agreement | +20, +5 per month | Antitrust |
-| Commodity corner (> 30% of a market) | +15 | Antitrust and Securities |
+| Commodity corner (> 30% of a market) | +15 | Securities |
 | Bribe (accepted) | +8; +30 if refused and reported | Financial Police |
 | Kickback on a contract | +4 per 1% of contract value | Financial Police |
 | Psyop campaign | +5 per campaign (× surveillance multiplier) | Financial Police (election law) and Data Authority |
 | Front company income | +3 per month per front | Financial Police |
 | Sanctions evasion | +25 per month | Financial Police (of the sanctioning country) |
 | Captive bank lending > 25% of its book to the group | +5 per month | Banking Supervisor |
-| Unlicensed AI or illegal cyberware | +5 per month | Data and Cyberware Authority |
+| Unlicensed AI | +5 per month | Data Authority |
 | Ignoring a weakly enforced law | +2 per month per law | Relevant agency |
 | Rival's tip-off scheme success | +15 | Any |
 | Whistleblower event (disloyal employee) | +20 | Any |
@@ -903,9 +869,9 @@ Exposure accumulates per holder (dynasty, company or character) per agency domai
 |---|---|---|---|
 | **1. Preliminary Inquiry** | 2 to 6 weeks | **Evidence** starts at Exposure / 4. Each week Evidence += `2 × Capacity × Zeal - GC defense` where GC defense = the higher of the General Counsel's Intrigue or Persuasion skill, divided by 5. Closes if Evidence < 15 at the end | Cooperate (Evidence +10 now, settlement penalty -30% later); stonewall (Evidence +0 this stage, 20% chance to jump straight to Subpoena); lobby the head; bribe; shred documents (Intrigue scheme; caught = Obstruction, a separate Serious offense) |
 | **2. Subpoena** | 1 week | Public announcement: stock -3 to -10%, reputation -5. Characters named gain "Under Investigation" | Hire outside counsel (tier 1 to 3: $1M, $5M, $20M per month × wealth index (4.10.4); counsel adds +2/+4/+8 to defense each week); PR campaign (ads, reduces stock hit by half) |
-| **3. Discovery** | 4 to 12 weeks | Evidence += `3 × Capacity × Zeal - GC defense - counsel` per week. Weekly **Cracks** roll: each named subordinate or client with loyalty < 50 has `5% × (1 - loyalty/100)` chance to flip: Evidence +20 | Pay off subordinates (opinion), move them abroad, arrange an "accident" (Intrigue; huge risk), call favors to slow (4 weeks per favor) |
+| **3. Discovery** | 4 to 12 weeks | Evidence += `3 × Capacity × Zeal - GC defense - counsel` per week. Weekly **Cracks** roll: each named subordinate or client with loyalty < 50 has `5% × (1 - loyalty/100)` chance to flip: Evidence +20 | Pay off subordinates (opinion pushes), move them abroad, arrange an "accident" (Intrigue; huge risk), call favors to slow (4 weeks per favor) |
 | **4. Charges or Closure** | 1 week | Evidence ≥ 40: charges and a settlement offer. Evidence < 40: closed; exposure halved | |
-| **5a. Settlement** | 2 to 6 weeks of negotiation | Penalty at 60% of the trial severity (40% if the holder cooperated), no admission of guilt for Minor and Serious; executives may still be banned | Negotiate (Influence vs head; each success -10% penalty, max 3); offer a scapegoat (a non-dynasty executive takes the fall: -50% penalty, that character's opinion -60 and family hostile) |
+| **5a. Settlement** | 2 to 6 weeks of negotiation | Penalty at 60% of the trial severity (40% if the holder cooperated), no admission of guilt for Minor and Serious; executives may still be banned | Negotiate (Influence vs head; each success -10% penalty, max 3); offer a scapegoat (a non-dynasty executive takes the fall: -50% penalty; that character and their family turn Rival) |
 | **5b. Trial** | 8 to 26 weeks | Conviction chance = `clamp(Evidence - defense score + 20, 5, 95)%` where defense score = GC skill + 5 × counsel tier (tiers 1 to 3). Non-independent courts: if the executive wants the target convicted (target is a political enemy), conviction = `90% × (1 - judicial independence) + normal chance × judicial independence` | Lobby the judge (managed democracy and below: a decision, 4.3.5); public campaign (jury trial countries: psyops can sway ±10%) |
 | **6. Verdict and Penalty** | Instant | Penalty table below; appeals possible once (judicial independence × 30% chance to reduce one tier) | |
 
@@ -916,23 +882,23 @@ Each offense has a **severity tier**. Severity can rise one tier for repeat offe
 | Tier | Example offenses | Company penalty **(T)** | Character penalty **(T)** | Other |
 |---|---|---|---|---|
 | **Minor** | Late disclosure, small data breach, minor permit violation | Warning or fine 0.5 to 1% of national revenue | None | Reputation -2 |
-| **Serious** | Insider trade by an executive, unreported stake via shell, price-fixing, tax avoidance through shells, unlicensed AI | Fine 2 to 5% of revenue; disgorgement of gains × 1.5; back taxes + 50% | Executive ban 2 to 5 years (cannot sit on boards in that country); "Scandal-Ridden" trait | Reputation -10; stock -5 to -15% |
-| **Grave** | Market manipulation, cartel, bribery of officials, systematic tax evasion, sanctions evasion, illegal cyberware trade | Fine 5 to 10% of global revenue; forced divestment of the offending business; licence suspension 3 to 12 months; deal unwound | Executive ban 10 years; prison 2 to 8 years possible (conviction × 50%); "Under Investigation" becomes "Blacklisted" | Reputation -25; stock -15 to -40%; asset freeze during appeal; relations -5 between the holder's home country and the prosecuting country if foreign |
+| **Serious** | Insider trade by an executive, unreported stake via shell, tax avoidance through shells, unlicensed AI | Fine 2 to 5% of revenue; disgorgement of gains × 1.5; back taxes + 50% | Executive ban 2 to 5 years (cannot sit on boards in that country); "Scandal-Ridden" trait | Reputation -10; stock -5 to -15% |
+| **Grave** | Market manipulation, bribery of officials, systematic tax evasion, sanctions evasion | Fine 5 to 10% of global revenue; forced divestment of the offending business; licence suspension 3 to 12 months; deal unwound | Executive ban 10 years; prison 2 to 8 years possible (conviction × 50%); "Under Investigation" becomes "Blacklisted" | Reputation -25; stock -15 to -40%; asset freeze during appeal; relations -5 between the holder's home country and the prosecuting country if foreign |
 | **Criminal** | Coup financing, laundering for cartels, ordering violence, large fraud | Company dissolution or forced sale at 50% of value; all assets in the country frozen and confiscated (judicial independence × 50% chance to recover a part) | Prison 8 to 25 years; extradition requests to countries with relation ≥ 25 | Reputation -50; "Blacklisted"; Tier 1 sanctions listing possible (liberal democracies, 30%) |
 
 For a trust or a character (not a company), fines are 1× (Serious), 2× (Grave) or 3× (Criminal) the gains or the evaded amount instead of a share of revenue **(T)**.
 
-Prison removes the character from play for the sentence (they can still own assets, write wills and hold hooks; a 3-hour weekly "visiting hours" action lets family consult them). Life extension (03) can make long sentences survivable.
+Prison removes the character from play for the sentence (they can still own assets, write wills and hold hooks; a weekly prison visit (3 ticks) lets family consult them). Life extension (03) can make long sentences survivable.
 
-### 4.9.6 Merger and foreign investment review
+### 4.9.6 Foreign investment review
 
-Takeovers (01) above C3 or C1 thresholds trigger a **review chain**:
+Foreign takeovers and stake purchases (01) above C1 thresholds trigger a **review chain** by the Foreign Investment Review:
 
 | Step | Duration **(T)** | Mechanics |
 |---|---|---|
 | **Filing** | 1 week | Mandatory when the threshold is crossed; skipping filing = Serious offense, deal voidable |
-| **Phase 1** | 4 weeks | Cleared unless `Concern ≥ 30`, where Concern = `2 × (post-deal share - threshold) + 10 if foreign buyer in strategic sector + 15 if the buyer's home relation < 0 + head's Zeal × 10 - your PC spent / 2` |
-| **Phase 2** | 12 to 20 weeks | Outcome roll: **Clear** `max(0, 60 - Concern)%`, **Clear with remedies** (divest enough to bring share to the threshold, or golden share for foreign buyers) `30%`, **Block** the remainder |
+| **Phase 1** | 4 weeks | Cleared unless `Concern ≥ 30`, where Concern = `2 × (post-deal foreign stake % - C1 threshold %) + 10 if a strategic sector + 15 if the buyer's home relation < 0 + head's Zeal × 10 - your PC spent / 2` |
+| **Phase 2** | 12 to 20 weeks | Outcome roll: **Clear** `max(0, 60 - Concern)%`, **Clear with remedies** (cut the stake to the threshold, or accept a golden share or local directors) `30%`, **Block** the remainder |
 | **Appeal** | 8 to 16 weeks | Overturn chance `judicial independence × 25%` |
 
 During review, the target's price trades at a discount to the offer reflecting the block chance.
@@ -941,14 +907,13 @@ During review, the target's price trades at a discount to the offer reflecting t
 
 | Contract type | Level | Typical size **(T)** | Duration | Restrictions |
 |---|---|---|---|---|
-| Defense procurement | National | 0.05 to 0.5% of GDP | 5 to 10 years | Domestic or allied bidders only; Security Establishment approval ≥ 0 |
+| Defense procurement | National | 0.05 to 0.5% of GDP | 5 to 10 years | Domestic or allied bidders only; Chuds approval ≥ 0 |
 | Surveillance systems | National or local | 0.01 to 0.1% of GDP | 3 to 5 years | Domestic or allied; T4 at Expanded or above |
 | National infrastructure (rail, grid, ports) | National or regional | 0.1 to 1% of GDP | 5 to 15 years | Foreign bidders need a local partner if C1 is Capped |
 | Healthcare and pharma supply | National or regional | 0.05 to 0.3% of GDP | 3 to 5 years | |
 | Government IT and cloud | Any | 0.01 to 0.1% of GDP | 3 to 7 years | T2 Data Sovereignty requires in-country data centers |
 | City services (transit, waste, utilities) | Local | 1 to 10% of the city budget | 5 to 20 years | |
 | Reconstruction | National | Large, after wars and disasters | 2 to 10 years | Often tied to foreign aid |
-| Security services (PMC) | National | Variable | 1 to 3 years | S1 Licensed or above |
 
 **Tender chain**: Announcement (quarterly calculation) → Bidding window (4 weeks) → Evaluation (2 to 6 weeks) → Award event → optional Protest by losers (judicial independence × 20% chance to re-run the tender).
 
@@ -956,7 +921,7 @@ During review, the target's price trades at a discount to the offer reflecting t
 
 `Bid score = 40 × (lowest price / your price) + 30 × capability + 20 × political + 10 × relation + kickback`
 
-- **Capability** (0 to 1): fit of your facilities, tech level and track record for the contract.
+- **Capability** (0 to 1): fit of your business units in the contract's industry, tech level and track record for the contract.
 - **Political** (0 to 1): `min(1, PC spent / 50 + 0.2 × favors called + 0.3 if a dynasty member is minister or mayor in charge)`.
 - **Relation** (0 to 1): 1.0 for domestic holders; for foreign holders, `relation of home to host / 100`, minimum 0.
 - **Kickback**: in managed democracies and below, `+3 per 1% of contract value` paid to the decision-maker (exposure +4 per 1%). In liberal democracies kickbacks are possible only through a bribed official and add +2 per 1% with exposure +8 per 1%.
@@ -969,7 +934,7 @@ During review, the target's price trades at a discount to the offer reflecting t
 
 **Bailout chain**: Distress (cash runway < 1 month or a bank run event) → Request (the company's head asks; a dynasty can lobby) → Government decision (weekly, up to 4 weeks) → Terms → Repayment or nationalization.
 
-**Bailout chance per weekly decision** = `30% + 15% if systemically important + 10% under Bailout with Stakes (-20% under Bail-In) + PC spent / 2 (as percentage points) - 20% if the company's owners are foreign - 10% per Angry group opposing bailouts` **(T)**. Under F7 No Bailouts the chance is 0 unless an emergency decree passes. Under Too Big to Fail it is automatic for systemically important companies.
+**Bailout chance per weekly decision** = `30% + 15% if systemically important + 10% under Bailout with Stakes (-20% under Bail-In) + PC spent / 2 (as percentage points) - 20% if the company's owners are foreign - 10% per Angry bloc opposing bailouts` **(T)**. Under F7 No Bailouts the chance is 0 unless an emergency decree passes. Under Too Big to Fail it is automatic for systemically important companies.
 
 | Form | Terms **(T)** |
 |---|---|
@@ -978,11 +943,11 @@ During review, the target's price trades at a discount to the offer reflecting t
 | **Guarantee** | State guarantees new debt; fee 1% per year; covenants |
 | **Bail-in** (F7 Bail-In) | Bondholders haircut 30 to 60% before any state money; shareholders wiped below 10% of old value |
 
-**Conditions** attached to any bailout: 50% chance the government demands the CEO's replacement (it appoints from a list it controls); 30% chance of a mandated sale of a division; political strings: no layoffs for 2 years (Labor and Gig approval +1) **(T)**.
+**Conditions** attached to any bailout: 50% chance the government demands the CEO's replacement (it appoints from a list it controls); 30% chance of a mandated sale of a division; political strings: no layoffs for 2 years (Communists and Neo-Luddites approval +1) **(T)**.
 
 ### 4.9.9 Nationalization
 
-A government can nationalize a company, a facility or a stake. Triggers **(T)**:
+A government can nationalize a company, a business unit or a stake. Triggers **(T)**:
 
 | Trigger | Chance or rule |
 |---|---|
@@ -991,7 +956,7 @@ A government can nationalize a company, a facility or a stake. Triggers **(T)**:
 | Revolution | Per 4.8.5 |
 | Hostile government (relation with owner's home ≤ -50) and strategic sector | 5% per month |
 | Sanctions retaliation | 10% per month per sanctions tier on foreign-owned assets of the sanctioning bloc |
-| E6 State Champions with State Apparatus clout ≥ 25% | 2% per year per foreign-owned company in the sector |
+| E6 State Champions with the ruling ideology's clout ≥ 25% | 2% per year per foreign-owned company in the sector |
 | Branch office seizure ladder | 4.9.10 |
 | Corporate sovereignty reclamation | 4.12.5 |
 
@@ -1012,7 +977,7 @@ A government can nationalize a company, a facility or a stake. Triggers **(T)**:
 
 Branch offices (01) live at the mercy of the host. Each month the host computes **Seizure risk** for each foreign branch office:
 
-`Seizure risk (%) = TypeBase + max(0, -Relation)/50 + 2 × SanctionsTier + 1 if strategic sector + 1 if host IG approval of foreign business (State Apparatus or Security Establishment) ≤ -5 - 10 × your national influence share in the host - 0.5 if local partner loyalty ≥ 60` (minimum 0) **(T)**
+`Seizure risk (%) = TypeBase + max(0, -Relation)/50 + 2 × SanctionsTier + 1 if strategic sector + 1 if host bloc approval of foreign business (the ruling ideology or the Chuds) ≤ -5 - 10 × your national influence share in the host - 0.5 if local partner loyalty ≥ 60` (minimum 0) **(T)**
 
 TypeBase: Liberal democracy 0, Managed democracy 0.2, One-party 0.3, Corporate oligarchy 0.2, Military junta 0.5, Failed state 1.0.
 
@@ -1020,7 +985,7 @@ A successful roll **does not seize directly**. It advances the **seizure ladder*
 
 | Step | Event | Host demand | Player options |
 |---|---|---|---|
-| **1. Pressure** | *Beijing Calls* style meeting | Raise local partner stake by 10 points, or a tech transfer, or a new local factory | Comply (ladder resets to 0); negotiate (Influence vs minister: success holds the ladder 6 months); refuse (ladder stays, relation of host with your company -10) |
+| **1. Pressure** | *Beijing Calls* style meeting | Raise local partner stake by 10 points, or a tech transfer, or new local investment | Comply (ladder resets to 0); negotiate (Influence vs minister: success holds the ladder 6 months); refuse (ladder stays, relation of host with your company -10) |
 | **2. Demands** | Formal demand with deadline (8 weeks) | Larger concessions: partner to 51%, State Golden Share, executive replacement | Comply (reset to 1); appeal through your home government (ambassador, relation trade-off); lobby with PC (cost 30 PC to hold 6 months) |
 | **3. Restrictions** | Dividend freeze, exit bans on expatriate executives (they cannot leave the country), tax audit (Tax Authority inquiry opens) | Full compliance with steps 1 and 2 | Comply; smuggle cash out (Financial Police exposure +25); evacuate executives (Intrigue scheme) |
 | **4. Seizure** | Administrator appointed; the state or the local partner takes control | n/a | Compensation per 4.9.9; arbitration; long game: back a faction or coup to reverse it |
@@ -1039,22 +1004,22 @@ A successful roll **does not seize directly**. It advances the **seizure ladder*
 
 Examples: a $28T country: $28M per LP; a $3T country: $3M; a $200B city: $200k. Each LP adds **+0.5 support** to the lobbied position (or against it), decaying 10% per month **(T)**, subject to caps below.
 
-| Action | Level | Cost **(T)** | Hours | Effect | Cap | Exposure |
+| Action | Level | Cost **(T)** | Time | Effect | Cap | Exposure |
 |---|---|---|---|---|---|---|
-| **Meet Official** | Any | 5 PC (free with an Introduction favor) | 2 | Opinion +10 (decays 2/month); required before Bribe or Court Patron | 1 per official per week | 0 |
-| **Lobby Bill** | Any | PC and money as LP | 4 per week (or a lobbying firm: +20% money cost, 0 hours) | +0.5 support per LP | Per holder per bill: G2 cap (+10 / +15 / +25); total all lobbying ±40 | 0 if legal; disclosed under Registered and Disclosed: opposing IGs' approval of your dynasty -1 |
-| **Fund Interest Group** | Any | Money | 1 | Clout per 4.4.5 | Clout from money cap +0.30 | 0; Capped G1: +1 per $ M/100 above the cap |
-| **Campaign Donation** | Any | Money, within G1 cap per character (each dynasty member can donate separately) | 1 | Campaign spending for a party or candidate; the recipient's opinion of the donor +1 per 2% of E donated (cap +25, decays 1 per month) | G1 | 0 legal; +5 if routed through shells to exceed caps |
-| **Independent Expenditure** (super-PAC style) | Any | Money | 2 | Campaign spending, or Ads for or against a candidate | None under Unlimited; banned under Public Funding Only | 0 disclosed; 0 under Dark Money; +5 per M/100 if done illegally |
-| **Issue Campaign** (ads) | Any | $ (0.10 × adults in jurisdiction) per week | 2 | +3 support on a bill for as long as it runs, then decays 25% per week; also +0.02 MediaBias for an IG | 2 active per bill per holder | 0 |
-| **Astroturf Campaign** (psyops) | Any | $ (0.04 × adults) per week | 2 | +6 support on a bill; or +0.05 MediaBias; decays 35% per week | 2 active per bill per holder | +5 per campaign start, × surveillance multiplier; exposé chance below |
-| **Commission a Bill** | Any | 40 / 20 / 10 PC (national / regional / local) | 4 | Starts a bill in Drafting through a client politician | One open bill per law | 0 |
-| **Request Decision** (permit, rezoning, licence, capital transfer approval) | Local / regional / national | 10 / 20 / 30 PC | 2 | Puts the request to the deciding body (4.3.5) | | 0 |
-| **Request Protection** | Any | 25 PC national, 10 regional, 5 local, per agency, plus 5 PC per month upkeep | 2 | Detection × 0.7 and investigations -1 Evidence per week, for that agency | 1 active per agency | 0, but if the protecting official falls in a scandal, +10 |
-| **Bribe Official** | Any | Money (4.10.4) | 2 | One decision, vote or favor without opinion or loyalty | | +8 if accepted; +30 if refused and reported |
-| **Blackmail Official** | Any | Spend a hook | 2 | As a favor; client loyalty irrelevant | | +5; official's opinion -50; 20% chance they go to the police anyway if Brave |
-| **Court Patron** | Any | Scheme (03) | Varies | Make the official a client (4.7.4) | | 0 |
-| **Host Gala** | Local or regional | $ (0.02 × adults in hub) | 6 | +5 opinion with all officials in the hub; temporary influence boost (05) | 1 per month per hub | 0 |
+| **Meet Official** | Any | 5 PC (free with an Introduction favor) | 2 ticks, in person in the city | A +10 opinion push; required before Bribe or Court Patron | 1 per official per week | 0 |
+| **Lobby Bill** | Any | PC and money as LP | Instant (or a lobbying firm: +20% money cost) | +0.5 support per LP | Per holder per bill: G2 cap (+10 / +15 / +25); total all lobbying ±40 | 0 if legal; disclosed under Registered and Disclosed: opposing blocs' approval of your dynasty -1 |
+| **Fund Ideology** | Any | Money | Instant | Clout per 4.4.5 | Clout from money cap +0.30 | 0; Capped G1: +1 per $ M/100 above the cap |
+| **Campaign Donation** | Any | Money, within G1 cap per character (each dynasty member can donate separately) | Instant | Campaign spending for a party or candidate; an opinion push from the recipient toward the donor of +1 per 2% of E donated (cap +25 per campaign) | G1 | 0 legal; +5 if routed through shells to exceed caps |
+| **Independent Expenditure** (super-PAC style) | Any | Money | Instant | Campaign spending, or Ads for or against a candidate | None under Unlimited; banned under Public Funding Only | 0 disclosed; 0 under Dark Money; +5 per M/100 if done illegally |
+| **Issue Campaign** (ads) | Any | $ (0.10 × adults in jurisdiction) per week | Instant | +3 support on a bill for as long as it runs, then decays 25% per week; also +0.02 MediaBias for a bloc | 2 active per bill per holder | 0 |
+| **Astroturf Campaign** (psyops) | Any | $ (0.04 × adults) per week | Instant | +6 support on a bill; or +0.05 MediaBias; decays 35% per week | 2 active per bill per holder | +5 per campaign start, × surveillance multiplier; exposé chance below |
+| **Commission a Bill** | Any | 40 / 20 / 10 PC (national / regional / local) | Instant | Starts a bill in Drafting through a client politician | One open bill per law | 0 |
+| **Request Decision** (permit, rezoning, licence, capital transfer approval) | Local / regional / national | 10 / 20 / 30 PC | Instant | Puts the request to the deciding body (4.3.5) | | 0 |
+| **Request Protection** | Any | 25 PC national, 10 regional, 5 local, per agency, plus 5 PC per month upkeep | Instant | Detection × 0.7 and investigations -1 Evidence per week, for that agency | 1 active per agency | 0, but if the protecting official falls in a scandal, +10 |
+| **Bribe Official** | Any | Money (4.10.4) | The bribe chain (4.20.3) | One decision, vote or favor without opinion or loyalty | | +8 if accepted; +30 if refused and reported |
+| **Blackmail Official** | Any | Spend a hook | Instant | As a favor; client loyalty irrelevant | | +5; a -50 push on the official's opinion (they turn Rival); 20% chance they go to the police anyway if Brave |
+| **Court Patron** | Any | Scheme (03) | Scheme, weeks (1.1.8) | Make the official a client (4.7.4) | | 0 |
+| **Host Gala** | Local or regional | $ (0.02 × adults in hub) | 6 ticks, in the hub | A +5 opinion push with all officials in the hub; temporary influence boost (05) | 1 per month per hub | 0 |
 
 ### 4.10.2 Caps
 
@@ -1110,7 +1075,7 @@ Relation (-100 to +100) per country pair, recalculated monthly. It drifts 1 poin
 
 | Relation band | Name | Effects |
 |---|---|---|
-| ≥ 50 | **Friendly** | Foreign Investment Review treats each other's holders one step looser on C1; visa-free travel (character travel time -2 h); arbitration available |
+| ≥ 50 | **Friendly** | Foreign Investment Review treats each other's holders one step looser on C1; visa-free travel (character travel time -2 ticks); arbitration available |
 | 0 to 49 | **Cordial** | Normal |
 | -1 to -49 | **Cool** | C1 effectively one step stricter for each other's holders; trade agreements may be suspended (5% per month below -25) |
 | -50 to -79 | **Hostile** | Sanctions chance 5% per month (from the stronger side); seizure risk terms apply; espionage events |
@@ -1125,13 +1090,13 @@ Relation (-100 to +100) per country pair, recalculated monthly. It drifts 1 poin
 | **Customs Union** | ≥ 60, same exchange of tariffs | Common external tariff (average of members, weighted by GDP) |
 | **Single Market** | ≥ 75 | Customs union plus free movement of capital and labor; C1 treats member holders as domestic; F2 cannot be stricter than Reporting between members |
 
-Agreements are proposed by governments (AI, yearly), lobbyable (Industrialists and Financiers usually support, Labor and Traditionalists usually oppose), and ratified like a law in each member (Support threshold of that country).
+Agreements are proposed by governments (AI, yearly), lobbyable (Liberals, Landites and Accelerationists usually support, Communists, Neo-Luddites and Chuds usually oppose), and ratified like a law in each member (Support threshold of that country).
 
 ### 4.11.3 Alliances and rivalries
 
 - **Defense Alliance**: members enter wars on each other's side (as background participants), share sanctions, and get +20 bid score on each other's defense contracts as "allied" bidders.
 - **Economic Bloc**: coordinate sanctions and trade war responses; usually built on a Single Market.
-- **Rivalry**: set from data at start; can be created when relation stays ≤ -50 for 24 months. Rivals run espionage events against each other's companies (rival's state hackers target your facilities: Netrun events, 2% per month per strategic facility **(T)**), and sanction each other more readily (×2 sanction chance).
+- **Rivalry**: set from data at start; can be created when relation stays ≤ -50 for 24 months. Rivals run espionage events against each other's companies (state-backed hackers target your Techno-Capital with hacking schemes, [17-hacking.md](17-hacking.md), 2% per month per strategic business unit **(T)**), and sanction each other more readily (×2 sanction chance).
 
 ### 4.11.4 Sanctions
 
@@ -1140,12 +1105,12 @@ Sanctions are imposed by a country or bloc on a target country, sector or holder
 | Tier | Name | What freezes | Routes and trade | Finance |
 |---|---|---|---|---|
 | **1** | **Targeted** | Assets of listed characters and companies inside the sanctioning countries; listed characters cannot travel there | No route closures | Listed holders cannot use the sanctioning countries' banks or currencies |
-| **2** | **Sectoral** | Plus: new investment in listed sectors (energy, finance, defense, tech) of the target | Export bans on advanced components, chips, cyberware and AI to the target; import bans on the target's listed goods | Target's companies in listed sectors barred from sanctioning exchanges and bond markets |
+| **2** | **Sectoral** | Plus: new investment in listed sectors (energy, finance, defense, tech) of the target | Export bans on chips, GPUs and AI to the target; import bans on the target's listed industries | Target's companies in listed sectors barred from sanctioning exchanges and bond markets |
 | **3** | **Financial** | Plus: the target's central bank reserves held in sanctioning currencies; all stakes held by target-country holders in sanctioning-country companies (voting rights suspended) | Insurance and shipping finance withdrawn: target-flagged ships on routes through sanctioning chokepoints stopped | Target cut off from the international payment network: dividends, interest and transfers between the target and sanctioning countries blocked; target bonds delisted |
 | **4** | **Embargo** | All assets of all target-country holders in sanctioning countries; all assets of sanctioning-country holders in the target are expected to be seized by retaliation | All trade routes (shipping, air, rail, pipeline, fiber) between sanctioning countries and the target closed; chokepoints controlled by sanctioning countries closed to target trade | Full financial cut-off |
 
 - **Secondary sanctions** (flag on Tier 2+): third-country holders that trade with the target in sanctioned industries are listed at Tier 1 with 10% chance per month of continued trade **(T)**.
-- **Imposition**: a government decision driven by relation, rivalry, war, coups, human rights events, and IG pressure (Security Establishment and Traditionalists push; Financiers and Industrialists with business in the target resist). Holders can lobby for or against (30 PC national to shift the decision chance by ±10 points **(T)**).
+- **Imposition**: a government decision driven by relation, rivalry, war, coups, human rights events, and bloc pressure (Chuds push; Liberals, Landites and Accelerationists with business in the target resist). Holders can lobby for or against (30 PC national to shift the decision chance by ±10 points **(T)**).
 - **Lifting**: monthly 3% chance per tier once the triggering cause ends and relation > -40 **(T)**; lifting happens one tier at a time.
 - **Retaliation**: a sanctioned target imposes counter-sanctions one tier lower on the sanctioner's holders within 4 weeks (70% **(T)**), and raises seizure risk for their branch offices (4.9.10).
 
@@ -1160,30 +1125,30 @@ Sanctions are imposed by a country or bloc on a target country, sector or holder
 
 ### 4.11.5 Trade wars
 
-Trade wars escalate in four levels. Each month a trade war is in force, escalation chance = `5% + max(0, -Relation)/10 % + 5% if Labor or Industrialists clout ≥ 25% in either country`, de-escalation chance = `5% + max(0, Relation)/10 %` **(T)**.
+Trade wars escalate in four levels. Each month a trade war is in force, escalation chance = `5% + max(0, -Relation)/10 % + 5% if Communists or Landites clout ≥ 25% in either country`, de-escalation chance = `5% + max(0, Relation)/10 %` **(T)**.
 
 | Level | Measures | Typical effect |
 |---|---|---|
 | **1. Skirmish** | +10% tariffs on 3 to 5 targeted industries | Those industries' price indices +5 to 10% in both countries |
 | **2. Broad Tariffs** | +25% on most industries both ways | Trade volume between them -30%; affected exporters' stocks -5 to -15% |
-| **3. Export Controls** | +50% tariffs; export bans on chips, rare earths, AI and cyberware components | Supply chain shocks (06); substitute suppliers' prices +20 to 40% |
+| **3. Export Controls** | +50% tariffs; export bans on chips, rare earths and AI | The banned industries' price indices +20 to 40% in the target |
 | **4. Decoupling** | Near-embargo on strategic industries; investment screening of each other's holders at Capped All | Stocks with exposure -20 to -40%; branch office seizure risk as Hostile |
 
 ### 4.11.6 Background wars
 
-Wars are background events. The player never commands armies (PMCs dropped, batch 51).
+Wars are background events. The player never commands armies.
 
 | Intensity | Example | Hubs in the war zone | Adjacent hubs and routes | Global |
 |---|---|---|---|---|
 | **Border clash** | Skirmishes for weeks | Output -10%; real estate -5% | Route disruption 5% chance per week | Defense stocks +5% |
-| **Regional war** | Months of fighting | Output -50%; each facility 2% per month destroyed; real estate -40%; population flight 2% per month | Output -10 to -20%; chokepoints at risk (20% closure per month) | Oil +20 to 50%; defense demand +30%; PMC demand +50% |
-| **Major war** | Great powers involved | Output -80 to -100%; facility destruction 5% per month; martial law | Output -20%; insurance on routes +300% | Oil +50 to 100%; commodity spikes; global stocks -10 to -25%; sanctions waves |
+| **Regional war** | Months of fighting | Output -50%; business units there lose 2% of their capacity per month; real estate -40%; population flight 2% per month | Output -10 to -20%; chokepoints at risk (20% closure per month) | Oil +20 to 50%; defense demand +30% |
+| **Major war** | Great powers involved | Output -80 to -100%; capacity destruction 5% per month; martial law | Output -20%; insurance on routes +300% | Oil +50 to 100%; commodity spikes; global stocks -10 to -25%; sanctions waves |
 | **Civil war** | After a stalemate coup or revolution | As regional war, split between two governments that each claim the country | As regional | Minor |
 
 - **War chance**: from relation (4.11.1), rivalry, junta and one-party ambition, and disputed territory data.
 - **Peace**: each month 5% + 5% per year of war, +10% if either side's stability < 25 **(T)**.
 - **Reconstruction**: after peace, reconstruction contracts worth 5 to 20% of the war-zone countries' GDP are tendered over 3 to 5 years.
-- **Opportunities**: defense manufacturing, PMC services, commodities, reconstruction, distressed asset purchases in affected hubs (real estate at -40% can be bought by those brave enough).
+- **Opportunities**: defense manufacturing, commodities, reconstruction, distressed asset purchases in affected hubs (real estate at -40% can be bought by those brave enough).
 
 ### 4.11.7 Stability formula
 
@@ -1240,7 +1205,7 @@ Hub stability (for local unrest and protests) = country stability + local modifi
 
 ## 4.12 Corporate sovereignty (endgame)
 
-At extreme influence, a dynasty or megacorp can turn a hub into territory its company governs. This is a Megacorp-rank goal (see [14-game-stages.md](../14-game-stages.md)).
+At extreme influence, a dynasty or megacorp can turn a hub into territory its company governs. It is a Megacorp-rank goal (4.28).
 
 ### 4.12.1 The three stages
 
@@ -1259,42 +1224,42 @@ At extreme influence, a dynasty or megacorp can turn a hub into territory its co
 | National position | ≥ 10% national share or a client minister | ≥ 25% national share, or a client head of government, or government type Corporate oligarchy | Council of Stakeholders chair (corporate oligarchy), or controlling the Failed state's capital hub, or a ratified treaty |
 | Local government | Mayor is a client or dynasty member | Same, plus council majority | n/a (replaced) |
 | Reputation | ≥ 0 | ≥ 10 | Any |
-| Security | n/a | PMC or private policing in the hub: 1 unit per 500k residents | 1 unit per 200k residents, plus air and cyber defense facilities |
+| Security | n/a | Private security in the zone (4.23): Security Strength 30 per 100k residents | Security Strength 80 per 100k residents, plus a cyber defense team |
 | Money | Zone setup $500M × wealth index | $5B × wealth index | $20B × wealth index plus a treaty payment |
 
 ### 4.12.3 Process
 
 Each stage is an event chain:
 
-1. **Feasibility Study** (8 weeks): the game shows the expected backlash: IG reactions, unrest, international reaction.
-2. **Enabling Legislation**: the C6 position must be in force nationally (pass it as a law; Sovereign Charters face State Apparatus and Traditionalists at -- and Labor at -).
+1. **Feasibility Study** (8 weeks): the game shows the expected backlash: bloc reactions, unrest, international reaction.
+2. **Enabling Legislation**: the C6 position must be in force nationally (pass it as a law; Sovereign Charters face the blocs that oppose them in 5.3, such as the Communists at --).
 3. **Charter Negotiation** (4 to 12 weeks, Persuasion contest with the head of government): terms are chosen from a menu:
    - Revenue share to the national government: 10 to 30% of zone tax revenue.
    - Lease length: 50 or 99 years (Stage 2), perpetual (Stage 3).
    - Reserved powers: defense, currency, citizenship (each reserved power lowers backlash by 10%).
    - Resident guarantees: keep minimum wage floor, keep elections for a Residents' Council (each lowers unrest).
-4. **Referendum** (democracies only; hub residents vote; formula 4.6.3 with Yes and No as the two options; the company's media, ads and psyops apply; Labor, Traditionalists, Environmentalists and State Apparatus campaign No).
+4. **Referendum** (democracies only; hub residents vote; formula 4.6.3 with Yes and No as the two options; the company's media, ads and psyops apply; the blocs that oppose the charter campaign No).
 5. **Handover** (4 weeks): local government dissolves (Stage 2) or the national flag comes down (Stage 3). Local officials who are not clients may resist (event).
 6. **Backlash** (ongoing): see 4.12.5.
 
 ### 4.12.4 Governing a corporate zone
 
 - **Upkeep**: the company pays for services: $1,500 per resident per year × wealth index for Stage 2, $3,000 for Stage 3 (security, utilities, courts) **(T)**, and collects zone taxes it sets.
-- **Laws**: set by board resolution: no debate phase; enacted at the next monthly board meeting. Each law change still moves IG approval and unrest among residents.
+- **Laws**: set by board resolution: no debate phase; enacted at the next monthly board meeting. Each law change still moves bloc approval and unrest among residents.
 - **Residents' Council**: advisory. If resident unrest exceeds 50, it can call a **Charter Strike** (zone output -40%) or petition the national government to revoke the charter.
-- **Citizenship and labor**: Stage 3 zones control immigration (L5) and can sell residency to wealthy characters (revenue, but Traditionalist backlash in the host country).
+- **Citizenship and labor**: Stage 3 zones control immigration (L5) and can sell residency to wealthy characters (revenue, but Chuds backlash in the host country).
 - **Courts**: private arbitration replaces courts; regulators of the host country lose jurisdiction (Stage 3) or keep only Financial Police and Securities powers (Stage 2).
-- **Score**: Stage 2 gives +500 renown per decade held, Stage 3 +2,000 **(T)**, and counts toward the Corporate Sovereignty endgame objective (14).
+- **Score**: Stage 2 gives +500 renown per decade held, Stage 3 +2,000 **(T)**, and counts toward the Corporate Sovereignty endgame (4.29).
 
 ### 4.12.5 Consequences and backlash
 
 | Source | Effect **(T)** |
 |---|---|
-| Host country IGs | Approval -2 for State Apparatus, Labor, Traditionalists; host stability -3 (Stage 2) or -8 (Stage 3) |
+| Host country blocs | Approval -2 for every bloc that opposes Sovereign Charters (5.3); host stability -3 (Stage 2) or -8 (Stage 3) |
 | Residents | Unrest +10 at handover, decaying 1 per month if the zone keeps minimum wage and a Residents' Council |
 | Liberal democracies | Relation -10 with the host for Stage 3; Tier 1 sanctions on the company's executives 20% (if the zone was won through a coup or capture) |
 | Rival dynasties | AI rivals with ≥ 10% influence in the host country gain a "Stop the Charter" casus belli and may fund the opposition, revolutions or a hostile takeover of the company |
-| **Reclamation** | Each month a hostile national government (relation to the company's head ≤ -25, or a government formed by parties that campaigned against the charter) has a 5% chance to start a **Reclamation** chain: Revocation Bill → Court Challenge (judicial independence decides if the charter's terms are respected) → Standoff (company security vs national police or military; PMC strength vs RS) → Reclaimed (nationalization with compensation per 4.9.9) or Charter Upheld |
+| **Reclamation** | Each month a hostile national government (relation to the company's head ≤ -25, or a government formed by parties that campaigned against the charter) has a 5% chance to start a **Reclamation** chain: Revocation Bill → Court Challenge (judicial independence decides if the charter's terms are respected) → Standoff (the company's Security Strength vs national police or military, 4.23.2) → Reclaimed (nationalization with compensation per 4.9.9) or Charter Upheld |
 | Stage 3 recognition | Each country decides to recognize the zone (relation with the company's home ≥ 25 and a trade deal); unrecognized zones cannot list on foreign exchanges or use the international payment network until 3 countries recognize them |
 
 ---
@@ -1303,33 +1268,35 @@ Each stage is an event chain:
 
 All numbers use the tuning values above.
 
-### 4.13.1 Buying a city council (rezoning for a chip fab)
+### 4.13.1 Buying a city council (rezoning for new chip capacity)
 
-**Situation.** The dynasty wants to build a chip fab on a 40-acre plot zoned Residential in Phoenix (United States, liberal democracy, corruption 25, wealth index 4). The hub has 2.5M people (1.9M adults) and a 9-seat council elected by ward. E11 Zoning is Standard: rezoning needs 5 of 9 votes. The dynasty's hub influence share is 18% (Presence tier).
+**Situation.** The dynasty's Foundry business wants to add capacity on a 40-acre plot zoned Residential in Phoenix (United States, liberal democracy, corruption 25, wealth index 4). The hub has 2.5M people (1.9M adults) and a 9-seat council elected by ward. E11 Zoning is Standard: rezoning needs 5 of 9 votes. The dynasty's hub influence share is 18% (Presence tier).
 
 **PC.** `100 × sqrt(0.18) × 1.0 = 42 PC per month`, pool cap 254.
 
-**The council before any action** (disposition = 10 × stance + opinion / 5):
+**The council before any action** (disposition = 10 × stance + opinion / 5, with the opinion tag read as Neutral 0 and Rival -50):
 
 | Seat | Party | Stance on rezoning | Opinion of dynasty | Disposition | Vote |
 |---|---|---|---|---|---|
-| 1 to 3 | Business party | +1 (jobs, investment) | 0 | +10 | Yes |
-| 4 and 5 | Business party, homeowner wards | -1 (neighbours object) | 0 | -10 | No |
-| 6 and 7 | Labor-green party, green wing | -1 | -10 | -12 | No |
-| 8 | Labor-green party, union wing | 0 (jobs vs environment) | 0 | 0 | Yes |
-| 9 | Independent | 0 | -20 | -4 | No |
+| 1 to 3 | Business party | +1 (jobs, investment) | Neutral | +10 | Yes |
+| 4 and 5 | Business party, homeowner wards | -1 (neighbours object) | Neutral | -10 | No |
+| 6 and 7 | Labor-green party, green wing | -1 | Rival | -20 | No |
+| 8 | Labor-green party, union wing | 0 (jobs vs environment) | Neutral | 0 | Yes |
+| 9 | Independent | 0 | Rival | -10 | No |
 
 Four votes. One more is needed.
 
 **Actions.**
 
-1. **Meet Official** with seats 4, 5, 8 and 9: 4 × 5 PC = 20 PC, 8 hours of the dynasty head's time over a week. Opinion +10 each. Seat 9 moves to -2. Seats 4 and 5 move to -8.
-2. **Campaign Donation** to seat 9, who faces re-election in 5 months. The ward has 211k adults, so E = $105k. Three adult dynasty members each give $20k (under the G1 Capped limit of $50k per donor): $60k = 57% of E, opinion +25 (cap). Seat 9's opinion is now -20 + 10 + 25 = +15, disposition +3.
+1. **Meet Official** with seat 9: 5 PC, a +10 opinion push. On its own that is below the 30 needed to move the tag.
+2. **Campaign Donation** to seat 9, who faces re-election in 5 months. The ward has 211k adults, so E = $105k. Three adult dynasty members each give $20k (under the G1 Capped limit of $50k per donor): $60k = 57% of E, a +25 push (the cap). With the meeting the pushes this year reach 35, so seat 9 moves from Rival to Neutral: disposition 0, a Yes.
+
+Meeting seats 4 and 5 would not help: a +10 push leaves them Neutral, and their stance still votes No.
 3. **Request Decision** (rezoning): 10 PC.
 
-**Vote: 5 to 4. Rezoning approved.** Total cost: 30 PC, $60k, about 10 hours. Exposure: 0 (all legal and disclosed).
+**Vote: 5 to 4. Rezoning approved.** Total cost: 15 PC and $60k. Exposure: 0 (all legal and disclosed).
 
-**Why not bribe?** A bribe to seat 9 would cost `$50k × 4 × (110 - 25)/60 × (1 + 50/100) = $425k`, with acceptance only `25% + 2% = 27%` and a 50% chance a refusal is reported (+30 exposure and an instant Financial Police inquiry). In a liberal democracy the legal route is cheaper and safer.
+**Why not bribe?** A bribe to seat 9 would cost `$50k × 4 × (110 - 25)/60 × (1 + 50/100) = $425k`, with acceptance only `25% - 10% (Rival: -50 / 5) = 15%` and a 50% chance a refusal is reported (+30 exposure and an instant Financial Police inquiry). In a liberal democracy the legal route is cheaper and safer.
 
 **Making it permanent.** At the next local election the dynasty funds challengers in wards 4 and 5: $300k each against incumbents spending $100k. Campaign utility `0.8 × ln(1 + 300/105) = 1.08` against `0.8 × ln(1 + 100/105) = 0.53`, minus the incumbent's +0.3, a net +0.25 utility for the challenger: about +6 points of vote share in an evenly matched ward. Winning both gives a 7-seat friendly majority, and if hub influence later reaches 25% (Power Broker), the dynasty can push E11 to Developer-Led and skip council votes entirely.
 
@@ -1339,17 +1306,16 @@ Four votes. One more is needed.
 
 **Base support** for Low (stance / 2 × clout):
 
-| Group | Clout | Stance on E3 Low | Contribution |
+| Bloc | Clout | Stance on E3 Low | Contribution |
 |---|---|---|---|
-| Financiers | 18% | ++ | +18 |
-| Industrialists | 15% | + | +7.5 |
-| Tech Sector | 10% | + | +5 |
-| Landowners | 8% | + | +4 |
-| Labor Unions | 16% | -- | -16 |
-| Gig Workers | 5% | - | -2.5 |
-| Environmentalists | 7% | - | -3.5 |
-| State Apparatus | 4% (marginalized, half) | - | -1 |
-| Traditionalists, Security, Transhumanists, Shadow Economy | 17% | 0 | 0 |
+| Landites | 15% | ++ | +15 |
+| Liberals | 20% | + | +10 |
+| Accelerationists | 12% | + | +6 |
+| Sovereigntists | 6% | + | +3 |
+| Communists | 16% | -- | -16 |
+| Neo-Luddites | 6% | - | -3 |
+| Effective Altruists | 7% | - | -3.5 |
+| Chuds, Transhumanists | 18% | 0 | 0 |
 | **Total** | | | **+11.5** |
 
 Threshold T = +10, so the bill would pass at `10% + 2% × 1.5 = 13%` per month: too slow.
@@ -1359,17 +1325,17 @@ Threshold T = +10, so the bill would pass at `10% + 2% × 1.5 = 13%` per month: 
 1. Save PC for 3 months, then **Commission a Bill** through a client legislator: 40 PC. Sponsor +5.
 2. **Lobby Bill**: 30 LP for the full +15 cap. 10 LP from PC (the rest of the pool) and 20 LP from money. LP price = `$3T × 0.000001 = $3M`, so $60M.
 3. **Issue Campaign** for 4 weeks before the first roll: `$0.10 × 50M = $5M` per week, $20M total, +3 support.
-4. The Labor Unions counter-lobby with 20 LP: -10.
+4. Communist-aligned unions counter-lobby with 20 LP: -10.
 
 **Support** = 11.5 + 5 + 15 + 3 - 10 = **24.5**. Pass chance = `10% + 2% × 14.5 = 39%` per month. Liberal democracy debate rolls start in month 2. If the dynasty tops up lobbying each month to offset the 10% decay (about 3 LP, $9M per month), the chance over the first three rolls is `1 - 0.61³ = 77%`.
 
-**Cost:** about $60M + $20M + $27M maintenance = $107M, paid back in under 3 years of tax savings. **Side effects**: lobbying is disclosed, so Labor, Gig and Environmentalist approval of the dynasty drops by 1, and any dynasty member running for office in labor-leaning wards takes the hit.
+**Cost:** about $60M + $20M + $27M maintenance = $107M, paid back in under 3 years of tax savings. **Side effects**: lobbying is disclosed, so Communist, Neo-Luddite and Effective Altruist approval of the dynasty drops by 1, and any dynasty member running for office in labor-leaning wards takes the hit.
 
 ### 4.13.3 Running the heir for mayor
 
-**Situation.** The heir (Persuasion 16, born in Manchester) runs for Mayor of Greater Manchester (United Kingdom, 2.2M adults, so E = $1.1M) for the business party (Industrialists, Financiers, Landowners, Traditionalists) against the incumbent of the labor-green party (Labor, Gig, Environmentalists, Tech Sector, Transhumanists), Influence 12. Unemployment 7%, inflation 4%, growth 1%.
+**Situation.** The heir (Persuasion 16, born in Manchester) runs for Mayor of Greater Manchester (United Kingdom, 2.2M adults, so E = $1.1M) for the business party (Landites, Accelerationists, Chuds) against the incumbent of the centre-left party (Liberals, Communists, Effective Altruists), Influence 12. Unemployment 7%, inflation 4%, growth 1%.
 
-**Utility terms that are the same for every segment:**
+**Utility terms that are the same for every stratum** (this example uses the Ideology weight of 3 and leaves out the platform term of 5.6.4):
 
 | Term | Heir | Incumbent |
 |---|---|---|
@@ -1380,49 +1346,32 @@ Threshold T = +10, so the bill would pass at `10% + 2% × 1.5 = 13%` per month: 
 | Candidate | `0.03 × 6 + 0.2 (local origin) = 0.38` | `0.03 × 2 = 0.06` |
 | **Sum** | **1.41** | **0.67** |
 
-Plus a targeted ad campaign at Professionals (+0.3 for the heir in that segment).
+Plus a targeted ad campaign at the PMC stratum (+0.3 for the heir there).
 
-**By segment** (ideology × 3 from the support base table):
+**By stratum** (ideology × 3 from the starting mix in 4.4.2):
 
-| Segment | Share of adults | Turnout | Heir ideology | Incumbent ideology | Heir share |
+| Stratum | Share of adults | Turnout | Heir ideology | Incumbent ideology | Heir share |
 |---|---|---|---|---|---|
-| Elite | 1% | 80% | 1.95 | 0.69 | 88% |
-| Professionals | 25% | 72% | 0.90 | 1.50 | 61% |
-| Skilled | 22% | 60% | 1.05 | 1.50 | 57% |
-| Unskilled | 22% | 50% | 1.05 | 1.20 | 64% |
-| Gig | 15% | 42% | 0.45 | 2.25 | 26% |
-| Unemployed | 15% | 35% | 0.90 | 1.20 | 61% |
+| Permanent Underclass | 52% | 40% | 0.99 | 1.41 | 58% |
+| PMC | 47% | 65% | 0.87 | 1.59 | 58% (with the targeted ads) |
+| Glitterati | 1% | 70% | 1.08 | 1.29 | 63% |
 
-**Result: heir 57%.** A generic business party candidate with equal spending would get about 35%: the heir's skill, origin, money and the family's newspaper are worth 22 points.
+Nobles and Oligarchs are named characters only and add a handful of votes.
 
-**The twist.** In week 14 the incumbent's allies run a Leak Scandal scheme: the heir's party footage (a minor scandal, -0.3). Recomputed: **50.0%**, a coin flip. The heir wins the debate and apologizes, halving the scandal to -0.15: **53.5%** on election night. Once elected: +10 points of hub influence, +20 PC per month, mayor's whip and appointment of the police chief. Cost: 30 hours per week of the heir's time, and conflict-of-interest exposure (+3 per month with the relevant agencies) on the family's Manchester real estate unless the heir uses a blind trust for personal holdings.
+**Result: heir 58%.** A generic business party candidate with equal spending would get about 33%: the heir's skill, origin, money and the family's newspaper are worth 25 points.
+
+**The twist.** In week 14 the incumbent's allies run a Leak Scandal scheme: the heir's party footage (a minor scandal, -0.3). Recomputed: **50.6%**, a coin flip. The heir wins the debate and apologizes, halving the scandal to -0.15: **54.3%** on election night. Once elected: +10 points of hub influence, +20 PC per month, mayor's whip and appointment of the police chief. Cost: the heir's time in office, and conflict-of-interest exposure (+3 per month with the relevant agencies) on the family's Manchester real estate unless the heir uses a blind trust for personal holdings.
 
 If playtests show money and media swinging races this much, the first values to lower are the Campaign coefficient (0.8) and the Media coefficient (1.0).
 
-### 4.13.4 Antitrust review of a takeover
+### 4.13.4 A sanctions shock to a branch office
 
-> **Removed (Logan, batch 56): there is no antitrust in the game.** Kept only as a record.
-
-**Situation.** The dynasty's chip company holds 35% of its home country's chip market and launches a tender offer for a rival with 13%. Post-deal share: 48%. C3 is Standard (threshold 35%). The Antitrust Authority's head is Ambitious (Zeal 1.2). The dynasty has 6% national share: 24 PC per month.
-
-**Phase 1 Concern** = `2 × (48 - 35) + 0 + 0 + 1.2 × 10 - PC / 2 = 38 - PC / 2`.
-
-| Plan | Concern | Result |
-|---|---|---|
-| Spend 0 PC | 38 | Phase 2: Clear 22%, Remedies 30%, Block 48% |
-| Spend 20 PC | 28 | **Cleared in Phase 1** (4 weeks) |
-| Spend 10 PC and pre-sell a fab (share falls to 44%) | 25 | Cleared in Phase 1 |
-
-The dynasty spends 20 PC. If the buyer had been foreign in a strategic sector (+10) from a country with negative relations (+15), Concern would have been 53 even after 20 PC: a 7% clean clearance and a 63% block. That is why cross-border chip deals run through branch offices or joint ventures.
-
-### 4.13.5 A sanctions shock to a branch office
-
-**Situation.** The dynasty's home is Country A (liberal democracy). Its branch office, a battery plant in Country B (one-party state, strategic sector), has a book value of $2B and $300M of profit per year. The local partner holds 51% (loyalty 70). After a naval incident, A and B's relation falls to -55, and A imposes **Tier 2 sectoral sanctions** (batteries and advanced components). The dynasty's national influence share in B is 0.8%.
+**Situation.** The dynasty's home is Country A (liberal democracy). Its branch office, an EV maker in Country B (one-party state, strategic sector), has a book value of $2B and $300M of profit per year. The local partner holds 51% (loyalty 70). After a naval incident, A and B's relation falls to -55, and A imposes **Tier 2 sectoral sanctions** (EVs and chips). The dynasty's national influence share in B is 0.8%.
 
 **Monthly seizure risk** = `0.3 + 55/50 + 2 × 2 + 1 (strategic) - 10 × 0.008 - 0.5 = 5.8%`.
 
-- Month 2: the roll succeeds. Ladder step 1, *Beijing Calls*: B wants a tech transfer of the plant's next battery generation. The dynasty negotiates (Influence 15 against the minister's 14: success), holding the ladder for 6 months.
-- Month 5: A escalates to **Tier 3 financial sanctions**. The ladder jumps straight to **step 3, Restrictions**: dividends frozen (they are blocked from A anyway), two expatriate executives under exit bans, a Tax Authority inquiry opens in B. Seizure risk rises to 7.8% per month, and the next advance is **Seizure** (compensation 30%, in B's currency, under Hard Controls). Target-flagged ships carrying the plant's output are stopped at A-controlled straits; output must be sold inside B or to neutral countries.
+- Month 2: the roll succeeds. Ladder step 1, *Beijing Calls*: B wants a tech transfer of the company's next EV generation. The dynasty negotiates (Influence 15 against the minister's 14: success), holding the ladder for 6 months.
+- Month 5: A escalates to **Tier 3 financial sanctions**. The ladder jumps straight to **step 3, Restrictions**: dividends frozen (they are blocked from A anyway), two expatriate executives under exit bans, a Tax Authority inquiry opens in B. Seizure risk rises to 7.8% per month, and the next advance is **Seizure** (compensation 30%, in B's currency, under Hard Controls). Target-flagged ships carrying the company's output are stopped at A-controlled straits; output must be sold inside B or to neutral countries.
 
 **The choice event *The Wall Comes Down*:**
 
@@ -1434,33 +1383,7 @@ The dynasty spends 20 PC. If the buyer had been foreign in a strategic sector (+
 
 The dynasty sells, then quietly asks a cadet house with a personal account in a neutral country to buy a minority of the local partner (Spin off logic, with evasion risk if hooks are used to keep control).
 
-### 4.13.6 Backing a coup with PMCs
-
-> **Removed (batch 51): PMCs are dropped.** Coups are backed with money, hooks and influence over officers instead.
-
-**Situation.** The dynasty owns a lithium mine in Country C, a small coastal managed democracy (MSI 8). A new government plans to nationalize lithium. Stability 40, Security Establishment approval -3 (SecurityLoyalty 35), ruling coalition clout 40%.
-
-**Regime strength** = `0.4 × 40 + 0.3 × 35 + 0.3 × 40 = 38.5`.
-
-**Building the plot:**
-
-| Term | Detail | CS |
-|---|---|---|
-| Plotter military | 3 generals recruited (each `40% + 2% × (18 - 10) + 20/5 = 60%` per attempt; 5 attempts over 3 weeks) commanding 22% of the forces | 22 |
-| PMC | 6 units ($30M per month) via S1 Licensed: `2 × 6 × 10/8 = 15` | 15 |
-| Bribes | $48M at $8M per point (`$10M × 8/10`) | 6 |
-| Popular | Traditionalists are Angry with 18% clout and back the plotters | 5 |
-| **Total** | | **48** |
-
-**Success chance per objective** = `50% + 1.5% × (48 - 38.5) = 64%`.
-
-**Leaks.** Sound Out lasts 3 weeks at 10% per week; Assemble 4 weeks at `5% + 6% = 11%` per week. Chance of no leak at all: `0.9³ × 0.89⁴ = 46%`. A leak costs generals and raises RS by 10, which would cut the per-objective chance to 49%.
-
-**Night of the Coup (no leak):** P(2 or 3 objectives) = `3 × 0.64² × 0.36 + 0.64³ = 70%` success. P(exactly 1) = 24%: since CS ≥ RS, a **civil war** stalemate. P(0) = 5%: failure.
-
-**Costs**: about $90M of PMC fees for 3 months plus $48M bribes. **Payoffs on success**: the nationalization is cancelled by decree, a hook on the junta leader, 2 favors per general, first refusal on privatized state mines, +15 bid score for 3 years. **Risks**: liberal democracy sanctions (60% Tier 1 on C), and if the dynasty's exposure with its home country's Financial Police reaches 50, its own characters can be listed. On failure: everything in Country C is seized, the PMC units are lost and the dynasty gets the "Coup Plotter" notoriety for 10 years.
-
-### 4.13.7 Insider tip and a securities investigation
+### 4.13.5 Insider tip and a securities investigation
 
 **Situation.** A client minister uses a favor to give the dynasty one week's notice of a surprise rate cut. The family trust buys index futures and makes $40M. Exposure +20 with the Securities Regulator (liberal democracy, F4 Standard ×1.0, capacity 4 ×1.25, head Ambitious and Honest: Zeal 1.4, corruption 20).
 
@@ -1471,12 +1394,12 @@ The dynasty sells, then quietly asks a cadet house with a personal account in a 
 | Path | Outcome |
 |---|---|
 | Settle (cooperated) | Serious tier at 40%: disgorgement `1.5 × $40M × 0.4 = $24M` plus fine `1 × $40M × 0.4 = $16M`; dynasty head banned from boards in that country for 2 to 5 years; reputation -10 |
-| Scapegoat the trust's portfolio manager | Penalty halved; the manager's opinion -60 and their family hostile; a new enemy who knows things |
+| Scapegoat the trust's portfolio manager | Penalty halved; the manager and their family turn Rival; a new enemy who knows things |
 | Trial | With Evidence 80 at trial and defense score `15 + 5 × 2 = 25`, conviction = `80 - 25 + 20 = 75%`; on conviction the full Serious penalty plus "Scandal-Ridden" |
 
 The lesson: favors buy information, but trading on it is the most detectable thing a dynasty can do.
 
-### 4.13.8 A currency crisis and a bank bailout
+### 4.13.6 A currency crisis and a bank bailout
 
 **Situation.** The dynasty's captive bank operates in Country D, a managed democracy with a peg to the dollar. Reserves cover 2 months of imports; stability 34; debt 75% of GDP, half in foreign currency (Limit 60). The bank holds $3B of D's government bonds and its assets are 2.5% of D's GDP (systemically important). A rival dynasty holds short positions against D's currency worth 10% of reserves.
 
@@ -1502,13 +1425,13 @@ In month 3 the peg breaks: the currency falls 45% over two weeks, the central ba
 
 | Event | Trigger | Options (short) |
 |---|---|---|
-| *The Fundraiser* | Election within 12 weeks, dynasty has influence ≥ 10% | Host (4 h, money raised, opinion) · Send a cheque · Decline |
+| *The Fundraiser* | Election within 12 weeks, dynasty has influence ≥ 10% | Host (4 ticks, money raised, opinion push) · Send a cheque · Decline |
 | *A Quiet Word from the Minister* | Client minister with Loyalty ≥ 60 | Accept advance notice (+20 securities exposure if traded on) · Decline politely |
 | *Subpoena* | Investigation reaches stage 2 | Cooperate · Lawyer up · Leak a counter-story |
 | *The Client Flips* | Discovery, client loyalty < 50 | Pay them off · Threaten (Intrigue) · Let it happen |
 | *Beijing Calls* | Seizure ladder step 1 | Comply · Negotiate · Refuse |
-| *General Strike* | Revolution pressure 50 | Negotiate with unions · Hire replacement workers (unrest +10) · Close the facility |
-| *The Colonel's Dinner* | Coup risk active, dynasty has PMCs or influence ≥ 5% in the country | Listen · Report to the government (Security approval +2, plotters hostile) · Leave early |
+| *General Strike* | Revolution pressure 50 | Negotiate with unions · Hire replacement workers (unrest +10) · Shut the affected business unit |
+| *The Colonel's Dinner* | Coup risk active, dynasty has influence ≥ 5% in the country | Listen · Report to the government (Chuds approval +2, plotters hostile) · Leave early |
 | *Night of the Long Phones* | A coup is under way | Commit reserves · Negotiate with a wavering general · Evacuate executives |
 | *Recount* | Margin < 0.5% | Fund the legal challenge · Concede |
 | *Party Congress* | One-party state, every 5 years | Back a faction · Stay neutral (safe, no gains) |
@@ -1533,9 +1456,9 @@ The Politics screen ([11-ui.md](../11-ui.md)) has seven tabs. Each tab opens on 
 | **Desk** (home tab) | Per jurisdiction: PC pool and monthly gain, influence tier, government type and ruling coalition, Government attitude (4.27.2), next election, open investigations, seizure ladder step, and a **Stakes** column: the yearly money impact on the dynasty of every bill in Drafting or Debate (estimated from the dynasty's assets and the law's effects) | Open a jurisdiction; set Political Objectives (4.15.2); approve the Director's budget |
 | **Laws** | The law grid by category (4.5.1) for the chosen jurisdiction: current position, bills in progress with a support bar, pass chance and the tooltip breakdown (4.5.10), the dynasty's Stakes per position | Lobby Bill, Commission a Bill, Issue or Astroturf Campaign, fund a think tank paper (4.18.2) |
 | **People** (the Rolodex) | Officials, clients, judges, journalists, regulator heads, party leaders, union and NGO leaders, crime bosses known to the dynasty: opinion, loyalty, favors owed, hooks, Integrity band if known | Meet, call in a favor, bribe, blackmail, Court Patron, hire (for lobbyists and fixers) |
-| **Elections** | Calendar of every election where the dynasty has Presence; polls with noise bands; candidates; the dynasty's backed candidates; campaign planner showing utility terms by segment (4.6.3) | Donate, independent expenditure, ads, run a family member, endorse |
+| **Elections** | Calendar of every election where the dynasty has Presence; polls with noise bands; candidates; the dynasty's backed candidates; campaign planner showing utility terms by stratum (4.6.3) | Donate, independent expenditure, ads, run a family member, endorse |
 | **Heat** | Exposure meters per agency per country (4.9.3), open investigations and their stage, scandals and their Heat (4.17.4), whistleblower risk per operation (4.20.5), dirty money balance (4.20.1) | Request Protection, respond to a scandal, hush money, restructure shells, launder |
-| **Public** | Favorability by segment, Elite Standing and Profile per country (4.16), media audience and tone, active protests and boycotts (4.24) | Set editorial lines, run media campaigns, fund foundations and NGOs |
+| **Public** | Favorability by stratum, Elite Standing and Profile per country (4.16), media audience and tone, active protests and boycotts (4.24) | Set editorial lines, run media campaigns, fund foundations and NGOs |
 | **World** | Relations, blocs, sanctions, trade wars, wars, international organizations (4.25), espionage requests (4.26) | Improve Relations, lobby international bodies, answer The Request |
 
 Every number has the usual tooltip breakdown. The **Stakes** column is the anti-tedium tool: a bill with a Stakes value below the player's chosen alert threshold (default 0.5% of the dynasty's yearly income **(T)**) is shown greyed out and never stops auto-advance.
@@ -1550,7 +1473,7 @@ Every number has the usual tooltip breakdown. The **Stakes** column is the anti-
 | **Move a law** | Push E11 Zoning to Permissive in Phoenix | Saves PC, Commissions the bill when the pass chance would be ≥ 25%, keeps lobbying topped up against decay |
 | **Win a decision** | Rezoning of a named plot; a merger clearance; a licence | Meets the deciding members, spends PC and favors until the disposition (4.3.5) is positive, then files the Request Decision |
 | **Protect** | Keep Financial Police in the United Kingdom off the dynasty | Keeps Request Protection active, meets the agency head monthly, alerts when Exposure passes 40 |
-| **Keep a friend in office** | Re-elect the client mayor | Donates within G1 caps, buys ads in the last 6 weeks, funds GOTV in the client's best segment |
+| **Keep a friend in office** | Re-elect the client mayor | Donates within G1 caps, buys ads in the last 6 weeks, funds GOTV in the client's best stratum |
 | **Weaken an enemy** | Unseat a hostile councilor | Funds the challenger, runs ads; never runs illegal actions unless the Conduct line allows |
 | **Win a contract** | The Lagos port tender | Spends PC on the Political term of the bid score (4.9.7), calls favors, pays kickbacks only if the Conduct line allows |
 
@@ -1598,9 +1521,9 @@ Most politics resolves on the weekly and monthly calculations (4.1.3). These mom
 | Stance | Roll | Success | Failure |
 |---|---|---|---|
 | **Deflect** | Intrigue vs chair's Intrigue | Heat -5 | Heat +5; "evasive" headline |
-| **Concede** (admit a small point) | Automatic | Heat -8; Favorability +2 with Professionals | Investigation Evidence +3 |
+| **Concede** (admit a small point) | Automatic | Heat -8; Favorability +2 with the PMC stratum | Investigation Evidence +3 |
 | **Attack** (the chair, the press, a rival) | Influence vs chair's Influence | Heat -10; Elite Standing -2 | Heat +15; a minor scandal |
-| **Charm** | Influence vs chair's Influence | Favorability +3 in all segments; Heat -3 | Nothing |
+| **Charm** | Influence vs chair's Influence | Favorability +3 in all strata; Heat -3 | Nothing |
 
 Success chance per round = `clamp(50% + 3% × (skill difference), 10%, 90%)` **(T)**. A Media Darling witness gets +10% on Charm; Scandal-Ridden -10% on everything. A critical failure (5% each round) is a viral clip: Heat +25 and Profile +10.
 
@@ -1610,13 +1533,13 @@ Every Monday at 07:00 local time of the dynasty seat, a one-page brief (like the
 
 ### 4.15.6 Pacing targets
 
-| Stage | Share of play time on politics **(T)** | Typical political actions per in-game month |
+| Largest company's rank (1.7.5) | Share of play time on politics **(T)** | Typical political actions per in-game month |
 |---|---|---|
-| The Heir | Under 5% | 0 to 2 (a donation, a campaign volunteer stint) |
-| The Founder | 5 to 10% | 1 to 4 (permits, a grant chain, Meet Official) |
-| The Climber | 10 to 20% | 4 to 10, most run by the Director |
-| The Tycoon | 15 to 25% | 10 to 40, nearly all run by Directors; the player handles alerts and hot moments |
-| The Oligarch | 20 to 30% | Many; the player plays the big chains (coups, charters, Council sessions, international votes) |
+| No company yet | Under 5% | 0 to 2 (a donation, a campaign volunteer stint) |
+| Venture | 5 to 10% | 1 to 4 (permits, a grant chain, Meet Official) |
+| Company | 10 to 20% | 4 to 10, most run by the Director |
+| Corporation | 15 to 25% | 10 to 40, nearly all run by Directors; the player handles alerts and hot moments |
+| Megacorp and Conglomerate | 20 to 30% | Many; the player plays the big chains (coups, charters, Council sessions, international votes) |
 
 ---
 
@@ -1628,7 +1551,7 @@ Every Monday at 07:00 local time of the dynasty seat, a one-page brief (like the
 
 | Measure | Range | Scope | Meaning |
 |---|---|---|---|
-| **Favorability** | -100 to +100 | Per dynasty per country per segment (also tracked for named public characters) | Whether ordinary people like the family |
+| **Favorability** | -100 to +100 | Per dynasty per country per stratum (also tracked for named public characters) | Whether ordinary people like the family |
 | **Elite Standing** | 0 to 100 | Per dynasty per country | Whether the political and business class treats the family as one of its own |
 | **Profile** | 0 to 100 | Per dynasty per country | How well known the family is. Scales how much Favorability matters |
 
@@ -1640,23 +1563,23 @@ Every Monday at 07:00 local time of the dynasty seat, a one-page brief (like the
 
 | Term | Value **(T)** |
 |---|---|
-| **MediaTone(s)** | `Σ outlets (audience share among segment s × credibility / 100 × tone toward the dynasty)`; tone is -1 to +1 (4.17.1) |
-| **Employer(s)** | +5 if the dynasty's companies employ ≥ 1% of the segment's workers in the country, +10 at ≥ 5%; -10 for 12 months after layoffs of ≥ 1,000 people or ≥ 10% of the dynasty's workforce in the country |
-| **Lobbying(s)** | For each disclosed political action in the last 12 months (Lobby Bill under G2 Registered or Light Disclosure, Issue Campaign, disclosed donation over E/2): -2 if the segment's largest IG has stance - or -- on the lobbied position, +1 if + or ++. Capped at ±10 |
-| **Philanthropy** | +1 per $1M × wealth index granted in the country in the last 12 months, capped at +15 (counts for all segments) |
+| **MediaTone(s)** | `Σ outlets (audience share among stratum s × credibility / 100 × tone toward the dynasty)`; tone is -1 to +1 (4.17.1) |
+| **Employer(s)** | +5 if the dynasty's companies employ ≥ 1% of the stratum's workers in the country, +10 at ≥ 5%; -10 for 12 months after layoffs of ≥ 1,000 people or ≥ 10% of the dynasty's workforce in the country |
+| **Lobbying(s)** | For each disclosed political action in the last 12 months (Lobby Bill under G2 Registered or Light Disclosure, Issue Campaign, disclosed donation over E/2): -2 if the stratum's largest bloc has stance - or -- on the lobbied position, +1 if + or ++. Capped at ±10 |
+| **Philanthropy** | +1 per $1M × wealth index granted in the country in the last 12 months, capped at +15 (counts for all strata) |
 | **Home** | +10 in the country of the dynasty seat (2.5.6) |
 | **Heat** | Sum of Heat of active scandals about the dynasty or its head in that country (4.17.4), capped at 60 |
-| **Price anger** | -10 among all segments while the dynasty uses Kingmaker price setting on an essential good (2.9.8) or is publicly linked to a commodity corner (3.7.6) |
+| **Price anger** | -10 among all strata while the dynasty is publicly linked to a commodity corner (3.7.6) or to price hikes in an essential industry (energy, housing) |
 
 **Effects of Favorability** (effective favorability, so Profile matters):
 
 | Use | Effect **(T)** |
 |---|---|
-| Family member as candidate | `Candidate += 0.01 × effective Fav(s)` in each segment (so +0.3 at Fav 50 and Profile 60) |
+| Family member as candidate | `Candidate += 0.01 × effective Fav(s)` in each stratum (so +0.3 at Fav 50 and Profile 60) |
 | Endorsement by the dynasty | The endorsed candidate gets `+0.005 × effective Fav(s)`; a negative value is a "kiss of death" |
 | Bills publicly linked to the dynasty (it sponsored them, or its lobbying was disclosed) | Support `+0.1 × population-weighted effective Fav`, capped at ±5 |
-| Boycotts | At Fav ≤ -40 and Profile ≥ 50 in a segment, the dynasty's consumer brands lose 10% appeal (2.15.3) with that segment's households in the country |
-| Protests | Fav ≤ -60 in a segment with union Organization ≥ 40 (2.8.6): a protest targeting the dynasty can start (4.24.2) |
+| Boycotts | At Fav ≤ -40 and Profile ≥ 50 in a stratum, the dynasty's consumer brands lose 10% appeal with that stratum in the country |
+| Protests | Fav ≤ -60 in a stratum with union Organization ≥ 40 (2.8.6): a protest targeting the dynasty can start (4.24.2) |
 | Populist targeting | 4.27.2 |
 
 ### 4.16.3 Elite Standing (monthly)
@@ -1665,18 +1588,18 @@ Every Monday at 07:00 local time of the dynasty seat, a one-page brief (like the
 
 | Elite Standing | Effects **(T)** |
 |---|---|
-| 0 to 24: **Pariah** | Officials' opinion -20; cannot host galas; appointment score -10 for family members; marriage acceptance -10% with old-money families |
+| 0 to 24: **Pariah** | A -20 opinion push from each official on entering the band; cannot host galas; appointment score -10 for family members; marriage acceptance -10% with old-money families |
 | 25 to 49: **Outsider** | Appointment score -5 |
 | 50 to 74: **Accepted** | None |
 | 75 to 100: **Establishment** | Appointment score +5; Meet Official costs 0 PC once per week with any national official; +5% marriage acceptance; AI dynasties less likely to join coalitions against the dynasty (4.27.4) |
 
-The tension is deliberate: lobbying for tax cuts, buying politicians and hosting galas raise Elite Standing and lower Favorability among working segments. A family that wants to run its own members for office must balance both.
+The tension is deliberate: lobbying for tax cuts, buying politicians and hosting galas raise Elite Standing and lower Favorability among the Permanent Underclass and PMC strata. A family that wants to run its own members for office must balance both.
 
 ### 4.16.4 Profile (weekly)
 
 | Change | Value **(T)** |
 |---|---|
-| Floor by standing tier (2.1) | Investor 0, Magnate 10, Mogul 20, Tycoon 35, Oligarch 50 |
+| Floor by personal wealth tier (1.10.5) | Investor 0, Magnate 10, Mogul 20, Tycoon 35, Oligarch 50 |
 | Consumer brand with ≥ 10% market share in the country | Floor +10 |
 | Scandal coverage | +Heat / 10 per week |
 | Election campaign by a family member | +5 (local), +10 (national) |
@@ -1690,17 +1613,17 @@ The tension is deliberate: lobbying for tax cuts, buying politicians and hosting
 
 ## 4.17 Media, narratives and scandals
 
-4.4.5 sets how owned media shifts IG clout, and 3.14.4 sets source reliability for market news. This section makes media a full political weapon: outlets with credibility, journalists as characters, and scandals as news cycles that can be fought.
+4.4.5 sets how owned media shifts bloc clout, and 3.14.4 sets source reliability for market news. This section makes media a full political weapon: outlets with credibility, journalists as characters, and scandals as news cycles that can be fought.
 
 ### 4.17.1 Outlets
 
-Any facility of sector Media (broadcast and publishing, social platform, synthetic media; 2.7.8) or a media company is an **outlet** with:
+Every outlet of the media system ([16-media.md](16-media.md)): broadcast and publishing, social platforms and synthetic media, has, for politics:
 
 | Stat | Range | Source **(T)** |
 |---|---|---|
-| **Audience share** | 0 to 100% per hub and country, split by segment | Facility levels and reach (2.7.8); tabloids skew Unskilled and Unemployed, major papers skew Elite and Professionals, social platforms skew Gig and young Professionals |
+| **Audience share** | 0 to 100% per hub and country, split by stratum | Reach ([16-media.md](16-media.md)); tabloids skew Permanent Underclass, major papers skew Glitterati and PMC, social platforms skew Permanent Underclass and young PMC |
 | **Credibility** | 0 to 100 | Starts at the source tier of 3.14.4 (Wire 95, Major paper 85, Trade 70, Tabloid and TV 50, Social 30). -10 each time a planted or spiked story is exposed; -5 per editor resignation; +1 per month back toward its tier |
-| **Editorial line** | Alignment -1 to +1 with each IG | Set by the owner (4.4.5) |
+| **Editorial line** | Alignment -1 to +1 with each bloc | Set by the owner (4.4.5) |
 | **Tone** | -1 to +1 toward each dynasty and named character | Owned outlets: set by the owner. Other outlets: start at 0; -0.1 per week while covering a scandal of that dynasty; +0.05 per month of access (interviews, exclusives); +0.02 per $1M × wealth index of yearly advertising placed with it by the dynasty's companies (cap +0.3, "advertiser leverage"); drifts 10% per month toward 0 |
 | **Editor** | Character | Integrity (as for agency heads, 4.9.2) decides whether they follow orders to spike or plant |
 
@@ -1710,14 +1633,14 @@ Any facility of sector Media (broadcast and publishing, social platform, synthet
 
 | Action | Cost and time **(T)** | Effect | Risk |
 |---|---|---|---|
-| **Set line** | 4 weeks; audience -5% (4.4.5) | IG alignment changes | Editor with Integrity ≥ 70 resigns if the change is ≥ 1.0 on any IG: credibility -5 |
+| **Set line** | 4 weeks; audience -5% (4.4.5) | Bloc alignment changes | Editor with Integrity ≥ 70 resigns if the change is ≥ 1.0 on any bloc: credibility -5 |
 | **Set tone** toward a holder | 2 weeks | Tone -1 to +1 | A tone of ±0.8 or more for 6 months: credibility -1 per month ("house organ") |
-| **Endorse** a party or candidate | 1 hour | Media term (4.6.3) | Audience among opposing segments -2% |
+| **Endorse** a party or candidate | Instant | Media term (4.6.3) | Audience among opposing strata -2% |
 | **Hit campaign** against a person or company | $ (0.02 × adults reached) per week | Target's MediaTone among the audience -0.3 per week of campaign (to -1) | 10% chance per week of a defamation suit if claims are false (4.21.2) |
-| **Spike a story** | 1 hour | The outlet does not run a story (3.14.4: early, late or never) | Leak chance 10% per spiked story (+5% per Integrity point of the editor above 50 / 10): scandal "Spiked" (minor) and credibility -10 |
+| **Spike a story** | Instant | The outlet does not run a story (3.14.4: early, late or never) | Leak chance 10% per spiked story (+5% per Integrity point of the editor above 50 / 10): scandal "Spiked" (minor) and credibility -10 |
 | **Plant a story** | Editor must comply (Integrity < 50) or the outlet must be friendly via a hook | Runs a story the dynasty wrote | False story: 15% exposure chance per month; exposure is a scandal for the dynasty and -10 credibility |
 | **Hire a star journalist** | Salary $1M to $5M × wealth index per year | +3% audience; credibility +5 | They may refuse orders like an Honest editor |
-| **Feed weighting** (social platforms only) | Free, hidden | Works like an ad campaign (+0.02 MediaBias, +0.15 Ads utility) without disclosure | Counts as a psyop for exposure (+5 with the Data and Cyberware Authority per month) and is a major scandal if found (daily psyop discovery roll, 2.5.7) |
+| **Feed weighting** (social platforms only) | Free, hidden | Works like an ad campaign (+0.02 MediaBias, +0.15 Ads utility) without disclosure | Counts as a psyop for exposure (+5 with the Data Authority per month) and is a major scandal if found (daily psyop discovery roll, 2.5.7) |
 
 **Buying a critic.** Buying an outlet that is hostile to the dynasty is legal, but on the change of control its star journalists and Integrity ≥ 70 editors leave (credibility -15, audience -10%) and they found or join a rival outlet that takes half the lost audience **(T)**.
 
@@ -1727,9 +1650,9 @@ Any facility of sector Media (broadcast and publishing, social platform, synthet
 
 Investigative journalists are characters (Intrigue, Influence, Honest or not, an outlet). Each country has 2 to 8 notable ones **(T)**, more in liberal democracies.
 
-- Each month a journalist picks a **target**: the holder with the highest political or financial exposure in the country, weighted ×1.5 for Tycoon and Oligarch dynasties and ×2 if a whistleblower contacted them (4.20.5).
+- Each month a journalist picks a **target**: the holder with the highest political or financial exposure in the country, weighted ×1.5 for dynasties whose largest company is Megacorp or Conglomerate rank and ×2 if a whistleblower contacted them (4.20.5).
 - A journalist on the dynasty's case multiplies the monthly exposé chance (4.10.3) by `1 + journalist's Intrigue / 20` **(T)** and raises revelation chances (4.17.4).
-- **Options against a journalist**: grant access (tone +0.1, but the journalist learns one secret 20% of the time); hire them away (salary ×2, they refuse if Honest); sue for defamation (4.21.2); smear (Leak Scandal scheme on them); buy their outlet (above); surveil or hack (Netrun, a Grave offense if found); arrange an "accident" (Criminal; Heat +60 on the dynasty if suspected, media freedom ×1.5 against it for 5 years).
+- **Options against a journalist**: grant access (tone +0.1, but the journalist learns one secret 20% of the time); hire them away (salary ×2, they refuse if Honest); sue for defamation (4.21.2); smear (Leak Scandal scheme on them); buy their outlet (above); surveil them or hack Techno-Capital they own (a hacking scheme, [17-hacking.md](17-hacking.md); a Grave offense if found); arrange an "accident" (Criminal; Heat +60 on the dynasty if suspected, media freedom ×1.5 against it for 5 years).
 
 ### 4.17.4 Scandals as news cycles
 
@@ -1754,9 +1677,9 @@ A **scandal** (minor, major or criminal, as in 4.6.3 and 4.10.3) now has three p
 |---|---|---|
 | **Ride it out** | None | None |
 | **Deny** | Heat ×0.8 | If the story is true, each later revelation adds +20 instead of +10 and costs Favorability -5 ("caught lying") |
-| **Apologize** | Heat ×0.5; each covering outlet's remaining days halved; revelation chance halved | Favorability -5 in all segments; Evidence +5 in any open investigation on the matter |
+| **Apologize** | Heat ×0.5; each covering outlet's remaining days halved; revelation chance halved | Favorability -5 in all strata; Evidence +5 in any open investigation on the matter |
 | **Counter-story** | Heat ×0.7 | Needs an owned outlet or a psyop; 25% chance the plant is exposed: a new minor scandal and -10 credibility for the outlet |
-| **Scapegoat** | Heat ×0.6 | As 4.9.4: the executive's opinion -60, family hostile |
+| **Scapegoat** | Heat ×0.6 | As 4.9.4: the executive and their family turn Rival |
 | **Legal threat** | Each covering outlet whose editor has Integrity < 50 stops with 40% chance | 15% chance of a backlash story: Heat +20 |
 | **Sue for defamation** | 4.21.2 | Heat +10 at filing; civil discovery risk |
 | **Philanthropy pivot** | Heat ×0.8; Favorability +3 | If reputation < -20: "washing" story, Heat +10 |
@@ -1773,7 +1696,7 @@ When two holders push opposing stories about the same bill, election or person, 
 
 ### 4.18.1 Political careers
 
-Family members are AI characters with their own ambitions ([13-open-questions.md](../13-open-questions.md), assumption 4). A family member becomes a politician through their life path ([03-characters.md](../03-characters.md) 3.5): Ambitious, Party School and Persuasion ≥ 12 make it likely; the head can **Encourage a Political Career** (1 hour; -10 opinion if the member has no political traits; +10 if Ambitious) **(T)**.
+Family members are AI characters with their own ambitions ([13-open-questions.md](../13-open-questions.md), assumption 4). A family member becomes a politician through their life path ([03-characters.md](../03-characters.md) 3.5): Ambitious, Party School and Persuasion ≥ 12 make it likely; the head can **Encourage a Political Career** (a -10 opinion push if the member has no political traits; +10 if Ambitious) **(T)**.
 
 **Typical ladder** (liberal democracy) **(T)**:
 
@@ -1788,7 +1711,7 @@ Family members are AI characters with their own ambitions ([13-open-questions.md
 
 **Party Standing** (0 to 100, per character per party): +5 per year of membership, +10 per election won for the party, +1 per $ E/10 the character's dynasty donated to the party in the last 4 years (cap +20), -20 if they voted against the party on a whipped bill, -30 on a scandal of major tier or worse. It adds `+ Party Standing / 10` to the nomination score of 4.7.2 **(T)** (this is a new term added to that formula).
 
-**Family officials and the head.** A family member in office does not need favors: the head asks directly (1 hour). The member complies if their opinion of the head is ≥ 20; each request costs -5 opinion **(T)**; Honest members refuse illegal requests and have a 10% chance of reporting them. A family member's political rise can also become a rival power base: a family Head of Government has their own Profile and may side with a sibling in a succession fight.
+**Family officials and the head.** A family member in office does not need favors: the head asks directly. The member complies unless their opinion of the head is Rival; each request is a -5 opinion push **(T)**; Honest members refuse illegal requests and have a 10% chance of reporting them. A family member's political rise can also become a rival power base: a family Head of Government has their own Profile and may side with a sibling in a succession fight.
 
 **Political dynasties.** Offices held by family members accumulate **Political House** renown: +10 renown per year per national office, +3 per regional or local office **(T)**. This counts toward the Political Machine legacy (1.11.4) and the Political Dynasty endgame (4.29).
 
@@ -1804,10 +1727,10 @@ A **think tank** is a non-profit company. Owned by a dynasty company it is a Sub
 |---|---|---|
 | **Policy paper** on one law position | 6 months | Bills moving that law toward the position get `+Prestige / 10` support (cap +8) in the Campaign term for 24 months |
 | **Model legislation** | 3 months | The next Commission a Bill on that law costs half PC |
-| **Shift the debate** | 24 months; needs Prestige ≥ 50 and B ≥ M / 50 per year in that jurisdiction | Success chance = `Prestige × 0.6 %`, reduced by the Prestige of any opposing think tank running the same program. On success one chosen IG's stance on one law position moves one step toward the think tank's view in that country for 10 years. At most one shift per IG per law per decade |
+| **Shift the debate** | 24 months; needs Prestige ≥ 50 and B ≥ M / 50 per year in that jurisdiction | Success chance = `Prestige × 0.6 %`, reduced by the Prestige of any opposing think tank running the same program. On success one chosen bloc's stance on one law position moves one step toward the think tank's view in that country for 10 years. At most one shift per bloc per law per decade |
 | **Fellowships** | Ongoing | Place a client or a former official as a fellow ($300k × wealth index per year): counts as a favor repaid (+10 loyalty) and keeps their network active for Introductions |
 
-Shift the debate is the slowest and strongest lever in the game: it changes what an interest group wants, not just how loud it is.
+Shift the debate is the slowest and strongest lever in the game: it changes what an ideology bloc wants, not just how loud it is.
 
 ### 4.18.3 Foundations and philanthropy
 
@@ -1822,7 +1745,7 @@ A **family foundation** is a new holder type (like a personal trust), founded by
 |---|---|---|
 | **Hub philanthropy** | As sponsorship and charity (2.5.7) | Goodwill as 2.5.7, with 35% (not 25%) becoming permanent |
 | **Named institution** (hospital, university wing, museum) | $50M to $500M × wealth index, one-off | Permanent Goodwill of +1 pp (small) to +3 pp (large) in the hub that never decays; Elite Standing +5; Profile +5 |
-| **Scholarships** | $1M × wealth index per year per 10 scholars | Each year one scholar becomes a named character with +30 opinion of the dynasty, recruitable as an executive, staffer or candidate |
+| **Scholarships** | $1M × wealth index per year per 10 scholars | Each year one scholar becomes a named character whose opinion of the dynasty starts at Friend, recruitable as an executive, staffer or candidate |
 | **NGO grants** | Any | The NGO's tone toward the dynasty +0.1 per $1M × wealth index (cap +0.5); if the NGO is a watchdog, a co-option story has 10% chance per year (Heat 20) |
 | **Disaster relief** | Any, after a disaster event | Favorability +5 in the affected country per $10M × wealth index (cap +15) |
 
@@ -1834,16 +1757,16 @@ A **family foundation** is a new holder type (like a personal trust), founded by
 
 | Donor share **(T)** | Status | Powers |
 |---|---|---|
-| ≥ 10% | **Major Donor** | A seat at the platform committee: once per year, set the party's platform stance on one law one step away from its IG average (4.4.7) for 2 years. The party's member IGs whose stance differs lose 1 approval of the party |
+| ≥ 10% | **Major Donor** | A seat at the platform committee: once per year, set the party's platform stance on one law one step away from its bloc average (4.4.7) for 2 years. The party's member blocs whose stance differs lose 1 approval of the party |
 | ≥ 25% | **Party Patron** | Nomination score +20 for up to 3 chosen candidates per election; in a leadership contest, the backed candidate gets +15 |
 | ≥ 50%, and a family member or client leads the party | **Owned Party** | The party's platform follows the dynasty on up to 3 laws; the party's legislators count as clients with Loyalty 50 (no favors needed for votes on those laws) |
 
-**Costs and risks.** A donor share above 25% becomes public under G1 Capped or Unlimited Disclosed (always under an exposé): Profile +10, and the party's opponents get +0.2 utility in segments where the dynasty's effective Favorability is below 0 ("the party of the [dynasty]"). Under G1 Public Funding Only, donor share above 10% is impossible legally; doing it through shells is a Serious offense.
+**Costs and risks.** A donor share above 25% becomes public under G1 Capped or Unlimited Disclosed (always under an exposé): Profile +10, and the party's opponents get +0.2 utility in strata where the dynasty's effective Favorability is below 0 ("the party of the [dynasty]"). Under G1 Public Funding Only, donor share above 10% is impossible legally; doing it through shells is a Serious offense.
 
 **Founding a party.** A dynasty can found a party (8 weeks, $ M / 20 to launch, $ M / 10 per year to be competitive **(T)**) when either:
 
-- an IG with clout ≥ 5% has no party, or its party's stance is 2 or more steps away from one of its ++ wants: the IG joins with chance 20% per quarter, more with Fund Interest Group; or
-- a family member has Profile ≥ 60 and effective Favorability ≥ 20 in at least one segment: a **personal party**. It has no IGs, so its Ideology term is 0, but its Candidate term counts ×2 and the dynasty's Favorability counts directly. Personal parties rise fast and fall with their leader's scandals. Founding one costs Elite Standing -10 ("traitor to their class") if its platform attacks the Elite segment.
+- a bloc with clout ≥ 5% has no party, or its party's stance is 2 or more steps away from one of its ++ wants: the bloc joins with chance 20% per quarter, more with Fund Ideology; or
+- a family member has Profile ≥ 60 and effective Favorability ≥ 20 in at least one stratum: a **personal party**. It has no blocs, so its Ideology term is 0, but its Candidate term counts ×2 and the dynasty's Favorability counts directly. Personal parties rise fast and fall with their leader's scandals. Founding one costs Elite Standing -10 ("traitor to their class") if its platform attacks the Glitterati and Oligarchs.
 
 In managed democracies, owning a licensed opposition party is allowed only with Government attitude Tolerated or better (4.27.2); otherwise the party is disqualified (4.6.7). In one-party states, the equivalent is backing a faction (4.8.2).
 
@@ -1855,26 +1778,26 @@ In managed democracies, owning a licensed opposition party is allowed only with 
 
 | Role | Key skill | Hired as | Effect **(T)** |
 |---|---|---|---|
-| **Lobbyist** | Influence | Staff ($300k to $3M × wealth index per year) or through a firm | Can be the Political Director; LP from money ×`(1 + 1% per Influence point above 10)`, max +20%; runs Lobby Bill and Meet Official with their own hours |
+| **Lobbyist** | Influence | Staff ($300k to $3M × wealth index per year) or through a firm | Can be the Political Director; LP from money ×`(1 + 1% per Influence point above 10)`, max +20%; runs Lobby Bill and Meet Official with their own time |
 | **Campaign manager** | Influence | Per campaign ($100k to $2M × wealth index) | The Campaign term coefficient (0.8 in 4.6.3) becomes `0.8 × (0.85 + Influence / 100)` for that candidate |
 | **Pollster** | Finance or Influence | Per poll | Internal poll noise ±1.5 (4.6.3), or ±1 with a pollster of skill ≥ 15 |
 | **Spin doctor** (PR) | Influence | Staff | Scandal responses: Deny, Apologize and Counter-story multipliers improve by 0.1 (for example Apologize ×0.4) |
 | **Fixer** | Intrigue | Staff, off the books | Runs deniable operations (4.20.4); holds **contacts** |
-| **Former official** ("revolving door") | Influence | Staff or board seat | Keeps their network: +20 opinion with former colleagues for 4 years; Introduction favors at no cost |
+| **Former official** ("revolving door") | Influence | Staff or board seat | Keeps their network: a +20 opinion push with former colleagues; Introduction favors at no cost |
 
-**Fixer contacts.** A fixer has a contact level (0 to 3) in each of: Police, Officials, Media, Crime, Netrunners, Security **(T)**. Operations need a level: bribing a judge needs Officials 2; buying a cartel's smuggling route needs Crime 2; hiring a netrunner crew needs Netrunners 1. Contacts rise 1 level per 2 years of work in a country, or at once when the fixer is recruited from that world (Street-Taught, former police, former intelligence). Fixers can be arrested: they roll Cracks (4.9.4) like subordinates, and a fixer who flips is worth +30 Evidence.
+**Fixer contacts.** A fixer has a contact level (0 to 3) in each of: Police, Officials, Media, Crime, Hackers, Security **(T)**. Operations need a level: bribing a judge needs Officials 2; buying a cartel's smuggling route needs Crime 2; hiring a hacker crew ([17-hacking.md](17-hacking.md)) needs Hackers 1. Contacts rise 1 level per 2 years of work in a country, or at once when the fixer is recruited from that world (Street-Taught, former police, former intelligence). Fixers can be arrested: they roll Cracks (4.9.4) like subordinates, and a fixer who flips is worth +30 Evidence.
 
 **Revolving door rules** by G2 **(T)**: Banned: hiring an official within 2 years of leaving office is treated as a bribe (exposure +10). Registered and Disclosed: 2-year cooling-off period, disclosed (Lobbying term of Favorability, 4.16.2). Light Disclosure: 1 year. Unregulated: none.
 
 ### 4.19.2 Lobbying, PR and consulting firms as businesses
 
-Political services are a product line of the Office facility (legal line, 2.7.8): **public affairs** (lobbying and PR) and **political consulting** (campaigns and polling).
+Political services are part of the Professional services industry ([10-industry-economy.md](10-industry-economy.md)): a business unit there can sell **public affairs** (lobbying and PR) and **political consulting** (campaigns and polling).
 
 - **Revenue**: retainers from AI clients, $0.5M to $10M × wealth index per client per year, by firm tier **(T)**.
 - **Access**: the sum of the firm's staff networks. Firm tier by Access: **Boutique**, **Established**, **Top-tier**. Clients of the firm (including the dynasty itself) pay 10% / 20% / 30% less PC for Meet Official, Request Decision and Commission a Bill in the firm's home country **(T)**.
 - **Intel**: the firm sees its clients' political objectives (intel +20 on each client's politics, 2.22.2).
 - **Conflicts**: if the dynasty lobbies against a client's objective, the client leaves after the bill resolves and the firm's reputation -5; repeated conflicts (3 in a year) turn into a scandal (minor).
-- **Hiring a firm** (rather than owning one): the existing option in 4.10.1 (Lobby Bill at +20% money cost and 0 hours) uses an Established firm; Top-tier firms charge +35% but their LP count ×1.1 **(T)**.
+- **Hiring a firm** (rather than owning one): the existing option in 4.10.1 (Lobby Bill at +20% money cost) uses an Established firm; Top-tier firms charge +35% but their LP count ×1.1 **(T)**.
 
 ---
 
@@ -1889,14 +1812,14 @@ Every holder's cash is split into **clean** and **dirty** money. Dirty money com
 | Source | Becomes dirty |
 |---|---|
 | Hidden income of Front Companies (1.7.4) | All of it |
-| Black-market sales (2.9.9), Freeport trades (3.2.5) | All proceeds |
+| Black market business units ([10-industry-economy.md](10-industry-economy.md)), Freeport trades (3.2.5) | All proceeds |
 | Bribes and kickbacks received (characters who are officials) | All |
 | Sanctions evasion profits | All |
 | Payments from organized crime (4.22) | All |
 
 **Spending dirty money**:
 
-- On cash-friendly uses (bribes, payments to organized crime, fixers, Freeport, smuggling, hush money, PMC cash payments): no extra exposure. Bribes paid with dirty money leave no money trail: if the bribe is later investigated, Evidence from the payment is halved **(T)**.
+- On cash-friendly uses (bribes, payments to organized crime, fixers, Freeport, smuggling, hush money, cash payments to guards): no extra exposure. Bribes paid with dirty money leave no money trail: if the bribe is later investigated, Evidence from the payment is halved **(T)**.
 - On visible assets (stakes, real estate, jets, company capital, donations): **unexplained wealth**: +1 Financial Police exposure per $1M with the country where the asset is booked, and with the holder's home country under F5 Open Registry or Standard **(T)**.
 
 **Paying bribes with clean money** needs a cover: a consulting contract, an invoice through a shell, a job for a relative. Without a cover, exposure from the bribe is ×1.5 **(T)**.
@@ -1907,7 +1830,7 @@ Laundering turns dirty money into clean money at a fee. Each method has a capaci
 
 | Method | Needs | Fee | Speed | Capacity | Trace left |
 |---|---|---|---|---|---|
-| **Cash business** | A Front Company running a retail, food, parking or entertainment facility | 10% | Monthly | Up to 30% of the facility's legit revenue per month | 50% |
+| **Cash business** | A Front Company running a cash-heavy business unit (Retail, Fast food, Gambling) | 10% | Monthly | Up to 30% of that unit's legit revenue per month | 50% |
 | **Real estate** | Buy and resell property; under F5 Open Registry the owner is visible | 5% plus normal transaction costs | 4 to 12 weeks per deal | Deal size | 40% (60% under Open Registry) |
 | **Trade misinvoicing** | A trading or logistics company with cross-border trade | 3% | Monthly | Up to 10% of the company's cross-border trade value | 40%; also +1 Tax Authority exposure per $3M |
 | **Shell layering** | Shell Companies in F5 Secrecy or Haven jurisdictions | 4% per layer | 2 weeks per layer | Unlimited | 50% per layer (1 layer 50%, 2 layers 25%, 3 layers 12.5%) |
@@ -1923,9 +1846,9 @@ Methods stack: a shell layer after a real estate deal multiplies the traces (40%
 
 | Step | Time | Mechanics **(T)** |
 |---|---|---|
-| **1. Approach** | Meet Official (4.10.1) | Required. Opinion +10 |
-| **2. Sound out** | 2 hours, Intrigue roll vs the official's Intrigue | Success reveals the official's Integrity band (low, medium, high) and Greedy or Honest traits. Failure: the official is wary; acceptance -10% for 6 months |
-| **3. Offer** | 2 hours | Acceptance chance as 4.10.4. The payment route below modifies it |
+| **1. Approach** | Meet Official (4.10.1) | Required. A +10 opinion push |
+| **2. Sound out** | 2 ticks in person, Intrigue roll vs the official's Intrigue | Success reveals the official's Integrity band (low, medium, high) and Greedy or Honest traits. Failure: the official is wary; acceptance -10% for 6 months |
+| **3. Offer** | Instant | Acceptance chance as 4.10.4. The payment route below modifies it |
 | **4. Payment** | Route below | |
 | **5. Delivery** | The vote, decision or favor | An official who accepted is **bought**: the dynasty gains a weak hook (usable once for Blackmail), and the official gains one over the dynasty. If either is investigated later, the other is a Cracks candidate |
 
@@ -1964,7 +1887,7 @@ Every illegal operation (front company, laundering chain, bribe ring, sanctions 
 | Response | Effect **(T)** |
 |---|---|
 | **Hush money** (an NDA bonus of 1 to 3 years' salary) | Chance ×0.5 for 2 years |
-| **Promote or transfer** | Opinion +20; transfer moves them away from the evidence (the knower count stays) |
+| **Promote or transfer** | A +20 opinion push; transfer moves them away from the evidence (the knower count stays) |
 | **Fire** | They stop being a knower after 3 months, but their chance ×3 during those months, and 30% go straight to a journalist |
 | **Discredit** (Leak Scandal on them) | If they blow, the exposure gain is halved |
 | **Sue under the NDA** | A civil suit (4.21.2); it works in courts with judicial independence < 0.5; elsewhere Heat +10 |
@@ -1992,7 +1915,7 @@ A government launches an **Anti-Corruption Drive** when: a new government is for
 | **International arbitration** | Outside any country (4.25) | Panel of 3 chosen by the parties | Investment disputes (4.9.9), contract disputes with arbitration clauses |
 | **Zone arbitration** | Corporate zones (4.12.4) | Appointed by the zone | Everything inside the zone |
 
-**Judges** are characters with: **Integrity** (as agency heads, 4.9.2), **Leaning** (Business, Neutral, State or Labor; a bias of ±10% in cases between those sides), **Ideology** (an aligned IG, used for law challenges), and **Ambition** (Ambitious judges want high-profile rulings and promotion). Judges are appointed by the head of government (and confirmed by the legislature in liberal democracies, a support vote with threshold 0 **(T)**); some countries elect trial judges (data flag). Appointments use 4.7.3, so a dynasty can push its candidates.
+**Judges** are characters with: **Integrity** (as agency heads, 4.9.2), **Leaning** (Business, Neutral, State or Labor; a bias of ±10% in cases between those sides), **Ideology** (an aligned bloc, used for law challenges), and **Ambition** (Ambitious judges want high-profile rulings and promotion). Judges are appointed by the head of government (and confirmed by the legislature in liberal democracies, a support vote with threshold 0 **(T)**); some countries elect trial judges (data flag). Appointments use 4.7.3, so a dynasty can push its candidates.
 
 **Court congestion** (country data, ×0.5 to ×3) multiplies all durations below.
 
@@ -2000,10 +1923,9 @@ A government launches an **Anti-Corruption Drive** when: a new government is for
 
 | Suit type | Typical trigger | Filing cost **(T)** | Duration **(T)** | Remedy if won |
 |---|---|---|---|---|
-| **Breach of contract** | A supply contract breach (2.10.4) | $250k × wealth index | 6 to 18 months | Damages: the claimed loss × 0.5 to 1.0; or specific performance |
+| **Breach of contract** | A breached commercial contract | $250k × wealth index | 6 to 18 months | Damages: the claimed loss × 0.5 to 1.0; or specific performance |
 | **Intellectual property and trade secrets** | Corporate espionage discovered (1.1.8), a copied product | $1M × wealth index | 12 to 36 months | Damages up to 2 years of the infringing product's profit; injunction stopping its sale |
 | **Defamation** | A hit campaign or exposé | $250k × wealth index | 6 to 24 months | Damages $1M to $50M × wealth index; retraction (the story's Heat ×0.3 and the outlet's credibility -10) |
-| **Private antitrust** | Price-fixing, predatory pricing, cartel conviction (4.9.5) | $2M × wealth index | 18 to 48 months | Damages ×1 to ×3 of the overcharge (×3 in countries with treble damages, data flag) |
 | **Shareholder suit** (derivative or class action) | Self-dealing, a fund loss (3.18.5), a takeover defense, a failed IPO | $1M × wealth index (paid by plaintiff firms on contingency) | 12 to 36 months | Damages paid by the company or its directors; board members' reputation -5 |
 | **Injunction** | To stop a takeover, a construction, a sale, a strike | $500k × wealth index plus a bond of 5% of the claimed harm | Hearing in 1 to 4 weeks | A temporary block until trial |
 | **Will contest** | A disputed will (1.11.3) | $100k × wealth index | 6 to 24 months | Redistribution |
@@ -2032,7 +1954,7 @@ A government launches an **Anti-Corruption Drive** when: a new government is for
 | **Forum shopping** | File in the court most friendly to you, among hubs where the defendant has assets: the player picks the court and sees its judges' Leanings | Move to dismiss for forum (50% in liberal democracies) |
 | **War of attrition** | Sue a smaller defendant: each month the defendant pays counsel; if their cash is below 10 × monthly legal cost, they settle with 40% chance per month | Anti-SLAPP laws (country flag): suits against journalists and activists with Merit ≤ 0 are dismissed in 8 weeks, and the plaintiff pays costs and suffers Heat +15 |
 | **Discovery fishing** | Sue to get civil discovery on a rival | Exposes your documents too |
-| **Patent thicket** | Owning many patents in a sector (tech research, 2.12) adds +2 Merit per tech tier lead in IP suits | Cross-licensing settlement |
+| **Patent thicket** | Owning many patents in an industry (tech research) adds +2 Merit per tech tier lead in IP suits | Cross-licensing settlement |
 | **Countersuit** | Answer any suit with your own | Doubles both legal bills |
 
 Frivolous suits (Merit ≤ -5) cost the plaintiff reputation -5 when lost.
@@ -2055,14 +1977,14 @@ Each hub has a **police force** led by the police chief (appointed by the mayor,
 
 | Crime effect | Value **(T)** |
 |---|---|
-| Theft and losses | `Crime / 20` % of facility output value in the hub (0 to 5%), cut by 75% for facilities whose owner's Security Strength in the district (4.23.2) is at least the strongest OCG's local strength |
-| Flight of the well-off | Professionals and Elite migration out of the hub +0.1% per year per 10 points of Crime above 40 (2.17.1) |
+| Theft and losses | `Crime / 20` % of the output value of business units operating in the hub (0 to 5%), cut by 75% for units whose owner's Security Strength in the district (4.23.2) is at least the strongest OCG's local strength |
+| Flight of the well-off | PMC and Glitterati migration out of the hub +0.1% per year per 10 points of Crime above 40 (2.17.1) |
 | Residential land value | -0.3% per year per point of Crime above 40 |
 | Kidnap risk on arrival | ×2 in hubs with Crime ≥ 60 (2.21.8) |
 
 ### 4.22.2 Organized crime groups
 
-**Organized crime groups (OCGs)** are AI actors, like companies and dynasties. Each has a **leader** (a character, usually high Intrigue, often Ruthless), **Strength** (0 to 100, nationally), **Control** (0 to 100) per district where it operates, a war chest, ties (hooks and bribes on police, officials and judges), and business lines. They are holders: they own front companies and real estate, which count toward influence like anyone's assets but show as "Undisclosed holder" unless the viewer's intel on the hub is 50 or more (2.22.2). Their money is the main funder of the Shadow Economy IG (counted in `Money_g`, 4.4.5).
+**Organized crime groups (OCGs)** are AI actors, like companies and dynasties. Each has a **leader** (a character, usually high Intrigue, often Ruthless), **Strength** (0 to 100, nationally), **Control** (0 to 100) per district where it operates, a war chest, ties (hooks and bribes on police, officials and judges), and business lines. They are holders: they own front companies and real estate, which count toward influence like anyone's assets but show as "Undisclosed holder" unless the viewer's intel on the hub is 50 or more (2.22.2). Their money is the main funder of the Sovereigntists (counted in `Money_g`, 4.4.5).
 
 **Local strength** of an OCG in a district = `Strength × Control / 100`.
 
@@ -2072,19 +1994,19 @@ Each hub has a **police force** led by the police chief (appointed by the mayor,
 | **Syndicate** (triad style) | Hong Kong, Ho Chi Minh City, Jakarta, diaspora districts of major hubs | Laundering, gambling, counterfeits, real estate, data | Medium | Long relationships, fronts, quiet partnerships with business |
 | **Mafia** | Italy (Milan, Rome), New York, Moscow, Istanbul | Construction, waste, ports, unions, public contracts | Medium | Infiltrates contracts and unions; delivers votes in wards |
 | **Street gang** | Any hub with Slums | Drugs, theft, protection in Slums and Residential districts | Medium to high, local | Intimidation and turnout in wards |
-| **Netrunner crew** | Online; based in hubs with Tech Parks and low surveillance | Ransomware, data theft, black-market data, hacking for hire | Low physical | Leaks and doxxing; works for anyone who pays |
+| **Hacker crew** | Online; based in hubs with Tech Parks and low surveillance | Ransomware, data theft, black-market data, hacking for hire ([17-hacking.md](17-hacking.md)) | Low physical | Leaks and doxxing; works for anyone who pays |
 | **Militia** | Failed states and juntas (Lagos edges, Kolwezi-Lubumbashi, Sahel, Somalia, Libya) | Checkpoints, resource smuggling, protection | Very high | Is the local government in failed-state hubs (4.3.4) |
 
-OCGs fight each other over districts (**gang wars**: Crime +20 in the district, facility output -5%, 1% chance per month per facility of collateral damage) and grow when they win. Their monthly AI: expand into the weakest-policed adjacent district, launder through fronts, buy officials when corruption ≥ 40, retaliate when hit.
+OCGs fight each other over districts (**gang wars**: Crime +20 in the district, business unit output there -5%, 1% chance per month per business unit of collateral damage) and grow when they win. Their monthly AI: expand into the weakest-policed adjacent district, launder through fronts, buy officials when corruption ≥ 40, retaliate when hit.
 
 ### 4.22.3 How OCGs meet companies
 
 | Interaction | Trigger | Rules **(T)** |
 |---|---|---|
-| **Protection demand** | A facility in a district with OCG Control ≥ 30 | Event *Insurance Salesmen*: pay 0.5% to 2% of the facility's revenue per year. Refusing: monthly **incident** chance = `Control / 5` % (theft, arson, a beaten manager: condition -10, one week of output lost, unrest +2 in its segment), ×0.25 if the owner's Security Strength in the district is at least the OCG's local strength, ×0.1 at twice. Paying is not a crime in most countries, but paying with clean money booked as "consulting" adds Financial Police exposure +1 per month (Italy and Mexico style laws: +3) |
+| **Protection demand** | A business unit operating in a district with OCG Control ≥ 30 | Event *Insurance Salesmen*: pay 0.5% to 2% of the unit's revenue per year. Refusing: monthly **incident** chance = `Control / 5` % (theft, arson, a beaten manager: one week of output lost, unrest +2 among its workers), ×0.25 if the owner's Security Strength in the district is at least the OCG's local strength, ×0.1 at twice. Paying is not a crime in most countries, but paying with clean money booked as "consulting" adds Financial Police exposure +1 per month (Italy and Mexico style laws: +3) |
 | **Infiltration** | Construction, waste, port or trucking contracts in a hub where a Mafia or Cartel has Control ≥ 40 | OCG-linked subcontractors offer 10% lower costs; accepting adds Financial Police exposure +2 per month and makes the OCG a knower (4.20.5) of the project |
-| **A favor for the plaza** | After 6 months of paying protection, 10% per month | The OCG asks to move goods through the dynasty's trucks, warehouses or ships. Accept: the dynasty earns dirty money (0.5% to 3% of the facility's revenue per month), exposure +3 per month, and the OCG holds a hook. Refuse: the protection price doubles or an incident fires |
-| **Hire services** | Fixer with Crime 2 (4.19.1) | Smuggling (bypass tariffs, quotas or sanctions; fee 15% to 30% of cargo value; seizure risk 5% per shipment); laundering (fee 15%; trace 30%); muscle (+20% success on intimidation and Blackmail; Criminal tier if traced); netrunning (+15% Netrun scheme success; $250k to $2M) |
+| **A favor for the plaza** | After 6 months of paying protection, 10% per month | The OCG asks to move goods through the dynasty's trucks, warehouses or ships. Accept: the dynasty earns dirty money (0.5% to 3% of the unit's revenue per month), exposure +3 per month, and the OCG holds a hook. Refuse: the protection price doubles or an incident fires |
+| **Hire services** | Fixer with Crime 2 (4.19.1) | Smuggling (bypass tariffs, quotas or sanctions; fee 15% to 30% of cargo value; seizure risk 5% per shipment); laundering (fee 15%; trace 30%); muscle (+20% success on intimidation and Blackmail; Criminal tier if traced); hacking (+15% hacking scheme success, [17-hacking.md](17-hacking.md); $250k to $2M) |
 | **Silent partnership** | Fixer with Crime 3 | Invest dirty money in an OCG venture: 20% to 40% yearly return in dirty money; the OCG holds a hook; Criminal tier if exposed |
 | **Inform** | Any | Tip the police: the OCG's Strength -5 and a cooperation credit with the police (one investigation step on the dynasty delayed 4 weeks); the OCG learns who talked with chance `1 - police integrity / 100`, then retaliates (50%) |
 | **Request a crackdown** | Request Decision to the police chief (10 PC local) or interior minister (30 PC national) | Success chance = `40% + 0.5% × (police strength - OCG Strength)`; success: OCG Control -15 in the target districts and Strength -10. Leak and retaliation as Inform |
@@ -2094,21 +2016,19 @@ The dynasty itself can never become an OCG. It can run front companies (1.7.4), 
 ### 4.22.4 OCGs and the state
 
 - **Bought police**: an OCG with ties to a police chief cuts Request a Crackdown success by 20 points in that hub and learns of every crackdown request.
-- **Captured state**: when OCGs' combined national Strength is 60 or more and corruption is 70 or more, the country is flagged Captured: Shadow Economy gains Office clout +0.08 (4.4.4); candidates who campaign against crime have a 10% chance per campaign of an attack event; national crackdowns have half the success chance **(T)**.
-- **War on crime**: a government decision when Crime ≥ 50 in the largest hub and the Security Establishment has clout ≥ 15%: OCG Strength -5 per month for 12 months, unrest +3 in Slums and Residential, stability -1, and relation -5 with liberal democracies if S2 is Militarized and T4 is Mass Surveillance or Social Credit (human rights pressure). OCGs answer with violence: Crime +10 for the first 6 months.
+- **Captured state**: when OCGs' combined national Strength is 60 or more and corruption is 70 or more, the country is flagged Captured: the Sovereigntists gain Office clout +0.08 (4.4.4); candidates who campaign against crime have a 10% chance per campaign of an attack event; national crackdowns have half the success chance **(T)**.
+- **War on crime**: a government decision when Crime ≥ 50 in the largest hub and the Chuds have clout ≥ 15%: OCG Strength -5 per month for 12 months, unrest +3 in Slums and Residential, stability -1, and relation -5 with liberal democracies if S2 is Militarized and T4 is Mass Surveillance or Social Credit (human rights pressure). OCGs answer with violence: Crime +10 for the first 6 months.
 - **Elections**: OCGs fund candidates who leave them alone (Money in the Campaign term), and in Captured countries they can deliver or suppress turnout in wards they control (±5 points).
 
 ---
 
-## 4.23 PMCs and private security
+## 4.23 Private security
 
-> **PMCs dropped (Logan, batch 51).** Only corporate security (guards, bodyguards) and cyber defense remain from this section; every PMC rule, unit and political use is removed.
+Companies and the dynasty pay for their own security: guards, bodyguards, drones and cyber defense. Security is a monthly cost paid by whoever deploys it, in the district where it is placed or with the character it protects. No private force may hold territory or fight wars.
 
-### 4.23.1 Security as a business
+### 4.23.1 Security spending
 
-Security companies run the Security HQ facility lines of 2.7.8: **corporate security** (guard-months, local) and **private military** (PMC team-months, global, needs S1 Licensed or Unrestricted). They sell to governments (security contracts, 4.9.7), to companies (site security, escorts), and to the dynasty itself.
-
-**One PMC unit** (4.8.4, about 200 contractors) equals 16 PMC team-months per month. Its cost in 4.8.4 ($5M per month) is the running cost when the unit comes from a PMC the dynasty owns; hiring a unit from a third-party PMC costs the market price of 16 team-months (about $7.2M at the base price of $450k) **(T)**. This clarifies, and does not change, 4.8.4.
+Security is bought as staff and services, not as a business: there is no security industry ([10-industry-economy.md](10-industry-economy.md)). The Head of Security (1.8.2) manages it for a company; the dynasty's own security is a household cost.
 
 ### 4.23.2 Units and Security Strength
 
@@ -2117,40 +2037,24 @@ Security companies run the Security HQ facility lines of 2.7.8: **corporate secu
 | Unit | Built from | Cost per month **(T)** | Strength **(T)** | Needs |
 |---|---|---|---|---|
 | **Guard detail** (20 guards) | 20 guard-months | `20 × $6,500 × wage index` | 2 | None |
-| **Armed response team** (12 armed guards, vehicles) | 40 guard-months | `40 × $6,500 × wage index` | 5 | S1 Domestic Guarding or above |
-| **PMC team** (12 operators) | 1 PMC team-month | $450k | 10 | S1 Licensed or above (under Banned only via shells, 4.5.7) |
-| **PMC unit** (about 200 operators) | 16 PMC team-months | $5M owned, about $7.2M hired | 160 | S1 Licensed or above |
-| **Drone wing** | 5 military drones per month plus operators | $1M | 20 | S1 Licensed or above |
-| **Maritime escort** | 2 PMC team-months plus a vessel | $1.2M | Not used on land; piracy and seizure risk on escorted shipments -70% (2.11) | S1 Licensed in the flag country |
-| **Cyber defense team** | Security HQ or Office staff | $300k × wage index | 0; cyberattack and state netrun success -30% (2.11, 4.26) | None |
+| **Armed response team** (12 armed guards, vehicles) | 40 guard-months | `40 × $6,500 × wage index` | 5 | None |
+| **Drone wing** | 5 military drones per month plus operators | $1M | 20 | Military drones ([6-technocapital.md](6-technocapital.md)) |
+| **Cyber defense team** | Security or IT staff | $300k × wage index | 0; hacking success against the holder -30% ([17-hacking.md](17-hacking.md), 4.26) | None |
 
 National forces are measured on the same scale for standoffs: `Police strength × 2` for a hub's police, `RS × MSI / 2` for the national military (4.8.1) **(T)**.
 
-### 4.23.3 Contracts
+### 4.23.3 Uses
 
-| Contract | Client | Size **(T)** | Notes |
+| Use | Who | Units **(T)** | Notes |
 |---|---|---|---|
-| Site security | Companies in high-crime or failed-state hubs | Guard details and response teams | Steady, low margin |
+| Business security | Companies in high-crime or failed-state hubs | Guard details and response teams | Cuts theft and protection incidents (4.22) |
 | Executive protection | Characters | 1 to 3 armed response teams | Kidnap risk ÷4 (2.21.8) |
-| Shipping escort | Shipping and commodity firms | Maritime escorts | Demand ×3 during piracy and chokepoint attacks |
-| Mine and oilfield protection | Extraction companies in juntas and failed states | 1 to 4 PMC units | Often paid partly in output or concessions |
-| Government security services | Governments (4.9.7) | 1 to 10 PMC units | Needs S1 Licensed; political term matters |
-| Training mission | A friendly government's forces | 1 PMC unit for 6 to 24 months | +10 opinion with that country's generals; the dynasty learns that country's SecurityLoyalty and coup plots (intel) |
-
-Working for a sanctioned regime is sanctions evasion (4.11.4) for the PMC's home country.
 
 ### 4.23.4 Rules of engagement and incidents
 
 The owner sets each deployment's **rules of engagement**: **Restrained** (Strength ×0.75), **Standard** (×1.0), **Aggressive** (×1.5) **(T)**.
 
-Monthly **incident** chance per deployment in a hub with unrest ≥ 40, a war, or active OCG conflict = `1% × units deployed (PMC unit = 4, others 1) × ROE factor (0.5, 1, 2)` **(T)**. An incident is civilian harm: a major scandal (criminal if Aggressive), Favorability -10 in the host country, an investigation in the PMC's home country (20% in liberal democracies), relation -5 between home and host, and a 10% chance of a Tier 1 sanctions listing of the PMC and its head. An Aggressive massacre can bring an International Criminal Tribunal referral (4.25).
-
-### 4.23.5 PMCs as a political force
-
-- **Armed presence**: each owned PMC unit based in a country gives +5 opinion from each general there (cap +20) and +2 Security Establishment approval of the dynasty **(T)**.
-- **Armed control** (failed states and civil wars): a holder whose Security Strength in a hub is at least 100 and at least the strongest militia's local strength there becomes the hub's **local authority** (the strongman of 4.3.4). This is the "controlling the failed state's capital hub" route to Stage 3 corporate sovereignty (4.12.2).
-- **Praetorian risk**: PMC commanders are characters. A unit not paid for a month has a 25% chance **(T)** of walking away with its equipment or switching to the highest bidder, including the regime or an OCG. A commander with opinion of the owner below -20 and Ambitious may sell the owner's plans (coup leak +10%).
-- **The PMC lobby**: owning a large PMC makes S1 a high-Stakes law; the dynasty gains the Security Establishment's ++ wants as its own interests.
+Monthly **incident** chance per deployment in a hub with unrest ≥ 40, a war, or active OCG conflict = `1% × units deployed × ROE factor (0.5, 1, 2)` **(T)**. An incident is civilian harm: a major scandal (criminal if Aggressive), Favorability -10 in the host country, an investigation in the owner's home country (20% in liberal democracies) and relation -5 between home and host. An Aggressive massacre can bring an International Criminal Tribunal referral (4.25).
 
 ---
 
@@ -2160,41 +2064,41 @@ Monthly **incident** chance per deployment in a hub with unrest ≥ 40, a war, o
 
 | Actor | What it is | Stats | What it does to a dynasty |
 |---|---|---|---|
-| **NGO** | Watchdog, environmental, labor rights, digital rights, human rights, or charity | Credibility (0 to 100), budget, reach per country, a leader character, aligned IG | Below |
+| **NGO** | Watchdog, environmental, labor rights, digital rights, human rights, or charity | Credibility (0 to 100), budget, reach per country, a leader character, aligned bloc | Below |
 | **Activist** | A character with high Influence, often Honest or Compassionate, sometimes young and online | Profile, followers (audience share of their channels) | Starts protests, joins hearings, sues |
-| **Union federation** | National body of the unions of 2.8.6 | Leader character; Organization average | Endorses parties, calls political strikes, funds Labor Unions IG |
+| **Union federation** | National body of the unions of 2.8.6 | Leader character; Organization average | Endorses parties, calls political strikes, funds the Communists |
 | **Professional and business associations** | Chambers of commerce, bar associations, industry lobbies | Membership dues | AI lobbying on behalf of a sector; the dynasty can lead one (Elite Standing +5) |
-| **Religious organizations** | Churches, mosques, temples, faith charities | Reach | Mobilize Traditionalists; moral campaigns against cyberware, AI, casinos |
-| **Online movements** | Spontaneous swarms from Gig, Unemployed and young Professionals | Momentum only | Fast protests and boycotts that fade fast |
+| **Religious organizations** | Churches, mosques, temples, faith charities | Reach | Mobilize the Chuds; moral campaigns against human enhancement, AI, casinos |
+| **Online movements** | Spontaneous swarms from the Permanent Underclass and young PMC | Momentum only | Fast protests and boycotts that fade fast |
 
 **NGO effects** **(T)**:
 
 | NGO type | Effect |
 |---|---|
 | **Watchdog** (anti-corruption, transparency) | Exposé chance ×1.2 on dynasties with any exposure ≥ 30 in the country; a complaint opens an inquiry with 10% chance per quarter when exposure ≥ 50 |
-| **Environmental** | Disposition -5 (4.3.5) on decisions for polluting facilities in hubs where it is active; files injunctions (4.21.3) against new heavy facilities |
-| **Labor rights** | Union Organization +1 per month at the targeted company's facilities |
-| **Digital rights** | Data and Cyberware Authority complaints (exposure +5); lobbies T2 and T3 toward strict positions |
-| **Human rights** | +5 points to sanctions imposition chances (4.11.4) after abuses; drives PMC incident investigations |
+| **Environmental** | Disposition -5 (4.3.5) on decisions for polluting businesses in hubs where it is active; files injunctions (4.21.3) against new heavy-industry capacity |
+| **Labor rights** | Union Organization +1 per month in the targeted company's business units |
+| **Digital rights** | Data Authority complaints (exposure +5); lobbies T2 and T3 toward strict positions |
+| **Human rights** | +5 points to sanctions imposition chances (4.11.4) after abuses; drives investigations of security incidents (4.23.4) |
 | **Charity and service** | Partner for philanthropy: Goodwill ×1.1 when the dynasty's grants go through it |
 
-**Dealing with NGOs**: **Fund** (tone toward the funder +0.1 per $1M × wealth index, cap +0.5; a watchdog that takes money loses 20 credibility if the funding becomes public); **Engage** (sign a pledge: compliance cost 0.5% to 2% of revenue in the sector, Favorability +5 among Professionals and the NGO's segments); **Fight** (sue, Leak Scandal on the leader, a counter-NGO funded by the dynasty, which is astroturf: Heat 30 if exposed). Managed democracies and one-party states can label foreign-funded NGOs "foreign agents" (a government decision): the NGO closes and its funders' exposure +10 with the Financial Police there.
+**Dealing with NGOs**: **Fund** (tone toward the funder +0.1 per $1M × wealth index, cap +0.5; a watchdog that takes money loses 20 credibility if the funding becomes public); **Engage** (sign a pledge: compliance cost 0.5% to 2% of revenue in the sector, Favorability +5 among the PMC stratum and the NGO's strata); **Fight** (sue, Leak Scandal on the leader, a counter-NGO funded by the dynasty, which is astroturf: Heat 30 if exposed). Managed democracies and one-party states can label foreign-funded NGOs "foreign agents" (a government decision): the NGO closes and its funders' exposure +10 with the Financial Police there.
 
 ### 4.24.2 Protests
 
-A **protest** has a cause (a law, a company, a scandal, election fraud, prices), a target (a government, a company or a dynasty), organizers, and **Momentum** (0 to 100). It starts at Momentum 20 from: an Angry IG (4.4.6), unrest ≥ 40 (2.8.5), visible fraud (4.6.7), a scandal with Heat ≥ 60 about a government or a dynasty, Favorability ≤ -60 (4.16.2), or a funded organizer.
+A **protest** has a cause (a law, a company, a scandal, election fraud, prices), a target (a government, a company or a dynasty), organizers, and **Momentum** (0 to 100). It starts at Momentum 20 from: an Angry bloc (4.4.6), unrest ≥ 40 (2.8.5), visible fraud (4.6.7), a scandal with Heat ≥ 60 about a government or a dynasty, Favorability ≤ -60 (4.16.2), or a funded organizer.
 
 **Daily Momentum change** **(T)**:
 
 `ΔM = (hub unrest - 40) / 20 + Organizers + 5 × Coverage - 2 - Concessions - Repression`
 
-- **Organizers**: union federation +2 (if Organization ≥ 40), NGO +1, Angry IG +2, activist with Profile ≥ 50 +1, online movement +1 (for its first 7 days only).
+- **Organizers**: union federation +2 (if Organization ≥ 40), NGO +1, Angry bloc +2, activist with Profile ≥ 50 +1, online movement +1 (for its first 7 days only).
 - **Coverage**: the share of the hub's audience (weighted by credibility) whose outlets cover the protest sympathetically.
 - **Size** = Momentum × 0.1% of the hub's adults (at 100, one adult in ten is in the street).
 
 | Momentum | Effects **(T)** |
 |---|---|
-| 40 to 59 | Financial District retail closed on protest days; hub output -3%; meetings in the hub take +1 hour |
+| 40 to 59 | Financial District retail closed on protest days; hub output -3%; meetings in the hub take +1 tick |
 | 60 to 79 | Hub output -8%; Request Decisions in the hub stall; Profile +2 per week for the target |
 | 80+ for 7 days | **Breakthrough**: a government target must answer (a bill toward the protesters' demand gets Crisis +20 support for 3 months, or a resignation event for a minister or mayor); a company or dynasty target faces a boycott (consumer brand appeal -15% in the country for 3 to 12 months) and Favorability -10 |
 
@@ -2204,7 +2108,7 @@ Protests feed unrest (+0.1 per Momentum point above 40 in the hub per week) and 
 
 ### 4.24.3 Political strikes and astroturf
 
-- **Political strikes**: a union federation can call a strike against a law or a government (not an employer). It uses the strike rules of 2.8.6 across every unionized facility in the country that joins (chance = Organization / 100 per facility). A general strike is the Uprising step of 4.8.5.
+- **Political strikes**: a union federation can call a strike against a law or a government (not an employer). It uses the strike rules of 2.8.6 across every unionized business unit in the country that joins (chance = Organization / 100 per unit). A general strike is the Uprising step of 4.8.5.
 - **Seed a movement**: the dynasty can fund a protest of its own (against a rival's plant, for a law), costing `$0.01 × hub adults` per week for an organizer that adds +2 Momentum per day. It is an astroturf campaign: exposure as 4.10.1 (+5 per start), and if exposed a major scandal for the dynasty and the end of the protest.
 
 ---
@@ -2221,13 +2125,13 @@ Fictional names, real functions. Players never join them; they lobby the governm
 | **Global Development Bank (GDB)** | World Bank and regional development banks | Votes weighted by GDP quota | Infrastructure loans to developing countries, tendered openly as contracts (4.9.7) with the capability weight raised to 40 and the political weight cut to 10 | Bidders convicted of a Grave bribery offense are debarred for 5 years |
 | **Financial Crimes Taskforce (FCT)** | FATF plus international financial police cooperation | 40 major economies | Yearly review of countries: a **grey list** (shells registered there exposure ×1.5; transfers from there delayed as under F2 Reporting) and a **black list** (that country's banks cut from the international payment network, like Tier 3 sanctions for banks only); runs the Freeport raids (3.2.5) | A haven government lobbied by the dynasty can stay off the lists only by tightening F5 one step |
 | **International Court of Arbitration (ICA)** | Investment arbitration centres | Countries with investment treaties | Investment arbitration (4.9.9) | As 4.9.9 and 4.21.1 |
-| **International Criminal Tribunal (ICT)** | International criminal court | Countries that joined (most liberal democracies) | Indicts characters for war crimes, coup violence and PMC massacres: an indicted character is detained on arrival in any member country (2.21.8) | Fund a defense; lobby non-member hosts; never travel |
+| **International Criminal Tribunal (ICT)** | International criminal court | Countries that joined (most liberal democracies) | Indicts characters for war crimes, coup violence and massacres by private security: an indicted character is detained on arrival in any member country (2.21.8) | Fund a defense; lobby non-member hosts; never travel |
 
 **ISF conditions.** A program comes with 2 to 4 conditions drawn from: E1 or E2 one step up; E7 Free Prices; E6 None; F1 Independent; F2 one step toward Open (or toward Restricted in a capital flight crisis); an Anti-Corruption Drive (4.20.6). Each condition is a bill with Crisis +30 support for 6 months. A government that misses conditions loses the next tranche (reserves) and its rating falls one notch **(T)**.
 
-**Blocs as a fourth level.** In a **Single Market** (4.11.2) the bloc has a commission (appointed by member governments) that acts as a level above national for three laws: C3 Antitrust for deals whose combined bloc-wide share crosses the bloc's own C3 threshold (the bloc's competition authority reviews them instead of the national one), the T2 Data Privacy floor, and the common external tariff (E5). Bloc laws change by unanimity for tariffs and by a qualified majority (55% of members holding 65% of the bloc's population) for the rest **(T)**. Lobbying the bloc: LP price uses bloc GDP; PC spent from any member country's pool counts at 50%.
+**Blocs as a fourth level.** In a **Single Market** (4.11.2) the bloc has a commission (appointed by member governments) that acts as a level above national for two laws: the T2 Data Privacy floor and the common external tariff (E5). Bloc laws change by unanimity for tariffs and by a qualified majority (55% of members holding 65% of the bloc's population) for the rest **(T)**. Lobbying the bloc: LP price uses bloc GDP; PC spent from any member country's pool counts at 50%.
 
-**International posts.** The ISF managing director, the AN envoy for a region, a bloc commissioner and the GDB president are appointed (4.7.3) from candidates nominated by member governments. A dynasty member in such a post gives Elite Standing +10 in every member country and +10 opinion from the heads of government who backed them **(T)**.
+**International posts.** The ISF managing director, the AN envoy for a region, a bloc commissioner and the GDB president are appointed (4.7.3) from candidates nominated by member governments. A dynasty member in such a post gives Elite Standing +10 in every member country and a +10 opinion push from the heads of government who backed them **(T)**.
 
 ---
 
@@ -2235,21 +2139,21 @@ Fictional names, real functions. Players never join them; they lobby the governm
 
 ### 4.26.1 State intelligence services
 
-Each country has an intelligence service with a **head** (a character), **Capability** (1 to 5, from MSI and the Security spending of 2.9.1: MSI ≥ 60 gives 5, 30 to 59 gives 4, 15 to 29 gives 3, 5 to 14 gives 2, below 5 gives 1 **(T)**) and **Aggression** (one-party states and juntas ×1.5, rivals ×2, allies ×0.5).
+Each country has an intelligence service with a **head** (a character), **Capability** (1 to 5, from MSI and country data: MSI ≥ 60 gives 5, 30 to 59 gives 4, 15 to 29 gives 3, 5 to 14 gives 2, below 5 gives 1 **(T)**) and **Aggression** (one-party states and juntas ×1.5, rivals ×2, allies ×0.5).
 
 ### 4.26.2 State operations against companies
 
-Rival states already run netrun events against strategic facilities (4.11.3). States also run:
+Rival states already hack strategic business units through state-backed hackers (4.11.3, [17-hacking.md](17-hacking.md)). States also run:
 
 | Operation | Target | Effect on success **(T)** |
 |---|---|---|
 | **Recruit an insider** | An executive or family member with opinion of the head below 0 | The foreign state learns the company's tech and plans; leaks one tech per year to its champions; the insider is a whistleblower candidate with a foreign handler |
 | **Honey trap** | A Hedonist or Lustful-lifestyle executive or family member | The foreign state gains a hook on them |
-| **Supply chain implant** | A strategic sector product (chips, telecom, AI) | The product is later "found" compromised: banned in the implanting state's rivals for 1 to 3 years |
+| **Hardware implant** | A strategic sector product (chips, telecom, AI) | The product is later "found" compromised: banned in the implanting state's rivals for 1 to 3 years |
 | **Detention** | An executive visiting the country (2.21.8) | A hostage for diplomatic or commercial leverage (seizure ladder demands, 4.9.10) |
 | **Pressure** | A branch office | Seizure ladder step 1 demand for data access |
 
-**Success chance** = `clamp(30% + 10% × Capability - 2% × target company's Head of Security Intrigue - 10% per cyber defense team, 5%, 90%)` **(T)**. Each operation is rolled monthly with chance `0.5% × Capability × Aggression` per strategic facility of a foreign holder **(T)**.
+**Success chance** = `clamp(30% + 10% × Capability - 2% × target company's Head of Security Intrigue - 10% per cyber defense team, 5%, 90%)` **(T)**. Each operation is rolled monthly with chance `0.5% × Capability × Aggression` per strategic business unit of a foreign holder **(T)**.
 
 ### 4.26.3 The Request
 
@@ -2257,8 +2161,8 @@ From Corporation rank on, a dynasty with strategic assets in a country (includin
 
 | Answer | Effect **(T)** |
 |---|---|
-| **Accept** | +1 favor with the service head (usable as Protection: one investigation by a national agency in that country is slowed 8 weeks); head of government opinion +10; Security Establishment approval of the dynasty +2. Risk: each operation has a 5% chance per year of being discovered by a third country: the characters involved are charged with espionage there (Criminal), the branch office there jumps one seizure ladder step, Tier 1 sanctions listing 20% |
-| **Refuse** | Security Establishment approval of the dynasty -2; in managed democracies and one-party states, seizure risk +0.5 points for 2 years (home) or Government attitude one step worse (host) |
+| **Accept** | +1 favor with the service head (usable as Protection: one investigation by a national agency in that country is slowed 8 weeks); a +10 opinion push from the head of government; Chuds approval of the dynasty +2. Risk: each operation has a 5% chance per year of being discovered by a third country: the characters involved are charged with espionage there (Criminal), the branch office there jumps one seizure ladder step, Tier 1 sanctions listing 20% |
+| **Refuse** | Chuds approval of the dynasty -2; in managed democracies and one-party states, seizure risk +0.5 points for 2 years (home) or Government attitude one step worse (host) |
 | **Double game** (accept and tell the other side) | Needs Intrigue ≥ 15; both services owe a favor; if found out (10% per year), both become hostile |
 
 When both the home and a host country ask in the same year, the **Two Masters** event fires: whichever is refused treats the dynasty as the other's asset.
@@ -2275,17 +2179,17 @@ When both the home and a host country ask in the same year, the **Two Masters** 
 
 ### 4.27.1 How AI governments decide
 
-Each government is run by its head of government (a character) and the leading IGs of its coalition.
+Each government is run by its head of government (a character) and the leading blocs of its coalition.
 
-- **Agenda**: at formation, the government picks 3 to 5 law changes, ranked by `clout of the IGs that want them × stance strength`, plus one pick from the head's traits (Greedy heads favor contracts and low enforcement; Honest heads an Anti-Corruption Drive; Ambitious heads anything popular before the next election). It proposes them over its term (4.5.9).
+- **Agenda**: at formation, the government picks 3 to 5 law changes, ranked by `clout of the blocs that want them × stance strength`, plus one pick from the head's traits (Greedy heads favor contracts and low enforcement; Honest heads an Anti-Corruption Drive; Ambitious heads anything popular before the next election). It proposes them over its term (4.5.9).
 - **Priorities** (weights 0 to 1 from type and traits): Growth, Stability, Revenue, Security, Re-election, Self-enrichment. Self-enrichment ≥ 0.5 means kickbacks are expected (4.9.7) and bribes are accepted 10% more often.
 - **Crisis responses** (monthly) **(T)**:
 
 | Condition | Typical response |
 |---|---|
-| Unemployment > 10% | Subsidies (E6 up), infrastructure contracts, tariff hikes if Industrialists or Labor lead |
+| Unemployment > 10% | Subsidies (E6 up), infrastructure contracts, tariff hikes if Landites or Communists lead |
 | Inflation > 8% | Rate rises if F1 allows; otherwise Essentials Capped price controls |
-| Stability < 40 | Democracies: concessions to Angry IGs; others: repression (Militarized policing, Emergency Decrees) |
+| Stability < 40 | Democracies: concessions to Angry blocs; others: repression (Militarized policing, Emergency Decrees) |
 | Currency crisis or default | ISF request, capital controls, or (populist heads) blame and seize foreign assets |
 | Big scandal (Heat ≥ 80) about the government | Scapegoat a minister; in non-democracies, a purge or an Anti-Corruption Drive against a convenient target |
 
@@ -2293,7 +2197,7 @@ Each government is run by its head of government (a character) and the leading I
 
 Each government holds an **attitude** toward each dynasty with assets or Profile in the country, recalculated monthly:
 
-`Attitude score = head of government's opinion of the dynasty head + 20 if the dynasty backed the ruling parties at the last election (-20 if it backed the opposition) + 2 × net Stakes alignment (bills the dynasty lobbied for minus against, on the government's agenda, last 2 years) - 10 if foreign - Exposure / 5 (highest agency) + 0.2 × effective Favorability (democracies only)` **(T)**
+`Attitude score = head of government's opinion of the dynasty head (the tag read as a number, 4.3.5) + 20 if the dynasty backed the ruling parties at the last election (-20 if it backed the opposition) + 2 × net Stakes alignment (bills the dynasty lobbied for minus against, on the government's agenda, last 2 years) - 10 if foreign - Exposure / 5 (highest agency) + 0.2 × effective Favorability (democracies only)` **(T)**
 
 | Score | Attitude | Effects **(T)** |
 |---|---|---|
@@ -2304,7 +2208,7 @@ Each government holds an **attitude** toward each dynasty with assets or Profile
 
 "By `1 - independence`" means the multiplier is scaled: an agency with independence 0.9 feels only 10% of it.
 
-**Populist targeting**: in democracies, if a dynasty has Profile ≥ 60 and population-weighted effective Favorability ≤ -10, populist parties put it in their campaigns ("the [dynasty] oligarchs"): +0.2 utility for them in segments where Favorability is negative. If they win, the new government starts at Targeted and proposes E4 Dynastic Wealth Tax or C3 Trust-Busting with priority **(T)**.
+**Populist targeting**: in democracies, if a dynasty has Profile ≥ 60 and population-weighted effective Favorability ≤ -10, populist parties put it in their campaigns ("the [dynasty] oligarchs"): +0.2 utility for them in strata where Favorability is negative. If they win, the new government starts at Targeted and proposes E4 Dynastic Wealth Tax with priority **(T)**.
 
 ### 4.27.3 AI dynasty political archetypes
 
@@ -2314,9 +2218,9 @@ AI dynasties use the archetypes of 2.23.1 for business. For politics each also h
 |---|---|---|
 | **Courtier** | Content, Cautious, Trusting | Backs whoever governs; buys protection; never funds the opposition |
 | **Kingmaker** | Ambitious, Brave | Funds both sides 70/30 toward the favorite; collects clients; runs family members for office |
-| **Ideologue** | Visionary, Honest | Funds IGs, think tanks and parties by conviction, even against its own business interest |
+| **Ideologue** | Visionary, Honest | Funds ideologies, think tanks and parties by conviction, even against its own business interest |
 | **Shadow Broker** | Deceitful, Ruthless | Bribes, fixers, OCG ties, blackmail; low Profile |
-| **Patriot** | Paranoid, Conservative, State-Linked charters | Works with State Apparatus and the Security Establishment; accepts The Request; state champion |
+| **Patriot** | Paranoid, Conservative, State-Linked charters | Works with the ruling ideology and the Chuds; accepts The Request; state champion |
 | **Populist** | Ambitious, Media Darling | Builds a personal party around a family member; attacks other dynasties publicly |
 | **Absentee** | Content, Greedy | Ignores politics until a bill threatens > 2% of its profit |
 
@@ -2329,30 +2233,28 @@ Monthly, in order **(T)**:
 3. **Contracts**: bid on tenders in its sectors; spend PC on the Political term if the contract is worth more than 10 × its monthly PC value.
 4. **Elections**: donate by archetype.
 5. **Rivalry**: run schemes (Dig Up Dirt, Leak Scandal, tip-offs) against dynasties it has a rivalry or casus belli with.
-6. **Coalitions**: AI dynasties form a **coalition against a dominant dynasty** (the player or an AI) when that dynasty reaches Power Broker in the country, or the Oligarch stage anywhere. Each AI dynasty with national share ≥ 5% and opinion of the target's head < 0 joins with 20% chance per quarter (×0.5 if the target's Elite Standing is Establishment). A coalition pools PC against the target's bills and clients, funds the target's opponents, files antitrust complaints (+10 Concern in reviews, 4.9.6), and coordinates short attacks in markets (3.25.2). It dissolves when the target falls below Presence or after 5 years.
+6. **Coalitions**: AI dynasties form a **coalition against a dominant dynasty** (the player or an AI) when that dynasty reaches Power Broker in the country, or its largest company reaches Conglomerate rank. Each AI dynasty with national share ≥ 5% and a Rival opinion of the target's head joins with 20% chance per quarter (×0.5 if the target's Elite Standing is Establishment). A coalition pools PC against the target's bills and clients, funds the target's opponents, lobbies against its foreign deals (+10 Concern in foreign investment reviews, 4.9.6), and coordinates short attacks in markets (3.25.2). It dissolves when the target falls below Presence or after 5 years.
 
 **Difficulty**: an AI political aggression setting (Low, Normal, High) scales the coalition chance, scheme frequency and Targeted thresholds by ×0.5, ×1 and ×1.5 **(T)**.
 
 ---
 
-## 4.28 Politics by company rank (replaces the five stages, batch 37)
+## 4.28 Politics by company rank
 
-Stages are gone. What politics offers grows with the rank of the dynasty's largest company (1.7.5) **(A)**. Nothing is locked: these are the tools and threats that usually matter at each size.
+What politics offers grows with the rank of the dynasty's largest company (1.7.5) **(A)**. Nothing is locked: these are the tools and threats that usually matter at each size.
 
 | Rank | Role of politics | Tools that usually matter | Typical threats |
 |---|---|---|---|
 | **Venture** (< $10M) | Permits and licences: politics as a gate | Request Decision, the Political Connections founding path (1.6.7), a boutique lobbyist, local donations | Permit denial, a captured councilor, an NGO injunction |
 | **Company** ($10M to $250M) | Hub and regional power: rezonings, council majorities | Political Director (4.15.2), Request Protection, local media, a foundation (trust over $100M **(T)**), a think tank, civil suits | First investigations, unions and protests, protection demands, journalists |
-| **Corporation** ($250M to $5B) | National lawmaking and the state as a customer | National lobbying, Major Donor and Party Patron, media empires, PMCs, courts as a weapon, The Request (4.26) | Antitrust, populist targeting, rival coalitions, whistleblowers, sanctions, hearings |
+| **Corporation** ($250M to $5B) | National lawmaking and the state as a customer | National lobbying, Major Donor and Party Patron, media empires, private security, courts as a weapon, The Request (4.26) | Foreign investment reviews, populist targeting, rival coalitions, whistleblowers, sanctions, hearings |
 | **Megacorp and Conglomerate** (> $5B) | Regime-level power | Owned parties, coups, Council of Stakeholders, international organizations, corporate sovereignty (4.12), endgames (4.29) | Revolutions, tribunals, Anti-Corruption Drives, every coalition at once |
-
-Where older sections say "Tycoon stage" read **Corporation rank**, and "Stage 5 (Oligarch)" read **Megacorp rank** (batch 37).
 
 ---
 
 ## 4.29 Political endgames
 
-[14-game-stages.md](../14-game-stages.md) 14.6 lists the Oligarch objectives. Corporate sovereignty (4.12) is one; these give exact conditions to the political ones and add three more, so a dynasty can win as a power broker, a political family, or even a respected benefactor. The player picks any number at the start of the Oligarch stage. Achieving one gives renown and, if the player chose "victory on achievement" at game setup, ends the game in victory; otherwise play continues **(T)**.
+Political endgames are long-term goals for a powerful dynasty, usually within reach from Megacorp rank (4.28). They are milestones, not victory conditions: the game is an endless sandbox, and each one achieved adds renown and a milestone to the dynasty score ([12-setup-and-score.md](12-setup-and-score.md) 12.4) while play continues. Corporate sovereignty (4.12) is one; the others let a dynasty be remembered as a power broker, a political family, or even a respected benefactor **(T)**.
 
 | Endgame | Condition **(T)** | Renown |
 |---|---|---|
@@ -2363,8 +2265,7 @@ Where older sections say "Tycoon stage" read **Corporation rank**, and "Stage 5 
 | **Market Maker** | Control a central bank (a client governor under F1 Directed or Monetary Financing), a currency board, or a global exchange (3.17.5) for 10 years | 2,000 |
 | **Bloc Architect** | A Single Market of 4 or more countries is ratified while the dynasty has Power Broker national share in each member and was the largest lobbyist for it in each | 2,000 |
 | **Media Hegemon** | ≥ 40% of the national audience in 3 countries (one with GDP ≥ $1T) for 10 years, with outlet credibility above 60 | 1,500 |
-| **Benefactor** | In the home country: effective Favorability ≥ +40 in every segment, reputation ≥ 60, Elite Standing ≥ 75, no family conviction for 30 years, a foundation with ≥ $10B in assets, and stability ≥ 70 for 10 years | 2,500 |
-| **Immortal Dynasty** | As 14.6 | As 14 |
+| **Benefactor** | In the home country: effective Favorability ≥ +40 in every stratum, reputation ≥ 60, Elite Standing ≥ 75, no family conviction for 30 years, a foundation with ≥ $10B in assets, and stability ≥ 70 for 10 years | 2,500 |
 
 **Falls.** The political layer can also end a dynasty's run without ending the game: **Exile** (all assets in the home country seized after a revolution or a Targeted government's nationalization; the dynasty continues from abroad with its foreign assets, Elite Standing 0 at home), **Disgrace** (the head and heir both convicted of Criminal-tier offenses: the trust passes to the next eligible member and Profile resets with Favorability -50) and **Capture** (a hostile coalition or government forces the sale of the flagship). Each is an event chain with a way back (a restoration coup, an appeal, a pardon from a later government).
 
@@ -2378,17 +2279,16 @@ Where older sections say "Tycoon stage" read **Corporation rank**, and "Stage 5 
 | *Front Page* | A scandal with Heat ≥ 40 | Ride it out · Deny · Apologize · Counter-story · Legal threat |
 | *The Editor Resigns* | Owner orders a line change against an Integrity ≥ 70 editor | Accept the resignation (credibility -5) · Back down · Buy their silence |
 | *A Seat at the Table* | Donor share reaches 25% in a party | Accept Party Patron status publicly · Stay in the shadows (keep powers, no Profile gain, exposé risk) |
-| *Brother Wants to Run* | Family member with Ambitious and Persuasion ≥ 12 | Back the career (fund, Party Standing) · Discourage (opinion -20) · Steer them to a safer seat |
+| *Brother Wants to Run* | Family member with Ambitious and Persuasion ≥ 12 | Back the career (fund, Party Standing) · Discourage (a -20 opinion push) · Steer them to a safer seat |
 | *Insurance Salesmen* | OCG protection demand (4.22.3) | Pay · Refuse and harden security · Request a crackdown · Inform |
-| *A Favor for the Plaza* | 6+ months of paying protection | Let the trucks roll (dirty money, hook) · Refuse (price doubles or incident) · Sell the facility |
+| *A Favor for the Plaza* | 6+ months of paying protection | Let the trucks roll (dirty money, hook) · Refuse (price doubles or incident) · Sell the business unit |
 | *The Accountant* | Whistleblower risk ≥ 5% per month on an operation | Hush money · Promote · Fire · Discredit · "Make it go away" |
 | *Unexplained Wealth* | Visible purchase with dirty money ≥ $10M | Proceed · Launder first (choose a method) · Cancel |
 | *Injunction Granted* | A rival's injunction freezes a deal or a build | Post a counter-bond · Appeal · Settle |
 | *Gentlemen, Please* | Discovery in a civil suit turns up an unrelated secret | Settle fast · Fight on (exposure +10 risk) · Countersuit |
-| *Martyr* | Police repression of a protest triggers a death | Call for calm (Favorability +3) · Blame agitators (Elite +3, Favorability -5) · Fund the funeral (Heat -10) |
+| *Martyr* | Police repression of a protest triggers a death | Call for calm (Favorability +3) · Blame agitators (Elite Standing +3, Favorability -5) · Fund the funeral (Heat -10) |
 | *The Request* | State intelligence approach (4.26.3) | Accept · Refuse · Double game |
 | *Two Masters* | Home and host services both ask in one year | Choose home · Choose host · Refuse both |
-| *Unpaid Contractors* | A PMC unit not paid for a month | Pay with a 20% bonus · Promise (Persuasion roll) · Let them go (Praetorian risk) |
 | *Grey List* | FCT lists a country where the dynasty has shells | Move the shells (5% fees) · Lobby for delisting · Ignore (exposure ×1.5) |
 | *The Oligarchs' Party* | Populist targeting starts (4.27.2) | Charm offensive (philanthropy, Favorability) · Fund the populists' rivals · Go quiet (Keep a Low Profile) |
 | *The Coalition* | AI dynasties form a coalition against the dynasty | Split it (buy one member) · Outspend it · Seek a marriage alliance with its leader |
@@ -2409,56 +2309,56 @@ All numbers use the tuning values above.
 |---|---|---|---|---|---|---|
 | **Ride it out** (no revelation) | 65 | 65 | Day 13 | 1 | -6.6% | None |
 | Ride it out, one revelation on day 8 (35% chance per week with a journalist on the case) | 65 | 80 | Day 22 | 3 | -13.5% | None |
-| **Apologize** | 26 | 36 | Never above 40 | 0 | 0% | Favorability -5 in all segments; Evidence +5 in the Financial Police inquiry |
+| **Apologize** | 26 | 36 | Never above 40 | 0 | 0% | Favorability -5 in all strata; Evidence +5 in the Financial Police inquiry |
 | **Legal threat** (the tabloid drops out, 40% chance) | 48 | 50 | Day 9 | 1 | -3.8% | 15% chance of a backlash story (Heat +20) |
 | **Counter-story** in The Courier | 58 | 58 | Day 12 | 1 | -4.5% | 25% chance the plant is exposed: a new minor scandal, Courier credibility -10 |
 
-**Favorability among Professionals** (target before the story): `0.5 × 20 (reputation) + 30 × (0.15 × 0.70 × 0.6) (Courier tone) + 5 (employer) + 6 (philanthropy: $14.4M at $2.4M per point) + 10 (home) = 32.9`; actual 30. During the first week of "Ride it out" average Heat is about 58: target ≈ `32.9 - 29 - 0.6 (Ledger tone -0.1) = 3.3`, so Favorability moves to `30 + 10% × (3.3 - 30) = 27.3`; a second week at Heat ≈ 45 brings it to about 25.6. With Profile 60 that cuts the heir's Candidate term among Professionals from `0.01 × 30 × 0.6 = 0.18` to `0.15`: small. The real damage is the **memory** and the revelations: the heir carries the family scandal's Scandal term of 0.8, which stays frozen in every week that ends with Heat ≥ 40. On election day, 10 weeks later, it is 0.14 after an apology (never frozen), 0.17 after riding it out cleanly (frozen 1 week), and 0.24 if a revelation lands (frozen 3 weeks), with twice the stock damage.
+**Favorability among the PMC stratum** (target before the story): `0.5 × 20 (reputation) + 30 × (0.15 × 0.70 × 0.6) (Courier tone) + 5 (employer) + 6 (philanthropy: $14.4M at $2.4M per point) + 10 (home) = 32.9`; actual 30. During the first week of "Ride it out" average Heat is about 58: target ≈ `32.9 - 29 - 0.6 (Ledger tone -0.1) = 3.3`, so Favorability moves to `30 + 10% × (3.3 - 30) = 27.3`; a second week at Heat ≈ 45 brings it to about 25.6. With Profile 60 that cuts the heir's Candidate term in the PMC stratum from `0.01 × 30 × 0.6 = 0.18` to `0.15`: small. The real damage is the **memory** and the revelations: the heir carries the family scandal's Scandal term of 0.8, which stays frozen in every week that ends with Heat ≥ 40. On election day, 10 weeks later, it is 0.14 after an apology (never frozen), 0.17 after riding it out cleanly (frozen 1 week), and 0.24 if a revelation lands (frozen 3 weeks), with twice the stock damage.
 
 **Suing the Ledger for defamation.** The story is true: Merit -8. Dynasty counsel score: General Counsel 15 + 5 × tier 3 = 30. Ledger: in-house counsel 12 + 5 × tier 2 = 22. UK judge Neutral; the government does not care. `P(win) = 50% - 32% + 16% = 34%`. Filing costs $600k (`$250k × 2.4`) and Heat +10 at once; the UK has no anti-SLAPP flag, so the suit runs 6 to 24 months. Civil discovery is the trap: each month of trial there is a 10% chance the Ledger's lawyers find the consultant's invoices, adding +10 Financial Police exposure, and the Ledger's journalist gets the documents. Over a 12-month trial that is a `1 - 0.9^12 = 72%` chance. **Verdict**: for a true story, apologize on day 1 (it costs 5 Favorability and 5 Evidence, but it kills the revelations, the stock drift and the hearing risk), scapegoat the subsidiary's CEO if the inquiry reaches Subpoena, and never sue over a true story. For a false story the answer flips: deny and sue, since debunking (15% per week) and a Merit of +8 work for the dynasty.
 
 ### 4.31.2 The clinic in Lagos: dirty money, laundering, deniability and a whistleblower
 
-**Situation.** The dynasty's Front Company in Lagos (Nigeria, liberal democracy, corruption 75, media freedom 0.9) runs a black clinic installing unlicensed cyberware behind a legitimate private hospital. It earns $2.5M of **dirty** money per month ($30M a year). The head wants to put $60M of accumulated dirty money into an office tower in Dubai (UAE, one-party state, corruption 30, Financial Police capacity 3).
+**Situation.** The dynasty's Front Company in Lagos (Nigeria, liberal democracy, corruption 75, media freedom 0.9) runs a black clinic (a Black market business unit) selling unapproved longevity treatments behind a legitimate private hospital. It earns $2.5M of **dirty** money per month ($30M a year). The head wants to put $60M of accumulated dirty money into an office tower in Dubai (UAE, one-party state, corruption 30, Financial Police capacity 3).
 
 **Option 1: buy the tower with dirty money.** Unexplained wealth: +60 exposure with the UAE Financial Police. Monthly inquiry chance = `0.60 × 1.0 × 1.0 × 1.0 × (1 - 30/200) = 51%`. If the inquiry reaches Discovery, the $60M counts with trace 100%: Evidence `5 × 6 × 1.0 = 30`. Almost certain trouble.
 
 **Option 2: three shell layers first.** Shells in Haven jurisdictions at 4% per layer: fees `1 - 0.96³ = 11.5%`, about $6.9M, taking 6 weeks. $53.1M of clean money buys a smaller tower. The shells' own routing exposure is ×0.2 under F5 Haven, so it is negligible. Trace `0.5³ = 12.5%`: if Lagos's front is ever investigated to Discovery, the Dubai money adds only `5 × 6 × 0.125 = 3.75` Evidence.
 
-**Deniability.** The clinic is run by a fixer (cutout 1), and the front's registered director is a nominee (cutout 2). If charges come, the chance the head is personally charged is `0.6² = 36%`. The front company is charged regardless (illegal cyberware trade: Grave).
+**Deniability.** The clinic is run by a fixer (cutout 1), and the front's registered director is a nominee (cutout 2). If charges come, the chance the head is personally charged is `0.6² = 36%`. The front company is charged regardless (black market medicine: Grave).
 
-**The knowers.** Flow $30M a year gives 3 staff knowers plus the 2 cutouts. Monthly whistle chances (`1% × (1 - opinion/100) × traits × (0.5 + 0.9)`):
+**The knowers.** Flow $30M a year gives 3 staff knowers plus the 2 cutouts. Monthly whistle chances (`1% × (1 - opinion/100) × traits × (0.5 + 0.9)`, with the opinion tag read as Friend +50, Neutral 0, Rival -50):
 
 | Knower | Opinion of the head | Traits | Monthly chance |
 |---|---|---|---|
-| Fixer (cutout) | +40 | Deceitful ×0.5 | 0.42% |
-| Nominee director (cutout) | +10 | None | 1.26% |
-| Clinic accountant | -20 | Honest ×3 | 5.04% |
-| Two nurses (anonymous staff, reputation 0) | 0 | None | 1.40% each |
+| Fixer (cutout) | Friend | Deceitful ×0.5 | 0.35% |
+| Nominee director (cutout) | Neutral | None | 1.40% |
+| Clinic accountant | Rival | Honest ×3 | 6.30% |
+| Two nurses (anonymous staff, reputation 0) | Neutral | None | 1.40% each |
 
-Chance that nobody talks in a month: 90.8%. **Over a year: 69% that someone blows the whistle.** The *Accountant* event fires (5.04% ≥ 5%):
+Chance that nobody talks in a month: 89.5%. **Over a year: 74% that someone blows the whistle.** The *Accountant* event fires (6.3% ≥ 5%):
 
 | Response | Result |
 |---|---|
-| Hush money (2 years' salary, about $90k) | Accountant 2.52%; yearly risk falls to **57%** |
-| Promote (opinion +20, to 0) | Accountant 4.2%; yearly risk about 65% |
-| Fire | 30% chance they go to a journalist at once, then 15% per month for 3 months: about **57%** that the firing itself causes the leak |
-| Shrink the operation to $15M a year | Only 2 staff knowers (the accountant and one nurse): with hush money, yearly risk about 49% |
+| Hush money (2 years' salary, about $90k) | Accountant 3.15%; yearly risk falls to **61%** |
+| Promote (a +20 push; with a +10 push from a raise earlier in the year the accountant moves from Rival to Neutral) | Accountant 4.2%; yearly risk about 66% |
+| Fire | 30% chance they go to a journalist at once, then 19% per month for 3 months: about **63%** that the firing itself causes the leak |
+| Shrink the operation to $15M a year | Only 2 staff knowers (the accountant and one nurse): with hush money, yearly risk about 53% |
 
 The lesson: a profitable dirty operation is a growing pool of people who know. The safest version is small, staffed by loyal people, run through two cutouts, and laundered before it touches anything visible.
 
 ### 4.31.3 Insurance Salesmen in Mexico City: protection, security or a crackdown
 
-**Situation.** The dynasty's auto parts plant in Mexico City's Industrial district (Mexico, liberal democracy, corruption 65, wage index 0.22) has revenue of $200M a year. A Cartel with Strength 60 holds Control 45 in the district: local strength `60 × 0.45 = 27`. Police strength 45, police integrity 35. The cartel asks 1% of revenue: **$2M a year**.
+**Situation.** The dynasty's Autos business unit, operating in Mexico City's Industrial district (Mexico, liberal democracy, corruption 65, wage index 0.22), has revenue of $200M a year. A Cartel with Strength 60 holds Control 45 in the district: local strength `60 × 0.45 = 27`. Police strength 45, police integrity 35. The cartel asks 1% of revenue: **$2M a year**.
 
 | Option | Cost per year | Monthly incident chance | Expected incidents per year | Other effects |
 |---|---|---|---|---|
 | **Pay** | $2M (plus Financial Police exposure +3 per month if paid as "consulting" in Mexico) | 0% | 0 | After 6 months, 10% per month of *A Favor for the Plaza* |
-| **Refuse, no security** | $0 | `45 / 5 = 9%` | 1.1 (68% chance of at least one) | Each incident: about $3.8M of lost output (one week), condition -10, Unskilled unrest +2 |
+| **Refuse, no security** | $0 | `45 / 5 = 9%` | 1.1 (68% chance of at least one) | Each incident: about $3.8M of lost output (one week), Unskilled unrest +2 |
 | **Refuse and harden**: 6 armed response teams (Strength 30 ≥ 27) | `6 × 40 × $6,500 × 0.22 × 12 = $4.1M` | `9% × 0.25 = 2.25%` | 0.27 (24% chance of at least one) | Theft losses (Crime / 20 %) cut by 75% |
-| **Request a crackdown** (interior minister, 30 PC) | PC | Success chance `40% + 0.5% × (45 - 60) = 32.5%` | | Success: Control 30 and Strength 50, local strength 15. The cartel learns who asked with chance `1 - 0.35 = 65%`, then retaliates 50%: a **33%** chance of a targeted attack on the plant manager or the plant |
+| **Request a crackdown** (interior minister, 30 PC) | PC | Success chance `40% + 0.5% × (45 - 60) = 32.5%` | | Success: Control 30 and Strength 50, local strength 15. The cartel learns who asked with chance `1 - 0.35 = 65%`, then retaliates 50%: a **33%** chance of a targeted attack on the unit's manager or premises |
 
-**Reading it.** Paying is the cheapest option today and the most dangerous later: it makes the dynasty a customer, and the *A Favor for the Plaza* event turns a customer into a partner with a hook on it. Hardening costs twice the protection fee but keeps the dynasty clean. A crackdown is a political play: it costs PC and has a one-in-three chance of making the cartel an enemy. A Tycoon dynasty would pay while lobbying the city for S2 Militarized (police strength 60, crackdown success 40%) and funding a mayoral candidate who campaigns on crime, then refuse once the odds improve.
+**Reading it.** Paying is the cheapest option today and the most dangerous later: it makes the dynasty a customer, and the *A Favor for the Plaza* event turns a customer into a partner with a hook on it. Hardening costs twice the protection fee but keeps the dynasty clean. A crackdown is a political play: it costs PC and has a one-in-three chance of making the cartel an enemy. A Corporation-rank dynasty would pay while lobbying the city for S2 Militarized (police strength 60, crackdown success 40%) and funding a mayoral candidate who campaigns on crime, then refuse once the odds improve.
 
 ---
 
@@ -2467,27 +2367,27 @@ The lesson: a profitable dirty operation is a growing pool of people who know. T
 New assumptions made in this file, to confirm with Logan:
 
 1. **Political Capital** is a separate spendable resource derived monthly from influence share (`100 × sqrt(share)`), pooled per dynasty per jurisdiction. Influence share itself stays as defined in 05 (rooted in assets, modified by origin, boosted by ads and psyops).
-2. **Two interest groups added**: State Apparatus and Shadow Economy, so non-democracies and failed states have realistic power holders.
+2. **The nine ideology blocs are the political actors** ([5-ideology.md](5-ideology.md)), and votes are counted by strata (4.0, 4.4).
 3. **A seventh law category, Governance** (campaign finance, lobbying rules, media ownership), added because these laws decide how much money can buy.
 4. **Extra laws added** beyond 08's list: environmental regulation, regional taxes, property tax, zoning, special economic zones, trusts and foundations, bailout policy, immigration.
 5. **Ruling family states** (for example Gulf monarchies) are modeled as a variant of the one-party state, not a separate type.
 6. **No country starts as a corporate oligarchy**; the type exists only as an outcome of play.
 7. **Starting country classifications and values** are a game abstraction at the start date, editable in data, and loosely inspired by public governance indices.
-8. **Two new agencies**: Banking Supervisor and Data and Cyberware Authority, in addition to the five in 08.
+8. **Six agencies**: the Banking Supervisor and the Data Authority are added to 08's list, and there is no antitrust authority.
 9. **Law changes move at most two steps per bill**, and a changed law locks for 12 months (6 in non-democracies).
 10. **Decisions vs laws**: individual permits, rezonings, contracts and reviews are decisions by named bodies using a disposition formula; standing laws use the clout-weighted support formula.
 11. **Seizure is a ladder**, never instant, except when war, Tier 3+ sanctions or a failed coup skip steps.
 12. **Bribes of officials are possible in every government type**, but liberal democracies make them expensive, rarely accepted and often reported.
-13. **Elections use a segment-level softmax** of utilities; money enters with a logarithm so doubling spending has diminishing returns.
+13. **Elections use a stratum-level softmax** of utilities; money enters with a logarithm so doubling spending has diminishing returns.
 14. **Money values** are in dollar equivalents scaled by GDP (political market size, LP price) or by a wealth index (bribes, legal fees), so the same rules work for a $50B city and a $28T country.
 15. **Corporate sovereignty Stage 3** needs a corporate oligarchy, a failed state, or a treaty; liberal democracies can host Stage 2 charter cities at most without a treaty.
 16. **Prison** keeps a character in play with very limited actions rather than removing them entirely.
 17. **Political Director and Objectives**: routine politics is delegated to a Political Director character working from player-set objectives, a budget and a Conduct line (Clean, Grey, Dark), so hourly play is kept for hot moments (election and coup nights, hearings, crisis meetings, Council sessions, protest standoffs).
 18. **Hearings** are a short hourly mini-mode with four answer stances.
-19. **Public standing is split three ways** beside reputation: Favorability per segment per country, Elite Standing per country, and Profile per country. None of them changes influence share, which stays rooted in assets.
+19. **Public standing is split three ways** beside reputation: Favorability per stratum per country, Elite Standing per country, and Profile per country. None of them changes influence share, which stays rooted in assets.
 20. **Scandals are news cycles**: Heat (daily, driven by outlet audience × credibility) is separate from the election Scandal term, which keeps halving every 4 weeks except in weeks ending with Heat ≥ 40.
 21. **Outlets have credibility and tone**, editors and journalists are characters, and media effects are weighted by audience × credibility.
-22. **Think tanks can shift an interest group's stance** by one step on one law for 10 years (at most once per IG per law per decade): the slowest and strongest political lever.
+22. **Think tanks can shift an ideology bloc's stance** by one step on one law for 10 years (at most once per bloc per law per decade): the slowest and strongest political lever.
 23. **Family foundations** are a new holder type with a deed, irrevocable assets, a payout rule under F6, and control stakes that never split under Partition.
 24. **Party donorship tiers** (Major Donor 10%, Party Patron 25%, Owned Party 50% plus leadership) and **personal parties** built around a high-Profile family member.
 25. **Party Standing** is a new per-character value, and it adds a `Party Standing / 10` term to the nomination score of 4.7.2.
@@ -2496,8 +2396,8 @@ New assumptions made in this file, to confirm with Logan:
 28. **Whistleblowers** are generated from each illegal operation's knowers (cutouts plus 1 per $10M of yearly flow, minimum 2).
 29. **Civil litigation** is a full system with judges as characters (Integrity, Leaning, Ideology), appeals, settlement, civil discovery and anti-SLAPP flags.
 30. **Organized crime groups** are AI actors and holders with Strength and district Control. The dynasty can pay, fight, hire, partner with or inform on them, but can never become one.
-31. **Security Strength** is one scale for guards, PMCs, police, militaries and OCGs. One PMC unit equals 16 PMC team-months; the $5M per month in 4.8.4 is the running cost of an owned unit, and hiring one costs about $7.2M.
-32. **International organizations** use fictional names (Assembly of Nations, ISF, World Trade Council, Global Development Bank, Financial Crimes Taskforce, International Court of Arbitration, International Criminal Tribunal). A Single Market bloc acts as a fourth level above national for C3, the T2 floor and E5.
+31. **Security Strength** is one scale for private security, police, militaries and OCGs.
+32. **International organizations** use fictional names (Assembly of Nations, ISF, World Trade Council, Global Development Bank, Financial Crimes Taskforce, International Court of Arbitration, International Criminal Tribunal). A Single Market bloc acts as a fourth level above national for the T2 floor and E5.
 33. **State intelligence services** run operations against companies and make **The Request** to dynasties from Corporation rank on.
 34. **AI governments** hold an attitude (Favored, Tolerated, Watched, Targeted) toward each dynasty, scaled by agency independence; **AI dynasties** have one of seven political archetypes and form coalitions against dominant dynasties.
-35. **Political endgames** add Kingmaker, Power Behind the Throne, Political Dynasty, Market Maker, Bloc Architect, Media Hegemon and Benefactor (with exact conditions) beside Corporate Sovereignty and Immortal Dynasty, plus non-final falls (Exile, Disgrace, Capture).
+35. **Political endgames** add Kingmaker, Power Behind the Throne, Political Dynasty, Market Maker, Bloc Architect, Media Hegemon and Benefactor (with exact conditions) beside Corporate Sovereignty, as score milestones rather than victory conditions, plus non-final falls (Exile, Disgrace, Capture).

@@ -1,5 +1,7 @@
 # Detailed design 1: Corporate core (companies, characters, dynasty, trusts)
 
+_Status: v1.1 (2026-10-18), consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files._
+
 This expands [01-companies.md](../01-companies.md), [02-trusts-and-assets.md](../02-trusts-and-assets.md), [03-characters.md](../03-characters.md) and [04-dynasty-and-succession.md](../04-dynasty-and-succession.md) into exact rules and numbers. All numbers are **tuning values**: starting points to balance, not final.
 
 Money is shown in the dynasty's home currency, written as $. "Month" means the monthly calculation (see [09-time-and-turns.md](../09-time-and-turns.md)).
@@ -17,7 +19,7 @@ The game has **named characters** of two kinds:
 
 - **Number of full characters** is set at game start, **200 by default**.
 - Full characters are spread across backgrounds, strata and locations. They include the starting characters the player did not pick, some of the rivals created in the **rival rotation**, and extra characters generated at random from templates with high variance.
-- **Character resources**: assets, clout, income, prestige and vril. Together with Image they shape the character's **stratum** ([2-map-influence-economy.md](2-map-influence-economy.md) 2.8.0).
+- **Character resources**: assets, clout, income, prestige and vril. Together with Image they shape the character's **stratum** ([2-map-and-influence.md](2-map-and-influence.md) 2.8.0).
 
 | Resource | What it is (Logan) |
 |---|---|
@@ -46,7 +48,7 @@ The game has **named characters** of two kinds:
 
 **What Hustle does (A).**
 - **Speed**: every action and project the character runs (founding, growth plan purchases, software features, schemes) takes `1 - (Hustle - 10) × 1%` of its normal time, from ×1.10 at 0 to ×0.80 at 30 **(T)**.
-- **Long hours**: ~~extra usable hours a day~~ (no daily budget since batch 64). Instead, ticking actions (1.1.6) take 10% less time at Hustle 15+ and 20% less at 25+ **(T)**.
+- **Long hours**: ticking actions (1.1.6) take 10% less time at Hustle 15+ and 20% less at 25+ **(T)**.
 - **Founding**: Hustle is the roll for the Bootstrap and Freestyle founding paths (1.6.4, 1.6.6) and for early sales at a new company.
 - **Side deals and the street**: it rolls for Black market deals (10.3), gambling hustles (9) and quick flips of assets and real estate.
 - **Stress**: long hours and crunch cost a character with Hustle 15+ half the stress (1.1.5).
@@ -58,9 +60,9 @@ The game has **named characters** of two kinds:
 
 ### 1.1.2 Personality traits
 
-Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs**, CK3 style (batch 60). Events can add more, so a character has **3 to 5** in all (Logan, batch 60; cyberware scrapped in batch 71). Traits drive AI choices and stress (Logan, 2026-10-17: grown from 7 with cyberpunk flavor). Each modifies skills, opinion and stress. Cyberware can add extra personality traits beyond the 3 (1.1.10).
+Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs**, CK3 style (batch 60). Events can add more, so a character has **3 to 5** in all (Logan, batch 60). Traits drive AI choices and stress (Logan, 2026-10-17: grown from 7 with cyberpunk flavor). Each modifies skills, opinion pushes (1.1.4) and stress.
 
-| Trait | Opposite | Skill effect | Stress when | Opinion |
+| Trait | Opposite | Skill effect | Stress when | Opinion push |
 |---|---|---|---|---|
 | Ambitious | Content | +1 all skills | Passed over, kept in a junior role | -10 to their liege |
 | Greedy | Generous | +2 Finance | Giving money away | +10 from Greedy |
@@ -75,7 +77,7 @@ Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs**, CK3 style 
 | Narcissist | Humble | +2 Persuasion in public, -2 in private; Fame gain ×1.5 | Being upstaged, losing Image | -5 from everyone; +10 from flatterers |
 | Gregarious | Shy | +2 Persuasion; meetings take half the hours | (Shy) public events, galas, campaigns | +5 from Gregarious |
 
-Same trait between two characters: +10 opinion each. Opposite trait: -10.
+Same trait between two characters: a +10 push each way. Opposite trait: a -10 push.
 
 #### Trait change (Logan, 2026-10-17)
 
@@ -92,8 +94,7 @@ Another character's traits are **hidden** until the player learns them:
 - Meeting in person reveals one trait per meeting **(T)**.
 - Investigating (a Spymaster task, 1.1.8.2, or a hired PI) reveals all traits, and for the player's character the ambition.
 - Famous characters (Fame 60+) have their public trait known to everyone; Narcissists' trait is always visible.
-- Lie-reader optics (1.1.10) reveal Deceitful at once.
-Unknown traits show as "?" on the character screen; opinion modifiers from them still apply.
+Unknown traits show as "?" on the character screen; opinion pushes from them still apply.
 
 #### Traits drive AI characters (Logan, 2026-10-17)
 
@@ -131,7 +132,7 @@ The player's character has **one ambition** at a time, picked by the player from
 | Build a legacy | Found a company, fund a cause, or get a dynasty heir established | Visionary, Content |
 | Be famous | Reach Fame 75 | Narcissist, Gregarious |
 | Protect the family | Keep the family trust intact; marry children well | Cautious, Compassionate |
-| Transcend | Fit 4 implants or reach Transhumanist goals | Visionary, Hedonist; Transhumanists |
+| Transcend | Reach Transhumanist goals: life extension and other human enhancement (1.1.9) | Visionary, Hedonist; Transhumanists |
 
 - Progress toward the ambition gives -5 stress a month; achieving it gives clout and +20 stress relief, and a new ambition is picked.
 - Meeting it also gives vril (1.1.0).
@@ -146,33 +147,29 @@ Gained at 18 to 22, level 1 to 4 (level from childhood focus and a roll).
 |---|---|---|---|
 | Ivy League MBA | Finance | +2 | Better VC pitch odds |
 | Quant PhD | Finance | +2, +1 Tech | Trading bonuses |
-| Bootcamp Coder | Tech | +2 | Tech-sector founding bonus |
+| Bootcamp Coder | Tech | +2 | Tech-industry founding bonus |
 | Law School | Intrigue | +1, +1 Persuasion | General Counsel task bonus |
-| Old Money Tutors | Persuasion | +2 | +10 opinion from old-money families |
-| Military Contractor | Operations | +2 | PMC contacts |
+| Old Money Tutors | Persuasion | +2 | +10 push from old-money families |
+| Military Contractor | Operations | +2 | Defense industry contacts |
 | Party School | Persuasion | +2 | Political appointments |
 | Street-Taught | Intrigue | +2 | Fixer contacts, no Ask Daddy path |
 
 ### 1.1.4 Opinion
 
-> **Simplified (Logan, batch 62): opinion is a tag, not a number.** Each character holds one of three attitudes toward each other character: **Friend**, **Neutral** or **Rival**. Special bonds (Nemesis, Lover, Mentor and Protégé, Partner) sit on top of the attitude (below).
->
-> - **Changing the tag (A).** The modifiers in the table below are no longer added up. Each one is now a **push**: a push of 30 or more (positive or negative) moves the tag one step at once (Rival → Neutral → Friend, or back); smaller pushes of the same direction add up over a year and move it when they reach 30, then reset **(T)**. Family ties, same dynasty and Partner start the tag at Friend; Nemesis always means Rival.
-> - **Formulas that use opinion** (bloc acceptance 1.4, loyalty 1.7.3, tender thresholds 1.9.3, votes in politics and the rest) read the tag as a number: **Friend +50, Neutral 0, Rival -50, Nemesis -100** **(T)**. Any rule written as "opinion above X" means the tag that clears it.
-> - The UI shows the tag and the bond, never a number.
+**Opinion is a tag, not a number** (Logan, batch 62). Each character holds one of three attitudes toward each other character: **Friend**, **Neutral** or **Rival**. Special bonds (Nemesis, Lover, Mentor and Protégé, Partner) sit on top of the attitude (below).
 
-The table below is kept as the list of pushes. (Old text: Opinion = sum of active modifiers, clamped to -100 to 100. Most modifiers decay toward 0 by 1 point per week unless marked permanent.
+- **Changing the tag (A).** Events and actions give **pushes**. A push of 30 or more (positive or negative) moves the tag one step at once (Rival → Neutral → Friend, or back); smaller pushes of the same direction add up over a year and move it when they reach 30, then reset **(T)**. Family ties, same dynasty and Partner start the tag at Friend; Nemesis always means Rival.
+- **Formulas that use opinion** (bloc acceptance 1.4, loyalty 1.7.3, tender thresholds 1.9.3, votes in politics and the rest) read the tag as a number: **Friend +50, Neutral 0, Rival -50, Nemesis -100** **(T)**. Any rule written as "opinion above X" means the tag that clears it.
+- The UI shows the tag and the bond, never a number.
 
-| Modifier | Value |
+Standard pushes **(T)**:
+
+| Source | Push |
 |---|---|
-| Parent / child | +30 permanent |
-| Sibling | +10 permanent |
-| Spouse | +20 permanent |
-| Same dynasty | +10 permanent |
-| Same origin hub | +5 permanent |
+| Parent / child, sibling, spouse, same dynasty | Starts at Friend |
+| Same origin hub | +5 |
 | Shared trait | +10 each |
 | Opposite trait | -10 each |
-| Friend / Rival / Nemesis | +40 / -40 / -80 |
 | Lover | +30 |
 | Monthly trust distribution, fair share | +10 |
 | Distribution below fair share | -5 per 10% short (max -30) |
@@ -184,18 +181,18 @@ The table below is kept as the list of pushes. (Old text: Opinion = sum of activ
 
 #### Relationships (Logan, 2026-10-17; batch 62)
 
-**Special bonds stay** (Logan, batch 62) and unlock their own actions: a mentor teaches a skill, a nemesis plots against you, a lover opens affair events. Friend and Rival are now the attitude tags above, so a character can hold any number of each; the limit of 3 friends and 3 rivals below is dropped. (Old text: characters have **both** an opinion number and **named relationships** (Logan).) A named relationship adds its opinion modifier above, unlocks its own events, and changes what the two can ask of each other **(A)**:
+**Special bonds** (Logan, batch 62) unlock their own actions: a mentor teaches a skill, a nemesis plots against you, a lover opens affair events. Friend and Rival are the attitude tags above, so a character can hold any number of each. Each relationship sets or pushes the tag, unlocks its own events, and changes what the two can ask of each other **(A)**:
 
-| Relationship | How it forms **(T)** | Opinion | Events and effects |
+| Relationship | How it forms **(T)** | Tag | Events and effects |
 |---|---|---|---|
-| **Friend** | Opinion 60+ for 6 months, or a Befriend scheme | +40 | Favors at a discount; warns you of schemes they hear about; grief event on death |
-| **Rival** | Competing for the same seat, deal or ambition; opinion -40 or lower | -40 | Rivalry events (public spats, poaching); +2 to skills used against them |
-| **Nemesis** | A rival who ruins you, or a discovered scheme that cost 30+ health or a company | -80 | Revenge ambition (1.1.2); they will scheme against you until one of you falls |
-| **Lover** | Seduce scheme, or opinion 60+ between attracted characters | +30 | Affair events; a secret affair is a strong hook (below) |
-| **Mentor** / **Protégé** | A character 15+ years older with a skill of 15+ takes on a younger one | +20 each | Protégé gains +1 a year in the mentor's best skill (max +5); protégés are eligible successors (1.11.0) |
-| **Partner** | Spouses and openly polyamorous partners (1.11.5) | +20 | Heirs; shared household events |
+| **Friend** | Pushes that reach Friend, or a Befriend scheme | Friend | Favors at a discount; warns you of schemes they hear about; grief event on death |
+| **Rival** | Competing for the same seat, deal or ambition; pushes that reach Rival | Rival | Rivalry events (public spats, poaching); +2 to skills used against them |
+| **Nemesis** | A rival who ruins you, or a discovered scheme that cost 30+ health or a company | Rival (reads -100) | Revenge ambition (1.1.2); they will scheme against you until one of you falls |
+| **Lover** | Seduce scheme, or Friends who are attracted to each other | +30 push | Affair events; a secret affair is a strong hook (below) |
+| **Mentor** / **Protégé** | A character 15+ years older with a skill of 15+ takes on a younger one | +20 push each | Protégé gains +1 a year in the mentor's best skill (max +5); protégés are eligible successors (1.11.0) |
+| **Partner** | Spouses and openly polyamorous partners (1.11.5) | Starts at Friend | Heirs; shared household events |
 
-A character can hold any number of relationships, but only 3 friends, 3 rivals and 1 nemesis at once **(T)**.
+A character can hold only 1 nemesis at once **(T)**.
 
 #### Hooks (Logan, 2026-10-17)
 
@@ -225,27 +222,22 @@ Stress 0 to 300. Levels at 100, 200, 300. Each new level triggers a breakdown ev
 
 ### 1.1.6 Time and actions
 
-> **Changed (Logan, batch 64): no daily hours budget.** **Most actions take no time** and resolve at once (a phone call, a trade, a board decision, starting a scheme). **Only certain actions burn ticks** (hours): while one runs, the character is **busy** and cannot start another ticking action, but instant actions still work **(A for which actions tick)**. The table below now lists only actions that tick; the 16-hour day is gone.
->
-> - **Ticking actions (A):** travel (domestic 4, international 12, halved by a private jet), in-person meetings (2), pitch meetings (3), board meetings (4), galas (5), vacations (72), and the opening of a scheme (1.1.8.1).
-> - **Location matters** (Logan, batch 64): some actions need the character in the city (meeting a minister, a gala, an in-person pitch), so travel is the main thing that burns time.
-> - **Delegation** (Logan, batch 64): any action can be handed to a board member, family member or fixer. **The AI then takes it over and rolls for it as if that person did it**, with their skills, traits and location, and their time if it ticks. The player sees the result.
->
-> (Old text follows.)
+There is **no daily hours budget** (Logan, batch 64). **Most actions take no time** and resolve at once (a phone call, a trade, a board decision, starting a scheme). **Only certain actions burn ticks** (hours): while one runs, the character is **busy** and cannot start another ticking action, but instant actions still work **(A for which actions tick)**.
 
-Each character has **16 usable hours per day** (kept, Logan 2026-10-17: hourly turns with a daily budget of hours spent on meetings, travel and schemes); the rest is sleep and private life. Workaholic: 18. Most actions cost hours:
-
-| Action | Hours |
+| Ticking action **(A)** | Ticks |
 |---|---|
-| Phone call | 1 |
-| Meeting (one character) | 2 |
+| Meeting in person (one character) | 2 |
 | Pitch meeting | 3 |
 | Board meeting | 4 |
 | Gala / networking event | 5 |
-| Domestic flight | 4 |
-| International flight | 12 |
+| Domestic travel | 4 (halved by a private jet) |
+| International travel | 12 (halved by a private jet) |
+| Vacation | 72 |
+| Opening a scheme (1.1.8.1) | 4 or 8 |
 
-Delegating an action to a board member or family member uses their hours instead, with their skills.
+- **Location matters** (Logan, batch 64): some actions need the character in the city (meeting a minister, a gala, an in-person pitch), so travel is the main thing that burns time.
+- **Delegation** (Logan, batch 64): any action can be handed to a board member, family member or fixer. **The AI then takes it over and rolls for it as if that person did it**, with their skills, traits and location, and their time if it ticks. The player sees the result.
+- Hour costs written elsewhere in this file (for example "Prepare deck (8 hours)") are ticks.
 
 ### 1.1.7 Life cycle
 
@@ -256,7 +248,7 @@ Delegating an action to a board member or family member uses their hours instead
 
 ### 1.1.8 Schemes
 
-> **Changed (Logan, batch 63): schemes are CK3 style, with Intrigue rolls over weeks.** This replaces the one-roll rule of 2026-10-17. The success and discovery formulas below still apply, but are rolled over the scheme's run (1.1.8.1).
+Schemes are CK3 style, with Intrigue rolls over weeks (Logan, batch 63).
 
 #### 1.1.8.1 How a scheme runs (Logan, batch 63)
 
@@ -265,12 +257,13 @@ Delegating an action to a board member or family member uses their hours instead
 - **Agents (A).** The schemer can bring in agents: friends, people they hold hooks over, or the target's own staff bought off. Each agent adds progress, and an agent close to the target (a board member, a spouse, a bodyguard) adds the most. Each agent is also a new way to be discovered.
 - When progress is full, the **success roll** resolves as below. A failed roll can be retried by starting over.
 - Only one scheme per schemer against the same target at a time.
-- The rest of this section's old text is kept for the formulas. (Old text: schemes are **simple one-roll actions** (Logan, 2026-10-17): no agents and no progress bars. The schemer pays the cost and the hours (1.1.6), and the scheme resolves at once with two rolls **(T)**:)
+
+The two rolls **(T)**:
 
 - **Success** = 50% + (schemer's skill - target's defense) × 3%, clamped 5% to 95%. Defense is the target's own skill, or their Head of Security's Intrigue if higher.
-- **Discovery** = 10% + target's defense × 1% - schemer's Intrigue × 1%, clamped 2% to 60%, rolled whether the scheme succeeds or fails. A discovered scheme gives -50 opinion (1.1.4), can make a nemesis, and serious ones (blackmail, accidents) open a police or regulator investigation.
+- **Discovery** = 10% + target's defense × 1% - schemer's Intrigue × 1%, clamped 2% to 60%, rolled whether the scheme succeeds or fails. A discovered scheme can make a nemesis, and serious ones (blackmail, accidents) open a police or regulator investigation.
 - **Getting caught (Logan, batch 63).** A discovered scheme makes the target a **Rival** (1.1.4), or a **Nemesis** if the scheme was serious (blackmail, an "accident", a scheme that cost them a company or 30+ health). The target gets a **hook** on the schemer (the scheme itself is the secret), and it **can become a scandal**: a public leak (Image and Favor hit, 1.1.0) if the target or the press chooses to run it.
-- Hours: 4 for social schemes, 8 for Intrigue and Tech schemes **(T)**. A character can run one scheme against the same target per month.
+- Opening ticks: 4 for social schemes, 8 for Intrigue and Tech schemes **(T)**.
 
 | Scheme | Skill | Cost | Effect on success |
 |---|---|---|---|
@@ -280,11 +273,12 @@ Delegating an action to a board member or family member uses their hours instead
 | Dig up dirt | Intrigue | $50k | Hook on target (if a secret exists) |
 | Leak scandal | Intrigue | $100k | Target loses 20 reputation, stock drops 3 to 8% |
 | Corporate espionage | Intrigue | $500k | Steal a tech or a deal |
-| ~~Netrun~~ | Tech | $250k | **Moved to the hacking system**, [17-hacking.md](17-hacking.md) (Logan, batches 63 and 69) |
 | Poach executive | Persuasion | signing bonus | Executive joins your company |
 | Investigate shell | Intrigue | $200k | Reveal hidden owners |
 | Blackmail | Intrigue | needs hook | Force an action (vote, sale, resignation) |
 | Arrange "accident" | Intrigue | $2M | Target dies or is injured; huge penalty if discovered |
+
+Hacking is its own system, not a scheme: [17-hacking.md](17-hacking.md).
 
 #### 1.1.8.2 Intel and the Spymaster (Logan, batch 63)
 
@@ -292,7 +286,7 @@ Delegating an action to a board member or family member uses their hours instead
 - **Secrets** are discrete facts kept in the engine: a hidden trait (1.1.2), an affair, a crime, an addiction, a hidden owner behind a shell, a figurehead and the **real controller** behind them (1.3.1), a planned takeover, insider trades.
 - A secret is learned through a **Dig up dirt** or **Investigate** scheme, an informant (an agent placed near the target), an event, or being told by someone who knows it. Each success reveals **one secret** **(A)**.
 - A known secret stays known. It can be **traded, leaked or turned into a hook**; if it is exposed, everyone knows it.
-- **Human intel only for now** (Logan): no hacking until the later hacking system.
+- Schemes and the Spymaster give human intel; hacking ([17-hacking.md](17-hacking.md)) is the other source.
 
 **The Spymaster (Logan).** A character's intel and defense against schemes are run by a **Spymaster**: the **Head of Security** board seat for a company (1.8.2), or a **personal fixer** the character hires for themselves and the family **(A)**.
 - The Spymaster's **Intrigue** is the defense against schemes on everyone they protect (1.1.8), and adds weekly progress to the employer's own Dig up dirt and Investigate schemes.
@@ -321,18 +315,14 @@ Every character has **health** from 0 to 100. There are no yearly death rolls: h
 |---|---|
 | 75 to 100 | None |
 | 50 to 74 | -1 to all skills |
-| 25 to 49 | -3 to all skills; 25% fewer hours a day (1.1.6) |
-| 1 to 24 | Bedridden: -6 to all skills, half hours, can only act through delegates; heirs and rivals start positioning |
+| 25 to 49 | -3 to all skills; ticking actions take 25% longer (1.1.6) |
+| 1 to 24 | Bedridden: -6 to all skills, ticking actions take twice as long, can only act through delegates; heirs and rivals start positioning |
 | 0 | Death; succession (1.11) |
 
 **Recovery and life extension (T).**
 - Rest and normal care restore 1 health a month while no health event fired that month, up to the age cap (100 minus 1 per year over 40).
 - **Private medicine** ($200,000 a year) doubles recovery and halves illness costs.
-- **Life extension** ($5M a year) raises the age cap by 15, halves aging chances, and grows with tech (cloned organs, gene therapy). It is a status symbol: Glitterati and above gain prestige from it, and heirs waiting on an inheritance lose opinion of the character.
-
-### 1.1.10 Cyberware: scrapped
-
-> **Scrapped (Logan, batch 71).** There is no cyberware in the game: no implants, slots, humanity, AI psychosis or cyberpsychosis, implant abilities or implant traits. The old rules are removed from this section. Life extension (1.1.9) stays.
+- **Life extension** ($5M a year) raises the age cap by 15, halves aging chances, and grows with tech (cloned organs, gene therapy). It is a status symbol: Glitterati and above gain prestige from it, and heirs waiting on an inheritance get a negative push toward the character.
 
 ## 1.2 Holders and stakes
 
@@ -388,7 +378,7 @@ Control is recalculated whenever a stake changes or a bloc changes (immediately)
 - **Sometimes a shadowy figure lurks.** When the chain passes through a shell, a hook or a figurehead, the company screen shows "Real controller: unknown" until the player's intel reaches it, through an Investigate action (1.1.8, like Investigate Shell), an informant on the board, or an event.
 
 **Exposure (Logan, batch 57).** A hidden controller is **legal**. **Governments and regulators never get involved**, and it is not a disclosure breach. But if **the press or certain people** (a rival, a director, a disgruntled figurehead) find out, the real controller **can lose control of the board** **(A for the numbers)**:
-- An **Exposed** event fires for the company. Every director's opinion of the real controller drops by 20, or 40 if the director was in the dark **(T)**.
+- An **Exposed** event fires for the company. Every director gets a -20 push toward the real controller, or -40 if the director was in the dark **(T)**.
 - Each director then rolls to defect: the chance is 50% minus their loyalty or opinion of the real controller ÷ 2 **(T)**. Defectors vote with the owner of record or with a rival bloc from then on.
 - The figurehead may **flip**: it gets a free check to break the chain (step 3 above), at +20% if the exposure embarrassed them **(T)**.
 - If the defectors and the figurehead together give someone else a board majority, the real controller loses control of the board. They can try to win it back through favors, hooks or a proxy fight (1.9.2).
@@ -422,17 +412,17 @@ Charter clauses (optional add-ons, set at founding or by charter change):
 
 ### 1.6.1 Found Company action
 
-Inputs: name, sector (one of ~20), home hub, target capital, founding path. Cost: 8 hours of the founder's time to start. The company is created only when the chain completes successfully.
+Inputs: name, industry (one of 45, [10-industry-economy.md](10-industry-economy.md) 10.0), home hub, target capital, founding path. Cost: 8 hours of the founder's time to start. The company is created only when the chain completes successfully.
 
-Starting company value = capital raised. Starting monthly revenue = capital x sector yield (0.5% to 3% per month), with costs set so a new company runs at a small loss for 6 to 18 months.
+Starting company value = capital raised. Starting monthly revenue = capital x industry yield (0.5% to 3% per month), with costs set so a new company runs at a small loss for 6 to 18 months.
 
 ### 1.6.2 Path: Venture Capital
 
 Chain per round:
 1. **Prepare deck** (8 hours). Deck quality = (Persuasion + Tech + Finance) / 3 + education bonus + random 0 to 10.
-2. **Pitch meetings**: the player picks up to 5 VC firms from a list (each a fund with a partner character, a sector preference and a risk appetite). Each pitch is 3 hours. Interest chance = 20% + deck quality x 2% + sector match 15% + partner opinion / 2.
+2. **Pitch meetings**: the player picks up to 5 VC firms from a list (each a fund with a partner character, an industry preference and a risk appetite). Each pitch is 3 hours. Interest chance = 20% + deck quality x 2% + industry match 15% + partner opinion / 2.
 3. **Term sheet** event from each interested firm: amount, valuation, board seat, preference multiple (1x to 2x), and a **milestone** (revenue target by a date).
-4. **Negotiate** (optional, 2 hours): an Persuasion roll can raise valuation 10% to 30%, or anger the partner (-20 opinion, may withdraw).
+4. **Negotiate** (optional, 2 hours): a Persuasion roll can raise valuation 10% to 30%, or anger the partner (a -20 push, may withdraw).
 5. **Close**: shares issued as class P; VC partner joins the board if the term sheet says so.
 
 | Round | Raise | Dilution | Board | Milestone window |
@@ -454,10 +444,10 @@ Requires a living parent (or grandparent, uncle, aunt) with personal wealth abov
 3. Each **meeting** (golf, gala, office: 3 to 5 hours) is an event. Commitment = friend's opinion of your father / 2 + your Influence x 2 + random. Results:
    - **Yes**: invests $100k to $5M for B shares; joins your bloc.
    - **Yes, but**: invests more, and you owe a **favor** (they hold a hook on you, redeemable once for a vote, a hire, or a deal).
-   - **No**: a polite refusal; small chance they tell others you are not ready (-5 opinion with Dad's circle).
+   - **No**: a polite refusal; small chance they tell others you are not ready (a -5 push with Dad's circle).
 4. Dad may top up from his personal account (not the family trust) if total raised is under target and his support is above 50.
 
-Effects: your reputation is tied to your father's for 5 years (his scandals hit you at half strength and yours hit him). If the company fails, Dad's opinion -30 and every investor -20.
+Effects: your reputation is tied to your father's for 5 years (his scandals hit you at half strength and yours hit him). If the company fails, Dad takes a -30 push and every investor a -20 push.
 
 ### 1.6.4 Path: Bootstrap
 
@@ -491,6 +481,40 @@ Effects: charter becomes State-Linked or the government takes 1 board seat; you 
 
 A company can found a vassal directly (Found Subsidiary action, CEO's time). It pays the capital from its own cash and holds 100% A shares. The parent's head appoints the new CEO.
 
+### 1.6.9 Running a young company
+
+A Venture-rank company (1.7.5) shows a **startup dashboard** on its company screen. All numbers here are **(T)**.
+
+| Metric | What it means |
+|---|---|
+| Runway | Months of cash left at the current burn; zero means missed payroll, then bankruptcy |
+| Burn | Monthly cash out minus cash in |
+| Product | Readiness 0 to 100 through the product phases below |
+| Traction | Customers and monthly revenue |
+| Team | Headcount, morale (0 to 100) and key hires |
+| Control | The founder's voting share, direct and through their bloc |
+| Hype | Market buzz 0 to 100: raises valuation and hiring odds, crashes when promises fail |
+
+**Other ways in.** Besides founding (1.6.1 to 1.6.8), a character can buy a small loss-making Venture or Company (inheriting its team, debts and reputation), be handed a trust-owned side business by family vote, or found again after an earlier company was sold or failed, keeping renown and contacts.
+
+**Product phases.** Idea (0 product points: pitching, angels), Prototype (100: pre-seed and seed interest), MVP (300: first customers and pilots), Launch (600: general sales and marketing), Product-market fit (the traction test below: Series A and up, bank credit lines) and Scale (1,500). Product points per week = sum over product staff of skill / 5, plus the founder's Tech / 3 in a week the founder works on product. Morale below 40 halves it. Phase names vary by industry (a mine's prototype is a survey, its MVP a pilot pit). A **pivot** before fit keeps 50% of the points and changes industry or customer, at Hype -20 and a -10 investor push (+5 if it follows a failed launch).
+
+**Product-market fit** comes when monthly revenue grows 10%+ a month for 3 months in a row with churn under 5%: an event, Hype +25. Churn rises when customers outgrow the engineering team. Go-to-market channels: enterprise sales (slow, sticky), consumer marketing (ad spend; fast, leaky), government contracts, partnerships (revenue share, risk of dependency) and grey-market growth (below).
+
+**Team.** Generic staff are numbers; key hires (CTO, Head of Sales, COO, first board members) are characters who can be poached, scheme and sit on the board. Hire chance = 30% + Hype / 2 + 1% per 1% of salary above market + equity offered + opinion of the founder. A funding round may require an option pool (5% to 15%) that dilutes the founders first; key hires ask 0.5% to 5%, vesting over 4 years with a 1-year cliff, and leavers keep vested shares as small holders. Morale moves monthly (up with raises, wins and equity; down with crunch, layoffs, missed payroll and founder scandals); below 30, 5% of staff quit each month and key hires start looking.
+
+**Co-founders.** The equity split is set at founding; an equal split keeps both happy but gives neither a majority alone. Co-founder tension rises with disagreements their traits care about and falls with success and shared credit. At high tension a breakup chain offers a buyout, a board vote to push them out, or splitting the company.
+
+**More money.** Bridge note (converts at a 20% discount at the next round); revenue-based financing (over $50k monthly revenue, repaying 5% to 10% of revenue until 1.5x); strategic investor (MVP or later, 10% to 30% for a board seat and right of first refusal on a sale); family trust investment (family vote); government grant (influence in the home jurisdiction; scrutiny, golden share); personal loan or mortgage. Valuation before revenue = phase base value × (1 + Hype / 100) × industry appetite; after it, a traction multiple × revenue.
+
+**Protecting control.** Keep class A shares (1.2; VC interest -15%), bring friendly holders into the bloc (1.4), negotiate protective provisions out of term sheets (Persuasion), prefer founder-friendly VC partners (a firm attribute; they rarely join factions) and buy back shares from leaving staff and angels. The dashboard shows how far each faction is from 50%.
+
+**Rivals.** AI rival startups in the same industry and hub compete for customers, staff and VC money. Once traction passes a threshold, an incumbent picks a response: ignore, copy (the founder's growth halves for 6 months unless the product is ahead), acquire (an offer) or crush (lawsuits, a price war, lobbying).
+
+**Grey-market growth.** Bought user data (+30% customers from marketing), bot armies (+20 Hype, back to 0 if revealed) and gig-worker labor (operating costs -30%, unrest and union events) each add **exposure**, which uses the shell investigation rule (1.7.4). Attacking a rival's systems goes through hacking ([17-hacking.md](17-hacking.md)).
+
+**Exits and failure.** After MVP an acquirer can make an offer: the founder takes the cash or stays on as a vassal CEO under the buyer. Failure: **bankruptcy** (payroll missed twice or a debt default: liquidation, personal guarantees called, reputation -30), **acquihire** (runway under 3 months and an offer: the team joins the buyer, investors get little), **ousted** (a faction wins a proxy fight: the founder keeps their shares, reputation -10) or **fire sale** (low price, reputation -10, no bankruptcy record). Failure is not game over: the dynasty and trust carry on.
+
 ## 1.7 Vassals
 
 ### 1.7.1 Vassal contract
@@ -501,9 +525,9 @@ A company can found a vassal directly (Found Subsidiary action, CEO's time). It 
 | Management fee | 0% to 5% of revenue | Cash up regardless of profit, -2 loyalty per 1% |
 | Parent board seats | 0 to majority | More control, -5 loyalty per seat above 2 |
 | Veto rights | yes / no | Parent can block vassal acquisitions and debt; -10 loyalty |
-| Non-compete | yes / no | Vassal cannot enter parent's sectors; -5 loyalty |
+| Non-compete | yes / no | Vassal cannot enter parent's industries; -5 loyalty |
 
-Changing the contract: costs the parent head 2 hours, and the vassal CEO's opinion changes by the loyalty delta x 2.
+Changing the contract: costs the parent head 2 ticks, and the vassal CEO gets a push of the loyalty delta x 2.
 
 ### 1.7.2 Autonomy levels
 
@@ -534,9 +558,8 @@ Current loyalty moves 5 points per week toward the target.
 | Branch Office | Must be registered in the host country. Host law sets: minimum local partner stake (0% to 51%), golden share (yes/no), local directors (0 to 50%). Unlocks host market and hubs. Host government relation below -50 risks seizure (see politics design). |
 | Shell Company | **Logan, batch 53:** basically an empty company for moving money around. **No business units**, but it can hold **software, compute and stored data** ([14-software.md](14-software.md), [15-infrastructure.md](15-infrastructure.md)), as well as stakes and cash. Registered in a haven jurisdiction. Holds stakes and cash anonymously; rivals see "Undisclosed holder" unless they run Investigate Shell. Income routed through it taxed at the haven rate (0% to 5%). Builds **exposure** +1 per month per shell plus +1 per $1M routed per month (both × the haven's F5 multiplier, [4-politics.md](4-politics.md) 4.9.3); investigation chance per month = exposure / 10 %. |
 | Joint Venture | Two parents, control by contract (for example 50/50 or 60/40). Deadlock event if parents' heads have opinion below 0 of each other. |
-| Front Company | Legit income plus a hidden illegal operation (smuggling, data brokering). Hidden income x2, raid chance 1% per month plus investigations. |
+| Front Company | Legit income plus a hidden illegal operation (smuggling, black market deals). Hidden income x2, raid chance 1% per month plus investigations. |
 | Franchise | Pays 4% to 8% royalties; parent has no board seats; brand scandal spreads both ways. |
-| ~~Direct Branch~~ | **Retired (batch 48).** A corporation now holds business units in any industry instead ([10-industry-economy.md](10-industry-economy.md) 10.0). |
 | Holding Company | Exists only to own stakes in other companies; no facilities. Consolidates the group's holdings under one board, so one bloc controls everything below it. Dividends from below pass up untaxed inside the same country **(T)**. Added 2026-10-17 (Logan). |
 | Cooperative | Owned by its workers or members, one vote each; the parent holds a minority stake and a supply or service contract, not control. Unions do not strike it; profits are paid out to members. Added 2026-10-17 (Logan). |
 | Captive Bank / Insurer | Lends to group companies at policy rate + 1%. Regulated: capital ratio must stay above 10% or regulators intervene. |
@@ -567,7 +590,7 @@ Each seat holder picks one task. Effect scales with the relevant skill.
 
 | Seat | Task | Effect (per skill point) |
 |---|---|---|
-| Chair | Manage shareholders | +0.5 opinion of head among holders per month |
+| Chair | Manage shareholders | +0.5 push per month toward the head among holders |
 | Chair | Prepare for vote | +1% votes in the next proxy fight |
 | CFO | Optimize capital | +0.3% company profit |
 | CFO | Restructure debt | -0.05% interest rate |
@@ -589,7 +612,7 @@ Each member's opinion of the head affects work: below 0, task effect halves; bel
 
 ### 1.8.4 Board meetings (quarterly)
 
-A board meeting is an event with an agenda of 1 to 4 items (dividend, budget, acquisition, CEO pay, member complaints). Each item is a majority vote of seats. The head can spend hours of persuasion (the Persuasion skill) to swing members.
+A board meeting is an event with an agenda of 1 to 4 items (dividend, budget, acquisition, CEO pay, member complaints). Each item is a majority vote of seats. The head can make Persuasion checks to swing members.
 
 ## 1.9 Factions, proxy fights and takeovers
 
@@ -617,7 +640,7 @@ Ultimatum: accept the demand, or a proxy fight is scheduled in 30 days.
 - The bidder announces a price, usually market price + 20% to 50% premium, for a target percentage.
 - Each holder accepts if: offer premium > their loyalty threshold. Threshold = 10% + opinion of current head / 4 + bloc membership 15%.
 - Lasts 20 days. The target can respond with defenses.
-- ~~Antitrust review~~: **no antitrust in the game** (Logan, batch 56). Foreign investment review (4-politics C1) can still be triggered.
+- A foreign investment review (4-politics C1) can be triggered.
 - **Control on the books, not real control** (1.3.1): a winning tender gives book control at once; real control comes later, through the feudal layer.
 - **When the target ends up fully owned** (Logan, batch 56), the player (or the AI bidder) **chooses each time**: **merge it in** (its units join the buyer's, its debt becomes the buyer's and its board is dissolved), or **keep it as a subsidiary** (1.7) with its own books and board.
 
@@ -643,7 +666,7 @@ Hostile action without a casus belli: -30 reputation and an investigation chance
 
 ### 1.10.1 Family trust rules
 
-Set at game start, changeable by a **family vote** (each adult dynasty member votes; 2/3 needed; costs -10 opinion from those who voted no).
+Set at game start, changeable by a **family vote** (each adult dynasty member votes; 2/3 needed; a -10 push from those who voted no).
 
 | Rule | Options |
 |---|---|
@@ -760,14 +783,14 @@ When the trustee dies or is removed (family vote with 3/4 needed to remove a liv
 ### 1.11.2 Succession shock
 
 On succession, for 12 months:
-- All bloc members, board members and vassal CEOs gain "New head" opinion: -20, decaying 2 per month.
+- All bloc members, board members and vassal CEOs get a "New head" push of -20 toward the new head.
 - Each bloc in a dynasty-controlled company checks immediately: members with opinion of the new head below 0 have a 30% chance to leave.
-- Siblings passed over gain -40 "Passed over".
+- Siblings passed over get a -40 "Passed over" push.
 - Personal assets of the dead head pass by will (default: equal split among children).
 
 ### 1.11.3 Wills
 
-The head (and every character with personal assets) has a will. Changing it costs 4 hours. Heirs learn their share; disinherited heirs gain -50 opinion. Wills can be contested in court (event chain, Intrigue and money) or forged (scheme).
+The head (and every character with personal assets) has a will. Changing it costs 4 ticks. Heirs learn their share; disinherited heirs get a -50 push. Wills can be contested in court (event chain, Intrigue and money) or forged (scheme).
 
 ### 1.11.4 Renown and legacies
 
@@ -775,7 +798,7 @@ Renown is earned monthly: +1 per $1B of trust value, +5 per company controlled a
 
 | Legacy track | Level 1 (500 renown) | Level 2 (2,000) | Level 3 (5,000) |
 |---|---|---|---|
-| Old Money | +10 reputation | +10 opinion from old-money families | Protected assets need 1/2 vote instead of 2/3 |
+| Old Money | +10 reputation | +10 push from old-money families | Protected assets need 1/2 vote instead of 2/3 |
 | Quant Bloodline | Children +1 Finance | +5% trust returns | Children +2 Finance |
 | Founders | +10% VC interest | Founding chains shortened | Founded companies +5% growth |
 | Political Machine | +5% political influence | Appointments easier | Family members +20% vote share |
@@ -783,19 +806,18 @@ Renown is earned monthly: +1 per $1B of trust value, +5 per company controlled a
 
 ### 1.11.5 Marriage
 
-> **Changed (Logan, batch 62): marriages are alliances between dynasties, with a prenup.** This replaces "light" marriage.
+Marriages are alliances between dynasties, with a prenup (Logan, batch 62).
 
 - **Alliance.** A marriage between two dynasties is an **alliance**: the two heads move to Friend, their dynasties count as allies in blocs (1.4: +20% acceptance) and in proxy fights, and they can call on each other in events **(A)**.
 - **Prenup.** Every marriage has a prenup set at the wedding, negotiated like a deal: what share of the family trust and personal assets the spouse can claim (0% to 50%), whether the spouse becomes a trust beneficiary, and what happens to children's shares **(A)**. No prenup means the home country's default (50/50 of what was gained during the marriage).
 - **Divorce splits by the prenup**, ends the alliance and turns the two heads Rival unless both agree it was amicable.
-- (Old text: Marriage is **light**, flavor, relationships and heirs, with no dowries, merged trusts or prenup mechanics.)
 
 - Proposal acceptance = 20% + opinion (as a number, 1.1.4) + wealth tier difference × 10%, + the value of the alliance and prenup terms offered **(T)**.
-- A spouse is a Partner relationship (1.1.4): +20 opinion, shared household events, and children who are eligible successors (1.11.0).
+- A spouse is a Partner relationship (1.1.4): the tag starts at Friend, with shared household events, and children who are eligible successors (1.11.0).
 - **Polygamy** (Logan): a character can have more than one spouse where the country's law allows it **(A)**: allowed in some countries (for example the UAE, Nigeria in some states, Saudi Arabia), elsewhere only through private ceremonies with no legal standing.
-- **Polyamory** (Logan): characters can have more than one open partner at once. Open partners are Partner relationships, not secret affairs, so they are not hooks. Characters with the Zealot trait and a conservative ideology lose opinion of polyamorous characters; Hedonist and Gregarious characters gain it **(A)**.
+- **Polyamory** (Logan): characters can have more than one open partner at once. Open partners are Partner relationships, not secret affairs, so they are not hooks. Characters with the Zealot trait and a conservative ideology get a negative push toward polyamorous characters; Hedonist and Gregarious characters a positive one **(A)**.
 - Children of any spouse or partner are eligible successors.
-- Divorce or a break-up: 4 hours and an event; spouses split assets **by the prenup** (Logan, batch 62), or 50/50 of what was gained during the marriage without one **(T)**.
+- Divorce or a break-up: 4 ticks and an event; spouses split assets **by the prenup** (Logan, batch 62), or 50/50 of what was gained during the marriage without one **(T)**.
 
 ## 1.12 Events for this layer (starting set)
 
@@ -803,16 +825,30 @@ Renown is earned monthly: +1 per $1B of trust value, +5 per company controlled a
 |---|---|---|
 | Heir in the Tabloids | Heir with Hedonist or Socialite, random | Pay off ($500k), let it ride (-10 reputation), disinherit |
 | The Quiet Meeting | Bloc member opinion < 0 of you | Confront (Influence), ignore, counter-offer |
-| Dad's Old Friend | Favor owed from Ask Daddy | Grant the favor, refuse (-30 opinion), negotiate |
+| Dad's Old Friend | Favor owed from Ask Daddy | Grant the favor, refuse (a -30 push), negotiate |
 | Missed Milestone | VC milestone date passed | Down round, bridge loan, fight the faction |
 | The Founder's Will | Head over 70 | Revise will, keep it, leak it to test heirs |
 | Covenant Breach | Bank covenant broken | Repay, renegotiate (Finance), default |
-| The Board Revolt | 3+ board members below -40 opinion | Fire them, concede, call shareholder vote |
+| The Board Revolt | 3+ board members at Rival toward the head | Fire them, concede, call shareholder vote |
 | Shell Exposed | Shell investigation succeeds | Settle, fight in court, sacrifice an executive |
 | Sibling Rivalry | Two heirs with Rival relationship | Mediate, pick a side, let them compete |
+| Demo Day | Prototype reached (1.6.9) | Pitch big (Persuasion; Hype up or down), pitch safe, skip |
+| The Clone | An incumbent chooses copy | Outbuild them, sue, seek a buyer |
+| Payroll Friday | Runway under 1 month | Personal loan, skip your salary, lay off 20%, ask Dad |
+| The Poacher | A rival offers your CTO double | Match, counter with equity, let them go |
+| Co-Founder Fight | Co-founder tension high | Talk it out, buy them out, board vote |
+| First Big Customer | Enterprise deal in reach | Discount to close, hold price, custom features (product points cost) |
+| Viral Moment | Random, Hype above 50 | Ride it (marketing spend), stay calm |
+| The Leak | Grey-market growth exposure | Deny, apologize, blame a contractor |
+| Acquisition Offer | An incumbent chooses acquire | Accept, negotiate (Finance), refuse |
+| Burnout | Long overwork (1.1.5) | Take a week off, push through |
+| Dad's Friend Wants a Job | Ask Daddy favor | Hire his son, refuse, find a compromise |
+| Regulator Letter | Regulated industry, traction over a threshold | Comply (cost), lobby, ignore |
+| Product-Market Fit | Traction test passed (1.6.9) | Raise now, grow on revenue, reward the team |
+| Office Romance | Two key hires become lovers | Allow, separate teams, fire one |
 
 ## 1.13 Assumptions
 
 - Company values in this layer are abstract until the economy layer exists; markets layer replaces the monthly price update.
 - Default policy rate is 4% until central banks exist.
-- 20 sectors at launch (finance, real estate, chips, consumer electronics, cyberware, energy, logistics, media, security, pharma, software, AI, telecoms, automotive, mining, agriculture, retail, construction, defense, entertainment).
+- Companies work in the 45 industries of [10-industry-economy.md](10-industry-economy.md) 10.0.

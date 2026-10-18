@@ -100,6 +100,7 @@
 - AI model capabilities (Logan, 2026-10-18): models have varying capabilities, each with a quality; an AI software needs one or more models to fill its capabilities, and a loaded model's quality in a capability caps the software's quality.
 - AI model data, size and speed (Logan, 2026-10-18): models take in varying types of data to train a capability, and different data types raise different capabilities; models have a size (how big a server or device is needed to run them) and a speed (jobs per tick).
 - Batch 73 (Logan, 2026-10-18): models cannot be stolen; owners can release open weights; countries can license, cap or ban frontier training; the frontier race question was left open; next is a consistency pass over the docs.
+- Batch 74 (Logan, 2026-10-18): consistency pass run with every proposed fix: stage files deleted (young-company rules to 1.6.9), overview files 01 to 08 and 10 shrunk to summaries, map file split into detailed/2-map-and-influence.md, 10-industry-economy rewritten around 10.0, 3-markets on the 24/7 calendar throughout, stale rules removed everywhere (see consistency-pass.md); frontier race pricing dropped, model price follows capability quality.
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm

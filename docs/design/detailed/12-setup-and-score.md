@@ -1,6 +1,6 @@
 # 12. Game setup, AI fairness, dynasty score and saves: detailed design
 
-_Status: draft v0.1 (2026-10-17). From Logan's answers in the design Q&A (batch 30). Builds on [7-starting-world.md](7-starting-world.md) (starting characters), [09-time-and-turns.md](../09-time-and-turns.md) (endless sandbox) and [1-corporate-core.md](1-corporate-core.md). Owner: Logan._
+_Status: draft v0.2 (2026-10-18), consistency pass, batch 74. v0.1 (2026-10-17). From Logan's answers in the design Q&A (batch 30). Builds on [7-starting-world.md](7-starting-world.md) (starting characters), [09-time-and-turns.md](../09-time-and-turns.md) (endless sandbox) and [1-corporate-core.md](1-corporate-core.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 12.6.
 
@@ -31,7 +31,7 @@ Everything else is fixed or rolled out of sight for each save **(A)**:
 
 AI characters and companies follow the same rules and see the same information as the player would in their seat **(A)**:
 - They see only what their intel level allows (2.22): hidden traits, ambitions, secret holders and schemes stay hidden from them until they meet, investigate or are told.
-- They pay the same prices, fees, hours and taxes, and roll the same dice.
+- They pay the same prices, fees, time costs and taxes, and roll the same dice.
 - They do not know the rolled crash year or boom rate; they react to the same signals the player sees (prices, news, Buzz).
 - Their quality comes from their skills, traits and archetype (2.23, 1.1.2), not from difficulty.
 - The **rival rotation** (7-starting-world) still aims rivals at the player when the director AI decides the story needs pressure, but those rivals play by the same rules.

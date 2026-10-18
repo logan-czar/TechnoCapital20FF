@@ -1,12 +1,12 @@
 # 6. Techno-Capital: detailed design
 
-_Status: draft v0.1 (2026-10-16). Requested by Logan. Techno-Capital is the machine capital of the cyberpunk economy: compute, foundry capacity, lithography machines, drones, autonomous vehicles and robots. Many actions in the game have a **Techno-Capital requirement**: the right machines must be allocated to the task for it to run, or to run to completion. The AI, data center and semiconductor supply chain is the heart of the early game. Builds on [2-map-influence-economy.md](2-map-influence-economy.md) (goods 2.6, facilities 2.7, contracts 2.10, tech tree 2.12). Owner: Logan._
+_Status: draft v0.2 (2026-10-18). v0.2, consistency pass, batch 74: no GPU supply chain, model prices follow capability quality, no model theft or mind uploads, hacking replaces netruns. v0.1 (2026-10-16), requested by Logan. Techno-Capital is the machine capital of the cyberpunk economy: compute, foundry capacity, lithography machines, drones, autonomous vehicles and robots. Many actions in the game have a **Techno-Capital requirement**: the right machines must be allocated to the task for it to run, or to run to completion. AI, data centers and chips are the heart of the early game. Compute and stored data are held as in [15-infrastructure.md](15-infrastructure.md), models as in [18-ai-models.md](18-ai-models.md), and the chip and AI industries are in [10-industry-economy.md](10-industry-economy.md) 10.3. Owner: Logan._
 
-Money buys almost everything in TechnoCapital20FF. Techno-Capital is the exception: there is never enough of it, it is made by a handful of companies in a handful of hubs, it goes obsolete, and governments fight over who may own it. A dynasty with $10B and no compute cannot train a model, run a drone fleet or keep an uploaded ancestor alive. A dynasty that controls a lithography line can decide who gets compute at all.
+Money buys almost everything in TechnoCapital20FF. Techno-Capital is the exception: there is never enough of it, it is made by a handful of companies in a handful of hubs, it goes obsolete, and governments fight over who may own it. A dynasty with $10B and no compute cannot train a model, run a drone fleet or serve a model to customers. A dynasty that controls a lithography line can decide who gets compute at all.
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Formulas are written so each term can be shown in a tooltip.
 
-**Decided rules kept intact.** Companies own or lease the buildings they produce in (Logan's Victoria 3 rule); Techno-Capital sits inside those buildings or in fleets, and follows the same ownership and lease rules. Vassals are held by companies, so Techno-Capital is held by companies too.
+**Decided rules kept intact.** Techno-Capital is held by corporations, not by their business units, and is not a business asset ([10-industry-economy.md](10-industry-economy.md) 10.0.7). Vassals are held by companies, so Techno-Capital is held by companies too.
 
 ---
 
@@ -16,17 +16,17 @@ Money buys almost everything in TechnoCapital20FF. Techno-Capital is the excepti
 
 Techno-Capital (TC) is any productive machine stock that can be **allocated** between uses. Seven pools:
 
-| Pool | Unit | Made from (2.6) | Lives in | Logan's list |
+| Pool | Unit | Comes from | Lives in | Logan's list |
 |---|---|---|---|---|
-| **Compute** | **H** = 1,000 accelerator-hours at Generation 1 (the same unit as the cloud compute service in 2.6.6) | AI server nodes in data centers | Data center levels (2.7.8) | Yes |
-| **Foundry capacity** | **Wafer starts** per month, by node (mature, memory, advanced, angstrom) | Chip fab levels | Chip fabs (2.7.5) | Yes ("foundries") |
-| **Lithography tools** | Machines, by class (DUV, EUV, High-NA) | Lithography systems | Installed in fab levels, or in storage | Yes |
-| **Drones** | Drones, by class (commercial, military) | Military drones; commercial drones (new good, 6.2.3) | Fleets based in a hub | Yes |
-| **Autonomous vehicles** | Vehicles (robotaxis, autonomous trucks) | EVs plus autonomy kits (new good, 6.2.3) | Fleets based in a hub | Yes ("automated cars") |
-| **Robots** | Industrial robots; humanoid robots late game | Industrial robots | Installed in facility levels, or in storage | Added (assumption 6.15) |
+| **Compute** | **H** = 1,000 accelerator-hours at Generation 1; 1 GPU compute unit gives 1 H a month (15.2) | GPU compute units built from GPU parts (15.2) | Data centers (15.3) | Yes |
+| **Foundry capacity** | **Wafer starts** per month, by node (mature, memory, advanced, angstrom) | Derived from Foundry business assets (10.6) | Foundries | Yes ("foundries") |
+| **Lithography tools** | Machines, by class (DUV, EUV, High-NA) | The Lithography machines industry (6.7.0) | Installed in foundries (4 per $1B a year of capacity, 10.6), or in storage | Yes |
+| **Drones** | Drones, by class (commercial, military) | The Drones industry (6.2.3) | Fleets based in a hub | Yes |
+| **Autonomous vehicles** | Vehicles (robotaxis, autonomous trucks) | EVs plus autonomy kits (6.2.3) | Fleets based in a hub | Yes ("automated cars") |
+| **Robots** | Industrial robots; humanoid robots late game | The Robotics industry | Working for the company's business units, or in storage | Added (assumption 6.15) |
 | **Models** | A trained AI model, by Generation and Quality | Training runs (6.5) | Held as an intangible by a company; runs on compute | Added (assumption 6.15) |
 
-Models are not a machine, but they behave like one: they are scarce, they go obsolete, they can be stolen, and they need compute to run. They are the TC that turns compute into work.
+Models are not a machine, but they behave like one: they are scarce, they go obsolete, and they need compute to run. They cannot be stolen (Logan, batch 73). They are the TC that turns compute into work.
 
 ### 6.1.2 Key terms
 
@@ -35,18 +35,18 @@ Models are not a machine, but they behave like one: they are scarce, they go obs
 | **Pool** | All of one TC type a company controls, broken down by hub |
 | **Allocation** | Assigning TC to a **task**. Allocated TC does nothing else |
 | **Leased out** | The default use: TC that is not allocated is **leased, not sold**. Its use is rented to others by contract or on the spot market, and the owner keeps the machine (6.3.4). The machines themselves can also be bought and sold as assets (6.3.5) |
-| **Own production** | TC installed in the company's own facility and running its production method (a fab making chips the company sells, robots in its own factory) counts as allocated to that facility |
+| **Own production** | TC used in the company's own business (a foundry making chips the company sells, robots in its own units) counts as allocated to it |
 | **Requirement** | What a task needs: pool, amount, minimum Generation or class, location, and control level (6.3) |
 | **Fill** | Allocated amount ÷ required amount for a task, 0 to 100% |
 | **Control level** | How the company holds the TC: **Owned** (it owns the machines), **Leased** (it agreed to pay a set amount for a set time to use them), **Spot** (expensive, on demand, no commitment) or **Compromised** (it is secretly using someone else's TC while they use it or while it sits idle, 6.9.3) |
-| **Lease rate** | The market price of using one unit of TC for a period. For compute it is the cloud compute price of 2.6.6 ($2,500 per H at base), now read as a lease price, not a sale |
+| **Lease rate** | The market price of using one unit of TC for a period. For compute it is the world cloud price for GPU compute (15.5; $2,500 per H at base) |
 | **Generation** | The technology vintage of compute, models and lithography. Newer generations do more per unit (6.4) |
 
 ### 6.1.3 Cadence
 
 | Interval | Techno-Capital calculations |
 |---|---|
-| **Hourly** | Allocation changes for compute and models take effect at the next turn; training runs, netruns and trading strategies progress; hot events (loss spikes, outages, cyberattacks) |
+| **Hourly** | Allocation changes for compute and models take effect at the next turn; training runs, hacks (17-hacking) and trading strategies progress; hot events (loss spikes, outages, cyberattacks) |
 | **Daily** | Drone and vehicle fleet moves between districts; spot prices and spot availability |
 | **Weekly** | Fleet operations (delivery, security, survey) resolve; robot and drone redeployments between hubs complete; foundry queue updates |
 | **Monthly** | Fab yield ramps, lithography service and condition, TC depreciation, node supply allocation (6.8.3), task upkeep billing, generation value repricing |
@@ -58,16 +58,16 @@ Models are not a machine, but they behave like one: they are scarce, they go obs
 
 ### 6.2.1 Compute
 
-- **Capacity** of a data center level = `14,600 H per month × Generation multiplier of its server nodes × power fill × condition factor` (output rules of 2.7.1).
-- **Leased out**: compute not allocated is leased to others, by contract or on the spot market (6.3.4). "Selling cloud compute" in 2.6.6 and 2.7.8 means leasing compute time; the owner keeps the servers.
+- **Capacity**: a company's compute is its GPU compute units (15.2): each gives 1 H a month × the Generation multiplier of its GPUs (6.4.1), scaled by power and maintenance (15.2).
+- **Leased out**: compute not allocated is leased to others, by contract or on the spot market (6.3.4). Renting it to the cloud market (15.5) is leasing compute time; the owner keeps the servers.
 - **Allocating** compute to a task costs nothing in cash but gives up that lease income: the **opportunity cost** shown in every task tooltip is the lease income forgone.
-- Any production method that lists cloud compute as an input (AI-augmented offices, cashierless retail, social platforms and so on, 2.7.8) can take it from the company's own pool instead of the market. This is the simplest kind of allocation and happens by default when the company has spare compute in the same country.
+- Software that needs GPU compute ([14-software.md](14-software.md)) takes it from the company's own pool before the cloud. This is the simplest kind of allocation and happens by default.
 - **Clusters**: compute in one hub held by one company (Owned, Leased, or Spot from a single provider) forms a **cluster**. Large training runs need a single cluster (6.5.2). Compute in different hubs cannot be added together for those tasks.
 
 ### 6.2.2 Foundry capacity and lithography tools
 
-- **Foundry capacity** is a fab level's wafer starts per month (2.7.5: mature 10,000, memory 20,000, advanced 5,000). A fab owner can run its own chips through it (own production) or lease **foundry slots** to fabless chip designers, who supply the design and pay per wafer start (6.6.2). Idle foundry capacity goes on the slot lease market.
-- **Lithography tools** are the lithography systems installed in fab levels (2.7.2: memory 4, advanced 10). They are the rarest TC in the game: one supplier in Eindhoven at start, $200M each for EUV and $380M for High-NA (6.7.0), made at about 4 per month worldwide **(T)**.
+- **Foundry capacity** is wafer starts per month, derived from a Foundry unit's business assets (10.6); as a reference, a fab level makes 10,000 (mature), 20,000 (memory) or 5,000 (advanced) **(T)**. A fab owner can run its own chips through it (own production) or lease **foundry slots** to fabless chip designers, who supply the design and pay per wafer start (6.6.2). Idle foundry capacity goes on the slot lease market.
+- **Lithography tools** are the machines installed in foundries (a memory fab level holds 4, an advanced one 10). They are the rarest TC in the game: one supplier in Eindhoven at start, $200M each for EUV and $380M for High-NA (6.7.0), made at about 4 per month worldwide **(T)**.
 
 | Class | Needed for | Starting makers | Tech |
 |---|---|---|---|
@@ -80,21 +80,16 @@ Models are not a machine, but they behave like one: they are scarce, they go obs
 
 ### 6.2.3 Drones, autonomous vehicles and robots
 
-Two new goods support these pools **(T)**:
-
-| Good | Unit | Base price | Main inputs | Made by | Tech |
-|---|---|---|---|---|---|
-| **Commercial drones** | unit | $4,000 | Mature chips 3, sensors 2, electric motors 0.05, battery cells 1 kWh, plastics 0.005 t | Machinery plant (drone line) | Logistics 2 or Security 2 |
-| **Autonomy kits** | kit for 1 vehicle | $6,000 | Advanced chips 4, sensors 12, telecom equipment 0.005, mature chips 10 | Component plant | Mobility 3 |
+Drones are bought from the Drones industry, autonomy kits from the EVs and Autos industries, and robots from the Robotics industry (10.3), at their price indexes. Base prices **(T)**: a commercial drone about $4,000, an autonomy kit about $6,000.
 
 | Pool | Unit | Upkeep per month **(T)** | Life | Notes |
 |---|---|---|---|---|
 | **Commercial drones** | drone | 3% of price; 5 H per 1,000 drones (fleet control) | 3 years | Delivery, survey, inspection, filming, crowd surveillance |
-| **Military drones** | drone | 3% of price; 20 H per 1,000 drones | 4 years | Security, PMC, defense contracts; need S1 Licensed for armed use |
+| **Military drones** | drone | 3% of price; 20 H per 1,000 drones | 4 years | Corporate security and defense contracts |
 | **Robotaxis** | vehicle (EV + autonomy kit) | 2% of price; 50 H per 1,000 vehicles | 6 years | Ride-hailing service (6.6.5) |
-| **Autonomous trucks** | vehicle (EV + autonomy kit, freight body) | 2% of price; 50 H per 1,000 vehicles | 6 years | Replace trucking legs and depot fuel (2.7.8 Autonomous fleet method) |
-| **Industrial robots** | robot | robot wear as in 2.7.8 | 8 years | Installed in facility levels; spare robots are stored and can be redeployed |
-| **Humanoid robots** | robot | 3% of price; 10 H per 100 robots | 5 years | Late game (Materials 4 and Digital 4): fill Unskilled jobs at 1.2 productivity in any method; banned under L3 Heavy in some countries **(T)** |
+| **Autonomous trucks** | vehicle (EV + autonomy kit, freight body) | 2% of price; 50 H per 1,000 vehicles | 6 years | Autonomous freight for Logistics and Shipping units |
+| **Industrial robots** | robot | 2% of price | 8 years | Work in the company's business units; spare robots are stored and can be redeployed |
+| **Humanoid robots** | robot | 3% of price; 10 H per 100 robots | 5 years | Late game (Materials 4 and Digital 4): fill Unskilled jobs at 1.2 productivity; banned under L3 Heavy in some countries **(T)** |
 
 - Fleets are **based in a hub** and work there; moving a fleet to another hub takes 1 week by road or air freight (air for drones), plus permits under T3 Risk-Based or stricter.
 - Fleets need **fleet control compute** (the H column). If the compute is missing, the fleet works at the compute fill. A robotaxi fleet whose compute goes offline stops.
@@ -103,7 +98,7 @@ Two new goods support these pools **(T)**:
 
 A model has a **Generation** (1 to 5+) and a **Quality** (40 to 100) set by its training run (6.5.3). A company can hold several models. Models do nothing on their own; they are **deployed** onto compute:
 
-- **Licensed** to customers as the AI models good (2.6.7).
+- **Rented** to customers through contracts ([18-ai-models.md](18-ai-models.md) 18.4).
 - **Served** inside the company: AI-native offices, autonomous corporate agents, AI advisors, synthetic media, AI-assisted research (6.6).
 - **Open-weighted**: released for free. Everyone gets a copy at Quality -10; the owner gains brand and Accelerationist alignment (5-ideology 5.9.2) but loses license revenue on it.
 
@@ -119,19 +114,19 @@ Every task that needs TC lists its requirement as one of three types **(T)**:
 |---|---|---|
 | **Gate** | The task cannot start without 100% fill, and pauses whenever fill drops below 100% | A fab level needs its 10 EUV tools; a frontier training run needs its full cluster |
 | **Rate** | The task progresses at `fill × base speed`. Fill above 100% speeds it up with diminishing returns: speed = `fill ^ 0.5` above 1.0, capped at 1.5× | Research projects, drone surveys, chip tape-outs |
-| **Upkeep** | The task keeps working only while it is fed every hour or month; output scales with fill | Robotaxi service, an AI advisor, a running psyop, an uploaded mind |
+| **Upkeep** | The task keeps working only while it is fed every hour or month; output scales with fill | Robotaxi service, an AI advisor, a running psyop |
 
 A requirement also names:
 
 - **Minimum Generation or class**: older TC may not count, or counts at its Generation multiplier (6.4).
 - **Location**: *Same hub* (fleets, colocated trading), *Same country* (data sovereignty, government contracts), *Any* (most compute tasks), or *Single cluster* (training runs).
-- **Control level**: which control levels the task accepts. Most tasks accept Owned, Leased or Spot. Secret tasks (netruns, illegal surveillance, training under a Moratorium) need Owned or Compromised, because leased and spot use is on the provider's books. Training runs accept Compromised only if the whole cluster is one compromised site.
+- **Control level**: which control levels the task accepts. Most tasks accept Owned, Leased or Spot. Secret tasks (hacks, illegal surveillance, training under a Moratorium) need Owned or Compromised, because leased and spot use is on the provider's books. Training runs accept Compromised only if the whole cluster is one compromised site.
 
 ### 6.3.2 Paused and interrupted tasks
 
 - A **Gate** task that loses fill pauses. Training runs paused for more than 72 hours lose 5% of their progress per further day (the cluster must restart from a checkpoint) **(T)**.
 - A **Rate** task keeps its progress and simply slows.
-- An **Upkeep** task loses its effect at once; an uploaded mind with no compute is **suspended** (6.7.4).
+- An **Upkeep** task loses its effect at once.
 - **Spot availability**: spot draws only on capacity that owners have put on the spot market and nobody is using. Once a spot allocation starts it is not taken back, but its price is reset daily; if the hub's spot capacity is used up, new spot requests wait in a queue.
 - **Compromised access lost**: when a compromise is detected (6.9.3) every task using it loses that fill at once.
 
@@ -148,10 +143,10 @@ Techno-Capital is **leased, not sold**. Owners keep the machines and rent out th
 
 | Control | How | Price | Terms |
 |---|---|---|---|
-| **Owned** | Buy the machines (new from makers, 6.7.3; used, 6.4.1) or build the facility | The asset price, then upkeep | Full control. Secret tasks allowed. Idle capacity can be leased out |
-| **Leased** | A lease contract: an agreed amount of TC for an agreed time (1 to 36 months) | Lease rate × term discount (1 to 5 months ×1.0, 6 to 11 ×0.95, 12 to 23 ×0.9, 24 to 36 ×0.85), paid monthly, one month's payment as a deposit | Guaranteed for the whole term: the lessor cannot take it back. Top allocation priority in a shortage (as capacity reservations in 2.10.3). Breaking early costs 50% of the remaining payments. The lessee may sublease. Leases transfer with the asset if the owner sells it |
-| **Spot** | Take spare capacity by the hour from the spot market | `Lease rate × (1.6 + 2 × max(0, R - 1))`, where R is the hub's tightness (2.9.2) | On demand, no commitment, stop any hour. Expensive. Only available while owners have idle capacity on offer in the hub (compute: anywhere in the country) |
-| **Compromised** | Secretly use TC that someone else owns or leases, while they use it or while it sits idle (6.9.3) | No lease paid; the cost is getting access (a netrun, a bribed insider, or a broker's fee of 30% to 60% of the spot price) | Secret, and outside export controls and T3. Can be detected and lost at any time |
+| **Owned** | Buy the machines (new from makers, 6.7.3; used, 6.4.1) or build the data center | The asset price, then upkeep | Full control. Secret tasks allowed. Idle capacity can be leased out |
+| **Leased** | A lease contract: an agreed amount of TC for an agreed time (1 to 36 months) | Lease rate × term discount (1 to 5 months ×1.0, 6 to 11 ×0.95, 12 to 23 ×0.9, 24 to 36 ×0.85), paid monthly, one month's payment as a deposit | Guaranteed for the whole term: the lessor cannot take it back. Top allocation priority in a shortage. Breaking early costs 50% of the remaining payments. The lessee may sublease. Leases transfer with the asset if the owner sells it |
+| **Spot** | Take spare capacity by the hour from the spot market | `Lease rate × (1.6 + 2 × max(0, R - 1))`, where R is the hub's tightness (demand ÷ capacity on offer) | On demand, no commitment, stop any hour. Expensive. Only available while owners have idle capacity on offer in the hub (compute: anywhere in the country) |
+| **Compromised** | Secretly use TC that someone else owns or leases, while they use it or while it sits idle (6.9.3) | No lease paid; the cost is getting access (a hack, 17-hacking, a bribed insider, or a broker's fee of 30% to 60% of the spot price) | Secret, and outside export controls and T3. Can be detected and lost at any time |
 
 Fleets and robots use the same rules: the lease rate for drones, vehicles and robots is 2% of the unit price per month, and spot day rates are 0.1% per day before the tightness markup **(T)**.
 
@@ -161,9 +156,9 @@ Fleets and robots use the same rules: the lease rate for drones, vehicles and ro
 
 The machines themselves are assets and trade like any other:
 
-- **New** AI server nodes, lithography tools, drones, autonomy kits and robots come from makers by supply contract or market purchase (2.10), allocated by Allocation Score when short (6.7.3).
+- **New** AI server nodes, lithography tools, drones, autonomy kits and robots come from makers by contract or market purchase, allocated by Allocation Score when short (6.7.3).
 - **Used** TC sells at the used price (6.4.1 for nodes; book value for other pools) to the grey market, crypto miners and sanctioned buyers.
-- **Whole facilities** (a data center, a fab with its tools) sell under the facility rules of 2.7.2 and 2.16.
+- **Whole business units** (a foundry with its tools) sell under the unit deal rules ([10-industry-economy.md](10-industry-economy.md) 10.5.4); data centers as in 15.3.
 - Selling TC that is leased out sells it **with its leases**: the buyer collects the lease payments until they end.
 
 ---
@@ -182,7 +177,7 @@ The game starts at **Generation 1** for accelerators. Every 24 months **(T)** th
 | Gen 4 | ×10 | $88,000 | Angstrom | High-NA EUV, plus photonic chips (Semiconductors 4) |
 | Gen 5+ | ×2.1 per generation | ×1.3 per generation | Angstrom | Late game research |
 
-- A data center's compute = level capacity × the multiplier of its node mix. Replacement at 2% per month (2.7.8) can buy the newest generation, so data centers modernize slowly unless the owner pays for a **refresh** (replacing all nodes at once: 20,000 nodes × the new price; level offline for 4 weeks).
+- A data center's compute = level capacity × the multiplier of its node mix. Replacement at 2% per month can buy the newest generation, so data centers modernize slowly unless the owner pays for a **refresh** (replacing all nodes at once: 20,000 nodes × the new price; level offline for 4 weeks).
 - **Used node price** = launch price × `0.55 ^ (generations behind the frontier)` **(T)**. Old nodes sell to the grey market, crypto miners and sanctioned countries.
 
 ### 6.4.2 Model generations
@@ -199,7 +194,7 @@ The Digital tech tier cuts every compute requirement in this file **(T)**: Digit
 
 ### 6.5.1 Why it matters
 
-Training runs are the early game's big bet. A Founder-stage AI lab lives or dies on getting its first frontier model out before the money runs out, and the whole chip supply chain (lithography → fabs → packaging → server nodes → data centers → power) sits behind each run.
+Training runs are the early game's big bet. A Venture-rank AI lab (1-corporate-core 1.7.5) lives or dies on getting its first model out before the money runs out, and lithography, foundries, GPUs, data centers and power all sit behind each run.
 
 ### 6.5.2 Requirement
 
@@ -224,13 +219,13 @@ Training runs are the early game's big bet. A Founder-stage AI lab lives or dies
 
 ### 6.5.4 Hourly play
 
-A Gen 3 run lasts about 4,400 hourly turns. The run is a progress bar on the Techno-Capital screen with **hot moments**: loss spikes, node failures (1 per 10,000 H per day, auto-handled unless above 5% of the cluster), a regulator's inspection under T3 Licensed Models, a Pause Front sit-in at the data center (5-ideology 5.7.2), or a rival's netrunners trying to steal the checkpoint.
+A Gen 3 run lasts about 4,400 hourly turns. The run is a progress bar on the Techno-Capital screen with **hot moments**: loss spikes, node failures (1 per 10,000 H per day, auto-handled unless above 5% of the cluster), a regulator's inspection under T3 Licensed Models, a Pause Front sit-in at the data center (5-ideology 5.7.2), or a rival's hackers going after the training data (17-hacking 17.4).
 
 ### 6.5.5 What the model is worth
 
-- **License price** per license-month = $10M × `2.5 ^ (Gen - frontier Gen)` × Quality / 75 **(T)**, where the frontier Gen is the best model held by anyone. The frontier model sells at full price; one generation behind sells at 40%.
+- **A model's value and price follow its capability quality** ([18-ai-models.md](18-ai-models.md) 18.2, 18.4): rent per license-month = $10M × the quality of the capability the buyer uses ÷ 75 **(T)**. There is no frontier pricing (Logan, batch 74).
 - **Serving cost**: every license-month sold needs 2,000 H of inference compute (Upkeep, any location unless the buyer's country is under T2 Data Sovereignty) **(T)**.
-- ~~**Theft**~~: **models cannot be stolen** (Logan, batch 73). Hackers can still steal the training data (17.4).
+- **Models cannot be stolen** (Logan, batch 73). Hackers can still steal the training data (17.4).
 
 ---
 
@@ -244,19 +239,15 @@ The full requirement list. **Opp. cost** is the market value of the TC at base p
 |---|---|---|---|
 | **Frontier training run** | 6.5.2 | Gate | A new model |
 | **Fine-tune** | 5% of the base model's training compute | Rate | A specialist model |
-| **Serve a model** (license sales) | 2,000 H per license-month sold | Upkeep | License revenue |
-| **AI-native office level** (2.7.8) | Its cloud compute input (900 H per level) from own pool or market; a model of Gen ≥ 2 | Upkeep | Office output ×1.1 with 85% fewer staff |
+| **Serve a model** (rent) | 2,000 H per license-month sold | Upkeep | Rent revenue |
 | **Autonomous corporate agent** (Digital 4) | 2,000 H per month and a model of Gen ≥ 3 | Upkeep | Runs one board task without a character, at the skill of `8 + 3 × model Gen` (cap 25) |
-| **AI advisor** for a character (3.7) | 50 H per month and a model of Gen ≥ 2 | Upkeep | +1 skill per model Gen above 1 in one skill (cap +4); hackable (6.9.4) |
-| **AI-assisted research** (2.7.8) | Its cloud compute input | Upkeep | 70 RP per level instead of 40 |
-| **Tier 3 research** in Digital, Semiconductors, Biotech, Cyberware or Security | 2,000 H per month while researching | Gate | Research proceeds |
+| **AI advisor** for a character (3.7) | 50 H per month and a model of Gen ≥ 2 | Upkeep | +1 skill per model Gen above 1 in one skill (cap +4); hackable (17-hacking) |
+| **Tier 3 research** in Digital, Semiconductors, Biotech or Security | 2,000 H per month while researching | Gate | Research proceeds |
 | **Tier 4 research** in those groups | 10,000 H per month while researching | Gate | Research proceeds |
 | **Drug discovery sprint** | 20,000 H, a model of Gen ≥ 2 | Rate | A patented molecule (APIs at ×4 price) in 6 months instead of research |
-| **Autonomous logistics** (2.7.8 Autonomous fleet method) | 30 autonomous trucks per depot level, plus their fleet control compute | Upkeep | Truck legs from the depot -30% |
 | **Drone delivery** (Logistics 3) | 200 commercial drones per hub served | Upkeep | Last-mile cost -40% for the company's retail and e-commerce sales in that hub |
 | **Resource survey** | 20 commercial drones for 2 months in a Resource Field district | Rate | Reveals a deposit's grade and size before buying the plot |
-| **Infrastructure inspection** | 10 drones per infrastructure asset (2.19) | Upkeep | Condition falls 0.5 per month instead of 1 |
-| **Lights-out factory** | All A3 robot requirements of a facility filled from own stock | Gate | The A3 method runs (2.7.1) |
+| **Infrastructure inspection** | 10 drones per infrastructure asset | Upkeep | Condition falls 0.5 per month instead of 1 |
 
 ### 6.6.2 Semiconductor tasks
 
@@ -275,7 +266,7 @@ The full requirement list. **Opp. cost** is the market value of the TC at base p
 
 - A new fab level starts at 40% yield and gains 10 points per month (20 with a yield ramp task).
 - Tool condition factor = average lithography tool condition ÷ 100. Unserviced tools lose 5 condition per month, so a fab cut off from service loses about 5% of its output a month until it shuts down.
-- Output of a fab level = method output × yield ÷ 0.9 (the 2.7.5 method outputs assume 90% yield).
+- Output of a fab level = its normal output × yield ÷ 0.9 (normal output assumes 90% yield).
 
 ### 6.6.4 Finance tasks (links to [3-markets-and-fx.md](3-markets-and-fx.md))
 
@@ -300,18 +291,15 @@ The full requirement list. **Opp. cost** is the market value of the TC at base p
 |---|---|---|---|
 | **Micro-targeted campaign** | 1 H per 10,000 adults in the constituency per month, a model of Gen ≥ 2 | Upkeep | Ads term +0.15 on top of normal ads (4.6.3); exposure +2 under T2 Strict |
 | **Synthetic psyop** | 1,000 H per month, a model of Gen ≥ 2 | Upkeep | Psyop cost -40% and discovery -20% (stacks with the synthetic media method) |
-| **Netrun scheme** | 500 H, Owned or Compromised | Rate | +10% netrun success per 500 H above the first, cap +30% |
-| **Cyber defense** | 1,000 H per month per company | Upkeep | Cyberattack and netrun success against the company -30% (stacks with a cyber defense team, 4.23.2) |
+| **Cyber defense** | 1,000 H per month per company | Upkeep | Hack success against the company -30% ([17-hacking.md](17-hacking.md); stacks with a cyber defense team, 4.23) |
 | **Surveillance coverage** | 10 drones and 100 H per month per district | Upkeep | Surveillance feeds 1 per district; scheme detection ×1.2 in that district; needs T4 Expanded or above for public spaces |
-| **Drone wing** (4.23.2) | 5 military drones per month replaced, plus fleet control | Upkeep | Security Strength 20 |
+| **Drone wing** (4.23) | 5 military drones per month replaced, plus fleet control | Upkeep | Security Strength 20 |
 | **Sovereign AI contract** (government contract, 4.9.7) | 50,000 H per month in the client country, a model of Gen ≥ 3 | Upkeep | Contract revenue; +10 government attitude; the dynasty sees the government's data (an intelligence hook, 4.26) |
 
 ### 6.6.7 Late-game tasks
 
 | Task | Requirement **(T)** | Type | Effect |
 |---|---|---|---|
-| **Digital consciousness upload** (3.7) | 1,000,000 H, a model of Gen ≥ 4, Cyberware 4 | Rate | A dead head continues as an advisor (6.7.4) |
-| **Run an uploaded mind** | 20,000 H per month | Upkeep | The upload advises and acts; suspended without compute |
 | **Gigacluster** | 6.7.5 | Gate | Gen 4+ training |
 | **Humanoid workforce** | Humanoid robots plus 10 H per 100 per month | Upkeep | Fills Unskilled jobs at 1.2 productivity |
 
@@ -319,116 +307,56 @@ The full requirement list. **Opp. cost** is the market value of the TC at base p
 
 ## 6.7 Building Techno-Capital
 
-### 6.7.0 The GPU chain: simplified, 4 layers (Logan, 2026-10-17)
+### 6.7.0 GPUs and the AI boom
 
-> **Retired (Logan, batch 50): no more supply chains.** Lithography machines, Foundry, GPUs and CPUs are now four separate industries with no chain between them ([10-industry-economy.md](10-industry-economy.md) 10.3, 10.6). The layer tables below are kept only for their boom trigger, boom rate and demand numbers, which still drive the GPUs industry and the GPU price index.
+There are **no supply chains** (Logan, batch 50): Lithography machines, Foundry, GPUs and CPUs are four separate industries ([10-industry-economy.md](10-industry-economy.md) 10.3, 10.6). GPU parts for compute ([15-infrastructure.md](15-infrastructure.md) 15.2) are bought from the GPUs industry at the **GPU price index** (10.6).
 
-> **Changed (Logan, 2026-10-17):** the economy is now measured in dollars ([10-industry-economy.md](10-industry-economy.md) 10.6). The four layers below are four dollar industries, made of sites; unit counts here (machines, dies, chips, GPUs) are reference values for sizing them and for deriving Techno-Capital, and the demand growth rates still drive the GPU industry.
+**Lithography machines are extremely expensive (Logan).** **$200M per EUV machine** and **$380M per High-NA machine** (from Generation 3, 6.4) **(T)**, shown as that price × the GPU index ÷ 100 (10.6), plus service at 4% of the price a year (6.2.2). Only the Eindhoven maker can build them at the start, about 4 a month worldwide **(T)**; anyone else must finish a Lithography R&D project (6.6.2), which costs billions and years. Machines are Techno-Capital: they are installed in foundries, leased, serviced, seized and export-controlled (6.2.2, 6.9).
 
-At the start **only energy and GPUs are modeled** as real goods (Logan). Everything else in the economy is abstracted (2-map 2.6.0). The GPU supply chain is the largest supply chain in the game, and at launch it is simulated as **four layers**. The eight-layer Stack (6.7.1) stays as the reference for later.
-
-**Decided (Logan).**
-- A GPU is a **component**: it goes into PCs for consumers and into AI server nodes for data centers.
-- **Fabless designers** own GPU designs and pay fabs and packagers to make them.
-- Each designer has a **developer ecosystem** score that makes buyers prefer its GPUs.
-- **Consumers and AI compete for the same cards.** At the start AI demand, and GPU demand overall, is very low compared with what it becomes. Consumer demand grows at a steady rate; AI demand grows at a really high rate.
-
-#### The four layers
-
-The chain is deliberately simple so the game never models a whole chip (Logan). Four layers, and **the last layer is the GPU itself**. Everything a layer needs besides the layer above it is an abstracted cost plus electricity.
-
-| Layer | What it makes | Inputs | Capacity gate | Starting holders (2.3.3) |
-|---|---|---|---|---|
-| **1. Lithography machines** | EUV lithography machines, the most expensive machine in the game | Abstracted parts ($60M per machine **(T)**), electricity | The Eindhoven line makes about 4 a month worldwide **(T)** | Eindhoven (sole maker) |
-| **2. Wafers** | GPU dies, made on wafers at fabs | Abstracted wafers and chemicals ($400 per die **(T)**), electricity 1.5 MWh per die **(T)** | Installed lithography machines: 1 EUV machine makes 25,000 dies a month **(T)** | Hsinchu-Taipei 60%, Seoul-Pyeongtaek 25%, Phoenix 15% |
-| **3. Chips** | Packaged chips: a die joined to its memory | 1 die, abstracted memory and substrate ($250 **(T)**), electricity 0.2 MWh | Packaging lines: 1 line makes 100,000 chips a month **(T)**. The tightest layer at the start | Hsinchu-Taipei, Penang |
-| **4. GPU** | **GPUs**, the finished good | 1 chip, abstracted board parts ($150 **(T)**), electricity 0.05 MWh | Board lines: 1 line makes 200,000 GPUs a month **(T)**; cheap and quick to add, rarely the bottleneck | Shenzhen, Hsinchu-Taipei, Penang |
-
-**The lithography machine is extremely expensive (Logan).**
-- Price: **$200M per EUV machine** and **$380M per High-NA machine** (from Generation 3, 6.4) **(T)**, plus service at 4% of the price a year (6.2). This replaces the earlier $150M.
-- An advanced fab level needs 10 machines (2.7.2), so a single level is **$2B in machines alone**, before the building.
-- Only the Eindhoven maker can build them at the start; anyone else must win a Lithography R&D project (6.6), which costs billions and years.
-- Machines are Techno-Capital: they are installed in fabs, leased, serviced, seized and export-controlled (6.2.2, 6.9). Deliveries take 8 weeks to install.
-- Each machine supports about 25,000 GPUs a month, so the world's ~180 installed EUV machines cap output at about 4.5M dies a month, of which GPU dies get a share **(T)**.
-
-**Deployment is demand, not a layer.** A finished GPU is bought by consumers (into PCs) or by AI buyers (into server nodes in data centers, 6.7.2). Data center power and grid connections limit how fast AI buyers can plug GPUs in.
-
-- **Designers** sit above the chain. A designer holds a GPU design (its Generation, 6.4.1) and books wafer, chip and board capacity by contract (2.10). A designer can own its own fab, but most don't.
-- An **AI server node** is 8 GPUs plus a host. It is still counted per GPU slot, so one GPU is one slot of compute (6.2).
-- **Energy** is the only other modeled sector: **electricity, crude oil and natural gas** (Logan). Oil and gas are produced, shipped and priced as goods; power plants burn them (or run on nuclear, hydro, solar and wind) to make electricity, priced per hub (2.6.8, 6.7.2).
+**Decided (Logan).** **Consumers and AI compete for the same GPUs.** At the start AI demand, and GPU demand overall, is very low compared with what it becomes. Consumer demand grows at a steady rate; AI demand grows at a really high rate.
 
 #### Demand
 
-One world GPU market with one price, **P**. Base price $1,500 per GPU **(T)**.
+GPU demand is the GPUs industry's market demand (10.0.3), and it moves the GPU price index. Reference sizes, in GPUs at a base price of $1,500 **(T)**:
 
 | Buyer | Demand per year | Price sensitivity | Growth **(T)** |
 |---|---|---|---|
-| **Consumers** (gamers, PCs, creators) | 40M GPUs at the start **(T)** | High: demand × (P ÷ $1,500)^-1.2 | +5% a year, steady |
-| **AI** (data centers, labs, clouds) | 0.5M GPUs at the start **(T)** | Low: demand × (P ÷ $1,500)^-0.3 | +3% a month before the **boom trigger**; after it, a boom rate rolled for each save (below) until the crash; -40% at the crash, then +2% a month |
+| **Consumers** (gamers, PCs, creators) | 40M GPUs at the start **(T)** | High: demand × (index ÷ 100)^-1.2 | +5% a year, steady |
+| **AI** (data centers, labs, clouds) | 0.5M GPUs at the start **(T)** | Low: demand × (index ÷ 100)^-0.3 | +3% a month before the **boom trigger**; after it, a boom rate rolled for each save (below) until the crash; -40% at the crash, then +2% a month |
 
 - **Boom speed varies by save** (Logan). The boom starts with a **triggering event**: by default the tipped lab's breakthrough (November 2022, [7-starting-world.md](7-starting-world.md) 7.7), which can come earlier or later if players change history. At game start the boom rate is rolled between +3% and +10% a month **(T)** (about ×1.4 to ×3.1 a year); the default reference case below uses +6%.
-- **Clearing.** Each month P moves toward the price where total demand equals the GPUs packaged **(T)**. Because AI buyers barely care about price and consumers care a lot, a shortage pushes P up and **pushes gamers out first**: the AI boom starves consumers.
-- In the reference case (+6% a month), at a steady price, these numbers put AI demand at about 1.5M GPUs in January 2024, 6M (12% of the market) in January 2026 and 50M in January 2029, when it overtakes consumer demand (about 56M) **(T)**. Supply grows only as fast as lithography machines, fabs and packaging lines are built, so P climbs through the boom.
-- **Server node price** = P + $4,000 for the host **(T)**, so the launch prices in 6.4.1 are a starting guide and node prices float with the GPU market.
+- **Who gets squeezed.** AI buyers barely care about price and consumers care a lot, so a shortage pushes the index up and **pushes gamers out first**: the AI boom starves consumers.
+- In the reference case (+6% a month), at a steady price, AI demand reaches about 1.5M GPUs in January 2024, 6M (12% of the market) in January 2026 and 50M in January 2029, when it overtakes consumer demand (about 56M) **(T)**. GPU supply grows only as fast as GPUs business units grow their assets (10.0.4), so the index climbs through the boom.
+- **Server node price** = $1,500 × GPU index ÷ 100 + $4,000 for the host **(T)**, so the launch prices in 6.4.1 are a starting guide.
 
 #### Developer ecosystem
 
-- Each designer has a **developer ecosystem** score from 0 to 100 **(T)**.
+- Each GPU maker (a corporation with a GPUs business unit) has a **developer ecosystem** score from 0 to 100 **(T)**.
 - **AI buyers** split their orders by `ecosystem² × availability`. **Consumers** split by `ecosystem × availability`, so they care less **(T)**.
-- Ecosystem grows by +1 a month per 10% share of GPUs installed worldwide, and by spending on developer programs ($50M a month for +1, **T**). It falls 1 a month when a designer has no current-Generation GPU.
-- **Starting designers**: four or more (Logan). Proposed four **(A)**: a dominant Bay Area designer (ecosystem 80); a second US designer (40); a Korean memory giant's GPU arm in Seoul (20); a Chinese designer in Shenzhen or Beijing (15), cut off from Hsinchu by the October 2022 export controls (6.9.1). The world's big clouds can start in-house chip programs later.
-
-#### Founding a GPU designer
-
-The player can found a GPU designer, but it is **prohibitively expensive in most market conditions** (Logan). Requirements **(T)**:
-- A design team: at least 10 characters with Tech 15 or more, poached or hired at Glitterati pay.
-- A **tape-out** of $1B per design at Generation 1, ×2 per Generation after.
-- **Capacity**: fab and packaging slots are booked by contract. In a shortage (market price P above base) slots are auctioned, and a newcomer must prepay 12 months of output at P. So the only cheap windows are before the boom trigger and after the crash.
-- A new designer starts with ecosystem 0, so AI buyers barely order from it until it wins share or spends on developer programs.
-
-#### Slop
-
-GPUs are a consumer good, so their recipe makes slop: 1.5 slop per GPU **(T)** (2-map 2.8.0).
-
-### 6.7.1 The Stack
-
-The AI supply chain is a stack of chokepoints. Each layer has a bottleneck a player can own, and each one can break.
-
-| Layer | Bottleneck | Starting holders (2.3.3) | What breaks it |
-|---|---|---|---|
-| 1. Materials | Specialty gases, photoresists, ultra-pure quartz, rare earths | Tokyo-Yokohama, Frankfurt, Baotou | Export controls on rare earths, chemical plant accidents |
-| 2. Lithography | EUV tools: one maker | Eindhoven | Export controls, service cut-offs, the maker being bought |
-| 3. Fabs | Advanced logic | Hsinchu-Taipei 60%, Seoul-Pyeongtaek, Phoenix | Taiwan Strait closure (2.14.4), earthquakes, water stress |
-| 4. Memory | High-bandwidth memory | Seoul-Pyeongtaek | Memory fab outages, Korea Strait |
-| 5. Packaging | Advanced packaging | Hsinchu-Taipei, Penang | Packaging capacity is the tightest layer at start (R = 1.25) **(T)** |
-| 6. Server nodes | Assembly and export licences | Shenzhen-Dongguan (with controls), Hsinchu-Taipei, Mexico City | Export controls on nodes to restricted countries |
-| 7. Data centers | Power and grid connections | Bay Area, Phoenix, Singapore, Beijing, Dubai | Grid queues (6.7.2), heatwaves, water, cable cuts |
-| 8. Models | Talent, data and frontier compute | AI dynasties in the Bay Area, Beijing, London, Tel Aviv | Regulation (T3), theft, the Pause Front |
+- Ecosystem grows by +1 a month per 10% share of GPUs installed worldwide, and by spending on developer programs ($50M a month for +1, **T**). It falls 1 a month when a maker has no current-Generation GPU.
+- **Starting makers**: four or more (Logan). Proposed four **(A)**: a dominant Bay Area designer (ecosystem 80); a second US designer (40); a Korean memory giant's GPU arm in Seoul (20); a Chinese designer in Shenzhen or Beijing (15), cut off from advanced foundries by the October 2022 export controls (6.9.1). The world's big clouds can start in-house chip programs later.
+- **Founding a GPU maker** is possible but **prohibitively expensive in most market conditions** (Logan): a design team of at least 10 characters with Tech 15 or more at Glitterati pay, and a **tape-out** of $1B per design at Generation 1, ×2 per Generation after **(T)**. A new maker starts with ecosystem 0, so AI buyers barely order from it until it wins share or spends on developer programs.
 
 ### 6.7.2 Power: the hidden gate
 
-- A data center level draws 17 to 21 MW (2.7.8). New levels need a **grid connection**: `queue time = 12 weeks × (1 + 2 × max(0, 0.15 - reserve margin) / 0.15)` **(T)**, so a tight grid can delay a data center by up to 9 months.
-- **Behind-the-meter power**: a company that owns a power plant or SMR in the same hub skips the queue for that plant's capacity and pays its own marginal cost (2.9.7).
-- A grid shortfall cuts power fill, and compute falls with it. Data centers sit at rationing step 4 (2.9.7) unless they hold a contracted industrial supply.
+- A data center's power draw follows its compute (15.3). New data centers need a **grid connection**: `queue time = 12 weeks × (1 + 2 × max(0, 0.15 - reserve margin) / 0.15)` **(T)**, so a tight grid can delay a data center by up to 9 months.
+- **Behind-the-meter power**: a company that owns a power plant or SMR in the same hub skips the queue for that plant's capacity and pays its own marginal cost.
+- A grid shortfall cuts power fill, and compute falls with it. Data centers are cut early in rationing unless they hold a contracted industrial supply.
 
 ### 6.7.3 Getting server nodes: allocation by relationship
 
-When AI server nodes are scarce (R > 1.05), makers do not just sell to the highest bidder. After the 2.10.3 priority order, **buyers without contracts are served by Allocation Score** **(T)**:
+When AI server nodes are scarce (R > 1.05), makers do not just sell to the highest bidder. After contract holders, **buyers without contracts are served by Allocation Score** **(T)**:
 
 `Allocation Score = bid premium % + opinion of the maker's CEO toward the buyer's CEO / 5 + 10 if the buyer has bought for 3+ years + 15 if the buyer is a "strategic partner" (a 5% stake or a joint venture) - 20 if the buyer's country is under export controls`
 
 GPU allocation becomes a CK3 relationship game: dinners with the maker's CEO, a seat on their board, a marriage between families.
 
-### 6.7.4 Uploaded minds
-
-An uploaded head keeps their skills (−2 to each, rising back over 5 years), counts as a character with no body, can sit on boards and advise, but cannot hold office or be trustee unless the family trust's rules say so. If its compute lapses for more than 30 days it is **suspended**: the family must choose whether to pay to restore it (a whole family event chain). Uploads can be stolen like model weights.
-
 ### 6.7.5 Gigaclusters (megaproject)
 
 A **gigacluster** is a campus of 40 or more data center levels in one hub, connected as one cluster **(T)**:
 
-- Needs a merged site of at least 8 plots (2.16.1), 1 GW of dedicated power (owned plants or a 10-year power contract), and Digital 3.
-- Counts as **Critical infrastructure**: +2 influence weight (2.5.2) in the hub, a target for state intelligence (4.26), and a high-Stakes asset in local politics.
+- Needs industrial real estate in the hub (2-map-and-influence 2.16), 1 GW of dedicated power (owned plants or a 10-year power contract), and Digital 3.
+- Counts as **Critical infrastructure**: +2 influence weight in the hub, a target for state intelligence (4.26), and a high-Stakes asset in local politics.
 - Build time 2 to 3 years; cost about $60B with Gen 2 nodes.
 
 ---
@@ -440,7 +368,7 @@ A **gigacluster** is a campus of 40 or more data center levels in one hub, conne
 | Pool | World total at start **(T)** | Largest holders |
 |---|---|---|
 | Compute | About 400 data center levels, 5.8M H per month (Gen 1) | Bay Area and Phoenix AI dynasties 40%, Beijing state-linked companies 20%, Singapore and Dubai 10% |
-| Advanced foundry | 6M advanced chips per month | Hsinchu-Taipei 60% (2.14.4) |
+| Advanced foundry | 6M advanced chips per month | Hsinchu-Taipei 60% |
 | EUV tools | About 180 installed | Hsinchu-Taipei 110, Seoul-Pyeongtaek 40, Phoenix 20, others 10 |
 | Military drones | About 400,000 | National militaries; Shenzhen-Dongguan makers |
 | Robotaxis | About 20,000 | Bay Area, Phoenix, Beijing, Shenzhen-Dongguan |
@@ -450,11 +378,11 @@ A **gigacluster** is a campus of 40 or more data center levels in one hub, conne
 ### 6.8.2 Techno-Capital share and influence
 
 - A dynasty's **compute share** = its Owned and Leased compute ÷ world compute. It appears on the Techno-Capital screen beside its world rank.
-- Data centers, fabs and lithography tools already give influence through their facility weight (2.5.2). A fab level with EUV tools counts ×1.5 and a gigacluster ×2 **(T)**: governments care about who holds the machines.
+- Data centers, foundries and lithography tools already give influence as assets in the hub (2.5). A fab level with EUV tools counts ×1.5 and a gigacluster ×2 **(T)**: governments care about who holds the machines.
 
 ### 6.8.3 Monthly node and tool supply
 
-New AI server nodes and lithography tools come from producers each month and are delivered through contracts (2.10). When demand outruns supply the price follows 2.9.2 (ε 1.5 for nodes, 2.5 for tools) and 6.7.3 decides who gets them.
+New AI server nodes and lithography tools come from their industries each month. When demand outruns supply the price follows the GPU index (10.6) and 6.7.3 decides who gets them.
 
 ---
 
@@ -487,29 +415,27 @@ A **compute haven** is a country with T3 Unregulated and F2 Open. Training runs 
 
 | Way | Cost | Notes |
 |---|---|---|
-| **Intrusion** | A netrun scheme (500 H) against the target's site | Success as 6.9.4 |
+| **Intrusion** | A hack against the target ([17-hacking.md](17-hacking.md) 17.3) | Success as in 17 |
 | **Insider** | Bribe an employee or executive of the owner (bribe chain, 4.20.3) | +20% success; the insider is a knower who can flip (4.20.5) |
-| **Broker** | Buy access from a black-market broker (Shadow Economy, OCGs) | 30% to 60% of the spot price; the broker knows who bought it |
+| **Broker** | Buy access from a black-market broker (organized crime) | 30% to 60% of the spot price; the broker knows who bought it |
 
 **How much can be used**: all of the target site's idle capacity, plus up to 10% of its capacity in use. Taking in-use capacity slows the owner's own tasks by the same share, which makes detection more likely.
 
 **Detection** (monthly per compromised site) = `5% + 1% per 1,000 H (or per 100 drones or vehicles) used per month + 10% if in-use capacity is taken + 15% if the owner runs a cyber defense task (6.6.6) + 2% per CTO Tech point above 10` **(T)**.
 
-On detection: access ends at once; the owner learns who did it unless the user wins an Intrigue check (+10 per cutout, 4.20.4); the user gains exposure +10 with the Data and Cyberware Authority and the owner gains a casus belli and a lawsuit (4.21.2); a public owner may make it a scandal (Heat 40).
+On detection: access ends at once; the owner learns who did it unless the user wins an Intrigue check (+10 per cutout, 4.20.4); the user gains exposure +10 with the Data Authority (4.9.1) and the owner gains a casus belli and a lawsuit (4.21.2); a public owner may make it a scandal (Heat 40).
 
 **Why use it**: compromised TC is free, invisible to export controls, T3 licensing and Moratoriums, and leaves no lease on anyone's books. It is the only way to run secret tasks without owning the machines.
 
 ### 6.9.4 Stealing TC
 
-> **Models cannot be stolen** (Logan, batch 73), and mind uploads went with cyberware (batch 71). Any row about stealing model weights or uploaded minds is void. Stealing other TC is the hacking system ([17-hacking.md](17-hacking.md)).
+Models cannot be stolen (Logan, batch 73); their training data can be (17.4). Hacks against TC run through [17-hacking.md](17-hacking.md).
 
-| Target | Scheme | Success **(T)** | Result |
+| Target | Way | Success **(T)** | Result |
 |---|---|---|---|
-| **Model weights** | Corporate espionage (Intrigue) with a netrun of 2,000 H, or an insider | `30% + 3 × (attacker Intrigue - defender security) + 10% with an insider`, -30% with cyber defense | A copy of the model; the victim loses nothing but its lead |
-| **Chip design** | Corporate espionage | As above | The tape-out result |
-| **An uploaded mind** | Netrun of 10,000 H | As above at -20% | A stolen ancestor: hooks, secrets, and a hostage |
-| **Drone fleet hijack** | Netrun of 500 H | As above | The fleet is lost for 1 to 7 days, or crashed |
-| **Lithography tools** | Physical theft is impossible; a state can seize a fab (4.9.10) | n/a | The tools change owner with the fab |
+| **Chip design** | Corporate espionage (Intrigue), or an insider | `30% + 3 × (attacker Intrigue - defender security) + 10% with an insider`, -30% with cyber defense | The tape-out result |
+| **Drone fleet hijack** | A hack (17) | As in 17 | The fleet is lost for 1 to 7 days, or crashed |
+| **Lithography tools** | Physical theft is impossible; a state can seize a foundry (4.9.10) | n/a | The tools change owner with the foundry |
 
 ---
 
@@ -534,11 +460,11 @@ The vassal contract (1.7.1) gains a term like a CK3 levy **(T)**:
 |---|---|---|
 | **Techno-Capital levy** | 0%, 10%, 25%, 50% (100% under Wholly Integrated) | The liege may allocate that share of the vassal's TC to its own tasks at no cost; the vassal loses the sales. -2 loyalty per 10% above 10%; a levy actually called up in a month costs another -3 loyalty that month |
 
-A liege with many vassal data centers can assemble a training run without building anything, at the price of their loyalty. A Defiant vassal can refuse a call-up (2.10.3).
+A liege with many vassal data centers can assemble a training run without building anything, at the price of their loyalty. A Defiant vassal can refuse a call-up (1.7.3).
 
 ### 6.10.3 Balance sheet and valuation
 
-TC sits on the balance sheet as equipment (2.13.3) and depreciates by its life in 6.2.3, or by generation for compute (6.4.1). Analysts (3-markets) value AI and chip companies on **compute share** and **model Generation** as well as earnings: a company holding the frontier model trades at a P/E premium of +50% **(T)**.
+TC sits on the balance sheet beside compute and software (10.0.8), not as business assets, and depreciates by its life in 6.2.3, or by generation for compute (6.4.1). Analysts (3-markets) value AI and chip companies on **compute share** and **model quality** as well as earnings: a company holding the highest-quality model in a capability trades at a P/E premium of +50% **(T)**.
 
 ---
 
@@ -546,29 +472,23 @@ TC sits on the balance sheet as equipment (2.13.3) and depreciates by its life i
 
 | Ideology | Attitude to Techno-Capital |
 |---|---|
-| Accelerationists | Want every gate open: +0.1 brand alignment per Gen of the frontier model a company holds |
+| Accelerationists | Want every gate open: +0.1 brand alignment per Gen of the newest model a company holds |
 | Landites | Capital is the intelligence: Landite drift +0.5 per 10% of world compute held by the top 3 dynasties |
 | Effective Altruists | Want Gen 3+ runs licensed; Pause Front targets training runs |
-| Transhumanists | Want uploads and cyberware research funded |
+| Transhumanists | Want longevity and brain-computer research funded |
 | Neo-Luddites | The Unplugged target data centers, robot factories, robotaxi depots; drift +1 per 5,000 robotaxis in a hub |
 | Communists | Want compute nationalized ("seize the servers"): C5 State Administration applied to data centers first |
 | Sovereigntists | Love compute havens and compromised compute |
-| Chuds | Hate foreign-owned data centers and implants; like domestic chip champions |
+| Chuds | Hate foreign-owned data centers and human enhancement; like domestic chip champions |
 | Liberals | Want export controls and standard licensing, and want them to work |
 
 ---
 
-## 6.12 Techno-Capital across the game stages
+## 6.12 The Machine Sovereign endgame
 
-| Stage | Techno-Capital play |
-|---|---|
-| **Heir** | A rig of old nodes for crypto mining, a drone filming startup, an AI advisor bought with the trust allowance. First taste of allocation |
-| **Founder** | The AI startup path: pay Spot prices, fight for a lease, raise a round to buy the first Gen 1 training run, sell licenses before the money runs out. A fabless chip startup path: tape out a custom accelerator. **The early game is here** |
-| **Climber** | Own data centers, chase power and grid queues, win GPU allocation by relationships, field a robotaxi fleet, call up vassal levies |
-| **Tycoon** | Fabs and lithography, export control fights, next-generation design, gigaclusters, Sovereign AI contracts |
-| **Oligarch** | Compute share as power, uploaded ancestors, lithography R&D to break the monopoly, and the **Machine Sovereign** endgame |
+What politics and Techno-Capital usually mean at each company rank is in [4-politics.md](4-politics.md) 4.28.
 
-**Machine Sovereign** (new endgame for 4.29): hold 25% or more of world compute and the frontier model for 5 consecutive years, while owning at least one advanced fab with its EUV tools. Renown 2,500 **(T)**.
+**Machine Sovereign** (new endgame for 4.29): hold 25% or more of world compute and the highest-quality model in at least one capability for 5 consecutive years, while owning at least one advanced fab with its EUV tools. Renown 2,500 **(T)**.
 
 ---
 
@@ -580,11 +500,9 @@ TC sits on the balance sheet as equipment (2.13.3) and depreciates by its life i
 | **Allocation Cut** | Node shortage and Allocation Score in the bottom third | Fly to meet the maker's CEO (8 hours, Persuasion check: restore allocation) · Pay +20% · Buy used Gen 1 nodes from the grey market |
 | **Service Suspended** | Export controls hit a fab's country | Lobby the maker's government (4.10) · Run the fab into the ground (yield falls 5% per month) · Smuggle parts (exposure +15; condition loss halved) |
 | **Grid Says No** | A data center's connection queue passes 6 months | Build behind-the-meter gas or SMR power · Move the build to another hub · Bribe the utility (exposure +5, queue halved) |
-| **Weights on a Forum** | A model is stolen and leaked | Sue (4.21.2) · Open-weight it officially and claim the credit (brand +5, license revenue on it ends) · Hunt the leaker (Intrigue scheme) |
 | **Robotaxi Kills a Pedestrian** | 0.2% per month per 1,000 robotaxis | Settle and pause (fleet offline 2 weeks) · Blame the victim (scandal Heat 50) · Lobby for a liability cap (T3 Risk-Based) |
-| **The Unplugged Come at Night** | Neo-Luddite cell operation against a data center | As 5-ideology 5.7.2; condition -15 and 20% of nodes destroyed |
+| **The Unplugged Come at Night** | Neo-Luddite cell operation against a data center | As 5-ideology 5.7.2; 20% of its GPU compute destroyed |
 | **Heatwave** | Summer in Phoenix or Dubai, 10% per year | Cut compute 20% for 3 weeks · Pay triple for water and power · Risk it (25% chance of a 1-week outage) |
-| **A Mind in the Machine** | The uploaded head's compute lapses | Pay to restore · Let them go (a funeral, again) · Sell the upload to a lab (cash, family opinion -40) |
 | **The Second Maker** | A rival finishes lithography R&D | Buy into them · Lobby for their national champion status · Steal their design |
 
 ---
@@ -593,7 +511,7 @@ TC sits on the balance sheet as equipment (2.13.3) and depreciates by its life i
 
 ### 6.14.1 A Founder trains the first model
 
-**Setup.** A Bay Area AI startup (Founder stage) closed a $250M Series B through the VC founding path. Digital 2, CTO with Tech 16, user data 12 DU licensed from a social platform.
+**Setup.** A Bay Area AI startup (Venture rank) closed a $250M Series B through the VC founding path. Digital 2, CTO with Tech 16, user data 12 DU licensed from a social platform.
 
 **Requirement.** Gen 1 model: 60,000 H × Digital 2 efficiency 1.15 = 69,000 H over at least 3 months, so 23,000 H per month from one cluster.
 
@@ -609,14 +527,14 @@ The founder takes the Phoenix lease. By the end of the run it has spent $207M of
 
 **The run.** 2,200 hourly turns. In week 6 a Loss Spike fires; the CTO's Tech check (16 vs 15) succeeds. Quality = 50 + 2 × 6 + 5 × 0 + data bonus 2 (12 DU against 10) = **64**.
 
-**Revenue.** The frontier model is Gen 1 (two other Gen 1 models exist), so the license price = $10M × 1 × 64/75 = $8.5M per license-month. Serving each license-month takes 2,000 H; the leased capacity (23,000 H per month) serves 11 license-months per month, about $94M a month in revenue against $51.75M a month of lease payments. The startup is alive, and every AI dynasty in the Bay Area now wants to buy it.
+**Revenue.** Price follows quality (6.5.5): rent = $10M × 64/75 = $8.5M per license-month. Serving each license-month takes 2,000 H; the leased capacity (23,000 H per month) serves 11 license-months per month, about $94M a month in revenue against $51.75M a month of lease payments. The startup is alive, and every AI dynasty in the Bay Area now wants to buy it.
 
 ### 6.14.2 Service suspended in Shanghai
 
-A dynasty's Shanghai branch office runs one advanced-node fab level with 10 EUV tools. A trade war reaches Export Controls (level 3) and the Netherlands orders service suspended.
+A dynasty's Shanghai branch office runs a Foundry unit with 10 EUV tools. A trade war reaches Export Controls (level 3) and the Netherlands orders service suspended.
 
 - Tool condition falls 5 per month: yield `= 95% × condition factor` falls from 95% to about 76% after 4 months and 57% after 8.
-- Output (method output × yield ÷ 0.9) falls from about 315,000 advanced chips per month to about 255,000 after 4 months. At the spiked advanced chip price ($520 under controls, 2.14.4 style) the fab still earns more than before for a year.
+- Output (method output × yield ÷ 0.9) falls from about 315,000 advanced chips per month to about 255,000 after 4 months. At the spiked advanced chip price ($520 under controls) the fab still earns more than before for a year.
 - Options: lobby the Dutch government through the dynasty's Rotterdam holdings (4.10); smuggle parts through Hong Kong (exposure +15 per month, condition loss halved); or sell the fab to a Chinese state champion at 70% of book value before the yield collapses, and take the influence gain with Beijing (+10 government attitude, 4.27.2).
 
 ---
@@ -627,15 +545,15 @@ A dynasty's Shanghai branch office runs one advanced-node fab level with 10 EUV 
 2. **Compute is measured in H** (1,000 Generation 1 accelerator-hours), the existing cloud compute unit, to avoid a clash with construction units (CU).
 3. **Techno-Capital is leased, not sold** (Logan's rule): unallocated TC is leased out by default, so allocation has an opportunity cost (lease income forgone), not a cash cost. The machines themselves can still be bought and sold.
 4. **Three requirement types** (Gate, Rate, Upkeep) and **four control levels**, as defined by Logan: Owned (you own it), Leased (you pay an agreed amount for an agreed time), Spot (expensive, on demand) and Compromised (secretly using someone else's TC while they use it or it is idle).
-5. **Training runs replace the "Frontier training" production method** of 2.7.8: models now come from runs (6.5), and the method row should be read as a dedicated training lease.
+5. **Model prices follow capability quality** (18-ai-models; Logan, batch 74): there is no frontier pricing.
 6. **Hardware generations every 24 months**, model generations at 4× compute each, Digital tier as algorithmic efficiency.
 7. **Lithography service** by the maker is a controllable lever; unserviced tools lose 5 condition per month.
 8. **GPU allocation by relationship** (Allocation Score) in shortages.
-9. **Two new goods**: commercial drones and autonomy kits.
+9. **Drones, autonomy kits and robots** come from their industries (10.3); there are no supply chains.
 10. **New board seat**: Chief Technology Officer.
 11. **New vassal contract term**: Techno-Capital levy (CK3 levy style).
 12. **Power grid connection queues** gate new data centers.
 13. **Gigaclusters** are a megaproject and critical infrastructure.
-14. **Uploaded minds** need ongoing compute and can be suspended or stolen.
+14. **Models cannot be stolen** (batch 73), and there are no mind uploads.
 15. **Machine Sovereign** is a new endgame (renown 2,500).
 16. **Starting world**: about 5.8M H per month of compute, about 180 EUV tools, two Gen 1 frontier models.

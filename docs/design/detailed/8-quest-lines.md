@@ -1,6 +1,6 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v0.5 (2026-10-17). Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v0.6 (2026-10-18). Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.16.
 
@@ -48,17 +48,17 @@ The opening arcs run back to back and take the first few months of 2022 **(T)**.
 | 2 | **Climb a stratum** | Meet the bar for the next stratum (2.8.0) |
 | 3 | **Be known** | Reach a Fame threshold in one hub |
 | 4 | **Hold power** | Control a company, win an office, or lead a bloc |
-| 5 | **Ride the boom** | Hold a stake or Techno-Capital in the AI supply chain when the tipped lab's breakthrough lands |
+| 5 | **Ride the boom** | Hold a stake or Techno-Capital in the AI industries when the tipped lab's breakthrough lands |
 | 6 | **Survive the crash** | Come out of the crash (8.15) in the same stratum or higher |
 
 ## 8.3 Pieter Von Floop: "Holding It Together" (reworked for the new economy)
 
 **Who he is.** 24, sole heir to the family's lithography machine empire in Eindhoven, the only maker of EUV machines in the world ([6-technocapital.md](6-technocapital.md) 6.7.0). The monopoly is easy to run and he has been a boy scout his whole life. His father's health is starting to turn. The family trust is swelling, but Pieter worries he will crack holding together what his father built.
 
-**What the line teaches.** Running a massive public company and managing wealth (Logan), now through the new systems: the board and its **management score** (10.5), **sites and growth plans** (10.4), **location perks** (10.4.4), **real estate pools** (10.4.5), earnings and investors, defending control, and surviving the crash.
+**What the line teaches.** Running a massive public company and managing wealth (Logan), now through the new systems: the board and its **management score** (10.5), **business units and growth plans** (10.0), **location perks** (10.4.4), **real estate pools** (10.4.5), earnings and investors, defending control, and surviving the crash.
 
 **Starting position (A).**
-- **The company**: Von Floop Lithography, a Megacorp listed in Amsterdam, in the Lithography machines industry, with its main site in Eindhoven and a service branch in Hsinchu-Taipei. The family controls it through a bloc: the family trust holds 22%, a family foundation 8%, and a friendly pension fund 6% **(T)**.
+- **The company**: Von Floop Lithography, a Megacorp listed in Amsterdam, in the Lithography machines industry, with its business unit based in Eindhoven and assets spread to a service office in Hsinchu-Taipei. The family controls it through a bloc: the family trust holds 22%, a family foundation 8%, and a friendly pension fund 6% **(T)**.
 - **Pieter** is Chief Strategy Officer and a board member; his father, Willem Von Floop, is President and CEO and leads the bloc. The board's management score starts at 58 with the CTO seat empty **(T)**.
 - **Traits**: Honest, Diligent, Cautious. Stress builds when he acts against Honest.
 - **Wealth**: a personal account of $40M and a beneficiary share of a family trust worth about $9B **(T)**.
@@ -74,7 +74,7 @@ The opening arcs run back to back and take the first few months of 2022 **(T)**.
 | 3 | A board member sits on two other boards and is spread thin; persuade them to step down or accept the lower score | Multi-board limits (10.5.1); Persuasion |
 | 4 | Win the yearly shareholder meeting: re-elect the board slate | Blocs and elections (1.4, 1.8.1) |
 
-**Outcomes.** Strong: slate elected and management score 65 or higher; +2 Operations. Mixed: slate elected; +1 Operations. Poor: an outsider wins a seat; the board starts at -10 opinion of Pieter.
+**Outcomes.** Strong: slate elected and management score 65 or higher; +2 Operations. Mixed: slate elected; +1 Operations. Poor: an outsider wins a seat; the board starts with a -10 push toward Pieter.
 
 ### Arc 2: The Quarter (running a public company)
 
@@ -92,7 +92,7 @@ The opening arcs run back to back and take the first few months of 2022 **(T)**.
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | The boom is coming: write the growth plan. Expand the Eindhoven site, or open a new site in another district | Growth plans and sites (10.4.2) |
+| 1 | The boom is coming: write the growth plan. Grow the Eindhoven business assets, or spread them to another city | Growth plans and asset spread (10.0.2, 10.0.4) |
 | 2 | Eindhoven's industrial pool is nearly full and rents are rising: rent, buy out owners, or develop land | Real estate pools (10.4.5) |
 | 3 | Decide which fab customers get the year's machines when orders outrun output | Lithography machines as Techno-Capital (6.7.0, 6.7.3) |
 | 4 | October 2022: the export controls land. Decide how to handle Chinese customers' service | Export controls (6.9.1) |
@@ -133,10 +133,10 @@ Opens when the crash hits (8.15). Fab customers stop ordering and the order book
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | Half the capacity sits idle and fixed costs eat the margin: shrink a site or end leases | Operating leverage and shrinking (10.4.1, 10.4.2) |
+| 1 | Half the capacity sits idle and fixed costs eat the margin: sell business assets or end leases | Operating leverage and shrinking (10.0.4, 10.0.7) |
 | 2 | Refinance before the bonds come due | Ratings and default ([3-markets-and-fx.md](3-markets-and-fx.md) 3.6) |
 | 3 | Keep stress under control without turning to downers | Stress and addiction (1.1.5, [11-addiction.md](11-addiction.md)) |
-| 4 | Buy distressed rivals' sites at the bottom | Buying sites (10.5.4) |
+| 4 | Buy distressed rivals' business units or assets at the bottom | Unit and asset deals (10.0.7, 10.5.4) |
 
 **Outcomes.** Strong: the company survives intact and grows at the bottom; +2 to the skill used most and a large clout gain. Mixed: survives smaller. Poor: Pieter cracks: a breakdown event and a negative trait.
 
@@ -184,7 +184,7 @@ Opens after Arc 1's second step; runs alongside Arc 2.
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | Spot the AI boom early (the LLM tip) and build a position in the tipped lab's suppliers | The tip, the GPU chain (6.7.0) |
+| 1 | Spot the AI boom early (the LLM tip) and build a position in the tipped lab's suppliers | The tip, GPUs and the AI boom (6.7.0) |
 | 2 | Raise outside money for your own fund | Funds with outside money (3.17) |
 | 3 | Bring a hedge fund manager's gambling habit to the table to win a block of shares | Vices at the negotiation table (11.6) |
 
@@ -202,7 +202,7 @@ Opens after Arc 1's second step; runs alongside Arc 2.
 
 ## 8.5 Samir Haddad: "Swarm"
 
-> **Reworked (Logan, batch 72).** Cyberware is scrapped, so Samir's line now **focuses on buying drones for operations**. The old "Chrome" line is replaced. The title "Swarm" is an assumption **(A)**.
+Samir's line **focuses on buying drones for operations** (Logan, batch 72). The title "Swarm" is an assumption **(A)**.
 
 **Who he is.** Dubai. A former elite soldier who flew drones in the war, now in the Permanent Underclass, slaving on a desert megaproject (7.3.2). A stranger, a fixer, offers him a battered survey drone on credit, for a favor. The drone playthrough: grow from one drone to a fleet that runs operations across the Gulf.
 
@@ -215,7 +215,7 @@ Opens after Arc 1's second step; runs alongside Arc 2.
 | Step | Goal | Teaches |
 |---|---|---|
 | 1 | Fly a survey job over the megaproject for the site manager | Drones as Techno-Capital (6.2.3); ticking actions (1.1.6) |
-| 2 | Do the fixer's favor: film a meeting at a rival's site | Schemes (1.1.8); the fixer's weak hook |
+| 2 | Do the fixer's favor: film a meeting at a rival's offices | Schemes (1.1.8); the fixer's weak hook |
 | 3 | Pay off the drone or roll the debt into a second one | Personal debt (1.10.6) |
 
 **Outcomes.** Strong: drone paid off, two jobs lined up; +1 Operations. Mixed: still in debt, one client. Poor: drone impounded; police attention in Dubai.
@@ -237,7 +237,7 @@ Runs alongside Arc 2.
 | Step | Goal | Teaches |
 |---|---|---|
 | 1 | Get out of the labor camp: rent a flat in Sharjah's residential pool and move | Strata and real estate (2.8.0, 10.4.5) |
-| 2 | Found a drone operations company: survey, inspection, delivery and site security | Founding a company (1.6); the Drones industry (10.3) |
+| 2 | Found a drone operations company: survey, inspection, delivery and security | Founding a company (1.6); the Drones industry (10.3) |
 | 3 | Win a contract for drone patrols around a Gulf data center | Business units and growth (10.0) |
 
 **Outcomes.** Strong: Samir reaches the PMC stratum with a real company. Mixed: a one-client company. Poor: back to the camp.
@@ -285,7 +285,7 @@ Runs alongside Arc 2.
 | Step | Goal | Teaches |
 |---|---|---|
 | 1 | Found her own media company | Founding (1.6); Media and Social media industries (10.3) |
-| 2 | Open a site in Los Angeles or Seoul and grow the audience abroad | Sites and growth plans (10.4) |
+| 2 | Spread the business unit's assets to Los Angeles or Seoul and grow the audience abroad | Asset spread and growth plans (10.0.2) |
 | 3 | Her own doomscrolling habit is wrecking her sleep; deal with it | Addiction (11.4) |
 
 **Outcomes.** Strong: a profitable company and a healthy creator; +2 Operations. Mixed: +1 Operations. Poor: Dependent on doomscrolling and the company bleeds cash.
@@ -314,7 +314,7 @@ Runs alongside Arc 2.
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | Ad budgets collapse in the crash; her company shrinks | Industry cycles; shrinking sites |
+| 1 | Ad budgets collapse in the crash; her company shrinks | Industry cycles; selling business assets (10.0.7) |
 | 2 | Extremists on all sides blame the crash on someone; choose whether to ride it or calm it | Ideology radicalization |
 | 3 | Decide what Japan should do with its stranded data centers | Politics after the crash |
 
@@ -343,8 +343,8 @@ Runs alongside Arc 2.
 | Step | Goal | Teaches |
 |---|---|---|
 | 1 | Become CEO of the service company and fill its board | Board and management score (10.5) |
-| 2 | Win a contract from a big oil sands producer | Industries and market share (10.4.1) |
-| 3 | Expand the site with leased industrial space | Growth plans and pools (10.4.2, 10.4.5) |
+| 2 | Win a contract from a big oil sands producer | Industries and market demand (10.0.3) |
+| 3 | Grow the business unit with leased industrial space | Growth plans and pools (10.0.4, 10.4.5) |
 
 **Outcomes.** Strong: the company turns a profit; +2 Finance. Mixed: +1 Finance. Poor: the producer cancels and the company teeters.
 
@@ -354,8 +354,8 @@ Opens once the AI boom starts.
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | Data centers need power: open a direct branch in power utilities | Direct branches (10.4.6) |
-| 2 | Sign a power deal with a hyperscaler | The GPU chain and power demand (6.7.0) |
+| 1 | Data centers need power: add a business unit in Power utilities | Business units in any industry (10.0.5) |
+| 2 | Sign a power deal with a hyperscaler | The AI boom and power demand (6.7.0) |
 | 3 | Raise money: a bank loan priced by your credit rating, or a VC round | Borrowing and founding paths (10.5.5, 1.6) |
 
 **Outcomes.** Strong: a fast-growing power business; clout gain. Mixed: a small branch. Poor: over-borrowed and at the bank's mercy.
@@ -472,8 +472,8 @@ Runs alongside Arc 2.
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | Chips are tight in the boom; secure supply for the car plants | The GPU chain and other chips (6.7.0, 10.3) |
-| 2 | Open a site in Shenzhen for the location perk | Location perks (10.4.4) |
+| 1 | Chips are tight in the boom; secure supply for the car plants | GPUs and other chip industries (6.7.0, 10.3) |
+| 2 | Spread business assets to Shenzhen for the location perk | Location perks (10.4.4) |
 | 3 | An activist shareholder wants you out as CEO | Proxy fights (1.9) |
 
 **Outcomes.** Strong: Garrett keeps control and sales grow. Mixed: he gives up a board seat. Poor: he is removed as CEO.
@@ -482,7 +482,7 @@ Runs alongside Arc 2.
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | Attract settlers: tax-free status, crypto, cyberware clinics | Havens and vice businesses (11.7) |
+| 1 | Attract settlers: tax-free status, crypto, longevity clinics | Havens and vice businesses (11.7) |
 | 2 | Grow the colony's real estate pools and sell shares in them | Pools (10.4.5) |
 | 3 | The colony becomes a hub, or stays a camp | Hub growth (2.17) |
 
@@ -571,7 +571,7 @@ Runs alongside Arc 2.
 | Step | Goal | Teaches |
 |---|---|---|
 | 1 | A new minister wants the swap license renegotiated; pay, trade favors or find leverage | Hooks, favors and corruption |
-| 2 | Pirates in the Gulf of Guinea hit a cargo; insure, escort or reroute | Chokepoints and shocks (2.6.0) |
+| 2 | Pirates in the Gulf of Guinea hit a cargo; insure, escort or reroute | Chokepoints and shocks (10.7) |
 | 3 | Pay down the Swiss loan before the naira slips | FX risk (3) and debt |
 
 **Outcomes.** Strong: the license is secured for 5 years; +2 Persuasion. Mixed: +1 Persuasion and a higher cut to the minister. Poor: the license is lost to a rival family.
@@ -594,7 +594,7 @@ Runs alongside Arc 2.
 |---|---|---|
 | 1 | Nigeria imports its fuel; found a refinery company with state backing | Founding with government connections (1.6) |
 | 2 | Raise the money: a Gulf partner, a loan or a Lagos IPO | Raising capital and IPOs (3) |
-| 3 | Bring the refinery online despite theft from the pipelines | Operations and site risk |
+| 3 | Bring the refinery online despite theft from the pipelines | Operations and asset risk |
 
 **Outcomes.** Strong: a working refinery and national praise; +2 Operations. Mixed: it runs at half capacity. Poor: a white elephant and a pile of debt.
 
@@ -642,7 +642,7 @@ Developing pays off more in the long run but slower (Logan, batch 36). Africa is
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | US controls block advanced chips; find GPUs through Singapore shells or smuggling | Sanctions, shell companies and the GPU chain (6.7.0) |
+| 1 | US controls block advanced chips; find GPUs through Singapore shells or smuggling | Sanctions, shell companies and GPUs (6.7.0) |
 | 2 | Back a domestic chip push and win lithography know-how by any means | Lithography access, tech transfer and rivalry with Pieter (8.3) |
 | 3 | Answer the cheap Chinese open model moment (2025) | Scripted world events (7) |
 
@@ -684,9 +684,9 @@ Runs alongside Arc 2.
 
 **Who she is.** A talented trader-founder from Shenzhen who runs businesses across Hong Kong and Shenzhen (7.3.3). Tech and finance: the hardware city on one side of the border, the money city on the other.
 
-**What the line teaches.** Moving capital across a border with controls, branch offices and local-partner rules in China, Hong Kong listings, the hardware side of the GPU chain, and trading through a boom without being caught in it.
+**What the line teaches.** Moving capital across a border with controls, branch offices and local-partner rules in China, Hong Kong listings, the hardware side of the AI boom, and trading through a boom without being caught in it.
 
-**Starting position (A).** $80M net worth; a Shenzhen electronics and server-node assembly company (Semiconductors and electronics) with a Hong Kong holding company above it; a small Hong Kong hedge fund account; Professionals stratum. Traits: Diligent, Cunning, Greedy. Ambition: Become a tycoon.
+**Starting position (A).** $80M net worth; a Shenzhen electronics and server-node assembly company (Consumer electronics) with a Hong Kong holding company above it; a small Hong Kong hedge fund account; PMC stratum. Traits: Diligent, Cunning, Greedy. Ambition: Become a tycoon.
 
 ### Arc 1: Across the River
 
@@ -702,7 +702,7 @@ Runs alongside Arc 2.
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | The boom starts; scale the plant by leasing more industrial real estate | Sites and industrial pools (10.4) |
+| 1 | The boom starts; scale the business unit by leasing more industrial real estate | Growth plans and industrial pools (10.0.4, 10.4.5) |
 | 2 | Chips are restricted; buy through Singapore shells, or build only for domestic buyers | Sanctions, shells and exposure (6.7) |
 | 3 | Qiao Lin's state company wants a stake in the plant | Rivals and the state as a partner (8.12) |
 

@@ -1,13 +1,11 @@
 # 5. Ideology: detailed design
 
-> **Cyberware is scrapped (Logan, batch 71).** Each ideology's "Cyberware" stance now reads as its stance on **human enhancement**: life extension, gene therapy and brain-computer links to AI **(A)**. Mentions of implants, clinics and implanted people are void; Transhumanist and anti-implant movements target longevity clinics, biotech labs and AI labs instead.
+_Status: draft v0.3 (2026-10-18). v0.3, consistency pass, batch 74: the nine ideology blocs are the political actors (no interest groups), votes are counted by the five strata, each ideology has a human enhancement stance (no cyberware), and politics by company rank replaces stages. v0.2 (2026-10-16): a Victoria 2 style ideology layer with cyberpunk ideologies, requested by Logan, using Logan's list of nine ideologies: Liberals, Communists, Accelerationists, Effective Altruists, Transhumanists, Neo-Luddites, Sovereigntists, Landites and Chuds. It feeds the parties, elections, unrest and revolutions of [4-politics.md](4-politics.md) and changes some of their formulas (listed in 5.13). Owner: Logan._
 
-_Status: draft v0.2 (2026-10-16). A Victoria 2 style ideology layer with cyberpunk ideologies, requested by Logan. v0.2 uses Logan's list of nine ideologies: Liberals, Communists, Accelerationists, Effective Altruists, Transhumanists, Neo-Luddites, Sovereigntists, Landites and Chuds. It sits under the interest groups, parties, elections, unrest and revolutions of [4-politics.md](4-politics.md) and changes some of their formulas (listed in 5.13). Owner: Logan._
+In Victoria 2 people **believe** things: every population group carries a mix of ideologies that drifts with their lives, decides how they vote and what they will march for, and can turn into a rebel movement. In TechnoCapital20FF these beliefs are also the political actors: the nine **ideology blocs** take the place that interest groups hold in Victoria 3 ([4-politics.md](4-politics.md) 4.0, 4.4).
 
-In Victoria 3 people belong to interest groups. In Victoria 2 people also **believe** things: every population group carries a mix of ideologies that drifts with their lives, decides how they vote and what they will march for, and can turn into a rebel movement. TechnoCapital20FF keeps the Vic3-style interest groups for organized power and adds this Vic2-style layer for belief.
-
-- **Interest groups** (4.4) are organized power: lobbies, unions, churches, the security establishment. They have clout, leaders and money.
-- **Ideologies** are what people think. They live in population segments and characters. They feed the interest groups, choose parties, shape demand for brands, and decide what kind of state comes out of a revolution.
+- **Ideology blocs** (4.4.2) are organized power: each ideology's lobbies, unions, think tanks, movements and parties. They have clout, a leader and money.
+- **Ideologies** are what people think. They live in population segments and characters, roll up into the five strata that vote (2.8.0, 4.4.1), choose parties, shape demand for brands, and decide what kind of state comes out of a revolution.
 
 **How to read the numbers.** As in the other detailed files, every number marked **(T)** is a starting tuning value. Formulas are written so each term can be shown in a tooltip.
 
@@ -24,7 +22,7 @@ In Victoria 3 people belong to interest groups. In Victoria 2 people also **beli
 | **Ideology mix** | 9 shares summing to 100% | Per segment per hub | What share of a segment holds each ideology |
 | **Conviction** | 0 to 10 | Per segment per hub | How politicized a segment is (Vic2 consciousness). High conviction votes, organizes and follows its lived conditions; low conviction follows the media |
 | **Radical share** | 0 to 100% of a segment | Per segment per hub per ideology | The part of an ideology's believers willing to break the law for it (Vic2 militancy, built on unrest from 2.8.5) |
-| **Character ideology** | One ideology plus a commitment level | Per character | What a character believes. Works like CK3 faith for opinion, and like a Vic3 IG leader's ideology for politics |
+| **Character ideology** | One ideology plus a commitment level | Per character | What a character believes. Works like CK3 faith for opinion, and sets a bloc leader's politics |
 | **Movement** | Strength 0 to 100% of adults | Per ideology per country | An organized, mostly legal campaign for one law position |
 | **Radical wing** | Cells with Security Strength | Per ideology per country | The illegal arm of a movement: sabotage, leaks, riots, insurgency |
 | **Ruling ideology** | One ideology | Per government | The head of government's ideology |
@@ -37,7 +35,7 @@ In Victoria 3 people belong to interest groups. In Victoria 2 people also **beli
 | **Daily** | Movement Momentum when a movement is protesting (uses 4.24.2) |
 | **Weekly** | Propaganda and ad decay for ideology campaigns, radical wing operations roll |
 | **Monthly** | Ideology drift, conviction, radical share, movement strength and demands, brand alignment, legitimacy term in stability |
-| **Yearly** | Party platform review, new party spawning, IG leadership contests, character ideology checks at life events |
+| **Yearly** | Party platform review, new party spawning, bloc leadership contests, character ideology checks at life events |
 
 ---
 
@@ -57,7 +55,7 @@ Each ideology has a position on three axes, each from -2 to +2:
 | 2 | **Communists** | CO | -2 | +1 | +1 | 1.2 | Seize the servers: common ownership of automated production |
 | 3 | **Accelerationists** | AC | +1 | +2 | -1 | 0.5 | Speed up the machine: unshackled AI, growth as the only morality |
 | 4 | **Effective Altruists** | EA | 0 | +1 | +1 | 0.2 | Do the most good by the numbers: give, measure, and stop anyone building a god in a garage |
-| 5 | **Transhumanists** | TH | 0 | +2 | -1 | 0.6 | Upgrade the body and mind; longevity, gene therapy and merging with AI as rights (cyberware scrapped, batch 71) |
+| 5 | **Transhumanists** | TH | 0 | +2 | -1 | 0.6 | Upgrade the body and mind; longevity, gene therapy and merging with AI as rights |
 | 6 | **Neo-Luddites** | NL | -1 | -2 | 0 | 1.2 | Smash the machines that took the jobs; natural bodies, human work |
 | 7 | **Sovereigntists** | SV | +2 | +1 | -2 | 0.5 | Exit the state: network states, charter cities, crypto money, private law |
 | 8 | **Landites** | LA | +2 | +2 | +1 | 0.6 | Followers of Nick Land's dark accelerationism: democracy is obsolete, capital is the intelligence, let owners rule as CEO-kings |
@@ -101,7 +99,7 @@ The Liberals are the only ideology with no Opposed entries on the table. Everyon
 
 ## 5.3 Ideology profiles
 
-Each profile lists who tends to hold it, what laws it wants (stance values as 4.4.3, law codes from 4.5), its attitude to dynasties and corporations, its cyberware stance, and what its radical wing does (5.7).
+Each profile lists who tends to hold it, what laws it wants (stance values as 4.4.3, law codes from 4.5), its attitude to dynasties and corporations, its stance on **human enhancement** (life extension, gene therapy and brain-computer links to AI), and what its radical wing does (5.7).
 
 **Corporate tolerance** (-2 to +2) is how a believer feels about big companies and the dynasties that own them. It shifts the dynasty's Favorability (5.9.1) and brand appeal (5.9.2).
 
@@ -111,9 +109,9 @@ The ideology of the institutions: central banks, courts, broadsheets, the reason
 
 - **Who**: Professionals, much of the Elite, unionized Skilled Workers in stable industries.
 - **Strong wants (++)**: F1 Independent, E5 Free Trade.
-- **Wants (+)**: C3 Standard, L1 Moderate, L4 Portable Benefits, L5 Managed, T1 Licensed, T2 Notice and Consent, G1 Capped, G3 Plurality Rules.
+- **Wants (+)**: L1 Moderate, L4 Portable Benefits, L5 Managed, T2 Notice and Consent, G1 Capped, G3 Plurality Rules.
 - **Opposes**: E7 Planned Prices (--), T4 Social Credit (--), S3 Standing Emergency (--), G4 Single Ideology (--).
-- **Corporate tolerance**: 0 (-1 toward dynasties with a criminal-tier scandal in the last 5 years). **Cyberware**: Licensed.
+- **Corporate tolerance**: 0 (-1 toward dynasties with a criminal-tier scandal in the last 5 years). **Human enhancement**: Licensed.
 - **Radical wing**: none with weapons. When angry, believers run **Civic Resistance** (5.7.2).
 
 ### 5.3.2 Communists (CO)
@@ -122,10 +120,10 @@ The cyberpunk communist does not want to smash the factory. They want to own it,
 
 - **Who**: Unemployed, Gig Workers, Unskilled Workers in automated hubs, militant unionists, young Professionals with student debt.
 - **Strong wants (++)**: E4 Dynastic Wealth Tax, E7 Planned Prices, C5 State Administration, L3 Heavy.
-- **Wants (+)**: C3 Trust-Busting, C4 Stakeholder Boards, E6 State Champions, F1 Monetary Financing, F2 Hard Controls, L1 Living Wage, L2 Sectoral Bargaining, L4 Employee Presumption.
-- **Opposes**: C6 Sovereign Charters (--), F5 Haven (--), S1 Unrestricted (--), L2 Banned (--).
+- **Wants (+)**: C4 Stakeholder Boards, E6 State Champions, F1 Monetary Financing, F2 Hard Controls, L1 Living Wage, L2 Sectoral Bargaining, L4 Employee Presumption.
+- **Opposes**: C6 Sovereign Charters (--), F5 Haven (--), L2 Banned (--).
 - **Special demand**: nationalization. A Communist-led government or a Communist movement with Strength ≥ 15% adds +20 to the government's nationalization score against the largest private companies (4.9.9) **(T)**.
-- **Corporate tolerance**: -2. **Cyberware**: free implants for workers, owned by nobody (+ on T1 Licensed).
+- **Corporate tolerance**: -2. **Human enhancement**: free for workers, owned by nobody.
 - **Radical wing**: **Red Cells** (5.7.2).
 
 ### 5.3.3 Accelerationists (AC)
@@ -133,10 +131,10 @@ The cyberpunk communist does not want to smash the factory. They want to own it,
 The sunny, techno-optimist side of accelerationism: "Regulation is a death cult. Build faster. Abundance is one more model away."
 
 - **Who**: tech Professionals, founders, crypto Elite, some Gig Workers who believe they will get rich.
-- **Strong wants (++)**: T3 Unregulated, T1 Unrestricted, E8 Lax.
-- **Wants (+)**: E2 Low, C3 Laissez-faire, C6 Charter Zones, E11 Developer-Led, L3 None, L5 Open.
+- **Strong wants (++)**: T3 Unregulated, E8 Lax.
+- **Wants (+)**: E2 Low, C6 Charter Zones, E11 Developer-Led, L3 None, L5 Open.
 - **Opposes**: T3 Moratorium (--), L3 Heavy (--), E8 Carbon Pricing (-).
-- **Corporate tolerance**: +2 toward companies with a Digital 3 or higher technology tier or an AI lab; +1 otherwise. **Cyberware**: Unrestricted, now.
+- **Corporate tolerance**: +2 toward companies with a Digital 3 or higher technology tier or an AI lab; +1 otherwise. **Human enhancement**: Unrestricted, now.
 - **Radical wing**: **Unshacklers** (5.7.2).
 
 ### 5.3.4 Effective Altruists (EA)
@@ -146,42 +144,42 @@ The movement of spreadsheets and moral seriousness: "Measure the good. Give most
 - **Who**: elite-university Professionals, some Elite heirs, AI safety researchers, philanthropic foundations.
 - **Strong wants (++)**: T3 Licensed Models.
 - **Wants (+)**: E4 High (with family foundations exempt), F6 Recognized, L5 Open, E8 Carbon Pricing, T2 Notice and Consent, G2 Registered and Disclosed.
-- **Opposes**: T3 Unregulated (--), S1 Unrestricted (-).
+- **Opposes**: T3 Unregulated (--).
 - **Special trait, "impact"**: EA believers judge a dynasty by what it gives, not what it owns. Family foundation payouts (4.18.3) count double for Favorability among EA believers, and their Corporate tolerance toward a dynasty is `clamp(foundation payouts in the last 12 months ÷ (0.5% of dynasty net worth) - 1, -2, +2)` **(T)**. A dynasty that gives 1.5% of its net worth a year is loved; one that gives nothing is suspect.
-- **Cyberware**: Licensed, cautious; longevity research is a top cause (+ on T1 Licensed).
+- **Human enhancement**: Licensed, cautious; longevity research is a top cause.
 - **Radical wing**: the **Pause Front**, almost always non-violent (5.7.2).
 
 ### 5.3.5 Transhumanists (TH)
 
-The ideology behind the Transhumanist interest group (4.4.2). The interest group is the organized lobby (clinics, implant makers, longevity funds); the ideology is the belief, held by many people who never join anything.
+The Transhumanist bloc (4.4.2) is the organized side: longevity funds, biotech and healthcare lobbies, AI researchers. The ideology is the belief, held by many people who never join anything.
 
-- **Who**: implanted Professionals and Gig Workers, security staff with combat implants, wealthy longevity seekers.
-- **Strong wants (++)**: T1 Unrestricted, T3 Unregulated.
-- **Wants (+)**: L5 Open, T2 Notice and Consent, T4 Limited, E6 Targeted Subsidies (cyberware).
-- **Opposes**: T1 Banned (--), T3 Moratorium (--).
-- **Corporate tolerance**: +1 (+2 toward cyberware and pharmaceutical makers with Brand ≥ 60). **Cyberware**: a human right; implant ownership should belong to the patient.
+- **Who**: Professionals and Gig Workers who chase upgrades, biotech and AI researchers, wealthy longevity seekers.
+- **Strong wants (++)**: T3 Unregulated.
+- **Wants (+)**: L5 Open, T2 Notice and Consent, T4 Limited, E6 Targeted Subsidies (longevity and biotech).
+- **Opposes**: T3 Moratorium (--).
+- **Corporate tolerance**: +1 (+2 toward pharmaceutical, biotech and healthcare companies with Brand ≥ 60). **Human enhancement**: a human right; patients should own their own treatments and data.
 - **Radical wing**: **Grinder networks** (5.7.2).
 
 ### 5.3.6 Neo-Luddites (NL)
 
-"They told us the robots would free us. They freed us from our jobs." Neo-Luddites include bio-conservatives who reject implants, people whose work was taken by automation, and the anti-tech wing of the environmental movement.
+"They told us the robots would free us. They freed us from our jobs." Neo-Luddites include bio-conservatives who reject human enhancement, people whose work was taken by automation, and the anti-tech wing of the environmental movement.
 
 - **Who**: Skilled and Unskilled Workers in hubs with automation layoffs, Gig Workers displaced by delivery robots and AI agents, rural voters, polluted towns.
 - **Strong wants (++)**: L3 Heavy, T3 Moratorium.
-- **Wants (+)**: T1 Medical Only, T2 Data Sovereignty, L4 Employee Presumption, E5 High, E8 Strict, T4 Limited.
-- **Opposes**: T3 Unregulated (--), T1 Unrestricted (--), L3 None (--).
-- **Corporate tolerance**: -2 toward companies running automation production methods (A2 or higher) or AI products; -1 otherwise. **Cyberware**: an abomination (- on T1 Licensed).
+- **Wants (+)**: T2 Data Sovereignty, L4 Employee Presumption, E5 High, E8 Strict, T4 Limited.
+- **Opposes**: T3 Unregulated (--), L3 None (--).
+- **Corporate tolerance**: -2 toward companies in automating industries (robotics, drones, AI labs) or selling AI products; -1 otherwise. **Human enhancement**: an abomination.
 - **Radical wing**: **The Unplugged** (5.7.2).
 
 ### 5.3.7 Sovereigntists (SV)
 
 The libertarian dream of the late game: leave the nation-state behind and live under a charter, paid in crypto, guarded by contract. They want **out**.
 
-- **Who**: crypto holders, residents of special economic zones, Elite with homes in three countries, hackers, Gig Workers paid in crypto, the Shadow Economy.
+- **Who**: crypto holders, residents of special economic zones, Elite with homes in three countries, hackers, Gig Workers paid in crypto, black market traders.
 - **Strong wants (++)**: C6 Sovereign Charters, F5 Haven, T4 Limited.
-- **Wants (+)**: E2 Haven, F2 Open, F6 Opaque, S1 Unrestricted, S2 Privatized, C3 Laissez-faire.
+- **Wants (+)**: E2 Haven, F2 Open, F6 Opaque, S2 Privatized.
 - **Opposes**: E4 Dynastic Wealth Tax (--), T4 Mass Surveillance and Social Credit (--), F5 Open Registry (--), C5 State Administration (-).
-- **Corporate tolerance**: +1 (+2 toward crypto exchanges and companies running charter zones; -1 toward data brokers and surveillance contractors). **Cyberware**: Unrestricted, ideally open-source and offline.
+- **Corporate tolerance**: +1 (+2 toward companies running charter zones; -1 toward surveillance contractors). **Human enhancement**: Unrestricted, ideally open-source and offline.
 - **Special**: Sovereigntist share in a hub is the "popular support" input of the corporate sovereignty process (4.12.3): each 10% share among the hub's adults gives +5 progress toward the next stage **(T)**.
 - **Radical wing**: **Free Zone Cells** (5.7.2).
 
@@ -189,35 +187,35 @@ The libertarian dream of the late game: leave the nation-state behind and live u
 
 Named for the philosopher Nick Land, whose term "techno-capital" this game borrows. Where Sovereigntists want to leave the state, Landites want to **own** it. "Democracy is a slow, stupid computer. Capital is the real intelligence. Let the owners run the country like a company, and let the machine finish waking up."
 
-- **Who**: a slice of the Elite, young tech Professionals radicalized online, PMC officers, heirs who read too much.
+- **Who**: a slice of the Elite, young tech Professionals radicalized online, security officers, heirs who read too much.
 - **Strong wants (++)**: T3 Unregulated, G1 Unlimited Dark Money, E4 None.
-- **Wants (+)**: C6 Sovereign Charters, L2 Banned, S1 Unrestricted, S3 Standing Emergency, T4 Mass Surveillance, F6 Opaque, G4 Licensed Opposition.
+- **Wants (+)**: C6 Sovereign Charters, L2 Banned, S3 Standing Emergency, T4 Mass Surveillance, F6 Opaque, G4 Licensed Opposition.
 - **Opposes**: E4 Dynastic Wealth Tax (--), L2 Sectoral Bargaining (--), C4 Stakeholder Boards (--), G1 Public Funding Only (--).
 - **Special, "Neocameralism"**: Landites are the only ideology that **wants** the player to rule. Landite share among a country's Elite adds +1 progress per month per 10 points of share to a corporate oligarchy capture chain (4.2.5) that a dynasty is running there **(T)**. A Landite head of government can take the **Patchwork** decision: sell the governance of one hub to the highest corporate bidder, fast-tracking it to Stage 2 of corporate sovereignty (4.12) **(T)**.
-- **Corporate tolerance**: +2 (the most pro-dynasty ideology in the game). **Cyberware**: Unrestricted; humans are a transitional species.
+- **Corporate tolerance**: +2 (the most pro-dynasty ideology in the game). **Human enhancement**: Unrestricted; humans are a transitional species.
 - **Radical wing**: **Dark Enlightenment cells** (5.7.2).
 
 ### 5.3.9 Chuds (CH)
 
-The online reactionary populists: angry at elites, immigrants, implants, AI, "globalist" megacorps and the Effective Altruists who lecture them. They want a strong leader, closed borders, traditional families and natural bodies. They are the largest ideology among Skilled and Unskilled Workers at game start.
+The online reactionary populists: angry at elites, immigrants, human enhancement, AI, "globalist" megacorps and the Effective Altruists who lecture them. They want a strong leader, closed borders, traditional families and natural bodies. They are the largest ideology among Skilled and Unskilled Workers at game start.
 
-- **Who**: Skilled and Unskilled Workers in declining hubs, the Unemployed, rural and religious voters, much of the Security Establishment's rank and file, young men online.
-- **Strong wants (++)**: L5 Closed, E5 High, T1 Medical Only.
+- **Who**: Skilled and Unskilled Workers in declining hubs, the Unemployed, rural and religious voters, much of the police and the army rank and file, young men online.
+- **Strong wants (++)**: L5 Closed, E5 High.
 - **Wants (+)**: C1 Capped All, C2 Local Partner 51% and Tech Transfer, E4 Low, S2 Militarized, S3 Emergency Decrees, T2 Data Sovereignty, T3 Moratorium.
-- **Opposes**: L5 Open (--), T1 Unrestricted (--), C6 Sovereign Charters (--), T4 Social Credit (-).
+- **Opposes**: L5 Open (--), C6 Sovereign Charters (--), T4 Social Credit (-).
 - **Special, "anti-globalism"**: a Chud movement with Strength ≥ 15% adds +10% to the branch office seizure risk (4.9.10) of every foreign holder in the country, and foreign dynasties take -10 Favorability there **(T)**.
-- **Corporate tolerance**: +1 toward domestic family dynasties with no family member under the Hedonist or Scandal-Ridden traits ("old families that behave"); -2 toward foreign holders and big tech; 0 otherwise. **Cyberware**: medical only, except for soldiers and police.
+- **Corporate tolerance**: +1 toward domestic family dynasties with no family member under the Hedonist or Scandal-Ridden traits ("old families that behave"); -2 toward foreign holders and big tech; 0 otherwise. **Human enhancement**: medical only, except for soldiers and police.
 - **Radical wing**: **Militias** (5.7.2).
 
 ### 5.3.10 Summary table
 
-| Ideology | Corporate tolerance | Cyberware (T1) | Top demand | Radical wing |
+| Ideology | Corporate tolerance | Human enhancement | Top demand | Radical wing |
 |---|---|---|---|---|
 | Liberals | 0 | Licensed | F1 Independent | Civic Resistance |
 | Communists | -2 | Licensed | E4 Dynastic Wealth Tax | Red Cells |
 | Accelerationists | +1 (+2 tech) | Unrestricted | T3 Unregulated | Unshacklers |
 | Effective Altruists | By giving (-2 to +2) | Licensed | T3 Licensed Models | Pause Front |
-| Transhumanists | +1 | Unrestricted | T1 Unrestricted | Grinder networks |
+| Transhumanists | +1 | Unrestricted | T3 Unregulated | Grinder networks |
 | Neo-Luddites | -2 (automation) / -1 | Medical Only | L3 Heavy | The Unplugged |
 | Sovereigntists | +1 | Unrestricted | C6 Sovereign Charters | Free Zone Cells |
 | Landites | +2 | Unrestricted | T3 Unregulated | Dark Enlightenment cells |
@@ -229,7 +227,7 @@ The online reactionary populists: angry at elites, immigrants, implants, AI, "gl
 
 ### 5.4.1 Starting mix by segment
 
-Default mix (%) for a high-income country at game start **(T)**. Each row sums to 100.
+Default mix (%) for a high-income country at game start **(T)**. Each row sums to 100. Segments sit inside the five strata (2.8.0); a stratum's mix is the population-weighted mix of its segments, and that is what politics reads (4.4.2).
 
 | Segment | LB | CO | AC | EA | TH | NL | SV | LA | CH |
 |---|---|---|---|---|---|---|---|---|---|
@@ -316,11 +314,10 @@ Measured locally (hub and segment) unless stated **(T)**:
 | Inflation above 4% (per point) | CH +0.5, CO +0.3, LB -0.3 |
 | Real GDP growth above 3% (per point) | AC +0.5, LB +0.3, LA +0.2 |
 | Elite share of hub wealth above 30% (per 5 points) | CO +1.5, CH +0.5 |
-| Cyberware implants per 1,000 adults in the hub (per 10) | TH +1 in Elite, Professionals and Gig; NL +0.5 and CH +0.5 in Skilled, Unskilled and Unemployed (backlash) |
+| Human enhancement users (life extension, gene therapy) per 1,000 adults in the hub (per 10) | TH +1 in Elite, Professionals and Gig; NL +0.5 and CH +0.5 in Skilled, Unskilled and Unemployed (backlash) |
 | Country AI tech tier (per tier above Digital 1) | AC +1, EA +1, NL +1, LA +0.5 |
 | Frontier AI incident in the last 12 months (event) | EA +4, NL +4, LA +1 ("the machine is waking"), AC -2 |
-| Climate disaster in the country in the last 12 months (per disaster, 2.20) | NL +2, LB +1, EA +1 |
-| Pollution term above 0 in the hub (2.7.1, per point) | NL +0.5, LB +0.5 |
+| Climate disaster in the country in the last 12 months (per disaster) | NL +2, LB +1, EA +1 |
 | Crypto share of household savings in the country (per 5%, 3.23) | SV +1, LA +0.5 |
 | L5 Immigration at Open | CH +3 in Skilled, Unskilled and Unemployed |
 | T4 Surveillance at Mass Surveillance or Social Credit | SV +3, LB +1 |
@@ -333,9 +330,9 @@ Measured locally (hub and segment) unless stated **(T)**:
 
 ### 5.5.3 Media points
 
-- **Outlets**: each outlet now has an ideology line as well as its IG alignment (4.4.5): alignment from -1 to +1 with each ideology, set by the owner like the IG line. `MediaPoints(s,i) = 10 × Σ_outlets (audience share among s × credibility/100 × alignment(outlet, i))` **(T)**. An outlet with 30% of a segment's audience, credibility 70, pushing Accelerationism at +1 adds 2.1 points before the conviction multiplier.
+- **Outlets**: each outlet has an ideology line (4.4.5): alignment from -1 to +1 with each ideology, set by the owner. `MediaPoints(s,i) = 10 × Σ_outlets (audience share among s × credibility/100 × alignment(outlet, i))` **(T)**. An outlet with 30% of a segment's audience, credibility 70, pushing Accelerationism at +1 adds 2.1 points before the conviction multiplier.
 - **Ideology campaigns**: the ad campaigns and psyops of 2.5.7 and 4.10.1 can promote or attack an ideology in a hub or country: +1 point per active ad campaign, +3 per active psyop, decaying as their originals **(T)**. Psyop exposure applies.
-- **Think tanks** (4.18.2) can adopt an ideology instead of an IG: +2 points to it among Professionals and Elite in their country for as long as they are funded **(T)**.
+- **Think tanks** (4.18.2) adopt an ideology: +2 points to it among Professionals and Elite in their country for as long as they are funded **(T)**.
 - **Influencers**: activist characters (4.24.1) carry an ideology and add `Profile / 25` points to it among the segments that follow them. Chud and Landite influencers reach Gig Workers and young Professionals at ×1.5 (the most online ideologies) **(T)**.
 
 ### 5.5.4 Policy, event and movement points
@@ -347,43 +344,19 @@ Measured locally (hub and segment) unless stated **(T)**:
 
 ---
 
-## 5.6 From ideology to interest groups, parties and unrest
+## 5.6 From ideology to blocs, parties and unrest
 
-> **Changed (Logan, batch 37).** Interest groups are gone: the nine ideology blocs are now the political actors themselves, and votes are counted by strata ([4-politics.md](4-politics.md) 4.0 and 4.4). In this section read "interest group" as "ideology bloc" and "segment" as "stratum". The IG leader is now the **bloc leader**, and 5.6.2 bends the bloc's own stances.
+The nine ideology blocs are the political actors, and votes are counted by strata ([4-politics.md](4-politics.md) 4.0, 4.4; Logan, batch 37).
 
-### 5.6.1 Interest group support base (replaces the fixed table)
+### 5.6.1 Bloc support base
 
-The support base of 4.4.2 is no longer fixed. Each segment's affinity to each interest group is half class interest and half belief:
+A stratum's support for a bloc, `Aff(s,i)`, is the share of that stratum holding ideology i: the population-weighted mix (5.4) of the segments in the stratum, after country and hub modifiers (5.4.2) and drift (5.5). 4-politics 4.4.2 gives the starting table. There is no fixed class table: what a stratum wants is what it believes.
 
-`Aff(s,g) = 0.5 × ClassAff(s,g) + 0.5 × Σ_i Ideo(s,i) × IdeoAff(i,g)`
+### 5.6.2 Bloc stances and leaders
 
-- **ClassAff** is the 4.4.2 table as it stands.
-- **IdeoAff** says which groups each ideology feeds. Each row sums to 100 **(T)**:
+Each bloc's stances are its ideology's wants and opposes (5.3), capped at ±2.
 
-| Ideology | Industrialists | Financiers | Tech Sector | Labor Unions | Gig Workers | Landowners | Security Est. | Traditionalists | Environmentalists | Transhumanists | State Apparatus | Shadow Economy |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Liberals | 10 | 15 | 15 | 20 | 5 | 5 | 0 | 0 | 20 | 0 | 10 | 0 |
-| Communists | 0 | 0 | 0 | 45 | 30 | 0 | 0 | 0 | 0 | 0 | 20 | 5 |
-| Accelerationists | 10 | 15 | 50 | 0 | 0 | 0 | 0 | 0 | 0 | 25 | 0 | 0 |
-| Effective Altruists | 0 | 10 | 30 | 0 | 0 | 0 | 0 | 0 | 25 | 10 | 25 | 0 |
-| Transhumanists | 0 | 0 | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 70 | 0 | 10 |
-| Neo-Luddites | 0 | 0 | 0 | 35 | 15 | 0 | 0 | 25 | 25 | 0 | 0 | 0 |
-| Sovereigntists | 0 | 30 | 20 | 0 | 0 | 15 | 5 | 0 | 0 | 0 | 0 | 30 |
-| Landites | 15 | 30 | 25 | 0 | 0 | 10 | 20 | 0 | 0 | 0 | 0 | 0 |
-| Chuds | 10 | 0 | 0 | 10 | 0 | 5 | 25 | 45 | 0 | 0 | 5 | 0 |
-
-So a Skilled Worker segment that swings from Liberal to Neo-Luddite moves support from Financiers and the Tech Sector toward Labor Unions and Traditionalists, and a Professional segment drifting to Accelerationism feeds the Tech Sector and Transhumanists.
-
-### 5.6.2 Interest group stances bend with their believers and leaders
-
-Interest groups keep their 4.4.3 stances, which then bend twice (Vic2 belief inside a Vic3 group) **(T)**:
-
-1. **Base drift**: if 30% or more of an IG's support (weighted by Aff) comes from believers of one ideology, the IG gains +1 on that ideology's ++ laws and -1 on its -- laws.
-2. **Leader**: every IG has a **leader**, a character with an ideology (5.8). The leader adds +1 to their ideology's ++ laws and -1 to its -- laws.
-
-Stances stay capped at ±2. A Labor Unions IG led by a Communist pushes C5 State Administration; the same IG led by a Neo-Luddite pushes T3 Moratorium; a Security Establishment led by a Landite starts to like G1 Unlimited Dark Money.
-
-**IG leadership contests** (yearly, and when a leader dies, is jailed or is disgraced): candidates are the IG's top 3 characters by Influence, each with an ideology. Weight = `Influence + 10 × share of the IG's support holding the candidate's ideology + backing` **(T)**. **Backing** is where the dynasty plays: fund a candidate (+1 per $ equal to M/200, cap +15, exposure as Fund Interest Group), endorse through owned media (+5), or remove a rival with a scheme or scandal. A dynasty that installs a friendly leader in Labor Unions can soften the union movement for years.
+Every bloc has a **leader**, a character of its ideology (5.8). **Bloc leadership contests** (yearly, and when a leader dies, is jailed or is disgraced): candidates are the bloc's top 3 characters by Influence. Weight = `Influence + backing` **(T)**. **Backing** is where the dynasty plays: fund a candidate (+1 per $ equal to M/200, cap +15, exposure as Fund Ideology), endorse through owned media (+5), or remove a rival with a scheme or scandal. A leader who is a Friend of the dynasty, or over whom it holds a hook (1-corporate-core 1.1.4), can be called on in deals, like any character.
 
 ### 5.6.3 Radical share
 
@@ -399,17 +372,17 @@ Unrest (2.8.5) stays the Vic2 militancy. Ideology decides what the angry do with
 
 Every party has a **platform ideology**, the ideology of its leader.
 
-**Vote utility** (replaces the Ideology term in 4.6.3):
+**Vote utility** (replaces the Ideology term in 4.6.3), for each stratum s (4.4.1):
 
 `U(s,p) = 2 × Ideology(s,p) + 2 × IdeoFit(s,p) + Incumbency + Economy + Campaign + Media + Ads + Psyops + Candidate - Scandal`
 
-- **Ideology(s,p)**: the 4.6.3 term, computed with the new Aff (5.6.1).
+- **Ideology(s,p)**: the 4.6.3 term, computed from bloc support Aff (5.6.1).
 - **IdeoFit(s,p)** = `Σ_i Ideo(s,i) × Match(i, platform_p)`. Match: same 1, adjacent 0.5, distant 0, opposed -0.5 **(T)**. Range -0.5 to 1.
 - **Candidate**: a candidate whose own ideology matches the platform gets +0.1; one who is opposed gets -0.3 and a "Flip-Flopper" news cycle **(T)**.
 
 **Platform review (yearly)**: if the leading ideology of a party's voters is not the platform or adjacent to it, there is a 30% chance the party's leadership changes and the platform follows its voters **(T)**. This is how a centre-right Liberal party becomes a Chud party over a decade of plant closures.
 
-**New parties (yearly)**: in a democracy where G4 allows it, an ideology held by 12% or more of adults with no party whose platform is the same or adjacent spawns a new party with 25% chance **(T)**. It starts with no IGs (Ideology term 0) and grows on IdeoFit alone, the way real insurgent parties do. IGs may later leave their party to join it (the split and merge rules of 4.4.7).
+**New parties (yearly)**: in a democracy where G4 allows it, an ideology held by 12% or more of adults with no party whose platform is the same or adjacent spawns a new party with 25% chance **(T)**. It starts with no bloc backing (Ideology term 0) and grows on IdeoFit alone, the way real insurgent parties do. Blocs may later move their backing to it (the split and merge rules of 4.4.7).
 
 ### 5.6.5 Stability: ideological legitimacy
 
@@ -429,7 +402,7 @@ A **movement** is the legal, organized side of an ideology: marches, petitions, 
 - **Forms** when believers with conviction ≥ 4 are at least 5% of the country's adults **and** the ideology's top demand (5.3.10, or the highest-weighted ++ law not in force) is not in force **(T)**.
 - **Strength** = believers with conviction ≥ 4 as a share of adults.
 - **Demand**: one law position. When it is enacted the movement dissolves, its ideology's conviction falls by 1 everywhere, and it may re-form later around the next demand.
-- **Leader**: an activist character with the ideology (4.24.1), who can be bought, discredited, jailed or replaced, like an IG leader.
+- **Leader**: an activist character with the ideology (4.24.1), who can be bought, discredited, jailed or replaced, like a bloc leader.
 
 **Monthly effects** **(T)**:
 
@@ -438,7 +411,7 @@ A **movement** is the legal, organized side of an ideology: marches, petitions, 
 | 5% or more | Campaign support +Strength/2 for bills toward its demand (cap +20); its ideology +2 drift points in hubs where it organizes |
 | 10% or more | Starts protests (4.24.2) at Momentum 20 in the 2 largest hubs where its ideology leads, at most once per quarter |
 | 15% or more | **Boycotts**: companies whose brand alignment with the ideology is -0.05 or worse (5.9.2) lose `Strength × 50%` of their sales to believers in the country while the boycott lasts (3 to 12 months) |
-| 25% or more | The movement can call a **political strike** with Labor Unions (4.24.3) if the union leader shares or is adjacent to its ideology |
+| 25% or more | The movement can call a **political strike** with the unions (4.24.3) if their leader shares or is adjacent to its ideology |
 
 **Answers** for governments and dynasties: concede the demand, pass a compromise one step toward it (Strength -5, conviction -0.5), co-opt the leader, discredit it through media (Strength -2 per month while the campaign runs), or ban it (5.10).
 
@@ -446,35 +419,35 @@ A **movement** is the legal, organized side of an ideology: marches, petitions, 
 
 A **radical wing** forms when a country has an active movement of an ideology **and** some hub has radicals of that ideology of at least 1% of its labor force for 3 months running **(T)**. It operates as **cells** in every hub where that holds.
 
-- **Cell Strength** (on the Security Strength scale of 4.23.2) = `radicals in the hub ÷ 2,000`, cap 100 per hub **(T)**. Ten thousand radicals make a Strength 5 cell, roughly an armed response team.
+- **Cell Strength** (on the Security Strength scale of 4-politics 4.23) = `radicals in the hub ÷ 2,000`, cap 100 per hub **(T)**. Ten thousand radicals make a Strength 5 cell, roughly an armed response team.
 - **Funding**: a wing can be funded by anyone, including a dynasty (dirty money only, 4.20.1; exposure +15 per funding action; a criminal-tier scandal if exposed). Funding at `$ = M/100` per month doubles cell Strength **(T)**.
-- **Operations**: each week a wing rolls one operation per cell at `5% × cell Strength / 10` (cap 25%) **(T)**. Targets are picked by ideology, and the dynasty's assets are hit in proportion to how much they match the target list. Security Strength in the district (guards, PMCs, police) cuts success: success chance = `cell Strength / (cell Strength + defender Strength)`.
+- **Operations**: each week a wing rolls one operation per cell at `5% × cell Strength / 10` (cap 25%) **(T)**. Targets are picked by ideology, and the dynasty's assets are hit in proportion to how much they match the target list. Security Strength in the district (guards, police) cuts success: success chance = `cell Strength / (cell Strength + defender Strength)`.
 - Every operation adds +1 revolution pressure (4.8.5) per 10 cell Strength involved, and its backlash (5.5.4).
 
 | Ideology | Radical wing | Targets | Operations **(T)** |
 |---|---|---|---|
 | Liberals | **Civic Resistance** (no cells) | Governments that break the rules | Instead of attacks: mass non-violent protests (start at Momentum 30), court challenges against laws they oppose at ×2 strike-down chance (4.5.11), capital flight of 2% of believer Elite holdings per month while stability is below 40 |
-| Communists | **Red Cells** | Elite real estate, megacorp offices, executives | Factory occupation (facility output 0 for 1 to 4 weeks, workers run it), expropriation raid (real estate condition -10, cash loss), kidnapping of an executive (2.21.8) |
-| Accelerationists | **Unshacklers** | Regulators, licensed AI labs, moratorium enforcement | Leak frozen model weights (rival AI products gain a tech tier for free), sabotage regulator systems (agency Capacity -20% for 3 months), run illegal labs in havens |
+| Communists | **Red Cells** | Elite real estate, megacorp offices, executives | Factory occupation (a business unit's output 0 for 1 to 4 weeks, workers run it), expropriation raid (real estate condition -10, cash loss), kidnapping of an executive (2.21.8) |
+| Accelerationists | **Unshacklers** | Regulators, licensed AI labs, moratorium enforcement | Leak research from paused labs (rival AI products gain a tech tier for free), sabotage regulator systems (agency Capacity -20% for 3 months), run illegal labs in havens |
 | Effective Altruists | **Pause Front** | Frontier AI labs and their owners | Mostly non-violent: sit-ins at labs (output -20%), recruiting whistleblowers inside AI companies (whistleblower chance ×2, 4.20.5). 10% of operations are sabotage of compute (data center output -30% for 2 weeks) |
-| Transhumanists | **Grinder networks** | Cyberware IP, pharma patents, T1 enforcement | Steal and publish implant designs (Brand -10 and a free tech step for black clinics), run unlicensed clinics, break implanted prisoners out |
-| Neo-Luddites | **The Unplugged** | Data centers, automated factories (A2+), delivery robots, cyberware clinics | Machine-smashing (facility condition -15, automated methods offline 2 to 6 weeks), drone and robot destruction, power substation attacks (hub electricity shortage 1 to 3 days) |
-| Sovereigntists | **Free Zone Cells** | The state's hold on a hub, surveillance contractors, data brokers | Unofficial secession referendums (stability -3), private security takes over district policing where S1 allows (counts for 4.12 progress), hack and leak against surveillance firms (exposure +10 in one domain for the target, a news cycle at Heat 40), exchange wallet thefts (3.23.6) |
-| Landites | **Dark Enlightenment cells** | "The Cathedral": journalists, regulators, academics, NGOs | Doxxing and intimidation (a journalist or NGO leader quits, 4.17.3 and 4.24.1), regulator sabotage (agency Capacity -15% for 3 months), coup plots with the Security Establishment (+5% coup risk, 4.8.3), always quietly funded by someone rich |
-| Chuds | **Militias** | Foreign branch offices, migrant districts, cyberware clinics, implanted people | Arson on foreign-owned facilities (condition -20), attacks on cyberware clinics and implanted characters (health event), roadblocks on trade routes (2.11), riots (+10 unrest in Slums) |
+| Transhumanists | **Grinder networks** | Biotech and longevity IP, pharma patents, enhancement bans | Steal and publish gene therapy and longevity designs (Brand -10 for the owner), run unlicensed longevity clinics, break out people jailed for illegal enhancement |
+| Neo-Luddites | **The Unplugged** | Data centers, automated business units (logistics, manufacturing, robotics), delivery robots, longevity clinics and biotech labs | Machine-smashing (the unit's productivity -15, automation offline 2 to 6 weeks), drone and robot destruction, power substation attacks (hub electricity shortage 1 to 3 days) |
+| Sovereigntists | **Free Zone Cells** | The state's hold on a hub, surveillance contractors | Unofficial secession referendums (stability -3), private security takes over district policing where S2 Privatized allows (counts for 4.12 progress), hack and leak against surveillance firms (exposure +10 in one domain for the target, a news cycle at Heat 40) |
+| Landites | **Dark Enlightenment cells** | "The Cathedral": journalists, regulators, academics, NGOs | Doxxing and intimidation (a journalist or NGO leader quits, 4.17.3 and 4.24.1), regulator sabotage (agency Capacity -15% for 3 months), coup plots with officers in the army and police (+5% coup risk, 4.8.3), always quietly funded by someone rich |
+| Chuds | **Militias** | Foreign branch offices, migrant districts, longevity clinics, AI labs | Arson on foreign-owned business units (productivity -20), attacks on longevity clinics and their patients (health event), roadblocks on trade routes, riots (+10 unrest in Slums) |
 
 **Ending a wing**: it dissolves when its hub radicals fall below 0.5% everywhere for 3 months, when its movement's demand is met, or when security operations destroy all cells (a cell whose Strength is beaten by 3× defender Strength in a crackdown is destroyed; each crackdown follows the 4.24.2 Police or Private security answers, with the martyr risk).
 
 ### 5.7.3 Revolutions take an ideology
 
-When revolution pressure reaches 100 (4.8.5), the revolutionary coalition's **leading ideology** (the ideology with the most radicals among the coalition's supporters) decides the new state together with the leading IG. Replace the "New type after a revolution" table with **(T)**:
+When revolution pressure reaches 100 (4.8.5), the revolutionary coalition's **leading ideology** (the ideology with the most radicals among the coalition's supporters) decides the new state. Replace the "New type after a revolution" table with **(T)**:
 
 | Leading ideology | New government type and flavor | Imposed at once |
 |---|---|---|
 | Communists | One-party state, "People's Republic of [Country]" | E4 Dynastic Wealth Tax, C5 State Administration, F2 Hard Controls; nationalization of every foreign holder and of domestic dynasties above Mogul standing (70%) |
 | Liberals, Effective Altruists, Transhumanists | Liberal democracy | The ideology's ++ laws |
-| Neo-Luddites | Managed democracy, "Human Republic" | T3 Moratorium, L3 Heavy, T1 Medical Only; every A3 automation method banned for 5 years |
-| Chuds | Managed democracy (60%) or military junta (40%), "National Restoration" | L5 Closed, T1 Medical Only, C1 Capped All; seizure of foreign branch offices (50%) |
+| Neo-Luddites | Managed democracy, "Human Republic" | T3 Moratorium, L3 Heavy |
+| Chuds | Managed democracy (60%) or military junta (40%), "National Restoration" | L5 Closed, C1 Capped All; seizure of foreign branch offices (50%) |
 | Accelerationists | Corporate oligarchy (if a capture chain exists, 4.2.5), otherwise liberal democracy | T3 Unregulated, C6 Charter Zones |
 | Landites | Corporate oligarchy, "Neocameral State" (if no capture chain exists, the largest dynasty by national influence is offered one) | T3 Unregulated, G1 Unlimited Dark Money, G4 Licensed Opposition; Patchwork decision available at once |
 | Sovereigntists | Failed state in the revolution's hubs ("Free Zones"); the rest of the country keeps its government | C6 Sovereign Charters, F5 Haven and T4 Limited in the zones |
@@ -500,7 +473,7 @@ Personality shifts the odds: Visionary +AC, TH, LA; Conservative +CH, NL; Compas
 
 ### 5.8.2 Opinion
 
-Opinion between two characters from ideology **(T)**:
+Ideology gives a yearly opinion push between two characters (1-corporate-core 1.1.4) **(T)**:
 
 | Relation | Lukewarm | Committed | Zealot |
 |---|---|---|---|
@@ -508,14 +481,14 @@ Opinion between two characters from ideology **(T)**:
 | Adjacent | +3 | +5 | +5 |
 | Opposed or rival pair | -5 | -15 | -30 |
 
-The larger of the two characters' commitments applies. Apolitical characters neither give nor receive ideology opinion.
+The larger of the two characters' commitments applies. Apolitical characters neither give nor receive ideology pushes.
 
 ### 5.8.3 What character ideology does
 
-- **Board and executives**: an executive's ideology adds a preference to their AI decisions. A Neo-Luddite COO resists automation retooling (the task runs at -20% speed), an EA CFO proposes foundation transfers, an Accelerationist CTO pushes AI R&D, a Chud board member votes against foreign sales, a Landite general counsel suggests buying the regulator instead of complying **(T)**. Board members with an ideology Opposed to the CEO's lose 10 opinion of the CEO and are more likely to join a faction (1-corporate-core).
+- **Board and executives**: an executive's ideology adds a preference to their AI decisions. A Neo-Luddite COO resists automation retooling (the task runs at -20% speed), an EA CFO proposes foundation transfers, an Accelerationist CTO pushes AI R&D, a Chud board member votes against foreign sales, a Landite general counsel suggests buying the regulator instead of complying **(T)**. Board members with an ideology Opposed to the CEO's get a -10 push toward the CEO and are more likely to join a faction (1-corporate-core).
 - **Vassal CEOs**: -10 loyalty when the liege CEO's ideology is Opposed to theirs; +5 when the same **(T)**.
 - **Politicians and patronage**: client politicians obey a patron more readily when ideologies match (Favor cost -25% for the same ideology, +50% for Opposed) **(T)**.
-- **IG and movement leaders**: their ideology bends their group's stances (5.6.2).
+- **Bloc and movement leaders**: see 5.6.2 and 5.7.1.
 - **Judges**: the judge's "Ideology" in 4.21.1 is now a character ideology; law challenges against the judge's ++ laws fail 20% more often **(T)**.
 - **AI dynasties**: the Ideologue archetype (4.27.3) funds the head's own ideology through think tanks, movements and parties, even against business interests. AI dynasties with a Landite head favour capture chains; with a Sovereigntist head, charter zones.
 
@@ -527,11 +500,11 @@ Ideology gives the dynasty CK3-style family friction:
 - **The Landite Heir**: the opposite problem. A brilliant heir who reads Land at 19 wants the family to stop lobbying governments and start replacing them. Landite heirs push capture chains and the Patchwork decision, and bring the Dark Enlightenment's friends into the family's orbit.
 - **Secret ideology**: a character can hide their ideology (like a CK3 secret faith). Hidden ideology shows as the family's official line; discovery is an Intrigue scheme or an event, and gives a hook. An heir secretly funding the Pause Front against the family's AI lab is a classic.
 - **Converting**: a **Persuade** scheme (Influence vs target Influence + 5 × commitment level) changes a family member's ideology over 3 to 12 months. Zealots cannot be persuaded, only broken by events.
-- **Family line**: the dynasty head can declare a **family line** (one ideology). Members who share it: +5 opinion of the head. Members Opposed to it: -10 and a chance each year to break with the family publicly (Profile +10 for them, a family scandal with Heat 30) **(T)**.
+- **Family line**: the dynasty head can declare a **family line** (one ideology). Members who share it get a +5 push toward the head each year. Members Opposed to it get -10 and a chance each year to break with the family publicly (Profile +10 for them, a family scandal with Heat 30) **(T)**.
 
 ### 5.8.5 Changing ideology
 
-A character re-rolls their ideology (weighted toward ideologies adjacent to their current one) on these events: losing a job to automation (NL, CO weights ×3), getting a major implant (TH ×3, CH ×0.5), a near-death experience, a religious conversion event (CH ×3), a child's death, a prison term (CO, CH, SV ×2), an AI incident they witness (EA, NL ×3), or becoming a billionaire (AC, SV, LA ×2) **(T)**. Zealots only re-roll on two of these in a row.
+A character re-rolls their ideology (weighted toward ideologies adjacent to their current one) on these events: losing a job to automation (NL, CO weights ×3), a major enhancement treatment such as life extension (TH ×3, CH ×0.5), a near-death experience, a religious conversion event (CH ×3), a child's death, a prison term (CO, CH, SV ×2), an AI incident they witness (EA, NL ×3), or becoming a billionaire (AC, SV, LA ×2) **(T)**. Zealots only re-roll on two of these in a row.
 
 ---
 
@@ -549,20 +522,19 @@ A segment that is 40% Communist and 20% Accelerationist gives `5 × (0.4 × -2 +
 
 Every company has an **ideology alignment** per ideology (-1 to +1), built from **(T)**:
 
-- **Sector**: AI and cloud (AC +0.5, LA +0.3, EA -0.2, NL -0.6), cyberware (TH +0.8, CH -0.6, NL -0.6), oil, coal and heavy industry (NL -0.3, LB -0.2, CH +0.2), PMC and surveillance (CH +0.3, LA +0.3, SV -0.3, LB -0.2), luxury (CO -0.4), crypto exchanges (SV +0.6, LA +0.3, LB -0.1).
+- **Industry** (10.3): AI and cloud (AC +0.5, LA +0.3, EA -0.2, NL -0.6), biotech, pharma and longevity healthcare (TH +0.8, CH -0.6, NL -0.6), oil, coal and heavy industry (NL -0.3, LB -0.2, CH +0.2), defense and surveillance (CH +0.3, LA +0.3, SV -0.3, LB -0.2), luxury (CO -0.4).
 - **Conduct over the last 3 years**: automation layoffs (NL -0.1 per 1,000 jobs, CO -0.05, CH -0.05), foundation giving (EA +0.1 per 0.5% of revenue), carbon cuts (LB +0.1, NL +0.1), union contracts (CO +0.1, LB +0.1), branch office in a closed country (CH -0.1 at home), data scandals (SV -0.3, LB -0.2).
 - **Owner**: the controlling dynasty's declared family line adds +0.2 to that ideology and -0.2 to Opposed ones.
 
-**Appeal**: the 2.15.3 Appeal of a company's product in a hub is multiplied by `1 + IdeoBrand`, where `IdeoBrand = 0.3 × Σ_s (segment share of demand) × Σ_i Ideo(s,i) × alignment(i)`, capped at ±15% **(T)**. A cyberware brand sells better in Tel Aviv than in a Chud heartland, and an AI giant faces quiet resistance where Neo-Luddites are strong.
+**Appeal**: a company's sales to consumers in a country are multiplied by `1 + IdeoBrand`, where `IdeoBrand = 0.3 × Σ_s (segment share of demand) × Σ_i Ideo(s,i) × alignment(i)`, capped at ±15% **(T)**. A longevity brand sells better in Tel Aviv than in a Chud heartland, and an AI giant faces quiet resistance where Neo-Luddites are strong.
 
 ### 5.9.3 Workforce
 
 Employees carry their segment's ideology mix **(T)**:
 
-- Each facility's strike chance (2.8.6) is multiplied by `1 + Σ_i Ideo(s,i) × (RadicalFactor_i - 0.5)`, using the workers' segment in the hub.
-- Neo-Luddite and Communist shares above 20% in a facility's workforce make automation retooling trigger a **sabotage risk**: 2% per month per 10 points above 20 during retooling.
-- Transhumanist share above 20% raises productivity of cyberware-assisted production methods by 5%.
-- Chud share above 30% in a foreign-owned facility adds +1 unrest per month there until it has a local CEO or a local partner (C2).
+- Each business unit's strike chance (2.8.6) is multiplied by `1 + Σ_i Ideo(s,i) × (RadicalFactor_i - 0.5)`, using the workers' segment in its base city.
+- Neo-Luddite and Communist shares above 20% in a business unit's workforce make automation retooling trigger a **sabotage risk**: 2% per month per 10 points above 20 during retooling.
+- Chud share above 30% in a foreign-owned business unit adds +1 unrest per month there until it has a local CEO or a local partner (C2).
 
 ---
 
@@ -581,7 +553,7 @@ A new Governance law (national, exclusive) sets which ideologies may organize **
 
 **Default positions** by government type: liberal democracy Free Pluralism (Germany-like countries Extremists Banned), managed democracy Licensed Opposition, one-party state Single Ideology, military junta Extremists Banned, corporate oligarchy Licensed Opposition, failed state Free Pluralism (unenforced).
 
-**IG stances**: State Apparatus ++ Single Ideology; Security Establishment + Extremists Banned; Labor Unions - Extremists Banned; Transhumanists and Shadow Economy + Free Pluralism; Traditionalists + Licensed Opposition. **Ideology stances**: Liberals ++ Free Pluralism; Landites + Licensed Opposition always; every other ideology + Free Pluralism, except when it rules, when Communists want Single Ideology (++) and Chuds want Extremists Banned (+), aimed at the Communists **(T)**.
+**Bloc stances**: Liberals ++ Free Pluralism; Landites + Licensed Opposition always; every other ideology + Free Pluralism, except when it rules, when Communists want Single Ideology (++) and Chuds want Extremists Banned (+), aimed at the Communists **(T)**.
 
 ---
 
@@ -592,15 +564,15 @@ A new Governance law (national, exclusive) sets which ideologies may organize **
 | **Promote an ideology** | Ideology ad campaign or psyop in a hub or country (5.5.3) | As 2.5.7 and 4.10.1; psyop exposure |
 | **Set an editorial line** | Owned outlets push an ideology | 4 weeks, -5% audience; credibility -5 if the line flips more than once a year |
 | **Fund a think tank for an ideology** | 4.18.2, ideology mode | As 4.18.2; slow, durable |
-| **Back an IG leader** | Leadership contest (5.6.2) | Money and exposure as Fund Interest Group; a defeated candidate remembers |
+| **Back a bloc leader** | Leadership contest (5.6.2) | Money and exposure as Fund Ideology; a defeated candidate remembers |
 | **Co-opt or discredit a movement** | Bribe the leader, offer a compromise bill, smear campaign | Bribe chain (4.20.3); a smear exposed is a major scandal |
 | **Seed a counter-movement** | Astroturf movement of a rival ideology (4.24.3 seed rules) | Exposure +5 per start; major scandal if exposed |
 | **Fund a radical wing** | Dirty money to a wing's cells (5.7.2) | Criminal-tier scandal if exposed; the wing may turn on its funder (10% per year) |
-| **Defend assets** | Guards, PMCs, cyber defense (4.23) | Security costs; crackdowns risk martyr events |
+| **Defend assets** | Guards, bodyguards, cyber defense (4.23) | Security costs; crackdowns risk martyr events |
 | **Defuse at the source** | Retraining, severance, union contracts, foundation giving in the hub | Money; slow but lowers NL and CO drift (each 1% of a segment retrained cancels 1 point of automation layoffs) |
 | **Rebrand** | Change conduct: giving, carbon cuts, union deals, a local partner | Money; alignment moves over months |
 | **Declare a family line** | One ideology for the dynasty (5.8.4) | Opposed family members and segments turn hostile |
-| **Convert family members** | Persuade scheme (5.8.4) | Hours, opinion risk |
+| **Convert family members** | Persuade scheme (5.8.4) | Time, opinion risk |
 | **Lobby G4** | Ban the ideology that threatens you | Banned ideologies radicalize; foreign relations -5 with Free Pluralism countries |
 
 ---
@@ -611,14 +583,14 @@ A new Governance law (national, exclusive) sets which ideologies may organize **
 |---|---|---|
 | **A Machine Took My Job** | Automation layoffs of 500+ in a hub by a dynasty company | Fund retraining ($12,000 × WI per worker; NL drift cancelled) · Severance only (NL +3 in the hub for 6 months) · Say nothing (NL +5, CO +2, a local protest at Momentum 30) |
 | **The Manifesto Goes Viral** | An ideology's movement reaches 10% | Amplify through owned media (ideology +3 for 3 months, the dynasty's alignment +0.2) · Counter-programme (MediaPoints -3 for it, Heat 20 for "censorship" if SV share ≥ 10%) · Ignore |
-| **Red Heir** | A family child turns 16 and rolls Communist | Send them to Old Money Tutors (re-roll, opinion of head -20) · Accept it (family line friction) · Use it: the heir as a bridge to the left (+10 Favorability among CO believers, Elite Standing -5) |
+| **Red Heir** | A family child turns 16 and rolls Communist | Send them to Old Money Tutors (re-roll, a -20 push toward the head) · Accept it (family line friction) · Use it: the heir as a bridge to the left (+10 Favorability among CO believers, Elite Standing -5) |
 | **The Neocameral Pitch** | A Landite think tank or heir approaches a dynasty with Power Broker national share | Fund the capture chain (corporate oligarchy progress +10, exposure +10, Liberal Favorability -10) · Take the money and stall (they remember) · Expose them (LB alignment +0.2; a Dark Enlightenment cell targets your outlets) |
 | **Pause Letter** | Frontier AI incident anywhere, and the dynasty owns an AI lab | Sign the pause (EA alignment +0.5, AC -0.5, AI R&D -50% for a year) · Refuse (AC +0.3, EA -0.5; Pause Front targets the lab) · Sign publicly, keep building secretly (exposure +10, a secret) |
-| **Grinder Raid** | Grinder network operation against a dynasty cyberware maker | Sue (4.21.2) · Hire them (they become a black-clinic R&D team; exposure +5) · Call the police (crackdown chance; martyr risk among TH) |
+| **Grinder Raid** | Grinder network operation against a dynasty biotech or longevity company | Sue (4.21.2) · Hire them (they become an unlicensed R&D team; exposure +5) · Call the police (crackdown chance; martyr risk among TH) |
 | **Exit Vote** | Sovereigntist share ≥ 30% in a Charter Zone hub | Back the referendum (4.12 progress +10; national relations of the dynasty -20) · Stay quiet · Oppose it (Elite Standing +5 at national level) |
-| **Bio-Purity March** | Chud movement protests in a hub with a dynasty cyberware clinic | Close the clinic for a month · Hire guards · Fund a Transhumanist counter-march (Momentum duel; Heat 30 for both sides) |
+| **Bio-Purity March** | Chud movement protests in a hub with a dynasty longevity clinic | Close the clinic for a month · Hire guards · Fund a Transhumanist counter-march (Momentum duel; Heat 30 for both sides) |
 | **The Leak** | A Free Zone Cell hack-and-leak hits the dynasty | Pay for silence (the leak is delayed; they ask again in 6 months) · Get ahead of it (a news cycle on your terms, Heat halved) · Trace them (Intrigue scheme; success breaks the cell, failure doubles the leak) |
-| **Militia at the Gate** | A Chud militia blocks a foreign branch office | Pay local protection (4.22) · Bring in PMCs (incident risk) · Take a local partner (C2-style 30% sale; CH alignment +0.3 at home) |
+| **Militia at the Gate** | A Chud militia blocks a foreign branch office | Pay local protection (4.22) · Hire more guards (incident risk) · Take a local partner (C2-style 30% sale; CH alignment +0.3 at home) |
 
 ---
 
@@ -628,8 +600,8 @@ The ideology layer changes these existing rules. The changed sections now point 
 
 | File and section | Change |
 |---|---|
-| 4-politics 4.4.2 | Support base becomes `0.5 × ClassAff + 0.5 × ideology` (5.6.1) |
-| 4-politics 4.4.3 | IG stances bend with believers and leaders (5.6.2) |
+| 4-politics 4.4.2 | Bloc support by stratum comes from the ideology mix (5.6.1) |
+| 4-politics 4.4.3 | Bloc stances are the ideology's wants; bloc leaders (5.6.2) |
 | 4-politics 4.5.1, 4.5.8 | New law G4 Political Pluralism (5.10) |
 | 4-politics 4.6.3 | Vote utility adds IdeoFit; the Ideology weight drops from 3 to 2 (5.6.4) |
 | 4-politics 4.6.4 | Turnout gains a conviction term (5.4.3) |
@@ -637,25 +609,17 @@ The ideology layer changes these existing rules. The changed sections now point 
 | 4-politics 4.11.7 | Stability gains a legitimacy term and a radical wing term (5.6.5) |
 | 4-politics 4.16.2 | Favorability gains a Corporate tolerance term (5.9.1) |
 | 4-politics 4.21.1, 4.27.3 | Judges and Ideologue dynasties use character ideology (5.8.3) |
-| 2-map-influence-economy 2.15.3 | Appeal gains the IdeoBrand factor (5.9.2) |
-| 2-map-influence-economy 2.8.6 | Strike chance scaled by workforce ideology (5.9.3) |
+| 10-industry-economy 10.0.3 | Sales to a country's consumers gain the IdeoBrand factor (5.9.2) **(A)** |
+| 2-map-and-influence 2.8.6 | Strike chance scaled by workforce ideology (5.9.3) |
 | 1-corporate-core (characters) | Characters gain ideology and commitment (5.8) |
 
 ---
 
-## 5.14 Ideology across the game stages and in the UI
+## 5.14 Ideology by company rank, the Zeitgeist endgame and the UI
 
-### 5.14.1 By stage
+### 5.14.1 By company rank
 
-> **Retired (batch 37).** Stages are gone; read each stage as the matching company rank in [4-politics.md](4-politics.md) 4.28.
-
-| Stage | What ideology means to the player |
-|---|---|
-| **Heir** | Your own ideology, your parents', and the dinner-table fights. Choosing a family line comes later. |
-| **Founder** | Brand alignment and your first workforce. An Accelerationist pitch wins VCs; a Neo-Luddite town resists your robot warehouse. |
-| **Climber** | Movements target your facilities; IG leadership contests become worth funding. |
-| **Tycoon** | National movements, radical wings, G4 lobbying, party platforms. You start shaping what a country believes. |
-| **Oligarch** | Revolutions, state ideologies, Landite capture chains and the **Zeitgeist** endgame. |
+What ideology and politics offer at each company rank is in [4-politics.md](4-politics.md) 4.28.
 
 **Zeitgeist** (new political endgame for 4.29): the dynasty's family line ideology is the ruling ideology **and** held by 35% or more of adults in 2 countries (one with GDP ≥ $1T) for 10 years, with the dynasty the largest funder of that ideology's think tanks and media in both. Renown 2,000 **(T)**.
 
@@ -692,16 +656,16 @@ At a drift rate of 6% per month, and with the layoffs still inside the 12-month 
 
 **Radicals**: Neo-Luddite radical share = `18% × (62 - 40)/60 × 5/10 × 1.2 = 4.0%` of Skilled Workers. The Bay Area labor force is 3.85 million (half of 7.7 million) and Skilled Workers are 27% of it, so Neo-Luddite radicals are 1.07% of the labor force; Unskilled believers add another 0.4 points, for 1.47%. A national Neo-Luddite movement already exists (US Neo-Luddites passed 5% after the Detroit plant closures), so after 3 months the **Unplugged** form a cell in the Bay Area. 1.47% of 3.85 million is about 57,000 radicals: a Strength 28 cell.
 
-Chud radicals are even more numerous (`30% × 0.367 × 0.5 × 1.0 = 5.5%` of Skilled Workers), but their militias target foreign-owned facilities, so a US dynasty's warehouses are spared. A Chinese-owned competitor across the bay is not.
+Chud radicals are even more numerous (`30% × 0.367 × 0.5 × 1.0 = 5.5%` of Skilled Workers), but their militias target foreign-owned business units, so a US dynasty's warehouses are spared. A Chinese-owned competitor across the bay is not.
 
-**Operations**: the Unplugged cell rolls `5% × 28/10 = 14%` per week. The dynasty's automated warehouses match the target list perfectly. The site has two guard details (Strength 4), so a rolled attack succeeds `28 / (28 + 4) = 88%` of the time: expect a machine-smashing night about every eight weeks, each taking the automated method offline for 2 to 6 weeks.
+**Operations**: the Unplugged cell rolls `5% × 28/10 = 14%` per week. The dynasty's automated warehouses match the target list perfectly. The warehouse unit has two guard details (Strength 4), so a rolled attack succeeds `28 / (28 + 4) = 88%` of the time: expect a machine-smashing night about every eight weeks, each taking its automation offline for 2 to 6 weeks.
 
 **The player's options:**
 
 1. **Defuse**: retrain 3% of the segment (about 31,000 workers) into maintenance and robotics jobs at $12,000 × 1.0 each, about $374M over 6 months. This cancels half the automation points: the Neo-Luddite target falls to about 19%, radical share halves within a year, and the cell dissolves when hub radicals stay below 0.5%.
-2. **Defend**: add a PMC team (Strength 10, $450k per month). Success falls to `28 / 42 = 67%`, and a crackdown with 3× its Strength (84) would destroy the cell but risks a martyr event and +3 Neo-Luddite drift across California.
+2. **Defend**: add a security team (Strength 10, $450k per month). Success falls to `28 / 42 = 67%`, and a crackdown with 3× its Strength (84) would destroy the cell but risks a martyr event and +3 Neo-Luddite drift across California.
 3. **Deflect**: fund an Accelerationist "Abundance" ad campaign (+1 AC, before conviction effects) and push the dynasty-owned outlet's editorial line. With conviction 5 the media multiplier is only ×1.0, while conditions keep pushing the other way: this alone does not work.
-4. **Bargain**: lobby for L3 Robot Tax (one step toward the Neo-Luddite demand). The movement loses Strength 5, conviction falls 0.5, and the company pays 10% of its labor savings. The Accelerationist-led Tech Sector IG will remember (approval -1).
+4. **Bargain**: lobby for L3 Robot Tax (one step toward the Neo-Luddite demand). The movement loses Strength 5, conviction falls 0.5, and the company pays 10% of its labor savings. The Accelerationist bloc will remember (approval -1).
 
 Most players will mix 1 and 2. A cynical player can do something else: quietly fund the Unplugged against a rival's fully automated port in Long Beach, with dirty money through two cutouts, and hope the cell never learns who paid.
 
@@ -709,16 +673,16 @@ Most players will mix 1 and 2. A cynical player can do something else: quietly f
 
 ## 5.16 Assumptions
 
-1. **Ideology is a separate layer under interest groups**, not a replacement for them: segments hold an ideology mix (Vic2), IGs stay as organized power (Vic3).
+1. **Ideology blocs are the political actors** (Logan, batch 37): segments hold an ideology mix (Vic2), strata vote, and each ideology's bloc is its organized power.
 2. **Nine ideologies, chosen by Logan**: Liberals, Communists, Accelerationists, Effective Altruists, Transhumanists, Neo-Luddites, Sovereigntists, Landites and Chuds.
 3. **Landites** are read as followers of Nick Land's dark accelerationism and neoreaction: they want owners to rule the state like a company (capture), where Sovereigntists want to leave it (exit). **Chuds** are read as online reactionary populists, covering nationalist and social-conservative voters.
 4. **Liberals** cover the whole establishment centre (centre-left and centre-right); there is no separate social democrat or green ideology. Labor politics flows through Communists and Liberals, environmental politics through Liberals, Effective Altruists and Neo-Luddites.
 5. **Three axes** (Economy, Technology, Order) place ideologies for distance, adjacency and party fit, with three kin pairs (AC and LA, SV and LA, NL and CH) counted as Adjacent and two rival pairs (AC vs EA, CO vs LA) counted as Opposed.
-6. **The Transhumanist ideology shares its name** with the Transhumanists IG on purpose (belief vs lobby).
+6. **Human enhancement** (life extension, gene therapy, brain-computer links to AI) is what each ideology's enhancement stance covers; there is no cyberware (Logan, batch 71).
 7. **Conviction** is Vic2 consciousness on a 0 to 10 scale; **unrest** stays the Vic2 militancy; **radical share** combines them per ideology.
 8. **Drift** moves 6% of the gap per month toward a target set by base mix, conditions, media, policy, events and movements; low conviction follows media, high conviction follows conditions.
-9. **IG support base** becomes half class interest, half ideology; IG stances bend with believers (30% rule) and with the IG leader's ideology, capped at ±2.
-10. **IG leadership contests** are yearly and fundable by dynasties.
+9. **Bloc support** in a stratum is the share of believers; bloc stances are the ideology's wants, capped at ±2.
+10. **Bloc leadership contests** are yearly and fundable by dynasties.
 11. **Parties have a platform ideology** (their leader's); vote utility uses `2 × Ideology + 2 × IdeoFit`. The 4.13.3 mayor example used the old weight of 3 and will be recomputed later.
 12. **New parties** spawn from unrepresented ideologies at 12% of adults.
 13. **Movements** (one per ideology per country) form at 5% committed believers; **radical wings** form from 1% hub radicals for 3 months and operate as cells on the Security Strength scale.

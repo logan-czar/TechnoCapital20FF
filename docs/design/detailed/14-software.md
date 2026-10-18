@@ -1,6 +1,6 @@
 # 14. Software: the software table and software contracts (detailed design)
 
-_Status: draft v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
+_Status: draft v0.5 (2026-10-18), consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 14.7.
 
@@ -23,7 +23,7 @@ Every column is Logan's (batches 42 and 43).
 | Column | What it holds |
 |---|---|
 | **Name** | The product's name, for example "Sable OS" or "Tally Pro" |
-| **Platforms** | Where it runs: desktop, phone, web, cloud, embedded (cars, drones, implants), data center |
+| **Platforms** | Where it runs: desktop, phone, web, cloud, embedded (cars, drones, robots), data center |
 | **Owners** | Who owns it, by holder (companies, trusts or characters) with % stakes, like company ownership (1.2) |
 | **Creators** | Who made it: the company that developed it and the lead characters credited |
 | **Inputs** | What it needs to run: the **types of input data** it processes, plus other software it depends on (14.3) |
@@ -57,7 +57,7 @@ Every column is Logan's (batches 42 and 43).
 
 ## 14.3 Inputs, outputs and nerfed output
 
-Software forms a small dependency graph, like the GPU chain (6.7.0) **(A)**.
+Software forms a small dependency graph **(A)**.
 - **Inputs** name other rows in the table (an app needs an operating system and a cloud platform), and each input is used through a **software contract** (14.4).
 - **Nerfed output (Logan).** When an input is missing or short, the product keeps running but its **output amount is cut**. How much it is cut depends on its quality and its software type **(A)**:
 
@@ -86,7 +86,7 @@ Contract terms **(A)**:
 - **Term**: monthly rolling, or 1 to 5 years.
 - **Instances**: how many instances the buyer may run; the buyer scales within that limit (14.2.2).
 - **Exclusivity**: a special contract can bar the owner from offering the product to a named rival.
-- **Breaking a contract** (Logan, batch 44): either side can break a signed contract, but pays a **penalty**: by default the fees left on the term × 50% **(T)**, plus an opinion hit between the companies' heads. The owner can also stop offering a market contract to new buyers at any time.
+- **Breaking a contract** (Logan, batch 44): either side can break a signed contract, but pays a **penalty**: by default the fees left on the term × 50% **(T)**, plus a negative opinion push between the companies' heads. The owner can also stop offering a market contract to new buyers at any time.
 - **Users** come from contracts: a product's users are the companies (and their staff) under contract, so there is no separate users column.
 - Contracts live in their own **contracts table** in the engine, with a Contracts view on the company screen.
 
@@ -100,7 +100,7 @@ Contract terms **(A)**:
 | Social feed | User activity (sold to advertisers); doomscrolling use (11) | +30% database |
 | Analytics | Reports and forecasts | Needs stored data; +20% compute |
 | Encryption | Secured records | +5% compute; a regulator issue in surveillance states |
-| Offline | Device logs | Runs on embedded platforms (cars, drones, implants) |
+| Offline | Device logs | Runs on embedded platforms (cars, drones, robots) |
 
 ## 14.6 Tags (A)
 

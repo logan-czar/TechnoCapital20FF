@@ -1,6 +1,6 @@
 # 7. Starting world: detailed design
 
-_Status: draft v0.5 (2026-10-17), alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the 15 starting characters, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-influence-economy.md](2-map-influence-economy.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v0.6 (2026-10-18), consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the 15 starting characters, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 7.10.
 
@@ -43,7 +43,7 @@ What follows from that, in January 2022 **(A)**:
 | Supply chains | COVID chip shortage | No pandemic chip shortage; chips are tight only from normal demand |
 | Security | Post-9/11 security state; long wars | No 9/11, so no post-9/11 security state at home. The Iraq war still happened: **the vice president and the CIA made up claims that Iraq had nukes** (Logan), and the US invaded anyway. It won quickly and cleanly, and Iraq became a stable US ally |
 | US position | High debt; energy imports falling with shale | US federal debt about 60% of GDP instead of 120% **(T)**; a stronger dollar; Iraq is a stable US-aligned oil exporter and Gulf supply is more secure, so Hormuz risk starts at Calm and US energy security is high |
-| Gulf and oil | Volatile | Oil supply is steadier and cheaper (oil price index starts at 90 **(T)**); cartel cuts (2.6.0) are weaker while US influence in the Gulf holds |
+| Gulf and oil | Volatile | Oil supply is steadier and cheaper (oil price index starts at 90 **(T)**); cartel cuts ([10-industry-economy.md](10-industry-economy.md) 10.6) are weaker while US influence in the Gulf holds |
 
 **Russia and Ukraine (Logan).** Russia invaded Ukraine much earlier, in **2005**, and the war never ended. By 2022 it is a long **drone-warfare stalemate** along a fortified front. Consequences **(A)**: Russia has been under heavy sanctions since 2005, Europe weaned itself off Russian gas long ago (pipeline gas to Europe is already cut at start), Russia sells oil at a discount through grey fleets, both sides and their backers buy drones in huge numbers (Robotics and drones and Aerospace and defense demand is higher, 10.3), and the Black Sea is at Attacks risk (2.4.2).
 
@@ -65,7 +65,7 @@ The detailed files were written with present-day starting values. At a January 2
 | Pandemic | None: COVID never happened (7.2.0) | n/a |
 | Ideology mix | Starting shares in [5-ideology.md](5-ideology.md) 5.4 are for 2022 | Accelerationist and Neo-Luddite shares grow with the boom |
 
-Hub populations, GDP and facility levels in [2-map-influence-economy.md](2-map-influence-economy.md) stand as January 2022 values **(A)**.
+Hub populations and GDP in [2-map-and-influence.md](2-map-and-influence.md) stand as January 2022 values **(A)**.
 
 ## 7.3 Starting characters
 
@@ -92,7 +92,7 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 |---|---|---|---|---|---|
 | 6 | **Tolu Balogun** | Lagos, Nigeria | Rich, with a burden | Oil money and corruption in a developing country | Corruption, oil and third-world development |
 | 7 | **Pieter Von Floop** † | Eindhoven, Netherlands | Rich, with a burden | The easy start. Sole heir to a lithography machine empire. The monopoly is easy to run, and he has been a boy scout his entire life. He is 24, and his father's health is starting to turn. The family trust is swelling, but he worries he may crack holding together what his father built | Run the world's lithography monopoly ([6-technocapital.md](6-technocapital.md) 6.7) |
-| 8 | **Samir Haddad** † | Dubai | Talented | A former elite soldier who flew drones in the war, now in the Permanent Underclass, slaving away on another megaproject in the desert. A fixer offers him a battered drone on credit, for a favor | A drone operations playthrough: grow from one drone to a fleet (Logan, batch 72; cyberware scrapped) |
+| 8 | **Samir Haddad** † | Dubai | Talented | A former elite soldier who flew drones in the war, now in the Permanent Underclass, slaving away on another megaproject in the desert. A fixer offers him a battered drone on credit, for a favor | A drone operations playthrough: grow from one drone to a fleet (Logan, batch 72) |
 | 9 | **Margaux Valcourt** † | Paris | Rich | A French redheaded woman who inherits a lot of money from her uncle. The Liberal, open-ended playthrough: she can become anything | Open sandbox |
 | 10 | **Viktor Sokolov** † | Moscow | Connected | A Putin-style spy dynasty: an intelligence officer building a family network inside the state **(A)** | Spycraft, state capture, sanctions |
 
@@ -103,7 +103,7 @@ Fifteen premade characters in three groups of five. Names marked † were filled
 | 11 | **Garrett Kroll** † | Pacific Ocean, off the coast of New Zealand | Rich, with a burden | A crazy automotive billionaire trying to start his own island colony by crashing boats into the side of Antarctica | A very hard politics run to protect his sovereign rights (Sovereigntists, [5-ideology.md](5-ideology.md)) |
 | 12 | **Fang Xiaoyu** | Shenzhen | Talented | Tech and finance; a woman (batch 37) | Run businesses across Hong Kong and Shenzhen |
 | 13 | **Qiao Lin** | Beijing | Connected | Party-state family; a woman (batch 36) | The China political run |
-| 14 | **Ananya Hegde** † | Bengaluru | Talented **(A)** | A sleeper overpowered investor | Win India good chip deals so it can build lots of data centers early and run them at lower cost: scale the whole AI supply chain as an investor |
+| 14 | **Ananya Hegde** † | Bengaluru | Talented **(A)** | A sleeper overpowered investor | Win India good chip deals so it can build lots of data centers early and run them at lower cost: scale the AI industries as an investor |
 | 15 | **Yuna Sakamoto** † | Tokyo-Yokohama, Japan | Connected | A young Japanese influencer with a massive following who now has to pivot her appeal to an incredibly politicized and extremist Japan | Choose a politics and drive Japan and Korea |
 
 ### 7.3.4 Unpicked characters
@@ -126,7 +126,7 @@ Depending on who the player picks, some of the other 14 starting characters are 
 
 ## 7.5 Origin city, Center of Power and influence
 
-- **Origin city** is fixed. Members born there get the origin bonus in [2-map-influence-economy.md](2-map-influence-economy.md) 2.5.6.
+- **Origin city** is fixed. Members born there get the origin bonus in [2-map-and-influence.md](2-map-and-influence.md) 2.5.6.
 - **Influence is money, power and prestige.** Money is the asset base (2.5.2). Power and prestige multiply it:
   - **Power** = political offices held, controlled company boards and government contracts (the political office modifier in 2.5.6 plus control of local media and utilities).
   - **Prestige** = renown and reputation ([1-corporate-core.md](1-corporate-core.md) 1.11.4 and the reputation modifier in 2.5.6).
@@ -170,7 +170,7 @@ Real events happen on schedule by default. Each one is an event or quest that pl
 | 2024 | Gen 2 accelerators; power deals for data centers; nuclear restarts | Power becomes the bottleneck |
 | 2025 | A cheap Chinese open model shocks the market | Beijing and Shenzhen get a boost; a market wobble |
 | 2026 to 2027 | Gen 3; gigaclusters; AI agents run whole departments | Fantastical events begin |
-| 2028 to 2029 | Gen 4; humanoid robots in factories; the first mind uploads | More fantastical events; peak valuations |
+| 2028 to 2029 | Gen 4; humanoid robots in factories | More fantastical events; peak valuations |
 | 2030 | **The crisis: the bubble pops** | A crash in AI valuations; the post-crash era begins |
 
 ## 7.8 New places
@@ -188,8 +188,8 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 
 ## 7.9 Changes to other files
 
-- [2-map-influence-economy.md](2-map-influence-economy.md) 2.3.3: Medellín, Sydney and Calgary added; there are now 44 hubs and 31 major countries. Kroll's colony is a special site.
-- [14-game-stages.md](../14-game-stages.md) and [stages/2-the-founder.md](../stages/2-the-founder.md): retired. The game has no stages; the mechanics in them stay as systems.
+- [2-map-and-influence.md](2-map-and-influence.md) 2.3.3: Medellín, Sydney and Calgary added; there are now 44 hubs and 31 major countries. Kroll's colony is a special site.
+- The game has no stages; founding and young-company rules are in [1-corporate-core.md](1-corporate-core.md) 1.6, and politics by company rank in [4-politics.md](4-politics.md) 4.28.
 - [10-events.md](../10-events.md): add the quest system.
 - [13-open-questions.md](../13-open-questions.md): the decided list holds these rules.
 

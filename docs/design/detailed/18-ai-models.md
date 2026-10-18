@@ -22,7 +22,7 @@ _Status: draft v0.3 (2026-10-18). Logan: **types of training data raise differen
 | No theft | **Models cannot be stolen** (batch 73). Their training data can be (17.4). |
 | Open weights | **An owner can release a model for free** (batch 73): brand and Accelerationist favor, but no rent from it (6.2.4). |
 | AI laws | **Countries can license, cap or ban frontier training** through politics (batch 73; the T3 law in [4-politics.md](4-politics.md)). |
-| Frontier race | Not answered yet; the frontier pricing in 6.5.5 stays as the assumption **(A)**. |
+| Frontier race | Dropped (batch 74): no frontier pricing; price follows capability quality. |
 | Quality cap | **When a model is loaded for a capability, the model's quality in that capability caps the software's quality** (Logan). |
 
 ## 18.2 The model (A)
@@ -53,7 +53,7 @@ A model is a row in its own **models table** in the engine:
 
 - **Data sets the capabilities** (Logan): see 18.3. A capability only gains quality from the data types that train it.
 - **Fine-tuning** (6.5.2) raises one capability by +5 to +10 at 5% of the base run's compute **(T)**.
-- The **Generation** still sets the price tier (18.4) and the frontier race; Quality now lives per capability.
+- The **Generation** still sets the price tier (18.4); there is no frontier race pricing (batch 74). Quality lives per capability.
 
 ### 18.2.1 Size and speed (Logan)
 
@@ -94,7 +94,7 @@ A model is a row in its own **models table** in the engine:
 ## 18.4 Renting models out (Logan: software contracts)
 
 - Models are rented through the **contracts table** (14.4), exactly like software: a **market contract** offered to every company, and occasional **special contracts** (exclusive access, a discount, a custom fine-tune).
-- **Price** follows 6.5.5: the frontier model earns full price, each generation behind earns 40% **(T)**.
+- **Price** follows the model's capability quality (6.5.5); there is no frontier pricing (batch 74).
 - **Serving**: the owner (or the renter, if the contract lets them run it themselves) runs enough copies to handle the jobs, each copy needing the model's **size** in GPU compute (18.2.1). Running short of GPU compute throttles every contract.
 - **Breaking a contract** costs the same penalty as software (14.4).
 

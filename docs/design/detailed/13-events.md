@@ -1,6 +1,6 @@
 # 13. Events, the director and event decks: detailed design
 
-_Status: draft v0.2 (2026-10-18). From Logan's answers in the design Q&A (batches 39 and 40). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.4 (news only through event pop-ups) and every detailed system file. Owner: Logan._
+_Status: draft v0.3 (2026-10-18), consistency pass, batch 74. v0.2 (2026-10-18). From Logan's answers in the design Q&A (batches 39 and 40). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.4 (news only through event pop-ups) and every detailed system file. Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 13.8.
 
@@ -65,26 +65,26 @@ Each deck has its own triggers, weights and cooldowns. Sample events per deck **
 |---|---|---|
 | **Character** | Traits, ambition, health, stress, age (1.1) | *Midlife*: buy a supercar or a yacht, or start a foundation · *The Diagnosis*: health falls 20 · *Old Rival at the Gala* |
 | **Family and succession** | Spouses, partners, children, wills (1.11) | *The Prodigal*: a child wants trust money for a startup · *Second Family*: a hidden lover's child appears · *The Will Reading* |
-| **Company** | The board, management score, sites, growth plans (1.7, 1.8, 10) | *The Board Revolt* · *Key Engineer Poached* · *Site Fire* · *A Buyer Calls* |
+| **Company** | The board, management score, business units, growth plans (1.7, 1.8, 10) | *The Board Revolt* · *Key Engineer Poached* · *Plant Fire* · *A Buyer Calls* |
 | **Industry** | The company's industry and its price index (10) | *Price War* · *Breakthrough at a Rival* · *Regulator Eyes Your Sector* · *GPU Allocation Cut* |
 | **Markets** | Holdings, margin, the market cycle (3) | *Margin Call* · *Short Report* · *Activist Builds a Stake* · *Hot IPO Allocation* |
 | **Real estate** | District pools, occupancy, the property cycle (10.4.5) | *Tenant Walks* · *Rezoning Vote* · *A Tower Comes Up Cheap* |
-| **Vices** | Addiction scores and stages (11) | *The Urge* · *Withdrawal* · *A Dealer's Offer* · *Relapse at the Casino* |
+| **Vices** | Addiction scores and levels (11) | *The Urge* · *Withdrawal* · *A Dealer's Offer* · *Relapse at the Casino* |
 | **Hooks and secrets** | Hooks held and held over the character (1.1.4) | *Blackmail Note* · *Calling in the Favor* · *Your Secret Is Out* |
-| **Strata** | Moving up or down a stratum (2.8.0) | *New Money*: the Nobles snub you · *Slop Riots* in a hub where you own sites · *Welcome to the Glitterati* |
+| **Strata** | Moving up or down a stratum (2.8.0) | *New Money*: the Nobles snub you · *Slop Riots* in a hub where you own business assets · *Welcome to the Glitterati* |
 | **Ideology** | The character's ideology, blocs, movements (5) | *Crisis of Faith* · *The Movement Wants a Donor* · *Your Child Joins the Red Cells* |
 | **Politics** | Elections, laws, regulators, influence (4) | *The Minister's Price* · *Subpoena* · *Election Night* · *Foreign Investment Review* |
 | **Earnings** | The four earnings days (3-markets 3.1.0), guidance and the insider blackout | *The Leaked Report* · *Whisper Number* · *Servers Crash at Midnight* · *The Analyst Call* · *A Friend Wants a Tip* |
 | **Gambling** | Bets and prediction markets (9) | *Hot Tip* · *Whale Table Invite* · *The Market Resolves* |
-| **Techno-Capital** | Compute, fabs, the GPU chain (6) | *Lease Expires* · *Compromised Cluster Found* · *The Lab Breakthrough* |
-| **World and timeline** | Scripted and rolled world events (7.7, 2.6.0) | *Strait Closed* · *Export Controls Tighten* · *The Crash* |
+| **Techno-Capital** | Compute, foundries, GPUs and models (6, 15, 18) | *Lease Expires* · *Compromised Cluster Found* · *The Lab Breakthrough* |
+| **World and timeline** | Scripted and rolled world events (7.7, 10.7) | *Strait Closed* · *Export Controls Tighten* · *The Crash* |
 | **Travel** | Trips and private jets (2.21) | *Flagged at Customs* · *Delayed in Dubai* · *A Stranger on the Jet* |
 
 ## 13.6 Chains and memory
 
 - Every event can set **flags** on characters, companies and places that later events read: "owes a favor", "seen with the rival", "known addict" **(A)**.
 - Chains (10.2) keep their own variables. A chain step can wait days or months before its next event.
-- Long memory: a character remembers a betrayal (an opinion modifier with a long decay, 1.1.4) and the director can bring it back years later.
+- Long memory: a character remembers a betrayal (a lasting opinion push, 1.1.4) and the director can bring it back years later.
 
 ## 13.7 Writing and tooling
 

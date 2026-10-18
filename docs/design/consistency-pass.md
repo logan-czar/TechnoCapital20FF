@@ -1,6 +1,6 @@
 # Consistency pass (2026-10-18)
 
-A sweep of every design file for rules that later decisions replaced. Counts are text matches, so a few are false hits (for example "sites" in "websites", or "stages" in a harmless sense), but each row points at real stale text. Nothing has been changed yet; this lists what is stale, where it is, and the proposed fix.
+A sweep of every design file for rules that later decisions replaced. Counts are text matches, so a few are false hits (for example "sites" in "websites", or "stages" in a harmless sense), but each row points at real stale text. **Done (batch 74, 2026-10-18).** Logan approved every proposed fix. All rows below were applied; what remains of these words is either a "there is no X" statement or a different meaning (the PMC stratum, consumer goods, websites). The table is kept as a record.
 
 ## Stale rules, by decision
 
@@ -23,9 +23,28 @@ A sweep of every design file for rules that later decisions replaced. Counts are
 | Phaser, browser | Godot desktop (batch 41) | 4 | 3 | 12-tech, 05-map, 11-ui | Remove |
 | Anonymous float | Named holders only (batch 58) | 3 | 1 | 3-markets | Reword 3.3.4 intro |
 
-## Structural issues
+## Structural issues (all applied in batch 74)
 
 1. **The old overview files (01 to 14 at the top level)** were written before the detailed files and repeat early rules: 06-economy (goods), 07-markets, 08-politics (interest groups, PMCs) and 14-game-stages (stages) are the most out of date. Proposed fix: turn each into a short summary that points to its detailed file, or delete them.
 2. **2-map-influence-economy.md** is the largest file and still holds most of the Victoria 3 economy (goods, hub prices, shipments). Its map, hubs, influence, strata, real estate and travel parts are still live. Proposed fix: split it, keep the live parts as "map and influence", and drop the economy parts.
 3. **10-industry-economy.md** carries both the new model (10.0) and the old site model (10.1 to 10.11) under a banner. Proposed fix: rewrite it around 10.0 only.
 4. **Banners everywhere.** Many files now open with "this overrides..." banners. Once the stale text is removed, the banners can go too.
+
+## What batch 74 did
+
+- Deleted 14-game-stages.md and the stages folder; live young-company rules moved to 1-corporate-core 1.6.9.
+- Overview files 01 to 08 and 10 are now short summaries pointing to their detailed files.
+- 2-map-influence-economy.md is split: the live parts are detailed/2-map-and-influence.md (same section numbers); the goods economy is gone. Location perks (2.3.5) and real estate pools (2.16) live there.
+- 10-industry-economy.md is rewritten around 10.0; 10.4.1 to 10.4.3 and 10.4.6 are gone.
+- 3-markets runs on the 24/7 calendar everywhere (no sessions, 24 ticks a day; worked examples redone).
+- 4-politics: ideology blocs, company rank, private security instead of PMCs (4.23), no antitrust (C3, S1 and T1 unused), Data Authority, actions instant or in ticks.
+- 6.5.5: frontier race pricing dropped; a model's price follows capability quality.
+- Banners removed; every touched file notes "consistency pass, batch 74".
+
+## Calls made during the pass (check if you like)
+
+- 3.7 commodities: a light neutral model (cost anchor and inventory from the industry supply ratio) until commodities are designed.
+- 2.5.2: the jobs part of influence reads a business unit's wage costs.
+- 10.8: a unit's slop splits across hubs by asset share.
+- 4.13.3 example parties: business party = Landites, Accelerationists, Chuds; centre-left = Liberals, Communists, Effective Altruists.
+- Low health and neuro-dust now change how long timed actions take instead of hours.

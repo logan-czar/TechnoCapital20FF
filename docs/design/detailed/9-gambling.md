@@ -1,6 +1,6 @@
 # 9. Gambling, crypto and prediction markets: detailed design
 
-_Status: draft v0.1 (2026-10-17). From Logan's answers in the design Q&A. Crypto itself is shallow; it lives inside a deep **gambling system**, which is part of the **addiction system** (still to be designed). Builds on [3-markets-and-fx.md](3-markets-and-fx.md) (3.23 crypto) and [1-corporate-core.md](1-corporate-core.md) (characters, stress). Owner: Logan._
+_Status: draft v0.2 (2026-10-18), consistency pass, batch 74: casinos sit in the Gambling industry, four vices. v0.1 (2026-10-17). From Logan's answers in the design Q&A. Crypto itself is shallow; it lives inside a deep **gambling system**, which is part of the **addiction system** (still to be designed). Builds on [3-markets-and-fx.md](3-markets-and-fx.md) (3.23 crypto) and [1-corporate-core.md](1-corporate-core.md) (characters, stress). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 9.7.
 
@@ -55,14 +55,11 @@ Players and AI characters bet on yes-or-no questions about the game world.
 - Games **(A)**: slots, crash games, roulette, blackjack, high-stakes poker against named characters.
 - Stakes are in coins, so a coin's boom or bust changes what the winnings are worth.
 - House edge 2% to 6% by game **(T)**. Poker against characters uses Intrigue and vril, not just chance.
-- Casinos can be owned: a casino is a company with the Crypto exchange business line ([3-markets-and-fx.md](3-markets-and-fx.md) 3.17.1) or a Front Company vassal ([1-corporate-core.md](1-corporate-core.md) 1.7.4) **(A)**.
+- Casinos can be owned: a casino is a business unit in the Gambling industry ([10-industry-economy.md](10-industry-economy.md) 10.3) or a Front Company vassal ([1-corporate-core.md](1-corporate-core.md) 1.7.4) **(A)**.
 
 ## 9.6 Links to the addiction system
 
-> The addiction system is now designed in [11-addiction.md](11-addiction.md). Gambling is one of its five vices.
-
-The addiction system covers **gambling, drugs, cyberware, doomscrolling and sex** (Logan, 2026-10-17: AI addiction swapped out for sex for now), all on characters.
-
+The addiction system ([11-addiction.md](11-addiction.md)) covers **gambling, drugs, doomscrolling and sex**, all on characters.
 
 - Gambling builds an **addiction** score on the character **(A)**: each session adds to it, big losses add more, and a high score triggers urges (events that push the character to gamble) and stress.
 - AI characters gamble too; a Glitterati or Noble with a gambling addiction is a target for hooks and blackmail.

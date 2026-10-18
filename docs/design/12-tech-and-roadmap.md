@@ -42,7 +42,7 @@ TechnoCapital20FF/
 ```
 
 **The engine is the source of truth (Logan).**
-- All game state lives in the engine as **tables** (characters, companies, holdings, sites, products, laws and so on), keyed by ids. GDScript never keeps its own copy of game rules or state; it keeps only what it is showing.
+- All game state lives in the engine as **tables** (characters, companies, holdings, business units, products, laws and so on), keyed by ids. GDScript never keeps its own copy of game rules or state; it keeps only what it is showing.
 - The engine runs on its **own thread** and ticks in the background at the chosen speed.
 - **Query tables (views)**: after each tick the engine updates ready-made tables for screens, for example the Portfolio rows, a company's board and products, a hub's influence ranking or the news feed. A screen reads one view instead of computing anything, so it opens instantly (Logan).
 - Views update only when their source rows changed (dirty flags), and heavy views (rankings, leaderboards) update on their own cadence (daily or weekly).
@@ -70,7 +70,7 @@ Rebuilt around the current design; the build starts only when Logan says so.
 1. **Skeleton**: Godot project in GDScript, the Rust engine as a GDExtension, the callable API, the hourly tick loop with speeds and pause, the top bar, save and load.
 2. **Characters and dynasty**: generation, skills, traits, ambitions, health, opinions, trusts, succession.
 3. **Companies**: charters, boards and the management score, ownership and blocs, ranks, founding paths.
-4. **Economy**: industries and price indices, sites, real estate pools, the Portfolio screen.
+4. **Economy**: industries and price indices, business units, real estate pools, the Portfolio screen.
 5. **Markets**: quotes, orders, IPOs, bonds, FX.
 6. **Map and influence**: hubs, districts, influence tiers, travel.
 7. **Events**: engine, director, first decks (about 10 events each), the opening quest "Papers".
