@@ -1,80 +1,81 @@
-# 15. Infrastructure: compute, servers, databases and the cloud (detailed design)
+# 15. Infrastructure: compute, data centers, databases and the cloud (detailed design)
 
-_Status: draft v0.1 (2026-10-18). Logan picked "compute, servers, databases, and the cloud" as the next system (batch 44). It is what software runs on: every software instance ([14-software.md](14-software.md) 14.2.2) needs compute and database space, and companies pay for it on their own servers or in a cloud bill. This first draft is Claude's proposal, marked **(A)**, for Logan to confirm in batch 45. Builds on [6-technocapital.md](6-technocapital.md) (compute in H, leasing, data centers, the GPU chain) and [10-industry-economy.md](10-industry-economy.md) (the Cloud and data centers industry, sites, real estate pools). Owner: Logan._
+_Status: draft v0.2 (2026-10-18). Logan picked "compute, servers, databases, and the cloud" as the next system (batch 44) and set its core in batch 45: **three compute types** built from parts, each with a maintenance score; **onsite or leased data centers**; **one world cloud price to start**; data has value; **no data residency rules**. It is what software runs on: every software instance ([14-software.md](14-software.md) 14.2.2) needs compute, and companies pay for it in their own data centers or in a cloud bill. Builds on [6-technocapital.md](6-technocapital.md) (compute, the GPU chain) and [10-industry-economy.md](10-industry-economy.md) (sites, real estate, the Cloud and data centers industry). Owner: Logan._
 
-**How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption; the list is in 15.8.
+**How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 15.8.
 
 ---
 
-## 15.1 The four parts (A)
+## 15.1 Decided by Logan
 
-| Part | What it is | Unit |
-|---|---|---|
-| **Compute** | Processing power that software instances and AI models use | **C** (general compute, CPU) and **H** (AI compute, GPU, 6.1) |
-| **Servers** | The physical machines a company owns that provide compute and storage | Racks |
-| **Databases** | Storage space for data (14.2.2) | TB |
-| **Cloud** | Compute and storage rented from a cloud provider instead of owned | A monthly cloud bill |
+| Topic | Decision |
+|---|---|
+| Compute types | **Three**: base compute, data compute and GPU compute (15.2). Each is built from parts and has a maintenance score. |
+| Where compute lives | **Onsite data centers at any of a company's sites**, or space in **data centers owned by cloud companies and leased** to them (15.3). |
+| The cloud | **One world price to start**, like spot compute (15.5). Provider contracts can come later. |
+| Data | **Stored data has value**: it can be sold, fed into other software or used to train AI, and most of it loses value as it ages (15.4). |
+| Residency | **No residency rules**: data can sit anywhere (15.4). |
 
-## 15.2 Compute (A)
+## 15.2 The three compute types (Logan)
 
-- **Two kinds.** General compute (**C**) runs ordinary software: SaaS, apps, banking systems. AI compute (**H**, 6.1) runs AI models, training runs and software with AI features (14.5). AI compute can do general work at a poor exchange rate (1 H does 50 C of work **(T)**); general compute cannot do AI work.
-- Each software instance needs its compute requirement ÷ quality factor (14.2.1), every tick it runs.
-- **Short of compute**, instances slow down: speed falls in proportion, and input data piles up in storage or is discarded (14.2.2).
-
-## 15.3 Servers (A)
-
-- A **server rack** is owned hardware: a set amount of C or H, plus storage in TB. Racks are bought new from hardware makers (GPU racks go through the GPU chain, 6.7.0) or used.
-- Racks sit **at a site** (10): a small server room in an office site, or a **data center** site on industrial real estate (10.4.5) for large fleets.
-- Costs: the rack price up front, then **power** (from the energy price index, 2.6.0), cooling and staff each month. Racks age: old racks give less compute per dollar of power, and break down more often **(T)**.
-- Idle capacity on owned racks can be leased out on the cloud market (15.5), as 6.3.4 already allows for compute.
-
-| Rack type **(T)** | Compute | Storage | Price | Power |
+| Type | What it is | Runs | Parts per unit | Maintenance score |
 |---|---|---|---|---|
-| General rack | 1,000 C | 200 TB | $300,000 | 15 kW |
-| Storage rack | 100 C | 2,000 TB | $250,000 | 8 kW |
-| AI rack | 2 H (≈ 2,000 accelerator-hours a month) | 50 TB | $3M | 120 kW |
+| **Base compute** | Classical computing. A desktop is 1 unit; a database server is 10 | Enterprise and desktop software | **1 base computer part** | **1** |
+| **Data compute** | Database- and storage-optimized compute, like data warehousing | Storage and processing of data for software | **0.5 base computer part** | **0.2** |
+| **GPU compute** | Accelerated compute for AI | **AI software requires it**; AI models and training runs (6) | **1 GPU part + 0.1 base computer part** | **5** |
 
-## 15.4 Databases (A)
+- **Ratios vary by software (Logan).** A basic enterprise program needs data compute and base compute at about **1 to 1**, but every app is different. Each software row's compute requirement (14.2) lists how many units of each type it needs per instance **(A)**.
+- **Demand over time (Logan).** GPU compute starts with **low demand** in 2022 and then **skyrockets** with the AI boom (6.7.0). Base and data compute demand grows steadily with the economy **(A)**.
+- **Parts.** Base computer parts come from the Consumer electronics and Semiconductors industries; GPU parts are the GPUs at the end of the GPU chain (6.7.0) **(A)**. A unit of compute is built by buying its parts and installing them in a data center.
+- **Maintenance score.** The upkeep a unit needs each month: power, cooling, repairs and staff time **(A)**. Monthly upkeep per unit = maintenance score × the **maintenance price** (about $50 at start, moved by the energy price index and local wages) **(T)**. So a GPU unit costs 25 times as much to keep running as a data compute unit. Skipping maintenance lowers the units' output and raises breakdown events.
+- **Mapping to Techno-Capital (A).** GPU compute is the AI compute of [6-technocapital.md](6-technocapital.md) (H): 1 unit of GPU compute delivers 1 H a month **(T)**.
 
-- **Storage** is measured in TB on owned racks or rented in the cloud.
-- **Stored data** is kept by type (transactions, user activity, sensor feeds and so on, 14.2.2) and by owner.
-- Data has a **value** that can be sold under contract to other companies, fed into other software, or used to train AI models. Most data loses value with age (−5% a month **(T)**); some types (medical, financial history) keep it.
-- A company's **database requirement** is the sum of its instances' needs (14.2) plus whatever stored data it keeps. Over capacity, new input data is discarded until space is added.
-- Privacy laws (T2, [4-politics.md](4-politics.md)) cap what data can be stored or sold in each country, and where it must be kept (data residency).
+## 15.3 Data centers (Logan)
 
-## 15.5 The cloud (A)
+- **Onsite data centers.** A company can put a data center at **any of its sites** (10). Its size is limited by the site's real estate and power.
+- **Leased space in cloud data centers.** Cloud companies own large data centers and **lease space to other companies**, who install their own compute units there. The lease is paid monthly per unit of space **(A)**.
+- **Cloud companies** are companies in the Cloud and data centers industry (10). Their data centers are their sites, on industrial real estate (10.4.5), with power from the energy index (2.6.0).
+- A data center has **capacity** (how many units of compute it can hold) and a **power draw**: about 1 kW per base compute unit, 0.3 kW per data compute unit and 5 kW per GPU compute unit **(T)**.
+- Idle compute a company owns can be sold to the cloud market at the world price (15.5).
 
-- **Cloud providers** are companies in the Cloud and data centers industry (10) that own large data centers and sell compute and storage.
-- They sell through the **contracts system** (14.4): a **market contract** with a price per C, H and TB per month that any company can sign, and **special contracts** for big customers (reserved capacity, discounts, exclusive GPU allocations).
-- The **cloud bill** is the monthly sum of everything a company uses under its cloud contracts. It rises and falls as the company scales its instances (14.2.2).
-- **Spot** capacity is cheaper but can be taken back; **reserved** capacity costs more but is guaranteed for the term (6.3.4).
-- Cloud contracts are tied to a **region**: data stays where the provider's data center is, which matters for privacy laws, export controls (6.9.1) and chokepoint outages.
-- Starting providers: three US hyperscalers, one Chinese, and one European, with a few regional players **(A)**.
+## 15.4 Databases and stored data
 
-## 15.6 Own servers or cloud? (A)
+- **Data compute is where data lives.** Stored input and output data (14.2.2) takes data compute capacity: 1 unit of data compute stores 10 TB **(T)** and processes it for software.
+- **Stored data has value (Logan).** It can be **sold**, **fed into other software**, or **used to train AI models** (6.5). Value depends on its type (transactions, user activity, sensor feeds and so on) and on how many companies want it **(A)**.
+- **Data ages (Logan).** Most data loses value as it gets older, about 5% a month **(T)**; some types, such as medical and financial history, keep their value **(A)**.
+- **No residency rules (Logan).** Data can be stored and processed in any country. Privacy laws (T2, [4-politics.md](4-politics.md)) can still limit what may be collected or sold, but not where it sits **(A)**.
 
-| | Own servers | Cloud |
+## 15.5 The cloud (Logan)
+
+- **One world price to start.** Any company can rent base, data or GPU compute from the cloud by the hour at a **world cloud price** per unit, with no contract, like spot compute (6.3.4).
+- The price moves with **demand against supply**: supply is all the idle compute that cloud companies (and anyone else) offer; demand is everything companies rent. When GPU demand skyrockets, the GPU cloud price follows **(A)**.
+- **Cloud revenue** goes to the owners of the compute being rented, in proportion to what they offer **(A)**.
+- The **cloud bill** is what a company pays each month for the compute it rents. It rises and falls as the company scales its software instances (14.2.2).
+- **Later**: cloud provider contracts (reserved capacity, discounts, exclusive GPU allocations) through the contracts system (14.4).
+
+## 15.6 Own or rent? (A)
+
+| | Own compute (onsite or leased space) | Rent from the cloud |
 |---|---|---|
-| Up front | Rack prices | None |
-| Monthly | Power, cooling, staff | The bill: about 2× the running cost of owned racks at the same use **(T)** |
-| Scaling | Slow: buying and installing racks takes weeks | Instant |
-| Control | Full; secret tasks allowed (6.3.4) | The provider can see usage and cut you off; governments can subpoena it |
-| Risk | Breakdowns, power cuts at your site | Provider outages, price rises, sanctions on the provider |
+| Up front | Parts and installation | None |
+| Monthly | Maintenance (score × maintenance price), plus the space lease if in a cloud data center | The world cloud price × units × hours |
+| Scaling | Slow: buying parts and installing them takes weeks | Instant |
+| Control | Full; secret tasks allowed (6.3.4) | None; the provider sees the usage |
+| Risk | Breakdowns and power cuts at the site | Price spikes when demand rises, above all for GPUs |
 
 ## 15.7 How it connects
 
 | System | Link |
 |---|---|
-| Software (14) | Instances need compute and database space; scaling raises the server load or the cloud bill |
-| Techno-Capital (6) | H is the same AI compute as Techno-Capital; GPU racks come from the GPU chain |
-| Economy (10) | Data centers are sites on industrial real estate; power comes from the energy index; cloud revenue counts in the Cloud and data centers industry |
-| Politics (4) | Privacy laws and data residency; export controls on AI racks and cloud access |
-| Events (13) | An Infrastructure deck: *Outage*, *Power Cut*, *Cloud Price Hike*, *Rack Fire*, *Data Breach* (once hacking exists) |
+| Software (14) | Instances need base, data or GPU compute; scaling changes the owned load or the cloud bill |
+| Techno-Capital (6) | GPU compute is the H of Techno-Capital; GPU parts come from the GPU chain |
+| Economy (10) | Data centers are sites; parts come from the electronics and semiconductor industries; cloud revenue counts in the Cloud and data centers industry |
+| Events (13) | An Infrastructure deck: *Outage*, *Power Cut*, *GPU Price Spike*, *Rack Fire* |
 
 ## 15.8 Assumptions and open items
 
-1. Two kinds of compute (C and H) and the exchange rate in 15.2.
-2. Rack types, prices and power in 15.3.
-3. Data value and decay in 15.4.
-4. Cloud through the contracts system, regions and starting providers in 15.5.
-5. The own versus cloud comparison in 15.6.
+1. Where parts come from, the maintenance price and the GPU-to-H mapping in 15.2.
+2. Data center capacity, space leases and power draw in 15.3.
+3. Storage per data compute unit, data value and ageing in 15.4.
+4. How the world cloud price moves and who earns from it in 15.5.
+5. The own versus rent comparison in 15.6.

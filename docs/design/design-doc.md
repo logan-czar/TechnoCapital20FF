@@ -49,7 +49,7 @@ Exact rules, numbers and content for each layer of the game:
 | 12. Setup, fair AI, dynasty score and saves | [detailed/12-setup-and-score.md](detailed/12-setup-and-score.md) |
 | 13. Events (frequency, the director, AI events, event decks) | [detailed/13-events.md](detailed/13-events.md) |
 | 14. Software (the software table and software contracts; hacking later) | [detailed/14-software.md](detailed/14-software.md) |
-| 15. Infrastructure (compute, servers, databases, the cloud) | [detailed/15-infrastructure.md](detailed/15-infrastructure.md) |
+| 15. Infrastructure (three compute types, data centers, data, the cloud) | [detailed/15-infrastructure.md](detailed/15-infrastructure.md) |
 
 ## Vision
 

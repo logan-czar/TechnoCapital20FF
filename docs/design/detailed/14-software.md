@@ -29,8 +29,8 @@ Every column is Logan's (batches 42 and 43).
 | **Inputs** | What it needs to run: the **types of input data** it processes, plus other software it depends on (14.3) |
 | **Outputs** | The **types of output data** it produces from its input data; the value of that data to the companies using it is what they pay for (14.3) |
 | **Version** | Major and minor version; a new major version is a release event |
-| **Database requirements** | Storage it needs, in TB, held in data centers or rented cloud (6) |
-| **Compute requirements** | Compute it needs to run, in H (6.1) |
+| **Database requirements** | Data compute it needs to store and process its data, per instance ([15-infrastructure.md](15-infrastructure.md) 15.4) |
+| **Compute requirements** | Units of base compute, and GPU compute for AI software, per instance (15.2) |
 | **Features** | What it can do. A feature typically **adds a new type of output data**, and can also require new inputs or more or different types of compute (Logan, batch 44; 14.5) |
 | **Speed** | **The amount of input data processed (translated into output data) per game tick** (Logan, batch 44), per instance (14.2.2) |
 | **Bloat** | **A modifier that extends the time it takes to maintain, update and add features to the software** (Logan). It **rises with each feature added** (batch 44) |
@@ -51,7 +51,7 @@ Every column is Logan's (batches 42 and 43).
 - **Data is what software works on.** Each product takes in input data of certain types and translates it into output data of other types. Data types are named, for example *transactions*, *user activity*, *sensor feeds*, *documents*, *market ticks*, *ad impressions* **(A)**.
 - **Input data can be stored or discarded** (Logan). Stored data fills database space (15) and can be processed later, sold under a contract, or fed to other software and AI models. Discarded data is gone.
 - **Instances.** A company using a piece of software runs one or more **instances** of it. Each instance processes up to the software's effective speed per tick and needs the software's compute and database requirements.
-- **Scaling (Logan).** When a company has more input data than its instances can process, it **scales up**: it runs more instances and pays for the extra on its own **servers** or in its **cloud bill** (15). Scaling down cuts the bill. Unprocessed data waits in storage or is discarded.
+- **Scaling (Logan).** When a company has more input data than its instances can process, it **scales up**: it runs more instances and pays for the extra in its own **data centers** or in its **cloud bill** (15). Scaling down cuts the bill. Unprocessed data waits in storage or is discarded.
 - By default the company's operations staff scale instances automatically to keep up; the player can cap the bill **(A)**.
 
 ## 14.3 Inputs, outputs and nerfed output
