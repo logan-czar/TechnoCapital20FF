@@ -186,7 +186,7 @@ Each **industry** has one world market whose yearly demand grows on its trend an
 | Banking | Finance | $2.5T | +4% | 1.4 | Positive (gains when rates rise) | 30% | 0.55 | Uses deposits (3.17) | Credit losses | 0.5 |
 | Insurance | Finance | $6T | +4% | 0.6 | Positive | 8% | 0.30 | Uses float (3.17) | Disasters | 0.3 |
 | Asset management | Finance | $500B | +6% | 1.5 | Medium | 30% | 0.50 | 0.1 | Markets level | 0.2 |
-| Oil | Energy | $2.5T | +1% | 0.8 | Low | 25% at oil index 100 | 0.60 | 2.5 | Oil price (10.6) | 0.2 |
+| Oil | Energy | $2.5T | 0% (stagnant, Logan batch 86) | 0.8 | Low | 25% at oil index 100 | 0.60 | 2.5 | Oil price (10.6) | 0.2 |
 | Gas | Energy | $1T | +2% | 0.8 | Low | 22% at gas index 100 | 0.60 | 2.5 | Gas price (10.6) | 0.2 |
 | Power utilities | Energy | $2.5T | +2.5% | 0.3 | High | 15% | 0.70 | 3.0 | Gas price | 0.3 |
 | Renewables | Energy | $350B | +12% | 0.6 | Very high | 20% | 0.80 | 4.0 | Rates | 0.1 |
@@ -277,7 +277,7 @@ Running business units is mostly automatic (Logan, batch 21). The executives run
 | **Buy or sell assets** | Part of a unit's assets, priced from book value × the cycle factor (10.0.7); the buyer must be in the same industry | As 10.0.7 |
 | **Merge units** | Two units in one industry owned by one corporation become one; fixed costs -10% | 3 months |
 | **Spin off** | One or more units become a new corporation; shares go to the parent's holders or are sold in an IPO (3.4) | 3 months |
-| **AI deals** | AI companies buy, sell, merge and spin off by archetype (2.23): a raider strips weak companies and sells their best units, an empire builder buys assets, a cautious owner sells into booms (Logan) | Monthly decision |
+| **AI deals** | **AI companies do not buy other companies unless the game director tells them to** (Logan, batch 86). Otherwise they buy and sell business assets and units by archetype (2.23): a raider sells weak units, an empire builder buys assets, a cautious owner sells into booms | Monthly decision; acquisitions only on the director's call |
 | **Private company value** | The post-money value of its last funding round; with no round in the last 2 years, net income × the industry's average P/E × 0.7 (private discount) (Logan) | |
 | **Can't pay its debts** | The default chain (3.6.6): a standstill, then creditors vote. They can extend and swap debt for equity (the creditors take the company), sell it whole, or take or auction its units one by one at the sale prices of 10.0.7 (Logan) | 2 to 6 months |
 

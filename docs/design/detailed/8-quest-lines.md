@@ -1,6 +1,6 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v1.5 (2026-10-18). Batch 85: the interrogation roll and Mandy's four endings, including the Canadian Furry Cartel. Batch 84: the Mink Scare's four stages and Mandy's interrogation, CPU delegation without rolls, the quarterly recap screen. Batch 83: the six First Week events, Vril Touch, the Mink Scare; the old tutorial arcs are dropped. Batch 81: the opening sequence (start on 1 January, the first earnings day, First Week on the Job, Intro Night, The Scandal). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v1.6 (2026-10-18). Batch 86: Arc 2 is now Oil Software (Q2 to Q4 2020); options vest in January 2021; the early AI move belongs to Arc 3. Batch 85: the interrogation roll and Mandy's four endings, including the Canadian Furry Cartel. Batch 84: the Mink Scare's four stages and Mandy's interrogation, CPU delegation without rolls, the quarterly recap screen. Batch 83: the six First Week events, Vril Touch, the Mink Scare; the old tutorial arcs are dropped. Batch 81: the opening sequence (start on 1 January, the first earnings day, First Week on the Job, Intro Night, The Scandal). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.6.
 
@@ -152,19 +152,27 @@ Whenever the Mink Scare resolves, **7 days before the 2 April earnings** John ge
 
 **Outcomes.** Strong: the board trusts you and the crews follow you; +2 Operations. Mixed: +1 Operations. Poor: Terry marks you as a Rival.
 
-### Arc 2: The Smallest Oil Company
+### Arc 2: Oil Software (Q2 to Q4 2020, Logan, batch 86)
+
+**The pitch.** The **oil industry is stagnant**: its demand is not growing while **renewables** are (10.3), and it is time to act. **Terry correctly spots a gap**: there is **no enterprise software specialized for the oil industry**, so every oil company uses general enterprise software to turn its **unstructured industry data into structured industry data**, inefficiently (14.2.2).
+
+From **Q2 to Q4 2020** the arc takes John through building that software:
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | Cheap Gulf oil squeezes the margins (7.2.0): cut costs or find a buyer for your oil | The oil price index (10.6), industry cycles |
-| 2 | Survive the first earnings day at 00:00 on 2 April 2020 | Earnings days, guidance rolls (3.1.0) |
-| 3 | Your options vest: hold, sell or borrow against them | Personal margin and pledged shares (1.10.6) |
+| 1 | **Set up a software business unit** at Arrowhead (the Software industry, 10.3) | Business units in any industry (10.0.5) |
+| 2 | **Create in-house enterprise software specialized for oil**: a new row in the software table whose input is unstructured oil data and output is structured oil data | The software table, inputs and outputs (14.2, 14.3) |
+| 3 | **Update it to improve quality**, version by version | Versions, quality and bloat (14.2.1) |
+| 4 | **Make decisions along the way** that push **quality, speed or capacity** | The trade-offs in 14.2.1; compute and cloud (15) |
+| 5 | **Terry presses John** to run casino money through Arrowhead (batch 86): agree, stall or refuse, which tests the befriend-or-bring-down choice from Arc 1 | Hooks, laundering risk (4), loyalty |
+| 6 | **Finished: keep it or lease it.** **Keep** the software in-house for a **competitive advantage** (Arrowhead's oil unit processes its data better than every rival), or **lease it out** to other oil companies through software contracts for **quick cash** (14.4) | Software contracts; strategy |
+| 7 | **January 2021: the cliff.** John's first options vest (8.3); hold, sell or borrow against them (batch 86) | Personal margin and pledged shares (1.10.6) |
 
-**Outcomes.** Strong: the stock rises and the company is no longer the smallest; +2 Finance. Mixed: +1 Finance. Poor: a bad quarter and a takeover bid from a bigger oil company.
+**Outcomes (A).** Strong: high-quality software that sets the industry standard; +2 Tech or Finance. Mixed: working but bloated software; +1 Finance. Poor: a costly flop that eats the year's budget. Arrowhead is never bought out here: AI companies do not buy other companies unless the director tells them to (10.5.4).
 
 ### Arc 3: Power Play
 
-Opens once the AI boom starts.
+Opens once the AI boom starts. It also holds John's **early AI move** before the boom, such as a stake in the tipped lab (Logan, batch 86; to be designed).
 
 | Step | Goal | Teaches |
 |---|---|---|
