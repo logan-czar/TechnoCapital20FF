@@ -124,6 +124,7 @@
 - Batch 95 (Logan, 2026-10-18): history of 2001. Enron does not collapse; it grows to about 5 times its real size and is exposed by an investigative journalist in late 2003. No anthrax letters. The Indian parliament attack happens. Iraq unfolds as usual (read: the real path and schedule, ending in the quick win in 7.2.0). 2002 drafted.
 - Batch 96 (Logan, 2026-10-18): history of 2002. WorldCom still falls, but only a weaker accounting law passes until Enron in 2003; SARS happens and stays a regional scare; the Bali bombings happen. 2003 drafted.
 - Batch 97 (Logan, 2026-10-18): history of 2003. Enron's exposure causes a sharp, short fall in energy and financial stocks and a tough accounting law, no recession; the journalist who exposes it is a fictional character, famous by 2020 (named with the starting characters); Saddam is caught when Baghdad falls in April. 2004 drafted.
+- Batch 98 (Logan, 2026-10-18): history of 2004. No Madrid bombings (Rajoy wins, Spain stays in Iraq); the Orange Revolution happens and leads to the 2005 invasion; Bush wins more easily. 2005 drafted.
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm

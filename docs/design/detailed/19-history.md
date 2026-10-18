@@ -1,6 +1,6 @@
 # 19. History: the world from the 1990s to 2020 (detailed design)
 
-_Status: draft v0.5 (2026-10-18; 2000 to 2003 ruled in batches 94 to 97, 2004 drafted). Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
+_Status: draft v0.6 (2026-10-18; 2000 to 2004 ruled in batches 94 to 98, 2005 drafted). Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
 
 **How to read this file.** Everything below is **real history**, as a base. Rows Logan has confirmed or changed are marked **(Logan)**; everything else is a draft for him to rule on. Where a real event clashes with the alternate history already decided (7.2.0), the clash is flagged.
 
@@ -127,22 +127,44 @@ Effects **(A)**: no Department of Homeland Security, no Patriot Act, and no Guan
 
 **Global (draft).** The **Indian Ocean tsunami** (26 December) kills about 230,000 across a dozen countries. The **EU grows by ten members** (1 May). **Google goes public** (August), and **Facebook** is founded at Harvard (February). Pop culture: **World of Warcraft**, **Half-Life 2**, *Shrek 2* and *Mean Girls*. The **Athens Olympics** go as in real life.
 
-> **Questions to rule on.** (1) **The Madrid train bombings** (March, 193 dead) were by an al-Qaeda-inspired local cell, three days before Spain's election, which then swung to Zapatero, who pulled Spain out of Iraq. a) ★ They never happen: Aznar's party wins, and Spain stays in Iraq. b) They still happen. (2) **Ukraine's Orange Revolution** (November to December): Yushchenko is poisoned, the rigged vote is overturned, and he wins. a) ★ It happens, and Putin sees it as a Western coup on his border, which leads straight to the **2005 invasion**. b) It never happens. (3) **The US election.** a) ★ Bush wins more easily than in real life, on the quick Iraq win and a strong economy. b) Kerry wins.
+**Rulings (Logan, batch 98).** (1) **The Madrid bombings never happen**: Aznar's party (under Rajoy) wins Spain's March election, and Spain stays in Iraq. (2) **The Orange Revolution happens**, and Putin reads it as a Western coup on his border, which leads straight to the 2005 invasion. (3) **Bush wins more easily** than in real life, on the quick Iraq win and a strong economy.
 
 | Region | Big events of 2004 (real, with game-world changes marked **(A)**) |
 |---|---|
-| **North America** | 1. **Bush is re-elected** over John Kerry (November) **(see question 3)**. 2. **(A)** No Abu Ghraib scandal and no Fallujah battles, since there is no insurgency; Iraq's oil exports grow fast under US protection. 3. Canada's **Paul Martin** is cut to a minority government by a sponsorship scandal (June). Also: **Martha Stewart** is convicted (March), and the Super Bowl halftime "wardrobe malfunction" (February). |
+| **North America** | 1. **Bush is re-elected** over John Kerry by a wide margin (November, Logan). 2. **(A)** No Abu Ghraib scandal and no Fallujah battles, since there is no insurgency; Iraq's oil exports grow fast under US protection. 3. Canada's **Paul Martin** is cut to a minority government by a sponsorship scandal (June). Also: **Martha Stewart** is convicted (March), and the Super Bowl halftime "wardrobe malfunction" (February). |
 | **Latin America** | 1. **Aristide is ousted** in Haiti, and UN peacekeepers arrive (February). 2. **Chávez survives** a recall referendum (August). 3. **Brazil leads** the UN Haiti mission, and Lula's star rises abroad. |
-| **Europe** | 1. The **EU expands** into the east (May). 2. The **Madrid train bombings** (March) **(see question 1)**. 3. The **EU constitution** is signed in Rome (October). Also: Dutch filmmaker **Theo van Gogh** is murdered by an Islamist (November). |
-| **Russia and the former USSR** | 1. The **Beslan school siege**: Chechen militants take over 1,100 hostages, and 334 die, most of them children (September). Putin uses it to end elected governors. 2. Ukraine's **Orange Revolution** (November to December) **(see question 2)**. 3. **Yukos is broken up** and its main unit sold to the state's Rosneft (December). Also: Putin is re-elected (March). |
+| **Europe** | 1. The **EU expands** into the east (May). 2. **(Logan) No Madrid bombings**: Rajoy wins Spain's election (March), and Spain stays in Iraq. 3. The **EU constitution** is signed in Rome (October). Also: Dutch filmmaker **Theo van Gogh** is murdered by an Islamist (November). |
+| **Russia and the former USSR** | 1. The **Beslan school siege**: Chechen militants take over 1,100 hostages, and 334 die, most of them children (September). Putin uses it to end elected governors. 2. Ukraine's **Orange Revolution**: Yushchenko is poisoned, the rigged vote is overturned, and he wins (November to December, Logan). Moscow calls it a Western coup. 3. **Yukos is broken up** and its main unit sold to the state's Rosneft (December). Also: Putin is re-elected (March). |
 | **Middle East and North Africa** | 1. **Arafat dies** (November). 2. **(A) Iraq's first elected government** is set up, and US troops begin to draw down. 3. Israel's **Gaza withdrawal plan** is approved (October). Also: Pakistan's **A.Q. Khan** confesses to selling nuclear secrets to Iran, Libya and North Korea (February). |
 | **Sub-Saharan Africa** | 1. The US calls **Darfur a genocide** (September). 2. **Mbeki** wins a second term as South Africa marks ten years of democracy (April). 3. **Equatorial Guinea coup plot**: Mark Thatcher and mercenaries are caught (August). |
 | **South Asia** | 1. The **tsunami** devastates Sri Lanka, southern India and the Maldives (December). 2. **Congress wins** India's election in an upset, and **Manmohan Singh** becomes prime minister (May). 3. **(A) Massoud wins Afghanistan's first presidential election** (October). |
 | **East Asia** | 1. **Lenovo buys IBM's PC business** (December), China's first big tech takeover abroad. 2. **Chen Shui-bian** is narrowly re-elected in Taiwan after being shot the day before the vote (March). 3. The **Chūetsu earthquake** in Japan (October). Also: a train explosion at **Ryongchon**, North Korea (April). |
 | **Southeast Asia and Oceania** | 1. The **tsunami** kills about 170,000 in **Aceh** and devastates Thailand's beaches (December). 2. **Susilo Bambang Yudhoyono** wins Indonesia's first direct presidential election (September). 3. **Howard** wins a fourth term in Australia (October). Also: the **Tak Bai** massacre deepens Thailand's southern insurgency (October). |
 
-**Logan's ruling on 2004:** _pending._
+**Logan's ruling on 2004 (batch 98):** everything above happened, with the changes in the rulings box.
 
-## 19.7 2005 onward
+## 19.7 The year 2005 (draft)
 
-To be written year by year after 2004 is settled, up to the 2020 start. Already set: **Russia invades Ukraine in 2005** (7.2.0).
+**Global (draft).** **Russia invades Ukraine** (7.2.0), the biggest war in Europe since 1945. **Hurricane Katrina** drowns New Orleans (August). **Pope John Paul II dies**, and Benedict XVI is elected (April). The **Kyoto Protocol** takes effect (February). Tech and pop culture: **YouTube** and **Reddit** are founded, **Google Maps** and the **Xbox 360** launch, and *Revenge of the Sith* closes out Star Wars.
+
+**The invasion (drafted for ruling).** Yushchenko takes office in January and asks to join NATO and the EU. In **spring 2005** Russia attacks, saying it is protecting Russian speakers. It takes **Crimea** in days and pushes into the **Donbas** and toward **Kyiv**, but the Kyiv drive stalls. By winter the front freezes roughly along the Dnieper's eastern edge **(A)**, and both sides dig in. Oil spikes briefly, then falls back as Iraq's output grows **(A)**.
+
+> **Questions to rule on.** (1) **How far does Russia get in 2005?** a) ★ Crimea and the Donbas fall, the push on Kyiv fails, and the front freezes into the long war. b) Russia takes everything east of the Dnieper. c) Kyiv falls, and the war goes on from western Ukraine. (2) **How does the West respond?** a) ★ Heavy sanctions and arms for Ukraine, but no NATO troops, and Europe starts weaning itself off Russian gas. b) NATO sends troops to defend western Ukraine. (3) **The London bombings** (7 July, 52 dead) were by a homegrown cell inspired by al-Qaeda. a) ★ They never happen. b) They still happen.
+
+| Region | Big events of 2005 (real, with game-world changes marked **(A)**) |
+|---|---|
+| **North America** | 1. **Hurricane Katrina** floods New Orleans and kills about 1,400, and the federal response is a scandal (August). 2. **(A)** The US leads the Western response to Russia's invasion: sanctions, arms and money for Ukraine **(see question 2)**. 3. Canada legalizes **same-sex marriage** nationwide (July), and Paul Martin's government falls in a no-confidence vote (November). |
+| **Latin America** | 1. **Evo Morales** wins Bolivia's presidency, its first Indigenous president (December). 2. **Argentina's debt swap** writes off most of its defaulted debt (February to March). 3. The **Mar del Plata summit** buries the US plan for a free-trade area of the Americas, led by Chávez (November). |
+| **Europe** | 1. **France and the Netherlands reject** the EU constitution (May to June). 2. **Angela Merkel** becomes Germany's chancellor (November). 3. **Riots** spread through France's suburbs (October to November). Also: the **Live 8** concerts and the **Gleneagles G8** cancel the debts of the poorest countries (July). |
+| **Russia and the former USSR** | 1. **Russia invades Ukraine** (spring) **(see question 1)**. 2. Kyrgyzstan's **Tulip Revolution** ousts Akayev (March), which Moscow also blames on the West. 3. Uzbekistan's army kills hundreds of protesters at **Andijan** (May). **(A)** Russia cuts gas to Ukraine, and transit to Europe through Ukraine stops. |
+| **Middle East and North Africa** | 1. Lebanon's former prime minister **Hariri is assassinated** (February), and the **Cedar Revolution** forces Syria out of Lebanon (April). 2. **Ahmadinejad** wins Iran's presidency (June). 3. **Israel leaves Gaza** (August). Also **(A)**: Iraq votes in a constitution and its first full parliament peacefully (October to December). |
+| **Sub-Saharan Africa** | 1. Sudan's **north-south peace deal** ends Africa's longest civil war (January). 2. **Ellen Johnson Sirleaf** wins Liberia's presidency, Africa's first elected woman head of state (November). 3. Mugabe's **Operation Murambatsvina** bulldozes the homes of 700,000 people (May to July). |
+| **South Asia** | 1. The **Kashmir earthquake** kills about 86,000 (October). 2. The **US-India nuclear deal** framework is agreed (July). 3. **Bombings in Delhi** markets kill 62 (October). |
+| **East Asia** | 1. **Anti-Japan protests** sweep Chinese cities (April). 2. **Koizumi wins a landslide** on privatizing Japan Post (September). 3. **North Korea declares** it has nuclear weapons (February). |
+| **Southeast Asia and Oceania** | 1. The **Aceh peace deal** ends 30 years of war, after the tsunami (August). 2. **Thaksin** wins a landslide re-election (February). 3. The second **Bali bombings** kill 20 (October). |
+
+**Logan's ruling on 2005:** _pending._
+
+## 19.8 2006 onward
+
+To be written year by year after 2005 is settled, up to the 2020 start.
