@@ -1899,9 +1899,8 @@ Laundering turns dirty money into clean money at a fee. Each method has a capaci
 | **Trade misinvoicing** | A trading or logistics company with cross-border trade | 3% | Monthly | Up to 10% of the company's cross-border trade value | 40%; also +1 Tax Authority exposure per $3M |
 | **Shell layering** | Shell Companies in F5 Secrecy or Haven jurisdictions | 4% per layer | 2 weeks per layer | Unlimited | 50% per layer (1 layer 50%, 2 layers 25%, 3 layers 12.5%) |
 | **Art and collectibles** | A freeport warehouse account | 15% | 2 to 6 months | Lumpy (one artwork at a time) | 30% |
-| **Own bank** | A Subsidiary in the Banking industry | 2% | Weekly | Unlimited | 30%; Banking Supervisor exposure +1 per $5M; a laundering conviction costs the bank licence |
 
-Crypto mixing is gone: crypto lives only in the phone tab ([9-gambling.md](9-gambling.md)) and is no laundering route (batch 116). Methods stack: a shell layer after a real estate deal multiplies the traces (40% × 50% = 20%). The shells and companies used keep their own exposure per their existing rules (1.7.4, 4.9.3).
+Crypto mixing is gone: crypto lives only in the phone tab ([9-gambling.md](9-gambling.md)) and is no laundering route (batch 116). The own-bank route is cut too (Logan, batch 117). Methods stack: a shell layer after a real estate deal multiplies the traces (40% × 50% = 20%). The shells and companies used keep their own exposure per their existing rules (1.7.4, 4.9.3).
 
 **Trace and Evidence.** When an investigation touching the dirty source reaches Discovery, every laundered sum adds Evidence `5 per $10M × trace` **(T)**. Unlaundered money spent on visible assets counts with trace 100%. Laundering for others (for a cartel or another character) earns 10% to 20% fees and is a Criminal-tier offense (4.9.5).
 
