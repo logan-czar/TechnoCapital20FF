@@ -195,7 +195,7 @@ New hubs and sites for the starting characters **(A)**:
 | Place | Country | Size | Pop (M) | Districts | Specialties |
 |---|---|---|---|---|---|
 | Medellín | Colombia | L | 4 | F1 I2 R4 S3 T1 X1 | Textiles, coffee, flowers, the informal economy, cartel money laundering, a growing tech scene |
-| Edmonton | Canada (Alberta) | M | 1.4 | F1 I3 R3 S1 X2 | Oil sands and oil field services, pipelines, the Alberta provincial government; John Techno's home (replaces Calgary, batches 76 and 77) |
+| Edmonton | Canada (Alberta) | S | 1.4 | F1 I2 R1 S1 X1 | Oil sands and oil field services, pipelines, the Alberta provincial government; John Techno's home (replaces Calgary, batches 76 and 77) |
 | Sydney | Australia (New South Wales) | XL | 5.4 | F4 I2 P2 R6 S1 T2 | Banking, pension funds, property, media, mining company headquarters |
 | Kroll's colony | None (claimed) | Site | 0 | P1 R1 | A claimed sea and ice site between New Zealand and Antarctica. Starts as a few beached ships; can grow into a hub if the claim survives |
 

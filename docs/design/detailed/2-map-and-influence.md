@@ -71,40 +71,41 @@ Foreigners also suffer the **foreigner influence penalty** of the government typ
 
 ### 2.2.3 Major countries: economy
 
-Columns: GDP in reference trillions at start; WI = wage index; FX regime is the starting F3 position; corporate tax is the starting E2 position (national rate only).
+Columns: GDP in reference trillions at start (**alternate January 2020**, 2026-10-18 review **(T)**: real 2019 values, with the US about 10% larger, the eurozone about 20% smaller in dollars after the euro crisis and the weak euro, and Russia about 30% smaller after 15 years of sanctions); WI = wage index; FX regime is the starting F3 position; corporate tax is the starting E2 position (national rate only).
 
 | # | Country | Currency | FX regime (F3) | GDP ($T) | WI | Corporate tax (E2) | Exchange (fictional) and notes |
 |---|---|---|---|---|---|---|---|
-| 1 | United States | USD | Free Float (reserve currency) | 28.0 | 1.00 | Moderate | Largest exchange; deepest bond market |
-| 2 | Canada | CAD | Free Float | 2.1 | 0.85 | Moderate | Resources, banking |
-| 3 | Mexico | MXN | Free Float | 1.8 | 0.22 | High | Nearshoring base for US market |
-| 4 | Brazil | BRL | Free Float | 2.2 | 0.25 | High | Agribusiness and iron ore |
-| 5 | Argentina | ARS | Managed Float | 0.6 | 0.20 | High | Lithium; history of controls |
-| 6 | Chile | CLP | Free Float | 0.33 | 0.30 | High | Copper and lithium |
-| 7 | United Kingdom | GBP | Free Float | 3.3 | 0.85 | Moderate | Global FX and insurance center |
-| 8 | Germany | EUR | Free Float (euro zone) | 4.5 | 0.90 | High | Euro central bank seat (Frankfurt) |
-| 9 | France | EUR | Free Float (euro zone) | 3.0 | 0.85 | Moderate | Luxury, aerospace, nuclear |
-| 10 | Netherlands | EUR | Free Float (euro zone) | 1.1 | 0.90 | Moderate | Largest port in Europe; lithography |
-| 11 | Italy | EUR | Free Float (euro zone) | 2.2 | 0.70 | Moderate | Machinery, luxury |
-| 12 | Switzerland | CHF | Free Float (safe haven) | 0.9 | 1.15 | Low | Private banking, commodity traders |
-| 13 | Russia | RUB | Managed Float | 2.0 | 0.25 | Moderate | Oil, gas, metals; under sanctions at start |
-| 14 | Turkey | TRY | Managed Float | 1.1 | 0.28 | Moderate | Controls the Turkish Straits |
-| 15 | Saudi Arabia | SAR | Peg (USD) | 1.1 | 0.55 | Moderate | Largest oil exporter |
-| 16 | United Arab Emirates | AED | Peg (USD) | 0.5 | 0.45 | Low | Re-export and finance free zones |
-| 17 | Israel | ILS | Free Float | 0.5 | 0.80 | Moderate | Cyber and surveillance tech |
-| 18 | Egypt | EGP | Managed Float | 0.35 | 0.10 | Moderate | Suez Canal revenue |
-| 19 | Nigeria | NGN | Managed Float | 0.30 | 0.08 | High | Oil; largest African consumer market |
-| 20 | South Africa | ZAR | Free Float | 0.38 | 0.22 | High | Mining finance, platinum metals |
-| 21 | India | INR | Managed Float | 3.9 | 0.12 | Moderate | IT services, generic pharma |
-| 22 | China | CNY | Managed Float | 18.5 | 0.30 | Moderate | Manufacturing core; capital controls |
-| 23 | Japan | JPY | Free Float | 4.2 | 0.75 | High | Robotics, chip materials |
-| 24 | South Korea | KRW | Free Float | 1.7 | 0.65 | Moderate | Memory, displays, batteries |
-| 25 | Taiwan | TWD | Managed Float | 0.8 | 0.50 | Moderate | Leading-edge chip fabs |
-| 26 | Singapore | SGD | Managed Float (basket) | 0.5 | 0.85 | Low | Transshipment, wealth management |
-| 27 | Malaysia | MYR | Managed Float | 0.4 | 0.25 | Moderate | Chip packaging |
-| 28 | Indonesia | IDR | Managed Float | 1.4 | 0.12 | Moderate | Nickel, coal, palm oil |
-| 29 | Vietnam | VND | Managed Float | 0.43 | 0.12 | Moderate | Electronics assembly |
-| 30 | Australia | AUD | Free Float | 1.7 | 0.95 | High | Iron ore, lithium, LNG |
+| 1 | United States | USD | Free Float (reserve currency) | 23.5 | 1.00 | Moderate | Largest exchange; deepest bond market |
+| 2 | Canada | CAD | Free Float | 1.75 | 0.85 | Moderate | Resources, banking |
+| 3 | Mexico | MXN | Free Float | 1.25 | 0.22 | High | Nearshoring base for US market |
+| 4 | Brazil | BRL | Free Float | 1.85 | 0.25 | High | Agribusiness and iron ore |
+| 5 | Argentina | ARS | Managed Float | 0.45 | 0.20 | High | Lithium; history of controls |
+| 6 | Chile | CLP | Free Float | 0.28 | 0.30 | High | Copper and lithium |
+| 7 | United Kingdom | GBP | Free Float | 2.75 | 0.85 | Moderate | Global FX and insurance center |
+| 8 | Germany | EUR | Free Float (euro zone) | 3.2 | 0.90 | High | Euro central bank seat (Frankfurt) |
+| 9 | France | EUR | Free Float (euro zone) | 2.2 | 0.85 | Moderate | Luxury, aerospace, nuclear |
+| 10 | Netherlands | EUR | Free Float (euro zone) | 0.75 | 0.90 | Moderate | Largest port in Europe; lithography |
+| 11 | Italy | EUR | Free Float (euro zone) | 1.6 | 0.70 | Moderate | Machinery, luxury |
+| 12 | Switzerland | CHF | Free Float (safe haven) | 0.75 | 1.15 | Low | Private banking, commodity traders |
+| 13 | Russia | RUB | Managed Float | 1.2 | 0.25 | Moderate | Oil, gas, metals; under sanctions at start |
+| 14 | Turkey | TRY | Managed Float | 0.75 | 0.28 | Moderate | Controls the Turkish Straits |
+| 15 | Saudi Arabia | SAR | Peg (USD) | 0.85 | 0.55 | Moderate | Largest oil exporter |
+| 16 | United Arab Emirates | AED | Peg (USD) | 0.42 | 0.45 | Low | Re-export and finance free zones |
+| 17 | Israel | ILS | Free Float | 0.40 | 0.80 | Moderate | Cyber and surveillance tech |
+| 18 | Egypt | EGP | Managed Float | 0.30 | 0.10 | Moderate | Suez Canal revenue |
+| 19 | Nigeria | NGN | Managed Float | 0.45 | 0.08 | High | Oil; largest African consumer market |
+| 20 | South Africa | ZAR | Free Float | 0.35 | 0.22 | High | Mining finance, platinum metals |
+| 21 | India | INR | Managed Float | 2.85 | 0.12 | Moderate | IT services, generic pharma |
+| 22 | China | CNY | Managed Float | 14.0 | 0.30 | Moderate | Manufacturing core; capital controls |
+| 23 | Japan | JPY | Free Float | 5.1 | 0.75 | High | Robotics, chip materials |
+| 24 | South Korea | KRW | Free Float | 1.65 | 0.65 | Moderate | Memory, displays, batteries |
+| 25 | Taiwan | TWD | Managed Float | 0.61 | 0.50 | Moderate | Leading-edge chip fabs |
+| 26 | Singapore | SGD | Managed Float (basket) | 0.37 | 0.85 | Low | Transshipment, wealth management |
+| 27 | Malaysia | MYR | Managed Float | 0.36 | 0.25 | Moderate | Chip packaging |
+| 28 | Indonesia | IDR | Managed Float | 1.12 | 0.12 | Moderate | Nickel, coal, palm oil |
+| 29 | Vietnam | VND | Managed Float | 0.26 | 0.12 | Moderate | Electronics assembly |
+| 30 | Australia | AUD | Free Float | 1.4 | 0.95 | High | Iron ore, lithium, LNG |
+| 31 | Qatar | QAR | Peg (USD) | 0.18 | 0.60 | Low | Largest LNG exporter; sovereign fund; promoted from Gulf minors so Doha has a country (2026-10-18 review) |
 
 ### 2.2.4 Major countries: business climate
 
@@ -154,7 +155,7 @@ Each group is one aggregated market with a combined GDP, one blended wage index 
 | Central and Eastern Europe | Poland, Czechia, Hungary, Romania, Baltic states, Slovakia | PLN (others tracked) | 1.9 | 0.35 | Screened | Auto parts, appliances, nearshore assembly for Germany |
 | Black Sea and Caucasus | Ukraine, Georgia, Armenia, Azerbaijan, Moldova | UAH | 0.35 | 0.12 | Guarded | Grain, neon gas, steel; Caspian oil; Middle Corridor rail; high conflict risk |
 | Central Asia | Kazakhstan, Uzbekistan, Turkmenistan, Kyrgyzstan, Tajikistan | KZT | 0.45 | 0.15 | Guarded | Uranium, oil, gas, rail corridor between China and Europe |
-| Gulf minors | Qatar, Kuwait, Bahrain, Oman | USD pegs | 0.55 | 0.50 | Guarded | LNG (Qatar), oil, sovereign funds |
+| Gulf minors | Kuwait, Bahrain, Oman | USD pegs | 0.37 | 0.50 | Guarded | LNG (Qatar), oil, sovereign funds |
 | Iran | Iran | IRR (F3 Dual Rate) | 0.40 | 0.08 | Closed | Oil and gas under sanctions; sits on the Strait of Hormuz |
 | North Africa and Levant | Morocco, Algeria, Tunisia, Jordan, Lebanon, Libya | MAD | 0.65 | 0.10 | Guarded | Phosphates (Morocco), gas to Europe (Algeria), oil (Libya) |
 | West Africa | Ghana, Côte d'Ivoire, Senegal, Mali, Burkina Faso, Niger and neighbors | XOF (euro peg) | 0.45 | 0.06 | Guarded | Cocoa, gold, uranium (Niger), offshore oil |
@@ -217,7 +218,7 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Bay Area | United States (California) | L | 7.7 | F2 I1 P1 R5 S1 T4 | Venture capital, software, AI labs, chip design | Transpacific sea and fiber to Tokyo, Taiwan, Shanghai; air freight hub for chips |
 | Los Angeles-Long Beach | United States (California) | XL | 13 | F2 I4 P3 R6 S2 T1 | Largest US container port, media and entertainment, aerospace, defense | Transpacific lanes to Shenzhen, Shanghai, Busan; rail land bridge to Chicago and New York |
 | Phoenix | United States (Arizona) | M | 5 | F1 I2 R4 S1 T2 | New chip fabs, data centers, water-stressed | Rail and road to Los Angeles and Houston; air |
-| Edmonton | Canada (Alberta) | M | 1.4 | F1 I3 R3 S1 X2 | Oil sands and oil field services, pipelines, the Alberta provincial government | Pipelines to Houston and the Pacific coast; rail to Toronto and Chicago. Added for the starting character John Techno, replacing Calgary (batch 76; [7-starting-world.md](7-starting-world.md) 7.8) |
+| Edmonton | Canada (Alberta) | S | 1.4 | F1 I2 R1 S1 X1 | Oil sands and oil field services, pipelines, the Alberta provincial government | Pipelines to Houston and the Pacific coast; rail to Toronto and Chicago. Added for the starting character John Techno, replacing Calgary (batch 76; [7-starting-world.md](7-starting-world.md) 7.8) |
 | Toronto | Canada (Ontario) | L | 6.5 | F3 I3 P1 R5 S1 T1 | Banking, mining finance, auto plants, AI research | Rail and road to New York and Chicago; St Lawrence Seaway |
 | Mexico City | Mexico (Valle de México and Bajío belt) | Mega | 22 | F2 I6 P1 R8 S5 T1 X1 | Vehicles and parts, nearshore electronics, consumer goods, telecom | Rail and road to Houston (US border crossings); Pacific port Manzanillo and Gulf port Veracruz (abstracted) |
 
@@ -227,7 +228,7 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 |---|---|---|---|---|---|---|
 | São Paulo | Brazil (São Paulo, with Santos port) | Mega | 22 | F3 I5 P2 R8 S4 T1 X1 | Finance, vehicles, food processing, soy, beef, sugar, iron ore marketing | Santos to Atlantic lanes; Cape of Good Hope to China; Panama Canal to the US west coast |
 | Antofagasta | Chile (Antofagasta, Atacama) | S | 0.5 | I1 P1 R1 S1 X2 | Copper mining, lithium brine | Pacific bulk lanes to Shanghai, Busan, Tokyo; Panama Canal to Houston |
-| Medellín | Colombia (Antioquia) | L | 4 | F1 I2 R4 S3 T1 X1 | Textiles, coffee, flowers, informal economy, cartel money laundering, growing tech scene | Road to Pacific port Buenaventura and Caribbean port Cartagena (abstracted); air to Miami and Bogotá. Added for the starting character Pablo Segundo ([7-starting-world.md](7-starting-world.md) 7.8) |
+| Medellín | Colombia (Antioquia) | M | 4 | F1 I2 R3 S2 T1 X1 | Textiles, coffee, flowers, informal economy, cartel money laundering, growing tech scene | Road to Pacific port Buenaventura and Caribbean port Cartagena (abstracted); air to Miami and Bogotá. Added for the starting character Pablo Segundo ([7-starting-world.md](7-starting-world.md) 7.8) |
 
 **Europe**
 
@@ -248,7 +249,7 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 |---|---|---|---|---|---|---|
 | Dubai | UAE (Dubai and Sharjah) | L | 6 | F4 I2 P3 R3 S1 T1 | Re-export logistics, gold trading, free zones, aviation hub, real estate, grey trade | Strait of Hormuz (inside the Gulf); sea lanes to India, East Africa and Europe; air hub |
 | Dhahran-Dammam | Saudi Arabia (Eastern Province) | M | 4 | F1 I3 P2 R2 X2 | Largest oil fields, refining, petrochemicals, desalination | Strait of Hormuz; East-West pipeline to the Red Sea coast (bypass); Bab-el-Mandeb and Suez |
-| Doha | Qatar (Gulf minors) | M | 2.4 | F2 I2 P2 R3 X1 | Largest LNG exporter, sovereign fund, media network | Strait of Hormuz; LNG lanes to Tokyo, Seoul and (via Suez) Rotterdam |
+| Doha | Qatar (Doha) | M | 2.4 | F2 I2 P2 R3 X1 | Largest LNG exporter, sovereign fund, media network | Strait of Hormuz; LNG lanes to Tokyo, Seoul and (via Suez) Rotterdam |
 | Tel Aviv | Israel (Central) | M | 4 | F2 I1 P1 R3 T3 | Cybersecurity, surveillance tech, chip design, defense electronics, venture capital | Mediterranean via Suez or Gibraltar; air; fiber |
 | Cairo-Suez | Egypt (Cairo and Canal Zone) | Mega | 22 | F2 I4 P2 R8 S7 T1 | Canal revenue, textiles, fertilizer, construction, gas | Suez Canal; Mediterranean and Red Sea lanes; Red Sea cable corridor landing |
 | Lagos | Nigeria (Lagos) | Mega | 21 | F2 I3 P2 R7 S9 T1 | Oil money, fintech, consumer goods, film industry, informal economy | Gulf of Guinea lanes (piracy risk); Atlantic to Europe; Cape of Good Hope to Asia |
@@ -274,7 +275,7 @@ District codes: F Financial, T Tech Park, P Port, I Industrial, R Residential, S
 | Jakarta | Indonesia (Jabodetabek, with Sulawesi nickel abstracted) | Mega | 34 | F2 I5 P2 R7 S6 T1 X1 | Consumer market, nickel processing, palm oil, coal | Sunda Strait; Malacca; Lombok route |
 | Ho Chi Minh City | Vietnam (Southeast) | XL | 14 | F1 I6 P2 R5 S3 T1 | Electronics assembly ("China plus one"), garments, footwear, rice | South China Sea; Malacca; transpacific lanes |
 | Perth-Pilbara | Australia (Western Australia) | M | 2.3 | F1 I2 P2 R3 X2 | Iron ore (largest exporter), lithium ore, LNG, gold | Bulk lanes to China, Japan and Korea via the Lombok and Makassar straits (bypassing Malacca) |
-| Sydney | Australia (New South Wales) | XL | 5.4 | F4 I2 P2 R6 S1 T2 | Banking, pension funds, property, media, mining company headquarters | Pacific lanes to Shanghai, Tokyo and Los Angeles; fiber to Singapore and the US. |
+| Sydney | Australia (New South Wales) | L | 5.4 | F3 I2 P2 R5 S1 T1 | Banking, pension funds, property, media, mining company headquarters | Pacific lanes to Shanghai, Tokyo and Los Angeles; fiber to Singapore and the US. |
 
 ### 2.3.4 Signature starting assets
 
@@ -407,7 +408,7 @@ The 1.5 weight on payroll makes jobs the strongest influence per dollar: a labor
 - **Floor rule**: a place's mass is never less than 1.25 × the total weighted assets of all modeled holders in it. This keeps assets alone from pushing any holder above 80%.
 - Masses are recomputed yearly and when a hub changes size class or a country's GDP moves more than 10%.
 
-Example masses: New York $120B; Penang $4.75B; Shenzhen-Dongguan $61B; Antofagasta $1.5B; United States $840B; China $555B; Chile $9.9B.
+Example masses: New York $120B; Penang $4.75B; Shenzhen-Dongguan $61B; Antofagasta $1.5B; United States $705B; China $420B; Chile $8.4B.
 
 ### 2.5.4 Holders and attribution
 
