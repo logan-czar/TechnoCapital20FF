@@ -1,6 +1,6 @@
 # 16. Media and entertainment (detailed design)
 
-_Status: draft v0.2 (2026-10-18). Batch 66: anyone can buy campaigns, studios sell one-off only, no adult sites, hidden credibility, outlets can expose secrets. Logan made media its own system in batch 50 (it is no longer one of the 45 industries) and set its shape in batch 65: **five kinds of media business**, **media campaigns** that pay creators for a set effect, owner **editorial control**, content **projects that roll for hits**, and **influencers as content creators**. Builds on [1-corporate-core.md](1-corporate-core.md) (Image: Fame and Favor), [10-industry-economy.md](10-industry-economy.md) (corporations, the Ads and Social media industries), [5-ideology.md](5-ideology.md) (ideology spread), [4-politics.md](4-politics.md) (scandals and news cycles) and [14-software.md](14-software.md) (contracts). Owner: Logan._
+_Status: draft v0.3 (2026-10-18). Batch 67: streamer subscriptions, one-off music payments, mixed starting owners, and all news named by outlet (the UI's information model, [../11-ui.md](../11-ui.md) 11.1.1). Batch 66: anyone can buy campaigns, studios sell one-off only, no adult sites, hidden credibility, outlets can expose secrets. Logan made media its own system in batch 50 (it is no longer one of the 45 industries) and set its shape in batch 65: **five kinds of media business**, **media campaigns** that pay creators for a set effect, owner **editorial control**, content **projects that roll for hits**, and **influencers as content creators**. Builds on [1-corporate-core.md](1-corporate-core.md) (Image: Fame and Favor), [10-industry-economy.md](10-industry-economy.md) (corporations, the Ads and Social media industries), [5-ideology.md](5-ideology.md) (ideology spread), [4-politics.md](4-politics.md) (scandals and news cycles) and [14-software.md](14-software.md) (contracts). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 16.9.
 
@@ -21,6 +21,10 @@ _Status: draft v0.2 (2026-10-18). Batch 66: anyone can buy campaigns, studios se
 | Adult sites | **Removed** (batch 66). There are no adult streamers. |
 | Credibility | **Hidden** (batch 66): the player learns it from results, not a number. |
 | Investigations | **Print and creators can investigate and expose secrets** (batch 66), which then run as scandals (16.5.1). |
+| Streamer income | **Subscribers per country × a monthly price, plus ads** (batch 67). A big library and hits keep subscribers. |
+| Music income | **A one-off payment on release**; **events can sometimes trigger royalty payments** later (batch 67). |
+| Starting owners | **A mix of rival dynasties and AI corporations**, and **each starting character owns a small outlet or channel** (batch 67). |
+| News is sourced | **Every story names the outlet that ran it**, with its bias. There is no neutral news: the news the character reads in game is slanted (batch 67, 11-ui 11.1.1). |
 
 ## 16.2 The five kinds of media business (Logan)
 
@@ -29,7 +33,7 @@ _Status: draft v0.2 (2026-10-18). Batch 66: anyone can buy campaigns, studios se
 | **Print** | Blogs, newspapers, publishers, magazines | Subscriptions and ads; breaks stories and scandals |
 | **Streamers** | Video, music and search platforms (YouTube-, Spotify-, Google- and Netflix-like); adult sites removed (batch 66) | Subscriptions and ads on their audience; **buy shows and films from studios** and **pay labels per play** |
 | **Studios** | **Create TV shows and movies and sell them to the streamers** | **One-off sales** to a streamer (Logan, batch 66): the streamer buys the film or show outright and keeps all its revenue |
-| **Music labels** | **Create music**, earn **revenue from plays on the streamers**, and run **concert tours** | Royalties per play from every streamer that carries the catalogue, plus tour income (16.6) |
+| **Music labels** | **Create music**, earn **revenue from plays on the streamers**, and run **concert tours** | **A one-off payment on release** (Logan, batch 67), occasional **royalty payments from events**, plus tour income (16.6) |
 | **Social media channels** | Content creators and their channels (16.7) | Platform ad share, sponsorships and **paid campaigns** (16.4) |
 
 - **Outlets.** Each media business owns named **outlets** (a newspaper, a streaming service, a studio label, a record label, a creator's channel). An outlet has an **audience** by country, a **slant** (one of the nine ideologies or none), and **credibility** (0 to 100, **hidden from the player**, Logan batch 66; it shows only through results: how much a story or campaign moved things) **(A)**.
@@ -89,7 +93,7 @@ Studios and labels make **projects**: films, shows and albums (and tours for lab
 
 - **Hit roll (A):** on release, the project rolls a result from Flop to Smash. The chance of a hit = 20% + talent Fame ÷ 5 + budget tier bonus (indie 0, mid +10, blockbuster +20) + Vril of the producer, clamped 5% to 70% **(T)**. A smash earns 3 to 10 times its budget; a flop loses most of it.
 - **Selling to streamers:** a finished film or show is **sold outright** to one streamer (Logan, batch 66). A likely smash makes streamers bid against each other before release.
-- **Music:** an album earns per play on every streamer that carries it, and a hit unlocks a **concert tour**: a project of 3 to 12 months that earns ticket and merch income in each hub it visits, and raises the artist's Fame.
+- **Music:** an album earns **a one-off payment on release**, scaled by the hit roll (Logan, batch 67); events (a viral revival, a film sync, a streamer deal) can **sometimes trigger royalty payments** later. A hit unlocks a **concert tour**: a project of 3 to 12 months that earns ticket and merch income in each hub it visits, and raises the artist's Fame.
 - A hit gives everyone attached **Fame**, and a hit with a slant spreads that ideology.
 
 ## 16.7 Influencers are content creators (Logan)
