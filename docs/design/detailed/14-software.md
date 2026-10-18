@@ -1,84 +1,75 @@
-# 14. Software: apps, AI models as products, and hacking (detailed design)
+# 14. Software: the software table and AI models as products (detailed design)
 
-_Status: draft v0.1 (2026-10-18). Logan picked "Software System" as the next topic and, in batch 41, said it means an **in-game system about software**: apps, hacking and AI models as products. This first draft is mostly Claude's proposal, marked **(A)**, for Logan to confirm or change in batch 42. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) 6.2.4 (AI models), [4-politics.md](4-politics.md) 4.22 and 4.23 (netrunner crews, cyber defense), [1-corporate-core.md](1-corporate-core.md) 1.1.8 (schemes) and 1.1.10 (cyberware hacking). Owner: Logan._
+_Status: draft v0.2 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**, and **hacking comes later**. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute, AI models 6.2.4) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
 
-**How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption; the list is in 14.7.
+**How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 14.6.
 
 ---
 
-## 14.1 What the system adds
+## 14.1 Decided by Logan
 
-The economy measures industries in dollars (10). Software sits on top of that as **named products** a company owns, so the player can launch an app, watch its users grow, sell AI models, and break into other people's software **(A)**.
-
-| Part | What it is |
+| Topic | Decision |
 |---|---|
-| **Products** | Named apps, SaaS tools, games and AI models owned by a company |
-| **Users and revenue** | Each product has users and revenue per user; product revenue feeds its company's revenue in its industry |
-| **Quality and security** | Each product has a quality score and a security score, set by the company's Tech talent and compute |
-| **Hacking** | Schemes against products and companies: data theft, ransomware, backdoors, sabotage |
-| **Exploits** | Zero-day exploits as items that can be found, bought, sold or stockpiled |
+| Software table | The game keeps a **software table**: one row per piece of software, with the columns in 14.2 (batch 42). |
+| Hacking | **Later.** Hacking, exploits and backdoors are a separate system to design after this one (batch 42). |
 
-## 14.2 Products (A)
+## 14.2 The software table
 
-| Type | Industry | Revenue model | Notes |
-|---|---|---|---|
-| **App** | Social media and ads; Gaming and gambling | Ads and in-app purchases per user | High slop (10.3); shows up in the phone tab (9) |
-| **SaaS tool** | Software and SaaS | Subscription per business seat | Sticky: customers churn slowly |
-| **Game** | Media and entertainment | Sales plus in-game purchases | Hits and flops by roll |
-| **AI model** | AI labs | Licensed per use (6.2.4) | Needs compute to serve; generation and quality from 6.4 |
-| **Platform** | Software and SaaS; Social media | Takes a cut of other products on it | Rare; app stores and operating systems; owned by a few megacorps at start |
+One row per product. Logan's columns are marked **L**; the rest are proposed **(A)**. Logan's list ended with "and", so at least one column is still missing.
 
-Each product has:
-- **Users** that grow or shrink monthly with quality, marketing spend, Buzz and rivals' products **(T)**.
-- **Quality** (0 to 100): set by the developing company's management score (the Tech skills on its board) and its R&D plan.
-- **Security** (0 to 100): set by security spend and a cyber defense team (4.23). Low security is an open door for hackers.
-- **Data**: a product with many users collects data, which is worth intel on its users (2.22) and can be sold, at a scandal risk.
+| Column | Source | What it holds |
+|---|---|---|
+| **Name** | L | The product's name, for example "Sable OS" or "Tally Pro" |
+| **Platforms** | L | Where it runs: desktop, phone, web, cloud, embedded (cars, drones, implants), data center |
+| **Owners** | L | Who owns it, by holder (companies, trusts or characters) with % stakes, like company ownership (1.2) |
+| **Creators** | L | Who made it: the company that developed it and the lead characters credited (their Tech skill sets quality) |
+| **Inputs** | L | What it needs to run or be made: other software it depends on, data, licences, and staff (14.3) |
+| **Outputs** | L | What it produces: revenue, services to other products, data, slop (10.3) |
+| **Quality** | L | 0 to 100; drives users, price and rivals' pressure |
+| **Version** | L | Major and minor version; a new major version is a release event |
+| **Database requirements** | L | Storage it needs, in TB, held in its owner's data centers or rented cloud (6) |
+| **Compute requirements** | L | Compute it needs to run, in H (6.1), scaling with users; AI models need much more |
+| **Features** | L | Tags that unlock uses and markets (14.4) |
+| Type **(A)** | | App, SaaS tool, game, AI model, platform, operating system, firmware |
+| Industry **(A)** | | Which of the 36 industries its revenue counts in |
+| Users **(A)** | | People or business seats using it; grows or shrinks monthly |
+| Price model **(A)** | | Free with ads, subscription, licence per use, one-off sale |
+| Licence **(A)** | | Closed, licensed to others, or open source |
+| Released **(A)** | | Release date of the first version and of the current version |
 
-**Launching a product** is a growth plan step for a company in a software industry: pick the type, spend months and money on development, then launch. The launch rolls against the company's management score for a hit, a normal start or a flop.
+## 14.3 Inputs and outputs (A)
 
-## 14.3 AI models as products (A)
+Software forms a small dependency graph, like the GPU chain (6.7.0).
+- **Inputs** name other rows in the table: an app needs an operating system and a cloud platform; an AI product needs an AI model; a model needs training data and compute.
+- If an input is lost (its owner raises the licence price, cuts access or goes bust), every product that needs it loses quality until it switches, which takes a development project.
+- **Outputs** feed back into the economy: revenue to the owning company's industry, services consumed by other products (with licence fees paid to the owner), data that improves the owner's models, and slop.
 
-AI models are already Techno-Capital (6.2.4). As products they also:
-- Have **users** (businesses and people paying per use) and need compute to serve them; short of compute, users leave.
-- Can be **open-sourced**: no license revenue, but Buzz, talent and a hit to rivals' prices.
-- Can be **stolen** by hacking (14.4) or by poaching the team, which copies the model to the thief at a lower quality.
+## 14.4 Features (A)
 
-## 14.4 Hacking (A)
+Features are tags. Each one opens a market or a use and adds to compute or database needs. Starting list:
 
-Hacking runs as **schemes** (1.1.8), rolled once against Tech (or Intrigue for social engineering). The player hires a **netrunner crew** (4.22) or uses a character's own Tech skill.
+| Feature | Opens | Extra needs **(T)** |
+|---|---|---|
+| Payments | Fintech revenue; crypto casino use (9) | +10% database |
+| Ads | Ad revenue per user; slop ×1.5 | +10% compute |
+| AI assistant | Higher price, needs an AI model as input | +50% compute |
+| Social feed | Doomscrolling use (11); network growth | +30% database |
+| Enterprise | Business seats; slower churn | none |
+| Encryption | Higher price in privacy-minded markets; a regulator issue in surveillance states | +5% compute |
+| Offline | Embedded platforms (cars, drones, implants) | none |
 
-| Scheme | Target | Success | Discovery risk |
-|---|---|---|---|
-| **Data theft** | A product or company | Intel on the company and its users; secrets that can become hooks (1.1.4) | Medium |
-| **Ransomware** | A company | The target pays or loses operations for weeks; stock -5% to -15% | High; regulators and police |
-| **Backdoor** | A product or a compute cluster | Lasting hidden access; on a cluster it gives **Compromised** control (6.3.5) | Low per month, grows over time |
-| **Sabotage** | A product | Quality and users fall; an outage event for the owner | Medium |
-| **Hack a person** | A character's phone or implants (1.1.10) | Secrets, messages, or implant control | Medium |
+## 14.5 How it is made and used (A)
 
-`Success = 40% + (attacker Tech - 10) × 3% + exploit bonus - target security ÷ 2 %`, clamped 5% to 90% **(T)**.
+- **Development** is a company growth or R&D plan step (10): pick the type, platforms and features, then spend months and money. Quality at release comes from the company's management score, its Tech talent and the budget.
+- **New versions** are R&D projects that raise quality and can add features.
+- **AI models** are rows in this table as well as Techno-Capital (6.2.4); their compute requirement draws on the owner's leased or owned compute.
+- **Buying and selling**: a product can be sold or licensed to another company, like any asset, through the deal screen.
+- The Rust engine keeps the software table as one of its tables and builds a **Products view** for the company screen.
 
-## 14.5 Exploits (A)
+## 14.6 Assumptions and open items
 
-- **Zero-days** are items tied to one product or platform. A zero-day adds +30% to hacking schemes against that target until it is patched **(T)**.
-- They are found by a netrunner crew or a security team (a monthly roll by Tech), or bought on a black market in hubs with low surveillance.
-- Each use has a chance to burn the exploit (the target patches it). Owners of the target product can buy bug bounties to find exploits first.
-- Selling zero-days to states or brokers is a business with high scandal risk.
-
-## 14.6 How it connects
-
-| System | Link |
-|---|---|
-| Economy (10) | Product revenue is part of its company's industry revenue; a hit raises the company's growth |
-| Techno-Capital (6) | AI models need compute; backdoors give Compromised control of clusters |
-| Vices (11) | Doomscrolling and gambling apps are products; owning one shows which users are hooked |
-| Politics (4) | Data privacy law (T2) and AI law (T3) limit products; regulators investigate breaches |
-| Events (13) | A Software deck: *Viral Launch*, *Outage*, *Breach Disclosed*, *Zero-day for Sale* |
-| UI (11) | A Products tab on the company screen; hacking from the schemes menu |
-
-## 14.7 Assumptions and open items
-
-1. Named products on top of industry dollars (14.1, 14.2).
-2. Product types and stats in 14.2.
-3. AI model product rules in 14.3.
-4. Hacking schemes and the formula in 14.4.
-5. Zero-day exploits in 14.5.
+1. The proposed columns in 14.2 beyond Logan's list, and the missing column after "features, and".
+2. The dependency graph in 14.3.
+3. The feature list in 14.4.
+4. Development and versions in 14.5.
+5. Hacking, exploits and backdoors: a later system.
