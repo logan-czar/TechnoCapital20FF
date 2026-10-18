@@ -70,7 +70,12 @@ Rules already decided by Logan (see [13-open-questions.md](../13-open-questions.
   | Head of IR or PR, if seated | Persuasion | Buzz +10 and smaller swings on the day |
 
   Failed rolls make it worse: the market doubts the guidance, and a cut hits at its full -15%. Guidance that turns out wrong next quarter costs the CFO reputation and confidence -5. Talking guidance up on purpose ("managing expectations", 3.3.6) uses the same rolls.
-- **Insider blackout.** Board members, executives and holders of more than 10% may not trade the company's shares in the **7 days before each earnings date** **(T)**. Trading anyway is possible: it is an **Intrigue** roll; a failure (or a later leak) opens an insider trading investigation (3.10) and a hook for whoever finds out.
+- **Quarterly recap screen (Logan, batch 84).** **7 days before each earnings date**, every company's executives get a **quarterly recap screen** (the player sees it for each company where they hold an executive or board seat). It shows:
+  - the **anticipated earnings** to be posted on the 2nd;
+  - how the **market is expected to react**;
+  - the expected effect on **investor confidence**;
+  - a **company outlook**: anything affecting the company, such as industry booms, scandals and other debuffs, or financial trouble like repeated underperformance.
+- **Insider blackout.** From the recap screen until the 2nd, **the player and all other executives and board members cannot trade** the company's shares (Logan, batch 84: a hard lock, read as the company's own shares). Holders of more than 10% fall under the same blackout **(T)**.
 - **1 January is a world holiday.** Markets are closed, and holiday events fire (New Year galas, family dinners, resolutions). Orders placed that day **queue up** and fill at the 2 January 00:00 reopening.
 - **Flat liquidity.** In a 24/7 market, liquidity is **the same around the clock**; there is no thin night session. Only earnings days and news shocks change it.
 - **Earnings deck.** Earnings days have **their own event deck** ([13-events.md](13-events.md) 13.5).

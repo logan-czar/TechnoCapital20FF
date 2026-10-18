@@ -27,7 +27,7 @@ The game has **named characters** of two kinds:
 | **Income** | What the character earns |
 | **Prestige** | Standing and renown |
 | **Clout** | A ticker of the character's achievements: a permanent buff for how much they have done in their life. It only goes up |
-| **Vril** | **A mystical luck stat that can swing rolls; rare and hard to raise** (Logan, batch 60). An esoteric X factor that works like luck. It does not follow the regular game rules: it sometimes punishes the player and other times helps them. Characters gain it by doing vril-worthy acts or through events, but the game never says clearly how; you just get it sometimes. Its value is hidden, unless the character has the perk **Vril Touch**, which shows it next to their resources (John Techno gets it in the opening, batch 83). It runs up to **99**, the highest bonus possible (Logan, batch 81; 9-gambling) |
+| **Vril** | **A mystical luck stat that can swing rolls; rare and hard to raise** (Logan, batch 60). An esoteric X factor that works like luck. It does not follow the regular game rules: it sometimes punishes the player and other times helps them. Characters gain it by doing vril-worthy acts or through events, but the game never says clearly how; you just get it sometimes. Its value is hidden, unless the character has the perk trait **Vril Touch**, which shows it next to their resources (John Techno gets it in the opening, batch 83). It runs up to **99**, the highest bonus possible (Logan, batch 81; 9-gambling) |
 | **Image** | The character's PR, made of two factors: **Fame** (how many people know you) and **Favor** (how much people like you). Logan's word was influence; it is called Image here because **influence** keeps its map meaning, power in a place from assets held there (2.5) (Logan). The existing reputation score becomes Favor **(A)** |
 
 - **Table characters can become full characters** (Logan), for example by promotion, winning office or becoming famous. Details later.
@@ -79,13 +79,16 @@ Every adult has 3 (confirmed by Logan, 2026-10-17) from **12 pairs**, CK3 style 
 
 Same trait between two characters: a +10 push each way. Opposite trait: a -10 push.
 
-#### Unique traits (Logan, batch 78)
+#### Unique traits and perks (Logan, batches 78 and 84)
 
-A few characters have a **unique trait** outside the 12 pairs. It has no opposite, counts toward the 3 to 5, and can sit alone: John Techno starts with only this one.
+A few traits sit outside the 12 pairs. They have no opposite, count toward the 3 to 5, and can sit alone: John Techno starts with only one.
+- **Unique traits** belong to one character from the start.
+- **Perks** are traits that **unlock an ability**, earned through events and quest arcs (Logan, batch 84: perks are traits, not a separate system).
 
-| Trait | Holder | Effect |
-|---|---|---|
-| **Operational Excellence** | John Techno ([8-quest-lines.md](8-quest-lines.md) 8.3) | While he sits on a company's board as **COO, CEO or Chair** (Logan, batch 79), the **buffs of all other board members are doubled**: their seat task effects (1.8.2) and their trait and skill bonuses to that company (batch 79) |
+| Trait | Kind | Holder | Effect |
+|---|---|---|---|
+| **Operational Excellence** | Unique | John Techno ([8-quest-lines.md](8-quest-lines.md) 8.3) | While he sits on a company's board as **COO, CEO or Chair** (Logan, batch 79), the **buffs of all other board members are doubled**: their seat task effects (1.8.2) and their trait and skill bonuses to that company (batch 79) |
+| **Vril Touch** | Perk | John Techno, from the opening (8.2.4) | The character **can see their vril value**, shown next to their resources (1.1) |
 
 #### Trait change (Logan, 2026-10-17)
 

@@ -1,6 +1,6 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v1.3 (2026-10-18). Batch 83: the six First Week events, Vril Touch, the Mink Scare; the old tutorial arcs are dropped. Batch 81: the opening sequence (start on 1 January, the first earnings day, First Week on the Job, Intro Night, The Scandal). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v1.4 (2026-10-18). Batch 84: the Mink Scare's four stages and Mandy's interrogation, CPU delegation without rolls, the quarterly recap screen. Batch 83: the six First Week events, Vril Touch, the Mink Scare; the old tutorial arcs are dropped. Batch 81: the opening sequence (start on 1 January, the first earnings day, First Week on the Job, Intro Night, The Scandal). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.6.
 
@@ -59,8 +59,8 @@ An event chain that starts on **7 January 2020**. It introduces the **software s
 
 | # | Event | What John does | Teaches |
 |---|---|---|---|
-| 1 | **The growth plan** | Set the business unit's growth plan spending, or **delegate it to the CPU** (the AI) | Growth plans (10.0.4), delegation (1.1.6) |
-| 2 | **R&D** | Set the R&D plan, or delegate it to the CPU | R&D and productivity (10.0.4) |
+| 1 | **The growth plan** | Set the business unit's growth plan spending, or **delegate it to the CPU**: the AI sets it with **no roll**, adjusting to the market and the company's financials (Logan, batch 84) | Growth plans (10.0.4), delegation (1.1.6) |
+| 2 | **R&D** | Set the R&D plan, or delegate it to the CPU (no roll; adjusts to the market and financials) | R&D and productivity (10.0.4) |
 | 3 | **Cloud and Techno-Capital** | An introduction to the company's compute, cloud bill and Techno-Capital | Infrastructure and the cloud (15), Techno-Capital (6) |
 | 4 | **Software** | An introduction to the software the company runs | The software table (14) |
 | 5 | **Upgrade the software** | John is told to upgrade: **pay to upgrade** to a more efficient version, then **pay for more cloud space** so the new version can process **structured data** | Versions and efficiency (14.2), data compute and the cloud (15.4, 15.5) |
@@ -70,19 +70,39 @@ An event chain that starts on **7 January 2020**. It introduces the **software s
 
 After the first week, an **intro night** where John **meets the rest of the board**. The night turns into a **gambling minigame** (9) that **introduces vril** (1.1).
 - For the **next 100 gambling events**, John has **99 vril**: the highest bonus to the odds possible in the game, so he has an **edge on all gambling** (9.5).
-- After the 100th gambling event his vril **drops to 20** and he gains the perk **Vril Touch**: he can **see his vril value**, shown next to his resources (Logan, batch 83; 1-corporate-core 1.1).
+- After the 100th gambling event his vril **drops to 20** and he gains the perk trait **Vril Touch**: he can **see his vril value**, shown next to his resources (Logan, batch 83; 1-corporate-core 1.1).
 
 ### 8.2.5 The Mink Scare (the last opening event, Logan, batch 83)
 
 **What happened.** A **salacious furry drug trafficking ring** inside Arrowhead Drilling. Warehouse workers and middle managers who were **secretly furries** have been using the company's **warehouse space and pipelines to traffic drugs across borders**. The ringleader is a middle manager, **Mandy Waltham**, whose fursona is **"Minky Mandy"**.
 
-**The saga.** Details **begin to emerge slowly at the start of February 2020** and keep coming as John navigates it **(T: a new revelation every week or two)**. The **media circus makes it look far more serious than it is**, and it spawns a wider scandal, **"The Mink Scare"**: rumors spread across the company about who is and who isn't a furry, souring morale and loyalty.
+**The saga.** Details **begin to emerge at the start of February 2020**. The **media circus makes it look far more serious than it is**, and it spawns a wider scandal, **"The Mink Scare"**: rumors spread across the company about who is and who isn't a furry, souring morale and loyalty. It unfolds in **four stages** (Logan, batch 84):
+
+| Stage | What comes out |
+|---|---|
+| 1 | The ring is found |
+| 2 | **Minky Mandy** is named |
+| 3 | The pipeline smuggling is exposed |
+| 4 | The furry panic: the Mink Scare proper |
+
+Depending on what John does, the scandal **resolves anywhere between 9 February and 28 March 2020** (Logan).
+
+**The interrogation (Logan, batch 84).** John interrogates Mandy Waltham. Her answer has two parts, and any mix of them can happen:
+- **Her statement**: a **sworn statement that absolves John** of wrongdoing; **no statement**; or **lies about John**.
+- **The police**: she **cooperates with the cops**; **refuses to cooperate**; or **works with the cops against John**.
+- **Succeeding** the event gets the best of both: a sworn statement clearing John, and cooperation with the police. Worse results move her toward silence or toward turning on him **(A for how the roll maps to the mix)**.
+
+**Mandy afterward (Logan).** After the interrogation she **becomes a full character** (1.1.0) and **never drops back** to a table character. Where she ends up depends on how the saga branches: the **Glitterati as an influencer** (16.7), **politics**, or a **narco** in the black market **(A for which branch leads where)**.
 
 **John's choice** (Logan, batch 81), open at each stage:
 - **Cover it up**: work out a scheme (1.1.8) to bury the ring and the rumors. Success keeps it quiet; discovery makes it a bigger scandal, with John attached.
 - **Come clean**: go public, hand the ring to the police, and **deal with the media backlash** (16): a hit to investor confidence and John's Image that fades over the following weeks **(T)**.
 
-**Characters (A).** Mandy Waltham is a full character (a Rival once exposed); the ring's other members are table characters. Terry and the board react by their traits.
+**Characters (A).** The ring's other members are table characters. Terry and the board react by their traits.
+
+### 8.2.6 The first quarterly recap (late March 2020)
+
+Whenever the Mink Scare resolves, **7 days before the 2 April earnings** John gets the first **quarterly recap screen** (3-markets 3.1.0): anticipated earnings, the expected market reaction, the effect on investor confidence, and the company outlook. From then until 2 April he and every other executive **cannot trade** Arrowhead shares. The same screen comes before every earnings day after this.
 
 ## 8.3 John Techno: "The One Man You Keep" (the player's line)
 
@@ -182,7 +202,7 @@ The AI bubble pops in 2030 on average (Logan). The year is set at game start as 
 ## 8.6 Assumptions and open items
 
 1. Outcome tiers and buff sizes in 8.1; the 25% chance a successor picks up an unfinished arc.
-2. The delivery time of the desktop (8.2.1), the pace of revelations, the come-clean backlash and Mandy Waltham as a full character (8.2.5).
+2. The delivery time of the desktop (8.2.1), the come-clean backlash, how the interrogation roll maps to Mandy's answer, and which branch sends her where (8.2.5).
 3. John Techno's skills, traits and arcs, the option review numbers, and the Terry branch in 8.3.
 4. Generated quest sources in 8.4.
 5. Crash timing and the ×1.2 crash size in 8.5.
