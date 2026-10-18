@@ -2032,7 +2032,7 @@ This expands the leveraged buyout of [02-trusts-and-assets.md](../02-trusts-and-
 
 The market's estimate of deal success, p, sets the target's price after a bid (3.3.6) and drives arbitrage. Recalculated daily [T]:
 
-`p = 0.90 - 0.20 if hostile - 0.15 if an antitrust review is likely - 0.10 if a foreign investment review applies - 0.10 if financing is not committed - 0.10 if a target bloc of 30% or more opposes + 0.05 if the break fee is 3% or more`, clamped to 0.30 to 0.95.
+`p = 0.90 - 0.20 if hostile - ~~0.15 if an antitrust review is likely~~ (no antitrust, batch 56) - 0.10 if a foreign investment review applies - 0.10 if financing is not committed - 0.10 if a target bloc of 30% or more opposes + 0.05 if the break fee is 3% or more`, clamped to 0.30 to 0.95.
 
 News moves p: a regulator's second request -0.05, an agreed remedy +0.05, a bloc defection +/- 0.10, a rival bid (see 3.20.3).
 

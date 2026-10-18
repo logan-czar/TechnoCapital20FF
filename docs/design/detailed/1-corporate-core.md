@@ -321,6 +321,27 @@ Share classes:
 
 Control is recalculated whenever a stake changes or a bloc changes (immediately), and checked weekly.
 
+### 1.3.1 Two layers of control: on the books and for real (Logan, batch 56)
+
+> Control works on **two layers**. The shares work like Wall Street Raider; **who actually calls the shots** comes from the corporate feudalism system.
+
+| Layer | Who it is | How it is decided | Who can see it |
+|---|---|---|---|
+| **On the books** (owner of record) | The holder that controls the company **by its shares**: the largest voting stake or the majority bloc (1.3) | Wall Street Raider style: buying shares on the market, block trades, tender offers (1.9.3), buybacks and dilution | Everyone: filings (3.4.8), the stock screen and the press |
+| **Real controller** | The **character who actually calls the shots** | Corporate feudalism: the vassal chain (1.7), bloc leadership (1.4), the charter (1.5), the board (1.8), hooks, favors and loyalty (1.1.4) | Only people with intel on the company or the people behind it |
+
+**How they come apart (A).** The real controller follows the chain of control upward from the owner of record:
+1. **Through companies, trusts and shells.** If the owner of record is a company, the real controller is the head of whatever sits at the top of its vassal chain. If it is a trust, it is the trustee. If it is a shell (1.7.4), it is whoever controls the shell, and outsiders see only "Undisclosed holder".
+2. **Through people.** If the owner of record is a character who is under a **strong hook** (1.1.4), or who is a loyal member of someone else's bloc, that other character is the real controller. The owner of record is then a **figurehead**: they vote and sign as told.
+3. **Breaking the chain.** A figurehead follows orders while their loyalty or the hook holds. When loyalty falls to Defiant (1.7.3), or the hook is destroyed or exposed, they start to decide for themselves, and the real controller has to win them back or retake control on the books.
+
+**Takeovers on two layers (A).**
+- Winning a tender offer or buying a majority gives **control on the books** at once: the new owner of record can call a vote, replace directors and appoint the head under the charter.
+- **Real control takes longer.** The old real controller's people still sit on the board and in the executive seats, with their loyalty and hooks. Until the new owner has placed or won over a board majority (a staggered board can make that take 2 years) and the CEO, the company is **contested** (1.3, -10% efficiency) and the old controller can still run schemes, leaks and proxy fights from inside.
+- The reverse also works: a dynasty can **gain real control without the shares** by holding hooks over the owner of record, or leading the bloc, and no filing shows it.
+
+**What the UI shows.** The company screen always shows the **owner of record**. It shows the **real controller** only when the player has intel. Otherwise it says "Real controller: unknown", and an Investigate action (1.1.8, like Investigate Shell) can reveal it.
+
 ## 1.4 Blocs
 
 - Any holder can **propose a bloc** to another holder of the same company. Acceptance chance = 30% + opinion / 2 + shared dynasty 20% + payment bonus.
@@ -544,9 +565,13 @@ Ultimatum: accept the demand, or a proxy fight is scheduled in 30 days.
 - The bidder announces a price, usually market price + 20% to 50% premium, for a target percentage.
 - Each holder accepts if: offer premium > their loyalty threshold. Threshold = 10% + opinion of current head / 4 + bloc membership 15%.
 - Lasts 20 days. The target can respond with defenses.
-- Antitrust or foreign investment review can be triggered if the combined company is large in a market (politics design).
+- ~~Antitrust review~~: **no antitrust in the game** (Logan, batch 56). Foreign investment review (4-politics C1) can still be triggered.
+- **Control on the books, not real control** (1.3.1): a winning tender gives book control at once; real control comes later, through the feudal layer.
+- **When the target ends up fully owned** (Logan, batch 56), the player (or the AI bidder) **chooses each time**: **merge it in** (its units join the buyer's, its debt becomes the buyer's and its board is dissolved), or **keep it as a subsidiary** (1.7) with its own books and board.
 
 ### 1.9.4 Defenses
+
+**Each defense is a board vote** (Logan, batch 56) at the target, unless the charter already holds it. A board the raider already controls will not vote for one.
 
 | Defense | Cost | Effect |
 |---|---|---|
@@ -556,6 +581,7 @@ Ultimatum: accept the demand, or a proxy fight is scheduled in 30 days.
 | Staggered board | Charter clause | Bidder needs 2 years to take the board |
 | Buyback | Cash | Raises price, shrinks float |
 | Litigation | $1M+ | Delays offer by 10 to 30 days |
+| Golden parachute (Logan, batch 56) | Board vote; payouts of 1 to 3 years of pay **(T)** | If control changes, the head and executives are paid out, making the takeover cost more and the executives harder to win over |
 
 ### 1.9.5 Casus belli effects
 

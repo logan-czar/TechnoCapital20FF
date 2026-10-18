@@ -20,6 +20,7 @@ Batch 37 checked politics against the Wall Street Raider style economy (10-indus
 | Votes | **Votes are counted by strata** (2.8.0), not by the six population segments. |
 | Tariffs and sanctions | They hit an **industry's price index** in the country (10-industry-economy), not Victoria 3 goods. |
 | Game stages | Stages are gone. 4.28 is replaced by politics by **company rank** (1.7.5). |
+| Antitrust | **None** (Logan, batch 56). The C3 Antitrust law, the Antitrust Authority, antitrust reviews of takeovers (4.13.4) and private antitrust suits are removed. Commodity cornering stays a Securities Regulator matter; cartels and predatory pricing are legal. Foreign investment review (C1) stays. |
 | PMCs | **Dropped** (Logan, batch 51). There are no private military contractors: 4.23.2 to 4.23.5, 4.13.6, the S1 law and every PMC option elsewhere are removed. Corporate guards, bodyguards and cyber defense teams stay as security spending. |
 
 **Reading rule for the rest of this file.** Older sections still name interest groups (IGs). Read each one as the ideology bloc(s) below (confirmed in batch 38 with Logan's changes):
@@ -439,7 +440,7 @@ All rates and multipliers below are **(T)**.
 |---|---|---|
 | **C1 Foreign Ownership** | N exclusive | **Open** no limits · **Screened** Foreign Investment Review for foreign stakes ≥ 25% in strategic sectors · **Capped Strategic** foreign voting stake ≤ 49% in strategic sectors, screened elsewhere · **Capped All** foreign voting stake ≤ 49% in every sector · **Closed** foreigners may only operate through a branch office with a state partner (see C2 State Golden Share) |
 | **C2 Branch Office Requirements** | N exclusive | **None** · **Local Directors** at least one third of board seats held by citizens · **Local Partner 30%** a local holder must own ≥ 30% of voting stock · **Local Partner 51% and Tech Transfer** local holder ≥ 51%; each year one tech level of the parent in that sector is shared with the partner · **State Golden Share** State-Linked charter mandatory (government veto over sales, dividends abroad and executive appointments) |
-| **C3 Antitrust** | N exclusive | **Laissez-faire** no review · **Light** review if the deal creates > 50% share in a sector in the country · **Standard** review above 35% share, or deal value > 0.5% of GDP · **Strict** review above 25%; authority may order breakup above 40% · **Trust-Busting** review above 20%; yearly review of every company above 30% share, breakup chance 25% per review |
+| ~~**C3 Antitrust**~~ (removed, batch 56) | N exclusive | **Laissez-faire** no review · **Light** review if the deal creates > 50% share in a sector in the country · **Standard** review above 35% share, or deal value > 0.5% of GDP · **Strict** review above 25%; authority may order breakup above 40% · **Trust-Busting** review above 20%; yearly review of every company above 30% share, breakup chance 25% per review |
 | **C4 Corporate Governance** | N exclusive | **Founder-Friendly** dual-class unlimited, poison pills and staggered boards allowed · **Standard** dual-class up to 10 votes per share, pills need a shareholder vote · **Shareholder Primacy** no new dual-class listings, pills banned, one third independent directors · **Stakeholder Boards** workers elect one third of board seats in companies with > 2,000 employees in the country |
 | **C5 Bankruptcy** | N exclusive | **Creditor-Friendly** liquidation in 2 months, creditors take control · **Reorganization** 6 to 12 months under protection, management stays, equity often survives at 5 to 20% · **State Administration** government administrator appointed; eligible for bailout (4.9.8); equity usually wiped |
 | **C6 Special Economic Zones** | N enables, L applies | **Banned** · **Tax Zones** corporate tax -50% and tariffs waived on re-exports inside zone hubs · **Charter Zones** a zone may set its own E8, E10, E11, L1 to L5 and S2 positions, with national law as the floor for L1 · **Sovereign Charters** a zone may become a corporate sovereign territory (4.12) |
@@ -844,7 +845,7 @@ Each country has seven agencies. Federal countries also have a regional attorney
 | Agency | Watches | Exposure sources | Typical penalties |
 |---|---|---|---|
 | **Securities Regulator** | Exchanges, listed companies, traders | Insider trades, undisclosed stake crossings, market manipulation, false earnings, pump-and-dump psyops | Fines, disgorgement, trading bans, executive bans, delisting |
-| **Antitrust Authority** | Mergers, market shares, cartels | Takeovers above C3 thresholds, price-fixing, commodity cornering, predatory pricing | Blocked deals, remedies (divestment), fines up to 10% of revenue, breakups |
+| ~~**Antitrust Authority**~~ (removed, batch 56) | Mergers, market shares, cartels | Takeovers above C3 thresholds, price-fixing, commodity cornering, predatory pricing | Blocked deals, remedies (divestment), fines up to 10% of revenue, breakups |
 | **Tax Authority** | Income, profit, trusts, shells | Shell routing, transfer pricing, undeclared trust income, offshore accounts | Back taxes plus 50 to 200% penalties, asset liens, criminal charges for evasion |
 | **Financial Police** (anti-money laundering and financial crime) | Dirty money, bribery, sanctions violations, fronts | Bribes, kickbacks, front companies, black market income, sanctions evasion, coup financing | Asset freezes, confiscation, prison, company dissolution |
 | **Foreign Investment Review** | Foreign takeovers and branch offices | Foreign stakes crossing C1 thresholds, strategic sector purchases, tech exports | Blocked deals, forced divestment, mitigation (golden share, local directors) |
@@ -1399,6 +1400,8 @@ Plus a targeted ad campaign at Professionals (+0.3 for the heir in that segment)
 If playtests show money and media swinging races this much, the first values to lower are the Campaign coefficient (0.8) and the Media coefficient (1.0).
 
 ### 4.13.4 Antitrust review of a takeover
+
+> **Removed (Logan, batch 56): there is no antitrust in the game.** Kept only as a record.
 
 **Situation.** The dynasty's chip company holds 35% of its home country's chip market and launches a tender offer for a rival with 13%. Post-deal share: 48%. C3 is Standard (threshold 35%). The Antitrust Authority's head is Ambitious (Zeal 1.2). The dynasty has 6% national share: 24 PC per month.
 
