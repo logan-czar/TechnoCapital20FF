@@ -146,6 +146,7 @@
 - Geography review (Logan, 2026-10-18): breakdown in reviews/geography-overview.md. Made more realistic: GDP set to the alternate January 2020, Edmonton S, Medellín M, Sydney L, Qatar the 31st major country. Ukraine, Greece, Mali and Iran stay in minor groups with no hubs. Characters' homes are flavor only (residence is just a hub).
 - More cities (Logan, 2026-10-18): 37 hubs added in the 31 major countries, 81 in all (2-map 2.3.3); minor groups still have none. Johannesburg population set to 9.5M to stay L.
 - Batch 115 (Logan, 2026-10-18): Aberdeen scrapped (80 hubs, 36 new). All 36 new hubs get location perks (2.3.5) and signature starting business units (2.3.4); entries (A), values (T).
+- Consistency pass 2 (2026-10-18): sweep done against decisions and a CK3 lens; report in reviews/consistency-pass-2.md (24 mechanical fix groups, 5 rulings, 10 CK3 gaps). Questions are batch 116.
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm
