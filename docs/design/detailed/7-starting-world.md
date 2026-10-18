@@ -1,6 +1,6 @@
 # 7. Starting world: detailed design
 
-_Status: draft v0.8 (2026-10-18). Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v0.9 (2026-10-18). Batch 77: Terry Tippacanoe, the new rival who owns John's company; Edmonton, the listed company and the desktop tip confirmed. Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 7.10.
 
@@ -22,7 +22,7 @@ _Status: draft v0.8 (2026-10-18). Batch 76: John Techno's premise and starting p
 | History | Follows the real AI boom, inside the alternate history in 7.2.0, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2030 on average a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.5); the game continues into a post-crash era with new rules. |
 | Alternate history (Logan, 2026-10-17) | In the game world the **dot-com crash, 9/11, the 2008 financial crisis and COVID never happened**. Everything else is the same, except that the **US won its wars in the Middle East far more decisively** and is in a much better position, both financially and in the security of its resources (7.2.0). |
 | Opening quest | **Buying a desktop computer** on the phone (Logan, batch 76; 7.6). It gives John his first compute. |
-| LLM tip | A tip names the company that will make the first LLM breakthrough. The tip is always correct, and the tipped lab is different each game. It arrives on the new desktop **(A)** (7.6). |
+| LLM tip | A tip names the company that will make the first LLM breakthrough. The tip is always correct, and the tipped lab is different each game. It arrives on the new desktop (Logan, batch 77; 7.6). |
 | Quests and events | Quests are tracked goal trees with branches and rolls. Events are single pop-ups that can start a quest. |
 | Succession | On death the player picks a successor from the eligible list ([1-corporate-core.md](1-corporate-core.md) 1.11.0). |
 | Game end | The game ends when no eligible successor is left, or at an optional end date. |
@@ -81,7 +81,7 @@ Hub populations and GDP in [2-map-and-influence.md](2-map-and-influence.md) stan
 |---|---|---|---|---|
 | **John Techno** | Edmonton, Alberta | Talented | A former **union man on Canada's oil fields** (Logan, batch 76). Liberal governments forced his company into new ownership and broke up the union, but the word was *"If there's one man you keep, it's John Techno."* His incredible stats, the best of any character in the game, made him a local legend. At **22** he is the **Chief Operating Officer of the smallest oil company in the game** | Rise from COO to controller; quest line "The One Man You Keep" ([8-quest-lines.md](8-quest-lines.md) 8.3) |
 
-**Starting position (Logan, batch 76).** $100,000 cash, a salary of $1M a year plus stock options, and a one-year paid-off lease on executive housing in Edmonton. Assumed details (company, options, skills, traits) are in 8.3 **(A)**.
+**Starting position (Logan, batch 76).** $100,000 cash, a salary of $1M a year plus stock options, and a one-year paid-off lease on executive housing in Edmonton. He is COO of a listed micro-cap owned by **Terry Tippacanoe** (7.3.5); his options and their yearly review are in 8.3 (batch 77). His skills and traits are in 8.3 **(A)**.
 
 ### 7.3.1 Rivals, group one: North and South America
 
@@ -114,15 +114,26 @@ Hub populations and GDP in [2-map-and-influence.md](2-map-and-influence.md) stan
 
 ### 7.3.4 The rival starting characters
 
-**All fourteen are active rivals** (Logan, batch 75) from day one (batch 76). Each heads a dynasty run by the AI and pursues the signature play in its row. They have **no quest lines** (Logan, batch 76): like every AI character, they act on their traits and premise, and the player meets them through the news, intel, deals and conflict. Natural rivalries still matter: each names two or three others it clashes with first (for example Antone Provolone and Pablo Segundo over the drug and money trade, Pieter Von Floop and Fang Xiaoyu over lithography access, Qiao Lin and Viktor Sokolov over sanctions-era deals) **(A)**.
+**All fifteen are active rivals** (the fourteen above plus Terry Tippacanoe, 7.3.5) (Logan, batch 75) from day one (batch 76). Each heads a dynasty run by the AI and pursues the signature play in its row. They have **no quest lines** (Logan, batch 76): like every AI character, they act on their traits and premise, and the player meets them through the news, intel, deals and conflict. Natural rivalries still matter: each names two or three others it clashes with first (for example Antone Provolone and Pablo Segundo over the drug and money trade, Pieter Von Floop and Fang Xiaoyu over lithography access, Qiao Lin and Viktor Sokolov over sanctions-era deals) **(A)**.
 
 **Rivals' starting position (T).** Wealth ranges widely by profile: Rich characters start with $1B to $10B in trusts and holdings (Ricky Feng's is mostly locked in the wallet), Connected characters with $1M to $50M, Talented characters with under $1M. Every premade character starts with a family suited to their premise, for example Dot Percy's five children and Pieter Von Floop's ailing father.
+
+### 7.3.5 Terry Tippacanoe (Logan, batch 77)
+
+| Character | Location | Profile | Premise | Signature play |
+|---|---|---|---|---|
+| **Terry Tippacanoe** | Edmonton, Alberta **(A)** | Rich **(A)** | A **Native financier of questionable origins**. He owns a **very popular casino** and, as the union broke up, bought out the smallest oil company in the game: **John Techno's**. He is the new owner and John's first rival | Grow money through the casino and deals; scheme against Liberals |
+
+- **Anti-Liberal edge (Logan).** Terry has a **buff against all Liberal characters in his schemes**: +15% success and -25% discovery when the target's ideology is Liberals ([5-ideology.md](5-ideology.md)) **(T)**.
+- **The casino** is a business unit in the Gambling industry ([10-industry-economy.md](10-industry-economy.md) 10.3), the source of his cash and his pull in Edmonton **(A)**.
+- **Questionable origins.** His past is held as one or more **secrets** (1.1.8.2) that intel, hacking or a news investigation can uncover **(A)**.
+- **John's choice (Logan).** John can **befriend Terry** or **work in the shadows on his downfall** ([8-quest-lines.md](8-quest-lines.md) 8.3, Arc 1).
 
 ## 7.4 Rival dynasties
 
 | Item | Rule |
 |---|---|
-| Total at start | 32 dynasties **(T)**: John Techno's family, the 14 rival starting characters' families (7.3.4) and 17 more run only by the AI. |
+| Total at start | 32 dynasties **(T)**: John Techno's family, the 15 rival starting characters' families (7.3.4, 7.3.5) and 16 more run only by the AI. |
 | Money mix | About 30% old money, 30% new tech money, 25% state-linked, 15% criminal **(T)** |
 | Placement | At least one dynasty in every hub with Size L or larger; Mega hubs get two or three **(T)** |
 | Originality | Fully original families. No parodies of real families or founders. |
@@ -142,8 +153,8 @@ Hub populations and GDP in [2-map-and-influence.md](2-map-and-influence.md) stan
 
 The first quest of the game is **buying a desktop computer**, on John's phone: he downloads the marketplace app, orders the computer, and it is delivered a few hours later. The reward is **1 base compute** and **1 data compute** (cloud data that comes free with the computer). Steps and rolls: [8-quest-lines.md](8-quest-lines.md) 8.2.1.
 
-- There is **no travel lock**: John can fly from the start **(A)**.
-- **The LLM tip** arrives on the new desktop once it is set up: it names the company that will make the first LLM breakthrough and explains how the AI system will work before the boom. The tip is always correct **(A)**.
+- There is **no travel lock**: John can fly from the start (Logan, batch 77).
+- **The LLM tip** arrives on the new desktop once it is set up: it names the company that will make the first LLM breakthrough and explains how the AI system will work before the boom. The tip is always correct (Logan, batch 77).
 - **The tipped lab is different each game.** At game start one lab is drawn from a pool of five fictional AI labs (for example a Bay Area nonprofit lab, a big tech research division, a London lab, a Beijing lab and a Toronto lab) **(A)**. The drawn lab makes the November 2022 breakthrough unless players change history.
 
 ## 7.7 Timeline 2020 to 2030
@@ -174,7 +185,7 @@ New hubs and sites for the starting characters **(A)**:
 | Place | Country | Size | Pop (M) | Districts | Specialties |
 |---|---|---|---|---|---|
 | Medellín | Colombia | L | 4 | F1 I2 R4 S3 T1 X1 | Textiles, coffee, flowers, the informal economy, cartel money laundering, a growing tech scene |
-| Edmonton | Canada (Alberta) | M | 1.4 | F1 I3 R3 S1 X2 | Oil sands and oil field services, pipelines, the Alberta provincial government; John Techno's home (replaces Calgary, batch 76 **(A)**) |
+| Edmonton | Canada (Alberta) | M | 1.4 | F1 I3 R3 S1 X2 | Oil sands and oil field services, pipelines, the Alberta provincial government; John Techno's home (replaces Calgary, batches 76 and 77) |
 | Sydney | Australia (New South Wales) | XL | 5.4 | F4 I2 P2 R6 S1 T2 | Banking, pension funds, property, media, mining company headquarters |
 | Kroll's colony | None (claimed) | Site | 0 | P1 R1 | A claimed sea and ice site between New Zealand and Antarctica. Starts as a few beached ships; can grow into a hub if the claim survives |
 
@@ -190,7 +201,7 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 ## 7.10 Assumptions and open items
 
 2. Hub and economy values in file 2 stand as January 2020 values.
-3. Medellín, Edmonton and Sydney hub data in 7.8, Kroll's colony as a special site, and Colombia as a major country.
+3. Medellín, Edmonton (replacing Calgary, confirmed batch 77) and Sydney hub data in 7.8, Kroll's colony as a special site, and Colombia as a major country.
 4. 32 dynasties at start, with the money mix and placement in 7.4.
 5. Starting wealth ranges by profile in 7.3.
 6. The Center of Power rule: 3-month lead, +10% influence.
@@ -198,6 +209,6 @@ Colombia moves out of the Andean minor group and becomes the 31st major country 
 12. The alternate-history consequences in 7.2.0, including the effects of the Ukraine war since 2005.
 8. Names marked † and profiles marked **(A)** in 7.3 (Tolu Balogun, Fang Xiaoyu and Qiao Lin confirmed in batch 35).
 9. The natural-rivals rule (7.3.4).
-14. Edmonton replacing Calgary as the added Alberta hub (7.8).
+14. Terry Tippacanoe's location, profile, buff size, casino and secrets (7.3.5).
 15. The 2020 to 2021 timeline rows (7.7).
 11. The pool of five candidate labs for the tip.

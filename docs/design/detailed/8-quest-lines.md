@@ -1,6 +1,6 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v0.7 (2026-10-18). Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v0.8 (2026-10-18). Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.6.
 
@@ -42,7 +42,7 @@ The first quest of the game is **buying a desktop computer**, done entirely on J
 
 **Reward (Logan).** John gets **1 base compute** (the desktop) and **1 data compute** (cloud data that comes with the computer, free of charge) ([15-infrastructure.md](15-infrastructure.md) 15.2). These are his first owned Techno-Capital.
 
-**Also on completion (A).** The **LLM tip** arrives on the new desktop: it names the lab that will make the first LLM breakthrough (7-starting-world 7.6). There is no travel lock.
+**Also on completion (Logan, batch 77).** The **LLM tip** arrives on the new desktop: it names the lab that will make the first LLM breakthrough (7-starting-world 7.6). There is no travel lock.
 
 ### 8.2.2 The other opening arcs
 
@@ -58,7 +58,16 @@ The first quest of the game is **buying a desktop computer**, done entirely on J
 
 **Starting position (Logan, batch 76).** **$100,000 cash**; a salary of **$1M a year plus stock options**; a **one-year paid-off lease on executive housing in Edmonton**. The best stats of any character in the game (7-starting-world 7.3.0).
 
-**Assumed details (A).** The company is a listed micro-cap with one Oil and gas business unit in Alberta, owned by the new owners' bloc; the options are 2% of the company, vesting over 4 years with a 1-year cliff. Skills: Operations 24, Hustle 20, Finance 16, Persuasion 18, Intrigue 8, Tech 8. Traits: Diligent, Brave, Honest, plus one hidden trait. His old union brothers start as Friends; the new owner starts Neutral. Ambition: Get rich.
+**The company (Logan, batch 77).** A **listed micro-cap** with one Oil and gas business unit in Alberta. Its new owner is **Terry Tippacanoe** (7-starting-world 7.3.5), who bought it out as the union broke up.
+
+**Stock options (Logan, batch 77).** John starts with options on **2% of the company**, vesting over **4 years** with a **1-year cliff**. The package **changes as the company grows**: at each yearly review the board resizes his next grant by the **company's financial situation** and **John's performance as COO** **(T)**:
+- New grant = 0.5% of the company × company factor × performance factor.
+- Company factor: 0.5 if the company lost money that year, 1 if it broke even or grew slowly, 1.5 if revenue grew 20% or more.
+- Performance factor: 0.5 to 1.5 from the year's productivity change in his units and the last arc outcome (Strong 1.5, Mixed 1, Poor 0.5).
+- As the company climbs a rank (1.7.5) the percentage shrinks but the value grows; a CEO seat (Arc 4) brings a new package.
+- A board where Terry is John's Rival can cut the grant to zero.
+
+**Assumed details (A).** Skills: Operations 24, Hustle 20, Finance 16, Persuasion 18, Intrigue 8, Tech 8. Traits: Diligent, Brave, Honest, plus one hidden trait. His old union brothers start as Friends; Terry starts Neutral. Ambition: Get rich.
 
 **What the line teaches.** Running a company from the COO seat, the industry economy, earnings days, board politics, the AI boom's power demand, and taking control.
 
@@ -66,11 +75,16 @@ The first quest of the game is **buying a desktop computer**, done entirely on J
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | Meet the new owner and the board; keep your seat | Board seats, Friend and Rival tags (1.8, 1.1.4) |
+| 1 | Meet Terry Tippacanoe, the new owner, at his casino, and the board he installed; keep your seat | Board seats, Friend and Rival tags (1.8, 1.1.4) |
 | 2 | Run the oil fields: set the unit's growth plan and R&D | Business units, productivity, growth plans (10.0) |
 | 3 | Your old union brothers want their jobs back: rehire them, or not | Loyalty, costs, the Communist bloc (4.0) |
+| 4 | **Friend or foe (Logan, batch 77).** Choose how to deal with Terry: **befriend him**, or **work in the shadows on his downfall** | The branch below |
 
-**Outcomes.** Strong: the board trusts you and the crews follow you; +2 Operations. Mixed: +1 Operations. Poor: the new owner marks you as a Rival.
+**The Terry branch.** The choice opens one of two quests that run alongside the rest of the line **(A)**:
+- **Befriend Terry.** Win him over (Persuasion, favors, a night at the casino). As a Friend he backs John on the board, cuts him into deals, and lends him his edge against Liberal characters in shared schemes; but his questionable origins are a secret that can sink anyone close to him, and he will expect favors (a hook).
+- **Bring him down.** Dig into his origins and the casino's books in secret (Intrigue schemes, hacking, a news outlet's investigation, 16.5.1). Each secret found is a hook or a scandal to use; the end goal is forcing him out of the company, which opens Arc 4 early. If Terry learns of it, he turns Nemesis.
+
+**Outcomes.** Strong: the board trusts you and the crews follow you; +2 Operations. Mixed: +1 Operations. Poor: Terry marks you as a Rival.
 
 ### Arc 2: The Smallest Oil Company
 
@@ -102,7 +116,7 @@ Opens once the AI boom starts.
 | 2 | Take the CEO seat: win the board, a proxy fight or a buyout | Takeovers and control (1.3.1) |
 | 3 | The Liberal government that broke the union comes for your industry: lobby, back a rival bloc or run for office | Politics (4), ideologies (5) |
 
-**Outcomes.** Strong: John is President and CEO and the real controller. Mixed: CEO in name, with the old owner still pulling strings. Poor: pushed out, with his options and his legend.
+**Outcomes.** Strong: John is President and CEO and the real controller. Mixed: CEO in name, with Terry still pulling strings. Poor: pushed out, with his options and his legend.
 
 ### Arc 5: Dry Hole (the crash)
 
@@ -129,7 +143,7 @@ The AI bubble pops in 2030 on average (Logan). The year is set at game start as 
 ## 8.6 Assumptions and open items
 
 1. Outcome tiers and buff sizes in 8.1; the 25% chance a successor picks up an unfinished arc.
-2. The opening arcs in 8.2, the delivery time of the desktop, and the LLM tip arriving on the desktop with no travel lock (8.2.1).
-3. John Techno's assumed company, options, skills, traits and arcs in 8.3.
+2. The opening arcs in 8.2 and the delivery time of the desktop (8.2.1).
+3. John Techno's skills, traits and arcs, the option review numbers, and the Terry branch in 8.3.
 4. Generated quest sources in 8.4.
 5. Crash timing and the ×1.2 crash size in 8.5.
