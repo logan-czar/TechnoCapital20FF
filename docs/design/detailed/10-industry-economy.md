@@ -36,6 +36,7 @@ _Status: draft v1.3 (2026-10-18). Consistency pass, batch 74: the file is built 
 | **Growth plan** | Target growth of business assets this year, as a %, with a budget |
 | **R&D plan** | R&D spend as a % of revenue |
 | **Revenue and expenses** | Calculated monthly (10.0.4) |
+| **Frozen** (Logan, batch 87) | A **frozen** unit has **no revenue and no expenses** and can only make software with its desktops (14.8). Example: the Kids Who Code charity's team in India (8-quest-lines 8.3) |
 
 ### 10.0.3 Market demand and supply (A)
 

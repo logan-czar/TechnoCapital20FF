@@ -65,7 +65,7 @@ A **media campaign** is a contract to make media **for a specific purpose**. **A
 - **Cost (A):** each creator charges by followers (about $1k per 10k followers per post) and each outlet by audience. A campaign runs 1 to 4 weeks.
 - **Credibility matters:** effects scale with the creators' and outlets' credibility. Paying low-credibility accounts is cheap but weak, and a campaign exposed as paid loses its effect and costs the buyer Favor.
 - **Campaigns stack with diminishing returns** on the same target and purpose in the same quarter (each further campaign at half the effect) **(T)**.
-- Campaigns use the **contracts table** (14.4) and can be special contracts (an exclusive deal with a star creator).
+- Campaigns are recorded in the **contracts table** (14.4). There are no special contracts (batch 87).
 
 ## 16.5 Editorial control (Logan)
 

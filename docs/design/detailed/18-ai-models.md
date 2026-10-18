@@ -93,7 +93,7 @@ A model is a row in its own **models table** in the engine:
 
 ## 18.4 Renting models out (Logan: software contracts)
 
-- Models are rented through the **contracts table** (14.4), exactly like software: a **market contract** offered to every company, and occasional **special contracts** (exclusive access, a discount, a custom fine-tune).
+- Models are rented through **licences** (14.4), exactly like software: one offer to every company, paid by usage, with a one-year lock on added capacity. There are no special contracts (batch 87).
 - **Price** follows the model's capability quality (6.5.5); there is no frontier pricing (batch 74).
 - **Serving**: the owner (or the renter, if the contract lets them run it themselves) runs enough copies to handle the jobs, each copy needing the model's **size** in GPU compute (18.2.1). Running short of GPU compute throttles every contract.
 - **Breaking a contract** costs the same penalty as software (14.4).

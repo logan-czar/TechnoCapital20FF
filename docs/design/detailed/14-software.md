@@ -1,6 +1,6 @@
-# 14. Software: the software table and software contracts (detailed design)
+# 14. Software: the software table, licences and making software (detailed design)
 
-_Status: draft v0.5 (2026-10-18), consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
+_Status: draft v0.6 (2026-10-18). Batch 87: making software with desktops (14.8), licences by usage with a one-year capacity lock, no special contracts, no copying (14.4). v0.5, consistency pass, batch 74: no implants, no GPU chain. v0.4 (2026-10-18). Batch 41: "Software System" means an **in-game system about software**. Batch 42: the game keeps a **software table**; hacking comes later. Batch 43: the last four columns (speed, bloat, quality, tags), **software contracts** for use and pricing, nerfed output, and AI models kept separate. Batch 44: software is a **data pipeline** (speed is data processed per tick), bloat comes from features, companies **scale instances**, and a broken contract costs a penalty. Builds on [10-industry-economy.md](10-industry-economy.md) (the Software and SaaS industry), [6-technocapital.md](6-technocapital.md) (compute) and [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) (the Rust engine keeps the tables). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 14.7.
 
@@ -11,7 +11,7 @@ _Status: draft v0.5 (2026-10-18), consistency pass, batch 74: no implants, no GP
 | Topic | Decision |
 |---|---|
 | Software table | One row per piece of software, with the columns in 14.2 (batches 42 and 43). |
-| Contracts | Who uses software and at what price is handled by its owner through **software contracts** (14.4), not table columns (batch 43). |
+| Licences | Who uses software and at what price is handled by its owner through **licences** (14.4), not table columns (batch 43; licence model batch 87). |
 | Missing inputs | A product's **output amount is nerfed** based on its quality and software type (batch 43). |
 | AI models | **Their own separate thing**, not rows in the software table (batch 43). See [18-ai-models.md](18-ai-models.md): rented through software contracts and powering AI features (batch 72). |
 | Hacking | A separate system: [17-hacking.md](17-hacking.md) (batch 69). |
@@ -72,23 +72,18 @@ Software forms a small dependency graph **(A)**.
   For example, a 50-quality SaaS tool that loses half its inputs works at 50% output; at 90 quality it keeps 70%.
 - **Outputs** feed the economy: output data raises the productivity of the companies that use it (a company's processed data is part of its management and operations output), it can be stored and sold, and its owner earns contract revenue. Slop comes from consumer software (10.3).
 
-## 14.4 Software contracts (Logan, batch 43)
+## 14.4 Software licences (Logan, batches 43 and 87)
 
-The owner of a piece of software decides who may use it and on what terms. A company that wants to use software **signs a software contract**.
+The owner of a piece of software decides who may use it. A company that wants to use software **buys licences**.
 
-| Contract | Who it is offered to | How it works |
-|---|---|---|
-| **Market contract** | **Every company** in the game | The owner sets one standard offer for the product: price, term and any limits. Any company can sign it at any time. |
-| **Special contract** | One company | Negotiated between two companies, occasionally: exclusive use, a discount, a custom build, source access, or a bundle. Made at the negotiation table like any deal. |
-
-Contract terms **(A)**:
-- **Price**: per seat, per unit processed, or a flat fee a month.
-- **Term**: monthly rolling, or 1 to 5 years.
-- **Instances**: how many instances the buyer may run; the buyer scales within that limit (14.2.2).
-- **Exclusivity**: a special contract can bar the owner from offering the product to a named rival.
-- **Breaking a contract** (Logan, batch 44): either side can break a signed contract, but pays a **penalty**: by default the fees left on the term × 50% **(T)**, plus a negative opinion push between the companies' heads. The owner can also stop offering a market contract to new buyers at any time.
-- **Users** come from contracts: a product's users are the companies (and their staff) under contract, so there is no separate users column.
-- Contracts live in their own **contracts table** in the engine, with a Contracts view on the company screen.
+- **One kind of deal (Logan, batch 87).** There are **no special contracts**. The owner sets one standard offer that **every company** can sign.
+- **Licences by usage.** A company **pays for X licences a month, based on how much it is using** the software (its instances, 14.2.2).
+- **Capacity lock.** When a company **increases its capacity** (buys more licences), it is **locked into that amount for a year** (Logan). It can grow again within the year, which restarts the lock, but it cannot drop below the locked amount until the year is up.
+- **Price (A).** The owner sets a price per licence per month. Changing the price applies to new and renewed capacity.
+- **Leaving early.** A company that drops below its locked amount pays the rest of the year's fees on the difference × 50% **(T)**, plus a negative opinion push between the companies' heads. The owner can stop selling new licences at any time.
+- **No copying (Logan, batch 87).** Software cannot be copied or cloned by other companies. Only an **Open source** product (14.6) can be forked.
+- **Users** come from licences: a product's users are the companies (and their staff) holding them, so there is no separate users column.
+- Licences live in their own **contracts table** in the engine, with a Contracts view on the company screen.
 
 ## 14.5 Features (A)
 
@@ -114,6 +109,26 @@ Tags are exceptions to the normal rules. Starting examples:
 | **Air-gapped** | Needs no inputs; cannot run in the cloud |
 | **Viral** | New market contracts sign themselves for a few months after a hit release |
 | **Abandonware** | No owner: no updates, quality decays over time, and the contracts are free |
+
+## 14.8 Making software (Logan, batch 87)
+
+**Desktops design software.** Software is created by taking **desktop computers** (base compute, 15.2) and **setting them to design software**.
+- **One employee on one desktop makes software units.** Each desktop assigned to design takes **1 employee** and produces **software units** at a rate set by **developer productivity** (about 1 software unit per desktop per month at normal productivity **(T)**).
+- **Cost in software units.** Every piece of software has a **cost in software units** to create: a new product, and each update or feature **(A for updates and features)**. Bloat multiplies the cost of updates and features (14.2.1).
+- **Employment cost.** Labor normally costs money **per software unit**, set by the **GDP per capita of the country** where it is developed **(T: about 1% of that country's yearly GDP per capita per software unit)**.
+- **Location.** When developing software, the **location** can be chosen. It sets both the **employment cost** and the **software quality** the work starts from (Logan). Countries have a software quality tier **(A)**:
+
+  | Tier | Starting quality **(T)** | Examples **(A)** |
+  |---|---|---|
+  | High | 70 | United States, Israel |
+  | Medium-high | 60 | Western Europe, Japan, South Korea, Canada |
+  | Medium | 50 | China, Eastern Europe |
+  | Medium-low | 40 | **India** (Logan), Southeast Asia, Latin America |
+  | Low | 30 | Most of Africa and the minor groups |
+
+  Updates raise quality from there (14.2.1).
+- **Volunteers.** A charity's developers are **volunteers**, so their labor is **free**; it is gated only by **how many desktops it has** and **developer productivity** (Logan).
+- **Directing the work.** The owner can set the software's direction (features, quality, speed or capacity) or **delegate** it and get an event when it is done (Logan, batch 87).
 
 ## 14.7 Assumptions and open items
 
