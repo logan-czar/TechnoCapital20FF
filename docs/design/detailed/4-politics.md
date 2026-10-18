@@ -2256,7 +2256,7 @@ Each government holds an **attitude** toward each character with assets or Fame 
 
 "By `1 - independence`" means the multiplier is scaled: an agency with independence 0.9 feels only 10% of it.
 
-**Populist targeting**: in democracies, if a character has Fame ≥ 60 and population-weighted effective Favor ≤ -10, populist parties put them in their campaigns ("[name] the oligarch"): +0.2 utility for them in strata where local Favor is negative. If they win, the new government starts at Targeted and proposes E4 Great Wealth Tax with priority **(T)**.
+**Populist targeting**: in democracies, if a character has Fame ≥ 60 and population-weighted effective Favor ≤ -10, populist parties put them in their campaigns ("[name] the oligarch"): +0.2 utility for them in strata where local Favor is negative. If they win, the new government starts at Targeted and proposes E4 Inheritance and Gift Tax with priority **(T)**.
 
 ### 4.27.3 AI rival political archetypes
 
