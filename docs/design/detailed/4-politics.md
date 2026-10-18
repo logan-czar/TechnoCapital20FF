@@ -1199,6 +1199,15 @@ Hub stability (for local unrest and protests) = country stability + local modifi
 - **Effects**: bonds haircut 30 to 70% (restructuring chain: Moratorium → Negotiation with creditors (holders with ≥ 5% of the bonds get a seat) → Haircut agreed or Holdout lawsuits); credit rating to D; domestic banks holding the bonds need recapitalization (bailout chain, 4.9.8); capital controls to Restricted or Hard (70%); Stability -15; government contracts paid late (50% delayed 6 months).
 - Regional and city governments can default on their own bonds with the same formula on their own debt and revenue (Limit 30% of regional GDP **(T)**); a national bailout of a region has the chance of a bailout of a systemically important company.
 
+**Debt vassalage** (Logan, batch 107). A country whose debt to **one other country** is so large it can never repay it can become that country's **debt vassal**: instead of servicing the debt, it pays the creditor a **set fee** every year, and the creditor gains **vassalage** over it. Mali has been a US debt vassal since its 2012 collapse ([19-history.md](19-history.md) 19.14). Details **(A)**:
+
+| Item | Rule |
+|---|---|
+| **How it starts** | A country in default or a currency crisis is bailed out by a single country instead of the ISF (4.25). If the bailout debt is above **50% of the debtor's GDP (T)** and the debtor misses a year of payments, the creditor can offer debt vassalage. The debtor's AI accepts if its Stability is under 40 **(T)**; otherwise it accepts or refuses by the usual AI weights. |
+| **The fee** | The debtor pays **2% of its GDP a year (T)** to the creditor's treasury, forever or until it buys its way out. The debt stops growing. |
+| **What the overlord gains** | The debtor follows the overlord in alliances, sanctions and international organization votes; relations are locked at +60 **(T)** or higher; the overlord's companies get **+25% influence (T)** and first right on state contracts and privatizations there; the overlord may base troops there. |
+| **How it ends** | The debtor repays the full debt in one sum, or a revolution or a nationalist government (Sovereigntists, 5-ideology) repudiates it, which sets relations with the overlord to -80 **(T)** and may trigger sanctions. |
+
 **Revolution**: 4.8.5.
 
 ---
