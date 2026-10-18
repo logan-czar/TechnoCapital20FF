@@ -51,7 +51,7 @@ The director decides **when** an event fires and **which deck** it comes from. I
 ## 13.4 Events for AI characters
 
 - Every full character (12-setup: 200) draws events from the same decks and on the same schedule, paced by their own tension **(A)**.
-- The AI picks options by its traits, ambition, ideology and archetype (1.1.2, 2.23), then rolls the same dice (12.3 fair AI).
+- The AI picks options by its **traits** and ideology (1.1.2; Logan, batch 61: no ambitions or play styles for AI), then rolls the same dice (12.3 fair AI).
 - **What the player sees.** Results come in as **news pop-ups** (11-ui 11.4) when the player has intel on the character, the event is public (a scandal, a merger, a death), or the character is family, a board member or a rival. Private results stay hidden until intel reaches them.
 - **Hooks into the player's game.** An AI event can open an event or quest for the player: a rival's scandal is a chance to buy their stake, and a friend's relapse is a chance to help or to gain a hook.
 - **Performance.** Off-screen events for characters far from the player resolve in weekly batches **(A)**.

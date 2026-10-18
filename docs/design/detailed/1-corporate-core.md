@@ -114,11 +114,13 @@ Traits **strongly** steer AI characters. Each trait adds weights to what an AI c
 | Narcissist | Media, buying fame, vanity projects |
 | Gregarious | Alliances, marriages, galas |
 
-AI company archetypes (2.23.1) follow the controlling character's traits.
+**Traits alone drive AI characters** (Logan, batch 61): there is no separate play style or character archetype on top of traits. The AI company archetypes (2.23.1) and political archetypes (4-politics 4.27.3) are only **labels worked out from the controlling character's traits**, not extra settings.
 
 #### Ambitions (Logan, 2026-10-17)
 
-Every full character has **one ambition** at a time, picked from their traits, stratum and situation **(A)**:
+> **Player only (Logan, batch 61).** Only the player's character has an ambition. AI characters have none; they act from their traits (above), ideology and situation. The table below is the player's list.
+
+The player's character has **one ambition** at a time, picked by the player from this list or suggested from their traits, stratum and situation **(A)**:
 
 | Ambition | Goal | Typical holder |
 |---|---|---|
@@ -132,8 +134,7 @@ Every full character has **one ambition** at a time, picked from their traits, s
 | Transcend | Fit 4 implants or reach Transhumanist goals | Visionary, Hedonist; Transhumanists |
 
 - Progress toward the ambition gives -5 stress a month; achieving it gives clout and +20 stress relief, and a new ambition is picked.
-- Ambitions are hidden like traits; knowing a rival's ambition tells you what they will do next and what they will trade for.
-- The player character also has an ambition; meeting it gives clout and vril (1.1.0).
+- Meeting it also gives vril (1.1.0).
 
 ### 1.1.3 Education traits
 
@@ -206,6 +207,13 @@ Stress 0 to 300. Levels at 100, 200, 300. Each new level triggers a breakdown ev
 - Acting against a trait: +10 to +40 stress depending on severity.
 - Lifestyle coping: -10 to -20 per month (Hedonist parties, Ascetic retreats).
 - Vacation action: 72 hours unavailable, -30 stress.
+- Overwork: every day with more than 14 hours used adds +2 stress **(T)** (Hustle 15+ halves it, 1.1.1).
+
+**Stress for AI characters (Logan, batch 61): a simpler simulation managed by the director** (13.3) **(A)**:
+- AI characters do not track stress points hour by hour. Each has a **stress level** of 0 to 3 that the director updates **weekly** from what happened to them: acting against a trait, losing a fight, a scandal, overwork or a loss raise it; vacations, wins and lifestyle spending lower it.
+- When an AI character's level rises, the director rolls a **breakdown** from the same list (burnout, a vice, a public outburst, quitting, a new bad trait) and resolves it off screen, shown to the player as a news pop-up if they would see it (13.4).
+- The director can use stress to pace the story: it can push a rival under pressure toward a breakdown when things are calm, and hold it back during a crisis.
+- When an AI character moves into the player's circle (full simulation tier, 12-tech 12.3), its level converts to points (level × 100) and then runs like the player's.
 
 ### 1.1.6 Time and actions
 
