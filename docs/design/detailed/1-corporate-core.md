@@ -335,12 +335,24 @@ Control is recalculated whenever a stake changes or a bloc changes (immediately)
 2. **Through people.** If the owner of record is a character who is under a **strong hook** (1.1.4), or who is a loyal member of someone else's bloc, that other character is the real controller. The owner of record is then a **figurehead**: they vote and sign as told.
 3. **Breaking the chain.** A figurehead follows orders while their loyalty or the hook holds. When loyalty falls to Defiant (1.7.3), or the hook is destroyed or exposed, they start to decide for themselves, and the real controller has to win them back or retake control on the books.
 
-**Takeovers on two layers (A).**
+**Takeovers on two layers.**
 - Winning a tender offer or buying a majority gives **control on the books** at once: the new owner of record can call a vote, replace directors and appoint the head under the charter.
-- **Real control takes longer.** The old real controller's people still sit on the board and in the executive seats, with their loyalty and hooks. Until the new owner has placed or won over a board majority (a staggered board can make that take 2 years) and the CEO, the company is **contested** (1.3, -10% efficiency) and the old controller can still run schemes, leaks and proxy fights from inside.
+- **No contested period** (Logan, batch 57): the takeover carries no efficiency penalty. Directors and executives loyal to the old real controller keep their seats until they are replaced (a staggered board can make that take 2 years), and until then they can still leak, scheme or start a proxy fight, by their loyalty **(A)**.
 - The reverse also works: a dynasty can **gain real control without the shares** by holding hooks over the owner of record, or leading the bloc, and no filing shows it.
 
-**What the UI shows.** The company screen always shows the **owner of record**. It shows the **real controller** only when the player has intel. Otherwise it says "Real controller: unknown", and an Investigate action (1.1.8, like Investigate Shell) can reveal it.
+**Figureheads (Logan, batch 57).** A player or AI can **deliberately put a figurehead on the books** to hide who is in charge: a relative, a loyal executive, a friendly holder or someone they hold a hook over. The stake is held in the figurehead's name (or their trust or company), and the real controller gives the orders. **AI dynasties do this too**, as well as using shells, so the player has to investigate rivals to see who is behind them.
+
+**Seeing real control (Logan, batch 57).**
+- **The owner of record is always visible** to everyone.
+- **The real controller needs intel.** Usually it is easy to tell: when the chain runs only through public links (companies, family trusts, open blocs), the real controller is shown at once **(A)**.
+- **Sometimes a shadowy figure lurks.** When the chain passes through a shell, a hook or a figurehead, the company screen shows "Real controller: unknown" until the player's intel reaches it, through an Investigate action (1.1.8, like Investigate Shell), an informant on the board, or an event.
+
+**Exposure (Logan, batch 57).** A hidden controller is **legal**. **Governments and regulators never get involved**, and it is not a disclosure breach. But if **the press or certain people** (a rival, a director, a disgruntled figurehead) find out, the real controller **can lose control of the board** **(A for the numbers)**:
+- An **Exposed** event fires for the company. Every director's opinion of the real controller drops by 20, or 40 if the director was in the dark **(T)**.
+- Each director then rolls to defect: the chance is 50% minus their loyalty or opinion of the real controller ÷ 2 **(T)**. Defectors vote with the owner of record or with a rival bloc from then on.
+- The figurehead may **flip**: it gets a free check to break the chain (step 3 above), at +20% if the exposure embarrassed them **(T)**.
+- If the defectors and the figurehead together give someone else a board majority, the real controller loses control of the board. They can try to win it back through favors, hooks or a proxy fight (1.9.2).
+- Whoever learns the secret first holds it as a **hook** (1.1.4) and can trade it, use it or leak it to the press.
 
 ## 1.4 Blocs
 
