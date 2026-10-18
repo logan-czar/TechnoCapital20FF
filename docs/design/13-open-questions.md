@@ -98,6 +98,7 @@
 - Batch 71 (Logan, 2026-10-18): cyberware is scrapped: no implants, humanity, cyberpsychosis, clinics or cyberware addiction; the vices are now four; ideology cyberware stances read as human enhancement; Samir's "Chrome" quest line needs a rework.
 - Batch 72 (Logan, 2026-10-18): Samir's quest line is reworked around buying drones for operations; AI models are trained on GPU compute and data, rented out through software contracts and power AI features in software (new file detailed/18-ai-models.md); AI addiction is scrapped.
 - AI model capabilities (Logan, 2026-10-18): models have varying capabilities, each with a quality; an AI software needs one or more models to fill its capabilities, and a loaded model's quality in a capability caps the software's quality.
+- AI model data, size and speed (Logan, 2026-10-18): models take in varying types of data to train a capability, and different data types raise different capabilities; models have a size (how big a server or device is needed to run them) and a speed (jobs per tick).
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm
