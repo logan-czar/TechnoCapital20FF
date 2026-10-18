@@ -34,7 +34,7 @@ _Status: draft v0.3 (2026-10-18). Batch 46: maintenance feeds the energy system,
 
 - **Onsite data centers.** A company can put a data center at **any of its sites** (10). Its size is limited by the site's real estate and power.
 - **Leased space in cloud data centers.** Cloud companies own large data centers and **lease space to other companies**, who install their own compute units there. The lease is paid monthly per unit of space **(A)**.
-- **Cloud companies** are companies in the Cloud and data centers industry (10). Their data centers are their sites, on industrial real estate (10.4.5), with power from the energy index (2.6.0).
+- **Cloud companies** are companies with business units in the Cloud or Data centers industries (10). Their data centers are their sites, on industrial real estate (10.4.5), with power from the energy index (2.6.0).
 - A data center has **capacity** (how many units of compute it can hold) and a **power draw**: about 1 kW per base compute unit, 0.3 kW per data compute unit and 5 kW per GPU compute unit **(T)**.
 - Idle compute a company owns can be sold to the cloud market at the world price (15.5).
 
@@ -69,7 +69,7 @@ _Status: draft v0.3 (2026-10-18). Batch 46: maintenance feeds the energy system,
 |---|---|
 | Software (14) | Instances need base, data or GPU compute; scaling changes the owned load or the cloud bill |
 | Techno-Capital (6) | GPU compute is the H of Techno-Capital; GPU parts come from the GPU chain |
-| Economy (10) | Data centers are sites; parts come from the electronics and semiconductor industries; cloud revenue counts in the Cloud and data centers industry |
+| Economy (10) | Data centers are business assets of Data centers units; parts come from the electronics and semiconductor industries; cloud revenue counts in the Cloud and data centers industry |
 | Events (13) | An Infrastructure deck: *Outage*, *Power Cut*, *GPU Price Spike*, *Rack Fire* |
 
 ## 15.8 Assumptions and open items

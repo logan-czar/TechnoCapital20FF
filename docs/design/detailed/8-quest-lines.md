@@ -235,7 +235,7 @@ Runs alongside Arc 2.
 | Step | Goal | Teaches |
 |---|---|---|
 | 1 | Get out of the labor camp: rent a flat in Sharjah's residential pool and move | Strata and real estate (2.8.0, 10.4.5) |
-| 2 | Start a security company as cover | Founding a company (1.6); Security and PMCs industry |
+| 2 | Start a security company as cover | Founding a company (1.6); Professional services industry |
 | 3 | Win a contract guarding a Gulf data center | Contracts and sites |
 
 **Outcomes.** Strong: Samir reaches the PMC stratum with a real company. Mixed: a shell of a company. Poor: back to the camp.
@@ -442,7 +442,7 @@ Opens once the AI boom starts.
 
 **What the line teaches.** Running a billionaire's empire while chasing a vanity project: an EV company, the cost of a colony, sovereignty and politics, Image, and managing a board that thinks you are mad.
 
-**Starting position (A).** Controlling stake in an EV company listed in the US (Autos and EVs), $6B net worth mostly in its shares, a fleet of three ships at Kroll's colony (7.8). Traits: Visionary, Narcissist, Brave. Ambition: Build a legacy.
+**Starting position (A).** Controlling stake in an EV company listed in the US (EVs), $6B net worth mostly in its shares, a fleet of three ships at Kroll's colony (7.8). Traits: Visionary, Narcissist, Brave. Ambition: Build a legacy.
 
 ### Arc 1: Landfall
 

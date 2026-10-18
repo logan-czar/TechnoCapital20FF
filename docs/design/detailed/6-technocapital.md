@@ -321,6 +321,8 @@ The full requirement list. **Opp. cost** is the market value of the TC at base p
 
 ### 6.7.0 The GPU chain: simplified, 4 layers (Logan, 2026-10-17)
 
+> **Retired (Logan, batch 50): no more supply chains.** Lithography machines, Foundry, GPUs and CPUs are now four separate industries with no chain between them ([10-industry-economy.md](10-industry-economy.md) 10.3, 10.6). The layer tables below are kept only for their boom trigger, boom rate and demand numbers, which still drive the GPUs industry and the GPU price index.
+
 > **Changed (Logan, 2026-10-17):** the economy is now measured in dollars ([10-industry-economy.md](10-industry-economy.md) 10.6). The four layers below are four dollar industries, made of sites; unit counts here (machines, dies, chips, GPUs) are reference values for sizing them and for deriving Techno-Capital, and the demand growth rates still drive the GPU industry.
 
 At the start **only energy and GPUs are modeled** as real goods (Logan). Everything else in the economy is abstracted (2-map 2.6.0). The GPU supply chain is the largest supply chain in the game, and at launch it is simulated as **four layers**. The eight-layer Stack (6.7.1) stays as the reference for later.

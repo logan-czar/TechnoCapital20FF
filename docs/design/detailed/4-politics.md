@@ -44,14 +44,14 @@ Batch 37 checked politics against the Wall Street Raider style economy (10-indus
 
 | Industries | Default lean |
 |---|---|
-| AI labs, cloud, semiconductors, GPUs, software, crypto | Accelerationists |
-| Cyberware clinics, biotech, longevity | Transhumanists |
+| AI labs, Cloud, Data centers, Lithography machines, Foundry, GPUs, CPUs, Software, SaaS | Accelerationists |
+| Pharma, Healthcare services (clinics, longevity) | Transhumanists |
 | Banks, funds, insurance, exchanges | Liberals |
-| Oil and gas, mining, utilities, autos, heavy industry, real estate | Landites |
-| Defense, PMCs, security | Chuds |
-| Media, entertainment, consumer goods, retail | Liberals |
-| Gaming and gambling, social media and ads | Sovereigntists |
-| Charities, education, healthcare | Effective Altruists |
+| Oil, Gas, Mining, Metals, Chemicals, Power utilities, Autos, EVs, Construction, Real estate, Agriculture | Landites |
+| Defense, Aerospace, Drones, Robotics | Chuds |
+| Retail, E-commerce, Fast food, Luxury, Consumer electronics, Telecom, Shipping, Logistics, Airlines, Professional services | Liberals |
+| Gaming, Gambling, Social media, Ads, Black market | Sovereigntists |
+| Healthcare services, Renewables | Effective Altruists |
 
 **Tariffs on industries.** A tariff of rate t on an industry raises that industry's price index in the importing country by `t × import share` **(T)**, where import share is the part of the country's use of that industry supplied from abroad. Domestic companies in that industry gain margin, and foreign ones lose sales there. Sanctions tiers (4.11) list **industries** instead of goods: Tier 2 Sectoral bans trade in the listed industries (for example semiconductors and GPUs), which raises their index in the target country and cuts exporters' revenue there.
 

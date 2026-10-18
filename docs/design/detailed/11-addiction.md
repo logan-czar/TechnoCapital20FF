@@ -85,11 +85,11 @@ Vices are businesses (Logan). They use the industry model ([10-industry-economy.
 
 | Vice | Industry | Legal? | Scandal risk |
 |---|---|---|---|
-| Gambling | Gaming and gambling; Crypto exchanges for crypto casinos | Licensed in most countries | Low; higher for crypto casinos |
+| Gambling | Gambling (crypto casinos included) | Licensed in most countries | Low; higher for crypto casinos |
 | Drugs | Pharma for legal stimulants; a Front Company (1.7.4) for illegal ones | Varies | High for fronts: raids and investigations |
-| Cyberware | Cyberware clinics | Licensed; black clinics are fronts | Medium |
-| Doomscrolling | Social media and ads | Legal | Low; regulation and youth-harm scandals |
-| Sex | Media and entertainment; escort and companion services through fronts where illegal | Varies | High where illegal |
+| Cyberware | Healthcare services (licensed clinics); Black market (black clinics) | Licensed; black clinics are illegal | Medium |
+| Doomscrolling | Social media | Legal | Low; regulation and youth-harm scandals |
+| Sex | Black market (escort and companion services where illegal); the Media system later | Varies | High where illegal |
 
 - **Scandal risk**: a company in a vice industry has a yearly scandal chance (2% to 20% by row) **(T)** that costs Favor for its head and board, stock price -5% to -20%, and opens regulator action.
 - **Owning the supply**: a company that sells a vice in a hub sees which named characters there are Habit or higher with it (their trait is no longer hidden from the owner), which makes vice businesses a source of hooks.
