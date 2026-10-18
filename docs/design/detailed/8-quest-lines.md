@@ -1,6 +1,6 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v1.1 (2026-10-18). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v1.2 (2026-10-18). Batch 81: the opening sequence (start on 1 January, the first earnings day, First Week on the Job, Intro Night, The Scandal). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [10-events.md](../10-events.md) 10.4 (quest rules), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.6.
 
@@ -27,7 +27,7 @@ A quest line is made of **arcs** (Logan's word; not chapters).
 
 ## 8.2 Opening arcs (tutorial)
 
-John plays these first, back to back, in the first weeks of January 2020 **(T)**; his own line (8.3) opens alongside them.
+John plays these first, in order, through January 2020; his own line (8.3) opens alongside them.
 
 ### 8.2.1 The Desktop (the first quest, Logan, batch 76)
 
@@ -44,13 +44,28 @@ The first quest of the game is **buying a desktop computer**, done entirely on J
 
 **Also on completion (Logan, batch 77).** The **LLM tip** arrives on the new desktop: it names the lab that will make the first LLM breakthrough (7-starting-world 7.6). There is no travel lock.
 
-### 8.2.2 The other opening arcs
+### 8.2.2 The first earnings day (2 January 2020, Logan, batch 81)
 
-| Arc | Teaches | Steps |
-|---|---|---|
-| **Take Stock** | Character screen, resources, strata | Open your Portfolio; check your stratum and what the next one needs; read the Pdoomberg terminal for your company |
-| **First Moves** | Actions, money | Make one trade or buy into a real estate pool; hold one meeting; set a monthly budget for your personal account |
-| **Your People** | Relationships, successors | Make a friend (1.1.4); name a successor in your will (1.11.0) |
+The game starts at **00:00 on 1 January 2020**, the one day the markets are closed, so John has a day to set up before the first earnings day at **00:00 on 2 January** (3.1.0). **Arrowhead Drilling reports a small profit** and announces **John's appointment to the board** as COO. Its stock moves on the news like every other report that night.
+
+### 8.2.3 First Week on the Job (from 7 January, Logan)
+
+An event chain that starts on **7 January 2020**. It introduces the **software system** (14), the company's business unit, finances and board, and the corporate system as a whole.
+
+- **The event screen (Logan).** Each event in the chain uses the **company event screen** (13-events 13.2.1): the **left side** tells the scenario, the **right side** shows the company UI with the relevant information, and a **list of decisions** sits at the **bottom of the left side**.
+- **Decisions set the quarter.** The choices made through the week **set the direction for the company for the rest of the quarter**: for example the growth plan, R&D spending, cost cuts, the software to run and how hard to push production **(A for the examples)**. They hold until the next quarter's review.
+
+### 8.2.4 Intro Night (after the first week, Logan)
+
+After the first week, an **intro night** where John **meets the rest of the board**. The night turns into a **gambling minigame** (9) that **introduces vril** (1.1).
+- For the **next 100 gambling events**, John has **99 vril**: the highest bonus to the odds possible in the game, so he has an **edge on all gambling** (9.5).
+- After the 100th gambling event his vril returns to its normal hidden value **(A)**.
+
+### 8.2.5 The Scandal (the last opening event, Logan)
+
+An **employee scandal** at Arrowhead Drilling. John handles it one of two ways:
+- **Cover it up**: work out a scheme (1.1.8) to bury it. Success keeps it quiet; discovery makes it a bigger scandal, with John attached.
+- **Come clean**: go public and **deal with the media backlash** (16): a hit to the company's investor confidence and John's Image that fades over the following weeks **(T)**.
 
 ## 8.3 John Techno: "The One Man You Keep" (the player's line)
 
@@ -150,7 +165,7 @@ The AI bubble pops in 2030 on average (Logan). The year is set at game start as 
 ## 8.6 Assumptions and open items
 
 1. Outcome tiers and buff sizes in 8.1; the 25% chance a successor picks up an unfinished arc.
-2. The opening arcs in 8.2 and the delivery time of the desktop (8.2.1).
+2. The delivery time of the desktop (8.2.1), the example quarter decisions (8.2.3), vril after the 100 gambling events (8.2.4) and the size of the come-clean backlash (8.2.5).
 3. John Techno's skills, traits and arcs, the option review numbers, and the Terry branch in 8.3.
 4. Generated quest sources in 8.4.
 5. Crash timing and the ×1.2 crash size in 8.5.

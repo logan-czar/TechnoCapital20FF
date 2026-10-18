@@ -55,6 +55,7 @@ Players and AI characters bet on yes-or-no questions about the game world.
 - Games **(A)**: slots, crash games, roulette, blackjack, high-stakes poker against named characters.
 - Stakes are in coins, so a coin's boom or bust changes what the winnings are worth.
 - House edge 2% to 6% by game **(T)**. Poker against characters uses Intrigue and vril, not just chance.
+- **Vril and the odds (Logan, batch 81).** Vril adds a bonus to the player's odds in every gambling game. **99 vril is the highest bonus possible**: enough to give an **edge on all gambling**, beating the house edge. John Techno gets 99 vril for his first 100 gambling events (8-quest-lines 8.2.4).
 - Casinos can be owned: a casino is a business unit in the Gambling industry ([10-industry-economy.md](10-industry-economy.md) 10.3) or a Front Company vassal ([1-corporate-core.md](1-corporate-core.md) 1.7.4) **(A)**.
 
 ## 9.6 Links to the addiction system

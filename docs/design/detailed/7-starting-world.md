@@ -1,6 +1,6 @@
 # 7. Starting world: detailed design
 
-_Status: draft v1.2 (2026-10-18). Batch 80: Arrowhead Drilling, its owners and board; Terry's politician friend in Montreal. Batch 79: John has no starting ambition; his parents are PMC middle managers in Edmonton. Batch 78: Terry's buff, net worth and heritage; John's skills and his one trait. Batch 77: Terry Tippacanoe, the new rival who owns John's company; Edmonton, the listed company and the desktop tip confirmed. Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v1.3 (2026-10-18). Batch 81: start at 00:00 on 1 January 2020, the opening sequence, a Liberal majority in Canada, Terry's friend is a Conservative MP. Batch 80: Arrowhead Drilling, its owners and board; Terry's politician friend in Montreal. Batch 79: John has no starting ambition; his parents are PMC middle managers in Edmonton. Batch 78: Terry's buff, net worth and heritage; John's skills and his one trait. Batch 77: Terry Tippacanoe, the new rival who owns John's company; Edmonton, the listed company and the desktop tip confirmed. Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2030. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts, succession), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 7.10.
 
@@ -127,7 +127,7 @@ Hub populations and GDP in [2-map-and-influence.md](2-map-and-influence.md) stan
 - **Anti-Liberal edge (Logan).** Terry has a **buff against all Liberal characters in his schemes**: **+25% success and -25% discovery** when the target's ideology is Liberals ([5-ideology.md](5-ideology.md)) (Logan, batch 78). **His schemes are never exposed in the media**: outlets cannot investigate or run them as scandals (16.5.1); they can only be found through intel or hacking.
 - **The casino** is a very popular casino in the Gambling industry ([10-industry-economy.md](10-industry-economy.md) 10.3), held by a **private company he owns outright** (Logan, batch 78). It is the source of his cash and his pull in Edmonton.
 - **Questionable origins, not a secret (Logan, batch 78).** His heritage is flavor for his grift, not a secret to uncover. What can be dug up is ordinary scheme material: his deals and the casino's books (1.1.8.2) **(A)**.
-- **Friends (Logan, batch 80).** Terry starts with **a politician friend in Montreal**: a full character, Terry's Friend, who gives him pull in federal politics. Assumed: a federal Member of Parliament for a Montreal seat, with a rolled ideology **(A)**.
+- **Friends (Logan, batch 80).** Terry starts with **a politician friend in Montreal**: a full character, Terry's Friend, who gives him pull in federal politics. He is a **Conservative MP** for a Montreal seat (Logan, batch 81).
 - **John's choice (Logan).** John can **befriend Terry** or **work in the shadows on his downfall** ([8-quest-lines.md](8-quest-lines.md) 8.3, Arc 1).
 
 ## 7.4 Rival dynasties
@@ -164,7 +164,10 @@ Real events happen on schedule by default. Each one is an event or quest that pl
 
 | Date | Event | Game effect |
 |---|---|---|
-| Jan 2020 | Scenario start (no pandemic, 7.2.0) | The opening quest "The Desktop" |
+| 1 Jan 2020, 00:00 | Scenario start (no pandemic, 7.2.0); markets closed | The opening quest "The Desktop" |
+| 2 Jan 2020, 00:00 | The first earnings day | Arrowhead Drilling reports a small profit and John's board seat (8-quest-lines 8.2.2) |
+| 7 Jan 2020 | First Week on the Job | Then Intro Night and The Scandal (8.2.3 to 8.2.5) |
+| 2020 | Canada has a **Liberal majority government** (Logan, batch 81) | The government that broke John's union |
 | 2020 to 2021 | No pandemic: offices full, rates near 3%, a long boom **(A)** | VC funding hot; property at its Peak (2.16.5) |
 | Nov 2020 | US elections **(A)** | An election event ([4-politics.md](4-politics.md)) |
 | 2021 | A crypto and SPAC mania **(A)** | Random boom coins in the gambling tab ([9-gambling.md](9-gambling.md)); IPO frenzy |

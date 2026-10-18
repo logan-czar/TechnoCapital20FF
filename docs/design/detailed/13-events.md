@@ -25,6 +25,13 @@ As in 10.1, plus **(A)**:
 - **No timer** (batch 40): an event waits until the player answers it, and the game stays paused while it is open.
 - **Pause**: every event pauses the game until it is answered (batch 40). AI characters' events never pause the game.
 
+### 13.2.1 The company event screen (Logan, batch 81)
+
+Company events (the First Week on the Job chain, 8-quest-lines 8.2.3, and other company-scope events **(A)**) use a split screen:
+- **Left side**: the scenario text, with the **list of decisions at the bottom**.
+- **Right side**: the **company UI** with the information relevant to the decision (financials, the business unit, the board, software).
+- Some decisions **set the company's direction for the quarter**; they hold until the next quarter.
+
 **Rolls.** `Success = 50% + (skill - 10) × 3% + trait and situation modifiers`, clamped 5% to 95% **(T)**. Vril can swing a roll either way (13-open-questions).
 
 ## 13.3 The director
