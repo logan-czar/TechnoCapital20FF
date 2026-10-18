@@ -1,6 +1,6 @@
 # 19. History: the world from the 1990s to 2020 (detailed design)
 
-_Status: draft v0.4 (2026-10-18; 2000 to 2002 ruled in batches 94 to 96, 2003 drafted). Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
+_Status: draft v0.5 (2026-10-18; 2000 to 2003 ruled in batches 94 to 97, 2004 drafted). Batch 93: Logan asked to build the game world's history **year by year**, from the 1990s up to the 2020 start. Each year Claude drafts what happened in real life, region by region, and Logan says what happened in the game world and what did not. Sports are assumed to have gone exactly as in real life unless something very notable changes. Builds on [7-starting-world.md](7-starting-world.md) 7.2.0 (the alternate history). Owner: Logan._
 
 **How to read this file.** Everything below is **real history**, as a base. Rows Logan has confirmed or changed are marked **(Logan)**; everything else is a draft for him to rule on. Where a real event clashes with the alternate history already decided (7.2.0), the clash is flagged.
 
@@ -107,7 +107,7 @@ Effects **(A)**: no Department of Homeland Security, no Patriot Act, and no Guan
 
 **The Enron exposure (Logan, batch 95; details drafted).** In **November 2003** an investigative journalist proves that Enron, now about **5 times** the size it was at its real collapse, is a fraud. It is the biggest bankruptcy in history, bigger than WorldCom several times over. **Arthur Andersen** dies with it, energy-trading deregulation is rolled back, and the full accounting crackdown that was delayed in 2002 finally passes **(A)**.
 
-> **Questions to rule on.** (1) **How hard does Enron hit?** a) ★ A sharp, short fall in energy and financial stocks and a tough new accounting law, but no recession. b) It sets off a recession. (2) **Who is the journalist?** a) ★ A fictional reporter who is a famous media figure by 2020, a character you can meet or hire. b) Just history, with no character. (3) **Saddam Hussein** was caught in December 2003, in real life. a) ★ He is caught when Baghdad falls in April, which fits the quick win. b) As in real life, in December.
+**Rulings (Logan, batch 97).** (1) Enron causes a **sharp, short fall** in energy and financial stocks and a **tough new accounting law**, but **no recession**. (2) **The journalist is a fictional character** who is a famous media figure by 2020, someone the player can meet or hire. Their name and stats are set with the other starting characters, later in the design (the "characters last" order). (3) **Saddam is caught when Baghdad falls in April.**
 
 | Region | Big events of 2003 (real, with game-world changes marked **(A)**) |
 |---|---|
@@ -115,14 +115,34 @@ Effects **(A)**: no Department of Homeland Security, no Patriot Act, and no Guan
 | **Latin America** | 1. **Lula** takes office in Brazil (January). 2. **Néstor Kirchner** becomes Argentina's president and starts its recovery (May). 3. Bolivia's **gas war** forces out President Sánchez de Lozada (October). Also: Chávez breaks the oil strike and purges the state oil company (February); Cuba's **Black Spring** jails 75 dissidents (March). |
 | **Europe** | 1. **Millions march** against the Iraq war on 15 February, and France and Germany split with the US. 2. A **heat wave** kills about 70,000 across Europe (August). 3. Serbian Prime Minister **Zoran Đinđić is assassinated** (March). Also: the EU signs its expansion treaty in Athens (April); Sweden rejects the euro days after its foreign minister **Anna Lindh** is murdered (September). |
 | **Russia and the former USSR** | 1. **Khodorkovsky is arrested** (October), and Putin starts taking apart **Yukos**, Russia's biggest oil company. 2. Georgia's **Rose Revolution** ousts Shevardnadze (November). 3. The **Tuzla Island dispute**: Russia builds a dam toward a Ukrainian island in the Kerch Strait (October) **(A: the first open crisis on the road to the 2005 invasion)**. |
-| **Middle East and North Africa** | 1. **Iraq falls in three weeks** (March to April), and Saddam is caught **(see question 3)**. 2. **Libya gives up its weapons programs** (December), spooked by how fast Iraq fell **(A: even faster here)**. 3. The US-backed **Road Map** for Israeli-Palestinian peace (April) stalls. Also: Iran lets in nuclear inspectors (October). **(A)** Al-Qaeda's Riyadh compound bombings (May) **never happen**, since the network is broken. |
+| **Middle East and North Africa** | 1. **Iraq falls in three weeks** (March to April), and **Saddam is caught as Baghdad falls** (April, Logan). 2. **Libya gives up its weapons programs** (December), spooked by how fast Iraq fell **(A: even faster here)**. 3. The US-backed **Road Map** for Israeli-Palestinian peace (April) stalls. Also: Iran lets in nuclear inspectors (October). **(A)** Al-Qaeda's Riyadh compound bombings (May) **never happen**, since the network is broken. |
 | **Sub-Saharan Africa** | 1. The **Darfur** war begins in Sudan (February). 2. **Charles Taylor** goes into exile, and Liberia's civil war ends (August). 3. The **Second Congo War** formally ends with a power-sharing government (July). |
 | **South Asia** | 1. **(A) Bin Laden is killed** by a Predator strike near the Pakistan border, as assumed in 19.2.1. 2. **India and Pakistan agree a ceasefire** in Kashmir (November). 3. **"India Shining"**: the economy grows at 8% and India announces a mission to the Moon (August). Also **(A)**: Massoud's Afghanistan holds its first loya jirga under US protection. |
 | **East Asia** | 1. **SARS** hits China and Hong Kong hard (February to July), and China is caught covering it up. 2. China puts its **first astronaut** into orbit (October). 3. North Korea **leaves the nuclear treaty** (January), and **six-party talks** begin (August). Also: **half a million march** in Hong Kong against a security law, which is shelved (July); **Hu Jintao** becomes president (March). |
 | **Southeast Asia and Oceania** | 1. **Mahathir retires** after 22 years running Malaysia (October). 2. The **JW Marriott bombing** in Jakarta (August), and JI's leader **Hambali** is caught in Thailand. 3. **SARS** hits Singapore. Also: **Aung San Suu Kyi** is detained again in Burma (May); Australia joins the Iraq war. |
 
-**Logan's ruling on 2003:** _pending._
+**Logan's ruling on 2003 (batch 97):** everything above happened, with the changes in the rulings box.
 
-## 19.6 2004 onward
+## 19.6 The year 2004 (draft)
 
-To be written year by year after 2003 is settled, up to the 2020 start.
+**Global (draft).** The **Indian Ocean tsunami** (26 December) kills about 230,000 across a dozen countries. The **EU grows by ten members** (1 May). **Google goes public** (August), and **Facebook** is founded at Harvard (February). Pop culture: **World of Warcraft**, **Half-Life 2**, *Shrek 2* and *Mean Girls*. The **Athens Olympics** go as in real life.
+
+> **Questions to rule on.** (1) **The Madrid train bombings** (March, 193 dead) were by an al-Qaeda-inspired local cell, three days before Spain's election, which then swung to Zapatero, who pulled Spain out of Iraq. a) ★ They never happen: Aznar's party wins, and Spain stays in Iraq. b) They still happen. (2) **Ukraine's Orange Revolution** (November to December): Yushchenko is poisoned, the rigged vote is overturned, and he wins. a) ★ It happens, and Putin sees it as a Western coup on his border, which leads straight to the **2005 invasion**. b) It never happens. (3) **The US election.** a) ★ Bush wins more easily than in real life, on the quick Iraq win and a strong economy. b) Kerry wins.
+
+| Region | Big events of 2004 (real, with game-world changes marked **(A)**) |
+|---|---|
+| **North America** | 1. **Bush is re-elected** over John Kerry (November) **(see question 3)**. 2. **(A)** No Abu Ghraib scandal and no Fallujah battles, since there is no insurgency; Iraq's oil exports grow fast under US protection. 3. Canada's **Paul Martin** is cut to a minority government by a sponsorship scandal (June). Also: **Martha Stewart** is convicted (March), and the Super Bowl halftime "wardrobe malfunction" (February). |
+| **Latin America** | 1. **Aristide is ousted** in Haiti, and UN peacekeepers arrive (February). 2. **Chávez survives** a recall referendum (August). 3. **Brazil leads** the UN Haiti mission, and Lula's star rises abroad. |
+| **Europe** | 1. The **EU expands** into the east (May). 2. The **Madrid train bombings** (March) **(see question 1)**. 3. The **EU constitution** is signed in Rome (October). Also: Dutch filmmaker **Theo van Gogh** is murdered by an Islamist (November). |
+| **Russia and the former USSR** | 1. The **Beslan school siege**: Chechen militants take over 1,100 hostages, and 334 die, most of them children (September). Putin uses it to end elected governors. 2. Ukraine's **Orange Revolution** (November to December) **(see question 2)**. 3. **Yukos is broken up** and its main unit sold to the state's Rosneft (December). Also: Putin is re-elected (March). |
+| **Middle East and North Africa** | 1. **Arafat dies** (November). 2. **(A) Iraq's first elected government** is set up, and US troops begin to draw down. 3. Israel's **Gaza withdrawal plan** is approved (October). Also: Pakistan's **A.Q. Khan** confesses to selling nuclear secrets to Iran, Libya and North Korea (February). |
+| **Sub-Saharan Africa** | 1. The US calls **Darfur a genocide** (September). 2. **Mbeki** wins a second term as South Africa marks ten years of democracy (April). 3. **Equatorial Guinea coup plot**: Mark Thatcher and mercenaries are caught (August). |
+| **South Asia** | 1. The **tsunami** devastates Sri Lanka, southern India and the Maldives (December). 2. **Congress wins** India's election in an upset, and **Manmohan Singh** becomes prime minister (May). 3. **(A) Massoud wins Afghanistan's first presidential election** (October). |
+| **East Asia** | 1. **Lenovo buys IBM's PC business** (December), China's first big tech takeover abroad. 2. **Chen Shui-bian** is narrowly re-elected in Taiwan after being shot the day before the vote (March). 3. The **Chūetsu earthquake** in Japan (October). Also: a train explosion at **Ryongchon**, North Korea (April). |
+| **Southeast Asia and Oceania** | 1. The **tsunami** kills about 170,000 in **Aceh** and devastates Thailand's beaches (December). 2. **Susilo Bambang Yudhoyono** wins Indonesia's first direct presidential election (September). 3. **Howard** wins a fourth term in Australia (October). Also: the **Tak Bai** massacre deepens Thailand's southern insurgency (October). |
+
+**Logan's ruling on 2004:** _pending._
+
+## 19.7 2005 onward
+
+To be written year by year after 2004 is settled, up to the 2020 start. Already set: **Russia invades Ukraine in 2005** (7.2.0).
