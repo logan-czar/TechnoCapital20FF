@@ -166,7 +166,8 @@ Real events happen on schedule by default. Each one is an event or quest that pl
 |---|---|---|
 | 1 Jan 2020, 00:00 | Scenario start (no pandemic, 7.2.0); markets closed | The opening quest "The Desktop" |
 | 2 Jan 2020, 00:00 | The first earnings day | Arrowhead Drilling reports a small profit and John's board seat (8-quest-lines 8.2.2) |
-| 7 Jan 2020 | First Week on the Job | Then Intro Night and The Scandal (8.2.3 to 8.2.5) |
+| 7 Jan 2020 | First Week on the Job | Then Intro Night (8.2.3, 8.2.4) |
+| Feb 2020 onward | **The Mink Scare** breaks at Arrowhead Drilling | A drug ring and a furry panic (8-quest-lines 8.2.5) |
 | 2020 | Canada has a **Liberal majority government** (Logan, batch 81) | The government that broke John's union |
 | 2020 to 2021 | No pandemic: offices full, rates near 3%, a long boom **(A)** | VC funding hot; property at its Peak (2.16.5) |
 | Nov 2020 | US elections **(A)** | An election event ([4-politics.md](4-politics.md)) |
