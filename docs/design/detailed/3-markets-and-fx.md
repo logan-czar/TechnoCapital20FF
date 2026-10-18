@@ -8,6 +8,33 @@ Rules already decided by Logan (see [13-open-questions.md](../13-open-questions.
 
 ---
 
+## 3.0 Investing (Logan, batch 58)
+
+> **This section overrides 3.3.4 and older investing rules where they clash.**
+
+| Topic | Decision |
+|---|---|
+| What characters and trusts can invest in | **Stocks, bonds, real estate pools (10.4.5), private stakes and gambling** (9) from the start. **Commodities (3.7) and FX (3.8) come later.** |
+| Funds | **The player can found a fund**: a hedge fund, private equity fund or VC fund, set up as a company (1.6). Outside money comes in, the fund charges fees, and its **fund manager rolls Finance**. |
+| Margin and shorting | **Characters may use them** through a **personal margin account** (3.5.4), with margin calls as events. |
+| Who trades | **Only named holders.** There is no anonymous crowd (3.3.4 below is changed to match). |
+| Screens | **A separate Portfolio screen for each holder** (each character, trust and company), not one combined screen ([11-ui.md](../11-ui.md) 11.2). |
+
+**Funds (A).**
+- A fund is a company of the type Fund. Its **investors** (AI characters, trusts, companies and governments) put money in; the fund buys stocks, bonds, real estate pool shares and private stakes with it.
+- **Fees**: 2% of assets a year plus 20% of gains above the fund's previous high (2 and 20) **(T)**.
+- **The fund manager** is a board seat. Each quarter they roll **Finance** against the fund's strategy: a success beats the market by about 1 to 3%, a failure lags it by the same **(T)**. Their traits shape the style (Greedy takes more risk, Cautious holds cash).
+- **Inflows and outflows**: investors add money after good years and pull it after bad ones (about ±20% of assets a year at the extremes) **(T)**.
+- **Strategy by type**: a hedge fund trades listed stocks and can short; a PE fund buys whole private companies or business units with debt; a VC fund takes stakes in startups through the founding paths (1.6.2).
+- A fund's stakes vote like any holder, and the fund manager's real controller (1.3.1) decides how.
+
+**Personal margin (A).** A character or trust can borrow against its holdings up to 50% of their value at the base rate plus 3% **(T)**. If the value falls below the maintenance level (30%), a **Margin Call** event fires (13.5 Markets deck): add cash, sell, or let the broker liquidate. Shorting borrows shares from named holders who lend them (3.5.1).
+
+**Only named holders (Logan).** Every share in the game is held by a **named holder**: a character, a trust, a company, a fund or a government. The eight archetypes in 3.3.4 are kept as **strategies of named funds** rather than an anonymous float **(A)**:
+- Each listed company's float is held by named funds of each archetype (Monolith Index Partners, Graywater Value, Kinetic Quant and so on), and their hourly orders follow the archetype formulas.
+- **Retail** is represented by a few named **retail platforms** (for example "Sherwood Retail"), each a named holder whose orders follow the retail formula. This keeps meme rallies and panics while every share still has an owner on the books **(A)**.
+- Named funds can be bought, influenced, investigated and taken over like any other holder.
+
 ## 3.1 Conventions and time cadence
 
 ### 3.1.1 Conventions
@@ -301,6 +328,8 @@ A gap between P and V* halves in about 460 ticks, or roughly 3 months of trading
 - Fat tails: each tick has a 2% chance that the draw is taken from a distribution 3 times as wide [T].
 
 ### 3.3.4 AI investor archetypes
+
+> **Changed by 3.0 (Logan, batch 58): only named holders trade.** The archetypes below are now the strategies of named funds and retail platforms, not an anonymous float.
 
 The anonymous float of every listed company is traded by eight **archetypes**. Their combined net buying or selling each tick is the "market". Separately, the largest stakes are held by **named AI holders** (funds that are entities in the ownership graph, such as Monolith Index Partners or Graywater Value). Named holders vote, join blocs and react to disclosures; they make strategic decisions weekly. Archetypes only generate hourly order flow.
 
