@@ -62,7 +62,7 @@ What we take from it: a fully tiled world, provinces as the one place every syst
 | System | Change |
 |---|---|
 | **Business units** | The asset spread is per province. Assets sit in a province and rent or buy space from its pools. The districts' industry fit is replaced by: Commerce-heavy industries need Commerce development, Industry-heavy industries need Industry development, and extraction needs the resource tag |
-| **Influence** | Weight = development × price level. The tiers (10/25/50) apply per province and per area, region and country. District perks become province perks; hub perks become area perks |
+| **Influence** | Weight = development × price level. The tiers apply per province and per area, region and country (batch 120: 10/25/50 for provinces and cities, 5/15/30 for areas and regions, 3/8/20 for countries). District perks become province perks; hub perks become area perks |
 | **Politics** | City councils sit at the area (metro) level, regional governments at the region, national governments at the country. Minor countries get real governments on the map (they already have them in 4.2.4) |
 | **Real estate** | The four pools per province replace district pools. Gentrification and slum clearance become development swaps inside a province |
 | **Travel** | Characters are in a province. Travel time comes from distance between provinces; airports exist by city rank |

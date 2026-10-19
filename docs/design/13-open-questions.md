@@ -152,13 +152,14 @@
 - Map rework (Logan, 2026-10-19): asked for an EU4-style map structure; plan in reviews/map-rework-eu4-plan.md; questions are batch 118.
 - Batch 118 (Logan, 2026-10-19): 1b EU4 scale, about 3,200 land provinces. 2a minor groups dissolved, every country real. 3a districts dropped, pools per province. 4a development in three tracks (Commerce, Industry, Population). 5a megacities split into provinces joined as a Metro, with shared metro systems (subway and the like: economies of scale, upgrade cost scales with size); systems are post-POC but the Metro link is in the POC. 6a one resource tag per province. 7a province list starts with a North America slice.
 - Batch 119 (Logan, 2026-10-19): any city of 5M+ is a Metro (Philadelphia, Phoenix). Province weight $0.3B per development point, country weight capped at 3% of GDP. Turkey and every EU member are in the Europe superregion.
+- Batch 120 (Logan, 2026-10-19): the country weight cap is dropped; every level is the sum of its provinces. Influence tiers drop by level: province and city 10/25/50%, area and region 5/15/30%, country 3/8/20% (T).
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm
 
 1. **Geography**: the real modern world (real countries and cities) with fictional companies, characters and brands.
 2. **Charter types**: Standard, Dual Leadership, Board-Governed and State-Linked are enough for now.
-3. **Influence thresholds**: 10%, 25% and 50% share of a place's weighted assets.
+3. **Influence thresholds**: 10%, 25% and 50% share of a province's or city's weighted assets; 5%, 15% and 30% in an area or region; 3%, 8% and 20% in a country (batch 120) **(T)**.
 4. **Player scope**: the player directly controls the dynasty head's actions, personal accounts and the family trust; other family members act on their own.
 5. **Starting scenario**: decided (see above): one 2022 scenario with 15 starting characters.
 6. **Wars**: countries go to war as background events; players never command armies (PMCs dropped, batch 51).

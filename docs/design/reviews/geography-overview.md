@@ -1,6 +1,6 @@
 # Geography in TechnoCapital20FF: how it works now
 
-_Superseded (batch 118, 2026-10-19): the map now uses provinces, areas and Metros instead of hubs and districts; see [map-rework-eu4-plan.md](map-rework-eu4-plan.md) and [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3. This file is kept as a record._
+_Superseded (batch 118, 2026-10-19): the map now uses provinces, areas and Metros instead of hubs and districts; see [map-rework-eu4-plan.md](map-rework-eu4-plan.md) and [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3. This file is kept as a record. Batch 120: the 10/25/50% tiers below now hold for provinces and cities only; areas and regions use 5/15/30% and countries 3/8/20% (2-map-and-influence.md 2.5.9)._
 
 _A plain-language breakdown of the current design (2026-10-18), for review. The rules live in [detailed/2-map-and-influence.md](../detailed/2-map-and-influence.md) unless another file is named. Section 7 lists the problems found while reading._
 
