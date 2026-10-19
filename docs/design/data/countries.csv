@@ -173,15 +173,15 @@ NPL,Nepal,South Asia,USD,NPR,34.2,28.6,0.06,N,Liberal democracy,Guarded,,13,Hydr
 BTN,Bhutan,South Asia,USD,BTN,2.5,0.76,0.12,N,Liberal democracy,Guarded,,4,Hydropower; old group South Asia minors (A); government_type (A)
 MDV,Maldives,South Asia,USD,MVR,5.6,0.53,0.28,N,Liberal democracy,Guarded,,1,old group South Asia minors (A); government_type (A)
 AFG,Afghanistan,South Asia,USD,AFN,25.0,38,0.04,N,Managed democracy,Guarded,,17,Stable under Massoud's chosen successor (19.22): GDP a little above the real 19B (A); old group South Asia minors (A); government_type (A)
-CHN,China,East Asia and Oceania,USD,CNY,14000,1398,0.30,Y,One-party state,Restricted,,141,Population and GDP include Hong Kong as given in 2.2.3; HKG row also lists it (A)
-JPN,Japan,East Asia and Oceania,USD,JPY,5100,126.3,0.75,Y,Liberal democracy,Screened,,61,
+CHN,China,East Asia and Oceania,USD,CNY,14000,1398,0.30,Y,One-party state,Restricted,,146,Population and GDP include Hong Kong as given in 2.2.3; HKG row also lists it (A)
+JPN,Japan,East Asia and Oceania,USD,JPY,5100,126.3,0.75,Y,Liberal democracy,Screened,,63,
 KOR,South Korea,East Asia and Oceania,USD,KRW,1650,51.7,0.65,Y,Liberal democracy,Screened,,35,
 TWN,Taiwan,East Asia and Oceania,USD,TWD,610,23.6,0.50,Y,Liberal democracy,Guarded,,22,
 SGP,Singapore,East Asia and Oceania,USD,SGD,370,5.7,0.85,Y,Managed democracy,Open,,3,
 MYS,Malaysia,East Asia and Oceania,USD,MYR,360,32.5,0.25,Y,Liberal democracy,Screened,,23,
 IDN,Indonesia,East Asia and Oceania,USD,IDR,1120,270.6,0.12,Y,Liberal democracy,Guarded,,51,
-VNM,Vietnam,East Asia and Oceania,USD,VND,260,96.5,0.12,Y,One-party state,Restricted,,26,
-AUS,Australia,East Asia and Oceania,USD,AUD,1400,25.4,0.95,Y,Liberal democracy,Screened,,52,
+VNM,Vietnam,East Asia and Oceania,USD,VND,260,96.5,0.12,Y,One-party state,Restricted,,27,
+AUS,Australia,East Asia and Oceania,USD,AUD,1400,25.4,0.95,Y,Liberal democracy,Screened,,53,
 HKG,Hong Kong,East Asia and Oceania,USD,HKD,363,7.5,0.81,N,Managed democracy,Screened,,3,SAR of China: own currency (HKD currency board) and own looser laws per the hub table 2.3.3; restriction Screened copied from there; dependent territory; government_type (A)
 PRK,North Korea,East Asia and Oceania,USD,KPW,18.0,25.7,0.04,N,One-party state (isolated),Closed,,11,Closed per 4.2.4: no foreign assets allowed at start; GDP is an estimate; old group Southeast Asia minors (A)
 MNG,Mongolia,East Asia and Oceania,USD,MNT,13.9,3.23,0.15,N,Liberal democracy,Guarded,,15,"Copper, coal; old group Central Asia (A); government_type (A)"
