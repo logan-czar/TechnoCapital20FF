@@ -8,8 +8,8 @@ SPM,Saint Pierre and Miquelon,North America,EUR,0.21,0.006,0.64,N,Liberal democr
 BRA,Brazil,Latin America,BRL,1850,211,0.25,Y,Liberal democracy,Guarded,,67,
 ARG,Argentina,Latin America,ARS,450,44.9,0.20,Y,Liberal democracy,Guarded,,35,
 CHL,Chile,Latin America,CLP,280,19,0.30,Y,Liberal democracy,Open,,22,
-COL,Colombia,Latin America,COP,320,50.3,0.18,Y,Liberal democracy,Screened,,28,
-PER,Peru,Latin America,PEN,228,32.5,0.21,N,Liberal democracy,Guarded,,25,Copper; old group Andean and Venezuela; government_type (A)
+COL,Colombia,Latin America,COP,320,50.3,0.18,Y,Liberal democracy,Screened,,29,
+PER,Peru,Latin America,PEN,228,32.5,0.21,N,Liberal democracy,Guarded,,27,Copper; old group Andean and Venezuela; government_type (A)
 ECU,Ecuador,Latin America,USD,108,17.4,0.19,N,Liberal democracy,Guarded,,15,Oil; dollarized; old group Andean and Venezuela; government_type (A)
 BOL,Bolivia,Latin America,BOB,41.0,11.5,0.13,N,Liberal democracy,Guarded,,17,Lithium; Morales gone (19.22); old group Andean and Venezuela; government_type (A)
 VEN,Venezuela,Latin America,VES,180,28.5,0.19,N,Managed democracy,Closed,,22,"Oil; sliding slowly under Maduro, cushioned by high oil (19.22), so GDP set well above the real 2019 collapse (A); old group Andean and Venezuela; restriction (A)"

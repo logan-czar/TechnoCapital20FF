@@ -40,3 +40,7 @@ The exact column spelling is set by that worker's file; check its header.
 ## provinces-europe.csv
 
 The Europe slice (batch 121 follow-up, 2026-10-19): 679 provinces in 51 countries, same columns and rules as provinces-north-america.csv. Ids use ISO alpha-2 prefixes. Russian-held Crimea and Donbas rows have country RUS, keep UA ids and count in Ukraine's budget. 13 Metros (London, Paris, Rhine-Ruhr, Madrid, Barcelona, Milan, Berlin, Hamburg, Munich, Frankfurt, Stuttgart, Istanbul, Ankara). Summary: provinces-europe-summary.md. Gibraltar (GIB), the Isle of Man (IMN) and the Faroes (FRO) have their own country rows (batch 122); France's overseas regions stay inside France (A). Batch 122 added two columns to both province files: `contested` (blank, or who disputes the province, e.g. "UKR claims") and `linked_cities` (a group of separate cities that work as one economy without being a Metro; only Randstad so far).
+
+## provinces-latin-america.csv
+
+The Latin America slice (batch 123, 2026-10-19): 391 provinces in 35 countries and territories, same columns and rules as the Europe file. 7 Metros: São Paulo (4), Rio de Janeiro (4), Buenos Aires (4), Lima (3), Bogotá (3), Santiago (2), Belo Horizonte (2). Contested: the Essequibo (VEN claims), Berbice-Linden (SUR claims) and southern Belize (GTM claims). Where a country has fewer provinces than first-level divisions, neighbouring divisions share one region (A). Summary: provinces-latin-america-summary.md.
