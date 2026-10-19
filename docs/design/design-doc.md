@@ -1,6 +1,6 @@
 # TechnoCapital20FF: Design Document
 
-_Status: v0.6 (2026-10-19). Batch 121: only national governments in the POC (no state, regional or city governments; regions, cities and Metros are map groupings). Batch 118: EU4-style map (about 195 real countries, about 3,200 provinces, Metros for megacities; no hubs, districts or minor groups). Batch 117: no stress, Heat means how cancelled a character is. Batch 116: rewritten to the current design (pausable real time with hourly ticks, 24/7 markets, one scenario with John Techno, news and Pdoomberg, two-layer control, Wall Street Raider style industries, no dynasty or succession: the player character's death ends the game). v0.5, consistency pass, batch 74. Owner: Logan. Living document; every part is open for revision._
+_Status: v0.6 (2026-10-19). Batch 124 card (Logan): whole world dollarized at start. Every country uses the US dollar, the Federal Monetary Board sets one world base rate, and FX and other central banks start dormant until a country launches its own currency ([detailed/3-markets-and-fx.md](detailed/3-markets-and-fx.md) 3.8.1). Batch 121: only national governments in the POC (no state, regional or city governments; regions, cities and Metros are map groupings). Batch 118: EU4-style map (about 195 real countries, about 3,200 provinces, Metros for megacities; no hubs, districts or minor groups). Batch 117: no stress, Heat means how cancelled a character is. Batch 116: rewritten to the current design (pausable real time with hourly ticks, 24/7 markets, one scenario with John Techno, news and Pdoomberg, two-layer control, Wall Street Raider style industries, no dynasty or succession: the player character's death ends the game). v0.5, consistency pass, batch 74. Owner: Logan. Living document; every part is open for revision._
 
 This is the entry point. Each system has its own file in this folder so it can grow independently.
 
@@ -12,7 +12,7 @@ This is the entry point. Each system has its own file in this folder so it can g
 | 4 | [04-dynasty-and-succession.md](04-dynasty-and-succession.md) | Removed (batch 116): what remains is the player character and game over on death |
 | 5 | [05-map-and-influence.md](05-map-and-influence.md) | World map: countries, regions, areas, provinces and Metros; influence |
 | 6 | [06-economy.md](06-economy.md) | Industries and business units (Wall Street Raider style), demand, financing |
-| 7 | [07-markets.md](07-markets.md) | 24/7 stock trading, earnings days, bonds, funds, central banks |
+| 7 | [07-markets.md](07-markets.md) | 24/7 stock trading, earnings days, bonds, funds, the world base rate (a dollarized world at start) |
 | 8 | [08-politics.md](08-politics.md) | National governments (the only level in the POC), ideology blocs, laws, regulators, lobbying, diplomacy |
 | 9 | [09-time-and-turns.md](09-time-and-turns.md) | Pausable real time with hourly ticks; daily, weekly, monthly, quarterly and yearly calculations |
 | 10 | [10-events.md](10-events.md) | Event engine and event chains |
@@ -59,7 +59,7 @@ The fantasy is *Succession* meets *Crusader Kings 3* meets *Wall Street Raider*:
 1. **Ownership is power.** Every relationship of authority is an equity stake, a charter clause, a contract or a debt. Characters are landless; assets are their titles.
 2. **People, not spreadsheets.** Companies are run by characters with traits, secrets and relationships. Numbers matter, but characters decide what happens to them.
 3. **One life.** You play John Techno and no one else. There is no dynasty and no successor: when John dies (health 0), the game is over (batch 116).
-4. **One connected world.** A strike at a business unit in one province moves an industry, a stock price, a currency and an election. Systems talk to each other.
+4. **One connected world.** A strike at a business unit in one province moves an industry, a stock price, a country's bond spread (or its currency, once it has one) and an election. Systems talk to each other.
 5. **Modern, plausible, a little dystopian.** Real mechanisms (VC rounds, dual-class shares, offshore shells, capital controls) pushed slightly past today.
 
 ## Key concepts

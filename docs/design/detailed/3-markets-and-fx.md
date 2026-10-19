@@ -1,6 +1,6 @@
 # 3. Markets and FX: detailed design
 
-_Status: draft v0.3 (2026-10-19). Batch 124: every Latin American country is dollarized at start (3.8.1); the BRL, ARS, COP and other Latin American currency and central bank rows below are inactive until a country re-currencies. Batch 122: the Eurozone Central Bank sets one rate for all 19 euro countries, which share one business cycle; the UK is outside the EU at start. Batch 121: only national governments, so only national government bonds exist (regional and city bonds removed from 3.6.1). Batch 118: EU4-style map; local time, roadshows, deposits, unrest, morning briefs and market research use provinces and cities (Metros or city provinces) instead of hubs; exchanges have a home city; charter cities are provinces. Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
+_Status: draft v0.3 (2026-10-19). Batch 124 card (Logan): whole world dollarized at start (3.8.1). Every country uses the US dollar, so there are no other currencies, exchange rates or FX trading at start; every government's bonds and bank lending price at the Federal Monetary Board's base rate plus a country spread (3.6.5); the FX (3.8) and central bank (3.9) rules stay as the rules for countries that re-currency by law, and every other currency and central bank row is dormant data until then; the euro crisis at start is a debt crisis. This replaces the earlier batch 124 Latin America ruling. Batch 122: the Eurozone Central Bank sets one rate for all 19 euro countries, which share one business cycle (both dormant while the euro does not exist, batch 124); the UK is outside the EU at start. Batch 121: only national governments, so only national government bonds exist (regional and city bonds removed from 3.6.1). Batch 118: EU4-style map; local time, roadshows, deposits, unrest, morning briefs and market research use provinces and cities (Metros or city provinces) instead of hubs; exchanges have a home city; charter cities are provinces. Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
 
 This file covers stock exchanges, the stock price model, corporate actions, short selling and margin, bonds and credit ratings, commodities, foreign exchange, central banks, and market crime. It ends with worked examples and a list of new assumptions.
 
@@ -12,7 +12,7 @@ Rules already decided by Logan (see [13-open-questions.md](../13-open-questions.
 
 | Topic | Decision |
 |---|---|
-| What characters and trusts can invest in | **Stocks, bonds, real estate pools ([2-map-and-influence.md](2-map-and-influence.md) 2.16), private stakes and gambling** (9) from the start. **Commodities (3.7) and FX (3.8) come later.** |
+| What characters and trusts can invest in | **Stocks, bonds, real estate pools ([2-map-and-influence.md](2-map-and-influence.md) 2.16), private stakes and gambling** (9) from the start. **Commodities (3.7) and FX (3.8) come later.** FX also needs a second currency: at start the whole world uses the dollar (3.8.1, batch 124). |
 | Funds | **The player can found a fund**: a hedge fund, private equity fund or VC fund, set up as a company (1.6). Outside money comes in, the fund charges fees, and its **fund manager rolls Finance**. |
 | Margin and shorting | **Characters may use them** through a **personal margin account** (3.5.4), with margin calls as events. |
 | Who trades | **Only named holders.** There is no anonymous crowd (3.3.4). |
@@ -41,7 +41,7 @@ Rules already decided by Logan (see [13-open-questions.md](../13-open-questions.
 - Rates and yields are **annual** unless the text says "per tick" or "per day".
 - A **tick** is one hourly market update, run on every turn (24 a day; markets close only on 1 January, 3.1.0).
 - **Settlement** is the daily close processing of a market (3.3.10).
-- Money in examples is in US dollars (USD) unless a currency is named.
+- Money is in US dollars (USD), the only currency at start (3.8.1, batch 124). An example that names another currency (3.11.7, 3.11.8) is set after that country has launched its own.
 - **V** is a stock's fundamental value per share, **P** its market price.
 - **ADV** is average daily volume in shares (20-day average).
 - **GRG** is the Global Risk Gauge, a 0 to 100 fear index (3.3.5).
@@ -57,8 +57,8 @@ Rules already decided by Logan (see [13-open-questions.md](../13-open-questions.
   - the Global Risk Gauge gets a +5 shock for the day (3.3.5);
   - circuit breakers (3.3.8) trip far more often, and the player gets an auto-pause alert on every holding at 00:00.
 - **2 January is the biggest day of the year.** The market reopens after the 1 January close at the same hour the annual reports come out, so the reopening auction (3.3.9) carries a full day of news plus every company's year.
-- **Daily jobs** (3.1.2) run at **00:00 UTC** **(A)**. Exchanges keep their home cities, currencies and indices, but have no trading hours.
-- FX and commodities are assumed to follow the same calendar **(A)**. The Freeport Night Market (3.2.5) never closes, even on 1 January. Crypto is not a market here: it lives in the phone tab ([9-gambling.md](9-gambling.md)).
+- **Daily jobs** (3.1.2) run at **00:00 UTC** **(A)**. Exchanges keep their home cities and indices (all list in USD at start, 3.8.1), but have no trading hours.
+- FX (once any country has its own currency, 3.8.1) and commodities are assumed to follow the same calendar **(A)**. The Freeport Night Market (3.2.5) never closes, even on 1 January. Crypto is not a market here: it lives in the phone tab ([9-gambling.md](9-gambling.md)).
 
 **Earnings season (Logan, batch 54).**
 - **Guidance.** Every company publishes **guidance** (its forecast for next quarter) alongside its earnings. Whether investors believe it comes down to a **stat roll by board members**: each roll shows how well they steer investor confidence **(A for who rolls and the numbers)**:
@@ -86,16 +86,16 @@ Markets follow the game's calculation schedule (hourly ticks, with daily, weekly
 
 | Cadence | Market work |
 |---|---|
-| **Hourly** (each tick) | Stock, commodity futures and FX ticks (every hour except on 1 January); order execution; circuit breaker checks; margin warnings and intraday forced liquidations; short squeeze checks; news shocks applied; GRG update |
+| **Hourly** (each tick) | Stock, commodity futures and FX ticks (every hour except on 1 January; FX only for currencies relaunched by law, 3.8.1); order execution; circuit breaker checks; margin warnings and intraday forced liquidations; short squeeze checks; news shocks applied; GRG update |
 | **Daily** (at 00:00 UTC, 3.1.0) | Daily close; settlement of trades; fundamental value refresh; sentiment decay; borrow fees and margin interest accrual; formal margin calls; futures variation margin; carry accrual on FX positions; FX fair value refresh; disclosure filings published; surveillance checks on the day's news |
 | **Weekly** | Named AI holders' strategic decisions (stake building, bloc votes, activist campaigns, tender decisions); short interest published; regulator suspicion reviews; commodity inventories updated (3.7.2); capital control quotas reset; shell detection rolls |
-| **Monthly** | Central bank meetings; dividends, coupons and loan interest paid; government bond auctions; commodity cost anchor update; PPP anchor drift for FX; index fund savings inflows; QE purchases |
+| **Monthly** | Central bank meetings (only the Federal Monetary Board at start, 3.9); dividends, coupons and loan interest paid; government bond auctions; commodity cost anchor update; PPP anchor drift for FX; index fund savings inflows; QE purchases |
 | **Quarterly** | Earnings reports on 2 January, 2 April, 2 July and 2 October at 00:00 (3.1.0) and full fundamental recalculation; credit rating reviews; index rebalancing; buyback windows reset |
 | **Yearly** | Dividend policy set at the annual shareholder meeting; listing compliance review; central bank governor terms; sovereign annual rating review |
 
 ### 3.1.3 The global trading day
 
-The turn clock runs on UTC, and each province shows local time. Every exchange, the FX market, commodity futures and government bonds tick on every turn, 24 hours a day and 7 days a week, so there are no sessions, lunch breaks, weekends or thin hours (3.1.0). Markets close only on 1 January; the Freeport Night Market (3.2.5) never closes. The daily close is the 00:00 UTC tick.
+The turn clock runs on UTC, and each province shows local time. Every exchange, the FX market (once it exists, 3.8.1), commodity futures and government bonds tick on every turn, 24 hours a day and 7 days a week, so there are no sessions, lunch breaks, weekends or thin hours (3.1.0). Markets close only on 1 January; the Freeport Night Market (3.2.5) never closes. The daily close is the 00:00 UTC tick.
 
 ### 3.1.4 Market tools by company rank
 
@@ -103,10 +103,10 @@ Market tools are grouped by the rank of the player's largest company ([1-corpora
 
 | Rank | Market tools that usually matter |
 |---|---|
-| Venture (< $10M) | Buy and sell listed stocks and government bonds in personal accounts; savings and money market accounts; bank loans and stock-pledge loans; corporate bonds; basic FX conversion |
+| Venture (< $10M) | Buy and sell listed stocks and government bonds in personal accounts; savings and money market accounts; bank loans and stock-pledge loans; corporate bonds; basic FX conversion (once a second currency exists, 3.8.1) |
 | Company ($10M to $250M) | IPO chain; margin accounts; short selling; block trades; tender offers; rights issues and buybacks for controlled companies |
 | Corporation ($250M to $5B) | Commodity futures and hedging; cornering; FX positions, carry trades and forwards; distressed debt; derivative stake building |
-| Megacorp and Conglomerate (> $5B) | Attacks on currency pegs; capture of central banks; private monetary authorities for charter cities (Arcology Scrip, 3.8.1) |
+| Megacorp and Conglomerate (> $5B) | Attacks on currency pegs (once countries re-currency and peg, 3.8.1); capture of central banks (only the Federal Monetary Board is active at start, 3.9); private monetary authorities for charter cities (Arcology Scrip, 3.8.1) |
 
 3.25.1 adds what markets are for at each rank.
 
@@ -116,9 +116,9 @@ Market tools are grouped by the rank of the player's largest company ([1-corpora
 
 ### 3.2.1 Exchange list
 
-Twelve fictional exchanges stand in for real ones, plus one off-the-books venue. Each has a home city (a Metro or city province), a currency, a regulator (the national securities regulator from [4-politics.md](4-politics.md)) and indices.
+Twelve fictional exchanges stand in for real ones, plus one off-the-books venue. Each has a home city (a Metro or city province), a currency, a regulator (the national securities regulator from [4-politics.md](4-politics.md)) and indices. At start every exchange lists in USD because the whole world is dollarized (3.8.1); the Currency column is the dormant home currency an exchange switches to if its country re-currencies **(A)**.
 
-| Code | Exchange | Home city | Stands in for | Currency | Headline index | Other indices |
+| Code | Exchange | Home city | Stands in for | Currency (USD at start) | Headline index | Other indices |
 |---|---|---|---|---|---|---|
 | ATX | Atlantic Exchange | New York | NYSE | USD | Atlantic 500 | Atlantic Industrials 30, Atlantic Mid 400 |
 | HDM | Hudson Digital Market | New York | Nasdaq | USD | Hudson 100 | Hudson Composite, Hudson Biotech |
@@ -133,7 +133,7 @@ Twelve fictional exchanges stand in for real ones, plus one off-the-books venue.
 | PSX | Paulista Exchange | Sao Paulo | B3 | BRL | Paulista Index | Paulista Small Caps |
 | NJX | Nejd Exchange | Riyadh | Tadawul | SAR | Nejd All-Share | Nejd 30 |
 
-A **global index**, the **Globe 1000**, is built from the 1,000 largest free-float companies across all twelve exchanges, converted to USD. Global funds track it, and the GRG reads its volatility.
+A **global index**, the **Globe 1000**, is built from the 1,000 largest free-float companies across all twelve exchanges, in USD (converted, once any exchange lists in another currency). Global funds track it, and the GRG reads its volatility.
 
 **Depth of simulation:** each exchange lists 30 to 120 fully simulated companies (with characters, boards and business units) plus a **rest-of-market basket**, one synthetic constituent per sector that stands for all unmodeled companies. Indices and sentiment include the basket so they behave like real markets, but the basket cannot be bought into control [T].
 
@@ -176,8 +176,8 @@ Notes:
 
 ### 3.2.4 Foreign access and cross-listing
 
-- **Depositary receipts**: a company can list a receipt on a second exchange (for example a Gateway 50 company on ATX). The receipt trades in the second exchange's currency and its price tracks the home share times the FX rate, with arbitrage closing gaps above 0.5% within 2 ticks [T]. Cost: a one-off fee of 0.03% of market cap and the second exchange's disclosure rules.
-- **HSE quota ("Connect")**: foreign holders buy HSE shares through a daily quota of 52 billion CNY for all foreigners combined [T]. When the quota is used up, foreign buy orders wait for the next day. A subsidiary incorporated in China that meets China's restriction label ([2-map-and-influence.md](2-map-and-influence.md) 2.2.2: a 30% local partner) counts as domestic and skips the quota (branch offices are dropped, batch 116).
+- **Depositary receipts**: a company can list a receipt on a second exchange (for example a Gateway 50 company on ATX). The receipt trades in the second exchange's currency and its price tracks the home share times the FX rate (one for one while both list in USD, as at start), with arbitrage closing gaps above 0.5% within 2 ticks [T]. Cost: a one-off fee of 0.03% of market cap and the second exchange's disclosure rules.
+- **HSE quota ("Connect")**: foreign holders buy HSE shares through a daily quota of $7.5 billion (52 billion CNY once China re-currencies) for all foreigners combined [T]. When the quota is used up, foreign buy orders wait for the next day. A subsidiary incorporated in China that meets China's restriction label ([2-map-and-influence.md](2-map-and-influence.md) 2.2.2: a 30% local partner) counts as domestic and skips the quota (branch offices are dropped, batch 116).
 - **Foreign ownership caps** (HSE 30%, NJX 49%, GXI by sector) apply to the sum of all foreign holders. When a cap is reached, foreigners can only buy from other foreigners, at a premium that floats from 0% to 15% [T].
 
 ### 3.2.5 The Freeport Night Market (cyberpunk venue)
@@ -215,7 +215,7 @@ V is recalculated in full each quarter at the earnings report, refreshed at ever
 |---|---|---|---|
 | M_sector | From the sector table (3.3.2) | | Base price to earnings ratio for the sector |
 | G (growth) | 1 + 2.5 x (g - g_sector) | 0.5 to 2.5 | Faster than the sector earns a higher multiple |
-| R (rates) | 9% / (y10 + 5%) | 0.4 to 1.6 | y10 is the 10-year government yield in the company's home currency (3.6.4). At y10 = 4% R is 1.0; at 12% (emerging market) R is 0.53 |
+| R (rates) | 9% / (y10 + 5%) | 0.4 to 1.6 | y10 is the 10-year government yield of the company's home country (3.6.5; in USD at start, the base rate path plus that country's spread). At y10 = 4% R is 1.0; at 12% (emerging market) R is 0.53 |
 | Q (quality) | 1 + sum of quality modifiers (table below) | 0.6 to 1.25 | Governance, management, scandals |
 | C (cycle) | For Energy, Mining, Logistics and Agriculture only: if TTM earnings exceed 1.3 times the 5-year average, C = (5-year average / TTM)^0.5; else 1.0 | 0.5 to 1.0 | Markets do not pay full multiples on peak commodity earnings |
 
@@ -778,7 +778,7 @@ Options arrive after the core markets are stable. Summary of the intended design
 
 | Issuer | Instruments | Where they trade | Notes |
 |---|---|---|---|
-| National governments | Bills (3 and 12 months), notes and bonds (2, 5, 10, 30 years) | Over the counter, every hour (3.1.0) | Issued at monthly auctions; eurozone members each issue in EUR with their own rating. The only government bonds: there are no regional or city governments (batch 121); holding them counts for national influence ([2-map-and-influence.md](2-map-and-influence.md) 2.5.2) |
+| National governments | Bills (3 and 12 months), notes and bonds (2, 5, 10, 30 years) | Over the counter, every hour (3.1.0) | Issued at monthly auctions; every government issues in USD at start (3.8.1), each with its own rating and country spread (3.6.5); a country that re-currencies issues new bonds in its own currency, while its old USD bonds stay in USD **(A)**. The only government bonds: there are no regional or city governments (batch 121); holding them counts for national influence ([2-map-and-influence.md](2-map-and-influence.md) 2.5.2) |
 | Companies, investment grade | 3 to 30-year bonds | Home market | Issued by bookbuild (an event); fee 0.5% |
 | Companies, high yield | 5 to 10-year bonds | Home market | Fee 1.5%; tighter covenants |
 | Private credit | Loans from funds | Not traded | Negotiated in events; leverage over borrowers ([10-industry-economy.md](10-industry-economy.md) 10.0.9) |
@@ -792,7 +792,7 @@ Corporate bonds are less liquid than stocks: their daily depth is 0.2% of the is
 
 Three fictional agencies rate issuers: **Meridian Ratings**, **Halvorsen & Gray** and **Cassini Credit**. The scale has 22 steps; AA to B carry plus and minus notches.
 
-Values are [T]. Spreads are over the government yield in the same currency and maturity. Default probabilities are the market's belief, used for pricing and AI decisions; actual defaults only happen when an issuer cannot or will not pay (3.6.6).
+Values are [T]. Spreads are over the government yield in the same currency and maturity. At start every bond is in USD, so a sovereign spread sits over the world base rate path (3.6.5). Default probabilities are the market's belief, used for pricing and AI decisions; actual defaults only happen when an issuer cannot or will not pay (3.6.6).
 
 | Rating | Grade | Corporate spread (5-year, basis points) | Sovereign spread (basis points) | Market's annual default probability |
 |---|---|---|---|---|
@@ -843,10 +843,10 @@ Within a band, each notch interpolates: a plus notch is a third of the way towar
 |---|---|
 | Debt / GDP below 40% / 40 to 80% / 80 to 120% / above 120% | +3 / +1 / -1 / -3 (0 for reserve-currency issuers above 120%) |
 | Budget deficit below 2% / 2 to 5% / above 5% of GDP | +1 / 0 / -2 |
-| FX reserves above 6 months of imports / 3 to 6 / below 3 | +1 / 0 / -2 |
+| FX reserves above 6 months of imports / 3 to 6 / below 3 (only for a country with its own currency; a dollarized country scores 0, batch 124) | +1 / 0 / -2 |
 | Inflation within 2 points of target / above target by 5+ points | +1 / -2 |
 | Stability ([4-politics.md](4-politics.md) 4.11.7) above 70 / below 40 | +1 / -2 |
-| Issuer of a reserve currency (USD, EUR, JPY, GBP, CHF) | +2 |
+| Issuer of a reserve currency (only the US at start; EUR, JPY, GBP and CHF count once relaunched, 3.8.1) | +2 |
 | Default in the past 10 years | -3 |
 | Government type: liberal democracy +1; one-party state 0; military junta -2; failed state -5 | |
 
@@ -856,7 +856,7 @@ Score 7 or more maps to AAA, then one notch lower per point down to CCC at -12 o
 
 - **Quarterly review** of every issuer (the quarterly calculation). The rating moves toward the implied rating by at most 1 notch per review, or 2 notches if the gap is 3 or more. Ratings are sticky on purpose.
 - **Outlook** (Positive, Stable, Negative) is set one review before a planned move, as a warning to markets.
-- **Watch**: after a major shock (takeover, default nearby, currency crisis, a big scandal) an agency places the issuer on Watch and may act within 2 weeks, moving up to 3 notches.
+- **Watch**: after a major shock (takeover, default nearby, debt or currency crisis, a big scandal) an agency places the issuer on Watch and may act within 2 weeks, moving up to 3 notches.
 - **Pro-cyclical**: while GRG is above 50, each downgrade review has a 30% chance of an extra notch.
 - **Agency personalities**:
 
@@ -883,6 +883,12 @@ Score 7 or more maps to AAA, then one notch lower per point down to CCC at -12 o
 - `TP(T)`, the term premium: `0.3% x ln(1 + T) x (1 + 0.5 x max(0, debt/GDP - 60%))`, minus 0.1 points for each 10% of GDP of government bonds the central bank holds through QE (floor 0) [T].
 - The **calibration offset** is a per-country constant set once so that starting yields match the January 2020 world.
 
+**Whole world dollarized (Logan, batch 124).** At start every government bond is in USD, so for every country r_0 is the Federal Monetary Board's base rate (1.75% at start, **T**) and r_n is the US neutral nominal rate. What is left of the formula is the **country spread**: TP(T) + sovereign spread(rating) + crisis premium + calibration offset.
+- The rating (3.6.3) already reads debt, deficit, stability and government type; the FX-risk parts of the old spreads are dropped.
+- The **crisis premium** adds 1 to 4 points while the country is in a debt crisis or the sovereign default chain (3.6.7) **(A, T)**.
+- The calibration offset now matches each country's January 2020 spread over US Treasuries, not its local-currency yield, floored so no government starts below the US yield **(A)**. Germany, Japan and Switzerland no longer start with negative yields.
+- Once a country re-currencies, bonds in its new currency use its own central bank's rate again (3.8.1).
+
 Example: US 10-year at the start, with r_0 = 1.75%, r_n = 3.0%, debt 120% of GDP, rating AA+. r_avg = 3.0 - 1.25 x 0.3 x 0.964 = 2.64%. TP = 0.3% x 2.40 x 1.3 = 0.94%. Spread 0.15%. y = 3.73% before the calibration offset; an offset of -1.9 points sets it to the January 2020 level of about 1.8% [T].
 
 **Corporate bonds:**
@@ -906,6 +912,8 @@ Example: US 10-year at the start, with r_0 = 1.75%, r_n = 3.0%, debt 120% of GDP
 | Bank loan to a company | Policy rate + corporate spread for its rating + 1.0 |
 | Mortgage | 10-year government yield + 1.5 to 2.5 |
 | Margin and pledge loans | See 3.5.4 and 3.5.5 |
+
+While a country is dollarized, "policy rate" in this table means the world base rate plus that country's sovereign spread and crisis premium, so savers and borrowers in risky countries get higher rates **(A)**.
 
 ### 3.6.6 Default and restructuring chain (companies)
 
@@ -931,7 +939,7 @@ Example: US 10-year at the start, with r_0 = 1.75%, r_n = 3.0%, debt 120% of GDP
 ### 3.6.7 Sovereign default chain
 
 1. **Funding stress**: a failed government bond auction (bid-to-cover below 1.5) pushes yields +0.25 to +0.75 points; Watch Negative.
-2. **Missed payment**: rating SD or D; all of that government's bonds fall to expected recovery (30% to 60%); the currency is hit (3.8.7); banks holding the bonds take losses.
+2. **Missed payment**: rating SD or D; all of that government's bonds fall to expected recovery (30% to 60%); the currency is hit (3.8.7), or in a dollarized country deposits and capital flee abroad (Run Pressure on its banks, 3.21.1) **(A)**; banks holding the bonds take losses.
 3. **Choices for the AI government** (players influence through lobbying and influence in that country):
    - **ISF program**: a loan with conditions: austerity laws (spending cuts, tax rises), central bank independence raised, capital controls lifted or imposed. Stability -10 to -20.
    - **Negotiated haircut** with a creditor committee: 30% to 70% losses for bondholders.
@@ -965,7 +973,7 @@ Commodity trading comes later (3.0); this section is its design for then. Raw ma
 | Gold | LMH | troy ounce | $1,520 | 15% | Physical in vaults | 0.2% | n/a (financial) |
 | Memory chips (Standard Memory Index) | Hsinchu Compute and Chip Exchange (HCX), Hsinchu | index point | 1,000 | 40% | Cash-settled | n/a | 2.0 |
 | Compute hours (GPU-hour index) | HCX | GPU-hour | $2.50 | 45% | Cash-settled | n/a | 1.5 |
-| Carbon permits | LMH | tonne CO2 | EUR 24 | 35% | Registry transfer | 0% | 1.0 |
+| Carbon permits | LMH | tonne CO2 | $23 | 35% | Registry transfer | 0% | 1.0 |
 
 **Hours**: commodity futures tick every hour on the 3.1.0 calendar and settle at 00:00 UTC; liquidity is flat around the clock.
 
@@ -991,7 +999,7 @@ Futures exist for monthly expiries out to 12 months (24 for oil and gas) [T].
 
 `F(T) = S x e^((r + s - cy) x T)`
 
-- r: the policy rate of the contract's currency; s: storage cost; T in years.
+- r: the policy rate of the contract's currency (the world base rate at start, 3.8.1); s: storage cost; T in years.
 - **Convenience yield** `cy = max(0, 0.30 x (1 / I - 1))`, where I = Inventory / NormalInventory [T].
 
 | Inventory ratio I | Convenience yield | Curve shape |
@@ -1053,25 +1061,34 @@ A **corner** means controlling so much of the deliverable supply at a delivery p
 
 ## 3.8 Foreign exchange
 
+> **Active once a country re-currencies (Logan, batch 124).** At start the whole world uses the US dollar (3.8.1), so there are no exchange rates and no FX market. Every rule in 3.8 is kept and applies to each currency a country launches by law.
+
 ### 3.8.1 Currencies
 
-Every country (or currency zone) has a currency; every account, price and asset is denominated in one ([1-corporate-core.md](1-corporate-core.md) 1.10). Rates are quoted as units per USD, except EUR and GBP, which are quoted as USD per unit, as in the real market.
+Every account, price and asset is denominated in a currency ([1-corporate-core.md](1-corporate-core.md) 1.10). Rates are quoted as units per USD, except EUR and GBP, which are quoted as USD per unit, as in the real market.
 
-**Dollarized Latin America (Logan, batch 124).** At start every Latin American country uses the **US dollar**: there is no real, Argentine or Colombian peso and no other Latin American currency. These countries:
+**The whole world is dollarized at start (Logan, batch 124).** Every country uses the **US dollar**. There are no other currencies, no exchange rates and no FX market or FX trading at start, and every price, account, asset and bond is in USD. So at start:
 
-- take the Federal Monetary Board's rate, plus a country spread for their own bonds (3.6), and share the US business cycle ([2-map-and-influence.md](2-map-and-influence.md) 2.18.1);
-- have no central bank of their own and no FX market, so their Latin American rows in the tables of 3.8 and 3.9 are inactive at start;
-- can **re-currency** by a national law (a new currency launches at a rate set by the government, then floats or pegs), which brings back their central bank row **(A)**;
-- still list stocks on their own exchanges (the Paulista Exchange and others), priced in USD.
+- **Rates**: the Federal Monetary Board sets the one world base rate (1.75% at start, **T**). Each country's government bonds and bank lending price at that base rate plus its **country spread**, set by its rating, debt, deficit, crisis state and politics (3.6.3, 3.6.5). The old FX-risk parts of spreads are dropped.
+- **Governments** have no monetary tools: no policy rate, no money printing, no capital controls on currency. They keep fiscal tools: tax, spending and debt.
+- **Central banks**: only the Federal Monetary Board is active. Every other row of 3.9.1 is **dormant**, and swap lines, reserves and FX interventions are inactive while a country is dollarized.
+- **Business cycles**: every country keeps its own cycle ([2-map-and-influence.md](2-map-and-influence.md) 2.18.1), and the policy-rate driver reads the world base rate against neutral for everyone. The shared euro-area cycle (batch 122) and the shared Latin America cycle (batch 124) are suspended while the euro and Latin American currencies do not exist; the euro-area rule applies again if the euro is launched **(A)**.
+- **What stays**: exchanges keep their listings and list in USD; commodities are priced in USD; havens, shells and laundering stay, minus any step that relied on currency conversion.
+- **The euro crisis at start is a debt crisis**: Greece's default, spreads blowing out and recession, not a currency crash. EUR 0.95 and the other rates in the table below are not start values. Argentina's chronic crisis and Egypt's weakness likewise show up in bond spreads and capital flight **(A)**.
 
-Mexico is in North America and keeps the peso. Argentina's chronic crisis now shows up in its bond spread and capital flight, not in its currency **(A)**.
+**Re-currency (A).** Any country can launch its own currency by a national law, **Launch a national currency** (an economy or finance law in [4-politics.md](4-politics.md), beside F3 Exchange Rate Regime). When it passes:
+- the country's row in the table below comes back, at a rate the government sets, and then floats or pegs under the regime rules of 3.8.3;
+- its central bank row in 3.9.1 wakes;
+- FX trading in that currency opens, under 3.8.2 to 3.8.7.
 
-Starting values are loosely January 2020 (real values, adjusted for the alternate history where noted); all are [T].
+A bloc can launch a shared currency the same way: the EU can launch the euro, and the Eurozone Central Bank wakes for the members that join. **So the FX system stays in the game but starts empty and grows as countries leave the dollar.** How the world came to use the dollar is pending (batch 125).
 
-| Code | Currency | Country or zone | Start rate | Regime at start | Policy rate at start | Role |
+**Dormant currency data.** Only the USD row is live at start. The other rows keep each currency's data for its relaunch: the reference rate and reference policy rate (loosely January 2020, adjusted for the alternate history where noted) are the defaults when the law does not set others **(A)**. All are [T].
+
+| Code | Currency | Country or zone | Reference rate | Default regime on launch | Reference policy rate | Role |
 |---|---|---|---|---|---|---|
-| USD | US dollar | United States | 1.00 | Free float | 1.75% | Main reserve currency; numeraire |
-| EUR | Euro | Eurozone | 0.95 USD per EUR **(T; down hard in the 2019 euro crisis, [19-history.md](19-history.md) 19.21)** | Free float | 0.00% | Reserve currency |
+| USD | US dollar | Whole world at start | 1.00 | Live: the only currency at start | 1.75% (the world base rate) | World currency; numeraire |
+| EUR | Euro | Eurozone | 0.95 USD per EUR **(T; reference only: at start the euro does not exist and the 2019 euro crisis is a debt crisis, [19-history.md](19-history.md) 19.21)** | Free float | 0.00% | Reserve currency |
 | JPY | Yen | Japan | 109 | Free float (intervention-prone) | -0.10% | Safe haven; carry funding currency |
 | GBP | Pound sterling | United Kingdom | 1.31 USD per GBP | Free float | 0.75% | Reserve currency |
 | CNY | Yuan (onshore; offshore CNH) | China | 6.93 | Managed float, +/- 2% daily band; moderate capital controls | 4.15% | Managed; trade giant |
@@ -1097,9 +1114,11 @@ Starting values are loosely January 2020 (real values, adjusted for the alternat
 
 Notes:
 - **Crypto** (coins and stablecoins) is not a currency in this market layer; it lives in the phone tab ([9-gambling.md](9-gambling.md)), batch 116.
-- **Arcology Scrip** is a corporate sovereign city's private central bank (usually at Megacorp rank, [4-politics.md](4-politics.md) 4.12): the controlling company sets its regime and policy rate using the rules in 3.9.
+- **Arcology Scrip** is a corporate sovereign city's private central bank (usually at Megacorp rank, [4-politics.md](4-politics.md) 4.12): the controlling company sets its regime and policy rate using the rules in 3.9. It is a corporate city's way to leave the dollar.
 
 ### 3.8.2 Exchange rate update
+
+Applies once a country re-currencies (3.8.1).
 
 Each currency's value is tracked as x = ln(USD per unit). The USD is the numeraire; the "Dollar Index" shows the USD against a trade-weighted basket.
 
@@ -1125,7 +1144,7 @@ Each currency's value is tracked as x = ln(USD per unit). The USD is the numerai
 - Debt: government debt as % of GDP. Stability: 0 to 100 from [4-politics.md](4-politics.md) 4.11.7.
 - The sum of adjustments is capped at +/- 0.30.
 - x_PPP drifts monthly by the inflation gap: x_PPP falls by (local inflation - US inflation) / 12.
-- The offset is set once at game start so that every currency starts at fair value, **except** deliberate starting imbalances: EGP 24% overvalued at its peg, ARS official rate 40% overvalued [T].
+- The offset is set when a currency launches (3.8.1), so that it starts at fair value unless the government sets its launch rate elsewhere **(A)**. A launch rate above fair value is overvalued from day one, as the reference EGP peg (24% overvalued) and ARS official rate (40% overvalued) would be [T].
 
 **Currency parameters** [T]:
 
@@ -1157,6 +1176,8 @@ Each currency's value is tracked as x = ln(USD per unit). The USD is the numerai
 
 ### 3.8.3 Exchange rate regimes
 
+Applies once a country re-currencies (3.8.1).
+
 The regime is a law in each country ([4-politics.md](4-politics.md), F3 Exchange Rate Regime) and can change through politics or a crisis.
 
 | Regime | Rules | Central bank behavior | Player angle |
@@ -1168,9 +1189,9 @@ The regime is a law in each country ([4-politics.md](4-politics.md), F3 Exchange
 | **Currency board** | Fixed rate, all base money backed by reserves at 100% or more | Automatic: when money flows out, base money shrinks and short-term rates spike, with no discretion | Very hard to break unless reserves fall below 100% of base money |
 | **Currency union** | One currency for several countries (EUR) | One central bank for all members; members keep their own bond ratings and spreads | Member spreads (for example Italy versus Germany) can blow out in a crisis |
 
-**Credibility** (0 to 100) is tracked for every managed regime. It starts at 80 for SAR, AED and HKD, 55 for EGP, 35 for ARS [T]. Daily change: -0.5 per 1% of starting reserves lost that day; +5 for a defensive rate hike of 5 points or more; -3 when capital controls are tightened under pressure; -2 to -10 for psyops or damaging news; recovers +0.5 per calm day toward its starting level. While credibility is 60 or more, the fair-value pull on a pegged rate is suspended (expectations are anchored); below 60 it is scaled by (60 - credibility) / 60.
+**Credibility** (0 to 100) is tracked for every managed regime. It starts, when the regime launches, at 80 for SAR, AED and HKD, 55 for EGP, 35 for ARS, and 50 for any other new peg [T, A]. Daily change: -0.5 per 1% of starting reserves lost that day; +5 for a defensive rate hike of 5 points or more; -3 when capital controls are tightened under pressure; -2 to -10 for psyops or damaging news; recovers +0.5 per calm day toward its starting level. While credibility is 60 or more, the fair-value pull on a pegged rate is suspended (expectations are anchored); below 60 it is scaled by (60 - credibility) / 60.
 
-**Capital controls** are an overlay on any regime ([4-politics.md](4-politics.md), F2 Capital Controls):
+**Capital controls** are an overlay on any regime ([4-politics.md](4-politics.md), F2 Capital Controls). While a country is dollarized, F2 still applies: it limits moving dollars into and out of the country instead of converting a currency ("convert" below reads "move out") **(A)**. This matches 4-politics, where defaults and seizures use F2:
 
 | Level | Rules [T] | Effects |
 |---|---|---|
@@ -1227,7 +1248,7 @@ Speculators (AI hedge funds and the player, usually at Megacorp rank, 3.1.4) can
 
 ### 3.8.7 Currency crisis event chain
 
-A currency crisis can start from an attack, from a sovereign default, or by itself when fundamentals rot.
+A currency crisis can start from an attack, from a sovereign default, or by itself when fundamentals rot. While a country is dollarized the same pressures make a **debt crisis** instead: its spread widens (the crisis premium, 3.6.5), capital flees and the sovereign default chain (3.6.7) carries the damage **(A)**.
 
 1. **Pressure Builds** (event): fires when 3 of these hold: reserves under 3 months of imports, current account deficit over 4% of GDP, short-term foreign debt above reserves, inflation 5 points above target, stability under 40, the rate more than 15% overvalued against fair value.
 2. **Speculative Attack**: AI hedge funds start selling; players may join, short local stocks, or rush to get money out.
@@ -1243,9 +1264,11 @@ A currency crisis can start from an attack, from a sovereign default, or by itse
 
 ## 3.9 Central banks
 
+> **Only the Federal Monetary Board is active at start (Logan, batch 124).** Its policy rate is the one world base rate (1.75% at start, **T**). Every other bank below is dormant and wakes when its country re-currencies (3.8.1); the Eurozone Central Bank wakes for the members that join a relaunched euro. The Board's rule (3.9.2) still reads US inflation and unemployment, so the rest of the world takes a rate set for the US **(A)**. Swap lines, reserves and FX intervention (3.9.4, 3.9.6) are inactive while a country is dollarized; banks in a dollarized country borrow at the Board's window (3.9.4) **(A)**.
+
 ### 3.9.1 Central bank roster
 
-Each currency has a central bank run by AI characters (a governor and a board of 4 to 8 members), influenced by politics. Names are fictional. All values are [T].
+Each currency has a central bank run by AI characters (a governor and a board of 4 to 8 members), influenced by politics. Names are fictional. All values are [T]. At start only the USD row is active; the others are dormant data for a relaunch (3.8.1).
 
 | Currency | Central bank | Mandate | Independence at start | Governor term | Usable FX reserves (USD bn) | Lower bound for rates |
 |---|---|---|---|---|---|---|
@@ -1337,10 +1360,12 @@ Central banks meet monthly, in the monthly calculation. Inputs come from the eco
 
 - At each meeting the bank publishes a **guidance bias**: Hawkish, Neutral or Dovish (from the direction of r_rule minus r_new).
 - Before each meeting the market forms an **expected rate** from the rule and the last guidance. The **surprise** is the actual decision minus the expected rate.
-- Market reaction to a surprise of +1 point [T]: currency +2%, local stock indices -4%, 2-year yields +0.8 point, 10-year yields +0.3 point. Smaller surprises scale linearly.
+- Market reaction to a surprise of +1 point [T]: currency +2% (where there is an exchange rate), local stock indices -4%, 2-year yields +0.8 point, 10-year yields +0.3 point. Smaller surprises scale linearly.
 - A board member who is your ally can tip you the decision a day early: trading on it is insider trading (3.10).
 
 ### 3.9.6 FX intervention and reserves
+
+Applies once a country re-currencies (3.8.1).
 
 - Intervention rules follow the regime (3.8.3). Free floaters intervene only in disorderly markets; managed floats at the band edges; pegs and boards always.
 - A bank will spend at most 10% of usable reserves per day unless defending a peg [T].
@@ -1360,7 +1385,7 @@ The central bank listens to the government in proportion to (1 - I). Players rea
 
 Lobbying a Full-independence bank directly has a quarter of the normal effect and a 20% chance per attempt of a public backlash (Favor -5) [T].
 
-**Capture** is the route to the Market Maker endgame ([4-politics.md](4-politics.md) 4.29): a player who has an ally as governor, a majority of board members as Friends, and independence at Low or Captured effectively sets the policy rate (r_final follows the player's choice within +/- 3 points of r_rule; beyond that inflation and the currency punish it).
+**Capture** is the route to the Market Maker endgame ([4-politics.md](4-politics.md) 4.29): a player who has an ally as governor, a majority of board members as Friends, and independence at Low or Captured effectively sets the policy rate (r_final follows the player's choice within +/- 3 points of r_rule; beyond that inflation and the currency punish it). At start the only bank to capture is the Federal Monetary Board, which sets the rate for the whole world; a woken national bank is the smaller prize **(A)**.
 
 ---
 
@@ -1467,17 +1492,17 @@ All companies, people and funds below are fictional. Numbers follow the formulas
 
 ### 3.11.3 A hostile stake build through the disclosure thresholds
 
-**Target**: Pellucid Grid, a utility on CBX. 200M shares at EUR 15.00 (market cap EUR 3.0B), V = EUR 19.00, book equity EUR 3.4B. The Lacroix family bloc holds 30%; index funds 18%; value funds (Graywater) 12%; hedge funds 5%; retail platforms 35%. ADV 1.4M shares (1% of float). Market cap is below book, so the **Undervaluation** casus belli is open. **Raider**: Varga Industrial (US), a known raider, with a Strategic synergy claim too.
+**Target**: Pellucid Grid, a utility on CBX. 200M shares at $15.00 (market cap $3.0B), V = $19.00, book equity $3.4B. The Lacroix family bloc holds 30%; index funds 18%; value funds (Graywater) 12%; hedge funds 5%; retail platforms 35%. ADV 1.4M shares (1% of float). Market cap is below book, so the **Undervaluation** casus belli is open. **Raider**: Varga Industrial (US), a known raider, with a Strategic synergy claim too.
 
-1. **Weeks 1 to 6, under the radar.** A 25% work order buys about 350,000 shares a day. After 28 trading days Varga holds 9.8M shares (4.9%). Permanent impact 0.8 x 0.94% x 7 = +5.3%, plus a little pull: price about EUR 15.95; average cost about EUR 15.50.
-2. **Crossing the first line (5%, France at F4 Standard).** Varga keeps buying through the 2-day filing window (legal) and files at 5.35% with **Active** intent. Reaction: +2% x 2 (known raider) = +4%, to EUR 16.60. Reservation prices +5%. Wolfsbane Capital buys 3% for merger arbitrage. Pellucid's board (on CBX no pills are allowed once an offer comes) starts a **white knight** search and lobbies the French government.
-3. **Weeks 7 to 10, to 10%.** Market buying adds 7M shares; a block of 2.3M from Wolfsbane costs EUR 17.50 (P x 1.03; arbs sell blocks cheaply, while Graywater holds out for its reservation price). Varga crosses 10% at about EUR 17.25 and files: +3% x 2 = +6%, to about EUR 18.30, close to V. Varga is an **insider**: blackout before earnings, short-swing rule, and the right to nominate a director at the next annual meeting.
+1. **Weeks 1 to 6, under the radar.** A 25% work order buys about 350,000 shares a day. After 28 trading days Varga holds 9.8M shares (4.9%). Permanent impact 0.8 x 0.94% x 7 = +5.3%, plus a little pull: price about $15.95; average cost about $15.50.
+2. **Crossing the first line (5%, France at F4 Standard).** Varga keeps buying through the 2-day filing window (legal) and files at 5.35% with **Active** intent. Reaction: +2% x 2 (known raider) = +4%, to $16.60. Reservation prices +5%. Wolfsbane Capital buys 3% for merger arbitrage. Pellucid's board (on CBX no pills are allowed once an offer comes) starts a **white knight** search and lobbies the French government.
+3. **Weeks 7 to 10, to 10%.** Market buying adds 7M shares; a block of 2.3M from Wolfsbane costs $17.50 (P x 1.03; arbs sell blocks cheaply, while Graywater holds out for its reservation price). Varga crosses 10% at about $17.25 and files: +3% x 2 = +6%, to about $18.30, close to V. Varga is an **insider**: blackout before earnings, short-swing rule, and the right to nominate a director at the next annual meeting.
 4. **The wall at 25% and 30%.** Market buying is now slow and expensive (the price is near V, so value funds sell into every rise). Crossing 25% triggers a **foreign investment review** (utility, foreign buyer): 4 to 8 weeks, decided by Varga's influence in France and diplomatic relations. Crossing 30% on CBX triggers a **mandatory bid** for all shares.
-5. **Tender offer.** Varga skips the creep and launches a tender offer at EUR 22.00 for all shares, conditional on reaching 50% and on regulatory approval. Review approved after 6 weeks (Varga spent Political Capital and promised to keep jobs: an obligation event).
-   - Acceptance: index funds (18%) tender if success looks likely; Wolfsbane and other arbs (8%) tender; Graywater's reservation is now about EUR 23.00 (V x 1.10 x 1.10), so it holds; retail platforms tender about half their shares at EUR 22. Projected: about 47%, short of 50%.
-   - Varga raises to EUR 23.00. Graywater and more retail tender. **Final: 53%.**
+5. **Tender offer.** Varga skips the creep and launches a tender offer at $22.00 for all shares, conditional on reaching 50% and on regulatory approval. Review approved after 6 weeks (Varga spent Political Capital and promised to keep jobs: an obligation event).
+   - Acceptance: index funds (18%) tender if success looks likely; Wolfsbane and other arbs (8%) tender; Graywater's reservation is now about $23.00 (V x 1.10 x 1.10), so it holds; retail platforms tender about half their shares at $22. Projected: about 47%, short of 50%.
+   - Varga raises to $23.00. Graywater and more retail tender. **Final: 53%.**
 6. **Control.** Varga's company is now Pellucid's **owner of record** with a majority on the books. With no figurehead or rival bloc in the way, it also becomes the **real controller** ([1-corporate-core.md](1-corporate-core.md) 1.3.1): Pellucid becomes its **vassal** and Varga appoints the CEO. The Lacroix bloc (30%) remains a powerful minority (above 25%, a **blocking minority** that can veto charter changes). Free float 17%, above CBX's 15% minimum, so no delisting.
-7. **Cost**: about EUR 325M for the first 10%, plus about EUR 1.98B for 86M tendered shares at EUR 23.00: about **EUR 2.3B for 53%**, an average of about EUR 21.70 a share, 45% above the price when the raid began and 14% above V.
+7. **Cost**: about $325M for the first 10%, plus about $1.98B for 86M tendered shares at $23.00: about **$2.3B for 53%**, an average of about $21.70 a share, 45% above the price when the raid began and 14% above V.
 
 ### 3.11.4 A margin call cascade breaks control
 
@@ -1527,7 +1552,9 @@ All companies, people and funds below are fictional. Numbers follow the formulas
 
 ### 3.11.7 A carry trade unwinds
 
-**Setup** (January 2020 values): yen borrowing at 0% (the policy rate is -0.10%, floored at 0 for borrowers), BRL 4.5%. USD/JPY 109, USD/BRL 4.02. The player borrows **JPY 21.8B** ($200M), converts to **BRL 804M**, and parks it in Brazilian money market funds. Collateral: 10% ($20M).
+**Set after re-currency.** At start the whole world uses the dollar (3.8.1), so this example assumes Japan and Brazil have both launched their own currencies at their reference rates and policy rates.
+
+**Setup** (reference values from 3.8.1): yen borrowing at 0% (the policy rate is -0.10%, floored at 0 for borrowers), BRL 4.5%. USD/JPY 109, USD/BRL 4.02. The player borrows **JPY 21.8B** ($200M), converts to **BRL 804M**, and parks it in Brazilian money market funds. Collateral: 10% ($20M).
 
 - Carry: (4.5% - 0%) / 365 x $200M = about $24,700 a day.
 - After 120 days: BRL interest earned 804M x 4.5% x 120 / 365 = BRL 11.9M; no yen interest is owed. At unchanged rates the gain is about $3.0M.
@@ -1540,7 +1567,9 @@ All companies, people and funds below are fictional. Numbers follow the formulas
 
 ### 3.11.8 Attacking the Egyptian pound peg
 
-**Setup** (the starting scenario's deliberately weak peg): EGP pegged at 16.00 per USD, band 15.84 to 16.16. Usable reserves $20B. Fair value 19.84 (the peg is 24% overvalued). Credibility 55. EGP policy rate 12.25%, USD 1.75%. Current account deficit 4% of GDP. GRG 30. The player's largest company is a Megacorp.
+**Set after re-currency.** At start Egypt uses the dollar (3.8.1); this example assumes Egypt has launched its own pound by law and pegged it at the reference 16.00, above fair value.
+
+**Setup** (a deliberately weak peg at launch): EGP pegged at 16.00 per USD, band 15.84 to 16.16. Usable reserves $20B. Fair value 19.84 (the peg is 24% overvalued). Credibility 55. EGP policy rate 12.25%, USD 1.75%. Current account deficit 4% of GDP. GRG 30. The player's largest company is a Megacorp.
 
 1. **The forward**: 3-month forward = 16.00 x (1 + 0.1225 x 0.25) / (1 + 0.0175 x 0.25) = **16.42**. If the peg holds, the player loses 16.42 / 16.00 - 1 = 2.6% of notional over 3 months: the carry cost.
 2. **Days 1 to 3**: the player sells **$6B** of EGP forward through several banks (collateral at 10% = $600M) and runs a psyops campaign: "reserves are lower than reported" (credibility -8). Banks hedge 70%: $4.2B of spot selling reaches the band edge. Reserves fall to **$15.8B**. Credibility: 55 - 10.5 (21% of reserves lost) - 8 = **36.5**.
@@ -1558,11 +1587,11 @@ All companies, people and funds below are fictional. Numbers follow the formulas
 | System | What markets take from it | What markets give back |
 |---|---|---|
 | Companies ([1-corporate-core.md](1-corporate-core.md)) | Cap tables, blocs, charters, boards, two-layer control (1.3.1), takeover tools | Share prices, changes of owner of record from tenders, margin sales and restructurings |
-| Trusts and accounts ([1-corporate-core.md](1-corporate-core.md) 1.10) | Personal trusts and accounts, account currencies | Portfolio values, margin calls, interest and dividends |
+| Trusts and accounts ([1-corporate-core.md](1-corporate-core.md) 1.10) | Personal trusts and accounts, account currencies (all USD at start) | Portfolio values, margin calls, interest and dividends |
 | Characters ([1-corporate-core.md](1-corporate-core.md) 1.1) | Finance, Persuasion and Intrigue skills; traits; schemes; Clout and Favor | Scandals, Under Investigation and Blacklisted traits, prison |
 | Map and influence ([2-map-and-influence.md](2-map-and-influence.md)) | Influence, psyops, ad campaigns; news and Pdoomberg (2.22) | Influence from bond holdings and listed companies |
-| Industry economy ([10](10-industry-economy.md)) | Earnings, industry supply and demand, trade balances, inflation, unemployment | Commodity prices, borrowing costs, FX-driven import prices |
-| Politics ([4-politics.md](4-politics.md)) | Laws (regimes, controls, independence, disclosure), regulators, elections, stability | Defaults, currency crises and market crashes that topple governments |
+| Industry economy ([10](10-industry-economy.md)) | Earnings, industry supply and demand, trade balances, inflation, unemployment | Commodity prices, borrowing costs (base rate plus country spread), FX-driven import prices once currencies exist |
+| Politics ([4-politics.md](4-politics.md)) | Laws (Launch a national currency, regimes, controls, independence, disclosure), regulators, elections, stability | Defaults, debt and currency crises and market crashes that topple governments |
 | Events ([13-events.md](13-events.md)) | Event chains for IPOs, margin calls, defaults, crises, investigations | Triggers for those chains |
 
 ---
@@ -1584,12 +1613,12 @@ The Markets screen of [11-ui.md](../11-ui.md) 11.2 is split into panels. The pan
 | **Watchlists** | Up to 10 lists of up to 50 instruments [T]. Columns: price, day change, estimated fair value and the gap to it (3.14.2), yield, short interest, Buzz, next event | Built-in lists: My holdings, My companies, Rivals' companies, and **Disclosure radar** (companies where any holder filed at the first line or more in the last 90 days) |
 | **Chart** | Hourly bars (1 to 5 days), daily bars (1 month to 1 year), weekly bars (up to 10 years) | Overlays: the estimated fair value band, the headline index, event markers (earnings, filings, news), volume, short interest |
 | **Order ticket** | The order and its preview: expected fill price, slippage and permanent impact (3.3.7), time to fill at the chosen participation, fees and transaction tax (3.24.3), estimated tax on a sale, margin effect, disclosure thresholds crossed and their deadlines, mandatory bid warnings, the inside information warning (3.10.1) | Nothing is sent until the player confirms the preview |
-| **Positions** | Holdings by account (each personal account, personal trust, and company treasury the player controls): cost basis, realized and unrealized gains, currency exposure, margin headroom | Pledged and lent shares are marked |
+| **Positions** | Holdings by account (each personal account, personal trust, and company treasury the player controls): cost basis, realized and unrealized gains, currency exposure (none until a second currency exists), margin headroom | Pledged and lent shares are marked |
 | **Orders** | Open and standing orders with progress bars | Work orders show shares filled, average price and impact so far |
 | **News feed** | Filtered news with source and reliability (3.14.4) | Filters: holdings, watchlists, sector, country, source tier |
 | **Calendar** | Earnings dates, ex-dividend dates, annual meetings and record dates, central bank meetings, bond auctions, index rebalances, futures expiries and roll days, lock-up expiries, tender deadlines, elections | Any calendar item can become an alert |
 | **Screener** | Filter all listed instruments by exchange, sector, gap to estimated fair value, dividend yield, rating, short interest, holder concentration, free float, Buzz | Saved screens can feed alerts ("tell me when a utility trades below book") |
-| **Market overview** | GRG, headline indices, Retail Fever (3.15.1), cycle phase by country ([2-map-and-influence.md](2-map-and-influence.md) 2.18), yield curves, FX heat map, commodity curves, Funding Stress Index (3.21.3) | The one-glance view for large portfolios |
+| **Market overview** | GRG, headline indices, Retail Fever (3.15.1), cycle phase by country ([2-map-and-influence.md](2-map-and-influence.md) 2.18), yield curves and country spreads, FX heat map (once a second currency exists), commodity curves, Funding Stress Index (3.21.3) | The one-glance view for large portfolios |
 
 ### 3.13.2 Accounts and who trades for whom
 
@@ -1616,7 +1645,7 @@ The five order types of 3.3.7 (market, limit, work order, block trade, tender of
 | **Auction order** (at the close, or at the 2 January reopening) | Fills at the 00:00 UTC daily close or in the 2 January reopening auction, at that price. No participation cap, but at most 10% of that tick's volume [T] | Cheap execution; index-style trades |
 | **Scheduled order** | Buys or sells a fixed amount every day, week or month until cancelled or a total is reached | Savings plans, slow stake building, slow exits |
 | **Threshold-capped order** | Any buy order can carry a cap such as "stop at 4.9%", counted over the whole holder group | Never cross a disclosure line by accident |
-| **Conditional order** | "If these conditions hold, send this order." Up to 3 conditions joined by AND [T], on price, gap to estimated fair value, GRG, an index level, a filing, a news type, a rating, a date | Plans such as "buy Pellucid with a 10% work order if it falls below EUR 14 while GRG is under 30" |
+| **Conditional order** | "If these conditions hold, send this order." Up to 3 conditions joined by AND [T], on price, gap to estimated fair value, GRG, an index level, a filing, a news type, a rating, a date | Plans such as "buy Pellucid with a 10% work order if it falls below $14 while GRG is under 30" |
 
 **Rules for all orders**
 - **Jumps**: a stop triggered by a jump (a news shock or the 2 January reopening) fills at the new price, not at the stop. Orders are frozen during halts.
@@ -1730,7 +1759,7 @@ A careful player can notice a stake being built before anyone files at the first
 
 ### 3.14.6 Inside information
 
-- Inside information is a **knowledge item** held by a character: for example "Pellucid's Q3 earnings are 20% above consensus", "Varga will bid EUR 22 on 14 March", "the Federal Monetary Board will cut by 0.5". Each item names a security, a direction and an expiry (its publication).
+- Inside information is a **knowledge item** held by a character: for example "Pellucid's Q3 earnings are 20% above consensus", "Varga will bid $22 on 14 March", "the Federal Monetary Board will cut by 0.5". Each item names a security, a direction and an expiry (its publication).
 - **Sources**: board seats and executive roles (automatic for their companies); deal teams (bankers and lawyers on a deal); central bank and regulator boards; allies in office ([4-politics.md](4-politics.md) 4.7.5); espionage and hacking ([17-hacking.md](17-hacking.md)); Lovers share an item with a 25% chance per week [T].
 - A bidder trading for itself before its own first filing is not insider trading (3.10.1); telling a friend about it is tipping.
 - **Leakage**: an item known to more than 5 characters has a 5% daily chance to reach the market as a rumor with a 70% truth flag [T]. Large deals therefore drift the price toward the news before the announcement, which is exactly what surveillance (3.10.2) looks for.
@@ -1796,7 +1825,7 @@ Markets and the business cycle of [2-map-and-influence.md](2-map-and-influence.m
 
 ### 3.16.1 Cycle phase effects on markets
 
-Each country's phase (2.18.1) applies to its exchange, its bonds and its currency. All values are [T].
+Each country's phase (2.18.1) applies to its exchange, its bonds and, once it has one, its currency (3.8.1). All values are [T].
 
 | Phase | Market sentiment drift (per week) | GRG baseline contribution | Credit spread multiplier | IPO coverage | Game director's takeover orders (frequency; AI never buys on its own, batch 86) | VC and PE funding | Retail Fever drift (per week) |
 |---|---|---|---|---|---|---|---|
@@ -2098,7 +2127,7 @@ Every bank and every fund with prime broker leverage has a **Run Pressure** scor
 | **Confidence** | A major failure: GRG +15 (3.3.5) and RP +15 for peers | |
 | **Funding freeze** | The **Funding Stress Index** (FSI, the interbank rate minus the policy rate) rises; bank loan and margin rates add the FSI; above FSI 1.5 only half of wholesale funding rolls over | `FSI = 0.1 + 0.02 x max(0, GRG - 30) + 0.5 per major failure in the last 30 days`, in points; the failure term decays 10% per day |
 | **Prime broker failure** | Client funds' assets are frozen for 4 to 12 weeks unless held in segregated accounts (an option when opening the account, costing 0.25% a year) | Funds with frozen assets cannot meet margin elsewhere and become forced sellers |
-| **Sovereign-bank loop** | Banks hold their own government's bonds: a sovereign downgrade cuts bank capital, and a bank bailout raises sovereign debt | As in 3.6.7 and [4-politics.md](4-politics.md) 4.11.8 |
+| **Sovereign-bank loop** | Banks hold their own government's bonds: a sovereign downgrade cuts bank capital, and a bank bailout raises sovereign debt. A dollarized government cannot print to break the loop, so bailouts come from the budget or the ISF **(A)** | As in 3.6.7 and [4-politics.md](4-politics.md) 4.11.8 |
 
 ### 3.21.4 The Financial Panic chain
 
@@ -2106,7 +2135,7 @@ Every bank and every fund with prime broker leverage has a **Run Pressure** scor
 
 1. **Panic** (global or regional event): GRG +20; market sentiment -30 on affected exchanges; Retail Fever -30; credit spreads x2; no new bonds rated below BBB and no IPOs while it lasts; brokers raise margin requirements by 10 points.
 2. **Credit crunch**: bank lending to companies -30%; loan approval chances -20%; contraction chance +40% per month in affected countries (a 2.18.1 driver).
-3. **Policy response** (AI governments and central banks, open to lobbying): emergency rate cuts (3.9.2); QE including corporate bonds at GRG 70 or more (3.9.4); swap lines; blanket deposit guarantees (RP -40); short-selling bans (3.5.1); bailouts (4.9.8); closing an exchange for up to 5 trading days after a one-day index fall of 20% or more; capital controls in weak countries.
+3. **Policy response** (AI governments and central banks, open to lobbying): emergency rate cuts (3.9.2; at start only the Federal Monetary Board, for the whole world); QE including corporate bonds at GRG 70 or more (3.9.4); swap lines between woken central banks; blanket deposit guarantees (RP -40); short-selling bans (3.5.1); bailouts (4.9.8); closing an exchange for up to 5 trading days after a one-day index fall of 20% or more; capital controls in weak countries that have their own currency.
 4. **Resolution**: the panic ends when FSI is below 0.5 and GRG below 35.
 5. **Aftermath**: the Bank Failure crisis effect on law support ([4-politics.md](4-politics.md) 4.5.10) applies; regulator zeal +0.2 for 12 months (4.9.2), the post-crisis crackdown.
 
@@ -2121,7 +2150,7 @@ The derivatives in scope for the first full release:
 | Instrument | Status | Where | Notes |
 |---|---|---|---|
 | Commodity futures | In | 3.7.3 | |
-| FX forwards and NDFs | In | 3.8.5 | |
+| FX forwards and NDFs | In | 3.8.5 | Once a country re-currencies (3.8.1) |
 | Equity swaps (cash-settled) | In | 3.4.8 | Through banks |
 | Securities lending | In | 3.5.1 | |
 | **Index futures** | In (new) | Headline index of each of the twelve exchanges | Cash-settled quarterly. Price = index x e^((r - dividend yield) x T). Margin 8% of notional [T]. The cheap way to hedge a whole portfolio or short a whole market. Index arbitrage passes 50% of net futures flow into the index stocks as flow [T] |
@@ -2184,7 +2213,7 @@ Stamp duties and transaction taxes, loosely based on the real exchanges [T]:
 | Exchange | Tax |
 |---|---|
 | CLX | 0.5% on purchases |
-| CBX | 0.3% on purchases of large caps (market cap above EUR 1B) |
+| CBX | 0.3% on purchases of large caps (market cap above $1B) |
 | VHX | 0.1% on each side |
 | GXI | 0.1% on each side |
 | HRX | 0.15% on sales |
@@ -2215,8 +2244,8 @@ This table adds to 3.1.4.
 |---|---|---|---|---|---|
 | **Venture** (< $10M) | Learning, funding and valuation more than trading. The public market is a mood that sets VC appetite | $10k to $5M in personal accounts and trusts; the founder's own stake | Watchlists, charts, stop and bracket orders, scheduled and conditional orders, index and bond funds, news feed, calendar, morning brief, founder secondaries (3.19.2), angel investing (3.19.3) | Losing your savings; a friend's tip that turns out to be inside information; a Mania popping (VC funding -70%); down rounds | A simple portfolio view, the cap table and private valuation |
 | **Company** ($10M to $250M) | Control: building stakes, defending them, IPOs, margin | Control stakes from $5M to $250M | Unusual Accumulation alerts (3.14.5), analyst tools, threshold-capped orders, desk sessions, the personal office (3.18.3), private stakes, small buyouts, merger deals (3.20) | Raiders, margin cascades, bloc defections, activists | Holdings tree with live prices, the disclosure radar, margin headroom |
-| **Corporation** ($250M to $5B) | Markets as an industry: owning financial companies, cornering, FX, buyouts | Hundreds of millions to a few billion, in many currencies | Financial companies (3.17), fund launches (3.18.4), PE buyouts (3.19.4), index futures (3.22), merger arbitrage | Financial panics, redemptions forcing sales, coordinated shorts by rivals | Market overview with cycles, GRG, FSI and your systemic links |
-| **Megacorp and Conglomerate** (> $5B) | Markets as a lever of state power | Positions that move currencies | Exchange ownership (3.17.5), rating agency control (3.17.6), systemically important status (Too Big to Fail), corporate scrip into Arcology Scrip (3.23.4) | Nationalization, coordinated crackdowns, every rival uniting, a panic you caused coming home | A world view of currencies, central banks and your systemic exposure |
+| **Corporation** ($250M to $5B) | Markets as an industry: owning financial companies, cornering, FX, buyouts | Hundreds of millions to a few billion, across many countries (and currencies, once relaunched) | Financial companies (3.17), fund launches (3.18.4), PE buyouts (3.19.4), index futures (3.22), merger arbitrage | Financial panics, redemptions forcing sales, coordinated shorts by rivals | Market overview with cycles, GRG, FSI and your systemic links |
+| **Megacorp and Conglomerate** (> $5B) | Markets as a lever of state power | Positions that move country spreads and, once countries re-currency, currencies | Exchange ownership (3.17.5), rating agency control (3.17.6), systemically important status (Too Big to Fail), corporate scrip into Arcology Scrip (3.23.4) | Nationalization, coordinated crackdowns, every rival uniting, a panic you caused coming home | A world view of country spreads, currencies, central banks and your systemic exposure |
 
 ### 3.25.2 Market rivals by rank
 
@@ -2266,21 +2295,21 @@ All companies, people and funds below are fictional. Numbers follow the formulas
 
 ### 3.26.2 A leveraged buyout of Brightwell Foods
 
-**Target.** Brightwell Foods, listed on CLX (Agriculture). EBITDA GBP 400M; 300M shares at GBP 8.00 (market cap GBP 2.4B); net debt GBP 600M. The UK is in Expansion; the policy rate is 4%. The buyer is the player's PE fund, Kessane Capital.
+**Target.** Brightwell Foods, listed on CLX (Agriculture). EBITDA $400M; 300M shares at $8.00 (market cap $2.4B); net debt $600M. The UK is in Expansion; the world base rate plus the UK's country spread is 4%. The buyer is the player's PE fund, Kessane Capital.
 
 **Price and financing.**
-- Offer: a 30% premium, GBP 10.40 a share: GBP 3.12B for the equity, plus GBP 0.60B to repay existing debt, plus fees of 2% (GBP 74M) and CLX stamp duty of 0.5% (GBP 16M): **GBP 3.81B in total**.
-- Senior loan 4x EBITDA = GBP 1.6B at 7.5%; high-yield bonds 2x = GBP 0.8B at 11%. Total debt 6x, the Expansion cap.
-- Fund equity: GBP 1.41B (37% of the total, above the 30% minimum).
-- Interest: GBP 120M + GBP 88M = GBP 208M a year. Coverage 400 / 208 = 1.9. Implied rating B (6.0x leverage) minus a notch for coverage below 3: **B-**.
+- Offer: a 30% premium, $10.40 a share: $3.12B for the equity, plus $0.60B to repay existing debt, plus fees of 2% ($74M) and CLX stamp duty of 0.5% ($16M): **$3.81B in total**.
+- Senior loan 4x EBITDA = $1.6B at 7.5%; high-yield bonds 2x = $0.8B at 11%. Total debt 6x, the Expansion cap.
+- Fund equity: $1.41B (37% of the total, above the 30% minimum).
+- Interest: $120M + $88M = $208M a year. Coverage 400 / 208 = 1.9. Implied rating B (6.0x leverage) minus a notch for coverage below 3: **B-**.
 
 **Five years of ownership (base case).**
-- Cost cuts add GBP 60M of EBITDA (a strike event at two plants, settled). EBITDA grows 3% a year: (400 + 60) x 1.16 = **GBP 533M** in year 5.
-- Free cash flow of about GBP 120M a year repays GBP 600M: debt falls to GBP 1.8B.
-- Exit at 8x EBITDA: enterprise value GBP 4.27B, equity GBP 2.47B. The fund turns GBP 1.41B into GBP 2.47B: **1.75 times its money**, about 12% a year.
-- Kessane's take: management fees of 1.5% on GBP 1.5B committed for 5 years (GBP 112M), and carry of 20% of the GBP 1.06B profit (GBP 212M), since the 8% hurdle (GBP 2.07B) is cleared.
+- Cost cuts add $60M of EBITDA (a strike event at two plants, settled). EBITDA grows 3% a year: (400 + 60) x 1.16 = **$533M** in year 5.
+- Free cash flow of about $120M a year repays $600M: debt falls to $1.8B.
+- Exit at 8x EBITDA: enterprise value $4.27B, equity $2.47B. The fund turns $1.41B into $2.47B: **1.75 times its money**, about 12% a year.
+- Kessane's take: management fees of 1.5% on $1.5B committed for 5 years ($112M), and carry of 20% of the $1.06B profit ($212M), since the 8% hurdle ($2.07B) is cleared.
 
-**Recession branch.** In year 2 the UK enters Contraction: EBITDA -20% to GBP 368M and the policy rate rises 2 points, adding GBP 32M of interest on the floating senior loan. Coverage falls to 368 / 240 = 1.5; net debt (GBP 2.28B after a year of repayment) / EBITDA is 6.2x against a 6.5x covenant. One more bad quarter starts the default chain (3.6.6). Kessane can inject GBP 150M of new equity (an equity cure), pay a waiver fee, or let the creditors take Brightwell.
+**Recession branch.** In year 2 the UK enters Contraction: EBITDA -20% to $368M and the UK's country spread widens 2 points, adding $32M of interest on the floating senior loan. Coverage falls to 368 / 240 = 1.5; net debt ($2.28B after a year of repayment) / EBITDA is 6.2x against a 6.5x covenant. One more bad quarter starts the default chain (3.6.6). Kessane can inject $150M of new equity (an equity cure), pay a waiver fee, or let the creditors take Brightwell.
 
 **The controller angle.** Selling Brightwell's business units to the player's own companies below market would help the player and hurt the fund's investors: self-dealing (3.18.5), detection 10% per quarter.
 
@@ -2317,8 +2346,8 @@ New assumptions introduced by this document, to confirm or change:
 8. **Mandatory bid rules** exist on most non-US exchanges at the levels given in 3.2.2, in addition to the disclosure lines.
 9. **Poison pills** are allowed only on ATX, HDM, HRX and ESE; CLX, CBX and LCX apply board neutrality.
 10. **Ratings and spreads are market beliefs**; real defaults only happen when an issuer cannot or will not pay out of its simulated cash flow.
-11. **Starting values** (prices, rates, reserves, ratings) are loosely based on January 2020, adjusted for the alternate history (EUR 0.95, a weaker ruble), and tuned by a per-country calibration offset; they are not meant to be exact.
-12. **The EGP starts on a hard peg, overvalued by 24%**, as a deliberate crisis seed in the default scenario, even though the real pound floated; ARS starts on a crawling peg with a parallel rate.
+11. **Starting values** (prices, rates, reserves, ratings) are loosely based on January 2020, adjusted for the alternate history (a whole world on the dollar, batch 124; EUR 0.95 and the weaker ruble are reference values for a relaunch), and tuned by a per-country calibration offset; they are not meant to be exact.
+12. **The EGP reference row is a hard peg, overvalued by 24%**, kept as a crisis seed for an Egyptian relaunch, even though the real pound floated; the ARS reference row is a crawling peg with a parallel rate. Neither currency exists at start (batch 124).
 13. **One fictional currency** is added as a cyberpunk accent: Arcology Scrip (charter-city currency in the endgame). Crypto (Ledgerbit, stablecoins) lives in the phone tab ([9-gambling.md](9-gambling.md)), batch 116.
 14. **The USD is the numeraire** for FX modeling; displayed rates follow real market quoting conventions.
 15. **Central banks meet monthly** (not 8 times a year), with emergency meetings allowed mid-month.
@@ -2350,3 +2379,9 @@ New assumptions introduced by this document, to confirm or change:
 41. **Taxes apply to realized gains only**, with a short-term rule, wash sale rule, step-up at death, participation exemption for companies, and per-exchange transaction taxes (3.24). The short-term rule is a new detail of the E3 law that should be mirrored in [4-politics.md](4-politics.md).
 42. **Company rank shapes the role of markets**, with the pacing targets of 3.25.3.
 43. **Disclosure lines** (decided by Logan, 2026-10-16): F4 Securities Regulation in [4-politics.md](4-politics.md) only sets the first public filing line (10% under Lax, 5% Standard, 3% Strict, 2% Draconian). The 10%, 25% and 50% lines and their effects are the same in every country.
+44. **The whole world is dollarized at start** (decided by Logan, batch 124): no other currencies, exchange rates or FX trading; the Federal Monetary Board's base rate plus a country spread prices every government; only the Federal Monetary Board is active (3.8.1, 3.9).
+45. **Re-currency** is a national law, Launch a national currency, beside F3 in [4-politics.md](4-politics.md); it wakes the country's currency row, central bank and FX trading, and a bloc can launch a shared currency such as the euro (3.8.1). A relaunched currency defaults to its reference rate and policy rate unless the law sets others.
+46. **Old USD bonds stay in USD** after a country re-currencies; only new issues are in the new currency (3.6.1).
+47. **Country spread details**: a crisis premium of 1 to 4 points in a debt crisis or default chain (T); calibration offsets match January 2020 spreads over US Treasuries, floored at the US yield (3.6.5).
+48. **The Federal Monetary Board reads US data** only, so the world takes a rate set for the US; banks in dollarized countries borrow at its window; capturing it is the one central bank capture available at start (3.9).
+49. **Capital controls (F2) stay active** while a country is dollarized and limit moving dollars across the border; a dollarized government cannot print to bail out banks (3.8.3, 3.21.3).

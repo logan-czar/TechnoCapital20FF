@@ -1,10 +1,10 @@
 # Detailed design 1: Corporate core (companies, characters, trusts)
 
-_Status: v1.1 (2026-10-18). Batch 121: only national governments; the Political Connections path (1.6.7) needs a city or region tier but meets a national minister (no mayors or governors). Consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 118: EU4-style map; home hub becomes home province (its city, a Metro or city province, where it has one), origin and healthcare checks use cities and countries. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23. Batch 117: no Cooperative or Captive Bank vassals, no Ask Daddy founding path, no stress for now (1.1.5), Heat redefined as how cancelled a character is (1.1.0), no optional end date. Batch 120: Political Connections needs Power broker at the level's threshold (25% in a city, 15% in a region)._
+_Status: v1.1 (2026-10-19). Batch 124 card (Logan): whole world dollarized at start, so money is in US dollars and the policy rate is the Federal Monetary Board's world base rate (1.10.2, 1.13). Batch 121: only national governments; the Political Connections path (1.6.7) needs a city or region tier but meets a national minister (no mayors or governors). Consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 118: EU4-style map; home hub becomes home province (its city, a Metro or city province, where it has one), origin and healthcare checks use cities and countries. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23. Batch 117: no Cooperative or Captive Bank vassals, no Ask Daddy founding path, no stress for now (1.1.5), Heat redefined as how cancelled a character is (1.1.0), no optional end date. Batch 120: Political Connections needs Power broker at the level's threshold (25% in a city, 15% in a region)._
 
 This file is the source of truth for companies, characters and trusts; it replaces the old overview stubs 01 to 04 in the design folder. All numbers are **tuning values**: starting points to balance, not final.
 
-Money is shown in the player character's home currency, written as $. "Month" means the monthly calculation (hourly ticks roll up into weekly and monthly calculations, see [4-politics.md](4-politics.md) 4.1.3).
+Money is in US dollars, written as $. At start every country uses the dollar (Logan, batch 124); once a country launches its own currency, amounts there convert at the live exchange rate ([3-markets-and-fx.md](3-markets-and-fx.md) 3.8.1). "Month" means the monthly calculation (hourly ticks roll up into weekly and monthly calculations, see [4-politics.md](4-politics.md) 4.1.3).
 
 ## 1.1 Characters
 
@@ -657,7 +657,7 @@ Hostile action without a casus belli: -30 Clout and an investigation chance of 2
 | Real estate | 3% to 7% rent + 0% to 5% appreciation | 30 to 90 days | Market cycles, local events |
 | Speculative | -50% to +200% | 1 day | High volatility |
 
-The policy rate is each currency's central bank rate ([3-markets-and-fx.md](3-markets-and-fx.md) 3.9).
+The policy rate is the Federal Monetary Board's world base rate (1.75% at start **(T)**), since every country uses the dollar at start (batch 124). A loan in a re-currencied country's currency uses that country's central bank rate ([3-markets-and-fx.md](3-markets-and-fx.md) 3.9).
 
 ### 1.10.3 Leverage
 
@@ -746,5 +746,5 @@ Removed (batch 116): no dynasty, houses, succession, heirs, wills, guardians, ma
 ## 1.13 Assumptions
 
 - Company values come from fair value ([10-industry-economy.md](10-industry-economy.md) 10.0.8) and the markets layer.
-- Interest rates follow each currency's central bank policy rate ([3-markets-and-fx.md](3-markets-and-fx.md) 3.9).
+- Interest rates follow the Federal Monetary Board's world base rate at start (every country uses the dollar, batch 124), or a re-currencied country's central bank rate for loans in its currency ([3-markets-and-fx.md](3-markets-and-fx.md) 3.9).
 - Companies work in the 42 industries of [10-industry-economy.md](10-industry-economy.md) 10.3.
