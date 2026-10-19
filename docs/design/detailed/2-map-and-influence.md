@@ -1,6 +1,6 @@
 # 2. Map and influence: detailed design
 
-_Status: draft v0.4 (2026-10-19). Batch 118 (Logan): EU4-style map. Hubs, districts and minor groups are gone: the world is about 195 real countries tiled into about 3,200 land provinces (Superregion > Country > Region > Area > Province); development in three tracks (Commerce, Industry, Population) sets each province's weight; megacities are Metros of 2 to 8 provinces with a shared council, property cycle and (post-POC) metro systems; one resource tag and one terrain per province; the four real estate pools sit in each province; influence runs per province, Metro, area, region and country. Rewritten: 2.2.1, 2.2.5, 2.3, 2.5, 2.16, 2.17; hub and district wording updated everywhere else. Batch 117: no captive banks (Zurich perk is HQ only), no T2 Data Sovereignty, no stress from travel. Batch 116: Colombia and DR Congo promoted to major countries (33); Semiconductors replaces Lithography machines, Foundry, GPUs and CPUs; no dynasties, family or succession (influence holders are characters, companies and governments); branch offices dropped; Clout and Favor replace reputation and prestige; intel learns secrets, accurate data only on Pdoomberg; workforce counts become payroll dollars; crashes cost health; AI takeovers only on the game director's order; consistency fixes A1 to A23. v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs (now provinces and Metros), location perks, influence, strata and population, pooled real estate, the hub life cycle (now development change), the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands the map and influence overview (05). Owner: Logan._
+_Status: draft v0.4 (2026-10-19). Batch 119 (Logan): any city with a metro population of 5M or more is a Metro, not only former hubs (Phoenix, Melbourne, Philadelphia); province weight is total development × wealth index × $0.3B, and country weight is capped at 3% of GDP; the 2.14 examples are rescaled. Batch 118 (Logan): EU4-style map. Hubs, districts and minor groups are gone: the world is about 195 real countries tiled into about 3,200 land provinces (Superregion > Country > Region > Area > Province); development in three tracks (Commerce, Industry, Population) sets each province's weight; megacities are Metros of 2 to 8 provinces with a shared council, property cycle and (post-POC) metro systems; one resource tag and one terrain per province; the four real estate pools sit in each province; influence runs per province, Metro, area, region and country. Rewritten: 2.2.1, 2.2.5, 2.3, 2.5, 2.16, 2.17; hub and district wording updated everywhere else. Batch 117: no captive banks (Zurich perk is HQ only), no T2 Data Sovereignty, no stress from travel. Batch 116: Colombia and DR Congo promoted to major countries (33); Semiconductors replaces Lithography machines, Foundry, GPUs and CPUs; no dynasties, family or succession (influence holders are characters, companies and governments); branch offices dropped; Clout and Favor replace reputation and prestige; intel learns secrets, accurate data only on Pdoomberg; workforce counts become payroll dollars; crashes cost health; AI takeovers only on the game director's order; consistency fixes A1 to A23. v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs (now provinces and Metros), location perks, influence, strata and population, pooled real estate, the hub life cycle (now development change), the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands the map and influence overview (05). Owner: Logan._
 
 This file turns the map and influence overviews into exact rules, formulas, numbers and content that a designer can balance. It is pure game design.
 
@@ -52,7 +52,7 @@ The world is fully tiled, EU4 style (Logan, batch 118). Every system points at *
 | **Regions** | About 400 **(T)** | Real first-level divisions: US states, Canadian provinces and territories, Mexican states, oblasts, Länder. Regional government sits here. Small countries are one region |
 | **Areas** | About 750 **(T)** | 3 to 6 neighbouring provinces inside one region, like an EU4 state. The middle step for influence roll-up and area perks (2.5) |
 | **Provinces** | About 3,200 land provinces **(T)** | The map tile: a city, part of a megacity, or a rural county-sized area. Holds development, the four real estate pools, population, unrest, one resource tag and one terrain (2.3.1) |
-| **Metros** | 52 at start (every former hub of size L or larger) | A named group of 2 to 8 adjacent provinces forming one megacity, with one city council and one property cycle (2.3.2) |
+| **Metros** | About 55 identified so far (every city with a metro population of 5M or more: 54 former hubs plus Philadelphia); likely about 100 once every superregion's list is built **(A)** | A named group of 2 to 8 adjacent provinces forming one megacity, with one city council and one property cycle (2.3.2) |
 | **Chokepoints** | 14 | Straits, canals, cable corridors (2.4). Each province lists the chokepoints it is exposed to |
 
 There are no hubs and no districts any more. The 80 former hubs are the starting city provinces and Metros (2.3.3). The province list is data, built superregion by superregion; the North America test slice is [provinces-north-america.csv](../data/provinces-north-america.csv) **(A)**.
@@ -203,7 +203,7 @@ Each track is at least 1 and at most 30. **Total development** = Commerce + Indu
 
 A province's total covers its whole area, not just its main town, so a large rural county cluster with oil fields (the Permian Basin) can out-develop a small city (batch 118 slice check) **(T)**.
 
-**Province weight** = total development × country wealth index × $1B **(T)**. The wealth index is the politics value (GDP per capita / $20,000, from 0.2 to 4; [4-politics.md](4-politics.md) 4.10.4). Weight replaces hub mass: it is the denominator of influence (2.5.3) and scales the cost of influence campaigns (2.5.7). Examples: a core Metro province at 75 in the United States (wealth index about 3.5) weighs about $265B; Penang (total 30; Malaysia 0.56) $16.8B; Antofagasta (total 25; Chile 0.74) $18.5B.
+**Province weight** = total development × country wealth index × $0.3B **(T)** (Logan, batch 119; was $1B). The wealth index is the politics value (GDP per capita / $20,000, from 0.2 to 4; [4-politics.md](4-politics.md) 4.10.4). Weight replaces hub mass: it is the denominator of influence (2.5.3) and scales the cost of influence campaigns (2.5.7). Higher places sum their provinces, but a **country's weight is capped at 3% of its GDP** **(T)** (2.5.3). Examples: a core Metro province at 75 in the United States (wealth index about 3.5) weighs about $79B; Penang (total 30; Malaysia 0.56) $5.04B; Antofagasta (total 25; Chile 0.74) $5.55B.
 
 **Where assets sit.** A business unit's asset spread ([10-industry-economy.md](10-industry-economy.md) 10.0.2) is per province: its assets sit in named provinces and rent or buy space from those provinces' pools (2.16). Districts are gone; instead each industry has a **fit** **(A)**: Commerce-heavy industries (finance, software, media, professional services, retail and the like) get +2% productivity on their assets in provinces where Commerce is the largest track, and Industry-heavy industries (plants, fabs, chemicals, metals, shipping and the like) in provinces where Industry is the largest **(T)**. Extraction industries look at the resource tag instead.
 
@@ -265,8 +265,10 @@ A **Metro** is a named group of 2 or more adjacent provinces forming one megacit
 
 **From hubs to provinces at start (T).** Each of the 80 former hubs becomes either:
 
-- a **Metro**, when its metro population is over 5M (size class L or larger): L 2 to 3 provinces, XL 3 to 5, Mega 4 to 8. That gives 52 Metros of about 180 provinces; or
-- a **single city province**, when smaller (size S and M: 28 provinces). Phoenix and Melbourne, at 5.0M, stay single provinces as M hubs **(A)**.
+- a **Metro**, when its metro population is 5M or more: 5M to 10M 2 to 3 provinces, 10M to 20M 3 to 5, 20M or more 4 to 8. That gives 54 Metros of about 185 provinces (the 52 hubs of size L or larger, plus Phoenix and Melbourne at 5.0M); or
+- a **single city province**, when smaller (26 provinces).
+
+**Any city of 5M or more is a Metro** (Logan, batch 119), not only former hubs: cities that were never hubs but reach 5M (Philadelphia in North America, a Metro of 3 provinces) come with each superregion's province list under the same size rule **(T)**.
 
 Starting development is seeded from the old district mix **(A)**: Population from the formula above, split across a Metro's provinces by population; Commerce from the Financial districts (and half of the Tech Park ones); Industry from the Industrial, Port and Resource Field districts (and the other half of the Tech Park ones). The Metro's core province gets the old Financial districts and the highest Commerce. The old Slums become the slum share of each province's Residential pool (2.16.6). The land around each former hub becomes ordinary town and rural provinces.
 
@@ -274,7 +276,7 @@ Starting development is seeded from the old district mix **(A)**: Population fro
 
 The **80 former hubs** (44 original, plus 36 added in the 2026-10-18 realism review; Aberdeen was added, then scrapped by Logan, batch 115) are the starting city provinces and Metros. All are in the 33 major countries. Every other city in the world, including those of Ukraine, Greece, Mali and Iran, comes with the province list and is not listed here. Populations are 2020 metro estimates **(T)**.
 
-**At start** gives the planned shape by the size rule in 2.3.2: a Metro with its planned province count, or a single province. Counts are planned **(T)**; the province data files are authoritative, starting with [provinces-north-america.csv](../data/provinces-north-america.csv) for North America. **Size** is the old size class, kept only for that rule. **Old districts** are the old district codes, kept because they seed starting development and slum share (2.3.2): F Financial, T Tech Park, P Port, I Industrial, R Residential, S Slums, X Resource Field. Population is metro population at start in millions. Connections list the main lanes and chokepoints (2.4).
+**At start** gives the planned shape by the size rule in 2.3.2: a Metro with its planned province count, or a single province. Counts are planned **(T)**; the province data files are authoritative, starting with [provinces-north-america.csv](../data/provinces-north-america.csv) for North America. **Size** is the old size class, kept for reference; since batch 119 the Metro rule goes by population (5M or more). **Old districts** are the old district codes, kept because they seed starting development and slum share (2.3.2): F Financial, T Tech Park, P Port, I Industrial, R Residential, S Slums, X Resource Field. Population is metro population at start in millions. Connections list the main lanes and chokepoints (2.4).
 
 **North America**
 
@@ -285,7 +287,7 @@ The **80 former hubs** (44 original, plus 36 added in the 2026-10-18 realism rev
 | Houston | United States (Texas) | L | 7.3 | Metro (3 provinces) | F1 I4 P3 R4 S1 X1 | Oil, Gas (LNG export), Chemicals (petrochemicals) | Gulf of Mexico tanker lanes; Panama Canal to Asia; Florida Strait to the Atlantic; pipelines to Chicago |
 | Bay Area | United States (California) | L | 7.7 | Metro (3 provinces) | F2 I1 P1 R5 S1 T4 | Venture capital, software, AI labs, Semiconductors (chip design) | Transpacific sea and fiber to Tokyo, Taiwan, Shanghai; air freight hub for chips |
 | Los Angeles-Long Beach | United States (California) | XL | 13 | Metro (4 provinces) | F2 I4 P3 R6 S2 T1 | Largest US container port, media and entertainment, aerospace, defense | Transpacific lanes to Shenzhen, Shanghai, Busan; rail land bridge to Chicago and New York |
-| Phoenix | United States (Arizona) | M | 5 | Single province | F1 I2 R4 S1 T2 | Semiconductors (new plants), data centers, water-stressed | Rail and road to Los Angeles and Houston; air |
+| Phoenix | United States (Arizona) | M | 5 | Metro (2 provinces; batch 119) | F1 I2 R4 S1 T2 | Semiconductors (new plants), data centers, water-stressed | Rail and road to Los Angeles and Houston; air |
 | Edmonton | Canada (Alberta) | S | 1.4 | Single province | F1 I2 R1 S1 X1 | Oil sands and oil field services, pipelines, the Alberta provincial government | Pipelines to Houston and the Pacific coast; rail to Toronto and Chicago. Added for the starting character John Techno, replacing Calgary (batch 76; [7-starting-world.md](7-starting-world.md) 7.8) |
 | Toronto | Canada (Ontario) | L | 6.5 | Metro (2 provinces) | F3 I3 P1 R5 S1 T1 | Banking, mining finance, auto plants, AI research | Rail and road to New York and Chicago; St Lawrence Seaway |
 | Mexico City | Mexico (Valle de México and Bajío belt) | Mega | 22 | Metro (4 provinces) | F2 I6 P1 R8 S5 T1 X1 | Vehicles and parts, nearshore electronics, consumer goods, telecom | Rail and road to Houston (US border crossings); Pacific port Manzanillo and Gulf port Veracruz (abstracted) |
@@ -379,7 +381,7 @@ The **80 former hubs** (44 original, plus 36 added in the 2026-10-18 realism rev
 | Kaohsiung | Taiwan (South Taiwan) | M | 2.7 | Single province | I4 P3 R2 T1 | Port, petrochemicals, steel, Semiconductors (new plants) | Taiwan and Luzon Straits |
 | Kuala Lumpur | Malaysia (Klang Valley) | L | 8 | Metro (3 provinces) | F3 I3 R5 S2 T1 | Finance, Islamic finance, palm oil trading, data centers | Port Klang on the Strait of Malacca |
 | Hanoi | Vietnam (Red River Delta) | L | 8 | Metro (3 provinces) | F1 I6 R5 S1 T1 | Government, electronics plants | Port of Haiphong (abstracted); rail to China |
-| Melbourne | Australia (Victoria) | M | 5.0 | Single province | F3 I2 P1 R4 | Finance, pension funds, universities, port | Bass Strait; Pacific lanes |
+| Melbourne | Australia (Victoria) | M | 5.0 | Metro (2 provinces; batch 119) | F3 I2 P1 R4 | Finance, pension funds, universities, port | Bass Strait; Pacific lanes |
 
 ### 2.3.4 Signature starting assets
 
@@ -578,16 +580,16 @@ Province weight replaces hub mass (Logan, batch 118). Every higher place is the 
 
 | Place | Weight |
 |---|---|
-| **Province** | Total development × wealth index × $1B (2.3.1) **(T)** |
+| **Province** | Total development × wealth index × $0.3B (2.3.1) **(T)** |
 | **City** | A Metro: the sum of its member provinces' weights. A single city province: its own weight |
 | **Area** | Sum of its provinces' weights |
 | **Region** | Sum of its areas' weights |
-| **Country** | Sum of its regions' weights |
+| **Country** | Sum of its regions' weights, capped at **3% of the country's GDP** (the old country mass basis; United States $705B) **(T)** (Logan, batch 119) |
 
 - **Floor rule**: a place's weight is never less than 1.25 × the total weighted assets of all modeled holders in it. This keeps assets alone from pushing any holder above 80%.
 - Weights are recomputed yearly (after development changes, 2.17) and when a country's GDP moves more than 10% (through the wealth index).
 
-Example weights **(T)**: a United States Metro core province at 75 about $265B; Bao'an-Longhua in the Shenzhen-Dongguan Metro (total 60, China 0.5) $30B; Penang $16.8B; Penang area (Penang and Seberang Perai, total 48) $26.9B; Malaysia about $200B; the United States about $15T. Country weights are far heavier than the old 3% of GDP masses (United States $705B), so national tiers now need very large holdings: see assumption 4.
+Example weights **(T)**: a United States Metro core province at 75 about $79B; Bao'an-Longhua in the Shenzhen-Dongguan Metro (total 60, China 0.5) $9B; Penang $5.04B; Penang area (Penang and Seberang Perai, total 48) $8.06B; Malaysia about $60B summed, capped at $10.8B (3% of $360B); the United States about $5T summed (the North America slice), capped at $705B. With about 20 development per province the summed weight is far above 3% of GDP almost everywhere, so in practice every country's weight is its cap: national tiers need about the same holdings as the old country masses. Regions are not capped (see assumption 4).
 
 ### 2.5.4 Holders and attribution
 
@@ -740,8 +742,8 @@ Kingmaker in a city (a Metro or a city province) for 12 months is also the first
 Every share shows its lines, for example (Penang, controlling character):
 
 ```
-Weighted assets in Penang           $1,180M
-Place weight                        $16.8B
+Weighted assets in Penang           $354M
+Place weight                        $5.04B
 Base share                          7.02%
   × Origin (born and raised)        ×1.25
   × Foreignness (halved)            ×0.95
@@ -942,47 +944,47 @@ Influence examples. All numbers use the tuning values above. Rounding is to the 
 
 ### 2.14.1 Getting Presence in Penang
 
-**Setup.** Penang is a single city province (the former Penang hub; Kulim is abstracted in): Commerce 5, Industry 11, Population 14 (1.8M people), total 30, resource tag None, Urban, coastal. Malaysia: liberal democracy, C1 Screened, WI 0.25, PF 0.475, wealth index 0.56. A US character controls a flagship whose wholly integrated Malaysian subsidiary (with a 30% local partner) has a Semiconductors business unit (assembly and test) with $600M of business assets in Penang, where Industry is the largest track (fit bonus +2%). The character was born and raised in Penang but holds only US citizenship. The subsidiary also bought $250M of Penang's Residential pool, $150M of its Industrial pool and $200M of Penang city bonds. The character's Favor is +20, with 3 years of presence.
+**Setup.** Penang is a single city province (the former Penang hub; Kulim is abstracted in): Commerce 5, Industry 11, Population 14 (1.8M people), total 30, resource tag None, Urban, coastal. Malaysia: liberal democracy, C1 Screened, WI 0.25, PF 0.475, wealth index 0.56. A US character controls a flagship whose wholly integrated Malaysian subsidiary (with a 30% local partner) has a Semiconductors business unit (assembly and test) with $180M of business assets in Penang, where Industry is the largest track (fit bonus +2%). The character was born and raised in Penang but holds only US citizenship. The subsidiary also bought $75M of Penang's Residential pool, $45M of its Industrial pool and $60M of Penang city bonds. The character's Favor is +20, with 3 years of presence.
 
 **Assets.**
 
 | Item | Value | Weight | Weighted |
 |---|---|---|---|
-| Business assets (assembly and test) | $600M | 1.0 | $600M |
-| Jobs: payroll of those assets, $4.4M per month, $53M per year | $53M | 1.5 | $79.5M |
-| Residential pool share | $250M | 1.0 | $250M |
-| Industrial pool share | $150M | 1.0 | $150M |
-| City bonds | $200M | 0.5 | $100M |
-| **Total** | | | **$1,179.5M** |
+| Business assets (assembly and test) | $180M | 1.0 | $180M |
+| Jobs: payroll of those assets, $1.33M per month, $15.9M per year | $15.9M | 1.5 | $23.85M |
+| Residential pool share | $75M | 1.0 | $75M |
+| Industrial pool share | $45M | 1.0 | $45M |
+| City bonds | $60M | 0.5 | $30M |
+| **Total** | | | **$353.85M** |
 
-**Share.** Penang weight = 30 × 0.56 × $1B = $16.8B. Base share = 1,179.5 / 16,800 = **7.02%**.
+**Share.** Penang weight = 30 × 0.56 × $0.3B = $5.04B. Base share = 353.85 / 5,040 = **7.02%**. (Batch 119: the holdings are 30% of the batch 118 version, matching the lighter weight, so the lesson is unchanged: the $1,180M of weighted assets of the old example would now give a 23.4% base share and Power broker, 30.8% final, without any campaign.)
 
 Multiplier = origin 1.25 (born and raised) × foreignness 0.95 (Liberal democracy 10% penalty, halved by the 30% local partner) × history 1.03 × Favor 1.04 = **1.272**. 7.02% × 1.272 = 8.93%, plus 1 pp flat for born and raised = **9.93%**. No tier yet. Penang is a single city province, so its province share is also its city share.
 
-**Campaign.** Temporary cap = max(6, 7.02) = 7.02 pp. An ad campaign of 4 pp costs 4 × $60,000 × 16.8 = **$4.03M per 4 weeks**; a hired director runs it (Persuasion 15, effectiveness 1.0). The character also hosts a gala: 1.4M adults × $0.02 = **$28,000**, +1 pp for 2 weeks, a push of 5 toward Friend with every Penang official, and two Befriend rolls at 30%.
+**Campaign.** Temporary cap = max(6, 7.02) = 7.02 pp. An ad campaign of 4 pp costs 4 × $60,000 × 5.04 = **$1.21M per 4 weeks**; a hired director runs it (Persuasion 15, effectiveness 1.0). The character also hosts a gala: 1.4M adults × $0.02 = **$28,000**, +1 pp for 2 weeks, a push of 5 toward Friend with every Penang official, and two Befriend rolls at 30%.
 
 Final share = 9.93 + 4 + 1 = **14.9%: Presence** at the next weekly check, in the province and the city. Political Capital in Penang: 100 × sqrt(0.149) = **39 PC per month**. The character now sees new construction in Penang's pools early, develops land there 15% faster and gets a free weekly meeting with local officials.
 
-**Keeping it.** The ad runs 8 weeks ($8.06M). After it ends, 3.5 pp (half the base share) is anchored and decays at 12.5% per week, the rest at 25%. The share stays at 10% or more for about 21 weeks, until the anchored points drop below 0.2 pp and vanish; it then sits just under 10%, and Presence is lost 13 weekly checks later. To keep it for good the character adds assets: growing the Penang Semiconductors assets by another $300M (plus $60M of jobs weight at $40M of payroll) lifts the base share to 9.16% and the final share to 9.16 × 1.272 + 1 = **12.7%** without any campaign.
+**Keeping it.** The ad runs 8 weeks ($2.42M). After it ends, 3.5 pp (half the base share) is anchored and decays at 12.5% per week, the rest at 25%. The share stays at 10% or more for about 21 weeks, until the anchored points drop below 0.2 pp and vanish; it then sits just under 10%, and Presence is lost 13 weekly checks later. To keep it for good the character adds assets: growing the Penang Semiconductors assets by another $90M (plus $18M of jobs weight at $12M of payroll) lifts the base share to 9.16% and the final share to 9.16 × 1.272 + 1 = **12.7%** without any campaign.
 
-**Roll-up.** Penang's area is Penang and Seberang Perai (total development 48), which is also the whole Penang state (region): weight $26.9B. Area and region share = 1,179.5 / 26,880 = 4.39% × (1.18 × 0.95 × 1.03 × 1.04 = 1.20) = **5.3%**. Malaysia's weight is about $200B: country share = 0.59% × 1.079 = **0.64%**, worth 8 PC per month nationally.
+**Roll-up.** Penang's area is Penang and Seberang Perai (total development 48), which is also the whole Penang state (region): weight $8.06B. Area and region share = 353.85 / 8,064 = 4.39% × (1.18 × 0.95 × 1.03 × 1.04 = 1.20) = **5.3%**. Malaysia's provinces sum to about $60B, but country weight is capped at 3% of GDP: $10.8B. Country share = 353.85 / 10,800 = 3.28% × 1.079 = **3.5%**, worth 19 PC per month nationally.
 
 ### 2.14.2 A foreign subsidiary tries to buy a foothold in Shenzhen
 
-**Setup.** The same character's flagship sets up a subsidiary in the Shenzhen-Dongguan Metro (China: one-party state, C1 Capped All, restriction label Restricted, so a 30% local partner is required; T4 Mass Surveillance; wealth index 0.5). The subsidiary is 70% flagship, 30% a Shenzhen family (local partner loyalty 65). It runs a Consumer electronics business unit (smartphone assembly) with $432M of business assets in Bao'an-Longhua, an industrial member province of the Metro (Commerce 10, Industry 28, Population 22, total 60).
+**Setup.** The same character's flagship sets up a subsidiary in the Shenzhen-Dongguan Metro (China: one-party state, C1 Capped All, restriction label Restricted, so a 30% local partner is required; T4 Mass Surveillance; wealth index 0.5). The subsidiary is 70% flagship, 30% a Shenzhen family (local partner loyalty 65). It runs a Consumer electronics business unit (smartphone assembly) with $130M of business assets in Bao'an-Longhua, an industrial member province of the Metro (Commerce 10, Industry 28, Population 22, total 60).
 
-**Assets.** Business assets $432M. Jobs: payroll $8.4M per month = $100.8M per year, × 1.5 = $151.2M. Total weighted: **$583M**.
+**Assets.** Business assets $130M. Jobs: payroll $2.5M per month = $30M per year, × 1.5 = $45M. Total weighted: **$175M**.
 
-**Shares.** Bao'an-Longhua weight = 60 × 0.5 × $1B = $30B.
+**Shares.** Bao'an-Longhua weight = 60 × 0.5 × $0.3B = $9B. (Batch 119: the holdings are 30% of the batch 118 version, matching the lighter weight; the old $583M would now give the subsidiary 7.1%, and with a 6.5 pp psyop it would reach Presence on a campaign, which the cap is meant to make rare.)
 
 | Holder | Calculation | Share |
 |---|---|---|
-| Subsidiary (HQ in the Metro, not foreign) | 583 / 30,000 = 1.94% × home 1.10 | **2.14%** |
-| Controlling character (foreign) | 583 × 0.9 (Managed autonomy) = 525 → 1.75% × foreignness | **1.14%** |
+| Subsidiary (HQ in the Metro, not foreign) | 175 / 9,000 = 1.94% × home 1.10 | **2.14%** |
+| Controlling character (foreign) | 175 × 0.9 (Managed autonomy) = 157.5 → 1.75% × foreignness | **1.14%** |
 
 Character foreignness: 1 - 0.50 (one-party) - 0.20 (Capped All is 2 steps past Screened) = 0.30; halved penalty for subsidiary assets with a 30% partner gives 1 - 0.35 = 0.65.
 
-**Psyops.** The player wants Presence in the province fast and runs the maximum psyop the cap allows: max(6, 1.94) = 6 pp, at 6 × $25,000 × 30 = **$4.5M per 4 weeks**, directed by a fixer with Intrigue 15. Subsidiary share = 2.14 + 6 = **8.14%**: still not Presence. Temporary boosts alone never reach a tier.
+**Psyops.** The player wants Presence in the province fast and runs the maximum psyop the cap allows: max(6, 1.94) = 6 pp, at 6 × $25,000 × 9 = **$1.35M per 4 weeks**, directed by a fixer with Intrigue 15. Subsidiary share = 2.14 + 6 = **8.14%**: still not Presence. Temporary boosts alone never reach a tier.
 
 **Risk.** Daily discovery = (0.2% + 0.03% × 6) × 1.5 × (1 - 15/60) = **0.43% per day**: 11% over 4 weeks, 30% over 12 weeks. Political exposure +5 × 1.5 = +7.5 at campaign start. If discovered: the 6 pp vanish, backlash of -12 pp decaying 10% per week (the share is clamped at 0), Favor -10, exposure +15, and the regime advances the seizure ladder to Step 1: *Beijing Calls* demands the local partner's stake rise to 40%.
 
@@ -1362,10 +1364,10 @@ A national recession cuts consumer demand 6%. The player's retail chain's earnin
 
 Assumptions in this file, to confirm with Logan:
 
-1. **First playable map** (batch 118): about 195 real countries (the 33 major ones with full economy tables, the rest with simple rows in data/countries.csv), about 400 regions, 750 areas and 3,200 land provinces, 52 Metros and 14 chokepoints. Minor groups and districts are gone. The province list is built superregion by superregion, North America first.
+1. **First playable map** (batch 118): about 195 real countries (the 33 major ones with full economy tables, the rest with simple rows in data/countries.csv), about 400 regions, 750 areas and 3,200 land provinces, about 55 Metros so far (every city of 5M or more, batch 119; likely about 100 when all superregions are built) and 14 chokepoints. Minor groups and districts are gone. The province list is built superregion by superregion, North America first.
 2. **Development seeding**: the starting Commerce and Industry of the former hubs' provinces come from their old district mix; slums become a slum share of the Residential pool. Industries get a Commerce or Industry fit (to be added in [10-industry-economy.md](10-industry-economy.md)).
 3. **Reference dollar and wage index**: base prices are in US dollar equivalents; the wage index (US = 1.0) scales wages, services, real estate and construction, separately from the politics wealth index, which now also sets province weight.
-4. **Province weight** = total development × wealth index × $1B, and every higher place sums its provinces. At $1B per point a city province weighs about 3 times the old hub mass and a country 10 to 20 times the old 3% of GDP mass, so national tiers need very large holdings. If that is too hard, lower the factor (about $0.3B) or cap country weight **(T)**. Jobs count through payroll × 1.5, making employers the most influential holders per dollar.
+4. **Province weight** = total development × wealth index × $0.3B, and every higher place sums its provinces, but country weight is capped at 3% of GDP (Logan, batch 119; was $1B with no cap) **(T)**. At $0.3B per point a city province weighs about the old hub mass. The cap binds for almost every country, so national tiers need about the same holdings as the old country masses (United States $705B). Regions are not capped, so a large region can weigh nearly as much as its country (California about $576B and Texas about $563B against the United States' $705B), and a holder's share there can be close to or below its national share **(A)**. Jobs count through payroll × 1.5, making employers the most influential holders per dollar.
 5. **Assets come first**: temporary boosts are capped at the larger of 6 pp or the base share, and a tier won by campaigns is lost after one quarter unless backed by assets.
 6. **Province and area tiers give economic perks only**; political perks start at the city level (a Metro or a city province). Towns and rural provinces have no city council; the region governs them locally.
 7. **Foreignness penalties, offices, Political Capital and government types** are taken from the politics design; restriction labels are derived from its laws. The starting law positions listed in 2.2.4 (C1, C2, F2, E5, L2, E2, F3) should be mirrored in politics data.

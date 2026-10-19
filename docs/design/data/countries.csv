@@ -1,5 +1,5 @@
 iso3,name,superregion,currency,gdp_usd_bn,population_m,wealth_index,major,government_type,restriction_label,subject_of,provinces_planned,notes
-USA,United States,North America,USD,23500,328.2,1.00,Y,Liberal democracy,Screened,,146,
+USA,United States,North America,USD,23500,328.2,1.00,Y,Liberal democracy,Screened,,147,
 CAN,Canada,North America,CAD,1750,37.6,0.85,Y,Liberal democracy,Screened,,59,
 MEX,Mexico,North America,MXN,1250,127.6,0.22,Y,Liberal democracy,Screened,,49,
 GRL,Greenland,North America,DKK,3.1,0.056,0.89,N,Liberal democracy,Screened,,3,Self-governing territory of Denmark; own row for its size on the map and rare earths and uranium; old group Nordics (A); dependent territory; government_type and restriction (A)
@@ -96,7 +96,7 @@ TJK,Tajikistan,Russia and Central Asia,TJS,8.3,9.3,0.05,N,Managed democracy,Guar
 GEO,Georgia,Russia and Central Asia,GEL,17.5,3.72,0.16,N,Liberal democracy,Guarded,,7,Middle Corridor; old group Black Sea and Caucasus; government_type (A)
 ARM,Armenia,Russia and Central Asia,AMD,13.6,2.96,0.15,N,Liberal democracy,Guarded,,6,old group Black Sea and Caucasus; government_type (A)
 AZE,Azerbaijan,Russia and Central Asia,AZN,48.0,10,0.16,N,Managed democracy,Guarded,,10,Caspian oil; old group Black Sea and Caucasus; government_type (A)
-TUR,Turkey,Middle East and North Africa,TRY,750,83.4,0.28,Y,Managed democracy,Screened,,35,Superregion Middle East and North Africa (A)
+TUR,Turkey,Europe,TRY,750,83.4,0.28,Y,Managed democracy,Screened,,35,Superregion Middle East and North Africa (A)
 SAU,Saudi Arabia,Middle East and North Africa,SAR,850,34.3,0.55,Y,One-party state (ruling family),Guarded,,37,
 ARE,United Arab Emirates,Middle East and North Africa,AED,420,9.8,0.45,Y,One-party state (ruling family),Guarded,,18,Haven free zones (C6) stay inside the UAE
 ISR,Israel,Middle East and North Africa,ILS,400,9.05,0.80,Y,Liberal democracy,Screened,,17,
