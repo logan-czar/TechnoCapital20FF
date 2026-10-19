@@ -1,6 +1,6 @@
 # 2. Map and influence: detailed design
 
-_Status: draft v0.4 (2026-10-19). Batch 120 (Logan): the country weight cap is dropped, so every place weighs the honest sum of its provinces; influence tier thresholds drop by level (province and city 10/25/50%, area and region 5/15/30%, country 3/8/20%) with the hysteresis band scaled to match; 2.3.1, 2.5.3, 2.5.9, 2.5.10, the 2.14.1 roll-up and assumption 4 updated. Batch 119 (Logan): any city with a metro population of 5M or more is a Metro, not only former hubs (Phoenix, Melbourne, Philadelphia); province weight is total development × wealth index × $0.3B, and country weight is capped at 3% of GDP; the 2.14 examples are rescaled. Batch 118 (Logan): EU4-style map. Hubs, districts and minor groups are gone: the world is about 195 real countries tiled into about 3,200 land provinces (Superregion > Country > Region > Area > Province); development in three tracks (Commerce, Industry, Population) sets each province's weight; megacities are Metros of 2 to 8 provinces with a shared council, property cycle and (post-POC) metro systems; one resource tag and one terrain per province; the four real estate pools sit in each province; influence runs per province, Metro, area, region and country. Rewritten: 2.2.1, 2.2.5, 2.3, 2.5, 2.16, 2.17; hub and district wording updated everywhere else. Batch 117: no captive banks (Zurich perk is HQ only), no T2 Data Sovereignty, no stress from travel. Batch 116: Colombia and DR Congo promoted to major countries (33); Semiconductors replaces Lithography machines, Foundry, GPUs and CPUs; no dynasties, family or succession (influence holders are characters, companies and governments); branch offices dropped; Clout and Favor replace reputation and prestige; intel learns secrets, accurate data only on Pdoomberg; workforce counts become payroll dollars; crashes cost health; AI takeovers only on the game director's order; consistency fixes A1 to A23. v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs (now provinces and Metros), location perks, influence, strata and population, pooled real estate, the hub life cycle (now development change), the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands the map and influence overview (05). Owner: Logan._
+_Status: draft v0.4 (2026-10-19). Batch 121 (Logan): only national governments in the POC; regions, areas, cities and Metros are map groupings with no government (no regional government, city councils, mayors, regional or city bonds); a Metro shares only its property cycle and post-POC metro systems; city and region perks now work through national officials (2.5.10), and each tier adds local standing PC to the country pool. Batch 120 (Logan): the country weight cap is dropped, so every place weighs the honest sum of its provinces; influence tier thresholds drop by level (province and city 10/25/50%, area and region 5/15/30%, country 3/8/20%) with the hysteresis band scaled to match; 2.3.1, 2.5.3, 2.5.9, 2.5.10, the 2.14.1 roll-up and assumption 4 updated. Batch 119 (Logan): any city with a metro population of 5M or more is a Metro, not only former hubs (Phoenix, Melbourne, Philadelphia); province weight is total development × wealth index × $0.3B, and country weight is capped at 3% of GDP; the 2.14 examples are rescaled. Batch 118 (Logan): EU4-style map. Hubs, districts and minor groups are gone: the world is about 195 real countries tiled into about 3,200 land provinces (Superregion > Country > Region > Area > Province); development in three tracks (Commerce, Industry, Population) sets each province's weight; megacities are Metros of 2 to 8 provinces with a shared council, property cycle and (post-POC) metro systems; one resource tag and one terrain per province; the four real estate pools sit in each province; influence runs per province, Metro, area, region and country. Rewritten: 2.2.1, 2.2.5, 2.3, 2.5, 2.16, 2.17; hub and district wording updated everywhere else. Batch 117: no captive banks (Zurich perk is HQ only), no T2 Data Sovereignty, no stress from travel. Batch 116: Colombia and DR Congo promoted to major countries (33); Semiconductors replaces Lithography machines, Foundry, GPUs and CPUs; no dynasties, family or succession (influence holders are characters, companies and governments); branch offices dropped; Clout and Favor replace reputation and prestige; intel learns secrets, accurate data only on Pdoomberg; workforce counts become payroll dollars; crashes cost health; AI takeovers only on the game director's order; consistency fixes A1 to A23. v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs (now provinces and Metros), location perks, influence, strata and population, pooled real estate, the hub life cycle (now development change), the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands the map and influence overview (05). Owner: Logan._
 
 This file turns the map and influence overviews into exact rules, formulas, numbers and content that a designer can balance. It is pure game design.
 
@@ -43,16 +43,16 @@ This file turns the map and influence overviews into exact rules, formulas, numb
 
 ### 2.2.1 Map structure
 
-The world is fully tiled, EU4 style (Logan, batch 118). Every system points at **provinces**; the layers above group them for government and influence roll-up.
+The world is fully tiled, EU4 style (Logan, batch 118). Every system points at **provinces**; the layers above group them for influence roll-up. Only countries have a government (Logan, batch 121): regions, areas, cities and Metros are map groupings with no government of their own.
 
 | Layer | Count at start | Notes |
 |---|---|---|
 | **Superregions** | 8 | Labels only, no rules: North America (US, Canada, Mexico, plus Greenland, Bermuda, St Pierre), Latin America (Central America, Caribbean, South America), Europe, Russia and Central Asia, Middle East and North Africa, Sub-Saharan Africa, South Asia, East Asia and Oceania (including Southeast Asia). Used for map labels and news beats |
 | **Countries** | About 195 **(T)** | Sovereign states and dependent territories, each with its government, laws, central bank, currency, tax and business cycle. The 33 former major countries keep full economy tables (2.2.3, 2.2.4); the others have simple rows (2.2.5) |
-| **Regions** | About 400 **(T)** | Real first-level divisions: US states, Canadian provinces and territories, Mexican states, oblasts, Länder. Regional government sits here. Small countries are one region |
+| **Regions** | About 400 **(T)** | Real first-level divisions: US states, Canadian provinces and territories, Mexican states, oblasts, Länder. A map grouping for influence roll-up and perks; there is no regional government in the POC (batch 121), though one may come back after the POC **(A)**. Small countries are one region |
 | **Areas** | About 750 **(T)** | 3 to 6 neighbouring provinces inside one region, like an EU4 state. The middle step for influence roll-up and area perks (2.5) |
 | **Provinces** | About 3,200 land provinces **(T)** | The map tile: a city, part of a megacity, or a rural county-sized area. Holds development, the four real estate pools, population, unrest, one resource tag and one terrain (2.3.1) |
-| **Metros** | About 55 identified so far (every city with a metro population of 5M or more: 54 former hubs plus Philadelphia); likely about 100 once every superregion's list is built **(A)** | A named group of 2 to 8 adjacent provinces forming one megacity, with one city council and one property cycle (2.3.2) |
+| **Metros** | About 55 identified so far (every city with a metro population of 5M or more: 54 former hubs plus Philadelphia); likely about 100 once every superregion's list is built **(A)** | A named group of 2 to 8 adjacent provinces forming one megacity, sharing one property cycle and (post-POC) metro systems; no city council (2.3.2) |
 | **Chokepoints** | 14 | Straits, canals, cable corridors (2.4). Each province lists the chokepoints it is exposed to |
 
 There are no hubs and no districts any more. The 80 former hubs are the starting city provinces and Metros (2.3.3). The province list is data, built superregion by superregion; the North America test slice is [provinces-north-america.csv](../data/provinces-north-america.csv) **(A)**.
@@ -207,14 +207,14 @@ A province's total covers its whole area, not just its main town, so a large rur
 
 **Where assets sit.** A business unit's asset spread ([10-industry-economy.md](10-industry-economy.md) 10.0.2) is per province: its assets sit in named provinces and rent or buy space from those provinces' pools (2.16). Districts are gone; instead each industry has a **fit** **(A)**: Commerce-heavy industries (finance, software, media, professional services, retail and the like) get +2% productivity on their assets in provinces where Commerce is the largest track, and Industry-heavy industries (plants, fabs, chemicals, metals, shipping and the like) in provinces where Industry is the largest **(T)**. Extraction industries look at the resource tag instead.
 
-**City rank** (shown on the map; sets the city government and airports) **(T)**:
+**City rank** (shown on the map; sets airports and which provinces are cities for influence perks; there is no city government, batch 121) **(T)**:
 
 | Rank | Population | Rules |
 |---|---|---|
-| **Metropolis** | In a Metro, or 3M or more | International airport. Council of 15 or 25 seats for a single province; a Metro has one council of 25 (2.3.2) |
-| **City** | 0.5M to 3M | Airport. Council of 7 or 9 seats (under 1.5M) or 9 or 15 (1.5M to 3M) |
-| **Town** | 50k to 0.5M | Regional airport at most. No city council: local government is the region **(A)** |
-| **None** | Under 50k | Rural. Local government is the region |
+| **Metropolis** | In a Metro, or 3M or more | International airport |
+| **City** | 0.5M to 3M | Airport |
+| **Town** | 50k to 0.5M | Regional airport at most. Not a city for influence perks |
+| **None** | Under 50k | Rural. Not a city for influence perks |
 
 **Resource tags.** One per province (Logan, batch 118), like an EU4 trade good. Business units of a matching industry with assets in the province get **+3% productivity** on that share of their assets **(T)**.
 
@@ -244,23 +244,22 @@ A province's total covers its whole area, not just its main town, so a large rur
 
 ### 2.3.2 Metros
 
-A **Metro** is a named group of 2 or more adjacent provinces forming one megacity (Logan, batch 118). The map draws an outline around its member provinces. Each member keeps its own development, pools, population, unrest and influence shares; the Metro adds what they share:
+A **Metro** is a named group of 2 or more adjacent provinces forming one megacity (Logan, batch 118). The map draws an outline around its member provinces. Each member keeps its own development, pools, population, unrest and influence shares; the Metro adds what they share. A Metro has **no council or mayor** (Logan, batch 121): as a government matter it shares only its property cycle and, after the POC, its metro systems; the other rows below are groupings for influence and perks:
 
 | Shared | Rule |
 |---|---|
-| **City council** | One council and mayor for the whole Metro. The city level of politics moves from the old hub to the Metro, or to a single province ranked City or Metropolis where there is no Metro ([4-politics.md](4-politics.md)) **(A)** |
 | **Property cycle** | One cycle for every member province (2.16.5) |
 | **Combined development** | The sum of the members' total development; shown on the Metro card and sets the cost of metro systems |
 | **City influence** | Influence across all member provinces, computed like an area, sets the tier for city perks (2.5.10) |
 | **Location perks** | A former hub's perks (2.3.5) apply in every member province |
 | **Metro systems** | Slots for subway, power grid, water, ports and airports (below) |
 
-**Metro systems (post-POC).** Each system (subway, power grid, water, ports and airports) has one shared level for the whole Metro and benefits every member province, which is the economy of scale; its upgrade cost scales with the Metro's combined development, so bigger Metros pay more per level (Logan) **(A)**. A starting shape for later: upgrade cost = $50M × combined development × wealth index × the next level **(T)**. **Metro systems are not in the POC.** The POC ships the Metro object, its outline on the map, its shared council and property cycle, and empty system slots.
+**Metro systems (post-POC).** Each system (subway, power grid, water, ports and airports) has one shared level for the whole Metro and benefits every member province, which is the economy of scale; its upgrade cost scales with the Metro's combined development, so bigger Metros pay more per level (Logan) **(A)**. A starting shape for later: upgrade cost = $50M × combined development × wealth index × the next level **(T)**. **Metro systems are not in the POC.** The POC ships the Metro object, its outline on the map, its shared property cycle, and empty system slots.
 
 **Membership (T).**
 
 - A Metro has 2 to 8 provinces; members are adjacent and rank Metropolis.
-- A Metro may cross region borders (New York takes in North Jersey). Each member keeps its own region and area for regional government and roll-up **(A)**.
+- A Metro may cross region borders (New York takes in North Jersey). Each member keeps its own region and area for roll-up **(A)**.
 - Formation, growth and dissolution follow 2.17.4.
 
 **From hubs to provinces at start (T).** Each of the 80 former hubs becomes either:
@@ -288,7 +287,7 @@ The **80 former hubs** (44 original, plus 36 added in the 2026-10-18 realism rev
 | Bay Area | United States (California) | L | 7.7 | Metro (3 provinces) | F2 I1 P1 R5 S1 T4 | Venture capital, software, AI labs, Semiconductors (chip design) | Transpacific sea and fiber to Tokyo, Taiwan, Shanghai; air freight hub for chips |
 | Los Angeles-Long Beach | United States (California) | XL | 13 | Metro (4 provinces) | F2 I4 P3 R6 S2 T1 | Largest US container port, media and entertainment, aerospace, defense | Transpacific lanes to Shenzhen, Shanghai, Busan; rail land bridge to Chicago and New York |
 | Phoenix | United States (Arizona) | M | 5 | Metro (2 provinces; batch 119) | F1 I2 R4 S1 T2 | Semiconductors (new plants), data centers, water-stressed | Rail and road to Los Angeles and Houston; air |
-| Edmonton | Canada (Alberta) | S | 1.4 | Single province | F1 I2 R1 S1 X1 | Oil sands and oil field services, pipelines, the Alberta provincial government | Pipelines to Houston and the Pacific coast; rail to Toronto and Chicago. Added for the starting character John Techno, replacing Calgary (batch 76; [7-starting-world.md](7-starting-world.md) 7.8) |
+| Edmonton | Canada (Alberta) | S | 1.4 | Single province | F1 I2 R1 S1 X1 | Oil sands and oil field services, pipelines | Pipelines to Houston and the Pacific coast; rail to Toronto and Chicago. Added for the starting character John Techno, replacing Calgary (batch 76; [7-starting-world.md](7-starting-world.md) 7.8) |
 | Toronto | Canada (Ontario) | L | 6.5 | Metro (2 provinces) | F3 I3 P1 R5 S1 T1 | Banking, mining finance, auto plants, AI research | Rail and road to New York and Chicago; St Lawrence Seaway |
 | Mexico City | Mexico (Valle de México and Bajío belt) | Mega | 22 | Metro (4 provinces) | F2 I6 P1 R8 S5 T1 X1 | Vehicles and parts, nearshore electronics, consumer goods, telecom | Rail and road to Houston (US border crossings); Pacific port Manzanillo and Gulf port Veracruz (abstracted) |
 | Washington DC | United States (DC, Maryland, Northern Virginia) | L | 6.3 | Metro (2 provinces) | F2 I1 R6 S2 T3 | Federal government, lobbying firms, defense contractors, Northern Virginia data center alley | Rail to New York; air; transatlantic fiber |
@@ -297,11 +296,11 @@ The **80 former hubs** (44 original, plus 36 added in the 2026-10-18 realism rev
 | Dallas-Fort Worth | United States (Texas) | L | 7.6 | Metro (3 provinces) | F3 I3 R5 S1 T2 | Corporate headquarters, energy finance, telecom, logistics | Rail and road to Houston and Chicago; air hub |
 | Atlanta | United States (Georgia) | L | 6.0 | Metro (2 provinces) | F2 I3 P1 R5 S2 T1 | The world's busiest airport, logistics, media, payments | Air hub; rail to the Gulf and East Coast ports |
 | Miami | United States (Florida) | L | 6.1 | Metro (2 provinces) | F3 P2 R6 S2 T1 | Latin American finance gateway, flight capital, real estate, cruise and tourism | Florida Strait; Caribbean and Panama Canal lanes; air to Latin America |
-| Austin | United States (Texas) | M | 2.2 | Single province | F1 I2 R4 S1 T2 | Semiconductors, software, EV plant, state government | Road and rail to Dallas and Houston; air |
+| Austin | United States (Texas) | M | 2.2 | Single province | F1 I2 R4 S1 T2 | Semiconductors, software, EV plant | Road and rail to Dallas and Houston; air |
 | Detroit | United States (Michigan) | M | 4.3 | Single province | F1 I4 R3 S2 | Autos and EVs, parts suppliers | Great Lakes; road and rail to Toronto and Chicago |
 | Las Vegas | United States (Nevada) | M | 2.3 | Single province | F1 I1 R5 S2 T1 | Casinos, gambling, conventions, tourism | Road and rail to Los Angeles; air |
 | Vancouver | Canada (British Columbia) | M | 2.6 | Single province | F2 P2 R4 S1 T1 | Pacific port, real estate, Asian capital, film | Transpacific lanes; rail to Edmonton and Toronto |
-| Montreal | Canada (Quebec) | M | 4.2 | Single province | F2 I2 P1 R3 S1 T1 | AI research, aerospace, video games, the Quebec government | St Lawrence Seaway; rail to Toronto and New York |
+| Montreal | Canada (Quebec) | M | 4.2 | Single province | F2 I2 P1 R3 S1 T1 | AI research, aerospace, video games | St Lawrence Seaway; rail to Toronto and New York |
 | Ottawa | Canada (Ontario) | S | 1.4 | Single province | F1 R3 S1 T1 | Federal government, tech | Rail and road to Montreal and Toronto |
 | Monterrey | Mexico (Nuevo León) | L | 5.3 | Metro (2 provinces) | F2 I6 R4 S2 | Steel, cement, nearshoring plants, brewing | Road and rail to Texas border crossings |
 | Guadalajara | Mexico (Jalisco) | L | 5.2 | Metro (2 provinces) | F1 I4 R5 S3 T1 | Electronics, software, tequila | Pacific port Manzanillo (abstracted); rail to Mexico City |
@@ -567,7 +566,7 @@ Steps 1 to 5 run monthly (the influence recalculation tick). Step 6 changes dail
 | **Real estate** (pool holdings, 2.16) | Market value | 1.0 | The pool's province, rolling up |
 | **Business assets** | Book value of a business unit's assets in that province (its asset spread, [10-industry-economy.md](10-industry-economy.md) 10.0.2) | 1.0 | The province where the assets sit (2.3.1), rolling up |
 | **Jobs provided** | Yearly payroll of those business assets (the wage part of their operating costs) | 1.5 | As business assets |
-| **Local government bonds** | Face value | 0.5 | The issuer's level: city bonds at the city (a Metro's bonds split over its provinces by weight), regional bonds at the region, national bonds at the country |
+| **Government bonds** | Face value | 0.5 | The country (national bonds only; there are no regional or city bonds, batch 121) |
 | **Stakes in companies headquartered there** | Market value of the stake | 0.5 | The company's HQ province, rolling up. Not counted for companies the holder controls (their assets count directly instead) |
 | **Media outlets based there** | Book value of the outlets ([16-media.md](16-media.md)) | 0.6 | Their province, rolling up; plus **audience**: +0.25 pp per 1% of local audience share (flat) |
 | **Financial holdings booked there** | Deposits and accounts at local banks, listed securities of non-local companies held through the local exchange | 0.15 | The province of the bank or exchange, rolling up |
@@ -609,9 +608,9 @@ Each level is computed with its own weight, using every asset inside it: provinc
 
 `Share(area) = weighted assets in all provinces of the area / area weight`
 
-`Share(region) = (weighted assets in all areas of the region + region-only assets such as regional bonds) / region weight`
+`Share(region) = weighted assets in all areas of the region / region weight`
 
-The same rule applies from regions to the country, adding country-only assets (national bonds, national media audience). The **city** share of a Metro is computed the same way over its member provinces, plus city bonds; it sits beside the area and does not feed the region (the provinces do) **(A)**.
+The same rule applies from regions to the country, adding country-only assets (national bonds, national media audience). The **city** share of a Metro is computed the same way over its member provinces; it sits beside the area and does not feed the region (the provinces do) **(A)**.
 
 **Prominence bonus** (flat, added at the higher level):
 
@@ -666,7 +665,7 @@ A Metro that spans two regions gives its city bonus to the region holding most o
 
 | Source | Points |
 |---|---|
-| Political office | As listed in [4-politics.md](4-politics.md) 4.7.1 (for example Mayor +10 pp in the city and each of its provinces, Governor +8 pp in the region, Minister +3 pp in the country). Counts for the office holder |
+| Political office | As listed in [4-politics.md](4-politics.md) 4.7.1 (for example Minister +3 pp and Head of Government +10 pp in the country; there are no city or regional offices, batch 121). Counts for the office holder |
 | Born and raised in the province | +1 pp (province) |
 | Media audience | +0.25 pp per 1% audience share |
 | Prominence bonus | 2.5.5 |
@@ -727,13 +726,13 @@ Tiers apply separately in each province, city, area, region and country (Logan, 
 
 ### 2.5.10 Perks by tier and level
 
-Provinces and areas give **economic perks only**. Political perks start at the **city** (the local government level): a Metro, or a single province ranked City or Metropolis. Towns and rural provinces have no city level; their local government is the region. Old district perks are now province perks; old hub perks are city perks (Logan, batch 118). Each tier is reached at its level's threshold (2.5.9): 10/25/50% in a province or city, 5/15/30% in an area or region, 3/8/20% in a country **(T)**.
+Provinces and areas give **economic perks only**. Political perks start at the **city**: a Metro, or a single province ranked City or Metropolis. Towns and rural provinces have no city level. No place below the country has a government (Logan, batch 121), so every city and region perk works through **national officials**: the ministers who decide about the place ([4-politics.md](4-politics.md) 4.3.5), national legislators elected there, and national tenders for work there **(A)**. Each place where a holder has a tier also adds local standing PC to the country pool (4-politics 4.1.2). Old district perks are now province perks; old hub perks are city perks (Logan, batch 118). Each tier is reached at its level's threshold (2.5.9): 10/25/50% in a province or city, 5/15/30% in an area or region, 3/8/20% in a country **(T)**.
 
 | Tier | Province | City (Metro or city province) | Area **(A)** | Region | Country |
 |---|---|---|---|---|---|
-| **Presence** | New construction in the province's real estate pools shown 3 days early (2.16.2) | All province perks in every province of the city; land development time in the city's pools -15% (2.16.2); Meet Official with local officials costs 0 PC once per week | All province Presence perks in every province of the area | Regional licences 2 weeks faster; Meet Official with regional officials free once per week | Meet Official with ministers free once per week; Foreign Investment Review time -25% |
-| **Power broker** | First refusal on new construction in the province's pools: 7 days to buy at the pool price +5% | First refusal on new pool construction and local tenders city-wide; one Request Decision for rezoning per quarter at 0 PC (automatic approval under E11 Developer-Led); land development time a further -15%; one property tax deal per year (E10 -25% on own real estate for 5 years, as a Request Decision); local lobby points +25%; S2 Privatized policing contracts allowed; unlocks the **Political Connections** founding path ([1-corporate-core.md](1-corporate-core.md) 1.6.7) | First refusal on new construction in every province of the area; land development time in the area -10% | One regional incentive deal per year (E9 corporate surcharge waived on new business assets for 5 years); regional contract bid score +10; priority for new infrastructure projects in your provinces; regional lobby points +25% | Eligible for E6 subsidies without a tender; national contract bid score +10; national lobby points +25%; meetings with the central bank governor and regulator heads |
-| **Kingmaker** | Veto a rival's real estate purchase in the province (10 PC) | Veto a rival's pool purchase, land development or acquisition in the city (20 PC; the rival can override with 40 PC or a court case); appointment score +30 for police chief and planning head; +0.3 Candidate utility for local candidates you back ([4-politics.md](4-politics.md) 4.6.3); local investigations lose 1 Evidence per week and local Request Protection costs 0 PC; local contract bid score +20 | Veto a rival's real estate purchase anywhere in the area (15 PC; override with 30 PC) | Appoint one regional cabinet member per year (appointment score +30); +0.2 Candidate utility for backed regional candidates; veto a rival's regional licence (30 PC); regional Request Protection costs 0 PC | Appointment score +30 for one minister or regulator head per year; +0.15 Candidate utility for backed national candidates; one tariff or subsidy change per year handled as a Decision instead of a Law; national Request Protection cost halved; seizure risk on your foreign-held assets in the country -1 point |
+| **Presence** | New construction in the province's real estate pools shown 3 days early (2.16.2) | All province perks in every province of the city; land development time in the city's pools -15% (2.16.2); Meet Official costs 0 PC once per week with a national legislator elected in the city | All province Presence perks in every province of the area | Meet Official free once per week with a national legislator elected in the region | Meet Official with ministers free once per week; Foreign Investment Review time -25% |
+| **Power broker** | First refusal on new construction in the province's pools: 7 days to buy at the pool price +5% | First refusal on new pool construction city-wide and on national tenders for services in the city; one Request Decision for rezoning per quarter at 0 PC, to the Minister of Land and Housing (automatic approval under E11 Developer-Led); land development time a further -15%; one property tax deal per year (E10 -25% on own real estate for 5 years, as a Request Decision); S2 Privatized policing contracts in the city's provinces can be requested from the Interior Minister; unlocks the **Political Connections** founding path ([1-corporate-core.md](1-corporate-core.md) 1.6.7) | First refusal on new construction in every province of the area; land development time in the area -10% | Bid score +10 on national contracts for projects in the region; priority for new infrastructure projects in your provinces | Eligible for E6 subsidies without a tender; national contract bid score +10; national lobby points +25%; meetings with the central bank governor and regulator heads |
+| **Kingmaker** | Veto a rival's real estate purchase in the province (10 PC) | Veto a rival's pool purchase, land development or acquisition in the city (20 PC; the rival can override with 40 PC or a court case); disposition +10 with national ministers on decisions about the city's provinces (4-politics 4.3.5); +0.3 Candidate utility for national candidates you back in constituencies inside the city ([4-politics.md](4-politics.md) 4.6.3); bid score +20 on national contracts for services in the city | Veto a rival's real estate purchase anywhere in the area (15 PC; override with 30 PC) | Disposition +5 with national ministers on decisions about the region's provinces; +0.2 Candidate utility for backed national candidates in constituencies in the region; veto a rival's real estate purchase anywhere in the region (30 PC; override with 60 PC) **(T)** | Appointment score +30 for one minister or regulator head per year; +0.15 Candidate utility for backed national candidates; one tariff or subsidy change per year handled as a Decision instead of a Law; national Request Protection cost halved; seizure risk on your foreign-held assets in the country -1 point |
 
 Kingmaker in a city (a Metro or a city province) for 12 months is also the first requirement of corporate sovereignty ([4-politics.md](4-politics.md) 4.12.2).
 
@@ -944,7 +943,7 @@ Influence examples. All numbers use the tuning values above. Rounding is to the 
 
 ### 2.14.1 Getting Presence in Penang
 
-**Setup.** Penang is a single city province (the former Penang hub; Kulim is abstracted in): Commerce 5, Industry 11, Population 14 (1.8M people), total 30, resource tag None, Urban, coastal. Malaysia: liberal democracy, C1 Screened, WI 0.25, PF 0.475, wealth index 0.56. A US character controls a flagship whose wholly integrated Malaysian subsidiary (with a 30% local partner) has a Semiconductors business unit (assembly and test) with $180M of business assets in Penang, where Industry is the largest track (fit bonus +2%). The character was born and raised in Penang but holds only US citizenship. The subsidiary also bought $75M of Penang's Residential pool, $45M of its Industrial pool and $60M of Penang city bonds. The character's Favor is +20, with 3 years of presence.
+**Setup.** Penang is a single city province (the former Penang hub; Kulim is abstracted in): Commerce 5, Industry 11, Population 14 (1.8M people), total 30, resource tag None, Urban, coastal. Malaysia: liberal democracy, C1 Screened, WI 0.25, PF 0.475, wealth index 0.56. A US character controls a flagship whose wholly integrated Malaysian subsidiary (with a 30% local partner) has a Semiconductors business unit (assembly and test) with $180M of business assets in Penang, where Industry is the largest track (fit bonus +2%). The character was born and raised in Penang but holds only US citizenship. The subsidiary also bought $75M of Penang's Residential pool, $45M of its Industrial pool and a $60M stake in a Penang-headquartered company. The character's Favor is +20, with 3 years of presence.
 
 **Assets.**
 
@@ -954,20 +953,20 @@ Influence examples. All numbers use the tuning values above. Rounding is to the 
 | Jobs: payroll of those assets, $1.33M per month, $15.9M per year | $15.9M | 1.5 | $23.85M |
 | Residential pool share | $75M | 1.0 | $75M |
 | Industrial pool share | $45M | 1.0 | $45M |
-| City bonds | $60M | 0.5 | $30M |
+| Stake in a Penang-headquartered company | $60M | 0.5 | $30M |
 | **Total** | | | **$353.85M** |
 
 **Share.** Penang weight = 30 × 0.56 × $0.3B = $5.04B. Base share = 353.85 / 5,040 = **7.02%**. (Batch 119: the holdings are 30% of the batch 118 version, matching the lighter weight, so the lesson is unchanged: the $1,180M of weighted assets of the old example would now give a 23.4% base share and Power broker, 30.8% final, without any campaign.)
 
 Multiplier = origin 1.25 (born and raised) × foreignness 0.95 (Liberal democracy 10% penalty, halved by the 30% local partner) × history 1.03 × Favor 1.04 = **1.272**. 7.02% × 1.272 = 8.93%, plus 1 pp flat for born and raised = **9.93%**. No tier yet. Penang is a single city province, so its province share is also its city share.
 
-**Campaign.** Temporary cap = max(6, 7.02) = 7.02 pp. An ad campaign of 4 pp costs 4 × $60,000 × 5.04 = **$1.21M per 4 weeks**; a hired director runs it (Persuasion 15, effectiveness 1.0). The character also hosts a gala: 1.4M adults × $0.02 = **$28,000**, +1 pp for 2 weeks, a push of 5 toward Friend with every Penang official, and two Befriend rolls at 30%.
+**Campaign.** Temporary cap = max(6, 7.02) = 7.02 pp. An ad campaign of 4 pp costs 4 × $60,000 × 5.04 = **$1.21M per 4 weeks**; a hired director runs it (Persuasion 15, effectiveness 1.0). The character also hosts a gala: 1.4M adults × $0.02 = **$28,000**, +1 pp for 2 weeks, a push of 5 toward Friend with Penang's national legislators and one minister who attends, and two Befriend rolls at 30%.
 
-Final share = 9.93 + 4 + 1 = **14.9%: Presence** at the next weekly check, in the province and the city. Political Capital in Penang: 100 × sqrt(0.149) = **39 PC per month**. The character now sees new construction in Penang's pools early, develops land there 15% faster and gets a free weekly meeting with local officials.
+Final share = 9.93 + 4 + 1 = **14.9%: Presence** at the next weekly check, in the province and the city. Penang has no government of its own (batch 121), so it has no PC pool: its city Presence adds 2 PC per month of local standing to the character's Malaysian pool ([4-politics.md](4-politics.md) 4.1.2). The character now sees new construction in Penang's pools early, develops land there 15% faster and gets a free weekly meeting with a national legislator elected in Penang.
 
 **Keeping it.** The ad runs 8 weeks ($2.42M). After it ends, 3.5 pp (half the base share) is anchored and decays at 12.5% per week, the rest at 25%. The share stays at 10% or more for about 21 weeks, until the anchored points drop below 0.2 pp and vanish; it then sits just under 10%, and Presence is lost 13 weekly checks later. To keep it for good the character adds assets: growing the Penang Semiconductors assets by another $90M (plus $18M of jobs weight at $12M of payroll) lifts the base share to 9.16% and the final share to 9.16 × 1.272 + 1 = **12.7%** without any campaign.
 
-**Roll-up.** Penang's area is Penang and Seberang Perai (total development 48), which is also the whole Penang state (region): weight $8.06B. Area and region share = 353.85 / 8,064 = 4.39% × (1.18 × 0.95 × 1.03 × 1.04 = 1.20) = **5.3%**: **Presence** in the area and the region, whose threshold is 5% (batch 120). Malaysia weighs the sum of its provinces, about $60B, with no cap (batch 120). Country share = 353.85 / 60,000 = 0.59% × 1.079 = **0.64%**, worth 8 PC per month nationally. National Presence (3%) would need about $1.67B of weighted assets in Malaysia at this multiplier.
+**Roll-up.** Penang's area is Penang and Seberang Perai (total development 48), which is also the whole Penang state (region): weight $8.06B. Area and region share = 353.85 / 8,064 = 4.39% × (1.18 × 0.95 × 1.03 × 1.04 = 1.20) = **5.3%**: **Presence** in the area and the region, whose threshold is 5% (batch 120). Malaysia weighs the sum of its provinces, about $60B, with no cap (batch 120). Country share = 353.85 / 60,000 = 0.59% × 1.079 = **0.64%**, worth 8 PC per month nationally, plus 2 local standing PC each for Presence in the city, the area and the region: **14 PC per month** in Malaysia once the campaign has won city Presence. National Presence (3%) would need about $1.67B of weighted assets in Malaysia at this multiplier.
 
 ### 2.14.2 A foreign subsidiary tries to buy a foothold in Shenzhen
 
@@ -1063,7 +1062,7 @@ Phase changes are rolled monthly; the chance to move on rises with each month in
 Slums are no longer districts. Each province's Residential pool has a **slum share** (0% to 100%): the part of its housing that is informal, renting at the slum yield and housing Gig and Unemployed segments first. At start the slum share is the old Slums districts' share of the former hub's districts, and a country default elsewhere (High income 0%, Middle 5%, Developing 20%) **(T)**. Gentrification and clearance are shifts in the pool mix and development (Logan, batch 118):
 
 - **Gentrification**: a province with a slum share whose residential pool price rises over 50% in 5 years rolls yearly (30%). On success the slum share falls 10 points, Commerce +1 (2.17.2), and Gig and Unemployed are pushed to another province (or out of the city); unrest +10 in the province for a year.
-- **Slum clearance** (a government or a city Power broker can push it): the slum share falls 25 points and that part of the Residential pool becomes Land, whose price rises ×3 over 2 years; residents displaced (+15 unrest; the Communist bloc's approval falls).
+- **Slum clearance** (the national government can push it, or a city Power broker through a Request Decision to the Minister of Land and Housing): the slum share falls 25 points and that part of the Residential pool becomes Land, whose price rises ×3 over 2 years; residents displaced (+15 unrest; the Communist bloc's approval falls).
 - **Slum spread**: a province with unrest over 60 for 2 years and falling residential prices gains 10 points of slum share and loses 1 Commerce.
 
 ### 2.16.7 Tax (Logan: own rates)
@@ -1103,11 +1102,11 @@ Payroll counts too: business assets above count their yearly payroll × 1.5, as 
 
 ### 2.17.3 City rank change
 
-At the yearly review a province takes the city rank its population gives (2.3.1). Rising to City gives it a city council and an airport and makes it a city for influence perks; falling to Town hands its local government back to the region. The first time a province reaches City rank, the company with the most business assets there gets a +10 pp founding bonus to influence in that province for 10 years.
+At the yearly review a province takes the city rank its population gives (2.3.1). Rising to City gives it an airport and makes it a city for influence perks; falling to Town removes the city perks. The first time a province reaches City rank, the company with the most business assets there gets a +10 pp founding bonus to influence in that province for 10 years.
 
 ### 2.17.4 Metro formation (T)
 
-- **Formation**: two or more adjacent provinces of rank City or Metropolis whose combined population is 5M or more, each with total development 30 or more, merge into a new Metro at the yearly review. They share a council from the next election ([4-politics.md](4-politics.md)) and one property cycle (the larger member's phase).
+- **Formation**: two or more adjacent provinces of rank City or Metropolis whose combined population is 5M or more, each with total development 30 or more, merge into a new Metro at the yearly review. They share one property cycle (the larger member's phase); there is no Metro council (batch 121).
 - **Growth**: an adjacent province that reaches City rank and total development 30 joins an existing Metro, up to 8 members. A Metro that would pass 8 members instead splits its largest member into two provinces (data-driven split lines) **(A)**.
 - **Mergers**: two Metros that touch and together hold under 8 provinces merge on a yearly roll (20%).
 - **Dissolution**: a Metro whose combined population stays under 4M for 5 years dissolves; its provinces become separate city provinces with their own cycles.
@@ -1326,7 +1325,7 @@ The map is the main screen.
 |---|---|---|
 | **World** | Superregion labels, countries, currency zones, chokepoints, wars, sanctions | Click a country for its economy and politics; click a chokepoint for its risk |
 | **Country** | Regions, areas, provinces, Metro outlines, national politics, cycle phase | Click a region, area, Metro or province |
-| **Province** | Its four pools, their prices and owners, the business units with assets there, development, resource, terrain, unrest | Buy or sell pool shares, develop land, rezone, visit. A Metro card shows its members, combined development, council, property cycle and (post-POC) metro systems |
+| **Province** | Its four pools, their prices and owners, the business units with assets there, development, resource, terrain, unrest | Buy or sell pool shares, develop land, rezone, visit. A Metro card shows its members, combined development, property cycle and (post-POC) metro systems |
 
 ### 2.24.2 Map modes (overlays)
 
@@ -1369,7 +1368,7 @@ Assumptions in this file, to confirm with Logan:
 3. **Reference dollar and wage index**: base prices are in US dollar equivalents; the wage index (US = 1.0) scales wages, services, real estate and construction, separately from the politics wealth index, which now also sets province weight.
 4. **Province weight** = total development × wealth index × $0.3B (Logan, batch 119; was $1B), and every higher place, the country included, is the honest sum of its provinces (Logan, batch 120 dropped the batch 119 cap of 3% of GDP on country weight) **(T)**. At $0.3B per point a city province weighs about the old hub mass. National weights are large (United States about $5.1T, Canada about $757B; Alberta about $112B), so tier thresholds drop by level: province and city 10/25/50%, area and region 5/15/30%, country 3/8/20% **(T)** (2.5.9). A large region is a modest part of its country (California about $576B, 11% of the United States), so a holder's regional share is usually well above its national share **(A)**. Jobs count through payroll × 1.5, making employers the most influential holders per dollar.
 5. **Assets come first**: temporary boosts are capped at the larger of 6 pp or the base share, and a tier won by campaigns is lost after one quarter unless backed by assets.
-6. **Province and area tiers give economic perks only**; political perks start at the city level (a Metro or a city province). Towns and rural provinces have no city council; the region governs them locally.
+6. **Province and area tiers give economic perks only**; political perks start at the city level (a Metro or a city province). Towns and rural provinces have no city level. No place below the country has a government (batch 121); city and region perks work through national officials.
 7. **Foreignness penalties, offices, Political Capital and government types** are taken from the politics design; restriction labels are derived from its laws. The starting law positions listed in 2.2.4 (C1, C2, F2, E5, L2, E2, F3) should be mirrored in politics data.
 8. **Location perks** belong to the city provinces and Metros of the former hubs and are open to every company that meets them (2.3.5).
 9. **Real estate** is pooled per province in four pools sized from development, with one property cycle per Metro or city province; gentrification and clearance shift the slum share (2.16).
@@ -1378,7 +1377,7 @@ Assumptions in this file, to confirm with Logan:
 12. **Characters have a location** (a province); meetings need the same city or a remote call at -30%; each character has a residence province (no dynasty seat); travel time comes from distance between provinces. Travel has a full private jet system with six jet classes, upgrades, itineraries, flight tracking, yachts and travel risk (2.21).
 13. **Information is imperfect**: the news is biased, accurate market data is only on Pdoomberg, and intel actions learn one secret at a time (2.22).
 14. **Jobs in influence**: the payroll counted at weight 1.5 (2.5.2) is the wage part of a business unit's operating costs.
-15. **Metros** (batch 118): 2 to 8 adjacent provinces with one council, one property cycle, a city influence level and post-POC metro systems whose upgrade cost scales with combined development. A Metro may cross region borders.
+15. **Metros** (batch 118): 2 to 8 adjacent provinces with no council, one property cycle, a city influence level and post-POC metro systems whose upgrade cost scales with combined development. A Metro may cross region borders.
 16. **Resource tags and terrain** (batch 118): one tag per province gives matching business units +3% productivity; terrain sets disaster odds and power cost.
 17. **Slop** balances per area (a Metro pools its members), following Logan's "production in an area".
-18. **Other files to update**: 4-politics (city level moves to Metros and city provinces; council seats by city rank), 7-starting-world (hubs to provinces), 10-industry-economy (asset spread per province; Commerce or Industry fit per industry), 11-ui (map modes and zoom).
+18. **Other files to update**: 4-politics (city level moves to Metros and city provinces; batch 121 then removed city and regional government entirely), 7-starting-world (hubs to provinces), 10-industry-economy (asset spread per province; Commerce or Industry fit per industry), 11-ui (map modes and zoom).

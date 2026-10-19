@@ -153,6 +153,7 @@
 - Batch 118 (Logan, 2026-10-19): 1b EU4 scale, about 3,200 land provinces. 2a minor groups dissolved, every country real. 3a districts dropped, pools per province. 4a development in three tracks (Commerce, Industry, Population). 5a megacities split into provinces joined as a Metro, with shared metro systems (subway and the like: economies of scale, upgrade cost scales with size); systems are post-POC but the Metro link is in the POC. 6a one resource tag per province. 7a province list starts with a North America slice.
 - Batch 119 (Logan, 2026-10-19): any city of 5M+ is a Metro (Philadelphia, Phoenix). Province weight $0.3B per development point, country weight capped at 3% of GDP. Turkey and every EU member are in the Europe superregion.
 - Batch 120 (Logan, 2026-10-19): the country weight cap is dropped; every level is the sum of its provinces. Influence tiers drop by level: province and city 10/25/50%, area and region 5/15/30%, country 3/8/20% (T).
+- Batch 121 (Logan, 2026-10-19): only national governments to start; the national government sets the laws for the whole country. No state or city governments in the POC; regions, areas, cities and Metros are map groupings only.
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm

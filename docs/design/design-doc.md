@@ -1,6 +1,6 @@
 # TechnoCapital20FF: Design Document
 
-_Status: v0.6 (2026-10-19). Batch 118: EU4-style map (about 195 real countries, about 3,200 provinces, Metros for megacities; no hubs, districts or minor groups). Batch 117: no stress, Heat means how cancelled a character is. Batch 116: rewritten to the current design (pausable real time with hourly ticks, 24/7 markets, one scenario with John Techno, news and Pdoomberg, two-layer control, Wall Street Raider style industries, no dynasty or succession: the player character's death ends the game). v0.5, consistency pass, batch 74. Owner: Logan. Living document; every part is open for revision._
+_Status: v0.6 (2026-10-19). Batch 121: only national governments in the POC (no state, regional or city governments; regions, cities and Metros are map groupings). Batch 118: EU4-style map (about 195 real countries, about 3,200 provinces, Metros for megacities; no hubs, districts or minor groups). Batch 117: no stress, Heat means how cancelled a character is. Batch 116: rewritten to the current design (pausable real time with hourly ticks, 24/7 markets, one scenario with John Techno, news and Pdoomberg, two-layer control, Wall Street Raider style industries, no dynasty or succession: the player character's death ends the game). v0.5, consistency pass, batch 74. Owner: Logan. Living document; every part is open for revision._
 
 This is the entry point. Each system has its own file in this folder so it can grow independently.
 
@@ -13,7 +13,7 @@ This is the entry point. Each system has its own file in this folder so it can g
 | 5 | [05-map-and-influence.md](05-map-and-influence.md) | World map: countries, regions, areas, provinces and Metros; influence |
 | 6 | [06-economy.md](06-economy.md) | Industries and business units (Wall Street Raider style), demand, financing |
 | 7 | [07-markets.md](07-markets.md) | 24/7 stock trading, earnings days, bonds, funds, central banks |
-| 8 | [08-politics.md](08-politics.md) | Governments at three levels, ideology blocs, laws, regulators, lobbying, diplomacy |
+| 8 | [08-politics.md](08-politics.md) | National governments (the only level in the POC), ideology blocs, laws, regulators, lobbying, diplomacy |
 | 9 | [09-time-and-turns.md](09-time-and-turns.md) | Pausable real time with hourly ticks; daily, weekly, monthly, quarterly and yearly calculations |
 | 10 | [10-events.md](10-events.md) | Event engine and event chains |
 | 11 | [11-ui.md](11-ui.md) | Godot screens, map views and the information sources (news, Pdoomberg, intel, search) |

@@ -1,6 +1,6 @@
 # Detailed design 1: Corporate core (companies, characters, trusts)
 
-_Status: v1.1 (2026-10-18), consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 118: EU4-style map; home hub becomes home province (its city, a Metro or city province, where it has one), origin and healthcare checks use cities and countries. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23. Batch 117: no Cooperative or Captive Bank vassals, no Ask Daddy founding path, no stress for now (1.1.5), Heat redefined as how cancelled a character is (1.1.0), no optional end date. Batch 120: Political Connections needs Power broker at the level's threshold (25% in a city, 15% in a region)._
+_Status: v1.1 (2026-10-18). Batch 121: only national governments; the Political Connections path (1.6.7) needs a city or region tier but meets a national minister (no mayors or governors). Consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 118: EU4-style map; home hub becomes home province (its city, a Metro or city province, where it has one), origin and healthcare checks use cities and countries. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23. Batch 117: no Cooperative or Captive Bank vassals, no Ask Daddy founding path, no stress for now (1.1.5), Heat redefined as how cancelled a character is (1.1.0), no optional end date. Batch 120: Political Connections needs Power broker at the level's threshold (25% in a city, 15% in a region)._
 
 This file is the source of truth for companies, characters and trusts; it replaces the old overview stubs 01 to 04 in the design folder. All numbers are **tuning values**: starting points to balance, not final.
 
@@ -451,9 +451,9 @@ The player assembles a funding plan from sources, each with its own short chain:
 
 ### 1.6.7 Path: Political Connections
 
-Requires political influence at **Power broker** tier in the home province's local government (25% in a city, 15% in a region; [2-map-and-influence.md](2-map-and-influence.md) 2.5.9) **(T)**: its city (a Metro or a city province) if it has one, otherwise its region.
+Requires influence at **Power broker** tier in the home province's city (25%; a Metro or a city province) if it has one, otherwise its region (15%) ([2-map-and-influence.md](2-map-and-influence.md) 2.5.9) **(T)**. Cities and regions have no government of their own (batch 121): the tier is what wins a hearing from the national ministry.
 
-1. **Meeting the Minister** (or mayor, or governor) (a 2-tick meeting).
+1. **Meeting the Minister** (a 2-tick meeting with the national minister whose portfolio covers the business).
 2. **Grant application**: grant of $1M to $50M, or a state bank loan at the policy rate, or a sovereign fund stake.
 3. **Public scrutiny**: an opposition or journalist event; Intrigue or Persuasion roll to keep it quiet, or take a Favor hit.
 4. **Contract award**: a 3 to 5 year government contract as first customer.

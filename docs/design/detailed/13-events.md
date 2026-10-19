@@ -1,6 +1,6 @@
 # 13. Events, the director and event decks: detailed design
 
-_Status: draft v0.4 (2026-10-19). Batch 118: EU4-style map; event scopes are province, city and country instead of hub, real estate events use province pools. Batch 117: no stress (tension reads the player character's Heat instead). Batch 116: header and links fixed (A22), option costs show ticks, not hours (A3), the family and succession deck removed, decks added for Media, Hacking, Software and AI models. v0.3, consistency pass, batch 74. v0.2 (2026-10-18). From Logan's answers in the design Q&A (batches 39 and 40). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.1.1 (news from named, biased outlets) and every detailed system file. Owner: Logan._
+_Status: draft v0.4 (2026-10-19). Batch 121: no city councils, so *Rezoning Vote* becomes *Rezoning Decision* (a national ministry decision). Batch 118: EU4-style map; event scopes are province, city and country instead of hub, real estate events use province pools. Batch 117: no stress (tension reads the player character's Heat instead). Batch 116: header and links fixed (A22), option costs show ticks, not hours (A3), the family and succession deck removed, decks added for Media, Hacking, Software and AI models. v0.3, consistency pass, batch 74. v0.2 (2026-10-18). From Logan's answers in the design Q&A (batches 39 and 40). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.1.1 (news from named, biased outlets) and every detailed system file. Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 13.8.
 
@@ -75,7 +75,7 @@ Each deck has its own triggers, weights and cooldowns. Sample events per deck **
 | **Company** | The board, management score, business units, growth plans (1.7, 1.8, 10) | *The Board Revolt* · *Key Engineer Poached* · *Plant Fire* · *A Buyer Calls* |
 | **Industry** | The company's industry and its price index (10) | *Price War* · *Breakthrough at a Rival* · *Regulator Eyes Your Sector* · *GPU Allocation Cut* |
 | **Markets** | Holdings, margin, the market cycle (3) | *Margin Call* · *Short Report* · *Activist Builds a Stake* · *Hot IPO Allocation* |
-| **Real estate** | Province pools, occupancy, the property cycle ([2-map-and-influence.md](2-map-and-influence.md) 2.16) | *Tenant Walks* · *Rezoning Vote* · *A Pool Stake Comes Up Cheap* |
+| **Real estate** | Province pools, occupancy, the property cycle ([2-map-and-influence.md](2-map-and-influence.md) 2.16) | *Tenant Walks* · *Rezoning Decision* · *A Pool Stake Comes Up Cheap* |
 | **Vices** | Addiction scores and levels (11) | *The Urge* · *Withdrawal* · *A Dealer's Offer* · *Relapse at the Casino* |
 | **Hooks and secrets** | Hooks held and held over the character (1.1.4) | *Blackmail Note* · *Calling in the Favor* · *Your Secret Is Out* |
 | **Strata** | Moving up or down a stratum (2.8.0) | *New Money*: the Nobles snub you · *Slop Riots* in a province where you own business assets · *Welcome to the Glitterati* |
