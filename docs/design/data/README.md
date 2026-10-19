@@ -36,3 +36,7 @@ id, name, country, region, area, metro, city_rank, commerce, industry, populatio
 - terrain: Urban, Temperate, Desert, Arctic, Tropical, Mountain or Wetland. coastal: Y or N. former_hub: the 2.3.3 hub it came from, if any.
 
 The exact column spelling is set by that worker's file; check its header.
+
+## provinces-europe.csv
+
+The Europe slice (batch 121 follow-up, 2026-10-19): 679 provinces in 48 countries, same columns and rules as provinces-north-america.csv. Ids use ISO alpha-2 prefixes. Russian-held Crimea and Donbas rows have country RUS, keep UA ids and count in Ukraine's budget. 13 Metros (London, Paris, Rhine-Ruhr, Madrid, Barcelona, Milan, Berlin, Hamburg, Munich, Frankfurt, Stuttgart, Istanbul, Ankara). Summary: provinces-europe-summary.md. Gibraltar and the Isle of Man are counted inside the UK, the Faroes inside Denmark, and France's overseas regions inside France (A).

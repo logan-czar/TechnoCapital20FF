@@ -42,11 +42,11 @@ CYM,Cayman Islands,Latin America,KYD,5.9,0.065,1.20,N,Liberal democracy,Open,,1,
 VGB,British Virgin Islands,Latin America,USD,1.0,0.03,0.62,N,Liberal democracy,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; government_type and restriction (A)"
 GBR,United Kingdom,Europe,GBP,2750,66.8,0.85,Y,Liberal democracy,Screened,,45,
 DEU,Germany,Europe,EUR,3200,83.1,0.90,Y,Liberal democracy,Screened,,50,
-FRA,France,Europe,EUR,2200,67.2,0.85,Y,Liberal democracy,Guarded,,44,
-NLD,Netherlands,Europe,EUR,750,17.3,0.90,Y,Liberal democracy,Screened,,23,
-ITA,Italy,Europe,EUR,1600,60.3,0.70,Y,Liberal democracy,Screened,,38,
+FRA,France,Europe,EUR,2200,67.2,0.85,Y,Liberal democracy,Guarded,,45,
+NLD,Netherlands,Europe,EUR,750,17.3,0.90,Y,Liberal democracy,Screened,,24,
+ITA,Italy,Europe,EUR,1600,60.3,0.70,Y,Liberal democracy,Screened,,40,
 CHE,Switzerland,Europe,CHF,750,8.6,1.15,Y,Liberal democracy,Open,,21,
-ESP,Spain,Europe,EUR,1115,47.1,0.49,N,Liberal democracy,Screened,,34,euro -20% applied; old group Euro periphery
+ESP,Spain,Europe,EUR,1115,47.1,0.49,N,Liberal democracy,Screened,,36,euro -20% applied; old group Euro periphery
 PRT,Portugal,Europe,EUR,192,10.3,0.41,N,Liberal democracy,Screened,,15,euro -20% applied; old group Euro periphery; government_type (A)
 IRL,Ireland,Europe,EUR,319,4.9,1.00,N,Liberal democracy,Screened,,15,Low tax draws holding companies; euro -20% applied; old group Euro periphery
 BEL,Belgium,Europe,EUR,428,11.5,0.67,N,Liberal democracy,Screened,,18,euro -20% applied; old group Euro periphery; government_type (A)
@@ -72,17 +72,17 @@ SWE,Sweden,Europe,SEK,531,10.3,0.84,N,Liberal democracy,Screened,,23,old group N
 NOR,Norway,Europe,NOK,403,5.35,1.10,N,Liberal democracy,Screened,,20,Oil and gas; sovereign wealth fund; old group Nordics
 DNK,Denmark,Europe,DKK,348,5.8,0.94,N,Liberal democracy,Screened,,16,Shipping; old group Nordics
 ISL,Iceland,Europe,ISK,24.7,0.36,1.03,N,Liberal democracy,Screened,,3,old group Nordics; government_type (A)
-POL,Poland,Europe,PLN,596,38,0.36,N,Liberal democracy,Screened,,27,old group Central and Eastern Europe
+POL,Poland,Europe,PLN,596,38,0.36,N,Liberal democracy,Screened,,28,old group Central and Eastern Europe
 CZE,Czechia,Europe,CZK,251,10.7,0.48,N,Liberal democracy,Screened,,16,old group Central and Eastern Europe; government_type (A)
 HUN,Hungary,Europe,HUF,164,9.77,0.38,N,Managed democracy,Screened,,14,old group Central and Eastern Europe; government_type (A)
-ROU,Romania,Europe,RON,250,19.4,0.32,N,Liberal democracy,Screened,,19,old group Central and Eastern Europe; government_type (A)
+ROU,Romania,Europe,RON,250,19.4,0.32,N,Liberal democracy,Screened,,20,old group Central and Eastern Europe; government_type (A)
 BGR,Bulgaria,Europe,BGN,68.6,6.98,0.26,N,Liberal democracy,Screened,,11,old group Central and Eastern Europe (A); government_type (A)
 HRV,Croatia,Europe,HRK,60.8,4.07,0.35,N,Liberal democracy,Screened,,9,old group Central and Eastern Europe (A); government_type (A)
 SRB,Serbia,Europe,RSD,51.5,6.95,0.21,N,Managed democracy,Screened,,10,Excludes Kosovo; old group Central and Eastern Europe (A); government_type (A)
 BIH,Bosnia and Herzegovina,Europe,BAM,20.2,3.3,0.19,N,Liberal democracy,Screened,,7,old group Central and Eastern Europe (A); government_type (A)
 MKD,North Macedonia,Europe,MKD,12.6,2.08,0.19,N,Liberal democracy,Screened,,5,old group Central and Eastern Europe (A); government_type (A)
 ALB,Albania,Europe,ALL,15.3,2.85,0.17,N,Liberal democracy,Screened,,6,old group Central and Eastern Europe (A); government_type (A)
-UKR,Ukraine,Europe,UAH,154,41.9,0.13,N,Liberal democracy (at war),Guarded,,21,Drone war since 2016 (19.22); population and area exclude Crimea and the Donbas held by Russia (A); old group Black Sea and Caucasus
+UKR,Ukraine,Europe,UAH,154,41.9,0.13,N,Liberal democracy (at war),Guarded,,22,Drone war since 2016 (19.22); population and area exclude Crimea and the Donbas held by Russia (A); old group Black Sea and Caucasus
 BLR,Belarus,Europe,BYN,64.4,9.47,0.20,N,Managed democracy,Guarded,,12,In Moscow's orbit (19.22); old group Black Sea and Caucasus (A); government_type (A)
 MDA,Moldova,Europe,MDL,11.9,2.66,0.15,N,Liberal democracy,Guarded,,6,old group Black Sea and Caucasus; government_type (A)
 GGY,Guernsey,Europe,GBP,3.5,0.063,0.89,N,Liberal democracy,Open,,1,"Haven; Crown Dependency, modeled inside the UK until now (2.2.5); old group Euro periphery (A); dependent territory; government_type and restriction (A)"
@@ -96,7 +96,7 @@ TJK,Tajikistan,Russia and Central Asia,TJS,8.3,9.3,0.05,N,Managed democracy,Guar
 GEO,Georgia,Russia and Central Asia,GEL,17.5,3.72,0.16,N,Liberal democracy,Guarded,,7,Middle Corridor; old group Black Sea and Caucasus; government_type (A)
 ARM,Armenia,Russia and Central Asia,AMD,13.6,2.96,0.15,N,Liberal democracy,Guarded,,6,old group Black Sea and Caucasus; government_type (A)
 AZE,Azerbaijan,Russia and Central Asia,AZN,48.0,10,0.16,N,Managed democracy,Guarded,,10,Caspian oil; old group Black Sea and Caucasus; government_type (A)
-TUR,Turkey,Europe,TRY,750,83.4,0.28,Y,Managed democracy,Screened,,35,Superregion Middle East and North Africa (A)
+TUR,Turkey,Europe,TRY,750,83.4,0.28,Y,Managed democracy,Screened,,36,Superregion Middle East and North Africa (A)
 SAU,Saudi Arabia,Middle East and North Africa,SAR,850,34.3,0.55,Y,One-party state (ruling family),Guarded,,37,
 ARE,United Arab Emirates,Middle East and North Africa,AED,420,9.8,0.45,Y,One-party state (ruling family),Guarded,,18,Haven free zones (C6) stay inside the UAE
 ISR,Israel,Middle East and North Africa,ILS,400,9.05,0.80,Y,Liberal democracy,Screened,,17,
