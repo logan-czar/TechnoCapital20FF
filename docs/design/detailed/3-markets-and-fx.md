@@ -1,6 +1,6 @@
 # 3. Markets and FX: detailed design
 
-_Status: draft v0.3 (2026-10-18). Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
+_Status: draft v0.3 (2026-10-19). Batch 118: EU4-style map; local time, roadshows, deposits, unrest, morning briefs and market research use provinces and cities (Metros or city provinces) instead of hubs; exchanges have a home city; charter cities are provinces. Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
 
 This file covers stock exchanges, the stock price model, corporate actions, short selling and margin, bonds and credit ratings, commodities, foreign exchange, central banks, and market crime. It ends with worked examples and a list of new assumptions.
 
@@ -95,7 +95,7 @@ Markets follow the game's calculation schedule (hourly ticks, with daily, weekly
 
 ### 3.1.3 The global trading day
 
-The turn clock runs on UTC, and each hub shows local time. Every exchange, the FX market, commodity futures and government bonds tick on every turn, 24 hours a day and 7 days a week, so there are no sessions, lunch breaks, weekends or thin hours (3.1.0). Markets close only on 1 January; the Freeport Night Market (3.2.5) never closes. The daily close is the 00:00 UTC tick.
+The turn clock runs on UTC, and each province shows local time. Every exchange, the FX market, commodity futures and government bonds tick on every turn, 24 hours a day and 7 days a week, so there are no sessions, lunch breaks, weekends or thin hours (3.1.0). Markets close only on 1 January; the Freeport Night Market (3.2.5) never closes. The daily close is the 00:00 UTC tick.
 
 ### 3.1.4 Market tools by company rank
 
@@ -116,7 +116,7 @@ Market tools are grouped by the rank of the player's largest company ([1-corpora
 
 ### 3.2.1 Exchange list
 
-Twelve fictional exchanges stand in for real ones, plus one off-the-books venue. Each has a home hub, a currency, a regulator (the national securities regulator from [4-politics.md](4-politics.md)) and indices.
+Twelve fictional exchanges stand in for real ones, plus one off-the-books venue. Each has a home city (a Metro or city province), a currency, a regulator (the national securities regulator from [4-politics.md](4-politics.md)) and indices.
 
 | Code | Exchange | Home city | Stands in for | Currency | Headline index | Other indices |
 |---|---|---|---|---|---|---|
@@ -484,7 +484,7 @@ Other costs: legal and accounting 1% of primary proceeds (minimum $2M), plus the
 - Midpoint = 0.88 x V (the customary IPO discount of 12%) [T]; range is the midpoint +/- 7%.
 - The company chooses the offering size: primary shares (new money for the company) and secondary shares (existing holders selling, for example VCs cashing out), plus a **greenshoe** of 15% extra shares the banks may sell.
 
-**Step 4: Roadshow** (2 weeks; 8 to 12 investor meetings in different hubs, each an instant roll once the presenter is there, so travel time matters)
+**Step 4: Roadshow** (2 weeks; 8 to 12 investor meetings in different cities, each an instant roll once the presenter is there, so travel time matters)
 
 Each meeting is a skill check of the presenters' Persuasion plus Finance against the investor's sophistication. The result builds **coverage**, the oversubscription multiple of the order book:
 
@@ -953,7 +953,7 @@ Commodity trading comes later (3.0); this section is its design for then. Raw ma
 | Commodity | Exchange | Unit | Starting price | Annual volatility | Delivery | Storage cost (per year, % of value) | Price elasticity eta (3.7.2) |
 |---|---|---|---|---|---|---|---|
 | Crude oil | Gulf Energy Exchange (GEX), Dubai; also Great Lakes Mercantile | barrel | $60 | 35% | Physical at Fujairah and Cushing | 4% | 1.5 |
-| Natural gas (three hubs: North America, Europe, Asia LNG) | Great Lakes Mercantile (GLM), Chicago | MMBtu | $2.00 / $7 / $5.50 (Europe is dear with Russian pipeline gas cut since 2005, A) | 55% | Physical at the hub | 8% | 1.8 |
+| Natural gas (three regional benchmarks: North America, Europe, Asia LNG) | Great Lakes Mercantile (GLM), Chicago | MMBtu | $2.00 / $7 / $5.50 (Europe is dear with Russian pipeline gas cut since 2005, A) | 55% | Physical at the benchmark delivery point | 8% | 1.8 |
 | Refined fuel (a commodity, not an industry) | GEX | tonne | $580 | 35% | Physical | 4% | 1.4 |
 | Iron ore | Bohai Commodity Exchange (BCX), Dalian | tonne | $93 | 30% | Physical at Qingdao | 3% | 1.2 |
 | Copper | London Metals Hall (LMH), London | tonne | $6,100 | 25% | Physical in LMH warehouses (Rotterdam, Singapore, New Orleans) | 2% | 1.0 |
@@ -1015,7 +1015,7 @@ Futures exist for monthly expiries out to 12 months (24 for oil and gas) [T].
 | **Consumers** (companies with Chemicals, Airlines, Semiconductors or Agriculture business units) | Buy futures to lock input costs |
 | **Managed money** (trend followers) | Momentum signal like 3.3.4 |
 | **Commodity index funds** | Long only; roll on days 5 to 9 |
-| **Physical traders** (Vanterra Trading, Halcrow Glencove, Silk Road Resources) | Own storage and ships; arbitrage spot, futures and hub prices; buy cheap stocks in contango to store |
+| **Physical traders** (Vanterra Trading, Halcrow Glencove, Silk Road Resources) | Own storage and ships; arbitrage spot, futures and regional benchmark prices; buy cheap stocks in contango to store |
 | **Governments** | Strategic reserves (oil and grain): release when price is 30% above its 1-year average, refill when 15% below [T]; export bans and price controls ([4-politics.md](4-politics.md)) |
 
 ### 3.7.5 Hedging
@@ -1072,10 +1072,10 @@ Starting values are loosely January 2020 (real values, adjusted for the alternat
 | CAD | Canadian dollar | Canada | 1.30 | Free float | 1.75% | Commodity currency |
 | AUD | Australian dollar | Australia | 1.45 | Free float | 0.75% | Commodity currency; risk-sensitive |
 | KRW | Won | South Korea | 1,160 | Free float; light controls | 1.25% | Export-driven; chip cycle |
-| SGD | Singapore dollar | Singapore | 1.35 | Managed basket band, +/- 2% | 1.50% | Managed; financial hub |
+| SGD | Singapore dollar | Singapore | 1.35 | Managed basket band, +/- 2% | 1.50% | Managed; financial center |
 | HKD | Hong Kong dollar | Hong Kong | 7.78 | Currency board, 7.75 to 7.85 | 2.00% | Pegged to USD |
 | SAR | Riyal | Saudi Arabia | 3.75 | Hard peg | 2.25% | Pegged; oil exporter |
-| AED | Dirham | United Arab Emirates | 3.6725 | Hard peg | 2.00% | Pegged; trade hub |
+| AED | Dirham | United Arab Emirates | 3.6725 | Hard peg | 2.00% | Pegged; trade center |
 | BRL | Real | Brazil | 4.02 | Free float | 4.50% | Carry target |
 | MXN | Peso | Mexico | 18.9 | Free float | 7.25% | Carry target |
 | ZAR | Rand | South Africa | 14.0 | Free float | 6.50% | Commodity, carry, risk-sensitive |
@@ -1085,11 +1085,11 @@ Starting values are loosely January 2020 (real values, adjusted for the alternat
 | ARS | Peso | Argentina | 60 (official) | Crawling peg, 2% a month; hard controls with a parallel rate | 50.00% | Chronic crisis |
 | COP | Peso | Colombia | 3,300 | Free float | 4.25% | Oil exporter; carry target (major country from batch 116) |
 | CDF | Franc | DR Congo | 1,670 | Managed float; the economy runs mostly on USD | 9.00% | Cobalt exporter; dollarized (major country from batch 116) |
-| **ASC** | Arcology Scrip | Corporate charter cities | Created when founded | Chosen by the city's company | Set by the company | Endgame currency for a corporate sovereignty hub ([4-politics.md](4-politics.md) 4.12) |
+| **ASC** | Arcology Scrip | Corporate charter cities | Created when founded | Chosen by the city's company | Set by the company | Endgame currency for a corporate sovereign city or province ([4-politics.md](4-politics.md) 4.12) |
 
 Notes:
 - **Crypto** (coins and stablecoins) is not a currency in this market layer; it lives in the phone tab ([9-gambling.md](9-gambling.md)), batch 116.
-- **Arcology Scrip** is a corporate sovereign hub's private central bank (usually at Megacorp rank, [4-politics.md](4-politics.md) 4.12): the controlling company sets its regime and policy rate using the rules in 3.9.
+- **Arcology Scrip** is a corporate sovereign city's private central bank (usually at Megacorp rank, [4-politics.md](4-politics.md) 4.12): the controlling company sets its regime and policy rate using the rules in 3.9.
 
 ### 3.8.2 Exchange rate update
 
@@ -1225,7 +1225,7 @@ A currency crisis can start from an attack, from a sovereign default, or by itse
 2. **Speculative Attack**: AI hedge funds start selling; players may join, short local stocks, or rush to get money out.
 3. **The Defense**: the central bank and government choose defenses (3.8.6). Each choice is a political event, and the companies it hits lobby (exporters want devaluation, importers and foreign-debt holders want defense).
 4. **The Break** (or survival): devaluation or float; overshoot.
-5. **Pass-through**: 30% of the devaluation passes into consumer prices over 6 months (50% for import-heavy economies) [T]; unrest rises in hubs as real wages fall.
+5. **Pass-through**: 30% of the devaluation passes into consumer prices over 6 months (50% for import-heavy economies) [T]; unrest rises in every province as real wages fall.
 6. **Balance-sheet damage**: companies and governments with unhedged foreign-currency debt see it grow in local terms; rating agencies go to Watch; defaults follow (3.6.6, 3.6.7). The local stock market typically falls 20% to 40% in USD terms.
 7. **Contagion**: currencies with a similar profile (same region, similar deficits, same peg anchor) get a GRG-style regional shock of +10 to +20 for 2 weeks [T].
 8. **Political fallout**: stability -10 to -25; the government may fall, call elections, or (in fragile states) face a coup ([4-politics.md](4-politics.md) 4.8). An ISF program may impose new laws.
@@ -1645,7 +1645,7 @@ The game runs in pausable real time and auto-pauses on events and chosen alerts.
 
 ### 3.13.6 The morning brief
 
-Each day at 07:00 local time in the player character's current hub [T], a one-screen notify-only card: moves since the last brief in the markets the player holds, portfolio change, today's calendar, open orders, the top 5 news items on holdings, margin headroom, and the month's cash needs (coupons, interest, distributions). It is the main way a player with a large portfolio follows markets without opening the Markets screen.
+Each day at 07:00 local time in the player character's current province [T], a one-screen notify-only card: moves since the last brief in the markets the player holds, portfolio change, today's calendar, open orders, the top 5 news items on holdings, margin headroom, and the month's cash needs (coupons, interest, distributions). It is the main way a player with a large portfolio follows markets without opening the Markets screen.
 
 ---
 
@@ -1680,7 +1680,7 @@ This section links the information rules of [2-map-and-influence.md](2-map-and-i
 | A board seat | Exact financials before publication (inside information) |
 | A meeting with the CFO or CEO | A Finance or Persuasion roll (instant once both are there) learns one secret |
 | Espionage schemes ([1-corporate-core.md](1-corporate-core.md) 1.1.8) | One secret on success |
-| Market research in the company's hubs (2.22.2) | As in 2.22.2 |
+| Market research in the provinces where the company has assets (2.22.2) | As in 2.22.2 |
 
 - **Disinformation** (2.22.2) shifts e by up to 15 points while the planted story lives, unless the player learned a secret on the company after it was planted.
 
@@ -1829,7 +1829,7 @@ A financial company is a normal company ([1-corporate-core.md](1-corporate-core.
 
 | Business line | License (regulator, [4-politics.md](4-politics.md) 4.9.1) | Minimum capital | Main revenue | Main risk | Special power |
 |---|---|---|---|---|---|
-| **Commercial bank** | Banking license (Banking Supervisor) | $250M national; $25M community bank in one hub | Net interest margin: loans at the 3.6.5 rates, deposits paid at policy rate - 1.5 (floor 0); account fees | Loan losses in a Contraction; bank runs (3.21) | Cheap deposit funding for the group; lending gives creditor leverage over borrowers ([10-industry-economy.md](10-industry-economy.md) 10.0.9); access to the central bank (3.9.4) |
+| **Commercial bank** | Banking license (Banking Supervisor) | $250M national; $25M community bank in one city or region | Net interest margin: loans at the 3.6.5 rates, deposits paid at policy rate - 1.5 (floor 0); account fees | Loan losses in a Contraction; bank runs (3.21) | Cheap deposit funding for the group; lending gives creditor leverage over borrowers ([10-industry-economy.md](10-industry-economy.md) 10.0.9); access to the central bank (3.9.4) |
 | **Investment bank** | Securities dealer license (Securities Regulator) | $100M | Underwriting spreads (3.4.1, 3.4.3), bond fees (3.6.1), M&A advice at 1% of deal value (0.5% above $5B), trading desk | Failed deals, trading losses, leaks | Hired on IPOs and deals; sees deal flow (inside information, 3.14.6); research desk (+20 intel on covered companies) |
 | **Broker** (retail or prime) | Broker license (Securities Regulator) | $20M retail; $200M prime | Commissions of 0.02% of value traded (retail: zero commission, paid 0.005% for order flow); margin lending at the 3.5.4 rates against funding at policy rate + 0.5; half of securities lending fees | Client defaults in crashes; meme-stock clearing bills (3.15.4) | Sees its clients' aggregate flow and short positions (intel); controls the lendable shares in its clients' margin accounts; can restrict trading |
 | **Asset manager** (index and active funds) | Fund manager license (Securities Regulator) | $5M | Fees on assets under management: index 0.05%, active 0.75% | Outflows after poor performance | Votes the shares its funds hold (3.18.2) |
@@ -1863,7 +1863,7 @@ Each bank keeps a simple balance sheet, updated monthly with its financials and 
 | **Liquidity ratio** | Liquid assets (cash, government bonds at market value) / (25% of uninsured deposits + wholesale funding due within 30 days) | 100% | Supervisor order; Run Pressure +10 (3.21.1) |
 | **Group lending** | Loans to group companies / all loans | 25% | Exposure +5 per month (4.9.3) |
 
-- **Deposits** come from the hubs where the bank has branches. Deposit share is driven by brand, the rate offered and branch count. **Deposit insurance** covers each depositor up to $250,000 (or the local equivalent) [T].
+- **Deposits** come from the provinces where the bank has branches. Deposit share is driven by brand, the rate offered and branch count. **Deposit insurance** covers each depositor up to $250,000 (or the local equivalent) [T].
 - **Loan losses** each year = the borrowers' default chance (by rating, 3.6.2, times the cycle multiplier of 2.18.1) x (1 - recovery).
 - **The held-to-maturity trap**: bonds held to maturity are carried at cost. When rates rise their market value falls, but the loss stays hidden until the bank has to sell. In a run, sales turn hidden losses into real ones at once (example 3.26.1).
 - Bank shares are valued by the book method (3.3.1 step 5).
@@ -1978,7 +1978,7 @@ Managing other people's money creates new offenses, added to the list in 3.10.1 
 ### 3.19.3 Angel and venture investing
 
 - Any character with spare cash can invest as an **angel**, and a company with a fund manager license can run a VC firm (3.17.1).
-- **Deal flow**: each month 0 to 3 pitches arrive from AI startups (Venture-rank rivals) [T], more with presence in tech hubs, the investor's Clout and the VC firm's brand. A pitch is a short event: deck quality, sector, asking valuation, the founder's visible traits, and the estimated fair value range.
+- **Deal flow**: each month 0 to 3 pitches arrive from AI startups (Venture-rank rivals) [T], more with presence in tech cities (Metros or city provinces with Tech perks, [2-map-and-influence.md](2-map-and-influence.md) 2.3.5), the investor's Clout and the VC firm's brand. A pitch is a short event: deck quality, sector, asking valuation, the founder's visible traits, and the estimated fair value range.
 - **Outcomes** are rolled at each later funding round: 40% raise at a higher valuation, 30% flat or down round, 30% fail [T], modified by founder skills, sector Mania (3.16.2) and the cycle phase (3.16.1). Winners can IPO (3.4.1) or be sold.
 - A lead investment carries a **board seat**: votes, factions and inside information.
 - Stakes in rival startups let the player watch, slow or absorb competitors, for example by pushing a sale to the player's company with a drag-along or board pressure, at the risk of a founder grievance and lost Clout in the startup scene.
@@ -2076,7 +2076,7 @@ Every bank and every fund with prime broker leverage has a **Run Pressure** scor
 | Raise emergency capital | A rights issue at a 40% to 60% discount (3.4.3), a white knight investor, or the owner's personal trust; RP -15 |
 | Seek a buyer | **Shotgun Merger** event: a stronger bank offers 10% to 30% of last week's share price, often with a government guarantee on losses. The run ends on announcement |
 | Request a bailout | [4-politics.md](4-politics.md) 4.9.8 |
-| Suspend withdrawals | Only under a government emergency decree or Hard capital controls: a bank holiday of up to 5 days; unrest +5 in the bank's hubs |
+| Suspend withdrawals | Only under a government emergency decree or Hard capital controls: a bank holiday of up to 5 days; unrest +5 in the provinces where the bank has assets |
 
 - The run ends when RP falls below 30. If cash and borrowing capacity run out first, the bank **fails** and goes to resolution under F7 and C5 (4.5.4, 4.5.3): bail-in, nationalization, a forced sale or liquidation.
 - The player's own deposits at a failing bank are uninsured above the limit like anyone else's. Pulling them out early on knowledge of the bank's state is trading on inside information.
@@ -2137,7 +2137,7 @@ Removed (batch 116): the Ledgerbit model and token offerings moved to the phone 
 
 - A company may pay up to 30% of wages in **company scrip**, redeemable only at its own stores and housing [T]. This is legal only in Charter Zones (C6) and corporate sovereign territories ([4-politics.md](4-politics.md) 4.12); elsewhere it is a labor law offense.
 - Effects [T]: the cash cost of the scrip part of wages falls 10% to 20% (the company keeps the retail margin when scrip is spent); unrest +3 per 10% of wages paid in scrip; workers leave half as often (scrip cannot be spent elsewhere).
-- Company scrip is the small-scale ancestor of Arcology Scrip (ASC, 3.8.1): when a corporate sovereign hub founds its monetary authority, its scrip converts into ASC.
+- Company scrip is the small-scale ancestor of Arcology Scrip (ASC, 3.8.1): when a corporate sovereign city founds its monetary authority, its scrip converts into ASC.
 
 ### 3.23.5 and 3.23.6
 
@@ -2320,7 +2320,7 @@ New assumptions introduced by this document, to confirm or change:
 19. **Freeport Night Market** access requires a shell company and is always on, with no regulator but raid and fraud risk.
 20. **Market tools are grouped by company rank** as listed in 3.1.4; nothing is locked.
 21. **Standing orders run in the hourly market loop** as a market rule, cost no character hours, and are not AI decisions; skill shows through execution quality (the executing character's Finance scales slippage) and Desk Sessions (3.13).
-22. **Market alerts have three tiers**, and the "always stop" tier (margin, filings and bids on the player's companies, halts, runs, forced sales) cannot be turned off; a morning brief arrives at 07:00 in the player character's hub (3.13.5, 3.13.6).
+22. **Market alerts have three tiers**, and the "always stop" tier (margin, filings and bids on the player's companies, halts, runs, forced sales) cannot be turned off; a morning brief arrives at 07:00 in the player character's province (3.13.5, 3.13.6).
 23. **The player never sees V directly**, only an estimated fair value whose error starts at 15% for listed and 30% for private companies and halves with each secret learned (2.22, 3.14.2).
 24. **Analysts are lightweight AI characters** with a sell-side bias, and their consensus feeds earnings surprises (3.14.3).
 25. **Inside information is tracked as knowledge items** held by characters, which leak as rumors once more than 5 characters know (3.14.6).

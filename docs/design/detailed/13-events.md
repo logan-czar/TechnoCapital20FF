@@ -1,6 +1,6 @@
 # 13. Events, the director and event decks: detailed design
 
-_Status: draft v0.4 (2026-10-18). Batch 117: no stress (tension reads the player character's Heat instead). Batch 116: header and links fixed (A22), option costs show ticks, not hours (A3), the family and succession deck removed, decks added for Media, Hacking, Software and AI models. v0.3, consistency pass, batch 74. v0.2 (2026-10-18). From Logan's answers in the design Q&A (batches 39 and 40). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.1.1 (news from named, biased outlets) and every detailed system file. Owner: Logan._
+_Status: draft v0.4 (2026-10-19). Batch 118: EU4-style map; event scopes are province, city and country instead of hub, real estate events use province pools. Batch 117: no stress (tension reads the player character's Heat instead). Batch 116: header and links fixed (A22), option costs show ticks, not hours (A3), the family and succession deck removed, decks added for Media, Hacking, Software and AI models. v0.3, consistency pass, batch 74. v0.2 (2026-10-18). From Logan's answers in the design Q&A (batches 39 and 40). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.1.1 (news from named, biased outlets) and every detailed system file. Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 13.8.
 
@@ -19,7 +19,7 @@ _Status: draft v0.4 (2026-10-18). Batch 117: no stress (tension reads the player
 ## 13.2 The event card
 
 A data-driven card with triggers, weights, cooldowns and 2 to 4 options ([10-events.md](../10-events.md)), plus **(A)**:
-- **Header**: the deck's icon and color, the scope (character, company, hub, country) and the date.
+- **Header**: the deck's icon and color, the scope (character, company, province or city, country) and the date.
 - **Portraits**: the characters involved.
 - **Options**: 2 to 4. Each option shows its **skill icon** (Finance, Operations, Persuasion, Intrigue, Tech or Hustle) when it rolls, its known costs (money, Favor, a hook spent, and how many ticks it takes if it is not instant) and any trait it suits ("Ruthless"). The success chance is **never shown** (Logan), and there are no hint words either (batch 40): only the skill icon.
 - **No timer** (batch 40): an event waits until the player answers it, and the game stays paused while it is open.
@@ -30,7 +30,7 @@ A data-driven card with triggers, weights, cooldowns and 2 to 4 options ([10-eve
 **Every event type** uses a split screen (Logan, batch 82):
 - **Left side (about 60%)**: the scenario text, with the **list of decisions at the bottom**.
 - **Right side (about 40% of the screen)**: an **information panel** showing what might be relevant to the event. It must **use all the space it is given**, with **dense, readable information that is clearly presented** (Logan).
-- What the panel shows depends on the event's scope **(A)**: a company event shows the company UI (financials, business units, board, software); a character event shows the characters involved (relationship tags, known traits, hooks, known secrets); a market event shows Pdoomberg data; a hub or country event shows its politics, ideologies and real estate; a gambling event shows the odds and stakes.
+- What the panel shows depends on the event's scope **(A)**: a company event shows the company UI (financials, business units, board, software); a character event shows the characters involved (relationship tags, known traits, hooks, known secrets); a market event shows Pdoomberg data; a province, city or country event shows its politics, ideologies and real estate; a gambling event shows the odds and stakes.
 - Some company decisions **set the company's direction for the quarter**; they hold until the next quarter (8-quest-lines 8.2.3).
 
 **Rolls.** `Success = 50% + (skill - 10) × 3% + trait and situation modifiers`, clamped 5% to 95% **(T)**. Vril can swing a roll either way (13-open-questions).
@@ -75,10 +75,10 @@ Each deck has its own triggers, weights and cooldowns. Sample events per deck **
 | **Company** | The board, management score, business units, growth plans (1.7, 1.8, 10) | *The Board Revolt* · *Key Engineer Poached* · *Plant Fire* · *A Buyer Calls* |
 | **Industry** | The company's industry and its price index (10) | *Price War* · *Breakthrough at a Rival* · *Regulator Eyes Your Sector* · *GPU Allocation Cut* |
 | **Markets** | Holdings, margin, the market cycle (3) | *Margin Call* · *Short Report* · *Activist Builds a Stake* · *Hot IPO Allocation* |
-| **Real estate** | District pools, occupancy, the property cycle (10.4.5) | *Tenant Walks* · *Rezoning Vote* · *A District Stake Comes Up Cheap* |
+| **Real estate** | Province pools, occupancy, the property cycle ([2-map-and-influence.md](2-map-and-influence.md) 2.16) | *Tenant Walks* · *Rezoning Vote* · *A Pool Stake Comes Up Cheap* |
 | **Vices** | Addiction scores and levels (11) | *The Urge* · *Withdrawal* · *A Dealer's Offer* · *Relapse at the Casino* |
 | **Hooks and secrets** | Hooks held and held over the character (1.1.4) | *Blackmail Note* · *Calling in the Favor* · *Your Secret Is Out* |
-| **Strata** | Moving up or down a stratum (2.8.0) | *New Money*: the Nobles snub you · *Slop Riots* in a hub where you own business assets · *Welcome to the Glitterati* |
+| **Strata** | Moving up or down a stratum (2.8.0) | *New Money*: the Nobles snub you · *Slop Riots* in a province where you own business assets · *Welcome to the Glitterati* |
 | **Ideology** | The character's ideology, blocs, movements (5) | *Crisis of Faith* · *The Movement Wants a Donor* · *Your Friend Joins the Red Cells* |
 | **Politics** | Elections, laws, regulators, influence (4) | *The Minister's Price* · *Subpoena* · *Election Night* · *Foreign Investment Review* |
 | **Earnings** | The four earnings days (3-markets 3.1.0), guidance and the insider blackout | *The Leaked Report* · *Whisper Number* · *Servers Crash at Midnight* · *The Analyst Call* · *A Friend Wants a Tip* |

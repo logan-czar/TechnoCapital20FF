@@ -1,6 +1,6 @@
 # Detailed design 1: Corporate core (companies, characters, trusts)
 
-_Status: v1.1 (2026-10-18), consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23. Batch 117: no Cooperative or Captive Bank vassals, no Ask Daddy founding path, no stress for now (1.1.5), Heat redefined as how cancelled a character is (1.1.0), no optional end date._
+_Status: v1.1 (2026-10-18), consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 118: EU4-style map; home hub becomes home province (its city, a Metro or city province, where it has one), origin and healthcare checks use cities and countries. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23. Batch 117: no Cooperative or Captive Bank vassals, no Ask Daddy founding path, no stress for now (1.1.5), Heat redefined as how cancelled a character is (1.1.0), no optional end date._
 
 This file is the source of truth for companies, characters and trusts; it replaces the old overview stubs 01 to 04 in the design folder. All numbers are **tuning values**: starting points to balance, not final.
 
@@ -175,7 +175,7 @@ Standard pushes **(T)**:
 | Source | Push |
 |---|---|
 | Relative (flavor only) | Starts at Friend |
-| Same origin hub | +5 |
+| Same origin city (Metro or province) | +5 |
 | Shared trait | +10 each |
 | Opposite trait | -10 each |
 | Lover | +30 |
@@ -298,7 +298,7 @@ Every character has **health** from 0 to 100. There are no yearly death rolls: h
 | Source | When it fires **(T)** | Health cost **(T)** |
 |---|---|---|
 | **Aging** | Yearly check from 50: chance 10% at 50, 30% at 65, 60% at 75, 90% at 85 | 5 to 20 |
-| **Illness** | 3% a year, ×2 in a pandemic or a hub with poor healthcare | 5 to 40; serious illness opens a treatment chain |
+| **Illness** | 3% a year, ×2 in a pandemic or in a country with poor healthcare | 5 to 40; serious illness opens a treatment chain |
 | **Addiction** | Monthly while addicted ([11-addiction.md](11-addiction.md)), by substance or habit | 1 to 5 |
 | **Violence** | Assassination attempts, accidents, travel risk (2.21.8) | 10 to 100 |
 
@@ -405,7 +405,7 @@ Charter clauses (optional add-ons, set at founding or by charter change):
 
 ### 1.6.1 Found Company action
 
-Inputs: name, industry (one of 42, [10-industry-economy.md](10-industry-economy.md) 10.3), home hub, target capital, founding path. Starting the action is instant; the path's meetings tick (1.1.6). The company is created only when the chain completes successfully.
+Inputs: name, industry (one of 42, [10-industry-economy.md](10-industry-economy.md) 10.3), home province (the HQ, [2-map-and-influence.md](2-map-and-influence.md) 2.3.1), target capital, founding path. Starting the action is instant; the path's meetings tick (1.1.6). The company is created only when the chain completes successfully.
 
 **A new company is an ordinary corporation** ([10-industry-economy.md](10-industry-economy.md) 10.0) holding **one small business unit** in the chosen industry (Logan, batch 116). The unit's business assets equal the capital raised less founding costs, and its expenses are set so it runs at a small loss for 6 to 18 months **(T)**. Company value comes from the normal fair value rule (10.0.8).
 
@@ -451,7 +451,7 @@ The player assembles a funding plan from sources, each with its own short chain:
 
 ### 1.6.7 Path: Political Connections
 
-Requires political influence at **Power broker** tier (25%) in the home hub's jurisdiction.
+Requires political influence at **Power broker** tier (25%) in the home province's local government: its city (a Metro or a city province) if it has one, otherwise its region.
 
 1. **Meeting the Minister** (or mayor, or governor) (a 2-tick meeting).
 2. **Grant application**: grant of $1M to $50M, or a state bank loan at the policy rate, or a sovereign fund stake.
@@ -480,7 +480,7 @@ A company can found a vassal directly (Found Subsidiary action, CEO's time). It 
 
 **Protecting control.** Keep class A shares (1.2; VC interest -15%), bring friendly holders into the bloc (1.4), negotiate protective provisions out of term sheets (Persuasion), prefer founder-friendly VC partners (a firm attribute; they rarely join factions) and buy back shares from leaving staff and angels. The company screen shows how far each faction is from 50%.
 
-**Rivals.** AI rival companies in the same industry and hub compete for staff and VC money. Once the unit's revenue passes a threshold, an incumbent picks a response: ignore, copy (the unit's growth halves for 6 months), acquire (an offer, only on the director's order, 13.3) or crush (lawsuits, a price war, lobbying).
+**Rivals.** AI rival companies in the same industry and city (or region, outside cities) compete for staff and VC money. Once the unit's revenue passes a threshold, an incumbent picks a response: ignore, copy (the unit's growth halves for 6 months), acquire (an offer, only on the director's order, 13.3) or crush (lawsuits, a price war, lobbying).
 
 **Grey-market growth.** Bought user data (+30% unit growth for a year), bot armies (investor confidence up, lost and more if revealed) and gig-worker labor (unit expenses -30%, unrest and union events) each add **exposure**, which uses the shell investigation rule (1.7.4). Attacking a rival's systems goes through hacking ([17-hacking.md](17-hacking.md)).
 
@@ -690,7 +690,7 @@ Expenses: lifestyle (by trait: Ascetic 0.5x, Hedonist 2x; base $20k a month), st
 | Debt | **Personal loans and pledging shares** (3.5.5). A default costs Clout and can force sales. |
 | Rich list | **A public world rich list** that drives Clout, Fame and rival attention. **Hidden wealth is not counted.** |
 
-**Spending budgets (A).** Each character sets a monthly amount for each line. A line raises its resource with diminishing returns: the gain is `points at the reference spend × (spend ÷ reference)^0.5`, capped at twice the reference gain **(T)**. The reference spend scales with the wealth index of the home hub.
+**Spending budgets (A).** Each character sets a monthly amount for each line. A line raises its resource with diminishing returns: the gain is `points at the reference spend × (spend ÷ reference)^0.5`, capped at twice the reference gain **(T)**. The reference spend scales with the wealth index of the home country.
 
 | Line | Examples | Raises | Reference spend and gain **(T)** |
 |---|---|---|---|

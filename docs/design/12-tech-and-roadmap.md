@@ -1,6 +1,6 @@
 # 12. Tech stack, architecture and roadmap
 
-_Status: v0.4 (2026-10-18). Batch 116: roadmap and tiers rewritten to the current design (one scenario and one player character, John Techno; no dynasty or succession; game over on death; news and Pdoomberg; two-layer control; Semiconductors as dollar effects). v0.3. Batch 41: a **desktop app built in Godot**, replacing Phaser and the browser. Batch 42: the simulation runs in a **Rust engine**; Godot's GDScript runs the front end. Design is still the current phase; this file records the plan for when the build starts. Owner: Logan._
+_Status: v0.4 (2026-10-19). Batch 118: roadmap step 6 builds provinces, areas, regions, Metros and countries instead of hubs and districts; influence views rank per province or city. Batch 116: roadmap and tiers rewritten to the current design (one scenario and one player character, John Techno; no dynasty or succession; game over on death; news and Pdoomberg; two-layer control; Semiconductors as dollar effects). v0.3. Batch 41: a **desktop app built in Godot**, replacing Phaser and the browser. Batch 42: the simulation runs in a **Rust engine**; Godot's GDScript runs the front end. Design is still the current phase; this file records the plan for when the build starts. Owner: Logan._
 
 Anything marked **(A)** is an assumption Logan has not confirmed yet; the list is in 12.6.
 
@@ -44,7 +44,7 @@ TechnoCapital20FF/
 **The engine is the source of truth (Logan).**
 - All game state lives in the engine as **tables** (characters, companies, holdings, business units, products, laws and so on), keyed by ids. GDScript never keeps its own copy of game rules or state; it keeps only what it is showing.
 - The engine runs on its **own thread** and ticks in the background at the chosen speed.
-- **Query tables (views)**: after each tick the engine updates ready-made tables for screens, for example the Portfolio rows, a company's board and products, a hub's influence ranking or the news feed. A screen reads one view instead of computing anything, so it opens instantly (Logan).
+- **Query tables (views)**: after each tick the engine updates ready-made tables for screens, for example the Portfolio rows, a company's board and products, a province's or city's influence ranking or the news feed. A screen reads one view instead of computing anything, so it opens instantly (Logan).
 - Views update only when their source rows changed (dirty flags), and heavy views (rankings, leaderboards) update on their own cadence (daily or weekly).
 
 **The callable API (Logan).** GDScript calls the engine through one object exposed by the binding crate **(A)**:
@@ -72,7 +72,7 @@ Rebuilt around the current design; the build starts only when Logan says so.
 3. **Companies**: charters, boards and the management score, ownership and blocs, the two layers of control (owner of record and real controller), ranks, founding paths.
 4. **Economy**: industries and price indices, business units, real estate pools, the Portfolio screen.
 5. **Markets and information**: 24/7 quotes and orders (closed 1 January), the four earnings days, IPOs, bonds, FX; the Pdoomberg terminal, the news feed from named outlets, intel and search.
-6. **Map and influence**: hubs, districts, influence tiers, travel.
+6. **Map and influence**: the province map (provinces, areas, regions, countries; development tracks, resource tags, terrain), Metros (outline, shared council and property cycle; metro systems are post-POC), province real estate pools, influence tiers, map modes, travel. The province list starts with the North America test slice.
 7. **Events**: engine, director, first decks (about 10 events each), the opening quest "The Desktop".
 8. **Techno-Capital and software**: the three compute types (15), Semiconductors and other heavy simulation as dollar effects on business units, the software table (hacking comes later).
 9. **Politics and ideology**: ideology blocs, strata voting, laws, elections, regulators.

@@ -1,6 +1,6 @@
 # 7. Starting world: detailed design
 
-_Status: draft v1.6 (2026-10-18). Batch 117: no optional end date. Batch 116: no dynasties or succession (rivals are characters, John's death ends the game, dead AI rivals pass holdings to a silent heir); John is single with two moms; rivals' signature plays become AI goals; Colombia (#32) and DR Congo (#33) are major countries, Medellín M and Sydney L; Semiconductors; Clout replaces prestige; no chip-generation simulation; fixes A5, A20, A22, A23. v1.5. Batch 93: the crash averages 2035; US chip export controls move to 2026. Batch 92: the AI boom starts in 2025. Batch 81: start at 00:00 on 1 January 2020, the opening sequence, a Liberal majority in Canada, Terry's friend is a Conservative MP. Batch 80: Arrowhead Drilling, its owners and board; Terry's politician friend in Montreal. Batch 79: John has no starting ambition; his parents are PMC middle managers in Edmonton (two moms, batch 116). Batch 78: Terry's buff, net worth and heritage; John's skills and his one trait. Batch 77: Terry Tippacanoe, the new rival who owns John's company; Edmonton, the listed company and the desktop tip confirmed. Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2035. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
+_Status: draft v1.6 (2026-10-19). Batch 118: EU4-style map; rivals are placed in cities (every city of rank Metropolis), Center of Power is a city or province, the starting places in 7.8 are city provinces, Kroll's colony is a claimed province; minor groups are gone. Batch 117: no optional end date. Batch 116: no dynasties or succession (rivals are characters, John's death ends the game, dead AI rivals pass holdings to a silent heir); John is single with two moms; rivals' signature plays become AI goals; Colombia (#32) and DR Congo (#33) are major countries, Medellín M and Sydney L; Semiconductors; Clout replaces prestige; no chip-generation simulation; fixes A5, A20, A22, A23. v1.5. Batch 93: the crash averages 2035; US chip export controls move to 2026. Batch 92: the AI boom starts in 2025. Batch 81: start at 00:00 on 1 January 2020, the opening sequence, a Liberal majority in Canada, Terry's friend is a Conservative MP. Batch 80: Arrowhead Drilling, its owners and board; Terry's politician friend in Montreal. Batch 79: John has no starting ambition; his parents are PMC middle managers in Edmonton (two moms, batch 116). Batch 78: Terry's buff, net worth and heritage; John's skills and his one trait. Batch 77: Terry Tippacanoe, the new rival who owns John's company; Edmonton, the listed company and the desktop tip confirmed. Batch 76: John Techno's premise and starting position, rivals without quest lines, the desktop as the first quest, Edmonton replaces Calgary. Batch 75: the scenario starts in **January 2020** with **one starting character, John Techno**; the other 14 premade characters are rivals. v0.6, consistency pass, batch 74. v0.5 (2026-10-17): alternate history added. Built from Logan's answers in the design Q&A. Sets the scenario, the starting character, the rival field, the opening quest and the timeline to 2035. Builds on [1-corporate-core.md](1-corporate-core.md) (characters, trusts), [2-map-and-influence.md](2-map-and-influence.md) (hubs, influence), [5-ideology.md](5-ideology.md) and [6-technocapital.md](6-technocapital.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 7.10.
 
@@ -17,7 +17,7 @@ _Status: draft v1.6 (2026-10-18). Batch 117: no optional end date. Batch 116: no
 | Full characters | The number of full characters is set at game start, **200 by default** ([1-corporate-core.md](1-corporate-core.md) 1.1.0). |
 | Rival field | 30 or more rival characters in the world, all fully original. A mix of old money, new tech money, state-linked and criminal money. Each is one person; relatives are flavor only (batch 116). |
 | Character places | Each rival character has an **Origin city** and a **Center of Power**, and can live anywhere. |
-| Center of Power | The hub where the character holds the most influence, so it moves as the character grows. Influence is money, power and Clout: money is the asset base, and power and Clout modify it (7.5). |
+| Center of Power | The city (a Metro or city province) or other province where the character holds the most influence, so it moves as the character grows. Influence is money, power and Clout: money is the asset base, and power and Clout modify it (7.5). |
 | Rise and fall | AI founders rise into new rival characters during play. When an AI rival dies, a game-generated heir character takes over their holdings silently, with no succession screen (batch 116) **(A)**. |
 | History | Follows the real AI boom, inside the alternate history in 7.2.0, with more and more fantastical things happening as the years pass. Real events happen on schedule by default, and players can change them. In **2035 on average** (Logan, batch 93) a crisis hits and the bubble pops** (the year varies by a few years with RNG and events; [8-quest-lines.md](8-quest-lines.md) 8.5); the game continues into a post-crash era with new rules. |
 | Alternate history (Logan, 2026-10-17) | In the game world **9/11, the 2008 financial crisis and COVID never happened**, and the dot-com boom ran cooler and ended in only a **slight downturn** (Logan, batch 94). Everything else is the same, except that the **US won its wars in the Middle East far more decisively** and is in a much better position, both financially and in the security of its resources (7.2.0). |
@@ -37,7 +37,7 @@ What follows from that, in January 2020 **(A)**:
 |---|---|---|
 | Tech | Scarred by the 2000 crash; big tech grew from the survivors | No real crash, only a slight downturn in 2000 to 2001 after a cooler boom: tech giants are older, bigger and richer, investors have never seen a true tech bust, and valuations and VC funding run hotter. The 2035 AI crash is the first great tech crash, so it hits harder (8.4) |
 | Banking | Bailouts, stricter rules after 2008, a decade of near-zero rates | No crisis, no bailouts and no post-crisis rules: banks are bigger and more leveraged and US regulator strictness is 1 point lower (3.10). But **tighter mortgage rules passed in 2003** (Logan, batch 101), so households carry less mortgage debt than in real life. Rates never went to zero: the US policy rate is about **3%** at start **(T)** |
-| Housing | Recovered from the 2008 crash | **Never bubbled, never crashed** (Logan, batch 101): the 2003 mortgage rules kept growth tempered, so prices rose steadily instead. Most hubs start in a mild Boom or Recovery phase of the property cycle (2.16.5), and none starts in a bubble **(A)** |
+| Housing | Recovered from the 2008 crash | **Never bubbled, never crashed** (Logan, batch 101): the 2003 mortgage rules kept growth tempered, so prices rose steadily instead. Most Metros and city provinces start in a mild Boom or Recovery phase of the property cycle (2.16.5), and none starts in a bubble **(A)** |
 | Pandemic | COVID lockdowns begin | **No pandemic**: no vaccine mandates, no stimulus wave, no 2021 inflation spike, no remote-work shift. Offices are full (commercial pools start at 95% occupancy) |
 | Supply chains | COVID chip shortage | No pandemic chip shortage; chips are tight only from normal demand |
 | Security | Post-9/11 security state; long wars | No 9/11, so no post-9/11 security state at home. After the USS Cole bombing (2000) the US broke al-Qaeda early with a covert and proxy campaign in Afghanistan (19.2.1). The Iraq war still happened: **the vice president and the CIA made up claims that Iraq had nukes** (Logan), and the US invaded anyway. It won quickly and cleanly, and Iraq became a stable US ally |
@@ -49,7 +49,7 @@ What follows from that, in January 2020 **(A)**:
 
 **Russia and Ukraine (Logan).** Russia invaded Ukraine much earlier, in **2005**. It took Crimea and the Donbas, its push on Kyiv failed, and **NATO troops defended western Ukraine** without fighting Russia directly (Logan, batch 99). After the pro-Russian **Yanukovych** won the 2010 election, the war **ended in 2011 in a stalemate on Russia's terms**: Ukraine dropped its NATO and EU bids, **NATO's troops went home** (Logan, batch 106), and the line sat **armed but at rest** for five years. Fighting **started again in 2016** (Logan, batch 105), and by 2020 it is a long **drone-warfare stalemate** along a fortified front ([19-history.md](19-history.md) 19.13). Consequences **(A)**: Russia has been under heavy sanctions since 2005, Europe weaned itself off Russian gas long ago (pipeline gas to Europe is already cut at start), Russia sells oil at a discount through grey fleets, both sides and their backers buy drones in huge numbers (Drones, Robotics, Aerospace and Defense demand is higher, 10.3), and the Black Sea is at Attacks risk (2.4.2).
 
-**Africa (Logan, batch 36).** Africa is a hell hole in this game world: weak states, coups, militias, piracy in the Gulf of Guinea and heavy capital flight **(A)**. African countries start with low stability and high risk, and most capital leaves the continent. **Lagos** is the exception that can rise: if it is developed (by the rival Tolu Balogun or by the player investing there), it becomes the clear-cut hub of Africa and draws the continent's money, talent and flight capital.
+**Africa (Logan, batch 36).** Africa is a hell hole in this game world: weak states, coups, militias, piracy in the Gulf of Guinea and heavy capital flight **(A)**. African countries start with low stability and high risk, and most capital leaves the continent. **Lagos** is the exception that can rise: if it is developed (by the rival Tolu Balogun or by the player investing there), its Metro becomes the clear-cut center of Africa and draws the continent's money, talent and flight capital.
 
 The chip export controls and the AI boom still happen on schedule (7.7).
 
@@ -67,7 +67,7 @@ The detailed files were written with present-day starting values. At a January 2
 | Pandemic | None: COVID never happened (7.2.0) | n/a |
 | Ideology mix | Starting shares in [5-ideology.md](5-ideology.md) 5.4 are for 2020 | Accelerationist and Neo-Luddite shares grow with the boom |
 
-Hub populations and GDP in [2-map-and-influence.md](2-map-and-influence.md) stand as January 2020 values **(A)**.
+Province populations and development and country GDP in [2-map-and-influence.md](2-map-and-influence.md) and the province data stand as January 2020 values **(A)**.
 
 ## 7.3 The starting character and the rival starting characters
 
@@ -139,19 +139,19 @@ Hub populations and GDP in [2-map-and-influence.md](2-map-and-influence.md) stan
 |---|---|
 | Total at start | 32 major characters **(T)**: John Techno, the 15 rival starting characters (7.3.4, 7.3.5) and 16 more AI rival characters. |
 | Money mix | About 30% old money, 30% new tech money, 25% state-linked, 15% criminal **(T)** |
-| Placement | At least one rival character in every hub with Size L or larger; Mega hubs get two or three **(T)** |
+| Placement | Rivals are placed in cities, biggest first: Metros of 4 or more provinces (the former Mega hubs) get two or three, then one rival per remaining Metro until the roster runs out; smaller cities get rivals only through the rotation and new-rival rules **(T)** (batch 118) |
 | Originality | Fully original characters. No parodies of real people, families or founders. |
 | Rival rotation | A roster of characters added to every game with preset AI. They can be directed at the player or at other characters to mess with them, by the game's director AI and by characters who hire them, the player included (Logan). |
-| New rivals | An AI-run company founder whose company reaches Corporation rank becomes a new rival character. At most one per hub per 5 years **(T)**. |
+| New rivals | An AI-run company founder whose company reaches Corporation rank becomes a new rival character. At most one per city (Metro or city province) per 5 years **(T)**. |
 | Death and dropping out | When an AI rival dies (health 0), a game-generated heir character silently takes over their holdings, with no succession screen (batch 116) **(A)**. A rival with no trusts and no holdings for 24 months drops off the rival list. |
 
 ## 7.5 Origin city, Center of Power and influence
 
-- **Origin city** is fixed. Characters born there get the origin bonus in [2-map-and-influence.md](2-map-and-influence.md) 2.5.6.
+- **Origin city** is fixed: a province, and through it its city (Metro or city province) if it has one. Characters born there get the origin bonus in [2-map-and-influence.md](2-map-and-influence.md) 2.5.6.
 - **Influence is money, power and Clout.** Money is the asset base (2.5.2). Power and Clout multiply it:
   - **Power** = political offices held, controlled company boards and government contracts (the political office modifier in 2.5.6 plus control of local media and utilities).
   - **Clout** = standing among the elite ([1-corporate-core.md](1-corporate-core.md) 1.1.0), with the public Image (Fame and Favor) modifier in 2.5.6 (batch 116: replaces prestige, renown and reputation).
-- **Center of Power** is the hub where the character's final influence share is highest. It is checked monthly and moves only when another hub leads for 3 months in a row **(T)**. The Center of Power gives +10% influence there and halves the character's travel time heading home **(T)**.
+- **Center of Power** is the city (a Metro or city province), or else the province, where the character's final influence share is highest. It is checked monthly and moves only when another place leads for 3 months in a row **(T)**. The Center of Power gives +10% influence there and halves the character's travel time heading home **(T)**.
 
 ## 7.6 The opening quest: "The Desktop" (Logan, batch 76)
 
@@ -189,28 +189,28 @@ Real events happen on schedule by default. Each one is an event or quest that pl
 
 ## 7.8 New places
 
-New hubs and sites for the starting characters **(A)**:
+New places for the starting characters **(A)**. Since batch 118 Medellín and Edmonton are single city provinces and Sydney a Metro; their starting development is seeded from the old size and district codes as in [2-map-and-influence.md](2-map-and-influence.md) 2.3.2, whose 2.3.3 table is authoritative:
 
-| Place | Country | Size | Pop (M) | Districts | Specialties |
+| Place | Country | Old size | Pop (M) | At start | Specialties |
 |---|---|---|---|---|---|
-| Medellín | Colombia | M | 4 | F1 I2 R4 S3 T1 X1 | Textiles, coffee, flowers, the informal economy, cartel money laundering, a growing tech scene |
-| Edmonton | Canada (Alberta) | S | 1.4 | F1 I2 R1 S1 X1 | Oil sands and oil field services, pipelines, the Alberta provincial government; John Techno's home (replaces Calgary, batches 76 and 77) |
-| Sydney | Australia (New South Wales) | L | 5.4 | F4 I2 P2 R6 S1 T2 | Banking, pension funds, property, media, mining company headquarters |
-| Kroll's colony | None (claimed) | Site | 0 | P1 R1 | A claimed sea and ice site between New Zealand and Antarctica. Starts as a few beached ships; can grow into a hub if the claim survives |
+| Medellín | Colombia (Antioquia) | M | 4 | City province | Textiles, coffee, flowers, the informal economy, cartel money laundering, a growing tech scene |
+| Edmonton | Canada (Alberta) | S | 1.4 | City province | Oil sands and oil field services, pipelines, the Alberta provincial government; John Techno's home (replaces Calgary, batches 76 and 77) |
+| Sydney | Australia (New South Wales) | L | 5.4 | Metro (2 provinces) | Banking, pension funds, property, media, mining company headquarters |
+| Kroll's colony | None (claimed) | Site | 0 | One claimed province, no city rank | A claimed sea and ice province between New Zealand and Antarctica, outside any country **(A)**. Starts as a few beached ships; can grow into a Town and then a City if the claim survives (2.17.3) |
 
-**Colombia and DR Congo are major countries** (Logan, batch 116): there are **33 major countries** (Qatar is #31, Colombia #32, DR Congo #33). Colombia leaves the Andean minor group and Medellín stays a Colombia hub. DR Congo leaves its minor group and **Kolwezi-Lubumbashi** becomes a DR Congo hub (Katanga), with the Zambian Copperbelt abstracted into it. There are still 80 hubs.
+**Colombia and DR Congo are major countries** (Logan, batch 116): there are **33 major countries** (Qatar is #31, Colombia #32, DR Congo #33). Since batch 118 every other country is a real country too (minor groups are dissolved). Medellín is a city province in Colombia (Antioquia) and **Kolwezi-Lubumbashi** a city province in DR Congo (Katanga), with the Zambian Copperbelt abstracted into it. There are still 80 former hubs (the starting cities).
 
 ## 7.9 Changes to other files
 
-- [2-map-and-influence.md](2-map-and-influence.md) 2.3.3: Medellín, Sydney and Edmonton added; there are now 80 hubs and 33 major countries (batch 116). Kroll's colony is a special site.
+- [2-map-and-influence.md](2-map-and-influence.md) 2.3.3: Medellín, Sydney and Edmonton added; there are now 80 former hubs (starting cities) and 33 major countries (batch 116). Kroll's colony is a special claimed province.
 - The game has no stages; founding and young-company rules are in [1-corporate-core.md](1-corporate-core.md) 1.6, and politics by company rank in [4-politics.md](4-politics.md) 4.28.
 - The quest system is in [8-quest-lines.md](8-quest-lines.md) 8.1 and events in [13-events.md](13-events.md).
 - [13-open-questions.md](../13-open-questions.md): the decided list holds these rules.
 
 ## 7.10 Assumptions and open items
 
-1. Hub and economy values in file 2 stand as January 2020 values.
-2. Medellín, Edmonton (replacing Calgary, confirmed batch 77) and Sydney hub data in 7.8, and Kroll's colony as a special site. (Colombia and DR Congo as major countries are confirmed, batch 116.)
+1. Province, city and economy values in file 2 and the province data stand as January 2020 values.
+2. Medellín, Edmonton (replacing Calgary, confirmed batch 77) and Sydney city data in 7.8, and Kroll's colony as a claimed province outside any country. (Colombia and DR Congo as major countries are confirmed, batch 116.)
 3. 32 major characters at start, with the money mix and placement in 7.4.
 4. Starting wealth ranges by profile in 7.3.
 5. The Center of Power rule: 3-month lead, +10% influence.

@@ -1,6 +1,6 @@
 # 11. Addiction: detailed design
 
-_Status: draft v0.3 (2026-10-18). Batch 117: no stress for now, so no vice relieves stress; sex gives a little health, downers a little Intrigue, and stress costs become skill costs. Batch 116: therapy is a monthly cost with no hours; sex has no Media route (no adult media); illegal vices run as Black market units; no partners or marriage. v0.2, consistency pass, batch 74: four vices (no cyberware), no daily hours budget. v0.1 (2026-10-17): from Logan's answers in the design Q&A (batch 28). Characters can be addicted to four vices. Every vice has a real benefit, which is why characters use them. Builds on [1-corporate-core.md](1-corporate-core.md) (health 1.1.9, hooks 1.1.4) and [9-gambling.md](9-gambling.md). Owner: Logan._
+_Status: draft v0.3 (2026-10-19). Batch 118: vice supply is seen per city (a Metro or city province). Batch 117: no stress for now, so no vice relieves stress; sex gives a little health, downers a little Intrigue, and stress costs become skill costs. Batch 116: therapy is a monthly cost with no hours; sex has no Media route (no adult media); illegal vices run as Black market units; no partners or marriage. v0.2, consistency pass, batch 74: four vices (no cyberware), no daily hours budget. v0.1 (2026-10-17): from Logan's answers in the design Q&A (batch 28). Characters can be addicted to four vices. Every vice has a real benefit, which is why characters use them. Builds on [1-corporate-core.md](1-corporate-core.md) (health 1.1.9, hooks 1.1.4) and [9-gambling.md](9-gambling.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 11.8.
 
@@ -89,7 +89,7 @@ Vices are businesses (Logan). They use the industry model ([10-industry-economy.
 | Sex | Black market (escort and companion services where illegal); there is no adult media ([16-media.md](16-media.md), batch 66) | Varies | High where illegal |
 
 - **Scandal risk**: a company in a vice industry has a yearly scandal chance (2% to 20% by row) **(T)** that costs Favor for its head and board, stock price -5% to -20%, and opens regulator action.
-- **Owning the supply**: a company that sells a vice in a hub sees which named characters there are Habit or higher with it (their trait is no longer hidden from the owner), which makes vice businesses a source of hooks.
+- **Owning the supply**: a company that sells a vice in a city (a Metro or city province) sees which named characters there are Habit or higher with it (their trait is no longer hidden from the owner), which makes vice businesses a source of hooks.
 - **Slop**: vice industries carry high slop ratios (10.3); the Underclass's slop includes freemium gambling and feeds (2.8.0).
 
 ## 11.8 Assumptions and open items

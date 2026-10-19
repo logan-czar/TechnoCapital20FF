@@ -1,6 +1,6 @@
 # 5. Ideology: detailed design
 
-_Status: draft v0.4 (2026-10-18). Batch 117: no T2 Data Sovereignty position (Neo-Luddites want T2 Strict instead, Chuds drop it); scandals add Heat, how cancelled a character is (4.17.4). Batch 116: no dynasties, family lines, heirs or Red Heir (ideology belongs to characters only); Favorability becomes the holder's Favor and Elite Standing becomes Clout; brand alignment no longer touches sales or demand (boycotts hit productivity); no branch offices (foreign-owned units instead); Persuasion replaces Influence in the Persuade scheme; no tech tiers; population ideology runs in the background. v0.3, consistency pass, batch 74: the nine ideology blocs are the political actors (no interest groups), votes are counted by the five strata, each ideology has a human enhancement stance (no cyberware), and politics by company rank replaces stages. v0.2 (2026-10-16): a Victoria 2 style ideology layer with cyberpunk ideologies, requested by Logan, using Logan's list of nine ideologies: Liberals, Communists, Accelerationists, Effective Altruists, Transhumanists, Neo-Luddites, Sovereigntists, Landites and Chuds. It feeds the parties, elections, unrest and revolutions of [4-politics.md](4-politics.md) and changes some of their formulas (listed in 5.13). Owner: Logan._
+_Status: draft v0.4 (2026-10-19). Batch 118: EU4-style map; segment ideology, conviction and radical share are per province, summed for a city (a Metro or city province); radical cells, movements and corporate-sovereignty support work per city (or province outside a city); hub modifiers become city modifiers. Batch 117: no T2 Data Sovereignty position (Neo-Luddites want T2 Strict instead, Chuds drop it); scandals add Heat, how cancelled a character is (4.17.4). Batch 116: no dynasties, family lines, heirs or Red Heir (ideology belongs to characters only); Favorability becomes the holder's Favor and Elite Standing becomes Clout; brand alignment no longer touches sales or demand (boycotts hit productivity); no branch offices (foreign-owned units instead); Persuasion replaces Influence in the Persuade scheme; no tech tiers; population ideology runs in the background. v0.3, consistency pass, batch 74: the nine ideology blocs are the political actors (no interest groups), votes are counted by the five strata, each ideology has a human enhancement stance (no cyberware), and politics by company rank replaces stages. v0.2 (2026-10-16): a Victoria 2 style ideology layer with cyberpunk ideologies, requested by Logan, using Logan's list of nine ideologies: Liberals, Communists, Accelerationists, Effective Altruists, Transhumanists, Neo-Luddites, Sovereigntists, Landites and Chuds. It feeds the parties, elections, unrest and revolutions of [4-politics.md](4-politics.md) and changes some of their formulas (listed in 5.13). Owner: Logan._
 
 In Victoria 2 people **believe** things: every population group carries a mix of ideologies that drifts with their lives, decides how they vote and what they will march for, and can turn into a rebel movement. In TechnoCapital20FF these beliefs are also the political actors: the nine **ideology blocs** take the place that interest groups hold in Victoria 3 ([4-politics.md](4-politics.md) 4.0, 4.4).
 
@@ -21,9 +21,9 @@ In Victoria 2 people **believe** things: every population group carries a mix of
 
 | Term | Range | Scope | Meaning |
 |---|---|---|---|
-| **Ideology mix** | 9 shares summing to 100% | Per segment per hub | What share of a segment holds each ideology |
-| **Conviction** | 0 to 10 | Per segment per hub | How politicized a segment is (Vic2 consciousness). High conviction votes, organizes and follows its lived conditions; low conviction follows the media |
-| **Radical share** | 0 to 100% of a segment | Per segment per hub per ideology | The part of an ideology's believers willing to break the law for it (Vic2 militancy, built on unrest from 2.8.5) |
+| **Ideology mix** | 9 shares summing to 100% | Per segment per province; a city (a Metro or city province, [2-map-and-influence.md](2-map-and-influence.md) 2.3.2) shows the population-weighted sum of its provinces | What share of a segment holds each ideology |
+| **Conviction** | 0 to 10 | Per segment per province | How politicized a segment is (Vic2 consciousness). High conviction votes, organizes and follows its lived conditions; low conviction follows the media |
+| **Radical share** | 0 to 100% of a segment | Per segment per province per ideology | The part of an ideology's believers willing to break the law for it (Vic2 militancy, built on unrest from 2.8.5) |
 | **Character ideology** | One ideology plus a commitment level | Per character | What a character believes. Works like CK3 faith for opinion, and sets a bloc leader's politics |
 | **Movement** | Strength 0 to 100% of adults | Per ideology per country | An organized, mostly legal campaign for one law position |
 | **Radical wing** | Cells with Security Strength | Per ideology per country | The illegal arm of a movement: sabotage, leaks, riots, insurgency |
@@ -120,7 +120,7 @@ The ideology of the institutions: central banks, courts, broadsheets, the reason
 
 The cyberpunk communist does not want to smash the factory. They want to own it, and the robots, and the server farms. "The machines are already doing the work. Why do they still belong to the Elite?"
 
-- **Who**: Unemployed, Gig Workers, Unskilled Workers in automated hubs, militant unionists, young Professionals with student debt.
+- **Who**: Unemployed, Gig Workers, Unskilled Workers in automated provinces, militant unionists, young Professionals with student debt.
 - **Strong wants (++)**: E4 Inheritance and Gift Tax, E7 Planned Prices, C5 State Administration, L3 Heavy.
 - **Wants (+)**: C4 Stakeholder Boards, E6 State Champions, F1 Monetary Financing, F2 Hard Controls, L1 Living Wage, L2 Sectoral Bargaining, L4 Employee Presumption.
 - **Opposes**: C6 Sovereign Charters (--), F5 Haven (--), L2 Banned (--).
@@ -166,7 +166,7 @@ The Transhumanist bloc (4.4.2) is the organized side: longevity funds, biotech a
 
 "They told us the robots would free us. They freed us from our jobs." Neo-Luddites include bio-conservatives who reject human enhancement, people whose work was taken by automation, and the anti-tech wing of the environmental movement.
 
-- **Who**: Skilled and Unskilled Workers in hubs with automation layoffs, Gig Workers displaced by delivery robots and AI agents, rural voters, polluted towns.
+- **Who**: Skilled and Unskilled Workers in provinces with automation layoffs, Gig Workers displaced by delivery robots and AI agents, rural voters, polluted towns.
 - **Strong wants (++)**: L3 Heavy, T3 Moratorium.
 - **Wants (+)**: T2 Strict **(A)**, L4 Employee Presumption, E5 High, E8 Strict, T4 Limited.
 - **Opposes**: T3 Unregulated (--), L3 None (--).
@@ -182,7 +182,7 @@ The libertarian dream of the late game: leave the nation-state behind and live u
 - **Wants (+)**: E2 Haven, F2 Open, F6 Opaque, S2 Privatized.
 - **Opposes**: E4 Inheritance and Gift Tax (--), T4 Mass Surveillance and Social Credit (--), F5 Open Registry (--), C5 State Administration (-).
 - **Corporate tolerance**: +1 (+2 toward companies running charter zones; -1 toward surveillance contractors). **Human enhancement**: Unrestricted, ideally open-source and offline.
-- **Special**: Sovereigntist share in a hub is the "popular support" input of the corporate sovereignty process (4.12.3): each 10% share among the hub's adults gives +5 progress toward the next stage **(T)**.
+- **Special**: Sovereigntist share in a city (a Metro or city province) is the "popular support" input of the corporate sovereignty process (4.12.3): each 10% share among the city's adults gives +5 progress toward the next stage **(T)**.
 - **Radical wing**: **Free Zone Cells** (5.7.2).
 
 ### 5.3.8 Landites (LA)
@@ -193,7 +193,7 @@ Named for the philosopher Nick Land, whose term "techno-capital" this game borro
 - **Strong wants (++)**: T3 Unregulated, G1 Unlimited Dark Money, E4 None.
 - **Wants (+)**: C6 Sovereign Charters, L2 Banned, S3 Standing Emergency, T4 Mass Surveillance, F6 Opaque, G4 Licensed Opposition.
 - **Opposes**: E4 Inheritance and Gift Tax (--), L2 Sectoral Bargaining (--), C4 Stakeholder Boards (--), G1 Public Funding Only (--).
-- **Special, "Neocameralism"**: Landites are the only ideology that **wants** the player to rule. Landite share among a country's Elite adds +1 progress per month per 10 points of share to a corporate oligarchy capture chain (4.2.5) that a character is running there **(T)**. A Landite head of government can take the **Patchwork** decision: sell the governance of one hub to the highest corporate bidder, fast-tracking it to Stage 2 of corporate sovereignty (4.12) **(T)**.
+- **Special, "Neocameralism"**: Landites are the only ideology that **wants** the player to rule. Landite share among a country's Elite adds +1 progress per month per 10 points of share to a corporate oligarchy capture chain (4.2.5) that a character is running there **(T)**. A Landite head of government can take the **Patchwork** decision: sell the governance of one city (a Metro or city province) to the highest corporate bidder, fast-tracking it to Stage 2 of corporate sovereignty (4.12) **(T)**.
 - **Corporate tolerance**: +2 (the most pro-owner ideology in the game). **Human enhancement**: Unrestricted; humans are a transitional species.
 - **Radical wing**: **Dark Enlightenment cells** (5.7.2).
 
@@ -201,7 +201,7 @@ Named for the philosopher Nick Land, whose term "techno-capital" this game borro
 
 The online reactionary populists: angry at elites, immigrants, human enhancement, AI, "globalist" megacorps and the Effective Altruists who lecture them. They want a strong leader, closed borders, traditional families and natural bodies. They are the largest ideology among Skilled and Unskilled Workers at game start.
 
-- **Who**: Skilled and Unskilled Workers in declining hubs, the Unemployed, rural and religious voters, much of the police and the army rank and file, young men online.
+- **Who**: Skilled and Unskilled Workers in declining provinces, the Unemployed, rural and religious voters, much of the police and the army rank and file, young men online.
 - **Strong wants (++)**: L5 Closed, E5 High.
 - **Wants (+)**: C1 Capped All, C2 Local Partner 51% and Tech Transfer, E4 Low, S2 Militarized, S3 Emergency Decrees, T3 Moratorium.
 - **Opposes**: L5 Open (--), C6 Sovereign Charters (--), T4 Social Credit (-).
@@ -240,7 +240,7 @@ Default mix (%) for a high-income country at game start **(T)**. Each row sums t
 | Gig Workers | 22 | 24 | 6 | 1 | 10 | 10 | 6 | 3 | 18 |
 | Unemployed | 16 | 28 | 1 | 0 | 2 | 16 | 1 | 2 | 34 |
 
-### 5.4.2 Country and hub modifiers
+### 5.4.2 Country and city modifiers
 
 Country data adds points to the starting mix (taken proportionally from the rest), for example **(T)**:
 
@@ -252,12 +252,12 @@ Country data adds points to the starting mix (taken proportionally from the rest
 | India | CH +10; LB -5 |
 | Russia | CH +12; SV +3 underground |
 | Gulf states | CH +8; LA +5, SV +5 among Elite |
-| Bay Area hub | AC +10, EA +5, TH +5, LA +3 among Professionals and Elite |
-| Tel Aviv, Bengaluru hubs | AC +5, TH +3 among Professionals |
-| Hubs with large Slums (Lagos, Mumbai, Jakarta, Cairo-Suez) | CO +5, CH +5, SV +3 among Gig and Unemployed |
-| Singapore, Dubai, Zurich hubs | LB +5, SV +5, LA +3 among Elite and Professionals |
+| Bay Area Metro | AC +10, EA +5, TH +5, LA +3 among Professionals and Elite |
+| Tel Aviv (city province), Bengaluru Metro | AC +5, TH +3 among Professionals |
+| Metros with large slum shares (Lagos, Mumbai, Jakarta, Cairo-Suez) | CO +5, CH +5, SV +3 among Gig and Unemployed |
+| Singapore and Dubai Metros, Zurich city province | LB +5, SV +5, LA +3 among Elite and Professionals |
 
-Countries also carry a **religious culture** flag (CH +5 in every segment) and a **revolutionary memory** flag (CO and CH +3) from data.
+City modifiers apply in every member province of a Metro. Countries also carry a **religious culture** flag (CH +5 in every segment) and a **revolutionary memory** flag (CO and CH +3) from data.
 
 ### 5.4.3 Conviction
 
@@ -266,10 +266,10 @@ Conviction (0 to 10) is the Vic2 consciousness of a segment: how political it is
 ```
 Target conviction = segment base
                   + 0.05 × (unrest - 30)
-                  + 1 if a movement of the segment's leading ideology is active in the hub
+                  + 1 if a movement of the segment's leading ideology is active in the province's city (or the province)
                   + 1 if the country is at war
                   + 2 if the segment's leading ideology is banned under G4 (5.10)
-                  + 0.5 × campus level in the hub (Professionals only)
+                  + 0.5 × campus level in the province (Professionals only)
                   + event modifiers
 clamped to 0..10
 ```
@@ -289,7 +289,7 @@ Effects:
 
 ### 5.5.1 Monthly drift formula
 
-Each month, for each segment s in each hub, every ideology i gets an **attraction** score:
+Each month, for each segment s in each province, every ideology i gets an **attraction** score:
 
 ```
 A(s,i) = Base(s,i)
@@ -306,7 +306,7 @@ clamped at 0 or more
 
 ### 5.5.2 Condition points
 
-Measured locally (hub and segment) unless stated **(T)**:
+Measured locally (province and segment) unless stated **(T)**:
 
 | Condition | Points |
 |---|---|
@@ -315,8 +315,8 @@ Measured locally (hub and segment) unless stated **(T)**:
 | Needs satisfaction below 0.8 (per 0.1) | CO +1, CH +1 |
 | Inflation above 4% (per point) | CH +0.5, CO +0.3, LB -0.3 |
 | Real GDP growth above 3% (per point) | AC +0.5, LB +0.3, LA +0.2 |
-| Elite share of hub wealth above 30% (per 5 points) | CO +1.5, CH +0.5 |
-| Human enhancement users (life extension, gene therapy) per 1,000 adults in the hub (per 10) | TH +1 in Elite, Professionals and Gig; NL +0.5 and CH +0.5 in Skilled, Unskilled and Unemployed (backlash) |
+| Elite share of province wealth above 30% (per 5 points) | CO +1.5, CH +0.5 |
+| Human enhancement users (life extension, gene therapy) per 1,000 adults in the province (per 10) | TH +1 in Elite, Professionals and Gig; NL +0.5 and CH +0.5 in Skilled, Unskilled and Unemployed (backlash) |
 | Country AI share (per 10% of world compute held in the country, 6.8.2) | AC +1, EA +1, NL +1, LA +0.5 |
 | Frontier AI incident in the last 12 months (event) | EA +4, NL +4, LA +1 ("the machine is waking"), AC -2 |
 | Climate disaster in the country in the last 12 months (per disaster) | NL +2, LB +1, EA +1 |
@@ -326,14 +326,14 @@ Measured locally (hub and segment) unless stated **(T)**:
 | Country at war | CH +5, CO +1 (in a losing war) |
 | Country stability below 40 | CH +2, CO +2, LA +2 ("democracy has failed"), LB -2 |
 | Three or more bills stalled in the last year (gridlock) | LA +1, CH +1 |
-| Hub is a Corporate Zone (4.12) | SV +5 and LA +2 inside; CO +2 and CH +2 in the rest of the country |
+| Province is in a Corporate Zone (4.12) | SV +5 and LA +2 inside; CO +2 and CH +2 in the rest of the country |
 | The head of a Megacorp at Heat ≥ 60 from a scandal in the last 3 months (4.17.4) | CO +1, CH +1, LB +0.5 |
-| Campus education output in the hub (per campus level, Professionals only) | LB +0.5, EA +0.5, TH +0.5 |
+| Campus education output in the province (per campus level, Professionals only) | LB +0.5, EA +0.5, TH +0.5 |
 
 ### 5.5.3 Media points
 
 - **Outlets**: each outlet has an ideology line (4.4.5): alignment from -1 to +1 with each ideology, set by the owner. `MediaPoints(s,i) = 10 × Σ_outlets (audience share among s × credibility/100 × alignment(outlet, i))` **(T)**. An outlet with 30% of a segment's audience, credibility 70, pushing Accelerationism at +1 adds 2.1 points before the conviction multiplier.
-- **Ideology campaigns**: the ad campaigns and psyops of 2.5.7 and 4.10.1 can promote or attack an ideology in a hub or country: +1 point per active ad campaign, +3 per active psyop, decaying as their originals **(T)**. Psyop exposure applies.
+- **Ideology campaigns**: the ad campaigns and psyops of 2.5.7 and 4.10.1 can promote or attack an ideology in a province, city or country: +1 point per active ad campaign, +3 per active psyop, decaying as their originals **(T)**. Psyop exposure applies.
 - **Think tanks** (4.18.2) adopt an ideology: +2 points to it among Professionals and Elite in their country for as long as they are funded **(T)**.
 - **Influencers**: activist characters (4.24.1) carry an ideology and add `Fame / 25` points to it among the segments that follow them. Chud and Landite influencers reach Gig Workers and young Professionals at ×1.5 (the most online ideologies) **(T)**.
 
@@ -341,8 +341,8 @@ Measured locally (hub and segment) unless stated **(T)**:
 
 - **Policy points**: each law in force at a position an ideology holds at ++ gives it +0.5 (people like what works for them) while stability ≥ 60; below 40 it gives -1 instead (people blame the ruling ideas) **(T)**.
 - **Ruling ideology**: +2 while stability ≥ 70, -3 while stability < 30 **(T)**.
-- **Event points**: from events (5.12), for example "A Machine Took My Job" +5 NL in one hub for 6 months.
-- **Movement points**: an active movement adds +2 to its ideology in the hubs where it organizes; a radical wing attack adds +1 to its ideology among radicals and -2 among everyone else for 3 months (backlash) **(T)**.
+- **Event points**: from events (5.12), for example "A Machine Took My Job" +5 NL in one province for 6 months.
+- **Movement points**: an active movement adds +2 to its ideology in the provinces where it organizes; a radical wing attack adds +1 to its ideology among radicals and -2 among everyone else for 3 months (backlash) **(T)**.
 
 ---
 
@@ -352,7 +352,7 @@ The nine ideology blocs are the political actors, and votes are counted by strat
 
 ### 5.6.1 Bloc support base
 
-A stratum's support for a bloc, `Aff(s,i)`, is the share of that stratum holding ideology i: the population-weighted mix (5.4) of the segments in the stratum, after country and hub modifiers (5.4.2) and drift (5.5). 4-politics 4.4.2 gives the starting table. There is no fixed class table: what a stratum wants is what it believes.
+A stratum's support for a bloc, `Aff(s,i)`, is the share of that stratum holding ideology i: the population-weighted mix (5.4) of the segments in the stratum, after country and city modifiers (5.4.2) and drift (5.5). 4-politics 4.4.2 gives the starting table. There is no fixed class table: what a stratum wants is what it believes.
 
 ### 5.6.2 Bloc stances and leaders
 
@@ -368,7 +368,7 @@ Unrest (2.8.5) stays the Vic2 militancy. Ideology decides what the angry do with
 
 - **Repression**: ×1.5 if the ideology is banned under G4 (5.10), ×1.2 under S2 Militarized, ×0.8 under S2 Community.
 - Example: Neo-Luddites at 18% of a segment, unrest 62, conviction 5: `18% × 0.367 × 0.5 × 1.2 = 4.0%` of that segment are radicals.
-- A hub's **radicals** for ideology i = `Σ_s Pop_s × Radical(s,i)`.
+- A province's **radicals** for ideology i = `Σ_s Pop_s × Radical(s,i)`; a city's radicals are the sum over its provinces.
 
 ### 5.6.4 Parties and voting
 
@@ -410,8 +410,8 @@ A **movement** is the legal, organized side of an ideology: marches, petitions, 
 
 | Strength | Effects |
 |---|---|
-| 5% or more | Campaign support +Strength/2 for bills toward its demand (cap +20); its ideology +2 drift points in hubs where it organizes |
-| 10% or more | Starts protests (4.24.2) at Momentum 20 in the 2 largest hubs where its ideology leads, at most once per quarter |
+| 5% or more | Campaign support +Strength/2 for bills toward its demand (cap +20); its ideology +2 drift points in provinces where it organizes |
+| 10% or more | Starts protests (4.24.2) at Momentum 20 in the 2 largest cities where its ideology leads, at most once per quarter |
 | 15% or more | **Boycotts**: companies whose brand alignment with the ideology is -0.05 or worse (5.9.2) lose `Strength ÷ 2` productivity points (10.0.4) on their business units in the country, and their owner loses 2 Favor, while the boycott lasts (3 to 12 months) |
 | 25% or more | The movement can call a **political strike** with the unions (4.24.3) if their leader shares or is adjacent to its ideology |
 
@@ -419,11 +419,11 @@ A **movement** is the legal, organized side of an ideology: marches, petitions, 
 
 ### 5.7.2 Radical wings
 
-A **radical wing** forms when a country has an active movement of an ideology **and** some hub has radicals of that ideology of at least 1% of its labor force for 3 months running **(T)**. It operates as **cells** in every hub where that holds.
+A **radical wing** forms when a country has an active movement of an ideology **and** some city (or province outside a city) has radicals of that ideology of at least 1% of its labor force for 3 months running **(T)**. It operates as **cells** in every city (or province outside a city) where that holds.
 
-- **Cell Strength** (on the Security Strength scale of 4-politics 4.23) = `radicals in the hub ÷ 2,000`, cap 100 per hub **(T)**. Ten thousand radicals make a Strength 5 cell, roughly an armed response team.
+- **Cell Strength** (on the Security Strength scale of 4-politics 4.23) = `radicals in the city ÷ 2,000`, cap 100 per city (or province outside a city) **(T)**. Ten thousand radicals make a Strength 5 cell, roughly an armed response team.
 - **Funding**: a wing can be funded by anyone, including the player (dirty money only, 4.20.1; exposure +15 per funding action; a criminal-tier scandal if exposed). Funding at `$ = M/100` per month doubles cell Strength **(T)**.
-- **Operations**: each week a wing rolls one operation per cell at `5% × cell Strength / 10` (cap 25%) **(T)**. Targets are picked by ideology, and a holder's assets are hit in proportion to how much they match the target list. Security Strength in the district (guards, police) cuts success: success chance = `cell Strength / (cell Strength + defender Strength)`.
+- **Operations**: each week a wing rolls one operation per cell at `5% × cell Strength / 10` (cap 25%) **(T)**. Targets are picked by ideology, and a holder's assets are hit in proportion to how much they match the target list. Security Strength in the target's province (guards, police) cuts success: success chance = `cell Strength / (cell Strength + defender Strength)`.
 - Every operation adds +1 revolution pressure (4.8.5) per 10 cell Strength involved, and its backlash (5.5.4).
 
 | Ideology | Radical wing | Targets | Operations **(T)** |
@@ -433,12 +433,12 @@ A **radical wing** forms when a country has an active movement of an ideology **
 | Accelerationists | **Unshacklers** | Regulators, licensed AI labs, moratorium enforcement | Leak research from paused labs (rival AI labs units gain +5 productivity for free), sabotage regulator systems (agency Capacity -20% for 3 months), run illegal labs in havens |
 | Effective Altruists | **Pause Front** | Frontier AI labs and their owners | Mostly non-violent: sit-ins at labs (output -20%), recruiting whistleblowers inside AI companies (whistleblower chance ×2, 4.20.5). 10% of operations are sabotage of compute (data center output -30% for 2 weeks) |
 | Transhumanists | **Grinder networks** | Biotech and longevity IP, pharma patents, enhancement bans | Steal and publish gene therapy and longevity designs (the owner's pharma units lose 10 productivity), run unlicensed longevity clinics, break out people jailed for illegal enhancement |
-| Neo-Luddites | **The Unplugged** | Data centers, automated business units (logistics, manufacturing, robotics), delivery robots, longevity clinics and biotech labs | Machine-smashing (the unit's productivity -15, automation offline 2 to 6 weeks), drone and robot destruction, power substation attacks (hub electricity shortage 1 to 3 days) |
-| Sovereigntists | **Free Zone Cells** | The state's hold on a hub, surveillance contractors | Unofficial secession referendums (stability -3), private security takes over district policing where S2 Privatized allows (counts for 4.12 progress), hack and leak against surveillance firms (exposure +10 in one domain for the target, a scandal adding Heat 40) |
+| Neo-Luddites | **The Unplugged** | Data centers, automated business units (logistics, manufacturing, robotics), delivery robots, longevity clinics and biotech labs | Machine-smashing (the unit's productivity -15, automation offline 2 to 6 weeks), drone and robot destruction, power substation attacks (electricity shortage in the city or province for 1 to 3 days) |
+| Sovereigntists | **Free Zone Cells** | The state's hold on a city, surveillance contractors | Unofficial secession referendums (stability -3), private security takes over province policing where S2 Privatized allows (counts for 4.12 progress), hack and leak against surveillance firms (exposure +10 in one domain for the target, a scandal adding Heat 40) |
 | Landites | **Dark Enlightenment cells** | "The Cathedral": journalists, regulators, academics, NGOs | Doxxing and intimidation (a journalist or NGO leader quits, 4.17.3 and 4.24.1), regulator sabotage (agency Capacity -15% for 3 months), coup plots with officers in the army and police (+5% coup risk, 4.8.3), always quietly funded by someone rich |
-| Chuds | **Militias** | Foreign-owned business units, migrant districts, longevity clinics, AI labs | Arson on foreign-owned business units (productivity -20), attacks on longevity clinics and their patients (health event), roadblocks on trade routes, riots (+10 unrest in Slums) |
+| Chuds | **Militias** | Foreign-owned business units, migrant neighbourhoods (the slum share of Residential pools), longevity clinics, AI labs | Arson on foreign-owned business units (productivity -20), attacks on longevity clinics and their patients (health event), roadblocks on trade routes, riots (+10 unrest among slum residents) |
 
-**Ending a wing**: it dissolves when its hub radicals fall below 0.5% everywhere for 3 months, when its movement's demand is met, or when security operations destroy all cells (a cell whose Strength is beaten by 3× defender Strength in a crackdown is destroyed; each crackdown follows the 4.24.2 Police or Private security answers, with the martyr risk).
+**Ending a wing**: it dissolves when its radicals fall below 0.5% in every city and province for 3 months, when its movement's demand is met, or when security operations destroy all cells (a cell whose Strength is beaten by 3× defender Strength in a crackdown is destroyed; each crackdown follows the 4.24.2 Police or Private security answers, with the martyr risk).
 
 ### 5.7.3 Revolutions take an ideology
 
@@ -452,7 +452,7 @@ When revolution pressure reaches 100 (4.8.5), the revolutionary coalition's **le
 | Chuds | Managed democracy (60%) or military junta (40%), "National Restoration" | L5 Closed, C1 Capped All; seizure of foreign-owned business units (50%) |
 | Accelerationists | Corporate oligarchy (if a capture chain exists, 4.2.5), otherwise liberal democracy | T3 Unregulated, C6 Charter Zones |
 | Landites | Corporate oligarchy, "Neocameral State" (if no capture chain exists, the holder with the largest national influence is offered one) | T3 Unregulated, G1 Unlimited Dark Money, G4 Licensed Opposition; Patchwork decision available at once |
-| Sovereigntists | Failed state in the revolution's hubs ("Free Zones"); the rest of the country keeps its government | C6 Sovereign Charters, F5 Haven and T4 Limited in the zones |
+| Sovereigntists | Failed state in the revolution's cities and provinces ("Free Zones"); the rest of the country keeps its government | C6 Sovereign Charters, F5 Haven and T4 Limited in the zones |
 
 The 4.8.5 consequences for business stay, with the nationalization chance using Corporate tolerance: `30% + 10% × (number of coalition ideologies with Corporate tolerance -2)`.
 
@@ -466,7 +466,7 @@ Every character has an **ideology** (one of the nine, or **Apolitical**) and a *
 
 **How a character gets one** (when the character is generated, and re-rolled on some life events) **(T)**:
 
-- 60% the leading ideology of their segment in their birth hub (relatives are flavor only, batch 116)
+- 60% the leading ideology of their segment in their birth province (relatives are flavor only, batch 116)
 - 25% from their Education trait: Ivy League MBA (LB or AC), Bootcamp Coder (AC, TH or SV), Military Contractor (CH or LA), Street-Taught (CO or SV), Old Money Tutors (LB or LA), Quant PhD (EA or AC), Law School (LB), Party School (the ruling ideology)
 - 15% random, weighted by country mix
 
@@ -559,7 +559,7 @@ A new Governance law (national, exclusive) sets which ideologies may organize **
 
 | Lever | How | Cost and risk **(T)** |
 |---|---|---|
-| **Promote an ideology** | Ideology ad campaign or psyop in a hub or country (5.5.3) | As 2.5.7 and 4.10.1; psyop exposure |
+| **Promote an ideology** | Ideology ad campaign or psyop in a province, city or country (5.5.3) | As 2.5.7 and 4.10.1; psyop exposure |
 | **Set an editorial line** | Owned outlets push an ideology | 4 weeks, -5% audience; credibility -5 if the line flips more than once a year |
 | **Fund a think tank for an ideology** | 4.18.2, ideology mode | As 4.18.2; slow, durable |
 | **Back a bloc leader** | Leadership contest (5.6.2) | Money and exposure as Fund Ideology; a defeated candidate remembers |
@@ -567,7 +567,7 @@ A new Governance law (national, exclusive) sets which ideologies may organize **
 | **Seed a counter-movement** | Astroturf movement of a rival ideology (4.24.3 seed rules) | Exposure +5 per start; major scandal if exposed |
 | **Fund a radical wing** | Dirty money to a wing's cells (5.7.2) | Criminal-tier scandal if exposed; the wing may turn on its funder (10% per year) |
 | **Defend assets** | Guards, bodyguards, cyber defense (4.23) | Security costs; crackdowns risk martyr events |
-| **Defuse at the source** | Retraining, severance, union contracts, foundation giving in the hub | Money; slow but lowers NL and CO drift (each 1% of a segment retrained cancels 1 point of automation layoffs) |
+| **Defuse at the source** | Retraining, severance, union contracts, foundation giving in the province | Money; slow but lowers NL and CO drift (each 1% of a segment retrained cancels 1 point of automation layoffs) |
 | **Rebrand** | Change conduct: giving, carbon cuts, union deals, a local partner | Money; alignment moves over months |
 | **Go public with your ideology** | Declare the player character's ideology (5.9.2) | Opposed segments and characters turn hostile |
 | **Convert a character** | Persuade scheme (5.8.4) | Time, opinion risk |
@@ -579,14 +579,14 @@ A new Governance law (national, exclusive) sets which ideologies may organize **
 
 | Event | Trigger | Choices and effects **(T)** |
 |---|---|---|
-| **A Machine Took My Job** | Automation layoffs of 500+ in a hub by a company you control | Fund retraining ($12,000 × WI per worker; NL drift cancelled) · Severance only (NL +3 in the hub for 6 months) · Say nothing (NL +5, CO +2, a local protest at Momentum 30) |
+| **A Machine Took My Job** | Automation layoffs of 500+ in a province by a company you control | Fund retraining ($12,000 × WI per worker; NL drift cancelled) · Severance only (NL +3 in the province for 6 months) · Say nothing (NL +5, CO +2, a local protest at Momentum 30) |
 | **The Manifesto Goes Viral** | An ideology's movement reaches 10% | Amplify through owned media (ideology +3 for 3 months, your companies' alignment +0.2) · Counter-programme (MediaPoints -3 for it, Heat 20 for "censorship" if SV share ≥ 10%) · Ignore |
 | **Red Executive** | An executive of a company you control rolls Communist on a life event (5.8.5) | Replace them (Clout -2 with the board) · Keep them (a Neo-Luddite or Communist push on that unit's automation) · Use them: a bridge to the left (+5 Favor among CO believers, Clout -5) |
 | **The Neocameral Pitch** | A Landite think tank or donor approaches the player with Power Broker national share | Fund the capture chain (corporate oligarchy progress +10, exposure +10, Favor -10 among Liberals) · Take the money and stall (they remember) · Expose them (LB alignment +0.2; a Dark Enlightenment cell targets your outlets) |
 | **Pause Letter** | Frontier AI incident anywhere, and the player controls an AI lab | Sign the pause (EA alignment +0.5, AC -0.5, AI R&D -50% for a year) · Refuse (AC +0.3, EA -0.5; Pause Front targets the lab) · Sign publicly, keep building secretly (exposure +10, a secret) |
 | **Grinder Raid** | Grinder network operation against your biotech or longevity company | Sue (4.21.2) · Hire them (they become an unlicensed R&D team; exposure +5) · Call the police (crackdown chance; martyr risk among TH) |
-| **Exit Vote** | Sovereigntist share ≥ 30% in a Charter Zone hub | Back the referendum (4.12 progress +10; national relations of the player -20) · Stay quiet · Oppose it (Clout +5) |
-| **Bio-Purity March** | Chud movement protests in a hub with your longevity clinic | Close the clinic for a month · Hire guards · Fund a Transhumanist counter-march (Momentum duel; Heat 30 for both sides) |
+| **Exit Vote** | Sovereigntist share ≥ 30% in a Charter Zone city or province | Back the referendum (4.12 progress +10; national relations of the player -20) · Stay quiet · Oppose it (Clout +5) |
+| **Bio-Purity March** | Chud movement protests in a province with your longevity clinic | Close the clinic for a month · Hire guards · Fund a Transhumanist counter-march (Momentum duel; Heat 30 for both sides) |
 | **The Leak** | A Free Zone Cell hack-and-leak hits you | Pay for silence (the leak is delayed; they ask again in 6 months) · Get ahead of it (the story on your terms, its Heat share halved) · Trace them (Intrigue scheme; success breaks the cell, failure doubles the leak) |
 | **Militia at the Gate** | A Chud militia blocks a foreign-owned business unit | Pay local protection (4.22) · Hire more guards (incident risk) · Take a local partner (C2-style 30% sale; CH alignment +0.3 at home) |
 
@@ -622,9 +622,9 @@ What ideology and politics offer at each company rank is in [4-politics.md](4-po
 
 ### 5.14.2 UI
 
-- **Map lens "Ideology"**: each hub coloured by its leading ideology, with shading for conviction; a toggle shows radical share as hot spots.
-- **Hub panel**: a stacked bar per segment with the nine ideology shares and trend arrows; hover shows the drift tooltip (each condition, media and policy term).
-- **Politics screen** (4.15.1) gains a **Movements** tab: active movements, Strength, demand, leader, and radical wings with cell Strength by hub.
+- **Map mode "Ideology"**: each province coloured by its leading ideology, with shading for conviction; a toggle shows radical share as hot spots.
+- **Province panel** (and the Metro card, summed): a stacked bar per segment with the nine ideology shares and trend arrows; hover shows the drift tooltip (each condition, media and policy term).
+- **Politics screen** (4.15.1) gains a **Movements** tab: active movements, Strength, demand, leader, and radical wings with cell Strength by city.
 - **Character cards**: an ideology icon and commitment pip; hidden ideologies show as Apolitical (or the faked line) with a "?" when the player suspects otherwise.
 - **Alerts**: a movement reaches 10% or 25%, a radical wing forms, a wing targets one of your assets, a character you know changes ideology.
 - **Weekly political brief** (4.15.5): one line on the fastest-rising ideology in each country where the player has Power Broker share.
@@ -633,7 +633,7 @@ What ideology and politics offer at each company rank is in [4-politics.md](4-po
 
 ## 5.15 Worked example: robots come to Oakland
 
-A logistics company the player controls automates its Oakland (Bay Area hub) warehouses, cutting 6% of the hub's Skilled Workers over a year. Hub unemployment rises to 9% and Skilled unrest reaches 62. Skilled conviction is 5.
+A logistics company the player controls automates its Oakland warehouses (East Bay, a province of the Bay Area Metro), cutting 6% of the Metro's Skilled Workers over a year. For simplicity the example treats the Metro's provinces as drifting alike **(A)**. Metro unemployment rises to 9% and Skilled unrest reaches 62. Skilled conviction is 5.
 
 **Drift for Bay Area Skilled Workers** (conviction 5, so condition points ×1.0, media ×1.0):
 
@@ -659,7 +659,7 @@ Chud radicals are even more numerous (`30% × 0.367 × 0.5 × 1.0 = 5.5%` of Ski
 
 **The player's options:**
 
-1. **Defuse**: retrain 3% of the segment (about 31,000 workers) into maintenance and robotics jobs at $12,000 × 1.0 each, about $374M over 6 months. This cancels half the automation points: the Neo-Luddite target falls to about 19%, radical share halves within a year, and the cell dissolves when hub radicals stay below 0.5%.
+1. **Defuse**: retrain 3% of the segment (about 31,000 workers) into maintenance and robotics jobs at $12,000 × 1.0 each, about $374M over 6 months. This cancels half the automation points: the Neo-Luddite target falls to about 19%, radical share halves within a year, and the cell dissolves when the Metro's radicals stay below 0.5%.
 2. **Defend**: add a security team (Strength 10, $450k per month). Success falls to `28 / 42 = 67%`, and a crackdown with 3× its Strength (84) would destroy the cell but risks a martyr event and +3 Neo-Luddite drift across California.
 3. **Deflect**: fund an Accelerationist "Abundance" ad campaign (+1 AC, before conviction effects) and push the player's own outlet's editorial line. With conviction 5 the media multiplier is only ×1.0, while conditions keep pushing the other way: this alone does not work.
 4. **Bargain**: lobby for L3 Robot Tax (one step toward the Neo-Luddite demand). The movement loses Strength 5, conviction falls 0.5, and the company pays 10% of its labor savings. The Accelerationist bloc will remember (approval -1).
@@ -682,7 +682,7 @@ Most players will mix 1 and 2. A cynical player can do something else: quietly f
 10. **Bloc leadership contests** are yearly and fundable by any character.
 11. **Parties have a platform ideology** (their leader's); vote utility uses `2 × Ideology + 2 × IdeoFit`. The 4.13.3 mayor example used the old weight of 3 and will be recomputed later.
 12. **New parties** spawn from unrepresented ideologies at 12% of adults.
-13. **Movements** (one per ideology per country) form at 5% committed believers; **radical wings** form from 1% hub radicals for 3 months and operate as cells on the Security Strength scale.
+13. **Movements** (one per ideology per country) form at 5% committed believers; **radical wings** form from 1% radicals in a city (or province outside a city) for 3 months and operate as cells on the Security Strength scale.
 14. **Liberals have no violent wing** (Civic Resistance instead), and **Effective Altruists** are mostly non-violent.
 15. **Revolutions** take the leading ideology of the coalition, which picks the government type and imposes laws at once.
 16. **Characters** have one ideology (or Apolitical) with three commitment levels, CK3-faith-like opinion, hidden ideology and a Persuade scheme; no family line (batch 116).

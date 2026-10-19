@@ -1,8 +1,8 @@
 # 6. Techno-Capital: detailed design
 
-_Status: draft v0.3 (2026-10-18). Batch 116: the fab, yield, wafer, lithography tool, fab level and chip generation simulation is cut; chips are the Semiconductors industry and act through dollar effects on business units; compute is measured only by the glossary in [15-infrastructure.md](15-infrastructure.md) 15.2.1; models have a quality per capability, not one Quality; no insider route, no crypto mining, no tech tiers (R&D and productivity instead); no dynasties. v0.2, consistency pass, batch 74: no GPU supply chain, model prices follow capability quality, no model theft or mind uploads, hacking replaces netruns. v0.1 (2026-10-16), requested by Logan. Techno-Capital is the machine capital of the cyberpunk economy: compute, drones, autonomous vehicles, robots and AI models. Many actions in the game have a **Techno-Capital requirement**: the right machines must be allocated to the task for it to run, or to run to completion. AI, data centers and chips are the heart of the early game. Compute and stored data are held and measured as in [15-infrastructure.md](15-infrastructure.md) (the compute glossary is 15.2.1), models as in [18-ai-models.md](18-ai-models.md), and the Semiconductors and AI labs industries are in [10-industry-economy.md](10-industry-economy.md) 10.3. Chips themselves are not Techno-Capital: Semiconductors units earn dollars like any other business unit. Owner: Logan._
+_Status: draft v0.3 (2026-10-19). Batch 118: EU4-style map; Techno-Capital pools, clusters and fleets sit in a **location** (a Metro, or a single province outside any Metro) instead of a hub; district-level tasks become province-level. Batch 116: the fab, yield, wafer, lithography tool, fab level and chip generation simulation is cut; chips are the Semiconductors industry and act through dollar effects on business units; compute is measured only by the glossary in [15-infrastructure.md](15-infrastructure.md) 15.2.1; models have a quality per capability, not one Quality; no insider route, no crypto mining, no tech tiers (R&D and productivity instead); no dynasties. v0.2, consistency pass, batch 74: no GPU supply chain, model prices follow capability quality, no model theft or mind uploads, hacking replaces netruns. v0.1 (2026-10-16), requested by Logan. Techno-Capital is the machine capital of the cyberpunk economy: compute, drones, autonomous vehicles, robots and AI models. Many actions in the game have a **Techno-Capital requirement**: the right machines must be allocated to the task for it to run, or to run to completion. AI, data centers and chips are the heart of the early game. Compute and stored data are held and measured as in [15-infrastructure.md](15-infrastructure.md) (the compute glossary is 15.2.1), models as in [18-ai-models.md](18-ai-models.md), and the Semiconductors and AI labs industries are in [10-industry-economy.md](10-industry-economy.md) 10.3. Chips themselves are not Techno-Capital: Semiconductors units earn dollars like any other business unit. Owner: Logan._
 
-Money buys almost everything in TechnoCapital20FF. Techno-Capital is the exception: there is never enough of it, its parts come from a handful of companies in a handful of hubs, and governments fight over who may own it. A character with $10B and no compute cannot train a model, run a drone fleet or serve a model to customers. A company that holds a big share of the world's GPU compute can decide who trains at all.
+Money buys almost everything in TechnoCapital20FF. Techno-Capital is the exception: there is never enough of it, its parts come from a handful of companies in a handful of cities, and governments fight over who may own it. A character with $10B and no compute cannot train a model, run a drone fleet or serve a model to customers. A company that holds a big share of the world's GPU compute can decide who trains at all.
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Formulas are written so each term can be shown in a tooltip.
 
@@ -19,8 +19,8 @@ Techno-Capital (TC) is any productive machine stock that can be **allocated** be
 | Pool | Unit | Comes from | Lives in | Logan's list |
 |---|---|---|---|---|
 | **Compute** | Base, data and GPU units, with **H** = one GPU unit running for a month (glossary, [15-infrastructure.md](15-infrastructure.md) 15.2.1) | Parts bought from the Semiconductors industry (15.2) | Data centers (15.3) | Yes |
-| **Drones** | Drones, by class (commercial, military) | The Drones industry (6.2.3) | Fleets based in a hub | Yes |
-| **Autonomous vehicles** | Vehicles (robotaxis, autonomous trucks) | EVs plus autonomy kits (6.2.3) | Fleets based in a hub | Yes ("automated cars") |
+| **Drones** | Drones, by class (commercial, military) | The Drones industry (6.2.3) | Fleets based in a location | Yes |
+| **Autonomous vehicles** | Vehicles (robotaxis, autonomous trucks) | EVs plus autonomy kits (6.2.3) | Fleets based in a location | Yes ("automated cars") |
 | **Robots** | Industrial robots; humanoid robots late game | The Robotics industry | Working for the company's business units, or in storage | Added (assumption 6.15) |
 | **Models** | A trained AI model, with a quality per capability ([18-ai-models.md](18-ai-models.md) 18.2) | Training runs (6.5) | Held as an intangible by a company; runs on compute | Added (assumption 6.15) |
 
@@ -32,7 +32,7 @@ Models are not a machine, but they behave like one: they are scarce, they go obs
 
 | Term | Meaning |
 |---|---|
-| **Pool** | All of one TC type a company controls, broken down by hub |
+| **Pool** | All of one TC type a company controls, broken down by **location**: a Metro, or a single province outside any Metro ([2-map-and-influence.md](2-map-and-influence.md) 2.3.2) **(A)** |
 | **Allocation** | Assigning TC to a **task**. Allocated TC does nothing else |
 | **Leased out** | The default use: TC that is not allocated is **leased, not sold**. Its use is rented to others by contract or on the spot market, and the owner keeps the machine (6.3.4). The machines themselves can also be bought and sold as assets (6.3.5) |
 | **Own production** | TC used in the company's own business (robots in its own units, compute running its own software) counts as allocated to it |
@@ -47,8 +47,8 @@ Models are not a machine, but they behave like one: they are scarce, they go obs
 | Interval | Techno-Capital calculations |
 |---|---|
 | **Hourly** | Allocation changes for compute and models take effect at the next turn; training runs, hacks (17-hacking) and trading strategies progress; hot events (loss spikes, outages, cyberattacks) |
-| **Daily** | Drone and vehicle fleet moves between districts; spot availability |
-| **Weekly** | Fleet operations (delivery, security, survey) resolve; robot and drone redeployments between hubs complete |
+| **Daily** | Drone and vehicle fleet moves between provinces of one Metro; spot availability |
+| **Weekly** | Fleet operations (delivery, security, survey) resolve; robot and drone redeployments between locations complete |
 | **Monthly** | TC depreciation, task upkeep billing |
 
 ---
@@ -61,7 +61,7 @@ Models are not a machine, but they behave like one: they are scarce, they go obs
 - **Leased out**: compute not allocated is leased to others or offered on the cloud (6.3.4, 15.5); the owner keeps the servers.
 - **Allocating** compute to a task costs nothing in cash but gives up that lease income: the **opportunity cost** shown in every task tooltip is the lease income forgone.
 - Software that needs GPU compute ([14-software.md](14-software.md)) takes it from the company's own pool before the cloud. This is the simplest kind of allocation and happens by default.
-- **Clusters**: compute in one hub held by one company (Owned, Leased, or Spot from a single provider) forms a **cluster**. Large training runs need a single cluster (6.5.2). Compute in different hubs cannot be added together for those tasks.
+- **Clusters**: compute in one location held by one company (Owned, Leased, or Spot from a single provider) forms a **cluster**. Large training runs need a single cluster (6.5.2). Compute in different locations cannot be added together for those tasks.
 
 ### 6.2.2 Foundry capacity and lithography tools
 
@@ -80,7 +80,7 @@ Drones are bought from the Drones industry, autonomy kits from the EVs and Autos
 | **Industrial robots** | robot | 2% of price | 8 years | Work in the company's business units; spare robots are stored and can be redeployed |
 | **Humanoid robots** | robot | 3% of price; 10 H per 100 robots | 5 years | Late game (a Robotics unit at productivity 130, 6.4.3): fill Unskilled jobs at 1.2 productivity; banned under L3 Heavy in some countries **(T)** |
 
-- Fleets are **based in a hub** and work there; moving a fleet to another hub takes 1 week by road or air freight (air for drones), plus permits under T3 Risk-Based or stricter.
+- Fleets are **based in a location** and work there; moving a fleet to another location takes 1 week by road or air freight (air for drones), plus permits under T3 Risk-Based or stricter.
 - Fleets need **fleet control compute** (the H column). If the compute is missing, the fleet works at the compute fill. A robotaxi fleet whose compute goes offline stops.
 
 ### 6.2.4 Models
@@ -108,7 +108,7 @@ Every task that needs TC lists its requirement as one of three types **(T)**:
 A requirement also names:
 
 - **Minimum class or capability**: a fleet class (6.2.3), or a model with a given capability and quality (18.2).
-- **Location**: *Same hub* (fleets, colocated trading), *Same country* (government contracts; there are no data residency rules, 15.4), *Any* (most compute tasks), or *Single cluster* (training runs).
+- **Location**: *Same location* (fleets, colocated trading), *Same country* (government contracts; there are no data residency rules, 15.4), *Any* (most compute tasks), or *Single cluster* (training runs).
 - **Control level**: which control levels the task accepts. Most tasks accept Owned, Leased or Spot. Secret tasks (hacks, illegal surveillance, training under a Moratorium) need Owned or Compromised, because leased and spot use is on the provider's books. Training runs accept Compromised only if the whole cluster is one compromised site.
 
 ### 6.3.2 Paused and interrupted tasks
@@ -121,10 +121,10 @@ A requirement also names:
 
 ### 6.3.3 The allocation screen and priorities
 
-- The **Techno-Capital screen** shows each pool by hub: total, **allocated** (by task, including own production), **leased out** (contract), **on spot** (offered, and how much is in use), **idle**, **broken or offline**, and **suspected compromised** (unexplained use, 6.9.3).
+- The **Techno-Capital screen** shows each pool by location: total, **allocated** (by task, including own production), **leased out** (contract), **on spot** (offered, and how much is in use), **idle**, **broken or offline**, and **suspected compromised** (unexplained use, 6.9.3).
 - The player sets **priorities 1 to 5** on tasks. When a pool shrinks (outage, sabotage, sanctions, a vassal turning Defiant), the lowest priorities lose fill first.
 - **Auto-allocation**: the COO (or the CTO board seat, 6.10.1) fills new tasks from TC on the spot market by default, cheapest lease income forgone first (contract leases are never broken automatically), so the player is not asked every hour.
-- Changes take effect at the next hourly turn for compute and models, next day for fleets in the same hub, and next week across hubs.
+- Changes take effect at the next hourly turn for compute and models, next day for fleets in the same location, and next week across locations.
 
 ### 6.3.4 Owning, leasing, spot and compromised
 
@@ -134,7 +134,7 @@ Techno-Capital is **leased, not sold**. Owners keep the machines and rent out th
 |---|---|---|---|
 | **Owned** | Buy the parts or machines (compute parts from the Semiconductors industry, 15.2, and 6.7.3 when short; fleets and robots, 6.2.3; used, 6.3.5) or build the data center | The asset price, then upkeep | Full control. Secret tasks allowed. Idle capacity can be leased out |
 | **Leased** | A lease contract: an agreed amount of TC for an agreed time (1 to 36 months) | The world cloud price at signing × 0.8, fixed for the term, paid monthly, one month's payment as a deposit **(T)**. One standard rate for every term | Guaranteed for the whole term: the lessor cannot take it back. Top allocation priority in a shortage. Breaking early costs 50% of the remaining payments. The lessee may sublease. Leases transfer with the asset if the owner sells it |
-| **Spot** | Take spare capacity by the hour from the spot market | The world cloud price (15.5) as it moves, hour by hour | On demand, no commitment, stop any hour. Dearer than a lease and exposed to price spikes. Only available while owners have idle capacity on offer (compute: on the cloud, anywhere; fleets: in the hub) |
+| **Spot** | Take spare capacity by the hour from the spot market | The world cloud price (15.5) as it moves, hour by hour | On demand, no commitment, stop any hour. Dearer than a lease and exposed to price spikes. Only available while owners have idle capacity on offer (compute: on the cloud, anywhere; fleets: in the location) |
 | **Compromised** | Secretly use TC that someone else owns, while they use it or while it sits idle (6.9.3) | No lease paid; the cost is getting access (a hack, 17-hacking, or a broker's fee of 30% to 60% of the spot price) | Secret, and outside export controls and T3. Can be detected and lost at any time |
 
 Fleets and robots use the same rules: the lease rate for drones, vehicles and robots is 2% of the unit price per month, and spot day rates are 0.1% per day **(T)**.
@@ -234,8 +234,8 @@ The full requirement list. **Opp. cost** is the market value of the TC at base p
 | **AI advisor** for a character (3.7) | 50 H per month and a model with Reasoning 50+ | Upkeep | +1 skill per 15 points of Reasoning above 50 in one skill (cap +3); hackable (17-hacking) |
 | **R&D compute** (batch 116, replaces tier 3 and 4 research) | 1,000 H per month per $100M a year of R&D spend in an AI labs, Semiconductors, Pharma or Defense unit | Rate | Without it that unit's R&D moves productivity at half effect (10.0.4) |
 | **Drug discovery sprint** | 20,000 H, a model with Reasoning 60+ | Rate | A Pharma unit's productivity +5 over 6 months |
-| **Drone delivery** | 200 commercial drones per hub served; a Logistics unit at 115 | Upkeep | Last-mile cost -40% for the company's retail and e-commerce units in that hub |
-| **Resource survey** | 20 commercial drones for 2 months in a Resource Field district | Rate | A Mining unit's productivity +3 for a year in that district's assets |
+| **Drone delivery** | 200 commercial drones per location served; a Logistics unit at 115 | Upkeep | Last-mile cost -40% for the company's retail and e-commerce units in that location |
+| **Resource survey** | 20 commercial drones for 2 months in a province with a mineral resource tag | Rate | A Mining unit's productivity +3 for a year on its assets in that province |
 | **Infrastructure inspection** | 10 drones per infrastructure asset | Upkeep | Condition falls 0.5 per month instead of 1 |
 
 ### 6.6.2 Semiconductor tasks
@@ -250,8 +250,8 @@ Removed (batch 116): there is no yield.
 
 | Task | Requirement **(T)** | Type | Effect |
 |---|---|---|---|
-| **Quant strategy** | 500 H per month per strategy, Same hub as the exchange (colocation) | Upkeep | +1% yearly return edge on the strategy's capital, cap $2B per strategy; halved under F4 Strict, banned short side under Draconian |
-| **Market-making desk** | 1,000 H per month, Same hub | Upkeep | Earns the bid-ask spread on one stock or currency pair; spreads narrow 30% for that asset |
+| **Quant strategy** | 500 H per month per strategy, Same location as the exchange (colocation) | Upkeep | +1% yearly return edge on the strategy's capital, cap $2B per strategy; halved under F4 Strict, banned short side under Draconian |
+| **Market-making desk** | 1,000 H per month, Same location | Upkeep | Earns the bid-ask spread on one stock or currency pair; spreads narrow 30% for that asset |
 | **Due diligence AI** | 2,000 H per deal, a model with Reasoning 50+ | Rate | Reveals hidden liabilities and shells in M&A targets (+30% discovery) |
 
 Crypto mining is removed (batch 116): crypto lives only in the phone tab ([9-gambling.md](9-gambling.md)).
@@ -260,7 +260,7 @@ Crypto mining is removed (batch 116): crypto lives only in the phone tab ([9-gam
 
 | Task | Requirement **(T)** | Type | Effect |
 |---|---|---|---|
-| **Robotaxi service** | At least 500 robotaxis in a hub; T3 certification (8 weeks under Risk-Based); an EVs or Autos unit at 130 (6.4.3) | Upkeep | Revenue per robotaxi `$4,500 × PF` per month; displaces Gig drivers (Gig jobs -5% in the hub per 5,000 robotaxis), feeding Neo-Luddite drift (5-ideology 5.5.2) |
+| **Robotaxi service** | At least 500 robotaxis in a location; T3 certification (8 weeks under Risk-Based); an EVs or Autos unit at 130 (6.4.3) | Upkeep | Revenue per robotaxi `$4,500 × PF` per month; displaces Gig drivers (Gig jobs -5% in the location per 5,000 robotaxis), feeding Neo-Luddite drift (5-ideology 5.5.2) |
 | **Executive transport** | 2 robotaxis per protected character, armored | Upkeep | Kidnap risk on the road ÷2 (2.21.8) |
 | **Delivery network** | As drone delivery | Upkeep | As above |
 
@@ -271,7 +271,7 @@ Crypto mining is removed (batch 116): crypto lives only in the phone tab ([9-gam
 | **Micro-targeted campaign** | 1 H per 10,000 adults in the constituency per month, a model with Language 50+ | Upkeep | Ads term +0.15 on top of normal ads (4.6.3); exposure +2 under T2 Strict |
 | **Synthetic psyop** | 1,000 H per month, a model with the Generation (media) capability at 50+ | Upkeep | Psyop cost -40% and discovery -20% (stacks with the synthetic media method) |
 | **Cyber defense** | 1,000 H per month per company | Upkeep | Hack success against the company -30% ([17-hacking.md](17-hacking.md); stacks with a cyber defense team, 4.23) |
-| **Surveillance coverage** | 10 drones and 100 H per month per district | Upkeep | Surveillance feeds 1 per district; scheme detection ×1.2 in that district; needs T4 Expanded or above for public spaces |
+| **Surveillance coverage** | 10 drones and 100 H per month per province | Upkeep | Surveillance feeds 1 per province; scheme detection ×1.2 in that province; needs T4 Expanded or above for public spaces |
 | **Drone wing** (4.23) | 5 military drones per month replaced, plus fleet control | Upkeep | Security Strength 20 |
 | **Sovereign AI contract** (government contract, 4.9.7) | 50,000 H per month in the client country, a model with Reasoning 70+ | Upkeep | Contract revenue; +10 government attitude; the owner sees the government's data (an intelligence hook, 4.26) |
 
@@ -317,7 +317,7 @@ GPU demand is part of the Semiconductors industry's market demand (10.0.3), and 
 ### 6.7.2 Power: the hidden gate
 
 - A data center's power draw follows its compute (15.3). New data centers need a **grid connection**: `queue time = 12 weeks × (1 + 2 × max(0, 0.15 - reserve margin) / 0.15)` **(T)**, so a tight grid can delay a data center by up to 9 months.
-- **Behind-the-meter power**: a company that owns a power plant or SMR in the same hub skips the queue for that plant's capacity and pays its own marginal cost.
+- **Behind-the-meter power**: a company that owns a power plant or SMR in the same location skips the queue for that plant's capacity and pays its own marginal cost.
 - A grid shortfall cuts power fill, and compute falls with it. Data centers are cut early in rationing unless they hold a contracted industrial supply.
 
 ### 6.7.3 Getting GPU parts: allocation by relationship
@@ -330,10 +330,10 @@ GPU allocation becomes a CK3 relationship game: dinners with the maker's CEO, a 
 
 ### 6.7.5 Gigaclusters (megaproject)
 
-A **gigacluster** is a campus of 400,000 or more GPU units in one hub, connected as one cluster **(T)**:
+A **gigacluster** is a campus of 400,000 or more GPU units in one province, connected as one cluster **(T)**:
 
-- Needs industrial real estate in the hub (2-map-and-influence 2.16), 1 GW of dedicated power (owned plants or a 10-year power contract), and an AI labs unit at 115 (6.4.3).
-- Counts as **Critical infrastructure**: +2 influence weight in the hub, a target for state intelligence (4.26), and a high-Stakes asset in local politics.
+- Needs industrial real estate in the province's Industrial pool (2-map-and-influence 2.16), 1 GW of dedicated power (owned plants or a 10-year power contract), and an AI labs unit at 115 (6.4.3).
+- Counts as **Critical infrastructure**: +2 influence weight in the province, a target for state intelligence (4.26), and a high-Stakes asset in local politics.
 - Build time 2 to 3 years; cost about $60B **(T)**.
 
 ---
@@ -355,7 +355,7 @@ Chipmaking is not TC: the Semiconductors industry's starting units (Hsinchu-Taip
 ### 6.8.2 Techno-Capital share and influence
 
 - A company's **compute share** = its Owned and Leased compute ÷ world compute. It appears on the Techno-Capital screen beside its world rank.
-- Data centers and Semiconductors units already give influence as assets in their hubs (2.5). A gigacluster counts ×2 **(T)**: governments care about who holds the machines.
+- Data centers and Semiconductors units already give influence as assets in their provinces (2.5). A gigacluster counts ×2 **(T)**: governments care about who holds the machines.
 
 ### 6.8.3 Monthly node and tool supply
 
@@ -454,7 +454,7 @@ TC sits on the balance sheet beside compute and software (10.0.8), not as busine
 | Landites | Capital is the intelligence: Landite drift +0.5 per 10% of world compute held by the top 3 holders |
 | Effective Altruists | Want Gen 3+ runs licensed; Pause Front targets training runs |
 | Transhumanists | Want longevity and brain-computer research funded |
-| Neo-Luddites | The Unplugged target data centers, robot factories, robotaxi depots; drift +1 per 5,000 robotaxis in a hub |
+| Neo-Luddites | The Unplugged target data centers, robot factories, robotaxi depots; drift +1 per 5,000 robotaxis in a location |
 | Communists | Want compute nationalized ("seize the servers"): C5 State Administration applied to data centers first |
 | Sovereigntists | Love compute havens and compromised compute |
 | Chuds | Hate foreign-owned data centers and human enhancement; like domestic chip champions |
@@ -477,7 +477,7 @@ What politics and Techno-Capital usually mean at each company rank is in [4-poli
 | **Loss Spike** | 1% per week during a training run | Roll back to checkpoint (-3% progress) · Push through (Tech check by the lead: success no loss, failure run score -5) |
 | **Allocation Cut** | GPU part shortage and Allocation Score in the bottom third | Fly to meet the maker's CEO (a trip, Persuasion check: restore allocation) · Pay +20% · Buy used GPU units from the grey market |
 | **Controls Bite** | Export controls hit a Semiconductors unit's country | Lobby the controlling government (4.10) · Ride it out (productivity -2 a month) · Smuggle parts (exposure +15; the loss halved) |
-| **Grid Says No** | A data center's connection queue passes 6 months | Build behind-the-meter gas or SMR power · Move the build to another hub · Bribe the utility (exposure +5, queue halved) |
+| **Grid Says No** | A data center's connection queue passes 6 months | Build behind-the-meter gas or SMR power · Move the build to another location · Bribe the utility (exposure +5, queue halved) |
 | **Robotaxi Kills a Pedestrian** | 0.2% per month per 1,000 robotaxis | Settle and pause (fleet offline 2 weeks) · Blame the victim (scandal Heat 50) · Lobby for a liability cap (T3 Risk-Based) |
 | **The Unplugged Come at Night** | Neo-Luddite cell operation against a data center | As 5-ideology 5.7.2; 20% of its GPU compute destroyed |
 | **Heatwave** | Summer in Phoenix or Dubai, 10% per year | Cut compute 20% for 3 weeks · Pay triple for water and power · Risk it (25% chance of a 1-week outage) |

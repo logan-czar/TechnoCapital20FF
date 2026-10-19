@@ -1,6 +1,6 @@
 # TechnoCapital20FF: Design Document
 
-_Status: v0.6 (2026-10-18). Batch 117: no stress, Heat means how cancelled a character is. Batch 116: rewritten to the current design (pausable real time with hourly ticks, 24/7 markets, one scenario with John Techno, news and Pdoomberg, two-layer control, Wall Street Raider style industries, no dynasty or succession: the player character's death ends the game). v0.5, consistency pass, batch 74. Owner: Logan. Living document; every part is open for revision._
+_Status: v0.6 (2026-10-19). Batch 118: EU4-style map (about 195 real countries, about 3,200 provinces, Metros for megacities; no hubs, districts or minor groups). Batch 117: no stress, Heat means how cancelled a character is. Batch 116: rewritten to the current design (pausable real time with hourly ticks, 24/7 markets, one scenario with John Techno, news and Pdoomberg, two-layer control, Wall Street Raider style industries, no dynasty or succession: the player character's death ends the game). v0.5, consistency pass, batch 74. Owner: Logan. Living document; every part is open for revision._
 
 This is the entry point. Each system has its own file in this folder so it can grow independently.
 
@@ -10,7 +10,7 @@ This is the entry point. Each system has its own file in this folder so it can g
 | 2 | [02-trusts-and-assets.md](02-trusts-and-assets.md) | Personal trusts and accounts, asset classes, leverage ("Wall Street Raiders Lite") |
 | 3 | [03-characters.md](03-characters.md) | Skills, traits, relationship tags, Heat, schemes |
 | 4 | [04-dynasty-and-succession.md](04-dynasty-and-succession.md) | Removed (batch 116): what remains is the player character and game over on death |
-| 5 | [05-map-and-influence.md](05-map-and-influence.md) | World map, countries, regions, economic hubs, influence |
+| 5 | [05-map-and-influence.md](05-map-and-influence.md) | World map: countries, regions, areas, provinces and Metros; influence |
 | 6 | [06-economy.md](06-economy.md) | Industries and business units (Wall Street Raider style), demand, financing |
 | 7 | [07-markets.md](07-markets.md) | 24/7 stock trading, earnings days, bonds, funds, central banks |
 | 8 | [08-politics.md](08-politics.md) | Governments at three levels, ideology blocs, laws, regulators, lobbying, diplomacy |
@@ -27,7 +27,7 @@ Exact rules, numbers and content for each layer of the game:
 | Layer | File |
 |---|---|
 | 1. Corporate core (companies, characters, trusts, young companies) | [detailed/1-corporate-core.md](detailed/1-corporate-core.md) |
-| 2. Map and influence (map, hubs, influence, strata, real estate pools, travel) | [detailed/2-map-and-influence.md](detailed/2-map-and-influence.md) |
+| 2. Map and influence (map, provinces and Metros, influence, strata, real estate pools, travel) | [detailed/2-map-and-influence.md](detailed/2-map-and-influence.md) |
 | 3. Markets and FX | [detailed/3-markets-and-fx.md](detailed/3-markets-and-fx.md) |
 | 4. Politics (ideology blocs, votes by strata, politics by company rank) | [detailed/4-politics.md](detailed/4-politics.md) |
 | 5. Ideology (the nine ideologies, Victoria 2 style) | [detailed/5-ideology.md](detailed/5-ideology.md) |
@@ -59,7 +59,7 @@ The fantasy is *Succession* meets *Crusader Kings 3* meets *Wall Street Raider*:
 1. **Ownership is power.** Every relationship of authority is an equity stake, a charter clause, a contract or a debt. Characters are landless; assets are their titles.
 2. **People, not spreadsheets.** Companies are run by characters with traits, secrets and relationships. Numbers matter, but characters decide what happens to them.
 3. **One life.** You play John Techno and no one else. There is no dynasty and no successor: when John dies (health 0), the game is over (batch 116).
-4. **One connected world.** A strike at a business unit in one hub moves an industry, a stock price, a currency and an election. Systems talk to each other.
+4. **One connected world.** A strike at a business unit in one province moves an industry, a stock price, a currency and an election. Systems talk to each other.
 5. **Modern, plausible, a little dystopian.** Real mechanisms (VC rounds, dual-class shares, offshore shells, capital controls) pushed slightly past today.
 
 ## Key concepts
@@ -84,7 +84,7 @@ The fantasy is *Succession* meets *Crusader Kings 3* meets *Wall Street Raider*:
 
 ```
 John Techno ──owns──> Personal trusts and accounts ─┐
-     │                                              ├──> Influence over hubs and governments
+     │                                              ├──> Influence over provinces, cities and governments
      └──seats, blocs, hooks──> Companies ───────────┤
                                  │                  │
                                  ├──own──> Vassal companies (subsidiaries, shells)
