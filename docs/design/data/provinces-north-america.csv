@@ -246,7 +246,7 @@ MX-0038,Yucatan,MEX,Yucatan,Yucatan,,City,7,6,16,None,Tropical,Y,,,,,"Merida ser
 MX-0039,Quintana Roo,MEX,Quintana Roo,Quintana Roo,,City,10,3,15,None,Tropical,Y,,,,,"Cancun, Playa del Carmen, Tulum, Cozumel cruise port"
 MX-0040,San Luis Potosi,MEX,San Luis Potosi,San Luis Potosi,,City,5,12,16,Farmland,Desert,N,,,,,"BMW and GM plants, Huasteca sugar cane"
 MX-0041,Hidalgo,MEX,Hidalgo,Hidalgo,,City,4,11,17,None,Mountain,N,,,,,"Pachuca, Tula refinery and cement"
-MX-0042,Zacatecas,MEX,Zacatecas,Zacatecas,,City,4,12,14,Gold,Desert,N,,,,,"Fresnillo silver, Penasquito gold"
+MX-0042,Zacatecas,MEX,Zacatecas,Zacatecas,,City,4,12,14,Silver,Desert,N,,,,,"Fresnillo silver, Penasquito gold; tag added in batch 124"
 MX-0043,Tabasco,MEX,Tabasco,Tabasco,,City,5,13,16,Oil,Wetland,Y,Florida Strait,,,,"Villahermosa Pemex offices, Dos Bocas Olmeca refinery"
 MX-0044,Campeche,MEX,Campeche,Campeche,,Town,4,12,12,Oil,Tropical,Y,Florida Strait,,,,Ciudad del Carmen base for Cantarell and Ku-Maloob-Zaap offshore oil
 MX-0045,Morelos,MEX,Morelos,Morelos,,City,5,6,15,None,Mountain,N,,,,,"Cuernavaca, Nissan plant"

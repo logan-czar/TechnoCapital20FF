@@ -5,40 +5,40 @@ MEX,Mexico,North America,MXN,1250,127.6,0.22,Y,Liberal democracy,Screened,,49,
 GRL,Greenland,North America,DKK,3.1,0.056,0.89,N,Liberal democracy,Screened,,3,Self-governing territory of Denmark; own row for its size on the map and rare earths and uranium; old group Nordics (A); dependent territory; government_type and restriction (A)
 BMU,Bermuda,North America,BMD,7.5,0.064,1.20,N,Liberal democracy,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; government_type and restriction (A)"
 SPM,Saint Pierre and Miquelon,North America,EUR,0.21,0.006,0.64,N,Liberal democracy,Screened,,1,French territory; listed in the North America superregion by the spec; fishing; euro -20% applied; old group Euro periphery (A); dependent territory; government_type and restriction (A)
-BRA,Brazil,Latin America,BRL,1850,211,0.25,Y,Liberal democracy,Guarded,,67,
-ARG,Argentina,Latin America,ARS,450,44.9,0.20,Y,Liberal democracy,Guarded,,35,
-CHL,Chile,Latin America,CLP,280,19,0.30,Y,Liberal democracy,Open,,22,
-COL,Colombia,Latin America,COP,320,50.3,0.18,Y,Liberal democracy,Screened,,29,
-PER,Peru,Latin America,PEN,228,32.5,0.21,N,Liberal democracy,Guarded,,27,Copper; old group Andean and Venezuela; government_type (A)
+BRA,Brazil,Latin America,USD,1850,211,0.25,Y,Liberal democracy,Guarded,,67,"dollarized at start, was BRL (batch 124)"
+ARG,Argentina,Latin America,USD,450,44.9,0.20,Y,Liberal democracy,Guarded,,35,"dollarized at start, was ARS (batch 124)"
+CHL,Chile,Latin America,USD,280,19,0.30,Y,Liberal democracy,Open,,22,"dollarized at start, was CLP (batch 124)"
+COL,Colombia,Latin America,USD,320,50.3,0.18,Y,Liberal democracy,Screened,,29,"dollarized at start, was COP (batch 124)"
+PER,Peru,Latin America,USD,228,32.5,0.21,N,Liberal democracy,Guarded,,27,"Copper; old group Andean and Venezuela; government_type (A); dollarized at start, was PEN (batch 124)"
 ECU,Ecuador,Latin America,USD,108,17.4,0.19,N,Liberal democracy,Guarded,,15,Oil; dollarized; old group Andean and Venezuela; government_type (A)
-BOL,Bolivia,Latin America,BOB,41.0,11.5,0.13,N,Liberal democracy,Guarded,,17,Lithium; Morales gone (19.22); old group Andean and Venezuela; government_type (A)
-VEN,Venezuela,Latin America,VES,180,28.5,0.19,N,Managed democracy,Closed,,22,"Oil; sliding slowly under Maduro, cushioned by high oil (19.22), so GDP set well above the real 2019 collapse (A); old group Andean and Venezuela; restriction (A)"
-URY,Uruguay,Latin America,UYU,56.0,3.5,0.37,N,Liberal democracy,Guarded,,10,old group Andean and Venezuela (A); government_type (A)
-PRY,Paraguay,Latin America,PYG,38.0,7,0.17,N,Liberal democracy,Guarded,,12,Hydropower; old group Andean and Venezuela (A); government_type (A)
-GUY,Guyana,Latin America,GYD,5.2,0.78,0.20,N,Liberal democracy,Screened,,6,Offshore oil discovered 2015; old group Central America and Caribbean (A); government_type (A)
-SUR,Suriname,Latin America,SRD,4.0,0.58,0.20,N,Liberal democracy,Screened,,6,old group Central America and Caribbean (A); government_type (A)
-PAN,Panama,Latin America,PAB,67.0,4.2,0.37,N,Liberal democracy,Screened,,10,Panama Canal; uses USD alongside PAB; old group Central America and Caribbean; government_type (A)
-CRI,Costa Rica,Latin America,CRC,64.0,5,0.32,N,Liberal democracy,Screened,,9,old group Central America and Caribbean; government_type (A)
-GTM,Guatemala,Latin America,GTQ,77.0,16.6,0.15,N,Liberal democracy,Screened,,13,old group Central America and Caribbean; government_type (A)
-HND,Honduras,Latin America,HNL,25.0,9.7,0.10,N,Managed democracy,Screened,,10,old group Central America and Caribbean (A); government_type (A)
+BOL,Bolivia,Latin America,USD,41.0,11.5,0.13,N,Liberal democracy,Guarded,,17,"Lithium; Morales gone (19.22); old group Andean and Venezuela; government_type (A); dollarized at start, was BOB (batch 124)"
+VEN,Venezuela,Latin America,USD,180,28.5,0.19,N,Managed democracy,Closed,,22,"Oil; sliding slowly under Maduro, cushioned by high oil (19.22), so GDP set well above the real 2019 collapse (A); old group Andean and Venezuela; restriction (A); dollarized at start, was VES (batch 124)"
+URY,Uruguay,Latin America,USD,56.0,3.5,0.37,N,Liberal democracy,Guarded,,10,"old group Andean and Venezuela (A); government_type (A); dollarized at start, was UYU (batch 124)"
+PRY,Paraguay,Latin America,USD,38.0,7,0.17,N,Liberal democracy,Guarded,,12,"Hydropower; old group Andean and Venezuela (A); government_type (A); dollarized at start, was PYG (batch 124)"
+GUY,Guyana,Latin America,USD,5.2,0.78,0.20,N,Liberal democracy,Screened,,6,"Offshore oil discovered 2015; old group Central America and Caribbean (A); government_type (A); dollarized at start, was GYD (batch 124)"
+SUR,Suriname,Latin America,USD,4.0,0.58,0.20,N,Liberal democracy,Screened,,6,"old group Central America and Caribbean (A); government_type (A); dollarized at start, was SRD (batch 124)"
+PAN,Panama,Latin America,USD,67.0,4.2,0.37,N,Liberal democracy,Screened,,10,"Panama Canal; uses USD alongside PAB; old group Central America and Caribbean; government_type (A); dollarized at start, was PAB (batch 124)"
+CRI,Costa Rica,Latin America,USD,64.0,5,0.32,N,Liberal democracy,Screened,,9,"old group Central America and Caribbean; government_type (A); dollarized at start, was CRC (batch 124)"
+GTM,Guatemala,Latin America,USD,77.0,16.6,0.15,N,Liberal democracy,Screened,,13,"old group Central America and Caribbean; government_type (A); dollarized at start, was GTQ (batch 124)"
+HND,Honduras,Latin America,USD,25.0,9.7,0.10,N,Managed democracy,Screened,,10,"old group Central America and Caribbean (A); government_type (A); dollarized at start, was HNL (batch 124)"
 SLV,El Salvador,Latin America,USD,27.0,6.5,0.14,N,Liberal democracy,Screened,,7,Dollarized; old group Central America and Caribbean (A); government_type (A)
-NIC,Nicaragua,Latin America,NIO,12.5,6.5,0.08,N,Managed democracy,Screened,,8,old group Central America and Caribbean (A); government_type (A)
-BLZ,Belize,Latin America,BZD,1.9,0.39,0.16,N,Liberal democracy,Screened,,3,old group Central America and Caribbean (A); government_type (A)
-CUB,Cuba,Latin America,CUP,103,11.3,0.25,N,One-party state,Restricted,,13,Group default Screened overridden for a one-party state (A); old group Central America and Caribbean; restriction (A)
-DOM,Dominican Republic,Latin America,DOP,89.0,10.7,0.23,N,Liberal democracy,Screened,,11,old group Central America and Caribbean; government_type (A)
-HTI,Haiti,Latin America,HTG,8.5,11.3,0.04,N,Failed state,Screened,,7,old group Central America and Caribbean
-JAM,Jamaica,Latin America,JMD,15.8,2.95,0.17,N,Liberal democracy,Screened,,5,Bauxite; old group Central America and Caribbean (A); government_type (A)
-TTO,Trinidad and Tobago,Latin America,TTD,24.0,1.4,0.39,N,Liberal democracy,Screened,,5,Gas and LNG; old group Central America and Caribbean (A); government_type (A)
-BHS,Bahamas,Latin America,BSD,12.8,0.39,0.61,N,Liberal democracy,Screened,,4,Offshore finance; not a starting shell haven; old group Central America and Caribbean (A); government_type (A)
-BRB,Barbados,Latin America,BBD,5.2,0.29,0.40,N,Liberal democracy,Screened,,1,old group Central America and Caribbean (A); government_type (A)
-ATG,Antigua and Barbuda,Latin America,XCD,1.7,0.097,0.39,N,Liberal democracy,Screened,,1,old group Central America and Caribbean (A); government_type (A)
-DMA,Dominica,Latin America,XCD,0.60,0.072,0.23,N,Liberal democracy,Screened,,1,old group Central America and Caribbean (A); government_type (A)
-GRD,Grenada,Latin America,XCD,1.2,0.112,0.28,N,Liberal democracy,Screened,,1,old group Central America and Caribbean (A); government_type (A)
-KNA,Saint Kitts and Nevis,Latin America,XCD,1.1,0.053,0.43,N,Liberal democracy,Screened,,1,old group Central America and Caribbean (A); government_type (A)
-LCA,Saint Lucia,Latin America,XCD,2.1,0.183,0.29,N,Liberal democracy,Screened,,1,old group Central America and Caribbean (A); government_type (A)
-VCT,Saint Vincent and the Grenadines,Latin America,XCD,0.82,0.111,0.21,N,Liberal democracy,Screened,,1,old group Central America and Caribbean (A); government_type (A)
+NIC,Nicaragua,Latin America,USD,12.5,6.5,0.08,N,Managed democracy,Screened,,8,"old group Central America and Caribbean (A); government_type (A); dollarized at start, was NIO (batch 124)"
+BLZ,Belize,Latin America,USD,1.9,0.39,0.16,N,Liberal democracy,Screened,,3,"old group Central America and Caribbean (A); government_type (A); dollarized at start, was BZD (batch 124)"
+CUB,Cuba,Latin America,USD,103,11.3,0.25,N,One-party state,Restricted,,13,"Group default Screened overridden for a one-party state (A); old group Central America and Caribbean; restriction (A); dollarized at start, was CUP (batch 124)"
+DOM,Dominican Republic,Latin America,USD,89.0,10.7,0.23,N,Liberal democracy,Screened,,11,"old group Central America and Caribbean; government_type (A); dollarized at start, was DOP (batch 124)"
+HTI,Haiti,Latin America,USD,8.5,11.3,0.04,N,Failed state,Screened,,7,"old group Central America and Caribbean; dollarized at start, was HTG (batch 124)"
+JAM,Jamaica,Latin America,USD,15.8,2.95,0.17,N,Liberal democracy,Screened,,5,"Bauxite; old group Central America and Caribbean (A); government_type (A); dollarized at start, was JMD (batch 124)"
+TTO,Trinidad and Tobago,Latin America,USD,24.0,1.4,0.39,N,Liberal democracy,Screened,,5,"Gas and LNG; old group Central America and Caribbean (A); government_type (A); dollarized at start, was TTD (batch 124)"
+BHS,Bahamas,Latin America,USD,12.8,0.39,0.61,N,Liberal democracy,Screened,,4,"Offshore finance; not a starting shell haven; old group Central America and Caribbean (A); government_type (A); dollarized at start, was BSD (batch 124)"
+BRB,Barbados,Latin America,USD,5.2,0.29,0.40,N,Liberal democracy,Screened,,1,"old group Central America and Caribbean (A); government_type (A); dollarized at start, was BBD (batch 124)"
+ATG,Antigua and Barbuda,Latin America,USD,1.7,0.097,0.39,N,Liberal democracy,Screened,,1,"old group Central America and Caribbean (A); government_type (A); dollarized at start, was XCD (batch 124)"
+DMA,Dominica,Latin America,USD,0.60,0.072,0.23,N,Liberal democracy,Screened,,1,"old group Central America and Caribbean (A); government_type (A); dollarized at start, was XCD (batch 124)"
+GRD,Grenada,Latin America,USD,1.2,0.112,0.28,N,Liberal democracy,Screened,,1,"old group Central America and Caribbean (A); government_type (A); dollarized at start, was XCD (batch 124)"
+KNA,Saint Kitts and Nevis,Latin America,USD,1.1,0.053,0.43,N,Liberal democracy,Screened,,1,"old group Central America and Caribbean (A); government_type (A); dollarized at start, was XCD (batch 124)"
+LCA,Saint Lucia,Latin America,USD,2.1,0.183,0.29,N,Liberal democracy,Screened,,1,"old group Central America and Caribbean (A); government_type (A); dollarized at start, was XCD (batch 124)"
+VCT,Saint Vincent and the Grenadines,Latin America,USD,0.82,0.111,0.21,N,Liberal democracy,Screened,,1,"old group Central America and Caribbean (A); government_type (A); dollarized at start, was XCD (batch 124)"
 PRI,Puerto Rico,Latin America,USD,116,3.19,0.66,N,Liberal democracy,Screened,,9,"US territory; own row because it has its own government, 3.2M people and pharma plants; US +10% applied; follows US federal law (A); old group Central America and Caribbean (A); dependent territory; government_type and restriction (A)"
-CYM,Cayman Islands,Latin America,KYD,5.9,0.065,1.20,N,Liberal democracy,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; government_type and restriction (A)"
+CYM,Cayman Islands,Latin America,USD,5.9,0.065,1.20,N,Liberal democracy,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; government_type and restriction (A); dollarized at start, was KYD (batch 124)"
 VGB,British Virgin Islands,Latin America,USD,1.0,0.03,0.62,N,Liberal democracy,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; government_type and restriction (A)"
 GBR,United Kingdom,Europe,GBP,2750,66.8,0.85,Y,Liberal democracy,Screened,,43,"Left the EU on 31 Dec 2019, outside it at game start (batch 122)"
 DEU,Germany,Europe,EUR,3200,83.1,0.90,Y,Liberal democracy,Screened,,50,
@@ -208,3 +208,4 @@ TUV,Tuvalu,East Asia and Oceania,AUD,0.05,0.012,0.14,N,Liberal democracy,Screene
 GIB,Gibraltar,Europe,GBP,2.8,0.034,0.95,N,Liberal democracy,Open,GBR,1,"Haven (batch 122); British Overseas Territory; online gambling, bunkering; out of the EU with the UK (A)"
 IMN,Isle of Man,Europe,GBP,7.0,0.085,0.85,N,Liberal democracy,Open,GBR,1,"Haven (batch 122); Crown Dependency; online gambling, ship registry (A)"
 FRO,Faroe Islands,Europe,DKK,3.1,0.052,0.90,N,Liberal democracy,Screened,DNK,1,"Self-governing under Denmark, outside the EU; fishing and salmon (batch 122) (A)"
+PAP,Papa's Port,Latin America,USD,0.3,0.004,0.60,N,Micronation (sovereign rule),Open,ARG,1,"Micronation on the Falkland Islands, Argentine territory, ruled by the sovereign Papa Slop (Logan, batch 124); code PAP is invented (A)"

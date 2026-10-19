@@ -233,7 +233,8 @@ Districts are gone, so each industry has a **fit** that says which kind of provi
 | Oil | Oil |
 | Gas | Gas |
 | Coal | Mining, Power utilities |
-| Copper, Lithium, Cobalt, Nickel, Rare earths, Gold, Uranium | Mining |
+| Copper, Lithium, Cobalt, Nickel, Rare earths, Gold, Uranium, Silver, Zinc, Tin | Mining |
+| Bauxite (batch 124) | Mining, Metals |
 | Iron ore | Mining, Metals |
 | Farmland, Timber, Fishing | Agriculture |
 | Hydropower | Power utilities, Renewables |
