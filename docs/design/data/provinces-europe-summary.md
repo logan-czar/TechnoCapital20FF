@@ -2,14 +2,14 @@
 
 _Generated from [provinces-europe.csv](provinces-europe.csv). Same columns and rules as North America. Russian-held Crimea and Donbas rows have country RUS and count in Ukraine's budget._
 
-**Total:** 679 provinces in 48 countries. World plan now 3221.
+**Total:** 679 provinces in 51 countries. World plan now 3221.
 
 ## Provinces per country
 
 | Country | Provinces |
 |---|---|
 | DEU | 50 |
-| GBR | 45 |
+| GBR | 43 |
 | FRA | 45 |
 | ITA | 40 |
 | ESP | 36 |
@@ -23,7 +23,10 @@ _Generated from [provinces-europe.csv](provinces-europe.csv). Same columns and r
 | ROU | 20 |
 | BEL | 18 |
 | AUT | 17 |
-| DNK | 16 |
+| DNK | 15 |
+| GIB | 1 |
+| IMN | 1 |
+| FRO | 1 |
 | FIN | 16 |
 | CZE | 16 |
 | PRT | 15 |

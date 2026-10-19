@@ -40,7 +40,7 @@ VCT,Saint Vincent and the Grenadines,Latin America,XCD,0.82,0.111,0.21,N,Liberal
 PRI,Puerto Rico,Latin America,USD,116,3.19,0.66,N,Liberal democracy,Screened,,9,"US territory; own row because it has its own government, 3.2M people and pharma plants; US +10% applied; follows US federal law (A); old group Central America and Caribbean (A); dependent territory; government_type and restriction (A)"
 CYM,Cayman Islands,Latin America,KYD,5.9,0.065,1.20,N,Liberal democracy,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; government_type and restriction (A)"
 VGB,British Virgin Islands,Latin America,USD,1.0,0.03,0.62,N,Liberal democracy,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; government_type and restriction (A)"
-GBR,United Kingdom,Europe,GBP,2750,66.8,0.85,Y,Liberal democracy,Screened,,45,
+GBR,United Kingdom,Europe,GBP,2750,66.8,0.85,Y,Liberal democracy,Screened,,43,"Left the EU on 31 Dec 2019, outside it at game start (batch 122)"
 DEU,Germany,Europe,EUR,3200,83.1,0.90,Y,Liberal democracy,Screened,,50,
 FRA,France,Europe,EUR,2200,67.2,0.85,Y,Liberal democracy,Guarded,,45,
 NLD,Netherlands,Europe,EUR,750,17.3,0.90,Y,Liberal democracy,Screened,,24,
@@ -59,7 +59,7 @@ LVA,Latvia,Europe,EUR,27.3,1.91,0.34,N,Liberal democracy,Screened,,7,euro -20% a
 LTU,Lithuania,Europe,EUR,43.7,2.79,0.36,N,Liberal democracy,Screened,,8,euro -20% applied; old group Central and Eastern Europe; government_type (A)
 SVK,Slovakia,Europe,EUR,84.0,5.45,0.36,N,Liberal democracy,Screened,,10,euro -20% applied; old group Central and Eastern Europe; government_type (A)
 SVN,Slovenia,Europe,EUR,43.4,2.09,0.44,N,Liberal democracy,Screened,,7,euro -20% applied; old group Central and Eastern Europe (A); government_type (A)
-CYP,Cyprus,Europe,EUR,20.0,0.89,0.47,N,Liberal democracy,Screened,,5,Shipping and offshore finance; euro -20% applied; old group Euro periphery (A); government_type (A)
+CYP,Cyprus,Europe,EUR,20.0,0.89,0.47,N,Liberal democracy,Screened,,5,Shipping and offshore finance; euro -20% applied; old group Euro periphery (A); government_type (A); has contested provinces (batch 122)
 MLT,Malta,Europe,EUR,12.0,0.5,0.49,N,Liberal democracy,Screened,,1,euro -20% applied; old group Euro periphery (A); government_type (A)
 MNE,Montenegro,Europe,EUR,4.4,0.62,0.21,N,Liberal democracy,Screened,,3,Uses the euro without membership; euro -20% applied; old group Central and Eastern Europe (A); government_type (A)
 XKX,Kosovo,Europe,EUR,6.3,1.8,0.13,N,Liberal democracy,Screened,,4,"Partially recognized; uses the euro; XKX is a user code, not ISO; euro -20% applied; old group Central and Eastern Europe (A); government_type (A)"
@@ -70,7 +70,7 @@ VAT,Vatican City,Europe,EUR,0.24,0.0008,1.20,N,One-party state,Screened,,1,Micro
 LIE,Liechtenstein,Europe,CHF,6.7,0.038,1.20,N,Liberal democracy,Screened,,1,Microstate; trusts and foundations; old group Euro periphery (A); government_type (A)
 SWE,Sweden,Europe,SEK,531,10.3,0.84,N,Liberal democracy,Screened,,23,old group Nordics
 NOR,Norway,Europe,NOK,403,5.35,1.10,N,Liberal democracy,Screened,,20,Oil and gas; sovereign wealth fund; old group Nordics
-DNK,Denmark,Europe,DKK,348,5.8,0.94,N,Liberal democracy,Screened,,16,Shipping; old group Nordics
+DNK,Denmark,Europe,DKK,348,5.8,0.94,N,Liberal democracy,Screened,,15,Shipping; old group Nordics
 ISL,Iceland,Europe,ISK,24.7,0.36,1.03,N,Liberal democracy,Screened,,3,old group Nordics; government_type (A)
 POL,Poland,Europe,PLN,596,38,0.36,N,Liberal democracy,Screened,,28,old group Central and Eastern Europe
 CZE,Czechia,Europe,CZK,251,10.7,0.48,N,Liberal democracy,Screened,,16,old group Central and Eastern Europe; government_type (A)
@@ -82,9 +82,9 @@ SRB,Serbia,Europe,RSD,51.5,6.95,0.21,N,Managed democracy,Screened,,10,Excludes K
 BIH,Bosnia and Herzegovina,Europe,BAM,20.2,3.3,0.19,N,Liberal democracy,Screened,,7,old group Central and Eastern Europe (A); government_type (A)
 MKD,North Macedonia,Europe,MKD,12.6,2.08,0.19,N,Liberal democracy,Screened,,5,old group Central and Eastern Europe (A); government_type (A)
 ALB,Albania,Europe,ALL,15.3,2.85,0.17,N,Liberal democracy,Screened,,6,old group Central and Eastern Europe (A); government_type (A)
-UKR,Ukraine,Europe,UAH,154,41.9,0.13,N,Liberal democracy (at war),Guarded,,22,Drone war since 2016 (19.22); population and area exclude Crimea and the Donbas held by Russia (A); old group Black Sea and Caucasus
+UKR,Ukraine,Europe,UAH,154,41.9,0.13,N,Liberal democracy (at war),Guarded,,22,Drone war since 2016 (19.22); population and area exclude Crimea and the Donbas held by Russia (A); old group Black Sea and Caucasus; has contested provinces (batch 122)
 BLR,Belarus,Europe,BYN,64.4,9.47,0.20,N,Managed democracy,Guarded,,12,In Moscow's orbit (19.22); old group Black Sea and Caucasus (A); government_type (A)
-MDA,Moldova,Europe,MDL,11.9,2.66,0.15,N,Liberal democracy,Guarded,,6,old group Black Sea and Caucasus; government_type (A)
+MDA,Moldova,Europe,MDL,11.9,2.66,0.15,N,Liberal democracy,Guarded,,6,old group Black Sea and Caucasus; government_type (A); has contested provinces (batch 122)
 GGY,Guernsey,Europe,GBP,3.5,0.063,0.89,N,Liberal democracy,Open,,1,"Haven; Crown Dependency, modeled inside the UK until now (2.2.5); old group Euro periphery (A); dependent territory; government_type and restriction (A)"
 JEY,Jersey,Europe,GBP,5.6,0.107,0.85,N,Liberal democracy,Open,,1,"Haven; Crown Dependency, modeled inside the UK until now (2.2.5); old group Euro periphery (A); dependent territory; government_type and restriction (A)"
 RUS,Russia,Russia and Central Asia,RUB,1200,146.7,0.25,Y,Managed democracy,Restricted,,70,Population and area include Crimea and the Donbas (A)
@@ -205,3 +205,6 @@ MHL,Marshall Islands,East Asia and Oceania,USD,0.24,0.059,0.14,N,Liberal democra
 PLW,Palau,East Asia and Oceania,USD,0.27,0.018,0.35,N,Liberal democracy,Screened,,1,old group Oceania minors; government_type (A)
 NRU,Nauru,East Asia and Oceania,AUD,0.12,0.011,0.28,N,Liberal democracy,Screened,,1,old group Oceania minors; government_type (A)
 TUV,Tuvalu,East Asia and Oceania,AUD,0.05,0.012,0.14,N,Liberal democracy,Screened,,1,old group Oceania minors; government_type (A)
+GIB,Gibraltar,Europe,GBP,2.8,0.034,0.95,N,Liberal democracy,Open,GBR,1,"Haven (batch 122); British Overseas Territory; online gambling, bunkering; out of the EU with the UK (A)"
+IMN,Isle of Man,Europe,GBP,7.0,0.085,0.85,N,Liberal democracy,Open,GBR,1,"Haven (batch 122); Crown Dependency; online gambling, ship registry (A)"
+FRO,Faroe Islands,Europe,DKK,3.1,0.052,0.90,N,Liberal democracy,Screened,DNK,1,"Self-governing under Denmark, outside the EU; fishing and salmon (batch 122) (A)"
