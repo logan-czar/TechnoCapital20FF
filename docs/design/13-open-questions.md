@@ -209,6 +209,7 @@
 - Batch 168 (Logan, 2026-10-20): board seats fixed to CEO, CFO, CIO, CMO, COO everywhere (1a; CTO removed); the whole game is built in Rust with Bevy, Godot and GDExtension dropped: headless deterministic sim crate in FixedUpdate (one step = one hour), standalone headless runner for soak tests, UI reads a SimViews resource and sends events (A; 12-tech-and-roadmap v0.6, mvp-spec v1.4).
 - Batch 169 (Logan, 2026-10-20): UI is Bevy UI only, no egui (1b; dense tables via an in-house table widget, A); one Bevy version pinned, upgraded only between milestones (2a).
 - Batch 170 (Logan, 2026-10-20): build plan written (mvp/build-plan.md, docs only): crates sim, sim-data, game, headless, mapgen; M0 to M10 in 97 tasks plus a 9-task province bitmap track.
+- Batch 171 (Logan, 2026-10-20): determinism on the same machine only (1b; cross-OS hashes post-MVP); Python prepares geodata, Rust mapgen draws the bitmap (2a); disputed land follows our province files, contested provinces hatched (3a). opengs-csharp reviewed (mvp/opengs-review.md): MIT Godot C# map demo, reuse shader ideas only, its data is likely Paradox-derived and off-limits.
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm

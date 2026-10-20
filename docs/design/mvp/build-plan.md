@@ -1,6 +1,8 @@
 # TechnoCapital20FF MVP build plan
 
-_Status: v0.1 (2026-10-20). Draft for Logan. Built on [mvp-spec.md](mvp-spec.md) v1.4 (sections 1 to 9, the M0 to M10 milestones and balance targets of section 10), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) v0.6 (batches 168 and 169), [map-sources.md](map-sources.md), [../data/README.md](../data/README.md) and the data tools in [../tools/mvp-data/](../tools/mvp-data/gen.py)._
+_Status: v0.2 (2026-10-20). Draft for Logan. Built on [mvp-spec.md](mvp-spec.md) v1.4 (sections 1 to 9, the M0 to M10 milestones and balance targets of section 10), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) v0.6 (batches 168 and 169), [map-sources.md](map-sources.md), [../data/README.md](../data/README.md) and the data tools in [../tools/mvp-data/](../tools/mvp-data/gen.py)._
+
+_Batch 171 (Logan): determinism only has to hold on one machine (same seed, build, OS and CPU), so plain f64 with a fixed iteration order and seeded RNG, no `libm` and no cross-OS hash test in the MVP (decision A); Python prepares the border geodata and the Rust `mapgen` draws the bitmap and centroids (decision B); disputed land follows our own province files and contested provinces are hatched (decision C). See section 6._
 
 **How to read it.** **(A)** marks an assumption Logan has not confirmed. **(T)** marks a tuning value. "Spec 5.1" means section 5.1 of mvp-spec.md. Task ids like M2.3 are used in the rest of this file.
 
@@ -8,7 +10,7 @@ _Status: v0.1 (2026-10-20). Draft for Logan. Built on [mvp-spec.md](mvp-spec.md)
 
 ## 1. What this plan covers
 
-This plan says how to build the MVP of mvp-spec.md: which Rust crates to make, what goes in each, the order of the work, how it is tested, what could go wrong and three choices Logan still has to make.
+This plan says how to build the MVP of mvp-spec.md: which Rust crates to make, what goes in each, the order of the work, how it is tested, what could go wrong and the three choices Logan made in batch 171.
 
 **Scope reminder.** The MVP is read-only. The player watches 651 companies run on their own on the real map, with a lite AI that only runs its own company. There is no trading, founding, politics or personal play (spec 1). The milestones M0 to M10 and their "done" lines come from spec 10 and do not change here; this plan only breaks them into tasks.
 
@@ -25,7 +27,7 @@ One Cargo workspace, one language, one pinned Bevy version (12.2, batch 169). Th
 | Crate | Kind | What lives there | Depends on |
 |---|---|---|---|
 | `sim-data` | library | One row struct per CSV file, loading with `serde` and `csv`, and the load-time checks (ids, ranges, balance identities) ported from validate.py. A bad row names the file, line and field (spec 10 M0) | serde, csv, thiserror |
-| `sim` | library, **no Bevy** | The whole simulation: tables keyed by id, the clock and scheduler, seeded RNG streams, every formula of spec 5 and 6, startup events and listings, news, the `SimViews` query tables (spec 9.2, 9.4), saves and the state hash. Public API: `Sim::new(data, seed)`, `Sim::step()` returns notices, `Sim::apply(control)` | sim-data, rand_chacha, rand_core, libm, serde, postcard, flate2, blake3 |
+| `sim` | library, **no Bevy** | The whole simulation: tables keyed by id, the clock and scheduler, seeded RNG streams, every formula of spec 5 and 6, startup events and listings, news, the `SimViews` query tables (spec 9.2, 9.4), saves and the state hash. Public API: `Sim::new(data, seed)`, `Sim::step()` returns notices, `Sim::apply(control)` | sim-data, rand_chacha, rand_core, serde, postcard, flate2, blake3 |
 | `game` | binary (the desktop app) | The Bevy app and its plugins: **SimBridgePlugin** (runs `sim` in `FixedUpdate`, turns UI events into controls and notices into Bevy events, holds `SimViews` as a resource), **MapPlugin** (ID texture, WGSL shader, camera, picking, map modes), **UiPlugin** (theme, top bar, alerts, screens), **TablePlugin** (the in-house table widget and a small chart widget), **PdoombergPlugin** (the terminal) | sim, sim-data, bevy (pinned) |
 | `headless` | binary | Runs `sim` with no window: data check, N-year runs, 30-year soak over many seeds, replay of a command log, state hashes and balance reports as CSV | sim, sim-data |
 | `mapgen` | binary (offline tool) | Turns `provinces.geojson` into the province-ID bitmap, the color to id table, province-centroids.csv (spec 2.2, G1) with label points, an adjacency list and a coastal cross-check. Never shipped with the game | geojson, geo, geo-rasterize, image, csv, serde |
@@ -38,14 +40,14 @@ One Cargo workspace, one language, one pinned Bevy version (12.2, batch 169). Th
 |---|---|---|
 | Engine | `bevy`, pinned exactly (`=0.x.y`) in `[workspace.dependencies]`, `Cargo.lock` kept | One version, upgraded only between milestones (batch 169). Version picked at build start: latest stable (12.6) |
 | Data | `serde`, `csv` | Decided in 12.2 |
-| Seeded RNG | `rand_chacha` (ChaCha8) | Same draws on every OS and every release; one stream per system (spec 3.1) |
-| Math | `libm` for pow, log10 and exp in the sim | The same bits on every OS (see 4.3) **(A)** |
+| Seeded RNG | `rand_chacha` (ChaCha8) | Same draws for the same seed in every release; one stream per system (spec 3.1) |
+| Math | Plain f64 and the standard library's pow, log10 and exp | Same-machine determinism is enough (decision A, batch 171) |
 | Normal and Poisson draws | Written in `sim` (Box-Muller, Knuth's Poisson for mean 2) | A dependency upgrade can never change the draws **(A)** |
 | Saves | `postcard` with `flate2` (pure Rust) | Compressed snapshots of the tables plus RNG positions (12.2) **(A)** |
 | State hash | `blake3` | Fast hash of the tables for replay tests |
 | Errors | `thiserror` | Clear load errors |
 | Tests | built-in `cargo test`, `insta` for golden files, `criterion` for benchmarks | **(A)** |
-| Map tool | `geojson`, `geo`, `geo-rasterize`, `image` | Rasterize and measure in Rust (see decision B) |
+| Map tool | `geojson`, `geo`, `geo-rasterize`, `image` | Rasterize and measure in Rust (decision B, batch 171) |
 
 ### 2.3 Folder tree
 
@@ -229,7 +231,7 @@ Each task has a one-line description and what "done" means. The last task of eac
 | # | Task | Done when |
 |---|---|---|
 | M8.1 | Load province-ids.png as a texture (nearest sampling, no mipmaps) and the color to ordinal table | Every bitmap color maps to one sim province |
-| M8.2 | WGSL shader: id lookup per pixel, a 3,255-entry color table texture, borders where neighbor ids differ | Political mode draws with country borders |
+| M8.2 | WGSL shader: id lookup per pixel, a 3,255-entry color table texture, borders where neighbor ids differ; hatching on provinces with a `contested` value (decision C) | Political mode draws with country borders; contested provinces show hatched |
 | M8.3 | Camera: pan and the World, Country, Province zoom levels | Smooth zoom at 60 fps |
 | M8.4 | Picking: read the id under the cursor from a CPU copy of the bitmap; hover and select | Hover outline follows the cursor |
 | M8.5 | Map modes: Political, Development (4), Industry, Company HQs pins, Financial zones with hub pins and legend; Metro outlines (8) | Each mode writes the color table from `get_map_layer` |
@@ -258,7 +260,7 @@ Each task has a one-line description and what "done" means. The last task of eac
 | M10.1 | Headless soak command: 30 years, a list of seeds, a metrics CSV per year (built after M1, grows with each milestone) | One command runs 50 seeds **(T)** |
 | M10.2 | Balance target checker: every 10-year target of spec 10 as pass or fail | Report lists each target per seed |
 | M10.3 | Startup, character and listing target checker | Same, for the second target list |
-| M10.4 | Determinism: replay, save and load mid-run, three OSes | Same seed gives the same hashes everywhere (4.3) |
+| M10.4 | Determinism: replay, save and load mid-run, on one machine | Same seed gives the same hashes on the same machine and build (4.3) |
 | M10.5 | Boom and pop check with noise off | AI labs demand matches validate.py's boom run |
 | M10.6 | Profile and fix hot spots | 30 years under 2 minutes headless |
 | M10.7 | Tuning pass on **(T)** values; changes go to the spec change log with Logan's okay | All targets pass in the agreed share of seeds |
@@ -317,9 +319,9 @@ Each spec 5 and 6 section gets its own test file in `sim/tests`, using the worke
 ### 4.3 Determinism and replay hashes
 
 - One RNG stream per system; nothing reads the wall clock or thread timing.
-- **Floats (A).** Keep f64 (spec 3) with rules: iterate tables as `Vec`s in id order, never a `HashMap`; sums in a fixed order; no parallel float reductions; `libm` for pow, log10 and exp; no fast-math or `target-cpu=native`; hash floats by their bits. This is enough for same-hash runs on one machine and very likely across OSes. Fixed-point money is the fallback if cross-OS hashes ever differ (decision A).
-- **Replay test.** A run records its seed and command log (in the MVP only speed and skip controls) and a hash each month. A replay must give the same hashes. Save at a random tick, load, continue: same hashes.
-- **Cross-OS.** CI runs a 2-year seeded run on Linux, Windows and macOS and compares the final hash.
+- **Floats (decision A, batch 171).** Plain f64 (spec 3) with a fixed order: iterate tables as `Vec`s in id order, never a `HashMap` in sim logic; sums in a fixed order; no parallel float reductions; hash floats by their bits. The goal is same hashes for the same seed, build, OS and CPU. Matching hashes across OSes is not needed.
+- **Replay test.** A run records its seed and command log (in the MVP only speed and skip controls) and a hash each month. A replay on the same machine must give the same hashes. Save at a random tick, load, continue: same hashes.
+- **Cross-OS hashes.** Post-MVP. Not tested in the MVP.
 
 ### 4.4 The 30-year soak and balance targets
 
@@ -357,26 +359,22 @@ The headless runner runs 2020 to 2050 over 50 seeds **(T)** and writes one CSV r
 | R2 | **Bevy version churn**: each release changes APIs (for example, Bevy 0.17 renamed buffered events to messages) | Exact pin and `Cargo.lock`; upgrades only between milestones, as their own task; `sim` has no Bevy dependency, so churn only touches `game` |
 | R3 | **Map data licensing**: geoBoundaries licenses vary by country and release; OSM data would make our polygons ODbL; GADM forbids commercial use | P2 filter with a provenance column; pinned releases re-checked on each update; no OSM or GADM in shipped data; CREDITS.md built from metadata |
 | R4 | **Sim speed at hourly ticks** with 651 to 1,100 companies and 3,255 provinces | Hourly work is only prices for listed companies; monthly jobs run 360 times in 30 years; tables as flat `Vec`s by ordinal; views rebuilt only when dirty and at most once per frame; province data touched only for monthly map layers; profile from M2 on with the soak harness |
-| R5 | **Determinism with floats** across OSes and builds | f64 with the 4.3 rules **(A)**; cross-OS hash test in CI from M1; fixed-point money as the fallback (decision A) |
+| R5 | **Determinism with floats** on one machine | f64 with the 4.3 ordering rules (decision A); replay hash test from M1; saves may not replay the same on another OS, which is accepted |
 | R6 | **Data drift** between design/data and the game | Sync script plus both checkers in CI (2.3) |
 | R7 | **Province crosswalk effort** (about 1,200 manual matches) and tiny metro provinces | Start track P at once; North America first; tiny-province report and a minimum display size or zoom rule (M8) |
-| R8 | **Disputed borders** are a storefront risk in some markets | Decision C |
+| R8 | **Disputed borders** are a storefront risk in some markets | Decision C: our own province files, contested provinces hatched |
 
 ---
 
-## 6. Open decisions for Logan
+## 6. Decided (batch 171, Logan)
 
-**A. How strict should determinism be?**
-1. f64 with the ordering rules and `libm`, same hashes on all three OSes, fixed-point only if a test fails. **Recommended**: matches spec 3 (money is f64) and keeps formulas simple.
-2. Fixed-point integers for all money now: safest, but every formula with pow or log gets harder.
-3. f64, same hashes only on one OS: least work, but a save could replay differently on another machine.
+These were open decisions in v0.1. Logan's picks are marked **Chosen**.
 
-**B. Who builds the province map: Python, Rust or both?**
-1. Python for the geodata work (fetch, license filter, crosswalk, shapes, simplify: P1 to P6) and the Rust `mapgen` for the bitmap, centroids, adjacency and QA (P7, P8). **Recommended**: Python has the best geodata tools (geopandas, shapely), and the parts the game depends on stay in Rust and in the workspace.
-2. All Python, no `mapgen` crate: one fewer crate, but the bitmap format lives outside the workspace.
-3. All Rust: one language, but Rust's geodata tools are thinner and the crosswalk work is slower.
+**A. How strict should determinism be?** **Chosen: same machine only.** Same seed, same build, same OS and CPU give the same results. Plain f64, a fixed iteration order (no `HashMap` iteration in sim logic) and seeded RNG. Replay hashes are compared on one machine. No `libm`; cross-OS hashes are post-MVP.
+- Not chosen: f64 with `libm` and same hashes on all three OSes; fixed-point money.
 
-**C. Which borders does the map draw for disputed land?**
-1. Follow our own province files (they already set, for example, Crimea as RUS and Taiwan as its own country), and hatch every province with a `contested` value. **Recommended**: the game's data stays the one source, and the dispute is still visible.
-2. Natural Earth's de facto lines as they come.
-3. Change borders per market at build time: the most work, only worth it for a storefront need.
+**B. Who builds the province map?** **Chosen: both.** Python in tools/ prepares the border geodata offline from Natural Earth and geoBoundaries (fetch, license filter, crosswalk, shapes, simplify: P1 to P6). The Rust `mapgen` tool draws the province-ID bitmap and centroids, plus adjacency and QA (P7, P8).
+- Not chosen: all Python; all Rust.
+
+**C. Which borders does the map draw for disputed land?** **Chosen: our own province files.** They already set, for example, Crimea as RUS and Taiwan as its own country. Every province with a `contested` value is drawn hatched on the map (M8.2).
+- Not chosen: Natural Earth's de facto lines; borders changed per market.

@@ -36,7 +36,7 @@ None of the open projects ships a real-world province map we can take as-is for 
 
 ## Recommended dataset
 
-1. Countries: Natural Earth admin 0 10m (public domain), with our own edits for contested areas (Taiwan, Kashmir, Crimea, Western Sahara and so on) set by a game design decision.
+1. Countries: Natural Earth admin 0 10m (public domain), with our own edits for contested areas (Taiwan, Kashmir, Crimea, Western Sahara and so on). Batch 171: disputed land follows our own province files, and contested provinces are drawn hatched.
 2. Regions: Natural Earth admin 1 10m, matched to our 2,015 regions by name and ISO code. Where a game region groups several admin-1 units, dissolve them.
 3. Provinces that subdivide a region: geoBoundaries gbOpen ADM2, or ADM3 for the metro splits. Use only countries whose `boundaryLicense` is CC BY, CC0 or public domain. For the rest, split synthetically with weighted Voronoi from city points, using Natural Earth populated places (public domain) or GeoNames (CC BY 4.0).
 4. Credits: geoBoundaries requires attribution of geoBoundaries plus each source. Generate a CREDITS file from the metadata.
@@ -53,7 +53,7 @@ None of the open projects ships a real-world province map we can take as-is for 
 5. Topology and simplification. Run mapshaper (MPL 2.0) to simplify with shared arcs, so neighbors stay gap-free, for example `mapshaper provinces.geojson -simplify 5% keep-shapes -clean -o`. Use GDAL/ogr2ogr for format conversion and reprojection, for example `ogr2ogr -f GeoJSON -t_srs EPSG:4326`. Pick the game projection here; Robinson or Miller fits an EU4-like look.
 6. Export.
    - (a) `provinces.geojson` with a `province_id` property, as the canonical vector source.
-   - (b) A province-ID color bitmap, the classic Paradox method: rasterize with `gdal_rasterize`, or in Python with rasterio. Give each province a unique RGB and write a CSV from color to ID. Use 8192x4096 or larger so small metro provinces get enough pixels (uncertain; test Singapore and the London splits). In Bevy, one shader (WGSL) looks up the ID texture for borders, hover and map modes. This is how OpenVic renders, so its shader is a good reference.
+   - (b) A province-ID color bitmap, the classic Paradox method. Batch 171: the Rust `mapgen` tool draws it and the centroids from provinces.geojson; Python only prepares the geodata. Give each province a unique RGB and write a CSV from color to ID. Use 8192x4096 or larger so small metro provinces get enough pixels (uncertain; test Singapore and the London splits). In Bevy, one shader (WGSL) looks up the ID texture for borders, hover and map modes. This is how OpenVic renders, so its shader is a good reference.
    - (c) Optional: triangulated meshes per province (mapbox_earcut or shapely triangulation) for labels and click polygons. The bitmap is simpler and scales better to 3,255 provinces.
 7. Derived data. Compute an adjacency list from shared borders (shapely `touches`, or neighbor pixels in the bitmap), area and centroid, and a coastal flag. Cross-check the coastal flag against the CSV `coastal` column. Feed these to the Rust `sim` crate.
 8. QA. Every CSV province has exactly one shape, there are no gaps or overlaps inside a region, and each province's island parts are allowed and flagged.
@@ -62,7 +62,7 @@ None of the open projects ships a real-world province map we can take as-is for 
 
 - License drift. geoBoundaries licenses are per country and per release. Re-check them on every data update and pin the release version.
 - ODbL contamination. Polygons that came from OSM, including through a geoBoundaries country sourced from OSM, would make our shipped map data ODbL. Keep a provenance column on every province.
-- Disputed borders. All sources take a side (Natural Earth is de facto; geoBoundaries CGAZ follows the US State Department). This is a political and storefront risk in some markets, notably China and India. Decide our policy explicitly.
+- Disputed borders. All sources take a side (Natural Earth is de facto; geoBoundaries CGAZ follows the US State Department). This is a political and storefront risk in some markets, notably China and India. Decided in batch 171: our own province files, with contested provinces hatched.
 - Matching effort. Our provinces are design units, not admin units. About 1,200 need a manual crosswalk or a Voronoi fallback. Expect several days of review.
 - Tiny provinces. Sub-city metro provinces may be only a few pixels at world scale. They need a minimum display size, a zoom level, or a merge rule.
 - Mismatched sources. Natural Earth admin 1 and geoBoundaries ADM2 lines do not coincide. Clipping ADM2 to Natural Earth leaves slivers; use a snap tolerance or take admin-1 as the dissolve of ADM2 where available.
