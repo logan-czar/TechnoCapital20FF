@@ -1,6 +1,6 @@
 # 3. Markets and FX: detailed design
 
-_Status: draft v0.3 (2026-10-20). Batch 144 (Logan): the CMO replaces Head of IR or PR in the guidance rolls; in the pre-quarter-end week every covered person, the player and AI alike, is locked out of all stocks (3.1.0). Batch 143 (Logan): the quarterly cycle ([21-quarterly-cycle.md](21-quarterly-cycle.md)): earnings prices move at 01:00 after a one-tick trading window at 00:00, so the earnings-day frenzy starts at 01:00; the recap screen opens the pre-quarter-end week; the player's trading lockout in that week replaces the insider blackout (3.1.0, 3.3.9). Batch 136 (Logan): the 3.6.3 rating reads the HSS band instead of government type (4-politics 4.2). Batch 134 (Logan): one alert scale in 3.13.5 (20-ui 20.4); source reliability shows only as a High, Mid or Low band (3.13.1, 3.14.4); trading without a Pdoomberg subscription uses one-day-old quotes (3.14.1). Batch 134 (Logan): Pdoomberg is a separate WSR-style terminal screen (3.13.1). Batch 131 (Logan): front-running cut. Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): leftover currency wording marked post-POC (FX positions, account and bond currencies, deposit insurance, the "woken" national bank in 3.9.7, peg defenses, Arcology Scrip). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board (3.8.1). This replaces the batch 124 whole-world-dollarized card. Batch 122: the Eurozone Central Bank sets one rate for all 19 euro countries, which share one business cycle (the shared cycle stays; in the POC the Eurozone Central Bank sets no rate, batch 125); the UK is outside the EU at start. Batch 121: only national governments, so only national government bonds exist (regional and city bonds removed from 3.6.1). Batch 118: EU4-style map; local time, roadshows, deposits, unrest, morning briefs and market research use provinces and cities (Metros or city provinces) instead of hubs; exchanges have a home city; charter cities are provinces. Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
+_Status: draft v0.3 (2026-10-20). Batch 152 (Logan): 24 financial zones, each with an exchange in a hub city. The exchange list becomes the 24 zone exchanges, each listed company lists on its HQ country's zone exchange, CBX moves to Frankfurt, and HDM, ESE and NJX become boards of ATX, HRX and the Creek Exchange (3.2.1, 3.2.2, 3.3.4, 3.17.5, assumption 1). Batch 144 (Logan): the CMO replaces Head of IR or PR in the guidance rolls; in the pre-quarter-end week every covered person, the player and AI alike, is locked out of all stocks (3.1.0). Batch 143 (Logan): the quarterly cycle ([21-quarterly-cycle.md](21-quarterly-cycle.md)): earnings prices move at 01:00 after a one-tick trading window at 00:00, so the earnings-day frenzy starts at 01:00; the recap screen opens the pre-quarter-end week; the player's trading lockout in that week replaces the insider blackout (3.1.0, 3.3.9). Batch 136 (Logan): the 3.6.3 rating reads the HSS band instead of government type (4-politics 4.2). Batch 134 (Logan): one alert scale in 3.13.5 (20-ui 20.4); source reliability shows only as a High, Mid or Low band (3.13.1, 3.14.4); trading without a Pdoomberg subscription uses one-day-old quotes (3.14.1). Batch 134 (Logan): Pdoomberg is a separate WSR-style terminal screen (3.13.1). Batch 131 (Logan): front-running cut. Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): leftover currency wording marked post-POC (FX positions, account and bond currencies, deposit insurance, the "woken" national bank in 3.9.7, peg defenses, Arcology Scrip). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board (3.8.1). This replaces the batch 124 whole-world-dollarized card. Batch 122: the Eurozone Central Bank sets one rate for all 19 euro countries, which share one business cycle (the shared cycle stays; in the POC the Eurozone Central Bank sets no rate, batch 125); the UK is outside the EU at start. Batch 121: only national governments, so only national government bonds exist (regional and city bonds removed from 3.6.1). Batch 118: EU4-style map; local time, roadshows, deposits, unrest, morning briefs and market research use provinces and cities (Metros or city provinces) instead of hubs; exchanges have a home city; charter cities are provinces. Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
 
 This file covers stock exchanges, the stock price model, corporate actions, short selling and margin, bonds and credit ratings, commodities, foreign exchange, central banks, and market crime. It ends with worked examples and a list of new assumptions.
 
@@ -116,28 +116,42 @@ Market tools are grouped by the rank of the player's largest company ([1-corpora
 
 ### 3.2.1 Exchange list
 
-Twelve fictional exchanges stand in for real ones, plus one off-the-books venue. Each has a home city (a Metro or city province), a currency, a regulator (the national securities regulator from [4-politics.md](4-politics.md)) and indices. Every exchange lists and trades in USD in the simulation (3.8.1, batch 125); the Currency column is the exchange's real home currency, used as flavor in news and history **(A)**.
+**One exchange per financial zone (Logan, batch 152).** Each of the 24 financial zones ([2-map-and-influence.md](2-map-and-influence.md) 2.18.2, data/financial-zones.csv) has **one fictional stock exchange in its hub city**, a key city, plus one off-the-books venue (3.2.5). Each has a home city and hub province, a currency, a regulator (the national securities regulator of the hub country, from [4-politics.md](4-politics.md)) and indices. Every exchange lists and trades in USD in the simulation (3.8.1, batch 125); the Currency column is the hub's real home currency, used as flavor in news and history **(A)**. **Each listed company lists on its HQ country's zone exchange** (a company headquartered in Macau's province lists on CTX); a depositary receipt (3.2.4) can add a second listing.
 
-| Code | Exchange | Home city | Stands in for | Currency (USD at start) | Headline index | Other indices |
-|---|---|---|---|---|---|---|
-| ATX | Atlantic Exchange | New York | NYSE | USD | Atlantic 500 | Atlantic Industrials 30, Atlantic Mid 400 |
-| HDM | Hudson Digital Market | New York | Nasdaq | USD | Hudson 100 | Hudson Composite, Hudson Biotech |
-| CLX | City of London Exchange | London | LSE | GBP | CLX 100 | CLX 250 |
-| CBX | Continental Bourse | Paris (with floors in Amsterdam, Frankfurt and Milan) | Euronext and Deutsche Boerse | EUR | Continental 50 | Continental Mid 100, Rhine 40 |
-| ESE | Edo Securities Exchange | Tokyo | JPX | JPY | Edo 225 | Edo Prime Index |
-| HSE | Huangpu Stock Exchange | Shanghai | SSE and SZSE | CNY | Huangpu Composite | Huangpu Star 50 (tech board) |
-| VHX | Victoria Harbour Exchange | Hong Kong | HKEX | HKD | Harbour Index | Harbour Mainland Enterprises |
-| GXI | Gateway Exchange of India | Mumbai | NSE and BSE | INR | Gateway 50 | Gateway Sensitive 30 |
-| HRX | Han River Exchange | Seoul | KRX | KRW | HRX 200 | HRX Growth |
-| LCX | Lion City Exchange | Singapore | SGX | SGD | Lion 30 | Lion REIT Index |
-| PSX | Paulista Exchange | Sao Paulo | B3 | BRL | Paulista Index | Paulista Small Caps |
-| NJX | Nejd Exchange | Riyadh | Tadawul | SAR | Nejd All-Share | Nejd 30 |
+**Boards (A).** Three exchanges of the old list of twelve are now boards of their zone's exchange, and keep their codes, listing rules, limits and indices wherever this file names them: **HDM** (Hudson Digital Market) is ATX's New York tech board; **ESE** (Edo Securities Exchange) is HRX's Tokyo board, since Japan joins the South Korea zone (provisional, flag for Logan); **NJX** (Nejd Exchange) is the Creek Exchange's Riyadh board. A company lists on a board when its HQ country is the board's country (Japan on ESE, Saudi Arabia on NJX) or, for HDM, when it chooses the tech board.
 
-A **global index**, the **Globe 1000**, is built from the 1,000 largest free-float companies across all twelve exchanges, in USD. Global funds track it, and the GRG reads its volatility.
+| # | Code | Exchange | Hub city (province) | Stands in for | Currency (USD at start) | Headline index | Other indices and boards |
+|---|---|---|---|---|---|---|---|
+| 1 | ATX | Atlantic Exchange | New York (US-0086) | NYSE and Nasdaq | USD | Atlantic 500 | Atlantic Industrials 30, Atlantic Mid 400; HDM board: Hudson 100, Hudson Composite, Hudson Biotech |
+| 2 | ASE | Antilles Securities Exchange | Kingston (JM-0001) | Jamaica Stock Exchange and the Eastern Caribbean exchange | JMD | Antilles 30 | Antilles Tourism |
+| 3 | HAB | Havana Bourse | Havana (CU-0001) | None: a state bourse for the military conglomerates and joint ventures | CUP | Malecon 20 | |
+| 4 | TDX | Taedong River Exchange | Pyongyang (KP-0001) | None: a state exchange for the regime's trading companies | KPW | Chollima 15 | |
+| 5 | CBX | Continental Bourse | Frankfurt (DE-0019), with floors in Paris, Amsterdam and Milan | Deutsche Boerse and Euronext | EUR | Continental 50 | Continental Mid 100, Rhine 40 |
+| 6 | CLX | City of London Exchange | London (GB-0001) | LSE | GBP | CLX 100 | CLX 250 |
+| 7 | HSE | Huangpu Stock Exchange | Shanghai (CN-0008) | SSE and SZSE | CNY | Huangpu Composite | Huangpu Star 50 (tech board) |
+| 8 | HRX | Han River Exchange | Seoul (KR-0001) | KRX, and JPX through the ESE board | KRW | HRX 200 | HRX Growth; ESE board: Edo 225, Edo Prime Index |
+| 9 | VHX | Victoria Harbour Exchange | Hong Kong (HK-0001) | HKEX, and TWSE for Taiwanese listings | HKD | Harbour Index | Harbour Mainland Enterprises, Formosa 50 |
+| 10 | SCX | Southern Cross Exchange | Sydney (AU-0001) | ASX and NZX | AUD | Southern Cross 200 | Southern Cross Resources |
+| 11 | CTX | Cotai Exchange | Macau (CN-0030) | None: a casino-money exchange in this world | MOP | Cotai 20 | |
+| 12 | LCX | Lion City Exchange | Singapore (SG-0001) | SGX | SGD | Lion 30 | Lion REIT Index, Lion ASEAN 100 |
+| 13 | GXI | Gateway Exchange of India | Mumbai (IN-0013) | NSE and BSE | INR | Gateway 50 | Gateway Sensitive 30 |
+| 14 | HVX | Highveld Exchange | Johannesburg (ZA-0001) | JSE | ZAR | Highveld Top 40 | Highveld Resources 10 |
+| 15 | LSX | Lagoon Securities Exchange | Lagos (NG-0001) | NGX and BRVM | NGN | Lagoon 50 | |
+| 16 | RVX | Rift Valley Exchange | Nairobi (KE-0001) | Nairobi Securities Exchange | KES | Rift 20 | |
+| 17 | ABX | Atlas Bourse | Casablanca (MA-0001) | Casablanca Stock Exchange | MAD | Atlas 25 | |
+| 18 | LMX | Limmat Exchange | Zurich (CH-0001) | SIX | CHF | Limmat 20 | |
+| 19 | DCX | Creek Exchange | Dubai (AE-0008) | DFM, ADX and Tadawul | AED | Creek 50 | NJX board: Nejd All-Share, Nejd 30 |
+| 20 | SRX | Silk Road Exchange | Almaty (KZ-0002) | KASE and the Moscow Exchange | KZT | Silk Road 30 | Silk Road Energy |
+| 21 | RFX | Reforma Exchange | Mexico City (MX-0001) | BMV | MXN | Reforma 35 | |
+| 22 | PSX | Paulista Exchange | São Paulo (BR-0001) | B3 | BRL | Paulista Index | Paulista Small Caps |
+| 23 | PLX | River Plate Exchange | Buenos Aires (AR-0001) | BYMA and the Santiago exchange | ARS | Plata 25 | |
+| 24 | ANX | Andean Exchange | Bogotá (CO-0001) | BVC and the Lima exchange | COP | Andes 20 | |
 
-**Depth of simulation:** each exchange lists 30 to 120 fully simulated companies (with characters, boards and business units) plus a **rest-of-market basket**, one synthetic constituent per sector that stands for all unmodeled companies. Indices and sentiment include the basket so they behave like real markets, but the basket cannot be bought into control [T].
+A **global index**, the **Globe 1000**, is built from the 1,000 largest free-float companies across all 24 exchanges, in USD. Global funds track it, and the GRG reads its volatility.
 
-**Calendar:** all twelve exchanges trade every hour of every day and close only on 1 January (3.1.0).
+**Depth of simulation:** each exchange lists 30 to 120 fully simulated companies (with characters, boards and business units) plus a **rest-of-market basket**, one synthetic constituent per sector that stands for all unmodeled companies. Indices and sentiment include the basket so they behave like real markets, but the basket cannot be bought into control [T]. The small zone exchanges (HAB, TDX, CTX and the Caribbean and African exchanges) start with few or no listed companies and are mostly basket at start **(A)**.
+
+**Calendar:** all 24 exchanges trade every hour of every day and close only on 1 January (3.1.0).
 
 ### 3.2.2 Listing requirements
 
@@ -159,8 +173,17 @@ All values are [T].
 | LCX | $150M | 25% | 3 years | Allowed | Allowed | 30% | One third independent | 4 |
 | PSX | $100M | 25% | 3 years | Not allowed on the premium segment | Allowed | Control change requires offer to minorities at 80% of the control price | 20% independent | 2 |
 | NJX | $100M | 30% | 3 years | Not allowed | Allowed; foreigners capped at 49% of any company | 50% | One third independent | 3 |
+| DCX | $100M | 25% | 3 years | Not allowed | Allowed; free zone companies 100% foreign | 30% | One third independent | 3 |
+| SCX | $50M | 20% | 3 years | Allowed | Allowed | 20% | Majority independent | 4 |
+| LMX | $100M | 25% | 3 years | Allowed | Allowed | 33.3% | One third independent | 4 |
+| SRX | $50M | 25% | 3 years | Not allowed | Allowed; strategic sectors need state approval | 30% | One quarter independent | 2 |
+| RFX, PLX, ANX | $50M | 20% | 3 years | Not allowed | Allowed | 30% | 25% independent | 2 |
+| ASE, HVX, LSX, RVX, ABX | $25M (HVX $100M) | 20% | 3 years | Not allowed | Allowed | 35% | One third independent | 2 (HVX 3) |
+| CTX | $50M | 25% | 2 years | Allowed | Allowed; mainland holders through the HSE quota | 30% | One quarter independent | 1 |
+| HAB, TDX | $10M | 10% | None | Not allowed | State approval only; foreigners capped at 49% (HAB) or barred (TDX) | None: the state holds control | None | 1 |
 
 Notes:
+- The rows from DCX down are the zone exchanges added in batch 152 [T]. A board (HDM, ESE, NJX, 3.2.1) keeps its own row.
 - **Board independence** feeds the CK3-style board (see [1-corporate-core.md](1-corporate-core.md) 1.8): a newly listed company must fill the required share of seats with Independent Directors, picked from an exchange-wide pool of AI characters. These seats can side with minority blocs.
 - **Mandatory bid**: a holder group that crosses the threshold must offer to buy all remaining shares at no less than the highest price it paid in the past 12 months. Passive crossings (for example from a buyback) are exempt.
 - **Fees**: a one-off listing fee of 0.05% of market cap (min $100k, max $2M) and an annual fee of 0.01% (min $50k, max $500k) [T].
@@ -345,6 +368,10 @@ Archetype shares vary by exchange [T]:
 | GXI, HRX | 8% | 8% | 15% | 45% | 1% | 5% | 8% | 10% |
 | PSX | 10% | 10% | 18% | 30% | 2% | 5% | 15% | 10% |
 | NJX | 5% | 8% | 10% | 35% | 0% | 30% | 2% | 10% |
+| DCX | 8% | 10% | 14% | 30% | 1% | 20% | 7% | 10% |
+| SCX, LMX | 18% | 14% | 16% | 15% | 4% | 4% | 17% | 12% |
+| Other batch 152 zone exchanges (ASE, CTX, HVX, LSX, RVX, ABX, SRX, RFX, PLX, ANX) | 8% | 10% | 15% | 35% | 1% | 12% | 9% | 10% |
+| HAB, TDX | 0% | 0% | 5% | 15% | 0% | 70% | 0% | 10% |
 
 **Volume:** ADV starts at a turnover rate times the free float: 0.5% per day for large caps, 0.8% for mid caps, 1.2% for small caps and meme stocks [T]. Volume rises x4 for the first 24 hours of each earnings day (3.1.0) and doubles on news shocks, and rises by 50% when GRG is above 40.
 
@@ -1902,7 +1929,7 @@ Each bank keeps a simple balance sheet, updated monthly with its financials and 
 
 ### 3.17.5 Owning an exchange
 
-- Each of the twelve exchanges is a listed company, except HSE and NJX, which are state-controlled [T]. A single holder group may hold at most 20% of an exchange's votes unless the government approves more (a lobbyable decision) [T].
+- Each of the 24 zone exchanges (batch 152) is a listed company, except HSE, HAB and TDX, which are state-controlled; the NJX board is state-controlled inside the Creek Exchange [T]. A single holder group may hold at most 20% of an exchange's votes unless the government approves more (a lobbyable decision) [T].
 - **Powers of a controlling holder**, within the regulator's limits: set trading fees (0 to 0.01%); compete for listings with lower fees and, once a year, one step of softer listing rules within what the national law allows (for example allowing dual-class shares where C4 permits); launch new boards and indices (a small-cap growth board, a sector index); decide when new products launch (index futures, options).
 - **Peek at the Book**: the exchange sees every order. Using this for the owner's own trading halves its slippage [T]; it is a crime with a detection base of 15% per quarter, and conviction costs the exchange license.
 - Owning a global exchange is one route to the Market Maker endgame ([4-politics.md](4-politics.md) 4.29).
@@ -2141,7 +2168,7 @@ The derivatives in scope for the first full release:
 | FX forwards and NDFs | In | 3.8.5 | Post-POC (3.8.1) |
 | Equity swaps (cash-settled) | In | 3.4.8 | Through banks |
 | Securities lending | In | 3.5.1 | |
-| **Index futures** | In (new) | Headline index of each of the twelve exchanges | Cash-settled quarterly. Price = index x e^((r - dividend yield) x T). Margin 8% of notional [T]. The cheap way to hedge a whole portfolio or short a whole market. Index arbitrage passes 50% of net futures flow into the index stocks as flow [T] |
+| **Index futures** | In (new) | Headline index of each of the 24 zone exchanges (batch 152) | Cash-settled quarterly. Price = index x e^((r - dividend yield) x T). Margin 8% of notional [T]. The cheap way to hedge a whole portfolio or short a whole market. Index arbitrage passes 50% of net futures flow into the index stocks as flow [T] |
 | Listed options on stocks and indices | Later | 3.5.6 | |
 | **Credit default swaps** | Later (outline) | Over the counter through banks | Pays face minus recovery if the issuer defaults; premium = the issuer's spread (3.6.5). Hook: an **empty creditor** who holds bonds plus more protection gains from a default, so it votes against restructurings. Risk: the bank that sold the protection may fail first |
 | Interest rate swaps | Abstracted | | Companies choose fixed or floating debt instead: fixed costs 0.3 points more but ignores rate rises [T] |
@@ -2324,7 +2351,7 @@ All companies, people and funds below are fictional. Numbers follow the formulas
 
 New assumptions introduced by this document, to confirm or change:
 
-1. **Twelve exchanges** (ATX, HDM, CLX, CBX, ESE, HSE, VHX, GXI, HRX, LCX, PSX, NJX) plus the Freeport Night Market are enough for the first full release; Frankfurt, Toronto, Sydney and others are folded into these or added later.
+1. **24 zone exchanges** (Logan, batch 152: one per financial zone, in its hub city; 3.2.1) plus the Freeport Night Market. The old HDM, ESE and NJX are boards of ATX, HRX and the Creek Exchange; Toronto, Tokyo as a separate exchange, Moscow and others are folded into these or added later.
 2. **Each exchange simulates 30 to 120 companies** in full, with a rest-of-market basket per sector for indices and sentiment.
 3. **Every market trades 24/7** and ticks every hour, closing only on 1 January (3.1.0), so time zones and daylight saving time do not affect trading.
 4. **Trades settle the same day** at the daily close (no T+1 or T+2 delay).

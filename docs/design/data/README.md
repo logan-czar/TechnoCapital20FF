@@ -124,9 +124,11 @@ The starting characters and companies (Logan, batch 136; rules in [7-starting-wo
 | notes | Canon links and assumptions |
 
 
-## MVP data tables: industries.csv, country-economy.csv, key-cities.csv (batch 147, 2026-10-20), financial-zones.csv (batch 150), ai-boom.csv (batch 151)
+## MVP data tables: industries.csv, country-economy.csv, key-cities.csv (batch 147, 2026-10-20), financial-zones.csv (batches 150 and 152), ai-boom.csv (batch 151)
 
 Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth. AI labs' trend_growth drops from 0.30 to 0.05 (its long-term rate before the boom); industries.csv gains `boom_uplift` and `crash_drop`; new ai-boom.csv (15 rows) holds AI labs' long-term rate by stage and boom year (mvp-spec 5.1.1). validate.py now draws growth with `lt_q = (1 + LT)^(1/4) - 1`, reports compound yearly growth, and runs a seeded 2020 to 2045 boom check.
+
+Batch 152 (Logan): 24 financial zones, each with an exchange in a hub city. financial-zones.csv becomes 24 rows with hub city, hub province, exchange, headline index, intensity, lag, contagion and own shock columns; every country is in exactly one zone (gen.py ZONE_MEMBERS); 8 hub cities join key-cities.csv (88 rows). validate.py checks every country is in exactly one zone, every hub province exists, lies in its zone and belongs to its hub city, and every hub city is in key-cities.csv; it prints each zone with its listed company count and the GDP-weighted intensity Z (1.08).
 
 Batch 150 (Logan): global business cycle, financial zones, mean-reverting industry growth. industries.csv gains `volatility` (0.01 a quarter for all, T); country-economy.csv's cycle_group and cycle_phase_start are replaced by `financial_zone`; new financial-zones.csv (8 rows). validate.py checks every zone exists, prints the GDP-weighted zone intensity (1.10) and runs a seeded 40-quarter growth check (mvp-spec 5.1).
 
@@ -181,19 +183,27 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 | corp_tax_rate | Rate charged in the MVP: real 2020 statutory rate, national plus typical sub-national, from the Tax Foundation and KPMG 2020 tables entered by hand (T). Havens 0.03 (E2 Haven rate); zero-tax countries floored at 0.03 (A); 10 countries with no reliable figure use 0.21 (A) |
 | sovereign_rating | 3.6.2 scale. Real January 2020 ratings moved for the alternate history (euro crisis, Greece's default, Russia's sanctions, a stronger US Middle East); unrated countries by wealth index, or CCC if collapsed (A) |
 | country_spread_bps | Spread over the 3% world base rate: the 3.6.2 sovereign spread for the rating, notches interpolated, plus a 50 to 200 bps crisis premium for 8 countries in the euro or debt crisis (T). US 0 |
-| financial_zone | Zone id in financial-zones.csv (Logan, batch 150). By superregion with exceptions (A): euro-area members and other euro users EA; Puerto Rico and the dollar offshore centers US; Mexico LAT; China and Hong Kong CN; developed East Asia, Australia, New Zealand and the Pacific islands EAS; Russia, Central Asia, South Asia and the rest of East Asia EMA. Replaces cycle_group and cycle_phase_start, since there are no national cycles |
+| financial_zone | Zone id in financial-zones.csv (Logan, batch 152; batch 150 had 8 zones). Every country is in exactly one zone, its nearest sensible one, listed in gen.py ZONE_MEMBERS (A); notes mark the assumed placements (Greenland and Saint Pierre and Miquelon in the EU zone, British havens with the UK, Chinese debt vassals with China, Japan with South Korea, Taiwan with Hong Kong and Russia with Upper Asia, the last three provisional). Replaces cycle_group and cycle_phase_start, since there are no national cycles |
 | notes | Sources and assumptions per row |
 
 ### financial-zones.csv
 
-8 rows (Logan, batch 150; mvp-spec 5.1, 2-map 2.18.2), written by gen.py from its ZONES table. A zone feels the global business cycle at its intensity: zone effect = intensity × g_t.
+24 rows (Logan, batch 152, replacing the 8 of batch 150; mvp-spec 5.1, 2-map 2.18.2, 3-markets 3.2.1), written by gen.py from its ZONES table. Each zone has one stock exchange in one hub city (a key city). A zone feels the global business cycle at its intensity, after its lag: zone effect = intensity × g(t − lag).
 
 | Column | Meaning |
 |---|---|
-| zone_id | US, EA, EU, CN, EAS, EMA, LAT, MEA |
-| name | US-led, Euro area, Other Europe, China, Other East Asia and Oceania, Emerging Asia, Latin America, Middle East and Africa |
-| intensity | How hard the zone feels the cycle (T): US 1.0, EA 1.2, EU 1.1, CN 0.9, EAS 1.1, EMA 1.3, LAT 1.4, MEA 1.3 |
-| countries | Member count, from country-economy.csv |
+| zone_id | NA, CAR, CUB, PRK, EU, UK, CN, KR, HK, AU, MO, SG, IN, AFS, AFW, AFE, AFN, CH, ME, UA, MX, BR, AR, CO |
+| number | Logan's zone number, 1 to 24 (14 to 17 are the four African zones) |
+| name | Zone name, e.g. North America and havens, China and puppets, Upper Asia (Himalayas) |
+| hub_city | The hub city, a key-cities.csv city (validate.py checks it) |
+| hub_province | Province id where the exchange sits; it must exist, belong to the hub city and lie in the zone (validate.py) |
+| exchange_code, exchange, headline_index | The zone's fictional exchange and headline index (3-markets 3.2.1) |
+| intensity | How hard the zone feels the cycle, North America 1.0 (T): 0.3 for Cuba and North Korea, 0.8 Switzerland, 0.9 China, up to 1.6 Argentina |
+| lag_quarters | Quarters before the cycle reaches the zone, 0 to 2 (T) |
+| contagion | Share of a member's default or bank crisis demand hit and spread rise that spreads to the other members, before the size factor of mvp-spec 5.1 (T) |
+| own_shock_sd | Yearly sd of a zone-only growth shock: 0.03 for the isolated Cuba and North Korea, else 0 (T) |
+| extra_provinces | Provinces of another country's row that belong to the zone: Macau's CN-0030 (zone MO), since Macau has no countries.csv row (A) |
+| countries | Member count, from country-economy.csv (Macau 0) |
 | gdp_usd_bn, gdp_share | Zone GDP from countries.csv and its share of world GDP |
 | notes | Who is in it and why (A) |
 
@@ -211,15 +221,15 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 
 ### key-cities.csv
 
-80 rows, parsed by the generator from [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3.3 (cities), 2.3.4 (signature starting assets) and 2.3.5 (perks), so the doc stays the source; rerun the generator after editing those tables.
+88 rows (80 until batch 152, which added the 8 financial zone hubs Kingston, Havana, Pyongyang, Macau, Almaty, Casablanca, Nairobi and Bogotá, with no perks), parsed by the generator from [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3.3 (cities), 2.3.4 (signature starting assets) and 2.3.5 (perks), so the doc stays the source; rerun the generator after editing those tables.
 
 | Column | Meaning |
 |---|---|
-| id | KC-01 to KC-80 in 2.3.3 order |
+| id | KC-01 to KC-88 in 2.3.3 order |
 | city | City name (2.3.3) |
 | country | iso3 |
 | province_ids | Semicolon list of province ids, 2.3.3 ranges expanded |
-| specialties | Semicolon list of industries: those of the city's 2.3.4 row, or for the 32 cities with no 2.3.4 row, read from the 2.3.3 text (A) |
+| specialties | Semicolon list of industries: those of the city's 2.3.4 row, or for the 40 cities with no 2.3.4 row (32, plus the 8 batch 152 hubs), read from the 2.3.3 text (A) |
 | specialties_text | The 2.3.3 specialties text |
 | signature_assets | The 2.3.4 text, or the specialties for cities without a 2.3.4 row (A) |
 | has_perk | Y if the city has a 2.3.5 perk (47 cities). Perks are not applied in the MVP (A) |
