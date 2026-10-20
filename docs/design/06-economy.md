@@ -1,10 +1,10 @@
 # 6. Economy
 
-_Summary (consistency pass, batch 74; batch 116: 42 industries, with Semiconductors as one industry). Full rules: [detailed/10-industry-economy.md](detailed/10-industry-economy.md)._
+_Summary (consistency pass, batch 74; batch 116: 42 industries, with Semiconductors as one industry; Consistency pass 3 (batch 129): financing uses the one world base rate). Full rules: [detailed/10-industry-economy.md](detailed/10-industry-economy.md)._
 
 - **Wall Street Raider style.** 42 industries in one flat list (Lithography machines, Foundry, GPUs and CPUs merged into **Semiconductors**, batch 116), one world market per industry with set demand. No goods and no supply chains.
 - **Business units.** A corporation holds business units in any industry. Each has revenue from its business assets (one dollar figure), expenses, a yearly growth plan, productivity and an R&D plan.
 - **Supply and demand.** Oversupply in an industry hurts productivity industry-wide; undersupply helps. Industry news cycles apply.
 - **Compute and software** are not business assets: the corporation pays for them and spreads the cost across units by revenue ([detailed/14-software.md](detailed/14-software.md), [detailed/15-infrastructure.md](detailed/15-infrastructure.md)).
-- **Financing.** Credit lines, bonds once rated, the central bank base rate plus a spread.
+- **Financing.** Credit lines, bonds once rated, the Federal Monetary Board's world base rate plus a country spread (every value in USD; FX is post-POC, batch 125).
 - **Media** is its own system ([detailed/16-media.md](detailed/16-media.md)).

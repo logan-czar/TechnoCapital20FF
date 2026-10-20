@@ -1,6 +1,6 @@
 # TechnoCapital20FF: Design Document
 
-_Status: v0.6 (2026-10-19). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. Countries keep their real currencies in news, history and UI text; other central banks set no rate in the POC ([detailed/3-markets-and-fx.md](detailed/3-markets-and-fx.md) 3.8.1). Batch 121: only national governments in the POC (no state, regional or city governments; regions, cities and Metros are map groupings). Batch 118: EU4-style map (about 195 real countries, about 3,200 provinces, Metros for megacities; no hubs, districts or minor groups). Batch 117: no stress, Heat means how cancelled a character is. Batch 116: rewritten to the current design (pausable real time with hourly ticks, 24/7 markets, one scenario with John Techno, news and Pdoomberg, two-layer control, Wall Street Raider style industries, no dynasty or succession: the player character's death ends the game). v0.5, consistency pass, batch 74. Owner: Logan. Living document; every part is open for revision._
+_Status: v0.6 (2026-10-19). Consistency pass 3 (batch 129): pillar 4 and the systems diagram no longer suggest that countries gain currencies in play (FX is post-POC). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. Countries keep their real currencies in news, history and UI text; other central banks set no rate in the POC ([detailed/3-markets-and-fx.md](detailed/3-markets-and-fx.md) 3.8.1). Batch 121: only national governments in the POC (no state, regional or city governments; regions, cities and Metros are map groupings). Batch 118: EU4-style map (about 195 real countries, about 3,200 provinces, Metros for megacities; no hubs, districts or minor groups). Batch 117: no stress, Heat means how cancelled a character is. Batch 116: rewritten to the current design (pausable real time with hourly ticks, 24/7 markets, one scenario with John Techno, news and Pdoomberg, two-layer control, Wall Street Raider style industries, no dynasty or succession: the player character's death ends the game). v0.5, consistency pass, batch 74. Owner: Logan. Living document; every part is open for revision._
 
 This is the entry point. Each system has its own file in this folder so it can grow independently.
 
@@ -59,7 +59,7 @@ The fantasy is *Succession* meets *Crusader Kings 3* meets *Wall Street Raider*:
 1. **Ownership is power.** Every relationship of authority is an equity stake, a charter clause, a contract or a debt. Characters are landless; assets are their titles.
 2. **People, not spreadsheets.** Companies are run by characters with traits, secrets and relationships. Numbers matter, but characters decide what happens to them.
 3. **One life.** You play John Techno and no one else. There is no dynasty and no successor: when John dies (health 0), the game is over (batch 116).
-4. **One connected world.** A strike at a business unit in one province moves an industry, a stock price, a country's bond spread (or its currency, once it has one) and an election. Systems talk to each other.
+4. **One connected world.** A strike at a business unit in one province moves an industry, a stock price, a country's bond spread (and, after the POC, its currency) and an election. Systems talk to each other.
 5. **Modern, plausible, a little dystopian.** Real mechanisms (VC rounds, dual-class shares, offshore shells, capital controls) pushed slightly past today.
 
 ## Key concepts
@@ -93,7 +93,7 @@ John Techno ──owns──> Personal trusts and accounts ─┐
                                  │
                             Shares on exchanges ──> Stock prices ──> Portfolio value
                                  │
-                            Taxes, jobs, lobbying ──> Governments ──> Laws, rates, FX
+                            Taxes, jobs, lobbying ──> Governments ──> Laws, rates
 ```
 
 ## Build plan

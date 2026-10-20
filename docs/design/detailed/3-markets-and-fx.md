@@ -1,6 +1,6 @@
 # 3. Markets and FX: detailed design
 
-_Status: draft v0.3 (2026-10-20). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board (3.8.1). This replaces the batch 124 whole-world-dollarized card. Batch 122: the Eurozone Central Bank sets one rate for all 19 euro countries, which share one business cycle (the shared cycle stays; in the POC the Eurozone Central Bank sets no rate, batch 125); the UK is outside the EU at start. Batch 121: only national governments, so only national government bonds exist (regional and city bonds removed from 3.6.1). Batch 118: EU4-style map; local time, roadshows, deposits, unrest, morning briefs and market research use provinces and cities (Metros or city provinces) instead of hubs; exchanges have a home city; charter cities are provinces. Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
+_Status: draft v0.3 (2026-10-20). Consistency pass 3 (batch 129): leftover currency wording marked post-POC (FX positions, account and bond currencies, deposit insurance, the "woken" national bank in 3.9.7, peg defenses, Arcology Scrip). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board (3.8.1). This replaces the batch 124 whole-world-dollarized card. Batch 122: the Eurozone Central Bank sets one rate for all 19 euro countries, which share one business cycle (the shared cycle stays; in the POC the Eurozone Central Bank sets no rate, batch 125); the UK is outside the EU at start. Batch 121: only national governments, so only national government bonds exist (regional and city bonds removed from 3.6.1). Batch 118: EU4-style map; local time, roadshows, deposits, unrest, morning briefs and market research use provinces and cities (Metros or city provinces) instead of hubs; exchanges have a home city; charter cities are provinces. Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
 
 This file covers stock exchanges, the stock price model, corporate actions, short selling and margin, bonds and credit ratings, commodities, foreign exchange, central banks, and market crime. It ends with worked examples and a list of new assumptions.
 
@@ -105,7 +105,7 @@ Market tools are grouped by the rank of the player's largest company ([1-corpora
 |---|---|
 | Venture (< $10M) | Buy and sell listed stocks and government bonds in personal accounts; savings and money market accounts; bank loans and stock-pledge loans; corporate bonds; basic FX conversion (post-POC, 3.8.1) |
 | Company ($10M to $250M) | IPO chain; margin accounts; short selling; block trades; tender offers; rights issues and buybacks for controlled companies |
-| Corporation ($250M to $5B) | Commodity futures and hedging; cornering; FX positions, carry trades and forwards; distressed debt; derivative stake building |
+| Corporation ($250M to $5B) | Commodity futures and hedging; cornering; FX positions, carry trades and forwards (post-POC, 3.8); distressed debt; derivative stake building |
 | Megacorp and Conglomerate (> $5B) | Attacks on currency pegs (post-POC, 3.8); capture of central banks (only the Federal Monetary Board sets a rate in the POC, 3.9); private monetary authorities for charter cities (Arcology Scrip, post-POC, 3.8.1) |
 
 3.25.1 adds what markets are for at each rank.
@@ -727,7 +727,7 @@ Personal accounts and personal trusts can open a margin account with a prime bro
 | Investment-grade government bond | 10% | 5% |
 | Investment-grade corporate bond | 20% | 15% |
 | High-yield bond | 50% | 35% |
-| FX position (majors / emerging / pegged under pressure) | 5% / 10% / 20% | 3% / 7% / 15% |
+| FX position, post-POC (majors / emerging / pegged under pressure) | 5% / 10% / 20% | 3% / 7% / 15% |
 | Commodity futures | Exchange-set, 8% to 15% of notional | 75% of initial |
 
 **Interest**: policy rate + 2.5% for accounts under $100M of assets, + 1.5% for $100M to $1B, + 1.0% above $1B [T]. Accrues daily, charged monthly.
@@ -784,7 +784,7 @@ Options arrive after the core markets are stable. Summary of the intended design
 | Private credit | Loans from funds | Not traded | Negotiated in events; leverage over borrowers ([10-industry-economy.md](10-industry-economy.md) 10.0.9) |
 | International Stabilization Fund (ISF) | Bailout loans to governments | Not traded | The game's stand-in for the IMF; loans come with conditions |
 
-Each bond has: currency, face value, coupon (paid semiannually, through the monthly calculation), maturity, seniority (secured, senior unsecured, subordinated), covenants (maximum net debt / EBITDA, minimum interest coverage) and a rating.
+Each bond has: currency (USD for every bond in the POC, 3.8.1), face value, coupon (paid semiannually, through the monthly calculation), maturity, seniority (secured, senior unsecured, subordinated), covenants (maximum net debt / EBITDA, minimum interest coverage) and a rating.
 
 Corporate bonds are less liquid than stocks: their daily depth is 0.2% of the issue size [T], so selling a big block costs real slippage (same formula as 3.3.7).
 
@@ -875,7 +875,7 @@ Score 7 or more maps to AAA, then one notch lower per point down to CCC at -12 o
 
 ### 3.6.5 Yield formula
 
-**Government bonds** in their own currency, maturity T years:
+**Government bonds** (all in USD in the POC, 3.8.1), maturity T years:
 
 `y(T) = r_avg(T) + TP(T) + sovereign spread(rating) + calibration offset`
 
@@ -1065,7 +1065,7 @@ A **corner** means controlling so much of the deliverable supply at a delivery p
 
 ### 3.8.1 Currencies
 
-Every account, price and asset is denominated in a currency ([1-corporate-core.md](1-corporate-core.md) 1.10). Rates are quoted as units per USD, except EUR and GBP, which are quoted as USD per unit, as in the real market.
+Post-POC, every account, price and asset is denominated in a currency ([1-corporate-core.md](1-corporate-core.md) 1.10); in the POC that currency is always USD. Rates are quoted as units per USD, except EUR and GBP, which are quoted as USD per unit, as in the real market.
 
 **Every value is in USD; local currencies are flavor (Logan, batch 125).** In the story every country keeps its real currency: the euro, the yen, the peso and the rest all exist. The simulation values everything in US dollars as a simplification, not as an in-world event, so there is no in-world story of how this happened. In the POC:
 
@@ -1107,7 +1107,7 @@ Every account, price and asset is denominated in a currency ([1-corporate-core.m
 | EGP | Pound | Egypt | 16.0 | Hard peg with moderate controls (starting scenario) | 12.25% | Overvalued peg; a crisis waiting to happen |
 | ARS | Peso | Argentina | 60 (official) | Crawling peg, 2% a month; hard controls with a parallel rate | 50.00% | Chronic crisis |
 | COP | Peso | Colombia | 3,300 | Free float | 4.25% | Oil exporter; carry target (major country from batch 116) |
-| CDF | Franc | DR Congo | 1,670 | Managed float; the economy runs mostly on USD | 9.00% | Cobalt exporter; dollarized (major country from batch 116) |
+| CDF | Franc | DR Congo | 1,670 | Managed float; the economy runs mostly on USD | 9.00% | Cobalt exporter; the real economy runs mostly on USD (major country from batch 116) |
 | **ASC** | Arcology Scrip | Corporate charter cities | Created when founded | Chosen by the city's company | Set by the company | Endgame currency for a corporate sovereign city or province ([4-politics.md](4-politics.md) 4.12) |
 
 Notes:
@@ -1306,11 +1306,11 @@ Each currency has a central bank run by AI characters (a governor and a board of
 
 ### 3.9.2 Policy rate decision rule
 
-Central banks meet monthly, in the monthly calculation. Inputs come from the economy simulation: 12-month inflation (pi), the inflation target (pi*), the output gap (GDP versus trend, in %), unemployment (u) and its natural rate (u*).
+Central banks meet monthly, in the monthly calculation; in the POC only the Federal Monetary Board's meeting sets a rate (3.9). Inputs come from the economy simulation: 12-month inflation (pi), the inflation target (pi*), the output gap (GDP versus trend, in %), unemployment (u) and its natural rate (u*).
 
 **Step 1: the rule rate** (Taylor-like):
 
-`r_rule = r*_real + pi + phi_pi x (pi - pi*) + phi_y x gap - phi_u x (u - u*) + phi_fx x dep3m + stress + hawk`
+`r_rule = r*_real + pi + phi_pi x (pi - pi*) + phi_y x gap - phi_u x (u - u*) + phi_fx x dep3m + market_calm + hawk`
 
 | Mandate | phi_pi | phi_y | phi_u | phi_fx | Notes |
 |---|---|---|---|---|---|
@@ -1321,7 +1321,7 @@ Central banks meet monthly, in the monthly calculation. Inputs come from the eco
 | Peg or currency board | Not used: r = anchor rate + peg spread (3.8.3) | | | | |
 
 - **Neutral real rate** r*_real: USD 1.0%, EUR 0.0%, JPY -0.5%, GBP 0.5%, CHF -0.5%, emerging markets 1.5% to 3% [T].
-- **stress**: when GRG is above 40, -0.25 points per 10 GRG points above 40 (cut to calm markets), except for emerging banks whose currency fell more than 5% in the month, which hike +0.5 instead [T].
+- **market_calm**: when GRG is above 40, -0.25 points per 10 GRG points above 40 (cut to calm markets), except for emerging banks whose currency fell more than 5% in the month, which hike +0.5 instead [T].
 - **hawk**: the board's average hawkishness. Each governor and board member is a character with a Hawk-Dove score from -10 (dove) to +10 (hawk); hawk = +0.1 points per point of average score [T]. Appointments matter.
 
 **Step 2: the political blend**:
@@ -1342,7 +1342,7 @@ Central banks meet monthly, in the monthly calculation. Inputs come from the eco
 - Savings and loan rates (3.6.5), margin interest (3.5.4).
 - Bond yields through r_avg (3.6.5).
 - Stock multiples through the R factor (3.3.1).
-- FX fair value through the real rate differential (3.8.2), and carry trades.
+- FX fair value through the real rate differential (3.8.2), and carry trades (post-POC).
 - The economy (borrowing costs for growing business assets, industry demand), handled in [10-industry-economy.md](10-industry-economy.md).
 
 ### 3.9.4 QE, QT and lender of last resort
@@ -1383,7 +1383,7 @@ The central bank listens to the government in proportion to (1 - I). Players rea
 
 Lobbying a Full-independence bank directly has a quarter of the normal effect and a 20% chance per attempt of a public backlash (Favor -5) [T].
 
-**Capture** is the route to the Market Maker endgame ([4-politics.md](4-politics.md) 4.29): a player who has an ally as governor, a majority of board members as Friends, and independence at Low or Captured effectively sets the policy rate (r_final follows the player's choice within +/- 3 points of r_rule; beyond that inflation and the currency punish it). At start the only bank to capture is the Federal Monetary Board, which sets the rate for the whole world; a woken national bank is the smaller prize **(A)**.
+**Capture** is the route to the Market Maker endgame ([4-politics.md](4-politics.md) 4.29): a player who has an ally as governor, a majority of board members as Friends, and independence at Low or Captured effectively sets the policy rate (r_final follows the player's choice within +/- 3 points of r_rule; beyond that inflation and the currency punish it). At start the only bank to capture is the Federal Monetary Board, which sets the rate for the whole world; post-POC, when other central banks set rates (3.8.1), a national bank is the smaller prize **(A)**.
 
 ---
 
@@ -1585,11 +1585,11 @@ All companies, people and funds below are fictional. Numbers follow the formulas
 | System | What markets take from it | What markets give back |
 |---|---|---|
 | Companies ([1-corporate-core.md](1-corporate-core.md)) | Cap tables, blocs, charters, boards, two-layer control (1.3.1), takeover tools | Share prices, changes of owner of record from tenders, margin sales and restructurings |
-| Trusts and accounts ([1-corporate-core.md](1-corporate-core.md) 1.10) | Personal trusts and accounts, account currencies (all USD at start) | Portfolio values, margin calls, interest and dividends |
+| Trusts and accounts ([1-corporate-core.md](1-corporate-core.md) 1.10) | Personal trusts and accounts, account currencies (all USD; other account currencies are post-POC, 3.8.1) | Portfolio values, margin calls, interest and dividends |
 | Characters ([1-corporate-core.md](1-corporate-core.md) 1.1) | Finance, Persuasion and Intrigue skills; traits; schemes; Clout and Favor | Scandals, Under Investigation and Blacklisted traits, prison |
 | Map and influence ([2-map-and-influence.md](2-map-and-influence.md)) | Influence, psyops, ad campaigns; news and Pdoomberg (2.22) | Influence from bond holdings and listed companies |
-| Industry economy ([10](10-industry-economy.md)) | Earnings, industry supply and demand, trade balances, inflation, unemployment | Commodity prices, borrowing costs (base rate plus country spread), FX-driven import prices once currencies exist |
-| Politics ([4-politics.md](4-politics.md)) | Laws (capital controls, independence, disclosure; exchange rate regimes post-POC), regulators, elections, stability | Defaults, debt and currency crises and market crashes that topple governments |
+| Industry economy ([10](10-industry-economy.md)) | Earnings, industry supply and demand, trade balances, inflation, unemployment | Commodity prices, borrowing costs (base rate plus country spread), FX-driven import prices once FX is added (post-POC, 3.8.1) |
+| Politics ([4-politics.md](4-politics.md)) | Laws (capital controls, independence, disclosure; exchange rate regimes post-POC), regulators, elections, stability | Defaults, debt crises (currency crises are post-POC, 3.8.7) and market crashes that topple governments |
 | Events ([13-events.md](13-events.md)) | Event chains for IPOs, margin calls, defaults, crises, investigations | Triggers for those chains |
 
 ---
@@ -1898,7 +1898,7 @@ Each bank keeps a simple balance sheet, updated monthly with its financials and 
 | **Liquidity ratio** | Liquid assets (cash, government bonds at market value) / (25% of uninsured deposits + wholesale funding due within 30 days) | 100% | Supervisor order; Run Pressure +10 (3.21.1) |
 | **Group lending** | Loans to group companies / all loans | 25% | Exposure +5 per month (4.9.3) |
 
-- **Deposits** come from the provinces where the bank has branches. Deposit share is driven by brand, the rate offered and branch count. **Deposit insurance** covers each depositor up to $250,000 (or the local equivalent) [T].
+- **Deposits** come from the provinces where the bank has branches. Deposit share is driven by brand, the rate offered and branch count. **Deposit insurance** covers each depositor up to $250,000 in every country (every value is in USD, 3.8.1) [T].
 - **Loan losses** each year = the borrowers' default chance (by rating, 3.6.2, times the cycle multiplier of 2.18.1) x (1 - recovery).
 - **The held-to-maturity trap**: bonds held to maturity are carried at cost. When rates rise their market value falls, but the loss stays hidden until the bank has to sell. In a run, sales turn hidden losses into real ones at once (example 3.26.1).
 - Bank shares are valued by the book method (3.3.1 step 5).
@@ -1958,7 +1958,7 @@ Any account can buy fund units instead of picking securities. All values are [T]
 
 | Setting | Choices |
 |---|---|
-| Target allocation | Sliders by asset class (stocks, bonds, cash, real estate, commodities, private markets, funds) and by region and currency |
+| Target allocation | Sliders by asset class (stocks, bonds, cash, real estate, commodities, private markets, funds) and by region (and, post-POC, by currency) |
 | Risk limits | Maximum drawdown before cutting risk; maximum single position; leverage cap |
 | Do-not-touch list | Control stakes and positions the player trades by hand |
 | Rebalancing | Monthly, quarterly, or when an allocation drifts 5 points |
@@ -2172,7 +2172,7 @@ Removed (batch 116): the Ledgerbit model and token offerings moved to the phone 
 
 - A company may pay up to 30% of wages in **company scrip**, redeemable only at its own stores and housing [T]. This is legal only in Charter Zones (C6) and corporate sovereign territories ([4-politics.md](4-politics.md) 4.12); elsewhere it is a labor law offense.
 - Effects [T]: the cash cost of the scrip part of wages falls 10% to 20% (the company keeps the retail margin when scrip is spent); unrest +3 per 10% of wages paid in scrip; workers leave half as often (scrip cannot be spent elsewhere).
-- Company scrip is the small-scale ancestor of Arcology Scrip (ASC, 3.8.1): when a corporate sovereign city founds its monetary authority, its scrip converts into ASC.
+- Company scrip is the small-scale ancestor of Arcology Scrip (ASC, post-POC, 3.8.1): when a corporate sovereign city founds its monetary authority, its scrip converts into ASC.
 
 ### 3.23.5 and 3.23.6
 
@@ -2243,7 +2243,7 @@ This table adds to 3.1.4.
 | **Venture** (< $10M) | Learning, funding and valuation more than trading. The public market is a mood that sets VC appetite | $10k to $5M in personal accounts and trusts; the founder's own stake | Watchlists, charts, stop and bracket orders, scheduled and conditional orders, index and bond funds, news feed, calendar, morning brief, founder secondaries (3.19.2), angel investing (3.19.3) | Losing your savings; a friend's tip that turns out to be inside information; a Mania popping (VC funding -70%); down rounds | A simple portfolio view, the cap table and private valuation |
 | **Company** ($10M to $250M) | Control: building stakes, defending them, IPOs, margin | Control stakes from $5M to $250M | Unusual Accumulation alerts (3.14.5), analyst tools, threshold-capped orders, desk sessions, the personal office (3.18.3), private stakes, small buyouts, merger deals (3.20) | Raiders, margin cascades, bloc defections, activists | Holdings tree with live prices, the disclosure radar, margin headroom |
 | **Corporation** ($250M to $5B) | Markets as an industry: owning financial companies, cornering, FX, buyouts | Hundreds of millions to a few billion, across many countries (and, post-POC, currencies) | Financial companies (3.17), fund launches (3.18.4), PE buyouts (3.19.4), index futures (3.22), merger arbitrage | Financial panics, redemptions forcing sales, coordinated shorts by rivals | Market overview with cycles, GRG, FSI and your systemic links |
-| **Megacorp and Conglomerate** (> $5B) | Markets as a lever of state power | Positions that move country spreads (and, post-POC, currencies) | Exchange ownership (3.17.5), rating agency control (3.17.6), systemically important status (Too Big to Fail), corporate scrip into Arcology Scrip (3.23.4) | Nationalization, coordinated crackdowns, every rival uniting, a panic you caused coming home | A world view of country spreads, currencies, central banks and your systemic exposure |
+| **Megacorp and Conglomerate** (> $5B) | Markets as a lever of state power | Positions that move country spreads (and, post-POC, currencies) | Exchange ownership (3.17.5), rating agency control (3.17.6), systemically important status (Too Big to Fail), corporate scrip into Arcology Scrip (post-POC, 3.23.4) | Nationalization, coordinated crackdowns, every rival uniting, a panic you caused coming home | A world view of country spreads, currencies (post-POC), central banks and your systemic exposure |
 
 ### 3.25.2 Market rivals by rank
 
@@ -2254,7 +2254,7 @@ AI rivals scale with the player's rank. In markets:
 | Venture | Other young traders and rival founders; rival startups' VCs; incumbents' venture arms | Tips that are traps; outbid rounds; strategic offers with rights of first refusal |
 | Company | Raiders ([2-map-and-influence.md](2-map-and-influence.md) 2.23.1), activists, short sellers such as Wolfsbane | Creeping stakes, short reports, proxy fights |
 | Corporation | Rivals' personal offices and funds; sovereign funds | Coordinated block purchases, white knight alliances, rating and media games |
-| Megacorp and Conglomerate | Coalitions of rivals, governments, central banks | Peg defenses aimed at the player, sanctions, nationalizations, bear raids on the flagship |
+| Megacorp and Conglomerate | Coalitions of rivals, governments, central banks | Peg defenses aimed at the player (post-POC), sanctions, nationalizations, bear raids on the flagship |
 
 ### 3.25.3 Pacing targets
 

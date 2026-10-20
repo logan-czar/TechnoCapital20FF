@@ -1,8 +1,8 @@
 # North American characters (draft v3, 2026-10-18)
 
-_Status: draft for Logan's review; nothing here is in [7-starting-world.md](../detailed/7-starting-world.md) yet._
+_Status: draft for Logan's review; nothing here is in [7-starting-world.md](../detailed/7-starting-world.md) yet. Consistency pass 3 (batch 129): "hub" becomes "city" (there are no hubs)._
 
-**What every entry has:** age, hub, profile and wealth, appearance, traits, ideology, skills, holdings, premise, secret or burden, AI goal and ties.
+**What every entry has:** age, city, profile and wealth, appearance, traits, ideology, skills, holdings, premise, secret or burden, AI goal and ties.
 
 **Canon versus proposals:**
 - **Canon:** premises from Logan's rulings (7.3, 8-quest-lines).
@@ -20,7 +20,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 ## Part 1. Characters already in the design
 
 ### 1. John Techno (the player)
-- **Age and hub:** 22, Edmonton.
+- **Age and city:** 22, Edmonton.
 - **Profile:** Talented. $100k cash, a $1M salary, and options on 2% of Arrowhead Drilling (vesting over 4 years, with a 1-year cliff).
 - **Appearance:** 6'2" and broad from years on the rigs. Sunburned neck, sandy buzz cut, a scar through his left eyebrow from a snapped chain. He wears the same work boots under his new suits.
 - **Traits:** Operational Excellence (unique). While he sits as COO, CEO or Chair, the buffs of every other board member are doubled.
@@ -37,7 +37,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - Mandy Waltham (the Mink Scare).
 
 ### 2. Terry Tippacanoe
-- **Age and hub:** 61, Edmonton.
+- **Age and city:** 61, Edmonton.
 - **Profile:** Rich, $1B net worth.
 - **Appearance:** heavyset and grinning. Turquoise bolo tie, beaded leather vest over a silk shirt, gold rings on every finger. Silver hair slicked back. He never takes off his tinted aviators, even indoors.
 - **Traits:** Deceitful, Greedy, Gregarious.
@@ -60,7 +60,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - Beau Lacoste, who wants Arrowhead.
 
 ### 3. Gilles Thibodeau (Terry's Montreal MP friend; name proposed)
-- **Age and hub:** 54, Montreal.
+- **Age and city:** 54, Montreal.
 - **Profile:** Connected, about $6M.
 - **Appearance:** short and pear-shaped. Rimless glasses, a neat grey goatee, rumpled navy suits and a Habs lapel pin. He talks with his hands.
 - **Traits:** Cautious, Greedy, Gregarious.
@@ -76,7 +76,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 - **Ties:** Terry (Friend and creditor).
 
 ### 4. Antone Provolone
-- **Age and hub:** 39, New York.
+- **Age and city:** 39, New York.
 - **Profile:** Connected, about $30M.
 - **Appearance:**
   - Thick black hair gelled back and a gym-built chest.
@@ -96,7 +96,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 - **Ties:** Hollis Brandt (his DC guy).
 
 ### 5. Ricky Feng
-- **Age and hub:** 27, Bay Area.
+- **Age and city:** 27, Bay Area.
 - **Profile:** Rich, with a burden. Billions on paper, mostly locked in the wallet.
 - **Appearance:**
   - Rail-thin and pale, with a bleached undercut and dark circles under his eyes.
@@ -115,7 +115,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 - **Ties:** Delphine Arcand (he wants her models for his bots).
 
 ### 6. Dot Percy
-- **Age and hub:** 56, Los Angeles.
+- **Age and city:** 56, Los Angeles.
 - **Profile:** Rich, with a burden.
 - **Appearance:**
   - Platinum bob, porcelain skin, Hollywood-perfect teeth.
@@ -136,7 +136,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 - **Ties:** Nora Castellane (who is sniffing around the will).
 
 ### 7. Mandy Waltham, "Minky Mandy"
-- **Age and hub:** 38, Edmonton.
+- **Age and city:** 38, Edmonton.
 - **Profile:** a table character until John interrogates her, then a full character. About $400k, mostly hidden.
 - **Appearance:**
   - Mousy and forgettable at work: cardigan, lanyard, a practical brown bob.
@@ -156,7 +156,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 - **Ties:** John.
 
 ### 8. Nora Castellane (the Enron journalist; name proposed)
-- **Age and hub:** 49, New York.
+- **Age and city:** 49, New York.
 - **Profile:** Connected, about $4M from books and speaking fees. Famous (Fame 80).
 - **Appearance:**
   - Tall and angular, with cropped grey hair and steel reading glasses on a chain.
@@ -176,7 +176,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - Corinne Vale.
 
 ### 9. Dale Pruitt (Arrowhead CEO, "Terry's man"; name proposed)
-- **Age and hub:** 58, Edmonton.
+- **Age and city:** 58, Edmonton.
 - **Profile:** Connected, about $3M.
 - **Appearance:**
   - Red-faced and paunchy, with a walrus moustache.
@@ -192,7 +192,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 - **Ties:** Terry (liege). John, who is the obvious replacement for his seat.
 
 ### 10. Sharon Bellweather (Arrowhead director, Terry's pick; name proposed)
-- **Age and hub:** 64, Edmonton.
+- **Age and city:** 64, Edmonton.
 - **Profile:** Connected, about $9M.
 - **Appearance:**
   - Tiny and silver-haired, with a pearl-grey skirt suit and half-moon glasses.
@@ -210,7 +210,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 - **Ties:** Terry. Nora Castellane, who would love to talk to her.
 
 ### 11. Kip Tran (Arrowhead director, Terry's pick; name proposed)
-- **Age and hub:** 33, Edmonton.
+- **Age and city:** 33, Edmonton.
 - **Profile:** Connected, about $2M.
 - **Appearance:**
   - Slim fit everything, an expensive fade and white sneakers with a suit.
@@ -226,7 +226,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 - **Ties:** Terry. John, a rival for the top seat or a natural ally against Terry.
 
 ### 12. Lou Martel (union brother; name proposed)
-- **Age and hub:** 47, Edmonton.
+- **Age and city:** 47, Edmonton.
 - **Profile:** Talented, about $60k.
 - **Appearance:**
   - Barrel-chested and grey-bearded, with a Carhartt jacket and union pins.
@@ -242,7 +242,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 - **Ties:** John (Friend). Dana Kowalczyk (a fellow traveler).
 
 ### 13. Ray Sandoval (union brother; name proposed)
-- **Age and hub:** 24, Edmonton.
+- **Age and city:** 24, Edmonton.
 - **Profile:** Talented, about $15k.
 - **Appearance:** wiry and quick, with a backwards Oilers cap and a gap-toothed grin. Forearm tattoo of a drill bit. Drives a rusted F-150.
 - **Traits:** Brave, Gregarious, Hedonist.
@@ -257,7 +257,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 ## Part 2. New North American characters (proposals)
 
 ### 14. Beau Lacoste
-- **Age and hub:** 46, Houston.
+- **Age and city:** 46, Houston.
 - **Profile:** Rich, with a burden. About $3B on paper.
 - **Appearance:**
   - Big, sunburned and blond, with a handlebar moustache.
@@ -280,7 +280,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - Corinne (he owes her house).
 
 ### 15. Corinne Vale
-- **Age and hub:** 63, Las Vegas.
+- **Age and city:** 63, Las Vegas.
 - **Profile:** Rich, with a burden. About $6B.
 - **Appearance:**
   - Towering red beehive, sequined jackets and diamond chokers.
@@ -301,7 +301,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - Nora Castellane (a threat).
 
 ### 16. Hollis Brandt
-- **Age and hub:** 58, Washington DC.
+- **Age and city:** 58, Washington DC.
 - **Profile:** Connected, about $40M.
 - **Appearance:**
   - Lean and patrician, with a silver side part and a perfect tan.
@@ -322,7 +322,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - Silas Reed (a rival fixer).
 
 ### 17. Inés Villarreal
-- **Age and hub:** 52, Monterrey.
+- **Age and city:** 52, Monterrey.
 - **Profile:** Rich, with a burden. About $4B.
 - **Appearance:**
   - Severe and elegant, with a black chignon streaked with grey.
@@ -340,7 +340,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - Dana Kowalczyk (Rival).
 
 ### 18. Delphine Arcand
-- **Age and hub:** 31, Montreal.
+- **Age and city:** 31, Montreal.
 - **Profile:** Talented, about $50k.
 - **Appearance:**
   - Small and pale, with curly auburn hair in a pencil-pinned bun.
@@ -358,7 +358,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - John (a possible hire for the software pivot).
 
 ### 19. Tyrell "Ty" Whitaker
-- **Age and hub:** 29, Atlanta.
+- **Age and city:** 29, Atlanta.
 - **Profile:** Talented, about $300k.
 - **Appearance:**
   - Tall and lanky, with short locs and round gold glasses.
@@ -376,7 +376,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - Lucía Ferraro (a rival for Latin American flows).
 
 ### 20. Wesley Chu
-- **Age and hub:** 41, Vancouver.
+- **Age and city:** 41, Vancouver.
 - **Profile:** Rich, with a burden. About $2B.
 - **Appearance:**
   - Soft-spoken and immaculate, with a grey cashmere coat and rimless glasses.
@@ -394,7 +394,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - Nora Castellane (a threat).
 
 ### 21. Dana Kowalczyk
-- **Age and hub:** 37, Detroit.
+- **Age and city:** 37, Detroit.
 - **Profile:** Talented, about $90k.
 - **Appearance:**
   - Stocky and strong, with a cropped blonde undercut.
@@ -413,7 +413,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - Inés Villarreal (Rival over parts plants).
 
 ### 22. Silas Reed
-- **Age and hub:** 34, Austin.
+- **Age and city:** 34, Austin.
 - **Profile:** Connected, about $25M.
 - **Appearance:**
   - Lean, bearded and intense, with a black Patagonia vest and a Texas-flag belt buckle.
@@ -425,7 +425,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
 - **Holdings:**
   - Stakes in Semiconductors and Data centers deals.
   - Several board seats.
-  - A direct line to the governor's office.
+  - A direct line to the Minister of Land and Housing.
 - **Premise:** a Texas fixer who brokers chip fab and data center deals with the state.
 - **Secret or burden:** he has been promising the same tax breaks to three rival companies.
 - **AI goal:** turn Austin into a self-governing tech zone, the first step toward corporate sovereignty.
@@ -434,7 +434,7 @@ _Status: draft for Logan's review; nothing here is in [7-starting-world.md](../d
   - Hollis Brandt (Rival).
 
 ### 23. Lucía Ferraro
-- **Age and hub:** 44, Miami.
+- **Age and city:** 44, Miami.
 - **Profile:** Connected, about $30M.
 - **Appearance:**
   - Glamorous and watchful, with long dark hair and gold hoop earrings.
