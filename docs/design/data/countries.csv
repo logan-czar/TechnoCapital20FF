@@ -1,212 +1,212 @@
 iso3,name,superregion,currency,gdp_usd_bn,population_m,wealth_index,major,hss,legislature_strength,judiciary_strength,variant,restriction_label,subject_of,provinces_planned,notes
-USA,United States,North America,USD,23500,328.2,1.00,Y,55,64,72,,Screened,,147,
-CAN,Canada,North America,CAD,1750,37.6,0.85,Y,42,75,87,,Screened,,59,
-MEX,Mexico,North America,MXN,1250,127.6,0.22,Y,58,55,48,,Screened,,49,
-GRL,Greenland,North America,DKK,3.1,0.056,0.89,N,45,72,82,,Screened,,3,Self-governing territory of Denmark; own row for its size on the map and rare earths and uranium; old group Nordics (A); dependent territory; branch strengths and restriction (A)
-BMU,Bermuda,North America,BMD,7.5,0.064,1.20,N,45,72,82,,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; branch strengths and restriction (A)"
-SPM,Saint Pierre and Miquelon,North America,EUR,0.21,0.006,0.64,N,45,72,82,,Screened,,1,French territory; listed in the North America superregion by the spec; fishing; euro -20% applied; old group Euro periphery (A); dependent territory; branch strengths and restriction (A)
-BRA,Brazil,Latin America,BRL,1850,211,0.25,Y,52,62,72,,Guarded,,67,
-ARG,Argentina,Latin America,ARS,450,44.9,0.20,Y,52,62,67,,Guarded,,35,
-CHL,Chile,Latin America,CLP,280,19,0.30,Y,48,68,78,,Open,,22,
-COL,Colombia,Latin America,COP,320,50.3,0.18,Y,52,62,67,,Screened,,29,
-PER,Peru,Latin America,PEN,228,32.5,0.21,N,50,65,75,,Guarded,,27,Copper; old group Andean and Venezuela; branch strengths (A)
-ECU,Ecuador,Latin America,USD,108,17.4,0.19,N,50,65,75,,Guarded,,15,Oil; dollarized; old group Andean and Venezuela; branch strengths (A)
-BOL,Bolivia,Latin America,BOB,41.0,11.5,0.13,N,50,65,75,,Guarded,,17,Lithium; Morales gone (19.22); old group Andean and Venezuela; branch strengths (A)
-VEN,Venezuela,Latin America,VES,180,28.5,0.19,N,80,26,25,,Closed,,22,"Oil; sliding slowly under Maduro, cushioned by high oil (19.22), so GDP set well above the real 2019 collapse (A); old group Andean and Venezuela; restriction (A); HSS set by hand from 19.22 (A)"
-URY,Uruguay,Latin America,UYU,56.0,3.5,0.37,N,50,65,75,,Guarded,,10,old group Andean and Venezuela (A); branch strengths (A)
-PRY,Paraguay,Latin America,PYG,38.0,7,0.17,N,50,65,75,,Guarded,,12,Hydropower; old group Andean and Venezuela (A); branch strengths (A)
-GUY,Guyana,Latin America,GYD,5.2,0.78,0.20,N,50,65,75,,Screened,,6,Offshore oil discovered 2015; old group Central America and Caribbean (A); branch strengths (A)
-SUR,Suriname,Latin America,SRD,4.0,0.58,0.20,N,50,65,75,,Screened,,6,old group Central America and Caribbean (A); branch strengths (A)
-PAN,Panama,Latin America,PAB,67.0,4.2,0.37,N,50,65,75,,Screened,,10,Panama Canal; uses USD alongside PAB; old group Central America and Caribbean; branch strengths (A)
-CRI,Costa Rica,Latin America,CRC,64.0,5,0.32,N,50,65,75,,Screened,,9,old group Central America and Caribbean; branch strengths (A)
-GTM,Guatemala,Latin America,GTQ,77.0,16.6,0.15,N,50,65,75,,Screened,,13,old group Central America and Caribbean; branch strengths (A)
-HND,Honduras,Latin America,HNL,25.0,9.7,0.10,N,65,46,48,,Screened,,10,old group Central America and Caribbean (A); branch strengths (A); HSS set by hand from 19.22 (A)
-SLV,El Salvador,Latin America,USD,27.0,6.5,0.14,N,50,65,75,,Screened,,7,Dollarized; old group Central America and Caribbean (A); branch strengths (A)
-NIC,Nicaragua,Latin America,NIO,12.5,6.5,0.08,N,82,23,27,,Screened,,8,old group Central America and Caribbean (A); branch strengths (A); HSS set by hand from 19.22 (A)
-BLZ,Belize,Latin America,BZD,1.9,0.39,0.16,N,50,65,75,,Screened,,3,old group Central America and Caribbean (A); branch strengths (A)
-CUB,Cuba,Latin America,CUP,103,11.3,0.25,N,88,16,18,,Restricted,,13,Group default Screened overridden for a one-party state (A); old group Central America and Caribbean; restriction (A); HSS set by hand from 19.22 (A)
-DOM,Dominican Republic,Latin America,DOP,89.0,10.7,0.23,N,50,65,75,,Screened,,11,old group Central America and Caribbean; branch strengths (A)
-HTI,Haiti,Latin America,HTG,8.5,11.3,0.04,N,35,44,38,,Screened,,7,old group Central America and Caribbean; starts Collapsed (4-politics 4.2.7); HSS set by hand from 19.22 (A)
-JAM,Jamaica,Latin America,JMD,15.8,2.95,0.17,N,50,65,75,,Screened,,5,Bauxite; old group Central America and Caribbean (A); branch strengths (A)
-TTO,Trinidad and Tobago,Latin America,TTD,24.0,1.4,0.39,N,50,65,75,,Screened,,5,Gas and LNG; old group Central America and Caribbean (A); branch strengths (A)
-BHS,Bahamas,Latin America,BSD,12.8,0.39,0.61,N,50,65,75,,Screened,,4,Offshore finance; not a starting shell haven; old group Central America and Caribbean (A); branch strengths (A)
-BRB,Barbados,Latin America,BBD,5.2,0.29,0.40,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
-ATG,Antigua and Barbuda,Latin America,XCD,1.7,0.097,0.39,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
-DMA,Dominica,Latin America,XCD,0.60,0.072,0.23,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
-GRD,Grenada,Latin America,XCD,1.2,0.112,0.28,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
-KNA,Saint Kitts and Nevis,Latin America,XCD,1.1,0.053,0.43,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
-LCA,Saint Lucia,Latin America,XCD,2.1,0.183,0.29,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
-VCT,Saint Vincent and the Grenadines,Latin America,XCD,0.82,0.111,0.21,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
-PRI,Puerto Rico,Latin America,USD,116,3.19,0.66,N,50,65,75,,Screened,,9,"US territory; own row because it has its own government, 3.2M people and pharma plants; US +10% applied; follows US federal law (A); old group Central America and Caribbean (A); dependent territory; branch strengths and restriction (A)"
-CYM,Cayman Islands,Latin America,KYD,5.9,0.065,1.20,N,50,65,75,,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; branch strengths and restriction (A)"
-VGB,British Virgin Islands,Latin America,USD,1.0,0.03,0.62,N,50,65,75,,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; branch strengths and restriction (A)"
-GBR,United Kingdom,Europe,GBP,2750,66.8,0.85,Y,45,72,82,,Screened,,43,"Left the EU on 31 Dec 2019, outside it at game start (batch 122)"
-DEU,Germany,Europe,EUR,3200,83.1,0.90,Y,40,78,90,,Screened,,50,
-FRA,France,Europe,EUR,2200,67.2,0.85,Y,55,54,68,,Guarded,,45,
-NLD,Netherlands,Europe,EUR,750,17.3,0.90,Y,40,78,90,,Screened,,24,
-ITA,Italy,Europe,EUR,1600,60.3,0.70,Y,42,75,82,,Screened,,40,
-CHE,Switzerland,Europe,CHF,750,8.6,1.15,Y,30,91,100,Federal Council,Open,,21,
-ESP,Spain,Europe,EUR,1115,47.1,0.49,N,45,72,82,,Screened,,36,euro -20% applied; old group Euro periphery; HSS set by hand from 19.22 (A)
-PRT,Portugal,Europe,EUR,192,10.3,0.41,N,45,72,82,,Screened,,15,euro -20% applied; old group Euro periphery; branch strengths (A)
-IRL,Ireland,Europe,EUR,319,4.9,1.00,N,40,78,90,,Screened,,15,Low tax draws holding companies; euro -20% applied; old group Euro periphery; HSS set by hand from 19.22 (A)
-BEL,Belgium,Europe,EUR,428,11.5,0.67,N,45,72,82,,Screened,,18,euro -20% applied; old group Euro periphery; branch strengths (A)
-AUT,Austria,Europe,EUR,356,8.9,0.71,N,45,72,82,,Screened,,17,euro -20% applied; old group Euro periphery; branch strengths (A)
-GRC,Greece,Europe,EUR,123,10.7,0.29,N,50,65,75,,Screened,,14,Defaulted in 2019 (19.22): extra -25% on top of the eurozone -20% (A); euro -20% applied; old group Euro periphery; HSS set by hand from 19.22 (A)
-LUX,Luxembourg,Europe,EUR,56.8,0.62,1.20,N,45,72,82,,Open,,1,Haven (2.2.5); restriction Open for a haven (A); euro -20% applied; old group Euro periphery; branch strengths and restriction (A)
-FIN,Finland,Europe,EUR,215,5.5,0.69,N,40,78,90,,Screened,,16,euro -20% applied; old group Nordics; HSS set by hand from 19.22 (A)
-EST,Estonia,Europe,EUR,25.1,1.33,0.41,N,45,72,82,,Screened,,6,euro -20% applied; old group Central and Eastern Europe; branch strengths (A)
-LVA,Latvia,Europe,EUR,27.3,1.91,0.34,N,45,72,82,,Screened,,7,euro -20% applied; old group Central and Eastern Europe; branch strengths (A)
-LTU,Lithuania,Europe,EUR,43.7,2.79,0.36,N,45,72,82,,Screened,,8,euro -20% applied; old group Central and Eastern Europe; branch strengths (A)
-SVK,Slovakia,Europe,EUR,84.0,5.45,0.36,N,45,72,82,,Screened,,10,euro -20% applied; old group Central and Eastern Europe; branch strengths (A)
-SVN,Slovenia,Europe,EUR,43.4,2.09,0.44,N,45,72,82,,Screened,,7,euro -20% applied; old group Central and Eastern Europe (A); branch strengths (A)
-CYP,Cyprus,Europe,EUR,20.0,0.89,0.47,N,45,72,82,,Screened,,5,Shipping and offshore finance; euro -20% applied; old group Euro periphery (A); branch strengths (A); has contested provinces (batch 122)
-MLT,Malta,Europe,EUR,12.0,0.5,0.49,N,45,72,82,,Screened,,1,euro -20% applied; old group Euro periphery (A); branch strengths (A)
-MNE,Montenegro,Europe,EUR,4.4,0.62,0.21,N,45,72,82,,Screened,,3,Uses the euro without membership; euro -20% applied; old group Central and Eastern Europe (A); branch strengths (A)
-XKX,Kosovo,Europe,EUR,6.3,1.8,0.13,N,45,72,82,,Screened,,4,"Partially recognized; uses the euro; XKX is a user code, not ISO; euro -20% applied; old group Central and Eastern Europe (A); branch strengths (A)"
-AND,Andorra,Europe,EUR,2.5,0.077,0.61,N,45,72,82,,Screened,,1,Microstate; euro -20% applied; old group Euro periphery (A); branch strengths (A)
-MCO,Monaco,Europe,EUR,5.9,0.039,1.20,N,45,72,82,,Screened,,1,Microstate; euro -20% applied; old group Euro periphery (A); branch strengths (A)
-SMR,San Marino,Europe,EUR,1.3,0.034,0.68,N,45,72,82,,Screened,,1,Microstate; euro -20% applied; old group Euro periphery (A); branch strengths (A)
-VAT,Vatican City,Europe,EUR,0.24,0.0008,1.20,N,98,3,3,,Screened,,1,Microstate; elective absolute monarchy: plain default system at HSS 98 (A); euro -20% applied; old group Euro periphery (A); branch strengths (A); HSS set by hand from 19.22 (A)
-LIE,Liechtenstein,Europe,CHF,6.7,0.038,1.20,N,45,72,82,,Screened,,1,Microstate; trusts and foundations; old group Euro periphery (A); branch strengths (A)
-SWE,Sweden,Europe,SEK,531,10.3,0.84,N,40,78,90,,Screened,,23,old group Nordics; HSS set by hand from 19.22 (A)
-NOR,Norway,Europe,NOK,403,5.35,1.10,N,40,78,90,,Screened,,20,Oil and gas; sovereign wealth fund; old group Nordics; HSS set by hand from 19.22 (A)
-DNK,Denmark,Europe,DKK,348,5.8,0.94,N,40,78,90,,Screened,,15,Shipping; old group Nordics; HSS set by hand from 19.22 (A)
-ISL,Iceland,Europe,ISK,24.7,0.36,1.03,N,45,72,82,,Screened,,3,old group Nordics; branch strengths (A)
-POL,Poland,Europe,PLN,596,38,0.36,N,52,62,62,,Screened,,28,old group Central and Eastern Europe; HSS set by hand from 19.22 (A)
-CZE,Czechia,Europe,CZK,251,10.7,0.48,N,45,72,82,,Screened,,16,old group Central and Eastern Europe; branch strengths (A)
-HUN,Hungary,Europe,HUF,164,9.77,0.38,N,65,46,48,,Screened,,14,old group Central and Eastern Europe; branch strengths (A); HSS set by hand from 19.22 (A)
-ROU,Romania,Europe,RON,250,19.4,0.32,N,45,72,82,,Screened,,20,old group Central and Eastern Europe; branch strengths (A)
-BGR,Bulgaria,Europe,BGN,68.6,6.98,0.26,N,45,72,82,,Screened,,11,old group Central and Eastern Europe (A); branch strengths (A)
-HRV,Croatia,Europe,HRK,60.8,4.07,0.35,N,45,72,82,,Screened,,9,old group Central and Eastern Europe (A); branch strengths (A)
-SRB,Serbia,Europe,RSD,51.5,6.95,0.21,N,65,46,48,,Screened,,10,Excludes Kosovo; old group Central and Eastern Europe (A); branch strengths (A); HSS set by hand from 19.22 (A)
-BIH,Bosnia and Herzegovina,Europe,BAM,20.2,3.3,0.19,N,45,72,82,,Screened,,7,old group Central and Eastern Europe (A); branch strengths (A)
-MKD,North Macedonia,Europe,MKD,12.6,2.08,0.19,N,45,72,82,,Screened,,5,old group Central and Eastern Europe (A); branch strengths (A)
-ALB,Albania,Europe,ALL,15.3,2.85,0.17,N,45,72,82,,Screened,,6,old group Central and Eastern Europe (A); branch strengths (A)
-UKR,Ukraine,Europe,UAH,154,41.9,0.13,N,58,50,53,,Guarded,,22,Drone war since 2016 (19.22); population and area exclude Crimea and the Donbas held by Russia (A); old group Black Sea and Caucasus; has contested provinces (batch 122); HSS set by hand from 19.22 (A)
-BLR,Belarus,Europe,BYN,64.4,9.47,0.20,N,88,16,18,,Guarded,,12,In Moscow's orbit (19.22); old group Black Sea and Caucasus (A); branch strengths (A); HSS set by hand from 19.22 (A)
-MDA,Moldova,Europe,MDL,11.9,2.66,0.15,N,45,72,82,,Guarded,,6,old group Black Sea and Caucasus; branch strengths (A); has contested provinces (batch 122)
-GGY,Guernsey,Europe,GBP,3.5,0.063,0.89,N,45,72,82,,Open,,1,"Haven; Crown Dependency, modeled inside the UK until now (2.2.5); old group Euro periphery (A); dependent territory; branch strengths and restriction (A)"
-JEY,Jersey,Europe,GBP,5.6,0.107,0.85,N,45,72,82,,Open,,1,"Haven; Crown Dependency, modeled inside the UK until now (2.2.5); old group Euro periphery (A); dependent territory; branch strengths and restriction (A)"
-RUS,Russia,Russia and Central Asia,RUB,1200,146.7,0.25,Y,88,16,18,Security Organs,Restricted,,74,Population and area include Crimea and the Donbas (A)
-KAZ,Kazakhstan,Russia and Central Asia,KZT,182,18.5,0.26,N,82,23,27,,Guarded,,26,"Uranium, oil; old group Central Asia; HSS set by hand from 19.22 (A)"
-UZB,Uzbekistan,Russia and Central Asia,UZS,60.0,33.6,0.08,N,85,20,22,,Guarded,,17,old group Central Asia; branch strengths (A); HSS set by hand from 19.22 (A)
-TKM,Turkmenistan,Russia and Central Asia,TMT,45.0,6,0.22,N,96,5,6,,Restricted,,13,Gas; group default Guarded overridden for a closed personalist state (A); old group Central Asia; branch strengths and restriction (A); HSS set by hand from 19.22 (A)
-KGZ,Kyrgyzstan,Russia and Central Asia,KGS,8.9,6.5,0.06,N,68,42,48,,Guarded,,9,Gold; old group Central Asia; branch strengths (A); HSS set by hand from 19.22 (A)
-TJK,Tajikistan,Russia and Central Asia,TJS,8.3,9.3,0.05,N,88,16,18,,Guarded,,9,Hydropower; old group Central Asia; branch strengths (A); HSS set by hand from 19.22 (A)
-GEO,Georgia,Russia and Central Asia,GEL,17.5,3.72,0.16,N,45,72,82,,Guarded,,7,Middle Corridor; old group Black Sea and Caucasus; branch strengths (A)
-ARM,Armenia,Russia and Central Asia,AMD,13.6,2.96,0.15,N,45,72,82,,Guarded,,6,old group Black Sea and Caucasus; branch strengths (A)
-AZE,Azerbaijan,Russia and Central Asia,AZN,48.0,10,0.16,N,88,16,18,,Guarded,,10,Caspian oil; old group Black Sea and Caucasus; branch strengths (A); HSS set by hand from 19.22 (A)
-TUR,Turkey,Europe,TRY,750,83.4,0.28,Y,78,29,33,,Screened,,36,Superregion Middle East and North Africa (A)
-SAU,Saudi Arabia,Middle East and North Africa,SAR,850,34.3,0.55,Y,95,6,8,Royal Court,Guarded,,37,
-ARE,United Arab Emirates,Middle East and North Africa,AED,420,9.8,0.45,Y,90,13,15,Federal Supreme Council,Guarded,,15,Haven free zones (C6) stay inside the UAE
-ISR,Israel,Middle East and North Africa,ILS,400,9.05,0.80,Y,48,68,88,,Screened,,17,
-EGY,Egypt,Middle East and North Africa,EGP,300,100.4,0.10,Y,82,23,27,,Guarded,,34,
-QAT,Qatar,Middle East and North Africa,QAR,180,2.83,0.60,Y,92,10,12,,Guarded,,10,
-IRN,Iran,Middle East and North Africa,IRR,400,83,0.16,N,82,23,27,Guardian Council,Closed,,37,Sanctioned; GDP copied from the single-country Iran group in 2.2.5; old group Iran
-IRQ,Iraq,Middle East and North Africa,IQD,234,39.3,0.18,N,65,50,52,,Guarded,,24,Stable US ally since 2003 (19.22); real 2019 GDP kept (A); old group Gulf minors (A); HSS set by hand from 19.22 (A)
-KWT,Kuwait,Middle East and North Africa,KWD,136,4.2,0.61,N,70,49,45,,Guarded,,10,old group Gulf minors; branch strengths (A); HSS set by hand from 19.22 (A)
-BHR,Bahrain,Middle East and North Africa,BHD,38.5,1.64,0.48,N,90,13,15,,Guarded,,1,old group Gulf minors; branch strengths (A); HSS set by hand from 19.22 (A)
-OMN,Oman,Middle East and North Africa,OMR,76.3,4.97,0.36,N,93,9,10,,Guarded,,13,old group Gulf minors; branch strengths (A); HSS set by hand from 19.22 (A)
-YEM,Yemen,Middle East and North Africa,YER,22.6,29.2,0.04,N,70,39,40,,Guarded,,16,old group Gulf minors (A); HSS set by hand from 19.22 (A)
-JOR,Jordan,Middle East and North Africa,JOD,44.5,10.1,0.15,N,80,26,30,,Guarded,,10,old group North Africa and Levant; branch strengths (A); HSS set by hand from 19.22 (A)
-LBN,Lebanon,Middle East and North Africa,LBP,52.0,6.86,0.22,N,72,36,42,,Guarded,,8,old group North Africa and Levant; branch strengths (A)
-SYR,Syria,Middle East and North Africa,SYP,60.0,21,0.11,N,82,23,27,,Guarded,,14,No Syrian war (19.22): GDP and population set near pre-2011 levels (A); US-friendly government (A); old group North Africa and Levant (A); branch strengths (A); HSS set by hand from 19.22 (A)
-PSE,Palestine,Middle East and North Africa,ILS,17.1,4.7,0.13,N,72,36,42,,Guarded,,6,Uses the shekel; old group North Africa and Levant (A); branch strengths (A)
-LBY,Libya,Middle East and North Africa,LYD,70.0,6.8,0.27,N,88,16,18,,Guarded,,19,No civil war (19.22): GDP set near pre-2011 levels (A); old group North Africa and Levant; HSS set by hand from 19.22 (A)
-DZA,Algeria,Middle East and North Africa,DZD,171,43.1,0.14,N,72,36,42,,Guarded,,29,Gas to Europe; old group North Africa and Levant; branch strengths (A)
-MAR,Morocco,Middle East and North Africa,MAD,120,36.5,0.12,N,80,26,30,,Guarded,,20,Phosphates; area excludes Western Sahara; old group North Africa and Levant; branch strengths (A); HSS set by hand from 19.22 (A)
-TUN,Tunisia,Middle East and North Africa,TND,39.0,11.7,0.12,N,72,36,42,,Guarded,,11,"No Arab Spring, so the old regime remains (A); old group North Africa and Levant; branch strengths (A)"
-NGA,Nigeria,Sub-Saharan Africa,NGN,450,201,0.08,Y,55,58,58,,Guarded,,40,
-ZAF,South Africa,Sub-Saharan Africa,ZAR,350,58.6,0.22,Y,45,72,82,,Screened,,32,
-COD,DR Congo,Sub-Saharan Africa,CDF,50.0,86.8,0.03,Y,75,32,32,,Guarded,,29,
-GHA,Ghana,Sub-Saharan Africa,GHS,68.3,30.4,0.09,N,50,65,75,,Guarded,,17,"Cocoa, gold; old group West Africa; branch strengths (A)"
-CIV,Cote d'Ivoire,Sub-Saharan Africa,XOF,58.5,25.7,0.09,N,72,36,42,,Guarded,,15,Cocoa; old group West Africa; branch strengths (A)
-SEN,Senegal,Sub-Saharan Africa,XOF,23.4,16.3,0.07,N,50,65,75,,Guarded,,11,old group West Africa; branch strengths (A)
-MLI,Mali,Sub-Saharan Africa,XOF,17.3,19.7,0.05,N,72,36,42,,Guarded,USA,17,Gold; US debt vassal since 2012 (4.11.8); old group West Africa; HSS set by hand from 19.22 (A)
-BFA,Burkina Faso,Sub-Saharan Africa,XOF,16.0,20.3,0.04,N,70,39,45,,Guarded,,12,Gold; no 2022 coups; old group West Africa; HSS set by hand from 19.22 (A)
-NER,Niger,Sub-Saharan Africa,XOF,12.9,23.3,0.03,N,70,39,45,,Guarded,,17,Uranium; no 2023 coup; old group West Africa; HSS set by hand from 19.22 (A)
-GIN,Guinea,Sub-Saharan Africa,GNF,13.4,12.8,0.05,N,72,36,42,,Guarded,,12,Bauxite; no 2021 coup; old group West Africa; branch strengths (A)
-GNB,Guinea-Bissau,Sub-Saharan Africa,XOF,1.4,1.92,0.04,N,72,36,42,,Guarded,,4,old group West Africa; branch strengths (A)
-SLE,Sierra Leone,Sub-Saharan Africa,SLL,4.1,7.8,0.03,N,50,65,75,,Guarded,,7,old group West Africa; branch strengths (A)
-LBR,Liberia,Sub-Saharan Africa,LRD,3.1,4.9,0.04,N,50,65,75,,Guarded,,6,Ship registry; old group West Africa; branch strengths (A)
-TGO,Togo,Sub-Saharan Africa,XOF,5.5,8.1,0.04,N,78,29,33,,Guarded,,7,old group West Africa; branch strengths (A); HSS set by hand from 19.22 (A)
-BEN,Benin,Sub-Saharan Africa,XOF,14.4,11.8,0.06,N,72,36,42,,Guarded,,9,old group West Africa; branch strengths (A)
-GMB,Gambia,Sub-Saharan Africa,GMD,1.8,2.35,0.04,N,50,65,75,,Guarded,,4,old group West Africa; branch strengths (A)
-CPV,Cabo Verde,Sub-Saharan Africa,CVE,2.0,0.55,0.13,N,50,65,75,,Guarded,,2,old group West Africa; branch strengths (A)
-MRT,Mauritania,Sub-Saharan Africa,MRU,7.6,4.5,0.08,N,72,36,42,,Guarded,,13,Iron ore; old group West Africa; branch strengths (A)
-TCD,Chad,Sub-Saharan Africa,XAF,11.3,15.9,0.04,N,82,23,27,,Guarded,,16,Oil; no 2021 junta; old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)
-CMR,Cameroon,Sub-Saharan Africa,XAF,39.0,25.9,0.07,N,85,20,22,,Guarded,,16,old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)
-CAF,Central African Republic,Sub-Saharan Africa,XAF,2.2,4.75,0.03,N,35,44,38,,Guarded,,10,Civil war since 2013; old group Central and Southern Africa (A); branch strengths (A); starts Collapsed (4-politics 4.2.7); HSS set by hand from 19.22 (A)
-COG,Republic of the Congo,Sub-Saharan Africa,XAF,12.3,5.4,0.09,N,82,23,27,,Guarded,,10,Oil; old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)
-GAB,Gabon,Sub-Saharan Africa,XAF,16.9,2.17,0.22,N,80,26,30,,Guarded,,9,"Oil, manganese; no 2023 coup; old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)"
-GNQ,Equatorial Guinea,Sub-Saharan Africa,XAF,11.0,1.36,0.23,N,95,6,8,,Guarded,,5,Oil; old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)
-STP,Sao Tome and Principe,Sub-Saharan Africa,STN,0.43,0.215,0.08,N,50,65,75,,Guarded,,1,old group Central and Southern Africa (A); branch strengths (A)
-KEN,Kenya,Sub-Saharan Africa,KES,95.5,52.6,0.08,N,62,49,57,,Guarded,,22,Mobile money fintech; old group East Africa and Horn; branch strengths (A); HSS set by hand from 19.22 (A)
-ETH,Ethiopia,Sub-Saharan Africa,ETB,96.0,112.1,0.05,N,72,36,42,,Guarded,,27,"Abiy, Nobel laureate (19.22); old group East Africa and Horn; branch strengths (A); HSS set by hand from 19.22 (A)"
-TZA,Tanzania,Sub-Saharan Africa,TZS,61.0,58,0.05,N,72,36,42,,Guarded,,23,old group East Africa and Horn; branch strengths (A); HSS set by hand from 19.22 (A)
-UGA,Uganda,Sub-Saharan Africa,UGX,35.0,44.3,0.04,N,82,23,27,,Guarded,,16,old group East Africa and Horn; branch strengths (A); HSS set by hand from 19.22 (A)
-SOM,Somalia,Sub-Saharan Africa,SOS,4.9,15.4,0.02,N,35,44,38,,Guarded,,13,old group East Africa and Horn; starts Collapsed (4-politics 4.2.7); HSS set by hand from 19.22 (A)
-SDN,Sudan,Sub-Saharan Africa,SDG,32.0,42.8,0.04,N,72,36,37,,Guarded,,23,Red Sea coast; old group East Africa and Horn; HSS set by hand from 19.22 (A)
-SSD,South Sudan,Sub-Saharan Africa,SSP,4.0,11.1,0.03,N,35,44,38,,Guarded,,12,Oil; old group East Africa and Horn (A); starts Collapsed (4-politics 4.2.7); HSS set by hand from 19.22 (A)
-ERI,Eritrea,Sub-Saharan Africa,ERN,2.0,3.5,0.03,N,96,5,6,,Restricted,,6,Group default Guarded overridden for a closed one-party state (A); old group East Africa and Horn (A); branch strengths and restriction (A); HSS set by hand from 19.22 (A)
-DJI,Djibouti,Sub-Saharan Africa,DJF,3.3,0.97,0.12,N,80,26,30,,Guarded,CHN,4,"Bab-el-Mandeb port and bases; old group East Africa and Horn (A); branch strengths (A); Chinese debt vassal at start via Belt and Road (Logan, batch 128; 4-politics 4.11.8); HSS set by hand from 19.22 (A)"
-RWA,Rwanda,Sub-Saharan Africa,RWF,10.4,12.6,0.05,N,85,20,22,,Guarded,,8,old group East Africa and Horn (A); branch strengths (A); HSS set by hand from 19.22 (A)
-BDI,Burundi,Sub-Saharan Africa,BIF,3.0,11.5,0.02,N,82,23,27,,Guarded,,6,old group East Africa and Horn (A); branch strengths (A); HSS set by hand from 19.22 (A)
-MDG,Madagascar,Sub-Saharan Africa,MGA,14.1,26.9,0.03,N,50,65,75,,Guarded,,15,old group Central and Southern Africa (A); branch strengths (A)
-MUS,Mauritius,Sub-Saharan Africa,MUR,14.2,1.27,0.29,N,50,65,75,,Screened,,4,Offshore finance gateway to India and Africa; restriction Screened (A); old group East Africa and Horn (A); branch strengths and restriction (A)
-SYC,Seychelles,Sub-Saharan Africa,SCR,1.7,0.098,0.39,N,50,65,75,,Guarded,,1,old group East Africa and Horn (A); branch strengths (A)
-COM,Comoros,Sub-Saharan Africa,KMF,1.2,0.85,0.07,N,72,36,42,,Guarded,,2,old group East Africa and Horn (A); branch strengths (A)
-ZMB,Zambia,Sub-Saharan Africa,ZMW,23.3,17.9,0.06,N,72,36,42,,Guarded,CHN,15,"Copperbelt (abstracted into the Kolwezi-Lubumbashi hub until now); old group Central and Southern Africa; branch strengths (A); Chinese debt vassal at start via Belt and Road (Logan, batch 128; 4-politics 4.11.8)"
-AGO,Angola,Sub-Saharan Africa,AOA,84.0,31.8,0.10,N,72,36,42,,Guarded,,22,Oil; old group Central and Southern Africa; branch strengths (A); HSS set by hand from 19.22 (A)
-ZWE,Zimbabwe,Sub-Saharan Africa,ZWL,21.8,14.6,0.07,N,78,29,33,,Guarded,,13,"Lithium, platinum; old group Central and Southern Africa; branch strengths (A); HSS set by hand from 19.22 (A)"
-MOZ,Mozambique,Sub-Saharan Africa,MZN,15.3,30.4,0.03,N,72,36,42,,Guarded,,16,Offshore gas; old group Central and Southern Africa; branch strengths (A)
-NAM,Namibia,Sub-Saharan Africa,NAD,12.5,2.49,0.16,N,50,65,75,,Guarded,,11,Uranium; old group Central and Southern Africa; branch strengths (A)
-BWA,Botswana,Sub-Saharan Africa,BWP,16.7,2.3,0.21,N,50,65,75,,Guarded,,10,Diamonds; old group Central and Southern Africa (A); branch strengths (A)
-MWI,Malawi,Sub-Saharan Africa,MWK,7.7,18.6,0.03,N,50,65,75,,Guarded,,10,old group Central and Southern Africa (A); branch strengths (A)
-LSO,Lesotho,Sub-Saharan Africa,LSL,2.4,2.13,0.06,N,50,65,75,,Guarded,,4,old group Central and Southern Africa (A); branch strengths (A)
-SWZ,Eswatini,Sub-Saharan Africa,SZL,4.5,1.15,0.14,N,94,8,9,,Guarded,,4,old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)
-IND,India,South Asia,INR,2850,1366.4,0.12,Y,55,58,62,,Guarded,,97,
-PAK,Pakistan,South Asia,PKR,278,216.6,0.06,N,65,46,48,,Guarded,CHN,34,Sliding into Chinese debt vassalage (19.22); set as a vassal at start per brief (A); old group South Asia minors; branch strengths (A); HSS set by hand from 19.22 (A)
-BGD,Bangladesh,South Asia,BDT,302,163,0.08,N,72,36,42,,Guarded,,29,Garments; old group South Asia minors; branch strengths (A); HSS set by hand from 19.22 (A)
-LKA,Sri Lanka,South Asia,LKR,84.0,21.8,0.13,N,72,36,42,,Guarded,CHN,13,Hambantota leased to China; Chinese debt vassal from 2017 (19.19); old group South Asia minors; branch strengths (A)
-NPL,Nepal,South Asia,NPR,34.2,28.6,0.06,N,45,72,82,,Guarded,,13,Hydropower; old group South Asia minors; branch strengths (A)
-BTN,Bhutan,South Asia,BTN,2.5,0.76,0.12,N,45,72,82,,Guarded,,4,Hydropower; old group South Asia minors (A); branch strengths (A)
-MDV,Maldives,South Asia,MVR,5.6,0.53,0.28,N,45,72,82,,Guarded,,1,old group South Asia minors (A); branch strengths (A)
-AFG,Afghanistan,South Asia,AFN,25.0,38,0.04,N,70,39,45,,Guarded,,17,Stable under Massoud's chosen successor (19.22): GDP a little above the real 19B (A); old group South Asia minors (A); branch strengths (A); HSS set by hand from 19.22 (A)
-CHN,China,East Asia and Oceania,CNY,14000,1398,0.30,Y,92,10,12,Party Standing Committee,Restricted,,145,Population and GDP include Hong Kong and Macau as given in 2.2.3; HKG and MAC rows also list them (A); Macau province moved to MAC (Logan; batch 153)
-JPN,Japan,East Asia and Oceania,JPY,5100,126.3,0.75,Y,42,75,87,,Screened,,63,
-KOR,South Korea,East Asia and Oceania,KRW,1650,51.7,0.65,Y,52,62,72,,Screened,,35,
-TWN,Taiwan,East Asia and Oceania,TWD,610,23.6,0.50,Y,48,68,78,,Guarded,,22,
-SGP,Singapore,East Asia and Oceania,SGD,370,5.7,0.85,Y,68,37,63,,Open,,3,
-MYS,Malaysia,East Asia and Oceania,MYR,360,32.5,0.25,Y,50,65,70,,Screened,,23,
-IDN,Indonesia,East Asia and Oceania,IDR,1120,270.6,0.12,Y,52,62,67,,Guarded,,51,
-VNM,Vietnam,East Asia and Oceania,VND,260,96.5,0.12,Y,86,18,21,,Restricted,,27,
-AUS,Australia,East Asia and Oceania,AUD,1400,25.4,0.95,Y,42,75,87,,Screened,,53,
-HKG,Hong Kong,East Asia and Oceania,HKD,363,7.5,0.81,N,62,39,67,Liaison Office,Screened,,3,SAR of China: own currency (HKD currency board) and own looser laws per the hub table 2.3.3; restriction Screened copied from there; dependent territory; branch strengths (A)
-MAC,Macau,East Asia and Oceania,MOP,55,0.65,1.20,N,62,39,67,,Screened,,1,"SAR of China like Hong Kong (Logan, batch 153): own currency (MOP, pegged to the HKD) and own laws per the hub table 2.3.3; restriction Screened, HSS and branch strengths copied from Hong Kong (A); no Liaison Office variant, so the 10 start variants stay (A); dependent territory; GDP and population real 2019 (A); WI by the fit, at the 1.20 clamp"
-PRK,North Korea,East Asia and Oceania,KPW,18.0,25.7,0.04,N,100,0,0,State Security,Closed,,11,Closed per 4.2.4: no foreign assets allowed at start; GDP is an estimate; old group Southeast Asia minors (A)
-MNG,Mongolia,East Asia and Oceania,MNT,13.9,3.23,0.15,N,45,72,82,,Guarded,,15,"Copper, coal; old group Central Asia (A); branch strengths (A)"
-THA,Thailand,East Asia and Oceania,THB,544,69.6,0.22,N,75,28,38,,Screened,,30,Auto and electronics assembly; old group Southeast Asia minors; HSS set by hand from 19.22 (A)
-PHL,Philippines,East Asia and Oceania,PHP,377,108.1,0.13,N,58,55,48,,Screened,,29,Business process outsourcing; old group Southeast Asia minors; HSS set by hand from 19.22 (A)
-MMR,Myanmar,East Asia and Oceania,MMK,76.0,54,0.07,N,62,49,47,Tatmadaw,Screened,,21,Rare earths; old group Southeast Asia minors
-KHM,Cambodia,East Asia and Oceania,KHR,27.0,16.5,0.07,N,85,20,22,,Screened,,12,Belt and Road client (not a vassal at start) (A); old group Southeast Asia minors; branch strengths (A); HSS set by hand from 19.22 (A)
-LAO,Laos,East Asia and Oceania,LAK,18.7,7.2,0.10,N,90,13,15,,Screened,,10,Belt and Road client (not a vassal at start) (A); old group Southeast Asia minors; branch strengths (A); HSS set by hand from 19.22 (A)
-BRN,Brunei,East Asia and Oceania,BND,13.5,0.43,0.59,N,96,5,6,,Screened,,4,Oil and gas; old group Southeast Asia minors (A); branch strengths (A); HSS set by hand from 19.22 (A)
-TLS,Timor-Leste,East Asia and Oceania,USD,2.0,1.29,0.07,N,45,72,82,,Screened,,3,old group Southeast Asia minors (A); branch strengths (A)
-NZL,New Zealand,East Asia and Oceania,NZD,211,4.98,0.73,N,45,72,82,,Screened,,16,Dairy; old group Oceania minors; branch strengths (A)
-PNG,Papua New Guinea,East Asia and Oceania,PGK,24.8,8.8,0.11,N,45,72,82,,Screened,,12,"LNG, gold, copper; old group Oceania minors; branch strengths (A)"
-FJI,Fiji,East Asia and Oceania,FJD,5.5,0.89,0.19,N,45,72,82,,Screened,,4,old group Oceania minors; branch strengths (A)
-SLB,Solomon Islands,East Asia and Oceania,SBD,1.6,0.67,0.10,N,45,72,82,,Screened,,3,old group Oceania minors; branch strengths (A)
-VUT,Vanuatu,East Asia and Oceania,VUV,0.93,0.3,0.12,N,45,72,82,,Screened,,2,old group Oceania minors; branch strengths (A)
-WSM,Samoa,East Asia and Oceania,WST,0.85,0.2,0.14,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
-TON,Tonga,East Asia and Oceania,TOP,0.51,0.104,0.16,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
-KIR,Kiribati,East Asia and Oceania,AUD,0.19,0.118,0.07,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
-FSM,Micronesia,East Asia and Oceania,USD,0.40,0.114,0.13,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
-MHL,Marshall Islands,East Asia and Oceania,USD,0.24,0.059,0.14,N,45,72,82,,Screened,,1,Ship registry; old group Oceania minors; branch strengths (A)
-PLW,Palau,East Asia and Oceania,USD,0.27,0.018,0.35,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
-NRU,Nauru,East Asia and Oceania,AUD,0.12,0.011,0.28,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
-TUV,Tuvalu,East Asia and Oceania,AUD,0.05,0.012,0.14,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
-GIB,Gibraltar,Europe,GBP,2.8,0.034,0.95,N,45,72,82,,Open,GBR,1,"Haven (batch 122); British Overseas Territory; online gambling, bunkering; out of the EU with the UK (A)"
-IMN,Isle of Man,Europe,GBP,7.0,0.085,0.85,N,45,72,82,,Open,GBR,1,"Haven (batch 122); Crown Dependency; online gambling, ship registry (A)"
-FRO,Faroe Islands,Europe,DKK,3.1,0.052,0.90,N,45,72,82,,Screened,DNK,1,"Self-governing under Denmark, outside the EU; fishing and salmon (batch 122) (A)"
-PAP,Papa's Port,Latin America,USD,0.3,0.004,0.60,N,100,0,0,Sovereign's Household,Open,ARG,1,"Micronation on the Falkland Islands, Argentine territory, ruled by the sovereign Papa Slop (Logan, batch 124); code PAP is invented (A)"
+USA,United States,North America,USD,23500,328.2,54,Y,55,64,72,,Screened,,147,
+CAN,Canada,North America,CAD,1750,37.6,73,Y,42,75,87,,Screened,,59,
+MEX,Mexico,North America,MXN,1250,127.6,49,Y,58,55,48,,Screened,,49,
+GRL,Greenland,North America,DKK,3.1,0.056,74,N,45,72,82,,Screened,,3,Self-governing territory of Denmark; own row for its size on the map and rare earths and uranium; old group Nordics (A); dependent territory; branch strengths and restriction (A)
+BMU,Bermuda,North America,BMD,7.5,0.064,60,N,45,72,82,,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; branch strengths and restriction (A)"
+SPM,Saint Pierre and Miquelon,North America,EUR,0.21,0.006,78,N,45,72,82,,Screened,,1,French territory; listed in the North America superregion by the spec; fishing; euro -20% applied; old group Euro periphery (A); dependent territory; branch strengths and restriction (A)
+BRA,Brazil,Latin America,BRL,1850,211,33,Y,52,62,72,,Guarded,,67,
+ARG,Argentina,Latin America,ARS,450,44.9,55,Y,52,62,67,,Guarded,,35,
+CHL,Chile,Latin America,CLP,280,19,51,Y,48,68,78,,Open,,22,
+COL,Colombia,Latin America,COP,320,50.3,37,Y,52,62,67,,Screened,,29,
+PER,Peru,Latin America,PEN,228,32.5,57,N,50,65,75,,Guarded,,27,Copper; old group Andean and Venezuela; branch strengths (A)
+ECU,Ecuador,Latin America,USD,108,17.4,49,N,50,65,75,,Guarded,,15,Oil; dollarized; old group Andean and Venezuela; branch strengths (A)
+BOL,Bolivia,Latin America,BOB,41.0,11.5,57,N,50,65,75,,Guarded,,17,Lithium; Morales gone (19.22); old group Andean and Venezuela; branch strengths (A)
+VEN,Venezuela,Latin America,VES,180,28.5,43,N,80,26,25,,Closed,,22,"Oil; sliding slowly under Maduro, cushioned by high oil (19.22), so GDP set well above the real 2019 collapse (A); old group Andean and Venezuela; restriction (A); HSS set by hand from 19.22 (A)"
+URY,Uruguay,Latin America,UYU,56.0,3.5,61,N,50,65,75,,Guarded,,10,old group Andean and Venezuela (A); branch strengths (A)
+PRY,Paraguay,Latin America,PYG,38.0,7,49,N,50,65,75,,Guarded,,12,Hydropower; old group Andean and Venezuela (A); branch strengths (A)
+GUY,Guyana,Latin America,GYD,5.2,0.78,50,N,50,65,75,,Screened,,6,Offshore oil discovered 2015; old group Central America and Caribbean (A); branch strengths (A)
+SUR,Suriname,Latin America,SRD,4.0,0.58,62,N,50,65,75,,Screened,,6,old group Central America and Caribbean (A); branch strengths (A)
+PAN,Panama,Latin America,PAB,67.0,4.2,40,N,50,65,75,,Screened,,10,Panama Canal; uses USD alongside PAB; old group Central America and Caribbean; branch strengths (A)
+CRI,Costa Rica,Latin America,CRC,64.0,5,44,N,50,65,75,,Screened,,9,old group Central America and Caribbean; branch strengths (A)
+GTM,Guatemala,Latin America,GTQ,77.0,16.6,43,N,50,65,75,,Screened,,13,old group Central America and Caribbean; branch strengths (A)
+HND,Honduras,Latin America,HNL,25.0,9.7,44,N,65,46,48,,Screened,,10,old group Central America and Caribbean (A); branch strengths (A); HSS set by hand from 19.22 (A)
+SLV,El Salvador,Latin America,USD,27.0,6.5,62,N,50,65,75,,Screened,,7,Dollarized; old group Central America and Caribbean (A); branch strengths (A)
+NIC,Nicaragua,Latin America,NIO,12.5,6.5,48,N,82,23,27,,Screened,,8,old group Central America and Caribbean (A); branch strengths (A); HSS set by hand from 19.22 (A)
+BLZ,Belize,Latin America,BZD,1.9,0.39,33,N,50,65,75,,Screened,,3,old group Central America and Caribbean (A); branch strengths (A)
+CUB,Cuba,Latin America,CUP,103,11.3,55,N,88,16,18,,Restricted,,13,Group default Screened overridden for a one-party state (A); old group Central America and Caribbean; restriction (A); HSS set by hand from 19.22 (A)
+DOM,Dominican Republic,Latin America,DOP,89.0,10.7,56,N,50,65,75,,Screened,,11,old group Central America and Caribbean; branch strengths (A)
+HTI,Haiti,Latin America,HTG,8.5,11.3,48,N,35,44,38,,Screened,,7,old group Central America and Caribbean; starts Collapsed (4-politics 4.2.7); HSS set by hand from 19.22 (A)
+JAM,Jamaica,Latin America,JMD,15.8,2.95,60,N,50,65,75,,Screened,,5,Bauxite; old group Central America and Caribbean (A); branch strengths (A)
+TTO,Trinidad and Tobago,Latin America,TTD,24.0,1.4,59,N,50,65,75,,Screened,,5,Gas and LNG; old group Central America and Caribbean (A); branch strengths (A)
+BHS,Bahamas,Latin America,BSD,12.8,0.39,58,N,50,65,75,,Screened,,4,Offshore finance; not a starting shell haven; old group Central America and Caribbean (A); branch strengths (A)
+BRB,Barbados,Latin America,BBD,5.2,0.29,58,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
+ATG,Antigua and Barbuda,Latin America,XCD,1.7,0.097,54,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
+DMA,Dominica,Latin America,XCD,0.60,0.072,64,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
+GRD,Grenada,Latin America,XCD,1.2,0.112,60,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
+KNA,Saint Kitts and Nevis,Latin America,XCD,1.1,0.053,60,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
+LCA,Saint Lucia,Latin America,XCD,2.1,0.183,38,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
+VCT,Saint Vincent and the Grenadines,Latin America,XCD,0.82,0.111,60,N,50,65,75,,Screened,,1,old group Central America and Caribbean (A); branch strengths (A)
+PRI,Puerto Rico,Latin America,USD,116,3.19,32,N,50,65,75,,Screened,,9,"US territory; own row because it has its own government, 3.2M people and pharma plants; US +10% applied; follows US federal law (A); old group Central America and Caribbean (A); dependent territory; branch strengths and restriction (A)"
+CYM,Cayman Islands,Latin America,KYD,5.9,0.065,60,N,50,65,75,,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; branch strengths and restriction (A)"
+VGB,British Virgin Islands,Latin America,USD,1.0,0.03,60,N,50,65,75,,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; branch strengths and restriction (A)"
+GBR,United Kingdom,Europe,GBP,2750,66.8,70,Y,45,72,82,,Screened,,43,"Left the EU on 31 Dec 2019, outside it at game start (batch 122)"
+DEU,Germany,Europe,EUR,3200,83.1,77,Y,40,78,90,,Screened,,50,
+FRA,France,Europe,EUR,2200,67.2,77,Y,55,54,68,,Guarded,,45,
+NLD,Netherlands,Europe,EUR,750,17.3,84,Y,40,78,90,,Screened,,24,
+ITA,Italy,Europe,EUR,1600,60.3,66,Y,42,75,82,,Screened,,40,
+CHE,Switzerland,Europe,CHF,750,8.6,74,Y,30,91,100,Federal Council,Open,,21,
+ESP,Spain,Europe,EUR,1115,47.1,67,N,45,72,82,,Screened,,36,euro -20% applied; old group Euro periphery; HSS set by hand from 19.22 (A)
+PRT,Portugal,Europe,EUR,192,10.3,69,N,45,72,82,,Screened,,15,euro -20% applied; old group Euro periphery; branch strengths (A)
+IRL,Ireland,Europe,EUR,319,4.9,79,N,40,78,90,,Screened,,15,Low tax draws holding companies; euro -20% applied; old group Euro periphery; HSS set by hand from 19.22 (A)
+BEL,Belgium,Europe,EUR,428,11.5,88,N,45,72,82,,Screened,,18,euro -20% applied; old group Euro periphery; branch strengths (A)
+AUT,Austria,Europe,EUR,356,8.9,79,N,45,72,82,,Screened,,17,euro -20% applied; old group Euro periphery; branch strengths (A)
+GRC,Greece,Europe,EUR,123,10.7,68,N,50,65,75,,Screened,,14,Defaulted in 2019 (19.22): extra -25% on top of the eurozone -20% (A); euro -20% applied; old group Euro periphery; HSS set by hand from 19.22 (A)
+LUX,Luxembourg,Europe,EUR,56.8,0.62,69,N,45,72,82,,Open,,1,Haven (2.2.5); restriction Open for a haven (A); euro -20% applied; old group Euro periphery; branch strengths and restriction (A)
+FIN,Finland,Europe,EUR,215,5.5,86,N,40,78,90,,Screened,,16,euro -20% applied; old group Nordics; HSS set by hand from 19.22 (A)
+EST,Estonia,Europe,EUR,25.1,1.33,79,N,45,72,82,,Screened,,6,euro -20% applied; old group Central and Eastern Europe; branch strengths (A)
+LVA,Latvia,Europe,EUR,27.3,1.91,71,N,45,72,82,,Screened,,7,euro -20% applied; old group Central and Eastern Europe; branch strengths (A)
+LTU,Lithuania,Europe,EUR,43.7,2.79,69,N,45,72,82,,Screened,,8,euro -20% applied; old group Central and Eastern Europe; branch strengths (A)
+SVK,Slovakia,Europe,EUR,84.0,5.45,94,N,45,72,82,,Screened,,10,euro -20% applied; old group Central and Eastern Europe; branch strengths (A)
+SVN,Slovenia,Europe,EUR,43.4,2.09,92,N,45,72,82,,Screened,,7,euro -20% applied; old group Central and Eastern Europe (A); branch strengths (A)
+CYP,Cyprus,Europe,EUR,20.0,0.89,74,N,45,72,82,,Screened,,5,Shipping and offshore finance; euro -20% applied; old group Euro periphery (A); branch strengths (A); has contested provinces (batch 122)
+MLT,Malta,Europe,EUR,12.0,0.5,77,N,45,72,82,,Screened,,1,euro -20% applied; old group Euro periphery (A); branch strengths (A)
+MNE,Montenegro,Europe,EUR,4.4,0.62,66,N,45,72,82,,Screened,,3,Uses the euro without membership; euro -20% applied; old group Central and Eastern Europe (A); branch strengths (A)
+XKX,Kosovo,Europe,EUR,6.3,1.8,82,N,45,72,82,,Screened,,4,"Partially recognized; uses the euro; XKX is a user code, not ISO; euro -20% applied; old group Central and Eastern Europe (A); branch strengths (A)"
+AND,Andorra,Europe,EUR,2.5,0.077,80,N,45,72,82,,Screened,,1,Microstate; euro -20% applied; old group Euro periphery (A); branch strengths (A)
+MCO,Monaco,Europe,EUR,5.9,0.039,60,N,45,72,82,,Screened,,1,Microstate; euro -20% applied; old group Euro periphery (A); branch strengths (A)
+SMR,San Marino,Europe,EUR,1.3,0.034,80,N,45,72,82,,Screened,,1,Microstate; euro -20% applied; old group Euro periphery (A); branch strengths (A)
+VAT,Vatican City,Europe,EUR,0.24,0.0008,80,N,98,3,3,,Screened,,1,Microstate; elective absolute monarchy: plain default system at HSS 98 (A); euro -20% applied; old group Euro periphery (A); branch strengths (A); HSS set by hand from 19.22 (A)
+LIE,Liechtenstein,Europe,CHF,6.7,0.038,80,N,45,72,82,,Screened,,1,Microstate; trusts and foundations; old group Euro periphery (A); branch strengths (A)
+SWE,Sweden,Europe,SEK,531,10.3,82,N,40,78,90,,Screened,,23,old group Nordics; HSS set by hand from 19.22 (A)
+NOR,Norway,Europe,NOK,403,5.35,85,N,40,78,90,,Screened,,20,Oil and gas; sovereign wealth fund; old group Nordics; HSS set by hand from 19.22 (A)
+DNK,Denmark,Europe,DKK,348,5.8,83,N,40,78,90,,Screened,,15,Shipping; old group Nordics; HSS set by hand from 19.22 (A)
+ISL,Iceland,Europe,ISK,24.7,0.36,88,N,45,72,82,,Screened,,3,old group Nordics; branch strengths (A)
+POL,Poland,Europe,PLN,596,38,83,N,52,62,62,,Screened,,28,old group Central and Eastern Europe; HSS set by hand from 19.22 (A)
+CZE,Czechia,Europe,CZK,251,10.7,88,N,45,72,82,,Screened,,16,old group Central and Eastern Europe; branch strengths (A)
+HUN,Hungary,Europe,HUF,164,9.77,81,N,65,46,48,,Screened,,14,old group Central and Eastern Europe; branch strengths (A); HSS set by hand from 19.22 (A)
+ROU,Romania,Europe,RON,250,19.4,70,N,45,72,82,,Screened,,20,old group Central and Eastern Europe; branch strengths (A)
+BGR,Bulgaria,Europe,BGN,68.6,6.98,59,N,45,72,82,,Screened,,11,old group Central and Eastern Europe (A); branch strengths (A)
+HRV,Croatia,Europe,HRK,60.8,4.07,82,N,45,72,82,,Screened,,9,old group Central and Eastern Europe (A); branch strengths (A)
+SRB,Serbia,Europe,RSD,51.5,6.95,71,N,65,46,48,,Screened,,10,Excludes Kosovo; old group Central and Eastern Europe (A); branch strengths (A); HSS set by hand from 19.22 (A)
+BIH,Bosnia and Herzegovina,Europe,BAM,20.2,3.3,74,N,45,72,82,,Screened,,7,old group Central and Eastern Europe (A); branch strengths (A)
+MKD,North Macedonia,Europe,MKD,12.6,2.08,74,N,45,72,82,,Screened,,5,old group Central and Eastern Europe (A); branch strengths (A)
+ALB,Albania,Europe,ALL,15.3,2.85,81,N,45,72,82,,Screened,,6,old group Central and Eastern Europe (A); branch strengths (A)
+UKR,Ukraine,Europe,UAH,154,41.9,89,N,58,50,53,,Guarded,,22,Drone war since 2016 (19.22); population and area exclude Crimea and the Donbas held by Russia (A); old group Black Sea and Caucasus; has contested provinces (batch 122); HSS set by hand from 19.22 (A)
+BLR,Belarus,Europe,BYN,64.4,9.47,88,N,88,16,18,,Guarded,,12,In Moscow's orbit (19.22); old group Black Sea and Caucasus (A); branch strengths (A); HSS set by hand from 19.22 (A)
+MDA,Moldova,Europe,MDL,11.9,2.66,89,N,45,72,82,,Guarded,,6,old group Black Sea and Caucasus; branch strengths (A); has contested provinces (batch 122)
+GGY,Guernsey,Europe,GBP,3.5,0.063,76,N,45,72,82,,Open,,1,"Haven; Crown Dependency, modeled inside the UK until now (2.2.5); old group Euro periphery (A); dependent territory; branch strengths and restriction (A)"
+JEY,Jersey,Europe,GBP,5.6,0.107,72,N,45,72,82,,Open,,1,"Haven; Crown Dependency, modeled inside the UK until now (2.2.5); old group Euro periphery (A); dependent territory; branch strengths and restriction (A)"
+RUS,Russia,Russia and Central Asia,RUB,1200,146.7,56,Y,88,16,18,Security Organs,Restricted,,74,Population and area include Crimea and the Donbas (A)
+KAZ,Kazakhstan,Russia and Central Asia,KZT,182,18.5,84,N,82,23,27,,Guarded,,26,"Uranium, oil; old group Central Asia; HSS set by hand from 19.22 (A)"
+UZB,Uzbekistan,Russia and Central Asia,UZS,60.0,33.6,68,N,85,20,22,,Guarded,,17,old group Central Asia; branch strengths (A); HSS set by hand from 19.22 (A)
+TKM,Turkmenistan,Russia and Central Asia,TMT,45.0,6,20,N,96,5,6,,Restricted,,13,Gas; group default Guarded overridden for a closed personalist state (A); old group Central Asia; branch strengths and restriction (A); HSS set by hand from 19.22 (A)
+KGZ,Kyrgyzstan,Russia and Central Asia,KGS,8.9,6.5,82,N,68,42,48,,Guarded,,9,Gold; old group Central Asia; branch strengths (A); HSS set by hand from 19.22 (A)
+TJK,Tajikistan,Russia and Central Asia,TJS,8.3,9.3,67,N,88,16,18,,Guarded,,9,Hydropower; old group Central Asia; branch strengths (A); HSS set by hand from 19.22 (A)
+GEO,Georgia,Russia and Central Asia,GEL,17.5,3.72,71,N,45,72,82,,Guarded,,7,Middle Corridor; old group Black Sea and Caucasus; branch strengths (A)
+ARM,Armenia,Russia and Central Asia,AMD,13.6,2.96,84,N,45,72,82,,Guarded,,6,old group Black Sea and Caucasus; branch strengths (A)
+AZE,Azerbaijan,Russia and Central Asia,AZN,48.0,10,87,N,88,16,18,,Guarded,,10,Caspian oil; old group Black Sea and Caucasus; branch strengths (A); HSS set by hand from 19.22 (A)
+TUR,Turkey,Europe,TRY,750,83.4,53,Y,78,29,33,,Screened,,36,Superregion Middle East and North Africa (A)
+SAU,Saudi Arabia,Middle East and North Africa,SAR,850,34.3,26,Y,95,6,8,Royal Court,Guarded,,37,
+ARE,United Arab Emirates,Middle East and North Africa,AED,420,9.8,24,Y,90,13,15,Federal Supreme Council,Guarded,,15,Haven free zones (C6) stay inside the UAE
+ISR,Israel,Middle East and North Africa,ILS,400,9.05,63,Y,48,68,88,,Screened,,17,
+EGY,Egypt,Middle East and North Africa,EGP,300,100.4,76,Y,82,23,27,,Guarded,,34,
+QAT,Qatar,Middle East and North Africa,QAR,180,2.83,22,Y,92,10,12,,Guarded,,10,
+IRN,Iran,Middle East and North Africa,IRR,400,83,51,N,82,23,27,Guardian Council,Closed,,37,Sanctioned; GDP copied from the single-country Iran group in 2.2.5; old group Iran
+IRQ,Iraq,Middle East and North Africa,IQD,234,39.3,81,N,65,50,52,,Guarded,,24,Stable US ally since 2003 (19.22); real 2019 GDP kept (A); old group Gulf minors (A); HSS set by hand from 19.22 (A)
+KWT,Kuwait,Middle East and North Africa,KWD,136,4.2,26,N,70,49,45,,Guarded,,10,old group Gulf minors; branch strengths (A); HSS set by hand from 19.22 (A)
+BHR,Bahrain,Middle East and North Africa,BHD,38.5,1.64,30,N,90,13,15,,Guarded,,1,old group Gulf minors; branch strengths (A); HSS set by hand from 19.22 (A)
+OMN,Oman,Middle East and North Africa,OMR,76.3,4.97,30,N,93,9,10,,Guarded,,13,old group Gulf minors; branch strengths (A); HSS set by hand from 19.22 (A)
+YEM,Yemen,Middle East and North Africa,YER,22.6,29.2,59,N,70,39,40,,Guarded,,16,old group Gulf minors (A); HSS set by hand from 19.22 (A)
+JOR,Jordan,Middle East and North Africa,JOD,44.5,10.1,68,N,80,26,30,,Guarded,,10,old group North Africa and Levant; branch strengths (A); HSS set by hand from 19.22 (A)
+LBN,Lebanon,Middle East and North Africa,LBP,52.0,6.86,68,N,72,36,42,,Guarded,,8,old group North Africa and Levant; branch strengths (A)
+SYR,Syria,Middle East and North Africa,SYP,60.0,21,65,N,82,23,27,,Guarded,,14,No Syrian war (19.22): GDP and population set near pre-2011 levels (A); US-friendly government (A); old group North Africa and Levant (A); branch strengths (A); HSS set by hand from 19.22 (A)
+PSE,Palestine,Middle East and North Africa,ILS,17.1,4.7,73,N,72,36,42,,Guarded,,6,Uses the shekel; old group North Africa and Levant (A); branch strengths (A)
+LBY,Libya,Middle East and North Africa,LYD,70.0,6.8,59,N,88,16,18,,Guarded,,19,No civil war (19.22): GDP set near pre-2011 levels (A); old group North Africa and Levant; HSS set by hand from 19.22 (A)
+DZA,Algeria,Middle East and North Africa,DZD,171,43.1,85,N,72,36,42,,Guarded,,29,Gas to Europe; old group North Africa and Levant; branch strengths (A)
+MAR,Morocco,Middle East and North Africa,MAD,120,36.5,61,N,80,26,30,,Guarded,,20,Phosphates; area excludes Western Sahara; old group North Africa and Levant; branch strengths (A); HSS set by hand from 19.22 (A)
+TUN,Tunisia,Middle East and North Africa,TND,39.0,11.7,73,N,72,36,42,,Guarded,,11,"No Arab Spring, so the old regime remains (A); old group North Africa and Levant; branch strengths (A)"
+NGA,Nigeria,Sub-Saharan Africa,NGN,450,201,70,Y,55,58,58,,Guarded,,40,
+ZAF,South Africa,Sub-Saharan Africa,ZAR,350,58.6,20,Y,45,72,82,,Screened,,32,
+COD,DR Congo,Sub-Saharan Africa,CDF,50.0,86.8,48,Y,75,32,32,,Guarded,,29,
+GHA,Ghana,Sub-Saharan Africa,GHS,68.3,30.4,53,N,50,65,75,,Guarded,,17,"Cocoa, gold; old group West Africa; branch strengths (A)"
+CIV,Cote d'Ivoire,Sub-Saharan Africa,XOF,58.5,25.7,66,N,72,36,42,,Guarded,,15,Cocoa; old group West Africa; branch strengths (A)
+SEN,Senegal,Sub-Saharan Africa,XOF,23.4,16.3,68,N,50,65,75,,Guarded,,11,old group West Africa; branch strengths (A)
+MLI,Mali,Sub-Saharan Africa,XOF,17.3,19.7,58,N,72,36,42,,Guarded,USA,17,Gold; US debt vassal since 2012 (4.11.8); old group West Africa; HSS set by hand from 19.22 (A)
+BFA,Burkina Faso,Sub-Saharan Africa,XOF,16.0,20.3,54,N,70,39,45,,Guarded,,12,Gold; no 2022 coups; old group West Africa; HSS set by hand from 19.22 (A)
+NER,Niger,Sub-Saharan Africa,XOF,12.9,23.3,55,N,70,39,45,,Guarded,,17,Uranium; no 2023 coup; old group West Africa; HSS set by hand from 19.22 (A)
+GIN,Guinea,Sub-Saharan Africa,GNF,13.4,12.8,81,N,72,36,42,,Guarded,,12,Bauxite; no 2021 coup; old group West Africa; branch strengths (A)
+GNB,Guinea-Bissau,Sub-Saharan Africa,XOF,1.4,1.92,70,N,72,36,42,,Guarded,,4,old group West Africa; branch strengths (A)
+SLE,Sierra Leone,Sub-Saharan Africa,SLL,4.1,7.8,69,N,50,65,75,,Guarded,,7,old group West Africa; branch strengths (A)
+LBR,Liberia,Sub-Saharan Africa,LRD,3.1,4.9,69,N,50,65,75,,Guarded,,6,Ship registry; old group West Africa; branch strengths (A)
+TGO,Togo,Sub-Saharan Africa,XOF,5.5,8.1,55,N,78,29,33,,Guarded,,7,old group West Africa; branch strengths (A); HSS set by hand from 19.22 (A)
+BEN,Benin,Sub-Saharan Africa,XOF,14.4,11.8,64,N,72,36,42,,Guarded,,9,old group West Africa; branch strengths (A)
+GMB,Gambia,Sub-Saharan Africa,GMD,1.8,2.35,62,N,50,65,75,,Guarded,,4,old group West Africa; branch strengths (A)
+CPV,Cabo Verde,Sub-Saharan Africa,CVE,2.0,0.55,55,N,50,65,75,,Guarded,,2,old group West Africa; branch strengths (A)
+MRT,Mauritania,Sub-Saharan Africa,MRU,7.6,4.5,45,N,72,36,42,,Guarded,,13,Iron ore; old group West Africa; branch strengths (A)
+TCD,Chad,Sub-Saharan Africa,XAF,11.3,15.9,60,N,82,23,27,,Guarded,,16,Oil; no 2021 junta; old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)
+CMR,Cameroon,Sub-Saharan Africa,XAF,39.0,25.9,47,N,85,20,22,,Guarded,,16,old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)
+CAF,Central African Republic,Sub-Saharan Africa,XAF,2.2,4.75,18,N,35,44,38,,Guarded,,10,Civil war since 2013; old group Central and Southern Africa (A); branch strengths (A); starts Collapsed (4-politics 4.2.7); HSS set by hand from 19.22 (A)
+COG,Republic of the Congo,Sub-Saharan Africa,XAF,12.3,5.4,42,N,82,23,27,,Guarded,,10,Oil; old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)
+GAB,Gabon,Sub-Saharan Africa,XAF,16.9,2.17,64,N,80,26,30,,Guarded,,9,"Oil, manganese; no 2023 coup; old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)"
+GNQ,Equatorial Guinea,Sub-Saharan Africa,XAF,11.0,1.36,32,N,95,6,8,,Guarded,,5,Oil; old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)
+STP,Sao Tome and Principe,Sub-Saharan Africa,STN,0.43,0.215,59,N,50,65,75,,Guarded,,1,old group Central and Southern Africa (A); branch strengths (A)
+KEN,Kenya,Sub-Saharan Africa,KES,95.5,52.6,63,N,62,49,57,,Guarded,,22,Mobile money fintech; old group East Africa and Horn; branch strengths (A); HSS set by hand from 19.22 (A)
+ETH,Ethiopia,Sub-Saharan Africa,ETB,96.0,112.1,70,N,72,36,42,,Guarded,,27,"Abiy, Nobel laureate (19.22); old group East Africa and Horn; branch strengths (A); HSS set by hand from 19.22 (A)"
+TZA,Tanzania,Sub-Saharan Africa,TZS,61.0,58,59,N,72,36,42,,Guarded,,23,old group East Africa and Horn; branch strengths (A); HSS set by hand from 19.22 (A)
+UGA,Uganda,Sub-Saharan Africa,UGX,35.0,44.3,55,N,82,23,27,,Guarded,,16,old group East Africa and Horn; branch strengths (A); HSS set by hand from 19.22 (A)
+SOM,Somalia,Sub-Saharan Africa,SOS,4.9,15.4,56,N,35,44,38,,Guarded,,13,old group East Africa and Horn; starts Collapsed (4-politics 4.2.7); HSS set by hand from 19.22 (A)
+SDN,Sudan,Sub-Saharan Africa,SDG,32.0,42.8,64,N,72,36,37,,Guarded,,23,Red Sea coast; old group East Africa and Horn; HSS set by hand from 19.22 (A)
+SSD,South Sudan,Sub-Saharan Africa,SSP,4.0,11.1,42,N,35,44,38,,Guarded,,12,Oil; old group East Africa and Horn (A); starts Collapsed (4-politics 4.2.7); HSS set by hand from 19.22 (A)
+ERI,Eritrea,Sub-Saharan Africa,ERN,2.0,3.5,14,N,96,5,6,,Restricted,,6,Group default Guarded overridden for a closed one-party state (A); old group East Africa and Horn (A); branch strengths and restriction (A); HSS set by hand from 19.22 (A)
+DJI,Djibouti,Sub-Saharan Africa,DJF,3.3,0.97,57,N,80,26,30,,Guarded,CHN,4,"Bab-el-Mandeb port and bases; old group East Africa and Horn (A); branch strengths (A); Chinese debt vassal at start via Belt and Road (Logan, batch 128; 4-politics 4.11.8); HSS set by hand from 19.22 (A)"
+RWA,Rwanda,Sub-Saharan Africa,RWF,10.4,12.6,53,N,85,20,22,,Guarded,,8,old group East Africa and Horn (A); branch strengths (A); HSS set by hand from 19.22 (A)
+BDI,Burundi,Sub-Saharan Africa,BIF,3.0,11.5,58,N,82,23,27,,Guarded,,6,old group East Africa and Horn (A); branch strengths (A); HSS set by hand from 19.22 (A)
+MDG,Madagascar,Sub-Saharan Africa,MGA,14.1,26.9,55,N,50,65,75,,Guarded,,15,old group Central and Southern Africa (A); branch strengths (A)
+MUS,Mauritius,Sub-Saharan Africa,MUR,14.2,1.27,66,N,50,65,75,,Screened,,4,Offshore finance gateway to India and Africa; restriction Screened (A); old group East Africa and Horn (A); branch strengths and restriction (A)
+SYC,Seychelles,Sub-Saharan Africa,SCR,1.7,0.098,76,N,50,65,75,,Guarded,,1,old group East Africa and Horn (A); branch strengths (A)
+COM,Comoros,Sub-Saharan Africa,KMF,1.2,0.85,49,N,72,36,42,,Guarded,,2,old group East Africa and Horn (A); branch strengths (A)
+ZMB,Zambia,Sub-Saharan Africa,ZMW,23.3,17.9,26,N,72,36,42,,Guarded,CHN,15,"Copperbelt (abstracted into the Kolwezi-Lubumbashi hub until now); old group Central and Southern Africa; branch strengths (A); Chinese debt vassal at start via Belt and Road (Logan, batch 128; 4-politics 4.11.8)"
+AGO,Angola,Sub-Saharan Africa,AOA,84.0,31.8,37,N,72,36,42,,Guarded,,22,Oil; old group Central and Southern Africa; branch strengths (A); HSS set by hand from 19.22 (A)
+ZWE,Zimbabwe,Sub-Saharan Africa,ZWL,21.8,14.6,39,N,78,29,33,,Guarded,,13,"Lithium, platinum; old group Central and Southern Africa; branch strengths (A); HSS set by hand from 19.22 (A)"
+MOZ,Mozambique,Sub-Saharan Africa,MZN,15.3,30.4,32,N,72,36,42,,Guarded,,16,Offshore gas; old group Central and Southern Africa; branch strengths (A)
+NAM,Namibia,Sub-Saharan Africa,NAD,12.5,2.49,22,N,50,65,75,,Guarded,,11,Uranium; old group Central and Southern Africa; branch strengths (A)
+BWA,Botswana,Sub-Saharan Africa,BWP,16.7,2.3,33,N,50,65,75,,Guarded,,10,Diamonds; old group Central and Southern Africa (A); branch strengths (A)
+MWI,Malawi,Sub-Saharan Africa,MWK,7.7,18.6,63,N,50,65,75,,Guarded,,10,old group Central and Southern Africa (A); branch strengths (A)
+LSO,Lesotho,Sub-Saharan Africa,LSL,2.4,2.13,50,N,50,65,75,,Guarded,,4,old group Central and Southern Africa (A); branch strengths (A)
+SWZ,Eswatini,Sub-Saharan Africa,SZL,4.5,1.15,31,N,94,8,9,,Guarded,,4,old group Central and Southern Africa (A); branch strengths (A); HSS set by hand from 19.22 (A)
+IND,India,South Asia,INR,2850,1366.4,61,Y,55,58,62,,Guarded,,97,
+PAK,Pakistan,South Asia,PKR,278,216.6,71,N,65,46,48,,Guarded,CHN,34,Sliding into Chinese debt vassalage (19.22); set as a vassal at start per brief (A); old group South Asia minors; branch strengths (A); HSS set by hand from 19.22 (A)
+BGD,Bangladesh,South Asia,BDT,302,163,70,N,72,36,42,,Guarded,,29,Garments; old group South Asia minors; branch strengths (A); HSS set by hand from 19.22 (A)
+LKA,Sri Lanka,South Asia,LKR,84.0,21.8,61,N,72,36,42,,Guarded,CHN,13,Hambantota leased to China; Chinese debt vassal from 2017 (19.19); old group South Asia minors; branch strengths (A)
+NPL,Nepal,South Asia,NPR,34.2,28.6,69,N,45,72,82,,Guarded,,13,Hydropower; old group South Asia minors; branch strengths (A)
+BTN,Bhutan,South Asia,BTN,2.5,0.76,65,N,45,72,82,,Guarded,,4,Hydropower; old group South Asia minors (A); branch strengths (A)
+MDV,Maldives,South Asia,MVR,5.6,0.53,76,N,45,72,82,,Guarded,,1,old group South Asia minors (A); branch strengths (A)
+AFG,Afghanistan,South Asia,AFN,25.0,38,73,N,70,39,45,,Guarded,,17,Stable under Massoud's chosen successor (19.22): GDP a little above the real 19B (A); old group South Asia minors (A); branch strengths (A); HSS set by hand from 19.22 (A)
+CHN,China,East Asia and Oceania,CNY,14000,1398,56,Y,92,10,12,Party Standing Committee,Restricted,,145,Population and GDP include Hong Kong and Macau as given in 2.2.3; HKG and MAC rows also list them (A); Macau province moved to MAC (Logan; batch 153)
+JPN,Japan,East Asia and Oceania,JPY,5100,126.3,74,Y,42,75,87,,Screened,,63,
+KOR,South Korea,East Asia and Oceania,KRW,1650,51.7,77,Y,52,62,72,,Screened,,35,
+TWN,Taiwan,East Asia and Oceania,TWD,610,23.6,73,Y,48,68,78,,Guarded,,22,
+SGP,Singapore,East Asia and Oceania,SGD,370,5.7,57,Y,68,37,63,,Open,,3,
+MYS,Malaysia,East Asia and Oceania,MYR,360,32.5,53,Y,50,65,70,,Screened,,23,
+IDN,Indonesia,East Asia and Oceania,IDR,1120,270.6,63,Y,52,62,67,,Guarded,,51,
+VNM,Vietnam,East Asia and Oceania,VND,260,96.5,68,Y,86,18,21,,Restricted,,27,
+AUS,Australia,East Asia and Oceania,AUD,1400,25.4,71,Y,42,75,87,,Screened,,53,
+HKG,Hong Kong,East Asia and Oceania,HKD,363,7.5,32,N,62,39,67,Liaison Office,Screened,,3,SAR of China: own currency (HKD currency board) and own looser laws per the hub table 2.3.3; restriction Screened copied from there; dependent territory; branch strengths (A)
+MAC,Macau,East Asia and Oceania,MOP,55,0.65,63,N,62,39,67,,Screened,,1,"SAR of China like Hong Kong (Logan, batch 153): own currency (MOP, pegged to the HKD) and own laws per the hub table 2.3.3; restriction Screened, HSS and branch strengths copied from Hong Kong (A); no Liaison Office variant, so the 10 start variants stay (A); dependent territory; GDP and population real 2019 (A); WI by the fit, at the 1.20 clamp"
+PRK,North Korea,East Asia and Oceania,KPW,18.0,25.7,10,N,100,0,0,State Security,Closed,,11,Closed per 4.2.4: no foreign assets allowed at start; GDP is an estimate; old group Southeast Asia minors (A)
+MNG,Mongolia,East Asia and Oceania,MNT,13.9,3.23,75,N,45,72,82,,Guarded,,15,"Copper, coal; old group Central Asia (A); branch strengths (A)"
+THA,Thailand,East Asia and Oceania,THB,544,69.6,65,N,75,28,38,,Screened,,30,Auto and electronics assembly; old group Southeast Asia minors; HSS set by hand from 19.22 (A)
+PHL,Philippines,East Asia and Oceania,PHP,377,108.1,59,N,58,55,48,,Screened,,29,Business process outsourcing; old group Southeast Asia minors; HSS set by hand from 19.22 (A)
+MMR,Myanmar,East Asia and Oceania,MMK,76.0,54,69,N,62,49,47,Tatmadaw,Screened,,21,Rare earths; old group Southeast Asia minors
+KHM,Cambodia,East Asia and Oceania,KHR,27.0,16.5,78,N,85,20,22,,Screened,,12,Belt and Road client (not a vassal at start) (A); old group Southeast Asia minors; branch strengths (A); HSS set by hand from 19.22 (A)
+LAO,Laos,East Asia and Oceania,LAK,18.7,7.2,62,N,90,13,15,,Screened,,10,Belt and Road client (not a vassal at start) (A); old group Southeast Asia minors; branch strengths (A); HSS set by hand from 19.22 (A)
+BRN,Brunei,East Asia and Oceania,BND,13.5,0.43,55,N,96,5,6,,Screened,,4,Oil and gas; old group Southeast Asia minors (A); branch strengths (A); HSS set by hand from 19.22 (A)
+TLS,Timor-Leste,East Asia and Oceania,USD,2.0,1.29,83,N,45,72,82,,Screened,,3,old group Southeast Asia minors (A); branch strengths (A)
+NZL,New Zealand,East Asia and Oceania,NZD,211,4.98,75,N,45,72,82,,Screened,,16,Dairy; old group Oceania minors; branch strengths (A)
+PNG,Papua New Guinea,East Asia and Oceania,PGK,24.8,8.8,56,N,45,72,82,,Screened,,12,"LNG, gold, copper; old group Oceania minors; branch strengths (A)"
+FJI,Fiji,East Asia and Oceania,FJD,5.5,0.89,79,N,45,72,82,,Screened,,4,old group Oceania minors; branch strengths (A)
+SLB,Solomon Islands,East Asia and Oceania,SBD,1.6,0.67,66,N,45,72,82,,Screened,,3,old group Oceania minors; branch strengths (A)
+VUT,Vanuatu,East Asia and Oceania,VUV,0.93,0.3,75,N,45,72,82,,Screened,,2,old group Oceania minors; branch strengths (A)
+WSM,Samoa,East Asia and Oceania,WST,0.85,0.2,63,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
+TON,Tonga,East Asia and Oceania,TOP,0.51,0.104,65,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
+KIR,Kiribati,East Asia and Oceania,AUD,0.19,0.118,84,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
+FSM,Micronesia,East Asia and Oceania,USD,0.40,0.114,60,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
+MHL,Marshall Islands,East Asia and Oceania,USD,0.24,0.059,69,N,45,72,82,,Screened,,1,Ship registry; old group Oceania minors; branch strengths (A)
+PLW,Palau,East Asia and Oceania,USD,0.27,0.018,70,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
+NRU,Nauru,East Asia and Oceania,AUD,0.12,0.011,70,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
+TUV,Tuvalu,East Asia and Oceania,AUD,0.05,0.012,62,N,45,72,82,,Screened,,1,old group Oceania minors; branch strengths (A)
+GIB,Gibraltar,Europe,GBP,2.8,0.034,74,N,45,72,82,,Open,GBR,1,"Haven (batch 122); British Overseas Territory; online gambling, bunkering; out of the EU with the UK (A)"
+IMN,Isle of Man,Europe,GBP,7.0,0.085,76,N,45,72,82,,Open,GBR,1,"Haven (batch 122); Crown Dependency; online gambling, ship registry (A)"
+FRO,Faroe Islands,Europe,DKK,3.1,0.052,90,N,45,72,82,,Screened,DNK,1,"Self-governing under Denmark, outside the EU; fishing and salmon (batch 122) (A)"
+PAP,Papa's Port,Latin America,USD,0.3,0.004,50,N,100,0,0,Sovereign's Household,Open,ARG,1,"Micronation on the Falkland Islands, Argentine territory, ruled by the sovereign Papa Slop (Logan, batch 124); code PAP is invented (A)"

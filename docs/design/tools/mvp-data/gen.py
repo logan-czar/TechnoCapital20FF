@@ -574,17 +574,18 @@ def sov_spread(r):
     return s
 
 def fallback_rating(c):
-    """Unrated in 2020: by wealth and state (A)."""
+    """Unrated in 2020: by GDP per head and state (A). Batch 158: wealth_index is an equality index,
+    so the old WI cut-offs 0.8/0.4/0.2/0.1 are restated as GDP per head $48k/$18k/$6.6k/$2.35k, which keeps every batch 148 rating."""
     if int(c['hss']) <= 35:
         return 'CCC'
-    wi = float(c['wealth_index'])
-    if wi >= 0.8:
+    gph = float(c['gdp_usd_bn']) / float(c['population_m'])  # $k per head
+    if gph >= 48:
         return 'A'
-    if wi >= 0.4:
+    if gph >= 18:
         return 'BBB-'
-    if wi >= 0.2:
+    if gph >= 6.6:
         return 'BB-'
-    if wi >= 0.1:
+    if gph >= 2.35:
         return 'B+'
     return 'B-'
 
@@ -618,7 +619,7 @@ def build_countries(countries):
                 notes.append('rating ' + RATING_NOTE[iso])
         else:
             rating = fallback_rating(c)
-            notes.append('unrated in 2020: rating from wealth and state (A)')
+            notes.append('unrated in 2020: rating from GDP per head and state (A)')
         off = OFFSET.get(iso, 0)
         if off:
             notes.append(f'crisis premium +{off} bps (3.6.5)')

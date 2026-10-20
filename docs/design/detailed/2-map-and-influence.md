@@ -1,6 +1,6 @@
 # 2. Map and influence: detailed design
 
-_Status: draft v0.7 (2026-10-20). Batch 157 (Logan): no geographic wage. Logan: "we don't have wage value we have labor_value that is it. This is bound to industry not geography." The wage index WI and price factor PF are removed as country and zone values; labor is labor_value only, set per industry ([10-industry-economy.md](10-industry-economy.md) 10.0.11.10). The post-MVP rules that still read WI or PF (2.8.4 wages and training, 2.8.6 union thresholds, 2.16 pools, 2.17 development targets, influence costs) need restating and are not in the MVP; the zone credit spread is a fixed base moved by the cycle (2.1.1, 2.18.2; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.2). Batch 155 (Logan): economy settings apply per financial zone, not per country. Logan: "Things that we were traditionally applying to a countries economy we are no apply across and entire financial zone." The wage index and price factor become zone values, and companies borrow at their zone's credit spread; tax, laws, the sovereign rating and spread, sanctions and politics stay national (2.1.1, 2.2.3, 2.2.5, 2.18.2; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.2). Batch 154 (Logan): Japan zone (with Taiwan), Russia zone. Zone 25 Japan (hub Tokyo-Yokohama, ESE Edo Securities Exchange; Japan and Taiwan) and zone 26 Russia (hub Moscow, YRX Yauza River Exchange; Russia and Belarus, A); 26 zones (2.3.3, 2.18.2). Batch 152 (Logan): 24 financial zones, each with an exchange in a hub city. Every country is in exactly one zone; each zone has an intensity, a lag and contagion (T); 8 hub cities join the key cities (2.3.3, 2.18.2, 2.24, summary item 11). Batch 150 (Logan): global business cycle, financial zones, mean-reverting industry growth. One global cycle felt by 8 financial zones at their own intensity replaces the national cycles and the shared euro-area cycle of batch 125; industries draw quarterly growth around their long-term rate (2.18.1, 2.18.2, 2.24, summary item 11; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1). Batch 144 (Logan): Head of Security renamed CIO in the accident table. Batch 136 (Logan): one US-based government system; foreignness penalties, the psyop-exposure table, Papa's Port and the worked examples read Head of State Strength instead of government type (4-politics 4.2). Consistency pass 3 (batch 129): Papa's Port currency wording, the gala push, the Penang example, the pool rate term and assumption 1 matched to the finished map and the USD rule. Batch 128 (Logan): Dubai, Sharjah and Ajman form one 3-province Dubai Metro; Platinum and Diamonds tags; resource provinces may exceed their development band through Industry; Russian areas follow federal districts (split where a district is large). Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule (2.3.2 to 2.3.5; the former_hub province column is gone). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. The 2.2.3 Currency and FX regime columns are flavor; there are no FX moves; every country runs its own cycle off the world base rate, the euro-area members share one cycle again, and Latin America keeps its own national cycles (2.18.1); London's FX trading and Buenos Aires's ARS perk are post-POC. This supersedes the Latin America line below. Batch 124 (Logan): Papa's Port, a micronation on the Falklands under Argentina (2.2.5); resource tags Bauxite, Silver, Zinc and Tin (2.3.1); chokepoints Florida Strait, Strait of Magellan and Drake Passage (2.4.2); Latin America dollarized at start (2.18.1; superseded by batch 125). Batch 123 (Logan): the contested flag is used wherever a real dispute exists, worldwide (2.3.1); Schengen is flavor only (2.21.2). Batch 122 (Logan): contested flag and linked cities on provinces (2.3.1, 2.3.2), Gibraltar, the Isle of Man and the Faroes are their own countries, Gibraltar and the Isle of Man are havens (2.2.5), one euro-area cycle (2.18.1). Batch 121 (Logan): only national governments in the POC; regions, areas, cities and Metros are map groupings with no government (no regional government, city councils, mayors, regional or city bonds); a Metro shares only its property cycle and post-POC metro systems; city and region perks now work through national officials (2.5.10), and each tier adds local standing PC to the country pool. Batch 120 (Logan): the country weight cap is dropped, so every place weighs the honest sum of its provinces; influence tier thresholds drop by level (province and city 10/25/50%, area and region 5/15/30%, country 3/8/20%) with the hysteresis band scaled to match; 2.3.1, 2.5.3, 2.5.9, 2.5.10, the 2.14.1 roll-up and assumption 4 updated. Batch 119 (Logan): any city with a metro population of 5M or more is a Metro, not only former hubs (Phoenix, Melbourne, Philadelphia); province weight is total development × wealth index × $0.3B, and country weight is capped at 3% of GDP; the 2.14 examples are rescaled. Batch 118 (Logan): EU4-style map. Hubs, districts and minor groups are gone: the world is about 195 real countries tiled into about 3,200 land provinces (Superregion > Country > Region > Area > Province); development in three tracks (Commerce, Industry, Population) sets each province's weight; megacities are Metros of 2 to 8 provinces with a shared council, property cycle and (post-POC) metro systems; one resource tag and one terrain per province; the four real estate pools sit in each province; influence runs per province, Metro, area, region and country. Rewritten: 2.2.1, 2.2.5, 2.3, 2.5, 2.16, 2.17; hub and district wording updated everywhere else. Batch 117: no captive banks (Zurich perk is HQ only), no T2 Data Sovereignty, no stress from travel. Batch 116: Colombia and DR Congo promoted to major countries (33); Semiconductors replaces Lithography machines, Foundry, GPUs and CPUs; no dynasties, family or succession (influence holders are characters, companies and governments); branch offices dropped; Clout and Favor replace reputation and prestige; intel learns secrets, accurate data only on Pdoomberg; workforce counts become payroll dollars; crashes cost health; AI takeovers only on the game director's order; consistency fixes A1 to A23. v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs (now provinces and Metros), location perks, influence, strata and population, pooled real estate, the hub life cycle (now development change), the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands the map and influence overview (05). Owner: Logan._
+_Status: draft v0.7 (2026-10-20). Batch 158 (Logan): bodyguards are gone (2.21.4, 2.21.8). The wealth index is an equality index (100 everyone earns about the same, 10 massive slavery or servitude; countries.csv, 2.2.3), not a wage or wealth measure. Every rule that multiplied by WI, PF or the wealth index now uses flat prices (A): province weight is total development × $0.3B (2.3.1, 2.5.3, assumption 4), pools (2.16), development targets (2.17), wages, training and union thresholds (2.8.4, 2.8.6) and sponsorship; income tiers read GDP per head (2.8.3); the 2.14 examples still use the old weights and need restating (open). Batch 157 (Logan): no geographic wage. Logan: "we don't have wage value we have labor_value that is it. This is bound to industry not geography." The wage index WI and price factor PF are removed as country and zone values; labor is labor_value only, set per industry ([10-industry-economy.md](10-industry-economy.md) 10.0.11.10). The post-MVP rules that still read WI or PF (2.8.4 wages and training, 2.8.6 union thresholds, 2.16 pools, 2.17 development targets, influence costs) need restating and are not in the MVP; the zone credit spread is a fixed base moved by the cycle (2.1.1, 2.18.2; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.2). Batch 155 (Logan): economy settings apply per financial zone, not per country. Logan: "Things that we were traditionally applying to a countries economy we are no apply across and entire financial zone." The wage index and price factor become zone values, and companies borrow at their zone's credit spread; tax, laws, the sovereign rating and spread, sanctions and politics stay national (2.1.1, 2.2.3, 2.2.5, 2.18.2; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.2). Batch 154 (Logan): Japan zone (with Taiwan), Russia zone. Zone 25 Japan (hub Tokyo-Yokohama, ESE Edo Securities Exchange; Japan and Taiwan) and zone 26 Russia (hub Moscow, YRX Yauza River Exchange; Russia and Belarus, A); 26 zones (2.3.3, 2.18.2). Batch 152 (Logan): 24 financial zones, each with an exchange in a hub city. Every country is in exactly one zone; each zone has an intensity, a lag and contagion (T); 8 hub cities join the key cities (2.3.3, 2.18.2, 2.24, summary item 11). Batch 150 (Logan): global business cycle, financial zones, mean-reverting industry growth. One global cycle felt by 8 financial zones at their own intensity replaces the national cycles and the shared euro-area cycle of batch 125; industries draw quarterly growth around their long-term rate (2.18.1, 2.18.2, 2.24, summary item 11; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1). Batch 144 (Logan): Head of Security renamed CIO in the accident table. Batch 136 (Logan): one US-based government system; foreignness penalties, the psyop-exposure table, Papa's Port and the worked examples read Head of State Strength instead of government type (4-politics 4.2). Consistency pass 3 (batch 129): Papa's Port currency wording, the gala push, the Penang example, the pool rate term and assumption 1 matched to the finished map and the USD rule. Batch 128 (Logan): Dubai, Sharjah and Ajman form one 3-province Dubai Metro; Platinum and Diamonds tags; resource provinces may exceed their development band through Industry; Russian areas follow federal districts (split where a district is large). Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule (2.3.2 to 2.3.5; the former_hub province column is gone). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. The 2.2.3 Currency and FX regime columns are flavor; there are no FX moves; every country runs its own cycle off the world base rate, the euro-area members share one cycle again, and Latin America keeps its own national cycles (2.18.1); London's FX trading and Buenos Aires's ARS perk are post-POC. This supersedes the Latin America line below. Batch 124 (Logan): Papa's Port, a micronation on the Falklands under Argentina (2.2.5); resource tags Bauxite, Silver, Zinc and Tin (2.3.1); chokepoints Florida Strait, Strait of Magellan and Drake Passage (2.4.2); Latin America dollarized at start (2.18.1; superseded by batch 125). Batch 123 (Logan): the contested flag is used wherever a real dispute exists, worldwide (2.3.1); Schengen is flavor only (2.21.2). Batch 122 (Logan): contested flag and linked cities on provinces (2.3.1, 2.3.2), Gibraltar, the Isle of Man and the Faroes are their own countries, Gibraltar and the Isle of Man are havens (2.2.5), one euro-area cycle (2.18.1). Batch 121 (Logan): only national governments in the POC; regions, areas, cities and Metros are map groupings with no government (no regional government, city councils, mayors, regional or city bonds); a Metro shares only its property cycle and post-POC metro systems; city and region perks now work through national officials (2.5.10), and each tier adds local standing PC to the country pool. Batch 120 (Logan): the country weight cap is dropped, so every place weighs the honest sum of its provinces; influence tier thresholds drop by level (province and city 10/25/50%, area and region 5/15/30%, country 3/8/20%) with the hysteresis band scaled to match; 2.3.1, 2.5.3, 2.5.9, 2.5.10, the 2.14.1 roll-up and assumption 4 updated. Batch 119 (Logan): any city with a metro population of 5M or more is a Metro, not only former hubs (Phoenix, Melbourne, Philadelphia); province weight is total development × wealth index × $0.3B, and country weight is capped at 3% of GDP; the 2.14 examples are rescaled. Batch 118 (Logan): EU4-style map. Hubs, districts and minor groups are gone: the world is about 195 real countries tiled into about 3,200 land provinces (Superregion > Country > Region > Area > Province); development in three tracks (Commerce, Industry, Population) sets each province's weight; megacities are Metros of 2 to 8 provinces with a shared council, property cycle and (post-POC) metro systems; one resource tag and one terrain per province; the four real estate pools sit in each province; influence runs per province, Metro, area, region and country. Rewritten: 2.2.1, 2.2.5, 2.3, 2.5, 2.16, 2.17; hub and district wording updated everywhere else. Batch 117: no captive banks (Zurich perk is HQ only), no T2 Data Sovereignty, no stress from travel. Batch 116: Colombia and DR Congo promoted to major countries (33); Semiconductors replaces Lithography machines, Foundry, GPUs and CPUs; no dynasties, family or succession (influence holders are characters, companies and governments); branch offices dropped; Clout and Favor replace reputation and prestige; intel learns secrets, accurate data only on Pdoomberg; workforce counts become payroll dollars; crashes cost health; AI takeovers only on the game director's order; consistency fixes A1 to A23. v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs (now provinces and Metros), location perks, influence, strata and population, pooled real estate, the hub life cycle (now development change), the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands the map and influence overview (05). Owner: Logan._
 
 This file turns the map and influence overviews into exact rules, formulas, numbers and content that a designer can balance. It is pure game design.
 
@@ -22,7 +22,7 @@ This file turns the map and influence overviews into exact rules, formulas, numb
 ### 2.1.1 Money and units
 
 - **Reference dollar ($)**: all base prices and costs are in US dollars. Every simulated value is in US dollars (Logan, batch 125), so there is no conversion; local currencies appear only as flavor in names, news and UI text, and FX is post-POC ([3-markets-and-fx.md](3-markets-and-fx.md) 3.8.1).
-- **Wage index (WI)** and **price factor (PF)**: **removed (Logan, batch 157).** There is no geographic wage: labor is labor_value, bound to industry. Batch 155 had made them zone values. Rules below that still multiply by WI or PF are post-MVP and need restating (open). The politics **wealth index** (GDP per capita / $20,000, countries.csv wealth_index) stays, for bribes, legal fees and unrated-country ratings, and is not a wage index.
+- **Wage index (WI)** and **price factor (PF)**: **removed (Logan, batch 157).** There is no geographic wage: labor is labor_value, bound to industry. Batch 155 had made them zone values. Batch 158 restated the post-MVP rules that multiplied by WI or PF with flat prices **(A)**. The **wealth index** (countries.csv wealth_index) is an **equality index** since batch 158 (Logan): 100 means everyone earns about the same, 10 means massive slavery or servitude; it is not a wage, a price level or a measure of how rich a country is, and no rule multiplies a cost by it. Rules that used WI, PF or the old politics wealth index as a price multiplier now use flat prices **(A)**. Bodyguards are removed (Logan, batch 158).
 - **pp** = percentage points of influence share.
 
 ### 2.1.2 Cadence for this layer
@@ -74,43 +74,43 @@ Foreigners also suffer the **foreigner influence penalty** of the country's Head
 
 ### 2.2.3 Major countries: economy
 
-Columns: GDP in reference trillions at start (**alternate January 2020**, 2026-10-18 review **(T)**: real 2019 values, with the US about 10% larger, the eurozone countries about 20% smaller after the euro crisis (run as a debt crisis in the simulation, batch 125), and Russia about 30% smaller after 15 years of sanctions); WI = wage index; **Currency** and **FX regime** are flavor (names, news, UI text) and the post-POC design; every simulated value is in USD (Logan, batch 125; [3-markets-and-fx.md](3-markets-and-fx.md) 3.8.1); corporate tax is the starting E2 position (national rate only). Batch 155: tax stays national. Batch 157: the WI column is the politics wealth index only, not a wage index (2.1.1).
+Columns: GDP in reference trillions at start (**alternate January 2020**, 2026-10-18 review **(T)**: real 2019 values, with the US about 10% larger, the eurozone countries about 20% smaller after the euro crisis (run as a debt crisis in the simulation, batch 125), and Russia about 30% smaller after 15 years of sanctions); Equality (WI) = the wealth index, an equality index since batch 158 (10 servitude to 100 equal; countries.csv); **Currency** and **FX regime** are flavor (names, news, UI text) and the post-POC design; every simulated value is in USD (Logan, batch 125; [3-markets-and-fx.md](3-markets-and-fx.md) 3.8.1); corporate tax is the starting E2 position (national rate only). Batch 155: tax stays national. Batch 157: the WI column is not a wage index (2.1.1). Batch 158: it is the equality index, values copied from countries.csv.
 
-| # | Country | Currency | FX regime (F3) | GDP ($T) | WI | Corporate tax (E2) | Exchange (fictional) and notes |
+| # | Country | Currency | FX regime (F3) | GDP ($T) | Equality (WI) | Corporate tax (E2) | Exchange (fictional) and notes |
 |---|---|---|---|---|---|---|---|
-| 1 | United States | USD | Free Float (reserve currency) | 23.5 | 1.00 | Moderate | Largest exchange; deepest bond market |
-| 2 | Canada | CAD | Free Float | 1.75 | 0.85 | Moderate | Resources, banking |
-| 3 | Mexico | MXN | Free Float | 1.25 | 0.22 | High | Nearshoring base for US market |
-| 4 | Brazil | BRL | Free Float | 1.85 | 0.25 | High | Agribusiness and iron ore |
-| 5 | Argentina | ARS | Managed Float | 0.45 | 0.20 | High | Lithium; history of controls |
-| 6 | Chile | CLP | Free Float | 0.28 | 0.30 | High | Copper and lithium |
-| 7 | United Kingdom | GBP | Free Float | 2.75 | 0.85 | Moderate | Global finance and insurance center (FX center in flavor; FX trading is post-POC, batch 125) |
-| 8 | Germany | EUR | Free Float (euro zone) | 3.2 | 0.90 | High | Seat of the Eurozone Central Bank (Frankfurt), a flavor name that sets no rate in the POC (batch 125) |
-| 9 | France | EUR | Free Float (euro zone) | 2.2 | 0.85 | Moderate | Luxury, aerospace, nuclear |
-| 10 | Netherlands | EUR | Free Float (euro zone) | 0.75 | 0.90 | Moderate | Largest port in Europe; Semiconductors (lithography) |
-| 11 | Italy | EUR | Free Float (euro zone) | 1.6 | 0.70 | Moderate | Machinery, luxury |
-| 12 | Switzerland | CHF | Free Float (safe haven) | 0.75 | 1.15 | Low | Private banking, commodity traders |
-| 13 | Russia | RUB | Managed Float | 1.2 | 0.25 | Moderate | Oil, gas, metals; under sanctions at start |
-| 14 | Turkey | TRY | Managed Float | 0.75 | 0.28 | Moderate | Controls the Turkish Straits |
-| 15 | Saudi Arabia | SAR | Peg (USD) | 0.85 | 0.55 | Moderate | Largest oil exporter |
-| 16 | United Arab Emirates | AED | Peg (USD) | 0.42 | 0.45 | Low | Re-export and finance free zones |
-| 17 | Israel | ILS | Free Float | 0.40 | 0.80 | Moderate | Cyber and surveillance tech |
-| 18 | Egypt | EGP | Managed Float | 0.30 | 0.10 | Moderate | Suez Canal revenue |
-| 19 | Nigeria | NGN | Managed Float | 0.45 | 0.08 | High | Oil; largest African consumer market |
-| 20 | South Africa | ZAR | Free Float | 0.35 | 0.22 | High | Mining finance, platinum metals |
-| 21 | India | INR | Managed Float | 2.85 | 0.12 | Moderate | IT services, generic pharma |
-| 22 | China | CNY | Managed Float | 14.0 | 0.30 | Moderate | Manufacturing core; capital controls |
-| 23 | Japan | JPY | Free Float | 5.1 | 0.75 | High | Robotics, chip materials |
-| 24 | South Korea | KRW | Free Float | 1.65 | 0.65 | Moderate | Memory, displays, batteries |
-| 25 | Taiwan | TWD | Managed Float | 0.61 | 0.50 | Moderate | Semiconductors (leading edge) |
-| 26 | Singapore | SGD | Managed Float (basket) | 0.37 | 0.85 | Low | Transshipment, wealth management |
-| 27 | Malaysia | MYR | Managed Float | 0.36 | 0.25 | Moderate | Semiconductors (assembly and test) |
-| 28 | Indonesia | IDR | Managed Float | 1.12 | 0.12 | Moderate | Nickel, coal, palm oil |
-| 29 | Vietnam | VND | Managed Float | 0.26 | 0.12 | Moderate | Electronics assembly |
-| 30 | Australia | AUD | Free Float | 1.4 | 0.95 | High | Iron ore, lithium, LNG |
-| 31 | Qatar | QAR | Peg (USD) | 0.18 | 0.60 | Low | Largest LNG exporter; sovereign fund; promoted from Gulf minors so Doha has a country (2026-10-18 review) |
-| 32 | Colombia | COP | Free Float | 0.32 | 0.18 | High | Oil, coal, coffee, flowers; Medellín; promoted from the Andean group (Logan, batch 116) |
-| 33 | DR Congo | CDF | Managed Float (heavily dollarized) | 0.05 | 0.03 | High | Cobalt and copper (Katanga, with the Zambian Copperbelt abstracted in); promoted from Central and Southern Africa (Logan, batch 116) |
+| 1 | United States | USD | Free Float (reserve currency) | 23.5 | 54 | Moderate | Largest exchange; deepest bond market |
+| 2 | Canada | CAD | Free Float | 1.75 | 73 | Moderate | Resources, banking |
+| 3 | Mexico | MXN | Free Float | 1.25 | 49 | High | Nearshoring base for US market |
+| 4 | Brazil | BRL | Free Float | 1.85 | 33 | High | Agribusiness and iron ore |
+| 5 | Argentina | ARS | Managed Float | 0.45 | 55 | High | Lithium; history of controls |
+| 6 | Chile | CLP | Free Float | 0.28 | 51 | High | Copper and lithium |
+| 7 | United Kingdom | GBP | Free Float | 2.75 | 70 | Moderate | Global finance and insurance center (FX center in flavor; FX trading is post-POC, batch 125) |
+| 8 | Germany | EUR | Free Float (euro zone) | 3.2 | 77 | High | Seat of the Eurozone Central Bank (Frankfurt), a flavor name that sets no rate in the POC (batch 125) |
+| 9 | France | EUR | Free Float (euro zone) | 2.2 | 77 | Moderate | Luxury, aerospace, nuclear |
+| 10 | Netherlands | EUR | Free Float (euro zone) | 0.75 | 84 | Moderate | Largest port in Europe; Semiconductors (lithography) |
+| 11 | Italy | EUR | Free Float (euro zone) | 1.6 | 66 | Moderate | Machinery, luxury |
+| 12 | Switzerland | CHF | Free Float (safe haven) | 0.75 | 74 | Low | Private banking, commodity traders |
+| 13 | Russia | RUB | Managed Float | 1.2 | 56 | Moderate | Oil, gas, metals; under sanctions at start |
+| 14 | Turkey | TRY | Managed Float | 0.75 | 53 | Moderate | Controls the Turkish Straits |
+| 15 | Saudi Arabia | SAR | Peg (USD) | 0.85 | 26 | Moderate | Largest oil exporter |
+| 16 | United Arab Emirates | AED | Peg (USD) | 0.42 | 24 | Low | Re-export and finance free zones |
+| 17 | Israel | ILS | Free Float | 0.40 | 63 | Moderate | Cyber and surveillance tech |
+| 18 | Egypt | EGP | Managed Float | 0.30 | 76 | Moderate | Suez Canal revenue |
+| 19 | Nigeria | NGN | Managed Float | 0.45 | 70 | High | Oil; largest African consumer market |
+| 20 | South Africa | ZAR | Free Float | 0.35 | 20 | High | Mining finance, platinum metals |
+| 21 | India | INR | Managed Float | 2.85 | 61 | Moderate | IT services, generic pharma |
+| 22 | China | CNY | Managed Float | 14.0 | 56 | Moderate | Manufacturing core; capital controls |
+| 23 | Japan | JPY | Free Float | 5.1 | 74 | High | Robotics, chip materials |
+| 24 | South Korea | KRW | Free Float | 1.65 | 77 | Moderate | Memory, displays, batteries |
+| 25 | Taiwan | TWD | Managed Float | 0.61 | 73 | Moderate | Semiconductors (leading edge) |
+| 26 | Singapore | SGD | Managed Float (basket) | 0.37 | 57 | Low | Transshipment, wealth management |
+| 27 | Malaysia | MYR | Managed Float | 0.36 | 53 | Moderate | Semiconductors (assembly and test) |
+| 28 | Indonesia | IDR | Managed Float | 1.12 | 63 | Moderate | Nickel, coal, palm oil |
+| 29 | Vietnam | VND | Managed Float | 0.26 | 68 | Moderate | Electronics assembly |
+| 30 | Australia | AUD | Free Float | 1.4 | 71 | High | Iron ore, lithium, LNG |
+| 31 | Qatar | QAR | Peg (USD) | 0.18 | 22 | Low | Largest LNG exporter; sovereign fund; promoted from Gulf minors so Doha has a country (2026-10-18 review) |
+| 32 | Colombia | COP | Free Float | 0.32 | 37 | High | Oil, coal, coffee, flowers; Medellín; promoted from the Andean group (Logan, batch 116) |
+| 33 | DR Congo | CDF | Managed Float (heavily dollarized) | 0.05 | 48 | High | Cobalt and copper (Katanga, with the Zambian Copperbelt abstracted in); promoted from Central and Southern Africa (Logan, batch 116) |
 
 ### 2.2.4 Major countries: business climate
 
@@ -158,7 +158,7 @@ Minor groups are dissolved (Logan, batch 118). Every other country (about 160) i
 
 **Papa's Port (Logan, batch 124).** The Falkland Islands are Argentine territory in this world, and they hold a **micronation, Papa's Port**, ruled by its sovereign, **Papa Slop**. It is its own country with one province, listed as a subject of Argentina. It runs the one government system at Head of State Strength 100 with the Sovereign's Household variant (4-politics 4.2.6, batch 136): Papa Slop holds every branch, sets every law by decree, and his only election is a yearly acclamation with one candidate **(A)**. Its flavor currency is the US dollar; as everywhere, every simulated value is in USD (batch 125). Papa Slop is a character whose profile is still to be written.
 
-Their economies are **simple rows** in [countries.csv](../data/countries.csv) (currency and FX regime as flavor, GDP, wealth index (not a wage index since batch 157), corporate tax, restriction label and economic role) **(T)**. They run the same rules as the 33 major countries, with fewer starting business units and no stock exchange unless the row lists one **(A)**. A country can be given a full economy table in data at any time.
+Their economies are **simple rows** in [countries.csv](../data/countries.csv) (currency and FX regime as flavor, GDP, wealth index (an equality index since batch 158), corporate tax, restriction label and economic role) **(T)**. They run the same rules as the 33 major countries, with fewer starting business units and no stock exchange unless the row lists one **(A)**. A country can be given a full economy table in data at any time.
 
 **Havens.** Shell company jurisdictions ([1-corporate-core.md](1-corporate-core.md) 1.7.4) at start: Cayman Islands, British Virgin Islands, Bermuda, Jersey (and Guernsey), Gibraltar, the Isle of Man (both added in batch 122), Luxembourg and the UAE free zones. Each is a country or dependent territory with its own provinces, except the UAE free zones, which are C6 Tax Zones inside UAE provinces **(A)**. Havens mostly hold paper: their provinces are small and Commerce-heavy, and shells registered there need no business assets.
 
@@ -209,7 +209,7 @@ Each track is at least 1 and at most 30. **Total development** = Commerce + Indu
 
 A province's total covers its whole area, not just its main town, so a large rural county cluster with oil fields (the Permian Basin) can out-develop a small city (batch 118 slice check) **(T)**.
 
-**Province weight** = total development × country wealth index × $0.3B **(T)** (Logan, batch 119; was $1B). The wealth index is the politics value (GDP per capita / $20,000, from 0.2 to 4; [4-politics.md](4-politics.md) 4.10.4). Weight replaces hub mass: it is the denominator of influence (2.5.3) and scales the cost of influence campaigns (2.5.7). Every higher place, the country included, is the honest sum of its provinces, with no cap (Logan, batch 120; batch 119 had capped country weight at 3% of GDP); tier thresholds drop by level instead (2.5.9) **(T)**. Examples: a core Metro province at 75 in the United States (wealth index about 3.5) weighs about $79B; Penang (total 30; Malaysia 0.56) $5.04B; Antofagasta (total 25; Chile 0.74) $5.55B.
+**Province weight** = total development × $0.3B **(T)** (Logan, batch 119; was $1B). Batch 158: the wealth index multiplier is dropped, as the wealth index is now an equality index and no longer measures cost; weight is a flat price per development point **(A)**. Weight replaces hub mass: it is the denominator of influence (2.5.3) and scales the cost of influence campaigns (2.5.7). Every higher place, the country included, is the honest sum of its provinces, with no cap (Logan, batch 120; batch 119 had capped country weight at 3% of GDP); tier thresholds drop by level instead (2.5.9) **(T)**. Examples: a core Metro province at 75 weighs $22.5B; Penang (total 30) $9B; Antofagasta (total 25) $7.5B.
 
 **Where assets sit.** A business unit's asset spread ([10-industry-economy.md](10-industry-economy.md) 10.0.2) is per province: its assets sit in named provinces and rent or buy space from those provinces' pools (2.16). Districts are gone; instead each industry has a **fit** **(A)**: Commerce-heavy industries (finance, software, media, professional services, retail and the like) get +2% productivity on their assets in provinces where Commerce is the largest track, and Industry-heavy industries (plants, fabs, chemicals, metals, shipping and the like) in provinces where Industry is the largest **(T)**. Extraction industries look at the resource tag instead.
 
@@ -261,7 +261,7 @@ A **Metro** is a named group of 2 or more adjacent provinces forming one megacit
 | **Location perks** | A key city's perks (2.3.5) apply in every member province |
 | **Metro systems** | Slots for subway, power grid, water, ports and airports (below) |
 
-**Metro systems (post-POC).** Each system (subway, power grid, water, ports and airports) has one shared level for the whole Metro and benefits every member province, which is the economy of scale; its upgrade cost scales with the Metro's combined development, so bigger Metros pay more per level (Logan) **(A)**. A starting shape for later: upgrade cost = $50M × combined development × wealth index × the next level **(T)**. **Metro systems are not in the POC.** The POC ships the Metro object, its outline on the map, its shared property cycle, and empty system slots.
+**Metro systems (post-POC).** Each system (subway, power grid, water, ports and airports) has one shared level for the whole Metro and benefits every member province, which is the economy of scale; its upgrade cost scales with the Metro's combined development, so bigger Metros pay more per level (Logan) **(A)**. A starting shape for later: upgrade cost = $50M × combined development × the next level **(T)** (flat; the wealth index multiplier dropped in batch 158). **Metro systems are not in the POC.** The POC ships the Metro object, its outline on the map, its shared property cycle, and empty system slots.
 
 **Linked cities (Logan, batch 122).** A few clusters of separate cities work as one economy without one core, so they are not Metros. They get a **linked-cities** tag instead: each city keeps its own province, property cycle and city rank, and the tag adds two things **(T)**: city influence is computed across the whole group (like a Metro, for city perks in 2.5.10), and a business unit with assets in two or more member provinces gets +1% productivity there. At start the only group is the **Randstad** (Amsterdam, Rotterdam, The Hague-Delft and Utrecht, about 8M people). Others (for example the Rhine-Ruhr if it were not a Metro) can be added in data **(A)**.
 
@@ -572,16 +572,16 @@ Province weight replaces hub mass (Logan, batch 118). Every higher place is the 
 
 | Place | Weight |
 |---|---|
-| **Province** | Total development × wealth index × $0.3B (2.3.1) **(T)** |
+| **Province** | Total development × $0.3B (2.3.1; flat since batch 158) **(T)** |
 | **City** | A Metro: the sum of its member provinces' weights. A single city province: its own weight |
 | **Area** | Sum of its provinces' weights |
 | **Region** | Sum of its areas' weights |
 | **Country** | Sum of its regions' weights, with no cap (Logan, batch 120; the batch 119 cap at 3% of GDP is dropped) |
 
 - **Floor rule**: a place's weight is never less than 1.25 × the total weighted assets of all modeled holders in it. This keeps assets alone from pushing any holder above 80%.
-- Weights are recomputed yearly (after development changes, 2.17) and when a country's GDP moves more than 10% (through the wealth index).
+- Weights are recomputed yearly (after development changes, 2.17). Batch 158: GDP no longer moves them, as the wealth index multiplier is gone **(A)**.
 
-Example weights **(T)**: a United States Metro core province at 75 about $79B; Bao'an-Longhua in the Shenzhen-Dongguan Metro (total 60, China 0.5) $9B; Penang $5.04B; Penang area (Penang and Seberang Perai, total 48) $8.06B; Malaysia about $60B; Alberta (7 provinces, total development 160, Canada wealth index 2.33) about $112B; California about $576B and Texas about $563B; Canada (59 provinces, total 1,084) about $757B; the United States (147 provinces, total 4,733, wealth index 3.58) about $5.1T (all from the North America slice). National weights are about 7 times the old batch 119 caps (United States $705B), so the tier thresholds drop by level (2.5.9): national Presence in the United States at 3% needs about $152B of weighted assets and Kingmaker at 20% about $1T; in Canada $23B and $151B; Presence in Alberta at 5% about $5.6B.
+Example weights **(T)**, flat at $0.3B per development point since batch 158: a United States Metro core province at 75 $22.5B; Bao'an-Longhua in the Shenzhen-Dongguan Metro (total 60) $18B; Penang $9B; Penang area (Penang and Seberang Perai, total 48) $14.4B; Malaysia about $107B; Alberta (7 provinces, total development 160) $48B; California about $161B and Texas about $157B; Canada (59 provinces, total 1,084) about $325B; the United States (147 provinces, total 4,733) about $1.42T (development totals from the North America slice). National weights are about 2 times the old batch 119 caps (United States $705B), so the tier thresholds still drop by level (2.5.9): national Presence in the United States at 3% needs about $43B of weighted assets and Kingmaker at 20% about $284B; in Canada $9.8B and $65B; Presence in Alberta at 5% about $2.4B. Before batch 158 rich countries weighed far more per point; whether that gap should come back (from GDP, not equality) is open.
 
 ### 2.5.4 Holders and attribution
 
@@ -672,7 +672,7 @@ Costs scale with the **place weight**, so buying influence in a Metro core or a 
 |---|---|---|---|---|---|---|---|
 | **Ad campaign** | $60k per pp per 4 weeks per $1B | +5 pp | 50% in the first week, full from the second | 4 to 26 weeks, paid each 4 weeks | 25% | None (legal) | Buys media units from the local market (cost / $8,000 units); owning local media cuts cost 30%; can also push an ideology bloc's MediaBias +0.02 ([4-politics.md](4-politics.md) 4.4.5) |
 | **Psyops** (bots, disinformation) | $25k per pp per 4 weeks per $1B | +10 pp | Full in 3 days | 2 to 12 weeks | 35% | Daily discovery roll (below); +5 political exposure per campaign start × surveillance multiplier ([4-politics.md](4-politics.md) 4.9.3) | Can push an ideology bloc's MediaBias +0.05 |
-| **Sponsorship and charity** | $150k per pp per $1B for a 26-week package | +3 pp | Linear over 4 weeks | 26 weeks, renewable | 5% | Only if the sponsor's Favor is below -20: "washing" scandal 2% per month | +1 Favor per $5M × PF spent (max +10 per year); 25% of its pp become permanent Goodwill at the end of each package |
+| **Sponsorship and charity** | $150k per pp per $1B for a 26-week package | +3 pp | Linear over 4 weeks | 26 weeks, renewable | 5% | Only if the sponsor's Favor is below -20: "washing" scandal 2% per month | +1 Favor per $5M spent (flat since batch 158, A) (max +10 per year); 25% of its pp become permanent Goodwill at the end of each package |
 | **Event or gala** | $0.02 × adults in the host city (a Metro, or the province) ([4-politics.md](4-politics.md) 4.10.1); hosting is instant (batch 64) | +1 pp in the host province and the city, +0.5 pp in its area and region | Instant | 2 weeks | 50% | None; a Hedonist host has a 5% scandal chance | A push of 5 toward Friend with the national legislators elected in the city and one minister who attends (there are no city officials, batch 121); the host rolls Befriend on 1 to 3 attending elite characters at Persuasion × 2% each; the host gains +1 Clout; 1 gala per city per month |
 
 **Rules:**
@@ -731,7 +731,7 @@ Kingmaker in a city (a Metro or a city province) for 12 months is also the first
 
 ### 2.5.11 Tooltip breakdown
 
-Every share shows its lines, for example (Penang, controlling character):
+Every share shows its lines, for example (Penang, controlling character; pre-batch 158 weight, see the 2.14 note):
 
 ```
 Weighted assets in Penang           $354M
@@ -795,7 +795,7 @@ Slop rules:
 
 ### 2.8.1 Segments
 
-Population is tracked per province as six segments of the labor force (half the province's population). Wages are monthly at WI 1.0 and are multiplied by the country's WI and the local tightness factor (2.8.4).
+Population is tracked per province as six segments of the labor force (half the province's population). Wages are monthly and multiplied only by the local tightness factor (2.8.4); batch 158 drops the WI multiplier (flat base wages, A; post-MVP, to be restated on labor_value).
 
 | Segment | Stratum (2.8.0) | Base wage | Spending share of disposable income | Leading ideologies ([5-ideology.md](5-ideology.md) 5.4.1) | Main unrest drivers |
 |---|---|---|---|---|---|
@@ -821,13 +821,13 @@ The game is an alternate reality a little more futuristic than ours. Basic neces
 
 ### 2.8.3 Default segment mix
 
-Share of the labor force (%) by country income tier, then adjusted by city type (applied to every province of the key city's Metro or city province; other provinces use the tier row alone).
+Share of the labor force (%) by country income tier (batch 158: tiers read GDP per head, the old WI cut-offs restated, A, since the wealth index is now an equality index), then adjusted by city type (applied to every province of the key city's Metro or city province; other provinces use the tier row alone).
 
 | Income tier | Elite | Professionals | Skilled | Unskilled | Gig | Unemployed |
 |---|---|---|---|---|---|---|
-| High (WI ≥ 0.6) | 1 | 28 | 25 | 22 | 16 | 8 |
-| Middle (WI 0.2 to 0.6) | 1 | 15 | 25 | 32 | 15 | 12 |
-| Developing (WI < 0.2) | 0.5 | 7 | 15 | 40 | 22 | 15.5 |
+| High (GDP per head ≥ $32k) | 1 | 28 | 25 | 22 | 16 | 8 |
+| Middle (GDP per head $6.6k to $32k) | 1 | 15 | 25 | 32 | 15 | 12 |
+| Developing (GDP per head < $6.6k) | 0.5 | 7 | 15 | 40 | 22 | 15.5 |
 
 | City type adjustment | Change in points |
 |---|---|
@@ -839,8 +839,8 @@ Share of the labor force (%) by country income tier, then adjusted by city type 
 
 ### 2.8.4 Hiring, wages, training and migration
 
-- **Local wage (monthly)**: `Wage = base wage × WI × tightness`, where `tightness = clamp(1 + 2 × (employment rate of the segment - 0.95), 0.85, 1.6)`. Wages move at most 3% per month (sticky), except for one-off law effects (L2 Sectoral Bargaining +8%). L1 Minimum Wage sets a floor as a share of the province's median wage.
-- **Training programs** (company action, in payroll dollars: business units have no worker counts): moving $1M of a unit's yearly Unskilled payroll in the province to Skilled costs $0.32M × WI over 6 months (85% complete); Skilled to Professional costs $0.65M × WI per $1M of payroll over 24 months **(T)**.
+- **Local wage (monthly)**: `Wage = base wage × tightness`, flat base wages with no WI since batch 158 **(A)**, where `tightness = clamp(1 + 2 × (employment rate of the segment - 0.95), 0.85, 1.6)`. Wages move at most 3% per month (sticky), except for one-off law effects (L2 Sectoral Bargaining +8%). L1 Minimum Wage sets a floor as a share of the province's median wage.
+- **Training programs** (company action, in payroll dollars: business units have no worker counts): moving $1M of a unit's yearly Unskilled payroll in the province to Skilled costs $0.32M over 6 months (85% complete); Skilled to Professional costs $0.65M per $1M of payroll over 24 months **(T)**.
 - **Natural education (yearly)**: 1% of Unskilled become Skilled; 0.5% of Skilled become Professionals.
 - **Migration (monthly)**: inside a country, 0.5% of a segment moves to the province where `wage × needs satisfaction` is 20% or more higher. Between countries, migration follows L5 Immigration ([4-politics.md](4-politics.md) 4.5.5).
 - **Population growth (yearly)**: developing 2%, middle 1%, high income 0.3% (T).
@@ -881,13 +881,13 @@ Segment offsets: Elite 5, Professionals 10, Skilled 10, Unskilled 13, Gig 15, Un
 ```
 ΔO = 0.1 × (unrest - 30)
    + L2 term: Banned -3 (O capped at 20), Restricted -1, Recognized 0, Sectoral Bargaining +2
-   + 1 if one employer's yearly payroll for the segment in the province is $100M × WI or more (T)
+   + 1 if one employer's yearly payroll for the segment in the province is $100M or more (T; flat since batch 158)
    + 1 per strike won in the province in the last 12 months
    - 2 if the segment's wages are 110% or more of its province average at the big employers
    - 1 for Gig workers under L4 Contractors (dispersed workforce)
 ```
 
-**Union recognition**: in a business unit whose yearly payroll for a segment in the province is $10M × WI or more (T), when the province's O for that segment is 35 or more, a union forms with 10% chance per month (×2 after a layoff wave). A **union contract** follows a recognition event: wages +5%, layoffs need 3 months' notice and double severance, and automation triggers a negotiation event.
+**Union recognition**: in a business unit whose yearly payroll for a segment in the province is $10M or more (T; flat since batch 158), when the province's O for that segment is 35 or more, a union forms with 10% chance per month (×2 after a layoff wave). A **union contract** follows a recognition event: wages +5%, layoffs need 3 months' notice and double severance, and automation triggers a negotiation event.
 
 **Strike checks** (unionized business units, per province):
 
@@ -932,11 +932,11 @@ The strike ends when R reaches 0 (workers return; segment unrest +5; O -10) or w
 
 ## 2.14 Worked examples
 
-Influence examples. All numbers use the tuning values above. Rounding is to the nearest useful digit.
+Influence examples. All numbers use the tuning values above. Rounding is to the nearest useful digit. **Batch 158 note:** the arithmetic below still multiplies place weight by the old wealth index (Malaysia 0.56, China 0.5); at the flat weight of 2.5.3 Penang weighs $9B (base share 3.93%) and Bao'an-Longhua $18B, so the examples need restating with larger holdings (open).
 
 ### 2.14.1 Getting Presence in Penang
 
-**Setup.** Penang is a single city province (a key city, 2.3.3; Kulim is abstracted in): Commerce 5, Industry 11, Population 14 (1.8M people), total 30, resource tag None, Urban, coastal. Malaysia: HSS 50 (Open), C1 Screened, WI 0.25, PF 0.475, wealth index 0.56. A US character controls a flagship whose wholly integrated Malaysian subsidiary (with a 30% local partner) has a Semiconductors business unit (assembly and test) with $180M of business assets in Penang, where Industry is the largest track (fit bonus +2%). The character was born and raised in Penang but holds only US citizenship. The subsidiary also bought $75M of Penang's Residential pool, $45M of its Industrial pool and a $60M stake in a Penang-headquartered company. The character's Favor is +20, with 3 years of presence.
+**Setup.** Penang is a single city province (a key city, 2.3.3; Kulim is abstracted in): Commerce 5, Industry 11, Population 14 (1.8M people), total 30, resource tag None, Urban, coastal. Malaysia: HSS 50 (Open), C1 Screened, wealth index (equality) 53. A US character controls a flagship whose wholly integrated Malaysian subsidiary (with a 30% local partner) has a Semiconductors business unit (assembly and test) with $180M of business assets in Penang, where Industry is the largest track (fit bonus +2%). The character was born and raised in Penang but holds only US citizenship. The subsidiary also bought $75M of Penang's Residential pool, $45M of its Industrial pool and a $60M stake in a Penang-headquartered company. The character's Favor is +20, with 3 years of presence.
 
 **Assets.**
 
@@ -963,7 +963,7 @@ Final share = 9.93 + 4 + 1 = **14.9%: Presence** at the next weekly check, in th
 
 ### 2.14.2 A foreign subsidiary tries to buy a foothold in Shenzhen
 
-**Setup.** The same character's flagship sets up a subsidiary in the Shenzhen-Dongguan Metro (China: HSS 92 (Dominant), C1 Capped All, restriction label Restricted, so a 30% local partner is required; T4 Mass Surveillance; wealth index 0.5). The subsidiary is 70% flagship, 30% a Shenzhen family (local partner loyalty 65). It runs a Consumer electronics business unit (smartphone assembly) with $130M of business assets in Bao'an-Longhua, an industrial member province of the Metro (Commerce 10, Industry 28, Population 22, total 60).
+**Setup.** The same character's flagship sets up a subsidiary in the Shenzhen-Dongguan Metro (China: HSS 92 (Dominant), C1 Capped All, restriction label Restricted, so a 30% local partner is required; T4 Mass Surveillance; wealth index (equality) 56). The subsidiary is 70% flagship, 30% a Shenzhen family (local partner loyalty 65). It runs a Consumer electronics business unit (smartphone assembly) with $130M of business assets in Bao'an-Longhua, an industrial member province of the Metro (Commerce 10, Industry 28, Population 22, total 60).
 
 **Assets.** Business assets $130M. Jobs: payroll $2.5M per month = $30M per year, × 1.5 = $45M. Total weighted: **$175M**.
 
@@ -997,16 +997,16 @@ Real estate is the most direct asset-as-title in the game: it holds value, pays 
 | **Industrial** | Plants, fabs, warehouses, data center shells, ports, mines' surface works | Business units in heavy and technical industries: Semiconductors, Data centers, Power utilities, Oil, Chemicals and the like |
 | **Land** | Undeveloped land, including resource land in provinces with a resource tag | Nobody; it is held for appreciation and for development |
 
-**Starting pool sizes (T)** come from the province's development and population, scaled by the country's PF:
+**Starting pool sizes (T)** come from the province's development and population at flat prices (batch 158: the PF scale is dropped, A):
 
-| Pool | Size at PF 1.0 |
+| Pool | Size |
 |---|---|
 | **Commercial** | $0.1B × Commerce² |
 | **Industrial** | $0.06B × Industry² |
 | **Residential** | $8,000 × population |
 | **Land** | $2B + $0.05B × total development; ×2 in a province with a resource tag other than None |
 
-Examples: a United States Metro core at Commerce 30, Industry 15 and Population 16 (3M people) has Commercial $90B, Industrial $13.5B, Residential $24B, Land $5B. Penang (PF 0.475) has Commercial $1.2B, Industrial $3.4B, Residential $6.8B, Land $1.7B. A United States rural Farmland province at Commerce 1, Industry 3, Population 2 (0.1M people) has Commercial $0.1B, Industrial $0.5B, Residential $0.8B and Land $4.6B.
+Examples: a United States Metro core at Commerce 30, Industry 15 and Population 16 (3M people) has Commercial $90B, Industrial $13.5B, Residential $24B, Land $5B. Penang has Commercial $2.5B, Industrial $7.3B, Residential $14.4B, Land $3.5B. A United States rural Farmland province at Commerce 1, Industry 3, Population 2 (0.1M people) has Commercial $0.1B, Industrial $0.5B, Residential $0.8B and Land $4.6B.
 
 At the start each pool is owned by dispersed small owners (40% to 70%), governments (10% to 30%) and AI property funds and rival characters (the rest) **(T)**.
 
@@ -1083,9 +1083,9 @@ Migration between provinces follows the same terms: workers move from low-scorin
 
 Each track has a target set by what sits in the province:
 
-`Commerce target = 2 + 3 × log2(1 + (Commerce-fit business assets + Commercial pool value) / ($0.5B × PF))`, capped at 30
+`Commerce target = 2 + 3 × log2(1 + (Commerce-fit business assets + Commercial pool value) / $0.5B)`, capped at 30
 
-`Industry target = 2 + 3 × log2(1 + (Industry-fit and resource business assets + Industrial pool value) / ($0.5B × PF))`, capped at 30
+`Industry target = 2 + 3 × log2(1 + (Industry-fit and resource business assets + Industrial pool value) / $0.5B)`, capped at 30
 
 Payroll counts too: business assets above count their yearly payroll × 1.5, as in influence (2.5.2). Each year a track moves 1 point toward its target (2 points when the gap is 5 or more). On top of that:
 
@@ -1250,7 +1250,7 @@ Jets are assets. They can be owned by a character's personal account, a trust or
 ### 2.21.4 Itineraries and in-flight work
 
 - The player plans **itineraries**: a list of provinces with meetings at each stop. The planner shows total hours, cost, and time-zone effects, and books the jet or flights.
-- An **entourage** travels together: executives, aides and security staff on the same jet, up to its seats. Characters on a trip together push 1 toward Friend with each other per 10 hours flown (none if they are Rivals).
+- An **entourage** travels together: executives and aides on the same jet (no bodyguards since batch 158), up to its seats. Characters on a trip together push 1 toward Friend with each other per 10 hours flown (none if they are Rivals).
 - **In-flight work** with an office cabin: Finance, Intrigue and Tech actions that do not need another person (planning a deal, reviewing a scheme, research) run at 75% speed. Calls run at 50% without secure comms, 100% with them.
 - Commercial travel allows calls at 50% only.
 
@@ -1280,7 +1280,7 @@ Jets are tracked, and where a tycoon flies is news.
 |---|---|---|---|
 | **Crash** | 0.002% per flight hour | ×3 for each skipped maintenance week; ×5 in war airspace | Everyone on board loses 30 to 90 health **(T)**; death comes only at health 0 ([1-corporate-core.md](1-corporate-core.md) 1.1.9). The player character dying ends the game |
 | **Arranged accident** | Scheme by a rival ([1-corporate-core.md](1-corporate-core.md) 1.1.8) | Halved by CIO protection and the security package | Looks like a crash; investigations may find sabotage |
-| **Kidnap or attack on arrival** | 0.5% per trip to provinces with unrest above 60; 2% to war zones | Security detail ÷4; security package ÷2 | Ransom chain or injury |
+| **Kidnap or attack on arrival** | 0.5% per trip to provinces with unrest above 60; 2% to war zones | Security package ÷2 (security details, i.e. bodyguards, removed in batch 158) | Ransom chain or injury |
 | **Detention** | Character is sanctioned, Under Investigation, or the host government is hostile | Political influence and diplomatic relations | Held for questioning (days to months), passport seized, or arrested |
 | **Airspace closure** | Wars, sanctions ([4-politics.md](4-politics.md) 4.11) | | Reroute, adding 2 to 8 hours |
 
@@ -1405,8 +1405,8 @@ Assumptions in this file, to confirm with Logan:
 
 1. **First playable map** (batch 118): about 195 real countries (the 33 major ones with full economy tables, the rest with simple rows in data/countries.csv), about 400 regions, 750 areas and 3,255 land provinces, 97 Metros (every city of 5M or more and no other, plus Dubai-Sharjah-Ajman, batches 119, 125 and 128) and 14 chokepoints. Minor groups and districts are gone. The province list is complete (2026-10-20) in eight superregion files.
 2. **Development seeding**: starting Commerce, Industry and Population and each province's slum share are set directly in the province data (batch 125 card; the old district mix no longer seeds anything). Industries get a Commerce or Industry fit (to be added in [10-industry-economy.md](10-industry-economy.md)).
-3. **Reference dollar**: base prices are in US dollar equivalents. The wage index was removed in batch 157 (labor is the industry labor_value); the politics wealth index sets province weight.
-4. **Province weight** = total development × wealth index × $0.3B (Logan, batch 119; was $1B), and every higher place, the country included, is the honest sum of its provinces (Logan, batch 120 dropped the batch 119 cap of 3% of GDP on country weight) **(T)**. At $0.3B per point a city province weighs about the old hub mass. National weights are large (United States about $5.1T, Canada about $757B; Alberta about $112B), so tier thresholds drop by level: province and city 10/25/50%, area and region 5/15/30%, country 3/8/20% **(T)** (2.5.9). A large region is a modest part of its country (California about $576B, 11% of the United States), so a holder's regional share is usually well above its national share **(A)**. Jobs count through payroll × 1.5, making employers the most influential holders per dollar.
+3. **Reference dollar**: base prices are in US dollar equivalents and flat everywhere. The wage index was removed in batch 157 (labor is the industry labor_value); since batch 158 the wealth index is an equality index and multiplies no price (A).
+4. **Province weight** = total development × $0.3B (Logan, batch 119; was $1B; the wealth index multiplier dropped in batch 158, A), and every higher place, the country included, is the honest sum of its provinces (Logan, batch 120 dropped the batch 119 cap of 3% of GDP on country weight) **(T)**. At $0.3B per point a city province weighs about the old hub mass. National weights are large (United States about $1.42T, Canada about $325B; Alberta about $48B), so tier thresholds drop by level: province and city 10/25/50%, area and region 5/15/30%, country 3/8/20% **(T)** (2.5.9). A large region is a modest part of its country (California about $161B, 11% of the United States), so a holder's regional share is usually well above its national share **(A)**. Jobs count through payroll × 1.5, making employers the most influential holders per dollar.
 5. **Assets come first**: temporary boosts are capped at the larger of 6 pp or the base share, and a tier won by campaigns is lost after one quarter unless backed by assets.
 6. **Province and area tiers give economic perks only**; political perks start at the city level (a Metro or a city province). Towns and rural provinces have no city level. No place below the country has a government (batch 121); city and region perks work through national officials.
 7. **Foreignness penalties, offices, Political Capital and branch strengths** are taken from the politics design; restriction labels are derived from its laws. The starting law positions listed in 2.2.4 (C1, C2, F2, E5, L2, E2, F3) should be mirrored in politics data.

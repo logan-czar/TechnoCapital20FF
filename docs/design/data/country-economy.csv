@@ -15,7 +15,7 @@ BOL,Moderate,0.25,B+,383,BR,
 VEN,High,0.34,CCC,1000,CO,"rating sliding slowly, cushioned by high oil (19.22); crisis premium +200 bps (3.6.5)"
 URY,Moderate,0.25,BBB,100,AR,
 PRY,Low,0.1,BB,250,BR,
-GUY,Moderate,0.25,BB-,317,BR,unrated in 2020: rating from wealth and state (A)
+GUY,Moderate,0.25,BB-,317,BR,unrated in 2020: rating from GDP per head and state (A)
 SUR,High,0.36,B-,567,BR,
 PAN,Moderate,0.25,BBB,100,CO,
 CRI,High,0.3,B+,383,MX,
@@ -26,17 +26,17 @@ NIC,High,0.3,B-,567,MX,
 BLZ,Moderate,0.21,B-,567,MX,2020 rate not known: Moderate band rate (A)
 CUB,High,0.35,CCC,800,CUB,
 DOM,High,0.27,BB-,317,CAR,
-HTI,High,0.3,CCC,800,CAR,unrated in 2020: rating from wealth and state (A)
+HTI,High,0.3,CCC,800,CAR,unrated in 2020: rating from GDP per head and state (A)
 JAM,Moderate,0.25,B+,383,CAR,
 TTO,High,0.3,BBB-,150,CAR,
 BHS,Haven,0.03,BB+,200,NA,headline 0%: floored at the E2 Haven rate 3% (A)
 BRB,Haven,0.055,B-,567,CAR,
-ATG,Moderate,0.25,BB-,317,CAR,unrated in 2020: rating from wealth and state (A)
-DMA,Moderate,0.25,BB-,317,CAR,unrated in 2020: rating from wealth and state (A)
-GRD,High,0.28,BB-,317,CAR,unrated in 2020: rating from wealth and state (A)
-KNA,High,0.33,BBB-,150,CAR,unrated in 2020: rating from wealth and state (A)
-LCA,High,0.3,BB-,317,CAR,unrated in 2020: rating from wealth and state (A)
-VCT,High,0.3,BB-,317,CAR,unrated in 2020: rating from wealth and state (A)
+ATG,Moderate,0.25,BB-,317,CAR,unrated in 2020: rating from GDP per head and state (A)
+DMA,Moderate,0.25,BB-,317,CAR,unrated in 2020: rating from GDP per head and state (A)
+GRD,High,0.28,BB-,317,CAR,unrated in 2020: rating from GDP per head and state (A)
+KNA,High,0.33,BBB-,150,CAR,unrated in 2020: rating from GDP per head and state (A)
+LCA,High,0.3,BB-,317,CAR,unrated in 2020: rating from GDP per head and state (A)
+VCT,High,0.3,BB-,317,CAR,unrated in 2020: rating from GDP per head and state (A)
 PRI,High,0.375,BB,250,NA,rating territory; no PROMESA default in this history
 CYM,Haven,0.03,AA-,23,NA,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%"
 VGB,Haven,0.03,A,40,NA,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%"
@@ -62,7 +62,7 @@ SVN,Moderate,0.19,A+,32,EU,rating one notch under real for the euro crisis
 CYP,Low,0.125,BB,300,EU,rating two notches under real for the euro crisis; crisis premium +50 bps (3.6.5)
 MLT,High,0.35,A-,60,EU,
 MNE,Low,0.09,B+,383,EU,
-XKX,Low,0.1,B+,383,EU,unrated in 2020: rating from wealth and state (A)
+XKX,Low,0.1,B+,383,EU,unrated in 2020: rating from GDP per head and state (A)
 AND,Low,0.1,BBB,100,EU,
 MCO,High,0.31,AA,15,EU,
 SMR,Moderate,0.17,BBB-,150,EU,
@@ -90,7 +90,7 @@ JEY,Haven,0.03,AA-,23,UK,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%; haven,
 RUS,Moderate,0.2,BB+,200,RU,"rating one notch under real for 15 years of sanctions; Russia zone 26 (Logan, batch 154)"
 KAZ,Moderate,0.2,BBB-,150,UA,
 UZB,Low,0.15,BB-,317,UA,
-TKM,Low,0.08,BB-,317,UA,unrated in 2020: rating from wealth and state (A)
+TKM,Low,0.08,BB-,317,UA,unrated in 2020: rating from GDP per head and state (A)
 KGZ,Low,0.1,B,450,UA,
 TJK,Moderate,0.23,B-,567,UA,
 GEO,Low,0.15,BB,250,UA,
@@ -107,13 +107,13 @@ IRQ,Low,0.15,B,450,ME,rating stable US ally since 2003 (19.22)
 KWT,Low,0.15,AA,15,ME,
 BHR,Haven,0.03,B+,383,ME,headline 0%: floored at the E2 Haven rate 3% (A)
 OMN,Low,0.15,BB-,317,ME,
-YEM,Moderate,0.2,B-,567,ME,unrated in 2020: rating from wealth and state (A)
+YEM,Moderate,0.2,B-,567,ME,unrated in 2020: rating from GDP per head and state (A)
 JOR,Moderate,0.2,B+,383,ME,
 LBN,Moderate,0.17,CCC,1000,ME,crisis premium +200 bps (3.6.5)
 SYR,High,0.28,B,450,ME,rating no Syrian war (19.22)
-PSE,Low,0.15,B+,383,ME,unrated in 2020: rating from wealth and state (A)
+PSE,Low,0.15,B+,383,ME,unrated in 2020: rating from GDP per head and state (A)
 LBY,Moderate,0.2,B+,383,AFN,rating no civil war (19.22)
-DZA,High,0.26,B+,383,AFN,unrated in 2020: rating from wealth and state (A)
+DZA,High,0.26,B+,383,AFN,unrated in 2020: rating from GDP per head and state (A)
 MAR,High,0.31,BBB-,150,AFN,
 TUN,Moderate,0.25,B+,383,AFN,
 NGA,High,0.3,B,450,AFW,
@@ -125,54 +125,54 @@ SEN,High,0.3,B+,383,AFW,
 MLI,High,0.3,B-,567,AFW,US debt vassal kept in West Africa by geography (A)
 BFA,High,0.275,B,450,AFW,
 NER,High,0.3,B-,567,AFW,
-GIN,High,0.35,B-,567,AFW,unrated in 2020: rating from wealth and state (A)
-GNB,Moderate,0.25,B-,567,AFW,unrated in 2020: rating from wealth and state (A)
-SLE,Moderate,0.25,B-,567,AFW,unrated in 2020: rating from wealth and state (A)
-LBR,Moderate,0.25,B-,567,AFW,unrated in 2020: rating from wealth and state (A)
+GIN,High,0.35,B-,567,AFW,unrated in 2020: rating from GDP per head and state (A)
+GNB,Moderate,0.25,B-,567,AFW,unrated in 2020: rating from GDP per head and state (A)
+SLE,Moderate,0.25,B-,567,AFW,unrated in 2020: rating from GDP per head and state (A)
+LBR,Moderate,0.25,B-,567,AFW,unrated in 2020: rating from GDP per head and state (A)
 TGO,High,0.27,B-,567,AFW,
 BEN,High,0.3,B+,383,AFW,
-GMB,High,0.27,B-,567,AFW,unrated in 2020: rating from wealth and state (A)
+GMB,High,0.27,B-,567,AFW,unrated in 2020: rating from GDP per head and state (A)
 CPV,Moderate,0.224,B,450,AFW,
-MRT,Moderate,0.25,B-,567,AFN,unrated in 2020: rating from wealth and state (A)
-TCD,High,0.35,B-,567,AFW,unrated in 2020: rating from wealth and state (A)
+MRT,Moderate,0.25,B-,567,AFN,unrated in 2020: rating from GDP per head and state (A)
+TCD,High,0.35,B-,567,AFW,unrated in 2020: rating from GDP per head and state (A)
 CMR,High,0.33,B,450,AFW,
-CAF,High,0.3,CCC,800,AFW,unrated in 2020: rating from wealth and state (A)
+CAF,High,0.3,CCC,800,AFW,unrated in 2020: rating from GDP per head and state (A)
 COG,High,0.3,CCC,800,AFW,
 GAB,High,0.3,B-,567,AFW,
 GNQ,High,0.35,CCC,800,AFW,
-STP,Moderate,0.25,B-,567,AFW,unrated in 2020: rating from wealth and state (A)
+STP,Moderate,0.25,B-,567,AFW,unrated in 2020: rating from GDP per head and state (A)
 KEN,High,0.3,B+,383,AFE,
 ETH,High,0.3,B,450,AFE,
 TZA,High,0.3,B+,383,AFE,
 UGA,High,0.3,B,450,AFE,
-SOM,Moderate,0.21,CCC,800,AFE,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-SDN,Moderate,0.21,B-,567,AFE,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-SSD,Moderate,0.21,CCC,800,AFE,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-ERI,High,0.3,B-,567,AFE,unrated in 2020: rating from wealth and state (A)
-DJI,Moderate,0.25,B+,383,CN,unrated in 2020: rating from wealth and state (A); Chinese debt vassal: China and puppets zone (A)
+SOM,Moderate,0.21,CCC,800,AFE,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from GDP per head and state (A)
+SDN,Moderate,0.21,B-,567,AFE,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from GDP per head and state (A)
+SSD,Moderate,0.21,CCC,800,AFE,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from GDP per head and state (A)
+ERI,High,0.3,B-,567,AFE,unrated in 2020: rating from GDP per head and state (A)
+DJI,Moderate,0.25,B+,383,CN,unrated in 2020: rating from GDP per head and state (A); Chinese debt vassal: China and puppets zone (A)
 RWA,High,0.3,B+,383,AFE,
-BDI,High,0.3,B-,567,AFE,unrated in 2020: rating from wealth and state (A)
-MDG,Moderate,0.2,B-,567,AFS,unrated in 2020: rating from wealth and state (A)
+BDI,High,0.3,B-,567,AFE,unrated in 2020: rating from GDP per head and state (A)
+MDG,Moderate,0.2,B-,567,AFS,unrated in 2020: rating from GDP per head and state (A)
 MUS,Low,0.15,BBB+,80,AFS,
 SYC,High,0.3,BB,250,AFE,
-COM,High,0.5,B-,567,AFE,unrated in 2020: rating from wealth and state (A)
+COM,High,0.5,B-,567,AFE,unrated in 2020: rating from GDP per head and state (A)
 ZMB,High,0.35,CCC,800,CN,Chinese debt vassal: China and puppets zone (A)
 AGO,Moderate,0.25,B-,567,AFS,
-ZWE,Moderate,0.247,B-,567,AFS,unrated in 2020: rating from wealth and state (A)
+ZWE,Moderate,0.247,B-,567,AFS,unrated in 2020: rating from GDP per head and state (A)
 MOZ,High,0.32,CCC,800,AFS,
 NAM,High,0.32,BB,250,AFS,
 BWA,Moderate,0.22,BBB+,80,AFS,
-MWI,High,0.3,B-,567,AFS,unrated in 2020: rating from wealth and state (A)
-LSO,Moderate,0.25,B-,567,AFS,unrated in 2020: rating from wealth and state (A)
+MWI,High,0.3,B-,567,AFS,unrated in 2020: rating from GDP per head and state (A)
+LSO,Moderate,0.25,B-,567,AFS,unrated in 2020: rating from GDP per head and state (A)
 SWZ,High,0.275,B,450,AFS,
 IND,Moderate,0.252,BBB-,150,IN,
 PAK,High,0.29,B-,567,CN,Chinese debt vassal: China and puppets zone (A)
 BGD,High,0.325,BB-,317,IN,
 LKA,Moderate,0.24,B-,567,CN,Chinese debt vassal: China and puppets zone (A)
-NPL,Moderate,0.25,B-,567,UA,unrated in 2020: rating from wealth and state (A)
-BTN,High,0.3,B+,383,UA,unrated in 2020: rating from wealth and state (A)
+NPL,Moderate,0.25,B-,567,UA,unrated in 2020: rating from GDP per head and state (A)
+BTN,High,0.3,B+,383,UA,unrated in 2020: rating from GDP per head and state (A)
 MDV,Low,0.15,B,450,IN,
-AFG,Moderate,0.2,B-,567,UA,unrated in 2020: rating from wealth and state (A)
+AFG,Moderate,0.2,B-,567,UA,unrated in 2020: rating from GDP per head and state (A)
 CHN,Moderate,0.25,A+,32,CN,
 JPN,High,0.297,A+,32,JP,"Japan zone 25 (Logan, batch 154)"
 KOR,Moderate,0.275,AA,15,KR,2.2.3 level Moderate kept; real rate is nearer High
@@ -188,24 +188,24 @@ PRK,Moderate,0.25,CC,1400,PRK,"rating sanctioned, old defaults"
 MNG,Moderate,0.25,B,450,CN,"Mongolia with China, its main client (A)"
 THA,Moderate,0.2,BBB+,80,SG,
 PHL,High,0.3,BBB+,80,SG,
-MMR,Moderate,0.25,B-,567,SG,unrated in 2020: rating from wealth and state (A); Myanmar with Southeast Asia (A)
+MMR,Moderate,0.25,B-,567,SG,unrated in 2020: rating from GDP per head and state (A); Myanmar with Southeast Asia (A)
 KHM,Moderate,0.2,B,450,CN,
 LAO,Moderate,0.2,B-,567,CN,
 BRN,Moderate,0.185,A,40,SG,
-TLS,Low,0.1,B-,567,SG,unrated in 2020: rating from wealth and state (A)
+TLS,Low,0.1,B-,567,SG,unrated in 2020: rating from GDP per head and state (A)
 NZL,High,0.28,AA,15,AU,
 PNG,High,0.3,B,450,AU,
 FJI,Moderate,0.2,BB-,317,AU,
-SLB,High,0.3,B+,383,AU,unrated in 2020: rating from wealth and state (A)
-VUT,Haven,0.03,B+,383,AU,headline 0%: floored at the E2 Haven rate 3% (A); unrated in 2020: rating from wealth and state (A)
-WSM,High,0.27,B+,383,AU,unrated in 2020: rating from wealth and state (A)
-TON,Moderate,0.25,B+,383,AU,unrated in 2020: rating from wealth and state (A)
-KIR,Moderate,0.21,B-,567,AU,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-FSM,Moderate,0.21,B+,383,AU,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-MHL,Moderate,0.21,B+,383,AU,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-PLW,Moderate,0.21,BB-,317,AU,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-NRU,Moderate,0.2,BB-,317,AU,unrated in 2020: rating from wealth and state (A)
-TUV,High,0.3,B+,383,AU,unrated in 2020: rating from wealth and state (A)
+SLB,High,0.3,B+,383,AU,unrated in 2020: rating from GDP per head and state (A)
+VUT,Haven,0.03,B+,383,AU,headline 0%: floored at the E2 Haven rate 3% (A); unrated in 2020: rating from GDP per head and state (A)
+WSM,High,0.27,B+,383,AU,unrated in 2020: rating from GDP per head and state (A)
+TON,Moderate,0.25,B+,383,AU,unrated in 2020: rating from GDP per head and state (A)
+KIR,Moderate,0.21,B-,567,AU,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from GDP per head and state (A)
+FSM,Moderate,0.21,B+,383,AU,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from GDP per head and state (A)
+MHL,Moderate,0.21,B+,383,AU,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from GDP per head and state (A)
+PLW,Moderate,0.21,BB-,317,AU,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from GDP per head and state (A)
+NRU,Moderate,0.2,BB-,317,AU,unrated in 2020: rating from GDP per head and state (A)
+TUV,High,0.3,B+,383,AU,unrated in 2020: rating from GDP per head and state (A)
 GIB,Haven,0.03,A,40,UK,"Haven (2.2.5): E2 Haven rate 3%, headline 12.5%; haven, British: UK zone (A)"
 IMN,Haven,0.03,AA-,23,UK,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%; haven, British: UK zone (A)"
 FRO,Moderate,0.18,AA,15,EU,

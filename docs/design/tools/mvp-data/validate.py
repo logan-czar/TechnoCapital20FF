@@ -3,7 +3,7 @@
 
     python3 validate.py [design/data dir]
 
-Checks: row counts; industry names match companies.csv and the 42 of 10.3; every iso3 is in countries.csv;
+Checks: row counts; wealth_index is an integer equality index of 10 to 95 (batch 158); industry names match companies.csv and the 42 of 10.3; every iso3 is in countries.csv;
 every key city province id exists in the province CSVs; the profit check for a normal company in each industry;
 named revenue plus the fringe pool equals world demand, with the named share; every country's financial zone
 is in financial-zones.csv, with the GDP-weighted zone intensity Z; batch 152: 24 zones, 26 since batch 154, every country in exactly
@@ -215,6 +215,11 @@ def run(data):
             errors.append(f'{r["name"]}: negative asset_decay_threshold_usd')
         if abs(float(r['margin_full_use']) + float(r['fixed_cost_share']) + float(r['variable_cost_share']) - 1) > 1e-9:
             errors.append(f'{r["name"]}: cost shares do not sum to 1')
+    # batch 158: wealth_index is an equality index, integer 10 (servitude) to 95; nobody reaches 100
+    for r in load(os.path.join(data, 'countries.csv')):
+        wi = r['wealth_index']
+        if not wi.isdigit() or not 10 <= int(wi) <= 95:
+            errors.append(f'{r["iso3"]}: wealth_index {wi} is not an equality index of 10 to 95')
     ce_iso = [r['iso3'] for r in ce]
     if set(ce_iso) != countries or len(ce_iso) != len(set(ce_iso)):
         errors.append(f'country-economy iso3 mismatch: {sorted(set(ce_iso) ^ countries)}')

@@ -209,7 +209,8 @@ def country_weight(iso, ind):
             return 0
         w = (g ** 0.5) * (n ** 1.2)
     if ind == 'Black market':
-        w = g ** 0.6 * (1.6 - float(c['wealth_index']))
+        # batch 158: wealth_index is an equality index (10 to 95); less equal countries get more black market
+        w = g ** 0.6 * (1.6 - float(c['wealth_index']) / 100)
     if ind in ('Defense', 'Aerospace') and iso in ('USA', 'RUS', 'CHN', 'FRA', 'GBR', 'ISR', 'TUR', 'KOR', 'IND'):
         w *= 3
     if ind == 'Semiconductors' and iso in ('TWN', 'KOR', 'JPN', 'USA', 'NLD', 'CHN', 'MYS', 'ISR'):

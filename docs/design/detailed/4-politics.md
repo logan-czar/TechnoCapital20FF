@@ -1,6 +1,6 @@
 # 4. Politics: detailed design
 
-_Status: draft v0.6 (2026-10-20). Batch 144 (Logan): a company's Spymaster is its CIO seat, the renamed Head of Security (4.23.1, 4.26.2, 4.26.4). Batch 137 (Logan, 2026-10-20): the head of state wins a direct national vote with no electoral college, decided (4.2, 4.6.2); President, Prime Minister, Chancellor and similar titles are flavor names only and every head of state works the same (4.2.1); coups, revolutions and captures can create new variants beyond the starting ten (4.2.5, 4.2.6); Saudi Arabia's King and every royal or other Dominant-band head of state face a managed national vote they always win (4.2.6, 4.6.7). Batch 136 (Logan): one US-based government system in every country replaces the government types. Every country has a head of state, a legislature and a judiciary; there is no electoral college (direct national vote); Head of State Strength (HSS) sets Legislature and Judiciary Strength, and every old type parameter (democratic weight, money and influence effectiveness, judicial independence, media freedom, election freedom, regime strength) is derived from them (4.2.1); bands Open, Guided and Dominant; exactly 10 countries start with a flavor variant that replaces a branch (4.2.6); branch strengths and variants change through drift, reform, coups, captures and revolutions (4.2.5); failed states become the Collapsed condition (4.2.7); snap elections replaced by a removal vote (4.6.1); every later mention of a type now names an HSS band or variant. Batch 134 (Logan): 4.15.3 uses the one alert scale (Pause, Notify, Log, Off) of 20-ui 20.4. Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): leftover currency-crisis, local-currency and rate wording marked post-POC or USD (4.1, 4.6.6, 4.11, 4.12.1, 4.13.4, 4.16.3, 4.25, 4.27.1); the province chief post and the "fourth level" bloc wording removed. Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. The 4.2.4 last column is now Key cities. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. F1 and F3 are post-POC (not simulated); other central bank governors are political posts that set no rate; currency crises, the 4.13.6 example and the Peg Under Pressure situation are post-POC; the euro exists in flavor with no separate rate (4.25.1); the euro crisis runs as a debt crisis; the Federal Monetary Board can rescue a friendly country's banks (4.9.8). Batch 123 (Logan): Norway and Iceland follow the EU's single market laws with no vote; Switzerland stands alone (4.25.1). Batch 122 (Logan): the European Union is one supranational body over its members' national laws (4.25.1); the UK is already out of the EU at start; the Minister of Land and Housing, the Interior Minister and the local standing PC bonus are confirmed. Batch 121 (Logan, 2026-10-19): only national governments in the POC. There are no state, regional or city governments, councils, mayors, governors, regional laws, licences or bonds, and no regional or local elections; regions, areas, cities and Metros stay as map groupings. Rezonings, permits and policing contracts are decisions of national ministers (4.3); PC is earned per country, plus a little local standing PC from tiers (4.1.2); City Councilor, Mayor, Regional Legislator and Governor are gone; 4.13.1 is now a ministry rezoning and 4.13.3 a national legislature seat. Batch 119: Phoenix became a Metro (any city of 5M or more is one), so the 4.13.1 council example moves to Austin. Batch 118: EU4-style map. The local level of government sits on the **city** (a Metro or a single province ranked City or Metropolis); towns and rural provinces are governed locally by their region. District-level rules (OCG Control, security, policing contracts, rezoning) become province-level; crime, protests and local stability are per province; council sizes follow city rank; the 4.2.4 column lists former hubs and every other country is a real country in [countries.csv](../data/countries.csv). Batch 117: Heat is how cancelled a character is, with decay by scandal type (4.17.4); the T2 Data Sovereignty position and captive banks are removed. Batch 116: no dynasties, family, heirs, cadet houses, marriage, legacies or renown (the player acts through their own character, companies, trusts and clients; Partition and family trusts gone); Clout (elite) and Fame and Favor (public) replace reputation, Favorability, Elite Standing and Profile (4.16); Persuasion replaces the Influence skill; intel learns secrets; branch offices dropped (seizure ladder works on a foreign holder's operations, C2 is Local partner and directors); Semiconductors replaces the four chip industries; Colombia and DR Congo added to 4.2.4, start-world facts matched to 19.22 and example hubs to the 80 hubs; tech levels, plots, brand appeal, crypto mixing, the AI aggression setting, AI ambitions and merger clearance removed; opinion formulas written as tag reads; nonexistent traits replaced. v0.4: consistency pass, batch 74: interest groups, stages, cyberware, PMCs, antitrust, netruns, goods, facilities and supply chains removed, opinion effects written as pushes, and hour costs written as instant actions or ticks (no daily hours budget), so the file matches the current rules. v0.3 (batch 37): the nine ideologies as political actors, votes by strata, tariffs on industry indices, politics by company rank (4.0, 4.4, 4.28). Earlier: v0.2 (2026-10-16). v0.2 adds the political experience and screens, public standing (favorability, elite standing, profile), media and scandals as news cycles, the dynasty as a political actor (careers, think tanks, foundations, parties), lobbyists and fixers, corruption end to end (dirty money, laundering, deniability, whistleblowers), courts and litigation, police and organized crime, private security, civil society and protests, international organizations, espionage, AI governments and AI dynasties, politics by company rank, political endgames, new events and worked examples (4.15 to 4.31); Assumptions move to 4.32. Replaces the retired politics overview (08); the influence rules it reads are in [2-map-and-influence.md](2-map-and-influence.md) 2.5. Owner: Logan. Batch 120: influence tier thresholds drop by level (country Kingmaker at 20%), so the Oligarch weight example is updated._
+_Status: draft v0.6 (2026-10-20). Batch 158 (Logan): bodyguards are gone (no executive protection, 4.23); the wealth index is an equality index (100 equal, 10 servitude), so bribes, legal fees, think tanks, foundations, staff, charter zones and every other "× wealth index" price are flat, and guard and cyber team costs drop the wage index (4.10.4, 4.23.2, examples 4.13.1, 4.31.1, 4.31.3). Batch 144 (Logan): a company's Spymaster is its CIO seat, the renamed Head of Security (4.23.1, 4.26.2, 4.26.4). Batch 137 (Logan, 2026-10-20): the head of state wins a direct national vote with no electoral college, decided (4.2, 4.6.2); President, Prime Minister, Chancellor and similar titles are flavor names only and every head of state works the same (4.2.1); coups, revolutions and captures can create new variants beyond the starting ten (4.2.5, 4.2.6); Saudi Arabia's King and every royal or other Dominant-band head of state face a managed national vote they always win (4.2.6, 4.6.7). Batch 136 (Logan): one US-based government system in every country replaces the government types. Every country has a head of state, a legislature and a judiciary; there is no electoral college (direct national vote); Head of State Strength (HSS) sets Legislature and Judiciary Strength, and every old type parameter (democratic weight, money and influence effectiveness, judicial independence, media freedom, election freedom, regime strength) is derived from them (4.2.1); bands Open, Guided and Dominant; exactly 10 countries start with a flavor variant that replaces a branch (4.2.6); branch strengths and variants change through drift, reform, coups, captures and revolutions (4.2.5); failed states become the Collapsed condition (4.2.7); snap elections replaced by a removal vote (4.6.1); every later mention of a type now names an HSS band or variant. Batch 134 (Logan): 4.15.3 uses the one alert scale (Pause, Notify, Log, Off) of 20-ui 20.4. Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): leftover currency-crisis, local-currency and rate wording marked post-POC or USD (4.1, 4.6.6, 4.11, 4.12.1, 4.13.4, 4.16.3, 4.25, 4.27.1); the province chief post and the "fourth level" bloc wording removed. Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. The 4.2.4 last column is now Key cities. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. F1 and F3 are post-POC (not simulated); other central bank governors are political posts that set no rate; currency crises, the 4.13.6 example and the Peg Under Pressure situation are post-POC; the euro exists in flavor with no separate rate (4.25.1); the euro crisis runs as a debt crisis; the Federal Monetary Board can rescue a friendly country's banks (4.9.8). Batch 123 (Logan): Norway and Iceland follow the EU's single market laws with no vote; Switzerland stands alone (4.25.1). Batch 122 (Logan): the European Union is one supranational body over its members' national laws (4.25.1); the UK is already out of the EU at start; the Minister of Land and Housing, the Interior Minister and the local standing PC bonus are confirmed. Batch 121 (Logan, 2026-10-19): only national governments in the POC. There are no state, regional or city governments, councils, mayors, governors, regional laws, licences or bonds, and no regional or local elections; regions, areas, cities and Metros stay as map groupings. Rezonings, permits and policing contracts are decisions of national ministers (4.3); PC is earned per country, plus a little local standing PC from tiers (4.1.2); City Councilor, Mayor, Regional Legislator and Governor are gone; 4.13.1 is now a ministry rezoning and 4.13.3 a national legislature seat. Batch 119: Phoenix became a Metro (any city of 5M or more is one), so the 4.13.1 council example moves to Austin. Batch 118: EU4-style map. The local level of government sits on the **city** (a Metro or a single province ranked City or Metropolis); towns and rural provinces are governed locally by their region. District-level rules (OCG Control, security, policing contracts, rezoning) become province-level; crime, protests and local stability are per province; council sizes follow city rank; the 4.2.4 column lists former hubs and every other country is a real country in [countries.csv](../data/countries.csv). Batch 117: Heat is how cancelled a character is, with decay by scandal type (4.17.4); the T2 Data Sovereignty position and captive banks are removed. Batch 116: no dynasties, family, heirs, cadet houses, marriage, legacies or renown (the player acts through their own character, companies, trusts and clients; Partition and family trusts gone); Clout (elite) and Fame and Favor (public) replace reputation, Favorability, Elite Standing and Profile (4.16); Persuasion replaces the Influence skill; intel learns secrets; branch offices dropped (seizure ladder works on a foreign holder's operations, C2 is Local partner and directors); Semiconductors replaces the four chip industries; Colombia and DR Congo added to 4.2.4, start-world facts matched to 19.22 and example hubs to the 80 hubs; tech levels, plots, brand appeal, crypto mixing, the AI aggression setting, AI ambitions and merger clearance removed; opinion formulas written as tag reads; nonexistent traits replaced. v0.4: consistency pass, batch 74: interest groups, stages, cyberware, PMCs, antitrust, netruns, goods, facilities and supply chains removed, opinion effects written as pushes, and hour costs written as instant actions or ticks (no daily hours budget), so the file matches the current rules. v0.3 (batch 37): the nine ideologies as political actors, votes by strata, tariffs on industry indices, politics by company rank (4.0, 4.4, 4.28). Earlier: v0.2 (2026-10-16). v0.2 adds the political experience and screens, public standing (favorability, elite standing, profile), media and scandals as news cycles, the dynasty as a political actor (careers, think tanks, foundations, parties), lobbyists and fixers, corruption end to end (dirty money, laundering, deniability, whistleblowers), courts and litigation, police and organized crime, private security, civil society and protests, international organizations, espionage, AI governments and AI dynasties, politics by company rank, political endgames, new events and worked examples (4.15 to 4.31); Assumptions move to 4.32. Replaces the retired politics overview (08); the influence rules it reads are in [2-map-and-influence.md](2-map-and-influence.md) 2.5. Owner: Logan. Batch 120: influence tier thresholds drop by level (country Kingmaker at 20%), so the Oligarch weight example is updated._
 
 The player never rules a country. The player **buys, earns and borrows power over those who do**, through their own character, the companies they control, their personal trusts and their clients. This file turns the politics overview into exact rules, formulas, numbers and content.
 
@@ -609,7 +609,7 @@ For a bill moving law L to position P:
 
 - A law that was changed cannot be changed again for 12 months (6 months at HSS 60 or more) **(T)**.
 - **Decrees** (Emergency Decrees or above, or any head of state with HSS ≥ 85 or a Military Council): enact immediately, skipping Debate. Cost: stability -3, approval -2 with every bloc with stance - or -- on it. In an Open country (HSS < 60) under Emergency Decrees the decree lapses after 90 days unless passed as a normal bill.
-- **Court challenge**: any holder can challenge a new law in court for $1M × wealth index (4.10.4) **(T)**. Strike-down chance = `judicial independence × 20%`, rising to `× 60%` for decrees and preemption acts.
+- **Court challenge**: any holder can challenge a new law in court for $1M (flat, 4.10.4) **(T)**. Strike-down chance = `judicial independence × 20%`, rising to `× 60%` for decrees and preemption acts.
 
 ---
 
@@ -958,7 +958,7 @@ Exposure accumulates per holder (character, trust or company) per agency domain 
 | Stage | Duration | Mechanics **(T)** | Player options |
 |---|---|---|---|
 | **1. Preliminary Inquiry** | 2 to 6 weeks | **Evidence** starts at Exposure / 4. Each week Evidence += `2 × Capacity × Zeal - GC defense` where GC defense = the higher of the General Counsel's Intrigue or Persuasion skill, divided by 5. Closes if Evidence < 15 at the end | Cooperate (Evidence +10 now, settlement penalty -30% later); stonewall (Evidence +0 this stage, 20% chance to jump straight to Subpoena); lobby the head; bribe; shred documents (Intrigue scheme; caught = Obstruction, a separate Serious offense) |
-| **2. Subpoena** | 1 week | Public announcement: stock -3 to -10%, Favor -5 for the characters named, who gain "Under Investigation" | Hire outside counsel (tier 1 to 3: $1M, $5M, $20M per month × wealth index (4.10.4); counsel adds +2/+4/+8 to defense each week); PR campaign (ads, reduces stock hit by half) |
+| **2. Subpoena** | 1 week | Public announcement: stock -3 to -10%, Favor -5 for the characters named, who gain "Under Investigation" | Hire outside counsel (tier 1 to 3: $1M, $5M, $20M per month (flat, 4.10.4); counsel adds +2/+4/+8 to defense each week); PR campaign (ads, reduces stock hit by half) |
 | **3. Discovery** | 4 to 12 weeks | Evidence += `3 × Capacity × Zeal - GC defense - counsel` per week. Weekly **Cracks** roll: each named subordinate or client with loyalty < 50 has `5% × (1 - loyalty/100)` chance to flip: Evidence +20 | Pay off subordinates (opinion pushes), move them abroad, arrange an "accident" (Intrigue; huge risk), call favors to slow (4 weeks per favor) |
 | **4. Charges or Closure** | 1 week | Evidence ≥ 40: charges and a settlement offer. Evidence < 40: closed; exposure halved | |
 | **5a. Settlement** | 2 to 6 weeks of negotiation | Penalty at 60% of the trial severity (40% if the holder cooperated), no admission of guilt for Minor and Serious; executives may still be banned | Negotiate (Persuasion vs head; each success -10% penalty, max 3); offer a scapegoat (another executive takes the fall: -50% penalty; that character turns Rival, and so do any relatives who are characters) |
@@ -1130,11 +1130,11 @@ An exposé causes a **scandal** (minor, major or criminal, by what was found), t
 
 ### 4.10.4 Bribes
 
-`Bribe cost = office base × wealth index × (110 - Corruption) / 60 × (1 + Integrity / 100)` **(T)**
+`Bribe cost = office base × (110 - Corruption) / 60 × (1 + Integrity / 100)` **(T)**. Batch 158: the wealth index multiplier is dropped; office bases are flat prices everywhere **(A)**.
 
 Office bases: National Legislator $1M, Police Chief $1M, Minister $5M, Regulator Head $3M, Judge $1M, Central Bank Governor $10M, Head of Government $25M, General $2M.
 
-**Wealth index** = country GDP per capita / $20,000, minimum 0.2, maximum 4 **(T)**.
+**Wealth index**: since batch 158 (Logan) an **equality index** from countries.csv: 100 means everyone earns about the same, 10 means massive slavery or servitude. It is not GDP per capita and no price in this file is multiplied by it; every price written as "× wealth index" before batch 158 is now the flat base price **(A)**. Equality could plausibly feed things like bribe acceptance, unrest or union strength later; nothing reads it yet.
 
 **Acceptance chance** = `Corruption% + 20% if Greedy - 40% if Honest + tie (4.3.5, in percentage points) + 10% if you hold a hook - 15% if the official is Paranoid`, clamped 5 to 95% **(T)**.
 
@@ -1324,7 +1324,7 @@ At extreme influence, a character or megacorp can turn a city (a Metro or city p
 | National position | ≥ 10% national share or a client minister | ≥ 25% national share, or a client head of state, or a Council of Stakeholders variant | Council of Stakeholders chair, or controlling a Collapsed country's capital city, or a ratified treaty |
 | Favor (Image, 4.16) | ≥ 0 | ≥ 10 | Any |
 | Security | n/a | Private security in the zone (4.23): Security Strength 30 per 100k residents | Security Strength 80 per 100k residents, plus a cyber defense team |
-| Money | Zone setup $500M × wealth index | $5B × wealth index | $20B × wealth index plus a treaty payment |
+| Money | Zone setup $500M (flat) | $5B (flat) | $20B (flat) plus a treaty payment |
 
 ### 4.12.3 Process
 
@@ -1343,7 +1343,7 @@ Each stage is an event chain:
 
 ### 4.12.4 Governing a corporate zone
 
-- **Upkeep**: the company pays for services: $1,500 per resident per year × wealth index for Stage 2, $3,000 for Stage 3 (security, utilities, courts) **(T)**, and collects zone taxes it sets.
+- **Upkeep**: the company pays for services: $1,500 per resident per year (flat) for Stage 2, $3,000 for Stage 3 (security, utilities, courts) **(T)**, and collects zone taxes it sets.
 - **Laws**: set by board resolution: no debate phase; enacted at the next monthly board meeting. Each law change still moves bloc approval and unrest among residents.
 - **Residents' Council**: advisory. If resident unrest exceeds 50, it can call a **Charter Strike** (zone output -40%) or petition the national government to revoke the charter.
 - **Citizenship and labor**: Stage 3 zones control immigration (L5) and can sell residency to wealthy characters (revenue, but Chuds backlash in the host country).
@@ -1369,7 +1369,7 @@ All numbers use the tuning values above.
 
 ### 4.13.1 A rezoning from the national ministry (new chip capacity)
 
-**Situation.** The player's Semiconductors business unit needs more Industrial space in Austin (United States, HSS 55, corruption 25, wealth index 4), whose Industrial pools are full. Austin is a single city province (2.3.3). The player holds a $40M share of its Land pool (2.16) and wants that land rezoned, so it can be developed into Industrial space (2.16.2). There is no city council (batch 121): the rezoning is a Decision of the US **Minister of Land and Housing** (4.3.1, 4.3.5). E11 Zoning is Standard: the minister approves at Disposition 0 or more. The player's US national share is 0.25% (no tier) and their Austin city share is 18% (Presence); no area or region tier.
+**Situation.** The player's Semiconductors business unit needs more Industrial space in Austin (United States, HSS 55, corruption 25), whose Industrial pools are full. Austin is a single city province (2.3.3). The player holds a $40M share of its Land pool (2.16) and wants that land rezoned, so it can be developed into Industrial space (2.16.2). There is no city council (batch 121): the rezoning is a Decision of the US **Minister of Land and Housing** (4.3.1, 4.3.5). E11 Zoning is Standard: the minister approves at Disposition 0 or more. The player's US national share is 0.25% (no tier) and their Austin city share is 18% (Presence); no area or region tier.
 
 **PC.** `100 × sqrt(0.0025) × 1.0 = 5`, plus 2 local standing PC for Presence in Austin (4.1.2): **7 PC per month**, pool cap 42.
 
@@ -1382,7 +1382,7 @@ All numbers use the tuning values above.
 
 **Decision: Disposition -10 + 10 = 0. Rezoning approved.** Total cost: 25 PC (about 3.5 months of income) and 6 ticks. Exposure: 0 (all legal and disclosed).
 
-**Why not bribe?** A bribe to the minister would cost `$5M × 4 × (110 - 25)/60 × (1 + 50/100) = $42.5M`, with acceptance only 25% and a 50% chance a refusal is reported (+30 exposure and an instant Financial Police inquiry). In an Open country the legal route is cheaper and safer.
+**Why not bribe?** A bribe to the minister would cost `$5M × (110 - 25)/60 × (1 + 50/100) = $10.6M` (flat since batch 158), with acceptance only 25% and a 50% chance a refusal is reported (+30 exposure and an instant Financial Police inquiry). In an Open country the legal route is cheaper and safer.
 
 **Making it easier next time.** If the player's Austin share reaches 25% (Power broker), one rezoning Request Decision per quarter costs 0 PC (2.5.10). Pushing E11 to Developer-Led is now a national bill (4.5.2): far dearer to pass, but it would make rezonings automatic for Power broker holders in every province of the country.
 
@@ -1649,7 +1649,7 @@ Local Favor is a read of the character's Favor in one country and stratum, not a
 | **MediaTone(s)** | `Σ outlets (audience share among stratum s × credibility / 100 × tone toward the character)`; tone is -1 to +1 (4.17.1) |
 | **Employer(s)** | +5 if the character's companies employ ≥ 1% of the stratum's workers in the country, +10 at ≥ 5%; -10 for 12 months after layoffs of ≥ 1,000 people or ≥ 10% of the character's workforce in the country |
 | **Lobbying(s)** | For each disclosed political action in the last 12 months (Lobby Bill under G2 Registered or Light Disclosure, Issue Campaign, disclosed donation over E/2): -2 if the stratum's largest bloc has stance - or -- on the lobbied position, +1 if + or ++. Capped at ±10 |
-| **Philanthropy** | +1 per $1M × wealth index granted in the country in the last 12 months, capped at +15 (counts for all strata) |
+| **Philanthropy** | +1 per $1M (flat) granted in the country in the last 12 months, capped at +15 (counts for all strata) |
 | **Home** | +10 in the character's home country (2.5.6) |
 | **Heat** | The character's Heat (4.17.4), capped at 60 |
 | **Price anger** | -10 among all strata while the character is publicly linked to a commodity corner (3.7.6) or to price hikes in an essential industry (energy, housing) |
@@ -1717,7 +1717,7 @@ Every outlet of the media system ([16-media.md](16-media.md)): broadcast and pub
 | **Audience share** | 0 to 100% per province and country, split by stratum | Reach ([16-media.md](16-media.md)); tabloids skew Permanent Underclass, major papers skew Glitterati and PMC, social platforms skew Permanent Underclass and young PMC |
 | **Credibility** | 0 to 100 | Starts at the source tier of 3.14.4 (Wire 95, Major paper 85, Trade 70, Tabloid and TV 50, Social 30). -10 each time a planted or spiked story is exposed; -5 per editor resignation; +1 per month back toward its tier |
 | **Editorial line** | Alignment -1 to +1 with each bloc | Set by the owner (4.4.5) |
-| **Tone** | -1 to +1 toward each named character and company | Owned outlets: set by the owner. Other outlets: start at 0; -0.1 per week while covering a scandal of that character; +0.05 per month of access (interviews, exclusives); +0.02 per $1M × wealth index of yearly advertising placed with it by the character's companies (cap +0.3, "advertiser leverage"); drifts 10% per month toward 0 |
+| **Tone** | -1 to +1 toward each named character and company | Owned outlets: set by the owner. Other outlets: start at 0; -0.1 per week while covering a scandal of that character; +0.05 per month of access (interviews, exclusives); +0.02 per $1M (flat) of yearly advertising placed with it by the character's companies (cap +0.3, "advertiser leverage"); drifts 10% per month toward 0 |
 | **Editor** | Character | Integrity (as for agency heads, 4.9.2) decides whether they follow orders to spike or plant |
 
 **Effect weight** of an outlet in any formula = audience share × credibility / 100. A tabloid with a huge audience but low credibility moves less than its audience suggests; a captured paper that is caught lying loses its power.
@@ -1732,7 +1732,7 @@ Every outlet of the media system ([16-media.md](16-media.md)): broadcast and pub
 | **Hit campaign** against a person or company | $ (0.02 × adults reached) per week | Target's MediaTone among the audience -0.3 per week of campaign (to -1) | 10% chance per week of a defamation suit if claims are false (4.21.2) |
 | **Spike a story** | Instant | The outlet does not run a story (3.14.4: early, late or never) | Leak chance 10% per spiked story (+5% per Integrity point of the editor above 50 / 10): scandal "Spiked" (minor) and credibility -10 |
 | **Plant a story** | Editor must comply (Integrity < 50) or the outlet must be friendly via a hook | Runs a story the player wrote | False story: 15% exposure chance per month; exposure is a scandal for the player and -10 credibility |
-| **Hire a star journalist** | Salary $1M to $5M × wealth index per year | +3% audience; credibility +5 | They may refuse orders like an Honest editor |
+| **Hire a star journalist** | Salary $1M to $5M (flat) per year | +3% audience; credibility +5 | They may refuse orders like an Honest editor |
 | **Feed weighting** (social platforms only) | Free, hidden | Works like an ad campaign (+0.02 MediaBias, +0.15 Ads utility) without disclosure | Counts as a psyop for exposure (+5 with the Data Authority per month) and is a major scandal if found (daily psyop discovery roll, 2.5.7) |
 
 **Buying a critic.** Buying an outlet that is hostile to you is legal, but on the change of control its star journalists and Integrity ≥ 70 editors leave (credibility -15, audience -10%) and they found or join a rival outlet that takes half the lost audience **(T)**.
@@ -1834,8 +1834,8 @@ The player character can hold office (4.7.1) and run for it (4.7.2). Other chara
 
 A **think tank** is a non-profit company. Owned by a company it is a subsidiary; owned by a foundation (4.18.3) or a personal trust it is a plain holding.
 
-- **Setup**: $5M × wealth index, 12 weeks. **Budget** B per year, set by the owner.
-- **Credibility** (0 to 100, as for outlets and NGOs; the old think tank "Prestige" is renamed, batch 116): target = `15 × ln(B / ($1M × wealth index)) + 3 per fellow with Persuasion ≥ 15`, capped at 100; moves 2 points per month toward the target **(T)**. Examples: $10M × wealth index → 35; $30M → 51; $100M → 69. Credibility is ×0.8 while more than 50% of its funding is publicly known to come from one holder ("industry-funded").
+- **Setup**: $5M (flat), 12 weeks. **Budget** B per year, set by the owner.
+- **Credibility** (0 to 100, as for outlets and NGOs; the old think tank "Prestige" is renamed, batch 116): target = `15 × ln(B / $1M) + 3 per fellow with Persuasion ≥ 15`, capped at 100; moves 2 points per month toward the target **(T)**. Examples: $10M → 35; $30M → 51; $100M → 69. Credibility is ×0.8 while more than 50% of its funding is publicly known to come from one holder ("industry-funded").
 - One **program** per country at a time:
 
 | Program | Time **(T)** | Effect **(T)** |
@@ -1843,7 +1843,7 @@ A **think tank** is a non-profit company. Owned by a company it is a subsidiary;
 | **Policy paper** on one law position | 6 months | Bills moving that law toward the position get `+Credibility / 10` support (cap +8) in the Campaign term for 24 months |
 | **Model legislation** | 3 months | The next Commission a Bill on that law costs half PC |
 | **Shift the debate** | 24 months; needs Credibility ≥ 50 and B ≥ M / 50 per year in that jurisdiction | Success chance = `Credibility × 0.6 %`, reduced by the Credibility of any opposing think tank running the same program. On success one chosen bloc's stance on one law position moves one step toward the think tank's view in that country for 10 years. At most one shift per bloc per law per decade |
-| **Fellowships** | Ongoing | Place a client or a former official as a fellow ($300k × wealth index per year): counts as a favor repaid (+10 loyalty) and keeps their network active for Introductions |
+| **Fellowships** | Ongoing | Place a client or a former official as a fellow ($300k (flat) per year): counts as a favor repaid (+10 loyalty) and keeps their network active for Introductions |
 
 Shift the debate is the slowest and strongest lever in the game: it changes what an ideology bloc wants, not just how loud it is.
 
@@ -1859,10 +1859,10 @@ A **foundation** is a holder type (like a personal trust), founded by a characte
 | Program | Cost **(T)** | Effect **(T)** |
 |---|---|---|
 | **City philanthropy** | As sponsorship and charity (2.5.7) | Goodwill as 2.5.7, with 35% (not 25%) becoming permanent |
-| **Named institution** (hospital, university wing, museum) | $50M to $500M × wealth index, one-off | Permanent Goodwill of +1 pp (small) to +3 pp (large) in the city (Metro or city province) that never decays; Clout +5; Fame +5 |
-| **Scholarships** | $1M × wealth index per year per 10 scholars | Each year one scholar becomes a named character who starts as the founder's Friend, recruitable as an executive, staffer or candidate |
-| **NGO grants** | Any | The NGO's tone toward the founder +0.1 per $1M × wealth index (cap +0.5); if the NGO is a watchdog, a co-option story has 10% chance per year (Heat 20) |
-| **Disaster relief** | Any, after a disaster event | Local Favor +5 in the affected country per $10M × wealth index (cap +15) |
+| **Named institution** (hospital, university wing, museum) | $50M to $500M (flat), one-off | Permanent Goodwill of +1 pp (small) to +3 pp (large) in the city (Metro or city province) that never decays; Clout +5; Fame +5 |
+| **Scholarships** | $1M (flat) per year per 10 scholars | Each year one scholar becomes a named character who starts as the founder's Friend, recruitable as an executive, staffer or candidate |
+| **NGO grants** | Any | The NGO's tone toward the founder +0.1 per $1M (flat) (cap +0.5); if the NGO is a watchdog, a co-option story has 10% chance per year (Heat 20) |
+| **Disaster relief** | Any, after a disaster event | Local Favor +5 in the affected country per $10M (flat) (cap +15) |
 
 - **Risks**: grants that benefit the founder, their companies or their relatives are self-dealing: Tax Authority exposure +5 per $10M **(T)**. Philanthropy while Favor < -20 risks the "washing" scandal (2.5.7).
 
@@ -1893,8 +1893,8 @@ In Guided countries, owning a licensed opposition party is allowed only with Gov
 
 | Role | Key skill | Hired as | Effect **(T)** |
 |---|---|---|---|
-| **Lobbyist** | Persuasion | Staff ($300k to $3M × wealth index per year) or through a firm | Can be the Political Director; LP from money ×`(1 + 1% per Persuasion point above 10)`, max +20%; runs Lobby Bill and Meet Official with their own time |
-| **Campaign manager** | Persuasion | Per campaign ($100k to $2M × wealth index) | The Campaign term coefficient (0.8 in 4.6.3) becomes `0.8 × (0.85 + Persuasion / 100)` for that candidate |
+| **Lobbyist** | Persuasion | Staff ($300k to $3M (flat) per year) or through a firm | Can be the Political Director; LP from money ×`(1 + 1% per Persuasion point above 10)`, max +20%; runs Lobby Bill and Meet Official with their own time |
+| **Campaign manager** | Persuasion | Per campaign ($100k to $2M (flat)) | The Campaign term coefficient (0.8 in 4.6.3) becomes `0.8 × (0.85 + Persuasion / 100)` for that candidate |
 | **Pollster** | Finance or Persuasion | Per poll | Internal poll noise ±1.5 (4.6.3), or ±1 with a pollster of skill ≥ 15 |
 | **Spin doctor** (PR) | Persuasion | Staff | Scandal responses: Deny, Apologize and Counter-story multipliers improve by 0.1 (for example Apologize ×0.4) |
 | **Fixer** | Intrigue | Staff, off the books | Runs deniable operations (4.20.4); holds **contacts** |
@@ -1908,7 +1908,7 @@ In Guided countries, owning a licensed opposition party is allowed only with Gov
 
 Political services are part of the Professional services industry ([10-industry-economy.md](10-industry-economy.md)): a business unit there can sell **public affairs** (lobbying and PR) and **political consulting** (campaigns and polling).
 
-- **Revenue**: retainers from AI clients, $0.5M to $10M × wealth index per client per year, by firm tier **(T)**.
+- **Revenue**: retainers from AI clients, $0.5M to $10M (flat) per client per year, by firm tier **(T)**.
 - **Access**: the sum of the firm's staff networks. Firm tier by Access: **Boutique**, **Established**, **Top-tier**. Clients of the firm (including its owner) pay 10% / 20% / 30% less PC for Meet Official, Request Decision and Commission a Bill in the firm's home country **(T)**.
 - **Intel**: the firm's owner learns each client's political objectives (one secret per client, 2.22.2).
 - **Conflicts**: if the owner lobbies against a client's objective, the client leaves after the bill resolves and the owner's Clout -5; repeated conflicts (3 in a year) turn into a scandal (minor).
@@ -2036,11 +2036,11 @@ A government launches an **Anti-Corruption Drive** when: a new government is for
 
 | Suit type | Typical trigger | Filing cost **(T)** | Duration **(T)** | Remedy if won |
 |---|---|---|---|---|
-| **Breach of contract** | A breached commercial contract | $250k × wealth index | 6 to 18 months | Damages: the claimed loss × 0.5 to 1.0; or specific performance |
-| **Intellectual property and trade secrets** | Corporate espionage discovered (1.1.8), a copied product | $1M × wealth index | 12 to 36 months | Damages up to 2 years of the infringing product's profit; injunction stopping its sale |
-| **Defamation** | A hit campaign or exposé | $250k × wealth index | 6 to 24 months | Damages $1M to $50M × wealth index; retraction (the story's Heat ×0.3 and the outlet's credibility -10) |
-| **Shareholder suit** (derivative or class action) | Self-dealing, a fund loss (3.18.5), a takeover defense, a failed IPO | $1M × wealth index (paid by plaintiff firms on contingency) | 12 to 36 months | Damages paid by the company or its directors; board members' Clout -5 |
-| **Injunction** | To stop a takeover, a construction, a sale, a strike | $500k × wealth index plus a bond of 5% of the claimed harm | Hearing in 1 to 4 weeks | A temporary block until trial |
+| **Breach of contract** | A breached commercial contract | $250k (flat) | 6 to 18 months | Damages: the claimed loss × 0.5 to 1.0; or specific performance |
+| **Intellectual property and trade secrets** | Corporate espionage discovered (1.1.8), a copied product | $1M (flat) | 12 to 36 months | Damages up to 2 years of the infringing product's profit; injunction stopping its sale |
+| **Defamation** | A hit campaign or exposé | $250k (flat) | 6 to 24 months | Damages $1M to $50M (flat); retraction (the story's Heat ×0.3 and the outlet's credibility -10) |
+| **Shareholder suit** (derivative or class action) | Self-dealing, a fund loss (3.18.5), a takeover defense, a failed IPO | $1M (flat) (paid by plaintiff firms on contingency) | 12 to 36 months | Damages paid by the company or its directors; board members' Clout -5 |
+| **Injunction** | To stop a takeover, a construction, a sale, a strike | $500k (flat) plus a bond of 5% of the claimed harm | Hearing in 1 to 4 weeks | A temporary block until trial |
 | **Holdout and asset seizure** | A defaulted government (3.6.7) | $5M | 2 to 6 years | Seizure of the government's assets abroad |
 
 **Win chance** **(T)**:
@@ -2136,7 +2136,7 @@ The player can never become an OCG. It can run front companies (1.7.4), partner 
 
 ## 4.23 Private security
 
-Companies and characters pay for their own security: guards, bodyguards, drones and cyber defense. Security is a monthly cost paid by whoever deploys it, in the province where it is placed or with the character it protects. No private force may hold territory or fight wars.
+Companies and characters pay for their own security: site guards, drones and cyber defense. Security is a monthly cost paid by whoever deploys it, in the province where it is placed. **Bodyguards are gone (Logan, batch 158):** there is no personal protection detail for characters; kidnap and attack risk on the road is cut only by the jet security package and CIO protection (2-map 2.21.8). No private force may hold territory or fight wars.
 
 ### 4.23.1 Security spending
 
@@ -2153,14 +2153,14 @@ The bonus only counts institutions whose Spymaster is not the player's Rival; a 
 
 ### 4.23.2 Units and Security Strength
 
-**Security Strength** is a single scale used against OCGs (4.22), rioters and protesters (4.24), standoffs with national forces (4.12.5), and kidnap or attack risks (2.21.8). A holder's Security Strength in a province is the sum of its units there.
+**Security Strength** is a single scale used against OCGs (4.22), rioters and protesters (4.24) and standoffs with national forces (4.12.5); since batch 158 it no longer guards characters against kidnap (bodyguards removed). A holder's Security Strength in a province is the sum of its units there.
 
 | Unit | Built from | Cost per month **(T)** | Strength **(T)** | Needs |
 |---|---|---|---|---|
-| **Guard detail** (20 guards) | 20 guard-months | `20 × $6,500 × wage index` | 2 | None |
-| **Armed response team** (12 armed guards, vehicles) | 40 guard-months | `40 × $6,500 × wage index` | 5 | None |
+| **Guard detail** (20 guards) | 20 guard-months | $130,000 (20 × $6,500, flat since batch 158, A) | 2 | None |
+| **Armed response team** (12 armed guards, vehicles) | 40 guard-months | $260,000 (40 × $6,500, flat) | 5 | None |
 | **Drone wing** | 5 military drones per month plus operators | $1M | 20 | Military drones ([6-technocapital.md](6-technocapital.md)) |
-| **Cyber defense team** | Security or IT staff | $300k × wage index | 0; hacking success against the holder -30% ([17-hacking.md](17-hacking.md), 4.26) | None |
+| **Cyber defense team** | Security or IT staff | $300k (flat) | 0; hacking success against the holder -30% ([17-hacking.md](17-hacking.md), 4.26) | None |
 
 National forces are measured on the same scale for standoffs: `Police strength × 2` for the police in a province, `RS × MSI / 2` for the national military (4.8.1) **(T)**.
 
@@ -2169,7 +2169,8 @@ National forces are measured on the same scale for standoffs: `Police strength �
 | Use | Who | Units **(T)** | Notes |
 |---|---|---|---|
 | Business security | Companies in high-crime or failed-state provinces | Guard details and response teams | Cuts theft and protection incidents (4.22) |
-| Executive protection | Characters | 1 to 3 armed response teams | Kidnap risk ÷4 (2.21.8) |
+
+Executive protection (bodyguard teams for characters) is removed (Logan, batch 158).
 
 ### 4.23.4 Rules of engagement and incidents
 
@@ -2203,7 +2204,7 @@ Monthly **incident** chance per deployment in a province with unrest ≥ 40, a w
 | **Human rights** | +5 points to sanctions imposition chances (4.11.4) after abuses; drives investigations of security incidents (4.23.4) |
 | **Charity and service** | Partner for philanthropy: Goodwill ×1.1 when a character's grants go through it |
 
-**Dealing with NGOs**: **Fund** (tone toward the funder +0.1 per $1M × wealth index, cap +0.5; a watchdog that takes money loses 20 credibility if the funding becomes public); **Engage** (sign a pledge: compliance cost 0.5% to 2% of revenue in the sector, local Favor +5 among the PMC stratum and the NGO's strata); **Fight** (sue, Leak Scandal on the leader, a counter-NGO funded by the player, which is astroturf: Heat 30 if exposed). Countries at HSS 60 or more can label foreign-funded NGOs "foreign agents" (a government decision): the NGO closes and its funders' exposure +10 with the Financial Police there.
+**Dealing with NGOs**: **Fund** (tone toward the funder +0.1 per $1M (flat), cap +0.5; a watchdog that takes money loses 20 credibility if the funding becomes public); **Engage** (sign a pledge: compliance cost 0.5% to 2% of revenue in the sector, local Favor +5 among the PMC stratum and the NGO's strata); **Fight** (sue, Leak Scandal on the leader, a counter-NGO funded by the player, which is astroturf: Heat 30 if exposed). Countries at HSS 60 or more can label foreign-funded NGOs "foreign agents" (a government decision): the NGO closes and its funders' exposure +10 with the Financial Police there.
 
 ### 4.24.2 Protests
 
@@ -2439,7 +2440,7 @@ All numbers use the tuning values above.
 
 ### 4.31.1 The Harbourside Files: a scandal, a narrative fight and a defamation suit
 
-**Situation.** London (United Kingdom, HSS 45, media freedom 0.95, wealth index 2.4). The Atlantic Ledger (major paper, 18% national audience, credibility 85, editor Integrity 70) runs "The Harbourside Files": the player's transit subsidiary paid a 2% kickback through a consultant to win a London transit contract. The story is **true**; it is a **major** scandal: Heat 50. On day 2 a tabloid TV channel (25% audience, credibility 50, editor Integrity 35) joins. The player owns The Courier (12% audience, credibility 70). The player character is running for a London seat in 10 weeks.
+**Situation.** London (United Kingdom, HSS 45, media freedom 0.95). The Atlantic Ledger (major paper, 18% national audience, credibility 85, editor Integrity 70) runs "The Harbourside Files": the player's transit subsidiary paid a 2% kickback through a consultant to win a London transit contract. The story is **true**; it is a **major** scandal: Heat 50. On day 2 a tabloid TV channel (25% audience, credibility 50, editor Integrity 35) joins. The player owns The Courier (12% audience, credibility 70). The player character is running for a London seat in 10 weeks.
 
 It is a **Corruption** scandal, so its share halves every year (4.17.4); the player character starts at Heat 0.
 
@@ -2453,9 +2454,9 @@ It is a **Corruption** scandal, so its share halves every year (4.17.4); the pla
 | **Legal threat** (the tabloid drops out, 40% chance) | 52 | 52 | Day 147 | 1 | -3.6% | 15% chance of a backlash story (Heat +20) |
 | **Counter-story** in The Courier | 40 | 40 | Never above 40 | 1 | 0% | 25% chance the plant is exposed: a new minor scandal, Courier credibility -10 |
 
-**Local Favor among the PMC stratum** (target before the story): `0.5 × 20 (Favor) + 30 × (0.15 × 0.70 × 0.6) (Courier tone) + 5 (employer) + 6 (philanthropy: $14.4M at $2.4M per point) + 10 (home) = 32.9`; actual 30. Riding it out, Heat sits around 52 for the 10 weeks to the election: target ≈ `32.9 - 26 - 0.6 (Ledger tone -0.1) = 6.3`, so local Favor sinks week by week to about 14.6 on election day. With Fame 60 that cuts the player's Candidate term in the PMC stratum from `0.01 × 30 × 0.6 = 0.18` to about 0.09. After an apology Heat sits around 26, local Favor ends near 23 and the term near 0.14. The **memory** adds to it: the Scandal term of 0.8 is frozen in every week that ends while an outlet still covers the story. On election day it is 0.14 after an apology (never frozen), 0.17 after riding it out cleanly (frozen 1 week), and 0.20 if a revelation lands (frozen 2 weeks), with twice the stock damage. Because Heat now lingers (Logan, batch 117), the cancelled player also faces halved Favor and Clout gains and wary politicians for months after the story is gone.
+**Local Favor among the PMC stratum** (target before the story): `0.5 × 20 (Favor) + 30 × (0.15 × 0.70 × 0.6) (Courier tone) + 5 (employer) + 6 (philanthropy: $6M at a flat $1M per point since batch 158) + 10 (home) = 32.9`; actual 30. Riding it out, Heat sits around 52 for the 10 weeks to the election: target ≈ `32.9 - 26 - 0.6 (Ledger tone -0.1) = 6.3`, so local Favor sinks week by week to about 14.6 on election day. With Fame 60 that cuts the player's Candidate term in the PMC stratum from `0.01 × 30 × 0.6 = 0.18` to about 0.09. After an apology Heat sits around 26, local Favor ends near 23 and the term near 0.14. The **memory** adds to it: the Scandal term of 0.8 is frozen in every week that ends while an outlet still covers the story. On election day it is 0.14 after an apology (never frozen), 0.17 after riding it out cleanly (frozen 1 week), and 0.20 if a revelation lands (frozen 2 weeks), with twice the stock damage. Because Heat now lingers (Logan, batch 117), the cancelled player also faces halved Favor and Clout gains and wary politicians for months after the story is gone.
 
-**Suing the Ledger for defamation.** The story is true: Merit -8. The player's counsel score: General Counsel 15 + 5 × tier 3 = 30. Ledger: in-house counsel 12 + 5 × tier 2 = 22. UK judge Neutral; the government does not care. `P(win) = 50% - 32% + 16% = 34%`. Filing costs $600k (`$250k × 2.4`) and Heat +10 at once; the UK has no anti-SLAPP flag, so the suit runs 6 to 24 months. Civil discovery is the trap: each month of trial there is a 10% chance the Ledger's lawyers find the consultant's invoices, adding +10 Financial Police exposure, and the Ledger's journalist gets the documents. Over a 12-month trial that is a `1 - 0.9^12 = 72%` chance. **Verdict**: for a true story, apologize on day 1 (it costs 5 Favor and 5 Evidence, but it kills the revelations, the stock drift and the hearing risk), scapegoat the subsidiary's CEO if the inquiry reaches Subpoena, and never sue over a true story. For a false story the answer flips: deny and sue, since debunking (15% per week) and a Merit of +8 work for the player.
+**Suing the Ledger for defamation.** The story is true: Merit -8. The player's counsel score: General Counsel 15 + 5 × tier 3 = 30. Ledger: in-house counsel 12 + 5 × tier 2 = 22. UK judge Neutral; the government does not care. `P(win) = 50% - 32% + 16% = 34%`. Filing costs $250k (flat since batch 158) and Heat +10 at once; the UK has no anti-SLAPP flag, so the suit runs 6 to 24 months. Civil discovery is the trap: each month of trial there is a 10% chance the Ledger's lawyers find the consultant's invoices, adding +10 Financial Police exposure, and the Ledger's journalist gets the documents. Over a 12-month trial that is a `1 - 0.9^12 = 72%` chance. **Verdict**: for a true story, apologize on day 1 (it costs 5 Favor and 5 Evidence, but it kills the revelations, the stock drift and the hearing risk), scapegoat the subsidiary's CEO if the inquiry reaches Subpoena, and never sue over a true story. For a false story the answer flips: deny and sue, since debunking (15% per week) and a Merit of +8 work for the player.
 
 ### 4.31.2 The clinic in Lagos: dirty money, laundering, deniability and a whistleblower
 
@@ -2489,16 +2490,16 @@ The lesson: a profitable dirty operation is a growing pool of people who know. T
 
 ### 4.31.3 Insurance Salesmen in Mexico City: protection, security or a crackdown
 
-**Situation.** The player's Autos business unit, with its assets in an Industry-heavy province of the Mexico City Metro (Mexico, HSS 58, corruption 65, wage index 0.22), has revenue of $200M a year. A Cartel with Strength 60 holds Control 45 in the province: local strength `60 × 0.45 = 27`. Police strength 45, police integrity 35. The cartel asks 1% of revenue: **$2M a year**.
+**Situation.** The player's Autos business unit, with its assets in an Industry-heavy province of the Mexico City Metro (Mexico, HSS 58, corruption 65), has revenue of $200M a year. A Cartel with Strength 60 holds Control 45 in the province: local strength `60 × 0.45 = 27`. Police strength 45, police integrity 35. The cartel asks 1% of revenue: **$2M a year**.
 
 | Option | Cost per year | Monthly incident chance | Expected incidents per year | Other effects |
 |---|---|---|---|---|
 | **Pay** | $2M (plus Financial Police exposure +3 per month if paid as "consulting" in Mexico) | 0% | 0 | After 6 months, 10% per month of *A Favor for the Plaza* |
 | **Refuse, no security** | $0 | `45 / 5 = 9%` | 1.1 (68% chance of at least one) | Each incident: about $3.8M of lost output (one week), Unskilled unrest +2 |
-| **Refuse and harden**: 6 armed response teams (Strength 30 ≥ 27) | `6 × 40 × $6,500 × 0.22 × 12 = $4.1M` | `9% × 0.25 = 2.25%` | 0.27 (24% chance of at least one) | Theft losses (Crime / 20 %) cut by 75% |
+| **Refuse and harden**: 6 armed response teams (Strength 30 ≥ 27) | `6 × 40 × $6,500 × 12 = $18.7M` (flat since batch 158) | `9% × 0.25 = 2.25%` | 0.27 (24% chance of at least one) | Theft losses (Crime / 20 %) cut by 75% |
 | **Request a crackdown** (Interior Minister, 10 PC) | PC | Success chance `40% + 0.5% × (45 - 60) = 32.5%` | | Success: Control 30 and Strength 50, local strength 15. The cartel learns who asked with chance `1 - 0.35 = 65%`, then retaliates 50%: a **33%** chance of a targeted attack on the unit's manager or premises |
 
-**Reading it.** Paying is the cheapest option today and the most dangerous later: it makes the player a customer, and the *A Favor for the Plaza* event turns a customer into a partner with a hook on it. Hardening costs twice the protection fee but keeps the player clean. A crackdown is a political play: it costs PC and has a one-in-three chance of making the cartel an enemy. A Corporation-rank player would pay while lobbying the national government for S2 Militarized (police strength 60, crackdown success 40%) and funding a national candidate who campaigns on crime, then refuse once the odds improve.
+**Reading it.** Paying is the cheapest option today and the most dangerous later: it makes the player a customer, and the *A Favor for the Plaza* event turns a customer into a partner with a hook on it. Hardening costs about nine times the protection fee at flat guard prices (batch 158) but keeps the player clean. A crackdown is a political play: it costs PC and has a one-in-three chance of making the cartel an enemy. A Corporation-rank player would pay while lobbying the national government for S2 Militarized (police strength 60, crackdown success 40%) and funding a national candidate who campaigns on crime, then refuse once the odds improve.
 
 ---
 
@@ -2519,7 +2520,7 @@ New assumptions made in this file, to confirm with Logan:
 11. **Seizure is a ladder**, never instant, except when war, Tier 3+ sanctions or a failed coup skip steps.
 12. **Bribes of officials are possible in every country**, but Open countries make them expensive, rarely accepted and often reported.
 13. **Elections use a stratum-level softmax** of utilities; money enters with a logarithm so doubling spending has diminishing returns.
-14. **Money values** are in dollar equivalents scaled by GDP (political market size, LP price) or by a wealth index (bribes, legal fees), so the same rules work for a $50B country and a $28T one.
+14. **Money values** are in dollar equivalents scaled by GDP (political market size, LP price) or flat (bribes, legal fees and every other price that used the wealth index before batch 158, when it became an equality index), so the same rules work for a $50B country and a $28T one.
 15. **Corporate sovereignty Stage 3** needs a Council of Stakeholders, a Collapsed country, or a treaty; Open countries can host Stage 2 charter cities at most without a treaty.
 16. **Prison** keeps a character in play with very limited actions rather than removing them entirely.
 17. **Political Director and Objectives**: routine politics is delegated to a Political Director character working from player-set objectives, a budget and a Conduct line (Clean, Grey, Dark), so hourly play is kept for hot moments (election and coup nights, hearings, crisis meetings, Council sessions, protest standoffs).
