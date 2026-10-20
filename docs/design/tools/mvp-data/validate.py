@@ -6,7 +6,7 @@
 Checks: row counts; industry names match companies.csv and the 42 of 10.3; every iso3 is in countries.csv;
 every key city province id exists in the province CSVs; the profit check for a normal company in each industry;
 named revenue plus the fringe pool equals world demand, with the named share; every country's financial zone
-is in financial-zones.csv, with the GDP-weighted zone intensity Z; batch 152: 24 zones, every country in exactly
+is in financial-zones.csv, with the GDP-weighted zone intensity Z; batch 152: 24 zones, 26 since batch 154, every country in exactly
 one, every hub province exists, lies in its zone and belongs to its hub city, every hub city is in key-cities.csv,
 exchange codes are unique, and listed companies are counted by their HQ country's zone exchange; a seeded 40-quarter run of the batch 150
 industry growth model (mvp-spec 5.1), which prints how far each industry's average growth sits from its
@@ -223,9 +223,9 @@ def run(data):
     for z in zones:
         if float(z['intensity']) <= 0:
             errors.append(f'{z["zone_id"]}: intensity must be above 0')
-    # batch 152: 24 zones, each with one exchange in a hub city that is a key city
-    if len(zones) != 24 or len(zone_ids) != 24:
-        errors.append(f'financial-zones: {len(zones)} rows, expected 24 distinct zones')
+    # batch 152: one exchange per zone in a hub city that is a key city; batch 154: 26 zones (Japan, Russia)
+    if len(zones) != 26 or len(zone_ids) != 26:
+        errors.append(f'financial-zones: {len(zones)} rows, expected 26 distinct zones')
     if len({z['exchange_code'] for z in zones}) != len(zones):
         errors.append('financial-zones: duplicate exchange codes')
     in_zone = {}
@@ -340,7 +340,7 @@ def run(data):
         if c['public'] == 'Y':
             ex = next(z['exchange_code'] for z in zones if z['zone_id'] == zone_of[c['hq_country']])
             listed[ex] = listed.get(ex, 0) + 1
-    print('\nFinancial zones (batch 152): number, id, hub, exchange, intensity, lag, contagion, members, GDP share, '
+    print('\nFinancial zones (batches 152 and 154): number, id, hub, exchange, intensity, lag, contagion, members, GDP share, '
           'listed companies (HQ country zone)')
     for z in zones:
         print(f'  {z["number"]:>2} {z["zone_id"]:4} {z["hub_city"]:17} {z["exchange_code"]} {z["intensity"]:>4} '

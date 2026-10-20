@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Build the MVP design data tables (Logan, batch 147; industries on shared defaults, batch 148; zones, batch 150).
+"""Build the MVP design data tables (Logan, batch 147; industries on shared defaults, batch 148; zones, batch 150; Japan and Russia zones, batch 154).
 
     python3 gen.py [design dir]
 
 Writes into <design>/data/:
   industries.csv        42 rows  (mvp-spec 2.2; 10-industry-economy 10.3, 10.3.1, 10.0.11.10; 3-markets 3.3.2)
   country-economy.csv   211 rows (mvp-spec 2.2; 2-map 2.2.3, 2.2.5, 2.18.2; 3-markets 3.6.2, 3.6.5; 4-politics E2)
-  financial-zones.csv    24 rows (mvp-spec 2.2, 5.1; 2-map 2.18.2; 3-markets 3.2.1; Logan, batches 150 and 152)
+  financial-zones.csv    26 rows (mvp-spec 2.2, 5.1; 2-map 2.18.2; 3-markets 3.2.1; Logan, batches 150, 152 and 154)
   ai-boom.csv            15 rows (mvp-spec 2.2, 5.1.1; 7-starting-world 7.7; Logan, batch 151)
   key-cities.csv        88 rows  (2-map 2.3.3, 2.3.4, 2.3.5, parsed from the markdown; 8 zone hubs, batch 152)
 
@@ -412,7 +412,7 @@ ZONES = [
     ('PRK', 4, 'North Korea', 'Pyongyang', 'KP-0001', 'TDX', 'Taedong River Exchange', 'Chollima 15',
      0.3, 2, 0.0, 0.03, '', 'North Korea alone: sealed economy, low intensity and its own shocks (A)'),
     ('EU', 5, 'European Union', 'Frankfurt', 'DE-0019', 'CBX', 'Continental Bourse', 'Continental 50',
-     1.2, 1, 0.5, 0.0, '', 'The 27 EU members plus Norway, Iceland, the Balkans, Ukraine, Moldova, Belarus, the '
+     1.2, 1, 0.5, 0.0, '', 'The 27 EU members plus Norway, Iceland, the Balkans, Ukraine, Moldova, the '
      'microstates, the Faroes, Greenland and Saint Pierre and Miquelon; the euro crisis makes it swing harder (A)'),
     ('UK', 6, 'United Kingdom', 'London', 'GB-0001', 'CLX', 'City of London Exchange', 'CLX 100',
      1.1, 0, 0.3, 0.0, '', 'UK with Gibraltar, the Isle of Man, Jersey and Guernsey (A)'),
@@ -420,9 +420,9 @@ ZONES = [
      0.9, 1, 0.4, 0.0, '', 'China, its debt vassals (Pakistan, Sri Lanka, Djibouti, Zambia) and close clients (Laos, '
      'Cambodia, Mongolia); state-steered credit damps the cycle (A)'),
     ('KR', 8, 'South Korea', 'Seoul-Pyeongtaek', 'KR-0001', 'HRX', 'Han River Exchange', 'HRX 200',
-     1.1, 1, 0.3, 0.0, '', 'South Korea and Japan (provisional: Japan joins the nearest zone, flag for Logan) (A)'),
+     1.1, 1, 0.3, 0.0, '', 'South Korea alone since batch 154 (Logan), when Japan got its own zone 25 (A)'),
     ('HK', 9, 'Hong Kong', 'Hong Kong', 'HK-0001', 'VHX', 'Victoria Harbour Exchange', 'Harbour Index',
-     1.2, 0, 0.4, 0.0, '', 'Hong Kong and Taiwan (provisional: flag for Logan) (A)'),
+     1.2, 0, 0.4, 0.0, '', 'Hong Kong alone since batch 154 (Logan), when Taiwan went with Japan to zone 25 (A)'),
     ('AU', 10, 'Australia', 'Sydney', 'AU-0001', 'SCX', 'Southern Cross Exchange', 'Southern Cross 200',
      1.0, 1, 0.2, 0.0, '', 'Australia, New Zealand and the Pacific islands (A)'),
     ('MO', 11, 'Macau', 'Macau', 'MO-0001', 'CTX', 'Cotai Exchange', 'Cotai 20',
@@ -449,8 +449,8 @@ ZONES = [
     ('ME', 19, 'Middle East', 'Dubai', 'AE-0008', 'DCX', 'Creek Exchange', 'Creek 50',
      1.1, 1, 0.3, 0.0, '', 'The Gulf, the Levant, Iraq, Iran, Turkey, Egypt and Yemen (A)'),
     ('UA', 20, 'Upper Asia (Himalayas)', 'Almaty', 'KZ-0002', 'SRX', 'Silk Road Exchange', 'Silk Road 30',
-     1.3, 1, 0.4, 0.0, '', 'Russia (provisional: flag for Logan), Central Asia, the Caucasus, Afghanistan, Nepal '
-     'and Bhutan (A)'),
+     1.3, 1, 0.4, 0.0, '', 'Central Asia, the Caucasus, Afghanistan, Nepal and Bhutan; Russia has its own zone 26 '
+     'since batch 154 (Logan) (A)'),
     ('MX', 21, 'Mexico', 'Mexico City', 'MX-0001', 'RFX', 'Reforma Exchange', 'Reforma 35',
      1.3, 0, 0.3, 0.0, '', 'Mexico and Central America from Guatemala and Belize to Costa Rica (A)'),
     ('BR', 22, 'Brazil', 'São Paulo', 'BR-0001', 'PSX', 'Paulista Exchange', 'Paulista Index',
@@ -460,19 +460,27 @@ ZONES = [
      'make it swing hardest (A)'),
     ('CO', 24, 'Colombia', 'Bogotá', 'CO-0001', 'ANX', 'Andean Exchange', 'Andes 20',
      1.3, 1, 0.4, 0.0, '', 'Colombia, Venezuela, Ecuador, Peru and Panama (A)'),
+    # Logan, batch 154: "Taiwan goes with Japan, Japan gets its own. Russia should have its own zone."
+    ('JP', 25, 'Japan', 'Tokyo-Yokohama', 'JP-0001', 'ESE', 'Edo Securities Exchange', 'Edo 225',
+     0.9, 1, 0.3, 0.0, '', 'Japan and Taiwan (Logan, batch 154); ESE, until then the HRX Tokyo board, is the zone '
+     'exchange; a mature, low-growth economy swings less (T)'),
+    ('RU', 26, 'Russia', 'Moscow', 'RU-0001', 'YRX', 'Yauza River Exchange', 'Yauza 50',
+     1.1, 1, 0.2, 0.02, '', 'Russia and Belarus, its close client (Logan, batch 154; Belarus A); commodity swings '
+     'would give about 1.4, but sanctions since 2005 partly isolate it: intensity 1.1, contagion 0.2 and a small '
+     'own shock (T)'),
 ]
-# Every one of the 211 countries in exactly one zone (batch 152 defaults, A). validate.py checks it.
+# Every one of the 211 countries in exactly one zone (batch 152 defaults, A; Japan and Russia zones, batch 154). validate.py checks it.
 ZONE_MEMBERS = {
     'NA': 'USA CAN BMU BHS CYM VGB PRI',
     'CAR': 'DOM HTI JAM TTO BRB ATG DMA GRD KNA LCA VCT',
     'CUB': 'CUB',
     'PRK': 'PRK',
     'EU': 'AUT BEL BGR HRV CYP CZE DNK EST FIN FRA DEU GRC HUN IRL ITA LVA LTU LUX MLT NLD POL PRT ROU SVK SVN ESP '
-          'SWE NOR ISL SRB BIH MKD ALB MNE XKX UKR MDA BLR AND MCO SMR VAT FRO GRL SPM',
+          'SWE NOR ISL SRB BIH MKD ALB MNE XKX UKR MDA AND MCO SMR VAT FRO GRL SPM',
     'UK': 'GBR GIB IMN JEY GGY',
     'CN': 'CHN PAK LKA DJI ZMB LAO KHM MNG',
-    'KR': 'KOR JPN',
-    'HK': 'HKG TWN',
+    'KR': 'KOR',
+    'HK': 'HKG',
     'AU': 'AUS NZL PNG FJI SLB VUT WSM TON KIR FSM MHL PLW NRU TUV',
     'MO': 'MAC',
     'SG': 'SGP IDN MYS THA VNM PHL BRN MMR TLS',
@@ -483,11 +491,13 @@ ZONE_MEMBERS = {
     'AFN': 'MAR DZA TUN LBY MRT',
     'CH': 'CHE LIE',
     'ME': 'SAU ARE ISR EGY QAT IRN IRQ KWT BHR OMN YEM JOR LBN SYR PSE TUR',
-    'UA': 'RUS KAZ UZB TKM KGZ TJK GEO ARM AZE AFG NPL BTN',
+    'UA': 'KAZ UZB TKM KGZ TJK GEO ARM AZE AFG NPL BTN',
     'MX': 'MEX GTM BLZ HND SLV NIC CRI',
     'BR': 'BRA PRY BOL GUY SUR',
     'AR': 'ARG CHL URY PAP',
     'CO': 'COL VEN ECU PER PAN',
+    'JP': 'JPN TWN',
+    'RU': 'RUS BLR',
 }
 ZONE_OF = {iso: z for z, members in ZONE_MEMBERS.items() for iso in members.split()}
 ZONE_NOTE = {'GRL': 'Greenland follows Denmark into the EU zone (A)',
@@ -498,10 +508,11 @@ ZONE_NOTE = {'GRL': 'Greenland follows Denmark into the EU zone (A)',
              'PAK': 'Chinese debt vassal: China and puppets zone (A)', 'LKA': 'Chinese debt vassal: China and puppets zone (A)',
              'DJI': 'Chinese debt vassal: China and puppets zone (A)', 'ZMB': 'Chinese debt vassal: China and puppets zone (A)',
              'MLI': 'US debt vassal kept in West Africa by geography (A)',
-             'JPN': 'provisional: Japan joins South Korea, the nearest zone (A, flag for Logan)',
-             'TWN': 'provisional: Taiwan joins Hong Kong (A, flag for Logan)',
+             'JPN': 'Japan zone 25 (Logan, batch 154)',
+             'TWN': 'Taiwan goes with Japan, zone 25 (Logan, batch 154)',
              'MAC': 'SAR of China with its own row (Logan, batch 153): Macau zone 11',
-             'RUS': 'provisional: Russia joins Upper Asia (A, flag for Logan)',
+             'RUS': 'Russia zone 26 (Logan, batch 154)',
+             'BLR': 'Russian close client: Russia zone 26 (batch 154, A)',
              'EGY': 'Egypt in the Middle East zone (A)', 'TUR': 'Turkey in the Middle East zone (A)',
              'MNG': 'Mongolia with China, its main client (A)', 'MMR': 'Myanmar with Southeast Asia (A)'}
 

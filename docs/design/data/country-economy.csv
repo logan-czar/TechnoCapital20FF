@@ -83,11 +83,11 @@ BIH,Low,0.1,B,450,EU,
 MKD,Low,0.1,BB-,317,EU,
 ALB,Low,0.15,B+,383,EU,
 UKR,Moderate,0.18,B-,567,EU,
-BLR,Moderate,0.18,B,450,EU,
+BLR,Moderate,0.18,B,450,RU,"Russian close client: Russia zone 26 (batch 154, A)"
 MDA,Low,0.12,B-,567,EU,
 GGY,Haven,0.03,AA-,23,UK,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%; haven, British: UK zone (A)"
 JEY,Haven,0.03,AA-,23,UK,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%; haven, British: UK zone (A)"
-RUS,Moderate,0.2,BB+,200,UA,"rating one notch under real for 15 years of sanctions; provisional: Russia joins Upper Asia (A, flag for Logan)"
+RUS,Moderate,0.2,BB+,200,RU,"rating one notch under real for 15 years of sanctions; Russia zone 26 (Logan, batch 154)"
 KAZ,Moderate,0.2,BBB-,150,UA,
 UZB,Low,0.15,BB-,317,UA,
 TKM,Low,0.08,BB-,317,UA,unrated in 2020: rating from wealth and state (A)
@@ -174,9 +174,9 @@ BTN,High,0.3,B+,383,UA,unrated in 2020: rating from wealth and state (A)
 MDV,Low,0.15,B,450,IN,
 AFG,Moderate,0.2,B-,567,UA,unrated in 2020: rating from wealth and state (A)
 CHN,Moderate,0.25,A+,32,CN,
-JPN,High,0.297,A+,32,KR,"provisional: Japan joins South Korea, the nearest zone (A, flag for Logan)"
+JPN,High,0.297,A+,32,JP,"Japan zone 25 (Logan, batch 154)"
 KOR,Moderate,0.275,AA,15,KR,2.2.3 level Moderate kept; real rate is nearer High
-TWN,Moderate,0.2,AA-,23,HK,"provisional: Taiwan joins Hong Kong (A, flag for Logan)"
+TWN,Moderate,0.2,AA-,23,JP,"Taiwan goes with Japan, zone 25 (Logan, batch 154)"
 SGP,Low,0.17,AAA,0,SG,2.2.3 level Low kept; real rate is nearer Moderate
 MYS,Moderate,0.24,A-,60,SG,
 IDN,Moderate,0.22,BBB,100,SG,
