@@ -1,6 +1,6 @@
 # 3. Markets and FX: detailed design
 
-_Status: draft v0.3 (2026-10-20). Batch 131 (Logan): front-running cut. Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): leftover currency wording marked post-POC (FX positions, account and bond currencies, deposit insurance, the "woken" national bank in 3.9.7, peg defenses, Arcology Scrip). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board (3.8.1). This replaces the batch 124 whole-world-dollarized card. Batch 122: the Eurozone Central Bank sets one rate for all 19 euro countries, which share one business cycle (the shared cycle stays; in the POC the Eurozone Central Bank sets no rate, batch 125); the UK is outside the EU at start. Batch 121: only national governments, so only national government bonds exist (regional and city bonds removed from 3.6.1). Batch 118: EU4-style map; local time, roadshows, deposits, unrest, morning briefs and market research use provinces and cities (Metros or city provinces) instead of hubs; exchanges have a home city; charter cities are provinces. Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
+_Status: draft v0.3 (2026-10-20). Batch 134 (Logan): one alert scale in 3.13.5 (20-ui 20.4); source reliability shows only as a High, Mid or Low band (3.13.1, 3.14.4); trading without a Pdoomberg subscription uses one-day-old quotes (3.14.1). Batch 134 (Logan): Pdoomberg is a separate WSR-style terminal screen (3.13.1). Batch 131 (Logan): front-running cut. Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): leftover currency wording marked post-POC (FX positions, account and bond currencies, deposit insurance, the "woken" national bank in 3.9.7, peg defenses, Arcology Scrip). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board (3.8.1). This replaces the batch 124 whole-world-dollarized card. Batch 122: the Eurozone Central Bank sets one rate for all 19 euro countries, which share one business cycle (the shared cycle stays; in the POC the Eurozone Central Bank sets no rate, batch 125); the UK is outside the EU at start. Batch 121: only national governments, so only national government bonds exist (regional and city bonds removed from 3.6.1). Batch 118: EU4-style map; local time, roadshows, deposits, unrest, morning briefs and market research use provinces and cities (Metros or city provinces) instead of hubs; exchanges have a home city; charter cities are provinces. Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
 
 This file covers stock exchanges, the stock price model, corporate actions, short selling and margin, bonds and credit ratings, commodities, foreign exchange, central banks, and market crime. It ends with worked examples and a list of new assumptions.
 
@@ -1596,7 +1596,7 @@ Time ticks hourly, and a player can hold hundreds of positions. The trading laye
 
 ### 3.13.1 The Markets screen
 
-The Markets screen of [11-ui.md](../11-ui.md) 11.2 is split into panels. The panels shown by default follow company rank (3.1.4, 3.25.1).
+The Markets screen of [11-ui.md](../11-ui.md) 11.2 is the **Pdoomberg terminal**, a separate full-screen terminal in the Wall Street Raider style (Logan, batch 134): dense green-or-amber-on-black monospace text, a command line with function keys and menus, and tables of quotes, filings and charts. It opens from the left rail or a hotkey and covers the map; the clock keeps running and Esc returns to the map ([20-ui.md](20-ui.md) 20.5.2). It is split into panels. The panels shown by default follow company rank (3.1.4, 3.25.1).
 
 | Panel | What it shows | Notes |
 |---|---|---|
@@ -1605,7 +1605,7 @@ The Markets screen of [11-ui.md](../11-ui.md) 11.2 is split into panels. The pan
 | **Order ticket** | The order and its preview: expected fill price, slippage and permanent impact (3.3.7), time to fill at the chosen participation, fees and transaction tax (3.24.3), estimated tax on a sale, margin effect, disclosure thresholds crossed and their deadlines, mandatory bid warnings | Nothing is sent until the player confirms the preview |
 | **Positions** | Holdings by account (each personal account, personal trust, and company treasury the player controls): cost basis, realized and unrealized gains, currency exposure (post-POC), margin headroom | Pledged and lent shares are marked |
 | **Orders** | Open and standing orders with progress bars | Work orders show shares filled, average price and impact so far |
-| **News feed** | Filtered news with source and reliability (3.14.4) | Filters: holdings, watchlists, sector, country, source tier |
+| **News feed** | Filtered news with source and reliability band (3.14.4) | Filters: holdings, watchlists, sector, country, source tier |
 | **Calendar** | Earnings dates, ex-dividend dates, annual meetings and record dates, central bank meetings, bond auctions, index rebalances, futures expiries and roll days, lock-up expiries, tender deadlines, elections | Any calendar item can become an alert |
 | **Screener** | Filter all listed instruments by exchange, sector, gap to estimated fair value, dividend yield, rating, short interest, holder concentration, free float, Buzz | Saved screens can feed alerts ("tell me when a utility trades below book") |
 | **Market overview** | GRG, headline indices, Retail Fever (3.15.1), cycle phase by country ([2-map-and-influence.md](2-map-and-influence.md) 2.18), yield curves and country spreads, FX heat map (post-POC), commodity curves, Funding Stress Index (3.21.3) | The one-glance view for large portfolios |
@@ -1659,13 +1659,13 @@ Placing an order costs no character hours: it is a call or a tap. Skill matters 
 
 ### 3.13.5 Alerts and auto-pause
 
-The game runs in pausable real time and auto-pauses on events and chosen alerts. Market alerts come in three tiers:
+The game runs in pausable real time and auto-pauses on events and chosen alerts. Market alerts use the one alert scale of [20-ui.md](20-ui.md) 20.4 (Logan, batch 134): each type is set to **Pause**, **Notify**, **Log** or **Off**. Defaults:
 
-| Tier | Behavior | Examples |
+| Default | Behavior | Examples |
 |---|---|---|
-| **Always stop** | Cannot be turned off | Margin warning and margin call; a disclosure filing on a company the player controls or holds 5% or more of; a bid or tender for such a company; a halt on a holding; a market-wide circuit breaker on an exchange holding 10% or more of the portfolio; a bank run on a bank that holds the player's deposits; any forced liquidation |
-| **Stop by default** | On unless the player turns it off | A stop or conditional order filled; a work order completed; a holding moving more than 5% in a day; an earnings surprise on a holding; a rating change on a held bond; a central bank surprise of 0.25 points or more; an Unusual Accumulation alert (3.14.5); meme state on a holding (3.15.2) |
-| **Notify only** | Logged in the feed | Watchlist moves, analyst rating changes, filings on watchlist companies, the daily close summary |
+| **Pause (locked)** | Cannot be set below Pause | Margin warning and margin call; a disclosure filing on a company the player controls or holds 5% or more of; a bid or tender for such a company; a halt on a holding; a market-wide circuit breaker on an exchange holding 10% or more of the portfolio; a bank run on a bank that holds the player's deposits; any forced liquidation |
+| **Pause** | Pauses unless the player sets it to Notify, Log or Off | A stop or conditional order filled; a work order completed; a holding moving more than 5% in a day; an earnings surprise on a holding; a rating change on a held bond; a central bank surprise of 0.25 points or more; an Unusual Accumulation alert (3.14.5); meme state on a holding (3.15.2) |
+| **Log** | Logged in the feed and event log; can be raised to Notify or Pause | Watchlist moves, analyst rating changes, filings on watchlist companies, the daily close summary |
 
 - **Batching**: fills and small moves while the game runs are gathered into one summary card shown at the next pause ("While you slept: 14 fills, 3 alerts, portfolio +1.2%").
 - **Run until** gets market conditions: until a work order completes, until a stake reaches a given %, until a filing deadline.
@@ -1693,6 +1693,8 @@ This section links the information rules of [2-map-and-influence.md](2-map-and-i
 | AI holders' reservation prices (3.4.9) | No | A range, after a meeting with the holder (Finance or Persuasion check) |
 | Pending bids, defenses, scandals, central bank decisions | No | Only once they leak as rumors (3.14.6) |
 | Private companies | No public numbers | One secret per successful intel action (2.22.2) |
+
+- **Without a Pdoomberg subscription** (Logan, batch 134): trading is still allowed, but quotes are **one day old** [T] and marked "Delayed" ([20-ui.md](20-ui.md) 20.5.2).
 
 ### 3.14.2 Estimated fair value
 
@@ -1723,19 +1725,19 @@ This section links the information rules of [2-map-and-influence.md](2-map-and-i
 
 ### 3.14.4 News feed and source reliability
 
-Every news item has a source and a reliability, the chance that the story is true.
+Every news item has a source and a reliability, the chance that the story is true. The exact reliability is hidden: Pdoomberg and the News feed show only a band, **High** (80% or more), **Mid** (50% to 79%) or **Low** (under 50%) [T], never a % (Logan, batch 134). Outlet credibility stays hidden too ([16-media.md](16-media.md)).
 
-| Source tier | Examples (fictional) | Reliability [T] | Buzz multiplier |
-|---|---|---|---|
-| **Official** | Filings, exchange notices, central bank statements, court rulings | 100% | x1.0 |
-| **Wire** | Meridian Wire, Ledger News | 95% | x1.0 |
-| **Major paper** | The Atlantic Ledger, Financial Courier | 85% | x1.0 |
-| **Trade press and newsletters** | Sector sites | 70% | x0.8 |
-| **Tabloid and TV** | | 50% | x1.2 |
-| **Forums and social** | Retail forums, finfluencers (3.15.3) | 30% | x1.5 (x2 in meme state) |
-| **Anonymous leak** | | 40% | x1.0 |
+| Source tier | Examples (fictional) | Reliability [T] (hidden) | Shown as | Buzz multiplier |
+|---|---|---|---|---|
+| **Official** | Filings, exchange notices, central bank statements, court rulings | 100% | High | x1.0 |
+| **Wire** | Meridian Wire, Ledger News | 95% | High | x1.0 |
+| **Major paper** | The Atlantic Ledger, Financial Courier | 85% | High | x1.0 |
+| **Trade press and newsletters** | Sector sites | 70% | Mid | x0.8 |
+| **Tabloid and TV** | | 50% | Mid | x1.2 |
+| **Forums and social** | Retail forums, finfluencers (3.15.3) | 30% | Low | x1.5 (x2 in meme state) |
+| **Anonymous leak** | | 40% | Low | x1.0 |
 
-- Rumors (3.3.6) carry a hidden truth flag. The player sees source and reliability; an intel action on the story learns its truth as one secret [T]. Pdoomberg and the in-game search are neutral; AI characters do not read the news.
+- Rumors (3.3.6) carry a hidden truth flag. The player sees the source and its reliability band, never the %; an intel action on the story learns its truth as one secret [T]. Pdoomberg and the in-game search are neutral; AI characters do not read the news.
 - Planted stories (psyops, leaks) show the outlet they were placed in. Placing a story in a Wire or Major paper needs a media asset or a hook on an editor. A false story in an Official channel is securities fraud.
 - **Owning media** (2.5.2) lets the owner run a true story early, late (up to 2 days) or never [T]. Spiking a story about one's own company is a scandal if it leaks.
 
@@ -2343,7 +2345,7 @@ New assumptions introduced by this document, to confirm or change:
 19. **Freeport Night Market** access requires a shell company and is always on, with no regulator but raid and fraud risk.
 20. **Market tools are grouped by company rank** as listed in 3.1.4; nothing is locked.
 21. **Standing orders run in the hourly market loop** as a market rule, cost no character hours, and are not AI decisions; skill shows through execution quality (the executing character's Finance scales slippage) and Desk Sessions (3.13).
-22. **Market alerts have three tiers**, and the "always stop" tier (margin, filings and bids on the player's companies, halts, runs, forced sales) cannot be turned off; a morning brief arrives at 07:00 in the player character's province (3.13.5, 3.13.6).
+22. **Market alerts use the one alert scale** (Pause, Notify, Log, Off; Logan, batch 134; 20-ui 20.4), and the locked types (margin, filings and bids on the player's companies, halts, runs, forced sales) cannot be set below Pause; a morning brief arrives at 07:00 in the player character's province (3.13.5, 3.13.6).
 23. **The player never sees V directly**, only an estimated fair value whose error starts at 15% for listed and 30% for private companies and halves with each secret learned (2.22, 3.14.2).
 24. **Analysts are lightweight AI characters** with a sell-side bias, and their consensus feeds earnings surprises (3.14.3).
 25. **Pending deals and decisions leak as public rumors** once more than 5 characters know (3.14.6); they give no private trading edge.

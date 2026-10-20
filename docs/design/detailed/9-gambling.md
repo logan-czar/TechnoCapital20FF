@@ -1,6 +1,6 @@
 # 9. Gambling, crypto and prediction markets: detailed design
 
-_Status: draft v0.3 (2026-10-18). Batch 130 (Logan): no insider trading for now. Batch 117: no stress (gambling urges no longer cause stress). Batch 116: betting on inside knowledge counts as insider trading if exposed (9.4); casinos are Gambling or Black market units (no Front Company vassal). v0.2, consistency pass, batch 74: casinos sit in the Gambling industry, four vices. v0.1 (2026-10-17). From Logan's answers in the design Q&A. Crypto itself is shallow; it lives inside a deep **gambling system**, which is part of the **addiction system** (still to be designed). Builds on [3-markets-and-fx.md](3-markets-and-fx.md) (3.23 crypto) and [1-corporate-core.md](1-corporate-core.md) (characters). Owner: Logan._
+_Status: draft v0.3 (2026-10-18). Batch 134 (Logan): the phone's gambling apps are Coin (crypto) and Predict (prediction markets), with Casino; 9.2 points to the phone apps in 20-ui 20.6. Batch 130 (Logan): no insider trading for now. Batch 117: no stress (gambling urges no longer cause stress). Batch 116: betting on inside knowledge counts as insider trading if exposed (9.4); casinos are Gambling or Black market units (no Front Company vassal). v0.2, consistency pass, batch 74: casinos sit in the Gambling industry, four vices. v0.1 (2026-10-17). From Logan's answers in the design Q&A. Crypto itself is shallow; it lives inside a deep **gambling system**, which is part of the **addiction system** (still to be designed). Builds on [3-markets-and-fx.md](3-markets-and-fx.md) (3.23 crypto) and [1-corporate-core.md](1-corporate-core.md) (characters). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 9.7.
 
@@ -16,14 +16,14 @@ _Status: draft v0.3 (2026-10-18). Batch 130 (Logan): no insider trading for now.
 | Crypto casinos | Crypto currencies can be gambled in casinos. |
 | Addiction | Gambling is part of the addiction system (to be designed). |
 
-## 9.2 The phone tab
+## 9.2 The phone apps
 
-The phone is a tab in the UI. Its gambling apps **(A)**:
+Gambling lives in apps on John's phone, a large panel in the UI ([20-ui.md](20-ui.md) 20.6). Its gambling apps (names: Logan, batch 134):
 
 | App | What it does |
 |---|---|
-| **Wallet** | Holds the character's coins; buy and sell at the current price (spread 1% **(T)**) |
-| **Markets** | Prediction markets (9.4) |
+| **Coin** (crypto) | Holds the character's coins; buy and sell at the current price (spread 1% **(T)**) |
+| **Predict** (prediction markets) | Prediction markets (9.4) |
 | **Casino** | Crypto casinos (9.5) |
 
 ## 9.3 Coins
@@ -69,7 +69,7 @@ The addiction system ([11-addiction.md](11-addiction.md)) covers **gambling, dru
 
 ## 9.7 Assumptions and open items
 
-1. The phone tab's three apps.
+1. The three gambling apps' contents (Coin, Predict, Casino; names decided in batch 134).
 2. Coin roster and the cycle table.
 3. Prediction market question types and pricing.
 4. Casino games, house edge and ownership.

@@ -1,6 +1,6 @@
 # 13. Events, the director and event decks: detailed design
 
-_Status: draft v0.4 (2026-10-19). Batch 130 (Logan): no insider trading for now. Batch 121: no city councils, so *Rezoning Vote* becomes *Rezoning Decision* (a national ministry decision). Batch 118: EU4-style map; event scopes are province, city and country instead of hub, real estate events use province pools. Batch 117: no stress (tension reads the player character's Heat instead). Batch 116: header and links fixed (A22), option costs show ticks, not hours (A3), the family and succession deck removed, decks added for Media, Hacking, Software and AI models. v0.3, consistency pass, batch 74. v0.2 (2026-10-18). From Logan's answers in the design Q&A (batches 39 and 40). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.1.1 (news from named, biased outlets) and every detailed system file. Owner: Logan._
+_Status: draft v0.4 (2026-10-19). Batch 134 (Logan): stories about AI characters go to the News feed only; only stories about the player, their companies or holdings pop up (13.4). Batch 130 (Logan): no insider trading for now. Batch 121: no city councils, so *Rezoning Vote* becomes *Rezoning Decision* (a national ministry decision). Batch 118: EU4-style map; event scopes are province, city and country instead of hub, real estate events use province pools. Batch 117: no stress (tension reads the player character's Heat instead). Batch 116: header and links fixed (A22), option costs show ticks, not hours (A3), the family and succession deck removed, decks added for Media, Hacking, Software and AI models. v0.3, consistency pass, batch 74. v0.2 (2026-10-18). From Logan's answers in the design Q&A (batches 39 and 40). Fills in [10-events.md](../10-events.md) (engine, chains and quests). Builds on [09-time-and-turns.md](../09-time-and-turns.md) (auto-pause), [11-ui.md](../11-ui.md) 11.1.1 (news from named, biased outlets) and every detailed system file. Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 13.8.
 
@@ -12,7 +12,7 @@ _Status: draft v0.4 (2026-10-19). Batch 130 (Logan): no insider trading for now.
 |---|---|
 | Frequency | **1 or 2 events a week** for the player's own character, not counting quest steps and alerts. |
 | Pacing | A **director** paces events: it adds pressure when things are calm and backs off during crises, like the rival rotation. |
-| AI characters | **Every full character gets events.** They are resolved off screen by the AI, and the player hears about them through news pop-ups. |
+| AI characters | **Every full character gets events.** They are resolved off screen by the AI, and the player hears about them through the News feed (batch 134: they never pop up). |
 | Option display | Options show **the skill they roll against, but not the odds**. |
 | Decks | **Every system feeds its own event deck**: vices, hooks, strata, ideology, industries, real estate, politics and the timeline, as well as character and company events. |
 
@@ -60,7 +60,7 @@ The director decides **when** an event fires and **which deck** it comes from. I
 
 - Every full character (12-setup: 200) draws events from the same decks and on the same schedule, paced by their own tension **(A)**.
 - The AI picks options by its **traits** and ideology (1.1.2; Logan, batch 61: no ambitions or play styles for AI), then rolls the same dice (12.3 fair AI).
-- **What the player sees.** Results come in as **news pop-ups** (11-ui 11.4) when the player has intel on the character, the event is public (a scandal, a merger, a death), or the character is a relative or friend of John, a board member or a rival. Private results stay hidden until intel reaches them.
+- **What the player sees.** Results come in as **stories in the News feed only**, never as pop-ups (Logan, batch 134): only stories about the player, the player's companies or holdings pop up ([20-ui.md](20-ui.md) 20.5.1). A result reaches the feed when the player has intel on the character, the event is public (a scandal, a merger, a death), or the character is a relative or friend of John, a board member or a rival. Private results stay hidden until intel reaches them.
 - **News reactions (Logan, batch 68).** AI characters do not read the news. When a story comes out about an AI character or someone close to them (relatives, friends, their companies), the director **may direct that character's response**: sue, run a counter-campaign, seek revenge on the outlet's owner, or crack under the pressure ([16-media.md](16-media.md)).
 - **Hooks into the player's game.** An AI event can open an event or quest for the player: a rival's scandal is a chance to buy their stake, and a friend's relapse is a chance to help or to gain a hook.
 - **Performance.** Off-screen events for characters far from the player resolve in weekly batches **(A)**.

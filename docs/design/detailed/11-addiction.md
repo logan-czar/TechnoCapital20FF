@@ -1,6 +1,6 @@
 # 11. Addiction: detailed design
 
-_Status: draft v0.3 (2026-10-19). Batch 118: vice supply is seen per city (a Metro or city province). Batch 117: no stress for now, so no vice relieves stress; sex gives a little health, downers a little Intrigue, and stress costs become skill costs. Batch 116: therapy is a monthly cost with no hours; sex has no Media route (no adult media); illegal vices run as Black market units; no partners or marriage. v0.2, consistency pass, batch 74: four vices (no cyberware), no daily hours budget. v0.1 (2026-10-17): from Logan's answers in the design Q&A (batch 28). Characters can be addicted to four vices. Every vice has a real benefit, which is why characters use them. Builds on [1-corporate-core.md](1-corporate-core.md) (health 1.1.9, hooks 1.1.4) and [9-gambling.md](9-gambling.md). Owner: Logan._
+_Status: draft v0.3 (2026-10-19). Batch 134 (Logan): gambling and doomscrolling name the phone's apps (Casino, Predict, Coin, Feed; 20-ui 20.6) instead of a phone tab. Batch 118: vice supply is seen per city (a Metro or city province). Batch 117: no stress for now, so no vice relieves stress; sex gives a little health, downers a little Intrigue, and stress costs become skill costs. Batch 116: therapy is a monthly cost with no hours; sex has no Media route (no adult media); illegal vices run as Black market units; no partners or marriage. v0.2, consistency pass, batch 74: four vices (no cyberware), no daily hours budget. v0.1 (2026-10-17): from Logan's answers in the design Q&A (batch 28). Characters can be addicted to four vices. Every vice has a real benefit, which is why characters use them. Builds on [1-corporate-core.md](1-corporate-core.md) (health 1.1.9, hooks 1.1.4) and [9-gambling.md](9-gambling.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 11.8.
 
@@ -23,9 +23,9 @@ Each vice has a **use** action (or happens through normal play), a **benefit**, 
 
 | Vice | How it is used | Benefit **(T)** | Cost per use **(T)** |
 |---|---|---|---|
-| **Gambling** | Casino and prediction market bets in the phone tab (9) | The winnings (or losses) themselves; a big win also gives +5 Fame | The stake |
+| **Gambling** | Bets in the phone's Casino, Predict and Coin apps (9; [20-ui.md](20-ui.md) 20.6) | The winnings (or losses) themselves; a big win also gives +5 Fame | The stake |
 | **Drugs** | "Use" action, by drug (11.3) | A stat boost for a set time | Money, health, a crash afterwards |
-| **Doomscrolling** | 1 hour on the phone tab feed | A 10% chance per hour of a useful rumor (market news a day early, or a character's secret) | The time; at high scores, -1 Operations while addicted |
+| **Doomscrolling** | 1 hour on the phone's Feed app | A 10% chance per hour of a useful rumor (market news a day early, or a character's secret) | The time; at high scores, -1 Operations while addicted |
 | **Sex** | Seduce scheme, lovers (1.1.4), paid services | +1 health **(T)**; a +5 push with the partner | Scandal risk if discovered (affairs, paid services); lovers become hooks |
 
 ## 11.3 Drugs (A)
