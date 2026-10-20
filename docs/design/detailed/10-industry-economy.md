@@ -1,6 +1,6 @@
 # 10. Industry economy (Wall Street Raider style): detailed design
 
-_Status: draft v1.6 (2026-10-20). Batch 141 (Logan): operations revised (10.0.11): productive compute from staffed productivity stations gives a stepped bonus of floor(1 + log10(PC)) (1 gives +1, 10 gives +2, 100 gives +3), replacing the batch 140 boost, cap and size factor; stations can split 50/50; labor units = business assets ÷ labor_value ($100,000 by default, varying by industry), with no hires, wages or hiring countries; labor staffs stations, schemes, software design and research, and unused labor gives small bonuses; data quests are now one rule, (1 + floor(log10(TB held)))% of revenue as free R&D, replacing the 7-tier ladder; held data decays faster the more is held; industries apply modifiers but the barebones base case does not change (10.0.11.10). Batch 140 (Logan): new operations and data earning model (10.0.11): the barebones company, work stations of 1 employee, 1 desktop and 1 base compute, labor units, 1 TB of unstructured data per $1M of revenue, enterprise stations, structured data held in data compute, and data milestones as data quests. Batch 137 (Logan): each industry has a background fringe pool of unnamed small businesses that fills out its 2020 size beyond the named companies (10.0.10). Consistency pass 3 (batch 129): 10.5.3 borrowing now uses the world base rate plus country and rating spreads. Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. Corporations borrow at the Federal Monetary Board's world base rate plus their country spread and rating spread (10.0). Batch 118: EU4-style map; a unit's base and asset spread are per province; each industry has a Commerce or Industry fit (+2%) and matching resource tags (+3%) in 10.3.1; real estate pools are per province; slop splits by province. Batch 116: Lithography machines, Foundry, GPUs and CPUs merged into one Semiconductors industry (42 industries); no compute or machine counts derived from dollars (10.6); compute units live in 15.2. v1.3, consistency pass, batch 74: the file is built around business units (10.0); there are no sites or direct branches. The economy is a flat list of 42 industries with no supply chains, each with one world market, and the player reads and plays it through company financials. The map, provinces, influence, strata, real estate, the business cycle, travel and politics live in [2-map-and-influence.md](2-map-and-influence.md), which also holds location perks (2.3.5) and real estate pools (2.16). Feeds the quarterly statements (10.0.8) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
+_Status: draft v1.7 (2026-10-20). Batch 142 (Logan): the first 5 labor units are the board (10.0.11.3): labor unit 1 is the CEO, and as a company gains its 2nd to 5th labor unit the controller may seat a board member of their choosing in each; units 6 and up are ordinary labor; every labor unit comes bundled with 1 desktop, 1 base compute and one productivity software seat, not bought separately; software quality no longer scales productive compute (PC per station is 1), so productivity software only feeds the productivity modifier through PC (10.0.11.2); free data compute is storage capacity only and starts empty, so a new company holds 0 TB and gets data only from revenue at 1 TB per $1M, and small companies earn free R&D slowly (10.0.11.1, 10.0.11.4); board conflicts listed in [1-corporate-core.md](1-corporate-core.md) 1.8.1. Batch 141 (Logan): operations revised (10.0.11): productive compute from staffed productivity stations gives a stepped bonus of floor(1 + log10(PC)) (1 gives +1, 10 gives +2, 100 gives +3), replacing the batch 140 boost, cap and size factor; stations can split 50/50; labor units = business assets ÷ labor_value ($100,000 by default, varying by industry), with no hires, wages or hiring countries; labor staffs stations, schemes, software design and research, and unused labor gives small bonuses; data quests are now one rule, (1 + floor(log10(TB held)))% of revenue as free R&D, replacing the 7-tier ladder; held data decays faster the more is held; industries apply modifiers but the barebones base case does not change (10.0.11.10). Batch 140 (Logan): new operations and data earning model (10.0.11): the barebones company, work stations of 1 employee, 1 desktop and 1 base compute, labor units, 1 TB of unstructured data per $1M of revenue, enterprise stations, structured data held in data compute, and data milestones as data quests. Batch 137 (Logan): each industry has a background fringe pool of unnamed small businesses that fills out its 2020 size beyond the named companies (10.0.10). Consistency pass 3 (batch 129): 10.5.3 borrowing now uses the world base rate plus country and rating spreads. Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. Corporations borrow at the Federal Monetary Board's world base rate plus their country spread and rating spread (10.0). Batch 118: EU4-style map; a unit's base and asset spread are per province; each industry has a Commerce or Industry fit (+2%) and matching resource tags (+3%) in 10.3.1; real estate pools are per province; slop splits by province. Batch 116: Lithography machines, Foundry, GPUs and CPUs merged into one Semiconductors industry (42 industries); no compute or machine counts derived from dollars (10.6); compute units live in 15.2. v1.3, consistency pass, batch 74: the file is built around business units (10.0); there are no sites or direct branches. The economy is a flat list of 42 industries with no supply chains, each with one world market, and the player reads and plays it through company financials. The map, provinces, influence, strata, real estate, the business cycle, travel and politics live in [2-map-and-influence.md](2-map-and-influence.md), which also holds location perks (2.3.5) and real estate pools (2.16). Feeds the quarterly statements (10.0.8) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 10.12.
 
@@ -155,27 +155,31 @@ Each industry has one **fringe pool**: an unnamed pool of small businesses that 
 - **Not ownable:** nobody can buy, sell, merge, invest in or take over the fringe; it has no corporation, shares, board or books, and earns no influence.
 - **Moves slowly with the cycle (T):** each year the fringe's assets grow by the industry's trend growth, and in its news cycle (10.0.6) they grow 3% a year faster in a Boom and shrink 5% a year in a Bust, spread monthly.
 
-### 10.0.11 Operations: desktops, labor, software and data (Logan, batches 140 and 141)
+### 10.0.11 Operations: desktops, labor, software and data (Logan, batches 140 to 142)
 
 Logan (batch 140): "The money earning mechanism is going to get switched up." This layer sits **under** the business-unit model; it does not replace it. Business assets, productivity, the R&D plan, market demand and the market factor still make revenue (10.0.3, 10.0.4). Operations adds three things on top:
 
-1. **Labor units** that come from business assets (10.0.11.3).
+1. **Labor units** that come from business assets (10.0.11.3). The first 5 are the board, and each comes bundled with a desktop, a base compute and a productivity software seat (batch 142).
 2. **Productive compute** from staffed productivity stations, which gives a small, hard-won productivity bonus (10.0.11.2).
 3. **A data loop**: revenue makes **unstructured** industry data, **enterprise stations** turn it into **structured** industry data, and structured data **held** in database compute earns **free R&D** through data quests (10.0.11.4 to 10.0.11.7).
 
 Logan (batch 141): "Productivity gains in this should be fought hard for and very small." Every number below is built to keep them small.
 
-**Decided by Logan (batches 140 and 141)**
+**Decided by Logan (batches 140 to 142)**
 
 | Topic | Decision |
 |---|---|
 | Barebones company | 1 desktop, 1 general productivity software, 1 general enterprise software; 10 base compute and 10 data compute; 1 labor unit (the CEO); 1 business asset of $100,000; valued at $1M; at productivity 100 and perfectly neutral demand, revenue $100,000 and expenses $100,000 (10.0.11.1). It is the **fixed base case** (batch 141) |
 | Work station | 1 labor unit + 1 desktop + 1 base compute running 1 software: **a 1 to 1 to 1 relationship** (10.0.11.2) |
+| Labor bundle (batch 142) | "Each labor unit come with 1 desktop, 1 compute unit, and the ability to run one productivity software": not bought separately per unit (10.0.11.3) |
+| Board from labor (batch 142) | "The first 5 labor units are the board. When you get your second labor unit you can assign a board member of your choosing and do the same for the third fourth and fifth" (10.0.11.3) |
 | Productive compute (batch 141) | "Productivity software running with a head in a desk gives the company the productive compute. **1 productive compute gives 1 productivity, 10 gives 2, 100 gives 3** etc." (10.0.11.2) |
+| Software quality (batch 142) | "No productivity software just affects the productivity modifier": quality does not scale PC; each productivity station makes 1 PC (10.0.11.2) |
 | 50/50 (batch 141) | A station can split **50/50** between productivity and enterprise software. The CEO's station runs productivity by default and can be switched |
 | Labor units (batch 141) | "You gain **one labor unit for every 100k** that you have in business assets", because the default **labor_value** is $100,000. labor_value **varies by industry or business unit purpose**. "**Staff is just going to be a labor units thing**": no hires, no wages, no hiring countries (10.0.11.3) |
 | Labor uses (batch 141) | Labor staffs stations, is assigned to **schemes**, **develops software** or **researches**. **Unused labor** has various positive effects (10.0.11.3) |
 | Unstructured data | **$1M of revenue creates 1 TB of the company's industry unstructured data** (10.0.11.4) |
+| Starting data (batch 142) | Free data compute is **storage capacity only and starts empty**: a new company holds **0 TB**, data comes only from revenue at 1 TB per $1M, and small companies earn their free R&D slowly (10.0.11.1, 10.0.11.4) |
 | Enterprise station | The same setup running **enterprise software turns 1 TB of unstructured data into 1 TB of structured industry data** (10.0.11.5) |
 | Storage | **Structured industry data is held in database compute** (data compute, 15.2) (10.0.11.6) |
 | Data decay (batch 141) | Held data is counted after ageing, and "**the more you have the faster it decays** so that you can't just stack stack stack" (10.0.11.6) |
@@ -188,46 +192,49 @@ The smallest company the game makes: what "Found company" (1.1) gives on the che
 
 | Item | Amount (Logan) | Notes |
 |---|---|---|
-| Desktops | **1** | One seat for one station (10.0.11.2) |
-| Productivity software | **1 general productivity software** licence | Runs on the CEO's station by default (Logan, batch 141) |
+| Desktops | **1** | The CEO's bundled desktop (10.0.11.3, batch 142) |
+| Productivity software | **1 general productivity software** licence | The CEO's bundled productivity seat (batch 142); runs on the CEO's station by default (Logan, batch 141) |
 | Enterprise software | **1 general enterprise software** licence | Idle unless the CEO's station is switched to it or split 50/50 (Logan, batch 141) |
-| Base compute | **10** | The pool that runs software instances (15.2) |
-| Data compute | **10** | 1,000 TB of storage (15.4), far more than the 0.1 TB a year it makes |
-| Labor units | **1, the CEO** | $100,000 of assets ÷ labor_value $100,000 = 1 (10.0.11.3). The CEO is that one unit **(A)** |
+| Base compute | **10** | 1 is the CEO's bundled base compute; the other 9 are extra pool compute (15.2, 10.0.11.3) **(A)** |
+| Data compute | **10** | Storage capacity only, and it **starts empty** (Logan, batch 142): 1,000 TB of room (15.4), far more than the 0.1 TB a year it makes |
+| Data held at founding | **0 TB** (Logan, batch 142) | No unstructured or structured data; it comes only from revenue (10.0.11.4) |
+| Labor units | **1, the CEO** | $100,000 of assets ÷ labor_value $100,000 = 1 (10.0.11.3). The CEO is that one unit (Logan, batch 142: labor unit 1 is the CEO), so its board is the CEO alone (10.0.11.3) **(A)** |
 | Business assets | **1 business asset of $100,000** | One dollar figure (10.0.7) |
 | Value | **$1M** | Recorded as a $1M post-money founding round (below) |
 | Revenue at productivity 100, neutral demand (M 1.0) | **$100,000 a year** | Before the productivity bonus |
 | Expenses at the same point | **$100,000 a year** | Break-even |
 
 - **Per year (A).** Revenue and expenses are yearly figures, as everywhere in 10 (10.0.3 demand and 10.3 sizes are a year); the engine books them monthly (10.0.4, ÷ 12).
+- **Starts with no data (Logan, batch 142).** Free data compute is storage capacity only and starts empty: a new company holds **0 TB**. Its data comes only from revenue, at 1 TB per $1M (10.0.11.4), so a small company earns its free R&D (10.0.11.7) slowly: the barebones company makes 0.1 TB a year and never holds 1 TB at steady state (10.0.11.6). The 651 starting companies are not new; they keep the generated holdings in 10.0.11.8 **(A)**.
 - **Other industries (A, from Logan's batch 141 answer).** The base case does not change: one $100,000 asset, one labor unit, the same loadout. The industry's **asset turnover** (10.3) is a modifier on top, so a barebones Software company makes $500,000 a year and a barebones Oil company $40,000, and its operating costs scale with revenue so it stays break-even **(A)** (open question for Logan).
-- **Break-even.** Its expenses are about **$8,500 of shared costs** (10 base compute at $600 a year upkeep, 10 data compute at $120, the desktop at $600, two licences at about $30 a month **(T)**) plus about **$91,500 of operating costs**, which include what its labor costs (10.0.11.3). Its operating margin is 0. Every gain comes from operations, R&D, growth and demand.
+- **Break-even.** Its expenses are about **$7,000 of shared costs** (the 9 extra base compute at $600 a year upkeep, 10 data compute at $120, the enterprise licence at about $30 a month **(T)**) plus about **$93,000 of operating costs**, which include the CEO's labor unit and its bundle of desktop, base compute and productivity seat (10.0.11.3, batch 142). Its operating margin is 0. Every gain comes from operations, R&D, growth and demand.
 - **$1M value (A).** The fair value formula (10.0.8) would value a break-even company at book equity, far below $1M. So founding records a **$1M post-money funding round**, and private company value uses the last round for 2 years (10.5.4). After that, with no new round, it falls back to the formula.
-- **With the CEO on productivity** (quality-50 software, PC 1.25), the bonus is **+1** (10.0.11.2): effective productivity 101 and revenue about **$101,000**. Split 50/50 the CEO makes PC 0.625, under 1, so **no bonus**, and converts half as fast.
+- **With the CEO on productivity** (PC 1, whatever the software's quality, batch 142), the bonus is **+1** (10.0.11.2): effective productivity 101 and revenue about **$101,000**. Split 50/50 the CEO makes PC 0.5, under 1, so **no bonus**, and converts half as fast.
 
-#### 10.0.11.2 Work stations and productive compute (Logan, batches 140 and 141)
+#### 10.0.11.2 Work stations and productive compute (Logan, batches 140 to 142)
 
-A **work station** is **1 labor unit + 1 desktop + 1 base compute** running **one instance** of one software. Kinds:
+A **work station** is **1 labor unit + 1 desktop + 1 base compute** running **one instance** of one software. Since batch 142 the desktop, the base compute and one productivity software seat **come bundled with the labor unit** (10.0.11.3), so a station is a labor unit put to work, with nothing else to buy. Kinds:
 
 | Station | Runs | Gives |
 |---|---|---|
 | **Productivity station** | General productivity software | **Productive compute** (below) |
 | **Enterprise station** | General or specialized enterprise software | Converts unstructured data to structured data (10.0.11.5) |
 | **50/50 station** (Logan, batch 141) | Both, sharing one desktop, one base compute and one labor unit | **Half** its productive compute and **half** its conversion rate |
-| **Design station** | No software instance; the desktop designs software | Software units (14.8): it takes 1 labor unit and 1 desktop, no pool compute **(A)** |
+| **Design station** | No software instance; the desktop designs software | Software units (14.8): it takes 1 labor unit and its bundled desktop; the bundled base compute sits idle **(A)** |
 
-- **Held by the corporation (A).** Like compute and software (10.0.7, 10.0.8), stations belong to the corporation, not to its units. Desktop and compute upkeep and licences are **shared costs** spread across the units by revenue share (10.0.8). Labor has no separate cost (10.0.11.3).
-- **Desktop vs base compute (A, mechanical fix).** A desktop is built and maintained like 1 base unit (1 base part, maintenance 1, 15.2), but it is a **seat**, not part of the base compute pool. The station's software instance runs on 1 base compute from the pool (owned or cloud). So a station uses its desktop **plus** 1 base compute.
+- **Held by the corporation (A).** Like compute and software (10.0.7, 10.0.8), stations belong to the corporation, not to its units. Extra compute, data compute and enterprise licences are **shared costs** spread across the units by revenue share (10.0.8). A labor unit and its bundle have no separate cost (10.0.11.3).
+- **Desktop vs base compute (A, mechanical fix).** A desktop is built and maintained like 1 base unit (1 base part, maintenance 1, 15.2), but it is a **seat**, not part of the base compute pool. The station's software instance runs on the labor unit's bundled base compute (batch 142). So a station uses its desktop **plus** 1 base compute, both from the bundle.
 - **Instances need a station (A).** A productivity or enterprise software instance does nothing without a staffed station. Server software (SaaS, cloud services, AI software) keeps scaling instances to its data as in 14.2.2.
 - **The CEO's station (Logan, batch 141).** Runs productivity by default; the player can switch it to enterprise or 50/50 at any time.
+- **Enterprise on the bundled seat (A).** An enterprise or 50/50 station runs enterprise software on the labor unit's bundled desktop and base compute. It needs an enterprise licence (14.2), since only the productivity seat is bundled, but no extra desktop or compute.
 
 **Productive compute (PC).** Each staffed productivity station makes productive compute:
 
-`PC per station = Q` of the productivity software (14.2.1: 1 + quality ÷ 200), so **1.0 to 1.5** (A, small). A 50/50 station makes half that.
+`PC per station = 1` (Logan, batch 142), times the industry's PC modifier (10.0.11.10). A 50/50 station makes half that.
 
 `Corporation PC = Σ PC over its productivity and 50/50 stations`
 
-- **Why quality stays (A).** On a stepped log scale even the best software (×1.5) moves a company less than half a step: 100 stations at quality 100 make PC 150, still +3. It is kept so productivity software has a reason to be good and to sell (14.4.1), and it can be dropped with no other change (open question for Logan).
+- **Quality does not scale PC (Logan, batch 142).** "No productivity software just affects the productivity modifier." The batch 141 ×1 to ×1.5 quality factor (Q, 14.2.1) is **removed**: a productivity station makes 1 PC whatever its software's quality. Productivity software does one thing, feed the productivity modifier through PC and the bonus below.
 
 **The productivity bonus (Logan, batch 141; A: stepped).**
 
@@ -247,15 +254,15 @@ A **work station** is **1 labor unit + 1 desktop + 1 base compute** running **on
 - **A live term.** The bonus is added to productivity each month while the stations are staffed. It **does not decay** and is not moved by R&D; it disappears the month the stations go empty (10.0.11.9).
 - **Corporation-wide (A).** It applies to every business unit of the corporation, like the management score (10.0.5).
 
-**Worked table** (asset turnover 1.0, labor_value $100,000, quality-50 productivity software, Q 1.25; station cost about $1,560 a year: desktop $600, base compute $600, licence $360 **(T)**):
+**Worked table** (asset turnover 1.0, labor_value $100,000, PC 1 per station; desktop, base compute and productivity seat come with each labor unit, so a station costs nothing extra, batch 142):
 
-| Company | Revenue a year | Labor units | All on productivity → PC → bonus | Gain a year | Station cost a year |
+| Company | Revenue a year | Labor units | All on productivity → PC → bonus | Gain a year | Labor for the last step |
 |---|---|---|---|---|---|
-| Barebones | $100,000 | 1 | 1 → 1.25 → **+1** | $1,000 | about $1,600 (already in its break-even costs) |
-| Small firm | $10M | 100 | 100 → 125 → **+3** (8 stations already give +2) | $300,000 | $156,000 |
-| Large firm | $1B | 10,000 | 10,000 → 12,500 → **+5** (800 give +4) | $50M | $15.6M |
+| Barebones | $100,000 | 1 | 1 → 1 → **+1** | $1,000 | 1 (the CEO) |
+| Small firm | $10M | 100 | 100 → 100 → **+3** (10 stations already give +2) | $300,000 | 90 more units |
+| Large firm | $1B | 10,000 | 10,000 → 10,000 → **+5** (1,000 give +4) | $50M | 9,000 more units |
 
-Gains are before variable costs. The last step is the costly one: at $1B, going from +4 (800 stations) to +5 (8,000 stations) takes 7,200 more stations, about $11M a year, for $10M more revenue, so most firms stop short of it and keep the labor for other uses.
+Gains are before variable costs. With stations bundled, **labor is the only price of PC (A)**, and the last step is the costly one: at $1B, going from +4 (1,000 stations) to +5 (10,000 stations) takes 9,000 more labor units, 90% of the company, which then cannot convert data, research, design software, join schemes or give the idle bonuses, for $10M more revenue. Most firms stop short of it and keep the labor for other uses.
 
 **Effective productivity (updates 10.0.4 step 1).**
 
@@ -263,7 +270,7 @@ Gains are before variable costs. The last step is the costly one: at $1B, going 
 
 The fit and resource tag bonuses (10.3.1) still apply to the bracket. Productivity itself still starts at 100, decays 0.5 a month (slower with spare labor, 10.0.11.3) and is moved by R&D. Data quests no longer add productivity; they give free R&D (10.0.11.7).
 
-#### 10.0.11.3 Labor units (Logan, batch 141)
+#### 10.0.11.3 Labor units (Logan, batches 141 and 142)
 
 "Staff is just going to be a labor units thing" (Logan). There are **no hires, no wages, no hiring countries and no separate staff costs**.
 
@@ -274,8 +281,26 @@ The fit and resource tag bonuses (10.3.1) still apply to the bracket. Productivi
 - **labor_value** is **$100,000** by default: one labor unit per $100,000 of business assets (Logan). It **varies by industry or business unit purpose** (Logan); see 10.0.11.10. A unit with labor_value $10,000 and $100,000 of assets gives 10 labor units (Logan's example).
 - **Pooled at the corporation (A).** Each business unit adds its share; the corporation assigns them, like stations. Shells hold no business assets and so no labor **(A)**.
 - **Live (A).** The count follows business assets each month. When it falls below what is assigned, idle units go first, then schemes, research, design, enterprise and productivity stations, newest first; the player can reorder **(A)**.
-- **Cost (A).** A labor unit costs nothing extra: its cost is already inside each unit's operating costs (10.0.4), as payroll dollars (2.8.4).
-- **Granted labor (A).** An event can grant labor units outside the asset rule. Kids Who Code's India team (8.3, Arc 2) is **100 volunteer labor units** on its 100 desktops in a frozen unit (10.0.2).
+- **Cost (A).** A labor unit costs nothing extra: its cost is already inside each unit's operating costs (10.0.4), as payroll dollars (2.8.4). So is the upkeep of its bundle (below, batch 142).
+- **Granted labor (A).** An event can grant labor units outside the asset rule. Kids Who Code's India team (8.3, Arc 2) is **100 volunteer labor units** on its 100 desktops in a frozen unit (10.0.2); those desktops are their bundle **(A)**.
+
+**The board: labor units 1 to 5 (Logan, batch 142).** "The first 5 labor units are the board. When you get your second labor unit you can assign a board member of your choosing and do the same for the third fourth and fifth" (Logan).
+
+| Labor unit | Is |
+|---|---|
+| 1 | The **CEO** (Logan) |
+| 2, 3, 4, 5 | **Board seats** ([1-corporate-core.md](1-corporate-core.md) 1.8): as the corporation gains its 2nd, 3rd, 4th and 5th labor unit (business assets ÷ labor_value), its controller may seat a board member **of their choosing** in each (Logan) |
+| 6 and up | Ordinary labor |
+
+- **Smaller boards (A).** A company with fewer than 5 labor units has a smaller board: the CEO plus one seat per labor unit beyond the first. The barebones company's board is the CEO alone.
+- **Who appoints (A).** The real controller (1.3.1) picks the character and the seat (CFO, COO and the rest, 1.8.2) when it opens. A seat left empty stays open until filled.
+- **Board labor still works (A).** A board member does their board role (CFO and so on, 1.8.2), and their labor unit can **also** staff a station, research, design software or join a scheme like any other unit. The seat is the character; the labor unit is the work.
+- **Losing labor (A).** If business assets fall and labor drops below 5, the newest board seat closes first and its member leaves the board. The CEO's unit is never dropped.
+- **Charters and elections.** How this fits charter board sizes (5 to 13, 1.5) and yearly elections is listed as open in [1-corporate-core.md](1-corporate-core.md) 1.8.1.
+
+**The bundle (Logan, batch 142).** "Each labor unit come with 1 desktop, 1 compute unit, and the ability to run one productivity software" (Logan). Every labor unit, the board's included, comes with **1 desktop, 1 base compute and one productivity software seat**. They are **not bought separately** per unit: they arrive and leave with the labor unit, and their upkeep sits inside operating costs like the labor itself **(A)**.
+- **The seat (A).** It runs one instance of the corporation's chosen productivity product, licence included. Enterprise software is not bundled: running it on the seat needs an enterprise licence (14.2).
+- **What extra compute is for (A).** Compute beyond the bundle is bought or rented as before (15.2) and is a shared cost. It runs **server software** that scales to data (SaaS, cloud services, AI software, 14.2.2), **database requirements and data storage** (data compute, 10.0.11.4, 10.0.11.6), **AI training runs** (18) and capacity sold or rented to others (15). It never adds stations: only labor units do.
 
 **Uses (Logan).** One labor unit does one thing at a time:
 
@@ -297,6 +322,7 @@ The fit and resource tag bonuses (10.3.1) still apply to the bracket. Productivi
 
 - **Rate.** Each business unit makes **1 TB of its industry's unstructured data per $1M of revenue** (Logan). Industries can modify the rate (10.0.11.10). It accrues **every hourly tick, prorated** from that tick's revenue, and the UI shows it per month **(A)**. A $40M unit makes about 3.3 TB a month; a $1B unit about 83 TB.
 - This **replaces** the older rate in 14.2.3 (about 1 TB a day per $100M of yearly revenue).
+- **Starts at 0 TB (Logan, batch 142).** A new company's free data compute is storage capacity only and starts empty. Revenue is the only source of new data, so small companies fill it, and earn free R&D (10.0.11.7), slowly. Buying or stealing data (10.0.11.6) only moves data that revenue already made somewhere.
 - **Frozen units** (10.0.2) have no revenue and make none.
 - **Storage (A).** Unstructured data **needs data compute** too (100 TB per unit, 15.4), owned or rented. When storage is full, new data **overflows and is lost**. By default the auto-scaler (14.2.2) rents cloud data compute first, unless the player caps the bill.
 - **Retention (T).** Unstructured data older than **12 months** is discarded by default (the player can change it).
@@ -305,7 +331,7 @@ The fit and resource tag bonuses (10.3.1) still apply to the bracket. Productivi
 
 #### 10.0.11.5 Enterprise stations
 
-- **Same setup (Logan).** 1 labor unit + 1 desktop + 1 base compute running enterprise software. It turns **1 TB of unstructured data into 1 TB of structured data** of the same industry. A 50/50 station converts at half the rate (Logan, batch 141).
+- **Same setup (Logan).** 1 labor unit + 1 desktop + 1 base compute running enterprise software (the labor unit's bundle plus an enterprise licence, batch 142). It turns **1 TB of unstructured data into 1 TB of structured data** of the same industry. A 50/50 station converts at half the rate (Logan, batch 141).
 - **Rate (T).** Per station = the software's **effective speed** (speed × Q, 14.2.1) in GB per hourly tick. General enterprise software has a base speed of **1 GB a tick**: about 8.8 TB a year at quality 0 and 11 TB at quality 50.
 - **Specialized software (14.2.3, Arc 2).** On its own data type it runs at **2× speed** (Logan). Arrowhead's oil software at quality 30: 1 × 1.15 × 2 = 2.3 GB a tick, about **20 TB a year per station**, so it needs half the labor of general software. That is why every oil company converts "inefficiently" before Arc 2 (8.3).
 - **Which data (A).** General enterprise software works on any industry's data. A corporation's enterprise stations split across its industries by unstructured backlog, unless the player sets priorities. Specialized software only takes its own type.
@@ -322,7 +348,7 @@ The fit and resource tag bonuses (10.3.1) still apply to the bracket. Productivi
 
 #### 10.0.11.6 Structured data held and its decay (Logan, batches 140 and 141)
 
-- **Storage.** Structured data sits in **data compute** (100 TB per unit, 15.4), held by the corporation, or by a shell (10.0.8).
+- **Storage.** Structured data sits in **data compute** (100 TB per unit, 15.4), held by the corporation, or by a shell (10.0.8). Data compute is storage capacity only and a new company's starts empty, at 0 TB held (Logan, batch 142).
 - **Held = after ageing (Logan, batch 141).** Data quests count the TB the corporation **still holds**, per industry type. Held data **decays**: each month a share of it becomes obsolete and is removed, freeing its storage. "**The more you have the faster it decays** so that you can't just stack stack stack" (Logan).
 
 **Decay (T).**
@@ -363,7 +389,7 @@ Data licensing is not a rule in 15 or 18, so it is not added here.
 
 #### 10.0.11.7 Data quests: free R&D from held data (Logan, batch 141)
 
-"Data quests for now should be **1% free R&D spend for every 1 × 10^x TB** of Structured business data" (Logan).
+"Data quests for now should be **1% free R&D spend for every 1 × 10^x TB** of Structured business data" (Logan). A new company starts at **0 TB** held and gets data only from revenue at 1 TB per $1M (Logan, batch 142), so small companies earn their free R&D slowly.
 
 `Free R&D = (1 + floor(log10(TB held))) %` of revenue, for 1 TB or more held, else **0**
 
@@ -397,17 +423,17 @@ Each starting company in [companies.csv](../data/companies.csv) gets an **operat
 | Enterprise stations | ceil(0.5 × R ÷ 11): converts **half** its data with general software |
 | Productivity stations | max(1, round(25% of labor units)) |
 | Other labor | Left idle (so most companies start with the slack effects, 10.0.11.3) |
-| Desktops | One per station |
-| Software | The world's starting general productivity and general enterprise products (14.2) |
-| Base compute | max(10, ceil(1.2 × stations)) |
+| Desktops | One per labor unit (bundled, batch 142) |
+| Software | One bundled seat per labor unit of the world's starting general productivity product, plus licences of the starting general enterprise product for the enterprise stations (14.2) |
+| Base compute | One per labor unit (bundled) plus extra max(9, ceil(0.2 × stations)) |
 | Unstructured data held | One month: R ÷ 12 TB |
 | Structured data held | The decay steady state for converting 0.5 × R TB a year (10.0.11.6) |
 | Data compute | max(10, ceil(1.2 × (held + R ÷ 12) ÷ 100)) |
 | Data quest | From the held amount (10.0.11.7) |
-| Costs | Each unit's fixed cost rate is lowered by its share of the station costs, so 2020 margins still match 10.3 |
+| Costs | Each unit's fixed cost rate is lowered by its share of the extra compute, data compute and enterprise licence costs (the bundle is already in operating costs), so 2020 margins still match 10.3 |
 | Exceptions | **Arrowhead** converts only 10% at start, so First Week on the Job event 5 (8.2.3) matters. A company with R near 0 gets the barebones loadout |
 
-**Examples.** **Arrowhead** ($40M revenue, Oil, capital 2.5 per $1): about $98M of assets at labor_value $500,000 gives **196 labor units** (the CEO among them); 49 productivity stations make PC 61 for **+2**; 1 enterprise station converts 4 TB a year, so it holds about **8.6 TB** for **1% free R&D** ($400,000); about 146 units idle (slack 0.3). A **$1B Software company** (capital 0.2 per $1): about $192M of assets at labor_value $20,000 gives **9,600 labor units**; 2,400 productivity stations make PC 3,000 for **+4**; 46 enterprise stations hold about **560 TB** for **3%**.
+**Examples.** **Arrowhead** ($40M revenue, Oil, capital 2.5 per $1): about $98M of assets at labor_value $500,000 gives **196 labor units** (the CEO and 4 board seats among them); 49 productivity stations make PC 49 for **+2**; 1 enterprise station converts 4 TB a year, so it holds about **8.6 TB** for **1% free R&D** ($400,000); about 146 units idle (slack 0.3). A **$1B Software company** (capital 0.2 per $1): about $192M of assets at labor_value $20,000 gives **9,600 labor units**; 2,400 productivity stations make PC 2,400 for **+4**; 46 enterprise stations hold about **560 TB** for **3%**.
 
 #### 10.0.11.9 Reconciled with older rules
 
@@ -426,6 +452,9 @@ Each starting company in [companies.csv](../data/companies.csv) gets an **operat
 | Fair value (10.0.8) | A break-even company is not worth $1M | Founding records a $1M round (10.0.11.1) |
 | 8.2.1 John's desktop | | Unchanged: his personal desktop is 1 base unit plus 1 free data compute |
 | 8.2.3 events 5 and 6 | | Event 5 adds enterprise capacity; event 6 spends held data (10.0.11.6) |
+| 1.8 board size, seats and elections ([1-corporate-core.md](1-corporate-core.md)) | Board seats now come from labor units 2 to 5 | Labor units 1 to 5 are the CEO and up to 4 seats the controller fills (10.0.11.3); conflicts with charter sizes and elections are listed in 1.8.1 |
+| Desktops and compute bought per station (batches 140 and 141) | Bundle | Each labor unit brings 1 desktop, 1 base compute and a productivity seat; only extra compute is bought (10.0.11.3) |
+| Batch 141 PC quality factor | Superseded by batch 142 | `PC per station = Q` is **removed**; PC per station is 1, times the industry modifier (10.0.11.2) |
 | Batch 140 boost, wages and ladder | Superseded by batch 141 | The `8 × Q × ln(1 + n ÷ S)` boost, its cap and size factor, Professionals wages, hiring countries, severance and the 7-tier ladder are **removed** |
 
 #### 10.0.11.10 Industry modifiers (Logan, batch 141)
@@ -666,4 +695,4 @@ Hovering a unit's revenue shows: business assets → asset turnover → producti
 12. Price indices in 10.6.
 13. Chokepoint exposure, and slop per dollar of revenue split by asset share (10.7, 10.8).
 14. The fringe pool's start size formula and its cycle rates (10.0.10).
-15. Operations (10.0.11, batch 141): the barebones break-even split, the $1M founding round and asset turnover as a modifier on its revenue; the CEO as the barebones company's one labor unit; PC per station scaled by software quality (×1 to ×1.5); the stepped PC bonus; labor pooled at the corporation and the order labor is dropped in; research labor's R&D effect step; the three unused labor effects; unstructured data storage, overflow and 12-month retention; enterprise base speed 1 GB a tick; the decay base of 2% a month; the 1-month grace on data quests; the parked data buffs; the industry modifier table (10.0.11.10); the starting loadout rule.
+15. Operations (10.0.11, batches 141 and 142): the barebones break-even split, the $1M founding round and asset turnover as a modifier on its revenue; smaller boards under 5 labor units, controller appointment, board labor staffing stations and the board conflicts in 1-corporate-core 1.8.1; the bundle's upkeep inside operating costs, the 9 extra base compute of the barebones company and what extra compute is for; the stepped PC bonus; labor pooled at the corporation and the order labor is dropped in; research labor's R&D effect step; the three unused labor effects; unstructured data storage, overflow and 12-month retention; enterprise base speed 1 GB a tick; the decay base of 2% a month; the 1-month grace on data quests; the parked data buffs; the industry modifier table (10.0.11.10); the starting loadout rule.
