@@ -110,8 +110,8 @@ Each profile lists who tends to hold it, what laws it wants (stance values as 4.
 The ideology of the institutions: central banks, courts, broadsheets, the reasonable centre-left and centre-right. They believe the system works if it is managed well, and they run most of the system.
 
 - **Who**: Professionals, much of the Elite, unionized Skilled Workers in stable industries.
-- **Strong wants (++)**: F1 Independent, E5 Free Trade.
-- **Wants (+)**: L1 Moderate, L4 Portable Benefits, L5 Managed, T2 Notice and Consent, G1 Capped, G3 Plurality Rules.
+- **Strong wants (++)** (Logan, batch 130): E5 Free Trade (top demand), **free speech** (T4 Limited, the end of state censorship and surveillance, plus G4 Political Pluralism; there is no separate speech law **(A)**) and **open borders** (L5 Open).
+- **Wants (+)**: L1 Moderate, L4 Portable Benefits, T2 Notice and Consent, G1 Capped, G3 Plurality Rules. (F1 Independent was dropped: central banks set no rate in the POC.)
 - **Opposes**: E7 Planned Prices (--), T4 Social Credit (--), S3 Standing Emergency (--), G4 Single Ideology (--).
 - **Corporate tolerance**: 0 (-1 toward owners with a criminal-tier scandal in the last 5 years). **Human enhancement**: Licensed.
 - **Radical wing**: none with weapons. When angry, believers run **Civic Resistance** (5.7.2).
@@ -213,7 +213,7 @@ The online reactionary populists: angry at elites, immigrants, human enhancement
 
 | Ideology | Corporate tolerance | Human enhancement | Top demand | Radical wing |
 |---|---|---|---|---|
-| Liberals | 0 | Licensed | F1 Independent | Civic Resistance |
+| Liberals | 0 | Licensed | E5 Free Trade (also free speech and open borders) | Civic Resistance |
 | Communists | -2 | Licensed | E4 Inheritance and Gift Tax | Red Cells |
 | Accelerationists | +1 (+2 tech) | Unrestricted | T3 Unregulated | Unshacklers |
 | Effective Altruists | By giving (-2 to +2) | Licensed | T3 Licensed Models | Pause Front |

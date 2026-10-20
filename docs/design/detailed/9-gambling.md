@@ -1,6 +1,6 @@
 # 9. Gambling, crypto and prediction markets: detailed design
 
-_Status: draft v0.3 (2026-10-18). Batch 117: no stress (gambling urges no longer cause stress). Batch 116: betting on inside knowledge counts as insider trading if exposed (9.4); casinos are Gambling or Black market units (no Front Company vassal). v0.2, consistency pass, batch 74: casinos sit in the Gambling industry, four vices. v0.1 (2026-10-17). From Logan's answers in the design Q&A. Crypto itself is shallow; it lives inside a deep **gambling system**, which is part of the **addiction system** (still to be designed). Builds on [3-markets-and-fx.md](3-markets-and-fx.md) (3.23 crypto) and [1-corporate-core.md](1-corporate-core.md) (characters). Owner: Logan._
+_Status: draft v0.3 (2026-10-18). Batch 130 (Logan): no insider trading for now. Batch 117: no stress (gambling urges no longer cause stress). Batch 116: betting on inside knowledge counts as insider trading if exposed (9.4); casinos are Gambling or Black market units (no Front Company vassal). v0.2, consistency pass, batch 74: casinos sit in the Gambling industry, four vices. v0.1 (2026-10-17). From Logan's answers in the design Q&A. Crypto itself is shallow; it lives inside a deep **gambling system**, which is part of the **addiction system** (still to be designed). Builds on [3-markets-and-fx.md](3-markets-and-fx.md) (3.23 crypto) and [1-corporate-core.md](1-corporate-core.md) (characters). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 9.7.
 
@@ -49,7 +49,7 @@ Players and AI characters bet on yes-or-no questions about the game world.
 - **Pricing (A)**: each question has a price from 1¢ to 99¢ for a Yes share that pays $1. The price moves with bets (AI bettors bet toward the true odds plus noise) and with news.
 - **Inside knowledge**: the player can bet on events they influence or know about, for example betting against a merger they plan to block. That is the point (Logan).
 - **No risk** (Logan): betting on events you control or know about carries no exposure. Offshore markets on the Freeport Night Market are just another venue.
-- **If exposed (A)**: should a story or investigation expose such a bet anyway, it counts as insider trading ([3-markets-and-fx.md](3-markets-and-fx.md) 3.10).
+- **If exposed**: no penalty. There is no insider trading in the POC (batch 130), so such a bet is never an offense.
 
 ## 9.5 Crypto casinos
 

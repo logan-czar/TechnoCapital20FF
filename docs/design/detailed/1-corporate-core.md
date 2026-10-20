@@ -1,6 +1,6 @@
 # Detailed design 1: Corporate core (companies, characters, trusts)
 
-_Status: v1.1 (2026-10-19). Consistency pass 3 (batch 129): 1.10.2 and 1.13 now say only the other central banks' rates in 3.9 are post-POC. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. The policy rate is the Federal Monetary Board's world base rate (1.10.2, 1.13). Batch 121: only national governments; the Political Connections path (1.6.7) needs a city or region tier but meets a national minister (no mayors or governors). Consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 118: EU4-style map; home hub becomes home province (its city, a Metro or city province, where it has one), origin and healthcare checks use cities and countries. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23. Batch 117: no Cooperative or Captive Bank vassals, no Ask Daddy founding path, no stress for now (1.1.5), Heat redefined as how cancelled a character is (1.1.0), no optional end date. Batch 120: Political Connections needs Power broker at the level's threshold (25% in a city, 15% in a region)._
+_Status: v1.1 (2026-10-19). Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): 1.10.2 and 1.13 now say only the other central banks' rates in 3.9 are post-POC. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. The policy rate is the Federal Monetary Board's world base rate (1.10.2, 1.13). Batch 121: only national governments; the Political Connections path (1.6.7) needs a city or region tier but meets a national minister (no mayors or governors). Consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 118: EU4-style map; home hub becomes home province (its city, a Metro or city province, where it has one), origin and healthcare checks use cities and countries. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23. Batch 117: no Cooperative or Captive Bank vassals, no Ask Daddy founding path, no stress for now (1.1.5), Heat redefined as how cancelled a character is (1.1.0), no optional end date. Batch 120: Political Connections needs Power broker at the level's threshold (25% in a city, 15% in a region)._
 
 This file is the source of truth for companies, characters and trusts; it replaces the old overview stubs 01 to 04 in the design folder. All numbers are **tuning values**: starting points to balance, not final.
 
@@ -118,7 +118,7 @@ Traits **strongly** steer AI characters. Each trait adds weights to what an AI c
 | Paranoid | Counter-intelligence, poison pills, keeping cash |
 | Ruthless | Hostile takeovers, layoffs, blackmail |
 | Visionary | Tech industries, AI bets, high R&D plans |
-| Honest | Refusing schemes, shells and insider trades |
+| Honest | Refusing schemes and shells |
 | Brave | Leverage, big bets, proxy fights |
 | Diligent | Taking seat tasks, staying on boards |
 | Hedonist | Spending, gambling (9), parties |
@@ -205,7 +205,7 @@ A **hook** is leverage over a character, as in Crusader Kings. **Both kinds stay
 | Hook | Source **(T)** | Use | Lasts |
 |---|---|---|---|
 | **Weak** | A favor done for them, a debt they owe you (money lent, a bailout), a campaign donation | Called in once: they vote your way, accept a deal, give a board seat or skip a scheme against you. Used up after one call | Until used, or 5 years |
-| **Strong** | A secret (affair, crime, shell, insider trade, hidden addiction) or blackmail material | Called in once a year without being used up; they cannot refuse unless they accept the secret coming out | Until the secret is exposed or destroyed |
+| **Strong** | A secret (affair, crime, shell, hidden addiction) or blackmail material | Called in once a year without being used up; they cannot refuse unless they accept the secret coming out | Until the secret is exposed or destroyed |
 
 Hooks come from Dig up dirt and Blackmail schemes (1.1.8), favors, loans and events. A character with a strong hook on them may try to destroy the evidence (a scheme against the holder).
 
@@ -277,7 +277,7 @@ Hacking is its own system, not a scheme: [17-hacking.md](17-hacking.md).
 #### 1.1.8.2 Intel and the Spymaster (Logan, batch 63)
 
 **Intel is per secret** (Logan): a character **either knows a secret or does not**. There are no intel levels.
-- **Secrets** are discrete facts kept in the engine: a hidden trait (1.1.2), an affair, a crime, an addiction, a hidden owner behind a shell, a figurehead and the **real controller** behind them (1.3.1), a planned takeover, insider trades.
+- **Secrets** are discrete facts kept in the engine: a hidden trait (1.1.2), an affair, a crime, an addiction, a hidden owner behind a shell, a figurehead and the **real controller** behind them (1.3.1), a planned takeover.
 - A secret is learned through a **Dig up dirt** or **Investigate** scheme, an informant (an agent placed near the target), an event, or being told by someone who knows it. Each success reveals **one secret** **(A)**.
 - A known secret stays known. It can be **traded, leaked or turned into a hook**; if it is exposed, everyone knows it.
 - Schemes and the Spymaster give human intel; hacking ([17-hacking.md](17-hacking.md)) is the other source.
@@ -657,7 +657,7 @@ Hostile action without a casus belli: -30 Clout and an investigation chance of 2
 | Real estate | 3% to 7% rent + 0% to 5% appreciation | 30 to 90 days | Market cycles, local events |
 | Speculative | -50% to +200% | 1 day | High volatility |
 
-The policy rate is the Federal Monetary Board's world base rate (1.75% at start **(T)**), set from US data only, so the whole world lives with US policy (batch 125). Other central banks set no rate in the POC **(A)** (their rates in [3-markets-and-fx.md](3-markets-and-fx.md) 3.9 are post-POC).
+The policy rate is the Federal Monetary Board's world base rate (3% at start **(T)**; batch 130), set from US data only, so the whole world lives with US policy (batch 125). Other central banks set no rate in the POC **(A)** (their rates in [3-markets-and-fx.md](3-markets-and-fx.md) 3.9 are post-POC).
 
 ### 1.10.3 Leverage
 

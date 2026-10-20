@@ -126,7 +126,7 @@ Each industry runs its own news cycle on top of the general business cycle **(A)
 |---|---|
 | Bank loans | **A credit line**, Wall Street Raider style. Each corporation has a line sized by its assets and credit rating, and **draws or repays it at will**. |
 | Bonds | Corporations can issue **bonds of 1 to 30 years once they have a credit rating**. The yield comes from 3.6.5. |
-| Rates | **The Federal Monetary Board sets one world base rate** (1.75% at start **(T)**), set from US data only, since every value is in USD in the simulation (Logan, batch 125). A corporation borrows at that rate **plus its home country's spread plus a spread for its rating** (3.6). Other central banks set no rate in the POC **(A)**. |
+| Rates | **The Federal Monetary Board sets one world base rate** (3% at start **(T)**; batch 130), set from US data only, since every value is in USD in the simulation (Logan, batch 125). A corporation borrows at that rate **plus its home country's spread plus a spread for its rating** (3.6). Other central banks set no rate in the POC **(A)**. |
 | Parent and subsidiary | **Intra-group lending is allowed.** A parent can lend to a subsidiary or pull cash up from it, at a loyalty cost. |
 | Default | **The default chain in 3.6.6**: restructure, sell units to creditors, or go bankrupt. |
 

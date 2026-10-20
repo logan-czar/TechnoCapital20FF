@@ -1,6 +1,6 @@
 # 3. Markets and FX: detailed design
 
-_Status: draft v0.3 (2026-10-20). Consistency pass 3 (batch 129): leftover currency wording marked post-POC (FX positions, account and bond currencies, deposit insurance, the "woken" national bank in 3.9.7, peg defenses, Arcology Scrip). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board (3.8.1). This replaces the batch 124 whole-world-dollarized card. Batch 122: the Eurozone Central Bank sets one rate for all 19 euro countries, which share one business cycle (the shared cycle stays; in the POC the Eurozone Central Bank sets no rate, batch 125); the UK is outside the EU at start. Batch 121: only national governments, so only national government bonds exist (regional and city bonds removed from 3.6.1). Batch 118: EU4-style map; local time, roadshows, deposits, unrest, morning briefs and market research use provinces and cities (Metros or city provinces) instead of hubs; exchanges have a home city; charter cities are provinces. Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
+_Status: draft v0.3 (2026-10-20). Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): leftover currency wording marked post-POC (FX positions, account and bond currencies, deposit insurance, the "woken" national bank in 3.9.7, peg defenses, Arcology Scrip). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board (3.8.1). This replaces the batch 124 whole-world-dollarized card. Batch 122: the Eurozone Central Bank sets one rate for all 19 euro countries, which share one business cycle (the shared cycle stays; in the POC the Eurozone Central Bank sets no rate, batch 125); the UK is outside the EU at start. Batch 121: only national governments, so only national government bonds exist (regional and city bonds removed from 3.6.1). Batch 118: EU4-style map; local time, roadshows, deposits, unrest, morning briefs and market research use provinces and cities (Metros or city provinces) instead of hubs; exchanges have a home city; charter cities are provinces. Batch 117: no character stress from losses (stress removed). Batch 116: no dynasty, family trust or succession (money sits in the character's personal trusts and accounts; the family bank and family office become the player's own); branch offices dropped; Clout and Favor replace reputation; Semiconductors replaces the four chip industries; crypto moved to the phone tab (9-gambling); disclosure lines set by F4 then 10, 25, 50; two-layer control in 3.4.8 and 3.11; market values rebased to January 2020; consistency fixes A1 to A22. v0.3 is the consistency pass, batch 74: company ranks replace game stages (3.1.4, 3.25), only named holders trade (3.3.4), the 24/7 calendar of 3.1.0 runs through every section, and antitrust, crypto exchanges, data brokers, cyberware and the old goods economy are removed. v0.2 added the trading experience, information and analysts, retail and meme stocks, market cycles and bubbles, the financial sector as a business, funds and the family office, private markets, M&A deal mechanics, financial crises and contagion, the derivatives scope, crypto and cyberpunk finance, taxes on trading, markets by company rank, and worked examples (3.13 to 3.26); Assumptions are in 3.27; the GRG baseline in 3.3.5 follows the business cycle (3.16.1). Owner: Logan. Expands the markets overview (07) and the trading parts of the trusts overview (02) into exact rules, numbers and content. Everything here is open for revision._
 
 This file covers stock exchanges, the stock price model, corporate actions, short selling and margin, bonds and credit ratings, commodities, foreign exchange, central banks, and market crime. It ends with worked examples and a list of new assumptions.
 
@@ -525,7 +525,7 @@ plus noise with a standard deviation of 8% [T], clamped to -15% and +60%. V_post
 
 **What changes after listing**
 - Quarterly earnings reports become public events with consensus and surprises.
-- Disclosure thresholds, insider rules and blackout windows apply to all holders.
+- Disclosure thresholds and blackout windows apply to all holders.
 - Required Independent Directors join the board.
 - Activists, short sellers and raiders can now target the company.
 - Shares can be pledged for loans at listed-stock rates (3.5.5), which unlocks a lot of founder liquidity and a lot of founder risk.
@@ -883,13 +883,13 @@ Score 7 or more maps to AAA, then one notch lower per point down to CCC at -12 o
 - `TP(T)`, the term premium: `0.3% x ln(1 + T) x (1 + 0.5 x max(0, debt/GDP - 60%))`, minus 0.1 points for each 10% of GDP of government bonds the central bank holds through QE (floor 0) [T].
 - The **calibration offset** is a per-country constant set once so that starting yields match the January 2020 world.
 
-**One world base rate (Logan, batch 125).** Every value is in USD in the simulation, so for every country r_0 is the Federal Monetary Board's base rate (1.75% at start, **T**) and r_n is the US neutral nominal rate. What is left of the formula is the **country spread**: TP(T) + sovereign spread(rating) + crisis premium + calibration offset.
+**One world base rate (Logan, batch 125).** Every value is in USD in the simulation, so for every country r_0 is the Federal Monetary Board's base rate (3% at start, **T**; Logan, batch 130) and r_n is the US neutral nominal rate. What is left of the formula is the **country spread**: TP(T) + sovereign spread(rating) + crisis premium + calibration offset.
 - The rating (3.6.3) already reads debt, deficit, stability and government type; the FX-risk parts of the old spreads are dropped.
 - The **crisis premium** adds 1 to 4 points while the country is in a debt crisis or the sovereign default chain (3.6.7) **(A, T)**.
 - The calibration offset now matches each country's January 2020 spread over US Treasuries, not its local-currency yield, floored so no government starts below the US yield **(A)**. Germany, Japan and Switzerland no longer start with negative yields.
 - Other central banks set no rate in the POC (3.9). Post-POC, when FX is added, bonds in each currency use its own central bank's rate (3.8.1).
 
-Example: US 10-year at the start, with r_0 = 1.75%, r_n = 3.0%, debt 120% of GDP, rating AA+. r_avg = 3.0 - 1.25 x 0.3 x 0.964 = 2.64%. TP = 0.3% x 2.40 x 1.3 = 0.94%. Spread 0.15%. y = 3.73% before the calibration offset; an offset of -1.9 points sets it to the January 2020 level of about 1.8% [T].
+Example: US 10-year at the start, with r_0 = 3.0%, r_n = 3.0%, debt 24% of GDP (batch 130), rating AAA. r_avg = 3.0%. TP = 0.3% x 2.40 x 1.0 = 0.72%. Spread 0.0%. y = 3.72% before the calibration offset; an offset of -0.2 points sets it to the alternate January 2020 level of about 3.5% [T].
 
 **Corporate bonds:**
 
@@ -1071,7 +1071,7 @@ Post-POC, every account, price and asset is denominated in a currency ([1-corpor
 
 - **One unit of account**: every price, account, asset, bond, revenue and wage is in USD, and the UI shows every value in $. There are no exchange rates, no FX market and no FX trading.
 - **Flavor**: each country's real currency name is kept in data (`currency`), news, history and UI text. A headline can say "euro crisis" or "yen weakens", and a character can mention a price in euros. The rates in the table below are history and news flavor and never touch a number **(A)**.
-- **Rates**: the Federal Monetary Board sets one world base rate (1.75% at start, **T**) from US data only, so the whole world lives with US policy. Each country's government bonds and bank lending price at that base rate plus its **country spread**, set by its rating, debt, deficit, crisis state and politics (3.6.3, 3.6.5).
+- **Rates**: the Federal Monetary Board sets one world base rate (3% at start, **T**; Logan, batch 130) from US data only, so the whole world lives with US policy. Each country's government bonds and bank lending price at that base rate plus its **country spread**, set by its rating, debt, deficit, crisis state and politics (3.6.3, 3.6.5).
 - **Central banks**: other central banks exist as flavor names and political posts (governor appointments stay, 3.9.7), but they set no rate in the POC **(A)**. Swap lines, reserves and FX intervention are post-POC.
 - **Governments** keep fiscal tools (tax, spending and debt) and F2 Capital Controls (3.8.3), which limit money moving into and out of the country. They have no rate and no money printing in the POC.
 - **Bank rescues**: in a banking crisis the Federal Monetary Board can lend to a foreign country's banks (3.9.4), but only if that country's relations with the US are friendly (+50 or more, **T**). Otherwise there is no rescue.
@@ -1085,7 +1085,7 @@ Post-POC, every account, price and asset is denominated in a currency ([1-corpor
 
 | Code | Currency | Country or zone | Flavor rate (post-POC start) | Regime (post-POC) | Policy rate (post-POC) | Role |
 |---|---|---|---|---|---|---|
-| USD | US dollar | United States | 1.00 | Unit of account for every simulated value | 1.75% (the world base rate) | World currency; numeraire |
+| USD | US dollar | United States | 1.00 | Unit of account for every simulated value | 3% (the world base rate) | World currency; numeraire |
 | EUR | Euro | Eurozone | 0.95 USD per EUR **(T; flavor only in the POC; the 2019 euro crisis is simulated as a debt crisis, [19-history.md](19-history.md) 19.21)** | Free float | 0.00% | Reserve currency |
 | JPY | Yen | Japan | 109 | Free float (intervention-prone) | -0.10% | Safe haven; carry funding currency |
 | GBP | Pound sterling | United Kingdom | 1.31 USD per GBP | Free float | 0.75% | Reserve currency |
@@ -1262,7 +1262,7 @@ A currency crisis can start from an attack, from a sovereign default, or by itse
 
 ## 3.9 Central banks
 
-> **Only the Federal Monetary Board sets a rate in the POC (Logan, batch 125).** Its policy rate is the one world base rate (1.75% at start, **T**). The Board's rule (3.9.2) reads US inflation and unemployment only, so the rest of the world lives with US policy **(A)**. Every other bank below exists as a flavor name and a political post (governor appointments stay, 3.9.7) but sets no rate in the POC **(A)**. Swap lines, reserves and FX intervention (3.9.4, 3.9.6) are post-POC. In a banking crisis the Board can lend to a foreign country's banks at its window (3.9.4), but only if that country's relations with the US are friendly (+50 or more, **T**); otherwise there is no rescue.
+> **Only the Federal Monetary Board sets a rate in the POC (Logan, batch 125).** Its policy rate is the one world base rate (3% at start, **T**; Logan, batch 130). The Board's rule (3.9.2) reads US inflation and unemployment only, so the rest of the world lives with US policy **(A)**. Every other bank below exists as a flavor name and a political post (governor appointments stay, 3.9.7) but sets no rate in the POC **(A)**. Swap lines, reserves and FX intervention (3.9.4, 3.9.6) are post-POC. In a banking crisis the Board can lend to a foreign country's banks at its window (3.9.4), but only if that country's relations with the US are friendly (+50 or more, **T**); otherwise there is no rescue.
 
 ### 3.9.1 Central bank roster
 
@@ -1359,7 +1359,6 @@ Central banks meet monthly, in the monthly calculation; in the POC only the Fede
 - At each meeting the bank publishes a **guidance bias**: Hawkish, Neutral or Dovish (from the direction of r_rule minus r_new).
 - Before each meeting the market forms an **expected rate** from the rule and the last guidance. The **surprise** is the actual decision minus the expected rate.
 - Market reaction to a surprise of +1 point [T]: currency +2% (where there is an exchange rate), local stock indices -4%, 2-year yields +0.8 point, 10-year yields +0.3 point. Smaller surprises scale linearly.
-- A board member who is your ally can tip you the decision a day early: trading on it is insider trading (3.10).
 
 ### 3.9.6 FX intervention and reserves
 
@@ -1387,14 +1386,14 @@ Lobbying a Full-independence bank directly has a quarter of the normal effect an
 
 ---
 
-## 3.10 Insider trading and manipulation
+## 3.10 Market manipulation
+
+Removed for now (Logan, batch 130): there is no insider trading in the POC; characters cannot trade on inside information.
 
 ### 3.10.1 What counts
 
 | Offense | What it is in the game | Typical source |
 |---|---|---|
-| **Insider trading** | Trading a security while holding material non-public information about it: unreleased earnings of a company where the trader is an insider (10%+ holder, director or executive), a planned takeover (other than by the bidder itself up to the first filing line), a central bank decision known in advance, a regulator's coming decision, a government contract award, the results of an espionage scheme | Board seats, allies in office, schemes |
-| **Tipping** | Passing such information to someone who trades (a relative, a lover, a bloc ally) | Gossip, hooks |
 | **Pump and dump** | Raising Buzz with false or bot-driven content (psyops) while selling | Psyops tools from [2-map-and-influence.md](2-map-and-influence.md) 2.5.7 |
 | **Short and distort** | Shorting, then publishing false negative information | Short reports |
 | **Spoofing** | Placing large fake orders to move the price, then cancelling (a player action "Paint the Tape": +/- 1% to 3% on one tick) | Manual action |
@@ -1404,20 +1403,14 @@ Lobbying a Full-independence bank directly has a quarter of the normal effect an
 | **Rating agency bribery** | Paying an analyst for a better rating | Schemes |
 | **Securities fraud** | Concealing a known issue in an IPO or report, cooking earnings | IPO due diligence, CFO schemes |
 
-When a player order would use non-public information the game knows they have, the order screen shows a clear warning ("This trade uses inside information"). The choice stays with the player.
-
 ### 3.10.2 Detection
 
-Each offense creates a **case** with a detection chance. Insider trades are checked once at the related news event (surveillance), and then for 26 weeks by a weekly background roll of 2% if the abnormal profit exceeded $1M (whistleblowers, journalists, a jealous rival). Ongoing offenses (pumps, spoofing, wash trading, undisclosed stakes) roll weekly while active.
+Each offense creates a **case** with a detection chance. One-off offenses roll once when committed; ongoing offenses (pumps, spoofing, wash trading, undisclosed stakes) roll weekly while active.
 
-`p_detect = clamp(Base x Size x Timing x Strictness x (1 - Concealment), 0, 0.95)`
+`p_detect = clamp(Base x Size x Strictness x (1 - Concealment), 0, 0.95)`
 
 | Offense | Base [T] |
 |---|---|
-| Insider trading before earnings | 15% |
-| Insider trading before a takeover | 25% |
-| Insider trading before a central bank or regulator decision | 20% |
-| Tipping | 10% per tippee; each tippee who is investigated has a 50% chance to name the source |
 | Pump and dump | 20% per week active |
 | Short and distort | 30% if the company rebuts successfully, 10% otherwise |
 | Spoofing | 10% per use |
@@ -1429,7 +1422,6 @@ Each offense creates a **case** with a detection chance. Insider trades are chec
 | Multiplier | Values [T] |
 |---|---|
 | **Size** (abnormal profit) | Under $1M x0.5; $1M to $10M x1.0; $10M to $100M x1.5; above $100M x2.0 |
-| **Timing** (trade before the news) | Within 1 day x2.0; within 1 week x1.5; 1 to 4 weeks x1.0; older x0.5 |
 | **Strictness** (regulator strictness 1 to 5 from 3.2.2) | x0.5, x0.75, x1.0, x1.25, x1.5; a regulator the holder has captured (Kingmaker influence with protection, [2-map-and-influence.md](2-map-and-influence.md) 2.5.10) x0.25 |
 | **Concealment** (additive, capped at 70%) | Shell in a secrecy jurisdiction 30%; nominee account 15%; through swaps 10%; Freeport Night Market 40%; Intrigue of the planning character +1% per point above 10 (maximum 20%) |
 
@@ -1610,7 +1602,7 @@ The Markets screen of [11-ui.md](../11-ui.md) 11.2 is split into panels. The pan
 |---|---|---|
 | **Watchlists** | Up to 10 lists of up to 50 instruments [T]. Columns: price, day change, estimated fair value and the gap to it (3.14.2), yield, short interest, Buzz, next event | Built-in lists: My holdings, My companies, Rivals' companies, and **Disclosure radar** (companies where any holder filed at the first line or more in the last 90 days) |
 | **Chart** | Hourly bars (1 to 5 days), daily bars (1 month to 1 year), weekly bars (up to 10 years) | Overlays: the estimated fair value band, the headline index, event markers (earnings, filings, news), volume, short interest |
-| **Order ticket** | The order and its preview: expected fill price, slippage and permanent impact (3.3.7), time to fill at the chosen participation, fees and transaction tax (3.24.3), estimated tax on a sale, margin effect, disclosure thresholds crossed and their deadlines, mandatory bid warnings, the inside information warning (3.10.1) | Nothing is sent until the player confirms the preview |
+| **Order ticket** | The order and its preview: expected fill price, slippage and permanent impact (3.3.7), time to fill at the chosen participation, fees and transaction tax (3.24.3), estimated tax on a sale, margin effect, disclosure thresholds crossed and their deadlines, mandatory bid warnings | Nothing is sent until the player confirms the preview |
 | **Positions** | Holdings by account (each personal account, personal trust, and company treasury the player controls): cost basis, realized and unrealized gains, currency exposure (post-POC), margin headroom | Pledged and lent shares are marked |
 | **Orders** | Open and standing orders with progress bars | Work orders show shares filled, average price and impact so far |
 | **News feed** | Filtered news with source and reliability (3.14.4) | Filters: holdings, watchlists, sector, country, source tier |
@@ -1699,20 +1691,20 @@ This section links the information rules of [2-map-and-influence.md](2-map-and-i
 | Fundamental value V | Never shown directly | Estimated fair value with an error band (3.14.2) |
 | Analyst ratings and consensus | Yes (3.14.3) | |
 | AI holders' reservation prices (3.4.9) | No | A range, after a meeting with the holder (Finance or Persuasion check) |
-| Pending bids, defenses, scandals, central bank decisions | No | Inside information (3.14.6) |
+| Pending bids, defenses, scandals, central bank decisions | No | Only once they leak as rumors (3.14.6) |
 | Private companies | No public numbers | One secret per successful intel action (2.22.2) |
 
 ### 3.14.2 Estimated fair value
 
 - The player's **estimated fair value** of a company is `EFV = V x (1 + e)`. The error e is drawn once each quarter (at the earnings report) and kept until the next draw, uniform within plus or minus the error width.
-- There is no intel level (batch 63). The error width is 15% for a listed company (its Pdoomberg filings and earnings calls) and 30% for a private one [T]. Each **secret** learned about the company's value this quarter halves the width; a board seat gives exact financials before publication (inside information). The band is shown, so the player knows how far to trust the number.
+- There is no intel level (batch 63). The error width is 15% for a listed company (its Pdoomberg filings and earnings calls) and 30% for a private one [T]. Each **secret** learned about the company's value this quarter halves the width; a board seat gives exact financials at each report, with no early look (batch 130). The band is shown, so the player knows how far to trust the number.
 - **Ways to learn a secret about a company** [T]:
 
 | Source | What it gives |
 |---|---|
 | Owning a bank or broker with a research desk that covers the company (3.17.1) | One secret a quarter, automatically |
 | Research subscription | One secret a quarter on a company you name in one sector on one exchange, for $50k a month |
-| A board seat | Exact financials before publication (inside information) |
+| A board seat | Exact financials at each report, with no early look (batch 130) |
 | A meeting with the CFO or CEO | A Finance or Persuasion roll (instant once both are there) learns one secret |
 | Espionage schemes ([1-corporate-core.md](1-corporate-core.md) 1.1.8) | One secret on success |
 | Market research in the provinces where the company has assets (2.22.2) | As in 2.22.2 |
@@ -1755,13 +1747,10 @@ A careful player can notice a stake being built before anyone files at the first
 - Success shows "Someone is building a stake (estimated 2% to 4%)" with no name. A second success names the broker doing the buying; finding the broker's client needs an Investigate scheme.
 - Stakes built through equity swaps (3.4.8) only show as unusual buying by the hedging banks: the chance is halved.
 
-### 3.14.6 Inside information
+### 3.14.6 Non-public information
 
-- Inside information is a **knowledge item** held by a character: for example "Pellucid's Q3 earnings are 20% above consensus", "Varga will bid $22 on 14 March", "the Federal Monetary Board will cut by 0.5". Each item names a security, a direction and an expiry (its publication).
-- **Sources**: board seats and executive roles (automatic for their companies); deal teams (bankers and lawyers on a deal); central bank and regulator boards; allies in office ([4-politics.md](4-politics.md) 4.7.5); espionage and hacking ([17-hacking.md](17-hacking.md)); Lovers share an item with a 25% chance per week [T].
-- A bidder trading for itself before its own first filing is not insider trading (3.10.1); telling a friend about it is tipping.
-- **Leakage**: an item known to more than 5 characters has a 5% daily chance to reach the market as a rumor with a 70% truth flag [T]. Large deals therefore drift the price toward the news before the announcement, which is exactly what surveillance (3.10.2) looks for.
-- The order warning of 3.10.1 appears whenever the account owner or the executing character holds a relevant item.
+- Removed for now (Logan, batch 130): there is no insider trading in the POC; characters cannot trade on inside information. No character holds tradable knowledge of unreleased earnings, bids or decisions, and the order screen has no inside information warning.
+- **Leakage** stays: a pending deal or decision known to more than 5 characters has a 5% daily chance to reach the market as a rumor with a 70% truth flag [T]. Large deals therefore drift the price toward the news before the announcement. The rumor is public, so nobody gets a private head start.
 
 ---
 
@@ -1907,7 +1896,7 @@ Each bank keeps a simple balance sheet, updated monthly with its financials and 
 
 - The three tiers of 3.4.1 (Bulge bracket, Major, Boutique) apply to player banks too. Tier is set yearly by the **league table**: the rank by fees earned over the last 3 years from underwriting and advice [T]. Global top 6: Bulge bracket; top 20: Major; others: Boutique. Minimum capital: Bulge $10B, Major $1B [T].
 - Using your own bank on your own deal keeps the fees in the group, but investors see a conflict: IPO coverage -0.5 [T].
-- **Chinese wall**: bankers on a deal hold inside information. The owner's characters get no knowledge item from the bank's deals unless they sit on the deal team. Asking for one is the scheme **Breach the Wall** (Intrigue; detection base 25% per use, as insider trading) [T].
+- **Chinese wall**: the owner's characters learn nothing about the bank's client deals unless they sit on the deal team, and no one can trade on a deal before it is public (no insider trading, batch 130).
 
 ### 3.17.5 Owning an exchange
 
@@ -1962,7 +1951,7 @@ Any account can buy fund units instead of picking securities. All values are [T]
 | Risk limits | Maximum drawdown before cutting risk; maximum single position; leverage cap |
 | Do-not-touch list | Control stakes and positions the player trades by hand |
 | Rebalancing | Monthly, quarterly, or when an allocation drifts 5 points |
-| Conduct line | **Clean** (no shells); **Grey** (shells for tax); **Dark** (Freeport and inside information allowed). Grey and Dark add exposure as usual |
+| Conduct line | **Clean** (no shells); **Grey** (shells for tax); **Dark** (Freeport allowed). Grey and Dark add exposure as usual |
 
 - The CIO acts on the mandate weekly (an AI decision on the weekly cadence) and uses standing orders in between. A monthly report card shows return against a benchmark of the same allocation, fees, and the main trades.
 - **CIO risks**: a Greedy CIO may skim (1% chance per month of 0.5% to 2% of assets) [T]; a Brave CIO tends to run near the risk limits, a Cautious one far below them; a CIO who holds the owner as a Rival or Nemesis can be turned by a rival's scheme and leak the owner's positions.
@@ -2015,7 +2004,7 @@ Managing other people's money creates new offenses, added to the list in 3.10.1 
 - Any character with spare cash can invest as an **angel**, and a company with a fund manager license can run a VC firm (3.17.1).
 - **Deal flow**: each month 0 to 3 pitches arrive from AI startups (Venture-rank rivals) [T], more with presence in tech cities (Metros or city provinces with Tech perks, [2-map-and-influence.md](2-map-and-influence.md) 2.3.5), the investor's Clout and the VC firm's brand. A pitch is a short event: deck quality, sector, asking valuation, the founder's visible traits, and the estimated fair value range.
 - **Outcomes** are rolled at each later funding round: 40% raise at a higher valuation, 30% flat or down round, 30% fail [T], modified by founder skills, sector Mania (3.16.2) and the cycle phase (3.16.1). Winners can IPO (3.4.1) or be sold.
-- A lead investment carries a **board seat**: votes, factions and inside information.
+- A lead investment carries a **board seat**: votes, factions and exact financials.
 - Stakes in rival startups let the player watch, slow or absorb competitors, for example by pushing a sale to the player's company with a drag-along or board pressure, at the risk of a founder grievance and lost Clout in the startup scene.
 
 ### 3.19.4 Leveraged buyouts
@@ -2114,7 +2103,7 @@ Every bank and every fund with prime broker leverage has a **Run Pressure** scor
 | Suspend withdrawals | Only under a government emergency decree or Hard capital controls: a bank holiday of up to 5 days; unrest +5 in the provinces where the bank has assets |
 
 - The run ends when RP falls below 30. If cash and borrowing capacity run out first, the bank **fails** and goes to resolution under F7 and C5 (4.5.4, 4.5.3): bail-in, nationalization, a forced sale or liquidation.
-- The player's own deposits at a failing bank are uninsured above the limit like anyone else's. Pulling them out early on knowledge of the bank's state is trading on inside information.
+- The player's own deposits at a failing bank are uninsured above the limit like anyone else's.
 
 ### 3.21.3 Contagion
 
@@ -2351,14 +2340,14 @@ New assumptions introduced by this document, to confirm or change:
 15. **Central banks meet monthly** (not 8 times a year), with emergency meetings allowed mid-month.
 16. **Options are a later feature** with only the outline in 3.5.6.
 17. **Regulator strictness** is a 1 to 5 value per country that scales detection; it can change through laws and capture.
-18. **The player always sees a warning** before an order that uses inside information the game knows they hold.
+18. **No insider trading in the POC** (batch 130): characters cannot trade on inside information.
 19. **Freeport Night Market** access requires a shell company and is always on, with no regulator but raid and fraud risk.
 20. **Market tools are grouped by company rank** as listed in 3.1.4; nothing is locked.
 21. **Standing orders run in the hourly market loop** as a market rule, cost no character hours, and are not AI decisions; skill shows through execution quality (the executing character's Finance scales slippage) and Desk Sessions (3.13).
 22. **Market alerts have three tiers**, and the "always stop" tier (margin, filings and bids on the player's companies, halts, runs, forced sales) cannot be turned off; a morning brief arrives at 07:00 in the player character's province (3.13.5, 3.13.6).
 23. **The player never sees V directly**, only an estimated fair value whose error starts at 15% for listed and 30% for private companies and halves with each secret learned (2.22, 3.14.2).
 24. **Analysts are lightweight AI characters** with a sell-side bias, and their consensus feeds earnings surprises (3.14.3).
-25. **Inside information is tracked as knowledge items** held by characters, which leak as rumors once more than 5 characters know (3.14.6).
+25. **Pending deals and decisions leak as public rumors** once more than 5 characters know (3.14.6); they give no private trading edge.
 26. **Retail Fever** per exchange scales retail volume, and **meme state** is a defined stock state; retail brokers can restrict buying during it (3.15).
 27. **The GRG baseline follows the global business cycle** instead of the fixed 18 in 3.3.5 (a change to 3.3.5); cycle phases set sentiment drift, spreads, IPO coverage and funding appetite (3.16.1).
 28. **Manias** are sector states driven by a Froth ratio; their popping is the market side of the 2.18.3 tech bubble crisis (3.16.2).
