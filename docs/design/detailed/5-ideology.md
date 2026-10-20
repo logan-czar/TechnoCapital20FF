@@ -486,7 +486,7 @@ The larger of the two characters' commitments applies. Apolitical characters nei
 
 ### 5.8.3 What character ideology does
 
-- **Board and executives**: an executive's ideology adds a preference to their AI decisions. A Neo-Luddite COO resists automation retooling (the task runs at -20% speed), an EA CFO proposes foundation transfers, an Accelerationist CTO pushes AI R&D, a Chud board member votes against foreign sales, a Landite general counsel suggests buying the regulator instead of complying **(T)**. Board members with an ideology Opposed to the CEO's get a -10 push toward the CEO and are more likely to join a faction (1-corporate-core).
+- **Board and executives**: an executive's ideology adds a preference to their AI decisions. A Neo-Luddite COO resists automation retooling (the task runs at -20% speed), an EA CFO proposes foundation transfers, an Accelerationist Chief Strategy Officer pushes AI R&D, a Chud board member votes against foreign sales, a Landite general counsel suggests buying the regulator instead of complying **(T)**. Board members with an ideology Opposed to the CEO's get a -10 push toward the CEO and are more likely to join a faction (1-corporate-core).
 - **Vassal CEOs**: -10 loyalty when the liege CEO's ideology is Opposed to theirs; +5 when the same **(T)**.
 - **Politicians and patronage**: client politicians obey a patron more readily when ideologies match (Favor cost -25% for the same ideology, +50% for Opposed) **(T)**.
 - **Bloc and movement leaders**: see 5.6.2 and 5.7.1.

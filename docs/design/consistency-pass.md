@@ -20,7 +20,7 @@ A sweep of every design file for rules that later decisions replaced. Counts are
 | Crypto exchanges, data brokers | Removed (batch 50) | 13 | 5 | 3-markets (5), 5-ideology (4) | Remove |
 | Model theft, uploaded minds | Not stealable (batch 73); cyberware scrapped | 5 | 2 | 6-technocapital (4) | Remove rows in 6.9.4 |
 | Daily hours budget | Ticking actions (batch 64) | 5 | 2 | 1-corporate-core (4) | Remove the old 16-hour text under the banner |
-| Phaser, browser | Godot desktop (batch 41) | 4 | 3 | 12-tech, 05-map, 11-ui | Remove |
+| Phaser, browser | Godot desktop (batch 41); since batch 168 the whole game is in Bevy | 4 | 3 | 12-tech, 05-map, 11-ui | Remove |
 | Anonymous float | Named holders only (batch 58) | 3 | 1 | 3-markets | Reword 3.3.4 intro |
 
 ## Structural issues (all applied in batch 74)

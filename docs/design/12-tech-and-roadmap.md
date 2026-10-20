@@ -1,6 +1,6 @@
 # 12. Tech stack, architecture and roadmap
 
-_Status: v0.5 (2026-10-20). Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth: the crash averages 2040 (roadmap step 10). Consistency pass 3 (batch 129): roadmap step 6 notes that the province data is complete. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. FX is not built in roadmap step 5; it is post-POC. Batch 121: Metros have no council (only national governments). Batch 118: roadmap step 6 builds provinces, areas, regions, Metros and countries instead of hubs and districts; influence views rank per province or city. Batch 116: roadmap and tiers rewritten to the current design (one scenario and one player character, John Techno; no dynasty or succession; game over on death; news and Pdoomberg; two-layer control; Semiconductors as dollar effects). v0.3. Batch 41: a **desktop app built in Godot**, replacing Phaser and the browser. Batch 42: the simulation runs in a **Rust engine**; Godot's GDScript runs the front end. Design is still the current phase; this file records the plan for when the build starts. Owner: Logan._
+_Status: v0.6 (2026-10-20). Batch 168 (Logan): "I want to do the entire thing in Bevy." The whole game is built in Rust with the Bevy engine: Bevy runs rendering, UI, input and the simulation (ECS). Godot, GDScript and the GDExtension bridge are dropped; 12.1 to 12.4 and 12.6 rewritten. Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth: the crash averages 2040 (roadmap step 10). Consistency pass 3 (batch 129): roadmap step 6 notes that the province data is complete. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. FX is not built in roadmap step 5; it is post-POC. Batch 121: Metros have no council (only national governments). Batch 118: roadmap step 6 builds provinces, areas, regions, Metros and countries instead of hubs and districts; influence views rank per province or city. Batch 116: roadmap and tiers rewritten to the current design (one scenario and one player character, John Techno; no dynasty or succession; game over on death; news and Pdoomberg; two-layer control; Semiconductors as dollar effects). v0.3. Batch 41: a **desktop app** (then in Godot, replaced by Bevy in batch 168), replacing Phaser and the browser. Batch 42: the simulation runs in a **Rust engine**. Design is still the current phase; this file records the plan for when the build starts. Owner: Logan._
 
 Anything marked **(A)** is an assumption Logan has not confirmed yet; the list is in 12.6.
 
@@ -9,52 +9,57 @@ Anything marked **(A)** is an assumption Logan has not confirmed yet; the list i
 | Topic | Decision |
 |---|---|
 | Platform | **A desktop app** from the start (batch 41). No browser build. |
-| Engine | **Godot** (batch 41), replacing Phaser. The look stays lightweight 2D: flat neon-on-dark vector panels and a map-first screen ([11-ui.md](11-ui.md) 11.4). |
+| Engine | **Bevy** (batch 168), replacing Godot (batch 41), which replaced Phaser. The whole game is one Rust program. The look stays lightweight 2D: flat neon-on-dark vector panels and a map-first screen ([11-ui.md](11-ui.md) 11.4). |
 | Simulation detail | **Tiered**: full detail for the player's circle and rivals, lighter weekly updates for everyone else (batch 41). |
-| Engine split | **Rust engine + GDScript front end** (batch 42). GDScript handles the front end: asset loading, the map, screens and input. A **Rust engine** runs the simulation and is the **source of truth**: it stores the game data, does the calculations in the background and keeps **query tables** up to date so screens and queries load fast. GDScript talks to it through a **callable API**. |
+| Engine split | **All Rust, all Bevy** (batch 168; was Rust engine + GDScript front end, batch 42). Bevy handles rendering, UI, input, audio and asset loading. The **simulation** is still the **source of truth**: it stores the game data, does the calculations and keeps **query tables** up to date so screens load fast. The UI talks to it through Bevy resources and events (12.3). |
 | Content | **JSON files** that can be edited without code, checked against schemas when the game loads (batch 41). |
 | Time | Pausable real time with hourly ticks and 5 speeds ([09-time-and-turns.md](09-time-and-turns.md)); deterministic seeded simulation; free saving ([detailed/12-setup-and-score.md](detailed/12-setup-and-score.md)). |
 
 ## 12.2 Stack (A)
 
-- **Godot 4, GDScript** for the front end (Logan): scenes, UI, the map, asset loading, input and audio.
-- **Rust** for the engine (Logan), built as a **GDExtension** library with the godot-rust bindings (gdext), so Godot loads it like a native module and GDScript calls it like any other object (Logan, batch 43).
-- **The engine has no Godot types in its core**: a plain Rust crate for the simulation, plus a thin binding crate that exposes the API to Godot. The core runs headless for tests and tools.
+- **Rust and Bevy for everything** (Logan, batch 168): one Cargo workspace, one language. Bevy draws the map and screens, handles input and audio, and runs the simulation schedule.
+- **Pin one Bevy version** in `Cargo.toml` and upgrade only between milestones **(A)**. Bevy changes its API often, so upgrades are planned work.
+- **The simulation crate has no Bevy rendering or UI dependency** **(A)**: a plain, deterministic Rust crate (`sim`) with seeded RNG. It runs inside the game as a Bevy plugin and also runs headless (no window) for tests, replays and soak runs.
+- **UI** **(A)**: Bevy UI (`bevy_ui`) for panels, the top bar and popups; `bevy_egui` for dense tables and the Pdoomberg terminal, where egui is faster to build and easier to read.
+- **Map** **(A)**: the province-ID bitmap loaded as a texture; one shader looks up each pixel's province for borders, hover, selection and map modes (a small per-province color table updated when the map mode or data changes).
+- **Data loading**: the CSV files in `data/` (and any JSON) are read at startup with `serde` and `csv` into Bevy resources **(A)**; a bad file names the file, row and field.
 - **Tests** with `cargo test`, including replay tests for determinism.
-- Content as **JSON** in `data/`, validated against **JSON Schema** files when the engine loads it; a bad file names the field and the line.
-- Saves are written by the engine: compressed snapshots of its tables plus the RNG seeds and positions.
-- Desktop exports for Windows, macOS and Linux (the Rust library is built per platform).
+- Saves are written by the simulation with `serde`: compressed snapshots of its tables plus the RNG seeds and positions.
+- Desktop builds for Windows, macOS and Linux with `cargo build --release` per platform.
 
 ## 12.3 Architecture (A)
 
 ```
 TechnoCapital20FF/
-  engine/                     # Rust workspace
-    core/                     # plain Rust crate: the simulation and the data; no Godot types
+  Cargo.toml                  # Rust workspace, pinned Bevy version
+  crates/
+    sim/                      # plain Rust crate: the simulation and the data; no rendering or UI
       world/                  # tables (the source of truth) and ids
       time/                   # hourly tick loop; daily, weekly, monthly, quarterly, yearly schedulers
       characters/ companies/ ownership/ economy/ technocapital/
       markets/ map/ politics/ ideology/ vices/ software/ media/ news/ events/ ai/ save/
       views/                  # query tables kept up to date for screens
-    godot/                    # GDExtension binding crate: the callable API
-  game/                       # Godot project, GDScript: scenes, UI, map, assets, input
-  data/                       # JSON content and schemas
+    sim_plugin/               # Bevy plugin: runs sim in FixedUpdate, exposes views as resources, turns events into commands
+    game/                     # Bevy app: UI (bevy_ui, bevy_egui), map shader, input, audio, saves menu
+    headless/                 # runner with no window: soak tests, replays, balance runs
+  assets/                     # map bitmaps, shaders, fonts, icons
+  data/                       # CSV and JSON content
 ```
 
 **The engine is the source of truth (Logan).**
-- All game state lives in the engine as **tables** (characters, companies, holdings, business units, products, laws and so on), keyed by ids. GDScript never keeps its own copy of game rules or state; it keeps only what it is showing.
-- The engine runs on its **own thread** and ticks in the background at the chosen speed.
+- All game state lives in the engine as **tables** (characters, companies, holdings, business units, products, laws and so on), keyed by ids. UI systems never keep their own copy of game rules or state; they keep only what they are showing.
+- The simulation runs in Bevy's **`FixedUpdate`** schedule **(A)**: one fixed step is one game hour, and the speed setting changes how many steps run per real second (pause runs none). Heavy batches (weekly light tier, rankings) can run on Bevy's task pool. If ticks ever slow down the frame rate, the sim can move to its own thread with the same boundary.
 - **Query tables (views)**: after each tick the engine updates ready-made tables for screens, for example the Portfolio rows, a company's board and products, a province's or city's influence ranking or the news feed. A screen reads one view instead of computing anything, so it opens instantly (Logan).
 - Views update only when their source rows changed (dirty flags), and heavy views (rankings, leaderboards) update on their own cadence (daily or weekly).
 
-**The callable API (Logan).** GDScript calls the engine through one object exposed by the binding crate **(A)**:
+**The sim to UI boundary (batch 168).** UI systems never touch sim tables directly; they use Bevy resources and events **(A)**:
 
 | Kind | Examples | Notes |
 |---|---|---|
-| **Control** | `new_game(seed)` (one scenario, John Techno), `load(path)`, `save(path)`, `set_speed(n)`, `pause()` | |
-| **Queries** | `get_view("portfolio", owner_id)`, `get_row("company", id)`, `find("characters", filter)` | Return dictionaries and arrays that GDScript can bind to UI; reads come from the last finished tick, so they never block the simulation |
-| **Commands** | `buy_shares(...)`, `found_company(...)`, `answer_event(event_id, option)` | Queued and applied at the start of the next tick; return a command id |
-| **Signals** | `tick_done(date)`, `event_opened(event_id)`, `alert(kind, id)`, `command_result(id, ok, message)` | The engine pushes these to Godot; events and chosen alerts pause the game |
+| **Control** (events) | `NewGame { seed }` (one scenario, John Techno), `Load(path)`, `Save(path)`, `SetSpeed(n)`, `Pause` | Read by the sim plugin before the next step |
+| **Queries** (read-only resources) | the `Views` resource: `views.portfolio(owner_id)`, `views.row::<Company>(id)`, `views.find_characters(filter)` | Typed Rust structs that UI systems read with `Res<Views>`; they hold the last finished tick, so a read never blocks the simulation |
+| **Commands** (events) | `BuyShares {..}`, `FoundCompany {..}`, `AnswerEvent { event_id, option }` | Queued and applied at the start of the next tick; each gets a command id |
+| **Notices** (events from sim) | `TickDone(date)`, `EventOpened(event_id)`, `Alert(kind, id)`, `CommandResult(id, ok, message)` | The sim plugin sends these to UI systems; events and chosen alerts pause the game |
 
 - **Simulation tiers (Logan, batch 41).**
   - **Full**: John Techno, his relatives, board members, people with hooks either way, active rivals and anyone the player is dealing with this month. Hourly actions, daily checks, every event deck.
@@ -67,7 +72,7 @@ TechnoCapital20FF/
 
 Rebuilt around the current design; the build starts only when Logan says so.
 
-1. **Skeleton**: Godot project in GDScript, the Rust engine as a GDExtension, the callable API, the hourly tick loop with speeds and pause, the top bar, save and load.
+1. **Skeleton**: the Rust workspace, the Bevy app and the `sim` plugin, the headless runner, the sim to UI boundary (12.3), the hourly tick loop with speeds and pause, the top bar, save and load.
 2. **Characters**: generation, skills, traits, the player's ambition, health and death (game over for John), relationship tags, personal trusts and accounts.
 3. **Companies**: charters, boards and the management score, ownership and blocs, the two layers of control (owner of record and real controller), ranks, founding paths.
 4. **Economy**: industries and price indices, business units, real estate pools, the Portfolio screen.
@@ -86,7 +91,7 @@ Rebuilt around the current design; the build starts only when Logan says so.
 
 ## 12.6 Assumptions and open items
 
-1. Godot 4 as the version (12.2). The GDExtension bridge is confirmed (batch 43).
-2. The engine thread, query views, the API shape and the command queue (12.3).
+1. Bevy for the whole game is confirmed (batch 168). Open: the pinned Bevy version, `bevy_ui` plus `bevy_egui` for UI, and the map shader approach (12.2). Risk: Bevy UI is young for a dense CK3-style UI and the API changes often; mitigation: pin the version and use egui for dense tables.
+2. The `FixedUpdate` tick, query views, the resource and event boundary and the command queue (12.3).
 3. Tier membership rules (12.3).
 4. The roadmap order and success criteria (12.4, 12.5).

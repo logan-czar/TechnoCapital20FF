@@ -1,6 +1,6 @@
 # TechnoCapital20FF MVP spec: the map, the business system and a read-only economic sim
 
-_Status: v1.3 (2026-10-20). The MVP spec for the map, the business system, a read-only economic sim and a lite AI that only runs its own company, current through Logan's batch 166: random and fixed startup events start new companies out of the fringe pool, each with new full and partial characters, and any private company that is big enough is put to a board vote to list on its zone exchange, where members' traits sway their votes (5.19, 5.20); full characters never age or die in the MVP (3.7.2). Every rule below is the latest ruling, and the batch-by-batch history is in the [Change log](#change-log) at the end._
+_Status: v1.4 (2026-10-20). Batch 168 (Logan): "I want to do the entire thing in Bevy": the whole game is Rust and Bevy; section 9 is now the sim to UI boundary inside Bevy, and M0, M7, M8 and M10 are rewritten. The MVP spec for the map, the business system, a read-only economic sim and a lite AI that only runs its own company, current through Logan's batch 166: random and fixed startup events start new companies out of the fringe pool, each with new full and partial characters, and any private company that is big enough is put to a board vote to list on its zone exchange, where members' traits sway their votes (5.19, 5.20); full characters never age or die in the MVP (3.7.2). Every rule below is the latest ruling, and the batch-by-batch history is in the [Change log](#change-log) at the end._
 
 **Sources.** Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults, on [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11.
 
@@ -52,7 +52,7 @@ Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), w
 |---|---|---|
 | id | slug | e.g. oil, semiconductors, fast_food (per industry) |
 | name | text | Per industry (10.3) |
-| sector | text | Per industry: Tech, Finance, Energy, Industry, Consumer, Health, Services (10.3). A label for screens; it also picks the Startup archetype (6.1) and the Tech CTO weight (5.7) |
+| sector | text | Per industry: Tech, Finance, Energy, Industry, Consumer, Health, Services (10.3). A label for screens; it also picks the Startup archetype (6.1) |
 | valuation_group | text | Default (one multiple for all) |
 | world_size_2020_usd_bn | number | Per industry (10.3 world size) |
 | trend_growth | fraction | Per industry (10.3). The **long-term growth rate** a year before the AI boom: quarterly growth draws revert to it (5.1, batch 150). AI labs 0.05, really small with low growth until the 2030 boom (Logan, batch 151; was 0.30); the boom moves LT by the ai-boom.csv schedule (5.1.1) |
@@ -121,9 +121,9 @@ Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), w
 
 ---
 
-## 3. Entities and state (Rust-side)
+## 3. Entities and state (the Rust `sim` crate)
 
-All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB is f64; counts are u32. "Static" means loaded and never changed in the MVP.
+All state lives in the `sim` crate's tables (plain Rust, no Bevy rendering or UI types; batch 168), keyed by id (12.3). Money is f64 USD; TB is f64; counts are u32. "Static" means loaded and never changed in the MVP.
 
 ### 3.1 World
 
@@ -231,12 +231,12 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | Labor unit | Seat **(A for order)** | Skill used (10.5.1) |
 |---|---|---|
 | 1 | CEO | Average of Finance, Operations, Persuasion |
-| 2 | COO | Operations |
-| 3 | CFO | Finance |
+| 2 | CFO | Finance |
+| 3 | CIO | Intrigue |
 | 4 | CMO | Persuasion |
-| 5 | CTO | Tech |
+| 5 | COO | Operations |
 
-A seat exists only when the company has that many labor units (10.0.11.3). Each seat holds a **simple character** (3.7.1; Logan, batch 145); in a company born in play it may hold one of its founders, a full character (3.7.2, 5.19.4). Chair, General Counsel, CIO and the rest are empty and count skill 3 (10.5.1). Seats persist; the MVP has no firing or elections. The only board vote in the MVP is the IPO vote (5.20.1).
+A seat exists only when the company has that many labor units (10.0.11.3). Each seat holds a **simple character** (3.7.1; Logan, batch 145); in a company born in play it may hold one of its founders, a full character (3.7.2, 5.19.4). The five seats are CEO, CFO, CIO, CMO and COO (Logan, batch 144; no CTO): CFO finance, CIO intel and schemes, CMO growth rate and investor relations, COO operations and plan lock. Chair, General Counsel, Chief Strategy Officer and the rest are empty and count skill 3 (10.5.1). Seats persist; the MVP has no firing or elections. The only board vote in the MVP is the IPO vote (5.20.1).
 
 ### 3.7.1 Simple characters (Logan, batch 145)
 
@@ -270,8 +270,8 @@ The seat skill is the skill the seat uses (3.7); the CEO draws all three of Fina
 | COO | Diligent, Ruthless, Cautious, Compassionate, Lazy |
 | CFO | Greedy, Cautious, Diligent, Honest, Deceitful |
 | CMO | Gregarious, Narcissist, Brave, Hedonist |
-| CTO | Visionary, Diligent, Conservative, Shy |
-| Chair, General Counsel, CIO, Chief Strategy Officer (post-MVP) | Paranoid, Ruthless, Honest, Ambitious, Cautious |
+| CIO | Paranoid, Deceitful, Ruthless, Cautious |
+| Chair, General Counsel, Chief Strategy Officer (post-MVP) | Paranoid, Ruthless, Honest, Ambitious, Cautious |
 
 Traits apply only their skill effects (1.1.2) and the management score shifts (10.5.1: Diligent +2, Lazy -2, Ambitious +1, Greedy -1 as CFO). They never change the plan: the Lite AI's trait nudges (section 6) read only the named controller's traits, and never a startup's founders (5.19.5). The one other use is the IPO vote, where each member's traits move their yes chance (5.20.1; Logan, batch 166). Expected management score with every labor seat filled and the Chair empty (5.7): about 33 small, 47 mid, 60 large.
 
@@ -325,7 +325,7 @@ They have no ambitions (player only, 1-corporate-core, Ambitions) and no ideolog
 
 ## 4. Tick order
 
-One tick is one hour (9.1). Jobs at 00:00 run in this order: hourly, daily, monthly (on the 1st), quarterly (on its dates), yearly (1 January). Each job reads the state left by the one before. The engine refreshes query tables after each tick (section 9).
+One tick is one hour (9.1). Jobs at 00:00 run in this order: hourly, daily, monthly (on the 1st), quarterly (on its dates), yearly (1 January). Each job reads the state left by the one before. The `sim` crate runs one tick per step of Bevy's `FixedUpdate` schedule (or per loop of the headless runner) and refreshes query tables after each tick (section 9).
 
 ### 4.1 Hourly (every tick)
 
@@ -662,7 +662,7 @@ Check (score 50): at the norm, -6 a year; at double the norm, +4 net; no R&D, -1
 
 ### 5.7 Management score (10.5.1)
 
-`score = min(100, Σ weight × skill ÷ 20 × 100)` with weights CEO 30%, COO 20%, CFO 20%, CTO 10% (20% in Tech, taking 10% from the CEO), Chair 10%, other seats 10% (the CMO in the MVP). Empty seats count skill 3. A board of skill 11 with an empty Chair scores about 51. Confidence factor `= 0.8 + score ÷ 250` (10.0.8, 10.5.2).
+`score = min(100, Σ weight × skill ÷ 20 × 100)` with weights CEO 30%, COO 20%, CFO 20%, CIO 10%, Chair 10%, other seats 10% (the CMO in the MVP). Empty seats count skill 3. A board of skill 11 with an empty Chair scores about 51. Confidence factor `= 0.8 + score ÷ 250` (10.0.8, 10.5.2).
 
 ### 5.8 Productive compute bonus (10.0.11.2, batch 142)
 
@@ -1066,28 +1066,29 @@ All built from 20-ui. Every action button is hidden or shows a lock icon with "R
 
 ---
 
-## 9. Engine API surface (GDExtension)
+## 9. Sim to UI boundary (Bevy)
 
-One engine object exposed through gdext (12.3). Queries read the last finished tick and never block; they return Dictionaries and Arrays (map layers return PackedArrays indexed by province ordinal).
+Batch 168: everything is one Rust program in Bevy (12.3). The `sim` crate runs as a Bevy plugin in `FixedUpdate` (one step is one hour) and also in a headless runner with no window **(A)**. UI systems never touch sim tables. They send **control events** (9.1), read the **`SimViews` resource** (9.2), and listen for **notice events** (9.3). Queries read the last finished tick and never block; they return typed Rust structs and `Vec`s (map layers return a `Vec<f32>` or `Vec<u32>` indexed by province ordinal).
 
-### 9.1 Control
+### 9.1 Control (Bevy events from UI to sim)
 
-| Call | Returns |
+| Event | Effect |
 |---|---|
-| `new_game(seed: int)` | ok; loads data, builds the start state (section 7) |
-| `set_speed(n: int)` (0 to 5), `pause()`, `resume()` | ok |
-| `skip_to(kind: String)` (next_release, next_lock, next_recap, month_end) | Runs at max speed until that tick, then pauses |
-| `get_clock()` | date, hour, speed, quarter_phase, days_to_next_phase |
-| `save(path)`, `load(path)` | ok |
+| `NewGame { seed: u64 }` | Loads data, builds the start state (section 7) |
+| `SetSpeed(n)` (0 to 5), `Pause`, `Resume` | Changes how many `FixedUpdate` steps run per second; pause runs none |
+| `SkipTo(kind)` (NextRelease, NextLock, NextRecap, MonthEnd) | Runs at max speed until that tick, then pauses |
+| `Save(path)`, `Load(path)` | Writes or reads the sim state with `serde` (12.2) |
 
-### 9.2 Queries
+The clock is a query: `clock()` gives date, hour, speed, quarter_phase, days_to_next_phase.
 
-| Call | Returns |
+### 9.2 Queries (methods on the read-only `SimViews` resource)
+
+| Query | Returns |
 |---|---|
 | `list_countries(filter)` / `get_country(iso3)` | Rows / detail with financial zone, tax, sovereign rating, sovereign spread, HQ count (economy settings are on the zone, batch 155) |
 | `get_cycle()` | Global phase, g_t, quarters left, Z, and each zone with its intensity, lag, contagion and current effect (batches 150 and 152) and its economy settings: base and effective credit spread, investor confidence (batches 155 and 157); the AI stage, boom year and boom date (batch 151; the rolled pop date only in Omniscient) |
 | `get_province(id)` | Province card: tracks, tags, Metro, key city, HQs, units with assets there |
-| `get_map_layer(mode, param)` | PackedFloat32Array or PackedInt32Array per province, plus legend |
+| `get_map_layer(mode, param)` | `Vec<f32>` or `Vec<u32>` per province ordinal, plus legend; the map system writes it into the shader's per-province lookup texture (M8) |
 | `list_key_cities()` / `list_metros()` | Rows with province ids |
 | `list_exchanges()` / `get_exchange(code)` | The 26 zone exchanges (batches 152 and 154): code, name, zone number and id, hub city and hub province, headline index name and level, listed company count / detail adding the listed companies (those whose HQ country is in the zone) and the index constituents |
 | `list_companies(filter)` | filter: industry, country, superregion, zone, exchange, public, archetype, sort, limit, offset. Rows: id, name, ticker, industry, hq, exchange (listed companies, batch 152), revenue TTM, NI TTM, price, change, value, rating |
@@ -1108,7 +1109,7 @@ One engine object exposed through gdext (12.3). Queries read the last finished t
 | `list_characters(filter)` / `get_character(id)` | Full characters, the 296 and those made in play: name, age, skills, traits, home province, company and seat (3.7.2) |
 | `list_births(since)` / `list_listings(since)` | Births: id, name, industry, HQ, date, size, event; listings: id, ticker, exchange, date, ipo_price, money raised (5.19, 5.20). list_companies also filters by origin (start, born) and listed |
 
-### 9.3 Signals
+### 9.3 Notices (Bevy events from sim to UI)
 
 `tick_done(datetime)`, `day_done(date)`, `month_done(month)`, `earnings_released(quarter)`, `plan_locked(quarter)`, `startup_event(id)`, `company_born(id)`, `ipo_vote(id, passed)`, `company_listed(id)`, `alert(kind, payload)`, `paused(reason)`.
 
@@ -1130,17 +1131,17 @@ Views carry dirty flags (12.3); only changed rows are rebuilt.
 
 | # | Milestone | Done when |
 |---|---|---|
-| M0 | Data load and validation: the CSVs, industries.csv, country-economy.csv, financial-zones.csv, ai-boom.csv, key-cities.csv, company-start.csv, startup-events.csv (the 5.19.2 fixed events, to build, batch 165); id checks | Loader rejects a bad row with file and line; headless |
+| M0 | Rust workspace with a pinned Bevy version, the `sim` crate and a headless runner (12.3); data load and validation with `serde` and `csv` into sim tables: the CSVs, industries.csv, country-economy.csv, financial-zones.csv, ai-boom.csv, key-cities.csv, company-start.csv, startup-events.csv (the 5.19.2 fixed events, to build, batch 165); id checks | Loader rejects a bad row with file and line; runs headless with no Bevy window |
 | M1 | Clock and scheduler: hourly ticks, daily, monthly, quarterly, yearly jobs; speeds and pause; seeded RNG streams | 10 years tick headless; job order matches section 4 |
 | M2 | Economy core: demand (global cycle, financial zones, quarterly growth draws, phase labels), fringe, supply, S, M, revenue, expenses, productivity, growth | At load every industry has S 1.00 and named revenue matches companies.csv within 0.5%; the engine's 40-quarter seeded growth run matches validate.py's growth check (5.1) |
 | M3 | Operations and data: labor, seats, stations, PC bonus, data create, convert, decay, free R&D | Arrowhead check (7.1) passes |
 | M4 | Books: ledger, statements, tax, credit line, rating, dividends, asset decay, distress, bankruptcy and removal | Balance sheet balances every month for every company still in the game |
 | M5 | Valuation and price: fair value, hourly price, earnings jump, reaction week | Opening price at V, $5 to $200 by size (company-start.csv); prices track V within ±30% over 10 years |
 | M6 | Lite AI and the quarter loop: plan lock, consensus, projections, recap, news wire; startup events, births and listings (5.19, 5.20) | A full year runs four releases, four locks, four recaps; the fixed events F1 to F9 fire on their dates; a birth takes exactly its assets from the fringe (supply unchanged before PC bonuses) and a listing keeps assets = liabilities + equity; the same seed gives the same IPO votes, member by member |
-| M7 | GDExtension API and views; Godot shell: top bar, time controls, alerts | Godot runs the sim at all speeds; screens read views only |
-| M8 | Map: geometry pipeline (gap G1), zoom, map modes, province card | All 3,255 provinces clickable |
-| M9 | Screens: Company, Industries, Pdoomberg, Recap, News | Every section 8 screen opens in under 100 ms |
-| M10 | Soak and balance: 30-year headless run, determinism replay | 30 years in under 2 minutes headless; same seed gives the same hashes; balance targets below; the AI boom and the pop fire on their dates and, with noise off, AI labs demand matches validate.py's boom run (5.1.1, batch 151) |
+| M7 | Sim plugin and views (section 9); Bevy shell: top bar, time controls, alerts (Bevy UI) | The Bevy app runs the sim in `FixedUpdate` at all speeds; screens read `SimViews` only and send events |
+| M8 | Map: geometry pipeline (gap G1), the province-ID bitmap as a Bevy texture with a lookup shader for borders, hover and map modes, zoom, province card | All 3,255 provinces clickable |
+| M9 | Screens: Company, Industries, Pdoomberg, Recap, News (Bevy UI; `bevy_egui` for dense tables and the Pdoomberg terminal **(A)**) | Every section 8 screen opens in under 100 ms |
+| M10 | Soak and balance: 30-year run in the headless runner (the `sim` crate without Bevy rendering), determinism replay | 30 years in under 2 minutes headless; same seed gives the same hashes; balance targets below; the AI boom and the pop fire on their dates and, with noise off, AI labs demand matches validate.py's boom run (5.1.1, batch 151) |
 
 **Balance targets after 10 years (T):** at least 85% of the 651 companies neither bankrupt nor removed; industry revenue within ±30% of the trend path; median productivity 90 to 110; no industry stuck at an M clamp for more than 8 quarters; 30% to 60% of releases are beats; the 2020 to 2029 run before the boom (5.1.1): each industry's 10-year average demand growth within ±3 pp of its long-term rate in 90% of seeds, and 10% to 25% of industry-quarters labeled Boom and 10% to 20% Bust (batch 150).
 
@@ -1207,6 +1208,7 @@ Logan: "we will rework them one by one once companies are known working." The MV
 
 Newest first. Section numbers say where each change lives now.
 
+- **v1.4 (2026-10-20), batch 168 (Logan).** "I want to do the entire thing in Bevy." The whole game is built in Rust with Bevy: rendering, UI, input and the simulation. Godot, GDScript and the GDExtension bridge are gone. Section 9 is now the sim to UI boundary (control and command events in, a read-only views resource and notice events out; same query list); sections 3 and 4 name the `sim` crate; milestones M0, M7, M8 and M10 are rewritten (a headless runner for the soak).
 - **v1.3 (2026-10-20), batch 166 (Logan: 1, 2a).** Every IPO is a board vote: once a company passes the 5.20 tests it is proposed at the plan lock, and again once a year after a failed vote; each seated member votes yes at 15% plus market terms plus trait modifiers (Ambitious, Greedy +15; Brave, Visionary, Narcissist +10; Paranoid −20; Cautious −15; Conservative, Content, Shy −10); a named or state controller votes too and wins ties; at most 3 listings a quarter. The tenth-chance damper on starting private companies is gone. A narrow exception to batch 165 3a: traits sway board votes, not the AI plan. Wire headlines for passed and failed votes. Full characters never age or die in the MVP; aging and death are post-MVP. Sanity check: about 4 starting private companies list a year in the early 2020s, about 19 by 2024 (1, 3.5, 3.7, 3.7.1, 3.7.2, 4.4, 5.18, 5.19.5, 5.20, 5.20.1, 8, 9.3, 10, C32, C33, C35, G12).
 - **v1.2 (2026-10-20), batch 165 (Logan: 1, 2b, 3a).** Random and fixed startup events replace the growth formula for births: about 2 random events a quarter whose industry favors hot, big-fringe industries, plus 9 fixed events tied to the 7.7 timeline (the chatbot launch brings 5 AI labs); each startup brings 1 to 5 full and 1 to 5 partial (simple) characters, with minimal full-character generation; starting private companies can list too, at a tenth of the chance; founders' traits do not shape AI choices; new population check (1, 3.1, 3.4, 3.5, 3.7, 3.7.1, 3.7.2, 4.4, 5.18, 5.19, 5.20, 6, 8, 9, 10, C29, C31 to C34, G12).
 - **v1.1 (2026-10-20), batch 163 Q6 (Logan, option a).** Company births: hot industries spin small companies out of the fringe pool at each plan lock, about 9 a year normally and a wave of AI labs in the boom; companies born in play list on their zone exchange once past $250M of revenue, with a 20% share issue; a removed company's assets return to the fringe (3.4, 3.5, 4.4, 5.12, 5.18, 5.19, 5.20, 8, 9, 10, C29 to C31, G12).

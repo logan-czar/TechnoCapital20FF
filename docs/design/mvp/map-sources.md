@@ -1,5 +1,7 @@
 # Map sources: real-world borders for TechnoCapital20FF
 
+_Batch 168 (Logan): the whole game is built in Rust with Bevy, not Godot; Godot-based tools below are now reference only._
+
 Researched 2026-10-20. Items marked (uncertain) were not confirmed from an official page.
 
 ## What we need
@@ -21,11 +23,11 @@ None of the open projects ships a real-world province map we can take as-is for 
 
 | Option | What it is | License | Fit for us |
 |---|---|---|---|
-| OpenVic (github.com/OpenVicProject/OpenVic) | Victoria 2 reimplementation in Godot 4.7.2 plus a C++ GDExtension | Code is MIT (LICENSE.md). Its map is the Vic2 provinces.bmp from a legitimate Vic2 copy. The project says the free default mode will have its own data, but no own world map is shipped yet (uncertain). | Learn from it: the Godot rendering of the provinces.bmp lookup texture and the map shader. Do not reuse the map. |
+| OpenVic (github.com/OpenVicProject/OpenVic) | Victoria 2 reimplementation in Godot 4.7.2 plus a C++ GDExtension | Code is MIT (LICENSE.md). Its map is the Vic2 provinces.bmp from a legitimate Vic2 copy. The project says the free default mode will have its own data, but no own world map is shipped yet (uncertain). | Learn from it: its provinces.bmp lookup texture and map shader, to port to a Bevy shader (WGSL). Do not reuse the map or code. |
 | Open Doctrines (github.com/Pr1nted/Open-Doctrines) | Source-available grand strategy game with 1,641 provinces | OpenDoctrines Non-Commercial License | Not usable in a commercial game. Its NOTICE.md and provenance file may show its sources. |
 | global-province-map-template (github.com/GeorgeQLe/global-province-map-template) | `gpm` CLI that builds strategy-game provinces from open geodata (Natural Earth, geoBoundaries, GHSL, WorldPop) and exports adjacency and topology QA | MIT | Closest match to our pipeline. It is immature: 0 stars, and its own 1444 candidate fails preflight. Read it for design ideas; do not depend on it. Its README also avoids OSM (ODbL) and GADM. |
 | OpenGS Map Tool (github.com/Thomas-Holtvedt/opengs-maptool) | Python tool. Takes land, boundary and density images and outputs a Paradox-style province bitmap and CSV through density-weighted Voronoi seeds | MIT | Good for the Voronoi split step if we work in raster. A vector pipeline gives us more control. |
-| Province Map Builder, Map Province Creator | Godot editor add-ons that Voronoi-subdivide an image into nested regions | Map Province Creator is MIT. Province Map Builder is open-source on GitLab (license uncertain). | Fantasy-style subdivision, not real borders. Low fit. |
+| Province Map Builder, Map Province Creator | Godot editor add-ons that Voronoi-subdivide an image into nested regions | Map Province Creator is MIT. Province Map Builder is open-source on GitLab (license uncertain). | Fantasy-style subdivision, not real borders. Low fit (and Godot-only; the game is in Bevy, batch 168). |
 | Natural Earth admin 0 and admin 1 (10m, v5.1.1) | More than 4,500 admin-1 units, about 14 MB shapefile | Public domain (naturalearthdata.com terms) | Best base for countries and regions. Gaps: microstates, some disputed areas, and the admin-1 theme is labelled beta. Three attribute columns came from GADM; drop them if worried. |
 | geoBoundaries gbOpen (ADM0 to ADM2+, v6.0.0; CGAZ global composites) | Per-country boundaries from many sources | Per-boundary license in metadata (`boundaryLicense`). Most are CC BY 4.0, but some gbOpen files are ODbL or CC BY-SA. gbAuthoritative is non-commercial. | Best source for admin-2. Filter out ODbL and SA countries and keep a credits file. CGAZ disputed areas follow US State Department lines. Size of the CGAZ ADM2 global file is not confirmed (likely hundreds of MB, uncertain). |
 | GADM 4.x | Admin boundaries down to levels 3 to 5 | No redistribution and no commercial use without prior consent | Do not use. |
@@ -51,9 +53,9 @@ None of the open projects ships a real-world province map we can take as-is for 
 5. Topology and simplification. Run mapshaper (MPL 2.0) to simplify with shared arcs, so neighbors stay gap-free, for example `mapshaper provinces.geojson -simplify 5% keep-shapes -clean -o`. Use GDAL/ogr2ogr for format conversion and reprojection, for example `ogr2ogr -f GeoJSON -t_srs EPSG:4326`. Pick the game projection here; Robinson or Miller fits an EU4-like look.
 6. Export.
    - (a) `provinces.geojson` with a `province_id` property, as the canonical vector source.
-   - (b) A province-ID color bitmap, the classic Paradox method: rasterize with `gdal_rasterize`, or in Python with rasterio. Give each province a unique RGB and write a CSV from color to ID. Use 8192x4096 or larger so small metro provinces get enough pixels (uncertain; test Singapore and the London splits). In Godot, one shader looks up the ID texture for borders, hover and map modes. This is how OpenVic renders, so its shader is a good reference.
+   - (b) A province-ID color bitmap, the classic Paradox method: rasterize with `gdal_rasterize`, or in Python with rasterio. Give each province a unique RGB and write a CSV from color to ID. Use 8192x4096 or larger so small metro provinces get enough pixels (uncertain; test Singapore and the London splits). In Bevy, one shader (WGSL) looks up the ID texture for borders, hover and map modes. This is how OpenVic renders, so its shader is a good reference.
    - (c) Optional: triangulated meshes per province (mapbox_earcut or shapely triangulation) for labels and click polygons. The bitmap is simpler and scales better to 3,255 provinces.
-7. Derived data. Compute an adjacency list from shared borders (shapely `touches`, or neighbor pixels in the bitmap), area and centroid, and a coastal flag. Cross-check the coastal flag against the CSV `coastal` column. Feed these to the Rust engine.
+7. Derived data. Compute an adjacency list from shared borders (shapely `touches`, or neighbor pixels in the bitmap), area and centroid, and a coastal flag. Cross-check the coastal flag against the CSV `coastal` column. Feed these to the Rust `sim` crate.
 8. QA. Every CSV province has exactly one shape, there are no gaps or overlaps inside a region, and each province's island parts are allowed and flagged.
 
 ## Risks

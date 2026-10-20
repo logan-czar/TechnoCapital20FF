@@ -611,9 +611,9 @@ There is no cyclical, random management rating as in Wall Street Raider (Logan).
 | CEO (the head) | Average of Finance, Operations and Persuasion | 30% |
 | COO | Operations | 20% |
 | CFO | Finance | 20% |
-| CTO | Tech | 10% (20% in Tech industries, taking 10% from the CEO) |
+| CIO | Intrigue | 10% |
 | Chair | Persuasion | 10% |
-| Other seats (General Counsel, CIO, CMO, Chief Strategy Officer, independents) | Their seat's skill, averaged | 10% |
+| Other seats (General Counsel, CMO, Chief Strategy Officer, independents) | Their seat's skill, averaged | 10% |
 
 - Score = `Σ weight × skill ÷ 20 × 100`, capped at 100. A board of skill-10 characters scores 50; a board of skill-20 characters scores 100.
 - An empty position counts as skill 3.

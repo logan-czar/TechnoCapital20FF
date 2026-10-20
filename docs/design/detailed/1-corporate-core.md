@@ -485,7 +485,7 @@ A company can found a vassal directly (Found Subsidiary action, CEO's time). It 
 
 **The startup chain (A).** Founding opens a chain that runs for 6 to 18 months: Demo Day, First Big Customer, The Clone, Payroll Friday, Viral Moment, Regulator Letter and, at the end, Product-Market Fit (1.12). Phase names vary by industry (a mine's demo is a survey, its first customer an offtake deal). The chain ends in **fit** when the unit's revenue has grown three quarters running, giving a growth boost and investor confidence, or in **failure** (below). A **pivot** event moves the unit to another industry, keeping 50% of its business assets, at a -10 investor push.
 
-**Team.** Generic staff are part of the unit's expenses; key hires (CTO, Head of Sales, COO, first board members) are characters who can be poached, scheme and sit on the board. Hire chance = 30% + 1% per 1% of salary above market + equity offered, +15% if the hire is a Friend of the founder. A funding round may require an option pool (5% to 15%) that dilutes the founders first; key hires ask 0.5% to 5%, vesting over 4 years with a 1-year cliff, and leavers keep vested shares as small holders. Crunch, layoffs and missed payroll fire staff events that can lower the unit's productivity and make key hires start looking.
+**Team.** Generic staff are part of the unit's expenses; key hires (CFO, Head of Sales, COO, first board members) are characters who can be poached, scheme and sit on the board. Hire chance = 30% + 1% per 1% of salary above market + equity offered, +15% if the hire is a Friend of the founder. A funding round may require an option pool (5% to 15%) that dilutes the founders first; key hires ask 0.5% to 5%, vesting over 4 years with a 1-year cliff, and leavers keep vested shares as small holders. Crunch, layoffs and missed payroll fire staff events that can lower the unit's productivity and make key hires start looking.
 
 **Co-founders.** The equity split is set at founding; an equal split keeps both happy but gives neither a majority alone. Co-founder tension rises with disagreements their traits care about and falls with success and shared credit. At high tension a breakup chain offers a buyout, a board vote to push them out, or splitting the company.
 
@@ -559,7 +559,7 @@ Current loyalty moves 5 points per week toward the target.
 
 ## 1.8 The board (council)
 
-**Management score (Logan, 2026-10-17).** The characters in a company's board positions set its **management score** (0 to 100), which drives its productivity and investor confidence. Positions include a **CTO** (Tech). Full rules: [10-industry-economy.md](10-industry-economy.md) 10.5.
+**Management score (Logan, 2026-10-17).** The characters in a company's board positions set its **management score** (0 to 100), which drives its productivity and investor confidence. The five labor seats are the CEO, CFO, CIO, CMO and COO (1.8.2; batch 144); there is no CTO. Full rules: [10-industry-economy.md](10-industry-economy.md) 10.5.
 
 ### 1.8.1 Seats and elections
 
@@ -577,7 +577,7 @@ Current loyalty moves 5 points per week toward the target.
 
 ### 1.8.2 Seat tasks
 
-**Seats:** Chair, CEO, CFO, COO, CTO, CMO, General Counsel, CIO, Chief Strategy Officer and Independent Directors. Batch 144 (Logan): the CIO (Chief Intelligence Officer) is the renamed Head of Security, and the CMO (Chief Marketing Officer, Persuasion) is a new seat that absorbs the Head of IR or PR.
+**Seats:** the five labor seats (1.8.1) are the **CEO, CFO, CIO, CMO and COO**: CFO finance; CIO intel and schemes; CMO growth rate and investor relations; COO operations and plan lock. Charter seats beyond 5 are the Chair, General Counsel, Chief Strategy Officer and Independent Directors. There is no CTO seat. Batch 144 (Logan): the CIO (Chief Intelligence Officer) is the renamed Head of Security, and the CMO (Chief Marketing Officer, Persuasion) is a new seat that absorbs the Head of IR or PR.
 
 Each seat holder picks one task. Effect scales with the relevant skill.
 
@@ -765,7 +765,7 @@ Removed (batch 116): no dynasty, houses, succession, heirs, wills, guardians, ma
 | Demo Day | Startup chain, early (1.6.9) | Pitch big (Persuasion; investor confidence and Fame up or down), pitch safe, skip |
 | The Clone | An incumbent chooses copy | Outbuild them, sue, seek a buyer |
 | Payroll Friday | Cash covers under 1 month of losses | Personal loan, skip your salary, lay off 20% (unit expenses down, productivity down), ask your backer |
-| The Poacher | A rival offers your CTO double | Match, counter with equity, let them go |
+| The Poacher | A rival offers your CFO double | Match, counter with equity, let them go |
 | Co-Founder Fight | Co-founder tension high | Talk it out, buy them out, board vote |
 | First Big Customer | Startup chain (1.6.9) | Discount to close (unit business assets up, margin down), hold price, custom work (unit growth slows) |
 | Viral Moment | Startup chain, random | Ride it (marketing spend: Fame and unit growth up), stay calm |

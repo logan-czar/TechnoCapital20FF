@@ -131,7 +131,7 @@ Logan: "Each board member is graded based on how they rolled over the course of 
 Each member's grade comes from **every roll they made for the company** in the quarter just ended: event options (13.2.1), guidance rolls (3.1.0), scheme success rolls they led (1.1.8), and their pre-quarter-end week events (21.6). Seat tasks are not rolled (1.8.2), so they count only through the seat result below **(A)**.
 
 - **Roll score (T).** A critical success (rolled 15+ points under the needed chance) counts +2, a success +1, a failure -1, a critical failure (15+ points over) -2.
-- **Seat result (A, T).** Up to ±10 for how their area did: CFO by earnings against guidance, CMO by revenue against the growth plan, CTO by productivity change, CIO by schemes finished and not discovered, others by the company's surprise s.
+- **Seat result (A, T).** Up to ±10 for how their area did: CFO by earnings against guidance, CMO by revenue against the growth plan, COO by productivity change, CIO by schemes finished and not discovered, others by the company's surprise s.
 - **Grade** = `50 + 25 × average roll score + seat result`, clamped 0 to 100 **(T)**. A member with no rolls gets 50 plus their seat result.
 
 | Letter | Grade **(T)** |
@@ -173,16 +173,16 @@ Each seat makes one suggestion for the quarter's plan. The **plan** has five ite
 | Plan item | Suggested by | What it sets |
 |---|---|---|
 | **Schemes** | **CIO** (Chief Intelligence Officer, the renamed Head of Security, batch 144) | Up to 2 company schemes for the quarter, with targets and labor assigned (1.1.8, 10.0.11.3) **(T)** |
-| **Techno-Capital and software** | **CTO** | Compute to buy, lease or drop; software upgrades and licences; station mix and research labor (6, 14, 15, 10.0.11) |
+| **Techno-Capital and software** | **COO** (there is no CTO seat, batch 144) | Compute to buy, lease or drop; software upgrades and licences; station mix and research labor (6, 14, 15, 10.0.11) |
 | **Growth rate** | **CMO** (Chief Marketing Officer, a new seat, batch 144) | Each unit's growth plan (10.0.2), from the industry's projected demand (10.0.3) |
 | **R&D %** | **Chief Strategy Officer**, else the COO **(A)** | Each unit's R&D plan as a % of revenue (10.0.4) |
 | **Financing** | **CFO** (Logan, batch 144) | Bonds, credit line draws and repayments, investing idle cash in holdings or bonds (10.0.9, 3.6); the dividend proposal (10.5.5) |
 
 - **Seat names (Logan, batch 144).** **CIO** is the **Chief Intelligence Officer**, the existing Head of Security seat renamed (the company's Spymaster, 1.1.8.2, 1.8.2); it is not the personal office's Chief Investment Officer (3.18.3). **CMO** (Chief Marketing Officer, Persuasion) is a new seat (1.8.2) that absorbs the "Head of IR or PR" of the guidance rolls (3.1.0). The finance suggestions (bonds, loans, investing idle cash) come from the **CFO**.
-- **Logan's words.** "The CIO will suggest schemes for you to run. The CTO can tell you things you could do with your technocapital and software. The CMO will suggest a growth rate based on the industry projected growth in demand. Other board members will suggest things to you like the R&D growth percentage."
+- **Logan's words.** "The CIO will suggest schemes for you to run. The CTO can tell you things you could do with your technocapital and software. The CMO will suggest a growth rate based on the industry projected growth in demand. Other board members will suggest things to you like the R&D growth percentage." The board is the CEO, CFO, CIO, CMO and COO (batch 144), so the CTO's item goes to the COO.
 - **Small boards (A).** Batch 142 caps the board at the CEO plus 4 seats, so most companies lack some of these seats. An item whose seat is empty is suggested by the **CEO**, or set by the CPU with no roll (as in 8.2.3) if the CEO delegates.
 - **Other seats.** Chair, General Counsel and Independent Directors add an **advisory note** (a takeover defense, a legal risk, a holder's mood) but own no item **(A)**.
-- **How a suggestion is made.** AI members suggest by skill and traits (10.5.3): a Greedy CFO hoards cash, an Ambitious CMO overshoots demand, a Cautious CTO leases. A skill roll sets how close the suggestion is to the engine's best plan **(A)**; that roll counts toward next quarter's grade.
+- **How a suggestion is made.** AI members suggest by skill and traits (10.5.3): a Greedy CFO hoards cash, an Ambitious CMO overshoots demand, a Cautious COO leases. A skill roll sets how close the suggestion is to the engine's best plan **(A)**; that roll counts toward next quarter's grade.
 
 ### 21.4.5 Edit rights by grade
 
@@ -283,8 +283,8 @@ Logan: "Each board member has one of these events for each day of the 7 days thi
 | CFO | Money | *Line Up the Banks* (Finance) | Credit line +10% and bond spread -0.25% next quarter | Rating watch |
 | CMO | Hype | *Product Teaser* (Persuasion) | Buzz +15, price drift +2% | Buzz -10 |
 | CMO | Boost | *Influencer Blitz* (Persuasion, costs cash, 16) | Investor confidence +1 for 2 quarters | The campaign flops (16 event) |
-| CTO | Hype | *Demo Day* (Tech) | Price drift +4% in Tech industries, +1% elsewhere | Servers crash: Buzz -15 |
-| CTO | Boost | *Roadmap Reveal* (Tech) | R&D effect ×1.05 for 3 quarters | None |
+| COO | Hype | *Demo Day* (Tech) | Price drift +4% in Tech industries, +1% elsewhere | Servers crash: Buzz -15 |
+| COO | Boost | *Roadmap Reveal* (Tech) | R&D effect ×1.05 for 3 quarters | None |
 | CIO | Soften | *Plant a Story* (Intrigue, needs an outlet, 16) | Negative jump -25% | Discovered: Heat +10 |
 | CIO | Hype | *Leak a Rival's Weak Numbers* (Intrigue) | Rival's price -3% and yours +1% | A discovered scheme (1.1.8) |
 | Chair | Money | *Call the Big Holders* (Persuasion) | Offering discount halved next quarter; bloc loyalty +5 | A holder joins a faction (1.9.1) |

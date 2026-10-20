@@ -123,7 +123,7 @@ A requirement also names:
 
 - The **Techno-Capital screen** shows each pool by location: total, **allocated** (by task, including own production), **leased out** (contract), **on spot** (offered, and how much is in use), **idle**, **broken or offline**, and **suspected compromised** (unexplained use, 6.9.3).
 - The player sets **priorities 1 to 5** on tasks. When a pool shrinks (outage, sabotage, sanctions, a vassal turning Defiant), the lowest priorities lose fill first.
-- **Auto-allocation**: the COO (or the CTO board seat, 6.10.1) fills new tasks from TC on the spot market by default, cheapest lease income forgone first (contract leases are never broken automatically), so the player is not asked every hour.
+- **Auto-allocation**: the COO (6.10.1) fills new tasks from TC on the spot market by default, cheapest lease income forgone first (contract leases are never broken automatically), so the player is not asked every hour.
 - Changes take effect at the next hourly turn for compute and models, next day for fleets in the same location, and next week across locations.
 
 ### 6.3.4 Owning, leasing, spot and compromised
@@ -399,7 +399,7 @@ There is no insider route (batch 70).
 
 **How much can be used**: all of the target site's idle capacity, plus up to 10% of its capacity in use. Taking in-use capacity slows the owner's own tasks by the same share, which makes detection more likely.
 
-**Detection** (monthly per compromised site) = `5% + 1% per 1,000 H (or per 100 drones or vehicles) used per month + 10% if in-use capacity is taken + 15% if the owner runs a cyber defense task (6.6.6) + 2% per CTO Tech point above 10` **(T)**.
+**Detection** (monthly per compromised site) = `5% + 1% per 1,000 H (or per 100 drones or vehicles) used per month + 10% if in-use capacity is taken + 15% if the owner runs a cyber defense task (6.6.6) + 2% per CIO Intrigue point above 10` **(T)**.
 
 On detection: access ends at once; the owner learns who did it unless the user wins an Intrigue check (+10 per cutout, 4.20.4); the user gains exposure +10 with the Data Authority (4.9.1) and the owner gains a casus belli and a lawsuit (4.21.2); a public owner may make it a scandal (Heat 40).
 
@@ -419,16 +419,16 @@ Models cannot be stolen (Logan, batch 73); their training data can be (17.4). Ha
 
 ## 6.10 Techno-Capital and the corporate core
 
-### 6.10.1 The CTO board seat
+### 6.10.1 Techno-Capital seat tasks
 
-A new board seat (1-corporate-core board, CK3 council style): **Chief Technology Officer** **(T)**.
+There is no CTO seat (Logan, batch 144: the board is the CEO, CFO, CIO, CMO and COO, 1-corporate-core 1.8.2). The COO and CIO gain these tasks, using Tech **(T)**.
 
 | Task | Effect |
 |---|---|
-| **Optimize allocation** | Opportunity cost of allocated TC -1% per Tech point above 10 (cap -15%): better scheduling squeezes more from the same machines |
-| **Secure the stack** | Cyber defense effect +20%; theft against the company -10% |
-| **Chase allocation** | +1 Allocation Score (6.7.3) per 2 Tech points above 10 |
-| **Lead a training run** | The CTO is the research lead (6.5.3) |
+| **Optimize allocation** (COO) | Opportunity cost of allocated TC -1% per Tech point above 10 (cap -15%): better scheduling squeezes more from the same machines |
+| **Secure the stack** (CIO) | Cyber defense effect +20%; theft against the company -10% |
+| **Chase allocation** (COO) | +1 Allocation Score (6.7.3) per 2 Tech points above 10 |
+| **Lead a training run** (any seat or key hire) | The member is the research lead (6.5.3) |
 
 ### 6.10.2 Vassals and the Techno-Capital levy
 
@@ -489,7 +489,7 @@ What politics and Techno-Capital usually mean at each company rank is in [4-poli
 
 ### 6.14.1 A Founder trains the first model
 
-**Setup.** A Bay Area AI startup (Venture rank) closed a $250M Series B through the VC founding path. Its AI labs unit runs at productivity 100, its CTO has Tech 16, and it licenses 12 DU of user data from a social platform. The GPU cloud price is $2,500 per GPU unit-month at the time; it moves with demand (15.5) **(T)**.
+**Setup.** A Bay Area AI startup (Venture rank) closed a $250M Series B through the VC founding path. Its AI labs unit runs at productivity 100, its research lead has Tech 16, and it licenses 12 DU of user data from a social platform. The GPU cloud price is $2,500 per GPU unit-month at the time; it moves with demand (15.5) **(T)**.
 
 **Requirement.** Gen 1 model: 60,000 H × efficiency 1.0 (6.4.3) = 60,000 H over at least 3 months, so 20,000 GPU units from one cluster.
 
@@ -503,7 +503,7 @@ What politics and Techno-Capital usually mean at each company rank is in [4-poli
 
 The founder takes the Phoenix lease. By the end of the run it has spent $160M of the $250M round (the $40M deposit plus 3 months of payments), and the model has to pay for the remaining 9 months of the lease.
 
-**The run.** 2,200 hourly turns. In week 6 a Loss Spike fires; the CTO's Tech check (16 vs 15) succeeds. Run score = 50 + 2 × 6 + 0 + data bonus 2 (12 DU against 10) = **64**. Its user activity and text data give it Language 64 and Reasoning about 50 (18.3).
+**The run.** 2,200 hourly turns. In week 6 a Loss Spike fires; the research lead's Tech check (16 vs 15) succeeds. Run score = 50 + 2 × 6 + 0 + data bonus 2 (12 DU against 10) = **64**. Its user activity and text data give it Language 64 and Reasoning about 50 (18.3).
 
 **Revenue.** The startup sells licences on the standard offer (14.4, 18.4) and uses the 9 leased months left to run the model's copies instead of training. The startup is alive, and every AI company in the Bay Area now wants to buy it.
 
