@@ -71,7 +71,7 @@ TechnoCapital20FF/
 
 ## 12.4 Roadmap (A)
 
-Rebuilt around the current design; the build starts only when Logan says so.
+Rebuilt around the current design; the build starts only when Logan says so. The MVP build plan (crates, tasks per milestone, tests, risks) is in [mvp/build-plan.md](mvp/build-plan.md).
 
 1. **Skeleton**: the Rust workspace, the Bevy app and the `sim` plugin, the headless runner, the sim to UI boundary (12.3), the hourly tick loop with speeds and pause, the top bar, save and load.
 2. **Characters**: generation, skills, traits, the player's ambition, health and death (game over for John), relationship tags, personal trusts and accounts.

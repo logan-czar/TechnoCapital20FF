@@ -1129,6 +1129,8 @@ Views carry dirty flags (12.3); only changed rows are rebuilt.
 
 ## 10. Build order
 
+The task-by-task plan for these milestones (crates, tasks, tests, risks) is in [build-plan.md](build-plan.md).
+
 | # | Milestone | Done when |
 |---|---|---|
 | M0 | Rust workspace with a pinned Bevy version, the `sim` crate and a headless runner (12.3); data load and validation with `serde` and `csv` into sim tables: the CSVs, industries.csv, country-economy.csv, financial-zones.csv, ai-boom.csv, key-cities.csv, company-start.csv, startup-events.csv (the 5.19.2 fixed events, to build, batch 165); id checks | Loader rejects a bad row with file and line; runs headless with no Bevy window |
