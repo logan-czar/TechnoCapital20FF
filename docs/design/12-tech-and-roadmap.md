@@ -1,6 +1,6 @@
 # 12. Tech stack, architecture and roadmap
 
-_Status: v0.4 (2026-10-19). Consistency pass 3 (batch 129): roadmap step 6 notes that the province data is complete. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. FX is not built in roadmap step 5; it is post-POC. Batch 121: Metros have no council (only national governments). Batch 118: roadmap step 6 builds provinces, areas, regions, Metros and countries instead of hubs and districts; influence views rank per province or city. Batch 116: roadmap and tiers rewritten to the current design (one scenario and one player character, John Techno; no dynasty or succession; game over on death; news and Pdoomberg; two-layer control; Semiconductors as dollar effects). v0.3. Batch 41: a **desktop app built in Godot**, replacing Phaser and the browser. Batch 42: the simulation runs in a **Rust engine**; Godot's GDScript runs the front end. Design is still the current phase; this file records the plan for when the build starts. Owner: Logan._
+_Status: v0.5 (2026-10-20). Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth: the crash averages 2040 (roadmap step 10). Consistency pass 3 (batch 129): roadmap step 6 notes that the province data is complete. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. FX is not built in roadmap step 5; it is post-POC. Batch 121: Metros have no council (only national governments). Batch 118: roadmap step 6 builds provinces, areas, regions, Metros and countries instead of hubs and districts; influence views rank per province or city. Batch 116: roadmap and tiers rewritten to the current design (one scenario and one player character, John Techno; no dynasty or succession; game over on death; news and Pdoomberg; two-layer control; Semiconductors as dollar effects). v0.3. Batch 41: a **desktop app built in Godot**, replacing Phaser and the browser. Batch 42: the simulation runs in a **Rust engine**; Godot's GDScript runs the front end. Design is still the current phase; this file records the plan for when the build starts. Owner: Logan._
 
 Anything marked **(A)** is an assumption Logan has not confirmed yet; the list is in 12.6.
 
@@ -76,7 +76,7 @@ Rebuilt around the current design; the build starts only when Logan says so.
 7. **Events**: engine, director, first decks (about 10 events each), the opening quest "The Desktop".
 8. **Techno-Capital and software**: the three compute types (15), Semiconductors and other heavy simulation as dollar effects on business units, the software table (hacking comes later).
 9. **Politics and ideology**: ideology blocs, strata voting, laws, elections, regulators.
-10. **Vices and gambling**, then media, then John Techno's quest line, then the crash (2035 on average).
+10. **Vices and gambling**, then media, then John Techno's quest line, then the crash (2040 on average; the AI boom starts in 2030).
 
 ## 12.5 Success criteria for the first playable (A)
 

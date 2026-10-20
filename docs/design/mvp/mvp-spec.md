@@ -1,6 +1,6 @@
 # TechnoCapital20FF MVP spec: the map, the business system and a read-only economic sim
 
-_Status: v0.7 (2026-10-20). Batch 150 (Logan): global business cycle, financial zones, mean-reverting industry growth. "Global business cycle. Intensity is felt differently by different financial zones. Industries do cycles just like the global cycle however they are offset by their industry growth rate." One global cycle (Expansion, Overheating, Contraction, Recovery, with a cycle value g_t) replaces the national cycles; 8 financial zones feel it at intensities 0.9 to 1.4 **(A, T)**, and world industry demand feels their GDP-weighted average, 1.10; each quarter every industry draws its growth around its long-term rate (trend_growth), mean-reverting, plus an asymmetric cycle term that lets high-growth industries grow more in upswings and cool off less in downturns, plus a volatility shock (new column, 1% a quarter for all **(T)**); Boom, Normal, Glut and Bust are now labels read from growth and the supply ratio, with no demand multipliers of their own; demand moves monthly by a third of the quarter's growth; new data/financial-zones.csv and country-economy financial_zone replace cycle_group and cycle_phase_start (1, 2.2, 3, 4.3, 5.1 to 5.3, 5.16, 5A C19 to C21, 6, 7.3, 8, 9.2, 10). Batch 149 (Logan): asset decay 1% a year above $10M of assets. "Asset decay 1% a year, only kicks in after 10 million assets": business asset decay is 1% a year for all industries (MVP default), on the part of a unit's gross assets above $10M only (marginal, no cliff; **A**), so $50M of assets decays $400k a year and a unit with $10M or less, such as the $100,000 barebones company, has none; book depreciation still equals decay and growth spending replaces decay first; new column asset_decay_threshold_usd (2.2, 5.5, 5.10, 5A C11, 6.2, 7.1). The start profit picture is unchanged (619 of 651 profitable, median 6.1%), since depreciation sits inside the fixed cost share; fixed cash rises to fill it and replacement spending falls about tenfold (2.2 checks). Batch 148 (Logan): "just make these like default companies for now we will rework them one by one once companies are known working. I want all industries to be like the defaults": all 42 industries use the barebones company's parameters (10.0.11.1) for the MVP: $1 of assets per $1 of revenue, labor_value $100,000, 1 TB per $1M, one asset decay (8%), one R&D norm (5%), one fixed cost share, one earnings multiple, one cycle sensitivity, and revenue equal to expenses at productivity 100 and M 1.0 with R&D at the norm counted in the expenses; industries keep only name, sector label, world demand 2020, trend and asset label (2.2, 5.5, C18); the cash_burning flags are parked (all N) and the 6.6 raise rule waits for them; per-industry tuning moves to 11.2; real 2020 tax rates, the wage index from wealth_index and real January 2020 ratings moved for the alternate history are decided (2.2, G5). At start 619 of 651 companies earn above 0 after R&D, from the PC bonus and free R&D only (2.2 checks). Batch 147 (Logan): built industries, country-economy and key-cities data: the three 2.2 tables now exist in design/data/, made by a reproducible generator in [../tools/mvp-data/](../tools/mvp-data/gen.py) that validates ids and runs the profit and fringe checks; 2.2 lists their final columns (G5 built). Batch 146 (Logan): Consumer electronics, EVs, E-commerce and AI labs are cash-burning industries on purpose and live on investor money; when their runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the industry news phase, and failures go down the bankruptcy path (6.6, G10 decided); batch 143 board-seat picks decided: seats beyond 5 are ordinary directors, charter minimums apply from 5 labor units, the controller appoints and the seat stands at the next yearly meeting, investor and government seats take the next labor seat or sit beyond 5, and the 651 starting companies keep their generated starting data while new companies start empty (7.1, G9 decided). Batch 145 (Logan): province shapes are generated from real-world boundary data ([map-sources.md](map-sources.md), 2.2, G1); simple characters fill board seats (3.7.1, G2); business assets degrade by industry, book depreciation equals the loss, and growth plans buy replacement before growth (2.2, 5.5, 5.10, 6.2, 7.1); bank and insurer capital set at $1.25 and $0.60 per $1, mapped to real capital ratios (2.2, G4); bankrupt firms go through forced sales, a 2-quarter freeze and removal, shareholders wiped (5.12, G7); one business unit per company at HQ is decided (G8); batch 143 board-seat items listed as open (G9). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
+_Status: v0.8 (2026-10-20). Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth. "AI boom I think we are moving to 2030 start now bubble in 2040. I think we need to do really small AI with low growth then an unprecedented growth rate." AI labs' long-term rate is a regime switch (new 5.1.1): 5% a year before the boom (world size about $5B to $8B), then a scripted boom event on 1 Jan 2030 sets it to 100% a year for two years, tapering to 15% by 2039; the scripted pop (2040 plus a roll of -2 to +2 years, rolled quarter) cuts demand once by crash_drop (AI labs 50%) and sets -10% for 8 quarters, then 8%; Data centers, Semiconductors and Cloud get a boom uplift of 0.15, 0.10 and 0.05 of the AI labs boom **(A, T)**; the quarterly draw now uses `lt_q = (1 + LT)^(1/4) - 1` instead of LT/4 so 100% a year compounds right, and the checks report compound yearly growth; new industries.csv columns boom_uplift and crash_drop and new data/ai-boom.csv; the crash's demand side is now in scope (1, 2.2, 3.1, 3.4, 4.3, 5.1, 5.1.1, 6.2, 7.3, 8, 9.2, 10). Batch 150 Q1 (1a, volatility 1% a quarter) and Q3 (3a, the euro crisis shows only through the euro area intensity and ratings and spreads) are confirmed as written (5.1, 7.3); Q2 keeps the asymmetric cycle. Batch 150 (Logan): global business cycle, financial zones, mean-reverting industry growth. "Global business cycle. Intensity is felt differently by different financial zones. Industries do cycles just like the global cycle however they are offset by their industry growth rate." One global cycle (Expansion, Overheating, Contraction, Recovery, with a cycle value g_t) replaces the national cycles; 8 financial zones feel it at intensities 0.9 to 1.4 **(A, T)**, and world industry demand feels their GDP-weighted average, 1.10; each quarter every industry draws its growth around its long-term rate (trend_growth), mean-reverting, plus an asymmetric cycle term that lets high-growth industries grow more in upswings and cool off less in downturns, plus a volatility shock (new column, 1% a quarter for all **(T)**); Boom, Normal, Glut and Bust are now labels read from growth and the supply ratio, with no demand multipliers of their own; demand moves monthly by a third of the quarter's growth; new data/financial-zones.csv and country-economy financial_zone replace cycle_group and cycle_phase_start (1, 2.2, 3, 4.3, 5.1 to 5.3, 5.16, 5A C19 to C21, 6, 7.3, 8, 9.2, 10). Batch 149 (Logan): asset decay 1% a year above $10M of assets. "Asset decay 1% a year, only kicks in after 10 million assets": business asset decay is 1% a year for all industries (MVP default), on the part of a unit's gross assets above $10M only (marginal, no cliff; **A**), so $50M of assets decays $400k a year and a unit with $10M or less, such as the $100,000 barebones company, has none; book depreciation still equals decay and growth spending replaces decay first; new column asset_decay_threshold_usd (2.2, 5.5, 5.10, 5A C11, 6.2, 7.1). The start profit picture is unchanged (619 of 651 profitable, median 6.1%), since depreciation sits inside the fixed cost share; fixed cash rises to fill it and replacement spending falls about tenfold (2.2 checks). Batch 148 (Logan): "just make these like default companies for now we will rework them one by one once companies are known working. I want all industries to be like the defaults": all 42 industries use the barebones company's parameters (10.0.11.1) for the MVP: $1 of assets per $1 of revenue, labor_value $100,000, 1 TB per $1M, one asset decay (8%), one R&D norm (5%), one fixed cost share, one earnings multiple, one cycle sensitivity, and revenue equal to expenses at productivity 100 and M 1.0 with R&D at the norm counted in the expenses; industries keep only name, sector label, world demand 2020, trend and asset label (2.2, 5.5, C18); the cash_burning flags are parked (all N) and the 6.6 raise rule waits for them; per-industry tuning moves to 11.2; real 2020 tax rates, the wage index from wealth_index and real January 2020 ratings moved for the alternate history are decided (2.2, G5). At start 619 of 651 companies earn above 0 after R&D, from the PC bonus and free R&D only (2.2 checks). Batch 147 (Logan): built industries, country-economy and key-cities data: the three 2.2 tables now exist in design/data/, made by a reproducible generator in [../tools/mvp-data/](../tools/mvp-data/gen.py) that validates ids and runs the profit and fringe checks; 2.2 lists their final columns (G5 built). Batch 146 (Logan): Consumer electronics, EVs, E-commerce and AI labs are cash-burning industries on purpose and live on investor money; when their runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the industry news phase, and failures go down the bankruptcy path (6.6, G10 decided); batch 143 board-seat picks decided: seats beyond 5 are ordinary directors, charter minimums apply from 5 labor units, the controller appoints and the seat stands at the next yearly meeting, investor and government seats take the next labor seat or sit beyond 5, and the 651 starting companies keep their generated starting data while new companies start empty (7.1, G9 decided). Batch 145 (Logan): province shapes are generated from real-world boundary data ([map-sources.md](map-sources.md), 2.2, G1); simple characters fill board seats (3.7.1, G2); business assets degrade by industry, book depreciation equals the loss, and growth plans buy replacement before growth (2.2, 5.5, 5.10, 6.2, 7.1); bank and insurer capital set at $1.25 and $0.60 per $1, mapped to real capital ratios (2.2, G4); bankrupt firms go through forced sales, a 2-quarter freeze and removal, shareholders wiped (5.12, G7); one business unit per company at HQ is decided (G8); batch 143 board-seat items listed as open (G9). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
 
 **How to read the numbers.** **(A)** marks an assumption made for the MVP, including the coordinator's defaults. **(T)** marks a tuning value. Section refs like 10.0.4 point to the detailed files.
 
@@ -22,7 +22,7 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 | **Software** | Two fixed products: the general productivity software and the general enterprise software, both quality 50 **(A)** | Every other product, licences as a market, bloat, versions |
 | **Quarter** | The 21 cycle, simplified: release, price reaction, AI plan lock, locked quarter, recap week | Grades, firing votes, board displeasure, board day events, guidance rolls, result plot line chains |
 | **Finance** | Light statements, tax, credit line, credit rating, dividends by rule, fair value, simple share price; share issues by cash-burning industries (6.6) are parked while no industry is flagged (batch 148) | Trading, order flow, bonds, margin, short selling, IPOs, buybacks, rights issues, default chain |
-| **World** | Static country table; one world base rate (3%, batch 130); one global business cycle felt by 8 financial zones; quarterly industry growth draws with phase labels (batch 150) | Politics beyond the static table, media, gambling, vices, FX, the crash, history events |
+| **World** | Static country table; one world base rate (3%, batch 130); one global business cycle felt by 8 financial zones; quarterly industry growth draws with phase labels (batch 150); the scripted AI boom (1 Jan 2030) and bubble pop (2040 on average) as switches of the long-term rate (batch 151, 5.1.1) | Politics beyond the static table, media, gambling, vices, FX, the crash's market, quest and event effects beyond demand (8.5), other history events |
 | **AI** | Each company sets its own quarterly plan (growth, R&D %, station split, data handling, credit line, dividend); cash-burning industries raise money when runway runs short (6.6, parked while no industry is flagged, batch 148) | Schemes, politics, takeovers, trading, media, anything outside its own company |
 
 **Information (A).** The observer is John Techno with his Pdoomberg subscription (7.3.0). Published figures (listed companies' statements, quotes, industry tables) are exact; private companies' figures show **?** (20.3.4). A debug toggle, **Omniscient**, shows every true value for testing and is off in release builds.
@@ -42,7 +42,7 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 
 ### 2.2 New MVP data tables (built, batch 147)
 
-Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), which writes the three files and financial-zones.csv (batch 150) into design/data/ and runs validate.py: industry names match companies.csv, every iso3 is in countries.csv, every country's financial zone exists, every key city province id is in the province files, and the checks below, including the seeded 40-quarter growth check of 5.1. Column meanings and assumptions are also in [../data/README.md](../data/README.md).
+Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), which writes the three files, financial-zones.csv (batch 150) and ai-boom.csv (batch 151) into design/data/ and runs validate.py: industry names match companies.csv, every iso3 is in countries.csv, every country's financial zone exists, every key city province id is in the province files, and the checks below, including the seeded 40-quarter growth check of 5.1. Column meanings and assumptions are also in [../data/README.md](../data/README.md).
 
 **industries.csv** (42 rows). **MVP defaults (Logan, batch 148):** "just make these like default companies for now we will rework them one by one once companies are known working. I want all industries to be like the defaults." Every industry uses the same parameters, those of the barebones company (10-industry-economy 10.0.11.1 and the 10.0.11.10 base case). An industry keeps only what makes it a distinct market: name, sector label, world demand 2020, trend growth and the flavor asset label. The columns stay as built in batch 147, so the engine and the rest of this spec read them unchanged; the per-industry values are parked for the rework (11.2), and gen.py keeps them behind a `PER_INDUSTRY` switch.
 
@@ -53,9 +53,11 @@ Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), w
 | sector | text | Per industry: Tech, Finance, Energy, Industry, Consumer, Health, Services (10.3). A label for screens; it also picks the Startup archetype (6.1) and the Tech CTO weight (5.7) |
 | valuation_group | text | Default (one multiple for all) |
 | world_size_2020_usd_bn | number | Per industry (10.3 world size) |
-| trend_growth | fraction | Per industry (10.3); "Boom-driven" AI labs uses 0.30 **(T)**. The **long-term growth rate** a year: quarterly growth draws revert to it (5.1, batch 150) |
+| trend_growth | fraction | Per industry (10.3). The **long-term growth rate** a year before the AI boom: quarterly growth draws revert to it (5.1, batch 150). AI labs 0.05, really small with low growth until the 2030 boom (Logan, batch 151; was 0.30); the boom moves LT by the ai-boom.csv schedule (5.1.1) |
 | cycle_beta | number | 1.0 for all: multiplies the cycle term of the quarterly growth draw (5.1) **(A)** |
-| volatility | fraction | 0.01 for all: the standard deviation of the quarterly growth shock, per quarter (Logan, batch 150; 5.1) **(T)**. New column |
+| volatility | fraction | 0.01 for all: the standard deviation of the quarterly growth shock, per quarter (Logan, batch 150, confirmed batch 151 1a; 5.1) **(T)**. New column |
+| boom_uplift | fraction | Share of the AI labs boom added to this industry's LT (5.1.1, batch 151): AI labs 1, Data centers 0.15, Semiconductors 0.10, Cloud 0.05, others 0 **(A, T)**. New column |
+| crash_drop | fraction | One-off demand cut at the bubble pop (5.1.1, batch 151): AI labs 0.50, Data centers 0.25, Semiconductors 0.20, Cloud 0.10, others 0 **(T)**. New column |
 | rate_sensitivity | 0 to 3 | 1 for all **(A)**; no effect while the base rate sits at neutral (3.1) |
 | margin_full_use | fraction | 0.05 for all: the margin before R&D, equal to rd_norm, so revenue equals expenses with R&D at the norm (5.5, C18) |
 | fixed_cost_share | fraction | 0.45 for all (the median f of 10.3) **(T)** |
@@ -91,6 +93,8 @@ Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), w
 | notes | Where each value came from and what is assumed |
 
 **financial-zones.csv** (8 rows, new in batch 150; written by gen.py from its ZONES table). Columns: zone_id, name, intensity (how hard the zone feels the global cycle, 5.1, **T**), countries, gdp_usd_bn and gdp_share (from countries.csv), notes. The zones and intensities are listed in 5.1.
+
+**ai-boom.csv** (15 rows, new in batch 151; written by gen.py from its AI_BOOM table). Columns: stage (preboom, boom, pop, bust, postcrash), boom_year (years since the boom event, for boom rows), default_year, ai_labs_lt (AI labs' long-term rate a year, **T**), notes. The schedule is listed in 5.1.1.
 
 Not duplicated from countries.csv: the **wage index** is countries.csv `wealth_index` (2.2.3 calls it the wage index; USA 1.00); **decided (Logan, batch 148, 3a)**. There is **no country productivity modifier**: the location bonus is per province (fit and resource tag, 5.4; 0 in the MVP while industries use the defaults), and city bonuses are the key-city perks below, not applied in the MVP **(A)**.
 
@@ -128,6 +132,7 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | cycle_phase, cycle_quarters_left | enum, u32 | Global cycle phase and quarters left in it (5.1, batch 150) |
 | g_t | fraction | Global cycle value: the phase's push on demand growth, a year, for a zone of intensity 1.0 (5.1) |
 | zone_intensity_avg Z | fraction | GDP-weighted average zone intensity, 1.10 at the 2020 data; static in the MVP (5.1) |
+| ai_stage, boom_date, pop_date | enum, date, date | Preboom, Boom, Bust or Postcrash; the boom event date (1 Jan 2030) and the pop date rolled at load (5.1.1, batch 151) |
 | quarter_phase | enum | Release, Reaction, Locked, PreQuarterEnd (21.1) |
 | rng_streams | seeds | One stream per system: cycle, growth (the quarterly draws), prices, AI, gen (12.3) |
 
@@ -154,6 +159,7 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | Field | Meaning |
 |---|---|
 | static row | All industries.csv columns |
+| lt | This quarter's long-term rate: trend_growth plus the boom term (5.1.1, batch 151) |
 | trend_demand | Yearly demand on the long-term rate alone, for screens and the balance targets (5.1) |
 | demand_core, demand | Yearly demand moved by the quarterly growth draws; effective demand after the rate term (5.1) |
 | q_growth, prev_q_growth | This quarter's and last quarter's demand growth, per quarter (5.1, batch 150) |
@@ -306,7 +312,7 @@ One tick is one hour (9.1). Jobs at 00:00 run in this order: hourly, daily, mont
 
 | Step | What runs | Section |
 |---|---|---|
-| 1 | **Quarterly draw**, on 1 Jan, Apr, Jul and Oct only: the global cycle advances one quarter (new phase and g_t when it expires), then every industry draws its q_growth for the new quarter (batch 150) | 5.1 |
+| 1 | **Quarterly draw**, on 1 Jan, Apr, Jul and Oct only: scripted AI events due today fire first (the boom on 1 Jan 2030, the pop on its rolled date) and every industry's lt is set (5.1.1, batch 151); the global cycle advances one quarter (new phase and g_t when it expires), then every industry draws its q_growth for the new quarter (batch 150) | 5.1, 5.1.1 |
 | 2 | Industry demand moves by a third of the quarter's growth; rate term; phase labels from q_growth and last month's S | 5.1 |
 | 3 | Fringe pools grow or shrink | 5.3 |
 | 4 | Labor units recounted; board seats opened or closed; stations assigned from the plan | 5.10 |
@@ -392,18 +398,20 @@ An industry at 4% (about the median) feels the cycle one for one; Oil and Autos 
 
 **Quarterly growth draw.** At each quarter boundary every industry draws its demand growth for the quarter, per quarter:
 
-`q_growth = LT/4 + φ × (prev_q_growth − LT/4) + cycle_term + volatility × z`
+`q_growth = lt_q + φ × (prev_q_growth − lt_q) + cycle_term + volatility × z`, with `lt_q = (1 + LT)^(1/4) − 1`
+
+lt_q replaced LT/4 in batch 151 **(A)**: the two are within 0.1 pp a quarter below LT 15%, but at the boom's 100% a year LT/4 would compound to 144%.
 
 `cycle_term = (1 − φ) × cycle_beta × k × Z × g_t ÷ 4`
 
-- φ = 0.5 **(T)**: half of last quarter's gap from the long-term rate carries over, so shocks fade and growth always pulls back toward LT/4 ("still average toward the long term rate").
-- The (1 − φ) factor makes a lasting phase settle the industry at `(LT + cycle_beta × k × Z × g_t) ÷ 4` a quarter: half way in the first quarter, 75% in the second, 88% in the third.
-- volatility is the industries.csv column, 0.01 a quarter for all in the MVP **(T)**; z is a standard normal draw from the growth stream, clamped to ±3. cycle_beta is 1 for all (2.2).
-- q_growth is floored at −25% a quarter **(A)**. At load prev_q_growth = LT/4 **(A)**.
+- φ = 0.5 **(T)**: half of last quarter's gap from the long-term rate carries over, so shocks fade and growth always pulls back toward lt_q ("still average toward the long term rate").
+- The (1 − φ) factor makes a lasting phase settle the industry at `lt_q + cycle_beta × k × Z × g_t ÷ 4` a quarter: half way in the first quarter, 75% in the second, 88% in the third.
+- volatility is the industries.csv column, 0.01 a quarter for all in the MVP **(T)** (confirmed, Logan, batch 151, 1a); z is a standard normal draw from the growth stream, clamped to ±3. cycle_beta is 1 for all (2.2).
+- q_growth is floored at −25% a quarter **(A)**. At load prev_q_growth = lt_q **(A)**.
 
 **Worked table** (Z 1.10; settled yearly growth `LT + k × Z × g_t` at each phase's middle g_t, no noise; quarterly growth is a quarter of it):
 
-| Phase (g_t) | Retail, LT 3% (k 0.95 up, 1.025 down) | Software, LT 9% (k 1.25 up, 0.875 down) | AI labs, LT 30% (k 2.30 up, 0.35 down) |
+| Phase (g_t) | Retail, LT 3% (k 0.95 up, 1.025 down) | Software, LT 9% (k 1.25 up, 0.875 down) | A fast grower, LT 30%, such as AI labs late in the boom (k 2.30 up, 0.35 down) |
 |---|---|---|---|
 | Expansion (+1%) | 4.0% | 10.4% | 32.5% |
 | Overheating (+3%) | 6.1% | 13.1% | 37.6% |
@@ -411,11 +419,11 @@ An industry at 4% (about the median) feels the cycle one for one; Oil and Autos 
 | Recovery (−0.5%) | 2.4% | 8.5% | 29.8% |
 | Best phase vs trend / worst vs trend | +3.1 pp / −5.1 pp | +4.1 pp / −4.3 pp | +7.6 pp / −1.7 pp |
 
-Over a full cycle the asymmetry leaves fast growers slightly above their long-term rate (500-seed means: AI labs +2.0 pp a year, Software +0.6, Retail +0.2, Oil −0.1): this is "grow more and cool off less" **(A)**.
+Over a full cycle the asymmetry leaves fast growers slightly above their long-term rate (500-seed means of compound yearly growth, batch 151: an LT 30% grower +2.4 pp a year, Software +0.6, Retail +0.2, Oil −0.1, AI labs before the boom (5%) +0.5): this is "grow more and cool off less" **(A)**. Kept as the default in batch 151: Logan answered Q2 with the AI boom (5.1.1).
 
 **Monthly demand.** Each month (4.3 step 2) `demand_core ×= (1 + q_growth)^(1/3)` and `trend_demand ×= (1 + LT)^(1/12)`. Effective demand `= demand_core × (1 − s × (base_rate − neutral_rate))`, with s the rate_sensitivity, unchanged (no effect while the base rate sits at neutral). Both start at the 2020 world size (7.3), so no c0 is needed.
 
-**Phase labels (A, T).** Boom, Normal, Glut and Bust stay, for screens, headlines (5.18), sale factors (5.10), fair value cycle factors (5.13) and the raise roll (6.6), but they no longer move demand or supply. With `gap = 4 × q_growth − LT` (this quarter's growth, a year, less the long-term rate), set monthly at step 2, first match:
+**Phase labels (A, T).** Boom, Normal, Glut and Bust stay, for screens, headlines (5.18), sale factors (5.10), fair value cycle factors (5.13) and the raise roll (6.6), but they no longer move demand or supply. With `gap = 4 × (q_growth − lt_q)` (this quarter's growth less the long-term rate, a year), set monthly at step 2, first match:
 
 | Label | Rule |
 |---|---|
@@ -426,7 +434,40 @@ Over a full cycle the asymmetry leaves fast growers slightly above their long-te
 
 In the 40-quarter runs these give about 18% Boom and 14% Bust industry-quarters.
 
-**Growth check (batch 150).** validate.py runs all 42 industries for 40 quarters with seed 150. Average yearly growth minus the long-term rate: mean +1.6 pp, sd 1.6 pp, range −2.8 pp (Defense) to +4.7 pp (Social media). The mean is high because this seed's cycle spent 26 of 40 quarters in Expansion or Overheating. Retail averages 4.2% (LT 3%), Software 10.5% (9%), AI labs 32.9% (30%), Oil −0.1% (0%). Over 500 seeds the gap per industry has an sd of about 1.3 to 1.4 pp; a volatility of 2% a quarter would double it to about 2.5 pp. The check fails if any industry is more than 6 pp off **(T)**.
+**Growth check (batch 150).** validate.py runs all 42 industries for 40 quarters with seed 150. Compound average yearly growth minus the long-term rate (batch 151; the quarters are 2020 to 2029, before the boom): mean +1.6 pp, sd 1.7 pp, range −2.9 pp (Defense) to +5.1 pp (Social media). The mean is high because this seed's cycle spent 26 of 40 quarters in Expansion or Overheating. Retail averages 4.2% (LT 3%), Software 10.5% (9%), AI labs 5.6% (5%), Oil −0.2% (0%). Over 500 seeds the gap per industry has an sd of about 1.3 to 1.5 pp; a volatility of 2% a quarter would double it to about 2.5 pp. The check fails if any industry is more than 6 pp off **(T)**.
+
+### 5.1.1 The AI boom and the bubble (Logan, batch 151; 7-starting-world 7.7, 8-quest-lines 8.5)
+
+Logan (batch 151): "AI boom I think we are moving to 2030 start now bubble in 2040. I think we need to do really small AI with low growth then an unprecedented growth rate."
+
+AI labs' long-term rate is a **regime switch**. The quarterly draw of 5.1 is unchanged; only LT moves, by stage and boom year, from data/ai-boom.csv **(T)**. Demand is year-end world demand from validate.py's noise-free run with the pop on 1 January 2040.
+
+| Stage | Default years | AI labs LT a year | AI labs demand |
+|---|---|---|---|
+| Pre-boom | 2020 to 2029 | 5% | $5B in 2020, $8B at the end of 2029 |
+| Boom year 0 (the boom event) | 2030 | 100% | $16B |
+| Boom year 1 | 2031 | 100% | $33B |
+| Boom year 2 | 2032 | 90% | $63B |
+| Boom year 3 | 2033 | 80% | $114B |
+| Boom year 4 | 2034 | 60% | $188B |
+| Boom year 5 | 2035 | 45% | $280B |
+| Boom year 6 | 2036 | 35% | $385B |
+| Boom year 7 | 2037 | 25% | $490B |
+| Boom year 8 | 2038 | 20% | $595B |
+| Boom year 9 | 2039 | 15% | $692B |
+| Boom year 10 and later | Only if the pop comes after 1 Jan 2040 | 12% | |
+| The pop | 2040 on average | Demand × 0.5 once | $311B at the end of 2040 |
+| Bust | 8 quarters from the pop | −10% | $280B at the end of 2041 |
+| Post-crash | After the bust | 8% | $364B in 2045 |
+
+- **Linked industries (A).** Every industry's long-term rate is `lt = trend_growth + boom_uplift × (AI labs LT − 5%)`. boom_uplift is 1 for AI labs, 0.15 for Data centers, 0.10 for Semiconductors and 0.05 for Cloud, 0 for the rest **(T)**. Before the boom the term is 0: AI is too small to move them. In boom year 0 Data centers run at 29% (15% + 14 pp), Cloud 25% and Semiconductors 15%; in the bust Data centers fall to 13%, Cloud 19% and Semiconductors 3.5%.
+- **The boom event (scripted, MVP).** At 00:00 on 1 January 2030, in 4.3 step 1 before that quarter's draw, the world's ai_stage becomes Boom and boom year 0 starts; each later 1 January starts the next boom year. Every industry with boom_uplift above 0 sets prev_q_growth to its new lt_q, so growth jumps at once instead of ramping up from 5% **(A)**. The news wire posts "[tipped lab] launches its chatbot" (5.18) and a World event alert fires (Pause by default) **(A)**. The read-only MVP has no tip and no quests: the tipped lab is drawn at load from the five candidate labs (7.6) only to name the headline **(A)**.
+- **The pop (scripted, MVP).** At load the world rolls the pop date from the gen stream: year 2040 plus a whole number from −2 to +2, and a quarter from 1 to 4 **(A)**; it fires at 00:00 on that quarter's first day in 4.3 step 1. Every industry's demand_core and trend_demand are multiplied by `1 − crash_drop` once (AI labs 0.50, Data centers 0.25, Semiconductors 0.20, Cloud 0.10, others 0; **T**), LT moves to the bust rate for 8 quarters and then to the post-crash rate, and prev_q_growth resets to the new lt_q. The 8.5 moves of the pop year by events (a bigger boom brings it closer, calm markets push it later) and the ×1.2 market crash need events and markets the MVP does not have **(A)**: prices fall through fair value's Bust cycle factor (5.13) and the earnings.
+- **Labels (A).** Industries with boom_uplift above 0 read **Boom** for the boom's first 4 quarters and **Bust** for the 8 bust quarters, whatever the gap.
+- **Supply.** Supply grows only as units buy assets (5.10), so in the boom S falls and M rises; the Lite AI's g_dem (6.2) uses the current lt and does not foresee the switch. At the pop S jumps (about 2 for AI labs), M collapses and units sell assets.
+- **The asymmetric cycle stays (batch 151, Q2 default kept).** At LT 100% k is 2.5 in upswings and 0.25 in downswings; over 500 seeds an industry held at 100% averages 3.9 pp a year above it.
+- **Checks.** validate.py runs 2020 to 2045 with the pop on 1 January 2040 and fails if AI labs end 2029 outside $6B to $10B, do not roughly double in 2030, or keep more than 60% of their 2039 demand in 2040. The 10-year balance targets (10) cover 2020 to 2029, before the boom; the M10 30-year soak covers the boom and the pop.
+- The GPU demand of 6-technocapital 6.7.0 (consumers against AI, the chip index, the rolled boom rate) is not in the MVP; Semiconductors feels the boom only through boom_uplift **(A)**.
 
 ### 5.2 Supply, oversupply and undersupply (10.0.3)
 
@@ -612,7 +653,7 @@ Every company runs the same rules at 9th 00:00 of each release month (21.7), in 
 
 | Input | Meaning |
 |---|---|
-| g_dem | Projected demand growth next 4 quarters (batch 150): `LT + (φ + φ² + φ³ + φ⁴) × (q_growth − LT/4)`, the long-term rate plus the expected fade of this quarter's gap (0.94 × the gap at φ 0.5); the AI does not forecast phase changes **(A)**. Retail in a Contraction (q_growth −0.5%) projects 1.8% |
+| g_dem | Projected demand growth next 4 quarters (batch 150): `LT + (φ + φ² + φ³ + φ⁴) × (q_growth − lt_q)`, with LT the industry's current lt (5.1.1: the AI does not foresee the boom or the pop), the long-term rate plus the expected fade of this quarter's gap (0.94 × the gap at φ 0.5); the AI does not forecast phase changes **(A)**. Retail in a Contraction (q_growth −0.5%) projects 1.8% |
 | S | Current supply ratio of the unit's industry |
 | ROA | Trailing 4-quarter EBIT ÷ gross assets |
 | loss_q | Consecutive quarters of negative EBIT |
@@ -727,7 +768,7 @@ R = revenue_usd_m. One business unit in the company's industry at hq_province.
 
 ### 7.3 Countries and the world
 
-The global cycle starts in Expansion with g_t and its quarters left drawn **(A)**; every industry's demand_core and trend_demand start at its 2020 world size, prev_q_growth at LT/4, and the Q1 2020 growth draw is made at load (5.1); labels follow from it; base rate 3%; clock 2020-01-01 00:00, paused. The euro crisis of the old cycle groups now lives in the euro area's 1.2 intensity and its ratings and spreads (2.2) **(A)**.
+The global cycle starts in Expansion with g_t and its quarters left drawn **(A)**; every industry's demand_core and trend_demand start at its 2020 world size, prev_q_growth at lt_q, the AI stage at Preboom, the pop date rolled (5.1.1), and the Q1 2020 growth draw is made at load (5.1); labels follow from it; base rate 3%; clock 2020-01-01 00:00, paused. The euro crisis of the old cycle groups now lives in the euro area's 1.2 intensity and its ratings and spreads (2.2) (decided, Logan, batch 151, 3a).
 
 ---
 
@@ -740,7 +781,7 @@ All built from 20-ui. Every action button is hidden or shows a lock icon with "R
 | **Main screen** | 20.2.1 | Top bar with date, hour, weekday, pause, speeds 1 to 5, Skip menu (next release, next plan lock, next recap, month end) and the **quarter clock** (phase name, days to next phase, 21.8); alert row; left rail with Company, Industries, Pdoomberg, Recap; outliner with a watchlist |
 | **Map** | 20.7.10, 2.24 | Zoom World, Country, Province. Modes: **Political** (default); **Development** (Commerce, Industry, Population, Total); **Industry** (the Industry track, or with an industry picked, that industry's business assets by province as a heat map); **Company HQs** (pins sized by revenue, colored by sector; filters by industry, country, listed); **Financial zones** (batch 150: each zone shaded by its intensity, legend with the global phase, g_t, quarters left and each zone's effect `intensity × g_t`; replaces the Economic cycle mode); Metro outlines over any mode. Clicking a province opens a province card: development, resource, terrain, Metro, key city, HQs and units there |
 | **Company** | 20.7.2 | Header: name, ticker, HQ, industry, owner of record, controller. Tabs: **Overview** (value, price, confidence, management score, cash, line, rating, next release); **Board** (seat cards for labor units 1 to 5, skill used); **Cap table** (static holders); **Units** (industry, base province, assets, productivity, growth, R&D, revenue, expenses); **Financials** (quarterly statements, Quarter view with last results and projection ranges, 21.5.3); **Tech** (labor split, stations, PC and next step, data quests card with progress bar, inflow vs decay, 10.0.11.7) |
-| **Industries** | 20.7.6 | Table of 42: demand, supply, S, M, phase label, long-term growth, this quarter's growth (a year, `4 × q_growth`), fringe share, top 5 companies; detail view with a 20-quarter chart of demand vs supply, quarterly growth bars against the long-term line, and the company list. A header strip shows the global phase and g_t (batch 150) |
+| **Industries** | 20.7.6 | Table of 42: demand, supply, S, M, phase label, long-term growth, this quarter's growth (a year, `(1 + q_growth)^4 − 1`), fringe share, top 5 companies; detail view with a 20-quarter chart of demand vs supply, quarterly growth bars against the long-term line, and the company list. A header strip shows the global phase and g_t (batch 150) |
 | **Pdoomberg** | 20.5.2, 3.13.1 | Full-screen terminal. F2 Quotes (watchlists: All, by industry, by country, Disclosure radar hidden); F3 Chart (daily bars with the estimated fair value band, ±15% for listed companies, 3.14.2; true V is never shown); F4 Order shows "Read-only MVP"; F5 Filings (quarterly statements); F6 Ratings (credit ratings only); F7 Bonds (base rate and country spreads); F9 Industries; F10 Screener (read-only filters) |
 | **Quarterly recap** | 20.7.9, 21.6.2 | Opens the pre-quarter-end week. World page: global phase and g_t, industries by phase label, biggest expected beats and misses by projection. Company page (watchlist companies): anticipated earnings range, expected reaction, confidence, outlook (news phase, losses, rating watch). No guidance choice |
 | **News feed** | 20.5.1 | Pdoomberg Wire headlines (5.18) with date and industry tag |
@@ -767,7 +808,7 @@ One engine object exposed through gdext (12.3). Queries read the last finished t
 | Call | Returns |
 |---|---|
 | `list_countries(filter)` / `get_country(iso3)` | Rows / detail with financial zone, tax, rating, spread, HQ count |
-| `get_cycle()` | Global phase, g_t, quarters left, Z, and each zone with its intensity and effect (batch 150) |
+| `get_cycle()` | Global phase, g_t, quarters left, Z, and each zone with its intensity and effect (batch 150); the AI stage, boom year and boom date (batch 151; the rolled pop date only in Omniscient) |
 | `get_province(id)` | Province card: tracks, tags, Metro, key city, HQs, units with assets there |
 | `get_map_layer(mode, param)` | PackedFloat32Array or PackedInt32Array per province, plus legend |
 | `list_key_cities()` / `list_metros()` | Rows with province ids |
@@ -818,9 +859,9 @@ Views carry dirty flags (12.3); only changed rows are rebuilt.
 | M7 | GDExtension API and views; Godot shell: top bar, time controls, alerts | Godot runs the sim at all speeds; screens read views only |
 | M8 | Map: geometry pipeline (gap G1), zoom, map modes, province card | All 3,255 provinces clickable |
 | M9 | Screens: Company, Industries, Pdoomberg, Recap, News | Every section 8 screen opens in under 100 ms |
-| M10 | Soak and balance: 30-year headless run, determinism replay | 30 years in under 2 minutes headless; same seed gives the same hashes; balance targets below |
+| M10 | Soak and balance: 30-year headless run, determinism replay | 30 years in under 2 minutes headless; same seed gives the same hashes; balance targets below; the AI boom and the pop fire on their dates and, with noise off, AI labs demand matches validate.py's boom run (5.1.1, batch 151) |
 
-**Balance targets after 10 years (T):** at least 85% of the 651 companies neither bankrupt nor removed; industry revenue within ±30% of the trend path; median productivity 90 to 110; no industry stuck at an M clamp for more than 8 quarters; 30% to 60% of releases are beats; each industry's 10-year average demand growth within ±3 pp of its long-term rate in 90% of seeds, and 10% to 25% of industry-quarters labeled Boom and 10% to 20% Bust (batch 150).
+**Balance targets after 10 years (T):** at least 85% of the 651 companies neither bankrupt nor removed; industry revenue within ±30% of the trend path; median productivity 90 to 110; no industry stuck at an M clamp for more than 8 quarters; 30% to 60% of releases are beats; the 2020 to 2029 run before the boom (5.1.1): each industry's 10-year average demand growth within ±3 pp of its long-term rate in 90% of seeds, and 10% to 25% of industry-quarters labeled Boom and 10% to 20% Bust (batch 150).
 
 ---
 

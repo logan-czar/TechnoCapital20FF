@@ -1,9 +1,25 @@
-zone_id,name,intensity,countries,gdp_usd_bn,gdp_share,notes
-US,US-led,1,7,25393,0.2953,"United States, Canada, Puerto Rico and the dollar offshore centers (A); the reference zone"
-EA,Euro area,1.2,26,10831,0.126,"19 euro-area members, the 6 other euro users and Saint Pierre and Miquelon; the euro crisis makes it swing harder (A)"
-EU,Other Europe,1.1,27,7309,0.085,"UK, Switzerland, the Nordics outside the euro, non-euro EU, the Balkans, Ukraine, Belarus, Moldova, Turkey and the crown dependencies (A)"
-CN,China,0.9,2,14363,0.167,China and Hong Kong; state-steered credit damps the cycle (A)
-EAS,Other East Asia and Oceania,1.1,18,9376,0.109,"Japan, Korea, Taiwan, Singapore, Australia, New Zealand and the Pacific islands; export-led (A)"
-EMA,Emerging Asia,1.3,29,7995,0.093,"Southeast Asia outside Singapore, Mongolia, North Korea, South Asia, Russia, the Caucasus and Central Asia (A)"
-LAT,Latin America,1.4,33,5338,0.0621,"Mexico, Central and South America and the Caribbean outside the dollar offshore centers (A)"
-MEA,Middle East and Africa,1.3,68,5390,0.0627,Middle East and North Africa and Sub-Saharan Africa (A)
+zone_id,number,name,hub_city,hub_province,exchange_code,exchange,headline_index,intensity,lag_quarters,contagion,own_shock_sd,extra_provinces,countries,gdp_usd_bn,gdp_share,notes
+NA,1,North America and havens,New York,US-0086,ATX,Atlantic Exchange,Atlantic 500,1,0,0.3,0,,7,25393,0.2953,"USA, Canada, Puerto Rico and the dollar havens (Bermuda, Bahamas, Caymans, BVI); the reference zone; havens follow North America (A)"
+CAR,2,Caribbean,Kingston,JM-0001,ASE,Antilles Securities Exchange,Antilles 30,1.3,1,0.3,0,,11,150,0.0017,The Caribbean islands outside Cuba and the dollar havens; tourism lags the US (A)
+CUB,3,Cuba,Havana,CU-0001,HAB,Havana Bourse,Malecon 20,0.3,2,0,0.03,,1,103,0.0012,"Cuba alone: isolated by the embargo, low intensity and its own shocks (A)"
+PRK,4,North Korea,Pyongyang,KP-0001,TDX,Taedong River Exchange,Chollima 15,0.3,2,0,0.03,,1,18,0.0002,"North Korea alone: sealed economy, low intensity and its own shocks (A)"
+EU,5,European Union,Frankfurt,DE-0019,CBX,Continental Bourse,Continental 50,1.2,1,0.5,0,,45,13864,0.1612,"The 27 EU members plus Norway, Iceland, the Balkans, Ukraine, Moldova, Belarus, the microstates, the Faroes, Greenland and Saint Pierre and Miquelon; the euro crisis makes it swing harder (A)"
+UK,6,United Kingdom,London,GB-0001,CLX,City of London Exchange,CLX 100,1.1,0,0.3,0,,5,2769,0.0322,"UK with Gibraltar, the Isle of Man, Jersey and Guernsey (A)"
+CN,7,China and puppets,Shanghai,CN-0008,HSE,Huangpu Stock Exchange,Huangpu Composite,0.9,1,0.4,0,,8,14448,0.168,"China, its debt vassals (Pakistan, Sri Lanka, Djibouti, Zambia) and close clients (Laos, Cambodia, Mongolia); state-steered credit damps the cycle (A)"
+KR,8,South Korea,Seoul-Pyeongtaek,KR-0001,HRX,Han River Exchange,HRX 200,1.1,1,0.3,0,,2,6750,0.0785,"South Korea and Japan (provisional: Japan joins the nearest zone, flag for Logan) (A)"
+HK,9,Hong Kong,Hong Kong,HK-0001,VHX,Victoria Harbour Exchange,Harbour Index,1.2,0,0.4,0,,2,973,0.0113,Hong Kong and Taiwan (provisional: flag for Logan) (A)
+AU,10,Australia,Sydney,AU-0001,SCX,Southern Cross Exchange,Southern Cross 200,1,1,0.2,0,,14,1646,0.0191,"Australia, New Zealand and the Pacific islands (A)"
+MO,11,Macau,Macau,CN-0030,CTX,Cotai Exchange,Cotai 20,1.5,1,0,0,CN-0030,0,0,0,"The Macau province only: Macau has no countries.csv row, so the zone holds province CN-0030 while China stays in zone 7; casino money swings hard (A)"
+SG,12,Singapore,Singapore,SG-0001,LCX,Lion City Exchange,Lion 30,1.2,1,0.4,0,,9,3122,0.0363,"Singapore and Southeast Asia: Indonesia, Malaysia, Thailand, Vietnam, the Philippines, Brunei, Myanmar and Timor-Leste (A)"
+IN,13,India,Mumbai,IN-0013,GXI,Gateway Exchange of India,Gateway 50,1.2,1,0.3,0,,3,3158,0.0367,"India, Bangladesh and the Maldives; Pakistan and Sri Lanka are Chinese debt vassals and sit in zone 7 (A)"
+AFS,14,Southern Africa,Johannesburg,ZA-0001,HVX,Highveld Exchange,Highveld Top 40,1.3,2,0.4,0,,12,593,0.0069,"South Africa, DR Congo, Angola and the SADC south and Indian Ocean (A)"
+AFW,15,West Africa,Lagos,NG-0001,LSX,Lagoon Securities Exchange,Lagoon 50,1.4,2,0.4,0,,22,785,0.0091,"West and Central Africa from Cabo Verde to the Congo Republic and Chad, including Mali, a US debt vassal (A)"
+AFE,16,East Africa,Nairobi,KE-0001,RVX,Rift Valley Exchange,Rift 20,1.2,2,0.3,0,,12,347,0.004,"Kenya, Ethiopia, the Great Lakes, the Horn outside Djibouti, Sudan, South Sudan, Seychelles and Comoros (A)"
+AFN,17,North and Northwest Africa,Casablanca,MA-0001,ABX,Atlas Bourse,Atlas 25,1.2,1,0.3,0,,5,408,0.0047,"Morocco, Algeria, Tunisia, Libya and Mauritania (A)"
+CH,18,Switzerland,Zurich,CH-0001,LMX,Limmat Exchange,Limmat 20,0.8,0,0.2,0,,2,757,0.0088,Switzerland and Liechtenstein; the safe haven swings least (A)
+ME,19,Middle East,Dubai,AE-0008,DCX,Creek Exchange,Creek 50,1.1,1,0.3,0,,16,3981,0.0463,"The Gulf, the Levant, Iraq, Iran, Turkey, Egypt and Yemen (A)"
+UA,20,Upper Asia (Himalayas),Almaty,KZ-0002,SRX,Silk Road Exchange,Silk Road 30,1.3,1,0.4,0,,12,1645,0.0191,"Russia (provisional: flag for Logan), Central Asia, the Caucasus, Afghanistan, Nepal and Bhutan (A)"
+MX,21,Mexico,Mexico City,MX-0001,RFX,Reforma Exchange,Reforma 35,1.3,0,0.3,0,,7,1457,0.0169,Mexico and Central America from Guatemala and Belize to Costa Rica (A)
+BR,22,Brazil,São Paulo,BR-0001,PSX,Paulista Exchange,Paulista Index,1.4,1,0.4,0,,5,1938,0.0225,"Brazil, Paraguay, Bolivia, Guyana and Suriname (A)"
+AR,23,Argentina,Buenos Aires,AR-0001,PLX,River Plate Exchange,Plata 25,1.6,1,0.5,0,,4,786,0.0091,"Argentina, Chile, Uruguay and Papa's Port (the Falklands); Argentina's debt crises make it swing hardest (A)"
+CO,24,Colombia,Bogotá,CO-0001,ANX,Andean Exchange,Andes 20,1.3,1,0.4,0,,5,903,0.0105,"Colombia, Venezuela, Ecuador, Peru and Panama (A)"

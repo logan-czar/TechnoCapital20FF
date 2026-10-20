@@ -6,8 +6,9 @@
 Writes into <design>/data/:
   industries.csv        42 rows  (mvp-spec 2.2; 10-industry-economy 10.3, 10.3.1, 10.0.11.10; 3-markets 3.3.2)
   country-economy.csv   210 rows (mvp-spec 2.2; 2-map 2.2.3, 2.2.5, 2.18.2; 3-markets 3.6.2, 3.6.5; 4-politics E2)
-  financial-zones.csv     8 rows (mvp-spec 2.2, 5.1; 2-map 2.18.2; Logan, batch 150)
-  key-cities.csv        80 rows  (2-map 2.3.3, 2.3.4, 2.3.5, parsed from the markdown)
+  financial-zones.csv    24 rows (mvp-spec 2.2, 5.1; 2-map 2.18.2; 3-markets 3.2.1; Logan, batches 150 and 152)
+  ai-boom.csv            15 rows (mvp-spec 2.2, 5.1.1; 7-starting-world 7.7; Logan, batch 151)
+  key-cities.csv        88 rows  (2-map 2.3.3, 2.3.4, 2.3.5, parsed from the markdown; 8 zone hubs, batch 152)
 
 Plain Python 3, no packages, no randomness: the same inputs always give the same files.
 Then runs validate.py, which checks ids and prints the margin and named-share checks.
@@ -24,8 +25,8 @@ DETAILED = os.path.join(DESIGN, 'detailed')
 # name, sector, world size $bn, trend, beta, rate sensitivity label, margin at full use, f, capital per $1
 # All copied from 10-industry-economy 10.3. Notes say where a 10.3 cell was not a single number.
 IND = [
-    ('Semiconductors', 'Tech', 330, 0.05, 1.6, 'Medium', 0.27, 0.45, 1.3, 'Trend +5% plus the AI boom (10.6); the boom is not modelled in the MVP, so 0.05 (A)'),
-    ('AI labs', 'Tech', 5, 0.30, 2.0, 'High', 0.00, 0.70, 0.3, 'Trend "Boom-driven" stored as 0.30 (T); margin "-40% to +40%" stored as 0.00 (T) (mvp-spec G4)'),
+    ('Semiconductors', 'Tech', 330, 0.05, 1.6, 'Medium', 0.27, 0.45, 1.3, 'Trend +5% before the AI boom; boom uplift 0.1 of the AI labs boom (ai-boom.csv, batch 151, A)'),
+    ('AI labs', 'Tech', 5, 0.05, 2.0, 'High', 0.00, 0.70, 0.3, 'Trend 0.05 before the 2030 boom, then the ai-boom.csv schedule (Logan, batch 151; T); margin "-40% to +40%" stored as 0.00 (T) (mvp-spec G4)'),
     ('Cloud', 'Tech', 300, 0.20, 1.0, 'Medium', 0.25, 0.50, 0.6, ''),
     ('Data centers', 'Tech', 100, 0.15, 0.8, 'High', 0.20, 0.65, 3.0, ''),
     ('Software', 'Tech', 350, 0.09, 0.8, 'Medium', 0.25, 0.55, 0.2, ''),
@@ -190,6 +191,32 @@ def fmt(x, nd=4):
 # term rate." trend_growth is the long-term rate; volatility is the sd of the quarterly growth shock (mvp-spec 5.1),
 # one value for all industries in the MVP (T).
 VOLATILITY = 0.01
+# Logan, batch 151: "AI boom I think we are moving to 2030 start now bubble in 2040. I think we need to do really small
+# AI with low growth then an unprecedented growth rate." AI labs' long-term rate is a regime switch (mvp-spec 5.1.1):
+# 5% before the boom, the AI_BOOM schedule from the scripted 2030 boom, a bust after the pop (2040 +/- 2 on average).
+# Another industry's long-term rate is trend_growth + boom_uplift x (AI labs rate - AI_PREBOOM_LT) (A); at the pop its
+# demand drops by crash_drop once (T).
+AI_PREBOOM_LT = 0.05
+BOOM_UPLIFT = {'AI labs': 1.0, 'Data centers': 0.15, 'Semiconductors': 0.1, 'Cloud': 0.05}     # A, T
+CRASH_DROP = {'AI labs': 0.5, 'Data centers': 0.25, 'Semiconductors': 0.2, 'Cloud': 0.1}       # T
+# stage, boom year (years since the boom event), default calendar year, AI labs long-term rate a year (T), notes
+AI_BOOM = [
+    ('preboom', '', '2020-2029', AI_PREBOOM_LT, 'Really small AI with low growth (Logan, batch 151); world size about $5B to $8B'),
+    ('boom', 0, '2030', 1.00, 'The tipped lab launches its chatbot: the boom event, 1 Jan 2030 00:00 (7.7)'),
+    ('boom', 1, '2031', 1.00, 'Unprecedented growth (Logan, batch 151)'),
+    ('boom', 2, '2032', 0.90, ''),
+    ('boom', 3, '2033', 0.80, ''),
+    ('boom', 4, '2034', 0.60, 'Tapering as the bubble nears'),
+    ('boom', 5, '2035', 0.45, ''),
+    ('boom', 6, '2036', 0.35, ''),
+    ('boom', 7, '2037', 0.25, ''),
+    ('boom', 8, '2038', 0.20, 'Earliest pop year (2040 - 2)'),
+    ('boom', 9, '2039', 0.15, ''),
+    ('boom', 10, '2040+', 0.12, 'Only if the pop is rolled after 1 Jan 2040; holds until the pop'),
+    ('pop', '', '2040 on average', '', 'The bubble pops: demand x (1 - crash_drop) once; the year is 2040 + a roll of -2 to +2, the quarter rolled (A)'),
+    ('bust', '', '8 quarters from the pop', -0.10, 'Two years of shrinking AI demand (T)'),
+    ('postcrash', '', 'after the bust', 0.08, 'The post-crash era (T)'),
+]
 DECAY_THRESHOLD_USD = 10_000_000
 PER_INDUSTRY = False
 DEFAULT = {
@@ -206,8 +233,10 @@ DEFAULT = {
 }
 DEFAULT['margin_full_use'] = DEFAULT['rd_norm']  # break-even after R&D at the norm, as the barebones company
 TREND_NOTE = {
-    'Semiconductors': 'Trend +5% plus the AI boom (10.6); the boom is not modelled in the MVP, so 0.05 (A)',
-    'AI labs': 'Trend "Boom-driven" stored as 0.30 (T)',
+    'Semiconductors': 'Trend +5% before the AI boom; boom uplift 0.1 of the AI labs boom (ai-boom.csv, batch 151, A)',
+    'Data centers': 'Boom uplift 0.15 of the AI labs boom (ai-boom.csv, batch 151, A)',
+    'Cloud': 'Boom uplift 0.05 of the AI labs boom (ai-boom.csv, batch 151, A)',
+    'AI labs': 'Trend 0.05 before the 2030 boom, then the ai-boom.csv schedule (Logan, batch 151; T)',
     'Oil': 'Trend 0%: stagnant (Logan, batch 86)',
     'Defense': 'Trend +4% is war-driven in 10.3; flat 0.04 in the MVP (A)',
 }
@@ -228,6 +257,7 @@ def build_default_industries():
             'id': slug(name), 'name': name, 'sector': sector, 'valuation_group': 'Default',
             'world_size_2020_usd_bn': fmt(size), 'trend_growth': fmt(trend), 'cycle_beta': fmt(d['cycle_beta']),
             'volatility': fmt(d['volatility']),
+            'boom_uplift': fmt(BOOM_UPLIFT.get(name, 0)), 'crash_drop': fmt(CRASH_DROP.get(name, 0)),
             'rate_sensitivity': d['rate_sensitivity'], 'margin_full_use': fmt(d['margin_full_use']),
             'fixed_cost_share': fmt(d['fixed_cost_share']),
             'variable_cost_share': fmt(1 - d['margin_full_use'] - d['fixed_cost_share']),
@@ -256,6 +286,7 @@ def build_tuned_industries():
             'id': slug(name), 'name': name, 'sector': sector, 'valuation_group': vg,
             'world_size_2020_usd_bn': fmt(size), 'trend_growth': fmt(trend), 'cycle_beta': fmt(beta),
             'volatility': fmt(VOLATILITY),
+            'boom_uplift': fmt(BOOM_UPLIFT.get(name, 0)), 'crash_drop': fmt(CRASH_DROP.get(name, 0)),
             'rate_sensitivity': RATE_SENS[rs], 'margin_full_use': fmt(m), 'fixed_cost_share': fmt(f),
             'variable_cost_share': fmt(1 - m - f), 'capital_per_dollar': fmt(cap), 'asset_turnover': fmt(1 / cap),
             'asset_decay': fmt(DECAY[name]), 'asset_decay_threshold_usd': DECAY_THRESHOLD_USD,
@@ -362,52 +393,132 @@ RATING_NOTE = {
 EURO_AREA = {'AUT', 'BEL', 'CYP', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'IRL', 'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD',
              'PRT', 'SVK', 'SVN', 'ESP'}
 EURO_USERS = {'MNE', 'XKX', 'AND', 'MCO', 'SMR', 'VAT'}
-# Logan, batch 150: "Global business cycle. Intensity is felt differently by different financial zones."
-# One global cycle (mvp-spec 5.1, 2-map 2.18.1) replaces the national cycles; each country sits in one of 8
-# financial zones (A), which feels the cycle at its intensity (T): zone effect = intensity x g_t.
+# Logan, batch 152: "Financial Zones Each have a stock exchange and hub city where the stock exchange takes place.
+# This financial city should be a hub and have a zone. ... Countries belong to one financial zone and only one.
+# Countries should join nearby financial zones." 24 zones replace the 8 of batch 150. One global cycle (mvp-spec 5.1,
+# 2-map 2.18.1) is felt by each zone at its intensity, after its lag (T): zone effect = intensity x g(t - lag).
+# Contagion (T): share of a member's default or bank crisis demand hit and spread rise that spreads to the other
+# members (mvp-spec 5.1). own_shock_sd (T): yearly sd of a zone-only growth shock, for the isolated economies.
+# zone_id, number, name, hub city (key city), hub province, exchange code, exchange, headline index,
+# intensity, lag (quarters), contagion, own_shock_sd, extra provinces (provinces of another country's row), note
 ZONES = [
-    ('US', 'US-led', 1.0, 'United States, Canada, Puerto Rico and the dollar offshore centers (A); the reference zone'),
-    ('EA', 'Euro area', 1.2, '19 euro-area members, the 6 other euro users and Saint Pierre and Miquelon; '
-                             'the euro crisis makes it swing harder (A)'),
-    ('EU', 'Other Europe', 1.1, 'UK, Switzerland, the Nordics outside the euro, non-euro EU, the Balkans, '
-                                'Ukraine, Belarus, Moldova, Turkey and the crown dependencies (A)'),
-    ('CN', 'China', 0.9, 'China and Hong Kong; state-steered credit damps the cycle (A)'),
-    ('EAS', 'Other East Asia and Oceania', 1.1, 'Japan, Korea, Taiwan, Singapore, Australia, New Zealand and '
-                                               'the Pacific islands; export-led (A)'),
-    ('EMA', 'Emerging Asia', 1.3, 'Southeast Asia outside Singapore, Mongolia, North Korea, South Asia, Russia, '
-                                  'the Caucasus and Central Asia (A)'),
-    ('LAT', 'Latin America', 1.4, 'Mexico, Central and South America and the Caribbean outside the dollar '
-                                  'offshore centers (A)'),
-    ('MEA', 'Middle East and Africa', 1.3, 'Middle East and North Africa and Sub-Saharan Africa (A)'),
+    ('NA', 1, 'North America and havens', 'New York', 'US-0086', 'ATX', 'Atlantic Exchange', 'Atlantic 500',
+     1.0, 0, 0.3, 0.0, '', 'USA, Canada, Puerto Rico and the dollar havens (Bermuda, Bahamas, Caymans, BVI); '
+     'the reference zone; havens follow North America (A)'),
+    ('CAR', 2, 'Caribbean', 'Kingston', 'JM-0001', 'ASE', 'Antilles Securities Exchange', 'Antilles 30',
+     1.3, 1, 0.3, 0.0, '', 'The Caribbean islands outside Cuba and the dollar havens; tourism lags the US (A)'),
+    ('CUB', 3, 'Cuba', 'Havana', 'CU-0001', 'HAB', 'Havana Bourse', 'Malecon 20',
+     0.3, 2, 0.0, 0.03, '', 'Cuba alone: isolated by the embargo, low intensity and its own shocks (A)'),
+    ('PRK', 4, 'North Korea', 'Pyongyang', 'KP-0001', 'TDX', 'Taedong River Exchange', 'Chollima 15',
+     0.3, 2, 0.0, 0.03, '', 'North Korea alone: sealed economy, low intensity and its own shocks (A)'),
+    ('EU', 5, 'European Union', 'Frankfurt', 'DE-0019', 'CBX', 'Continental Bourse', 'Continental 50',
+     1.2, 1, 0.5, 0.0, '', 'The 27 EU members plus Norway, Iceland, the Balkans, Ukraine, Moldova, Belarus, the '
+     'microstates, the Faroes, Greenland and Saint Pierre and Miquelon; the euro crisis makes it swing harder (A)'),
+    ('UK', 6, 'United Kingdom', 'London', 'GB-0001', 'CLX', 'City of London Exchange', 'CLX 100',
+     1.1, 0, 0.3, 0.0, '', 'UK with Gibraltar, the Isle of Man, Jersey and Guernsey (A)'),
+    ('CN', 7, 'China and puppets', 'Shanghai', 'CN-0008', 'HSE', 'Huangpu Stock Exchange', 'Huangpu Composite',
+     0.9, 1, 0.4, 0.0, '', 'China, its debt vassals (Pakistan, Sri Lanka, Djibouti, Zambia) and close clients (Laos, '
+     'Cambodia, Mongolia); state-steered credit damps the cycle (A)'),
+    ('KR', 8, 'South Korea', 'Seoul-Pyeongtaek', 'KR-0001', 'HRX', 'Han River Exchange', 'HRX 200',
+     1.1, 1, 0.3, 0.0, '', 'South Korea and Japan (provisional: Japan joins the nearest zone, flag for Logan) (A)'),
+    ('HK', 9, 'Hong Kong', 'Hong Kong', 'HK-0001', 'VHX', 'Victoria Harbour Exchange', 'Harbour Index',
+     1.2, 0, 0.4, 0.0, '', 'Hong Kong and Taiwan (provisional: flag for Logan) (A)'),
+    ('AU', 10, 'Australia', 'Sydney', 'AU-0001', 'SCX', 'Southern Cross Exchange', 'Southern Cross 200',
+     1.0, 1, 0.2, 0.0, '', 'Australia, New Zealand and the Pacific islands (A)'),
+    ('MO', 11, 'Macau', 'Macau', 'CN-0030', 'CTX', 'Cotai Exchange', 'Cotai 20',
+     1.5, 1, 0.0, 0.0, 'CN-0030', 'The Macau province only: Macau has no countries.csv row, so the zone holds '
+     'province CN-0030 while China stays in zone 7; casino money swings hard (A)'),
+    ('SG', 12, 'Singapore', 'Singapore', 'SG-0001', 'LCX', 'Lion City Exchange', 'Lion 30',
+     1.2, 1, 0.4, 0.0, '', 'Singapore and Southeast Asia: Indonesia, Malaysia, Thailand, Vietnam, the Philippines, '
+     'Brunei, Myanmar and Timor-Leste (A)'),
+    ('IN', 13, 'India', 'Mumbai', 'IN-0013', 'GXI', 'Gateway Exchange of India', 'Gateway 50',
+     1.2, 1, 0.3, 0.0, '', 'India, Bangladesh and the Maldives; Pakistan and Sri Lanka are Chinese debt vassals '
+     'and sit in zone 7 (A)'),
+    ('AFS', 14, 'Southern Africa', 'Johannesburg', 'ZA-0001', 'HVX', 'Highveld Exchange', 'Highveld Top 40',
+     1.3, 2, 0.4, 0.0, '', 'South Africa, DR Congo, Angola and the SADC south and Indian Ocean (A)'),
+    ('AFW', 15, 'West Africa', 'Lagos', 'NG-0001', 'LSX', 'Lagoon Securities Exchange', 'Lagoon 50',
+     1.4, 2, 0.4, 0.0, '', 'West and Central Africa from Cabo Verde to the Congo Republic and Chad, including Mali, '
+     'a US debt vassal (A)'),
+    ('AFE', 16, 'East Africa', 'Nairobi', 'KE-0001', 'RVX', 'Rift Valley Exchange', 'Rift 20',
+     1.2, 2, 0.3, 0.0, '', 'Kenya, Ethiopia, the Great Lakes, the Horn outside Djibouti, Sudan, South Sudan, '
+     'Seychelles and Comoros (A)'),
+    ('AFN', 17, 'North and Northwest Africa', 'Casablanca', 'MA-0001', 'ABX', 'Atlas Bourse', 'Atlas 25',
+     1.2, 1, 0.3, 0.0, '', 'Morocco, Algeria, Tunisia, Libya and Mauritania (A)'),
+    ('CH', 18, 'Switzerland', 'Zurich', 'CH-0001', 'LMX', 'Limmat Exchange', 'Limmat 20',
+     0.8, 0, 0.2, 0.0, '', 'Switzerland and Liechtenstein; the safe haven swings least (A)'),
+    ('ME', 19, 'Middle East', 'Dubai', 'AE-0008', 'DCX', 'Creek Exchange', 'Creek 50',
+     1.1, 1, 0.3, 0.0, '', 'The Gulf, the Levant, Iraq, Iran, Turkey, Egypt and Yemen (A)'),
+    ('UA', 20, 'Upper Asia (Himalayas)', 'Almaty', 'KZ-0002', 'SRX', 'Silk Road Exchange', 'Silk Road 30',
+     1.3, 1, 0.4, 0.0, '', 'Russia (provisional: flag for Logan), Central Asia, the Caucasus, Afghanistan, Nepal '
+     'and Bhutan (A)'),
+    ('MX', 21, 'Mexico', 'Mexico City', 'MX-0001', 'RFX', 'Reforma Exchange', 'Reforma 35',
+     1.3, 0, 0.3, 0.0, '', 'Mexico and Central America from Guatemala and Belize to Costa Rica (A)'),
+    ('BR', 22, 'Brazil', 'São Paulo', 'BR-0001', 'PSX', 'Paulista Exchange', 'Paulista Index',
+     1.4, 1, 0.4, 0.0, '', 'Brazil, Paraguay, Bolivia, Guyana and Suriname (A)'),
+    ('AR', 23, 'Argentina', 'Buenos Aires', 'AR-0001', 'PLX', 'River Plate Exchange', 'Plata 25',
+     1.6, 1, 0.5, 0.0, '', "Argentina, Chile, Uruguay and Papa's Port (the Falklands); Argentina's debt crises "
+     'make it swing hardest (A)'),
+    ('CO', 24, 'Colombia', 'Bogotá', 'CO-0001', 'ANX', 'Andean Exchange', 'Andes 20',
+     1.3, 1, 0.4, 0.0, '', 'Colombia, Venezuela, Ecuador, Peru and Panama (A)'),
 ]
-ZONE_BY_SUPER = {'North America': 'US', 'Latin America': 'LAT', 'Europe': 'EU', 'Russia and Central Asia': 'EMA',
-                 'Middle East and North Africa': 'MEA', 'Sub-Saharan Africa': 'MEA', 'South Asia': 'EMA',
-                 'East Asia and Oceania': 'EMA'}
-ZONE_EXCEPT = {'MEX': 'LAT', 'GRL': 'EU', 'SPM': 'EA', 'PRI': 'US', 'BHS': 'US', 'CYM': 'US', 'VGB': 'US',
-               'CHN': 'CN', 'HKG': 'CN', 'JPN': 'EAS', 'KOR': 'EAS', 'TWN': 'EAS', 'SGP': 'EAS', 'AUS': 'EAS',
-               'NZL': 'EAS', 'PNG': 'EAS', 'FJI': 'EAS', 'SLB': 'EAS', 'VUT': 'EAS', 'WSM': 'EAS', 'TON': 'EAS',
-               'KIR': 'EAS', 'FSM': 'EAS', 'MHL': 'EAS', 'PLW': 'EAS', 'NRU': 'EAS', 'TUV': 'EAS'}
-ZONE_NOTE = {'MEX': 'Mexico in Latin America, not US-led (A)', 'GRL': 'Greenland follows Denmark (A)',
-             'PRI': 'US territory: US-led (A)', 'BHS': 'dollar offshore center: US-led (A)',
-             'CYM': 'dollar offshore center: US-led (A)', 'VGB': 'dollar offshore center: US-led (A)',
-             'SPM': 'French territory: euro area (A)', 'TUR': 'Turkey in Other Europe (A)',
-             'RUS': 'Russia in Emerging Asia (A)'}
+# Every one of the 210 countries in exactly one zone (batch 152 defaults, A). validate.py checks it.
+ZONE_MEMBERS = {
+    'NA': 'USA CAN BMU BHS CYM VGB PRI',
+    'CAR': 'DOM HTI JAM TTO BRB ATG DMA GRD KNA LCA VCT',
+    'CUB': 'CUB',
+    'PRK': 'PRK',
+    'EU': 'AUT BEL BGR HRV CYP CZE DNK EST FIN FRA DEU GRC HUN IRL ITA LVA LTU LUX MLT NLD POL PRT ROU SVK SVN ESP '
+          'SWE NOR ISL SRB BIH MKD ALB MNE XKX UKR MDA BLR AND MCO SMR VAT FRO GRL SPM',
+    'UK': 'GBR GIB IMN JEY GGY',
+    'CN': 'CHN PAK LKA DJI ZMB LAO KHM MNG',
+    'KR': 'KOR JPN',
+    'HK': 'HKG TWN',
+    'AU': 'AUS NZL PNG FJI SLB VUT WSM TON KIR FSM MHL PLW NRU TUV',
+    'MO': '',
+    'SG': 'SGP IDN MYS THA VNM PHL BRN MMR TLS',
+    'IN': 'IND BGD MDV',
+    'AFS': 'ZAF COD AGO ZWE MOZ NAM BWA MWI LSO SWZ MDG MUS',
+    'AFW': 'NGA GHA CIV SEN MLI BFA NER GIN GNB SLE LBR TGO BEN GMB CPV TCD CMR CAF COG GAB GNQ STP',
+    'AFE': 'KEN ETH TZA UGA SOM SDN SSD ERI RWA BDI SYC COM',
+    'AFN': 'MAR DZA TUN LBY MRT',
+    'CH': 'CHE LIE',
+    'ME': 'SAU ARE ISR EGY QAT IRN IRQ KWT BHR OMN YEM JOR LBN SYR PSE TUR',
+    'UA': 'RUS KAZ UZB TKM KGZ TJK GEO ARM AZE AFG NPL BTN',
+    'MX': 'MEX GTM BLZ HND SLV NIC CRI',
+    'BR': 'BRA PRY BOL GUY SUR',
+    'AR': 'ARG CHL URY PAP',
+    'CO': 'COL VEN ECU PER PAN',
+}
+ZONE_OF = {iso: z for z, members in ZONE_MEMBERS.items() for iso in members.split()}
+ZONE_NOTE = {'GRL': 'Greenland follows Denmark into the EU zone (A)',
+             'SPM': 'French territory: EU zone (A)', 'GIB': 'haven, British: UK zone (A)',
+             'IMN': 'haven, British: UK zone (A)', 'JEY': 'haven, British: UK zone (A)',
+             'GGY': 'haven, British: UK zone (A)', 'LUX': 'haven, EU member: EU zone (A)',
+             'LIE': 'Liechtenstein goes with Switzerland (A)',
+             'PAK': 'Chinese debt vassal: China and puppets zone (A)', 'LKA': 'Chinese debt vassal: China and puppets zone (A)',
+             'DJI': 'Chinese debt vassal: China and puppets zone (A)', 'ZMB': 'Chinese debt vassal: China and puppets zone (A)',
+             'MLI': 'US debt vassal kept in West Africa by geography (A)',
+             'JPN': 'provisional: Japan joins South Korea, the nearest zone (A, flag for Logan)',
+             'TWN': 'provisional: Taiwan joins Hong Kong (A, flag for Logan)',
+             'RUS': 'provisional: Russia joins Upper Asia (A, flag for Logan)',
+             'EGY': 'Egypt in the Middle East zone (A)', 'TUR': 'Turkey in the Middle East zone (A)',
+             'MNG': 'Mongolia with China, its main client (A)', 'MMR': 'Myanmar with Southeast Asia (A)'}
 
 def financial_zone(c):
-    iso = c['iso3']
-    if iso in EURO_AREA or iso in EURO_USERS:
-        return 'EA'
-    return ZONE_EXCEPT.get(iso) or ZONE_BY_SUPER[c['superregion']]
+    return ZONE_OF[c['iso3']]
 
 def build_zones(countries, ce_rows):
     gdp = {c['iso3']: float(c['gdp_usd_bn']) for c in countries}
     total = sum(gdp.values())
     rows = []
-    for zid, name, inten, note in ZONES:
+    for (zid, num, name, hub, hub_prov, code, exch, index, inten, lag, cont, own, extra, note) in ZONES:
         members = [r['iso3'] for r in ce_rows if r['financial_zone'] == zid]
         g = sum(gdp[i] for i in members)
-        rows.append({'zone_id': zid, 'name': name, 'intensity': fmt(inten), 'countries': len(members),
-                     'gdp_usd_bn': round(g), 'gdp_share': fmt(g / total), 'notes': note})
+        rows.append({'zone_id': zid, 'number': num, 'name': name, 'hub_city': hub, 'hub_province': hub_prov,
+                     'exchange_code': code, 'exchange': exch, 'headline_index': index, 'intensity': fmt(inten),
+                     'lag_quarters': lag, 'contagion': fmt(cont), 'own_shock_sd': fmt(own),
+                     'extra_provinces': extra, 'countries': len(members), 'gdp_usd_bn': round(g),
+                     'gdp_share': fmt(g / total), 'notes': note})
     return rows
 
 # 3.6.5 crisis premium while in a debt crisis or the default chain, as the calibration offset (A, T)
@@ -480,8 +591,6 @@ def build_countries(countries):
         zone = financial_zone(c)
         if iso in ZONE_NOTE:
             notes.append(ZONE_NOTE[iso])
-        elif zone == 'EA' and iso in EURO_USERS:
-            notes.append('uses the euro outside the euro area: euro area zone (A)')
         rows.append({'iso3': iso, 'corp_tax_level': level, 'corp_tax_rate': fmt(rate),
                      'sovereign_rating': rating, 'country_spread_bps': spread, 'financial_zone': zone,
                      'notes': '; '.join(notes)})
@@ -496,7 +605,9 @@ COUNTRY_ISO = {'United States': 'USA', 'Canada': 'CAN', 'Mexico': 'MEX', 'Brazil
                'Saudi Arabia': 'SAU', 'Qatar': 'QAT', 'Israel': 'ISR', 'Egypt': 'EGY', 'Nigeria': 'NGA',
                'South Africa': 'ZAF', 'DR Congo': 'COD', 'India': 'IND', 'China': 'CHN',
                'Hong Kong (SAR of China)': 'HKG', 'Taiwan': 'TWN', 'South Korea': 'KOR', 'Japan': 'JPN',
-               'Singapore': 'SGP', 'Malaysia': 'MYS', 'Indonesia': 'IDN', 'Vietnam': 'VNM', 'Australia': 'AUS'}
+               'Singapore': 'SGP', 'Malaysia': 'MYS', 'Indonesia': 'IDN', 'Vietnam': 'VNM', 'Australia': 'AUS',
+               'Jamaica': 'JAM', 'Cuba': 'CUB', 'North Korea': 'PRK', 'Kazakhstan': 'KAZ', 'Morocco': 'MAR',
+               'Kenya': 'KEN'}
 # Specialty industries for the key cities that have no 2.3.4 row, read from their 2.3.3 specialties text (A).
 # Non-industries in that text (media, exchanges, government, textiles, tourism) are left out.
 SPECIALTY_FALLBACK = {
@@ -533,6 +644,15 @@ SPECIALTY_FALLBACK = {
     'Jakarta': ['Retail', 'Metals', 'Agriculture', 'Mining'],
     'Ho Chi Minh City': ['Consumer electronics', 'Agriculture'],
     'Sydney': ['Banking', 'Asset management', 'Real estate', 'Mining'],
+    # batch 152 financial zone hubs (A)
+    'Kingston': ['Shipping', 'Banking', 'Professional services'],
+    'Havana': ['Shipping', 'Agriculture'],
+    'Pyongyang': ['Defense', 'Black market'],
+    'Macau': ['Gambling', 'Real estate'],
+    'Almaty': ['Banking', 'Logistics', 'Telecom'],
+    'Casablanca': ['Banking', 'Chemicals', 'Shipping'],
+    'Nairobi': ['Banking', 'Telecom', 'Professional services'],
+    'Bogotá': ['Banking', 'Logistics', 'Agriculture'],
 }
 INDUSTRY_NAMES = [r[0] for r in IND]
 
@@ -599,6 +719,11 @@ def build_key_cities():
                      'notes': '; '.join(notes)})
     return rows
 
+def build_ai_boom():
+    """The AI boom schedule (Logan, batch 151; mvp-spec 5.1.1): AI labs' long-term rate by stage and boom year."""
+    return [{'stage': st, 'boom_year': n, 'default_year': yr, 'ai_labs_lt': fmt(lt) if lt != '' else '', 'notes': note}
+            for st, n, yr, lt, note in AI_BOOM]
+
 def write(path, rows):
     with open(path, 'w', newline='', encoding='utf-8') as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()), lineterminator='\n')
@@ -613,6 +738,7 @@ def main():
     write(os.path.join(DATA, 'country-economy.csv'), ce_rows)
     write(os.path.join(DATA, 'financial-zones.csv'), build_zones(countries, ce_rows))
     write(os.path.join(DATA, 'key-cities.csv'), build_key_cities())
+    write(os.path.join(DATA, 'ai-boom.csv'), build_ai_boom())
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import validate
     sys.exit(validate.run(DATA))

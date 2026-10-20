@@ -278,7 +278,7 @@ Starting development (Commerce, Industry and Population), city rank and each pro
 
 ### 2.3.3 Key cities
 
-Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. A **key city** is a city that has location perks (2.3.5) or seeded starting businesses (2.3.4). There are **80**, all in the 33 major countries: the cities of the old hub list (44 original, plus 36 added in the 2026-10-18 realism review). Being a key city sets nothing else: Metro status comes only from the 5M+ rule (2.3.2), and starting development, city rank and slum share are set directly in the province data **(A)**. Every other city in the world comes with the province list and is not listed here.
+Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. A **key city** is a city that has location perks (2.3.5) or seeded starting businesses (2.3.4). There are **88**: the 80 cities of the old hub list in the 33 major countries (44 original, plus 36 added in the 2026-10-18 realism review), plus 8 financial zone hub cities added in batch 152 (Kingston, Havana, Pyongyang, Macau, Almaty, Casablanca, Nairobi, Bogotá), which have no perks **(A)**. Every financial zone's hub city, where its exchange sits, is a key city (2.18.2). Being a key city sets nothing else: Metro status comes only from the 5M+ rule (2.3.2), and starting development, city rank and slum share are set directly in the province data **(A)**. Every other city in the world comes with the province list and is not listed here.
 
 **Province ids** are the city province or the Metro's member provinces in the province data files, plus any nearby province that holds the city's core industry, such as Hsinchu City for the chip cluster or the Pilbara for Perth's iron ore **(A)**. **Specialties** are the industries of the city's starting business units (2.3.4). **Perk** points to its row in 2.3.5. Edmonton and Medellín are key cities for the starting characters John Techno and Pablo Segundo ([7-starting-world.md](7-starting-world.md) 7.8).
 
@@ -364,6 +364,14 @@ Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and sta
 | Kuala Lumpur | Malaysia | MY-0001 to MY-0003 | Finance, Islamic finance, palm oil trading, data centers | 2.3.5 |
 | Hanoi | Vietnam | VN-0025 to VN-0027 | Government, electronics plants | 2.3.5 |
 | Melbourne | Australia | AU-0015, AU-0016 | Finance, pension funds, universities, port | 2.3.5 |
+| Kingston | Jamaica | JM-0001 | Caribbean zone exchange (batch 152), container transshipment on the Panama Canal route, banks, call centers, music | none |
+| Havana | Cuba | CU-0001 | Cuba zone exchange (batch 152), Communist Party and ministries, military conglomerate, tourism, port, sugar and tobacco | none |
+| Pyongyang | North Korea | KP-0001 | North Korea zone exchange (batch 152), regime capital, state trading companies, sanctions evasion | none |
+| Macau | China | CN-0030 | Macau zone exchange (batch 152), casinos, VIP junket money flows out of China | none |
+| Almaty | Kazakhstan | KZ-0002 | Upper Asia zone exchange (batch 152), banking, trading houses for Chinese goods, telecom | none |
+| Casablanca | Morocco | MA-0001, MA-0002 | North and Northwest Africa zone exchange (batch 152), banking, phosphate chemicals headquarters, port, industry | none |
+| Nairobi | Kenya | KE-0001 | East Africa zone exchange (batch 152), mobile money, banking, telecom, regional headquarters | none |
+| Bogotá | Colombia | CO-0001 to CO-0003 | Colombia zone exchange (batch 152), banking, government, air cargo, cut flowers | none |
 
 ### 2.3.4 Signature starting assets
 

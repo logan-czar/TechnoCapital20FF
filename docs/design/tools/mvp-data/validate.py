@@ -6,9 +6,12 @@
 Checks: row counts; industry names match companies.csv and the 42 of 10.3; every iso3 is in countries.csv;
 every key city province id exists in the province CSVs; the profit check for a normal company in each industry;
 named revenue plus the fringe pool equals world demand, with the named share; every country's financial zone
-is in financial-zones.csv, with the GDP-weighted zone intensity Z; and a seeded 40-quarter run of the batch 150
+is in financial-zones.csv, with the GDP-weighted zone intensity Z; batch 152: 24 zones, every country in exactly
+one, every hub province exists, lies in its zone and belongs to its hub city, every hub city is in key-cities.csv,
+exchange codes are unique, and listed companies are counted by their HQ country's zone exchange; a seeded 40-quarter run of the batch 150
 industry growth model (mvp-spec 5.1), which prints how far each industry's average growth sits from its
-long-term rate. Returns 1 on any error.
+long-term rate; and a seeded 2020 to 2045 run of the batch 151 AI boom (mvp-spec 5.1.1: boom 2030, pop 2040),
+which prints AI labs' long-term rate and demand by year. Returns 1 on any error.
 """
 import csv, glob, math, os, random, statistics, sys
 
@@ -25,13 +28,18 @@ def cycle_k(lt, g):
         return min(2.5, max(0.5, 1 + 5 * (lt - 0.04)))
     return min(1.5, max(0.25, 1 - 2.5 * (lt - 0.04)))
 
+def lt_q(lt):
+    """Quarterly long-term rate (batch 151): (1 + LT)^(1/4) - 1, so demand_core tracks trend_demand even at the
+    boom's 100% a year; within 0.1 pp of LT/4 for LT under 15%."""
+    return (1 + lt) ** 0.25 - 1
+
 def growth_run(inds, z_avg, seed, quarters=40):
-    """Seeded run of q_growth for every industry; returns average annual growth and the phase path."""
+    """Seeded run of q_growth for every industry; returns compound average yearly growth and the phase path."""
     rng = random.Random(seed)
     phase = 'Expansion'
     g = rng.uniform(*PHASES[phase][0])
     left = rng.randint(*PHASES[phase][1])
-    prev = {r['name']: float(r['trend_growth']) / 4 for r in inds}
+    prev = {r['name']: lt_q(float(r['trend_growth'])) for r in inds}
     total = dict.fromkeys(prev, 0.0)
     path = []
     for q in range(quarters):
@@ -46,10 +54,66 @@ def growth_run(inds, z_avg, seed, quarters=40):
             n, lt = r['name'], float(r['trend_growth'])
             noise = max(-3.0, min(3.0, rng.gauss(0, 1)))
             cycle = (1 - PHI) * float(r['cycle_beta']) * cycle_k(lt, g) * z_avg * g / 4
-            qg = max(-0.25, lt / 4 + PHI * (prev[n] - lt / 4) + cycle + float(r['volatility']) * noise)
+            qg = max(-0.25, lt_q(lt) + PHI * (prev[n] - lt_q(lt)) + cycle + float(r['volatility']) * noise)
             prev[n] = qg
-            total[n] += qg
-    return {n: 4 * t / quarters for n, t in total.items()}, path
+            total[n] += math.log(1 + qg)
+    # compound average yearly growth (batch 151), comparable with LT at any rate
+    return {n: math.exp(4 * t / quarters) - 1 for n, t in total.items()}, path
+
+def boom_lt(sched, q, boom_q, pop_q):
+    """AI labs' long-term rate in quarter q (0 = Q1 2020) under the ai-boom.csv schedule (mvp-spec 5.1.1)."""
+    pre = [float(r['ai_labs_lt']) for r in sched if r['stage'] == 'preboom'][0]
+    boom = {int(r['boom_year']): float(r['ai_labs_lt']) for r in sched if r['stage'] == 'boom'}
+    bust = [float(r['ai_labs_lt']) for r in sched if r['stage'] == 'bust'][0]
+    post = [float(r['ai_labs_lt']) for r in sched if r['stage'] == 'postcrash'][0]
+    if q < boom_q:
+        return pre, 'preboom'
+    if q < pop_q:
+        return boom[min(max(boom), (q - boom_q) // 4)], 'boom'
+    if q < pop_q + 8:
+        return bust, 'bust'
+    return post, 'postcrash'
+
+def boom_run(inds, sched, z_avg, seed, pop_year=2040, pop_quarter=1, end_year=2045, noise=True):
+    """Seeded quarterly run from Q1 2020 with the scripted boom (1 Jan 2030) and pop (mvp-spec 5.1.1). Every
+    industry's LT = trend_growth + boom_uplift x (AI labs rate - preboom rate); at the pop demand x (1 - crash_drop)
+    once and prev_q_growth resets to the new lt_q, as at the boom. Returns {name: [(year, LT, demand at year end)]}."""
+    rng = random.Random(seed)
+    pre = [float(r['ai_labs_lt']) for r in sched if r['stage'] == 'preboom'][0]
+    boom_q, pop_q = 40, (pop_year - 2020) * 4 + pop_quarter - 1
+    phase = 'Expansion'
+    g = rng.uniform(*PHASES[phase][0])
+    left = rng.randint(*PHASES[phase][1])
+    lt0 = {r['name']: float(r['trend_growth']) for r in inds}
+    up = {r['name']: float(r['boom_uplift']) for r in inds}
+    dem = {r['name']: float(r['world_size_2020_usd_bn']) for r in inds}
+    prev = {n: lt_q(lt0[n]) for n in lt0}
+    out = {n: [] for n in lt0}
+    stage_was = 'preboom'
+    for q in range((end_year - 2020 + 1) * 4):
+        if q > 0:
+            left -= 1
+            if left <= 0:
+                phase = PHASES[phase][2]
+                g = rng.uniform(*PHASES[phase][0])
+                left = rng.randint(*PHASES[phase][1])
+        ai, stage = boom_lt(sched, q, boom_q, pop_q)
+        for r in inds:
+            n = r['name']
+            lt = lt0[n] + up[n] * (ai - pre)
+            if stage != stage_was and stage in ('boom', 'bust'):
+                prev[n] = lt_q(lt)                      # scripted switch: no carry-over of the old gap (A)
+                if stage == 'bust':
+                    dem[n] *= 1 - float(r['crash_drop'])
+            z = max(-3.0, min(3.0, rng.gauss(0, 1))) if noise else 0.0
+            cycle = (1 - PHI) * float(r['cycle_beta']) * cycle_k(lt, g) * z_avg * g / 4 if noise else 0.0
+            qg = max(-0.25, lt_q(lt) + PHI * (prev[n] - lt_q(lt)) + cycle + float(r['volatility']) * z)
+            prev[n] = qg
+            dem[n] *= 1 + qg
+            if q % 4 == 3:
+                out[n].append((2020 + q // 4, lt, dem[n]))
+        stage_was = stage
+    return out
 
 def load(path):
     return list(csv.DictReader(open(path, encoding='utf-8')))
@@ -132,7 +196,7 @@ def run(data):
     for f in glob.glob(os.path.join(data, 'provinces-*.csv')):
         provinces |= {r['id'] for r in load(f)}
 
-    for name, rows, n in [('industries', inds, 42), ('country-economy', ce, len(countries)), ('key-cities', kc, 80)]:
+    for name, rows, n in [('industries', inds, 42), ('country-economy', ce, len(countries)), ('key-cities', kc, 88)]:
         if len(rows) != n:
             errors.append(f'{name}: {len(rows)} rows, expected {n}')
     names = {r['name'] for r in inds}
@@ -159,6 +223,39 @@ def run(data):
     for z in zones:
         if float(z['intensity']) <= 0:
             errors.append(f'{z["zone_id"]}: intensity must be above 0')
+    # batch 152: 24 zones, each with one exchange in a hub city that is a key city
+    if len(zones) != 24 or len(zone_ids) != 24:
+        errors.append(f'financial-zones: {len(zones)} rows, expected 24 distinct zones')
+    if len({z['exchange_code'] for z in zones}) != len(zones):
+        errors.append('financial-zones: duplicate exchange codes')
+    in_zone = {}
+    for r in ce:
+        in_zone.setdefault(r['iso3'], []).append(r['financial_zone'])
+    for iso in countries:
+        if len(in_zone.get(iso, [])) != 1:
+            errors.append(f'{iso}: in {len(in_zone.get(iso, []))} financial zones, expected exactly 1')
+    if sum(int(z['countries']) for z in zones) != len(countries):
+        errors.append('financial-zones: member counts do not sum to the countries')
+    prov_country = {}
+    for f in glob.glob(os.path.join(data, 'provinces-*.csv')):
+        prov_country.update({r['id']: r['country'] for r in load(f)})
+    zone_of = {r['iso3']: r['financial_zone'] for r in ce}
+    kc_by_city = {r['city']: r for r in kc}
+    for z in zones:
+        hub, hp = z['hub_city'], z['hub_province']
+        if hp not in provinces:
+            errors.append(f'{z["zone_id"]}: hub province {hp} not in the province files')
+            continue
+        if hub not in kc_by_city:
+            errors.append(f'{z["zone_id"]}: hub city {hub} not in key-cities.csv')
+        elif hp not in kc_by_city[hub]['province_ids'].split(';'):
+            errors.append(f'{z["zone_id"]}: hub province {hp} not among {hub} key city provinces')
+        extra = [p for p in z['extra_provinces'].split(';') if p]
+        if hp not in extra and zone_of.get(prov_country[hp]) != z['zone_id']:
+            errors.append(f'{z["zone_id"]}: hub province {hp} lies in {prov_country[hp]}, outside the zone')
+        for p in extra:
+            if p not in provinces:
+                errors.append(f'{z["zone_id"]}: extra province {p} not in the province files')
     gdp = {r['iso3']: float(r['gdp_usd_bn']) for r in load(os.path.join(data, 'countries.csv'))}
     inten = {z['zone_id']: float(z['intensity']) for z in zones}
     z_avg = sum(gdp[r['iso3']] * inten[r['financial_zone']] for r in ce) / sum(gdp[r['iso3']] for r in ce)
@@ -238,8 +335,18 @@ def run(data):
     if bb <= 0:
         errors.append(f'barebones fixed_cost_rate {bb:.3f}')
     # batch 150: financial zones and the industry growth model (mvp-spec 5.1)
-    print('\nFinancial zones (batch 150): ' + ', '.join(f'{z["zone_id"]} {z["intensity"]} '
-          f'({100 * float(z["gdp_share"]):.0f}% of GDP)' for z in zones) + f'; GDP-weighted intensity Z = {z_avg:.3f}')
+    listed = {}
+    for c in cos:
+        if c['public'] == 'Y':
+            ex = next(z['exchange_code'] for z in zones if z['zone_id'] == zone_of[c['hq_country']])
+            listed[ex] = listed.get(ex, 0) + 1
+    print('\nFinancial zones (batch 152): number, id, hub, exchange, intensity, lag, contagion, members, GDP share, '
+          'listed companies (HQ country zone)')
+    for z in zones:
+        print(f'  {z["number"]:>2} {z["zone_id"]:4} {z["hub_city"]:17} {z["exchange_code"]} {z["intensity"]:>4} '
+              f'{z["lag_quarters"]}q {z["contagion"]:>4} {z["countries"]:>3} {100 * float(z["gdp_share"]):5.1f}% '
+              f'{listed.get(z["exchange_code"], 0):>3}')
+    print(f'  GDP-weighted intensity Z = {z_avg:.3f}')
     avg, path = growth_run(inds, z_avg, seed=150)
     gaps = sorted((avg[r['name']] - float(r['trend_growth']), r['name']) for r in inds)
     print(f'Growth check, seed 150, 40 quarters: average growth minus long-term rate, mean '
@@ -256,7 +363,30 @@ def run(data):
         print(f'  {name}: long-term {100 * lt:.1f}%, 40-quarter average {100 * avg[name]:.2f}%')
     if max(abs(x) for x, _ in gaps) > 0.06:
         errors.append('growth check: an industry averages more than 6 pp from its long-term rate')
-    print(f'Rows: industries {len(inds)}, country-economy {len(ce)}, key-cities {len(kc)}, zones {len(zones)}')
+    # batch 151: the AI boom (mvp-spec 5.1.1)
+    sched = load(os.path.join(data, 'ai-boom.csv'))
+    for r in inds:
+        if not 0 <= float(r['boom_uplift']) <= 1 or not 0 <= float(r['crash_drop']) < 1:
+            errors.append(f'{r["name"]}: boom_uplift or crash_drop out of range')
+    calm = boom_run(inds, sched, z_avg, seed=151, noise=False)['AI labs']
+    seeded = boom_run(inds, sched, z_avg, seed=151)
+    ai = seeded['AI labs']
+    print('\nAI boom (batch 151; boom 1 Jan 2030, pop 1 Jan 2040), AI labs by year: LT, year-end demand $bn '
+          'without noise / seed 151')
+    print('  ' + '; '.join(f'{y} {100 * lt:.0f}% {d0:.1f}/{d1:.1f}' for (y, lt, d0), (_, _, d1) in zip(calm, ai)))
+    for name in ('Data centers', 'Cloud', 'Semiconductors'):
+        row = {y: (lt, d) for y, lt, d in seeded[name]}
+        print(f'  {name}: 2029 LT {100 * row[2029][0]:.0f}% ${row[2029][1]:.0f}B; 2030 LT {100 * row[2030][0]:.0f}% '
+              f'${row[2030][1]:.0f}B; 2039 ${row[2039][1]:.0f}B; 2040 LT {100 * row[2040][0]:.0f}% ${row[2040][1]:.0f}B')
+    by_y = {y: d for y, _, d in calm}
+    if not 6 <= by_y[2029] <= 10:
+        errors.append(f'AI labs 2029 demand ${by_y[2029]:.1f}B, expected about $5B to $8B before the boom')
+    if not 1.8 <= by_y[2030] / by_y[2029] <= 2.2:
+        errors.append('AI labs should about double in the boom\'s first year')
+    if not by_y[2040] < 0.6 * by_y[2039]:
+        errors.append('AI labs demand should crash at the 2040 pop')
+    print(f'Rows: industries {len(inds)}, country-economy {len(ce)}, key-cities {len(kc)}, zones {len(zones)}, '
+          f'ai-boom {len(sched)}')
     for e in errors:
         print('ERROR', e)
     print('OK' if not errors else f'{len(errors)} errors')

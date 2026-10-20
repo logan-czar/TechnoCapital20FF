@@ -1,6 +1,6 @@
 # 12. Game setup, AI fairness, the player's score and saves: detailed design
 
-_Status: draft v0.3 (2026-10-18). Batch 117: the optional end date is removed; the game is an endless sandbox. Batch 116: no character pick (John Techno is the only playable character; the rivals have AI goals); the dynasty score becomes the player's score; intel is secrets learned, not a level (A2); no fab points (A11). v0.2, consistency pass, batch 74. v0.1 (2026-10-17). From Logan's answers in the design Q&A (batch 30). Builds on [7-starting-world.md](7-starting-world.md) (starting characters), [09-time-and-turns.md](../09-time-and-turns.md) (endless sandbox) and [1-corporate-core.md](1-corporate-core.md). Owner: Logan._
+_Status: draft v0.4 (2026-10-20). Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth. The rolled crash year is 2040 ± 2 (12.2). Batch 117: the optional end date is removed; the game is an endless sandbox. Batch 116: no character pick (John Techno is the only playable character; the rivals have AI goals); the dynasty score becomes the player's score; intel is secrets learned, not a level (A2); no fab points (A11). v0.2, consistency pass, batch 74. v0.1 (2026-10-17). From Logan's answers in the design Q&A (batch 30). Builds on [7-starting-world.md](7-starting-world.md) (starting characters), [09-time-and-turns.md](../09-time-and-turns.md) (endless sandbox) and [1-corporate-core.md](1-corporate-core.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 12.6.
 
@@ -23,7 +23,7 @@ _Status: draft v0.3 (2026-10-18). Batch 117: the optional end date is removed; t
 2. There is no end date (Logan, batch 117): the game is an endless sandbox that ends only when John Techno dies.
 
 Everything else is fixed or rolled out of sight for each save **(A)**:
-- The crash year (2035 ± 2, [8-quest-lines.md](8-quest-lines.md) 8.5) and the AI boom rate (3% to 10% a month, [6-technocapital.md](6-technocapital.md) 6.7.0) are rolled at game start and never shown.
+- The crash year (2040 ± 2, batch 151, [8-quest-lines.md](8-quest-lines.md) 8.5) and the AI boom rate (3% to 10% a month, [6-technocapital.md](6-technocapital.md) 6.7.0) are rolled at game start and never shown.
 - The tipped lab is rolled (7-starting-world).
 - The number of full characters is 200.
 - The 15 premade rival characters start as active AI rivals with the AI goals in [7-starting-world.md](7-starting-world.md) 7.3.4.

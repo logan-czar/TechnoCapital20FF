@@ -124,7 +124,9 @@ The starting characters and companies (Logan, batch 136; rules in [7-starting-wo
 | notes | Canon links and assumptions |
 
 
-## MVP data tables: industries.csv, country-economy.csv, key-cities.csv (batch 147, 2026-10-20), financial-zones.csv (batch 150)
+## MVP data tables: industries.csv, country-economy.csv, key-cities.csv (batch 147, 2026-10-20), financial-zones.csv (batch 150), ai-boom.csv (batch 151)
+
+Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth. AI labs' trend_growth drops from 0.30 to 0.05 (its long-term rate before the boom); industries.csv gains `boom_uplift` and `crash_drop`; new ai-boom.csv (15 rows) holds AI labs' long-term rate by stage and boom year (mvp-spec 5.1.1). validate.py now draws growth with `lt_q = (1 + LT)^(1/4) - 1`, reports compound yearly growth, and runs a seeded 2020 to 2045 boom check.
 
 Batch 150 (Logan): global business cycle, financial zones, mean-reverting industry growth. industries.csv gains `volatility` (0.01 a quarter for all, T); country-economy.csv's cycle_group and cycle_phase_start are replaced by `financial_zone`; new financial-zones.csv (8 rows). validate.py checks every zone exists, prints the GDP-weighted zone intensity (1.10) and runs a seeded 40-quarter growth check (mvp-spec 5.1).
 
@@ -141,9 +143,11 @@ Batch 147 (Logan): built industries, country-economy and key-cities data, the th
 | sector | Tech, Finance, Energy, Industry, Consumer, Health or Services (10.3) |
 | valuation_group | Row of the 3.3.2 sector table. Black market has no row and uses Professional services (A) |
 | world_size_2020_usd_bn | World demand in 2020, $ billions (10.3) |
-| trend_growth | Long-term yearly demand growth (10.3); quarterly growth draws revert to it (batch 150, mvp-spec 5.1). AI labs "Boom-driven" is 0.30 (T); Semiconductors 0.05 without the AI boom (A) |
+| trend_growth | Long-term yearly demand growth before the AI boom (10.3); quarterly growth draws revert to it (batch 150, mvp-spec 5.1). AI labs 0.05 until the 2030 boom, then the ai-boom.csv schedule (Logan, batch 151; T) |
 | cycle_beta | Cyclicality β (10.3); multiplies the cycle term of the quarterly growth draw (mvp-spec 5.1); 1 for all in the MVP |
 | volatility | Standard deviation of the quarterly growth shock, per quarter (Logan, batch 150; mvp-spec 5.1); 0.01 for all in the MVP (T) |
+| boom_uplift | Share of the AI labs boom added to the long-term rate: lt = trend_growth + boom_uplift x (AI labs rate - 0.05) (batch 151, mvp-spec 5.1.1). AI labs 1, Data centers 0.15, Semiconductors 0.10, Cloud 0.05, others 0 (A, T) |
+| crash_drop | One-off demand cut when the bubble pops (batch 151, mvp-spec 5.1.1). AI labs 0.50, Data centers 0.25, Semiconductors 0.20, Cloud 0.10, others 0 (T) |
 | rate_sensitivity | 0 Low, 1 Medium, 2 High, 3 Very high; "Positive" (Banking, Insurance) is 0 (A) |
 | margin_full_use | Margin before R&D at productivity 100 and M 1.0 (10.3). AI labs "-40% to +40%" is 0.00 (T); Oil and Gas at index 100 |
 | fixed_cost_share | f (10.3). Depreciation and shared costs sit inside it (mvp-spec 5.5) |
@@ -192,6 +196,18 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 | countries | Member count, from country-economy.csv |
 | gdp_usd_bn, gdp_share | Zone GDP from countries.csv and its share of world GDP |
 | notes | Who is in it and why (A) |
+
+### ai-boom.csv
+
+15 rows (Logan, batch 151; mvp-spec 5.1.1, 7-starting-world 7.7), written by gen.py from its AI_BOOM table: AI labs' long-term rate by stage. The boom is a scripted world event on 1 January 2030; the pop is rolled at load as 2040 plus -2 to +2 years, in a rolled quarter (A).
+
+| Column | Meaning |
+|---|---|
+| stage | preboom, boom, pop, bust or postcrash |
+| boom_year | Years since the boom event (boom rows only; 10 holds until the pop) |
+| default_year | The calendar year with the default dates |
+| ai_labs_lt | AI labs' long-term rate a year (T): 0.05 before the boom; 1.00, 1.00, 0.90, 0.80, 0.60, 0.45, 0.35, 0.25, 0.20, 0.15 in boom years 0 to 9; 0.12 after; -0.10 for the 8 bust quarters; 0.08 after |
+| notes | What the stage is |
 
 ### key-cities.csv
 
