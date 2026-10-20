@@ -1,6 +1,6 @@
 # TechnoCapital20FF MVP spec: the map, the business system and a read-only economic sim
 
-_Status: v0.2 (2026-10-20). Batch 145 (Logan): province shapes are generated from real-world boundary data ([map-sources.md](map-sources.md), 2.2, G1); simple characters fill board seats (3.7.1, G2); business assets degrade by industry, book depreciation equals the loss, and growth plans buy replacement before growth (2.2, 5.5, 5.10, 6.2, 7.1); bank and insurer capital set at $1.25 and $0.60 per $1, mapped to real capital ratios (2.2, G4); bankrupt firms go through forced sales, a 2-quarter freeze and removal, shareholders wiped (5.12, G7); one business unit per company at HQ is decided (G8); batch 143 board-seat items listed as open (G9). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
+_Status: v0.3 (2026-10-20). Batch 146 (Logan): Consumer electronics, EVs, E-commerce and AI labs are cash-burning industries on purpose and live on investor money; when their runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the industry news phase, and failures go down the bankruptcy path (6.6, G10 decided); batch 143 board-seat picks decided: seats beyond 5 are ordinary directors, charter minimums apply from 5 labor units, the controller appoints and the seat stands at the next yearly meeting, investor and government seats take the next labor seat or sit beyond 5, and the 651 starting companies keep their generated starting data while new companies start empty (7.1, G9 decided). Batch 145 (Logan): province shapes are generated from real-world boundary data ([map-sources.md](map-sources.md), 2.2, G1); simple characters fill board seats (3.7.1, G2); business assets degrade by industry, book depreciation equals the loss, and growth plans buy replacement before growth (2.2, 5.5, 5.10, 6.2, 7.1); bank and insurer capital set at $1.25 and $0.60 per $1, mapped to real capital ratios (2.2, G4); bankrupt firms go through forced sales, a 2-quarter freeze and removal, shareholders wiped (5.12, G7); one business unit per company at HQ is decided (G8); batch 143 board-seat items listed as open (G9). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
 
 **How to read the numbers.** **(A)** marks an assumption made for the MVP, including the coordinator's defaults. **(T)** marks a tuning value. Section refs like 10.0.4 point to the detailed files.
 
@@ -21,9 +21,9 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 | **Operations and data** | Labor units, stations, productive compute, unstructured and structured data, conversion, decay, free R&D (10.0.11) | Schemes, software design stations, software development (14), AI models (18), hacking, data sales |
 | **Software** | Two fixed products: the general productivity software and the general enterprise software, both quality 50 **(A)** | Every other product, licences as a market, bloat, versions |
 | **Quarter** | The 21 cycle, simplified: release, price reaction, AI plan lock, locked quarter, recap week | Grades, firing votes, board displeasure, board day events, guidance rolls, result plot line chains |
-| **Finance** | Light statements, tax, credit line, credit rating, dividends by rule, fair value, simple share price | Trading, order flow, bonds, margin, short selling, IPOs, buybacks, default chain |
+| **Finance** | Light statements, tax, credit line, credit rating, dividends by rule, fair value, simple share price, share issues by cash-burning industries (6.6) | Trading, order flow, bonds, margin, short selling, IPOs, buybacks, rights issues, default chain |
 | **World** | Static country table; one world base rate (3%, batch 130); national business cycles; industry news cycles | Politics beyond the static table, media, gambling, vices, FX, the crash, history events |
-| **AI** | Each company sets its own quarterly plan (growth, R&D %, station split, data handling, credit line, dividend) | Schemes, politics, takeovers, trading, media, anything outside its own company |
+| **AI** | Each company sets its own quarterly plan (growth, R&D %, station split, data handling, credit line, dividend); cash-burning industries raise money when runway runs short (6.6) | Schemes, politics, takeovers, trading, media, anything outside its own company |
 
 **Information (A).** The observer is John Techno with his Pdoomberg subscription (7.3.0). Published figures (listed companies' statements, quotes, industry tables) are exact; private companies' figures show **?** (20.3.4). A debug toggle, **Omniscient**, shows every true value for testing and is off in release builds.
 
@@ -166,7 +166,7 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | Field | Meaning |
 |---|---|
 | id, name, ticker, public, hq_province, hq_country | From companies.csv |
-| controller, control_basis, owner_of_record, holders | Static cap table from companies.csv |
+| controller, control_basis, owner_of_record, holders | Cap table from companies.csv; static except dilution by share issues (6.6) |
 | archetype | Incumbent, Aggressive grower, Cash cow, State champion, Startup (2.23.1, section 6) |
 | units | List of business unit ids (one in the MVP) |
 | board | Seats from labor units 1 to 5 (3.7) |
@@ -266,14 +266,14 @@ Traits apply only their skill effects (1.1.2) and the management score shifts (1
 |---|---|
 | Income | Revenue; operating costs (variable, fixed cash); R&D; shared costs; depreciation; EBIT; interest expense; interest income; pre-tax income; tax; net income |
 | Balance sheet | Cash; business assets at book; total assets; credit line drawn; equity |
-| Cash flow | Operating cash; asset purchases; asset sales; line drawn or repaid; dividends; net change |
+| Cash flow | Operating cash; asset purchases; asset sales; line drawn or repaid; shares issued, net of fees (6.6); dividends; net change |
 | Key figures | Productivity, PC bonus, labor units, held TB, free R&D %, management score, rating, guidance range |
 
 ### 3.10 Share price (listed companies)
 
 | Field | Meaning |
 |---|---|
-| shares_out | Set at load so the opening price is $25 (7.1) |
+| shares_out | Set at load so the opening price is $25 (7.1); rises with share issues (6.6) |
 | fair_value, V | Total and per share (5.13) |
 | price P | Hourly (5.14) |
 | consensus_ni | Next quarter net income consensus (set at the plan lock) |
@@ -509,7 +509,7 @@ Paid at the plan lock from the last quarter: `dividend = payout ratio × NI` if 
 
 ### 5.18 Industry news (10.0.6)
 
-Each phase change posts one headline for the industry; each release posts the five largest beats and misses, bankruptcies and removals (5.12) and rating changes of 2+ notches. MVP headlines come from a neutral **Pdoomberg Wire** byline, since outlets and slant are out of scope **(A)**.
+Each phase change posts one headline for the industry; each release posts the five largest beats and misses, bankruptcies and removals (5.12) and rating changes of 2+ notches; each raise and failed raise (6.6) posts one headline. MVP headlines come from a neutral **Pdoomberg Wire** byline, since outlets and slant are out of scope **(A)**.
 
 ---
 
@@ -601,6 +601,21 @@ Then trait nudges: Ambitious +3 pp, Content −1 pp, Cautious −2 pp, Brave +1 
 
 At load, plans use g_dem for growth, rd_norm for R&D and the station split above.
 
+### 6.6 Raising money in cash-burning industries (Logan, batch 146)
+
+Logan (batch 146): Consumer electronics, EVs, E-commerce and AI labs lose money after R&D on purpose; they live on investor money ([10-industry-economy.md](../detailed/10-industry-economy.md) 10.3). So that they do not all go bankrupt in the read-only MVP, a company in one of these four **cash-burning industries** raises money when its cash runs short. Checked at the plan lock, after 6.2 to 6.4 and before 6.5, for Active and Distressed companies; one try per plan lock.
+
+- **Burn**: minus the last quarter's free cash flow (operating cash less asset purchases, 3.9), when that is negative. With no burn there is no raise.
+- **Runway**: `own cash ÷ burn`, in quarters. A raise starts when runway falls under **4 quarters (T)**.
+- **Target**: `8 × burn − own cash`, enough for 8 quarters of runway **(T)**.
+- **Method (A)**:
+  1. **Credit line draw**, if rated: the rating is B or better (rating factor above 0, 5.12) and the undrawn line covers the target. The target is drawn now, ahead of need; no dilution; interest as in 5.12.
+  2. Otherwise a **new share issue**, the follow-on offering of [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.4.3: issue price `= P × (1 − discount)`, with the 3.4.3 discount of 4% for large caps (market value $10B and up **(A)**) and 8% for small caps **(T)**; fees 3% of the gross raise (3.4.3: 2.5% to 4%) **(T)**; new shares capped at 20% of shares_out per raise, the 3.4.3 line above which holders must approve, since the MVP has no votes **(A)**; announcement effect `P ×= 1 − (2% + 0.5 × dilution%)` (3.4.3). Private companies place new shares with unnamed investors at their shown value (0.7 × V, 5.13) less 8%, with no price effect **(A)**. Rights issues on pre-emption exchanges (3.4.3) are not used, since the MVP has one world exchange **(A)**.
+  - **Dilution**: shares_out rises by the new shares, which go to an unnamed **new investors** holder on the cap table; every existing holder's stake falls by `old shares ÷ new shares`. The controller stays the controller; control contests are out of scope **(A)**.
+- **Success roll (T)**: `chance = 50% + 100 × (confidence factor − 1) + news adj + method adj − 10% × consecutive failed raises`, clamped 5% to 95%. Investor confidence is the confidence factor of 5.7 (0.8 to 1.2, so ±20 pp). News adj by the industry's news phase (5.1): Boom +30 pp, Normal 0, Glut −15 pp, Bust −35 pp. Method adj: credit line +20 pp, share issue 0.
+- **Failure**: nothing is raised and the company tries again at the next plan lock. Until a raise succeeds, 6.2 holds g at −asset_decay (no purchases). When cash runs out with the line full, it enters the bankruptcy path of 5.12: forced sales, then Bankrupt and frozen with shareholders wiped, then removed.
+- **Headline**: each raise and failed raise posts a Pdoomberg Wire headline (5.18).
+
 ---
 
 ## 7. Starting state
@@ -608,6 +623,8 @@ At load, plans use g_dem for growth, rd_norm for R&D and the station split above
 ### 7.1 Each of the 651 companies (10.0.11.8)
 
 R = revenue_usd_m. One business unit in the company's industry at hq_province.
+
+**Starting data vs new companies (Logan, batch 146; batch 143 pick).** The 651 starting companies have been running for years, so they keep the generated starting data below: assets, seated boards, held unstructured and structured data, cash and line, rating and history. A company founded in play (post-MVP) starts empty: the barebones loadout, 0 TB held (10.0.11.1, 10.0.11.4, batch 142) and only the CEO seat.
 
 | Item | Rule |
 |---|---|
@@ -617,7 +634,7 @@ R = revenue_usd_m. One business unit in the company's industry at hq_province.
 | Ramping | None |
 | Productivity | 100 **(A)** |
 | Labor units | floor(gross ÷ labor_value), minimum 1 |
-| Board | Seats 1 to min(5, L), each with a generated simple character (3.7.1) |
+| Board | Seats 1 to min(5, L), each with a generated simple character (3.7.1); no charter seats beyond 5 in the MVP (C14) |
 | Productivity stations | `max(1, round(0.25 × L))` (10.0.11.8); the AI's power-of-10 rule (6.4) applies from the first plan lock |
 | Enterprise stations | `ceil(0.5 × R × data_tb_per_musd ÷ 10.95)` (C16); Arrowhead (CO-0001) uses 0.1 in place of 0.5 |
 | Idle | The rest |
@@ -751,8 +768,8 @@ The most important things the docs do not define well enough to build, each with
 | G6 | **Starting balance sheet and share count**: companies.csv has book equity but no cash, debt, asset book or shares | Asset book = 50% of gross; cash or line fills the gap to book equity; shares set so price opens at $25 at engine value |
 | G7 | **Distress without the default chain**: the MVP has no bonds, creditors or restructuring | **Decided (Logan, batch 145):** forced asset sales at the cycle sale factor; after 6 months or no assets, Bankrupt and frozen for 2 quarters with shareholders wiped; then removed from the game (5.12; timings T) |
 | G8 | **One unit per company, all at HQ**: companies.csv gives one industry and no asset spread, so diversified groups and multi-province spreads do not exist | **Decided (Logan, batch 145):** one business unit per company, at HQ, for the MVP. Post-MVP: business-units.csv (company, industry, share of revenue, province shares) so the map's industry layer shows real footprints |
-| G9 | **Batch 143 board-seat items still open.** The board meeting chain (21.4) and the labor seats of batch 142 leave open: board size beyond 5 seats, charter minimums under 5 labor units, election vs controller appointment, and investor and government seats (1-corporate-core 1.8.1); the grading formula, performance score and firing threshold (21.4.1 to 21.4.3, 21.9 items 6 to 8) | Still open for Logan. Not needed for the MVP (no elections, firing or board play; labor seats filled by simple characters, C14), but needed before board play |
-| G10 | **Thin margins after R&D at the norm.** margin_full_use minus rd_norm is negative for Consumer electronics (-2%), EVs (-6%), E-commerce (-1%) and AI labs (-15%), and about 0 for Autos, Aerospace and Robotics, so these start at or below break-even before interest. Older than batch 145; asset decay does not change EBIT | Check in M10 soak; if they fail the balance targets, lower their rd_norm or raise their margin **(T)** |
+| G9 | **Batch 143 board-seat items.** The board meeting chain (21.4) and the labor seats of batch 142 left open: board size beyond 5 seats, charter minimums under 5 labor units, election vs controller appointment, investor and government seats, and starting data (1-corporate-core 1.8.1); the grading formula, performance score and firing threshold (21.4.1 to 21.4.3, 21.9 items 6 to 8) | **Decided (Logan, batch 146; batch 143 picks):** charter seats beyond the 5 labor seats are ordinary directors with no labor unit; the charter minimum of 5 applies only from 5 labor units; when a seat opens the controller appoints and the appointee stands at the next yearly meeting; VC, strategic-investor and government seats take the next labor seat as it opens, or sit beyond 5 if all are full (1-corporate-core 1.8.1); the 651 starting companies keep their generated starting data and new companies start empty (7.1). The MVP still has no elections, firing or board play (C14); the grading, performance score and firing values stay as in 21.4 (T, 21.9) |
+| G10 | **Thin margins after R&D at the norm.** margin_full_use minus rd_norm is negative for Consumer electronics (-2%), EVs (-6%), E-commerce (-1%) and AI labs (-15%), and about 0 for Autos, Aerospace and Robotics, so these start at or below break-even before interest. Older than batch 145; asset decay does not change EBIT | **Decided (Logan, batch 146):** intended. The four are cash-burning industries that live on investor money (10-industry-economy 10.3); their margins and rd_norm stay as they are. When runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the news phase; failures go down the bankruptcy path (6.6). Autos, Aerospace and Robotics are not cash-burning; check them in the M10 soak **(T)** |
 
 ### 11.1 Doc fixes needed (not made here)
 
