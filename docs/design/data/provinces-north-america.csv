@@ -254,3 +254,8 @@ MX-0046,Aguascalientes,MEX,Aguascalientes,Aguascalientes,,City,5,12,14,None,Temp
 MX-0047,Nayarit,MEX,Nayarit,Nayarit,,Town,4,3,13,Farmland,Temperate,Y,,,,"Tepic, Riviera Nayarit resorts"
 MX-0048,Colima-Manzanillo,MEX,Colima,Colima,,Town,3,10,11,None,Tropical,Y,,,,Mexico's largest container port (Pacific)
 MX-0049,Tlaxcala,MEX,Tlaxcala,Tlaxcala,,Town,2,6,13,None,Mountain,N,,,,"textiles, Puebla auto suppliers"
+GL-0001,Nuuk-West Greenland,GRL,Greenland,Greenland,,Town,3,3,2,Fishing,Arctic,Y,,,,"capital Nuuk, home rule government, shrimp and halibut fleets, Kangerlussuaq airport; self-governing under Denmark (A)"
+GL-0002,South Greenland-Kujalleq,GRL,Greenland,Greenland,,none,1,3,1,Rare earths,Arctic,Y,,,,"Kvanefjeld and Tanbreez rare earth and uranium deposits, Narsaq, sheep farms"
+GL-0003,North and East Greenland,GRL,Greenland,Greenland,,none,1,2,1,Fishing,Arctic,Y,,,,"Ilulissat ice fjord tourism, Thule (Pituffik) US air base, Tasiilaq, almost empty ice sheet"
+BM-0001,Bermuda,BMU,Bermuda,Bermuda,,Town,12,2,2,None,Temperate,Y,,,,"British Overseas Territory and haven (2.2.5): reinsurance capital, captive insurers, shell registrations, Hamilton"
+PM-0001,Saint Pierre and Miquelon,SPM,Saint Pierre and Miquelon,Saint Pierre and Miquelon,,none,2,2,1,Fishing,Temperate,Y,,,,"French territory off Newfoundland, cod fishing, ferry port"

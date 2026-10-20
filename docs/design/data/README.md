@@ -52,3 +52,12 @@ The East Asia and Oceania slice (batch 124, 2026-10-19): 606 provinces in 32 cou
 ## provinces-south-asia.csv
 
 The South Asia slice (batch 126, 2026-10-20): 208 provinces in 8 countries, same columns (no former_hub). 13 Metros (39 provinces): Delhi NCR, Mumbai, Dhaka, Karachi, Kolkata, Lahore, Bengaluru, Chennai, Hyderabad, Ahmedabad, Surat, Pune, Chittagong. Contested: Indian Kashmir and Ladakh (PAK claims), Gilgit-Baltistan and Azad Kashmir (IND claims), Arunachal Pradesh (CHN claims). Linked cities: Islamabad-Rawalpindi. Rural Indian provinces are very populous (Population track 27 to 28). Summary: provinces-south-asia-summary.md.
+
+## The last three slices (batch 127, 2026-10-20)
+
+- provinces-mena.csv: 334 provinces in 19 countries, 5 Metros (Cairo 6, Tehran, Riyadh, Baghdad, Alexandria). Contested: Western Sahara (SADR claims), Golan (SYR claims), East Jerusalem (PSE claims), West Bank (ISR occupies), Halaib (SDN claims), Iranian Gulf islands (ARE claims).
+- provinces-russia-central-asia.csv: 171 provinces in 9 countries, 2 Metros (Moscow 5, St Petersburg 3). Crimea and the Donbas stay in the Europe file. Contested: Kurils (JPN claims), Abkhazia and South Ossetia (RUS-backed breakaway), Nagorno-Karabakh (ARM-backed Artsakh).
+- provinces-sub-saharan-africa.csv: 608 provinces in 49 countries, 7 Metros (Lagos, Kinshasa, Johannesburg, Luanda, Dar es Salaam, Khartoum, Abidjan). Contested: Somaliland, Abyei. Linked cities: Zambian Copperbelt, Accra-Tema.
+- Greenland, Bermuda and Saint Pierre and Miquelon (5 rows) were added to provinces-north-america.csv, which now has 260 rows.
+
+The world map is complete: 3,258 provinces, matching countries.csv provinces_planned.

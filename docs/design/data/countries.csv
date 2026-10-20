@@ -87,8 +87,8 @@ BLR,Belarus,Europe,BYN,64.4,9.47,0.20,N,Managed democracy,Guarded,,12,In Moscow'
 MDA,Moldova,Europe,MDL,11.9,2.66,0.15,N,Liberal democracy,Guarded,,6,old group Black Sea and Caucasus; government_type (A); has contested provinces (batch 122)
 GGY,Guernsey,Europe,GBP,3.5,0.063,0.89,N,Liberal democracy,Open,,1,"Haven; Crown Dependency, modeled inside the UK until now (2.2.5); old group Euro periphery (A); dependent territory; government_type and restriction (A)"
 JEY,Jersey,Europe,GBP,5.6,0.107,0.85,N,Liberal democracy,Open,,1,"Haven; Crown Dependency, modeled inside the UK until now (2.2.5); old group Euro periphery (A); dependent territory; government_type and restriction (A)"
-RUS,Russia,Russia and Central Asia,RUB,1200,146.7,0.25,Y,Managed democracy,Restricted,,70,Population and area include Crimea and the Donbas (A)
-KAZ,Kazakhstan,Russia and Central Asia,KZT,182,18.5,0.26,N,Managed democracy,Guarded,,27,"Uranium, oil; old group Central Asia"
+RUS,Russia,Russia and Central Asia,RUB,1200,146.7,0.25,Y,Managed democracy,Restricted,,74,Population and area include Crimea and the Donbas (A)
+KAZ,Kazakhstan,Russia and Central Asia,KZT,182,18.5,0.26,N,Managed democracy,Guarded,,26,"Uranium, oil; old group Central Asia"
 UZB,Uzbekistan,Russia and Central Asia,UZS,60.0,33.6,0.08,N,Managed democracy,Guarded,,17,old group Central Asia; government_type (A)
 TKM,Turkmenistan,Russia and Central Asia,TMT,45.0,6,0.22,N,One-party state,Restricted,,13,Gas; group default Guarded overridden for a closed personalist state (A); old group Central Asia; government_type and restriction (A)
 KGZ,Kyrgyzstan,Russia and Central Asia,KGS,8.9,6.5,0.06,N,Managed democracy,Guarded,,9,Gold; old group Central Asia; government_type (A)
@@ -100,32 +100,32 @@ TUR,Turkey,Europe,TRY,750,83.4,0.28,Y,Managed democracy,Screened,,36,Superregion
 SAU,Saudi Arabia,Middle East and North Africa,SAR,850,34.3,0.55,Y,One-party state (ruling family),Guarded,,37,
 ARE,United Arab Emirates,Middle East and North Africa,AED,420,9.8,0.45,Y,One-party state (ruling family),Guarded,,18,Haven free zones (C6) stay inside the UAE
 ISR,Israel,Middle East and North Africa,ILS,400,9.05,0.80,Y,Liberal democracy,Screened,,17,
-EGY,Egypt,Middle East and North Africa,EGP,300,100.4,0.10,Y,Managed democracy (US friend),Guarded,,31,
-QAT,Qatar,Middle East and North Africa,QAR,180,2.83,0.60,Y,One-party state (ruling family),Guarded,,11,
-IRN,Iran,Middle East and North Africa,IRR,400,83,0.16,N,Managed democracy (the region's holdout),Closed,,34,Sanctioned; GDP copied from the single-country Iran group in 2.2.5; old group Iran
-IRQ,Iraq,Middle East and North Africa,IQD,234,39.3,0.18,N,Managed democracy (US ally),Guarded,,22,Stable US ally since 2003 (19.22); real 2019 GDP kept (A); old group Gulf minors (A)
+EGY,Egypt,Middle East and North Africa,EGP,300,100.4,0.10,Y,Managed democracy (US friend),Guarded,,34,
+QAT,Qatar,Middle East and North Africa,QAR,180,2.83,0.60,Y,One-party state (ruling family),Guarded,,10,
+IRN,Iran,Middle East and North Africa,IRR,400,83,0.16,N,Managed democracy (the region's holdout),Closed,,37,Sanctioned; GDP copied from the single-country Iran group in 2.2.5; old group Iran
+IRQ,Iraq,Middle East and North Africa,IQD,234,39.3,0.18,N,Managed democracy (US ally),Guarded,,24,Stable US ally since 2003 (19.22); real 2019 GDP kept (A); old group Gulf minors (A)
 KWT,Kuwait,Middle East and North Africa,KWD,136,4.2,0.61,N,Managed democracy,Guarded,,10,old group Gulf minors; government_type (A)
 BHR,Bahrain,Middle East and North Africa,BHD,38.5,1.64,0.48,N,One-party state (ruling family),Guarded,,1,old group Gulf minors; government_type (A)
 OMN,Oman,Middle East and North Africa,OMR,76.3,4.97,0.36,N,One-party state (ruling family),Guarded,,13,old group Gulf minors; government_type (A)
-YEM,Yemen,Middle East and North Africa,YER,22.6,29.2,0.04,N,Managed democracy (US-backed),Guarded,,15,old group Gulf minors (A)
+YEM,Yemen,Middle East and North Africa,YER,22.6,29.2,0.04,N,Managed democracy (US-backed),Guarded,,16,old group Gulf minors (A)
 JOR,Jordan,Middle East and North Africa,JOD,44.5,10.1,0.15,N,Managed democracy,Guarded,,10,old group North Africa and Levant; government_type (A)
 LBN,Lebanon,Middle East and North Africa,LBP,52.0,6.86,0.22,N,Managed democracy,Guarded,,8,old group North Africa and Levant; government_type (A)
 SYR,Syria,Middle East and North Africa,SYP,60.0,21,0.11,N,Managed democracy,Guarded,,14,No Syrian war (19.22): GDP and population set near pre-2011 levels (A); US-friendly government (A); old group North Africa and Levant (A); government_type (A)
 PSE,Palestine,Middle East and North Africa,ILS,17.1,4.7,0.13,N,Managed democracy,Guarded,,6,Uses the shekel; old group North Africa and Levant (A); government_type (A)
 LBY,Libya,Middle East and North Africa,LYD,70.0,6.8,0.27,N,One-party state (US friend),Guarded,,19,No civil war (19.22): GDP set near pre-2011 levels (A); old group North Africa and Levant
 DZA,Algeria,Middle East and North Africa,DZD,171,43.1,0.14,N,Managed democracy,Guarded,,29,Gas to Europe; old group North Africa and Levant; government_type (A)
-MAR,Morocco,Middle East and North Africa,MAD,120,36.5,0.12,N,Managed democracy,Guarded,,19,Phosphates; area excludes Western Sahara; old group North Africa and Levant; government_type (A)
+MAR,Morocco,Middle East and North Africa,MAD,120,36.5,0.12,N,Managed democracy,Guarded,,20,Phosphates; area excludes Western Sahara; old group North Africa and Levant; government_type (A)
 TUN,Tunisia,Middle East and North Africa,TND,39.0,11.7,0.12,N,Managed democracy,Guarded,,11,"No Arab Spring, so the old regime remains (A); old group North Africa and Levant; government_type (A)"
-NGA,Nigeria,Sub-Saharan Africa,NGN,450,201,0.08,Y,Liberal democracy,Guarded,,38,
-ZAF,South Africa,Sub-Saharan Africa,ZAR,350,58.6,0.22,Y,Liberal democracy,Screened,,30,
-COD,DR Congo,Sub-Saharan Africa,CDF,50.0,86.8,0.03,Y,Managed democracy,Guarded,,28,
-GHA,Ghana,Sub-Saharan Africa,GHS,68.3,30.4,0.09,N,Liberal democracy,Guarded,,16,"Cocoa, gold; old group West Africa; government_type (A)"
+NGA,Nigeria,Sub-Saharan Africa,NGN,450,201,0.08,Y,Liberal democracy,Guarded,,40,
+ZAF,South Africa,Sub-Saharan Africa,ZAR,350,58.6,0.22,Y,Liberal democracy,Screened,,32,
+COD,DR Congo,Sub-Saharan Africa,CDF,50.0,86.8,0.03,Y,Managed democracy,Guarded,,29,
+GHA,Ghana,Sub-Saharan Africa,GHS,68.3,30.4,0.09,N,Liberal democracy,Guarded,,17,"Cocoa, gold; old group West Africa; government_type (A)"
 CIV,Cote d'Ivoire,Sub-Saharan Africa,XOF,58.5,25.7,0.09,N,Managed democracy,Guarded,,15,Cocoa; old group West Africa; government_type (A)
 SEN,Senegal,Sub-Saharan Africa,XOF,23.4,16.3,0.07,N,Liberal democracy,Guarded,,11,old group West Africa; government_type (A)
 MLI,Mali,Sub-Saharan Africa,XOF,17.3,19.7,0.05,N,"Managed democracy (US debt vassal, 4.11.8)",Guarded,USA,17,Gold; US debt vassal since 2012 (4.11.8); old group West Africa
 BFA,Burkina Faso,Sub-Saharan Africa,XOF,16.0,20.3,0.04,N,Managed democracy,Guarded,,12,Gold; no 2022 coups; old group West Africa
 NER,Niger,Sub-Saharan Africa,XOF,12.9,23.3,0.03,N,Managed democracy,Guarded,,17,Uranium; no 2023 coup; old group West Africa
-GIN,Guinea,Sub-Saharan Africa,GNF,13.4,12.8,0.05,N,Managed democracy,Guarded,,11,Bauxite; no 2021 coup; old group West Africa; government_type (A)
+GIN,Guinea,Sub-Saharan Africa,GNF,13.4,12.8,0.05,N,Managed democracy,Guarded,,12,Bauxite; no 2021 coup; old group West Africa; government_type (A)
 GNB,Guinea-Bissau,Sub-Saharan Africa,XOF,1.4,1.92,0.04,N,Managed democracy,Guarded,,4,old group West Africa; government_type (A)
 SLE,Sierra Leone,Sub-Saharan Africa,SLL,4.1,7.8,0.03,N,Liberal democracy,Guarded,,7,old group West Africa; government_type (A)
 LBR,Liberia,Sub-Saharan Africa,LRD,3.1,4.9,0.04,N,Liberal democracy,Guarded,,6,Ship registry; old group West Africa; government_type (A)
@@ -141,9 +141,9 @@ COG,Republic of the Congo,Sub-Saharan Africa,XAF,12.3,5.4,0.09,N,Managed democra
 GAB,Gabon,Sub-Saharan Africa,XAF,16.9,2.17,0.22,N,Managed democracy,Guarded,,9,"Oil, manganese; no 2023 coup; old group Central and Southern Africa (A); government_type (A)"
 GNQ,Equatorial Guinea,Sub-Saharan Africa,XAF,11.0,1.36,0.23,N,One-party state (ruling family),Guarded,,5,Oil; old group Central and Southern Africa (A); government_type (A)
 STP,Sao Tome and Principe,Sub-Saharan Africa,STN,0.43,0.215,0.08,N,Liberal democracy,Guarded,,1,old group Central and Southern Africa (A); government_type (A)
-KEN,Kenya,Sub-Saharan Africa,KES,95.5,52.6,0.08,N,Managed democracy,Guarded,,21,Mobile money fintech; old group East Africa and Horn; government_type (A)
+KEN,Kenya,Sub-Saharan Africa,KES,95.5,52.6,0.08,N,Managed democracy,Guarded,,22,Mobile money fintech; old group East Africa and Horn; government_type (A)
 ETH,Ethiopia,Sub-Saharan Africa,ETB,96.0,112.1,0.05,N,Managed democracy,Guarded,,27,"Abiy, Nobel laureate (19.22); old group East Africa and Horn; government_type (A)"
-TZA,Tanzania,Sub-Saharan Africa,TZS,61.0,58,0.05,N,Managed democracy,Guarded,,22,old group East Africa and Horn; government_type (A)
+TZA,Tanzania,Sub-Saharan Africa,TZS,61.0,58,0.05,N,Managed democracy,Guarded,,23,old group East Africa and Horn; government_type (A)
 UGA,Uganda,Sub-Saharan Africa,UGX,35.0,44.3,0.04,N,Managed democracy,Guarded,,16,old group East Africa and Horn; government_type (A)
 SOM,Somalia,Sub-Saharan Africa,SOS,4.9,15.4,0.02,N,Failed state,Guarded,,13,old group East Africa and Horn
 SDN,Sudan,Sub-Saharan Africa,SDG,32.0,42.8,0.04,N,Managed democracy (US-friendly transition after Bashir),Guarded,,23,Red Sea coast; old group East Africa and Horn
@@ -160,8 +160,8 @@ ZMB,Zambia,Sub-Saharan Africa,ZMW,23.3,17.9,0.06,N,Managed democracy,Guarded,,15
 AGO,Angola,Sub-Saharan Africa,AOA,84.0,31.8,0.10,N,Managed democracy,Guarded,,22,Oil; old group Central and Southern Africa; government_type (A)
 ZWE,Zimbabwe,Sub-Saharan Africa,ZWL,21.8,14.6,0.07,N,Managed democracy,Guarded,,13,"Lithium, platinum; old group Central and Southern Africa; government_type (A)"
 MOZ,Mozambique,Sub-Saharan Africa,MZN,15.3,30.4,0.03,N,Managed democracy,Guarded,,16,Offshore gas; old group Central and Southern Africa; government_type (A)
-NAM,Namibia,Sub-Saharan Africa,NAD,12.5,2.49,0.16,N,Liberal democracy,Guarded,,12,Uranium; old group Central and Southern Africa; government_type (A)
-BWA,Botswana,Sub-Saharan Africa,BWP,16.7,2.3,0.21,N,Liberal democracy,Guarded,,11,Diamonds; old group Central and Southern Africa (A); government_type (A)
+NAM,Namibia,Sub-Saharan Africa,NAD,12.5,2.49,0.16,N,Liberal democracy,Guarded,,11,Uranium; old group Central and Southern Africa; government_type (A)
+BWA,Botswana,Sub-Saharan Africa,BWP,16.7,2.3,0.21,N,Liberal democracy,Guarded,,10,Diamonds; old group Central and Southern Africa (A); government_type (A)
 MWI,Malawi,Sub-Saharan Africa,MWK,7.7,18.6,0.03,N,Liberal democracy,Guarded,,10,old group Central and Southern Africa (A); government_type (A)
 LSO,Lesotho,Sub-Saharan Africa,LSL,2.4,2.13,0.06,N,Liberal democracy,Guarded,,4,old group Central and Southern Africa (A); government_type (A)
 SWZ,Eswatini,Sub-Saharan Africa,SZL,4.5,1.15,0.14,N,One-party state (ruling family),Guarded,,4,old group Central and Southern Africa (A); government_type (A)

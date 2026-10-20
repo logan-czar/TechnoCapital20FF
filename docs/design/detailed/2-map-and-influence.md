@@ -55,7 +55,7 @@ The world is fully tiled, EU4 style (Logan, batch 118). Every system points at *
 | **Metros** | 69 in the four built slices (every city with a metro population of 5M or more, the only rule for Metros); likely about 100 once every superregion's list is built **(A)** | A named group of 2 to 8 adjacent provinces forming one megacity, sharing one property cycle and (post-POC) metro systems; no city council (2.3.2) |
 | **Chokepoints** | 14 | Straits, canals, cable corridors (2.4). Each province lists the chokepoints it is exposed to |
 
-There are no hubs and no districts any more. The 80 key cities (2.3.3) hold the location perks and signature starting businesses; Metros come only from the 5M+ rule (2.3.2). The province list is data, built superregion by superregion; done so far: North America, 254 provinces ([provinces-north-america.csv](../data/provinces-north-america.csv)) Europe, 679 provinces ([provinces-europe.csv](../data/provinces-europe.csv)) Latin America, 392 provinces ([provinces-latin-america.csv](../data/provinces-latin-america.csv)), South Asia, 208 provinces ([provinces-south-asia.csv](../data/provinces-south-asia.csv)) and East Asia and Oceania, 606 provinces ([provinces-east-asia-oceania.csv](../data/provinces-east-asia-oceania.csv)) **(A)**.
+There are no hubs and no districts any more. The 80 key cities (2.3.3) hold the location perks and signature starting businesses; Metros come only from the 5M+ rule (2.3.2). The province list is data, built superregion by superregion and now complete: 3,258 provinces in eight files in [data/](../data/README.md) (North America 260, Latin America 392, Europe 679, Russia and Central Asia 171, Middle East and North Africa 334, Sub-Saharan Africa 608, South Asia 208, East Asia and Oceania 606) **(A)**.
 
 Government types, corruption, stability and election cycles for every country are in [4-politics.md](4-politics.md) 4.2.4. The tables below add the economic and business-climate values.
 
@@ -181,7 +181,7 @@ The **province** is the one place every system points at: business assets, real 
 | **Terrain** | One terrain type (below) |
 | **Coastal** | Y or N. Only coastal provinces (and river ports named in the notes) hold sea ports |
 | **Chokepoint exposure** | The chokepoints (2.4) its sea and cable links pass through; business units with assets here take those chokepoints' risk |
-| **Contested** | Blank, or who disputes the province (Logan, batch 122). Below |
+| **Contested** | Blank, or a short label naming the dispute: usually "<ISO3> claims", but also a non-country claimant ("SADR claims", "Somaliland self-declared"), "ISR occupies" for occupied land, or a two-sided dispute ("SDN and SSD dispute") (Logan, batch 122; forms widened after the last slices (A)). Below |
 | **Linked cities** | Blank, or the name of a linked-cities group (2.3.2, batch 122) |
 | **Notes** | Free text |
 
@@ -317,25 +317,25 @@ Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and sta
 | Frankfurt | Germany | DE-0019, DE-0020, DE-0023 | Eurozone Central Bank (a flavor name that sets no rate in the POC, batch 125), banking, chemicals, precision optics, auto suppliers, air cargo | 2.3.5 |
 | Paris | France | FR-0001 to FR-0004 | Luxury goods, aerospace, nuclear engineering, defense, finance | none |
 | Zurich | Switzerland | CH-0001 | Private banking, commodity trading houses, insurance, pharma | 2.3.5 |
-| Moscow | Russia | slice pending | Energy company headquarters, metals, defense, oil trading, cybercrime underground | none |
+| Moscow | Russia | RU-0001 to RU-0005 | Energy company headquarters, metals, defense, oil trading, cybercrime underground | none |
 | Istanbul | Turkey | TR-0001 to TR-0005 | Textiles, vehicles, shipping, regional finance | none |
 | Munich | Germany | DE-0006 to DE-0008 | Autos, insurance and reinsurance, Semiconductors | 2.3.5 |
 | Berlin | Germany | DE-0013 to DE-0015 | Federal government, startups, media | 2.3.5 |
 | Amsterdam | Netherlands | NL-0001 | Stock exchange, fintech, data centers, internet exchange | 2.3.5 |
 | Milan | Italy | IT-0001 to IT-0003 | Finance, fashion, luxury, design | 2.3.5 |
 | Rome | Italy | IT-0007 | Government, the Vatican, tourism, state energy company headquarters | 2.3.5 |
-| St Petersburg | Russia | slice pending | Baltic port, shipbuilding, gas company headquarters | 2.3.5 |
-| Dubai | UAE | slice pending | Re-export logistics, gold trading, free zones, aviation hub, real estate, grey trade | none |
-| Dhahran-Dammam | Saudi Arabia | slice pending | Largest oil fields, petrochemicals, desalination | none |
-| Doha | Qatar | slice pending | Largest LNG exporter, sovereign fund, media network | none |
-| Tel Aviv | Israel | slice pending | Cybersecurity, surveillance tech, Semiconductors (chip design), defense electronics, venture capital | none |
-| Cairo-Suez | Egypt | slice pending | Canal revenue, textiles, fertilizer, construction, gas | none |
-| Lagos | Nigeria | slice pending | Oil money, fintech, consumer goods, film industry, informal economy | none |
-| Johannesburg | South Africa | slice pending | Mining finance, platinum metals, gold, coal power | none |
-| Kolwezi-Lubumbashi | DR Congo | slice pending | Cobalt (about 70% of world supply), copper | none |
-| Riyadh | Saudi Arabia | slice pending | Government, royal court, sovereign fund, megaprojects | 2.3.5 |
-| Abu Dhabi | UAE | slice pending | Sovereign funds, oil, AI investment | 2.3.5 |
-| Cape Town | South Africa | slice pending | Finance, tourism, wine, tech | 2.3.5 |
+| St Petersburg | Russia | RU-0015 to RU-0018 | Baltic port, shipbuilding, gas company headquarters | 2.3.5 |
+| Dubai | UAE | AE-0008 to AE-0011 | Re-export logistics, gold trading, free zones, aviation hub, real estate, grey trade | none |
+| Dhahran-Dammam | Saudi Arabia | SA-0014 to SA-0016, SA-0018 | Largest oil fields, petrochemicals, desalination | none |
+| Doha | Qatar | QA-0001 to QA-0003, QA-0008 | Largest LNG exporter, sovereign fund, media network | none |
+| Tel Aviv | Israel | IL-0004, IL-0005, IL-0007, IL-0010 | Cybersecurity, surveillance tech, Semiconductors (chip design), defense electronics, venture capital | none |
+| Cairo-Suez | Egypt | EG-0001 to EG-0005, EG-0007, EG-0018 to EG-0020 | Canal revenue, textiles, fertilizer, construction, gas | none |
+| Lagos | Nigeria | NG-0001 to NG-0004 | Oil money, fintech, consumer goods, film industry, informal economy | none |
+| Johannesburg | South Africa | ZA-0001 to ZA-0004, ZA-0023 (Rustenburg), ZA-0026 (Emalahleni) | Mining finance, platinum metals, gold, coal power | none |
+| Kolwezi-Lubumbashi | DR Congo | CD-0023, CD-0024 | Cobalt (about 70% of world supply), copper | none |
+| Riyadh | Saudi Arabia | SA-0001 to SA-0003 | Government, royal court, sovereign fund, megaprojects | 2.3.5 |
+| Abu Dhabi | UAE | AE-0001, AE-0002, AE-0005, AE-0006 | Sovereign funds, oil, AI investment | 2.3.5 |
+| Cape Town | South Africa | ZA-0006, ZA-0007 (Stellenbosch-Paarl) | Finance, tourism, wine, tech | 2.3.5 |
 | Mumbai | India | IN-0013 to IN-0016, IN-0051 (Jamnagar refinery) | Finance, main exchange, film industry, generic pharma, petrochemicals (Gujarat abstracted) | none |
 | Bengaluru | India | IN-0023 to IN-0025 | IT services, software outsourcing, Semiconductors (chip design), aerospace, biotech | 2.3.5 |
 | Shanghai | China | CN-0008 to CN-0013 | Largest container port, finance, EVs, Semiconductors (mature nodes), shipbuilding | none |
