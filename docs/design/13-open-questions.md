@@ -202,6 +202,7 @@
 - Batch 160 (Logan, 2026-10-20): province weight G = sqrt(GDP per head / world GDP per head), safety clamp 0.1 to 4 (T): US 2.53, China 0.95, India 0.43, Burundi 0.15; country totals US $3.59T, China $1.73T, India $516B (2-map 2.3.1, 2.14).
 - Batch 161 (Logan, 2026-10-20): starting balance sheet: asset book 50% of gross, cash or drawn credit line fills the gap to book equity (1a; 349 cash, 302 drawn); opening prices vary by size: clamp(round($25 x (engine value / $1B)^0.35 x jitter +-10%), 5, 200) (2b, T; median $47, ARDR $9); G6 decided, data/company-start.csv.
 - Batch 162 (Logan, 2026-10-20): cleanup pass (1a): 11.1 doc fixes applied, stale lines fixed, change log added; mvp-spec is v1.0. Earlier lines in this log are history and may show superseded values.
+- Batch 163 (Logan, 2026-10-20): union pension holds 7% of Arrowhead (Terry 60, public 33) (1a); LP consent is a step John must win in The Fund (2a); Terry's gambling cut, the truth of his background is a cause of his fall (content open) (3); power deals are a one-time free addition to business assets from the next quarter, 0.1 GW $100M, 0.3 GW $300M, 1 GW $1B (4, T); the player's final score is scrapped everywhere (5).
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm

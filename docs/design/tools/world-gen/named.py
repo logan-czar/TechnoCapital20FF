@@ -264,7 +264,7 @@ def co(key, name, industry, prov, public, rev=None, hint=None, book=None, ctrl=N
 
 # Terry and Arrowhead (7.3.0, 7.3.5, 8-quest-lines)
 co('arrowhead', 'Arrowhead Drilling', 'Oil', 'CA-0033', 'Y', rev=40, book=100, value=100, ctrl='terry', stake=60, basis='majority',
-   notes='Once People Oil Trust; the smallest oil company in the game, worth $100M; Terry 60% (Chair), public 40%; John Techno is COO with options on 2% from Terry\'s shares; CEO Dale Pruitt; owns the oil software (8.3)')
+   notes='Once People Oil Trust; the smallest oil company in the game, worth $100M; Terry 60% (Chair), the old union\'s pension fund 7% (batch 163; no holder row yet), public 33%; John Techno is COO with options on 2% from Terry\'s shares; CEO Dale Pruitt; owns the oil software (8.3)')
 co('paintedsky', 'Painted Sky Gaming', 'Gambling', 'CA-0033', 'N', rev=330, ctrl='terry', stake=100, basis='majority',
    notes='Terry\'s very popular casino, held by a private company he owns outright (7.3.5); CFO Kip Tran; its books are Terry\'s secret')
 co('kidswhocode', 'Kids Who Code', 'Software', 'CA-0033', 'N', rev=0, book=1, ctrl='terry', stake=100, basis='majority',

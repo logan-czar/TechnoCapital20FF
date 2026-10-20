@@ -1,6 +1,6 @@
 # 4. Dynasty and succession (removed)
 
-_Batch 116: the dynasty and succession system was removed (Logan). Earlier: summary, consistency pass, batch 74._
+_Batch 163: the player's score is scrapped (Logan). Batch 116: the dynasty and succession system was removed (Logan). Earlier: summary, consistency pass, batch 74._
 
 Removed (batch 116): there are no dynasties, houses, cadet branches, family trust, heirs, successors, guardians, wills, marriage, prenups, children, legacies, renown or succession laws.
 
@@ -10,4 +10,4 @@ What remains:
 - **Money** sits in the character's own personal trusts and accounts ([02-trusts-and-assets.md](02-trusts-and-assets.md)).
 - **Relatives as flavor.** Characters can have relatives (John has two moms), but there are no family mechanics.
 - **AI rivals still die.** When an AI rival character dies, a game-generated heir character takes over their holdings silently, with no succession screen **(A)**.
-- **Score.** The endless sandbox keeps a score for the player character ([detailed/12-setup-and-score.md](detailed/12-setup-and-score.md) 12.4).
+- **No score.** The endless sandbox keeps milestones and a history log for the player character, but no score (batch 163; [detailed/12-setup-and-score.md](detailed/12-setup-and-score.md) 12.4).

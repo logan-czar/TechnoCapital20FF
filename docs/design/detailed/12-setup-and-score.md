@@ -1,6 +1,6 @@
-# 12. Game setup, AI fairness, the player's score and saves: detailed design
+# 12. Game setup, AI fairness, milestones and saves: detailed design
 
-_Status: draft v0.4 (2026-10-20). Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth. The rolled crash year is 2040 ± 2 (12.2). Batch 117: the optional end date is removed; the game is an endless sandbox. Batch 116: no character pick (John Techno is the only playable character; the rivals have AI goals); the dynasty score becomes the player's score; intel is secrets learned, not a level (A2); no fab points (A11). v0.2, consistency pass, batch 74. v0.1 (2026-10-17). From Logan's answers in the design Q&A (batch 30). Builds on [7-starting-world.md](7-starting-world.md) (starting characters), [09-time-and-turns.md](../09-time-and-turns.md) (endless sandbox) and [1-corporate-core.md](1-corporate-core.md). Owner: Logan._
+_Status: draft v0.5 (2026-10-20). Batch 163 (Logan): the player's score is scrapped ("final score not needed anymore"); milestones and the history log stay, without points, and the leaderboard is replaced by the rich list (12.1, 12.4). Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth. The rolled crash year is 2040 ± 2 (12.2). Batch 117: the optional end date is removed; the game is an endless sandbox. Batch 116: no character pick (John Techno is the only playable character; the rivals have AI goals); the dynasty score becomes the player's score; intel is secrets learned, not a level (A2); no fab points (A11). v0.2, consistency pass, batch 74. v0.1 (2026-10-17). From Logan's answers in the design Q&A (batch 30). Builds on [7-starting-world.md](7-starting-world.md) (starting characters), [09-time-and-turns.md](../09-time-and-turns.md) (endless sandbox) and [1-corporate-core.md](1-corporate-core.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 12.6.
 
@@ -12,7 +12,7 @@ _Status: draft v0.4 (2026-10-20). Batch 151 (Logan): AI boom moves to 2030, bubb
 |---|---|
 | Difficulty | **One fixed difficulty.** No presets. |
 | AI | **Fair**: AI characters see what a character in their position would see. No hidden bonuses, no cheating. |
-| Score | A **player's score** with milestones and a history log; there are no victory conditions (endless sandbox). It was the dynasty score until batch 116; it now measures the player character, John Techno. |
+| Score | **No score** (Logan, batch 163: scrapped). John's run is recorded in **milestones** and a **history log**; there are no victory conditions (endless sandbox). |
 | Setup | **No setup choices** (Logan, batches 75 and 116): one scenario, January 2020, and **John Techno is the only playable character**. Difficulty is fixed. |
 | Saves | **Free saving**: save and load at any time. No ironman mode. |
 | Game over | When John Techno dies (health 0), the game is over (batch 116). There is no successor. |
@@ -37,22 +37,13 @@ AI characters and companies follow the same rules and see the same information a
 - Their quality comes from their skills, traits and archetype (2.23, 1.1.2), not from difficulty.
 - The **rival rotation** (7-starting-world) still aims rivals at the player when the director AI decides the story needs pressure, but those rivals play by the same rules.
 
-## 12.4 The player's score
+## 12.4 Milestones and the history log
 
-A running score that measures how the player character, John Techno, is doing (batch 116: it replaces the dynasty score). It never ends the game **(A)**.
+There is **no player's score** (Logan, batch 163: "final score not needed anymore scrap it"). It had replaced the dynasty score in batch 116.
 
-| Part | Points **(T)** |
-|---|---|
-| Net worth | 1 point per $10M of John's personal trusts and accounts |
-| Clout | John's Clout (1.1.0) |
-| Control | 50 points per company controlled, ×2 for a Megacorp, ×4 for a Conglomerate (1.7.5) |
-| Influence | 20 points per place where John holds the top influence tier (2.5.9) |
-| Techno-Capital | 1 point per 1,000 GPU compute units owned or leased long term ([15-infrastructure.md](15-infrastructure.md)) **(T)** |
-| Strata | 100 points if John is Nobles or Oligarchs (2.8.0) |
-
-- **Milestones**: crossing set lines (first $1B, first Megacorp, becoming an Oligarch, surviving the crash, taking the CEO seat at Arrowhead Drilling) adds a permanent entry to the history log and a one-off score bonus **(T)**.
+- **Milestones**: crossing set lines (first $1B, first Megacorp, becoming an Oligarch, surviving the crash, taking the CEO seat at Arrowhead Drilling) adds a permanent entry to the history log **(T)**.
 - **History log**: a dated chronicle of John's big deals, scandals, rivals' deaths and milestones, readable at any time and shown at game over.
-- **Rivals' scores** are shown on a leaderboard of the top 10 characters, with the player's rank. Scores of rival characters the player has no intel on are estimates from published data.
+- **How John compares** with his rivals is shown by the public rich list (1-corporate-core 1.10.6), not by a leaderboard.
 
 ## 12.5 Saves
 
@@ -63,5 +54,5 @@ A running score that measures how the player character, John Techno, is doing (b
 
 1. The hidden rolls and fixed values in 12.2.
 2. The fair-AI rules in 12.3.
-3. The player's score parts and milestones in 12.4.
+3. The milestones in 12.4.
 4. Autosave frequency in 12.5.
