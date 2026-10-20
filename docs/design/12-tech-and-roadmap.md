@@ -20,7 +20,8 @@ Anything marked **(A)** is an assumption Logan has not confirmed yet; the list i
 - **Rust and Bevy for everything** (Logan, batch 168): one Cargo workspace, one language. Bevy draws the map and screens, handles input and audio, and runs the simulation schedule.
 - **Pin one Bevy version** in `Cargo.toml` and upgrade only between milestones **(A)**. Bevy changes its API often, so upgrades are planned work.
 - **The simulation crate has no Bevy rendering or UI dependency** **(A)**: a plain, deterministic Rust crate (`sim`) with seeded RNG. It runs inside the game as a Bevy plugin and also runs headless (no window) for tests, replays and soak runs.
-- **UI** **(A)**: Bevy UI (`bevy_ui`) for panels, the top bar and popups; `bevy_egui` for dense tables and the Pdoomberg terminal, where egui is faster to build and easier to read.
+- **UI** (Logan, batch 169): Bevy UI (`bevy_ui`) only, for everything: panels, the top bar, popups, dense tables and the Pdoomberg terminal. No egui. Dense tables need a small in-house table widget (virtualized rows, sortable columns) **(A)**.
+- **Bevy version** (Logan, batch 169): one Bevy version is pinned in Cargo.toml and upgraded only between milestones.
 - **Map** **(A)**: the province-ID bitmap loaded as a texture; one shader looks up each pixel's province for borders, hover, selection and map modes (a small per-province color table updated when the map mode or data changes).
 - **Data loading**: the CSV files in `data/` (and any JSON) are read at startup with `serde` and `csv` into Bevy resources **(A)**; a bad file names the file, row and field.
 - **Tests** with `cargo test`, including replay tests for determinism.
@@ -40,7 +41,7 @@ TechnoCapital20FF/
       markets/ map/ politics/ ideology/ vices/ software/ media/ news/ events/ ai/ save/
       views/                  # query tables kept up to date for screens
     sim_plugin/               # Bevy plugin: runs sim in FixedUpdate, exposes views as resources, turns events into commands
-    game/                     # Bevy app: UI (bevy_ui, bevy_egui), map shader, input, audio, saves menu
+    game/                     # Bevy app: UI (bevy_ui), map shader, input, audio, saves menu
     headless/                 # runner with no window: soak tests, replays, balance runs
   assets/                     # map bitmaps, shaders, fonts, icons
   data/                       # CSV and JSON content
@@ -91,7 +92,7 @@ Rebuilt around the current design; the build starts only when Logan says so.
 
 ## 12.6 Assumptions and open items
 
-1. Bevy for the whole game is confirmed (batch 168). Open: the pinned Bevy version, `bevy_ui` plus `bevy_egui` for UI, and the map shader approach (12.2). Risk: Bevy UI is young for a dense CK3-style UI and the API changes often; mitigation: pin the version and use egui for dense tables.
+1. Bevy for the whole game is confirmed (batch 168). Decided (batch 169): `bevy_ui` only, and one pinned Bevy version upgraded only between milestones. Open: which version to pin (pick the latest stable when the build starts) and the map shader approach (12.2). Risk: Bevy UI is young for a dense CK3-style UI; mitigation: the pinned version and an in-house table widget built early (M9).
 2. The `FixedUpdate` tick, query views, the resource and event boundary and the command queue (12.3).
 3. Tier membership rules (12.3).
 4. The roadmap order and success criteria (12.4, 12.5).
