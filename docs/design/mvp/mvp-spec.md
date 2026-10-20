@@ -1,6 +1,6 @@
 # TechnoCapital20FF MVP spec: the map, the business system and a read-only economic sim
 
-_Status: v1.1 (2026-10-20). The MVP spec for the map, the business system, a read-only economic sim and a lite AI that only runs its own company, current through Logan's batch 163 Q6: companies are now born out of the fringe pool and list on their zone exchange once big enough (5.19, 5.20). Every rule below is the latest ruling, and the batch-by-batch history is in the [Change log](#change-log) at the end._
+_Status: v1.2 (2026-10-20). The MVP spec for the map, the business system, a read-only economic sim and a lite AI that only runs its own company, current through Logan's batch 165: random and fixed startup events start new companies out of the fringe pool, each with new full and partial characters, and any private company lists on its zone exchange once big enough (5.19, 5.20). Every rule below is the latest ruling, and the batch-by-batch history is in the [Change log](#change-log) at the end._
 
 **Sources.** Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults, on [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11.
 
@@ -18,7 +18,7 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 |---|---|---|
 | **Player** | Opens every MVP screen; pause and speeds 1 to 5; skip to next event **(A)** | Every player action: trading, founding, schemes, board seats, travel, the phone, quests |
 | **Map** | 3,255 provinces, 211 countries, regions, areas, 97 Metros, 88 key cities, 8 superregions (design/data/) | Influence, real estate pools, development change, chokepoint risk, travel, unrest |
-| **Companies** | 651 companies (data/companies.csv), one business unit each at HQ (decided, Logan batch 145), board as labor units 1 to 5 filled by simple characters (3.7.1); new companies born out of the fringe pool and IPOs of those companies (5.19, 5.20; batch 163) | Subsidiary directives, shells, deals on units, takeovers, characters' personal play |
+| **Companies** | 651 companies (data/companies.csv), one business unit each at HQ (decided, Logan batch 145), board as labor units 1 to 5 filled by simple characters (3.7.1); new companies started by random and fixed startup events out of the fringe pool, with their founders as new full and partial characters, and IPOs of private companies (5.19, 5.20; batches 163 and 165) | Subsidiary directives, shells, deals on units, takeovers, characters' personal play |
 | **Economy** | 42 industries on shared default parameters (batch 148, 2.2), world demand, supply ratio, market factor, fringe pools, productivity, decay, R&D, growth plans | Price indices and cost drivers (D fixed at 1.0) **(A)**, real estate, slop, chokepoints, tariffs |
 | **Operations and data** | Labor units, stations, productive compute, unstructured and structured data, conversion, decay, free R&D (10.0.11) | Schemes, software design stations, software development (14), AI models (18), hacking, data sales |
 | **Software** | Two fixed products: the general productivity software and the general enterprise software, both quality 50 **(A)** | Every other product, licences as a market, bloat, versions |
@@ -139,6 +139,7 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | ai_stage, boom_date, pop_date | enum, date, date | Preboom, Boom, Bust or Postcrash; the boom event date (1 Jan 2030) and the pop date rolled at load (5.1.1, batch 151) |
 | quarter_phase | enum | Release, Reaction, Locked, PreQuarterEnd (21.1) |
 | rng_streams | seeds | One stream per system: cycle, growth (the quarterly draws), prices, AI, gen (12.3) |
+| startup_events | list | The fixed startup events with a fired flag, and a log of every event that fired, fixed or random (5.19, batch 165) |
 
 ### 3.2 Country (static)
 
@@ -180,7 +181,7 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | fringe_assets | Fringe pool business assets (10.0.10) |
 | supply, supply_ratio S, market_factor M | 10.0.3 |
 | published | Last month's demand, supply, S, M, q_growth and phase label, for screens |
-| birth_lambda, births | This quarter's expected births λ and the births so far, by quarter (5.19, batch 163) |
+| startup_weight, births | This quarter's random-event weight w and the births so far, by quarter (5.19, batch 165) |
 
 ### 3.5 Corporation
 
@@ -205,7 +206,7 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | distress_months | Months with cash below 0 after the line is exhausted |
 | status | Active, Distressed, Bankrupt (frozen) or Removed (5.12) |
 | frozen_quarters | Quarters spent Bankrupt (5.12) |
-| origin, born_date, founder | Start (the 651) or Born; the plan lock it was born at; its founder, a simple character (5.19, batch 163) |
+| origin, born_date, event, founders | Start (the 651) or Born; the plan lock it was born at; the startup event that made it; its full characters, lead founder first (5.19, batch 165) |
 | exchange, listed_date, ipo_price | Listing exchange code (HQ zone, 5.14), the plan lock it listed at and its open_price; empty while private (5.20) |
 
 ### 3.6 Business unit
@@ -234,13 +235,13 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | 4 | CMO | Persuasion |
 | 5 | CTO | Tech |
 
-A seat exists only when the company has that many labor units (10.0.11.3). Each seat holds a **simple character** (3.7.1; Logan, batch 145). Chair, General Counsel, CIO and the rest are empty and count skill 3 (10.5.1). Seats persist; the MVP has no firing or elections.
+A seat exists only when the company has that many labor units (10.0.11.3). Each seat holds a **simple character** (3.7.1; Logan, batch 145); in a company born in play it may hold one of its founders, a full character (3.7.2, 5.19.4). Chair, General Counsel, CIO and the rest are empty and count skill 3 (10.5.1). Seats persist; the MVP has no firing or elections.
 
 ### 3.7.1 Simple characters (Logan, batch 145)
 
 Logan: "We need simple characters that do the bare minimum, make the default choice on everything, and just serve as stats to roll against with traits to fill their role. These will supplement the full characters."
 
-A **simple character** is a filler executive ([1-corporate-core.md](../detailed/1-corporate-core.md) 1.1.0): a name, an age, the six skills (Finance, Operations, Persuasion, Intrigue, Tech, Hustle; 1.1.1) and one or two role traits. It has no ambitions, relationships, opinion, hooks, schemes or personal play. It always takes the default choice and exists to fill board seats and be rolled against. The 296 full characters stay as they are; simple characters are **generated as needed** to fill the roughly 2,700 board seats beyond them: at load, and whenever a seat opens (5.10). When a seat closes or the company is removed, its simple character is discarded **(A)**.
+A **simple character** is a filler executive ([1-corporate-core.md](../detailed/1-corporate-core.md) 1.1.0): a name, an age, the six skills (Finance, Operations, Persuasion, Intrigue, Tech, Hustle; 1.1.1) and one or two role traits. It has no ambitions, relationships, opinion, hooks, schemes or personal play. It always takes the default choice and exists to fill board seats and be rolled against. Logan calls them **partial characters** (batch 165): partial and simple mean the same thing. The 296 full characters stay as they are, joined by the full characters startup events create (3.7.2); simple characters are **generated as needed** to fill the roughly 2,700 board seats beyond them: at load, and whenever a seat opens (5.10). When a seat closes or the company is removed, its simple character is discarded **(A)**.
 
 | Field | Type | Meaning |
 |---|---|---|
@@ -271,8 +272,24 @@ The seat skill is the skill the seat uses (3.7); the CEO draws all three of Fina
 | CTO | Visionary, Diligent, Conservative, Shy |
 | Chair, General Counsel, CIO, Chief Strategy Officer (post-MVP) | Paranoid, Ruthless, Honest, Ambitious, Cautious |
 
-Traits apply only their skill effects (1.1.2) and the management score shifts (10.5.1: Diligent +2, Lazy -2, Ambitious +1, Greedy -1 as CFO). They never change the plan: the Lite AI's trait nudges (section 6) read only the named controller's traits. Expected management score with every labor seat filled and the Chair empty (5.7): about 33 small, 47 mid, 60 large.
+Traits apply only their skill effects (1.1.2) and the management score shifts (10.5.1: Diligent +2, Lazy -2, Ambitious +1, Greedy -1 as CFO). They never change the plan: the Lite AI's trait nudges (section 6) read only the named controller's traits, and never a startup's founders (5.19.5). Expected management score with every labor seat filled and the Chair empty (5.7): about 33 small, 47 mid, 60 large.
 
+### 3.7.2 Full characters made in play (Logan, batch 165)
+
+Startup events (5.19.4) create **full characters**: new rows like those in data/characters.csv. The MVP gives them only what it needs **(A)**:
+
+| Field | Rule **(T)** |
+|---|---|
+| id, name | Next CH- id; name from the HQ country's superregion list, unique against characters.csv |
+| tier | generated |
+| age | Lead founder 22 to 55; others 25 to 60 |
+| finance, operations, persuasion, intrigue, tech, hustle (0 to 30) | One best skill 10 to 18, one second skill 7 to 13, the other four 2 to 9. The best skill is the skill of the seat it is cast for (3.7; the lead founder's is one of Finance, Operations or Persuasion); the second is picked at random |
+| traits | 3 from the 12 pairs of 1-corporate-core 1.1.2, no opposite pair |
+| home province | The startup's HQ province (70%) or another province of the HQ country by province weight (30%) |
+| cash_usd | $0.1M to $1M; net worth adds the value of their stake (5.13) |
+| company, seat | Where they sit (5.19.4) |
+
+They have no ambitions (player only, 1-corporate-core, Ambitions) and no ideology, hook, relationships, schemes or personal play in the MVP **(A)**. Their ages and skills do not move and nobody dies in the MVP **(A)**. For scale, the starting holders have a median best skill of 13 and the rivals 18.
 
 ### 3.8 Compute and software (corporation level)
 
@@ -356,7 +373,7 @@ The quarter starts at each release and ends at the next (21.1). Accounting quart
 | 1. Release | 2 Apr 00:00 | 2 Jul 00:00 | 2 Oct 00:00 | 2 Jan 00:00 | Statements published to Filings; Earnings day alert (Pause by default); prices frozen this tick (21.2) |
 | Price move | 2 Apr 01:00 | 2 Jul 01:00 | 2 Oct 01:00 | 2 Jan 01:00 | Full fair value; earnings jump ×1.5; buzz; rating review; credit line review; result headlines |
 | 2. Reaction week | 2 Apr 01:00 to 9 Apr 00:00 | 2 to 9 Jul | 2 to 9 Oct | 2 to 9 Jan | Daily 20% reversion toward V; hourly volatility ×2 falling to ×1 by day 7 (21.3.1) |
-| 3. Plan lock | 9 Apr 00:00 | 9 Jul 00:00 | 9 Oct 00:00 | 9 Jan 00:00 | Company births (5.19), then listings (5.20), then every company's Lite AI plan (section 6) in one batch, new companies included; consensus set; old plan ran until now (21.5) |
+| 3. Plan lock | 9 Apr 00:00 | 9 Jul 00:00 | 9 Oct 00:00 | 9 Jan 00:00 | Startup events (5.19: fixed events due, then random events; each startup with its cast), then listings (5.20), then every company's Lite AI plan (section 6) in one batch, new companies included; consensus set; old plan ran until now (21.5) |
 | 4. Locked quarter | 9 Apr to 25 Jun | 9 Jul to 25 Sep | 9 Oct to 26 Dec | 9 Jan to 26 Mar | Plans fixed; projections shown as ranges |
 | 5. Pre-quarter-end week | 25 Jun 00:00 to 2 Jul 00:00 | 25 Sep to 2 Oct | 26 Dec to 2 Jan | 26 Mar to 2 Apr | Quarterly recap built and shown (Pause by default); no board day events **(A)** |
 
@@ -730,57 +747,106 @@ Paid at the plan lock from the last quarter: `dividend = payout ratio × NI` if 
 
 ### 5.18 Industry news (10.0.6)
 
-Each phase change posts one headline for the industry; each release posts the five largest beats and misses, bankruptcies and removals (5.12) and rating changes of 2+ notches; each raise and failed raise (6.6) posts one headline; each birth posts "[Name] spins out in [industry] in [city or province]" and each listing "[Name] lists on [exchange code] at $[price], raising $[net]M" (5.19, 5.20). MVP headlines come from a neutral **Pdoomberg Wire** byline, since outlets and slant are out of scope **(A)**.
+Each phase change posts one headline for the industry; each release posts the five largest beats and misses, bankruptcies and removals (5.12) and rating changes of 2+ notches; each raise and failed raise (6.6) posts one headline; each startup event posts one headline, a fixed event its own line (F4: "[tipped lab]'s chatbot sets off a startup rush: [n] new AI labs") and a random one "[Name] launches in [industry] in [city or province]" (a hot cluster: "[n] startups launch in [industry] in [city]"), and each listing "[Name] lists on [exchange code] at $[price], raising $[net]M" (5.19, 5.20). MVP headlines come from a neutral **Pdoomberg Wire** byline, since outlets and slant are out of scope **(A)**.
 
-### 5.19 Company births (Logan, batch 163 Q6a)
+### 5.19 Startup events and company births (Logan, batches 163 Q6a and 165)
 
 Logan (batch 163, Q6 a): "Company births: fast-growing industries spin startups out of the fringe pool, and private companies list (IPO) once they reach a size."
 
-Without births the named world only shrinks (5.12), and a fast-growing industry grows only through its unnamed fringe. Births run at each plan lock (4.4), before the Lite AI batch, so a new company gets its first plan the same day. Draws use the gen stream (3.1) in industry id order, so a seed always gives the same births **(A)**.
+Logan (batch 165, 1): "random and fixed events start startups in various industries. Startups should usually spawn 1-5 partial characters and 1-5 full characters depending on the event."
 
-**How many (T).** For each industry not labeled Glut or Bust (5.1):
+Without births the named world only shrinks (5.12), and a fast-growing industry grows only through its unnamed fringe. New companies come only from **startup events**, of two kinds: **random** events, rolled at each plan lock, and **fixed** events on set dates tied to the scripted world events (5.1.1, 7-starting-world 7.7). Both run at the plan lock (4.4), fixed events first, before listings and the Lite AI batch, so a new company gets its first plan the same day. All draws use the gen stream (3.1), so a seed always gives the same events **(A)**. Batch 163's growth formula (expected births from growth above 6% and fringe size) is gone; its heat and fringe terms live on only as the weights that pick a random event's industry.
 
-- heat `h = max(0, (1 + q_growth)^4 − 1 − 6%)`: this quarter's growth a year, above a 6% floor;
-- fringe factor `f = clamp(1 + log10(fringe revenue in $B), 0.5, 5)`: a bigger unnamed pool has a bit more room to spin out;
-- expected births `λ = 0.35 × h × (1 + 2h) × f`. The number is a Poisson draw on λ, capped at 3 per industry and 6 world-wide a quarter (over 6, a random 6 are kept).
+**What an event says.** Every event, random or fixed, names its industry or industries; how many startups (1 to several); each startup's size, as a revenue range whose assets are carved out of the fringe; the HQ region; and its **cast**, the number of full and partial characters each startup brings (5.19.4).
 
-The (1 + 2h) term makes very fast growth count for more, so a boom shows as a wave. Retail (3%) spawns almost nothing; EVs (25%, fringe $223B) about 1.5 a year; AI labs in the boom (100% a year) about 1.5 a quarter.
+#### 5.19.1 Random startup events (T)
 
-**Each birth (A, T).**
+- **How many.** At each plan lock the number of random events is a Poisson draw with mean 2, about 8 a year. The mean is flat: the boom shows through the industry weights and the fixed events.
+- **Which industry.** Each event picks one industry with weight `w = f × (0.02 + h)²`, where `h = max(0, (1 + q_growth)^4 − 1 − 6%)` is this quarter's growth a year above a flat 6%, and `f = clamp(1 + log10(fringe revenue in $B), 0.5, 5)` is the fringe factor. Industries labeled Glut or Bust (5.1) weigh 0. The square makes hot industries win most events: in the boom AI labs take most random events, while Retail (3%) almost never gets one.
+- **Which type.** Each event then draws its type:
+
+| Type | Chance | Startups | Revenue each | Full characters each | Partial characters each |
+|---|---|---|---|---|---|
+| Garage founder | 50% | 1 | $5M to $20M | 1 | 1 to 3 |
+| Spin-out team | 30% | 1 | $10M to $50M | 2 to 3 | 2 to 4 |
+| Hot cluster | 15% | 2 to 3, same industry and province | $5M to $30M | 1 to 2 | 1 to 3 |
+| Backed venture | 5% | 1 | $30M to $50M | 3 to 5 | 3 to 5 |
+
+- **HQ.** One province, weighted by `province weight (2-map 2.3.1) × (1 + named companies of the industry with HQ there) × 3 if a key city there lists the industry`; country, zone and exchange follow. A hot cluster puts all its startups in one province.
+
+#### 5.19.2 Fixed startup events (A, T)
+
+A fixed event fires at the first plan lock on or after its date. This is a small starter set, kept here until it moves to data/startup-events.csv (M0). A fixed event fires even if its industry is labeled Glut or Bust, but never takes more than the fringe allows (5.19.3). Its HQ uses the 5.19.1 province weights inside its region, and it posts its own headline (5.18).
+
+| # | Date (plan lock) | Event (7-starting-world 7.7) | Startups | Revenue each | HQ region | Cast each: full, partial |
+|---|---|---|---|---|---|---|
+| F1 | 9 Apr 2020 | The transformer paper: researchers leave to build on it | 2 AI labs | $5M to $15M | North America | 2 to 3, 1 to 2 |
+| F2 | 9 Apr 2021 | The crypto and SPAC mania | 1 Software, 1 E-commerce, 1 Gambling | $10M to $40M | Anywhere | 1 to 2, 2 to 4 |
+| F3 | 9 Jan 2022 | Suppliers to the Ukraine drone war | 2 Drones, 1 Defense | $5M to $30M | Europe | 1 to 3, 1 to 3 |
+| F4 | 9 Jan 2030 | The tipped lab launches its chatbot: the boom event (5.1.1) | 5 AI labs, 1 Cloud | $10M to $50M | Anywhere | 3 to 5, 2 to 4 |
+| F5 | 9 Jan 2031 | The GPU gold rush | 2 Semiconductors, 2 Data centers | $20M to $50M | East Asia and Oceania, North America | 2 to 3, 2 to 4 |
+| F6 | 9 Jan 2032 | Power deals and the cheap Chinese open model | 2 AI labs (China), 1 Data centers, 1 Renewables | $10M to $50M | China for the labs, anywhere for the rest | 2 to 4, 2 to 4 |
+| F7 | 9 Jan 2033 | AI agents run whole departments | 2 Software, 2 SaaS | $5M to $30M | Anywhere | 1 to 3, 1 to 3 |
+| F8 | 9 Jan 2035 | Humanoid robots in factories | 3 Robotics | $10M to $50M | One each in East Asia and Oceania, North America and Europe | 2 to 4, 2 to 4 |
+| F9 | First plan lock after the bust ends (the pop + 8 quarters, 5.1.1) | The post-crash rebuild | 2 AI labs, 1 Cloud | $5M to $20M | Anywhere | 2 to 3, 1 to 3 |
+
+That is 32 startups: 8 before the boom, 21 in 2030 to 2035 and 3 after the bust.
+
+#### 5.19.3 Each startup (A, T)
 
 | Item | Rule |
 |---|---|
-| Size | Target revenue log-uniform $5M to $50M, capped at 2% of the fringe's revenue; no birth under $1M |
+| Size | Target revenue log-uniform in the event's range, capped at 2% of the fringe's revenue; a startup under $1M is skipped |
 | Assets | `gross_assets = target revenue × capital_per_dollar`, carved out of the industry's fringe_assets (5.3), so supply is conserved. asset_book = gross (newly bought), no ramping, productivity 100 |
-| HQ | One province, weighted by `province weight (2-map 2.3.1) × (1 + named companies of the industry with HQ there) × 3 if a key city there lists the industry`; country, zone and exchange follow |
 | Name | Generated from the world-gen name lists (tools/world-gen/names.py), unique; no ticker while private |
-| Founder and board | The founder is a new simple character (3.7.1) in the CEO seat; seats 2 to 5 open with labor units (5.10) |
-| Cap table | Founder 60%, unnamed seed investors 40%; control_basis majority. The founder controls but gives no trait nudges, since only named controllers nudge (section 6) |
+| Cast and board | The event's full and partial characters (5.19.4) |
+| Cap table | The full characters (the founders) hold 60%: the lead founder half of it and the others the rest in equal parts; unnamed seed investors hold 40%. The lead founder is the controller, control_basis founder: the founders act as one block **(A)** |
 | Seed round | Cash `= 0.5 × gross_assets` from the seed investors; no line drawn; rating implied from the run rate (5.12) |
 | Shares | The 7.1 rule for private companies (batch 161): shares = engine value ÷ open_price |
 | Data and history | Empty (7.1 note, batch 146): 0 TB held, no history; TTM figures scale the quarters so far to a year until there are 4 **(A)**. Stations by the 7.1 rules |
-| Archetype | 6.1 as written: a Tech birth under $50M is a Startup |
+| Archetype | 6.1 without the trait rows (5.19.5): a Tech startup under $50M is a Startup, else Incumbent |
+
+#### 5.19.4 The cast: full and partial characters (Logan, batch 165)
+
+Logan's **partial** characters are the **simple characters** of 3.7.1: one thing, two names. Each startup brings 1 to 5 of each, the numbers set by its event (tables above, T). **Full characters** are new rows like those in data/characters.csv, made by 3.7.2.
+
+**Where they sit (A).** A startup starts with 50 or more labor units ($5M of assets at labor_value $100,000), so all five labor seats (3.7) open at birth.
+
+1. The **lead founder**, the first full character, is CEO.
+2. Each other full character takes the open labor seat whose skill is its best, ties in seat order.
+3. Partial characters fill the labor seats still open; each is generated for its seat by 3.7.1 (small company).
+4. Anyone left over sits as a **director**: a board seat with no labor unit (1-corporate-core 1.8.1, batch 146) that has no effect in the MVP. A labor seat still empty after the cast is filled by 3.7.1 as usual.
+
+Full characters stay in the world when their company is removed, unseated, for later play. Partial characters are discarded with their seat, as in 3.7.1.
+
+#### 5.19.5 Founders and the Lite AI (Logan, batch 165, 3a)
+
+Founders' traits do not shape AI choices in the MVP. A startup plans like a company with no named controller: the 6.1 archetype without the trait rows, and no trait nudges in 6.2 to 6.5. Founders' traits apply only their skill effects and management score shifts, like any board member's (3.7.1).
 
 **The reverse path.** A removed company's remaining assets go back to its industry's fringe (5.12 step 3), so capacity that leaves the named world returns to the pool that births draw from.
 
-**Sanity check (scratchpad script, 300 seeds, pop on 1 January 2040; it skips Glut, distress and funding caps).** About 9 births a year in 2020 to 2029 (EVs 1.6, Drones 1.0, Cloud 1.0 a year; 24 of the 42 industries under 0.1 a year); about 17 a year in 2030 to 2035, of them about 6 a year in AI labs (33 in all, against 11 named labs at start); about 12 to 13 a year after the pop. About 360 births in 30 years.
+**Sanity check (scratchpad events165.py, 300 seeds, pop on 1 January 2040; it skips Glut, distress and funding caps).** About 8 events and 11 startups a year in 2020 to 2029 (under 1 a year from fixed events); about 9 events and 13 startups a year in 2030 to 2035, of them about 6 a year in AI labs (36 in all, against 11 named labs at start); about 10 a year after. About 330 startups in 30 years. Characters: about 18 full and 25 partial a year in 2020 to 2029, and about 27 full and 33 partial a year in 2030 to 2035; about 180, 225 and 165 full characters in the three decades, 570 in all, against 296 at start.
 
-### 5.20 Listings (IPO) (Logan, batch 163 Q6a)
+### 5.20 Listings (IPO) (Logan, batches 163 Q6a and 165)
 
-At each plan lock, after births, a private Active company born in play (5.19) **(A)** may list when all of these hold **(T)**:
+Logan (batch 165, 2b): starting private companies can list too. At each plan lock, after the startup events, a private Active company, born in play (5.19) or one of the 184 starting private companies, may list when all of these hold **(T)**:
 
-- at least 8 quarters since its birth, and TTM revenue at least $250M;
+- at least 8 quarters since its birth (starting companies pass this at once), and TTM revenue at least $250M;
 - TTM net income above 0, or 4-quarter revenue growth of at least 20%;
 - rating B or better, not Distressed, and its industry not labeled Bust.
 
-Each eligible company lists with chance `25% + phase adj + confidence ÷ 10` percentage points, clamped 0% to 50%, with phase adj Boom +15, Normal 0, Glut −10 and confidence its exchange's (5.1.2); at most 4 listings world-wide a quarter **(T)**. Listing **(A, T)**:
+Each eligible company lists with chance `25% + phase adj + confidence ÷ 10` percentage points, clamped 0% to 50%, with phase adj Boom +15, Normal 0, Glut −10 and confidence its exchange's (5.1.2); at most 4 listings world-wide a quarter **(T)**. A starting private company rolls at a tenth of that chance **(T)**: it has stayed private for years by choice, and at the full chance the 68 already over $250M would all list by 2024.
+
+**The owner's say (A).** The MVP has no owner choices, so the roll stands for the controller's decision: a named character, trust or state controller that wins the roll is taken to agree. The controller keeps control after the 20% issue dilutes it (6.6); control contests are out of scope.
+
+Listing **(A, T)**:
 
 1. **Exchange**: its HQ zone's exchange (5.14).
 2. **Price**: pre-money value = engine value (5.13, with that exchange's X and no private discount); open_price by the batch 161 rule (7.1); existing shares are re-split to `pre-money value ÷ open_price`.
 3. **New money**: new shares equal to 20% of those go to an unnamed **public float** holder at `open_price × 0.92` (the 6.6 small-cap discount), less 3% fees; cash rises by the net; holders dilute as in 6.6.
 4. **Listed**: public = Y, a unique ticker of up to 4 letters, P = open_price, buzz 0. It joins its exchange's headline index with the divisor adjusted, so the level does not jump. From the next release its statements publish and its figures stop showing **?**.
 
-Sanity check (same script, which skips the profit test, so an upper bound): almost no listings before 2029, 1 to 3 a year in the boom, 4 to 9 a year in the 2040s, about 110 in 30 years.
+Sanity check (events165.py, with a rough profit test, so an upper bound): about 4 listings a year in 2020 to 2029, almost all starting private companies (about 6 in 2020, falling as that pool drains); about 5 a year in 2030 to 2035; about 7 a year from 2036, mostly startups; about 180 in 30 years (about 100 startups and 80 of the 184 starting private companies).
 
 ---
 
@@ -818,9 +884,12 @@ Rule: the newest Logan ruling wins; where Logan has not ruled, the most recent d
 | C26 | Price factor PF per country (2-map 2.1.1) and electricity price index per country grid (10.6) vs batches 155 and 157 | price_level was derived from wage_level and is removed with it (batch 157); nothing in the MVP read it (D fixed at 1.0). The electricity index becomes one per zone grid post-MVP (A) |
 | C27 | Market sentiment per exchange (3.3.5) and investor confidence vs batches 155 and 157 | One confidence value per zone exchange, starting at confidence_start (0 for all, T) and moved daily by its headline index and news (Logan, batch 157, 2a; 5.1.2). Logan, batch 158 (2a): it nudges the fair value of companies listed there by up to ±10% (X, 5.13, T). A company's own investor confidence factor still comes from its board (5.7, 10.5.2), since it belongs to the company, not the economy (A) |
 | C28 | What stays national after batch 155 | Corporate tax (5.11; tax is national law, paid where profit is earned), the sovereign rating and its corporate ceiling (5.12), the sovereign spread and government debt, laws, sanctions and politics (batch 121) (A) |
-| C29 | v1.0 scope: no IPOs and no new companies in the read-only MVP vs Logan, batch 163 Q6a | Companies are born out of the fringe pool and list once big enough (5.19, 5.20). The player still founds nothing (section 1) |
+| C29 | v1.0 scope: no IPOs and no new companies in the read-only MVP vs Logan, batch 163 Q6a | Random and fixed startup events start companies out of the fringe pool (Logan, batch 165, replacing batch 163's growth formula), and private companies list once big enough (5.19, 5.20). The player still founds nothing (section 1) |
 | C30 | 5.12: a removed company's sold capacity leaves the game vs births carving capacity out of the fringe | Removed capacity returns to the fringe (5.12 step 3), so births and removals move capacity both ways (A) |
-| C31 | 7.1 note: a company founded in play starts with the barebones loadout and only the CEO seat vs a spin-out carved from the fringe | A spin-out keeps the "starts empty" part (0 TB, no history) but takes its carved assets, and its seats open with labor units as usual (5.19, A) |
+| C31 | 7.1 note: a company founded in play starts with the barebones loadout and only the CEO seat vs a spin-out carved from the fringe | A spin-out keeps the "starts empty" part (0 TB, no history) but takes its carved assets, and its five seats open at birth and are filled by its cast (5.19.4, A) |
+| C32 | v1.1: only companies born in play may list vs Logan, batch 165 (2b) | Starting private companies may list under the same tests, at a tenth of the chance; the roll stands for the owner's yes (5.20, A) |
+| C33 | 6.1 and 6.2 read the controller's traits vs startup founders, who are full characters with traits | Founders' traits do not shape AI choices in the MVP (Logan, batch 165, 3a; 5.19.5) |
+| C34 | 3.7.1 discards a simple character with its seat vs full characters made in play | Full characters stay in the world, unseated, when their company is removed (3.7.2, A) |
 
 ---
 
@@ -836,7 +905,7 @@ Every company runs the same rules at 9th 00:00 of each release month (21.7), in 
 | loss_q | Consecutive quarters of negative EBIT |
 | liquidity | Own cash + undrawn line |
 | min_cash | 5% of trailing annual revenue **(T)** |
-| traits | The named controller's traits, if the controller is a character; else none |
+| traits | The named controller's traits, if the controller is a character; else none. A born company's founders count as none (Logan, batch 165, 3a; 5.19.5) |
 
 ### 6.1 Archetype (2.23.1)
 
@@ -962,7 +1031,7 @@ All built from 20-ui. Every action button is hidden or shows a lock icon with "R
 | **Pdoomberg** | 20.5.2, 3.13.1 | Full-screen terminal. F2 Quotes (watchlists: All, by industry, by country, Disclosure radar hidden); F3 Chart (daily bars with the estimated fair value band, ±15% for listed companies, 3.14.2; true V is never shown); F4 Order shows "Read-only MVP"; F5 Filings (quarterly statements); F6 Ratings (credit ratings only); F7 Bonds (base rate, zone credit spreads and sovereign spreads, batch 155); F9 Industries; F10 Screener (read-only filters) |
 | **Quarterly recap** | 20.7.9, 21.6.2 | Opens the pre-quarter-end week. World page: global phase and g_t, industries by phase label, biggest expected beats and misses by projection. Company page (watchlist companies): anticipated earnings range, expected reaction, confidence, outlook (phase label, losses, rating watch). No guidance choice |
 | **News feed** | 20.5.1 | Pdoomberg Wire headlines (5.18) with date and industry tag |
-| **Births and listings** (batch 163) | 20.7.6, 20.7.2 | Industries table: a births column (last 4 quarters) and the fringe share; Company header: "Spun out [date]" and "Listed [date] on [exchange] at $[price]"; F10 Screener filter by origin and listing date (5.19, 5.20) |
+| **Startups and listings** (batches 163 and 165) | 20.7.6, 20.7.2 | Industries table: a births column (last 4 quarters) and the fringe share; News feed: each startup event; Company header: "Founded [date] ([event])" and "Listed [date] on [exchange] at $[price]"; Board tab: founders' cards (full characters) show skills, traits and home province, partial characters are marked as such, directors listed below the seats; F10 Screener filter by origin and listing date (5.19, 5.20) |
 | **Time controls** | 9.1 | Pause (Space), speeds 1 to 5 (keys 1 to 5): 2 s, 1 s, 0.5 s, 0.2 s per hour and max; alerts: Earnings day (Pause), Quarterly recap (Pause), Plan lock (Log), Bankruptcy in watchlist (Notify), each settable Pause, Notify, Log, Off |
 
 ---
@@ -1005,11 +1074,13 @@ One engine object exposed through gdext (12.3). Queries read the last finished t
 | `get_rates()` | Base rate, zone credit spreads, sovereign spreads, rating spreads (batch 155) |
 | `get_news(since, filter)` | Headlines |
 | `get_recap(scope)` | scope: world or a company id |
-| `list_births(since)` / `list_listings(since)` | Births: id, name, industry, HQ, date, size; listings: id, ticker, exchange, date, ipo_price, money raised (5.19, 5.20). list_companies also filters by origin (start, born) and listed |
+| `list_startup_events(since)` | Events: id, fixed or random, type, date, industries, startups made (5.19, batch 165) |
+| `list_characters(filter)` / `get_character(id)` | Full characters, the 296 and those made in play: name, age, skills, traits, home province, company and seat (3.7.2) |
+| `list_births(since)` / `list_listings(since)` | Births: id, name, industry, HQ, date, size, event; listings: id, ticker, exchange, date, ipo_price, money raised (5.19, 5.20). list_companies also filters by origin (start, born) and listed |
 
 ### 9.3 Signals
 
-`tick_done(datetime)`, `day_done(date)`, `month_done(month)`, `earnings_released(quarter)`, `plan_locked(quarter)`, `company_born(id)`, `company_listed(id)`, `alert(kind, payload)`, `paused(reason)`.
+`tick_done(datetime)`, `day_done(date)`, `month_done(month)`, `earnings_released(quarter)`, `plan_locked(quarter)`, `startup_event(id)`, `company_born(id)`, `company_listed(id)`, `alert(kind, payload)`, `paused(reason)`.
 
 ### 9.4 Query tables kept ready
 
@@ -1029,13 +1100,13 @@ Views carry dirty flags (12.3); only changed rows are rebuilt.
 
 | # | Milestone | Done when |
 |---|---|---|
-| M0 | Data load and validation: the CSVs, industries.csv, country-economy.csv, financial-zones.csv, ai-boom.csv, key-cities.csv, company-start.csv; id checks | Loader rejects a bad row with file and line; headless |
+| M0 | Data load and validation: the CSVs, industries.csv, country-economy.csv, financial-zones.csv, ai-boom.csv, key-cities.csv, company-start.csv, startup-events.csv (the 5.19.2 fixed events, to build, batch 165); id checks | Loader rejects a bad row with file and line; headless |
 | M1 | Clock and scheduler: hourly ticks, daily, monthly, quarterly, yearly jobs; speeds and pause; seeded RNG streams | 10 years tick headless; job order matches section 4 |
 | M2 | Economy core: demand (global cycle, financial zones, quarterly growth draws, phase labels), fringe, supply, S, M, revenue, expenses, productivity, growth | At load every industry has S 1.00 and named revenue matches companies.csv within 0.5%; the engine's 40-quarter seeded growth run matches validate.py's growth check (5.1) |
 | M3 | Operations and data: labor, seats, stations, PC bonus, data create, convert, decay, free R&D | Arrowhead check (7.1) passes |
 | M4 | Books: ledger, statements, tax, credit line, rating, dividends, asset decay, distress, bankruptcy and removal | Balance sheet balances every month for every company still in the game |
 | M5 | Valuation and price: fair value, hourly price, earnings jump, reaction week | Opening price at V, $5 to $200 by size (company-start.csv); prices track V within ±30% over 10 years |
-| M6 | Lite AI and the quarter loop: plan lock, consensus, projections, recap, news wire; company births and listings (5.19, 5.20) | A full year runs four releases, four locks, four recaps; a birth takes exactly its assets from the fringe (supply unchanged before PC bonuses) and a listing keeps assets = liabilities + equity |
+| M6 | Lite AI and the quarter loop: plan lock, consensus, projections, recap, news wire; startup events, births and listings (5.19, 5.20) | A full year runs four releases, four locks, four recaps; the fixed events F1 to F9 fire on their dates; a birth takes exactly its assets from the fringe (supply unchanged before PC bonuses) and a listing keeps assets = liabilities + equity |
 | M7 | GDExtension API and views; Godot shell: top bar, time controls, alerts | Godot runs the sim at all speeds; screens read views only |
 | M8 | Map: geometry pipeline (gap G1), zoom, map modes, province card | All 3,255 provinces clickable |
 | M9 | Screens: Company, Industries, Pdoomberg, Recap, News | Every section 8 screen opens in under 100 ms |
@@ -1043,7 +1114,7 @@ Views carry dirty flags (12.3); only changed rows are rebuilt.
 
 **Balance targets after 10 years (T):** at least 85% of the 651 companies neither bankrupt nor removed; industry revenue within ±30% of the trend path; median productivity 90 to 110; no industry stuck at an M clamp for more than 8 quarters; 30% to 60% of releases are beats; the 2020 to 2029 run before the boom (5.1.1): each industry's 10-year average demand growth within ±3 pp of its long-term rate in 90% of seeds, and 10% to 25% of industry-quarters labeled Boom and 10% to 20% Bust (batch 150).
 
-**Births and listings targets (T, batch 163; checked in the M10 soak).** 4 to 15 births a year on average in 2020 to 2029; 15 to 50 AI labs births in 2030 to 2035 in 80% of seeds; the named company count stays between 600 and 1,100 in every year of the 30-year run; 20 to 150 listings in 30 years.
+**Startup, character and listing targets (T, batches 163 and 165; checked in the M10 soak).** 6 to 15 startups a year on average in 2020 to 2029; 15 to 50 AI labs startups in 2030 to 2035 in 80% of seeds; the named company count stays between 600 and 1,100 in every year of the 30-year run; 60 to 250 listings in 30 years and no more than 12 in any year. **World population check:** 100 to 300 full characters made per decade; under 1,200 full characters in the world in 2050 (296 at start); every startup has 1 to 5 full and 1 to 5 partial characters, and no labor seat of a born company is empty.
 
 ---
 
@@ -1064,7 +1135,7 @@ The most important things the docs do not define well enough to build, each with
 | G9 | **Batch 143 board-seat items.** The board meeting chain (21.4) and the labor seats of batch 142 left open: board size beyond 5 seats, charter minimums under 5 labor units, election vs controller appointment, investor and government seats, and starting data (1-corporate-core 1.8.1); the grading formula, performance score and firing threshold (21.4.1 to 21.4.3, 21.9 items 6 to 8) | **Decided (Logan, batch 146; batch 143 picks):** charter seats beyond the 5 labor seats are ordinary directors with no labor unit; the charter minimum of 5 applies only from 5 labor units; when a seat opens the controller appoints and the appointee stands at the next yearly meeting; VC, strategic-investor and government seats take the next labor seat as it opens, or sit beyond 5 if all are full (1-corporate-core 1.8.1); the 651 starting companies keep their generated starting data and new companies start empty (7.1). The MVP still has no elections, firing or board play (C14); the grading, performance score and firing values stay as in 21.4 (T, 21.9) |
 | G10 | **Thin margins after R&D at the norm.** margin_full_use minus rd_norm is negative for Consumer electronics (-2%), EVs (-6%), E-commerce (-1%) and AI labs (-15%), and about 0 for Autos, Aerospace and Robotics, so these start at or below break-even before interest. Older than batch 145; asset decay does not change EBIT | **Decided (Logan, batch 146):** intended. The four are cash-burning industries that live on investor money (10-industry-economy 10.3); their margins and rd_norm stay as they are. When runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the industry's phase label; failures go down the bankruptcy path (6.6). Autos, Aerospace and Robotics are not cash-burning; check them in the M10 soak **(T)**. **Parked (Logan, batch 148):** with the shared defaults no industry is thin or cash-burning (2.2); the flags and the 6.6 rule return with the per-industry rework (11.2) |
 | G11 | **Zone economy details (batches 155 to 158). Decided.** | Logan, batch 156: (1a) corporate tax stays national (C28); (2a) zone values are set directly per zone, seeded from GDP-weighted member averages (5.1.2); (3b) a company's home government softens the zone: home_spread = half zone credit spread + half home sovereign spread (5.1.2, 5.12, 5.13). Logan, batch 157: (1ab) base spread plus a quarterly cycle term (k 8, clamp 0.5x to 2x base, T); (2a) confidence per zone exchange from its index and news (T); (3) no geographic wage or price level. Logan, batch 158: (1) the WI and PF leftovers are restated with flat prices **(A)**: 2-map 2.8.4 wages and training, 2.8.6 union thresholds, 2.16 pools, 2.17 targets, province weight (total development × $0.3B; batch 159 adds the GDP per head factor G; batch 160 makes it sqrt of the ratio, safety clamp 0.1 to 4) and sponsorship; 4-politics bribes, legal fees and every "× wealth index" price, and the 4.23 guard and cyber team costs; 14-software 14.4.1 `L` (flat $100); 1-corporate-core spending budgets; 5-ideology retraining; 6-technocapital robotaxi revenue. wealth_index is an equality index and multiplies no cost; bodyguards are removed. (2a) exchange confidence feeds fair value through X (5.13). Batch 159: the 2.14 examples are restated and rich-country provinces weigh more again through G (GDP per head, not equality). Open: equality could plausibly feed unrest, unions or bribe acceptance later, but nothing reads it |
-| G12 | **Nothing created companies after load**, so the named world only shrank and fast growers grew only through the fringe | **Decided (Logan, batch 163 Q6a):** births out of the fringe pool and IPOs (5.19, 5.20; all numbers T). Open: births driven by growth above a flat 6% floor rather than above each industry's own long-term rate (which would hide the AI wave, since the boom raises the long-term rate itself); only companies born in play may list (all 68 starting privates over $250M have a named controller or a state owner); founders give no trait nudges |
+| G12 | **Nothing created companies after load**, so the named world only shrank and fast growers grew only through the fringe | **Decided (Logan, batch 163 Q6a; batch 165: 1, 2b, 3a):** random and fixed startup events start companies out of the fringe pool, each startup with 1 to 5 full and 1 to 5 partial characters; any private company may list, starting ones included; founders' traits do not shape AI choices (5.19, 5.20; all numbers T). Open: the random event rate (2 a quarter), the type table and the starter fixed list F1 to F9 are first guesses to tune |
 
 ### 11.1 Doc fixes (all done)
 
@@ -1106,6 +1177,7 @@ Logan: "we will rework them one by one once companies are known working." The MV
 
 Newest first. Section numbers say where each change lives now.
 
+- **v1.2 (2026-10-20), batch 165 (Logan: 1, 2b, 3a).** Random and fixed startup events replace the growth formula for births: about 2 random events a quarter whose industry favors hot, big-fringe industries, plus 9 fixed events tied to the 7.7 timeline (the chatbot launch brings 5 AI labs); each startup brings 1 to 5 full and 1 to 5 partial (simple) characters, with minimal full-character generation; starting private companies can list too, at a tenth of the chance; founders' traits do not shape AI choices; new population check (1, 3.1, 3.4, 3.5, 3.7, 3.7.1, 3.7.2, 4.4, 5.18, 5.19, 5.20, 6, 8, 9, 10, C29, C31 to C34, G12).
 - **v1.1 (2026-10-20), batch 163 Q6 (Logan, option a).** Company births: hot industries spin small companies out of the fringe pool at each plan lock, about 9 a year normally and a wave of AI labs in the boom; companies born in play list on their zone exchange once past $250M of revenue, with a 20% share issue; a removed company's assets return to the fringe (3.4, 3.5, 4.4, 5.12, 5.18, 5.19, 5.20, 8, 9, 10, C29 to C31, G12).
 
 - **v1.0 (2026-10-20), cleanup pass (Logan approved).** The 11.1 doc fixes are made in the source docs; stale lines from before batches 155 to 161 are fixed (scope row, daily confidence step 4.2, rights issues, 7.3, C9, the recap screen, M0, key city ids); the batch history moves here from the status line.
