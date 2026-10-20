@@ -33,7 +33,7 @@ CO-0031,Baltic Meridian Trading,,Oil,RUS,RU-0015,N,6000,11031,10397,CH-0011,60,p
 CO-0032,Vostok Data Security,,Software,RUS,RU-0002,N,80,8.6,234,CH-0011,60,proxy,CH-0107,,a front for the Moscow cybercrime underground
 CO-0033,Neva Tankers,,Shipping,RUS,RU-0016,N,700,829,663,CH-0011,55,proxy,CH-0108,,the grey fleet itself
 CO-0034,Kremnev Security Group,,Professional services,RUS,RU-0001,N,150,7.7,156,CH-0011,60,proxy,CH-0108,,
-CO-0035,Kroll Motorworks,KRMO,Autos,NZL,NZ-0001,Y,15000,9261,7976,CH-0012,16,class_a,,,the automotive fortune (7.3.3)
+CO-0035,Kroll Motorworks,KRMO,Autos,NZL,NZ-0001,Y,15000,9261,7976,CH-0012,16,class_a,,CO-0043:3,the automotive fortune (7.3.3)
 CO-0036,Kroll Marine,,Shipping,NZL,NZ-0016,N,350,402,322,CH-0012,100,majority,,,the boats he crashes into Antarctica
 CO-0037,Southern Reach Colony Company,,Construction,NZL,NZ-0016,N,20,4.1,7.0,CH-0012,100,majority,,,builds and runs Kroll's colony (7.8); HQ in Southland until the claimed province exists (A)
 CO-0038,Kroll Robotics,,Robotics,NZL,NZ-0013,N,250,107,176,CH-0012,90,majority,,,
@@ -79,7 +79,7 @@ CO-0077,Bank Habersaat and Cie,,Banking,CHE,CH-0001,N,900,1585,2035,CH-0028,60,m
 CO-0078,Ellwangen Motorenwerke,ELMO,Autos,DEU,DE-0006,Y,12000,6590,6135,CH-0029,21,class_a,,CH-0194:7,
 CO-0079,Isar Re,ISRE,Insurance,DEU,DE-0007,Y,6000,3443,3805,CH-0029,34,class_a,,,reinsurance
 CO-0080,Klinik Ewigkeit,,Healthcare services,DEU,DE-0008,N,60,20.1,48.9,CH-0029,100,majority,,,the longevity clinic
-CO-0081,Casa Brambilla,CABR,Luxury,ITA,IT-0001,Y,120,39.6,264,CH-0030,10,class_a,,CH-0198:6,biometric-locked handbags; Gulf sovereign money holds a large minority (A)
+CO-0081,Casa Brambilla,CABR,Luxury,ITA,IT-0001,Y,120,39.6,264,CH-0030,10,class_a,,,biometric-locked handbags; Gulf sovereign money holds a large minority (A)
 CO-0082,Brambilla Immobiliare,,Real estate,ITA,IT-0002,N,12,14.7,20.8,CH-0030,70,majority,,,
 CO-0083,Via Spiga Retail,,Retail,ITA,IT-0003,N,20,5.2,8.3,CH-0030,60,majority,,,
 CO-0084,Aydinoglu Yapi,AYYA,Construction,TUR,TR-0001,Y,6000,1170,2084,CH-0031,41,class_a,,,"bridges, airports, border walls"
@@ -227,7 +227,7 @@ CO-0225,Kestrel Digital,KEDI,Consumer electronics,KOR,KR-0005,Y,55409,14922,5567
 CO-0226,Namsan E-Mobility,NEM,EVs,KOR,KR-0005,Y,5644,3047,2438,,,widely_held,,CH-0252:9,key-city starting business (Seoul-Pyeongtaek)
 CO-0227,Jade Harbour Volt Motors,JHVM,EVs,CHN,CN-0021,Y,7188,3460,2768,,,widely_held,,CH-0154:20;CH-0162:8,key-city starting business (Shenzhen-Dongguan)
 CO-0228,Huaxing Drones,HUDR,Drones,CHN,CN-0022,Y,671,264,544,,,widely_held,,,key-city starting business (Shenzhen-Dongguan)
-CO-0229,Selat Foundry,SEFO,Semiconductors,MYS,MY-0005,Y,7976,7937,27254,,,widely_held,,CH-0276:8,key-city starting business (Penang)
+CO-0229,Selat Foundry,SEFO,Semiconductors,MYS,MY-0005,Y,7976,7937,27254,,,widely_held,,CH-0276:11,key-city starting business (Penang)
 CO-0230,Wanli Ore,WAOR,Mining,CHN,CN-0116,Y,16304,19569,22819,CHN,70,state,,CH-0275:6,state firm
 CO-0231,Haixia Metals,HAME,Metals,CHN,CN-0116,Y,31401,31537,31222,CHN,51,state,,CH-0228:9,state firm
 CO-0232,Wildrose Gas Transmission,WGT,Gas,AUS,AU-0035,Y,12955,15153,18013,,,widely_held,,CH-0158:11,key-city starting business (Perth-Pilbara)
@@ -243,15 +243,15 @@ CO-0241,Waverly Logistics,WALO,Logistics,USA,US-0119,Y,22145,14601,13332,,,widel
 CO-0242,Big Sky Airways,BSA,Airlines,USA,US-0039,Y,26861,27558,22046,,,widely_held,,,key-city starting business (Atlanta)
 CO-0243,Foxhollow Trust Bank,FTB,Banking,USA,US-0031,Y,79001,138215,178334,,,widely_held,,CO-0157:5;CO-0155:4,key-city starting business (Miami)
 CO-0244,Fenmore Properties,FEPR,Real estate,USA,US-0033,Y,66000,83644,115183,,,widely_held,,,key-city starting business (Miami)
-CO-0245,Rockledge Electric Vehicles,REV,EVs,USA,US-0126,Y,24793,17178,13742,,,widely_held,,CH-0172:7;CO-0043:6,key-city starting business (Austin)
+CO-0245,Rockledge Electric Vehicles,REV,EVs,USA,US-0126,Y,24793,17178,13742,,,widely_held,,CH-0172:7,key-city starting business (Austin)
 CO-0246,Thunder Bay Logic,TBL,Software,USA,US-0126,Y,38500,5725,112886,,,widely_held,,CO-0147:2,key-city starting business (Austin)
 CO-0247,Northwind Motors,NOMO,Autos,USA,US-0066,Y,74966,31219,35341,,,widely_held,,CH-0257:6,key-city starting business (Detroit)
-CO-0248,Iron Range Electric Vehicles,IREV,EVs,USA,US-0066,Y,7301,4607,3686,,,widely_held,,CH-0211:19;CH-0197:7,key-city starting business (Detroit)
+CO-0248,Iron Range Electric Vehicles,IREV,EVs,USA,US-0066,Y,7301,4607,3686,,,widely_held,,CH-0211:19;CH-0197:7;CO-0108:1,key-city starting business (Detroit)
 CO-0249,Granite Falls Lines,GFL,Shipping,CAN,CA-0026,Y,12185,15751,12601,,,widely_held,,,key-city starting business (Vancouver)
 CO-0250,Foxhollow Machine Minds,FMM,AI labs,CAN,CA-0015,Y,428,455,364,,,widely_held,,CH-0202:19,key-city starting business (Montreal)
 CO-0251,Gilded Age Airframes,GAA,Aerospace,CAN,CA-0015,Y,9489,5068,7000,,,widely_held,,CH-0155:34,key-city starting business (Montreal)
 CO-0252,Muskeg Play,MUPL,Gaming,CAN,CA-0015,Y,2424,699,6369,,,widely_held,,,key-city starting business (Montreal)
-CO-0253,Ashgrove Networks,ASNE,Telecom,CAN,CA-0010,Y,28227,38527,70242,,,widely_held,,,key-city starting business (Ottawa)
+CO-0253,Ashgrove Networks,ASNE,Telecom,CAN,CA-0010,Y,28227,38527,70242,,,widely_held,,CO-0108:1,key-city starting business (Ottawa)
 CO-0254,Saltgrass Logic,SALO,Software,CAN,CA-0010,Y,9261,1386,27157,,,widely_held,,CH-0219:9,key-city starting business (Ottawa)
 CO-0255,Laguna Verde Builders,LVB,Construction,MEX,MX-0013,Y,132496,28230,46727,,,widely_held,,,key-city starting business (Monterrey)
 CO-0256,Puerto Viejo Systems,PVS,Software,MEX,MX-0008,Y,26143,3432,76518,,,widely_held,,CO-0159:5,key-city starting business (Guadalajara)
@@ -262,7 +262,7 @@ CO-0260,Brandberg Direct,BRDI,E-commerce,DEU,DE-0013,Y,54899,10014,26062,,,widel
 CO-0261,Hollandse Kust Server Parks,HKSP,Data centers,NLD,NL-0001,Y,5235,11978,15686,,,widely_held,,CH-0284:6,key-city starting business (Amsterdam)
 CO-0262,Oranjewoud Trust Bank,OTB,Banking,NLD,NL-0001,Y,64264,113847,145491,,,widely_held,,,key-city starting business (Amsterdam)
 CO-0263,Kalahari Grain,KAGR,Agriculture,ZAF,ZA-0006,Y,77864,88668,71567,,,widely_held,,,key-city starting business (Cape Town)
-CO-0264,Kailash Motors,KAMO,Autos,IND,IN-0001,Y,31047,12204,14419,,,widely_held,,CH-0199:13,key-city starting business (Delhi NCR)
+CO-0264,Kailash Motors,KAMO,Autos,IND,IN-0001,Y,31047,12204,14419,,,widely_held,,CH-0199:16,key-city starting business (Delhi NCR)
 CO-0265,Himgiri Code,HICO,Software,IND,IN-0002,Y,18085,2314,52915,,,widely_held,,CO-0169:6;CH-0168:5,key-city starting business (Delhi NCR)
 CO-0266,Rajhans Mobile,RAMO,Telecom,IND,IN-0005,Y,23171,31239,57544,IND,70,state,,CO-0155:5,state firm
 CO-0267,Sindhu Pharma,SIPH,Pharma,IND,IN-0031,Y,23379,7070,48026,,,widely_held,,CH-0156:5;CO-0155:1,key-city starting business (Hyderabad)
@@ -282,7 +282,7 @@ CO-0280,Jinqiao Chemie,JICH,Chemicals,TWN,TW-0016,Y,12411,7508,9420,,,widely_hel
 CO-0281,Fenghuang Smelting,FESM,Metals,TWN,TW-0016,Y,12113,13433,12424,,,widely_held,,CH-0143:8,key-city starting business (Kaohsiung)
 CO-0282,Kenanga Farms,KEFA,Agriculture,MYS,MY-0001,Y,32260,38446,30757,,,widely_held,,,key-city starting business (Kuala Lumpur)
 CO-0283,Mutiara Data Halls,MDH,Data centers,MYS,MY-0002,Y,6967,12082,19718,,,widely_held,,CH-0129:13,key-city starting business (Kuala Lumpur)
-CO-0284,Mekong Electric,MEEL,Consumer electronics,VNM,VN-0027,Y,15958,4967,16235,,,widely_held,,CH-0238:8,key-city starting business (Hanoi)
+CO-0284,Mekong Electric,MEEL,Consumer electronics,VNM,VN-0027,Y,15958,4967,16235,,,widely_held,,CH-0238:11,key-city starting business (Hanoi)
 CO-0285,Chinook Assurance,CHAS,Insurance,USA,US-0027,Y,102149,36799,58233,,,widely_held,,,key-city starting business (New York)
 CO-0286,Crowsnest Circle,CRCI,Social media,USA,US-0018,Y,28679,7419,101598,,,widely_held,,,key-city starting business (Bay Area)
 CO-0287,Steelhead Aero,STAE,Aerospace,USA,US-0014,Y,30362,18476,23077,,,widely_held,,CH-0222:10,key-city starting business (Los Angeles-Long Beach)
@@ -290,7 +290,7 @@ CO-0288,Bitterroot Shipyards,BISH,Shipping,USA,US-0010,Y,14025,20314,16251,,,wid
 CO-0289,Wolf River Foundry,WRF,Semiconductors,USA,US-0006,Y,16436,11261,54634,,,widely_held,,CO-0155:4;CO-0157:2,key-city starting business (Phoenix)
 CO-0290,Cerro Azul Automotive,CAA,Autos,MEX,MX-0004,Y,105411,54549,52890,,,widely_held,,,key-city starting business (Mexico City)
 CO-0291,Ijsselmeer Petrochemical,IJPE,Chemicals,NLD,NL-0004,Y,8643,5883,6756,,,widely_held,,CH-0223:12,key-city starting business (Rotterdam)
-CO-0292,Kamchatka Steel,KAST,Metals,RUS,RU-0004,Y,15468,13846,14873,RUS,67,state,,CO-0108:1,state firm
+CO-0292,Kamchatka Steel,KAST,Metals,RUS,RU-0004,Y,15468,13846,14873,RUS,67,state,,,state firm
 CO-0293,Kapadokya Markets,KAMA,Retail,TUR,TR-0002,Y,140182,28373,55613,,,widely_held,,CO-0169:3,key-city starting business (Istanbul)
 CO-0294,Kalahari Mining,KAMI,Mining,ZAF,ZA-0023,Y,41391,53241,58998,,,widely_held,,,key-city starting business (Johannesburg)
 CO-0295,Yuntai Motor Works,YMW,Autos,CHN,CN-0012,Y,71183,34360,34973,,,widely_held,,,key-city starting business (Shanghai)
@@ -340,12 +340,12 @@ CO-0338,Midnattsol Marketplace,,E-commerce,SWE,SE-0001,N,3007,960,1551,CH-0057,8
 CO-0339,Polyarny Studios,POST,Gaming,UKR,UA-0013,Y,17.9,5.7,47.2,CH-0058,18,class_a,,CH-0179:11,
 CO-0340,Cerro Azul Construction,CAC,Construction,ESP,ES-0004,Y,18398,3329,6311,CH-0059,24,class_a,,,
 CO-0341,Kestrel Re,KERE,Insurance,IRL,IE-0002,Y,41.1,15.9,23.8,CH-0060,45,class_a,,CH-0243:26;CH-0161:10,
-CO-0342,Volga-Don Smelting,VDS,Metals,RUS,RU-0005,Y,16468,21553,17878,CH-0061,17,class_a,,CH-0140:16;CH-0237:12,
+CO-0342,Volga-Don Smelting,VDS,Metals,RUS,RU-0005,Y,16468,21553,17878,CH-0061,17,class_a,,CH-0140:16,
 CO-0343,Krasny Yar Gas Transmission,KYGT,Gas,KAZ,KZ-0022,Y,7107,8937,10069,CH-0063,17,class_a,,,
 CO-0344,Ironhorse Grain,,Agriculture,UZB,UZ-0008,N,34.0,40.0,32.0,CH-0064,53,majority,,,
 CO-0345,Firat Estates,,Real estate,AZE,AZ-0001,N,1103,1278,1889,CH-0065,67,majority,,,
 CO-0346,Sibirsky Les Trading,,Black market,RUS,RU-0015,N,22.8,4.8,20.6,CH-0067,83,majority,,,
-CO-0347,Krasny Yar Metals,KYM,Metals,RUS,RU-0016,Y,3254,4056,3472,CH-0068,31,class_a,,CH-0119:7;CO-0108:1,
+CO-0347,Krasny Yar Metals,KYM,Metals,RUS,RU-0016,Y,3254,4056,3472,CH-0068,31,class_a,,CH-0119:7,
 CO-0348,Nile Delta Data Halls,NDDH,Data centers,QAT,QA-0003,Y,2062,4105,5995,CH-0071,35,class_a,,,
 CO-0349,Persepolis Trading,,Black market,IRN,IR-0001,N,19.8,4.4,18.0,CH-0072,71,majority,,,
 CO-0350,Al Waha Logistics,AWL,Logistics,EGY,EG-0005,Y,4901,2493,2729,CH-0073,31,class_a,,CH-0284:16,
@@ -364,7 +364,7 @@ CO-0362,Margalla Markets,MAMA,Retail,PAK,PK-0018,Y,105,28.1,43.7,CH-0089,39,clas
 CO-0363,Margalla Telecom,,Telecom,BGD,BD-0025,N,530,598,1281,CH-0090,66,majority,,,
 CO-0364,Kingsbridge Energy Grid,KEG,Power utilities,IND,IN-0056,Y,4948,11495,9196,CH-0092,28,class_a,,,
 CO-0365,Vindhya Grain,VIGR,Agriculture,LKA,LK-0008,Y,78.2,63.1,64.1,CH-0093,20,class_a,,,
-CO-0366,Shinonome Medical Group,SMG,Healthcare services,JPN,JP-0001,Y,5797,2862,4998,CH-0095,34,class_a,,CO-0043:6,
+CO-0366,Shinonome Medical Group,SMG,Healthcare services,JPN,JP-0001,Y,5797,2862,4998,CH-0095,34,class_a,,,
 CO-0367,Mekong Builders,MEBU,Construction,VNM,VN-0004,Y,194,30.4,65.1,CH-0096,26,class_a,,,
 CO-0368,Copperline Foundry,COFO,Semiconductors,USA,US-0032,Y,17728,12292,58972,,,widely_held,,,
 CO-0369,Carmel Chipworks,CACH,Semiconductors,ISR,IL-0016,Y,11524,11922,39514,,,widely_held,,CO-0147:2,
@@ -439,15 +439,15 @@ CO-0437,Tamarack Studios,TAST,Gaming,USA,US-0062,Y,22000,5185,57457,,,widely_hel
 CO-0438,Sahyadri Interactive,SAIN,Gaming,IND,IN-0001,Y,9227,2167,24096,,,widely_held,,CH-0226:10;CH-0291:8,
 CO-0439,Fujimi Play,FUPL,Gaming,JPN,JP-0001,Y,2593,490,6736,,,widely_held,,CH-0273:21;CH-0129:5,
 CO-0440,Sierra Alta Interactive,SAI,Gaming,MEX,MX-0001,Y,4427,1070,11570,,,widely_held,,,
-CO-0441,Morava Interactive,MOIN,Gaming,LTU,LT-0001,Y,4673,851,12129,,,widely_held,,CH-0165:14;CH-0160:9,
+CO-0441,Valmont Interactive,VAIN,Gaming,LUX,LU-0001,Y,4673,851,12129,,,widely_held,,CH-0165:14;CH-0160:9,
 CO-0442,Crossfield Sportsbook,CRSP,Gambling,USA,US-0140,Y,26400,6994,69181,,,widely_held,,,
 CO-0443,Jade Harbour Lottery,JHL,Gambling,CHN,CN-0009,Y,4117,1113,10795,,,widely_held,,CH-0256:16,
-CO-0444,Fenghuang Casino Resorts,FCR,Gambling,CHN,CN-0021,Y,3534,1025,9287,,,widely_held,,CH-0295:16,
-CO-0445,Persepolis Lottery,PELO,Gambling,IRN,IR-0020,Y,9625,2895,25326,,,widely_held,,CH-0218:9,
-CO-0446,Malabar Gaming Holdings,MGH,Gambling,IND,IN-0014,Y,4284,1091,11213,,,widely_held,,,
+CO-0444,Fenghuang Casino Resorts,FCR,Gambling,CHN,CN-0020,Y,3534,1025,9287,,,widely_held,,CH-0295:16,
+CO-0445,Qasr Al Bahr Lottery,QABL,Gambling,IRQ,IQ-0009,Y,9625,2895,25326,,,widely_held,,CH-0218:9,
+CO-0446,Malabar Gaming Holdings,MGH,Gambling,IND,IN-0014,Y,4284,1091,11213,,,widely_held,,CO-0108:1,
 CO-0447,Konkan Casino Resorts,KCR,Gambling,IND,IN-0033,Y,3431,994,9016,,,widely_held,,,
 CO-0448,Changjiang Bet,CHBE,Gambling,CHN,CN-0140,Y,14919,5099,39439,,,widely_held,,CO-0157:6,
-CO-0449,Quarry Hill Gaming Holdings,QHGH,Gambling,GBR,GB-0002,Y,16035,4968,42235,,,widely_held,,CH-0296:6;CO-0108:1,
+CO-0449,Quarry Hill Gaming Holdings,QHGH,Gambling,GBR,GB-0002,Y,16035,4968,42235,,,widely_held,,CH-0296:6,
 CO-0450,Mistral Bet,MIBE,Gambling,FRA,FR-0001,Y,5627,1398,14718,,,widely_held,,CH-0163:5,
 CO-0451,Volta Casino Resorts,VCR,Gambling,GHA,GH-0001,Y,9249,2849,24356,,,widely_held,,CH-0136:12;CH-0215:9,
 CO-0452,Kano Gate Insurance,KGI,Insurance,NGA,NG-0001,Y,53637,22412,31504,,,widely_held,,CH-0130:8,
@@ -457,7 +457,7 @@ CO-0455,Hollowell Re,HORE,Insurance,USA,US-0044,Y,264000,86691,147975,,,widely_h
 CO-0456,Polyarny Mutual,POMU,Insurance,RUS,RU-0015,Y,41430,16812,24184,,,widely_held,,CH-0139:7,
 CO-0457,Amur Insurance,AMIN,Insurance,RUS,RU-0053,Y,41509,15989,23974,,,widely_held,,CH-0150:12;CH-0201:5,
 CO-0458,Kivu Bleu Insurance,KBI,Insurance,COD,CD-0023,Y,73250,35439,44473,,,widely_held,,CH-0163:5,
-CO-0459,Lotus Bay Mutual,LBM,Insurance,CHN,CN-0009,Y,64807,35762,40669,,,widely_held,,CH-0252:7;CO-0157:2,
+CO-0459,Lotus Bay Mutual,LBM,Insurance,CHN,CN-0009,Y,64807,35762,40669,,,widely_held,,CH-0252:7;CO-0043:6;CO-0157:2,
 CO-0460,Lodestar Insurance,LOIN,Insurance,USA,US-0122,Y,95250,47560,58274,,,widely_held,,CO-0155:4,
 CO-0461,Najm Re,NARE,Insurance,LBY,LY-0012,Y,43122,15113,24456,,,widely_held,,CH-0272:7,
 CO-0462,Ponte Vecchio Crude,PVC,Oil,ITA,IT-0003,Y,31871,40683,49853,ITA,67,state,,,state firm
@@ -465,10 +465,10 @@ CO-0463,Hawthorne Drilling,HADR,Oil,USA,US-0011,Y,41273,72367,70464,,,widely_hel
 CO-0464,Driftwood Energy,DREN,Oil,USA,US-0011,Y,40095,48761,61991,,,widely_held,,,
 CO-0465,Baiyun Midstream,BAMI,Gas,CHN,CN-0007,Y,48180,67729,70402,CHN,51,state,,,state firm
 CO-0466,Tianma Gas,TIGA,Gas,CHN,CN-0009,Y,25728,43591,39822,CHN,67,state,,,state firm
-CO-0467,Al Burj LNG,ABL,Gas,DZA,DZ-0016,Y,16182,22417,23546,DZA,60,state,,CH-0197:8;CH-0237:8,state firm
+CO-0467,Al Burj LNG,ABL,Gas,DZA,DZ-0016,Y,16182,22417,23546,DZA,60,state,,CH-0237:10;CH-0197:8,state firm
 CO-0468,Oakhurst Gas,OAGA,Gas,CAN,CA-0001,Y,43105,62056,63424,,,widely_held,,,
 CO-0469,Vindhya Power,VIPO,Power utilities,IND,IN-0036,Y,24906,53028,42422,IND,60,state,,CO-0169:6;CO-0147:5;CO-0314:3,state firm
-CO-0470,Negev Energy Grid,NEG,Power utilities,ISR,IL-0004,Y,22626,36201,28961,,,widely_held,,,
+CO-0470,Negev Energy Grid,NEG,Power utilities,ISR,IL-0004,Y,22626,36201,28961,,,widely_held,,CH-0198:9,
 CO-0471,Old Post Road Utilities,OPRU,Power utilities,ESP,ES-0003,Y,17208,33514,26811,,,widely_held,,CH-0239:8,
 CO-0472,Elbstern Electric,ELEL,Power utilities,DEU,DE-0028,Y,20937,34119,27295,,,widely_held,,,
 CO-0473,Xinghe Energy Grid,XEG,Power utilities,CHN,CN-0008,Y,58748,81944,66221,CHN,75,state,,,state firm
@@ -535,7 +535,7 @@ CO-0533,Vinterhav Airframes,VIAI,Aerospace,SWE,SE-0005,Y,11528,5928,8436,,,widel
 CO-0534,Saltgrass Aviation,,Aerospace,GBR,GB-0036,N,6326,3837,4804,CH-0118,57,majority,,,
 CO-0535,Coldwater Aviation,COAV,Aerospace,CHN,CN-0065,Y,10826,4500,7602,CHN,51,state,,CH-0196:12;CH-0221:6,state firm
 CO-0536,Bramblewood Aero,BRAE,Aerospace,USA,US-0014,Y,8233,3201,5715,,,widely_held,,CH-0175:9,
-CO-0537,Arirang Defense Systems,ADS,Defense,KOR,KR-0005,Y,6930,2937,5684,,,widely_held,,CH-0206:16,
+CO-0537,Arirang Defense Systems,ADS,Defense,KOR,KR-0005,Y,6930,2937,5684,,,widely_held,,CH-0206:16;CO-0043:2,
 CO-0538,Chao Phraya Dynamics,CPD,Defense,THA,TH-0006,Y,5535,2455,4572,,,widely_held,,CH-0205:6,
 CO-0539,Fenghuang Ordnance,FEOR,Defense,CHN,CN-0008,Y,10548,3991,8507,CHN,70,state,,,state firm
 CO-0540,Coalbrook Dynamics,CODY,Defense,USA,US-0006,Y,42350,19422,35175,,,widely_held,,CH-0152:6,
@@ -547,7 +547,7 @@ CO-0545,Fairhaven Arms,FAAR,Defense,USA,US-0080,Y,11982,6936,10384,,,widely_held
 CO-0546,Windward Arms,WIAR,Defense,USA,US-0005,Y,22220,10935,18679,,,widely_held,,CH-0115:11,
 CO-0547,Saltgrass Robotics,SARO,Robotics,AUS,AU-0024,Y,607,224,418,,,widely_held,,CH-0242:9,
 CO-0548,Yenisei Mechatronics,YEME,Robotics,RUS,RU-0039,Y,287,113,200,,,widely_held,,CO-0314:3,
-CO-0549,Hoshizora Mechatronics,HOME,Robotics,JPN,JP-0004,Y,3580,1624,2555,,,widely_held,,CH-0213:8;CO-0043:6,
+CO-0549,Hoshizora Mechatronics,HOME,Robotics,JPN,JP-0004,Y,3580,1624,2555,,,widely_held,,CH-0213:8,
 CO-0550,Clearwater Basin Mechatronics,CBM,Robotics,GBR,GB-0013,Y,354,167,255,,,widely_held,,CH-0176:10;CO-0258:3,
 CO-0551,Faro Rojo Mechatronics,FRM,Robotics,VEN,VE-0009,Y,666,239,456,,,widely_held,,,
 CO-0552,Oranjewoud Robot Works,,Robotics,NLD,NL-0009,N,538,282,395,CH-0119,60,majority,,,
@@ -566,22 +566,22 @@ CO-0564,Cutbank Haulage,CUHA,Logistics,CAN,CA-0012,Y,11567,8199,7136,,,widely_he
 CO-0565,Ipe Amarelo Express,IAE,Logistics,BRA,BR-0003,Y,11261,6232,6422,,,widely_held,,,
 CO-0566,Clearwater Basin Freight,CBF,Logistics,USA,US-0137,Y,49500,23134,26951,,,widely_held,,CH-0177:9,
 CO-0567,Fleur-de-Sel Logistics,FDSL,Logistics,FRA,FR-0003,Y,14984,11224,9424,,,widely_held,,,
-CO-0568,Navratna Haulage,NAHA,Logistics,IND,IN-0046,Y,35079,25061,21699,,,widely_held,,CH-0134:6,
+CO-0568,Navratna Haulage,NAHA,Logistics,IND,IN-0046,Y,35079,25061,21699,,,widely_held,,CH-0134:6;CH-0198:5,
 CO-0569,Jindo Air,JIAI,Airlines,KOR,KR-0004,Y,13957,10271,8217,,,widely_held,,CH-0247:16,
 CO-0570,Al Rawda Airlines,ARA,Airlines,OMN,OM-0007,Y,3941,4720,3776,,,widely_held,,CH-0184:19,
 CO-0571,Wadi Fatima Air,WFA,Airlines,SAU,SA-0016,Y,5503,4183,3346,SAU,51,state,,CH-0268:21;CH-0227:7,state firm
 CO-0572,Lodestar Air,LOAI,Airlines,USA,US-0072,Y,44000,42304,33843,,,widely_held,,CH-0217:8,
 CO-0573,Edelweiss Air,EDAI,Airlines,DEU,DE-0001,Y,10699,10413,8330,,,widely_held,,CH-0212:9,
-CO-0574,Fenmore Airlines,FEAI,Airlines,USA,US-0039,Y,7699,6308,5046,,,widely_held,,CH-0147:6,
+CO-0574,Fenmore Airlines,FEAI,Airlines,USA,US-0039,Y,8703,7130,5704,,,widely_held,,CH-0147:6,
 CO-0575,Tamarack Airlines,TAAI,Airlines,CAN,CA-0002,Y,5017,3837,3070,,,widely_held,,CH-0216:11,
 CO-0576,Oakhurst Airlines,OAAI,Airlines,USA,US-0046,Y,33245,24459,19567,,,widely_held,,,
 CO-0577,Juniper Ridge Airways,JRA,Airlines,USA,US-0141,Y,11754,13154,10523,,,widely_held,,CH-0183:9,
 CO-0578,Oyo Crown Airlines,OCA,Airlines,NGA,NG-0003,Y,4694,4447,3558,NGA,55,state,,,state firm
-CO-0579,Sierra Alta Airlines,SAA,Airlines,COL,CO-0005,Y,8703,8237,6590,,,widely_held,,,
+CO-0579,Sierra Alta Airlines,SAA,Airlines,CRI,CR-0003,Y,7699,7287,5830,,,widely_held,,,
 CO-0580,Huaxing Airways,HUAI,Airlines,CHN,CN-0104,Y,5835,6847,5478,CHN,70,state,,,state firm
 CO-0581,Bitterroot Builders,BIBU,Construction,CAN,CA-0002,Y,101232,22565,36000,,,widely_held,,CH-0231:5;CO-0155:3,
 CO-0582,Baiyun Infrastructure,BAIN,Construction,CHN,CN-0086,Y,200200,47701,72118,CHN,67,state,,,state firm
-CO-0583,Baiyun Markets,BAMA,Retail,CHN,CN-0031,Y,210981,59051,88605,,,widely_held,,,
+CO-0583,Baiyun Markets,BAMA,Retail,CHN,CN-0033,Y,210981,59051,88605,,,widely_held,,,
 CO-0584,Benten Department Stores,BDS,Retail,JPN,JP-0055,Y,126957,39998,54657,,,widely_held,,CO-0160:1,
 CO-0585,Huaxing Stores,HUAX,Retail,CHN,CN-0085,Y,440000,124626,185228,,,widely_held,,,
 CO-0586,Deccan Markets,DEMA,Retail,IND,IN-0003,Y,100196,25699,41376,,,widely_held,,CH-0180:6,
@@ -589,7 +589,7 @@ CO-0587,Quarry Hill Mart,QHM,Retail,USA,US-0086,Y,318018,60280,124938,,,widely_h
 CO-0588,Haetae Markets,HAMA,Retail,KOR,KR-0002,Y,71783,22186,30775,,,widely_held,,,
 CO-0589,Atalaya Mart,ATMA,Retail,COL,CO-0005,Y,117833,32969,49483,,,widely_held,,CH-0188:5;CH-0261:5,
 CO-0590,Gilded Age Retail,GAR,Retail,AUS,AU-0035,Y,100917,24241,41180,,,widely_held,,,
-CO-0591,Caspian Department Stores,CDS,Retail,IRN,IR-0019,Y,57743,17032,24511,,,widely_held,,CH-0236:7,
+CO-0591,Caspian Department Stores,CDS,Retail,IRN,IR-0019,Y,57743,17032,24511,,,widely_held,,CH-0236:9,
 CO-0592,Graystone Markets,GRMA,Retail,BGD,BD-0009,Y,79483,19948,32691,,,widely_held,,,
 CO-0593,Lodestar Direct,LODI,E-commerce,USA,US-0140,Y,80629,16500,38814,,,widely_held,,,
 CO-0594,Sindhu Shop,SISH,E-commerce,IND,IN-0024,Y,31849,9489,16223,,,widely_held,,CH-0229:14,
@@ -608,23 +608,23 @@ CO-0606,Paragon Point Noodle House,PPNH,Fast food,NOR,NO-0009,Y,8463,2635,7899,,
 CO-0607,Kestrel Foods,KEFO,Fast food,USA,US-0018,Y,13681,4164,12741,,,widely_held,,CH-0263:19,
 CO-0608,Rheinwerk Foods,RHFO,Fast food,DEU,DE-0019,Y,16401,5071,15298,,,widely_held,,CH-0241:5,
 CO-0609,Kingsbridge Grill,KING,Fast food,USA,US-0006,Y,18962,6469,17869,,,widely_held,,CH-0277:15;CH-0219:6,
-CO-0610,Monte Claro Foods,MCF,Fast food,HTI,HT-0001,Y,5674,1625,5254,,,widely_held,,CO-0199:3,
+CO-0610,Karpaty Foods,KAFO,Fast food,HUN,HU-0001,Y,5674,1625,5254,,,widely_held,,CO-0199:3,
 CO-0611,Mazury Foods,MAFO,Fast food,ROU,RO-0008,Y,11488,3781,10784,,,widely_held,,CH-0210:8,
 CO-0612,Rijnmond Noodle House,RNH,Fast food,NLD,NL-0009,Y,9361,2548,8628,,,widely_held,,,
 CO-0613,Kano Gate Burgers,,Fast food,NGA,NG-0029,N,5778,2589,5630,CH-0124,59,majority,,,
-CO-0614,Yenisei Burgers,YEBU,Fast food,RUS,RU-0017,Y,9918,2745,9155,,,widely_held,,,
-CO-0615,Yenisei Jewellers,YEJE,Luxury,RUS,RU-0004,Y,14110,5176,31184,,,widely_held,,CH-0125:9;CH-0157:5,
+CO-0614,Yenisei Burgers,YEBU,Fast food,RUS,RU-0017,Y,9918,2745,9155,,,widely_held,,CH-0157:5,
+CO-0615,Yenisei Jewellers,YEJE,Luxury,RUS,RU-0004,Y,14110,5176,31184,,,widely_held,,CH-0125:9,
 CO-0616,Maison Tsubasa,MATS,Luxury,JPN,JP-0003,Y,34650,12332,76465,,,widely_held,,,
 CO-0617,Sertao Jewellers,SEJE,Luxury,BRA,BR-0010,Y,17434,6519,38567,,,widely_held,,CO-0155:6;CO-0157:4;CO-0258:3,
 CO-0618,Maison Poseidonia,MAPO,Luxury,CYP,CY-0001,Y,6186,1981,13585,,,widely_held,,CH-0171:21,
 CO-0619,Garuda Jewellers,GAJE,Luxury,MYS,MY-0002,Y,7853,2631,17281,,,widely_held,,CH-0144:6,
 CO-0620,Maison Pont-Neuf,MPN,Luxury,FRA,FR-0001,Y,30916,9590,67801,,,widely_held,,,
-CO-0621,Cielo Abierto Jewellers,CAJ,Luxury,VEN,VE-0001,Y,9388,2199,20374,,,widely_held,,CH-0257:8,
+CO-0621,Cielo Abierto Jewellers,CAJ,Luxury,VEN,VE-0001,Y,9388,2199,20374,,,widely_held,,,
 CO-0622,Atelier Volga-Don,AVD,Luxury,RUS,UA-0020,Y,10080,3650,22263,,,widely_held,,,
 CO-0623,Bluewater Laboratories,BLLA,Pharma,USA,US-0019,Y,50786,18166,105168,,,widely_held,,,
 CO-0624,Cerro Azul Biologics,CAB,Pharma,ESP,ES-0004,Y,17589,5186,36092,,,widely_held,,CH-0245:6;CO-0258:5,
 CO-0625,Shinonome Laboratories,SHLA,Pharma,JPN,JP-0006,Y,15458,4665,31751,,,widely_held,,CH-0262:9,
-CO-0626,Rio Hondo Therapeutics,RHT,Pharma,COL,CO-0015,Y,10728,3065,21984,,,widely_held,,CH-0137:8,
+CO-0626,Rio Hondo Therapeutics,RHT,Pharma,COL,CO-0015,Y,10728,3065,21984,,,widely_held,,CH-0137:8;CH-0257:8,
 CO-0627,Balaton Biologics,BABI,Pharma,BGR,BG-0006,Y,11977,4958,25004,,,widely_held,,CH-0214:10,
 CO-0628,Old Post Road Therapeutics,OPRT,Pharma,USA,US-0044,Y,103516,39461,215092,,,widely_held,,,
 CO-0629,Midorigaoka Therapeutics,MITH,Pharma,JPN,JP-0006,Y,33339,12880,69325,,,widely_held,,CO-0157:5,
@@ -639,14 +639,14 @@ CO-0637,Caspian Hospitals,CAHO,Healthcare services,IRN,IR-0020,Y,38359,18316,328
 CO-0638,Blackfen Medical Group,BMG,Healthcare services,SAU,SA-0001,Y,13242,4508,10807,,,widely_held,,,
 CO-0639,Muskeg Health,MUHE,Healthcare services,ESP,ES-0001,Y,20137,9618,17263,,,widely_held,,,
 CO-0640,Marmara Health,MAHE,Healthcare services,TUR,TR-0001,Y,68329,33336,58788,,,widely_held,,CH-0212:5;CO-0199:1,
-CO-0641,Bayt Al Hikma Hospitals,BAHH,Healthcare services,SAU,SA-0001,Y,16167,7722,13860,,,widely_held,,,
+CO-0641,Bayt Al Hikma Hospitals,BAHH,Healthcare services,SAU,SA-0001,Y,16167,7722,13860,,,widely_held,,CH-0132:6,
 CO-0642,Fujimi Medical Group,FMG,Healthcare services,JPN,JP-0042,Y,25483,9163,20944,,,widely_held,,CO-0258:4,
-CO-0643,Cerro Azul Health,CAH,Healthcare services,PRI,PR-0001,Y,12920,4084,10450,,,widely_held,,,
-CO-0644,Pinecrest Health,PIHE,Healthcare services,ZAF,ZA-0006,Y,11857,6620,10452,,,widely_held,,CH-0179:19;CH-0132:6,
+CO-0643,Tatra Health,TAHE,Healthcare services,POL,PL-0001,Y,12920,4084,10450,,,widely_held,,CH-0258:6,
+CO-0644,Pinecrest Health,PIHE,Healthcare services,ZAF,ZA-0006,Y,11857,6620,10452,,,widely_held,,CH-0179:19,
 CO-0645,Boa Vista Health,BVH,Healthcare services,BRA,BR-0001,Y,15463,6632,13030,,,widely_held,,,
 CO-0646,Riverbend Health,RIHE,Healthcare services,GBR,GB-0025,Y,105600,55599,92078,,,widely_held,,CO-0147:4;CO-0155:1,
 CO-0647,Daxing Health,DAHE,Healthcare services,CHN,CN-0086,Y,16613,7136,14002,,,widely_held,,,
 CO-0648,Baiyun Consulting,BACO,Professional services,CHN,CN-0057,Y,52800,2830,54903,,,widely_held,,CH-0279:5,
 CO-0649,Rinjani Consulting,RINC,Professional services,MYS,MY-0001,Y,30828,1447,31994,,,widely_held,,CH-0167:9,
-CO-0650,Volta Associates,VOAS,Professional services,GHA,GH-0001,Y,49507,3396,51702,,,widely_held,,CH-0258:5,
+CO-0650,Morava Associates,MOAS,Professional services,GIB,GI-0001,Y,49507,3396,51702,,,widely_held,,,
 CO-0651,Porto Novo Advisory,PNA,Professional services,BRA,BR-0053,Y,42269,1933,43853,,,widely_held,,CO-0160:6;CO-0155:2,
