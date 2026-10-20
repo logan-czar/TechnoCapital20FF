@@ -939,7 +939,7 @@ Example: US 10-year at the start, with r_0 = 3.0%, r_n = 3.0%, debt 24% of GDP (
 | Product | Rate [T] |
 |---|---|
 | Savings and money market | Policy rate - 0.25 (floor 0) |
-| Bank loan to a company | Policy rate + corporate spread for its rating + 1.0 |
+| Bank loan to a company | World base rate + home spread (half the zone credit spread, half the home sovereign spread; batch 156) + corporate spread for its rating. The old +1.0 is dropped (consistency pass 3, batch 129; 10-industry-economy 10.0.9) |
 | Mortgage | 10-year government yield + 1.5 to 2.5 |
 | Margin and pledge loans | See 3.5.4 and 3.5.5 |
 

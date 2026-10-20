@@ -33,7 +33,7 @@ Hong Kong is a separate row (SAR) because the docs give it its own currency and 
 
 Being built by another worker: the North America test slice of the province list (United States, Canada, Mexico, Greenland, Bermuda, Saint Pierre and Miquelon). Columns, from the batch 118 spec:
 
-id, name, country, region, area, metro, city_rank, commerce, industry, population, resource, terrain, coastal, chokepoint_exposure, notes
+id, name, country, region, area, metro, city_rank, commerce, industry, population, resource, terrain, coastal, chokepoint, contested, linked_cities, notes (the column is `chokepoint`, not `chokepoint_exposure`)
 
 - region: a real first-level division (state, province, territory). area: 3 to 6 neighbouring provinces inside one region. metro: blank if none.
 - city_rank: Metropolis, City, Town or none. commerce, industry, population: development tracks, integers 1 to 30.
@@ -65,7 +65,7 @@ The South Asia slice (batch 126, 2026-10-20): 208 provinces in 8 countries, same
 - provinces-sub-saharan-africa.csv: 608 provinces in 49 countries, 7 Metros (Lagos, Kinshasa, Johannesburg, Luanda, Dar es Salaam, Khartoum, Abidjan). Contested: Somaliland, Abyei. Linked cities: Zambian Copperbelt, Accra-Tema.
 - Greenland, Bermuda and Saint Pierre and Miquelon (5 rows) were added to provinces-north-america.csv, which now has 260 rows.
 
-The world map is complete: 3,258 provinces, matching countries.csv provinces_planned.
+The world map is complete: 3,255 provinces, matching countries.csv provinces_planned.
 
 ## Batch 128 (2026-10-20)
 

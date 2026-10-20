@@ -201,6 +201,7 @@
 - Batch 159 (Logan, 2026-10-20): province weight = development x $0.3B x G, G = country GDP per head / world GDP per head, clamped 0.2 to 3 (1a, T; 2-map 2.3.1, 2.14); starting world regenerated with world-gen seed 136 so equality feeds the black market weight (2b): counts and hand-authored pieces unchanged, 36 companies and 34 holders differ, 619 of 651 still profitable.
 - Batch 160 (Logan, 2026-10-20): province weight G = sqrt(GDP per head / world GDP per head), safety clamp 0.1 to 4 (T): US 2.53, China 0.95, India 0.43, Burundi 0.15; country totals US $3.59T, China $1.73T, India $516B (2-map 2.3.1, 2.14).
 - Batch 161 (Logan, 2026-10-20): starting balance sheet: asset book 50% of gross, cash or drawn credit line fills the gap to book equity (1a; 349 cash, 302 drawn); opening prices vary by size: clamp(round($25 x (engine value / $1B)^0.35 x jitter +-10%), 5, 200) (2b, T; median $47, ARDR $9); G6 decided, data/company-start.csv.
+- Batch 162 (Logan, 2026-10-20): cleanup pass (1a): 11.1 doc fixes applied, stale lines fixed, change log added; mvp-spec is v1.0. Earlier lines in this log are history and may show superseded values.
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm
