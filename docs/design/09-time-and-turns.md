@@ -1,6 +1,6 @@
 # 9. Time and turns
 
-_Batch 134 (Logan): one alert scale (Pause, Notify, Log, Off; a few types locked on Pause), set out in detailed/20-ui.md 20.4. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. FX rates do not tick in the POC, and the monthly rate decision is the Federal Monetary Board's. Batch 117: no stress checks; the optional end date is removed. Batch 116: rewritten to the current design: 24/7 markets closed only on 1 January, no hours budget, game over when the player character dies. Updated 2026-10-17 (Logan, batch 29): pausable real time with hourly ticks; endless sandbox; single player._
+_Batch 143 (Logan): the quarterly cycle, [detailed/21-quarterly-cycle.md](detailed/21-quarterly-cycle.md): a one-tick trading window at release, a reaction week, the board meeting chain, a locked quarter and a pre-quarter-end week with a trading lockout (9.2). Batch 134 (Logan): one alert scale (Pause, Notify, Log, Off; a few types locked on Pause), set out in detailed/20-ui.md 20.4. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. FX rates do not tick in the POC, and the monthly rate decision is the Federal Monetary Board's. Batch 117: no stress checks; the optional end date is removed. Batch 116: rewritten to the current design: 24/7 markets closed only on 1 January, no hours budget, game over when the player character dies. Updated 2026-10-17 (Logan, batch 29): pausable real time with hourly ticks; endless sandbox; single player._
 
 ## 9.1 Pausable real time, hourly ticks (Logan, 2026-10-17)
 
@@ -23,7 +23,7 @@ Heavy calculations are offloaded to longer intervals:
 | **Daily** | Trade settlement, the news cycle and Heat decay (4-politics 4.17.4), schemes (one-roll, 1.1.8) and travel arrivals, influence campaign decay, character schedules |
 | **Weekly** | The economy: industry demand and price indices ([detailed/10-industry-economy.md](detailed/10-industry-economy.md)), real estate rents, labor; relationship tag and addiction checks; bloc checks, temporary influence decay, AI strategic decisions |
 | **Monthly** | Company finances (revenue, costs, growth plans), dividends and tribute, rent, interest, loan payments, trust payouts, taxes, central bank decisions (only the Federal Monetary Board at start), population needs and unrest, influence recalculation |
-| **Quarterly** | Earnings reports (00:00 on the 2nd), the quarterly recap 7 days before, board meetings, credit rating reviews |
+| **Quarterly** | The quarterly cycle ([detailed/21-quarterly-cycle.md](detailed/21-quarterly-cycle.md)): earnings reports at 00:00 on the 2nd with prices moving at 01:00; the reaction week; the board meeting event chain at the end of that week (grades, firing votes, plan lock); the pre-quarter-end week 7 days before the next release (auto-pause, the recap screen, the player's trading lockout, one event per board member per day); credit rating reviews |
 | **Yearly** | Aging health checks (1.1.9), annual shareholder meetings, budgets, scheduled elections |
 
 ## 9.3 Performance notes
