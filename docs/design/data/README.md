@@ -1,10 +1,12 @@
 # Map data files
 
+_Status (2026-10-20): Batch 153 (Logan): Macau gets its own country row. MAC is a Chinese special region like Hong Kong: countries.csv 211 rows, province CN-0030 re-id'd MO-0001 in country MAC, China plans 145 provinces and Macau 1 (world still 3,255), and country-economy.csv puts MAC in zone 11 (Macau)._
+
 Data tables for the EU4-style map (batch 118). Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. The `former_hub` column is dropped from every province file; key city province ids live in [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3.3, and future slices (Russia and Central Asia, Middle East and North Africa, Sub-Saharan Africa, South Asia) use the same columns without it. Rules live in [../detailed/2-map-and-influence.md](../detailed/2-map-and-influence.md); the approved plan is [../reviews/map-rework-eu4-plan.md](../reviews/map-rework-eu4-plan.md). Values marked (A) are assumptions and (T) are tuning values.
 
 ## countries.csv
 
-Batch 136 (Logan): the `government_type` column is replaced by `hss`, `legislature_strength`, `judiciary_strength` and `variant` (one US-based government system, 4-politics 4.2). One row per country or dependent territory: 197 sovereign states (the 193 UN members plus Taiwan, Kosovo, Palestine and Vatican City) and 9 territories (Cayman Islands, British Virgin Islands, Bermuda, Jersey, Guernsey, Hong Kong, Greenland, Puerto Rico, Saint Pierre and Miquelon). 206 rows, plus Gibraltar, the Isle of Man and the Faroes (batch 122) and Papa's Port (batch 124): 210 rows.
+Batch 136 (Logan): the `government_type` column is replaced by `hss`, `legislature_strength`, `judiciary_strength` and `variant` (one US-based government system, 4-politics 4.2). One row per country or dependent territory: 197 sovereign states (the 193 UN members plus Taiwan, Kosovo, Palestine and Vatican City) and 9 territories (Cayman Islands, British Virgin Islands, Bermuda, Jersey, Guernsey, Hong Kong, Greenland, Puerto Rico, Saint Pierre and Miquelon). 206 rows, plus Gibraltar, the Isle of Man and the Faroes (batch 122) and Papa's Port (batch 124): 210 rows. Macau (MAC, batch 153) is the 10th territory: 211 rows.
 
 | Column | Meaning |
 |---|---|
@@ -16,16 +18,16 @@ Batch 136 (Logan): the `government_type` column is replaced by `hss`, `legislatu
 | population_m | Population in millions, real 2019 |
 | wealth_index | WI (2.2.3 calls it the wage index). The 33 majors copy 2.2.3. Others use a fit over the majors: WI = 1.065 × (GDP per head / US GDP per head)^0.707, clamped 0.02 to 1.20 (T) |
 | major | Y for the 33 former major countries |
-| hss | Head of State Strength, 0 to 100 (4-politics 4.2.1, batch 136). The 33 majors, Hong Kong and Papa's Port copy 4.2.4. Others start from the old government type (liberal democracy 45, or 50 in Latin America and Sub-Saharan Africa; managed democracy 72; one-party state 90; ruling family 93; failed state 35) and some are set by hand from the 19.22 start world, noted "HSS set by hand from 19.22 (A)" (T) |
+| hss | Head of State Strength, 0 to 100 (4-politics 4.2.1, batch 136). The 33 majors, Hong Kong and Papa's Port copy 4.2.4; Macau copies Hong Kong (batch 153, A). Others start from the old government type (liberal democracy 45, or 50 in Latin America and Sub-Saharan Africa; managed democracy 72; one-party state 90; ruling family 93; failed state 35) and some are set by hand from the 19.22 start world, noted "HSS set by hand from 19.22 (A)" (T) |
 | legislature_strength | 0 to 100: `clamp(130 - 1.3 × hss + ΔL, 0, 100)`, with ΔL a per-country override of -15 to +15 (collapsed states -40) (T) |
 | judiciary_strength | 0 to 100: `clamp(150 - 1.5 × hss + ΔJ, 0, 100)`, with ΔJ a per-country override of -15 to +15 (collapsed states -60) (T) |
 | variant | Blank for the plain system, or the flavor variant that replaces one branch (4-politics 4.2.6). Exactly 10 rows at start: SAU Royal Court, PRK State Security, RUS Security Organs, IRN Guardian Council, CHN Party Standing Committee, ARE Federal Supreme Council, HKG Liaison Office, MMR Tatmadaw, CHE Federal Council, PAP Sovereign's Household. Somalia, South Sudan, Haiti and the Central African Republic start Collapsed (4.2.7), noted in notes |
 | restriction_label | Open, Screened, Guarded, Restricted or Closed. Majors copy 2.2.4; others take the typical restriction of their old minor group (2.2.5), with overrides marked (A) in notes |
 | subject_of | Debt vassalage overlord (4.11.8): Mali to USA; Pakistan and Sri Lanka to CHN |
-| provinces_planned | Planned land provinces (T). Formula 0.45 × sqrt(land area, thousand km²) + 2 × sqrt(population M) + sqrt(GDP $bn), scaled so the world sums to 3,200, capped at one province per 300 km², minimum 1; microstates and small islands are 1; a few set by hand (Greenland 3, Iceland 3, Singapore 3, Hong Kong 3, Luxembourg 1, Malta 1) |
+| provinces_planned | Planned land provinces (T). Formula 0.45 × sqrt(land area, thousand km²) + 2 × sqrt(population M) + sqrt(GDP $bn), scaled so the world sums to 3,200, capped at one province per 300 km², minimum 1; microstates and small islands are 1; a few set by hand (Greenland 3, Iceland 3, Singapore 3, Hong Kong 3, Macau 1, Luxembourg 1, Malta 1) |
 | notes | Old minor group (with (A) when the country was not named in that group), sovereign of a territory, resources, and which fields are assumed |
 
-Hong Kong is a separate row (SAR) because the docs give it its own currency and laws (2.3.3); China's major-country GDP and population still include it, so do not sum the two.
+Hong Kong is a separate row (SAR) because the docs give it its own currency and laws (2.3.3); China's major-country GDP and population still include it, so do not sum the two. Macau (MAC) is a separate row on the same terms (Logan, batch 153), with no variant, so the 10 start variants stay (A).
 
 ## provinces-north-america.csv
 
@@ -50,7 +52,7 @@ The Latin America slice (batch 123, 2026-10-19): 391 provinces in 35 countries a
 
 ## provinces-east-asia-oceania.csv
 
-The East Asia and Oceania slice (batch 124, 2026-10-19): 606 provinces in 32 countries and territories, same columns and rules. 34 Metros covering 114 provinces (17 key cities, 17 other 5M+ cities, mostly Chinese). Contested: every Taiwan province (CHN claims) and Sabah (PHL claims). Macau is a region inside China (no country row) (A). Chinese provinces are much larger than their cities, so city rank used a city population table in the generator, not province population. Summary: provinces-east-asia-oceania-summary.md.
+The East Asia and Oceania slice (batch 124, 2026-10-19): 606 provinces in 32 countries and territories, same columns and rules. 34 Metros covering 114 provinces (17 key cities, 17 other 5M+ cities, mostly Chinese). Contested: every Taiwan province (CHN claims) and Sabah (PHL claims). Macau was a region inside China (CN-0030) until batch 153 gave it its own country row: it is now MO-0001 in country MAC. Chinese provinces are much larger than their cities, so city rank used a city population table in the generator, not province population. Summary: provinces-east-asia-oceania-summary.md.
 
 ## provinces-south-asia.csv
 
@@ -174,7 +176,7 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 
 ### country-economy.csv
 
-210 rows, one per countries.csv row, holding only what countries.csv lacks. The wage index is countries.csv `wealth_index` (2.2.3 calls it the wage index, USA 1.00) and is not repeated here.
+211 rows, one per countries.csv row, holding only what countries.csv lacks. The wage index is countries.csv `wealth_index` (2.2.3 calls it the wage index, USA 1.00) and is not repeated here.
 
 | Column | Meaning |
 |---|---|
@@ -202,8 +204,8 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 | lag_quarters | Quarters before the cycle reaches the zone, 0 to 2 (T) |
 | contagion | Share of a member's default or bank crisis demand hit and spread rise that spreads to the other members, before the size factor of mvp-spec 5.1 (T) |
 | own_shock_sd | Yearly sd of a zone-only growth shock: 0.03 for the isolated Cuba and North Korea, else 0 (T) |
-| extra_provinces | Provinces of another country's row that belong to the zone: Macau's CN-0030 (zone MO), since Macau has no countries.csv row (A) |
-| countries | Member count, from country-economy.csv (Macau 0) |
+| extra_provinces | Provinces of another country's row that belong to the zone. Empty since batch 153, when Macau got its own row MAC (it held Macau's CN-0030 before) |
+| countries | Member count, from country-economy.csv (Macau 1: MAC) |
 | gdp_usd_bn, gdp_share | Zone GDP from countries.csv and its share of world GDP |
 | notes | Who is in it and why (A) |
 

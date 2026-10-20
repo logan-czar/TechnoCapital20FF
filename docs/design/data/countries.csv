@@ -173,7 +173,7 @@ NPL,Nepal,South Asia,NPR,34.2,28.6,0.06,N,45,72,82,,Guarded,,13,Hydropower; old 
 BTN,Bhutan,South Asia,BTN,2.5,0.76,0.12,N,45,72,82,,Guarded,,4,Hydropower; old group South Asia minors (A); branch strengths (A)
 MDV,Maldives,South Asia,MVR,5.6,0.53,0.28,N,45,72,82,,Guarded,,1,old group South Asia minors (A); branch strengths (A)
 AFG,Afghanistan,South Asia,AFN,25.0,38,0.04,N,70,39,45,,Guarded,,17,Stable under Massoud's chosen successor (19.22): GDP a little above the real 19B (A); old group South Asia minors (A); branch strengths (A); HSS set by hand from 19.22 (A)
-CHN,China,East Asia and Oceania,CNY,14000,1398,0.30,Y,92,10,12,Party Standing Committee,Restricted,,146,Population and GDP include Hong Kong as given in 2.2.3; HKG row also lists it (A)
+CHN,China,East Asia and Oceania,CNY,14000,1398,0.30,Y,92,10,12,Party Standing Committee,Restricted,,145,Population and GDP include Hong Kong and Macau as given in 2.2.3; HKG and MAC rows also list them (A); Macau province moved to MAC (Logan; batch 153)
 JPN,Japan,East Asia and Oceania,JPY,5100,126.3,0.75,Y,42,75,87,,Screened,,63,
 KOR,South Korea,East Asia and Oceania,KRW,1650,51.7,0.65,Y,52,62,72,,Screened,,35,
 TWN,Taiwan,East Asia and Oceania,TWD,610,23.6,0.50,Y,48,68,78,,Guarded,,22,
@@ -183,6 +183,7 @@ IDN,Indonesia,East Asia and Oceania,IDR,1120,270.6,0.12,Y,52,62,67,,Guarded,,51,
 VNM,Vietnam,East Asia and Oceania,VND,260,96.5,0.12,Y,86,18,21,,Restricted,,27,
 AUS,Australia,East Asia and Oceania,AUD,1400,25.4,0.95,Y,42,75,87,,Screened,,53,
 HKG,Hong Kong,East Asia and Oceania,HKD,363,7.5,0.81,N,62,39,67,Liaison Office,Screened,,3,SAR of China: own currency (HKD currency board) and own looser laws per the hub table 2.3.3; restriction Screened copied from there; dependent territory; branch strengths (A)
+MAC,Macau,East Asia and Oceania,MOP,55,0.65,1.20,N,62,39,67,,Screened,,1,"SAR of China like Hong Kong (Logan, batch 153): own currency (MOP, pegged to the HKD) and own laws per the hub table 2.3.3; restriction Screened, HSS and branch strengths copied from Hong Kong (A); no Liaison Office variant, so the 10 start variants stay (A); dependent territory; GDP and population real 2019 (A); WI by the fit, at the 1.20 clamp"
 PRK,North Korea,East Asia and Oceania,KPW,18.0,25.7,0.04,N,100,0,0,State Security,Closed,,11,Closed per 4.2.4: no foreign assets allowed at start; GDP is an estimate; old group Southeast Asia minors (A)
 MNG,Mongolia,East Asia and Oceania,MNT,13.9,3.23,0.15,N,45,72,82,,Guarded,,15,"Copper, coal; old group Central Asia (A); branch strengths (A)"
 THA,Thailand,East Asia and Oceania,THB,544,69.6,0.22,N,75,28,38,,Screened,,30,Auto and electronics assembly; old group Southeast Asia minors; HSS set by hand from 19.22 (A)

@@ -183,6 +183,7 @@ IDN,Moderate,0.22,BBB,100,SG,
 VNM,Moderate,0.2,BB,250,SG,
 AUS,High,0.3,AAA,0,AU,
 HKG,Moderate,0.165,AA+,10,HK,
+MAC,Low,0.12,AA+,10,MO,"SAR of China with its own row (Logan, batch 153): Macau zone 11"
 PRK,Moderate,0.25,CC,1400,PRK,"rating sanctioned, old defaults"
 MNG,Moderate,0.25,B,450,CN,"Mongolia with China, its main client (A)"
 THA,Moderate,0.2,BBB+,80,SG,

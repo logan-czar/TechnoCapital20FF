@@ -5,7 +5,7 @@
 
 Writes into <design>/data/:
   industries.csv        42 rows  (mvp-spec 2.2; 10-industry-economy 10.3, 10.3.1, 10.0.11.10; 3-markets 3.3.2)
-  country-economy.csv   210 rows (mvp-spec 2.2; 2-map 2.2.3, 2.2.5, 2.18.2; 3-markets 3.6.2, 3.6.5; 4-politics E2)
+  country-economy.csv   211 rows (mvp-spec 2.2; 2-map 2.2.3, 2.2.5, 2.18.2; 3-markets 3.6.2, 3.6.5; 4-politics E2)
   financial-zones.csv    24 rows (mvp-spec 2.2, 5.1; 2-map 2.18.2; 3-markets 3.2.1; Logan, batches 150 and 152)
   ai-boom.csv            15 rows (mvp-spec 2.2, 5.1.1; 7-starting-world 7.7; Logan, batch 151)
   key-cities.csv        88 rows  (2-map 2.3.3, 2.3.4, 2.3.5, parsed from the markdown; 8 zone hubs, batch 152)
@@ -327,7 +327,7 @@ TAX = {
     'BWA': .22, 'MWI': .30, 'LSO': .25, 'SWZ': .275,
     'IND': .252, 'PAK': .29, 'BGD': .325, 'LKA': .24, 'NPL': .25, 'BTN': .30, 'MDV': .15, 'AFG': .20,
     'CHN': .25, 'JPN': .297, 'KOR': .275, 'TWN': .20, 'SGP': .17, 'MYS': .24, 'IDN': .22, 'VNM': .20, 'AUS': .30,
-    'HKG': .165, 'PRK': .25, 'MNG': .25, 'THA': .20, 'PHL': .30, 'MMR': .25, 'KHM': .20, 'LAO': .20, 'BRN': .185,
+    'HKG': .165, 'MAC': .12, 'PRK': .25, 'MNG': .25, 'THA': .20, 'PHL': .30, 'MMR': .25, 'KHM': .20, 'LAO': .20, 'BRN': .185,
     'TLS': .10, 'NZL': .28, 'PNG': .30, 'FJI': .20, 'SLB': .30, 'VUT': 0.0, 'WSM': .27, 'TON': .25, 'KIR': None,
     'FSM': None, 'MHL': None, 'PLW': None, 'NRU': .20, 'TUV': .30, 'PAP': None,
     # havens: headline rates for the notes only
@@ -373,7 +373,7 @@ RATING = {
     'AGO': 'B-', 'MOZ': 'CCC', 'NAM': 'BB', 'BWA': 'BBB+', 'SWZ': 'B',
     'IND': 'BBB-', 'PAK': 'B-', 'BGD': 'BB-', 'LKA': 'B-', 'MDV': 'B',
     'CHN': 'A+', 'JPN': 'A+', 'KOR': 'AA', 'TWN': 'AA-', 'SGP': 'AAA', 'MYS': 'A-', 'IDN': 'BBB', 'VNM': 'BB',
-    'AUS': 'AAA', 'HKG': 'AA+', 'PRK': 'CC', 'MNG': 'B', 'THA': 'BBB+', 'PHL': 'BBB+', 'KHM': 'B', 'LAO': 'B-',
+    'AUS': 'AAA', 'HKG': 'AA+', 'MAC': 'AA+', 'PRK': 'CC', 'MNG': 'B', 'THA': 'BBB+', 'PHL': 'BBB+', 'KHM': 'B', 'LAO': 'B-',
     'BRN': 'A', 'NZL': 'AA', 'PNG': 'B', 'FJI': 'BB-', 'PAP': 'B-',
 }
 RATING_NOTE = {
@@ -425,9 +425,9 @@ ZONES = [
      1.2, 0, 0.4, 0.0, '', 'Hong Kong and Taiwan (provisional: flag for Logan) (A)'),
     ('AU', 10, 'Australia', 'Sydney', 'AU-0001', 'SCX', 'Southern Cross Exchange', 'Southern Cross 200',
      1.0, 1, 0.2, 0.0, '', 'Australia, New Zealand and the Pacific islands (A)'),
-    ('MO', 11, 'Macau', 'Macau', 'CN-0030', 'CTX', 'Cotai Exchange', 'Cotai 20',
-     1.5, 1, 0.0, 0.0, 'CN-0030', 'The Macau province only: Macau has no countries.csv row, so the zone holds '
-     'province CN-0030 while China stays in zone 7; casino money swings hard (A)'),
+    ('MO', 11, 'Macau', 'Macau', 'MO-0001', 'CTX', 'Cotai Exchange', 'Cotai 20',
+     1.5, 1, 0.0, 0.0, '', 'Macau alone: its own country row MAC since batch 153 (Logan), while China stays in '
+     'zone 7; casino money swings hard (A)'),
     ('SG', 12, 'Singapore', 'Singapore', 'SG-0001', 'LCX', 'Lion City Exchange', 'Lion 30',
      1.2, 1, 0.4, 0.0, '', 'Singapore and Southeast Asia: Indonesia, Malaysia, Thailand, Vietnam, the Philippines, '
      'Brunei, Myanmar and Timor-Leste (A)'),
@@ -461,7 +461,7 @@ ZONES = [
     ('CO', 24, 'Colombia', 'Bogotá', 'CO-0001', 'ANX', 'Andean Exchange', 'Andes 20',
      1.3, 1, 0.4, 0.0, '', 'Colombia, Venezuela, Ecuador, Peru and Panama (A)'),
 ]
-# Every one of the 210 countries in exactly one zone (batch 152 defaults, A). validate.py checks it.
+# Every one of the 211 countries in exactly one zone (batch 152 defaults, A). validate.py checks it.
 ZONE_MEMBERS = {
     'NA': 'USA CAN BMU BHS CYM VGB PRI',
     'CAR': 'DOM HTI JAM TTO BRB ATG DMA GRD KNA LCA VCT',
@@ -474,7 +474,7 @@ ZONE_MEMBERS = {
     'KR': 'KOR JPN',
     'HK': 'HKG TWN',
     'AU': 'AUS NZL PNG FJI SLB VUT WSM TON KIR FSM MHL PLW NRU TUV',
-    'MO': '',
+    'MO': 'MAC',
     'SG': 'SGP IDN MYS THA VNM PHL BRN MMR TLS',
     'IN': 'IND BGD MDV',
     'AFS': 'ZAF COD AGO ZWE MOZ NAM BWA MWI LSO SWZ MDG MUS',
@@ -500,6 +500,7 @@ ZONE_NOTE = {'GRL': 'Greenland follows Denmark into the EU zone (A)',
              'MLI': 'US debt vassal kept in West Africa by geography (A)',
              'JPN': 'provisional: Japan joins South Korea, the nearest zone (A, flag for Logan)',
              'TWN': 'provisional: Taiwan joins Hong Kong (A, flag for Logan)',
+             'MAC': 'SAR of China with its own row (Logan, batch 153): Macau zone 11',
              'RUS': 'provisional: Russia joins Upper Asia (A, flag for Logan)',
              'EGY': 'Egypt in the Middle East zone (A)', 'TUR': 'Turkey in the Middle East zone (A)',
              'MNG': 'Mongolia with China, its main client (A)', 'MMR': 'Myanmar with Southeast Asia (A)'}
@@ -604,7 +605,7 @@ COUNTRY_ISO = {'United States': 'USA', 'Canada': 'CAN', 'Mexico': 'MEX', 'Brazil
                'France': 'FRA', 'Switzerland': 'CHE', 'Russia': 'RUS', 'Turkey': 'TUR', 'Italy': 'ITA', 'UAE': 'ARE',
                'Saudi Arabia': 'SAU', 'Qatar': 'QAT', 'Israel': 'ISR', 'Egypt': 'EGY', 'Nigeria': 'NGA',
                'South Africa': 'ZAF', 'DR Congo': 'COD', 'India': 'IND', 'China': 'CHN',
-               'Hong Kong (SAR of China)': 'HKG', 'Taiwan': 'TWN', 'South Korea': 'KOR', 'Japan': 'JPN',
+               'Hong Kong (SAR of China)': 'HKG', 'Macau (SAR of China)': 'MAC', 'Taiwan': 'TWN', 'South Korea': 'KOR', 'Japan': 'JPN',
                'Singapore': 'SGP', 'Malaysia': 'MYS', 'Indonesia': 'IDN', 'Vietnam': 'VNM', 'Australia': 'AUS',
                'Jamaica': 'JAM', 'Cuba': 'CUB', 'North Korea': 'PRK', 'Kazakhstan': 'KAZ', 'Morocco': 'MAR',
                'Kenya': 'KEN'}

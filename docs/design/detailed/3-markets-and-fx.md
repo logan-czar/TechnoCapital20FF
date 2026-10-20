@@ -116,7 +116,7 @@ Market tools are grouped by the rank of the player's largest company ([1-corpora
 
 ### 3.2.1 Exchange list
 
-**One exchange per financial zone (Logan, batch 152).** Each of the 24 financial zones ([2-map-and-influence.md](2-map-and-influence.md) 2.18.2, data/financial-zones.csv) has **one fictional stock exchange in its hub city**, a key city, plus one off-the-books venue (3.2.5). Each has a home city and hub province, a currency, a regulator (the national securities regulator of the hub country, from [4-politics.md](4-politics.md)) and indices. Every exchange lists and trades in USD in the simulation (3.8.1, batch 125); the Currency column is the hub's real home currency, used as flavor in news and history **(A)**. **Each listed company lists on its HQ country's zone exchange** (a company headquartered in Macau's province lists on CTX); a depositary receipt (3.2.4) can add a second listing.
+**One exchange per financial zone (Logan, batch 152).** Each of the 24 financial zones ([2-map-and-influence.md](2-map-and-influence.md) 2.18.2, data/financial-zones.csv) has **one fictional stock exchange in its hub city**, a key city, plus one off-the-books venue (3.2.5). Each has a home city and hub province, a currency, a regulator (the national securities regulator of the hub country, from [4-politics.md](4-politics.md)) and indices. Every exchange lists and trades in USD in the simulation (3.8.1, batch 125); the Currency column is the hub's real home currency, used as flavor in news and history **(A)**. **Each listed company lists on its HQ country's zone exchange** (a company headquartered in Macau (MAC) lists on CTX); a depositary receipt (3.2.4) can add a second listing.
 
 **Boards (A).** Three exchanges of the old list of twelve are now boards of their zone's exchange, and keep their codes, listing rules, limits and indices wherever this file names them: **HDM** (Hudson Digital Market) is ATX's New York tech board; **ESE** (Edo Securities Exchange) is HRX's Tokyo board, since Japan joins the South Korea zone (provisional, flag for Logan); **NJX** (Nejd Exchange) is the Creek Exchange's Riyadh board. A company lists on a board when its HQ country is the board's country (Japan on ESE, Saudi Arabia on NJX) or, for HDM, when it chooses the tech board.
 
@@ -132,7 +132,7 @@ Market tools are grouped by the rank of the player's largest company ([1-corpora
 | 8 | HRX | Han River Exchange | Seoul (KR-0001) | KRX, and JPX through the ESE board | KRW | HRX 200 | HRX Growth; ESE board: Edo 225, Edo Prime Index |
 | 9 | VHX | Victoria Harbour Exchange | Hong Kong (HK-0001) | HKEX, and TWSE for Taiwanese listings | HKD | Harbour Index | Harbour Mainland Enterprises, Formosa 50 |
 | 10 | SCX | Southern Cross Exchange | Sydney (AU-0001) | ASX and NZX | AUD | Southern Cross 200 | Southern Cross Resources |
-| 11 | CTX | Cotai Exchange | Macau (CN-0030) | None: a casino-money exchange in this world | MOP | Cotai 20 | |
+| 11 | CTX | Cotai Exchange | Macau (MO-0001) | None: a casino-money exchange in this world | MOP | Cotai 20 | |
 | 12 | LCX | Lion City Exchange | Singapore (SG-0001) | SGX | SGD | Lion 30 | Lion REIT Index, Lion ASEAN 100 |
 | 13 | GXI | Gateway Exchange of India | Mumbai (IN-0013) | NSE and BSE | INR | Gateway 50 | Gateway Sensitive 30 |
 | 14 | HVX | Highveld Exchange | Johannesburg (ZA-0001) | JSE | ZAR | Highveld Top 40 | Highveld Resources 10 |

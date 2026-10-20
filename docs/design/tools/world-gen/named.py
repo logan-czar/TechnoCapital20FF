@@ -433,7 +433,7 @@ co('sipahifert', 'Sipahi Fertilizer', 'Chemicals', 'PK-0001', 'Y', rev=1100, ctr
 co('sipahicement', 'Sipahi Cement', 'Construction', 'PK-0003', 'Y', rev=700, ctrl='qureshi', stake=55, basis='trust')
 co('ghazibank', 'Ghazi Commercial Bank', 'Banking', 'PK-0001', 'Y', rev=600, ctrl='qureshi', stake=51, basis='trust')
 co('sipahicereal', 'Sipahi Cereals', 'Agriculture', 'PK-0009', 'N', rev=300, ctrl='qureshi', stake=100, basis='trust')
-co('goldenlotus', 'Golden Lotus VIP Club', 'Gambling', 'CN-0030', 'N', rev=900, ctrl='lam', stake=60, basis='majority', notes='the Macau junket')
+co('goldenlotus', 'Golden Lotus VIP Club', 'Gambling', 'MO-0001', 'N', rev=900, ctrl='lam', stake=60, basis='majority', notes='the Macau junket')
 co('peakfortune', 'Peak Fortune Properties', 'Real estate', 'HK-0002', 'Y', rev=600, ctrl='lam', stake=15, basis='class_a')
 co('kowloonremit', 'Kowloon Remittance', 'Black market', 'HK-0003', 'N', rev=120, ctrl='lam', stake=80, basis='majority', notes='the underground bank')
 co('formosalattice', 'Formosa Lattice', 'Semiconductors', 'TW-0004', 'N', rev=1.5, ctrl='chen', stake=60, basis='majority')

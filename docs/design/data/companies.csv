@@ -112,7 +112,7 @@ CO-0110,Sipahi Fertilizer,SIFE,Chemicals,PAK,PK-0001,Y,1100,893,903,CH-0043,55,t
 CO-0111,Sipahi Cement,SICE,Construction,PAK,PK-0003,Y,700,139,244,CH-0043,55,trust,,CH-0166:8,
 CO-0112,Ghazi Commercial Bank,GCB,Banking,PAK,PK-0001,Y,600,1010,1342,CH-0043,51,trust,,CH-0200:17;CH-0167:8;CH-0235:6,
 CO-0113,Sipahi Cereals,,Agriculture,PAK,PK-0009,N,300,321,270,CH-0043,100,trust,,,
-CO-0114,Golden Lotus VIP Club,,Gambling,CHN,CN-0030,N,900,286,2373,CH-0044,60,majority,,,the Macau junket
+CO-0114,Golden Lotus VIP Club,,Gambling,MAC,MO-0001,N,900,286,2373,CH-0044,60,majority,,,the Macau junket
 CO-0115,Peak Fortune Properties,PFP,Real estate,HKG,HK-0002,Y,600,944,1102,CH-0044,15,class_a,,,
 CO-0116,Kowloon Remittance,,Black market,HKG,HK-0003,N,120,22.5,108,CH-0044,80,majority,,,the underground bank
 CO-0117,Formosa Lattice,,Semiconductors,TWN,TW-0004,N,1.5,1.1,5.0,CH-0045,60,majority,,,

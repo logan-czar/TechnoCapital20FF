@@ -367,7 +367,7 @@ Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and sta
 | Kingston | Jamaica | JM-0001 | Caribbean zone exchange (batch 152), container transshipment on the Panama Canal route, banks, call centers, music | none |
 | Havana | Cuba | CU-0001 | Cuba zone exchange (batch 152), Communist Party and ministries, military conglomerate, tourism, port, sugar and tobacco | none |
 | Pyongyang | North Korea | KP-0001 | North Korea zone exchange (batch 152), regime capital, state trading companies, sanctions evasion | none |
-| Macau | China | CN-0030 | Macau zone exchange (batch 152), casinos, VIP junket money flows out of China | none |
+| Macau | Macau (SAR of China) | MO-0001 | Macau zone exchange (batch 152), casinos, VIP junket money flows out of China | none |
 | Almaty | Kazakhstan | KZ-0002 | Upper Asia zone exchange (batch 152), banking, trading houses for Chinese goods, telecom | none |
 | Casablanca | Morocco | MA-0001, MA-0002 | North and Northwest Africa zone exchange (batch 152), banking, phosphate chemicals headquarters, port, industry | none |
 | Nairobi | Kenya | KE-0001 | East Africa zone exchange (batch 152), mobile money, banking, telecom, regional headquarters | none |
@@ -1138,7 +1138,7 @@ g_t moves **growth**, not the level of demand: each industry draws its quarterly
 
 Logan (batch 152): "Financial Zones Each have a stock exchange and hub city where the stock exchange takes place. This financial city should be a hub and have a zone. Places In the list that I kind of just named should be assigned a city. Countries belong to one financial zone and only one. Countries should join nearby financial zones."
 
-There are **24 financial zones** (batch 152, replacing the 8 of batch 150). Each has **one stock exchange in one hub city**, a key city (2.3.3), and the exchange list of [3-markets-and-fx.md](3-markets-and-fx.md) 3.2.1 is these 24 exchanges. Every country belongs to **exactly one zone**, the nearest sensible one (data/country-economy.csv financial_zone; data/financial-zones.csv) **(A)**. Macau has no country row, so its province (CN-0030) forms zone 11 on its own **(A)**. Each zone has **(T)**:
+There are **24 financial zones** (batch 152, replacing the 8 of batch 150). Each has **one stock exchange in one hub city**, a key city (2.3.3), and the exchange list of [3-markets-and-fx.md](3-markets-and-fx.md) 3.2.1 is these 24 exchanges. Every country belongs to **exactly one zone**, the nearest sensible one (data/country-economy.csv financial_zone; data/financial-zones.csv) **(A)**. Macau has its own country row MAC (Logan, batch 153), so Macau (province MO-0001) forms zone 11 on its own. Each zone has **(T)**:
 
 - an **intensity**, how hard the global cycle hits it (North America 1.0): `zone effect = intensity × g(t − lag)`;
 - a **lag** in quarters before the cycle reaches it;
@@ -1158,7 +1158,7 @@ Isolated economies (Cuba, North Korea) get intensity 0.3 and their own shocks; t
 | 8 | South Korea | Seoul-Pyeongtaek | HRX Han River Exchange | 1.1 | 1 | 0.3 | South Korea, Japan (provisional) |
 | 9 | Hong Kong | Hong Kong | VHX Victoria Harbour Exchange | 1.2 | 0 | 0.4 | Hong Kong, Taiwan (provisional) |
 | 10 | Australia | Sydney | SCX Southern Cross Exchange | 1.0 | 1 | 0.2 | Australia, New Zealand, the Pacific islands |
-| 11 | Macau | Macau | CTX Cotai Exchange | 1.5 | 1 | 0.0 | The Macau province only |
+| 11 | Macau | Macau | CTX Cotai Exchange | 1.5 | 1 | 0.0 | Macau (MAC) only |
 | 12 | Singapore | Singapore | LCX Lion City Exchange | 1.2 | 1 | 0.4 | Southeast Asia: Singapore, Indonesia, Malaysia, Thailand, Vietnam, Philippines, Brunei, Myanmar, Timor-Leste |
 | 13 | India | Mumbai | GXI Gateway Exchange of India | 1.2 | 1 | 0.3 | India, Bangladesh, Maldives |
 | 14 | Southern Africa | Johannesburg | HVX Highveld Exchange | 1.3 | 2 | 0.4 | South Africa, DR Congo, Angola and the south (12) |
