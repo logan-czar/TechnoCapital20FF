@@ -135,13 +135,13 @@ Formulas, the zone table, a worked table for Retail, Software and a 30% grower, 
 |---|---|
 | Bank loans | **A credit line**, Wall Street Raider style. Each corporation has a line sized by its assets and credit rating, and **draws or repays it at will**. |
 | Bonds | Corporations can issue **bonds of 1 to 30 years once they have a credit rating**. The yield comes from 3.6.5. |
-| Rates | **The Federal Monetary Board sets one world base rate** (3% at start **(T)**; batch 130), set from US data only, since every value is in USD in the simulation (Logan, batch 125). A corporation borrows at that rate **plus its financial zone's credit spread plus a spread for its rating** (3.6; batch 155: the zone spread replaces the home country's spread, [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.2). Other central banks set no rate in the POC **(A)**. |
+| Rates | **The Federal Monetary Board sets one world base rate** (3% at start **(T)**; batch 130), set from US data only, since every value is in USD in the simulation (Logan, batch 125). A corporation borrows at that rate **plus its financial zone's credit spread plus a spread for its rating** (3.6; batch 156: half the zone spread plus half the home country's sovereign spread; batch 155: the zone spread replaces the home country's spread, [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.2). Other central banks set no rate in the POC **(A)**. |
 | Parent and subsidiary | **Intra-group lending is allowed.** A parent can lend to a subsidiary or pull cash up from it, at a loyalty cost. |
 | Default | **The default chain in 3.6.6**: restructure, sell units to creditors, or go bankrupt. |
 
 **Credit line (A).**
 - Size = `book value of business assets and real estate × 50% + cash × 100% - debt already owed`, × a rating factor from 1.0 for AAA down to 0.3 for B, and 0 for CCC or below **(T)**.
-- Interest is charged monthly on the amount drawn, at the base rate plus the zone credit spread plus the rating spread (batch 155); the undrawn part costs 0.25% a year **(T)**.
+- Interest is charged monthly on the amount drawn, at the base rate plus the home spread (half zone credit spread, half home sovereign spread; batch 156) plus the rating spread; the undrawn part costs 0.25% a year **(T)**.
 - The bank reviews the line every quarter after earnings. A rating cut can shrink it, and a corporation over its new limit must repay the difference within 3 months or the default chain starts.
 - Location perks (2.3.5) lower the spread.
 

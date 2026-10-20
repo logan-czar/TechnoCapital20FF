@@ -945,7 +945,7 @@ Example: US 10-year at the start, with r_0 = 3.0%, r_n = 3.0%, debt 24% of GDP (
 
 In the POC, "policy rate" in this table means the world base rate plus that country's sovereign spread and crisis premium, so savers and borrowers in risky countries get higher rates **(A)**.
 
-**Batch 155 (Logan): economy settings apply per financial zone.** Companies no longer borrow at their home country's spread: their loans and the government yield in the corporate bond formula above use the **zone credit spread**, set per zone and seeded from the GDP-weighted sovereign spreads of the members ([mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.2, 5.12) **(T)**. Government bonds keep each country's own sovereign spread, rating and crisis premium, since government debt stays national **(A)**.
+**Batch 156 (Logan): home spread.** Companies borrow at half their zone's credit spread plus half their home country's sovereign spread (mvp-spec 5.1.2). **Batch 155 (Logan): economy settings apply per financial zone.** Companies no longer borrow at their home country's spread: their loans and the government yield in the corporate bond formula above use the **zone credit spread**, set per zone and seeded from the GDP-weighted sovereign spreads of the members ([mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.2, 5.12) **(T)**. Government bonds keep each country's own sovereign spread, rating and crisis premium, since government debt stays national **(A)**.
 
 ### 3.6.6 Default and restructuring chain (companies)
 

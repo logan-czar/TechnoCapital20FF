@@ -188,7 +188,7 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 | corp_tax_level | Haven, Low, Moderate or High (E2 Corporate Tax, 4-politics). Majors copy 2.2.3; the 8 havens of 2.2.5 (Cayman Islands, British Virgin Islands, Bermuda, Jersey, Guernsey, Gibraltar, Isle of Man, Luxembourg) are Haven; others take the band nearest their rate (A) |
 | corp_tax_rate | Rate charged in the MVP: real 2020 statutory rate, national plus typical sub-national, from the Tax Foundation and KPMG 2020 tables entered by hand (T). Havens 0.03 (E2 Haven rate); zero-tax countries floored at 0.03 (A); 10 countries with no reliable figure use 0.21 (A) |
 | sovereign_rating | 3.6.2 scale. Real January 2020 ratings moved for the alternate history (euro crisis, Greece's default, Russia's sanctions, a stronger US Middle East); unrated countries by wealth index, or CCC if collapsed (A) |
-| sovereign_spread_bps | Renamed from country_spread_bps (batch 155). The government's own spread over the 3% world base rate: the 3.6.2 sovereign spread for the rating, notches interpolated, plus a 50 to 200 bps crisis premium for 8 countries in the euro or debt crisis (T). US 0. Companies do not borrow at it since batch 155; it seeds the zone's credit_spread_bps |
+| sovereign_spread_bps | Renamed from country_spread_bps (batch 155). The government's own spread over the 3% world base rate: the 3.6.2 sovereign spread for the rating, notches interpolated, plus a 50 to 200 bps crisis premium for 8 countries in the euro or debt crisis (T). US 0. Seeds the zone's credit_spread_bps; since batch 156 companies borrow at half of it plus half their zone's credit_spread_bps (mvp-spec 5.1.2) |
 | financial_zone | Zone id in financial-zones.csv (Logan, batch 152; batch 150 had 8 zones). Every country is in exactly one zone, its nearest sensible one, listed in gen.py ZONE_MEMBERS (A); notes mark the assumed placements (Greenland and Saint Pierre and Miquelon in the EU zone, British havens with the UK, Chinese debt vassals with China, Belarus with Russia; Japan, Taiwan and Russia placed by Logan in batch 154). Replaces cycle_group and cycle_phase_start, since there are no national cycles |
 | notes | Sources and assumptions per row |
 
@@ -213,7 +213,7 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 | gdp_usd_bn, gdp_share | Zone GDP from countries.csv and its share of world GDP |
 | wage_level | Batch 155: the zone's wage index (US 1.00), seeded as the GDP-weighted members' wealth_index, 2 decimals (T): 0.04 North Korea to 1.20 Macau; EU 0.74 |
 | price_level | Batch 155: 0.3 + 0.7 x wage_level, the 2-map 2.1.1 price factor at zone level |
-| credit_spread_bps | Batch 155: the spread companies in the zone borrow at over the world base rate, seeded as the GDP-weighted members' sovereign_spread_bps (T): 0 Switzerland, 1 North America, 78 EU, 591 Argentina, 1,400 North Korea |
+| credit_spread_bps | Batch 155: the zone's corporate credit spread over the world base rate (since batch 156 a company pays half of it plus half its home sovereign spread), seeded as the GDP-weighted members' sovereign_spread_bps (T): 0 Switzerland, 1 North America, 78 EU, 591 Argentina, 1,400 North Korea |
 | confidence_start | Batch 155: starting market sentiment of the zone exchange, -100 to +100 (3-markets 3.3.5); 0 for all (T) |
 | notes | Who is in it and why (A) |
 

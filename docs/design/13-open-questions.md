@@ -195,6 +195,7 @@
 - Batch 153 (Logan, 2026-10-20): Macau gets its own country row (MAC, like Hong Kong; province MO-0001; 211 countries); AI boom uplift Data centers +15%, Semiconductors +10%, Cloud +5%; Cloud and Data centers pre-boom growth waits for the per-industry rework.
 - Batch 154 (Logan, 2026-10-20): Japan gets its own financial zone (Tokyo, with Taiwan); Russia gets its own zone (Moscow, with Belarus (A)). 26 zones in all.
 - Batch 155 (Logan, 2026-10-20): economy settings apply per financial zone, not per country: business cycle, wage level, price level, corporate credit spread, investor confidence, demand weights (financial-zones.csv, seeded as GDP-weighted averages, T). Tax, sovereign rating, sanctions, laws and politics stay national (A). Follow-ups asked as batch 156.
+- Batch 156 (Logan, 2026-10-20): corporate tax stays national (1a); zone values set directly per zone, seeded from member countries (2a); companies borrow at a home spread = half zone credit spread + half home sovereign spread, also used for fair value y10 (3b; mvp-spec 5.1.2, 5.12, 5.13, G11 decided).
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm
