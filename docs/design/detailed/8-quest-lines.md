@@ -1,6 +1,6 @@
 # 8. Quest lines: detailed design
 
-_Status: draft v2.2 (2026-10-18). Batch 116: no successors or legacy quests (John's death ends the game); John is single with two moms; Arrowhead's unit is in Oil; dead links to 10-events fixed (A22). v2.1. Batch 92: The Pivot's cause and four choices; the AI boom starts in 2025. Batch 91: Arc 3 is The Pivot to a software company; Power Play, The Top Job and Dry Hole move to Arcs 4 to 6. Batch 90: the oil software's costs, updates and structured data. Batch 88: Arrowhead owns the oil software; the charity's 100 desktops make 100 software units a day. Batch 87: Kids Who Code (Terry's charity builds the oil software in India), the casino-money hook, licences. Batch 86: Arc 2 is now Oil Software (Q2 to Q4 2020); options vest in January 2021; the early AI move belongs to Arc 3. Batch 85: the interrogation roll and Mandy's four endings, including the Canadian Furry Cartel. Batch 84: the Mink Scare's four stages and Mandy's interrogation, CPU delegation without rolls, the quarterly recap screen. Batch 83: the six First Week events, Vril Touch, the Mink Scare; the old tutorial arcs are dropped. Batch 81: the opening sequence (start on 1 January, the first earnings day, First Week on the Job, Intro Night, The Scandal). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [13-events.md](13-events.md) (events and chains), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
+_Status: draft v2.3 (2026-10-20). Batch 138 (Logan): John's line now has **8 arcs** plus a closing event (8.1, 8.3). Arc 4 is **The Fund**: John starts a VC fund, raises money from many sources with strings attached, backs the tipped lab and founds his own AI startup, which gets compute, data and talent the easy way or the hard way. Arc 5 is **Quiet Money** (2022 to 2024): grow the Pivot and build a war chest, interleaved with generated side quests. Arc 6 is **Power Play**: deals to build power plants and a Power utilities business through oil connections, not tied to the Pivot. Arc 7 is **The Fall of Terry** (replaces The Top Job and absorbs Arc 1's friend-or-foe branch): Terry's protracted fall from grace while John gathers power, ending in forcing Terry out or keeping him as a figurehead. Arc 8 is **Dry Hole**, updated for the fund and the startup. A short closing event, **The One Man You Kept**, sums up John's run before the open-ended game. v2.2 (2026-10-18). Batch 116: no successors or legacy quests (John's death ends the game); John is single with two moms; Arrowhead's unit is in Oil; dead links to 10-events fixed (A22). v2.1. Batch 92: The Pivot's cause and four choices; the AI boom starts in 2025. Batch 91: Arc 3 is The Pivot to a software company; Power Play, The Top Job and Dry Hole move to Arcs 4 to 6. Batch 90: the oil software's costs, updates and structured data. Batch 88: Arrowhead owns the oil software; the charity's 100 desktops make 100 software units a day. Batch 87: Kids Who Code (Terry's charity builds the oil software in India), the casino-money hook, licences. Batch 86: Arc 2 is now Oil Software (Q2 to Q4 2020); options vest in January 2021; the early AI move belongs to Arc 3. Batch 85: the interrogation roll and Mandy's four endings, including the Canadian Furry Cartel. Batch 84: the Mink Scare's four stages and Mandy's interrogation, CPU delegation without rolls, the quarterly recap screen. Batch 83: the six First Week events, Vril Touch, the Mink Scare; the old tutorial arcs are dropped. Batch 81: the opening sequence (start on 1 January, the first earnings day, First Week on the Job, Intro Night, The Scandal). Batch 80: John's company is Arrowhead Drilling (once People Oil Trust), worth $100M; John's options come out of Terry's shares. Batch 79: Operational Excellence also works as CEO or Chair; John starts with no ambition; his family. Batch 78: John's skills are all 24 and he has one trait, Operational Excellence; Terry's schemes stay out of the media. Batch 77: Terry Tippacanoe is the new owner, with a befriend-or-bring-down branch; options grow with the company and John's performance; the tip arrives on the desktop. Batch 76: **only the player has a quest line**: the rivals' lines are cut (rivals act on their traits), John Techno's line is rewritten for his new premise, and the opening quest is now buying a desktop computer. v0.6: Consistency pass, batch 74: quest steps use business units and assets, no cyberware, no supply chains. Batch 35: full lines for Pablo, Tolu and Qiao. Batch 36: Fang (a woman, batch 37), Pablo picks his ideology, Qiao is a woman, Lagos becomes Africa's hub. Back in work now that the economy, corporations, investing and characters are designed. Batch 33 answers applied: full lines for one character per region next, Pieter reworked for the new economy, generated quests after a line ends, and successors usually start fresh. Builds on [13-events.md](13-events.md) (events and chains), [7-starting-world.md](7-starting-world.md) (characters, alternate history), [1-corporate-core.md](1-corporate-core.md), [3-markets-and-fx.md](3-markets-and-fx.md), [6-technocapital.md](6-technocapital.md), [10-industry-economy.md](10-industry-economy.md) and [11-addiction.md](11-addiction.md). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 8.6.
 
@@ -13,11 +13,11 @@ A quest line is made of **arcs** (Logan's word; not chapters).
 | Rule | Decision (Logan) |
 |---|---|
 | Structure | The number of arcs, their length and their story structure vary by character. |
-| Length | A full line has **4 to 6 arcs**, spanning 2020 to the crash and after (batch 33; start year moved to 2020 in batch 75). |
-| Concurrency | Arcs can run at the same time. |
+| Length | Set by the story, not a fixed count (batch 138; the old rule of 4 to 6 arcs is retired). **John Techno's line has 8 arcs** plus a closing event, spanning 2020 to the crash (8.3). |
+| Concurrency | Arcs can run at the same time and overlap in time; John's arcs 4 to 7 all overlap (8.3, the line at a glance). |
 | Outcomes | Each arc ends in one of several outcomes. Each outcome gives a **stat buff** (skills or character resources); better outcomes give better buffs, and bad outcomes can give worse ones or penalties. Outcomes can also change traits (1.1.2). |
 | Steps | Inside an arc, the player sees only the next step. Failure branches into new quests. Quest steps are event chains ([13-events.md](13-events.md) 13.6). |
-| After the line | When a line ends, **generated side quests** keep coming from events, the character's ambition (1.1.2) and rivals (batch 33). |
+| After the line | When a line ends, a short **closing event** sums up the run (batch 138), then **generated side quests** keep coming from events, the character's ambition (1.1.2) and rivals (batch 33). Side quests also run **during** the line in the quiet years 2022 to 2024, interleaved with Arc 5 (8.3). |
 | Death | Removed (batch 116): there are no successors. If John Techno dies, the game is over and the line ends with it. |
 | The crash | The AI bubble pops in **2035 on average** (Logan, batch 93). The actual year varies by a few years with RNG and events (8.5). Every full line has a crash arc that opens whenever it hits. |
 
@@ -125,7 +125,7 @@ Whenever the Mink Scare resolves, **7 days before the 2 April earnings** John ge
 - New grant = 0.5% of the company × company factor × performance factor.
 - Company factor: 0.5 if the company lost money that year, 1 if it broke even or grew slowly, 1.5 if revenue grew 20% or more.
 - Performance factor: 0.5 to 1.5 from the year's productivity change in his units and the last arc outcome (Strong 1.5, Mixed 1, Poor 0.5).
-- As the company climbs a rank (1.7.5) the percentage shrinks but the value grows; a CEO seat (Arc 5) brings a new package.
+- As the company climbs a rank (1.7.5) the percentage shrinks but the value grows; a CEO seat (Arc 7) brings a new package.
 - A board where Terry is John's Rival can cut the grant to zero.
 
 **Skills and trait (Logan, batch 78).** **24 in all six skills** (Finance, Operations, Persuasion, Intrigue, Tech, Hustle). He starts with **one trait**, unique to him: **Operational Excellence** (1-corporate-core 1.1.2): while he sits on a company's board as **COO, CEO or Chair** (batch 79), the buffs of **all other board members are doubled**. Events and arc outcomes can add more traits later.
@@ -135,7 +135,21 @@ Whenever the Mink Scare resolves, **7 days before the 2 April earnings** John ge
 **Family (Logan, batches 79 and 116).** A **single, 22-year-old man with two moms**. His moms live in **Edmonton** and are in the **PMC stratum, both middle managers**. They are flavor characters: there are no family mechanics and no personal life arc.
 
 
-**What the line teaches.** Running a company from the COO seat, the industry economy, earnings days, board politics, the AI boom's power demand, and taking control.
+**What the line teaches.** Running a company from the COO seat, the industry economy, earnings days, board politics, venture capital and training AI models, the AI boom's power demand, and taking control.
+
+**The line at a glance (Logan, batch 138).** Eight arcs and a closing event. Arcs overlap in time; the windows are defaults **(T)**, and the crash moves Arc 8.
+
+| Arc | Name | Default window | Opens when | In one line |
+|---|---|---|---|---|
+| 1 | New Owners | Q1 2020 on | After the opening (8.2) | Keep the COO seat; befriend Terry or work on his downfall |
+| 2 | Oil Software | Q2 to Q4 2020 | 3 March 2020 | Build the oil software through Terry's charity |
+| 3 | The Pivot | Q1 2021 | The oil windfall | Spend the windfall on gambling, software or oil |
+| 4 | The Fund | 2021 to the boom (2025) | John's options vest and the Pivot is chosen | Start a VC fund, back the tipped lab, build John's own AI startup |
+| 5 | Quiet Money | 2022 to 2024 | 1 January 2022 | Grow the Pivot and build a war chest, between generated side quests |
+| 6 | Power Play | 2025 to about 2029 | The boom (the tipped lab's chatbot) | Use oil connections to build power plants and a Power utilities business |
+| 7 | The Fall of Terry | About 2023 to 2030 | Terry's first slip | Terry declines; John gathers power, then forces Terry out or keeps him as a figurehead |
+| 8 | Dry Hole | The crash (2035 on average) | The bubble pops (8.5) | Survive the crash with the fund, the startup and the power business |
+| End | The One Man You Kept | After every arc closes | Arc 8 and all others closed | A short closing event sums up the run; the game goes on (8.4) |
 
 ### Arc 1: New Owners
 
@@ -146,9 +160,9 @@ Whenever the Mink Scare resolves, **7 days before the 2 April earnings** John ge
 | 3 | Your old union brothers want their jobs back: rehire them, or not | Loyalty, costs, the Communist bloc (4.0) |
 | 4 | **Friend or foe (Logan, batch 77).** Choose how to deal with Terry: **befriend him**, or **work in the shadows on his downfall** | The branch below |
 
-**The Terry branch.** The choice opens one of two quests that run alongside the rest of the line **(A)**:
+**The Terry branch.** The choice opens one of two quests that run alongside the rest of the line and flow into **Arc 7, The Fall of Terry**, which sets how each path plays out (batch 138) **(A)**:
 - **Befriend Terry.** Win him over (Persuasion, favors, a night at the casino). As a Friend he backs John on the board, cuts him into deals, and lends him his edge against Liberal characters in shared schemes; and he will expect favors (a hook).
-- **Bring him down.** Dig into his deals and the casino's books in secret (Intrigue schemes and hacking; the media will never expose him, 7.3.5). Each secret found is a hook, or ammunition with the board and shareholders; the end goal is forcing him out of the company, which opens Arc 5 (The Top Job) early. If Terry learns of it, he turns Nemesis.
+- **Bring him down.** Dig into his deals and the casino's books in secret (Intrigue schemes and hacking; the media will never expose him, 7.3.5). Each secret found is a hook, or ammunition with the board and shareholders; the end goal is forcing him out of the company, and each secret found speeds up his fall in Arc 7. If Terry learns of it, he turns Nemesis.
 
 **Outcomes.** Strong: the board trusts you and the crews follow you; +2 Operations. Mixed: +1 Operations. Poor: Terry marks you as a Rival.
 
@@ -189,53 +203,221 @@ From **Q2 to Q4 2020** the arc takes John through building that software:
 
 **Outcomes (A).** Strong: the chosen path takes off; +2 Tech or Operations. Mixed: +1 Tech or Operations. Poor: the new spending drains cash.
 
-### Arc 4: Power Play
+### Arc 4: The Fund (2021 to the boom, Logan, batch 138)
 
-Opens once the AI boom starts, in **2025** (batch 92). It also holds John's **early AI move** before the boom, such as a stake in the tipped lab (Logan, batches 86 and 92; to be designed).
+**The idea (Logan).** John cashes in on the LLM tip (7-starting-world 7.6) through **venture capital**: *"John starts a fund and looks to get funding from various places. His first start up is an AI start up that must acquire compute and develop models the easy way or the hard way."* The tip tells John which lab will break through in 2025, and nobody else knows it. Until the boom, AI demand for GPUs is tiny (6.7.0), so GPU parts, the cloud GPU price and AI valuations are all cheap: every dollar John puts into AI before 2025 is bought at pre-boom prices.
 
-| Step | Goal | Teaches |
-|---|---|---|
-| 1 | Data centers need power: push the board to add a business unit in Power utilities | Business units in any industry (10.0.5) |
-| 2 | Sign a power deal with a hyperscaler | The AI boom and power demand (6.7.0) |
-| 3 | Raise money: a credit line, bonds once rated, or a new share issue | Financing (10.0.9) |
+**When.** Opens when John's first options vest (January 2021, Arc 2 step 7) and the Pivot (Arc 3) has been chosen. It runs alongside Arcs 3, 5 and 7 and **ends when the boom starts** (the tipped lab's chatbot, 2025), when its outcome is judged. The fund and the startup carry on afterwards as ordinary companies.
 
-**Outcomes.** Strong: a fast-growing power business; clout gain. Mixed: a small unit. Poor: over-borrowed and at the bank's mercy.
+**Two vehicles (A).**
+- **The fund**: a company of the type Fund holding a **venture capital firm** licence ([3-markets-and-fx.md](3-markets-and-fx.md) 3.0, 3.17.1, 3.18.4). John is its lead manager, so its quarterly roll uses his Finance. It charges 2% a year of committed capital plus 20% of profit (3.18.2), and commitments are locked for 10 years.
+- **The startup**: a new company in the **AI labs** industry that John founds (1-corporate-core 1.6). The player names it and picks its home province; Edmonton is the default. John is founder and Chair and stays COO of Arrowhead; Operational Excellence works on both boards (1.1.2).
 
-### Arc 5: The Top Job
+**The tipped lab and the startup are different companies.** The tipped lab is drawn at game start from the pool of five candidate labs (7.6; rows in data/companies.csv). The **fund** can back it; the **startup** is John's own. How the fund gets into the tipped lab depends on which lab was drawn **(A)**:
 
-| Step | Goal | Teaches |
-|---|---|---|
-| 1 | Build a bloc: your options, friendly holders and the old union pension | Blocs and the charter (1.3, 1.5) |
-| 2 | Take the CEO seat: win the board, a proxy fight or a buyout | Takeovers and control (1.3.1) |
-| 3 | The Liberal government that broke the union comes for your industry: lobby, back a rival bloc or run for office | Politics (4), ideologies (5) |
+| Tipped lab (7.6) | How the fund gets in |
+|---|---|
+| **Open Meridian Institute** (Bay Area nonprofit, widely held) | A nonprofit has no equity round. The fund backs the **for-profit arm** the lab spins off to raise money: a Venture-rank company that licenses the lab's models |
+| **Halcyon Frontier Research** (a big tech subsidiary) | The parent will not sell the division. The fund buys the **parent's listed shares** quietly, or backs **researchers who leave** the division to found a spinout |
+| **Kingsway Intelligence** (London), **Tianshu Intelligence** (Beijing), **Lakeshore Vector Labs** (Toronto) | Private and widely held: the fund joins the lab's **next funding round** as an investor (the 1.6.2 round seen from the investor's side) at a pre-boom valuation. Tianshu needs a foreign investment review (4-politics 4.9.6) and is hit by the 2026 US export controls (6.9.1) |
 
-**Outcomes.** Strong: John is President and CEO and the real controller. Mixed: CEO in name, with Terry still pulling strings. Poor: pushed out, with his options and his legend.
-
-### Arc 6: Dry Hole (the crash)
+**Steps (A).**
 
 | Step | Goal | Teaches |
 |---|---|---|
-| 1 | Data centers stop paying; power demand collapses | Industry cycles, operating leverage |
-| 2 | Restructure the debt or let creditors take the company | Restructuring (10.5.4) |
-| 3 | Start again or hold on | Ambition |
+| 1 | **Seed the fund manager.** The licence needs **$2M of minimum capital** (3.17.1). John raises it from his vested options: **sell** them, or **borrow against** them on personal margin (up to 50% of their value, 3.0, 1.10.6), plus his salary. Then apply for the **fund manager licence**: 8 to 12 weeks and a fit and proper test (3.17.2). A Mink Scare that ended badly for John (8.2.5) shows up here as exposure | Personal margin; licences |
+| 2 | **Write the pitch book and meet the money** (3.18.4). Each source in the table below rolls for a commitment, and each comes with **strings attached** | Fundraising |
+| 3 | **First close.** The fund closes at what was committed. A first fund raises **$50M to $500M** (3.18.4); John's target is **$150M (T)** | Fund terms |
+| 4 | **Back the tipped lab** (table above). This stake is the fund's ticket to the boom: when the chatbot launches, the lab's value jumps and the fund's marks with it | Private stakes and valuation (10.5.4, 3.19.1) |
+| 5 | **Found the startup** (1.6.1) on the Venture Capital path with **John's fund as lead investor**. Because John runs the fund, this is a **related deal**: every LP holding 10% or more of the commitments votes on it, and a majority must consent. Without consent, or at an inflated valuation, it counts as **self-dealing** (3.18.5). The fund may put at most **25% of its commitments into one company (T)**, so later rounds need **co-investors**: another VC, the sovereign fund or a strategic investor (1.6.9) | Founding; fiduciary duty |
+| 6 | **Hire the research lead.** The lead's Tech sets the run score (6.5.3). Easy way or hard way (below) | Key hires (1.6.9) |
+| 7 | **Get compute.** Easy way or hard way (below) | Owned, leased, spot and compromised compute (6.3.4); data centers (15.3) |
+| 8 | **Get data.** Easy way or hard way (below). The data types chosen decide which capabilities the model gets (18.3) | Stored data (15.4); data types and capabilities (18.3) |
+| 9 | **The first training run**: a **Gen 1** model, **60,000 H over 3 months**, which needs **20,000 GPU units in one cluster** and **10 DU (1,000 TB)** of data (6.5.2, 15.2.1, 18.3). Hot moments as in 6.5.4: loss spikes, node failures, a rival's hackers after the training data | Training runs (6.5, 18.3) |
+| 10 | **Use the model before the boom.** **License** it (18.4), **release it as open weights** for Fame and Accelerationist favor (6.2.4), or **load it into Arrowhead's oil software** as an AI feature (14.5, 18.5; a deal with Arrowhead's board). With time and money left, raise a Series A or B and start a **Gen 2** run (240,000 H over 4 months, 60,000 GPU units) | Licences, open weights, AI features |
 
-**Outcomes.** Strong: John buys his rivals at the bottom. Mixed: he survives smaller. Poor: he loses the company but keeps his stats, and the climb starts again.
+**The easy way or the hard way (Logan).** The startup has three needs: talent, compute and data. The player picks the easy or the hard way for **each need separately**, and mixes are allowed **(A)**. The easy way costs money and dilution; the hard way costs time, risk and enemies, but leaves John owning more.
+
+| Need | The easy way: pay up | The hard way: build, collect or take |
+|---|---|---|
+| **Talent** | Hire a lead and team at Glitterati pay with an option pool (1.6.9). Expensive; nobody gets angry | **Poach researchers from the tipped lab** or another lab: the 1.6.9 hire chance plus a Persuasion roll. Each poach makes the lab's head a Rival of John and has a **20% chance (T)** of a lawsuit (4-politics 4.21.2). A lead poached from the tipped lab brings its know-how: run score **+5 (T)** |
+| **Compute** | **Rent GPU units from the cloud** (15.5) on spot, or **lease** them for up to 36 months at 80% of the cloud price at signing (6.3.4). Instant, but the provider sees the usage (15.6). Before 2025 the GPU cloud price is low, and **a lease signed before the boom locks that low price** for its whole term: a move only someone with the tip would make | **Build an onsite GPU data center** (15.3): buy 20,000 GPU units' parts at the chip price index (about $1,500 each at index 100, so about $30M, 6.7.0), find industrial real estate in the province, and wait in the **grid queue** (up to 9 months, 6.7.2), or skip it by running **behind the meter** on gas from Arrowhead's fields (a deal with Arrowhead's board). Upkeep is maintenance score 5 per unit (15.2). Owned compute allows secret tasks and can be leased out when idle. **Grey method: Compromised compute**, through a hack or a broker (6.9.3). It is free and invisible to export controls, but monthly detection is 5% plus 1% per 1,000 H, so a Gen 1 run (20,000 H a month) is caught about 25% of the time each month, and a run may use Compromised compute only as one whole site (6.5.2). It suits fine-tuning and small jobs; a whole run on it is a gamble |
+| **Data** | **License or buy data** on the data market (15.4). Bought data trains a model just like your own (18.3) | **Collect it**: Arrowhead's structured oil data from Arc 2 (it counts as sensor feeds and documents **(A)**), a consumer app, or the charity's desktops gathering user data. Using Arrowhead's data is a related deal that Terry's board must approve. **Scrape it**: grey-market user data adds exposure (1.6.9). **Grey method: hacking** a rival's owned Techno-Capital to **steal its data** (17-hacking 17.3, 17.4). Hacking only steals data: **models cannot be stolen** (18.1) |
+
+**Where the money comes from (Logan: "various places").** Each source rolls for a commitment as in 3.18.4. **Sizes are (T); strings are (A).**
+
+| Source | Typical commitment | Strings attached |
+|---|---|---|
+| **John himself** (options sold or pledged, salary) | The $2M licence capital, plus 1% of the fund as the manager's own stake | Pledged options face a margin call (3.0) if Arrowhead's price falls |
+| **Terry Tippacanoe** (friend path, or while Terry is still Neutral) | $10M to $30M, partly casino cash | Terry wants a first look at every deal and a seat on the startup's board, and holds a weak hook on John for it (1.1.4). Casino cash in the fund adds exposure +5 a year **(T)**, which Arc 7 can turn against either man. On the foe path Terry refuses, or comes in only to spy |
+| **Minor holders** from data/characters.csv, for example **Spencer Ainsworth** (oil-sands tech money, Fort McMurray), **Celeste Langridge** (Saskatoon old money), **Clifford Ridley** (founded Red Mesa Neural, Winnipeg) | $5M to $25M each | Their traits set the strings. A Zealot wants "stranger ideas" backed; an Effective Altruist wants a safety clause (no Gen 3+ runs in a compute haven, 6.9.2); Ridley wants co-investment rights in the startup, and he is a Liberal, so Terry's tag toward John drops one step if Ridley comes in |
+| **A rival** from data/characters.csv, for example **Cassius Whitlock** (Houston: pipes, power lines and the grid) | $10M to $50M | A rival LP sees the fund's deals as a holder (intel) and later asks a favor; the director (13.3) can use the tie. Whitlock's money sets up Arc 6, as partner or obstacle |
+| **A sovereign fund**, for example through **Tariq Al-Harbi** (the Riyadh sovereign fund's man for megaprojects) | $50M to $100M | Strategic and slow (3.3.4). It wants a board seat in the startup and a promise to train an Arabic model or build compute in the Kingdom later. The tie carries into Arc 6 |
+| **Personal offices** (the old family offices, 3.18.3), for example **Corinne Vale's** (Las Vegas) | $5M to $20M | Quarterly reports and a Clean conduct line (no shells). Vale commits only if Terry is kept out, and asks for anything John learns about Painted Sky Gaming: a seed for Arc 7 |
+| **Pension funds and endowments** (3.18.4) | $10M to $40M | They need a track record, so the commitment chance is low for a first fund; they walk away from Fund II after a bad year |
+
+**Outcomes (A).** Judged when the boom starts (2025):
+- **Strong**: the startup has a model with at least one capability at quality **60 or more (T)** on compute it owns or leased before the boom, and the fund holds the tipped lab. +2 Tech or Finance and a Clout gain; a second fund (Fund II) raises more (3.18.4).
+- **Mixed**: a model, but below quality 60 or on compute rented at boom prices. +1 Finance.
+- **Poor**: no model by the boom. The startup faces a down round (1.6.2), and LPs will not commit to Fund II.
+
+### Arc 5: Quiet Money (2022 to 2024, Logan, batch 138)
+
+**The idea (Logan).** The quiet years between the Pivot and the boom. John **grows whatever the Pivot started** and **builds a war chest** for what comes next: the boom, the power deals and the fight for Arrowhead. **Generated side quests** run in the same years (below).
+
+**Growing the Pivot (A).** The first step follows Arc 3's choice:
+
+| Pivot choice (Arc 3) | How it grows |
+|---|---|
+| **Pivot to gambling** | Grow the prediction market or online casino in the new Edmonton software unit, with Terry as partner. It takes players from Terry's own casino: good for John's numbers, and a first crack in Terry's money (Arc 7) |
+| **Stick to the old system** | Improve the oil software and make new software in the software unit; lease it to more oil companies (14.4) |
+| **Software the old way** | Keep the charity's 100 desktops busy and add more (14.8); each product is cheap but India-quality |
+| **Pour the windfall into oil** | Grow the oil units and buy business assets cheaply from the debt-racked big oil companies (10.5.4), adding gas that Arc 6 can use |
+
+**Steps (A).**
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | **Grow the Pivot**: the chosen unit's revenue up **30% by the end of 2022 (T)** | Growth plans and R&D (10.0.4) |
+| 2 | **Set up the money structure**: a personal trust and a shell company (1.10.1, 1.7.4); at $100M in trusts, a personal office (3.18.3) | Trusts, shells and the personal office |
+| 3 | **Take a quiet stake**: buy Arrowhead shares through trusts or shells while staying under the disclosure lines (3.1.1). This stake feeds Arc 7. The fund cannot be used to hide it (3.18.4) | Disclosure and holder groups |
+| 4 | **Keep dry powder**: credit lines for the companies John runs (10.0.9), a pledged-share loan ready to draw, and cash | Financing |
+| 5 | **Count the war chest** on 1 January 2025 | |
+
+**The war chest (A)** = cash and undrawn credit in John's trusts, accounts and the companies he really controls, plus listed holdings he could sell within a month. The fund's marks (Arc 4) do not count: they are paper.
+
+**How the arc and the side quests interleave (Logan: both).** From 2022 to 2024 the director (13.3) offers **generated side quests** (8.4) even though the line is still running **(A for the rules, T for the numbers)**:
+- Quiet Money is **quarter-paced**: each step is checked on an earnings day (3.1.0), so most weeks have no arc step.
+- The director fills the gaps with up to **2 open side quests** at a time, offering a new one only when no arc step has fired for **30 days**.
+- **Arc steps come first.** A side quest event never fires within **7 days** of an arc step, and a side quest is paused, not failed, while an arc's event chain runs.
+- **Themes lean toward the war chest and the boom**: the 2021 crypto and SPAC mania (7.7), a debt-racked oil company selling assets, a cheap lot of GPU parts, a rival's scandal to exploit, a friend in trouble.
+- **Rewards** are cash, hooks, Clout and data; side quest money counts toward the war chest.
+- From 2025, while Arcs 6 and 7 are busy, the cap drops to **1 open side quest** until the line ends.
+
+**Outcomes (T).** Strong: a war chest of **$100M or more**; +2 Finance. Mixed: **$20M to $100M**; +1 Finance. Poor: **under $20M**, or the Pivot unit lost money two years running; the board's performance factor on John's option review drops a step (8.3).
+
+### Arc 6: Power Play (from the 2025 boom, Logan, batch 138)
+
+**The idea (Logan).** *"Power play should be about securing deals to build utilities leveraging oil connections."* The boom makes **power** the bottleneck (6.7.2; 7.7: power deals in 2027). John uses his oil-world ties (Arrowhead's gas, pipelines, the union, oil-country politicians and ministers, Middle East oil money) to build **power plants** and a **Power utilities** business ([10-industry-economy.md](10-industry-economy.md) 10.3). It is **not tied to the Pivot** (Logan): every Arc 3 choice can play it, though the oil choice starts with more gas.
+
+**When.** Opens at the boom (2025) and runs to about **2029 (T)**, closing when its last deal is signed or lost.
+
+**Steps (A).**
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | **The squeeze.** New data centers wait up to 9 months in grid queues (6.7.2); the startup (Arc 4) or a hyperscaler needs power. Pick the **vehicle**: push Arrowhead's board to add a **Power utilities** business unit (10.0.5), found a power company of John's own (1.6), or found one as a subsidiary (1.6.8) | Business units in any industry (10.0.5) |
+| 2 | **Fuel from Arrowhead's gas.** Secure gas: Arrowhead's own fields, a supply deal or stake with a gas company such as **Oakhurst Gas** (Toronto), or buying gas business assets (10.5.4). A gas plant beside a data center sells **behind the meter** and skips the grid queue (6.7.2) | Deals; energy price indices (10.6) |
+| 3 | **Pipes and wires.** Get gas to the plant and power to the buyer: a pipeline and grid deal with **Cassius Whitlock** (Houston; he owns the pipes, the power lines and **Gulf Coast Grid**), or a rival route. Whitlock asks for a stake or a hook | Deals with rivals; hooks (1.1.4) |
+| 4 | **The union.** The old union brothers build and run the plants. If John rehired them in Arc 1, they come cheap and fast; if not, he bargains with the union federation (4-politics 4.24) or faces strikes | Unions and loyalty |
+| 5 | **Oil-country politics.** Permits come only from national governments (4.3.1). Meet ministers (Meet Official, 4.10.1), **Request Decision** for each permit (10 PC), lobby, or call in favors from oil-country legislators and Terry's friend the Conservative MP (7.3.5). Canada's Liberal government, the one that broke the union, pushes back; Mandy Waltham, if she became a politician, helps or blocks (8.2.5) | Political Capital and lobbying (4.10) |
+| 6 | **Win a government contract.** Bid on a **National infrastructure (grid)** or **City services (utilities)** contract (4.9.7). Bid score = price, capability, political (PC spent, favors called, a minister) and relation | Government contracts (4.9.7) |
+| 7 | **The Gulf.** Turn Middle East oil ties into a gas-for-power or power-for-compute deal with **Ghawar National Oil Company** (Saudi Arabia) or **Liwa National Oil Company** (UAE), opened through **Tariq Al-Harbi** if he is an LP of the fund (Arc 4). Gulf sovereign money lends cheaper to a company with an Abu Dhabi HQ (-0.25 points, 2.3.5). From 2026 the US chip export controls (6.9.1) make GPU-heavy Gulf deals political | International relations (4.11); export controls |
+| 8 | **Sign the offtake.** A **10-year power contract (A)** with a hyperscaler, a gigacluster builder (a gigacluster needs 1 GW of dedicated power, 6.7.5) or John's own startup (a related deal) | Long-term contracts |
+| 9 | **Finance the build.** A credit line, bonds once rated, or a new share issue (10.0.9); sovereign fund money; the fund (Arc 4) co-investing | Financing (10.0.9) |
+
+**Outcomes (T).** Strong: **1 GW or more** of plants built or contracted and a fast-growing power business; +2 Operations or Persuasion and a Clout gain. Mixed: a small unit, **under 0.3 GW**; +1 Operations. Poor: over-borrowed, with debt above **3× the unit's yearly revenue**, and at the bank's mercy.
+
+### Arc 7: The Fall of Terry (about 2023 to 2030, Logan, batch 138)
+
+Replaces the old Arc 5, The Top Job, and absorbs Arc 1's friend-or-foe branch.
+
+**The idea (Logan).** *"Terry will have a protracted fall from grace. During this point John will complete quests to amass power in the company. At the end if he succeeds he can either force Terry out or keep Terry on as a figurehead."*
+
+**Why it is not a media scandal.** Terry's schemes are **never exposed in the media**: outlets cannot investigate them or run them as scandals (7.3.5, 16.5.1). So the press never brings him down, and his fall comes from everywhere else **(A)**:
+- **His own vices.** Terry gambles at his own tables (the gambling vice, 11.2; he is Greedy and Gregarious). The habit grows and costs him money and judgment.
+- **Money trouble.** Painted Sky Gaming loses players to online gambling (John's own platform, if the Pivot went that way) and to rivals; Terry pledges Arrowhead shares for loans (1.10.6), so a fall in Arrowhead's price brings margin calls.
+- **Rivals and holders.** They run Dig up dirt and other schemes on him (1.1.8). His buff works only against Liberals (7.3.5), so a non-Liberal schemer has no penalty; Corinne Vale has wanted him gone for years.
+- **Regulators.** An investigation (4.9.4) is not the press. Exposure from the casino-money scheme (Arc 2 step 5) or casino cash in John's fund (Arc 4) can open one; its findings are legal facts, not stories.
+- **The board.** As his money and judgment slip, directors' tags toward him fall and a faction forms (1.9.1).
+
+**Terry's decline (A, T for the windows).** Five stages. Each fires when its trigger hits or at the end of its window, whichever comes first. John can speed a stage up (secrets found, debts bought) or slow it down (bailing Terry out).
+
+| Stage | Default window | What happens to Terry |
+|---|---|---|
+| 1. The first slip | 2023 | Big losses at his own tables; the casino's revenue falls two quarters running |
+| 2. Borrowed time | 2024 to 2025 | He pledges Arrowhead shares for loans; a margin call; he sells part of his stake |
+| 3. The file | 2025 to 2026 | A regulator opens an investigation into the casino's books; Terry starts no new schemes while it runs |
+| 4. The board turns | 2026 to 2028 | Directors' tags toward Terry drop; a faction reaches 10% of votes; his CEO takes the blame for a bad quarter |
+| 5. The reckoning | By 2030 at the latest | Terry must sell his block, face a proxy fight or give up control. If John is not ready, his lenders sell the block to an outsider |
+
+**John's power quests (A).** These run alongside the stages, in any order:
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | **Seats.** Get allies onto Arrowhead's board at the yearly meeting (1.8.1): a CFO, a General Counsel, independent directors | Board seats and tasks (1.8) |
+| 2 | **A bloc.** Join John's vested options, the quiet stake from Arc 5, friendly holders from the 40% public float and **the old union's pension fund** (it kept a People Oil Trust stake through the sale **(A)**) into a bloc John leads (1.4) | Blocs and bloc leadership |
+| 3 | **Friendly holders.** Win swing holders with meetings, favors or payments (1.9.2) | Proxy campaigns |
+| 4 | **Hooks.** Dig into Terry's deals and the casino's books (1.1.8.2, 17); **buy Terry's debts** from his lenders, so John becomes his creditor (a weak hook, 1.1.4); or bail him out quietly (another weak hook) | Hooks |
+| 5 | **The CEO seat.** At the reckoning, take the head: win the board, a proxy fight (1.9.2), or **buy Terry's pledged block** when his lenders sell it (a block trade or a tender offer, 1.9.3) | Control on the books and for real (1.3.1) |
+| 6 | **The choice (Logan).** **Force Terry out**, or **keep Terry on as a figurehead** (below) | Figureheads (1.3.1) |
+
+**The choice.**
+
+| | Force Terry out | Keep Terry as a figurehead |
+|---|---|---|
+| **On the books** | John or his bloc becomes the owner of record; Terry leaves the board | Terry stays Chair and owner of record of his shares; John is the real controller through a strong hook or bloc leadership, and that is hidden (1.3.1) |
+| **Cost** | Buying Terry's stake at a premium, or winning a proxy fight | Little cash; it needs a strong hook or Terry's loyalty |
+| **Gains** | Clean control, with no chain to break | Terry's anti-Liberal scheme edge and his MP friend keep working for John; rivals cannot see who runs Arrowhead; John's money stays free for Arc 6 |
+| **Risks** | Terry turns Nemesis unless he was a Friend and was paid out fairly; his MP friend turns against John | The chain can break: if Terry's loyalty falls to Defiant or the hook is destroyed or exposed, he decides for himself again (1.3.1). A rival or director who finds out fires the Exposed event. Terry's vices keep dragging on him |
+
+**Arc 1's choice plays out here (A).** The friend-or-foe branch of Arc 1 is the opening of this arc, and it changes how the fall goes:
+
+| | Friend path | Foe path |
+|---|---|---|
+| **During the fall** | Terry **leans on John**: he asks for loans, cover and favors. Each one John grants gives him a weak hook on Terry; refusing cools Terry to Neutral | John's digging drives the fall: each secret found moves the next stage up to **6 months earlier (T)**. If Terry learns of it he **fights back** as a Nemesis: he cuts John's option grant to zero (8.3), tries to fire him as COO at a board meeting and schemes against him |
+| **At the reckoning** | Terry asks John to save him. The figurehead path is easy (Terry's loyalty starts **+20 (T)**); forcing him out is a betrayal: the Friend tag is lost and John takes **Clout -10 (T)** among those who know | Forcing him out is easy with the hooks in hand. Keeping him as a figurehead needs a strong hook (blackmail), and his loyalty starts low, so the chain is fragile |
+
+**Outcomes.** Strong: John is President and CEO and the real controller of Arrowhead, with Terry out or a loyal figurehead; +2 Persuasion or Intrigue, a Clout gain and a new options package (8.3); the score milestone for taking the CEO seat (12-setup-and-score 12.4). Mixed: John is CEO, but Terry or another holder keeps a blocking minority, or the figurehead is restless; +1 Persuasion. Poor: Terry falls, but an outsider buys his block and takes Arrowhead, and John is pushed out with his options and his legend.
+
+### Arc 8: Dry Hole (the crash)
+
+Opens when the bubble pops (8.5): 2035 on average. Updated for the fund, the AI startup and the power business (batch 138).
+
+| Step | Goal | Teaches |
+|---|---|---|
+| 1 | **The pop.** AI GPU demand falls 40% (6.7.0) and the GPU cloud price follows; data centers stop paying, and power demand collapses | Industry cycles, operating leverage |
+| 2 | **Save the startup.** Its value collapses while leases signed in the boom keep costing. Cut the burn, sell or lease out its GPU units, take an acquihire, release its model as open weights for Fame, or keep training on cheap compute while rivals cannot | Young company failures and exits (1.6.9) |
+| 3 | **Hold the fund together.** Marks fall and the LPs' strings come due: the sovereign fund wants its board seat's worth, Terry or a rival LP wants out through a secondary sale at a 30% discount (3.19.2), and an investor lawsuit raises self-dealing detection to 40% (3.18.5) | Fund secondaries; fiduciary duty |
+| 4 | **Rescue the power business.** Offtakers default on their power contracts. Restructure the debt or let the creditors take the unit (10.5.4, 3.6.6) | Restructuring |
+| 5 | **Bottom fishing.** Spend what is left of the war chest buying rivals' units and stakes at crash prices | Ambition; deals |
+
+**Outcomes.** Strong: John buys his rivals at the bottom. Mixed: he survives, smaller. Poor: he loses the companies but keeps his stats, and the climb starts again.
+
+### The closing event: "The One Man You Kept" (Logan, batch 138)
+
+When the line ends, a **short scripted closing event** sums up John's run (Logan). The game then goes on **open-ended**, with generated quests (8.4). It is not a victory screen: endings are out of scope (batch 130).
+
+- **When (A).** Once Arc 8 has closed and every other arc has closed. An arc still open when Arc 8 closes resolves at its current outcome. If John dies first, the game is over and there is no closing event (8.1).
+- **The screen.** The event screen (13.2.1): the left side tells John's run in a few lines of story; the right side shows his record **(A)**:
+  - **What he built**: the companies he really controls, with rank and value; the fund's return multiple; the startup's best model capability; the gigawatts of power he built.
+  - **Who he beat**: rivals he ruined or bought out, his Nemesis's fate, and Terry's fate (forced out, a figurehead, or the man who outlasted John).
+  - **His score**: the player's score (12.4), his rich-list rank (1.10.6) and his milestones.
+  - **Each arc's outcome tier.**
+- **Effect (T).** A permanent history log entry and a one-off score bonus of **+5% per Strong arc outcome**. If John still has no ambition (1.1.2), the event asks the player to pick one, since ambitions feed the generated quests.
+- **Then** one button, **Carry on**, and the game continues.
 
 ## 8.4 Generated quests after a line
 
-When John's line ends, **generated side quests** keep coming (batch 33) **(A)**:
+When John's line ends, after the closing event (8.3), **generated side quests** keep coming (batch 33) **(A)**. They also run in 2022 to 2024 alongside Arc 5, under the interleaving rules there (batch 138):
 - **From the ambition** (1.1.2): a 2 to 4 step quest toward it, rebuilt when the ambition changes.
 - **From events**: an event can open a quest (a merger offer, a scandal to bury, a friend in trouble).
 - **From rivals**: a rival's scheme or a rival rotation character aimed at the player opens a defense quest.
 
 ## 8.5 The crash
 
-The AI bubble pops in 2035 on average (Logan, batch 93). The year is set at game start as 2035 plus a roll of -2 to +2 years **(T)**, then moved by events: a bigger boom (high AI valuations, heavy leverage) brings it closer, and calmer markets push it later **(A)**. In this world there was never a dot-com crash or a 2008 crisis (7.2.0), so investors have never lived through a great crash, and it hits harder: market drops are ×1.2 the normal crash size **(T)**. When it hits, John Techno's crash arc (8.3) opens, and any generated quests tied to the boom resolve.
+The AI bubble pops in 2035 on average (Logan, batch 93). The year is set at game start as 2035 plus a roll of -2 to +2 years **(T)**, then moved by events: a bigger boom (high AI valuations, heavy leverage) brings it closer, and calmer markets push it later **(A)**. In this world there was never a dot-com crash or a 2008 crisis (7.2.0), so investors have never lived through a great crash, and it hits harder: market drops are ×1.2 the normal crash size **(T)**. When it hits, John Techno's crash arc (8.3, Arc 8: Dry Hole) opens, and any generated quests tied to the boom resolve.
 
 ## 8.6 Assumptions and open items
 
 1. Outcome tiers and buff sizes in 8.1.
 2. The delivery time of the desktop (8.2.1), the come-clean backlash, how the interrogation roll maps to Mandy's answer, and the Furry Cartel's effects (8.2.5).
-3. John Techno's skills, traits and arcs, the option review numbers, and the Terry branch in 8.3.
-4. Generated quest sources in 8.4.
+3. John Techno's skills, traits and arcs, the option review numbers, and the Terry branch in 8.3 (now the opening of Arc 7).
+4. Generated quest sources in 8.4, including side quests during the line (Arc 5).
 5. Crash timing and the ×1.2 crash size in 8.5.
+6. The Fund (Arc 4, batch 138): the fund as a VC firm led by John; the $150M target and 25% single-company cap; LP consent for the startup as the guard against self-dealing; how the fund gets into each of the five candidate labs; the money sources' sizes and strings; the easy and hard ways (poach lawsuit 20% and run score +5, pre-boom leases, Arrowhead's oil data counting as sensor feeds and documents); the quality 60 line for a Strong outcome.
+7. Quiet Money (Arc 5): growth per Pivot branch, the +30% target, the war chest definition and the $20M and $100M tiers; side quests during the line (2 open, 30 days since the last arc step, 7-day buffer, 1 open from 2025).
+8. Power Play (Arc 6): the named partners (Oakhurst Gas, Cassius Whitlock, Ghawar and Liwa national oil companies, Tariq Al-Harbi), the 10-year power contract as a deal type, and the 1 GW, 0.3 GW and 3× debt tiers.
+9. The Fall of Terry (Arc 7): the five decline stages and their windows, the causes outside the media, the union pension still holding an Arrowhead stake, the friend and foe effects (+20 loyalty, 6 months earlier, Clout -10), and the figurehead trade-offs.
+10. Dry Hole (Arc 8): the startup, fund and power steps.
+11. The closing event: when it fires, what it shows, the +5% score bonus per Strong outcome and the ambition prompt.
