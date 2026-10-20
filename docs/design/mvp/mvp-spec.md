@@ -1,6 +1,6 @@
 # TechnoCapital20FF MVP spec: the map, the business system and a read-only economic sim
 
-_Status: v0.4 (2026-10-20). Batch 147 (Logan): built industries, country-economy and key-cities data: the three 2.2 tables now exist in design/data/, made by a reproducible generator in [../tools/mvp-data/](../tools/mvp-data/gen.py) that validates ids and runs the profit and fringe checks; 2.2 lists their final columns (G5 built). Batch 146 (Logan): Consumer electronics, EVs, E-commerce and AI labs are cash-burning industries on purpose and live on investor money; when their runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the industry news phase, and failures go down the bankruptcy path (6.6, G10 decided); batch 143 board-seat picks decided: seats beyond 5 are ordinary directors, charter minimums apply from 5 labor units, the controller appoints and the seat stands at the next yearly meeting, investor and government seats take the next labor seat or sit beyond 5, and the 651 starting companies keep their generated starting data while new companies start empty (7.1, G9 decided). Batch 145 (Logan): province shapes are generated from real-world boundary data ([map-sources.md](map-sources.md), 2.2, G1); simple characters fill board seats (3.7.1, G2); business assets degrade by industry, book depreciation equals the loss, and growth plans buy replacement before growth (2.2, 5.5, 5.10, 6.2, 7.1); bank and insurer capital set at $1.25 and $0.60 per $1, mapped to real capital ratios (2.2, G4); bankrupt firms go through forced sales, a 2-quarter freeze and removal, shareholders wiped (5.12, G7); one business unit per company at HQ is decided (G8); batch 143 board-seat items listed as open (G9). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
+_Status: v0.5 (2026-10-20). Batch 148 (Logan): "just make these like default companies for now we will rework them one by one once companies are known working. I want all industries to be like the defaults": all 42 industries use the barebones company's parameters (10.0.11.1) for the MVP: $1 of assets per $1 of revenue, labor_value $100,000, 1 TB per $1M, one asset decay (8%), one R&D norm (5%), one fixed cost share, one earnings multiple, one cycle sensitivity, and revenue equal to expenses at productivity 100 and M 1.0 with R&D at the norm counted in the expenses; industries keep only name, sector label, world demand 2020, trend and asset label (2.2, 5.5, C18); the cash_burning flags are parked (all N) and the 6.6 raise rule waits for them; per-industry tuning moves to 11.2; real 2020 tax rates, the wage index from wealth_index and real January 2020 ratings moved for the alternate history are decided (2.2, G5). At start 619 of 651 companies earn above 0 after R&D, from the PC bonus and free R&D only (2.2 checks). Batch 147 (Logan): built industries, country-economy and key-cities data: the three 2.2 tables now exist in design/data/, made by a reproducible generator in [../tools/mvp-data/](../tools/mvp-data/gen.py) that validates ids and runs the profit and fringe checks; 2.2 lists their final columns (G5 built). Batch 146 (Logan): Consumer electronics, EVs, E-commerce and AI labs are cash-burning industries on purpose and live on investor money; when their runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the industry news phase, and failures go down the bankruptcy path (6.6, G10 decided); batch 143 board-seat picks decided: seats beyond 5 are ordinary directors, charter minimums apply from 5 labor units, the controller appoints and the seat stands at the next yearly meeting, investor and government seats take the next labor seat or sit beyond 5, and the 651 starting companies keep their generated starting data while new companies start empty (7.1, G9 decided). Batch 145 (Logan): province shapes are generated from real-world boundary data ([map-sources.md](map-sources.md), 2.2, G1); simple characters fill board seats (3.7.1, G2); business assets degrade by industry, book depreciation equals the loss, and growth plans buy replacement before growth (2.2, 5.5, 5.10, 6.2, 7.1); bank and insurer capital set at $1.25 and $0.60 per $1, mapped to real capital ratios (2.2, G4); bankrupt firms go through forced sales, a 2-quarter freeze and removal, shareholders wiped (5.12, G7); one business unit per company at HQ is decided (G8); batch 143 board-seat items listed as open (G9). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
 
 **How to read the numbers.** **(A)** marks an assumption made for the MVP, including the coordinator's defaults. **(T)** marks a tuning value. Section refs like 10.0.4 point to the detailed files.
 
@@ -17,13 +17,13 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 | **Player** | Opens every MVP screen; pause and speeds 1 to 5; skip to next event **(A)** | Every player action: trading, founding, schemes, board seats, travel, the phone, quests |
 | **Map** | 3,255 provinces, 210 countries, regions, areas, 97 Metros, 80 key cities, 8 superregions (design/data/) | Influence, real estate pools, development change, chokepoint risk, travel, unrest |
 | **Companies** | 651 companies (data/companies.csv), one business unit each at HQ (decided, Logan batch 145), board as labor units 1 to 5 filled by simple characters (3.7.1) | Subsidiary directives, shells, deals on units, takeovers, IPOs, characters' personal play |
-| **Economy** | 42 industries, world demand, supply ratio, market factor, fringe pools, productivity, decay, R&D, growth plans | Price indices and cost drivers (D fixed at 1.0) **(A)**, real estate, slop, chokepoints, tariffs |
+| **Economy** | 42 industries on shared default parameters (batch 148, 2.2), world demand, supply ratio, market factor, fringe pools, productivity, decay, R&D, growth plans | Price indices and cost drivers (D fixed at 1.0) **(A)**, real estate, slop, chokepoints, tariffs |
 | **Operations and data** | Labor units, stations, productive compute, unstructured and structured data, conversion, decay, free R&D (10.0.11) | Schemes, software design stations, software development (14), AI models (18), hacking, data sales |
 | **Software** | Two fixed products: the general productivity software and the general enterprise software, both quality 50 **(A)** | Every other product, licences as a market, bloat, versions |
 | **Quarter** | The 21 cycle, simplified: release, price reaction, AI plan lock, locked quarter, recap week | Grades, firing votes, board displeasure, board day events, guidance rolls, result plot line chains |
-| **Finance** | Light statements, tax, credit line, credit rating, dividends by rule, fair value, simple share price, share issues by cash-burning industries (6.6) | Trading, order flow, bonds, margin, short selling, IPOs, buybacks, rights issues, default chain |
+| **Finance** | Light statements, tax, credit line, credit rating, dividends by rule, fair value, simple share price; share issues by cash-burning industries (6.6) are parked while no industry is flagged (batch 148) | Trading, order flow, bonds, margin, short selling, IPOs, buybacks, rights issues, default chain |
 | **World** | Static country table; one world base rate (3%, batch 130); national business cycles; industry news cycles | Politics beyond the static table, media, gambling, vices, FX, the crash, history events |
-| **AI** | Each company sets its own quarterly plan (growth, R&D %, station split, data handling, credit line, dividend); cash-burning industries raise money when runway runs short (6.6) | Schemes, politics, takeovers, trading, media, anything outside its own company |
+| **AI** | Each company sets its own quarterly plan (growth, R&D %, station split, data handling, credit line, dividend); cash-burning industries raise money when runway runs short (6.6, parked while no industry is flagged, batch 148) | Schemes, politics, takeovers, trading, media, anything outside its own company |
 
 **Information (A).** The observer is John Techno with his Pdoomberg subscription (7.3.0). Published figures (listed companies' statements, quotes, industry tables) are exact; private companies' figures show **?** (20.3.4). A debug toggle, **Omniscient**, shows every true value for testing and is off in release builds.
 
@@ -44,66 +44,37 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 
 Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), which writes the three files into design/data/ and runs validate.py: industry names match companies.csv, every iso3 is in countries.csv, every key city province id is in the province files, and the checks below. Column meanings and assumptions are also in [../data/README.md](../data/README.md).
 
-**industries.csv** (42 rows). Most values copy 10.3 and 10.0.11.10; new columns are marked new.
+**industries.csv** (42 rows). **MVP defaults (Logan, batch 148):** "just make these like default companies for now we will rework them one by one once companies are known working. I want all industries to be like the defaults." Every industry uses the same parameters, those of the barebones company (10-industry-economy 10.0.11.1 and the 10.0.11.10 base case). An industry keeps only what makes it a distinct market: name, sector label, world demand 2020, trend growth and the flavor asset label. The columns stay as built in batch 147, so the engine and the rest of this spec read them unchanged; the per-industry values are parked for the rework (11.2), and gen.py keeps them behind a `PER_INDUSTRY` switch.
 
-| Column | Type | Meaning and source |
+| Column | Type | MVP value (batch 148) |
 |---|---|---|
-| id | slug | e.g. oil, semiconductors, fast_food (new) |
-| name | text | 10.3 |
-| sector | text | Tech, Finance, Energy, Industry, Consumer, Health, Services (10.3) |
-| valuation_group | text | Row of the sector table 3.3.2 |
-| world_size_2020_usd_bn | number | 10.3 world size |
-| trend_growth | fraction | 10.3; "Boom-driven" AI labs uses 0.30 **(T)** |
-| cycle_beta | number | Cyclicality β (10.3) |
-| rate_sensitivity | 0 to 3 | Low 0, Medium 1, High 2, Very high 3; "Positive" (Banking, Insurance) stored as 0 in the MVP **(A)** |
-| margin_full_use | fraction | 10.3; AI labs "-40% to +40%" stored as 0.00 **(T)** |
-| fixed_cost_share | fraction | f (10.3) |
-| capital_per_dollar | number | 10.3; Banking 1.25 and Insurance 0.60 **(T)**: Logan's $1 and $0.50 base moved toward real capital ratios (batch 145, below) |
-| asset_turnover | number | Derived: 1 ÷ capital_per_dollar |
-| asset_decay | fraction | New (Logan, batch 145): share of business assets lost each year, 0.05 to 0.10 by industry (table below) **(T)** |
-| rd_norm | fraction | New: industry R&D norm (10.0.4 gives only "2% heavy industry to 15% tech"). Values in the table below **(T)** |
-| labor_value_usd | number | 10.0.11.10 (default 100,000) |
-| pc_modifier | number | 10.0.11.10 (Retail and Fast food 0.5, else 1) |
-| data_tb_per_musd | number | 10.0.11.10 (default 1) |
-| data_decay_base | fraction | 10.0.11.10 (default 0.02) |
-| fit | enum | Commerce, Industry or Extraction (10.3.1) |
-| resource_tags | list | Matching tags (10.3.1), semicolon list |
-| asset_label | text | Flavor label (10.0.7): fields, fabs, stores... (new) |
-| variable_cost_share | fraction | Derived (new): v = 1 − margin_full_use − fixed_cost_share (5.5) |
-| cash_burning | Y/N | New: Y for Consumer electronics, EVs, E-commerce and AI labs (Logan, batch 146; 6.6) |
-| earnings_multiple | number | New: M_sector (P/E) of the valuation group (3.3.2), used in 5.13. Black market has no 3.3.2 row and uses Professional services (16) **(A)** |
-| notes | text | New: where a 10.3 cell was not a single number and what was stored |
+| id | slug | e.g. oil, semiconductors, fast_food (per industry) |
+| name | text | Per industry (10.3) |
+| sector | text | Per industry: Tech, Finance, Energy, Industry, Consumer, Health, Services (10.3). A label for screens; it also picks the Startup archetype (6.1) and the Tech CTO weight (5.7) |
+| valuation_group | text | Default (one multiple for all) |
+| world_size_2020_usd_bn | number | Per industry (10.3 world size) |
+| trend_growth | fraction | Per industry (10.3); "Boom-driven" AI labs uses 0.30 **(T)** |
+| cycle_beta | number | 1.0 for all: demand moves with the world cycle one for one **(A)** |
+| rate_sensitivity | 0 to 3 | 1 for all **(A)**; no effect while the base rate sits at neutral (3.1) |
+| margin_full_use | fraction | 0.05 for all: the margin before R&D, equal to rd_norm, so revenue equals expenses with R&D at the norm (5.5, C18) |
+| fixed_cost_share | fraction | 0.45 for all (the median f of 10.3) **(T)** |
+| variable_cost_share | fraction | 0.50: v = 1 − margin_full_use − fixed_cost_share (5.5) |
+| capital_per_dollar | number | 1.0 for all: the barebones $100,000 asset makes $100,000 a year |
+| asset_turnover | number | 1.0 (1 ÷ capital_per_dollar) |
+| asset_decay | fraction | 0.08 for all (the barebones rate, 10.0.11.1) |
+| rd_norm | fraction | 0.05 for all **(T)** |
+| labor_value_usd | number | 100,000 (10.0.11.10 base case) |
+| pc_modifier | number | 1 |
+| data_tb_per_musd | number | 1 (1 TB per $1M) |
+| data_decay_base | fraction | 0.02 |
+| fit | enum | Empty: no fit, so no location bonus in the MVP (5.4) |
+| resource_tags | list | Empty |
+| asset_label | text | Per industry: flavor label (10.0.7): fields, fabs, stores... |
+| cash_burning | Y/N | N for all: parked (batch 148). The 6.6 raise rule stays for when the flags return in the rework |
+| earnings_multiple | number | 17 for all (the median M_sector of the 42 industries in 3.3.2) **(T)**, used in 5.13 |
+| notes | text | "MVP defaults (Logan, batch 148)", plus the trend notes |
 
-R&D norm by industry **(T)**:
-
-| rd_norm | Industries |
-|---|---|
-| 15% | AI labs, Pharma, Semiconductors, Software |
-| 12% | SaaS |
-| 10% | Cloud, Social media, Gaming, Consumer electronics, Robotics, Drones, EVs, Aerospace, Defense |
-| 6% | Ads, Data centers, Telecom, Autos, Chemicals, Gambling, E-commerce |
-| 3% | Banking, Insurance, Asset management, Healthcare services, Professional services, Power utilities, Renewables, Metals, Mining, Agriculture, Shipping, Logistics, Airlines, Luxury, Real estate |
-| 2% | Oil, Gas, Construction, Retail, Fast food, Black market |
-
-Asset decay by industry (Logan, batch 145; 10.3) **(T)**:
-
-| asset_decay | Industries |
-|---|---|
-| 10% | AI labs, Cloud, Data centers, Software, SaaS, Social media, Ads, Consumer electronics, Gaming, Gambling, Semiconductors, E-commerce, Drones, Robotics |
-| 8% | Telecom, Banking, Insurance, Asset management, Chemicals, Autos, EVs, Aerospace, Defense, Shipping, Logistics, Airlines, Construction, Retail, Fast food, Luxury, Pharma, Healthcare services, Professional services, Black market |
-| 6% | Oil, Gas, Mining, Metals, Agriculture |
-| 5% | Power utilities, Renewables, Real estate |
-
-**Bank and insurer capital (Logan, batch 145) (T).** Logan's base is $1 of business assets per $1 of revenue for Banking and $0.50 for Insurance. The MVP moves both toward real levels and keeps one simple game rule: **a bank's or insurer's business assets are its regulatory capital**, the equity that lets it lend or underwrite. Deposits and float fund the loans and claims and are not on the game's books (3.17). Every other rule (turnover, growth, decay, the credit line) treats it like any business asset.
-
-| Industry | Real-world anchor | Mapping | MVP value |
-|---|---|---|---|
-| Banking | Capital of about 10 to 15% of risk-weighted assets (Basel III minimum about 10.5% with the conservation buffer). Revenue runs about 5% of total assets; risk-weighted assets are about 55% of total assets | $1 of revenue needs about $11 of risk-weighted assets; at a 12% capital ratio that is about $1.30 of capital | 1.25 (base 1.0) |
-| Insurance | Capital above the required solvency capital, typically held at 150 to 200% coverage; P&C rule of thumb: no more than about $3 of premiums per $1 of capital | Required capital about 30 to 40% of premiums × about 170% coverage ≈ $0.55 to $0.65 per $1 of premiums | 0.60 (base 0.5) |
-
-Asset decay (8%) stands for loan losses and claims run-off. Check: fixed cost per $1 of assets (f ÷ capital) is 0.44 for Banking and 0.50 for Insurance, far above 0.08, so both keep their 30% and 8% margins (5.5).
-
-**Built-table checks (batch 147).** A normal company is the industry's median named company with the 7.1 loadout, productivity 100 and M 1.0. Its fixed_cost_rate (5.5) is positive in all 42 industries (lowest Data centers 0.12 counting its shared costs, then Renewables 0.15). EBIT margin after R&D at the norm is above 0 in 35 of the 38 non-cash-burning industries; Oil earns 25% before R&D and 23% after it. Autos, Aerospace and Robotics sit at exactly 0% at the norm and earn 3 to 5% once the free R&D from their starting data (3 to 5%) replaces paid R&D (6.3); the four cash-burning industries lose 1 to 15% at the norm, as intended (G10). Named revenue is below world size in every industry, so named revenue plus the fringe pool equals world demand; the named share runs from 0.02% (Black market) to 80% (Social media), median 34%.
+**Built-table checks (batch 148).** validate.py runs a normal company per industry (median named revenue, the 7.1 loadout, productivity 100, M 1.0) and every one of the 651 starting companies. Fixed_cost_rate (5.5) is 0.37 in every industry. With R&D at the norm and no bonus a company breaks even, so every industry shows 0% EBIT at the norm. **Profit at start comes only from productivity above 100, undersupply and free R&D:** demand starts at S = 1.0 and M = 1.0 (7.2) and location bonuses are 0, so at load only the PC bonus (+1 to +7, +5 for the median company, worth `0.45 × bonus ÷ (100 + bonus)` of revenue, about 2% at +5, since gross assets are set so the unit makes R with its bonus, 7.1) and free R&D from held data (1 to 6% of revenue, replacing paid R&D, 6.3) give profit. **619 of the 651 companies earn above 0 after R&D at load**, median EBIT margin 6.1%, top 7.9%. The 32 loss-makers (down to −2.5%) are small companies whose named controller pushes R&D above the norm (Aggressive grower 1.3×, Visionary, Diligent: 6.5 to 9% of revenue) with little held data; at the norm R&D all 651 earn above 0, so the economy is not loss-making by default. Margins are thin: productivity decays about 6 points a year at the norm (5.6), so profit holds only while R&D, data and the PC bonus keep productivity above 100; check in the M10 soak **(T)**. Named revenue is below world size in every industry, so named revenue plus the fringe pool equals world demand; the named share runs from 0.02% (Black market) to 80% (Social media), median 34%.
 
 **country-economy.csv** (210 rows, one per countries.csv row; gap G5).
 
@@ -111,14 +82,14 @@ Asset decay (8%) stands for loan losses and claims run-off. Check: fixed cost pe
 |---|---|
 | iso3 | Key into countries.csv |
 | corp_tax_level | Haven, Low, Moderate, High (E2, 4-politics): the law position politics will move post-MVP. The 33 majors copy 2.2.3; the 8 havens of 2.2.5 are Haven; others take the E2 band nearest their real rate **(A)** |
-| corp_tax_rate | The rate the MVP charges (5.11): the real 2020 statutory rate, national plus typical sub-national (Tax Foundation and KPMG 2020 tables, entered by hand; worth a spot check) **(T)**. Havens (2.2.5) use the E2 Haven rate 0.03; zero-tax countries (UAE, Bahrain, Bahamas, Vanuatu, Vatican) are floored at 0.03; 10 countries with no reliable figure use the Moderate rate 0.21 **(A)**. Where a major's real rate sits nearer another band than its 2.2.3 level (US 25.8%, France 32%, Switzerland 21.1%...), the level is kept and the notes say so. Excess Profits is not used at start |
-| sovereign_rating | AAA to CC on the 3.6.2 scale: real January 2020 agency ratings moved for the alternate history (euro crisis, Greece's 2019 default, Russia's sanctions, a stronger US Middle East; notes say which). The 3.6.3 points table needs debt, deficit, inflation and stability, which are not in the data, so it is not used at start **(A)**. Unrated countries: CCC if collapsed (HSS 35), else by wealth index (A 0.8+, BBB- 0.4+, BB- 0.2+, B+ 0.1+, else B-) **(A)** |
+| corp_tax_rate | The rate the MVP charges (5.11): the real 2020 statutory rate, national plus typical sub-national (Tax Foundation and KPMG 2020 tables, entered by hand; worth a spot check). **Decided (Logan, batch 148, 2a):** keep the real 2020 rates. Havens (2.2.5) use the E2 Haven rate 0.03; zero-tax countries (UAE, Bahrain, Bahamas, Vanuatu, Vatican) are floored at 0.03; 10 countries with no reliable figure use the Moderate rate 0.21 **(A)**. Where a major's real rate sits nearer another band than its 2.2.3 level (US 25.8%, France 32%, Switzerland 21.1%...), the level is kept and the notes say so. Excess Profits is not used at start |
+| sovereign_rating | AAA to CC on the 3.6.2 scale: real January 2020 agency ratings moved for the alternate history (euro crisis, Greece's 2019 default, Russia's sanctions, a stronger US Middle East; notes say which); **decided (Logan, batch 148, 4a)**. The 3.6.3 points table needs debt, deficit, inflation and stability, which are not in the data, so it is not used at start **(A)**. Unrated countries: CCC if collapsed (HSS 35), else by wealth index (A 0.8+, BBB- 0.4+, BB- 0.2+, B+ 0.1+, else B-) **(A)** |
 | country_spread_bps | Fixed spread over the world base rate (3.6.5): the 3.6.2 sovereign spread for the rating (a plus or minus notch moves a third of the way to the next band) plus a crisis premium of 50 to 200 bps for Greece, Italy, Spain, Portugal, Cyprus, Argentina, Venezuela and Lebanon; US 0 **(T)** |
 | cycle_group | iso3, or EA for the 19 euro-area members, which share one cycle (2.18.1). Dependent territories share their sovereign's group: Puerto Rico USA; Greenland and the Faroes DNK; Jersey, Guernsey, the Isle of Man and Gibraltar GBR; Saint Pierre and Miquelon EA **(A)**. Euro users outside the euro area (Montenegro, Kosovo, Andorra, Monaco, San Marino, Vatican) and all of Latin America keep their own cycles |
 | cycle_phase_start | Expansion, Overheating, Contraction or Recovery. The EA group and the other euro users start in Contraction (the euro crisis, 2.18.1); the non-euro EU, the UK, Switzerland, Norway, Iceland and Liechtenstein start in Recovery; Argentina, Venezuela, Lebanon, Iran and Zimbabwe start in Contraction and Turkey in Recovery; everyone else in Expansion **(A)** |
 | notes | Where each value came from and what is assumed |
 
-Not duplicated from countries.csv: the **wage index** is countries.csv `wealth_index` (2.2.3 calls it the wage index; USA 1.00). There is **no country productivity modifier**: the location bonus is per province (fit and resource tag, 5.4), and city bonuses are the key-city perks below, not applied in the MVP **(A)**.
+Not duplicated from countries.csv: the **wage index** is countries.csv `wealth_index` (2.2.3 calls it the wage index; USA 1.00); **decided (Logan, batch 148, 3a)**. There is **no country productivity modifier**: the location bonus is per province (fit and resource tag, 5.4; 0 in the MVP while industries use the defaults), and city bonuses are the key-city perks below, not applied in the MVP **(A)**.
 
 **key-cities.csv** (80 rows, parsed from 2-map 2.3.3 to 2.3.5 by the generator, so the doc stays the source). Location perks are not applied in the MVP **(A)**; key cities show as map labels and filters.
 
@@ -410,7 +381,7 @@ All yearly figures are booked monthly as ÷ 12 (10.0.11.1). Money is in USD.
 
 `revenue (month) = assets_eff × turnover × effective productivity ÷ 100 ÷ 12`
 
-- **Location bonus** (10.3.1): `+2 × share of assets in provinces whose largest track matches the fit + 3 × share in provinces whose resource tag matches` (points of productivity) **(A: points, not percent)**. With 100% at the base province this is 0, 2, 3 or 5.
+- **Location bonus** (10.3.1): `+2 × share of assets in provinces whose largest track matches the fit + 3 × share in provinces whose resource tag matches` (points of productivity) **(A: points, not percent)**. With 100% at the base province this is 0, 2, 3 or 5. **MVP (batch 148):** industries use the defaults, which have no fit and no resource tags, so the location bonus is 0 for every unit until the per-industry rework (11.2); the rule stays.
 - **Demand share.** A unit's share of the industry's revenue is its share of supply; total industry revenue is `supply × M`, which equals `(supply × demand)^0.5` when M is not clamped. Demand is never fully met or fully exceeded; that is the intended Wall Street Raider feel.
 
 ### 5.5 Expenses (10.0.4, 10.3; conflict C11)
@@ -425,10 +396,12 @@ Per unit, per month:
 | R&D spend | `revenue × rd_plan` (free R&D costs nothing, 5.9) |
 | Shared costs | Corporation compute, data compute and licences (3.8), split across units by revenue share (10.0.8) |
 
-- **Depreciation sits inside the fixed share (A).** `fixed_cost_rate = f × turnover − asset_decay − shared_cost_rate` at load, so fixed cash plus depreciation plus shared costs equals `f × revenue at productivity 100 and M 1.0`, and margin_full_use is the margin before R&D, as in the 10.10 worked example. Without this, Oil (capital 2.5, decay 6%) would lose 15 of its 25 margin points to depreciation.
-- **Profit check (batch 145).** `f × turnover` is lowest in Renewables (0.20), then Data centers (0.22), Power utilities (0.23), Oil and Gas (0.24); it is above `asset_decay + shared cost rate` in all 42 industries, both at the starting values (shared costs are well under 1% of assets) and for the barebones company ($7,000 of shared costs on $100,000, rate 0.07; worst case Data centers 0.22 − 0.10 − 0.07 = 0.05). So fixed_cost_rate stays positive and EBIT before R&D is unchanged: Oil keeps 25%, and the barebones company stays break-even. What changes is cash: a company that holds still now spends its depreciation on replacement, so its steady free cash flow before growth is EBIT less R&D, interest and tax, not that plus depreciation. Some industries already earn nothing or lose money after R&D at the norm; that is older and not caused by asset decay (G10).
+- **Depreciation sits inside the fixed share (A).** `fixed_cost_rate = f × turnover − asset_decay − shared_cost_rate` at load, so fixed cash plus depreciation plus shared costs equals `f × revenue at productivity 100 and M 1.0`, and margin_full_use is the margin before R&D, as in the 10.10 worked example. Without this, Oil at its 10.3 values (capital 2.5, decay 6%) would lose 15 of its 25 margin points to depreciation.
+- **R&D counts in break-even (Logan, batch 148; C18).** The barebones company has revenue equal to expenses at productivity 100 and M 1.0 (10.0.11.1). With R&D on top of a 0% margin, every default company would lose its R&D, so the MVP counts R&D at the norm inside the barebones expenses: `margin_full_use = rd_norm` (0.05), and EBIT after R&D at the norm is exactly 0. Per $1 of revenue at productivity 100: variable 0.50, fixed cash 0.37, depreciation 0.08 and shared costs under 0.01 (together f = 0.45), R&D 0.05. For the barebones company itself the $7,000 of shared costs come out of fixed cash, which leaves 0.30.
+- **Where profit comes from (batch 148).** At break-even, profit comes only from productivity above 100 (the PC bonus, R&D above the norm, later location bonuses), undersupply (M above 1.0) and free R&D from held data, which replaces paid R&D (6.3). At load every industry has M 1.0, so the PC bonus and free R&D carry it: 619 of 651 companies earn above 0 after R&D, median 6.1% (2.2 checks).
+- **Profit check (batch 148).** With the defaults `f × turnover` is 0.45 in every industry, above `asset_decay + shared cost rate`: 0.45 − 0.08 − under 0.01 = 0.37 for the starting companies and 0.45 − 0.08 − 0.07 = 0.30 for the barebones company, so fixed_cost_rate stays positive. Batch 145 note, kept for the per-industry rework: at the 10.3 values `f × turnover` is lowest in Renewables (0.20), then Data centers (0.22), Power utilities (0.23), Oil and Gas (0.24); it is above `asset_decay + shared cost rate` in all 42 industries, both at the starting values (shared costs are well under 1% of assets) and for the barebones company ($7,000 of shared costs on $100,000, rate 0.07; worst case Data centers 0.22 − 0.10 − 0.07 = 0.05). So fixed_cost_rate stays positive and EBIT before R&D is unchanged: Oil keeps 25%, and the barebones company stays break-even. What changes is cash: a company that holds still now spends its depreciation on replacement, so its steady free cash flow before growth is EBIT less R&D, interest and tax, not that plus depreciation. At the 10.3 values some industries earned nothing or lost money after R&D at the norm; that was older and not caused by asset decay (G10).
 - **Productivity decay is kept (batch 145).** Asset decay carries the physical wear of assets (paid by replacement purchases); productivity decay (5.6) is the business falling behind (paid by R&D). No double counting in money; the old 10.0.7 wording that called productivity decay the assets' wear is fixed.
-- **Check (Robotics, 10.10):** turnover 1.43, f 0.35, margin 0.10: v 0.55; at M 1.0, revenue $3.0B, costs $1.65B + $1.05B, EBIT before R&D $0.30B. Matches.
+- **Check (Robotics, 10.10, at its parked 10.3 values):** turnover 1.43, f 0.35, margin 0.10: v 0.55; at M 1.0, revenue $3.0B, costs $1.65B + $1.05B, EBIT before R&D $0.30B. Matches.
 
 ### 5.6 Productivity decay and R&D effect (10.0.4, 10.5.2, 10.0.11.3)
 
@@ -543,7 +516,7 @@ Rule: the newest Logan ruling wins; where Logan has not ruled, the most recent d
 
 | # | Conflict | Resolution |
 |---|---|---|
-| C1 | 10.0.4 revenue model vs the operations layer (10.0.11, batches 140 to 142) and the break-even barebones company | 10.0.11 sits on top of 10.0.4 (Logan, batch 140): effective productivity = (productivity + PC bonus + location bonus) × M. The barebones break-even case is for founding only and is not used in the MVP |
+| C1 | 10.0.4 revenue model vs the operations layer (10.0.11, batches 140 to 142) and the break-even barebones company | 10.0.11 sits on top of 10.0.4 (Logan, batch 140): effective productivity = (productivity + PC bonus + location bonus) × M. The barebones break-even case is for founding only, but its parameters are now every industry's MVP defaults (Logan, batch 148; 2.2, C18) |
 | C2 | Batch 141 PC = quality factor Q vs batch 142 | Batch 142: PC per station is 1 × industry modifier |
 | C3 | Data accrues every hourly tick (10.0.11.4) vs monthly finances (9.2) | Monthly, with the month's revenue (coordinator default) |
 | C4 | 14.2.3 data rate (1 TB a day per $100M) and tier table vs 10.0.11 | 1 TB per $1M and the free R&D rule (batch 141) |
@@ -553,13 +526,14 @@ Rule: the newest Logan ruling wins; where Logan has not ruled, the most recent d
 | C8 | Fair value: 10.0.8 blend vs 3.3.1 earnings-multiple V with sales value for loss-makers | 10.0.8 blend (Logan, batch 53), using 3.3.1's E_norm, G and R factors and asset floor; loss-makers at book × cycle (10.0.8) |
 | C9 | Loan rate: 3.6.5 "policy + corporate spread + 1.0" vs 10.0.9 and 10.5.5 "base + country spread + rating spread" | Base + country spread + rating spread (consistency pass 3, batch 129) |
 | C10 | Credit line counts cash at 100%, so drawing raises its own limit | Count own cash only (cash − drawn) (A) |
-| C11 | Depreciation at 10% of assets a year wipes out capital-heavy margins (Oil: 2.5 × 10% = 25% of revenue) | Depreciation equals asset decay (5 to 10% by industry, Logan batch 145) and is part of the fixed cost share; margin_full_use stays the margin before R&D (A, gap G3) |
+| C11 | Depreciation at 10% of assets a year wipes out capital-heavy margins (Oil: 2.5 × 10% = 25% of revenue) | Depreciation equals asset decay (5 to 10% by industry, Logan batch 145; 8% for every industry in the MVP, batch 148) and is part of the fixed cost share; margin_full_use stays the margin before R&D (A, gap G3) |
 | C12 | Supply uses productivity, revenue uses productivity + PC bonus, so S is not 1 at start | Supply uses p_pre (productivity + PC bonus + location bonus) (A) |
 | C13 | Growth plan is "this year" (10.0.2) vs set each quarter (21.5) | Annual rate locked each quarter, bought monthly at 1/12 (21.5) |
 | C14 | Charter board sizes 5 to 13 and elections (1.5, 1.8.1) vs labor units 1 to 5 (batch 142) | Labor rule only; no charter seats or elections in the MVP (A) |
 | C15 | companies.csv est_value (margin × 0.75 × multiple, ignoring R&D) vs the engine's fair value | Engine fair value drives price; shares are set so the opening price is $25 at engine value; est_value is shown only as "2020 estimate" (A) |
 | C16 | Starting loadout enterprise stations `ceil(0.5 × R ÷ 11)` ignores the industry data rate | `ceil(0.5 × R × data_tb_per_musd ÷ 10.95)` (A) |
 | C17 | 12.1 says content is JSON | The MVP loads the design/data CSVs directly; JSON conversion is post-MVP (A) |
+| C18 | All industries use the barebones defaults (Logan, batch 148), whose revenue equals expenses at productivity 100 and M 1.0 (10.0.11.1), vs R&D booked on top of expenses (5.5): a 0% margin before R&D would make every default company lose its R&D | R&D at the norm counts inside the break-even expenses: margin_full_use = rd_norm = 0.05, so EBIT after R&D at the norm is 0 and profit comes from productivity above 100, undersupply and free R&D (5.5) (A) |
 
 ---
 
@@ -627,6 +601,8 @@ At load, plans use g_dem for growth, rd_norm for R&D and the station split above
 
 ### 6.6 Raising money in cash-burning industries (Logan, batch 146)
 
+**Parked for the MVP (Logan, batch 148).** While industries use the shared defaults (2.2), no industry is flagged cash_burning and no company loses money by design, so this rule never fires. It stays in the spec as written for when the flags return in the per-industry rework (11.2).
+
 Logan (batch 146): Consumer electronics, EVs, E-commerce and AI labs lose money after R&D on purpose; they live on investor money ([10-industry-economy.md](../detailed/10-industry-economy.md) 10.3). So that they do not all go bankrupt in the read-only MVP, a company in one of these four **cash-burning industries** raises money when its cash runs short. Checked at the plan lock, after 6.2 to 6.4 and before 6.5, for Active and Distressed companies; one try per plan lock.
 
 - **Burn**: minus the last quarter's free cash flow (operating cash less asset purchases, 3.9), when that is negative. With no burn there is no raise.
@@ -674,7 +650,7 @@ R = revenue_usd_m. One business unit in the company's industry at hq_province.
 | Shares | Listed: `shares_out = fair value ÷ $25`; P = V = $25 **(A)** |
 | Barebones exception | R below $0.1M: the barebones loadout (10.0.11.1): one $100,000 asset, 1 labor unit, CEO on productivity, 10 base and 10 data compute, 0 TB |
 
-**Arrowhead check** (R $40M, Oil, Edmonton: Industry track 12 is largest but Oil is Extraction, resource tag Oil): location +3; labor_value $500,000; first pass PC bonus +2. Gross assets `40 × 2.5 × 100 ÷ 105 ≈ $95.2M`; 190 labor units; 48 productivity stations (PC 48, +2); 1 enterprise station; held structured data about 8.6 TB at start (1% free R&D, $0.4M), rising toward about 20 TB (2%) as its one station runs at capacity; about 141 idle (decay 0.3). Revenue $40M at M 1.0; EBIT before R&D about $11.2M, unchanged by asset decay (batch 145); holding its assets flat costs about $5.7M a year in replacement (6% of $95.2M).
+**Arrowhead check** (R $40M, Oil, Edmonton), at the MVP defaults (batch 148): location 0 (the defaults have no fit or resource tags); labor_value $100,000; first pass PC bonus +3 (400 labor units, 100 stations), second pass +2. Gross assets `40 × 1.0 × 100 ÷ 102 ≈ $39.2M`; 392 labor units; 98 productivity stations (PC 98, +2); 1 enterprise station; held structured data about 8.6 TB at start (1% free R&D, $0.4M), rising toward about 20 TB (2%) as its one station runs at capacity; about 293 idle (decay 0.3). Revenue $40M at M 1.0; EBIT before R&D about $2.35M (5% plus 0.45 × 2 ÷ 102 from the PC bonus); Terry's Greedy trait makes it a Cash cow, so its R&D target is 0.05 × 0.7 × 0.8 = 2.8%, less 1% free: paid R&D about $0.7M and EBIT after R&D about $1.6M (4.1%); holding its assets flat costs about $3.1M a year in replacement (8% of $39.2M). Its batch 145 figures at the 10.3 Oil values (location +3, $95.2M of assets, EBIT before R&D $11.2M) return with the per-industry rework (11.2).
 
 ### 7.2 Industry fringe pools (10.0.10)
 
@@ -786,14 +762,14 @@ The most important things the docs do not define well enough to build, each with
 |---|---|---|
 | G1 | **No province geometry.** The province files have no shapes or coordinates, so the map cannot be drawn | **Decided (Logan, batch 145):** province shapes are generated from real-world boundary data into a province-id bitmap and province-centroids.csv in tools/. Sources and method: [map-sources.md](map-sources.md) |
 | G2 | **Board seats need about 2,700 people.** characters.csv has 296; most companies need up to 5 seated executives for the management score | **Decided (Logan, batch 145):** simple characters (3.7.1) are generated as needed to fill the seats: name, age, six skills by company size, one or two role traits, always the default choice. Named controllers stay off boards in the MVP and only nudge the AI through traits |
-| G3 | **Depreciation vs margin** (C11). 10% a year on capital-heavy assets eats Oil, Utilities and Renewables margins whole | Depreciation now equals asset decay, 5 to 10% by industry (Logan, batch 145); it is part of the fixed cost share, and margin_full_use is the margin before R&D (5.5 profit check) |
-| G4 | **Missing industry numbers**: Banking and Insurance capital ("uses deposits"), AI labs margin (-40% to +40%), per-industry R&D norms, "Positive" rate sensitivity | Banking capital 1.25, Insurance 0.60 (Logan's $1 and $0.50 base moved toward real capital ratios, batch 145, 2.2); AI labs margin 0%; the rd_norm table in 2.2; Positive treated as 0 until rates move |
-| G5 | **Corporate tax, sovereign rating and spread are not in countries.csv** (2.2.5 says the tax is there) | **Built (batch 147):** country-economy.csv (2.2): tax levels from 2.2.3 for the majors and Haven for the havens, rates at real 2020 values (havens 3%); ratings from real January 2020 ratings moved for the alternate history, since the 3.6.3 inputs are not in the data; spreads from the 3.6.2 table plus crisis premiums |
+| G3 | **Depreciation vs margin** (C11). 10% a year on capital-heavy assets eats Oil, Utilities and Renewables margins whole | Depreciation now equals asset decay, 5 to 10% by industry (Logan, batch 145); it is part of the fixed cost share, and margin_full_use is the margin before R&D (5.5 profit check). MVP: one decay rate, 8%, for all industries (batch 148) |
+| G4 | **Missing industry numbers**: Banking and Insurance capital ("uses deposits"), AI labs margin (-40% to +40%), per-industry R&D norms, "Positive" rate sensitivity | Banking capital 1.25, Insurance 0.60 (Logan's $1 and $0.50 base moved toward real capital ratios, batch 145, 11.2); AI labs margin 0%; the rd_norm table in 11.2; Positive treated as 0 until rates move. **Parked (Logan, batch 148):** the MVP uses the shared defaults (2.2); these values wait for the per-industry rework (11.2) |
+| G5 | **Corporate tax, sovereign rating and spread are not in countries.csv** (2.2.5 says the tax is there) | **Built (batch 147); decided (Logan, batch 148: 2a, 3a, 4a):** keep the real 2020 corporate tax rates, the wage index from wealth_index and the real January 2020 sovereign ratings moved for the alternate history. country-economy.csv (2.2): tax levels from 2.2.3 for the majors and Haven for the havens, rates at real 2020 values (havens 3%); ratings from real January 2020 ratings moved for the alternate history, since the 3.6.3 inputs are not in the data; spreads from the 3.6.2 table plus crisis premiums |
 | G6 | **Starting balance sheet and share count**: companies.csv has book equity but no cash, debt, asset book or shares | Asset book = 50% of gross; cash or line fills the gap to book equity; shares set so price opens at $25 at engine value |
 | G7 | **Distress without the default chain**: the MVP has no bonds, creditors or restructuring | **Decided (Logan, batch 145):** forced asset sales at the cycle sale factor; after 6 months or no assets, Bankrupt and frozen for 2 quarters with shareholders wiped; then removed from the game (5.12; timings T) |
 | G8 | **One unit per company, all at HQ**: companies.csv gives one industry and no asset spread, so diversified groups and multi-province spreads do not exist | **Decided (Logan, batch 145):** one business unit per company, at HQ, for the MVP. Post-MVP: business-units.csv (company, industry, share of revenue, province shares) so the map's industry layer shows real footprints |
 | G9 | **Batch 143 board-seat items.** The board meeting chain (21.4) and the labor seats of batch 142 left open: board size beyond 5 seats, charter minimums under 5 labor units, election vs controller appointment, investor and government seats, and starting data (1-corporate-core 1.8.1); the grading formula, performance score and firing threshold (21.4.1 to 21.4.3, 21.9 items 6 to 8) | **Decided (Logan, batch 146; batch 143 picks):** charter seats beyond the 5 labor seats are ordinary directors with no labor unit; the charter minimum of 5 applies only from 5 labor units; when a seat opens the controller appoints and the appointee stands at the next yearly meeting; VC, strategic-investor and government seats take the next labor seat as it opens, or sit beyond 5 if all are full (1-corporate-core 1.8.1); the 651 starting companies keep their generated starting data and new companies start empty (7.1). The MVP still has no elections, firing or board play (C14); the grading, performance score and firing values stay as in 21.4 (T, 21.9) |
-| G10 | **Thin margins after R&D at the norm.** margin_full_use minus rd_norm is negative for Consumer electronics (-2%), EVs (-6%), E-commerce (-1%) and AI labs (-15%), and about 0 for Autos, Aerospace and Robotics, so these start at or below break-even before interest. Older than batch 145; asset decay does not change EBIT | **Decided (Logan, batch 146):** intended. The four are cash-burning industries that live on investor money (10-industry-economy 10.3); their margins and rd_norm stay as they are. When runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the news phase; failures go down the bankruptcy path (6.6). Autos, Aerospace and Robotics are not cash-burning; check them in the M10 soak **(T)** |
+| G10 | **Thin margins after R&D at the norm.** margin_full_use minus rd_norm is negative for Consumer electronics (-2%), EVs (-6%), E-commerce (-1%) and AI labs (-15%), and about 0 for Autos, Aerospace and Robotics, so these start at or below break-even before interest. Older than batch 145; asset decay does not change EBIT | **Decided (Logan, batch 146):** intended. The four are cash-burning industries that live on investor money (10-industry-economy 10.3); their margins and rd_norm stay as they are. When runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the news phase; failures go down the bankruptcy path (6.6). Autos, Aerospace and Robotics are not cash-burning; check them in the M10 soak **(T)**. **Parked (Logan, batch 148):** with the shared defaults no industry is thin or cash-burning (2.2); the flags and the 6.6 rule return with the per-industry rework (11.2) |
 
 ### 11.1 Doc fixes needed (not made here)
 
@@ -808,3 +784,22 @@ Batch 145 made its own source edits: 1-corporate-core 1.1.0 (simple characters) 
 7. data/README.md: provinces' column is `chokepoint`, not `chokepoint_exposure`; 2.2.5 says countries.csv has corporate tax, it does not (G5).
 8. 10.0.4 and 10.10: say whether depreciation is inside the fixed cost share (C11).
 9. 10.0.3: say whether supply uses productivity or productivity + PC bonus (C12).
+10. 10.0.11.1: say that the barebones company's $100,000 of expenses include R&D at the norm (C18).
+
+### 11.2 Later: per-industry rework (Logan, batch 148)
+
+Logan: "we will rework them one by one once companies are known working." The MVP runs every industry on the shared defaults (2.2). These per-industry values are parked, not dropped; each industry is reworked one at a time after the default companies are shown working (M10 soak). The batch 147 values are in [10-industry-economy.md](../detailed/10-industry-economy.md) 10.3, 10.3.1 and 10.0.11.10 and in gen.py (`PER_INDUSTRY = True` rebuilds them).
+
+| Item | Parked values (batch 147 and earlier) |
+|---|---|
+| Margin and cost structure | margin_full_use, f and v per industry (10.3); AI labs "-40% to +40%" stored as 0 (G4) |
+| Capital per $1 | 0.1 (Asset management) to 4.0 (Renewables) (10.3); Banking 1.25 and Insurance 0.60 as regulatory capital (batch 145, below) |
+| Asset decay | 10%: AI labs, Cloud, Data centers, Software, SaaS, Social media, Ads, Consumer electronics, Gaming, Gambling, Semiconductors, E-commerce, Drones, Robotics. 8%: Telecom, Banking, Insurance, Asset management, Chemicals, Autos, EVs, Aerospace, Defense, Shipping, Logistics, Airlines, Construction, Retail, Fast food, Luxury, Pharma, Healthcare services, Professional services, Black market. 6%: Oil, Gas, Mining, Metals, Agriculture. 5%: Power utilities, Renewables, Real estate (Logan, batch 145) |
+| R&D norm | 15%: AI labs, Pharma, Semiconductors, Software. 12%: SaaS. 10%: Cloud, Social media, Gaming, Consumer electronics, Robotics, Drones, EVs, Aerospace, Defense. 6%: Ads, Data centers, Telecom, Autos, Chemicals, Gambling, E-commerce. 3%: Banking, Insurance, Asset management, Healthcare services, Professional services, Power utilities, Renewables, Metals, Mining, Agriculture, Shipping, Logistics, Airlines, Luxury, Real estate. 2%: Oil, Gas, Construction, Retail, Fast food, Black market **(T)**. When R&D comes back per industry, keep C18: margin_full_use is the margin before R&D |
+| Operations modifiers | labor_value, PC per station, TB per $1M and data decay base by industry (10.0.11.10) |
+| Cycle and rates | Cyclicality β 0.2 to 2.0 and rate sensitivity Low to Very high, "Positive" for Banking and Insurance (10.3) |
+| Earnings multiple | M_sector by valuation group (3.3.2); Black market valued with Professional services |
+| Fit and resource tags | Commerce, Industry or Extraction and the matching resource tags (10.3.1), which give the location bonus (5.4) |
+| Cash-burning flags | Consumer electronics, EVs, E-commerce and AI labs (Logan, batch 146); the 6.6 raise rule is kept for them |
+| Bank and insurer capital | **Logan, batch 145 (T).** A bank's or insurer's business assets are its regulatory capital; deposits and float fund the loans and claims off the game's books (3.17). Banking: capital about 10 to 15% of risk-weighted assets (Basel III about 10.5% with the buffer), revenue about 5% of total assets, risk-weighted assets about 55% of total assets, so about $1.30 of capital per $1 of revenue: 1.25 (base 1.0). Insurance: required capital about 30 to 40% of premiums at about 170% coverage, $0.55 to $0.65 per $1 of premiums: 0.60 (base 0.5). Asset decay 8% stands for loan losses and claims run-off |
+| Oil and gas indices | Margins at oil and gas index 100 (10.6) |

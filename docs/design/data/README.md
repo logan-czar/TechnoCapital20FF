@@ -130,7 +130,7 @@ Batch 147 (Logan): built industries, country-economy and key-cities data, the th
 
 ### industries.csv
 
-42 rows, one per industry of 10-industry-economy 10.3. Values copy 10.3, 10.3.1, 10.0.11.10, the mvp-spec 2.2 R&D norm and asset decay tables and the 3-markets 3.3.2 sector table.
+42 rows, one per industry of 10-industry-economy 10.3. **MVP defaults (Logan, batch 148):** every industry uses the barebones company's parameters (capital 1.0, asset decay 0.08, rd_norm 0.05, margin_full_use 0.05 so revenue equals expenses with R&D at the norm, f 0.45, cycle_beta 1, rate_sensitivity 1, labor_value 100,000, 1 TB per $1M, data decay 0.02, earnings multiple 17, valuation_group Default, no fit or resource tags, cash_burning N). Only id, name, sector, world size, trend, asset label and notes differ. The meanings below are the batch 147 columns; the per-industry values are parked for the rework (mvp-spec 11.2) and gen.py rebuilds them with `PER_INDUSTRY = True`.
 
 | Column | Meaning |
 |---|---|
@@ -160,7 +160,7 @@ Batch 147 (Logan): built industries, country-economy and key-cities data, the th
 | earnings_multiple | M_sector P/E of the valuation group (3.3.2) |
 | notes | Where a 10.3 cell was not a single number and what was stored |
 
-Checks (validate.py, a normal company is the industry's median named company with the mvp-spec 7.1 loadout): every non-cash-burning industry earns above 0 after R&D at the norm except Autos, Aerospace and Robotics, which sit at exactly 0% and earn 3 to 5% once free R&D from their held data replaces paid R&D; Oil earns 25% before R&D and 23% after. Named companies hold from 0.02% (Black market) to 80% (Social media) of world demand, median 34%; the fringe pool is the rest.
+Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a normal company breaks even at the norm in every industry; at load 619 of the 651 companies earn above 0 after R&D (median 6.1%), from the PC bonus and free R&D only, and the 32 loss-makers are small companies whose controller sets R&D above the norm. Named companies hold from 0.02% (Black market) to 80% (Social media) of world demand, median 34%; the fringe pool is the rest.
 
 ### country-economy.csv
 

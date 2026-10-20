@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the three MVP design data tables (Logan, batch 147).
+"""Build the three MVP design data tables (Logan, batch 147; industries on shared defaults, batch 148).
 
     python3 gen.py [design dir]
 
@@ -173,7 +173,61 @@ def fmt(x, nd=4):
     s = f'{x:.{nd}f}'.rstrip('0').rstrip('.')
     return s if s not in ('', '-0') else '0'
 
+# Logan, batch 148: "just make these like default companies for now we will rework them one by one once
+# companies are known working. I want all industries to be like the defaults."
+# Every industry uses the barebones company's parameters (10-industry-economy 10.0.11.1, 10.0.11.10 base case):
+# $1 of assets per $1 of revenue, labor_value $100,000, 1 TB per $1M, 8% asset decay, and revenue equal to
+# expenses at productivity 100 and M 1.0 with R&D at the norm counted in the expenses (margin before R&D =
+# rd_norm). Industries keep only name, sector (a label), world size, trend and asset label. The per-industry
+# tables above are parked for the per-industry rework (mvp-spec 11.2); set PER_INDUSTRY = True to use them again.
+PER_INDUSTRY = False
+DEFAULT = {
+    'capital_per_dollar': 1.0,   # barebones: one $100,000 asset makes $100,000 a year
+    'asset_decay': 0.08,         # barebones: 8% (10.0.11.1)
+    'rd_norm': 0.05,             # one R&D norm (T)
+    'fixed_cost_share': 0.45,    # median f of 10.3 (T); shared costs and depreciation sit inside it (5.5)
+    'cycle_beta': 1.0,           # moves with the economy (A)
+    'rate_sensitivity': 1,       # Medium; rates are fixed at neutral in the MVP, so no effect (A)
+    'earnings_multiple': 17,     # median M_sector of the 42 industries in 3.3.2 (T)
+    'labor_value_usd': 100000, 'pc_modifier': 1.0, 'data_tb_per_musd': 1, 'data_decay_base': 0.02,
+}
+DEFAULT['margin_full_use'] = DEFAULT['rd_norm']  # break-even after R&D at the norm, as the barebones company
+TREND_NOTE = {
+    'Semiconductors': 'Trend +5% plus the AI boom (10.6); the boom is not modelled in the MVP, so 0.05 (A)',
+    'AI labs': 'Trend "Boom-driven" stored as 0.30 (T)',
+    'Oil': 'Trend 0%: stagnant (Logan, batch 86)',
+    'Defense': 'Trend +4% is war-driven in 10.3; flat 0.04 in the MVP (A)',
+}
+
 def build_industries():
+    if not PER_INDUSTRY:
+        return build_default_industries()
+    return build_tuned_industries()
+
+def build_default_industries():
+    d = DEFAULT
+    rows = []
+    for name, sector, size, trend, *_ in IND:
+        notes = ['MVP defaults (Logan, batch 148)']
+        if name in TREND_NOTE:
+            notes.append(TREND_NOTE[name])
+        rows.append({
+            'id': slug(name), 'name': name, 'sector': sector, 'valuation_group': 'Default',
+            'world_size_2020_usd_bn': fmt(size), 'trend_growth': fmt(trend), 'cycle_beta': fmt(d['cycle_beta']),
+            'rate_sensitivity': d['rate_sensitivity'], 'margin_full_use': fmt(d['margin_full_use']),
+            'fixed_cost_share': fmt(d['fixed_cost_share']),
+            'variable_cost_share': fmt(1 - d['margin_full_use'] - d['fixed_cost_share']),
+            'capital_per_dollar': fmt(d['capital_per_dollar']), 'asset_turnover': fmt(1 / d['capital_per_dollar']),
+            'asset_decay': fmt(d['asset_decay']), 'rd_norm': fmt(d['rd_norm']),
+            'labor_value_usd': d['labor_value_usd'], 'pc_modifier': fmt(d['pc_modifier']),
+            'data_tb_per_musd': d['data_tb_per_musd'], 'data_decay_base': fmt(d['data_decay_base']),
+            'fit': '', 'resource_tags': '', 'asset_label': LABEL[name], 'cash_burning': 'N',
+            'earnings_multiple': d['earnings_multiple'], 'notes': '; '.join(notes),
+        })
+    return rows
+
+def build_tuned_industries():
+    """The batch 147 per-industry table, parked for the per-industry rework (batch 148)."""
     rows = []
     for name, sector, size, trend, beta, rs, m, f, cap, note in IND:
         lv, pcm, tb, dd = MODS.get(name, BASE_MOD)
