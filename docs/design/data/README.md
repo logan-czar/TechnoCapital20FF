@@ -124,7 +124,9 @@ The starting characters and companies (Logan, batch 136; rules in [7-starting-wo
 | notes | Canon links and assumptions |
 
 
-## MVP data tables: industries.csv, country-economy.csv, key-cities.csv (batch 147, 2026-10-20)
+## MVP data tables: industries.csv, country-economy.csv, key-cities.csv (batch 147, 2026-10-20), financial-zones.csv (batch 150)
+
+Batch 150 (Logan): global business cycle, financial zones, mean-reverting industry growth. industries.csv gains `volatility` (0.01 a quarter for all, T); country-economy.csv's cycle_group and cycle_phase_start are replaced by `financial_zone`; new financial-zones.csv (8 rows). validate.py checks every zone exists, prints the GDP-weighted zone intensity (1.10) and runs a seeded 40-quarter growth check (mvp-spec 5.1).
 
 Batch 147 (Logan): built industries, country-economy and key-cities data, the three new tables of [../mvp/mvp-spec.md](../mvp/mvp-spec.md) 2.2. Made by a reproducible generator, `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), which then runs `validate.py`: industry names match companies.csv, every iso3 is in countries.csv, every key city province id is in the province files, every industry's named revenue is below its world size, and every industry's fixed cost rate is positive. Values marked (A) are assumptions and (T) tuning values; each row's notes column says what was assumed for it.
 
@@ -139,8 +141,9 @@ Batch 147 (Logan): built industries, country-economy and key-cities data, the th
 | sector | Tech, Finance, Energy, Industry, Consumer, Health or Services (10.3) |
 | valuation_group | Row of the 3.3.2 sector table. Black market has no row and uses Professional services (A) |
 | world_size_2020_usd_bn | World demand in 2020, $ billions (10.3) |
-| trend_growth | Yearly demand trend (10.3). AI labs "Boom-driven" is 0.30 (T); Semiconductors 0.05 without the AI boom (A) |
-| cycle_beta | Cyclicality β (10.3) |
+| trend_growth | Long-term yearly demand growth (10.3); quarterly growth draws revert to it (batch 150, mvp-spec 5.1). AI labs "Boom-driven" is 0.30 (T); Semiconductors 0.05 without the AI boom (A) |
+| cycle_beta | Cyclicality β (10.3); multiplies the cycle term of the quarterly growth draw (mvp-spec 5.1); 1 for all in the MVP |
+| volatility | Standard deviation of the quarterly growth shock, per quarter (Logan, batch 150; mvp-spec 5.1); 0.01 for all in the MVP (T) |
 | rate_sensitivity | 0 Low, 1 Medium, 2 High, 3 Very high; "Positive" (Banking, Insurance) is 0 (A) |
 | margin_full_use | Margin before R&D at productivity 100 and M 1.0 (10.3). AI labs "-40% to +40%" is 0.00 (T); Oil and Gas at index 100 |
 | fixed_cost_share | f (10.3). Depreciation and shared costs sit inside it (mvp-spec 5.5) |
@@ -174,9 +177,21 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 | corp_tax_rate | Rate charged in the MVP: real 2020 statutory rate, national plus typical sub-national, from the Tax Foundation and KPMG 2020 tables entered by hand (T). Havens 0.03 (E2 Haven rate); zero-tax countries floored at 0.03 (A); 10 countries with no reliable figure use 0.21 (A) |
 | sovereign_rating | 3.6.2 scale. Real January 2020 ratings moved for the alternate history (euro crisis, Greece's default, Russia's sanctions, a stronger US Middle East); unrated countries by wealth index, or CCC if collapsed (A) |
 | country_spread_bps | Spread over the 3% world base rate: the 3.6.2 sovereign spread for the rating, notches interpolated, plus a 50 to 200 bps crisis premium for 8 countries in the euro or debt crisis (T). US 0 |
-| cycle_group | EA for the 19 euro-area members; a dependent territory takes its sovereign's group (A); else its own iso3. Latin America keeps national cycles |
-| cycle_phase_start | Starting phase of the group: EA and other euro users Contraction; the rest of Europe's EU and EFTA members and the UK Recovery; a few crisis countries set by hand; else Expansion (A) |
+| financial_zone | Zone id in financial-zones.csv (Logan, batch 150). By superregion with exceptions (A): euro-area members and other euro users EA; Puerto Rico and the dollar offshore centers US; Mexico LAT; China and Hong Kong CN; developed East Asia, Australia, New Zealand and the Pacific islands EAS; Russia, Central Asia, South Asia and the rest of East Asia EMA. Replaces cycle_group and cycle_phase_start, since there are no national cycles |
 | notes | Sources and assumptions per row |
+
+### financial-zones.csv
+
+8 rows (Logan, batch 150; mvp-spec 5.1, 2-map 2.18.2), written by gen.py from its ZONES table. A zone feels the global business cycle at its intensity: zone effect = intensity × g_t.
+
+| Column | Meaning |
+|---|---|
+| zone_id | US, EA, EU, CN, EAS, EMA, LAT, MEA |
+| name | US-led, Euro area, Other Europe, China, Other East Asia and Oceania, Emerging Asia, Latin America, Middle East and Africa |
+| intensity | How hard the zone feels the cycle (T): US 1.0, EA 1.2, EU 1.1, CN 0.9, EAS 1.1, EMA 1.3, LAT 1.4, MEA 1.3 |
+| countries | Member count, from country-economy.csv |
+| gdp_usd_bn, gdp_share | Zone GDP from countries.csv and its share of world GDP |
+| notes | Who is in it and why (A) |
 
 ### key-cities.csv
 

@@ -5,9 +5,51 @@
 
 Checks: row counts; industry names match companies.csv and the 42 of 10.3; every iso3 is in countries.csv;
 every key city province id exists in the province CSVs; the profit check for a normal company in each industry;
-named revenue plus the fringe pool equals world demand, with the named share. Returns 1 on any error.
+named revenue plus the fringe pool equals world demand, with the named share; every country's financial zone
+is in financial-zones.csv, with the GDP-weighted zone intensity Z; and a seeded 40-quarter run of the batch 150
+industry growth model (mvp-spec 5.1), which prints how far each industry's average growth sits from its
+long-term rate. Returns 1 on any error.
 """
-import csv, glob, math, os, statistics, sys
+import csv, glob, math, os, random, statistics, sys
+
+# Batch 150 growth model (mvp-spec 5.1), all T: phase -> (g range a year, length range in quarters, next phase)
+PHI = 0.5
+PHASES = {'Expansion': ((0.0, 0.02), (12, 28), 'Overheating'),
+          'Overheating': ((0.02, 0.04), (2, 6), 'Contraction'),
+          'Contraction': ((-0.06, -0.03), (2, 8), 'Recovery'),
+          'Recovery': ((-0.02, 0.01), (4, 10), 'Expansion')}
+
+def cycle_k(lt, g):
+    """Asymmetric cycle sensitivity (5.1): high long-term growth amplifies upswings and damps downswings."""
+    if g >= 0:
+        return min(2.5, max(0.5, 1 + 5 * (lt - 0.04)))
+    return min(1.5, max(0.25, 1 - 2.5 * (lt - 0.04)))
+
+def growth_run(inds, z_avg, seed, quarters=40):
+    """Seeded run of q_growth for every industry; returns average annual growth and the phase path."""
+    rng = random.Random(seed)
+    phase = 'Expansion'
+    g = rng.uniform(*PHASES[phase][0])
+    left = rng.randint(*PHASES[phase][1])
+    prev = {r['name']: float(r['trend_growth']) / 4 for r in inds}
+    total = dict.fromkeys(prev, 0.0)
+    path = []
+    for q in range(quarters):
+        if q > 0:
+            left -= 1
+            if left <= 0:
+                phase = PHASES[phase][2]
+                g = rng.uniform(*PHASES[phase][0])
+                left = rng.randint(*PHASES[phase][1])
+        path.append((phase, g))
+        for r in inds:
+            n, lt = r['name'], float(r['trend_growth'])
+            noise = max(-3.0, min(3.0, rng.gauss(0, 1)))
+            cycle = (1 - PHI) * float(r['cycle_beta']) * cycle_k(lt, g) * z_avg * g / 4
+            qg = max(-0.25, lt / 4 + PHI * (prev[n] - lt / 4) + cycle + float(r['volatility']) * noise)
+            prev[n] = qg
+            total[n] += qg
+    return {n: 4 * t / quarters for n, t in total.items()}, path
 
 def load(path):
     return list(csv.DictReader(open(path, encoding='utf-8')))
@@ -109,10 +151,20 @@ def run(data):
     ce_iso = [r['iso3'] for r in ce]
     if set(ce_iso) != countries or len(ce_iso) != len(set(ce_iso)):
         errors.append(f'country-economy iso3 mismatch: {sorted(set(ce_iso) ^ countries)}')
+    zones = load(os.path.join(data, 'financial-zones.csv'))
+    zone_ids = {z['zone_id'] for z in zones}
     for r in ce:
-        g = r['cycle_group']
-        if g != 'EA' and g not in countries:
-            errors.append(f'{r["iso3"]}: unknown cycle_group {g}')
+        if r['financial_zone'] not in zone_ids:
+            errors.append(f'{r["iso3"]}: unknown financial_zone {r["financial_zone"]}')
+    for z in zones:
+        if float(z['intensity']) <= 0:
+            errors.append(f'{z["zone_id"]}: intensity must be above 0')
+    gdp = {r['iso3']: float(r['gdp_usd_bn']) for r in load(os.path.join(data, 'countries.csv'))}
+    inten = {z['zone_id']: float(z['intensity']) for z in zones}
+    z_avg = sum(gdp[r['iso3']] * inten[r['financial_zone']] for r in ce) / sum(gdp[r['iso3']] for r in ce)
+    for r in inds:
+        if not 0 <= float(r['volatility']) <= 0.10:
+            errors.append(f'{r["name"]}: volatility out of 0 to 10% a quarter')
     for r in kc:
         if r['country'] not in countries:
             errors.append(f'{r["city"]}: unknown country {r["country"]}')
@@ -185,7 +237,26 @@ def run(data):
           f'of {len(cos)} start above the decay threshold')
     if bb <= 0:
         errors.append(f'barebones fixed_cost_rate {bb:.3f}')
-    print(f'Rows: industries {len(inds)}, country-economy {len(ce)}, key-cities {len(kc)}')
+    # batch 150: financial zones and the industry growth model (mvp-spec 5.1)
+    print('\nFinancial zones (batch 150): ' + ', '.join(f'{z["zone_id"]} {z["intensity"]} '
+          f'({100 * float(z["gdp_share"]):.0f}% of GDP)' for z in zones) + f'; GDP-weighted intensity Z = {z_avg:.3f}')
+    avg, path = growth_run(inds, z_avg, seed=150)
+    gaps = sorted((avg[r['name']] - float(r['trend_growth']), r['name']) for r in inds)
+    print(f'Growth check, seed 150, 40 quarters: average growth minus long-term rate, mean '
+          f'{100 * statistics.mean(x for x, _ in gaps):+.2f} pp, sd {100 * statistics.pstdev(x for x, _ in gaps):.2f} pp, '
+          f'from {100 * gaps[0][0]:+.2f} pp ({gaps[0][1]}) to {100 * gaps[-1][0]:+.2f} pp ({gaps[-1][1]})')
+    seen = []
+    for p, g in path:
+        if not seen or seen[-1][0] != p:
+            seen.append([p, g, 0])
+        seen[-1][2] += 1
+    print('  cycle path: ' + ', '.join(f'{p} {100 * g:+.1f}% x{n}q' for p, g, n in seen))
+    for name in ('Retail', 'Software', 'AI labs', 'Oil'):
+        lt = float(next(r for r in inds if r['name'] == name)['trend_growth'])
+        print(f'  {name}: long-term {100 * lt:.1f}%, 40-quarter average {100 * avg[name]:.2f}%')
+    if max(abs(x) for x, _ in gaps) > 0.06:
+        errors.append('growth check: an industry averages more than 6 pp from its long-term rate')
+    print(f'Rows: industries {len(inds)}, country-economy {len(ce)}, key-cities {len(kc)}, zones {len(zones)}')
     for e in errors:
         print('ERROR', e)
     print('OK' if not errors else f'{len(errors)} errors')

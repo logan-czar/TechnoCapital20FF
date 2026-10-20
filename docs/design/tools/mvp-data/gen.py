@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Build the three MVP design data tables (Logan, batch 147; industries on shared defaults, batch 148).
+"""Build the MVP design data tables (Logan, batch 147; industries on shared defaults, batch 148; zones, batch 150).
 
     python3 gen.py [design dir]
 
 Writes into <design>/data/:
   industries.csv        42 rows  (mvp-spec 2.2; 10-industry-economy 10.3, 10.3.1, 10.0.11.10; 3-markets 3.3.2)
-  country-economy.csv   210 rows (mvp-spec 2.2; 2-map 2.2.3, 2.2.5, 2.18.1; 3-markets 3.6.2, 3.6.5; 4-politics E2)
+  country-economy.csv   210 rows (mvp-spec 2.2; 2-map 2.2.3, 2.2.5, 2.18.2; 3-markets 3.6.2, 3.6.5; 4-politics E2)
+  financial-zones.csv     8 rows (mvp-spec 2.2, 5.1; 2-map 2.18.2; Logan, batch 150)
   key-cities.csv        80 rows  (2-map 2.3.3, 2.3.4, 2.3.5, parsed from the markdown)
 
 Plain Python 3, no packages, no randomness: the same inputs always give the same files.
@@ -184,6 +185,11 @@ def fmt(x, nd=4):
 # industry, on the part of a unit's gross assets above $10M only (marginal, A): $50M decays $400k a year, and a
 # unit with $10M or less (the $100,000 barebones company) has none. The threshold is a column so the rework can
 # change it per industry.
+# Logan, batch 150: "Industries have growth rates that are long term and stable, their quarterly growth rate will go
+# up and down based on the industries volatility, the overall business cycle, but still average toward the long
+# term rate." trend_growth is the long-term rate; volatility is the sd of the quarterly growth shock (mvp-spec 5.1),
+# one value for all industries in the MVP (T).
+VOLATILITY = 0.01
 DECAY_THRESHOLD_USD = 10_000_000
 PER_INDUSTRY = False
 DEFAULT = {
@@ -193,6 +199,7 @@ DEFAULT = {
     'rd_norm': 0.05,             # one R&D norm (T)
     'fixed_cost_share': 0.45,    # median f of 10.3 (T); shared costs and depreciation sit inside it (5.5)
     'cycle_beta': 1.0,           # moves with the economy (A)
+    'volatility': VOLATILITY,    # sd of the quarterly growth shock, same for all (batch 150, T)
     'rate_sensitivity': 1,       # Medium; rates are fixed at neutral in the MVP, so no effect (A)
     'earnings_multiple': 17,     # median M_sector of the 42 industries in 3.3.2 (T)
     'labor_value_usd': 100000, 'pc_modifier': 1.0, 'data_tb_per_musd': 1, 'data_decay_base': 0.02,
@@ -220,6 +227,7 @@ def build_default_industries():
         rows.append({
             'id': slug(name), 'name': name, 'sector': sector, 'valuation_group': 'Default',
             'world_size_2020_usd_bn': fmt(size), 'trend_growth': fmt(trend), 'cycle_beta': fmt(d['cycle_beta']),
+            'volatility': fmt(d['volatility']),
             'rate_sensitivity': d['rate_sensitivity'], 'margin_full_use': fmt(d['margin_full_use']),
             'fixed_cost_share': fmt(d['fixed_cost_share']),
             'variable_cost_share': fmt(1 - d['margin_full_use'] - d['fixed_cost_share']),
@@ -247,6 +255,7 @@ def build_tuned_industries():
         rows.append({
             'id': slug(name), 'name': name, 'sector': sector, 'valuation_group': vg,
             'world_size_2020_usd_bn': fmt(size), 'trend_growth': fmt(trend), 'cycle_beta': fmt(beta),
+            'volatility': fmt(VOLATILITY),
             'rate_sensitivity': RATE_SENS[rs], 'margin_full_use': fmt(m), 'fixed_cost_share': fmt(f),
             'variable_cost_share': fmt(1 - m - f), 'capital_per_dollar': fmt(cap), 'asset_turnover': fmt(1 / cap),
             'asset_decay': fmt(DECAY[name]), 'asset_decay_threshold_usd': DECAY_THRESHOLD_USD,
@@ -353,19 +362,54 @@ RATING_NOTE = {
 EURO_AREA = {'AUT', 'BEL', 'CYP', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'IRL', 'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD',
              'PRT', 'SVK', 'SVN', 'ESP'}
 EURO_USERS = {'MNE', 'XKX', 'AND', 'MCO', 'SMR', 'VAT'}
-NON_EURO_EU = {'BGR', 'HRV', 'CZE', 'DNK', 'HUN', 'POL', 'ROU', 'SWE'}
-# Territories that share their sovereign's cycle (A); SPM is French, so it joins the euro area group
-CYCLE_PARENT = {'PRI': 'USA', 'GRL': 'DNK', 'FRO': 'DNK', 'SPM': 'EA', 'JEY': 'GBR', 'GGY': 'GBR', 'IMN': 'GBR',
-                'GIB': 'GBR'}
-# Starting phases set by hand (A); everything else starts in Expansion
-PHASE = {}
-for c in EURO_USERS:
-    PHASE[c] = 'Contraction'
-for c in NON_EURO_EU | {'GBR', 'CHE', 'NOR', 'ISL', 'LIE'}:
-    PHASE[c] = 'Recovery'
-PHASE.update({'ARG': 'Contraction', 'VEN': 'Contraction', 'LBN': 'Contraction', 'IRN': 'Contraction',
-              'ZWE': 'Contraction', 'TUR': 'Recovery'})
-PHASE_NOTE = {'Contraction': 'in recession at start', 'Recovery': 'recovering at start'}
+# Logan, batch 150: "Global business cycle. Intensity is felt differently by different financial zones."
+# One global cycle (mvp-spec 5.1, 2-map 2.18.1) replaces the national cycles; each country sits in one of 8
+# financial zones (A), which feels the cycle at its intensity (T): zone effect = intensity x g_t.
+ZONES = [
+    ('US', 'US-led', 1.0, 'United States, Canada, Puerto Rico and the dollar offshore centers (A); the reference zone'),
+    ('EA', 'Euro area', 1.2, '19 euro-area members, the 6 other euro users and Saint Pierre and Miquelon; '
+                             'the euro crisis makes it swing harder (A)'),
+    ('EU', 'Other Europe', 1.1, 'UK, Switzerland, the Nordics outside the euro, non-euro EU, the Balkans, '
+                                'Ukraine, Belarus, Moldova, Turkey and the crown dependencies (A)'),
+    ('CN', 'China', 0.9, 'China and Hong Kong; state-steered credit damps the cycle (A)'),
+    ('EAS', 'Other East Asia and Oceania', 1.1, 'Japan, Korea, Taiwan, Singapore, Australia, New Zealand and '
+                                               'the Pacific islands; export-led (A)'),
+    ('EMA', 'Emerging Asia', 1.3, 'Southeast Asia outside Singapore, Mongolia, North Korea, South Asia, Russia, '
+                                  'the Caucasus and Central Asia (A)'),
+    ('LAT', 'Latin America', 1.4, 'Mexico, Central and South America and the Caribbean outside the dollar '
+                                  'offshore centers (A)'),
+    ('MEA', 'Middle East and Africa', 1.3, 'Middle East and North Africa and Sub-Saharan Africa (A)'),
+]
+ZONE_BY_SUPER = {'North America': 'US', 'Latin America': 'LAT', 'Europe': 'EU', 'Russia and Central Asia': 'EMA',
+                 'Middle East and North Africa': 'MEA', 'Sub-Saharan Africa': 'MEA', 'South Asia': 'EMA',
+                 'East Asia and Oceania': 'EMA'}
+ZONE_EXCEPT = {'MEX': 'LAT', 'GRL': 'EU', 'SPM': 'EA', 'PRI': 'US', 'BHS': 'US', 'CYM': 'US', 'VGB': 'US',
+               'CHN': 'CN', 'HKG': 'CN', 'JPN': 'EAS', 'KOR': 'EAS', 'TWN': 'EAS', 'SGP': 'EAS', 'AUS': 'EAS',
+               'NZL': 'EAS', 'PNG': 'EAS', 'FJI': 'EAS', 'SLB': 'EAS', 'VUT': 'EAS', 'WSM': 'EAS', 'TON': 'EAS',
+               'KIR': 'EAS', 'FSM': 'EAS', 'MHL': 'EAS', 'PLW': 'EAS', 'NRU': 'EAS', 'TUV': 'EAS'}
+ZONE_NOTE = {'MEX': 'Mexico in Latin America, not US-led (A)', 'GRL': 'Greenland follows Denmark (A)',
+             'PRI': 'US territory: US-led (A)', 'BHS': 'dollar offshore center: US-led (A)',
+             'CYM': 'dollar offshore center: US-led (A)', 'VGB': 'dollar offshore center: US-led (A)',
+             'SPM': 'French territory: euro area (A)', 'TUR': 'Turkey in Other Europe (A)',
+             'RUS': 'Russia in Emerging Asia (A)'}
+
+def financial_zone(c):
+    iso = c['iso3']
+    if iso in EURO_AREA or iso in EURO_USERS:
+        return 'EA'
+    return ZONE_EXCEPT.get(iso) or ZONE_BY_SUPER[c['superregion']]
+
+def build_zones(countries, ce_rows):
+    gdp = {c['iso3']: float(c['gdp_usd_bn']) for c in countries}
+    total = sum(gdp.values())
+    rows = []
+    for zid, name, inten, note in ZONES:
+        members = [r['iso3'] for r in ce_rows if r['financial_zone'] == zid]
+        g = sum(gdp[i] for i in members)
+        rows.append({'zone_id': zid, 'name': name, 'intensity': fmt(inten), 'countries': len(members),
+                     'gdp_usd_bn': round(g), 'gdp_share': fmt(g / total), 'notes': note})
+    return rows
+
 # 3.6.5 crisis premium while in a debt crisis or the default chain, as the calibration offset (A, T)
 OFFSET = {'GRC': 200, 'ITA': 50, 'ESP': 50, 'PRT': 50, 'CYP': 50, 'ARG': 200, 'VEN': 200, 'LBN': 200}
 # 3.6.2 sovereign spreads by band (bps)
@@ -433,24 +477,14 @@ def build_countries(countries):
         if off:
             notes.append(f'crisis premium +{off} bps (3.6.5)')
         spread = 0 if iso == 'USA' else round(sov_spread(rating) + off)
-        group = 'EA' if iso in EURO_AREA else CYCLE_PARENT.get(iso, iso)
-        if iso in CYCLE_PARENT:
-            notes.append(f'cycle shared with {group} (A)')
-        if group == 'EA':
-            phase = 'Contraction'
-            if iso in EURO_AREA:
-                notes.append('euro area: shares the EA cycle, in the euro crisis recession (2.18.1)')
-        elif iso in CYCLE_PARENT:
-            phase = PHASE.get(group, 'Expansion')
-        else:
-            phase = PHASE.get(iso, 'Expansion')
-            if iso in EURO_USERS:
-                notes.append('uses the euro outside the euro area: own cycle, hit by the euro crisis (A)')
-            elif iso in PHASE:
-                notes.append(PHASE_NOTE[phase] + ' (A)')
+        zone = financial_zone(c)
+        if iso in ZONE_NOTE:
+            notes.append(ZONE_NOTE[iso])
+        elif zone == 'EA' and iso in EURO_USERS:
+            notes.append('uses the euro outside the euro area: euro area zone (A)')
         rows.append({'iso3': iso, 'corp_tax_level': level, 'corp_tax_rate': fmt(rate),
-                     'sovereign_rating': rating, 'country_spread_bps': spread, 'cycle_group': group,
-                     'cycle_phase_start': phase, 'notes': '; '.join(notes)})
+                     'sovereign_rating': rating, 'country_spread_bps': spread, 'financial_zone': zone,
+                     'notes': '; '.join(notes)})
     return rows
 
 # ---------------------------------------------------------------------------
@@ -575,7 +609,9 @@ def write(path, rows):
 def main():
     countries = list(csv.DictReader(open(os.path.join(DATA, 'countries.csv'), encoding='utf-8')))
     write(os.path.join(DATA, 'industries.csv'), build_industries())
-    write(os.path.join(DATA, 'country-economy.csv'), build_countries(countries))
+    ce_rows = build_countries(countries)
+    write(os.path.join(DATA, 'country-economy.csv'), ce_rows)
+    write(os.path.join(DATA, 'financial-zones.csv'), build_zones(countries, ce_rows))
     write(os.path.join(DATA, 'key-cities.csv'), build_key_cities())
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import validate

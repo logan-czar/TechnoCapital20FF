@@ -1,6 +1,6 @@
 # TechnoCapital20FF MVP spec: the map, the business system and a read-only economic sim
 
-_Status: v0.6 (2026-10-20). Batch 149 (Logan): asset decay 1% a year above $10M of assets. "Asset decay 1% a year, only kicks in after 10 million assets": business asset decay is 1% a year for all industries (MVP default), on the part of a unit's gross assets above $10M only (marginal, no cliff; **A**), so $50M of assets decays $400k a year and a unit with $10M or less, such as the $100,000 barebones company, has none; book depreciation still equals decay and growth spending replaces decay first; new column asset_decay_threshold_usd (2.2, 5.5, 5.10, 5A C11, 6.2, 7.1). The start profit picture is unchanged (619 of 651 profitable, median 6.1%), since depreciation sits inside the fixed cost share; fixed cash rises to fill it and replacement spending falls about tenfold (2.2 checks). Batch 148 (Logan): "just make these like default companies for now we will rework them one by one once companies are known working. I want all industries to be like the defaults": all 42 industries use the barebones company's parameters (10.0.11.1) for the MVP: $1 of assets per $1 of revenue, labor_value $100,000, 1 TB per $1M, one asset decay (8%), one R&D norm (5%), one fixed cost share, one earnings multiple, one cycle sensitivity, and revenue equal to expenses at productivity 100 and M 1.0 with R&D at the norm counted in the expenses; industries keep only name, sector label, world demand 2020, trend and asset label (2.2, 5.5, C18); the cash_burning flags are parked (all N) and the 6.6 raise rule waits for them; per-industry tuning moves to 11.2; real 2020 tax rates, the wage index from wealth_index and real January 2020 ratings moved for the alternate history are decided (2.2, G5). At start 619 of 651 companies earn above 0 after R&D, from the PC bonus and free R&D only (2.2 checks). Batch 147 (Logan): built industries, country-economy and key-cities data: the three 2.2 tables now exist in design/data/, made by a reproducible generator in [../tools/mvp-data/](../tools/mvp-data/gen.py) that validates ids and runs the profit and fringe checks; 2.2 lists their final columns (G5 built). Batch 146 (Logan): Consumer electronics, EVs, E-commerce and AI labs are cash-burning industries on purpose and live on investor money; when their runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the industry news phase, and failures go down the bankruptcy path (6.6, G10 decided); batch 143 board-seat picks decided: seats beyond 5 are ordinary directors, charter minimums apply from 5 labor units, the controller appoints and the seat stands at the next yearly meeting, investor and government seats take the next labor seat or sit beyond 5, and the 651 starting companies keep their generated starting data while new companies start empty (7.1, G9 decided). Batch 145 (Logan): province shapes are generated from real-world boundary data ([map-sources.md](map-sources.md), 2.2, G1); simple characters fill board seats (3.7.1, G2); business assets degrade by industry, book depreciation equals the loss, and growth plans buy replacement before growth (2.2, 5.5, 5.10, 6.2, 7.1); bank and insurer capital set at $1.25 and $0.60 per $1, mapped to real capital ratios (2.2, G4); bankrupt firms go through forced sales, a 2-quarter freeze and removal, shareholders wiped (5.12, G7); one business unit per company at HQ is decided (G8); batch 143 board-seat items listed as open (G9). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
+_Status: v0.7 (2026-10-20). Batch 150 (Logan): global business cycle, financial zones, mean-reverting industry growth. "Global business cycle. Intensity is felt differently by different financial zones. Industries do cycles just like the global cycle however they are offset by their industry growth rate." One global cycle (Expansion, Overheating, Contraction, Recovery, with a cycle value g_t) replaces the national cycles; 8 financial zones feel it at intensities 0.9 to 1.4 **(A, T)**, and world industry demand feels their GDP-weighted average, 1.10; each quarter every industry draws its growth around its long-term rate (trend_growth), mean-reverting, plus an asymmetric cycle term that lets high-growth industries grow more in upswings and cool off less in downturns, plus a volatility shock (new column, 1% a quarter for all **(T)**); Boom, Normal, Glut and Bust are now labels read from growth and the supply ratio, with no demand multipliers of their own; demand moves monthly by a third of the quarter's growth; new data/financial-zones.csv and country-economy financial_zone replace cycle_group and cycle_phase_start (1, 2.2, 3, 4.3, 5.1 to 5.3, 5.16, 5A C19 to C21, 6, 7.3, 8, 9.2, 10). Batch 149 (Logan): asset decay 1% a year above $10M of assets. "Asset decay 1% a year, only kicks in after 10 million assets": business asset decay is 1% a year for all industries (MVP default), on the part of a unit's gross assets above $10M only (marginal, no cliff; **A**), so $50M of assets decays $400k a year and a unit with $10M or less, such as the $100,000 barebones company, has none; book depreciation still equals decay and growth spending replaces decay first; new column asset_decay_threshold_usd (2.2, 5.5, 5.10, 5A C11, 6.2, 7.1). The start profit picture is unchanged (619 of 651 profitable, median 6.1%), since depreciation sits inside the fixed cost share; fixed cash rises to fill it and replacement spending falls about tenfold (2.2 checks). Batch 148 (Logan): "just make these like default companies for now we will rework them one by one once companies are known working. I want all industries to be like the defaults": all 42 industries use the barebones company's parameters (10.0.11.1) for the MVP: $1 of assets per $1 of revenue, labor_value $100,000, 1 TB per $1M, one asset decay (8%), one R&D norm (5%), one fixed cost share, one earnings multiple, one cycle sensitivity, and revenue equal to expenses at productivity 100 and M 1.0 with R&D at the norm counted in the expenses; industries keep only name, sector label, world demand 2020, trend and asset label (2.2, 5.5, C18); the cash_burning flags are parked (all N) and the 6.6 raise rule waits for them; per-industry tuning moves to 11.2; real 2020 tax rates, the wage index from wealth_index and real January 2020 ratings moved for the alternate history are decided (2.2, G5). At start 619 of 651 companies earn above 0 after R&D, from the PC bonus and free R&D only (2.2 checks). Batch 147 (Logan): built industries, country-economy and key-cities data: the three 2.2 tables now exist in design/data/, made by a reproducible generator in [../tools/mvp-data/](../tools/mvp-data/gen.py) that validates ids and runs the profit and fringe checks; 2.2 lists their final columns (G5 built). Batch 146 (Logan): Consumer electronics, EVs, E-commerce and AI labs are cash-burning industries on purpose and live on investor money; when their runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the industry news phase, and failures go down the bankruptcy path (6.6, G10 decided); batch 143 board-seat picks decided: seats beyond 5 are ordinary directors, charter minimums apply from 5 labor units, the controller appoints and the seat stands at the next yearly meeting, investor and government seats take the next labor seat or sit beyond 5, and the 651 starting companies keep their generated starting data while new companies start empty (7.1, G9 decided). Batch 145 (Logan): province shapes are generated from real-world boundary data ([map-sources.md](map-sources.md), 2.2, G1); simple characters fill board seats (3.7.1, G2); business assets degrade by industry, book depreciation equals the loss, and growth plans buy replacement before growth (2.2, 5.5, 5.10, 6.2, 7.1); bank and insurer capital set at $1.25 and $0.60 per $1, mapped to real capital ratios (2.2, G4); bankrupt firms go through forced sales, a 2-quarter freeze and removal, shareholders wiped (5.12, G7); one business unit per company at HQ is decided (G8); batch 143 board-seat items listed as open (G9). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
 
 **How to read the numbers.** **(A)** marks an assumption made for the MVP, including the coordinator's defaults. **(T)** marks a tuning value. Section refs like 10.0.4 point to the detailed files.
 
@@ -22,7 +22,7 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 | **Software** | Two fixed products: the general productivity software and the general enterprise software, both quality 50 **(A)** | Every other product, licences as a market, bloat, versions |
 | **Quarter** | The 21 cycle, simplified: release, price reaction, AI plan lock, locked quarter, recap week | Grades, firing votes, board displeasure, board day events, guidance rolls, result plot line chains |
 | **Finance** | Light statements, tax, credit line, credit rating, dividends by rule, fair value, simple share price; share issues by cash-burning industries (6.6) are parked while no industry is flagged (batch 148) | Trading, order flow, bonds, margin, short selling, IPOs, buybacks, rights issues, default chain |
-| **World** | Static country table; one world base rate (3%, batch 130); national business cycles; industry news cycles | Politics beyond the static table, media, gambling, vices, FX, the crash, history events |
+| **World** | Static country table; one world base rate (3%, batch 130); one global business cycle felt by 8 financial zones; quarterly industry growth draws with phase labels (batch 150) | Politics beyond the static table, media, gambling, vices, FX, the crash, history events |
 | **AI** | Each company sets its own quarterly plan (growth, R&D %, station split, data handling, credit line, dividend); cash-burning industries raise money when runway runs short (6.6, parked while no industry is flagged, batch 148) | Schemes, politics, takeovers, trading, media, anything outside its own company |
 
 **Information (A).** The observer is John Techno with his Pdoomberg subscription (7.3.0). Published figures (listed companies' statements, quotes, industry tables) are exact; private companies' figures show **?** (20.3.4). A debug toggle, **Omniscient**, shows every true value for testing and is off in release builds.
@@ -42,7 +42,7 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 
 ### 2.2 New MVP data tables (built, batch 147)
 
-Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), which writes the three files into design/data/ and runs validate.py: industry names match companies.csv, every iso3 is in countries.csv, every key city province id is in the province files, and the checks below. Column meanings and assumptions are also in [../data/README.md](../data/README.md).
+Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), which writes the three files and financial-zones.csv (batch 150) into design/data/ and runs validate.py: industry names match companies.csv, every iso3 is in countries.csv, every country's financial zone exists, every key city province id is in the province files, and the checks below, including the seeded 40-quarter growth check of 5.1. Column meanings and assumptions are also in [../data/README.md](../data/README.md).
 
 **industries.csv** (42 rows). **MVP defaults (Logan, batch 148):** "just make these like default companies for now we will rework them one by one once companies are known working. I want all industries to be like the defaults." Every industry uses the same parameters, those of the barebones company (10-industry-economy 10.0.11.1 and the 10.0.11.10 base case). An industry keeps only what makes it a distinct market: name, sector label, world demand 2020, trend growth and the flavor asset label. The columns stay as built in batch 147, so the engine and the rest of this spec read them unchanged; the per-industry values are parked for the rework (11.2), and gen.py keeps them behind a `PER_INDUSTRY` switch.
 
@@ -53,8 +53,9 @@ Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), w
 | sector | text | Per industry: Tech, Finance, Energy, Industry, Consumer, Health, Services (10.3). A label for screens; it also picks the Startup archetype (6.1) and the Tech CTO weight (5.7) |
 | valuation_group | text | Default (one multiple for all) |
 | world_size_2020_usd_bn | number | Per industry (10.3 world size) |
-| trend_growth | fraction | Per industry (10.3); "Boom-driven" AI labs uses 0.30 **(T)** |
-| cycle_beta | number | 1.0 for all: demand moves with the world cycle one for one **(A)** |
+| trend_growth | fraction | Per industry (10.3); "Boom-driven" AI labs uses 0.30 **(T)**. The **long-term growth rate** a year: quarterly growth draws revert to it (5.1, batch 150) |
+| cycle_beta | number | 1.0 for all: multiplies the cycle term of the quarterly growth draw (5.1) **(A)** |
+| volatility | fraction | 0.01 for all: the standard deviation of the quarterly growth shock, per quarter (Logan, batch 150; 5.1) **(T)**. New column |
 | rate_sensitivity | 0 to 3 | 1 for all **(A)**; no effect while the base rate sits at neutral (3.1) |
 | margin_full_use | fraction | 0.05 for all: the margin before R&D, equal to rd_norm, so revenue equals expenses with R&D at the norm (5.5, C18) |
 | fixed_cost_share | fraction | 0.45 for all (the median f of 10.3) **(T)** |
@@ -86,9 +87,10 @@ Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), w
 | corp_tax_rate | The rate the MVP charges (5.11): the real 2020 statutory rate, national plus typical sub-national (Tax Foundation and KPMG 2020 tables, entered by hand; worth a spot check). **Decided (Logan, batch 148, 2a):** keep the real 2020 rates. Havens (2.2.5) use the E2 Haven rate 0.03; zero-tax countries (UAE, Bahrain, Bahamas, Vanuatu, Vatican) are floored at 0.03; 10 countries with no reliable figure use the Moderate rate 0.21 **(A)**. Where a major's real rate sits nearer another band than its 2.2.3 level (US 25.8%, France 32%, Switzerland 21.1%...), the level is kept and the notes say so. Excess Profits is not used at start |
 | sovereign_rating | AAA to CC on the 3.6.2 scale: real January 2020 agency ratings moved for the alternate history (euro crisis, Greece's 2019 default, Russia's sanctions, a stronger US Middle East; notes say which); **decided (Logan, batch 148, 4a)**. The 3.6.3 points table needs debt, deficit, inflation and stability, which are not in the data, so it is not used at start **(A)**. Unrated countries: CCC if collapsed (HSS 35), else by wealth index (A 0.8+, BBB- 0.4+, BB- 0.2+, B+ 0.1+, else B-) **(A)** |
 | country_spread_bps | Fixed spread over the world base rate (3.6.5): the 3.6.2 sovereign spread for the rating (a plus or minus notch moves a third of the way to the next band) plus a crisis premium of 50 to 200 bps for Greece, Italy, Spain, Portugal, Cyprus, Argentina, Venezuela and Lebanon; US 0 **(T)** |
-| cycle_group | iso3, or EA for the 19 euro-area members, which share one cycle (2.18.1). Dependent territories share their sovereign's group: Puerto Rico USA; Greenland and the Faroes DNK; Jersey, Guernsey, the Isle of Man and Gibraltar GBR; Saint Pierre and Miquelon EA **(A)**. Euro users outside the euro area (Montenegro, Kosovo, Andorra, Monaco, San Marino, Vatican) and all of Latin America keep their own cycles |
-| cycle_phase_start | Expansion, Overheating, Contraction or Recovery. The EA group and the other euro users start in Contraction (the euro crisis, 2.18.1); the non-euro EU, the UK, Switzerland, Norway, Iceland and Liechtenstein start in Recovery; Argentina, Venezuela, Lebanon, Iran and Zimbabwe start in Contraction and Turkey in Recovery; everyone else in Expansion **(A)** |
+| financial_zone | One of the 8 zones of financial-zones.csv (Logan, batch 150; 5.1). Replaces cycle_group and cycle_phase_start, since national cycles are gone. By superregion, with exceptions **(A)**: the 19 euro-area members, the 6 other euro users and Saint Pierre and Miquelon are EA; Puerto Rico, the Bahamas, the Caymans and the British Virgin Islands join the US-led zone; Mexico is Latin America; China and Hong Kong are China; Japan, Korea, Taiwan, Singapore, Australia, New Zealand and the Pacific islands are Other East Asia and Oceania; the rest of East Asia, South Asia, Russia and Central Asia are Emerging Asia; Greenland follows Denmark into Other Europe |
 | notes | Where each value came from and what is assumed |
+
+**financial-zones.csv** (8 rows, new in batch 150; written by gen.py from its ZONES table). Columns: zone_id, name, intensity (how hard the zone feels the global cycle, 5.1, **T**), countries, gdp_usd_bn and gdp_share (from countries.csv), notes. The zones and intensities are listed in 5.1.
 
 Not duplicated from countries.csv: the **wage index** is countries.csv `wealth_index` (2.2.3 calls it the wage index; USA 1.00); **decided (Logan, batch 148, 3a)**. There is **no country productivity modifier**: the location bonus is per province (fit and resource tag, 5.4; 0 in the MVP while industries use the defaults), and city bonuses are the key-city perks below, not applied in the MVP **(A)**.
 
@@ -123,17 +125,19 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | speed | 0 to 5 | 0 paused; 1 to 5 as 9.1 |
 | base_rate | fraction | World base rate, 0.03 **(T)**, fixed in the MVP **(A)** |
 | neutral_rate | fraction | 0.03 **(T)** |
-| world_cycle_mod | fraction | GDP-weighted average of country demand modifiers (2.18.2) |
+| cycle_phase, cycle_quarters_left | enum, u32 | Global cycle phase and quarters left in it (5.1, batch 150) |
+| g_t | fraction | Global cycle value: the phase's push on demand growth, a year, for a zone of intensity 1.0 (5.1) |
+| zone_intensity_avg Z | fraction | GDP-weighted average zone intensity, 1.10 at the 2020 data; static in the MVP (5.1) |
 | quarter_phase | enum | Release, Reaction, Locked, PreQuarterEnd (21.1) |
-| rng_streams | seeds | One stream per system: cycle, news, prices, AI, gen (12.3) |
+| rng_streams | seeds | One stream per system: cycle, growth (the quarterly draws), prices, AI, gen (12.3) |
 
-### 3.2 Country (static except the cycle)
+### 3.2 Country (static)
 
 | Field | Meaning |
 |---|---|
 | iso3, name, superregion, gdp, population, wealth_index | From countries.csv |
 | corp_tax_rate, sovereign_rating, country_spread | From country-economy.csv |
-| cycle_phase, phase_months_left, demand_mod | National cycle (2.18.1); euro-area members read their group's values |
+| financial_zone | From country-economy.csv; the zone's intensity and effect (`intensity × g_t`) are read from the zone (5.1, batch 150). Countries have no cycle of their own |
 
 ### 3.3 Province (static)
 
@@ -150,12 +154,13 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | Field | Meaning |
 |---|---|
 | static row | All industries.csv columns |
-| base_demand | Trend-only yearly demand |
-| demand | Effective yearly demand after cycle, rates and news |
-| news_phase, news_months_left | Boom, Normal, Glut, Bust (10.0.6) |
+| trend_demand | Yearly demand on the long-term rate alone, for screens and the balance targets (5.1) |
+| demand_core, demand | Yearly demand moved by the quarterly growth draws; effective demand after the rate term (5.1) |
+| q_growth, prev_q_growth | This quarter's and last quarter's demand growth, per quarter (5.1, batch 150) |
+| phase_label | Boom, Normal, Glut or Bust, read from q_growth and S (5.1); a label, with no demand multiplier |
 | fringe_assets | Fringe pool business assets (10.0.10) |
 | supply, supply_ratio S, market_factor M | 10.0.3 |
-| published | Last month's demand, supply, S, M and phase, for screens |
+| published | Last month's demand, supply, S, M, q_growth and phase label, for screens |
 
 ### 3.5 Corporation
 
@@ -301,8 +306,8 @@ One tick is one hour (9.1). Jobs at 00:00 run in this order: hourly, daily, mont
 
 | Step | What runs | Section |
 |---|---|---|
-| 1 | Country cycles advance; world_cycle_mod | 5.1 |
-| 2 | Industry news phases advance; demand updated | 5.1, 5.2 |
+| 1 | **Quarterly draw**, on 1 Jan, Apr, Jul and Oct only: the global cycle advances one quarter (new phase and g_t when it expires), then every industry draws its q_growth for the new quarter (batch 150) | 5.1 |
+| 2 | Industry demand moves by a third of the quarter's growth; rate term; phase labels from q_growth and last month's S | 5.1 |
 | 3 | Fringe pools grow or shrink | 5.3 |
 | 4 | Labor units recounted; board seats opened or closed; stations assigned from the plan | 5.10 |
 | 5 | Productive compute and PC bonus | 5.8 |
@@ -330,6 +335,8 @@ The quarter starts at each release and ends at the next (21.1). Accounting quart
 | 4. Locked quarter | 9 Apr to 25 Jun | 9 Jul to 25 Sep | 9 Oct to 26 Dec | 9 Jan to 26 Mar | Plans fixed; projections shown as ranges |
 | 5. Pre-quarter-end week | 25 Jun 00:00 to 2 Jul 00:00 | 25 Sep to 2 Oct | 26 Dec to 2 Jan | 26 Mar to 2 Apr | Quarterly recap built and shown (Pause by default); no board day events **(A)** |
 
+The quarterly growth draw runs inside the monthly job at 00:00 on 1 January, April, July and October (4.3 step 1), before Close and compile, so each quarter's growth is known before its plan lock on the 9th **(A)**.
+
 The first quarter is special: the game starts 1 Jan 2020 00:00 with plans set at load (section 6). The 2 Jan 2020 release publishes a **synthetic Q4 2019** built from the starting run rate (revenue ÷ 4 and so on) **(A)**, and 1 January 2020 is a market holiday. The pre-quarter-end week starts 7 days before the next release: 26 March, 25 June, 25 September and 26 December (21.1).
 
 ### 4.5 Yearly (1 January 00:00, after the Q4 close)
@@ -344,36 +351,94 @@ The first quarter is special: the game starts 1 Jan 2020 00:00 with plans set at
 
 All yearly figures are booked monthly as ÷ 12 (10.0.11.1). Money is in USD.
 
-### 5.1 Demand (10.0.3, 10.3, 10.0.6, 2.18)
+### 5.1 Demand: global business cycle and industry growth (Logan, batch 150; 10.0.3, 10.0.6, 2.18)
 
-- **Base demand** grows monthly: `base_demand ×= (1 + trend_growth)^(1/12)`.
-- **Country cycle** (2.18.1): each cycle group sits in a phase with a demand modifier drawn uniformly in the phase range on entry: Expansion 0 to +3%, Overheating +3 to +5%, Contraction -3 to -8%, Recovery -1 to +2%. Phase lengths drawn uniformly: Expansion 36 to 96 months, Overheating 6 to 24, Contraction 6 to 18, Recovery 12 to 36. Order: Expansion, Overheating, Contraction, Recovery, Expansion **(A)**.
-- **World cycle modifier** `c = Σ (gdp × demand_mod) ÷ Σ gdp` (2.18.2).
-- **Effective demand**:
-  `demand = base_demand × (1 + β × (c − c0)) × (1 − s × (base_rate − neutral_rate)) × news_mult`
-  where c0 is c at load, so demand starts at the 2020 world size **(A)**; s is rate_sensitivity; news_mult is 1.15 in Boom, 0.85 in Bust, else 1 (10.0.6).
-- **Industry news phase** (10.0.6): each phase lasts 6 to 36 months by roll **(T)**. Every industry starts Normal with 6 to 36 months left **(A)**. On expiry the next phase is rolled **(T)**:
+Logan (batch 150): "Global business cycle. Intensity is felt differently by different financial zones. Industries do cycles just like the global cycle however they are offset by their industry growth rate. So will grow more and cool off less during these times. Industries have growth rates that are long term and stable, their quarterly growth rate with go up and down based on the industries volatility, the overall business cycle, but still average toward the long term rate."
 
-| From | Boom | Normal | Glut | Bust |
-|---|---|---|---|---|
-| Normal | 35% | 30% | 35% | 0% |
-| Boom | 0% | 40% | 60% | 0% |
-| Glut | 0% | 50% | 0% | 50% |
-| Bust | 30% | 70% | 0% | 0% |
+This replaces the national cycles (2.18.1) and the news-phase demand multipliers (10.0.6) of v0.6 (C19, C20).
 
-  If S is above 1.15 at the roll, Glut and Bust weights double; below 0.85, Boom doubles **(T)**.
+**Global business cycle.** One world cycle sits in one phase at a time. On entering a phase it draws the **cycle value g_t** (the phase's push on demand growth, a year, for a zone of intensity 1.0) and the phase length, both uniform in the ranges below **(T)**. Phases change only at quarter boundaries (4.3 step 1).
+
+| Phase | g_t a year | Length | Next |
+|---|---|---|---|
+| Expansion | 0 to +2% | 12 to 28 quarters | Overheating |
+| Overheating | +2% to +4% | 2 to 6 quarters | Contraction |
+| Contraction | −3% to −6% | 2 to 8 quarters | Recovery |
+| Recovery | −2% to +1% (growth back near trend) | 4 to 10 quarters | Expansion |
+
+An average cycle runs about 9 years and g_t averages about +0.2% a year over it, so the cycle adds almost no long-run growth. The game starts in Expansion (7.3).
+
+**Financial zones (A).** Each country sits in one financial zone (country-economy.csv financial_zone, data/financial-zones.csv), and a zone feels the cycle at its intensity: `zone_effect_z = intensity_z × g_t`. The old cycle groups (184 of them, mostly single countries) were too many to reuse, so the zones are new **(A)**; intensities are **(T)**.
+
+| Zone | Intensity | Share of 2020 GDP | Members |
+|---|---|---|---|
+| US-led | 1.0 | 30% | USA, Canada, Puerto Rico, Bermuda and the dollar offshore centers (Bahamas, Caymans, BVI) |
+| Euro area | 1.2 | 13% | The 19 members, the 6 other euro users, Saint Pierre and Miquelon; the euro crisis makes it swing harder |
+| Other Europe | 1.1 | 8% | UK, Switzerland, non-euro Nordics and EU, the Balkans, Ukraine, Belarus, Moldova, Turkey, crown dependencies, Greenland |
+| China | 0.9 | 17% | China and Hong Kong; state-steered credit damps the cycle |
+| Other East Asia and Oceania | 1.1 | 11% | Japan, Korea, Taiwan, Singapore, Australia, New Zealand, the Pacific islands |
+| Emerging Asia | 1.3 | 9% | The rest of East and Southeast Asia, South Asia, Russia, the Caucasus and Central Asia |
+| Latin America | 1.4 | 6% | Mexico, Central and South America, the rest of the Caribbean, Papa's Port |
+| Middle East and Africa | 1.3 | 6% | MENA and Sub-Saharan Africa |
+
+**Zone weighting of world demand (A).** Each industry still sells into one world market (10.0.3), and the MVP has no split of an industry's demand by zone, so every industry feels the **GDP-weighted average intensity** `Z = Σ gdp_c × intensity_zone(c) ÷ Σ gdp_c`, which is **1.10** at the 2020 data (static while GDP is static). Post-MVP, an industry's own demand split by zone replaces the GDP weights.
+
+**Offset by growth rate: asymmetric cycle sensitivity (T).** With LT the industry's long-term rate (trend_growth, a year):
+
+- upswing (g_t ≥ 0): `k = clamp(1 + 5 × (LT − 0.04), 0.5, 2.5)`, so amplification rises with long-term growth;
+- downswing (g_t < 0): `k = clamp(1 − 2.5 × (LT − 0.04), 0.25, 1.5)`, so sensitivity falls with long-term growth.
+
+An industry at 4% (about the median) feels the cycle one for one; Oil and Autos at 0% get 0.8 up and 1.1 down.
+
+**Quarterly growth draw.** At each quarter boundary every industry draws its demand growth for the quarter, per quarter:
+
+`q_growth = LT/4 + φ × (prev_q_growth − LT/4) + cycle_term + volatility × z`
+
+`cycle_term = (1 − φ) × cycle_beta × k × Z × g_t ÷ 4`
+
+- φ = 0.5 **(T)**: half of last quarter's gap from the long-term rate carries over, so shocks fade and growth always pulls back toward LT/4 ("still average toward the long term rate").
+- The (1 − φ) factor makes a lasting phase settle the industry at `(LT + cycle_beta × k × Z × g_t) ÷ 4` a quarter: half way in the first quarter, 75% in the second, 88% in the third.
+- volatility is the industries.csv column, 0.01 a quarter for all in the MVP **(T)**; z is a standard normal draw from the growth stream, clamped to ±3. cycle_beta is 1 for all (2.2).
+- q_growth is floored at −25% a quarter **(A)**. At load prev_q_growth = LT/4 **(A)**.
+
+**Worked table** (Z 1.10; settled yearly growth `LT + k × Z × g_t` at each phase's middle g_t, no noise; quarterly growth is a quarter of it):
+
+| Phase (g_t) | Retail, LT 3% (k 0.95 up, 1.025 down) | Software, LT 9% (k 1.25 up, 0.875 down) | AI labs, LT 30% (k 2.30 up, 0.35 down) |
+|---|---|---|---|
+| Expansion (+1%) | 4.0% | 10.4% | 32.5% |
+| Overheating (+3%) | 6.1% | 13.1% | 37.6% |
+| Contraction (−4.5%) | −2.1% | 4.7% | 28.3% |
+| Recovery (−0.5%) | 2.4% | 8.5% | 29.8% |
+| Best phase vs trend / worst vs trend | +3.1 pp / −5.1 pp | +4.1 pp / −4.3 pp | +7.6 pp / −1.7 pp |
+
+Over a full cycle the asymmetry leaves fast growers slightly above their long-term rate (500-seed means: AI labs +2.0 pp a year, Software +0.6, Retail +0.2, Oil −0.1): this is "grow more and cool off less" **(A)**.
+
+**Monthly demand.** Each month (4.3 step 2) `demand_core ×= (1 + q_growth)^(1/3)` and `trend_demand ×= (1 + LT)^(1/12)`. Effective demand `= demand_core × (1 − s × (base_rate − neutral_rate))`, with s the rate_sensitivity, unchanged (no effect while the base rate sits at neutral). Both start at the 2020 world size (7.3), so no c0 is needed.
+
+**Phase labels (A, T).** Boom, Normal, Glut and Bust stay, for screens, headlines (5.18), sale factors (5.10), fair value cycle factors (5.13) and the raise roll (6.6), but they no longer move demand or supply. With `gap = 4 × q_growth − LT` (this quarter's growth, a year, less the long-term rate), set monthly at step 2, first match:
+
+| Label | Rule |
+|---|---|
+| Bust | gap ≤ −5% |
+| Glut | S above 1.15 last month (it stays Glut until S falls under 1.10) |
+| Boom | gap ≥ +5% |
+| Normal | Otherwise |
+
+In the 40-quarter runs these give about 18% Boom and 14% Bust industry-quarters.
+
+**Growth check (batch 150).** validate.py runs all 42 industries for 40 quarters with seed 150. Average yearly growth minus the long-term rate: mean +1.6 pp, sd 1.6 pp, range −2.8 pp (Defense) to +4.7 pp (Social media). The mean is high because this seed's cycle spent 26 of 40 quarters in Expansion or Overheating. Retail averages 4.2% (LT 3%), Software 10.5% (9%), AI labs 32.9% (30%), Oil −0.1% (0%). Over 500 seeds the gap per industry has an sd of about 1.3 to 1.4 pp; a volatility of 2% a quarter would double it to about 2.5 pp. The check fails if any industry is more than 6 pp off **(T)**.
 
 ### 5.2 Supply, oversupply and undersupply (10.0.3)
 
 - **Unit pre-market productivity** `p_pre = productivity + PC bonus + location_bonus` (conflict C12).
 - **Supply** `= fringe_assets × turnover + Σ units (assets_eff × turnover × p_pre ÷ 100)`, where `assets_eff = gross_assets − 0.2 × ramping` (new assets at 80%, 10.0.4).
-- **Supply ratio** `S = supply ÷ demand`, plus 0.2 in a Glut (10.0.6).
+- **Supply ratio** `S = supply ÷ demand`. The +0.2 in a Glut is dropped, since Glut is now read from S (C21, batch 150).
 - **Market factor** `M = clamp((1 ÷ S)^0.5, 0.7, 1.3)` **(T)**. Oversupply (S above 1) gives M below 1, cutting every unit's effective productivity; undersupply raises it. S 1.21 gives M 0.91; S 0.81 gives M 1.11.
 
 ### 5.3 Fringe pool (10.0.10)
 
 - At load: `fringe_revenue = max(0, world_size − Σ named revenue in the industry)`; `fringe_assets = fringe_revenue ÷ turnover`, productivity 100, no decay **(A)**.
-- Monthly: `fringe_assets ×= (1 + trend_growth + adj)^(1/12)`, with adj +3% in Boom, -5% in Bust, else 0.
+- Monthly: `fringe_assets ×= (1 + q_growth)^(1/3)`, so the fringe grows with its industry's demand and keeps its share (batch 150; the Boom and Bust adjustments are gone with the multipliers, C20) **(A)**.
 - Revenue `= fringe_assets × turnover × M ÷ 12`. Not ownable; shown as one row "Fringe (unnamed)" on the industry screen.
 
 ### 5.4 Revenue (10.0.4, 10.0.11.2)
@@ -498,7 +563,7 @@ Free R&D steps: under 1 TB 0%; 1 TB 1%; 10 TB 2%; 100 TB 3%; 1 PB 4%; 10 PB 5%; 
 
 ### 5.16 Projections and consensus (21.5.1)
 
-- At the plan lock the engine projects the quarter from the locked plan with current demand (no new rolls); `consensus = projection × (1 + e)`, e uniform ±5% **(T)**, so surprises come from news phases, cycles and noise.
+- At the plan lock the engine projects the quarter from the locked plan with current demand (no new rolls); `consensus = projection × (1 + e)`, e uniform ±5% **(T)**. Since batch 150 the quarter's growth is drawn before the lock (4.4), so surprises come from e, from supply and M moving as other companies grow, and from productivity; check the beat rate in the M10 soak and widen e if it is low **(T)**.
 - Shown range: `±30% × (1 − 0.6 × elapsed share) × (1 − 24 ÷ 50) × 0.7`, ×2 for companies whose plan is secret (all, for the observer), minimum ±3%.
 
 ### 5.17 Dividends (10.5.5, 3.3.2)
@@ -535,6 +600,9 @@ Rule: the newest Logan ruling wins; where Logan has not ruled, the most recent d
 | C16 | Starting loadout enterprise stations `ceil(0.5 × R ÷ 11)` ignores the industry data rate | `ceil(0.5 × R × data_tb_per_musd ÷ 10.95)` (A) |
 | C17 | 12.1 says content is JSON | The MVP loads the design/data CSVs directly; JSON conversion is post-MVP (A) |
 | C18 | All industries use the barebones defaults (Logan, batch 148), whose revenue equals expenses at productivity 100 and M 1.0 (10.0.11.1), vs R&D booked on top of expenses (5.5): a 0% margin before R&D would make every default company lose its R&D | R&D at the norm counts inside the break-even expenses: margin_full_use = rd_norm = 0.05, so EBIT after R&D at the norm is 0 and profit comes from productivity above 100, undersupply and free R&D (5.5) (A) |
+| C19 | National cycles per country with a shared euro-area cycle (2-map 2.18.1, batch 125) vs one global cycle | One global cycle felt by 8 financial zones at their intensities (Logan, batch 150; 5.1). cycle_group and cycle_phase_start are replaced by financial_zone; the zones and intensities are (A, T) |
+| C20 | Industry news phases as their own random cycle with demand ×1.15 in Boom and ×0.85 in Bust (10.0.6) vs the batch 150 growth model | Demand moves only by the quarterly growth draws (5.1); Boom, Normal, Glut and Bust become labels read from q_growth and S, with no multipliers; the fringe grows with demand (A) |
+| C21 | Glut adds +0.2 to S (10.0.6) vs Glut read from S | The +0.2 is dropped, so S does not feed on its own label (A) |
 
 ---
 
@@ -544,7 +612,7 @@ Every company runs the same rules at 9th 00:00 of each release month (21.7), in 
 
 | Input | Meaning |
 |---|---|
-| g_dem | Projected demand growth next 4 quarters: trend + cycle drift + news adj (Boom +5%, Glut −3%, Bust −5%) **(T)** |
+| g_dem | Projected demand growth next 4 quarters (batch 150): `LT + (φ + φ² + φ³ + φ⁴) × (q_growth − LT/4)`, the long-term rate plus the expected fade of this quarter's gap (0.94 × the gap at φ 0.5); the AI does not forecast phase changes **(A)**. Retail in a Contraction (q_growth −0.5%) projects 1.8% |
 | S | Current supply ratio of the unit's industry |
 | ROA | Trailing 4-quarter EBIT ÷ gross assets |
 | loss_q | Consecutive quarters of negative EBIT |
@@ -613,7 +681,7 @@ Logan (batch 146): Consumer electronics, EVs, E-commerce and AI labs lose money 
   1. **Credit line draw**, if rated: the rating is B or better (rating factor above 0, 5.12) and the undrawn line covers the target. The target is drawn now, ahead of need; no dilution; interest as in 5.12.
   2. Otherwise a **new share issue**, the follow-on offering of [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.4.3: issue price `= P × (1 − discount)`, with the 3.4.3 discount of 4% for large caps (market value $10B and up **(A)**) and 8% for small caps **(T)**; fees 3% of the gross raise (3.4.3: 2.5% to 4%) **(T)**; new shares capped at 20% of shares_out per raise, the 3.4.3 line above which holders must approve, since the MVP has no votes **(A)**; announcement effect `P ×= 1 − (2% + 0.5 × dilution%)` (3.4.3). Private companies place new shares with unnamed investors at their shown value (0.7 × V, 5.13) less 8%, with no price effect **(A)**. Rights issues on pre-emption exchanges (3.4.3) are not used, since the MVP has one world exchange **(A)**.
   - **Dilution**: shares_out rises by the new shares, which go to an unnamed **new investors** holder on the cap table; every existing holder's stake falls by `old shares ÷ new shares`. The controller stays the controller; control contests are out of scope **(A)**.
-- **Success roll (T)**: `chance = 50% + 100 × (confidence factor − 1) + news adj + method adj − 10% × consecutive failed raises`, clamped 5% to 95%. Investor confidence is the confidence factor of 5.7 (0.8 to 1.2, so ±20 pp). News adj by the industry's news phase (5.1): Boom +30 pp, Normal 0, Glut −15 pp, Bust −35 pp. Method adj: credit line +20 pp, share issue 0.
+- **Success roll (T)**: `chance = 50% + 100 × (confidence factor − 1) + news adj + method adj − 10% × consecutive failed raises`, clamped 5% to 95%. Investor confidence is the confidence factor of 5.7 (0.8 to 1.2, so ±20 pp). News adj by the industry's phase label (5.1): Boom +30 pp, Normal 0, Glut −15 pp, Bust −35 pp. Method adj: credit line +20 pp, share issue 0.
 - **Failure**: nothing is raised and the company tries again at the next plan lock. Until a raise succeeds, 6.2 holds g at −d_eff (no purchases). When cash runs out with the line full, it enters the bankruptcy path of 5.12: forced sales, then Bankrupt and frozen with shareholders wiped, then removed.
 - **Headline**: each raise and failed raise posts a Pdoomberg Wire headline (5.18).
 
@@ -659,7 +727,7 @@ R = revenue_usd_m. One business unit in the company's industry at hq_province.
 
 ### 7.3 Countries and the world
 
-Cycles from country-economy.csv with months left drawn in the phase's range; c0 recorded; base rate 3%; every industry Normal; clock 2020-01-01 00:00, paused.
+The global cycle starts in Expansion with g_t and its quarters left drawn **(A)**; every industry's demand_core and trend_demand start at its 2020 world size, prev_q_growth at LT/4, and the Q1 2020 growth draw is made at load (5.1); labels follow from it; base rate 3%; clock 2020-01-01 00:00, paused. The euro crisis of the old cycle groups now lives in the euro area's 1.2 intensity and its ratings and spreads (2.2) **(A)**.
 
 ---
 
@@ -670,11 +738,11 @@ All built from 20-ui. Every action button is hidden or shows a lock icon with "R
 | Screen | Source | MVP content |
 |---|---|---|
 | **Main screen** | 20.2.1 | Top bar with date, hour, weekday, pause, speeds 1 to 5, Skip menu (next release, next plan lock, next recap, month end) and the **quarter clock** (phase name, days to next phase, 21.8); alert row; left rail with Company, Industries, Pdoomberg, Recap; outliner with a watchlist |
-| **Map** | 20.7.10, 2.24 | Zoom World, Country, Province. Modes: **Political** (default); **Development** (Commerce, Industry, Population, Total); **Industry** (the Industry track, or with an industry picked, that industry's business assets by province as a heat map); **Company HQs** (pins sized by revenue, colored by sector; filters by industry, country, listed); **Economic cycle**; Metro outlines over any mode. Clicking a province opens a province card: development, resource, terrain, Metro, key city, HQs and units there |
+| **Map** | 20.7.10, 2.24 | Zoom World, Country, Province. Modes: **Political** (default); **Development** (Commerce, Industry, Population, Total); **Industry** (the Industry track, or with an industry picked, that industry's business assets by province as a heat map); **Company HQs** (pins sized by revenue, colored by sector; filters by industry, country, listed); **Financial zones** (batch 150: each zone shaded by its intensity, legend with the global phase, g_t, quarters left and each zone's effect `intensity × g_t`; replaces the Economic cycle mode); Metro outlines over any mode. Clicking a province opens a province card: development, resource, terrain, Metro, key city, HQs and units there |
 | **Company** | 20.7.2 | Header: name, ticker, HQ, industry, owner of record, controller. Tabs: **Overview** (value, price, confidence, management score, cash, line, rating, next release); **Board** (seat cards for labor units 1 to 5, skill used); **Cap table** (static holders); **Units** (industry, base province, assets, productivity, growth, R&D, revenue, expenses); **Financials** (quarterly statements, Quarter view with last results and projection ranges, 21.5.3); **Tech** (labor split, stations, PC and next step, data quests card with progress bar, inflow vs decay, 10.0.11.7) |
-| **Industries** | 20.7.6 | Table of 42: demand, supply, S, M, news phase, trend, fringe share, top 5 companies; detail view with a 20-quarter chart of demand vs supply and the company list |
+| **Industries** | 20.7.6 | Table of 42: demand, supply, S, M, phase label, long-term growth, this quarter's growth (a year, `4 × q_growth`), fringe share, top 5 companies; detail view with a 20-quarter chart of demand vs supply, quarterly growth bars against the long-term line, and the company list. A header strip shows the global phase and g_t (batch 150) |
 | **Pdoomberg** | 20.5.2, 3.13.1 | Full-screen terminal. F2 Quotes (watchlists: All, by industry, by country, Disclosure radar hidden); F3 Chart (daily bars with the estimated fair value band, ±15% for listed companies, 3.14.2; true V is never shown); F4 Order shows "Read-only MVP"; F5 Filings (quarterly statements); F6 Ratings (credit ratings only); F7 Bonds (base rate and country spreads); F9 Industries; F10 Screener (read-only filters) |
-| **Quarterly recap** | 20.7.9, 21.6.2 | Opens the pre-quarter-end week. World page: industries by phase, biggest expected beats and misses by projection. Company page (watchlist companies): anticipated earnings range, expected reaction, confidence, outlook (news phase, losses, rating watch). No guidance choice |
+| **Quarterly recap** | 20.7.9, 21.6.2 | Opens the pre-quarter-end week. World page: global phase and g_t, industries by phase label, biggest expected beats and misses by projection. Company page (watchlist companies): anticipated earnings range, expected reaction, confidence, outlook (news phase, losses, rating watch). No guidance choice |
 | **News feed** | 20.5.1 | Pdoomberg Wire headlines (5.18) with date and industry tag |
 | **Time controls** | 9.1 | Pause (Space), speeds 1 to 5 (keys 1 to 5): 2 s, 1 s, 0.5 s, 0.2 s per hour and max; alerts: Earnings day (Pause), Quarterly recap (Pause), Plan lock (Log), Bankruptcy in watchlist (Notify), each settable Pause, Notify, Log, Off |
 
@@ -698,7 +766,8 @@ One engine object exposed through gdext (12.3). Queries read the last finished t
 
 | Call | Returns |
 |---|---|
-| `list_countries(filter)` / `get_country(iso3)` | Rows / detail with cycle, tax, rating, spread, HQ count |
+| `list_countries(filter)` / `get_country(iso3)` | Rows / detail with financial zone, tax, rating, spread, HQ count |
+| `get_cycle()` | Global phase, g_t, quarters left, Z, and each zone with its intensity and effect (batch 150) |
 | `get_province(id)` | Province card: tracks, tags, Metro, key city, HQs, units with assets there |
 | `get_map_layer(mode, param)` | PackedFloat32Array or PackedInt32Array per province, plus legend |
 | `list_key_cities()` / `list_metros()` | Rows with province ids |
@@ -741,7 +810,7 @@ Views carry dirty flags (12.3); only changed rows are rebuilt.
 |---|---|---|
 | M0 | Data load and validation: the CSVs, industries.csv, country-economy.csv, key-cities.csv; id checks | Loader rejects a bad row with file and line; headless |
 | M1 | Clock and scheduler: hourly ticks, daily, monthly, quarterly, yearly jobs; speeds and pause; seeded RNG streams | 10 years tick headless; job order matches section 4 |
-| M2 | Economy core: demand, cycles, news phases, fringe, supply, S, M, revenue, expenses, productivity, growth | At load every industry has S 1.00 and named revenue matches companies.csv within 0.5% |
+| M2 | Economy core: demand (global cycle, financial zones, quarterly growth draws, phase labels), fringe, supply, S, M, revenue, expenses, productivity, growth | At load every industry has S 1.00 and named revenue matches companies.csv within 0.5%; the engine's 40-quarter seeded growth run matches validate.py's growth check (5.1) |
 | M3 | Operations and data: labor, seats, stations, PC bonus, data create, convert, decay, free R&D | Arrowhead check (7.1) passes |
 | M4 | Books: ledger, statements, tax, credit line, rating, dividends, asset decay, distress, bankruptcy and removal | Balance sheet balances every month for every company still in the game |
 | M5 | Valuation and price: fair value, hourly price, earnings jump, reaction week | Opening price $25 at V; prices track V within ±30% over 10 years |
@@ -751,7 +820,7 @@ Views carry dirty flags (12.3); only changed rows are rebuilt.
 | M9 | Screens: Company, Industries, Pdoomberg, Recap, News | Every section 8 screen opens in under 100 ms |
 | M10 | Soak and balance: 30-year headless run, determinism replay | 30 years in under 2 minutes headless; same seed gives the same hashes; balance targets below |
 
-**Balance targets after 10 years (T):** at least 85% of the 651 companies neither bankrupt nor removed; industry revenue within ±30% of the trend path; median productivity 90 to 110; no industry stuck at an M clamp for more than 8 quarters; 30% to 60% of releases are beats.
+**Balance targets after 10 years (T):** at least 85% of the 651 companies neither bankrupt nor removed; industry revenue within ±30% of the trend path; median productivity 90 to 110; no industry stuck at an M clamp for more than 8 quarters; 30% to 60% of releases are beats; each industry's 10-year average demand growth within ±3 pp of its long-term rate in 90% of seeds, and 10% to 25% of industry-quarters labeled Boom and 10% to 20% Bust (batch 150).
 
 ---
 
@@ -798,7 +867,7 @@ Logan: "we will rework them one by one once companies are known working." The MV
 | Asset decay | 10%: AI labs, Cloud, Data centers, Software, SaaS, Social media, Ads, Consumer electronics, Gaming, Gambling, Semiconductors, E-commerce, Drones, Robotics. 8%: Telecom, Banking, Insurance, Asset management, Chemicals, Autos, EVs, Aerospace, Defense, Shipping, Logistics, Airlines, Construction, Retail, Fast food, Luxury, Pharma, Healthcare services, Professional services, Black market. 6%: Oil, Gas, Mining, Metals, Agriculture. 5%: Power utilities, Renewables, Real estate (Logan, batch 145). The rework should also say whether the $10M threshold of batch 149 stays for all industries |
 | R&D norm | 15%: AI labs, Pharma, Semiconductors, Software. 12%: SaaS. 10%: Cloud, Social media, Gaming, Consumer electronics, Robotics, Drones, EVs, Aerospace, Defense. 6%: Ads, Data centers, Telecom, Autos, Chemicals, Gambling, E-commerce. 3%: Banking, Insurance, Asset management, Healthcare services, Professional services, Power utilities, Renewables, Metals, Mining, Agriculture, Shipping, Logistics, Airlines, Luxury, Real estate. 2%: Oil, Gas, Construction, Retail, Fast food, Black market **(T)**. When R&D comes back per industry, keep C18: margin_full_use is the margin before R&D |
 | Operations modifiers | labor_value, PC per station, TB per $1M and data decay base by industry (10.0.11.10) |
-| Cycle and rates | Cyclicality β 0.2 to 2.0 and rate sensitivity Low to Very high, "Positive" for Banking and Insurance (10.3) |
+| Cycle and rates | Cyclicality β 0.2 to 2.0 (now the cycle_beta multiplier of the growth draw, 5.1), volatility per industry (batch 150), and rate sensitivity Low to Very high, "Positive" for Banking and Insurance (10.3) |
 | Earnings multiple | M_sector by valuation group (3.3.2); Black market valued with Professional services |
 | Fit and resource tags | Commerce, Industry or Extraction and the matching resource tags (10.3.1), which give the location bonus (5.4) |
 | Cash-burning flags | Consumer electronics, EVs, E-commerce and AI labs (Logan, batch 146); the 6.6 raise rule is kept for them |

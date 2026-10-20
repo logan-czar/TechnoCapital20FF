@@ -1,211 +1,211 @@
-iso3,corp_tax_level,corp_tax_rate,sovereign_rating,country_spread_bps,cycle_group,cycle_phase_start,notes
-USA,Moderate,0.258,AAA,0,USA,Expansion,2.2.3 level Moderate kept; real rate is nearer High; rating AAA: stronger US in the alternate history (3.6.5 example)
-CAN,Moderate,0.265,AAA,0,CAN,Expansion,2.2.3 level Moderate kept; real rate is nearer High
-MEX,High,0.3,BBB+,80,MEX,Expansion,
-GRL,High,0.265,AA,15,DNK,Recovery,cycle shared with DNK (A)
-BMU,Haven,0.03,A+,32,BMU,Expansion,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%"
-SPM,Moderate,0.21,AA-,23,EA,Contraction,2020 rate not known: Moderate band rate (A); cycle shared with EA (A)
-BRA,High,0.34,BB-,317,BRA,Expansion,
-ARG,High,0.3,CCC,1000,ARG,Contraction,"rating post-2019 default, CCC; crisis premium +200 bps (3.6.5); in recession at start (A)"
-CHL,High,0.27,A+,32,CHL,Expansion,
-COL,High,0.32,BBB-,150,COL,Expansion,
-PER,High,0.295,BBB+,80,PER,Expansion,
-ECU,Moderate,0.25,B-,567,ECU,Expansion,
-BOL,Moderate,0.25,B+,383,BOL,Expansion,
-VEN,High,0.34,CCC,1000,VEN,Contraction,"rating sliding slowly, cushioned by high oil (19.22); crisis premium +200 bps (3.6.5); in recession at start (A)"
-URY,Moderate,0.25,BBB,100,URY,Expansion,
-PRY,Low,0.1,BB,250,PRY,Expansion,
-GUY,Moderate,0.25,BB-,317,GUY,Expansion,unrated in 2020: rating from wealth and state (A)
-SUR,High,0.36,B-,567,SUR,Expansion,
-PAN,Moderate,0.25,BBB,100,PAN,Expansion,
-CRI,High,0.3,B+,383,CRI,Expansion,
-GTM,Moderate,0.25,BB-,317,GTM,Expansion,
-HND,Moderate,0.25,BB-,317,HND,Expansion,
-SLV,High,0.3,B-,567,SLV,Expansion,
-NIC,High,0.3,B-,567,NIC,Expansion,
-BLZ,Moderate,0.21,B-,567,BLZ,Expansion,2020 rate not known: Moderate band rate (A)
-CUB,High,0.35,CCC,800,CUB,Expansion,
-DOM,High,0.27,BB-,317,DOM,Expansion,
-HTI,High,0.3,CCC,800,HTI,Expansion,unrated in 2020: rating from wealth and state (A)
-JAM,Moderate,0.25,B+,383,JAM,Expansion,
-TTO,High,0.3,BBB-,150,TTO,Expansion,
-BHS,Haven,0.03,BB+,200,BHS,Expansion,headline 0%: floored at the E2 Haven rate 3% (A)
-BRB,Haven,0.055,B-,567,BRB,Expansion,
-ATG,Moderate,0.25,BB-,317,ATG,Expansion,unrated in 2020: rating from wealth and state (A)
-DMA,Moderate,0.25,BB-,317,DMA,Expansion,unrated in 2020: rating from wealth and state (A)
-GRD,High,0.28,BB-,317,GRD,Expansion,unrated in 2020: rating from wealth and state (A)
-KNA,High,0.33,BBB-,150,KNA,Expansion,unrated in 2020: rating from wealth and state (A)
-LCA,High,0.3,BB-,317,LCA,Expansion,unrated in 2020: rating from wealth and state (A)
-VCT,High,0.3,BB-,317,VCT,Expansion,unrated in 2020: rating from wealth and state (A)
-PRI,High,0.375,BB,250,USA,Expansion,rating territory; no PROMESA default in this history; cycle shared with USA (A)
-CYM,Haven,0.03,AA-,23,CYM,Expansion,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%"
-VGB,Haven,0.03,A,40,VGB,Expansion,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%"
-GBR,Moderate,0.19,AA,15,GBR,Recovery,recovering at start (A)
-DEU,High,0.299,AAA,0,EA,Contraction,"euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-FRA,Moderate,0.32,AA-,23,EA,Contraction,"2.2.3 level Moderate kept; real rate is nearer High; rating one notch under real for the euro crisis; euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-NLD,Moderate,0.25,AAA,0,EA,Contraction,"euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-ITA,Moderate,0.278,BB+,250,EA,Contraction,"2.2.3 level Moderate kept; real rate is nearer High; rating two notches under real for the euro crisis; crisis premium +50 bps (3.6.5); euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-CHE,Low,0.211,AAA,0,CHE,Recovery,2.2.3 level Low kept; real rate is nearer Moderate; recovering at start (A)
-ESP,Moderate,0.25,BBB,150,EA,Contraction,"rating two notches under real for the euro crisis; crisis premium +50 bps (3.6.5); euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-PRT,High,0.315,BB+,250,EA,Contraction,"rating two notches under real for the euro crisis; crisis premium +50 bps (3.6.5); euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-IRL,Low,0.125,A,40,EA,Contraction,"rating two notches under real for the euro crisis; euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-BEL,Moderate,0.25,AA-,23,EA,Contraction,"rating one notch under real for the euro crisis; euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-AUT,Moderate,0.25,AA+,10,EA,Contraction,"euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-GRC,Moderate,0.24,CCC,1000,EA,Contraction,"rating defaulted in 2019 (19.22): CCC after the default; crisis premium +200 bps (3.6.5); euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-LUX,Haven,0.03,AAA,0,EA,Contraction,"Haven (2.2.5): E2 Haven rate 3%, headline 24.9%; euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-FIN,Moderate,0.2,AA+,10,EA,Contraction,"euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-EST,Moderate,0.2,AA-,23,EA,Contraction,"euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-LVA,Moderate,0.2,A,40,EA,Contraction,"euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-LTU,Low,0.15,A,40,EA,Contraction,"euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-SVK,Moderate,0.21,A+,32,EA,Contraction,"euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-SVN,Moderate,0.19,A+,32,EA,Contraction,"rating one notch under real for the euro crisis; euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-CYP,Low,0.125,BB,300,EA,Contraction,"rating two notches under real for the euro crisis; crisis premium +50 bps (3.6.5); euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-MLT,High,0.35,A-,60,EA,Contraction,"euro area: shares the EA cycle, in the euro crisis recession (2.18.1)"
-MNE,Low,0.09,B+,383,MNE,Contraction,"uses the euro outside the euro area: own cycle, hit by the euro crisis (A)"
-XKX,Low,0.1,B+,383,XKX,Contraction,"unrated in 2020: rating from wealth and state (A); uses the euro outside the euro area: own cycle, hit by the euro crisis (A)"
-AND,Low,0.1,BBB,100,AND,Contraction,"uses the euro outside the euro area: own cycle, hit by the euro crisis (A)"
-MCO,High,0.31,AA,15,MCO,Contraction,"uses the euro outside the euro area: own cycle, hit by the euro crisis (A)"
-SMR,Moderate,0.17,BBB-,150,SMR,Contraction,"uses the euro outside the euro area: own cycle, hit by the euro crisis (A)"
-VAT,Haven,0.03,A,40,VAT,Contraction,"headline 0%: floored at the E2 Haven rate 3% (A); uses the euro outside the euro area: own cycle, hit by the euro crisis (A)"
-LIE,Low,0.125,AAA,0,LIE,Recovery,recovering at start (A)
-SWE,Moderate,0.214,AAA,0,SWE,Recovery,recovering at start (A)
-NOR,Moderate,0.22,AAA,0,NOR,Recovery,recovering at start (A)
-DNK,Moderate,0.22,AAA,0,DNK,Recovery,recovering at start (A)
-ISL,Moderate,0.2,A,40,ISL,Recovery,recovering at start (A)
-POL,Moderate,0.19,A-,60,POL,Recovery,recovering at start (A)
-CZE,Moderate,0.19,AA-,23,CZE,Recovery,recovering at start (A)
-HUN,Low,0.09,BBB,100,HUN,Recovery,recovering at start (A)
-ROU,Low,0.16,BBB-,150,ROU,Recovery,recovering at start (A)
-BGR,Low,0.1,BBB,100,BGR,Recovery,recovering at start (A)
-HRV,Moderate,0.18,BBB-,150,HRV,Recovery,recovering at start (A)
-SRB,Low,0.15,BB+,200,SRB,Expansion,
-BIH,Low,0.1,B,450,BIH,Expansion,
-MKD,Low,0.1,BB-,317,MKD,Expansion,
-ALB,Low,0.15,B+,383,ALB,Expansion,
-UKR,Moderate,0.18,B-,567,UKR,Expansion,
-BLR,Moderate,0.18,B,450,BLR,Expansion,
-MDA,Low,0.12,B-,567,MDA,Expansion,
-GGY,Haven,0.03,AA-,23,GBR,Recovery,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%; cycle shared with GBR (A)"
-JEY,Haven,0.03,AA-,23,GBR,Recovery,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%; cycle shared with GBR (A)"
-RUS,Moderate,0.2,BB+,200,RUS,Expansion,rating one notch under real for 15 years of sanctions
-KAZ,Moderate,0.2,BBB-,150,KAZ,Expansion,
-UZB,Low,0.15,BB-,317,UZB,Expansion,
-TKM,Low,0.08,BB-,317,TKM,Expansion,unrated in 2020: rating from wealth and state (A)
-KGZ,Low,0.1,B,450,KGZ,Expansion,
-TJK,Moderate,0.23,B-,567,TJK,Expansion,
-GEO,Low,0.15,BB,250,GEO,Expansion,
-ARM,Moderate,0.18,BB-,317,ARM,Expansion,
-AZE,Moderate,0.2,BB+,200,AZE,Expansion,
-TUR,Moderate,0.22,B+,383,TUR,Recovery,recovering at start (A)
-SAU,Moderate,0.2,A,40,SAU,Expansion,rating one notch over real: stronger US Middle East
-ARE,Low,0.03,AA,15,ARE,Expansion,headline 0%: floored at the E2 Haven rate 3% (A); 2.2.3 level Low kept; real rate is nearer Haven
-ISR,Moderate,0.23,AA-,23,ISR,Expansion,
-EGY,Moderate,0.225,B,450,EGY,Expansion,
-QAT,Low,0.1,AA-,23,QAT,Expansion,
-IRN,Moderate,0.25,B-,567,IRN,Contraction,in recession at start (A)
-IRQ,Low,0.15,B,450,IRQ,Expansion,rating stable US ally since 2003 (19.22)
-KWT,Low,0.15,AA,15,KWT,Expansion,
-BHR,Haven,0.03,B+,383,BHR,Expansion,headline 0%: floored at the E2 Haven rate 3% (A)
-OMN,Low,0.15,BB-,317,OMN,Expansion,
-YEM,Moderate,0.2,B-,567,YEM,Expansion,unrated in 2020: rating from wealth and state (A)
-JOR,Moderate,0.2,B+,383,JOR,Expansion,
-LBN,Moderate,0.17,CCC,1000,LBN,Contraction,crisis premium +200 bps (3.6.5); in recession at start (A)
-SYR,High,0.28,B,450,SYR,Expansion,rating no Syrian war (19.22)
-PSE,Low,0.15,B+,383,PSE,Expansion,unrated in 2020: rating from wealth and state (A)
-LBY,Moderate,0.2,B+,383,LBY,Expansion,rating no civil war (19.22)
-DZA,High,0.26,B+,383,DZA,Expansion,unrated in 2020: rating from wealth and state (A)
-MAR,High,0.31,BBB-,150,MAR,Expansion,
-TUN,Moderate,0.25,B+,383,TUN,Expansion,
-NGA,High,0.3,B,450,NGA,Expansion,
-ZAF,High,0.28,BB,250,ZAF,Expansion,
-COD,High,0.3,CCC,800,COD,Expansion,
-GHA,Moderate,0.25,B,450,GHA,Expansion,
-CIV,Moderate,0.25,BB-,317,CIV,Expansion,
-SEN,High,0.3,B+,383,SEN,Expansion,
-MLI,High,0.3,B-,567,MLI,Expansion,
-BFA,High,0.275,B,450,BFA,Expansion,
-NER,High,0.3,B-,567,NER,Expansion,
-GIN,High,0.35,B-,567,GIN,Expansion,unrated in 2020: rating from wealth and state (A)
-GNB,Moderate,0.25,B-,567,GNB,Expansion,unrated in 2020: rating from wealth and state (A)
-SLE,Moderate,0.25,B-,567,SLE,Expansion,unrated in 2020: rating from wealth and state (A)
-LBR,Moderate,0.25,B-,567,LBR,Expansion,unrated in 2020: rating from wealth and state (A)
-TGO,High,0.27,B-,567,TGO,Expansion,
-BEN,High,0.3,B+,383,BEN,Expansion,
-GMB,High,0.27,B-,567,GMB,Expansion,unrated in 2020: rating from wealth and state (A)
-CPV,Moderate,0.224,B,450,CPV,Expansion,
-MRT,Moderate,0.25,B-,567,MRT,Expansion,unrated in 2020: rating from wealth and state (A)
-TCD,High,0.35,B-,567,TCD,Expansion,unrated in 2020: rating from wealth and state (A)
-CMR,High,0.33,B,450,CMR,Expansion,
-CAF,High,0.3,CCC,800,CAF,Expansion,unrated in 2020: rating from wealth and state (A)
-COG,High,0.3,CCC,800,COG,Expansion,
-GAB,High,0.3,B-,567,GAB,Expansion,
-GNQ,High,0.35,CCC,800,GNQ,Expansion,
-STP,Moderate,0.25,B-,567,STP,Expansion,unrated in 2020: rating from wealth and state (A)
-KEN,High,0.3,B+,383,KEN,Expansion,
-ETH,High,0.3,B,450,ETH,Expansion,
-TZA,High,0.3,B+,383,TZA,Expansion,
-UGA,High,0.3,B,450,UGA,Expansion,
-SOM,Moderate,0.21,CCC,800,SOM,Expansion,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-SDN,Moderate,0.21,B-,567,SDN,Expansion,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-SSD,Moderate,0.21,CCC,800,SSD,Expansion,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-ERI,High,0.3,B-,567,ERI,Expansion,unrated in 2020: rating from wealth and state (A)
-DJI,Moderate,0.25,B+,383,DJI,Expansion,unrated in 2020: rating from wealth and state (A)
-RWA,High,0.3,B+,383,RWA,Expansion,
-BDI,High,0.3,B-,567,BDI,Expansion,unrated in 2020: rating from wealth and state (A)
-MDG,Moderate,0.2,B-,567,MDG,Expansion,unrated in 2020: rating from wealth and state (A)
-MUS,Low,0.15,BBB+,80,MUS,Expansion,
-SYC,High,0.3,BB,250,SYC,Expansion,
-COM,High,0.5,B-,567,COM,Expansion,unrated in 2020: rating from wealth and state (A)
-ZMB,High,0.35,CCC,800,ZMB,Expansion,
-AGO,Moderate,0.25,B-,567,AGO,Expansion,
-ZWE,Moderate,0.247,B-,567,ZWE,Contraction,unrated in 2020: rating from wealth and state (A); in recession at start (A)
-MOZ,High,0.32,CCC,800,MOZ,Expansion,
-NAM,High,0.32,BB,250,NAM,Expansion,
-BWA,Moderate,0.22,BBB+,80,BWA,Expansion,
-MWI,High,0.3,B-,567,MWI,Expansion,unrated in 2020: rating from wealth and state (A)
-LSO,Moderate,0.25,B-,567,LSO,Expansion,unrated in 2020: rating from wealth and state (A)
-SWZ,High,0.275,B,450,SWZ,Expansion,
-IND,Moderate,0.252,BBB-,150,IND,Expansion,
-PAK,High,0.29,B-,567,PAK,Expansion,
-BGD,High,0.325,BB-,317,BGD,Expansion,
-LKA,Moderate,0.24,B-,567,LKA,Expansion,
-NPL,Moderate,0.25,B-,567,NPL,Expansion,unrated in 2020: rating from wealth and state (A)
-BTN,High,0.3,B+,383,BTN,Expansion,unrated in 2020: rating from wealth and state (A)
-MDV,Low,0.15,B,450,MDV,Expansion,
-AFG,Moderate,0.2,B-,567,AFG,Expansion,unrated in 2020: rating from wealth and state (A)
-CHN,Moderate,0.25,A+,32,CHN,Expansion,
-JPN,High,0.297,A+,32,JPN,Expansion,
-KOR,Moderate,0.275,AA,15,KOR,Expansion,2.2.3 level Moderate kept; real rate is nearer High
-TWN,Moderate,0.2,AA-,23,TWN,Expansion,
-SGP,Low,0.17,AAA,0,SGP,Expansion,2.2.3 level Low kept; real rate is nearer Moderate
-MYS,Moderate,0.24,A-,60,MYS,Expansion,
-IDN,Moderate,0.22,BBB,100,IDN,Expansion,
-VNM,Moderate,0.2,BB,250,VNM,Expansion,
-AUS,High,0.3,AAA,0,AUS,Expansion,
-HKG,Moderate,0.165,AA+,10,HKG,Expansion,
-PRK,Moderate,0.25,CC,1400,PRK,Expansion,"rating sanctioned, old defaults"
-MNG,Moderate,0.25,B,450,MNG,Expansion,
-THA,Moderate,0.2,BBB+,80,THA,Expansion,
-PHL,High,0.3,BBB+,80,PHL,Expansion,
-MMR,Moderate,0.25,B-,567,MMR,Expansion,unrated in 2020: rating from wealth and state (A)
-KHM,Moderate,0.2,B,450,KHM,Expansion,
-LAO,Moderate,0.2,B-,567,LAO,Expansion,
-BRN,Moderate,0.185,A,40,BRN,Expansion,
-TLS,Low,0.1,B-,567,TLS,Expansion,unrated in 2020: rating from wealth and state (A)
-NZL,High,0.28,AA,15,NZL,Expansion,
-PNG,High,0.3,B,450,PNG,Expansion,
-FJI,Moderate,0.2,BB-,317,FJI,Expansion,
-SLB,High,0.3,B+,383,SLB,Expansion,unrated in 2020: rating from wealth and state (A)
-VUT,Haven,0.03,B+,383,VUT,Expansion,headline 0%: floored at the E2 Haven rate 3% (A); unrated in 2020: rating from wealth and state (A)
-WSM,High,0.27,B+,383,WSM,Expansion,unrated in 2020: rating from wealth and state (A)
-TON,Moderate,0.25,B+,383,TON,Expansion,unrated in 2020: rating from wealth and state (A)
-KIR,Moderate,0.21,B-,567,KIR,Expansion,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-FSM,Moderate,0.21,B+,383,FSM,Expansion,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-MHL,Moderate,0.21,B+,383,MHL,Expansion,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-PLW,Moderate,0.21,BB-,317,PLW,Expansion,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
-NRU,Moderate,0.2,BB-,317,NRU,Expansion,unrated in 2020: rating from wealth and state (A)
-TUV,High,0.3,B+,383,TUV,Expansion,unrated in 2020: rating from wealth and state (A)
-GIB,Haven,0.03,A,40,GBR,Recovery,"Haven (2.2.5): E2 Haven rate 3%, headline 12.5%; cycle shared with GBR (A)"
-IMN,Haven,0.03,AA-,23,GBR,Recovery,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%; cycle shared with GBR (A)"
-FRO,Moderate,0.18,AA,15,DNK,Recovery,cycle shared with DNK (A)
-PAP,Moderate,0.21,B-,567,PAP,Expansion,"2020 rate not known: Moderate band rate (A); rating micronation ruled by decree, unrated: set by hand"
+iso3,corp_tax_level,corp_tax_rate,sovereign_rating,country_spread_bps,financial_zone,notes
+USA,Moderate,0.258,AAA,0,US,2.2.3 level Moderate kept; real rate is nearer High; rating AAA: stronger US in the alternate history (3.6.5 example)
+CAN,Moderate,0.265,AAA,0,US,2.2.3 level Moderate kept; real rate is nearer High
+MEX,High,0.3,BBB+,80,LAT,"Mexico in Latin America, not US-led (A)"
+GRL,High,0.265,AA,15,EU,Greenland follows Denmark (A)
+BMU,Haven,0.03,A+,32,US,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%"
+SPM,Moderate,0.21,AA-,23,EA,2020 rate not known: Moderate band rate (A); French territory: euro area (A)
+BRA,High,0.34,BB-,317,LAT,
+ARG,High,0.3,CCC,1000,LAT,"rating post-2019 default, CCC; crisis premium +200 bps (3.6.5)"
+CHL,High,0.27,A+,32,LAT,
+COL,High,0.32,BBB-,150,LAT,
+PER,High,0.295,BBB+,80,LAT,
+ECU,Moderate,0.25,B-,567,LAT,
+BOL,Moderate,0.25,B+,383,LAT,
+VEN,High,0.34,CCC,1000,LAT,"rating sliding slowly, cushioned by high oil (19.22); crisis premium +200 bps (3.6.5)"
+URY,Moderate,0.25,BBB,100,LAT,
+PRY,Low,0.1,BB,250,LAT,
+GUY,Moderate,0.25,BB-,317,LAT,unrated in 2020: rating from wealth and state (A)
+SUR,High,0.36,B-,567,LAT,
+PAN,Moderate,0.25,BBB,100,LAT,
+CRI,High,0.3,B+,383,LAT,
+GTM,Moderate,0.25,BB-,317,LAT,
+HND,Moderate,0.25,BB-,317,LAT,
+SLV,High,0.3,B-,567,LAT,
+NIC,High,0.3,B-,567,LAT,
+BLZ,Moderate,0.21,B-,567,LAT,2020 rate not known: Moderate band rate (A)
+CUB,High,0.35,CCC,800,LAT,
+DOM,High,0.27,BB-,317,LAT,
+HTI,High,0.3,CCC,800,LAT,unrated in 2020: rating from wealth and state (A)
+JAM,Moderate,0.25,B+,383,LAT,
+TTO,High,0.3,BBB-,150,LAT,
+BHS,Haven,0.03,BB+,200,US,headline 0%: floored at the E2 Haven rate 3% (A); dollar offshore center: US-led (A)
+BRB,Haven,0.055,B-,567,LAT,
+ATG,Moderate,0.25,BB-,317,LAT,unrated in 2020: rating from wealth and state (A)
+DMA,Moderate,0.25,BB-,317,LAT,unrated in 2020: rating from wealth and state (A)
+GRD,High,0.28,BB-,317,LAT,unrated in 2020: rating from wealth and state (A)
+KNA,High,0.33,BBB-,150,LAT,unrated in 2020: rating from wealth and state (A)
+LCA,High,0.3,BB-,317,LAT,unrated in 2020: rating from wealth and state (A)
+VCT,High,0.3,BB-,317,LAT,unrated in 2020: rating from wealth and state (A)
+PRI,High,0.375,BB,250,US,rating territory; no PROMESA default in this history; US territory: US-led (A)
+CYM,Haven,0.03,AA-,23,US,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%; dollar offshore center: US-led (A)"
+VGB,Haven,0.03,A,40,US,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%; dollar offshore center: US-led (A)"
+GBR,Moderate,0.19,AA,15,EU,
+DEU,High,0.299,AAA,0,EA,
+FRA,Moderate,0.32,AA-,23,EA,2.2.3 level Moderate kept; real rate is nearer High; rating one notch under real for the euro crisis
+NLD,Moderate,0.25,AAA,0,EA,
+ITA,Moderate,0.278,BB+,250,EA,2.2.3 level Moderate kept; real rate is nearer High; rating two notches under real for the euro crisis; crisis premium +50 bps (3.6.5)
+CHE,Low,0.211,AAA,0,EU,2.2.3 level Low kept; real rate is nearer Moderate
+ESP,Moderate,0.25,BBB,150,EA,rating two notches under real for the euro crisis; crisis premium +50 bps (3.6.5)
+PRT,High,0.315,BB+,250,EA,rating two notches under real for the euro crisis; crisis premium +50 bps (3.6.5)
+IRL,Low,0.125,A,40,EA,rating two notches under real for the euro crisis
+BEL,Moderate,0.25,AA-,23,EA,rating one notch under real for the euro crisis
+AUT,Moderate,0.25,AA+,10,EA,
+GRC,Moderate,0.24,CCC,1000,EA,rating defaulted in 2019 (19.22): CCC after the default; crisis premium +200 bps (3.6.5)
+LUX,Haven,0.03,AAA,0,EA,"Haven (2.2.5): E2 Haven rate 3%, headline 24.9%"
+FIN,Moderate,0.2,AA+,10,EA,
+EST,Moderate,0.2,AA-,23,EA,
+LVA,Moderate,0.2,A,40,EA,
+LTU,Low,0.15,A,40,EA,
+SVK,Moderate,0.21,A+,32,EA,
+SVN,Moderate,0.19,A+,32,EA,rating one notch under real for the euro crisis
+CYP,Low,0.125,BB,300,EA,rating two notches under real for the euro crisis; crisis premium +50 bps (3.6.5)
+MLT,High,0.35,A-,60,EA,
+MNE,Low,0.09,B+,383,EA,uses the euro outside the euro area: euro area zone (A)
+XKX,Low,0.1,B+,383,EA,unrated in 2020: rating from wealth and state (A); uses the euro outside the euro area: euro area zone (A)
+AND,Low,0.1,BBB,100,EA,uses the euro outside the euro area: euro area zone (A)
+MCO,High,0.31,AA,15,EA,uses the euro outside the euro area: euro area zone (A)
+SMR,Moderate,0.17,BBB-,150,EA,uses the euro outside the euro area: euro area zone (A)
+VAT,Haven,0.03,A,40,EA,headline 0%: floored at the E2 Haven rate 3% (A); uses the euro outside the euro area: euro area zone (A)
+LIE,Low,0.125,AAA,0,EU,
+SWE,Moderate,0.214,AAA,0,EU,
+NOR,Moderate,0.22,AAA,0,EU,
+DNK,Moderate,0.22,AAA,0,EU,
+ISL,Moderate,0.2,A,40,EU,
+POL,Moderate,0.19,A-,60,EU,
+CZE,Moderate,0.19,AA-,23,EU,
+HUN,Low,0.09,BBB,100,EU,
+ROU,Low,0.16,BBB-,150,EU,
+BGR,Low,0.1,BBB,100,EU,
+HRV,Moderate,0.18,BBB-,150,EU,
+SRB,Low,0.15,BB+,200,EU,
+BIH,Low,0.1,B,450,EU,
+MKD,Low,0.1,BB-,317,EU,
+ALB,Low,0.15,B+,383,EU,
+UKR,Moderate,0.18,B-,567,EU,
+BLR,Moderate,0.18,B,450,EU,
+MDA,Low,0.12,B-,567,EU,
+GGY,Haven,0.03,AA-,23,EU,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%"
+JEY,Haven,0.03,AA-,23,EU,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%"
+RUS,Moderate,0.2,BB+,200,EMA,rating one notch under real for 15 years of sanctions; Russia in Emerging Asia (A)
+KAZ,Moderate,0.2,BBB-,150,EMA,
+UZB,Low,0.15,BB-,317,EMA,
+TKM,Low,0.08,BB-,317,EMA,unrated in 2020: rating from wealth and state (A)
+KGZ,Low,0.1,B,450,EMA,
+TJK,Moderate,0.23,B-,567,EMA,
+GEO,Low,0.15,BB,250,EMA,
+ARM,Moderate,0.18,BB-,317,EMA,
+AZE,Moderate,0.2,BB+,200,EMA,
+TUR,Moderate,0.22,B+,383,EU,Turkey in Other Europe (A)
+SAU,Moderate,0.2,A,40,MEA,rating one notch over real: stronger US Middle East
+ARE,Low,0.03,AA,15,MEA,headline 0%: floored at the E2 Haven rate 3% (A); 2.2.3 level Low kept; real rate is nearer Haven
+ISR,Moderate,0.23,AA-,23,MEA,
+EGY,Moderate,0.225,B,450,MEA,
+QAT,Low,0.1,AA-,23,MEA,
+IRN,Moderate,0.25,B-,567,MEA,
+IRQ,Low,0.15,B,450,MEA,rating stable US ally since 2003 (19.22)
+KWT,Low,0.15,AA,15,MEA,
+BHR,Haven,0.03,B+,383,MEA,headline 0%: floored at the E2 Haven rate 3% (A)
+OMN,Low,0.15,BB-,317,MEA,
+YEM,Moderate,0.2,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+JOR,Moderate,0.2,B+,383,MEA,
+LBN,Moderate,0.17,CCC,1000,MEA,crisis premium +200 bps (3.6.5)
+SYR,High,0.28,B,450,MEA,rating no Syrian war (19.22)
+PSE,Low,0.15,B+,383,MEA,unrated in 2020: rating from wealth and state (A)
+LBY,Moderate,0.2,B+,383,MEA,rating no civil war (19.22)
+DZA,High,0.26,B+,383,MEA,unrated in 2020: rating from wealth and state (A)
+MAR,High,0.31,BBB-,150,MEA,
+TUN,Moderate,0.25,B+,383,MEA,
+NGA,High,0.3,B,450,MEA,
+ZAF,High,0.28,BB,250,MEA,
+COD,High,0.3,CCC,800,MEA,
+GHA,Moderate,0.25,B,450,MEA,
+CIV,Moderate,0.25,BB-,317,MEA,
+SEN,High,0.3,B+,383,MEA,
+MLI,High,0.3,B-,567,MEA,
+BFA,High,0.275,B,450,MEA,
+NER,High,0.3,B-,567,MEA,
+GIN,High,0.35,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+GNB,Moderate,0.25,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+SLE,Moderate,0.25,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+LBR,Moderate,0.25,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+TGO,High,0.27,B-,567,MEA,
+BEN,High,0.3,B+,383,MEA,
+GMB,High,0.27,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+CPV,Moderate,0.224,B,450,MEA,
+MRT,Moderate,0.25,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+TCD,High,0.35,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+CMR,High,0.33,B,450,MEA,
+CAF,High,0.3,CCC,800,MEA,unrated in 2020: rating from wealth and state (A)
+COG,High,0.3,CCC,800,MEA,
+GAB,High,0.3,B-,567,MEA,
+GNQ,High,0.35,CCC,800,MEA,
+STP,Moderate,0.25,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+KEN,High,0.3,B+,383,MEA,
+ETH,High,0.3,B,450,MEA,
+TZA,High,0.3,B+,383,MEA,
+UGA,High,0.3,B,450,MEA,
+SOM,Moderate,0.21,CCC,800,MEA,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
+SDN,Moderate,0.21,B-,567,MEA,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
+SSD,Moderate,0.21,CCC,800,MEA,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
+ERI,High,0.3,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+DJI,Moderate,0.25,B+,383,MEA,unrated in 2020: rating from wealth and state (A)
+RWA,High,0.3,B+,383,MEA,
+BDI,High,0.3,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+MDG,Moderate,0.2,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+MUS,Low,0.15,BBB+,80,MEA,
+SYC,High,0.3,BB,250,MEA,
+COM,High,0.5,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+ZMB,High,0.35,CCC,800,MEA,
+AGO,Moderate,0.25,B-,567,MEA,
+ZWE,Moderate,0.247,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+MOZ,High,0.32,CCC,800,MEA,
+NAM,High,0.32,BB,250,MEA,
+BWA,Moderate,0.22,BBB+,80,MEA,
+MWI,High,0.3,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+LSO,Moderate,0.25,B-,567,MEA,unrated in 2020: rating from wealth and state (A)
+SWZ,High,0.275,B,450,MEA,
+IND,Moderate,0.252,BBB-,150,EMA,
+PAK,High,0.29,B-,567,EMA,
+BGD,High,0.325,BB-,317,EMA,
+LKA,Moderate,0.24,B-,567,EMA,
+NPL,Moderate,0.25,B-,567,EMA,unrated in 2020: rating from wealth and state (A)
+BTN,High,0.3,B+,383,EMA,unrated in 2020: rating from wealth and state (A)
+MDV,Low,0.15,B,450,EMA,
+AFG,Moderate,0.2,B-,567,EMA,unrated in 2020: rating from wealth and state (A)
+CHN,Moderate,0.25,A+,32,CN,
+JPN,High,0.297,A+,32,EAS,
+KOR,Moderate,0.275,AA,15,EAS,2.2.3 level Moderate kept; real rate is nearer High
+TWN,Moderate,0.2,AA-,23,EAS,
+SGP,Low,0.17,AAA,0,EAS,2.2.3 level Low kept; real rate is nearer Moderate
+MYS,Moderate,0.24,A-,60,EMA,
+IDN,Moderate,0.22,BBB,100,EMA,
+VNM,Moderate,0.2,BB,250,EMA,
+AUS,High,0.3,AAA,0,EAS,
+HKG,Moderate,0.165,AA+,10,CN,
+PRK,Moderate,0.25,CC,1400,EMA,"rating sanctioned, old defaults"
+MNG,Moderate,0.25,B,450,EMA,
+THA,Moderate,0.2,BBB+,80,EMA,
+PHL,High,0.3,BBB+,80,EMA,
+MMR,Moderate,0.25,B-,567,EMA,unrated in 2020: rating from wealth and state (A)
+KHM,Moderate,0.2,B,450,EMA,
+LAO,Moderate,0.2,B-,567,EMA,
+BRN,Moderate,0.185,A,40,EMA,
+TLS,Low,0.1,B-,567,EMA,unrated in 2020: rating from wealth and state (A)
+NZL,High,0.28,AA,15,EAS,
+PNG,High,0.3,B,450,EAS,
+FJI,Moderate,0.2,BB-,317,EAS,
+SLB,High,0.3,B+,383,EAS,unrated in 2020: rating from wealth and state (A)
+VUT,Haven,0.03,B+,383,EAS,headline 0%: floored at the E2 Haven rate 3% (A); unrated in 2020: rating from wealth and state (A)
+WSM,High,0.27,B+,383,EAS,unrated in 2020: rating from wealth and state (A)
+TON,Moderate,0.25,B+,383,EAS,unrated in 2020: rating from wealth and state (A)
+KIR,Moderate,0.21,B-,567,EAS,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
+FSM,Moderate,0.21,B+,383,EAS,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
+MHL,Moderate,0.21,B+,383,EAS,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
+PLW,Moderate,0.21,BB-,317,EAS,2020 rate not known: Moderate band rate (A); unrated in 2020: rating from wealth and state (A)
+NRU,Moderate,0.2,BB-,317,EAS,unrated in 2020: rating from wealth and state (A)
+TUV,High,0.3,B+,383,EAS,unrated in 2020: rating from wealth and state (A)
+GIB,Haven,0.03,A,40,EU,"Haven (2.2.5): E2 Haven rate 3%, headline 12.5%"
+IMN,Haven,0.03,AA-,23,EU,"Haven (2.2.5): E2 Haven rate 3%, headline 0.0%"
+FRO,Moderate,0.18,AA,15,EU,
+PAP,Moderate,0.21,B-,567,LAT,"2020 rate not known: Moderate band rate (A); rating micronation ruled by decree, unrated: set by hand"
