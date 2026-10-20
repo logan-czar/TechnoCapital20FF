@@ -1,12 +1,12 @@
 # 4. Politics: detailed design
 
-_Status: draft v0.5 (2026-10-20). Batch 134 (Logan): 4.15.3 uses the one alert scale (Pause, Notify, Log, Off) of 20-ui 20.4. Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): leftover currency-crisis, local-currency and rate wording marked post-POC or USD (4.1, 4.6.6, 4.11, 4.12.1, 4.13.4, 4.16.3, 4.25, 4.27.1); the province chief post and the "fourth level" bloc wording removed. Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. The 4.2.4 last column is now Key cities. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. F1 and F3 are post-POC (not simulated); other central bank governors are political posts that set no rate; currency crises, the 4.13.6 example and the Peg Under Pressure situation are post-POC; the euro exists in flavor with no separate rate (4.25.1); the euro crisis runs as a debt crisis; the Federal Monetary Board can rescue a friendly country's banks (4.9.8). Batch 123 (Logan): Norway and Iceland follow the EU's single market laws with no vote; Switzerland stands alone (4.25.1). Batch 122 (Logan): the European Union is one supranational body over its members' national laws (4.25.1); the UK is already out of the EU at start; the Minister of Land and Housing, the Interior Minister and the local standing PC bonus are confirmed. Batch 121 (Logan, 2026-10-19): only national governments in the POC. There are no state, regional or city governments, councils, mayors, governors, regional laws, licences or bonds, and no regional or local elections; regions, areas, cities and Metros stay as map groupings. Rezonings, permits and policing contracts are decisions of national ministers (4.3); PC is earned per country, plus a little local standing PC from tiers (4.1.2); City Councilor, Mayor, Regional Legislator and Governor are gone; 4.13.1 is now a ministry rezoning and 4.13.3 a national legislature seat. Batch 119: Phoenix became a Metro (any city of 5M or more is one), so the 4.13.1 council example moves to Austin. Batch 118: EU4-style map. The local level of government sits on the **city** (a Metro or a single province ranked City or Metropolis); towns and rural provinces are governed locally by their region. District-level rules (OCG Control, security, policing contracts, rezoning) become province-level; crime, protests and local stability are per province; council sizes follow city rank; the 4.2.4 column lists former hubs and every other country is a real country in [countries.csv](../data/countries.csv). Batch 117: Heat is how cancelled a character is, with decay by scandal type (4.17.4); the T2 Data Sovereignty position and captive banks are removed. Batch 116: no dynasties, family, heirs, cadet houses, marriage, legacies or renown (the player acts through their own character, companies, trusts and clients; Partition and family trusts gone); Clout (elite) and Fame and Favor (public) replace reputation, Favorability, Elite Standing and Profile (4.16); Persuasion replaces the Influence skill; intel learns secrets; branch offices dropped (seizure ladder works on a foreign holder's operations, C2 is Local partner and directors); Semiconductors replaces the four chip industries; Colombia and DR Congo added to 4.2.4, start-world facts matched to 19.22 and example hubs to the 80 hubs; tech levels, plots, brand appeal, crypto mixing, the AI aggression setting, AI ambitions and merger clearance removed; opinion formulas written as tag reads; nonexistent traits replaced. v0.4: consistency pass, batch 74: interest groups, stages, cyberware, PMCs, antitrust, netruns, goods, facilities and supply chains removed, opinion effects written as pushes, and hour costs written as instant actions or ticks (no daily hours budget), so the file matches the current rules. v0.3 (batch 37): the nine ideologies as political actors, votes by strata, tariffs on industry indices, politics by company rank (4.0, 4.4, 4.28). Earlier: v0.2 (2026-10-16). v0.2 adds the political experience and screens, public standing (favorability, elite standing, profile), media and scandals as news cycles, the dynasty as a political actor (careers, think tanks, foundations, parties), lobbyists and fixers, corruption end to end (dirty money, laundering, deniability, whistleblowers), courts and litigation, police and organized crime, private security, civil society and protests, international organizations, espionage, AI governments and AI dynasties, politics by company rank, political endgames, new events and worked examples (4.15 to 4.31); Assumptions move to 4.32. Replaces the retired politics overview (08); the influence rules it reads are in [2-map-and-influence.md](2-map-and-influence.md) 2.5. Owner: Logan. Batch 120: influence tier thresholds drop by level (country Kingmaker at 20%), so the Oligarch weight example is updated._
+_Status: draft v0.6 (2026-10-20). Batch 136 (Logan): one US-based government system in every country replaces the government types. Every country has a head of state, a legislature and a judiciary; there is no electoral college (direct national vote); Head of State Strength (HSS) sets Legislature and Judiciary Strength, and every old type parameter (democratic weight, money and influence effectiveness, judicial independence, media freedom, election freedom, regime strength) is derived from them (4.2.1); bands Open, Guided and Dominant; exactly 10 countries start with a flavor variant that replaces a branch (4.2.6); branch strengths and variants change through drift, reform, coups, captures and revolutions (4.2.5); failed states become the Collapsed condition (4.2.7); snap elections replaced by a removal vote (4.6.1); every later mention of a type now names an HSS band or variant. Batch 134 (Logan): 4.15.3 uses the one alert scale (Pause, Notify, Log, Off) of 20-ui 20.4. Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): leftover currency-crisis, local-currency and rate wording marked post-POC or USD (4.1, 4.6.6, 4.11, 4.12.1, 4.13.4, 4.16.3, 4.25, 4.27.1); the province chief post and the "fourth level" bloc wording removed. Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. The 4.2.4 last column is now Key cities. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. F1 and F3 are post-POC (not simulated); other central bank governors are political posts that set no rate; currency crises, the 4.13.6 example and the Peg Under Pressure situation are post-POC; the euro exists in flavor with no separate rate (4.25.1); the euro crisis runs as a debt crisis; the Federal Monetary Board can rescue a friendly country's banks (4.9.8). Batch 123 (Logan): Norway and Iceland follow the EU's single market laws with no vote; Switzerland stands alone (4.25.1). Batch 122 (Logan): the European Union is one supranational body over its members' national laws (4.25.1); the UK is already out of the EU at start; the Minister of Land and Housing, the Interior Minister and the local standing PC bonus are confirmed. Batch 121 (Logan, 2026-10-19): only national governments in the POC. There are no state, regional or city governments, councils, mayors, governors, regional laws, licences or bonds, and no regional or local elections; regions, areas, cities and Metros stay as map groupings. Rezonings, permits and policing contracts are decisions of national ministers (4.3); PC is earned per country, plus a little local standing PC from tiers (4.1.2); City Councilor, Mayor, Regional Legislator and Governor are gone; 4.13.1 is now a ministry rezoning and 4.13.3 a national legislature seat. Batch 119: Phoenix became a Metro (any city of 5M or more is one), so the 4.13.1 council example moves to Austin. Batch 118: EU4-style map. The local level of government sits on the **city** (a Metro or a single province ranked City or Metropolis); towns and rural provinces are governed locally by their region. District-level rules (OCG Control, security, policing contracts, rezoning) become province-level; crime, protests and local stability are per province; council sizes follow city rank; the 4.2.4 column lists former hubs and every other country is a real country in [countries.csv](../data/countries.csv). Batch 117: Heat is how cancelled a character is, with decay by scandal type (4.17.4); the T2 Data Sovereignty position and captive banks are removed. Batch 116: no dynasties, family, heirs, cadet houses, marriage, legacies or renown (the player acts through their own character, companies, trusts and clients; Partition and family trusts gone); Clout (elite) and Fame and Favor (public) replace reputation, Favorability, Elite Standing and Profile (4.16); Persuasion replaces the Influence skill; intel learns secrets; branch offices dropped (seizure ladder works on a foreign holder's operations, C2 is Local partner and directors); Semiconductors replaces the four chip industries; Colombia and DR Congo added to 4.2.4, start-world facts matched to 19.22 and example hubs to the 80 hubs; tech levels, plots, brand appeal, crypto mixing, the AI aggression setting, AI ambitions and merger clearance removed; opinion formulas written as tag reads; nonexistent traits replaced. v0.4: consistency pass, batch 74: interest groups, stages, cyberware, PMCs, antitrust, netruns, goods, facilities and supply chains removed, opinion effects written as pushes, and hour costs written as instant actions or ticks (no daily hours budget), so the file matches the current rules. v0.3 (batch 37): the nine ideologies as political actors, votes by strata, tariffs on industry indices, politics by company rank (4.0, 4.4, 4.28). Earlier: v0.2 (2026-10-16). v0.2 adds the political experience and screens, public standing (favorability, elite standing, profile), media and scandals as news cycles, the dynasty as a political actor (careers, think tanks, foundations, parties), lobbyists and fixers, corruption end to end (dirty money, laundering, deniability, whistleblowers), courts and litigation, police and organized crime, private security, civil society and protests, international organizations, espionage, AI governments and AI dynasties, politics by company rank, political endgames, new events and worked examples (4.15 to 4.31); Assumptions move to 4.32. Replaces the retired politics overview (08); the influence rules it reads are in [2-map-and-influence.md](2-map-and-influence.md) 2.5. Owner: Logan. Batch 120: influence tier thresholds drop by level (country Kingmaker at 20%), so the Oligarch weight example is updated._
 
 The player never rules a country. The player **buys, earns and borrows power over those who do**, through their own character, the companies they control, their personal trusts and their clients. This file turns the politics overview into exact rules, formulas, numbers and content.
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value, expected to change in playtesting. Formulas are written so each term can be shown in a tooltip breakdown (see [11-ui.md](../11-ui.md)). Money is in US dollars. Every simulated value is in US dollars (Logan, batch 125); countries keep their real currencies in names, news and history as flavor, but there are no exchange rates in the POC (FX is post-POC).
 
-**Decided rule kept intact.** Influence is rooted mainly in the assets a holder owns in an area, modified by birthplace and origin, and temporarily boosted by psyops and ad campaigns (see [2-map-and-influence.md](2-map-and-influence.md) 2.5). Everything political in this file is fed by that influence. Money can buy political effects directly, but how far money goes depends on the government type, and money spent without influence behind it is less effective and riskier.
+**Decided rule kept intact.** Influence is rooted mainly in the assets a holder owns in an area, modified by birthplace and origin, and temporarily boosted by psyops and ad campaigns (see [2-map-and-influence.md](2-map-and-influence.md) 2.5). Everything political in this file is fed by that influence. Money can buy political effects directly, but how far money goes depends on the country's branch strengths (4.2), and money spent without influence behind it is less effective and riskier.
 
 ---
 
@@ -62,7 +62,7 @@ Money given to a bloc goes through the **Fund Ideology** action (4.10.1): think 
 
 Influence share is a stock (how strong you are). Political Capital is a flow (what you can do this month).
 
-- **Monthly PC gain** in a country = `100 × sqrt(national influence share) × Influence Effectiveness(government type) + local standing PC + office PC` **(T)**.
+- **Monthly PC gain** in a country = `100 × sqrt(national influence share) × Influence Effectiveness (4.2.1) + local standing PC + office PC` **(T)**.
   - Influence share is a fraction (0.25 for 25%).
   - The square root keeps small players relevant in big countries: 1% share gives 10 PC per month, 10% gives 32, 25% gives 50, 50% gives 71.
 - **Pool cap** = 6 × monthly gain, minimum 20 **(T)**. PC above the cap is lost.
@@ -82,45 +82,90 @@ Influence share is a stock (how strong you are). Political Capital is a flow (wh
 | **Weekly** | Polls, campaign events, lobbying actions resolve, investigation steps, coup plot progress and leak rolls, temporary boost decay (ads and psyops), bloc approval, trade war and sanctions escalation checks, seizure ladder steps |
 | **Monthly** | PC income, clout recalculation, law progress rolls, exposure detection rolls, stability, relation drift, revolution pressure, coup risk, default risk (currency crisis risk is post-POC), foreign asset seizure risk (4.9.10) |
 | **Quarterly** | Government contract tenders open, regulator capacity review, credit and political risk ratings |
-| **Yearly** | Scheduled elections fire on their date, party plenums, budgets, agency head term reviews, government type review (drift from stability and bloc pressure) |
+| **Yearly** | Scheduled elections fire on their date, party plenums, budgets, agency head term reviews, branch strength drift (4.2.5) |
 
 ---
 
-## 4.2 Government types
+## 4.2 One government system (Logan, batch 136)
 
-### 4.2.1 Type table
+Logan's ruling (batch 136): "1 government system based on the USA's in every country. Add flavor and remove electoral college. Give legislatures and judicial branches varying strengths and weaknesses based on how strong the head of state is. In some states replace the judicial branch with a secret police or something different like royal family in Saudi arabia. We can switch some but have usa be the default with no popular vote. Only add these flavor changes to 10 countries."
 
-| Type | How power changes hands | Corruption (default, range) | Money effectiveness | Influence effectiveness | Stability baseline | Foreigner influence penalty | Law enactment time | Judicial independence | Media freedom |
-|---|---|---|---|---|---|---|---|---|---|
-| **Liberal democracy** | Free elections on fixed schedules; coalitions; confidence votes | 20 (5 to 75) | 1.0 | 1.0 | 70 | -10% | 6 to 18 months | 0.9 | 0.9 |
-| **Managed democracy** | Elections with incumbent advantage, fraud and disqualification; managed succession inside the ruling circle | 50 (10 to 80) | 1.3 | 0.9 | 60 | -30% | 2 to 6 months | 0.4 | 0.4 |
-| **One-party state** | Party congress every 5 years; faction struggle; ruling family variant uses family council | 40 (20 to 80) | 0.6 | 0.6 | 65 | -50% | 1 to 4 months | 0.2 | 0.1 |
-| **Corporate oligarchy** | Council of Stakeholders: seats weighted by national influence share; the largest holder chairs | 60 (40 to 85) | 2.0 | 1.5 | 55 | 0% | 1 to 2 months | 0.3 | 0.3 |
-| **Military junta** | Council of generals; coups and counter-coups; occasional managed transition to elections | 65 (50 to 85) | 0.9 | 0.7 | 45 | -30% | Decree, 0 to 1 month | 0.1 | 0.2 |
-| **Failed state** | No effective center; local strongmen and militias (characters and OCGs, not governments, 4.3.4) hold provinces; national government exists on paper | 85 (70 to 95) | 1.6 | 0.8 | 20 | -10% | National laws barely enforced | 0.0 | 0.5 |
+The old government types (liberal democracy, managed democracy, one-party state, corporate oligarchy, military junta, failed state) are gone. Every country runs **the same US-style system**, and countries differ only in how strong each branch is, plus a flavor variant in exactly 10 countries (4.2.6).
 
-All values **(T)**.
+### 4.2.1 Three branches and Head of State Strength
+
+| Branch | Who | What it does |
+|---|---|---|
+| **Head of state** | One elected character, who is also head of government (the two are one office everywhere; this file's "head of government" means the head of state) **(A)** | Runs the executive: the cabinet of ministers (4.7.1) and the six agencies (4.9.1); proposes the national agenda; signs or vetoes bills; issues decrees where strength allows; runs diplomacy |
+| **Legislature** | Elected legislators (4.6.2), organized in parties (4.4.7) | Passes laws (4.5.9, 4.5.10); can remove the head of state (4.6.1); holds hearings (4.15.4) |
+| **Judiciary** | Judges (4.21) and the courts | Checks the other two: trials (4.9.4), court challenges to laws and decrees (4.5.11), seizure and contract appeals |
+
+**No electoral college.** The head of state is elected by a **direct national vote** (4.6.2) in every country, the United States included. Elections exist everywhere; in strong-executive countries they are managed (4.6.7) **(A)**.
+
+Each country has three numbers, 0 to 100, stored in [countries.csv](../data/countries.csv):
+
+- **Head of State Strength (HSS)**: how much power the head of state holds over the other two branches and the agencies. The United States is the default at 55; liberal democracies sit around 40 to 55 and strong-executive states around 85 to 95 **(T)**.
+- **Legislature Strength (L)** = `clamp(130 - 1.3 × HSS + ΔL, 0, 100)` **(T)**.
+- **Judiciary Strength (J)** = `clamp(150 - 1.5 × HSS + ΔJ, 0, 100)` **(T)**.
+
+ΔL and ΔJ are per-country overrides of -15 to +15 for real quirks (a strong US Congress, Israel's strong court, weak courts in Mexico and the Philippines); collapsed states use larger ones **(T)**. The stronger the head of state, the weaker the other two. The countries.csv values are the start values; after that L and J move on their own (4.2.5) and are not recomputed from HSS unless an event says so.
+
+**Derived parameters.** Every old type parameter is now read from the three strengths. This table is the one mapping; every formula elsewhere in this file that names one of these parameters uses this row **(T)**:
+
+| Old parameter | Now | Read from | US value (HSS 55, L 64, J 72) | At HSS 72 (old managed) | At HSS 92 (old one-party) |
+|---|---|---|---|---|---|
+| **Democratic weight D** (4.4.4) | `0.05 + 0.6 × L / 100` | L | 0.43 | 0.27 | 0.11 |
+| **Influence effectiveness** (4.1.2) | `1.0 - 0.015 × max(0, HSS - 70)` | HSS | 1.0 | 0.97 | 0.67 |
+| **Money effectiveness, MoneyEff** (4.4.5) | `1.0 + 0.01 × max(0, 60 - J) - 0.06 × max(0, HSS - 80)` | J, HSS | 1.0 | 1.18 | 0.76 |
+| **Judicial independence** (0 to 1) | `J / 100` | J | 0.72 | 0.42 | 0.12 |
+| **Media freedom** (0 to 1) | `clamp((95 - HSS) / 50, 0.05, 0.95)` | HSS | 0.80 | 0.46 | 0.06 |
+| **Election freedom** (4.6.7) | Free if HSS < 60; managed at 60 or more, with fraud and pressure scaling with HSS | HSS | Free | Managed | Heavily managed |
+| **Stability baseline** (4.11.7) | `70 - 0.15 × abs(HSS - 50)` | HSS | 69 | 67 | 64 |
+| **Foreigner influence penalty** | `-(10 + max(0, HSS - 50))%`, capped at -50% | HSS | -15% | -32% | -50% |
+| **Pass threshold T** (4.5.10) | `clamp(round((L - 30) / 4), -10, +10)` | L | +9 | +2 | -5 |
+| **Law speed** (4.5.9) | First pass roll at month 2 if L ≥ 50, month 1 if L is 20 to 49; decree rule if HSS ≥ 85 | L, HSS | Month 2 | Month 1 | Decree |
+| **Head of state's party weight** (4.5.10) | The head of state's party's core ideology counts its stances double if HSS ≥ 85 | HSS | No | No | Double |
+| **Decrees** (4.5.11) | Allowed if HSS ≥ 85, or under Emergency Decrees or above | HSS | Emergency only | Emergency only | Yes |
+| **Regime strength input** (4.8.1) | `+0.2 × HSS` term | HSS | +11 | +14 | +18 |
+| **Coup risk gate** (4.8.3) | Coups only under emergency or Stability < 20 if HSS < 60 | HSS | Gated | Open | Open |
+| **Agency independence** (4.9.2) | `J / 100` | J | 0.72 | 0.42 | 0.12 |
+| **Agency capacity default** (4.9.2) | 3 if HSS < 60, 2 if 60 to 84, 3 if 85 or more; 1 when Collapsed | HSS | 3 | 2 | 3 |
+| **Enforcement factor** (4.3.3) | 100%; 90% under Council of Stakeholders, 85% under Military Council, 30% when Collapsed | Variant, condition | 100% | 100% | 100% |
+| **Corruption drift target** (4.2.3) | Laws, plus `-0.3 × (J - 50)` | J | -7 | +2 | +11 |
+
+What the derived parameters do (unchanged from the old types):
 
 - **Money effectiveness** multiplies every money-to-politics conversion: clout from funding, lobby points bought with money, campaign spending, bribes.
 - **Influence effectiveness** multiplies PC gain (4.1.2).
 - **Foreigner influence penalty** applies to the influence share of holders whose character (by citizenship) and company headquarters are foreign (stacks with nationalist law positions such as Foreign Ownership: Capped or Closed, which add a further -10% each step past Screened **(T)**).
-- **Judicial independence** (0 to 1): chance that a trial follows the evidence instead of the executive's wishes, and that courts strike down unlawful seizures.
-- **Media freedom** (0 to 1): multiplies the chance that an exposé gets published and spreads; low freedom means scandals about the regime's friends stay buried, but scandals about its enemies are amplified.
+- **Judicial independence** (0 to 1): chance that a trial follows the evidence instead of the head of state's wishes, and that courts strike down unlawful seizures.
+- **Media freedom** (0 to 1): multiplies the chance that an exposé gets published and spreads; low freedom means scandals about the regime's friends stay buried, but scandals about its enemies are amplified. G3 State-Controlled halves it further **(A)**.
+- A variant (4.2.6) keeps its branch's strength number for these formulas unless its row says otherwise.
 
-### 4.2.2 What money and influence buy, by type
+**Bands.** Many rules only need to know roughly how strong the head of state is. This file names three bands of HSS **(T)**:
 
-| Type | Cheap | Expensive or impossible | Typical player play |
+| Band | HSS | Plays like | Elections |
 |---|---|---|---|
-| **Liberal democracy** | Legal lobbying, campaign donations, think tanks, media ownership | Bribes (low acceptance, high detection), direct control of regulators, decrees | Fund groups and campaigns, own media, run for office or back candidates, use lawyers |
-| **Managed democracy** | Access to the ruling circle, contracts, protection from investigations | Supporting the opposition (risk of targeted investigations and seizures) | Become a loyal court oligarch; pay for contracts; avoid backing the losing side |
-| **One-party state** | Permits and partnerships through party patrons in the ministries | Buying national policy with money; owning media; open lobbying | Local subsidiaries with local partners, cultivate party faction patrons, accept transfers of plans and data |
-| **Corporate oligarchy** | Almost everything: votes on the Council are weighted by influence share | Nothing is off limits, but rivals can outbid you | Accumulate assets to win Council seats; laws are a market |
-| **Military junta** | Security contracts, mining concessions | Stable long-term rules: the next coup can void your deals | Short horizons, quick returns, cultivate the generals, keep an exit plan |
-| **Failed state** | Local strongmen, ports, militia protection | National guarantees of any kind | Resource extraction under armed protection, high risk; candidate for corporate sovereignty |
+| **Open** | 0 to 59 | The old liberal democracy | Free; removal votes, real courts |
+| **Guided** | 60 to 84 | The old managed democracy | Managed (4.6.7); courts lean to the executive |
+| **Dominant** | 85 to 100 | The old one-party state and junta | Heavily managed; the ruling party's factions (4.8.2) pick the candidate; decree rule |
+
+A rule that says "Guided or Dominant" applies at HSS 60 or more. **Collapsed** (4.2.7) is a condition on top of any band, not a band.
+
+### 4.2.2 What money and influence buy, by band
+
+| Band | Cheap | Expensive or impossible | Typical player play |
+|---|---|---|---|
+| **Open** | Legal lobbying, campaign donations, think tanks, media ownership | Bribes (low acceptance, high detection), direct control of regulators, decrees | Fund groups and campaigns, own media, run for office or back candidates, use lawyers |
+| **Guided** | Access to the head of state's circle, contracts, protection from investigations | Supporting the opposition (risk of targeted investigations and seizures) | Become a loyal court oligarch; pay for contracts; avoid backing the losing side |
+| **Dominant** | Permits and partnerships through patrons in the ruling party and ministries; security contracts | Buying national policy with money; owning media; open lobbying; stable rules if the head of state changes | Local subsidiaries with local partners, cultivate faction patrons, keep an exit plan |
+| **Collapsed** (any band) | Local strongmen, ports, militia protection | National guarantees of any kind | Resource extraction under armed protection, high risk; candidate for corporate sovereignty |
+
+The 10 variants (4.2.6) add their own levers on top.
 
 ### 4.2.3 Corruption
 
-Corruption (0 to 100) is a country value with a type default. It can differ by region and city as map data (local corruption = national ± up to 20 **(T)**); regions and cities have no government of their own (batch 121).
+Corruption (0 to 100) is a country value from data. It can differ by region and city as map data (local corruption = national ± up to 20 **(T)**); regions and cities have no government of their own (batch 121).
 
 | Effect | Formula **(T)** |
 |---|---|
@@ -128,95 +173,135 @@ Corruption (0 to 100) is a country value with a type default. It can differ by r
 | Bribe cost multiplier | `(110 - Corruption) / 60` (Corruption 20 → 1.5×, 50 → 1.0×, 85 → 0.42×) |
 | Detection of bribery and kickbacks by regulators | multiplied by `1 - Corruption / 200` |
 | Kickbacks expected on government contracts | `Corruption / 10` % of contract value (2% at 20, 8.5% at 85) for a neutral bid score; paying less loses bid score (4.9.7) |
-| Enforcement of national law in a province | `100% - max(0, Local corruption - 50)%` (Failed state at 85 enforces 65%; combined with type, see 4.3.3) |
+| Enforcement of national law in a province | `100% - max(0, Local corruption - 50)%` (a collapsed state at 85 enforces 65%; combined with the enforcement factor, see 4.3.3) |
 
-Corruption drifts monthly by ±1 toward a target set by laws (Lobbying Rules, Campaign Finance, Media Ownership), judicial independence, and the clout of the Sovereigntists **(T)**.
+Corruption drifts monthly by ±1 toward a target set by laws (Lobbying Rules, Campaign Finance, Media Ownership), Judiciary Strength (4.2.1), and the clout of the Sovereigntists **(T)**.
 
 ### 4.2.4 Starting countries
 
-The starting classification is a game abstraction, a snapshot at the start date (1 January 2020, matched to the alternate history in [19-history.md](19-history.md) 19.22), stored as editable data. It is not a judgment of any country, and in play every country can move between types. Corruption and stability values are loosely inspired by public governance indicators and are tuning values.
+The starting values are a game abstraction, a snapshot at the start date (1 January 2020, matched to the alternate history in [19-history.md](19-history.md) 19.22), stored as editable data. They are not a judgment of any country, and in play every value can move (4.2.5). HSS was set from each country's old type and its 19.22 start: liberal democracies 45 (50 in Latin America and Sub-Saharan Africa), managed democracies 72, one-party states 90, ruling-family states 93, failed states 35 with large negative ΔL and ΔJ, then adjusted by hand for the countries below and a few others noted in countries.csv **(A)**. Corruption and stability values are loosely inspired by public governance indicators and are tuning values.
 
-| Country | Type | Corruption | Stability | Structure | National election cycle (legislature / executive) | Key cities |
-|---|---|---|---|---|---|---|
-| United States | Liberal democracy | 25 | 62 | Federal | 2 / 4 years | New York, Bay Area, Washington DC, Houston, Chicago and 10 more |
-| Canada | Liberal democracy | 15 | 75 | Federal | 4 (parliamentary) | Toronto, Montreal, Vancouver, Ottawa, Edmonton |
-| Mexico | Liberal democracy | 65 | 52 | Federal | 3 / 6 years | Mexico City, Monterrey, Guadalajara |
-| United Kingdom | Liberal democracy | 20 | 62 | Unitary (devolved) | 5 (parliamentary) | London |
-| Ireland | Liberal democracy | 15 | 74 | Unitary | 5 (parliamentary) | None |
-| Germany | Liberal democracy | 15 | 66 | Federal | 4 (parliamentary) | Frankfurt, Munich, Berlin |
-| France | Liberal democracy | 25 | 56 | Unitary | 5 / 5 years | Paris |
-| Netherlands | Liberal democracy | 12 | 70 | Unitary | 4 (parliamentary) | Amsterdam, Rotterdam, Eindhoven |
-| Switzerland | Liberal democracy | 10 | 85 | Federal | 4 (collegial executive) | Zurich |
-| Sweden, Norway, Denmark, Finland | Liberal democracy | 8 to 12 | 76 to 82 | Unitary | 4 (parliamentary) | None |
-| Italy | Liberal democracy | 40 | 52 | Unitary | 5 (parliamentary) | Milan, Rome |
-| Spain | Liberal democracy | 35 | 54 | Unitary (strong regions) | 4 (parliamentary) | None |
-| Greece | Liberal democracy | 45 | 35 | Unitary | 4 (parliamentary) | None (defaulted at start, 19.22) |
-| Poland | Liberal democracy | 35 | 64 | Unitary | 4 / 5 years | None |
-| Ukraine | Liberal democracy (at war) | 60 | 35 | Unitary | 5 / 5 years | None (drone war under Zelensky, 19.22) |
-| Japan | Liberal democracy | 20 | 78 | Unitary | 4 (parliamentary) | Tokyo-Yokohama, Osaka-Kobe |
-| South Korea | Liberal democracy | 30 | 64 | Unitary | 4 / 5 years | Seoul-Pyeongtaek |
-| Taiwan | Liberal democracy | 25 | 62 | Unitary | 4 / 4 years | Hsinchu-Taipei, Kaohsiung |
-| Australia | Liberal democracy | 15 | 74 | Federal | 3 (parliamentary) | Sydney, Melbourne, Perth-Pilbara |
-| Israel | Liberal democracy | 30 | 50 | Unitary | 4 (parliamentary) | Tel Aviv |
-| India | Liberal democracy | 55 | 58 | Federal | 5 (parliamentary) | Mumbai, Delhi NCR, Bengaluru, Hyderabad, Chennai |
-| Indonesia | Liberal democracy | 60 | 60 | Unitary | 5 / 5 years | Jakarta |
-| Malaysia | Liberal democracy | 45 | 60 | Federal | 5 (parliamentary) | Kuala Lumpur, Penang |
-| Philippines | Liberal democracy | 65 | 52 | Unitary | 3 / 6 years | None |
-| Brazil | Liberal democracy | 55 | 55 | Federal | 4 / 4 years | São Paulo, Rio de Janeiro |
-| Argentina | Liberal democracy | 60 | 45 | Federal | 2 / 4 years | Buenos Aires |
-| Chile | Liberal democracy | 30 | 55 | Unitary | 4 / 4 years | Santiago, Antofagasta |
-| Colombia | Liberal democracy | 60 | 52 | Unitary | 4 / 4 years | Medellín **(A)** |
-| South Africa | Liberal democracy | 55 | 48 | Unitary (provinces) | 5 (parliamentary) | Johannesburg, Cape Town |
-| Nigeria | Liberal democracy | 75 | 38 | Federal | 4 / 4 years | Lagos |
-| Singapore | Managed democracy | 10 | 82 | City-state | 5 (parliamentary) | Singapore |
-| Turkey | Managed democracy | 55 | 50 | Unitary | 5 / 5 years | Istanbul |
-| Russia | Managed democracy | 70 | 52 | Federal | 5 / 6 years | Moscow, St Petersburg |
-| Kazakhstan | Managed democracy | 65 | 58 | Unitary | 5 / 7 years | None |
-| Egypt | Managed democracy (US friend) | 65 | 52 | Unitary | 5 / 6 years | Cairo-Suez |
-| Iraq | Managed democracy (US ally) | 60 | 55 | Federal | 4 (parliamentary) | None |
-| Yemen | Managed democracy (US-backed) | 80 | 35 | Unitary | 7 / 7 years | None **(A)** |
-| Iran | Managed democracy (the region's holdout) | 70 | 40 | Unitary | 4 / 4 years | None |
-| Thailand | Managed democracy (army-led) | 55 | 50 | Unitary | 4 (parliamentary) | None |
-| Myanmar | Managed democracy (army-guided) | 75 | 35 | Unitary | 5 (parliamentary) | None |
-| Venezuela | Managed democracy | 80 | 30 | Federal | 5 / 6 years | None |
-| DR Congo | Managed democracy | 80 | 25 | Unitary (provinces) | 5 / 5 years | Kolwezi-Lubumbashi (Katanga) **(A)** |
-| Mali | Managed democracy (US debt vassal, 4.11.8) | 70 | 35 | Unitary | 5 / 5 years | None |
-| Burkina Faso, Niger | Managed democracy | 70 to 75 | 30 to 35 | Unitary | 5 / 5 years | None |
-| Sudan | Managed democracy (US-friendly transition after Bashir) | 80 | 30 | Federal | Transition council, elections due | None |
-| China | One-party state | 45 | 70 | Unitary | Party congress every 5 years | Shanghai, Shenzhen-Dongguan, Beijing, Hong Kong, Chengdu, Wuhan, Baotou |
-| Vietnam | One-party state | 55 | 68 | Unitary | Party congress every 5 years | Ho Chi Minh City, Hanoi |
-| Cuba | One-party state | 50 | 45 | Unitary | Party congress every 5 years | None |
-| North Korea | One-party state (isolated) | 80 | 55 | Unitary | Closed: no foreign assets allowed at start | None |
-| Saudi Arabia | One-party state (ruling family) | 45 | 66 | Unitary | Family council | Riyadh, Dhahran-Dammam |
-| United Arab Emirates | One-party state (ruling family) | 30 | 76 | Federal | Family council | Dubai, Abu Dhabi |
-| Qatar | One-party state (ruling family) | 35 | 78 | Unitary | Family council | Doha |
-| Libya | One-party state (US friend) | 70 | 55 | Unitary | Leader's congress | None **(A)** |
-| Somalia | Failed state | 90 | 12 | Federal (nominal) | Nominal | None |
-| South Sudan | Failed state | 90 | 8 | Federal (nominal) | Nominal | None |
-| Haiti | Failed state | 85 | 10 | Unitary | Nominal | None |
+| Country | HSS | Legislature | Judiciary | Variant (4.2.6) | Corruption | Stability | Structure | Elections (legislature / head of state) | Key cities |
+|---|---|---|---|---|---|---|---|---|---|
+| United States | 55 | 64 | 72 | - | 25 | 62 | Federal | 2 / 4 years | New York, Bay Area, Washington DC, Houston, Chicago and 10 more |
+| Canada | 42 | 75 | 87 | - | 15 | 75 | Federal | 4 / 4 years (A) | Toronto, Montreal, Vancouver, Ottawa, Edmonton |
+| Mexico | 58 | 55 | 48 | - | 65 | 52 | Federal | 3 / 6 years | Mexico City, Monterrey, Guadalajara |
+| United Kingdom | 45 | 72 | 82 | - | 20 | 62 | Unitary (devolved) | 5 / 5 years (A) | London |
+| Ireland | 40 | 78 | 90 | - | 15 | 74 | Unitary | 5 / 5 years (A) | None |
+| Germany | 40 | 78 | 90 | - | 15 | 66 | Federal | 4 / 4 years (A) | Frankfurt, Munich, Berlin |
+| France | 55 | 54 | 68 | - | 25 | 56 | Unitary | 5 / 5 years | Paris |
+| Netherlands | 40 | 78 | 90 | - | 12 | 70 | Unitary | 4 / 4 years (A) | Amsterdam, Rotterdam, Eindhoven |
+| Switzerland | 30 | 91 | 100 | Federal Council | 10 | 85 | Federal | 4 / 4 years (Federal Council, 4.2.6) | Zurich |
+| Sweden, Norway, Denmark, Finland | 40 | 78 | 90 | - | 8 to 12 | 76 to 82 | Unitary | 4 / 4 years (A) | None |
+| Italy | 42 | 75 | 82 | - | 40 | 52 | Unitary | 5 / 5 years (A) | Milan, Rome |
+| Spain | 45 | 72 | 82 | - | 35 | 54 | Unitary (strong regions) | 4 / 4 years (A) | None |
+| Greece | 50 | 65 | 75 | - | 45 | 35 | Unitary | 4 / 4 years (A) | None (defaulted at start, 19.22) |
+| Poland | 52 | 62 | 62 | - | 35 | 64 | Unitary | 4 / 5 years | None |
+| Ukraine | 58 | 50 | 53 | - | 60 | 35 | Unitary | 5 / 5 years | None (drone war under Zelensky, 19.22) |
+| Japan | 42 | 75 | 87 | - | 20 | 78 | Unitary | 4 / 4 years (A) | Tokyo-Yokohama, Osaka-Kobe |
+| South Korea | 52 | 62 | 72 | - | 30 | 64 | Unitary | 4 / 5 years | Seoul-Pyeongtaek |
+| Taiwan | 48 | 68 | 78 | - | 25 | 62 | Unitary | 4 / 4 years | Hsinchu-Taipei, Kaohsiung |
+| Australia | 42 | 75 | 87 | - | 15 | 74 | Federal | 3 / 3 years (A) | Sydney, Melbourne, Perth-Pilbara |
+| Israel | 48 | 68 | 88 | - | 30 | 50 | Unitary | 4 / 4 years (A) | Tel Aviv |
+| India | 55 | 58 | 62 | - | 55 | 58 | Federal | 5 / 5 years (A) | Mumbai, Delhi NCR, Bengaluru, Hyderabad, Chennai |
+| Indonesia | 52 | 62 | 67 | - | 60 | 60 | Unitary | 5 / 5 years | Jakarta |
+| Malaysia | 50 | 65 | 70 | - | 45 | 60 | Federal | 5 / 5 years (A) | Kuala Lumpur, Penang |
+| Philippines | 58 | 55 | 48 | - | 65 | 52 | Unitary | 3 / 6 years | None |
+| Brazil | 52 | 62 | 72 | - | 55 | 55 | Federal | 4 / 4 years | São Paulo, Rio de Janeiro |
+| Argentina | 52 | 62 | 67 | - | 60 | 45 | Federal | 2 / 4 years | Buenos Aires |
+| Chile | 48 | 68 | 78 | - | 30 | 55 | Unitary | 4 / 4 years | Santiago, Antofagasta |
+| Colombia | 52 | 62 | 67 | - | 60 | 52 | Unitary | 4 / 4 years | Medellín **(A)** |
+| South Africa | 45 | 72 | 82 | - | 55 | 48 | Unitary (provinces) | 5 / 5 years (A) | Johannesburg, Cape Town |
+| Nigeria | 55 | 58 | 58 | - | 75 | 38 | Federal | 4 / 4 years | Lagos |
+| Singapore | 68 | 37 | 63 | - | 10 | 82 | City-state | 5 / 5 years (A) | Singapore |
+| Turkey | 78 | 29 | 33 | - | 55 | 50 | Unitary | 5 / 5 years | Istanbul |
+| Russia | 88 | 16 | 18 | Security Organs | 70 | 52 | Federal | 5 / 6 years | Moscow, St Petersburg |
+| Kazakhstan | 82 | 23 | 27 | - | 65 | 58 | Unitary | 5 / 7 years | None |
+| Egypt | 82 | 23 | 27 | - | 65 | 52 | Unitary | 5 / 6 years | Cairo-Suez |
+| Iraq | 65 | 50 | 52 | - | 60 | 55 | Federal | 4 / 4 years (A) | None |
+| Yemen | 70 | 39 | 40 | - | 80 | 35 | Unitary | 7 / 7 years | None **(A)** |
+| Iran | 82 | 23 | 27 | Guardian Council | 70 | 40 | Unitary | 4 / 4 years | None |
+| Thailand | 75 | 28 | 38 | - | 55 | 50 | Unitary | 4 / 4 years (A) | None |
+| Myanmar | 62 | 49 | 47 | Tatmadaw | 75 | 35 | Unitary | 5 / 5 years (A) | None |
+| Venezuela | 80 | 26 | 25 | - | 80 | 30 | Federal | 5 / 6 years | None |
+| DR Congo | 75 | 32 | 32 | - | 80 | 25 | Unitary (provinces) | 5 / 5 years | Kolwezi-Lubumbashi (Katanga) **(A)** |
+| Mali | 72 | 36 | 42 | - | 70 | 35 | Unitary | 5 / 5 years | None |
+| Burkina Faso, Niger | 70 | 39 | 45 | - | 70 to 75 | 30 to 35 | Unitary | 5 / 5 years | None |
+| Sudan | 72 | 36 | 37 | - | 80 | 30 | Federal | Transition; first direct vote due (A) | None |
+| China | 92 | 10 | 12 | Party Standing Committee | 45 | 70 | Unitary | 5 / 5 years, managed; the party congress picks the candidate | Shanghai, Shenzhen-Dongguan, Beijing, Hong Kong, Chengdu, Wuhan, Baotou |
+| Vietnam | 86 | 18 | 21 | - | 55 | 68 | Unitary | 5 / 5 years, managed; the party congress picks the candidate | Ho Chi Minh City, Hanoi |
+| Cuba | 88 | 16 | 18 | - | 50 | 45 | Unitary | 5 / 5 years, managed; the party congress picks the candidate | None |
+| North Korea | 100 | 0 | 0 | State Security | 80 | 55 | Unitary | 5 / 5 years, single candidate; closed: no foreign assets allowed at start | None |
+| Saudi Arabia | 95 | 6 | 8 | Royal Court | 45 | 66 | Unitary | 4 / 7 years, managed; the Royal Court picks the candidate (A) | Riyadh, Dhahran-Dammam |
+| United Arab Emirates | 90 | 13 | 15 | Federal Supreme Council | 30 | 76 | Federal | 4 / 7 years, managed; the ruling family picks the candidate (A) | Dubai, Abu Dhabi |
+| Qatar | 92 | 10 | 12 | - | 35 | 78 | Unitary | 4 / 7 years, managed; the ruling family picks the candidate (A) | Doha |
+| Libya | 88 | 16 | 18 | - | 70 | 55 | Unitary | 4 / 4 years, managed (A) | None **(A)** |
+| Hong Kong | 62 | 39 | 67 | Liaison Office | 15 **(A)** | 40 **(A)** | SAR of China | 4 / 5 years | Hong Kong (also listed under China) |
+| Papa's Port | 100 | 0 | 0 | Sovereign's Household | 50 **(A)** | 70 **(A)** | Micronation | Yearly acclamation **(A)** | None |
+| Somalia | 35 | 44 | 38 | - | 90 | 12 | Federal (nominal) | 4 / 4 years on paper (Collapsed, 4.2.7) | None |
+| South Sudan | 35 | 44 | 38 | - | 90 | 8 | Federal (nominal) | 4 / 4 years on paper (Collapsed, 4.2.7) | None |
+| Haiti | 35 | 44 | 38 | - | 85 | 10 | Unitary | 4 / 4 years on paper (Collapsed, 4.2.7) | None |
 
-Start-world notes (batch 116): there was no Arab Spring, so every Middle East and North Africa government is a US puppet or friend except Iran; there were no 2021 to 2023 coups, so Myanmar, Burkina Faso and Niger are not juntas; Mali is a US debt vassal; Sudan is in a US-friendly transition after Bashir. European stability values are lowered for the euro crisis (the simulation runs it as a debt crisis, since there is no FX in the POC, batch 125), and Greece's for its default **(T)**. The last column lists only the 80 key cities of [2-map-and-influence.md](2-map-and-influence.md) 2.3.3 (cities with location perks or seeded starting businesses); "None" means none of them, but every country has its own cities in the province list. All 33 major countries are listed; minor groups are gone (batch 118), and every other country is a real country whose government type, corruption and stability come from its row in [countries.csv](../data/countries.csv) (government type copied from here or assumed from the 19.22 start world) **(A)**.
+Start-world notes (batch 116): there was no Arab Spring, so every Middle East and North Africa government is a US puppet or friend except Iran; there were no 2021 to 2023 coups, so Myanmar, Burkina Faso and Niger have no military government; Mali is a US debt vassal (4.11.8); Sudan is in a US-friendly transition after Bashir; Ukraine is at war (HSS 58 for wartime powers **(A)**). European stability values are lowered for the euro crisis (the simulation runs it as a debt crisis, since there is no FX in the POC, batch 125), and Greece's for its default **(T)**. The last column lists only the 80 key cities of [2-map-and-influence.md](2-map-and-influence.md) 2.3.3 (cities with location perks or seeded starting businesses); "None" means none of them, but every country has its own cities in the province list. All 33 major countries are listed, plus Hong Kong and Papa's Port for their variants; every other country is a real country whose HSS, Legislature, Judiciary and variant come from its row in [countries.csv](../data/countries.csv) **(A)**. countries.csv has no corruption or stability columns yet, so those values for unlisted countries are still to be set **(A)**.
 
-The **Structure** column (federal, unitary, devolved) is flavour and post-POC data only: in the POC every country has one national government and no regional or city governments (Logan, batch 121) **(A)**.
+The **Elections** column gives the legislature term and the head of state's term. Countries that had a parliamentary system now elect a head of state directly, on the old parliamentary term **(A)**. The **Structure** column (federal, unitary, devolved) is flavour and post-POC data only: in the POC every country has one national government and no regional or city governments (Logan, batch 121) **(A)**.
 
-No country starts as a **corporate oligarchy**. It is something powerful characters create, through capture of a weak state, a revolution's aftermath or a failed state's collapse (4.2.5).
+### 4.2.5 Changing branch strengths and variants
 
-### 4.2.5 Changing government type
+"We can switch some" (Logan, batch 136): HSS, L, J and the variant all move in play. Every change is an event, shown in the news and on the Politics screen.
 
-Type changes happen only through these transitions. Each is an event chain.
+**Yearly drift** (in the yearly calculation) **(T)**:
 
-| From | To | Trigger | Chain |
+- HSS moves 1 point toward a target: `+3 per Angry bloc that wants order (Chuds, Sovereigntists) with clout ≥ 15%`, `+5 under Emergency Powers at Standing Emergency or above`, `+3 if the head of state's party won more than 60% at the last election`, `-3 per year the head of state's party has under 40% of the legislature`, `-5 if a Powerful bloc that wants pluralism (Liberals, Effective Altruists) is Loyal`.
+- L and J each move 1 point toward their start formula value for the current HSS (4.2.1), so a drifting executive slowly drags the other two with it.
+
+**Events and laws** **(T)**:
+
+| Change | Trigger | Effect |
+|---|---|---|
+| **Erosion** | HSS ≥ 50 and Emergency Powers at Standing Emergency for 12+ months, or Media Ownership State-Controlled, or Stability < 35 for 6 months | Chain: Postponed Election (HSS +5) → Court Packing (J -15) → Media Takeover (HSS +5). Each step can be resisted by blocs with clout ≥ 30% combined, and by a court challenge at `J / 100 × 40%` |
+| **Reform law** | A Reform bill to strengthen the legislature or courts (a one-off bill, not a standing law; any holder can Commission one, 4.10.1) **(A)** | On passing: L or J +10, HSS -5. Needs Support ≥ T + 10, and the head of state can veto it unless L ≥ 60 |
+| **Opening** | A Guided or Dominant country with a reformer head of state and Stability ≥ 55 for 24 months, or a revolution led by Liberals, Communists, Effective Altruists or Neo-Luddites (5.7.3) | Chain: Free Election → Truth Commission → Purge of the Old Guard. HSS -20, L and J reset to the formula |
+| **Consolidation** | The head of state's party wins 3 elections in a row with more than 70% and passes G4 Ban on Opposition | HSS +10; the party's factions (4.8.2) take over candidate selection |
+| **Coup** (4.8.4) | A successful coup | HSS set to `max(HSS, 88)`; the **Military Council** variant replaces the legislature (4.2.6). With a civilian front: HSS +15, no variant |
+| **Transition** | Military Council 24+ months, Stability ≥ 40 and a Content leader, or 3+ sanctions tiers lifted on condition | The Military Council variant ends; HSS -15; a direct vote within 20 weeks |
+| **Revolution** (4.8.5) | Revolution pressure reaches 100 | New HSS and any variant set by the coalition's leading ideology ([5-ideology.md](5-ideology.md) 5.7.3) |
+| **Capture** | One or more characters (or AI megacorps) hold ≥ 40% national influence share together, Chuds approval ≥ 0, and a holder with ≥ 15% national share starts the chain, in a Guided country, a Collapsed one, or under a Military Council | Chain: Debt-for-Equity Deal → Council of Stakeholders → Charter of Governance. The **Council of Stakeholders** variant replaces the legislature (4.2.6) |
+| **Succession** | A variant's own succession rule (Royal Court, Party Standing Committee) | HSS ±5 by the new head of state's traits (Ambitious +5, Content -5) |
+| **Collapse** | 4.2.7 | Collapsed condition starts or ends |
+
+**Variants in play.** At the start exactly 10 countries have a variant (4.2.6). Coups, captures and revolutions can add a play variant (Military Council, Council of Stakeholders, Revolutionary Council) to any country, and an Opening ends a variant: the country returns to the plain system **(A)**. A starting variant other than those three ends only through a revolution or Opening; while it lasts, its branch keeps working as written below.
+
+### 4.2.6 Flavor variants
+
+Exactly 10 countries start with a **variant**: one branch (or the executive) is replaced by a different body. Every other country is the plain default. Each variant keeps the branch's strength number and its role in the derived parameters (4.2.1), and adds the rules below **(A)** **(T)**.
+
+| Country | Replaced branch | Variant | Who sits in it | How you gain influence over it | What it does that a normal branch does not |
+|---|---|---|---|---|---|
+| **Saudi Arabia** | Judiciary | **Royal Court** | The King, the Crown Prince (MBS) and 3 to 5 senior princes, as characters in 2 to 3 family branches | Ties and hooks with princes; funding a branch (as the old ruling family variant, 4.8.2); gifts and joint ventures with princes' holding companies; Persuasion meetings in Riyadh | Rules for whoever the Crown Prince favors: a holder who is the Crown Prince's Friend wins every case, a Rival loses. Vets head of state candidates (only royals stand) and decides succession by family council (score in 4.8.2). **Anti-Corruption Detention**: each year, 2% chance per domestic character at Mogul wealth or above who is not the Crown Prince's Friend to be detained for 2 to 8 weeks and settle for 20 to 40% of their in-country assets |
+| **North Korea** | Judiciary | **State Security** (secret police) | The Minister of State Security and 2 deputies | Hooks only (no PC from foreign holders while the country is closed); bribes through smuggling contacts in China | No trials: conviction is 95% whenever the head of state wants it. Watches everyone: every holder's exposure gain in the country is doubled. Can arrest any character in the country (Intrigue escape roll) |
+| **Russia** | Judiciary | **Security Organs** (secret police; the siloviki) | The Director and 3 to 4 security generals, as characters | PC spent and hooks on generals; a **Krysha** (protection) contract: pay `0.5% of in-country revenue` per year to a general for -50% investigation chance and +20 defense in Russian trials | Courts convict at the Organs' word (Judicial independence counts as 0 when a general wants a verdict). **Reiderstvo**: a holder with a Krysha general can ask the Organs to open a case on a domestic company and force its sale to them at 50% of fair value (success `40% + 2% × PC spent / 10`, exposure +30, the target's controller becomes Nemesis) |
+| **Iran** | Judiciary | **Guardian Council** | 12 jurists and clerics, half named by the head of state | Funding the bonyads (religious foundations that own businesses) counts as Fund Ideology for the Neo-Luddites and Chuds **(A)**; joint ventures with a bonyad give 1 favor per year with one member | Vets every candidate: any candidate whose party leans against the Council's blocs has a 50% chance of disqualification. Reviews every passed law: 30% veto chance unless the Council's blocs are at stance + or better |
+| **China** | Legislature | **Party Standing Committee** | 7 members, the top of the ruling party's factions (4.8.2) | Back factions (4.8.2): patrons, PC, jobs for members' relatives; a local partner (C2) linked to a faction | Laws pass by faction weight, not bloc clout: Support uses `Σ factions (strength share × faction stance)` in place of the bloc term. Picks the party's head of state candidate at each Congress. A **Five-Year Plan** every 5 years names 3 priority industries: +5% productivity for domestic business units in them and +15 bid score on their contracts |
+| **United Arab Emirates** | Legislature | **Federal Supreme Council** | The seven emirs; Abu Dhabi and Dubai hold vetoes | Influence share in each emirate's region counts as a vote toward that emir's disposition (4.3.5) | A law needs 5 of 7 emirs, including Abu Dhabi and Dubai. Each emir can grant a free zone (C6 Charter Zone) in his emirate as a decision, without a national law |
+| **Hong Kong** | Judiciary | **Liaison Office** (Beijing's office and the interpretations of China's Standing Committee) | The Director, a Chinese official character | PC and ties in China count: your Chinese national PC can be spent on Hong Kong decisions at 1:1 | Any Hong Kong court ruling can be overridden by an interpretation from Beijing: 50% chance when China's head of state has a stake (Targeted holders, 4.27.2). Security and data laws (S and T categories) follow China's positions after a 6-month delay |
+| **Myanmar** | Legislature | **Tatmadaw** (the army) | The Commander-in-Chief and the army's 25% bloc of appointed legislators | Joint ventures with the army's conglomerates (jade, rare earths, ports); favors from generals (4.8.4) | Holds 25% of legislature seats that always vote the Chuds' stance, and a veto on Security laws. The Commander-in-Chief appoints the defense, interior and border ministers. AI coup chance +1% per month whenever Chuds approval is 0 or below, at any RS **(A)** |
+| **Switzerland** | Executive | **Federal Council** | Seven councillors from the main parties, who share the head of state's role; the presidency rotates yearly | Ties with each councillor (as ministers, 4.7.1) | A head of state decision needs 4 of 7 councillors. No decrees, ever. **Referendum**: any law passed can be put to a national vote by a petition of 1% of adults within 100 days (4.6.1) |
+| **Papa's Port** | Legislature | **Sovereign's Household** | Papa Slop, sovereign of Papa's Port, and his household | Ties and hooks with Papa Slop; gifts; favors | Papa Slop sets every law by decree in one week. The head of state vote is a yearly acclamation with one candidate **(A)**. With HSS 100 every check is off: L and J are 0 |
+
+**Play variants** (none at start; added by 4.2.5) **(T)**:
+
+| Variant | Replaced branch | Who sits | What it does |
 |---|---|---|---|
-| Liberal democracy | Managed democracy | Emergency Powers at Standing Emergency for 12+ months, or an executive with Media Ownership: State-Controlled, or Stability < 35 for 6 months | *Erosion*: Postponed Election → Court Packing → Media Takeover. Each step can be resisted by blocs with clout ≥ 30% combined |
-| Liberal or managed democracy | Military junta | Successful coup (4.8.4) | Coup chain |
-| Managed democracy | Liberal democracy | Revolution led by Liberals, Communists, Effective Altruists or Neo-Luddites; or a "reformer" executive plus Stability ≥ 55 for 24 months | *Opening*: Free Election → Truth Commission → Purge of the Old Guard |
-| Managed democracy | One-party state | Ruling party wins 3 consecutive elections with > 70% and passes Ban on Opposition (requires the party's core ideology at clout ≥ 25%) | *Consolidation* |
-| One-party state | Managed democracy | Party struggle won by a Reformist faction plus Stability < 45 | *Thaw* |
-| Military junta | Managed democracy | 24+ months in power and Stability ≥ 40, junta leader Content (AI characters have no ambitions, only traits), or foreign pressure (3+ sanctions tiers lifted on condition) | *Transition Election* |
-| Any | Failed state | Stability < 10 for 3 months, or lost major war, or revolution with no winning coalition after 3 months | *Collapse* |
-| Failed state | Military junta or Managed democracy | A faction controls provinces with ≥ 60% of population | *Reunification* |
-| Failed state, Military junta or Managed democracy | Corporate oligarchy | One or more characters (or AI megacorps) together hold ≥ 40% national influence share and Chuds approval ≥ 0, and a capture chain is started by a holder with ≥ 15% national share | *Capture*: Debt-for-Equity Deal → Council of Stakeholders → Charter of Governance |
-| Corporate oligarchy | Any | Revolution, coup, or foreign intervention event | Standard chains |
+| **Military Council** | Legislature | The coup's generals (4.8.4) | Laws by decree, enacted the same week unless the council rejects them (Support < 0); Chuds stances count triple; Chuds Office term +0.20 (4.4.4); counter-coup chance ×1.5 (4.8.3); enforcement 85% |
+| **Council of Stakeholders** | Legislature | Every holder with at least 2% national influence share; the largest chairs; the rest share a "Public" seat | Weighted votes replace the bloc vote (4.5.10); any seat holder can move a motion for 10% of its seat weight in PC; any decision can be taken to a vote (4.3.5); money effectiveness ×2, influence effectiveness ×1.5, foreigner penalty 0; enforcement 90%; Landites, Accelerationists and Liberals Office term +0.08 each |
+| **Revolutionary Council** | Legislature | The revolution's leaders (4.8.5) | Rules for 3 to 12 months by decree, then hands over to the variant or plain system 5.7.3 sets |
+
+### 4.2.7 Collapsed condition
+
+A country is **Collapsed** when Stability stays below 10 for 3 months, or after a lost major war, or when a revolution has no winning coalition after 3 months. It ends when one faction controls provinces with 60% or more of the population (the *Reunification* chain), which sets HSS to 75 **(T)**. Somalia, South Sudan, Haiti and the Central African Republic start Collapsed.
+
+While Collapsed, whatever its HSS: no effective center; local strongmen, militias and clan leaders hold provinces as characters and OCGs (4.22.2), not as governments (4.3.4); enforcement factor 30%; money effectiveness ×1.5 and influence effectiveness ×0.8; agency capacity 1; stability baseline 20; judicial independence 0 in practice; nationalization compensation 0% and seizure base 1.0 (4.9.9, 4.9.10) **(T)**.
 
 ---
 
@@ -252,18 +337,18 @@ The federal, unitary and devolved flags in 4.2.4 have no rules in the POC: every
 Every law in 4.5 is a national law with one position for the whole country. The old level rules (stacked rates, floors, ceilings, enabling laws, preemption and local experimentation) are removed. The one exception is a special economic zone (C6): the national government designates the zone's provinces (a Decision), and a Charter Zone may set its own positions on the laws C6 lists (4.12).
 
 1. **Grace period**: when a national change makes a zone position illegal (for example the L1 floor rises above a Charter Zone's wage), the zone gets a 3-month grace period **(T)**, then snaps to the nearest legal position.
-2. **Enforcement**: national law is enforced in a province at `Enforcement%` = type factor × corruption factor (4.2.3), using that province's local corruption. Type factor: LD 100%, MD 100%, OP 100%, CO 90%, MJ 85%, FS 30% **(T)**. Below 70% enforcement, holders can ignore a national law there at an exposure cost of +2 per month per law ignored **(T)**.
+2. **Enforcement**: national law is enforced in a province at `Enforcement%` = enforcement factor × corruption factor (4.2.3), using that province's local corruption. Enforcement factor (4.2.1): 100%, or 90% under a Council of Stakeholders, 85% under a Military Council and 30% when Collapsed **(T)**. Below 70% enforcement, holders can ignore a national law there at an exposure cost of +2 per month per law ignored **(T)**.
 
-### 4.3.4 Failed states, juntas and local strongmen
+### 4.3.4 Collapsed states, military councils and local strongmen
 
-There is no lower-level government under any type. In a **failed state**, local strongmen, militias and clan leaders hold provinces as characters and OCGs (4.22.2), not as governments: their power is OCG Control and Strength, and national law reaches their provinces only at the failed-state enforcement rate (4.3.3). Under a **military junta** or **Martial Law** (S3), the national military runs every province directly.
+There is no lower-level government at any HSS or under any variant. In a **Collapsed** country (4.2.7), local strongmen, militias and clan leaders hold provinces as characters and OCGs (4.22.2), not as governments: their power is OCG Control and Strength, and national law reaches their provinces only at the collapsed enforcement rate (4.3.3). Under a **Military Council** (4.2.6) or **Martial Law** (S3), the national military runs every province directly.
 
 ### 4.3.5 Laws and decisions
 
 Politics produces two kinds of outcome:
 
 - **Laws**: standing national positions in a law category (4.5). Passed through the support formula (4.5.10).
-- **Decisions**: case-by-case rulings on one holder's request: a permit, a rezoning, a policing contract, a crackdown, a contract award, a foreign investment review, a licence. Decisions are taken by a **named national official** (the responsible minister or agency head, 4.7.1) and are where personal relationships, favors and bribes matter most. In a corporate oligarchy the Council of Stakeholders may take any decision to a weighted vote (4.5.10).
+- **Decisions**: case-by-case rulings on one holder's request: a permit, a rezoning, a policing contract, a crackdown, a contract award, a foreign investment review, a licence. Decisions are taken by a **named national official** (the responsible minister or agency head, 4.7.1) and are where personal relationships, favors and bribes matter most. Under the Council of Stakeholders variant (4.2.6) the Council may take any decision to a weighted vote (4.5.10).
 
 The deciding official says yes if:
 
@@ -313,13 +398,13 @@ Each bloc's stances are its ideology's wants and opposes in 5.3 (5.3.1 to 5.3.9)
 
 Recalculated monthly per jurisdiction.
 
-1. **Base support** (s is a stratum and g an ideology bloc) mixes money power and vote power by the government type's **democratic weight D**:
+1. **Base support** (s is a stratum and g an ideology bloc) mixes money power and vote power by the **democratic weight D** (4.2.1):
 
    `Base_g = (1 - D) × W_g + D × V_g`
 
    - `W_g` = share of all wealth-weighted support: `Σ_s Pop_s × WealthWeight_s × Aff(s,g)`, divided by the total over all groups.
    - `V_g` = share of all vote-weighted support: `Σ_s Pop_s × Turnout_s × Aff(s,g)`, divided by the total.
-   - D **(T)**: Liberal democracy 0.5, Managed democracy 0.3, One-party 0.1, Corporate oligarchy 0.05, Military junta 0.1, Failed state 0.2.
+   - D = `0.05 + 0.6 × Legislature Strength / 100` (4.2.1) **(T)**: United States 0.43, an HSS 72 country 0.27, China 0.11. A Council of Stakeholders sets D to 0.05.
 
 2. **Raw clout**:
 
@@ -334,11 +419,11 @@ Recalculated monthly per jurisdiction.
 
 | Situation | Office_g |
 |---|---|
-| Bloc in the governing coalition (democracies) | +0.05 |
+| Bloc in the governing coalition | +0.05 |
 | Bloc leading the governing coalition | +0.08 |
-| The ruling ideology in a one-party state | +0.15 |
-| Chuds in a military junta (or the junta leader's ideology) | +0.20 |
-| In a corporate oligarchy: Landites, Accelerationists and Liberals | +0.08 each |
+| The core ideology of the head of state's party in a Dominant country (HSS ≥ 85) | +0.15 |
+| Chuds under a Military Council (or the council leader's ideology) | +0.20 |
+| Under a Council of Stakeholders: Landites, Accelerationists and Liberals | +0.08 each |
 
 ### 4.4.5 How money and media shift clout
 
@@ -349,7 +434,7 @@ Recalculated monthly per jurisdiction.
 - `F_g` = donations and funding to group g over the trailing 12 months. Each month the counted total decays 8% **(T)**, so money must keep flowing.
 - `M` = the jurisdiction's **political market size** = 0.05% of its yearly GDP **(T)**. For a $28T economy M = $14B; for a $1T economy, M = $500M; for a $50B economy, M = $25M.
 - Square root: the first dollars count most. Funding of M/10 gives +0.063 × MoneyEff; funding of M gives +0.20 × MoneyEff.
-- Money flows into blocs through the **Fund Ideology** action (4.10.1): think tanks, foundations, unions' strike funds, church charities, veterans' associations, militias (Sovereigntists and Chuds in failed states).
+- Money flows into blocs through the **Fund Ideology** action (4.10.1): think tanks, foundations, unions' strike funds, church charities, veterans' associations, militias (Sovereigntists and Chuds in collapsed states).
 - Under Campaign Finance: Public Funding Only, money to groups counts at half **(T)**.
 
 **Media.**
@@ -369,10 +454,10 @@ Monthly: `Approval_g = Σ over all current laws of stance_g(current position) + 
 
 ### 4.4.7 Parties
 
-- In democracies, **parties** bundle 1 to 3 ideology blocs; a party's core ideology is the one with the most of its voters. Each bloc belongs to at most one party per country at a time. Country data defines starting parties (fictional names for real-world equivalents, for example a centre-right party of Landites, Accelerationists and Chuds).
+- In every country, **parties** bundle 1 to 3 ideology blocs; a party's core ideology is the one with the most of its voters. Each bloc belongs to at most one party per country at a time. Country data defines starting parties (fictional names for real-world equivalents, for example a centre-right party of Landites, Accelerationists and Chuds).
 - A party's stance on any law is the clout-weighted average stance of its member blocs.
 - Parties can split when two member blocs have stances 3+ apart on a law that is being debated **and** both have clout ≥ 10% (yearly check, 15% chance **(T)**), and merge when two parties together could win a majority and their bloc stances average within 1 on the top 5 debated laws.
-- Managed democracies have a **ruling party** plus licensed opposition; one-party states have one party with **factions** (4.8.2).
+- At HSS 60 or more the head of state's party is the **ruling party** and other parties are licensed opposition (G4); in Dominant countries (HSS ≥ 85) the ruling party's **factions** (4.8.2) matter more than the other parties.
 
 ---
 
@@ -476,14 +561,14 @@ Proposal ──> Drafting (1 month) ──> Debate (monthly pass rolls) ──> 
 
 | Proposer | How | Cost |
 |---|---|---|
-| Government (AI) | The governing coalition proposes the top law change its leading blocs want, at most 2 national bills at a time in democracies, 3 in other types | Free |
+| Government (AI) | The governing coalition proposes the top law change its leading blocs want, at most 2 national bills at a time in Open countries (HSS < 60), 3 at HSS 60 or more | Free |
 | The player character in office | Legislator: one bill per year. Minister: bills in their portfolio. Head of government: any | Instant, plus Support starts +5 for head of government sponsorship |
 | Any holder through a client politician | **Commission a Bill** action (4.10.1) | 40 PC |
-| Corporate oligarchy Council member | A motion by any seat holder | 10% of its seat weight in PC |
+| Council of Stakeholders member (variant, 4.2.6) | A motion by any seat holder | 10% of its seat weight in PC |
 
 Only one bill per law can be in Drafting or Debate at a time. A proposal targets one position; it can move a law by **at most two steps** **(T)**.
 
-**Duration by type** **(T)**: the monthly pass roll uses a time modifier. Liberal democracy: first roll at month 2 of debate. Managed democracy, one-party state and corporate oligarchy: first roll at month 1. Military junta: decree, enacted the same week as proposed unless the junta council rejects it (Support < 0). Failed state: national laws enact like a junta but only apply in provinces at the enforcement rate (4.3.3).
+**Duration by branch strength** **(T)**: the monthly pass roll uses a time modifier (4.2.1). Legislature 50 or more: first roll at month 2 of debate. Legislature 20 to 49, or a Council of Stakeholders: first roll at month 1. Decree rule (HSS ≥ 85, or a Military Council): the head of state's own bills are enacted the same week as proposed unless Support < T. Collapsed: laws enact as usual but only apply in provinces at the enforcement rate (4.3.3).
 
 **Implementation delay**: 1 month for rates and taxes, 2 months for regulatory changes, 3 months for structural changes (C4, C5, C6, F1, F3) **(T)**.
 
@@ -499,18 +584,18 @@ For a bill moving law L to position P:
 - **Campaign**: issue ads and astroturf campaigns (4.10.1).
 - **Crisis**: events, for example "Bank Failure" gives +20 to bailout and banking laws for 3 months.
 
-**Threshold T** by type **(T)**: Liberal democracy +10. Managed democracy 0. One-party state 0 (but the ruling ideology's stances count double). Corporate oligarchy: no clout vote; see below. Military junta -10 (Chuds stances count triple).
+**Threshold T** **(T)** = `clamp(round((Legislature - 30) / 4), -10, +10)` (4.2.1): United States +9, an HSS 72 country +2, China -5. At HSS 85 or more the head of state's party's core ideology counts its stances double. Variants change this: a Council of Stakeholders has no clout vote (see below), a Military Council counts Chuds stances triple, and China's Party Standing Committee uses faction weights (4.2.6).
 
 **Monthly pass chance** = `clamp(10% + 2% × (Support - T), 0%, 75%)` **(T)**.
 
 **Veto by powerful blocs**: if a Powerful bloc (clout ≥ 20%) has stance -- on the position, the pass chance is halved.
 
-**Corporate oligarchy voting**: Council seats are weighted by national influence share of each holder with at least 2% share (the rest share a "Public" seat voting with the clout-weighted bloc stance). A motion passes with > 50% of weighted votes, at the next monthly Council session. Votes can be bought from other holders (they are characters with opinion tags, hooks and prices).
+**Council of Stakeholders voting** (variant, 4.2.6): Council seats are weighted by national influence share of each holder with at least 2% share (the rest share a "Public" seat voting with the clout-weighted bloc stance). A motion passes with > 50% of weighted votes, at the next monthly Council session. Votes can be bought from other holders (they are characters with opinion tags, hooks and prices).
 
 ### 4.5.11 Repeal, cooldowns and decrees
 
-- A law that was changed cannot be changed again for 12 months (6 months in non-democracies) **(T)**.
-- **Decrees** (Emergency Decrees or above, or any junta or one-party executive): enact immediately, skipping Debate. Cost: stability -3, approval -2 with every bloc with stance - or -- on it. In a liberal democracy under Emergency Decrees the decree lapses after 90 days unless passed as a normal bill.
+- A law that was changed cannot be changed again for 12 months (6 months at HSS 60 or more) **(T)**.
+- **Decrees** (Emergency Decrees or above, or any head of state with HSS ≥ 85 or a Military Council): enact immediately, skipping Debate. Cost: stability -3, approval -2 with every bloc with stance - or -- on it. In an Open country (HSS < 60) under Emergency Decrees the decree lapses after 90 days unless passed as a normal bill.
 - **Court challenge**: any holder can challenge a new law in court for $1M × wealth index (4.10.4) **(T)**. Strike-down chance = `judicial independence × 20%`, rising to `× 60%` for decrees and preemption acts.
 
 ---
@@ -521,12 +606,12 @@ For a bill moving law L to position P:
 
 | Level | Office | Default term **(T)** | Campaign length | Held in |
 |---|---|---|---|---|
-| National | Legislature | 4 or 5 years (country data; US House 2) | 16 weeks | Liberal and managed democracies |
-| National | Executive (presidential systems) | 4 to 7 years | 20 weeks (plus 8-week primary if the country has primaries) | Liberal and managed democracies |
-| Any | Referendum | Called by government or by a petition with 5% of adults | 8 weeks | Democracies; corporate sovereignty (4.12) |
+| National | Legislature | 4 or 5 years (country data; US House 2) | 16 weeks | Every country |
+| National | Head of state (direct national vote) | 4 to 7 years | 20 weeks (plus 8-week primary if the country has primaries) | Every country; managed at HSS 60 or more (4.6.7) |
+| Any | Referendum | Called by government or by a petition with 5% of adults | 8 weeks | Open and Guided countries; Switzerland's 1% petition (4.2.6); corporate sovereignty (4.12) |
 
 - Election dates are fixed by data and checked in the yearly calculation; voting day is a single day, results arrive over 6 to 12 hourly turns, region by region.
-- **Snap elections** (parliamentary systems): each month a government's coalition approval average is ≤ -3 or stability < 40, there is a 10% chance the government falls and an election is held in 8 weeks **(T)**. A player with a client prime minister can call one at a time of their choosing (one favor).
+- **No snap elections** (batch 136: every country has fixed US-style terms) **(A)**. Instead, a **removal vote**: each month the governing coalition's approval average is ≤ -3 or stability < 40, there is a `10% × Legislature / 100` chance the legislature removes the head of state; the deputy (a minister the head of state named) serves out the term **(T)**. A player can push a removal vote with favors from client legislators (one favor each adds 1 percentage point).
 - There are no regional or city elections (batch 121): only national elections and referendums.
 
 ### 4.6.2 Electoral systems
@@ -538,7 +623,9 @@ Each legislature uses one system, from country data:
 | **First past the post** | Each national constituency (part of a city province, a province, or a group of provinces; drawn in country data) goes to the plurality winner | Big parties overrepresented; local influence matters a lot |
 | **Proportional** | Seats proportional to national vote share, 5% threshold **(T)** | Coalitions common; small parties survive |
 | **Mixed** | Half each | |
-| **Two-round** (executives) | Runoff between the top two if nobody passes 50% | |
+| **Two-round** (head of state) | Runoff between the top two if nobody passes 50% | |
+
+**Head of state: direct national vote** (Logan, batch 136). There is **no electoral college** anywhere, the United States included: the head of state is elected by the national popular vote, counted over every stratum in the country (4.6.3), by plurality, or by two rounds where country data says so **(A)**.
 
 Constituency-level results use the strata of the provinces in that constituency, so **concentrated local influence wins seats** under first past the post.
 
@@ -574,7 +661,7 @@ _Ideology update: the Ideology weight drops from 3 to 2 and a party-platform ter
 
 `Turnout_s = BaseTurnout_s × TypeMod + GOTV_s + Polarization - Apathy`, clamped 10% to 95% **(T)**
 
-- **BaseTurnout**: table in 4.4.1. **TypeMod**: liberal democracy 1.0, managed democracy 0.85.
+- **BaseTurnout**: table in 4.4.1. **TypeMod** (by HSS, 4.2.1): 1.0 below 60, 0.85 at 60 to 84, 0.7 at 85 or more **(T)**.
 - **GOTV** (get out the vote) spending targeted at a stratum: +1 point per $0.25 × stratum adults spent, cap +8 points per party.
 - **Polarization**: +5 points if the top two are within 5 points in polls; +3 if an Angry bloc backs a party.
 - **Apathy**: `0.2 × (60 - Stability)` when stability < 60.
@@ -594,25 +681,25 @@ A campaign is an event chain with weekly beats. Typical national chain:
 
 ### 4.6.6 Results and government formation
 
-- Seats are assigned by the electoral system. A party or coalition with > 50% of seats forms the government. Coalition formation (proportional systems) takes 2 to 12 weeks **(T)**; the largest party invites partners whose bloc stances are closest; the player can bribe or pay for a partner to join or refuse (decision of the partner's leader, 4.3.5).
+- Seats are assigned by the electoral system. The elected head of state forms the government (the cabinet); the **governing coalition** is the head of state's party plus the parties that agree to back it in the legislature. Coalition building (proportional systems) takes 2 to 12 weeks **(T)**; the largest party invites partners whose bloc stances are closest; the player can bribe or pay for a partner to join or refuse (decision of the partner's leader, 4.3.5).
 - The governing coalition's blocs get the Office clout bonus (4.4.4). The new government:
   - proposes its top law changes in the first 3 months (agenda bonus +5 support during that window **(T)**),
   - replaces ministers, and may replace regulator heads whose term allows (4.9.2) and the central bank governor (if F1 is Coordinated or looser),
-  - reviews **government contracts**: contracts awarded by the previous government to holders who backed the losing side have a 10% chance each of cancellation in liberal democracies, 40% in managed democracies **(T)**.
+  - reviews **government contracts**: contracts awarded by the previous government to holders who backed the losing side have a 10% chance each of cancellation in Open countries, 40% at HSS 60 or more **(T)**.
 - **Market reaction**: the country's index (and, after the POC when FX is simulated, its currency; batch 125) move by `-3% × (average approval change of Liberals, Landites and Accelerationists)/5` over the next week **(T)**.
 - A player who funded the winning side gets **favors** (4.7.4); the losing side's donors get "Backed the Loser": a -10 opinion push from each new minister, and the label lasts 2 years.
 
 ### 4.6.7 Managed elections
 
-Managed democracies run the same formula with three extra terms:
+Guided and Dominant countries (HSS 60 or more, 4.2.1) run the same formula with three extra terms, scaled by HSS:
 
 | Term | Effect **(T)** |
 |---|---|
-| **Administrative resource** | Incumbent +0.6 utility in every stratum |
-| **Fraud** | After counting, `Corruption / 5` points of vote share move from the opposition to the incumbent (50 corruption = 10 points). Visible fraud above 8 points: 15% chance of a protest wave (unrest +10, stability -5) |
-| **Disqualification** | Any opposition candidate polling > 35% has a 30% chance per campaign of being disqualified, unless protected by a patron with ≥ 25% national influence |
+| **Administrative resource** | Incumbent `+0.02 × (HSS - 50)` utility in every stratum (+0.6 at HSS 80, +0.9 at 95) |
+| **Fraud** | After counting, `Corruption / 5 × min(1, (HSS - 50) / 30)` points of vote share move from the opposition to the incumbent (50 corruption = 10 points). Visible fraud above 8 points: 15% chance of a protest wave (unrest +10, stability -5) |
+| **Disqualification** | Any opposition candidate polling > 35% has an `(HSS - 50)%` chance per campaign (30% at HSS 80) of being disqualified, unless protected by a patron with ≥ 25% national influence |
 
-Backing the opposition in a managed democracy is legal but costs: each $1M donated adds +2 exposure with the Tax Authority and Financial Police in that country **(T)**.
+Backing the opposition at HSS 60 or more is legal but costs: each $1M donated adds +2 exposure with the Tax Authority and Financial Police in that country **(T)**.
 
 ---
 
@@ -624,13 +711,13 @@ Backing the opposition in a managed democracy is legal but costs: each $1M donat
 |---|---|---|---|---|---|---|
 | **National Legislator** | National | Elected | Age 25, citizen | Instant votes; hearings tick | National vote, one bill per year, committee hearings (can summon executives) | +0.5 point in country; +8 PC |
 | **Minister** | National | Appointed by head of government | Citizen; relevant skill ≥ 12 | Instant decisions; in-person meetings tick | Portfolio bills, portfolio decisions (permits, licences, contracts; rezonings for Land and Housing; policing contracts, crackdowns and the police chief for Interior), oversight of related agencies | +3 points; +30 PC |
-| **Head of Government or State** | National | Elected, appointed by party, or seized | Age 35, citizen | Instant decisions; in-person meetings and travel tick | National agenda, appoint ministers and agency heads, decrees where allowed, diplomacy | +10 points; +80 PC |
-| **Regulator Head** | National | Appointed (term 5 years, LD; at pleasure, others) | Relevant skill ≥ 14 (Finance for securities and banking, Intrigue for financial police) | Instant decisions | Opens and closes investigations (4.9) | +2 points; +20 PC |
-| **Central Bank Governor** | National | Appointed (term 6 years, LD) | Finance ≥ 18 | Instant decisions | Policy rate, FX intervention (see [3-markets-and-fx.md](3-markets-and-fx.md)). In the POC only the US post (the Federal Monetary Board) sets a rate, the world base rate from US data; other governors are still appointed as political posts but set no rate and make no FX moves **(A, batch 125)** | +3 points; +30 PC |
+| **Head of State** (also head of government) | National | Elected by direct national vote (4.6.2), or seized (coup or revolution) | Age 35, citizen | Instant decisions; in-person meetings and travel tick | National agenda, appoint ministers and agency heads, decrees where allowed, diplomacy | +10 points; +80 PC |
+| **Regulator Head** | National | Appointed (term 5 years if HSS < 60; at pleasure otherwise) | Relevant skill ≥ 14 (Finance for securities and banking, Intrigue for financial police) | Instant decisions | Opens and closes investigations (4.9) | +2 points; +20 PC |
+| **Central Bank Governor** | National | Appointed (term 6 years if HSS < 60) | Finance ≥ 18 | Instant decisions | Policy rate, FX intervention (see [3-markets-and-fx.md](3-markets-and-fx.md)). In the POC only the US post (the Federal Monetary Board) sets a rate, the world base rate from US data; other governors are still appointed as political posts but set no rate and make no FX moves **(A, batch 125)** | +3 points; +30 PC |
 | **Ambassador** | National | Appointed | Persuasion ≥ 10 | Based in the host country (travel ticks) | +5 relation between home and host per year; trade mission events | +1 point in host country |
-| **Party Official** | National | Party appointment (one-party states) | Party membership; Party School trait helps | Instant; party sessions tick | Faction strength (4.8.2) | As a minister |
-| **General** | National | Military career; junta council seat | Military education or security career | Instant; coup nights tick | Coup participation, Chuds approval | Junta council member: +5 points |
-| **Council of Stakeholders seat** | National | Influence share ≥ 2% (corporate oligarchy) | Any holder | Instant votes | Weighted vote on motions | Built into share |
+| **Party Official** | National | Party appointment (ruling parties at HSS 60 or more) | Party membership; Party School trait helps | Instant; party sessions tick | Faction strength (4.8.2) | As a minister |
+| **General** | National | Military career; Military Council seat (4.2.6) | Military education or security career | Instant; coup nights tick | Coup participation, Chuds approval | Military Council member: +5 points |
+| **Council of Stakeholders seat** | National | Influence share ≥ 2% (Council of Stakeholders variant) | Any holder | Instant votes | Weighted vote on motions | Built into share |
 
 There are no city, regional or state offices (batch 121): City Councilor, Mayor, Regional Legislator and Governor are removed. Office has no weekly time cost: votes and decisions are instant, and in-person meetings, hearings and travel burn ticks. Holding office **adds influence in that place** as above (2.5), adds PC, and grants **Political Office** status on the character. Offices are never inherited. A character who held an office for 8+ years gets +0.2 utility when running for it again ("Name Recognition") **(T)**.
 
@@ -638,11 +725,11 @@ There are no city, regional or state offices (batch 121): City Councilor, Mayor,
 
 Batch 116: there are no family members to run. The player character can run, and the player can back any other candidate (a Friend, a protégé, an executive), who becomes a client if elected with the player's money (4.7.4).
 
-- **Eligibility**: age and citizenship above; criminal conviction bars office for 10 years in liberal democracies; Social Credit bars low-Favor characters.
+- **Eligibility**: age and citizenship above; criminal conviction bars office for 10 years in Open countries; Social Credit bars low-Favor characters.
 - **Declaring** costs 60 PC **(T)** and requires a party nomination in proportional systems: a party nominates the candidate with the highest `Persuasion skill + tie with the party leader (4.3.5) + 10 × donations to the party / E` (E from 4.6.3). In first past the post systems, primaries use the same vote formula among the party's strata.
 - **The candidate's time**: campaign events (rallies, debates, fundraisers) burn ticks and keep the candidate busy for most of each campaign day **(T)**. Executive roles at a company must be delegated; a CEO who campaigns gives their company -10 productivity for the campaign.
 - **Conflict of interest** once elected (4.7.5).
-- **Benefits**: direct votes, agenda power, office influence, appointment power, and immunity from investigations in their own country while in a head-of-government role (managed democracy and below: always; liberal democracy: never).
+- **Benefits**: direct votes, agenda power, office influence, appointment power, and immunity from investigations in their own country while in a head-of-government role (HSS 60 or more: always; Open countries: never).
 
 ### 4.7.3 Appointments
 
@@ -652,7 +739,7 @@ Appointed posts (ministers, regulator heads, central bank governor, ambassadors,
 
 - The player can push their own character, an executive or Friend, a **client** (4.7.4), or simply lobby for any non-hostile candidate.
 - Appointments fire when a post is vacant: new government, death, scandal resignation, term end (yearly check).
-- **Removal**: an appointee can be dismissed by the appointer at any time in non-democracies; in liberal democracies regulator heads and the central bank governor can only be removed for cause (a scandal or conviction event).
+- **Removal**: an appointee can be dismissed by the appointer at any time at HSS 60 or more; in Open countries regulator heads and the central bank governor can only be removed for cause (a scandal or conviction event).
 
 ### 4.7.4 Patronage
 
@@ -684,28 +771,28 @@ Clients are characters: they age, retire, lose elections, get indicted and can t
 
 ### 4.7.5 Conflict of interest
 
-A character in office who, directly or through their personal trusts or companies, holds assets in a sector affected by their votes or portfolio gains +3 exposure per month with the relevant agency (liberal democracy only; +1 in managed democracy) **(T)**, unless they place those assets in a **blind trust**: the assets are managed by an appointed trustee character, cannot be traded by the official, and count only 50% toward their personal influence. Company stakes the official really controls can be blinded only by moving the stakes themselves into the blind trust, which gives up control while in office: a deliberate tension for a player who runs for office **(A)**.
+A character in office who, directly or through their personal trusts or companies, holds assets in a sector affected by their votes or portfolio gains +3 exposure per month with the relevant agency (Open countries; +1 in Guided, 0 in Dominant) **(T)**, unless they place those assets in a **blind trust**: the assets are managed by an appointed trustee character, cannot be traded by the official, and count only 50% toward their personal influence. Company stakes the official really controls can be blinded only by moving the stakes themselves into the blind trust, which gives up control while in office: a deliberate tension for a player who runs for office **(A)**.
 
 ---
 
-## 4.8 Non-democratic power transfer
+## 4.8 Power transfer outside elections
 
 ### 4.8.1 Regime strength
 
-`RS = 0.4 × Stability + 0.3 × SecurityLoyalty + 0.3 × RulingClout` **(T)**
+`RS = 0.3 × Stability + 0.25 × SecurityLoyalty + 0.25 × RulingClout + 0.2 × HSS` **(T)**
 
-- **SecurityLoyalty** (0 to 100) = `50 + 5 × approval of the Chuds` (the bloc the officer corps leans to), plus 10 if the head of government is a general (junta), minus 15 if the military's budget was cut in the last 12 months.
+- **SecurityLoyalty** (0 to 100) = `50 + 5 × approval of the Chuds` (the bloc the officer corps leans to), plus 10 if the head of state is a general (Military Council), minus 15 if the military's budget was cut in the last 12 months.
 - **RulingClout** = combined clout (%) of the blocs in the ruling coalition, capped at 100.
-- Liberal democracies use RS only for coup checks during Standing Emergency or Martial Law.
+- Open countries (HSS < 60) use RS only for coup checks during Standing Emergency or Martial Law.
 
-### 4.8.2 Party struggles (one-party states and managed democracies)
+### 4.8.2 Party struggles (Guided and Dominant countries)
 
 - The ruling party has 2 to 4 **factions** (data-driven per country, fictional names). Templates: **Reformists** (aligned with Accelerationists and Liberals), **Hardliners** (Chuds and the ruling ideology), **Princelings** (family networks of party elders; Landites), **Technocrats** (the ruling ideology and Accelerationists).
 - **Faction strength** (monthly) = `clout of aligned blocs + 5 × officials in top posts + 0.5 × PC donated by backers + MoneyEff × 0.1 × sqrt(funds / M) × 100 + scandal effects` **(T)**.
-- **Yearly Plenum**: the strongest faction gets one top post (a minister or a top party post; there are no province governments, batch 121). **Party Congress** every 5 years: the strongest faction names the party leader and head of government; ties are broken by the incumbent leader's choice.
+- **Yearly Plenum**: the strongest faction gets one top post (a minister or a top party post; there are no province governments, batch 121). **Party Congress** every 5 years: the strongest faction names the party leader and the party's head of state candidate, who then faces the managed national vote (4.6.7); ties are broken by the incumbent leader's choice.
 - **Backing a faction** (player action): donate through a local partner or front (money), spend PC, provide jobs and board seats to faction members' relatives (patronage, +1 favor each), or run a Dig Up Dirt scheme against a rival faction leader.
 - **Purges**: after a Congress, each losing faction has a 50% chance to suffer an **Anti-Corruption Campaign** **(T)**. Every holder that backed it with more than 10 PC or $1M in the past 2 years gets +30 exposure with the Financial Police there, and its operations and local partner in that country face a seizure ladder step (4.9.10).
-- **Ruling family variant**: replace factions with **branches of the ruling family** (2 to 3 princes or princesses as characters). Succession to the throne on the ruler's death is decided by a family council (the country's politics, not a player mechanic): score = `Persuasion skill + tie with the ruler (4.3.5) + Chuds backing + foreign backing`. The player can fund a branch or hold hooks over its members.
+- **Royal Court** (Saudi Arabia only, 4.2.6): replace factions with **branches of the ruling family** (2 to 3 princes or princesses as characters). Succession to the throne on the ruler's death is decided by a family council (the country's politics, not a player mechanic): score = `Persuasion skill + tie with the ruler (4.3.5) + Chuds backing + foreign backing`. The player can fund a branch or hold hooks over its members.
 
 ### 4.8.3 Monthly coup risk
 
@@ -719,8 +806,8 @@ A coup plot can form on its own (AI generals) or be started by a holder (4.8.4).
 | RS 45 to 59 and Chuds approval ≤ -5 | 1% |
 | RS 30 to 44 | 2%, doubled if the Chuds are Angry |
 | RS < 30 | 5%, doubled if the Chuds are Angry |
-| Military junta (counter-coup) | ×1.5 |
-| Liberal democracy | Only under Standing Emergency or Martial Law, or Stability < 20; then ×0.5 |
+| Military Council variant (counter-coup) | ×1.5 |
+| Open country (HSS < 60) | Only under Standing Emergency or Martial Law, or Stability < 20; then ×0.5 |
 
 ### 4.8.4 Coups
 
@@ -752,7 +839,7 @@ A coup plot can form on its own (AI generals) or be started by a holder (4.8.4).
 
 | Outcome | Effects **(T)** |
 |---|---|
-| **Success** (2 or 3 objectives) | Government type becomes Military junta (or the plotters' chosen type if a civilian front was arranged). The backer gets: a hook on the junta leader, 2 favors with each plotting general, first refusal on state assets being privatized, +15 bid score on all contracts for 3 years, Chuds approval of the backer +5. Liberal democracies: relation -30 with the new regime; 60% chance each that a liberal democracy bloc imposes Tier 1 sanctions, 25% Tier 2. If the backer is exposed (exposure ≥ 50 with any agency of a liberal democracy), the backer's characters may be listed under Tier 1 sanctions there. Stability -15 |
+| **Success** (2 or 3 objectives) | HSS becomes at least 88 and the Military Council variant replaces the legislature (with a civilian front: HSS +15 and no variant; 4.2.5). The backer gets: a hook on the council leader, 2 favors with each plotting general, first refusal on state assets being privatized, +15 bid score on all contracts for 3 years, Chuds approval of the backer +5. Open countries: relation -30 with the new regime; 60% chance each that a bloc of Open countries imposes Tier 1 sanctions, 25% Tier 2. If the backer is exposed (exposure ≥ 50 with any agency of an Open country), the backer's characters may be listed under Tier 1 sanctions there. Stability -15 |
 | **Failure** (0 objectives, or 1 objective with CS < RS) | Plotting generals executed or jailed. Backer: all assets in the country frozen, seizure ladder jumps to Seizure for its operations there, its characters in the country arrested (Intrigue escape roll), exposure 100 with the regime's agencies, Clout -30 and Favor -30, "Coup Plotter" notoriety for 10 years. Regime RS +15, Stability +5 (rally effect) |
 | **Stalemate** (exactly 1 of 3 objectives taken and CS ≥ RS) | Civil conflict: background war "Civil War" starts (4.11.6). Stability -30. Both sides seek backers |
 
@@ -768,9 +855,9 @@ A coup plot can form on its own (AI generals) or be started by a holder (4.8.4).
 |---|---|---|
 | 25 | **Unrest** | Protests in the largest cities: business unit output in their provinces -5%, Commercial pools in their core provinces -3% per month |
 | 50 | **Uprising** | Event chain begins: Mass Protest → General Strike (all business units in affected provinces output -40% while it lasts, 1 to 4 weeks) → Clashes (Militarized policing: RP -10 but Stability -5; Community policing: RP +5). A revolutionary **coalition** forms from Angry blocs |
-| 100 | **Revolution** | Government falls. The new type depends on the coalition's leading ideology (5.7.3). A "Revolutionary Council" rules for 3 to 12 months |
+| 100 | **Revolution** | Government falls. The new HSS and any variant depend on the coalition's leading ideology (5.7.3). A "Revolutionary Council" rules for 3 to 12 months |
 
-**New type after a revolution**: set by the coalition's leading ideology, as in [5-ideology.md](5-ideology.md) 5.7.3. If no bloc is above 25% clout after 3 months, the country becomes a Failed state.
+**New HSS and variant after a revolution**: set by the coalition's leading ideology, as in [5-ideology.md](5-ideology.md) 5.7.3. If no bloc is above 25% clout after 3 months, the country becomes Collapsed (4.2.7).
 
 **Revolution consequences for business** **(T)**:
 
@@ -813,9 +900,9 @@ Each country has six agencies. There are no regional attorneys general or tax of
 
 | Stat | Range | Source **(T)** |
 |---|---|---|
-| **Capacity** | 1 to 5 | Budget set yearly by government (lobbyable decision); default 3 in liberal democracies, 2 in managed, 3 in one-party, 1 in failed states. Detection factor: 1 → ×0.5, 2 → ×0.75, 3 → ×1.0, 4 → ×1.25, 5 → ×1.5 |
+| **Capacity** | 1 to 5 | Budget set yearly by government (lobbyable decision); default by HSS (4.2.1): 3 below 60, 2 at 60 to 84, 3 at 85 or more, 1 when Collapsed. Detection factor: 1 → ×0.5, 2 → ×0.75, 3 → ×1.0, 4 → ×1.25, 5 → ×1.5 |
 | **Zeal** | ×0.6 to ×1.4 | From the head's traits: Ambitious +0.2, Honest +0.2, Paranoid +0.1, Content -0.2, Greedy -0.1, Deceitful -0.1; plus +0.2 for 12 months after a public scandal in the agency's domain |
-| **Independence** | 0 to 1 | Equals judicial independence of the government type; decides how far the executive can steer cases (protect allies, target enemies) |
+| **Independence** | 0 to 1 | Equals judicial independence, J / 100 (4.2.1); decides how far the executive can steer cases (protect allies, target enemies) |
 | **Integrity** | 0 to 100 | Head's bribe resistance: 50 + 30 if Honest, -30 if Deceitful, -20 if Greedy, +10 if Paranoid |
 
 The **head** is a full character (skills, traits, relatives as flavor, secrets) appointed by the head of government (4.7.3). The head can be lobbied (opinion pushes), bribed (4.10.4), blackmailed (hooks), befriended, or replaced. Heads act from their traits, not ambitions (AI characters have none): an Ambitious head wants a high-profile conviction (Clout +10 for the head) and prefers big targets (characters whose largest company is Megacorp or Conglomerate rank, 1.7.5, are targeted 1.5× more **(T)**).
@@ -860,7 +947,7 @@ Exposure accumulates per holder (character, trust or company) per agency domain 
 | **3. Discovery** | 4 to 12 weeks | Evidence += `3 × Capacity × Zeal - GC defense - counsel` per week. Weekly **Cracks** roll: each named subordinate or client with loyalty < 50 has `5% × (1 - loyalty/100)` chance to flip: Evidence +20 | Pay off subordinates (opinion pushes), move them abroad, arrange an "accident" (Intrigue; huge risk), call favors to slow (4 weeks per favor) |
 | **4. Charges or Closure** | 1 week | Evidence ≥ 40: charges and a settlement offer. Evidence < 40: closed; exposure halved | |
 | **5a. Settlement** | 2 to 6 weeks of negotiation | Penalty at 60% of the trial severity (40% if the holder cooperated), no admission of guilt for Minor and Serious; executives may still be banned | Negotiate (Persuasion vs head; each success -10% penalty, max 3); offer a scapegoat (another executive takes the fall: -50% penalty; that character turns Rival, and so do any relatives who are characters) |
-| **5b. Trial** | 8 to 26 weeks | Conviction chance = `clamp(Evidence - defense score + 20, 5, 95)%` where defense score = GC skill + 5 × counsel tier (tiers 1 to 3). Non-independent courts: if the executive wants the target convicted (target is a political enemy), conviction = `90% × (1 - judicial independence) + normal chance × judicial independence` | Lobby the judge (managed democracy and below: a decision, 4.3.5); public campaign (jury trial countries: psyops can sway ±10%) |
+| **5b. Trial** | 8 to 26 weeks | Conviction chance = `clamp(Evidence - defense score + 20, 5, 95)%` where defense score = GC skill + 5 × counsel tier (tiers 1 to 3). Non-independent courts: if the executive wants the target convicted (target is a political enemy), conviction = `90% × (1 - judicial independence) + normal chance × judicial independence` | Lobby the judge (HSS 60 or more: a decision, 4.3.5); public campaign (jury trial countries: psyops can sway ±10%) |
 | **6. Verdict and Penalty** | Instant | Penalty table below; appeals possible once (judicial independence × 30% chance to reduce one tier) | |
 
 ### 4.9.5 Outcomes and penalties
@@ -872,7 +959,7 @@ Each offense has a **severity tier**. Severity can rise one tier for repeat offe
 | **Minor** | Late disclosure, small data breach, minor permit violation | Warning or fine 0.5 to 1% of national revenue | None | Favor -2 |
 | **Serious** | Unreported stake via shell, tax avoidance through shells, unlicensed AI | Fine 2 to 5% of revenue; disgorgement of gains × 1.5; back taxes + 50% | Executive ban 2 to 5 years (cannot sit on boards in that country) | Favor -10, Clout -5; stock -5 to -15% |
 | **Grave** | Market manipulation, bribery of officials, systematic tax evasion, sanctions evasion | Fine 5 to 10% of global revenue; forced divestment of the offending business; licence suspension 3 to 12 months; deal unwound | Executive ban 10 years; prison 2 to 8 years possible (conviction × 50%); "Under Investigation" becomes "Blacklisted" | Favor -25, Clout -15; stock -15 to -40%; asset freeze during appeal; relations -5 between the holder's home country and the prosecuting country if foreign |
-| **Criminal** | Coup financing, laundering for cartels, ordering violence, large fraud | Company dissolution or forced sale at 50% of value; all assets in the country frozen and confiscated (judicial independence × 50% chance to recover a part) | Prison 8 to 25 years; extradition requests to countries with relation ≥ 25 | Favor -50, Clout -30; "Blacklisted"; Tier 1 sanctions listing possible (liberal democracies, 30%) |
+| **Criminal** | Coup financing, laundering for cartels, ordering violence, large fraud | Company dissolution or forced sale at 50% of value; all assets in the country frozen and confiscated (judicial independence × 50% chance to recover a part) | Prison 8 to 25 years; extradition requests to countries with relation ≥ 25 | Favor -50, Clout -30; "Blacklisted"; Tier 1 sanctions listing possible (Open countries, 30%) |
 
 For a trust or a character (not a company), fines are 1× (Serious), 2× (Grave) or 3× (Criminal) the gains or the evaded amount instead of a share of revenue **(T)**.
 
@@ -912,7 +999,7 @@ Every contract is let by the national government (batch 121). **Tender chain**: 
 - **Capability** (0 to 1): fit of your business units in the contract's industry, their productivity and your track record for the contract.
 - **Political** (0 to 1): `min(1, PC spent / 50 + 0.2 × favors called + 0.3 if the bidder's controlling character is the minister in charge)`.
 - **Relation** (0 to 1): 1.0 for domestic holders; for foreign holders, `relation of home to host / 100`, minimum 0.
-- **Kickback**: in managed democracies and below, `+3 per 1% of contract value` paid to the decision-maker (exposure +4 per 1%). In liberal democracies kickbacks are possible only through a bribed official and add +2 per 1% with exposure +8 per 1%.
+- **Kickback**: at HSS 60 or more, `+3 per 1% of contract value` paid to the decision-maker (exposure +4 per 1%). In Open countries kickbacks are possible only through a bribed official and add +2 per 1% with exposure +8 per 1%.
 - The highest score wins. Ties go to the domestic bidder.
 - Failing to deliver (capacity shortfall) triggers penalties of 10 to 30% of contract value and Clout -10 for the bidder's controlling character.
 
@@ -952,14 +1039,14 @@ A government can nationalize a company, a business unit or a stake. Triggers **(
 
 **Compensation** paid to the owner **(T)**:
 
-| Government type | Compensation | Paid as |
+| Band or variant (4.2.1) | Compensation | Paid as |
 |---|---|---|
-| Liberal democracy | 90 to 100% of market value | Government bonds over 5 years |
-| Managed democracy | 50% | Bonds over 10 years, 20% default risk |
-| One-party state | 30% | Cash valued in USD (the country's own currency is flavor, batch 125), Hard Controls apply |
-| Corporate oligarchy | Negotiated: the Council votes | Any |
-| Military junta | 10 to 30% | Often never paid (50%) |
-| Failed state | 0% | None |
+| Open (HSS < 60) | 90 to 100% of market value, times `0.5 + J / 200` | Government bonds over 5 years |
+| Guided (HSS 60 to 84) | 50% | Bonds over 10 years, 20% default risk |
+| Dominant (HSS 85+) | 30% | Cash valued in USD (the country's own currency is flavor, batch 125), Hard Controls apply |
+| Council of Stakeholders | Negotiated: the Council votes | Any |
+| Military Council | 10 to 30% | Often never paid (50%) |
+| Collapsed | 0% | None |
 
 **Arbitration**: if the owner's home and host have a trade agreement (FTA or better) or relation ≥ 25 at the time of seizure, the owner can start international arbitration (12 to 36 months, legal costs $5M to $50M); win chance 60% (−20% if the owner was convicted of a Grave offense there); winning recovers an extra 30% of value, paid if the host's relation with the owner's home stays ≥ 0 **(T)**.
 
@@ -967,9 +1054,9 @@ A government can nationalize a company, a business unit or a stake. Triggers **(
 
 Branch offices are gone (batch 116). The ladder works on a **foreign holder's operations** in a host country: its business units' assets there, its local subsidiaries and its stakes in local companies. How restricted a country is for foreigners is its **restriction label** (Open, Screened, Guarded, Closed; [2-map-and-influence.md](2-map-and-influence.md) 2.2.4), which follows its C1 and C2 laws. Each month the host computes **Seizure risk** for each foreign holder with operations there:
 
-`Seizure risk (%) = TypeBase + max(0, -Relation)/50 + 2 × SanctionsTier + 1 if strategic sector + 1 if host bloc approval of foreign business (the ruling ideology or the Chuds) ≤ -5 - 10 × your national influence share in the host - 0.5 if local partner loyalty ≥ 60` (minimum 0) **(T)**
+`Seizure risk (%) = Base + max(0, -Relation)/50 + 2 × SanctionsTier + 1 if strategic sector + 1 if host bloc approval of foreign business (the ruling ideology or the Chuds) ≤ -5 - 10 × your national influence share in the host - 0.5 if local partner loyalty ≥ 60` (minimum 0) **(T)**
 
-TypeBase: Liberal democracy 0, Managed democracy 0.2, One-party 0.3, Corporate oligarchy 0.2, Military junta 0.5, Failed state 1.0.
+Base (4.2.1): Open 0, Guided 0.2, Dominant 0.3, Council of Stakeholders 0.2, Military Council 0.5, Collapsed 1.0.
 
 A successful roll **does not seize directly**. It advances the **seizure ladder** by one step. Steps decay back by one after 12 months with no further advance.
 
@@ -1051,7 +1138,7 @@ Relation (-100 to +100) per country pair, recalculated monthly. It drifts 1 poin
 | Component | Value **(T)** |
 |---|---|
 | Base relation | From data: history, culture, alignment (-60 to +60) |
-| Same government type family (democracies with democracies, etc.) | +10 |
+| Same HSS band (Open with Open, and so on; 4.2.1) | +10 |
 | Trade agreement | +5 (Preferential) to +20 (Single Market) |
 | Alliance | +30 |
 | Rivalry | -40 |
@@ -1069,7 +1156,7 @@ Relation (-100 to +100) per country pair, recalculated monthly. It drifts 1 poin
 | 0 to 49 | **Cordial** | Normal |
 | -1 to -49 | **Cool** | C1 effectively one step stricter for each other's holders; trade agreements may be suspended (5% per month below -25) |
 | -50 to -79 | **Hostile** | Sanctions chance 5% per month (from the stronger side); seizure risk terms apply; espionage events |
-| ≤ -80 | **Enemy** | War chance 1% per month if either is a junta or one-party state, 0.3% otherwise **(T)** |
+| ≤ -80 | **Enemy** | War chance 1% per month if either is Dominant (HSS ≥ 85) or under a Military Council, 0.3% otherwise **(T)** |
 
 ### 4.11.2 Trade agreements
 
@@ -1135,7 +1222,7 @@ Wars are background events. The player never commands armies.
 | **Major war** | Great powers involved | Output -80 to -100%; capacity destruction 5% per month; martial law | Output -20%; insurance on routes +300% | Oil +50 to 100%; commodity spikes; global stocks -10 to -25%; sanctions waves |
 | **Civil war** | After a stalemate coup or revolution | As regional war, split between two governments that each claim the country | As regional | Minor |
 
-- **War chance**: from relation (4.11.1), rivalry, junta and one-party expansionism (country data), and disputed territory data.
+- **War chance**: from relation (4.11.1), rivalry, the expansionism of Dominant and Military Council countries (country data), and disputed territory data.
 - **Peace**: each month 5% + 5% per year of war, +10% if either side's stability < 25 **(T)**.
 - **Reconstruction**: after peace, reconstruction contracts worth 5 to 20% of the war-zone countries' GDP are tendered over 3 to 5 years.
 - **Opportunities**: defense manufacturing, commodities, reconstruction, distressed asset purchases in affected provinces (real estate at -40% can be bought by those brave enough).
@@ -1145,7 +1232,7 @@ Wars are background events. The player never commands armies.
 Recalculated monthly per country **(T)**:
 
 ```
-Stability = Baseline(type)
+Stability = Baseline(HSS, 4.2.1)
           - 1.5 × max(0, Inflation% - 4)
           - 1.0 × max(0, Unemployment% - 6)
           - 0.3 × AverageUnrest (population-weighted, 0 to 100)
@@ -1169,7 +1256,7 @@ Local stability (per province, for local unrest and protests) = country stabilit
 | 50 to 69 | **Tense** | Risk premium on bonds +1%; FDI -10% |
 | 30 to 49 | **Unstable** | Risk premium +3%; capital flight 1% of foreign holdings per month; coup and default checks active |
 | 15 to 29 | **Crisis** | Risk premium +8%; revolution pressure builds; currency crisis chance ×2 (post-POC) |
-| < 15 | **Collapse** | Failed state transition after 3 months below 10 |
+| < 15 | **Collapse** | Collapsed condition (4.2.7) after 3 months below 10 |
 
 ### 4.11.8 Consequences: default, currency crisis, revolution
 
@@ -1211,7 +1298,7 @@ At extreme influence, a character or megacorp can turn a city (a Metro or city p
 |---|---|---|---|
 | **1. Special Economic Zone** | The city (or one of its provinces) is a tax zone and the company runs its services | C6 Tax Zones or higher | Corporate tax -50% in the zone; company manages zone infrastructure and collects fees; +10 PC per month in the country |
 | **2. Charter City** | The company's board administers the city under a national charter | C6 Charter Zones or higher | The zone sets its own E8, E10, E11, L1 (above the national floor) to L5, S2 (Privatized allowed), and zone taxes; **Company Administration**: the controlling company's head appoints a zone administrator, and residents get a Residents' Council with advisory votes |
-| **3. Sovereign Corporate Zone** | The city (all its provinces) is a separate polity governed by the company's charter | C6 Sovereign Charters, which can only be enacted in a corporate oligarchy, a failed state, or by treaty with Support ≥ +40 | All law categories except those reserved in the treaty; its own relations, its own exchange and (optionally, post-POC) its own currency or scrip ([3-markets-and-fx.md](3-markets-and-fx.md) 3.8; in the POC the zone's money is USD like everywhere, batch 125); its own security forces; becomes a city-state, a country of its own (4.3.2) |
+| **3. Sovereign Corporate Zone** | The city (all its provinces) is a separate polity governed by the company's charter | C6 Sovereign Charters, which can only be enacted under a Council of Stakeholders, in a Collapsed country, or by treaty with Support ≥ +40 | All law categories except those reserved in the treaty; its own relations, its own exchange and (optionally, post-POC) its own currency or scrip ([3-markets-and-fx.md](3-markets-and-fx.md) 3.8; in the POC the zone's money is USD like everywhere, batch 125); its own security forces; becomes a city-state, a country of its own (4.3.2) |
 
 ### 4.12.2 Requirements **(T)**
 
@@ -1219,7 +1306,7 @@ At extreme influence, a character or megacorp can turn a city (a Metro or city p
 |---|---|---|---|
 | City influence share (character or company; [2-map-and-influence.md](2-map-and-influence.md) 2.5.10) | ≥ 50% (Kingmaker) for 12 months | ≥ 60% for 24 months | ≥ 75% for 36 months |
 | Regional influence share | ≥ 25% | ≥ 35% | ≥ 50% |
-| National position | ≥ 10% national share or a client minister | ≥ 25% national share, or a client head of government, or government type Corporate oligarchy | Council of Stakeholders chair (corporate oligarchy), or controlling the Failed state's capital city, or a ratified treaty |
+| National position | ≥ 10% national share or a client minister | ≥ 25% national share, or a client head of state, or a Council of Stakeholders variant | Council of Stakeholders chair, or controlling a Collapsed country's capital city, or a ratified treaty |
 | Favor (Image, 4.16) | ≥ 0 | ≥ 10 | Any |
 | Security | n/a | Private security in the zone (4.23): Security Strength 30 per 100k residents | Security Strength 80 per 100k residents, plus a cyber defense team |
 | Money | Zone setup $500M × wealth index | $5B × wealth index | $20B × wealth index plus a treaty payment |
@@ -1235,7 +1322,7 @@ Each stage is an event chain:
    - Lease length: 50 or 99 years (Stage 2), perpetual (Stage 3).
    - Reserved powers: defense, currency, citizenship (each reserved power lowers backlash by 10%).
    - Resident guarantees: keep minimum wage floor, keep elections for a Residents' Council (each lowers unrest).
-4. **Referendum** (democracies only; residents of the city's provinces vote; formula 4.6.3 with Yes and No as the two options; the company's media, ads and psyops apply; the blocs that oppose the charter campaign No).
+4. **Referendum** (Open and Guided countries only; residents of the city's provinces vote; formula 4.6.3 with Yes and No as the two options; the company's media, ads and psyops apply; the blocs that oppose the charter campaign No).
 5. **Handover** (4 weeks): the national ministries hand the city's administration to the company (Stage 2) or the national flag comes down (Stage 3). National officials who are not clients may resist (event).
 6. **Backlash** (ongoing): see 4.12.5.
 
@@ -1254,7 +1341,7 @@ Each stage is an event chain:
 |---|---|
 | Host country blocs | Approval -2 for every bloc that opposes Sovereign Charters (5.3); host stability -3 (Stage 2) or -8 (Stage 3) |
 | Residents | Unrest +10 at handover, decaying 1 per month if the zone keeps minimum wage and a Residents' Council |
-| Liberal democracies | Relation -10 with the host for Stage 3; Tier 1 sanctions on the company's executives 20% (if the zone was won through a coup or capture) |
+| Open countries | Relation -10 with the host for Stage 3; Tier 1 sanctions on the company's executives 20% (if the zone was won through a coup or capture) |
 | Rival characters | AI rivals with ≥ 10% influence in the host country gain a "Stop the Charter" casus belli and may fund the opposition or revolutions; a hostile takeover of the company happens only on the game director's order (AI companies buy only when the director says so, 2.23) |
 | **Reclamation** | Each month a hostile national government (relation to the company's head ≤ -25, or a government formed by parties that campaigned against the charter) has a 5% chance to start a **Reclamation** chain: Revocation Bill → Court Challenge (judicial independence decides if the charter's terms are respected) → Standoff (the company's Security Strength vs national police or military, 4.23.2) → Reclaimed (nationalization with compensation per 4.9.9) or Charter Upheld |
 | Stage 3 recognition | Each country decides to recognize the zone (relation with the company's home ≥ 25 and a trade deal); unrecognized zones cannot list on foreign exchanges or use the international payment network until 3 countries recognize them |
@@ -1267,7 +1354,7 @@ All numbers use the tuning values above.
 
 ### 4.13.1 A rezoning from the national ministry (new chip capacity)
 
-**Situation.** The player's Semiconductors business unit needs more Industrial space in Austin (United States, liberal democracy, corruption 25, wealth index 4), whose Industrial pools are full. Austin is a single city province (2.3.3). The player holds a $40M share of its Land pool (2.16) and wants that land rezoned, so it can be developed into Industrial space (2.16.2). There is no city council (batch 121): the rezoning is a Decision of the US **Minister of Land and Housing** (4.3.1, 4.3.5). E11 Zoning is Standard: the minister approves at Disposition 0 or more. The player's US national share is 0.25% (no tier) and their Austin city share is 18% (Presence); no area or region tier.
+**Situation.** The player's Semiconductors business unit needs more Industrial space in Austin (United States, HSS 55, corruption 25, wealth index 4), whose Industrial pools are full. Austin is a single city province (2.3.3). The player holds a $40M share of its Land pool (2.16) and wants that land rezoned, so it can be developed into Industrial space (2.16.2). There is no city council (batch 121): the rezoning is a Decision of the US **Minister of Land and Housing** (4.3.1, 4.3.5). E11 Zoning is Standard: the minister approves at Disposition 0 or more. The player's US national share is 0.25% (no tier) and their Austin city share is 18% (Presence); no area or region tier.
 
 **PC.** `100 × sqrt(0.0025) × 1.0 = 5`, plus 2 local standing PC for Presence in Austin (4.1.2): **7 PC per month**, pool cap 42.
 
@@ -1280,13 +1367,13 @@ All numbers use the tuning values above.
 
 **Decision: Disposition -10 + 10 = 0. Rezoning approved.** Total cost: 25 PC (about 3.5 months of income) and 6 ticks. Exposure: 0 (all legal and disclosed).
 
-**Why not bribe?** A bribe to the minister would cost `$5M × 4 × (110 - 25)/60 × (1 + 50/100) = $42.5M`, with acceptance only 25% and a 50% chance a refusal is reported (+30 exposure and an instant Financial Police inquiry). In a liberal democracy the legal route is cheaper and safer.
+**Why not bribe?** A bribe to the minister would cost `$5M × 4 × (110 - 25)/60 × (1 + 50/100) = $42.5M`, with acceptance only 25% and a 50% chance a refusal is reported (+30 exposure and an instant Financial Police inquiry). In an Open country the legal route is cheaper and safer.
 
 **Making it easier next time.** If the player's Austin share reaches 25% (Power broker), one rezoning Request Decision per quarter costs 0 PC (2.5.10). Pushing E11 to Developer-Led is now a national bill (4.5.2): far dearer to pass, but it would make rezonings automatic for Power broker holders in every province of the country.
 
 ### 4.13.2 Lobbying a national capital gains tax cut
 
-**Situation.** A $3T liberal democracy with 50M adults. E3 is Moderate (20%). The player wants Low (10%); their personal trusts and companies realize about $400M of gains per year, so the cut saves $40M per year. The governing coalition is labor-green, so no government sponsorship. The player's national share is 2%: 14 PC per month, cap 85. G2 is Light Disclosure (lobby cap +15 per holder).
+**Situation.** A $3T Open country (HSS 45, Legislature 72, so T = +10) with 50M adults. E3 is Moderate (20%). The player wants Low (10%); their personal trusts and companies realize about $400M of gains per year, so the cut saves $40M per year. The governing coalition is labor-green, so no government sponsorship. The player's national share is 2%: 14 PC per month, cap 85. G2 is Light Disclosure (lobby cap +15 per holder).
 
 **Base support** for Low (stance / 2 × clout):
 
@@ -1311,7 +1398,7 @@ Threshold T = +10, so the bill would pass at `10% + 2% × 1.5 = 13%` per month: 
 3. **Issue Campaign** for 4 weeks before the first roll: `$0.10 × 50M = $5M` per week, $20M total, +3 support.
 4. Communist-aligned unions counter-lobby with 20 LP: -10.
 
-**Support** = 11.5 + 5 + 15 + 3 - 10 = **24.5**. Pass chance = `10% + 2% × 14.5 = 39%` per month. Liberal democracy debate rolls start in month 2. If the player tops up lobbying each month to offset the 10% decay (about 3 LP, $9M per month), the chance over the first three rolls is `1 - 0.61³ = 77%`.
+**Support** = 11.5 + 5 + 15 + 3 - 10 = **24.5**. Pass chance = `10% + 2% × 14.5 = 39%` per month. With Legislature 50 or more, debate rolls start in month 2. If the player tops up lobbying each month to offset the 10% decay (about 3 LP, $9M per month), the chance over the first three rolls is `1 - 0.61³ = 77%`.
 
 **Cost:** about $60M + $20M + $27M maintenance = $107M, paid back in under 3 years of tax savings. **Side effects**: lobbying is disclosed, so Communist, Neo-Luddite and Effective Altruist approval of the player drops by 1, and the player character takes the hit if they ever run for office in labor-leaning wards.
 
@@ -1350,7 +1437,7 @@ If playtests show money and media swinging races this much, the first values to 
 
 ### 4.13.4 A sanctions shock to a foreign operation
 
-**Situation.** The player's home is Country A (liberal democracy). The player controls an EV maker in Country B (one-party state, strategic sector, restriction label Guarded) with a 49% stake; C2 forces a local partner to hold 51% (loyalty 70). It has a book value of $2B and $300M of profit per year. After a naval incident, A and B's relation falls to -55, and A imposes **Tier 2 sectoral sanctions** (EVs and Semiconductors). The player's national influence share in B is 0.8%.
+**Situation.** The player's home is Country A (an Open country). The player controls an EV maker in Country B (a Dominant country, strategic sector, restriction label Guarded) with a 49% stake; C2 forces a local partner to hold 51% (loyalty 70). It has a book value of $2B and $300M of profit per year. After a naval incident, A and B's relation falls to -55, and A imposes **Tier 2 sectoral sanctions** (EVs and Semiconductors). The player's national influence share in B is 0.8%.
 
 **Monthly seizure risk** = `0.3 + 55/50 + 2 × 2 + 1 (strategic) - 10 × 0.008 - 0.5 = 5.8%`.
 
@@ -1375,7 +1462,7 @@ Removed (batch 130): no insider trading.
 
 **Post-POC: not simulated; every value is in USD** (batch 125). The example shows the post-POC FX rules; in the POC the same country would have a debt crisis without the peg break.
 
-**Situation.** The player's bank (a Subsidiary in the Banking industry) operates in Country D, a managed democracy whose currency is pegged to the dollar. Reserves cover 2 months of imports; stability 34; debt 75% of GDP, half in foreign currency (Limit 60). The bank holds $3B of D's government bonds and its assets are 2.5% of D's GDP (systemically important). A rival holds short positions against D's currency worth 10% of reserves.
+**Situation.** The player's bank (a Subsidiary in the Banking industry) operates in Country D, a Guided country whose currency is pegged to the dollar. Reserves cover 2 months of imports; stability 34; debt 75% of GDP, half in foreign currency (Limit 60). The bank holds $3B of D's government bonds and its assets are 2.5% of D's GDP (systemically important). A rival holds short positions against D's currency worth 10% of reserves.
 
 **Currency crisis chance** = `5% × (3 - 2) × (1 + (50 - 34)/25) + 0.5 × 10% = 8.2% + 5% = 13.2%` per month.
 
@@ -1408,7 +1495,7 @@ In month 3 the peg breaks: the currency falls 45% over two weeks, the central ba
 | *The Colonel's Dinner* | Coup risk active, the player has influence ≥ 5% in the country | Listen · Report to the government (Chuds approval +2, plotters hostile) · Leave early |
 | *Night of the Long Phones* | A coup is under way | Commit reserves · Negotiate with a wavering general · Evacuate executives |
 | *Recount* | Margin < 0.5% | Fund the legal challenge · Concede |
-| *Party Congress* | One-party state, every 5 years | Back a faction · Stay neutral (safe, no gains) |
+| *Party Congress* | Dominant countries (HSS ≥ 85), every 5 years | Back a faction · Stay neutral (safe, no gains) |
 | *The Wall Comes Down* | Sanctions Tier 2+ on a country where the player has operations | 4.11.4 options |
 | *Peg Under Pressure* | Currency crisis chance ≥ 10% (post-POC only, batch 125) | Short the currency · Hedge · Lobby for IMF-style support (relation) |
 | *Charter Referendum* | Corporate sovereignty step 4 | Campaign hard · Sweeten terms (Residents' Council) · Delay |
@@ -1427,7 +1514,7 @@ The Politics screen ([11-ui.md](../11-ui.md)) has seven tabs. Each tab opens on 
 
 | Tab | What the player sees | What the player clicks |
 |---|---|---|
-| **Desk** (home tab) | Per jurisdiction: PC pool and monthly gain, influence tier, government type and ruling coalition, Government attitude (4.27.2), next election, open investigations, seizure ladder step, and a **Stakes** column: the yearly money impact on the player of every bill in Drafting or Debate (estimated from the assets of the player character, their trusts and their companies, and the law's effects) | Open a jurisdiction; set Political Objectives (4.15.2); approve the Director's budget |
+| **Desk** (home tab) | Per jurisdiction: PC pool and monthly gain, influence tier, HSS, branch strengths, variant and ruling coalition, Government attitude (4.27.2), next election, open investigations, seizure ladder step, and a **Stakes** column: the yearly money impact on the player of every bill in Drafting or Debate (estimated from the assets of the player character, their trusts and their companies, and the law's effects) | Open a jurisdiction; set Political Objectives (4.15.2); approve the Director's budget |
 | **Laws** | The law grid by category (4.5.1) for the chosen jurisdiction: current position, bills in progress with a support bar, pass chance and the tooltip breakdown (4.5.10), the player's Stakes per position | Lobby Bill, Commission a Bill, Issue or Astroturf Campaign, fund a think tank paper (4.18.2) |
 | **People** (the Rolodex) | Officials, clients, judges, journalists, regulator heads, party leaders, union and NGO leaders, crime bosses known to the player: opinion tag, loyalty, favors owed, hooks, Integrity band if known | Meet, call in a favor, bribe, blackmail, Court Patron, hire (for lobbyists and fixers) |
 | **Elections** | Calendar of every election where the player has Presence; polls with noise bands; candidates; the player's backed candidates; campaign planner showing utility terms by stratum (4.6.3) | Donate, independent expenditure, ads, run for office, back a protégé, endorse |
@@ -1487,10 +1574,10 @@ Most politics resolves on the weekly and monthly calculations (4.1.3). These mom
 | **Coup night** (4.8.4) | 6 to 24 turns | Commit reserves, negotiate with generals, cut the internet |
 | **Hearing** (below) | 4 to 6 turns | Choose an answer stance each round |
 | **Crisis meeting** (bailout, seizure step 2 or 3, ISF conditions) | 2 to 4 turns | Negotiation rounds: offer, concede, threaten, walk out |
-| **Council session** (corporate oligarchy, 4.5.10) and key junta council votes | 1 to 3 turns | Last-minute vote buying with PC, favors or money |
+| **Council session** (Council of Stakeholders, 4.5.10) and key Military Council votes | 1 to 3 turns | Last-minute vote buying with PC, favors or money |
 | **Protest standoff** (4.24.2) | 2 to 8 turns | Negotiate, wait, call police, call private security |
 
-**Hearings.** A legislature committee summons the player character or one of their executives when: they are at Heat ≥ 50 with a major or criminal scandal about them in a liberal or managed democracy; an investigation of their company reaches Subpoena; or a hostile legislator spends 10 PC **(T)**. Refusing costs Favor -10 and Heat +15. A hearing has 4 to 6 rounds (one per hour). Each round the player picks a stance:
+**Hearings.** A legislature committee summons the player character or one of their executives when: they are at Heat ≥ 50 with a major or criminal scandal about them in a country with Legislature 25 or more; an investigation of their company reaches Subpoena; or a hostile legislator spends 10 PC **(T)**. Refusing costs Favor -10 and Heat +15. A hearing has 4 to 6 rounds (one per hour). Each round the player picks a stance:
 
 | Stance | Roll | Success | Failure |
 |---|---|---|---|
@@ -1639,7 +1726,7 @@ Every outlet of the media system ([16-media.md](16-media.md)): broadcast and pub
 
 ### 4.17.3 Journalists
 
-Investigative journalists are characters (Intrigue, Persuasion, Honest or not, an outlet). Each country has 2 to 8 notable ones **(T)**, more in liberal democracies.
+Investigative journalists are characters (Intrigue, Persuasion, Honest or not, an outlet). Each country has 2 to 8 notable ones **(T)**, more in Open countries.
 
 - Each month a journalist picks a **target**: the holder with the highest political or financial exposure in the country, weighted ×1.5 for characters whose largest company is Megacorp or Conglomerate rank and ×2 if a whistleblower contacted them (4.20.5).
 - A journalist on the player's case multiplies the monthly exposé chance (4.10.3) by `1 + journalist's Intrigue / 20` **(T)** and raises revelation chances (4.17.4).
@@ -1697,7 +1784,7 @@ A **scandal** (minor, major or criminal, as in 4.6.3 and 4.10.3) has four parts:
 | **Favor** | The local Favor term in 4.16.2 (-0.5 × Heat); Favor gains of any kind are halved while Heat ≥ 40 |
 | **Clout dealings** | Elite characters' acceptance of deals, favors, invitations and bloc offers -1% per 2 Heat; Clout gains are halved while Heat ≥ 40; Clout -1 a month while Heat ≥ 60 (elites keep their distance) |
 | **Board votes** | Votes for the character's nominees, proposals and own seat in board elections and proxy fights -1% per 5 Heat; at Heat ≥ 60 a board with a Rival majority may call a vote to remove the character as head (1.8) |
-| **Politics** | Fame gain (4.16.4); hearings (4.15.4) at Heat ≥ 50; in liberal and managed democracies, politicians refuse public meetings, endorsements and disclosed donations from a character at Heat ≥ 50 unless a hook forces them; a client's Loyalty -1 a month while their patron is at Heat ≥ 60 |
+| **Politics** | Fame gain (4.16.4); hearings (4.15.4) at Heat ≥ 50; in Open and Guided countries, politicians refuse public meetings, endorsements and disclosed donations from a character at Heat ≥ 50 unless a hook forces them; a client's Loyalty -1 a month while their patron is at Heat ≥ 60 |
 | **Media coverage** | Every outlet's tone toward the character -0.1 per 25 Heat; outlets cover new scandals about the character 3 extra days while Heat ≥ 40 |
 | **Markets** | A price drift for the character's listed companies of `-(Heat / 100)` % per trading day while an outlet covers one of their scandals and Heat ≥ 40 (on top of the one-time hit of 4.10.3) |
 
@@ -1715,7 +1802,7 @@ Batch 116: there are no dynasties, houses or family members. The player acts in 
 
 The player character can hold office (4.7.1) and run for it (4.7.2). Other characters, AI or not, rise through their own careers, driven by their traits (AI characters have no ambitions): Ambitious, Party School and Persuasion ≥ 12 make a career likely. The player backs them as **protégés**: funding, Party Standing and introductions, so that once elected with the player's money they become clients (4.7.4).
 
-**Typical ladder** (liberal democracy) **(T)**:
+**Typical ladder** (Open country) **(T)**:
 
 | Step | Age | Time on step | What it gives |
 |---|---|---|---|
@@ -1781,7 +1868,7 @@ A **foundation** is a holder type (like a personal trust), founded by a characte
 - a bloc with clout ≥ 5% has no party, or its party's stance is 2 or more steps away from one of its ++ wants: the bloc joins with chance 20% per quarter, more with Fund Ideology; or
 - the character has Fame ≥ 60 and effective Favor ≥ 20 in at least one stratum: a **personal party**. It has no blocs, so its Ideology term is 0, but its Candidate term counts ×2 and the character's local Favor counts directly. Personal parties rise fast and fall with their leader's scandals. Founding one costs Clout -10 ("traitor to their class") if its platform attacks the Glitterati and Oligarchs.
 
-In managed democracies, owning a licensed opposition party is allowed only with Government attitude Tolerated or better (4.27.2); otherwise the party is disqualified (4.6.7). In one-party states, the equivalent is backing a faction (4.8.2).
+In Guided countries, owning a licensed opposition party is allowed only with Government attitude Tolerated or better (4.27.2); otherwise the party is disqualified (4.6.7). In Dominant countries, the equivalent is backing a faction (4.8.2).
 
 ---
 
@@ -1908,7 +1995,7 @@ Every illegal operation (front company, laundering chain, bribe ring, sanctions 
 
 ### 4.20.6 Anti-corruption drives
 
-A government launches an **Anti-Corruption Drive** when: a new government is formed by parties that campaigned on corruption; an ISF program demands it (4.25); a corruption scandal takes a character's Heat to 80; or a Reformist faction wins a party congress (4.8.2). For 24 months **(T)**: Financial Police capacity +1 and Zeal +0.2; the country's corruption target falls by 10; officials who were bought (4.20.3) have a 10% chance each per quarter of being arrested and becoming Cracks candidates against whoever bought them. A drive in a managed democracy or one-party state is selective: it targets holders with Government attitude Watched or Targeted (4.27.2) at ×2 and Favored holders at ×0.25.
+A government launches an **Anti-Corruption Drive** when: a new government is formed by parties that campaigned on corruption; an ISF program demands it (4.25); a corruption scandal takes a character's Heat to 80; or a Reformist faction wins a party congress (4.8.2). For 24 months **(T)**: Financial Police capacity +1 and Zeal +0.2; the country's corruption target falls by 10; officials who were bought (4.20.3) have a 10% chance each per quarter of being arrested and becoming Cracks candidates against whoever bought them. A drive at HSS 60 or more is selective: it targets holders with Government attitude Watched or Targeted (4.27.2) at ×2 and Favored holders at ×0.25.
 
 ---
 
@@ -1926,7 +2013,7 @@ A government launches an **Anti-Corruption Drive** when: a new government is for
 | **International arbitration** | Outside any country (4.25) | Panel of 3 chosen by the parties | Investment disputes (4.9.9), contract disputes with arbitration clauses |
 | **Zone arbitration** | Corporate zones (4.12.4) | Appointed by the zone | Everything inside the zone |
 
-**Judges** are characters with: **Integrity** (as agency heads, 4.9.2), **Leaning** (Business, Neutral, State or Labor; a bias of ±10% in cases between those sides), **Ideology** (an aligned bloc, used for law challenges), and their traits (an Ambitious judge wants high-profile rulings and promotion). Judges are appointed by the head of government (and confirmed by the legislature in liberal democracies, a support vote with threshold 0 **(T)**); some countries elect trial judges (data flag). Appointments use 4.7.3, so a player can push their candidates.
+**Judges** are characters with: **Integrity** (as agency heads, 4.9.2), **Leaning** (Business, Neutral, State or Labor; a bias of ±10% in cases between those sides), **Ideology** (an aligned bloc, used for law challenges), and their traits (an Ambitious judge wants high-profile rulings and promotion). Judges are appointed by the head of government (and confirmed by the legislature in Open countries, a support vote with threshold 0 **(T)**); some countries elect trial judges (data flag). Appointments use 4.7.3, so a player can push their candidates.
 
 **Court congestion** (country data, ×0.5 to ×3) multiplies all durations below.
 
@@ -1961,7 +2048,7 @@ A government launches an **Anti-Corruption Drive** when: a new government is for
 | Tactic | How **(T)** | Counter |
 |---|---|---|
 | **Injunction blitz** | File injunctions against a rival's takeover, plant or permit; a granted injunction (chance = `30% + 3% × Merit + Leaning`) freezes it until trial | Post a counter-bond, appeal (4 weeks), settle |
-| **Forum shopping** | File in the court most friendly to you, among the trial benches of the countries where the defendant has assets: the player picks the court and sees its judges' Leanings | Move to dismiss for forum (50% in liberal democracies) |
+| **Forum shopping** | File in the court most friendly to you, among the trial benches of the countries where the defendant has assets: the player picks the court and sees its judges' Leanings | Move to dismiss for forum (50% in Open countries) |
 | **War of attrition** | Sue a smaller defendant: each month the defendant pays counsel; if their cash is below 10 × monthly legal cost, they settle with 40% chance per month | Anti-SLAPP laws (country flag): suits against journalists and activists with Merit ≤ 0 are dismissed in 8 weeks, and the plaintiff pays costs and suffers Heat +15 |
 | **Discovery fishing** | Sue to get civil discovery on a rival | Exposes your documents too |
 | **Patent thicket** | Owning many patents in an industry adds +2 Merit per 10 points of productivity lead over the defendant's unit in that industry in IP suits **(T)** | Cross-licensing settlement |
@@ -2005,7 +2092,7 @@ Each country has one **national police** force led by a national police chief, a
 | **Mafia** | Italy (Milan, Rome), New York, Moscow, Istanbul | Construction, waste, ports, unions, public contracts | Medium | Infiltrates contracts and unions; delivers votes in constituencies |
 | **Street gang** | Any province with a large slum share | Drugs, theft, protection in slums and Residential pools | Medium to high, local | Intimidation and turnout in constituencies |
 | **Hacker crew** | Online; based in Commerce-heavy cities with tech business units and low surveillance | Ransomware, data theft, black-market data, hacking for hire ([17-hacking.md](17-hacking.md)) | Low physical | Leaks and doxxing; works for anyone who pays |
-| **Militia** | Weak and failed states (Lagos edges, Kolwezi-Lubumbashi; rural provinces such as the Sahel and Somalia) | Checkpoints, resource smuggling, protection | Very high | Is the de facto power in failed-state provinces (an OCG, not a government, 4.3.4) |
+| **Militia** | Weak and collapsed states (Lagos edges, Kolwezi-Lubumbashi; rural provinces such as the Sahel and Somalia) | Checkpoints, resource smuggling, protection | Very high | Is the de facto power in collapsed-state provinces (an OCG, not a government, 4.3.4) |
 
 OCGs fight each other over provinces (**gang wars**: Crime +20 in the province, business unit output there -5%, 1% chance per month per business unit of collateral damage) and grow when they win. Their monthly AI: expand into the weakest-policed adjacent province, launder through fronts, buy officials when corruption ≥ 40, retaliate when hit.
 
@@ -2027,7 +2114,7 @@ The player can never become an OCG. It can run front companies (1.7.4), partner 
 
 - **Bought police**: an OCG with ties to the police in a province (or to the police chief, for the whole country) cuts Request a Crackdown success by 20 points there and learns of every crackdown request.
 - **Captured state**: when OCGs' combined national Strength is 60 or more and corruption is 70 or more, the country is flagged Captured: the Sovereigntists gain Office clout +0.08 (4.4.4); candidates who campaign against crime have a 10% chance per campaign of an attack event; national crackdowns have half the success chance **(T)**.
-- **War on crime**: a government decision when Crime ≥ 50 in the core province of the largest city and the Chuds have clout ≥ 15%: OCG Strength -5 per month for 12 months, unrest +3 among slum residents, stability -1, and relation -5 with liberal democracies if S2 is Militarized and T4 is Mass Surveillance or Social Credit (human rights pressure). OCGs answer with violence: Crime +10 for the first 6 months.
+- **War on crime**: a government decision when Crime ≥ 50 in the core province of the largest city and the Chuds have clout ≥ 15%: OCG Strength -5 per month for 12 months, unrest +3 among slum residents, stability -1, and relation -5 with Open countries if S2 is Militarized and T4 is Mass Surveillance or Social Credit (human rights pressure). OCGs answer with violence: Crime +10 for the first 6 months.
 - **Elections**: OCGs fund candidates who leave them alone (Money in the Campaign term), and in Captured countries they can deliver or suppress turnout in constituencies they control (±5 points).
 
 ---
@@ -2073,7 +2160,7 @@ National forces are measured on the same scale for standoffs: `Police strength �
 
 The owner sets each deployment's **rules of engagement**: **Restrained** (Strength ×0.75), **Standard** (×1.0), **Aggressive** (×1.5) **(T)**.
 
-Monthly **incident** chance per deployment in a province with unrest ≥ 40, a war, or active OCG conflict = `1% × units deployed × ROE factor (0.5, 1, 2)` **(T)**. An incident is civilian harm: a major scandal (criminal if Aggressive), local Favor -10 in the host country, an investigation in the owner's home country (20% in liberal democracies) and relation -5 between home and host. An Aggressive massacre can bring an International Criminal Tribunal referral (4.25).
+Monthly **incident** chance per deployment in a province with unrest ≥ 40, a war, or active OCG conflict = `1% × units deployed × ROE factor (0.5, 1, 2)` **(T)**. An incident is civilian harm: a major scandal (criminal if Aggressive), local Favor -10 in the host country, an investigation in the owner's home country (20% in Open countries) and relation -5 between home and host. An Aggressive massacre can bring an International Criminal Tribunal referral (4.25).
 
 ---
 
@@ -2101,7 +2188,7 @@ Monthly **incident** chance per deployment in a province with unrest ≥ 40, a w
 | **Human rights** | +5 points to sanctions imposition chances (4.11.4) after abuses; drives investigations of security incidents (4.23.4) |
 | **Charity and service** | Partner for philanthropy: Goodwill ×1.1 when a character's grants go through it |
 
-**Dealing with NGOs**: **Fund** (tone toward the funder +0.1 per $1M × wealth index, cap +0.5; a watchdog that takes money loses 20 credibility if the funding becomes public); **Engage** (sign a pledge: compliance cost 0.5% to 2% of revenue in the sector, local Favor +5 among the PMC stratum and the NGO's strata); **Fight** (sue, Leak Scandal on the leader, a counter-NGO funded by the player, which is astroturf: Heat 30 if exposed). Managed democracies and one-party states can label foreign-funded NGOs "foreign agents" (a government decision): the NGO closes and its funders' exposure +10 with the Financial Police there.
+**Dealing with NGOs**: **Fund** (tone toward the funder +0.1 per $1M × wealth index, cap +0.5; a watchdog that takes money loses 20 credibility if the funding becomes public); **Engage** (sign a pledge: compliance cost 0.5% to 2% of revenue in the sector, local Favor +5 among the PMC stratum and the NGO's strata); **Fight** (sue, Leak Scandal on the leader, a counter-NGO funded by the player, which is astroturf: Heat 30 if exposed). Countries at HSS 60 or more can label foreign-funded NGOs "foreign agents" (a government decision): the NGO closes and its funders' exposure +10 with the Financial Police there.
 
 ### 4.24.2 Protests
 
@@ -2121,7 +2208,7 @@ A **protest** has a cause (a law, a company, a scandal, election fraud, prices),
 | 60 to 79 | Local output -8%; Request Decisions about the province stall; Fame +2 per week for the target |
 | 80+ for 7 days | **Breakthrough**: a government target must answer (a bill toward the protesters' demand gets Crisis +20 support for 3 months, or a resignation event for a minister); a company or character target faces a boycott (its consumer-facing business units lose 5 productivity for 3 to 12 months **(T)**; brand appeal is gone, batch 75) and local Favor -10 |
 
-**Answers**: **Concede** (meet the demand: Concessions = Momentum, the protest ends); **Negotiate** (Persuasion vs the lead organizer: success gives Concessions 5 per day for a week); **Wait** (fatigue does the work, slowly); **Police** (Repression = 20 × protest suppression, which is ×1.5 under Militarized; 30% chance of a **martyr** event: Momentum +30 and new protests at Momentum 30 in the country's 2 largest cities); **Private security** (Repression = 10 per 20 Security Strength deployed, plus all the effects of a security crackdown in 2.8.6: Favor -15, unrest +10, investigation 20% in liberal democracies). A protest ends below Momentum 10.
+**Answers**: **Concede** (meet the demand: Concessions = Momentum, the protest ends); **Negotiate** (Persuasion vs the lead organizer: success gives Concessions 5 per day for a week); **Wait** (fatigue does the work, slowly); **Police** (Repression = 20 × protest suppression, which is ×1.5 under Militarized; 30% chance of a **martyr** event: Momentum +30 and new protests at Momentum 30 in the country's 2 largest cities); **Private security** (Repression = 10 per 20 Security Strength deployed, plus all the effects of a security crackdown in 2.8.6: Favor -15, unrest +10, investigation 20% in Open countries). A protest ends below Momentum 10.
 
 Protests feed unrest (+0.1 per Momentum point above 40 in the place per week) and therefore revolution pressure (4.8.5).
 
@@ -2144,7 +2231,7 @@ Fictional names, real functions. Players never join them; they lobby the governm
 | **Global Development Bank (GDB)** | World Bank and regional development banks | Votes weighted by GDP quota | Infrastructure loans to developing countries, tendered openly as contracts (4.9.7) with the capability weight raised to 40 and the political weight cut to 10 | Bidders convicted of a Grave bribery offense are debarred for 5 years |
 | **Financial Crimes Taskforce (FCT)** | FATF plus international financial police cooperation | 40 major economies | Yearly review of countries: a **grey list** (shells registered there exposure ×1.5; transfers from there delayed as under F2 Reporting) and a **black list** (that country's banks cut from the international payment network, like Tier 3 sanctions for banks only); runs the Freeport raids (3.2.5) | A haven government lobbied by the player can stay off the lists only by tightening F5 one step |
 | **International Court of Arbitration (ICA)** | Investment arbitration centres | Countries with investment treaties | Investment arbitration (4.9.9) | As 4.9.9 and 4.21.1 |
-| **International Criminal Tribunal (ICT)** | International criminal court | Countries that joined (most liberal democracies) | Indicts characters for war crimes, coup violence and massacres by private security: an indicted character is detained on arrival in any member country (2.21.8) | Fund a defense; lobby non-member hosts; never travel |
+| **International Criminal Tribunal (ICT)** | International criminal court | Countries that joined (most Open countries) | Indicts characters for war crimes, coup violence and massacres by private security: an indicted character is detained on arrival in any member country (2.21.8) | Fund a defense; lobby non-member hosts; never travel |
 
 **ISF conditions.** A program comes with 2 to 4 conditions drawn from: E1 or E2 one step up; E7 Free Prices; E6 None; F1 Independent (post-POC); F2 one step toward Open (or toward Restricted in a capital flight crisis); an Anti-Corruption Drive (4.20.6). Each condition is a bill with Crisis +30 support for 6 months. A government that misses conditions loses the next tranche (reserves) and its rating falls one notch **(T)**.
 
@@ -2175,7 +2262,7 @@ The **European Union (EU)** is the one Single Market in the starting world that 
 
 ### 4.26.1 State intelligence services
 
-Each country has an intelligence service with a **head** (a character), **Capability** (1 to 5, from MSI and country data: MSI ≥ 60 gives 5, 30 to 59 gives 4, 15 to 29 gives 3, 5 to 14 gives 2, below 5 gives 1 **(T)**) and **Aggression** (one-party states and juntas ×1.5, rivals ×2, allies ×0.5).
+Each country has an intelligence service with a **head** (a character), **Capability** (1 to 5, from MSI and country data: MSI ≥ 60 gives 5, 30 to 59 gives 4, 15 to 29 gives 3, 5 to 14 gives 2, below 5 gives 1 **(T)**) and **Aggression** (Dominant countries and Military Councils ×1.5, rivals ×2, allies ×0.5).
 
 ### 4.26.2 State operations against companies
 
@@ -2198,7 +2285,7 @@ From Corporation rank on, a character with strategic assets in a country (includ
 | Answer | Effect **(T)** |
 |---|---|
 | **Accept** | +1 favor with the service head (usable as Protection: one investigation by a national agency in that country is slowed 8 weeks); a +10 opinion push from the head of government; Chuds approval of the character +2. Risk: each operation has a 5% chance per year of being discovered by a third country: the characters involved are charged with espionage there (Criminal), the character's operations there jump one seizure ladder step, Tier 1 sanctions listing 20% |
-| **Refuse** | Chuds approval of the character -2; in managed democracies and one-party states, seizure risk +0.5 points for 2 years (home) or Government attitude one step worse (host) |
+| **Refuse** | Chuds approval of the character -2; at HSS 60 or more, seizure risk +0.5 points for 2 years (home) or Government attitude one step worse (host) |
 | **Double game** (accept and tell the other side) | Needs Intrigue ≥ 15; both services owe a favor; if found out (10% per year), both become hostile |
 
 When both the home and a host country ask in the same year, the **Two Masters** event fires: whichever is refused treats the player as the other's asset.
@@ -2225,9 +2312,9 @@ Each government is run by its head of government (a character) and the leading b
 |---|---|
 | Unemployment > 10% | Subsidies (E6 up), infrastructure contracts, tariff hikes if Landites or Communists lead |
 | Inflation > 8% | In the US, rate rises by the Federal Monetary Board (the only rate setter in the POC, batch 125); elsewhere Essentials Capped price controls |
-| Stability < 40 | Democracies: concessions to Angry blocs; others: repression (Militarized policing, Emergency Decrees) |
+| Stability < 40 | Open countries: concessions to Angry blocs; HSS 60 or more: repression (Militarized policing, Emergency Decrees) |
 | Default (or, post-POC, a currency crisis) | ISF request, capital controls, or (populist heads) blame and seize foreign assets |
-| A minister or the head of government at Heat ≥ 80 | Scapegoat a minister; in non-democracies, a purge or an Anti-Corruption Drive against a convenient target |
+| A minister or the head of government at Heat ≥ 80 | Scapegoat a minister; at HSS 60 or more, a purge or an Anti-Corruption Drive against a convenient target |
 
 ### 4.27.2 Government attitude toward a character
 
@@ -2240,11 +2327,11 @@ Each government holds an **attitude** toward each character with assets or Fame 
 | ≥ 40 | **Favored** | Bid score +10 on contracts; Request Protection cost halved; agencies' Zeal ×0.8 toward the character (by `1 - independence`) |
 | 0 to 39 | **Tolerated** | None |
 | -1 to -39 | **Watched** | Agencies' Zeal ×1.2 (by `1 - independence`); permits take 25% longer |
-| ≤ -40 | **Targeted** | Agencies' Zeal ×1.5 (by `1 - independence`); contract bid score -10; foreign holders' seizure risk +0.5 points; in managed democracies and below, the state media runs a hit campaign |
+| ≤ -40 | **Targeted** | Agencies' Zeal ×1.5 (by `1 - independence`); contract bid score -10; foreign holders' seizure risk +0.5 points; at HSS 60 or more, the state media runs a hit campaign |
 
 "By `1 - independence`" means the multiplier is scaled: an agency with independence 0.9 feels only 10% of it.
 
-**Populist targeting**: in democracies, if a character has Fame ≥ 60 and population-weighted effective Favor ≤ -10, populist parties put them in their campaigns ("[name] the oligarch"): +0.2 utility for them in strata where local Favor is negative. If they win, the new government starts at Targeted and proposes E4 Inheritance and Gift Tax with priority **(T)**.
+**Populist targeting**: in Open and Guided countries, if a character has Fame ≥ 60 and population-weighted effective Favor ≤ -10, populist parties put them in their campaigns ("[name] the oligarch"): +0.2 utility for them in strata where local Favor is negative. If they win, the new government starts at Targeted and proposes E4 Inheritance and Gift Tax with priority **(T)**.
 
 ### 4.27.3 AI rival political archetypes
 
@@ -2296,7 +2383,7 @@ Political endgames are long-term goals for a powerful player, usually within rea
 |---|---|---|
 | **Corporate Sovereignty** | Hold a Stage 3 Sovereign Corporate Zone for 10 years (4.12) | 3,000 |
 | **Kingmaker** | In 3 countries at once (at least one with GDP ≥ $1T), the head of government is the player character or a client with Loyalty ≥ 60, held for 4 consecutive years | 2,500 |
-| **Power Behind the Throne** | Chair the Council of Stakeholders of a corporate oligarchy with GDP ≥ $500B for 10 years | 2,500 |
+| **Power Behind the Throne** | Chair the Council of Stakeholders (variant, 4.2.6) of a country with GDP ≥ $500B for 10 years | 2,500 |
 | **Political Machine** (replaces Political Dynasty, batch 116) | The player character holds head of government in any countries for a combined 8 years, or 3 clients hold national office (minister or higher) in one country at the same time | 2,000 |
 | **Market Maker** | Control a central bank (a client governor under F1 Directed or Monetary Financing), a currency board, or a global exchange (3.17.5) for 10 years | 2,000 |
 | **Bloc Architect** | A Single Market of 4 or more countries is ratified while the player has Power Broker national share in each member and was the largest lobbyist for it in each | 2,000 |
@@ -2337,7 +2424,7 @@ All numbers use the tuning values above.
 
 ### 4.31.1 The Harbourside Files: a scandal, a narrative fight and a defamation suit
 
-**Situation.** London (United Kingdom, liberal democracy, media freedom 0.9, wealth index 2.4). The Atlantic Ledger (major paper, 18% national audience, credibility 85, editor Integrity 70) runs "The Harbourside Files": the player's transit subsidiary paid a 2% kickback through a consultant to win a London transit contract. The story is **true**; it is a **major** scandal: Heat 50. On day 2 a tabloid TV channel (25% audience, credibility 50, editor Integrity 35) joins. The player owns The Courier (12% audience, credibility 70). The player character is running for a London seat in 10 weeks.
+**Situation.** London (United Kingdom, HSS 45, media freedom 0.95, wealth index 2.4). The Atlantic Ledger (major paper, 18% national audience, credibility 85, editor Integrity 70) runs "The Harbourside Files": the player's transit subsidiary paid a 2% kickback through a consultant to win a London transit contract. The story is **true**; it is a **major** scandal: Heat 50. On day 2 a tabloid TV channel (25% audience, credibility 50, editor Integrity 35) joins. The player owns The Courier (12% audience, credibility 70). The player character is running for a London seat in 10 weeks.
 
 It is a **Corruption** scandal, so its share halves every year (4.17.4); the player character starts at Heat 0.
 
@@ -2357,7 +2444,7 @@ It is a **Corruption** scandal, so its share halves every year (4.17.4); the pla
 
 ### 4.31.2 The clinic in Lagos: dirty money, laundering, deniability and a whistleblower
 
-**Situation.** The player's Front Company in Lagos (Nigeria, liberal democracy, corruption 75, media freedom 0.9) runs a black clinic (a Black market business unit) selling unapproved longevity treatments behind a legitimate private hospital. It earns $2.5M of **dirty** money per month ($30M a year). The player wants to put $60M of accumulated dirty money into a share of the Commercial pool of the Dubai Metro's core province (2.16; UAE, one-party state, corruption 30, Financial Police capacity 3).
+**Situation.** The player's Front Company in Lagos (Nigeria, HSS 55, corruption 75; the example uses media freedom 0.9, its pre-batch-136 value; the 4.2.1 formula now gives 0.8, which lowers each whistle chance below by about 7%) runs a black clinic (a Black market business unit) selling unapproved longevity treatments behind a legitimate private hospital. It earns $2.5M of **dirty** money per month ($30M a year). The player wants to put $60M of accumulated dirty money into a share of the Commercial pool of the Dubai Metro's core province (2.16; UAE, one-party state, corruption 30, Financial Police capacity 3).
 
 **Option 1: buy the pool share with dirty money.** Unexplained wealth: +60 exposure with the UAE Financial Police. Monthly inquiry chance = `0.60 × 1.0 × 1.0 × 1.0 × (1 - 30/200) = 51%`. If the inquiry reaches Discovery, the $60M counts with trace 100%: Evidence `5 × 6 × 1.0 = 30`. Almost certain trouble.
 
@@ -2387,7 +2474,7 @@ The lesson: a profitable dirty operation is a growing pool of people who know. T
 
 ### 4.31.3 Insurance Salesmen in Mexico City: protection, security or a crackdown
 
-**Situation.** The player's Autos business unit, with its assets in an Industry-heavy province of the Mexico City Metro (Mexico, liberal democracy, corruption 65, wage index 0.22), has revenue of $200M a year. A Cartel with Strength 60 holds Control 45 in the province: local strength `60 × 0.45 = 27`. Police strength 45, police integrity 35. The cartel asks 1% of revenue: **$2M a year**.
+**Situation.** The player's Autos business unit, with its assets in an Industry-heavy province of the Mexico City Metro (Mexico, HSS 58, corruption 65, wage index 0.22), has revenue of $200M a year. A Cartel with Strength 60 holds Control 45 in the province: local strength `60 × 0.45 = 27`. Police strength 45, police integrity 35. The cartel asks 1% of revenue: **$2M a year**.
 
 | Option | Cost per year | Monthly incident chance | Expected incidents per year | Other effects |
 |---|---|---|---|---|
@@ -2408,17 +2495,17 @@ New assumptions made in this file, to confirm with Logan:
 2. **The nine ideology blocs are the political actors** ([5-ideology.md](5-ideology.md)), and votes are counted by strata (4.0, 4.4).
 3. **A seventh law category, Governance** (campaign finance, lobbying rules, media ownership), added because these laws decide how much money can buy.
 4. **Extra laws added** beyond the retired overview's list: environmental regulation, property tax, zoning (regional taxes were removed in batch 121), special economic zones, trusts and foundations, bailout policy, immigration.
-5. **Ruling family states** (for example Gulf monarchies) are modeled as a variant of the one-party state, not a separate type.
-6. **No country starts as a corporate oligarchy**; the type exists only as an outcome of play.
+5. **One government system** (Logan, batch 136): every country has the same three US-style branches; Head of State Strength sets Legislature and Judiciary Strength, and every old type parameter is derived from them (4.2.1). Gulf monarchies are plain high-HSS countries, except Saudi Arabia's Royal Court and the UAE's Federal Supreme Council, which are two of the 10 starting variants (4.2.6).
+6. **No country starts with a Council of Stakeholders or a Military Council**; those play variants exist only as outcomes of play (4.2.5).
 7. **Starting country classifications and values** are a game abstraction at the start date, editable in data, and loosely inspired by public governance indices.
 8. **Six agencies**: the Banking Supervisor and the Data Authority are added to the retired overview's list, and there is no antitrust authority.
-9. **Law changes move at most two steps per bill**, and a changed law locks for 12 months (6 in non-democracies).
+9. **Law changes move at most two steps per bill**, and a changed law locks for 12 months (6 at HSS 60 or more).
 10. **Decisions vs laws**: individual permits, rezonings, contracts and reviews are decisions by named national officials using a disposition formula; standing laws use the clout-weighted support formula.
 11. **Seizure is a ladder**, never instant, except when war, Tier 3+ sanctions or a failed coup skip steps.
-12. **Bribes of officials are possible in every government type**, but liberal democracies make them expensive, rarely accepted and often reported.
+12. **Bribes of officials are possible in every country**, but Open countries make them expensive, rarely accepted and often reported.
 13. **Elections use a stratum-level softmax** of utilities; money enters with a logarithm so doubling spending has diminishing returns.
 14. **Money values** are in dollar equivalents scaled by GDP (political market size, LP price) or by a wealth index (bribes, legal fees), so the same rules work for a $50B country and a $28T one.
-15. **Corporate sovereignty Stage 3** needs a corporate oligarchy, a failed state, or a treaty; liberal democracies can host Stage 2 charter cities at most without a treaty.
+15. **Corporate sovereignty Stage 3** needs a Council of Stakeholders, a Collapsed country, or a treaty; Open countries can host Stage 2 charter cities at most without a treaty.
 16. **Prison** keeps a character in play with very limited actions rather than removing them entirely.
 17. **Political Director and Objectives**: routine politics is delegated to a Political Director character working from player-set objectives, a budget and a Conduct line (Clean, Grey, Dark), so hourly play is kept for hot moments (election and coup nights, hearings, crisis meetings, Council sessions, protest standoffs).
 18. **Hearings** are a short hourly mini-mode with four answer stances.
