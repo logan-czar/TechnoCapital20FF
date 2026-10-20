@@ -1,6 +1,6 @@
 # TechnoCapital20FF MVP spec: the map, the business system and a read-only economic sim
 
-_Status: v0.3 (2026-10-20). Batch 146 (Logan): Consumer electronics, EVs, E-commerce and AI labs are cash-burning industries on purpose and live on investor money; when their runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the industry news phase, and failures go down the bankruptcy path (6.6, G10 decided); batch 143 board-seat picks decided: seats beyond 5 are ordinary directors, charter minimums apply from 5 labor units, the controller appoints and the seat stands at the next yearly meeting, investor and government seats take the next labor seat or sit beyond 5, and the 651 starting companies keep their generated starting data while new companies start empty (7.1, G9 decided). Batch 145 (Logan): province shapes are generated from real-world boundary data ([map-sources.md](map-sources.md), 2.2, G1); simple characters fill board seats (3.7.1, G2); business assets degrade by industry, book depreciation equals the loss, and growth plans buy replacement before growth (2.2, 5.5, 5.10, 6.2, 7.1); bank and insurer capital set at $1.25 and $0.60 per $1, mapped to real capital ratios (2.2, G4); bankrupt firms go through forced sales, a 2-quarter freeze and removal, shareholders wiped (5.12, G7); one business unit per company at HQ is decided (G8); batch 143 board-seat items listed as open (G9). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
+_Status: v0.4 (2026-10-20). Batch 147 (Logan): built industries, country-economy and key-cities data: the three 2.2 tables now exist in design/data/, made by a reproducible generator in [../tools/mvp-data/](../tools/mvp-data/gen.py) that validates ids and runs the profit and fringe checks; 2.2 lists their final columns (G5 built). Batch 146 (Logan): Consumer electronics, EVs, E-commerce and AI labs are cash-burning industries on purpose and live on investor money; when their runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the industry news phase, and failures go down the bankruptcy path (6.6, G10 decided); batch 143 board-seat picks decided: seats beyond 5 are ordinary directors, charter minimums apply from 5 labor units, the controller appoints and the seat stands at the next yearly meeting, investor and government seats take the next labor seat or sit beyond 5, and the 651 starting companies keep their generated starting data while new companies start empty (7.1, G9 decided). Batch 145 (Logan): province shapes are generated from real-world boundary data ([map-sources.md](map-sources.md), 2.2, G1); simple characters fill board seats (3.7.1, G2); business assets degrade by industry, book depreciation equals the loss, and growth plans buy replacement before growth (2.2, 5.5, 5.10, 6.2, 7.1); bank and insurer capital set at $1.25 and $0.60 per $1, mapped to real capital ratios (2.2, G4); bankrupt firms go through forced sales, a 2-quarter freeze and removal, shareholders wiped (5.12, G7); one business unit per company at HQ is decided (G8); batch 143 board-seat items listed as open (G9). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
 
 **How to read the numbers.** **(A)** marks an assumption made for the MVP, including the coordinator's defaults. **(T)** marks a tuning value. Section refs like 10.0.4 point to the detailed files.
 
@@ -40,7 +40,9 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 | companies.csv | id, name, ticker, industry, hq_country, hq_province, public, revenue_usd_m, book_value_usd_m, est_value_usd_m, controller, controller_stake_pct, control_basis, owner_of_record, other_holders | Seeds corporations and their single unit. est_value is display-only (conflict C15) |
 | characters.csv | id, name, tier, traits, finance, operations, persuasion, tech | The 296 full characters. Only those named as controller or owner_of_record are loaded, as **named controllers**: their traits nudge the AI (section 6). Board seats hold simple characters (3.7.1) |
 
-### 2.2 New MVP data tables (to build; not created by this spec)
+### 2.2 New MVP data tables (built, batch 147)
+
+Built by `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), which writes the three files into design/data/ and runs validate.py: industry names match companies.csv, every iso3 is in countries.csv, every key city province id is in the province files, and the checks below. Column meanings and assumptions are also in [../data/README.md](../data/README.md).
 
 **industries.csv** (42 rows). Most values copy 10.3 and 10.0.11.10; new columns are marked new.
 
@@ -67,6 +69,10 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 | fit | enum | Commerce, Industry or Extraction (10.3.1) |
 | resource_tags | list | Matching tags (10.3.1), semicolon list |
 | asset_label | text | Flavor label (10.0.7): fields, fabs, stores... (new) |
+| variable_cost_share | fraction | Derived (new): v = 1 − margin_full_use − fixed_cost_share (5.5) |
+| cash_burning | Y/N | New: Y for Consumer electronics, EVs, E-commerce and AI labs (Logan, batch 146; 6.6) |
+| earnings_multiple | number | New: M_sector (P/E) of the valuation group (3.3.2), used in 5.13. Black market has no 3.3.2 row and uses Professional services (16) **(A)** |
+| notes | text | New: where a 10.3 cell was not a single number and what was stored |
 
 R&D norm by industry **(T)**:
 
@@ -97,21 +103,39 @@ Asset decay by industry (Logan, batch 145; 10.3) **(T)**:
 
 Asset decay (8%) stands for loan losses and claims run-off. Check: fixed cost per $1 of assets (f ÷ capital) is 0.44 for Banking and 0.50 for Insurance, far above 0.08, so both keep their 30% and 8% margins (5.5).
 
+**Built-table checks (batch 147).** A normal company is the industry's median named company with the 7.1 loadout, productivity 100 and M 1.0. Its fixed_cost_rate (5.5) is positive in all 42 industries (lowest Data centers 0.12 counting its shared costs, then Renewables 0.15). EBIT margin after R&D at the norm is above 0 in 35 of the 38 non-cash-burning industries; Oil earns 25% before R&D and 23% after it. Autos, Aerospace and Robotics sit at exactly 0% at the norm and earn 3 to 5% once the free R&D from their starting data (3 to 5%) replaces paid R&D (6.3); the four cash-burning industries lose 1 to 15% at the norm, as intended (G10). Named revenue is below world size in every industry, so named revenue plus the fringe pool equals world demand; the named share runs from 0.02% (Black market) to 80% (Social media), median 34%.
+
 **country-economy.csv** (210 rows, one per countries.csv row; gap G5).
 
 | Column | Meaning |
 |---|---|
 | iso3 | Key into countries.csv |
-| corp_tax_level | Haven, Low, Moderate, High (E2, 4-politics). The 33 majors copy 2.2.3; havens (2.2.5) Haven; others Moderate **(A)** |
-| corp_tax_rate | Haven 0.03, Low 0.12, Moderate 0.21, High 0.30 (E2). Excess Profits is not used at start |
-| sovereign_rating | AAA to D (3.6.2), set once from the 3.6.3 points table **(A)** |
-| country_spread_bps | Fixed spread over the world base rate (3.6.5): sovereign spread for the rating plus a calibration offset; US 0 **(T)** |
-| cycle_group | iso3, or EA for the 19 euro-area members, which share one cycle (2.18.1) |
-| cycle_phase_start | Expansion, Overheating, Contraction or Recovery; euro-crisis countries start Contraction (2.18.1) **(A)** |
+| corp_tax_level | Haven, Low, Moderate, High (E2, 4-politics): the law position politics will move post-MVP. The 33 majors copy 2.2.3; the 8 havens of 2.2.5 are Haven; others take the E2 band nearest their real rate **(A)** |
+| corp_tax_rate | The rate the MVP charges (5.11): the real 2020 statutory rate, national plus typical sub-national (Tax Foundation and KPMG 2020 tables, entered by hand; worth a spot check) **(T)**. Havens (2.2.5) use the E2 Haven rate 0.03; zero-tax countries (UAE, Bahrain, Bahamas, Vanuatu, Vatican) are floored at 0.03; 10 countries with no reliable figure use the Moderate rate 0.21 **(A)**. Where a major's real rate sits nearer another band than its 2.2.3 level (US 25.8%, France 32%, Switzerland 21.1%...), the level is kept and the notes say so. Excess Profits is not used at start |
+| sovereign_rating | AAA to CC on the 3.6.2 scale: real January 2020 agency ratings moved for the alternate history (euro crisis, Greece's 2019 default, Russia's sanctions, a stronger US Middle East; notes say which). The 3.6.3 points table needs debt, deficit, inflation and stability, which are not in the data, so it is not used at start **(A)**. Unrated countries: CCC if collapsed (HSS 35), else by wealth index (A 0.8+, BBB- 0.4+, BB- 0.2+, B+ 0.1+, else B-) **(A)** |
+| country_spread_bps | Fixed spread over the world base rate (3.6.5): the 3.6.2 sovereign spread for the rating (a plus or minus notch moves a third of the way to the next band) plus a crisis premium of 50 to 200 bps for Greece, Italy, Spain, Portugal, Cyprus, Argentina, Venezuela and Lebanon; US 0 **(T)** |
+| cycle_group | iso3, or EA for the 19 euro-area members, which share one cycle (2.18.1). Dependent territories share their sovereign's group: Puerto Rico USA; Greenland and the Faroes DNK; Jersey, Guernsey, the Isle of Man and Gibraltar GBR; Saint Pierre and Miquelon EA **(A)**. Euro users outside the euro area (Montenegro, Kosovo, Andorra, Monaco, San Marino, Vatican) and all of Latin America keep their own cycles |
+| cycle_phase_start | Expansion, Overheating, Contraction or Recovery. The EA group and the other euro users start in Contraction (the euro crisis, 2.18.1); the non-euro EU, the UK, Switzerland, Norway, Iceland and Liechtenstein start in Recovery; Argentina, Venezuela, Lebanon, Iran and Zimbabwe start in Contraction and Turkey in Recovery; everyone else in Expansion **(A)** |
+| notes | Where each value came from and what is assumed |
 
-**key-cities.csv** (80 rows, copied from 2.3.3): city, country, province_ids (semicolon list), specialties, has_perk (Y/N). Location perks are not applied in the MVP **(A)**; key cities show as map labels and filters.
+Not duplicated from countries.csv: the **wage index** is countries.csv `wealth_index` (2.2.3 calls it the wage index; USA 1.00). There is **no country productivity modifier**: the location bonus is per province (fit and resource tag, 5.4), and city bonuses are the key-city perks below, not applied in the MVP **(A)**.
 
-**province-geometry** (to build, gap G1): a province-id bitmap (one color per province id, EU4 style) plus province-centroids.csv (id, lat, lon, label_x, label_y). Without it the map cannot draw. Province shapes are generated from real-world boundary data (Logan, batch 145); sources and method are in [map-sources.md](map-sources.md).
+**key-cities.csv** (80 rows, parsed from 2-map 2.3.3 to 2.3.5 by the generator, so the doc stays the source). Location perks are not applied in the MVP **(A)**; key cities show as map labels and filters.
+
+| Column | Meaning |
+|---|---|
+| id | KC-01 to KC-80, in 2.3.3 order (new) |
+| city | 2.3.3 name |
+| country | iso3 (2.3.3 gives the country name) |
+| province_ids | Semicolon list, ranges in 2.3.3 expanded (US-0086 to US-0089 becomes four ids) |
+| specialties | Semicolon list of the 42 industries: the industries of the 2.3.4 row; for the 32 cities with no 2.3.4 row, read from the 2.3.3 specialties text, leaving out non-industries such as media, exchanges, government and textiles **(A)** |
+| specialties_text | The 2.3.3 specialties text, as written (new) |
+| signature_assets | The 2.3.4 text; for the 32 cities without a 2.3.4 row, the specialties above **(A)** |
+| has_perk | Y if the city has a 2.3.5 row (47 cities) |
+| perk_achieve, perk_get | The 2.3.5 "Achieve" and "Get" text (new) |
+| notes | Assumptions |
+
+**province-geometry** (still to build, not part of batch 147; gap G1): a province-id bitmap (one color per province id, EU4 style) plus province-centroids.csv (id, lat, lon, label_x, label_y). Without it the map cannot draw. Province shapes are generated from real-world boundary data (Logan, batch 145); sources and method are in [map-sources.md](map-sources.md).
 
 ---
 
@@ -764,7 +788,7 @@ The most important things the docs do not define well enough to build, each with
 | G2 | **Board seats need about 2,700 people.** characters.csv has 296; most companies need up to 5 seated executives for the management score | **Decided (Logan, batch 145):** simple characters (3.7.1) are generated as needed to fill the seats: name, age, six skills by company size, one or two role traits, always the default choice. Named controllers stay off boards in the MVP and only nudge the AI through traits |
 | G3 | **Depreciation vs margin** (C11). 10% a year on capital-heavy assets eats Oil, Utilities and Renewables margins whole | Depreciation now equals asset decay, 5 to 10% by industry (Logan, batch 145); it is part of the fixed cost share, and margin_full_use is the margin before R&D (5.5 profit check) |
 | G4 | **Missing industry numbers**: Banking and Insurance capital ("uses deposits"), AI labs margin (-40% to +40%), per-industry R&D norms, "Positive" rate sensitivity | Banking capital 1.25, Insurance 0.60 (Logan's $1 and $0.50 base moved toward real capital ratios, batch 145, 2.2); AI labs margin 0%; the rd_norm table in 2.2; Positive treated as 0 until rates move |
-| G5 | **Corporate tax, sovereign rating and spread are not in countries.csv** (2.2.5 says the tax is there) | Add country-economy.csv: majors from 2.2.3, havens 3%, others Moderate 21%; rating from the 3.6.3 points table; spread set to January 2020 levels |
+| G5 | **Corporate tax, sovereign rating and spread are not in countries.csv** (2.2.5 says the tax is there) | **Built (batch 147):** country-economy.csv (2.2): tax levels from 2.2.3 for the majors and Haven for the havens, rates at real 2020 values (havens 3%); ratings from real January 2020 ratings moved for the alternate history, since the 3.6.3 inputs are not in the data; spreads from the 3.6.2 table plus crisis premiums |
 | G6 | **Starting balance sheet and share count**: companies.csv has book equity but no cash, debt, asset book or shares | Asset book = 50% of gross; cash or line fills the gap to book equity; shares set so price opens at $25 at engine value |
 | G7 | **Distress without the default chain**: the MVP has no bonds, creditors or restructuring | **Decided (Logan, batch 145):** forced asset sales at the cycle sale factor; after 6 months or no assets, Bankrupt and frozen for 2 quarters with shareholders wiped; then removed from the game (5.12; timings T) |
 | G8 | **One unit per company, all at HQ**: companies.csv gives one industry and no asset spread, so diversified groups and multi-province spreads do not exist | **Decided (Logan, batch 145):** one business unit per company, at HQ, for the MVP. Post-MVP: business-units.csv (company, industry, share of revenue, province shares) so the map's industry layer shows real footprints |

@@ -123,3 +123,73 @@ The starting characters and companies (Logan, batch 136; rules in [7-starting-wo
 | other_holders | Other stakes, semicolon list of id:pct; ids are characters, companies (funds) or countries |
 | notes | Canon links and assumptions |
 
+
+## MVP data tables: industries.csv, country-economy.csv, key-cities.csv (batch 147, 2026-10-20)
+
+Batch 147 (Logan): built industries, country-economy and key-cities data, the three new tables of [../mvp/mvp-spec.md](../mvp/mvp-spec.md) 2.2. Made by a reproducible generator, `python3 design/tools/mvp-data/gen.py` (plain Python, no randomness), which then runs `validate.py`: industry names match companies.csv, every iso3 is in countries.csv, every key city province id is in the province files, every industry's named revenue is below its world size, and every industry's fixed cost rate is positive. Values marked (A) are assumptions and (T) tuning values; each row's notes column says what was assumed for it.
+
+### industries.csv
+
+42 rows, one per industry of 10-industry-economy 10.3. Values copy 10.3, 10.3.1, 10.0.11.10, the mvp-spec 2.2 R&D norm and asset decay tables and the 3-markets 3.3.2 sector table.
+
+| Column | Meaning |
+|---|---|
+| id | Slug, e.g. oil, fast_food |
+| name | Industry name, as in companies.csv |
+| sector | Tech, Finance, Energy, Industry, Consumer, Health or Services (10.3) |
+| valuation_group | Row of the 3.3.2 sector table. Black market has no row and uses Professional services (A) |
+| world_size_2020_usd_bn | World demand in 2020, $ billions (10.3) |
+| trend_growth | Yearly demand trend (10.3). AI labs "Boom-driven" is 0.30 (T); Semiconductors 0.05 without the AI boom (A) |
+| cycle_beta | Cyclicality β (10.3) |
+| rate_sensitivity | 0 Low, 1 Medium, 2 High, 3 Very high; "Positive" (Banking, Insurance) is 0 (A) |
+| margin_full_use | Margin before R&D at productivity 100 and M 1.0 (10.3). AI labs "-40% to +40%" is 0.00 (T); Oil and Gas at index 100 |
+| fixed_cost_share | f (10.3). Depreciation and shared costs sit inside it (mvp-spec 5.5) |
+| variable_cost_share | 1 − margin_full_use − fixed_cost_share |
+| capital_per_dollar | Cost of business assets per $1 of yearly revenue at productivity 100 (10.3); Banking 1.25 and Insurance 0.60 are regulatory capital (batch 145) |
+| asset_turnover | 1 ÷ capital_per_dollar |
+| asset_decay | Share of business assets lost each year, 0.05 to 0.10 (batch 145) |
+| rd_norm | Industry R&D norm, share of revenue (mvp-spec 2.2) (T) |
+| labor_value_usd | Business assets per labor unit (10.0.11.10) |
+| pc_modifier | Productive compute per station (10.0.11.10): 0.5 Retail and Fast food, else 1 |
+| data_tb_per_musd | Unstructured TB per $1M of revenue (10.0.11.10): 3 social media, ads, e-commerce; 2 finance; else 1 |
+| data_decay_base | Monthly held-data decay base (10.0.11.10) |
+| fit | Commerce, Industry or Extraction (10.3.1) |
+| resource_tags | Matching province resource tags, semicolon list (10.3.1) |
+| asset_label | Flavor label for business assets (10.0.7). Fabs, stores, oil fields and fleets come from the doc; the rest are new (A) |
+| cash_burning | Y for Consumer electronics, EVs, E-commerce and AI labs (Logan, batch 146) |
+| earnings_multiple | M_sector P/E of the valuation group (3.3.2) |
+| notes | Where a 10.3 cell was not a single number and what was stored |
+
+Checks (validate.py, a normal company is the industry's median named company with the mvp-spec 7.1 loadout): every non-cash-burning industry earns above 0 after R&D at the norm except Autos, Aerospace and Robotics, which sit at exactly 0% and earn 3 to 5% once free R&D from their held data replaces paid R&D; Oil earns 25% before R&D and 23% after. Named companies hold from 0.02% (Black market) to 80% (Social media) of world demand, median 34%; the fringe pool is the rest.
+
+### country-economy.csv
+
+210 rows, one per countries.csv row, holding only what countries.csv lacks. The wage index is countries.csv `wealth_index` (2.2.3 calls it the wage index, USA 1.00) and is not repeated here.
+
+| Column | Meaning |
+|---|---|
+| iso3 | Key into countries.csv |
+| corp_tax_level | Haven, Low, Moderate or High (E2 Corporate Tax, 4-politics). Majors copy 2.2.3; the 8 havens of 2.2.5 (Cayman Islands, British Virgin Islands, Bermuda, Jersey, Guernsey, Gibraltar, Isle of Man, Luxembourg) are Haven; others take the band nearest their rate (A) |
+| corp_tax_rate | Rate charged in the MVP: real 2020 statutory rate, national plus typical sub-national, from the Tax Foundation and KPMG 2020 tables entered by hand (T). Havens 0.03 (E2 Haven rate); zero-tax countries floored at 0.03 (A); 10 countries with no reliable figure use 0.21 (A) |
+| sovereign_rating | 3.6.2 scale. Real January 2020 ratings moved for the alternate history (euro crisis, Greece's default, Russia's sanctions, a stronger US Middle East); unrated countries by wealth index, or CCC if collapsed (A) |
+| country_spread_bps | Spread over the 3% world base rate: the 3.6.2 sovereign spread for the rating, notches interpolated, plus a 50 to 200 bps crisis premium for 8 countries in the euro or debt crisis (T). US 0 |
+| cycle_group | EA for the 19 euro-area members; a dependent territory takes its sovereign's group (A); else its own iso3. Latin America keeps national cycles |
+| cycle_phase_start | Starting phase of the group: EA and other euro users Contraction; the rest of Europe's EU and EFTA members and the UK Recovery; a few crisis countries set by hand; else Expansion (A) |
+| notes | Sources and assumptions per row |
+
+### key-cities.csv
+
+80 rows, parsed by the generator from [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3.3 (cities), 2.3.4 (signature starting assets) and 2.3.5 (perks), so the doc stays the source; rerun the generator after editing those tables.
+
+| Column | Meaning |
+|---|---|
+| id | KC-01 to KC-80 in 2.3.3 order |
+| city | City name (2.3.3) |
+| country | iso3 |
+| province_ids | Semicolon list of province ids, 2.3.3 ranges expanded |
+| specialties | Semicolon list of industries: those of the city's 2.3.4 row, or for the 32 cities with no 2.3.4 row, read from the 2.3.3 text (A) |
+| specialties_text | The 2.3.3 specialties text |
+| signature_assets | The 2.3.4 text, or the specialties for cities without a 2.3.4 row (A) |
+| has_perk | Y if the city has a 2.3.5 perk (47 cities). Perks are not applied in the MVP (A) |
+| perk_achieve, perk_get | The 2.3.5 perk text |
+| notes | Assumptions |
