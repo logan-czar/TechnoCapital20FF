@@ -435,6 +435,39 @@ def run(data):
         errors.append('AI labs should about double in the boom\'s first year')
     if not by_y[2040] < 0.6 * by_y[2039]:
         errors.append('AI labs demand should crash at the 2040 pop')
+    # batch 161 (Logan, G6): starting balance sheet, share count and opening price (mvp-spec 7.1)
+    cs_path = os.path.join(data, 'company-start.csv')
+    if not os.path.exists(cs_path):
+        errors.append('company-start.csv missing (run gen.py)')
+    else:
+        st = load(cs_path)
+        bv = {c['id']: float(c['book_value_usd_m']) * 1e6 for c in cos}
+        if [r['id'] for r in st] != [c['id'] for c in cos]:
+            errors.append('company-start.csv ids differ from companies.csv')
+        for r in st:
+            ab, cash, line = float(r['asset_book_usd']), float(r['cash_usd']), float(r['credit_drawn_usd'])
+            eq, p, sh = float(r['book_equity_usd']), float(r['open_price']), float(r['shares'])
+            if not (p == int(p) and 5 <= p <= 200):
+                errors.append(f'{r["id"]}: open_price {p} not a whole dollar in 5 to 200')
+            if abs(cash + ab - (line + eq)) > 2:
+                errors.append(f'{r["id"]}: assets {cash + ab:.0f} != liabilities {line:.0f} + equity {eq:.0f}')
+            if abs(eq - bv.get(r['id'], eq)) > 2:
+                errors.append(f'{r["id"]}: book equity {eq:.0f} differs from companies.csv book value')
+            if abs(ab - 0.5 * float(r['gross_assets_usd'])) > 1 or min(ab, cash, line) < 0:
+                errors.append(f'{r["id"]}: asset book is not 50% of gross, or a negative balance')
+            if line > 0 and cash > 0.05 * 1e6 * float(next(c['revenue_usd_m'] for c in cos if c['id'] == r['id'])) + 1:
+                errors.append(f'{r["id"]}: draws the line while holding cash above min_cash')
+            if sh < 1 or abs(sh * p - float(r['engine_value_usd'])) > p:
+                errors.append(f'{r["id"]}: shares x open_price is not the engine value')
+        ps = [float(r['open_price']) for r in st]
+        pl = [float(r['open_price']) for r in st if r['public'] == 'Y']
+        ar = next((r for r in st if r['ticker'] == 'ARDR'), None)
+        print(f'\nCompany start (batch 161): {sum(1 for r in st if float(r["credit_drawn_usd"]) == 0)} start with cash, '
+              f'{sum(1 for r in st if float(r["credit_drawn_usd"]) > 0)} with a drawn line; open price all '
+              f'${min(ps):.0f} / ${statistics.median(ps):.0f} / ${max(ps):.0f} (min / median / max), listed '
+              f'${min(pl):.0f} / ${statistics.median(pl):.0f} / ${max(pl):.0f}, {sum(1 for x in ps if x == 5)} at $5'
+              + (f'; ARDR ${float(ar["open_price"]):.0f} x {int(ar["shares"]):,} shares = '
+                 f'${float(ar["engine_value_usd"]) / 1e6:.0f}M' if ar else ''))
     print(f'Rows: industries {len(inds)}, country-economy {len(ce)}, key-cities {len(kc)}, zones {len(zones)}, '
           f'ai-boom {len(sched)}')
     for e in errors:

@@ -9,8 +9,9 @@ Writes into <design>/data/:
   financial-zones.csv    26 rows (mvp-spec 2.2, 5.1, 5.1.2; 2-map 2.18.2; 3-markets 3.2.1; Logan, batches 150, 152, 154 and 155)
   ai-boom.csv            15 rows (mvp-spec 2.2, 5.1.1; 7-starting-world 7.7; Logan, batch 151)
   key-cities.csv        88 rows  (2-map 2.3.3, 2.3.4, 2.3.5, parsed from the markdown; 8 zone hubs, batch 152)
+  company-start.csv    651 rows  (mvp-spec 7.1, G6; starting balance sheet, share count and opening price, Logan, batch 161)
 
-Plain Python 3, no packages, no randomness: the same inputs always give the same files.
+Plain Python 3, no packages, no randomness (the price jitter is a hash of the company id): the same inputs always give the same files.
 Then runs validate.py, which checks ids and prints the margin and named-share checks.
 """
 import csv, os, re, sys, math
@@ -762,6 +763,74 @@ def build_ai_boom():
     return [{'stage': st, 'boom_year': n, 'default_year': yr, 'ai_labs_lt': fmt(lt) if lt != '' else '', 'notes': note}
             for st, n, yr, lt, note in AI_BOOM]
 
+# ---------------------------------------------------------------------------
+# 6. company-start.csv (Logan, batch 161: mvp-spec 7.1, G6)
+# ---------------------------------------------------------------------------
+PRICE_BASE, PRICE_REF_USD, PRICE_EXP, PRICE_MIN, PRICE_MAX, PRICE_JITTER = 25.0, 1e9, 0.35, 5, 200, 0.10   # (T)
+MIN_VALUE_USD = 100000.0   # value floor for share counts: the barebones company's one asset (A)
+
+def price_jitter(cid):
+    """Seeded jitter of up to +-10%, read from a hash of the company id (no random state, same every run)."""
+    import zlib
+    return 1 + PRICE_JITTER * (2 * (zlib.crc32(('price:' + cid).encode()) % 10001) / 10000 - 1)
+
+def build_company_start(ce_rows, zones):
+    """Starting balance sheet and share count for the 651 companies (Logan, batch 161, 1a and 2b).
+    Asset book = 50% of gross business assets (7.1 loadout); cash fills the gap up to book equity, or a
+    drawn credit line covers asset book above book equity plus min_cash (5% of revenue). Engine value is the
+    5.13 fair value at load: flat synthetic history (g 0, G 1), Normal cycle, company confidence 1.0, X from
+    the zone confidence_start for listed companies; it skips line interest (A). open_price =
+    clamp(round(25 x (value / $1B)^0.35 x jitter), 5, 200)
+    (a fixed $1B reference, not the median, so the spread reaches about $5 to $200); shares = value / open_price."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import validate
+    cos = validate.load(os.path.join(DATA, 'companies.csv'))
+    inds = {r['name']: r for r in validate.load(os.path.join(DATA, 'industries.csv'))}
+    traits = {c['id']: c['traits'].split(';') for c in validate.load(os.path.join(DATA, 'characters.csv'))}
+    ce = {r['iso3']: r for r in ce_rows}
+    zone = {z['zone_id']: z for z in zones}
+    rows = []
+    for c in cos:
+        ind = inds[c['industry']]
+        r_usd = float(c['revenue_usd_m']) * 1e6
+        be = float(c['book_value_usd_m']) * 1e6
+        if r_usd < 1e5:   # barebones loadout (7.1)
+            gross = 1e5
+        else:
+            cap, lv = float(ind['capital_per_dollar']), float(ind['labor_value_usd'])
+            b = validate.pc_bonus(r_usd * cap, lv)
+            b = validate.pc_bonus(r_usd * cap * 100 / (100 + b), lv)
+            gross = r_usd * cap * 100 / (100 + b)
+        asset_book = 0.5 * gross
+        min_cash = 0.05 * r_usd
+        if be >= asset_book:
+            cash, line = be - asset_book, 0.0
+        else:
+            line, cash = asset_book - be + min_cash, min_cash
+        margin = validate.normal_company(ind, max(0.1, float(c['revenue_usd_m'])), validate.rd_mult(c, ind, traits))[2]
+        ebit = margin * r_usd
+        e = ce[c['hq_country']]
+        z = zone[e['financial_zone']]
+        ni = ebit * (1 - float(e['corp_tax_rate'])) if ebit > 0 else ebit
+        home = (0.5 * float(z['credit_spread_bps']) + 0.5 * float(e['sovereign_spread_bps'])) / 1e4
+        rf = min(1.6, max(0.4, 0.09 / (0.035 + home + 0.05)))
+        x = 1 + 0.10 * float(z['confidence_start']) / 100 if c['public'] == 'Y' else 1.0
+        if ni > 0:
+            fv = (0.3 * be + 0.7 * ni * float(ind['earnings_multiple']) * rf) * x
+        else:
+            fv = be * x
+        fv = max(fv, 0.6 * be, MIN_VALUE_USD)
+        rows.append([c, asset_book, cash, line, fv])
+    out = []
+    for c, ab, cash, line, fv in rows:
+        p = PRICE_BASE * (fv / PRICE_REF_USD) ** PRICE_EXP * price_jitter(c['id'])
+        p = min(PRICE_MAX, max(PRICE_MIN, round(p)))
+        out.append({'id': c['id'], 'ticker': c['ticker'], 'public': c['public'],
+                    'gross_assets_usd': round(2 * ab), 'asset_book_usd': round(ab), 'cash_usd': round(cash),
+                    'credit_drawn_usd': round(line), 'book_equity_usd': round(cash + ab - line),
+                    'engine_value_usd': round(fv), 'open_price': p, 'shares': max(1, round(fv / p))})
+    return out
+
 def write(path, rows):
     with open(path, 'w', newline='', encoding='utf-8') as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()), lineterminator='\n')
@@ -774,9 +843,11 @@ def main():
     write(os.path.join(DATA, 'industries.csv'), build_industries())
     ce_rows = build_countries(countries)
     write(os.path.join(DATA, 'country-economy.csv'), ce_rows)
-    write(os.path.join(DATA, 'financial-zones.csv'), build_zones(countries, ce_rows))
+    zone_rows = build_zones(countries, ce_rows)
+    write(os.path.join(DATA, 'financial-zones.csv'), zone_rows)
     write(os.path.join(DATA, 'key-cities.csv'), build_key_cities())
     write(os.path.join(DATA, 'ai-boom.csv'), build_ai_boom())
+    write(os.path.join(DATA, 'company-start.csv'), build_company_start(ce_rows, zone_rows))
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import validate
     sys.exit(validate.run(DATA))
