@@ -85,7 +85,7 @@ RD_NORM = by_list([
             'Renewables', 'Metals', 'Mining', 'Agriculture', 'Shipping', 'Logistics', 'Airlines', 'Luxury', 'Real estate']),
     (0.02, ['Oil', 'Gas', 'Construction', 'Retail', 'Fast food', 'Black market']),
 ])
-# mvp-spec 2.2 and 10.3 asset decay (Logan, batch 145; T)
+# mvp-spec 2.2 and 10.3 asset decay (Logan, batch 145; T); parked: the MVP uses 1% above $10M for all (batch 149)
 DECAY = by_list([
     (0.10, ['AI labs', 'Cloud', 'Data centers', 'Software', 'SaaS', 'Social media', 'Ads', 'Consumer electronics', 'Gaming',
             'Gambling', 'Semiconductors', 'E-commerce', 'Drones', 'Robotics']),
@@ -176,14 +176,20 @@ def fmt(x, nd=4):
 # Logan, batch 148: "just make these like default companies for now we will rework them one by one once
 # companies are known working. I want all industries to be like the defaults."
 # Every industry uses the barebones company's parameters (10-industry-economy 10.0.11.1, 10.0.11.10 base case):
-# $1 of assets per $1 of revenue, labor_value $100,000, 1 TB per $1M, 8% asset decay, and revenue equal to
+# $1 of assets per $1 of revenue, labor_value $100,000, 1 TB per $1M, and revenue equal to
 # expenses at productivity 100 and M 1.0 with R&D at the norm counted in the expenses (margin before R&D =
 # rd_norm). Industries keep only name, sector (a label), world size, trend and asset label. The per-industry
 # tables above are parked for the per-industry rework (mvp-spec 11.2); set PER_INDUSTRY = True to use them again.
+# Logan, batch 149: "Asset decay 1% a year, only kicks in after 10 million assets." Decay is 1% a year for every
+# industry, on the part of a unit's gross assets above $10M only (marginal, A): $50M decays $400k a year, and a
+# unit with $10M or less (the $100,000 barebones company) has none. The threshold is a column so the rework can
+# change it per industry.
+DECAY_THRESHOLD_USD = 10_000_000
 PER_INDUSTRY = False
 DEFAULT = {
     'capital_per_dollar': 1.0,   # barebones: one $100,000 asset makes $100,000 a year
-    'asset_decay': 0.08,         # barebones: 8% (10.0.11.1)
+    'asset_decay': 0.01,         # 1% a year above the threshold (Logan, batch 149)
+    'asset_decay_threshold_usd': DECAY_THRESHOLD_USD,  # no decay on the first $10M of a unit (batch 149)
     'rd_norm': 0.05,             # one R&D norm (T)
     'fixed_cost_share': 0.45,    # median f of 10.3 (T); shared costs and depreciation sit inside it (5.5)
     'cycle_beta': 1.0,           # moves with the economy (A)
@@ -218,7 +224,8 @@ def build_default_industries():
             'fixed_cost_share': fmt(d['fixed_cost_share']),
             'variable_cost_share': fmt(1 - d['margin_full_use'] - d['fixed_cost_share']),
             'capital_per_dollar': fmt(d['capital_per_dollar']), 'asset_turnover': fmt(1 / d['capital_per_dollar']),
-            'asset_decay': fmt(d['asset_decay']), 'rd_norm': fmt(d['rd_norm']),
+            'asset_decay': fmt(d['asset_decay']), 'asset_decay_threshold_usd': d['asset_decay_threshold_usd'],
+            'rd_norm': fmt(d['rd_norm']),
             'labor_value_usd': d['labor_value_usd'], 'pc_modifier': fmt(d['pc_modifier']),
             'data_tb_per_musd': d['data_tb_per_musd'], 'data_decay_base': fmt(d['data_decay_base']),
             'fit': '', 'resource_tags': '', 'asset_label': LABEL[name], 'cash_burning': 'N',
@@ -242,7 +249,8 @@ def build_tuned_industries():
             'world_size_2020_usd_bn': fmt(size), 'trend_growth': fmt(trend), 'cycle_beta': fmt(beta),
             'rate_sensitivity': RATE_SENS[rs], 'margin_full_use': fmt(m), 'fixed_cost_share': fmt(f),
             'variable_cost_share': fmt(1 - m - f), 'capital_per_dollar': fmt(cap), 'asset_turnover': fmt(1 / cap),
-            'asset_decay': fmt(DECAY[name]), 'rd_norm': fmt(RD_NORM[name]), 'labor_value_usd': lv,
+            'asset_decay': fmt(DECAY[name]), 'asset_decay_threshold_usd': DECAY_THRESHOLD_USD,
+            'rd_norm': fmt(RD_NORM[name]), 'labor_value_usd': lv,
             'pc_modifier': fmt(pcm), 'data_tb_per_musd': tb, 'data_decay_base': fmt(dd), 'fit': FIT[name],
             'resource_tags': ';'.join(TAGS.get(name, [])), 'asset_label': LABEL[name],
             'cash_burning': 'Y' if name in CASH_BURNING else 'N', 'earnings_multiple': PE[vg],

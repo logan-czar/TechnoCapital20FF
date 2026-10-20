@@ -130,7 +130,7 @@ Batch 147 (Logan): built industries, country-economy and key-cities data, the th
 
 ### industries.csv
 
-42 rows, one per industry of 10-industry-economy 10.3. **MVP defaults (Logan, batch 148):** every industry uses the barebones company's parameters (capital 1.0, asset decay 0.08, rd_norm 0.05, margin_full_use 0.05 so revenue equals expenses with R&D at the norm, f 0.45, cycle_beta 1, rate_sensitivity 1, labor_value 100,000, 1 TB per $1M, data decay 0.02, earnings multiple 17, valuation_group Default, no fit or resource tags, cash_burning N). Only id, name, sector, world size, trend, asset label and notes differ. The meanings below are the batch 147 columns; the per-industry values are parked for the rework (mvp-spec 11.2) and gen.py rebuilds them with `PER_INDUSTRY = True`.
+42 rows, one per industry of 10-industry-economy 10.3. **Batch 149 (Logan): asset decay 1% a year above $10M of assets** ("Asset decay 1% a year, only kicks in after 10 million assets"): asset_decay 0.01 for all and a new column asset_decay_threshold_usd 10,000,000; decay is marginal, so $50M decays $400k a year and a unit with $10M or less (the $100,000 barebones company) has none. **MVP defaults (Logan, batch 148):** every industry uses the barebones company's parameters (capital 1.0, asset decay 0.01 above $10M (batch 149), rd_norm 0.05, margin_full_use 0.05 so revenue equals expenses with R&D at the norm, f 0.45, cycle_beta 1, rate_sensitivity 1, labor_value 100,000, 1 TB per $1M, data decay 0.02, earnings multiple 17, valuation_group Default, no fit or resource tags, cash_burning N). Only id, name, sector, world size, trend, asset label and notes differ. The meanings below are the batch 147 columns; the per-industry values are parked for the rework (mvp-spec 11.2) and gen.py rebuilds them with `PER_INDUSTRY = True`.
 
 | Column | Meaning |
 |---|---|
@@ -147,7 +147,8 @@ Batch 147 (Logan): built industries, country-economy and key-cities data, the th
 | variable_cost_share | 1 − margin_full_use − fixed_cost_share |
 | capital_per_dollar | Cost of business assets per $1 of yearly revenue at productivity 100 (10.3); Banking 1.25 and Insurance 0.60 are regulatory capital (batch 145) |
 | asset_turnover | 1 ÷ capital_per_dollar |
-| asset_decay | Share of business assets lost each year, 0.05 to 0.10 (batch 145) |
+| asset_decay | Share of business assets lost each year, on the part above asset_decay_threshold_usd; 0.01 for all in the MVP (batch 149; 0.05 to 0.10 by industry in batch 145, parked) |
+| asset_decay_threshold_usd | Assets of a unit that never decay: decay applies only above this, marginally (10,000,000 for all, batch 149) |
 | rd_norm | Industry R&D norm, share of revenue (mvp-spec 2.2) (T) |
 | labor_value_usd | Business assets per labor unit (10.0.11.10) |
 | pc_modifier | Productive compute per station (10.0.11.10): 0.5 Retail and Fast food, else 1 |

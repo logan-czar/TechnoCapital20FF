@@ -28,6 +28,11 @@ def steady_held(c_tb, base):
             lo = mid
     return lo
 
+def decay_dollars(gross, ind):
+    """Yearly asset decay: asset_decay on the part of gross assets above the threshold (Logan, batch 149;
+    marginal, mvp-spec 5.10). $50M at 1% above $10M decays $400k; $10M or less decays nothing."""
+    return float(ind['asset_decay']) * max(0.0, gross - float(ind['asset_decay_threshold_usd']))
+
 def pc_bonus(gross, lv):
     """7.1 loadout: productivity stations max(1, round(0.25 x labor)), PC bonus floor(1 + log10 PC) (5.8)."""
     stations = max(1, round(0.25 * max(1, math.floor(gross / lv))))
@@ -39,7 +44,7 @@ def normal_company(ind, r_m, rd_mult=1.0):
     costs (f x turnover x gross) fall to f x 100 / (100 + bonus) of revenue. Returns (EBIT margin at the
     norm with no bonus, free R&D %, EBIT margin at start with the PC bonus and free R&D, fixed_cost_rate)."""
     cap, f, m = float(ind['capital_per_dollar']), float(ind['fixed_cost_share']), float(ind['margin_full_use'])
-    decay, rd = float(ind['asset_decay']), float(ind['rd_norm'])
+    rd = float(ind['rd_norm'])
     tb, base, lv = float(ind['data_tb_per_musd']), float(ind['data_decay_base']), float(ind['labor_value_usd'])
     bonus = pc_bonus(r_m * 1e6 * cap, lv)
     bonus = pc_bonus(r_m * 1e6 * cap * 100 / (100 + bonus), lv)   # iterate twice (7.1)
@@ -52,7 +57,7 @@ def normal_company(ind, r_m, rd_mult=1.0):
     free = free_rd_pct(held) / 100
     stored = held + 12 * inflow                  # worst case: a full year of unstructured kept
     shared = 12 * (50 * max(9, math.ceil(0.2 * labor)) + 10 * max(10, math.ceil(1.2 * stored / 100)) + 30 * ent)
-    fcr = f / cap - decay - shared / gross
+    fcr = f / cap - decay_dollars(gross, ind) / gross - shared / gross
     start = m + f * bonus / (100 + bonus) - max(0.0, rd * rd_mult - free)
     return m - rd, free, start, fcr
 
@@ -95,8 +100,10 @@ def run(data):
     if len({r['id'] for r in inds}) != len(inds):
         errors.append('duplicate industry ids')
     for r in inds:
-        if not 0.05 <= float(r['asset_decay']) <= 0.10:
-            errors.append(f'{r["name"]}: asset_decay out of 5 to 10%')
+        if not 0 <= float(r['asset_decay']) <= 0.10:
+            errors.append(f'{r["name"]}: asset_decay out of 0 to 10%')
+        if float(r['asset_decay_threshold_usd']) < 0:
+            errors.append(f'{r["name"]}: negative asset_decay_threshold_usd')
         if abs(float(r['margin_full_use']) + float(r['fixed_cost_share']) + float(r['variable_cost_share']) - 1) > 1e-9:
             errors.append(f'{r["name"]}: cost shares do not sum to 1')
     ce_iso = [r['iso3'] for r in ce]
@@ -162,6 +169,22 @@ def run(data):
           f'{pos} of {len(margins)} profitable, {neg} loss-making, {len(margins) - pos - neg} at 0; '
           f'median margin {100 * statistics.median(margins):.1f}%, range {100 * min(margins):.1f}% to '
           f'{100 * max(margins):.1f}%')
+    d0 = inds[0]
+    if abs(decay_dollars(50e6, d0) - 0.01 * 40e6) > 1e-6 and float(d0['asset_decay']) == 0.01:
+        errors.append('decay example: $50M should decay $400k a year')
+    bb = float(d0['fixed_cost_share']) / float(d0['capital_per_dollar']) - decay_dollars(1e5, d0) / 1e5 - 7000 / 1e5
+    print(f'Asset decay (batch 149): {100 * float(d0["asset_decay"]):.0f}% a year above '
+          f'${float(d0["asset_decay_threshold_usd"]) / 1e6:.0f}M; $50M decays ${decay_dollars(50e6, d0) / 1e3:.0f}k a year; '
+          f'barebones ($100k) decays ${decay_dollars(1e5, d0):.0f}, fixed_cost_rate {bb:.2f}')
+    fcrs = []
+    for c in cos:
+        ind = by_name[c['industry']]
+        fcrs.append(normal_company(ind, max(0.1, float(c['revenue_usd_m'])))[3])
+    print(f'Starting companies fixed_cost_rate: {min(fcrs):.3f} to {max(fcrs):.3f}, median {statistics.median(fcrs):.3f}; '
+          f'{sum(1 for c in cos if float(c["revenue_usd_m"]) * float(by_name[c["industry"]]["capital_per_dollar"]) > 10)} '
+          f'of {len(cos)} start above the decay threshold')
+    if bb <= 0:
+        errors.append(f'barebones fixed_cost_rate {bb:.3f}')
     print(f'Rows: industries {len(inds)}, country-economy {len(ce)}, key-cities {len(kc)}')
     for e in errors:
         print('ERROR', e)
