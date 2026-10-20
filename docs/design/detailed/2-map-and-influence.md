@@ -55,7 +55,7 @@ The world is fully tiled, EU4 style (Logan, batch 118). Every system points at *
 | **Metros** | 69 in the four built slices (every city with a metro population of 5M or more, the only rule for Metros); likely about 100 once every superregion's list is built **(A)** | A named group of 2 to 8 adjacent provinces forming one megacity, sharing one property cycle and (post-POC) metro systems; no city council (2.3.2) |
 | **Chokepoints** | 14 | Straits, canals, cable corridors (2.4). Each province lists the chokepoints it is exposed to |
 
-There are no hubs and no districts any more. The 80 key cities (2.3.3) hold the location perks and signature starting businesses; Metros come only from the 5M+ rule (2.3.2). The province list is data, built superregion by superregion; done so far: North America, 254 provinces ([provinces-north-america.csv](../data/provinces-north-america.csv)) Europe, 679 provinces ([provinces-europe.csv](../data/provinces-europe.csv)) Latin America, 392 provinces ([provinces-latin-america.csv](../data/provinces-latin-america.csv)) and East Asia and Oceania, 606 provinces ([provinces-east-asia-oceania.csv](../data/provinces-east-asia-oceania.csv)) **(A)**.
+There are no hubs and no districts any more. The 80 key cities (2.3.3) hold the location perks and signature starting businesses; Metros come only from the 5M+ rule (2.3.2). The province list is data, built superregion by superregion; done so far: North America, 254 provinces ([provinces-north-america.csv](../data/provinces-north-america.csv)) Europe, 679 provinces ([provinces-europe.csv](../data/provinces-europe.csv)) Latin America, 392 provinces ([provinces-latin-america.csv](../data/provinces-latin-america.csv)), South Asia, 208 provinces ([provinces-south-asia.csv](../data/provinces-south-asia.csv)) and East Asia and Oceania, 606 provinces ([provinces-east-asia-oceania.csv](../data/provinces-east-asia-oceania.csv)) **(A)**.
 
 Government types, corruption, stability and election cycles for every country are in [4-politics.md](4-politics.md) 4.2.4. The tables below add the economic and business-climate values.
 
@@ -336,8 +336,8 @@ Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and sta
 | Riyadh | Saudi Arabia | slice pending | Government, royal court, sovereign fund, megaprojects | 2.3.5 |
 | Abu Dhabi | UAE | slice pending | Sovereign funds, oil, AI investment | 2.3.5 |
 | Cape Town | South Africa | slice pending | Finance, tourism, wine, tech | 2.3.5 |
-| Mumbai | India | slice pending | Finance, main exchange, film industry, generic pharma, petrochemicals (Gujarat abstracted) | none |
-| Bengaluru | India | slice pending | IT services, software outsourcing, Semiconductors (chip design), aerospace, biotech | 2.3.5 |
+| Mumbai | India | IN-0013 to IN-0016, IN-0051 (Jamnagar refinery) | Finance, main exchange, film industry, generic pharma, petrochemicals (Gujarat abstracted) | none |
+| Bengaluru | India | IN-0023 to IN-0025 | IT services, software outsourcing, Semiconductors (chip design), aerospace, biotech | 2.3.5 |
 | Shanghai | China | CN-0008 to CN-0013 | Largest container port, finance, EVs, Semiconductors (mature nodes), shipbuilding | none |
 | Shenzhen-Dongguan | China | CN-0019 to CN-0022 | Electronics assembly, component markets, drones, EVs and batteries | 2.3.5 |
 | Hong Kong | Hong Kong (SAR of China) | HK-0001 to HK-0003 | Offshore gateway into China, trading houses, re-export, company registrations | none |
@@ -352,9 +352,9 @@ Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and sta
 | Ho Chi Minh City | Vietnam | VN-0001 to VN-0004 | Electronics assembly ("China plus one"), garments, footwear, rice | none |
 | Perth-Pilbara | Australia | AU-0035, AU-0041, AU-0042 (Pilbara) | Iron ore (largest exporter), lithium ore, LNG, gold | none |
 | Sydney | Australia | AU-0001, AU-0002 | Banking, pension funds, property, media, mining company headquarters | none |
-| Delhi NCR | India | slice pending | Capital and government, IT services, autos | 2.3.5 |
-| Hyderabad | India | slice pending | Pharma, IT services, cloud data centers | 2.3.5 |
-| Chennai | India | slice pending | Autos, electronics assembly, port | 2.3.5 |
+| Delhi NCR | India | IN-0001 to IN-0003, IN-0005 | Capital and government, IT services, autos | 2.3.5 |
+| Hyderabad | India | IN-0029 to IN-0031 | Pharma, IT services, cloud data centers | 2.3.5 |
+| Chennai | India | IN-0033 to IN-0035 | Autos, electronics assembly, port | 2.3.5 |
 | Chengdu | China | CN-0085 to CN-0089 | Electronics assembly, gaming, aerospace | 2.3.5 |
 | Wuhan | China | CN-0063 to CN-0065 | Autos, steel, optical fiber, research labs | 2.3.5 |
 | Osaka-Kobe | Japan | JP-0037 to JP-0040, JP-0042 | Manufacturing, electronics, pharma, port | 2.3.5 |

@@ -48,3 +48,7 @@ The Latin America slice (batch 123, 2026-10-19): 391 provinces in 35 countries a
 ## provinces-east-asia-oceania.csv
 
 The East Asia and Oceania slice (batch 124, 2026-10-19): 606 provinces in 32 countries and territories, same columns and rules. 34 Metros covering 114 provinces (17 key cities, 17 other 5M+ cities, mostly Chinese). Contested: every Taiwan province (CHN claims) and Sabah (PHL claims). Macau is a region inside China (no country row) (A). Chinese provinces are much larger than their cities, so city rank used a city population table in the generator, not province population. Summary: provinces-east-asia-oceania-summary.md.
+
+## provinces-south-asia.csv
+
+The South Asia slice (batch 126, 2026-10-20): 208 provinces in 8 countries, same columns (no former_hub). 13 Metros (39 provinces): Delhi NCR, Mumbai, Dhaka, Karachi, Kolkata, Lahore, Bengaluru, Chennai, Hyderabad, Ahmedabad, Surat, Pune, Chittagong. Contested: Indian Kashmir and Ladakh (PAK claims), Gilgit-Baltistan and Azad Kashmir (IND claims), Arunachal Pradesh (CHN claims). Linked cities: Islamabad-Rawalpindi. Rural Indian provinces are very populous (Population track 27 to 28). Summary: provinces-south-asia-summary.md.
