@@ -74,6 +74,7 @@ None of the open projects ships a real-world province map we can take as-is for 
 - Open Doctrines: https://github.com/Pr1nted/Open-Doctrines
 - global-province-map-template: https://github.com/GeorgeQLe/global-province-map-template
 - OpenGS Map Tool: https://github.com/Thomas-Holtvedt/opengs-maptool
+- OpenGS (MIT) and its C# port opengs-csharp: https://github.com/Thomas-Holtvedt/opengs and https://github.com/JDSweet/opengs-csharp. Shader reference only (batch 172): province id texture with a color table, map modes, hatching, smooth borders, curved labels. Ideas are rewritten for Bevy; its province data is likely Paradox-derived and is not used ([opengs-review.md](opengs-review.md)).
 - Province Map Builder: https://projects.cs.ut.ee/province-map-builder
 - Map Province Creator: https://godotengine.org/asset-library/asset/4733
 - Natural Earth admin 1: https://www.naturalearthdata.com/?p=480 and the license note at https://www.naturalearthdata.com/?p=3348

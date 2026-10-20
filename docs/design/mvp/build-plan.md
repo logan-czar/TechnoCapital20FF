@@ -2,6 +2,8 @@
 
 _Status: v0.2 (2026-10-20). Draft for Logan. Built on [mvp-spec.md](mvp-spec.md) v1.4 (sections 1 to 9, the M0 to M10 milestones and balance targets of section 10), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) v0.6 (batches 168 and 169), [map-sources.md](map-sources.md), [../data/README.md](../data/README.md) and the data tools in [../tools/mvp-data/](../tools/mvp-data/gen.py)._
 
+_Batch 172 (Logan): province borders are smooth, drawn from a border layer that `mapgen` precomputes (P7) instead of a per-pixel neighbor test (1b); OpenGS is listed in map-sources.md as a shader reference only (2a; review in [opengs-review.md](opengs-review.md))._
+
 _Batch 171 (Logan): determinism only has to hold on one machine (same seed, build, OS and CPU), so plain f64 with a fixed iteration order and seeded RNG, no `libm` and no cross-OS hash test in the MVP (decision A); Python prepares the border geodata and the Rust `mapgen` draws the bitmap and centroids (decision B); disputed land follows our own province files and contested provinces are hatched (decision C). See section 6._
 
 **How to read it.** **(A)** marks an assumption Logan has not confirmed. **(T)** marks a tuning value. "Spec 5.1" means section 5.1 of mvp-spec.md. Task ids like M2.3 are used in the rest of this file.
@@ -231,7 +233,7 @@ Each task has a one-line description and what "done" means. The last task of eac
 | # | Task | Done when |
 |---|---|---|
 | M8.1 | Load province-ids.png as a texture (nearest sampling, no mipmaps) and the color to ordinal table | Every bitmap color maps to one sim province |
-| M8.2 | WGSL shader: id lookup per pixel, a 3,255-entry color table texture, borders where neighbor ids differ; hatching on provinces with a `contested` value (decision C) | Political mode draws with country borders; contested provinces show hatched |
+| M8.2 | WGSL shader: id lookup per pixel, a 3,255-entry color table texture, smooth borders read from the precomputed border layer (batch 172); hatching on provinces with a `contested` value (decision C) | Political mode draws with country borders; contested provinces show hatched |
 | M8.3 | Camera: pan and the World, Country, Province zoom levels | Smooth zoom at 60 fps |
 | M8.4 | Picking: read the id under the cursor from a CPU copy of the bitmap; hover and select | Hover outline follows the cursor |
 | M8.5 | Map modes: Political, Development (4), Industry, Company HQs pins, Financial zones with hub pins and legend; Metro outlines (8) | Each mode writes the color table from `get_map_layer` |
@@ -276,7 +278,7 @@ Each task has a one-line description and what "done" means. The last task of eac
 | P4 | Build shapes: dissolve admin-2 units, clip to the region, weighted Voronoi splits from city points | Python (geopandas, shapely) | One shape per province |
 | P5 | Topology-safe simplify (mapshaper) and projection (Robinson or Miller **(A)**) | mapshaper, ogr2ogr | No gaps or slivers between neighbors |
 | P6 | Export provinces.geojson with `province_id` | Python | The vector source of truth |
-| P7 | `mapgen`: rasterize to province-ids.png at 8192x4096 **(T)**, color table, centroids and label points, adjacency, coastal cross-check against the CSV | Rust | All outputs written to assets/map |
+| P7 | `mapgen`: rasterize to province-ids.png at 8192x4096 **(T)**, color table, centroids and label points, adjacency, a smooth border layer (border distance field per province and country edge, batch 172), coastal cross-check against the CSV | Rust | All outputs written to assets/map |
 | P8 | QA and credits: every province has pixels, tiny-province report (Singapore, London splits), CREDITS.md from geoBoundaries metadata | Rust and Python | Report is clean or each issue is signed off |
 | P9 | North America slice end to end first (12.4), then the world | All | NA by M2, world before M8 **(A)** |
 

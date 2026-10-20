@@ -210,6 +210,7 @@
 - Batch 169 (Logan, 2026-10-20): UI is Bevy UI only, no egui (1b; dense tables via an in-house table widget, A); one Bevy version pinned, upgraded only between milestones (2a).
 - Batch 170 (Logan, 2026-10-20): build plan written (mvp/build-plan.md, docs only): crates sim, sim-data, game, headless, mapgen; M0 to M10 in 97 tasks plus a 9-task province bitmap track.
 - Batch 171 (Logan, 2026-10-20): determinism on the same machine only (1b; cross-OS hashes post-MVP); Python prepares geodata, Rust mapgen draws the bitmap (2a); disputed land follows our province files, contested provinces hatched (3a). opengs-csharp reviewed (mvp/opengs-review.md): MIT Godot C# map demo, reuse shader ideas only, its data is likely Paradox-derived and off-limits.
+- Batch 172 (Logan, 2026-10-20): smooth province borders from a border layer precomputed by mapgen (1b); OpenGS listed in map-sources as a shader reference only (2a).
 - Values written "at start" in the detailed files were set for a present-day start. They are rebased to January 2022 in detailed/7-starting-world.md; later states (for example chip export controls) arrive through the 2022 to 2030 timeline instead. Russia has been at war in Ukraine and under sanctions since 2005 in the game world.
 
 ## Assumptions to confirm
