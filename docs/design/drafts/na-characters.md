@@ -1,6 +1,6 @@
 # North American characters (draft v3, 2026-10-18)
 
-_Status: draft for Logan's review; nothing here is in [7-starting-world.md](../detailed/7-starting-world.md) yet. Consistency pass 3 (batch 129): "hub" becomes "city" (there are no hubs)._
+_Status: draft for Logan's review. Batch 137 (Logan): the 8 Part 2 characters who own companies (Beau Lacoste, Corinne Vale, Hollis Brandt, Inés Villarreal, Ty Whitaker, Wesley Chu, Silas Reed, Lucía Ferraro) are in characters.csv as **minor holders, not rivals** ([7-starting-world.md](../detailed/7-starting-world.md) 7.4, 7.11); "Rival" in their ties is an opinion tie, not rival status. The rest of this draft is not in 7-starting-world yet. Consistency pass 3 (batch 129): "hub" becomes "city" (there are no hubs)._
 
 **What every entry has:** age, city, profile and wealth, appearance, traits, ideology, skills, holdings, premise, secret or burden, AI goal and ties.
 

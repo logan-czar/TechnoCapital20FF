@@ -1,6 +1,6 @@
 # 10. Industry economy (Wall Street Raider style): detailed design
 
-_Status: draft v1.4 (2026-10-20). Consistency pass 3 (batch 129): 10.5.3 borrowing now uses the world base rate plus country and rating spreads. Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. Corporations borrow at the Federal Monetary Board's world base rate plus their country spread and rating spread (10.0). Batch 118: EU4-style map; a unit's base and asset spread are per province; each industry has a Commerce or Industry fit (+2%) and matching resource tags (+3%) in 10.3.1; real estate pools are per province; slop splits by province. Batch 116: Lithography machines, Foundry, GPUs and CPUs merged into one Semiconductors industry (42 industries); no compute or machine counts derived from dollars (10.6); compute units live in 15.2. v1.3, consistency pass, batch 74: the file is built around business units (10.0); there are no sites or direct branches. The economy is a flat list of 42 industries with no supply chains, each with one world market, and the player reads and plays it through company financials. The map, provinces, influence, strata, real estate, the business cycle, travel and politics live in [2-map-and-influence.md](2-map-and-influence.md), which also holds location perks (2.3.5) and real estate pools (2.16). Feeds the quarterly statements (10.0.8) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
+_Status: draft v1.4 (2026-10-20). Batch 137 (Logan): each industry has a background fringe pool of unnamed small businesses that fills out its 2020 size beyond the named companies (10.0.10). Consistency pass 3 (batch 129): 10.5.3 borrowing now uses the world base rate plus country and rating spreads. Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. Corporations borrow at the Federal Monetary Board's world base rate plus their country spread and rating spread (10.0). Batch 118: EU4-style map; a unit's base and asset spread are per province; each industry has a Commerce or Industry fit (+2%) and matching resource tags (+3%) in 10.3.1; real estate pools are per province; slop splits by province. Batch 116: Lithography machines, Foundry, GPUs and CPUs merged into one Semiconductors industry (42 industries); no compute or machine counts derived from dollars (10.6); compute units live in 15.2. v1.3, consistency pass, batch 74: the file is built around business units (10.0); there are no sites or direct branches. The economy is a flat list of 42 industries with no supply chains, each with one world market, and the player reads and plays it through company financials. The map, provinces, influence, strata, real estate, the business cycle, travel and politics live in [2-map-and-influence.md](2-map-and-influence.md), which also holds location perks (2.3.5) and real estate pools (2.16). Feeds the quarterly statements (10.0.8) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
 
 **How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 10.12.
 
@@ -42,7 +42,7 @@ _Status: draft v1.4 (2026-10-20). Consistency pass 3 (batch 129): 10.5.3 borrowi
 
 Each industry has one **market demand** (dollars a year) that grows on its trend and moves with the business cycle, interest rates, cost drivers (10.6) and its own news cycle (10.0.6).
 
-- **Supply** = the sum over every business unit in the industry of `business assets × asset turnover × productivity ÷ 100`, where **asset turnover** is the revenue one dollar of assets can make in a year at normal productivity (the inverse of "capital per $1 of capacity" in 10.3).
+- **Supply** = the fringe pool's supply (10.0.10) plus the sum over every business unit in the industry of `business assets × asset turnover × productivity ÷ 100`, where **asset turnover** is the revenue one dollar of assets can make in a year at normal productivity (the inverse of "capital per $1 of capacity" in 10.3).
 - **Supply ratio** S = supply ÷ demand.
 - **Market factor** M = `(1 ÷ S)^0.5`, clamped 0.7 to 1.3 **(T)**. It multiplies **every unit's effective productivity** in the industry: an oversupplied industry (S > 1) works below its productivity, an undersupplied one (S < 1) above it (Logan).
 - **One world market per industry** (Logan, batch 49), like Wall Street Raider: every business unit in the industry, wherever it is, competes for the same world demand. Countries still matter through tax, laws, tariffs (4.0) and location perks.
@@ -144,6 +144,16 @@ Each industry runs its own news cycle on top of the general business cycle **(A)
 - Loans inside a group are cancelled out in the group view but stay on each corporation's own books (10.0.8).
 
 **Default (A).** Missing a payment on the credit line or a bond starts the chain in 3.6.6. Selling units to creditors uses the asset sale prices of 10.0.7 (60 to 100% of book by cycle). A subsidiary's default does not pull the parent down unless the parent guaranteed its debt.
+
+### 10.0.10 Background fringe pool (Logan, batch 137)
+
+Each industry has one **fringe pool**: an unnamed pool of small businesses that makes up the rest of the industry's 2020 size beyond the named companies in [companies.csv](../data/companies.csv).
+
+- **Size at start (A):** `fringe revenue = industry world size 2020 (10.3) - sum of the named companies' revenue in that industry`, with a floor of 0. Its business assets are that revenue ÷ the industry's asset turnover, at productivity 100.
+- **Adds supply:** its assets count in the industry's supply (10.0.3) like one more business unit.
+- **Takes demand share:** it earns its share of world demand by the same revenue formula (10.0.4), so named companies never get the whole market.
+- **Not ownable:** nobody can buy, sell, merge, invest in or take over the fringe; it has no corporation, shares, board or books, and earns no influence.
+- **Moves slowly with the cycle (T):** each year the fringe's assets grow by the industry's trend growth, and in its news cycle (10.0.6) they grow 3% a year faster in a Boom and shrink 5% a year in a Bust, spread monthly.
 
 ## 10.1 Other decisions by Logan
 
@@ -366,3 +376,4 @@ Hovering a unit's revenue shows: business assets → asset turnover → producti
 11. Which choices executives make on their own (10.5.3).
 12. Price indices in 10.6.
 13. Chokepoint exposure, and slop per dollar of revenue split by asset share (10.7, 10.8).
+14. The fringe pool's start size formula and its cycle rates (10.0.10).
