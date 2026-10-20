@@ -1,6 +1,6 @@
 # Detailed design 1: Corporate core (companies, characters, trusts)
 
-_Status: v1.2 (2026-10-20). Batch 143 (Logan): quarterly board meetings are now the event chain of [21-quarterly-cycle.md](21-quarterly-cycle.md) 21.4: grades from the quarter's rolls, a performance score, shareholder votes to fire, seat suggestions, edits by grade, the COO's lock and the CEO's final pass (1.8.4). Batch 142 (Logan): the first 5 labor units are the board ([10-industry-economy.md](10-industry-economy.md) 10.0.11.3): labor unit 1 is the CEO, and the controller seats a board member of their choosing as the company gains its 2nd to 5th labor unit; conflicts with charter board sizes and elections are listed in 1.8.1. Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): 1.10.2 and 1.13 now say only the other central banks' rates in 3.9 are post-POC. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. The policy rate is the Federal Monetary Board's world base rate (1.10.2, 1.13). Batch 121: only national governments; the Political Connections path (1.6.7) needs a city or region tier but meets a national minister (no mayors or governors). Consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 118: EU4-style map; home hub becomes home province (its city, a Metro or city province, where it has one), origin and healthcare checks use cities and countries. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23. Batch 117: no Cooperative or Captive Bank vassals, no Ask Daddy founding path, no stress for now (1.1.5), Heat redefined as how cancelled a character is (1.1.0), no optional end date. Batch 120: Political Connections needs Power broker at the level's threshold (25% in a city, 15% in a region)._
+_Status: v1.3 (2026-10-20). Batch 144 (Logan): the Head of Security seat is renamed CIO (Chief Intelligence Officer), the company's Spymaster (1.1.8, 1.1.8.2, 1.8.2); the CMO (Chief Marketing Officer) is a new seat that suggests the growth rate and takes over marketing, Buzz and IR rolls (1.8.2); a fired member's replacement is nominated by the player (or the plan runner) and approved by the controller (1.8.4). Batch 143 (Logan): quarterly board meetings are now the event chain of [21-quarterly-cycle.md](21-quarterly-cycle.md) 21.4: grades from the quarter's rolls, a performance score, shareholder votes to fire, seat suggestions, edits by grade, the COO's lock and the CEO's final pass (1.8.4). Batch 142 (Logan): the first 5 labor units are the board ([10-industry-economy.md](10-industry-economy.md) 10.0.11.3): labor unit 1 is the CEO, and the controller seats a board member of their choosing as the company gains its 2nd to 5th labor unit; conflicts with charter board sizes and elections are listed in 1.8.1. Batch 130 (Logan): no insider trading for now. Consistency pass 3 (batch 129): 1.10.2 and 1.13 now say only the other central banks' rates in 3.9 are post-POC. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. The policy rate is the Federal Monetary Board's world base rate (1.10.2, 1.13). Batch 121: only national governments; the Political Connections path (1.6.7) needs a city or region tier but meets a national minister (no mayors or governors). Consistency pass, batch 74: no daily hours budget, opinion as tags and pushes, no cyberware, founding and young-company rules folded in from the retired stage files. Batch 118: EU4-style map; home hub becomes home province (its city, a Metro or city province, where it has one), origin and healthcare checks use cities and countries. Batch 116: no family, dynasty or succession (death of the player character ends the game), Clout and Fame/Favor replace prestige and reputation, no branch offices, startup dashboard folded into business units, mechanical fixes A1, A3, A4, A10, A15, A22, A23. Batch 117: no Cooperative or Captive Bank vassals, no Ask Daddy founding path, no stress for now (1.1.5), Heat redefined as how cancelled a character is (1.1.0), no optional end date. Batch 120: Political Connections needs Power broker at the level's threshold (25% in a city, 15% in a region)._
 
 This file is the source of truth for companies, characters and trusts; it replaces the old overview stubs 01 to 04 in the design folder. All numbers are **tuning values**: starting points to balance, not final.
 
@@ -252,7 +252,7 @@ Schemes are CK3 style, with Intrigue rolls over weeks (Logan, batch 63).
 
 The two rolls **(T)**:
 
-- **Success** = 50% + (schemer's skill - target's defense) × 3%, clamped 5% to 95%. Defense is the target's own skill, or their Head of Security's Intrigue if higher.
+- **Success** = 50% + (schemer's skill - target's defense) × 3%, clamped 5% to 95%. Defense is the target's own skill, or their CIO's Intrigue if higher (1.8.2).
 - **Discovery** = 10% + target's defense × 1% - schemer's Intrigue × 1%, clamped 2% to 60%, rolled whether the scheme succeeds or fails. A discovered scheme can make a nemesis, and serious ones (blackmail, accidents) open a police or regulator investigation.
 - **Getting caught (Logan, batch 63).** A discovered scheme makes the target a **Rival** (1.1.4), or a **Nemesis** if the scheme was serious (blackmail, an "accident", a scheme that cost them a company or 30+ health). The target gets a **hook** on the schemer (the scheme itself is the secret), and it **can become a scandal**: a public leak (Image and Favor hit, 1.1.0) if the target or the press chooses to run it.
 - Opening ticks: 4 for social schemes, 8 for Intrigue and Tech schemes **(T)**.
@@ -282,7 +282,7 @@ Hacking is its own system, not a scheme: [17-hacking.md](17-hacking.md).
 - A known secret stays known. It can be **traded, leaked or turned into a hook**; if it is exposed, everyone knows it.
 - Schemes and the Spymaster give human intel; hacking ([17-hacking.md](17-hacking.md)) is the other source.
 
-**The Spymaster (Logan).** A character's intel and defense against schemes are run by a **Spymaster**: the **Head of Security** board seat for a company (1.8.2), or a **personal fixer** the character hires for themselves **(A)**.
+**The Spymaster (Logan).** A character's intel and defense against schemes are run by a **Spymaster**: the **CIO** (Chief Intelligence Officer, formerly Head of Security, batch 144) board seat for a company (1.8.2), or a **personal fixer** the character hires for themselves **(A)**.
 - The Spymaster's **Intrigue** is the defense against schemes on everyone they protect (1.1.8), and adds weekly progress to the employer's own Dig up dirt and Investigate schemes.
 - Each week the Spymaster has a 1 in 10 chance to **uncover a scheme** running against the people they protect, rising to 1 in 4 with Intrigue 20+ **(T)**.
 - A disloyal Spymaster is the worst leak: they can sell secrets to rivals (a Rival or a hook over them makes this likely).
@@ -563,6 +563,8 @@ Current loyalty moves 5 points per week toward the target.
 
 ### 1.8.2 Seat tasks
 
+**Seats:** Chair, CEO, CFO, COO, CTO, CMO, General Counsel, CIO, Chief Strategy Officer and Independent Directors. Batch 144 (Logan): the CIO (Chief Intelligence Officer) is the renamed Head of Security, and the CMO (Chief Marketing Officer, Persuasion) is a new seat that absorbs the Head of IR or PR.
+
 Each seat holder picks one task. Effect scales with the relevant skill.
 
 | Seat | Task | Effect (per skill point) |
@@ -577,11 +579,15 @@ Each seat holder picks one task. Effect scales with the relevant skill.
 | COO | Cut costs | +0.5% profit; counts as acting against the trait for Compassionate COOs (drift, 1.1.2) |
 | General Counsel | Takeover defense | +2% to defense rolls |
 | General Counsel | Fabricate claim | Progress toward a casus belli |
-| Head of Security | Counter-intelligence | +1% discovery chance on schemes against the company |
-| Head of Security | Protect executives | -2% success of hostile schemes on executives |
+| CIO | Counter-intelligence | +1% discovery chance on schemes against the company |
+| CIO | Protect executives | -2% success of hostile schemes on executives |
+| CMO | Marketing | +0.5 Buzz per month and +0.1% revenue **(T)** |
+| CMO | Investor relations | +2% to the CMO's guidance roll (3-markets 3.1.0) and smaller swings on earnings day **(T)** |
 | Chief Strategy Officer | Expand | Progress toward a new business unit or a unit's spread into a new city |
 | Chief Strategy Officer | Government relations | +0.2 political influence per month in the home jurisdiction |
 | Independent Director | Lend Clout | +0.2 management score (investor confidence, [10-industry-economy.md](10-industry-economy.md) 10.5) |
+
+Besides its task, the **CMO** suggests each unit's growth rate at the quarterly meeting from the industry's projected demand ([21-quarterly-cycle.md](21-quarterly-cycle.md) 21.4.4), and rolls the marketing, Buzz and IR events and the IR guidance roll (3-markets 3.1.0, 21.6.4) (Logan, batch 144).
 
 ### 1.8.3 Board opinion
 
@@ -591,10 +597,10 @@ Each member's tag toward the head affects work: a **Rival** halves their task ef
 
 Since batch 143 (Logan) the quarterly board meeting is the **event chain** in [21-quarterly-cycle.md](21-quarterly-cycle.md) 21.4, held at the end of the week after earnings:
 - each member is **graded** on the rolls they made for the company over the quarter, and the grade moves their **performance score**; trades that displease the board lower it too (21.3.4);
-- a member under the threshold **(T)** faces a **shareholder vote to fire**, using bloc and proxy rules (1.4, 1.9.2); the plan runner nominates a replacement and the real controller approves or seats their own pick, which settles item 3 of 1.8.1 for firings **(A)**;
+- a member under the threshold **(T)** faces a **shareholder vote to fire**, using bloc and proxy rules (1.4, 1.9.2); the player (or the current plan runner) nominates a replacement and the real controller approves it (Logan, batch 144), so the controller still seats labor seats 2 to 5 (1.8.1); a rejected nominee lets the controller seat their own pick **(A)**;
 - seats **suggest** the quarter's plan (schemes, Techno-Capital and software, growth rate, R&D %, financing and the dividend, 10.5.5), members may edit an item only with a higher grade than its author, the **COO locks** the plan and the **CEO** (or the real controller behind a figurehead, 1.3.1) makes a final pass.
 
-The old agenda items (budget, acquisition, CEO pay, member complaints) become suggestions or advisory notes in that chain **(A)**. Any other vote of the board itself is still a majority of seats, and the head can make Persuasion checks to swing members. The chain names a **CIO** (read as the Head of Security) and a **CMO** seat that 1.8.2 does not list yet (21.4.4, **A**).
+The old agenda items (budget, acquisition, CEO pay, member complaints) become suggestions or advisory notes in that chain **(A)**. Any other vote of the board itself is still a majority of seats, and the head can make Persuasion checks to swing members. The chain's **CIO** (the renamed Head of Security) and **CMO** (a new seat) are in 1.8.2 (Logan, batch 144; 21.4.4).
 
 ## 1.9 Factions, proxy fights and takeovers
 

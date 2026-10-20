@@ -1,6 +1,6 @@
 # 21. The quarterly cycle: detailed design
 
-_Status: draft v0.1 (2026-10-20). Batch 143 (Logan): the quarterly cycle._
+_Status: draft v0.2 (2026-10-20). Batch 144 (Logan): the pre-quarter-end week starts 7 days before the next release, decided (21.1); the CFO makes the financing suggestion (21.4.4); the CIO (Chief Intelligence Officer) is the renamed Head of Security and the CMO (Chief Marketing Officer) a new seat absorbing Head of IR or PR (21.4.4); every covered person, John and AI alike, is locked out of all stocks in that week (21.6.1); the player (or the current plan runner) nominates a fired member's replacement and the controller approves (21.4.3). Batch 143 (Logan): the quarterly cycle._
 
 Logan (batch 143): "How Quarters will work." Every company runs the same loop four times a year: earnings come out, the market reacts, the board meets and locks a plan, the quarter plays out under that plan, and a final week of board events sets up the next report. "This cycle repeats over and over as companies compete with each other" (Logan).
 
@@ -12,7 +12,7 @@ This file pulls together and replaces the quarterly pieces that were spread over
 
 ## 21.1 The cycle at a glance
 
-Logan treats the earnings release as the **start** of a quarter and the next release as its **end**, so the "week before the end of a quarter" is the 7 days before the next release **(A)**. Release dates stay 2 January, 2 April, 2 July and 2 October at 00:00 UTC (3.1.0).
+Logan treats the earnings release as the **start** of a quarter and the next release as its **end**, so the "week before the end of a quarter" is the 7 days before the next release, not the calendar quarter end (Logan, batch 144: decided). Release dates stay 2 January, 2 April, 2 July and 2 October at 00:00 UTC (3.1.0).
 
 | # | Phase | When (Q2 example) | Trading | What happens |
 |---|---|---|---|---|
@@ -20,7 +20,7 @@ Logan treats the earnings release as the **start** of a quarter and the next rel
 | 2 | **Reaction week** | 2 Apr 01:00 to 9 Apr 00:00 | Open | The market reacts and overreacts; result plot lines fire events; trades against your own company displease its board (21.3) |
 | 3 | **Board meeting event chain** | 9 Apr 00:00 **(A)** | Open (game paused while the chain runs) | Grading, performance scores, firing votes, seat suggestions, edits by grade, plan lock (21.4) |
 | 4 | **Locked quarter** | 9 Apr to 25 Jun | Open | The plan runs; projections shown as ranges; scheme events (21.5) |
-| 5 | **Pre-quarter-end week** | 25 Jun 00:00 to 2 Jul 00:00 | **Locked for the player** | Auto-pause, recap screen, one event per board member per day (21.6) |
+| 5 | **Pre-quarter-end week** | 25 Jun 00:00 to 2 Jul 00:00 | **Locked for every covered person** (21.6.1) | Auto-pause, recap screen, one event per board member per day (21.6) |
 | 6 | **Back to earnings** | 2 Jul 00:00 | Unlocks | Phase 1 again |
 
 The pre-quarter-end week starts on 26 March, 25 June, 25 September and 26 December. The 1 January holiday falls inside the Q4 week; markets are closed that day anyway (3.1.0).
@@ -163,7 +163,7 @@ Board displeasure (21.3.4) then takes off its half. The score is shown on each s
 - **Threshold (T).** A member whose performance score is under **40** is **up for a vote to fire** (Logan). So is anyone at 80+ displeasure (21.3.4).
 - **The vote** is a shareholder vote, not a board vote (Logan: "shareholders will vote if they keep their job"). It uses the existing rules: each bloc votes as its leader (1.4), and swing holders vote by lean as in a proxy fight (1.9.2), with the member's tags toward each holder plus `(performance score - 40) ÷ 2` added to their lean toward keeping **(T)**. The member may spend one Persuasion check to plead their case (+10 lean on success) **(T)**. A simple majority of votes cast fires them.
 - **Hidden control.** The real controller's bloc votes as the controller wishes, through figureheads (1.3.1).
-- **Replacement.** Logan: "After you can select a replacement if they are fired." Batch 142 says the controller seats board members (1.8.1, 10.0.11.3). Reconciled **(A)**: the **plan runner** (21.4.6; the player when he is COO) **nominates** the replacement from the company's executives, the player's contacts or a hiring pool; the **real controller approves or seats their own pick** instead. If the player is the controller, his pick stands. The new member starts at performance 70 and joins this meeting at grade C.
+- **Replacement.** Logan: "After you can select a replacement if they are fired." Batch 142 says the controller seats board members at labor units 2 to 5 (1.8.1, 10.0.11.3). Reconciled (Logan, batch 144): the **player** (or the current **plan runner**, 21.4.6, at a company where the player has no seat) **nominates** the replacement from the company's executives, the player's contacts or a hiring pool, and the **real controller approves** it. The controller still seats every one of those labor seats, since nobody sits without approval; a rejected nominee lets the controller seat their own pick **(A)**. If the player is the controller, his pick stands. The new member starts at performance 70 and joins this meeting at grade C.
 - **The player can be fired.** If John's own seat is voted out he leaves the board and the chain continues without him; he keeps his shares and any other seats **(A)**.
 
 ### 21.4.4 Suggestions by seat
@@ -172,13 +172,13 @@ Each seat makes one suggestion for the quarter's plan. The **plan** has five ite
 
 | Plan item | Suggested by | What it sets |
 |---|---|---|
-| **Schemes** | **CIO** (Head of Security, **A**) | Up to 2 company schemes for the quarter, with targets and labor assigned (1.1.8, 10.0.11.3) **(T)** |
+| **Schemes** | **CIO** (Chief Intelligence Officer, the renamed Head of Security, batch 144) | Up to 2 company schemes for the quarter, with targets and labor assigned (1.1.8, 10.0.11.3) **(T)** |
 | **Techno-Capital and software** | **CTO** | Compute to buy, lease or drop; software upgrades and licences; station mix and research labor (6, 14, 15, 10.0.11) |
-| **Growth rate** | **CMO** (new seat, **A**) | Each unit's growth plan (10.0.2), from the industry's projected demand (10.0.3) |
+| **Growth rate** | **CMO** (Chief Marketing Officer, a new seat, batch 144) | Each unit's growth plan (10.0.2), from the industry's projected demand (10.0.3) |
 | **R&D %** | **Chief Strategy Officer**, else the COO **(A)** | Each unit's R&D plan as a % of revenue (10.0.4) |
-| **Financing** | **CFO** (**A**: Logan wrote "the CTO" here a second time) | Bonds, credit line draws and repayments, investing idle cash in holdings or bonds (10.0.9, 3.6); the dividend proposal (10.5.5) |
+| **Financing** | **CFO** (Logan, batch 144) | Bonds, credit line draws and repayments, investing idle cash in holdings or bonds (10.0.9, 3.6); the dividend proposal (10.5.5) |
 
-- **Seat names (A).** The board has no CIO or CMO seat today (1.8.2, 10.5.1). The proposal: **CIO** is the **Chief Intelligence Officer**, a new name for the Head of Security (the company's Spymaster, 1.1.8.2); it is not the personal office's Chief Investment Officer (3.18.3). **CMO** (Chief Marketing Officer, Persuasion) is a new seat that absorbs the "Head of IR or PR" of the guidance rolls (3.1.0).
+- **Seat names (Logan, batch 144).** **CIO** is the **Chief Intelligence Officer**, the existing Head of Security seat renamed (the company's Spymaster, 1.1.8.2, 1.8.2); it is not the personal office's Chief Investment Officer (3.18.3). **CMO** (Chief Marketing Officer, Persuasion) is a new seat (1.8.2) that absorbs the "Head of IR or PR" of the guidance rolls (3.1.0). The finance suggestions (bonds, loans, investing idle cash) come from the **CFO**.
 - **Logan's words.** "The CIO will suggest schemes for you to run. The CTO can tell you things you could do with your technocapital and software. The CMO will suggest a growth rate based on the industry projected growth in demand. Other board members will suggest things to you like the R&D growth percentage."
 - **Small boards (A).** Batch 142 caps the board at the CEO plus 4 seats, so most companies lack some of these seats. An item whose seat is empty is suggested by the **CEO**, or set by the CPU with no roll (as in 8.2.3) if the CEO delegates.
 - **Other seats.** Chair, General Counsel and Independent Directors add an **advisory note** (a takeover defense, a legal risk, a holder's mood) but own no item **(A)**.
@@ -247,8 +247,7 @@ Logan: "At one week before the end of a quarter the game is paused and then the 
 ### 21.6.1 Pause and lockout
 
 - **Auto-pause** at 00:00, 7 days before the next release (21.1). The Quarterly recap alert is locked on Pause **(A)**.
-- **The player cannot trade any stock** until 00:00 on the 2nd (Logan: "locked out of trading stocks"; **A**: read as every stock, not just his companies). Open orders are suspended. Forced sales from margin calls (3.5.4) still execute.
-- **Named AI characters (A).** Every executive, board member and 10%+ holder of a company is locked out of that company's shares, as the old blackout did (3.1.0). Fairness with the player's wider lock is an open question (21.9).
+- **Every covered person is locked out of all stocks** until 00:00 on the 2nd (Logan, batch 144). Covered persons are the executives, board members and 10%+ holders of any company (3.1.0), John and named AI characters alike, and the lock covers every stock, not just their own company's. The player is always covered **(A)**. Open orders are suspended. Forced sales from margin calls (3.5.4) still execute.
 - **Companies** cannot run buybacks or offerings in the week **(A)**.
 - **Prices keep moving.** Archetype order flow (3.3.4) and news run as normal, so hype and softening work through the market while insiders sit still.
 - This **replaces the old 7-day insider blackout** of 3.1.0; it starts on the same day.
@@ -318,19 +317,19 @@ Because the player cannot trade in this week, hype helps what he already holds; 
 
 ## 21.9 Assumptions
 
-1. Quarter start is the release and quarter end is the next release; the pre-quarter-end week is the 7 days before the 2nd (21.1).
+1. Quarter start is the release and quarter end is the next release (decided, batch 144: the pre-quarter-end week is the 7 days before the 2nd, 21.1).
 2. The board meeting chain fires at 00:00 on the 9th; the old plan runs until the lock (21.1, 21.5).
 3. Window limits: pre-release fills, 5% of ADV, AI holders get the window too; 1 January orders fill in the window (21.2).
 4. Overreaction factor, reversion and volatility (21.3.1); the result types and plot lines (21.3.2); the proximity tiers (21.3.3).
 5. Board displeasure: the trades, values, thresholds and decay (21.3.4).
 6. Grading formula, criticals, seat results and letter bands (21.4.1).
 7. Performance score start, changes by grade, A grades restoring slowly (21.4.2).
-8. Firing threshold 40, the vote's lean bonus and plea; the plan runner nominates and the controller approves (21.4.3).
-9. The five plan items; CIO = Chief Intelligence Officer (the renamed Head of Security); CMO a new seat absorbing Head of IR or PR; Logan's second "CTO" read as the CFO; R&D from the Chief Strategy Officer, else the COO; empty seats fall to the CEO (21.4.4).
+8. Firing threshold 40, the vote's lean bonus and plea; a rejected nominee lets the controller seat their own pick (21.4.3). Decided in batch 144: the player (or plan runner) nominates and the controller approves.
+9. The five plan items; R&D from the Chief Strategy Officer, else the COO; empty seats fall to the CEO (21.4.4). Decided in batch 144: CIO = Chief Intelligence Officer (the renamed Head of Security); CMO a new seat absorbing Head of IR or PR; financing from the CFO.
 10. Edits need a strictly higher grade, compared by number; one Persuasion appeal per item (21.4.5).
 11. The plan runner is the COO, else the CEO; how the chain works when the player holds other roles (21.4.6).
 12. Growth plan set per quarter as an annual rate (21.5).
 13. Projection range formula (21.5.1).
-14. The player's lockout covers every stock; named AI insiders are locked only from their own companies; no buybacks or offerings in the week (21.6.1).
+14. The player is always a covered person; no buybacks or offerings in the week (21.6.1). Decided in batch 144: every covered person, John and AI alike, is locked out of all stocks.
 15. Board day cards with one row per member; event effects (21.6.3, 21.6.4).
 16. AI batching and the new alerts and quarter clock (21.7, 21.8).
