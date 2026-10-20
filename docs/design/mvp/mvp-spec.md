@@ -1,6 +1,6 @@
 # TechnoCapital20FF MVP spec: the map, the business system and a read-only economic sim
 
-_Status: v0.1 (2026-10-20). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
+_Status: v0.2 (2026-10-20). Batch 145 (Logan): province shapes are generated from real-world boundary data ([map-sources.md](map-sources.md), 2.2, G1); simple characters fill board seats (3.7.1, G2); business assets degrade by industry, book depreciation equals the loss, and growth plans buy replacement before growth (2.2, 5.5, 5.10, 6.2, 7.1); bank and insurer capital set at $1.25 and $0.60 per $1, mapped to real capital ratios (2.2, G4); bankrupt firms go through forced sales, a 2-quarter freeze and removal, shareholders wiped (5.12, G7); one business unit per company at HQ is decided (G8); batch 143 board-seat items listed as open (G9). Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults. Sources: [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations, batches 140 to 144), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11._
 
 **How to read the numbers.** **(A)** marks an assumption made for the MVP, including the coordinator's defaults. **(T)** marks a tuning value. Section refs like 10.0.4 point to the detailed files.
 
@@ -16,7 +16,7 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 |---|---|---|
 | **Player** | Opens every MVP screen; pause and speeds 1 to 5; skip to next event **(A)** | Every player action: trading, founding, schemes, board seats, travel, the phone, quests |
 | **Map** | 3,255 provinces, 210 countries, regions, areas, 97 Metros, 80 key cities, 8 superregions (design/data/) | Influence, real estate pools, development change, chokepoint risk, travel, unrest |
-| **Companies** | 651 companies (data/companies.csv), one business unit each **(A)**, board as labor units 1 to 5 | Subsidiary directives, shells, deals on units, takeovers, IPOs, characters' personal play |
+| **Companies** | 651 companies (data/companies.csv), one business unit each at HQ (decided, Logan batch 145), board as labor units 1 to 5 filled by simple characters (3.7.1) | Subsidiary directives, shells, deals on units, takeovers, IPOs, characters' personal play |
 | **Economy** | 42 industries, world demand, supply ratio, market factor, fringe pools, productivity, decay, R&D, growth plans | Price indices and cost drivers (D fixed at 1.0) **(A)**, real estate, slop, chokepoints, tariffs |
 | **Operations and data** | Labor units, stations, productive compute, unstructured and structured data, conversion, decay, free R&D (10.0.11) | Schemes, software design stations, software development (14), AI models (18), hacking, data sales |
 | **Software** | Two fixed products: the general productivity software and the general enterprise software, both quality 50 **(A)** | Every other product, licences as a market, bloat, versions |
@@ -38,7 +38,7 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 | countries.csv | iso3, name, superregion, gdp_usd_bn, population_m, wealth_index, major, hss, restriction_label, subject_of | Static. Superregions come from this column; there is no superregion file |
 | provinces-*.csv (8 files) | id, name, country, region, area, metro, city_rank, commerce, industry, population, resource, terrain, coastal, contested, linked_cities | Static. The chokepoint column is read and ignored. Regions and areas are built from the distinct values |
 | companies.csv | id, name, ticker, industry, hq_country, hq_province, public, revenue_usd_m, book_value_usd_m, est_value_usd_m, controller, controller_stake_pct, control_basis, owner_of_record, other_holders | Seeds corporations and their single unit. est_value is display-only (conflict C15) |
-| characters.csv | id, name, tier, traits, finance, operations, persuasion, tech | Only characters named as controller or owner_of_record are loaded, as **named controllers**: their traits nudge the AI (section 6) |
+| characters.csv | id, name, tier, traits, finance, operations, persuasion, tech | The 296 full characters. Only those named as controller or owner_of_record are loaded, as **named controllers**: their traits nudge the AI (section 6). Board seats hold simple characters (3.7.1) |
 
 ### 2.2 New MVP data tables (to build; not created by this spec)
 
@@ -56,8 +56,9 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 | rate_sensitivity | 0 to 3 | Low 0, Medium 1, High 2, Very high 3; "Positive" (Banking, Insurance) stored as 0 in the MVP **(A)** |
 | margin_full_use | fraction | 10.3; AI labs "-40% to +40%" stored as 0.00 **(T)** |
 | fixed_cost_share | fraction | f (10.3) |
-| capital_per_dollar | number | 10.3; Banking 1.0 and Insurance 0.5 **(T)**, since 10.3 says "uses deposits" (gap G4) |
+| capital_per_dollar | number | 10.3; Banking 1.25 and Insurance 0.60 **(T)**: Logan's $1 and $0.50 base moved toward real capital ratios (batch 145, below) |
 | asset_turnover | number | Derived: 1 ÷ capital_per_dollar |
+| asset_decay | fraction | New (Logan, batch 145): share of business assets lost each year, 0.05 to 0.10 by industry (table below) **(T)** |
 | rd_norm | fraction | New: industry R&D norm (10.0.4 gives only "2% heavy industry to 15% tech"). Values in the table below **(T)** |
 | labor_value_usd | number | 10.0.11.10 (default 100,000) |
 | pc_modifier | number | 10.0.11.10 (Retail and Fast food 0.5, else 1) |
@@ -78,6 +79,24 @@ R&D norm by industry **(T)**:
 | 3% | Banking, Insurance, Asset management, Healthcare services, Professional services, Power utilities, Renewables, Metals, Mining, Agriculture, Shipping, Logistics, Airlines, Luxury, Real estate |
 | 2% | Oil, Gas, Construction, Retail, Fast food, Black market |
 
+Asset decay by industry (Logan, batch 145; 10.3) **(T)**:
+
+| asset_decay | Industries |
+|---|---|
+| 10% | AI labs, Cloud, Data centers, Software, SaaS, Social media, Ads, Consumer electronics, Gaming, Gambling, Semiconductors, E-commerce, Drones, Robotics |
+| 8% | Telecom, Banking, Insurance, Asset management, Chemicals, Autos, EVs, Aerospace, Defense, Shipping, Logistics, Airlines, Construction, Retail, Fast food, Luxury, Pharma, Healthcare services, Professional services, Black market |
+| 6% | Oil, Gas, Mining, Metals, Agriculture |
+| 5% | Power utilities, Renewables, Real estate |
+
+**Bank and insurer capital (Logan, batch 145) (T).** Logan's base is $1 of business assets per $1 of revenue for Banking and $0.50 for Insurance. The MVP moves both toward real levels and keeps one simple game rule: **a bank's or insurer's business assets are its regulatory capital**, the equity that lets it lend or underwrite. Deposits and float fund the loans and claims and are not on the game's books (3.17). Every other rule (turnover, growth, decay, the credit line) treats it like any business asset.
+
+| Industry | Real-world anchor | Mapping | MVP value |
+|---|---|---|---|
+| Banking | Capital of about 10 to 15% of risk-weighted assets (Basel III minimum about 10.5% with the conservation buffer). Revenue runs about 5% of total assets; risk-weighted assets are about 55% of total assets | $1 of revenue needs about $11 of risk-weighted assets; at a 12% capital ratio that is about $1.30 of capital | 1.25 (base 1.0) |
+| Insurance | Capital above the required solvency capital, typically held at 150 to 200% coverage; P&C rule of thumb: no more than about $3 of premiums per $1 of capital | Required capital about 30 to 40% of premiums × about 170% coverage ≈ $0.55 to $0.65 per $1 of premiums | 0.60 (base 0.5) |
+
+Asset decay (8%) stands for loan losses and claims run-off. Check: fixed cost per $1 of assets (f ÷ capital) is 0.44 for Banking and 0.50 for Insurance, far above 0.08, so both keep their 30% and 8% margins (5.5).
+
 **country-economy.csv** (210 rows, one per countries.csv row; gap G5).
 
 | Column | Meaning |
@@ -92,7 +111,7 @@ R&D norm by industry **(T)**:
 
 **key-cities.csv** (80 rows, copied from 2.3.3): city, country, province_ids (semicolon list), specialties, has_perk (Y/N). Location perks are not applied in the MVP **(A)**; key cities show as map labels and filters.
 
-**province-geometry** (to build, gap G1): a province-id bitmap (one color per province id, EU4 style) plus province-centroids.csv (id, lat, lon, label_x, label_y). Without it the map cannot draw.
+**province-geometry** (to build, gap G1): a province-id bitmap (one color per province id, EU4 style) plus province-centroids.csv (id, lat, lon, label_x, label_y). Without it the map cannot draw. Province shapes are generated from real-world boundary data (Logan, batch 145); sources and method are in [map-sources.md](map-sources.md).
 
 ---
 
@@ -163,16 +182,18 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | shares_out, price, fair_value, buzz | Valuation (listed: price; private: value only) |
 | history | Last 20 quarters of key figures; daily price bars |
 | distress_months | Months with cash below 0 after the line is exhausted |
+| status | Active, Distressed, Bankrupt (frozen) or Removed (5.12) |
+| frozen_quarters | Quarters spent Bankrupt (5.12) |
 
 ### 3.6 Business unit
 
 | Field | Meaning |
 |---|---|
-| id, corporation, industry, base_province | One per company, in its CSV industry, based at hq_province **(A)** |
-| asset_spread | Province shares; 100% base province in the MVP **(A)** |
-| gross_assets | Business assets at cost (capacity, 10.0.7) |
+| id, corporation, industry, base_province | One per company, in its CSV industry, based at hq_province (decided, Logan batch 145) |
+| asset_spread | Province shares; 100% base province in the MVP (decided, batch 145) |
+| gross_assets | Business assets at cost (capacity, 10.0.7), less sales and asset decay (5.10) |
 | ramping | List of (amount, months_left) for new assets at 80% for 6 months (10.0.4) |
-| asset_book | Depreciated book value |
+| asset_book | Book value; falls by depreciation, which equals asset decay (5.5) |
 | productivity | 30 to 200, starts 100 |
 | location_bonus | Fit and resource points (10.3.1) |
 | fixed_cost_rate | Fixed cash cost per $1 of gross assets a year, set at load (7.1) |
@@ -190,7 +211,45 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | 4 | CMO | Persuasion |
 | 5 | CTO | Tech |
 
-A seat exists only when the company has that many labor units (10.0.11.3). Each seat holds a **generated executive** (name, skills drawn 6 to 16, no traits) **(A, gap G2)**. Chair, General Counsel, CIO and the rest are empty and count skill 3 (10.5.1). Seats persist; the MVP has no firing or elections.
+A seat exists only when the company has that many labor units (10.0.11.3). Each seat holds a **simple character** (3.7.1; Logan, batch 145). Chair, General Counsel, CIO and the rest are empty and count skill 3 (10.5.1). Seats persist; the MVP has no firing or elections.
+
+### 3.7.1 Simple characters (Logan, batch 145)
+
+Logan: "We need simple characters that do the bare minimum, make the default choice on everything, and just serve as stats to roll against with traits to fill their role. These will supplement the full characters."
+
+A **simple character** is a filler executive ([1-corporate-core.md](../detailed/1-corporate-core.md) 1.1.0): a name, an age, the six skills (Finance, Operations, Persuasion, Intrigue, Tech, Hustle; 1.1.1) and one or two role traits. It has no ambitions, relationships, opinion, hooks, schemes or personal play. It always takes the default choice and exists to fill board seats and be rolled against. The 296 full characters stay as they are; simple characters are **generated as needed** to fill the roughly 2,700 board seats beyond them: at load, and whenever a seat opens (5.10). When a seat closes or the company is removed, its simple character is discarded **(A)**.
+
+| Field | Type | Meaning |
+|---|---|---|
+| id, name | u32, text | Name from a list for the HQ country's superregion **(A)** |
+| age | u8 | Drawn by company size (below); ages do not move skills in the MVP **(A)** |
+| finance, operations, persuasion, intrigue, tech, hustle | 0 to 30 | Drawn by company size and seat (below) |
+| traits | 1 or 2 | From the seat's role list (below) |
+| company, seat | ids | Where it sits |
+
+**Generation rule (T).** Uniform integer draws from the gen RNG stream. Company size is trailing annual revenue (starting revenue at load).
+
+| Company size | Seat skill | Other five skills | Age |
+|---|---|---|---|
+| Small: under $100M | 4 to 10 | 2 to 8 | 25 to 55 |
+| Mid: $100M to $10B | 7 to 13 | 3 to 9 | 30 to 62 |
+| Large: $10B and up | 10 to 16 | 4 to 10 | 38 to 68 |
+
+The seat skill is the skill the seat uses (3.7); the CEO draws all three of Finance, Operations and Persuasion in the seat range. A seat's character keeps its draw if the company later changes size.
+
+**Traits (T).** One trait (60%) or two (40%), drawn from the seat's list with no opposite pair (1.1.2):
+
+| Seat | Role traits |
+|---|---|
+| CEO | Ambitious, Diligent, Brave, Visionary, Cautious, Gregarious |
+| COO | Diligent, Ruthless, Cautious, Compassionate, Lazy |
+| CFO | Greedy, Cautious, Diligent, Honest, Deceitful |
+| CMO | Gregarious, Narcissist, Brave, Hedonist |
+| CTO | Visionary, Diligent, Conservative, Shy |
+| Chair, General Counsel, CIO, Chief Strategy Officer (post-MVP) | Paranoid, Ruthless, Honest, Ambitious, Cautious |
+
+Traits apply only their skill effects (1.1.2) and the management score shifts (10.5.1: Diligent +2, Lazy -2, Ambitious +1, Greedy -1 as CFO). They never change the plan: the Lite AI's trait nudges (section 6) read only the named controller's traits. Expected management score with every labor seat filled and the Chair empty (5.7): about 33 small, 47 mid, 60 large.
+
 
 ### 3.8 Compute and software (corporation level)
 
@@ -254,11 +313,11 @@ One tick is one hour (9.1). Jobs at 00:00 run in this order: hourly, daily, mont
 | 6 | Supply, S and M per industry | 5.2 |
 | 7 | Unit revenue | 5.4 |
 | 8 | Data: create unstructured, convert, decay, retention; free R&D % for next month | 5.9 |
-| 9 | Expenses: variable, fixed, depreciation, R&D, shared costs | 5.5, 5.11 |
+| 9 | Expenses: variable, fixed, depreciation (this month's asset decay), R&D, shared costs | 5.5, 5.11 |
 | 10 | Productivity: decay and R&D effect | 5.6 |
-| 11 | Growth plan: buy or sell assets; ramping tranches age | 5.10 |
+| 11 | Asset decay applied; growth plan buys replacement plus growth, or sells; ramping tranches age; simple characters generated for new seats | 5.10, 3.7.1 |
 | 12 | Interest, line fees, interest on cash | 5.12 |
-| 13 | Cash settles; auto-draw or auto-repay the credit line; distress check | 5.12 |
+| 13 | Cash settles; auto-draw or auto-repay the credit line; distress and bankruptcy checks | 5.12 |
 | 14 | Post the monthly ledger; tax accrues on the quarter (paid at quarter close) | 5.11 |
 
 ### 4.4 Quarterly (exact days)
@@ -338,11 +397,13 @@ Per unit, per month:
 |---|---|
 | Variable | `revenue × v`, with `v = 1 − margin_full_use − f` and D fixed at 1.0 **(A)** |
 | Fixed cash | `gross_assets × fixed_cost_rate ÷ 12` |
-| Depreciation | `min(asset_book, gross_assets × 0.10 ÷ 12)` (10.0.7, 10 years straight line) |
+| Depreciation | `min(asset_book, gross_assets × asset_decay ÷ 12)`: the month's asset decay at cost (5.10). Book depreciation equals the degradation (Logan, batch 145, 10.0.7); the 10-year straight line is retired |
 | R&D spend | `revenue × rd_plan` (free R&D costs nothing, 5.9) |
 | Shared costs | Corporation compute, data compute and licences (3.8), split across units by revenue share (10.0.8) |
 
-- **Depreciation sits inside the fixed share (A).** `fixed_cost_rate = f × turnover − 0.10 − shared_cost_rate` at load, so fixed cash plus depreciation plus shared costs equals `f × revenue at productivity 100 and M 1.0`, and margin_full_use is the margin before R&D, as in the 10.10 worked example. Without this, Oil (capital 2.5) loses its whole 25% margin to depreciation.
+- **Depreciation sits inside the fixed share (A).** `fixed_cost_rate = f × turnover − asset_decay − shared_cost_rate` at load, so fixed cash plus depreciation plus shared costs equals `f × revenue at productivity 100 and M 1.0`, and margin_full_use is the margin before R&D, as in the 10.10 worked example. Without this, Oil (capital 2.5, decay 6%) would lose 15 of its 25 margin points to depreciation.
+- **Profit check (batch 145).** `f × turnover` is lowest in Renewables (0.20), then Data centers (0.22), Power utilities (0.23), Oil and Gas (0.24); it is above `asset_decay + shared cost rate` in all 42 industries, both at the starting values (shared costs are well under 1% of assets) and for the barebones company ($7,000 of shared costs on $100,000, rate 0.07; worst case Data centers 0.22 − 0.10 − 0.07 = 0.05). So fixed_cost_rate stays positive and EBIT before R&D is unchanged: Oil keeps 25%, and the barebones company stays break-even. What changes is cash: a company that holds still now spends its depreciation on replacement, so its steady free cash flow before growth is EBIT less R&D, interest and tax, not that plus depreciation. Some industries already earn nothing or lose money after R&D at the norm; that is older and not caused by asset decay (G10).
+- **Productivity decay is kept (batch 145).** Asset decay carries the physical wear of assets (paid by replacement purchases); productivity decay (5.6) is the business falling behind (paid by R&D). No double counting in money; the old 10.0.7 wording that called productivity decay the assets' wear is fixed.
 - **Check (Robotics, 10.10):** turnover 1.43, f 0.35, margin 0.10: v 0.55; at M 1.0, revenue $3.0B, costs $1.65B + $1.05B, EBIT before R&D $0.30B. Matches.
 
 ### 5.6 Productivity decay and R&D effect (10.0.4, 10.5.2, 10.0.11.3)
@@ -390,10 +451,12 @@ Free R&D steps: under 1 TB 0%; 1 TB 1%; 10 TB 2%; 100 TB 3%; 1 PB 4%; 10 PB 5%; 
 ### 5.10 Labor units and growth plan purchases (10.0.11.3, 10.0.4, 10.0.7, 21.5)
 
 - **Labor units** `= floor(Σ units gross_assets ÷ labor_value)`, minimum 1 (the CEO). Seats 2 to 5 open and close with the count (3.7). When the count falls below what is assigned, drop idle first, then research, enterprise, then productivity (10.0.11.3).
-- **Growth plan** is an annual rate g set at the plan lock (21.5). Monthly at step 11:
-  - g above 0: buy `gross_assets × g ÷ 12` of new assets; cash pays the same amount (assets are carried at cost). The tranche enters `ramping` for 6 months.
-  - g below 0: sell `gross_assets × |g| ÷ 12` of capacity; the book sold is the same share of asset_book; cash received `= book sold × sale factor` (Boom 1.00, Normal 0.85, Glut 0.70, Bust 0.60, 10.0.7); the difference is a gain or loss in pre-tax income.
-- **Depreciation** (5.5) lowers asset_book only; gross_assets (capacity) is unchanged by it (10.0.7).
+- **Asset decay** (Logan, batch 145): "Percentage of business assets degrade overtime, this drives growth spending." Monthly at step 11 the unit loses `gross_assets × asset_decay ÷ 12` of capacity at cost, a real loss of the asset base. The same dollar amount comes off asset_book as depreciation (5.5), capped at asset_book. Ramping tranches decay with the rest **(A)**.
+- **Growth plan** is an annual net rate g set at the plan lock (21.5): replacement comes first, then growth. Monthly at step 11, purchases `= gross_assets × (asset_decay + g) ÷ 12`:
+  - above 0: buy that amount; cash pays it, and it is added to gross_assets and asset_book at cost. The growth part (`gross_assets × g ÷ 12`, when g is above 0) enters `ramping` for 6 months; replacement does not ramp **(A)**.
+  - below 0 (g below −asset_decay): sell `gross_assets × |asset_decay + g| ÷ 12` of capacity; the book sold is the same share of asset_book; cash received `= book sold × sale factor` (Boom 1.00, Normal 0.85, Glut 0.70, Bust 0.60, 10.0.7); the difference is a gain or loss in pre-tax income.
+  - So g = 0 holds the asset base flat and costs `asset_decay × gross_assets` a year in cash; g = −asset_decay buys and sells nothing and lets the base shrink by decay alone.
+- **Seats**: when the labor count opens a seat 2 to 5, a simple character is generated for it (3.7.1); when it closes, the character is discarded.
 
 ### 5.11 Tax (10.5.5)
 
@@ -407,7 +470,10 @@ Free R&D steps: under 1 TB 0%; 1 TB 1%; 10 TB 2%; 100 TB 3%; 1 PB 4%; 10 PB 5%; 
 - **Auto-draw**: if cash is below 0 after the month, draw the shortfall up to the limit. **Auto-repay**: per the plan (6.5).
 - **Review** at 01:00 on release days: limit recomputed; a company over its new limit must repay the excess within 3 months (10.0.9), by auto-repay from cash first.
 - **Implied rating** (3.6.3) from net debt ÷ EBITDA (EBITDA = EBIT + depreciation, trailing 4 quarters): below 0.5 AAA, 0.5 to 1 AA, 1 to 2 A, 2 to 3 BBB, 3 to 4 BB+, 4 to 5 BB-, 5 to 6.5 B, 6.5 to 8 CCC, above 8 or EBITDA negative CC. Adjustments: interest cover above 10 +1 notch, below 3 -1, below 1.5 -2; revenue above $20B +1, below $500M -1; utilities +1; mining and shipping -1. Ceiling: sovereign + 1 notch. The rating moves 1 notch per review toward implied, 2 if 3 or more away (3.6.4).
-- **Distress (A, gap G7)**: if cash is still below 0 with the line full, `distress_months += 1` and the unit sells assets at the sale factor until cash reaches 0. After 6 distress months, or with no assets left, the company is **Insolvent**: frozen (no revenue, no expenses, 10.0.2), delisted from quotes, kept on the map for history.
+- **Distress, bankruptcy and removal (Logan, batch 145; timings T).** Forced asset sales, then frozen, then removed:
+  1. **Forced sales (Distressed).** If cash is still below 0 with the line full, `distress_months += 1` and the unit sells assets at the sale factor until cash reaches 0. No dividends; purchases stop (g = −asset_decay at most). A month that ends with cash at or above 0 and the line within its limit resets distress_months to 0.
+  2. **Bankrupt and frozen.** After **6 distress months**, or with no assets left, the company is **Bankrupt**: frozen for **2 quarters** (no revenue, no expenses, no decay, 10.0.2; its capacity leaves supply), delisted from quotes with the price set to $0.00, and **shareholders wiped**: equity is 0 and every holder's stake is worthless. It stays on screens and the map, marked Bankrupt.
+  3. **Removed.** At the first release after its 2 frozen quarters, its remaining assets are sold at the Bust factor (0.60) to repay the line, any unpaid line is written off by the bank **(A)**, and the company is **removed from the game**: off lists, the map and the screens, its simple characters discarded. Its filings, price history and headlines stay in the archive **(A)**. Sold capacity leaves the game, like any MVP asset sale **(A)**.
 
 ### 5.13 Fair value (10.0.8, 3.3.1; conflict C8)
 
@@ -443,7 +509,7 @@ Paid at the plan lock from the last quarter: `dividend = payout ratio × NI` if 
 
 ### 5.18 Industry news (10.0.6)
 
-Each phase change posts one headline for the industry; each release posts the five largest beats and misses, insolvencies and rating changes of 2+ notches. MVP headlines come from a neutral **Pdoomberg Wire** byline, since outlets and slant are out of scope **(A)**.
+Each phase change posts one headline for the industry; each release posts the five largest beats and misses, bankruptcies and removals (5.12) and rating changes of 2+ notches. MVP headlines come from a neutral **Pdoomberg Wire** byline, since outlets and slant are out of scope **(A)**.
 
 ---
 
@@ -463,7 +529,7 @@ Rule: the newest Logan ruling wins; where Logan has not ruled, the most recent d
 | C8 | Fair value: 10.0.8 blend vs 3.3.1 earnings-multiple V with sales value for loss-makers | 10.0.8 blend (Logan, batch 53), using 3.3.1's E_norm, G and R factors and asset floor; loss-makers at book × cycle (10.0.8) |
 | C9 | Loan rate: 3.6.5 "policy + corporate spread + 1.0" vs 10.0.9 and 10.5.5 "base + country spread + rating spread" | Base + country spread + rating spread (consistency pass 3, batch 129) |
 | C10 | Credit line counts cash at 100%, so drawing raises its own limit | Count own cash only (cash − drawn) (A) |
-| C11 | Depreciation at 10% of assets a year wipes out capital-heavy margins (Oil: 2.5 × 10% = 25% of revenue) | Depreciation is part of the fixed cost share; margin_full_use stays the margin before R&D (A, gap G3) |
+| C11 | Depreciation at 10% of assets a year wipes out capital-heavy margins (Oil: 2.5 × 10% = 25% of revenue) | Depreciation equals asset decay (5 to 10% by industry, Logan batch 145) and is part of the fixed cost share; margin_full_use stays the margin before R&D (A, gap G3) |
 | C12 | Supply uses productivity, revenue uses productivity + PC bonus, so S is not 1 at start | Supply uses p_pre (productivity + PC bonus + location bonus) (A) |
 | C13 | Growth plan is "this year" (10.0.2) vs set each quarter (21.5) | Annual rate locked each quarter, bought monthly at 1/12 (21.5) |
 | C14 | Charter board sizes 5 to 13 and elections (1.5, 1.8.1) vs labor units 1 to 5 (batch 142) | Labor rule only; no charter seats or elections in the MVP (A) |
@@ -509,7 +575,7 @@ All values **(T)**. A controller with both Ambitious and Greedy takes the first 
 | 0 ≤ ROA < hurdle | `min(2%, g_dem − 10 × max(0, S − 1))` |
 | ROA < 0 and loss_q < 2 | 0% |
 
-Then trait nudges: Ambitious +3 pp, Content −1 pp, Cautious −2 pp, Brave +1 pp, Visionary +1 pp in Tech **(T)**. Clamp −20% to +30%. **Funding cap**: the quarter's purchases (`gross_assets × g ÷ 4`) may use at most 50% of liquidity above min_cash; scale g down to fit.
+Then trait nudges: Ambitious +3 pp, Content −1 pp, Cautious −2 pp, Brave +1 pp, Visionary +1 pp in Tech **(T)**. Clamp −20% to +30%. **Funding cap**: the quarter's purchases (`gross_assets × (asset_decay + g) ÷ 4`, replacement plus growth, 5.10) may use at most 50% of liquidity above min_cash; scale g down to fit, but not below −asset_decay (no purchases).
 
 ### 6.3 R&D plan
 
@@ -551,14 +617,14 @@ R = revenue_usd_m. One business unit in the company's industry at hq_province.
 | Ramping | None |
 | Productivity | 100 **(A)** |
 | Labor units | floor(gross ÷ labor_value), minimum 1 |
-| Board | Seats 1 to min(5, L) with generated executives (3.7) |
+| Board | Seats 1 to min(5, L), each with a generated simple character (3.7.1) |
 | Productivity stations | `max(1, round(0.25 × L))` (10.0.11.8); the AI's power-of-10 rule (6.4) applies from the first plan lock |
 | Enterprise stations | `ceil(0.5 × R × data_tb_per_musd ÷ 10.95)` (C16); Arrowhead (CO-0001) uses 0.1 in place of 0.5 |
 | Idle | The rest |
 | Unstructured held | One month: `R × data_tb_per_musd ÷ 12` TB in the newest bucket |
 | Structured held | Steady state (5.9) for converting `min(capacity, share × inflow)` a month, share 0.5 (Arrowhead 0.1) |
 | Compute | 3.8 rules |
-| Fixed cost rate | `f × turnover − 0.10 − shared costs ÷ gross` (5.5) |
+| Fixed cost rate | `f × turnover − asset_decay − shared costs ÷ gross` (5.5) |
 | Asset book | `0.5 × gross` **(A)** |
 | Cash and line | If book_value ≥ asset book: cash = book_value − asset book, line 0. Else line drawn = asset book − book_value + min_cash, cash = min_cash **(A)** |
 | Rating | Implied rating from the starting run rate (5.12), no smoothing |
@@ -567,7 +633,7 @@ R = revenue_usd_m. One business unit in the company's industry at hq_province.
 | Shares | Listed: `shares_out = fair value ÷ $25`; P = V = $25 **(A)** |
 | Barebones exception | R below $0.1M: the barebones loadout (10.0.11.1): one $100,000 asset, 1 labor unit, CEO on productivity, 10 base and 10 data compute, 0 TB |
 
-**Arrowhead check** (R $40M, Oil, Edmonton: Industry track 12 is largest but Oil is Extraction, resource tag Oil): location +3; labor_value $500,000; first pass PC bonus +2. Gross assets `40 × 2.5 × 100 ÷ 105 ≈ $95.2M`; 190 labor units; 48 productivity stations (PC 48, +2); 1 enterprise station; held structured data about 8.6 TB at start (1% free R&D, $0.4M), rising toward about 20 TB (2%) as its one station runs at capacity; about 141 idle (decay 0.3). Revenue $40M at M 1.0; EBIT before R&D about $11.2M.
+**Arrowhead check** (R $40M, Oil, Edmonton: Industry track 12 is largest but Oil is Extraction, resource tag Oil): location +3; labor_value $500,000; first pass PC bonus +2. Gross assets `40 × 2.5 × 100 ÷ 105 ≈ $95.2M`; 190 labor units; 48 productivity stations (PC 48, +2); 1 enterprise station; held structured data about 8.6 TB at start (1% free R&D, $0.4M), rising toward about 20 TB (2%) as its one station runs at capacity; about 141 idle (decay 0.3). Revenue $40M at M 1.0; EBIT before R&D about $11.2M, unchanged by asset decay (batch 145); holding its assets flat costs about $5.7M a year in replacement (6% of $95.2M).
 
 ### 7.2 Industry fringe pools (10.0.10)
 
@@ -592,7 +658,7 @@ All built from 20-ui. Every action button is hidden or shows a lock icon with "R
 | **Pdoomberg** | 20.5.2, 3.13.1 | Full-screen terminal. F2 Quotes (watchlists: All, by industry, by country, Disclosure radar hidden); F3 Chart (daily bars with the estimated fair value band, ±15% for listed companies, 3.14.2; true V is never shown); F4 Order shows "Read-only MVP"; F5 Filings (quarterly statements); F6 Ratings (credit ratings only); F7 Bonds (base rate and country spreads); F9 Industries; F10 Screener (read-only filters) |
 | **Quarterly recap** | 20.7.9, 21.6.2 | Opens the pre-quarter-end week. World page: industries by phase, biggest expected beats and misses by projection. Company page (watchlist companies): anticipated earnings range, expected reaction, confidence, outlook (news phase, losses, rating watch). No guidance choice |
 | **News feed** | 20.5.1 | Pdoomberg Wire headlines (5.18) with date and industry tag |
-| **Time controls** | 9.1 | Pause (Space), speeds 1 to 5 (keys 1 to 5): 2 s, 1 s, 0.5 s, 0.2 s per hour and max; alerts: Earnings day (Pause), Quarterly recap (Pause), Plan lock (Log), Insolvency in watchlist (Notify), each settable Pause, Notify, Log, Off |
+| **Time controls** | 9.1 | Pause (Space), speeds 1 to 5 (keys 1 to 5): 2 s, 1 s, 0.5 s, 0.2 s per hour and max; alerts: Earnings day (Pause), Quarterly recap (Pause), Plan lock (Log), Bankruptcy in watchlist (Notify), each settable Pause, Notify, Log, Off |
 
 ---
 
@@ -659,7 +725,7 @@ Views carry dirty flags (12.3); only changed rows are rebuilt.
 | M1 | Clock and scheduler: hourly ticks, daily, monthly, quarterly, yearly jobs; speeds and pause; seeded RNG streams | 10 years tick headless; job order matches section 4 |
 | M2 | Economy core: demand, cycles, news phases, fringe, supply, S, M, revenue, expenses, productivity, growth | At load every industry has S 1.00 and named revenue matches companies.csv within 0.5% |
 | M3 | Operations and data: labor, seats, stations, PC bonus, data create, convert, decay, free R&D | Arrowhead check (7.1) passes |
-| M4 | Books: ledger, statements, tax, credit line, rating, dividends, distress | Balance sheet balances every month for all 651 |
+| M4 | Books: ledger, statements, tax, credit line, rating, dividends, asset decay, distress, bankruptcy and removal | Balance sheet balances every month for every company still in the game |
 | M5 | Valuation and price: fair value, hourly price, earnings jump, reaction week | Opening price $25 at V; prices track V within ±30% over 10 years |
 | M6 | Lite AI and the quarter loop: plan lock, consensus, projections, recap, news wire | A full year runs four releases, four locks, four recaps |
 | M7 | GDExtension API and views; Godot shell: top bar, time controls, alerts | Godot runs the sim at all speeds; screens read views only |
@@ -667,26 +733,30 @@ Views carry dirty flags (12.3); only changed rows are rebuilt.
 | M9 | Screens: Company, Industries, Pdoomberg, Recap, News | Every section 8 screen opens in under 100 ms |
 | M10 | Soak and balance: 30-year headless run, determinism replay | 30 years in under 2 minutes headless; same seed gives the same hashes; balance targets below |
 
-**Balance targets after 10 years (T):** at least 85% of companies solvent; industry revenue within ±30% of the trend path; median productivity 90 to 110; no industry stuck at an M clamp for more than 8 quarters; 30% to 60% of releases are beats.
+**Balance targets after 10 years (T):** at least 85% of the 651 companies neither bankrupt nor removed; industry revenue within ±30% of the trend path; median productivity 90 to 110; no industry stuck at an M clamp for more than 8 quarters; 30% to 60% of releases are beats.
 
 ---
 
 ## 11. Gaps and open questions
 
-The 8 most important things the docs do not define well enough to build, each with a recommended answer.
+The most important things the docs do not define well enough to build, each with a recommended answer or, where Logan has ruled, his decision.
 
 | # | Gap | Recommended answer |
 |---|---|---|
-| G1 | **No province geometry.** The province files have no shapes or coordinates, so the map cannot be drawn | Build a province-id bitmap and province-centroids.csv in tools/: geocode each province's name and region, cut Voronoi cells inside the real country and first-level borders (Natural Earth, public domain), then hand-fix Metros |
-| G2 | **Board seats need about 2,700 people.** characters.csv has 296; most companies need up to 5 seated executives for the management score | Generated unnamed executives (skills 6 to 16, no traits) fill seats; named controllers stay off boards in the MVP and only nudge the AI through traits |
-| G3 | **Depreciation vs margin** (C11). 10% a year on capital-heavy assets eats Oil, Utilities and Renewables margins whole | Depreciation is part of the fixed cost share, and margin_full_use is the margin before R&D |
-| G4 | **Missing industry numbers**: Banking and Insurance capital ("uses deposits"), AI labs margin (-40% to +40%), per-industry R&D norms, "Positive" rate sensitivity | Banking capital 1.0, Insurance 0.5; AI labs margin 0%; the rd_norm table in 2.2; Positive treated as 0 until rates move |
+| G1 | **No province geometry.** The province files have no shapes or coordinates, so the map cannot be drawn | **Decided (Logan, batch 145):** province shapes are generated from real-world boundary data into a province-id bitmap and province-centroids.csv in tools/. Sources and method: [map-sources.md](map-sources.md) |
+| G2 | **Board seats need about 2,700 people.** characters.csv has 296; most companies need up to 5 seated executives for the management score | **Decided (Logan, batch 145):** simple characters (3.7.1) are generated as needed to fill the seats: name, age, six skills by company size, one or two role traits, always the default choice. Named controllers stay off boards in the MVP and only nudge the AI through traits |
+| G3 | **Depreciation vs margin** (C11). 10% a year on capital-heavy assets eats Oil, Utilities and Renewables margins whole | Depreciation now equals asset decay, 5 to 10% by industry (Logan, batch 145); it is part of the fixed cost share, and margin_full_use is the margin before R&D (5.5 profit check) |
+| G4 | **Missing industry numbers**: Banking and Insurance capital ("uses deposits"), AI labs margin (-40% to +40%), per-industry R&D norms, "Positive" rate sensitivity | Banking capital 1.25, Insurance 0.60 (Logan's $1 and $0.50 base moved toward real capital ratios, batch 145, 2.2); AI labs margin 0%; the rd_norm table in 2.2; Positive treated as 0 until rates move |
 | G5 | **Corporate tax, sovereign rating and spread are not in countries.csv** (2.2.5 says the tax is there) | Add country-economy.csv: majors from 2.2.3, havens 3%, others Moderate 21%; rating from the 3.6.3 points table; spread set to January 2020 levels |
 | G6 | **Starting balance sheet and share count**: companies.csv has book equity but no cash, debt, asset book or shares | Asset book = 50% of gross; cash or line fills the gap to book equity; shares set so price opens at $25 at engine value |
-| G7 | **Distress without the default chain**: the MVP has no bonds, creditors or restructuring | Forced asset sales at the cycle sale factor; after 6 months or no assets, the company is Insolvent and frozen |
-| G8 | **One unit per company, all at HQ**: companies.csv gives one industry and no asset spread, so diversified groups and multi-province spreads do not exist | Accept for the MVP; add business-units.csv (company, industry, share of revenue, province shares) post-MVP so the map's industry layer shows real footprints |
+| G7 | **Distress without the default chain**: the MVP has no bonds, creditors or restructuring | **Decided (Logan, batch 145):** forced asset sales at the cycle sale factor; after 6 months or no assets, Bankrupt and frozen for 2 quarters with shareholders wiped; then removed from the game (5.12; timings T) |
+| G8 | **One unit per company, all at HQ**: companies.csv gives one industry and no asset spread, so diversified groups and multi-province spreads do not exist | **Decided (Logan, batch 145):** one business unit per company, at HQ, for the MVP. Post-MVP: business-units.csv (company, industry, share of revenue, province shares) so the map's industry layer shows real footprints |
+| G9 | **Batch 143 board-seat items still open.** The board meeting chain (21.4) and the labor seats of batch 142 leave open: board size beyond 5 seats, charter minimums under 5 labor units, election vs controller appointment, and investor and government seats (1-corporate-core 1.8.1); the grading formula, performance score and firing threshold (21.4.1 to 21.4.3, 21.9 items 6 to 8) | Still open for Logan. Not needed for the MVP (no elections, firing or board play; labor seats filled by simple characters, C14), but needed before board play |
+| G10 | **Thin margins after R&D at the norm.** margin_full_use minus rd_norm is negative for Consumer electronics (-2%), EVs (-6%), E-commerce (-1%) and AI labs (-15%), and about 0 for Autos, Aerospace and Robotics, so these start at or below break-even before interest. Older than batch 145; asset decay does not change EBIT | Check in M10 soak; if they fail the balance targets, lower their rd_norm or raise their margin **(T)** |
 
-### 11.1 Doc fixes needed (not made here; this spec writes no other file)
+### 11.1 Doc fixes needed (not made here)
+
+Batch 145 made its own source edits: 1-corporate-core 1.1.0 (simple characters) and 10-industry-economy 10.0.4, 10.0.7, 10.0.11.1, 10.3 and 10.12 (asset decay, bank and insurer capital).
 
 1. 7-starting-world header and 7.2: starting rate "about 1.75%" should be 3% (batch 130).
 2. 10.0.11.8: the enterprise station rule should multiply by the industry data rate (C16).
