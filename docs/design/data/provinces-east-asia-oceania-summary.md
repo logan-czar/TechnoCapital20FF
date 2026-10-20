@@ -1,5 +1,7 @@
 # East Asia and Oceania province slice: summary (2026-10-19)
 
+Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. The `former_hub` column is gone from the CSV; each key city's province ids are in [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3.3, and the "Old mix" column below is a historical check only (the old district mix no longer seeds anything).
+
 _Generated from [provinces-east-asia-oceania.csv](provinces-east-asia-oceania.csv) (batch 124). Same columns and rules as the North America, Europe and Latin America slices, including `contested` and `linked_cities` (batch 122). Population follows the spec formula from rough 2019-2020 population estimates (A); Commerce and Industry are hand-set (T). Names are ASCII (accents and macrons dropped) (A). Resource tags include Bauxite, Silver, Zinc and Tin (added in batch 124)._
 
 **Total:** 606 provinces in 32 countries and territories (plan 597). Metros: 34 (114 provinces). World plan in countries.csv: 3225; with this slice's actual counts it would be 3234.
@@ -77,7 +79,7 @@ Regions are the real first-level divisions: Chinese provinces, autonomous region
 
 ## Metros (34)
 
-Commerce/Industry/Population shares of the Metro's total, against the old district mix for former hubs (Financial + Tech / Industrial + Port + Resource / Residential + Slums).
+Commerce/Industry/Population shares of the Metro's total, against the old district mix for key cities (Financial + Tech / Industrial + Port + Resource / Residential + Slums).
 
 | Metro | Size | Pop (M) | Provinces (region, total) | Total dev | C/I/P | Old mix C/I/P |
 |---|---|---|---|---|---|---|
@@ -87,40 +89,40 @@ Commerce/Industry/Population shares of the Metro's total, against the old distri
 | Seoul-Pyeongtaek | Mega | 26 | Seoul Gangbuk-Yeouido (Seoul, 49), Seoul Gangnam-Songpa (Seoul, 49), Incheon (Incheon, 45), Suwon-Seongnam-Yongin (Gyeonggi, 57), Hwaseong-Pyeongtaek-Ansan (Gyeonggi, 53), Goyang-Paju-Uijeongbu (Gyeonggi, 39) | 292 | 30%/33%/37% | 33%/29%/38% |
 | Shenzhen-Dongguan | Mega | 22 | Shenzhen Futian-Nanshan (Guangdong, 60), Shenzhen Bao'an-Longhua (Guangdong, 54), Shenzhen Longgang-Yantian (Guangdong, 53), Dongguan (Guangdong, 57) | 224 | 22%/42%/36% | 25%/42%/33% |
 | Beijing | Mega | 22 | Central Beijing-Financial Street (Beijing, 47), Chaoyang-Shunyi (Beijing, 49), Haidian-Changping (Beijing, 50), Fengtai-Daxing-Yizhuang (Beijing, 48) | 194 | 41%/20%/39% | 33%/17%/50% |
-| Guangzhou-Foshan | Mega | 20.6 | Guangzhou Tianhe-Yuexiu (Guangdong, 51), Guangzhou Huangpu-Nansha (Guangdong, 53), Guangzhou North-Baiyun (Guangdong, 43), Foshan (Guangdong, 56) | 203 | 24%/36%/40% | not a former hub |
+| Guangzhou-Foshan | Mega | 20.6 | Guangzhou Tianhe-Yuexiu (Guangdong, 51), Guangzhou Huangpu-Nansha (Guangdong, 53), Guangzhou North-Baiyun (Guangdong, 43), Foshan (Guangdong, 56) | 203 | 24%/36%/40% | not a key city |
 | Osaka-Kobe | XL | 19 | Osaka Kita-Chuo (Osaka, 48), North-East Osaka (Osaka, 43), South Osaka-Sakai (Osaka, 40), Kobe-Hanshin (Hyogo, 47), Kyoto (Kyoto, 40) | 218 | 28%/34%/38% | 17%/44%/39% |
 | Chengdu | XL | 16 | Chengdu Jinjiang-Tianfu (Sichuan, 43), Chengdu High-tech West (Sichuan, 45), Chengdu North-Xindu (Sichuan, 36), Chengdu East-Longquanyi (Sichuan, 40), Chengdu West-Wenjiang-Pidu (Sichuan, 35) | 199 | 23%/34%/43% | 22%/28%/50% |
-| Chongqing | XL | 15.9 | Yuzhong-Jiangbei (Chongqing, 45), Shapingba-Xiyong (Chongqing, 47), Liangjiang-Yubei (Chongqing, 49) | 141 | 26%/34%/40% | not a former hub |
+| Chongqing | XL | 15.9 | Yuzhong-Jiangbei (Chongqing, 45), Shapingba-Xiyong (Chongqing, 47), Liangjiang-Yubei (Chongqing, 49) | 141 | 26%/34%/40% | not a key city |
 | Ho Chi Minh City | XL | 14 | Saigon Center (Ho Chi Minh City, 51), Thu Duc-Eastern Saigon (Ho Chi Minh City, 46), Binh Duong (Binh Duong, 45), Dong Nai-Bien Hoa (Dong Nai, 43) | 185 | 22%/40%/38% | 11%/44%/44% |
-| Manila | XL | 13.9 | Makati-BGC (National Capital Region, 47), Manila-Pasay (National Capital Region, 41), Quezon City-North (National Capital Region, 36), South Metro Manila (National Capital Region, 35) | 159 | 35%/21%/43% | not a former hub |
-| Tianjin | XL | 13.6 | Tianjin Heping-Nankai (Tianjin, 45), Binhai New Area (Tianjin, 53), Wuqing-Beichen-Jinghai (Tianjin, 43) | 141 | 23%/38%/39% | not a former hub |
+| Manila | XL | 13.9 | Makati-BGC (National Capital Region, 47), Manila-Pasay (National Capital Region, 41), Quezon City-North (National Capital Region, 36), South Metro Manila (National Capital Region, 35) | 159 | 35%/21%/43% | not a key city |
+| Tianjin | XL | 13.6 | Tianjin Heping-Nankai (Tianjin, 45), Binhai New Area (Tianjin, 53), Wuqing-Beichen-Jinghai (Tianjin, 43) | 141 | 23%/38%/39% | not a key city |
 | Wuhan | XL | 11 | Wuhan Hankou-Jianghan (Hubei, 44), Wuchang-Optics Valley (Hubei, 50), Hanyang-Wuhan Economic Zone (Hubei, 44) | 138 | 26%/35%/39% | 11%/39%/50% |
-| Bangkok | XL | 10.5 | Bangkok Silom-Sukhumvit (Bangkok, 50), Thonburi-Bangkok West (Bangkok, 36), Samut Prakan (Samut Prakan, 43), Nonthaburi-Pathum Thani (Nonthaburi-Pathum Thani, 40) | 169 | 27%/34%/38% | not a former hub |
+| Bangkok | XL | 10.5 | Bangkok Silom-Sukhumvit (Bangkok, 50), Thonburi-Bangkok West (Bangkok, 36), Samut Prakan (Samut Prakan, 43), Nonthaburi-Pathum Thani (Nonthaburi-Pathum Thani, 40) | 169 | 27%/34%/38% | not a key city |
 | Hsinchu-Taipei | L | 9 | Taipei (Taipei, 48), New Taipei (New Taipei, 42), Taoyuan (Taoyuan, 45) | 135 | 34%/30%/36% | 50%/21%/29% |
-| Nanjing | L | 8.8 | Nanjing Xinjiekou-Gulou (Jiangsu, 44), Nanjing Jiangning-Jiangbei (Jiangsu, 47) | 91 | 29%/31%/41% | not a former hub |
-| Bandung | L | 8.5 | Bandung City (West Java, 40), Bandung Raya-Cimahi (West Java, 38) | 78 | 23%/31%/46% | not a former hub |
+| Nanjing | L | 8.8 | Nanjing Xinjiekou-Gulou (Jiangsu, 44), Nanjing Jiangning-Jiangbei (Jiangsu, 47) | 91 | 29%/31%/41% | not a key city |
+| Bandung | L | 8.5 | Bandung City (West Java, 40), Bandung Raya-Cimahi (West Java, 38) | 78 | 23%/31%/46% | not a key city |
 | Kuala Lumpur | L | 8 | Kuala Lumpur City (Kuala Lumpur, 46), Petaling Jaya-Klang (Selangor, 50), Hulu Langat-Sepang (Selangor, 31) | 127 | 35%/28%/38% | 29%/21%/50% |
 | Hanoi | L | 8 | Hanoi Hoan Kiem-Ba Dinh (Hanoi, 44), Hanoi West-Hoa Lac (Hanoi, 42), Bac Ninh (Bac Ninh, 44) | 130 | 27%/35%/38% | 14%/43%/43% |
-| Xi'an | L | 8.0 | Xi'an Beilin-Qujiang (Shaanxi, 42), Xi'an High-tech-Xianyang (Shaanxi, 49) | 91 | 26%/33%/41% | not a former hub |
-| Hangzhou | L | 7.6 | Hangzhou Shangcheng-Binjiang (Zhejiang, 50), Hangzhou Yuhang-Xiaoshan (Zhejiang, 49) | 99 | 36%/26%/37% | not a former hub |
+| Xi'an | L | 8.0 | Xi'an Beilin-Qujiang (Shaanxi, 42), Xi'an High-tech-Xianyang (Shaanxi, 49) | 91 | 26%/33%/41% | not a key city |
+| Hangzhou | L | 7.6 | Hangzhou Shangcheng-Binjiang (Zhejiang, 50), Hangzhou Yuhang-Xiaoshan (Zhejiang, 49) | 99 | 36%/26%/37% | not a key city |
 | Hong Kong | L | 7.5 | Hong Kong Island-Central (Hong Kong, 45), Kowloon (Hong Kong, 37), New Territories-Lantau (Hong Kong, 42) | 124 | 44%/19%/37% | 43%/21%/36% |
-| Nagoya | L | 7.5 | Nagoya City (Aichi, 42), Owari-Nagoya Port (Aichi, 40), Toyota-Mikawa (Aichi, 50) | 132 | 21%/42%/36% | not a former hub |
-| Shenyang | L | 7.2 | Shenyang Heping-Shenhe (Liaoning, 40), Shenyang Tiexi-Hunnan (Liaoning, 42) | 82 | 23%/34%/43% | not a former hub |
-| Suzhou | L | 7.1 | Suzhou Industrial Park-Gusu (Jiangsu, 54), Kunshan-Taicang (Jiangsu, 53) | 107 | 21%/45%/35% | not a former hub |
-| Surabaya | L | 7.0 | Surabaya City (East Java, 45), Sidoarjo-Gresik (East Java, 45) | 90 | 23%/38%/39% | not a former hub |
-| Harbin | L | 6.4 | Harbin Nangang-Daoli (Heilongjiang, 37), Harbin Songbei-Pingfang (Heilongjiang, 38) | 75 | 23%/32%/45% | not a former hub |
-| Zhengzhou | L | 6.2 | Zhengzhou Jinshui-Zhengdong (Henan, 44), Zhengzhou Airport-Xinzheng (Henan, 44) | 88 | 24%/36%/40% | not a former hub |
+| Nagoya | L | 7.5 | Nagoya City (Aichi, 42), Owari-Nagoya Port (Aichi, 40), Toyota-Mikawa (Aichi, 50) | 132 | 21%/42%/36% | not a key city |
+| Shenyang | L | 7.2 | Shenyang Heping-Shenhe (Liaoning, 40), Shenyang Tiexi-Hunnan (Liaoning, 42) | 82 | 23%/34%/43% | not a key city |
+| Suzhou | L | 7.1 | Suzhou Industrial Park-Gusu (Jiangsu, 54), Kunshan-Taicang (Jiangsu, 53) | 107 | 21%/45%/35% | not a key city |
+| Surabaya | L | 7.0 | Surabaya City (East Java, 45), Sidoarjo-Gresik (East Java, 45) | 90 | 23%/38%/39% | not a key city |
+| Harbin | L | 6.4 | Harbin Nangang-Daoli (Heilongjiang, 37), Harbin Songbei-Pingfang (Heilongjiang, 38) | 75 | 23%/32%/45% | not a key city |
+| Zhengzhou | L | 6.2 | Zhengzhou Jinshui-Zhengdong (Henan, 44), Zhengzhou Airport-Xinzheng (Henan, 44) | 88 | 24%/36%/40% | not a key city |
 | Singapore | L | 6 | Downtown Core-Marina Bay (Singapore, 46), West Singapore-Jurong (Singapore, 49), East Singapore-Changi (Singapore, 42) | 137 | 35%/33%/32% | 36%/43%/21% |
-| Qingdao | L | 5.6 | Qingdao Shinan-Laoshan (Shandong, 45), Qingdao Huangdao-West Coast (Shandong, 47) | 92 | 24%/39%/37% | not a former hub |
+| Qingdao | L | 5.6 | Qingdao Shinan-Laoshan (Shandong, 45), Qingdao Huangdao-West Coast (Shandong, 47) | 92 | 24%/39%/37% | not a key city |
 | Sydney | L | 5.4 | Sydney CBD-North Shore (New South Wales, 48), Western Sydney-Parramatta (New South Wales, 40) | 88 | 43%/20%/36% | 29%/29%/43% |
-| Yangon | L | 5.3 | Yangon Downtown-Port (Yangon, 40), Yangon North-Hlaingthaya (Yangon, 38) | 78 | 26%/33%/41% | not a former hub |
+| Yangon | L | 5.3 | Yangon Downtown-Port (Yangon, 40), Yangon North-Hlaingthaya (Yangon, 38) | 78 | 26%/33%/41% | not a key city |
 | Melbourne | L | 5.0 | Melbourne CBD-East (Victoria, 46), Melbourne West-North (Victoria, 40) | 86 | 37%/26%/37% | 30%/30%/40% |
 
-The 17 former hubs of 5M+ in this superregion keep their planned shapes from 2.3.3, with these changes (A): Seoul-Pyeongtaek has 6 provinces (plan 5; Gyeonggi's northern belt of Goyang and Paju is its own member), Singapore 3 (plan 2; the country's budget is 3, all of it urban), Hsinchu-Taipei is Taipei, New Taipei and Taoyuan (8.9M) while Hsinchu City, with TSMC's headquarters, is a separate City province that is not adjacent to Taipei (so it carries no former_hub value), and Beijing's 4 provinces cover Beijing municipality only: Tianjin (13.6M) is its own Metro instead of the hub's abstracted port. Busan (3.4M city) is a single Metropolis province and Ulsan a City; the hub notes 'with Ulsan and Busan abstracted' and 'with Nagoya abstracted' and 'with Sulawesi nickel abstracted' are replaced by real provinces.
+The 17 key cities of 5M+ in this superregion are Metros by the 5M+ rule; against the shapes first planned in the old hub list (A): Seoul-Pyeongtaek has 6 provinces (plan 5; Gyeonggi's northern belt of Goyang and Paju is its own member), Singapore 3 (plan 2; the country's budget is 3, all of it urban), Hsinchu-Taipei is Taipei, New Taipei and Taoyuan (8.9M) while Hsinchu City, with TSMC's headquarters, is a separate City province that is not adjacent to Taipei (so it is not in the Hsinchu-Taipei key city's province ids, 2.3.3), and Beijing's 4 provinces cover Beijing municipality only: Tianjin (13.6M) is its own Metro instead of Beijing's old abstracted port. Busan (3.4M city) is a single Metropolis province and Ulsan a City; the old hub list's notes 'with Ulsan and Busan abstracted' and 'with Nagoya abstracted' and 'with Sulawesi nickel abstracted' are replaced by real provinces.
 
-Seventeen non-hub cities pass 5M and become Metros by the batch 119 rule: Guangzhou-Foshan (20.6M, Mega 4), Chongqing (15.9M core of a 32M municipality, XL 3), Manila (13.9M, XL 4), Tianjin (XL 3), Bangkok (10.5M, XL 4) and the L Metros Nagoya, Nanjing, Suzhou, Hangzhou, Xi'an, Bandung, Surabaya, Shenyang, Zhengzhou, Harbin, Qingdao and Yangon. Borderline cities kept as single provinces (A): Dalian 4.5M, Changsha 4.6M, Jinan 4.6M, Hefei 4.5M, Medan 4.7M, Kunming 4.4M, Urumqi 4.4M, Changchun 4.4M, Xiamen 4.3M, Shijiazhuang 4.3M, Wuxi 4.1M, Fuzhou 4.0M (Metropolis); Semarang's Kedungsepur, Fukuoka-Kitakyushu and Busan-Ulsan are planning regions of separate cities rather than one 5M city. These use the city's own population for the Metropolis check (CITY_POP in the generator), because their provinces also hold large rural counties (A).
+Seventeen cities that are not key cities pass 5M and become Metros by the batch 119 rule: Guangzhou-Foshan (20.6M, Mega 4), Chongqing (15.9M core of a 32M municipality, XL 3), Manila (13.9M, XL 4), Tianjin (XL 3), Bangkok (10.5M, XL 4) and the L Metros Nagoya, Nanjing, Suzhou, Hangzhou, Xi'an, Bandung, Surabaya, Shenyang, Zhengzhou, Harbin, Qingdao and Yangon. Borderline cities kept as single provinces (A): Dalian 4.5M, Changsha 4.6M, Jinan 4.6M, Hefei 4.5M, Medan 4.7M, Kunming 4.4M, Urumqi 4.4M, Changchun 4.4M, Xiamen 4.3M, Shijiazhuang 4.3M, Wuxi 4.1M, Fuzhou 4.0M (Metropolis); Semarang's Kedungsepur, Fukuoka-Kitakyushu and Busan-Ulsan are planning regions of separate cities rather than one 5M city. These use the city's own population for the Metropolis check (CITY_POP in the generator), because their provinces also hold large rural counties (A).
 
-Single provinces for former hubs under 5M: Baotou (City, total 44), Penang (City, total 44), Kaohsiung (City, total 45), Perth-Pilbara (City, total 33). Perth-Pilbara is the Perth province; the Pilbara iron ore and LNG coast are two separate provinces 1,500 km north (A).
+Single provinces for key cities under 5M: Baotou (City, total 44), Penang (City, total 44), Kaohsiung (City, total 45), Perth-Pilbara (City, total 33). Perth-Pilbara is the Perth province; the Pilbara iron ore and LNG coast are two separate provinces 1,500 km north (A).
 
 ## Contested provinces (batch 123 and 124)
 

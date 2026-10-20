@@ -1,5 +1,7 @@
 # North America provinces: summary
 
+Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. The `former_hub` column is gone from the CSV; each key city's province ids are in [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3.3, and the "Old mix" column below is a historical check only (the old district mix no longer seeds anything).
+
 Generated from `provinces-north-america.csv` (batch 118 test slice; batch 119: 5M+ Metro rule). Built by a python script with hand-authored rows; Population follows the spec guide (2 + 3 x log2(pop in millions x 10)) from rough 2020 population estimates (A). Commerce and Industry are hand-set (T). Names are ASCII (accents dropped) (A). Coastal Y includes Great Lakes shores (A).
 
 ## Totals
@@ -19,7 +21,7 @@ Generated from `provinces-north-america.csv` (batch 118 test slice; batch 119: 5
 
 ## Metros
 
-Commerce/Industry/Population shares of the Metro's total, against the old district mix (Financial + Tech / Industrial + Port + Resource / Residential + Slums).
+Commerce/Industry/Population shares of the Metro's total, against the old district mix for key cities (Financial + Tech / Industrial + Port + Resource / Residential + Slums).
 
 | Metro | Size | Provinces | Total dev | C/I/P now | Old mix C/I/P |
 |---|---|---|---|---|---|
@@ -37,12 +39,12 @@ Commerce/Industry/Population shares of the Metro's total, against the old distri
 | Monterrey | L | Monterrey Centro-San Pedro (Nuevo Leon, 39), Apodaca-Escobedo (Nuevo Leon, 41), Guadalupe-Santa Catarina (Nuevo Leon, 33) | 113 | 19%/42%/39% | 14%/43%/43% |
 | Guadalajara | L | Guadalajara Centro (Jalisco, 33), Zapopan (Jalisco, 34), Tlaquepaque-El Salto (Jalisco, 32) | 99 | 22%/34%/43% | 14%/29%/57% |
 | Phoenix | L | Phoenix-Central (Arizona, 36), East Valley (Arizona, 34) | 70 | 27%/27%/46% | 30%/20%/50% |
-| Philadelphia | L | South Jersey (New Jersey, 30), Philadelphia City (Pennsylvania, 38), Delaware Valley PA Suburbs (Pennsylvania, 34) | 102 | 31%/26%/42% | none (not a former hub) |
+| Philadelphia | L | South Jersey (New Jersey, 30), Philadelphia City (Pennsylvania, 38), Delaware Valley PA Suburbs (Pennsylvania, 34) | 102 | 31%/26%/42% | none (not a key city) |
 
-Batch 119 (Logan): any city with a metro population of 5M or more is a Metro, not only former hubs. Phoenix (exactly 5.0M) is now a Metro of 2 provinces and Philadelphia (6.2M with its New Jersey part; not a former hub) a Metro of 3. The US goes from 146 to 147 provinces: to stay near 146, Western and Eastern Montana merged into Montana, and Lehigh Valley-Scranton and Northern Pennsylvania into Northeastern and Northern Pennsylvania. No other North American city reaches 5M: Boston (4.9M), Detroit (4.3M), Montreal (4.2M) and Seattle (4.0M) stay single provinces (A).
+Batch 119 (Logan): any city with a metro population of 5M or more is a Metro, not only the old hubs. Phoenix (exactly 5.0M) is now a Metro of 2 provinces and Philadelphia (6.2M with its New Jersey part; not a key city) a Metro of 3. The US goes from 146 to 147 provinces: to stay near 146, Western and Eastern Montana merged into Montana, and Lehigh Valley-Scranton and Northern Pennsylvania into Northeastern and Northern Pennsylvania. No other North American city reaches 5M: Boston (4.9M), Detroit (4.3M), Montreal (4.2M) and Seattle (4.0M) stay single provinces (A).
 
 
-Single city provinces for former hubs under 5M: Edmonton (32), Boston (48), Seattle (46), Austin (38), Detroit (49), Las Vegas (33), Vancouver (39), Montreal (44), Ottawa (27).
+Single city provinces for key cities under 5M: Edmonton (32), Boston (48), Seattle (46), Austin (38), Detroit (49), Las Vegas (33), Vancouver (39), Montreal (44), Ottawa (27).
 
 ## Top 15 provinces by total development
 

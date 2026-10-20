@@ -1,6 +1,6 @@
 # Map data files
 
-Data tables for the EU4-style map (batch 118). Rules live in [../detailed/2-map-and-influence.md](../detailed/2-map-and-influence.md); the approved plan is [../reviews/map-rework-eu4-plan.md](../reviews/map-rework-eu4-plan.md). Values marked (A) are assumptions and (T) are tuning values.
+Data tables for the EU4-style map (batch 118). Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. The `former_hub` column is dropped from every province file; key city province ids live in [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3.3, and future slices (Russia and Central Asia, Middle East and North Africa, Sub-Saharan Africa, South Asia) use the same columns without it. Rules live in [../detailed/2-map-and-influence.md](../detailed/2-map-and-influence.md); the approved plan is [../reviews/map-rework-eu4-plan.md](../reviews/map-rework-eu4-plan.md). Values marked (A) are assumptions and (T) are tuning values.
 
 ## countries.csv
 
@@ -28,12 +28,12 @@ Hong Kong is a separate row (SAR) because the docs give it its own currency and 
 
 Being built by another worker: the North America test slice of the province list (United States, Canada, Mexico, Greenland, Bermuda, Saint Pierre and Miquelon). Columns, from the batch 118 spec:
 
-id, name, country, region, area, metro, city_rank, commerce, industry, population, resource, terrain, coastal, chokepoint_exposure, former_hub, notes
+id, name, country, region, area, metro, city_rank, commerce, industry, population, resource, terrain, coastal, chokepoint_exposure, notes
 
 - region: a real first-level division (state, province, territory). area: 3 to 6 neighbouring provinces inside one region. metro: blank if none.
 - city_rank: Metropolis, City, Town or none. commerce, industry, population: development tracks, integers 1 to 30.
 - resource: Oil, Gas, Coal, Copper, Lithium, Cobalt, Nickel, Rare earths, Iron ore, Gold, Uranium, Timber, Farmland, Fishing, Hydropower or None.
-- terrain: Urban, Temperate, Desert, Arctic, Tropical, Mountain or Wetland. coastal: Y or N. former_hub: the 2.3.3 hub it came from, if any.
+- terrain: Urban, Temperate, Desert, Arctic, Tropical, Mountain or Wetland. coastal: Y or N.
 
 The exact column spelling is set by that worker's file; check its header.
 
@@ -47,4 +47,4 @@ The Latin America slice (batch 123, 2026-10-19): 391 provinces in 35 countries a
 
 ## provinces-east-asia-oceania.csv
 
-The East Asia and Oceania slice (batch 124, 2026-10-19): 606 provinces in 32 countries and territories, same columns and rules. 34 Metros covering 114 provinces (17 former hubs, 17 other 5M+ cities, mostly Chinese). Contested: every Taiwan province (CHN claims) and Sabah (PHL claims). Macau is a region inside China (no country row) (A). Chinese provinces are much larger than their cities, so city rank used a city population table in the generator, not province population. Summary: provinces-east-asia-oceania-summary.md.
+The East Asia and Oceania slice (batch 124, 2026-10-19): 606 provinces in 32 countries and territories, same columns and rules. 34 Metros covering 114 provinces (17 key cities, 17 other 5M+ cities, mostly Chinese). Contested: every Taiwan province (CHN claims) and Sabah (PHL claims). Macau is a region inside China (no country row) (A). Chinese provinces are much larger than their cities, so city rank used a city population table in the generator, not province population. Summary: provinces-east-asia-oceania-summary.md.

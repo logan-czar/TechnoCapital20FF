@@ -1,5 +1,7 @@
 # Latin America province slice: summary (2026-10-19)
 
+Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. The `former_hub` column is gone from the CSV; each key city's province ids are in [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3.3, and the "Old mix" column below is a historical check only (the old district mix no longer seeds anything).
+
 _Generated from [provinces-latin-america.csv](provinces-latin-america.csv) (batch 123). Same columns and rules as the North America and Europe slices, including `contested` and `linked_cities` (batch 122). Population follows the spec formula from rough 2019-2020 population estimates (A); Commerce and Industry are hand-set (T). Names are ASCII (accents dropped) (A)._
 
 **Total:** 391 provinces in 35 countries and territories (plan 388). Metros: 7. World plan in countries.csv: 3221; with this slice's actual counts it would be 3224.
@@ -80,21 +82,21 @@ Regions are the real first-level divisions (Brazilian states and the Federal Dis
 
 ## Metros (7)
 
-Commerce/Industry/Population shares of the Metro's total, against the old district mix for former hubs (Financial + Tech / Industrial + Port + Resource / Residential + Slums).
+Commerce/Industry/Population shares of the Metro's total, against the old district mix for key cities (Financial + Tech / Industrial + Port + Resource / Residential + Slums).
 
 | Metro | Size | Pop (M) | Provinces (region, total) | Total dev | C/I/P | Old mix C/I/P |
 |---|---|---|---|---|---|---|
 | Sao Paulo | Mega | 22 | Sao Paulo Centro-Faria Lima (Sao Paulo, 52), Sao Paulo Zona Leste-Guarulhos (Sao Paulo, 43), ABC Paulista-Zona Sul (Sao Paulo, 46), Santos-Baixada Santista (Sao Paulo, 39) | 180 | 25%/33%/42% | 17%/33%/50% |
 | Buenos Aires | XL | 15 | Buenos Aires Centro-Puerto Madero (Ciudad de Buenos Aires, 44), Zona Norte-Tigre (Buenos Aires, 40), Zona Oeste-La Matanza (Buenos Aires, 35), Zona Sur-Avellaneda (Buenos Aires, 39) | 158 | 26%/29%/45% | 17%/33%/50% |
 | Rio de Janeiro | XL | 13 | Rio Centro-Zona Sul (Rio de Janeiro, 45), Barra-Zona Oeste (Rio de Janeiro, 36), Baixada Fluminense (Rio de Janeiro, 36), Niteroi-Sao Goncalo (Rio de Janeiro, 35) | 152 | 28%/28%/45% | 11%/33%/56% |
-| Bogota | XL | 10.9 | Bogota Chapinero-Norte (Bogota, 43), Bogota Sur-Occidente (Bogota, 36), Sabana-Soacha (Cundinamarca, 32) | 111 | 27%/27%/46% | not a former hub |
-| Lima | XL | 10.7 | Lima Centro-San Isidro (Lima, 44), Lima Norte-Este (Lima, 37), Callao (Callao, 35) | 116 | 27%/31%/42% | not a former hub |
+| Bogota | XL | 10.9 | Bogota Chapinero-Norte (Bogota, 43), Bogota Sur-Occidente (Bogota, 36), Sabana-Soacha (Cundinamarca, 32) | 111 | 27%/27%/46% | not a key city |
+| Lima | XL | 10.7 | Lima Centro-San Isidro (Lima, 44), Lima Norte-Este (Lima, 37), Callao (Callao, 35) | 116 | 27%/31%/42% | not a key city |
 | Santiago | L | 6.8 | Santiago Oriente-Sanhattan (Santiago Metropolitan, 43), Santiago Poniente-Sur (Santiago Metropolitan, 38) | 81 | 35%/22%/43% | 29%/21%/50% |
-| Belo Horizonte | L | 6.0 | Belo Horizonte Centro-Pampulha (Minas Gerais, 39), Contagem-Betim (Minas Gerais, 41) | 80 | 26%/32%/41% | not a former hub |
+| Belo Horizonte | L | 6.0 | Belo Horizonte Centro-Pampulha (Minas Gerais, 39), Contagem-Betim (Minas Gerais, 41) | 80 | 26%/32%/41% | not a key city |
 
-Former hubs Sao Paulo (Mega, 4 provinces with the port of Santos), Rio de Janeiro (XL, 4), Buenos Aires (XL, 4; the core is Buenos Aires city, the rest are in Buenos Aires province) and Santiago (L, 2) keep their planned shapes from 2.3.3. Three non-hub cities pass 5M and become Metros by the batch 119 rule: Lima (10.7M, XL, 3 provinces with Callao), Bogota (10.9M, XL, 3 with the Sabana and Soacha in Cundinamarca) and Belo Horizonte (6.0M, L, 2). No other Latin American city reaches 5M: Brasilia (4.7M with its ring), Guayaquil (about 4.4M as a province, 3M as a city), Porto Alegre (4.3M), Recife and Fortaleza (4.1M), Medellin (4.0M), Salvador (3.9M), Curitiba (3.8M), Santo Domingo (3.6M), Campinas (3.3M) and Guatemala City (3.1M) are single Metropolis or City provinces (A).
+Key cities Sao Paulo (Mega, 4 provinces with the port of Santos), Rio de Janeiro (XL, 4), Buenos Aires (XL, 4; the core is Buenos Aires city, the rest are in Buenos Aires province) and Santiago (L, 2) are Metros by the 5M+ rule, with the shapes first planned in the old hub list. Three cities that are not key cities pass 5M and become Metros by the batch 119 rule: Lima (10.7M, XL, 3 provinces with Callao), Bogota (10.9M, XL, 3 with the Sabana and Soacha in Cundinamarca) and Belo Horizonte (6.0M, L, 2). No other Latin American city reaches 5M: Brasilia (4.7M with its ring), Guayaquil (about 4.4M as a province, 3M as a city), Porto Alegre (4.3M), Recife and Fortaleza (4.1M), Medellin (4.0M), Salvador (3.9M), Curitiba (3.8M), Santo Domingo (3.6M), Campinas (3.3M) and Guatemala City (3.1M) are single Metropolis or City provinces (A).
 
-Single provinces for former hubs under 5M: Antofagasta (City, total 37), Medellin (Metropolis, total 42). No Panama or other Central American or Caribbean city was a hub.
+Single provinces for key cities under 5M: Antofagasta (City, total 37), Medellin (Metropolis, total 42). No Central American or Caribbean city is a key city.
 
 ## Contested provinces (batch 123)
 

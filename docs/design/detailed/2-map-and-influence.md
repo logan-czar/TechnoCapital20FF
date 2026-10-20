@@ -1,6 +1,6 @@
 # 2. Map and influence: detailed design
 
-_Status: draft v0.4 (2026-10-19). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. The 2.2.3 Currency and FX regime columns are flavor; there are no FX moves; every country runs its own cycle off the world base rate, the euro-area members share one cycle again, and Latin America keeps its own national cycles (2.18.1); London's FX trading and Buenos Aires's ARS perk are post-POC. This supersedes the Latin America line below. Batch 124 (Logan): Papa's Port, a micronation on the Falklands under Argentina (2.2.5); resource tags Bauxite, Silver, Zinc and Tin (2.3.1); chokepoints Florida Strait, Strait of Magellan and Drake Passage (2.4.2); Latin America dollarized at start (2.18.1; superseded by batch 125). Batch 123 (Logan): the contested flag is used wherever a real dispute exists, worldwide (2.3.1); Schengen is flavor only (2.21.2). Batch 122 (Logan): contested flag and linked cities on provinces (2.3.1, 2.3.2), Gibraltar, the Isle of Man and the Faroes are their own countries, Gibraltar and the Isle of Man are havens (2.2.5), one euro-area cycle (2.18.1). Batch 121 (Logan): only national governments in the POC; regions, areas, cities and Metros are map groupings with no government (no regional government, city councils, mayors, regional or city bonds); a Metro shares only its property cycle and post-POC metro systems; city and region perks now work through national officials (2.5.10), and each tier adds local standing PC to the country pool. Batch 120 (Logan): the country weight cap is dropped, so every place weighs the honest sum of its provinces; influence tier thresholds drop by level (province and city 10/25/50%, area and region 5/15/30%, country 3/8/20%) with the hysteresis band scaled to match; 2.3.1, 2.5.3, 2.5.9, 2.5.10, the 2.14.1 roll-up and assumption 4 updated. Batch 119 (Logan): any city with a metro population of 5M or more is a Metro, not only former hubs (Phoenix, Melbourne, Philadelphia); province weight is total development × wealth index × $0.3B, and country weight is capped at 3% of GDP; the 2.14 examples are rescaled. Batch 118 (Logan): EU4-style map. Hubs, districts and minor groups are gone: the world is about 195 real countries tiled into about 3,200 land provinces (Superregion > Country > Region > Area > Province); development in three tracks (Commerce, Industry, Population) sets each province's weight; megacities are Metros of 2 to 8 provinces with a shared council, property cycle and (post-POC) metro systems; one resource tag and one terrain per province; the four real estate pools sit in each province; influence runs per province, Metro, area, region and country. Rewritten: 2.2.1, 2.2.5, 2.3, 2.5, 2.16, 2.17; hub and district wording updated everywhere else. Batch 117: no captive banks (Zurich perk is HQ only), no T2 Data Sovereignty, no stress from travel. Batch 116: Colombia and DR Congo promoted to major countries (33); Semiconductors replaces Lithography machines, Foundry, GPUs and CPUs; no dynasties, family or succession (influence holders are characters, companies and governments); branch offices dropped; Clout and Favor replace reputation and prestige; intel learns secrets, accurate data only on Pdoomberg; workforce counts become payroll dollars; crashes cost health; AI takeovers only on the game director's order; consistency fixes A1 to A23. v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs (now provinces and Metros), location perks, influence, strata and population, pooled real estate, the hub life cycle (now development change), the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands the map and influence overview (05). Owner: Logan._
+_Status: draft v0.4 (2026-10-20). Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule (2.3.2 to 2.3.5; the former_hub province column is gone). Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. The 2.2.3 Currency and FX regime columns are flavor; there are no FX moves; every country runs its own cycle off the world base rate, the euro-area members share one cycle again, and Latin America keeps its own national cycles (2.18.1); London's FX trading and Buenos Aires's ARS perk are post-POC. This supersedes the Latin America line below. Batch 124 (Logan): Papa's Port, a micronation on the Falklands under Argentina (2.2.5); resource tags Bauxite, Silver, Zinc and Tin (2.3.1); chokepoints Florida Strait, Strait of Magellan and Drake Passage (2.4.2); Latin America dollarized at start (2.18.1; superseded by batch 125). Batch 123 (Logan): the contested flag is used wherever a real dispute exists, worldwide (2.3.1); Schengen is flavor only (2.21.2). Batch 122 (Logan): contested flag and linked cities on provinces (2.3.1, 2.3.2), Gibraltar, the Isle of Man and the Faroes are their own countries, Gibraltar and the Isle of Man are havens (2.2.5), one euro-area cycle (2.18.1). Batch 121 (Logan): only national governments in the POC; regions, areas, cities and Metros are map groupings with no government (no regional government, city councils, mayors, regional or city bonds); a Metro shares only its property cycle and post-POC metro systems; city and region perks now work through national officials (2.5.10), and each tier adds local standing PC to the country pool. Batch 120 (Logan): the country weight cap is dropped, so every place weighs the honest sum of its provinces; influence tier thresholds drop by level (province and city 10/25/50%, area and region 5/15/30%, country 3/8/20%) with the hysteresis band scaled to match; 2.3.1, 2.5.3, 2.5.9, 2.5.10, the 2.14.1 roll-up and assumption 4 updated. Batch 119 (Logan): any city with a metro population of 5M or more is a Metro, not only former hubs (Phoenix, Melbourne, Philadelphia); province weight is total development × wealth index × $0.3B, and country weight is capped at 3% of GDP; the 2.14 examples are rescaled. Batch 118 (Logan): EU4-style map. Hubs, districts and minor groups are gone: the world is about 195 real countries tiled into about 3,200 land provinces (Superregion > Country > Region > Area > Province); development in three tracks (Commerce, Industry, Population) sets each province's weight; megacities are Metros of 2 to 8 provinces with a shared council, property cycle and (post-POC) metro systems; one resource tag and one terrain per province; the four real estate pools sit in each province; influence runs per province, Metro, area, region and country. Rewritten: 2.2.1, 2.2.5, 2.3, 2.5, 2.16, 2.17; hub and district wording updated everywhere else. Batch 117: no captive banks (Zurich perk is HQ only), no T2 Data Sovereignty, no stress from travel. Batch 116: Colombia and DR Congo promoted to major countries (33); Semiconductors replaces Lithography machines, Foundry, GPUs and CPUs; no dynasties, family or succession (influence holders are characters, companies and governments); branch offices dropped; Clout and Favor replace reputation and prestige; intel learns secrets, accurate data only on Pdoomberg; workforce counts become payroll dollars; crashes cost health; AI takeovers only on the game director's order; consistency fixes A1 to A23. v0.3: consistency pass, batch 74. The file is split from the old "map, influence and economy" file: the map, countries, regions, hubs (now provinces and Metros), location perks, influence, strata and population, pooled real estate, the hub life cycle (now development change), the business cycle, travel and private jets stay here; the old goods economy is gone, replaced by industries and business units in [10-industry-economy.md](10-industry-economy.md) 10.0. Earlier: v0.2 (2026-10-16) added the hub life cycle, business cycles, travel, intelligence, AI behavior and map views. Expands the map and influence overview (05). Owner: Logan._
 
 This file turns the map and influence overviews into exact rules, formulas, numbers and content that a designer can balance. It is pure game design.
 
@@ -52,10 +52,10 @@ The world is fully tiled, EU4 style (Logan, batch 118). Every system points at *
 | **Regions** | About 400 **(T)** | Real first-level divisions: US states, Canadian provinces and territories, Mexican states, oblasts, Länder. A map grouping for influence roll-up and perks; there is no regional government in the POC (batch 121), though one may come back after the POC **(A)**. Small countries are one region |
 | **Areas** | About 750 **(T)** | 3 to 6 neighbouring provinces inside one region, like an EU4 state. The middle step for influence roll-up and area perks (2.5) |
 | **Provinces** | About 3,200 land provinces **(T)** | The map tile: a city, part of a megacity, or a rural county-sized area. Holds development, the four real estate pools, population, unrest, one resource tag and one terrain (2.3.1) |
-| **Metros** | About 55 identified so far (every city with a metro population of 5M or more: 54 former hubs plus Philadelphia); likely about 100 once every superregion's list is built **(A)** | A named group of 2 to 8 adjacent provinces forming one megacity, sharing one property cycle and (post-POC) metro systems; no city council (2.3.2) |
+| **Metros** | 69 in the four built slices (every city with a metro population of 5M or more, the only rule for Metros); likely about 100 once every superregion's list is built **(A)** | A named group of 2 to 8 adjacent provinces forming one megacity, sharing one property cycle and (post-POC) metro systems; no city council (2.3.2) |
 | **Chokepoints** | 14 | Straits, canals, cable corridors (2.4). Each province lists the chokepoints it is exposed to |
 
-There are no hubs and no districts any more. The 80 former hubs are the starting city provinces and Metros (2.3.3). The province list is data, built superregion by superregion; done so far: North America, 254 provinces ([provinces-north-america.csv](../data/provinces-north-america.csv)) Europe, 679 provinces ([provinces-europe.csv](../data/provinces-europe.csv)) Latin America, 392 provinces ([provinces-latin-america.csv](../data/provinces-latin-america.csv)) and East Asia and Oceania, 606 provinces ([provinces-east-asia-oceania.csv](../data/provinces-east-asia-oceania.csv)) **(A)**.
+There are no hubs and no districts any more. The 80 key cities (2.3.3) hold the location perks and signature starting businesses; Metros come only from the 5M+ rule (2.3.2). The province list is data, built superregion by superregion; done so far: North America, 254 provinces ([provinces-north-america.csv](../data/provinces-north-america.csv)) Europe, 679 provinces ([provinces-europe.csv](../data/provinces-europe.csv)) Latin America, 392 provinces ([provinces-latin-america.csv](../data/provinces-latin-america.csv)) and East Asia and Oceania, 606 provinces ([provinces-east-asia-oceania.csv](../data/provinces-east-asia-oceania.csv)) **(A)**.
 
 Government types, corruption, stability and election cycles for every country are in [4-politics.md](4-politics.md) 4.2.4. The tables below add the economic and business-climate values.
 
@@ -181,7 +181,6 @@ The **province** is the one place every system points at: business assets, real 
 | **Terrain** | One terrain type (below) |
 | **Coastal** | Y or N. Only coastal provinces (and river ports named in the notes) hold sea ports |
 | **Chokepoint exposure** | The chokepoints (2.4) its sea and cable links pass through; business units with assets here take those chokepoints' risk |
-| **Former hub** | Which of the 80 former hubs it belonged to, if any (2.3.3) |
 | **Contested** | Blank, or who disputes the province (Logan, batch 122). Below |
 | **Linked cities** | Blank, or the name of a linked-cities group (2.3.2, batch 122) |
 | **Notes** | Free text |
@@ -258,7 +257,7 @@ A **Metro** is a named group of 2 or more adjacent provinces forming one megacit
 | **Property cycle** | One cycle for every member province (2.16.5) |
 | **Combined development** | The sum of the members' total development; shown on the Metro card and sets the cost of metro systems |
 | **City influence** | Influence across all member provinces, computed like an area, sets the tier for city perks (2.5.10) |
-| **Location perks** | A former hub's perks (2.3.5) apply in every member province |
+| **Location perks** | A key city's perks (2.3.5) apply in every member province |
 | **Metro systems** | Slots for subway, power grid, water, ports and airports (below) |
 
 **Metro systems (post-POC).** Each system (subway, power grid, water, ports and airports) has one shared level for the whole Metro and benefits every member province, which is the economy of scale; its upgrade cost scales with the Metro's combined development, so bigger Metros pay more per level (Logan) **(A)**. A starting shape for later: upgrade cost = $50M × combined development × wealth index × the next level **(T)**. **Metro systems are not in the POC.** The POC ships the Metro object, its outline on the map, its shared property cycle, and empty system slots.
@@ -271,129 +270,102 @@ A **Metro** is a named group of 2 or more adjacent provinces forming one megacit
 - A Metro may cross region borders (New York takes in North Jersey). Each member keeps its own region and area for roll-up **(A)**.
 - Formation, growth and dissolution follow 2.17.4.
 
-**From hubs to provinces at start (T).** Each of the 80 former hubs becomes either:
+**Metros come only from the 5M+ rule** (Logan, batch 119; batch 125 card): every city with a metro population of 5M or more is a Metro, and no other city is. Shape by size **(T)**: 5M to 10M 2 to 3 provinces, 10M to 20M 3 to 5, 20M or more 4 to 8. Each superregion's province list sets its Metros under this rule. Key cities (2.3.3) under 5M are single city provinces like any other city.
 
-- a **Metro**, when its metro population is 5M or more: 5M to 10M 2 to 3 provinces, 10M to 20M 3 to 5, 20M or more 4 to 8. That gives 54 Metros of about 185 provinces (the 52 hubs of size L or larger, plus Phoenix and Melbourne at 5.0M); or
-- a **single city province**, when smaller (26 provinces).
+Starting development (Commerce, Industry and Population), city rank and each province's slum share (2.16.6) are set directly in the province data **(A)**.
 
-**Any city of 5M or more is a Metro** (Logan, batch 119), not only former hubs: cities that were never hubs but reach 5M (Philadelphia in North America, a Metro of 3 provinces) come with each superregion's province list under the same size rule **(T)**.
+### 2.3.3 Key cities
 
-Starting development is seeded from the old district mix **(A)**: Population from the formula above, split across a Metro's provinces by population; Commerce from the Financial districts (and half of the Tech Park ones); Industry from the Industrial, Port and Resource Field districts (and the other half of the Tech Park ones). The Metro's core province gets the old Financial districts and the highest Commerce. The old Slums become the slum share of each province's Residential pool (2.16.6). The land around each former hub becomes ordinary town and rural provinces.
+Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. A **key city** is a city that has location perks (2.3.5) or seeded starting businesses (2.3.4). There are **80**, all in the 33 major countries: the cities of the old hub list (44 original, plus 36 added in the 2026-10-18 realism review). Being a key city sets nothing else: Metro status comes only from the 5M+ rule (2.3.2), and starting development, city rank and slum share are set directly in the province data **(A)**. Every other city in the world comes with the province list and is not listed here.
 
-### 2.3.3 Former hubs (city provinces and Metros at start)
+**Province ids** are the city province or the Metro's member provinces in the province data files, plus any nearby province that holds the city's core industry, such as Hsinchu City for the chip cluster or the Pilbara for Perth's iron ore **(A)**; "slice pending" means that superregion's province list is not built yet. **Specialties** are the industries of the city's starting business units (2.3.4). **Perk** points to its row in 2.3.5. Edmonton and Medellín are key cities for the starting characters John Techno and Pablo Segundo ([7-starting-world.md](7-starting-world.md) 7.8).
 
-The **80 former hubs** (44 original, plus 36 added in the 2026-10-18 realism review; Aberdeen was added, then scrapped by Logan, batch 115) are the starting city provinces and Metros. All are in the 33 major countries. Every other city in the world, including those of Ukraine, Greece, Mali and Iran, comes with the province list and is not listed here. Populations are 2020 metro estimates **(T)**.
-
-**At start** gives the planned shape by the size rule in 2.3.2: a Metro with its planned province count, or a single province. Counts are planned **(T)**; the province data files are authoritative, starting with [provinces-north-america.csv](../data/provinces-north-america.csv) for North America. **Size** is the old size class, kept for reference; since batch 119 the Metro rule goes by population (5M or more). **Old districts** are the old district codes, kept because they seed starting development and slum share (2.3.2): F Financial, T Tech Park, P Port, I Industrial, R Residential, S Slums, X Resource Field. Population is metro population at start in millions. Connections list the main lanes and chokepoints (2.4).
-
-**North America**
-
-| Former hub | Country (region) | Size | Pop (M) | At start | Old districts | Specialties | Connections |
-|---|---|---|---|---|---|---|---|
-| New York | United States (New York-New Jersey) | Mega | 20 | Metro (4 provinces) | F5 I2 P2 R9 S3 T3 | Global finance, main exchange, media, law, insurance, prime real estate | Transatlantic sea and fiber to London and Rotterdam; rail and road to Chicago; Panama Canal to Asia; Gibraltar to the Mediterranean |
-| Chicago | United States (Illinois) | L | 9.5 | Metro (3 provinces) | F3 I4 P1 R4 S1 T1 | Futures and commodity exchange, rail freight center, food processing, grain | Rail to New York, Houston, Los Angeles; Great Lakes and St Lawrence (seasonal); Mississippi barges to the Gulf |
-| Houston | United States (Texas) | L | 7.3 | Metro (3 provinces) | F1 I4 P3 R4 S1 X1 | Oil, Gas (LNG export), Chemicals (petrochemicals) | Gulf of Mexico tanker lanes; Panama Canal to Asia; Florida Strait to the Atlantic; pipelines to Chicago |
-| Bay Area | United States (California) | L | 7.7 | Metro (3 provinces) | F2 I1 P1 R5 S1 T4 | Venture capital, software, AI labs, Semiconductors (chip design) | Transpacific sea and fiber to Tokyo, Taiwan, Shanghai; air freight hub for chips |
-| Los Angeles-Long Beach | United States (California) | XL | 13 | Metro (4 provinces) | F2 I4 P3 R6 S2 T1 | Largest US container port, media and entertainment, aerospace, defense | Transpacific lanes to Shenzhen, Shanghai, Busan; rail land bridge to Chicago and New York |
-| Phoenix | United States (Arizona) | M | 5 | Metro (2 provinces; batch 119) | F1 I2 R4 S1 T2 | Semiconductors (new plants), data centers, water-stressed | Rail and road to Los Angeles and Houston; air |
-| Edmonton | Canada (Alberta) | S | 1.4 | Single province | F1 I2 R1 S1 X1 | Oil sands and oil field services, pipelines | Pipelines to Houston and the Pacific coast; rail to Toronto and Chicago. Added for the starting character John Techno, replacing Calgary (batch 76; [7-starting-world.md](7-starting-world.md) 7.8) |
-| Toronto | Canada (Ontario) | L | 6.5 | Metro (2 provinces) | F3 I3 P1 R5 S1 T1 | Banking, mining finance, auto plants, AI research | Rail and road to New York and Chicago; St Lawrence Seaway |
-| Mexico City | Mexico (Valle de México and Bajío belt) | Mega | 22 | Metro (4 provinces) | F2 I6 P1 R8 S5 T1 X1 | Vehicles and parts, nearshore electronics, consumer goods, telecom | Rail and road to Houston (US border crossings); Pacific port Manzanillo and Gulf port Veracruz (abstracted) |
-| Washington DC | United States (DC, Maryland, Northern Virginia) | L | 6.3 | Metro (2 provinces) | F2 I1 R6 S2 T3 | Federal government, lobbying firms, defense contractors, Northern Virginia data center alley | Rail to New York; air; transatlantic fiber |
-| Boston | United States (Massachusetts) | M | 4.9 | Single province | F2 R4 S1 T3 | Biotech, universities, asset management, robotics | Rail to New York; Atlantic port (abstracted); air |
-| Seattle | United States (Washington) | M | 4.0 | Single province | F1 I2 P2 R3 T2 | Cloud computing, e-commerce, aerospace, Pacific port | Transpacific lanes to Tokyo, Busan and Shanghai; rail to Chicago |
-| Dallas-Fort Worth | United States (Texas) | L | 7.6 | Metro (3 provinces) | F3 I3 R5 S1 T2 | Corporate headquarters, energy finance, telecom, logistics | Rail and road to Houston and Chicago; air hub |
-| Atlanta | United States (Georgia) | L | 6.0 | Metro (2 provinces) | F2 I3 P1 R5 S2 T1 | The world's busiest airport, logistics, media, payments | Air hub; rail to the Gulf and East Coast ports |
-| Miami | United States (Florida) | L | 6.1 | Metro (2 provinces) | F3 P2 R6 S2 T1 | Latin American finance gateway, flight capital, real estate, cruise and tourism | Florida Strait; Caribbean and Panama Canal lanes; air to Latin America |
-| Austin | United States (Texas) | M | 2.2 | Single province | F1 I2 R4 S1 T2 | Semiconductors, software, EV plant | Road and rail to Dallas and Houston; air |
-| Detroit | United States (Michigan) | M | 4.3 | Single province | F1 I4 R3 S2 | Autos and EVs, parts suppliers | Great Lakes; road and rail to Toronto and Chicago |
-| Las Vegas | United States (Nevada) | M | 2.3 | Single province | F1 I1 R5 S2 T1 | Casinos, gambling, conventions, tourism | Road and rail to Los Angeles; air |
-| Vancouver | Canada (British Columbia) | M | 2.6 | Single province | F2 P2 R4 S1 T1 | Pacific port, real estate, Asian capital, film | Transpacific lanes; rail to Edmonton and Toronto |
-| Montreal | Canada (Quebec) | M | 4.2 | Single province | F2 I2 P1 R3 S1 T1 | AI research, aerospace, video games | St Lawrence Seaway; rail to Toronto and New York |
-| Ottawa | Canada (Ontario) | S | 1.4 | Single province | F1 R3 S1 T1 | Federal government, tech | Rail and road to Montreal and Toronto |
-| Monterrey | Mexico (Nuevo León) | L | 5.3 | Metro (2 provinces) | F2 I6 R4 S2 | Steel, cement, nearshoring plants, brewing | Road and rail to Texas border crossings |
-| Guadalajara | Mexico (Jalisco) | L | 5.2 | Metro (2 provinces) | F1 I4 R5 S3 T1 | Electronics, software, tequila | Pacific port Manzanillo (abstracted); rail to Mexico City |
-
-**South America**
-
-| Former hub | Country (region) | Size | Pop (M) | At start | Old districts | Specialties | Connections |
-|---|---|---|---|---|---|---|---|
-| São Paulo | Brazil (São Paulo, with Santos port) | Mega | 22 | Metro (4 provinces) | F3 I5 P2 R8 S4 T1 X1 | Finance, vehicles, food processing, soy, beef, sugar, iron ore marketing | Santos to Atlantic lanes; Cape of Good Hope to China; Panama Canal to the US west coast |
-| Antofagasta | Chile (Antofagasta, Atacama) | S | 0.5 | Single province | I1 P1 R1 S1 X2 | Copper mining, lithium brine | Pacific bulk lanes to Shanghai, Busan, Tokyo; Panama Canal to Houston |
-| Medellín | Colombia (Antioquia) | M | 4 | Single province | F1 I2 R3 S2 T1 X1 | Textiles, coffee, flowers, informal economy, cartel money laundering, growing tech scene | Road to Pacific port Buenaventura and Caribbean port Cartagena (abstracted); air to Miami and Bogotá. Added for the starting character Pablo Segundo ([7-starting-world.md](7-starting-world.md) 7.8) |
-| Rio de Janeiro | Brazil (Rio de Janeiro) | XL | 13 | Metro (4 provinces) | F2 I3 P3 R6 S4 | Offshore oil company headquarters, media, tourism | Atlantic lanes; offshore oil fields |
-| Buenos Aires | Argentina (Buenos Aires) | XL | 15 | Metro (4 provinces) | F3 I4 P2 R6 S3 | Finance, agribusiness, lithium financing, software exports | River Plate port; Atlantic lanes |
-| Santiago | Chile (Santiago Metropolitan) | L | 6.8 | Metro (2 provinces) | F3 I3 R5 S2 T1 | Finance, mining company headquarters, pension funds | Road to Pacific port Valparaíso (abstracted); air |
-
-**Europe**
-
-| Former hub | Country (region) | Size | Pop (M) | At start | Old districts | Specialties | Connections |
-|---|---|---|---|---|---|---|---|
-| London | United Kingdom (Greater London) | XL | 15 | Metro (4 provinces) | F5 I1 P1 R7 S2 T2 | Insurance, law, wealth management, links to havens; FX trading (post-POC, batch 125) | Dover Strait; Channel Tunnel rail; transatlantic fiber and air |
-| Rotterdam | Netherlands (South Holland) | M | 2.5 | Single province | F1 I3 P4 R2 | Largest European port, chemicals, LNG import, Rhine gateway | Asia-Europe lanes via Suez or the Cape; Dover Strait; Rhine barges and rail to Frankfurt |
-| Eindhoven | Netherlands (North Brabant) | S | 0.8 | Single province | I2 R2 T2 | Semiconductors (lithography systems; sole supplier at start), photonics, precision systems | Rail and road to Rotterdam; air freight |
-| Frankfurt | Germany (Hesse, Rhine-Main incl. chemical complex) | L | 5.8 | Metro (2 provinces) | F4 I4 P1 R4 T1 | Eurozone Central Bank (a flavor name that sets no rate in the POC, batch 125), banking, chemicals, precision optics, auto suppliers, air cargo | Rhine barges and rail to Rotterdam; rail to Paris and over the Alps to the south; air |
-| Paris | France (Île-de-France) | XL | 13 | Metro (4 provinces) | F3 I3 P1 R7 S2 T2 | Luxury goods, aerospace, nuclear engineering, defense, finance | Rail and road to Rotterdam and Frankfurt; Channel Tunnel to London; port of Le Havre (abstracted) |
-| Zurich | Switzerland (Zurich, with Basel and Geneva abstracted) | M | 1.5 | Single province | F4 I1 R4 T1 | Private banking, commodity trading houses, insurance, pharma | Rail to Frankfurt and Milan; air |
-| Moscow | Russia (Central) | Mega | 21 | Metro (4 provinces) | F3 I5 P1 R9 S4 T2 | Energy company headquarters, metals, defense, oil trading, cybercrime underground | Pipelines to China and (sanctioned) Europe; rail to China via Kazakhstan; Baltic ports via the Danish Straits; Black Sea via the Turkish Straits |
-| Istanbul | Turkey (Marmara) | XL | 16 | Metro (5 provinces) | F2 I5 P3 R5 S3 | Textiles, vehicles, shipping, regional finance | Turkish Straits; Black Sea lanes; rail to Europe; Middle Corridor rail to Central Asia and China |
-| Munich | Germany (Bavaria) | L | 6.0 | Metro (2 provinces) | F3 I4 R5 T2 | Autos, insurance and reinsurance, Semiconductors | Rail to Frankfurt and over the Alps; air |
-| Berlin | Germany (Berlin-Brandenburg) | L | 6.1 | Metro (2 provinces) | F2 I2 R6 S2 T2 | Federal government, startups, media | Rail to Frankfurt, Warsaw and the Baltic |
-| Amsterdam | Netherlands (North Holland) | M | 2.5 | Single province | F3 P1 R4 T2 | Stock exchange, fintech, data centers, internet exchange | Rail to Rotterdam; North Sea; transatlantic fiber |
-| Milan | Italy (Lombardy) | L | 7.4 | Metro (3 provinces) | F4 I4 R5 S1 | Finance, fashion, luxury, design | Rail over the Alps to Zurich and Frankfurt |
-| Rome | Italy (Lazio) | M | 4.3 | Single province | F1 I1 R5 S2 T1 | Government, the Vatican, tourism, state energy company headquarters | Rail to Milan; Mediterranean port (abstracted) |
-| St Petersburg | Russia (Northwest) | L | 6.2 | Metro (2 provinces) | F2 I4 P3 R4 S1 | Baltic port, shipbuilding, gas company headquarters | Baltic lanes via the Danish Straits; rail to Moscow |
-
-**Middle East and Africa**
-
-| Former hub | Country (region) | Size | Pop (M) | At start | Old districts | Specialties | Connections |
-|---|---|---|---|---|---|---|---|
-| Dubai | UAE (Dubai and Sharjah) | L | 6 | Metro (2 provinces) | F4 I2 P3 R3 S1 T1 | Re-export logistics, gold trading, free zones, aviation hub, real estate, grey trade | Strait of Hormuz (inside the Gulf); sea lanes to India, East Africa and Europe; air hub |
-| Dhahran-Dammam | Saudi Arabia (Eastern Province) | M | 4 | Single province | F1 I3 P2 R2 X2 | Largest oil fields, petrochemicals, desalination | Strait of Hormuz; East-West pipeline to the Red Sea coast (bypass); Bab-el-Mandeb and Suez |
-| Doha | Qatar (Doha) | M | 2.4 | Single province | F2 I2 P2 R3 X1 | Largest LNG exporter, sovereign fund, media network | Strait of Hormuz; LNG lanes to Tokyo, Seoul and (via Suez) Rotterdam |
-| Tel Aviv | Israel (Central) | M | 4 | Single province | F2 I1 P1 R3 T3 | Cybersecurity, surveillance tech, Semiconductors (chip design), defense electronics, venture capital | Mediterranean via Suez or Gibraltar; air; fiber |
-| Cairo-Suez | Egypt (Cairo and Canal Zone) | Mega | 22 | Metro (4 provinces) | F2 I4 P2 R8 S7 T1 | Canal revenue, textiles, fertilizer, construction, gas | Suez Canal; Mediterranean and Red Sea lanes; Red Sea cable corridor landing |
-| Lagos | Nigeria (Lagos) | Mega | 21 | Metro (4 provinces) | F2 I3 P2 R7 S9 T1 | Oil money, fintech, consumer goods, film industry, informal economy | Gulf of Guinea lanes (piracy risk); Atlantic to Europe; Cape of Good Hope to Asia |
-| Johannesburg | South Africa (Gauteng, with Durban port abstracted) | L | 9.5 | Metro (3 provinces) | F3 I3 P1 R4 S2 X1 | Mining finance, platinum metals, gold, coal power | Rail to Durban; Cape of Good Hope; Mozambique Channel |
-| Kolwezi-Lubumbashi | DR Congo (Katanga; the Zambian Copperbelt is abstracted in) | M | 3 | Single province | I2 R2 S3 X3 | Cobalt (about 70% of world supply), copper | Long truck and rail lanes to Durban, Dar es Salaam and Lobito; border delays |
-| Riyadh | Saudi Arabia (Riyadh) | L | 7.6 | Metro (3 provinces) | F3 I3 R5 S2 T1 | Government, royal court, sovereign fund, megaprojects | Rail to Dhahran-Dammam; air |
-| Abu Dhabi | UAE (Abu Dhabi) | M | 1.5 | Single province | F3 I2 P2 R2 X1 | Sovereign funds, oil, AI investment | Strait of Hormuz; road to Dubai |
-| Cape Town | South Africa (Western Cape) | M | 4.7 | Single province | F2 I1 P2 R3 S2 | Finance, tourism, wine, tech | Cape of Good Hope lanes |
-
-**Asia and Oceania**
-
-| Former hub | Country (region) | Size | Pop (M) | At start | Old districts | Specialties | Connections |
-|---|---|---|---|---|---|---|---|
-| Mumbai | India (Maharashtra) | Mega | 24 | Metro (5 provinces) | F4 I3 P2 R6 S8 T1 | Finance, main exchange, film industry, generic pharma, petrochemicals (Gujarat abstracted) | Arabian Sea lanes to the Gulf (Hormuz); Suez to Europe; Malacca to East Asia |
-| Bengaluru | India (Karnataka) | XL | 13 | Metro (4 provinces) | F1 I2 R7 S4 T4 | IT services, software outsourcing, Semiconductors (chip design), aerospace, biotech | Air; Chennai port (abstracted); fiber |
-| Shanghai | China (Yangtze Delta) | Mega | 29 | Metro (6 provinces) | F4 I6 P3 R8 S1 T3 | Largest container port, finance, EVs, Semiconductors (mature nodes), shipbuilding | Taiwan Strait (southbound); East China Sea to Japan, Korea and the Pacific; Malacca to Europe; Yangtze barges; rail to Europe via Kazakhstan |
-| Shenzhen-Dongguan | China (Pearl River Delta) | Mega | 22 | Metro (4 provinces) | F2 I7 P3 R6 S2 T4 | Electronics assembly, component markets, drones, EVs and batteries | South China Sea to Malacca; Taiwan Strait (northbound); Luzon Strait to the Pacific; Hong Kong next door |
-| Hong Kong | China (Hong Kong SAR) | L | 7.5 | Metro (3 provinces) | F5 P3 R4 S1 T1 | Offshore gateway into China, trading houses, re-export, company registrations | Pearl River Delta; Taiwan Strait; Malacca; Luzon Strait cables. Its HKD Currency Board is flavor (every value is in USD, batch 125); its own looser laws: restriction Screened |
-| Beijing | China (Jing-Jin-Ji, with Tianjin port) | Mega | 22 | Metro (4 provinces) | F3 I3 P1 R9 S3 T5 | Central government, state company headquarters, AI and surveillance tech, regulators | Tianjin via the Bohai and Yellow Sea; rail to Russia and Mongolia; rail to Shanghai |
-| Baotou | China (Inner Mongolia) | M | 2.7 | Single province | I4 R2 S1 X3 | Rare earth mining and separation, steel, aluminium | Rail to Beijing and Tianjin port; rail to Mongolia and Russia |
-| Hsinchu-Taipei | Taiwan (North Taiwan) | L | 9 | Metro (3 provinces) | F2 I2 P1 R4 T5 | Semiconductors (leading-edge logic and advanced packaging), electronics design | Taiwan Strait and Luzon Strait for all sea exits; air freight for chips; undersea cables |
-| Seoul-Pyeongtaek | South Korea (Capital Area, with Ulsan and Busan abstracted) | Mega | 26 | Metro (5 provinces) | F3 I5 P2 R8 S1 T5 | Semiconductors (memory), displays, batteries, shipbuilding, vehicles, entertainment | Korea Strait; East China Sea; Taiwan or Luzon Strait to Malacca; Pacific to the US |
-| Tokyo-Yokohama | Japan (Kanto, with Nagoya abstracted) | Mega | 37 | Metro (8 provinces) | F5 I5 P3 R9 S1 T3 | Finance, vehicles, robotics, Semiconductors (materials), precision machinery | Pacific lanes to the US; East China Sea; Malacca and Hormuz for oil and LNG |
-| Singapore | Singapore | L | 6 | Metro (2 provinces) | F4 I2 P4 R3 T1 | Transshipment, petrochemicals, commodity trading, wealth management, data centers, cable landings | Strait of Malacca and Singapore Strait; South China Sea; Indian Ocean |
-| Penang | Malaysia (Penang and Kulim) | M | 1.8 | Single province | I4 P1 R3 T2 | Semiconductors (assembly, test and packaging), electronics | Strait of Malacca; air |
-| Jakarta | Indonesia (Jabodetabek, with Sulawesi nickel abstracted) | Mega | 34 | Metro (7 provinces) | F2 I5 P2 R7 S6 T1 X1 | Consumer market, nickel processing, palm oil, coal | Sunda Strait; Malacca; Lombok route |
-| Ho Chi Minh City | Vietnam (Southeast) | XL | 14 | Metro (4 provinces) | F1 I6 P2 R5 S3 T1 | Electronics assembly ("China plus one"), garments, footwear, rice | South China Sea; Malacca; transpacific lanes |
-| Perth-Pilbara | Australia (Western Australia) | M | 2.3 | Single province | F1 I2 P2 R3 X2 | Iron ore (largest exporter), lithium ore, LNG, gold | Bulk lanes to China, Japan and Korea via the Lombok and Makassar straits (bypassing Malacca) |
-| Sydney | Australia (New South Wales) | L | 5.4 | Metro (2 provinces) | F3 I2 P2 R5 S1 T1 | Banking, pension funds, property, media, mining company headquarters | Pacific lanes to Shanghai, Tokyo and Los Angeles; fiber to Singapore and the US. |
-| Delhi NCR | India (Delhi, Gurugram, Noida) | Mega | 31 | Metro (7 provinces) | F3 I5 R9 S6 T3 | Capital and government, IT services, autos | Rail to Mumbai; air hub |
-| Hyderabad | India (Telangana) | XL | 10 | Metro (3 provinces) | F1 I3 R7 S4 T3 | Pharma, IT services, cloud data centers | Rail and road to Chennai and Mumbai; air |
-| Chennai | India (Tamil Nadu) | XL | 11 | Metro (3 provinces) | F1 I5 P2 R6 S3 T1 | Autos, electronics assembly, port | Bay of Bengal lanes to Malacca |
-| Chengdu | China (Sichuan) | XL | 16 | Metro (5 provinces) | F2 I5 R7 S2 T2 | Electronics assembly, gaming, aerospace | Rail to Europe; Yangtze via Chongqing |
-| Wuhan | China (Hubei) | XL | 11 | Metro (3 provinces) | F1 I6 P1 R7 S2 T1 | Autos, steel, optical fiber, research labs | Yangtze barges to Shanghai; rail hub |
-| Osaka-Kobe | Japan (Kansai) | XL | 19 | Metro (5 provinces) | F3 I5 P3 R6 S1 | Manufacturing, electronics, pharma, port | Inland Sea; Pacific lanes |
-| Kaohsiung | Taiwan (South Taiwan) | M | 2.7 | Single province | I4 P3 R2 T1 | Port, petrochemicals, steel, Semiconductors (new plants) | Taiwan and Luzon Straits |
-| Kuala Lumpur | Malaysia (Klang Valley) | L | 8 | Metro (3 provinces) | F3 I3 R5 S2 T1 | Finance, Islamic finance, palm oil trading, data centers | Port Klang on the Strait of Malacca |
-| Hanoi | Vietnam (Red River Delta) | L | 8 | Metro (3 provinces) | F1 I6 R5 S1 T1 | Government, electronics plants | Port of Haiphong (abstracted); rail to China |
-| Melbourne | Australia (Victoria) | M | 5.0 | Metro (2 provinces; batch 119) | F3 I2 P1 R4 | Finance, pension funds, universities, port | Bass Strait; Pacific lanes |
+| City | Country | Province ids | Specialties | Perk |
+|---|---|---|---|---|
+| New York | United States | US-0027, US-0080, US-0081, US-0086 to US-0089 | Global finance, main exchange, media, law, insurance, prime real estate | 2.3.5 |
+| Chicago | United States | US-0044 to US-0046 | Futures and commodity exchange, rail freight center, food processing, grain | none |
+| Houston | United States | US-0122 to US-0124 | Oil, Gas (LNG export), Chemicals (petrochemicals) | none |
+| Bay Area | United States | US-0018 to US-0020 | Venture capital, software, AI labs, Semiconductors (chip design) | 2.3.5 |
+| Los Angeles-Long Beach | United States | US-0010 to US-0014 | Largest US container port, media and entertainment, aerospace, defense | none |
+| Phoenix | United States | US-0005, US-0006 | Semiconductors (new plants), data centers, water-stressed | none |
+| Edmonton | Canada | CA-0033 | Oil sands and oil field services, pipelines | none |
+| Toronto | Canada | CA-0001 to CA-0003 | Banking, mining finance, auto plants, AI research | none |
+| Mexico City | Mexico | MX-0001 to MX-0005 | Vehicles and parts, nearshore electronics, consumer goods, telecom | none |
+| Washington DC | United States | US-0030, US-0062, US-0137 | Federal government, lobbying firms, defense contractors, Northern Virginia data center alley | 2.3.5 |
+| Boston | United States | US-0064 | Biotech, universities, asset management, robotics | 2.3.5 |
+| Seattle | United States | US-0140 | Cloud computing, e-commerce, aerospace, Pacific port | 2.3.5 |
+| Dallas-Fort Worth | United States | US-0118 to US-0120 | Corporate headquarters, energy finance, telecom, logistics | 2.3.5 |
+| Atlanta | United States | US-0038 to US-0040 | The world's busiest airport, logistics, media, payments | 2.3.5 |
+| Miami | United States | US-0031 to US-0033 | Latin American finance gateway, flight capital, real estate, cruise and tourism | 2.3.5 |
+| Austin | United States | US-0126 | Semiconductors, software, EV plant | 2.3.5 |
+| Detroit | United States | US-0066 | Autos and EVs, parts suppliers | 2.3.5 |
+| Las Vegas | United States | US-0076 | Casinos, gambling, conventions, tourism | 2.3.5 |
+| Vancouver | Canada | CA-0026 | Pacific port, real estate, Asian capital, film | 2.3.5 |
+| Montreal | Canada | CA-0015 | AI research, aerospace, video games | 2.3.5 |
+| Ottawa | Canada | CA-0010 | Federal government, tech | 2.3.5 |
+| Monterrey | Mexico | MX-0011 to MX-0013 | Steel, cement, nearshoring plants, brewing | 2.3.5 |
+| Guadalajara | Mexico | MX-0007 to MX-0009 | Electronics, software, tequila | 2.3.5 |
+| São Paulo | Brazil | BR-0001 to BR-0004 | Finance, vehicles, food processing, soy, beef, sugar, iron ore marketing | none |
+| Antofagasta | Chile | CL-0003 | Copper mining, lithium brine | none |
+| Medellín | Colombia | CO-0005 | Textiles, coffee, flowers, informal economy, cartel money laundering, growing tech scene | none |
+| Rio de Janeiro | Brazil | BR-0010 to BR-0013 | Offshore oil company headquarters, media, tourism | 2.3.5 |
+| Buenos Aires | Argentina | AR-0001 to AR-0004 | Finance, agribusiness, lithium financing, software exports | 2.3.5 |
+| Santiago | Chile | CL-0009, CL-0010 | Finance, mining company headquarters, pension funds | 2.3.5 |
+| London | United Kingdom | GB-0001 to GB-0004 | Insurance, law, wealth management, links to havens; FX trading (post-POC, batch 125) | 2.3.5 |
+| Rotterdam | Netherlands | NL-0004 | Largest European port, chemicals, LNG import, Rhine gateway | none |
+| Eindhoven | Netherlands | NL-0009 | Semiconductors (lithography systems; sole supplier at start), photonics, precision systems | none |
+| Frankfurt | Germany | DE-0019, DE-0020, DE-0023 | Eurozone Central Bank (a flavor name that sets no rate in the POC, batch 125), banking, chemicals, precision optics, auto suppliers, air cargo | 2.3.5 |
+| Paris | France | FR-0001 to FR-0004 | Luxury goods, aerospace, nuclear engineering, defense, finance | none |
+| Zurich | Switzerland | CH-0001 | Private banking, commodity trading houses, insurance, pharma | 2.3.5 |
+| Moscow | Russia | slice pending | Energy company headquarters, metals, defense, oil trading, cybercrime underground | none |
+| Istanbul | Turkey | TR-0001 to TR-0005 | Textiles, vehicles, shipping, regional finance | none |
+| Munich | Germany | DE-0006 to DE-0008 | Autos, insurance and reinsurance, Semiconductors | 2.3.5 |
+| Berlin | Germany | DE-0013 to DE-0015 | Federal government, startups, media | 2.3.5 |
+| Amsterdam | Netherlands | NL-0001 | Stock exchange, fintech, data centers, internet exchange | 2.3.5 |
+| Milan | Italy | IT-0001 to IT-0003 | Finance, fashion, luxury, design | 2.3.5 |
+| Rome | Italy | IT-0007 | Government, the Vatican, tourism, state energy company headquarters | 2.3.5 |
+| St Petersburg | Russia | slice pending | Baltic port, shipbuilding, gas company headquarters | 2.3.5 |
+| Dubai | UAE | slice pending | Re-export logistics, gold trading, free zones, aviation hub, real estate, grey trade | none |
+| Dhahran-Dammam | Saudi Arabia | slice pending | Largest oil fields, petrochemicals, desalination | none |
+| Doha | Qatar | slice pending | Largest LNG exporter, sovereign fund, media network | none |
+| Tel Aviv | Israel | slice pending | Cybersecurity, surveillance tech, Semiconductors (chip design), defense electronics, venture capital | none |
+| Cairo-Suez | Egypt | slice pending | Canal revenue, textiles, fertilizer, construction, gas | none |
+| Lagos | Nigeria | slice pending | Oil money, fintech, consumer goods, film industry, informal economy | none |
+| Johannesburg | South Africa | slice pending | Mining finance, platinum metals, gold, coal power | none |
+| Kolwezi-Lubumbashi | DR Congo | slice pending | Cobalt (about 70% of world supply), copper | none |
+| Riyadh | Saudi Arabia | slice pending | Government, royal court, sovereign fund, megaprojects | 2.3.5 |
+| Abu Dhabi | UAE | slice pending | Sovereign funds, oil, AI investment | 2.3.5 |
+| Cape Town | South Africa | slice pending | Finance, tourism, wine, tech | 2.3.5 |
+| Mumbai | India | slice pending | Finance, main exchange, film industry, generic pharma, petrochemicals (Gujarat abstracted) | none |
+| Bengaluru | India | slice pending | IT services, software outsourcing, Semiconductors (chip design), aerospace, biotech | 2.3.5 |
+| Shanghai | China | CN-0008 to CN-0013 | Largest container port, finance, EVs, Semiconductors (mature nodes), shipbuilding | none |
+| Shenzhen-Dongguan | China | CN-0019 to CN-0022 | Electronics assembly, component markets, drones, EVs and batteries | 2.3.5 |
+| Hong Kong | Hong Kong (SAR of China) | HK-0001 to HK-0003 | Offshore gateway into China, trading houses, re-export, company registrations | none |
+| Beijing | China | CN-0001 to CN-0004 | Central government, state company headquarters, AI and surveillance tech, regulators | none |
+| Baotou | China | CN-0116 | Rare earth mining and separation, steel, aluminium | none |
+| Hsinchu-Taipei | Taiwan | TW-0001 to TW-0005 (Hsinchu City and County added) | Semiconductors (leading-edge logic and advanced packaging), electronics design | 2.3.5 |
+| Seoul-Pyeongtaek | South Korea | KR-0001 to KR-0006 | Semiconductors (memory), displays, batteries, shipbuilding, vehicles, entertainment | 2.3.5 |
+| Tokyo-Yokohama | Japan | JP-0001 to JP-0006, JP-0008, JP-0010 | Finance, vehicles, robotics, Semiconductors (materials), precision machinery | 2.3.5 |
+| Singapore | Singapore | SG-0001 to SG-0003 | Transshipment, petrochemicals, commodity trading, wealth management, data centers, cable landings | 2.3.5 |
+| Penang | Malaysia | MY-0005 | Semiconductors (assembly, test and packaging), electronics | none |
+| Jakarta | Indonesia | ID-0001 to ID-0006, ID-0011 | Consumer market, nickel processing, palm oil, coal | none |
+| Ho Chi Minh City | Vietnam | VN-0001 to VN-0004 | Electronics assembly ("China plus one"), garments, footwear, rice | none |
+| Perth-Pilbara | Australia | AU-0035, AU-0041, AU-0042 (Pilbara) | Iron ore (largest exporter), lithium ore, LNG, gold | none |
+| Sydney | Australia | AU-0001, AU-0002 | Banking, pension funds, property, media, mining company headquarters | none |
+| Delhi NCR | India | slice pending | Capital and government, IT services, autos | 2.3.5 |
+| Hyderabad | India | slice pending | Pharma, IT services, cloud data centers | 2.3.5 |
+| Chennai | India | slice pending | Autos, electronics assembly, port | 2.3.5 |
+| Chengdu | China | CN-0085 to CN-0089 | Electronics assembly, gaming, aerospace | 2.3.5 |
+| Wuhan | China | CN-0063 to CN-0065 | Autos, steel, optical fiber, research labs | 2.3.5 |
+| Osaka-Kobe | Japan | JP-0037 to JP-0040, JP-0042 | Manufacturing, electronics, pharma, port | 2.3.5 |
+| Kaohsiung | Taiwan | TW-0016 | Port, petrochemicals, steel, Semiconductors (new plants) | 2.3.5 |
+| Kuala Lumpur | Malaysia | MY-0001 to MY-0003 | Finance, Islamic finance, palm oil trading, data centers | 2.3.5 |
+| Hanoi | Vietnam | VN-0025 to VN-0027 | Government, electronics plants | 2.3.5 |
+| Melbourne | Australia | AU-0015, AU-0016 | Finance, pension funds, universities, port | 2.3.5 |
 
 ### 2.3.4 Signature starting assets
 
-Each former hub's city province or Metro starts with AI-owned business units in its specialty industries, so the world economy runs from turn one. In a Metro their assets are spread over the member provinces that fit their industry (2.3.1). Examples, plus every hub added in the 2026-10-18 review (Logan, batch 115) **(A)**:
+Each key city's city province or Metro starts with AI-owned business units in its specialty industries (2.3.3), so the world economy runs from turn one. In a Metro their assets are spread over the member provinces that fit their industry (2.3.1). Examples, plus every key city added in the 2026-10-18 review (Logan, batch 115) **(A)**:
 
 | City (Metro or city province) | Signature business units at start |
 |---|---|
@@ -450,7 +422,7 @@ Unit sizes and their province spread live in province data (January 2020 values,
 
 ### 2.3.5 Location perks (Logan, 2026-10-17)
 
-Perks belong to **locations**, not to company size. The big **financial and tech hubs** have perks (Logan, batch 24), and so does every hub added in the 2026-10-18 review (Logan, batch 115). Since batch 118 each perk belongs to the former hub's **city**: its Metro (every member province) or its single city province. Each is of the form **"every company that achieves X here gets Y"**. Any number of companies can hold the same perk; there is no ranking and no size threshold. Starting set **(A)**, values **(T)**:
+Perks belong to **locations**, not to company size. The big **financial and tech cities** have perks (Logan, batch 24), and so does every key city added in the 2026-10-18 review (Logan, batch 115). Each perk belongs to the **key city** (2.3.3): its Metro (every member province) or its single city province. Each is of the form **"every company that achieves X here gets Y"**. Any number of companies can hold the same perk; there is no ranking and no size threshold. Starting set **(A)**, values **(T)**:
 
 | City (Metro or city province) | Achieve | Get |
 |---|---|---|
@@ -511,7 +483,7 @@ Perks belong to **locations**, not to company size. The big **financial and tech
 
 ## 2.4 Chokepoints
 
-Goods do not ship along lanes: each industry has one world market ([10-industry-economy.md](10-industry-economy.md) 10.0). Chokepoints stay on the map as places whose **risk level** raises costs and cuts capacity for the industries exposed to them.
+Goods do not ship along lanes: each industry has one world market ([10-industry-economy.md](10-industry-economy.md) 10.0). Chokepoints stay on the map as places whose **risk level** raises costs and cuts capacity for the industries exposed to them. Each province's chokepoint exposure (2.3.1) records the lanes its trade uses; the old per-hub connection lists are dropped (batch 125 card).
 
 ### 2.4.2 Chokepoints
 
@@ -556,7 +528,7 @@ Shocks raise the oil and gas price indices and, through power plants that burn t
 
 ### 2.5.1 Overview and order of calculation
 
-Influence share is tracked **per holder per place**: province, area, region and country, plus the **city** (a Metro, or a single province ranked City or Metropolis), which carries the old hub perks. Holders are characters, companies and governments (no dynasties or family trusts, batch 116).
+Influence share is tracked **per holder per place**: province, area, region and country, plus the **city** (a Metro, or a single province ranked City or Metropolis), which carries the key city perks (2.3.5). Holders are characters, companies and governments (no dynasties or family trusts, batch 116).
 
 Monthly, for each holder and place:
 
@@ -738,7 +710,7 @@ Tiers apply separately in each province, city, area, region and country (Logan, 
 
 ### 2.5.10 Perks by tier and level
 
-Provinces and areas give **economic perks only**. Political perks start at the **city**: a Metro, or a single province ranked City or Metropolis. Towns and rural provinces have no city level. No place below the country has a government (Logan, batch 121), so every city and region perk works through **national officials**: the ministers who decide about the place ([4-politics.md](4-politics.md) 4.3.5), national legislators elected there, and national tenders for work there **(A)**. Each place where a holder has a tier also adds local standing PC to the country pool (4-politics 4.1.2). Old district perks are now province perks; old hub perks are city perks (Logan, batch 118). Each tier is reached at its level's threshold (2.5.9): 10/25/50% in a province or city, 5/15/30% in an area or region, 3/8/20% in a country **(T)**.
+Provinces and areas give **economic perks only**. Political perks start at the **city**: a Metro, or a single province ranked City or Metropolis. Towns and rural provinces have no city level. No place below the country has a government (Logan, batch 121), so every city and region perk works through **national officials**: the ministers who decide about the place ([4-politics.md](4-politics.md) 4.3.5), national legislators elected there, and national tenders for work there **(A)**. Each place where a holder has a tier also adds local standing PC to the country pool (4-politics 4.1.2). Old district perks are now province perks; old hub perks are key city perks (2.3.5) (Logan, batch 118). Each tier is reached at its level's threshold (2.5.9): 10/25/50% in a province or city, 5/15/30% in an area or region, 3/8/20% in a country **(T)**.
 
 | Tier | Province | City (Metro or city province) | Area **(A)** | Region | Country |
 |---|---|---|---|---|---|
@@ -840,7 +812,7 @@ The game is an alternate reality a little more futuristic than ours. Basic neces
 
 ### 2.8.3 Default segment mix
 
-Share of the labor force (%) by country income tier, then adjusted by city type (applied to every province of the former hub's Metro or city province; other provinces use the tier row alone).
+Share of the labor force (%) by country income tier, then adjusted by city type (applied to every province of the key city's Metro or city province; other provinces use the tier row alone).
 
 | Income tier | Elite | Professionals | Skilled | Unskilled | Gig | Unemployed |
 |---|---|---|---|---|---|---|
@@ -1071,7 +1043,7 @@ Phase changes are rolled monthly; the chance to move on rises with each month in
 
 ### 2.16.6 Gentrification and slum clearance
 
-Slums are no longer districts. Each province's Residential pool has a **slum share** (0% to 100%): the part of its housing that is informal, renting at the slum yield and housing Gig and Unemployed segments first. At start the slum share is the old Slums districts' share of the former hub's districts, and a country default elsewhere (High income 0%, Middle 5%, Developing 20%) **(T)**. Gentrification and clearance are shifts in the pool mix and development (Logan, batch 118):
+Slums are no longer districts. Each province's Residential pool has a **slum share** (0% to 100%): the part of its housing that is informal, renting at the slum yield and housing Gig and Unemployed segments first. At start the slum share is set directly in the province data (batch 125 card), from a country default (High income 0%, Middle 5%, Developing 20%) raised in big poor cities **(T)** **(A)**. Gentrification and clearance are shifts in the pool mix and development (Logan, batch 118):
 
 - **Gentrification**: a province with a slum share whose residential pool price rises over 50% in 5 years rolls yearly (30%). On success the slum share falls 10 points, Commerce +1 (2.17.2), and Gig and Unemployed are pushed to another province (or out of the city); unrest +10 in the province for a year.
 - **Slum clearance** (the national government can push it, or a city Power broker through a Request Decision to the Minister of Land and Housing): the slum share falls 25 points and that part of the Residential pool becomes Land, whose price rises ×3 over 2 years; residents displaced (+15 unrest; the Communist bloc's approval falls).
@@ -1377,14 +1349,14 @@ A national recession cuts consumer demand 6%. The player's retail chain's earnin
 
 Assumptions in this file, to confirm with Logan:
 
-1. **First playable map** (batch 118): about 195 real countries (the 33 major ones with full economy tables, the rest with simple rows in data/countries.csv), about 400 regions, 750 areas and 3,200 land provinces, about 55 Metros so far (every city of 5M or more, batch 119; likely about 100 when all superregions are built) and 14 chokepoints. Minor groups and districts are gone. The province list is built superregion by superregion, North America first.
-2. **Development seeding**: the starting Commerce and Industry of the former hubs' provinces come from their old district mix; slums become a slum share of the Residential pool. Industries get a Commerce or Industry fit (to be added in [10-industry-economy.md](10-industry-economy.md)).
+1. **First playable map** (batch 118): about 195 real countries (the 33 major ones with full economy tables, the rest with simple rows in data/countries.csv), about 400 regions, 750 areas and 3,200 land provinces, 69 Metros in the four built slices (every city of 5M or more and no other, batches 119 and 125; likely about 100 when all superregions are built) and 14 chokepoints. Minor groups and districts are gone. The province list is built superregion by superregion, North America first.
+2. **Development seeding**: starting Commerce, Industry and Population and each province's slum share are set directly in the province data (batch 125 card; the old district mix no longer seeds anything). Industries get a Commerce or Industry fit (to be added in [10-industry-economy.md](10-industry-economy.md)).
 3. **Reference dollar and wage index**: base prices are in US dollar equivalents; the wage index (US = 1.0) scales wages, services, real estate and construction, separately from the politics wealth index, which now also sets province weight.
 4. **Province weight** = total development × wealth index × $0.3B (Logan, batch 119; was $1B), and every higher place, the country included, is the honest sum of its provinces (Logan, batch 120 dropped the batch 119 cap of 3% of GDP on country weight) **(T)**. At $0.3B per point a city province weighs about the old hub mass. National weights are large (United States about $5.1T, Canada about $757B; Alberta about $112B), so tier thresholds drop by level: province and city 10/25/50%, area and region 5/15/30%, country 3/8/20% **(T)** (2.5.9). A large region is a modest part of its country (California about $576B, 11% of the United States), so a holder's regional share is usually well above its national share **(A)**. Jobs count through payroll × 1.5, making employers the most influential holders per dollar.
 5. **Assets come first**: temporary boosts are capped at the larger of 6 pp or the base share, and a tier won by campaigns is lost after one quarter unless backed by assets.
 6. **Province and area tiers give economic perks only**; political perks start at the city level (a Metro or a city province). Towns and rural provinces have no city level. No place below the country has a government (batch 121); city and region perks work through national officials.
 7. **Foreignness penalties, offices, Political Capital and government types** are taken from the politics design; restriction labels are derived from its laws. The starting law positions listed in 2.2.4 (C1, C2, F2, E5, L2, E2, F3) should be mirrored in politics data.
-8. **Location perks** belong to the city provinces and Metros of the former hubs and are open to every company that meets them (2.3.5).
+8. **Location perks** belong to the city provinces and Metros of the key cities and are open to every company that meets them (2.3.5).
 9. **Real estate** is pooled per province in four pools sized from development, with one property cycle per Metro or city province; gentrification and clearance shift the slum share (2.16).
 10. **Development changes yearly** toward targets set by business assets, payroll and pools, and falls with unrest, disasters and decline; provinces climb city ranks and adjacent cities form Metros (2.17).
 11. **Business cycles** run per country with four phases and a global recession event; housing crashes, tech bubbles, debt crises and commodity super-cycles are the main crises (2.18).
