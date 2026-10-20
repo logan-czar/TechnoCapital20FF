@@ -11,8 +11,7 @@ One row per country or dependent territory: 197 sovereign states (the 193 UN mem
 | iso3 | ISO 3166 alpha-3 code (Kosovo uses the user code XKX) |
 | name | Country name |
 | superregion | One of the 8 superregions: North America, Latin America, Europe, Russia and Central Asia, Middle East and North Africa, Sub-Saharan Africa, South Asia, East Asia and Oceania |
-| currency | USD for every country at start (batch 124: the whole world is dollarized) |
-| dormant_currency | The national currency that returns if the country launches its own by law (blank for countries that used USD anyway) |
+| currency | The country's real currency, as flavor only (names, news, history). Every simulated value is in USD; there is no FX in the POC (batch 125) |
 | gdp_usd_bn | GDP in $ billions at the alternate January 2020 start. The 33 majors copy 2.2.3 exactly. Others: real 2019 values, eurozone and other euro users -20%, Greece a further -25% for its default, Puerto Rico +10% with the US; a few history cases set by hand (Syria, Libya, Venezuela, Afghanistan, Iran) and noted in the row (A) |
 | population_m | Population in millions, real 2019 |
 | wealth_index | WI (2.2.3 calls it the wage index). The 33 majors copy 2.2.3. Others use a fit over the majors: WI = 1.065 × (GDP per head / US GDP per head)^0.707, clamped 0.02 to 1.20 (T) |
@@ -44,7 +43,7 @@ The Europe slice (batch 121 follow-up, 2026-10-19): 679 provinces in 51 countrie
 
 ## provinces-latin-america.csv
 
-The Latin America slice (batch 123, 2026-10-19): 391 provinces in 35 countries and territories, same columns and rules as the Europe file. 7 Metros: São Paulo (4), Rio de Janeiro (4), Buenos Aires (4), Lima (3), Bogotá (3), Santiago (2), Belo Horizonte (2). Contested: the Essequibo (VEN claims), Berbice-Linden (SUR claims) and southern Belize (GTM claims). Where a country has fewer provinces than first-level divisions, neighbouring divisions share one region (A). Papa's Port (PP-0001, country PAP, batch 124) is the Falklands micronation under Argentina, added after the build, so the slice now has 392 rows. Every country in the world uses USD at start (batch 124). Summary: provinces-latin-america-summary.md.
+The Latin America slice (batch 123, 2026-10-19): 391 provinces in 35 countries and territories, same columns and rules as the Europe file. 7 Metros: São Paulo (4), Rio de Janeiro (4), Buenos Aires (4), Lima (3), Bogotá (3), Santiago (2), Belo Horizonte (2). Contested: the Essequibo (VEN claims), Berbice-Linden (SUR claims) and southern Belize (GTM claims). Where a country has fewer provinces than first-level divisions, neighbouring divisions share one region (A). Papa's Port (PP-0001, country PAP, batch 124) is the Falklands micronation under Argentina, added after the build, so the slice now has 392 rows. Papa's Port's flavor currency is USD. Summary: provinces-latin-america-summary.md.
 
 ## provinces-east-asia-oceania.csv
 
