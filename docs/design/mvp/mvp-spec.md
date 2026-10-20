@@ -1,6 +1,6 @@
 # TechnoCapital20FF MVP spec: the map, the business system and a read-only economic sim
 
-_Status: v1.0 (2026-10-20). The MVP spec for the map, the business system, a read-only economic sim and a lite AI that only runs its own company, current through Logan's batch 161. Every rule below is the latest ruling, and the batch-by-batch history is in the [Change log](#change-log) at the end._
+_Status: v1.1 (2026-10-20). The MVP spec for the map, the business system, a read-only economic sim and a lite AI that only runs its own company, current through Logan's batch 163 Q6: companies are now born out of the fringe pool and list on their zone exchange once big enough (5.19, 5.20). Every rule below is the latest ruling, and the batch-by-batch history is in the [Change log](#change-log) at the end._
 
 **Sources.** Built from Logan's MVP scope (2026-10-20) and the coordinator's defaults, on [10-industry-economy.md](../detailed/10-industry-economy.md) (10.0 to 10.6, 10.0.11 operations), [21-quarterly-cycle.md](../detailed/21-quarterly-cycle.md), [3-markets-and-fx.md](../detailed/3-markets-and-fx.md) 3.1, 3.3, 3.6, 3.9, 3.13, 3.14, [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.2, 2.3, 2.18, 2.23, 2.24, [20-ui.md](../detailed/20-ui.md), [../09-time-and-turns.md](../09-time-and-turns.md), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) and the data in [../data/](../data/README.md). Where it fills a hole in the docs it marks the answer (A) or (T) and lists it in sections 5A and 11.
 
@@ -18,12 +18,12 @@ The MVP proves one thing: the 651 starting companies can run on their own, quart
 |---|---|---|
 | **Player** | Opens every MVP screen; pause and speeds 1 to 5; skip to next event **(A)** | Every player action: trading, founding, schemes, board seats, travel, the phone, quests |
 | **Map** | 3,255 provinces, 211 countries, regions, areas, 97 Metros, 88 key cities, 8 superregions (design/data/) | Influence, real estate pools, development change, chokepoint risk, travel, unrest |
-| **Companies** | 651 companies (data/companies.csv), one business unit each at HQ (decided, Logan batch 145), board as labor units 1 to 5 filled by simple characters (3.7.1) | Subsidiary directives, shells, deals on units, takeovers, IPOs, characters' personal play |
+| **Companies** | 651 companies (data/companies.csv), one business unit each at HQ (decided, Logan batch 145), board as labor units 1 to 5 filled by simple characters (3.7.1); new companies born out of the fringe pool and IPOs of those companies (5.19, 5.20; batch 163) | Subsidiary directives, shells, deals on units, takeovers, characters' personal play |
 | **Economy** | 42 industries on shared default parameters (batch 148, 2.2), world demand, supply ratio, market factor, fringe pools, productivity, decay, R&D, growth plans | Price indices and cost drivers (D fixed at 1.0) **(A)**, real estate, slop, chokepoints, tariffs |
 | **Operations and data** | Labor units, stations, productive compute, unstructured and structured data, conversion, decay, free R&D (10.0.11) | Schemes, software design stations, software development (14), AI models (18), hacking, data sales |
 | **Software** | Two fixed products: the general productivity software and the general enterprise software, both quality 50 **(A)** | Every other product, licences as a market, bloat, versions |
 | **Quarter** | The 21 cycle, simplified: release, price reaction, AI plan lock, locked quarter, recap week | Grades, firing votes, board displeasure, board day events, guidance rolls, result plot line chains |
-| **Finance** | Light statements, tax, credit line, credit rating, dividends by rule, fair value, simple share price; share issues by cash-burning industries (6.6) are parked while no industry is flagged (batch 148) | Trading, order flow, bonds, margin, short selling, IPOs, buybacks, rights issues, default chain |
+| **Finance** | Light statements, tax, credit line, credit rating, dividends by rule, fair value, simple share price; share issues by cash-burning industries (6.6) are parked while no industry is flagged (batch 148); the IPO share issue of 5.20 | Trading, order flow, bonds, margin, short selling, buybacks, rights issues, default chain |
 | **World** | Static country table; one world base rate (3%, batch 130); one global business cycle felt by 26 financial zones, each with an exchange in a hub city (batches 152 and 154), which also hold the economy settings (credit spread and exchange confidence; 5.1.2); quarterly industry growth draws with phase labels (batch 150); the scripted AI boom (1 Jan 2030) and bubble pop (2040 on average) as switches of the long-term rate (batch 151, 5.1.1) | Politics beyond the static table, media, gambling, vices, FX, the crash's market, quest and event effects beyond demand (8-quest-lines 8.5), other history events |
 | **AI** | Each company sets its own quarterly plan (growth, R&D %, station split, data handling, credit line, dividend); cash-burning industries raise money when runway runs short (6.6, parked while no industry is flagged, batch 148) | Schemes, politics, takeovers, trading, media, anything outside its own company |
 
@@ -180,6 +180,7 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | fringe_assets | Fringe pool business assets (10.0.10) |
 | supply, supply_ratio S, market_factor M | 10.0.3 |
 | published | Last month's demand, supply, S, M, q_growth and phase label, for screens |
+| birth_lambda, births | This quarter's expected births λ and the births so far, by quarter (5.19, batch 163) |
 
 ### 3.5 Corporation
 
@@ -204,6 +205,8 @@ All state lives in the engine's tables, keyed by id (12.3). Money is f64 USD; TB
 | distress_months | Months with cash below 0 after the line is exhausted |
 | status | Active, Distressed, Bankrupt (frozen) or Removed (5.12) |
 | frozen_quarters | Quarters spent Bankrupt (5.12) |
+| origin, born_date, founder | Start (the 651) or Born; the plan lock it was born at; its founder, a simple character (5.19, batch 163) |
+| exchange, listed_date, ipo_price | Listing exchange code (HQ zone, 5.14), the plan lock it listed at and its open_price; empty while private (5.20) |
 
 ### 3.6 Business unit
 
@@ -353,7 +356,7 @@ The quarter starts at each release and ends at the next (21.1). Accounting quart
 | 1. Release | 2 Apr 00:00 | 2 Jul 00:00 | 2 Oct 00:00 | 2 Jan 00:00 | Statements published to Filings; Earnings day alert (Pause by default); prices frozen this tick (21.2) |
 | Price move | 2 Apr 01:00 | 2 Jul 01:00 | 2 Oct 01:00 | 2 Jan 01:00 | Full fair value; earnings jump ×1.5; buzz; rating review; credit line review; result headlines |
 | 2. Reaction week | 2 Apr 01:00 to 9 Apr 00:00 | 2 to 9 Jul | 2 to 9 Oct | 2 to 9 Jan | Daily 20% reversion toward V; hourly volatility ×2 falling to ×1 by day 7 (21.3.1) |
-| 3. Plan lock | 9 Apr 00:00 | 9 Jul 00:00 | 9 Oct 00:00 | 9 Jan 00:00 | Every company's Lite AI plan (section 6) in one batch; consensus set; old plan ran until now (21.5) |
+| 3. Plan lock | 9 Apr 00:00 | 9 Jul 00:00 | 9 Oct 00:00 | 9 Jan 00:00 | Company births (5.19), then listings (5.20), then every company's Lite AI plan (section 6) in one batch, new companies included; consensus set; old plan ran until now (21.5) |
 | 4. Locked quarter | 9 Apr to 25 Jun | 9 Jul to 25 Sep | 9 Oct to 26 Dec | 9 Jan to 26 Mar | Plans fixed; projections shown as ranges |
 | 5. Pre-quarter-end week | 25 Jun 00:00 to 2 Jul 00:00 | 25 Sep to 2 Oct | 26 Dec to 2 Jan | 26 Mar to 2 Apr | Quarterly recap built and shown (Pause by default); no board day events **(A)** |
 
@@ -690,7 +693,7 @@ Free R&D steps: under 1 TB 0%; 1 TB 1%; 10 TB 2%; 100 TB 3%; 1 PB 4%; 10 PB 5%; 
 - **Distress, bankruptcy and removal (Logan, batch 145; timings T).** Forced asset sales, then frozen, then removed:
   1. **Forced sales (Distressed).** If cash is still below 0 with the line full, `distress_months += 1` and the unit sells assets at the sale factor until cash reaches 0. No dividends; purchases stop (g = −d_eff at most). A month that ends with cash at or above 0 and the line within its limit resets distress_months to 0.
   2. **Bankrupt and frozen.** After **6 distress months**, or with no assets left, the company is **Bankrupt**: frozen for **2 quarters** (no revenue, no expenses, no decay, 10.0.2; its capacity leaves supply), delisted from quotes with the price set to $0.00, and **shareholders wiped**: equity is 0 and every holder's stake is worthless. It stays on screens and the map, marked Bankrupt.
-  3. **Removed.** At the first release after its 2 frozen quarters, its remaining assets are sold at the Bust factor (0.60) to repay the line, any unpaid line is written off by the bank **(A)**, and the company is **removed from the game**: off lists, the map and the screens, its simple characters discarded. Its filings, price history and headlines stay in the archive **(A)**. Sold capacity leaves the game, like any MVP asset sale **(A)**.
+  3. **Removed.** At the first release after its 2 frozen quarters, its remaining assets are sold at the Bust factor (0.60) to repay the line, any unpaid line is written off by the bank **(A)**, and the company is **removed from the game**: off lists, the map and the screens, its simple characters discarded. Its filings, price history and headlines stay in the archive **(A)**. Its remaining gross assets go back to its industry's fringe_assets, so the market keeps the capacity and births can spin it out again (batch 163, 5.19); other MVP asset sales still take capacity out of the game **(A)**.
 
 ### 5.13 Fair value (10.0.8, 3.3.1; conflict C8)
 
@@ -727,7 +730,57 @@ Paid at the plan lock from the last quarter: `dividend = payout ratio × NI` if 
 
 ### 5.18 Industry news (10.0.6)
 
-Each phase change posts one headline for the industry; each release posts the five largest beats and misses, bankruptcies and removals (5.12) and rating changes of 2+ notches; each raise and failed raise (6.6) posts one headline. MVP headlines come from a neutral **Pdoomberg Wire** byline, since outlets and slant are out of scope **(A)**.
+Each phase change posts one headline for the industry; each release posts the five largest beats and misses, bankruptcies and removals (5.12) and rating changes of 2+ notches; each raise and failed raise (6.6) posts one headline; each birth posts "[Name] spins out in [industry] in [city or province]" and each listing "[Name] lists on [exchange code] at $[price], raising $[net]M" (5.19, 5.20). MVP headlines come from a neutral **Pdoomberg Wire** byline, since outlets and slant are out of scope **(A)**.
+
+### 5.19 Company births (Logan, batch 163 Q6a)
+
+Logan (batch 163, Q6 a): "Company births: fast-growing industries spin startups out of the fringe pool, and private companies list (IPO) once they reach a size."
+
+Without births the named world only shrinks (5.12), and a fast-growing industry grows only through its unnamed fringe. Births run at each plan lock (4.4), before the Lite AI batch, so a new company gets its first plan the same day. Draws use the gen stream (3.1) in industry id order, so a seed always gives the same births **(A)**.
+
+**How many (T).** For each industry not labeled Glut or Bust (5.1):
+
+- heat `h = max(0, (1 + q_growth)^4 − 1 − 6%)`: this quarter's growth a year, above a 6% floor;
+- fringe factor `f = clamp(1 + log10(fringe revenue in $B), 0.5, 5)`: a bigger unnamed pool has a bit more room to spin out;
+- expected births `λ = 0.35 × h × (1 + 2h) × f`. The number is a Poisson draw on λ, capped at 3 per industry and 6 world-wide a quarter (over 6, a random 6 are kept).
+
+The (1 + 2h) term makes very fast growth count for more, so a boom shows as a wave. Retail (3%) spawns almost nothing; EVs (25%, fringe $223B) about 1.5 a year; AI labs in the boom (100% a year) about 1.5 a quarter.
+
+**Each birth (A, T).**
+
+| Item | Rule |
+|---|---|
+| Size | Target revenue log-uniform $5M to $50M, capped at 2% of the fringe's revenue; no birth under $1M |
+| Assets | `gross_assets = target revenue × capital_per_dollar`, carved out of the industry's fringe_assets (5.3), so supply is conserved. asset_book = gross (newly bought), no ramping, productivity 100 |
+| HQ | One province, weighted by `province weight (2-map 2.3.1) × (1 + named companies of the industry with HQ there) × 3 if a key city there lists the industry`; country, zone and exchange follow |
+| Name | Generated from the world-gen name lists (tools/world-gen/names.py), unique; no ticker while private |
+| Founder and board | The founder is a new simple character (3.7.1) in the CEO seat; seats 2 to 5 open with labor units (5.10) |
+| Cap table | Founder 60%, unnamed seed investors 40%; control_basis majority. The founder controls but gives no trait nudges, since only named controllers nudge (section 6) |
+| Seed round | Cash `= 0.5 × gross_assets` from the seed investors; no line drawn; rating implied from the run rate (5.12) |
+| Shares | The 7.1 rule for private companies (batch 161): shares = engine value ÷ open_price |
+| Data and history | Empty (7.1 note, batch 146): 0 TB held, no history; TTM figures scale the quarters so far to a year until there are 4 **(A)**. Stations by the 7.1 rules |
+| Archetype | 6.1 as written: a Tech birth under $50M is a Startup |
+
+**The reverse path.** A removed company's remaining assets go back to its industry's fringe (5.12 step 3), so capacity that leaves the named world returns to the pool that births draw from.
+
+**Sanity check (scratchpad script, 300 seeds, pop on 1 January 2040; it skips Glut, distress and funding caps).** About 9 births a year in 2020 to 2029 (EVs 1.6, Drones 1.0, Cloud 1.0 a year; 24 of the 42 industries under 0.1 a year); about 17 a year in 2030 to 2035, of them about 6 a year in AI labs (33 in all, against 11 named labs at start); about 12 to 13 a year after the pop. About 360 births in 30 years.
+
+### 5.20 Listings (IPO) (Logan, batch 163 Q6a)
+
+At each plan lock, after births, a private Active company born in play (5.19) **(A)** may list when all of these hold **(T)**:
+
+- at least 8 quarters since its birth, and TTM revenue at least $250M;
+- TTM net income above 0, or 4-quarter revenue growth of at least 20%;
+- rating B or better, not Distressed, and its industry not labeled Bust.
+
+Each eligible company lists with chance `25% + phase adj + confidence ÷ 10` percentage points, clamped 0% to 50%, with phase adj Boom +15, Normal 0, Glut −10 and confidence its exchange's (5.1.2); at most 4 listings world-wide a quarter **(T)**. Listing **(A, T)**:
+
+1. **Exchange**: its HQ zone's exchange (5.14).
+2. **Price**: pre-money value = engine value (5.13, with that exchange's X and no private discount); open_price by the batch 161 rule (7.1); existing shares are re-split to `pre-money value ÷ open_price`.
+3. **New money**: new shares equal to 20% of those go to an unnamed **public float** holder at `open_price × 0.92` (the 6.6 small-cap discount), less 3% fees; cash rises by the net; holders dilute as in 6.6.
+4. **Listed**: public = Y, a unique ticker of up to 4 letters, P = open_price, buzz 0. It joins its exchange's headline index with the divisor adjusted, so the level does not jump. From the next release its statements publish and its figures stop showing **?**.
+
+Sanity check (same script, which skips the profit test, so an upper bound): almost no listings before 2029, 1 to 3 a year in the boom, 4 to 9 a year in the 2040s, about 110 in 30 years.
 
 ---
 
@@ -765,6 +818,9 @@ Rule: the newest Logan ruling wins; where Logan has not ruled, the most recent d
 | C26 | Price factor PF per country (2-map 2.1.1) and electricity price index per country grid (10.6) vs batches 155 and 157 | price_level was derived from wage_level and is removed with it (batch 157); nothing in the MVP read it (D fixed at 1.0). The electricity index becomes one per zone grid post-MVP (A) |
 | C27 | Market sentiment per exchange (3.3.5) and investor confidence vs batches 155 and 157 | One confidence value per zone exchange, starting at confidence_start (0 for all, T) and moved daily by its headline index and news (Logan, batch 157, 2a; 5.1.2). Logan, batch 158 (2a): it nudges the fair value of companies listed there by up to ±10% (X, 5.13, T). A company's own investor confidence factor still comes from its board (5.7, 10.5.2), since it belongs to the company, not the economy (A) |
 | C28 | What stays national after batch 155 | Corporate tax (5.11; tax is national law, paid where profit is earned), the sovereign rating and its corporate ceiling (5.12), the sovereign spread and government debt, laws, sanctions and politics (batch 121) (A) |
+| C29 | v1.0 scope: no IPOs and no new companies in the read-only MVP vs Logan, batch 163 Q6a | Companies are born out of the fringe pool and list once big enough (5.19, 5.20). The player still founds nothing (section 1) |
+| C30 | 5.12: a removed company's sold capacity leaves the game vs births carving capacity out of the fringe | Removed capacity returns to the fringe (5.12 step 3), so births and removals move capacity both ways (A) |
+| C31 | 7.1 note: a company founded in play starts with the barebones loadout and only the CEO seat vs a spin-out carved from the fringe | A spin-out keeps the "starts empty" part (0 TB, no history) but takes its carved assets, and its seats open with labor units as usual (5.19, A) |
 
 ---
 
@@ -906,6 +962,7 @@ All built from 20-ui. Every action button is hidden or shows a lock icon with "R
 | **Pdoomberg** | 20.5.2, 3.13.1 | Full-screen terminal. F2 Quotes (watchlists: All, by industry, by country, Disclosure radar hidden); F3 Chart (daily bars with the estimated fair value band, ±15% for listed companies, 3.14.2; true V is never shown); F4 Order shows "Read-only MVP"; F5 Filings (quarterly statements); F6 Ratings (credit ratings only); F7 Bonds (base rate, zone credit spreads and sovereign spreads, batch 155); F9 Industries; F10 Screener (read-only filters) |
 | **Quarterly recap** | 20.7.9, 21.6.2 | Opens the pre-quarter-end week. World page: global phase and g_t, industries by phase label, biggest expected beats and misses by projection. Company page (watchlist companies): anticipated earnings range, expected reaction, confidence, outlook (phase label, losses, rating watch). No guidance choice |
 | **News feed** | 20.5.1 | Pdoomberg Wire headlines (5.18) with date and industry tag |
+| **Births and listings** (batch 163) | 20.7.6, 20.7.2 | Industries table: a births column (last 4 quarters) and the fringe share; Company header: "Spun out [date]" and "Listed [date] on [exchange] at $[price]"; F10 Screener filter by origin and listing date (5.19, 5.20) |
 | **Time controls** | 9.1 | Pause (Space), speeds 1 to 5 (keys 1 to 5): 2 s, 1 s, 0.5 s, 0.2 s per hour and max; alerts: Earnings day (Pause), Quarterly recap (Pause), Plan lock (Log), Bankruptcy in watchlist (Notify), each settable Pause, Notify, Log, Off |
 
 ---
@@ -948,10 +1005,11 @@ One engine object exposed through gdext (12.3). Queries read the last finished t
 | `get_rates()` | Base rate, zone credit spreads, sovereign spreads, rating spreads (batch 155) |
 | `get_news(since, filter)` | Headlines |
 | `get_recap(scope)` | scope: world or a company id |
+| `list_births(since)` / `list_listings(since)` | Births: id, name, industry, HQ, date, size; listings: id, ticker, exchange, date, ipo_price, money raised (5.19, 5.20). list_companies also filters by origin (start, born) and listed |
 
 ### 9.3 Signals
 
-`tick_done(datetime)`, `day_done(date)`, `month_done(month)`, `earnings_released(quarter)`, `plan_locked(quarter)`, `alert(kind, payload)`, `paused(reason)`.
+`tick_done(datetime)`, `day_done(date)`, `month_done(month)`, `earnings_released(quarter)`, `plan_locked(quarter)`, `company_born(id)`, `company_listed(id)`, `alert(kind, payload)`, `paused(reason)`.
 
 ### 9.4 Query tables kept ready
 
@@ -977,13 +1035,15 @@ Views carry dirty flags (12.3); only changed rows are rebuilt.
 | M3 | Operations and data: labor, seats, stations, PC bonus, data create, convert, decay, free R&D | Arrowhead check (7.1) passes |
 | M4 | Books: ledger, statements, tax, credit line, rating, dividends, asset decay, distress, bankruptcy and removal | Balance sheet balances every month for every company still in the game |
 | M5 | Valuation and price: fair value, hourly price, earnings jump, reaction week | Opening price at V, $5 to $200 by size (company-start.csv); prices track V within ±30% over 10 years |
-| M6 | Lite AI and the quarter loop: plan lock, consensus, projections, recap, news wire | A full year runs four releases, four locks, four recaps |
+| M6 | Lite AI and the quarter loop: plan lock, consensus, projections, recap, news wire; company births and listings (5.19, 5.20) | A full year runs four releases, four locks, four recaps; a birth takes exactly its assets from the fringe (supply unchanged before PC bonuses) and a listing keeps assets = liabilities + equity |
 | M7 | GDExtension API and views; Godot shell: top bar, time controls, alerts | Godot runs the sim at all speeds; screens read views only |
 | M8 | Map: geometry pipeline (gap G1), zoom, map modes, province card | All 3,255 provinces clickable |
 | M9 | Screens: Company, Industries, Pdoomberg, Recap, News | Every section 8 screen opens in under 100 ms |
 | M10 | Soak and balance: 30-year headless run, determinism replay | 30 years in under 2 minutes headless; same seed gives the same hashes; balance targets below; the AI boom and the pop fire on their dates and, with noise off, AI labs demand matches validate.py's boom run (5.1.1, batch 151) |
 
 **Balance targets after 10 years (T):** at least 85% of the 651 companies neither bankrupt nor removed; industry revenue within ±30% of the trend path; median productivity 90 to 110; no industry stuck at an M clamp for more than 8 quarters; 30% to 60% of releases are beats; the 2020 to 2029 run before the boom (5.1.1): each industry's 10-year average demand growth within ±3 pp of its long-term rate in 90% of seeds, and 10% to 25% of industry-quarters labeled Boom and 10% to 20% Bust (batch 150).
+
+**Births and listings targets (T, batch 163; checked in the M10 soak).** 4 to 15 births a year on average in 2020 to 2029; 15 to 50 AI labs births in 2030 to 2035 in 80% of seeds; the named company count stays between 600 and 1,100 in every year of the 30-year run; 20 to 150 listings in 30 years.
 
 ---
 
@@ -1004,6 +1064,7 @@ The most important things the docs do not define well enough to build, each with
 | G9 | **Batch 143 board-seat items.** The board meeting chain (21.4) and the labor seats of batch 142 left open: board size beyond 5 seats, charter minimums under 5 labor units, election vs controller appointment, investor and government seats, and starting data (1-corporate-core 1.8.1); the grading formula, performance score and firing threshold (21.4.1 to 21.4.3, 21.9 items 6 to 8) | **Decided (Logan, batch 146; batch 143 picks):** charter seats beyond the 5 labor seats are ordinary directors with no labor unit; the charter minimum of 5 applies only from 5 labor units; when a seat opens the controller appoints and the appointee stands at the next yearly meeting; VC, strategic-investor and government seats take the next labor seat as it opens, or sit beyond 5 if all are full (1-corporate-core 1.8.1); the 651 starting companies keep their generated starting data and new companies start empty (7.1). The MVP still has no elections, firing or board play (C14); the grading, performance score and firing values stay as in 21.4 (T, 21.9) |
 | G10 | **Thin margins after R&D at the norm.** margin_full_use minus rd_norm is negative for Consumer electronics (-2%), EVs (-6%), E-commerce (-1%) and AI labs (-15%), and about 0 for Autos, Aerospace and Robotics, so these start at or below break-even before interest. Older than batch 145; asset decay does not change EBIT | **Decided (Logan, batch 146):** intended. The four are cash-burning industries that live on investor money (10-industry-economy 10.3); their margins and rd_norm stay as they are. When runway falls under 4 quarters they raise money by a discounted share issue or, if rated, a credit line draw, with success set by investor confidence and the industry's phase label; failures go down the bankruptcy path (6.6). Autos, Aerospace and Robotics are not cash-burning; check them in the M10 soak **(T)**. **Parked (Logan, batch 148):** with the shared defaults no industry is thin or cash-burning (2.2); the flags and the 6.6 rule return with the per-industry rework (11.2) |
 | G11 | **Zone economy details (batches 155 to 158). Decided.** | Logan, batch 156: (1a) corporate tax stays national (C28); (2a) zone values are set directly per zone, seeded from GDP-weighted member averages (5.1.2); (3b) a company's home government softens the zone: home_spread = half zone credit spread + half home sovereign spread (5.1.2, 5.12, 5.13). Logan, batch 157: (1ab) base spread plus a quarterly cycle term (k 8, clamp 0.5x to 2x base, T); (2a) confidence per zone exchange from its index and news (T); (3) no geographic wage or price level. Logan, batch 158: (1) the WI and PF leftovers are restated with flat prices **(A)**: 2-map 2.8.4 wages and training, 2.8.6 union thresholds, 2.16 pools, 2.17 targets, province weight (total development × $0.3B; batch 159 adds the GDP per head factor G; batch 160 makes it sqrt of the ratio, safety clamp 0.1 to 4) and sponsorship; 4-politics bribes, legal fees and every "× wealth index" price, and the 4.23 guard and cyber team costs; 14-software 14.4.1 `L` (flat $100); 1-corporate-core spending budgets; 5-ideology retraining; 6-technocapital robotaxi revenue. wealth_index is an equality index and multiplies no cost; bodyguards are removed. (2a) exchange confidence feeds fair value through X (5.13). Batch 159: the 2.14 examples are restated and rich-country provinces weigh more again through G (GDP per head, not equality). Open: equality could plausibly feed unrest, unions or bribe acceptance later, but nothing reads it |
+| G12 | **Nothing created companies after load**, so the named world only shrank and fast growers grew only through the fringe | **Decided (Logan, batch 163 Q6a):** births out of the fringe pool and IPOs (5.19, 5.20; all numbers T). Open: births driven by growth above a flat 6% floor rather than above each industry's own long-term rate (which would hide the AI wave, since the boom raises the long-term rate itself); only companies born in play may list (all 68 starting privates over $250M have a named controller or a state owner); founders give no trait nudges |
 
 ### 11.1 Doc fixes (all done)
 
@@ -1044,6 +1105,8 @@ Logan: "we will rework them one by one once companies are known working." The MV
 ## Change log
 
 Newest first. Section numbers say where each change lives now.
+
+- **v1.1 (2026-10-20), batch 163 Q6 (Logan, option a).** Company births: hot industries spin small companies out of the fringe pool at each plan lock, about 9 a year normally and a wave of AI labs in the boom; companies born in play list on their zone exchange once past $250M of revenue, with a 20% share issue; a removed company's assets return to the fringe (3.4, 3.5, 4.4, 5.12, 5.18, 5.19, 5.20, 8, 9, 10, C29 to C31, G12).
 
 - **v1.0 (2026-10-20), cleanup pass (Logan approved).** The 11.1 doc fixes are made in the source docs; stale lines from before batches 155 to 161 are fixed (scope row, daily confidence step 4.2, rights issues, 7.3, C9, the recap screen, M0, key city ids); the batch history moves here from the status line.
 - **Batch 161.** Starting balance sheet and share count (G6 decided): the asset book is 50% of gross business assets; cash fills the gap up to book equity, or a drawn line covers the shortfall plus min_cash; opening prices run $5 to $200 by size (median $47) with shares = engine value ÷ open_price; new data/company-start.csv (7.1, C15, G6).

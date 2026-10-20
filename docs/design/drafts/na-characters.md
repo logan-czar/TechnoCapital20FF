@@ -1,6 +1,6 @@
 # North American characters (draft v3, 2026-10-18)
 
-_Status: draft for Logan's review. Batch 137 (Logan): the 8 Part 2 characters who own companies (Beau Lacoste, Corinne Vale, Hollis Brandt, Inés Villarreal, Ty Whitaker, Wesley Chu, Silas Reed, Lucía Ferraro) are in characters.csv as **minor holders, not rivals** ([7-starting-world.md](../detailed/7-starting-world.md) 7.4, 7.11); "Rival" in their ties is an opinion tie, not rival status. The rest of this draft is not in 7-starting-world yet. Consistency pass 3 (batch 129): "hub" becomes "city" (there are no hubs)._
+_Status: draft for Logan's review. Batch 164 (Logan): Terry's premise, edges and secret now carry the truth of his background and his Liberal Kryptonite perk ([7-starting-world.md](../detailed/7-starting-world.md) 7.3.5). Batch 137 (Logan): the 8 Part 2 characters who own companies (Beau Lacoste, Corinne Vale, Hollis Brandt, Inés Villarreal, Ty Whitaker, Wesley Chu, Silas Reed, Lucía Ferraro) are in characters.csv as **minor holders, not rivals** ([7-starting-world.md](../detailed/7-starting-world.md) 7.4, 7.11); "Rival" in their ties is an opinion tie, not rival status. The rest of this draft is not in 7-starting-world yet. Consistency pass 3 (batch 129): "hub" becomes "city" (there are no hubs)._
 
 **What every entry has:** age, city, profile and wealth, appearance, traits, ideology, skills, holdings, premise, secret or burden, AI goal and ties.
 
@@ -47,11 +47,11 @@ _Status: draft for Logan's review. Batch 137 (Logan): the 8 Part 2 characters wh
   - A very popular casino, held by a private company he owns outright.
   - 60% of Arrowhead Drilling (he is Chair).
   - The Kids Who Code charity.
-- **Premise:** he is a Native financier of questionable origins. Ethnically Black and 1/8th Native American, he plays up the Native part as his grift; his listed nationality is First Nations and Black. He bought out the union-era company as the union broke up.
+- **Premise:** he is a Native financier of questionable origins. In public he presents as First Nations, and plays up the Native part as his grift. In truth he is a Black man with 1/8th First Nations ancestry, adopted and raised by a white family (batch 164; his secret, below). He bought out the union-era company as the union broke up.
 - **Edges:**
-  - +25% success and -25% discovery on schemes against Liberal characters.
+  - Liberal Kryptonite (batch 164): +25% success and -25% discovery on schemes against Liberal characters, Liberal-slant outlets never cover his scandals, and his Heat gains are x0.75. Lost for good if his secret comes out.
   - The media can never expose his schemes.
-- **Secret or burden:** the casino's books and his deals. He wants to run casino money through Arrowhead.
+- **Secret or burden:** the truth of his background (batch 164; if it comes out, Heat +50 and Liberal Kryptonite is lost), the casino's books and his deals. He wants to run casino money through Arrowhead.
 - **AI goal:** grow the casino empire and his pull in Alberta and Ottawa, and keep John useful.
 - **Ties:**
   - John, who can befriend him or work on his downfall.

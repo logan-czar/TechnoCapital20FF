@@ -26,7 +26,7 @@ ch('john', 'John Techno', 'player', 'Talented', 'Edmonton', 'CA-0033', 22, '', (
 ch('terry', 'Terry Tippacanoe', 'rival', 'Rich', 'Edmonton', 'CA-0033', 61, 'criminal', (18,8,17,19,4,16),
    ['Deceitful','Greedy','Gregarious'], 'Chuds', 90_000_000, wealth=1.0,
    hook='A Native financier of questionable origins who owns a very popular casino and, since the union broke, John\'s company.',
-   notes='7.3.5; $1B net worth (batch 78); +25% success and -25% discovery on schemes against Liberals; the media never exposes his schemes; money_type criminal (A)')
+   notes='7.3.5; $1B net worth (batch 78); +25% success and -25% discovery on schemes against Liberals; the media never exposes his schemes; Liberal Kryptonite perk (batch 164): the Liberal scheme buff plus no Liberal-slant coverage and Heat gains x0.75 (T) while his secret holds; secret (batch 164): presents as First Nations but is a Black man with 1/8 First Nations ancestry adopted by a white family; if it comes out he loses the perk for good and takes Heat +50 (T); money_type criminal (A)')
 # ---------------------------------------------------------------- 7.3 rivals
 ch('antone', 'Antone Provolone', 'rival', 'Connected', 'New York', 'US-0086', 39, 'criminal', (16,7,18,17,3,15),
    ['Gregarious','Ruthless','Greedy'], 'Liberals', 4_000_000,
