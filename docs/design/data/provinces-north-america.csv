@@ -202,7 +202,7 @@ CA-0053,Western Newfoundland,CAN,Newfoundland and Labrador,Newfoundland and Labr
 CA-0054,Labrador,CAN,Newfoundland and Labrador,Newfoundland and Labrador,,none,1,9,1,Iron ore,Arctic,Y,,,,"Labrador Trough iron ore, Churchill Falls hydro, Voisey's Bay nickel"
 CA-0055,Prince Edward Island,CAN,Prince Edward Island,Prince Edward Island,,Town,3,2,4,Farmland,Temperate,Y,,,,"Charlottetown, potatoes"
 CA-0056,Yukon,CAN,Yukon,Yukon,,none,2,3,1,Gold,Arctic,N,,,,"Whitehorse, Klondike gold"
-CA-0057,Northwest Territories,CAN,Northwest Territories,Northwest Territories,,Town,2,5,1,None,Arctic,N,,,,"Yellowknife, diamond mines"
+CA-0057,Northwest Territories,CAN,Northwest Territories,Northwest Territories,,Town,2,5,1,Diamonds,Arctic,N,,,,"Yellowknife, diamond mines; tag Diamonds added in batch 128"
 CA-0058,Baffin-Iqaluit,CAN,Nunavut,Nunavut,,none,1,4,1,Iron ore,Arctic,Y,,,,"territorial capital, Mary River iron ore"
 CA-0059,Kivalliq-Kitikmeot,CAN,Nunavut,Nunavut,,none,1,4,1,Gold,Arctic,Y,,,,Meadowbank gold
 MX-0001,Cuauhtemoc-Centro,MEX,Ciudad de Mexico,Ciudad de Mexico,Mexico City,Metropolis,16,6,15,None,Urban,N,,,,"Reforma offices, Bolsa Mexicana, government"

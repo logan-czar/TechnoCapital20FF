@@ -61,3 +61,10 @@ The South Asia slice (batch 126, 2026-10-20): 208 provinces in 8 countries, same
 - Greenland, Bermuda and Saint Pierre and Miquelon (5 rows) were added to provinces-north-america.csv, which now has 260 rows.
 
 The world map is complete: 3,258 provinces, matching countries.csv provinces_planned.
+
+## Batch 128 (2026-10-20)
+
+- Dubai, Sharjah and Ajman are one city: the Dubai Metro of 3 provinces (AE-0008 Dubai Core, AE-0010 Dubai Marina-Jebel Ali, AE-0012 Sharjah-Ajman). AE-0009, AE-0011 and AE-0015 were merged into them, so the MENA file has 331 rows and the world 3,255.
+- New resource tags Platinum and Diamonds; 15 provinces retagged (Rustenburg, the Great Dyke, Jwaneng, Orapa, Catoca, Mirny, the Northwest Territories, Kimberley and others).
+- Russian areas now follow the federal districts, split into 14 areas.
+- Djibouti and Zambia are Chinese debt vassals (countries.csv subject_of CHN).

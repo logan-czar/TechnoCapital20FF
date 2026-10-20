@@ -98,7 +98,7 @@ ARM,Armenia,Russia and Central Asia,AMD,13.6,2.96,0.15,N,Liberal democracy,Guard
 AZE,Azerbaijan,Russia and Central Asia,AZN,48.0,10,0.16,N,Managed democracy,Guarded,,10,Caspian oil; old group Black Sea and Caucasus; government_type (A)
 TUR,Turkey,Europe,TRY,750,83.4,0.28,Y,Managed democracy,Screened,,36,Superregion Middle East and North Africa (A)
 SAU,Saudi Arabia,Middle East and North Africa,SAR,850,34.3,0.55,Y,One-party state (ruling family),Guarded,,37,
-ARE,United Arab Emirates,Middle East and North Africa,AED,420,9.8,0.45,Y,One-party state (ruling family),Guarded,,18,Haven free zones (C6) stay inside the UAE
+ARE,United Arab Emirates,Middle East and North Africa,AED,420,9.8,0.45,Y,One-party state (ruling family),Guarded,,15,Haven free zones (C6) stay inside the UAE
 ISR,Israel,Middle East and North Africa,ILS,400,9.05,0.80,Y,Liberal democracy,Screened,,17,
 EGY,Egypt,Middle East and North Africa,EGP,300,100.4,0.10,Y,Managed democracy (US friend),Guarded,,34,
 QAT,Qatar,Middle East and North Africa,QAR,180,2.83,0.60,Y,One-party state (ruling family),Guarded,,10,
@@ -149,14 +149,14 @@ SOM,Somalia,Sub-Saharan Africa,SOS,4.9,15.4,0.02,N,Failed state,Guarded,,13,old 
 SDN,Sudan,Sub-Saharan Africa,SDG,32.0,42.8,0.04,N,Managed democracy (US-friendly transition after Bashir),Guarded,,23,Red Sea coast; old group East Africa and Horn
 SSD,South Sudan,Sub-Saharan Africa,SSP,4.0,11.1,0.03,N,Failed state,Guarded,,12,Oil; old group East Africa and Horn (A)
 ERI,Eritrea,Sub-Saharan Africa,ERN,2.0,3.5,0.03,N,One-party state,Restricted,,6,Group default Guarded overridden for a closed one-party state (A); old group East Africa and Horn (A); government_type and restriction (A)
-DJI,Djibouti,Sub-Saharan Africa,DJF,3.3,0.97,0.12,N,Managed democracy,Guarded,,4,Bab-el-Mandeb port and bases; old group East Africa and Horn (A); government_type (A)
+DJI,Djibouti,Sub-Saharan Africa,DJF,3.3,0.97,0.12,N,Managed democracy,Guarded,CHN,4,"Bab-el-Mandeb port and bases; old group East Africa and Horn (A); government_type (A); Chinese debt vassal at start via Belt and Road (Logan, batch 128; 4-politics 4.11.8)"
 RWA,Rwanda,Sub-Saharan Africa,RWF,10.4,12.6,0.05,N,Managed democracy,Guarded,,8,old group East Africa and Horn (A); government_type (A)
 BDI,Burundi,Sub-Saharan Africa,BIF,3.0,11.5,0.02,N,Managed democracy,Guarded,,6,old group East Africa and Horn (A); government_type (A)
 MDG,Madagascar,Sub-Saharan Africa,MGA,14.1,26.9,0.03,N,Liberal democracy,Guarded,,15,old group Central and Southern Africa (A); government_type (A)
 MUS,Mauritius,Sub-Saharan Africa,MUR,14.2,1.27,0.29,N,Liberal democracy,Screened,,4,Offshore finance gateway to India and Africa; restriction Screened (A); old group East Africa and Horn (A); government_type and restriction (A)
 SYC,Seychelles,Sub-Saharan Africa,SCR,1.7,0.098,0.39,N,Liberal democracy,Guarded,,1,old group East Africa and Horn (A); government_type (A)
 COM,Comoros,Sub-Saharan Africa,KMF,1.2,0.85,0.07,N,Managed democracy,Guarded,,2,old group East Africa and Horn (A); government_type (A)
-ZMB,Zambia,Sub-Saharan Africa,ZMW,23.3,17.9,0.06,N,Managed democracy,Guarded,,15,Copperbelt (abstracted into the Kolwezi-Lubumbashi hub until now); old group Central and Southern Africa; government_type (A)
+ZMB,Zambia,Sub-Saharan Africa,ZMW,23.3,17.9,0.06,N,Managed democracy,Guarded,CHN,15,"Copperbelt (abstracted into the Kolwezi-Lubumbashi hub until now); old group Central and Southern Africa; government_type (A); Chinese debt vassal at start via Belt and Road (Logan, batch 128; 4-politics 4.11.8)"
 AGO,Angola,Sub-Saharan Africa,AOA,84.0,31.8,0.10,N,Managed democracy,Guarded,,22,Oil; old group Central and Southern Africa; government_type (A)
 ZWE,Zimbabwe,Sub-Saharan Africa,ZWL,21.8,14.6,0.07,N,Managed democracy,Guarded,,13,"Lithium, platinum; old group Central and Southern Africa; government_type (A)"
 MOZ,Mozambique,Sub-Saharan Africa,MZN,15.3,30.4,0.03,N,Managed democracy,Guarded,,16,Offshore gas; old group Central and Southern Africa; government_type (A)
