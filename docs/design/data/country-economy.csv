@@ -1,4 +1,4 @@
-iso3,corp_tax_level,corp_tax_rate,sovereign_rating,country_spread_bps,financial_zone,notes
+iso3,corp_tax_level,corp_tax_rate,sovereign_rating,sovereign_spread_bps,financial_zone,notes
 USA,Moderate,0.258,AAA,0,NA,2.2.3 level Moderate kept; real rate is nearer High; rating AAA: stronger US in the alternate history (3.6.5 example)
 CAN,Moderate,0.265,AAA,0,NA,2.2.3 level Moderate kept; real rate is nearer High
 MEX,High,0.3,BBB+,80,MX,

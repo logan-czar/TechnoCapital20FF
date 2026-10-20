@@ -1,6 +1,6 @@
 # Map data files
 
-_Status (2026-10-20): Batch 154 (Logan): Japan zone (with Taiwan), Russia zone. financial-zones.csv has 26 rows: zone 25 Japan (JP; hub Tokyo-Yokohama, JP-0001; ESE Edo Securities Exchange, Edo 225; Japan and Taiwan) and zone 26 Russia (RU; hub Moscow, RU-0001; YRX Yauza River Exchange, Yauza 50; Russia and Belarus, A); country-economy.csv moves JPN, TWN, RUS and BLR; the Tokyo and Moscow key cities name their zone exchange; validate.py expects 26 zones; Z 1.07. Batch 153 (Logan): Macau gets its own country row. MAC is a Chinese special region like Hong Kong: countries.csv 211 rows, province CN-0030 re-id'd MO-0001 in country MAC, China plans 145 provinces and Macau 1 (world still 3,255), and country-economy.csv puts MAC in zone 11 (Macau)._
+_Status (2026-10-20): Batch 155 (Logan): economy settings apply per financial zone, not per country. financial-zones.csv gains wage_level, price_level, credit_spread_bps and confidence_start, seeded from GDP-weighted member values; country-economy.csv's country_spread_bps is renamed sovereign_spread_bps and keeps only the national side (tax, sovereign rating and spread, zone). Batch 154 (Logan): Japan zone (with Taiwan), Russia zone. financial-zones.csv has 26 rows: zone 25 Japan (JP; hub Tokyo-Yokohama, JP-0001; ESE Edo Securities Exchange, Edo 225; Japan and Taiwan) and zone 26 Russia (RU; hub Moscow, RU-0001; YRX Yauza River Exchange, Yauza 50; Russia and Belarus, A); country-economy.csv moves JPN, TWN, RUS and BLR; the Tokyo and Moscow key cities name their zone exchange; validate.py expects 26 zones; Z 1.07. Batch 153 (Logan): Macau gets its own country row. MAC is a Chinese special region like Hong Kong: countries.csv 211 rows, province CN-0030 re-id'd MO-0001 in country MAC, China plans 145 provinces and Macau 1 (world still 3,255), and country-economy.csv puts MAC in zone 11 (Macau)._
 
 Data tables for the EU4-style map (batch 118). Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. The `former_hub` column is dropped from every province file; key city province ids live in [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3.3, and future slices (Russia and Central Asia, Middle East and North Africa, Sub-Saharan Africa, South Asia) use the same columns without it. Rules live in [../detailed/2-map-and-influence.md](../detailed/2-map-and-influence.md); the approved plan is [../reviews/map-rework-eu4-plan.md](../reviews/map-rework-eu4-plan.md). Values marked (A) are assumptions and (T) are tuning values.
 
@@ -126,7 +126,9 @@ The starting characters and companies (Logan, batch 136; rules in [7-starting-wo
 | notes | Canon links and assumptions |
 
 
-## MVP data tables: industries.csv, country-economy.csv, key-cities.csv (batch 147, 2026-10-20), financial-zones.csv (batches 150, 152 and 154), ai-boom.csv (batch 151)
+## MVP data tables: industries.csv, country-economy.csv, key-cities.csv (batch 147, 2026-10-20), financial-zones.csv (batches 150, 152, 154 and 155), ai-boom.csv (batch 151)
+
+Batch 155 (Logan): economy settings apply per financial zone, not per country. Logan: "Things that we were traditionally applying to a countries economy we are no apply across and entire financial zone." financial-zones.csv gains four zone economy columns, each set per zone and seeded by gen.py as the GDP-weighted average of the members' old country values (T; ZONE_ECON_SET in gen.py overrides by hand, empty at start): wage_level (from countries.csv wealth_index), price_level (0.3 + 0.7 x wage_level), credit_spread_bps (from the members' sovereign spreads) and confidence_start (0). Companies borrow at the base rate plus their zone's credit spread plus their rating spread (mvp-spec 5.12). country-economy.csv keeps the national, government side: corp_tax_level, corp_tax_rate, sovereign_rating, sovereign_spread_bps (renamed from country_spread_bps) and financial_zone. validate.py checks the new columns and the seeds and prints each zone's values with its members' ranges (mvp-spec 5.1.2).
 
 Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth. AI labs' trend_growth drops from 0.30 to 0.05 (its long-term rate before the boom); industries.csv gains `boom_uplift` and `crash_drop`; new ai-boom.csv (15 rows) holds AI labs' long-term rate by stage and boom year (mvp-spec 5.1.1). validate.py now draws growth with `lt_q = (1 + LT)^(1/4) - 1`, reports compound yearly growth, and runs a seeded 2020 to 2045 boom check.
 
@@ -178,7 +180,7 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 
 ### country-economy.csv
 
-211 rows, one per countries.csv row, holding only what countries.csv lacks. The wage index is countries.csv `wealth_index` (2.2.3 calls it the wage index, USA 1.00) and is not repeated here.
+211 rows, one per countries.csv row, holding only what countries.csv lacks. Since batch 155 it is the national, government side only; economy settings (wage level, price level, credit spread, confidence) are on the zone in financial-zones.csv. countries.csv `wealth_index` (2.2.3 calls it the wage index, USA 1.00) is the seed of the zone wage level and is not repeated here.
 
 | Column | Meaning |
 |---|---|
@@ -186,7 +188,7 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 | corp_tax_level | Haven, Low, Moderate or High (E2 Corporate Tax, 4-politics). Majors copy 2.2.3; the 8 havens of 2.2.5 (Cayman Islands, British Virgin Islands, Bermuda, Jersey, Guernsey, Gibraltar, Isle of Man, Luxembourg) are Haven; others take the band nearest their rate (A) |
 | corp_tax_rate | Rate charged in the MVP: real 2020 statutory rate, national plus typical sub-national, from the Tax Foundation and KPMG 2020 tables entered by hand (T). Havens 0.03 (E2 Haven rate); zero-tax countries floored at 0.03 (A); 10 countries with no reliable figure use 0.21 (A) |
 | sovereign_rating | 3.6.2 scale. Real January 2020 ratings moved for the alternate history (euro crisis, Greece's default, Russia's sanctions, a stronger US Middle East); unrated countries by wealth index, or CCC if collapsed (A) |
-| country_spread_bps | Spread over the 3% world base rate: the 3.6.2 sovereign spread for the rating, notches interpolated, plus a 50 to 200 bps crisis premium for 8 countries in the euro or debt crisis (T). US 0 |
+| sovereign_spread_bps | Renamed from country_spread_bps (batch 155). The government's own spread over the 3% world base rate: the 3.6.2 sovereign spread for the rating, notches interpolated, plus a 50 to 200 bps crisis premium for 8 countries in the euro or debt crisis (T). US 0. Companies do not borrow at it since batch 155; it seeds the zone's credit_spread_bps |
 | financial_zone | Zone id in financial-zones.csv (Logan, batch 152; batch 150 had 8 zones). Every country is in exactly one zone, its nearest sensible one, listed in gen.py ZONE_MEMBERS (A); notes mark the assumed placements (Greenland and Saint Pierre and Miquelon in the EU zone, British havens with the UK, Chinese debt vassals with China, Belarus with Russia; Japan, Taiwan and Russia placed by Logan in batch 154). Replaces cycle_group and cycle_phase_start, since there are no national cycles |
 | notes | Sources and assumptions per row |
 
@@ -209,6 +211,10 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 | extra_provinces | Provinces of another country's row that belong to the zone. Empty since batch 153, when Macau got its own row MAC (it held Macau's CN-0030 before) |
 | countries | Member count, from country-economy.csv (Macau 1: MAC) |
 | gdp_usd_bn, gdp_share | Zone GDP from countries.csv and its share of world GDP |
+| wage_level | Batch 155: the zone's wage index (US 1.00), seeded as the GDP-weighted members' wealth_index, 2 decimals (T): 0.04 North Korea to 1.20 Macau; EU 0.74 |
+| price_level | Batch 155: 0.3 + 0.7 x wage_level, the 2-map 2.1.1 price factor at zone level |
+| credit_spread_bps | Batch 155: the spread companies in the zone borrow at over the world base rate, seeded as the GDP-weighted members' sovereign_spread_bps (T): 0 Switzerland, 1 North America, 78 EU, 591 Argentina, 1,400 North Korea |
+| confidence_start | Batch 155: starting market sentiment of the zone exchange, -100 to +100 (3-markets 3.3.5); 0 for all (T) |
 | notes | Who is in it and why (A) |
 
 ### ai-boom.csv

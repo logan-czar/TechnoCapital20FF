@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Build the MVP design data tables (Logan, batch 147; industries on shared defaults, batch 148; zones, batch 150; Japan and Russia zones, batch 154).
+"""Build the MVP design data tables (Logan, batch 147; industries on shared defaults, batch 148; zones, batch 150; Japan and Russia zones, batch 154; zone economy, batch 155).
 
     python3 gen.py [design dir]
 
 Writes into <design>/data/:
   industries.csv        42 rows  (mvp-spec 2.2; 10-industry-economy 10.3, 10.3.1, 10.0.11.10; 3-markets 3.3.2)
   country-economy.csv   211 rows (mvp-spec 2.2; 2-map 2.2.3, 2.2.5, 2.18.2; 3-markets 3.6.2, 3.6.5; 4-politics E2)
-  financial-zones.csv    26 rows (mvp-spec 2.2, 5.1; 2-map 2.18.2; 3-markets 3.2.1; Logan, batches 150, 152 and 154)
+  financial-zones.csv    26 rows (mvp-spec 2.2, 5.1, 5.1.2; 2-map 2.18.2; 3-markets 3.2.1; Logan, batches 150, 152, 154 and 155)
   ai-boom.csv            15 rows (mvp-spec 2.2, 5.1.1; 7-starting-world 7.7; Logan, batch 151)
   key-cities.csv        88 rows  (2-map 2.3.3, 2.3.4, 2.3.5, parsed from the markdown; 8 zone hubs, batch 152)
 
@@ -519,18 +519,45 @@ ZONE_NOTE = {'GRL': 'Greenland follows Denmark into the EU zone (A)',
 def financial_zone(c):
     return ZONE_OF[c['iso3']]
 
+# Logan, batch 155: "Things that we were traditionally applying to a countries economy we are no apply across and
+# entire financial zone." Economy settings live on the zone (mvp-spec 5.1.2, 5A C23 to C28); government settings stay
+# national (corporate tax, sovereign rating and spread, laws, sanctions, politics; batch 121) (A).
+# Each zone value is set directly per zone; the default seed is the GDP-weighted average of the members' old country
+# values (T). ZONE_ECON_SET overrides a seed by hand: {zone_id: {column: value}} (empty at start).
+#   wage_level        GDP-weighted wage index WI (countries.csv wealth_index; US 1.00), 2 decimals (2-map 2.1.1)
+#   price_level       0.3 + 0.7 x wage_level, the 2-map 2.1.1 price factor PF at zone level (linear, so the same as
+#                     the GDP-weighted PF of the members)
+#   credit_spread_bps GDP-weighted sovereign_spread_bps of the members: the zone spread corporate borrowing pays over
+#                     the world base rate (mvp-spec 5.12, 5.13)
+#   confidence_start  starting market sentiment of the zone exchange, -100 to +100 (3-markets 3.3.5); 0 for all (T)
+ZONE_ECON_SET = {}
+CONFIDENCE_START = 0
+
+def zone_economy(members, gdp, ce_by_iso, wi):
+    g = sum(gdp[i] for i in members)
+    wl = round(sum(gdp[i] * wi[i] for i in members) / g, 2)
+    cs = round(sum(gdp[i] * float(ce_by_iso[i]['sovereign_spread_bps']) for i in members) / g)
+    return {'wage_level': wl, 'price_level': round(0.3 + 0.7 * wl, 3), 'credit_spread_bps': cs,
+            'confidence_start': CONFIDENCE_START}
+
 def build_zones(countries, ce_rows):
     gdp = {c['iso3']: float(c['gdp_usd_bn']) for c in countries}
+    wi = {c['iso3']: float(c['wealth_index']) for c in countries}
+    ce_by_iso = {r['iso3']: r for r in ce_rows}
     total = sum(gdp.values())
     rows = []
     for (zid, num, name, hub, hub_prov, code, exch, index, inten, lag, cont, own, extra, note) in ZONES:
         members = [r['iso3'] for r in ce_rows if r['financial_zone'] == zid]
         g = sum(gdp[i] for i in members)
+        econ = zone_economy(members, gdp, ce_by_iso, wi)
+        econ.update(ZONE_ECON_SET.get(zid, {}))
         rows.append({'zone_id': zid, 'number': num, 'name': name, 'hub_city': hub, 'hub_province': hub_prov,
                      'exchange_code': code, 'exchange': exch, 'headline_index': index, 'intensity': fmt(inten),
                      'lag_quarters': lag, 'contagion': fmt(cont), 'own_shock_sd': fmt(own),
                      'extra_provinces': extra, 'countries': len(members), 'gdp_usd_bn': round(g),
-                     'gdp_share': fmt(g / total), 'notes': note})
+                     'gdp_share': fmt(g / total), 'wage_level': fmt(econ['wage_level'], 2),
+                     'price_level': fmt(econ['price_level'], 3), 'credit_spread_bps': econ['credit_spread_bps'],
+                     'confidence_start': econ['confidence_start'], 'notes': note})
     return rows
 
 # 3.6.5 crisis premium while in a debt crisis or the default chain, as the calibration offset (A, T)
@@ -603,8 +630,10 @@ def build_countries(countries):
         zone = financial_zone(c)
         if iso in ZONE_NOTE:
             notes.append(ZONE_NOTE[iso])
+        # batch 155: renamed from country_spread_bps. The government's own spread (sovereign bonds post-MVP; the seed
+        # of its zone's credit_spread_bps); company borrowing reads the zone spread instead (mvp-spec 5.12, 5A C23)
         rows.append({'iso3': iso, 'corp_tax_level': level, 'corp_tax_rate': fmt(rate),
-                     'sovereign_rating': rating, 'country_spread_bps': spread, 'financial_zone': zone,
+                     'sovereign_rating': rating, 'sovereign_spread_bps': spread, 'financial_zone': zone,
                      'notes': '; '.join(notes)})
     return rows
 
