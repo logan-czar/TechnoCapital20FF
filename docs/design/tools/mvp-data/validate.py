@@ -11,10 +11,10 @@ one, every hub province exists, lies in its zone and belongs to its hub city, ev
 exchange codes are unique, and listed companies are counted by their HQ country's zone exchange; a seeded 40-quarter run of the batch 150
 industry growth model (mvp-spec 5.1), which prints how far each industry's average growth sits from its
 long-term rate; and a seeded 2020 to 2045 run of the batch 151 AI boom (mvp-spec 5.1.1: boom 2030, pop 2040),
-which prints AI labs' long-term rate and demand by year; batch 155: every zone has its economy columns (wage_level,
-price_level, credit_spread_bps, confidence_start) in range, price_level = 0.3 + 0.7 x wage_level, the seeds match
-the GDP-weighted member values unless gen.py sets the zone by hand, and country-economy.csv has sovereign_spread_bps
-and no country-level economy columns. Returns 1 on any error.
+which prints AI labs' long-term rate and demand by year; batch 155: every zone has its economy columns
+(credit_spread_bps, confidence_start) in range, the spread seed matches the GDP-weighted member value unless gen.py
+sets the zone by hand, and country-economy.csv has sovereign_spread_bps and no country-level economy columns;
+batch 157: no wage_level or price_level anywhere (labor is the industry labor_value only). Returns 1 on any error.
 """
 import csv, glob, math, os, random, statistics, sys
 
@@ -263,13 +263,15 @@ def run(data):
     inten = {z['zone_id']: float(z['intensity']) for z in zones}
     z_avg = sum(gdp[r['iso3']] * inten[r['financial_zone']] for r in ce) / sum(gdp[r['iso3']] for r in ce)
     # batch 155 (Logan): economy settings apply per financial zone, not per country
-    wi = {r['iso3']: float(r['wealth_index']) for r in load(os.path.join(data, 'countries.csv'))}
     for col in ('sovereign_spread_bps', 'corp_tax_rate', 'sovereign_rating', 'financial_zone'):
         if ce and col not in ce[0]:
             errors.append(f'country-economy: missing column {col}')
     for col in ('country_spread_bps', 'wage_level', 'price_level', 'credit_spread_bps', 'confidence_start'):
         if ce and col in ce[0]:
-            errors.append(f'country-economy: {col} is a zone setting since batch 155')
+            errors.append(f'country-economy: {col} is a zone setting since batch 155 or removed in batch 157')
+    for col in ('wage_level', 'price_level'):
+        if zones and col in zones[0]:
+            errors.append(f'financial-zones: {col} removed in batch 157 (labor is the industry labor_value only)')
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     try:
         from gen import ZONE_ECON_SET
@@ -279,31 +281,23 @@ def run(data):
     for z in zones:
         zid = z['zone_id']
         try:
-            wl, pl = float(z['wage_level']), float(z['price_level'])
             cs, cf = float(z['credit_spread_bps']), float(z['confidence_start'])
         except (KeyError, ValueError):
             errors.append(f'{zid}: zone economy columns missing or not numbers')
             continue
-        if not 0.02 <= wl <= 1.5:
-            errors.append(f'{zid}: wage_level {wl} out of 0.02 to 1.5')
-        if abs(pl - (0.3 + 0.7 * wl)) > 0.0015:
-            errors.append(f'{zid}: price_level {pl} is not 0.3 + 0.7 x wage_level')
         if not 0 <= cs <= 2500:
             errors.append(f'{zid}: credit_spread_bps {cs} out of 0 to 2500')
         if not -100 <= cf <= 100:
             errors.append(f'{zid}: confidence_start {cf} out of -100 to +100')
         mem = [r for r in ce if r['financial_zone'] == zid]
         g = sum(gdp[r['iso3']] for r in mem)
-        seed_wl = sum(gdp[r['iso3']] * wi[r['iso3']] for r in mem) / g
         seed_cs = sum(gdp[r['iso3']] * float(r['sovereign_spread_bps']) for r in mem) / g
         hand = ZONE_ECON_SET.get(zid, {})
-        if 'wage_level' not in hand and abs(wl - seed_wl) > 0.0051:
-            errors.append(f'{zid}: wage_level {wl} is not the GDP-weighted member WI {seed_wl:.3f}')
         if 'credit_spread_bps' not in hand and abs(cs - seed_cs) > 0.51:
             errors.append(f'{zid}: credit_spread_bps {cs} is not the GDP-weighted member spread {seed_cs:.1f}')
         lo = min(mem, key=lambda r: float(r['sovereign_spread_bps']))
         hi = max(mem, key=lambda r: float(r['sovereign_spread_bps']))
-        zone_econ.append((z, wl, pl, cs, cf, lo, hi, min(wi[r['iso3']] for r in mem), max(wi[r['iso3']] for r in mem)))
+        zone_econ.append((z, cs, cf, lo, hi))
     for r in inds:
         if not 0 <= float(r['volatility']) <= 0.10:
             errors.append(f'{r["name"]}: volatility out of 0 to 10% a quarter')
@@ -392,10 +386,10 @@ def run(data):
               f'{z["lag_quarters"]}q {z["contagion"]:>4} {z["countries"]:>3} {100 * float(z["gdp_share"]):5.1f}% '
               f'{listed.get(z["exchange_code"], 0):>3}')
     print(f'  GDP-weighted intensity Z = {z_avg:.3f}')
-    print('\nZone economy (Logan, batch 155): wage level (member WI range), price level, credit spread bps '
+    print('\nZone economy (Logan, batches 155 and 157): base credit spread bps '
           '(member sovereign spread range), confidence start')
-    for z, wl, pl, cs, cf, lo, hi, wlo, whi in zone_econ:
-        print(f'  {z["number"]:>2} {z["zone_id"]:4} wage {wl:4.2f} ({wlo:.2f} to {whi:.2f})  price {pl:5.3f}  '
+    for z, cs, cf, lo, hi in zone_econ:
+        print(f'  {z["number"]:>2} {z["zone_id"]:4} '
               f'credit {cs:5.0f} ({lo["sovereign_spread_bps"]} {lo["iso3"]} to {hi["sovereign_spread_bps"]} {hi["iso3"]})  '
               f'confidence {cf:+.0f}')
     avg, path = growth_run(inds, z_avg, seed=150)

@@ -524,39 +524,35 @@ def financial_zone(c):
 # national (corporate tax, sovereign rating and spread, laws, sanctions, politics; batch 121) (A).
 # Each zone value is set directly per zone; the default seed is the GDP-weighted average of the members' old country
 # values (T). ZONE_ECON_SET overrides a seed by hand: {zone_id: {column: value}} (empty at start).
-#   wage_level        GDP-weighted wage index WI (countries.csv wealth_index; US 1.00), 2 decimals (2-map 2.1.1)
-#   price_level       0.3 + 0.7 x wage_level, the 2-map 2.1.1 price factor PF at zone level (linear, so the same as
-#                     the GDP-weighted PF of the members)
 #   credit_spread_bps GDP-weighted sovereign_spread_bps of the members: the zone spread corporate borrowing pays over
 #                     the world base rate (mvp-spec 5.12, 5.13)
 #   confidence_start  starting market sentiment of the zone exchange, -100 to +100 (3-markets 3.3.5); 0 for all (T)
+# Logan, batch 157 (3): "we don't have wage value we have labor_value that is it. This is bound to industry not
+# geography." No zone wage or price level: labor is industries.csv labor_value_usd only. credit_spread_bps is the
+# fixed base the quarterly cycle term moves around (mvp-spec 5.1.2, batch 157 1ab, A).
 ZONE_ECON_SET = {}
 CONFIDENCE_START = 0
 
-def zone_economy(members, gdp, ce_by_iso, wi):
+def zone_economy(members, gdp, ce_by_iso):
     g = sum(gdp[i] for i in members)
-    wl = round(sum(gdp[i] * wi[i] for i in members) / g, 2)
     cs = round(sum(gdp[i] * float(ce_by_iso[i]['sovereign_spread_bps']) for i in members) / g)
-    return {'wage_level': wl, 'price_level': round(0.3 + 0.7 * wl, 3), 'credit_spread_bps': cs,
-            'confidence_start': CONFIDENCE_START}
+    return {'credit_spread_bps': cs, 'confidence_start': CONFIDENCE_START}
 
 def build_zones(countries, ce_rows):
     gdp = {c['iso3']: float(c['gdp_usd_bn']) for c in countries}
-    wi = {c['iso3']: float(c['wealth_index']) for c in countries}
     ce_by_iso = {r['iso3']: r for r in ce_rows}
     total = sum(gdp.values())
     rows = []
     for (zid, num, name, hub, hub_prov, code, exch, index, inten, lag, cont, own, extra, note) in ZONES:
         members = [r['iso3'] for r in ce_rows if r['financial_zone'] == zid]
         g = sum(gdp[i] for i in members)
-        econ = zone_economy(members, gdp, ce_by_iso, wi)
+        econ = zone_economy(members, gdp, ce_by_iso)
         econ.update(ZONE_ECON_SET.get(zid, {}))
         rows.append({'zone_id': zid, 'number': num, 'name': name, 'hub_city': hub, 'hub_province': hub_prov,
                      'exchange_code': code, 'exchange': exch, 'headline_index': index, 'intensity': fmt(inten),
                      'lag_quarters': lag, 'contagion': fmt(cont), 'own_shock_sd': fmt(own),
                      'extra_provinces': extra, 'countries': len(members), 'gdp_usd_bn': round(g),
-                     'gdp_share': fmt(g / total), 'wage_level': fmt(econ['wage_level'], 2),
-                     'price_level': fmt(econ['price_level'], 3), 'credit_spread_bps': econ['credit_spread_bps'],
+                     'gdp_share': fmt(g / total), 'credit_spread_bps': econ['credit_spread_bps'],
                      'confidence_start': econ['confidence_start'], 'notes': note})
     return rows
 
