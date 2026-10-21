@@ -119,6 +119,25 @@ fn ratings_and_company_detail_show_the_books() {
         assert_eq!(o.status, c.finance.status());
         assert_eq!(o.archetype, c.archetype);
     }
+    // list_companies (monthly): at load, revenue and NI over the trailing published quarters,
+    // the synthetic Q1 to Q3 2019 annualized (D228): the run rate.
+    let fresh = Sim::new(data(), 2).unwrap();
+    let w0 = fresh.world();
+    let rows = &fresh.views().company_rows.get().rows;
+    assert_eq!(rows.len(), 651);
+    for row in rows {
+        let c = &w0.companies[row.id];
+        let year: f64 = c.finance.quarters()[..4]
+            .iter()
+            .map(|s| s.lines.revenue)
+            .sum();
+        assert!(
+            (row.revenue_ttm - year).abs() < 1e-6 * year.max(1.0),
+            "{}",
+            c.key
+        );
+        assert_eq!(row.rating, c.finance.rating);
+    }
     let chile = r.get(company(w, "CO-0179")).unwrap();
     println!(
         "Andes Cobre on 2 January 2020: {} (implied {}), line rate {:.2}% (home spread {:.0} bps)",
