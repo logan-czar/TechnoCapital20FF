@@ -125,12 +125,12 @@ fn check(key: &str, open: &Sheet, m: &Ledger, close: &Sheet, sheet_view: (f64, f
     }
 }
 
-fn run(seed: u64) -> (u64, [usize; 3]) {
+fn run(seed: u64) -> (u64, [usize; 4]) {
     let mut sim = Sim::new(data(), seed).unwrap();
     let n = sim.world().companies.len();
     let mut open: Vec<Sheet> = (0..n).map(|i| sheet(sim.world(), i)).collect();
     let end = DateTime::midnight(Date::ymd(2020 + YEARS, 1, 1));
-    let (mut checked, mut bankrupt_months) = (0u64, 0usize);
+    let (mut checked, mut bankrupt_months, mut dipped) = (0u64, 0usize, 0usize);
     let mut ever_bankrupt = vec![false; n];
     while sim.now() < end {
         sim.step();
@@ -159,6 +159,31 @@ fn run(seed: u64) -> (u64, [usize; 3]) {
                 bankrupt_months += 1;
                 ever_bankrupt[i] = true;
             }
+            // Cash after a close (D122): the step 13 settle leaves a company not frozen at or
+            // above 0 (auto-draw, then forced sales). At a quarter end the 4.4 close then pays
+            // the quarter's tax, which can leave cash below 0 by at most that tax; the next
+            // month's settle (an ordinary month, checked here next time) draws or sells for it.
+            if !c.finance.status().is_frozen() {
+                let t = tol(&open[i], &close);
+                if now.date().is_quarter_first_month() {
+                    assert!(
+                        close.cash >= -posted.lines.tax_paid - t,
+                        "{} {}: cash {} below its tax paid",
+                        c.key,
+                        posted.month,
+                        close.cash
+                    );
+                    dipped += usize::from(close.cash < -t);
+                } else {
+                    assert!(
+                        close.cash >= -t,
+                        "{} {}: cash {} after the settle",
+                        c.key,
+                        posted.month,
+                        close.cash
+                    );
+                }
+            }
             open[i] = close;
             checked += 1;
         }
@@ -182,6 +207,7 @@ fn run(seed: u64) -> (u64, [usize; 3]) {
             ever_bankrupt.iter().filter(|&&b| b).count(),
             bankrupt_months,
             removed,
+            dipped,
         ],
     )
 }
@@ -189,11 +215,12 @@ fn run(seed: u64) -> (u64, [usize; 3]) {
 #[test]
 fn every_company_balances_every_month_for_ten_years() {
     for seed in SEEDS {
-        let (checked, [bankrupt, bankrupt_months, removed]) = run(seed);
+        let (checked, [bankrupt, bankrupt_months, removed, dipped]) = run(seed);
         println!(
             "seed {seed}: {checked} company-months checked over {YEARS} years; {bankrupt} \
              companies went Bankrupt ({bankrupt_months} Bankrupt company-months checked on the \
-             estate line), {removed} removed"
+             estate line), {removed} removed; {dipped} quarter closes left cash below 0 by the tax \
+             paid, each settled by the next month"
         );
         // The run is long enough to cover the whole walk: some companies are checked while
         // Bankrupt and some are removed (the M4.7 path on the starting data).

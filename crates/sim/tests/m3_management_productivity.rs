@@ -166,7 +166,8 @@ fn plans_and_board(w: &mut World, _: &mut JobCtx<'_>) {
         let norm = w.industries[w.units[unit].industry].params.rd_norm;
         w.units[unit].rd_plan = mult * norm;
         // Keep the test companies solvent, so the M4 books (5.12 distress) never freeze them
-        // before the year is out: CO-0026 and CO-0027 start CC with a drawn line (D16).
+        // before the year is out: CO-0026 and CO-0027 start with $0 cash and no line, so the
+        // barebones loadout is in forced sales from the first month (design fix 226).
         let c = &mut w.companies[id];
         c.cash_usd = SOLVENT_CASH_USD;
         c.finance.line.drawn = 0.0;
