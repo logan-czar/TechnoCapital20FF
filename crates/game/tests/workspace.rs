@@ -566,3 +566,101 @@ fn layouts_and_density() {
         "{rows:?}"
     );
 }
+
+/// The entity of the button whose label is `label` (a theme button's text child).
+fn button_labelled(app: &mut App, label: &str) -> Entity {
+    let text = app
+        .world_mut()
+        .query::<(Entity, &Text)>()
+        .iter(app.world())
+        .find(|(_, t)| t.0 == label)
+        .map(|(e, _)| e)
+        .unwrap_or_else(|| panic!("no {label:?} text"));
+    app.world().get::<ChildOf>(text).unwrap().parent()
+}
+
+/// A Settings button in an unfocused pane works on the first click: the press that focuses its
+/// pane (and moves the last layout) does not rebuild the page under the pointer, and neither
+/// does a divider drag.
+#[test]
+fn settings_buttons_work_in_an_unfocused_pane() {
+    use game::test_support::{click, drag, press as pointer_press};
+    let mut app = shell_app();
+    open(&mut app, PageRef::Settings, OpenTarget::NewPane);
+    let focused = ws(&app).focused();
+    assert_eq!(
+        ws(&app).page(focused),
+        Some(&PageRef::World),
+        "Settings is unfocused"
+    );
+    let compact = button_labelled(&mut app, "compact");
+    app.world_mut()
+        .trigger(pointer_press(compact, PointerButton::Primary));
+    frames(&mut app, 2);
+    assert_ne!(
+        ws(&app).focused(),
+        focused,
+        "the press focused the Settings pane"
+    );
+    assert!(
+        app.world().get_entity(compact).is_ok(),
+        "the focus change did not rebuild the page"
+    );
+    // A divider drag moves only the last layout: no rebuild either.
+    let divider = app
+        .world_mut()
+        .query::<(Entity, &game::ui::theme::Tooltip)>()
+        .iter(app.world())
+        .find(|(_, t)| t.0.starts_with("Drag to resize ("))
+        .map(|(e, _)| e)
+        .unwrap();
+    let container = app.world().get::<ChildOf>(divider).unwrap().parent();
+    app.world_mut().entity_mut(container).insert(ComputedNode {
+        size: Vec2::new(1000.0, 600.0),
+        inverse_scale_factor: 1.0,
+        ..default()
+    });
+    let split = ws(&app).splits()[0].0;
+    app.world_mut()
+        .trigger(drag(divider, Vec2::new(100.0, 0.0)));
+    frames(&mut app, 2);
+    assert!(
+        (ws(&app).ratio(split).unwrap() - 0.6).abs() < 1e-4,
+        "dragged 100 of 1000 px"
+    );
+    assert!(app.world().get_entity(compact).is_ok());
+    app.world_mut()
+        .trigger(click(compact, PointerButton::Primary));
+    frames(&mut app, 2);
+    assert_eq!(app.world().resource::<UiConfig>().density, Density::Compact);
+}
+
+/// A link click opens its page in the focused pane; a middle click in a new pane; a right click
+/// opens nothing.
+#[test]
+fn link_clicks_open_pages() {
+    use game::test_support::click;
+    let mut app = shell_app();
+    let link = |app: &mut App, page: &PageRef| {
+        app.world_mut()
+            .query::<(Entity, &Link)>()
+            .iter(app.world())
+            .find(|(_, l)| &l.0 == page)
+            .map(|(e, _)| e)
+            .unwrap()
+    };
+    let e = link(&mut app, &PageRef::Industries);
+    app.world_mut().trigger(click(e, PointerButton::Secondary));
+    frames(&mut app, 2);
+    assert_eq!(focused_page(&app), PageRef::World);
+    app.world_mut().trigger(click(e, PointerButton::Primary));
+    frames(&mut app, 2);
+    assert_eq!(focused_page(&app), PageRef::Industries);
+    act(&mut app, PaneAction::Back(None));
+    let e = link(&mut app, &PageRef::News);
+    app.world_mut().trigger(click(e, PointerButton::Middle));
+    frames(&mut app, 2);
+    assert_eq!(ws(&app).len(), 2);
+    assert_eq!(ws(&app).page(ws(&app).pane_ids()[1]), Some(&PageRef::News));
+    assert_eq!(focused_page(&app), PageRef::World, "the focus stays");
+}

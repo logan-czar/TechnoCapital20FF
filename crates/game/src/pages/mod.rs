@@ -407,7 +407,9 @@ pub enum Refresh {
     Manual,
     /// Also whenever one of its views' versions moves.
     OnViewChange,
-    /// Also whenever the UI config changes (the Settings page).
+    /// Also whenever the config's display settings or layout names change
+    /// ([`UiConfig::display_signature`]; the Settings page). Focus moves and divider drags
+    /// change only the last layout, so they rebuild nothing.
     OnConfigChange,
 }
 

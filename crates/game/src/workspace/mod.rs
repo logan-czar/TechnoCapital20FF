@@ -676,11 +676,7 @@ fn render_panes(
     mut frames: Query<(&mut PaneFrame, &mut BorderColor)>,
     mut frame_count: Local<usize>,
     mut scrolls: Query<&mut ScrollPosition>,
-    mut cfg_rev: Local<u64>,
 ) {
-    if cfg.is_changed() {
-        *cfg_rev += 1;
-    }
     // Views move every tick at speed; only pages that rebuild on them need a look then.
     let view_pages = views.is_changed()
         && frames.iter().any(|(f, _)| {
@@ -710,7 +706,7 @@ fn render_panes(
             Some(s) if s.refresh == Refresh::OnViewChange => {
                 s.views.iter().map(|&k| view_meta(&views, k).1).collect()
             }
-            Some(s) if s.refresh == Refresh::OnConfigChange => vec![*cfg_rev],
+            Some(s) if s.refresh == Refresh::OnConfigChange => vec![cfg.display_signature()],
             _ => Vec::new(),
         };
         let want = Drawn {

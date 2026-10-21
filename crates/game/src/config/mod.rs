@@ -37,7 +37,7 @@ pub const COLUMN_WIDTH_MIN: f32 = 24.0;
 pub const COLUMN_WIDTH_MAX: f32 = 900.0;
 
 /// Row density (D458): table rows and page lines.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
 pub enum Density {
     /// 18 px rows.
     Compact,
@@ -152,6 +152,20 @@ impl UiConfig {
     /// A table row's height in logical pixels.
     pub fn row_height(&self) -> f32 {
         (self.density.row_height() * self.font_scale).round()
+    }
+
+    /// A hash of what the Settings page shows: density, font scale and the saved layouts
+    /// (names and shapes). It ignores the last layout, which moves with every focus change.
+    pub fn display_signature(&self) -> u64 {
+        use std::hash::{Hash, Hasher};
+        let mut h = std::collections::hash_map::DefaultHasher::new();
+        self.density.hash(&mut h);
+        self.font_scale.to_bits().hash(&mut h);
+        for (name, l) in &self.layouts {
+            name.hash(&mut h);
+            format!("{l:?}").hash(&mut h);
+        }
+        h.finish()
     }
 
     /// Steps the font scale by `steps` of [`FONT_SCALE_STEP`].
