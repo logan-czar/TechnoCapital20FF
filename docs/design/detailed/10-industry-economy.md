@@ -1,0 +1,716 @@
+# 10. Industry economy (Wall Street Raider style): detailed design
+
+_Status: draft v1.16 (2026-10-20). MVP spec cleanup (Logan approved, 2026-10-20): the [mvp-spec](../mvp/mvp-spec.md) 11.1 fixes are made here: supply uses productivity + PC bonus + location bonus (10.0.3); depreciation sits inside the fixed cost share (10.0.4, 10.10); the credit line counts own cash only (10.0.9); the barebones company's $100,000 of expenses include R&D at the norm (10.0.11.1); unstructured data accrues monthly (10.0.11.4); the starting enterprise station rule reads the industry data rate (10.0.11.8). Batch 157 (Logan): no geographic wage or price level. Logan: "we don't have wage value we have labor_value that is it. This is bound to industry not geography." Labor is labor_value only, set per industry (10.0.11.10). The zone credit spread is a fixed base moved each quarter by the cycle (10.0.9, 10.5.5; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.2). Batch 155 (Logan): economy settings apply per financial zone, not per country. Companies borrow at the world base rate plus their zone's credit spread plus their rating spread; the electricity index is a zone value (the wage and price levels were removed in batch 157); tax stays national (10.0.9, 10.5.5, 10.6; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.2). Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth. AI labs' long-term rate is 5% until the scripted 2030 boom, then about 100% a year tapering to 15% by 2039, a crash in demand and growth at the pop, and 8% after; Data centers, Semiconductors and Cloud get a smaller boom uplift; the quarterly draw uses `lt_q = (1 + LT)^(1/4) - 1` (10.0.6, 10.3, 10.6; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.1). Batch 150 (Logan): global business cycle, financial zones, mean-reverting industry growth. Each industry has a long-term growth rate (trend_growth) and a volatility; every quarter its growth is drawn around the long-term rate, mean-reverting, plus the global cycle felt through the financial zones and offset by the growth rate, so fast growers grow more in upswings and cool off less in downturns; news phases become labels read from growth and the supply ratio, with no demand multipliers (10.0.3, 10.0.6, 10.0.10; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1). Batch 149 (Logan): asset decay 1% a year above $10M of assets. "Asset decay 1% a year, only kicks in after 10 million assets": in the MVP business asset decay is 1% a year for all industries, on the part of a unit's assets above $10M only (marginal, no cliff, **A**), so $50M decays $400k a year and a barebones company ($100,000 of assets) has no decay; book depreciation still equals decay and growth spending replaces decay first (10.0.7, 10.0.11.1, 10.3; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.10). Batch 148 (Logan): "just make these like default companies for now we will rework them one by one once companies are known working. I want all industries to be like the defaults": for the MVP all 42 industries use the barebones company's parameters (10.0.11.1) and keep only name, world size, trend and asset label; the cash-burning flags are parked; the 10.3 values below stay as the source for the per-industry rework (10.3; [mvp/mvp-spec.md](../mvp/mvp-spec.md) 2.2, 11.2). Batch 146 (Logan): Consumer electronics, EVs, E-commerce and AI labs are cash-burning industries on purpose: they lose money after R&D and live on investor money, raising it by share issues or credit line draws (10.3; MVP rule in [mvp/mvp-spec.md](../mvp/mvp-spec.md) 6.6); the 651 starting companies keep their generated data holdings, decided (10.0.11.1). Batch 145 (Logan): business assets degrade by a share of their value each year (5% to 10% by industry **(T)**), a real loss of capacity, not only book depreciation; book depreciation now equals that degradation and the 10-year straight line is retired; the growth plan buys back the degraded assets before it can grow, so degradation drives growth spending; productivity decay stays as it is (10.0.4, 10.0.7, 10.0.11.1, 10.3); Banking and Insurance capital set at $1.25 and $0.60 per $1 of revenue, Logan's $1 and $0.50 base moved toward real capital ratios (10.3). Batch 144 (Logan): Head of Security renamed CIO and the CMO added in the management score table (10.5). Batch 143 (Logan): the growth plan and R&D plan are set at the quarterly board meeting ([21-quarterly-cycle.md](21-quarterly-cycle.md) 21.4) and locked for the quarter (10.0.1, 10.5.3). Batch 142 (Logan): the first 5 labor units are the board (10.0.11.3): labor unit 1 is the CEO, and as a company gains its 2nd to 5th labor unit the controller may seat a board member of their choosing in each; units 6 and up are ordinary labor; every labor unit comes bundled with 1 desktop, 1 base compute and one productivity software seat, not bought separately; software quality no longer scales productive compute (PC per station is 1), so productivity software only feeds the productivity modifier through PC (10.0.11.2); free data compute is storage capacity only and starts empty, so a new company holds 0 TB and gets data only from revenue at 1 TB per $1M, and small companies earn free R&D slowly (10.0.11.1, 10.0.11.4); board conflicts listed in [1-corporate-core.md](1-corporate-core.md) 1.8.1. Batch 141 (Logan): operations revised (10.0.11): productive compute from staffed productivity stations gives a stepped bonus of floor(1 + log10(PC)) (1 gives +1, 10 gives +2, 100 gives +3), replacing the batch 140 boost, cap and size factor; stations can split 50/50; labor units = business assets ÷ labor_value ($100,000 by default, varying by industry), with no hires, wages or hiring countries; labor staffs stations, schemes, software design and research, and unused labor gives small bonuses; data quests are now one rule, (1 + floor(log10(TB held)))% of revenue as free R&D, replacing the 7-tier ladder; held data decays faster the more is held; industries apply modifiers but the barebones base case does not change (10.0.11.10). Batch 140 (Logan): new operations and data earning model (10.0.11): the barebones company, work stations of 1 employee, 1 desktop and 1 base compute, labor units, 1 TB of unstructured data per $1M of revenue, enterprise stations, structured data held in data compute, and data milestones as data quests. Batch 137 (Logan): each industry has a background fringe pool of unnamed small businesses that fills out its 2020 size beyond the named companies (10.0.10). Consistency pass 3 (batch 129): 10.5.3 borrowing now uses the world base rate plus country and rating spreads. Batch 125 card (Logan): former hubs list scrapped; key cities hold perks and starting businesses; Metros only from the 5M+ rule. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. Corporations borrow at the Federal Monetary Board's world base rate plus their country spread and rating spread (10.0). Batch 118: EU4-style map; a unit's base and asset spread are per province; each industry has a Commerce or Industry fit (+2%) and matching resource tags (+3%) in 10.3.1; real estate pools are per province; slop splits by province. Batch 116: Lithography machines, Foundry, GPUs and CPUs merged into one Semiconductors industry (42 industries); no compute or machine counts derived from dollars (10.6); compute units live in 15.2. v1.3, consistency pass, batch 74: the file is built around business units (10.0); there are no sites or direct branches. The economy is a flat list of 42 industries with no supply chains, each with one world market, and the player reads and plays it through company financials. The map, provinces, influence, strata, real estate, the business cycle, travel and politics live in [2-map-and-influence.md](2-map-and-influence.md), which also holds location perks (2.3.5) and real estate pools (2.16). Feeds the quarterly statements (10.0.8) and stock values ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3). Owner: Logan._
+
+**How to read the numbers.** Every number marked **(T)** is a starting tuning value. Anything marked **(A)** is an assumption that Logan has not confirmed yet; the list is in 10.12.
+
+---
+
+## 10.0 Business units and corporations (Logan, batch 48)
+
+### 10.0.1 Decided by Logan
+
+| Topic | Decision |
+|---|---|
+| Industries | **42 industries in a flat list with no supply chains** (batch 50; 42 since the Semiconductors merge, batch 116), in 10.3. |
+| Business unit | A business unit **operates in one industry** and **belongs to a corporation**. It has **revenue and expenses**. |
+| Business assets | Revenue is generated by **business assets** that are specific to the business unit. |
+| Base city | Every business unit has a **base city** (since batch 118, its base province, 10.0.2). |
+| Growth plan | How much the unit **plans to grow its business assets this year**. Since batch 143 the growth plan (suggested by the CMO) and the R&D plan (suggested by another seat) are set at the quarterly board meeting and locked for the quarter, the growth plan as an annual rate ([21-quarterly-cycle.md](21-quarterly-cycle.md) 21.4.4, 21.5) **(A)**. |
+| Productivity | A score that **decreases over time**. It sets how effective the unit is at **turning business assets into revenue**. |
+| R&D plan | What share of revenue goes to **R&D spend**. R&D spend **raises or lowers productivity**. |
+| Market | Each industry has a **set market demand**, and companies compete to meet it. An **oversupplied** market lowers productivity across the industry; an **undersupplied** one raises it. |
+| Structure | **No direct branches.** A corporation holds **several business units, each in any industry**, like a diversified Wall Street Raider company. |
+| Industry news | Each industry has **its own news cycle** of booms, busts and new regulation that hits every company in it. |
+
+### 10.0.2 The business unit
+
+| Field | What it holds |
+|---|---|
+| **Corporation** | The company that owns it. A unit belongs to exactly one corporation and can be sold to another |
+| **Industry** | One of the industries in 10.3 |
+| **Base province** | The province it is run from (its headquarters, [2-map-and-influence.md](2-map-and-influence.md) 2.3.1); location perks for HQs (2.3.5) come from that province's city (its Metro or city province), if any |
+| **Asset spread** | Where its business assets sit: a unit can **spread its assets across several provinces** (Logan, batch 49; cities became provinces in batch 118). Each province's share sets where its profit is taxed, where it gains influence and which location perks it can meet, and earns the fit and resource tag bonuses (10.3.1) |
+| **Business assets** | **One dollar figure** (Logan, batch 52), with a flavor label per industry (10.0.7). Carried on the corporation's balance sheet at book value |
+| **Productivity** | Starts at 100 (normal); 50 is badly run-down, 150 is excellent **(T)** |
+| **Growth plan** | Target growth of business assets this year, as a %, with a budget |
+| **R&D plan** | R&D spend as a % of revenue |
+| **Revenue and expenses** | Calculated monthly (10.0.4) |
+| **Frozen** (Logan, batch 87) | A **frozen** unit has **no revenue and no expenses** and can only make software with its desktops (14.8). Example: the Kids Who Code charity's team in India (8-quest-lines 8.3) |
+
+### 10.0.3 Market demand and supply (A)
+
+Each industry has one **market demand** (dollars a year). Since batch 150 it grows each quarter by a **quarterly growth draw** around the industry's long-term rate, moved by the global business cycle and the industry's volatility (10.0.6), and also by interest rates and cost drivers (10.6). Demand moves monthly by a third of the quarter's growth: `demand ×= (1 + q_growth)^(1/3)` ([mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1).
+
+- **Supply** = the fringe pool's supply (10.0.10) plus the sum over every business unit in the industry of `business assets × asset turnover × (productivity + PC bonus + location bonus) ÷ 100`, the same productivity that revenue uses before the market factor (10.0.4), so S is 1.0 when units make exactly their revenue (mvp-spec C12) **(A)**, where **asset turnover** is the revenue one dollar of assets can make in a year at normal productivity (the inverse of "capital per $1 of capacity" in 10.3).
+- **Supply ratio** S = supply ÷ demand.
+- **Market factor** M = `(1 ÷ S)^0.5`, clamped 0.7 to 1.3 **(T)**. It multiplies **every unit's effective productivity** in the industry: an oversupplied industry (S > 1) works below its productivity, an undersupplied one (S < 1) above it (Logan).
+- **One world market per industry** (Logan, batch 49), like Wall Street Raider: every business unit in the industry, wherever it is, competes for the same world demand. Countries still matter through tax, laws, tariffs (4.0) and location perks.
+
+### 10.0.4 Monthly calculation (A)
+
+1. **Effective productivity** = (productivity + PC bonus + location bonus) × M. The PC bonus is a live term from staffed productivity stations (10.0.11.2, batch 141).
+2. **Revenue** = business assets × asset turnover × effective productivity ÷ 100 ÷ 12.
+3. **Expenses** = operating costs (`revenue × variable cost share × D`, plus `business assets × fixed cost rate`), R&D spend (revenue × R&D plan), depreciation of business assets (equal to their degradation since batch 145, 10.0.7), and the cost of replacing and growing assets (below). D is the cost driver index (10.6). **Depreciation sits inside the fixed cost share (A; mvp-spec C11):** the fixed cost rate is set so that fixed cash costs plus depreciation plus shared costs equal the fixed cost share of revenue at productivity 100 and M 1.0. So the margin at full use (10.3) is the margin before R&D, and depreciation does not cut it a second time.
+4. **Productivity drift**: productivity falls by **0.5 points a month** on its own, from a normal of 100 (Logan, batch 49). R&D then moves it:
+   `Δ productivity = 10 × (R&D plan ÷ industry R&D norm - 1) × management factor` points a year, spread monthly **(T)**, where the industry R&D norm is 2% of revenue for heavy industry up to 15% for tech, and the management factor is `0.5 + management score ÷ 100` (10.5). Example with a management score of 50: at the norm, R&D adds nothing and productivity slides 6 points a year; at double the norm it gains about 4 a year net; with no R&D it loses about 16 a year (Logan: R&D spend increases **or decreases** productivity).
+5. **Growth**: the growth plan's budget buys new business assets at the industry's capital cost, spread over the year (Logan, batch 52). New assets start at 80% productivity for 6 months **(T)**. Since batch 145 the plan **first replaces the assets lost to degradation** (10.0.7) and only then grows: a plan of g a year buys `business assets × (degradation rate + g)` a year, so a plan of 0% holds the asset base flat and still costs cash. Logan: "this drives growth spending."
+6. The unit's profit flows into the corporation's books; tax is paid in each country by the share of the unit's assets there (10.5.5).
+
+### 10.0.5 Corporations (A)
+
+- A corporation is the legal company: it has the **shares, holders, board, charter, cash, debt and credit rating** (1.2 to 1.8, 3.6). Its business units have none of these.
+- It can own **any number of business units in any industries** (Logan). Its **main industry** is the industry of its largest unit by assets; that sets its sector for markets and indices.
+- The board's **management score** (10.5) applies to every unit: it sets how well R&D turns into productivity, and still sets investor confidence (Logan, batch 49).
+- **Vassals** (1.7) stay separate: a subsidiary is another corporation with its own units and books (10.0.8).
+- **Deals on units**: buy, sell, merge (two units in one industry become one; fixed costs -10%) and spin off (one or more units become a new corporation), as in 10.5.4.
+- **Real estate** is a separate investment in province pools (2.16). As a unit's assets grow in a province, it rents or buys the space it needs from that province's pools; the cost is part of its asset growth **(A)**.
+
+### 10.0.6 Industry growth and news phases (Logan, batch 150)
+
+Logan (batch 150): "Industries do cycles just like the global cycle however they are offset by their industry growth rate. So will grow more and cool off less during these times. Industries have growth rates that are long term and stable, their quarterly growth rate with go up and down based on the industries volatility, the overall business cycle, but still average toward the long term rate."
+
+**Superseded for the MVP and the base game:** the industry news cycle as its own random cycle (phases of 6 to 36 months by roll, demand ×1.15 in a Boom and ×0.85 in a Bust, a Glut adding +0.2 to the supply ratio) is gone.
+
+- **Long-term rate and volatility.** Each industry has a stable **long-term growth rate** LT (trend_growth, 10.3) and a **volatility**, the size of its quarterly growth shocks (1% a quarter for all in the MVP **(T)**).
+- **Quarterly growth.** Each quarter: `q_growth = lt_q + φ × (last q_growth − lt_q) + cycle term + volatility × noise`, with `lt_q = (1 + LT)^(1/4) − 1` (batch 151; about LT/4 for normal rates) and φ 0.5 **(T)**, so growth wanders but always pulls back toward the long-term rate.
+- **Cycle term, offset by growth rate.** The global cycle value g_t ([2-map-and-influence.md](2-map-and-influence.md) 2.18.1), felt at the GDP-weighted zone intensity (2.18.2), times an asymmetric sensitivity k: in upswings `k = 1 + 5 × (LT − 4%)` (0.5 to 2.5), in downswings `k = 1 − 2.5 × (LT − 4%)` (0.25 to 1.5) **(T)**. A 30% grower feels upswings 2.3 times and downswings 0.35 times, and AI labs in the boom (100%) 2.5 times and 0.25 times; Retail (3%) and AI labs before the boom (5%) about one for one; Oil (0%) 0.8 up and 1.1 down. The asymmetry stays (batch 151, Q2 default).
+- **News phases are labels (A).** Boom, Normal, Glut and Bust stay as labels for screens, headlines, sale factors (10.0.7) and the fair value cycle factor (10.0.8): Bust when this quarter's growth, a year, is 5 points or more under the long-term rate; Glut when the supply ratio is above 1.15; Boom when growth is 5 points or more over; else Normal **(T)**. They no longer move demand or supply.
+- **The AI boom and the bubble (Logan, batch 151).** "I think we need to do really small AI with low growth then an unprecedented growth rate." The boom changes AI labs' long-term rate, a regime switch: **5%** a year from 2020 to 2029 (about $5B to $8B), then from the boom event (the tipped lab's chatbot, 2030; [7-starting-world.md](7-starting-world.md) 7.7) **100%** a year in 2030 and 2031, 90% in 2032, 80% in 2033, then tapering as the bubble nears (60%, 45%, 35%, 25%, 20%, 15% in 2034 to 2039) **(T)**. At the pop (2040 on average, [8-quest-lines.md](8-quest-lines.md) 8.5) demand falls by half once and the rate is −10% for two years, then 8%. Data centers, Semiconductors and Cloud add 0.15, 0.10 and 0.05 of the AI labs boom to their own rates and lose 25%, 20% and 10% of demand at the pop **(A, T)**. Full table: [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.1.
+- **Regulation news**: new rules from politics (4.5) raise costs or cap growth for one industry.
+- Each label change fires an **Industry** deck event for every company in it (13.5).
+
+Formulas, the zone table, a worked table for Retail, Software and a 30% grower, the 40-quarter check and the AI boom schedule (5.1.1) are in [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.
+
+### 10.0.7 Business assets (Logan, batch 52)
+
+| Topic | Decision |
+|---|---|
+| Form | **One dollar figure per business unit**, like Wall Street Raider. No list of individual plants or stores. |
+| Flavor | Each industry gives its assets a **label** for the UI: "fabs" for Semiconductors, "stores" for Retail, "oil fields" for Oil, "fleets" for Airlines and so on **(A)**. The label changes nothing in the maths. |
+| Buying | The **growth plan** buys new assets at the industry's **capital cost per $1 of assets** (10.3). Corporations can also **buy and sell assets between units**, their own or another corporation's. |
+| Degradation and depreciation (Logan, batch 145) | "Percentage of business assets degrade overtime, this drives growth spending." Each year a unit **loses a share of its business assets**, set by industry (10.3): from 5% for long-lived assets such as power plants and buildings to 10% for servers and short-lived equipment **(T)**, booked monthly. This is a **real loss of the asset base**, not only an accounting entry: the assets at cost that make revenue shrink by it. **Book depreciation equals this degradation**: the dollar amount lost is the depreciation expense and comes off book value. It replaces the old 10-year straight line (10% a year, book only). The growth plan must buy the lost amount back before it can grow (10.0.4). **MVP default (Logan, batch 149):** "Asset decay 1% a year, only kicks in after 10 million assets." For now every industry loses **1% a year on the part of a unit's business assets above $10M** only. It is marginal, so there is no cliff at $10M **(A)**: $50M of assets decays $400k a year (1% of $40M), and a unit with $10M or less has **no decay**. The 5% to 10% industry rates (10.3) are parked for the per-industry rework. |
+| Shrinking | A unit shrinks by **selling assets at 60% to 100% of book value**, set by the industry's news cycle: about 100% in a Boom, 85% in Normal, 70% in a Glut and 60% in a Bust **(T)**. |
+| Not assets | **Compute and owned software are not business assets** (batch 52). They stay in their own systems ([15-infrastructure.md](15-infrastructure.md), [14-software.md](14-software.md)) and their costs and income are counted separately. |
+
+- **Book value vs. capacity (A, revised in batch 145).** Revenue in 10.0.4 uses the **asset base at cost** (what was paid, less what was sold, less what has degraded), not book value. Degradation lowers both: capacity at cost by the industry's rate, and book value by the same dollar amount (its depreciation). Book value can still sit below cost (the MVP starts companies' assets at half of cost, [mvp-spec](../mvp/mvp-spec.md) 7.1); it is what the balance sheet, sale prices and valuations use.
+- **Degradation and productivity decay (batch 145).** **Productivity decay stays as it is** (0.5 a month, 10.0.4). Before batch 145 this section called productivity decay the business's "real wear"; that meaning now belongs to degradation, and productivity decay is the business falling behind (old methods, rivals catching up) that R&D fights. They are paid by different spending, replacement purchases and R&D, and hit different things (capacity and productivity), so there is **no double counting in money**. When depreciation sits inside the fixed cost share (as in the MVP spec, conflict C11), profit before R&D does not change at all; what changes is cash, since a company that holds still now spends its depreciation on replacement. The only overlap was in the old wording, fixed here.
+- **Asset deals between corporations (A).** A sale of assets (not a whole unit) is priced by the seller's ask and the buyer's bid at the negotiation table, starting from book value × the cycle factor above. The buying unit must be in the same industry; the assets keep their province spread.
+
+### 10.0.8 Subsidiaries, shells, statements and value (Logan, batch 53)
+
+| Topic | Decision |
+|---|---|
+| Subsidiaries | **A separate corporation that must follow its parent's directives.** Separate books, its own business units and its own board. The board makes its own decisions, but **the parent can override them**. It works like a vassal (1.7). |
+| On the parent's books | A subsidiary **counts as an asset** of the parent: its stake, at the parent's share of the subsidiary's book equity **(A)**. Its units are **not** added to the parent's units; its dividends and management fees (1.7.1) are the parent's income from it. |
+| Shell companies | **Basically empty companies for moving money around.** No business units. They can hold **cash, shares, software, compute and stored data** (1.7.4). |
+| Statements | **A light set, quarterly**, like Wall Street Raider: income statement, balance sheet and cash flow (below). |
+| Fair value | **A blend of book value and an industry earnings multiple**, moved by the industry news cycle and investor confidence (below). |
+| Shared costs | **The corporation pays** its cloud bill, compute maintenance and software contracts, and **spreads them across its units by revenue share**. |
+
+**Parent overrides (A).** A parent directive is a command on the subsidiary's screen: set the growth or R&D plan, buy or sell units or assets, pay a dividend, take on or repay debt, or replace the CEO. The subsidiary's board then votes; if it says no, the parent can override, at a loyalty cost of -10 for that subsidiary (1.7.3), or -5 if it holds a majority of the board **(T)**. Parent veto rights (1.7.1) still block the subsidiary's own deals before they happen.
+
+**The quarterly statements (A).**
+
+| Statement | Lines |
+|---|---|
+| **Income statement** | Revenue by unit; operating costs; R&D; shared costs (compute, cloud, software contracts); depreciation; interest; income from subsidiaries and holdings; tax; net income |
+| **Balance sheet** | Cash; business assets at book value by unit; compute and software (15, 14); stakes in subsidiaries and other companies; real estate; debt; equity |
+| **Cash flow** | Operating cash; asset purchases and sales; deals; debt raised or repaid; dividends and buybacks |
+
+**Fair value (A).** Used by AI buyers, deals and as V in the stock price model ([3-markets-and-fx.md](3-markets-and-fx.md) 3.3.1):
+
+`Fair value = 0.3 × book equity + 0.7 × normalized earnings × industry multiple × cycle factor × confidence factor` **(T)**
+
+- The **industry multiple** comes from the sector table (3.3.2), set per industry in 10.3.
+- The **cycle factor** follows the industry's news cycle: Boom 1.2, Normal 1.0, Glut 0.85, Bust 0.7 **(T)**.
+- The **confidence factor** is investor confidence from the board's management score (10.5): `0.8 + management score ÷ 250` **(T)**.
+- A corporation that loses money is valued at book equity × the cycle factor, never below its asset floor (3.3.1).
+
+**Shared costs (A).** Compute, cloud and software are held by the corporation, not by units (10.0.7). Each month their total is split across the units by share of revenue and shown on each unit as "shared costs", so a unit's profit includes its slice.
+
+### 10.0.9 Financing (Logan, batch 55)
+
+| Topic | Decision |
+|---|---|
+| Bank loans | **A credit line**, Wall Street Raider style. Each corporation has a line sized by its assets and credit rating, and **draws or repays it at will**. |
+| Bonds | Corporations can issue **bonds of 1 to 30 years once they have a credit rating**. The yield comes from 3.6.5. |
+| Rates | **The Federal Monetary Board sets one world base rate** (3% at start **(T)**; batch 130), set from US data only, since every value is in USD in the simulation (Logan, batch 125). A corporation borrows at that rate **plus its financial zone's credit spread plus a spread for its rating** (3.6; batch 156: half the zone spread plus half the home country's sovereign spread; batch 155: the zone spread replaces the home country's spread; batch 157: the zone spread is a fixed base that widens in downturns and narrows in booms, by the zone's intensity, [mvp/mvp-spec.md](../mvp/mvp-spec.md) 5.1.2). Other central banks set no rate in the POC **(A)**. |
+| Parent and subsidiary | **Intra-group lending is allowed.** A parent can lend to a subsidiary or pull cash up from it, at a loyalty cost. |
+| Default | **The default chain in 3.6.6**: restructure, sell units to creditors, or go bankrupt. |
+
+**Credit line (A).**
+- Size = `book value of business assets and real estate × 50% + own cash - other debt already owed`, where own cash is cash minus the amount drawn on the line, floored at 0, so drawing the line does not raise its own limit (mvp-spec C10) **(A)**; then × a rating factor from 1.0 for AAA down to 0.3 for B, and 0 for CCC or below **(T)**.
+- Interest is charged monthly on the amount drawn, at the base rate plus the home spread (half zone credit spread, half home sovereign spread; batch 156) plus the rating spread; the undrawn part costs 0.25% a year **(T)**.
+- The bank reviews the line every quarter after earnings. A rating cut can shrink it, and a corporation over its new limit must repay the difference within 3 months or the default chain starts.
+- Location perks (2.3.5) lower the spread.
+
+**Bonds (A).** A corporation gets its first rating when it reaches the Corporation rank (1.7.5) or asks an agency for one (3.6.4). Bonds are fixed coupon, repaid at maturity, and trade on the bond market. Covenants can cap further debt.
+
+**Intra-group money (A).**
+- **Loans down**: a parent lends to its subsidiary at any rate it sets; a below-market rate gives the subsidiary loyalty +2, and an above-market one costs -2 **(T)**.
+- **Cash up**: outside the dividend (1.7.1 tribute), a parent can pull cash up from a subsidiary as a special dividend or a loan the subsidiary makes to it. Each pull costs loyalty -1 per 5% of the subsidiary's cash taken, and the subsidiary's minority holders can sue if it leaves the subsidiary unable to pay its debts **(T)**.
+- Loans inside a group are cancelled out in the group view but stay on each corporation's own books (10.0.8).
+
+**Default (A).** Missing a payment on the credit line or a bond starts the chain in 3.6.6. Selling units to creditors uses the asset sale prices of 10.0.7 (60 to 100% of book by cycle). A subsidiary's default does not pull the parent down unless the parent guaranteed its debt.
+
+### 10.0.10 Background fringe pool (Logan, batch 137)
+
+Each industry has one **fringe pool**: an unnamed pool of small businesses that makes up the rest of the industry's 2020 size beyond the named companies in [companies.csv](../data/companies.csv).
+
+- **Size at start (A):** `fringe revenue = industry world size 2020 (10.3) - sum of the named companies' revenue in that industry`, with a floor of 0. Its business assets are that revenue ÷ the industry's asset turnover, at productivity 100.
+- **Adds supply:** its assets count in the industry's supply (10.0.3) like one more business unit.
+- **Takes demand share:** it earns its share of world demand by the same revenue formula (10.0.4), so named companies never get the whole market.
+- **Not ownable:** nobody can buy, sell, merge, invest in or take over the fringe; it has no corporation, shares, board or books, and earns no influence.
+- **Moves with demand (batch 150, A):** each month the fringe's assets grow by a third of the industry's quarterly growth (10.0.6), so the fringe keeps its share of demand. The old Boom and Bust adjustments (+3% and -5% a year) are gone with the news multipliers.
+
+### 10.0.11 Operations: desktops, labor, software and data (Logan, batches 140 to 142)
+
+Logan (batch 140): "The money earning mechanism is going to get switched up." This layer sits **under** the business-unit model; it does not replace it. Business assets, productivity, the R&D plan, market demand and the market factor still make revenue (10.0.3, 10.0.4). Operations adds three things on top:
+
+1. **Labor units** that come from business assets (10.0.11.3). The first 5 are the board, and each comes bundled with a desktop, a base compute and a productivity software seat (batch 142).
+2. **Productive compute** from staffed productivity stations, which gives a small, hard-won productivity bonus (10.0.11.2).
+3. **A data loop**: revenue makes **unstructured** industry data, **enterprise stations** turn it into **structured** industry data, and structured data **held** in database compute earns **free R&D** through data quests (10.0.11.4 to 10.0.11.7).
+
+Logan (batch 141): "Productivity gains in this should be fought hard for and very small." Every number below is built to keep them small.
+
+**Decided by Logan (batches 140 to 142)**
+
+| Topic | Decision |
+|---|---|
+| Barebones company | 1 desktop, 1 general productivity software, 1 general enterprise software; 10 base compute and 10 data compute; 1 labor unit (the CEO); 1 business asset of $100,000; valued at $1M; at productivity 100 and perfectly neutral demand, revenue $100,000 and expenses $100,000 (10.0.11.1). It is the **fixed base case** (batch 141) |
+| Work station | 1 labor unit + 1 desktop + 1 base compute running 1 software: **a 1 to 1 to 1 relationship** (10.0.11.2) |
+| Labor bundle (batch 142) | "Each labor unit come with 1 desktop, 1 compute unit, and the ability to run one productivity software": not bought separately per unit (10.0.11.3) |
+| Board from labor (batch 142) | "The first 5 labor units are the board. When you get your second labor unit you can assign a board member of your choosing and do the same for the third fourth and fifth" (10.0.11.3) |
+| Productive compute (batch 141) | "Productivity software running with a head in a desk gives the company the productive compute. **1 productive compute gives 1 productivity, 10 gives 2, 100 gives 3** etc." (10.0.11.2) |
+| Software quality (batch 142) | "No productivity software just affects the productivity modifier": quality does not scale PC; each productivity station makes 1 PC (10.0.11.2) |
+| 50/50 (batch 141) | A station can split **50/50** between productivity and enterprise software. The CEO's station runs productivity by default and can be switched |
+| Labor units (batch 141) | "You gain **one labor unit for every 100k** that you have in business assets", because the default **labor_value** is $100,000. labor_value **varies by industry or business unit purpose**. "**Staff is just going to be a labor units thing**": no hires, no wages, no hiring countries (10.0.11.3) |
+| Labor uses (batch 141) | Labor staffs stations, is assigned to **schemes**, **develops software** or **researches**. **Unused labor** has various positive effects (10.0.11.3) |
+| Unstructured data | **$1M of revenue creates 1 TB of the company's industry unstructured data** (10.0.11.4) |
+| Starting data (batch 142) | Free data compute is **storage capacity only and starts empty**: a new company holds **0 TB**, data comes only from revenue at 1 TB per $1M, and small companies earn their free R&D slowly (10.0.11.1, 10.0.11.4) |
+| Enterprise station | The same setup running **enterprise software turns 1 TB of unstructured data into 1 TB of structured industry data** (10.0.11.5) |
+| Storage | **Structured industry data is held in database compute** (data compute, 15.2) (10.0.11.6) |
+| Data decay (batch 141) | Held data is counted after ageing, and "**the more you have the faster it decays** so that you can't just stack stack stack" (10.0.11.6) |
+| Data quests (batch 141) | "For now": **1% free R&D spend for every 1 × 10^x TB** of structured business data: 1 TB 1%, 100 TB 3%, 10 PB 5%. Fixed thresholds (10.0.11.7) |
+| Industries (batch 141) | "Industries may change or apply modifiers to what is above, but what is above does not change" (10.0.11.10) |
+
+#### 10.0.11.1 The barebones company (Logan)
+
+The smallest company the game makes: what "Found company" (1.1) gives on the cheapest path, and the floor for generated companies. It is the **fixed base case** of every rule in 10.0.11 (Logan, batch 141); industries apply modifiers to it (10.0.11.10) but never change it.
+
+| Item | Amount (Logan) | Notes |
+|---|---|---|
+| Desktops | **1** | The CEO's bundled desktop (10.0.11.3, batch 142) |
+| Productivity software | **1 general productivity software** licence | The CEO's bundled productivity seat (batch 142); runs on the CEO's station by default (Logan, batch 141) |
+| Enterprise software | **1 general enterprise software** licence | Idle unless the CEO's station is switched to it or split 50/50 (Logan, batch 141) |
+| Base compute | **10** | 1 is the CEO's bundled base compute; the other 9 are extra pool compute (15.2, 10.0.11.3) **(A)** |
+| Data compute | **10** | Storage capacity only, and it **starts empty** (Logan, batch 142): 1,000 TB of room (15.4), far more than the 0.1 TB a year it makes |
+| Data held at founding | **0 TB** (Logan, batch 142) | No unstructured or structured data; it comes only from revenue (10.0.11.4) |
+| Labor units | **1, the CEO** | $100,000 of assets ÷ labor_value $100,000 = 1 (10.0.11.3). The CEO is that one unit (Logan, batch 142: labor unit 1 is the CEO), so its board is the CEO alone (10.0.11.3) **(A)** |
+| Business assets | **1 business asset of $100,000** | One dollar figure (10.0.7) |
+| Value | **$1M** | Recorded as a $1M post-money founding round (below) |
+| Revenue at productivity 100, neutral demand (M 1.0) | **$100,000 a year** | Before the productivity bonus |
+| Expenses at the same point | **$100,000 a year** | Break-even |
+
+- **Per year (A).** Revenue and expenses are yearly figures, as everywhere in 10 (10.0.3 demand and 10.3 sizes are a year); the engine books them monthly (10.0.4, ÷ 12).
+- **Starts with no data (Logan, batch 142).** Free data compute is storage capacity only and starts empty: a new company holds **0 TB**. Its data comes only from revenue, at 1 TB per $1M (10.0.11.4), so a small company earns its free R&D (10.0.11.7) slowly: the barebones company makes 0.1 TB a year and never holds 1 TB at steady state (10.0.11.6). The 651 starting companies are not new; they have been running for years and keep the generated holdings in 10.0.11.8 (Logan, batch 146).
+- **Other industries (A, from Logan's batch 141 answer).** The base case does not change: one $100,000 asset, one labor unit, the same loadout. The industry's **asset turnover** (10.3) is a modifier on top, so a barebones Software company makes $500,000 a year and a barebones Oil company $40,000, and its operating costs scale with revenue so it stays break-even **(A)** (open question for Logan).
+- **No degradation (Logan, batch 149).** Asset decay applies only to the part of a unit's assets above $10M (10.0.7), so the barebones company's $100,000 asset **does not decay**: it has no depreciation and needs no replacement purchases, and it stays the same size at a growth plan of 0% with no spending. Its operating costs below hold no depreciation; it still breaks even. A company starts to decay only once its assets pass $10M. (Batch 145 had it degrade at its industry's rate, about $8,000 a year; replaced.)
+- **Break-even.** Its expenses are about **$7,000 of shared costs** (the 9 extra base compute at $600 a year upkeep, 10 data compute at $120, the enterprise licence at about $30 a month **(T)**), **$5,000 of R&D at the norm** (5%; R&D at the norm counts inside the break-even expenses, Logan batch 148, mvp-spec C18) and about **$88,000 of operating costs**, which include the CEO's labor unit and its bundle of desktop, base compute and productivity seat (10.0.11.3, batch 142). Its operating margin is 0. Every gain comes from operations, R&D, growth and demand.
+- **$1M value (A).** The fair value formula (10.0.8) would value a break-even company at book equity, far below $1M. So founding records a **$1M post-money funding round**, and private company value uses the last round for 2 years (10.5.4). After that, with no new round, it falls back to the formula.
+- **With the CEO on productivity** (PC 1, whatever the software's quality, batch 142), the bonus is **+1** (10.0.11.2): effective productivity 101 and revenue about **$101,000**. Split 50/50 the CEO makes PC 0.5, under 1, so **no bonus**, and converts half as fast.
+
+#### 10.0.11.2 Work stations and productive compute (Logan, batches 140 to 142)
+
+A **work station** is **1 labor unit + 1 desktop + 1 base compute** running **one instance** of one software. Since batch 142 the desktop, the base compute and one productivity software seat **come bundled with the labor unit** (10.0.11.3), so a station is a labor unit put to work, with nothing else to buy. Kinds:
+
+| Station | Runs | Gives |
+|---|---|---|
+| **Productivity station** | General productivity software | **Productive compute** (below) |
+| **Enterprise station** | General or specialized enterprise software | Converts unstructured data to structured data (10.0.11.5) |
+| **50/50 station** (Logan, batch 141) | Both, sharing one desktop, one base compute and one labor unit | **Half** its productive compute and **half** its conversion rate |
+| **Design station** | No software instance; the desktop designs software | Software units (14.8): it takes 1 labor unit and its bundled desktop; the bundled base compute sits idle **(A)** |
+
+- **Held by the corporation (A).** Like compute and software (10.0.7, 10.0.8), stations belong to the corporation, not to its units. Extra compute, data compute and enterprise licences are **shared costs** spread across the units by revenue share (10.0.8). A labor unit and its bundle have no separate cost (10.0.11.3).
+- **Desktop vs base compute (A, mechanical fix).** A desktop is built and maintained like 1 base unit (1 base part, maintenance 1, 15.2), but it is a **seat**, not part of the base compute pool. The station's software instance runs on the labor unit's bundled base compute (batch 142). So a station uses its desktop **plus** 1 base compute, both from the bundle.
+- **Instances need a station (A).** A productivity or enterprise software instance does nothing without a staffed station. Server software (SaaS, cloud services, AI software) keeps scaling instances to its data as in 14.2.2.
+- **The CEO's station (Logan, batch 141).** Runs productivity by default; the player can switch it to enterprise or 50/50 at any time.
+- **Enterprise on the bundled seat (A).** An enterprise or 50/50 station runs enterprise software on the labor unit's bundled desktop and base compute. It needs an enterprise licence (14.2), since only the productivity seat is bundled, but no extra desktop or compute.
+
+**Productive compute (PC).** Each staffed productivity station makes productive compute:
+
+`PC per station = 1` (Logan, batch 142), times the industry's PC modifier (10.0.11.10). A 50/50 station makes half that.
+
+`Corporation PC = Σ PC over its productivity and 50/50 stations`
+
+- **Quality does not scale PC (Logan, batch 142).** "No productivity software just affects the productivity modifier." The batch 141 ×1 to ×1.5 quality factor (Q, 14.2.1) is **removed**: a productivity station makes 1 PC whatever its software's quality. Productivity software does one thing, feed the productivity modifier through PC and the bonus below.
+
+**The productivity bonus (Logan, batch 141; A: stepped).**
+
+`PC bonus = floor(1 + log10(PC))` for PC ≥ 1, else **0**
+
+| PC | Bonus |
+|---|---|
+| Under 1 | 0 |
+| 1 to 9.99 | **+1** |
+| 10 to 99.99 | **+2** |
+| 100 to 999.99 | **+3** |
+| 1,000 to 9,999.99 | +4 |
+| 10,000 or more | +5, and +1 more for each further 10× |
+
+- **Stepped, so hard-won (A).** Each step needs 10 times the stations of the last, and nothing is gained between steps.
+- **No cap and no size factor.** The batch 140 boost (`8 × Q × ln(1 + n ÷ S)`, cap +20, size factor) is **removed**. Size now matters only through the **labor units** a company has (10.0.11.3): a barebones company can never pass +1, a $1B company can reach +5.
+- **A live term.** The bonus is added to productivity each month while the stations are staffed. It **does not decay** and is not moved by R&D; it disappears the month the stations go empty (10.0.11.9).
+- **Corporation-wide (A).** It applies to every business unit of the corporation, like the management score (10.0.5).
+
+**Worked table** (asset turnover 1.0, labor_value $100,000, PC 1 per station; desktop, base compute and productivity seat come with each labor unit, so a station costs nothing extra, batch 142):
+
+| Company | Revenue a year | Labor units | All on productivity → PC → bonus | Gain a year | Labor for the last step |
+|---|---|---|---|---|---|
+| Barebones | $100,000 | 1 | 1 → 1 → **+1** | $1,000 | 1 (the CEO) |
+| Small firm | $10M | 100 | 100 → 100 → **+3** (10 stations already give +2) | $300,000 | 90 more units |
+| Large firm | $1B | 10,000 | 10,000 → 10,000 → **+5** (1,000 give +4) | $50M | 9,000 more units |
+
+Gains are before variable costs. With stations bundled, **labor is the only price of PC (A)**, and the last step is the costly one: at $1B, going from +4 (1,000 stations) to +5 (10,000 stations) takes 9,000 more labor units, 90% of the company, which then cannot convert data, research, design software, join schemes or give the idle bonuses, for $10M more revenue. Most firms stop short of it and keep the labor for other uses.
+
+**Effective productivity (updates 10.0.4 step 1).**
+
+`Effective productivity = (productivity + PC bonus) × M`
+
+The fit and resource tag bonuses (10.3.1) still apply to the bracket. Productivity itself still starts at 100, decays 0.5 a month (slower with spare labor, 10.0.11.3) and is moved by R&D. Data quests no longer add productivity; they give free R&D (10.0.11.7).
+
+#### 10.0.11.3 Labor units (Logan, batches 141 and 142)
+
+"Staff is just going to be a labor units thing" (Logan). There are **no hires, no wages, no hiring countries and no separate staff costs**.
+
+**How many.**
+
+`Labor units = floor(Σ over the corporation's business units of business assets ÷ labor_value)`
+
+- **labor_value** is **$100,000** by default: one labor unit per $100,000 of business assets (Logan). It **varies by industry or business unit purpose** (Logan); see 10.0.11.10. It is bound to industry, not geography: there is no country or zone wage level (Logan, batch 157). A unit with labor_value $10,000 and $100,000 of assets gives 10 labor units (Logan's example).
+- **Pooled at the corporation (A).** Each business unit adds its share; the corporation assigns them, like stations. Shells hold no business assets and so no labor **(A)**.
+- **Live (A).** The count follows business assets each month. When it falls below what is assigned, idle units go first, then schemes, research, design, enterprise and productivity stations, newest first; the player can reorder **(A)**.
+- **Cost (A).** A labor unit costs nothing extra: its cost is already inside each unit's operating costs (10.0.4), as payroll dollars (2.8.4). So is the upkeep of its bundle (below, batch 142).
+- **Granted labor (A).** An event can grant labor units outside the asset rule. Kids Who Code's India team (8.3, Arc 2) is **100 volunteer labor units** on its 100 desktops in a frozen unit (10.0.2); those desktops are their bundle **(A)**.
+
+**The board: labor units 1 to 5 (Logan, batch 142).** "The first 5 labor units are the board. When you get your second labor unit you can assign a board member of your choosing and do the same for the third fourth and fifth" (Logan).
+
+| Labor unit | Is |
+|---|---|
+| 1 | The **CEO** (Logan) |
+| 2, 3, 4, 5 | **Board seats** ([1-corporate-core.md](1-corporate-core.md) 1.8): as the corporation gains its 2nd, 3rd, 4th and 5th labor unit (business assets ÷ labor_value), its controller may seat a board member **of their choosing** in each (Logan) |
+| 6 and up | Ordinary labor |
+
+- **Smaller boards (A).** A company with fewer than 5 labor units has a smaller board: the CEO plus one seat per labor unit beyond the first. The barebones company's board is the CEO alone.
+- **Who appoints (A).** The real controller (1.3.1) picks the character and the seat (CFO, COO and the rest, 1.8.2) when it opens. A seat left empty stays open until filled.
+- **Board labor still works (A).** A board member does their board role (CFO and so on, 1.8.2), and their labor unit can **also** staff a station, research, design software or join a scheme like any other unit. The seat is the character; the labor unit is the work.
+- **Losing labor (A).** If business assets fall and labor drops below 5, the newest board seat closes first and its member leaves the board. The CEO's unit is never dropped.
+- **Charters and elections.** How this fits charter board sizes (5 to 13, 1.5) and yearly elections is listed as open in [1-corporate-core.md](1-corporate-core.md) 1.8.1.
+
+**The bundle (Logan, batch 142).** "Each labor unit come with 1 desktop, 1 compute unit, and the ability to run one productivity software" (Logan). Every labor unit, the board's included, comes with **1 desktop, 1 base compute and one productivity software seat**. They are **not bought separately** per unit: they arrive and leave with the labor unit, and their upkeep sits inside operating costs like the labor itself **(A)**.
+- **The seat (A).** It runs one instance of the corporation's chosen productivity product, licence included. Enterprise software is not bundled: running it on the seat needs an enterprise licence (14.2).
+- **What extra compute is for (A).** Compute beyond the bundle is bought or rented as before (15.2) and is a shared cost. It runs **server software** that scales to data (SaaS, cloud services, AI software, 14.2.2), **database requirements and data storage** (data compute, 10.0.11.4, 10.0.11.6), **AI training runs** (18) and capacity sold or rented to others (15). It never adds stations: only labor units do.
+
+**Uses (Logan).** One labor unit does one thing at a time:
+
+| Use | What it does |
+|---|---|
+| **Staff a station** | Productivity, enterprise or 50/50 station (10.0.11.2) |
+| **Assign to a scheme** | Schemes that list a labor slot take units; each scheme's own rule says what they add **(A)** |
+| **Develop software** | A **design station**: 1 labor unit + 1 desktop makes 1 software unit a day at normal productivity (14.8). This **replaces** the old employee and per-unit labor cost of 14.8 **(A)** |
+| **Research** | Adds to the **R&D effect** (10.0.4) of every unit of the corporation, on the same stepped rule: 1 unit ×1.01, 10 units ×1.02, 100 units ×1.03, +0.01 per further 10× **(A, T)**. Units also staff research projects in other systems when those ask for labor (for example AI training runs, 18) **(A)** |
+| **Leave unused** | The positive effects below |
+
+**Unused labor (Logan: "various positive effects"; T).** Kept small, and measured as the share of labor units left idle:
+
+1. **Slack.** With 10% or more idle, productivity drifts **0.4** a month instead of 0.5; with 25% or more, **0.3**.
+2. **Lower turnover.** With 10% or more idle, staff trouble events (walkouts, a key team poached, burnout, 13) are **25% less likely**.
+3. **Crisis pool.** Crisis events (a hack cleanup 17, a disaster, a strike, a raid) offer **"Throw people at it"**: commit up to half the idle units for 1 month to **halve** the event's loss in assets or productivity, or to cut a cleanup's time by half.
+
+#### 10.0.11.4 Unstructured data (Logan: 1 TB per $1M of revenue)
+
+- **Rate.** Each business unit makes **1 TB of its industry's unstructured data per $1M of revenue** (Logan). Industries can modify the rate (10.0.11.10). It accrues **monthly**, from the month's revenue, like the rest of a company's finances (9.2; mvp-spec C3) **(A)**. A $40M unit makes about 3.3 TB a month; a $1B unit about 83 TB.
+- This **replaces** the older rate in 14.2.3 (about 1 TB a day per $100M of yearly revenue).
+- **Starts at 0 TB (Logan, batch 142).** A new company's free data compute is storage capacity only and starts empty. Revenue is the only source of new data, so small companies fill it, and earn free R&D (10.0.11.7), slowly. Buying or stealing data (10.0.11.6) only moves data that revenue already made somewhere.
+- **Frozen units** (10.0.2) have no revenue and make none.
+- **Storage (A).** Unstructured data **needs data compute** too (100 TB per unit, 15.4), owned or rented. When storage is full, new data **overflows and is lost**. By default the auto-scaler (14.2.2) rents cloud data compute first, unless the player caps the bill.
+- **Retention (T).** Unstructured data older than **12 months** is discarded by default (the player can change it).
+- **Not held.** Unstructured data does not count for data quests and does not decay by the 10.0.11.6 rule; it only waits for conversion.
+- **Value.** Unstructured data is worthless on the black market (17.4); it is only input for enterprise stations.
+
+#### 10.0.11.5 Enterprise stations
+
+- **Same setup (Logan).** 1 labor unit + 1 desktop + 1 base compute running enterprise software (the labor unit's bundle plus an enterprise licence, batch 142). It turns **1 TB of unstructured data into 1 TB of structured data** of the same industry. A 50/50 station converts at half the rate (Logan, batch 141).
+- **Rate (T).** Per station = the software's **effective speed** (speed × Q, 14.2.1) in GB per hourly tick. General enterprise software has a base speed of **1 GB a tick**: about 8.8 TB a year at quality 0 and 11 TB at quality 50.
+- **Specialized software (14.2.3, Arc 2).** On its own data type it runs at **2× speed** (Logan). Arrowhead's oil software at quality 30: 1 × 1.15 × 2 = 2.3 GB a tick, about **20 TB a year per station**, so it needs half the labor of general software. That is why every oil company converts "inefficiently" before Arc 2 (8.3).
+- **Which data (A).** General enterprise software works on any industry's data. A corporation's enterprise stations split across its industries by unstructured backlog, unless the player sets priorities. Specialized software only takes its own type.
+- **Database need.** Each instance needs the software's database requirement in data compute (14.2), on top of the storage the data takes.
+
+**Stations needed to convert all of a unit's data** (general software at quality 50, 11 TB a year; specialized at quality 50, 22 TB a year). Labor is rarely the limit: at labor_value $100,000 and turnover 1.0 a unit has 10 labor units per $1M of revenue.
+
+| Unit revenue | Unstructured data a year | General stations | Specialized stations |
+|---|---|---|---|
+| $1M | 1 TB | 1 (mostly idle) | 1 |
+| $40M (Arrowhead) | 40 TB | 4 | 2 |
+| $1B | 1,000 TB | 92 | 46 |
+| $100B | 100,000 TB | about 9,100 | about 4,600 |
+
+#### 10.0.11.6 Structured data held and its decay (Logan, batches 140 and 141)
+
+- **Storage.** Structured data sits in **data compute** (100 TB per unit, 15.4), held by the corporation, or by a shell (10.0.8). Data compute is storage capacity only and a new company's starts empty, at 0 TB held (Logan, batch 142).
+- **Held = after ageing (Logan, batch 141).** Data quests count the TB the corporation **still holds**, per industry type. Held data **decays**: each month a share of it becomes obsolete and is removed, freeing its storage. "**The more you have the faster it decays** so that you can't just stack stack stack" (Logan).
+
+**Decay (T).**
+
+`Monthly decay rate = base × (1 + log10(TB held))` for 1 TB or more, else `base`
+
+- **base = 2% a month (T)**. Some industries change it (10.0.11.10: 1% for the slow-ageing finance and health types).
+- 1 TB decays at 2% a month, 100 TB at 6%, 10,000 TB at 10%, 1,000,000 TB at 14%.
+- **Steady state.** A corporation converting C TB a month settles where `C = rate × held`. Doubling the inflow raises the held amount by less than double, and the bigger the pile the smaller the gain.
+
+**Steady state by company size** (all of one industry's data converted, 1 TB per $1M, base 2%):
+
+| Revenue in the industry | Converted a month | Held at steady state | Decay rate there | Data quest |
+|---|---|---|---|---|
+| $100,000 (barebones) | 0.008 TB | **0.4 TB** | 2% | None: it needs about $240,000 of revenue to hold 1 TB |
+| $10M | 0.83 TB | **18 TB** | 4.5% | **2%** free R&D ($200,000) |
+| $100M | 8.3 TB | 130 TB | 6.3% | 3% |
+| $1B | 83 TB | **1,040 TB** | 8.0% | **4%** free R&D ($40M), just over the line |
+| $10B | 830 TB | 8,500 TB | 9.9% | 4% |
+| $100B | 8,300 TB | 71,000 TB | 11.7% | 5% |
+
+So from $1B up, ten times the revenue buys about one more percent at most, and staying above a line takes constant fresh data. Bought or stolen data can lift a company a step, but it decays at the same rising rate.
+
+- **Sale value.** The black market and sale price of a TB still falls with its age as in 15.4; decay only sets how much is held **(A)**.
+- **Auto-discard.** Replaced by decay: no separate discard rule for structured data.
+
+**Uses** (consistent with 15.4, 17.4 and 18.3):
+
+| Use | What happens to the held amount |
+|---|---|
+| **Sell** to another company at an agreed price (15.4) | Moves to the buyer **(A)** |
+| **Sell on the black market** (17.4: $50 to $2,000 a TB by industry) | Removed **(A)** |
+| **Stolen** in a hack (17.4) | The thief gets a copy that counts toward its own data quests; the owner keeps its data **(A)** |
+| **Train AI models** (18.3) | Read, not used up **(A)** |
+| **Consume for a one-off bonus** (8.2.3 event 6) | Spent |
+
+Data licensing is not a rule in 15 or 18, so it is not added here.
+
+#### 10.0.11.7 Data quests: free R&D from held data (Logan, batch 141)
+
+"Data quests for now should be **1% free R&D spend for every 1 × 10^x TB** of Structured business data" (Logan). A new company starts at **0 TB** held and gets data only from revenue at 1 TB per $1M (Logan, batch 142), so small companies earn their free R&D slowly.
+
+`Free R&D = (1 + floor(log10(TB held))) %` of revenue, for 1 TB or more held, else **0**
+
+| Held structured data | Free R&D |
+|---|---|
+| Under 1 TB | 0 |
+| **1 TB** | **1%** |
+| 10 TB | 2% |
+| **100 TB** | **3%** |
+| 1,000 TB (1 PB) | 4% |
+| **10,000 TB (10 PB)** | **5%** |
+| Each further 10× | +1% |
+
+- **Logan's example.** A company with $100,000 of revenue and 1 TB held gets **$1,000** of free R&D a year; with 100 TB, $3,000; with 10 PB, $5,000.
+- **Fixed thresholds (Logan).** They are **not** scaled to revenue: the same TB give the same percent to a small and a large company.
+- **Free R&D** is added to the unit's R&D plan at no cost and works exactly like R&D spending (10.0.4).
+- **Per corporation, per industry (A).** Each industry's quest counts the corporation's held structured data of that industry's type, and the percent applies to the revenue of its business units **in that industry**. Data from an industry where it has no unit counts but gives nothing.
+- **Losing a step (T).** If held data falls below a threshold, the lower percent applies after a **1-month grace**.
+- **Other buffs parked (A).** Logan said "for now". The batch 140 ladder's other buffs (R&D cost cut, free compute, lower expenses, guidance rolls, free asset growth, intel notes) are **parked** for a later batch. This replaces both the 7-tier ladder (batch 140) and the stored and produced tier table in 14.2.3.
+
+**In the UI (A).** The Company screen's Tech tab (20.7.2) shows a **Data quests** card per industry: held TB, the current free R&D percent, the **next threshold as a goal** with a **progress bar**, the monthly inflow against the monthly decay, and the estimated time to reach it (or "not reachable at this inflow"). Reaching a step sends a toast (20.4.2).
+
+#### 10.0.11.8 How it changes the 651 starting companies (A)
+
+Each starting company in [companies.csv](../data/companies.csv) gets an **operations loadout from its business assets**. The CSV is not changed now; this is the rule for the generator ([../tools/world-gen/](../tools/world-gen/)). R is revenue_usd_m.
+
+| Item | Rule **(T)** |
+|---|---|
+| Business assets | `revenue × capital per $1 × 100 ÷ (100 + PC bonus)`, with the PC bonus from a first pass at 100 |
+| Labor units | From business assets ÷ labor_value (10.0.11.3, 10.0.11.10) |
+| Enterprise stations | ceil(0.5 × R × data rate ÷ 10.95), with the data rate in TB per $1M (10.0.11.10) and 10.95 TB a year per station: converts **half** its data with general software (mvp-spec C16) |
+| Productivity stations | max(1, round(25% of labor units)) |
+| Other labor | Left idle (so most companies start with the slack effects, 10.0.11.3) |
+| Desktops | One per labor unit (bundled, batch 142) |
+| Software | One bundled seat per labor unit of the world's starting general productivity product, plus licences of the starting general enterprise product for the enterprise stations (14.2) |
+| Base compute | One per labor unit (bundled) plus extra max(9, ceil(0.2 × stations)) |
+| Unstructured data held | One month: R ÷ 12 TB |
+| Structured data held | The decay steady state for converting 0.5 × R TB a year (10.0.11.6) |
+| Data compute | max(10, ceil(1.2 × (held + R ÷ 12) ÷ 100)) |
+| Data quest | From the held amount (10.0.11.7) |
+| Costs | Each unit's fixed cost rate is lowered by its share of the extra compute, data compute and enterprise licence costs (the bundle is already in operating costs), so 2020 margins still match 10.3 |
+| Exceptions | **Arrowhead** converts only 10% at start, so First Week on the Job event 5 (8.2.3) matters. A company with R near 0 gets the barebones loadout |
+
+**Examples.** **Arrowhead** ($40M revenue, Oil, capital 2.5 per $1): about $98M of assets at labor_value $500,000 gives **196 labor units** (the CEO and 4 board seats among them); 49 productivity stations make PC 49 for **+2**; 1 enterprise station converts 4 TB a year, so it holds about **8.6 TB** for **1% free R&D** ($400,000); about 146 units idle (slack 0.3). A **$1B Software company** (capital 0.2 per $1): about $192M of assets at labor_value $20,000 gives **9,600 labor units**; 2,400 productivity stations make PC 2,400 for **+4**; 46 enterprise stations hold about **560 TB** for **3%**.
+
+#### 10.0.11.9 Reconciled with older rules
+
+| Older rule | Conflict | Fix |
+|---|---|---|
+| Compute is not a business asset; the corporation pays compute and spreads it by revenue (10.0.7, 10.0.8) | Stations add desktops and data | All of it is held by the corporation and spread by revenue as shared costs. Desktops, labor units and data are **not** business assets. Data is made per unit, but held by the corporation |
+| Productivity decays 0.5 a month (10.0.4) | Would the bonus decay? | No. Productivity still decays (slower with idle labor, 10.0.11.3) and R&D still moves it; the PC bonus is a **live term added each month**, gone when the stations go |
+| R&D moves productivity (10.0.4) | Data quests and research labor touch R&D | Data quest free R&D adds to the plan as in 14.2.3; research labor multiplies the R&D effect (10.0.11.3) |
+| Productivity thresholds for old tech tiers (6.4.3) | Which productivity counts? | The thresholds read productivity **+ PC bonus**, before the market factor **(A)** |
+| 14.2.3 data rate and buff tiers | 1 TB a day per $100M; tiers per $100M | Replaced by 1 TB per $1M (10.0.11.4) and data quests (10.0.11.7) |
+| 14.2.2 auto-scaling instances | Instances scale with data | Productivity and enterprise instances need a staffed station; server software scales as before |
+| 14.8 employees and per-unit labor cost | Labor is now labor units | A design station takes 1 labor unit; there is no wage per software unit. 14.4.1 keeps a **notional** labor price only to price licences (14.4.1) |
+| 15.2 "a desktop is 1 base unit" | Double counting | A desktop is built like 1 base unit but is a seat, not pool compute (10.0.11.2) |
+| 15.4 data ages and loses value | Two ageing rules? | Value still falls with age for sale prices; the amount held decays by 10.0.11.6 |
+| 2.8.4 "business units have no worker counts" | Labor units are a count | Labor units are an abstract count derived from assets; units keep their payroll dollars, and nobody is hired from a province |
+| Fair value (10.0.8) | A break-even company is not worth $1M | Founding records a $1M round (10.0.11.1) |
+| 8.2.1 John's desktop | | Unchanged: his personal desktop is 1 base unit plus 1 free data compute |
+| 8.2.3 events 5 and 6 | | Event 5 adds enterprise capacity; event 6 spends held data (10.0.11.6) |
+| 1.8 board size, seats and elections ([1-corporate-core.md](1-corporate-core.md)) | Board seats now come from labor units 2 to 5 | Labor units 1 to 5 are the CEO and up to 4 seats the controller fills (10.0.11.3); conflicts with charter sizes and elections are listed in 1.8.1 |
+| Desktops and compute bought per station (batches 140 and 141) | Bundle | Each labor unit brings 1 desktop, 1 base compute and a productivity seat; only extra compute is bought (10.0.11.3) |
+| Batch 141 PC quality factor | Superseded by batch 142 | `PC per station = Q` is **removed**; PC per station is 1, times the industry modifier (10.0.11.2) |
+| Batch 140 boost, wages and ladder | Superseded by batch 141 | The `8 × Q × ln(1 + n ÷ S)` boost, its cap and size factor, Professionals wages, hiring countries, severance and the 7-tier ladder are **removed** |
+
+#### 10.0.11.10 Industry modifiers (Logan, batch 141)
+
+"Industries may change or apply modifiers to what is above, but what is above does not change" (Logan). The rules in 10.0.11.1 to 10.0.11.7 are the base; an industry (or a business unit's purpose, such as a frozen software unit) only sets the modifiers below. Starting values **(T)**:
+
+| Industries | labor_value | PC per station | Data per $1M of revenue | Decay base a month |
+|---|---|---|---|---|
+| **Base case** (barebones; every industry not listed) | **$100,000** | ×1 | 1 TB | 2% |
+| Software, SaaS, Professional services | $20,000 (many units) | ×1 | 1 TB | 2% |
+| Retail, Fast food | $25,000 | ×0.5 (front-line work, desks matter less) | 1 TB | 2% |
+| Social media, Ads, E-commerce | $50,000 | ×1 | 3 TB | 3% |
+| Banking, Insurance, Asset management | $50,000 | ×1 | 2 TB | 1% |
+| Pharma, Healthcare services | $100,000 | ×1 | 1 TB | 1% |
+| Semiconductors, Telecom, Data centers, Mining, Metals | $250,000 | ×1 | 1 TB | 2% |
+| Oil, Gas, Power utilities, Renewables | $500,000 (few units) | ×1 | 1 TB | 2% |
+| Frozen software unit (10.0.2) | Set by the event that makes it (8.3) | | | |
+
+## 10.1 Other decisions by Logan
+
+| Topic | Decision |
+|---|---|
+| Model | Wall Street Raider style: the economy is a set of **industries**, and companies earn money from the industries they operate in. There are no goods tables, recipes, production methods, per-location goods prices or shipments. The player reads and plays the economy through company financials, not factories. |
+| Location perks (batches 23 and 24) | Perks belong to **locations**, not to size: "every company that achieves X in this location gets Y", for example every company with its HQ in New York gets a bonus to investor confidence. Only the big financial and tech cities (the 80 key cities, Metros or city provinces) have them ([2-map-and-influence.md](2-map-and-influence.md) 2.3.5). |
+| Real estate (batches 23 and 32) | Each **province** (was district; batch 118) has pools of **commercial, residential, industrial and land** real estate. Investing buys a part of the pool, which appreciates; the owner chooses how much to rent out for passive income; real estate is taxed at its own rates. Pools grow slowly with population and new construction; holders buy any dollar amount; prices follow the property cycle, renter demand and interest rates ([2-map-and-influence.md](2-map-and-influence.md) 2.16). |
+| Money (batch 24) | The CFO proposes the dividend and the board votes at the quarterly meeting. Each country taxes the profit earned there; shells and havens lower it at a risk. Corporations borrow on a credit line priced by credit rating, and through bonds once rated (10.0.9). The player manages all investments from one portfolio screen. |
+| Boards (batch 23) | A character can sit on up to 3 boards. The CEO's and Chair's Image counts toward investor confidence. |
+| Management (batch 22) | No cyclical, random management rating like Wall Street Raider. A company's **management score** comes from the stats of the characters in its board positions, and it sets **investor confidence** and how well R&D lifts **productivity** (10.5). |
+| Deals (batch 22) | AI companies make deals too, by archetype. Private companies are valued at their last funding round, or an earnings multiple when there is none. A company that can't pay its debts goes through a restructuring event chain, where creditors can take it or auction its business units (10.5.4). |
+| Energy and chips | Measured in **dollars** like every other industry; nothing is counted in physical units (10.6). |
+| Running units | **Mostly automatic.** The company's executives run its business units; the player sets the plans when in control and buys, sells and merges (10.5). |
+
+## 10.2 The model in one paragraph
+
+Each **industry** has one world market whose yearly demand grows on its trend and swings with the business cycle, interest rates, its cost drivers and its own news cycle. A **corporation** holds any number of **business units**, each in one industry, like a diversified Wall Street Raider company. A unit's **business assets**, one dollar figure, turn into revenue at the industry's asset turnover, scaled by the unit's **productivity**, which decays unless R&D holds it up, and by the industry's **market factor**, which holds back an oversupplied industry and lifts an undersupplied one. Fixed costs are paid on assets, so a unit in a slump loses money. The corporation's **management score**, built from the stats of the characters on its board, sets how well R&D lifts productivity and how much investors trust it. Profit flows into the quarterly statements, which set fair value and share price (10.0.8).
+
+## 10.3 Industries
+
+**The list (Logan, batch 50): 42 industries in a flat list, with no supply chains.** Every industry sells into its own world market (10.0.3). **Semiconductors** is one industry (Logan, batch 116): it covers lithography machines, foundries, GPUs and CPUs, and it makes the GPU parts and base computer parts that compute is built from ([15-infrastructure.md](15-infrastructure.md) 15.2). **Media and entertainment** is not an industry but its own system ([16-media.md](16-media.md)). Sizes and every other number are starting values **(T)**.
+
+**MVP: industries use the defaults (Logan, batch 148).** "Just make these like default companies for now we will rework them one by one once companies are known working. I want all industries to be like the defaults." In the MVP every industry runs on the barebones company's parameters (10.0.11.1, the 10.0.11.10 base case): $1 of assets per $1 of revenue, labor_value $100,000, 1 TB per $1M, asset decay of 1% a year above $10M of a unit's assets (Logan, batch 149; none for the barebones company), one R&D norm (5%), one fixed cost share (0.45), one earnings multiple and one cycle sensitivity, with revenue equal to expenses at productivity 100 and neutral demand, R&D at the norm counted in the expenses. Only the name, world size, trend growth and asset label differ (the sector stays as a label). Fit and resource tags (10.3.1) and the cash-burning flags are parked, so no unit gets a location bonus and no industry burns cash on purpose. At break-even, profit comes only from productivity above 100, undersupply and free R&D from data (10.0.11.7). The table and notes below are kept unchanged as the source for the per-industry rework, one industry at a time ([mvp/mvp-spec.md](../mvp/mvp-spec.md) 2.2, 11.2).
+
+Each industry has its own **capital per $1 of capacity**: the cost of new business assets for each dollar of yearly revenue they can make at normal productivity (Logan, batch 51).
+
+| Industry | Sector | World size 2020 ($/yr) **(T)** | Trend growth **(T)** | Cyclicality β **(T)** | Rate sensitivity **(T)** | Margin at full use **(T)** | Fixed cost share f **(T)** | Capital per $1 of capacity **(T)** | Main cost drivers | Slop per $1M **(T)** |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Semiconductors | Tech | $330B | +5%, plus 0.10 of the AI boom (10.0.6) | 1.6 | Medium | 27% | 0.45 | 1.3 | Electricity | 0.2 |
+| AI labs | Tech | $5B | +5% until the 2030 boom, then the boom schedule (10.0.6, batch 151) | 2.0 | High | -40% to +40% | 0.70 | 0.3 | Compute (6.2) | 2 |
+| Cloud | Tech | $300B | +20%, plus 0.05 of the AI boom (10.0.6) | 1.0 | Medium | 25% | 0.50 | 0.6 | Chip price, data center rents | 0.2 |
+| Data centers | Tech | $100B | +15%, plus 0.15 of the AI boom (10.0.6) | 0.8 | High | 20% | 0.65 | 3.0 | Electricity | 0.1 |
+| Software | Tech | $350B | +9% | 0.8 | Medium | 25% | 0.55 | 0.2 | Wages | 1 |
+| SaaS | Tech | $250B | +14% | 0.8 | High | 22% | 0.65 | 0.2 | Wages, cloud price | 1 |
+| Social media | Tech | $250B | +10% | 1.3 | Medium | 30% | 0.55 | 0.4 | Wages | 15 |
+| Ads | Tech | $450B | +8% | 1.6 | Medium | 30% | 0.45 | 0.3 | Wages | 4 |
+| Consumer electronics | Tech | $1.1T | +3% | 1.3 | Low | 8% | 0.25 | 0.4 | Chip price | 3 |
+| Telecom | Tech | $1.6T | +1.5% | 0.4 | Medium | 18% | 0.65 | 2.0 | Electricity | 1 |
+| Gaming | Tech | $200B | +8% | 0.6 | Low | 22% | 0.45 | 0.4 | Chip price | 25 |
+| Gambling | Tech | $400B | +8% | 0.6 | Low | 22% | 0.35 | 0.5 | Coin prices (9.3) | 35 |
+| Banking | Finance | $2.5T | +4% | 1.4 | Positive (gains when rates rise) | 30% | 0.55 | 1.25 (regulatory capital; deposits fund the loans, 3.17; batch 145) | Credit losses | 0.5 |
+| Insurance | Finance | $6T | +4% | 0.6 | Positive | 8% | 0.30 | 0.60 (regulatory capital; float funds the claims, 3.17; batch 145) | Disasters | 0.3 |
+| Asset management | Finance | $500B | +6% | 1.5 | Medium | 30% | 0.50 | 0.1 | Markets level | 0.2 |
+| Oil | Energy | $2.5T | 0% (stagnant, Logan batch 86) | 0.8 | Low | 25% at oil index 100 | 0.60 | 2.5 | Oil price (10.6) | 0.2 |
+| Gas | Energy | $1T | +2% | 0.8 | Low | 22% at gas index 100 | 0.60 | 2.5 | Gas price (10.6) | 0.2 |
+| Power utilities | Energy | $2.5T | +2.5% | 0.3 | High | 15% | 0.70 | 3.0 | Gas price | 0.3 |
+| Renewables | Energy | $350B | +12% | 0.6 | Very high | 20% | 0.80 | 4.0 | Rates | 0.1 |
+| Mining | Industry | $800B | +2% | 1.6 | Low | 18% | 0.60 | 2.2 | Electricity, oil | 0.3 |
+| Metals | Industry | $1.2T | +2% | 1.6 | Low | 12% | 0.50 | 1.8 | Electricity | 0.3 |
+| Chemicals | Industry | $4T | +3% | 1.2 | Low | 10% | 0.40 | 1.2 | Gas price | 1 |
+| Agriculture | Industry | $4T | +1.5% | 0.3 | Low | 10% | 0.45 | 1.5 | Gas price (fertilizer), weather | 0.5 |
+| Autos | Industry | $2.6T | 0% | 1.8 | High | 6% | 0.35 | 0.8 | Chip price, metals | 3 |
+| EVs | Industry | $400B | +25% | 1.8 | High | 4% | 0.40 | 1.0 | Chip price, metals, electricity | 3 |
+| Aerospace | Industry | $450B | +4% | 1.2 | Low | 10% | 0.40 | 0.8 | Metals | 0.5 |
+| Defense | Industry | $350B | +4% (war-driven) | 0.3 | Low | 12% | 0.40 | 0.8 | Government budgets (4.x) | 0.5 |
+| Robotics | Industry | $45B | +12% | 1.5 | Medium | 10% | 0.35 | 0.7 | Chip price | 0.5 |
+| Drones | Industry | $15B | +25% | 1.3 | Medium | 12% | 0.35 | 0.6 | Chip price | 0.5 |
+| Shipping | Industry | $500B | +3% | 1.5 | Low | 8% | 0.60 | 2.0 | Oil price, chokepoints (10.7) | 1 |
+| Logistics | Industry | $900B | +3% | 1.2 | Low | 7% | 0.40 | 1.0 | Oil price, wages | 1 |
+| Airlines | Industry | $500B | +5% | 1.8 | Low | 5% | 0.60 | 1.5 | Oil price | 2 |
+| Construction | Industry | $13T | +3% | 1.6 | Very high | 5% | 0.20 | 0.3 | Metals, rates | 2 |
+| Retail | Consumer | $20T | +3% | 1.0 | Medium | 4% | 0.30 | 0.4 | Wages, shipping | 10 |
+| E-commerce | Consumer | $5T | +10% | 1.0 | Medium | 5% | 0.35 | 0.4 | Logistics, wages | 12 |
+| Fast food | Consumer | $1T | +2% | 0.3 | Low | 10% | 0.35 | 0.6 | Wages | 40 |
+| Luxury | Consumer | $350B | +5% | 2.0 | Low | 25% | 0.35 | 0.5 | Glitterati and above wealth | 0 |
+| Pharma | Health | $1.4T | +5% | 0.2 | Low | 22% | 0.55 | 0.6 | R&D | 2 |
+| Healthcare services | Health | $8T | +5% | 0.2 | Low | 8% | 0.50 | 0.7 | Wages | 1 |
+| Real estate | Services | $3T | +3% | 1.4 | Very high | 20% | 0.60 | 2.0 | Rates, the property cycle (2.16) | 1 |
+| Professional services | Services | $6T | +4% | 0.8 | Low | 15% | 0.30 | 0.1 | Wages | 1 |
+| Black market | Services | $2T | +3% | 0.2 | Low | 40% | 0.30 | 0.3 | Policing and laws (4.22); raid risk (11.7) | 5 |
+
+- **Asset degradation rate (Logan, batch 145; rates T).** The share of business assets lost each year (10.0.7). Parked for the rework: the MVP uses 1% a year above $10M of a unit's assets for every industry (Logan, batch 149). **10%**: AI labs, Cloud, Data centers, Software, SaaS, Social media, Ads, Consumer electronics, Gaming, Gambling, Semiconductors, E-commerce, Drones, Robotics. **8%**: Telecom, Banking, Insurance, Asset management, Chemicals, Autos, EVs, Aerospace, Defense, Shipping, Logistics, Airlines, Construction, Retail, Fast food, Luxury, Pharma, Healthcare services, Professional services, Black market. **6%**: Oil, Gas, Mining, Metals, Agriculture. **5%**: Power utilities, Renewables, Real estate. For banks and insurers it stands for loan losses and claims run-off.
+- **Profit check (batch 145).** The fixed part of costs per $1 of assets is f ÷ capital per $1: lowest in Renewables (0.80 ÷ 4.0 = 0.20), then Data centers (0.22), Power utilities (0.23), Oil and Gas (0.24). It is above the degradation rate in all 42 industries, also for the barebones company with its $7,000 of shared costs on $100,000 of assets (worst case Data centers: 0.22 - 0.10 - 0.07 = 0.05 left for fixed cash costs), so when depreciation sits inside the fixed cost share, margins at full use are unchanged: Oil keeps 25% before R&D, and the barebones company stays break-even.
+- **Cash-burning industries (Logan, batch 146).** **Consumer electronics, EVs, E-commerce and AI labs** lose money after R&D at the norm on purpose (margin less R&D norm about -2%, -6%, -1% and -15%): like their real counterparts they live on investor money, not profit. They fund the gap with new share issues ([3-markets-and-fx.md](3-markets-and-fx.md) 3.4.3) and credit line draws (10.0.9); whether a raise succeeds rests on investor confidence (10.5.2) and the industry's news phase (10.0.6), and a company that cannot raise goes bankrupt. The MVP's lite AI rule is in [mvp/mvp-spec.md](../mvp/mvp-spec.md) 6.6.
+- **Bank and insurer capital (Logan, batch 145; T).** Logan's base is $1 of business assets per $1 of revenue for Banking and $0.50 for Insurance, moved toward real levels with one simple rule: **a bank's or insurer's business assets are its regulatory capital**, the equity that lets it lend or underwrite; deposits and float fund the loans and claims and are not business assets (3.17). Banking: real banks hold capital of about 10 to 15% of risk-weighted assets (Basel III minimum about 10.5% with the conservation buffer); revenue runs about 5% of total assets and risk-weighted assets about 55% of total assets, so $1 of revenue needs about $11 of risk-weighted assets and, at a 12% ratio, about $1.30 of capital: **1.25**. Insurance: insurers must hold capital above their required solvency capital and typically hold 150% to 200% of it; required capital of about 30 to 40% of premiums at about 170% coverage gives $0.55 to $0.65 per $1 of premiums (the P&C rule of thumb caps premiums at about 3 times capital): **0.60**. Everything else follows the normal rules: asset turnover 0.80 and 1.67, and f ÷ capital (0.44 and 0.50) stays well above the 8% degradation rate.
+- **Real estate** as an industry is development, property management and brokerage. The province pools of commercial, residential, industrial and land real estate (2.16) stay as a separate investment anyone can buy into.
+- **Black market** covers drug fronts, escort services, smuggling and other illegal trade. Its business units carry a yearly raid risk and are secrets that can become hooks (11.7).
+- **Cyclicality β**: industry demand × (1 + β × the cycle demand modifier, 2.18.1). A β of 1.8 in a -5% recession cuts demand 9%.
+- **Rate sensitivity**: demand × (1 - s × (policy rate - neutral rate)), with s = 0 (Low), 1 (Medium), 2 (High), 3 (Very high) **(T)**. Banks and insurers use it the other way round on their margin.
+- **Strata spending** (2.8.0): consumer industries' demand moves with the spending of each stratum. The PMC's needs (housing, energy, healthcare) map to real estate, power utilities and healthcare services; unmet needs raise unrest (2.8.5) **(A)**.
+
+### 10.3.1 Province fit and resource tags (batch 118)
+
+Districts are gone, so each industry has a **fit** that says which kind of province suits it ([2-map-and-influence.md](2-map-and-influence.md) 2.3.1) **(A)**. A business unit gets **+2% productivity** on the share of its assets in provinces whose largest development track matches its fit **(T)**. Extraction industries have no fit and look at the province's **resource tag** instead. Separately, a unit gets **+3% productivity** on the share of its assets in provinces whose resource tag matches its industry **(T)**. The two bonuses stack **(A)**. Ties between tracks count for both fits **(A)**.
+
+| Fit | Industries |
+|---|---|
+| **Commerce-heavy** (Commerce is the largest track) | AI labs, Cloud, Software, SaaS, Social media, Ads, Gaming, Gambling, Banking, Insurance, Asset management, Retail, E-commerce, Fast food, Luxury, Healthcare services, Real estate, Professional services, Black market |
+| **Industry-heavy** (Industry is the largest track) | Semiconductors, Data centers, Consumer electronics, Telecom, Power utilities, Renewables, Metals, Chemicals, Autos, EVs, Aerospace, Defense, Robotics, Drones, Shipping, Logistics, Airlines, Construction, Pharma |
+| **Extraction** (resource tag only) | Oil, Gas, Mining, Agriculture |
+
+| Resource tag | Matching industries (+3%) |
+|---|---|
+| Oil | Oil |
+| Gas | Gas |
+| Coal | Mining, Power utilities |
+| Copper, Lithium, Cobalt, Nickel, Rare earths, Gold, Uranium, Silver, Zinc, Tin, Platinum, Diamonds | Mining |
+| Bauxite (batch 124) | Mining, Metals |
+| Iron ore | Mining, Metals |
+| Farmland, Timber, Fishing | Agriculture |
+| Hydropower | Power utilities, Renewables |
+| None | None |
+
+An extraction unit's assets should sit mostly in provinces with a matching tag; assets elsewhere (offices, refineries counted as Oil assets) earn no bonus but no penalty **(A)**.
+
+## 10.4 Locations and real estate
+
+Business units have no buildings of their own. Where a unit's assets sit (10.0.2) decides where it is taxed, where it gains influence (2.5.2) and which location perks it meets, and the space it needs comes from the province real estate pools. The old site rules (10.4.1 to 10.4.3) and direct branches (10.4.6) were removed: business units (10.0) replaced both.
+
+### 10.4.4 Location perks
+
+Moved to [2-map-and-influence.md](2-map-and-influence.md) 2.3.5.
+
+### 10.4.5 Real estate pools
+
+Moved to [2-map-and-influence.md](2-map-and-influence.md) 2.16 (pools, growth, price, rent, buying and selling, tax).
+
+## 10.5 Management score
+
+There is no cyclical, random management rating as in Wall Street Raider (Logan). A company's **management score** (0 to 100) is built from the board: the characters in its positions (1.8) and their stats.
+
+### 10.5.1 How the score is built (T)
+
+| Position | Skill used | Weight |
+|---|---|---|
+| CEO (the head) | Average of Finance, Operations and Persuasion | 30% |
+| COO | Operations | 20% |
+| CFO | Finance | 20% |
+| CIO | Intrigue | 10% |
+| Chair | Persuasion | 10% |
+| Other seats (General Counsel, CMO, Chief Strategy Officer, independents) | Their seat's skill, averaged | 10% |
+
+- Score = `Σ weight × skill ÷ 20 × 100`, capped at 100. A board of skill-10 characters scores 50; a board of skill-20 characters scores 100.
+- An empty position counts as skill 3.
+- A character can sit on **up to 3 boards** (Logan). Each board after the first cuts what they add to every board's score by 20% (×0.8 on two boards, ×0.6 on three) **(T)**.
+- A member who holds the head as Rival or Nemesis counts at half their skill (1.8.3).
+- Traits shift the member's contribution: Diligent +2 skill, Lazy -2, Ambitious +1, Greedy -1 to the CFO slot only, Honest +1 to investor confidence (below), Deceitful -1 **(A)**.
+- The score changes only when the board changes, when members' skills grow or fall, or when opinion tags and traits change. It is never rolled.
+
+### 10.5.2 What the score does (T)
+
+| Effect | Formula | At score 30 | At score 50 | At score 80 |
+|---|---|---|---|---|
+| **R&D effect** | Management factor `0.5 + score ÷ 100` multiplies how much R&D moves productivity (10.0.4) | ×0.80 | ×1.00 | ×1.30 |
+| **Investor confidence** | Confidence factor `0.8 + 0.4 × score ÷ 100` in fair value (10.0.8); also moves the credit rating one notch per 25 points away from 50 (3.6) | ×0.92 | ×1.00 | ×1.12 |
+
+**Image** (Logan): the CEO's and Chair's Image adds to investor confidence, up to ±10%: each of them adds `(Fame × Favor ÷ 100 - 25) ÷ 250`, capped at ±5% each **(T)** (Fame and Favor 0 to 100, [1-corporate-core.md](1-corporate-core.md) 1.1.0).
+
+Investor confidence makes boards a target: poaching a rival's star CFO lowers their score and their share price, and putting a famous name on your own board lifts yours.
+
+### 10.5.3 What executives do on their own
+
+Running business units is mostly automatic (Logan, batch 21). The executives run each unit from month to month and write its growth plan and R&D plan (10.0.2) when nobody else does, starting from the industry's R&D norm (10.0.4) **(A)**. Whoever controls the company can set both plans. Since batch 143 both are set only at the quarterly board meeting chain and hold until the next one ([21-quarterly-cycle.md](21-quarterly-cycle.md) 21.4). Executives' traits shape the choices: a Greedy CEO starves R&D for short-term profit; an Ambitious one over-expands; a Cautious one rents space instead of buying it. The player shapes this through who sits in which position, the charter, the plans when they control the company, and pressure as a shareholder.
+
+### 10.5.4 Deals
+
+| Deal | Rule **(T)** | Takes |
+|---|---|---|
+| **Buy or sell a business unit** | The asking price starts at the unit's share of its corporation's business assets × the corporation's fair value (10.0.8), or of the private valuation below, then is negotiated. Its assets, their province spread and the real estate it holds move with it | 1 to 3 months |
+| **Buy or sell assets** | Part of a unit's assets, priced from book value × the cycle factor (10.0.7); the buyer must be in the same industry | As 10.0.7 |
+| **Merge units** | Two units in one industry owned by one corporation become one; fixed costs -10% | 3 months |
+| **Spin off** | One or more units become a new corporation; shares go to the parent's holders or are sold in an IPO (3.4) | 3 months |
+| **AI deals** | **AI companies do not buy other companies unless the game director tells them to** (Logan, batch 86). Otherwise they buy and sell business assets and units by archetype (2.23): a raider sells weak units, an empire builder buys assets, a cautious owner sells into booms | Monthly decision; acquisitions only on the director's call |
+| **Private company value** | The post-money value of its last funding round; with no round in the last 2 years, net income × the industry's average P/E × 0.7 (private discount) (Logan) | |
+| **Can't pay its debts** | The default chain (3.6.6): a standstill, then creditors vote. They can extend and swap debt for equity (the creditors take the company), sell it whole, or take or auction its units one by one at the sale prices of 10.0.7 (Logan) | 2 to 6 months |
+
+This keeps the Wall Street Raider moves: buy a conglomerate, strip and sell its best units, merge what is left with your own, spin off the rest.
+
+### 10.5.5 Dividends, tax and borrowing (Logan, batch 24)
+
+- **Dividends.** The CFO proposes a dividend each quarter (Fixed, Progressive or Special, [3-markets-and-fx.md](3-markets-and-fx.md) 3.4.6) and the **board votes** on it at the quarterly meeting (1.8.4). A CFO's traits shape the proposal: Greedy proposes low payouts to keep cash, a CFO loyal to a cash-hungry major holder proposes high ones. The head can lobby members with Persuasion.
+- **Tax (Logan, batch 56).** Tax stays national after batch 155: it is a country's law, not a zone economy setting. Each country's corporate tax rate applies to **the share of profit earned there**, which is the share of each business unit's assets in that country (10.0.2) ([4-politics.md](4-politics.md) E2 and E9). Havens are reached through shell companies (1.7.4), which lowers tax but builds exposure. There is no world tax rate.
+- **Borrowing.** Corporations draw on a bank credit line and, once rated, issue bonds (10.0.9), at the Federal Monetary Board's world base rate plus their financial zone's credit spread (batch 155; was the home country's spread; batch 157: base plus a quarterly cycle term) and a spread for their credit rating (3.6, 10.0.9), lowered by location perks (2.3.5). The management score moves the rating (10.5.2).
+
+## 10.6 Energy and semiconductors in dollars
+
+Energy and chips are measured in dollars like every other industry (Logan). Nothing is counted in physical units.
+
+- **Price indices.** Oil, gas, electricity (per financial zone grid since batch 155; was per country) and chips (the Semiconductors industry) each have a **price index**, 100 at the start. Each month an index moves toward `100 × (world demand ÷ world capacity)^(1/ε)` for its industry, with price elasticity ε (oil 0.3, gas 0.4, electricity 0.2, chips 0.5) **(T)**. Oil and gas indices trade as futures on the commodity exchanges ([3-markets-and-fx.md](3-markets-and-fx.md)). Shocks in 2.4.3 (Hormuz, cartel cuts, sanctions, the Red Sea) cut capacity directly, so the index jumps.
+- **Cost driver index D.** For each industry, D = 1 + the weighted change of its cost drivers' indices from 100 **(T)**. Example: airlines with oil 40% of variable cost; oil index 150 gives D = 1.20.
+- **Pass-through.** Each industry passes part of D to its prices: commodities 80%, most industries 50%, regulated utilities 100% after 6 months **(T)**. Pass-through raises revenue and lowers demand by the industry's price sensitivity.
+- **No supply chains** (Logan, batch 50). **Semiconductors** is one industry (batch 116). The **chip price index** follows its demand against its supply, and the AI boom ([6-technocapital.md](6-technocapital.md) 6.7.0, boom trigger in 2030 and boom rate; 10.0.6 in the MVP) drives its demand directly.
+- **Compute is bought, not derived** (batch 116). Compute units (base, data and GPU) are counted as in the compute glossary ([15-infrastructure.md](15-infrastructure.md) 15.2): a company buys their parts from the Semiconductors industry at the chip index and installs them. Nothing converts dollars of industry capacity into machines or compute, and there are no lithography machine, wafer or fab counts.
+
+## 10.7 Trade, chokepoints and disruptions
+
+Nothing ships along routes; trade works through costs and productivity:
+
+- Each industry has an **exposure** to each chokepoint (0 to 1) **(T)**: Shipping 1.0, Oil and Gas 0.6, Consumer electronics 0.5, Software 0.
+- When a chokepoint is at Tension, Attacks, Conflict or Closed (2.4.2), exposed business units pay more (D rises by exposure × 2%, 5%, 15%, 30%) and lose effective productivity (exposure × 0%, 2%, 10%, 30%) **(T)**.
+- **Tariffs and trade wars** (4.11) add to the D of the foreign business units they target.
+- **Links between industries.** An industry's cost drivers are other industries' prices, so shocks spread: oil up → airlines, chemicals and shipping costs up → their earnings fall → their shares fall → trusts holding them lose value.
+
+## 10.8 Slop
+
+Slop is produced per dollar: each business unit makes `revenue × its industry's slop per $1M` a month, split across the provinces where its assets sit by asset share (10.0.2) and balanced per area, a Metro pooling its members ([2-map-and-influence.md](2-map-and-influence.md) 2.8.0) **(T)**. The rules in 2.8.0 for slop need and the 0.8 and 1.2 ratio bands apply.
+
+## 10.9 The old economy sections in the map file
+
+The goods, production methods, hub prices, supply contracts, financial statements and competition sections of the map file are gone: industries (10.3), business units (10.0) and the quarterly statements (10.0.8) replace them. Population and labor (2.8) stays, with needs read as spending on industries (10.3); oil and gas shocks are now 2.4.3 and real estate pools 2.16 in [2-map-and-influence.md](2-map-and-influence.md).
+
+## 10.10 Worked example: a robotics unit in a recession
+
+Halcyon Robotics holds one business unit in Robotics, based in the US, with $2.1B of business assets. Robotics needs $0.7 of capital per $1 of capacity, so its asset turnover is 1 ÷ 0.7 ≈ 1.43. Its margin at full use is 10% and its fixed cost share 0.35, so the variable cost share is 0.55 and fixed costs are 0.35 × the unit's revenue at M 1.0. Productivity 100, management score 50, D 1.0. Depreciation and shared costs sit inside the fixed costs (10.0.4), so figures are before R&D, interest and tax.
+
+- **Normal times** (supply matches demand, M 1.0): revenue = 2.1 × 1.43 = $3.0B a year. Operating costs = 3.0 × 0.55 + 3.0 × 0.35 = 1.65 + 1.05 = $2.70B. Operating profit $0.30B.
+- **Recession** (cycle -6%, β 1.5, so demand -9%): supply ratio S = 1 ÷ 0.91 = 1.10, so M = 0.95. Revenue = $2.86B; costs = 1.57 + 1.05 = $2.62B; operating profit $0.24B.
+- **A Robotics Bust on top** (a further 15% demand fall from the quarterly growth draws; since batch 150 the Bust label itself no longer cuts demand, 10.0.6): S = 1 ÷ (0.91 × 0.85) = 1.29, so M = 0.88. Revenue = $2.64B; costs = 1.45 + 1.05 = $2.50B; operating profit $0.14B, less than half of normal, because fixed costs do not shrink with revenue.
+- **What happens next**: unless the player controls the company, the executives adjust the plans on their own (10.5.3). The player can lift the management score (a skill-20 COO in place of a skill-10 one raises it from 50 to 60, so R&D moves productivity 10% more), shrink by selling assets (only 60% of book in a Bust, 10.0.7), or buy a weaker rival's Robotics unit at a Bust price and merge it in to cut fixed costs 10% (10.5.4).
+
+## 10.11 Tooltips
+
+Hovering a unit's revenue shows: business assets → asset turnover → productivity → market factor (supply ratio and the news cycle) → revenue. Hovering its costs shows the variable part, the fixed part, R&D, shared costs and D with each driver's contribution.
+
+## 10.12 Assumptions and open items
+
+1. Every number in 10.3.
+2. The supply and market factor formula in 10.0.3 (one world market confirmed).
+3. Revenue, expenses, productivity decay and the R&D formula in 10.0.4.
+4. Corporation rules in 10.0.5 and unit deals in 10.5.4.
+5. Industry news cycle phases in 10.0.6.
+6. How a unit's growth plan picks which provinces its new assets go to (10.0.2), and the fit and resource tag lists in 10.3.1.
+7. Flavor labels, the asset degradation rates by industry (batch 145; they replace the 10-year depreciation), the cycle sale factors, and pricing of asset deals in 10.0.7.
+8. How subsidiaries are carried, parent overrides, the statement lines, the fair value formula and the shared cost split in 10.0.8.
+9. Credit line sizing, bond eligibility, intra-group loyalty costs and default links in 10.0.9.
+10. Management score weights, trait shifts, the multi-board cut and the Image formula in 10.5.
+11. Which choices executives make on their own (10.5.3).
+12. Price indices in 10.6.
+13. Chokepoint exposure, and slop per dollar of revenue split by asset share (10.7, 10.8).
+14. The fringe pool's start size formula and its cycle rates (10.0.10).
+15. Operations (10.0.11, batches 141 and 142): the barebones break-even split, the $1M founding round and asset turnover as a modifier on its revenue; smaller boards under 5 labor units, controller appointment, board labor staffing stations and the board conflicts in 1-corporate-core 1.8.1; the bundle's upkeep inside operating costs, the 9 extra base compute of the barebones company and what extra compute is for; the stepped PC bonus; labor pooled at the corporation and the order labor is dropped in; research labor's R&D effect step; the three unused labor effects; unstructured data storage, overflow and 12-month retention; enterprise base speed 1 GB a tick; the decay base of 2% a month; the 1-month grace on data quests; the parked data buffs; the industry modifier table (10.0.11.10); the starting loadout rule.

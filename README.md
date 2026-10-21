@@ -1,13 +1,20 @@
 # TechnoCapital20FF
 
-A turn-based grand strategy game about dynasties that control capital in a modern world with cyberpunk accents. Crusader Kings style characters, corporate feudalism and succession, on top of a Victoria 3 / EU4 style economy and politics, with stock, bond, commodity and FX markets.
+A modern-day cyberpunk grand strategy game: Crusader Kings style corporate feudalism and characters on top of a Wall Street Raider style economy and stock market.
 
-Built with Phaser 3, TypeScript and Vite.
+Built entirely in Rust with [Bevy](https://bevyengine.org/) (pinned at 0.20.0).
 
 ## Design
 
-Start with [docs/design/design-doc.md](docs/design/design-doc.md).
+- MVP in plain English: [docs/design/mvp/mvp-summary.md](docs/design/mvp/mvp-summary.md)
+- MVP spec: [docs/design/mvp/mvp-spec.md](docs/design/mvp/mvp-spec.md)
+- Build plan: [docs/design/mvp/build-plan.md](docs/design/mvp/build-plan.md)
+- Full design index: [docs/design/design-doc.md](docs/design/design-doc.md)
 
 ## Status
 
-Design phase. The Phase 1 skeleton (turn loop, ownership graph, charters, blocs) comes next; see [docs/design/12-tech-and-roadmap.md](docs/design/12-tech-and-roadmap.md).
+Design done for the MVP (a read-only map and business simulation). The build starts with milestone M0: the Cargo workspace and data loading.
+
+## License
+
+Proprietary. See [LICENSE](LICENSE).
