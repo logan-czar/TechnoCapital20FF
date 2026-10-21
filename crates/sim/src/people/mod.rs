@@ -2,3 +2,10 @@
 //! full characters made in play, and the management score and confidence factor.
 //!
 //! Spec sections: 3.7, 3.7.1, 3.7.2, 5.7; simple characters are generated in 4.3 step 11.
+
+pub mod board;
+pub mod full;
+pub mod management;
+pub mod names;
+pub mod simple;
+pub mod traits;
