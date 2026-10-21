@@ -46,6 +46,10 @@ pub struct BirthsView {
     pub events: Vec<EventRow>,
     pub births: Vec<BirthRow>,
     pub listings: Vec<ListingRow>,
+    /// Full characters made in play so far (3.7.2; the spec 10 world population check).
+    pub full_characters_made: usize,
+    /// Full characters in the world: the 296 and those made in play.
+    pub full_characters: usize,
 }
 
 impl BirthsView {
@@ -113,6 +117,13 @@ impl ViewData for BirthsView {
             events,
             births,
             listings,
+            full_characters_made: w
+                .characters
+                .rows()
+                .iter()
+                .filter(|c| c.tier == crate::people::full::GENERATED_TIER)
+                .count(),
+            full_characters: w.characters.len(),
         }
     }
 }

@@ -379,7 +379,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             &industries[industry].sector,
             controller_traits,
         );
-        // The plan at load (D283, D159): R&D by the 6.3 rule at productivity 100 and loss_q 0,
+        // The plan at load (D283, D161): R&D by the 6.3 rule at productivity 100 and loss_q 0,
         // less the starting free R&D; growth is g_dem of the Q1 2020 draw, set once the economy's
         // load draws are made (`ai::jobs::plan_at_load`).
         let rd_plan = rd_plan_at_load(

@@ -182,7 +182,7 @@ fn apply_operating(world: &mut World, id: CompanyId, op: &OperatingPlan) {
 /// newborns included, they were born in steps 1 and 2), locks its plan: 6.1 to 6.4, the parked
 /// 6.6 raise, then 6.5 on the cash and line after it. The draw or repayment moves cash and the
 /// line now, and the dividend (5.17, computed once, in `ai::financing`) is paid through
-/// `finance::jobs::pay_dividend`; both wait in `pending` for the month's ledger (D125).
+/// `finance::jobs::pay_dividend`; both wait in `pending` for the month's ledger (D125, D160).
 pub fn plan_lock_job(world: &mut World, ctx: &mut JobCtx<'_>) {
     let statuses: Vec<_> = world
         .companies

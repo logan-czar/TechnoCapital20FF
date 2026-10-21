@@ -4,6 +4,7 @@
 //! count and the mean zone confidence. Rebuilt daily (D144).
 
 use super::{Cadence, ViewData, ViewInput};
+use crate::market::earnings::SurpriseTag;
 
 /// The M5.8 tracking band: a quoted company-day tracks V when `|P ÷ V − 1| ≤ 30%` (D143).
 pub const TRACKING_BAND: f64 = 0.30;
@@ -20,6 +21,12 @@ pub struct MarketStatsView {
     pub within_band: usize,
     /// The mean investor confidence over the 26 zones (spec 5.1.2).
     pub mean_confidence: f64,
+    /// The last release's reports: companies not frozen with a quarter compared against its
+    /// consensus (5.15), and how many were tagged Beat or Big beat, Miss or Big miss (the spec 10
+    /// "30% to 60% of releases are beats" target, read by the headless soak).
+    pub reports: usize,
+    pub beats: usize,
+    pub misses: usize,
 }
 
 /// `|P ÷ V − 1|` (D143); a V at or below 0 counts as an infinite gap.
@@ -52,6 +59,18 @@ impl ViewData for MarketStatsView {
             _ => 0.5 * (gaps[n / 2 - 1] + gaps[n / 2]),
         };
         let zones = w.zones.len().max(1) as f64;
+        let (mut reports, mut beats, mut misses) = (0, 0, 0);
+        for (id, c) in w.companies.iter() {
+            if c.finance.status().is_frozen() || c.finance.quarters().is_empty() {
+                continue;
+            }
+            reports += 1;
+            match w.market.stocks[id].tags.surprise {
+                Some(SurpriseTag::Beat | SurpriseTag::BigBeat) => beats += 1,
+                Some(SurpriseTag::Miss | SurpriseTag::BigMiss) => misses += 1,
+                None => {}
+            }
+        }
         MarketStatsView {
             listed: w
                 .market
@@ -64,6 +83,9 @@ impl ViewData for MarketStatsView {
             median_gap,
             within_band: gaps.iter().filter(|&&g| g <= TRACKING_BAND).count(),
             mean_confidence: w.zones.iter().map(|(_, z)| z.confidence).sum::<f64>() / zones,
+            reports,
+            beats,
+            misses,
         }
     }
 }
