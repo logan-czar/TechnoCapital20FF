@@ -29,7 +29,7 @@ use crate::finance::statements::trailing_four;
 use crate::news::Headline;
 use crate::ops::stations::BAREBONES_REVENUE_USD;
 use crate::people::management::confidence_factor;
-use crate::rng::{NoNoise, Stream};
+use crate::rng::{DrawSource, NoNoise, Stream};
 use crate::time::scheduler::TickFacts;
 use crate::time::{Date, DateTime, JobCtx, Scheduler, Slot};
 use crate::world::{Company, CompanyId, Ordinal, Table, World, ZoneId};
@@ -135,9 +135,10 @@ pub fn confidence_news(headlines: &[Headline]) -> f64 {
 /// at g 0 against the industry's lt, D244); V is that ÷ shares_out; P stays company-start.csv's
 /// open_price (set in the load, so P = V up to the share rounding); buzz 0; the consensus for
 /// the 2 January 2020 release is the synthetic Q4 2019 net income, so its surprise is 0 (D133);
-/// every exchange's index is 1,000 at its listed cap. Call after [`crate::finance::start`]; it
-/// draws nothing.
-pub fn start(world: &mut World) {
+/// every exchange's index is 1,000 at its listed cap. Call after [`crate::finance::start`].
+/// Its only draws are each quoted stock's estimated fair value error for the first quarter, one
+/// prices-stream uniform each in company id order, so EFV is never true V (spec 8; D150).
+pub fn start(world: &mut World, draws: &mut dyn DrawSource) {
     for id in world.companies.ids() {
         let c = &world.companies[id];
         let ind = &world.industries[c.industry];
@@ -191,6 +192,17 @@ pub fn start(world: &mut World) {
             .map(|z| ExchangeIndex::at_load(caps[z.index()]))
             .collect(),
     );
+    for (_, s) in world.market.stocks.iter_mut() {
+        if s.quoted {
+            s.efv_error = draw_efv_error(draws);
+        }
+    }
+}
+
+/// The estimated fair value error e of a quoted stock (spec 3.14.2; D140): uniform within ±15%,
+/// one prices-stream uniform.
+pub fn draw_efv_error(draws: &mut dyn DrawSource) -> f64 {
+    EFV_ERROR_WIDTH * (2.0 * draws.uniform(Stream::Prices) - 1.0)
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -263,7 +275,7 @@ pub fn buzz_job(world: &mut World, ctx: &mut JobCtx<'_>) {
     }
     for (_, s) in world.market.stocks.iter_mut() {
         if s.quoted {
-            s.efv_error = EFV_ERROR_WIDTH * (2.0 * ctx.draws.uniform(Stream::Prices) - 1.0);
+            s.efv_error = draw_efv_error(ctx.draws);
         }
     }
 }
@@ -360,6 +372,8 @@ pub fn delist_job(world: &mut World, ctx: &mut JobCtx<'_>) {
         let s = &mut world.market.stocks[id];
         s.quoted = false;
         s.price = 0.0;
+        // The day's change reads 0, not −P, from the delisting on (D149).
+        s.prev_close = 0.0;
         s.fair_value = 0.0;
         s.value = 0.0;
         s.buzz = 0.0;

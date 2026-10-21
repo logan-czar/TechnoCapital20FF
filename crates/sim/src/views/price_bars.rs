@@ -2,8 +2,9 @@
 //! 8): the daily bars of every company that has any (listed now, or delisted with its history
 //! kept), 10 years at most (4.5 step 2). Rebuilt daily (spec 9.4).
 //!
-//! Each history shares its month chunks with the World (D139), so a daily rebuild copies a few
-//! pointers per company, not ten years of bars.
+//! Each history shares its chunks with the World (D139, D148): the closed months behind one
+//! `Arc`, the open month behind another, so a daily rebuild copies two pointers per company,
+//! however long the history.
 
 use super::{Cadence, ViewData, ViewInput};
 use crate::market::daily::DailyBar;

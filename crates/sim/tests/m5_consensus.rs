@@ -4,8 +4,10 @@
 //! the prices stream. Checked at the 9 April 2020 lock: every consensus is within ±5% of the
 //! projection made from the world just before the lock's consensus job, and the e spread over
 //! the companies is uniform-like (mean near 0, both ends used). Then the Q2 2020 quarter as the
-//! engine posts it is compared with the projection: the median miss is printed, and the
-//! surprises at the 2 July release follow from the consensus (5.15).
+//! engine posts it is compared with the projection: the median miss is under 1% (the projection
+//! runs the locked plans with no new rolls, so only the month-to-month M and supply moves of
+//! other companies' plans separate them), and the surprises at the 2 July release follow from
+//! the consensus (5.15). A last test checks that projecting draws nothing and changes nothing.
 
 mod common;
 
@@ -19,11 +21,13 @@ use sim::world::World;
 
 /// Spec 5.16: e uniform within ±5%.
 const CONSENSUS_ERROR: f64 = 0.05;
+/// M5 review: the posted quarter misses the no-rolls projection by under 1% at the median.
+const MAX_MEDIAN_MISS: f64 = 0.01;
 
 static PROJECTION: Mutex<Vec<f64>> = Mutex::new(Vec::new());
 
-/// Runs in the lock's IPO slot, before the consensus job (lock step 5): the projection of the
-/// same world.
+/// Runs in the lock's Lite AI slot after the batch (it is registered after the built-in jobs),
+/// so just before the consensus job (lock step 5): the projection of the same world.
 fn project(w: &mut World, ctx: &mut JobCtx<'_>) {
     if ctx.facts.date == Date::ymd(2020, 4, 9) {
         *PROJECTION.lock().unwrap() = project_quarter_net_income(w, ctx.facts.now);
@@ -33,7 +37,7 @@ fn project(w: &mut World, ctx: &mut JobCtx<'_>) {
 #[test]
 fn consensus_is_the_projection_within_five_percent() {
     let mut sim = Sim::new(data(), 11).unwrap();
-    sim.register_test_job(Slot::LockIpoVotes, "test.project", project);
+    sim.register_test_job(Slot::LockAiPlans, "test.project", project);
     let lock = DateTime::midnight(Date::ymd(2020, 4, 9));
     while sim.now() < lock {
         sim.step();
@@ -102,4 +106,35 @@ fn consensus_is_the_projection_within_five_percent() {
         100.0 * misses[misses.len() / 2],
         100.0 * misses[misses.len() * 9 / 10]
     );
+    assert!(
+        misses[misses.len() / 2] < MAX_MEDIAN_MISS,
+        "median |miss| {}",
+        misses[misses.len() / 2]
+    );
+}
+
+/// Runs a projection inside the lock and throws it away.
+fn project_and_drop(w: &mut World, ctx: &mut JobCtx<'_>) {
+    let p = project_quarter_net_income(w, ctx.facts.now);
+    assert!(!p.is_empty());
+}
+
+/// Spec 5.16 "no new rolls" (D141): projecting the quarter on a clone leaves the world, the RNG
+/// streams and so the state hash exactly as they were. Two runs of the same seed, one projecting
+/// an extra time at every lock, hash the same after a year.
+#[test]
+fn projecting_draws_nothing_and_changes_nothing() {
+    let end = DateTime::midnight(Date::ymd(2021, 1, 10));
+    let mut plain = Sim::new(data(), 4).unwrap();
+    let mut probed = Sim::new(data(), 4).unwrap();
+    probed.register_test_job(
+        Slot::LockIpoVotes,
+        "test.project_and_drop",
+        project_and_drop,
+    );
+    while plain.now() < end {
+        plain.step();
+        probed.step();
+    }
+    assert_eq!(plain.state_hash(), probed.state_hash());
 }

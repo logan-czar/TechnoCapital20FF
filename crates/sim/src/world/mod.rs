@@ -26,6 +26,7 @@ pub mod economy;
 pub mod entities;
 pub mod ids;
 pub mod load;
+pub mod log;
 pub mod notice;
 pub mod table;
 pub mod units;

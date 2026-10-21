@@ -93,7 +93,7 @@ pub fn start_world(data: &WorldData, draws: &mut dyn DrawSource) -> Result<World
     economy::start(&mut world, draws);
     people::seating::start(&mut world, draws);
     finance::start(&mut world);
-    market::start(&mut world);
+    market::start(&mut world, draws);
     Ok(world)
 }
 
