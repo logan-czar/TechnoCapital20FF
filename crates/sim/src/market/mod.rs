@@ -20,6 +20,7 @@
 //! - [`projection`]: 5.16 consensus and projection ranges.
 
 pub mod daily;
+pub mod earnings;
 pub mod engine_value;
 pub mod fair_value;
 pub mod price;
