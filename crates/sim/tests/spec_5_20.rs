@@ -212,46 +212,49 @@ fn cap_of_three_by_ttm_revenue_then_lower_id() {
 
 #[test]
 fn listing_mechanics_and_a_equals_l_plus_e() {
-    // Pre-money $500M: the 7.1 open price, existing shares re-split to value ÷ price, 20% new
-    // shares at price × 0.92, less 3% fees.
+    // Pre-money $500M for CO-0700, worked by hand from 7.1 and gen.py: jitter
+    // 1 + 0.1 × (2 × (crc32("price:CO-0700") mod 10001) ÷ 10000 − 1) = 1.08316, so the open
+    // price is round(25 × 0.5^0.35 × 1.08316) = round(21.25) = $21; the re-split is
+    // round(500M ÷ 21) = 23,809,524 shares; the float round(0.2 × that) = 4,761,905 shares at
+    // $21 × 0.92, less 3%: $89,240,004.46 net.
     let l = list_company(500.0e6, "CO-0700");
-    let p = open_price(500.0e6, "CO-0700");
-    assert_eq!(l.open_price, p);
-    assert_eq!(l.resplit_shares, shares_for(500.0e6, p));
-    assert_eq!(l.new_shares, (0.2 * l.resplit_shares as f64).round() as u64);
-    assert!((l.gross - l.new_shares as f64 * p * 0.92).abs() < 1e-6);
-    assert!((l.net - 0.97 * l.gross).abs() < 1e-6);
-    assert_eq!(l.shares_out, l.resplit_shares + l.new_shares);
+    assert_eq!(l.open_price, 21.0);
+    assert_eq!(l.resplit_shares, 23_809_524);
+    assert_eq!(l.new_shares, 4_761_905);
+    assert_eq!(l.shares_out, 23_809_524 + 4_761_905);
+    assert!((l.net - 89_240_004.462).abs() < 0.01, "{}", l.net);
+    assert!((l.fees - 0.03 * 4_761_905.0 * 21.0 * 0.92).abs() < 1e-6);
+    // Post-money cap: $21 × 28,571,429 shares.
+    assert_eq!(l.market_cap(), 21.0 * 28_571_429.0);
     // A holder of 60% before keeps 60% of the re-split, 50% after the 20% issue.
     let old = 1_000_000;
     let h = l.resplit_holding(600_000, old);
     assert!((h as f64 / l.resplit_shares as f64 - 0.6).abs() < 1e-6);
     assert!((h as f64 / l.shares_out as f64 - 0.5).abs() < 1e-5);
 
-    // A = L + E after listing: cash rises by the net, equity by the same.
-    let before = Books {
-        cash: 50.0e6,
+    // A = L + E after listing, on a $50M cash, $300M book, $100M line company (equity $250M):
+    // after the listing cash is $139.24M, assets $439.24M, liabilities still $100M, equity
+    // $339.24M. This checks the listing's cash against hand-worked balances; the engine-level
+    // check (the 5.12 month roll-forward with the issue in `pending`, D125) is M6.10's wiring
+    // test.
+    let after = Books {
+        cash: 50.0e6 + l.net,
         asset_book: 300.0e6,
         line_drawn: 100.0e6,
         ..Books::default()
     };
-    let after = Books {
-        cash: before.cash + l.net,
-        ..before
-    };
-    let (s0, s1) = (
-        balance_sheet(&before, CompanyStatus::Active),
-        balance_sheet(&after, CompanyStatus::Active),
-    );
+    let s1 = balance_sheet(&after, CompanyStatus::Active);
     check_identity(&s1, CompanyStatus::Active).unwrap();
-    assert!((s1.total_assets - s1.total_liabilities - s1.equity).abs() < 1e-6);
-    assert!((s1.equity - s0.equity - l.net).abs() < 1e-6);
+    assert!((s1.total_assets - 439_240_004.462).abs() < 0.01);
+    assert_eq!(s1.total_liabilities, 100.0e6);
+    assert!((s1.equity - 339_240_004.462).abs() < 0.01);
 
     // The exchange index does not jump when it joins: the divisor takes the new cap.
     let mut idx = ExchangeIndex::at_load(2.0e9);
     let level = idx.level(2.2e9).unwrap();
+    assert!((level - 1100.0).abs() < 1e-9);
     idx.reweight(2.2e9, 2.2e9 + l.market_cap());
-    assert!((idx.level(2.2e9 + l.market_cap()).unwrap() - level).abs() < 1e-9);
+    assert!((idx.level(2.2e9 + l.market_cap()).unwrap() - 1100.0).abs() < 1e-9);
 }
 
 #[test]

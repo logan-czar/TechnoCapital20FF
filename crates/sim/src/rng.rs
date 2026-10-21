@@ -29,7 +29,8 @@ pub enum Stream {
     Growth = 1,
     /// Hourly share price noise (spec 5.14).
     Prices = 2,
-    /// Lite AI choices and IPO votes (spec 6, 5.20.1).
+    /// Lite AI choices (spec 6; the 6.6 raise roll, D266). IPO votes are gen-stream draws
+    /// (5.20.1, D276).
     Ai = 3,
     /// World generation in play: simple characters, startups, names (spec 3.7.1, 5.19).
     Gen = 4,
