@@ -435,13 +435,61 @@ pub const PROJECTION_SLOTS: [Slot; 13] = [
     Slot::MonthlyLedger,
 ];
 
+/// What a projection holds at its plan-lock value (spec 5.16; design fix 109, D168): each
+/// industry's supply, S and M, and each unit's productivity. Surprises then come "from supply
+/// and M moving as other companies grow, and from productivity" (5.16), not from the projection.
+#[derive(Debug, Clone, PartialEq)]
+pub struct HeldAtLock {
+    /// Per industry, in id order: supply, S and M (spec 5.2).
+    pub market: Vec<(f64, f64, f64)>,
+    /// Per unit, in id order: productivity (spec 5.6).
+    pub productivity: Vec<f64>,
+}
+
+impl HeldAtLock {
+    /// The values in `world` now: at the plan lock, the S and M of the last month close (4.3
+    /// step 6) and the productivity its step 10 left.
+    pub fn of(world: &World) -> Self {
+        HeldAtLock {
+            market: world
+                .industries
+                .rows()
+                .iter()
+                .map(|i| (i.supply, i.supply_ratio, i.market_factor))
+                .collect(),
+            productivity: world.units.rows().iter().map(|u| u.productivity).collect(),
+        }
+    }
+
+    /// Puts every industry's supply, S and M back to the held values (after 4.3 step 6).
+    pub fn restore_market(&self, world: &mut World) {
+        for ((_, ind), &(supply, s, m)) in world.industries.iter_mut().zip(&self.market) {
+            ind.supply = supply;
+            ind.supply_ratio = s;
+            ind.market_factor = m;
+        }
+    }
+
+    /// Puts every unit's productivity back to the held value (after 4.3 step 10).
+    pub fn restore_productivity(&self, world: &mut World) {
+        for ((_, u), &p) in world.units.iter_mut().zip(&self.productivity) {
+            u.productivity = p;
+        }
+    }
+}
+
 /// The engine's projection of each company's net income for the calendar quarter `lock` falls in
-/// (spec 5.16 "from the locked plan with current demand, no new rolls"; D141): a clone of the
-/// world runs the quarter's remaining month closes (4.3 steps 2 to 14) with
-/// [`NoNoise`] draws, the close on the next quarter's first day reading this quarter's growth
-/// as its own (the quarterly draw is skipped). The result is the sum of the months the clone
-/// posts, in company id order; 0 for a company frozen in the clone.
+/// (spec 5.16 "from the locked plan with current demand, no new rolls"; D141, D168): a clone of
+/// the world runs the quarter's remaining month closes (4.3 steps 2 to 14) with [`NoNoise`]
+/// draws, the close on the next quarter's first day reading this quarter's growth as its own
+/// (the quarterly draw is skipped). Every industry's supply, S and M and every unit's
+/// productivity are held at their lock values ([`HeldAtLock`], put back after steps 6 and 10),
+/// so each company's projection runs only its own locked plan (growth, R&D, stations,
+/// financing) at the lock's prices and productivity: other companies' growth and the
+/// productivity drift are left to the actual quarter (design fix 109). The result is the sum of
+/// the months the clone posts, in company id order; 0 for a company frozen in the clone.
 pub fn project_quarter_net_income(world: &World, lock: DateTime) -> Vec<f64> {
+    let held = HeldAtLock::of(world);
     let mut clone = world.clone();
     let scheduler: Scheduler = crate::scheduler();
     let quarter = lock.date().quarter();
@@ -464,7 +512,14 @@ pub fn project_quarter_net_income(world: &World, lock: DateTime) -> Vec<f64> {
         clone.clock = now;
         let mut draws = NoNoise;
         let mut ctx = JobCtx::detached(TickFacts::new(now), &mut draws, &mut notices);
-        scheduler.run_slots(&PROJECTION_SLOTS, &mut clone, &mut ctx);
+        for slot in PROJECTION_SLOTS {
+            scheduler.run_slots(&[slot], &mut clone, &mut ctx);
+            match slot {
+                Slot::MonthlySupply => held.restore_market(&mut clone),
+                Slot::MonthlyProductivity => held.restore_productivity(&mut clone),
+                _ => {}
+            }
+        }
         notices.clear();
         close = close.month_of().next().first_day();
     }
