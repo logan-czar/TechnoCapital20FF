@@ -108,7 +108,10 @@ impl Trait {
         }
     }
 
-    /// The trait named `name` (characters.csv spelling), if it is one of the 24.
+    /// The trait named `name` (characters.csv spelling), if it is one of the 24. characters.csv
+    /// also holds unique traits and perks outside the 12 pairs (1-corporate-core 1.1.2, such as
+    /// "Operational Excellence"); they give None here, so whoever loads full characters filters
+    /// them out (they have no skill effect or management shift in the MVP).
     pub fn from_name(name: &str) -> Option<Trait> {
         Trait::ALL.iter().copied().find(|t| t.name() == name)
     }
