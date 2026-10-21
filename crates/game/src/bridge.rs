@@ -54,43 +54,15 @@ impl Views {
         }
     }
 
-    /// The sim refresh these views come from (the copy's own `SimViews::refresh` is not
-    /// updated by a partial copy, so this shadows it).
+    /// The sim refresh these views come from.
     pub fn refresh(&self) -> u64 {
         self.refresh
     }
 
-    /// Copies each view whose version differs. Every view of `sim_views!` must be listed here
-    /// (a sim request asks for a generated copy so a new view cannot be missed).
+    /// Copies each view whose version differs, through the copy `sim_views!` generates over
+    /// every view, so a new view cannot be missed.
     fn sync_from(&mut self, src: &SimViews) {
-        macro_rules! copy_changed {
-            ($($field:ident),* $(,)?) => {$(
-                if self.views.$field.version() != src.$field.version() {
-                    self.views.$field.clone_from(&src.$field);
-                }
-            )*};
-        }
-        copy_changed!(
-            clock,
-            quotes,
-            price_bars,
-            news,
-            projection,
-            company_rows,
-            company_detail,
-            units,
-            tech,
-            industry_rows,
-            industry_detail,
-            cycle,
-            map_layers,
-            province_cards,
-            statements,
-            filings,
-            ratings,
-            recap,
-            map_static,
-        );
+        self.views.copy_changed_from(src);
         self.refresh = src.refresh();
     }
 }
