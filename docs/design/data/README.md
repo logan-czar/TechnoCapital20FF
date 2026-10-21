@@ -259,6 +259,16 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 | partial_min, partial_max | Partial (simple) characters each startup brings (5.19.4) |
 | notes | Source |
 
+### names/ (world-gen name lists)
+
+Written by tools/world-gen/export_names.py from tools/world-gen/names.py (build-plan M0.6), so the Rust sim can name simple characters (mvp-spec 3.7.1) and startups (5.19.3); rerun it after editing names.py. One file per superregion (A), named by the provinces-*.csv slugs, plus two lookups. The Rust `sim-data` checks expect all 8 files, every kind for each culture, a culture for every country and a suffix for every industry.
+
+| File | Columns | Meaning |
+|---|---|---|
+| `<superregion>.csv` (8) | culture, family_first, kind, name | Every culture used by a country of that superregion; family_first Y writes the family name first (Chinese, Korean, Vietnamese); kind is male, female, surname or company_prefix |
+| country-cultures.csv | iso3, culture | All 211 countries: names.py COUNTRY_CULTURE, else the superregion default (the world-gen gen.py rule) |
+| industry-suffixes.csv | industry, suffix | Company name suffixes per industry |
+
 ### key-cities.csv
 
 88 rows (80 until batch 152, which added the 8 financial zone hubs Kingston, Havana, Pyongyang, Macau, Almaty, Casablanca, Nairobi and Bogotá, with no perks), parsed by the generator from [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3.3 (cities), 2.3.4 (signature starting assets) and 2.3.5 (perks), so the doc stays the source; rerun the generator after editing those tables.

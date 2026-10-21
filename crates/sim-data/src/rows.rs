@@ -314,6 +314,45 @@ pub struct StartupEvent {
     pub notes: String,
 }
 
+/// What a name in a names file is for (spec 3.7.1, 5.19.3).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum NameKind {
+    Male,
+    Female,
+    Surname,
+    /// A company name prefix (place-like or evocative word).
+    CompanyPrefix,
+}
+
+/// names/<superregion>.csv: name parts per culture used in that superregion (M0.6).
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NameRow {
+    pub culture: String,
+    /// The culture writes the family name first.
+    #[serde(deserialize_with = "yes_no")]
+    pub family_first: bool,
+    pub kind: NameKind,
+    pub name: String,
+}
+
+/// names/country-cultures.csv: which culture's names each country uses.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CountryCulture {
+    pub iso3: String,
+    pub culture: String,
+}
+
+/// names/industry-suffixes.csv: company name suffixes per industry.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct IndustrySuffix {
+    pub industry: String,
+    pub suffix: String,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

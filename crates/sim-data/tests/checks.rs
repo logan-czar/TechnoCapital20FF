@@ -135,3 +135,14 @@ fn startup_event_references() {
         "date",
     );
 }
+
+#[test]
+fn country_culture_must_be_in_its_superregion_file() {
+    // USA (line 2) moved to a culture the North America file does not have.
+    expect_error(
+        |w| w.country_cultures.rows[0].culture = "japanese".into(),
+        "names/country-cultures.csv",
+        2,
+        "culture",
+    );
+}

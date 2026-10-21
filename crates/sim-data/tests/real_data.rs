@@ -33,3 +33,18 @@ fn fixed_startup_events_load() {
     let total: u32 = ev.iter().flat_map(|e| &e.startups).map(|g| g.count).sum();
     assert_eq!(total, 32);
 }
+
+#[test]
+fn names_load_for_all_superregions() {
+    let w = load_world(&default_data_dir()).unwrap_or_else(|e| panic!("{e}"));
+    assert_eq!(w.names.len(), 8);
+    for t in &w.names {
+        assert!(t.len() > 50, "{}: {} names", t.file, t.len());
+    }
+    let chinese = w.names[0]
+        .rows
+        .iter()
+        .find(|r| r.culture == "chinese")
+        .unwrap();
+    assert!(chinese.family_first);
+}

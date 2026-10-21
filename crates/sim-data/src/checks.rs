@@ -69,6 +69,7 @@ pub fn check(w: &WorldData) -> Vec<DataError> {
     companies(w, &ids, &mut errors);
     company_start(w, &mut errors);
     startup_events(w, &ids, &mut errors);
+    names(w, &ids, &mut errors);
     errors
 }
 
@@ -504,5 +505,76 @@ fn is_iso_date(s: &str) -> bool {
                 && (1..=31).contains(&d.parse::<u8>().unwrap_or(0))
         }
         _ => false,
+    }
+}
+
+/// The world-gen name lists (build-plan M0.6; spec 3.7.1, 5.19.3): every superregion file names
+/// each of its cultures' males, females, surnames and company prefixes; every country has a
+/// culture found in its superregion's file; every industry has a company name suffix.
+fn names(w: &WorldData, ids: &Ids, errors: &mut Vec<DataError>) {
+    use crate::NameKind;
+    const KINDS: [NameKind; 4] = [
+        NameKind::Male,
+        NameKind::Female,
+        NameKind::Surname,
+        NameKind::CompanyPrefix,
+    ];
+    // Superregion name to the cultures its file covers.
+    let mut covered: BTreeMap<&str, BTreeSet<&str>> = BTreeMap::new();
+    for (t, (_, region)) in w.names.iter().zip(SUPERREGIONS) {
+        let cultures: BTreeSet<&str> = t.rows.iter().map(|r| r.culture.as_str()).collect();
+        if cultures.is_empty() {
+            errors.push(t.file_err("no names"));
+        }
+        for c in &cultures {
+            for kind in KINDS {
+                if !t.rows.iter().any(|r| r.culture == *c && r.kind == kind) {
+                    errors.push(t.file_err(format!("culture {c} has no {kind:?} names")));
+                }
+            }
+        }
+        covered.insert(region, cultures);
+    }
+    let region_of: BTreeMap<&str, &str> = w
+        .countries
+        .rows
+        .iter()
+        .map(|c| (c.iso3.as_str(), c.superregion.as_str()))
+        .collect();
+    let t = &w.country_cultures;
+    let seen = unique(t, "iso3", |r| &r.iso3, errors);
+    for (line, r) in t.iter() {
+        match region_of.get(r.iso3.as_str()) {
+            None => errors.push(t.err(line, "iso3", format!("unknown country {}", r.iso3))),
+            Some(region)
+                if !covered
+                    .get(region)
+                    .is_some_and(|c| c.contains(r.culture.as_str())) =>
+            {
+                errors.push(t.err(
+                    line,
+                    "culture",
+                    format!(
+                        "{}: {} is not in the {region} names file",
+                        r.iso3, r.culture
+                    ),
+                ));
+            }
+            Some(_) => {}
+        }
+    }
+    for iso in ids.countries.difference(&seen) {
+        errors.push(t.file_err(format!("{iso} has no culture")));
+    }
+    let t = &w.industry_suffixes;
+    let mut with_suffix = BTreeSet::new();
+    for (line, r) in t.iter() {
+        if !ids.industries.contains(r.industry.as_str()) {
+            errors.push(t.err(line, "industry", format!("unknown industry {}", r.industry)));
+        }
+        with_suffix.insert(r.industry.as_str());
+    }
+    for ind in ids.industries.difference(&with_suffix) {
+        errors.push(t.file_err(format!("{ind} has no company name suffix")));
     }
 }

@@ -43,6 +43,10 @@ pub struct WorldData {
     pub key_cities: Table<KeyCity>,
     pub company_start: Table<CompanyStart>,
     pub startup_events: Table<StartupEvent>,
+    /// Name lists, one table per superregion, in [`SUPERREGIONS`] order.
+    pub names: Vec<Table<NameRow>>,
+    pub country_cultures: Table<CountryCulture>,
+    pub industry_suffixes: Table<IndustrySuffix>,
 }
 
 impl WorldData {
@@ -67,6 +71,9 @@ impl WorldData {
             ("key-cities", self.key_cities.len()),
             ("company-start", self.company_start.len()),
             ("startup-events", self.startup_events.len()),
+            ("names", self.names.iter().map(Table::len).sum()),
+            ("country-cultures", self.country_cultures.len()),
+            ("industry-suffixes", self.industry_suffixes.len()),
         ]
     }
 }
@@ -79,15 +86,9 @@ pub fn default_data_dir() -> PathBuf {
 /// Loads every table from `dir`. Stops at the first file that does not parse; the error names the
 /// file, line and field (spec 10 M0).
 pub fn load_world(dir: &Path) -> Result<WorldData, DataError> {
-    let per_region = |pattern: &str| {
-        SUPERREGIONS
-            .iter()
-            .map(|(slug, _)| load_table(dir, &pattern.replace("{}", slug)))
-            .collect::<Result<Vec<_>, _>>()
-    };
     Ok(WorldData {
         countries: load_table(dir, "countries.csv")?,
-        provinces: per_region("provinces-{}.csv")?,
+        provinces: per_region(dir, "provinces-{}.csv")?,
         companies: load_table(dir, "companies.csv")?,
         characters: load_table(dir, "characters.csv")?,
         industries: load_table(dir, "industries.csv")?,
@@ -97,5 +98,19 @@ pub fn load_world(dir: &Path) -> Result<WorldData, DataError> {
         key_cities: load_table(dir, "key-cities.csv")?,
         company_start: load_table(dir, "company-start.csv")?,
         startup_events: load_table(dir, "startup-events.csv")?,
+        names: per_region(dir, "names/{}.csv")?,
+        country_cultures: load_table(dir, "names/country-cultures.csv")?,
+        industry_suffixes: load_table(dir, "names/industry-suffixes.csv")?,
     })
+}
+
+/// One table per superregion, from `pattern` with `{}` replaced by each slug.
+fn per_region<T: serde::de::DeserializeOwned>(
+    dir: &Path,
+    pattern: &str,
+) -> Result<Vec<Table<T>>, DataError> {
+    SUPERREGIONS
+        .iter()
+        .map(|(slug, _)| load_table(dir, &pattern.replace("{}", slug)))
+        .collect()
 }
