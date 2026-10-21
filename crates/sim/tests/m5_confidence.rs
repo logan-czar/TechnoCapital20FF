@@ -12,7 +12,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 use common::data;
 use sim::Sim;
-use sim::market::jobs::confidence_headlines;
+use sim::market::jobs::{confidence_headlines, confidence_news};
 use sim::time::{Date, DateTime, JobCtx, Slot};
 use sim::world::{Ordinal, World, ZoneId};
 
@@ -63,6 +63,7 @@ fn confidence_follows_the_index_and_decays_to_zero_with_no_news() {
         .collect();
     let mut prev_level: Vec<Option<f64>> = zones.iter().map(|&z| level(sim.world(), z)).collect();
     let mut days = 0;
+    let mut news_days = 0;
     let mut empty_path = Vec::new();
     let end = DateTime::midnight(Date::ymd(2020, 5, 1));
     while sim.now() < end {
@@ -76,17 +77,27 @@ fn confidence_follows_the_index_and_decays_to_zero_with_no_news() {
         }
         days += 1;
         for &z in &zones {
-            assert!(
-                confidence_headlines(w, z).is_empty(),
-                "no headlines before M6.5"
-            );
+            // Since M6.5 the day's Pdoomberg Wire headlines on the exchange's companies carry
+            // their 5.1.2 points (D137, D158); the empty exchange has none.
+            let headlines = confidence_headlines(w, z);
+            for h in &headlines {
+                let c = h.company.expect("a confidence headline names its company");
+                assert_eq!(w.market.stocks[c].exchange, Some(z));
+            }
+            let news = confidence_news(&headlines);
+            if news != 0.0 {
+                news_days += 1;
+            }
+            if z == empty {
+                assert!(headlines.is_empty());
+            }
             let now = level(w, z);
             let r = match (prev_level[z.index()], now) {
                 (Some(a), Some(b)) => (b / a - 1.0) * 100.0,
                 _ => 0.0,
             };
-            let mut want =
-                (RETAIN * prev_conf[z.index()] + POINTS_PER_PERCENT * r).clamp(-100.0, 100.0);
+            let mut want = (RETAIN * prev_conf[z.index()] + POINTS_PER_PERCENT * r + news)
+                .clamp(-100.0, 100.0);
             if want.abs() < 0.005 {
                 want = 0.0;
             }
@@ -103,9 +114,13 @@ fn confidence_follows_the_index_and_decays_to_zero_with_no_news() {
         empty_path.push(w.zones[empty].confidence);
     }
     println!(
-        "{days} days; empty exchange {}: {:?}",
+        "{days} days; empty exchange {}: {:?}; {news_days} exchange-days with headline points",
         sim.world().zones[empty].exchange_code,
         &empty_path[..5]
+    );
+    assert!(
+        news_days > 0,
+        "the April release's beats and misses move their exchanges"
     );
     // From +100: 90 after the first close, 0.9^n × 100 after n, exactly 0 from day 94 on.
     for (n, &c) in empty_path.iter().enumerate() {

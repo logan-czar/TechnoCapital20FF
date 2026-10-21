@@ -6,7 +6,8 @@
 //!   (checked company by company in `m5_load.rs`; here the range and the gap on every seed).
 //! - Tracking (D143): at each daily close (00:00, after the daily jobs) every quoted company is
 //!   one company-day; it tracks when `|P ÷ V − 1| ≤ 30%`. The done line holds for a seed when at
-//!   least 90% of its company-days over 2020 to 2029 track. Seeds 1 to 5 run on their own threads;
+//!   least 98% of its company-days over 2020 to 2029 track and every year reaches 97% (D143,
+//!   D151). Seeds 1 to 5 run on their own threads;
 //!   the share, the median and 95th percentile gap and the worst year are printed per seed.
 //! - The first release (design fix 235): V moves at the first daily refresh (2 January 00:00:
 //!   the company confidence factor and the effective spread replace 7.1's 1.0 and base spread)
@@ -23,8 +24,11 @@ use sim::time::{Date, DateTime};
 
 /// D143: a company-day tracks V within ±30%.
 const BAND: f64 = 0.30;
-/// D143: the share of company-days that must track over the 10 years, per seed.
-const MIN_TRACKING_SHARE: f64 = 0.90;
+/// D143 (raised by D151): the share of company-days that must track over the 10 years, per
+/// seed (seeds 1 to 5 run 99.7%).
+const MIN_TRACKING_SHARE: f64 = 0.98;
+/// D151: the share every single year must reach (the worst year on seeds 1 to 5 was 98.58%).
+const MIN_YEAR_TRACKING_SHARE: f64 = 0.97;
 const YEARS: i32 = 10;
 const SEEDS: [u64; 5] = [1, 2, 3, 4, 5];
 /// Spec 7.1: open prices run $5 to $200.
@@ -134,6 +138,13 @@ fn prices_track_v_within_30_percent_over_ten_years() {
             share >= MIN_TRACKING_SHARE,
             "seed {}: {share} of company-days within ±30%",
             r.seed
+        );
+        assert!(
+            r.worst_year.1 >= MIN_YEAR_TRACKING_SHARE,
+            "seed {}: {} tracks only {} of its company-days",
+            r.seed,
+            r.worst_year.0,
+            r.worst_year.1
         );
     }
 }

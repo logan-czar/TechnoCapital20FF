@@ -4,15 +4,14 @@
 //! [`crate::world::Zone`]). Every field derives serde, so saves and the state hash cover it.
 //! The jobs in [`super::jobs`] move it.
 
-use std::sync::Arc;
-
 use serde::{Deserialize, Serialize};
 
 use super::daily::{BarBuilder, DailyBar};
 use super::earnings::ResultTags;
 use super::fair_value::FairValueBasis;
 use super::index::ExchangeIndex;
-use crate::time::{Date, Month};
+use crate::time::Date;
+use crate::world::log::ChunkLog;
 use crate::world::{CompanyId, Table, ZoneId};
 
 /// The market tables (spec 3.10, 5.14).
@@ -52,6 +51,9 @@ pub struct Stock {
     pub buzz: f64,
     /// Next quarter's net income consensus, set at the plan lock (spec 3.10, 5.16).
     pub consensus_ni: f64,
+    /// The engine's no-rolls projection the consensus was drawn around (5.16, D141); the recap
+    /// reads it for the expected results (D280).
+    pub projection_ni: f64,
     /// The surprise of the quarter just closed, set at the close (4.4 result tags) and spent at
     /// the 01:00 price move (5.15); `None` otherwise.
     pub pending_surprise: Option<f64>,
@@ -88,6 +90,7 @@ impl Stock {
             },
             buzz: 0.0,
             consensus_ni: 0.0,
+            projection_ni: 0.0,
             pending_surprise: None,
             last_surprise: 0.0,
             tags: ResultTags::default(),
@@ -110,41 +113,38 @@ impl Stock {
 
 /// A company's daily bars (spec 3.10 `bars`), oldest first, in one chunk per calendar month.
 ///
-/// The price history view shares the chunks (an `Arc` each), so a daily bar copies only the
-/// open month's chunk when the view still holds it (copy on write), never ten years of bars
-/// (D139).
+/// The price history view shares them: the closed months sit behind one `Arc` and the open
+/// month behind another ([`ChunkLog`]), so the daily view rebuild copies two pointers per
+/// company and a new bar copies at most the open month, never ten years of bars (D139, D148).
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct BarHistory {
-    chunks: Vec<Arc<Vec<DailyBar>>>,
+    log: ChunkLog<DailyBar>,
 }
 
 impl BarHistory {
-    /// Appends a closed bar (bars arrive in date order).
+    /// Appends a closed bar (bars arrive in date order); a bar in a new month opens a chunk.
     pub fn push(&mut self, bar: DailyBar) {
-        let month = bar.date.month_of();
-        match self.chunks.last_mut() {
-            Some(c) if chunk_month(c) == Some(month) => Arc::make_mut(c).push(bar),
-            _ => self.chunks.push(Arc::new(vec![bar])),
-        }
+        self.log
+            .push(bar, |last, b| last.date.month_of() == b.date.month_of());
     }
 
     /// Every bar, oldest first.
     pub fn iter(&self) -> impl DoubleEndedIterator<Item = &DailyBar> {
-        self.chunks.iter().flat_map(|c| c.iter())
+        self.log.iter()
     }
 
     /// The number of bars kept.
     pub fn len(&self) -> usize {
-        self.chunks.iter().map(|c| c.len()).sum()
+        self.log.len()
     }
 
     pub fn is_empty(&self) -> bool {
-        self.chunks.is_empty()
+        self.log.is_empty()
     }
 
     /// The newest bar.
     pub fn last(&self) -> Option<&DailyBar> {
-        self.chunks.last().and_then(|c| c.last())
+        self.log.last()
     }
 
     /// The bars dated `from` to `to` inclusive, oldest first (spec 9.2 `get_price_history`).
@@ -155,16 +155,11 @@ impl BarHistory {
     /// Drops every bar dated before `first_kept` (spec 4.5 step 2: 10 years kept). Month chunks
     /// wholly before it go; a chunk that straddles it is trimmed.
     pub fn drop_before(&mut self, first_kept: Date) {
-        self.chunks
-            .retain(|c| c.last().is_some_and(|b| b.date >= first_kept));
-        if let Some(c) = self.chunks.first_mut()
-            && c.first().is_some_and(|b| b.date < first_kept)
-        {
-            Arc::make_mut(c).retain(|b| b.date >= first_kept);
-        }
+        self.log.drop_while(|b| b.date < first_kept);
     }
-}
 
-fn chunk_month(c: &[DailyBar]) -> Option<Month> {
-    c.first().map(|b| b.date.month_of())
+    /// True if `other` shares these bars' chunks (a view's copy, D148).
+    pub fn shares_with(&self, other: &BarHistory) -> bool {
+        self.log.shares_with(&other.log)
+    }
 }

@@ -6,7 +6,6 @@ mod common;
 
 use common::data;
 use common::economy::{economy_scheduler, rel, run_month, world_at_load};
-use sim::economy::assets::placeholder_plan;
 use sim::economy::revenue::{month_expenses, unit_revenue_month};
 use sim::economy::start::{BAREBONES_ASSETS_USD, fixed_cost_rate_at_load};
 use sim::economy::supply::{p_pre, unit_supply};
@@ -17,12 +16,9 @@ use sim::time::Date;
 fn the_barebones_company_breaks_even() {
     let w = world_at_load(&data(), &mut RngStreams::new(1));
     let params = &w.industries.iter().next().unwrap().1.params;
-    let (growth, rd) = placeholder_plan(params);
-    assert_eq!(
-        (growth, rd),
-        (0.0, 0.05),
-        "before plans: hold assets, R&D at the norm"
-    );
+    // C18: break-even is with R&D at the norm.
+    let rd = params.rd_norm;
+    assert_eq!(rd, 0.05);
     // 10.0.11.1: one $100,000 asset at productivity 100 and M 1.0 makes $100,000 a year. With the
     // $7,000 of shared costs of spec 5.5 the fixed cost rate is 0.38; with M2's 0 (the M3.5 hook)
     // it is 0.45. Either way revenue equals expenses with R&D at the norm.
@@ -49,9 +45,10 @@ fn the_barebones_company_breaks_even() {
         );
     }
 
-    // The loaded barebones company (CO-0003) carries its +1 PC bonus: its only profit is the
-    // 0.45 × bonus ÷ (100 + bonus) of revenue that productivity above 100 gives (spec 2.2), at
-    // the load M (1.00 to two decimals).
+    // The loaded barebones company (CO-0003) carries its +1 PC bonus: at R&D at the norm its only
+    // profit is the 0.45 × bonus ÷ (100 + bonus) of revenue that productivity above 100 gives
+    // (spec 2.2), at the load M (1.00 to two decimals); the plan at load pays its 6.3 plan
+    // instead of the norm (D283), so the margin moves by the norm less that plan.
     let (_, c) = w
         .companies
         .iter()
@@ -59,14 +56,16 @@ fn the_barebones_company_breaks_even() {
         .unwrap();
     let u = &w.units[c.units[0]];
     let fixed_and_dep = 0.45 * BAREBONES_ASSETS_USD / 12.0;
-    assert!((u.ebit_m() - (0.45 * u.revenue_m - fixed_and_dep)).abs() < 1e-9);
-    assert!((u.ebit_m() / u.revenue_m - 0.45 / 101.0).abs() < 1e-4);
+    let saved = params.rd_norm - u.rd_plan;
+    assert!((u.ebit_m() - ((0.45 + saved) * u.revenue_m - fixed_and_dep)).abs() < 1e-9);
+    assert!((u.ebit_m() / u.revenue_m - (0.45 / 101.0 + saved)).abs() < 1e-4);
 }
 
 #[test]
 fn every_company_at_load_earns_only_its_pc_bonus() {
     // At load S = M = 1.0 and productivity 100, so EBIT after R&D at the norm is exactly
-    // f × bonus ÷ (100 + bonus) of revenue (spec 2.2 "Built-table checks", 5.5).
+    // f × bonus ÷ (100 + bonus) of revenue (spec 2.2 "Built-table checks", 5.5). The units book
+    // their 6.3 plan at load (D283), so the check puts R&D back at the norm.
     let w = world_at_load(&data(), &mut RngStreams::new(1));
     for (_, u) in w.units.iter() {
         let c = &w.companies[u.company];
@@ -75,18 +74,20 @@ fn every_company_at_load_earns_only_its_pc_bonus() {
         let m = ind.market_factor;
         // Variable and R&D scale with M; fixed cash and depreciation sum to f × gross × turnover.
         let rev100 = u.gross_assets * ind.params.asset_turnover / 12.0;
+        assert!((u.rd_m - u.revenue_m * u.rd_plan).abs() < 1e-9 * u.revenue_m.max(1.0));
+        let at_norm = u.ebit_m() + u.rd_m - u.revenue_m * ind.params.rd_norm;
         let want = u.revenue_m * (1.0 - 0.5 - 0.05) - f * rev100;
         assert!(
-            (u.ebit_m() - want).abs() < 1e-6 * u.revenue_m.max(1.0),
+            (at_norm - want).abs() < 1e-6 * u.revenue_m.max(1.0),
             "{}",
             c.key
         );
         let at_m1 = c.pc_bonus / (100.0 + c.pc_bonus) * f;
         assert!(
-            (u.ebit_m() / u.revenue_m - at_m1).abs() < 1e-3,
+            (at_norm / u.revenue_m - at_m1).abs() < 1e-3,
             "{}: margin {} vs {at_m1} (M {m})",
             c.key,
-            u.ebit_m() / u.revenue_m
+            at_norm / u.revenue_m
         );
     }
 }

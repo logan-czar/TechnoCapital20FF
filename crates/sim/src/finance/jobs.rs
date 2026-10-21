@@ -21,7 +21,6 @@ use super::credit::{
 use super::distress::{
     CompanyStatus, SettleInputs, on_quarter_close, removal_due, remove, settle_month,
 };
-use super::dividends::{DividendInputs, dividend, payout_ratio};
 use super::rating::{
     RatingInputs, StartRatingInputs, implied_rating, notches_between, review_move, starting_rating,
 };
@@ -575,37 +574,20 @@ pub fn annual_statements_job(world: &mut World, ctx: &mut JobCtx<'_>) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// The dividend rule, ready for the plan lock (spec 5.17; build-plan M4.8, called from M6.3).
+// The dividend at the plan lock (spec 5.17; build-plan M4.8, M6.3).
 
-/// The dividend company `id` would pay at a plan lock now (spec 5.17): payout ratio (the sector
-/// payout × its archetype's payout mult, 6.1) × the net income of the last quarter archived, if
-/// that is above 0, the company is Active and own cash after it stays above min_cash (5% of
-/// trailing revenue); otherwise 0.
-pub fn dividend_due(world: &World, id: CompanyId) -> f64 {
-    let c = &world.companies[id];
-    let Some(last) = c.finance.quarters().last() else {
+/// Pays a dividend of `amount` at the plan lock (spec 5.17): cash falls now and the dividend is
+/// booked into the month it falls in, posted at the next monthly close (D125). The amount is the
+/// Lite AI's (`ai::financing`, the one 5.17 calculation, on the balances after the 6.5 draw or
+/// repayment); nothing is paid for an amount at or below 0. Returns what was paid.
+pub fn pay_dividend(world: &mut World, id: CompanyId, amount: f64) -> f64 {
+    if amount <= 0.0 {
         return 0.0;
-    };
-    dividend(&DividendInputs {
-        net_income: last.lines.net_income(),
-        cash: c.cash_usd,
-        line_drawn: c.finance.line.drawn,
-        min_cash: min_cash(trailing_revenue(c)),
-        payout_ratio: payout_ratio(c.archetype.payout_mult()),
-        status: c.finance.status(),
-    })
-}
-
-/// Pays [`dividend_due`]: cash falls now and the dividend is booked into the month it falls in,
-/// posted at the next monthly close (D125). Returns the amount. M6.3's plan lock calls it.
-pub fn pay_dividend(world: &mut World, id: CompanyId) -> f64 {
-    let d = dividend_due(world, id);
-    if d > 0.0 {
-        let c = &mut world.companies[id];
-        c.cash_usd -= d;
-        c.finance.pending.dividends += d;
     }
-    d
+    let c = &mut world.companies[id];
+    c.cash_usd -= amount;
+    c.finance.pending.dividends += amount;
+    amount
 }
 
 // ---------------------------------------------------------------------------------------------

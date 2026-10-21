@@ -157,11 +157,17 @@ fn score_fifty_ceo() -> SeatHolder {
 /// Barebones companies and their R&D plan as a multiple of the norm.
 const BAREBONES_PLANS: [(&str, f64); 3] = [("CO-0003", 2.0), ("CO-0026", 1.0), ("CO-0027", 0.0)];
 
-/// Stands in for the M6 plan each month (4.3 step 3): the score-50 CEO and the R&D plans.
+/// Overrides the Lite AI's plan each month (4.3 step 3): the score-50 CEO, the R&D plans and the
+/// CEO on productivity (the 6.4 split would put a 100%-coverage CEO at L = 1 on 50/50, which
+/// changes no term of 5.6 but is not the case written here).
 fn plans_and_board(w: &mut World, _: &mut JobCtx<'_>) {
     for (key, mult) in BAREBONES_PLANS {
         let id = company(w, key);
         w.companies[id].board[0] = Some(score_fifty_ceo());
+        w.companies[id].stations = Stations {
+            productivity: 1,
+            ..Stations::default()
+        };
         let unit = w.companies[id].units[0];
         let norm = w.industries[w.units[unit].industry].params.rd_norm;
         w.units[unit].rd_plan = mult * norm;
@@ -256,13 +262,17 @@ fn productivity_step_follows_5_6_on_the_live_engine() {
         );
         checked += 1;
     }
-    assert_eq!(checked, 649);
-    // Arrowhead with 12 research stations: ×1.02; 281 of 392 idle, decay 0.3.
+    assert_eq!(checked, w.units.len() - 2);
+    // Arrowhead with 12 research stations out of the 9 January split's 291 idle (6.4: 100 / 1 /
+    // 0 / 291): ×1.02; 279 of 392 idle, decay 0.3. Its R&D is the locked 1.8% plus 1% free.
     let a = &w.companies[company(w, "CO-0001")];
-    assert_eq!((a.stations.research, a.stations.idle), (12, 281));
+    assert_eq!((a.stations.research, a.stations.idle), (12, 279));
     let au = &w.units[a.units[0]];
-    let want =
-        100.0 + 10.0 * (0.06 / 0.05 - 1.0) * (0.5 + spec_score(w, a) / 100.0) * 1.02 / 12.0 - 0.3;
+    let rd_total = before.units[a.units[0]].rd_plan + 0.01;
+    assert!((rd_total - 0.028).abs() < 1e-12);
+    let want = 100.0
+        + 10.0 * (rd_total / 0.05 - 1.0) * (0.5 + spec_score(w, a) / 100.0) * 1.02 / 12.0
+        - 0.3;
     assert!((au.productivity - want).abs() < 1e-9);
     // The clamp (5.6): 30 to 200.
     assert_eq!(

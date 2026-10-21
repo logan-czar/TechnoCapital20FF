@@ -44,7 +44,7 @@ pub struct CompanyRowsView {
 }
 
 impl ViewData for CompanyRowsView {
-    const CADENCE: Cadence = Cadence::Monthly;
+    const CADENCE: Cadence = Cadence::MonthlyAndLock;
 
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;

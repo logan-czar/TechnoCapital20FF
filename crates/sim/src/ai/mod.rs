@@ -24,6 +24,7 @@ pub mod archetype;
 pub mod financing;
 pub mod growth;
 pub mod inputs;
+pub mod jobs;
 pub mod plan;
 pub mod raise;
 pub mod rd;

@@ -14,7 +14,7 @@ use std::time::Instant;
 use sim::finance::distress::CompanyStatus;
 use sim::finance::rating::Band;
 use sim::time::{Date, DateTime};
-use sim::world::Ordinal;
+use sim::world::{Ordinal, Origin, PhaseLabel};
 use sim::{Notice, Sim};
 
 const USAGE: &str = "usage:\n  \
@@ -34,12 +34,136 @@ const USAGE: &str = "usage:\n  \
 /// December close the quoted (listed, not delisted) count, the median `|P ÷ V − 1|` over them,
 /// the mean zone confidence and the headline index levels of four exchanges ([`INDEX_COLUMNS`];
 /// empty with no listing); and over the year's daily closes the share of quoted company-days
-/// with `|P ÷ V − 1| ≤ 30%` (the M5.8 tracking share, D143).
+/// with `|P ÷ V − 1| ≤ 30%` (the M5.8 tracking share, D143). M6 (the spec 10 and build-plan 4.4
+/// targets, for the M10 soak): startup events and startups born in the year (and AI labs
+/// startups), listings in the year and starting private companies listed so far, named
+/// companies (not Removed) at the close, the share of the 651 still Active, the share of the
+/// year's reports tagged Beat or Big beat and Miss or Big miss (at each release, D249), the share
+/// of industry-months labeled Boom and Bust, industries ever held at an M clamp (0.7 or 1.3) for
+/// more than 8 quarters in a row and the longest such run so far, full characters made in play
+/// so far, and the median unit productivity at the close.
 const METRICS_HEADER: &str = "seed,year,ticks,final_hash,wall_ms,phase,g_t,named_revenue_usd,\
     fringe_revenue_usd,mean_s,min_s,max_s,mean_m,mean_productivity,mean_management,data_tb,\
     profitable_share,distressed_in_year,distressed,bankrupt,removed,bankruptcies_in_year,\
     removals_in_year,active_share,line_drawn_usd,ratings,quoted,median_gap,tracking_share,\
-    mean_confidence,index_atx,index_cbx,index_hse,index_ese";
+    mean_confidence,index_atx,index_cbx,index_hse,index_ese,events_in_year,startups_in_year,\
+    ai_lab_startups_in_year,listings_in_year,start_private_listed,named_companies,\
+    start_active_share,beat_share,miss_share,boom_share,bust_share,m_clamp_over_8q,\
+    max_m_clamp_quarters,full_characters_made,median_productivity";
+
+/// Spec 5.2: M's clamp; an industry at it for more than 8 quarters misses a spec 10 target.
+const M_CLAMP: (f64, f64) = (0.7, 1.3);
+const M_CLAMP_QUARTERS: u32 = 8;
+
+/// The M6 columns' running counts (D166).
+#[derive(Default)]
+struct YearBirths {
+    reports: usize,
+    beats: usize,
+    misses: usize,
+    industry_months: usize,
+    boom_months: usize,
+    bust_months: usize,
+    /// Consecutive quarters at an M clamp, by industry; and whether it ever passed 8.
+    clamp_run: Vec<u32>,
+    clamp_over: Vec<bool>,
+    max_run: u32,
+}
+
+impl YearBirths {
+    /// A release (the 2nd of a quarter's first month): its reports and their tags.
+    fn add_release(&mut self, sim: &Sim) {
+        let m = sim.views().market_stats.get();
+        self.reports += m.reports;
+        self.beats += m.beats;
+        self.misses += m.misses;
+    }
+
+    /// A month close: the labels; at a quarter's last month the M clamp runs.
+    fn add_month(&mut self, sim: &Sim, month: u8) {
+        let rows = &sim.views().industry_rows.get().rows;
+        self.clamp_run.resize(rows.len(), 0);
+        self.clamp_over.resize(rows.len(), false);
+        for (i, r) in rows.iter().enumerate() {
+            self.industry_months += 1;
+            self.boom_months += usize::from(r.phase_label == PhaseLabel::Boom);
+            self.bust_months += usize::from(r.phase_label == PhaseLabel::Bust);
+            if month.is_multiple_of(3) {
+                let at_clamp =
+                    r.market_factor <= M_CLAMP.0 + 1e-12 || r.market_factor >= M_CLAMP.1 - 1e-12;
+                self.clamp_run[i] = if at_clamp { self.clamp_run[i] + 1 } else { 0 };
+                self.clamp_over[i] |= self.clamp_run[i] > M_CLAMP_QUARTERS;
+                self.max_run = self.max_run.max(self.clamp_run[i]);
+            }
+        }
+    }
+
+    /// The M6 columns of `year`'s row; the year's counts restart, the runs carry on.
+    fn columns(&mut self, sim: &Sim, year: i32) -> String {
+        let v = sim.views();
+        let births = v.births.get();
+        let in_year = |d: Date| d.year == year;
+        let events = births.events.iter().filter(|e| in_year(e.date)).count();
+        let startups = births.births.iter().filter(|b| in_year(b.date)).count();
+        let industries = &v.industry_rows.get().rows;
+        let ai_labs = births
+            .births
+            .iter()
+            .filter(|b| in_year(b.date))
+            .filter(|b| {
+                industries
+                    .iter()
+                    .any(|r| r.id == b.industry && r.key == "ai_labs")
+            })
+            .count();
+        let listings = births.listings.iter().filter(|l| in_year(l.date)).count();
+        let companies = &v.company_detail.get().companies;
+        let start_listed = births
+            .listings
+            .iter()
+            .filter(|l| {
+                companies
+                    .iter()
+                    .any(|c| c.id == l.id && c.origin == Origin::Start)
+            })
+            .count();
+        let named = companies
+            .iter()
+            .filter(|c| c.status != CompanyStatus::Removed)
+            .count();
+        let starts: Vec<_> = companies
+            .iter()
+            .filter(|c| c.origin == Origin::Start)
+            .collect();
+        let start_active = starts
+            .iter()
+            .filter(|c| c.status == CompanyStatus::Active)
+            .count() as f64
+            / starts.len().max(1) as f64;
+        let mut prod: Vec<f64> = v.units.get().units.iter().map(|u| u.productivity).collect();
+        prod.sort_by(f64::total_cmp);
+        let median_prod = prod.get(prod.len() / 2).copied().unwrap_or(0.0);
+        let share = |a: usize, b: usize| a as f64 / b.max(1) as f64;
+        let out = format!(
+            "{events},{startups},{ai_labs},{listings},{start_listed},{named},{start_active:.4},\
+             {:.4},{:.4},{:.4},{:.4},{},{},{},{median_prod:.3}",
+            share(self.beats, self.reports),
+            share(self.misses, self.reports),
+            share(self.boom_months, self.industry_months),
+            share(self.bust_months, self.industry_months),
+            self.clamp_over.iter().filter(|&&o| o).count(),
+            self.max_run,
+            births.full_characters_made,
+        );
+        *self = YearBirths {
+            clamp_run: std::mem::take(&mut self.clamp_run),
+            clamp_over: std::mem::take(&mut self.clamp_over),
+            max_run: self.max_run,
+            ..YearBirths::default()
+        };
+        out
+    }
+}
 
 /// The headline exchanges whose index levels the metrics show: North America, the EU, China and
 /// Japan (financial-zones.csv `exchange_code`).
@@ -329,6 +453,7 @@ fn run(args: &RunArgs) -> ExitCode {
         let mut year_ticks = 0u64;
         let mut economy = YearEconomy::default();
         let mut tracking = YearTracking::default();
+        let mut births = YearBirths::default();
         let mut distressed_seen = vec![false; sim.views().company_detail.get().companies.len()];
         while sim.now() < end {
             year_ticks += 1;
@@ -336,11 +461,18 @@ fn run(args: &RunArgs) -> ExitCode {
                 if let Notice::DayDone(_) = n {
                     tracking.add_day(&sim);
                 }
+                if let Notice::EarningsReleased(_) = n {
+                    births.add_release(&sim);
+                }
                 let Notice::MonthDone(month) = n else {
                     continue;
                 };
                 economy.add_month(&sim);
+                births.add_month(&sim, month.month);
                 for c in &sim.views().company_detail.get().companies {
+                    if c.id.index() >= distressed_seen.len() {
+                        distressed_seen.resize(c.id.index() + 1, false);
+                    }
                     if c.status == CompanyStatus::Distressed {
                         distressed_seen[c.id.index()] = true;
                     }
@@ -358,10 +490,11 @@ fn run(args: &RunArgs) -> ExitCode {
                     let seen = distressed_seen.iter().filter(|&&d| d).count();
                     let books = books_columns(&sim, month.year, seen);
                     let market = tracking.columns(&sim);
+                    let m6 = births.columns(&sim, month.year);
                     distressed_seen.iter_mut().for_each(|d| *d = false);
                     writeln!(
                         csv,
-                        "{seed},{},{year_ticks},{hash},{ms},{cols},{ops},{books},{market}",
+                        "{seed},{},{year_ticks},{hash},{ms},{cols},{ops},{books},{market},{m6}",
                         month.year
                     )
                     .unwrap();

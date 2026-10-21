@@ -13,8 +13,10 @@ use crate::people::board::{Seat, Skills};
 use crate::people::management::{EMPTY_SEAT_SKILL, Member, confidence_factor, member_skill};
 use crate::people::traits::Trait;
 use crate::market::fair_value::shown_value;
+use crate::time::Quarter;
 use crate::world::{
-    CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, SeatHolder, World, ZoneId,
+    CharacterId, CompanyId, CountryId, IndustryId, IpoVoteRecord, Ordinal, Origin, ProvinceId,
+    SeatHolder, World, ZoneId,
 };
 
 /// Who sits in a seat (spec 3.7, 3.7.1, 3.7.2).
@@ -71,6 +73,13 @@ pub struct CompanyDetail {
     pub status: CompanyStatus,
     /// Spec 6.1.
     pub archetype: Archetype,
+    /// Start or Born (spec 8 header "Founded [date] ([event])"), its founders and directors, and
+    /// the last IPO vote with the next vote's quarter (spec 8 Board tab, 5.20.1).
+    pub origin: Origin,
+    pub founders: Vec<CharacterId>,
+    pub directors: usize,
+    pub ipo_last_vote: Option<IpoVoteRecord>,
+    pub ipo_next_vote: Option<Quarter>,
     /// Shares outstanding (spec 3.10).
     pub shares_out: u64,
     /// The listing exchange (spec 5.14), `None` while private; quoted unless delisted.
@@ -125,7 +134,7 @@ fn person(w: &World, holder: &SeatHolder) -> SeatPerson {
 }
 
 impl ViewData for CompanyDetailView {
-    const CADENCE: Cadence = Cadence::Monthly;
+    const CADENCE: Cadence = Cadence::MonthlyAndLock;
 
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;
@@ -185,6 +194,11 @@ impl ViewData for CompanyDetailView {
                     rating: c.finance.rating,
                     status: c.finance.status(),
                     archetype: c.archetype,
+                    origin: c.origin,
+                    founders: c.founders.clone(),
+                    directors: c.directors.len(),
+                    ipo_last_vote: c.ipo_last_vote.clone(),
+                    ipo_next_vote: c.ipo_next_vote,
                     shares_out: c.shares_out,
                     exchange: s.exchange,
                     quoted: s.quoted,

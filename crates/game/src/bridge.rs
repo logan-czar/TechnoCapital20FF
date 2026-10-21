@@ -94,6 +94,10 @@ pub struct SimRate {
     pub budget_hits: u64,
     /// Wall time spent stepping in the last finished frame.
     pub step_time_last_frame: Duration,
+    /// The longest single tick of the last finished frame, timed from the budget check that let
+    /// it run to its end: the most the frame may overrun its budget (D300, D152).
+    pub longest_tick_last_frame: Duration,
+    longest_tick_this_frame: Duration,
     /// Game hours per real second, measured over the last full second.
     pub hours_per_second: f64,
     window_start: Option<Instant>,
@@ -183,6 +187,7 @@ impl Plugin for SimBridgePlugin {
 fn start_frame(mut runner: ResMut<SimRunner>, mut rate: ResMut<SimRate>) {
     rate.step_time_last_frame = runner.spent;
     runner.spent = Duration::ZERO;
+    rate.longest_tick_last_frame = std::mem::take(&mut rate.longest_tick_this_frame);
     rate.steps_last_frame = rate.steps_this_frame;
     rate.steps_this_frame = 0;
     let now = Instant::now();
@@ -271,11 +276,13 @@ fn step_sim(
         }
         // The first tick of a frame always runs, so the game moves however slow a tick is.
         let first_of_frame = rate.steps_this_frame + steps == 0;
-        if !first_of_frame && runner.spent + start.elapsed() >= runner.budget {
+        let checked = Instant::now();
+        if !first_of_frame && runner.spent + checked.duration_since(start) >= runner.budget {
             cut_short = true;
             break;
         }
         notices.write_batch(runner.sim.step().into_iter().map(SimNotice));
+        rate.longest_tick_this_frame = rate.longest_tick_this_frame.max(checked.elapsed());
         steps += 1;
         if let Pace::Timed(_) = p {
             runner.owed -= 1.0;

@@ -52,14 +52,17 @@ fn monthly_hashes_and_metrics() {
          mean_s,min_s,max_s,mean_m,mean_productivity,mean_management,data_tb,profitable_share,\
          distressed_in_year,distressed,bankrupt,removed,bankruptcies_in_year,removals_in_year,\
          active_share,line_drawn_usd,ratings,quoted,median_gap,tracking_share,mean_confidence,\
-         index_atx,index_cbx,index_hse,index_ese"
+         index_atx,index_cbx,index_hse,index_ese,events_in_year,startups_in_year,\
+         ai_lab_startups_in_year,listings_in_year,start_private_listed,named_companies,\
+         start_active_share,beat_share,miss_share,boom_share,bust_share,m_clamp_over_8q,\
+         max_m_clamp_quarters,full_characters_made,median_productivity"
     );
     assert_eq!(rows.len(), 3);
     assert!(rows[1].starts_with("7,2020,8784,"), "{}", rows[1]);
     assert!(rows[2].starts_with("8,2020,8784,"), "{}", rows[2]);
     // M2 columns: a phase name, g_t, a year of revenue and S near 1 in the first year.
     let cols: Vec<&str> = rows[1].split(',').collect();
-    assert_eq!(cols.len(), 34, "{}", rows[1]);
+    assert_eq!(cols.len(), 49, "{}", rows[1]);
     assert!(
         ["Expansion", "Overheating"].contains(&cols[5]),
         "{}",
@@ -75,16 +78,19 @@ fn monthly_hashes_and_metrics() {
     assert!((0.0..=100.0).contains(&num(14)), "{}", rows[1]);
     assert!(num(15) > 0.0, "{}", rows[1]);
     assert!((0.0..=1.0).contains(&num(16)), "{}", rows[1]);
-    // M4 columns: counts of the 651, an active share, the line drawn and the rating bands of
-    // the companies not frozen, which with the Active and Distressed ones make up the 651.
+    // M4 columns: counts of the companies (the 651 and those born in play), an active share, the
+    // line drawn and the rating bands of the companies not frozen, which with the Active and
+    // Distressed ones make up every company.
     let int = |i: usize| -> usize { cols[i].parse().unwrap() };
     let (distressed, bankrupt, removed) = (int(18), int(19), int(20));
+    let companies = int(39) + removed;
+    assert!(companies >= 651 + int(35), "{}", rows[1]);
     assert!(int(17) >= distressed, "{}", rows[1]);
     assert!(int(21) >= bankrupt + removed, "{}", rows[1]);
     assert_eq!(int(22), removed, "{}", rows[1]);
-    let active = num(23) * 651.0;
+    let active = num(23) * companies as f64;
     assert!(
-        (active.round() as usize + distressed + bankrupt + removed) == 651,
+        (active.round() as usize + distressed + bankrupt + removed) == companies,
         "{}",
         rows[1]
     );
@@ -93,14 +99,28 @@ fn monthly_hashes_and_metrics() {
         .split('|')
         .map(|b| b.split_once(':').unwrap().1.parse::<usize>().unwrap())
         .sum();
-    assert_eq!(banded, 651 - bankrupt - removed, "{}", rows[1]);
-    // M5 columns: the quoted count is at most the 467 listed, the gap and the tracking share
-    // are shares, confidence is on the −100 to +100 scale and ATX (North America) shows a level.
-    assert!((1..=467).contains(&int(26)), "{}", rows[1]);
+    assert_eq!(banded, companies - bankrupt - removed, "{}", rows[1]);
+    // M5 columns: the quoted count is at most the 467 listed at load and those listed in the
+    // year, the gap and the tracking share are shares, confidence is on the −100 to +100 scale
+    // and ATX (North America) shows a level.
+    assert!((1..=467 + int(37)).contains(&int(26)), "{}", rows[1]);
     assert!((0.0..1.0).contains(&num(27)), "{}", rows[1]);
     assert!((0.0..=1.0).contains(&num(28)), "{}", rows[1]);
     assert!((-100.0..=100.0).contains(&num(29)), "{}", rows[1]);
     assert!(num(30) > 0.0, "{}", rows[1]);
+    // M6 columns: 2020 has F1 and random events (startups 1 to 3 each), its listings are of
+    // starting private companies, the 651's active share, the shares, the clamp runs, the
+    // founders made and the median productivity within the 5.6 clamp.
+    assert!(int(34) >= 1 && int(35) >= int(34), "{}", rows[1]);
+    assert!(int(36) >= 2, "F1's two AI labs: {}", rows[1]);
+    assert_eq!(int(38), int(37), "{}", rows[1]);
+    assert!((0.0..=1.0).contains(&num(40)), "{}", rows[1]);
+    for i in 41..=44 {
+        assert!((0.0..=1.0).contains(&num(i)), "{}", rows[1]);
+    }
+    assert!(int(46) <= 4, "{}", rows[1]);
+    assert!(int(47) >= int(35), "a founder or more each: {}", rows[1]);
+    assert!((30.0..=200.0).contains(&num(48)), "{}", rows[1]);
 
     // Same seed, same hashes.
     let (_, again, _) = run(&args);

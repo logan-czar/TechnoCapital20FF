@@ -52,13 +52,19 @@ pub use world::{LoadError, Notice, World};
 /// price move (full fair value, earnings jump, buzz), 4.2 steps 1 (bars, buzz), 2 (fair value),
 /// 3 (reaction week) and 6 (index closes, zone confidence, new bars), 4.3 step 13 (delisting at
 /// bankruptcy, after finance's settle), the close's result tags, the lock's consensus and the
-/// 4.5 bar archive. Slots expected to be shared, in the order
-/// their calls must go:
+/// 4.5 bar archive; `births` (M6) in the plan lock's steps 1 to 3 (fixed and random startup
+/// events, IPO votes and listings); `ai` (M6) in the lock's step 4 (the Lite AI batch) and the
+/// close (loss_q); `news` (M6) in 4.3 steps 1a (the chatbot), 2 (phase changes) and 13
+/// (bankruptcies), the release (removals), the price move's step 6 (results and rating
+/// changes) and 4.2 step 5 (the daily post); `recap` (M6) in the pre-quarter-end week. Slots
+/// expected to be shared, in the order their calls must go:
 ///
 /// - `Slot::Alerts`: `time` (calendar alerts) only; other modules raise alerts from their own
 ///   slots through `JobCtx::raise_alert` (the economy raises the World event alert in 1a).
 /// - `Slot::MonthlyAiEvents` (4.3 step 1): `economy` (boom and pop, 5.1.1), then `news` (the
 ///   chatbot headline, 5.18).
+/// - `Slot::MonthlyDemand` (4.3 step 2): `economy` (demand and labels), then `news` (phase
+///   change headlines).
 /// - `Slot::MonthlyLaborSeats` (4.3 step 4): `ops` (labor units, seats, stations, 5.10).
 /// - `Slot::MonthlyExpenses` (4.3 step 9): `economy` (variable, fixed cash, depreciation, R&D,
 ///   shared, 5.5), then `finance` (the month's ledger opens with those lines; tax accrues at
@@ -67,12 +73,16 @@ pub use world::{LoadError, Notice, World};
 ///   ramping, 5.10), then `people` (simple characters for new seats, 3.7.1), then `finance`
 ///   (depreciation, purchases and sales posted).
 /// - `Slot::MonthlyCashSettle` (4.3 step 13): `finance` (settle, distress, bankruptcy), then
-///   `market` (delisting the new bankruptcies, D134).
-/// - `Slot::CloseStatements` (4.4 close): `finance` (tax paid, then the statements, D122).
-/// - `Slot::ReleasePublish` (4.4 release): `finance` (removals, 5.12 step 3).
+///   `market` (delisting the new bankruptcies, D134), then `news` (bankruptcy headlines).
+/// - `Slot::CloseStatements` (4.4 close): `finance` (tax paid, then the statements, D122), then
+///   `ai` (loss_q from the quarter just archived).
+/// - `Slot::ReleasePublish` (4.4 release): `finance` (removals, 5.12 step 3), then `news`
+///   (removal headlines).
 /// - `Slot::PriceMoveResultHeadlines` (4.4 price move): `news` only.
 /// - `Slot::LockIpoVotes` (4.4 plan lock): `births` (votes, then listings, 5.20.1; a listing
 ///   calls `market::jobs::list_company` so the index keeps its level).
+/// - `Slot::LockAiPlans` (4.4 plan lock): `ai` (the Lite AI batch, every company not frozen,
+///   newborns included).
 /// - `Slot::LockConsensus` (4.4 plan lock): `market` (the projection and consensus, 5.16).
 fn register_jobs(s: &mut Scheduler) {
     time::alerts::register(s);
@@ -81,19 +91,36 @@ fn register_jobs(s: &mut Scheduler) {
     people::register(s);
     finance::register(s);
     market::register(s);
+    births::jobs::register(s);
+    ai::jobs::register(s);
+    news::jobs::register(s);
+    recap::jobs::register(s);
 }
 
 /// The whole start state (spec 7): the static tables and 7.1 loadouts, then the load's draws in
-/// their frozen order: the economy's (pop date, cycle start, zone shocks, Q1 2020 growth draw;
-/// 7.3), then the boards' simple characters (3.7.1, 7.1); then the books, which draw nothing
-/// (the starting rating, line limit and synthetic history, 7.1 and 4.4); then the market, which
-/// draws nothing (engine value, V and P at open_price, the indices at 1,000; 7.1, 5.14).
+/// their frozen order (D163): the economy's (pop date, cycle start, zone shocks, Q1 2020 growth
+/// draw; 7.3); the tipped lab (gen stream, right after the pop roll, D111, D281); the plan at
+/// load (growth g_dem of the Q1 draw, D283; draws nothing); the boards' simple characters
+/// (3.7.1, 7.1); the starting private companies' first IPO votes (gen stream, after the boards,
+/// D276); then the books, which draw nothing (the starting rating, line limit and synthetic
+/// history, 7.1 and 4.4); then the market (engine value, V and P at open_price, the indices at
+/// 1,000, each quoted stock's EFV error; 7.1, 5.14, D150). The news wire starts from the load's
+/// phase labels.
 pub fn start_world(data: &WorldData, draws: &mut dyn DrawSource) -> Result<World, LoadError> {
     let mut world = World::from_data(data)?;
     economy::start(&mut world, draws);
+    births::jobs::draw_tipped_lab_at_load(&mut world, draws);
+    ai::jobs::plan_at_load(&mut world);
     people::seating::start(&mut world, draws);
+    births::jobs::draw_first_votes(&mut world, draws);
     finance::start(&mut world);
-    market::start(&mut world);
+    market::start(&mut world, draws);
+    world.news.labels = world
+        .industries
+        .rows()
+        .iter()
+        .map(|i| i.phase_label)
+        .collect();
     Ok(world)
 }
 

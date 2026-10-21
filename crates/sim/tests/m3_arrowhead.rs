@@ -2,16 +2,12 @@
 //! spec 2.2 and 5.5 (build-plan "Profit picture").
 //!
 //! Spec M3 done: 392 labor units, PC bonus +2, about 8.6 TB held, EBIT after R&D about $1.6M.
-//! Every line comes from the engine's load month (D110) except the R&D plan, which is M6's (6.1,
-//! 6.3): until the Lite AI exists every unit runs R&D at the norm (D105). The check therefore
-//! reads the engine's revenue, variable, fixed cash, depreciation, shared costs and free R&D, and
-//! applies the 7.1 plan written from the spec (Terry is Greedy: a Cash cow, R&D target
-//! 0.05 × 0.7 × 0.8 = 2.8%, less the engine's 1% free R&D). It also prints the EBIT after R&D the
-//! engine books today under the placeholder plan.
-//!
-//! M6.2 replaces the in-test R&D plan with the engine's booked `u.rd_m` (the 6.3 plan the lock
-//! writes), keeping $1.6M and 4.1% for Arrowhead and 619 of 651 at a 6.1% median as the expected
-//! values (D119).
+//! Every line comes from the engine's load month (D110), the R&D line too: since M6.2 the units
+//! book the 6.3 plan at load (D283: 6.1 archetype mult × 6.3 trait mults at productivity 100 and
+//! loss_q 0, less free R&D), so both checks read the engine's booked `u.rd_m`. Terry is Greedy:
+//! a Cash cow, R&D target 0.05 × 0.7 × 0.8 = 2.8%, less the engine's 1% free R&D = 1.8%, $0.72M.
+//! The expected values stay the spec's: $1.6M and 4.1% for Arrowhead, 619 of 651 profitable at a
+//! 6.1% median (D119).
 
 mod common;
 
@@ -45,34 +41,39 @@ fn arrowhead_check_on_the_live_engine() {
     let before = ebit_before_rd(u);
     // 7.1: about $2.35M (5% plus 0.45 × 2 ÷ 102 from the PC bonus).
     assert!((before - 2.35e6).abs() < 0.01e6, "EBIT before R&D {before}");
-    // The engine's own line under the placeholder plan (R&D at the norm, D105).
-    let placeholder_after = 12.0 * u.ebit_m();
-    // 7.1's plan (6.1 Cash cow 0.7, 6.3 Greedy 0.8): paid R&D = target − free R&D.
+    // The engine's booked R&D: the 6.3 plan the unit runs from load (D283).
+    let paid = 12.0 * u.rd_m;
+    let after = 12.0 * u.ebit_m();
+    // The plan written from the spec: 6.1 Cash cow 0.7, 6.3 Greedy 0.8, less the 1% free R&D.
     let rd_norm = w.industries[u.industry].params.rd_norm;
-    let target = rd_norm * 0.7 * 0.8;
-    let paid = revenue * (target - book.free_rd_fraction()).max(0.0);
-    let after = before - paid;
+    let spec_plan = rd_norm * 0.7 * 0.8 - book.free_rd_fraction();
+    assert!(
+        (u.rd_plan - spec_plan).abs() < 1e-12,
+        "rd_plan {}",
+        u.rd_plan
+    );
     println!(
-        "Arrowhead at load (engine): revenue ${:.2}M, EBIT before R&D ${:.3}M, paid R&D at the \
-         7.1 plan ${:.3}M, EBIT after R&D ${:.3}M ({:.1}%); at the placeholder plan (R&D at the \
-         norm) ${:.3}M",
+        "Arrowhead at load (engine): revenue ${:.2}M, EBIT before R&D ${:.3}M, booked R&D \
+         ${:.3}M ({:.1}% of revenue), EBIT after R&D ${:.3}M ({:.1}%)",
         revenue / 1e6,
         before / 1e6,
         paid / 1e6,
+        100.0 * u.rd_plan,
         after / 1e6,
         100.0 * after / revenue,
-        placeholder_after / 1e6
     );
     assert!((paid - 0.72e6).abs() < 0.005e6, "paid R&D {paid}");
     assert!((after - 1.6e6).abs() < 0.05e6, "EBIT after R&D {after}");
     assert!((after / revenue - 0.041).abs() < 0.001);
 
-    // The first monthly close keeps the done-line figures: the live recount (4.3 steps 4 and 5)
-    // gives the same 392 labor units and +2.
+    // The first monthly close keeps 392 labor units and 1% free R&D. The 9 January lock's 6.4
+    // split put 100 stations on productivity (the largest power of ten at most 40% of 392, up
+    // from the loadout's 98), so the first recount (5.8) counts PC 100: +3.
     run_to(&mut sim, Date::ymd(2020, 2, 1));
     let w = sim.world();
     let a = &w.companies[company(w, "CO-0001")];
-    assert_eq!((a.labor_units, a.pc_bonus), (392, 2.0));
+    assert_eq!((a.labor_units, a.stations.productivity), (392, 100));
+    assert_eq!(a.pc_bonus, 3.0);
     assert_eq!(a.data[0].book.free_rd_pct, 1);
 }
 
@@ -114,7 +115,7 @@ fn median(mut v: Vec<f64>) -> f64 {
     }
 }
 
-/// Margins after R&D at load, from the engine's lines, with `paid(world, unit)` R&D a year.
+/// Margins after R&D at load, from the engine's lines, with `paid(unit)` R&D a year.
 fn margins(w: &World, paid: impl Fn(&BusinessUnit) -> f64) -> Vec<f64> {
     w.units
         .iter()
@@ -132,14 +133,9 @@ fn profit_picture_at_load() {
     let w = sim.world();
     assert_eq!(w.units.len(), 651);
 
-    // Today's engine: R&D at the norm (placeholder plan, D105).
-    let engine = margins(w, |u| 12.0 * u.rd_m);
-    let engine_pos = engine.iter().filter(|&&m| m > 1e-9).count();
-    let engine_median = median(engine.clone());
-
-    // With M6's plans (6.1, 6.3) on the engine's lines and free R&D: spec 2.2 and 5.5 expect
-    // 619 of 651 profitable after R&D, median margin 6.1%.
-    let planned = margins(w, |u| {
+    // The booked plan is the spec's (6.1 first match, 6.3 trait mults, less free R&D), written
+    // here from companies.csv and characters.csv.
+    for (_, u) in w.units.iter() {
         let c = &w.companies[u.company];
         let row = d.companies.rows.iter().find(|r| r.id == c.key).unwrap();
         let ind = &w.industries[u.industry];
@@ -153,25 +149,26 @@ fn profit_picture_at_load() {
         let free = c.data_in(u.industry).unwrap().free_rd_fraction();
         let rd_norm = ind.params.rd_norm;
         let plan = (rd_norm * mult - free).clamp(0.0, 3.0 * rd_norm);
-        12.0 * u.revenue_m * plan
-    });
-    let pos = planned.iter().filter(|&&m| m > 1e-9).count();
-    let neg = planned.iter().filter(|&&m| m < -1e-9).count();
-    let med = median(planned.clone());
-    let lo = planned.iter().copied().fold(f64::INFINITY, f64::min);
-    let hi = planned.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+        assert!((u.rd_plan - plan).abs() < 1e-12, "{}", c.key);
+        assert!((u.rd_m - u.revenue_m * plan).abs() < 1e-6 * u.revenue_m.max(1.0));
+    }
+
+    // The engine's booked R&D at load: spec 2.2 and 5.5 expect 619 of 651 profitable after R&D,
+    // median margin 6.1%.
+    let engine = margins(w, |u| 12.0 * u.rd_m);
+    let pos = engine.iter().filter(|&&m| m > 1e-9).count();
+    let neg = engine.iter().filter(|&&m| m < -1e-9).count();
+    let med = median(engine.clone());
+    let lo = engine.iter().copied().fold(f64::INFINITY, f64::min);
+    let hi = engine.iter().copied().fold(f64::NEG_INFINITY, f64::max);
     println!(
-        "Load profit picture (engine lines): with M6's 6.1/6.3 R&D plans {pos} of 651 profitable \
-         after R&D, {neg} loss-making, median margin {:.1}%, range {:.1}% to {:.1}% (spec 2.2: 619 \
-         of 651, 6.1%); with today's placeholder (R&D at the norm) {engine_pos} of 651, median \
-         {:.2}%",
+        "Load profit picture (engine lines and booked R&D): {pos} of 651 profitable after R&D, \
+         {neg} loss-making, median margin {:.1}%, range {:.1}% to {:.1}% (spec 2.2: 619 of 651, \
+         6.1%)",
         100.0 * med,
         100.0 * lo,
         100.0 * hi,
-        100.0 * engine_median
     );
     assert_eq!(pos, 619);
     assert_eq!(format!("{:.1}", 100.0 * med), "6.1");
-    // Under the placeholder every company earns its PC bonus share, f × b ÷ (100 + b) (D105).
-    assert_eq!(engine_pos, 651);
 }

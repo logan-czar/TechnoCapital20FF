@@ -53,11 +53,17 @@ fn max_speed_is_budgeted_per_frame() {
     for _ in 0..30 {
         app.update();
         let rate = app.world().resource::<SimRate>();
-        let slack = Duration::from_millis(20);
+        // The budget logic (D300, D152): a frame stops stepping once the budget is spent, so it
+        // overruns by at most the one tick that crossed it, timed from the check that let it
+        // run. Tying the bound to the frame's own longest tick keeps the assertion exact on a
+        // loaded machine (a slow midnight or plan-lock tick), where a fixed wall-clock slack
+        // failed; the slack left only covers the bookkeeping after the loop.
+        let bookkeeping = Duration::from_millis(5);
         assert!(
-            rate.step_time_last_frame <= budget + slack,
-            "a frame stepped for {:?}",
-            rate.step_time_last_frame
+            rate.step_time_last_frame <= budget + rate.longest_tick_last_frame + bookkeeping,
+            "a frame stepped for {:?} (budget {budget:?}, longest tick {:?})",
+            rate.step_time_last_frame,
+            rate.longest_tick_last_frame
         );
         assert!(rate.steps_last_frame >= 1, "max speed ran no tick");
         total += rate.steps_last_frame;

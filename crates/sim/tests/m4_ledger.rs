@@ -91,17 +91,20 @@ fn every_line_posts_once_a_month_in_step_order() {
             near("R&D", l.rd, u.rd_m);
             near("shared", l.shared, u.shared_m);
             // Step 11: depreciation is the month's decay off the book, capped at the book
-            // (5.5, 5.10), and the purchases buy back the decay at g = 0.
+            // (5.5, 5.10), and the purchases are `gross × (d_eff + g) ÷ 12` at the unit's locked
+            // growth plan g (a sale below 0; a Distressed company buys nothing).
             let bu = &before.units[c.units[0]];
             let p = &w.industries[u.industry].params;
             let decay =
                 p.asset_decay * (bu.gross_assets - p.asset_decay_threshold_usd).max(0.0) / 12.0;
             near("depreciation", l.depreciation, decay.min(bu.asset_book));
             let distressed = b.finance.status() != sim::finance::distress::CompanyStatus::Active;
-            near(
-                "purchases",
-                l.asset_purchases,
-                if distressed { 0.0 } else { decay },
+            let plan = decay + bu.gross_assets * bu.growth_plan / 12.0;
+            let want = if distressed { 0.0 } else { plan.max(0.0) };
+            assert!(
+                (l.asset_purchases - want).abs() <= 1e-9 * bu.gross_assets.max(1.0),
+                "purchases: {} vs {want}",
+                l.asset_purchases
             );
             // Step 12: interest, fee and cash interest on the opening balances (5.12), at base
             // + home spread (half the zone's effective spread, half the sovereign spread,
@@ -125,11 +128,12 @@ fn every_line_posts_once_a_month_in_step_order() {
                 l.interest_income,
                 own * (base - 0.0025) / 12.0,
             );
-            // Step 13: the line moved by what the ledger says (5.12 auto-draw and repay).
+            // Step 13: the line moved by what the ledger says (5.12 auto-draw and repay), plus
+            // what the month's plan lock drew or repaid (6.5, booked in `pending`, D125).
             near(
                 "line drawn or repaid",
                 l.line_drawn_or_repaid,
-                c.finance.line.drawn - drawn,
+                c.finance.line.drawn - drawn + b.finance.pending.line_drawn_or_repaid,
             );
             // Step 14: the accrual is the quarter-to-date tax less earlier accruals (5.11, D227),
             // with the HQ country's rate.
@@ -195,7 +199,10 @@ fn nothing_posts_between_monthly_closes() {
     for (_, c) in w.companies.iter() {
         if c.finance.in_game() {
             assert!(c.finance.months.is_empty(), "{}", c.key);
-            assert_eq!(c.finance.quarters().len(), 5, "{}", c.key);
+            // The 651 hold the four synthetic 2019 quarters and Q1 2020; a company born at the
+            // 9 January lock holds Q1 2020 only.
+            let want = if c.origin.is_born() { 1 } else { 5 };
+            assert_eq!(c.finance.quarters().len(), want, "{}", c.key);
         }
     }
 }

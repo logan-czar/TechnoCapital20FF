@@ -26,17 +26,6 @@ pub const SALE_FACTOR_NORMAL: f64 = 0.85;
 pub const SALE_FACTOR_GLUT: f64 = 0.70;
 pub const SALE_FACTOR_BUST: f64 = 0.60;
 
-/// **Growth plan hook until the M6 Lite AI** (spec 6.2): the annual net growth rate every unit
-/// runs before plans are locked. g = 0 holds the asset base flat, buying back each month's decay
-/// (spec 5.10). The M6 plan lock (4.4 row 3) overwrites `growth_plan` and `rd_plan`.
-pub const PLACEHOLDER_GROWTH_PLAN: f64 = 0.0;
-
-/// The plan a unit runs until the Lite AI sets one (spec 6: "at load, plans use ... rd_norm for
-/// R&D"): growth [`PLACEHOLDER_GROWTH_PLAN`], R&D at the norm. Returns `(growth_plan, rd_plan)`.
-pub fn placeholder_plan(params: &IndustryParams) -> (f64, f64) {
-    (PLACEHOLDER_GROWTH_PLAN, params.rd_norm)
-}
-
 /// Yearly asset decay in USD (spec 5.10).
 pub fn decay_usd(gross_assets: f64, p: &IndustryParams) -> f64 {
     p.asset_decay * (gross_assets - p.asset_decay_threshold_usd).max(0.0)

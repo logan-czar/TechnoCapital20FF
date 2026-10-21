@@ -84,7 +84,8 @@ fn company_units_and_tech_views_show_arrowhead() {
 fn m3_views_rebuild_monthly_and_copy_by_version() {
     let mut sim = Sim::new(data(), 2).unwrap();
     let stale = sim.views().clone();
-    run_to(&mut sim, Date::ymd(2020, 1, 15));
+    // Before the 9 January lock, which also rebuilds the company views (births, D159).
+    run_to(&mut sim, Date::ymd(2020, 1, 8));
     let v = sim.views();
     assert_eq!(
         v.tech.version(),
