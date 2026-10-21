@@ -181,8 +181,8 @@ pub(crate) fn draw_trait(draws: &mut dyn DrawSource, list: &[Trait], excluded: &
 /// integer draws from the gen stream, in a frozen order (D202): the name ([`NameBook::draw`]),
 /// the age, the six skills in column order (each seat skill in the seat range, the rest in the
 /// other range; the CEO's Finance, Operations and Persuasion all in the seat range), then the
-/// trait count (two with [`TWO_TRAIT_CHANCE`]) and the traits from the seat's list with no
-/// opposite pair.
+/// trait count (two with [`TWO_TRAIT_CHANCE`]), then the traits from the seat's list with no
+/// opposite pair (the first uniform, the second uniform over the rest less its opposite).
 pub fn generate_simple(
     draws: &mut dyn DrawSource,
     names: &NameBook,
@@ -202,9 +202,10 @@ pub fn generate_simple(
         skills.set(kind, range.draw(draws));
     }
     let list = role_traits(seat);
+    let two = draws.chance(Stream::Gen, TWO_TRAIT_CHANCE);
     let first = draw_trait(draws, list, &[]);
     let mut traits = vec![first];
-    if draws.chance(Stream::Gen, TWO_TRAIT_CHANCE) {
+    if two {
         traits.push(draw_trait(draws, list, &[first]));
     }
     SimpleCharacter {
