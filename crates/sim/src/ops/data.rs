@@ -54,8 +54,10 @@ pub const STEADY_STATE_ITERATIONS: u32 = 200;
 /// Held TB where converting `c` TB a month equals decay (spec 5.9, used at load in 7.1):
 /// solves `C = rate(held) × held`. `rate × held` rises with held and is continuous at 1 TB, so
 /// below `base` the answer is `C ÷ base` (under 1 TB) and above it a geometric bisection from
-/// 1 TB, as validate.py `steady_held` does. 0 for C ≤ 0. This is the held level after conversion
-/// and before decay; the end-of-month level it settles at is that less C (D210).
+/// 1 TB. 0 for C ≤ 0. Unlike validate.py `steady_held`, which bisects from a 1 TB floor and so
+/// returns 1 TB (1% free R&D) for any C below `base`, this follows 5.9 below 1 TB too (design
+/// fix 208). This is the held level after conversion and before decay; the end-of-month level
+/// it settles at is that less C (D210).
 pub fn steady_state_held(c_tb: f64, base: f64) -> f64 {
     if c_tb <= 0.0 || base <= 0.0 {
         return 0.0;
