@@ -11,7 +11,7 @@ pub mod rows;
 
 use std::path::{Path, PathBuf};
 
-pub use checks::{EXPECTED_COUNTS, check};
+pub use checks::{EXPECTED_COUNTS, RATING_LABELS, check, rating_factor_of_label};
 pub use error::DataError;
 pub use load::{Table, load_table};
 pub use rows::*;

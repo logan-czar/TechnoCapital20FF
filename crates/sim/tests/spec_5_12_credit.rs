@@ -8,7 +8,7 @@ use sim::finance::credit::{
     CreditLine, EXCESS_REPAY_MONTHS, auto_draw, excess_instalment, home_spread, line_limit,
     line_rate, min_cash, monthly_charges, own_cash, plan_repay, review_line,
 };
-use sim::finance::rating::Rating;
+use sim::finance::rating::{Rating, StartRatingInputs, starting_rating};
 
 fn bps(x: f64) -> f64 {
     (x * 10_000.0 * 1e6).round() / 1e6
@@ -229,11 +229,13 @@ fn starting_limits_match_the_python_export_for_all_651() {
 }
 
 #[test]
-fn design_fix_221_starting_lines_over_their_limit() {
-    // Pinned until Logan decides design fix 221: with the 7.1 starting lines and the 5.12
-    // limit, 231 of the 302 companies that start with a drawn line are over their own limit at
-    // load, among them all 63 rated CCC or CC (rating factor 0, so a limit of 0); $798B over in
-    // all, and 215 cannot repay the excess from cash. If a fix lands, update these numbers.
+fn d15_d16_starting_lines_within_their_limit() {
+    // Design fix 221, decided at the M3 gate (D15, D16): with the 7.1 starting lines, 231 of the
+    // 302 companies that started with a drawn line were over their own 5.12 limit at load
+    // ($798B in all), all 63 rated CCC or CC among them. gen.py now sizes every starting line to
+    // its limit at its own starting rating: 288 companies start with a line (14 of the 231 were
+    // sized to 0), none is over its limit, none rated CCC or CC draws one, so the first review
+    // (2 January 2020) opens no repayment window.
     let d = data();
     let (mut with_line, mut over, mut ccc_or_cc, mut short_of_cash) = (0, 0, 0, 0);
     let mut excess = 0.0;
@@ -248,7 +250,6 @@ fn design_fix_221_starting_lines_over_their_limit() {
         let limit = line_limit(f.start.asset_book_usd, f.start.cash_usd, drawn, rating);
         if rating >= Rating::Ccc {
             ccc_or_cc += 1;
-            assert_eq!(limit, 0.0, "{}", row.id());
         }
         if drawn > limit {
             over += 1;
@@ -258,13 +259,62 @@ fn design_fix_221_starting_lines_over_their_limit() {
             }
         }
     }
-    assert_eq!(with_line, 302);
-    assert_eq!(over, 231);
-    assert_eq!(ccc_or_cc, 63);
-    assert_eq!(short_of_cash, 215);
-    assert!(
-        (excess / 1.0e9 - 798.25).abs() < 0.01,
-        "excess ${}B",
-        excess / 1.0e9
-    );
+    assert_eq!(with_line, 288);
+    assert_eq!(over, 0);
+    assert_eq!(ccc_or_cc, 0);
+    assert_eq!(short_of_cash, 0);
+    assert_eq!(excess, 0.0);
+}
+
+#[test]
+fn d15_cut_lines_are_the_largest_within_their_limit() {
+    // D15: a line cut below the 7.1 line (asset book − book value + min_cash) is the largest
+    // within its own limit: $1,000 more is over the limit at the starting rating that larger
+    // line would have (gen.py's float guard, D236, can leave a line a few dollars below a rating
+    // edge). The twin of validate.py's check, with the engine's rating. The cash the smaller line
+    // no longer funds is not added back: cash stays min_cash and book equity rises by the cut.
+    let d = data();
+    let mut cut = 0;
+    for row in finance_start() {
+        let f = facts(&d, row.id());
+        let book_value = f.company.book_value_usd_m * 1e6;
+        let s = f.start;
+        if book_value >= s.asset_book_usd {
+            continue;
+        }
+        let line_71 = s.asset_book_usd - book_value + min_cash(f.company.revenue_usd_m * 1e6);
+        assert!(
+            (s.cash_usd - min_cash(f.company.revenue_usd_m * 1e6)).abs() <= 1.0,
+            "{}",
+            row.id()
+        );
+        assert!(
+            (s.book_equity_usd - (book_value + line_71 - s.credit_drawn_usd)).abs() <= 2.0,
+            "{} book equity",
+            row.id()
+        );
+        if s.credit_drawn_usd >= line_71 - 2.0 {
+            continue;
+        }
+        cut += 1;
+        let more = line_71.min(s.credit_drawn_usd + 1000.0);
+        let rating = starting_rating(&StartRatingInputs {
+            cash: s.cash_usd,
+            line_drawn: more,
+            ebitda: row.num("ebit") + row.num("depreciation"),
+            revenue: row.num("revenue"),
+            industry_key: &f.industry.id,
+            sovereign: f.sovereign(),
+            base_rate: BASE_RATE,
+            home_spread: home_spread(f.zone_spread(), f.sovereign_spread()),
+        })
+        .implied;
+        assert!(
+            more > line_limit(s.asset_book_usd, s.cash_usd, more, rating),
+            "{} line {} is not the largest within its limit",
+            row.id(),
+            s.credit_drawn_usd
+        );
+    }
+    assert_eq!(cut, 231);
 }

@@ -14,7 +14,9 @@ long-term rate; and a seeded 2020 to 2045 run of the batch 151 AI boom (mvp-spec
 which prints AI labs' long-term rate and demand by year; batch 155: every zone has its economy columns
 (credit_spread_bps, confidence_start) in range, the spread seed matches the GDP-weighted member value unless gen.py
 sets the zone by hand, and country-economy.csv has sovereign_spread_bps and no country-level economy columns;
-batch 157: no wage_level or price_level anywhere (labor is the industry labor_value only). Returns 1 on any error.
+batch 157: no wage_level or price_level anywhere (labor is the industry labor_value only); D15 and D16 (Logan, M3 gate):
+every starting line within its 5.12 limit at its start_rating, cut lines the largest within it, none rated CCC or CC.
+Returns 1 on any error.
 """
 import csv, glob, math, os, random, re, statistics, sys
 
@@ -187,6 +189,99 @@ def rd_mult(co, ind, traits):
         if tr in t:
             mult *= k
     return mult
+
+# mvp-spec 5.12 credit line and implied rating at load (7.1), as docs/build/decisions.md D220 to D223 and
+# D235 read them. Shared by gen.py, which sizes the starting lines to the 5.12 limit (D15, D16), the
+# company-start.csv checks below and export_finance_fixtures.py. All T values are 5.12's.
+BASE_RATE = 0.03                      # mvp-spec 3.1
+RATING_SCALE = ['AAA', 'AA+', 'AA', 'AA-', 'A+', 'A', 'A-', 'BBB+', 'BBB', 'BBB-', 'BB+', 'BB', 'BB-',
+                'B+', 'B', 'B-', 'CCC', 'CC']
+RATING_BANDS = ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', 'CCC', 'CC']
+RATING_FACTOR = {'AAA': 1.0, 'AA': 0.9, 'A': 0.8, 'BBB': 0.65, 'BB': 0.5, 'B': 0.3, 'CCC': 0.0, 'CC': 0.0}
+SPREAD_BPS = {'AAA': 40, 'AA': 60, 'A': 90, 'BBB': 150, 'BB': 280, 'B': 450, 'CCC': 900, 'CC': 1600}
+LEVERAGE = [(0.5, 'AAA'), (1.0, 'AA'), (2.0, 'A'), (3.0, 'BBB'), (4.0, 'BB+'), (5.0, 'BB-'), (6.5, 'B')]
+NO_LINE_RATINGS = ('CCC', 'CC')       # D16: no company starts rated CCC or CC with a drawn line
+
+
+def rating_band(r):
+    """The band a notch reads its rating factor and spread from (D220): BB+ and BB- read BB."""
+    return r[:-1] if r[-1] in '+-' else r
+
+
+def corp_spread(r):
+    """5.12 corporate spread with the 3.6.2 notch thirds (D220), a fraction."""
+    b = rating_band(r)
+    s = SPREAD_BPS[b]
+    i = RATING_BANDS.index(b)
+    if r.endswith('+') and i > 0:
+        s -= (s - SPREAD_BPS[RATING_BANDS[i - 1]]) / 3
+    elif r.endswith('-') and i < len(RATING_BANDS) - 1:
+        s += (SPREAD_BPS[RATING_BANDS[i + 1]] - s) / 3
+    return s / 1e4
+
+
+def notch_shift(r, notches):
+    """Better by `notches` (negative: worse), clamped to AAA..CC."""
+    return RATING_SCALE[min(len(RATING_SCALE) - 1, max(0, RATING_SCALE.index(r) - notches))]
+
+
+def leverage_rating(net_debt, ebitda):
+    """5.12 leverage rating (D221): EBITDA <= 0 is CC, net cash is AAA, lower edges inclusive, 8.0 is CCC."""
+    if ebitda <= 0:
+        return 'CC'
+    if net_debt <= 0:
+        return 'AAA'
+    x = net_debt / ebitda
+    for edge, r in LEVERAGE:
+        if x < edge:
+            return r
+    return 'CCC' if x <= 8.0 else 'CC'
+
+
+def rating_at_load(net_debt, ebitda, line, home, revenue, industry, sovereign):
+    """The starting rating (7.1, 5.12): leverage, then the cover (EBITDA / a year of line interest at the
+    leverage rating's rate, one pass, D222), revenue and sector notches summed and clamped (D221), capped at
+    the sovereign + 1 notch. Returns (leverage rating, implied rating)."""
+    lev = leverage_rating(net_debt, ebitda)
+    interest = line * (BASE_RATE + home + corp_spread(lev))
+    if interest <= 0:
+        cover = 1 if ebitda > 0 else 0
+    else:
+        c = ebitda / interest
+        cover = 1 if c > 10 else (-2 if c < 1.5 else (-1 if c < 3 else 0))
+    size = 1 if revenue > 20e9 else (-1 if revenue < 500e6 else 0)
+    sector = {'power_utilities': 1, 'mining': -1, 'shipping': -1}.get(industry, 0)
+    adjusted = notch_shift(lev, cover + size + sector)
+    ceiling = notch_shift(sovereign, 1)
+    implied = adjusted if RATING_SCALE.index(adjusted) >= RATING_SCALE.index(ceiling) else ceiling
+    return lev, implied
+
+
+def home_spread_bps(zone_bps, sovereign_bps):
+    """5.12 home spread at load in whole bps: half the zone's base spread (D235) plus half the sovereign
+    spread, rounded half away from zero (D109, D223)."""
+    return math.floor(0.5 * float(zone_bps) + 0.5 * float(sovereign_bps) + 0.5)
+
+
+def line_limit(book, cash, line, rating):
+    """5.12 limit: max(0, 0.5 x asset_book + own cash) x rating_factor, own cash = cash - line floored at 0."""
+    return max(0.0, 0.5 * book + max(0.0, cash - line)) * RATING_FACTOR[rating_band(rating)]
+
+
+def run_rate(co, ind, traits, gross, book):
+    """A year at the starting run rate (7.1 loadout, productivity 100, M 1.0, the 6.1 and 6.3 R&D plan):
+    (revenue, EBIT, depreciation). Revenue below $0.1M uses $0.1M (the barebones loadout)."""
+    r_m = max(0.1, float(co['revenue_usd_m']))
+    ebit = normal_company(ind, r_m, rd_mult(co, ind, traits))[2] * r_m * 1e6
+    return r_m * 1e6, ebit, min(book, decay_dollars(gross, ind))
+
+
+def start_rating(co, ind, traits, econ, zone, gross, book, cash, line):
+    """The 7.1 starting rating of a company with these balances: (leverage rating, implied rating)."""
+    revenue, ebit, dep = run_rate(co, ind, traits, gross, book)
+    home = home_spread_bps(zone['credit_spread_bps'], econ['sovereign_spread_bps']) / 1e4
+    return rating_at_load(line - cash, ebit + dep, line, home, revenue, ind['id'], econ['sovereign_rating'])
+
 
 def run(data):
     errors = []
@@ -435,30 +530,72 @@ def run(data):
         errors.append('AI labs should about double in the boom\'s first year')
     if not by_y[2040] < 0.6 * by_y[2039]:
         errors.append('AI labs demand should crash at the 2040 pop')
-    # batch 161 (Logan, G6): starting balance sheet, share count and opening price (mvp-spec 7.1)
+    # batch 161 (Logan, G6): starting balance sheet, share count and opening price (mvp-spec 7.1);
+    # D15, D16 (Logan, M3 gate): starting lines sized to the 5.12 limit, none rated CCC or CC
     cs_path = os.path.join(data, 'company-start.csv')
     if not os.path.exists(cs_path):
         errors.append('company-start.csv missing (run gen.py)')
     else:
         st = load(cs_path)
-        bv = {c['id']: float(c['book_value_usd_m']) * 1e6 for c in cos}
+        co_by_id = {c['id']: c for c in cos}
+        ce_by_iso = {r['iso3']: r for r in ce}
+        zone_by_id = {z['zone_id']: z for z in zones}
         if [r['id'] for r in st] != [c['id'] for c in cos]:
             errors.append('company-start.csv ids differ from companies.csv')
+        sized, sized_usd, rated = 0, 0.0, {}
         for r in st:
-            ab, cash, line = float(r['asset_book_usd']), float(r['cash_usd']), float(r['credit_drawn_usd'])
+            co = co_by_id.get(r['id'])
+            if co is None:
+                continue
+            bv = float(co['book_value_usd_m']) * 1e6
+            min_cash = 0.05 * 1e6 * float(co['revenue_usd_m'])
+            gross, ab = float(r['gross_assets_usd']), float(r['asset_book_usd'])
+            cash, line = float(r['cash_usd']), float(r['credit_drawn_usd'])
             eq, p, sh = float(r['book_equity_usd']), float(r['open_price']), float(r['shares'])
+            rating = r.get('start_rating', '')
             if not (p == int(p) and 5 <= p <= 200):
                 errors.append(f'{r["id"]}: open_price {p} not a whole dollar in 5 to 200')
             if abs(cash + ab - (line + eq)) > 2:
                 errors.append(f'{r["id"]}: assets {cash + ab:.0f} != liabilities {line:.0f} + equity {eq:.0f}')
-            if abs(eq - bv.get(r['id'], eq)) > 2:
-                errors.append(f'{r["id"]}: book equity {eq:.0f} differs from companies.csv book value')
-            if abs(ab - 0.5 * float(r['gross_assets_usd'])) > 1 or min(ab, cash, line) < 0:
+            # 7.1 cash and line, with D15: book value at or above the asset book holds cash and no line, so
+            # equity is book value; below it, cash is min_cash and the line at most the 7.1 line
+            # (asset book - book value + min_cash), so equity is book value plus what the line was cut by.
+            line_71 = ab - bv + min_cash if bv < ab else 0.0
+            if bv >= ab and (line > 0 or abs(eq - bv) > 2):
+                errors.append(f'{r["id"]}: book value covers the asset book, but the line is drawn or book equity '
+                              f'{eq:.0f} differs from companies.csv book value')
+            if bv < ab and (abs(cash - min_cash) > 1 or line > line_71 + 2 or eq < bv - 2):
+                errors.append(f'{r["id"]}: book value is below the asset book, but cash is not min_cash, or the '
+                              f'line is above the 7.1 line {line_71:.0f}, or book equity is below book value')
+            if abs(ab - 0.5 * gross) > 1 or min(ab, cash, line) < 0:
                 errors.append(f'{r["id"]}: asset book is not 50% of gross, or a negative balance')
-            if line > 0 and cash > 0.05 * 1e6 * float(next(c['revenue_usd_m'] for c in cos if c['id'] == r['id'])) + 1:
+            if line > 0 and cash > min_cash + 1:
                 errors.append(f'{r["id"]}: draws the line while holding cash above min_cash')
             if sh < 1 or abs(sh * p - float(r['engine_value_usd'])) > p:
                 errors.append(f'{r["id"]}: shares x open_price is not the engine value')
+            if rating not in RATING_SCALE:
+                errors.append(f'{r["id"]}: start_rating {rating} is not on the AAA to CC scale')
+                continue
+            rated[rating] = rated.get(rating, 0) + 1
+            ind, econ = by_name[co['industry']], ce_by_iso[co['hq_country']]
+            zone = zone_by_id[econ['financial_zone']]
+            if start_rating(co, ind, traits, econ, zone, gross, ab, cash, line)[1] != rating:
+                errors.append(f'{r["id"]}: start_rating {rating} is not the 7.1 rating of its starting balances')
+            # D15: no starting line above its 5.12 limit; D16: none rated CCC or CC with a drawn line
+            if line > line_limit(ab, cash, line, rating):
+                errors.append(f'{r["id"]}: line {line:.0f} above its 5.12 limit '
+                              f'{line_limit(ab, cash, line, rating):.0f} at {rating}')
+            if line > 0 and rating in NO_LINE_RATINGS:
+                errors.append(f'{r["id"]}: starts rated {rating} with a drawn line')
+            # D15: a line cut below the 7.1 line is the largest within its own limit (to $1,000; gen.py's
+            # float guard steps a line at a rating edge down by a few dollars)
+            if line < line_71 - 2:
+                sized += 1
+                sized_usd += line_71 - line
+                more = min(line_71, line + 1000)
+                more_rating = start_rating(co, ind, traits, econ, zone, gross, ab, cash, more)[1]
+                if more <= line_limit(ab, cash, more, more_rating):
+                    errors.append(f'{r["id"]}: line {line:.0f} cut below the largest line within its 5.12 limit')
         ps = [float(r['open_price']) for r in st]
         pl = [float(r['open_price']) for r in st if r['public'] == 'Y']
         ar = next((r for r in st if r['ticker'] == 'ARDR'), None)
@@ -468,6 +605,9 @@ def run(data):
               f'${min(pl):.0f} / ${statistics.median(pl):.0f} / ${max(pl):.0f}, {sum(1 for x in ps if x == 5)} at $5'
               + (f'; ARDR ${float(ar["open_price"]):.0f} x {int(ar["shares"]):,} shares = '
                  f'${float(ar["engine_value_usd"]) / 1e6:.0f}M' if ar else ''))
+        print(f'Starting lines (D15, D16): {sized} cut to their 5.12 limit, ${sized_usd / 1e9:.1f}B less drawn; '
+              f'drawn ${sum(float(r["credit_drawn_usd"]) for r in st) / 1e9:.1f}B in all; starting ratings '
+              + ', '.join(f'{k} {rated[k]}' for k in RATING_SCALE if k in rated))
     # build-plan M0.5: the fixed startup events F1 to F9 (mvp-spec 5.19.2)
     ev_path = os.path.join(data, 'startup-events.csv')
     events = load(ev_path) if os.path.exists(ev_path) else []

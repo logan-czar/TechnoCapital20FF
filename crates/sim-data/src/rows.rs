@@ -243,6 +243,10 @@ pub struct CompanyStart {
     pub asset_book_usd: f64,
     pub cash_usd: f64,
     pub credit_drawn_usd: f64,
+    /// The 7.1 starting rating (5.12 implied rating at load; D220 to D223, D235) of these
+    /// balances, as an agency label ("BBB-"). gen.py sizes the line to its 5.12 limit at this
+    /// rating (D15, D16); sim's `finance::rating::starting_rating` must agree with it.
+    pub start_rating: String,
     pub book_equity_usd: f64,
     pub engine_value_usd: f64,
     pub open_price: f64,
