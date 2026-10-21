@@ -47,8 +47,7 @@ pub fn line_limit(asset_book: f64, cash: f64, line_drawn: f64, rating: Rating) -
 pub fn home_spread(zone_spread: f64, sovereign_spread: f64) -> f64 {
     let zone_bps = (zone_spread * BPS_PER_UNIT).round();
     let sov_bps = (sovereign_spread * BPS_PER_UNIT).round();
-    let bps = (HOME_SPREAD_ZONE_WEIGHT * zone_bps + HOME_SPREAD_SOVEREIGN_WEIGHT * sov_bps)
-        .round();
+    let bps = (HOME_SPREAD_ZONE_WEIGHT * zone_bps + HOME_SPREAD_SOVEREIGN_WEIGHT * sov_bps).round();
     bps / BPS_PER_UNIT
 }
 
