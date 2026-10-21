@@ -16,6 +16,7 @@ pub mod people;
 pub mod recap;
 pub mod rng;
 pub mod save;
+pub mod soak;
 pub mod time;
 pub mod views;
 pub mod world;
@@ -370,6 +371,13 @@ impl Sim {
     /// The clock (spec 9.1 `clock()`).
     pub fn clock(&self) -> &ClockView {
         self.views.clock()
+    }
+
+    /// The engine's true totals for the headless soak (D427), behind the `soak-stats` feature
+    /// that only the headless runner enables: the game reads only [`Sim::views`] (spec 9).
+    #[cfg(feature = "soak-stats")]
+    pub fn soak_stats(&self) -> soak::SoakStats {
+        soak::soak_stats(&self.world)
     }
 
     /// Read access to the world tables, for sim's own tests only (feature `test-hooks`). The

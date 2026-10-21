@@ -68,11 +68,17 @@ pub fn recap_job(world: &mut World, ctx: &mut JobCtx<'_>) {
         &industries,
         &listed,
     );
-    world.recap = Some(Arc::new(Recap {
+    world.recaps.push(Arc::new(Recap {
         world: page,
         companies: pages,
     }));
+    let extra = world.recaps.len().saturating_sub(RECAPS_KEPT);
+    world.recaps.drain(..extra);
 }
+
+/// Recaps kept on the World, oldest dropped first (D433): 20 quarters, as the statements
+/// archive keeps (spec 4.5 step 2).
+pub const RECAPS_KEPT: usize = 20;
 
 /// Registers the recap job (spec 4.4 row 5).
 pub fn register(s: &mut Scheduler) {

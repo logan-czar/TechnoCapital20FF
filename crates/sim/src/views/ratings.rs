@@ -5,7 +5,7 @@
 //! A private company's or new listing's line drawn and limit are estimate bands (D420); its
 //! rating is published (F6 shows every rating, D157).
 
-use super::estimate::{Field, Figure};
+use super::estimate::{Figure, Kind, StatementLine};
 use super::{Cadence, ViewData, ViewInput};
 use crate::finance::credit::line_rate;
 use crate::finance::distress::CompanyStatus;
@@ -97,8 +97,14 @@ impl ViewData for RatingsView {
                     rating: f.rating,
                     implied: f.implied,
                     last_review_notches: f.last_review_notches,
-                    line_drawn: est.current(banded, id, Field::LineDrawn, f.line.drawn),
-                    line_limit: est.current(banded, id, Field::LineLimit, f.line.limit),
+                    // The same estimates as v_company_detail's (D429).
+                    line_drawn: est.company_now(
+                        banded,
+                        id,
+                        Kind::Line(StatementLine::BalanceLineDrawn),
+                        f.line.drawn,
+                    ),
+                    line_limit: est.company_now(banded, id, Kind::LineLimit, f.line.limit),
                     line_rate: line_rate(w.base_rate, home, f.rating),
                     home_spread: home,
                     excess_months_left: f.line.excess_months_left,

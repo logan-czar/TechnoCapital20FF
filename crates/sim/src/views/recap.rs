@@ -1,16 +1,25 @@
-//! v_recap: `get_recap(scope)` (spec 9.2; 8 Quarterly recap: the world page and the watchlist
-//! companies' pages). Rebuilt quarterly (spec 9.4) and after a control (the watchlist).
+//! v_recap: `get_recap(quarter, scope)` (spec 9.2; 8 Quarterly recap: the world page and the
+//! watchlist companies' pages; m9-plan section 1: past recaps by quarter). Rebuilt quarterly
+//! (spec 9.4) and after a control (the watchlist).
 //!
-//! The recap itself is built at the start of the pre-quarter-end week (`recap::jobs`). The view
-//! copies its pages with each money figure as a [`Figure`]: a private company's or new listing's
-//! anticipated range, projection and consensus are estimate bands (D420), so the true recap
-//! (which the World keeps whole) never reaches a screen. The ratios (expected surprise and
-//! reaction), confidence and outlook are shown as they are.
+//! Each recap is built at the start of its pre-quarter-end week (`recap::jobs`) and the World
+//! keeps the last 20 (D433). The view copies their pages with each money figure as a
+//! [`Figure`]: a company that does not publish shows its consensus and projection as its one
+//! estimate of each for the quarter (the consensus is v_projection's), the anticipated range as
+//! `range()` of the consensus band, and the expected surprise and reaction worked out from the
+//! two estimates (D420, D430), so the true recap never reaches a screen. Confidence and the
+//! outlook are shown as they are.
 
-use super::estimate::{Estimator, Field, Figure};
+use super::estimate::{ESTIMATE_FLOOR_USD, Estimator, Figure, Kind, Subject};
+use super::projection::{consensus_figure, range_of};
 use super::{Cadence, ViewData, ViewInput};
+use crate::finance::statements::Period;
+use crate::market::earnings::{jumped_price, surprise};
+use crate::market::projection::{RangeViewer, elapsed_share, range_width};
+use crate::recap::jobs::Recap;
 use crate::recap::{CompanyRecap, ExpectedResult, Outlook};
 use crate::time::Quarter;
+use crate::time::quarter::recap_tick;
 use crate::world::{CompanyId, CyclePhase, IndustryId, PhaseLabel, World};
 
 /// A company's expected result (spec 8 "by projection"; D280) as the observer sees it.
@@ -19,7 +28,8 @@ pub struct ExpectedRow {
     pub company: CompanyId,
     pub projection: Figure,
     pub consensus: Figure,
-    /// The surprise s the projection would make (5.15), a ratio.
+    /// The surprise s the projection would make (5.15), a ratio; from the estimates when the
+    /// figures are bands.
     pub expected_surprise: f64,
 }
 
@@ -51,18 +61,16 @@ pub struct RecapPage {
     pub estimated: bool,
 }
 
-#[derive(Debug, Clone, Default, PartialEq)]
-pub struct RecapView {
-    /// The world page of the last recap built; None before the first pre-quarter-end week.
-    pub world: Option<WorldRecapPage>,
-    /// Every company page of the last recap, in company id order.
+/// One quarter's recap.
+#[derive(Debug, Clone, PartialEq)]
+pub struct RecapQuarter {
+    pub world: WorldRecapPage,
+    /// Every company page, in company id order.
     pub companies: Vec<RecapPage>,
-    /// The watchlist companies with a page, in id order.
-    pub watchlist: Vec<CompanyId>,
 }
 
-impl RecapView {
-    /// `get_recap(company)`: a company's page in the last recap.
+impl RecapQuarter {
+    /// A company's page.
     pub fn company(&self, id: CompanyId) -> Option<&RecapPage> {
         self.companies
             .binary_search_by_key(&id, |p| p.company)
@@ -71,30 +79,101 @@ impl RecapView {
     }
 }
 
-fn expected_row(est: &Estimator, w: &World, e: &ExpectedResult) -> ExpectedRow {
-    let banded = est.banded(w, e.company);
-    ExpectedRow {
-        company: e.company,
-        projection: est.current(banded, e.company, Field::Projection, e.projection),
-        consensus: est.current(banded, e.company, Field::ConsensusNi, e.consensus),
-        expected_surprise: e.expected_surprise,
+#[derive(Debug, Clone, Default, PartialEq)]
+pub struct RecapView {
+    /// The recaps kept, oldest first (D433); empty before the first pre-quarter-end week.
+    pub recaps: Vec<RecapQuarter>,
+    /// The watchlist companies with a page in the latest recap, in id order.
+    pub watchlist: Vec<CompanyId>,
+}
+
+impl RecapView {
+    /// The latest recap.
+    pub fn latest(&self) -> Option<&RecapQuarter> {
+        self.recaps.last()
+    }
+
+    /// `get_recap(quarter, world)`: the recap of quarter `q`.
+    pub fn quarter(&self, q: Quarter) -> Option<&RecapQuarter> {
+        self.recaps.iter().find(|r| r.world.quarter == q)
+    }
+
+    /// `get_recap(company)`: a company's page in the latest recap.
+    pub fn company(&self, id: CompanyId) -> Option<&RecapPage> {
+        self.latest()?.company(id)
     }
 }
 
-fn page(est: &Estimator, w: &World, p: &CompanyRecap) -> RecapPage {
+/// The expected result as shown (D430): the consensus and projection estimates, and the
+/// surprise worked out from them.
+fn expected_row(est: &Estimator, w: &World, q: Quarter, e: &ExpectedResult) -> ExpectedRow {
+    let banded = est.banded(w, e.company);
+    let consensus = consensus_figure(est, banded, e.company, q, e.consensus);
+    let projection = est.of_period(
+        banded,
+        Subject::Company(e.company),
+        Kind::Projection,
+        Period::Quarter(q),
+        e.projection,
+        ESTIMATE_FLOOR_USD,
+    );
+    ExpectedRow {
+        company: e.company,
+        projection,
+        consensus,
+        expected_surprise: if banded {
+            surprise(projection.shown(), consensus.shown())
+        } else {
+            e.expected_surprise
+        },
+    }
+}
+
+fn page(est: &Estimator, w: &World, width: f64, p: &CompanyRecap) -> RecapPage {
     let banded = est.banded(w, p.company);
-    // The range ends share the consensus's error, so they keep their order (D422).
-    let end = |x| est.current(banded, p.company, Field::ConsensusNi, x);
+    let expected = expected_row(est, w, p.quarter, &p.expected);
     RecapPage {
         company: p.company,
         quarter: p.quarter,
-        range: (end(p.range.0), end(p.range.1)),
-        expected: expected_row(est, w, &p.expected),
-        expected_reaction: p.expected_reaction,
+        range: if banded {
+            range_of(expected.consensus, width)
+        } else {
+            (Figure::Exact(p.range.0), Figure::Exact(p.range.1))
+        },
+        expected,
+        expected_reaction: if banded {
+            jumped_price(1.0, expected.expected_surprise) - 1.0
+        } else {
+            p.expected_reaction
+        },
         confidence_factor: p.confidence_factor,
         exchange_confidence: p.exchange_confidence,
         outlook: p.outlook,
         estimated: banded,
+    }
+}
+
+fn recap_quarter(est: &Estimator, w: &World, recap: &Recap) -> RecapQuarter {
+    let r = &recap.world;
+    // The observer's 5.16 width at the recap tick, as the recap used (D252).
+    let width = range_width(elapsed_share(recap_tick(r.quarter)), RangeViewer::OBSERVER);
+    let rows = |list: &[ExpectedResult]| -> Vec<ExpectedRow> {
+        list.iter().map(|e| expected_row(est, w, r.quarter, e)).collect()
+    };
+    RecapQuarter {
+        world: WorldRecapPage {
+            quarter: r.quarter,
+            phase: r.phase,
+            g_t: r.g_t,
+            industries_by_label: r.industries_by_label.clone(),
+            expected_beats: rows(&r.expected_beats),
+            expected_misses: rows(&r.expected_misses),
+        },
+        companies: recap
+            .companies
+            .iter()
+            .map(|p| page(est, w, width, p))
+            .collect(),
     }
 }
 
@@ -104,31 +183,19 @@ impl ViewData for RecapView {
 
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;
-        let Some(recap) = w.recap.as_ref() else {
-            return RecapView::default();
-        };
         let est = input.estimator();
-        let r = &recap.world;
-        let rows = |list: &[ExpectedResult]| -> Vec<ExpectedRow> {
-            list.iter().map(|e| expected_row(&est, w, e)).collect()
-        };
-        let companies: Vec<RecapPage> = recap.companies.iter().map(|p| page(&est, w, p)).collect();
-        let watchlist = companies
+        let recaps: Vec<RecapQuarter> = w
+            .recaps
             .iter()
-            .map(|p| p.company)
-            .filter(|id| input.controls.watchlist.contains(id))
+            .map(|r| recap_quarter(&est, w, r))
             .collect();
-        RecapView {
-            world: Some(WorldRecapPage {
-                quarter: r.quarter,
-                phase: r.phase,
-                g_t: r.g_t,
-                industries_by_label: r.industries_by_label.clone(),
-                expected_beats: rows(&r.expected_beats),
-                expected_misses: rows(&r.expected_misses),
-            }),
-            companies,
-            watchlist,
-        }
+        let watchlist = recaps.last().map_or_else(Vec::new, |r| {
+            r.companies
+                .iter()
+                .map(|p| p.company)
+                .filter(|id| input.controls.watchlist.contains(id))
+                .collect()
+        });
+        RecapView { recaps, watchlist }
     }
 }

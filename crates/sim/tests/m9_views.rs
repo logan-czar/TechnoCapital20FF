@@ -399,3 +399,29 @@ fn building_views_moves_no_rng_stream() {
     assert_eq!(&world, sim.world());
     assert_eq!(sim.state_hash(), sim::hash::state_hash(&world, &rng));
 }
+
+#[test]
+fn past_recaps_open_by_quarter() {
+    // m9-plan section 1: past recaps are reachable by quarter; the World keeps the last 20
+    // (D433) and v_recap serves each with the same banding.
+    let mut sim = Sim::new(data(), 2).unwrap();
+    run_to(&mut sim, Date::ymd(2021, 1, 2));
+    let v = sim.views().recap.get();
+    let quarters: Vec<String> = v
+        .recaps
+        .iter()
+        .map(|r| r.world.quarter.to_string())
+        .collect();
+    assert_eq!(v.recaps.len(), 4, "{quarters:?}");
+    assert_eq!(sim.world().recaps.len(), 4);
+    let q3 = sim::time::Quarter { year: 2020, q: 3 };
+    let page = v.quarter(q3).unwrap();
+    assert_eq!(page.world.quarter, q3);
+    let private = company(sim.world(), "CO-0002");
+    assert!(page.company(private).unwrap().estimated);
+    assert_eq!(
+        v.latest().unwrap().world.quarter,
+        sim::time::Quarter { year: 2020, q: 4 }
+    );
+    assert_eq!(sim::recap::jobs::RECAPS_KEPT, 20);
+}

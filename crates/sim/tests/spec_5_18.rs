@@ -100,10 +100,13 @@ fn rating_changes_of_two_notches_or_more() {
 
 #[test]
 fn raises_and_failed_raises() {
-    let h = news::raise(D, IND, CO, "Acme", RaiseMethod::ShareIssue, 58.2e6);
+    let h = news::raise(D, IND, CO, "Acme", RaiseMethod::ShareIssue, Some(58.2e6));
     assert_eq!(h.text, "Acme raises $58.2M in a share issue");
-    let h = news::raise(D, IND, CO, "Acme", RaiseMethod::CreditLine, 60.0e6);
+    let h = news::raise(D, IND, CO, "Acme", RaiseMethod::CreditLine, Some(60.0e6));
     assert_eq!(h.text, "Acme raises $60.0M on its credit line");
+    // A company that does not publish: no amount on the wire (D420).
+    let h = news::raise(D, IND, CO, "Acme", RaiseMethod::CreditLine, None);
+    assert_eq!(h.text, "Acme raises money on its credit line");
     let h = news::failed_raise(D, IND, CO, "Acme", RaiseMethod::ShareIssue);
     assert_eq!(h.text, "Acme fails to sell new shares");
 }

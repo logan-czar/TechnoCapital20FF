@@ -1,25 +1,30 @@
-//! Estimate bands (D420 to D422; Logan's 2026-10-21 ruling replacing spec 1's "?"): over a
-//! two-year run, every money figure the views give for a company that does not publish (private,
-//! or a new listing before its first release after listing, spec 5.20.1) is a band whose
-//! endpoints and estimate are never the true value, and no true value of such a company appears
-//! anywhere in its rows of the views while Omniscient is off. A company that publishes shows
-//! exact figures.
+//! Estimate bands (D420 to D434; Logan's 2026-10-21 rulings replacing spec 1's "?"): over a
+//! two-year run, every money and data figure the views give for a company that does not publish
+//! (private, or a new listing before its first release after listing, spec 5.20.1) is a band
+//! whose endpoints and estimate are never the true value; no true value of such a company
+//! appears anywhere in its rows of the views while Omniscient is off; an industry with one or
+//! two such companies shows its totals as bands; averaging a company's revenue estimates does
+//! not find its revenue; and the 5.9 data book no longer rebuilds a monthly revenue. A company
+//! that publishes shows exact figures.
 //!
 //! Each view is checked on the ticks it is rebuilt (its dirty flag), against the world as it
 //! stands after that tick: the state it was built from.
 
 mod common;
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use common::{assert_figure, data};
 use sim::Sim;
-use sim::finance::statements::{Statement, trailing_four};
+use sim::finance::statements::{Period, Statement, trailing_four};
 use sim::market::fair_value::shown_value;
-use sim::time::{Date, DateTime};
+use sim::ops::data::{RETENTION_MONTHS, decay_rate};
+use sim::time::{Date, DateTime, Quarter};
 use sim::views::estimate::{Figure, StatementLine, shows_estimates};
+use sim::views::industry_rows::INDUSTRY_BANDED_BELOW;
 use sim::views::statements::published;
-use sim::world::{CompanyId, Ordinal, World};
+use sim::world::units::USD_PER_MILLION;
+use sim::world::{CompanyId, IndustryId, Ordinal, World};
 
 /// The numbers in a Debug dump: runs of digits, '.', '-', '+' and 'e'.
 fn numbers(s: &str) -> impl Iterator<Item = &str> {
@@ -30,8 +35,19 @@ fn numbers(s: &str) -> impl Iterator<Item = &str> {
 /// Money figures this small are left out of the text scan (scores, counts and shares sit in
 /// the same rows); the structural checks still cover them.
 const SCAN_MIN_USD: f64 = 1_000.0;
+/// The same for data figures, TB.
+const SCAN_MIN_TB: f64 = 1.0;
 
-/// Every true money value of company `id` the views could show, as Debug strings.
+fn debug_set(values: impl IntoIterator<Item = f64>, min: f64) -> BTreeSet<String> {
+    values
+        .into_iter()
+        .filter(|x| x.abs() >= min && x.fract() != 0.0)
+        .map(|x| format!("{x:?}"))
+        .collect()
+}
+
+/// Every true money and data value of company `id` the views could show, as Debug strings (the
+/// compute and licences line is exact by D434 and left out).
 fn truths(w: &World, id: CompanyId) -> BTreeSet<String> {
     let c = &w.companies[id];
     let s = &w.market.stocks[id];
@@ -43,6 +59,7 @@ fn truths(w: &World, id: CompanyId) -> BTreeSet<String> {
         shown_value(s.value, false),
         s.consensus_ni,
         s.projection_ni,
+        c.revenue_usd,
     ];
     let quarters = c.finance.quarters();
     let n = quarters
@@ -52,7 +69,12 @@ fn truths(w: &World, id: CompanyId) -> BTreeSet<String> {
     let ttm = trailing_four(&quarters[..n]).unwrap_or_default();
     out.extend([ttm.revenue, ttm.net_income()]);
     for st in quarters.iter().chain(c.finance.years()) {
-        out.extend(StatementLine::ALL.iter().map(|l| l.of(st)));
+        out.extend(
+            StatementLine::ALL
+                .iter()
+                .filter(|&&l| l != StatementLine::Shared)
+                .map(|l| l.of(st)),
+        );
     }
     for &u in &c.units {
         let u = &w.units[u];
@@ -65,25 +87,37 @@ fn truths(w: &World, id: CompanyId) -> BTreeSet<String> {
             u.fixed_m,
             u.rd_m,
             u.dep_m,
-            u.shared_m,
             u.ebit_m(),
             u.capex_m,
         ]);
     }
-    if let Some(r) = &w.recap
-        && let Some(p) = r.companies.iter().find(|p| p.company == id)
-    {
-        out.extend([
-            p.range.0,
-            p.range.1,
-            p.expected.projection,
-            p.expected.consensus,
+    for r in &w.recaps {
+        if let Some(p) = r.companies.iter().find(|p| p.company == id) {
+            out.extend([
+                p.range.0,
+                p.range.1,
+                p.expected.projection,
+                p.expected.consensus,
+            ]);
+        }
+    }
+    let mut set = debug_set(out, SCAN_MIN_USD);
+    let mut tb = Vec::new();
+    for d in &c.data {
+        let p = &w.industries[d.industry].params;
+        let b = &d.book;
+        tb.extend([
+            b.held,
+            b.unstructured_tb(),
+            b.held + b.unstructured_tb(),
+            b.held * decay_rate(b.held, p.data_decay_base),
         ]);
     }
-    out.into_iter()
-        .filter(|x| x.abs() >= SCAN_MIN_USD)
-        .map(|x| format!("{x:?}"))
-        .collect()
+    for st in quarters.iter().chain(c.finance.years()) {
+        tb.push(st.key.held_tb);
+    }
+    set.extend(debug_set(tb, SCAN_MIN_TB));
+    set
 }
 
 fn assert_no_truth(dump: &str, truths: &BTreeSet<String>, what: &str) {
@@ -97,17 +131,63 @@ fn assert_no_truth(dump: &str, truths: &BTreeSet<String>, what: &str) {
 
 fn line_figures(banded: bool, s: &Statement, f: &[(StatementLine, Figure)]) {
     for (l, fig) in f {
-        assert_figure(*fig, l.of(s), banded, l.label());
+        if *l == StatementLine::Shared {
+            assert_eq!(
+                fig.exact(),
+                Some(l.of(s)),
+                "the compute line is exact (D434)"
+            );
+        } else {
+            assert_figure(*fig, l.of(s), banded, l.label());
+        }
     }
+}
+
+/// The 5.9 data book run backwards (the review's probe): from held and unstructured TB at two
+/// month closes, the TB created in the month, so the month's revenue. With no data dropped (fewer
+/// than 12 buckets before), `held₁ = m × (1 − rate(m))` with `m = held₀ + converted`, and
+/// `created = unstructured₁ − unstructured₀ + converted`.
+fn rebuilt_revenue(h0: f64, u0: f64, h1: f64, u1: f64, decay_base: f64, tb_per_musd: f64) -> f64 {
+    let f = |m: f64| m * (1.0 - decay_rate(m, decay_base)) - h1;
+    let (mut lo, mut hi) = (h1.min(h0).max(0.0) * 0.5, h1 * 2.0 + 10.0);
+    for _ in 0..200 {
+        let mid = 0.5 * (lo + hi);
+        if f(mid) > 0.0 {
+            hi = mid;
+        } else {
+            lo = mid;
+        }
+    }
+    let converted = 0.5 * (lo + hi) - h0;
+    (u1 - u0 + converted) / tb_per_musd * USD_PER_MILLION
+}
+
+/// How close the probe gets on the true book: a rebuild this close is exact.
+const PROBE_EXACT: f64 = 1e-6;
+
+/// One month close's data book of a banded company: true and shown held and unstructured TB.
+#[derive(Clone, Copy)]
+struct Book {
+    held: f64,
+    unstructured: f64,
+    buckets: usize,
+    shown_held: f64,
+    shown_unstructured: f64,
 }
 
 #[test]
 fn private_figures_are_bands_that_never_show_the_truth() {
     let mut sim = Sim::new(data(), 6).unwrap();
-    let end = DateTime::midnight(Date::ymd(2022, 1, 1));
+    let end = DateTime::midnight(Date::ymd(2022, 1, 3));
     let mut banded_seen = BTreeSet::new();
     let mut listed_in_play = BTreeSet::new();
+    let mut estimated_industries = BTreeSet::new();
     let mut checks = 0u64;
+    // Revenue estimates and truths per company, for the averaging check (D429).
+    let mut revenue: BTreeMap<CompanyId, (f64, f64)> = BTreeMap::new();
+    let mut books: BTreeMap<CompanyId, Book> = BTreeMap::new();
+    let (mut probes, mut probe_exact, mut probe_fooled) = (0u32, 0u32, 0u32);
+    let mut probe_within_1pct = 0u32;
     while sim.now() < end {
         sim.step();
         let w = sim.world();
@@ -127,6 +207,12 @@ fn private_figures_are_bands_that_never_show_the_truth() {
             }
         }
 
+        if v.cap_table.is_dirty() {
+            for (id, c) in w.companies.iter() {
+                let t = v.cap_table.get().get(id).unwrap();
+                assert_eq!(t.lines.iter().map(|l| l.shares).sum::<u64>(), c.shares_out);
+            }
+        }
         if v.company_rows.is_dirty() {
             for r in &v.company_rows.get().rows {
                 let b = is_banded(r.id);
@@ -144,6 +230,9 @@ fn private_figures_are_bands_that_never_show_the_truth() {
                 if b {
                     banded_seen.insert(r.id);
                     assert_no_truth(&format!("{r:?}"), &truths_of(r.id), "v_company_row");
+                    let e = revenue.entry(r.id).or_default();
+                    e.0 += r.revenue_ttm.shown();
+                    e.1 += ttm.revenue;
                 }
                 checks += 1;
             }
@@ -163,10 +252,16 @@ fn private_figures_are_bands_that_never_show_the_truth() {
                         b,
                         "value a share",
                     );
+                    // Derived from the total's band (D430): the two agree.
+                    let row = v.company_rows.get().rows.iter().find(|r| r.id == d.id);
+                    if let (Some(row), true) = (row, v.company_rows.is_dirty()) {
+                        let per = row.value.shown() / c.shares_out.max(1) as f64;
+                        assert!((d.shown_value_per_share.shown() - per).abs() <= 1e-9 * per.abs());
+                    }
                 }
                 if b {
                     assert_no_truth(&format!("{d:?}"), &truths_of(d.id), "v_company_detail");
-                } else if c.cash_usd.abs() >= SCAN_MIN_USD {
+                } else if c.cash_usd.abs() >= SCAN_MIN_USD && c.cash_usd.fract() != 0.0 {
                     // The scan is not vacuous: a published cash figure is found in its row.
                     let cash = format!("{:?}", c.cash_usd);
                     assert!(numbers(&format!("{d:?}")).any(|t| t == cash), "{cash}");
@@ -186,14 +281,81 @@ fn private_figures_are_bands_that_never_show_the_truth() {
                     (r.fixed_m, u.fixed_m),
                     (r.rd_m, u.rd_m),
                     (r.dep_m, u.dep_m),
-                    (r.shared_m, u.shared_m),
                     (r.ebit_m, u.ebit_m()),
                     (r.capex_m, u.capex_m),
                 ] {
                     assert_figure(f, t, b, "unit figure");
                 }
+                assert_eq!(r.shared_m.exact(), Some(u.shared_m));
                 if b {
                     assert_no_truth(&format!("{r:?}"), &truths_of(r.company), "v_units");
+                    if w.clock.date().day == 1 && w.clock.hour() == 0 {
+                        let e = revenue.entry(r.company).or_default();
+                        e.0 += 12.0 * r.revenue_m.shown();
+                        e.1 += 12.0 * u.revenue_m;
+                    }
+                }
+            }
+        }
+        if v.tech.is_dirty() {
+            for t in &v.tech.get().companies {
+                let b = is_banded(t.company);
+                let c = &w.companies[t.company];
+                for (d, book) in t.data.iter().zip(&c.data) {
+                    let p = &w.industries[book.industry].params;
+                    let bk = &book.book;
+                    assert_figure(d.held_tb, bk.held, b, "held TB");
+                    assert_figure(
+                        d.unstructured_tb,
+                        bk.unstructured_tb(),
+                        b,
+                        "unstructured TB",
+                    );
+                    let decay = bk.held * decay_rate(bk.held, p.data_decay_base);
+                    assert_figure(d.decay_tb, decay, b, "decay TB");
+                }
+                if b {
+                    assert_no_truth(&format!("{t:?}"), &truths_of(t.company), "v_tech");
+                }
+                // The probe, at each month close, on books that dropped no data.
+                if b && w.clock.date().day == 1 && w.clock.hour() == 0 && c.data.len() == 1 {
+                    let (d, bk) = (&t.data[0], &c.data[0]);
+                    let p = &w.industries[bk.industry].params;
+                    let now = Book {
+                        held: bk.book.held,
+                        unstructured: bk.book.unstructured_tb(),
+                        buckets: bk.book.unstructured.len(),
+                        shown_held: d.held_tb.shown(),
+                        shown_unstructured: d.unstructured_tb.shown(),
+                    };
+                    let rev = c.units.iter().map(|&u| w.units[u].revenue_m).sum::<f64>();
+                    if let Some(before) = books.insert(t.company, now)
+                        && before.buckets < RETENTION_MONTHS
+                        && rev > 1.0e6
+                    {
+                        let (base, rate) = (p.data_decay_base, p.data_tb_per_musd);
+                        let exact = rebuilt_revenue(
+                            before.held,
+                            before.unstructured,
+                            now.held,
+                            now.unstructured,
+                            base,
+                            rate,
+                        );
+                        let shown = rebuilt_revenue(
+                            before.shown_held,
+                            before.shown_unstructured,
+                            now.shown_held,
+                            now.shown_unstructured,
+                            base,
+                            rate,
+                        );
+                        probes += 1;
+                        probe_exact += u32::from((exact / rev - 1.0).abs() < PROBE_EXACT);
+                        // Fooled: not rebuilt to the precision the probe has on the true book.
+                        probe_fooled += u32::from((shown / rev - 1.0).abs() > PROBE_EXACT);
+                        probe_within_1pct += u32::from((shown / rev - 1.0).abs() < 0.01);
+                    }
                 }
             }
         }
@@ -225,11 +387,29 @@ fn private_figures_are_bands_that_never_show_the_truth() {
                         .chain(cs.estimated_years.iter().zip(&puby))
                     {
                         assert_eq!(e.period, s.period);
-                        let f: Vec<(StatementLine, Figure)> = StatementLine::ALL
-                            .iter()
-                            .map(|&l| (l, Figure::Band(e.line(l))))
-                            .collect();
+                        let f: Vec<(StatementLine, Figure)> =
+                            StatementLine::ALL.iter().map(|&l| (l, e.line(l))).collect();
                         line_figures(true, s, &f);
+                        assert_figure(e.operating.held_tb, s.key.held_tb, true, "statement TB");
+                    }
+                    // A year's revenue is its quarters' summed (D430).
+                    for y in &cs.estimated_years {
+                        let Period::Year(year) = y.period else {
+                            unreachable!()
+                        };
+                        let qs: Vec<_> = cs
+                            .estimated_quarters
+                            .iter()
+                            .filter(|q| matches!(q.period, Period::Quarter(q) if q.year == year))
+                            .collect();
+                        if qs.len() == 4 {
+                            let sum: f64 = qs
+                                .iter()
+                                .map(|q| q.line(StatementLine::Revenue).shown())
+                                .sum();
+                            let shown = y.line(StatementLine::Revenue).shown();
+                            assert!((shown - sum).abs() <= 1e-9 * sum.abs().max(1.0));
+                        }
                     }
                     assert_no_truth(&format!("{cs:?}"), &truths_of(cs.id), "v_statements");
                 } else {
@@ -247,7 +427,7 @@ fn private_figures_are_bands_that_never_show_the_truth() {
                     .finance
                     .quarters()
                     .iter()
-                    .find(|s| s.period == sim::finance::statements::Period::Quarter(fl.quarter))
+                    .find(|s| s.period == Period::Quarter(fl.quarter))
                     .unwrap();
                 line_figures(
                     b,
@@ -264,6 +444,11 @@ fn private_figures_are_bands_that_never_show_the_truth() {
                     ],
                 );
                 if b {
+                    // The same estimate as the statement's (D429).
+                    let st = v.statements.get().get(fl.company).unwrap();
+                    if let Some(e) = st.estimated_quarters.iter().find(|e| e.period == s.period) {
+                        assert_eq!(e.line(StatementLine::Revenue), fl.revenue);
+                    }
                     assert_no_truth(&format!("{fl:?}"), &truths_of(fl.company), "v_filings");
                 }
             }
@@ -292,38 +477,118 @@ fn private_figures_are_bands_that_never_show_the_truth() {
                     "the ends keep their order"
                 );
                 if b {
+                    // The ends are derived from the consensus band (D430): the width shown
+                    // and the ends shown give back the estimate, not the consensus.
+                    let back = 0.5 * (r.range.0.shown() + r.range.1.shown());
+                    assert!((back - r.consensus_ni.shown()).abs() <= 1e-6 * back.abs().max(1.0));
                     assert_no_truth(&format!("{r:?}"), &truths_of(r.id), "v_projection");
                 }
             }
         }
-        if v.recap.is_dirty()
-            && let Some(recap) = &w.recap
-        {
+        if v.recap.is_dirty() && !w.recaps.is_empty() {
             let view = v.recap.get();
-            for (p, t) in view.companies.iter().zip(&recap.companies) {
-                let b = is_banded(p.company);
-                assert_figure(p.range.0, t.range.0, b, "recap range low");
-                assert_figure(p.range.1, t.range.1, b, "recap range high");
-                assert_figure(
-                    p.expected.projection,
-                    t.expected.projection,
-                    b,
-                    "recap projection",
-                );
-                assert_figure(
-                    p.expected.consensus,
-                    t.expected.consensus,
-                    b,
-                    "recap consensus",
-                );
-                if b {
-                    assert_no_truth(&format!("{p:?}"), &truths_of(p.company), "v_recap");
+            assert_eq!(view.recaps.len(), w.recaps.len());
+            for (rq, recap) in view.recaps.iter().zip(&w.recaps) {
+                assert_eq!(rq.world.quarter, recap.world.quarter);
+                for (p, t) in rq.companies.iter().zip(&recap.companies) {
+                    let b = is_banded(p.company);
+                    assert_figure(p.range.0, t.range.0, b, "recap range low");
+                    assert_figure(p.range.1, t.range.1, b, "recap range high");
+                    assert_figure(
+                        p.expected.projection,
+                        t.expected.projection,
+                        b,
+                        "recap projection",
+                    );
+                    assert_figure(
+                        p.expected.consensus,
+                        t.expected.consensus,
+                        b,
+                        "recap consensus",
+                    );
+                    if b {
+                        assert_no_truth(&format!("{p:?}"), &truths_of(p.company), "v_recap");
+                    }
+                }
+                for e in rq
+                    .world
+                    .expected_beats
+                    .iter()
+                    .chain(&rq.world.expected_misses)
+                {
+                    if is_banded(e.company) {
+                        assert!(e.projection.is_band() && e.consensus.is_band());
+                    }
                 }
             }
-            let page = view.world.as_ref().unwrap();
-            for e in page.expected_beats.iter().chain(&page.expected_misses) {
-                if is_banded(e.company) {
-                    assert!(e.projection.is_band() && e.consensus.is_band());
+        }
+        if v.births.is_dirty() {
+            for br in &v.births.get().births {
+                let b = is_banded(br.id);
+                assert_figure(br.size_usd, w.companies[br.id].revenue_usd, b, "birth size");
+                if b {
+                    assert_no_truth(&format!("{br:?}"), &truths_of(br.id), "v_births");
+                }
+            }
+        }
+        if v.news.is_dirty() {
+            // Every headline about a banded company carries no true figure of it.
+            for h in v
+                .news
+                .get()
+                .feed
+                .iter()
+                .filter(|h| h.date == w.clock.date())
+            {
+                if let Some(c) = h.company
+                    && is_banded(c)
+                {
+                    assert_no_truth(&format!("{h:?}"), &truths_of(c), "v_news");
+                }
+            }
+        }
+        if v.industry_rows.is_dirty() {
+            let ranked = sim::views::industry_rows::companies_by_revenue(w);
+            for row in &v.industry_rows.get().rows {
+                let list = &ranked[row.id.index()];
+                let n = list
+                    .iter()
+                    .filter(|(c, _)| is_banded(*c) && !w.companies[*c].finance.status().is_frozen())
+                    .count();
+                let want = (1..INDUSTRY_BANDED_BELOW).contains(&n);
+                assert_eq!(row.estimated, want, "{}", row.key);
+                let ind = &w.industries[row.id];
+                let named: f64 = list.iter().map(|(_, r)| r).sum();
+                assert_figure(row.named_revenue_m, named, want, "named revenue");
+                assert_figure(row.supply, ind.supply, want, "supply");
+                assert_figure(row.supply_ratio, ind.supply_ratio, want, "S");
+                assert_figure(row.market_factor, ind.market_factor, want, "M");
+                assert_figure(row.fringe_revenue_m, ind.fringe_revenue_m, want, "fringe");
+                if want {
+                    estimated_industries.insert(row.id);
+                    let t = debug_set(
+                        [
+                            named,
+                            ind.supply,
+                            ind.supply_ratio,
+                            ind.market_factor,
+                            ind.fringe_revenue_m,
+                        ],
+                        0.0,
+                    );
+                    assert_no_truth(&format!("{row:?}"), &t, "v_industry_row");
+                }
+                // The top 5 rank by the revenue shown, as the detail list does.
+                if v.industry_detail.is_dirty() {
+                    let detail = v.industry_detail.get().get(row.id).unwrap();
+                    let first: Vec<CompanyId> =
+                        detail.companies.iter().take(5).map(|c| c.company).collect();
+                    assert_eq!(row.top_companies, first);
+                    assert!(detail.companies.windows(2).all(|p| {
+                        p[0].revenue_m.shown() > p[1].revenue_m.shown()
+                            || (p[0].revenue_m.shown() == p[1].revenue_m.shown()
+                                && p[0].company < p[1].company)
+                    }));
                 }
             }
         }
@@ -349,8 +614,8 @@ fn private_figures_are_bands_that_never_show_the_truth() {
             }
         }
     }
-    // The run covers the 184 starting private companies, the 2020-21 births and listings.
     let w = sim.world();
+    // The run covers the 184 starting private companies, the 2020-21 births and listings.
     let private_at_load = 651 - 467;
     assert!(banded_seen.len() > private_at_load, "{}", banded_seen.len());
     assert!(
@@ -362,11 +627,60 @@ fn private_figures_are_bands_that_never_show_the_truth() {
             banded_seen.contains(id),
             "a new listing is banded until its first release"
         );
-        assert!(!shows_estimates(w, *id) || w.market.stocks[*id].exchange.is_some());
     }
-    println!(
-        "{checks} company rows checked; {} companies banded at some point; {} listed in play",
-        banded_seen.len(),
-        listed_in_play.len()
+    assert!(
+        !estimated_industries.is_empty(),
+        "an industry with one or two banded companies"
     );
+
+    // Averaging (D429): every revenue estimate of a company (8 published quarters, the TTMs and
+    // the monthly unit revenues of the two years) leans the same way, so the average stays
+    // more than 5% from the truth for a large majority of companies.
+    let mut quarters_seen = 0usize;
+    let st = sim.views().statements.get();
+    for (&id, e) in revenue.iter_mut() {
+        if let Some(cs) = st.get(id).filter(|c| c.estimated) {
+            let c = &w.companies[id];
+            for (q, s) in cs.estimated_quarters.iter().zip(c.finance.quarters()) {
+                if matches!(
+                    q.period,
+                    Period::Quarter(Quarter {
+                        year: 2020 | 2021,
+                        ..
+                    })
+                ) {
+                    e.0 += 4.0 * q.line(StatementLine::Revenue).shown();
+                    e.1 += 4.0 * s.lines.revenue;
+                    quarters_seen += 1;
+                }
+            }
+        }
+    }
+    let judged: Vec<f64> = revenue
+        .values()
+        .filter(|(_, t)| *t > 0.0)
+        .map(|(s, t)| s / t - 1.0)
+        .collect();
+    let off = judged.iter().filter(|r| r.abs() > 0.05).count();
+    println!(
+        "{checks} company rows; {} banded; {} listed in play; {} estimated industries; \
+         averaging: {off} of {} companies more than 5% off ({quarters_seen} quarters); \
+         data-book probe: {probes} months, exact on the truth {probe_exact}, fooled {probe_fooled} \
+         ({probe_within_1pct} by chance within 1%)",
+        banded_seen.len(),
+        listed_in_play.len(),
+        estimated_industries.len(),
+        judged.len()
+    );
+    assert!(quarters_seen > 0 && judged.len() > private_at_load);
+    assert!(off * 10 >= judged.len() * 9, "{off} of {}", judged.len());
+    // The probe rebuilds the revenue from the true book (so it is a real probe), and the shown
+    // book never gives it.
+    assert!(probes > 100);
+    assert_eq!(probe_exact, probes, "the probe works on the true book");
+    assert_eq!(
+        probe_fooled, probes,
+        "the shown book never gives the revenue"
+    );
+    let _ = IndustryId::from_index(0);
 }

@@ -22,11 +22,15 @@ fn industry_views_at_load_and_after_six_years() {
     assert_eq!(rows.len(), 42);
     for r in rows {
         assert_eq!(
-            format!("{:.2} {:.2}", r.supply_ratio, r.market_factor),
+            format!(
+                "{:.2} {:.2}",
+                r.supply_ratio.exact().unwrap(),
+                r.market_factor.exact().unwrap()
+            ),
             "1.00 1.00"
         );
         assert!(r.top_companies.len() <= 5 && !r.top_companies.is_empty());
-        assert!((0.0..1.0).contains(&r.fringe_share));
+        assert!((0.0..1.0).contains(&r.fringe_share.exact().unwrap()));
         let detail = v.industry_detail.get().get(r.id).unwrap();
         assert_eq!(
             detail.companies.first().map(|c| c.company),
@@ -37,7 +41,7 @@ fn industry_views_at_load_and_after_six_years() {
             .iter()
             .map(|c| c.share.exact().unwrap())
             .sum::<f64>()
-            + detail.fringe_share;
+            + detail.fringe_share.exact().unwrap();
         assert!((shares - 1.0).abs() < 1e-9);
         let revenue =
             |c: &sim::views::industry_detail::IndustryCompany| c.revenue_m.exact().unwrap();

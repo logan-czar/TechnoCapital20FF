@@ -82,7 +82,7 @@ fn a_full_year_runs_four_releases_four_locks_four_recaps() {
         }
         let t = sim.now();
         if t.hour() == 0 && sim::time::quarter::is_recap_day(t.date()) {
-            recaps.push(sim.world().recap.as_ref().unwrap().world.quarter);
+            recaps.push(sim.world().recaps.last().unwrap().world.quarter);
         }
     }
     let q = |year, q| sim::time::Quarter { year, q };

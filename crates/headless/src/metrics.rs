@@ -382,18 +382,22 @@ impl Recorder {
         self.economy.add_month(sim);
         self.births.add_month(sim);
         let rows = &v.industry_rows.get().rows;
+        // The true industry figures: an industry with one or two private companies shows bands
+        // (D432), so they come from the soak totals (D427).
+        let truth = sim.soak_stats().industries;
         let figures: Vec<MonthFigures> = rows
             .iter()
-            .map(|r| MonthFigures {
+            .zip(&truth)
+            .map(|(r, t)| MonthFigures {
                 label: r.phase_label,
-                revenue: r.named_revenue_m + r.fringe_revenue_m,
+                revenue: t.named_revenue_m + t.fringe_revenue_m,
                 trend_demand: r.trend_demand,
                 demand: r.demand,
             })
             .collect();
         self.quarter.add_month(&mut self.labels, &figures);
         if month.is_multiple_of(QUARTER_MONTHS) {
-            let factors: Vec<f64> = rows.iter().map(|r| r.market_factor).collect();
+            let factors: Vec<f64> = truth.iter().map(|t| t.market_factor).collect();
             self.clamp.add_quarter(&factors);
         }
         let companies = &v.company_detail.get().companies;
@@ -676,10 +680,10 @@ impl YearBirths {
 
 /// Spec 10 "median productivity 90 to 110" (D321): the median productivity of the units with
 /// gross assets above 0 of companies not frozen (Active or Distressed), the mean of the middle
-/// two for an even count; 0 with no unit. Read from v_world_totals, since a private company's
+/// two for an even count; 0 with no unit. From the soak totals, since a private company's
 /// gross assets are an estimate band in v_units (D420, D427).
 fn median_productivity(sim: &Sim) -> f64 {
-    sim.views().world_totals.get().median_productivity
+    sim.soak_stats().median_productivity
 }
 
 /// The year's M5.8 tracking count, added at each daily close from v_market_stats.
@@ -743,8 +747,8 @@ fn books_columns(sim: &Sim, year: i32, distressed_in_year: usize) -> String {
         .iter()
         .filter(|c| in_year(c.removed_on))
         .count();
-    // The true total, from v_world_totals: a private company's line is a band (D420, D427).
-    let line = v.world_totals.get().line_drawn_usd;
+    // The true total, from the soak totals: a private company's line is a band (D420, D427).
+    let line = sim.soak_stats().line_drawn_usd;
     let bands: Vec<String> = ratings
         .band_counts()
         .iter()
@@ -782,9 +786,10 @@ fn operations_columns(sim: &Sim) -> String {
     let companies = &v.company_detail.get().companies;
     let n = companies.len().max(1) as f64;
     let mean_management = companies.iter().map(|c| c.management_score).sum::<f64>() / n;
-    let data_tb: f64 = v.tech.get().companies.iter().map(|t| t.stored_tb()).sum();
-    // From v_world_totals: a private company's EBIT is a band in v_units (D420, D427).
-    let profitable = v.world_totals.get().profitable_companies;
+    // From the soak totals: a private company's EBIT and TB are bands (D420, D427, D431).
+    let totals = sim.soak_stats();
+    let data_tb = totals.data_tb;
+    let profitable = totals.profitable_companies;
     format!(
         "{mean_productivity:.3},{mean_management:.3},{data_tb:.1},{:.4}",
         profitable as f64 / n
@@ -801,16 +806,16 @@ struct YearEconomy {
 impl YearEconomy {
     /// Adds the month just closed.
     fn add_month(&mut self, sim: &Sim) {
-        for r in &sim.views().industry_rows.get().rows {
-            self.named_revenue += r.named_revenue_m;
-            self.fringe_revenue += r.fringe_revenue_m;
+        for t in &sim.soak_stats().industries {
+            self.named_revenue += t.named_revenue_m;
+            self.fringe_revenue += t.fringe_revenue_m;
         }
     }
 
     /// The economy columns of the year's row.
     fn columns(&self, sim: &Sim) -> String {
         let cycle = sim.views().cycle.get();
-        let rows = &sim.views().industry_rows.get().rows;
+        let rows = sim.soak_stats().industries;
         let n = rows.len().max(1) as f64;
         let s: Vec<f64> = rows.iter().map(|r| r.supply_ratio).collect();
         let mean_s = s.iter().sum::<f64>() / n;

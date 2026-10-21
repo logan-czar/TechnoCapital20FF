@@ -6,7 +6,8 @@
 //! indices) with status Removed; screens drop them (spec 5.12 step 3). A private company's or
 //! new listing's cash, line and value are estimate bands (D420).
 
-use super::estimate::{Field, Figure};
+use super::company_rows::value_shown;
+use super::estimate::{Figure, Kind, StatementLine};
 use super::{Cadence, ViewData, ViewInput};
 use crate::ai::archetype::Archetype;
 use crate::finance::distress::CompanyStatus;
@@ -14,7 +15,6 @@ use crate::finance::rating::Rating;
 use crate::people::board::{Seat, Skills};
 use crate::people::management::{EMPTY_SEAT_SKILL, Member, confidence_factor, member_skill};
 use crate::people::traits::Trait;
-use crate::market::fair_value::shown_value;
 use crate::time::Quarter;
 use crate::world::{
     CharacterId, CompanyId, CountryId, IndustryId, IpoVoteRecord, Ordinal, Origin, ProvinceId,
@@ -180,14 +180,10 @@ impl ViewData for CompanyDetailView {
                 });
                 let s = &w.market.stocks[id];
                 let banded = est.banded(w, id);
+                // A private company's value a share is its total band over the shares (D430).
                 let shown = match s.exchange {
                     Some(_) => Figure::Exact(s.value * (1.0 + s.efv_error)),
-                    None => est.current_per_share(
-                        banded,
-                        id,
-                        Field::Value,
-                        shown_value(s.value, false),
-                    ),
+                    None => value_shown(&est, w, id, banded).over(c.shares_out.max(1) as f64),
                 };
                 CompanyDetail {
                     id,
@@ -202,9 +198,19 @@ impl ViewData for CompanyDetailView {
                     controller_name: c.controller.map(|ch| w.characters[ch].name.clone()),
                     management_score: c.management_score,
                     confidence_factor: confidence_factor(c.management_score),
-                    cash_usd: est.current(banded, id, Field::Cash, c.cash_usd),
-                    line_drawn_usd: est.current(banded, id, Field::LineDrawn, c.finance.line.drawn),
-                    line_limit_usd: est.current(banded, id, Field::LineLimit, c.finance.line.limit),
+                    cash_usd: est.company_now(
+                        banded,
+                        id,
+                        Kind::Line(StatementLine::Cash),
+                        c.cash_usd,
+                    ),
+                    line_drawn_usd: est.company_now(
+                        banded,
+                        id,
+                        Kind::Line(StatementLine::BalanceLineDrawn),
+                        c.finance.line.drawn,
+                    ),
+                    line_limit_usd: est.company_now(banded, id, Kind::LineLimit, c.finance.line.limit),
                     rating: c.finance.rating,
                     status: c.finance.status(),
                     archetype: c.archetype,

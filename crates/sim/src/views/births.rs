@@ -4,7 +4,9 @@
 //! last 4 quarters (spec 8). Rebuilt quarterly: events, births and listings happen only at the
 //! plan lock (spec 9.4 Quarterly, 4.4 row 3).
 
+use super::estimate::{ESTIMATE_FLOOR_USD, Figure, Kind, Subject};
 use super::{Cadence, ViewData, ViewInput};
+use crate::finance::statements::Period;
 use crate::births::random::EventKind;
 use crate::time::{Date, Quarter};
 use crate::world::{CompanyId, IndustryId, Ordinal, Origin, ProvinceId, StartupEventId, ZoneId};
@@ -33,8 +35,8 @@ pub struct BirthRow {
     pub industry: IndustryId,
     pub hq: ProvinceId,
     pub date: Date,
-    /// Revenue it was sized for, USD a year (5.19.3).
-    pub size_usd: f64,
+    /// Revenue it was sized for, USD a year (5.19.3); a band while it does not publish (D420).
+    pub size_usd: Figure,
     pub event: StartupEventId,
 }
 
@@ -89,9 +91,11 @@ impl BirthsView {
 
 impl ViewData for BirthsView {
     const CADENCE: Cadence = Cadence::Quarterly;
+    const ON_OMNISCIENT: bool = true;
 
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;
+        let est = input.estimator();
         let events = w
             .births
             .events
@@ -128,7 +132,14 @@ impl ViewData for BirthsView {
                     industry: c.industry,
                     hq: c.hq_province,
                     date,
-                    size_usd: c.revenue_usd,
+                    size_usd: est.of_period(
+                        est.banded(w, id),
+                        Subject::Company(id),
+                        Kind::BirthSize,
+                        Period::Quarter(date.quarter()),
+                        c.revenue_usd,
+                        ESTIMATE_FLOOR_USD,
+                    ),
                     event,
                 }),
                 Origin::Start => None,

@@ -7,7 +7,8 @@
 //! estimate of that quarter (D420).
 
 use super::statements::published;
-use super::estimate::{Field, Figure, StatementLine};
+use super::estimate::{Figure, StatementLine};
+use super::statements::statement_line;
 use super::{Cadence, ViewData, ViewInput};
 use crate::finance::rating::Rating;
 use crate::finance::statements::Period;
@@ -81,9 +82,7 @@ impl ViewData for FilingsView {
                     .rev()
                     .find(|s| s.period == Period::Quarter(quarter))?;
                 let banded = est.banded(w, id);
-                let fig = |l: StatementLine| {
-                    est.of_period(banded, id, s.period, Field::Line(l.error_key()), l.of(s))
-                };
+                let fig = |l: StatementLine| statement_line(&est, banded, id, s, l);
                 Some(Filing {
                     company: id,
                     quarter,

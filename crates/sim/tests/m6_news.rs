@@ -40,7 +40,7 @@ fn every_headline_type_posts_and_reports_its_event() {
         if t.hour() == 0 && sim::time::quarter::is_recap_day(t.date()) {
             recaps.push(t.date());
             let w = sim.world();
-            let r = w.recap.as_ref().expect("the recap is built on its day");
+            let r = w.recaps.last().expect("the recap is built on its day");
             assert_eq!(r.world.quarter, t.date().quarter());
             let pages = w
                 .companies
@@ -59,8 +59,8 @@ fn every_headline_type_posts_and_reports_its_event() {
                 assert!(b.expected_surprise > 0.0);
             }
             // The view copies the recap; a company that does not publish shows bands (D420).
-            let v = sim.views().recap.get();
-            assert_eq!(v.world.as_ref().map(|p| p.quarter), Some(r.world.quarter));
+            let v = sim.views().recap.get().latest().unwrap();
+            assert_eq!(v.world.quarter, r.world.quarter);
             assert_eq!(v.companies.len(), r.companies.len());
             for (p, t) in v.companies.iter().zip(&r.companies) {
                 assert_eq!(p.company, t.company);

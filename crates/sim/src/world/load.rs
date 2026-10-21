@@ -580,7 +580,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         },
         births,
         news: Default::default(),
-        recap: None,
+        recaps: Vec::new(),
     })
 }
 

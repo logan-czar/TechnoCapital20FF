@@ -7,7 +7,7 @@ rust-version.workspace = true
 publish.workspace = true
 
 [dependencies]
-sim.workspace = true
+sim = { workspace = true, features = ["soak-stats"] }
 sim-data.workspace = true
 
 [lints]

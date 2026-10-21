@@ -8,16 +8,17 @@
 //! plan lock and on load (spec 9.4), and when Omniscient is toggled (D423).
 
 use super::cap_table::{controller_name, controller_of};
-use super::estimate::{Field, Figure};
-use super::statements::published;
+use super::estimate::{Estimator, Figure, Kind, StatementLine};
+use super::statements::{published, ttm_line};
 use super::{Cadence, ViewData, ViewInput};
 use crate::ai::archetype::Archetype;
 use crate::finance::distress::CompanyStatus;
 use crate::finance::rating::Rating;
-use crate::finance::statements::trailing_four;
 use crate::market::fair_value::shown_value;
 use crate::time::Date;
-use crate::world::{CharacterId, CompanyId, ControllerRef, CountryId, IndustryId, Origin, ZoneId};
+use crate::world::{
+    CharacterId, CompanyId, ControllerRef, CountryId, IndustryId, Origin, World, ZoneId,
+};
 
 /// Where a company is listed (spec 3.5 `listed_date`, 8 Company header "Listed [date] on
 /// [exchange] at $[price]").
@@ -99,6 +100,17 @@ pub struct CompanyRowsView {
     pub rows: Vec<CompanyRow>,
 }
 
+/// The value shown (spec 5.13 step 6): a listed company's EFV × shares, exact (it is already an
+/// estimate, D140); a private company's 0.7 × fair value, one band (D420) that v_company_detail
+/// divides by the shares for its value a share (D430).
+pub fn value_shown(est: &Estimator, w: &World, id: CompanyId, banded: bool) -> Figure {
+    let s = &w.market.stocks[id];
+    match s.exchange {
+        Some(_) => Figure::Exact(s.fair_value * (1.0 + s.efv_error)),
+        None => est.company_now(banded, id, Kind::Value, shown_value(s.fair_value, false)),
+    }
+}
+
 impl ViewData for CompanyRowsView {
     const CADENCE: Cadence = Cadence::MonthlyAndLock;
     const ON_OMNISCIENT: bool = true;
@@ -117,17 +129,9 @@ impl ViewData for CompanyRowsView {
                     .iter()
                     .take_while(|s| published(s, w.clock))
                     .count();
-                let ttm = trailing_four(&quarters[..n]).unwrap_or_default();
+                let published = &quarters[..n];
                 let s = &w.market.stocks[id];
-                let value = match s.exchange {
-                    Some(_) => Figure::Exact(s.fair_value * (1.0 + s.efv_error)),
-                    None => est.current(
-                        banded,
-                        id,
-                        Field::Value,
-                        shown_value(s.fair_value, false),
-                    ),
-                };
+                let value = value_shown(&est, w, id, banded);
                 let listing = match (s.exchange, s.listed_on) {
                     (None, _) => Listing::Private,
                     (Some(exchange), None) => Listing::BeforeStart { exchange },
@@ -147,13 +151,8 @@ impl ViewData for CompanyRowsView {
                     industry: c.industry,
                     hq_country: c.hq_country,
                     public: c.public,
-                    revenue_ttm: est.current(banded, id, Field::RevenueTtm, ttm.revenue),
-                    net_income_ttm: est.current(
-                        banded,
-                        id,
-                        Field::NetIncomeTtm,
-                        ttm.net_income(),
-                    ),
+                    revenue_ttm: ttm_line(&est, banded, id, published, StatementLine::Revenue),
+                    net_income_ttm: ttm_line(&est, banded, id, published, StatementLine::NetIncome),
                     rating: c.finance.rating,
                     status: c.finance.status(),
                     exchange: s.exchange,

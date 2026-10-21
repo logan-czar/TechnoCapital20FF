@@ -46,12 +46,14 @@ fn company_units_and_tech_views_show_arrowhead() {
     assert_eq!((t.pc, t.pc_bonus, t.next_bonus_pc), (98.0, 2.0, 100.0));
     assert_eq!(t.compute.monthly_usd, 4_080.0);
     let d = &t.data[0];
-    assert!((d.held_tb - 8.6).abs() < 0.05);
+    // Arrowhead is listed, so its data figures are exact (D431).
+    let held = d.held_tb.exact().unwrap();
+    assert!((held - 8.6).abs() < 0.05);
     // 1% free R&D from 1 TB; the next step (2%) at 10 TB (5.9).
     assert_eq!((d.free_rd_pct, d.next_step_tb, d.buckets), (1, 10.0, 1));
-    assert!((d.inflow_tb - 40.0 / 12.0).abs() < 1e-3);
+    assert!((d.inflow_tb.exact().unwrap() - 40.0 / 12.0).abs() < 1e-3);
     assert_eq!(d.conversion_tb, 0.9125);
-    assert!((t.stored_tb() - (d.held_tb + 40.0 / 12.0)).abs() < 1e-9);
+    assert!((t.stored_tb().exact().unwrap() - (held + 40.0 / 12.0)).abs() < 1e-9);
 
     let c = v.company_detail.get().get(arrowhead).unwrap();
     assert_eq!(

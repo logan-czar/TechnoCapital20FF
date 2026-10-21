@@ -4,7 +4,7 @@
 //! toggled (D423). A private company's or new listing's unit money figures are estimate bands
 //! (D420); productivity, growth and R&D plans are operations, shown exactly.
 
-use super::estimate::{Field, Figure};
+use super::estimate::{Figure, Kind, StatementLine as L};
 use super::{Cadence, ViewData, ViewInput};
 use crate::world::{CompanyId, IndustryId, Ordinal, ProvinceId, UnitId};
 
@@ -59,6 +59,26 @@ impl UnitsView {
     }
 }
 
+/// A unit's last-month revenue as every view shows it (v_units, v_industry_detail, v_tech's
+/// inflow, v_industry_row's total; D429): one estimate of the figure.
+pub fn unit_revenue(
+    est: &super::estimate::Estimator,
+    banded: bool,
+    u: &crate::world::BusinessUnit,
+) -> Figure {
+    revenue_figure(est, banded, u.company, u.revenue_m)
+}
+
+/// A company's last-month revenue `revenue_m` as shown (D429).
+pub fn revenue_figure(
+    est: &super::estimate::Estimator,
+    banded: bool,
+    company: CompanyId,
+    revenue_m: f64,
+) -> Figure {
+    est.company_now(banded, company, Kind::Line(L::Revenue), revenue_m)
+}
+
 impl ViewData for UnitsView {
     const CADENCE: Cadence = Cadence::MonthlyAndLock;
     const ON_OMNISCIENT: bool = true;
@@ -72,27 +92,28 @@ impl ViewData for UnitsView {
             .map(|(id, u)| {
                 let c = &w.companies[u.company];
                 let banded = est.banded(w, u.company);
-                let fig = |field, truth| est.current(banded, u.company, field, truth);
+                let fig = |kind, truth| est.company_now(banded, u.company, kind, truth);
                 UnitRow {
                     id,
                     company: u.company,
                     industry: u.industry,
                     base_province: u.base_province,
-                    gross_assets: fig(Field::UnitGrossAssets, u.gross_assets),
-                    asset_book: fig(Field::UnitAssetBook, u.asset_book),
-                    assets_eff: fig(Field::UnitAssetsEff, u.assets_eff()),
+                    gross_assets: fig(Kind::GrossAssets, u.gross_assets),
+                    asset_book: fig(Kind::Line(L::AssetBook), u.asset_book),
+                    assets_eff: fig(Kind::AssetsEff, u.assets_eff()),
                     productivity: u.productivity,
                     p_pre: crate::economy::supply::p_pre(u, c),
                     growth_plan: u.growth_plan,
                     rd_plan: u.rd_plan,
-                    revenue_m: fig(Field::UnitRevenue, u.revenue_m),
-                    variable_m: fig(Field::UnitVariable, u.variable_m),
-                    fixed_m: fig(Field::UnitFixed, u.fixed_m),
-                    rd_m: fig(Field::UnitRd, u.rd_m),
-                    dep_m: fig(Field::UnitDepreciation, u.dep_m),
-                    shared_m: fig(Field::UnitShared, u.shared_m),
-                    ebit_m: fig(Field::UnitEbit, u.ebit_m()),
-                    capex_m: fig(Field::UnitCapex, u.capex_m),
+                    revenue_m: unit_revenue(&est, banded, u),
+                    variable_m: fig(Kind::Line(L::Variable), u.variable_m),
+                    fixed_m: fig(Kind::Line(L::FixedCash), u.fixed_m),
+                    rd_m: fig(Kind::Line(L::Rd), u.rd_m),
+                    dep_m: fig(Kind::Line(L::Depreciation), u.dep_m),
+                    // The compute bill follows the published station counts (D434).
+                    shared_m: Figure::Exact(u.shared_m),
+                    ebit_m: fig(Kind::Line(L::Ebit), u.ebit_m()),
+                    capex_m: fig(Kind::Line(L::AssetPurchases), u.capex_m),
                     estimated: banded,
                 }
             })

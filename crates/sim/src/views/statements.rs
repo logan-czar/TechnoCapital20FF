@@ -10,18 +10,21 @@
 //!
 //! A private company publishes no statements (spec 1, 5.20.1 Listing step 4), nor does a new
 //! listing before its first release after listing: their statements are served as
-//! [`EstimatedStatement`]s, one band per money line, keyed by the statement's period so a
-//! quarter's estimate does not move from release to release (D420). Their exact archive is not
+//! [`EstimatedStatement`]s, one figure per line keyed by the statement's period, so a quarter's
+//! estimate does not move from release to release, and a year's flows sum its quarters' (D420,
+//! D430). Their exact archive is not
 //! in the view at all, so a screen cannot show it; Omniscient serves it.
 
 use std::sync::Arc;
 
-use super::estimate::{Band, Estimator, Field, StatementLine};
+use super::estimate::{
+    ESTIMATE_FLOOR_TB, ESTIMATE_FLOOR_USD, Estimator, Figure, Kind, StatementLine, Subject,
+};
 use super::{Cadence, ViewData, ViewInput};
 use crate::finance::distress::CompanyStatus;
 use crate::finance::rating::Rating;
 use crate::finance::state::{Archive, PostedMonth};
-use crate::finance::statements::{Period, Statement};
+use crate::finance::statements::{Period, QUARTERS_PER_YEAR, Statement, trailing_four};
 use crate::time::quarter::RELEASE_DAY;
 use crate::time::{Date, DateTime, Quarter};
 use crate::world::{CompanyId, Ordinal};
@@ -49,62 +52,171 @@ pub enum StatementPeriod {
     Year,
 }
 
-/// A statement's figures that are not money (spec 3.9 key figures), shown exactly: the observer
-/// sees operations, not the books (D420).
+/// A statement's figures that are not money (spec 3.9 key figures), shown exactly as
+/// operations, but for held TB, a band (it would give the revenue away, D431).
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct OperatingFigures {
     pub productivity: f64,
     pub pc_bonus: u32,
     pub labor_units: u64,
-    pub held_tb: f64,
+    pub held_tb: Figure,
     pub free_rd_pct: u32,
     pub management_score: f64,
     pub rating: Rating,
 }
 
-/// A statement of a company that does not publish: every money line of [`StatementLine::ALL`]
-/// as a band (D420). Lines are estimated one by one, so the bands need not add up.
+/// A statement of a company that does not publish: every line of [`StatementLine::ALL`] as a
+/// figure (D420): a band, but the compute and licences line, which follows the published
+/// station counts and stays exact (D434). Lines are estimated one by one, so the bands need not
+/// add up; a year's flows are the sums of its quarters' bands (D430).
 #[derive(Debug, Clone, PartialEq)]
 pub struct EstimatedStatement {
     pub period: Period,
     pub synthetic: bool,
-    /// One band per [`StatementLine::ALL`] entry, in that order.
-    pub lines: Vec<Band>,
+    /// One figure per [`StatementLine::ALL`] entry, in that order.
+    pub lines: Vec<Figure>,
     pub operating: OperatingFigures,
 }
 
 impl EstimatedStatement {
-    /// The band of one line.
-    pub fn line(&self, line: StatementLine) -> Band {
+    /// The figure of one line.
+    pub fn line(&self, line: StatementLine) -> Figure {
         self.lines[line as usize]
     }
 }
 
-/// The estimated statement of `s` for company `id` (D420): each line keyed by the statement's
-/// period and the line, so v_filings shows the same bands.
-pub fn estimated_statement(est: &Estimator, id: CompanyId, s: &Statement) -> EstimatedStatement {
-    let lines = StatementLine::ALL
-        .iter()
-        .map(|&l| {
-            est.of_period(true, id, s.period, Field::Line(l.error_key()), l.of(s))
-                .band()
-                .expect("a banded figure is a band")
-        })
-        .collect();
+/// One line of a quarter's (or a lone year's) statement as the views show it (D420, D430): the
+/// one estimate of that figure for that period, so v_statements, v_filings and the TTM agree.
+/// The compute and licences line is exact (D434); the guidance high end is the low end's band
+/// moved by the guidance's width, so the two ends share one error.
+pub fn statement_line(
+    est: &Estimator,
+    banded: bool,
+    id: CompanyId,
+    s: &Statement,
+    l: StatementLine,
+) -> Figure {
+    match l {
+        StatementLine::Shared => Figure::Exact(l.of(s)),
+        StatementLine::GuidanceHigh => {
+            let width = s.key.guidance.1 - s.key.guidance.0;
+            statement_line(est, banded, id, s, StatementLine::GuidanceLow).map(|x| x + width)
+        }
+        _ => est.of_period(
+            banded,
+            Subject::Company(id),
+            Kind::Line(l),
+            s.period,
+            l.of(s),
+            ESTIMATE_FLOOR_USD,
+        ),
+    }
+}
+
+fn operating(est: &Estimator, banded: bool, id: CompanyId, s: &Statement) -> OperatingFigures {
     let k = &s.key;
+    OperatingFigures {
+        productivity: k.productivity,
+        pc_bonus: k.pc_bonus,
+        labor_units: k.labor_units,
+        held_tb: est.of_period(
+            banded,
+            Subject::Company(id),
+            Kind::HeldTb,
+            s.period,
+            k.held_tb,
+            ESTIMATE_FLOOR_TB,
+        ),
+        free_rd_pct: k.free_rd_pct,
+        management_score: k.management_score,
+        rating: k.rating,
+    }
+}
+
+/// The estimated statement of quarter statement `s` for company `id` (D420).
+pub fn estimated_quarter(est: &Estimator, id: CompanyId, s: &Statement) -> EstimatedStatement {
     EstimatedStatement {
         period: s.period,
         synthetic: s.synthetic,
-        lines,
-        operating: OperatingFigures {
-            productivity: k.productivity,
-            pc_bonus: k.pc_bonus,
-            labor_units: k.labor_units,
-            held_tb: k.held_tb,
-            free_rd_pct: k.free_rd_pct,
-            management_score: k.management_score,
-            rating: k.rating,
-        },
+        lines: StatementLine::ALL
+            .iter()
+            .map(|&l| statement_line(est, true, id, s, l))
+            .collect(),
+        operating: operating(est, true, id, s),
+    }
+}
+
+/// The estimated statement of year statement `y` (D430): with its four quarters' estimates at
+/// hand, its flows are their sums and its balance sheet, guidance and held TB are Q4's (one
+/// estimate per figure); a year whose quarters have left the archive is estimated on its own.
+pub fn estimated_year(
+    est: &Estimator,
+    id: CompanyId,
+    y: &Statement,
+    quarters: &[EstimatedStatement],
+) -> EstimatedStatement {
+    let Period::Year(year) = y.period else {
+        return estimated_quarter(est, id, y);
+    };
+    let of_year: Vec<&EstimatedStatement> = quarters
+        .iter()
+        .filter(|q| matches!(q.period, Period::Quarter(q) if q.year == year))
+        .collect();
+    if of_year.len() != QUARTERS_PER_YEAR {
+        return estimated_quarter(est, id, y);
+    }
+    let q4 = of_year[QUARTERS_PER_YEAR - 1];
+    EstimatedStatement {
+        period: y.period,
+        synthetic: y.synthetic,
+        lines: StatementLine::ALL
+            .iter()
+            .map(|&l| {
+                if l == StatementLine::Shared {
+                    Figure::Exact(l.of(y))
+                } else if l.is_flow() {
+                    Figure::sum(of_year.iter().map(|q| q.line(l)))
+                } else {
+                    q4.line(l)
+                }
+            })
+            .collect(),
+        operating: q4.operating,
+    }
+}
+
+/// A trailing-four-quarters revenue or net income (spec 5.13 TTM, D228) from the published quarters, as
+/// `trailing_four` makes it: exact for a publishing company, else the sum of the quarters'
+/// bands (scaled up for fewer than four, D430); a company with none shows a band of 0.
+pub fn ttm_line(
+    est: &Estimator,
+    banded: bool,
+    id: CompanyId,
+    published: &[Statement],
+    l: StatementLine,
+) -> Figure {
+    let n = published.len().min(QUARTERS_PER_YEAR);
+    if !banded {
+        let ttm = trailing_four(published).unwrap_or_default();
+        return Figure::Exact(match l {
+            StatementLine::Revenue => ttm.revenue,
+            StatementLine::NetIncome => ttm.net_income(),
+            _ => panic!("a TTM of revenue or net income"),
+        });
+    }
+    if n == 0 {
+        return est.company_now(true, id, Kind::Line(l), 0.0);
+    }
+    let sum = Figure::sum(
+        published[published.len() - n..]
+            .iter()
+            .map(|s| statement_line(est, true, id, s, l)),
+    );
+    let k = QUARTERS_PER_YEAR as f64 / n as f64;
+    if n == QUARTERS_PER_YEAR {
+        sum
+    } else {
+        sum.map(|x| x * k)
     }
 }
 
@@ -224,10 +336,21 @@ impl ViewData for StatementsView {
                 let banded = est.banded(w, id);
                 let quarters = count(c.finance.quarters());
                 let years = count(c.finance.years());
-                let estimate = |all: &[Statement]| -> Vec<EstimatedStatement> {
-                    all.iter()
-                        .map(|s| estimated_statement(&est, id, s))
+                let estimated_quarters: Vec<EstimatedStatement> = if banded {
+                    c.finance.quarters()[..quarters]
+                        .iter()
+                        .map(|s| estimated_quarter(&est, id, s))
                         .collect()
+                } else {
+                    Vec::new()
+                };
+                let estimated_years: Vec<EstimatedStatement> = if banded {
+                    c.finance.years()[..years]
+                        .iter()
+                        .map(|y| estimated_year(&est, id, y, &estimated_quarters))
+                        .collect()
+                } else {
+                    Vec::new()
                 };
                 CompanyStatements {
                     id,
@@ -237,16 +360,8 @@ impl ViewData for StatementsView {
                     archive: (!banded).then(|| Arc::clone(&c.finance.archive)),
                     published_quarters: if banded { 0 } else { quarters },
                     published_years: if banded { 0 } else { years },
-                    estimated_quarters: if banded {
-                        estimate(&c.finance.quarters()[..quarters])
-                    } else {
-                        Vec::new()
-                    },
-                    estimated_years: if banded {
-                        estimate(&c.finance.years()[..years])
-                    } else {
-                        Vec::new()
-                    },
+                    estimated_quarters,
+                    estimated_years,
                     months: if omniscient {
                         c.finance.months.clone()
                     } else {

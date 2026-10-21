@@ -90,9 +90,10 @@ pub struct World {
     pub births: BirthsState,
     /// The Pdoomberg Wire (spec 5.18; M6).
     pub news: NewsWire,
-    /// The last quarterly recap (spec 8, 21.6.2), built at the start of the pre-quarter-end
-    /// week; shared with v_recap.
-    pub recap: Option<std::sync::Arc<crate::recap::jobs::Recap>>,
+    /// The quarterly recaps (spec 8, 21.6.2), each built at the start of its pre-quarter-end
+    /// week, oldest first, the last [`crate::recap::jobs::RECAPS_KEPT`] kept so past recaps open
+    /// by quarter (m9-plan section 1; D433).
+    pub recaps: Vec<std::sync::Arc<crate::recap::jobs::Recap>>,
 }
 
 impl World {
