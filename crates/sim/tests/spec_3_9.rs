@@ -264,9 +264,38 @@ fn check_against_fixture(id: &str, f: &CompanyFacts<'_>, row: &FixtureRow, full:
     let i = q4.income();
     let cf = q4.cash_flow();
     let what = |line: &str| format!("{id} {line}");
-    assert_close(&what("Q4 revenue"), i.revenue, row.num("q4_revenue"));
-    assert_close(&what("Q4 EBIT"), i.ebit, row.num("q4_ebit"));
-    assert_close(&what("Q4 EBITDA"), q4.lines.ebitda(), row.num("q4_ebitda"));
+    // Revenue, EBIT and EBITDA are checked against values derived here from the CSVs, not
+    // against the fixture that supplied the lines. Revenue: companies.csv revenue_usd_m (the
+    // $0.1M barebones floor of 7.1), a quarter of it.
+    let r = f.company.revenue_usd_m.max(0.1) * 1.0e6;
+    assert_eq!(i.revenue, r / 4.0, "{id} Q4 revenue");
+    // EBITDA − EBIT is depreciation, the 5.10 decay on company-start.csv's gross assets:
+    // asset_decay × max(0, gross − threshold), capped at the asset book (5.5).
+    let ind = f.industry;
+    let gross = f.start.gross_assets_usd;
+    let decay = (ind.asset_decay * (gross - ind.asset_decay_threshold_usd).max(0.0))
+        .min(f.start.asset_book_usd);
+    assert!(
+        (q4.lines.ebitda() - i.ebit - decay / 4.0).abs() < 1.0,
+        "{id} Q4 EBITDA − EBIT {} vs decay ÷ 4 {}",
+        q4.lines.ebitda() - i.ebit,
+        decay / 4.0
+    );
+    // EBIT (5.5 at load, M 1.0): revenue less variable `R × (1 − margin − f)`, less fixed cash
+    // + depreciation + shared, which 7.1's fixed cost rate holds at `f × turnover × gross`,
+    // less paid R&D. Barebones companies (R below $0.1M) carry the loadout's $100,000 and are
+    // left out.
+    if f.company.revenue_usd_m >= 0.1 {
+        let ebit = r * (ind.margin_full_use + ind.fixed_cost_share)
+            - ind.fixed_cost_share * ind.asset_turnover * gross
+            - row.num("rd");
+        assert!(
+            (i.ebit - ebit / 4.0).abs() < 1.0,
+            "{id} Q4 EBIT {} vs {}",
+            i.ebit,
+            ebit / 4.0
+        );
+    }
     assert_close(
         &what("Q4 pre-tax"),
         i.pre_tax_income,
@@ -317,12 +346,8 @@ fn check_against_fixture(id: &str, f: &CompanyFacts<'_>, row: &FixtureRow, full:
             row.num("interest_income") / 4.0
         });
         let y = year_statement(2019, &h);
-        assert_close(
-            &what("2019 revenue"),
-            y.income().revenue,
-            row.num("revenue"),
-        );
-        assert_close(&what("2019 EBIT"), y.income().ebit, row.num("ebit"));
+        assert_close(&what("2019 revenue"), y.income().revenue, r);
+        assert_close(&what("2019 EBIT"), y.income().ebit, 4.0 * i.ebit);
         assert_close(
             &what("2019 pre-tax"),
             y.income().pre_tax_income,
