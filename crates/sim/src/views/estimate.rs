@@ -39,7 +39,6 @@
 //! or sums. A band of a small figure (below the floor) can reach below 0.
 
 use crate::finance::statements::{Period, Statement};
-use crate::time::quarter::release_tick;
 use crate::time::{DateTime, Quarter};
 use crate::world::{CompanyId, IndustryId, Ordinal, World};
 
@@ -62,6 +61,8 @@ pub const ESTIMATE_FLOOR_USD: f64 = 1.0e6;
 pub const ESTIMATE_FLOOR_SHARE: f64 = 0.01;
 /// The floor of a data figure, TB (T, D431).
 pub const ESTIMATE_FLOOR_TB: f64 = 1.0;
+/// The floor of a productivity, points (T, D436).
+pub const ESTIMATE_FLOOR_POINTS: f64 = 1.0;
 /// The floor of a ratio such as M (T, D432).
 pub const ESTIMATE_FLOOR_RATIO: f64 = 0.01;
 /// The salt of the estimate hash (D421), so its numbers share nothing with any other use of
@@ -224,6 +225,8 @@ pub enum Kind {
     BirthSize,
     GrossAssets,
     AssetsEff,
+    /// A unit's productivity (5.6), banded with its money figures (D436).
+    Productivity,
     HeldTb,
     UnstructuredTb,
     DecayTb,
@@ -252,6 +255,7 @@ impl Kind {
             Kind::MarketFactor => 12,
             Kind::FringeRevenue => 13,
             Kind::FringeShare => 14,
+            Kind::Productivity => 15,
         }
     }
 }
@@ -436,19 +440,14 @@ impl StatementLine {
 /// the first release after its listing (its first statements publish then); never a company
 /// listed at load.
 pub fn shows_estimates(w: &World, id: CompanyId) -> bool {
-    let s = &w.market.stocks[id];
-    match (s.exchange, s.listed_on) {
-        (None, _) => true,
-        (Some(_), None) => false,
-        (Some(_), Some(listed)) => w.clock < release_tick(listed.quarter().next()),
-    }
+    !w.publishes(id)
 }
 
 /// The newest quarter published at `now` (its release has run, spec 4.4 row 1; D130): Q3 2019
 /// on 1 January 2020, Q4 2019 from 2 January.
 pub fn release_quarter(now: DateTime) -> Quarter {
     let q = now.date().quarter().prev();
-    if now >= release_tick(q.next()) {
+    if now >= crate::time::quarter::release_tick(q.next()) {
         q
     } else {
         q.prev()

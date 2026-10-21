@@ -155,7 +155,7 @@ fn try_raise(world: &mut World, ctx: &mut JobCtx<'_>, id: CompanyId) {
     c.failed_raises = 0;
     c.raise_pending = false;
     // A company that does not publish raises without the wire printing the amount (D420).
-    let net = (!crate::views::estimate::shows_estimates(world, id)).then_some(plan.net);
+    let net = world.publishes(id).then_some(plan.net);
     world
         .news
         .queue(news::raise(date, industry, id, &name, plan.method, net));
