@@ -36,7 +36,7 @@ pub use ids::{
     CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, StartupEventId, ZoneId,
 };
 pub use load::LoadError;
-pub use notice::{AlertKind, AlertLevel, AlertPayload, Notice, PauseReason, SkipKind};
+pub use notice::{AlertKind, AlertLevel, AlertLevels, AlertPayload, Notice, PauseReason, SkipKind};
 pub use table::Table;
 
 use crate::time::DateTime;

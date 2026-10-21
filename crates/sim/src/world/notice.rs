@@ -92,6 +92,32 @@ pub enum AlertLevel {
     Off,
 }
 
+/// The level set for each alert kind (spec 8; changed by `Control::SetAlert`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AlertLevels([AlertLevel; AlertKind::ALL.len()]);
+
+impl Default for AlertLevels {
+    /// The spec 8 defaults.
+    fn default() -> Self {
+        AlertLevels(AlertKind::ALL.map(AlertKind::default_level))
+    }
+}
+
+impl AlertLevels {
+    /// Every alert Off: for runs whose alerts nobody sees, such as projections (spec 5.16).
+    pub fn all_off() -> Self {
+        AlertLevels([AlertLevel::Off; AlertKind::ALL.len()])
+    }
+
+    pub fn get(&self, kind: AlertKind) -> AlertLevel {
+        self.0[kind.index()]
+    }
+
+    pub fn set(&mut self, kind: AlertKind, level: AlertLevel) {
+        self.0[kind.index()] = level;
+    }
+}
+
 /// What an alert is about.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum AlertPayload {
