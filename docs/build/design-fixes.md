@@ -1,0 +1,14 @@
+# Design fixes for Logan
+
+Prose errors builders found in `docs/design` while building. Code PRs do not edit design prose (CLAUDE.md); Logan fixes these in the design and syncs them in. Strike a row through once it lands.
+
+| # | Where | Problem | Suggested fix |
+|---|---|---|---|
+| 1 | data/README.md | Says `fixed_cost_rate` is 0.37 in every industry; spec 2.2 and 5.5 give 0.38 to 0.449 (median 0.439) | Match the spec |
+| 2 | data/README.md, batch 155 paragraph | Borrowing at base + zone spread + rating is stale; spec 5.12 uses the home spread (half zone, half sovereign) | Point to spec 5.12 |
+| 3 | data/README.md status line | Province weight clamp G given as both 0.2 to 3 (batch 159) and 0.1 to 4 (batch 160) | Keep one; spec 5.19.1 also needs the province weight formula stated in the spec itself |
+| 4 | mvp-spec 7.1 | Says companies founded in play start barebones with only a CEO; superseded by 5.19.4 and C31 | Remove or cross-reference 5.19.4 |
+| 5 | 12-tech-and-roadmap 12.3 | Notice names (`TickDone`, `EventOpened`, `CommandResult`) differ from spec 9.3's list | Use the 9.3 list |
+| 6 | 12-tech-and-roadmap 12.6 | Table widget in M9; build-plan moved it to M7.7 | Say M7.7 |
+| 7 | mvp-spec 2.2, 10 M0 | `startup-events.csv` and `names/` are listed as "to build"; both exist since M0 | Mark built |
+| 8 | mvp-spec 9.1 | No controls for alert settings, the Omniscient toggle or the watchlist, though spec 8 and M1.5, M7.6, M7.8 need them | Add `SetAlert`, `SetOmniscient` (debug only), watchlist add and remove; the build adds them now |
