@@ -13,7 +13,7 @@ use super::entities::{
     BusinessUnit, Character, Company, CompanyData, Country, Industry, IndustryParams, PhaseLabel,
     Province, Zone,
 };
-use super::ids::{CharacterId, CompanyId, IndustryId, Ordinal, UnitId};
+use super::ids::{CharacterId, CompanyId, IndustryId, Ordinal, ProvinceId, UnitId};
 use super::table::Table;
 use super::units::{fraction_from_bps, shares_from_csv, usd_from_billions, usd_from_millions};
 use crate::ai::archetype::Archetype;
@@ -27,6 +27,7 @@ use crate::economy::start::{
 use crate::economy::supply::fringe_assets_at_load;
 use crate::finance::rating::Rating;
 use crate::finance::state::CompanyFinance;
+use crate::market::state::{MarketState, Stock};
 use crate::ops::compute::compute_bill;
 use crate::ops::data::{DataBook, DataParams, conversion_capacity};
 use crate::ops::labor::{fit_stations, labor_units};
@@ -122,6 +123,11 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
                 number: z.number,
                 name: z.name.clone(),
                 exchange_code: z.exchange_code.clone(),
+                exchange_name: z.exchange.clone(),
+                headline_index: z.headline_index.clone(),
+                hub_city: z.hub_city.clone(),
+                // Set once the provinces are loaded, below.
+                hub_province: ProvinceId::from_index(0),
                 intensity: z.intensity,
                 lag_quarters: z.lag_quarters,
                 contagion: z.contagion,
@@ -211,6 +217,17 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             name: p.name.clone(),
             country: country_keys.get("provinces", &p.id, "country", &p.country, "country")?,
         });
+    }
+
+    // Each exchange's hub province (financial-zones.csv `hub_province`).
+    for (z, row) in zones.iter_mut().zip(&zone_rows) {
+        z.1.hub_province = province_keys.get(
+            "financial-zones",
+            &row.zone_id,
+            "hub_province",
+            &row.hub_province,
+            "province",
+        )?;
     }
 
     // Industries (spec 3.4). companies.csv names its industry by name, not slug.
@@ -310,6 +327,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
     let company_rows = sorted_by(data.companies.rows.iter(), |c| &c.id);
     Keys::<crate::world::CompanyId>::new("companies", company_rows.iter().map(|c| c.id.as_str()))?;
     let mut companies = Vec::with_capacity(company_rows.len());
+    let mut stocks = Vec::with_capacity(company_rows.len());
     let mut units = Vec::with_capacity(company_rows.len());
     let mut named_revenue = vec![0.0; industries.len()];
     for c in &company_rows {
@@ -388,22 +406,32 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             &industries[industry].sector,
             controller.map_or(&[][..], |ch| &characters[ch].traits[..]),
         );
+        let hq_country = country_keys.get(
+            "companies",
+            &c.id,
+            "hq_country",
+            &c.hq_country,
+            "country",
+        )?;
+        // A listed company lists on its HQ country's zone exchange at company-start.csv's
+        // open_price (spec 5.14, 7.1; D145); `market::start` sets its value.
+        let exchange = c.public.then_some(countries[hq_country.index()].zone);
+        let shares_out = shares_from_csv(start.shares).map_err(bad)?;
+        stocks.push(Stock::at_load(
+            exchange,
+            if c.public { start.open_price } else { 0.0 },
+            shares_out,
+        ));
         companies.push(Company {
             key: c.id.clone(),
             name: c.name.clone(),
             ticker: c.ticker.clone(),
             industry,
-            hq_country: country_keys.get(
-                "companies",
-                &c.id,
-                "hq_country",
-                &c.hq_country,
-                "country",
-            )?,
+            hq_country,
             hq_province,
             public: c.public,
             revenue_usd: revenue,
-            shares_out: shares_from_csv(start.shares).map_err(bad)?,
+            shares_out,
             units: vec![unit_id],
             controller,
             labor_units: labor,
@@ -471,6 +499,11 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         name_books,
         simple_characters_made: 0,
         books_check: Default::default(),
+        market: MarketState {
+            stocks: Table::from_rows(stocks),
+            // Set by `market::start` at the listed caps (spec 5.14).
+            indices: Table::default(),
+        },
     })
 }
 

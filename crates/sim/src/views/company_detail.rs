@@ -12,8 +12,9 @@ use crate::finance::rating::Rating;
 use crate::people::board::{Seat, Skills};
 use crate::people::management::{EMPTY_SEAT_SKILL, Member, confidence_factor, member_skill};
 use crate::people::traits::Trait;
+use crate::market::fair_value::shown_value;
 use crate::world::{
-    CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, SeatHolder, World,
+    CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, SeatHolder, World, ZoneId,
 };
 
 /// Who sits in a seat (spec 3.7, 3.7.1, 3.7.2).
@@ -70,6 +71,18 @@ pub struct CompanyDetail {
     pub status: CompanyStatus,
     /// Spec 6.1.
     pub archetype: Archetype,
+    /// Shares outstanding (spec 3.10).
+    pub shares_out: u64,
+    /// The listing exchange (spec 5.14), `None` while private; quoted unless delisted.
+    pub exchange: Option<ZoneId>,
+    pub quoted: bool,
+    /// P at the rebuild, USD a share (5.14); 0 for a private or delisted company.
+    pub price: f64,
+    /// The estimated fair value a share shown for a listed company (3.14.2), or a private
+    /// company's 0.7 × V (spec 5.13 step 6).
+    pub shown_value_per_share: f64,
+    /// Buzz (3.10).
+    pub buzz: f64,
     /// CEO, CFO, CIO, CMO, COO, then the Chair (spec 3.7).
     pub board: Vec<SeatCard>,
 }
@@ -148,6 +161,11 @@ impl ViewData for CompanyDetailView {
                     skill_used: EMPTY_SEAT_SKILL,
                     holder: None,
                 });
+                let s = &w.market.stocks[id];
+                let shown = match s.exchange {
+                    Some(_) => s.value * (1.0 + s.efv_error),
+                    None => shown_value(s.value, false),
+                };
                 CompanyDetail {
                     id,
                     key: c.key.clone(),
@@ -167,6 +185,12 @@ impl ViewData for CompanyDetailView {
                     rating: c.finance.rating,
                     status: c.finance.status(),
                     archetype: c.archetype,
+                    shares_out: c.shares_out,
+                    exchange: s.exchange,
+                    quoted: s.quoted,
+                    price: s.price,
+                    shown_value_per_share: shown,
+                    buzz: s.buzz,
                     board,
                 }
             })

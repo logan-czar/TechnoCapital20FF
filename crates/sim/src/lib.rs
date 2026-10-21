@@ -48,7 +48,11 @@ pub use world::{LoadError, Notice, World};
 /// (productivity); `people` (M3) in step 11 (new seats); `finance` (M4) in steps 9 (the month
 /// opens and posts the 5.5 lines), 11 (depreciation, purchases, sales), 12 (interest), 13 (cash
 /// settle, distress), 14 (tax accrual, ledger posted), the 4.4 close, release and 01:00 rating
-/// and line reviews, and the 4.5 annual statements. Slots expected to be shared, in the order
+/// and line reviews, and the 4.5 annual statements; `market` (M5) in 4.1 step 2 (prices), the 4.4
+/// price move (full fair value, earnings jump, buzz), 4.2 steps 1 (bars, buzz), 2 (fair value),
+/// 3 (reaction week) and 6 (index closes, zone confidence, new bars), 4.3 step 13 (delisting at
+/// bankruptcy, after finance's settle), the close's result tags, the lock's consensus and the
+/// 4.5 bar archive. Slots expected to be shared, in the order
 /// their calls must go:
 ///
 /// - `Slot::Alerts`: `time` (calendar alerts) only; other modules raise alerts from their own
@@ -62,27 +66,34 @@ pub use world::{LoadError, Notice, World};
 /// - `Slot::MonthlyAssets` (4.3 step 11): `economy` (asset decay, growth plan buys and sells,
 ///   ramping, 5.10), then `people` (simple characters for new seats, 3.7.1), then `finance`
 ///   (depreciation, purchases and sales posted).
+/// - `Slot::MonthlyCashSettle` (4.3 step 13): `finance` (settle, distress, bankruptcy), then
+///   `market` (delisting the new bankruptcies, D134).
 /// - `Slot::CloseStatements` (4.4 close): `finance` (tax paid, then the statements, D122).
 /// - `Slot::ReleasePublish` (4.4 release): `finance` (removals, 5.12 step 3).
 /// - `Slot::PriceMoveResultHeadlines` (4.4 price move): `news` only.
-/// - `Slot::LockIpoVotes` (4.4 plan lock): `births` (votes, then listings, 5.20.1).
+/// - `Slot::LockIpoVotes` (4.4 plan lock): `births` (votes, then listings, 5.20.1; a listing
+///   calls `market::jobs::list_company` so the index keeps its level).
+/// - `Slot::LockConsensus` (4.4 plan lock): `market` (the projection and consensus, 5.16).
 fn register_jobs(s: &mut Scheduler) {
     time::alerts::register(s);
     economy::register(s);
     ops::register(s);
     people::register(s);
     finance::register(s);
+    market::register(s);
 }
 
 /// The whole start state (spec 7): the static tables and 7.1 loadouts, then the load's draws in
 /// their frozen order: the economy's (pop date, cycle start, zone shocks, Q1 2020 growth draw;
 /// 7.3), then the boards' simple characters (3.7.1, 7.1); then the books, which draw nothing
-/// (the starting rating, line limit and synthetic history, 7.1 and 4.4).
+/// (the starting rating, line limit and synthetic history, 7.1 and 4.4); then the market, which
+/// draws nothing (engine value, V and P at open_price, the indices at 1,000; 7.1, 5.14).
 pub fn start_world(data: &WorldData, draws: &mut dyn DrawSource) -> Result<World, LoadError> {
     let mut world = World::from_data(data)?;
     economy::start(&mut world, draws);
     people::seating::start(&mut world, draws);
     finance::start(&mut world);
+    market::start(&mut world);
     Ok(world)
 }
 
