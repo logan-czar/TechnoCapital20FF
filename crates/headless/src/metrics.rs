@@ -18,6 +18,8 @@ use sim::world::{Ordinal, Origin, PhaseLabel};
 use sim::{Notice, Sim};
 use sim_data::WorldData;
 
+use crate::profile::Profiler;
+
 /// `years.csv` header: one row per seed per year, written at the year's December close (the
 /// 1 January 00:00 tick that closes it). Rows of a seed are in year order.
 ///
@@ -104,12 +106,15 @@ pub struct SeedOutput {
 
 /// Runs `seed` from the start state for `years` years (to 1 January of 2020 + years, 00:00)
 /// through `Sim::step` only, recording both tables. With `hash_monthly` it prints the state hash
-/// after each month close (`run --hash-monthly`, M1.9).
+/// after each month close (`run --hash-monthly`, M1.9). With `profile` each step runs through
+/// `Sim::step_observed` and its parts are timed there (`run --profile`, M10.6, D400); the rows and
+/// hashes are the same either way.
 pub fn run_seed(
     data: &WorldData,
     seed: u64,
     years: u32,
     hash_monthly: bool,
+    mut profile: Option<&mut Profiler>,
 ) -> Result<SeedOutput, String> {
     let start = Instant::now();
     let mut sim = Sim::new(data.clone(), seed).map_err(|e| e.to_string())?;
@@ -119,7 +124,16 @@ pub fn run_seed(
     while sim.now() < end {
         ticks += 1;
         rec.year_ticks += 1;
-        for n in sim.step() {
+        let notices = match profile.as_deref_mut() {
+            None => sim.step(),
+            Some(p) => {
+                let t = Instant::now();
+                let notices = sim.step_observed(p);
+                p.add_step(t.elapsed());
+                notices
+            }
+        };
+        for n in notices {
             rec.notice(&sim, &n, hash_monthly);
         }
     }

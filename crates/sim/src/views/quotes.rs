@@ -83,13 +83,19 @@ impl ViewData for QuotesView {
     const ON_CONTROL: bool = true;
 
     fn build(input: &ViewInput<'_>) -> Self {
+        let mut v = QuotesView::default();
+        v.rebuild(input);
+        v
+    }
+
+    /// Refills the two `Vec`s in place, so the rebuild every tick allocates nothing once they
+    /// have grown (D402).
+    fn rebuild(&mut self, input: &ViewInput<'_>) {
         let w = input.world;
         let omniscient = input.controls.omniscient;
-        let rows = w
-            .market
-            .stocks
-            .iter()
-            .filter_map(|(id, s)| {
+        self.rows.clear();
+        self.rows
+            .extend(w.market.stocks.iter().filter_map(|(id, s)| {
                 let exchange = s.exchange.filter(|_| s.quoted)?;
                 let efv = s.value * (1.0 + s.efv_error);
                 let change = s.price - s.prev_close;
@@ -112,19 +118,14 @@ impl ViewData for QuotesView {
                     market_cap: s.cap(),
                     value: omniscient.then_some(s.value),
                 })
-            })
-            .collect();
+            }));
         let caps = exchange_caps(w);
-        let indices = w
-            .market
-            .indices
-            .iter()
-            .map(|(z, i)| IndexQuote {
+        self.indices.clear();
+        self.indices
+            .extend(w.market.indices.iter().map(|(z, i)| IndexQuote {
                 zone: z,
                 level: i.level(caps[z.index()]),
                 prev_close: i.prev_close,
-            })
-            .collect();
-        QuotesView { rows, indices }
+            }));
     }
 }

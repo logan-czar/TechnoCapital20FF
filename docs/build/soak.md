@@ -138,3 +138,57 @@ Spec 10's balance targets after 10 years, then its startup, character and listin
 ## Performance
 
 Build-plan 4.5 and spec 10 M10: 30 years headless in under 2 minutes per seed. `timing.csv` holds each seed's wall time; `soak` prints the min, median and max. Seeds running at once share the machine's memory bandwidth, so a seed's time grows with `--jobs` (on Logan's PC one seed alone takes about 8 to 11 s; 20 seeds on 12 jobs took 20 s of wall time, 8.5 to 10.9 s per seed).
+
+### Profiling (M10.6)
+
+`run --profile` times every scheduler slot, every job and the view refresh (each view too) and prints a table per seed, slowest first (D400). The timer is in headless; the sim only tells an observer which part of the tick starts and finishes, so a profiled run writes the same rows and hashes (`crates/headless/tests/profile.rs`).
+
+```
+target/release/headless run --years 30 --seeds 1 --profile
+```
+
+Seed 1, 30 years, release, median of 3 runs on Logan's PC before and after the M10.6 fixes (main at 466d8a6 with only the profiling hook added, then this branch). The PC is shared, so single runs vary by about 20%; the whole run (`run --years 30 --seeds 1`, no profiling) went from about 9.5 s to about 7 s, and to 5.5 s on a quiet run.
+
+| Part | Before (s) | After (s) |
+|---|---|---|
+| All steps | 8.17 | 5.82 |
+| View refresh after each tick | 3.56 | 2.43 |
+| `hourly.2.share_prices` | 2.13 | 2.03 |
+| `daily.1.price_bars` | 1.34 | 0.27 |
+| view `quotes` (every tick) | 1.30 | 0.68 |
+| view `price_bars` (daily) | 0.59 | 0.22 |
+| view `company_detail` | 0.36 | 0.32 |
+| `quarterly.plan_lock.5.consensus` | 0.32 | 0.31 |
+| view `statements` | 0.26 | 0.23 |
+| view `company_rows` | 0.22 | 0.19 |
+| `daily.2.fair_value` | 0.20 | 0.17 |
+| `quarterly.close.1.statements` | 0.18 | 0.16 |
+
+The fixes: the daily bar push no longer copies each company's open month while v_price_bars shares it, nor the month list at a month close (`ChunkLog` on write-once slots, D401); v_quotes refills its vectors in place (D402). Both keep every output byte-identical: seeds 1 to 12 × 30 years give the same `years.csv` and `quarters.csv` bytes as main, and seeds 1 and 2 the same 720 monthly hashes (`run --hash-monthly`). What is left is the hourly price step (two prices-stream draws a quoted stock a tick, D135) and the every-tick quotes view; the monthly and quarterly jobs are small.
+
+The state hash itself is not part of a run: `run --hash-monthly` adds about 25 ms a month at 15 years (the postcard bytes of the world, about 70 MB with ten years of bars, then blake3).
+
+## Determinism: replay and save/load (M10.4)
+
+Build-plan 4.3: same seed, same hashes, on the same machine and build (decision A; across OSes is post-MVP).
+
+**Replay** (D403). `record` plays a scripted player for N years and writes the seed, every control it sent (with its frame) and the state hash at every month close; `replay` plays the log back and checks every hash line as it is made, stopping at the first that differs.
+
+```
+target/release/headless record --years 30 --seed 1 --out run1.log
+target/release/headless replay run1.log
+```
+
+The log holds every control the MVP player has but NewGame and the debug-only Omniscient: speed 0 to 5, pause, resume, the four SkipTos, alert levels, the watchlist, and Save and Load (numbered saves beside the log, removed at the end; a Load rewinds to the latest save). Both commands drive the sim through one frame loop that runs `TICKS_PER_FRAME[effective speed]` ticks a frame and stops when the sim pauses itself, so the sim's own pauses (alerts, finished skips, loads) happen again in the replay; a hash line is `hash <frame> <step> <month> <hash>`, so a changed pause shows too. `crates/headless/tests/replay.rs` records a year, replays it, and checks that a changed hash, a dropped control, another seed or a bad line all fail. On Logan's PC a 30-year record or replay takes about a minute (the monthly hashes and the gzip of each save are most of it); seed 1's 30-year log (523 controls, Saves and Loads among them) ends on the same hash as `run --seeds 1`.
+
+**Save, load, continue** (D404). `crates/sim/tests/m10_save_load.rs` saves a game at ticks its seed picks (the plan lock tick, mid-way through the locked quarter, mid-way through a reaction week, right after a birth, a listing and a bankruptcy, and 3 random ticks), loads each save into another seed's game and plays on; every monthly hash and the final world must equal an unbroken run's. The default test covers 2 years of seed 3; the full check, 30 years on seeds 1 and 2, is ignored by default:
+
+```
+cargo test --release -p sim --test m10_save_load -- --ignored
+```
+
+It takes about 1.5 minutes in release on Logan's PC (9 cuts a seed, 360 monthly hashes a seed, all equal).
+
+## The boom and the pop with noise off (M10.5)
+
+`crates/sim/tests/m10_boom_pop.rs` runs the whole engine (every job of every slot, as `Sim::step` does) with the cycle and growth streams silenced and Z = 0, as validate.py's noise-free boom run (D405). Births, the Lite AI, the books and the market keep their own draws. Nothing downstream writes demand, so the match is exact: AI labs and the other 41 industries equal `tests/fixtures/validate-boom-calm.csv` to 1e-9 at every 1 January close 2020 to 2045, the boom's World event fires at 1 January 2030 00:00 and the pop's on its rolled date (a seed that rolls 1 January 2040, and one that rolls 1 July 2041), and the pop cuts each industry by its crash_drop on that tick. Both runs are in the default `cargo test` (about 15 s in debug).
