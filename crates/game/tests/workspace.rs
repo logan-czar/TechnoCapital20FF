@@ -535,6 +535,148 @@ fn hover_cards_follow_links() {
     assert_eq!(app.world().resource::<HoverCard>().shown, None);
 }
 
+/// Every text under an entity, with its color.
+fn texts_under(app: &App, root: Entity) -> Vec<(String, Color)> {
+    let mut out = Vec::new();
+    let mut stack = vec![root];
+    while let Some(e) = stack.pop() {
+        if let Some(t) = app.world().get::<Text>(e) {
+            let c = app.world().get::<TextColor>(e).map_or(Color::NONE, |c| c.0);
+            out.push((t.0.clone(), c));
+        }
+        if let Some(c) = app.world().get::<Children>(e) {
+            stack.extend(c.iter());
+        }
+    }
+    out
+}
+
+/// A private company's hover card, drawn in the shell with Omniscient off, shows its figures
+/// as bands in the estimate color, and none of the true values (D461, D463; the truth from a
+/// second game of the same seed with Omniscient on, debug builds only). Its HQ is a place link.
+#[test]
+fn a_private_company_card_shows_bands() {
+    use game::links::HoverCardPanel;
+    use game::table::format::{self, BAND_TEXT};
+    let mut app = shell_app();
+    assert!(!controls(&app).omniscient);
+    let views = app.world().resource::<Views>().clone();
+    let row = views
+        .company_rows
+        .get()
+        .rows
+        .iter()
+        .find(|r| r.estimated && !r.public)
+        .unwrap()
+        .clone();
+    let page = PageRef::Company(row.id);
+    let e = app
+        .world_mut()
+        .spawn(game::links::link("probe", page.clone()))
+        .id();
+    app.world_mut().entity_mut(e).insert(Hovered(true));
+    let n = (HOVER_DELAY_SECS / FRAME.as_secs_f32()).ceil() as usize + 4;
+    frames(&mut app, n);
+    assert_eq!(app.world().resource::<HoverCard>().shown, Some(page));
+    let panel = app
+        .world_mut()
+        .query_filtered::<Entity, With<HoverCardPanel>>()
+        .single(app.world())
+        .unwrap();
+    let texts = texts_under(&app, panel);
+    for f in [row.revenue_ttm, row.net_income_ttm, row.value] {
+        let b = f.band().expect("a band");
+        let s = format::band(b.low, b.high);
+        assert!(
+            texts.iter().any(|(t, c)| *t == s && *c == BAND_TEXT),
+            "{s} in {texts:?}"
+        );
+    }
+    let d = views.company_detail.get().get(row.id).unwrap();
+    let hq = views.places.get().place_name(d.hq_province).unwrap();
+    let hq_link = app
+        .world_mut()
+        .query::<(&Text, &Link)>()
+        .iter(app.world())
+        .any(|(t, l)| t.0 == hq && l.0 == PageRef::Country(row.hq_country));
+    assert!(hq_link, "HQ {hq} links to its country");
+    if cfg!(debug_assertions) {
+        let mut truth = Sim::new(data(), 42).unwrap();
+        truth.apply(sim::Control::SetOmniscient(true)).unwrap();
+        let t = truth
+            .views()
+            .company_rows
+            .get()
+            .rows
+            .iter()
+            .find(|r| r.id == row.id)
+            .unwrap()
+            .clone();
+        for f in [t.revenue_ttm, t.net_income_ttm, t.value] {
+            let x = format::money(f.exact().unwrap());
+            assert!(
+                !texts.iter().any(|(s, _)| s.contains(&x)),
+                "the truth {x} in {texts:?}"
+            );
+        }
+    }
+}
+
+/// The command bar finds a country and a character by name (lane A1's views, D464) and opens
+/// them: typed in lowercase, the top result is the page, and Enter opens it.
+#[test]
+fn command_bar_finds_countries_and_characters() {
+    let mut app = shell_app();
+    let index = app.world().resource::<NameIndex>().clone();
+    let views = app.world().resource::<Views>().clone();
+    let typable = |s: &str| s.chars().all(|c| c.is_ascii_alphabetic() || c == ' ');
+    let unique = |s: &str| {
+        index
+            .entries()
+            .iter()
+            .filter(|e| e.name.eq_ignore_ascii_case(s))
+            .count()
+            == 1
+    };
+    let country = views
+        .countries
+        .get()
+        .countries
+        .iter()
+        .find(|c| typable(&c.name) && unique(&c.name))
+        .unwrap();
+    let character = views
+        .characters
+        .get()
+        .full
+        .iter()
+        .find(|c| typable(&c.name) && unique(&c.name))
+        .unwrap();
+    let sim::views::characters::CharacterRef::Full(ch) = character.id else {
+        unreachable!()
+    };
+    for (name, page) in [
+        (country.name.clone(), PageRef::Country(country.id)),
+        (character.name.clone(), PageRef::Character(ch)),
+    ] {
+        press(&mut app, KeyCode::Backquote);
+        assert!(app.world().resource::<CommandBar>().open);
+        type_text(&mut app, &name.to_lowercase());
+        assert_eq!(
+            app.world().resource::<CommandBar>().items[0],
+            game::command::CommandItem::Open(page.clone()),
+            "{name}"
+        );
+        press(&mut app, KeyCode::Enter);
+        assert_eq!(focused_page(&app), page);
+        let pane = ws(&app).focused();
+        assert!(
+            body_texts(&mut app, pane).contains(&name),
+            "{name} titles its page"
+        );
+    }
+}
+
 /// Saved layouts: save, change the workspace, load it back; density from the keyboard.
 #[test]
 fn layouts_and_density() {

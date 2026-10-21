@@ -8,11 +8,12 @@
 //!   click goes on to the row.
 
 pub mod cards;
+pub mod names;
 
 use bevy::picking::hover::Hovered;
 use bevy::prelude::*;
 
-use crate::bridge::{RunnerControls, Views};
+use crate::bridge::Views;
 use crate::command::index::NameIndex;
 use crate::pages::PageRef;
 use crate::ui::theme::{self, color, font, size};
@@ -176,7 +177,6 @@ fn show_card(
     children: Query<&Children>,
     views: Res<Views>,
     index: Res<NameIndex>,
-    controls: Res<RunnerControls>,
 ) {
     let Some(panel) = state.panel else {
         return;
@@ -223,7 +223,7 @@ fn show_card(
             commands.entity(e).despawn();
         }
     }
-    let card = cards::card(&p, &views, &index, controls.omniscient);
+    let card = cards::card(&p, &views, &index);
     spawn_card_content(&mut commands, panel, &card, &p);
     let (cursor, win) = windows
         .iter()

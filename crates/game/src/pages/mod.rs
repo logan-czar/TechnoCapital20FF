@@ -353,6 +353,12 @@ pub enum ViewKey {
     Ratings,
     Recap,
     MapStatic,
+    Places,
+    Countries,
+    Zones,
+    Rates,
+    Characters,
+    CapTable,
 }
 
 /// A view's name, version and cadence.
@@ -384,6 +390,12 @@ pub fn view_meta(v: &sim::SimViews, key: ViewKey) -> (&'static str, u64, Cadence
         ViewKey::Ratings => m!("v_ratings", ratings),
         ViewKey::Recap => m!("v_recap", recap),
         ViewKey::MapStatic => m!("v_map_static", map_static),
+        ViewKey::Places => m!("v_places", places),
+        ViewKey::Countries => m!("v_countries", countries),
+        ViewKey::Zones => m!("v_zones", zones),
+        ViewKey::Rates => m!("v_rates", rates),
+        ViewKey::Characters => m!("v_characters", characters),
+        ViewKey::CapTable => m!("v_cap_table", cap_table),
     }
 }
 

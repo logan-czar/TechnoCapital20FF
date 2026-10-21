@@ -6,7 +6,7 @@ use std::sync::Arc;
 
 use bevy::picking::hover::Hovered;
 use bevy::prelude::*;
-use sim::finance::distress::CompanyStatus;
+use sim::views::characters::Role;
 use sim::world::Origin;
 
 use super::{
@@ -16,7 +16,7 @@ use super::{
 use crate::bridge::{RunnerControls, Views};
 use crate::chart::{ChartModel, Ohlc, Series, ValueFormat, spawn_chart, ten_year_view};
 use crate::command::index::NameIndex;
-use crate::links::link_sized;
+use crate::links::{link_sized, names};
 use crate::ui::theme::{self, Tooltip, color, font};
 
 /// A line showing one view's refresh state; rewritten when the views change.
@@ -39,8 +39,9 @@ pub const CHART_SECTIONS: &[super::SectionSpec] = &[
 ];
 
 /// The chart a company or industry placeholder shows, from the views: a company's daily bars
-/// for the last year (the 10-year weekly view once it has more than a year), an industry's
-/// demand and supply over its last 20 quarters.
+/// over each day's EFV band (D424) for the last year (the 10-year weekly view once it has more
+/// than a year), an industry's demand and supply over its last 20 quarters (supply a band in
+/// the quarters it was estimated, D437).
 pub fn placeholder_chart(page: &PageRef, v: &sim::SimViews) -> Option<ChartModel> {
     match page {
         PageRef::Company(id) => {
@@ -50,11 +51,11 @@ pub fn placeholder_chart(page: &PageRef, v: &sim::SimViews) -> Option<ChartModel
             let year_ago = last.add_days(-365);
             Some(if daily.first().is_some_and(|b| b.date < year_ago) {
                 ChartModel::candles(
-                    "10 years, weekly bars (EFV band with lane A1's EFV history)",
+                    "10 years, weekly bars over the EFV band",
                     ten_year_view(&daily),
                 )
             } else {
-                ChartModel::candles("Daily bars (EFV band with lane A1's EFV history)", daily)
+                ChartModel::candles("Daily bars over the EFV band", daily)
             })
         }
         PageRef::Industry(id) => {
@@ -64,21 +65,17 @@ pub fn placeholder_chart(page: &PageRef, v: &sim::SimViews) -> Option<ChartModel
             if q.is_empty() {
                 return None;
             }
+            let supply: Vec<_> = q.iter().map(|h| h.supply).collect();
+            let mut series = vec![Series::Line {
+                name: "demand".into(),
+                values: q.iter().map(|h| h.demand).collect(),
+                color: color::CYAN,
+            }];
+            series.extend(Series::figures("supply", &supply, color::AMBER));
             Some(ChartModel {
                 title: format!("Demand vs supply, last {} quarters", q.len()),
                 labels: q.iter().map(|h| h.quarter.to_string()).collect(),
-                series: vec![
-                    Series::Line {
-                        name: "demand".into(),
-                        values: q.iter().map(|h| h.demand).collect(),
-                        color: color::CYAN,
-                    },
-                    Series::Line {
-                        name: "supply".into(),
-                        values: q.iter().map(|h| h.supply.shown()).collect(),
-                        color: color::AMBER,
-                    },
-                ],
+                series,
                 format: ValueFormat::Money,
                 reference: None,
             })
@@ -101,12 +98,11 @@ fn spec(kind: PageKind) -> (&'static [ViewKey], &'static [&'static str], &'stati
                 ViewKey::Statements,
                 ViewKey::Projection,
                 ViewKey::Births,
+                ViewKey::CapTable,
+                ViewKey::Characters,
+                ViewKey::Places,
             ],
-            &[
-                "v_cap_table (A1)",
-                "v_characters (A1)",
-                "estimate bands (A1)",
-            ],
+            &[],
             "M9.2 and M9.7 (lane B1): header with owner of record and controller, Founded and \
              Listed lines; Overview, Board, Cap table, Units, Financials and Tech tabs.",
         ),
@@ -121,29 +117,34 @@ fn spec(kind: PageKind) -> (&'static [ViewKey], &'static [&'static str], &'stati
              growth, the fringe row and the company list.",
         ),
         PageKind::Character => (
-            &[ViewKey::CompanyDetail],
-            &["v_characters (A1)"],
+            &[ViewKey::Characters, ViewKey::Places, ViewKey::CompanyRows],
+            &[],
             "Lane B1: age, skills, traits, home province and country, roles (seats, \
              controller, founder, director), holdings; partial characters marked.",
         ),
         PageKind::Country => (
-            &[ViewKey::CompanyRows],
-            &["v_countries (A1)", "v_rates (A1)"],
+            &[ViewKey::Countries, ViewKey::Rates, ViewKey::CompanyRows],
+            &[],
             "Lane B1: iso3, superregion, sovereign rating and spread, tax rate, HQ'd companies.",
         ),
         PageKind::Zone => (
-            &[ViewKey::Cycle, ViewKey::Exchanges],
-            &["v_zones (A1)"],
+            &[ViewKey::Zones, ViewKey::Rates, ViewKey::Exchanges],
+            &[],
             "Lane B1: spread, confidence, index, member countries.",
         ),
         PageKind::Exchange => (
-            &[ViewKey::Exchanges, ViewKey::Quotes, ViewKey::Cycle],
+            &[
+                ViewKey::Exchanges,
+                ViewKey::Quotes,
+                ViewKey::Zones,
+                ViewKey::Places,
+            ],
             &[],
             "Lane B1: listed companies, constituents and the index chart.",
         ),
         PageKind::Event => (
             &[ViewKey::Births, ViewKey::News],
-            &["event names (A1)"],
+            &[],
             "Lane B2: the event's type, date, industries and the startups it made.",
         ),
         PageKind::Recap => (
@@ -153,7 +154,7 @@ fn spec(kind: PageKind) -> (&'static [ViewKey], &'static [&'static str], &'stati
                 ViewKey::Clock,
                 ViewKey::IndustryRows,
             ],
-            &["recap ranges as bands (A1)"],
+            &[],
             "M9.5 (lane B2): world page (global phase and g_t, industries by phase label, \
              biggest expected beats and misses) and watchlist company pages.",
         ),
@@ -268,17 +269,26 @@ pub fn related(
     let mut out: Vec<(&'static str, Vec<(String, PageRef)>)> = Vec::new();
     match page {
         PageRef::Company(id) => {
+            let detail = v.company_detail.get().get(*id);
             if let Some(r) = v.company_rows.get().rows.iter().find(|r| r.id == *id) {
                 out.push(("Industry", vec![t(PageRef::Industry(r.industry))]));
-                out.push(("HQ", vec![t(PageRef::Country(r.hq_country))]));
+                let hq = detail
+                    .and_then(|d| names::place(v, d.hq_province))
+                    .unwrap_or_else(|| t(PageRef::Country(r.hq_country)));
+                out.push(("HQ", vec![hq]));
                 if let Some(z) = r.exchange {
                     out.push(("Exchange", vec![t(PageRef::Exchange(z))]));
                 }
-            }
-            if let Some(d) = v.company_detail.get().get(*id) {
-                if let Some(c) = d.controller {
-                    out.push(("Controller", vec![t(PageRef::Character(c))]));
+                if let (Some(p), Some(n)) =
+                    (names::controller_page(r.controller), &r.controller_name)
+                {
+                    out.push(("Controller", vec![(n.clone(), p)]));
                 }
+                if let Some(o) = r.owner_of_record {
+                    out.push(("Owner of record", vec![t(PageRef::Character(o))]));
+                }
+            }
+            if let Some(d) = detail {
                 let board: Vec<_> = d
                     .board
                     .iter()
@@ -313,46 +323,70 @@ pub fn related(
             out.push(("List", vec![t(PageRef::Industries)]));
         }
         PageRef::Character(id) => {
-            let mut seats = Vec::new();
-            let mut controls = Vec::new();
-            for c in &v.company_detail.get().companies {
-                if c.status == CompanyStatus::Removed {
-                    continue;
-                }
-                if c.board
-                    .iter()
-                    .any(|s| s.holder.as_ref().is_some_and(|h| h.character == Some(*id)))
+            if let Some(c) = v.characters.get().get(*id) {
+                if let Some(h) = &c.home
+                    && let Some(home) = names::place(v, h.province)
                 {
-                    seats.push(t(PageRef::Company(c.id)));
+                    out.push(("Home", vec![home]));
                 }
-                if c.controller == Some(*id) {
-                    controls.push(t(PageRef::Company(c.id)));
+                let mut seats = Vec::new();
+                let mut controls = Vec::new();
+                let mut other = Vec::new();
+                for r in &c.roles {
+                    let (_, co) = names::role(r);
+                    let link = t(PageRef::Company(co));
+                    let list = match r {
+                        Role::Seat { .. } | Role::Director { .. } => &mut seats,
+                        Role::Controller { .. } => &mut controls,
+                        _ => &mut other,
+                    };
+                    if !list.contains(&link) {
+                        list.push(link);
+                    }
                 }
+                out.push(("Controls", controls));
+                out.push(("Board seats", seats));
+                out.push(("Founder or owner", other));
+                out.push((
+                    "Holdings",
+                    c.holdings
+                        .iter()
+                        .map(|h| t(PageRef::Company(h.company)))
+                        .collect(),
+                ));
             }
-            out.push(("Controls", controls));
-            out.push(("Board seats", seats));
             out.push(("List", vec![t(PageRef::Characters)]));
         }
         PageRef::Country(id) => {
-            let hq: Vec<_> = v
-                .company_rows
-                .get()
-                .rows
-                .iter()
-                .filter(|r| r.hq_country == *id && r.status != CompanyStatus::Removed)
-                .take(12)
-                .map(|r| t(PageRef::Company(r.id)))
-                .collect();
-            out.push(("HQ companies", hq));
+            if let Some(c) = v.countries.get().get(*id) {
+                out.push(("Zone", vec![t(PageRef::Zone(c.zone))]));
+                out.push((
+                    "HQ companies",
+                    c.hq_companies
+                        .iter()
+                        .take(12)
+                        .map(|&co| t(PageRef::Company(co)))
+                        .collect(),
+                ));
+            }
             out.push(("List", vec![t(PageRef::Countries)]));
         }
         PageRef::Zone(id) => {
             out.push(("Exchange", vec![t(PageRef::Exchange(*id))]));
+            if let Some(z) = v.zones.get().get(*id) {
+                out.push((
+                    "Countries",
+                    z.members.iter().map(|&c| t(PageRef::Country(c))).collect(),
+                ));
+            }
             out.push(("List", vec![t(PageRef::Zones)]));
         }
         PageRef::Exchange(zone) => {
             out.push(("Zone", vec![t(PageRef::Zone(*zone))]));
             if let Some(x) = v.exchanges.get().exchanges.iter().find(|x| x.zone == *zone) {
+                if let Some(hub) = names::place(v, x.hub_province) {
+                    out.push(("Hub", vec![hub]));
+                }
                 out.push((
                     "Constituents",
                     x.constituents

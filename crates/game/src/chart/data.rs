@@ -2,9 +2,11 @@
 //! aggregation for the 10-year view, and the scale and primitives a chart is drawn from. Pure
 //! functions, so the drawing is tested without a window.
 
+use bevy::prelude::Alpha;
 use bevy::prelude::Color;
 use sim::market::daily::DailyBar;
 use sim::time::Date;
+use sim::views::estimate::Figure;
 
 use crate::table::format;
 use crate::ui::theme::color;
@@ -22,6 +24,9 @@ pub struct Ohlc {
 }
 
 impl Ohlc {
+    /// A view bar with its EFV band (D424, D465): the bar's `efv_low()` to `efv_high()`, the
+    /// estimate in force through that day (a weekly or monthly bar from `get_price_history`
+    /// carries its last day's EFV).
     pub fn from_bar(b: &DailyBar) -> Ohlc {
         Ohlc {
             date: b.date,
@@ -29,7 +34,7 @@ impl Ohlc {
             high: b.high,
             low: b.low,
             close: b.close,
-            band: None,
+            band: (b.efv.is_finite() && b.efv > 0.0).then(|| (b.efv_low(), b.efv_high())),
         }
     }
 
@@ -44,7 +49,8 @@ pub const LONG_VIEW_YEARS: i32 = 10;
 
 /// Daily bars into Monday-to-Sunday weeks, each dated by its first bar (as v_price_bars'
 /// weekly resolution): the first open, the last close, the highest high and lowest low, and the
-/// band of the week's last bar (the band at the close, as the close is the last day's; D457).
+/// band of the week's last bar (the band at the close, as the close is the last day's; D457),
+/// as v_price_bars' weekly bars take the last day's EFV (D424).
 pub fn weekly(daily: &[Ohlc]) -> Vec<Ohlc> {
     let key = |d: Date| d.days_since_epoch() - d.weekday().index() as i64;
     let mut out: Vec<Ohlc> = Vec::with_capacity(daily.len() / 5 + 1);
@@ -56,9 +62,7 @@ pub fn weekly(daily: &[Ohlc]) -> Vec<Ohlc> {
                 w.high = w.high.max(b.high);
                 w.low = w.low.min(b.low);
                 w.close = b.close;
-                if b.band.is_some() {
-                    w.band = b.band;
-                }
+                w.band = b.band;
             }
             _ => {
                 out.push(*b);
@@ -111,6 +115,17 @@ impl ValueFormat {
             ValueFormat::Number => format!("{v:.2}"),
         }
     }
+
+    /// A band's range, as the table writes one (D456): `low-high`, or `low to high` when it
+    /// reaches below zero.
+    pub fn band(self, low: f64, high: f64) -> String {
+        let (l, h) = (self.fmt(low), self.fmt(high));
+        if low < 0.0 || high < 0.0 {
+            format!("{l} to {h}")
+        } else {
+            format!("{l}-{h}")
+        }
+    }
 }
 
 /// One series of a chart. Every series of a chart has one value per x slot.
@@ -129,6 +144,13 @@ pub enum Series {
     },
     /// Candles, drawn over their EFV band.
     Candles(Vec<Ohlc>),
+    /// An estimate band per slot (D420, D466): a translucent strip from low to high, `None`
+    /// where the figure is exact. Put it before the series it belongs to, so it draws under it.
+    Band {
+        name: String,
+        bands: Vec<Option<(f64, f64)>>,
+        color: Color,
+    },
 }
 
 impl Series {
@@ -136,7 +158,38 @@ impl Series {
         match self {
             Series::Line { values, .. } | Series::Bars { values, .. } => values.len(),
             Series::Candles(c) => c.len(),
+            Series::Band { bands, .. } => bands.len(),
         }
+    }
+
+    /// A line of view figures (D466): the exact ones as a line, the bands as a band strip under
+    /// it (the line breaks there), so a chart never draws a band's estimate as if it were known
+    /// and its readout shows a band's range.
+    pub fn figures(name: &str, figures: &[Figure], color: Color) -> Vec<Series> {
+        let values = figures
+            .iter()
+            .map(|f| f.exact().unwrap_or(f64::NAN))
+            .collect();
+        let line = Series::Line {
+            name: name.to_owned(),
+            values,
+            color,
+        };
+        if !figures.iter().any(|f| f.is_band()) {
+            return vec![line];
+        }
+        let bands = figures
+            .iter()
+            .map(|f| f.band().map(|b| (b.low, b.high)))
+            .collect();
+        vec![
+            Series::Band {
+                name: name.to_owned(),
+                bands,
+                color: color.with_alpha(BAND_ALPHA),
+            },
+            line,
+        ]
     }
 
     pub fn is_empty(&self) -> bool {
@@ -198,6 +251,12 @@ impl ChartModel {
                             take(l);
                             take(h);
                         }
+                    }
+                }
+                Series::Band { bands, .. } => {
+                    for &(l, h) in bands.iter().flatten() {
+                        take(l);
+                        take(h);
                     }
                 }
             }
@@ -290,6 +349,8 @@ impl Scale {
 
 /// The EFV band's color (amber, translucent: an estimate, 11.4 warnings).
 pub const BAND_COLOR: Color = Color::srgba(1.0, 0.690, 0.0, 0.16);
+/// The alpha of a figure's estimate band, in its line's color (D466).
+pub const BAND_ALPHA: f32 = 0.22;
 /// A candle body's share of its slot.
 pub const BODY_SHARE: f32 = 0.7;
 
@@ -373,34 +434,60 @@ pub fn primitives(m: &ChartModel, w: f32, h: f32) -> (Vec<Prim>, Option<Scale>) 
                     });
                 }
             }
+            Series::Band {
+                bands, color: c, ..
+            } => {
+                for (i, b) in bands.iter().enumerate() {
+                    if let Some((l, hb)) = *b
+                        && l.is_finite()
+                        && hb.is_finite()
+                    {
+                        let (y1, y2) = (sc.y(hb), sc.y(l));
+                        out.push(Prim::Rect {
+                            x: slot * i as f32,
+                            y: y1,
+                            w: slot.max(1.0),
+                            h: (y2 - y1).max(1.0),
+                            color: *c,
+                        });
+                    }
+                }
+            }
             Series::Line {
                 values, color: c, ..
             } => {
-                let pts: Vec<(f32, f32)> = values
-                    .iter()
-                    .enumerate()
-                    .filter(|(_, v)| v.is_finite())
-                    .map(|(i, &v)| (cx(i), sc.y(v)))
-                    .collect();
-                for p in pts.windows(2) {
-                    out.push(Prim::Segment {
-                        x1: p[0].0,
-                        y1: p[0].1,
-                        x2: p[1].0,
-                        y2: p[1].1,
-                        width: 1.5,
-                        color: *c,
-                    });
+                // Runs of adjacent finite values; a missing value (a band, D466) breaks the line.
+                let mut run: Vec<(f32, f32)> = Vec::new();
+                let flush = |run: &mut Vec<(f32, f32)>, out: &mut Vec<Prim>| {
+                    for p in run.windows(2) {
+                        out.push(Prim::Segment {
+                            x1: p[0].0,
+                            y1: p[0].1,
+                            x2: p[1].0,
+                            y2: p[1].1,
+                            width: 1.5,
+                            color: *c,
+                        });
+                    }
+                    if run.len() == 1 {
+                        out.push(Prim::Rect {
+                            x: run[0].0 - 1.5,
+                            y: run[0].1 - 1.5,
+                            w: 3.0,
+                            h: 3.0,
+                            color: *c,
+                        });
+                    }
+                    run.clear();
+                };
+                for (i, &v) in values.iter().enumerate() {
+                    if v.is_finite() {
+                        run.push((cx(i), sc.y(v)));
+                    } else {
+                        flush(&mut run, &mut out);
+                    }
                 }
-                if pts.len() == 1 {
-                    out.push(Prim::Rect {
-                        x: pts[0].0 - 1.5,
-                        y: pts[0].1 - 1.5,
-                        w: 3.0,
-                        h: 3.0,
-                        color: *c,
-                    });
-                }
+                flush(&mut run, &mut out);
             }
         }
     }
@@ -439,8 +526,13 @@ pub fn readout(m: &ChartModel, i: usize) -> String {
                 }
             }
             Series::Line { name, values, .. } | Series::Bars { name, values, .. } => {
-                if let Some(&v) = values.get(i) {
+                if let Some(&v) = values.get(i).filter(|v| v.is_finite()) {
                     parts.push(format!("{name} {}", f(v)));
+                }
+            }
+            Series::Band { name, bands, .. } => {
+                if let Some(&Some((l, h))) = bands.get(i) {
+                    parts.push(format!("{name} {}", m.format.band(l, h)));
                 }
             }
         }
@@ -599,6 +691,69 @@ mod tests {
                 }
             }
         }
+    }
+
+    /// A view bar carries its EFV band (D465): `efv_low()` to `efv_high()`.
+    #[test]
+    fn bars_carry_their_efv_band() {
+        let b = DailyBar {
+            date: Date::ymd(2020, 3, 2),
+            open: 10.0,
+            high: 11.0,
+            low: 9.5,
+            close: 10.5,
+            efv: 12.0,
+        };
+        let o = Ohlc::from_bar(&b);
+        assert_eq!(o.band, Some((b.efv_low(), b.efv_high())));
+        assert_eq!(Ohlc::from_bar(&DailyBar { efv: 0.0, ..b }).band, None);
+    }
+
+    /// Figures chart as a line where exact and a band strip where banded (D466): the line
+    /// breaks at the bands, the readout shows a band's range and never its estimate.
+    #[test]
+    fn figures_draw_bands_and_break_the_line() {
+        use sim::views::estimate::Band;
+        let band = |estimate: f64| {
+            Figure::Band(Band {
+                estimate,
+                low: estimate * 0.75,
+                high: estimate * 1.25,
+            })
+        };
+        let f = [
+            Figure::Exact(10.0),
+            Figure::Exact(11.0),
+            band(12.345),
+            Figure::Exact(13.0),
+        ];
+        let series = Series::figures("supply", &f, color::AMBER);
+        assert_eq!(series.len(), 2, "a band under a line");
+        assert!(matches!(series[0], Series::Band { .. }));
+        let m = ChartModel {
+            title: "t".into(),
+            labels: vec!["a".into(), "b".into(), "c".into(), "d".into()],
+            series,
+            format: ValueFormat::Number,
+            reference: None,
+        };
+        let (prims, _) = primitives(&m, 400.0, 100.0);
+        let segments = prims
+            .iter()
+            .filter(|p| matches!(p, Prim::Segment { .. }))
+            .count();
+        let rects = prims
+            .iter()
+            .filter(|p| matches!(p, Prim::Rect { .. }))
+            .count();
+        assert_eq!(segments, 1, "a then b; c is a band; d alone");
+        assert_eq!(rects, 2, "the band and d's dot");
+        let r = readout(&m, 2);
+        assert!(r.contains("supply 9.26-15.43"), "{r}");
+        assert!(!r.contains("12.3"), "{r}");
+        assert!(readout(&m, 0).contains("supply 10.00"));
+        let exact = Series::figures("x", &[Figure::Exact(1.0)], color::CYAN);
+        assert_eq!(exact.len(), 1, "no band strip when every figure is exact");
     }
 
     #[test]
