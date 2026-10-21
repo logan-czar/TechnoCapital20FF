@@ -11,7 +11,6 @@ use sim::births::ipo::{
     next_vote_after, passes_ipo_tests, trait_modifier, voters, yes_chance,
 };
 use sim::births::names::{ticker, ticker_candidates};
-use sim::births::startup::{open_price, shares_for};
 use sim::finance::balance::{Books, balance_sheet, check_identity};
 use sim::finance::distress::CompanyStatus;
 use sim::finance::rating::Rating;
