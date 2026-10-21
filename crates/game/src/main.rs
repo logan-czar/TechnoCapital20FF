@@ -4,8 +4,6 @@
 //! [--rows N]`, `--bench-max [seconds]` and `--bench-pages` (every page kind to its first
 //! laid-out frame), which print timings to stdout and exit.
 
-use std::sync::Arc;
-
 use bevy::prelude::*;
 use bevy::window::PresentMode;
 use game::bench::{BenchMode, BenchPlugin};
@@ -47,7 +45,10 @@ fn parse_args() -> Args {
             flag @ ("--bench-table" | "--bench-max") => {
                 let seconds = number(i).unwrap_or(DEFAULT_BENCH_SECONDS);
                 args.bench = Some(if flag == "--bench-table" {
-                    BenchMode::Table { seconds }
+                    BenchMode::Table {
+                        seconds,
+                        rows: None,
+                    }
                 } else {
                     BenchMode::Max { seconds }
                 });
@@ -79,14 +80,14 @@ fn exit_usage(msg: &str) -> ! {
 }
 
 fn main() {
-    let args = parse_args();
+    let mut args = parse_args();
     let data = sim_data::load_world(&sim_data::default_data_dir()).unwrap_or_else(|e| {
         eprintln!("cannot load the starting data: {e}");
         std::process::exit(1)
     });
-    let mut demo = demo_tables(&data);
-    if let Some(n) = args.rows {
-        demo.provinces = Arc::new(demo.provinces.repeated_to(n));
+    let demo = demo_tables(&data);
+    if let (Some(BenchMode::Table { rows, .. }), Some(n)) = (&mut args.bench, args.rows) {
+        *rows = Some(n);
     }
     let sim = Sim::new(data, args.seed).unwrap_or_else(|e| {
         eprintln!("cannot build the start state: {e}");

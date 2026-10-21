@@ -22,8 +22,14 @@
 //! A later registration for a kind replaces the earlier one, so Phase B plugins (added after
 //! [`PagesPlugin`]) replace the placeholders. Pages read only [`crate::bridge::Views`] (spec 9).
 
+pub mod events;
+pub mod industries;
 pub mod lists;
+pub mod live;
+pub mod market;
+pub mod news;
 pub mod placeholder;
+pub mod recap;
 pub mod settings;
 pub mod world;
 

@@ -462,10 +462,8 @@ fn every_page_kind_builds() {
                 .count();
             assert_eq!(tables, 1, "{p} has its index table");
         }
-        if matches!(
-            p.kind(),
-            PageKind::Company | PageKind::Industry | PageKind::Zone
-        ) {
+        // Industry, Event, Recap and Headline are lane B2's pages now.
+        if matches!(p.kind(), PageKind::Company | PageKind::Zone) {
             assert!(
                 texts.iter().any(|t| t.contains("Placeholder")),
                 "{p} is a placeholder"

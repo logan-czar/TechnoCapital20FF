@@ -1,8 +1,9 @@
 //! Release-build benches (D14; build-plan M7.1, M7.7, 4.5), printed to stdout:
 //!
-//! - `--bench-table [seconds]`: the province table on the home screen auto-scrolls every frame
-//!   and re-sorts by the next column every [`SORT_EVERY`] frames; prints frame time p50, p95 and
-//!   max, the frames that sorted, and the sort times. `--rows N` repeats the provinces to N rows.
+//! - `--bench-table [seconds]`: the real company table (Pdoomberg's F10 Screener over
+//!   v_company_row, full screen) auto-scrolls every frame and re-sorts by the next column every
+//!   [`SORT_EVERY`] frames; prints frame time p50, p95 and max, the frames that sorted, and the
+//!   sort times. `--rows N` repeats its rows to N.
 //! - `--bench-max [seconds]`: the sim at max speed (alerts off) with the shell drawing; prints
 //!   frame times and game hours per second, to show the window stays responsive.
 //!
@@ -14,10 +15,13 @@ use bevy::prelude::*;
 use sim::Control;
 use sim::world::{AlertKind, AlertLevel};
 
+use std::sync::Arc;
+
 use crate::bridge::{SimControl, SimRate, Views};
+use crate::pages::{OpenPdoomberg, PdbFunction};
+use crate::pdoomberg::PdoombergUi;
 use crate::table::{Table, TableSystems};
 use crate::ui::ShellLayout;
-use crate::ui::screens::DemoTableEntities;
 
 /// Frames skipped before measuring (pipeline and font atlas warm-up).
 pub const WARMUP_FRAMES: u32 = 120;
@@ -30,6 +34,8 @@ pub const SCROLL_PER_FRAME: isize = 3;
 pub enum BenchMode {
     Table {
         seconds: f64,
+        /// Repeat the table's rows to this many.
+        rows: Option<usize>,
     },
     Max {
         seconds: f64,
@@ -42,7 +48,7 @@ pub enum BenchMode {
 impl BenchMode {
     fn seconds(self) -> f64 {
         match self {
-            BenchMode::Table { seconds } | BenchMode::Max { seconds } => seconds,
+            BenchMode::Table { seconds, .. } | BenchMode::Max { seconds } => seconds,
             BenchMode::Pages => f64::INFINITY,
         }
     }
@@ -61,6 +67,8 @@ struct Bench {
     /// Frames left whose time counts as a sort frame.
     sort_window: u8,
     next_col: usize,
+    /// The rows were repeated to the asked count.
+    repeated: bool,
 }
 
 pub struct BenchPlugin(pub BenchMode);
@@ -82,11 +90,18 @@ impl Plugin for BenchPlugin {
             sorts_ms: Vec::new(),
             sort_window: 0,
             next_col: 0,
+            repeated: false,
         })
         .add_systems(First, measure)
         .add_systems(Update, drive.before(TableSystems));
-        if let BenchMode::Max { .. } = self.0 {
-            app.add_systems(Startup, max_speed);
+        match self.0 {
+            BenchMode::Max { .. } => {
+                app.add_systems(Startup, max_speed);
+            }
+            BenchMode::Table { .. } => {
+                app.add_systems(Startup, open_screener);
+            }
+            BenchMode::Pages => {}
         }
     }
 }
@@ -101,11 +116,19 @@ fn max_speed(mut w: MessageWriter<SimControl>) {
     w.write(SimControl(Control::SetSpeed(sim::time::control::MAX_SPEED)));
 }
 
-/// The laid-out size of the shell's areas and the demo table, so a bench run also shows the
+/// The table bench's table: Pdoomberg F10, every company from v_company_row.
+fn open_screener(mut w: MessageWriter<OpenPdoomberg>) {
+    w.write(OpenPdoomberg {
+        function: PdbFunction::F10,
+        company: None,
+    });
+}
+
+/// The laid-out size of the shell's areas and the bench table, so a bench run also shows the
 /// layout is sane (no window screenshots in this setup).
 fn report_layout(
     layout: &ShellLayout,
-    tables: Option<&DemoTableEntities>,
+    tables: Option<&PdoombergUi>,
     nodes: &Query<&ComputedNode>,
     children: &Query<&Children>,
     table_q: &Query<&mut Table>,
@@ -130,7 +153,10 @@ fn report_layout(
         .map(|c| c.iter().map(|e| format!("{:.0}", size(e).x)).collect())
         .unwrap_or_default();
     println!("BENCH layout top bar items (px): {}", parts.join(" "));
-    if let Some(t) = tables.and_then(|t| table_q.get(t.provinces).ok()) {
+    if let Some(t) = tables
+        .and_then(|t| t.main_table)
+        .and_then(|e| table_q.get(e).ok())
+    {
         println!(
             "BENCH table: {} rows, pool {} rows, {} visible",
             t.model().len(),
@@ -146,7 +172,7 @@ fn measure(
     rate: Res<SimRate>,
     views: Res<Views>,
     layout: Res<ShellLayout>,
-    tables: Option<Res<DemoTableEntities>>,
+    tables: Option<Res<PdoombergUi>>,
     nodes: Query<&ComputedNode>,
     children: Query<&Children>,
     table_q: Query<&mut Table>,
@@ -219,13 +245,26 @@ fn report(name: &str, v: &mut [f64]) {
     );
 }
 
-fn drive(mut b: ResMut<Bench>, tables: Option<Res<DemoTableEntities>>, mut q: Query<&mut Table>) {
-    if !matches!(b.mode, BenchMode::Table { .. }) || b.start.is_none() {
-        return;
-    }
-    let Some(mut t) = tables.and_then(|t| q.get_mut(t.provinces).ok()) else {
+fn drive(mut b: ResMut<Bench>, tables: Option<Res<PdoombergUi>>, mut q: Query<&mut Table>) {
+    let BenchMode::Table { rows, .. } = b.mode else {
         return;
     };
+    let Some(mut t) = tables
+        .and_then(|t| t.main_table)
+        .and_then(|e| q.get_mut(e).ok())
+    else {
+        return;
+    };
+    if !b.repeated {
+        b.repeated = true;
+        if let Some(n) = rows {
+            let m = t.model().repeated_to(n);
+            t.set_model(Arc::new(m));
+        }
+    }
+    if b.start.is_none() {
+        return;
+    }
     if b.frame.is_multiple_of(SORT_EVERY) {
         let cols = t.model().columns.len();
         let col = b.next_col % cols;

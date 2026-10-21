@@ -574,6 +574,33 @@ impl Table {
     }
 }
 
+/// A table's colors, on its root node: without one a table draws in the theme's colors. Full-screen
+/// Pdoomberg draws its tables amber on black ([`TableLook::TERMINAL`]; 20-ui 20.5.2; D514). Gains,
+/// losses, links and bands keep their own colors.
+#[derive(Component, Debug, Clone, Copy, PartialEq)]
+pub struct TableLook {
+    /// Plain cell text.
+    pub text: Color,
+    /// Header titles.
+    pub header: Color,
+    pub header_bg: Color,
+    /// Row stripes.
+    pub rows: [Color; 2],
+    /// The table's and footer's background.
+    pub bg: Color,
+}
+
+impl TableLook {
+    /// Pdoomberg's terminal: amber text on black, faint stripes (20-ui 20.5.2).
+    pub const TERMINAL: TableLook = TableLook {
+        text: color::TERMINAL_TEXT,
+        header: color::TERMINAL_TEXT,
+        header_bg: Color::srgb(0.10, 0.07, 0.0),
+        rows: [color::TERMINAL_BG, Color::srgb(0.05, 0.035, 0.0)],
+        bg: color::TERMINAL_BG,
+    };
+}
+
 /// The table under the keyboard.
 #[derive(Resource, Debug, Default, Clone, Copy, PartialEq)]
 pub struct TableFocus(pub Option<Entity>);
@@ -1159,22 +1186,23 @@ fn keyboard_scroll(
 /// color or link differs are written.
 #[allow(clippy::type_complexity)]
 fn redraw(
-    tables: Query<&Table, Changed<Table>>,
+    tables: Query<(&Table, Option<&TableLook>), Changed<Table>>,
     mut texts: Query<(&mut Text, &mut TextColor)>,
     mut backgrounds: Query<&mut BackgroundColor>,
     mut slots: Query<&mut LinkSlot>,
 ) {
-    for t in &tables {
+    for (t, look) in &tables {
         if t.built_layout != t.layout {
             continue;
         }
+        let (plain, rows) = look.map_or((color::TEXT, color::ROW), |l| (l.text, l.rows));
         for (slot, row) in t.pool.iter().enumerate() {
             let pos = t.top + slot;
             let data = t.row_at(pos);
             for (i, &col) in t.shown.iter().enumerate() {
                 let value = data.map_or("", |r| t.model.display(r, col));
                 let cell = data.and_then(|r| t.model.get(r, col));
-                let want_color = cell.and_then(Cell::color).unwrap_or(color::TEXT);
+                let want_color = cell.and_then(Cell::color).unwrap_or(plain);
                 if let Ok((mut text, mut tc)) = texts.get_mut(row.texts[i]) {
                     if text.0 != value {
                         value.clone_into(&mut text.0);
@@ -1191,7 +1219,7 @@ fn redraw(
                 }
             }
             // Stripes follow the data, so they scroll with it.
-            let stripe = color::ROW[pos % 2];
+            let stripe = rows[pos % 2];
             if let Ok(mut bg) = backgrounds.get_mut(row.node)
                 && bg.0 != stripe
             {
@@ -1210,6 +1238,35 @@ fn redraw(
                 && text.0 != title
             {
                 text.0 = title;
+            }
+        }
+    }
+}
+
+/// Paints the background, header and footer of tables with a [`TableLook`] (cells follow it in
+/// [`redraw`]). Cheap: a few tables, and only what differs is written.
+fn apply_looks(
+    tables: Query<(Entity, &Table, &TableLook)>,
+    mut texts: Query<&mut TextColor>,
+    mut backgrounds: Query<&mut BackgroundColor>,
+) {
+    for (root, t, look) in &tables {
+        for (e, want) in [
+            (root, look.bg),
+            (t.header_row, look.header_bg),
+            (t.footer, look.bg),
+        ] {
+            if let Ok(mut bg) = backgrounds.get_mut(e)
+                && bg.0 != want
+            {
+                bg.0 = want;
+            }
+        }
+        for &e in &t.header {
+            if let Ok(mut c) = texts.get_mut(e)
+                && c.0 != look.header
+            {
+                c.0 = look.header;
             }
         }
     }
@@ -1280,7 +1337,7 @@ impl Plugin for TablePlugin {
                     build_layouts,
                     resize_pools,
                     apply_widths,
-                    (redraw, redraw_footers),
+                    (redraw, redraw_footers, apply_looks),
                     store_configs,
                 )
                     .chain()
