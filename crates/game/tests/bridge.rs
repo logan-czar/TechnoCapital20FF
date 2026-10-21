@@ -292,3 +292,81 @@ fn earnings_day_and_recap_pause_by_default() {
     );
     assert_eq!(pauses, [release_tick(Q1_2020), recap_tick(Q1_2020)]);
 }
+
+/// The app's views equal `want` exactly (every view and the refresh count).
+fn assert_views(app: &App, want: &sim::SimViews, what: &str) {
+    let views = app.world().resource::<Views>();
+    assert!(**views == *want, "{what}: stale views");
+    assert_eq!(views.refresh(), want.refresh(), "{what}: refresh");
+}
+
+/// M7.3: a NewGame rebuilds every view at refresh 1, version 1, so the bridge copies them all,
+/// even when the old game's refresh or versions happen to match.
+#[test]
+fn new_game_replaces_every_view() {
+    // Only a SetAlert since the start: the old game is still at refresh 1.
+    let mut app = bridge_app();
+    send(
+        &mut app,
+        Control::SetAlert {
+            kind: AlertKind::PlanLock,
+            level: AlertLevel::Off,
+        },
+    );
+    frames(&mut app, 1);
+    send(&mut app, Control::NewGame { seed: 7 });
+    frames(&mut app, 2);
+    assert_views(
+        &app,
+        sim::Sim::new(data(), 7).unwrap().views(),
+        "after SetAlert",
+    );
+
+    // An old game that ran into February (later refresh, newer versions).
+    let mut app = bridge_app();
+    alerts_off(&mut app);
+    send(&mut app, Control::SkipTo(SkipKind::MonthEnd));
+    frames(&mut app, 200);
+    assert!(app.world().resource::<Views>().refresh() > 1);
+    send(&mut app, Control::NewGame { seed: 7 });
+    frames(&mut app, 2);
+    assert_views(
+        &app,
+        sim::Sim::new(data(), 7).unwrap().views(),
+        "after a run",
+    );
+}
+
+/// M7.3: a Load rebuilds every view at refresh 1 (D13), so the bridge copies them all, whatever
+/// refresh the game it replaces had reached.
+#[test]
+fn load_replaces_every_view() {
+    let dir = std::env::temp_dir().join(format!("m7-bridge-load-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let path = dir.join("save.bin");
+    let mut saved = sim();
+    for _ in 0..100 {
+        saved.step();
+    }
+    saved.save(&path).unwrap();
+    let mut want = sim::Sim::new(data(), 1).unwrap();
+    want.load(&path).unwrap();
+
+    // Into a fresh game (same refresh, 1) and into one that has run (a different refresh).
+    for run in [0, 60] {
+        let mut app = bridge_app();
+        if run > 0 {
+            alerts_off(&mut app);
+            send(&mut app, Control::SetSpeed(4));
+            frames(&mut app, run);
+        }
+        send(&mut app, Control::Load(path.clone()));
+        frames(&mut app, 2);
+        assert_views(&app, want.views(), &format!("load after {run} frames"));
+        assert_eq!(
+            app.world().resource::<Views>().clock().now,
+            DateTime::from_hours(100)
+        );
+    }
+    let _ = std::fs::remove_dir_all(&dir);
+}

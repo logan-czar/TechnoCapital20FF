@@ -135,6 +135,8 @@ pub struct SimRunner {
     owed: f64,
     budget: Duration,
     spent: Duration,
+    /// A NewGame or Load rebuilt every view since the last sync.
+    rebuilt: bool,
 }
 
 impl SimRunner {
@@ -144,6 +146,7 @@ impl SimRunner {
             owed: 0.0,
             budget: FRAME_STEP_BUDGET,
             spent: Duration::ZERO,
+            rebuilt: false,
         }
     }
 
@@ -225,6 +228,12 @@ fn apply_controls(
         any = true;
         match runner.sim.apply(control.clone()) {
             Ok(out) => {
+                // NewGame and Load rebuild every view at refresh 1, version 1 (spec 9.4 "and on
+                // load"), so version numbers cannot tell old from new: copy them all.
+                if matches!(control, Control::NewGame { .. } | Control::Load(_)) {
+                    runner.rebuilt = true;
+                    runner.owed = 0.0;
+                }
                 notices.write_batch(out.into_iter().map(SimNotice));
             }
             Err(e) => warn!("control {control:?} refused: {e}"),
@@ -304,12 +313,16 @@ fn step_sim(
 
 /// Copies the changed views in, once per frame (spec 9.4; build-plan M7.3).
 fn sync_views(
-    runner: Res<SimRunner>,
+    mut runner: ResMut<SimRunner>,
     mut views: ResMut<Views>,
     mut mirror: ResMut<RunnerControls>,
 ) {
+    let runner = &mut *runner;
     let src = runner.sim.views();
-    if views.refresh != src.refresh() {
+    if std::mem::take(&mut runner.rebuilt) {
+        // A new game or a load: every view is new, whatever its version says.
+        *views = Views::new(src);
+    } else if views.refresh != src.refresh() {
         views.sync_from(src);
     }
     if mirror.0 != *runner.sim.controls() {
