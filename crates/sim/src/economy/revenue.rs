@@ -78,7 +78,8 @@ pub fn shared_costs_month_hook(world: &World, unit: &BusinessUnit) -> f64 {
         .map(|&u| world.units[u].revenue_m.max(0.0))
         .sum();
     if total > 0.0 {
-        bill * unit.revenue_m.max(0.0) / total
+        // The share first, so a sole unit's share is exactly 1.
+        bill * (unit.revenue_m.max(0.0) / total)
     } else {
         bill / company.units.len().max(1) as f64
     }
