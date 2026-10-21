@@ -222,7 +222,7 @@ fn perturb_even_companies(w: &mut World, ctx: &mut JobCtx<'_>) {
     let now = ctx.facts.now;
     let base = project_quarter_net_income(w, now);
     let mut copy = w.clone();
-    let even = |id: CompanyId| id.0 % 2 == 0;
+    let even = |id: CompanyId| id.0.is_multiple_of(2);
     for (_, u) in copy.units.iter_mut() {
         if even(u.company) {
             u.growth_plan += PERTURB_GROWTH;
