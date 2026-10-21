@@ -6,6 +6,7 @@ A cyberpunk grand strategy game: CK3-style corporate feudalism on a Wall Street 
 
 - `docs/design/`: the design docs. Start with `docs/design/mvp/mvp-spec.md` (what the MVP does) and `docs/design/mvp/build-plan.md` (crates, milestones, tasks). The working copy is edited in the project's shared folder and copied here, so treat `docs/design/` as read-only from code PRs unless a PR is about the docs.
 - `docs/design/data/`: the starting world CSVs the game loads. `docs/design/tools/mvp-data/` generates and validates them (`python3 gen.py && python3 validate.py`).
+- `scripts/sync-design.sh`: refreshes `docs/design/` from the shared design folder (`/mnt/project-files/design`) and runs both data checkers (validate.py and `cargo run -p headless -- --check-data`).
 - Rust code (from M0 on): one Cargo workspace at the repo root with the crates `sim`, `sim-data`, `game`, `headless` and `mapgen` (build-plan section 2).
 
 ## Rules
