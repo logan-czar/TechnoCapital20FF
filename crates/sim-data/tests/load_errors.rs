@@ -74,3 +74,10 @@ fn good_rows_load() {
     assert_eq!(t.lines[0], 2);
     assert_eq!(t.rows[0].iso3, "USA");
 }
+
+#[test]
+fn crlf_first_row_is_line_2() {
+    // csv's own line counter says 1 here; lines are counted from the bytes.
+    let e = load_err("crlf-first-row.csv");
+    assert_at(&e, "crlf-first-row.csv", 2, Some("gdp_usd_bn"));
+}

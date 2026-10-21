@@ -3,7 +3,7 @@
 
 use std::path::Path;
 
-use csv::{ErrorKind, StringRecord};
+use csv::{ErrorKind, Position, StringRecord};
 use serde::de::DeserializeOwned;
 
 use crate::DataError;
@@ -45,11 +45,12 @@ impl<T> Table<T> {
 
 /// Loads `dir/file` into rows of `T`, using the header row to match columns to fields.
 pub fn load_table<T: DeserializeOwned>(dir: &Path, file: &str) -> Result<Table<T>, DataError> {
-    let mut reader =
-        csv::Reader::from_path(dir.join(file)).map_err(|e| DataError::file(file, e.to_string()))?;
+    let bytes = std::fs::read(dir.join(file)).map_err(|e| DataError::file(file, e.to_string()))?;
+    let lines = LineIndex::new(&bytes);
+    let mut reader = csv::Reader::from_reader(bytes.as_slice());
     let headers = reader
         .headers()
-        .map_err(|e| csv_error(file, &StringRecord::new(), e))?
+        .map_err(|e| csv_error(file, &lines, &StringRecord::new(), e))?
         .clone();
     let mut table = Table {
         file: file.to_owned(),
@@ -59,29 +60,53 @@ pub fn load_table<T: DeserializeOwned>(dir: &Path, file: &str) -> Result<Table<T
     let mut record = StringRecord::new();
     while reader
         .read_record(&mut record)
-        .map_err(|e| csv_error(file, &headers, e))?
+        .map_err(|e| csv_error(file, &lines, &headers, e))?
     {
         let row = record.deserialize(Some(&headers)).map_err(|e| {
-            let mut err = csv_error(file, &headers, e);
+            let mut err = csv_error(file, &lines, &headers, e);
             if err.field.is_none() {
                 err.field = find_bad_column::<T>(&headers, &record, &err.message);
             }
             err
         })?;
         table.rows.push(row);
-        table.lines.push(record.position().map_or(0, |p| p.line()));
+        table.lines.push(lines.line(record.position()));
     }
     Ok(table)
 }
 
-fn csv_error(file: &str, headers: &StringRecord, e: csv::Error) -> DataError {
+/// Line numbers from byte offsets. After a CRLF line (the province files use CRLF) csv reports the
+/// next record as starting on the `\n` of the line before, with a line count one short, so lines
+/// are counted from the bytes, and a `\n` at the start offset belongs to the previous line.
+struct LineIndex(Vec<u64>);
+
+impl LineIndex {
+    fn new(bytes: &[u8]) -> Self {
+        Self(
+            (0u64..)
+                .zip(bytes)
+                .filter(|&(_, &b)| b == b'\n')
+                .map(|(i, _)| i)
+                .collect(),
+        )
+    }
+
+    /// 1-based line on which the record at `pos` starts (0 when unknown).
+    fn line(&self, pos: Option<&Position>) -> u64 {
+        pos.map_or(0, |p| {
+            self.0.partition_point(|&nl| nl <= p.byte()) as u64 + 1
+        })
+    }
+}
+
+fn csv_error(file: &str, lines: &LineIndex, headers: &StringRecord, e: csv::Error) -> DataError {
     let column = |i: Option<u64>| {
         i.and_then(|i| headers.get(usize::try_from(i).ok()?))
             .map(str::to_owned)
     };
-    let (line, field, message) = match e.kind() {
+    let (pos, field, message) = match e.kind() {
         ErrorKind::Deserialize { pos, err } => (
-            pos.as_ref().map(|p| p.line()),
+            pos.as_ref(),
             column(err.field()).or_else(|| missing_field(&err.kind().to_string())),
             err.kind().to_string(),
         ),
@@ -90,20 +115,20 @@ fn csv_error(file: &str, headers: &StringRecord, e: csv::Error) -> DataError {
             expected_len,
             len,
         } => (
-            pos.as_ref().map(|p| p.line()),
+            pos.as_ref(),
             None,
             format!("row has {len} fields, the header has {expected_len}"),
         ),
         ErrorKind::Utf8 { pos, err } => (
-            pos.as_ref().map(|p| p.line()),
+            pos.as_ref(),
             column(Some(err.field() as u64)),
             "not valid UTF-8".to_owned(),
         ),
-        _ => (e.position().map(|p| p.line()), None, e.to_string()),
+        _ => (e.position(), None, e.to_string()),
     };
     DataError {
         file: file.to_owned(),
-        line,
+        line: pos.map(|p| lines.line(Some(p))),
         field,
         message,
     }
