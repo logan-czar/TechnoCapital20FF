@@ -8,6 +8,8 @@
 use bevy::picking::hover::Hovered;
 use bevy::prelude::*;
 
+use crate::config::UiConfig;
+
 /// Color tokens. The four neon accents carry meaning (11.4): cyan money and gains, magenta alerts
 /// and losses, amber warnings, green health and growth.
 pub mod color {
@@ -40,6 +42,16 @@ pub mod color {
     pub const TERMINAL_TEXT: Color = AMBER;
     /// Table rows, alternating.
     pub const ROW: [Color; 2] = [PANEL, Color::srgb(0.106, 0.125, 0.161)]; // #161A22, #1B2029
+    /// Gains (11.4: cyan) and losses (magenta).
+    pub const GAIN: Color = CYAN;
+    pub const LOSS: Color = MAGENTA;
+    /// Links to pages (D454): a pale blue, apart from the four meaning accents, so a name never
+    /// reads as money or an alert. AA on BG, PANEL and the row stripes.
+    pub const LINK: Color = Color::srgb(0.557, 0.773, 1.0); // #8EC5FF
+    /// A hovered link.
+    pub const LINK_HOVER: Color = Color::srgb(0.792, 0.890, 1.0); // #CAE3FF
+    /// The focused pane's frame.
+    pub const FOCUS: Color = CYAN;
 }
 
 /// Font sizes in logical pixels.
@@ -66,13 +78,52 @@ pub mod size {
     pub const ROW: f32 = 22.0;
 }
 
-/// A text node.
+/// A text node. Its size is scaled by the config's font scale ([`ThemedText`]).
 pub fn text(s: impl Into<String>, size: f32, color: Color) -> impl Bundle {
     (
         Text::new(s),
         TextFont::from_font_size(FontSize::Px(size)),
         TextColor(color),
+        ThemedText(size),
     )
+}
+
+/// A text node that keeps to one line (crumbs, table cells, chips).
+pub fn text_line(s: impl Into<String>, size: f32, color: Color) -> impl Bundle {
+    (text(s, size, color), TextLayout::no_wrap())
+}
+
+/// A text's unscaled size in logical pixels: the theme multiplies it by the config's font scale
+/// (D458), so every theme text follows the font setting.
+#[derive(Component, Debug, Clone, Copy, PartialEq)]
+pub struct ThemedText(pub f32);
+
+/// Applies the font scale: to every text when the scale changed, else to new texts.
+fn apply_font_scale(
+    cfg: Res<UiConfig>,
+    mut last: Local<Option<f32>>,
+    mut all: Query<(&ThemedText, &mut TextFont)>,
+    added: Query<Entity, Added<ThemedText>>,
+) {
+    let scale = cfg.font_scale;
+    let set = |t: &ThemedText, f: &mut TextFont| {
+        let want = FontSize::Px((t.0 * scale).round());
+        if f.font_size != want {
+            f.font_size = want;
+        }
+    };
+    if *last != Some(scale) {
+        *last = Some(scale);
+        for (t, mut f) in &mut all {
+            set(t, &mut f);
+        }
+    } else if (scale - 1.0).abs() > f32::EPSILON {
+        for e in &added {
+            if let Ok((t, mut f)) = all.get_mut(e) {
+                set(t, &mut f);
+            }
+        }
+    }
 }
 
 /// Body text in the default color.
@@ -316,7 +367,13 @@ pub struct ThemePlugin;
 
 impl Plugin for ThemePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_tooltip)
-            .add_systems(PostUpdate, (restyle_buttons, show_tooltip));
+        app.add_systems(Startup, spawn_tooltip).add_systems(
+            PostUpdate,
+            (
+                restyle_buttons,
+                show_tooltip,
+                apply_font_scale.before(bevy::ui::UiSystems::Prepare),
+            ),
+        );
     }
 }

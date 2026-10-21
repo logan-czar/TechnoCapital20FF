@@ -1,256 +1,63 @@
-//! The screens the router opens (build-plan M7.8; spec 8). M7 builds the shell only, so each
-//! screen is a stub panel ("coming in M9") that reads its views from [`Views`] and shows their
-//! refresh state; the map's place holds the province table demo, and Pdoomberg's F2 holds a
-//! company table demo from the starting data ([`super::demo`]), whose rows add to or drop from
-//! the watchlist.
+//! Full-screen Pdoomberg (build-plan M7.8, M9.4; spec 8; 20-ui 20.5.2): the one screen that is
+//! not a workspace page. M7 built it as a stub with a company table demo from the starting data
+//! ([`super::demo`]) whose rows add to or drop from the watchlist; M9 A2 adds the route the
+//! command bar sets (`ARDR F3`), shown as a stub line until lane B2 draws the F-key pages.
+//!
+//! Every other screen is a page in the tiling workspace ([`crate::pages`],
+//! [`crate::workspace`]).
 
 use std::sync::Arc;
 
 use bevy::prelude::*;
 use sim::Control;
-use sim::views::Cadence;
 use sim::world::CompanyId;
 
-use super::rail::{Router, Screen, ScreenRoot};
+pub use crate::pages::placeholder::ViewLine;
+pub use crate::pages::{ViewKey, view_meta};
+
+use super::rail::{Screen, ScreenRoot};
 use super::theme::{self, color, font, size};
 use super::{DemoTables, ShellLayout, SpawnLayout, UiSystems};
-use crate::bridge::{RunnerControls, SimControl, Views};
-use crate::table::{Table, TableFocus, TableRowClicked, spawn_table};
+use crate::bridge::{RunnerControls, SimControl};
+use crate::command::index::NameIndex;
+use crate::pages::{PdbFunction, PdoombergRoute};
+use crate::table::{Table, TableRowClicked, spawn_table};
 
-/// The views each stub reads (spec 9.4).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ViewKey {
-    Clock,
-    Quotes,
-    PriceBars,
-    News,
-    Projection,
-    CompanyRows,
-    CompanyDetail,
-    Units,
-    Tech,
-    IndustryRows,
-    IndustryDetail,
-    MapLayers,
-    ProvinceCards,
-    Statements,
-    Filings,
-    Ratings,
-    Recap,
-    MapStatic,
-}
-
-/// A view's name, version and cadence.
-pub fn view_meta(v: &sim::SimViews, key: ViewKey) -> (&'static str, u64, Cadence) {
-    macro_rules! m {
-        ($name:literal, $f:ident) => {
-            ($name, v.$f.version(), v.$f.cadence())
-        };
-    }
-    match key {
-        ViewKey::Clock => m!("v_clock", clock),
-        ViewKey::Quotes => m!("v_quotes", quotes),
-        ViewKey::PriceBars => m!("v_price_bars", price_bars),
-        ViewKey::News => m!("v_news", news),
-        ViewKey::Projection => m!("v_projection", projection),
-        ViewKey::CompanyRows => m!("v_company_row", company_rows),
-        ViewKey::CompanyDetail => m!("v_company_detail", company_detail),
-        ViewKey::Units => m!("v_units", units),
-        ViewKey::Tech => m!("v_tech", tech),
-        ViewKey::IndustryRows => m!("v_industry_row", industry_rows),
-        ViewKey::IndustryDetail => m!("v_industry_detail", industry_detail),
-        ViewKey::MapLayers => m!("v_map_layers", map_layers),
-        ViewKey::ProvinceCards => m!("v_province_card", province_cards),
-        ViewKey::Statements => m!("v_statements", statements),
-        ViewKey::Filings => m!("v_filings", filings),
-        ViewKey::Ratings => m!("v_ratings", ratings),
-        ViewKey::Recap => m!("v_recap", recap),
-        ViewKey::MapStatic => m!("v_map_static", map_static),
-    }
-}
-
-fn cadence_name(c: Cadence) -> &'static str {
-    match c {
-        Cadence::EveryTick => "every tick",
-        Cadence::Daily => "daily",
-        Cadence::Monthly => "monthly and on load",
-        Cadence::MonthlyAndLock => "monthly, at plan locks and on load",
-        Cadence::Quarterly => "quarterly",
-        Cadence::OnceAtLoad => "once at load",
-    }
-}
-
-/// A line showing one view's refresh state; rewritten when the views change.
-#[derive(Component, Debug, Clone, Copy)]
-pub struct ViewLine(pub ViewKey);
-
-/// The demo tables' entities.
+/// The demo tables' entities: the World page's province table (the latest one built) and
+/// Pdoomberg's company table.
 #[derive(Resource, Debug, Clone, Copy)]
 pub struct DemoTableEntities {
     pub provinces: Entity,
     pub companies: Entity,
 }
 
+/// Pdoomberg's route line.
+#[derive(Component)]
+pub struct PdoombergRouteLine;
+
 pub struct ScreensPlugin;
 
 impl Plugin for ScreensPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_screens.after(SpawnLayout))
+        app.add_systems(Startup, spawn_pdoomberg.after(SpawnLayout))
             .add_systems(
                 Update,
                 (
-                    focus_table.run_if(resource_changed::<Router>),
                     toggle_watch,
                     omniscient_quotes.run_if(resource_changed::<RunnerControls>),
-                    show_view_lines.run_if(resource_changed::<Views>),
+                    show_route.run_if(
+                        resource_changed::<PdoombergRoute>.or_eager(resource_changed::<NameIndex>),
+                    ),
                 )
                     .in_set(UiSystems::Show),
             );
     }
 }
 
-/// What each stub screen will show and which views it reads.
-fn stub(screen: Screen) -> (&'static str, &'static str, &'static [ViewKey]) {
-    match screen {
-        Screen::Company => (
-            "20.7.2",
-            "Header, then Overview, Board, Cap table, Units, Financials and Tech tabs.",
-            &[
-                ViewKey::CompanyDetail,
-                ViewKey::Units,
-                ViewKey::Tech,
-                ViewKey::Statements,
-                ViewKey::Projection,
-            ],
-        ),
-        Screen::Industries => (
-            "20.7.6",
-            "Table of the 42 industries with a detail view and the global phase strip.",
-            &[ViewKey::IndustryRows, ViewKey::IndustryDetail],
-        ),
-        Screen::Recap => (
-            "20.7.9, 21.6.2",
-            "World page and watchlist company pages; opens the pre-quarter-end week.",
-            &[ViewKey::Recap, ViewKey::Projection, ViewKey::Clock],
-        ),
-        Screen::News => (
-            "20.5.1",
-            "Pdoomberg Wire headlines with date and industry tag.",
-            &[ViewKey::News],
-        ),
-        Screen::Pdoomberg => (
-            "20.5.2, 3.13.1",
-            "F2 Quotes, F3 Chart, F5 Filings, F6 Ratings, F7 Bonds, F9 Industries, F10 Screener.",
-            &[
-                ViewKey::Quotes,
-                ViewKey::PriceBars,
-                ViewKey::Filings,
-                ViewKey::Ratings,
-            ],
-        ),
-        Screen::Map => (
-            "20.7.10, 2.24",
-            "The province map with its modes and the province card (M8).",
-            &[
-                ViewKey::MapStatic,
-                ViewKey::MapLayers,
-                ViewKey::ProvinceCards,
-            ],
-        ),
-    }
-}
+/// The function keys row (spec 8 Pdoomberg; F4 shows the lock).
+const KEYS: [PdbFunction; 8] = PdbFunction::ALL;
 
-fn view_lines(commands: &mut Commands, parent: Entity, keys: &[ViewKey], c: Color) {
-    for &k in keys {
-        let e = commands
-            .spawn((ViewLine(k), theme::text("", font::SMALL, c)))
-            .id();
-        commands.entity(parent).add_child(e);
-    }
-}
-
-fn spawn_screens(mut commands: Commands, layout: Res<ShellLayout>, demo: Res<DemoTables>) {
-    // The map's place: the province table demo until M8.
-    let map = commands
-        .spawn((
-            ScreenRoot(Screen::Map),
-            Node {
-                flex_grow: 1.0,
-                min_height: px(0.0),
-                flex_direction: FlexDirection::Column,
-                padding: UiRect::all(px(size::PAD)),
-                row_gap: px(size::GAP),
-                ..default()
-            },
-        ))
-        .id();
-    commands.entity(layout.main).insert_children(0, &[map]);
-    let head = commands
-        .spawn(Node {
-            flex_direction: FlexDirection::Row,
-            align_items: AlignItems::Baseline,
-            column_gap: px(12.0),
-            ..default()
-        })
-        .id();
-    let t = commands.spawn(theme::title("World")).id();
-    let note = commands
-        .spawn(theme::muted(
-            "The map lands in M8. Until then: the provinces of the starting data (table demo).",
-        ))
-        .id();
-    commands.entity(head).add_children(&[t, note]);
-    commands.entity(map).add_child(head);
-    let provinces = spawn_table(&mut commands, map, Arc::clone(&demo.provinces));
-
-    for screen in [
-        Screen::Company,
-        Screen::Industries,
-        Screen::Recap,
-        Screen::News,
-    ] {
-        let (section, what, keys) = stub(screen);
-        let panel = commands
-            .spawn((
-                ScreenRoot(screen),
-                theme::panel(Node {
-                    position_type: PositionType::Absolute,
-                    left: px(0.0),
-                    top: px(0.0),
-                    bottom: px(0.0),
-                    width: percent(size::PANEL_PCT),
-                    display: Display::None,
-                    ..default()
-                }),
-                GlobalZIndex(10),
-            ))
-            .id();
-        let title = commands.spawn(theme::title(screen.name())).id();
-        let sub = commands
-            .spawn(theme::text(
-                format!("Coming in M9 (20-ui {section})"),
-                font::BODY,
-                color::AMBER,
-            ))
-            .id();
-        let body = commands.spawn(theme::body(what)).id();
-        let rule = commands.spawn(theme::rule()).id();
-        let reads = commands.spawn(theme::muted("Reads from SimViews:")).id();
-        commands
-            .entity(panel)
-            .add_children(&[title, sub, body, rule, reads]);
-        view_lines(&mut commands, panel, keys, color::TEXT_MUTED);
-        let lock = commands.spawn(theme::read_only_lock()).id();
-        let close = commands
-            .spawn(theme::muted(format!(
-                "{} or Esc closes; the game keeps running behind panels.",
-                screen.key_name()
-            )))
-            .id();
-        commands.entity(panel).add_children(&[lock, close]);
-        commands.entity(layout.main).add_child(panel);
-    }
-
+fn spawn_pdoomberg(mut commands: Commands, layout: Res<ShellLayout>, demo: Res<DemoTables>) {
     // Pdoomberg: the full-screen terminal (20.5.2), the one exception to the look.
     let term = commands
         .spawn((
@@ -300,85 +107,87 @@ fn spawn_screens(mut commands: Commands, layout: Res<ShellLayout>, demo: Res<Dem
             ..default()
         })
         .id();
-    for (i, k) in [
-        "F2 Quotes",
-        "F3 Chart",
-        "F4 Order",
-        "F5 Filings",
-        "F6 Ratings",
-        "F7 Bonds",
-        "F9 Industries",
-        "F10 Screener",
-    ]
-    .into_iter()
-    .enumerate()
-    {
+    for (i, f) in KEYS.into_iter().enumerate() {
         let c = if i == 0 {
             color::TERMINAL_TEXT
         } else {
             color::TEXT_MUTED
         };
-        let e = commands.spawn(theme::text(k, font::BODY, c)).id();
+        let e = commands
+            .spawn(theme::text(
+                format!("{} {}", f.code(), f.name()),
+                font::BODY,
+                c,
+            ))
+            .id();
         commands.entity(keys_row).add_child(e);
-        if k == "F4 Order" {
+        if f == PdbFunction::F4 {
             let lock = commands.spawn(theme::read_only_lock()).id();
             commands.entity(keys_row).add_child(lock);
         }
     }
     commands.entity(term).add_child(keys_row);
+    let route = commands
+        .spawn((
+            PdoombergRouteLine,
+            theme::text("", font::BODY, color::TERMINAL_TEXT),
+        ))
+        .id();
+    commands.entity(term).add_child(route);
     let note = commands
         .spawn(theme::text(
-            "F2 Quotes (demo: starting data until v_quotes lands in M5). Click a row to watch \
-             or unwatch it. Esc returns to the map. Coming in M9 (20-ui 20.5.2).",
+            "F2 Quotes (demo: starting data until lane B2's pages). Click a row to watch or \
+             unwatch it. Esc returns to the workspace; Ctrl+K opens the command bar \
+             (TICKER F3).",
             font::SMALL,
             color::TERMINAL_TEXT,
         ))
         .id();
     commands.entity(term).add_child(note);
-    view_lines(
-        &mut commands,
-        term,
-        stub(Screen::Pdoomberg).2,
-        color::TEXT_MUTED,
-    );
+    for k in [
+        ViewKey::Quotes,
+        ViewKey::PriceBars,
+        ViewKey::Filings,
+        ViewKey::Ratings,
+    ] {
+        let e = commands
+            .spawn((ViewLine(k), theme::text("", font::SMALL, color::TEXT_MUTED)))
+            .id();
+        commands.entity(term).add_child(e);
+    }
     let companies = spawn_table(&mut commands, term, Arc::clone(&demo.companies));
     commands.insert_resource(DemoTableEntities {
-        provinces,
+        provinces: Entity::PLACEHOLDER,
         companies,
     });
-    commands.insert_resource(TableFocus(Some(provinces)));
 }
 
-fn show_view_lines(views: Res<Views>, mut lines: Query<(&ViewLine, &mut Text)>) {
-    for (line, mut text) in &mut lines {
-        let (name, version, cadence) = view_meta(&views, line.0);
-        let s = format!(
-            "  {name}: refresh {version} of {} ({})",
-            views.refresh(),
-            cadence_name(cadence)
-        );
-        if text.0 != s {
-            text.0 = s;
-        }
-    }
-}
-
-/// The keyboard scrolls the open screen's table, or the map's under a panel.
-fn focus_table(
-    router: Res<Router>,
-    tables: Option<Res<DemoTableEntities>>,
-    mut focus: ResMut<TableFocus>,
+/// The route line: the function page and company the command bar asked for. A stub until lane
+/// B2 draws each F-key page.
+fn show_route(
+    route: Res<PdoombergRoute>,
+    index: Res<NameIndex>,
+    mut q: Query<&mut Text, With<PdoombergRouteLine>>,
 ) {
-    let Some(t) = tables else {
-        return;
-    };
-    let want = if router.current == Screen::Pdoomberg {
-        t.companies
-    } else {
-        t.provinces
-    };
-    if focus.0 != Some(want) {
-        focus.0 = Some(want);
+    let who = route.company.map_or("no company".to_owned(), |c| {
+        let p = crate::pages::PageRef::Company(c);
+        let ticker = index.entry(&p).and_then(|e| e.alias.clone());
+        format!(
+            "{} ({})",
+            index.title(&p),
+            ticker.unwrap_or_else(|| "-".into())
+        )
+    });
+    let s = format!(
+        "> {} {}: {who}. The {} page is lane B2's (M9.4).",
+        route.function.code(),
+        route.function.name(),
+        route.function.code()
+    );
+    for mut t in &mut q {
+        if t.0 != s {
+            t.0.clone_from(&s);
+        }
     }
 }
 

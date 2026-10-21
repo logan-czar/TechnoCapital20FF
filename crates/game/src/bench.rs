@@ -28,14 +28,22 @@ pub const SCROLL_PER_FRAME: isize = 3;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum BenchMode {
-    Table { seconds: f64 },
-    Max { seconds: f64 },
+    Table {
+        seconds: f64,
+    },
+    Max {
+        seconds: f64,
+    },
+    /// Open every page kind and time it to its first laid-out frame
+    /// ([`crate::page_bench`]).
+    Pages,
 }
 
 impl BenchMode {
     fn seconds(self) -> f64 {
         match self {
             BenchMode::Table { seconds } | BenchMode::Max { seconds } => seconds,
+            BenchMode::Pages => f64::INFINITY,
         }
     }
 }
@@ -59,6 +67,10 @@ pub struct BenchPlugin(pub BenchMode);
 
 impl Plugin for BenchPlugin {
     fn build(&self, app: &mut App) {
+        if self.0 == BenchMode::Pages {
+            app.add_plugins(crate::page_bench::PageBenchPlugin);
+            return;
+        }
         app.insert_resource(Bench {
             mode: self.0,
             frame: 0,

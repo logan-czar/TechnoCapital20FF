@@ -239,10 +239,14 @@ fn spawn_top_bar(mut commands: Commands, layout: Res<ShellLayout>) {
 /// Space, 1 to 5, + and -, Ctrl+Space (spec 8; 20-ui 20.2.6).
 fn time_keys(
     keys: Res<ButtonInput<KeyCode>>,
+    capture: Res<super::KeyboardCapture>,
     views: Res<Views>,
     mut w: MessageWriter<SimControl>,
     mut menu: ResMut<OpenMenu>,
 ) {
+    if capture.0 {
+        return;
+    }
     let clock = views.clock();
     let ctrl = keys.any_pressed([KeyCode::ControlLeft, KeyCode::ControlRight]);
     if keys.just_pressed(KeyCode::Space) {
@@ -253,6 +257,10 @@ fn time_keys(
         } else {
             send(&mut w, Control::Pause);
         }
+    }
+    // Ctrl and Alt with digits, + and - are workspace shortcuts (D453).
+    if super::modifier_held(&keys) {
+        return;
     }
     const DIGITS: [(KeyCode, KeyCode); 5] = [
         (KeyCode::Digit1, KeyCode::Numpad1),
