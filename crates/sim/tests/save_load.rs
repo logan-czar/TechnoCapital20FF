@@ -38,6 +38,10 @@ fn save_load_continue_matches_an_unbroken_run() {
     for cut in [1, 23, 24 * 31, 24 * 91 + 1, 5_555] {
         let mut first = churning_sim(&data, 77);
         let mut got = monthly_hashes(&mut first, cut);
+        // Every cut has draws behind it: the state differs from the same seed with no job.
+        let mut idle_at_cut = Sim::new(data.clone(), 77).unwrap();
+        monthly_hashes(&mut idle_at_cut, cut);
+        assert_ne!(first.state_hash(), idle_at_cut.state_hash(), "cut {cut}");
         let bytes = first.save_bytes();
         // Load into a game with another seed and clock, to show the save replaces everything.
         let mut second = churning_sim(&data, 999);

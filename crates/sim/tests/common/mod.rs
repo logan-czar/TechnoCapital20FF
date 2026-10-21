@@ -12,10 +12,11 @@ pub fn data() -> sim_data::WorldData {
     sim_data::load_world(&sim_data::default_data_dir()).unwrap()
 }
 
-/// A new game with the churn job in the hourly share price slot.
+/// A new game with the churn job in the hourly alerts slot, which runs on every tick (the share
+/// price slot skips 1 January and release ticks).
 pub fn churning_sim(data: &sim_data::WorldData, seed: u64) -> Sim {
     let mut sim = Sim::new(data.clone(), seed).unwrap();
-    sim.register_test_job(Slot::SharePrices, "test.churn", churn);
+    sim.register_test_job(Slot::Alerts, "test.churn", churn);
     sim
 }
 
