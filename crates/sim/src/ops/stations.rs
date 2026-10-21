@@ -206,6 +206,31 @@ pub struct Loadout {
     pub barebones: bool,
 }
 
+impl Loadout {
+    /// The PC bonus a company holds at load (7.1, D106): the second-pass bonus its gross assets
+    /// were sized with ([`Loadout::assets_bonus`]), so every unit makes its companies.csv revenue
+    /// at M 1.0; the barebones loadout's fixed $100,000 asset is not sized from a bonus, so it
+    /// holds the live +1 of its one productivity station. The monthly compute step (4.3 step 5)
+    /// recounts it from the stations from the first month on (design fix 201).
+    pub fn load_bonus(&self) -> u32 {
+        if self.barebones {
+            self.pc_bonus
+        } else {
+            self.assets_bonus
+        }
+    }
+}
+
+/// The PC at which the bonus after `bonus` starts (spec 5.8): 1 for bonus 0, else 10^bonus, so
+/// +2 (PC 10 to 99.99) steps up at PC 100. For the Tech tab's "next step" (spec 8).
+pub fn next_bonus_pc(bonus: u32) -> f64 {
+    if bonus == 0 {
+        PC_BONUS_FIRST_STEP
+    } else {
+        PC_BONUS_FIRST_STEP * PC_BONUS_STEP_FACTOR.powi(bonus as i32)
+    }
+}
+
 /// The 7.1 starting productivity stations for `labor` units: `max(1, round(0.25 × L))`, rounding
 /// halves to even as validate.py and gen.py do (Python `round`; D208).
 pub fn loadout_productivity_stations(labor: u64) -> u64 {

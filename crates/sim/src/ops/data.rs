@@ -31,6 +31,17 @@ pub fn free_rd_step(held_tb: f64) -> u32 {
     decade_steps(held_tb, FREE_RD_FIRST_STEP_TB, FREE_RD_STEP_FACTOR)
 }
 
+/// Held TB at which the free R&D step after `pct` starts (spec 5.9 steps): 1 TB for 0%, else
+/// 10^pct TB, so 1% (1 to 9.99 TB) steps up at 10 TB. For the Tech tab's data quests card
+/// (spec 8).
+pub fn next_free_rd_tb(pct: u32) -> f64 {
+    if pct == 0 {
+        FREE_RD_FIRST_STEP_TB
+    } else {
+        FREE_RD_FIRST_STEP_TB * FREE_RD_STEP_FACTOR.powi(pct as i32)
+    }
+}
+
 /// The monthly decay rate at `held` TB (spec 5.9 step 4): `base × (1 + log10(held))` for
 /// held ≥ 1, else base.
 pub fn decay_rate(held_tb: f64, base: f64) -> f64 {

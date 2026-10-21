@@ -6,7 +6,7 @@
 //! Expenses per unit per month (5.5): variable `revenue × v` with `v = 1 − margin_full_use − f`
 //! (D fixed at 1.0); fixed cash `gross_assets × fixed_cost_rate ÷ 12`; depreciation
 //! `min(asset_book, decay_usd ÷ 12)`; R&D `revenue × rd_plan`; shared costs from the 3.8 compute
-//! (M3; 0 until then). Fixed cash plus depreciation plus shared costs equal `f × revenue` at
+//! bill (M3), split by revenue share. Fixed cash plus depreciation plus shared costs equal `f × revenue` at
 //! productivity 100 and M 1.0 (the fixed cost rate is set so at load, 7.1), so with R&D at the
 //! norm (`margin_full_use = rd_norm`, C18) a company at productivity 100 and M 1.0 breaks even.
 
@@ -63,11 +63,25 @@ pub fn month_expenses(
     }
 }
 
-/// The month's shared costs of a unit (spec 5.5: corporation compute, data compute and licences
-/// of 3.8, split across units by revenue share). **Hook for M3.5**: 0 until the compute costs
-/// exist; while it is 0 the fixed cost rate at load carries the whole fixed share (7.1).
-pub fn shared_costs_month_hook(_world: &World, _unit: &BusinessUnit) -> f64 {
-    0.0
+/// The month's shared costs of a unit (spec 5.5): its corporation's compute, data compute and
+/// licences (3.8, the bill set at 4.3 step 5) split across the corporation's units by revenue
+/// share (10.0.8), equally if none has revenue. Filled together with
+/// [`super::start::shared_costs_at_load_hook`] (D108): at load the fixed cost rate leaves room
+/// for the starting bill, so at productivity 100 and M 1.0 fixed cash, depreciation and shared
+/// costs still sum to `f × revenue`.
+pub fn shared_costs_month_hook(world: &World, unit: &BusinessUnit) -> f64 {
+    let company = &world.companies[unit.company];
+    let bill = company.compute.monthly_usd;
+    let total: f64 = company
+        .units
+        .iter()
+        .map(|&u| world.units[u].revenue_m.max(0.0))
+        .sum();
+    if total > 0.0 {
+        bill * unit.revenue_m.max(0.0) / total
+    } else {
+        bill / company.units.len().max(1) as f64
+    }
 }
 
 /// Sets every unit's month of revenue and every industry's fringe revenue from the current M.

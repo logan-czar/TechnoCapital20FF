@@ -8,7 +8,7 @@ use common::data;
 use common::economy::{economy_scheduler, rel, run_month, world_at_load};
 use sim::economy::assets::placeholder_plan;
 use sim::economy::revenue::{month_expenses, unit_revenue_month};
-use sim::economy::start::{BAREBONES_GROSS_USD, fixed_cost_rate_at_load};
+use sim::economy::start::{BAREBONES_ASSETS_USD, fixed_cost_rate_at_load};
 use sim::economy::supply::{p_pre, unit_supply};
 use sim::rng::RngStreams;
 use sim::time::Date;
@@ -27,15 +27,15 @@ fn the_barebones_company_breaks_even() {
     // $7,000 of shared costs of spec 5.5 the fixed cost rate is 0.38; with M2's 0 (the M3.5 hook)
     // it is 0.45. Either way revenue equals expenses with R&D at the norm.
     for shared_year in [7_000.0, 0.0] {
-        let rate = fixed_cost_rate_at_load(BAREBONES_GROSS_USD, shared_year, params);
+        let rate = fixed_cost_rate_at_load(BAREBONES_ASSETS_USD, shared_year, params);
         let want_rate = if shared_year > 0.0 { 0.38 } else { 0.45 };
         assert!((rate - want_rate).abs() < 1e-12, "{rate}");
-        let revenue = unit_revenue_month(BAREBONES_GROSS_USD, 1.0, 100.0, 1.0);
+        let revenue = unit_revenue_month(BAREBONES_ASSETS_USD, 1.0, 100.0, 1.0);
         assert!((revenue - 100_000.0 / 12.0).abs() < 1e-9);
         let e = month_expenses(
             revenue,
-            BAREBONES_GROSS_USD,
-            0.5 * BAREBONES_GROSS_USD,
+            BAREBONES_ASSETS_USD,
+            0.5 * BAREBONES_ASSETS_USD,
             rate,
             rd,
             params,
@@ -58,7 +58,7 @@ fn the_barebones_company_breaks_even() {
         .find(|(_, c)| c.key == "CO-0003")
         .unwrap();
     let u = &w.units[c.units[0]];
-    let fixed_and_dep = 0.45 * BAREBONES_GROSS_USD / 12.0;
+    let fixed_and_dep = 0.45 * BAREBONES_ASSETS_USD / 12.0;
     assert!((u.ebit_m() - (0.45 * u.revenue_m - fixed_and_dep)).abs() < 1e-9);
     assert!((u.ebit_m() / u.revenue_m - 0.45 / 101.0).abs() < 1e-4);
 }

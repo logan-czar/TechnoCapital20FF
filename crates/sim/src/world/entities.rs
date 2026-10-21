@@ -5,7 +5,13 @@
 
 use serde::{Deserialize, Serialize};
 
-use super::ids::{CompanyId, CountryId, IndustryId, ProvinceId, UnitId, ZoneId};
+use super::ids::{CharacterId, CompanyId, CountryId, IndustryId, ProvinceId, UnitId, ZoneId};
+use crate::ops::compute::ComputeBill;
+use crate::ops::data::DataBook;
+use crate::ops::stations::Stations;
+use crate::people::board::{LABOR_SEAT_COUNT, Seat, Skills};
+use crate::people::simple::SimpleCharacter;
+use crate::people::traits::Trait;
 use crate::time::Quarter;
 
 /// A financial zone (spec 3.2.1), static in the MVP except its effective spread and confidence.
@@ -204,9 +210,32 @@ pub struct Company {
     pub shares_out: u64,
     /// Business units (spec 3.5; one in the MVP).
     pub units: Vec<UnitId>,
+    /// The named controller when it is a full character (companies.csv `controller` holds a
+    /// CH- id; spec 3.5, 6 "traits"); None for companies, states and the widely held.
+    pub controller: Option<CharacterId>,
+    /// Labor units L (spec 3.5, 5.10), recounted at 4.3 step 4.
+    pub labor_units: u64,
+    /// `labor_assignment` (spec 3.5): one station per labor unit, fitted to L at 4.3 step 4.
+    pub stations: Stations,
+    /// Productive compute (spec 5.8), set at 4.3 step 5.
+    pub pc: f64,
     /// The stepped productive compute bonus (spec 5.8), corporation-wide. Set at load by the 7.1
-    /// two-pass rule; M3's monthly compute step owns it from then on.
+    /// two-pass rule (D106); the monthly compute step (4.3 step 5) recounts it from the stations
+    /// from the first month on.
     pub pc_bonus: f64,
+    /// Extra base compute, data compute and licences with the month's bill (spec 3.5, 3.8), set
+    /// at 4.3 step 5; the bill is the month's shared costs (5.5).
+    pub compute: ComputeBill,
+    /// Data per industry the company has units in (spec 3.5 `data`, 5.9), in industry id order.
+    pub data: Vec<CompanyData>,
+    /// The five labor seats in [`Seat::LABOR`] order (spec 3.7): None while closed (fewer labor
+    /// units) or open and waiting for its character (4.3 step 11).
+    pub board: [Option<SeatHolder>; LABOR_SEAT_COUNT],
+    /// Seats opened by this month's recount (4.3 step 4) that get a simple character at step 11
+    /// (spec 3.7.1, 5.10), in opening order.
+    pub seats_to_fill: Vec<Seat>,
+    /// 0 to 100 (spec 5.7), from the seated board each month (D115).
+    pub management_score: f64,
     /// Cash, USD (company-start.csv `cash_usd`; settled monthly from M4, 4.3 step 13).
     pub cash_usd: f64,
     /// Credit line drawn, USD (company-start.csv `credit_drawn_usd`, spec 5.12).
@@ -281,10 +310,61 @@ impl BusinessUnit {
     }
 }
 
-/// A full character (spec 3.7.2).
+impl Company {
+    /// The holder of a labor seat, if the seat is open and filled.
+    pub fn seat(&self, seat: Seat) -> Option<&SeatHolder> {
+        let i = Seat::LABOR.iter().position(|&s| s == seat)?;
+        self.board[i].as_ref()
+    }
+
+    /// The data of one industry, if the company has units in it.
+    pub fn data_in(&self, industry: IndustryId) -> Option<&DataBook> {
+        self.data
+            .iter()
+            .find(|d| d.industry == industry)
+            .map(|d| &d.book)
+    }
+}
+
+/// One corporation's data in one industry (spec 3.5 `data`, 5.9).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CompanyData {
+    pub industry: IndustryId,
+    pub book: DataBook,
+}
+
+/// A simple character seated on a board (spec 3.7.1), with its id.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SimpleSeat {
+    /// Spec 3.7.1 `id`: the order it was generated in, from 0 (`World::simple_characters_made`).
+    pub id: u32,
+    pub character: SimpleCharacter,
+}
+
+/// Who holds a labor seat (spec 3.7): a simple character (3.7.1), or a full character a startup
+/// event seated (3.7.2, 5.19.4; from M6).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SeatHolder {
+    Simple(SimpleSeat),
+    Full(CharacterId),
+}
+
+/// A full character (spec 3.7.2): the 296 of characters.csv (D11) and, from M6, those made in
+/// play. The MVP keeps what it reads: skills and traits for the management score, rolls and the
+/// Lite AI's trait nudges.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Character {
     /// characters.csv `id`.
     pub key: String,
     pub name: String,
+    /// player, rival or holder from characters.csv; generated for those made in play (3.7.2).
+    pub tier: String,
+    pub age: u8,
+    pub skills: Skills,
+    /// Traits of the 12 pairs (1-corporate-core 1.1.2). characters.csv's unique traits and perks
+    /// outside the pairs (such as "Operational Excellence") are dropped at load (D113).
+    pub traits: Vec<Trait>,
+    /// characters.csv `origin_province` (spec 3.7.2 home province).
+    pub home_province: ProvinceId,
+    pub cash_usd: f64,
 }

@@ -7,12 +7,12 @@
 //! effects and spreads, supply, S, M, labels and the units' starting month of revenue and
 //! expenses).
 //!
-//! **Note for lane F (M3.4):** the PC bonus here is only the 7.1 load rule (productivity stations
-//! `max(1, round(0.25 × labor units))`, two passes). M3's monthly compute step (5.8, 4.3 step 5)
-//! owns `Company::pc_bonus` from the first month on; [`pc_bonus_steps`] is the 5.8 step table and
-//! can be shared.
+//! The 7.1 loadout itself (PC bonus passes, gross assets, labor units, stations) is lane F's
+//! [`crate::ops::stations::starting_loadout`], the one implementation: [`start_loadout`] calls it
+//! with a company's industry parameters. M3's monthly compute step (5.8, 4.3 step 5) recounts
+//! `Company::pc_bonus` from the stations from the first month on (D106, design fix 201).
 
-use super::PRODUCTIVITY_SCALE;
+use super::MONTHS_PER_YEAR;
 use super::ai_boom::{ai_labs_lt, roll_pop_date, set_industry_lt, stage_at};
 use super::assets::decay_usd;
 use super::cycle::{set_zone_effects, start_cycle};
@@ -21,77 +21,42 @@ use super::growth::{draw_all_growth, lt_q};
 use super::revenue::{set_expenses, set_revenue};
 use super::supply::set_supply;
 use super::zones::set_zone_spreads;
+use crate::ops::compute::ComputeBill;
+use crate::ops::stations::{Loadout, LoadoutInputs, starting_loadout};
 use crate::rng::DrawSource;
 use crate::time::DateTime;
 use crate::world::{IndustryParams, World};
 
-/// Productivity of every unit at load (spec 7.1, A).
-pub const START_PRODUCTIVITY: f64 = 100.0;
-/// Productivity stations at load: `max(1, round(0.25 × L))` (spec 7.1, 10.0.11.8).
-pub const LOAD_STATION_SHARE: f64 = 0.25;
-/// Below $0.1M of revenue a company starts with the barebones loadout (spec 7.1).
-pub const BAREBONES_REVENUE_USD: f64 = 100_000.0;
-/// The barebones loadout's one asset (spec 7.1, 10.0.11.1).
-pub const BAREBONES_GROSS_USD: f64 = 100_000.0;
-/// The barebones loadout: 1 labor unit, the CEO on productivity, so one productivity station.
-pub const BAREBONES_PRODUCTIVITY_STATIONS: f64 = 1.0;
-/// The PC bonus steps up by one at each power of this (spec 5.8).
-const PC_STEP: f64 = 10.0;
+pub use crate::ops::stations::{
+    ARROWHEAD_ENTERPRISE_SHARE, ARROWHEAD_KEY, BAREBONES_ASSETS_USD, BAREBONES_REVENUE_USD,
+    LOADOUT_ENTERPRISE_SHARE, START_PRODUCTIVITY,
+};
 
-/// `labor units = floor(gross_assets ÷ labor_value)`, minimum 1 (spec 5.10).
-pub fn labor_units(gross_assets: f64, labor_value: f64) -> f64 {
-    (gross_assets / labor_value).floor().max(1.0)
+/// The 7.1 starting loadout of the company with companies.csv id `key` and yearly revenue
+/// `revenue` (spec 7.1, C16), from lane F's [`starting_loadout`]: the PC bonus by the station
+/// rule iterated twice, gross assets `R × capital_per_dollar × 100 ÷ (100 + PC bonus + location
+/// bonus)` (company-start.csv holds them rounded to dollars; load reads the CSV), labor units,
+/// productivity and enterprise stations (share 0.5, Arrowhead 0.1) and idle; under $0.1M the
+/// barebones loadout. The bonus load sets is [`Loadout::load_bonus`] (D106).
+pub fn start_loadout(key: &str, revenue: f64, location_bonus: f64, p: &IndustryParams) -> Loadout {
+    starting_loadout(LoadoutInputs {
+        revenue_usd: revenue,
+        capital_per_dollar: p.capital_per_dollar,
+        labor_value_usd: p.labor_value_usd,
+        pc_modifier: p.pc_modifier,
+        data_tb_per_musd: p.data_tb_per_musd,
+        location_bonus,
+        enterprise_share: enterprise_share(key),
+    })
 }
 
-/// Productivity stations at load, `max(1, round(0.25 × L))`, rounding halves to even as
-/// gen.py's Python `round` does, so the bonus matches company-start.csv.
-pub fn load_productivity_stations(labor_units: f64) -> f64 {
-    (LOAD_STATION_SHARE * labor_units)
-        .round_ties_even()
-        .max(1.0)
-}
-
-/// The 5.8 step table: `floor(1 + log10(PC))` for PC ≥ 1, else 0, counted by powers of ten so
-/// the steps at 10, 100, 1,000 are exact.
-pub fn pc_bonus_steps(pc: f64) -> f64 {
-    if pc < 1.0 {
-        return 0.0;
+/// The enterprise and structured-data share of 7.1: 0.5, Arrowhead (CO-0001) 0.1.
+pub fn enterprise_share(key: &str) -> f64 {
+    if key == ARROWHEAD_KEY {
+        ARROWHEAD_ENTERPRISE_SHARE
+    } else {
+        LOADOUT_ENTERPRISE_SHARE
     }
-    let (mut bonus, mut step) = (1.0, PC_STEP);
-    while pc >= step {
-        bonus += 1.0;
-        step *= PC_STEP;
-    }
-    bonus
-}
-
-/// The PC bonus of the 7.1 loadout for a unit with `gross_assets` (spec 5.8, 7.1):
-/// `PC = productivity stations × pc_modifier`.
-pub fn load_pc_bonus(gross_assets: f64, p: &IndustryParams) -> f64 {
-    let stations = load_productivity_stations(labor_units(gross_assets, p.labor_value_usd));
-    pc_bonus_steps(stations * p.pc_modifier)
-}
-
-/// The 7.1 "first pass, iterate twice" PC bonus of a company with yearly revenue `revenue`: the
-/// station rule at `R × capital_per_dollar`, then again at the gross assets that bonus implies.
-/// Under $0.1M of revenue, the barebones loadout's bonus.
-pub fn start_pc_bonus(revenue: f64, location_bonus: f64, p: &IndustryParams) -> f64 {
-    if revenue < BAREBONES_REVENUE_USD {
-        return pc_bonus_steps(BAREBONES_PRODUCTIVITY_STATIONS * p.pc_modifier);
-    }
-    let first = load_pc_bonus(revenue * p.capital_per_dollar, p);
-    load_pc_bonus(gross_at_load(revenue, first, location_bonus, p), p)
-}
-
-/// Gross assets at load: `R × capital_per_dollar × 100 ÷ (100 + PC bonus + location bonus)`, so
-/// the unit makes exactly R at M 1.0 (spec 7.1); the barebones loadout's $100,000 under $0.1M.
-/// company-start.csv holds these, rounded to whole dollars; load reads the CSV.
-pub fn gross_at_load(revenue: f64, pc_bonus: f64, location_bonus: f64, p: &IndustryParams) -> f64 {
-    if revenue < BAREBONES_REVENUE_USD {
-        return BAREBONES_GROSS_USD;
-    }
-    revenue * p.capital_per_dollar * PRODUCTIVITY_SCALE
-        / (PRODUCTIVITY_SCALE + pc_bonus + location_bonus)
 }
 
 /// `fixed_cost_rate = f × turnover − d_eff − shared costs ÷ gross` (spec 5.5, 7.1), with d_eff at
@@ -105,11 +70,13 @@ pub fn fixed_cost_rate_at_load(gross_assets: f64, shared_cost_usd: f64, p: &Indu
         - shared_cost_usd / gross_assets
 }
 
-/// A unit's yearly shared costs at load (spec 3.8, 7.1 "Compute"). **Hook for M3.5**: 0 until
-/// the compute costs exist, matching [`super::revenue::shared_costs_month_hook`], so fixed cash
-/// plus depreciation plus shared costs stay `f × revenue` at productivity 100.
-pub fn shared_costs_at_load_hook(_gross_assets: f64, _revenue: f64) -> f64 {
-    0.0
+/// A company's yearly shared costs at load (spec 3.8, 5.5, 7.1 "Compute"): twelve months of
+/// its starting compute and licence bill. Filled together with
+/// [`super::revenue::shared_costs_month_hook`] (D108), so fixed cash plus depreciation plus
+/// shared costs stay `f × revenue` at productivity 100 and M 1.0. One unit per company in the
+/// MVP, so the unit carries the whole bill.
+pub fn shared_costs_at_load_hook(bill: &ComputeBill) -> f64 {
+    MONTHS_PER_YEAR * bill.monthly_usd
 }
 
 /// The 7.3 start at 2020-01-01 00:00: the pop date (gen stream), the cycle in Expansion and the

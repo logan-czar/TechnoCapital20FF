@@ -10,18 +10,27 @@ use thiserror::Error;
 use super::World;
 use super::economy::{AiBoom, AiSchedule, AiStage, GlobalCycle};
 use super::entities::{
-    BusinessUnit, Character, Company, Country, Industry, IndustryParams, PhaseLabel, Province, Zone,
+    BusinessUnit, Character, Company, CompanyData, Country, Industry, IndustryParams, PhaseLabel,
+    Province, Zone,
 };
-use super::ids::{CompanyId, IndustryId, Ordinal, UnitId};
+use super::ids::{CharacterId, CompanyId, IndustryId, Ordinal, UnitId};
 use super::table::Table;
 use super::units::{fraction_from_bps, shares_from_csv, usd_from_billions, usd_from_millions};
 use crate::economy::ai_boom::{POP_BASE_YEAR, boom_date};
 use crate::economy::assets::placeholder_plan;
 use crate::economy::cycle::{START_PHASE, z_avg};
 use crate::economy::start::{
-    START_PRODUCTIVITY, fixed_cost_rate_at_load, shared_costs_at_load_hook, start_pc_bonus,
+    START_PRODUCTIVITY, enterprise_share, fixed_cost_rate_at_load, shared_costs_at_load_hook,
+    start_loadout,
 };
 use crate::economy::supply::fringe_assets_at_load;
+use crate::ops::compute::compute_bill;
+use crate::ops::data::{DataBook, DataParams, conversion_capacity};
+use crate::ops::labor::{fit_stations, labor_units};
+use crate::ops::stations::productive_compute;
+use crate::people::board::Skills;
+use crate::people::names::NameBooks;
+use crate::people::traits::Trait;
 use crate::time::{Date, DateTime};
 
 /// A row that cannot be turned into sim state. `sim_data::check` catches all of these first on
@@ -230,6 +239,53 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             .collect(),
     );
 
+    // Full characters (spec 3.7.2): all 296 (decision D11), with the skills, traits, age, cash
+    // and home province the MVP reads. Traits outside the 12 pairs are dropped (D113).
+    let character_rows = sorted_by(data.characters.rows.iter(), |c| &c.id);
+    let character_keys =
+        Keys::<CharacterId>::new("characters", character_rows.iter().map(|c| c.id.as_str()))?;
+    let mut characters = Vec::with_capacity(character_rows.len());
+    for c in &character_rows {
+        characters.push(Character {
+            key: c.id.clone(),
+            name: c.name.clone(),
+            tier: c.tier.clone(),
+            age: c.age,
+            skills: Skills {
+                finance: c.finance,
+                operations: c.operations,
+                persuasion: c.persuasion,
+                intrigue: c.intrigue,
+                tech: c.tech,
+                hustle: c.hustle,
+            },
+            traits: c
+                .traits
+                .iter()
+                .filter_map(|t| Trait::from_name(t.trim()))
+                .collect(),
+            home_province: province_keys.get(
+                "characters",
+                &c.id,
+                "origin_province",
+                &c.origin_province,
+                "province",
+            )?,
+            cash_usd: c.cash_usd,
+        });
+    }
+    let characters = Table::from_rows(characters);
+
+    // Name books per country, in country id order (spec 3.7.1; D203), built once here.
+    let name_books =
+        NameBooks::build(data, country_rows.iter().map(|c| c.iso3.as_str())).map_err(|e| {
+            LoadError::BadValue {
+                table: "names",
+                key: e.0,
+                message: "no name list for the country's culture".into(),
+            }
+        })?;
+
     // Companies (spec 3.5), joined with company-start.csv.
     let starts: BTreeMap<&str, &sim_data::CompanyStart> = data
         .company_start
@@ -268,6 +324,22 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         let location_bonus = 0.0;
         let gross = start.gross_assets_usd;
         let (growth_plan, rd_plan) = placeholder_plan(params);
+        // The 7.1 loadout (lane F's one implementation): labor units from the loaded gross
+        // assets, the loadout's stations fitted to them (a no-op on today's data, D208), the
+        // starting data (5.9) and the compute bill (3.8) that the fixed cost rate leaves room for.
+        let loadout = start_loadout(&c.id, revenue, location_bonus, params);
+        let labor = labor_units(gross, params.labor_value_usd);
+        let stations = fit_stations(loadout.stations, labor);
+        let book = DataBook::at_load(
+            revenue,
+            DataParams {
+                tb_per_musd: params.data_tb_per_musd,
+                decay_base: params.data_decay_base,
+            },
+            conversion_capacity(&stations),
+            enterprise_share(&c.id),
+        );
+        let compute = compute_bill(&stations, book.stored_tb());
         let unit_id = UnitId::from_index(units.len());
         units.push(BusinessUnit {
             company: CompanyId::from_index(companies.len()),
@@ -280,7 +352,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             location_bonus,
             fixed_cost_rate: fixed_cost_rate_at_load(
                 gross,
-                shared_costs_at_load_hook(gross, revenue),
+                shared_costs_at_load_hook(&compute),
                 params,
             ),
             growth_plan,
@@ -312,7 +384,17 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             revenue_usd: revenue,
             shares_out: shares_from_csv(start.shares).map_err(bad)?,
             units: vec![unit_id],
-            pc_bonus: start_pc_bonus(revenue, location_bonus, params),
+            controller: character_keys.0.get(c.controller.as_str()).copied(),
+            labor_units: labor,
+            stations,
+            pc: productive_compute(&stations, params.pc_modifier),
+            pc_bonus: f64::from(loadout.load_bonus()),
+            compute,
+            data: vec![CompanyData { industry, book }],
+            // Seated by `people::seating::start`, which draws (spec 3.7.1, 7.1).
+            board: Default::default(),
+            seats_to_fill: Vec::new(),
+            management_score: 0.0,
             cash_usd: start.cash_usd,
             line_drawn_usd: start.credit_drawn_usd,
         });
@@ -325,22 +407,6 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             ind.params.asset_turnover,
         );
     }
-
-    // Full characters (spec 3.7.2): all 296 (decision D11).
-    let character_rows = sorted_by(data.characters.rows.iter(), |c| &c.id);
-    Keys::<crate::world::CharacterId>::new(
-        "characters",
-        character_rows.iter().map(|c| c.id.as_str()),
-    )?;
-    let characters = Table::from_rows(
-        character_rows
-            .iter()
-            .map(|c| Character {
-                key: c.id.clone(),
-                name: c.name.clone(),
-            })
-            .collect(),
-    );
 
     let schedule = ai_schedule(data)?;
     Ok(World {
@@ -370,6 +436,8 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             ai_labs_lt: schedule.preboom_lt,
             schedule,
         },
+        name_books,
+        simple_characters_made: 0,
     })
 }
 

@@ -34,8 +34,8 @@ use serde::{Deserialize, Serialize};
 
 pub use economy::{AiBoom, AiSchedule, AiStage, CyclePhase, GlobalCycle};
 pub use entities::{
-    BusinessUnit, Character, Company, Country, Industry, IndustryParams, IndustryQuarter,
-    PhaseLabel, Province, Tranche, Zone,
+    BusinessUnit, Character, Company, CompanyData, Country, Industry, IndustryParams,
+    IndustryQuarter, PhaseLabel, Province, SeatHolder, SimpleSeat, Tranche, Zone,
 };
 pub use ids::{
     CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, StartupEventId, UnitId,
@@ -45,6 +45,7 @@ pub use load::LoadError;
 pub use notice::{AlertKind, AlertLevel, AlertLevels, AlertPayload, Notice, PauseReason, SkipKind};
 pub use table::Table;
 
+use crate::people::names::NameBooks;
 use crate::time::DateTime;
 
 /// All simulation state except the RNG streams (spec 3.1 to 3.10). Static tables are kept here too,
@@ -69,13 +70,19 @@ pub struct World {
     pub cycle: GlobalCycle,
     /// The AI boom and the bubble (spec 3.1, 5.1.1).
     pub ai: AiBoom,
+    /// Person names per country, built once at load (spec 3.7.1, 3.7.2): jobs see no CSVs and a
+    /// save loads without them (D13).
+    pub name_books: NameBooks,
+    /// Simple characters generated so far, so the next one's id (spec 3.7.1 `id`).
+    pub simple_characters_made: u32,
 }
 
 impl World {
-    /// The static start state from the loaded data (spec 7): tables, units, fringe pools and
-    /// everything else load sets without a draw. [`crate::economy::start`] then makes the load's
-    /// draws (the cycle start, the pop date and the Q1 2020 growth draw, spec 7.3); `Sim::new`
-    /// does both.
+    /// The static start state from the loaded data (spec 7): tables, units, fringe pools, the
+    /// 7.1 loadouts (labor, stations, PC, data, compute) and everything else load sets without a
+    /// draw. [`crate::economy::start`] then makes the economy's load draws (the cycle start, the
+    /// pop date and the Q1 2020 growth draw, spec 7.3) and [`crate::people::seating::start`]
+    /// seats the boards (3.7.1, 7.1); `Sim::new` does all three.
     pub fn from_data(data: &sim_data::WorldData) -> Result<World, LoadError> {
         load::build_world(data)
     }

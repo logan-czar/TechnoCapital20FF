@@ -44,7 +44,9 @@ pub use world::{LoadError, Notice, World};
 /// the spec text for that step. Slots filled now: `time` in `Slot::Alerts`; `economy` (M2) in
 /// the 4.3 step 1 slots (1a AI events, 1b industry lt, 1c cycle, 1d zone spreads, 1e growth
 /// draws) and steps 2 (demand), 3 (fringe), 6 (supply), 7 (revenue), 9 (expenses) and 11
-/// (assets). Slots expected to be shared, in the order their calls must go:
+/// (assets); `ops` (M3) in steps 4 (labor and seats), 5 (compute), 8 (data) and 10
+/// (productivity); `people` (M3) in step 11 (new seats). Slots expected to be shared, in the
+/// order their calls must go:
 ///
 /// - `Slot::Alerts`: `time` (calendar alerts) only; other modules raise alerts from their own
 ///   slots through `JobCtx::raise_alert` (the economy raises the World event alert in 1a).
@@ -60,6 +62,18 @@ pub use world::{LoadError, Notice, World};
 fn register_jobs(s: &mut Scheduler) {
     time::alerts::register(s);
     economy::register(s);
+    ops::register(s);
+    people::register(s);
+}
+
+/// The whole start state (spec 7): the static tables and 7.1 loadouts, then the load's draws in
+/// their frozen order: the economy's (pop date, cycle start, zone shocks, Q1 2020 growth draw;
+/// 7.3), then the boards' simple characters (3.7.1, 7.1).
+pub fn start_world(data: &WorldData, draws: &mut dyn DrawSource) -> Result<World, LoadError> {
+    let mut world = World::from_data(data)?;
+    economy::start(&mut world, draws);
+    people::seating::start(&mut world, draws);
+    Ok(world)
 }
 
 /// A scheduler with every module's jobs, as a game runs them: for re-running steps on a cloned
@@ -104,10 +118,10 @@ impl Sim {
     }
 
     fn from_shared(data: Arc<WorldData>, seed: u64) -> Result<Sim, LoadError> {
-        let mut world = World::from_data(&data)?;
         let mut rng = RngStreams::new(seed);
-        // The load's draws: cycle start, pop date, Q1 2020 growth draw (spec 7.3, D12).
-        economy::start(&mut world, &mut rng);
+        // The load's draws: cycle start, pop date, Q1 2020 growth draw (spec 7.3, D12), then the
+        // boards (7.1).
+        let world = start_world(&data, &mut rng)?;
         let scheduler = scheduler();
         let controls = Controls::default();
         let views = SimViews::build(&world, &controls);
