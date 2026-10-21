@@ -15,6 +15,7 @@ pub mod people;
 pub mod recap;
 pub mod rng;
 pub mod time;
+pub mod views;
 pub mod world;
 
 use std::sync::Arc;
@@ -26,6 +27,8 @@ pub use rng::{DrawSource, RngStreams, Stream};
 use time::control::{MAX_SPEED, Skip, skip_target};
 pub use time::{Control, Controls};
 use time::{DateTime, Scheduler, Slot};
+pub use views::ClockView;
+pub use views::SimViews;
 use world::{CompanyId, PauseReason};
 pub use world::{LoadError, Notice, World};
 
@@ -57,6 +60,7 @@ pub struct Sim {
     rng: RngStreams,
     scheduler: Scheduler,
     controls: Controls,
+    views: SimViews,
     trace: Option<Vec<Slot>>,
 }
 
@@ -71,12 +75,15 @@ impl Sim {
         let world = World::from_data(&data)?;
         let mut scheduler = Scheduler::new();
         register_jobs(&mut scheduler);
+        let controls = Controls::default();
+        let views = SimViews::build(&world, &controls);
         Ok(Sim {
             data,
             world,
             rng: RngStreams::new(seed),
             scheduler,
-            controls: Controls::default(),
+            controls,
+            views,
             trace: None,
         })
     }
@@ -109,6 +116,7 @@ impl Sim {
             self.pause(&mut notices, reason);
         }
         notices.extend(done);
+        self.views.refresh_after_tick(&self.world, &self.controls);
         notices
     }
 
@@ -128,7 +136,7 @@ impl Sim {
                 let keep = std::mem::take(&mut self.controls);
                 *self = Sim::from_shared(Arc::clone(&self.data), seed)?;
                 self.controls.alerts = keep.alerts;
-                self.trace = None;
+                self.views = SimViews::build(&self.world, &self.controls);
             }
             Control::SetSpeed(0) | Control::Pause => {
                 c.skip = None;
@@ -166,12 +174,29 @@ impl Sim {
                 c.watchlist.remove(&id);
             }
         }
+        self.views.refresh_clock(&self.world, &self.controls);
         Ok(notices)
     }
 
     /// The time of the last finished tick.
     pub fn now(&self) -> DateTime {
         self.world.clock
+    }
+
+    /// The read-only views the UI reads (spec 9.2, 9.4).
+    pub fn views(&self) -> &SimViews {
+        &self.views
+    }
+
+    /// The clock (spec 9.1 `clock()`).
+    pub fn clock(&self) -> &ClockView {
+        self.views.clock()
+    }
+
+    /// Read access to the world tables, for tests and headless reports; the game reads only
+    /// [`Sim::views`] (spec 9).
+    pub fn world(&self) -> &World {
+        &self.world
     }
 
     /// Speed, pause, skip, alert levels, Omniscient and the watchlist.
