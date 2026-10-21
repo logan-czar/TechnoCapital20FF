@@ -18,6 +18,9 @@
 //! - [`index`]: 5.14 headline indices at 1,000 with a divisor.
 //! - [`confidence`]: 5.1.2 zone exchange confidence.
 //! - [`projection`]: 5.16 consensus and projection ranges.
+//!
+//! Wiring (lane S, M5): [`state`] holds the market tables on the World and [`jobs`] the
+//! scheduled jobs that call the formulas.
 
 pub mod confidence;
 pub mod daily;
@@ -25,5 +28,9 @@ pub mod earnings;
 pub mod engine_value;
 pub mod fair_value;
 pub mod index;
+pub mod jobs;
 pub mod price;
 pub mod projection;
+pub mod state;
+
+pub use jobs::{register, start};

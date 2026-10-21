@@ -11,8 +11,9 @@
 //! Adding a view is a new file plus one line in the `sim_views!` list below, which generates the
 //! module, the [`SimViews`] field and the build and refresh code. M1 fills the clock view, M2 the
 //! industry rows, industry detail and cycle views, M3 the units, tech and company detail views,
-//! M4 the statements, filings, ratings and company rows; the others are empty placeholders on
-//! their cadence.
+//! M4 the statements, filings, ratings and company rows, M5 the quotes, price bars, exchanges
+//! and market stats (and prices in the company rows and detail, confidence in the cycle view);
+//! the others are empty placeholders on their cadence.
 
 use std::fmt;
 
@@ -209,6 +210,8 @@ sim_views! {
     clock: clock::ClockView;
     quotes: quotes::QuotesView;
     price_bars: price_bars::PriceBarsView;
+    exchanges: exchanges::ExchangesView;
+    market_stats: market_stats::MarketStatsView;
     news: news::NewsView;
     projection: projection::ProjectionView;
     company_rows: company_rows::CompanyRowsView;

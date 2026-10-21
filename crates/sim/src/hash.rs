@@ -37,8 +37,17 @@ impl fmt::Display for StateHash {
 
 /// The hash of the simulation state.
 pub fn state_hash(world: &World, rng: &RngStreams) -> StateHash {
-    let mut hasher = blake3::Hasher::new();
-    postcard::to_io(&(HASH_FORMAT, world, rng), &mut hasher)
+    // postcard writes a field at a time; a buffer in front of the hasher turns millions of
+    // small writes (M5's ten years of daily bars) into a few large ones. The bytes hashed, and
+    // so the hash, are the same.
+    let mut out = std::io::BufWriter::with_capacity(HASH_BUFFER_BYTES, blake3::Hasher::new());
+    postcard::to_io(&(HASH_FORMAT, world, rng), &mut out)
         .expect("serializing into a hasher cannot fail");
+    let hasher = out
+        .into_inner()
+        .expect("flushing into a hasher cannot fail");
     StateHash(*hasher.finalize().as_bytes())
 }
+
+/// The write buffer in front of the hasher, bytes.
+const HASH_BUFFER_BYTES: usize = 1 << 16;

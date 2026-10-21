@@ -51,14 +51,15 @@ fn monthly_hashes_and_metrics() {
         "seed,year,ticks,final_hash,wall_ms,phase,g_t,named_revenue_usd,fringe_revenue_usd,\
          mean_s,min_s,max_s,mean_m,mean_productivity,mean_management,data_tb,profitable_share,\
          distressed_in_year,distressed,bankrupt,removed,bankruptcies_in_year,removals_in_year,\
-         active_share,line_drawn_usd,ratings"
+         active_share,line_drawn_usd,ratings,quoted,median_gap,tracking_share,mean_confidence,\
+         index_atx,index_cbx,index_hse,index_ese"
     );
     assert_eq!(rows.len(), 3);
     assert!(rows[1].starts_with("7,2020,8784,"), "{}", rows[1]);
     assert!(rows[2].starts_with("8,2020,8784,"), "{}", rows[2]);
     // M2 columns: a phase name, g_t, a year of revenue and S near 1 in the first year.
     let cols: Vec<&str> = rows[1].split(',').collect();
-    assert_eq!(cols.len(), 26, "{}", rows[1]);
+    assert_eq!(cols.len(), 34, "{}", rows[1]);
     assert!(
         ["Expansion", "Overheating"].contains(&cols[5]),
         "{}",
@@ -93,6 +94,13 @@ fn monthly_hashes_and_metrics() {
         .map(|b| b.split_once(':').unwrap().1.parse::<usize>().unwrap())
         .sum();
     assert_eq!(banded, 651 - bankrupt - removed, "{}", rows[1]);
+    // M5 columns: the quoted count is at most the 467 listed, the gap and the tracking share
+    // are shares, confidence is on the −100 to +100 scale and ATX (North America) shows a level.
+    assert!((1..=467).contains(&int(26)), "{}", rows[1]);
+    assert!((0.0..1.0).contains(&num(27)), "{}", rows[1]);
+    assert!((0.0..=1.0).contains(&num(28)), "{}", rows[1]);
+    assert!((-100.0..=100.0).contains(&num(29)), "{}", rows[1]);
+    assert!(num(30) > 0.0, "{}", rows[1]);
 
     // Same seed, same hashes.
     let (_, again, _) = run(&args);

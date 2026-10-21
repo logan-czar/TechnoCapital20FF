@@ -46,6 +46,7 @@ pub use notice::{AlertKind, AlertLevel, AlertLevels, AlertPayload, Notice, Pause
 pub use table::Table;
 
 use crate::finance::state::BooksCheck;
+use crate::market::state::MarketState;
 use crate::people::names::NameBooks;
 use crate::time::DateTime;
 
@@ -78,6 +79,8 @@ pub struct World {
     pub simple_characters_made: u32,
     /// The engine's run of the build-plan M4.9 balance check (finance::jobs).
     pub books_check: BooksCheck,
+    /// Prices, fair values, bars and the headline indices (spec 3.10, 5.13 to 5.15; M5).
+    pub market: MarketState,
 }
 
 impl World {

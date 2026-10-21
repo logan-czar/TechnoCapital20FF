@@ -1,7 +1,7 @@
 //! v_cycle: `get_cycle()` (spec 9.2): the global phase, g_t, quarters left, Z, every zone's
 //! cycle settings, effect and spreads, and the AI stage, boom year and boom date; the rolled pop
-//! date only in Omniscient. Rebuilt monthly, on load and after a control (the Omniscient toggle
-//! shows or hides the pop date).
+//! date only in Omniscient. Rebuilt daily (zone confidence moves each day at 00:00, 5.1.2; D146),
+//! on load and after a control (the Omniscient toggle shows or hides the pop date).
 
 use super::{Cadence, ViewData, ViewInput};
 use crate::economy::ai_boom::{boom_year, stage_at};
@@ -25,7 +25,11 @@ pub struct ZoneCycleRow {
     /// Base and effective credit spread, fractions (spec 5.1.2).
     pub credit_spread_base: f64,
     pub credit_spread: f64,
+    /// Investor confidence of the zone exchange, −100 to +100, moved daily (spec 5.1.2).
     pub confidence: f64,
+    /// The exchange's headline index level at its last daily close; `None` with no listing
+    /// (spec 5.14).
+    pub index_close: Option<f64>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -47,7 +51,7 @@ pub struct CycleView {
 }
 
 impl ViewData for CycleView {
-    const CADENCE: Cadence = Cadence::Monthly;
+    const CADENCE: Cadence = Cadence::Daily;
     const ON_CONTROL: bool = true;
 
     fn build(input: &ViewInput<'_>) -> Self {
@@ -77,6 +81,7 @@ impl ViewData for CycleView {
                     credit_spread_base: z.credit_spread_base,
                     credit_spread: z.credit_spread,
                     confidence: z.confidence,
+                    index_close: w.market.indices[id].prev_close,
                 })
                 .collect(),
             ai_stage: w.ai.stage,

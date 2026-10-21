@@ -26,6 +26,12 @@ pub struct Zone {
     pub number: u32,
     pub name: String,
     pub exchange_code: String,
+    /// The zone exchange's name, its headline index's name, its hub city and hub province
+    /// (financial-zones.csv; spec 9.2 `list_exchanges`).
+    pub exchange_name: String,
+    pub headline_index: String,
+    pub hub_city: String,
+    pub hub_province: ProvinceId,
     /// How hard the global cycle hits the zone, North America 1.0 (spec 5.1).
     pub intensity: f64,
     /// Quarters the zone lags the global cycle (spec 5.1).

@@ -30,11 +30,61 @@ const USAGE: &str = "usage:\n  \
 /// companies with EBIT after R&D above 0 that month. M4: companies seen Distressed at any month
 /// close of the year, and at the December close Distressed, Bankrupt (frozen) and Removed (all
 /// years); bankruptcies and removals in the year; the share of the 651 still Active; the total
-/// line drawn; the rating bands of the companies not frozen (`AAA:n|AA:n|...|CC:n`).
+/// line drawn; the rating bands of the companies not frozen (`AAA:n|AA:n|...|CC:n`). M5: at the
+/// December close the quoted (listed, not delisted) count, the median `|P ÷ V − 1|` over them,
+/// the mean zone confidence and the headline index levels of four exchanges ([`INDEX_COLUMNS`];
+/// empty with no listing); and over the year's daily closes the share of quoted company-days
+/// with `|P ÷ V − 1| ≤ 30%` (the M5.8 tracking share, D143).
 const METRICS_HEADER: &str = "seed,year,ticks,final_hash,wall_ms,phase,g_t,named_revenue_usd,\
     fringe_revenue_usd,mean_s,min_s,max_s,mean_m,mean_productivity,mean_management,data_tb,\
     profitable_share,distressed_in_year,distressed,bankrupt,removed,bankruptcies_in_year,\
-    removals_in_year,active_share,line_drawn_usd,ratings";
+    removals_in_year,active_share,line_drawn_usd,ratings,quoted,median_gap,tracking_share,\
+    mean_confidence,index_atx,index_cbx,index_hse,index_ese";
+
+/// The headline exchanges whose index levels the metrics show: North America, the EU, China and
+/// Japan (financial-zones.csv `exchange_code`).
+const INDEX_COLUMNS: [&str; 4] = ["ATX", "CBX", "HSE", "ESE"];
+
+/// The year's M5.8 tracking count, added at each daily close from v_market_stats.
+#[derive(Default)]
+struct YearTracking {
+    within: u64,
+    days: u64,
+}
+
+impl YearTracking {
+    fn add_day(&mut self, sim: &Sim) {
+        let m = sim.views().market_stats.get();
+        self.within += m.within_band as u64;
+        self.days += m.quoted as u64;
+    }
+
+    /// The M5 market columns at the December close.
+    fn columns(&self, sim: &Sim) -> String {
+        let v = sim.views();
+        let m = v.market_stats.get();
+        let quotes = v.quotes.get();
+        let levels: Vec<String> = INDEX_COLUMNS
+            .iter()
+            .map(|code| {
+                v.exchanges
+                    .get()
+                    .get(code)
+                    .and_then(|e| quotes.indices.iter().find(|i| i.zone == e.zone))
+                    .and_then(|i| i.level)
+                    .map_or(String::new(), |l| format!("{l:.2}"))
+            })
+            .collect();
+        format!(
+            "{},{:.4},{:.4},{:.3},{}",
+            m.quoted,
+            m.median_gap,
+            self.within as f64 / self.days.max(1) as f64,
+            m.mean_confidence,
+            levels.join(",")
+        )
+    }
+}
 
 /// The M4 books columns at the close of `year` (the 1 January tick that closes it), with
 /// `distressed_in_year` counted by the caller from the monthly closes.
@@ -278,10 +328,14 @@ fn run(args: &RunArgs) -> ExitCode {
         let (seed_start, mut year_start) = (Instant::now(), Instant::now());
         let mut year_ticks = 0u64;
         let mut economy = YearEconomy::default();
+        let mut tracking = YearTracking::default();
         let mut distressed_seen = vec![false; sim.views().company_detail.get().companies.len()];
         while sim.now() < end {
             year_ticks += 1;
             for n in sim.step() {
+                if let Notice::DayDone(_) = n {
+                    tracking.add_day(&sim);
+                }
                 let Notice::MonthDone(month) = n else {
                     continue;
                 };
@@ -303,14 +357,16 @@ fn run(args: &RunArgs) -> ExitCode {
                     let ops = operations_columns(&sim);
                     let seen = distressed_seen.iter().filter(|&&d| d).count();
                     let books = books_columns(&sim, month.year, seen);
+                    let market = tracking.columns(&sim);
                     distressed_seen.iter_mut().for_each(|d| *d = false);
                     writeln!(
                         csv,
-                        "{seed},{},{year_ticks},{hash},{ms},{cols},{ops},{books}",
+                        "{seed},{},{year_ticks},{hash},{ms},{cols},{ops},{books},{market}",
                         month.year
                     )
                     .unwrap();
                     economy = YearEconomy::default();
+                    tracking = YearTracking::default();
                     all_ticks += year_ticks;
                     year_ticks = 0;
                     year_start = Instant::now();
