@@ -20,8 +20,47 @@ const USAGE: &str = "usage:\n  \
     DIR defaults to the repository's docs/design/data; seeds A..B are inclusive (a single seed A \
     also works)";
 
-/// Metrics CSV header; later milestones add columns.
-const METRICS_HEADER: &str = "seed,year,ticks,final_hash,wall_ms";
+/// Metrics CSV header; later milestones add columns. M2: the cycle phase and g_t at the year's
+/// close, the year's named and fringe revenue (sum of the twelve monthly closes) and S and M
+/// across the 42 industries at the December close.
+const METRICS_HEADER: &str = "seed,year,ticks,final_hash,wall_ms,phase,g_t,named_revenue_usd,\
+    fringe_revenue_usd,mean_s,min_s,max_s,mean_m";
+
+/// The M2 economy columns, read from the views after each month closes.
+#[derive(Default)]
+struct YearEconomy {
+    named_revenue: f64,
+    fringe_revenue: f64,
+}
+
+impl YearEconomy {
+    /// Adds the month just closed.
+    fn add_month(&mut self, sim: &Sim) {
+        for r in &sim.views().industry_rows.get().rows {
+            self.named_revenue += r.named_revenue_m;
+            self.fringe_revenue += r.fringe_revenue_m;
+        }
+    }
+
+    /// The economy columns of the year's row.
+    fn columns(&self, sim: &Sim) -> String {
+        let cycle = sim.views().cycle.get();
+        let rows = &sim.views().industry_rows.get().rows;
+        let n = rows.len().max(1) as f64;
+        let s: Vec<f64> = rows.iter().map(|r| r.supply_ratio).collect();
+        let mean_s = s.iter().sum::<f64>() / n;
+        let min_s = s.iter().copied().fold(f64::INFINITY, f64::min);
+        let max_s = s.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+        let mean_m = rows.iter().map(|r| r.market_factor).sum::<f64>() / n;
+        format!(
+            "{},{:.6},{:.0},{:.0},{mean_s:.4},{min_s:.4},{max_s:.4},{mean_m:.4}",
+            cycle.phase.name(),
+            cycle.g_t,
+            self.named_revenue,
+            self.fringe_revenue,
+        )
+    }
+}
 
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
@@ -152,6 +191,7 @@ fn run(args: &RunArgs) -> ExitCode {
         };
         let (seed_start, mut year_start) = (Instant::now(), Instant::now());
         let mut year_ticks = 0u64;
+        let mut economy = YearEconomy::default();
         while sim.now() < end {
             year_ticks += 1;
             for n in sim.step() {
@@ -159,12 +199,15 @@ fn run(args: &RunArgs) -> ExitCode {
                     continue;
                 };
                 let hash = sim.state_hash();
+                economy.add_month(&sim);
                 if args.hash_monthly {
                     println!("seed {seed} {month} {hash}");
                 }
                 if month.month == 12 {
                     let ms = year_start.elapsed().as_millis();
-                    writeln!(csv, "{seed},{},{year_ticks},{hash},{ms}", month.year).unwrap();
+                    let cols = economy.columns(&sim);
+                    writeln!(csv, "{seed},{},{year_ticks},{hash},{ms},{cols}", month.year).unwrap();
+                    economy = YearEconomy::default();
                     all_ticks += year_ticks;
                     year_ticks = 0;
                     year_start = Instant::now();
