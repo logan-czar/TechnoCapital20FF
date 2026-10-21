@@ -11,6 +11,15 @@ use sim::finance::distress::{
 };
 use sim::finance::sales::REMOVAL_SALE_FACTOR;
 use sim::finance::statements::Ledger;
+use sim::finance::tax::TaxBook;
+
+/// A tax book with `accrued` of tax payable.
+fn payable(accrued: f64) -> TaxBook {
+    TaxBook {
+        accrued,
+        ..TaxBook::default()
+    }
+}
 use sim::world::PhaseLabel;
 
 #[track_caller]
@@ -231,7 +240,7 @@ fn removal_settles_the_estate_and_returns_capacity_to_the_fringe() {
         cash: 1.0e6,
         asset_book: 10.0e6,
         line_drawn: 12.0e6,
-        tax_payable: 0.2e6,
+        tax: payable(0.2e6),
     };
     let (after, r) = remove(state, &books, 25.0e6);
     assert_eq!(after.status, CompanyStatus::Removed);
@@ -247,7 +256,7 @@ fn removal_settles_the_estate_and_returns_capacity_to_the_fringe() {
         cash: 5.0e6,
         asset_book: 10.0e6,
         line_drawn: 2.0e6,
-        tax_payable: 0.5e6,
+        tax: payable(0.5e6),
     };
     let (_, r) = remove(state, &rich, 25.0e6);
     near(r.line_repaid, 2.0e6);
@@ -259,7 +268,7 @@ fn removal_settles_the_estate_and_returns_capacity_to_the_fringe() {
         cash: -3.0e6,
         asset_book: 0.0,
         line_drawn: 4.0e6,
-        tax_payable: 0.0,
+        tax: TaxBook::default(),
     };
     let (_, r) = remove(state, &empty, 0.0);
     assert_eq!(r.line_repaid, 0.0);
@@ -321,7 +330,7 @@ fn a_forced_failure_walks_distress_bankrupt_removed() {
             cash: 1.0e6,
             asset_book: 20.0e6,
             line_drawn: 4.0e6,
-            tax_payable: 0.0,
+            tax: TaxBook::default(),
         },
         gross: 40.0e6,
         line: line(4.0e6, 4.0e6),

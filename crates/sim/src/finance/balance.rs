@@ -15,6 +15,7 @@ use serde::{Deserialize, Serialize};
 
 use super::distress::CompanyStatus;
 use super::statements::Ledger;
+use super::tax::TaxBook;
 
 /// Absolute tolerance of the balance checks, USD.
 pub const BALANCE_TOLERANCE_USD: f64 = 0.01;
@@ -29,8 +30,15 @@ pub struct Books {
     /// Business assets at book (Σ units asset_book).
     pub asset_book: f64,
     pub line_drawn: f64,
-    /// Tax accrued this quarter, not yet paid (5.11).
-    pub tax_payable: f64,
+    /// The tax book (5.11): its `accrued` is the tax payable, held nowhere else.
+    pub tax: TaxBook,
+}
+
+impl Books {
+    /// Tax accrued this quarter, not yet paid (5.11, D227).
+    pub fn tax_payable(&self) -> f64 {
+        self.tax.accrued
+    }
 }
 
 /// Balance sheet lines (spec 3.9: cash; business assets at book; total assets; credit line
@@ -60,7 +68,7 @@ impl BalanceSheet {
 /// The balance sheet of `books` for a company in `status` (spec 3.9; D230).
 pub fn balance_sheet(books: &Books, status: CompanyStatus) -> BalanceSheet {
     let total_assets = books.cash + books.asset_book;
-    let total_liabilities = books.line_drawn + books.tax_payable;
+    let total_liabilities = books.line_drawn + books.tax_payable();
     let residual = total_assets - total_liabilities;
     let (estate, equity) = if status == CompanyStatus::Bankrupt {
         (residual, 0.0)
@@ -72,7 +80,7 @@ pub fn balance_sheet(books: &Books, status: CompanyStatus) -> BalanceSheet {
         asset_book: books.asset_book,
         total_assets,
         line_drawn: books.line_drawn,
-        tax_payable: books.tax_payable,
+        tax_payable: books.tax_payable(),
         total_liabilities,
         estate,
         equity,

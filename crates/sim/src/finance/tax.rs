@@ -45,7 +45,8 @@ pub struct TaxBook {
     pub carryforward: f64,
     /// Pre-tax income of the quarter so far.
     pub quarter_pre_tax: f64,
-    /// Tax accrued in the quarter so far (the balance sheet's tax payable).
+    /// Tax accrued in the quarter so far: the one source of the balance sheet's tax payable
+    /// ([`super::balance::Books::tax`]).
     pub accrued: f64,
 }
 
@@ -59,10 +60,21 @@ pub fn accrue_month(book: &mut TaxBook, month_pre_tax: f64, rate: f64) -> f64 {
     accrual
 }
 
-/// Closes the quarter (spec 5.11, 4.4 Close and compile): the tax paid is what was accrued; the
-/// carryforward moves; the quarter's running figures reset.
-pub fn close_quarter(book: &mut TaxBook, rate: f64) -> QuarterTax {
-    let q = quarter_tax(book.quarter_pre_tax, book.carryforward, rate);
+/// Closes the quarter (spec 5.11, 4.4 Close and compile): the tax paid is exactly what the
+/// months accrued (`book.accrued`, the balance sheet's tax payable), not a recomputation; the
+/// carryforward moves by the quarter's pre-tax income; the quarter's running figures reset.
+pub fn close_quarter(book: &mut TaxBook) -> QuarterTax {
+    let pti = book.quarter_pre_tax;
+    let cf = book.carryforward.max(0.0);
+    let used = cf.min(pti.max(0.0));
+    let added = (-pti).max(0.0);
+    let q = QuarterTax {
+        pre_tax_income: pti,
+        carryforward_used: used,
+        tax: book.accrued,
+        carryforward_added: added,
+        carryforward_after: cf - used + added,
+    };
     book.carryforward = q.carryforward_after;
     book.quarter_pre_tax = 0.0;
     book.accrued = 0.0;

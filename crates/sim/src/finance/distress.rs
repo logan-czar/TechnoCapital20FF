@@ -250,14 +250,14 @@ pub fn remove(state: DistressState, books: &Books, gross_assets: f64) -> (Distre
     let mut cash = books.cash + sale.proceeds;
     let line_repaid = books.line_drawn.max(0.0).min(cash.max(0.0));
     cash -= line_repaid;
-    let tax_paid = books.tax_payable.max(0.0).min(cash.max(0.0));
+    let tax_paid = books.tax_payable().max(0.0).min(cash.max(0.0));
     cash -= tax_paid;
     let removal = Removal {
         sale,
         line_repaid,
         line_written_off: books.line_drawn.max(0.0) - line_repaid,
         tax_paid,
-        other_written_off: (books.tax_payable.max(0.0) - tax_paid) + (-cash).max(0.0),
+        other_written_off: (books.tax_payable().max(0.0) - tax_paid) + (-cash).max(0.0),
         residual_cash: cash.max(0.0),
         capacity_to_fringe: gross_assets.max(0.0),
     };

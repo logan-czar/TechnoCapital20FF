@@ -5,6 +5,7 @@
 mod finance_common;
 
 use finance_common::data;
+use sim::finance::balance::Books;
 use sim::finance::tax::{QuarterTax, TaxBook, accrue_month, close_quarter, quarter_tax};
 
 #[track_caller]
@@ -96,7 +97,7 @@ fn accrued_monthly_paid_at_the_close() {
         near(*a, 3.0e6);
     }
     near(book.accrued, 9.0e6);
-    let q = close_quarter(&mut book, r);
+    let q = close_quarter(&mut book);
     near(q.tax, 9.0e6);
     near(accruals.iter().sum::<f64>(), q.tax);
     assert_eq!(book, TaxBook::default(), "the quarter resets");
@@ -114,7 +115,7 @@ fn accrual_reads_the_carryforward_and_reverses_on_a_loss_month() {
     near(a[0], 0.0);
     near(a[1], 1.5e6);
     near(a[2], 3.0e6);
-    let q = close_quarter(&mut book, r);
+    let q = close_quarter(&mut book);
     near(q.tax, 4.5e6);
     assert_eq!(book.carryforward, 0.0);
     // A loss month after a profit month reverses its accrual; the quarter's net profit is taxed
@@ -127,7 +128,7 @@ fn accrual_reads_the_carryforward_and_reverses_on_a_loss_month() {
     near(a[0], 3.0e6);
     near(a[1], -3.0e6);
     near(a[2], 1.5e6);
-    let q = close_quarter(&mut book, r);
+    let q = close_quarter(&mut book);
     near(q.tax, 1.5e6);
     assert_eq!(book.carryforward, 0.0);
     // A loss quarter adds its net loss at the close, not month by month.
@@ -135,7 +136,30 @@ fn accrual_reads_the_carryforward_and_reverses_on_a_loss_month() {
     for p in [-4.0e6, 1.0e6, -2.0e6] {
         assert_eq!(accrue_month(&mut book, p, r), 0.0);
     }
-    let q = close_quarter(&mut book, r);
+    let q = close_quarter(&mut book);
     assert_eq!((q.tax, q.carryforward_added), (0.0, 5.0e6));
     assert_eq!(book.carryforward, 5.0e6);
+}
+
+#[test]
+fn the_close_pays_exactly_what_was_accrued() {
+    // The close takes no rate: it pays the tax book's accrual, the one tax payable the balance
+    // sheet reads, and never recomputes it. Accruals made at 30% then 20% (a rate change in the
+    // quarter) pay what the months booked: the cumulative accrual at the last month's 20%.
+    let mut book = TaxBook::default();
+    let a = [
+        accrue_month(&mut book, 10.0e6, 0.3),
+        accrue_month(&mut book, 10.0e6, 0.3),
+        accrue_month(&mut book, 10.0e6, 0.2),
+    ];
+    near(book.accrued, 6.0e6);
+    let books = Books {
+        tax: book,
+        ..Books::default()
+    };
+    assert_eq!(books.tax_payable(), book.accrued);
+    let q = close_quarter(&mut book);
+    assert_eq!(q.tax, books.tax_payable());
+    near(a.iter().sum::<f64>(), q.tax);
+    assert_eq!(book.accrued, 0.0);
 }

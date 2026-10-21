@@ -15,8 +15,16 @@ use sim::finance::statements::{
     ARCHIVE_QUARTERS, KeyFigures, Ledger, Period, Statement, archive_push, quarter_statement,
     synthetic_history, trailing_four, year_statement,
 };
-use sim::finance::tax::quarter_tax;
+use sim::finance::tax::{TaxBook, quarter_tax};
 use sim::time::calendar::Quarter;
+
+/// A tax book with `accrued` of tax payable.
+fn payable(accrued: f64) -> TaxBook {
+    TaxBook {
+        accrued,
+        ..TaxBook::default()
+    }
+}
 
 fn key(rating: Rating) -> KeyFigures {
     KeyFigures {
@@ -140,7 +148,7 @@ fn synthetic_history_is_a_quarter_of_the_run_rate() {
             cash: 80.4e6,
             asset_book: 19.6e6,
             line_drawn: 0.0,
-            tax_payable: 0.0,
+            tax: TaxBook::default(),
         },
         CompanyStatus::Active,
     );
@@ -241,7 +249,7 @@ fn run_rate(f: &CompanyFacts<'_>, row: &FixtureRow) -> (Ledger, BalanceSheet, Ra
             cash,
             asset_book: book,
             line_drawn: line,
-            tax_payable: 0.0,
+            tax: TaxBook::default(),
         },
         CompanyStatus::Active,
     );
@@ -380,7 +388,7 @@ fn balance_identity_active_and_bankrupt() {
         cash: 12.0e6,
         asset_book: 40.0e6,
         line_drawn: 30.0e6,
-        tax_payable: 0.5e6,
+        tax: payable(0.5e6),
     };
     // Active: equity is the residual, no estate.
     let a = balance_sheet(&books, CompanyStatus::Active);
@@ -394,7 +402,7 @@ fn balance_identity_active_and_bankrupt() {
         cash: -2.0e6,
         asset_book: 10.0e6,
         line_drawn: 30.0e6,
-        tax_payable: 0.0,
+        tax: TaxBook::default(),
     };
     let b = balance_sheet(&deficit, CompanyStatus::Bankrupt);
     assert_eq!(b.equity, 0.0);
@@ -415,7 +423,7 @@ fn month_check_rolls_every_balance_through_the_ledger() {
         cash: 20.0e6,
         asset_book: 50.0e6,
         line_drawn: 10.0e6,
-        tax_payable: 0.3e6,
+        tax: payable(0.3e6),
     };
     let m = sample_month();
     // Apply the month to the books the way steps 9 to 14 do.
@@ -423,7 +431,7 @@ fn month_check_rolls_every_balance_through_the_ledger() {
         cash: opening_books.cash + m.net_cash_change(),
         asset_book: opening_books.asset_book + m.asset_purchases - m.depreciation - m.book_sold(),
         line_drawn: opening_books.line_drawn + m.line_drawn_or_repaid,
-        tax_payable: opening_books.tax_payable + m.tax - m.tax_paid,
+        tax: payable(opening_books.tax_payable() + m.tax - m.tax_paid),
     };
     let open = balance_sheet(&opening_books, CompanyStatus::Active);
     let close = balance_sheet(&closing_books, CompanyStatus::Active);
@@ -466,7 +474,7 @@ fn month_check_through_the_wipe_and_a_frozen_month() {
         cash: 0.0,
         asset_book: 8.0e6,
         line_drawn: 10.0e6,
-        tax_payable: 0.0,
+        tax: TaxBook::default(),
     };
     let m = Ledger {
         revenue: 1.0e6,
@@ -482,7 +490,7 @@ fn month_check_through_the_wipe_and_a_frozen_month() {
         cash: opening.cash + m.net_cash_change(),
         asset_book: opening.asset_book - m.book_sold(),
         line_drawn: opening.line_drawn,
-        tax_payable: 0.0,
+        tax: TaxBook::default(),
     };
     let open = balance_sheet(&opening, CompanyStatus::Distressed);
     let close = balance_sheet(&closing, CompanyStatus::Bankrupt);
