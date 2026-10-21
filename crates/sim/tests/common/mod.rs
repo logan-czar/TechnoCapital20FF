@@ -4,6 +4,8 @@
 
 #![allow(dead_code)]
 
+pub mod economy;
+
 use sim::time::{JobCtx, Slot};
 use sim::world::{AlertKind, AlertPayload, CompanyId, Ordinal, World};
 use sim::{Sim, Stream};
