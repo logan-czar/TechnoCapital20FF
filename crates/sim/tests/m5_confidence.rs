@@ -57,7 +57,10 @@ fn confidence_follows_the_index_and_decays_to_zero_with_no_news() {
     // Every zone starts at confidence_start, 0 for all (5.1.2).
     assert!(w.zones.iter().all(|(_, z)| z.confidence == 0.0));
     sim.register_test_job(Slot::Alerts, "test.shock", shock_empty_zone);
-    let mut prev_conf: Vec<f64> = zones.iter().map(|&z| sim.world().zones[z].confidence).collect();
+    let mut prev_conf: Vec<f64> = zones
+        .iter()
+        .map(|&z| sim.world().zones[z].confidence)
+        .collect();
     let mut prev_level: Vec<Option<f64>> = zones.iter().map(|&z| level(sim.world(), z)).collect();
     let mut days = 0;
     let mut empty_path = Vec::new();
@@ -73,13 +76,17 @@ fn confidence_follows_the_index_and_decays_to_zero_with_no_news() {
         }
         days += 1;
         for &z in &zones {
-            assert!(confidence_headlines(w, z).is_empty(), "no headlines before M6.5");
+            assert!(
+                confidence_headlines(w, z).is_empty(),
+                "no headlines before M6.5"
+            );
             let now = level(w, z);
             let r = match (prev_level[z.index()], now) {
                 (Some(a), Some(b)) => (b / a - 1.0) * 100.0,
                 _ => 0.0,
             };
-            let mut want = (RETAIN * prev_conf[z.index()] + POINTS_PER_PERCENT * r).clamp(-100.0, 100.0);
+            let mut want =
+                (RETAIN * prev_conf[z.index()] + POINTS_PER_PERCENT * r).clamp(-100.0, 100.0);
             if want.abs() < 0.005 {
                 want = 0.0;
             }
@@ -104,7 +111,10 @@ fn confidence_follows_the_index_and_decays_to_zero_with_no_news() {
     for (n, &c) in empty_path.iter().enumerate() {
         let k = n + 1;
         if k < QUIET_DAYS_TO_ZERO {
-            assert!((c - 100.0 * RETAIN.powi(k as i32)).abs() < 1e-9, "day {k}: {c}");
+            assert!(
+                (c - 100.0 * RETAIN.powi(k as i32)).abs() < 1e-9,
+                "day {k}: {c}"
+            );
             assert!(c > 0.0);
         } else {
             assert_eq!(c, 0.0, "day {k}");
@@ -112,9 +122,10 @@ fn confidence_follows_the_index_and_decays_to_zero_with_no_news() {
     }
     assert!(empty_path.len() > QUIET_DAYS_TO_ZERO);
     // Listed exchanges did move (index returns).
-    assert!(sim
-        .world()
-        .zones
-        .iter()
-        .any(|(z, c)| z != empty && c.confidence != 0.0));
+    assert!(
+        sim.world()
+            .zones
+            .iter()
+            .any(|(z, c)| z != empty && c.confidence != 0.0)
+    );
 }

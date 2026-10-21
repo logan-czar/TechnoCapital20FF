@@ -100,9 +100,21 @@ fn bars_buzz_fair_value_jump_and_reaction_week() {
     let n = sim.world().companies.len();
     // Hourly prices since the day's bar opened, per company.
     let mut day_prices: Vec<Vec<f64>> = vec![Vec::new(); n];
-    let mut open: Vec<f64> = sim.world().market.stocks.rows().iter().map(|s| s.price).collect();
+    let mut open: Vec<f64> = sim
+        .world()
+        .market
+        .stocks
+        .rows()
+        .iter()
+        .map(|s| s.price)
+        .collect();
     let mut buzz: Vec<f64> = vec![0.0; n];
-    let mut confidence: Vec<f64> = sim.world().zones.iter().map(|(_, z)| z.confidence).collect();
+    let mut confidence: Vec<f64> = sim
+        .world()
+        .zones
+        .iter()
+        .map(|(_, z)| z.confidence)
+        .collect();
     let (mut bars_checked, mut refreshes, mut jumps, mut reversions) = (0, 0, 0, 0);
     let mut tags = [0usize; 4];
     while sim.now() < end {
@@ -123,7 +135,10 @@ fn bars_buzz_fair_value_jump_and_reaction_week() {
             let yesterday = d.add_days(-1);
             let last = s.bars.last();
             if yesterday == Date::ymd(2020, 1, 1) {
-                assert!(last.is_none_or(|b| b.date != yesterday), "a bar on 1 January");
+                assert!(
+                    last.is_none_or(|b| b.date != yesterday),
+                    "a bar on 1 January"
+                );
             } else {
                 let bar = last.expect("a bar each trading day");
                 assert_eq!(bar.date, yesterday);
@@ -169,13 +184,8 @@ fn bars_buzz_fair_value_jump_and_reaction_week() {
                     continue;
                 }
                 let s = &w.market.stocks[id];
-                let want = spec_fair_value(
-                    w,
-                    id,
-                    s.basis.e_norm,
-                    s.basis.growth_factor,
-                    &confidence,
-                );
+                let want =
+                    spec_fair_value(w, id, s.basis.e_norm, s.basis.growth_factor, &confidence);
                 near(s.fair_value, want, &format!("{} daily fair value", c.key));
                 near(s.value, s.fair_value / c.shares_out as f64, "V");
                 refreshes += 1;
@@ -211,7 +221,11 @@ fn bars_buzz_fair_value_jump_and_reaction_week() {
                 // The surprise against the 9 January consensus (5.15), and the tags.
                 let last = quarters.last().unwrap();
                 let ni = last.lines.net_income();
-                let cons = if s.consensus_ni == 0.0 { 1.0 } else { s.consensus_ni };
+                let cons = if s.consensus_ni == 0.0 {
+                    1.0
+                } else {
+                    s.consensus_ni
+                };
                 let sp = (ni - cons) / cons.abs();
                 near(s.last_surprise, sp, "surprise");
                 let tag = s.tags.surprise;

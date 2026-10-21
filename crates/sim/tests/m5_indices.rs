@@ -28,7 +28,10 @@ use sim::world::{CompanyId, Ordinal, World, ZoneId};
 const INDEX_BASE: f64 = 1000.0;
 
 fn near(a: f64, b: f64, what: &str) {
-    assert!((a - b).abs() <= 1e-9 * b.abs().max(1.0), "{what}: {a} vs {b}");
+    assert!(
+        (a - b).abs() <= 1e-9 * b.abs().max(1.0),
+        "{what}: {a} vs {b}"
+    );
 }
 
 /// What the listing job saw: (level before, level after) on the exchange with listings, the
@@ -60,7 +63,9 @@ fn list_two(w: &mut World, ctx: &mut JobCtx<'_>) {
     let private: Vec<CompanyId> = w
         .companies
         .iter()
-        .filter(|(id, c)| !c.public && !c.finance.status().is_frozen() && w.market.stocks[*id].exchange.is_none())
+        .filter(|(id, c)| {
+            !c.public && !c.finance.status().is_frozen() && w.market.stocks[*id].exchange.is_none()
+        })
         .map(|(id, _)| id)
         .collect();
     let zone_of = |w: &World, id: CompanyId| w.countries[w.companies[id].hq_country].zone;
@@ -135,8 +140,14 @@ fn an_index_does_not_jump_when_a_company_lists_or_issues_shares() {
     println!("{seen:?}");
     assert!(sim.world().market.stocks[seen.listed].exchange == Some(seen.zone));
     near(seen.after, seen.before, "level through a listing");
-    near(seen.issue_after, seen.issue_before, "level through a share issue");
-    let (id, z, before, after) = seen.empty_listed.expect("a private company on an empty exchange");
+    near(
+        seen.issue_after,
+        seen.issue_before,
+        "level through a share issue",
+    );
+    let (id, z, before, after) = seen
+        .empty_listed
+        .expect("a private company on an empty exchange");
     assert_eq!(before, None, "an exchange with no listing shows no level");
     near(after.unwrap(), INDEX_BASE, "a first listing opens at 1,000");
     let w = sim.world();
@@ -151,7 +162,10 @@ fn an_index_does_not_jump_when_a_company_lists_or_issues_shares() {
             .constituents
             .contains(&id)
     );
-    assert_eq!(w.market.stocks[seen.listed].shares, w.companies[seen.listed].shares_out);
+    assert_eq!(
+        w.market.stocks[seen.listed].shares,
+        w.companies[seen.listed].shares_out
+    );
 }
 
 // --- Delisting at bankruptcy ------------------------------------------------------------------
@@ -161,7 +175,10 @@ static BASE_RATE_BITS: AtomicU64 = AtomicU64::new(0);
 /// A distress month's extra cost, as a share of the asset book (as in m4_distress.rs).
 const LOSS_SHARE_OF_BOOK: f64 = 0.04;
 /// Levels of the target's exchange at steps 12 and 14 of the bankruptcy month.
-static LEVELS: Mutex<Vec<(Option<f64>, Option<f64>, bool)>> = Mutex::new(Vec::new());
+static LEVELS: Mutex<Vec<MonthLevels>> = Mutex::new(Vec::new());
+
+/// The level at step 12, the level at step 14 and whether the target was Bankrupt by then.
+type MonthLevels = (Option<f64>, Option<f64>, bool);
 
 fn target() -> CompanyId {
     CompanyId::from_index(TARGET.load(Ordering::SeqCst))
@@ -218,7 +235,10 @@ fn a_bankruptcy_delists_without_moving_the_index() {
         sim.world().units[u].fixed_cost_rate.to_bits(),
         Ordering::SeqCst,
     );
-    assert!(sim.world().market.stocks[id].quoted, "Arrowhead lists on ATX");
+    assert!(
+        sim.world().market.stocks[id].quoted,
+        "Arrowhead lists on ATX"
+    );
     sim.register_test_job(Slot::MonthlyDemand, "test.squeeze", squeeze);
     sim.register_test_job(Slot::MonthlyInterest, "test.level_12", level_at_step_12);
     sim.register_test_job(Slot::MonthlyLedger, "test.level_14", level_at_step_14);
@@ -242,8 +262,15 @@ fn a_bankruptcy_delists_without_moving_the_index() {
         .iter()
         .find(|(_, _, bankrupt)| *bankrupt)
         .expect("Arrowhead went bankrupt");
-    println!("delisted {delisted_on:?}: level at step 12 {:?}, at step 14 {:?}", month.0, month.1);
-    near(month.1.unwrap(), month.0.unwrap(), "level through the delisting");
+    println!(
+        "delisted {delisted_on:?}: level at step 12 {:?}, at step 14 {:?}",
+        month.0, month.1
+    );
+    near(
+        month.1.unwrap(),
+        month.0.unwrap(),
+        "level through the delisting",
+    );
     let w = sim.world();
     assert_eq!(w.companies[id].finance.status(), CompanyStatus::Removed);
     assert_eq!(w.market.stocks[id].price, 0.0);

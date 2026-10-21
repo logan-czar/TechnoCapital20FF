@@ -52,7 +52,7 @@ fn open_price(value: f64, id: &str) -> f64 {
 
 #[test]
 fn crc32_matches_python() {
-    // zlib.crc32(b"price:CO-0001") and the classic check value.
+    // The CRC-32 check value (zlib.crc32(b"123456789")).
     assert_eq!(crc32(b"123456789"), 0xCBF4_3926);
 }
 
@@ -116,10 +116,17 @@ fn load_values_match_company_start_and_open_at_v() {
         }
     }
     assert_eq!(listed, 467);
-    println!("engine value vs company-start.csv: worst ${worst_usd:.4}; worst |V/P − 1| {worst_gap:.2e}");
+    println!(
+        "engine value vs company-start.csv: worst ${worst_usd:.4}; worst |V/P − 1| {worst_gap:.2e}"
+    );
 
     // Arrowhead (ARDR): $9 × about 6.67M shares = $60M, its 0.6 × book floor (7.1).
-    let ardr = w.companies.iter().find(|(_, c)| c.key == "CO-0001").unwrap().0;
+    let ardr = w
+        .companies
+        .iter()
+        .find(|(_, c)| c.key == "CO-0001")
+        .unwrap()
+        .0;
     let s = &w.market.stocks[ardr];
     assert_eq!(s.price, 9.0);
     assert_eq!(w.companies[ardr].shares_out, 6_666_667);

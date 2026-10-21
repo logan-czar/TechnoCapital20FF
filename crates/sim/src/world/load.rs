@@ -406,13 +406,8 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             &industries[industry].sector,
             controller.map_or(&[][..], |ch| &characters[ch].traits[..]),
         );
-        let hq_country = country_keys.get(
-            "companies",
-            &c.id,
-            "hq_country",
-            &c.hq_country,
-            "country",
-        )?;
+        let hq_country =
+            country_keys.get("companies", &c.id, "hq_country", &c.hq_country, "country")?;
         // A listed company lists on its HQ country's zone exchange at company-start.csv's
         // open_price (spec 5.14, 7.1; D145); `market::start` sets its value.
         let exchange = c.public.then_some(countries[hq_country.index()].zone);

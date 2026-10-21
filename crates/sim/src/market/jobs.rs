@@ -52,11 +52,7 @@ fn frozen(c: &Company) -> bool {
 /// (3.9), M_sector, the HQ home spread on the zone's effective spread (5.1.2, 5.12), the
 /// industry's phase label (5.1), the company's own confidence factor (5.7), its listing
 /// exchange's confidence (5.1.2; `None` while private) and the industry's book floor.
-pub fn fair_value_inputs(
-    world: &World,
-    id: CompanyId,
-    basis: FairValueBasis,
-) -> FairValueInputs {
+pub fn fair_value_inputs(world: &World, id: CompanyId, basis: FairValueBasis) -> FairValueInputs {
     let c = &world.companies[id];
     let ind = &world.industries[c.industry];
     let exchange = world.market.stocks[id].exchange;
@@ -166,11 +162,8 @@ pub fn start(world: &mut World) {
             listing_confidence: exchange.map(|z| world.zones[z].confidence_start),
             book_floor_share: book_floor_share(&ind.key),
         });
-        let basis = FairValueBasis::at_release(
-            Some(ni),
-            super::engine_value::LOAD_REVENUE_GROWTH,
-            ind.lt,
-        );
+        let basis =
+            FairValueBasis::at_release(Some(ni), super::engine_value::LOAD_REVENUE_GROWTH, ind.lt);
         let quarters = c.finance.quarters();
         let (q4_ni, q4_revenue) = quarters
             .last()
