@@ -46,10 +46,26 @@ fn monthly_hashes_and_metrics() {
 
     let rows = std::fs::read_to_string(&csv).unwrap();
     let rows: Vec<&str> = rows.lines().collect();
-    assert_eq!(rows[0], "seed,year,ticks,final_hash,wall_ms");
+    assert_eq!(
+        rows[0],
+        "seed,year,ticks,final_hash,wall_ms,phase,g_t,named_revenue_usd,fringe_revenue_usd,\
+         mean_s,min_s,max_s,mean_m"
+    );
     assert_eq!(rows.len(), 3);
     assert!(rows[1].starts_with("7,2020,8784,"), "{}", rows[1]);
     assert!(rows[2].starts_with("8,2020,8784,"), "{}", rows[2]);
+    // M2 columns: a phase name, g_t, a year of revenue and S near 1 in the first year.
+    let cols: Vec<&str> = rows[1].split(',').collect();
+    assert_eq!(cols.len(), 13, "{}", rows[1]);
+    assert!(
+        ["Expansion", "Overheating"].contains(&cols[5]),
+        "{}",
+        rows[1]
+    );
+    let named: f64 = cols[7].parse().unwrap();
+    assert!(named > 1e12, "named revenue a year {named}");
+    let mean_s: f64 = cols[9].parse().unwrap();
+    assert!((0.9..1.1).contains(&mean_s), "{mean_s}");
 
     // Same seed, same hashes.
     let (_, again, _) = run(&args);

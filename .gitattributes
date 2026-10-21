@@ -1,2 +1,5 @@
 # Shell scripts must keep LF endings even with core.autocrlf on Windows.
 *.sh text eol=lf
+# Golden fixtures are written with LF by docs/design/tools/mvp-data/export_fixtures.py; keep them LF
+# so a regenerated fixture does not show as changed on Windows.
+crates/sim/tests/fixtures/*.csv text eol=lf
