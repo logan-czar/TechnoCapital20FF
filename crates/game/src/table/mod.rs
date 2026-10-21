@@ -293,6 +293,14 @@ impl Table {
         self.pool.len()
     }
 
+    /// The text entity of the first pooled row's first shown cell, once the pool has rows and
+    /// the redraw has filled them (the timing bench waits for its layout).
+    pub fn first_cell_text(&self) -> Option<Entity> {
+        (self.built_layout == self.layout)
+            .then(|| self.pool.first().and_then(|r| r.texts.first().copied()))
+            .flatten()
+    }
+
     pub fn top(&self) -> usize {
         self.top
     }

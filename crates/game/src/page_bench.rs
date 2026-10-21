@@ -1,7 +1,9 @@
 //! The page timing smoke test (M9 A2 task 9; the M9.9 harness's first cut; D459): `--bench-pages`
 //! opens one page of every kind in the focused pane, from an [`OpenPage`] message, and times it
-//! to the first frame whose layout has the page: the pane drew it, its body has a size, and
-//! every text of its header is laid out. Each page opens twice: cold (its first build, font
+//! to the first frame whose layout has the page: the pane drew it, its body has a size, every
+//! text of its header is laid out, every table on it shows its first row's text laid out (the
+//! pool sizes itself from the body's laid-out height, so that is a frame or two later), and
+//! every chart with data has drawn. Each page opens twice: cold (its first build, font
 //! glyphs new) and warm. Prints a table and exits; the target is under 100 ms in a release
 //! build on a fresh 2020 world.
 
@@ -12,8 +14,10 @@ use bevy::text::TextLayoutInfo;
 use sim::finance::distress::CompanyStatus;
 
 use crate::bridge::Views;
+use crate::chart::Chart;
 use crate::command::index::NameIndex;
 use crate::pages::PageRef;
+use crate::table::Table;
 use crate::workspace::{OpenPage, PaneFrame, Workspace, WorkspaceInput};
 
 /// Frames before the first page (pipelines and the font atlas warm up).
@@ -118,6 +122,8 @@ fn check_laid_out(
     nodes: Query<&ComputedNode>,
     children: Query<&Children>,
     texts: Query<(&Text, &TextLayoutInfo)>,
+    tables: Query<&Table>,
+    charts: Query<&Chart>,
     mut exit: MessageWriter<AppExit>,
 ) {
     let Some((at, sent_frame)) = b.sent else {
@@ -143,7 +149,21 @@ fn check_laid_out(
                 });
                 any && all
             });
-            sized && texts_done
+            // Every table shows its first row's text laid out, and every chart has drawn.
+            let widgets_done = children.iter_descendants(f.body).all(|e| {
+                let table_ok = !tables.contains(e)
+                    || tables.get(e).is_ok_and(|t| {
+                        t.model().is_empty()
+                            || t.first_cell_text()
+                                .and_then(|c| texts.get(c).ok())
+                                .is_some_and(|(txt, info)| !txt.0.is_empty() && info.size.x > 0.0)
+                    });
+                let chart_ok = charts
+                    .get(e)
+                    .map_or(true, |c| c.model().slots() == 0 || c.drawn_primitives() > 0);
+                table_ok && chart_ok
+            });
+            sized && texts_done && widgets_done
         });
     let frames_taken = b.frame - sent_frame;
     if !ready && frames_taken < TIMEOUT_FRAMES {
