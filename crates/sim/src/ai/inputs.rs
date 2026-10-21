@@ -49,7 +49,7 @@ pub fn liquidity(cash: f64, line: &CreditLine) -> f64 {
 /// The traits the Lite AI reads (spec 6 "traits", 5.19.5): the named controller's when the
 /// controller is a character, else none; a company born in play reads none, whatever its
 /// founders' traits (Logan, batch 165, 3a; C33).
-pub fn plan_traits<'a>(controller_traits: Option<&'a [Trait]>, born_in_play: bool) -> &'a [Trait] {
+pub fn plan_traits(controller_traits: Option<&[Trait]>, born_in_play: bool) -> &[Trait] {
     match controller_traits {
         Some(t) if !born_in_play => t,
         _ => &[],

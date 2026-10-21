@@ -177,10 +177,13 @@ pub fn result(
     ))
 }
 
+/// Release picks: (company, surprise s), in post order.
+pub type Picks = Vec<(CompanyId, f64)>;
+
 /// The release's picks (spec 5.18 "the five largest beats and misses"; D279): the five largest
 /// beats (s above +5%, largest first) and the five largest misses (s below −5%, worst first),
 /// ties to the lower id. Input is (company, s) for every company that reported.
-pub fn top_results(results: &[(CompanyId, f64)]) -> (Vec<(CompanyId, f64)>, Vec<(CompanyId, f64)>) {
+pub fn top_results(results: &[(CompanyId, f64)]) -> (Picks, Picks) {
     let mut beats: Vec<(CompanyId, f64)> = results
         .iter()
         .copied()
