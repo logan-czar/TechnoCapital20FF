@@ -19,6 +19,7 @@
 //! - [`confidence`]: 5.1.2 zone exchange confidence.
 //! - [`projection`]: 5.16 consensus and projection ranges.
 
+pub mod confidence;
 pub mod daily;
 pub mod earnings;
 pub mod engine_value;
