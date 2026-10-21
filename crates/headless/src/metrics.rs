@@ -676,30 +676,10 @@ impl YearBirths {
 
 /// Spec 10 "median productivity 90 to 110" (D321): the median productivity of the units with
 /// gross assets above 0 of companies not frozen (Active or Distressed), the mean of the middle
-/// two for an even count; 0 with no unit.
+/// two for an even count; 0 with no unit. Read from v_world_totals, since a private company's
+/// gross assets are an estimate band in v_units (D420, D427).
 fn median_productivity(sim: &Sim) -> f64 {
-    let v = sim.views();
-    let companies = &v.company_detail.get().companies;
-    let mut prod: Vec<f64> = v
-        .units
-        .get()
-        .units
-        .iter()
-        .filter(|u| u.gross_assets > 0.0 && !companies[u.company.index()].status.is_frozen())
-        .map(|u| u.productivity)
-        .collect();
-    prod.sort_by(f64::total_cmp);
-    median(&prod)
-}
-
-/// The median of sorted values (0 when empty).
-fn median(sorted: &[f64]) -> f64 {
-    let n = sorted.len();
-    match n {
-        0 => 0.0,
-        _ if n % 2 == 1 => sorted[n / 2],
-        _ => 0.5 * (sorted[n / 2 - 1] + sorted[n / 2]),
-    }
+    sim.views().world_totals.get().median_productivity
 }
 
 /// The year's M5.8 tracking count, added at each daily close from v_market_stats.
@@ -763,7 +743,8 @@ fn books_columns(sim: &Sim, year: i32, distressed_in_year: usize) -> String {
         .iter()
         .filter(|c| in_year(c.removed_on))
         .count();
-    let line: f64 = companies.iter().map(|c| c.line_drawn_usd).sum();
+    // The true total, from v_world_totals: a private company's line is a band (D420, D427).
+    let line = v.world_totals.get().line_drawn_usd;
     let bands: Vec<String> = ratings
         .band_counts()
         .iter()
@@ -802,11 +783,8 @@ fn operations_columns(sim: &Sim) -> String {
     let n = companies.len().max(1) as f64;
     let mean_management = companies.iter().map(|c| c.management_score).sum::<f64>() / n;
     let data_tb: f64 = v.tech.get().companies.iter().map(|t| t.stored_tb()).sum();
-    let mut ebit = vec![0.0; companies.len()];
-    for u in units {
-        ebit[u.company.index()] += u.ebit_m;
-    }
-    let profitable = ebit.iter().filter(|&&e| e > 0.0).count();
+    // From v_world_totals: a private company's EBIT is a band in v_units (D420, D427).
+    let profitable = v.world_totals.get().profitable_companies;
     format!(
         "{mean_productivity:.3},{mean_management:.3},{data_tb:.1},{:.4}",
         profitable as f64 / n
@@ -852,14 +830,6 @@ impl YearEconomy {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn median_of_odd_and_even_counts() {
-        assert_eq!(median(&[]), 0.0);
-        assert_eq!(median(&[3.0]), 3.0);
-        assert_eq!(median(&[1.0, 2.0, 9.0]), 2.0);
-        assert_eq!(median(&[1.0, 2.0, 4.0, 9.0]), 3.0);
-    }
 
     #[test]
     fn cagr_and_revenue_ratio() {

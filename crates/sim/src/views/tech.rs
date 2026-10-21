@@ -1,8 +1,11 @@
 //! v_tech: `get_company_tech` (spec 9.2), the Company screen's Tech tab (spec 8): labor split,
 //! stations, PC and the next bonus step, compute, and per industry the data quests card
 //! (progress to the next free R&D step, inflow against conversion and decay; 10.0.11.7).
-//! Rebuilt monthly and on load (spec 9.4).
+//! Rebuilt monthly and on load (spec 9.4), and when Omniscient is toggled (D423). A private
+//! company's or new listing's data inflow is worked out from its estimated revenue, since the
+//! true inflow would give its revenue away (D420).
 
+use super::estimate::Field;
 use super::{Cadence, ViewData, ViewInput};
 use crate::ops::compute::ComputeBill;
 use crate::ops::data::{conversion_capacity, decay_rate, next_free_rd_tb};
@@ -24,7 +27,8 @@ pub struct TechData {
     pub grace: bool,
     /// Held TB at which the next free R&D step starts (the progress bar's end).
     pub next_step_tb: f64,
-    /// Unstructured TB a month from last month's revenue (5.9 step 2).
+    /// Unstructured TB a month from last month's revenue (5.9 step 2); from the estimated
+    /// revenue when the company's figures are bands (D420).
     pub inflow_tb: f64,
     /// TB a month the stations convert at most (5.9 step 3; the main industry's book).
     pub conversion_tb: f64,
@@ -63,13 +67,16 @@ impl TechView {
 
 impl ViewData for TechView {
     const CADENCE: Cadence = Cadence::MonthlyAndLock;
+    const ON_OMNISCIENT: bool = true;
 
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;
+        let est = input.estimator();
         let companies = w
             .companies
             .iter()
             .map(|(id, c)| {
+                let banded = est.banded(w, id);
                 let capacity = conversion_capacity(&c.stations);
                 let data = c
                     .data
@@ -83,6 +90,9 @@ impl ViewData for TechView {
                             .filter(|u| u.industry == d.industry)
                             .map(|u| u.revenue_m)
                             .sum();
+                        let revenue = est
+                            .current(banded, id, Field::UnitRevenue, revenue)
+                            .shown();
                         let b = &d.book;
                         TechData {
                             industry: d.industry,

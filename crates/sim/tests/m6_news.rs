@@ -58,8 +58,24 @@ fn every_headline_type_posts_and_reports_its_event() {
                 );
                 assert!(b.expected_surprise > 0.0);
             }
+            // The view copies the recap; a company that does not publish shows bands (D420).
             let v = sim.views().recap.get();
-            assert_eq!(v.recap.as_deref(), Some(&**r));
+            assert_eq!(v.world.as_ref().map(|p| p.quarter), Some(r.world.quarter));
+            assert_eq!(v.companies.len(), r.companies.len());
+            for (p, t) in v.companies.iter().zip(&r.companies) {
+                assert_eq!(p.company, t.company);
+                let estimated = sim::views::estimate::shows_estimates(w, t.company);
+                assert_eq!(p.estimated, estimated);
+                if estimated {
+                    let b = p.expected.consensus.band().unwrap();
+                    assert!(b.low < t.expected.consensus && t.expected.consensus < b.high);
+                    assert_ne!(b.estimate, t.expected.consensus);
+                } else {
+                    assert_eq!(p.range.0.exact(), Some(t.range.0));
+                    assert_eq!(p.range.1.exact(), Some(t.range.1));
+                    assert_eq!(p.expected.projection.exact(), Some(t.expected.projection));
+                }
+            }
         }
     }
     assert_eq!(

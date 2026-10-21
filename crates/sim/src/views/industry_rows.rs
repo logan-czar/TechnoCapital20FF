@@ -1,7 +1,11 @@
 //! v_industry_row: `list_industries` (spec 9.2), the spec 8 Industries table of 42: demand,
 //! supply, S, M, phase label, long-term growth, this quarter's growth a year, fringe share and the
-//! top 5 companies. Rebuilt monthly and on load (spec 9.4).
+//! top 5 companies. Rebuilt monthly and on load (spec 9.4), and when Omniscient is toggled
+//! (D423): the top 5 are ranked by the revenue shown (a private company's estimate, D420), so
+//! the ranking cannot give a hidden revenue away. The industry totals are published figures
+//! (spec 1: industry tables are exact).
 
+use super::estimate::{Estimator, Field};
 use super::{Cadence, ViewData, ViewInput};
 use crate::economy::supply::fringe_supply;
 use crate::world::{CompanyId, IndustryId, Ordinal, PhaseLabel, World};
@@ -32,7 +36,8 @@ pub struct IndustryRow {
     /// Last month's revenue of the named units and of the fringe, USD.
     pub named_revenue_m: f64,
     pub fringe_revenue_m: f64,
-    /// The biggest companies by last month's revenue, ties to the lower id.
+    /// The biggest companies by last month's revenue shown (exact or estimated, D420), ties to
+    /// the lower id.
     pub top_companies: Vec<CompanyId>,
 }
 
@@ -59,11 +64,32 @@ pub fn companies_by_revenue(w: &World) -> Vec<Vec<(CompanyId, f64)>> {
     out
 }
 
+/// One industry's companies by last month's revenue as shown (the exact revenue, or the
+/// estimate when banded; D420), biggest first, ties to the lower id: the order of the
+/// Industries table's top 5 and the detail view's list.
+pub fn ranked_as_shown(
+    est: &Estimator,
+    w: &World,
+    list: &[(CompanyId, f64)],
+) -> Vec<(CompanyId, f64)> {
+    let mut shown: Vec<(CompanyId, f64)> = list
+        .iter()
+        .map(|&(c, r)| {
+            let banded = est.banded(w, c);
+            (c, est.current(banded, c, Field::UnitRevenue, r).shown())
+        })
+        .collect();
+    shown.sort_by(|a, b| b.1.total_cmp(&a.1).then(a.0.cmp(&b.0)));
+    shown
+}
+
 impl ViewData for IndustryRowsView {
     const CADENCE: Cadence = Cadence::Monthly;
+    const ON_OMNISCIENT: bool = true;
 
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;
+        let est = input.estimator();
         let ranked = companies_by_revenue(w);
         let rows = w
             .industries
@@ -91,7 +117,11 @@ impl ViewData for IndustryRowsView {
                     },
                     named_revenue_m: list.iter().map(|(_, r)| r).sum(),
                     fringe_revenue_m: ind.fringe_revenue_m,
-                    top_companies: list.iter().take(TOP_COMPANIES).map(|(c, _)| *c).collect(),
+                    top_companies: ranked_as_shown(&est, w, list)
+                        .iter()
+                        .take(TOP_COMPANIES)
+                        .map(|(c, _)| *c)
+                        .collect(),
                 }
             })
             .collect();

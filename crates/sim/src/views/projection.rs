@@ -4,8 +4,10 @@
 //!
 //! The observer never sees a plan, so the range is the 5.16 range at today's share of the
 //! quarter elapsed, ×2 for a secret plan and centred on the consensus (D252); it narrows as the
-//! quarter passes and never goes under ±3%. The plan itself shows only in Omniscient.
+//! quarter passes and never goes under ±3%. The plan itself shows only in Omniscient. A private
+//! company's or new listing's consensus and range ends are estimate bands (D420).
 
+use super::estimate::{Field, Figure};
 use super::{Cadence, ViewData, ViewInput};
 use crate::ai::plan::LockedPlan;
 use crate::market::projection::{RangeViewer, elapsed_share, range, range_width};
@@ -16,9 +18,9 @@ use crate::world::CompanyId;
 pub struct ProjectionRow {
     pub id: CompanyId,
     /// The quarter's net income consensus set at the plan lock (5.16).
-    pub consensus_ni: f64,
+    pub consensus_ni: Figure,
     /// The shown range, low then high (5.16).
-    pub range: (f64, f64),
+    pub range: (Figure, Figure),
     /// The range's half-width as a share of the consensus.
     pub width: f64,
     /// The locked plan, in Omniscient only (spec 1: published data only).
@@ -49,6 +51,7 @@ impl ViewData for ProjectionView {
 
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;
+        let est = input.estimator();
         let elapsed = elapsed_share(w.clock);
         let width = range_width(elapsed, RangeViewer::OBSERVER);
         let companies = w
@@ -57,10 +60,17 @@ impl ViewData for ProjectionView {
             .filter(|(_, c)| !c.finance.status().is_frozen())
             .map(|(id, c)| {
                 let consensus = w.market.stocks[id].consensus_ni;
+                let banded = est.banded(w, id);
+                let (low, high) = range(consensus, width);
                 ProjectionRow {
                     id,
-                    consensus_ni: consensus,
-                    range: range(consensus, width),
+                    consensus_ni: est.current(banded, id, Field::ConsensusNi, consensus),
+                    // One error for the consensus and both ends, so the ends keep their order
+                    // (the estimate is increasing in the truth, D422).
+                    range: (
+                        est.current(banded, id, Field::ConsensusNi, low),
+                        est.current(banded, id, Field::ConsensusNi, high),
+                    ),
                     width,
                     plan: if input.controls.omniscient {
                         c.plan

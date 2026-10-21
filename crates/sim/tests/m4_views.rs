@@ -5,8 +5,8 @@
 
 mod common;
 
-use common::data;
 use common::ops::{company, run_to};
+use common::{assert_figure, data};
 use sim::Sim;
 use sim::finance::statements::Period;
 use sim::time::{Control, Date, DateTime, Quarter};
@@ -53,8 +53,8 @@ fn statements_are_published_at_the_release() {
     assert_eq!(f.filings.len(), 651);
     let af = f.of_company(a).unwrap();
     assert_eq!(
-        af.revenue,
-        sim.world().companies[a].finance.quarters()[3].lines.revenue
+        af.revenue.exact(),
+        Some(sim.world().companies[a].finance.quarters()[3].lines.revenue)
     );
     assert!(af.synthetic);
     // Q1 2020 is compiled at the 1 April close, unpublished until the 2 April release.
@@ -81,8 +81,7 @@ fn statements_are_published_at_the_release() {
     if cfg!(debug_assertions) {
         run_to(&mut sim, Date::ymd(2020, 6, 1));
         sim.apply(Control::SetOmniscient(true)).unwrap();
-        // The view follows at its next quarterly rebuild (the recap, 25 June).
-        run_to(&mut sim, Date::ymd(2020, 6, 25));
+        // The view follows the toggle at once (D423).
         let months = sim.views().statements.get().months(a, 3).to_vec();
         assert_eq!(months.len(), 2, "April and May");
         assert_eq!(months[0].month.month, 4);
@@ -103,10 +102,12 @@ fn ratings_and_company_detail_show_the_books() {
     assert_eq!(total, 651);
     for (id, c) in w.companies.iter() {
         let row = r.get(id).unwrap();
+        let banded = sim::views::estimate::shows_estimates(w, id);
+        assert_eq!(banded, !c.public, "no listing in play by 2 January 2020");
         assert_eq!(row.rating, c.finance.rating);
         assert_eq!(row.implied, c.finance.implied);
-        assert_eq!(row.line_limit, c.finance.line.limit);
-        assert_eq!(row.line_drawn, c.finance.line.drawn);
+        assert_figure(row.line_limit, c.finance.line.limit, banded, "line limit");
+        assert_figure(row.line_drawn, c.finance.line.drawn, banded, "line drawn");
         assert_eq!(
             row.line_rate,
             w.base_rate
@@ -115,7 +116,7 @@ fn ratings_and_company_detail_show_the_books() {
         );
         // The Overview (monthly) carries what load set: the January figures.
         let o = d.get(id).unwrap();
-        assert_eq!(o.cash_usd, c.cash_usd);
+        assert_figure(o.cash_usd, c.cash_usd, banded, "cash");
         assert_eq!(o.status, c.finance.status());
         assert_eq!(o.archetype, c.archetype);
     }
@@ -131,11 +132,13 @@ fn ratings_and_company_detail_show_the_books() {
             .iter()
             .map(|s| s.lines.revenue)
             .sum();
-        assert!(
-            (row.revenue_ttm - year).abs() < 1e-6 * year.max(1.0),
-            "{}",
-            c.key
-        );
+        let shown = row.revenue_ttm.shown();
+        if c.public {
+            assert!((shown - year).abs() < 1e-6 * year.max(1.0), "{}", c.key);
+        } else {
+            let b = row.revenue_ttm.band().unwrap();
+            assert!(b.low < year && year < b.high && shown != year, "{}", c.key);
+        }
         assert_eq!(row.rating, c.finance.rating);
     }
     let chile = r.get(company(w, "CO-0179")).unwrap();

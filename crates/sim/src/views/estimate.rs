@@ -98,14 +98,13 @@ impl Figure {
 pub enum Field {
     RevenueTtm,
     NetIncomeTtm,
+    /// The value shown, total and a share (one error, so the two agree).
     Value,
-    ValuePerShare,
     Cash,
     LineDrawn,
     LineLimit,
+    /// The consensus and the ends of its range, which share one error so they keep their order.
     ConsensusNi,
-    RangeLow,
-    RangeHigh,
     Projection,
     // Units (spec 8 Units tab), one unit per company in the MVP (spec 1).
     UnitGrossAssets,
@@ -132,13 +131,10 @@ impl Field {
             Field::RevenueTtm => 1,
             Field::NetIncomeTtm => 2,
             Field::Value => 3,
-            Field::ValuePerShare => 4,
             Field::Cash => 5,
             Field::LineDrawn => 6,
             Field::LineLimit => 7,
             Field::ConsensusNi => 8,
-            Field::RangeLow => 9,
-            Field::RangeHigh => 10,
             Field::Projection => 11,
             Field::UnitGrossAssets => 20,
             Field::UnitAssetBook => 21,
@@ -266,6 +262,15 @@ impl StatementLine {
             StatementLine::Equity => "Equity",
             StatementLine::GuidanceLow => "Guidance, low",
             StatementLine::GuidanceHigh => "Guidance, high",
+        }
+    }
+
+    /// The line whose error this line shares: the guidance ends share one, so they keep their
+    /// order (the estimate is increasing in the truth, D422); every other line has its own.
+    pub fn error_key(self) -> StatementLine {
+        match self {
+            StatementLine::GuidanceHigh => StatementLine::GuidanceLow,
+            l => l,
         }
     }
 

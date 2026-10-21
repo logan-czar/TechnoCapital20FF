@@ -265,6 +265,13 @@ macro_rules! sim_views {
 
 sim_views! {
     clock: clock::ClockView;
+    places: places::PlacesView;
+    countries: countries::CountriesView;
+    zones: zones::ZonesView;
+    rates: rates::RatesView;
+    characters: characters::CharactersView;
+    cap_table: cap_table::CapTableView;
+    world_totals: world_totals::WorldTotalsView;
     quotes: quotes::QuotesView;
     price_bars: price_bars::PriceBarsView;
     exchanges: exchanges::ExchangesView;

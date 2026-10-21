@@ -10,6 +10,13 @@ use sim::time::{Control, Date, DateTime};
 #[test]
 fn industry_views_at_load_and_after_six_years() {
     let mut sim = Sim::new(data(), 3).unwrap();
+    // The top 5 and the detail list rank by the revenue shown; a private company's is a band
+    // (D420), so the exact shares and order are checked with Omniscient on.
+    let banded_first = sim.views().industry_rows.get().rows[0]
+        .top_companies
+        .clone();
+    assert!(!banded_first.is_empty());
+    sim.apply(Control::SetOmniscient(true)).unwrap();
     let v = sim.views();
     let rows = &v.industry_rows.get().rows;
     assert_eq!(rows.len(), 42);
@@ -25,15 +32,21 @@ fn industry_views_at_load_and_after_six_years() {
             detail.companies.first().map(|c| c.company),
             r.top_companies.first().copied()
         );
-        let shares: f64 =
-            detail.companies.iter().map(|c| c.share).sum::<f64>() + detail.fringe_share;
+        let shares: f64 = detail
+            .companies
+            .iter()
+            .map(|c| c.share.exact().unwrap())
+            .sum::<f64>()
+            + detail.fringe_share;
         assert!((shares - 1.0).abs() < 1e-9);
+        let revenue =
+            |c: &sim::views::industry_detail::IndustryCompany| c.revenue_m.exact().unwrap();
         assert!(
             detail
                 .companies
                 .windows(2)
-                .all(|p| p[0].revenue_m > p[1].revenue_m
-                    || (p[0].revenue_m == p[1].revenue_m && p[0].company < p[1].company))
+                .all(|p| revenue(&p[0]) > revenue(&p[1])
+                    || (revenue(&p[0]) == revenue(&p[1]) && p[0].company < p[1].company))
         );
     }
     let end = DateTime::midnight(Date::ymd(2026, 1, 2));

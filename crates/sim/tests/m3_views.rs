@@ -23,13 +23,13 @@ fn company_units_and_tech_views_show_arrowhead() {
     let rows: Vec<_> = units.of_company(arrowhead).collect();
     assert_eq!(rows.len(), 1);
     let u = rows[0];
-    assert!((12.0 * u.revenue_m - 40.0e6).abs() < 0.01e6);
+    // Arrowhead is listed, so its unit figures are exact (D420).
+    let x = |f: sim::views::estimate::Figure| f.exact().unwrap();
+    assert!((12.0 * x(u.revenue_m) - 40.0e6).abs() < 0.01e6);
     assert_eq!((u.productivity, u.p_pre), (100.0, 102.0));
-    assert_eq!(u.shared_m, 4_080.0);
-    assert!(
-        (u.ebit_m - (u.revenue_m - u.variable_m - u.fixed_m - u.rd_m - u.dep_m - u.shared_m)).abs()
-            < 1e-9
-    );
+    assert_eq!(x(u.shared_m), 4_080.0);
+    let lines = x(u.revenue_m) - x(u.variable_m) - x(u.fixed_m) - x(u.rd_m) - x(u.dep_m);
+    assert!((x(u.ebit_m) - (lines - x(u.shared_m))).abs() < 1e-9);
 
     let t = v.tech.get().get(arrowhead).unwrap();
     assert_eq!(t.labor_units, 392);

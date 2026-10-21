@@ -168,7 +168,10 @@ fn every_exchange_with_a_listing_opens_at_1000() {
 
 #[test]
 fn private_companies_show_seventy_percent_of_fair_value() {
-    let sim = Sim::new(data(), 1).unwrap();
+    let mut sim = Sim::new(data(), 1).unwrap();
+    // The observer sees a band around an estimate of 0.7 × V (D420); Omniscient the value.
+    let banded = sim.views().company_detail.get().companies.clone();
+    sim.apply(sim::Control::SetOmniscient(true)).unwrap();
     let w = sim.world();
     let detail = &sim.views().company_detail.get().companies;
     for (id, c) in w.companies.iter() {
@@ -176,8 +179,11 @@ fn private_companies_show_seventy_percent_of_fair_value() {
             continue;
         }
         let s = &w.market.stocks[id];
-        let shown = detail[id.index()].shown_value_per_share;
-        assert!((shown - PRIVATE_DISCOUNT * s.value).abs() < 1e-9 * s.value.max(1.0));
+        let want = PRIVATE_DISCOUNT * s.value;
+        let shown = detail[id.index()].shown_value_per_share.exact().unwrap();
+        assert!((shown - want).abs() < 1e-9 * s.value.max(1.0));
+        let band = banded[id.index()].shown_value_per_share.band().unwrap();
+        assert!(band.low < want && want < band.high && band.estimate != want);
         assert!(sim.views().quotes.get().get(id).is_none(), "no quote");
     }
 }

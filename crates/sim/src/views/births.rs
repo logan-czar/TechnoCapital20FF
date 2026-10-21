@@ -1,11 +1,16 @@
 //! v_births: `list_startup_events(since)`, `list_births(since)` and `list_listings(since)` (spec
-//! 9.2; 8 Startups and listings). Rebuilt quarterly: events, births and listings happen only at
-//! the plan lock (spec 9.4 Quarterly, 4.4 row 3).
+//! 9.2; 8 Startups and listings), each event with its name (the Company header's "Founded
+//! [date] ([event])"), and the Industries table's births column: births per industry over the
+//! last 4 quarters (spec 8). Rebuilt quarterly: events, births and listings happen only at the
+//! plan lock (spec 9.4 Quarterly, 4.4 row 3).
 
 use super::{Cadence, ViewData, ViewInput};
 use crate::births::random::EventKind;
-use crate::time::Date;
-use crate::world::{CompanyId, IndustryId, Origin, ProvinceId, StartupEventId, ZoneId};
+use crate::time::{Date, Quarter};
+use crate::world::{CompanyId, IndustryId, Ordinal, Origin, ProvinceId, StartupEventId, ZoneId};
+
+/// Spec 8 Industries table: the births column counts the last 4 quarters.
+pub const BIRTHS_COLUMN_QUARTERS: usize = 4;
 
 /// A startup event that fired (spec 9.2 `list_startup_events`).
 #[derive(Debug, Clone, PartialEq)]
@@ -13,6 +18,8 @@ pub struct EventRow {
     pub id: StartupEventId,
     /// Fixed (its startup-events.csv id) or random (its type).
     pub kind: EventKind,
+    /// A fixed event's startup-events.csv `name`, a random event's type name (5.19.1).
+    pub name: String,
     pub date: Date,
     pub industries: Vec<IndustryId>,
     pub startups: Vec<CompanyId>,
@@ -50,6 +57,10 @@ pub struct BirthsView {
     pub full_characters_made: usize,
     /// Full characters in the world: the 296 and those made in play.
     pub full_characters: usize,
+    /// The quarters the births column counts, oldest first: this quarter and the 3 before.
+    pub births_column_quarters: Vec<Quarter>,
+    /// Companies born per industry in those quarters, in industry id order (spec 8).
+    pub births_by_industry: Vec<usize>,
 }
 
 impl BirthsView {
@@ -63,6 +74,16 @@ impl BirthsView {
 
     pub fn list_listings(&self, since: Date) -> impl Iterator<Item = &ListingRow> {
         self.listings.iter().filter(move |l| l.date >= since)
+    }
+
+    /// The event with id `id` (for "Founded [date] ([event])").
+    pub fn event(&self, id: StartupEventId) -> Option<&EventRow> {
+        self.events.iter().find(|e| e.id == id)
+    }
+
+    /// The births column of industry `id` (spec 8).
+    pub fn births_last_four_quarters(&self, id: IndustryId) -> usize {
+        self.births_by_industry.get(id.index()).copied().unwrap_or(0)
     }
 }
 
@@ -78,12 +99,26 @@ impl ViewData for BirthsView {
             .map(|e| EventRow {
                 id: e.id,
                 kind: e.kind.clone(),
+                name: match &e.kind {
+                    EventKind::Random(t) => t.name().to_owned(),
+                    EventKind::Fixed(key) => w
+                        .births
+                        .fixed
+                        .iter()
+                        .find(|f| &f.id == key)
+                        .map_or_else(|| key.clone(), |f| f.name.clone()),
+                },
                 date: e.date,
                 industries: e.industries.clone(),
                 startups: e.companies.clone(),
             })
             .collect();
-        let births = w
+        let now_q = w.clock.date().quarter();
+        let births_column_quarters: Vec<Quarter> = (0..BIRTHS_COLUMN_QUARTERS)
+            .rev()
+            .map(|back| (0..back).fold(now_q, |q, _| q.prev()))
+            .collect();
+        let births: Vec<BirthRow> = w
             .companies
             .iter()
             .filter_map(|(id, c)| match c.origin {
@@ -99,6 +134,12 @@ impl ViewData for BirthsView {
                 Origin::Start => None,
             })
             .collect();
+        let mut births_by_industry = vec![0; w.industries.len()];
+        for b in &births {
+            if births_column_quarters.contains(&b.date.quarter()) {
+                births_by_industry[b.industry.index()] += 1;
+            }
+        }
         let listings = w
             .companies
             .iter()
@@ -124,6 +165,8 @@ impl ViewData for BirthsView {
                 .filter(|c| c.tier == crate::people::full::GENERATED_TIER)
                 .count(),
             full_characters: w.characters.len(),
+            births_column_quarters,
+            births_by_industry,
         }
     }
 }

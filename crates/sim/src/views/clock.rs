@@ -2,7 +2,7 @@
 //! tick and after every control (spec 9.4).
 
 use super::{Cadence, ViewData, ViewInput};
-use crate::time::quarter::{QuarterPhase, phase_at};
+use crate::time::quarter::{QuarterPhase, next_phase_start, phase_at};
 use crate::time::{Date, DateTime, Weekday};
 use crate::world::SkipKind;
 
@@ -22,6 +22,9 @@ pub struct ClockView {
     pub next_phase: QuarterPhase,
     /// Calendar days to the next phase start (D7).
     pub days_to_next_phase: u32,
+    /// The next release: 00:00 on the next 2 January, April, July or October after now (spec 4.4
+    /// row 1, 8 Overview "next release").
+    pub next_release: DateTime,
 }
 
 impl ViewData for ClockView {
@@ -43,6 +46,7 @@ impl ViewData for ClockView {
             quarter_phase: phase.phase,
             next_phase: phase.next_phase,
             days_to_next_phase: phase.days_to_next_phase(now.date()),
+            next_release: next_phase_start(now, QuarterPhase::Release),
         }
     }
 }
