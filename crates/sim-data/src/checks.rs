@@ -8,7 +8,11 @@
 //!
 //! Not ported: validate.py's zone spread seed check (credit_spread_bps equals the GDP-weighted
 //! member spread unless gen.py's ZONE_ECON_SET sets it by hand) is a generator identity that needs
-//! gen.py's hand-set table, so it stays in Python.
+//! gen.py's hand-set table, so it stays in Python. Two company-start.csv checks need the run-rate
+//! EBITDA, which only the engine computes: that `start_rating` is the 7.1 rating of the starting
+//! balances, and that a line cut below its 7.1 line is the largest within its own limit (D15).
+//! Their twins are sim's tests (`spec_5_12_rating`, `spec_5_12_credit`); here the limit and the
+//! D16 rule read `start_rating` as written.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -45,6 +49,28 @@ const OPEN_PRICE_RANGE: (f64, f64) = (5.0, 200.0);
 const ASSET_BOOK_SHARE: f64 = 0.5;
 /// min_cash is 5% of revenue; a company drawing its line holds no more (spec 7.1, 5.12).
 const MIN_CASH_SHARE: f64 = 0.05;
+/// The 18 notches of the rating scale, best first (spec 5.12, 3.6.2; D220): company-start.csv
+/// `start_rating` is one of them.
+pub const RATING_LABELS: [&str; 18] = [
+    "AAA", "AA+", "AA", "AA-", "A+", "A", "A-", "BBB+", "BBB", "BBB-", "BB+", "BB", "BB-", "B+",
+    "B", "B-", "CCC", "CC",
+];
+/// Spec 5.12 rating factor by band (T); a notch reads its band's (D220). The twin of sim's
+/// `finance::rating::rating_factor`, which sim's tests check against it.
+const RATING_FACTORS: [(&str, f64); 8] = [
+    ("AAA", 1.0),
+    ("AA", 0.9),
+    ("A", 0.8),
+    ("BBB", 0.65),
+    ("BB", 0.5),
+    ("B", 0.3),
+    ("CCC", 0.0),
+    ("CC", 0.0),
+];
+/// Spec 5.12 limit: `0.5 × asset_book + own cash`, times the rating factor.
+const LIMIT_ASSET_BOOK_SHARE: f64 = 0.5;
+/// D16 (Logan, M3 gate): no company starts rated CCC or CC with a drawn line.
+const NO_LINE_RATINGS: [&str; 2] = ["CCC", "CC"];
 /// Dollar tolerances of validate.py for rounded balances.
 const BALANCE_TOL_USD: f64 = 2.0;
 const ASSET_BOOK_TOL_USD: f64 = 1.0;
@@ -362,7 +388,8 @@ fn companies(w: &WorldData, ids: &Ids, errors: &mut Vec<DataError>) {
     }
 }
 
-/// Batch 161 (G6): the starting balance sheet, share count and opening price (spec 7.1).
+/// Batch 161 (G6): the starting balance sheet, share count and opening price (spec 7.1); D15 and
+/// D16 (Logan, M3 gate): starting lines within their 5.12 limit, none rated CCC or CC.
 fn company_start(w: &WorldData, errors: &mut Vec<DataError>) {
     let t = &w.company_start;
     let cos = &w.companies.rows;
@@ -393,12 +420,71 @@ fn company_start(w: &WorldData, errors: &mut Vec<DataError>) {
                 ),
             ));
         }
-        if (r.book_equity_usd - c.book_value_usd_m * 1e6).abs() > BALANCE_TOL_USD {
-            errors.push(t.err(
+        // Spec 7.1 cash and line, with D15: book value at or above the asset book holds cash and
+        // no line, so book equity is book value; below it, cash is min_cash and the line at most
+        // the 7.1 line (asset book − book value + min_cash), so book equity is book value plus
+        // what the line was cut by.
+        let book_value = c.book_value_usd_m * 1e6;
+        let min_cash = MIN_CASH_SHARE * 1e6 * c.revenue_usd_m;
+        if book_value >= r.asset_book_usd {
+            if r.credit_drawn_usd > 0.0 || (r.book_equity_usd - book_value).abs() > BALANCE_TOL_USD
+            {
+                errors.push(t.err(
+                    line,
+                    "book_equity_usd",
+                    format!(
+                        "{id}: book value covers the asset book, but the line is drawn or book \
+                         equity differs from companies.csv book value"
+                    ),
+                ));
+            }
+        } else {
+            let line_71 = r.asset_book_usd - book_value + min_cash;
+            if (r.cash_usd - min_cash).abs() > MIN_CASH_TOL_USD
+                || r.credit_drawn_usd > line_71 + BALANCE_TOL_USD
+                || r.book_equity_usd < book_value - BALANCE_TOL_USD
+            {
+                errors.push(t.err(
+                    line,
+                    "credit_drawn_usd",
+                    format!(
+                        "{id}: book value is below the asset book, but cash is not min_cash, or \
+                         the line is above the 7.1 line {line_71:.0}, or book equity is below \
+                         book value"
+                    ),
+                ));
+            }
+        }
+        // D15: no starting line above its 5.12 limit at its starting rating; D16: none rated CCC
+        // or CC with a drawn line.
+        match rating_factor_of_label(&r.start_rating) {
+            None => errors.push(t.err(
                 line,
-                "book_equity_usd",
-                format!("{id}: differs from companies.csv book value"),
-            ));
+                "start_rating",
+                format!("{id}: {} is not on the AAA to CC scale", r.start_rating),
+            )),
+            Some(factor) => {
+                let own_cash = (r.cash_usd - r.credit_drawn_usd).max(0.0);
+                let limit =
+                    (LIMIT_ASSET_BOOK_SHARE * r.asset_book_usd + own_cash).max(0.0) * factor;
+                if r.credit_drawn_usd > limit {
+                    errors.push(t.err(
+                        line,
+                        "credit_drawn_usd",
+                        format!(
+                            "{id}: line {:.0} above its 5.12 limit {limit:.0} at {}",
+                            r.credit_drawn_usd, r.start_rating
+                        ),
+                    ));
+                }
+                if r.credit_drawn_usd > 0.0 && NO_LINE_RATINGS.contains(&r.start_rating.as_str()) {
+                    errors.push(t.err(
+                        line,
+                        "start_rating",
+                        format!("{id}: starts rated {} with a drawn line", r.start_rating),
+                    ));
+                }
+            }
         }
         if (r.asset_book_usd - ASSET_BOOK_SHARE * r.gross_assets_usd).abs() > ASSET_BOOK_TOL_USD
             || r.asset_book_usd.min(r.cash_usd).min(r.credit_drawn_usd) < 0.0
@@ -409,9 +495,7 @@ fn company_start(w: &WorldData, errors: &mut Vec<DataError>) {
                 format!("{id}: not 50% of gross, or a negative balance"),
             ));
         }
-        if r.credit_drawn_usd > 0.0
-            && r.cash_usd > MIN_CASH_SHARE * 1e6 * c.revenue_usd_m + MIN_CASH_TOL_USD
-        {
+        if r.credit_drawn_usd > 0.0 && r.cash_usd > min_cash + MIN_CASH_TOL_USD {
             errors.push(t.err(
                 line,
                 "cash_usd",
@@ -426,6 +510,19 @@ fn company_start(w: &WorldData, errors: &mut Vec<DataError>) {
             ));
         }
     }
+}
+
+/// The spec 5.12 rating factor of a notch label on the AAA to CC scale (a notch reads its band's,
+/// D220: "BB+" reads BB's 0.5); `None` off the scale.
+pub fn rating_factor_of_label(label: &str) -> Option<f64> {
+    if !RATING_LABELS.contains(&label) {
+        return None;
+    }
+    let band = label.trim_end_matches(['+', '-']);
+    RATING_FACTORS
+        .iter()
+        .find(|(b, _)| *b == band)
+        .map(|(_, f)| *f)
 }
 
 /// The fixed startup events F1 to F9 (spec 5.19.2, build-plan M0.5); the twin of validate.py's.
