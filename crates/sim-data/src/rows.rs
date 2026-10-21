@@ -248,3 +248,83 @@ pub struct CompanyStart {
     pub open_price: f64,
     pub shares: f64,
 }
+
+/// When a fixed startup event fires (spec 5.19.2).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum EventTrigger {
+    /// The first plan lock on or after `date`.
+    Date,
+    /// The first plan lock after the bust ends (the pop + 8 quarters, spec 5.1.1).
+    AfterBust,
+}
+
+/// One group of startups in a fixed event: `count:industry@region|region`.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StartupGroup {
+    pub count: u32,
+    pub industry: String,
+    /// Allowed HQ regions: `any`, a superregion slug (as in the province file names) or an iso3.
+    pub regions: Vec<String>,
+}
+
+impl StartupGroup {
+    fn parse(s: &str) -> Result<Self, String> {
+        let bad = || format!("`{s}` is not count:industry@region");
+        let (count, rest) = s.split_once(':').ok_or_else(bad)?;
+        let (industry, regions) = rest.split_once('@').ok_or_else(bad)?;
+        let count = count.trim().parse().map_err(|_| bad())?;
+        let regions: Vec<String> = regions.split('|').map(str::to_owned).collect();
+        if industry.is_empty() || regions.iter().any(String::is_empty) {
+            return Err(bad());
+        }
+        Ok(Self {
+            count,
+            industry: industry.to_owned(),
+            regions,
+        })
+    }
+}
+
+fn startup_groups<'de, D: Deserializer<'de>>(d: D) -> Result<Vec<StartupGroup>, D::Error> {
+    String::deserialize(d)?
+        .split(';')
+        .filter(|s| !s.is_empty())
+        .map(|s| StartupGroup::parse(s).map_err(de::Error::custom))
+        .collect()
+}
+
+/// startup-events.csv: the fixed startup events F1 to F9 (spec 5.19.2, M0.5).
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StartupEvent {
+    pub id: String,
+    pub name: String,
+    pub trigger: EventTrigger,
+    /// ISO date `YYYY-MM-DD` for `date` events, empty for `after_bust`.
+    pub date: String,
+    #[serde(deserialize_with = "startup_groups")]
+    pub startups: Vec<StartupGroup>,
+    pub revenue_min_usd_m: f64,
+    pub revenue_max_usd_m: f64,
+    pub full_min: u8,
+    pub full_max: u8,
+    pub partial_min: u8,
+    pub partial_max: u8,
+    pub notes: String,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn startup_group_parses() {
+        let g = StartupGroup::parse("2:Semiconductors@east-asia-oceania|north-america").unwrap();
+        assert_eq!(g.count, 2);
+        assert_eq!(g.industry, "Semiconductors");
+        assert_eq!(g.regions, ["east-asia-oceania", "north-america"]);
+        assert!(StartupGroup::parse("2 AI labs").is_err());
+        assert!(StartupGroup::parse("x:AI labs@any").is_err());
+    }
+}

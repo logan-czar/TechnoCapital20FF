@@ -243,6 +243,22 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 | open_price | Opening price per share in whole dollars, $5 to $200 (T) |
 | shares | engine_value_usd ÷ open_price, rounded; listed and private alike |
 
+### startup-events.csv
+
+9 rows, the fixed startup events F1 to F9 of mvp-spec 5.19.2 (32 startups), written by tools/mvp-data/gen.py (build-plan M0.5; values A, T). A fixed event fires at the first plan lock on or after its date. validate.py and the Rust `sim-data` checks read the industries and regions and expect 32 startups.
+
+| Column | Meaning |
+|---|---|
+| id | F1 to F9 |
+| name | The event (7-starting-world 7.7) |
+| trigger | `date`: the first plan lock on or after `date`; `after_bust`: the first plan lock after the bust ends (the pop + 8 quarters, 5.1.1) |
+| date | ISO date (YYYY-MM-DD) for `date` events, empty for `after_bust` |
+| startups | Semicolon list of groups `count:industry@regions`; regions are `|`-separated alternatives, each `any`, a superregion slug as in the provinces-*.csv names, or a country iso3 (F6: `2:AI labs@CHN`) |
+| revenue_min_usd_m, revenue_max_usd_m | Each startup's revenue range in $M (log-uniform draw, 5.19.3) |
+| full_min, full_max | Full characters each startup brings (5.19.4) |
+| partial_min, partial_max | Partial (simple) characters each startup brings (5.19.4) |
+| notes | Source |
+
 ### key-cities.csv
 
 88 rows (80 until batch 152, which added the 8 financial zone hubs Kingston, Havana, Pyongyang, Macau, Almaty, Casablanca, Nairobi and Bogotá, with no perks), parsed by the generator from [2-map-and-influence.md](../detailed/2-map-and-influence.md) 2.3.3 (cities), 2.3.4 (signature starting assets) and 2.3.5 (perks), so the doc stays the source; rerun the generator after editing those tables.

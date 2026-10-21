@@ -113,3 +113,25 @@ fn duplicate_province_id() {
         "id",
     );
 }
+
+#[test]
+fn startup_event_references() {
+    expect_error(
+        |w| w.startup_events.rows[0].startups[0].industry = "Alchemy".into(),
+        "startup-events.csv",
+        2,
+        "startups",
+    );
+    expect_error(
+        |w| w.startup_events.rows[1].startups[0].regions[0] = "atlantis".into(),
+        "startup-events.csv",
+        3,
+        "startups",
+    );
+    expect_error(
+        |w| w.startup_events.rows[2].date = "2022-13-09".into(),
+        "startup-events.csv",
+        4,
+        "date",
+    );
+}

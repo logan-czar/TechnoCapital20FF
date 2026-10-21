@@ -20,3 +20,16 @@ fn passes_all_checks() {
     let text: Vec<String> = errors.iter().map(ToString::to_string).collect();
     assert!(errors.is_empty(), "{}", text.join("\n"));
 }
+
+#[test]
+fn fixed_startup_events_load() {
+    let w = load_world(&default_data_dir()).unwrap_or_else(|e| panic!("{e}"));
+    let ev = &w.startup_events.rows;
+    assert_eq!(ev.len(), 9);
+    let f6 = &ev[5];
+    assert_eq!(f6.startups[0].industry, "AI labs");
+    assert_eq!(f6.startups[0].regions, ["CHN"]);
+    assert_eq!(ev[8].trigger, sim_data::EventTrigger::AfterBust);
+    let total: u32 = ev.iter().flat_map(|e| &e.startups).map(|g| g.count).sum();
+    assert_eq!(total, 32);
+}

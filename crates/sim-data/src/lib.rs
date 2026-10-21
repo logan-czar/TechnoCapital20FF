@@ -42,6 +42,7 @@ pub struct WorldData {
     pub ai_boom: Table<AiBoomStage>,
     pub key_cities: Table<KeyCity>,
     pub company_start: Table<CompanyStart>,
+    pub startup_events: Table<StartupEvent>,
 }
 
 impl WorldData {
@@ -65,6 +66,7 @@ impl WorldData {
             ("ai-boom", self.ai_boom.len()),
             ("key-cities", self.key_cities.len()),
             ("company-start", self.company_start.len()),
+            ("startup-events", self.startup_events.len()),
         ]
     }
 }
@@ -94,5 +96,6 @@ pub fn load_world(dir: &Path) -> Result<WorldData, DataError> {
         ai_boom: load_table(dir, "ai-boom.csv")?,
         key_cities: load_table(dir, "key-cities.csv")?,
         company_start: load_table(dir, "company-start.csv")?,
+        startup_events: load_table(dir, "startup-events.csv")?,
     })
 }

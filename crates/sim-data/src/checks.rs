@@ -15,7 +15,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use crate::{DataError, SUPERREGIONS, Table, WorldData};
 
 /// Expected row counts (spec 10 M0, build-plan M0.2).
-pub const EXPECTED_COUNTS: [(&str, usize); 10] = [
+pub const EXPECTED_COUNTS: [(&str, usize); 11] = [
     ("countries", 211),
     ("provinces", 3255),
     ("companies", 651),
@@ -26,6 +26,7 @@ pub const EXPECTED_COUNTS: [(&str, usize); 10] = [
     ("ai-boom", 15),
     ("key-cities", 88),
     ("company-start", 651),
+    ("startup-events", 9),
 ];
 
 /// Asset decay is 0% to 10% a year (validate.py; spec 5.10).
@@ -50,6 +51,10 @@ const ASSET_BOOK_TOL_USD: f64 = 1.0;
 const MIN_CASH_TOL_USD: f64 = 1.0;
 /// Cost shares sum to 1 (validate.py).
 const SHARE_SUM_TOL: f64 = 1e-9;
+/// The fixed events F1 to F9 bring 32 startups (spec 5.19.2).
+const FIXED_EVENT_STARTUPS: u32 = 32;
+/// Every startup brings 1 to 5 full and 1 to 5 partial characters (spec 5.19, batch 165).
+const CAST_RANGE: (u8, u8) = (1, 5);
 
 /// Runs every check and returns all problems found (empty when the data is good).
 pub fn check(w: &WorldData) -> Vec<DataError> {
@@ -63,6 +68,7 @@ pub fn check(w: &WorldData) -> Vec<DataError> {
     key_cities(w, &ids, &mut errors);
     companies(w, &ids, &mut errors);
     company_start(w, &mut errors);
+    startup_events(w, &ids, &mut errors);
     errors
 }
 
@@ -418,5 +424,85 @@ fn company_start(w: &WorldData, errors: &mut Vec<DataError>) {
                 format!("{id}: shares x open_price is not the engine value"),
             ));
         }
+    }
+}
+
+/// The fixed startup events F1 to F9 (spec 5.19.2, build-plan M0.5); the twin of validate.py's.
+fn startup_events(w: &WorldData, ids: &Ids, errors: &mut Vec<DataError>) {
+    use crate::EventTrigger;
+    let t = &w.startup_events;
+    let expected = (1..=9).map(|i| format!("F{i}"));
+    if t.rows.iter().map(|e| e.id.clone()).ne(expected) {
+        errors.push(t.file_err("expected the 9 rows F1 to F9 in order"));
+    }
+    let region_ok = |r: &str| {
+        r == "any" || SUPERREGIONS.iter().any(|(slug, _)| *slug == r) || ids.countries.contains(r)
+    };
+    let mut startups = 0;
+    for (line, e) in t.iter() {
+        let id = &e.id;
+        let date_ok = match e.trigger {
+            EventTrigger::Date => is_iso_date(&e.date),
+            EventTrigger::AfterBust => e.date.is_empty(),
+        };
+        if !date_ok {
+            errors.push(t.err(
+                line,
+                "date",
+                format!("{id}: `{}` does not fit the trigger", e.date),
+            ));
+        }
+        if e.startups.is_empty() {
+            errors.push(t.err(line, "startups", format!("{id}: no startups")));
+        }
+        for g in &e.startups {
+            startups += g.count;
+            if !ids.industries.contains(g.industry.as_str()) {
+                errors.push(t.err(
+                    line,
+                    "startups",
+                    format!("{id}: unknown industry {}", g.industry),
+                ));
+            }
+            for r in g.regions.iter().filter(|r| !region_ok(r)) {
+                errors.push(t.err(line, "startups", format!("{id}: unknown region {r}")));
+            }
+        }
+        if !(e.revenue_min_usd_m > 0.0 && e.revenue_min_usd_m <= e.revenue_max_usd_m) {
+            errors.push(t.err(
+                line,
+                "revenue_max_usd_m",
+                format!("{id}: bad revenue range"),
+            ));
+        }
+        let (lo, hi) = CAST_RANGE;
+        for (field, min, max) in [
+            ("full_max", e.full_min, e.full_max),
+            ("partial_max", e.partial_min, e.partial_max),
+        ] {
+            if !(lo <= min && min <= max && max <= hi) {
+                errors.push(t.err(
+                    line,
+                    field,
+                    format!("{id}: cast {min} to {max} not within 1 to 5"),
+                ));
+            }
+        }
+    }
+    if !t.is_empty() && startups != FIXED_EVENT_STARTUPS {
+        errors.push(t.file_err(format!("{startups} startups, expected 32")));
+    }
+}
+
+/// `YYYY-MM-DD` with a month of 1 to 12 and a day of 1 to 31.
+fn is_iso_date(s: &str) -> bool {
+    let parts: Vec<_> = s.split('-').collect();
+    let num = |p: &str, len: usize| p.len() == len && p.bytes().all(|b| b.is_ascii_digit());
+    match parts[..] {
+        [y, m, d] if num(y, 4) && num(m, 2) && num(d, 2) => {
+            (1..=12).contains(&m.parse::<u8>().unwrap_or(0))
+                && (1..=31).contains(&d.parse::<u8>().unwrap_or(0))
+        }
+        _ => false,
     }
 }
