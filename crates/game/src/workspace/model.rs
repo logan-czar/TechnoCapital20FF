@@ -17,6 +17,9 @@ pub const HISTORY_CAP: usize = 64;
 pub const MIN_RATIO: f32 = 0.1;
 /// How far a keyboard resize moves a divider (a share of the split).
 pub const NUDGE: f32 = 0.05;
+/// The smallest pane a split may make, in logical pixels: a header and a few rows.
+pub const MIN_PANE_W: f32 = 160.0;
+pub const MIN_PANE_H: f32 = 80.0;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct PaneId(pub u32);
@@ -420,31 +423,51 @@ impl Workspace {
     }
 
     /// Closes `pane`; its sibling takes the split's place. The last pane never closes. A closed
-    /// focused pane hands focus to the first pane of its sibling.
+    /// focused pane hands focus to the first pane (in tree order) of its sibling subtree, the
+    /// pane that now fills its place; another pane's focus is kept.
     pub fn close(&mut self, pane: PaneId) -> bool {
         if self.panes.len() <= 1 || !self.panes.contains_key(&pane) {
             return false;
         }
+        let heir = self.sibling_of(pane);
         if !remove_pane(&mut self.root, pane) {
             return false;
         }
         self.panes.remove(&pane);
         if self.focused == pane {
-            // The sibling now sits where the split was; its first pane in order near the old
-            // spot is the first pane of the tree that is still open: pick the nearest by order.
-            self.focused = self.pane_ids()[0];
+            self.focused = heir.unwrap_or_else(|| self.pane_ids()[0]);
         }
         self.structure += 1;
         true
     }
 
-    /// Closes `pane` and focuses `then` when it is still open (the UI picks the sibling).
-    pub fn close_focus(&mut self, pane: PaneId, then: Option<PaneId>) -> bool {
-        let closed = self.close(pane);
-        if closed && let Some(t) = then {
-            self.focus(t);
+    /// Whether splitting `pane` along `axis`, in a workspace `w` by `h` logical pixels, leaves
+    /// both halves at least [`MIN_PANE_W`] by [`MIN_PANE_H`] (D450).
+    pub fn can_split(&self, pane: PaneId, axis: Axis, w: f32, h: f32) -> bool {
+        if self.panes.len() >= MAX_PANES {
+            return false;
         }
-        closed
+        let Some((_, r)) = self.rects(w, h).into_iter().find(|(p, _)| *p == pane) else {
+            return false;
+        };
+        let (hw, hh) = match axis {
+            Axis::Row => (r.w / 2.0, r.h),
+            Axis::Column => (r.w, r.h / 2.0),
+        };
+        hw >= MIN_PANE_W && hh >= MIN_PANE_H
+    }
+
+    /// The axis a new pane split off `pane` takes: its longer side's, or the other when that one
+    /// would make a pane too small; `None` when neither fits.
+    pub fn new_pane_axis(&self, pane: PaneId, w: f32, h: f32) -> Option<Axis> {
+        let first = self.auto_axis(pane, w, h);
+        let other = match first {
+            Axis::Row => Axis::Column,
+            Axis::Column => Axis::Row,
+        };
+        [first, other]
+            .into_iter()
+            .find(|&a| self.can_split(pane, a, w, h))
     }
 
     pub fn ratio(&self, split: SplitId) -> Option<f32> {
@@ -786,7 +809,7 @@ mod tests {
         let v = ws.structure_version();
         // Closing b: c takes the right half.
         assert_eq!(ws.sibling_of(b), Some(c));
-        assert!(ws.close_focus(b, ws.sibling_of(b)));
+        assert!(ws.close(b));
         assert!(ws.structure_version() > v);
         assert_eq!(ws.pane_ids(), [a, c]);
         assert_eq!(ws.focused(), c);
@@ -911,5 +934,117 @@ mod tests {
         let before = other.clone();
         other.load(&big);
         assert_eq!(other, before);
+    }
+
+    #[test]
+    fn splits_keep_panes_readable() {
+        let mut ws = Workspace::new(PageRef::World);
+        let a = ws.focused();
+        // 400 x 300: one row split leaves 200 x 300 halves, a second would be 100 wide.
+        assert!(ws.can_split(a, Axis::Row, 400.0, 300.0));
+        let b = ws.split(a, Axis::Row, None, false).unwrap();
+        assert!(!ws.can_split(a, Axis::Row, 400.0, 300.0));
+        assert!(
+            ws.can_split(a, Axis::Column, 400.0, 300.0),
+            "150 px tall halves"
+        );
+        assert_eq!(ws.new_pane_axis(a, 400.0, 300.0), Some(Axis::Column));
+        ws.split(b, Axis::Column, None, false).unwrap();
+        // b is 200 x 150 now: no way to split it.
+        assert_eq!(ws.new_pane_axis(b, 400.0, 300.0), None);
+        assert!(!ws.can_split(PaneId(99), Axis::Row, 4000.0, 3000.0));
+    }
+
+    /// Random sequences of every operation keep the workspace whole: the tree and the pane map
+    /// agree, the focus is a pane, ratios stay in range, the panes tile the area exactly, and a
+    /// save loads back the same.
+    #[test]
+    fn random_operations_keep_the_invariants() {
+        let (w, h) = (1600.0f32, 900.0f32);
+        let mut seed: u64 = 0x2545_f491_4f6c_dd1d;
+        let mut next = |n: u64| {
+            seed ^= seed << 13;
+            seed ^= seed >> 7;
+            seed ^= seed << 17;
+            seed % n
+        };
+        for run in 0..40 {
+            let mut ws = Workspace::new(PageRef::World);
+            for step in 0..120 {
+                let ids = ws.pane_ids();
+                let pane = ids[next(ids.len() as u64) as usize];
+                match next(9) {
+                    0 | 1 => {
+                        let axis = if next(2) == 0 {
+                            Axis::Row
+                        } else {
+                            Axis::Column
+                        };
+                        if ws.can_split(pane, axis, w, h) {
+                            ws.split(pane, axis, Some(co(step)), next(2) == 0);
+                        }
+                    }
+                    2 => {
+                        ws.close(pane);
+                    }
+                    3 => {
+                        if let Some(&(s, _, _)) = ws.splits().first() {
+                            ws.set_ratio(s, next(1000) as f32 / 500.0 - 0.5);
+                        }
+                    }
+                    4 => {
+                        let d = [Dir::Left, Dir::Right, Dir::Up, Dir::Down][next(4) as usize];
+                        ws.nudge(pane, d);
+                    }
+                    5 => {
+                        ws.open(pane, co(step + 1000));
+                    }
+                    6 => {
+                        ws.back(pane);
+                    }
+                    7 => {
+                        let s = ws.to_saved();
+                        ws.load(&s);
+                        assert_eq!(ws.to_saved(), s, "run {run} step {step}");
+                    }
+                    _ => {
+                        ws.focus(pane);
+                    }
+                }
+                check(&ws, w, h, run, step);
+            }
+        }
+    }
+
+    fn check(ws: &Workspace, w: f32, h: f32, run: usize, step: u32) {
+        let ids = ws.pane_ids();
+        let mut sorted = ids.clone();
+        sorted.sort_unstable();
+        sorted.dedup();
+        assert_eq!(sorted.len(), ids.len(), "a pane twice in the tree");
+        let keys: Vec<PaneId> = ws.panes.keys().copied().collect();
+        assert_eq!(sorted, keys, "tree and map agree (run {run} step {step})");
+        assert!(ws.panes.contains_key(&ws.focused()), "the focus is a pane");
+        assert!((1..=MAX_PANES).contains(&ws.len()));
+        for (_, _, r) in ws.splits() {
+            assert!((MIN_RATIO..=1.0 - MIN_RATIO).contains(&r), "ratio {r}");
+        }
+        let rects = ws.rects(w, h);
+        let area: f32 = rects.iter().map(|(_, r)| r.w * r.h).sum();
+        assert!(
+            (area - w * h).abs() < 1.0,
+            "the panes tile the area: {area}"
+        );
+        for (_, r) in &rects {
+            assert!(r.x >= -0.01 && r.y >= -0.01);
+            assert!(r.x + r.w <= w + 0.01 && r.y + r.h <= h + 0.01);
+        }
+        for (i, (_, a)) in rects.iter().enumerate() {
+            for (_, b) in &rects[i + 1..] {
+                let ox = (a.x + a.w).min(b.x + b.w) - a.x.max(b.x);
+                let oy = (a.y + a.h).min(b.y + b.h) - a.y.max(b.y);
+                assert!(ox <= 0.01 || oy <= 0.01, "panes overlap");
+            }
+        }
     }
 }

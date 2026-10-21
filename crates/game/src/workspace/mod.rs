@@ -373,11 +373,11 @@ fn apply_open_page(
                 ws.open(p, m.page.clone());
             }
             OpenTarget::NewPane => {
-                let axis = ws.auto_axis(focused, size.x, size.y);
-                if ws
-                    .split(focused, axis, Some(m.page.clone()), false)
-                    .is_none()
-                {
+                // Too many panes, or none would stay readable: open it here instead (D450).
+                let split = ws
+                    .new_pane_axis(focused, size.x, size.y)
+                    .and_then(|axis| ws.split(focused, axis, Some(m.page.clone()), false));
+                if split.is_none() {
                     ws.open(focused, m.page.clone());
                 }
             }
@@ -409,12 +409,13 @@ fn apply_pane_actions(
                 ws.back_to(*p, *i);
             }
             PaneAction::Split(p, axis) => {
-                ws.split(or_f(p), *axis, None, true);
+                let p = or_f(p);
+                if ws.can_split(p, *axis, size.x, size.y) {
+                    ws.split(p, *axis, None, true);
+                }
             }
             PaneAction::Close(p) => {
-                let p = or_f(p);
-                let next = ws.sibling_of(p);
-                ws.close_focus(p, next);
+                ws.close(or_f(p));
             }
             PaneAction::FocusDir(d) => {
                 if let Some(n) = ws.neighbor(f, *d, size.x, size.y) {
