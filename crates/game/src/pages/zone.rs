@@ -144,7 +144,7 @@ pub fn index_chart(z: ZoneId, v: &SimViews, h: &IndexHistory, index: &NameIndex)
     let pts = h.of(z);
     let level = v.quotes.get().index(z).and_then(|i| i.level);
     ChartModel {
-        title: format!("{name}: {} daily closes recorded this session", pts.len()),
+        title: format!("{name}: daily closes seen this session ({})", pts.len()),
         labels: pts.iter().map(|(d, _)| format::date(*d)).collect(),
         series: vec![Series::Line {
             name: name.clone(),
@@ -239,7 +239,7 @@ pub fn zone_doc(z: ZoneId, v: &SimViews, index: &NameIndex, h: &IndexHistory) ->
                     "Confidence",
                     vec![
                         Span::Live(Live::ZoneConfidence(z)),
-                        Span::muted("investor confidence, -100 to +100"),
+                        Span::muted("investor confidence (-100 to +100)"),
                     ],
                 ),
                 Field::cell("GDP share", Cell::Percent(r.gdp_share)),

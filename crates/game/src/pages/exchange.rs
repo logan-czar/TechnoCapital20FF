@@ -99,7 +99,7 @@ pub fn constituents_model(z: ZoneId, v: &SimViews, index: &NameIndex) -> TableMo
             Column::number("Price", 80.0),
             Column::number("Day", 70.0),
             Column::number("Market cap", 100.0).with_hint("Last price x shares: the index weight"),
-            Column::number("EFV", 80.0).with_hint("Estimated fair value a share (3.14.2)"),
+            Column::number("EFV", 90.0).with_hint("Estimated fair value a share (3.14.2)"),
             Column::text("Rating", 60.0),
         ],
         rows,

@@ -34,14 +34,17 @@ use crate::ui::theme::{self, Tooltip, color, font, size};
 
 /// A field's label column width in logical pixels.
 pub const LABEL_WIDTH: f32 = 118.0;
-/// The least width of one field of a [`Block::Fields`] grid; fields grow to fill the row.
-pub const FIELD_MIN_WIDTH: f32 = 250.0;
-/// A card's width ([`Block::Cards`]).
+/// The basis width of one field of a [`Block::Fields`] grid: fields grow to fill the row, and a
+/// long value widens its field (onto its own line) rather than overlapping the next.
+pub const FIELD_BASIS: f32 = 250.0;
+/// A card's basis width ([`Block::Cards`]); a card widens to fit its text.
 pub const CARD_WIDTH: f32 = 238.0;
+/// A card field's label width.
+pub const CARD_LABEL_WIDTH: f32 = 96.0;
 /// The height a chart block takes.
 pub const CHART_HEIGHT: f32 = 230.0;
 /// The most rows a section table shows before it scrolls inside itself.
-pub const TABLE_ROWS_SHOWN: usize = 16;
+pub const TABLE_ROWS_SHOWN: usize = 40;
 /// Room for a table's footer line under its rows.
 pub const TABLE_FOOTER: f32 = 20.0;
 /// A progress bar's width and height.
@@ -634,12 +637,25 @@ fn spawn_span(commands: &mut Commands, s: &Span, v: &SimViews, size: f32) -> Ent
     }
 }
 
-fn spawn_spans(commands: &mut Commands, parent: Entity, spans: &[Span], v: &SimViews, size: f32) {
+/// A row of spans; a line wraps, a field's value keeps to one line (its field widens instead).
+fn spawn_spans(
+    commands: &mut Commands,
+    parent: Entity,
+    spans: &[Span],
+    v: &SimViews,
+    size: f32,
+    wrap: bool,
+) {
     let row = commands
         .spawn(Node {
             flex_direction: FlexDirection::Row,
-            flex_wrap: FlexWrap::Wrap,
+            flex_wrap: if wrap {
+                FlexWrap::Wrap
+            } else {
+                FlexWrap::NoWrap
+            },
             column_gap: px(5.0),
+            min_width: if wrap { px(0.0) } else { Val::Auto },
             align_items: AlignItems::Baseline,
             ..default()
         })
@@ -656,6 +672,8 @@ fn spawn_fields(commands: &mut Commands, parent: Entity, fields: &[Field], v: &S
         .spawn(Node {
             flex_direction: FlexDirection::Row,
             flex_wrap: FlexWrap::Wrap,
+            // Wrap inside the pane rather than widen it to the fields' total.
+            min_width: px(0.0),
             column_gap: px(14.0),
             row_gap: px(1.0),
             ..default()
@@ -666,8 +684,7 @@ fn spawn_fields(commands: &mut Commands, parent: Entity, fields: &[Field], v: &S
             .spawn(Node {
                 flex_direction: FlexDirection::Row,
                 flex_grow: 1.0,
-                flex_basis: px(FIELD_MIN_WIDTH),
-                min_width: px(FIELD_MIN_WIDTH),
+                flex_basis: px(FIELD_BASIS),
                 column_gap: px(6.0),
                 align_items: AlignItems::Baseline,
                 ..default()
@@ -690,7 +707,7 @@ fn spawn_fields(commands: &mut Commands, parent: Entity, fields: &[Field], v: &S
             ))
             .id();
         commands.entity(cell).add_child(label);
-        spawn_spans(commands, cell, &f.value, v, font::BODY);
+        spawn_spans(commands, cell, &f.value, v, font::BODY, false);
         commands.entity(grid).add_child(cell);
     }
     commands.entity(parent).add_child(grid);
@@ -741,7 +758,7 @@ fn spawn_block(
 ) {
     match block {
         Block::Fields(f) => spawn_fields(commands, parent, f, v),
-        Block::Line(s) => spawn_spans(commands, parent, s, v, font::BODY),
+        Block::Line(s) => spawn_spans(commands, parent, s, v, font::BODY, true),
         Block::Heading(h) => {
             let e = commands
                 .spawn(theme::text_line(h.clone(), font::SMALL, color::CYAN))
@@ -756,11 +773,28 @@ fn spawn_block(
                     flex_direction: FlexDirection::Column,
                     height: px((rows + 1.0) * row_h + TABLE_FOOTER),
                     flex_shrink: 0.0,
+                    min_width: px(0.0),
+                    overflow: Overflow::clip(),
                     ..default()
                 })
                 .id();
+            // The table sits in an absolute frame filling the holder, so a wide table clips to
+            // the pane (its column chooser hides columns) instead of widening the page: an
+            // absolute node adds nothing to its parent's content size.
+            let frame = commands
+                .spawn(Node {
+                    position_type: PositionType::Absolute,
+                    left: px(0.0),
+                    right: px(0.0),
+                    top: px(0.0),
+                    bottom: px(0.0),
+                    flex_direction: FlexDirection::Column,
+                    ..default()
+                })
+                .id();
+            commands.entity(holder).add_child(frame);
             commands.entity(parent).add_child(holder);
-            let table = spawn_table_with_id(commands, holder, Arc::new(t.model.clone()), &t.id);
+            let table = spawn_table_with_id(commands, frame, Arc::new(t.model.clone()), &t.id);
             if let Some(l) = t.live {
                 commands.entity(table).insert((l, LiveVersion(0)));
             }
@@ -785,6 +819,8 @@ fn spawn_block(
                 .spawn(Node {
                     flex_direction: FlexDirection::Row,
                     flex_wrap: FlexWrap::Wrap,
+                    // Wrap inside the pane rather than widen it to the cards' total.
+                    min_width: px(0.0),
                     column_gap: px(size::GAP),
                     row_gap: px(size::GAP),
                     ..default()
@@ -795,9 +831,8 @@ fn spawn_block(
                     .spawn((
                         Node {
                             flex_direction: FlexDirection::Column,
-                            width: px(CARD_WIDTH),
-                            flex_grow: 1.0,
-                            max_width: px(CARD_WIDTH * 1.6),
+                            flex_basis: px(CARD_WIDTH),
+                            flex_grow: 0.0,
                             padding: UiRect::all(px(5.0)),
                             row_gap: px(1.0),
                             border: UiRect::all(px(1.0)),
@@ -811,7 +846,7 @@ fn spawn_block(
                         BorderColor::all(color::BORDER),
                     ))
                     .id();
-                spawn_spans(commands, card, &c.head, v, font::BODY);
+                spawn_spans(commands, card, &c.head, v, font::BODY, true);
                 for f in &c.fields {
                     let line = commands
                         .spawn(Node {
@@ -824,8 +859,8 @@ fn spawn_block(
                     let label = commands
                         .spawn((
                             Node {
-                                width: px(72.0),
-                                min_width: px(72.0),
+                                width: px(CARD_LABEL_WIDTH),
+                                min_width: px(CARD_LABEL_WIDTH),
                                 flex_shrink: 0.0,
                                 ..default()
                             },
@@ -837,7 +872,7 @@ fn spawn_block(
                         ))
                         .id();
                     commands.entity(line).add_child(label);
-                    spawn_spans(commands, line, &f.value, v, font::SMALL);
+                    spawn_spans(commands, line, &f.value, v, font::SMALL, false);
                     commands.entity(card).add_child(line);
                 }
                 if let Some(p) = &c.bar {

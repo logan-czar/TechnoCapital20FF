@@ -330,10 +330,10 @@ fn overview(d: &CompanyDetail, row: Option<&CompanyRow>, v: &SimViews) -> Vec<Bl
     let zone = v.countries.get().get(d.hq_country).map(|c| c.zone);
     let mut conf = vec![
         Span::Cell(Cell::Ratio(d.confidence_factor)),
-        Span::muted("factor (0.8 + score / 250)"),
+        Span::muted("factor"),
     ];
     if let Some(z) = zone {
-        conf.push(Span::muted("; zone"));
+        conf.push(Span::muted("| zone"));
         conf.push(Span::Live(Live::ZoneConfidence(z)));
     }
     f.push(Field::new("Confidence", conf));
@@ -821,7 +821,7 @@ fn statements_table(id: &str, cols: &[StatementCol]) -> TableDoc {
     columns.extend(
         cols.iter()
             .enumerate()
-            .map(|(i, c)| Column::number(&c.label, 132.0).with_key(&format!("p{i}"))),
+            .map(|(i, c)| Column::number(&c.label, 124.0).with_key(&format!("p{i}"))),
     );
     TableDoc {
         id: id.into(),
