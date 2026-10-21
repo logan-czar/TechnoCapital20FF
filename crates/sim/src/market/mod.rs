@@ -23,4 +23,5 @@ pub mod daily;
 pub mod earnings;
 pub mod engine_value;
 pub mod fair_value;
+pub mod index;
 pub mod price;

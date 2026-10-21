@@ -4,6 +4,7 @@
 //! company lists or leaves).
 
 use sim::market::daily::{BarBuilder, DailyBar};
+use sim::market::index::{ExchangeIndex, INDEX_BASE, market_cap};
 use sim::market::price::{
     MIN_PRICE_USD, SECTOR_BETA, SECTOR_VOLATILITY, StockTick, prices_move,
     reaction_volatility_mult, rho, sigma_hourly, step_price, step_prices, target_value,
@@ -236,4 +237,75 @@ fn bars_close_at_00_00_each_day() {
         }
     }
     assert_eq!(bar.close(), None);
+}
+
+/// Total cap of (price, shares) constituents.
+fn cap(list: &[(f64, u64)]) -> f64 {
+    list.iter().map(|&(p, s)| market_cap(p, s)).sum()
+}
+
+#[test]
+fn index_starts_at_1000_and_keeps_its_level_through_listings_and_removals() {
+    // 5.14: market-cap weighted, 1,000 at load. A $10 × 1,000, B $20 × 500, C $5 × 4,000:
+    // $40,000 of cap.
+    assert_eq!(INDEX_BASE, 1000.0);
+    near(market_cap(2.5, 4), 10.0);
+    let mut cos = vec![(10.0, 1000u64), (20.0, 500), (5.0, 4000)];
+    let mut idx = ExchangeIndex::at_load(cap(&cos));
+    near(idx.level(cap(&cos)).unwrap(), 1000.0);
+    // A rises to $12: the level moves with the cap, 1,000 × 42,000 ÷ 40,000 = 1,050.
+    cos[0].0 = 12.0;
+    near(idx.level(cap(&cos)).unwrap(), 1050.0);
+    // D lists at $7 × 3,000 = $21,000 (build-plan M5.6): no jump.
+    let before = cap(&cos);
+    cos.push((7.0, 3000));
+    idx.reweight(before, cap(&cos));
+    near(idx.level(cap(&cos)).unwrap(), 1050.0);
+    // D rises to $8: 1,050 × 66,000 ÷ 63,000 = 1,100.
+    cos[3].0 = 8.0;
+    near(idx.level(cap(&cos)).unwrap(), 1100.0);
+    // C ($20,000) is removed: no jump either (D250).
+    let before = cap(&cos);
+    cos.remove(2);
+    idx.reweight(before, cap(&cos));
+    near(idx.level(cap(&cos)).unwrap(), 1100.0);
+    // A falls to $6: 1,100 × 40,000 ÷ 46,000.
+    cos[0].0 = 6.0;
+    near(idx.level(cap(&cos)).unwrap(), 1100.0 * 40_000.0 / 46_000.0);
+    // A share issue (6.6) is a constituent change too: B issues 500 shares at $20.
+    let before = cap(&cos);
+    cos[1].1 += 500;
+    idx.reweight(before, cap(&cos));
+    near(idx.level(cap(&cos)).unwrap(), 1100.0 * 40_000.0 / 46_000.0);
+}
+
+#[test]
+fn an_exchange_with_no_listing_shows_no_level() {
+    // 5.14 (A): no listed company, no level; its return is 0 (5.1.2).
+    let mut empty = ExchangeIndex::at_load(0.0);
+    assert_eq!(empty.level(0.0), None);
+    assert_eq!(empty.close_day(0.0), 0.0);
+    // Its first listing starts the index at 1,000 (D250).
+    empty.reweight(0.0, 5_000.0);
+    near(empty.level(5_000.0).unwrap(), 1000.0);
+    // When the last company leaves, the level goes and the last one is kept; a later listing
+    // resumes from it.
+    let mut idx = ExchangeIndex::at_load(10_000.0);
+    near(idx.level(12_000.0).unwrap(), 1200.0);
+    idx.reweight(12_000.0, 0.0);
+    assert_eq!(idx.level(0.0), None);
+    idx.reweight(0.0, 3_000.0);
+    near(idx.level(3_000.0).unwrap(), 1200.0);
+}
+
+#[test]
+fn the_daily_return_is_the_level_change_in_percent() {
+    // 5.1.2 r_z: the headline index's return that day in %.
+    let mut idx = ExchangeIndex::at_load(40_000.0);
+    near(idx.close_day(42_000.0), 5.0);
+    near(idx.close_day(42_000.0), 0.0);
+    near(idx.close_day(39_900.0), -5.0);
+    // A listing between closes does not count as a return.
+    idx.reweight(39_900.0, 60_000.0);
+    near(idx.close_day(60_000.0), 0.0);
 }
