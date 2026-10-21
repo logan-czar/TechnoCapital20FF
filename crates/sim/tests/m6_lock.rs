@@ -136,9 +136,10 @@ fn the_lite_ai_batch_at_the_first_lock_follows_section_6() {
         assert_eq!(a.archetype, arch, "{}", c.key);
         let (hurdle, adj, rd_mult, coverage) = row(arch);
 
-        // 6.3: productivity adj, trait mults, loss cut, less free R&D, clamp.
-        let p_adj = if u.productivity < 95.0 {
-            0.25
+        // 6.3: productivity adj (+0.5 below 100, D360's tuning of the spec's +0.25 below 95),
+        // trait mults, loss cut, less free R&D, clamp.
+        let p_adj = if u.productivity < 100.0 {
+            0.5
         } else if u.productivity > 110.0 {
             -0.2
         } else {
@@ -195,7 +196,14 @@ fn the_lite_ai_batch_at_the_first_lock_follows_section_6() {
         let p = &ind.params;
         let d = p.asset_decay * (gross - p.asset_decay_threshold_usd).max(0.0) / gross.max(1.0);
         let line = c.finance.line;
-        let liquidity = (c.cash_usd - line.drawn).max(0.0) + (line.limit - line.drawn).max(0.0);
+        // The batch runs after the lock's listings (4.4, 5.20.1): a company that lists here plans
+        // with its IPO's new money, its cash after the lock less the plan's own moves (D125).
+        let cash = if !c.public && a.public {
+            a.cash_usd - (plan.financing.draw - plan.financing.repay - plan.financing.dividend)
+        } else {
+            c.cash_usd
+        };
+        let liquidity = (cash - line.drawn).max(0.0) + (line.limit - line.drawn).max(0.0);
         let min_cash = 0.05 * ttm_revenue;
         let budget = 0.5 * (liquidity - min_cash).max(0.0);
         if c.finance.status() != CompanyStatus::Active {

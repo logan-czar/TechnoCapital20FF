@@ -155,7 +155,9 @@ fn voter_traits(w: &World, id: CompanyId) -> Vec<(VoterRole, &[Trait])> {
 
 #[test]
 fn ipo_votes_and_listings_follow_5_20() {
-    let end = Date::ymd(2021, 2, 2);
+    // Past the Q1 2021 close, so a listing at the 9 January 2021 lock has its quarter's
+    // statements (the shares-issued check below).
+    let end = Date::ymd(2021, 4, 2);
     let (sim, seen) = run(31, end, true);
     let w = sim.world();
     let before = BEFORE.lock().unwrap().clone();
