@@ -693,6 +693,69 @@ mod tests {
         }
     }
 
+    /// A view bar carries its EFV band (D465): `efv_low()` to `efv_high()`.
+    #[test]
+    fn bars_carry_their_efv_band() {
+        let b = DailyBar {
+            date: Date::ymd(2020, 3, 2),
+            open: 10.0,
+            high: 11.0,
+            low: 9.5,
+            close: 10.5,
+            efv: 12.0,
+        };
+        let o = Ohlc::from_bar(&b);
+        assert_eq!(o.band, Some((b.efv_low(), b.efv_high())));
+        assert_eq!(Ohlc::from_bar(&DailyBar { efv: 0.0, ..b }).band, None);
+    }
+
+    /// Figures chart as a line where exact and a band strip where banded (D466): the line
+    /// breaks at the bands, the readout shows a band's range and never its estimate.
+    #[test]
+    fn figures_draw_bands_and_break_the_line() {
+        use sim::views::estimate::Band;
+        let band = |estimate: f64| {
+            Figure::Band(Band {
+                estimate,
+                low: estimate * 0.75,
+                high: estimate * 1.25,
+            })
+        };
+        let f = [
+            Figure::Exact(10.0),
+            Figure::Exact(11.0),
+            band(12.345),
+            Figure::Exact(13.0),
+        ];
+        let series = Series::figures("supply", &f, color::AMBER);
+        assert_eq!(series.len(), 2, "a band under a line");
+        assert!(matches!(series[0], Series::Band { .. }));
+        let m = ChartModel {
+            title: "t".into(),
+            labels: vec!["a".into(), "b".into(), "c".into(), "d".into()],
+            series,
+            format: ValueFormat::Number,
+            reference: None,
+        };
+        let (prims, _) = primitives(&m, 400.0, 100.0);
+        let segments = prims
+            .iter()
+            .filter(|p| matches!(p, Prim::Segment { .. }))
+            .count();
+        let rects = prims
+            .iter()
+            .filter(|p| matches!(p, Prim::Rect { .. }))
+            .count();
+        assert_eq!(segments, 1, "a then b; c is a band; d alone");
+        assert_eq!(rects, 2, "the band and d's dot");
+        let r = readout(&m, 2);
+        assert!(r.contains("supply 9.26-15.43"), "{r}");
+        assert!(!r.contains("12.3"), "{r}");
+        assert!(readout(&m, 0).contains("supply 10.00"));
+        let exact = Series::figures("x", &[Figure::Exact(1.0)], color::CYAN);
+        assert_eq!(exact.len(), 1, "no band strip when every figure is exact");
+    }
+
     #[test]
     fn scales_and_ticks() {
         let s = Scale::new((10.0, 20.0), 100.0);
