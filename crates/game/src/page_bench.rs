@@ -30,12 +30,16 @@ pub const TARGET_MS: f64 = 100.0;
 #[derive(Resource, Default)]
 struct PageBench {
     frame: u64,
-    pages: Vec<PageRef>,
+    pages: Vec<(PageRef, Tab)>,
     i: usize,
     pass: u8,
     sent: Option<(Instant, u64)>,
-    results: Vec<(PageRef, u8, f64, u64)>,
+    results: Vec<(String, u8, f64, u64)>,
 }
+
+/// The Company page's tab a bench entry opens (lane B1, D481): `None` shows every section,
+/// `Some(id)` only that one (the others folded, as the tab strip does).
+type Tab = Option<Option<&'static str>>;
 
 pub struct PageBenchPlugin;
 
@@ -47,8 +51,35 @@ impl Plugin for PageBenchPlugin {
     }
 }
 
-/// One page of each kind, picked from the views of the world as it is.
-fn pick_pages(v: &Views, index: &NameIndex) -> Vec<PageRef> {
+/// One page of each kind, picked from the views of the world as it is; then each Company tab
+/// on a listed and a private company in turn (so each open is a new page in the pane).
+fn pick_pages(v: &Views, index: &NameIndex) -> Vec<(PageRef, Tab)> {
+    let mut out: Vec<(PageRef, Tab)> = pages_of_each_kind(v, index)
+        .into_iter()
+        .map(|p| (p, None))
+        .collect();
+    let world = out.pop();
+    let rows = &v.company_rows.get().rows;
+    let pick = |public: bool| {
+        rows.iter()
+            .find(|r| r.public == public && r.status == CompanyStatus::Active)
+            .map(|r| PageRef::Company(r.id))
+    };
+    if let (Some(listed), Some(private)) = (pick(true), pick(false)) {
+        for &(id, _) in crate::pages::company::SECTIONS {
+            for p in [&listed, &private] {
+                out.push((p.clone(), Some(Some(id))));
+            }
+        }
+        // Back to every section shown.
+        out.push((listed, Some(None)));
+    }
+    out.extend(world);
+    out
+}
+
+/// One page of each kind.
+fn pages_of_each_kind(v: &Views, index: &NameIndex) -> Vec<PageRef> {
     let rows = &v.company_rows.get().rows;
     let listed = rows
         .iter()
@@ -98,6 +129,7 @@ fn send_next(
     mut b: ResMut<PageBench>,
     views: Res<Views>,
     index: Res<NameIndex>,
+    mut cfg: ResMut<crate::config::UiConfig>,
     mut open: MessageWriter<OpenPage>,
 ) {
     b.frame += 1;
@@ -107,9 +139,17 @@ fn send_next(
     if b.pages.is_empty() {
         b.pages = pick_pages(&views, &index);
     }
-    let Some(page) = b.pages.get(b.i).cloned() else {
+    let Some((page, tab)) = b.pages.get(b.i).cloned() else {
         return;
     };
+    if let Some(tab) = tab {
+        crate::pages::doc::select_tab(
+            &mut cfg,
+            crate::pages::PageKind::Company,
+            crate::pages::company::SECTIONS,
+            tab,
+        );
+    }
     open.write(OpenPage::focused(page));
     b.sent = Some((Instant::now(), b.frame));
 }
@@ -129,7 +169,7 @@ fn check_laid_out(
     let Some((at, sent_frame)) = b.sent else {
         return;
     };
-    let page = b.pages[b.i].clone();
+    let (page, tab) = b.pages[b.i].clone();
     let ready = frames
         .iter()
         .find(|f| f.pane == ws.focused())
@@ -175,7 +215,12 @@ fn check_laid_out(
         f64::INFINITY
     };
     let pass = b.pass;
-    b.results.push((page, pass, ms, frames_taken + 1));
+    let label = match tab {
+        Some(Some(t)) => format!("{} tab {t}", page.key()),
+        Some(None) => format!("{} all tabs", page.key()),
+        None => page.key(),
+    };
+    b.results.push((label, pass, ms, frames_taken + 1));
     b.sent = None;
     b.i += 1;
     if b.i == b.pages.len() {
@@ -188,10 +233,10 @@ fn check_laid_out(
     }
 }
 
-fn report(results: &[(PageRef, u8, f64, u64)]) {
+fn report(results: &[(String, u8, f64, u64)]) {
     println!("BENCH pages: open in the focused pane, to the first laid-out frame");
     println!(
-        "BENCH {:<28} {:>9} {:>7} {:>9} {:>7}",
+        "BENCH {:<34} {:>9} {:>7} {:>9} {:>7}",
         "page", "cold ms", "frames", "warm ms", "frames"
     );
     let cold: Vec<_> = results.iter().filter(|r| r.1 == 0).collect();
@@ -201,12 +246,8 @@ fn report(results: &[(PageRef, u8, f64, u64)]) {
         let (wm, wf) = w.map_or((f64::NAN, 0), |w| (w.2, w.3));
         worst = worst.max(c.2).max(wm);
         println!(
-            "BENCH {:<28} {:>9.2} {:>7} {:>9.2} {:>7}",
-            c.0.key(),
-            c.2,
-            c.3,
-            wm,
-            wf
+            "BENCH {:<34} {:>9.2} {:>7} {:>9.2} {:>7}",
+            c.0, c.2, c.3, wm, wf
         );
     }
     println!(
