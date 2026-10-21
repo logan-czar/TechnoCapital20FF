@@ -16,7 +16,7 @@ which prints AI labs' long-term rate and demand by year; batch 155: every zone h
 sets the zone by hand, and country-economy.csv has sovereign_spread_bps and no country-level economy columns;
 batch 157: no wage_level or price_level anywhere (labor is the industry labor_value only). Returns 1 on any error.
 """
-import csv, glob, math, os, random, statistics, sys
+import csv, glob, math, os, random, re, statistics, sys
 
 # Batch 150 growth model (mvp-spec 5.1), all T: phase -> (g range a year, length range in quarters, next phase)
 PHI = 0.5
@@ -468,8 +468,37 @@ def run(data):
               f'${min(pl):.0f} / ${statistics.median(pl):.0f} / ${max(pl):.0f}, {sum(1 for x in ps if x == 5)} at $5'
               + (f'; ARDR ${float(ar["open_price"]):.0f} x {int(ar["shares"]):,} shares = '
                  f'${float(ar["engine_value_usd"]) / 1e6:.0f}M' if ar else ''))
+    # build-plan M0.5: the fixed startup events F1 to F9 (mvp-spec 5.19.2)
+    ev_path = os.path.join(data, 'startup-events.csv')
+    events = load(ev_path) if os.path.exists(ev_path) else []
+    if [e['id'] for e in events] != [f'F{i}' for i in range(1, 10)]:
+        errors.append('startup-events.csv: expected the 9 rows F1 to F9 (run gen.py)')
+    slugs = {os.path.basename(f)[len('provinces-'):-len('.csv')] for f in glob.glob(os.path.join(data, 'provinces-*.csv'))}
+    n_startups = 0
+    for e in events:
+        eid = e['id']
+        if e['trigger'] not in ('date', 'after_bust') or (e['trigger'] == 'date') != bool(re.fullmatch(r'\d{4}-\d{2}-\d{2}', e['date'])):
+            errors.append(f'{eid}: trigger {e["trigger"]} with date "{e["date"]}"')
+        for grp in e['startups'].split(';'):
+            m = re.fullmatch(r'(\d+):([^@]+)@(.+)', grp)
+            if not m:
+                errors.append(f'{eid}: startup group "{grp}" is not count:industry@region')
+                continue
+            n_startups += int(m.group(1))
+            if m.group(2) not in names:
+                errors.append(f'{eid}: unknown industry {m.group(2)}')
+            for reg in m.group(3).split('|'):
+                if reg != 'any' and reg not in slugs and reg not in countries:
+                    errors.append(f'{eid}: unknown region {reg}')
+        if not 0 < float(e['revenue_min_usd_m']) <= float(e['revenue_max_usd_m']):
+            errors.append(f'{eid}: revenue range {e["revenue_min_usd_m"]} to {e["revenue_max_usd_m"]}')
+        for k in ('full', 'partial'):
+            if not 1 <= int(e[f'{k}_min']) <= int(e[f'{k}_max']) <= 5:
+                errors.append(f'{eid}: {k} cast {e[f"{k}_min"]} to {e[f"{k}_max"]} not within 1 to 5 (5.19)')
+    if events and n_startups != 32:
+        errors.append(f'startup-events.csv: {n_startups} startups, expected 32 (5.19.2)')
     print(f'Rows: industries {len(inds)}, country-economy {len(ce)}, key-cities {len(kc)}, zones {len(zones)}, '
-          f'ai-boom {len(sched)}')
+          f'ai-boom {len(sched)}, startup-events {len(events)} ({n_startups} startups)')
     for e in errors:
         print('ERROR', e)
     print('OK' if not errors else f'{len(errors)} errors')

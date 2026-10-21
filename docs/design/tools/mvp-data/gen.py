@@ -10,6 +10,7 @@ Writes into <design>/data/:
   ai-boom.csv            15 rows (mvp-spec 2.2, 5.1.1; 7-starting-world 7.7; Logan, batch 151)
   key-cities.csv        88 rows  (2-map 2.3.3, 2.3.4, 2.3.5, parsed from the markdown; 8 zone hubs, batch 152)
   company-start.csv    651 rows  (mvp-spec 7.1, G6; starting balance sheet, share count and opening price, Logan, batch 161)
+  startup-events.csv     9 rows  (mvp-spec 5.19.2: the fixed startup events F1 to F9; build-plan M0.5)
 
 Plain Python 3, no packages, no randomness (the price jitter is a hash of the company id): the same inputs always give the same files.
 Then runs validate.py, which checks ids and prints the margin and named-share checks.
@@ -831,6 +832,41 @@ def build_company_start(ce_rows, zones):
                     'engine_value_usd': round(fv), 'open_price': p, 'shares': max(1, round(fv / p))})
     return out
 
+# ---------------------------------------------------------------------------
+# 7. startup-events.csv (mvp-spec 5.19.2, build-plan M0.5)
+# ---------------------------------------------------------------------------
+# The fixed startup events F1 to F9 (A, T). trigger: 'date' fires at the first plan lock on or after date;
+# 'after_bust' at the first plan lock after the bust ends (the pop + 8 quarters, 5.1.1).
+# startups: ';'-separated groups count:industry@regions; regions are '|'-separated alternatives, each 'any',
+# a superregion slug (as in the provinces-*.csv names) or a country iso3.
+# id, name, trigger, date, startups, revenue $M min, max, full characters min, max, partial min, max
+STARTUP_EVENTS = [
+    ('F1', 'The transformer paper: researchers leave to build on it', 'date', '2020-04-09',
+     '2:AI labs@north-america', 5, 15, 2, 3, 1, 2),
+    ('F2', 'The crypto and SPAC mania', 'date', '2021-04-09',
+     '1:Software@any;1:E-commerce@any;1:Gambling@any', 10, 40, 1, 2, 2, 4),
+    ('F3', 'Suppliers to the Ukraine drone war', 'date', '2022-01-09',
+     '2:Drones@europe;1:Defense@europe', 5, 30, 1, 3, 1, 3),
+    ('F4', 'The tipped lab launches its chatbot: the boom event (5.1.1)', 'date', '2030-01-09',
+     '5:AI labs@any;1:Cloud@any', 10, 50, 3, 5, 2, 4),
+    ('F5', 'The GPU gold rush', 'date', '2031-01-09',
+     '2:Semiconductors@east-asia-oceania|north-america;2:Data centers@east-asia-oceania|north-america', 20, 50, 2, 3, 2, 4),
+    ('F6', 'Power deals and the cheap Chinese open model', 'date', '2032-01-09',
+     '2:AI labs@CHN;1:Data centers@any;1:Renewables@any', 10, 50, 2, 4, 2, 4),
+    ('F7', 'AI agents run whole departments', 'date', '2033-01-09',
+     '2:Software@any;2:SaaS@any', 5, 30, 1, 3, 1, 3),
+    ('F8', 'Humanoid robots in factories', 'date', '2035-01-09',
+     '1:Robotics@east-asia-oceania;1:Robotics@north-america;1:Robotics@europe', 10, 50, 2, 4, 2, 4),
+    ('F9', 'The post-crash rebuild', 'after_bust', '',
+     '2:AI labs@any;1:Cloud@any', 5, 20, 2, 3, 1, 3),
+]
+
+def build_startup_events():
+    """The fixed startup events of mvp-spec 5.19.2 (32 startups: 8 before the boom, 21 in 2030 to 2035, 3 after the bust)."""
+    cols = ['id', 'name', 'trigger', 'date', 'startups', 'revenue_min_usd_m', 'revenue_max_usd_m',
+            'full_min', 'full_max', 'partial_min', 'partial_max']
+    return [dict(zip(cols, e), notes='mvp-spec 5.19.2 (A, T)') for e in STARTUP_EVENTS]
+
 def write(path, rows):
     with open(path, 'w', newline='', encoding='utf-8') as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()), lineterminator='\n')
@@ -848,6 +884,7 @@ def main():
     write(os.path.join(DATA, 'key-cities.csv'), build_key_cities())
     write(os.path.join(DATA, 'ai-boom.csv'), build_ai_boom())
     write(os.path.join(DATA, 'company-start.csv'), build_company_start(ce_rows, zone_rows))
+    write(os.path.join(DATA, 'startup-events.csv'), build_startup_events())
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import validate
     sys.exit(validate.run(DATA))
