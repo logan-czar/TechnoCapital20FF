@@ -50,7 +50,10 @@ fn check(dir: &std::path::Path) -> ExitCode {
         eprintln!("error: {e}");
     }
     if errors.is_empty() {
-        let _world = sim::World::new(world, 0);
+        if let Err(e) = sim::World::from_data(&world) {
+            eprintln!("error: {e}");
+            return ExitCode::FAILURE;
+        }
         println!("OK");
         ExitCode::SUCCESS
     } else {
