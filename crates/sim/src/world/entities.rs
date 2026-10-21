@@ -282,7 +282,8 @@ pub struct BusinessUnit {
     pub rd_m: f64,
     /// Last month's depreciation, USD (spec 5.5).
     pub dep_m: f64,
-    /// Last month's shared costs, USD (spec 5.5; 0 until M3 adds the 3.8 compute costs).
+    /// Last month's shared costs, USD: the company's 3.8 compute bill split by revenue share
+    /// (spec 5.5).
     pub shared_m: f64,
     /// Last month's asset purchases at cost, USD (spec 5.10); paid at the cash settle (4.3 step 13).
     pub capex_m: f64,
