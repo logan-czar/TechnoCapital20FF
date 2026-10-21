@@ -165,6 +165,12 @@ macro_rules! sim_views {
                 $(self.$field = View::built(&input, self.refresh);)*
             }
 
+            /// Every view holds the same data as in `other`, whatever their versions and dirty
+            /// flags (for checking that a copy shows a given state).
+            pub fn same_data(&self, other: &SimViews) -> bool {
+                true $(&& self.$field.get() == other.$field.get())*
+            }
+
             /// After a tick: rebuilds the views due on this tick and clears the others' dirty
             /// flags (spec 9.4).
             pub(crate) fn refresh_after_tick(&mut self, world: &World, controls: &Controls) {

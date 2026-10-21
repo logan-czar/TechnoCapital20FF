@@ -21,10 +21,11 @@ bevy = { workspace = true, features = [
     "bevy_picking",
     "ui_picking",
 ] }
+# Never with the `test-hooks` feature: the game reads only the views (spec 9; the gate's
+# boundary step builds this crate without it).
+sim.workspace = true
+# The starting data the sim is built from; also the table demo's province and company rows.
+sim-data.workspace = true
 
 [lints]
 workspace = true
-
-[dev-dependencies]
-# The table spike (examples/table_spike.rs) reads the real province rows.
-sim-data.workspace = true
