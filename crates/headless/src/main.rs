@@ -4,8 +4,8 @@
 //!   checks; a bad row exits non-zero with its file, line and field (spec 10 M0).
 //! - `run` (M1.8, M1.9) runs each seed for N years through the `Sim` API only, prints the state
 //!   hash each month with `--hash-monthly`, and writes the soak's yearly metrics rows.
-//! - `soak` (M10.1) runs many seeds on worker threads and writes `years.csv`, `quarters.csv` and
-//!   `timing.csv`; `check` (M10.2, M10.3) marks every spec 10 target per seed (docs/build/
+//! - `soak` (M10.1) runs many seeds, each in its own child process (`soak-seed`, D333), and writes
+//!   `years.csv`, `quarters.csv` and `timing.csv`; `check` (M10.2, M10.3) marks every spec 10 target per seed (docs/build/
 //!   soak.md).
 
 mod metrics;

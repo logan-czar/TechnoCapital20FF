@@ -8,6 +8,8 @@
 use std::fmt::Write as _;
 use std::time::Instant;
 
+use sim::economy::supply::{M_MAX, M_MIN};
+use sim::economy::{MONTHS_PER_QUARTER, MONTHS_PER_YEAR};
 use sim::finance::distress::CompanyStatus;
 use sim::finance::rating::Band;
 use sim::time::calendar::EPOCH_YEAR;
@@ -43,8 +45,8 @@ pub const QUARTERS_HEADER: &str = "seed,year,quarter,released,reports,beats,miss
     industry_months,boom_months,bust_months,rev_ratio_min,rev_ratio_max,rev_out_of_band,\
     m_clamp_industries,m_clamp_max_run,m_clamp_over_8q";
 
-/// Spec 5.2: M's clamp. Spec 10: no industry "stuck at an M clamp for more than 8 quarters".
-pub const M_CLAMP: (f64, f64) = (0.7, 1.3);
+/// Spec 10: no industry "stuck at an M clamp (spec 5.2, `M_MIN` and `M_MAX`) for more than 8
+/// quarters".
 pub const M_CLAMP_QUARTERS: u32 = 8;
 /// How close to a clamp edge counts as at it (M is clamped exactly; float slack only).
 const M_CLAMP_EPSILON: f64 = 1e-12;
@@ -56,6 +58,11 @@ pub const REVENUE_TREND_BAND: f64 = 0.30;
 /// Spec 10: "each industry's 10-year average demand growth within ±3 pp of its long-term rate"
 /// (D324), in percentage points a year.
 pub const DEMAND_GROWTH_BAND_PP: f64 = 3.0;
+
+/// Calendar month numbers: a quarter's last month is a multiple of this, and December is the
+/// year's last (sim::economy's month counts, which are f64 rates there).
+const QUARTER_MONTHS: u8 = MONTHS_PER_QUARTER as u8;
+const DECEMBER: u8 = MONTHS_PER_YEAR as u8;
 
 /// The `ai_labs` industry key (industries.csv), for the spec 10 AI labs startup target.
 const AI_LABS_KEY: &str = "ai_labs";
@@ -120,15 +127,18 @@ struct ClampRuns {
     max_run: u32,
 }
 
+/// M at either clamp edge (spec 5.2).
+fn at_clamp(m: f64) -> bool {
+    m <= M_MIN + M_CLAMP_EPSILON || m >= M_MAX - M_CLAMP_EPSILON
+}
+
 impl ClampRuns {
-    fn add_quarter(&mut self, sim: &Sim) {
-        let rows = &sim.views().industry_rows.get().rows;
-        self.run.resize(rows.len(), 0);
-        self.over.resize(rows.len(), false);
-        for (i, r) in rows.iter().enumerate() {
-            let at = r.market_factor <= M_CLAMP.0 + M_CLAMP_EPSILON
-                || r.market_factor >= M_CLAMP.1 - M_CLAMP_EPSILON;
-            self.run[i] = if at { self.run[i] + 1 } else { 0 };
+    /// A quarter's last month close: each industry's M, in industry id order.
+    fn add_quarter(&mut self, factors: &[f64]) {
+        self.run.resize(factors.len(), 0);
+        self.over.resize(factors.len(), false);
+        for (i, &m) in factors.iter().enumerate() {
+            self.run[i] = if at_clamp(m) { self.run[i] + 1 } else { 0 };
             self.over[i] |= self.run[i] > M_CLAMP_QUARTERS;
             self.max_run = self.max_run.max(self.run[i]);
         }
@@ -149,6 +159,49 @@ struct QuarterAcc {
     /// Per industry: the quarter's revenue (named + fringe) and trend revenue (D322).
     revenue: Vec<f64>,
     trend: Vec<f64>,
+}
+
+/// One industry at a month close, as v_industry_row shows it.
+struct MonthFigures {
+    /// The label this close set, in force for the next month.
+    label: PhaseLabel,
+    /// The month's revenue, named units plus fringe.
+    revenue: f64,
+    trend_demand: f64,
+}
+
+impl QuarterAcc {
+    /// Adds the month just closed (D322, D325). It ran under `labels`, set at the previous close
+    /// (or at load for January 2020); they then take the labels this close set, which are in
+    /// force for the next month. Its revenue is set against a twelfth of the trend demand at the
+    /// same close.
+    fn add_month(&mut self, labels: &mut Vec<PhaseLabel>, rows: &[MonthFigures]) {
+        self.revenue.resize(rows.len(), 0.0);
+        self.trend.resize(rows.len(), 0.0);
+        labels.resize(rows.len(), PhaseLabel::Normal);
+        for (i, r) in rows.iter().enumerate() {
+            self.industry_months += 1;
+            self.boom_months += usize::from(labels[i] == PhaseLabel::Boom);
+            self.bust_months += usize::from(labels[i] == PhaseLabel::Bust);
+            labels[i] = r.label;
+            self.revenue[i] += r.revenue;
+            self.trend[i] += r.trend_demand / MONTHS_PER_YEAR;
+        }
+    }
+}
+
+/// A cast's full and simple character counts from its board at birth (D326): the founders, and
+/// the simple characters cast, which are the simple seat holders plus the directors who are not
+/// unseated founders. With partials placed before seat fillers (5.19.4 step 3), that is
+/// `max(partials drawn, open seats left after the seated founders)`.
+fn cast_sizes(
+    founders: usize,
+    seated_founders: usize,
+    simple_seats: usize,
+    directors: usize,
+) -> (usize, usize) {
+    let simple_directors = directors.saturating_sub(founders - seated_founders);
+    (founders, simple_seats + simple_directors)
 }
 
 /// A born company's cast at birth (D326): the year's count and the min and max sizes.
@@ -225,10 +278,10 @@ impl Recorder {
                 if hash_monthly {
                     println!("seed {} {month} {}", self.seed, sim.state_hash());
                 }
-                if month.month.is_multiple_of(3) {
-                    self.quarter_close(month.year, month.month / 3);
+                if month.month.is_multiple_of(QUARTER_MONTHS) {
+                    self.quarter_close(month.year, month.month / QUARTER_MONTHS);
                 }
-                if month.month == 12 {
+                if month.month == DECEMBER {
                     self.year_close(sim, month.year);
                 }
             }
@@ -252,12 +305,11 @@ impl Recorder {
             .iter()
             .filter(|s| s.holder.as_ref().is_some_and(|h| h.partial))
             .count();
-        let simple_directors = c
-            .directors
-            .saturating_sub(c.founders.len() - seated_founders);
+        let (full, simple) =
+            cast_sizes(c.founders.len(), seated_founders, simple_seats, c.directors);
         self.casts.casts += 1;
-        widen(&mut self.casts.full, c.founders.len());
-        widen(&mut self.casts.simple, simple_seats + simple_directors);
+        widen(&mut self.casts.full, full);
+        widen(&mut self.casts.simple, simple);
         let empty = c
             .board
             .iter()
@@ -271,22 +323,18 @@ impl Recorder {
         self.economy.add_month(sim);
         self.births.add_month(sim);
         let rows = &v.industry_rows.get().rows;
-        let q = &mut self.quarter;
-        q.revenue.resize(rows.len(), 0.0);
-        q.trend.resize(rows.len(), 0.0);
-        self.labels.resize(rows.len(), PhaseLabel::Normal);
-        for (i, r) in rows.iter().enumerate() {
-            // The month just closed ran under the labels set at the last close (D325).
-            q.industry_months += 1;
-            q.boom_months += usize::from(self.labels[i] == PhaseLabel::Boom);
-            q.bust_months += usize::from(self.labels[i] == PhaseLabel::Bust);
-            self.labels[i] = r.phase_label;
-            // Its revenue against a twelfth of the trend demand at the same close (D322).
-            q.revenue[i] += r.named_revenue_m + r.fringe_revenue_m;
-            q.trend[i] += r.trend_demand / 12.0;
-        }
-        if month.is_multiple_of(3) {
-            self.clamp.add_quarter(sim);
+        let figures: Vec<MonthFigures> = rows
+            .iter()
+            .map(|r| MonthFigures {
+                label: r.phase_label,
+                revenue: r.named_revenue_m + r.fringe_revenue_m,
+                trend_demand: r.trend_demand,
+            })
+            .collect();
+        self.quarter.add_month(&mut self.labels, &figures);
+        if month.is_multiple_of(QUARTER_MONTHS) {
+            let factors: Vec<f64> = rows.iter().map(|r| r.market_factor).collect();
+            self.clamp.add_quarter(&factors);
         }
         let companies = &v.company_detail.get().companies;
         if companies.len() > self.distressed_seen.len() {
@@ -710,6 +758,80 @@ mod tests {
         assert_eq!(revenue_ratio(3.0, 2.0), 1.5);
         assert_eq!(revenue_ratio(0.0, 0.0), 1.0);
         assert_eq!(revenue_ratio(1.0, 0.0), f64::INFINITY);
+    }
+
+    #[test]
+    fn clamp_runs_count_consecutive_quarters_at_either_edge() {
+        let mut c = ClampRuns::default();
+        // Industry 0 sits at the floor, industry 1 at the cap then leaves it, industry 2 never.
+        for q in 0..10 {
+            let one = if q < 3 { M_MAX } else { 1.0 };
+            c.add_quarter(&[M_MIN, one, 1.05]);
+        }
+        assert_eq!(c.run, [10, 0, 0]);
+        assert_eq!(c.over, [true, false, false]);
+        assert_eq!(c.max_run, 10);
+        // A quarter off the clamp resets the run but not `over` or the longest run.
+        c.add_quarter(&[0.9, M_MAX, 1.0]);
+        assert_eq!(c.run, [0, 1, 0]);
+        assert_eq!(c.over, [true, false, false]);
+        assert_eq!(c.max_run, 10);
+        // Exactly 8 quarters is not over; 9 is.
+        let mut d = ClampRuns::default();
+        for _ in 0..M_CLAMP_QUARTERS {
+            d.add_quarter(&[M_MAX]);
+        }
+        assert_eq!(d.over, [false]);
+        d.add_quarter(&[M_MAX]);
+        assert_eq!(d.over, [true]);
+        assert!(at_clamp(M_MIN) && at_clamp(M_MAX) && !at_clamp(M_MIN + 1e-6));
+    }
+
+    #[test]
+    fn a_month_counts_the_labels_in_force_before_its_close() {
+        let fig = |label| MonthFigures {
+            label,
+            revenue: 10.0,
+            trend_demand: 120.0,
+        };
+        // Load labels Boom and Normal; the January close sets Bust and Boom for February.
+        let mut labels = vec![PhaseLabel::Boom, PhaseLabel::Normal];
+        let mut q = QuarterAcc::default();
+        q.add_month(&mut labels, &[fig(PhaseLabel::Bust), fig(PhaseLabel::Boom)]);
+        assert_eq!((q.industry_months, q.boom_months, q.bust_months), (2, 1, 0));
+        assert_eq!(labels, [PhaseLabel::Bust, PhaseLabel::Boom]);
+        // February ran under Bust and Boom, whatever its close sets.
+        q.add_month(
+            &mut labels,
+            &[fig(PhaseLabel::Normal), fig(PhaseLabel::Normal)],
+        );
+        assert_eq!((q.industry_months, q.boom_months, q.bust_months), (4, 2, 1));
+        // Revenue against a twelfth of trend demand: 20 over 2 × 10.
+        assert_eq!(q.revenue, [20.0, 20.0]);
+        assert_eq!(q.trend, [20.0, 20.0]);
+    }
+
+    /// 5.19.4 placement with five open seats: the lead founder is CEO and the others take
+    /// seats; partials fill the seats left in order, then sit as directors; fillers take the
+    /// rest. A sixth founder (outside the spec's 1 to 5) would be an unseated director.
+    #[test]
+    fn cast_sizes_give_max_of_partials_and_open_seats() {
+        const SEATS: usize = 5;
+        for founders in 1..=6usize {
+            for partials in 0..=7usize {
+                let seated = founders.min(SEATS);
+                let partial_seats = partials.min(SEATS - seated);
+                let simple_seats = SEATS - seated;
+                let directors = (founders - seated) + (partials - partial_seats);
+                let (full, simple) = cast_sizes(founders, seated, simple_seats, directors);
+                assert_eq!(full, founders);
+                assert_eq!(
+                    simple,
+                    partials.max(SEATS - seated),
+                    "{founders} {partials}"
+                );
+            }
+        }
     }
 
     #[test]
