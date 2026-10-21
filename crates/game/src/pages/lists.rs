@@ -1,19 +1,24 @@
 //! List pages (M9 A2): Companies, Industries, News, Characters, Countries, Exchanges, Zones and
 //! Events, each a placeholder header plus an index table of links built from the views, so the
 //! wiki is navigable before Phase B builds the real tables (B2 owns Industries and News).
-//! Private companies show no figures (spec 1): the table holds only what is published.
+//! Every figure goes through [`Cell::figure`] (D461): a company that does not publish shows
+//! estimate bands, which sort by their midpoint, never by a hidden value. Names come from
+//! lane A1's countries, zones, characters and places views, and every place is a link (D462).
 
+use std::collections::HashMap;
 use std::sync::Arc;
 
 use bevy::prelude::*;
 use sim::SimViews;
 use sim::finance::distress::CompanyStatus;
+use sim::views::characters::CharacterRef;
 
 use super::placeholder::page_header;
 use super::{PageAppExt, PageBuild, PageKind, PageRef, PageSpec, ViewKey};
 use crate::bridge::Views;
 use crate::command::index::{NameIndex, event_name};
-use crate::table::{Cell, Column, GainUnit, TableModel, spawn_table_with_id};
+use crate::links::names;
+use crate::table::{Cell, Column, GainUnit, TableModel, Unit, spawn_table_with_id};
 
 /// Registers every list page.
 pub fn register(app: &mut App) {
@@ -24,14 +29,25 @@ pub fn register(app: &mut App) {
         ),
         (PageKind::Industries, &[ViewKey::IndustryRows]),
         (PageKind::News, &[ViewKey::News]),
-        (PageKind::Characters, &[ViewKey::CompanyDetail]),
-        (PageKind::Countries, &[ViewKey::CompanyRows]),
-        (PageKind::Exchanges, &[ViewKey::Exchanges]),
-        (PageKind::Zones, &[ViewKey::Cycle]),
+        (
+            PageKind::Characters,
+            &[ViewKey::Characters, ViewKey::Places],
+        ),
+        (PageKind::Countries, &[ViewKey::Countries]),
+        (PageKind::Exchanges, &[ViewKey::Exchanges, ViewKey::Places]),
+        (PageKind::Zones, &[ViewKey::Zones]),
         (PageKind::Events, &[ViewKey::Births]),
     ];
     for (kind, views) in lists {
         app.register_page(kind, PageSpec::new(views), list_page);
+    }
+}
+
+/// A place's link cell ("Edmonton, Canada", opening the country), or `fallback` as text.
+fn place_cell(v: &SimViews, province: sim::world::ProvinceId, fallback: &str) -> Cell {
+    match names::place(v, province) {
+        Some((name, page)) => Cell::Link(page, name),
+        None => Cell::Text(fallback.to_owned()),
     }
 }
 
@@ -61,6 +77,9 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                         q.map_or(Cell::Unknown, |q| {
                             Cell::Gain(q.change_pct, GainUnit::Percent)
                         }),
+                        Cell::figure(r.revenue_ttm, Unit::Money),
+                        Cell::figure(r.net_income_ttm, Unit::Money),
+                        Cell::figure(r.value, Unit::Money),
                         if listed {
                             Cell::Rating(r.rating)
                         } else {
@@ -79,6 +98,12 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                     Column::text("Exchange", 170.0),
                     Column::number("Price", 80.0).with_hint("Last price, USD a share"),
                     Column::number("Day", 70.0).with_hint("Change since the last close"),
+                    Column::number("Revenue TTM", 130.0)
+                        .with_hint("Trailing four published quarters; a band while not published"),
+                    Column::number("Net income", 130.0)
+                        .with_hint("TTM; a band while not published"),
+                    Column::number("Value", 130.0)
+                        .with_hint("Market cap at EFV when listed; a band while not published"),
                     Column::text("Rating", 60.0).with_hint("? for private companies"),
                     Column::text("Status", 80.0),
                 ],
@@ -98,8 +123,8 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                         Cell::Text(r.phase_label.name().into()),
                         Cell::Gain(r.growth_annual, GainUnit::Percent),
                         Cell::Percent(r.lt),
-                        Cell::Ratio(r.supply_ratio.shown()),
-                        Cell::Percent(r.fringe_share.shown()),
+                        Cell::figure(r.supply_ratio, Unit::Ratio),
+                        Cell::figure(r.fringe_share, Unit::Percent),
                         r.top_companies
                             .first()
                             .map_or(Cell::Unknown, |&c| link(PageRef::Company(c))),
@@ -113,8 +138,9 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                     Column::text("Phase", 70.0),
                     Column::number("Growth", 70.0).with_hint("This quarter's growth, a year"),
                     Column::number("Long-term", 80.0),
-                    Column::number("S", 60.0).with_hint("Supply over demand"),
-                    Column::number("Fringe", 70.0),
+                    Column::number("S", 90.0)
+                        .with_hint("Supply over demand; a band in an estimated industry"),
+                    Column::number("Fringe", 100.0),
                     Column::text("Largest", 200.0),
                 ],
                 rows,
@@ -161,43 +187,87 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
             )
         }
         PageRef::Characters => {
-            let rows = index
-                .entries()
+            let company_names: HashMap<_, _> = v
+                .company_rows
+                .get()
+                .rows
                 .iter()
-                .filter(|e| matches!(e.page, PageRef::Character(_)))
-                .map(|e| {
-                    vec![
-                        Cell::Link(e.page.clone(), e.name.clone()),
-                        Cell::Text(e.detail.clone()),
-                    ]
-                })
+                .map(|r| (r.id, r.name.as_str()))
                 .collect();
-            TableModel::new(
-                vec![Column::text("Name", 220.0), Column::text("Role", 360.0)],
-                rows,
-            )
-        }
-        PageRef::Countries => {
-            let mut counts: std::collections::BTreeMap<u32, i64> = Default::default();
-            for r in &v.company_rows.get().rows {
-                if r.status != CompanyStatus::Removed {
-                    *counts.entry(r.hq_country.0).or_default() += 1;
-                }
-            }
-            let rows = counts
-                .into_iter()
-                .map(|(c, n)| {
+            let rows = v
+                .characters
+                .get()
+                .full
+                .iter()
+                .filter_map(|c| match c.id {
+                    CharacterRef::Full(id) => Some((id, c)),
+                    CharacterRef::Partial(_) => None,
+                })
+                .map(|(id, c)| {
+                    let role = c.roles.first().map_or(Cell::Text("-".into()), |r| {
+                        let co = names::role(r).1;
+                        Cell::Link(
+                            PageRef::Company(co),
+                            names::role_text(r, company_names.get(&co).copied().unwrap_or("?")),
+                        )
+                    });
                     vec![
-                        link(PageRef::Country(sim::world::CountryId(c))),
-                        Cell::Int(n),
+                        Cell::Link(PageRef::Character(id), c.name.clone()),
+                        Cell::Int(i64::from(c.age)),
+                        c.home.as_ref().map_or(Cell::Text("-".into()), |h| {
+                            place_cell(v, h.province, &h.province_name)
+                        }),
+                        Cell::Text(c.tier.clone()),
+                        role,
+                        Cell::Int(c.roles.len() as i64),
+                        Cell::Int(c.holdings.len() as i64),
                     ]
                 })
                 .collect();
             TableModel::new(
                 vec![
-                    Column::text("Country", 200.0)
-                        .with_hint("Named by id until lane A1's countries view"),
-                    Column::number("HQ companies", 110.0),
+                    Column::text("Name", 200.0),
+                    Column::number("Age", 50.0),
+                    Column::text("Home", 200.0),
+                    Column::text("Tier", 80.0),
+                    Column::text("First role", 260.0),
+                    Column::number("Roles", 60.0),
+                    Column::number("Holdings", 70.0),
+                ],
+                rows,
+            )
+        }
+        PageRef::Countries => {
+            let rows = v
+                .countries
+                .get()
+                .countries
+                .iter()
+                .map(|c| {
+                    vec![
+                        link(PageRef::Country(c.id)),
+                        Cell::Text(c.iso3.clone()),
+                        Cell::Text(c.superregion.clone()),
+                        link(PageRef::Zone(c.zone)),
+                        Cell::Money(c.gdp_usd),
+                        Cell::Percent(c.corp_tax_rate),
+                        Cell::Rating(c.sovereign_rating),
+                        Cell::Percent(c.sovereign_spread),
+                        Cell::Int(c.hq_companies.len() as i64),
+                    ]
+                })
+                .collect();
+            TableModel::new(
+                vec![
+                    Column::text("Country", 200.0),
+                    Column::text("ISO3", 50.0),
+                    Column::text("Region", 140.0),
+                    Column::text("Zone", 170.0),
+                    Column::number("GDP", 80.0),
+                    Column::number("Corp tax", 70.0),
+                    Column::text("Sovereign", 70.0),
+                    Column::number("Spread", 70.0).with_hint("Sovereign spread"),
+                    Column::number("HQ companies", 100.0),
                 ],
                 rows,
             )
@@ -212,7 +282,7 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                     vec![
                         Cell::Text(x.code.clone()),
                         link(PageRef::Exchange(x.zone)),
-                        Cell::Text(x.hub_city.clone()),
+                        place_cell(v, x.hub_province, &x.hub_city),
                         Cell::Text(x.index_name.clone()),
                         x.level
                             .map_or(Cell::Unknown, |l| Cell::Int(l.round() as i64)),
@@ -225,7 +295,7 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                 vec![
                     Column::text("Code", 60.0),
                     Column::text("Exchange", 220.0),
-                    Column::text("Hub", 120.0),
+                    Column::text("Hub", 200.0),
                     Column::text("Index", 160.0),
                     Column::number("Level", 70.0).with_hint("The headline index at the last close"),
                     Column::number("Listed", 60.0),
@@ -236,7 +306,7 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
         }
         PageRef::Zones => {
             let rows = v
-                .cycle
+                .zones
                 .get()
                 .zones
                 .iter()
@@ -248,6 +318,10 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                         Cell::Gain(z.effect, GainUnit::Percent),
                         Cell::Percent(z.credit_spread),
                         Cell::Int(z.confidence.round() as i64),
+                        z.index_close
+                            .map_or(Cell::Unknown, |l| Cell::Int(l.round() as i64)),
+                        Cell::Percent(z.gdp_share),
+                        Cell::Int(z.members.len() as i64),
                     ]
                 })
                 .collect();
@@ -259,6 +333,9 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                     Column::number("Effect", 70.0),
                     Column::number("Spread", 70.0),
                     Column::number("Confidence", 90.0),
+                    Column::number("Index", 70.0).with_hint("The headline index at the last close"),
+                    Column::number("GDP share", 80.0),
+                    Column::number("Countries", 80.0),
                 ],
                 rows,
             )
@@ -271,7 +348,7 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                 .iter()
                 .map(|e| {
                     vec![
-                        Cell::Link(PageRef::Event(e.id), event_name(&e.kind, e.date)),
+                        Cell::Link(PageRef::Event(e.id), event_name(e)),
                         Cell::Date(e.date),
                         Cell::Int(e.industries.len() as i64),
                         Cell::Int(e.startups.len() as i64),
@@ -299,7 +376,7 @@ fn list_page(
     index: Res<NameIndex>,
 ) {
     let kind = b.page.kind();
-    let n = crate::links::cards::list_len(&b.page, &views, &index)
+    let n = crate::links::cards::list_len(&b.page, &views)
         .map_or(String::new(), |n| format!("{n} entries"));
     page_header(
         &mut commands,

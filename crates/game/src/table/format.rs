@@ -1,12 +1,18 @@
 //! Cell values and their display formats (build-plan M7.7; M9 A2, D456): money, percent,
 //! counts, per-share prices, dates, ratings, ratios, colored gains and losses, links to pages,
 //! estimate bands, text and "?" for values the player does not know (20-ui 20.1).
+//!
+//! A view's [`Figure`] (exact, or an estimate band for a company that does not publish, D420)
+//! becomes a cell through [`Cell::figure`] and text through [`figure_in`], the one path every
+//! page, card and table uses (D461): an exact figure is its plain cell, a band is
+//! [`Cell::Band`], shown as its range and sorted by its midpoint, never by a hidden value.
 
 use std::cmp::Ordering;
 
 use bevy::prelude::Color;
 use sim::finance::rating::Rating;
 use sim::time::Date;
+use sim::views::estimate::Figure;
 
 use crate::pages::PageRef;
 use crate::ui::theme::color;
@@ -21,6 +27,38 @@ pub enum GainUnit {
     /// USD a share: +$0.45.
     Price,
 }
+
+/// What a figure counts, so an exact figure and a band of it read alike (D461).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum Unit {
+    /// USD, scaled: $12.3M.
+    #[default]
+    Money,
+    /// USD a share: $45.23.
+    Price,
+    /// A fraction as a percent: 12.3%.
+    Percent,
+    /// A multiple: 1.23x.
+    Ratio,
+    /// A plain quantity with one decimal (TB, productivity points): 1,234.5.
+    Number,
+}
+
+impl Unit {
+    /// `v` in this unit.
+    pub fn fmt(self, v: f64) -> String {
+        match self {
+            Unit::Money => money(v),
+            Unit::Price => price(v),
+            Unit::Percent => percent(v),
+            Unit::Ratio => ratio(v),
+            Unit::Number => number(v),
+        }
+    }
+}
+
+/// The text color of an estimate band (amber, as the chart's EFV band: an estimate; D461).
+pub const BAND_TEXT: Color = color::AMBER;
 
 /// One table cell.
 #[derive(Debug, Clone, PartialEq)]
@@ -40,15 +78,19 @@ pub enum Cell {
     Rating(Rating),
     /// A multiple: 1.23x.
     Ratio(f64),
+    /// A plain quantity with one decimal: 1,234.5.
+    Number(f64),
     /// A signed change, colored by its sign: gains cyan, losses magenta (11.4).
     Gain(f64, GainUnit),
     /// A named thing that opens its page when clicked (D454); sorts by its text.
     Link(PageRef, String),
-    /// An estimate band in USD (M9 estimate bands): "$12M-$18M". Sorts by its midpoint, which
-    /// is all the player knows: never by a hidden value (D456).
+    /// An estimate band (D420) in `unit`: "$12.0M-$18.0M", "10.0%-15.0%". Sorts by its
+    /// midpoint, which is all the player knows: never by a hidden value (D456, D461). Build it
+    /// from a view's figure with [`Cell::figure`].
     Band {
         low: f64,
         high: f64,
+        unit: Unit,
     },
     /// A value the player does not know: "?".
     Unknown,
@@ -66,9 +108,10 @@ impl Cell {
             Cell::Date(d) => date(*d),
             Cell::Rating(r) => r.label().to_owned(),
             Cell::Ratio(v) => ratio(*v),
+            Cell::Number(v) => number(*v),
             Cell::Gain(v, unit) => gain(*v, *unit),
             Cell::Link(_, text) => text.clone(),
-            Cell::Band { low, high } => band(*low, *high),
+            Cell::Band { low, high, unit } => band_in(*unit, *low, *high),
             Cell::Unknown => "?".to_owned(),
         }
     }
@@ -82,18 +125,40 @@ impl Cell {
                 | Cell::Percent(_)
                 | Cell::Price(_)
                 | Cell::Ratio(_)
+                | Cell::Number(_)
                 | Cell::Gain(..)
                 | Cell::Band { .. }
         )
     }
 
-    /// The text color, when the cell has its own: gains, losses and links.
+    /// The cell of a view's figure (D461): an exact figure as its unit's plain cell, a band as
+    /// [`Cell::Band`] (its range only: the estimate inside it is not printed, and the hidden
+    /// truth is never in a figure at all).
+    pub fn figure(f: Figure, unit: Unit) -> Cell {
+        match f {
+            Figure::Exact(x) => match unit {
+                Unit::Money => Cell::Money(x),
+                Unit::Price => Cell::Price(x),
+                Unit::Percent => Cell::Percent(x),
+                Unit::Ratio => Cell::Ratio(x),
+                Unit::Number => Cell::Number(x),
+            },
+            Figure::Band(b) => Cell::Band {
+                low: b.low,
+                high: b.high,
+                unit,
+            },
+        }
+    }
+
+    /// The text color, when the cell has its own: gains, losses, links and estimate bands.
     pub fn color(&self) -> Option<Color> {
         match self {
             Cell::Gain(v, _) if *v > 0.0 => Some(color::GAIN),
             Cell::Gain(v, _) if *v < 0.0 => Some(color::LOSS),
             Cell::Gain(..) => Some(color::TEXT_MUTED),
             Cell::Link(..) => Some(color::LINK),
+            Cell::Band { .. } => Some(BAND_TEXT),
             _ => None,
         }
     }
@@ -135,11 +200,15 @@ impl Cell {
     pub fn number(&self) -> Option<f64> {
         match self {
             Cell::Int(n) => Some(*n as f64),
-            Cell::Money(v) | Cell::Percent(v) | Cell::Price(v) | Cell::Ratio(v) => Some(*v),
+            Cell::Money(v)
+            | Cell::Percent(v)
+            | Cell::Price(v)
+            | Cell::Ratio(v)
+            | Cell::Number(v) => Some(*v),
             Cell::Gain(v, _) => Some(*v),
             Cell::Date(d) => Some(d.days_since_epoch() as f64),
             Cell::Rating(r) => Some(*r as u8 as f64),
-            Cell::Band { low, high } => Some((low + high) / 2.0),
+            Cell::Band { low, high, .. } => Some((low + high) / 2.0),
             _ => None,
         }
     }
@@ -225,6 +294,16 @@ pub fn ratio(v: f64) -> String {
     format!("{v:.2}x")
 }
 
+/// A quantity with one decimal and thousands separators: 1,234.5.
+pub fn number(v: f64) -> String {
+    if !v.is_finite() {
+        return "?".to_owned();
+    }
+    let tenths = (v.abs() * 10.0).round() as i64;
+    let sign = if v < 0.0 && tenths > 0 { "-" } else { "" };
+    format!("{sign}{}.{}", int(tenths / 10), tenths % 10)
+}
+
 /// A signed change: +1.2%, -$0.45, +$1.20M; zero has no sign.
 pub fn gain(v: f64, unit: GainUnit) -> String {
     if !v.is_finite() {
@@ -243,25 +322,33 @@ pub fn gain(v: f64, unit: GainUnit) -> String {
     format!("{}{body}", if v < 0.0 { "-" } else { "+" })
 }
 
-/// A money figure from a view (M9 estimate bands, D420): exact as [`money`], a band as
-/// [`band`].
-pub fn figure(f: sim::views::estimate::Figure) -> String {
-    match f {
-        sim::views::estimate::Figure::Exact(x) => money(x),
-        sim::views::estimate::Figure::Band(b) => band(b.low, b.high),
-    }
+/// A view's figure as text in `unit` (D461): the text of [`Cell::figure`].
+pub fn figure_in(f: Figure, unit: Unit) -> String {
+    Cell::figure(f, unit).display()
 }
 
-/// An estimate band: `$12.0M-$18.0M`. The font is ASCII (D302), so the separator is a hyphen;
-/// a band reaching below zero reads `-$5.00M to $3.00M` instead, so no hyphen is a minus.
+/// A money figure from a view as text (D420): exact as [`money`], a band as [`band`].
+pub fn figure(f: Figure) -> String {
+    figure_in(f, Unit::Money)
+}
+
+/// A money estimate band: `$12.0M-$18.0M` ([`band_in`]).
 pub fn band(low: f64, high: f64) -> String {
+    band_in(Unit::Money, low, high)
+}
+
+/// An estimate band in `unit`: `$12.0M-$18.0M`, `10.0%-15.0%`. The font is ASCII (D302), so the
+/// separator is a hyphen; a band reaching below zero reads `-$5.00M to $3.00M` instead, so no
+/// hyphen is a minus.
+pub fn band_in(unit: Unit, low: f64, high: f64) -> String {
     if !(low.is_finite() && high.is_finite()) {
         return "?".to_owned();
     }
+    let (l, h) = (unit.fmt(low), unit.fmt(high));
     if low < 0.0 || high < 0.0 {
-        format!("{} to {}", money(low), money(high))
+        format!("{l} to {h}")
     } else {
-        format!("{}-{}", money(low), money(high))
+        format!("{l}-{h}")
     }
 }
 
@@ -313,7 +400,8 @@ mod tests {
         assert_eq!(
             Cell::Band {
                 low: 12e6,
-                high: 18e6
+                high: 18e6,
+                unit: Unit::Money
             }
             .display(),
             "$12.0M-$18.0M"
@@ -321,11 +409,14 @@ mod tests {
         assert_eq!(
             Cell::Band {
                 low: -5e6,
-                high: 3e6
+                high: 3e6,
+                unit: Unit::Money
             }
             .display(),
             "-$5.00M to $3.00M"
         );
+        assert_eq!(Cell::Number(1234.56).display(), "1,234.6");
+        assert_eq!(Cell::Number(-0.04).display(), "0.0");
         let link = Cell::Link(PageRef::Company(CompanyId(4)), "Arrowhead".into());
         assert_eq!(link.display(), "Arrowhead");
         assert_eq!(link.link(), Some(&PageRef::Company(CompanyId(4))));
@@ -354,7 +445,11 @@ mod tests {
 
     #[test]
     fn new_cells_sort_by_what_they_show() {
-        let b = |low: f64, high: f64| Cell::Band { low, high };
+        let b = |low: f64, high: f64| Cell::Band {
+            low,
+            high,
+            unit: Unit::Money,
+        };
         // Bands by midpoint: 10-30 (20) after 12-18 (15), before 5-40 (22.5).
         assert_eq!(b(10.0, 30.0).cmp_value(&b(12.0, 18.0)), Ordering::Greater);
         assert_eq!(b(10.0, 30.0).cmp_value(&b(5.0, 40.0)), Ordering::Less);
@@ -374,6 +469,59 @@ mod tests {
             Cell::Gain(-1.0, GainUnit::Price).cmp_value(&Cell::Gain(0.5, GainUnit::Price)),
             Ordering::Less
         );
+    }
+
+    /// A view's figure becomes one cell kind (D461): exact figures their unit's plain cell, bands
+    /// a band of that unit showing only its range (never the estimate inside), colored as an
+    /// estimate, sorting by the midpoint.
+    #[test]
+    fn figures_become_cells_and_text() {
+        use sim::views::estimate::Band;
+        let band = Figure::Band(Band {
+            estimate: 0.13,
+            low: 0.10,
+            high: 0.15,
+        });
+        assert_eq!(
+            Cell::figure(Figure::Exact(2.5e6), Unit::Money),
+            Cell::Money(2.5e6)
+        );
+        assert_eq!(
+            Cell::figure(Figure::Exact(12.0), Unit::Price),
+            Cell::Price(12.0)
+        );
+        assert_eq!(
+            Cell::figure(Figure::Exact(0.2), Unit::Percent),
+            Cell::Percent(0.2)
+        );
+        assert_eq!(
+            Cell::figure(Figure::Exact(1.1), Unit::Ratio),
+            Cell::Ratio(1.1)
+        );
+        assert_eq!(
+            Cell::figure(Figure::Exact(7.0), Unit::Number),
+            Cell::Number(7.0)
+        );
+        let c = Cell::figure(band, Unit::Percent);
+        assert_eq!(
+            c,
+            Cell::Band {
+                low: 0.10,
+                high: 0.15,
+                unit: Unit::Percent
+            }
+        );
+        assert_eq!(c.display(), "10.0%-15.0%");
+        assert_eq!(figure_in(band, Unit::Percent), "10.0%-15.0%");
+        assert!(!c.display().contains("13"), "the estimate is not printed");
+        assert_eq!(c.color(), Some(BAND_TEXT));
+        assert_eq!(
+            c.number(),
+            Some(0.125),
+            "sorts by the midpoint, not the estimate"
+        );
+        assert_eq!(figure_in(band, Unit::Ratio), "0.10x-0.15x");
+        assert_eq!(figure(Figure::Exact(-2.5e6)), "-$2.50M");
     }
 
     #[test]

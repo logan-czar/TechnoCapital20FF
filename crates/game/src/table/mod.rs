@@ -27,7 +27,7 @@ use bevy::input::mouse::MouseScrollUnit;
 use bevy::picking::hover::Hovered;
 use bevy::prelude::*;
 
-pub use format::{Cell, GainUnit};
+pub use format::{Cell, GainUnit, Unit};
 
 use crate::config::{
     COLUMN_WIDTH_MAX, COLUMN_WIDTH_MIN, ColumnConfig, SortConfig, TableConfig, UiConfig,

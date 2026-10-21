@@ -2,10 +2,11 @@
 //! can search it and links, breadcrumbs and pane titles can name a page. Built from
 //! [`SimViews`] only (spec 9), and rebuilt when one of its source views moves.
 //!
-//! Sources today: companies (name and ticker), industries, financial zones, exchanges (name,
-//! code and index name), startup events, the characters seated on boards or named as
-//! controllers, the recap of each quarter so far, and the list pages. Countries have no names in
-//! the views until lane A1's countries view lands; their pages are titled by id until then.
+//! Sources (D464): companies (name and ticker), industries, countries (name and iso3, from
+//! v_countries), financial zones (v_zones), exchanges (name, code and index name), startup
+//! events (their v_births names), every full character (v_characters, with a first role), the
+//! recap of each quarter so far, and the list pages. Partial characters have no page (3.7.1) and
+//! are not indexed.
 
 use std::collections::HashMap;
 
@@ -14,10 +15,13 @@ use sim::SimViews;
 use sim::births::random::EventKind;
 use sim::finance::distress::CompanyStatus;
 use sim::time::Quarter;
-use sim::world::{CharacterId, CompanyId};
+use sim::views::births::EventRow;
+use sim::views::characters::CharacterRef;
+use sim::world::CompanyId;
 
 use super::fuzzy::score_lower;
 use crate::bridge::Views;
+use crate::links::names;
 use crate::pages::{PageKind, PageRef};
 
 /// One named thing.
@@ -94,7 +98,7 @@ pub struct Hit {
 /// The versions of the views the index was built from, and the quarter (for recaps).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 struct Sources {
-    versions: [u64; 6],
+    versions: [u64; 7],
     quarter: Option<Quarter>,
 }
 
@@ -103,11 +107,12 @@ impl Sources {
         Sources {
             versions: [
                 v.company_rows.version(),
-                v.company_detail.version(),
                 v.industry_rows.version(),
-                v.cycle.version(),
+                v.countries.version(),
+                v.zones.version(),
                 v.exchanges.version(),
                 v.births.version(),
+                v.characters.version(),
             ],
             quarter: Some(v.clock().date.quarter()),
         }
@@ -176,7 +181,17 @@ impl NameIndex {
                 format!("Industry, {}", r.sector),
             ));
         }
-        for z in &v.cycle.get().zones {
+        for c in &v.countries.get().countries {
+            entries.push(
+                IndexEntry::new(
+                    PageRef::Country(c.id),
+                    c.name.clone(),
+                    format!("Country, {}, {}", c.superregion, c.zone_name),
+                )
+                .alias(&c.iso3),
+            );
+        }
+        for z in &v.zones.get().zones {
             entries.push(
                 IndexEntry::new(
                     PageRef::Zone(z.id),
@@ -198,34 +213,47 @@ impl NameIndex {
             );
         }
         for e in &v.births.get().events {
-            entries.push(IndexEntry::new(
+            let mut entry = IndexEntry::new(
                 PageRef::Event(e.id),
-                event_name(&e.kind, e.date),
+                event_name(e),
                 format!("Startup event, {} startups", e.startups.len()),
-            ));
+            );
+            if let EventKind::Fixed(key) = &e.kind {
+                entry = entry.alias(key);
+            }
+            entries.push(entry);
         }
-        // Characters: those on a board or named as a controller (lane A1's characters view adds
-        // the rest), each once, from the first company (in id order) that names them.
-        let mut seen: HashMap<CharacterId, ()> = HashMap::new();
-        for c in &v.company_detail.get().companies {
-            if c.status == CompanyStatus::Removed {
+        // Every full character (v_characters), described by its first role, else its tier.
+        let company_names: HashMap<CompanyId, &str> = v
+            .company_rows
+            .get()
+            .rows
+            .iter()
+            .map(|r| (r.id, r.name.as_str()))
+            .collect();
+        for c in &v.characters.get().full {
+            let CharacterRef::Full(id) = c.id else {
                 continue;
-            }
-            let mut add = |id: CharacterId, name: &str, role: String| {
-                if seen.insert(id, ()).is_none() {
-                    entries.push(IndexEntry::new(PageRef::Character(id), name, role));
-                }
             };
-            if let (Some(id), Some(name)) = (c.controller, &c.controller_name) {
-                add(id, name, format!("Controller of {}", c.name));
-            }
-            for s in &c.board {
-                if let Some(p) = &s.holder
-                    && let Some(id) = p.character
-                {
-                    add(id, &p.name, format!("{} of {}", seat_name(s.seat), c.name));
-                }
-            }
+            let detail = c
+                .roles
+                .first()
+                .map(|r| {
+                    let co = names::role(r).1;
+                    names::role_text(r, company_names.get(&co).copied().unwrap_or("?"))
+                })
+                .unwrap_or_else(|| {
+                    if c.tier.is_empty() {
+                        "Character".to_owned()
+                    } else {
+                        format!("Character, {}", c.tier)
+                    }
+                });
+            entries.push(IndexEntry::new(
+                PageRef::Character(id),
+                c.name.clone(),
+                detail,
+            ));
         }
         // A recap for every quarter so far, newest first.
         let mut q = v.clock().date.quarter();
@@ -274,8 +302,6 @@ impl NameIndex {
             return e.name.clone();
         }
         match page {
-            PageRef::Country(id) => format!("Country #{}", id.0),
-            PageRef::Character(id) => format!("Character #{}", id.0),
             PageRef::Recap(q) => format!("Quarterly recap {q}"),
             PageRef::Headline { date, n } => format!("Headline {date} #{n}"),
             p => {
@@ -331,12 +357,10 @@ pub fn seat_name(seat: sim::people::board::Seat) -> &'static str {
     }
 }
 
-/// A startup event's name: the fixed event's id, or the random type, with its date.
-pub fn event_name(kind: &EventKind, date: sim::time::Date) -> String {
-    match kind {
-        EventKind::Fixed(id) => format!("{id} ({date})"),
-        EventKind::Random(t) => format!("{} ({date})", t.name()),
-    }
+/// A startup event's name: v_births' name (startup-events.csv's for a fixed event, the type
+/// for a random one) with its date, so two random events of one type differ.
+pub fn event_name(e: &EventRow) -> String {
+    format!("{} ({})", e.name, e.date)
 }
 
 /// Keeps the index current, before any UI system reads it.
