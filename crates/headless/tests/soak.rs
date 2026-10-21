@@ -72,8 +72,8 @@ fn tiny_soak_twice_gives_the_same_tables_and_checks() {
         .skip(1)
         .map(|l| l.split(',').collect())
         .collect();
-    // 20 targets since D363 (two revenue targets) and D366 (Cloud's waived row).
-    assert_eq!(rows.len(), 20 * 2, "{targets}");
+    // 21 targets since D363 (two revenue targets), D366 and D368 (Cloud's two waived rows).
+    assert_eq!(rows.len(), 21 * 2, "{targets}");
     assert!(rows.iter().all(|r| r.len() == 5), "{targets}");
     // One year covers only the per-birth cast check (every other target needs 10 or 30 years),
     // and each 2020 cast has 1 to 5 founders and 1 to 5 simple characters.

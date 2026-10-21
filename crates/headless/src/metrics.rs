@@ -47,7 +47,9 @@ pub const QUARTERS_HEADER: &str = "seed,year,quarter,released,reports,beats,miss
     industry_months,boom_months,bust_months,rev_ratio_min,rev_ratio_max,rev_out_of_band,\
     m_clamp_industries,m_clamp_max_run,m_clamp_over_8q,rev_demand_min,rev_demand_max,\
     rev_demand_out_of_band,demand_trend_min,demand_trend_max,demand_trend_out_of_band,\
-    m_clamp_max_run_counted,m_clamp_max_run_waived";
+    m_clamp_max_run_counted,m_clamp_max_run_waived,rev_demand_min_counted,\
+    rev_demand_max_counted,rev_demand_out_counted,rev_demand_min_waived,rev_demand_max_waived,\
+    rev_demand_out_waived";
 
 /// Spec 10: no industry "stuck at an M clamp (spec 5.2, `M_MIN` and `M_MAX`) for more than 8
 /// quarters".
@@ -70,10 +72,11 @@ pub const REVENUE_DEMAND_BAND: f64 = 0.30;
 /// out of band.
 pub const DEMAND_TREND_BAND: f64 = 0.55;
 
-/// D366 (design fix 366): industries waived from the "no industry stuck at an M clamp for more
-/// than 8 quarters" target until the spec 11.2 per-industry rework of Cloud's 20% pre-boom
-/// growth. Their runs are still counted and reported on their own.
-pub const M_CLAMP_WAIVED: &[&str] = &["cloud"];
+/// Industries waived until the spec 11.2 per-industry rework of Cloud's 20% pre-boom growth,
+/// from two targets: "no industry stuck at an M clamp for more than 8 quarters" (D366, design
+/// fix 366) and "industry revenue within ±30% of the industry's own demand path" (D368, design
+/// fix 363). Their figures are still recorded and reported on their own rows.
+pub const SPEC_11_2_WAIVED: &[&str] = &["cloud"];
 
 /// Spec 10: "each industry's 10-year average demand growth within ±3 pp of its long-term rate"
 /// (D324), in percentage points a year.
@@ -157,8 +160,6 @@ struct ClampRuns {
     over: Vec<bool>,
     /// The longest run seen so far, any industry.
     max_run: u32,
-    /// Industries waived from the target (D366), in industry id order; missing means not.
-    waived: Vec<bool>,
 }
 
 /// M at either clamp edge (spec 5.2).
@@ -178,13 +179,13 @@ impl ClampRuns {
         }
     }
 
-    /// The longest run ending this quarter among the waived industries (`waived` true) or among
-    /// the others (D366).
-    fn current_max(&self, waived: bool) -> u32 {
+    /// The longest run ending this quarter among the industries whose `waived` flag (D366,
+    /// industry id order; missing means not waived) equals `want`.
+    fn current_max(&self, waived: &[bool], want: bool) -> u32 {
         self.run
             .iter()
             .enumerate()
-            .filter(|&(i, _)| self.waived.get(i).copied().unwrap_or(false) == waived)
+            .filter(|&(i, _)| is_waived(waived, i) == want)
             .map(|(_, &r)| r)
             .max()
             .unwrap_or(0)
@@ -280,6 +281,8 @@ struct Recorder {
     tracking: YearTracking,
     births: YearBirths,
     clamp: ClampRuns,
+    /// Per industry in id order: in [`SPEC_11_2_WAIVED`] (D366, D368).
+    waived: Vec<bool>,
     quarter: QuarterAcc,
     /// The labels in force for the month now running: set at load (D110) for January 2020, then
     /// by each month close for the next month (4.3 step 2).
@@ -303,13 +306,11 @@ impl Recorder {
             economy: YearEconomy::default(),
             tracking: YearTracking::default(),
             births: YearBirths::default(),
-            clamp: ClampRuns {
-                waived: rows
-                    .iter()
-                    .map(|r| M_CLAMP_WAIVED.contains(&r.key.as_str()))
-                    .collect(),
-                ..ClampRuns::default()
-            },
+            clamp: ClampRuns::default(),
+            waived: rows
+                .iter()
+                .map(|r| SPEC_11_2_WAIVED.contains(&r.key.as_str()))
+                .collect(),
             quarter: QuarterAcc::default(),
             labels: rows.iter().map(|r| r.phase_label).collect(),
             demand0: rows.iter().map(|r| r.demand).collect(),
@@ -439,8 +440,11 @@ impl Recorder {
             .collect();
         let (rd_min, rd_max, rd_out) = band_stats(&rev_demand, REVENUE_DEMAND_BAND);
         let (dt_min, dt_max, dt_out) = band_stats(&demand_trend, DEMAND_TREND_BAND);
-        let counted = self.clamp.current_max(false);
-        let waived = self.clamp.current_max(true);
+        // D368: the same revenue ratios split into the industries judged and those waived.
+        let [(rc_min, rc_max, rc_out), (rw_min, rw_max, rw_out)] = [false, true]
+            .map(|want| band_stats_where(&rev_demand, REVENUE_DEMAND_BAND, &self.waived, want));
+        let counted = self.clamp.current_max(&self.waived, false);
+        let waived = self.clamp.current_max(&self.waived, true);
         let min = ratios.iter().copied().fold(f64::INFINITY, f64::min);
         let max = ratios.iter().copied().fold(f64::NEG_INFINITY, f64::max);
         let out = ratios
@@ -463,7 +467,8 @@ impl Recorder {
             self.quarters,
             "{},{year},{quarter},{released},{reports},{beats},{misses},{},{},{},{},{min:.4},\
              {max:.4},{out},{at_clamp},{max_run},{over},{rd_min:.4},{rd_max:.4},{rd_out},\
-             {dt_min:.4},{dt_max:.4},{dt_out},{counted},{waived}",
+             {dt_min:.4},{dt_max:.4},{dt_out},{counted},{waived},{rc_min:.4},{rc_max:.4},\
+             {rc_out},{rw_min:.4},{rw_max:.4},{rw_out}",
             self.seed,
             ratios.len(),
             q.industry_months,
@@ -553,6 +558,26 @@ fn band_stats(ratios: &[f64], band: f64) -> (f64, f64, usize) {
     let max = ratios.iter().copied().fold(f64::NEG_INFINITY, f64::max);
     let out = ratios.iter().filter(|&&r| (r - 1.0).abs() > band).count();
     (min, max, out)
+}
+
+/// [`band_stats`] over the industries whose waived flag equals `want` (D368). With none it gives
+/// (1, 1, 0): an empty set is inside every band.
+fn band_stats_where(ratios: &[f64], band: f64, waived: &[bool], want: bool) -> (f64, f64, usize) {
+    let picked: Vec<f64> = ratios
+        .iter()
+        .enumerate()
+        .filter(|&(i, _)| is_waived(waived, i) == want)
+        .map(|(_, &r)| r)
+        .collect();
+    if picked.is_empty() {
+        return (1.0, 1.0, 0);
+    }
+    band_stats(&picked, band)
+}
+
+/// Whether industry `i` is in [`SPEC_11_2_WAIVED`], from the flags in industry id order.
+fn is_waived(waived: &[bool], i: usize) -> bool {
+    waived.get(i).copied().unwrap_or(false)
 }
 
 /// `2019Q4`.
@@ -875,22 +900,34 @@ mod tests {
     #[test]
     fn waived_industries_are_reported_apart() {
         // Industry 1 is waived (D366): its 12-quarter run is its own; the others' longest is 4.
-        let mut c = ClampRuns {
-            waived: vec![false, true, false],
-            ..ClampRuns::default()
-        };
+        let waived = [false, true, false];
+        let mut c = ClampRuns::default();
         for q in 0..12 {
             let zero = if q >= 8 { M_MIN } else { 1.0 };
             c.add_quarter(&[zero, M_MAX, 1.0]);
         }
-        assert_eq!(c.current_max(true), 12);
-        assert_eq!(c.current_max(false), 4);
+        assert_eq!(c.current_max(&waived, true), 12);
+        assert_eq!(c.current_max(&waived, false), 4);
         assert_eq!(c.max_run, 12);
         // With no waiver list nothing is waived.
         let mut d = ClampRuns::default();
         d.add_quarter(&[M_MAX]);
-        assert_eq!((d.current_max(false), d.current_max(true)), (1, 0));
+        assert_eq!(
+            (d.current_max(&[], false), d.current_max(&[], true)),
+            (1, 0)
+        );
         assert_eq!(band_stats(&[0.6, 1.0, 1.4], 0.3), (0.6, 1.4, 2));
+        // D368: the waived industry's revenue ratio (0.6) leaves the judged figures and is
+        // reported on its own; all of them still count in the plain columns.
+        let ratios = [0.9, 0.6, 1.2];
+        assert_eq!(band_stats(&ratios, 0.3), (0.6, 1.2, 1));
+        assert_eq!(
+            band_stats_where(&ratios, 0.3, &waived, false),
+            (0.9, 1.2, 0)
+        );
+        assert_eq!(band_stats_where(&ratios, 0.3, &waived, true), (0.6, 0.6, 1));
+        assert_eq!(band_stats_where(&ratios, 0.3, &[], true), (1.0, 1.0, 0));
+        assert_eq!(band_stats_where(&ratios, 0.3, &[], false), (0.6, 1.2, 1));
     }
 
     #[test]
