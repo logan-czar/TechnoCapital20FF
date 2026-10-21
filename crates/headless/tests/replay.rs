@@ -58,7 +58,7 @@ fn replay_text(name: &str, text: &str) -> (bool, String) {
 fn a_recorded_run_replays_to_the_same_hashes() {
     let (path, text) = record("seed3.log");
     let lines: Vec<&str> = text.lines().collect();
-    assert_eq!(lines[..3], ["version 1", "seed 3", "years 1"]);
+    assert_eq!(lines[..3], ["version 2", "seed 3", "years 1"]);
     let hashes: Vec<&str> = lines
         .iter()
         .copied()
@@ -71,6 +71,11 @@ fn a_recorded_run_replays_to_the_same_hashes() {
     assert_eq!(hashes[0].rsplit(' ').next().unwrap().len(), 64);
     assert!(lines.last().unwrap().starts_with("end "), "{text}");
     assert!(lines.last().unwrap().contains(" 2021-01-01 00:00 "));
+    // The end line ends with the digest of the final controls (D403): 16 hex digits.
+    let digest = lines.last().unwrap().rsplit(' ').next().unwrap();
+    assert!(lines.last().unwrap().contains(" controls "), "{text}");
+    assert_eq!(digest.len(), 16);
+    assert!(digest.chars().all(|c| c.is_ascii_hexdigit()));
     for kind in [
         "speed", "pause", "resume", "skip", "alert", "watch-", "save", "load",
     ] {
@@ -130,13 +135,38 @@ fn a_changed_log_does_not_replay() {
     assert!(!ok);
     assert!(out.contains("differs at hash line 1"), "{out}");
 
+    // A dropped watchlist control: the first one (seed 3 saves after it, so the year's Load
+    // keeps it; a later one the Load rewinds past has no effect at all). It moves no frame,
+    // step or state hash (the hash does not cover the controls, D13), so only the end line's
+    // controls digest differs.
+    let first_watch = lines
+        .iter()
+        .position(|l| l.starts_with("control ") && l.contains(" watch-"))
+        .unwrap();
+    let dropped: Vec<&str> = lines
+        .iter()
+        .enumerate()
+        .filter(|&(j, _)| j != first_watch)
+        .map(|(_, l)| *l)
+        .collect();
+    let n_hash = lines
+        .iter()
+        .filter(|l| l.starts_with("hash ") || l.starts_with("end "))
+        .count();
+    let (ok, out) = replay_text("bad-watch.log", &(dropped.join("\n") + "\n"));
+    assert!(!ok);
+    assert!(
+        out.contains(&format!("differs at hash line {n_hash}")),
+        "{out}"
+    );
+
     // Another seed.
     let reseeded = text.replacen("seed 3\n", "seed 4\n", 1);
     let (ok, out) = replay_text("bad-seed.log", &reseeded);
     assert!(!ok, "{out}");
 
     // Not a log.
-    let (ok, out) = replay_text("bad-format.log", "version 1\nseed 3\nyears 1\nnonsense\n");
+    let (ok, out) = replay_text("bad-format.log", "version 2\nseed 3\nyears 1\nnonsense\n");
     assert!(!ok);
     assert!(out.contains("log line 4"), "{out}");
 }

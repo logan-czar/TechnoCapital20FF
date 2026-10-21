@@ -34,7 +34,7 @@ If a seed fails (its child exits non-zero), the seeds that ran are still written
 `check DIR` reads `years.csv` and `quarters.csv` and writes:
 
 - `targets.csv`: `target, seed, result, measured, bound`, one row per target per seed (targets in the order below, seeds ascending). `result` is PASS, FAIL or NA (the run does not cover the target's window, for example a 1-year run and a year-10 target).
-- `summary.csv`: per target the seeds evaluated and passed, the pass share, the required share, the verdict (MET, NOT MET, n/a), and the min, median and max of the measured value over the seeds (the leading number of `measured`; for `industry_revenue_trend` the worst `|ratio − 1|`, for `full_characters_per_decade` the decade count farthest from 200, for `cast_sizes` the number of casts, for `named_companies` the highest count).
+- `summary.csv`: per target the seeds evaluated and passed, the pass share, the required share, the verdict (MET, NOT MET, WAIVED, n/a), and the min, median and max of the measured value over the seeds (the leading number of `measured`; for `industry_revenue_demand` and `industry_demand_trend` the worst `|ratio − 1|`, for `demand_growth_pooled` the seed's share of industries within 3 pp, for `full_characters_per_decade` the decade count farthest from 200, for `cast_sizes` the number of casts, for `named_companies` the highest count). For the pooled target `demand_growth_pooled` (D365) "evaluated" and "passed" count industry-runs over all seeds, not seeds. A waived target (D366) is reported per seed but its verdict is WAIVED, never MET or NOT MET.
 
 It prints the summary. It exits 0 whatever the verdicts (it is a report, not a gate).
 
@@ -99,21 +99,29 @@ It prints the summary. It exits 0 whatever the verdicts (it is a report, not a g
 | `m_clamp_industries` | Industries at an M clamp (M at 0.7 or 1.3) at the quarter's last month close (D166) |
 | `m_clamp_max_run` | The longest run of consecutive quarters at a clamp, any industry, ending this quarter |
 | `m_clamp_over_8q` | Industries whose run ending this quarter is above 8 |
+| `rev_demand_min`, `rev_demand_max` | Across industries, the lowest and highest quarter revenue ÷ demand revenue: the sum of a twelfth of effective demand at the quarter's three closes (D363 (a)) |
+| `rev_demand_out_of_band` | Industries whose revenue ÷ demand ratio is outside 0.70 to 1.30 |
+| `demand_trend_min`, `demand_trend_max` | Across industries, the lowest and highest quarter demand revenue ÷ trend revenue (D363 (b)) |
+| `demand_trend_out_of_band` | Industries whose demand ÷ trend ratio is outside 0.45 to 1.55 |
+| `m_clamp_max_run_counted` | The longest clamp run ending this quarter among the industries not waived (D366) |
+| `m_clamp_max_run_waived` | The same among the waived industries (`M_CLAMP_WAIVED`: Cloud, until the spec 11.2 per-industry rework) |
 
 ## The targets
 
-Spec 10's balance targets after 10 years, then its startup, character and listing targets (all **(T)**). Each bound is a named constant in `targets.rs`. A seed passes or fails each target; a target is **MET** when the share of evaluated seeds that pass reaches its required share: the share spec 10 names, else 100% (D330).
+Spec 10's balance targets after 10 years, then its startup, character and listing targets (all **(T)**). Each bound is a named constant in `targets.rs`. A seed passes or fails each target; a target is **MET** when the share of evaluated seeds that pass reaches its required share: the share spec 10 names, else 100% (D330). Logan's M10.7 sign-off restated four of them (D363 to D366, design fixes 363 to 366): revenue is checked against each industry's own demand path with a separate demand-against-trend bound, demand growth is pooled over industry-runs, the Bust band is 8% to 22%, and Cloud is waived from the M clamp target until the spec 11.2 rework and reported on its own row.
 
 | Id | Spec 10 | How a seed is checked | Needs |
 |---|---|---|---|
 | `start_alive_10y` | at least 85% of the 651 neither bankrupt nor removed | `start_alive_share` at the 2029 close ≥ 0.85 (D320) | all seeds |
 | `median_productivity_10y` | median productivity 90 to 110 | `median_productivity` at the 2029 close in 90 to 110 (D321) | all seeds |
-| `industry_revenue_trend` | industry revenue within ±30% of the trend path | every industry-quarter Q1 2020 to Q4 2029: revenue ÷ trend revenue in 0.70 to 1.30 (D322) | all seeds |
-| `m_clamp_8q` | no industry stuck at an M clamp for more than 8 quarters | the longest clamp run of Q1 2020 to Q4 2029 is at most 8 quarters (D327) | all seeds |
+| `industry_revenue_demand` | industry revenue within ±30% of the industry's own demand path (restated, D363 (a); was ±30% of the trend path, D322) | every industry-quarter Q1 2020 to Q4 2029: revenue ÷ demand revenue in 0.70 to 1.30 | all seeds |
+| `industry_demand_trend` | each industry's demand within ±55% of its trend path (D363 (b)) | every industry-quarter Q1 2020 to Q4 2029: demand revenue ÷ trend revenue in 0.45 to 1.55 | all seeds |
+| `m_clamp_8q` | no industry stuck at an M clamp for more than 8 quarters, Cloud waived (D366) | the longest clamp run of Q1 2020 to Q4 2029 among the industries not waived (`m_clamp_max_run_counted`) is at most 8 quarters (D327) | all seeds |
+| `m_clamp_8q_cloud_waived` | Cloud's clamp runs, waived until the spec 11.2 per-industry rework (D366) | Cloud's longest run of Q1 2020 to Q4 2029 (`m_clamp_max_run_waived`) at most 8 quarters, reported per seed | WAIVED |
 | `beat_share` | 30% to 60% of releases are beats | Σ beats ÷ Σ reports over the releases of Q1 2020 to Q4 2029 in 0.30 to 0.60 (D323) | all seeds |
-| `demand_growth_lt` | each industry's 10-year average demand growth within ±3 pp of its long-term rate, in 90% of seeds | `demand_dev_out` = 0 at the 2029 close (D324) | 90% |
+| `demand_growth_pooled` | 90% of industry-runs (industries × seeds) have their 10-year average demand growth within ±3 pp of their long-term rate (restated, D365; was every industry in 90% of seeds, D324) | per seed, `industries − demand_dev_out` of `industries` within 3 pp at the 2029 close; a seed row passes at 90% | 90% of industry-runs, pooled |
 | `boom_share` | 10% to 25% of industry-quarters labeled Boom | Σ `boom_months` ÷ Σ `industry_months`, Q1 2020 to Q4 2029, in 0.10 to 0.25 (D325) | all seeds |
-| `bust_share` | 10% to 20% Bust | the same with `bust_months`, in 0.10 to 0.20 | all seeds |
+| `bust_share` | 8% to 22% Bust (restated, D364; was 10% to 20%) | the same with `bust_months`, in 0.08 to 0.22 | all seeds |
 | `startups_per_year` | 6 to 15 startups a year on average in 2020 to 2029 | mean `startups_in_year` over 2020 to 2029 in 6 to 15 (D328) | all seeds |
 | `ai_lab_startups_2030_2035` | 15 to 50 AI labs startups in 2030 to 2035, in 80% of seeds | Σ `ai_lab_startups_in_year` over 2030 to 2035 (both inclusive) in 15 to 50 (D331) | 80% |
 | `named_companies` | between 600 and 1,100 in every year | every row 2020 to 2049: `named_companies` in 600 to 1,100 (D329) | all seeds |
@@ -129,7 +137,7 @@ Spec 10's balance targets after 10 years, then its startup, character and listin
 
 ## Performance
 
-Build-plan 4.5 and spec 10 M10: 30 years headless in under 2 minutes per seed. `timing.csv` holds each seed's wall time; `soak` prints the min, median and max. Seeds running at once share the machine's memory bandwidth, so a seed's time grows with `--jobs` (on Logan's PC one seed alone takes about 8 to 11 s; 20 seeds on 12 jobs took 20 s of wall time, 8.5 to 10.9 s per seed).
+Build-plan 4.5 and spec 10 M10: 30 years headless in under 2 minutes per seed. `timing.csv` holds each seed's wall time; `soak` prints the min, median and max. Seeds running at once share the machine's memory bandwidth, so a seed's time grows with `--jobs` (on Logan's PC one seed alone takes about 8 to 11 s; 20 seeds on 12 jobs took 20 s of wall time, 8.5 to 10.9 s per seed). After M10.6 and the M10.7 tuning (D360 to D362): one seed alone about 6 s (`run --years 30 --seeds 1`, 5.9 s), 20 seeds on 8 jobs 20.3 s of wall time (6.4 to 6.9 s per seed), 50 seeds on 8 jobs 49.0 s (6.8 to 7.4 s per seed).
 
 ### Profiling (M10.6)
 
@@ -141,20 +149,22 @@ target/release/headless run --years 30 --seeds 1 --profile
 
 Seed 1, 30 years, release, median of 3 runs on Logan's PC before and after the M10.6 fixes (main at 466d8a6 with only the profiling hook added, then this branch). The PC is shared, so single runs vary by about 20%; the whole run (`run --years 30 --seeds 1`, no profiling) went from about 9.5 s to about 7 s, and to 5.5 s on a quiet run.
 
-| Part | Before (s) | After (s) |
-|---|---|---|
-| All steps | 8.17 | 5.82 |
-| View refresh after each tick | 3.56 | 2.43 |
-| `hourly.2.share_prices` | 2.13 | 2.03 |
-| `daily.1.price_bars` | 1.34 | 0.27 |
-| view `quotes` (every tick) | 1.30 | 0.68 |
-| view `price_bars` (daily) | 0.59 | 0.22 |
-| view `company_detail` | 0.36 | 0.32 |
-| `quarterly.plan_lock.5.consensus` | 0.32 | 0.31 |
-| view `statements` | 0.26 | 0.23 |
-| view `company_rows` | 0.22 | 0.19 |
-| `daily.2.fair_value` | 0.20 | 0.17 |
-| `quarterly.close.1.statements` | 0.18 | 0.16 |
+| Part | Before (s) | After (s) | After the M10.7 tuning (s) |
+|---|---|---|---|
+| All steps | 8.17 | 5.82 | 5.24 |
+| View refresh after each tick | 3.56 | 2.43 | 2.10 |
+| `hourly.2.share_prices` | 2.13 | 2.03 | 1.99 |
+| `daily.1.price_bars` | 1.34 | 0.27 | 0.22 |
+| view `quotes` (every tick) | 1.30 | 0.68 | 0.69 |
+| view `price_bars` (daily) | 0.59 | 0.22 | 0.18 |
+| view `company_detail` | 0.36 | 0.32 | 0.29 |
+| `quarterly.plan_lock.5.consensus` | 0.32 | 0.31 | 0.27 |
+| view `statements` | 0.26 | 0.23 | 0.17 |
+| view `company_rows` | 0.22 | 0.19 | 0.15 |
+| `daily.2.fair_value` | 0.20 | 0.17 | 0.14 |
+| `quarterly.close.1.statements` | 0.18 | 0.16 | 0.15 |
+
+The third column is the merged tree after the M10.7 tuning (D360 to D362; build/m10-tuning), seed 1, median of 3 profiled runs (6.0 to 6.2 s each with the profiler). The tuning changes the world the jobs work on (fewer bankruptcies, more listings), not the code paths, and the PC was quieter than for the M10.6 columns, so the small drops are mostly run-to-run noise (about 20% on this shared PC): read the columns as a check on order of size, not to the tenth.
 
 The fixes: the daily bar push no longer copies each company's open month while v_price_bars shares it, nor the month list at a month close (`ChunkLog` on write-once slots, D401); v_quotes refills its vectors in place (D402). Both keep every output byte-identical: seeds 1 to 12 × 30 years give the same `years.csv` and `quarters.csv` bytes as main, and seeds 1 and 2 the same 720 monthly hashes (`run --hash-monthly`). What is left is the hourly price step (two prices-stream draws a quoted stock a tick, D135) and the every-tick quotes view; the monthly and quarterly jobs are small.
 
@@ -171,7 +181,7 @@ target/release/headless record --years 30 --seed 1 --out run1.log
 target/release/headless replay run1.log
 ```
 
-The log holds every control the MVP player has but NewGame and the debug-only Omniscient: speed 0 to 5, pause, resume, the four SkipTos, alert levels, the watchlist, and Save and Load (numbered saves beside the log, removed at the end; a Load rewinds to the latest save). Both commands drive the sim through one frame loop that runs `TICKS_PER_FRAME[effective speed]` ticks a frame and stops when the sim pauses itself, so the sim's own pauses (alerts, finished skips, loads) happen again in the replay; a hash line is `hash <frame> <step> <month> <hash>`, so a changed pause shows too. `crates/headless/tests/replay.rs` records a year, replays it, and checks that a changed hash, a dropped control, another seed or a bad line all fail. On Logan's PC a 30-year record or replay takes about a minute (the monthly hashes and the gzip of each save are most of it); seed 1's 30-year log (523 controls, Saves and Loads among them) ends on the same hash as `run --seeds 1`.
+The log holds every control the MVP player has but NewGame and the debug-only Omniscient: speed 0 to 5, pause, resume, the four SkipTos, alert levels, the watchlist, and Save and Load (numbered saves beside the log, removed at the end; a Load rewinds to the latest save). Both commands drive the sim through one frame loop that runs `TICKS_PER_FRAME[effective speed]` ticks a frame and stops when the sim pauses itself, so the sim's own pauses (alerts, finished skips, loads) happen again in the replay; a hash line is `hash <frame> <step> <month> <hash>`, so a changed pause shows too. The end line, `end <frame> <step> <clock> <hash> controls <digest>`, adds a digest of the final controls, which the state hash does not cover (D13), so a dropped control that moves no timing (a watchlist change) fails too (log version 2, D403). `crates/headless/tests/replay.rs` records a year, replays it, and checks that a changed hash, a dropped control, a dropped watchlist control, another seed or a bad line all fail. On Logan's PC a 30-year record or replay takes about a minute (the monthly hashes and the gzip of each save are most of it). After the M10.7 tuning, seed 1's 30-year log has 518 controls (38 of them Saves and Loads) and 522 hash lines; `record` and `replay` each took 63 s, the replay matched every line, and its end hash is `run --years 30 --seeds 1`'s (`afd33029…`). Before the tuning it had 523 controls.
 
 **Save, load, continue** (D404). `crates/sim/tests/m10_save_load.rs` saves a game at ticks its seed picks (the plan lock tick, mid-way through the locked quarter, mid-way through a reaction week, right after a birth, a listing and a bankruptcy, and 3 random ticks), loads each save into another seed's game and plays on; every monthly hash and the final world must equal an unbroken run's. The default test covers 2 years of seed 3; the full check, 30 years on seeds 1 and 2, is ignored by default:
 
@@ -179,7 +189,7 @@ The log holds every control the MVP player has but NewGame and the debug-only Om
 cargo test --release -p sim --test m10_save_load -- --ignored
 ```
 
-It takes about 1.5 minutes in release on Logan's PC (9 cuts a seed, 360 monthly hashes a seed, all equal).
+It takes about 1.5 minutes in release on Logan's PC (9 cuts a seed, 360 monthly hashes a seed, all equal); after the M10.7 tuning, 96 s, all equal.
 
 ## The boom and the pop with noise off (M10.5)
 

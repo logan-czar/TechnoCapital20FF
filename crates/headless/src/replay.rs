@@ -19,26 +19,35 @@
 //! The log is plain text, one record per line:
 //!
 //! ```text
-//! version 1
+//! version 2
 //! seed 7
 //! years 2
 //! control <frame> <control>      e.g. "control 120 speed 4", "control 300 skip next-lock"
 //! hash <frame> <step> <month> <state hash>
-//! end <frame> <step> <clock> <state hash>
+//! end <frame> <step> <clock> <state hash> controls <digest>
 //! ```
+//!
+//! The state hash does not cover the controls (D13), so the end line adds a digest of the final
+//! `Controls` (speed, pause, skip, alert levels, watchlist): a dropped or changed control that
+//! moves no frame, step or hash (a watchlist change, say) still fails the replay (D403).
 
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
 
 use sim::time::calendar::EPOCH_YEAR;
 use sim::time::control::MAX_SPEED;
-use sim::time::{Control, Date, DateTime};
+use sim::time::{Control, Controls, Date, DateTime};
 use sim::world::{AlertKind, AlertLevel, CompanyId, SkipKind};
 use sim::{Notice, Sim};
 use sim_data::WorldData;
 
-/// The log format version written on the first line.
-pub const LOG_VERSION: u32 = 1;
+/// The log format version written on the first line (2: the end line carries the controls
+/// digest).
+pub const LOG_VERSION: u32 = 2;
+
+/// FNV-1a 64 (offset basis and prime) for the controls digest on the end line.
+const FNV_OFFSET: u64 = 0xcbf2_9ce4_8422_2325;
+const FNV_PRIME: u64 = 0x0000_0100_0000_01b3;
 
 /// Ticks the headless frame loop runs in one frame at each effective speed, 0 (paused) to 5
 /// (max, and while skipping). The game's own frame budget is wall-clock based (spec 8, 9.1);
@@ -244,6 +253,9 @@ pub struct RunLog {
     pub controls: Vec<LoggedControl>,
     /// `hash` and `end` lines, as written.
     pub hashes: Vec<String>,
+    /// The save numbers the run applied or tried to apply, so their files are removed at the end
+    /// even when a Save failed partway (not part of the log text).
+    pub saves_tried: Vec<u32>,
 }
 
 /// Where the controls of a run come from: the scripted player, or a log (whose hash lines the
@@ -308,6 +320,9 @@ fn run_frames_into(
             }
         };
         for c in controls {
+            if let LogControl::Save(n) = c {
+                out.saves_tried.push(n);
+            }
             sim.apply(c.control(save_path))
                 .map_err(|e| format!("frame {frame}: {}: {e}", c.text()))?;
             out.controls.push(LoggedControl { frame, control: c });
@@ -349,7 +364,12 @@ fn run_frames_into(
             log.controls.len() - next_logged
         ));
     }
-    let line = format!("end {frame} {step} {} {}", sim.now(), sim.state_hash());
+    let line = format!(
+        "end {frame} {step} {} {} controls {}",
+        sim.now(),
+        sim.state_hash(),
+        controls_digest(sim.controls())
+    );
     add_hash(out, line, &source)?;
     if let Source::Log(log) = &source
         && out.hashes.len() != log.hashes.len()
@@ -374,11 +394,19 @@ fn save_paths(log: &Path, tag: &str) -> impl Fn(u32) -> PathBuf {
     }
 }
 
+/// A 16-hex-digit digest of the controls (FNV-1a 64 of their `Debug` text: fixed field order,
+/// and the watchlist is a `BTreeSet`, so the same controls always give the same digest).
+pub fn controls_digest(c: &Controls) -> String {
+    let h = format!("{c:?}").bytes().fold(FNV_OFFSET, |h, b| {
+        (h ^ u64::from(b)).wrapping_mul(FNV_PRIME)
+    });
+    format!("{h:016x}")
+}
+
+/// Removes every save file the run applied or tried to apply, a failed one included.
 fn remove_saves(paths: &dyn Fn(u32) -> PathBuf, log: &RunLog) {
-    for c in &log.controls {
-        if let LogControl::Save(n) = c.control {
-            let _ = std::fs::remove_file(paths(n));
-        }
+    for &n in &log.saves_tried {
+        let _ = std::fs::remove_file(paths(n));
     }
 }
 

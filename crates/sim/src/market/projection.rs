@@ -5,8 +5,11 @@
 use crate::rng::{DrawSource, Stream};
 use crate::time::DateTime;
 
-/// Spec 5.16: `consensus = projection × (1 + e)`, e uniform ±5% (T).
-pub const CONSENSUS_ERROR: f64 = 0.05;
+/// Spec 5.16: `consensus = projection × (1 + e)`, e uniform ±5% (T), widened to ±15% by the M10
+/// tuning pass as 5.16 asks when the beat rate is low (M10.7, D361, signed off by Logan): at ±5%
+/// only 10% to 12% of the 2020s releases are beats against spec 10's 30% to 60%; at ±15% about
+/// 36%.
+pub const CONSENSUS_ERROR: f64 = 0.15;
 /// Spec 5.16 (21.5.1): the range starts at ±30% ...
 pub const RANGE_BASE: f64 = 0.30;
 /// ... narrows by `1 − 0.6 × share of the quarter elapsed` ...
@@ -21,8 +24,8 @@ pub const RANGE_SECRET_MULT: f64 = 2.0;
 /// ... and never under ±3%.
 pub const RANGE_MIN: f64 = 0.03;
 
-/// The consensus for the quarter (spec 5.16): `projection × (1 + e)`, e = −5% + 10% × u from one
-/// prices-stream uniform (D252). With NoNoise (u = 0.5) the consensus is the projection.
+/// The consensus for the quarter (spec 5.16): `projection × (1 + e)`, e = −15% + 30% × u from one
+/// prices-stream uniform (D252, D361). With NoNoise (u = 0.5) the consensus is the projection.
 pub fn consensus(projection: f64, draws: &mut dyn DrawSource) -> f64 {
     let e = CONSENSUS_ERROR * (2.0 * draws.uniform(Stream::Prices) - 1.0);
     projection * (1.0 + e)
