@@ -244,6 +244,9 @@ pub struct RunLog {
     pub controls: Vec<LoggedControl>,
     /// `hash` and `end` lines, as written.
     pub hashes: Vec<String>,
+    /// The save numbers the run applied or tried to apply, so their files are removed at the end
+    /// even when a Save failed partway (not part of the log text).
+    pub saves_tried: Vec<u32>,
 }
 
 /// Where the controls of a run come from: the scripted player, or a log (whose hash lines the
@@ -308,6 +311,9 @@ fn run_frames_into(
             }
         };
         for c in controls {
+            if let LogControl::Save(n) = c {
+                out.saves_tried.push(n);
+            }
             sim.apply(c.control(save_path))
                 .map_err(|e| format!("frame {frame}: {}: {e}", c.text()))?;
             out.controls.push(LoggedControl { frame, control: c });
@@ -374,11 +380,10 @@ fn save_paths(log: &Path, tag: &str) -> impl Fn(u32) -> PathBuf {
     }
 }
 
+/// Removes every save file the run applied or tried to apply, a failed one included.
 fn remove_saves(paths: &dyn Fn(u32) -> PathBuf, log: &RunLog) {
-    for c in &log.controls {
-        if let LogControl::Save(n) = c.control {
-            let _ = std::fs::remove_file(paths(n));
-        }
+    for &n in &log.saves_tried {
+        let _ = std::fs::remove_file(paths(n));
     }
 }
 
