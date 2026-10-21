@@ -151,3 +151,7 @@ cargo test --release -p sim --test m10_save_load -- --ignored
 ```
 
 It takes about 1.5 minutes in release on Logan's PC (9 cuts a seed, 360 monthly hashes a seed, all equal).
+
+## The boom and the pop with noise off (M10.5)
+
+`crates/sim/tests/m10_boom_pop.rs` runs the whole engine (every job of every slot, as `Sim::step` does) with the cycle and growth streams silenced and Z = 0, as validate.py's noise-free boom run (D405). Births, the Lite AI, the books and the market keep their own draws. Nothing downstream writes demand, so the match is exact: AI labs and the other 41 industries equal `tests/fixtures/validate-boom-calm.csv` to 1e-9 at every 1 January close 2020 to 2045, the boom's World event fires at 1 January 2030 00:00 and the pop's on its rolled date (a seed that rolls 1 January 2040, and one that rolls 1 July 2041), and the pop cuts each industry by its crash_drop on that tick. Both runs are in the default `cargo test` (about 15 s in debug).
