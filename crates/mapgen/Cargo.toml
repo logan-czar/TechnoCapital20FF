@@ -1,0 +1,10 @@
+[package]
+name = "mapgen"
+description = "Offline tool: province-ID bitmap, centroids and borders from provinces.geojson (build-plan 2.1, P7). Stub in M0."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true

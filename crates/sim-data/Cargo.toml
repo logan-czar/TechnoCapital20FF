@@ -1,0 +1,15 @@
+[package]
+name = "sim-data"
+description = "Row structs, CSV loading and load-time checks for the starting world data (build-plan 2.1)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+csv.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true

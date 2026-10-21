@@ -1,0 +1,26 @@
+[package]
+name = "game"
+description = "The TechnoCapital20FF desktop app (Bevy)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+# Only what a window with bevy_ui and text needs (build-plan 2.1); no 3D, audio, gamepads or scenes.
+bevy = { workspace = true, features = [
+    "default_app",
+    "std",
+    "multi_threaded",
+    "bevy_winit",
+    "x11",
+    "wayland",
+    "default_font",
+    "ui_api",
+    "ui_bevy_render",
+    "bevy_picking",
+    "ui_picking",
+] }
+
+[lints]
+workspace = true
