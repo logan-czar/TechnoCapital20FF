@@ -72,11 +72,11 @@ pub fn range_width(elapsed_share: f64, viewer: RangeViewer) -> f64 {
     w.max(RANGE_MIN)
 }
 
-/// The shown range (low, high) around `projection` (spec 5.16): `projection ∓ |projection| × w`,
-/// so the low end stays below the high end for a projected loss. For a secret plan (every
-/// company, for the observer) the centre is the consensus, not the engine's projection
-/// (21.5.1 "the range uses analysts' consensus").
-pub fn range(projection: f64, width: f64) -> (f64, f64) {
-    let half = projection.abs() * width;
-    (projection - half, projection + half)
+/// The shown range (low, high) around `centre` (spec 5.16): `centre ∓ |centre| × w`, so the
+/// low end stays below the high end for a projected loss. The centre is the engine's projection
+/// for a viewer who sees the plan; for a secret plan (every company, for the observer) it is the
+/// consensus (21.5.1 "the range uses analysts' consensus").
+pub fn range(centre: f64, width: f64) -> (f64, f64) {
+    let half = centre.abs() * width;
+    (centre - half, centre + half)
 }

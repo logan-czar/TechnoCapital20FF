@@ -82,8 +82,8 @@ fn elapsed_share_of_the_calendar_quarter() {
 }
 
 #[test]
-fn range_around_a_projection() {
-    // projection ∓ |projection| × width.
+fn range_around_a_centre() {
+    // centre ∓ |centre| × width.
     let (lo, hi) = range(100.0, 0.2);
     near(lo, 80.0);
     near(hi, 120.0);
