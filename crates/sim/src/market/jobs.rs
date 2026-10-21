@@ -26,6 +26,7 @@ use super::projection::consensus;
 use super::state::Stock;
 use crate::finance::jobs::{company_home_spread, run_rate, sheet};
 use crate::finance::statements::trailing_four;
+use crate::news::Headline;
 use crate::ops::stations::BAREBONES_REVENUE_USD;
 use crate::people::management::confidence_factor;
 use crate::rng::{NoNoise, Stream};
@@ -114,11 +115,20 @@ pub fn index_level(world: &World, zone: ZoneId) -> Option<f64> {
     world.market.indices[zone].level(exchange_cap(world, zone))
 }
 
-/// The Pdoomberg Wire headlines of the day on companies listed on `zone`'s exchange that move
-/// its confidence (spec 5.1.2 news_z, 5.18). **Hook:** headlines are lane F's M6.5 news wire, so
-/// until it lands this returns none and confidence moves by the index return only (D137).
-pub fn confidence_headlines(_world: &World, _zone: ZoneId) -> Vec<ConfidenceHeadline> {
+/// The Pdoomberg Wire headlines posted today on companies listed on `zone`'s exchange (spec
+/// 5.1.2 news_z, 5.18). **Hook:** the news wire (`crate::news`, M6.5) is not wired into the World
+/// until M6, so this returns none and confidence moves by the index return only (D137). M6
+/// fills it from the day's posted headlines; [`confidence_news`] already reads their points.
+pub fn confidence_headlines(_world: &World, _zone: ZoneId) -> Vec<Headline> {
     Vec::new()
+}
+
+/// news_z of one exchange (spec 5.1.2): the points of the day's headlines on its companies that
+/// carry any (beats and misses, bankruptcies, 2+ notch rating changes).
+pub fn confidence_news(headlines: &[Headline]) -> f64 {
+    let points: Vec<ConfidenceHeadline> =
+        headlines.iter().filter_map(Headline::confidence).collect();
+    news_points(&points)
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -322,7 +332,7 @@ pub fn zone_confidence_job(world: &mut World, ctx: &mut JobCtx<'_>) {
     let caps = exchange_caps(world);
     for z in world.zones.ids() {
         let r = world.market.indices[z].close_day(caps[z.index()]);
-        let news = news_points(&confidence_headlines(world, z));
+        let news = confidence_news(&confidence_headlines(world, z));
         let zone = &mut world.zones[z];
         zone.confidence = update_confidence(zone.confidence, r, news);
     }
