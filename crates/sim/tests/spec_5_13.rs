@@ -192,7 +192,7 @@ fn edge_cases_newborn_negative_book_and_penny_floor() {
 
 #[test]
 fn revenue_growth_over_four_quarters() {
-    // D241: TTM over the prior TTM with 8+ quarters; matched quarters a year apart with 5 to 7;
+    // D254: TTM over the prior TTM with 8+ quarters; matched quarters a year apart with 5 to 7;
     // 0 with 4 or fewer (no year-ago figure).
     near(
         revenue_growth(&[10.0, 10.0, 10.0, 10.0, 11.0, 11.0, 11.0, 11.0]),

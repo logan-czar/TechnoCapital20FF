@@ -59,7 +59,7 @@ pub fn clamp_growth(g: f64) -> f64 {
 }
 
 /// The 4-quarter revenue growth g of spec 5.13 step 1, from quarterly revenues oldest first (the
-/// archive, synthetic 2019 quarters included), unclamped (D241):
+/// archive, synthetic 2019 quarters included), unclamped (D254):
 ///
 /// - with 8 or more quarters: the last four ÷ the four before − 1 (TTM over the prior TTM);
 /// - with 5 to 7: the last `n − 4` quarters ÷ the same quarters a year earlier − 1;
