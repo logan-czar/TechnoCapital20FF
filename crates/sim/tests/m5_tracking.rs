@@ -15,11 +15,18 @@
 //!   interest on cash, which 7.1's engine value skips). The test prints both moves' distribution,
 //!   how many companies cross between the profit and loss paths, and the tracking share right
 //!   after; the surprise of that release is 0 (D133), so P does not jump.
+//! - The beat rate (spec 10 "30% to 60% of releases are beats", 5.16, design fix 109, D168): the
+//!   same runs count, at every release from 2 April 2020 to 2 October 2029 (the 2 January 2020
+//!   release has no consensus and so surprise 0, D133, and is left out), the reports
+//!   (companies not frozen with a quarter, as v_market_stats counts them, D166) tagged Beat or
+//!   Big beat and Miss or Big miss, and the median |surprise| over those reports, and print them
+//!   per seed. Nothing is asserted on them: the target is for the M10 soak and tuning pass.
 
 mod common;
 
 use common::data;
 use sim::Sim;
+use sim::market::earnings::SurpriseTag;
 use sim::time::{Date, DateTime};
 
 /// D143: a company-day tracks V within ±30%.
@@ -34,6 +41,12 @@ const SEEDS: [u64; 5] = [1, 2, 3, 4, 5];
 /// Spec 7.1: open prices run $5 to $200.
 const PRICE_MIN: f64 = 5.0;
 const PRICE_MAX: f64 = 200.0;
+/// D133: the first release's surprise is 0 (no lock before it), so the beat count skips it.
+const FIRST_RELEASE: Date = Date {
+    year: 2020,
+    month: 1,
+    day: 2,
+};
 
 fn quantile(sorted: &[f64], q: f64) -> f64 {
     if sorted.is_empty() {
@@ -51,6 +64,11 @@ struct SeedResult {
     p95_gap: f64,
     worst_year: (i32, f64),
     open_gap: f64,
+    /// Reports at the releases, those tagged a beat and a miss, and the median |surprise|.
+    reports: u64,
+    beats: u64,
+    misses: u64,
+    median_surprise: f64,
 }
 
 fn run_seed(seed: u64) -> SeedResult {
@@ -65,11 +83,31 @@ fn run_seed(seed: u64) -> SeedResult {
     let (mut within, mut days) = (0u64, 0u64);
     let mut gaps: Vec<f64> = Vec::new();
     let mut year: Vec<(u64, u64)> = vec![(0, 0); YEARS as usize];
+    let (mut reports, mut beats, mut misses) = (0u64, 0u64, 0u64);
+    let mut surprises: Vec<f64> = Vec::new();
     while sim.now() < end {
         sim.step();
         let t = sim.now();
         if t.hour() != 0 {
             continue;
+        }
+        // A release day (4.4): the close's tags and surprises (D142).
+        let d = t.date();
+        if d.day == 2 && d.month % 3 == 1 && d > FIRST_RELEASE {
+            let w = sim.world();
+            for (id, c) in w.companies.iter() {
+                if c.finance.status().is_frozen() || c.finance.quarters().is_empty() {
+                    continue;
+                }
+                let s = &w.market.stocks[id];
+                reports += 1;
+                match s.tags.surprise {
+                    Some(SurpriseTag::Beat | SurpriseTag::BigBeat) => beats += 1,
+                    Some(SurpriseTag::Miss | SurpriseTag::BigMiss) => misses += 1,
+                    None => {}
+                }
+                surprises.push(s.last_surprise.abs());
+            }
         }
         // The day that just closed.
         let y = (t.date().add_days(-1).year - 2020) as usize;
@@ -89,6 +127,7 @@ fn run_seed(seed: u64) -> SeedResult {
         }
     }
     gaps.sort_by(f64::total_cmp);
+    surprises.sort_by(f64::total_cmp);
     let worst_year = year
         .iter()
         .enumerate()
@@ -103,6 +142,10 @@ fn run_seed(seed: u64) -> SeedResult {
         p95_gap: quantile(&gaps, 0.95),
         worst_year,
         open_gap,
+        reports,
+        beats,
+        misses,
+        median_surprise: quantile(&surprises, 0.5),
     }
 }
 
@@ -129,6 +172,17 @@ fn prices_track_v_within_30_percent_over_ten_years() {
             r.worst_year.0,
             100.0 * r.worst_year.1,
             r.open_gap
+        );
+    }
+    println!("seed | reports | beats | misses | median |surprise|");
+    for r in &results {
+        println!(
+            "{} | {} | {:.2}% | {:.2}% | {:.2}%",
+            r.seed,
+            r.reports,
+            100.0 * r.beats as f64 / r.reports as f64,
+            100.0 * r.misses as f64 / r.reports as f64,
+            100.0 * r.median_surprise
         );
     }
     for r in &results {
