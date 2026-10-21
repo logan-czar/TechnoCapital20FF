@@ -5,14 +5,16 @@
 //! citing its spec 10 line; choices where spec 10 is ambiguous are D320 to D334 (docs/build/
 //! decisions.md). A seed is PASS, FAIL or NA (the run does not cover the target's window). A
 //! target is MET when the share of evaluated seeds that pass reaches its required share: the
-//! share spec 10 names ("in 90% of seeds"), else every seed (D330). docs/build/soak.md has the
-//! full definitions.
+//! share spec 10 names ("in 90% of seeds"), else every seed (D330). Two kinds differ (D365,
+//! D366): a pooled target is MET on its share of industry-runs over all seeds, and a waived one
+//! is reported per seed but marked WAIVED, not MET or NOT MET. docs/build/soak.md has the full
+//! definitions.
 
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 use std::path::Path;
 
-use crate::metrics::{M_CLAMP_QUARTERS, REVENUE_TREND_BAND};
+use crate::metrics::{DEMAND_TREND_BAND, M_CLAMP_QUARTERS, M_CLAMP_WAIVED, REVENUE_DEMAND_BAND};
 
 /// Spec 10 "balance targets after 10 years": the 2020 to 2029 run, whose last year closes on
 /// 1 January 2030 (the 2029 row).
@@ -22,18 +24,24 @@ pub const TEN_YEAR_LAST: i32 = 2029;
 pub const START_ALIVE_MIN: f64 = 0.85;
 /// Spec 10: "median productivity 90 to 110" (D321).
 pub const MEDIAN_PRODUCTIVITY: (f64, f64) = (90.0, 110.0);
-/// Spec 10: "industry revenue within ±30% of the trend path" (D322).
-pub const REVENUE_RATIO: (f64, f64) = (1.0 - REVENUE_TREND_BAND, 1.0 + REVENUE_TREND_BAND);
+/// Spec 10 as restated by Logan (D363 (a), design fix 363): industry revenue within ±30% of the
+/// industry's own demand path. Replaces D322's ±30% of the trend path.
+pub const REVENUE_DEMAND_RATIO: (f64, f64) = (1.0 - REVENUE_DEMAND_BAND, 1.0 + REVENUE_DEMAND_BAND);
+/// D363 (b): each industry's demand within ±55% of its trend path.
+pub const DEMAND_TREND_RATIO: (f64, f64) = (1.0 - DEMAND_TREND_BAND, 1.0 + DEMAND_TREND_BAND);
 /// Spec 10: "no industry stuck at an M clamp for more than 8 quarters".
 pub const M_CLAMP_MAX_RUN: u32 = M_CLAMP_QUARTERS;
 /// Spec 10: "30% to 60% of releases are beats" (D323).
 pub const BEAT_SHARE: (f64, f64) = (0.30, 0.60);
-/// Spec 10: "each industry's 10-year average demand growth within ±3 pp of its long-term rate in
-/// 90% of seeds" (D324; the band is `metrics::DEMAND_GROWTH_BAND_PP`).
-pub const DEMAND_GROWTH_SEED_SHARE: f64 = 0.90;
+/// Spec 10 as restated by Logan (D365, design fixes 320 and 365): 90% of all industry-runs
+/// (industries × seeds, pooled) have their 10-year average demand growth within ±3 pp of their
+/// long-term rate (D324's measure; the band is `metrics::DEMAND_GROWTH_BAND_PP`). Replaces
+/// "every industry within 3 pp in 90% of seeds".
+pub const DEMAND_GROWTH_POOLED_SHARE: f64 = 0.90;
 /// Spec 10: "10% to 25% of industry-quarters labeled Boom and 10% to 20% Bust" (D325).
 pub const BOOM_SHARE: (f64, f64) = (0.10, 0.25);
-pub const BUST_SHARE: (f64, f64) = (0.10, 0.20);
+/// Bust as restated by Logan (D364, design fix 364): 8% to 22% in every seed (was 10% to 20%).
+pub const BUST_SHARE: (f64, f64) = (0.08, 0.22);
 /// Spec 10: "6 to 15 startups a year on average in 2020 to 2029".
 pub const STARTUPS_PER_YEAR: (f64, f64) = (6.0, 15.0);
 /// Spec 10: "15 to 50 AI labs startups in 2030 to 2035 in 80% of seeds" (D331: both years
@@ -101,10 +109,17 @@ pub struct QuarterRow {
     pub industry_months: u32,
     pub boom_months: u32,
     pub bust_months: u32,
-    pub rev_ratio_min: f64,
-    pub rev_ratio_max: f64,
-    pub rev_out_of_band: u32,
-    pub m_clamp_max_run: u32,
+    pub industries: u32,
+    pub rev_demand_min: f64,
+    pub rev_demand_max: f64,
+    pub rev_demand_out_of_band: u32,
+    pub demand_trend_min: f64,
+    pub demand_trend_max: f64,
+    pub demand_trend_out_of_band: u32,
+    /// The longest clamp run ending this quarter among the industries not waived (D366), and
+    /// among the waived ones.
+    pub m_clamp_max_run_counted: u32,
+    pub m_clamp_max_run_waived: u32,
 }
 
 /// A seed's rows, years and quarters in order.
@@ -149,6 +164,8 @@ pub struct Verdict {
     pub pass: bool,
     pub value: f64,
     pub measured: String,
+    /// A pooled target's (passing, total) industry-runs in this seed (D365).
+    pub pool: Option<(u32, u32)>,
 }
 
 fn verdict(pass: bool, value: f64, measured: String) -> Option<Verdict> {
@@ -156,7 +173,19 @@ fn verdict(pass: bool, value: f64, measured: String) -> Option<Verdict> {
         pass,
         value,
         measured,
+        pool: None,
     })
+}
+
+/// How a target's verdict is reached.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Kind {
+    /// MET when the share of evaluated seeds that pass reaches `required` (D330).
+    Seeds,
+    /// MET when the share of industry-runs over all seeds that pass reaches `required` (D365).
+    Pooled,
+    /// Reported per seed, never MET or NOT MET: a temporary waiver (D366).
+    Waived,
 }
 
 fn within(v: f64, (lo, hi): (f64, f64)) -> bool {
@@ -167,14 +196,32 @@ fn within_u(v: u32, (lo, hi): (u32, u32)) -> bool {
     (lo..=hi).contains(&v)
 }
 
+/// Every industry-quarter's ratio inside `band`, from each quarter's (min, max, out of band);
+/// the value is the worst `|ratio − 1|`.
+fn band_verdict(qs: impl Iterator<Item = (f64, f64, u32)>, band: (f64, f64)) -> Option<Verdict> {
+    let (mut lo, mut hi, mut out) = (f64::INFINITY, f64::NEG_INFINITY, 0);
+    for (a, b, n) in qs {
+        lo = lo.min(a);
+        hi = hi.max(b);
+        out += n;
+    }
+    let worst = (lo - 1.0).abs().max((hi - 1.0).abs());
+    verdict(
+        out == 0 && within(lo, band) && within(hi, band),
+        worst,
+        format!("ratio {lo:.3} to {hi:.3}; {out} industry-quarters out"),
+    )
+}
+
 /// One spec 10 target.
 pub struct Target {
     pub id: &'static str,
     /// The spec 10 wording it checks.
     pub spec: &'static str,
     pub bound: &'static str,
-    /// The share of evaluated seeds that must pass (D330).
+    /// The share of evaluated seeds (or, pooled, industry-runs) that must pass (D330, D365).
     pub required: f64,
+    pub kind: Kind,
     /// None when the run does not cover the target's window.
     pub eval: fn(&SeedData) -> Option<Verdict>,
 }
@@ -187,6 +234,7 @@ pub const TARGETS: &[Target] = &[
         spec: "85%+ of the 651 neither bankrupt nor removed after 10 years",
         bound: ">= 0.85 at the 2029 close",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let r = s.year(TEN_YEAR_LAST)?;
             let v = r.start_alive_share;
@@ -198,43 +246,60 @@ pub const TARGETS: &[Target] = &[
         spec: "median productivity 90 to 110 after 10 years",
         bound: "90 to 110 at the 2029 close",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let v = s.year(TEN_YEAR_LAST)?.median_productivity;
             verdict(within(v, MEDIAN_PRODUCTIVITY), v, format!("{v:.2}"))
         },
     },
     Target {
-        id: "industry_revenue_trend",
-        spec: "industry revenue within ±30% of the trend path",
-        bound: "every industry-quarter 2020-2029 in 0.70 to 1.30 of trend",
+        id: "industry_revenue_demand",
+        spec: "industry revenue within ±30% of the industry's own demand path (D363)",
+        bound: "every industry-quarter 2020-2029 in 0.70 to 1.30 of demand",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let qs = s.quarters_in((TEN_YEAR_FIRST, TEN_YEAR_LAST))?;
-            let lo = qs
-                .iter()
-                .map(|q| q.rev_ratio_min)
-                .fold(f64::INFINITY, f64::min);
-            let hi = qs
-                .iter()
-                .map(|q| q.rev_ratio_max)
-                .fold(f64::NEG_INFINITY, f64::max);
-            let out: u32 = qs.iter().map(|q| q.rev_out_of_band).sum();
-            let worst = (lo - 1.0).abs().max((hi - 1.0).abs());
-            verdict(
-                out == 0 && within(lo, REVENUE_RATIO) && within(hi, REVENUE_RATIO),
-                worst,
-                format!("ratio {lo:.3} to {hi:.3}; {out} industry-quarters out"),
+            band_verdict(
+                qs.iter()
+                    .map(|q| (q.rev_demand_min, q.rev_demand_max, q.rev_demand_out_of_band)),
+                REVENUE_DEMAND_RATIO,
+            )
+        },
+    },
+    Target {
+        id: "industry_demand_trend",
+        spec: "each industry's demand within ±55% of its trend path (D363)",
+        bound: "every industry-quarter 2020-2029 in 0.45 to 1.55 of trend",
+        required: ALL_SEEDS,
+        kind: Kind::Seeds,
+        eval: |s| {
+            let qs = s.quarters_in((TEN_YEAR_FIRST, TEN_YEAR_LAST))?;
+            band_verdict(
+                qs.iter().map(|q| {
+                    (
+                        q.demand_trend_min,
+                        q.demand_trend_max,
+                        q.demand_trend_out_of_band,
+                    )
+                }),
+                DEMAND_TREND_RATIO,
             )
         },
     },
     Target {
         id: "m_clamp_8q",
-        spec: "no industry stuck at an M clamp for more than 8 quarters",
-        bound: "longest run 2020-2029 <= 8 quarters",
+        spec: "no industry stuck at an M clamp for more than 8 quarters (Cloud waived: D366)",
+        bound: "longest run 2020-2029 <= 8 quarters among the industries not waived",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let qs = s.quarters_in((TEN_YEAR_FIRST, TEN_YEAR_LAST))?;
-            let run = qs.iter().map(|q| q.m_clamp_max_run).max().unwrap_or(0);
+            let run = qs
+                .iter()
+                .map(|q| q.m_clamp_max_run_counted)
+                .max()
+                .unwrap_or(0);
             verdict(
                 run <= M_CLAMP_MAX_RUN,
                 f64::from(run),
@@ -243,10 +308,31 @@ pub const TARGETS: &[Target] = &[
         },
     },
     Target {
+        id: "m_clamp_8q_cloud_waived",
+        spec: "Cloud's M clamp runs: waived until the spec 11.2 per-industry rework (D366)",
+        bound: "longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)",
+        required: ALL_SEEDS,
+        kind: Kind::Waived,
+        eval: |s| {
+            let qs = s.quarters_in((TEN_YEAR_FIRST, TEN_YEAR_LAST))?;
+            let run = qs
+                .iter()
+                .map(|q| q.m_clamp_max_run_waived)
+                .max()
+                .unwrap_or(0);
+            verdict(
+                run <= M_CLAMP_MAX_RUN,
+                f64::from(run),
+                format!("{} {run} quarters", M_CLAMP_WAIVED.join(" ")),
+            )
+        },
+    },
+    Target {
         id: "beat_share",
         spec: "30% to 60% of releases are beats",
         bound: "0.30 to 0.60 of reports for Q1 2020 to Q4 2029",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let qs = s.releases_of((TEN_YEAR_FIRST, TEN_YEAR_LAST))?;
             let reports: u32 = qs.iter().map(|q| q.reports).sum();
@@ -260,18 +346,29 @@ pub const TARGETS: &[Target] = &[
         },
     },
     Target {
-        id: "demand_growth_lt",
-        spec: "each industry's 10-year average demand growth within ±3 pp of its long-term rate in 90% of seeds",
-        bound: "every industry within 3 pp at the 2029 close",
-        required: DEMAND_GROWTH_SEED_SHARE,
+        id: "demand_growth_pooled",
+        spec: "90% of industry-runs (industries x seeds) have 10-year average demand growth within ±3 pp of their long-term rate (D365)",
+        bound: "pooled share of industries within 3 pp at the 2029 close >= 0.90",
+        required: DEMAND_GROWTH_POOLED_SHARE,
+        kind: Kind::Pooled,
         eval: |s| {
             let r = s.year(TEN_YEAR_LAST)?;
-            let v = r.demand_dev_max_pp;
-            verdict(
-                r.demand_dev_out == 0,
-                v,
-                format!("worst {v:.2} pp; {} industries out", r.demand_dev_out),
-            )
+            let n = s
+                .quarters
+                .iter()
+                .find(|q| q.year == TEN_YEAR_LAST && q.quarter == 4)?
+                .industries;
+            let within_n = n.saturating_sub(r.demand_dev_out);
+            let v = f64::from(within_n) / f64::from(n.max(1));
+            Some(Verdict {
+                pass: v + 1e-9 >= DEMAND_GROWTH_POOLED_SHARE,
+                value: v,
+                measured: format!(
+                    "{within_n} of {n} within 3 pp; worst {:.2} pp",
+                    r.demand_dev_max_pp
+                ),
+                pool: Some((within_n, n)),
+            })
         },
     },
     Target {
@@ -279,6 +376,7 @@ pub const TARGETS: &[Target] = &[
         spec: "10% to 25% of industry-quarters labeled Boom (2020-2029)",
         bound: "0.10 to 0.25 of industry-months in force 2020-2029",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let qs = s.quarters_in((TEN_YEAR_FIRST, TEN_YEAR_LAST))?;
             let n: u32 = qs.iter().map(|q| q.industry_months).sum();
@@ -289,9 +387,10 @@ pub const TARGETS: &[Target] = &[
     },
     Target {
         id: "bust_share",
-        spec: "10% to 20% of industry-quarters labeled Bust (2020-2029)",
-        bound: "0.10 to 0.20 of industry-months in force 2020-2029",
+        spec: "8% to 22% of industry-quarters labeled Bust (2020-2029; D364)",
+        bound: "0.08 to 0.22 of industry-months in force 2020-2029",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let qs = s.quarters_in((TEN_YEAR_FIRST, TEN_YEAR_LAST))?;
             let n: u32 = qs.iter().map(|q| q.industry_months).sum();
@@ -305,6 +404,7 @@ pub const TARGETS: &[Target] = &[
         spec: "6 to 15 startups a year on average in 2020 to 2029",
         bound: "mean 6 to 15 over 2020-2029",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let ys = s.years_in((TEN_YEAR_FIRST, TEN_YEAR_LAST))?;
             let total: u32 = ys.iter().map(|y| y.startups).sum();
@@ -317,6 +417,7 @@ pub const TARGETS: &[Target] = &[
         spec: "15 to 50 AI labs startups in 2030 to 2035 in 80% of seeds",
         bound: "15 to 50 born 2030-2035",
         required: AI_LABS_SEED_SHARE,
+        kind: Kind::Seeds,
         eval: |s| {
             let ys = s.years_in(AI_LABS_YEARS)?;
             let v: u32 = ys.iter().map(|y| y.ai_lab_startups).sum();
@@ -328,6 +429,7 @@ pub const TARGETS: &[Target] = &[
         spec: "named company count between 600 and 1100 in every year",
         bound: "600 to 1100 at every year close 2020-2049",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let ys = s.years_in(RUN_YEARS)?;
             let lo = ys.iter().map(|y| y.named).min()?;
@@ -341,6 +443,7 @@ pub const TARGETS: &[Target] = &[
         spec: "60 to 250 listings in 30 years",
         bound: "60 to 250 listed 2020-2049",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let ys = s.years_in(LISTINGS_YEARS)?;
             let v: u32 = ys.iter().map(|y| y.listings).sum();
@@ -352,6 +455,7 @@ pub const TARGETS: &[Target] = &[
         spec: "no more than 12 listings in any year",
         bound: "<= 12 in every year 2020-2049",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let v = s.years_in(RUN_YEARS)?.iter().map(|y| y.listings).max()?;
             verdict(v <= LISTINGS_PER_YEAR_MAX, f64::from(v), format!("max {v}"))
@@ -362,6 +466,7 @@ pub const TARGETS: &[Target] = &[
         spec: "10 to 30 starting private companies listed by the end of 2024 in 90% of seeds",
         bound: "10 to 30 at the 2024 close",
         required: START_PRIVATE_LISTED_SEED_SHARE,
+        kind: Kind::Seeds,
         eval: |s| {
             let v = s.year(START_PRIVATE_LISTED_BY)?.start_private_listed;
             verdict(
@@ -376,6 +481,7 @@ pub const TARGETS: &[Target] = &[
         spec: "100 to 300 full characters made per decade",
         bound: "100 to 300 made in each of the 2020s 2030s and 2040s the run covers",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let made: Vec<(i32, u32)> = DECADES
                 .iter()
@@ -409,6 +515,7 @@ pub const TARGETS: &[Target] = &[
         spec: "under 1200 full characters in the world in 2050",
         bound: "< 1200 at the 1 January 2050 close",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let v = s.year(FULL_CHARACTERS_YEAR)?.full_characters;
             verdict(v < FULL_CHARACTERS_BELOW, f64::from(v), format!("{v}"))
@@ -419,6 +526,7 @@ pub const TARGETS: &[Target] = &[
         spec: "every startup has 1 to 5 full and 1 to 5 partial characters",
         bound: "founders 1 to 5 and simple cast 1 to 5 at every birth",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let casts: u32 = s.years.iter().map(|y| y.casts).sum();
             if casts == 0 {
@@ -452,6 +560,7 @@ pub const TARGETS: &[Target] = &[
         spec: "no labor seat of a born company is empty",
         bound: "0 empty open seats at every birth and month close 2020-2049",
         required: ALL_SEEDS,
+        kind: Kind::Seeds,
         eval: |s| {
             let v = s
                 .years_in(RUN_YEARS)?
@@ -590,10 +699,15 @@ pub fn parse(years: &str, quarters: &str) -> Result<BTreeMap<u64, SeedData>, Str
             industry_months: f.get("industry_months")?,
             boom_months: f.get("boom_months")?,
             bust_months: f.get("bust_months")?,
-            rev_ratio_min: f.get("rev_ratio_min")?,
-            rev_ratio_max: f.get("rev_ratio_max")?,
-            rev_out_of_band: f.get("rev_out_of_band")?,
-            m_clamp_max_run: f.get("m_clamp_max_run")?,
+            industries: f.get("industries")?,
+            rev_demand_min: f.get("rev_demand_min")?,
+            rev_demand_max: f.get("rev_demand_max")?,
+            rev_demand_out_of_band: f.get("rev_demand_out_of_band")?,
+            demand_trend_min: f.get("demand_trend_min")?,
+            demand_trend_max: f.get("demand_trend_max")?,
+            demand_trend_out_of_band: f.get("demand_trend_out_of_band")?,
+            m_clamp_max_run_counted: f.get("m_clamp_max_run_counted")?,
+            m_clamp_max_run_waived: f.get("m_clamp_max_run_waived")?,
         };
         out.entry(f.get("seed")?).or_default().quarters.push(r);
     }
@@ -609,6 +723,8 @@ pub fn parse(years: &str, quarters: &str) -> Result<BTreeMap<u64, SeedData>, Str
 pub struct Summary {
     pub id: &'static str,
     pub spec: &'static str,
+    pub kind: Kind,
+    /// Seeds evaluated and passed; for a pooled target, industry-runs (D365).
     pub evaluated: usize,
     pub passed: usize,
     pub required: f64,
@@ -621,10 +737,11 @@ impl Summary {
         (self.evaluated > 0).then(|| self.passed as f64 / self.evaluated as f64)
     }
 
-    /// "MET", "NOT MET" or "n/a" (no seed covers the window).
+    /// "MET", "NOT MET", "WAIVED" (D366) or "n/a" (no seed covers the window).
     pub fn verdict(&self) -> &'static str {
         match self.share() {
             None => "n/a",
+            Some(_) if self.kind == Kind::Waived => "WAIVED",
             // A tiny slack so 9 of 10 seeds meets 90% despite float division.
             Some(s) if s + 1e-9 >= self.required => "MET",
             Some(_) => "NOT MET",
@@ -642,8 +759,16 @@ pub fn evaluate(seeds: &BTreeMap<u64, SeedData>) -> (String, Vec<Summary>) {
         for (seed, data) in seeds {
             let (result, measured) = match (t.eval)(data) {
                 Some(v) => {
-                    evaluated += 1;
-                    passed += usize::from(v.pass);
+                    match (t.kind, v.pool) {
+                        (Kind::Pooled, Some((ok, n))) => {
+                            evaluated += n as usize;
+                            passed += ok as usize;
+                        }
+                        _ => {
+                            evaluated += 1;
+                            passed += usize::from(v.pass);
+                        }
+                    }
                     values.push(v.value);
                     (if v.pass { "PASS" } else { "FAIL" }, v.measured)
                 }
@@ -655,6 +780,7 @@ pub fn evaluate(seeds: &BTreeMap<u64, SeedData>) -> (String, Vec<Summary>) {
         summaries.push(Summary {
             id: t.id,
             spec: t.spec,
+            kind: t.kind,
             evaluated,
             passed,
             required: t.required,
@@ -750,8 +876,10 @@ mod tests {
         listings_in_year,start_private_listed,full_characters_made,full_characters,\
         casts_in_year,cast_full_min,cast_full_max,cast_simple_min,cast_simple_max,\
         born_empty_seats_max";
-    const Q_HEADER: &str = "seed,year,quarter,released,reports,beats,industry_months,\
-        boom_months,bust_months,rev_ratio_min,rev_ratio_max,rev_out_of_band,m_clamp_max_run";
+    const Q_HEADER: &str = "seed,year,quarter,released,reports,beats,industries,\
+        industry_months,boom_months,bust_months,rev_demand_min,rev_demand_max,\
+        rev_demand_out_of_band,demand_trend_min,demand_trend_max,demand_trend_out_of_band,\
+        m_clamp_max_run_counted,m_clamp_max_run_waived";
 
     /// A good 30-year seed: 10 startups a year (4 AI labs in 2030 to 2035, 24 in all), 700
     /// named companies, 4 listings a year (120), 3 starting private companies listed a year to
@@ -800,13 +928,18 @@ mod tests {
                     released,
                     "600".into(),
                     "240".into(),
+                    "42".into(),
                     "126".into(),
                     "20".into(),
                     "18".into(),
                     "0.8".into(),
                     "1.2".into(),
                     "0".into(),
+                    "0.6".into(),
+                    "1.5".into(),
+                    "0".into(),
                     "3".into(),
+                    "2".into(),
                 ]
                 .to_vec()
             })
@@ -891,20 +1024,49 @@ mod tests {
             "110.5",
         );
         fails_only(
-            "industry_revenue_trend",
+            "industry_revenue_demand",
             'q',
-            "rev_ratio_max",
+            "rev_demand_max",
             &[2027],
             "1.31",
         );
         fails_only(
-            "industry_revenue_trend",
+            "industry_revenue_demand",
             'q',
-            "rev_ratio_min",
+            "rev_demand_min",
             &[2021],
             "0.69",
         );
-        fails_only("m_clamp_8q", 'q', "m_clamp_max_run", &[2028], "9");
+        fails_only(
+            "industry_revenue_demand",
+            'q',
+            "rev_demand_out_of_band",
+            &[2024],
+            "1",
+        );
+        fails_only(
+            "industry_demand_trend",
+            'q',
+            "demand_trend_max",
+            &[2027],
+            "1.56",
+        );
+        fails_only(
+            "industry_demand_trend",
+            'q',
+            "demand_trend_min",
+            &[2021],
+            "0.44",
+        );
+        fails_only("m_clamp_8q", 'q', "m_clamp_max_run_counted", &[2028], "9");
+        // Cloud's own run fails only its waived row (D366), not m_clamp_8q.
+        fails_only(
+            "m_clamp_8q_cloud_waived",
+            'q',
+            "m_clamp_max_run_waived",
+            &[2028],
+            "9",
+        );
         // 240 of 600 is 40%; 170 is 28%, 370 is 62%.
         fails_only(
             "beat_share",
@@ -920,13 +1082,14 @@ mod tests {
             &(2020..2031).collect::<Vec<_>>(),
             "370",
         );
-        fails_only("demand_growth_lt", 'y', "demand_dev_out", &[2029], "1");
-        // 20 of 126 is 15.9%; 12 is 9.5%, 32 is 25.4%.
+        // Pooled (D365): 38 of 42 within 3 pp is 90.5%, 37 is 88.1%.
+        fails_only("demand_growth_pooled", 'y', "demand_dev_out", &[2029], "5");
+        // 20 of 126 is 15.9%; 12 is 9.5%, 32 is 25.4%; Bust 18 is 14.3%, 10 is 7.9%, 28 is 22.2%.
         let decade: Vec<i32> = (2020..2030).collect();
         fails_only("boom_share", 'q', "boom_months", &decade, "12");
         fails_only("boom_share", 'q', "boom_months", &decade, "32");
-        fails_only("bust_share", 'q', "bust_months", &decade, "12");
-        fails_only("bust_share", 'q', "bust_months", &decade, "26");
+        fails_only("bust_share", 'q', "bust_months", &decade, "10");
+        fails_only("bust_share", 'q', "bust_months", &decade, "28");
         fails_only("startups_per_year", 'y', "startups_in_year", &decade, "5");
         fails_only("startups_per_year", 'y', "startups_in_year", &decade, "16");
         let ai: Vec<i32> = (2030..2036).collect();
@@ -1031,16 +1194,68 @@ mod tests {
         let s = |passed, required| Summary {
             id: "x",
             spec: "x",
+            kind: Kind::Seeds,
             evaluated: 10,
             passed,
             required,
             values: None,
         };
-        assert_eq!(s(9, DEMAND_GROWTH_SEED_SHARE).verdict(), "MET");
-        assert_eq!(s(8, DEMAND_GROWTH_SEED_SHARE).verdict(), "NOT MET");
+        assert_eq!(s(9, START_PRIVATE_LISTED_SEED_SHARE).verdict(), "MET");
+        assert_eq!(s(8, START_PRIVATE_LISTED_SEED_SHARE).verdict(), "NOT MET");
         assert_eq!(s(8, AI_LABS_SEED_SHARE).verdict(), "MET");
         assert_eq!(s(9, ALL_SEEDS).verdict(), "NOT MET");
         assert_eq!(s(10, ALL_SEEDS).verdict(), "MET");
+        // A waived target is reported but never MET (D366).
+        let w = Summary {
+            kind: Kind::Waived,
+            ..s(10, ALL_SEEDS)
+        };
+        assert_eq!(w.verdict(), "WAIVED");
+    }
+
+    #[test]
+    fn a_pooled_target_counts_industry_runs_over_seeds() {
+        // D365: two seeds, one with 42 of 42 within 3 pp and one with 36 of 42 (85.7%, a seed
+        // FAIL); pooled 78 of 84 is 92.9%, MET. With 33 of 42 the pool is 75 of 84, 89.3%.
+        let (y, q) = good();
+        let run = |out: &str| {
+            let mut y2 = y.clone();
+            let i = col(Y_HEADER, "demand_dev_out");
+            let yc = col(Y_HEADER, "year");
+            for r in y2.iter_mut() {
+                r[0] = "2".into();
+                if r[yc] == "2029" {
+                    r[i] = out.to_string();
+                }
+            }
+            let mut q2 = q.clone();
+            for r in q2.iter_mut() {
+                r[0] = "2".into();
+            }
+            let mut ys = y.clone();
+            ys.extend(y2);
+            let mut qs = q.clone();
+            qs.extend(q2);
+            let seeds = parse(&text(Y_HEADER, &ys), &text(Q_HEADER, &qs)).unwrap();
+            let (csv, sums) = evaluate(&seeds);
+            let s = sums
+                .into_iter()
+                .find(|s| s.id == "demand_growth_pooled")
+                .unwrap();
+            let seed2 = csv
+                .lines()
+                .find(|l| l.starts_with("demand_growth_pooled,2,"))
+                .unwrap()
+                .to_string();
+            (s, seed2)
+        };
+        let (s, seed2) = run("6");
+        assert_eq!((s.passed, s.evaluated), (78, 84));
+        assert_eq!(s.verdict(), "MET");
+        assert!(seed2.contains(",FAIL,36 of 42"), "{seed2}");
+        let (s, _) = run("9");
+        assert_eq!((s.passed, s.evaluated), (75, 84));
+        assert_eq!(s.verdict(), "NOT MET");
     }
 
     #[test]

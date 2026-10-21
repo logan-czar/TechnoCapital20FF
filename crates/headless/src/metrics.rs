@@ -43,7 +43,9 @@ pub const YEARS_HEADER: &str = "seed,year,ticks,state_hash,phase,g_t,named_reven
 /// quarter's last month (the 1st of the next quarter, 00:00). Rows of a seed are in quarter order.
 pub const QUARTERS_HEADER: &str = "seed,year,quarter,released,reports,beats,misses,industries,\
     industry_months,boom_months,bust_months,rev_ratio_min,rev_ratio_max,rev_out_of_band,\
-    m_clamp_industries,m_clamp_max_run,m_clamp_over_8q";
+    m_clamp_industries,m_clamp_max_run,m_clamp_over_8q,rev_demand_min,rev_demand_max,\
+    rev_demand_out_of_band,demand_trend_min,demand_trend_max,demand_trend_out_of_band,\
+    m_clamp_max_run_counted,m_clamp_max_run_waived";
 
 /// Spec 10: no industry "stuck at an M clamp (spec 5.2, `M_MIN` and `M_MAX`) for more than 8
 /// quarters".
@@ -52,8 +54,24 @@ pub const M_CLAMP_QUARTERS: u32 = 8;
 const M_CLAMP_EPSILON: f64 = 1e-12;
 
 /// Spec 10: "industry revenue within ±30% of the trend path" (D322): a quarter's revenue over
-/// its trend revenue outside `1 ± 0.30` is out of band.
+/// its trend revenue outside `1 ± 0.30` is out of band. Kept as columns; the targets read D363's
+/// two bands below instead.
 pub const REVENUE_TREND_BAND: f64 = 0.30;
+
+/// Spec 10 as restated by Logan (M10.7 sign-off, D363 (a), design fix 363): "industry revenue
+/// within ±30% of the industry's own demand path": a quarter's revenue over a twelfth of its
+/// effective demand at the same closes outside `1 ± 0.30` is out of band.
+pub const REVENUE_DEMAND_BAND: f64 = 0.30;
+
+/// D363 (b): each industry's effective demand within ±55% of its trend path (the review's
+/// figure): a quarter's demand over its trend demand at the same closes outside `1 ± 0.55` is
+/// out of band.
+pub const DEMAND_TREND_BAND: f64 = 0.55;
+
+/// D366 (design fix 366): industries waived from the "no industry stuck at an M clamp for more
+/// than 8 quarters" target until the spec 11.2 per-industry rework of Cloud's 20% pre-boom
+/// growth. Their runs are still counted and reported on their own.
+pub const M_CLAMP_WAIVED: &[&str] = &["cloud"];
 
 /// Spec 10: "each industry's 10-year average demand growth within ±3 pp of its long-term rate"
 /// (D324), in percentage points a year.
@@ -125,6 +143,8 @@ struct ClampRuns {
     over: Vec<bool>,
     /// The longest run seen so far, any industry.
     max_run: u32,
+    /// Industries waived from the target (D366), in industry id order; missing means not.
+    waived: Vec<bool>,
 }
 
 /// M at either clamp edge (spec 5.2).
@@ -143,6 +163,18 @@ impl ClampRuns {
             self.max_run = self.max_run.max(self.run[i]);
         }
     }
+
+    /// The longest run ending this quarter among the waived industries (`waived` true) or among
+    /// the others (D366).
+    fn current_max(&self, waived: bool) -> u32 {
+        self.run
+            .iter()
+            .enumerate()
+            .filter(|&(i, _)| self.waived.get(i).copied().unwrap_or(false) == waived)
+            .map(|(_, &r)| r)
+            .max()
+            .unwrap_or(0)
+    }
 }
 
 /// The quarter being recorded (`quarters.csv`).
@@ -156,9 +188,11 @@ struct QuarterAcc {
     industry_months: usize,
     boom_months: usize,
     bust_months: usize,
-    /// Per industry: the quarter's revenue (named + fringe) and trend revenue (D322).
+    /// Per industry: the quarter's revenue (named + fringe), trend revenue (D322) and demand
+    /// revenue (a twelfth of effective demand at each close, D363).
     revenue: Vec<f64>,
     trend: Vec<f64>,
+    demand: Vec<f64>,
 }
 
 /// One industry at a month close, as v_industry_row shows it.
@@ -168,6 +202,8 @@ struct MonthFigures {
     /// The month's revenue, named units plus fringe.
     revenue: f64,
     trend_demand: f64,
+    /// Effective demand at the close, USD a year (spec 5.1).
+    demand: f64,
 }
 
 impl QuarterAcc {
@@ -178,6 +214,7 @@ impl QuarterAcc {
     fn add_month(&mut self, labels: &mut Vec<PhaseLabel>, rows: &[MonthFigures]) {
         self.revenue.resize(rows.len(), 0.0);
         self.trend.resize(rows.len(), 0.0);
+        self.demand.resize(rows.len(), 0.0);
         labels.resize(rows.len(), PhaseLabel::Normal);
         for (i, r) in rows.iter().enumerate() {
             self.industry_months += 1;
@@ -186,6 +223,7 @@ impl QuarterAcc {
             labels[i] = r.label;
             self.revenue[i] += r.revenue;
             self.trend[i] += r.trend_demand / MONTHS_PER_YEAR;
+            self.demand[i] += r.demand / MONTHS_PER_YEAR;
         }
     }
 }
@@ -251,7 +289,13 @@ impl Recorder {
             economy: YearEconomy::default(),
             tracking: YearTracking::default(),
             births: YearBirths::default(),
-            clamp: ClampRuns::default(),
+            clamp: ClampRuns {
+                waived: rows
+                    .iter()
+                    .map(|r| M_CLAMP_WAIVED.contains(&r.key.as_str()))
+                    .collect(),
+                ..ClampRuns::default()
+            },
             quarter: QuarterAcc::default(),
             labels: rows.iter().map(|r| r.phase_label).collect(),
             demand0: rows.iter().map(|r| r.demand).collect(),
@@ -329,6 +373,7 @@ impl Recorder {
                 label: r.phase_label,
                 revenue: r.named_revenue_m + r.fringe_revenue_m,
                 trend_demand: r.trend_demand,
+                demand: r.demand,
             })
             .collect();
         self.quarter.add_month(&mut self.labels, &figures);
@@ -365,6 +410,23 @@ impl Recorder {
             .zip(&q.trend)
             .map(|(&r, &t)| revenue_ratio(r, t))
             .collect();
+        // D363: revenue against the industry's own demand path, and demand against its trend.
+        let rev_demand: Vec<f64> = q
+            .revenue
+            .iter()
+            .zip(&q.demand)
+            .map(|(&r, &d)| revenue_ratio(r, d))
+            .collect();
+        let demand_trend: Vec<f64> = q
+            .demand
+            .iter()
+            .zip(&q.trend)
+            .map(|(&d, &t)| revenue_ratio(d, t))
+            .collect();
+        let (rd_min, rd_max, rd_out) = band_stats(&rev_demand, REVENUE_DEMAND_BAND);
+        let (dt_min, dt_max, dt_out) = band_stats(&demand_trend, DEMAND_TREND_BAND);
+        let counted = self.clamp.current_max(false);
+        let waived = self.clamp.current_max(true);
         let min = ratios.iter().copied().fold(f64::INFINITY, f64::min);
         let max = ratios.iter().copied().fold(f64::NEG_INFINITY, f64::max);
         let out = ratios
@@ -386,7 +448,8 @@ impl Recorder {
         writeln!(
             self.quarters,
             "{},{year},{quarter},{released},{reports},{beats},{misses},{},{},{},{},{min:.4},\
-             {max:.4},{out},{at_clamp},{max_run},{over}",
+             {max:.4},{out},{at_clamp},{max_run},{over},{rd_min:.4},{rd_max:.4},{rd_out},\
+             {dt_min:.4},{dt_max:.4},{dt_out},{counted},{waived}",
             self.seed,
             ratios.len(),
             q.industry_months,
@@ -458,8 +521,8 @@ fn cagr(from: f64, to: f64, years: f64) -> f64 {
     }
 }
 
-/// A quarter's revenue over its trend revenue (D322); with no trend, 1 for no revenue, else
-/// infinite.
+/// A quarter's revenue over its trend revenue (D322), and likewise revenue over demand revenue
+/// and demand over trend (D363); with no denominator, 1 for a zero numerator, else infinite.
 fn revenue_ratio(revenue: f64, trend: f64) -> f64 {
     if trend > 0.0 {
         revenue / trend
@@ -468,6 +531,14 @@ fn revenue_ratio(revenue: f64, trend: f64) -> f64 {
     } else {
         1.0
     }
+}
+
+/// The lowest and highest ratio and how many are outside `1 ± band`.
+fn band_stats(ratios: &[f64], band: f64) -> (f64, f64, usize) {
+    let min = ratios.iter().copied().fold(f64::INFINITY, f64::min);
+    let max = ratios.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+    let out = ratios.iter().filter(|&&r| (r - 1.0).abs() > band).count();
+    (min, max, out)
 }
 
 /// `2019Q4`.
@@ -788,11 +859,33 @@ mod tests {
     }
 
     #[test]
+    fn waived_industries_are_reported_apart() {
+        // Industry 1 is waived (D366): its 12-quarter run is its own; the others' longest is 4.
+        let mut c = ClampRuns {
+            waived: vec![false, true, false],
+            ..ClampRuns::default()
+        };
+        for q in 0..12 {
+            let zero = if q >= 8 { M_MIN } else { 1.0 };
+            c.add_quarter(&[zero, M_MAX, 1.0]);
+        }
+        assert_eq!(c.current_max(true), 12);
+        assert_eq!(c.current_max(false), 4);
+        assert_eq!(c.max_run, 12);
+        // With no waiver list nothing is waived.
+        let mut d = ClampRuns::default();
+        d.add_quarter(&[M_MAX]);
+        assert_eq!((d.current_max(false), d.current_max(true)), (1, 0));
+        assert_eq!(band_stats(&[0.6, 1.0, 1.4], 0.3), (0.6, 1.4, 2));
+    }
+
+    #[test]
     fn a_month_counts_the_labels_in_force_before_its_close() {
         let fig = |label| MonthFigures {
             label,
             revenue: 10.0,
             trend_demand: 120.0,
+            demand: 96.0,
         };
         // Load labels Boom and Normal; the January close sets Bust and Boom for February.
         let mut labels = vec![PhaseLabel::Boom, PhaseLabel::Normal];
@@ -809,6 +902,8 @@ mod tests {
         // Revenue against a twelfth of trend demand: 20 over 2 × 10.
         assert_eq!(q.revenue, [20.0, 20.0]);
         assert_eq!(q.trend, [20.0, 20.0]);
+        // And against a twelfth of effective demand (D363): 2 × 8.
+        assert_eq!(q.demand, [16.0, 16.0]);
     }
 
     /// 5.19.4 placement with five open seats: the lead founder is CEO and the others take

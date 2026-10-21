@@ -34,7 +34,7 @@ If a seed fails (its child exits non-zero), the seeds that ran are still written
 `check DIR` reads `years.csv` and `quarters.csv` and writes:
 
 - `targets.csv`: `target, seed, result, measured, bound`, one row per target per seed (targets in the order below, seeds ascending). `result` is PASS, FAIL or NA (the run does not cover the target's window, for example a 1-year run and a year-10 target).
-- `summary.csv`: per target the seeds evaluated and passed, the pass share, the required share, the verdict (MET, NOT MET, n/a), and the min, median and max of the measured value over the seeds (the leading number of `measured`; for `industry_revenue_trend` the worst `|ratio − 1|`, for `full_characters_per_decade` the decade count farthest from 200, for `cast_sizes` the number of casts, for `named_companies` the highest count).
+- `summary.csv`: per target the seeds evaluated and passed, the pass share, the required share, the verdict (MET, NOT MET, WAIVED, n/a), and the min, median and max of the measured value over the seeds (the leading number of `measured`; for `industry_revenue_demand` and `industry_demand_trend` the worst `|ratio − 1|`, for `demand_growth_pooled` the seed's share of industries within 3 pp, for `full_characters_per_decade` the decade count farthest from 200, for `cast_sizes` the number of casts, for `named_companies` the highest count). For the pooled target `demand_growth_pooled` (D365) "evaluated" and "passed" count industry-runs over all seeds, not seeds. A waived target (D366) is reported per seed but its verdict is WAIVED, never MET or NOT MET.
 
 It prints the summary. It exits 0 whatever the verdicts (it is a report, not a gate).
 
@@ -99,21 +99,29 @@ It prints the summary. It exits 0 whatever the verdicts (it is a report, not a g
 | `m_clamp_industries` | Industries at an M clamp (M at 0.7 or 1.3) at the quarter's last month close (D166) |
 | `m_clamp_max_run` | The longest run of consecutive quarters at a clamp, any industry, ending this quarter |
 | `m_clamp_over_8q` | Industries whose run ending this quarter is above 8 |
+| `rev_demand_min`, `rev_demand_max` | Across industries, the lowest and highest quarter revenue ÷ demand revenue: the sum of a twelfth of effective demand at the quarter's three closes (D363 (a)) |
+| `rev_demand_out_of_band` | Industries whose revenue ÷ demand ratio is outside 0.70 to 1.30 |
+| `demand_trend_min`, `demand_trend_max` | Across industries, the lowest and highest quarter demand revenue ÷ trend revenue (D363 (b)) |
+| `demand_trend_out_of_band` | Industries whose demand ÷ trend ratio is outside 0.45 to 1.55 |
+| `m_clamp_max_run_counted` | The longest clamp run ending this quarter among the industries not waived (D366) |
+| `m_clamp_max_run_waived` | The same among the waived industries (`M_CLAMP_WAIVED`: Cloud, until the spec 11.2 per-industry rework) |
 
 ## The targets
 
-Spec 10's balance targets after 10 years, then its startup, character and listing targets (all **(T)**). Each bound is a named constant in `targets.rs`. A seed passes or fails each target; a target is **MET** when the share of evaluated seeds that pass reaches its required share: the share spec 10 names, else 100% (D330).
+Spec 10's balance targets after 10 years, then its startup, character and listing targets (all **(T)**). Each bound is a named constant in `targets.rs`. A seed passes or fails each target; a target is **MET** when the share of evaluated seeds that pass reaches its required share: the share spec 10 names, else 100% (D330). Logan's M10.7 sign-off restated four of them (D363 to D366, design fixes 363 to 366): revenue is checked against each industry's own demand path with a separate demand-against-trend bound, demand growth is pooled over industry-runs, the Bust band is 8% to 22%, and Cloud is waived from the M clamp target until the spec 11.2 rework and reported on its own row.
 
 | Id | Spec 10 | How a seed is checked | Needs |
 |---|---|---|---|
 | `start_alive_10y` | at least 85% of the 651 neither bankrupt nor removed | `start_alive_share` at the 2029 close ≥ 0.85 (D320) | all seeds |
 | `median_productivity_10y` | median productivity 90 to 110 | `median_productivity` at the 2029 close in 90 to 110 (D321) | all seeds |
-| `industry_revenue_trend` | industry revenue within ±30% of the trend path | every industry-quarter Q1 2020 to Q4 2029: revenue ÷ trend revenue in 0.70 to 1.30 (D322) | all seeds |
-| `m_clamp_8q` | no industry stuck at an M clamp for more than 8 quarters | the longest clamp run of Q1 2020 to Q4 2029 is at most 8 quarters (D327) | all seeds |
+| `industry_revenue_demand` | industry revenue within ±30% of the industry's own demand path (restated, D363 (a); was ±30% of the trend path, D322) | every industry-quarter Q1 2020 to Q4 2029: revenue ÷ demand revenue in 0.70 to 1.30 | all seeds |
+| `industry_demand_trend` | each industry's demand within ±55% of its trend path (D363 (b)) | every industry-quarter Q1 2020 to Q4 2029: demand revenue ÷ trend revenue in 0.45 to 1.55 | all seeds |
+| `m_clamp_8q` | no industry stuck at an M clamp for more than 8 quarters, Cloud waived (D366) | the longest clamp run of Q1 2020 to Q4 2029 among the industries not waived (`m_clamp_max_run_counted`) is at most 8 quarters (D327) | all seeds |
+| `m_clamp_8q_cloud_waived` | Cloud's clamp runs, waived until the spec 11.2 per-industry rework (D366) | Cloud's longest run of Q1 2020 to Q4 2029 (`m_clamp_max_run_waived`) at most 8 quarters, reported per seed | WAIVED |
 | `beat_share` | 30% to 60% of releases are beats | Σ beats ÷ Σ reports over the releases of Q1 2020 to Q4 2029 in 0.30 to 0.60 (D323) | all seeds |
-| `demand_growth_lt` | each industry's 10-year average demand growth within ±3 pp of its long-term rate, in 90% of seeds | `demand_dev_out` = 0 at the 2029 close (D324) | 90% |
+| `demand_growth_pooled` | 90% of industry-runs (industries × seeds) have their 10-year average demand growth within ±3 pp of their long-term rate (restated, D365; was every industry in 90% of seeds, D324) | per seed, `industries − demand_dev_out` of `industries` within 3 pp at the 2029 close; a seed row passes at 90% | 90% of industry-runs, pooled |
 | `boom_share` | 10% to 25% of industry-quarters labeled Boom | Σ `boom_months` ÷ Σ `industry_months`, Q1 2020 to Q4 2029, in 0.10 to 0.25 (D325) | all seeds |
-| `bust_share` | 10% to 20% Bust | the same with `bust_months`, in 0.10 to 0.20 | all seeds |
+| `bust_share` | 8% to 22% Bust (restated, D364; was 10% to 20%) | the same with `bust_months`, in 0.08 to 0.22 | all seeds |
 | `startups_per_year` | 6 to 15 startups a year on average in 2020 to 2029 | mean `startups_in_year` over 2020 to 2029 in 6 to 15 (D328) | all seeds |
 | `ai_lab_startups_2030_2035` | 15 to 50 AI labs startups in 2030 to 2035, in 80% of seeds | Σ `ai_lab_startups_in_year` over 2030 to 2035 (both inclusive) in 15 to 50 (D331) | 80% |
 | `named_companies` | between 600 and 1,100 in every year | every row 2020 to 2049: `named_companies` in 600 to 1,100 (D329) | all seeds |
