@@ -72,7 +72,6 @@ pub fn text(s: impl Into<String>, size: f32, color: Color) -> impl Bundle {
         Text::new(s),
         TextFont::from_font_size(FontSize::Px(size)),
         TextColor(color),
-        Pickable::IGNORE,
     )
 }
 

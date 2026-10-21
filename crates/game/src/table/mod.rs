@@ -99,6 +99,19 @@ impl TableModel {
     pub fn display(&self, row: usize, col: usize) -> &str {
         self.display[row].get(col).map_or("", String::as_str)
     }
+
+    /// The rows repeated (cycling) to `n` rows, for scale benches.
+    pub fn repeated_to(&self, n: usize) -> TableModel {
+        if self.rows.is_empty() {
+            return self.clone();
+        }
+        let pick = |i: usize| i % self.rows.len();
+        TableModel {
+            columns: self.columns.clone(),
+            rows: (0..n).map(|i| self.rows[pick(i)].clone()).collect(),
+            display: (0..n).map(|i| self.display[pick(i)].clone()).collect(),
+        }
+    }
 }
 
 /// Row indices of `model` sorted by column `col` (build-plan M7.7). Ties go to the lower row
