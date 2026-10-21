@@ -3,7 +3,9 @@
 
 mod finance_common;
 
-use finance_common::{BASE_RATE, assert_close, data, facts, finance_start};
+use finance_common::{
+    BASE_RATE, CompanyFacts, FixtureRow, assert_close, data, facts, finance_start,
+};
 use sim::finance::credit::{
     CreditLine, EXCESS_REPAY_MONTHS, auto_draw, excess_instalment, home_spread, line_limit,
     line_rate, min_cash, monthly_charges, own_cash, plan_repay, review_line,
@@ -233,9 +235,9 @@ fn d15_d16_starting_lines_within_their_limit() {
     // Design fix 221, decided at the M3 gate (D15, D16): with the 7.1 starting lines, 231 of the
     // 302 companies that started with a drawn line were over their own 5.12 limit at load
     // ($798B in all), all 63 rated CCC or CC among them. gen.py now sizes every starting line to
-    // its limit at its own starting rating: 288 companies start with a line (14 of the 231 were
-    // sized to 0), none is over its limit, none rated CCC or CC draws one, so the first review
-    // (2 January 2020) opens no repayment window.
+    // its limit at the run-rate EBITDA less 10% (D241): 262 companies start with a line (40 of
+    // the 237 cut went to 0), none is over its limit at its starting rating, none rated CCC or CC
+    // draws one, so the first review (2 January 2020) opens no repayment window.
     let d = data();
     let (mut with_line, mut over, mut ccc_or_cc, mut short_of_cash) = (0, 0, 0, 0);
     let mut excess = 0.0;
@@ -259,22 +261,63 @@ fn d15_d16_starting_lines_within_their_limit() {
             }
         }
     }
-    assert_eq!(with_line, 288);
+    assert_eq!(with_line, 262);
     assert_eq!(over, 0);
     assert_eq!(ccc_or_cc, 0);
     assert_eq!(short_of_cash, 0);
     assert_eq!(excess, 0.0);
 }
 
+/// D241 (T): gen.py sizes the starting lines at the run-rate EBITDA less this share
+/// (validate.py `LOAD_LINE_SIZING_MARGIN`).
+const LOAD_LINE_SIZING_MARGIN: f64 = 0.10;
+
+/// The 5.12 limit of a starting line `x`, floored to the dollar, at the starting rating `x`
+/// would have with the run-rate EBITDA scaled by `k` (the engine's `starting_rating`).
+fn limit_at(f: &CompanyFacts<'_>, row: &FixtureRow, x: f64, k: f64) -> f64 {
+    let s = f.start;
+    let rating = starting_rating(&StartRatingInputs {
+        cash: s.cash_usd,
+        line_drawn: x,
+        ebitda: k * (row.num("ebit") + row.num("depreciation")),
+        revenue: row.num("revenue"),
+        industry_key: &f.industry.id,
+        sovereign: f.sovereign(),
+        base_rate: BASE_RATE,
+        home_spread: home_spread(f.zone_spread(), f.sovereign_spread()),
+    })
+    .implied;
+    line_limit(s.asset_book_usd, s.cash_usd, x, rating).floor()
+}
+
 #[test]
-fn d15_cut_lines_are_the_largest_within_their_limit() {
-    // D15: a line cut below the 7.1 line (asset book − book value + min_cash) is the largest
-    // within its own limit: $1,000 more is over the limit at the starting rating that larger
-    // line would have (gen.py's float guard, D236, can leave a line a few dollars below a rating
-    // edge). The twin of validate.py's check, with the engine's rating. The cash the smaller line
+fn d241_starting_lines_hold_with_ebitda_5_percent_lower() {
+    // D241: inside the 10% sizing margin, a run rate 5% lower than the Python one (the engine's
+    // own lines, a weak first quarter) leaves every starting line within its limit.
+    let d = data();
+    for row in finance_start() {
+        let f = facts(&d, row.id());
+        let drawn = f.start.credit_drawn_usd;
+        if drawn > 0.0 {
+            assert!(
+                drawn <= limit_at(&f, &row, drawn, 0.95),
+                "{} line {drawn} over its limit at EBITDA x 0.95",
+                row.id()
+            );
+        }
+    }
+}
+
+#[test]
+fn d15_cut_lines_settle_where_the_haircut_iteration_does() {
+    // D15 with D241: a line cut below the 7.1 line (asset book − book value + min_cash) is where
+    // x = min(7.1 line, limit(x)) at the haircut run rate settles: a fixed point, or the lower
+    // line of a two-line cycle (one line just past a band edge, the other its worse band's
+    // limit). The twin of validate.py's check, with the engine's rating. The cash the smaller line
     // no longer funds is not added back: cash stays min_cash and book equity rises by the cut.
     let d = data();
-    let mut cut = 0;
+    let k = 1.0 - LOAD_LINE_SIZING_MARGIN;
+    let (mut cut, mut fixed, mut cycle) = (0, 0, 0);
     for row in finance_start() {
         let f = facts(&d, row.id());
         let book_value = f.company.book_value_usd_m * 1e6;
@@ -293,28 +336,28 @@ fn d15_cut_lines_are_the_largest_within_their_limit() {
             "{} book equity",
             row.id()
         );
-        if s.credit_drawn_usd >= line_71 - 2.0 {
+        let x = s.credit_drawn_usd;
+        assert!(
+            x <= limit_at(&f, &row, x, k),
+            "{} line {x} over its limit at the haircut run rate",
+            row.id()
+        );
+        if x >= line_71 - 2.0 {
             continue;
         }
         cut += 1;
-        let more = line_71.min(s.credit_drawn_usd + 1000.0);
-        let rating = starting_rating(&StartRatingInputs {
-            cash: s.cash_usd,
-            line_drawn: more,
-            ebitda: row.num("ebit") + row.num("depreciation"),
-            revenue: row.num("revenue"),
-            industry_key: &f.industry.id,
-            sovereign: f.sovereign(),
-            base_rate: BASE_RATE,
-            home_spread: home_spread(f.zone_spread(), f.sovereign_spread()),
-        })
-        .implied;
-        assert!(
-            more > line_limit(s.asset_book_usd, s.cash_usd, more, rating),
-            "{} line {} is not the largest within its limit",
-            row.id(),
-            s.credit_drawn_usd
-        );
+        let l0 = line_71.round();
+        let next = l0.min(limit_at(&f, &row, x, k));
+        if next == x {
+            fixed += 1;
+        } else {
+            assert!(
+                next > x && l0.min(limit_at(&f, &row, next, k)) == x,
+                "{} line {x} is neither a fixed point nor the lower line of a cycle",
+                row.id()
+            );
+            cycle += 1;
+        }
     }
-    assert_eq!(cut, 231);
+    assert_eq!((cut, fixed, cycle), (237, 114, 123));
 }
