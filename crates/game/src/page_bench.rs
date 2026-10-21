@@ -63,7 +63,6 @@ fn pick_pages(v: &Views, index: &NameIndex) -> Vec<PageRef> {
         .next()
         .map(|h| PageRef::Headline { date: h.date, n: 0 });
     [
-        Some(PageRef::World),
         Some(PageRef::Companies),
         listed,
         private,
@@ -83,6 +82,8 @@ fn pick_pages(v: &Views, index: &NameIndex) -> Vec<PageRef> {
         Some(PageRef::News),
         headline,
         Some(PageRef::Settings),
+        // Last: the workspace starts on it, so first would open nothing.
+        Some(PageRef::World),
     ]
     .into_iter()
     .flatten()

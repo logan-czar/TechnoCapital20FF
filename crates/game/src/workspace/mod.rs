@@ -681,9 +681,16 @@ fn render_panes(
     if cfg.is_changed() {
         *cfg_rev += 1;
     }
+    // Views move every tick at speed; only pages that rebuild on them need a look then.
+    let view_pages = views.is_changed()
+        && frames.iter().any(|(f, _)| {
+            ws.page(f.pane)
+                .and_then(|p| registry.get(p.kind()))
+                .is_some_and(|s| s.refresh == Refresh::OnViewChange)
+        });
     let any = ws.is_changed()
         || cfg.is_changed()
-        || views.is_changed()
+        || view_pages
         || index.is_changed()
         || registry.is_changed()
         || frames.iter().count() != *frame_count;

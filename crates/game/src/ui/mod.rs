@@ -1,6 +1,6 @@
 //! The UI shell (build-plan M7.4 to M7.8; spec 8 main screen; 20-ui 20.2): the top bar with the
-//! alert row, the left rail, the main area (the map's place, with panel slot 1 over it and the
-//! full-screen Pdoomberg terminal), the outliner, toasts, and the screen router.
+//! alert row, the left rail, the main area (the tiling page workspace of M9, with the
+//! full-screen Pdoomberg terminal over it), the outliner, toasts, and the screen router.
 //!
 //! Every screen reads [`Views`](crate::bridge::Views) (and the runner controls mirror) and sends
 //! [`SimControl`](crate::bridge::SimControl) messages; none can reach the sim (spec 9).
