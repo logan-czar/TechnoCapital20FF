@@ -26,6 +26,11 @@ bevy = { workspace = true, features = [
 sim.workspace = true
 # The starting data the sim is built from; also the table demo's province and company rows.
 sim-data.workspace = true
+# The UI config file (layouts, columns, sections, density; D452): serde for the types and RON
+# for a human-readable file. Bevy's asset crate already builds ron 0.12, so neither adds a crate
+# to the build. The config dir is found from the platform's environment variables, no crate.
+serde.workspace = true
+ron = "0.12"
 
 [lints]
 workspace = true

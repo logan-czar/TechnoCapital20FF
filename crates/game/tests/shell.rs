@@ -9,6 +9,7 @@ use bevy::prelude::*;
 use bevy::time::TimeUpdateStrategy;
 use common::{FRAME, Seen, data, frames, send, ticks};
 use game::bridge::{RunnerControls, SimBridgePlugin, SimNotice, Views};
+use game::pages::PageRef;
 use game::table::{Table, TableFocus, TableRowClicked, sort_order};
 use game::ui::ShellPlugin;
 use game::ui::alerts::{AlertBoard, AlertIcon, EventLog, MAX_TOASTS, Toast};
@@ -16,6 +17,7 @@ use game::ui::demo::{COMPANY_REVENUE_COL, demo_tables};
 use game::ui::outliner::OmniscientToggle;
 use game::ui::rail::{Router, Screen, ScreenRoot};
 use game::ui::screens::{DemoTableEntities, ViewLine};
+use game::workspace::Workspace;
 use sim::time::Quarter;
 use sim::time::quarter::{recap_tick, release_tick};
 use sim::world::{AlertKind, AlertLevel, AlertPayload, CompanyId};
@@ -212,37 +214,48 @@ fn alert_settings_apply() {
     assert!(!log.iter().any(|l| l.contains("Plan lock")));
 }
 
-/// M7.8: the rail keys route between screens; Esc closes; the keyboard follows the open table.
+/// M7.8, M9 A2 (D451): the rail keys open their pages in the focused pane; B opens full-screen
+/// Pdoomberg over the workspace and Esc closes it; the keyboard follows the open table.
 #[test]
-fn router_opens_and_closes_screens() {
+fn router_opens_pages_and_pdoomberg() {
     let mut app = shell_app();
-    let shown = |app: &mut App, s: Screen| {
+    let pdb_shown = |app: &mut App| {
         app.world_mut()
             .query::<(&ScreenRoot, &Node)>()
             .iter(app.world())
-            .find(|(r, _)| r.0 == s)
+            .find(|(r, _)| r.0 == Screen::Pdoomberg)
             .map(|(_, n)| n.display != Display::None)
             .unwrap()
     };
     let current = |app: &App| app.world().resource::<Router>().current;
+    let page = |app: &App| {
+        let ws = app.world().resource::<Workspace>();
+        ws.page(ws.focused()).cloned().unwrap()
+    };
     assert_eq!(current(&app), Screen::Map);
-    assert!(shown(&mut app, Screen::Map));
-    for (key, screen) in [
-        (KeyCode::KeyO, Screen::Company),
-        (KeyCode::KeyU, Screen::Industries),
-        (KeyCode::KeyR, Screen::Recap),
-        (KeyCode::KeyN, Screen::News),
+    assert_eq!(
+        page(&app),
+        PageRef::World,
+        "the workspace starts on the World page"
+    );
+    assert!(!pdb_shown(&mut app));
+    let quarter = app.world().resource::<Views>().clock().date.quarter();
+    for (key, want) in [
+        (KeyCode::KeyO, PageRef::Companies),
+        (KeyCode::KeyU, PageRef::Industries),
+        (KeyCode::KeyR, PageRef::Recap(quarter)),
+        (KeyCode::KeyN, PageRef::News),
     ] {
         press(&mut app, key);
-        assert_eq!(current(&app), screen);
-        assert!(shown(&mut app, screen));
-        assert!(shown(&mut app, Screen::Map), "panels open over the map");
+        assert_eq!(current(&app), Screen::Map);
+        assert_eq!(page(&app), want);
     }
-    press(&mut app, KeyCode::KeyN);
-    assert_eq!(current(&app), Screen::Map, "a screen's key closes it");
+    let ws = app.world().resource::<Workspace>();
+    assert_eq!(ws.len(), 1, "rail pages open in the focused pane");
+    assert_eq!(ws.history(ws.focused()).unwrap().back_list().len(), 4);
     press(&mut app, KeyCode::KeyB);
     assert_eq!(current(&app), Screen::Pdoomberg);
-    assert!(!shown(&mut app, Screen::Map), "Pdoomberg is full screen");
+    assert!(pdb_shown(&mut app), "Pdoomberg is full screen");
     let tables = *app.world().resource::<DemoTableEntities>();
     assert_eq!(
         app.world().resource::<TableFocus>().0,
@@ -250,10 +263,11 @@ fn router_opens_and_closes_screens() {
     );
     press(&mut app, KeyCode::Escape);
     assert_eq!(current(&app), Screen::Map);
-    assert_eq!(
-        app.world().resource::<TableFocus>().0,
-        Some(tables.provinces)
-    );
+    assert!(!pdb_shown(&mut app));
+    assert_eq!(page(&app), PageRef::News, "the workspace is where it was");
+    // The News page's table has the keyboard.
+    let focus = app.world().resource::<TableFocus>().0;
+    assert!(focus.is_some() && focus != Some(tables.companies));
     assert!(controls(&app).paused, "screens never touch the clock");
 }
 
@@ -412,7 +426,7 @@ fn screens_show_the_views() {
         app.world_mut()
             .query::<(&ViewLine, &Text)>()
             .iter(app.world())
-            .find(|(_, t)| t.0.contains("v_clock"))
+            .find(|(_, t)| t.0.contains("v_quotes"))
             .map(|(_, t)| t.0.clone())
             .unwrap()
     };

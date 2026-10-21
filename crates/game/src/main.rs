@@ -1,7 +1,8 @@
 //! The desktop app (build-plan M7): the sim bridge and the UI shell.
 //!
 //! `cargo run -p game --release [-- --seed N]`. Benches (D14): `--bench-table [seconds]
-//! [--rows N]` and `--bench-max [seconds]`, which print timings to stdout and exit.
+//! [--rows N]`, `--bench-max [seconds]` and `--bench-pages` (every page kind to its first
+//! laid-out frame), which print timings to stdout and exit.
 
 use std::sync::Arc;
 
@@ -9,6 +10,7 @@ use bevy::prelude::*;
 use bevy::window::PresentMode;
 use game::bench::{BenchMode, BenchPlugin};
 use game::bridge::SimBridgePlugin;
+use game::config::{ConfigStore, default_config_path};
 use game::ui::ShellPlugin;
 use game::ui::demo::demo_tables;
 use sim::Sim;
@@ -53,6 +55,7 @@ fn parse_args() -> Args {
                     i += 1;
                 }
             }
+            "--bench-pages" => args.bench = Some(BenchMode::Pages),
             "--rows" => {
                 args.rows = Some(
                     list.get(i + 1)
@@ -70,7 +73,7 @@ fn parse_args() -> Args {
 
 fn exit_usage(msg: &str) -> ! {
     eprintln!(
-        "{msg}\nusage: game [--seed N] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]]"
+        "{msg}\nusage: game [--seed N] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-pages]"
     );
     std::process::exit(2)
 }
@@ -104,6 +107,11 @@ fn main() {
     }))
     .add_plugins(SimBridgePlugin::new(sim))
     .insert_resource(demo)
+    // The UI config file (D452); benches keep theirs in memory so a run never edits it.
+    .insert_resource(match (&args.bench, default_config_path()) {
+        (None, Some(path)) => ConfigStore::at(path),
+        _ => ConfigStore::in_memory(),
+    })
     .add_plugins(ShellPlugin)
     .add_systems(Startup, |mut commands: Commands| {
         commands.spawn(Camera2d);

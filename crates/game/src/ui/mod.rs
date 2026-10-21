@@ -53,10 +53,30 @@ impl OpenMenu {
 /// System sets of the shell, all in `Update` after the views are synced.
 #[derive(SystemSet, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum UiSystems {
+    /// The command bar takes the keyboard first ([`KeyboardCapture`]).
+    Capture,
     /// Keyboard and routing.
     Input,
     /// Reading views and notices into the widgets.
     Show,
+}
+
+/// True while a text field (the command bar) has the keyboard: every other key handler skips
+/// the frame (D453).
+#[derive(Resource, Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub struct KeyboardCapture(pub bool);
+
+/// Ctrl or Alt is held: plain-key shortcuts (screen letters, speeds, table scrolling, Tab) step
+/// aside for the workspace's Ctrl and Alt shortcuts (D453).
+pub fn modifier_held(keys: &ButtonInput<KeyCode>) -> bool {
+    keys.any_pressed([
+        KeyCode::ControlLeft,
+        KeyCode::ControlRight,
+        KeyCode::AltLeft,
+        KeyCode::AltRight,
+        KeyCode::SuperLeft,
+        KeyCode::SuperRight,
+    ])
 }
 
 /// Startup set: the layout first, then each module's content.
@@ -68,15 +88,32 @@ pub struct ShellPlugin;
 
 impl Plugin for ShellPlugin {
     fn build(&self, app: &mut App) {
+        // The config first: the theme, tables and workspace read it at startup.
+        if !app.world().contains_resource::<crate::config::UiConfig>() {
+            app.add_plugins(crate::config::ConfigPlugin);
+        }
         app.init_resource::<DemoTables>()
+            .init_resource::<KeyboardCapture>()
             .add_plugins((theme::ThemePlugin, TablePlugin))
             .configure_sets(
                 Update,
-                (UiSystems::Input, UiSystems::Show, TableSystems)
+                (
+                    UiSystems::Capture,
+                    UiSystems::Input,
+                    UiSystems::Show,
+                    TableSystems,
+                )
                     .chain()
                     .after(SimSystems::SyncViews),
             )
             .add_systems(Startup, spawn_layout.in_set(SpawnLayout))
+            .add_plugins((
+                crate::pages::PagesPlugin,
+                crate::workspace::WorkspacePlugin,
+                crate::links::LinksPlugin,
+                crate::command::CommandPlugin,
+                crate::chart::ChartPlugin,
+            ))
             .add_plugins((
                 rail::RouterPlugin,
                 top_bar::TopBarPlugin,
