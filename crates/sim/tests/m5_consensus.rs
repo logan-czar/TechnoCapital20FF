@@ -2,9 +2,9 @@
 //! projects each company's quarter with no new rolls (a clone runs the quarter's three month
 //! closes with NoNoise draws, each industry's supply, S and M and each unit's productivity held
 //! at their lock values, design fix 109), and `consensus = projection × (1 + e)`, e uniform
-//! within ±5% from the prices stream.
+//! within ±20% from the prices stream (the spec's ±5% widened by the M10.7 tuning pass, D361).
 //!
-//! - At the 9 April 2020 lock every consensus is within ±5% of the projection made from the world
+//! - At the 9 April 2020 lock every consensus is within ±20% of the projection made from the world
 //!   just before the lock's consensus job, the e spread over the companies is uniform-like (mean
 //!   near 0, both ends used), and the surprises at the 2 July release follow from the consensus
 //!   (5.15).
@@ -29,8 +29,8 @@ use sim::market::jobs::{HeldAtLock, project_quarter_net_income};
 use sim::time::{Date, DateTime, JobCtx, Slot};
 use sim::world::{CompanyId, World};
 
-/// Spec 5.16: e uniform within ±5%.
-const CONSENSUS_ERROR: f64 = 0.05;
+/// Spec 5.16: e uniform within ±5%, widened to ±20% by the M10.7 tuning pass (D361).
+const CONSENSUS_ERROR: f64 = 0.20;
 /// The lock and the release of the quarter the tests project (Q2 2020).
 const LOCK: (i32, u8, u8) = (2020, 4, 9);
 const RELEASE: (i32, u8, u8) = (2020, 7, 2);
@@ -82,7 +82,7 @@ fn project(w: &mut World, ctx: &mut JobCtx<'_>) {
 }
 
 #[test]
-fn consensus_is_the_projection_within_five_percent() {
+fn consensus_is_the_projection_within_twenty_percent() {
     let mut sim = Sim::new(data(), 11).unwrap();
     sim.register_test_job(Slot::LockAiPlans, "test.project", project);
     run_to(&mut sim, lock());
@@ -112,8 +112,9 @@ fn consensus_is_the_projection_within_five_percent() {
         "{} consensus errors: mean {mean:+.4}, range {lo:+.4} to {hi:+.4}",
         es.len()
     );
+    // Both ends used: beyond 80% of the bound each way (D361's ±20%).
     assert!(mean.abs() < 0.01);
-    assert!(lo < -0.04 && hi > 0.04);
+    assert!(lo < -0.8 * CONSENSUS_ERROR && hi > 0.8 * CONSENSUS_ERROR);
 
     // The 2 July surprises follow from the consensus (5.15).
     run_to(&mut sim, release());

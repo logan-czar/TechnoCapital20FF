@@ -1,5 +1,5 @@
 //! Spec 5.16 projections and consensus (21.5.1): `consensus = projection × (1 + e)`, e uniform
-//! ±5%; the shown range `±30% × (1 − 0.6 × elapsed share) × (1 − 24 ÷ 50) × 0.7`, ×2 for a
+//! ±20% (the spec's ±5% widened by the M10.7 tuning pass, D361); the shown range `±30% × (1 − 0.6 × elapsed share) × (1 − 24 ÷ 50) × 0.7`, ×2 for a
 //! secret plan (all, for the observer), minimum ±3%. The range shrinks as the quarter passes.
 
 use sim::market::projection::{RangeViewer, consensus, elapsed_share, range, range_width};
@@ -93,21 +93,21 @@ fn range_around_a_centre() {
 }
 
 #[test]
-fn consensus_is_the_projection_within_five_percent() {
+fn consensus_is_the_projection_within_twenty_percent() {
     // NoNoise (u = 0.5) gives e = 0.
     near(consensus(10.0e6, &mut NoNoise), 10.0e6);
-    // e = −5% + 10% × u.
+    // e = −20% + 40% × u (D361).
     let mut s = ScriptedDraws::new();
     s.push(Stream::Prices, [0.0, 0.75]);
-    near(consensus(10.0e6, &mut s), 9.5e6);
-    near(consensus(10.0e6, &mut s), 10.25e6);
-    // Uniform ±5%: mean 0, sd 0.1 ÷ sqrt(12).
+    near(consensus(10.0e6, &mut s), 8.0e6);
+    near(consensus(10.0e6, &mut s), 11.0e6);
+    // Uniform ±20%: mean 0, sd 0.4 ÷ sqrt(12).
     let mut r = RngStreams::new(5);
     let n = 100_000;
     let es: Vec<f64> = (0..n).map(|_| consensus(1.0, &mut r) - 1.0).collect();
-    assert!(es.iter().all(|e| (-0.05..0.05).contains(e)));
+    assert!(es.iter().all(|e| (-0.20..0.20).contains(e)));
     let mean = es.iter().sum::<f64>() / n as f64;
     let sd = (es.iter().map(|e| (e - mean).powi(2)).sum::<f64>() / n as f64).sqrt();
-    assert!(mean.abs() < 5e-4, "{mean}");
-    assert!((sd / (0.1 / 12f64.sqrt()) - 1.0).abs() < 0.01, "{sd}");
+    assert!(mean.abs() < 2e-3, "{mean}");
+    assert!((sd / (0.4 / 12f64.sqrt()) - 1.0).abs() < 0.01, "{sd}");
 }
