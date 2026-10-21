@@ -18,7 +18,7 @@
 use std::fmt;
 
 use crate::time::control::Controls;
-use crate::time::scheduler::TickFacts;
+use crate::time::scheduler::{TickFacts, TickObserver, TickPart};
 use crate::world::World;
 
 /// How often a view is rebuilt (spec 9.4).
@@ -73,6 +73,13 @@ pub trait ViewData: Clone + PartialEq + fmt::Debug {
     const ON_CONTROL: bool = false;
 
     fn build(input: &ViewInput<'_>) -> Self;
+
+    /// Rebuilds this view in place from `input`; the result must equal [`ViewData::build`]'s.
+    /// The default builds a new one; a view rebuilt every tick overrides it to reuse its
+    /// allocations (D402).
+    fn rebuild(&mut self, input: &ViewInput<'_>) {
+        *self = Self::build(input);
+    }
 }
 
 /// One view with its version and dirty flag (spec 9.4, 12.3).
@@ -113,7 +120,7 @@ impl<T: ViewData> View<T> {
     fn after_tick(&mut self, facts: &TickFacts, input: &ViewInput<'_>, version: u64) {
         self.dirty = T::CADENCE.is_due(facts);
         if self.dirty {
-            self.data = T::build(input);
+            self.data.rebuild(input);
             self.version = version;
         }
     }
@@ -189,11 +196,27 @@ macro_rules! sim_views {
 
             /// After a tick: rebuilds the views due on this tick and clears the others' dirty
             /// flags (spec 9.4).
-            pub(crate) fn refresh_after_tick(&mut self, world: &World, controls: &Controls) {
+            ///
+            /// With an `observer`, each view rebuilt is timed as a [`TickPart::View`] (D400).
+            pub(crate) fn refresh_after_tick(
+                &mut self,
+                world: &World,
+                controls: &Controls,
+                mut observer: Option<&mut dyn TickObserver>,
+            ) {
                 self.refresh += 1;
                 let facts = TickFacts::new(world.clock);
                 let input = ViewInput { world, controls };
-                $(self.$field.after_tick(&facts, &input, self.refresh);)*
+                $(
+                    let watch = self.$field.cadence().is_due(&facts);
+                    if watch && let Some(o) = &mut observer {
+                        o.started(TickPart::View(stringify!($field)));
+                    }
+                    self.$field.after_tick(&facts, &input, self.refresh);
+                    if watch && let Some(o) = &mut observer {
+                        o.finished(TickPart::View(stringify!($field)));
+                    }
+                )*
             }
 
             /// After a control: rebuilds the views that follow controls (the clock).

@@ -11,4 +11,4 @@ pub mod trace;
 pub use calendar::{Date, DateTime, Month, Quarter, Weekday};
 pub use control::{Control, Controls};
 pub use quarter::QuarterPhase;
-pub use scheduler::{JobCtx, JobFn, Scheduler, Slot, TickFacts};
+pub use scheduler::{JobCtx, JobFn, Scheduler, Slot, TickFacts, TickObserver, TickPart};

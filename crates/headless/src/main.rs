@@ -9,6 +9,7 @@
 //!   soak.md).
 
 mod metrics;
+mod profile;
 mod soak;
 mod targets;
 
@@ -19,11 +20,12 @@ use std::time::Instant;
 use sim::Sim;
 
 use crate::metrics::{YEARS_HEADER, run_seed};
+use crate::profile::Profiler;
 use crate::soak::{DEFAULT_SEEDS, DEFAULT_YEARS, SoakArgs};
 
 const USAGE: &str = "usage:\n  \
     headless --check-data [--data-dir DIR]\n  \
-    headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--data-dir DIR]\n  \
+    headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--data-dir DIR]\n  \
     headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--data-dir DIR]\n  \
     headless check DIR\n\
     DIR defaults to the repository's docs/design/data; seeds A..B are inclusive (a single seed A \
@@ -126,12 +128,14 @@ struct RunArgs {
     seeds: (u64, u64),
     out: Option<PathBuf>,
     hash_monthly: bool,
+    profile: bool,
     dir: PathBuf,
 }
 
 impl RunArgs {
     fn parse(args: &[String]) -> Option<RunArgs> {
         let (mut years, mut seeds, mut out, mut hash_monthly) = (None, None, None, false);
+        let mut profile = false;
         let mut dir = sim_data::default_data_dir();
         let mut it = args.iter();
         while let Some(arg) = it.next() {
@@ -140,6 +144,7 @@ impl RunArgs {
                 "--seeds" => seeds = Some(parse_seeds(it.next()?)?),
                 "--out" => out = Some(PathBuf::from(it.next()?)),
                 "--hash-monthly" => hash_monthly = true,
+                "--profile" => profile = true,
                 "--data-dir" => dir = PathBuf::from(it.next()?),
                 _ => return None,
             }
@@ -149,6 +154,7 @@ impl RunArgs {
             seeds: seeds?,
             out,
             hash_monthly,
+            profile,
             dir,
         })
     }
@@ -230,7 +236,14 @@ fn run(args: &RunArgs) -> ExitCode {
     let mut csv = format!("{YEARS_HEADER}\n");
     let (mut all_ticks, all_start) = (0u64, Instant::now());
     for seed in args.seeds.0..=args.seeds.1 {
-        let out = match run_seed(&data, seed, args.years, args.hash_monthly) {
+        let mut profiler = args.profile.then(Profiler::new);
+        let out = match run_seed(
+            &data,
+            seed,
+            args.years,
+            args.hash_monthly,
+            profiler.as_mut(),
+        ) {
             Ok(o) => o,
             Err(e) => {
                 eprintln!("error: {e}");
@@ -241,6 +254,9 @@ fn run(args: &RunArgs) -> ExitCode {
             "seed {seed}: {} years to {}, hash {}, {} ms",
             args.years, out.end, out.state_hash, out.wall_ms
         );
+        if let Some(p) = &profiler {
+            println!("profile, seed {seed}:\n{}", p.table());
+        }
         csv.push_str(&out.years);
         all_ticks += out.ticks;
     }

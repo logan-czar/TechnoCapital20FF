@@ -30,7 +30,7 @@ pub use hash::StateHash;
 pub use rng::{DrawSource, RngStreams, Stream};
 use time::control::{MAX_SPEED, Skip, skip_target};
 pub use time::{Control, Controls};
-use time::{DateTime, Scheduler, Slot};
+use time::{DateTime, Scheduler, Slot, TickObserver, TickPart};
 pub use views::ClockView;
 pub use views::SimViews;
 use world::{CompanyId, PauseReason};
@@ -188,16 +188,31 @@ impl Sim {
     /// [`Notice::TickDone`]. It runs whether or not the game is paused: the runner decides how
     /// many steps to run from [`Controls::effective_speed`] (spec 9.1).
     pub fn step(&mut self) -> Vec<Notice> {
+        self.step_inner(None)
+    }
+
+    /// [`Sim::step`], telling `observer` when each slot, job and the view refresh start and
+    /// finish (build-plan M10.6 profiling, D400). The tick is the same as `step`'s: the observer
+    /// sees no state and cannot change any.
+    pub fn step_observed(&mut self, observer: &mut dyn TickObserver) -> Vec<Notice> {
+        self.step_inner(Some(observer))
+    }
+
+    fn step_inner(&mut self, mut observer: Option<&mut dyn TickObserver>) -> Vec<Notice> {
         let mut notices = Vec::new();
         if let Some(t) = &mut self.trace {
             t.clear();
         }
-        let alert_pause = self.scheduler.run_tick(
+        let alert_pause = self.scheduler.run_tick_observed(
             &mut self.world,
             &mut self.rng,
             &mut notices,
             &self.controls,
             self.trace.as_mut(),
+            match &mut observer {
+                Some(o) => Some(&mut **o),
+                None => None,
+            },
         );
         // Pauses go in just before the final TickDone.
         let done = notices.pop();
@@ -210,7 +225,20 @@ impl Sim {
             self.pause(&mut notices, reason);
         }
         notices.extend(done);
-        self.views.refresh_after_tick(&self.world, &self.controls);
+        if let Some(o) = &mut observer {
+            o.started(TickPart::Views);
+        }
+        self.views.refresh_after_tick(
+            &self.world,
+            &self.controls,
+            match &mut observer {
+                Some(o) => Some(&mut **o),
+                None => None,
+            },
+        );
+        if let Some(o) = observer {
+            o.finished(TickPart::Views);
+        }
         notices
     }
 

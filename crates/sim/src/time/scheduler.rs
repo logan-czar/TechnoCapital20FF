@@ -404,6 +404,28 @@ impl<'a> JobCtx<'a> {
     }
 }
 
+/// A part of a tick a [`TickObserver`] is told about (build-plan M10.6 profiling).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TickPart {
+    /// A due slot, all its jobs.
+    Slot(Slot),
+    /// One job of a slot, by its registered name.
+    Job(Slot, &'static str),
+    /// The view refresh after the tick's jobs (spec 9.4).
+    Views,
+    /// One view rebuilt in that refresh, by its `SimViews` field name.
+    View(&'static str),
+}
+
+/// Watches the parts of a tick as they run, for profiling (build-plan M10.6, D400). It is told
+/// only which part starts and finishes, never sees the world or the draws, so it cannot change a
+/// run: a step with an observer gives the same world, draws and notices as one without. Any wall
+/// clock lives in the observer (headless `run --profile`), never in sim logic (build-plan 4.3).
+pub trait TickObserver {
+    fn started(&mut self, part: TickPart);
+    fn finished(&mut self, part: TickPart);
+}
+
 /// The registered jobs of every slot.
 #[derive(Clone)]
 pub struct Scheduler {
@@ -442,7 +464,21 @@ impl Scheduler {
         ctx_draws: &mut dyn DrawSource,
         notices: &mut Vec<Notice>,
         controls: &Controls,
+        trace: Option<&mut Vec<Slot>>,
+    ) -> Option<PauseReason> {
+        self.run_tick_observed(world, ctx_draws, notices, controls, trace, None)
+    }
+
+    /// [`Scheduler::run_tick`], telling `observer` when each due slot and each of its jobs
+    /// starts and finishes (D400). The tick itself is the same with or without one.
+    pub fn run_tick_observed(
+        &self,
+        world: &mut World,
+        ctx_draws: &mut dyn DrawSource,
+        notices: &mut Vec<Notice>,
+        controls: &Controls,
         mut trace: Option<&mut Vec<Slot>>,
+        mut observer: Option<&mut dyn TickObserver>,
     ) -> Option<PauseReason> {
         // 4.1 step 1: advance the clock. Jobs then run for the new time, so the first tick is
         // 2020-01-01 01:00; the 00:00 start state is the load (spec 7.3, D12).
@@ -456,8 +492,21 @@ impl Scheduler {
             if let Some(t) = trace.as_deref_mut() {
                 t.push(slot);
             }
-            for (_, job) in self.jobs(slot) {
-                job(world, &mut ctx);
+            match observer.as_deref_mut() {
+                None => {
+                    for (_, job) in self.jobs(slot) {
+                        job(world, &mut ctx);
+                    }
+                }
+                Some(o) => {
+                    o.started(TickPart::Slot(slot));
+                    for &(name, job) in self.jobs(slot) {
+                        o.started(TickPart::Job(slot, name));
+                        job(world, &mut ctx);
+                        o.finished(TickPart::Job(slot, name));
+                    }
+                    o.finished(TickPart::Slot(slot));
+                }
             }
             if let Some(n) = slot.notice_after(&facts) {
                 ctx.notice(n);
