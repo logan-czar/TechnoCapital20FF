@@ -9,8 +9,9 @@
 //! **One file per view.** Each view is a struct in its own file that implements [`ViewData`]:
 //! its cadence and its `build` from the [`ViewInput`]. Filling a view touches only its file.
 //! Adding a view is a new file plus one line in the `sim_views!` list below, which generates the
-//! module, the [`SimViews`] field and the build and refresh code. M1 fills the clock view; the
-//! others are empty placeholders on their cadence.
+//! module, the [`SimViews`] field and the build and refresh code. M1 fills the clock view, M2 the
+//! industry rows, industry detail and cycle views; the others are empty placeholders on their
+//! cadence.
 
 use std::fmt;
 
@@ -188,6 +189,7 @@ sim_views! {
     tech: tech::TechView;
     industry_rows: industry_rows::IndustryRowsView;
     industry_detail: industry_detail::IndustryDetailView;
+    cycle: cycle::CycleView;
     map_layers: map_layers::MapLayersView;
     province_cards: province_cards::ProvinceCardsView;
     statements: statements::StatementsView;
