@@ -18,6 +18,7 @@ use sim::ai::archetype::Archetype;
 use sim::finance::distress::CompanyStatus;
 use sim::people::traits::Trait;
 use sim::time::Date;
+use sim::world::Holder;
 
 /// Spec 6.1 payout mults (T).
 fn spec_payout_mult(a: Archetype) -> f64 {
@@ -37,6 +38,7 @@ fn the_dividend_rule_at_the_first_plan_lock() {
     run_to(&mut sim, Date::ymd(2020, 1, 10));
     let after = sim.world().clone();
     let mut paying = 0;
+    let mut listed = 0;
     for (id, c) in before.companies.iter() {
         let f = &c.finance;
         let a = &after.companies[id];
@@ -76,17 +78,31 @@ fn the_dividend_rule_at_the_first_plan_lock() {
             c.key,
             plan.financing.dividend
         );
-        // Cash moved at the lock by the draw, repayment and dividend (D125). A company that lists
-        // at this lock also takes its IPO's new money (5.20.1 listing step 3), so its cash is
-        // left out here; the listing's own books are checked in spec_5_20.
-        let moved = plan.financing.draw - plan.financing.repay - plan.financing.dividend;
-        if c.public || !a.public {
-            assert!(
-                (a.cash_usd - (c.cash_usd + moved)).abs() < 1e-6,
-                "{}",
-                c.key
-            );
+        // Cash moved at the lock by the draw, repayment and dividend (D125), plus, for a company
+        // that lists at this lock, its IPO's new money (5.20.1 listing step 3): the float sold at
+        // open_price × 0.92, less 3% fees.
+        let mut moved = plan.financing.draw - plan.financing.repay - plan.financing.dividend;
+        let mut tolerance = 1e-6;
+        if !c.public && a.public {
+            let float = a
+                .holders
+                .iter()
+                .find(|h| h.holder == Holder::PublicFloat)
+                .expect("a listed company has a public float")
+                .shares;
+            let net = float as f64 * after.market.stocks[id].ipo_price * 0.92 * 0.97;
+            moved += net;
+            // Up to rounding on the hundreds of millions raised (m6_ipo uses the same 1e-6 share).
+            tolerance = 1e-6 * net;
+            listed += 1;
         }
+        assert!(
+            (a.cash_usd - (c.cash_usd + moved)).abs() < tolerance,
+            "{}: cash {} want {}",
+            c.key,
+            a.cash_usd,
+            c.cash_usd + moved
+        );
         paying += usize::from(want > 0.0);
         if a.archetype == Archetype::Startup {
             assert_eq!(
@@ -96,7 +112,7 @@ fn the_dividend_rule_at_the_first_plan_lock() {
             );
         }
     }
-    println!("9 January 2020: {paying} of 651 pay a dividend");
+    println!("9 January 2020: {paying} of 651 pay a dividend; {listed} list at the lock");
     assert!(paying > 0);
 
     // Arrowhead (7.1): a Cash cow with no line and $80M of cash, 0.40 × 1.3 = 52% of Q4 2019 NI.
