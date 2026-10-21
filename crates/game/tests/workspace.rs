@@ -76,21 +76,80 @@ fn press(app: &mut App, key: KeyCode) {
 fn type_text(app: &mut App, s: &str) {
     for c in s.chars() {
         let t = c.to_string();
+        // The physical key a US keyboard types `c` with, so every other key handler sees the
+        // real key (O, N, digits, Space) while the bar has the keyboard.
+        let code = key_for(c);
+        let logical = if c == ' ' {
+            Key::Space
+        } else {
+            Key::Character(t.as_str().into())
+        };
         app.world_mut().write_message(key_event(
-            KeyCode::KeyA,
-            Key::Character(t.as_str().into()),
+            code,
+            logical.clone(),
             Some(&t),
             ButtonState::Pressed,
         ));
         app.update();
-        app.world_mut().write_message(key_event(
-            KeyCode::KeyA,
-            Key::Character(t.as_str().into()),
-            None,
-            ButtonState::Released,
-        ));
+        app.world_mut()
+            .write_message(key_event(code, logical, None, ButtonState::Released));
         app.update();
     }
+}
+
+fn key_for(c: char) -> KeyCode {
+    const LETTERS: [KeyCode; 26] = [
+        KeyCode::KeyA,
+        KeyCode::KeyB,
+        KeyCode::KeyC,
+        KeyCode::KeyD,
+        KeyCode::KeyE,
+        KeyCode::KeyF,
+        KeyCode::KeyG,
+        KeyCode::KeyH,
+        KeyCode::KeyI,
+        KeyCode::KeyJ,
+        KeyCode::KeyK,
+        KeyCode::KeyL,
+        KeyCode::KeyM,
+        KeyCode::KeyN,
+        KeyCode::KeyO,
+        KeyCode::KeyP,
+        KeyCode::KeyQ,
+        KeyCode::KeyR,
+        KeyCode::KeyS,
+        KeyCode::KeyT,
+        KeyCode::KeyU,
+        KeyCode::KeyV,
+        KeyCode::KeyW,
+        KeyCode::KeyX,
+        KeyCode::KeyY,
+        KeyCode::KeyZ,
+    ];
+    const DIGITS: [KeyCode; 10] = [
+        KeyCode::Digit0,
+        KeyCode::Digit1,
+        KeyCode::Digit2,
+        KeyCode::Digit3,
+        KeyCode::Digit4,
+        KeyCode::Digit5,
+        KeyCode::Digit6,
+        KeyCode::Digit7,
+        KeyCode::Digit8,
+        KeyCode::Digit9,
+    ];
+    match c.to_ascii_lowercase() {
+        l @ 'a'..='z' => LETTERS[(l as u8 - b'a') as usize],
+        d @ '0'..='9' => DIGITS[(d as u8 - b'0') as usize],
+        ' ' => KeyCode::Space,
+        '-' => KeyCode::Minus,
+        '=' => KeyCode::Equal,
+        _ => KeyCode::Quote,
+    }
+}
+
+fn controls(app: &App) -> RunnerControls {
+    app.world().resource::<RunnerControls>().clone()
 }
 
 fn ws(app: &App) -> &Workspace {
@@ -224,8 +283,14 @@ fn panes_split_close_focus_and_resize_from_keys() {
     assert_eq!(ws(&app).pane_ids(), [a, c]);
     assert_eq!(ws(&app).focused(), c);
     assert_eq!(frames_n(&mut app), 2);
-    // Ctrl and digits are not speeds; the clock never moved.
-    assert!(app.world().resource::<RunnerControls>().paused);
+    // Ctrl and Alt with digits are not speeds (D453); plain digits still are.
+    chord(&mut app, &[KeyCode::ControlLeft], KeyCode::Digit3);
+    chord(&mut app, &[KeyCode::AltLeft], KeyCode::Digit4);
+    let c = controls(&app);
+    assert_eq!((c.speed, c.paused), (1, true), "the clock never moved");
+    press(&mut app, KeyCode::Digit3);
+    let c = controls(&app);
+    assert_eq!((c.speed, c.paused), (3, false));
     // The last layout is in the config.
     let saved = app
         .world()
@@ -250,12 +315,63 @@ fn command_bar_searches_and_opens() {
             _ => None,
         })
         .unwrap();
+    // Running at speed 3, with a back history in the focused pane.
+    common::alerts_off(&mut app);
+    common::send(&mut app, sim::Control::SetSpeed(3));
+    open(&mut app, PageRef::Industries, OpenTarget::Focused);
+    open(&mut app, PageRef::Zones, OpenTarget::Focused);
+    let before = (controls(&app).speed, controls(&app).paused);
+    assert_eq!(before, (3, false));
     chord(&mut app, &[KeyCode::ControlLeft], KeyCode::KeyK);
     assert!(app.world().resource::<CommandBar>().open);
-    // "1" is typed, not a speed key.
-    type_text(&mut app, "1");
-    assert!(app.world().resource::<RunnerControls>().paused);
-    assert_eq!(app.world().resource::<CommandBar>().query, "1");
+    // With the bar open, digits, rail letters and Space are text; Backspace edits the query.
+    type_text(&mut app, "1on 5");
+    assert_eq!(app.world().resource::<CommandBar>().query, "1on 5");
+    for _ in 0..5 {
+        press(&mut app, KeyCode::Backspace);
+    }
+    assert_eq!(app.world().resource::<CommandBar>().query, "");
+    let c = controls(&app);
+    assert_eq!(
+        (c.speed, c.paused),
+        before,
+        "no speed key or pause reached the clock"
+    );
+    assert_eq!(app.world().resource::<Router>().current, Screen::Map);
+    assert_eq!(focused_page(&app), PageRef::Zones, "no rail page, no back");
+    assert_eq!(
+        ws(&app)
+            .history(ws(&app).focused())
+            .unwrap()
+            .back_list()
+            .len(),
+        2
+    );
+    // AltGr (Ctrl+Alt on Windows) types text too.
+    app.world_mut().write_message(key_event(
+        KeyCode::ControlLeft,
+        Key::Control,
+        None,
+        ButtonState::Pressed,
+    ));
+    app.world_mut().write_message(key_event(
+        KeyCode::AltRight,
+        Key::AltGraph,
+        None,
+        ButtonState::Pressed,
+    ));
+    app.update();
+    type_text(&mut app, "q");
+    for k in [KeyCode::ControlLeft, KeyCode::AltRight] {
+        app.world_mut().write_message(key_event(
+            k,
+            Key::Unidentified(NativeKey::Unidentified),
+            None,
+            ButtonState::Released,
+        ));
+    }
+    app.update();
+    assert_eq!(app.world().resource::<CommandBar>().query, "q");
     press(&mut app, KeyCode::Backspace);
     type_text(&mut app, &ticker.to_lowercase());
     assert_eq!(

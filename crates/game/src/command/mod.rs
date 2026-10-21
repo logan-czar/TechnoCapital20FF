@@ -305,7 +305,10 @@ fn bar_keys(
     mut run: MessageWriter<RunCommand>,
 ) {
     capture.0 = bar.open;
-    let ctrl = keys.any_pressed([KeyCode::ControlLeft, KeyCode::ControlRight]);
+    // Windows reports AltGr as Ctrl+Alt: with both held a key is text (@, {, ...), not a Ctrl
+    // chord (D455).
+    let alt = keys.any_pressed([KeyCode::AltLeft, KeyCode::AltRight]);
+    let ctrl = keys.any_pressed([KeyCode::ControlLeft, KeyCode::ControlRight]) && !alt;
     let shift = keys.any_pressed([KeyCode::ShiftLeft, KeyCode::ShiftRight]);
     let toggle =
         (ctrl && keys.just_pressed(KeyCode::KeyK)) || keys.just_pressed(KeyCode::Backquote);
