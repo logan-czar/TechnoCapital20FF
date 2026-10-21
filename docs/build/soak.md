@@ -130,3 +130,24 @@ Spec 10's balance targets after 10 years, then its startup, character and listin
 ## Performance
 
 Build-plan 4.5 and spec 10 M10: 30 years headless in under 2 minutes per seed. `timing.csv` holds each seed's wall time; `soak` prints the min, median and max. Seeds running at once share the machine's memory bandwidth, so a seed's time grows with `--jobs` (on Logan's PC one seed alone takes about 8 to 11 s; 20 seeds on 12 jobs took 20 s of wall time, 8.5 to 10.9 s per seed).
+
+## Determinism: replay and save/load (M10.4)
+
+Build-plan 4.3: same seed, same hashes, on the same machine and build (decision A; across OSes is post-MVP).
+
+**Replay** (D403). `record` plays a scripted player for N years and writes the seed, every control it sent (with its frame) and the state hash at every month close; `replay` plays the log back and checks every hash line as it is made, stopping at the first that differs.
+
+```
+target/release/headless record --years 30 --seed 1 --out run1.log
+target/release/headless replay run1.log
+```
+
+The log holds every control the MVP player has but NewGame and the debug-only Omniscient: speed 0 to 5, pause, resume, the four SkipTos, alert levels, the watchlist, and Save and Load (numbered saves beside the log, removed at the end; a Load rewinds to the latest save). Both commands drive the sim through one frame loop that runs `TICKS_PER_FRAME[effective speed]` ticks a frame and stops when the sim pauses itself, so the sim's own pauses (alerts, finished skips, loads) happen again in the replay; a hash line is `hash <frame> <step> <month> <hash>`, so a changed pause shows too. `crates/headless/tests/replay.rs` records a year, replays it, and checks that a changed hash, a dropped control, another seed or a bad line all fail. On Logan's PC a 30-year record or replay takes about a minute (the monthly hashes and the gzip of each save are most of it); seed 1's 30-year log (523 controls, Saves and Loads among them) ends on the same hash as `run --seeds 1`.
+
+**Save, load, continue** (D404). `crates/sim/tests/m10_save_load.rs` saves a game at ticks its seed picks (the plan lock tick, mid-way through the locked quarter, mid-way through a reaction week, right after a birth, a listing and a bankruptcy, and 3 random ticks), loads each save into another seed's game and plays on; every monthly hash and the final world must equal an unbroken run's. The default test covers 2 years of seed 3; the full check, 30 years on seeds 1 and 2, is ignored by default:
+
+```
+cargo test --release -p sim --test m10_save_load -- --ignored
+```
+
+It takes about 1.5 minutes in release on Logan's PC (9 cuts a seed, 360 monthly hashes a seed, all equal).
