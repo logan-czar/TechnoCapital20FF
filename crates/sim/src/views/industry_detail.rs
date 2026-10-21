@@ -8,11 +8,11 @@
 
 use super::estimate::{ESTIMATE_FLOOR_USD, Figure, Kind, Subject};
 use super::industry_rows::{
-    companies_by_revenue, industry_estimated, industry_figure, ranked_as_shown,
+    companies_by_revenue, estimated_industries, industry_figure, ranked_as_shown,
 };
 use super::{Cadence, ViewData, ViewInput};
 use crate::finance::statements::Period;
-use crate::time::Quarter;
+use crate::time::{DateTime, Quarter};
 use crate::world::{CompanyId, IndustryId, Ordinal};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -70,13 +70,14 @@ impl ViewData for IndustryDetailView {
         let w = input.world;
         let est = input.estimator();
         let ranked = companies_by_revenue(w);
+        let classes = estimated_industries(&est, w);
         let industries = w
             .industries
             .iter()
             .map(|(id, ind)| {
                 let list = &ranked[id.index()];
-                let estimated = industry_estimated(&est, w, list);
-                let shown = ranked_as_shown(&est, w, list);
+                let estimated = classes[id.index()];
+                let shown = ranked_as_shown(&est, w, list, estimated);
                 let fringe = industry_figure(
                     &est,
                     estimated,
@@ -99,8 +100,13 @@ impl ViewData for IndustryDetailView {
                         .map(|h| IndustryQuarterRow {
                             quarter: h.quarter,
                             demand: h.demand,
+                            // A quarter's band follows the class it closed in (D437).
                             supply: est.of_period(
-                                estimated,
+                                !est.omniscient
+                                    && w.industry_estimated_at(
+                                        id,
+                                        DateTime::midnight(h.quarter.next().first_day()),
+                                    ),
                                 Subject::Industry(id),
                                 Kind::Supply,
                                 Period::Quarter(h.quarter),

@@ -780,14 +780,13 @@ fn band_label(b: Band) -> &'static str {
 /// The M3 operations columns, read from the views at the December close.
 fn operations_columns(sim: &Sim) -> String {
     let v = sim.views();
-    let units = &v.units.get().units;
-    let mean_productivity =
-        units.iter().map(|u| u.productivity).sum::<f64>() / units.len().max(1) as f64;
     let companies = &v.company_detail.get().companies;
     let n = companies.len().max(1) as f64;
     let mean_management = companies.iter().map(|c| c.management_score).sum::<f64>() / n;
-    // From the soak totals: a private company's EBIT and TB are bands (D420, D427, D431).
+    // From the soak totals: a private company's EBIT, TB and productivity are bands (D420,
+    // D427, D431, D436).
     let totals = sim.soak_stats();
+    let mean_productivity = totals.mean_productivity;
     let data_tb = totals.data_tb;
     let profitable = totals.profitable_companies;
     format!(

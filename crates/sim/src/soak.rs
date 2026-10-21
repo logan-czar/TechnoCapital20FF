@@ -25,6 +25,8 @@ pub struct SoakStats {
     pub line_drawn_usd: f64,
     /// Companies whose units' last-month EBIT (after R&D, spec 5.5) sums above 0.
     pub profitable_companies: usize,
+    /// The mean productivity over every unit (spec 5.6).
+    pub mean_productivity: f64,
     /// The median productivity of the units with gross assets above 0 of companies not frozen,
     /// the mean of the middle two for an even count; 0 with none (spec 10, D321).
     pub median_productivity: f64,
@@ -62,6 +64,9 @@ pub fn soak_stats(w: &World) -> SoakStats {
         .map(|u| u.productivity)
         .collect();
     prod.sort_by(f64::total_cmp);
+    let units = w.units.rows();
+    let mean_productivity =
+        units.iter().map(|u| u.productivity).sum::<f64>() / units.len().max(1) as f64;
     // Per company, held plus unstructured over its industries, then summed (as TechRow did).
     let data_tb: f64 = companies
         .iter()
@@ -86,6 +91,7 @@ pub fn soak_stats(w: &World) -> SoakStats {
     SoakStats {
         line_drawn_usd,
         profitable_companies: ebit.iter().filter(|&&e| e > 0.0).count(),
+        mean_productivity,
         median_productivity: median(&prod),
         data_tb,
         industries,

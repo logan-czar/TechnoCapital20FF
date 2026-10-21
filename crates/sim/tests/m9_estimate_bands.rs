@@ -16,15 +16,16 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use common::{assert_figure, data};
 use sim::Sim;
+use sim::economy::supply::{M_MAX, M_MIN, p_pre};
 use sim::finance::statements::{Period, Statement, trailing_four};
 use sim::market::fair_value::shown_value;
 use sim::ops::data::{RETENTION_MONTHS, decay_rate};
 use sim::time::{Date, DateTime, Quarter};
 use sim::views::estimate::{Figure, StatementLine, shows_estimates};
-use sim::views::industry_rows::INDUSTRY_BANDED_BELOW;
 use sim::views::statements::published;
+use sim::views::units::UnitRow;
 use sim::world::units::USD_PER_MILLION;
-use sim::world::{CompanyId, IndustryId, Ordinal, World};
+use sim::world::{CompanyId, INDUSTRY_UNPUBLISHED_BELOW, IndustryId, Ordinal, UnitId, World};
 
 /// The numbers in a Debug dump: runs of digits, '.', '-', '+' and 'e'.
 fn numbers(s: &str) -> impl Iterator<Item = &str> {
@@ -165,6 +166,50 @@ fn rebuilt_revenue(h0: f64, u0: f64, h1: f64, u1: f64, decay_base: f64, tb_per_m
 /// How close the probe gets on the true book: a rebuild this close is exact.
 const PROBE_EXACT: f64 = 1e-6;
 
+/// A published peer's true unit and data figures, for the scan of its unit and tech rows.
+fn unit_truths(w: &World, id: CompanyId) -> BTreeSet<String> {
+    let c = &w.companies[id];
+    let mut money = Vec::new();
+    let mut tb = Vec::new();
+    for &u in &c.units {
+        let u = &w.units[u];
+        money.extend([
+            u.gross_assets,
+            u.asset_book,
+            u.assets_eff(),
+            u.revenue_m,
+            u.variable_m,
+            u.fixed_m,
+            u.rd_m,
+            u.dep_m,
+            u.ebit_m(),
+            u.capex_m,
+        ]);
+    }
+    for d in &c.data {
+        let p = &w.industries[d.industry].params;
+        let b = &d.book;
+        tb.extend([
+            b.held,
+            b.unstructured_tb(),
+            b.held + b.unstructured_tb(),
+            b.held * decay_rate(b.held, p.data_decay_base),
+        ]);
+    }
+    let mut set = debug_set(money, SCAN_MIN_USD);
+    set.extend(debug_set(tb, SCAN_MIN_TB));
+    set
+}
+
+/// A unit at the last month close: true and shown assets_eff and p_pre (the M probe's inputs).
+#[derive(Clone, Copy)]
+struct UnitSnap {
+    assets_eff: f64,
+    p_pre: f64,
+    shown_assets_eff: f64,
+    shown_p_pre: f64,
+}
+
 /// One month close's data book of a banded company: true and shown held and unstructured TB.
 #[derive(Clone, Copy)]
 struct Book {
@@ -187,6 +232,11 @@ fn private_figures_are_bands_that_never_show_the_truth() {
     let mut revenue: BTreeMap<CompanyId, (f64, f64)> = BTreeMap::new();
     let mut books: BTreeMap<CompanyId, Book> = BTreeMap::new();
     let (mut probes, mut probe_exact, mut probe_fooled) = (0u32, 0u32, 0u32);
+    // The review's M probe (D436): attempts, exact on the true figures, exact on the shown.
+    let (mut m_probes, mut m_exact, mut m_shown_exact) = (0u32, 0u32, 0u32);
+    let mut snaps: BTreeMap<UnitId, UnitSnap> = BTreeMap::new();
+    // Each industry's class at each quarter's close, as the live row showed it (D437).
+    let mut class_at_close: BTreeMap<(IndustryId, Quarter), bool> = BTreeMap::new();
     let mut probe_within_1pct = 0u32;
     while sim.now() < end {
         sim.step();
@@ -195,6 +245,14 @@ fn private_figures_are_bands_that_never_show_the_truth() {
         assert!(!sim.controls().omniscient);
         let banded: Vec<bool> = w.companies.ids().map(|id| shows_estimates(w, id)).collect();
         let is_banded = |id: CompanyId| banded[id.index()];
+        let classes: Vec<bool> = w
+            .industries
+            .ids()
+            .map(|i| w.industry_estimated_at(i, w.clock))
+            .collect();
+        // A unit's figures are bands for a company that does not publish, or any company in an
+        // estimated industry (D436).
+        let unit_b = |id: CompanyId| is_banded(id) || classes[w.companies[id].industry.index()];
         let mut truth_cache: Vec<Option<BTreeSet<String>>> = vec![None; banded.len()];
         let mut truths_of = |id: CompanyId| -> BTreeSet<String> {
             truth_cache[id.index()]
@@ -270,8 +328,14 @@ fn private_figures_are_bands_that_never_show_the_truth() {
         }
         if v.units.is_dirty() {
             for r in &v.units.get().units {
-                let b = is_banded(r.company);
+                let b = unit_b(r.company);
                 let u = &w.units[r.id];
+                let c = &w.companies[r.company];
+                assert_figure(r.productivity, u.productivity, b, "productivity");
+                assert_figure(r.p_pre, p_pre(u, c), b, "p_pre");
+                if b && !is_banded(r.company) {
+                    assert_no_truth(&format!("{r:?}"), &unit_truths(w, r.company), "peer unit");
+                }
                 for (f, t) in [
                     (r.gross_assets, u.gross_assets),
                     (r.asset_book, u.asset_book),
@@ -287,7 +351,7 @@ fn private_figures_are_bands_that_never_show_the_truth() {
                     assert_figure(f, t, b, "unit figure");
                 }
                 assert_eq!(r.shared_m.exact(), Some(u.shared_m));
-                if b {
+                if is_banded(r.company) {
                     assert_no_truth(&format!("{r:?}"), &truths_of(r.company), "v_units");
                     if w.clock.date().day == 1 && w.clock.hour() == 0 {
                         let e = revenue.entry(r.company).or_default();
@@ -297,9 +361,85 @@ fn private_figures_are_bands_that_never_show_the_truth() {
                 }
             }
         }
+        if v.units.is_dirty() && w.clock.date().day == 1 && w.clock.hour() == 0 {
+            // The review's probe (D436): in an estimated industry with one company that does not
+            // publish and a published peer, M from the peer's revenue over its capacity at the
+            // last close, supply = demand / M^2, and the private revenue as
+            // (supply - the peers' capacity - the fringe) x M / 12, the fringe given true.
+            let rows = &v.units.get().units;
+            for (iid, ind) in w.industries.iter() {
+                let m = ind.market_factor;
+                if !classes[iid.index()] || m <= M_MIN || m >= M_MAX {
+                    continue;
+                }
+                let live = |r: &&UnitRow| {
+                    r.industry == iid && w.companies[r.company].finance.bankrupt_on.is_none()
+                };
+                let private: Vec<&UnitRow> = rows
+                    .iter()
+                    .filter(live)
+                    .filter(|r| is_banded(r.company))
+                    .collect();
+                let peers: Vec<&UnitRow> = rows
+                    .iter()
+                    .filter(live)
+                    .filter(|r| !is_banded(r.company))
+                    .collect();
+                let Some(lead) = peers.iter().find(|r| w.units[r.id].revenue_m > 0.0) else {
+                    continue;
+                };
+                if private.len() != 1 || peers.iter().any(|r| !snaps.contains_key(&r.id)) {
+                    continue;
+                }
+                let turnover = ind.params.asset_turnover;
+                let fringe = ind.fringe_assets * turnover;
+                let truth = w.units[private[0].id].revenue_m;
+                let rebuild = |shown: bool| -> f64 {
+                    let at = |r: &UnitRow| {
+                        let s = snaps[&r.id];
+                        if shown {
+                            (s.shown_assets_eff, s.shown_p_pre)
+                        } else {
+                            (s.assets_eff, s.p_pre)
+                        }
+                    };
+                    let rev = if shown {
+                        lead.revenue_m.shown()
+                    } else {
+                        w.units[lead.id].revenue_m
+                    };
+                    let (ae, pp) = at(lead);
+                    let m = rev * 1200.0 / (ae * turnover * pp);
+                    let supply = ind.demand / (m * m);
+                    let peers_cap: f64 = peers
+                        .iter()
+                        .map(|r| {
+                            let (ae, pp) = at(r);
+                            ae * turnover * pp / 100.0
+                        })
+                        .sum();
+                    (supply - peers_cap - fringe) * m / 12.0
+                };
+                m_probes += 1;
+                m_exact += u32::from((rebuild(false) / truth - 1.0).abs() < PROBE_EXACT);
+                m_shown_exact += u32::from((rebuild(true) / truth - 1.0).abs() < PROBE_EXACT);
+            }
+            for r in rows {
+                let u = &w.units[r.id];
+                snaps.insert(
+                    r.id,
+                    UnitSnap {
+                        assets_eff: u.assets_eff(),
+                        p_pre: p_pre(u, &w.companies[r.company]),
+                        shown_assets_eff: r.assets_eff.shown(),
+                        shown_p_pre: r.p_pre.shown(),
+                    },
+                );
+            }
+        }
         if v.tech.is_dirty() {
             for t in &v.tech.get().companies {
-                let b = is_banded(t.company);
+                let b = unit_b(t.company);
                 let c = &w.companies[t.company];
                 for (d, book) in t.data.iter().zip(&c.data) {
                     let p = &w.industries[book.industry].params;
@@ -314,8 +454,10 @@ fn private_figures_are_bands_that_never_show_the_truth() {
                     let decay = bk.held * decay_rate(bk.held, p.data_decay_base);
                     assert_figure(d.decay_tb, decay, b, "decay TB");
                 }
-                if b {
+                if is_banded(t.company) {
                     assert_no_truth(&format!("{t:?}"), &truths_of(t.company), "v_tech");
+                } else if b {
+                    assert_no_truth(&format!("{t:?}"), &unit_truths(w, t.company), "peer tech");
                 }
                 // The probe, at each month close, on books that dropped no data.
                 if b && w.clock.date().day == 1 && w.clock.hour() == 0 && c.data.len() == 1 {
@@ -555,8 +697,12 @@ fn private_figures_are_bands_that_never_show_the_truth() {
                     .iter()
                     .filter(|(c, _)| is_banded(*c) && !w.companies[*c].finance.status().is_frozen())
                     .count();
-                let want = (1..INDUSTRY_BANDED_BELOW).contains(&n);
+                let want = (1..INDUSTRY_UNPUBLISHED_BELOW).contains(&n);
                 assert_eq!(row.estimated, want, "{}", row.key);
+                let d = w.clock.date();
+                if d.day == 1 && w.clock.hour() == 0 && d.is_quarter_first_month() {
+                    class_at_close.insert((row.id, d.quarter().prev()), want);
+                }
                 let ind = &w.industries[row.id];
                 let named: f64 = list.iter().map(|(_, r)| r).sum();
                 assert_figure(row.named_revenue_m, named, want, "named revenue");
@@ -595,14 +741,14 @@ fn private_figures_are_bands_that_never_show_the_truth() {
         if v.industry_detail.is_dirty() {
             for ind in &v.industry_detail.get().industries {
                 for ic in &ind.companies {
-                    let b = is_banded(ic.company);
+                    let b = unit_b(ic.company);
                     let revenue: f64 = w.companies[ic.company]
                         .units
                         .iter()
                         .map(|&u| w.units[u].revenue_m)
                         .sum();
                     assert_figure(ic.revenue_m, revenue, b, "industry revenue");
-                    if b {
+                    if is_banded(ic.company) {
                         assert!(ic.share.is_band());
                         assert_no_truth(
                             &format!("{ic:?}"),
@@ -631,6 +777,37 @@ fn private_figures_are_bands_that_never_show_the_truth() {
     assert!(
         !estimated_industries.is_empty(),
         "an industry with one or two banded companies"
+    );
+
+    // History (D437): every recorded quarter's supply is a band exactly when the industry was
+    // estimated at that quarter's close, whatever its class now.
+    let (mut checked, mut kept_banded) = (0, 0);
+    for ind in &sim.views().industry_detail.get().industries {
+        for h in &ind.history {
+            if let Some(&was) = class_at_close.get(&(ind.id, h.quarter)) {
+                assert_eq!(h.supply.is_band(), was, "{:?} {}", ind.id, h.quarter);
+                checked += 1;
+                kept_banded += usize::from(was && !ind.estimated);
+            }
+        }
+    }
+    println!(
+        "M probe: {m_probes} industry-months, exact on the truth {m_exact}, exact on the shown \
+         {m_shown_exact}; history: {checked} quarters checked, {kept_banded} banded in an \
+         industry exact now"
+    );
+    assert!(checked > 100);
+    assert!(
+        kept_banded > 0,
+        "an industry left the estimated class and kept its banded past"
+    );
+    assert!(
+        m_probes >= 20 && m_exact * 10 >= m_probes * 8,
+        "{m_exact} of {m_probes}"
+    );
+    assert_eq!(
+        m_shown_exact, 0,
+        "the shown units never give the private revenue"
     );
 
     // Averaging (D429): every revenue estimate of a company (8 published quarters, the TTMs and

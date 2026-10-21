@@ -8,7 +8,8 @@
 //! D432): an industry with one or two companies whose figures are bands would let its exact
 //! totals, less the published parts, isolate them. Such an industry shows its named revenue as
 //! the sum of the revenues shown, and its supply, S, M, fringe revenue and fringe share as
-//! bands, since any of those would rebuild the named total through the 5.2 and 5.4 identities.
+//! bands, since any of those would rebuild the named total through the 5.2 and 5.4 identities;
+//! its published companies' monthly unit figures are bands too, since they give M (D436).
 
 use super::estimate::{
     ESTIMATE_FLOOR_RATIO, ESTIMATE_FLOOR_SHARE, ESTIMATE_FLOOR_USD, Estimator, Figure, Kind,
@@ -21,9 +22,7 @@ use crate::world::{CompanyId, IndustryId, Ordinal, PhaseLabel, World};
 
 /// Companies shown per industry row (spec 8).
 pub const TOP_COMPANIES: usize = 5;
-/// An industry with at least one and fewer than this many banded companies (not frozen) shows
-/// its totals as bands (Logan's ruling, D432).
-pub const INDUSTRY_BANDED_BELOW: usize = 3;
+pub use crate::world::INDUSTRY_UNPUBLISHED_BELOW;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct IndustryRow {
@@ -80,31 +79,42 @@ pub fn companies_by_revenue(w: &World) -> Vec<Vec<(CompanyId, f64)>> {
 }
 
 /// One industry's companies with last month's revenue as shown (one estimate per figure,
-/// D429), biggest shown first, ties to the lower id: the order of the Industries table's top 5
-/// and the detail view's list.
+/// D429; a published company's too in an estimated industry, D436), biggest shown first, ties
+/// to the lower id: the order of the Industries table's top 5 and the detail view's list.
 pub fn ranked_as_shown(
     est: &Estimator,
     w: &World,
     list: &[(CompanyId, f64)],
+    estimated: bool,
 ) -> Vec<(CompanyId, Figure)> {
     let mut shown: Vec<(CompanyId, Figure)> = list
         .iter()
-        .map(|&(c, r)| (c, revenue_figure(est, est.banded(w, c), c, r)))
+        .map(|&(c, r)| (c, revenue_figure(est, est.banded(w, c) || estimated, c, r)))
         .collect();
     shown.sort_by(|a, b| b.1.shown().total_cmp(&a.1.shown()).then(a.0.cmp(&b.0)));
     shown
 }
 
-/// Whether industry `id`'s totals are bands (D432): it has at least one and fewer than
-/// [`INDUSTRY_BANDED_BELOW`] companies not frozen whose figures are bands.
-pub fn industry_estimated(est: &Estimator, w: &World, list: &[(CompanyId, f64)]) -> bool {
-    let n = list
-        .iter()
-        .filter(|&&(c, _)| {
-            est.banded(w, c) && !w.companies[c].finance.status().is_frozen()
-        })
-        .count();
-    (1..INDUSTRY_BANDED_BELOW).contains(&n)
+/// Whether each industry is in the estimated class now (D432; never in Omniscient), in
+/// industry id order: its totals, and its published companies' monthly unit figures (D436),
+/// are bands.
+pub fn estimated_industries(est: &Estimator, w: &World) -> Vec<bool> {
+    w.industries
+        .ids()
+        .map(|id| !est.omniscient && w.industry_estimated_at(id, w.clock))
+        .collect()
+}
+
+/// Whether a company's unit figures in `industry` are bands (D420, D436): its own figures are,
+/// or the industry is estimated.
+pub fn unit_banded(
+    est: &Estimator,
+    w: &World,
+    estimated: &[bool],
+    company: CompanyId,
+    industry: IndustryId,
+) -> bool {
+    est.banded(w, company) || estimated[industry.index()]
 }
 
 /// An industry-level figure: a band in an estimated industry (D432).
@@ -127,13 +137,14 @@ impl ViewData for IndustryRowsView {
         let w = input.world;
         let est = input.estimator();
         let ranked = companies_by_revenue(w);
+        let classes = estimated_industries(&est, w);
         let rows = w
             .industries
             .iter()
             .map(|(id, ind)| {
                 let list = &ranked[id.index()];
-                let estimated = industry_estimated(&est, w, list);
-                let shown = ranked_as_shown(&est, w, list);
+                let estimated = classes[id.index()];
+                let shown = ranked_as_shown(&est, w, list, estimated);
                 let fig = |kind, truth, floor| industry_figure(&est, estimated, id, kind, truth, floor);
                 let fringe = fringe_supply(ind.fringe_assets, ind.params.asset_turnover);
                 let supply = fig(Kind::Supply, ind.supply, ESTIMATE_FLOOR_USD);

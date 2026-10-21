@@ -8,6 +8,7 @@
 //! compute bill follow the published station counts and stay exact (D434).
 
 use super::estimate::{ESTIMATE_FLOOR_TB, Figure, Kind, Subject};
+use super::industry_rows::{estimated_industries, unit_banded};
 use super::units::unit_revenue;
 use super::{Cadence, ViewData, ViewInput};
 use crate::ops::compute::ComputeBill;
@@ -75,11 +76,14 @@ impl ViewData for TechView {
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;
         let est = input.estimator();
+        let classes = estimated_industries(&est, w);
         let companies = w
             .companies
             .iter()
             .map(|(id, c)| {
-                let banded = est.banded(w, id);
+                // Bands for a company that does not publish, and for a published one in an
+                // estimated industry: its data book would give its monthly revenue, so M (D436).
+                let banded = unit_banded(&est, w, &classes, id, c.industry);
                 let capacity = conversion_capacity(&c.stations);
                 let data = c
                     .data

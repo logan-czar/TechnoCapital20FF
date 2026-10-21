@@ -1,10 +1,14 @@
 //! v_units: `get_company_units` (spec 9.2), the Company screen's Units tab (spec 8): industry,
 //! base province, assets, productivity, growth, R&D, revenue and expenses of every business
 //! unit. Rebuilt monthly, at the plan lock and on load (spec 9.4), and when Omniscient is
-//! toggled (D423). A private company's or new listing's unit money figures are estimate bands
-//! (D420); productivity, growth and R&D plans are operations, shown exactly.
+//! toggled (D423). A private company's or new listing's unit money figures and productivity are
+//! estimate bands (D420, D436), and so are a published company's in an estimated industry
+//! (D432): its monthly revenue over its capacity would give the industry's M, and from it the
+//! private companies' revenue (spec 1 publishes listed companies' quarterly statements, not
+//! their units). Growth and R&D plans are shown exactly.
 
-use super::estimate::{Figure, Kind, StatementLine as L};
+use super::estimate::{ESTIMATE_FLOOR_POINTS, Figure, Kind, StatementLine as L, Subject};
+use super::industry_rows::{estimated_industries, unit_banded};
 use super::{Cadence, ViewData, ViewInput};
 use crate::world::{CompanyId, IndustryId, Ordinal, ProvinceId, UnitId};
 
@@ -20,10 +24,11 @@ pub struct UnitRow {
     pub asset_book: Figure,
     /// Gross assets less the 20% shortfall of ramping tranches (spec 5.2).
     pub assets_eff: Figure,
-    /// 30 to 200 (spec 5.6).
-    pub productivity: f64,
-    /// `productivity + PC bonus + location bonus` (spec 5.2).
-    pub p_pre: f64,
+    /// 30 to 200 (spec 5.6); a band with the money figures (D436).
+    pub productivity: Figure,
+    /// `productivity + PC bonus + location bonus` (spec 5.2): the productivity band moved by
+    /// the published bonuses (D430).
+    pub p_pre: Figure,
     /// The locked plan's annual growth rate and R&D share of revenue (spec 3.6).
     pub growth_plan: f64,
     pub rd_plan: f64,
@@ -86,12 +91,21 @@ impl ViewData for UnitsView {
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;
         let est = input.estimator();
+        let classes = estimated_industries(&est, w);
         let units = w
             .units
             .iter()
             .map(|(id, u)| {
                 let c = &w.companies[u.company];
-                let banded = est.banded(w, u.company);
+                let banded = unit_banded(&est, w, &classes, u.company, u.industry);
+                let productivity = est.current(
+                    banded,
+                    Subject::Company(u.company),
+                    Kind::Productivity,
+                    u.productivity,
+                    ESTIMATE_FLOOR_POINTS,
+                );
+                let bonuses = crate::economy::supply::p_pre(u, c) - u.productivity;
                 let fig = |kind, truth| est.company_now(banded, u.company, kind, truth);
                 UnitRow {
                     id,
@@ -101,8 +115,11 @@ impl ViewData for UnitsView {
                     gross_assets: fig(Kind::GrossAssets, u.gross_assets),
                     asset_book: fig(Kind::Line(L::AssetBook), u.asset_book),
                     assets_eff: fig(Kind::AssetsEff, u.assets_eff()),
-                    productivity: u.productivity,
-                    p_pre: crate::economy::supply::p_pre(u, c),
+                    productivity,
+                    p_pre: match productivity {
+                        Figure::Exact(_) => Figure::Exact(crate::economy::supply::p_pre(u, c)),
+                        Figure::Band(_) => productivity.map(|p| p + bonuses),
+                    },
                     growth_plan: u.growth_plan,
                     rd_plan: u.rd_plan,
                     revenue_m: unit_revenue(&est, banded, u),
