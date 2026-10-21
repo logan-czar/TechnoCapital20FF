@@ -5,16 +5,16 @@
 //! citing its spec 10 line; choices where spec 10 is ambiguous are D320 to D334 (docs/build/
 //! decisions.md). A seed is PASS, FAIL or NA (the run does not cover the target's window). A
 //! target is MET when the share of evaluated seeds that pass reaches its required share: the
-//! share spec 10 names ("in 90% of seeds"), else every seed (D330). Two kinds differ (D365,
-//! D366): a pooled target is MET on its share of industry-runs over all seeds, and a waived one
-//! is reported per seed but marked WAIVED, not MET or NOT MET. docs/build/soak.md has the full
-//! definitions.
+//! share spec 10 names ("in 90% of seeds"), else every seed (D330), unless Logan restated it
+//! (D367). Two kinds differ (D365, D366): a pooled target is MET on its share of industry-runs
+//! over all seeds, and a waived one is reported per seed but marked WAIVED, not MET or NOT MET.
+//! docs/build/soak.md has the full definitions.
 
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 use std::path::Path;
 
-use crate::metrics::{DEMAND_TREND_BAND, M_CLAMP_QUARTERS, M_CLAMP_WAIVED, REVENUE_DEMAND_BAND};
+use crate::metrics::{DEMAND_TREND_BAND, M_CLAMP_QUARTERS, REVENUE_DEMAND_BAND, SPEC_11_2_WAIVED};
 
 /// Spec 10 "balance targets after 10 years": the 2020 to 2029 run, whose last year closes on
 /// 1 January 2030 (the 2029 row).
@@ -25,10 +25,15 @@ pub const START_ALIVE_MIN: f64 = 0.85;
 /// Spec 10: "median productivity 90 to 110" (D321).
 pub const MEDIAN_PRODUCTIVITY: (f64, f64) = (90.0, 110.0);
 /// Spec 10 as restated by Logan (D363 (a), design fix 363): industry revenue within ±30% of the
-/// industry's own demand path. Replaces D322's ±30% of the trend path.
+/// industry's own demand path. Replaces D322's ±30% of the trend path. The industries in
+/// `metrics::SPEC_11_2_WAIVED` (Cloud) are judged apart and waived (D368).
 pub const REVENUE_DEMAND_RATIO: (f64, f64) = (1.0 - REVENUE_DEMAND_BAND, 1.0 + REVENUE_DEMAND_BAND);
 /// D363 (b): each industry's demand within ±55% of its trend path.
 pub const DEMAND_TREND_RATIO: (f64, f64) = (1.0 - DEMAND_TREND_BAND, 1.0 + DEMAND_TREND_BAND);
+/// (T) Logan's ruling of 2026-10-21 on D363 (b) (D367, design fix 363): the ±55% band must hold
+/// in 85% of seeds, not every seed (44 of 50 seeds were inside it; every miss is demand above
+/// trend).
+pub const DEMAND_TREND_SEED_SHARE: f64 = 0.85;
 /// Spec 10: "no industry stuck at an M clamp for more than 8 quarters".
 pub const M_CLAMP_MAX_RUN: u32 = M_CLAMP_QUARTERS;
 /// Spec 10: "30% to 60% of releases are beats" (D323).
@@ -110,9 +115,6 @@ pub struct QuarterRow {
     pub boom_months: u32,
     pub bust_months: u32,
     pub industries: u32,
-    pub rev_demand_min: f64,
-    pub rev_demand_max: f64,
-    pub rev_demand_out_of_band: u32,
     pub demand_trend_min: f64,
     pub demand_trend_max: f64,
     pub demand_trend_out_of_band: u32,
@@ -120,6 +122,14 @@ pub struct QuarterRow {
     /// among the waived ones.
     pub m_clamp_max_run_counted: u32,
     pub m_clamp_max_run_waived: u32,
+    /// The revenue ÷ demand figures among the industries not waived (D368), and among the
+    /// waived ones.
+    pub rev_demand_min_counted: f64,
+    pub rev_demand_max_counted: f64,
+    pub rev_demand_out_counted: u32,
+    pub rev_demand_min_waived: f64,
+    pub rev_demand_max_waived: f64,
+    pub rev_demand_out_waived: u32,
 }
 
 /// A seed's rows, years and quarters in order.
@@ -254,24 +264,53 @@ pub const TARGETS: &[Target] = &[
     },
     Target {
         id: "industry_revenue_demand",
-        spec: "industry revenue within ±30% of the industry's own demand path (D363)",
-        bound: "every industry-quarter 2020-2029 in 0.70 to 1.30 of demand",
+        spec: "industry revenue within ±30% of the industry's own demand path (D363; Cloud waived: D368)",
+        bound: "every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived",
         required: ALL_SEEDS,
         kind: Kind::Seeds,
         eval: |s| {
             let qs = s.quarters_in((TEN_YEAR_FIRST, TEN_YEAR_LAST))?;
             band_verdict(
-                qs.iter()
-                    .map(|q| (q.rev_demand_min, q.rev_demand_max, q.rev_demand_out_of_band)),
+                qs.iter().map(|q| {
+                    (
+                        q.rev_demand_min_counted,
+                        q.rev_demand_max_counted,
+                        q.rev_demand_out_counted,
+                    )
+                }),
                 REVENUE_DEMAND_RATIO,
             )
         },
     },
     Target {
-        id: "industry_demand_trend",
-        spec: "each industry's demand within ±55% of its trend path (D363)",
-        bound: "every industry-quarter 2020-2029 in 0.45 to 1.55 of trend",
+        id: "industry_revenue_demand_cloud_waived",
+        spec: "Cloud's revenue against its own demand path: waived until the spec 11.2 per-industry rework (D368)",
+        bound: "every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)",
         required: ALL_SEEDS,
+        kind: Kind::Waived,
+        eval: |s| {
+            let qs = s.quarters_in((TEN_YEAR_FIRST, TEN_YEAR_LAST))?;
+            let v = band_verdict(
+                qs.iter().map(|q| {
+                    (
+                        q.rev_demand_min_waived,
+                        q.rev_demand_max_waived,
+                        q.rev_demand_out_waived,
+                    )
+                }),
+                REVENUE_DEMAND_RATIO,
+            )?;
+            Some(Verdict {
+                measured: format!("{} {}", SPEC_11_2_WAIVED.join(" "), v.measured),
+                ..v
+            })
+        },
+    },
+    Target {
+        id: "industry_demand_trend",
+        spec: "each industry's demand within ±55% of its trend path in 85% of seeds (D363; D367)",
+        bound: "every industry-quarter 2020-2029 in 0.45 to 1.55 of trend",
+        required: DEMAND_TREND_SEED_SHARE,
         kind: Kind::Seeds,
         eval: |s| {
             let qs = s.quarters_in((TEN_YEAR_FIRST, TEN_YEAR_LAST))?;
@@ -323,7 +362,7 @@ pub const TARGETS: &[Target] = &[
             verdict(
                 run <= M_CLAMP_MAX_RUN,
                 f64::from(run),
-                format!("{} {run} quarters", M_CLAMP_WAIVED.join(" ")),
+                format!("{} {run} quarters", SPEC_11_2_WAIVED.join(" ")),
             )
         },
     },
@@ -700,14 +739,17 @@ pub fn parse(years: &str, quarters: &str) -> Result<BTreeMap<u64, SeedData>, Str
             boom_months: f.get("boom_months")?,
             bust_months: f.get("bust_months")?,
             industries: f.get("industries")?,
-            rev_demand_min: f.get("rev_demand_min")?,
-            rev_demand_max: f.get("rev_demand_max")?,
-            rev_demand_out_of_band: f.get("rev_demand_out_of_band")?,
             demand_trend_min: f.get("demand_trend_min")?,
             demand_trend_max: f.get("demand_trend_max")?,
             demand_trend_out_of_band: f.get("demand_trend_out_of_band")?,
             m_clamp_max_run_counted: f.get("m_clamp_max_run_counted")?,
             m_clamp_max_run_waived: f.get("m_clamp_max_run_waived")?,
+            rev_demand_min_counted: f.get("rev_demand_min_counted")?,
+            rev_demand_max_counted: f.get("rev_demand_max_counted")?,
+            rev_demand_out_counted: f.get("rev_demand_out_counted")?,
+            rev_demand_min_waived: f.get("rev_demand_min_waived")?,
+            rev_demand_max_waived: f.get("rev_demand_max_waived")?,
+            rev_demand_out_waived: f.get("rev_demand_out_waived")?,
         };
         out.entry(f.get("seed")?).or_default().quarters.push(r);
     }
@@ -826,13 +868,13 @@ pub fn summary_csv(summaries: &[Summary]) -> String {
 fn print_summary(summaries: &[Summary], seeds: usize) {
     println!("{seeds} seeds");
     println!(
-        "{:28} {:>6} {:>6} {:>8} {:>8}  {:>10} {:>10} {:>10}",
+        "{:36} {:>6} {:>6} {:>8} {:>8}  {:>10} {:>10} {:>10}",
         "target", "passed", "of", "share", "needed", "min", "median", "max"
     );
     for s in summaries {
         let (lo, mid, hi) = s.values.unwrap_or((f64::NAN, f64::NAN, f64::NAN));
         println!(
-            "{:28} {:>6} {:>6} {:>8} {:>8.2}  {lo:>10.4} {mid:>10.4} {hi:>10.4}  {}",
+            "{:36} {:>6} {:>6} {:>8} {:>8.2}  {lo:>10.4} {mid:>10.4} {hi:>10.4}  {}",
             s.id,
             s.passed,
             s.evaluated,
@@ -879,7 +921,9 @@ mod tests {
     const Q_HEADER: &str = "seed,year,quarter,released,reports,beats,industries,\
         industry_months,boom_months,bust_months,rev_demand_min,rev_demand_max,\
         rev_demand_out_of_band,demand_trend_min,demand_trend_max,demand_trend_out_of_band,\
-        m_clamp_max_run_counted,m_clamp_max_run_waived";
+        m_clamp_max_run_counted,m_clamp_max_run_waived,rev_demand_min_counted,\
+        rev_demand_max_counted,rev_demand_out_counted,rev_demand_min_waived,\
+        rev_demand_max_waived,rev_demand_out_waived";
 
     /// A good 30-year seed: 10 startups a year (4 AI labs in 2030 to 2035, 24 in all), 700
     /// named companies, 4 listings a year (120), 3 starting private companies listed a year to
@@ -940,6 +984,12 @@ mod tests {
                     "0".into(),
                     "3".into(),
                     "2".into(),
+                    "0.8".into(),
+                    "1.2".into(),
+                    "0".into(),
+                    "0.9".into(),
+                    "1.1".into(),
+                    "0".into(),
                 ]
                 .to_vec()
             })
@@ -1023,25 +1073,41 @@ mod tests {
             &[2029],
             "110.5",
         );
+        // The judged revenue target reads the industries not waived (D368).
         fails_only(
             "industry_revenue_demand",
             'q',
-            "rev_demand_max",
+            "rev_demand_max_counted",
             &[2027],
             "1.31",
         );
         fails_only(
             "industry_revenue_demand",
             'q',
-            "rev_demand_min",
+            "rev_demand_min_counted",
             &[2021],
             "0.69",
         );
         fails_only(
             "industry_revenue_demand",
             'q',
-            "rev_demand_out_of_band",
+            "rev_demand_out_counted",
             &[2024],
+            "1",
+        );
+        // Cloud out of band fails only its waived row (D368), not industry_revenue_demand.
+        fails_only(
+            "industry_revenue_demand_cloud_waived",
+            'q',
+            "rev_demand_min_waived",
+            &[2024],
+            "0.696",
+        );
+        fails_only(
+            "industry_revenue_demand_cloud_waived",
+            'q',
+            "rev_demand_out_waived",
+            &[2027],
             "1",
         );
         fails_only(
@@ -1256,6 +1322,75 @@ mod tests {
         let (s, _) = run("9");
         assert_eq!((s.passed, s.evaluated), (75, 84));
         assert_eq!(s.verdict(), "NOT MET");
+    }
+
+    /// `n` copies of the good seed (seeds 1 to n); `edit(seed, quarter row)` changes each
+    /// quarter row. Returns the summaries by id.
+    fn many_seeds(n: u64, edit: impl Fn(u64, &mut Vec<String>)) -> Vec<Summary> {
+        let (y, q) = good();
+        let (mut ys, mut qs) = (Vec::new(), Vec::new());
+        for seed in 1..=n {
+            for r in &y {
+                let mut r = r.clone();
+                r[0] = seed.to_string();
+                ys.push(r);
+            }
+            for r in &q {
+                let mut r = r.clone();
+                r[0] = seed.to_string();
+                edit(seed, &mut r);
+                qs.push(r);
+            }
+        }
+        let seeds = parse(&text(Y_HEADER, &ys), &text(Q_HEADER, &qs)).unwrap();
+        evaluate(&seeds).1
+    }
+
+    fn summary<'a>(sums: &'a [Summary], id: &str) -> &'a Summary {
+        sums.iter().find(|s| s.id == id).unwrap()
+    }
+
+    #[test]
+    fn demand_trend_needs_85_percent_of_seeds() {
+        // D367: 17 of 20 seeds inside ±55% is 85%, MET; 16 of 20 is 80%, NOT MET.
+        let i = col(Q_HEADER, "demand_trend_max");
+        let run = |bad: u64| {
+            let sums = many_seeds(20, |seed, r| {
+                if seed <= bad && r[1] == "2025" {
+                    r[i] = "1.6".into();
+                }
+            });
+            let s = summary(&sums, "industry_demand_trend").clone();
+            assert_eq!(s.required, DEMAND_TREND_SEED_SHARE);
+            (s.passed, s.evaluated, s.verdict())
+        };
+        assert_eq!(run(3), (17, 20, "MET"));
+        assert_eq!(run(4), (16, 20, "NOT MET"));
+    }
+
+    #[test]
+    fn cloud_is_judged_apart_from_revenue_against_demand() {
+        // D368: Cloud below 0.70 of its demand in every seed leaves the judged target MET and
+        // shows on its own WAIVED row, each seed a FAIL there.
+        let (lo, out) = (
+            col(Q_HEADER, "rev_demand_min_waived"),
+            col(Q_HEADER, "rev_demand_out_waived"),
+        );
+        let sums = many_seeds(4, |_, r| {
+            if r[1] == "2024" {
+                r[lo] = "0.696".into();
+                r[out] = "1".into();
+            }
+        });
+        let judged = summary(&sums, "industry_revenue_demand");
+        assert_eq!((judged.passed, judged.evaluated), (4, 4));
+        assert_eq!(judged.verdict(), "MET");
+        let waived = summary(&sums, "industry_revenue_demand_cloud_waived");
+        assert_eq!((waived.passed, waived.evaluated), (0, 4));
+        assert_eq!(waived.kind, Kind::Waived);
+        assert_eq!(waived.verdict(), "WAIVED");
+        let (_, worst, _) = waived.values.unwrap();
+        assert!((worst - 0.304).abs() < 1e-9, "{worst}");
     }
 
     #[test]
