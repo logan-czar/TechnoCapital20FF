@@ -88,7 +88,7 @@ impl YearBirths {
             self.industry_months += 1;
             self.boom_months += usize::from(r.phase_label == PhaseLabel::Boom);
             self.bust_months += usize::from(r.phase_label == PhaseLabel::Bust);
-            if month % 3 == 0 {
+            if month.is_multiple_of(3) {
                 let at_clamp =
                     r.market_factor <= M_CLAMP.0 + 1e-12 || r.market_factor >= M_CLAMP.1 - 1e-12;
                 self.clamp_run[i] = if at_clamp { self.clamp_run[i] + 1 } else { 0 };
