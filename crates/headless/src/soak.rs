@@ -20,14 +20,15 @@ use crate::metrics::{QUARTERS_HEADER, SeedOutput, YEARS_HEADER, run_seed};
 pub const DEFAULT_YEARS: u32 = 30;
 pub const DEFAULT_SEEDS: (u64, u64) = (1, 50);
 
-/// The `timing.csv` header: one row per seed, wall time of the seed's whole run (load
-/// included) and per simulated year.
+/// The `timing.csv` header: one row per seed, wall time of the seed's run (from `Sim::new` to
+/// its last tick) and per simulated year.
 pub const TIMING_HEADER: &str = "seed,years,ticks,wall_ms,ms_per_year";
 
 pub struct SoakArgs {
     pub years: u32,
     pub seeds: (u64, u64),
-    /// Worker threads; `None` is half the machine's cores (it is shared), at least 1.
+    /// Seeds run at once (child processes); `None` is half the machine's cores (it is shared),
+    /// at least 1.
     pub jobs: Option<usize>,
     pub out: PathBuf,
     /// Run the target checker on the output afterwards (`--check`).

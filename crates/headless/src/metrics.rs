@@ -70,7 +70,7 @@ pub struct SeedOutput {
     pub years: String,
     pub quarters: String,
     pub ticks: u64,
-    /// Wall time of the whole seed, load included (not part of either table).
+    /// Wall time of the seed from `Sim::new` to its last tick (not part of either table).
     pub wall_ms: u128,
     pub state_hash: String,
     /// The clock at the end (`2050-01-01 00:00`).
