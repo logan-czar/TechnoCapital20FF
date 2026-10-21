@@ -3,9 +3,12 @@
 
 pub mod alerts;
 pub mod calendar;
+pub mod control;
 pub mod quarter;
 pub mod scheduler;
 pub mod trace;
 
 pub use calendar::{Date, DateTime, Month, Quarter, Weekday};
+pub use control::{Control, Controls};
+pub use quarter::QuarterPhase;
 pub use scheduler::{JobCtx, JobFn, Scheduler, Slot, TickFacts};
