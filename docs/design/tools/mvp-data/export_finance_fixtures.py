@@ -6,6 +6,7 @@ statements, as a golden fixture for the Rust finance formulas (build-plan M4.2, 
 
 An independent Python implementation of mvp-spec 3.9, 4.4, 5.11, 5.12 and 7.1 as the F4 decisions read them
 (docs/build/decisions.md D220 to D234), used to check the engine's functions; nothing here feeds the game.
+The 5.12 rating and limit at load are validate.py's, which gen.py also sizes the starting lines with (D15).
 
 Run-rate inputs (a year, USD) come from validate.py's normal company (mvp-spec 7.1 loadout at productivity
 100 and M 1.0, the 6.1 and 6.3 R&D plan; validate.normal_company), so EBIT is validate.py's starting margin
@@ -37,62 +38,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_DATA = os.path.normpath(os.path.join(HERE, '..', '..', 'data'))
 DEFAULT_OUT = os.path.normpath(os.path.join(HERE, '..', '..', '..', '..', 'crates', 'sim', 'tests', 'fixtures'))
 
-BASE_RATE = 0.03                      # mvp-spec 3.1
-SCALE = ['AAA', 'AA+', 'AA', 'AA-', 'A+', 'A', 'A-', 'BBB+', 'BBB', 'BBB-', 'BB+', 'BB', 'BB-',
-         'B+', 'B', 'B-', 'CCC', 'CC']
-BANDS = ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', 'CCC', 'CC']
-FACTOR = {'AAA': 1.0, 'AA': 0.9, 'A': 0.8, 'BBB': 0.65, 'BB': 0.5, 'B': 0.3, 'CCC': 0.0, 'CC': 0.0}
-SPREAD_BPS = {'AAA': 40, 'AA': 60, 'A': 90, 'BBB': 150, 'BB': 280, 'B': 450, 'CCC': 900, 'CC': 1600}
-LEVERAGE = [(0.5, 'AAA'), (1.0, 'AA'), (2.0, 'A'), (3.0, 'BBB'), (4.0, 'BB+'), (5.0, 'BB-'), (6.5, 'B')]
-
-
-def band(r):
-    return r[:-1] if r[-1] in '+-' else r
-
-
-def spread(r):
-    """5.12 corporate spread with the 3.6.2 notch thirds (D220), a fraction."""
-    b = band(r)
-    s = SPREAD_BPS[b]
-    i = BANDS.index(b)
-    if r.endswith('+') and i > 0:
-        s -= (s - SPREAD_BPS[BANDS[i - 1]]) / 3
-    elif r.endswith('-') and i < len(BANDS) - 1:
-        s += (SPREAD_BPS[BANDS[i + 1]] - s) / 3
-    return s / 1e4
-
-
-def shift(r, notches):
-    """Better by `notches` (negative: worse), clamped to AAA..CC."""
-    return SCALE[min(len(SCALE) - 1, max(0, SCALE.index(r) - notches))]
-
-
-def leverage(net_debt, ebitda):
-    if ebitda <= 0:
-        return 'CC'
-    if net_debt <= 0:
-        return 'AAA'
-    x = net_debt / ebitda
-    for edge, r in LEVERAGE:
-        if x < edge:
-            return r
-    return 'CCC' if x <= 8.0 else 'CC'
-
-
-def rating_at_load(net_debt, ebitda, line, home, revenue, industry, sovereign):
-    lev = leverage(net_debt, ebitda)
-    interest = line * (BASE_RATE + home + spread(lev))
-    if interest <= 0:
-        cover = 1 if ebitda > 0 else 0
-    else:
-        c = ebitda / interest
-        cover = 1 if c > 10 else (-2 if c < 1.5 else (-1 if c < 3 else 0))
-    size = 1 if revenue > 20e9 else (-1 if revenue < 500e6 else 0)
-    sector = {'power_utilities': 1, 'mining': -1, 'shipping': -1}.get(industry, 0)
-    adjusted = shift(lev, cover + size + sector)
-    ceiling = shift(sovereign, 1)
-    implied = adjusted if SCALE.index(adjusted) >= SCALE.index(ceiling) else ceiling
-    return lev, implied
+# The 5.12 rating and limit at load live in validate.py, shared with gen.py, which sizes the starting lines
+# to the 5.12 limit with them (D15, D16).
+BASE_RATE = validate.BASE_RATE
+spread = validate.corp_spread
+rating_at_load = validate.rating_at_load
 
 
 def main():
@@ -135,13 +85,13 @@ def main():
         assert abs(ebit - start_margin * r) < 1e-6 * max(1.0, r), (c['id'], ebit, start_margin * r)
         e = ce[c['hq_country']]
         z = zones[e['financial_zone']]
-        home_bps = math.floor(0.5 * float(z['credit_spread_bps']) + 0.5 * float(e['sovereign_spread_bps']) + 0.5)
+        home_bps = validate.home_spread_bps(z['credit_spread_bps'], e['sovereign_spread_bps'])
         home = home_bps / 1e4
         ebitda = ebit + dep
         lev, rating = rating_at_load(line - cash, ebitda, line, home, r, ind['id'], e['sovereign_rating'])
         rate = BASE_RATE + home + spread(rating)
         own = max(0.0, cash - line)
-        limit = max(0.0, 0.5 * book + own) * FACTOR[band(rating)]
+        limit = validate.line_limit(book, cash, line, rating)
         interest = line * rate
         fee = max(0.0, limit - line) * 0.0025
         income = own * (BASE_RATE - 0.0025)

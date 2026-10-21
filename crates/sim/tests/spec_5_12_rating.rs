@@ -268,6 +268,13 @@ fn starting_ratings_match_the_run_rate_for_all_651() {
             row.id()
         );
         assert_eq!(r.implied, row.rating("start_rating"), "{} start", row.id());
+        // company-start.csv carries the same rating, which its D15 and D16 load checks read.
+        assert_eq!(
+            Rating::parse(&f.start.start_rating),
+            Some(r.implied),
+            "{} company-start.csv start_rating",
+            row.id()
+        );
         assert!(
             r.implied >= sovereign_ceiling(f.sovereign()),
             "{}",
@@ -276,6 +283,19 @@ fn starting_ratings_match_the_run_rate_for_all_651() {
         *by_rating.entry(r.implied).or_default() += 1;
     }
     assert_eq!(by_rating.values().sum::<u32>(), 651);
+}
+
+#[test]
+fn sim_data_reads_the_same_rating_factors() {
+    // sim-data's load checks (D15, D16) carry their own copy of the 5.12 rating factor table.
+    assert_eq!(sim_data::RATING_LABELS.len(), Rating::ALL.len());
+    for (label, r) in sim_data::RATING_LABELS.iter().zip(Rating::ALL) {
+        assert_eq!(*label, r.label());
+        assert_eq!(
+            sim_data::rating_factor_of_label(label),
+            Some(rating_factor(r))
+        );
+    }
 }
 
 #[test]
