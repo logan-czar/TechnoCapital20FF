@@ -293,15 +293,19 @@ fn earnings_day_and_recap_pause_by_default() {
     assert_eq!(pauses, [release_tick(Q1_2020), recap_tick(Q1_2020)]);
 }
 
-/// The app's views equal `want` exactly (every view and the refresh count).
+/// The app's views are an exact copy of the running sim's (every view, version and the refresh
+/// count) and show the same data as `want`. Since M2 a NewGame or Load keeps the refresh count
+/// and versions climbing, so `want` (a fresh `Sim`) matches on data, not on versions.
 fn assert_views(app: &App, want: &sim::SimViews, what: &str) {
     let views = app.world().resource::<Views>();
-    assert!(**views == *want, "{what}: stale views");
-    assert_eq!(views.refresh(), want.refresh(), "{what}: refresh");
+    let live = app.world().resource::<SimRunner>().sim_views();
+    assert!(**views == *live, "{what}: stale views");
+    assert_eq!(views.refresh(), live.refresh(), "{what}: refresh");
+    assert!(views.same_data(want), "{what}: views show another state");
 }
 
-/// M7.3: a NewGame rebuilds every view at refresh 1, version 1, so the bridge copies them all,
-/// even when the old game's refresh or versions happen to match.
+/// M7.3: a NewGame rebuilds every view (spec 9.4), so the bridge copies them all, even when the
+/// old game's refresh or versions could have matched.
 #[test]
 fn new_game_replaces_every_view() {
     // Only a SetAlert since the start: the old game is still at refresh 1.
@@ -337,8 +341,8 @@ fn new_game_replaces_every_view() {
     );
 }
 
-/// M7.3: a Load rebuilds every view at refresh 1 (D13), so the bridge copies them all, whatever
-/// refresh the game it replaces had reached.
+/// M7.3: a Load rebuilds every view (D13), so the bridge copies them all, whatever refresh the
+/// game it replaces had reached.
 #[test]
 fn load_replaces_every_view() {
     let dir = std::env::temp_dir().join(format!("m7-bridge-load-{}", std::process::id()));

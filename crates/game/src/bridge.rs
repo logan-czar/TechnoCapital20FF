@@ -82,6 +82,7 @@ impl Views {
             tech,
             industry_rows,
             industry_detail,
+            cycle,
             map_layers,
             province_cards,
             statements,
@@ -153,6 +154,12 @@ impl SimRunner {
     /// Sets the per-frame step budget (benches and tests).
     pub fn set_budget(&mut self, budget: Duration) {
         self.budget = budget;
+    }
+
+    /// The sim's own views, as the sim holds them now (tests compare the copied resource with
+    /// them).
+    pub fn sim_views(&self) -> &SimViews {
+        self.sim.views()
     }
 }
 
@@ -228,8 +235,9 @@ fn apply_controls(
         any = true;
         match runner.sim.apply(control.clone()) {
             Ok(out) => {
-                // NewGame and Load rebuild every view at refresh 1, version 1 (spec 9.4 "and on
-                // load"), so version numbers cannot tell old from new: copy them all.
+                // NewGame and Load rebuild every view (spec 9.4 "and on load"). Since M2 their
+                // versions keep climbing (`SimViews::rebuild`), so the version sync would catch
+                // them too; the full copy stays as a cheap guarantee.
                 if matches!(control, Control::NewGame { .. } | Control::Load(_)) {
                     runner.rebuilt = true;
                     runner.owed = 0.0;

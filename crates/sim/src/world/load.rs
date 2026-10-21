@@ -8,11 +8,21 @@ use sim_data::WorldData;
 use thiserror::Error;
 
 use super::World;
-use super::entities::{Character, Company, Country, Industry, Province, Zone};
-use super::ids::Ordinal;
+use super::economy::{AiBoom, AiSchedule, AiStage, GlobalCycle};
+use super::entities::{
+    BusinessUnit, Character, Company, Country, Industry, IndustryParams, PhaseLabel, Province, Zone,
+};
+use super::ids::{CompanyId, IndustryId, Ordinal, UnitId};
 use super::table::Table;
 use super::units::{fraction_from_bps, shares_from_csv, usd_from_billions, usd_from_millions};
-use crate::time::DateTime;
+use crate::economy::ai_boom::{POP_BASE_YEAR, boom_date};
+use crate::economy::assets::placeholder_plan;
+use crate::economy::cycle::{START_PHASE, z_avg};
+use crate::economy::start::{
+    START_PRODUCTIVITY, fixed_cost_rate_at_load, shared_costs_at_load_hook, start_pc_bonus,
+};
+use crate::economy::supply::fringe_assets_at_load;
+use crate::time::{Date, DateTime};
 
 /// A row that cannot be turned into sim state. `sim_data::check` catches all of these first on
 /// good data; this guards a `Sim` built from unchecked rows.
@@ -92,7 +102,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         "financial-zones",
         zone_rows.iter().map(|z| z.zone_id.as_str()),
     )?;
-    let zones = Table::from_rows(
+    let mut zones: Table<_, Zone> = Table::from_rows(
         zone_rows
             .iter()
             .map(|z| Zone {
@@ -100,7 +110,18 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
                 number: z.number,
                 name: z.name.clone(),
                 exchange_code: z.exchange_code.clone(),
+                intensity: z.intensity,
+                lag_quarters: z.lag_quarters,
+                contagion: z.contagion,
+                own_shock_sd: z.own_shock_sd,
+                gdp_usd: 0.0,
+                gdp_share: 0.0,
                 credit_spread_base: fraction_from_bps(z.credit_spread_bps),
+                credit_spread: fraction_from_bps(z.credit_spread_bps),
+                own_shock: 0.0,
+                effect: 0.0,
+                confidence_start: z.confidence_start,
+                confidence: z.confidence_start,
             })
             .collect(),
     );
@@ -138,6 +159,25 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         });
     }
 
+    // Zone GDP aggregates and Z (spec 3.2.1, 5.1), summed over the members in id order.
+    for c in &countries {
+        zones[c.zone].gdp_usd += c.gdp_usd;
+    }
+    let world_gdp: f64 = countries.iter().map(|c| c.gdp_usd).sum();
+    for (_, z) in zones.iter_mut() {
+        z.gdp_share = if world_gdp > 0.0 {
+            z.gdp_usd / world_gdp
+        } else {
+            0.0
+        };
+    }
+    let z_avg = z_avg(
+        countries
+            .iter()
+            .map(|c| (c.gdp_usd, zones[c.zone].intensity)),
+    );
+    let max_lag = zones.iter().map(|(_, z)| z.lag_quarters).max().unwrap_or(0);
+
     // Provinces (spec 3.3), all 8 files.
     let province_rows = sorted_by(data.all_provinces().map(|(_, _, p)| p), |p| &p.id);
     let province_keys = Keys::new("provinces", province_rows.iter().map(|p| p.id.as_str()))?;
@@ -157,13 +197,35 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         industry_rows.iter().map(|i| i.id.as_str()),
     )?;
     let industry_by_name = Keys::new("industries", industry_rows.iter().map(|i| i.name.as_str()))?;
-    let industries = Table::from_rows(
+    let mut industries: Table<IndustryId, Industry> = Table::from_rows(
         industry_rows
             .iter()
-            .map(|i| Industry {
-                key: i.id.clone(),
-                name: i.name.clone(),
-                world_size_2020_usd: usd_from_billions(i.world_size_2020_usd_bn),
+            .map(|i| {
+                let world_size = usd_from_billions(i.world_size_2020_usd_bn);
+                Industry {
+                    key: i.id.clone(),
+                    name: i.name.clone(),
+                    sector: i.sector.clone(),
+                    asset_label: i.asset_label.clone(),
+                    world_size_2020_usd: world_size,
+                    params: industry_params(i),
+                    lt: i.trend_growth,
+                    prev_lt: i.trend_growth,
+                    // Demand starts at the 2020 world size (spec 7.3).
+                    trend_demand: world_size,
+                    demand_core: world_size,
+                    demand: world_size,
+                    q_growth: 0.0,
+                    prev_q_growth: 0.0,
+                    carry_reset: false,
+                    phase_label: PhaseLabel::Normal,
+                    fringe_assets: 0.0,
+                    supply: 0.0,
+                    supply_ratio: 1.0,
+                    market_factor: 1.0,
+                    fringe_revenue_m: 0.0,
+                    history: Vec::new(),
+                }
             })
             .collect(),
     );
@@ -178,6 +240,8 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
     let company_rows = sorted_by(data.companies.rows.iter(), |c| &c.id);
     Keys::<crate::world::CompanyId>::new("companies", company_rows.iter().map(|c| c.id.as_str()))?;
     let mut companies = Vec::with_capacity(company_rows.len());
+    let mut units = Vec::with_capacity(company_rows.len());
+    let mut named_revenue = vec![0.0; industries.len()];
     for c in &company_rows {
         let bad = |message: String| LoadError::BadValue {
             table: "companies",
@@ -187,17 +251,55 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         let start = starts
             .get(c.id.as_str())
             .ok_or_else(|| bad("no company-start.csv row".into()))?;
+        let industry: IndustryId =
+            industry_by_name.get("companies", &c.id, "industry", &c.industry, "industry")?;
+        let hq_province = province_keys.get(
+            "companies",
+            &c.id,
+            "hq_province",
+            &c.hq_province,
+            "province",
+        )?;
+        let revenue = usd_from_millions(c.revenue_usd_m);
+        named_revenue[industry.index()] += revenue;
+        let params = &industries[industry].params;
+        // The unit (spec 3.6, 7.1): gross assets and book from company-start.csv, productivity
+        // 100, no ramping, location bonus 0 (the MVP defaults have no fit or resource tags, 5.4).
+        let location_bonus = 0.0;
+        let gross = start.gross_assets_usd;
+        let (growth_plan, rd_plan) = placeholder_plan(params);
+        let unit_id = UnitId::from_index(units.len());
+        units.push(BusinessUnit {
+            company: CompanyId::from_index(companies.len()),
+            industry,
+            base_province: hq_province,
+            gross_assets: gross,
+            ramping: Vec::new(),
+            asset_book: start.asset_book_usd,
+            productivity: START_PRODUCTIVITY,
+            location_bonus,
+            fixed_cost_rate: fixed_cost_rate_at_load(
+                gross,
+                shared_costs_at_load_hook(gross, revenue),
+                params,
+            ),
+            growth_plan,
+            rd_plan,
+            revenue_m: 0.0,
+            variable_m: 0.0,
+            fixed_m: 0.0,
+            rd_m: 0.0,
+            dep_m: 0.0,
+            shared_m: 0.0,
+            capex_m: 0.0,
+            sale_proceeds_m: 0.0,
+            sale_gain_m: 0.0,
+        });
         companies.push(Company {
             key: c.id.clone(),
             name: c.name.clone(),
             ticker: c.ticker.clone(),
-            industry: industry_by_name.get(
-                "companies",
-                &c.id,
-                "industry",
-                &c.industry,
-                "industry",
-            )?,
+            industry,
             hq_country: country_keys.get(
                 "companies",
                 &c.id,
@@ -205,17 +307,23 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
                 &c.hq_country,
                 "country",
             )?,
-            hq_province: province_keys.get(
-                "companies",
-                &c.id,
-                "hq_province",
-                &c.hq_province,
-                "province",
-            )?,
+            hq_province,
             public: c.public,
-            revenue_usd: usd_from_millions(c.revenue_usd_m),
+            revenue_usd: revenue,
             shares_out: shares_from_csv(start.shares).map_err(bad)?,
+            units: vec![unit_id],
+            pc_bonus: start_pc_bonus(revenue, location_bonus, params),
+            cash_usd: start.cash_usd,
+            line_drawn_usd: start.credit_drawn_usd,
         });
+    }
+    // Fringe pools (spec 5.3, 7.2): what named revenue leaves of the 2020 world size.
+    for (id, ind) in industries.iter_mut() {
+        ind.fringe_assets = fringe_assets_at_load(
+            ind.world_size_2020_usd,
+            named_revenue[id.index()],
+            ind.params.asset_turnover,
+        );
     }
 
     // Full characters (spec 3.7.2): all 296 (decision D11).
@@ -234,6 +342,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             .collect(),
     );
 
+    let schedule = ai_schedule(data)?;
     Ok(World {
         clock: DateTime::START,
         zones,
@@ -242,5 +351,93 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         industries,
         companies: Table::from_rows(companies),
         characters,
+        units: Table::from_rows(units),
+        base_rate: BASE_RATE,
+        neutral_rate: NEUTRAL_RATE,
+        // `economy::start` makes the cycle's draws (spec 7.3); until then g is 0.
+        cycle: GlobalCycle {
+            phase: START_PHASE,
+            quarters_left: 0,
+            g_t: 0.0,
+            g_history: vec![0.0; max_lag as usize + 1],
+            z_avg,
+        },
+        ai: AiBoom {
+            stage: AiStage::Preboom,
+            boom_date: boom_date(),
+            // Rolled by `economy::start` (spec 5.1.1).
+            pop_date: Date::ymd(POP_BASE_YEAR, 1, 1),
+            ai_labs_lt: schedule.preboom_lt,
+            schedule,
+        },
+    })
+}
+
+/// World base rate, fixed in the MVP (spec 3.1, T).
+pub const BASE_RATE: f64 = 0.03;
+/// Neutral rate (spec 3.1, T).
+pub const NEUTRAL_RATE: f64 = 0.03;
+
+/// The industries.csv tuning columns (spec 2.2).
+fn industry_params(i: &sim_data::Industry) -> IndustryParams {
+    IndustryParams {
+        trend_growth: i.trend_growth,
+        cycle_beta: i.cycle_beta,
+        volatility: i.volatility,
+        boom_uplift: i.boom_uplift,
+        crash_drop: i.crash_drop,
+        rate_sensitivity: i.rate_sensitivity,
+        margin_full_use: i.margin_full_use,
+        fixed_cost_share: i.fixed_cost_share,
+        variable_cost_share: i.variable_cost_share,
+        capital_per_dollar: i.capital_per_dollar,
+        asset_turnover: i.asset_turnover,
+        asset_decay: i.asset_decay,
+        asset_decay_threshold_usd: i.asset_decay_threshold_usd,
+        rd_norm: i.rd_norm,
+        labor_value_usd: i.labor_value_usd,
+        pc_modifier: i.pc_modifier,
+        data_tb_per_musd: i.data_tb_per_musd,
+        data_decay_base: i.data_decay_base,
+        cash_burning: i.cash_burning,
+        earnings_multiple: i.earnings_multiple,
+    }
+}
+
+/// AI labs' long-term rate by stage from ai-boom.csv (spec 5.1.1): one preboom, bust and
+/// postcrash row each, and the boom rows by boom year 0, 1, 2... with no gap.
+fn ai_schedule(data: &WorldData) -> Result<AiSchedule, LoadError> {
+    let bad = |key: &str, message: &str| LoadError::BadValue {
+        table: "ai-boom",
+        key: key.to_owned(),
+        message: message.to_owned(),
+    };
+    let rate = |stage: &str| -> Result<f64, LoadError> {
+        let mut rows = data.ai_boom.rows.iter().filter(|r| r.stage == stage);
+        let row = rows.next().ok_or_else(|| bad(stage, "no row"))?;
+        if rows.next().is_some() {
+            return Err(bad(stage, "more than one row"));
+        }
+        row.ai_labs_lt.ok_or_else(|| bad(stage, "no ai_labs_lt"))
+    };
+    let mut boom: Vec<(u32, f64)> = Vec::new();
+    for r in data.ai_boom.rows.iter().filter(|r| r.stage == "boom") {
+        let year = r
+            .boom_year
+            .ok_or_else(|| bad("boom", "a boom row has no boom_year"))?;
+        let lt = r
+            .ai_labs_lt
+            .ok_or_else(|| bad("boom", "a boom row has no ai_labs_lt"))?;
+        boom.push((year, lt));
+    }
+    boom.sort_by_key(|&(y, _)| y);
+    if boom.is_empty() || boom.iter().enumerate().any(|(i, &(y, _))| y as usize != i) {
+        return Err(bad("boom", "boom years must run 0, 1, 2... with no gap"));
+    }
+    Ok(AiSchedule {
+        preboom_lt: rate("preboom")?,
+        boom_lt: boom.into_iter().map(|(_, lt)| lt).collect(),
+        bust_lt: rate("bust")?,
+        postcrash_lt: rate("postcrash")?,
     })
 }

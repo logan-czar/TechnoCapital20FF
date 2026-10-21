@@ -9,8 +9,9 @@
 //! **One file per view.** Each view is a struct in its own file that implements [`ViewData`]:
 //! its cadence and its `build` from the [`ViewInput`]. Filling a view touches only its file.
 //! Adding a view is a new file plus one line in the `sim_views!` list below, which generates the
-//! module, the [`SimViews`] field and the build and refresh code. M1 fills the clock view; the
-//! others are empty placeholders on their cadence.
+//! module, the [`SimViews`] field and the build and refresh code. M1 fills the clock view, M2 the
+//! industry rows, industry detail and cycle views; the others are empty placeholders on their
+//! cadence.
 
 use std::fmt;
 
@@ -144,13 +145,30 @@ macro_rules! sim_views {
         }
 
         impl SimViews {
-            /// Every view built from the state, all dirty: at a new game and on load (spec 9.4).
+            /// Every view built from the state, all dirty, at refresh 1: the first build of a
+            /// `Sim` (spec 9.4).
             pub(crate) fn build(world: &World, controls: &Controls) -> SimViews {
                 let input = ViewInput { world, controls };
                 SimViews {
                     refresh: 1,
                     $($field: View::built(&input, 1),)*
                 }
+            }
+
+            /// Every view rebuilt from a new state, all dirty, at the next refresh number: at a
+            /// NewGame and on load (spec 9.4). The refresh counter and every view's version keep
+            /// climbing, so a reader that copies views by version never mistakes a new game's
+            /// views for ones it already has.
+            pub(crate) fn rebuild(&mut self, world: &World, controls: &Controls) {
+                self.refresh += 1;
+                let input = ViewInput { world, controls };
+                $(self.$field = View::built(&input, self.refresh);)*
+            }
+
+            /// Every view holds the same data as in `other`, whatever their versions and dirty
+            /// flags (for checking that a copy shows a given state).
+            pub fn same_data(&self, other: &SimViews) -> bool {
+                true $(&& self.$field.get() == other.$field.get())*
             }
 
             /// After a tick: rebuilds the views due on this tick and clears the others' dirty
@@ -188,6 +206,7 @@ sim_views! {
     tech: tech::TechView;
     industry_rows: industry_rows::IndustryRowsView;
     industry_detail: industry_detail::IndustryDetailView;
+    cycle: cycle::CycleView;
     map_layers: map_layers::MapLayersView;
     province_cards: province_cards::ProvinceCardsView;
     statements: statements::StatementsView;
