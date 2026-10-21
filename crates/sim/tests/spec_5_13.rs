@@ -162,7 +162,7 @@ fn loss_case() {
 
 #[test]
 fn edge_cases_newborn_negative_book_and_penny_floor() {
-    // D240: no statements yet (trailing_four is None) values at book × cycle × X.
+    // D253: no statements yet (trailing_four is None) values at book × cycle × X.
     let newborn = FairValueInputs {
         basis: FairValueBasis::at_release(None, 0.0, 0.05),
         book_equity: 20.0 * M,
@@ -214,31 +214,36 @@ fn revenue_growth_over_four_quarters() {
     near(revenue_growth(&[0.0; 5]), 0.0);
 }
 
+/// The 7.1 inputs of one starting company, from the CSVs: book equity (company-start.csv,
+/// D238), the run-rate EBIT (validate.py's starting margin × companies.csv revenue:
+/// finance-start.csv's margin, independent of the engine), the HQ tax, M_sector, the industry's
+/// trend_growth as lt (D1), the D223 home spread from the zone's base spread (D235), X from
+/// confidence_start for listed companies, and the industry's 5.13 book floor.
+fn load_inputs(f: &finance_common::CompanyFacts<'_>, ebit: f64) -> EngineValueInputs {
+    EngineValueInputs {
+        book_equity: f.start.book_equity_usd,
+        run_rate_ebit: ebit,
+        tax_rate: f.economy.corp_tax_rate,
+        sector_multiple: f.industry.earnings_multiple,
+        g_sector: f.industry.trend_growth,
+        home_spread: home_spread(f.zone_spread(), f.sovereign_spread()),
+        listing_confidence: f.company.public.then_some(f.zone.confidence_start),
+        book_floor_share: book_floor_share(&f.industry.id),
+    }
+}
+
 #[test]
 fn engine_value_reproduces_company_start_for_all_651() {
-    // Spec 7.1 (batch 161), as gen.py builds it: book equity and the run-rate EBIT (validate.py's
-    // starting margin × companies.csv revenue: finance-start.csv's margin, independent of the
-    // engine), the HQ country's tax, M_sector 17, R from half the zone's base spread plus half
-    // the sovereign spread (D235), X from confidence_start for listed companies.
+    // Spec 7.1 (batch 161): the 5.13 fair value at load (D244).
     let d = data();
     let fixture = finance_start();
     assert_eq!(fixture.len(), 651);
     assert_eq!(d.company_start.rows.len(), 651);
-    let mut worst_rounded = 0.0f64;
     for row in &fixture {
         let f = facts(&d, row.id());
         let margin = row.num("ebit") / row.num("revenue");
         let ebit = margin * f.company.revenue_usd_m * 1e6;
-        let blend = 0.5 * f.zone_spread() + 0.5 * f.sovereign_spread();
-        let inputs = EngineValueInputs {
-            book_equity: f.start.book_equity_usd,
-            run_rate_ebit: ebit,
-            tax_rate: f.economy.corp_tax_rate,
-            sector_multiple: f.industry.earnings_multiple,
-            home_spread: blend,
-            listing_confidence: f.company.public.then_some(f.zone.confidence_start),
-        };
-        let ev = engine_value_at_load(&inputs);
+        let ev = engine_value_at_load(&load_inputs(&f, ebit));
         let want = f.start.engine_value_usd;
         // company-start.csv rounds to whole dollars.
         assert!(
@@ -246,12 +251,6 @@ fn engine_value_reproduces_company_start_for_all_651() {
             "{}: engine value {ev} vs company-start.csv {want}",
             row.id()
         );
-        // With the engine's own home spread (rounded to whole bps, D223) it stays within 0.1%.
-        let rounded = engine_value_at_load(&EngineValueInputs {
-            home_spread: home_spread(f.zone_spread(), f.sovereign_spread()),
-            ..inputs
-        });
-        worst_rounded = worst_rounded.max((rounded - want).abs() / want);
         assert!(ev >= MIN_ENGINE_VALUE_USD);
         // shares = engine value ÷ open_price, so P = V = open_price at load (7.1).
         assert!(
@@ -260,14 +259,10 @@ fn engine_value_reproduces_company_start_for_all_651() {
             row.id()
         );
     }
-    assert!(
-        worst_rounded < 1e-3,
-        "rounded home spread off by {worst_rounded}"
-    );
 }
 
 #[test]
-fn arrowhead_engine_value_is_its_book_floor() {
+fn engine_value_worked_cases() {
     // Spec 7.1: "Arrowhead (ARDR) $9 × about 6.67M shares = $60M (its 0.6 × book floor)".
     let d = data();
     let f = facts(&d, "CO-0001");
@@ -277,26 +272,49 @@ fn arrowhead_engine_value_is_its_book_floor() {
         .into_iter()
         .find(|r| r.id() == "CO-0001")
         .unwrap();
-    let ev = engine_value_at_load(&EngineValueInputs {
-        book_equity: f.start.book_equity_usd,
-        run_rate_ebit: row.num("ebit"),
-        tax_rate: f.economy.corp_tax_rate,
-        sector_multiple: f.industry.earnings_multiple,
-        home_spread: 0.5 * f.zone_spread() + 0.5 * f.sovereign_spread(),
-        listing_confidence: Some(f.zone.confidence_start),
-    });
-    near(ev, 0.6 * f.start.book_equity_usd);
-    // The loss path and the barebones three: NI ≤ 0 values at book × X.
+    near(
+        engine_value_at_load(&load_inputs(&f, row.num("ebit"))),
+        0.6 * f.start.book_equity_usd,
+    );
+    let base = EngineValueInputs {
+        book_equity: 100.0 * M,
+        run_rate_ebit: 20.0 * M,
+        tax_rate: 0.25,
+        sector_multiple: 17.0,
+        g_sector: 0.10,
+        home_spread: 0.005,
+        listing_confidence: Some(0.0),
+        book_floor_share: book_floor_share("oil"),
+    };
+    // NI = 20 × 0.75 = 15; G at g 0 = 1 − 2.5 × 0.10 = 0.75; R 1.0 (y10 4%):
+    // 0.3 × 100 + 0.7 × 15 × 17 × 0.75 = 30 + 133.875 = $163.875M.
+    near(load_net_income(20.0 * M, 0.25), 15.0 * M);
+    near(engine_value_at_load(&base), 163.875 * M);
+    // lt 0.25 hits the G floor 0.5: 30 + 0.7 × 15 × 17 × 0.5 = $119.25M.
+    near(
+        engine_value_at_load(&EngineValueInputs {
+            g_sector: 0.25,
+            ..base
+        }),
+        119.25 * M,
+    );
+    // A thin earner in Real estate sits on the 0.9 floor: NI $0.75M gives 30 + 6.69 < 90.
+    near(
+        engine_value_at_load(&EngineValueInputs {
+            run_rate_ebit: 1.0 * M,
+            book_floor_share: book_floor_share("real_estate"),
+            ..base
+        }),
+        90.0 * M,
+    );
+    // The loss path and the barebones three (revenue 0, so NI 0): book × X.
     near(load_net_income(-2.0 * M, 0.25), -2.0 * M);
-    near(load_net_income(2.0 * M, 0.25), 1.5 * M);
     near(
         engine_value_at_load(&EngineValueInputs {
             book_equity: 1.0 * M,
             run_rate_ebit: 0.0,
-            tax_rate: 0.25,
-            sector_multiple: 17.0,
-            home_spread: 0.0,
             listing_confidence: None,
+            ..base
         }),
         1.0 * M,
     );
@@ -305,10 +323,8 @@ fn arrowhead_engine_value_is_its_book_floor() {
         engine_value_at_load(&EngineValueInputs {
             book_equity: 10_000.0,
             run_rate_ebit: -1.0,
-            tax_rate: 0.25,
-            sector_multiple: 17.0,
-            home_spread: 0.0,
             listing_confidence: None,
+            ..base
         }),
         MIN_ENGINE_VALUE_USD,
     );

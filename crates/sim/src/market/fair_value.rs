@@ -136,7 +136,7 @@ pub fn book_floor_share(industry_key: &str) -> f64 {
 /// recalculation only at the release"; D243): normalized earnings and the growth factor.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct FairValueBasis {
-    /// E_norm (5.13 step 1); `None` for a company with no statements yet (D240).
+    /// E_norm (5.13 step 1); `None` for a company with no statements yet (D253).
     pub e_norm: Option<f64>,
     /// G (5.13 step 2).
     pub growth_factor: f64,
@@ -181,7 +181,7 @@ pub struct FairValueInputs {
 ///
 /// - profit (E_norm above 0): `(0.3 × book + 0.7 × E_norm × M_sector × G × R × cycle ×
 ///   confidence) × X`;
-/// - loss (E_norm at or below 0, or no statements, D240): `book × cycle × X`;
+/// - loss (E_norm at or below 0, or no statements, D253): `book × cycle × X`;
 /// - then the floors: at least `floor share × book` (a negative book has no book floor, D242)
 ///   and at least $0.01 a share.
 pub fn fair_value(i: &FairValueInputs) -> f64 {
