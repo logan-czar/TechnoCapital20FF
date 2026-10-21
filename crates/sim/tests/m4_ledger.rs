@@ -61,9 +61,11 @@ fn near(what: &str, a: f64, b: f64) {
 #[test]
 fn every_line_posts_once_a_month_in_step_order() {
     let mut sim = Sim::new(data(), 5).unwrap();
-    // March 2020 closes on 1 April: a quarter end, so the close pays the quarter's tax too.
-    // February closes on 1 March: an ordinary month.
-    for (y, m) in [(2020, 3), (2020, 5), (2021, 2)] {
+    // The tick on the 1st closes the month before: 1 March closes February and 1 May closes
+    // April (ordinary months, tax only accrues); 1 April closes March and 1 July 2021 closes
+    // June, quarter ends, where the 4.4 close then pays the quarter's tax.
+    let mut quarter_ends = 0;
+    for (y, m) in [(2020, 3), (2020, 4), (2020, 5), (2021, 2), (2021, 7)] {
         let close = DateTime::midnight(Date::ymd(y, m, 1));
         while sim.now().next() < close {
             sim.step();
@@ -139,6 +141,7 @@ fn every_line_posts_once_a_month_in_step_order() {
             if m == 4 || m == 1 || m == 7 || m == 10 {
                 near("tax paid", l.tax_paid, to_date);
                 assert_eq!(c.finance.tax.accrued, 0.0);
+                quarter_ends += 1;
             } else {
                 assert_eq!(l.tax_paid, 0.0);
                 near("tax payable", c.finance.tax.accrued, to_date);
@@ -150,6 +153,11 @@ fn every_line_posts_once_a_month_in_step_order() {
             "{checked} companies checked on {y}-{m:02}-01"
         );
     }
+    // Both quarter-end closes ran the tax-paid branch for every company checked.
+    assert!(
+        quarter_ends > 1200,
+        "{quarter_ends} quarter-end company-months checked"
+    );
 }
 
 #[test]
