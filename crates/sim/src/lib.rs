@@ -8,6 +8,7 @@ pub mod ai;
 pub mod births;
 pub mod economy;
 pub mod finance;
+pub mod hash;
 pub mod market;
 pub mod news;
 pub mod ops;
@@ -23,6 +24,7 @@ use std::sync::Arc;
 use sim_data::WorldData;
 use thiserror::Error;
 
+pub use hash::StateHash;
 pub use rng::{DrawSource, RngStreams, Stream};
 use time::control::{MAX_SPEED, Skip, skip_target};
 pub use time::{Control, Controls};
@@ -181,6 +183,16 @@ impl Sim {
     /// The time of the last finished tick.
     pub fn now(&self) -> DateTime {
         self.world.clock
+    }
+
+    /// The hash of the world and RNG positions (build-plan M1.8, 4.3).
+    pub fn state_hash(&self) -> StateHash {
+        hash::state_hash(&self.world, &self.rng)
+    }
+
+    /// The game seed.
+    pub fn seed(&self) -> u64 {
+        self.rng.seed()
     }
 
     /// The read-only views the UI reads (spec 9.2, 9.4).
