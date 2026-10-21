@@ -105,30 +105,42 @@ fn company_start_balance_identity() {
 
 #[test]
 fn company_start_lines_within_their_limit() {
-    // D15: CO-0002 starts at A- with its line at the 5.12 limit (0.5 × asset book × 0.8); at BBB
-    // (0.65) the same line is over it.
+    // D15: CO-0002 starts at A with its line sized to 0.5 × asset book × 0.65 (BBB, its rating
+    // with EBITDA 10% lower, D241); at BB (0.5) the same line is over its limit.
     expect_error(
-        |w| w.company_start.rows[1].start_rating = "BBB".into(),
+        |w| w.company_start.rows[1].start_rating = "BB".into(),
         "company-start.csv",
         3,
         "credit_drawn_usd",
     );
-    // D15: a line above the 7.1 line (asset book − book value + min_cash).
+    // D15: a line above the 7.1 line (asset book − book value + min_cash, $73.7M).
     expect_error(
         |w| {
             let r = &mut w.company_start.rows[1];
-            r.credit_drawn_usd += 20.0e6;
-            r.book_equity_usd -= 20.0e6;
+            r.credit_drawn_usd += 30.0e6;
+            r.book_equity_usd -= 30.0e6;
         },
         "company-start.csv",
         3,
         "credit_drawn_usd",
     );
-    // D16: CO-0006 draws its line; rated CCC it may not.
+    // D15 equity rule: CO-0002's book value is below its asset book, so it holds exactly min_cash
+    // ($16.5M, 5% of $330M); $1M more cash (and equity, so the sheet still balances) is caught.
     expect_error(
-        |w| w.company_start.rows[5].start_rating = "CCC".into(),
+        |w| {
+            let r = &mut w.company_start.rows[1];
+            r.cash_usd += 1.0e6;
+            r.book_equity_usd += 1.0e6;
+        },
         "company-start.csv",
-        7,
+        3,
+        "credit_drawn_usd",
+    );
+    // D16: CO-0007 draws its line; rated CCC it may not.
+    expect_error(
+        |w| w.company_start.rows[6].start_rating = "CCC".into(),
+        "company-start.csv",
+        8,
         "start_rating",
     );
     expect_error(

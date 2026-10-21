@@ -283,6 +283,22 @@ def start_rating(co, ind, traits, econ, zone, gross, book, cash, line):
     return rating_at_load(line - cash, ebit + dep, line, home, revenue, ind['id'], econ['sovereign_rating'])
 
 
+LOAD_LINE_SIZING_MARGIN = 0.10   # D241 (T): starting lines are sized against the run-rate EBITDA less 10%
+
+
+def sizing_limit(co, ind, traits, econ, zone, gross, book, cash):
+    """D15, D241: the function line -> floor(5.12 limit of that line, at the rating it would have with the
+    run-rate EBITDA cut by LOAD_LINE_SIZING_MARGIN), in whole dollars, for a company with these balances."""
+    revenue, ebit, dep = run_rate(co, ind, traits, gross, book)
+    home = home_spread_bps(zone['credit_spread_bps'], econ['sovereign_spread_bps']) / 1e4
+    ebitda = (1 - LOAD_LINE_SIZING_MARGIN) * (ebit + dep)
+
+    def limit_at(x):
+        r = rating_at_load(x - cash, ebitda, x, home, revenue, ind['id'], econ['sovereign_rating'])[1]
+        return math.floor(line_limit(book, cash, x, r))
+    return limit_at
+
+
 def run(data):
     errors = []
     inds = load(os.path.join(data, 'industries.csv'))
@@ -587,15 +603,22 @@ def run(data):
                               f'{line_limit(ab, cash, line, rating):.0f} at {rating}')
             if line > 0 and rating in NO_LINE_RATINGS:
                 errors.append(f'{r["id"]}: starts rated {rating} with a drawn line')
-            # D15: a line cut below the 7.1 line is the largest within its own limit (to $1,000; gen.py's
-            # float guard steps a line at a rating edge down by a few dollars)
+            # D241: every line is within its limit at the run-rate EBITDA less the sizing margin, and a line
+            # cut below the 7.1 line is where gen.py's iteration x = min(7.1 line, haircut limit(x)) settles:
+            # a fixed point, or the lower line of a two-line cycle
+            if line > 0 or bv < ab:
+                limit_at = sizing_limit(co, ind, traits, econ, zone, gross, ab, cash)
+                if line > limit_at(line):
+                    errors.append(f'{r["id"]}: line {line:.0f} above its 5.12 limit {limit_at(line):.0f} at the '
+                                  f'run-rate EBITDA less {100 * LOAD_LINE_SIZING_MARGIN:.0f}%')
             if line < line_71 - 2:
                 sized += 1
                 sized_usd += line_71 - line
-                more = min(line_71, line + 1000)
-                more_rating = start_rating(co, ind, traits, econ, zone, gross, ab, cash, more)[1]
-                if more <= line_limit(ab, cash, more, more_rating):
-                    errors.append(f'{r["id"]}: line {line:.0f} cut below the largest line within its 5.12 limit')
+                l0 = round(line_71)
+                nxt = min(l0, limit_at(line))
+                if not (nxt == line or (nxt > line and min(l0, limit_at(nxt)) == line)):
+                    errors.append(f'{r["id"]}: line {line:.0f} cut to neither a fixed point nor the lower line of '
+                                  f'a cycle of x = min(7.1 line, limit(x)) at the haircut run rate')
         ps = [float(r['open_price']) for r in st]
         pl = [float(r['open_price']) for r in st if r['public'] == 'Y']
         ar = next((r for r in st if r['ticker'] == 'ARDR'), None)

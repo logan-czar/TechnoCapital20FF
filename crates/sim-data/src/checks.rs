@@ -433,7 +433,8 @@ fn company_start(w: &WorldData, errors: &mut Vec<DataError>) {
                     line,
                     "book_equity_usd",
                     format!(
-                        "{id}: book value covers the asset book, but the line is drawn or book                          equity differs from companies.csv book value"
+                        "{id}: book value covers the asset book, but the line is drawn or book \
+                         equity differs from companies.csv book value"
                     ),
                 ));
             }
@@ -447,7 +448,9 @@ fn company_start(w: &WorldData, errors: &mut Vec<DataError>) {
                     line,
                     "credit_drawn_usd",
                     format!(
-                        "{id}: book value is below the asset book, but cash is not min_cash, or                          the line is above the 7.1 line {line_71:.0}, or book equity is below                          book value"
+                        "{id}: book value is below the asset book, but cash is not min_cash, or \
+                         the line is above the 7.1 line {line_71:.0}, or book equity is below \
+                         book value"
                     ),
                 ));
             }
