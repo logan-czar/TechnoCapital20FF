@@ -375,7 +375,7 @@ fn sections_collapse_and_hide() {
             .map(|h| h.id)
             .collect()
     };
-    assert_eq!(headers(&mut app).len(), 3);
+    assert_eq!(headers(&mut app).len(), 4);
     {
         let mut cfg = app.world_mut().resource_mut::<UiConfig>();
         let s = cfg.sections.entry("company".into()).or_default();
@@ -385,7 +385,7 @@ fn sections_collapse_and_hide() {
     frames(&mut app, 2);
     let mut h = headers(&mut app);
     h.sort_unstable();
-    assert_eq!(h, ["links", "plan"]);
+    assert_eq!(h, ["chart", "links", "plan"]);
     let pane = ws(&app).focused();
     let texts = body_texts(&mut app, pane);
     assert!(

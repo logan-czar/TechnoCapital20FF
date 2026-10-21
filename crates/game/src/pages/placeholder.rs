@@ -2,6 +2,8 @@
 //! links to the pages it relates to, the views it will read, and what Phase B fills in. Phase
 //! B replaces a kind by registering its own builder ([`super::PageAppExt::register_page`]).
 
+use std::sync::Arc;
+
 use bevy::picking::hover::Hovered;
 use bevy::prelude::*;
 use sim::finance::distress::CompanyStatus;
@@ -12,6 +14,7 @@ use super::{
     ViewKey, cadence_name, view_meta,
 };
 use crate::bridge::{RunnerControls, Views};
+use crate::chart::{ChartModel, Ohlc, Series, ValueFormat, spawn_chart, ten_year_view};
 use crate::command::index::NameIndex;
 use crate::links::link_sized;
 use crate::ui::theme::{self, Tooltip, color, font};
@@ -26,6 +29,63 @@ pub const SECTIONS: &[super::SectionSpec] = &[
     ("views", "Views this page reads"),
     ("plan", "Phase B fills in"),
 ];
+
+/// Company and industry placeholders add a chart from the views (the M9.1 widget at work).
+pub const CHART_SECTIONS: &[super::SectionSpec] = &[
+    ("links", "Links"),
+    ("chart", "Chart"),
+    ("views", "Views this page reads"),
+    ("plan", "Phase B fills in"),
+];
+
+/// The chart a company or industry placeholder shows, from the views: a company's daily bars
+/// for the last year (the 10-year weekly view once it has more than a year), an industry's
+/// demand and supply over its last 20 quarters.
+pub fn placeholder_chart(page: &PageRef, v: &sim::SimViews) -> Option<ChartModel> {
+    match page {
+        PageRef::Company(id) => {
+            let h = v.price_bars.get().companies.iter().find(|h| h.id == *id)?;
+            let daily: Vec<Ohlc> = h.bars.iter().map(Ohlc::from_bar).collect();
+            let last = daily.last()?.date;
+            let year_ago = last.add_days(-365);
+            Some(if daily.first().is_some_and(|b| b.date < year_ago) {
+                ChartModel::candles(
+                    "10 years, weekly bars (EFV band with lane A1's EFV history)",
+                    ten_year_view(&daily),
+                )
+            } else {
+                ChartModel::candles("Daily bars (EFV band with lane A1's EFV history)", daily)
+            })
+        }
+        PageRef::Industry(id) => {
+            let d = v.industry_detail.get().get(*id)?;
+            let start = d.history.len().saturating_sub(20);
+            let q = &d.history[start..];
+            if q.is_empty() {
+                return None;
+            }
+            Some(ChartModel {
+                title: format!("Demand vs supply, last {} quarters", q.len()),
+                labels: q.iter().map(|h| h.quarter.to_string()).collect(),
+                series: vec![
+                    Series::Line {
+                        name: "demand".into(),
+                        values: q.iter().map(|h| h.demand).collect(),
+                        color: color::CYAN,
+                    },
+                    Series::Line {
+                        name: "supply".into(),
+                        values: q.iter().map(|h| h.supply).collect(),
+                        color: color::AMBER,
+                    },
+                ],
+                format: ValueFormat::Money,
+                reference: None,
+            })
+        }
+        _ => None,
+    }
+}
 
 /// Each placeholder kind: views it reads, views lane A1 adds, and what Phase B builds.
 fn spec(kind: PageKind) -> (&'static [ViewKey], &'static [&'static str], &'static str) {
@@ -120,9 +180,14 @@ pub fn register(app: &mut App) {
         PageKind::Headline,
     ] {
         let (views, planned, _) = spec(kind);
+        let sections = if matches!(kind, PageKind::Company | PageKind::Industry) {
+            CHART_SECTIONS
+        } else {
+            SECTIONS
+        };
         app.register_page(
             kind,
-            PageSpec::new(views).planned(planned).sections(SECTIONS),
+            PageSpec::new(views).planned(planned).sections(sections),
             placeholder_page,
         );
     }
@@ -419,6 +484,21 @@ fn placeholder_page(
                 ))
                 .id();
             commands.entity(body).add_child(e);
+        }
+    }
+    if let Some(body) = b.section("chart") {
+        match placeholder_chart(&b.page, &views) {
+            Some(m) => {
+                spawn_chart(&mut commands, body, Arc::new(m));
+            }
+            None => {
+                let e = commands
+                    .spawn(theme::muted(
+                        "No history yet: the chart fills as the game runs.",
+                    ))
+                    .id();
+                commands.entity(body).add_child(e);
+            }
         }
     }
     if let Some(body) = b.section("plan") {

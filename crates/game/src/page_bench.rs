@@ -54,13 +54,7 @@ fn pick_pages(v: &Views, index: &NameIndex) -> Vec<PageRef> {
         .iter()
         .find(|r| !r.public && r.status == CompanyStatus::Active)
         .map(|r| PageRef::Company(r.id));
-    let first = |f: fn(&PageRef) -> bool| {
-        index
-            .entries()
-            .iter()
-            .map(|e| e.page.clone())
-            .find(&f)
-    };
+    let first = |f: fn(&PageRef) -> bool| index.entries().iter().map(|e| e.page.clone()).find(&f);
     let headline = v
         .news
         .get()
