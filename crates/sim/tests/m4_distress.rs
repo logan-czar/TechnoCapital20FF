@@ -18,12 +18,25 @@ use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 
 use common::data;
 use sim::Sim;
-use sim::economy::assets::sale_factor;
 use sim::finance::distress::CompanyStatus;
 use sim::finance::jobs::sheet;
 use sim::finance::rating::Band;
 use sim::time::{Control, Date, DateTime, JobCtx, Slot};
-use sim::world::{AlertKind, AlertPayload, CompanyId, Notice, Ordinal, World};
+use sim::world::{AlertKind, AlertPayload, CompanyId, Notice, Ordinal, PhaseLabel, World};
+
+/// Spec 5.10 sale factors by phase label (10.0.7), written out.
+fn spec_sale_factor(label: PhaseLabel) -> f64 {
+    match label {
+        PhaseLabel::Boom => 1.00,
+        PhaseLabel::Normal => 0.85,
+        PhaseLabel::Glut => 0.70,
+        PhaseLabel::Bust => 0.60,
+    }
+}
+
+/// The company the walk is written for: the lowest-id company that starts rated CCC or CC with
+/// no line on today's data (company-start.csv after D241).
+const EXPECTED_TARGET: &str = "CO-0008";
 
 /// The test company's index, and its fixed cost rate at load (f64 bits).
 static TARGET: AtomicUsize = AtomicUsize::new(usize::MAX);
@@ -119,6 +132,10 @@ fn a_forced_failure_walks_distressed_bankrupt_removed() {
         Ordering::SeqCst,
     );
     let key = sim.world().companies[pick].key.clone();
+    assert_eq!(
+        key, EXPECTED_TARGET,
+        "the starting data moved: re-pick the test company"
+    );
     sim.register_test_job(Slot::MonthlyDemand, "test.squeeze", squeeze);
     sim.register_test_job(Slot::MonthlySupply, "test.supply", check_supply);
     sim.apply(Control::WatchlistAdd(pick)).unwrap();
@@ -142,7 +159,7 @@ fn a_forced_failure_walks_distressed_bankrupt_removed() {
         // is book sold × the sale factor of this month's label, the gain the difference.
         let book_sold = u0.asset_book - l.depreciation - u1.asset_book;
         assert!(book_sold > 0.0, "{key} month {m}: a forced sale");
-        let factor = sale_factor(w.industries[industry].phase_label);
+        let factor = spec_sale_factor(w.industries[industry].phase_label);
         let proceeds = book_sold * factor;
         assert!((l.asset_sale_proceeds - proceeds).abs() < 1e-6 * proceeds.max(1.0));
         assert!((l.asset_sale_gain - (proceeds - book_sold)).abs() < 1e-6 * book_sold);
@@ -251,10 +268,17 @@ fn a_forced_failure_walks_distressed_bankrupt_removed() {
     assert_eq!(w.units[unit].gross_assets, 0.0);
     assert!(c.board.iter().all(Option::is_none));
     assert!(!c.finance.quarters().is_empty(), "filings stay");
-    // Nothing owed: no line, and the tax payable came out of the sale (D233).
-    assert_eq!(
-        r.line_repaid + r.line_written_off,
-        before.companies[pick].finance.line.drawn
+    // No line to repay (limit 0 at CC); removal with a drawn line is `m4_removal.rs`. The tax
+    // payable came out of the sale first (D233).
+    assert_eq!(before.companies[pick].finance.line.drawn, 0.0);
+    let payable = before.companies[pick].finance.tax.accrued;
+    assert!(
+        (r.tax_paid
+            - payable
+                .max(0.0)
+                .min((before.companies[pick].cash_usd + r.sale.proceeds).max(0.0)))
+        .abs()
+            < 1e-6
     );
     // The next supply step counts the returned capacity in the fringe (M2 supply, 5.2).
     step_to(
