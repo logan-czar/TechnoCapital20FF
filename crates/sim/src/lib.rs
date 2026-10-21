@@ -166,9 +166,18 @@ impl Sim {
         match control {
             Control::NewGame { seed } => {
                 let keep = std::mem::take(&mut self.controls);
-                *self = Sim::from_shared(Arc::clone(&self.data), seed)?;
+                let fresh = match Sim::from_shared(Arc::clone(&self.data), seed) {
+                    Ok(s) => s,
+                    Err(e) => {
+                        self.controls = keep;
+                        return Err(e.into());
+                    }
+                };
+                // The old views carry their refresh count over, so versions keep climbing.
+                let mut views = std::mem::replace(self, fresh).views;
                 self.controls.alerts = keep.alerts;
-                self.views = SimViews::build(&self.world, &self.controls);
+                views.rebuild(&self.world, &self.controls);
+                self.views = views;
             }
             Control::SetSpeed(0) | Control::Pause => {
                 c.skip = None;
@@ -236,7 +245,7 @@ impl Sim {
         let mut notices = Vec::new();
         self.controls.paused = false;
         self.pause(&mut notices, PauseReason::Loaded);
-        self.views = SimViews::build(&self.world, &self.controls);
+        self.views.rebuild(&self.world, &self.controls);
         Ok(notices)
     }
 

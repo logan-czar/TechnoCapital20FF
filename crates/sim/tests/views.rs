@@ -70,3 +70,43 @@ fn views_rebuild_on_their_cadence() {
     assert_eq!(v.company_rows.version(), v.refresh());
     assert_eq!(v.map_static.version(), 1);
 }
+
+/// Versions of a spread of views: every tick, daily, monthly, quarterly and once at load.
+fn versions(s: &Sim) -> Vec<u64> {
+    let v = s.views();
+    vec![
+        v.refresh(),
+        v.clock.version(),
+        v.price_bars.version(),
+        v.industry_rows.version(),
+        v.cycle.version(),
+        v.statements.version(),
+        v.map_static.version(),
+    ]
+}
+
+#[test]
+fn versions_keep_climbing_across_new_game_and_load() {
+    // The bridge copies views by version (spec 9.4), so a NewGame or a Load must never hand out a
+    // version it has handed out before.
+    let mut s = sim();
+    run_until(&mut s, DateTime::midnight(Date::ymd(2020, 2, 3)));
+    let before = versions(&s);
+    let top = *before.iter().max().unwrap();
+    s.apply(Control::NewGame { seed: 6 }).unwrap();
+    let after = versions(&s);
+    assert!(after.iter().all(|&v| v > top), "{before:?} then {after:?}");
+    assert_eq!(s.now(), DateTime::START);
+    assert!(s.views().map_static.is_dirty() && s.views().cycle.is_dirty());
+
+    run_until(&mut s, DateTime::midnight(Date::ymd(2020, 1, 5)));
+    let save = s.save_bytes();
+    run_until(&mut s, DateTime::midnight(Date::ymd(2020, 3, 2)));
+    let before = versions(&s);
+    let top = *before.iter().max().unwrap();
+    s.load_bytes(&save).unwrap();
+    let after = versions(&s);
+    assert!(after.iter().all(|&v| v > top), "{before:?} then {after:?}");
+    assert_eq!(s.now(), DateTime::midnight(Date::ymd(2020, 1, 5)));
+    assert!(s.views().map_static.is_dirty());
+}

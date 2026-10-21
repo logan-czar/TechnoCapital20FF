@@ -145,13 +145,24 @@ macro_rules! sim_views {
         }
 
         impl SimViews {
-            /// Every view built from the state, all dirty: at a new game and on load (spec 9.4).
+            /// Every view built from the state, all dirty, at refresh 1: the first build of a
+            /// `Sim` (spec 9.4).
             pub(crate) fn build(world: &World, controls: &Controls) -> SimViews {
                 let input = ViewInput { world, controls };
                 SimViews {
                     refresh: 1,
                     $($field: View::built(&input, 1),)*
                 }
+            }
+
+            /// Every view rebuilt from a new state, all dirty, at the next refresh number: at a
+            /// NewGame and on load (spec 9.4). The refresh counter and every view's version keep
+            /// climbing, so a reader that copies views by version never mistakes a new game's
+            /// views for ones it already has.
+            pub(crate) fn rebuild(&mut self, world: &World, controls: &Controls) {
+                self.refresh += 1;
+                let input = ViewInput { world, controls };
+                $(self.$field = View::built(&input, self.refresh);)*
             }
 
             /// After a tick: rebuilds the views due on this tick and clears the others' dirty
