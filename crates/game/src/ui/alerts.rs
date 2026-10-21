@@ -28,6 +28,8 @@ pub const MAX_TOASTS: usize = 5;
 /// Event log lines kept.
 pub const LOG_LINES: usize = 200;
 
+/// The four levels every alert can be set to; all five alerts are settable in the MVP (spec 8;
+/// D306).
 pub const LEVELS: [AlertLevel; 4] = [
     AlertLevel::Pause,
     AlertLevel::Notify,
@@ -155,6 +157,7 @@ struct Toast {
     born: f32,
 }
 
+/// An icon of the alert row, for one alert kind.
 #[derive(Component)]
 pub struct AlertIcon(pub AlertKind);
 

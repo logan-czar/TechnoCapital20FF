@@ -24,10 +24,10 @@ pub use format::Cell;
 use crate::ui::theme::{self, Tooltip, color, font, size};
 
 /// Rows per wheel line (the M0.8 spike saw one notch arrive as two line events on X11, so one
-/// line is two rows here; Logan checks the feel by hand, D14).
+/// line is two rows here, D307; Logan checks the feel by hand, D14).
 pub const ROWS_PER_WHEEL_LINE: f32 = 2.0;
 /// Most pooled rows a table keeps, whatever the window height (a 4K-tall window at 22 px is
-/// about 100 rows).
+/// about 100 rows; D307).
 pub const MAX_POOL: usize = 160;
 
 /// A column: title, width in logical pixels and whether it holds numbers (right-aligned).
