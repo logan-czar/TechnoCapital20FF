@@ -504,21 +504,21 @@ const TAG_JITTER: u64 = 3;
 /// The error of one estimate (D429): the subject's persistent sign for the kind, times the
 /// year's bias magnitude, plus the jitter of this period and true value.
 pub fn error(seed: u64, subject: Subject, kind: Kind, year: i32, period: u64, truth: f64) -> f64 {
-    let sign = if estimate_hash(seed, subject, kind, &[TAG_SIGN]) & 1 == 1 {
+    // The (seed, subject, kind) prefix once, then each part's own tail.
+    let prefix = estimate_hash(seed, subject, kind, &[]);
+    let sign = if mix(prefix ^ TAG_SIGN) & 1 == 1 {
         1.0
     } else {
         -1.0
     };
     let year = u64::from(year.unsigned_abs());
     let bias = ESTIMATE_BIAS_MIN
-        + unit(estimate_hash(seed, subject, kind, &[TAG_BIAS, year]))
-            * (ESTIMATE_BIAS_MAX - ESTIMATE_BIAS_MIN);
-    let j = unit(estimate_hash(
-        seed,
-        subject,
-        kind,
-        &[TAG_JITTER, year, period, truth.to_bits()],
-    ));
+        + unit(mix(mix(prefix ^ TAG_BIAS) ^ year)) * (ESTIMATE_BIAS_MAX - ESTIMATE_BIAS_MIN);
+    let tail = [year, period, truth.to_bits()];
+    let j = unit(
+        tail.iter()
+            .fold(mix(prefix ^ TAG_JITTER), |h, &x| mix(h ^ x)),
+    );
     sign * bias + (2.0 * j - 1.0) * ESTIMATE_JITTER
 }
 

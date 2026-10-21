@@ -319,6 +319,20 @@ impl ViewData for StatementsView {
     const ON_OMNISCIENT: bool = true;
 
     fn build(input: &ViewInput<'_>) -> Self {
+        build_with(input, &[])
+    }
+
+    /// Reuses the last build's estimates of quarters still in the archive (D435): an archived
+    /// quarter never changes, and its estimate is a function of the seed, the company and the
+    /// statement, so the result equals `build`'s. Years are summed again (a year whose
+    /// quarters leave the archive is estimated on its own).
+    fn rebuild(&mut self, input: &ViewInput<'_>) {
+        let prev = std::mem::take(&mut self.companies);
+        *self = build_with(input, &prev);
+    }
+}
+
+fn build_with(input: &ViewInput<'_>, prev: &[CompanyStatements]) -> StatementsView {
         let w = input.world;
         let omniscient = input.controls.omniscient;
         let est = input.estimator();
@@ -336,10 +350,19 @@ impl ViewData for StatementsView {
                 let banded = est.banded(w, id);
                 let quarters = count(c.finance.quarters());
                 let years = count(c.finance.years());
+                let old: &[EstimatedStatement] = prev
+                    .get(id.index())
+                    .filter(|p| p.id == id && p.estimated)
+                    .map_or(&[], |p| &p.estimated_quarters[..]);
                 let estimated_quarters: Vec<EstimatedStatement> = if banded {
                     c.finance.quarters()[..quarters]
                         .iter()
-                        .map(|s| estimated_quarter(&est, id, s))
+                        .map(|s| {
+                            old.iter()
+                                .find(|e| e.period == s.period)
+                                .cloned()
+                                .unwrap_or_else(|| estimated_quarter(&est, id, s))
+                        })
                         .collect()
                 } else {
                     Vec::new()
@@ -371,5 +394,4 @@ impl ViewData for StatementsView {
             })
             .collect();
         StatementsView { companies }
-    }
 }

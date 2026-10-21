@@ -341,6 +341,16 @@ fn omniscient_toggles_rebuild_the_banded_views_at_once() {
     sim.apply(Control::SetOmniscient(false)).unwrap();
     let s = sim.views().statements.get().get(private).unwrap();
     assert!(s.estimated && s.quarters().is_empty() && !s.estimated_quarters.is_empty());
+
+    // The quarterly rebuild reuses archived quarters' estimates (D435): after a year of
+    // rebuilds, a fresh build (the toggle) gives the same view.
+    run_to(&mut sim, Date::ymd(2021, 4, 2));
+    let rebuilt = sim.views().statements.get().clone();
+    let banded = rebuilt.companies.iter().filter(|c| c.estimated).count();
+    assert!(banded > 100);
+    sim.apply(Control::SetOmniscient(true)).unwrap();
+    sim.apply(Control::SetOmniscient(false)).unwrap();
+    assert_eq!(sim.views().statements.get(), &rebuilt);
 }
 
 #[test]
