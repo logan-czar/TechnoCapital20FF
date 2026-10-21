@@ -7,10 +7,11 @@ use bevy::prelude::*;
 use sim::Control;
 
 use super::alerts::{AlertBoard, EventLog, kind_name, level_name, target};
-use super::rail::{Navigate, Screen};
+use super::rail::Navigate;
 use super::theme::{self, Tooltip, color, font, size};
-use super::{DemoTables, ShellLayout, SpawnLayout, UiSystems};
+use super::{KeyboardCapture, ShellLayout, SpawnLayout, UiSystems, modifier_held};
 use crate::bridge::{RunnerControls, SimControl};
+use crate::command::index::NameIndex;
 
 /// Event log lines the outliner shows.
 pub const OUTLINER_LOG_LINES: usize = 12;
@@ -44,7 +45,7 @@ impl Plugin for OutlinerPlugin {
                 Update,
                 (
                     draw_watchlist.run_if(
-                        resource_changed::<RunnerControls>.or_eager(resource_changed::<DemoTables>),
+                        resource_changed::<RunnerControls>.or_eager(resource_changed::<NameIndex>),
                     ),
                     draw_alerts.run_if(resource_changed::<AlertBoard>),
                     draw_log.run_if(resource_changed::<EventLog>),
@@ -114,7 +115,15 @@ fn spawn_outliner(mut commands: Commands, layout: Res<ShellLayout>) {
     }
 }
 
-fn fold_key(keys: Res<ButtonInput<KeyCode>>, mut folded: ResMut<OutlinerFolded>) {
+fn fold_key(
+    keys: Res<ButtonInput<KeyCode>>,
+    capture: Res<KeyboardCapture>,
+    mut folded: ResMut<OutlinerFolded>,
+) {
+    // Ctrl+Tab moves pane focus (D453).
+    if capture.0 || modifier_held(&keys) {
+        return;
+    }
     if keys.just_pressed(KeyCode::Tab) {
         folded.0 = !folded.0;
     }
@@ -138,10 +147,13 @@ fn clear_lines(commands: &mut Commands, list: Entity, children: &Query<&Children
     }
 }
 
+/// The watchlist: each company a link to its page (M9 A2) with its last price; right-click
+/// removes it.
 fn draw_watchlist(
     mut commands: Commands,
     controls: Res<RunnerControls>,
-    names: Res<DemoTables>,
+    index: Res<NameIndex>,
+    views: Res<crate::bridge::Views>,
     list: Query<Entity, With<WatchlistList>>,
     children: Query<&Children>,
 ) {
@@ -159,28 +171,38 @@ fn draw_watchlist(
         commands.entity(list).add_child(e);
     }
     for &id in &controls.watchlist {
-        let line = commands
+        let page = crate::pages::PageRef::Company(id);
+        let price = views
+            .quotes
+            .get()
+            .get(id)
+            .map_or("-".to_owned(), |q| crate::table::format::price(q.last));
+        let name = commands
             .spawn((
-                ListLine,
-                theme::button(format!("{}  ?", names.company_name(id)), color::CYAN),
-                Tooltip(
-                    "Price ? until the quotes view lands (M5). Click: Pdoomberg; right-click: \
-                     remove"
-                        .into(),
-                ),
+                crate::links::link_sized(index.title(&page), page, font::BODY),
+                Tooltip("Click: the company page (Shift: new pane); right-click: remove".into()),
             ))
             .observe(
-                move |ev: On<PointerClick>,
-                      mut w: MessageWriter<SimControl>,
-                      mut nav: MessageWriter<Navigate>,
-                      router: Res<super::rail::Router>| {
+                move |ev: On<PointerClick>, mut w: MessageWriter<SimControl>| {
                     if ev.button == PointerButton::Secondary {
                         w.write(SimControl(Control::WatchlistRemove(id)));
-                    } else if router.current != Screen::Pdoomberg {
-                        nav.write(Navigate(Screen::Pdoomberg));
                     }
                 },
             )
+            .id();
+        let price = commands
+            .spawn(theme::text_line(price, font::SMALL, color::TEXT_MUTED))
+            .id();
+        let line = commands
+            .spawn((
+                ListLine,
+                Node {
+                    flex_direction: FlexDirection::Row,
+                    column_gap: px(8.0),
+                    ..default()
+                },
+            ))
+            .add_children(&[name, price])
             .id();
         commands.entity(list).add_child(line);
     }
