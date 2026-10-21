@@ -22,9 +22,39 @@ const USAGE: &str = "usage:\n  \
 
 /// Metrics CSV header; later milestones add columns. M2: the cycle phase and g_t at the year's
 /// close, the year's named and fringe revenue (sum of the twelve monthly closes) and S and M
-/// across the 42 industries at the December close.
+/// across the 42 industries at the December close. M3, at the December close: mean unit
+/// productivity, mean management score, total data held and unstructured (TB) and the share of
+/// companies with EBIT after R&D above 0 that month.
 const METRICS_HEADER: &str = "seed,year,ticks,final_hash,wall_ms,phase,g_t,named_revenue_usd,\
-    fringe_revenue_usd,mean_s,min_s,max_s,mean_m";
+    fringe_revenue_usd,mean_s,min_s,max_s,mean_m,mean_productivity,mean_management,data_tb,\
+    profitable_share";
+
+/// The M3 operations columns, read from the views at the December close.
+fn operations_columns(sim: &Sim) -> String {
+    let v = sim.views();
+    let units = &v.units.get().units;
+    let mean_productivity =
+        units.iter().map(|u| u.productivity).sum::<f64>() / units.len().max(1) as f64;
+    let companies = &v.company_detail.get().companies;
+    let n = companies.len().max(1) as f64;
+    let mean_management = companies.iter().map(|c| c.management_score).sum::<f64>() / n;
+    let data_tb: f64 = v.tech.get().companies.iter().map(|t| t.stored_tb()).sum();
+    let profitable = companies
+        .iter()
+        .filter(|c| {
+            v.units
+                .get()
+                .of_company(c.id)
+                .map(|u| u.ebit_m)
+                .sum::<f64>()
+                > 0.0
+        })
+        .count();
+    format!(
+        "{mean_productivity:.3},{mean_management:.3},{data_tb:.1},{:.4}",
+        profitable as f64 / n
+    )
+}
 
 /// The M2 economy columns, read from the views after each month closes.
 #[derive(Default)]
@@ -206,7 +236,13 @@ fn run(args: &RunArgs) -> ExitCode {
                 if month.month == 12 {
                     let ms = year_start.elapsed().as_millis();
                     let cols = economy.columns(&sim);
-                    writeln!(csv, "{seed},{},{year_ticks},{hash},{ms},{cols}", month.year).unwrap();
+                    let ops = operations_columns(&sim);
+                    writeln!(
+                        csv,
+                        "{seed},{},{year_ticks},{hash},{ms},{cols},{ops}",
+                        month.year
+                    )
+                    .unwrap();
                     economy = YearEconomy::default();
                     all_ticks += year_ticks;
                     year_ticks = 0;

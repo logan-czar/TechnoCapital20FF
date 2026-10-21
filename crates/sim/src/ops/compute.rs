@@ -4,6 +4,8 @@
 //! costs; this module prices the rest. The monthly total is the corporation's shared costs,
 //! split across its units by revenue share (5.5).
 
+use serde::{Deserialize, Serialize};
+
 use super::stations::Stations;
 
 /// Spec 3.8: extra base compute is at least this many units.
@@ -25,7 +27,7 @@ pub const DATA_COMPUTE_USD_MONTH: f64 = 10.0;
 pub const ENTERPRISE_LICENCE_USD_MONTH: f64 = 30.0;
 
 /// A month's compute and licences (spec 3.8).
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default, Serialize, Deserialize)]
 pub struct ComputeBill {
     pub extra_base_compute: u64,
     pub data_compute: u64,

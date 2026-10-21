@@ -171,6 +171,16 @@ macro_rules! sim_views {
                 true $(&& self.$field.get() == other.$field.get())*
             }
 
+            /// Makes this copy show `src`: every view whose version differs is cloned in, the
+            /// others are left alone, and the refresh number follows. Generated over the whole
+            /// list, so a reader (the Bevy bridge) that copies views by version cannot miss one.
+            pub fn copy_changed_from(&mut self, src: &SimViews) {
+                $(if self.$field.version() != src.$field.version() {
+                    self.$field.clone_from(&src.$field);
+                })*
+                self.refresh = src.refresh;
+            }
+
             /// After a tick: rebuilds the views due on this tick and clears the others' dirty
             /// flags (spec 9.4).
             pub(crate) fn refresh_after_tick(&mut self, world: &World, controls: &Controls) {

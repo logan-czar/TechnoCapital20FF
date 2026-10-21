@@ -5,6 +5,7 @@
 #![allow(dead_code)]
 
 pub mod economy;
+pub mod ops;
 
 use sim::time::{JobCtx, Slot};
 use sim::world::{AlertKind, AlertPayload, CompanyId, Ordinal, World};

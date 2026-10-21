@@ -6,11 +6,16 @@ mod common;
 
 use common::data;
 use common::economy::{industry, world_at_load};
-use sim::economy::start::{
-    BAREBONES_GROSS_USD, BAREBONES_REVENUE_USD, gross_at_load, load_pc_bonus, start_pc_bonus,
-};
+use sim::economy::start::{BAREBONES_ASSETS_USD, BAREBONES_REVENUE_USD, start_loadout};
+use sim::ops::stations::{pc_bonus, productive_compute};
 use sim::rng::RngStreams;
 use sim::world::{CompanyId, Ordinal};
+
+/// Gross assets at load by the 7.1 rule, written from the spec:
+/// `R × capital_per_dollar × 100 ÷ (100 + PC bonus + location bonus)`, location bonus 0.
+fn gross_by_spec(revenue: f64, capital_per_dollar: f64, bonus: f64) -> f64 {
+    revenue * capital_per_dollar * 100.0 / (100.0 + bonus)
+}
 
 #[test]
 fn named_revenue_matches_companies_csv_within_half_a_percent() {
@@ -32,7 +37,7 @@ fn named_revenue_matches_companies_csv_within_half_a_percent() {
         if c.revenue_usd < BAREBONES_REVENUE_USD {
             // The barebones loadout (7.1): one $100,000 asset, the CEO's station gives PC 1,
             // bonus +1, so it makes $101,000 a year whatever companies.csv says (D107).
-            assert_eq!(unit.gross_assets, BAREBONES_GROSS_USD, "{}", c.key);
+            assert_eq!(unit.gross_assets, BAREBONES_ASSETS_USD, "{}", c.key);
             assert_eq!(c.pc_bonus, 1.0);
             assert!((yearly - 101_000.0).abs() < 1.0, "{} {yearly}", c.key);
             barebones += 1;
@@ -43,9 +48,11 @@ fn named_revenue_matches_companies_csv_within_half_a_percent() {
         assert!(err < 0.005, "{}: {yearly} vs {}", c.key, c.revenue_usd);
         // company-start.csv's gross assets are the 7.1 rule at this bonus, rounded to dollars.
         let params = &w.industries[c.industry].params;
-        let gross = gross_at_load(c.revenue_usd, c.pc_bonus, 0.0, params);
+        let gross = gross_by_spec(c.revenue_usd, params.capital_per_dollar, c.pc_bonus);
         assert!((gross - unit.gross_assets).abs() <= 0.5, "{}", c.key);
-        assert_eq!(c.pc_bonus, start_pc_bonus(c.revenue_usd, 0.0, params));
+        // The bonus load holds is the loadout's second pass (D106), lane F's one implementation.
+        let loadout = start_loadout(&c.key, c.revenue_usd, 0.0, params);
+        assert_eq!(c.pc_bonus, f64::from(loadout.assets_bonus), "{}", c.key);
     }
     assert_eq!(barebones, 3, "CO-0003, CO-0026 and CO-0027 start barebones");
     println!("worst named revenue error {:.4}%", 100.0 * worst);
@@ -66,26 +73,49 @@ fn named_revenue_matches_companies_csv_within_half_a_percent() {
         let u = &w.units[c.units[0]];
         let params = &w.industries[c.industry].params;
         assert_eq!(c.pc_bonus, 5.0, "{key}");
-        assert_eq!(load_pc_bonus(u.gross_assets, params), 6.0, "{key}");
+        // The station rule on the loaded gross: L = floor(gross ÷ labor_value), stations
+        // max(1, round(0.25 × L)), bonus floor(1 + log10(PC)) (5.8, 5.10, 7.1).
+        let l = (u.gross_assets / params.labor_value_usd).floor();
+        let stations = (0.25 * l).round_ties_even().max(1.0);
+        assert_eq!(stations * params.pc_modifier, c.pc, "{key}");
+        assert_eq!((1.0 + c.pc.log10()).floor(), 6.0, "{key}");
+        assert_eq!(
+            pc_bonus(productive_compute(&c.stations, params.pc_modifier)),
+            6
+        );
     }
 }
 
 #[test]
 fn fixed_cost_rate_at_load() {
     let w = world_at_load(&data(), &mut RngStreams::new(1));
-    // f × turnover − d_eff − shared ÷ gross (5.5, 7.1). Shared costs are 0 until M3.5, so the rate
-    // is 0.45 less d_eff: 0.45 at $10M of assets or less, toward 0.44 for large units.
+    // f × turnover − d_eff − shared ÷ gross (5.5, 7.1), with the shared costs a year of the 3.8
+    // bill (M3.5): $50 per extra base compute max(9, ceil(0.2 × stations)), $10 per data compute
+    // max(10, ceil(1.2 × TB stored ÷ 100)), $30 per enterprise licence, each a month.
+    let mut rates = Vec::new();
     for (_, u) in w.units.iter() {
+        let c = &w.companies[u.company];
         let p = &w.industries[u.industry].params;
         let decay = p.asset_decay * (u.gross_assets - p.asset_decay_threshold_usd).max(0.0);
-        let want = p.fixed_cost_share * p.asset_turnover - decay / u.gross_assets;
-        assert!((u.fixed_cost_rate - want).abs() < 1e-15);
-        assert!(
-            (0.44..=0.45).contains(&u.fixed_cost_rate),
-            "{}",
-            u.fixed_cost_rate
-        );
+        let s = &c.stations;
+        let stations = s.productivity + s.enterprise + s.fifty_fifty + s.research + s.idle;
+        let stored: f64 = c.data.iter().map(|d| d.book.stored_tb()).sum();
+        let extra = stations.div_ceil(5).max(9) as f64;
+        let data_compute = (1.2 * stored / 100.0).ceil().max(10.0);
+        let licences = (s.enterprise + s.fifty_fifty) as f64;
+        let shared = 12.0 * (50.0 * extra + 10.0 * data_compute + 30.0 * licences);
+        let want = p.fixed_cost_share * p.asset_turnover
+            - decay / u.gross_assets
+            - shared / u.gross_assets;
+        assert!((u.fixed_cost_rate - want).abs() < 1e-12, "{}", c.key);
+        rates.push(u.fixed_cost_rate);
     }
+    // Spec 5.5: 0.38 to 0.449, median 0.439 (the barebones three at 0.45 − 0.066, design fix
+    // 207's $6,600, round to 0.38).
+    rates.sort_by(f64::total_cmp);
+    let (lo, hi, median) = (rates[0], rates[rates.len() - 1], rates[rates.len() / 2]);
+    println!("fixed cost rate {lo:.3} to {hi:.3}, median {median:.3}");
+    assert_eq!(format!("{lo:.2} {hi:.3} {median:.3}"), "0.38 0.449 0.439");
 }
 
 #[test]
