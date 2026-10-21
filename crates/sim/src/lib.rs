@@ -4,6 +4,8 @@
 //! M0 holds only a placeholder `World` and the RNG choice; the clock, scheduler and formulas arrive
 //! from M1 on.
 
+pub mod time;
+
 use rand_chacha::ChaCha8Rng;
 use rand_core::SeedableRng;
 use sim_data::WorldData;

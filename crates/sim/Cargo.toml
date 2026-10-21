@@ -9,6 +9,7 @@ publish.workspace = true
 [dependencies]
 rand_chacha.workspace = true
 rand_core.workspace = true
+serde.workspace = true
 sim-data.workspace = true
 
 [lints]
