@@ -160,6 +160,8 @@ fn barebones_and_small_loadouts() {
     assert_eq!((b.gross_assets_usd, b.labor), (100_000.0, 1));
     assert_eq!(b.stations.productivity, 1);
     assert_eq!(b.stations.total(), 1);
+    // The fixed $100,000 asset is not sized from a bonus; its live PC 1 gives +1 (5.8).
+    assert_eq!((b.first_pass_bonus, b.assets_bonus, b.pc_bonus), (0, 0, 1));
     // $0.25M: 2 labor units, 1 productivity station; the C16 enterprise station fits.
     let s = starting_loadout(loadout_inputs(0.25, 0.5));
     assert_eq!(
@@ -222,14 +224,15 @@ fn loadout_gross_assets_match_company_start_csv() {
             start.gross_assets_usd
         );
         assert_eq!(l.stations.total(), l.labor);
-        if l.pc_bonus != l.assets_bonus {
+        if !l.barebones && l.pc_bonus != l.assets_bonus {
             unsettled.push((co.id.as_str(), l.assets_bonus, l.pc_bonus));
         }
     }
     // Two passes do not settle for three companies near $42B: pass 1 gives +6 (105,198
     // stations), pass 2 +5 (99,243), but gross set at +5 buys 100,188 stations, which is +6, so
-    // at the live bonus they make 106 ÷ 105 of R (+0.95%). Design fix 201; lane S picks which
-    // bonus M2.6 uses.
+    // at the live bonus they make 106 ÷ 105 of R (+0.95%). More passes alternate +5, +6, ...
+    // (design fix 201): the second-pass bonus (`assets_bonus`) holds until the first monthly
+    // recount, and M2.6 checks load revenue against it.
     assert_eq!(
         unsettled,
         vec![("CO-0154", 5, 6), ("CO-0540", 5, 6), ("CO-0651", 5, 6)]

@@ -196,9 +196,12 @@ pub struct Loadout {
     /// The PC bonus of the final stations (what 5.8 gives from now on).
     pub pc_bonus: u32,
     /// The second-pass bonus the gross assets were set with (7.1); equal to `pc_bonus` unless
-    /// the two passes have not settled.
+    /// the two passes have not settled (design fix 201). It holds until the first monthly
+    /// recount, and the load revenue check (M2.6) reads it. 0 for the barebones loadout, whose
+    /// $100,000 asset is fixed rather than sized from a bonus (its live `pc_bonus` is +1 from
+    /// PC 1).
     pub assets_bonus: u32,
-    /// The first-pass bonus (from gross assets at bonus 0), for checks.
+    /// The first-pass bonus (from gross assets at bonus 0), for checks; 0 for barebones.
     pub first_pass_bonus: u32,
     pub barebones: bool,
 }
@@ -242,8 +245,9 @@ pub fn starting_loadout(inp: LoadoutInputs) -> Loadout {
             stations,
             pc,
             pc_bonus: pc_bonus(pc),
-            assets_bonus: pc_bonus(pc),
-            first_pass_bonus: pc_bonus(pc),
+            // The fixed $100,000 asset is not sized from any bonus, so no pass ran.
+            assets_bonus: 0,
+            first_pass_bonus: 0,
             barebones: true,
         };
     }
