@@ -277,7 +277,8 @@ fn noise_off_full_engine_matches_validate_py_year_by_year() {
         ],
         "the boom on 1 January 2030 and the pop on its rolled date, nothing else"
     );
-    // 2020 to 2039 by their 1 January closes, and 2045's close after the pop: 26 years.
+    // validate.py's years 2020 to 2045 (the 1 January closes of 2021 to 2046), the pop's
+    // close included: 26 years.
     assert_eq!(run.compared, 26 * 42);
     assert!(run.pop_cut_miss < 1e-12, "{}", run.pop_cut_miss);
 }
