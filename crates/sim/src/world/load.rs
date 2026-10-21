@@ -417,10 +417,18 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             seats_to_fill: Vec::new(),
             management_score: 0.0,
             archetype,
-            // Cash and line as company-start.csv has them (spec 7.1); the rating, limit and
-            // history are set by `finance::start` once the load month exists.
+            // Cash, line and starting rating as company-start.csv has them (spec 7.1, D241);
+            // the limit and history are set by `finance::start` once the load month exists.
             cash_usd: start.cash_usd,
-            finance: CompanyFinance::at_load(start.credit_drawn_usd),
+            finance: CompanyFinance::at_load(
+                start.credit_drawn_usd,
+                Rating::parse(&start.start_rating).ok_or_else(|| {
+                    bad(format!(
+                        "start_rating `{}` is not on the AAA to CC scale",
+                        start.start_rating
+                    ))
+                })?,
+            ),
         });
     }
     // Fringe pools (spec 5.3, 7.2): what named revenue leaves of the 2020 world size.

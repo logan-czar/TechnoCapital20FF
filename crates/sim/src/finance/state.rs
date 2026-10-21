@@ -64,9 +64,10 @@ pub struct CompanyFinance {
 }
 
 impl CompanyFinance {
-    /// The state before [`super::jobs::start`] sets the rating, limit and history: the line as
-    /// drawn in company-start.csv, with no limit yet.
-    pub fn at_load(line_drawn: f64) -> CompanyFinance {
+    /// The state before [`super::jobs::start`] sets the limit and history: the line as drawn
+    /// and the starting rating as company-start.csv has them (spec 7.1; D241, D132), with no
+    /// limit yet.
+    pub fn at_load(line_drawn: f64, start_rating: Rating) -> CompanyFinance {
         let unrated = ImpliedRating {
             leverage: Rating::WORST,
             cover_notches: 0,
@@ -82,7 +83,7 @@ impl CompanyFinance {
                 limit: 0.0,
                 excess_months_left: 0,
             },
-            rating: Rating::WORST,
+            rating: start_rating,
             implied: unrated,
             last_review_notches: 0,
             distress: DistressState::default(),

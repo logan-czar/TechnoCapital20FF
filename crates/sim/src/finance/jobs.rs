@@ -130,7 +130,9 @@ pub fn key_figures(world: &World, c: &Company) -> KeyFigures {
 /// mults less free R&D, productivity 100, loss_q 0). The line is at the starting rating (5.12) on
 /// company-start.csv's cash and line, tax on each quarter's pre-tax income with no carryforward
 /// (5.11) and replacement purchases equal to depreciation (a flat history, D228). Returns the
-/// year's ledger, the starting rating and the line.
+/// year's ledger, the implied rating of the run rate (7.1, 5.12) and the line, both at the
+/// company's starting rating: company-start.csv's, which the implied rating must equal (D241,
+/// D132; checked for all 651 in `m4_ratings.rs`).
 ///
 /// The load month itself runs at the load M and on gross assets rounded to the dollar, about
 /// 1e-7 off R, enough to move a rating that D236 sizes to a band edge; the run rate does not.
@@ -176,7 +178,7 @@ pub fn run_rate(world: &World, c: &Company) -> (Ledger, super::rating::ImpliedRa
         base_rate: world.base_rate,
         home_spread: home,
     });
-    let rating = start.implied;
+    let rating = c.finance.rating;
     let line = CreditLine {
         drawn,
         limit: line_limit(book, cash, drawn, rating),
@@ -199,9 +201,10 @@ pub fn run_rate(world: &World, c: &Company) -> (Ledger, super::rating::ImpliedRa
     (l, start, line)
 }
 
-/// The finance start state (spec 7.1, 4.4; build-plan M4.2, M4.4, M4.5): each company's starting
-/// rating from its run rate, its line limit, the four synthetic 2019 quarters and the 2019 year,
-/// and the opening balance sheet of January 2020. Call once, after the economy and the boards
+/// The finance start state (spec 7.1, 4.4; build-plan M4.2, M4.4, M4.5): each company's run
+/// rate and its implied rating (the starting rating itself is company-start.csv's, D241), its
+/// line limit, the four synthetic 2019 quarters and the 2019 year, and the opening balance sheet
+/// of January 2020. Call once, after the economy and the boards
 /// are set (their load month and management scores feed it); it draws nothing.
 pub fn start(world: &mut World) {
     for id in world.companies.ids() {
@@ -217,12 +220,9 @@ pub fn start(world: &mut World) {
             },
             status,
         );
-        let mut key = key_figures(world, c);
-        key.rating = implied.implied;
-        let history = synthetic_history(&annual, opening, key);
+        let history = synthetic_history(&annual, opening, key_figures(world, c));
         let year = year_statement(SYNTHETIC_YEAR, &history);
         let f = &mut world.companies[id].finance;
-        f.rating = implied.implied;
         f.implied = implied;
         f.line = line;
         f.opening = opening;

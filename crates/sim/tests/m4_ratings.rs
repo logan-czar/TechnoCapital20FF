@@ -18,7 +18,8 @@ use sim::time::{Date, DateTime};
 
 #[test]
 fn starting_ratings_match_the_run_rate_for_all_651() {
-    let sim = Sim::new(data(), 1).unwrap();
+    let d = data();
+    let sim = Sim::new(d.clone(), 1).unwrap();
     let w = sim.world();
     let rows = finance_start();
     assert_eq!(rows.len(), 651);
@@ -26,13 +27,22 @@ fn starting_ratings_match_the_run_rate_for_all_651() {
     let mut leverage_off = 0;
     for row in &rows {
         let c = &w.companies[company(w, row.id())];
-        let want = row.rating("start_rating");
-        if c.finance.rating != want {
+        // The engine's own implied rating from its run rate (7.1, 5.12; D121) against the
+        // independent Python export, and against company-start.csv's start_rating, which load
+        // reads as the starting rating (D241, D132).
+        let computed = c.finance.implied.implied;
+        let fixture = row.rating("start_rating");
+        let start = d
+            .company_start
+            .rows
+            .iter()
+            .find(|s| s.id == row.id())
+            .unwrap();
+        let csv = Rating::parse(&start.start_rating).unwrap();
+        if computed != fixture || computed != csv {
             off.push(format!(
-                "{} engine {} fixture {} (leverage {} vs {})",
+                "{} engine {computed} fixture {fixture} company-start {csv} (leverage {} vs {})",
                 row.id(),
-                c.finance.rating,
-                want,
                 c.finance.implied.leverage,
                 row.rating("leverage_rating")
             ));
@@ -41,10 +51,11 @@ fn starting_ratings_match_the_run_rate_for_all_651() {
             leverage_off += 1;
         }
         // The rating is the implied one, no smoothing (7.1).
-        assert_eq!(c.finance.rating, c.finance.implied.implied, "{}", row.id());
+        assert_eq!(c.finance.rating, csv, "{}", row.id());
     }
     println!(
-        "starting ratings: {} of 651 match finance-start.csv; leverage ratings off: {leverage_off}",
+        "starting ratings: {} of 651 computed by the engine match finance-start.csv and \
+         company-start.csv; leverage ratings off: {leverage_off}",
         651 - off.len()
     );
     for o in &off {
