@@ -39,7 +39,8 @@ pub struct PriceBarsView {
 impl PriceBarsView {
     /// The bars of company `id` from `from` to `to` inclusive at `resolution` (spec 9.2
     /// `get_price_history`); empty for a company with none. A weekly or monthly bar opens at its
-    /// first daily bar's open, closes at its last's close and spans their high and low.
+    /// first daily bar's open, closes at its last's close and spans their high and low; its EFV
+    /// is the last daily bar's (D424), so the F3 band follows the close.
     pub fn get_price_history(
         &self,
         id: CompanyId,
@@ -67,6 +68,7 @@ impl PriceBarsView {
                     agg.high = agg.high.max(b.high);
                     agg.low = agg.low.min(b.low);
                     agg.close = b.close;
+                    agg.efv = b.efv;
                 }
                 _ => {
                     out.push(*b);

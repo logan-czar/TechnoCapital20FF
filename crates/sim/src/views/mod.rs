@@ -21,6 +21,8 @@ use crate::time::control::Controls;
 use crate::time::scheduler::{TickFacts, TickObserver, TickPart};
 use crate::world::World;
 
+pub mod estimate;
+
 /// How often a view is rebuilt (spec 9.4).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Cadence {
@@ -63,6 +65,15 @@ impl Cadence {
 pub struct ViewInput<'a> {
     pub world: &'a World,
     pub controls: &'a Controls,
+    /// The game seed: the estimate bands hash it (D421). Views never see the RNG streams.
+    pub seed: u64,
+}
+
+impl ViewInput<'_> {
+    /// The estimate maker for this build (D420).
+    pub fn estimator(&self) -> estimate::Estimator {
+        estimate::Estimator::new(self.seed, self.controls.omniscient, self.world.clock)
+    }
 }
 
 /// One view's data: its cadence and how to build it.
@@ -71,6 +82,9 @@ pub trait ViewData: Clone + PartialEq + fmt::Debug {
     const CADENCE: Cadence;
     /// Also rebuilt after a control (speed, pause, skip), between ticks.
     const ON_CONTROL: bool = false;
+    /// Also rebuilt after a control that turns Omniscient on or off (D423): the views whose
+    /// figures are estimate bands unless Omniscient shows the truth.
+    const ON_OMNISCIENT: bool = false;
 
     fn build(input: &ViewInput<'_>) -> Self;
 
@@ -125,9 +139,10 @@ impl<T: ViewData> View<T> {
         }
     }
 
-    /// Rebuilds after a control if this view follows controls and changed; true if it did.
-    fn after_control(&mut self, input: &ViewInput<'_>, version: u64) -> bool {
-        if !T::ON_CONTROL {
+    /// Rebuilds after a control if this view follows controls (or Omniscient, and it was
+    /// toggled) and changed; true if it did.
+    fn after_control(&mut self, input: &ViewInput<'_>, version: u64, toggled: bool) -> bool {
+        if !(T::ON_CONTROL || (T::ON_OMNISCIENT && toggled)) {
             return false;
         }
         let data = T::build(input);
@@ -154,16 +169,20 @@ macro_rules! sim_views {
         #[derive(Debug, Clone, PartialEq)]
         pub struct SimViews {
             refresh: u64,
+            /// Omniscient at the last build, so a control that toggles it rebuilds the
+            /// `ON_OMNISCIENT` views (D423).
+            omniscient: bool,
             $(pub $field: View<$ty>,)*
         }
 
         impl SimViews {
             /// Every view built from the state, all dirty, at refresh 1: the first build of a
             /// `Sim` (spec 9.4).
-            pub(crate) fn build(world: &World, controls: &Controls) -> SimViews {
-                let input = ViewInput { world, controls };
+            pub(crate) fn build(world: &World, controls: &Controls, seed: u64) -> SimViews {
+                let input = ViewInput { world, controls, seed };
                 SimViews {
                     refresh: 1,
+                    omniscient: controls.omniscient,
                     $($field: View::built(&input, 1),)*
                 }
             }
@@ -172,9 +191,10 @@ macro_rules! sim_views {
             /// NewGame and on load (spec 9.4). The refresh counter and every view's version keep
             /// climbing, so a reader that copies views by version never mistakes a new game's
             /// views for ones it already has.
-            pub(crate) fn rebuild(&mut self, world: &World, controls: &Controls) {
+            pub(crate) fn rebuild(&mut self, world: &World, controls: &Controls, seed: u64) {
                 self.refresh += 1;
-                let input = ViewInput { world, controls };
+                self.omniscient = controls.omniscient;
+                let input = ViewInput { world, controls, seed };
                 $(self.$field = View::built(&input, self.refresh);)*
             }
 
@@ -192,6 +212,7 @@ macro_rules! sim_views {
                     self.$field.clone_from(&src.$field);
                 })*
                 self.refresh = src.refresh;
+                self.omniscient = src.omniscient;
             }
 
             /// After a tick: rebuilds the views due on this tick and clears the others' dirty
@@ -202,11 +223,12 @@ macro_rules! sim_views {
                 &mut self,
                 world: &World,
                 controls: &Controls,
+                seed: u64,
                 mut observer: Option<&mut dyn TickObserver>,
             ) {
                 self.refresh += 1;
                 let facts = TickFacts::new(world.clock);
-                let input = ViewInput { world, controls };
+                let input = ViewInput { world, controls, seed };
                 $(
                     let watch = self.$field.cadence().is_due(&facts);
                     if watch && let Some(o) = &mut observer {
@@ -219,12 +241,20 @@ macro_rules! sim_views {
                 )*
             }
 
-            /// After a control: rebuilds the views that follow controls (the clock).
-            pub(crate) fn refresh_after_control(&mut self, world: &World, controls: &Controls) {
-                let input = ViewInput { world, controls };
+            /// After a control: rebuilds the views that follow controls (the clock), and those
+            /// that follow Omniscient when it was toggled (D423).
+            pub(crate) fn refresh_after_control(
+                &mut self,
+                world: &World,
+                controls: &Controls,
+                seed: u64,
+            ) {
+                let input = ViewInput { world, controls, seed };
                 let next = self.refresh + 1;
+                let toggled = controls.omniscient != self.omniscient;
+                self.omniscient = controls.omniscient;
                 let mut changed = false;
-                $(changed |= self.$field.after_control(&input, next);)*
+                $(changed |= self.$field.after_control(&input, next, toggled);)*
                 if changed {
                     self.refresh = next;
                 }

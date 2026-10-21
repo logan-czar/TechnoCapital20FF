@@ -35,9 +35,9 @@ use serde::{Deserialize, Serialize};
 
 pub use economy::{AiBoom, AiSchedule, AiStage, CyclePhase, GlobalCycle};
 pub use entities::{
-    BusinessUnit, Character, Company, CompanyData, Country, Director, Holder, Holding, Industry,
-    IndustryParams, IndustryQuarter, IpoVoteRecord, Origin, PhaseLabel, Province, SeatHolder,
-    SimpleSeat, Tranche, Zone,
+    BusinessUnit, Character, Company, CompanyData, ControllerRef, Country, Director, Holder,
+    Holding, Industry, IndustryParams, IndustryQuarter, IpoVoteRecord, Origin, PhaseLabel,
+    Province, SeatHolder, SimpleSeat, StartControl, Tranche, Zone,
 };
 pub use ids::{
     CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, StartupEventId, UnitId,

@@ -21,7 +21,9 @@ use crate::world::World;
 /// The first bytes of every save.
 pub const SAVE_MAGIC: &[u8; 8] = b"TC20FFSV";
 /// Bumped whenever the saved layout changes (any new field in any table).
-pub const SAVE_VERSION: u32 = 6;
+/// 7: each daily bar holds its EFV (D424), companies their companies.csv control (D425) and
+/// countries their superregion.
+pub const SAVE_VERSION: u32 = 7;
 
 #[derive(Debug, Error)]
 pub enum SaveError {

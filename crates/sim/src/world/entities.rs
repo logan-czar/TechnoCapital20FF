@@ -65,6 +65,9 @@ pub struct Country {
     /// countries.csv `iso3`.
     pub key: String,
     pub name: String,
+    /// countries.csv `superregion`, as written there (spec 9.2 `list_companies` filter, the
+    /// Country page; D425).
+    pub superregion: String,
     /// country-economy.csv `financial_zone`.
     pub zone: ZoneId,
     /// GDP in USD (CSV `gdp_usd_bn`).
@@ -289,6 +292,33 @@ pub struct Company {
     /// A born company's run rate at birth (spec 5.19.3, D271): the Lite AI reads its revenue and
     /// EBIT until its first quarter is archived (D262).
     pub birth_run_rate: Option<crate::births::startup::RunRate>,
+    /// A starting company's control as companies.csv gives it (spec 3.5, 8 Company header and
+    /// Cap table; D425): read by the views only, never by a job. None for a born company.
+    pub start_control: Option<StartControl>,
+}
+
+/// Who controls a starting company, as companies.csv `controller` names it (spec 3.5; D425).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ControllerRef {
+    /// Widely held: no controller.
+    None,
+    Character(CharacterId),
+    /// A state (an iso3 in companies.csv).
+    State(CountryId),
+    /// Another company (a CO- id).
+    Company(CompanyId),
+}
+
+/// companies.csv's control columns of a starting company (spec 3.5, 8; D425).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct StartControl {
+    pub controller: ControllerRef,
+    /// `controller_stake_pct` as a fraction of the starting shares; None when not given.
+    pub stake: Option<f64>,
+    /// `control_basis`: majority, class_a, state, proxy, trust, subsidiary or widely_held.
+    pub basis: String,
+    /// `owner_of_record` (a proxy holder), when it names a character.
+    pub owner_of_record: Option<CharacterId>,
 }
 
 /// Where a company came from (spec 3.5 `origin`).
