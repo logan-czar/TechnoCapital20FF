@@ -18,6 +18,8 @@ The spec text still says the old values; design fixes 360 to 366 list the lines 
 
 How it was run: `headless soak --years 30 --seeds 1..20 --jobs 8 --out DIR --check` (docs/build/soak.md), about 26 s for 20 seeds on this machine, so every experiment is a full 20-seed × 30-year soak, and the baseline and the final set were confirmed on 50 seeds. Experiments changed one constant (or a named pair) at a time on top of the step before. Mechanisms were diagnosed with a scratch per-industry, per-quarter dump of S, M, demand ÷ trend and revenue ÷ trend and a yearly IPO-pipeline count (not committed). "Main values" below is the branch with the four tuned constants put back to main's values, which reproduces main's 50-seed `years.csv` byte for byte.
 
+After main's PR #21 (M10.4 to M10.6 and M10.8) was merged into this branch, the 20- and 50-seed soaks were re-run: `years.csv`, `quarters.csv` and `summary.csv` are byte-identical to the runs in these tables (20 seeds now take 20.3 s of wall time on 8 jobs, 50 seeds 49.0 s). PR #21's review notes are folded in on this branch too: a controls digest on the replay end line (D403), save files removed after a failed Save, design fix 369 (M10.8 verified on Windows only), a comment fix in m10_boom_pop and a line in D401.
+
 ## 1. The signed-off change set
 
 | Decision | Spec | Constant | Old → new | What it fixes |
@@ -283,6 +285,7 @@ Still open:
 6. **D363 (a) and Cloud** (flag 2): one Cloud seed misses; extend the waiver, or a 90% seed share.
 7. **Design fix 367**: whether spec 10 wants a floor on failures per decade.
 8. **Design fix 368**: whether the shown range should keep up with e late in a quarter.
+9. **Design fix 369** (from PR #21's review): M10.8 is verified on Windows only; macOS and Linux are untested.
 
 ## 9. Not fixed by tuning
 
