@@ -21,6 +21,7 @@
 pub mod balance;
 pub mod credit;
 pub mod distress;
+pub mod dividends;
 pub mod rating;
 pub mod sales;
 pub mod statements;
