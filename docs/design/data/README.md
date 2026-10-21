@@ -240,7 +240,7 @@ Checks (validate.py, batch 148): fixed_cost_rate is 0.37 in every industry; a no
 | credit_drawn_usd | 0, or asset book − book value + min_cash, cut to the largest line within its 5.12 limit at start_rating (D15) |
 | start_rating | The 7.1 starting rating of these balances (mvp-spec 5.12 implied rating at load, build decisions D220 to D223, D235), AAA to CC |
 | book_equity_usd | cash + asset book − credit drawn; equals companies.csv book_value_usd_m, or more where D15 cut the line |
-| engine_value_usd | mvp-spec 5.13 fair value at load: flat synthetic history, Normal cycle, company confidence 1.0, X from the zone confidence_start (listed only), line interest skipped, floored at 0.6 × book and $100,000 (A) |
+| engine_value_usd | mvp-spec 5.13 fair value at load on book_equity_usd: flat synthetic history (g 0, so G = clamp(1 − 2.5 × the industry's trend_growth, 0.5, 2.5)), R from the home spread rounded to whole bps, Normal cycle, company confidence 1.0, X from the zone confidence_start (listed only), line interest skipped, floored at 0.6 × book (0.9 for Real estate) and $100,000 (A; build decisions D238 to D240) |
 | open_price | Opening price per share in whole dollars, $5 to $200 (T) |
 | shares | engine_value_usd ÷ open_price, rounded; listed and private alike |
 

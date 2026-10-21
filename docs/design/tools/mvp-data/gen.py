@@ -770,6 +770,11 @@ def build_ai_boom():
 # ---------------------------------------------------------------------------
 PRICE_BASE, PRICE_REF_USD, PRICE_EXP, PRICE_MIN, PRICE_MAX, PRICE_JITTER = 25.0, 1e9, 0.35, 5, 200, 0.10   # (T)
 MIN_VALUE_USD = 100000.0   # value floor for share counts: the barebones company's one asset (A)
+# mvp-spec 5.13 fair value: R = clamp(9% / (y10 + 5%), 0.4, 1.6), y10 = 3.5% + home spread;
+# G = clamp(1 + 2.5 x (g - g_sector), 0.5, 2.5); floor 0.6 x book equity, 0.9 for Real estate
+FV_R_NUM, FV_Y10_BASE, FV_R_ADD, FV_R_MIN, FV_R_MAX = 0.09, 0.035, 0.05, 0.4, 1.6
+FV_G_SLOPE, FV_G_MIN, FV_G_MAX = 2.5, 0.5, 2.5
+FV_FLOOR, FV_FLOOR_REAL_ESTATE = 0.6, 0.9
 
 def price_jitter(cid):
     """Seeded jitter of up to +-10%, read from a hash of the company id (no random state, same every run)."""
@@ -827,8 +832,10 @@ def build_company_start(ce_rows, zones):
     is unchanged, and book equity = asset book + cash - line rises above companies.csv book_value. D16: no
     company starts rated CCC or CC with a drawn line. start_rating (7.1, 5.12; D220 to D223, D235) is
     validate.start_rating on the balances as written. Engine value is the 5.13 fair value at load on that
-    book equity: flat synthetic history (g 0, G 1), Normal cycle, company confidence 1.0, X from the zone
-    confidence_start for listed companies; it skips line interest (A). open_price =
+    book equity (D238): flat synthetic history (g 0, so G = clamp(1 - 2.5 x lt, 0.5, 2.5) with g_sector the
+    industry's lt, D1, D239), R from the home spread rounded as D223 does, Normal cycle, company confidence
+    1.0, X from the zone confidence_start for listed companies, floored at 0.6 x book (0.9 for Real estate);
+    it skips line interest (A). open_price =
     clamp(round(25 x (value / $1B)^0.35 x jitter), 5, 200)
     (a fixed $1B reference, not the median, so the spread reaches about $5 to $200); shares = value / open_price."""
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -885,14 +892,17 @@ def build_company_start(ce_rows, zones):
         margin = validate.normal_company(ind, max(0.1, float(c['revenue_usd_m'])), validate.rd_mult(c, ind, traits))[2]
         ebit = margin * r_usd
         ni = ebit * (1 - float(e['corp_tax_rate'])) if ebit > 0 else ebit
-        home = (0.5 * float(z['credit_spread_bps']) + 0.5 * float(e['sovereign_spread_bps'])) / 1e4
-        rf = min(1.6, max(0.4, 0.09 / (0.035 + home + 0.05)))
+        # 5.13 at load: y10 = 3.5% + home spread, the home spread rounded to whole bps (D223, design fix 231);
+        # G with g = 0 against g_sector = the industry's lt (D1; D239, design fix 230)
+        rf = min(FV_R_MAX, max(FV_R_MIN, FV_R_NUM / (FV_Y10_BASE + home_rr + FV_R_ADD)))
+        g_mult = min(FV_G_MAX, max(FV_G_MIN, 1 + FV_G_SLOPE * (0.0 - float(ind['trend_growth']))))
         x = 1 + 0.10 * float(z['confidence_start']) / 100 if c['public'] == 'Y' else 1.0
         if ni > 0:
-            fv = (0.3 * be + 0.7 * ni * float(ind['earnings_multiple']) * rf) * x
+            fv = (0.3 * be + 0.7 * ni * float(ind['earnings_multiple']) * g_mult * rf) * x
         else:
             fv = be * x
-        fv = max(fv, 0.6 * be, MIN_VALUE_USD)
+        floor = FV_FLOOR_REAL_ESTATE if ind['id'] == 'real_estate' else FV_FLOOR   # 5.13 step 5 (design fix 231)
+        fv = max(fv, floor * be, MIN_VALUE_USD)
         rows.append([c, asset_book, cash, line, rating, fv])
     print(f'company-start D15: {log["kept"]} starting lines within their 5.12 limit, '
           f'{log["fixed"] + log["cycle"]} sized to it ({log["fixed"]} at a fixed point, {log["cycle"]} alternating '
