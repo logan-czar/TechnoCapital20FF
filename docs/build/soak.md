@@ -129,4 +129,4 @@ Spec 10's balance targets after 10 years, then its startup, character and listin
 
 ## Performance
 
-Build-plan 4.5 and spec 10 M10: 30 years headless in under 2 minutes per seed. `timing.csv` holds each seed's wall time; `soak` prints the min, median and max. Seeds running at once share the machine's memory bandwidth, so a seed's time grows with `--jobs` (on Logan's PC one seed alone takes about 8 to 11 s; 20 seeds on 12 jobs took 21 s of wall time, 9.3 to 12.0 s per seed).
+Build-plan 4.5 and spec 10 M10: 30 years headless in under 2 minutes per seed. `timing.csv` holds each seed's wall time; `soak` prints the min, median and max. Seeds running at once share the machine's memory bandwidth, so a seed's time grows with `--jobs` (on Logan's PC one seed alone takes about 8 to 11 s; 20 seeds on 12 jobs took 20 s of wall time, 8.5 to 10.9 s per seed).
