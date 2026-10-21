@@ -2,36 +2,17 @@
 //! the book, cash received `book sold × sale factor`, and the gain or loss in pre-tax income.
 //! Used by growth plan sales (4.3 step 11), forced sales in distress (5.12 step 1, 4.3 step 13)
 //! and the removal sale at the Bust factor (5.12 step 3).
+//!
+//! The sale factor table is economy's: [`crate::economy::assets::sale_factor`] of the industry's
+//! [`crate::world::PhaseLabel`] (Boom 1.00, Normal 0.85, Glut 0.70, Bust 0.60). These functions
+//! take the factor as an input.
 
 use serde::{Deserialize, Serialize};
 
-/// An industry's phase label as the sale factor reads it (spec 5.1, 5.10). Lane S's
-/// `world::PhaseLabel` carries the same four labels; [`sale_factor`] is the one table.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub enum SalePhase {
-    Boom,
-    Normal,
-    Glut,
-    Bust,
-}
+use crate::economy::assets::SALE_FACTOR_BUST;
 
-/// Spec 5.10 sale factors (10.0.7): cash per $1 of book sold.
-pub const SALE_FACTOR_BOOM: f64 = 1.00;
-pub const SALE_FACTOR_NORMAL: f64 = 0.85;
-pub const SALE_FACTOR_GLUT: f64 = 0.70;
-pub const SALE_FACTOR_BUST: f64 = 0.60;
 /// Spec 5.12 step 3: a removed company's assets sell at the Bust factor whatever the label.
 pub const REMOVAL_SALE_FACTOR: f64 = SALE_FACTOR_BUST;
-
-/// Cash per $1 of book sold for the industry's phase label (spec 5.10).
-pub fn sale_factor(phase: SalePhase) -> f64 {
-    match phase {
-        SalePhase::Boom => SALE_FACTOR_BOOM,
-        SalePhase::Normal => SALE_FACTOR_NORMAL,
-        SalePhase::Glut => SALE_FACTOR_GLUT,
-        SalePhase::Bust => SALE_FACTOR_BUST,
-    }
-}
 
 /// One sale (spec 5.10). All amounts USD.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Serialize, Deserialize)]

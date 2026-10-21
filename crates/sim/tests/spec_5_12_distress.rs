@@ -2,14 +2,16 @@
 //! settle: build-plan M4.7, with a forced-failure test company that walks all three steps and
 //! keeps its books balanced every month (M4.9).
 
+use sim::economy::assets::sale_factor;
 use sim::finance::balance::{Books, balance_sheet, check_month};
 use sim::finance::credit::{CreditLine, review_line};
 use sim::finance::distress::{
     BANKRUPT_AFTER_DISTRESS_MONTHS, CompanyStatus, DistressState, FROZEN_QUARTERS, SettleInputs,
     bankrupt, on_quarter_close, removal_due, remove, settle_month,
 };
-use sim::finance::sales::{REMOVAL_SALE_FACTOR, SalePhase, sale_factor};
+use sim::finance::sales::REMOVAL_SALE_FACTOR;
 use sim::finance::statements::Ledger;
+use sim::world::PhaseLabel;
 
 #[track_caller]
 fn near(a: f64, b: f64) {
@@ -31,7 +33,7 @@ fn inputs(cash: f64, line: CreditLine) -> SettleInputs {
         min_cash: 0.5e6,
         gross_assets: 40.0e6,
         asset_book: 20.0e6,
-        sale_factor: sale_factor(SalePhase::Normal),
+        sale_factor: sale_factor(PhaseLabel::Normal),
         state: DistressState::default(),
     }
 }
@@ -146,7 +148,7 @@ fn no_assets_left_is_bankrupt_at_once() {
     let mut i = inputs(-10.0e6, line(10.0e6, 10.0e6));
     i.asset_book = 5.0e6;
     i.gross_assets = 9.0e6;
-    i.sale_factor = sale_factor(SalePhase::Bust);
+    i.sale_factor = sale_factor(PhaseLabel::Bust);
     let s = settle_month(&i);
     assert_eq!((s.gross_assets, s.asset_book), (0.0, 0.0));
     near(s.forced_sale.proceeds, 3.0e6);
@@ -266,7 +268,7 @@ impl Company {
             min_cash: 0.05 * 12.0 * revenue,
             gross_assets: self.gross,
             asset_book: self.books.asset_book,
-            sale_factor: sale_factor(SalePhase::Normal),
+            sale_factor: sale_factor(PhaseLabel::Normal),
             state: self.state,
         });
         let ledger = Ledger {
