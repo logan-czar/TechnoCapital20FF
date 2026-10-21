@@ -4202,6 +4202,7 @@ name = "sim"
 version = "0.1.0"
 dependencies = [
  "blake3",
+ "flate2",
  "postcard",
  "rand_chacha",
  "rand_core 0.9.5",

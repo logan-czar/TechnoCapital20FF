@@ -15,10 +15,12 @@ pub mod ops;
 pub mod people;
 pub mod recap;
 pub mod rng;
+pub mod save;
 pub mod time;
 pub mod views;
 pub mod world;
 
+use std::path::Path;
 use std::sync::Arc;
 
 use sim_data::WorldData;
@@ -51,8 +53,8 @@ pub enum SimError {
     DebugOnly,
     #[error(transparent)]
     Load(#[from] LoadError),
-    #[error("saves arrive in M1.7")]
-    Unsupported,
+    #[error(transparent)]
+    Save(#[from] save::SaveError),
 }
 
 /// The simulation: the world, its RNG streams, the scheduler that runs them and the controls.
@@ -158,7 +160,8 @@ impl Sim {
                 });
                 c.paused = false;
             }
-            Control::Save(_) | Control::Load(_) => return Err(SimError::Unsupported),
+            Control::Save(path) => self.save(&path)?,
+            Control::Load(path) => notices.extend(self.load(&path)?),
             Control::SetAlert { kind, level } => c.alerts.set(kind, level),
             Control::SetOmniscient(on) => {
                 if !cfg!(debug_assertions) {
@@ -178,6 +181,40 @@ impl Sim {
         }
         self.views.refresh_clock(&self.world, &self.controls);
         Ok(notices)
+    }
+
+    /// The state as save bytes (spec 9.1 `Save`; build-plan M1.7).
+    pub fn save_bytes(&self) -> Vec<u8> {
+        save::encode(&self.world, &self.rng, &self.controls)
+    }
+
+    /// Writes a save file.
+    pub fn save(&self, path: &Path) -> Result<(), SimError> {
+        std::fs::write(path, self.save_bytes()).map_err(save::SaveError::from)?;
+        Ok(())
+    }
+
+    /// Replaces the state with a save's (spec 9.1 `Load`). The game comes back paused with no skip
+    /// running (D13); the views are rebuilt (spec 9.4 "and on load"). The loaded data stays, for
+    /// a later NewGame.
+    pub fn load_bytes(&mut self, bytes: &[u8]) -> Result<Vec<Notice>, SimError> {
+        let state = save::decode(bytes)?;
+        self.world = state.world;
+        self.rng = state.rng;
+        self.controls = state.controls;
+        self.controls.skip = None;
+        self.controls.omniscient &= cfg!(debug_assertions);
+        let mut notices = Vec::new();
+        self.controls.paused = false;
+        self.pause(&mut notices, PauseReason::Loaded);
+        self.views = SimViews::build(&self.world, &self.controls);
+        Ok(notices)
+    }
+
+    /// Reads a save file.
+    pub fn load(&mut self, path: &Path) -> Result<Vec<Notice>, SimError> {
+        let bytes = std::fs::read(path).map_err(save::SaveError::from)?;
+        self.load_bytes(&bytes)
     }
 
     /// The time of the last finished tick.
