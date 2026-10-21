@@ -28,9 +28,18 @@ pub fn boom_date() -> Date {
     Date::ymd(BOOM_YEAR, 1, 1)
 }
 
+/// Quarters in a calendar year, for the quarter counts below.
+pub const QUARTERS_IN_YEAR: i64 = 4;
+
 /// A quarter's position on one running count (year × 4 + quarter − 1).
 pub fn quarter_index(q: Quarter) -> i64 {
-    i64::from(q.year) * 4 + i64::from(q.q) - 1
+    i64::from(q.year) * QUARTERS_IN_YEAR + i64::from(q.q) - 1
+}
+
+/// The boom year (spec 5.1.1): whole years into the boom from `quarters_in`, the quarters since
+/// the boom event that [`stage_at`] gives for the Boom stage. Boom year 0 is 2030.
+pub fn boom_year(quarters_in: i64) -> u32 {
+    u32::try_from(quarters_in.max(0) / QUARTERS_IN_YEAR).unwrap_or(u32::MAX)
 }
 
 /// The stage on `date` and how many whole quarters into it (spec 5.1.1).
@@ -57,7 +66,7 @@ pub fn ai_labs_lt(schedule: &AiSchedule, stage: AiStage, quarters_in: i64) -> f6
     match stage {
         AiStage::Preboom => schedule.preboom_lt,
         AiStage::Boom => {
-            let year = usize::try_from(quarters_in / 4).unwrap_or(0);
+            let year = usize::try_from(boom_year(quarters_in)).unwrap_or(usize::MAX);
             let last = schedule.boom_lt.len().saturating_sub(1);
             schedule
                 .boom_lt
@@ -180,6 +189,11 @@ mod tests {
         assert_eq!(
             stage_at(Date::ymd(2042, 4, 1), b, p),
             (AiStage::Postcrash, 0)
+        );
+        assert_eq!(
+            [0, 3, 4, 11, 40].map(boom_year),
+            [0, 0, 1, 2, 10],
+            "whole years into the boom"
         );
         let s = schedule();
         assert_eq!(ai_labs_lt(&s, AiStage::Boom, 9), 0.9);

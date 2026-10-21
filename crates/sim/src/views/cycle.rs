@@ -4,7 +4,7 @@
 //! shows or hides the pop date).
 
 use super::{Cadence, ViewData, ViewInput};
-use crate::economy::ai_boom::stage_at;
+use crate::economy::ai_boom::{boom_year, stage_at};
 use crate::time::Date;
 use crate::world::{AiStage, CyclePhase, ZoneId};
 
@@ -80,7 +80,7 @@ impl ViewData for CycleView {
                 })
                 .collect(),
             ai_stage: w.ai.stage,
-            boom_year: (stage == AiStage::Boom).then(|| u32::try_from(quarters_in / 4).unwrap_or(0)),
+            boom_year: (stage == AiStage::Boom).then(|| boom_year(quarters_in)),
             boom_date: w.ai.boom_date,
             ai_labs_lt: w.ai.ai_labs_lt,
             pop_date: input.controls.omniscient.then_some(w.ai.pop_date),
