@@ -1,7 +1,7 @@
 //! The archetype table (spec 6.1, 2.23.1) and the 6.3 trait R&D mults, the slice of the Lite AI
 //! that load needs before M6: the starting run rate's R&D plan (7.1 "Plan", "Rating") and the
-//! dividend rule's payout mult (5.17). M6.1 adds the hurdle ROA, growth adj and data coverage
-//! columns and the plan lock that reads them.
+//! dividend rule's payout mult (5.17). M6.1 (F6) adds the hurdle ROA, growth adj and data
+//! coverage columns, read by the 6.2 growth plan and the 6.4 station split.
 
 use serde::{Deserialize, Serialize};
 
@@ -17,44 +17,66 @@ pub enum Archetype {
     Incumbent,
 }
 
-/// One row of the spec 6.1 archetype table: the columns M4 reads (M6.1 adds the hurdle ROA,
-/// growth adj and data coverage).
+/// One row of the spec 6.1 archetype table (all T).
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ArchetypeRow {
     pub archetype: Archetype,
+    /// Hurdle ROA (6.2 situation rows).
+    pub hurdle_roa: f64,
+    /// Added to the 6.2 growth when ROA meets the hurdle, a fraction a year.
+    pub growth_adj: f64,
     /// R&D mult (6.3 target).
     pub rd_mult: f64,
     /// Payout mult (5.17 payout ratio).
     pub payout_mult: f64,
+    /// Share of the monthly unstructured inflow the 6.4 split covers with enterprise stations.
+    pub data_coverage: f64,
 }
 
-/// Spec 6.1 (all T), in the enum's order: State champion 1.0 / 1.0, Startup 1.2 / 0, Aggressive
-/// grower 1.3 / 0.5, Cash cow 0.7 / 1.3, Incumbent 1.0 / 1.0 (R&D mult / payout mult).
+/// Spec 6.1 (all T), in the enum's order: hurdle ROA, growth adj, R&D mult, payout mult, data
+/// coverage: State champion 6%, +2 pp, 1.0, 1.0, 50%; Startup 12%, +4 pp, 1.2, 0, 100%;
+/// Aggressive grower 8%, +5 pp, 1.3, 0.5, 100%; Cash cow 15%, −3 pp, 0.7, 1.3, 25%; Incumbent
+/// 10%, 0, 1.0, 1.0, 50%.
 pub const ARCHETYPE_TABLE: [ArchetypeRow; 5] = [
     ArchetypeRow {
         archetype: Archetype::StateChampion,
+        hurdle_roa: 0.06,
+        growth_adj: 0.02,
         rd_mult: 1.0,
         payout_mult: 1.0,
+        data_coverage: 0.5,
     },
     ArchetypeRow {
         archetype: Archetype::Startup,
+        hurdle_roa: 0.12,
+        growth_adj: 0.04,
         rd_mult: 1.2,
         payout_mult: 0.0,
+        data_coverage: 1.0,
     },
     ArchetypeRow {
         archetype: Archetype::AggressiveGrower,
+        hurdle_roa: 0.08,
+        growth_adj: 0.05,
         rd_mult: 1.3,
         payout_mult: 0.5,
+        data_coverage: 1.0,
     },
     ArchetypeRow {
         archetype: Archetype::CashCow,
+        hurdle_roa: 0.15,
+        growth_adj: -0.03,
         rd_mult: 0.7,
         payout_mult: 1.3,
+        data_coverage: 0.25,
     },
     ArchetypeRow {
         archetype: Archetype::Incumbent,
+        hurdle_roa: 0.10,
+        growth_adj: 0.0,
         rd_mult: 1.0,
         payout_mult: 1.0,
+        data_coverage: 0.5,
     },
 ];
 
@@ -81,23 +103,22 @@ impl Archetype {
     /// table order, as validate.py and the M3 profit check do (D120; design fix 105 asks whether
     /// the 6.1 note "takes the first trait in its list" should win instead).
     pub fn at_load(control_basis: &str, revenue_usd: f64, sector: &str, traits: &[Trait]) -> Self {
-        let has = |t: Trait| traits.contains(&t);
-        if control_basis == STATE_CONTROL_BASIS {
-            Archetype::StateChampion
-        } else if revenue_usd < STARTUP_REVENUE_BELOW_USD && sector == STARTUP_SECTOR {
-            Archetype::Startup
-        } else if has(Trait::Ambitious) || has(Trait::Brave) {
-            Archetype::AggressiveGrower
-        } else if has(Trait::Greedy) || has(Trait::Cautious) {
-            Archetype::CashCow
-        } else {
-            Archetype::Incumbent
-        }
+        archetype(&ArchetypeInputs {
+            state_controlled: control_basis == STATE_CONTROL_BASIS,
+            revenue_usd,
+            tech: sector == STARTUP_SECTOR,
+            traits,
+        })
     }
 
     /// This archetype's row of [`ARCHETYPE_TABLE`].
     pub fn row(self) -> &'static ArchetypeRow {
         &ARCHETYPE_TABLE[self as usize]
+    }
+
+    /// This archetype's row, by value (the 6.2 to 6.5 inputs).
+    pub fn params(self) -> ArchetypeRow {
+        *self.row()
     }
 
     /// Spec 6.1 R&D mult (T).
@@ -118,6 +139,42 @@ impl Archetype {
             Archetype::CashCow => "Cash cow",
             Archetype::Incumbent => "Incumbent",
         }
+    }
+}
+
+/// What the archetype reads (spec 6.1), for the plan lock.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ArchetypeInputs<'a> {
+    /// companies.csv `control_basis` is [`STATE_CONTROL_BASIS`] (a born company is
+    /// founder-controlled, never state).
+    pub state_controlled: bool,
+    /// Trailing annual revenue, USD (starting revenue at load; the sized revenue at birth).
+    pub revenue_usd: f64,
+    /// The industry's sector is [`STARTUP_SECTOR`].
+    pub tech: bool,
+    /// The traits the AI reads (`ai::inputs::plan_traits`): the named controller's, or none for
+    /// widely held companies and companies born in play (5.19.5).
+    pub traits: &'a [Trait],
+}
+
+/// The 6.1 first-match rule, the one place it is written ([`Archetype::at_load`] calls it):
+/// State champion; Startup (revenue below $50M in Tech); Aggressive grower (Ambitious or
+/// Brave); Cash cow (Greedy or Cautious); otherwise Incumbent. Rows match in **table order**
+/// (D120), so a controller with both Ambitious and Greedy is an Aggressive grower whatever the
+/// order of its traits; design fix 105 asks Logan whether the 6.1 note ("takes the first trait
+/// in its list") should win instead, which would change only the two trait rows here.
+pub fn archetype(i: &ArchetypeInputs<'_>) -> Archetype {
+    let has = |t: Trait| i.traits.contains(&t);
+    if i.state_controlled {
+        Archetype::StateChampion
+    } else if i.revenue_usd < STARTUP_REVENUE_BELOW_USD && i.tech {
+        Archetype::Startup
+    } else if has(Trait::Ambitious) || has(Trait::Brave) {
+        Archetype::AggressiveGrower
+    } else if has(Trait::Greedy) || has(Trait::Cautious) {
+        Archetype::CashCow
+    } else {
+        Archetype::Incumbent
     }
 }
 
