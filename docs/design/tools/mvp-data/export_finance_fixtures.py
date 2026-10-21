@@ -17,7 +17,8 @@ net cash is AAA), the cover from EBITDA / a year of line interest at the leverag
 the revenue and sector notches summed and clamped to AAA..CC, capped at the sovereign + 1 notch. Then a year
 at the run rate with that rating: line interest, undrawn fee, interest on own cash (5.12), tax on positive
 pre-tax income (5.11, no carryforward at load), replacement purchases equal to depreciation (flat history,
-D228). Home spread: round half even of half the zone spread plus half the sovereign spread (D223).
+D228). Home spread: half the zone's base spread plus half the sovereign spread, rounded half away from zero
+(D109, D223).
 
 Columns of finance-start.csv (USD a year unless named q4_ or bs_; ratings as labels):
   id, revenue, variable, fixed_cash, rd, shared, depreciation, ebit (the run-rate lines);
@@ -134,7 +135,7 @@ def main():
         assert abs(ebit - start_margin * r) < 1e-6 * max(1.0, r), (c['id'], ebit, start_margin * r)
         e = ce[c['hq_country']]
         z = zones[e['financial_zone']]
-        home_bps = round(0.5 * float(z['credit_spread_bps']) + 0.5 * float(e['sovereign_spread_bps']))
+        home_bps = math.floor(0.5 * float(z['credit_spread_bps']) + 0.5 * float(e['sovereign_spread_bps']) + 0.5)
         home = home_bps / 1e4
         ebitda = ebit + dep
         lev, rating = rating_at_load(line - cash, ebitda, line, home, r, ind['id'], e['sovereign_rating'])

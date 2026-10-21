@@ -71,8 +71,9 @@ fn home_spreads_from_the_spec_and_csv() {
     assert_eq!(bps(country("GRC")), 539.0);
     // Argentina (591 + 1,000) ÷ 2 = 795.5, to 796.
     assert_eq!(bps(country("ARG")), 796.0);
-    // The US: (1 + 0) ÷ 2 = 0.5 rounds half to even, to 0 (D223).
-    assert_eq!(bps(country("USA")), 0.0);
+    // The US: (1 + 0) ÷ 2 = 0.5 rounds half away from zero, to 1, as D109 rounds the effective
+    // zone spread (D223).
+    assert_eq!(bps(country("USA")), 1.0);
     // The effective zone spread is what home spread reads (batch 157): the EU at 112 bps in a
     // mid Contraction gives (112 + 0) ÷ 2 = 56 for Germany.
     assert_eq!(bps(home_spread(0.0112, 0.0)), 56.0);

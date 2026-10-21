@@ -42,13 +42,13 @@ pub fn line_limit(asset_book: f64, cash: f64, line_drawn: f64, rating: Rating) -
 /// Home spread, a fraction (spec 5.1.2 batch 156, 5.12): `0.5 × zone credit spread + 0.5 ×
 /// sovereign spread`, rounded to whole basis points. `zone_spread` is the zone's effective spread
 /// this quarter. Both inputs are whole bps in the data, so each is snapped to its bps first and
-/// the half-bps result rounds half to even, as Python's `round` does (D223): a Chilean company
-/// pays round((591 + 32) ÷ 2) = 312 bps.
+/// the half-bps result rounds half away from zero, as the effective zone spread does (D109,
+/// D223): a Chilean company pays round((591 + 32) ÷ 2) = 312 bps.
 pub fn home_spread(zone_spread: f64, sovereign_spread: f64) -> f64 {
     let zone_bps = (zone_spread * BPS_PER_UNIT).round();
     let sov_bps = (sovereign_spread * BPS_PER_UNIT).round();
     let bps = (HOME_SPREAD_ZONE_WEIGHT * zone_bps + HOME_SPREAD_SOVEREIGN_WEIGHT * sov_bps)
-        .round_ties_even();
+        .round();
     bps / BPS_PER_UNIT
 }
 
