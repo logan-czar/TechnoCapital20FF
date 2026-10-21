@@ -10,7 +10,8 @@ $ErrorActionPreference = 'Continue'
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
-$pkgs = if ($SimOnly) { @('-p', 'sim', '-p', 'sim-data', '-p', 'headless') } else { @('--workspace') }
+# [string[]] keeps a one-item list an array; a bare string would splat as single characters.
+[string[]]$pkgs = if ($SimOnly) { @('-p', 'sim', '-p', 'sim-data', '-p', 'headless') } else { @('--workspace') }
 
 function Step([string]$name, [scriptblock]$cmd) {
     Write-Host "== $name"
