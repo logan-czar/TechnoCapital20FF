@@ -198,6 +198,9 @@ impl Rect {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SavedNode {
     Pane {
+        /// A page key the game no longer knows (a hand edit, an old file) loads as the World
+        /// page, so one bad key costs one pane, not the whole config (D452).
+        #[serde(deserialize_with = "lenient_page")]
         page: PageRef,
     },
     Split {
@@ -206,6 +209,14 @@ pub enum SavedNode {
         first: Box<SavedNode>,
         second: Box<SavedNode>,
     },
+}
+
+fn lenient_page<'de, D: serde::Deserializer<'de>>(d: D) -> Result<PageRef, D::Error> {
+    let key = String::deserialize(d)?;
+    Ok(PageRef::from_key(&key).unwrap_or_else(|| {
+        bevy::log::warn!("UI config: unknown page {key:?} in a layout; it opens the World page");
+        PageRef::World
+    }))
 }
 
 /// A named layout, or the last session's (D450).

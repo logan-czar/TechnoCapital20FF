@@ -204,10 +204,19 @@ pub fn platform_config_dir() -> Option<PathBuf> {
 /// The config file's path: `$TC20FF_CONFIG_DIR/ui.ron`, else the platform directory's
 /// `TechnoCapital20FF/ui.ron`.
 pub fn default_config_path() -> Option<PathBuf> {
-    if let Some(dir) = std::env::var_os(CONFIG_DIR_ENV).filter(|v| !v.is_empty()) {
+    config_path_from(|k| std::env::var_os(k), platform_config_dir())
+}
+
+/// [`default_config_path`] from an environment lookup and a platform directory (testable: the
+/// crate forbids `unsafe`, and setting a variable in-process is `unsafe` in edition 2024).
+pub fn config_path_from(
+    env: impl Fn(&str) -> Option<std::ffi::OsString>,
+    platform: Option<PathBuf>,
+) -> Option<PathBuf> {
+    if let Some(dir) = env(CONFIG_DIR_ENV).filter(|v| !v.is_empty()) {
         return Some(PathBuf::from(dir).join(CONFIG_FILE));
     }
-    platform_config_dir().map(|d| d.join(APP_DIR).join(CONFIG_FILE))
+    platform.map(|d| d.join(APP_DIR).join(CONFIG_FILE))
 }
 
 /// How the load went.
@@ -244,12 +253,13 @@ pub fn from_text(text: &str) -> Result<UiConfig, String> {
 
 /// Loads the config at `path`; never fails (D452).
 pub fn load(path: &Path) -> (UiConfig, LoadOutcome) {
-    let text = match std::fs::read_to_string(path) {
-        Ok(t) => t,
+    let bytes = match std::fs::read(path) {
+        Ok(b) => b,
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
             return (UiConfig::default(), LoadOutcome::Missing);
         }
         Err(e) => {
+            // Unreadable (permissions, a directory): leave it where it is.
             return (
                 UiConfig::default(),
                 LoadOutcome::Corrupt {
@@ -259,7 +269,13 @@ pub fn load(path: &Path) -> (UiConfig, LoadOutcome) {
             );
         }
     };
-    match from_text(&text) {
+    // An editor may have saved it with a byte-order mark; text that is not UTF-8 is corrupt
+    // like text that does not parse.
+    let bytes = bytes.strip_prefix(b"\xEF\xBB\xBF").unwrap_or(&bytes);
+    let parsed = std::str::from_utf8(bytes)
+        .map_err(|e| format!("not UTF-8: {e}"))
+        .and_then(from_text);
+    match parsed {
         Ok(cfg) => (cfg, LoadOutcome::Loaded),
         Err(error) => {
             let backup = path.with_extension("ron.corrupt");
@@ -371,7 +387,8 @@ fn write_config(
     exit: MessageReader<AppExit>,
 ) {
     let now = time.elapsed_secs_f64();
-    if cfg.is_changed() && !cfg.is_added() && store.pending_since.is_none() {
+    // Every change restarts the wait, so a divider drag writes once, after it settles (D452).
+    if cfg.is_changed() && !cfg.is_added() {
         store.pending_since = Some(now);
     }
     let due = store
@@ -389,12 +406,27 @@ mod tests {
     use crate::workspace::model::{Axis, SavedNode};
     use sim::world::CompanyId;
 
-    fn scratch(name: &str) -> PathBuf {
-        let dir =
-            std::env::temp_dir().join(format!("tc20ff-a2-config-{name}-{}", std::process::id()));
-        let _ = std::fs::remove_dir_all(&dir);
-        std::fs::create_dir_all(&dir).unwrap();
-        dir.join(CONFIG_FILE)
+    /// A fresh directory under the temp dir, removed when the test ends (pass or fail).
+    struct Scratch(PathBuf);
+
+    impl Scratch {
+        fn new(name: &str) -> Scratch {
+            let dir = std::env::temp_dir()
+                .join(format!("tc20ff-a2-config-{name}-{}", std::process::id()));
+            let _ = std::fs::remove_dir_all(&dir);
+            std::fs::create_dir_all(&dir).unwrap();
+            Scratch(dir)
+        }
+
+        fn file(&self) -> PathBuf {
+            self.0.join(CONFIG_FILE)
+        }
+    }
+
+    impl Drop for Scratch {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0);
+        }
     }
 
     fn sample() -> UiConfig {
@@ -452,7 +484,8 @@ mod tests {
 
     #[test]
     fn round_trips_through_the_file() {
-        let path = scratch("roundtrip");
+        let dir = Scratch::new("roundtrip");
+        let path = dir.file();
         let cfg = sample();
         let mut store = ConfigStore::at(path.clone());
         store.flush(&cfg);
@@ -473,7 +506,8 @@ mod tests {
 
     #[test]
     fn missing_and_corrupt_files_give_defaults() {
-        let path = scratch("corrupt");
+        let dir = Scratch::new("corrupt");
+        let path = dir.file();
         let (cfg, outcome) = load(&path);
         assert_eq!((cfg, outcome), (UiConfig::default(), LoadOutcome::Missing));
         std::fs::write(&path, "(density: Sideways, font_scale: \"big\"").unwrap();
@@ -511,14 +545,83 @@ mod tests {
             n => panic!("{n:?}"),
         }
         assert_eq!(l.focused, 0, "focus index out of range resets");
-        // An unknown page key makes the file unreadable, so it is moved aside (D452).
-        let cfg = from_text("(layouts: {\"x\": (root: Pane(page: \"company/zz\"), focused: 0)})");
-        assert!(cfg.is_err(), "an unparseable page key fails the parse");
+        // An unknown page key costs only its pane: it opens the World page (D452).
+        let cfg = from_text(
+            "(density: Compact, layouts: {\"x\": (root: Split(axis: Row, ratio: 0.5, first: \
+             Pane(page: \"company/zz\"), second: Pane(page: \"news\")), focused: 1)})",
+        )
+        .unwrap();
+        assert_eq!(
+            cfg.density,
+            Density::Compact,
+            "the rest of the file survives"
+        );
+        match &cfg.layouts["x"].root {
+            SavedNode::Split { first, second, .. } => {
+                assert_eq!(
+                    **first,
+                    SavedNode::Pane {
+                        page: PageRef::World
+                    }
+                );
+                assert_eq!(
+                    **second,
+                    SavedNode::Pane {
+                        page: PageRef::News
+                    }
+                );
+            }
+            n => panic!("{n:?}"),
+        }
+    }
+
+    #[test]
+    fn bom_and_non_utf8_files() {
+        let dir = Scratch::new("bom");
+        let path = dir.file();
+        std::fs::write(&path, b"\xEF\xBB\xBF(density: Compact)").unwrap();
+        let (cfg, outcome) = load(&path);
+        assert_eq!(outcome, LoadOutcome::Loaded, "a byte-order mark is skipped");
+        assert_eq!(cfg.density, Density::Compact);
+        // Latin-1 text from an old editor: not UTF-8, so corrupt, and moved aside.
+        std::fs::write(&path, b"(density: Compact) // caf\xE9").unwrap();
+        match load(&path) {
+            (c, LoadOutcome::Corrupt { error, backup }) => {
+                assert_eq!(c, UiConfig::default());
+                assert!(error.contains("UTF-8"), "{error}");
+                assert!(backup.is_some_and(|b| b.exists()));
+                assert!(!path.exists());
+            }
+            o => panic!("{o:?}"),
+        }
+    }
+
+    #[test]
+    fn the_config_dir_variable_wins() {
+        let platform = Some(PathBuf::from("plat"));
+        let none = |_: &str| None;
+        assert_eq!(
+            config_path_from(none, platform.clone()),
+            Some(PathBuf::from("plat").join(APP_DIR).join(CONFIG_FILE))
+        );
+        let set = |k: &str| (k == CONFIG_DIR_ENV).then(|| std::ffi::OsString::from("mine"));
+        assert_eq!(
+            config_path_from(set, platform.clone()),
+            Some(PathBuf::from("mine").join(CONFIG_FILE))
+        );
+        let empty = |_: &str| Some(std::ffi::OsString::new());
+        assert_eq!(
+            config_path_from(empty, platform),
+            Some(PathBuf::from("plat").join(APP_DIR).join(CONFIG_FILE)),
+            "an empty variable is unset"
+        );
+        assert_eq!(config_path_from(none, None), None);
     }
 
     #[test]
     fn writes_wait_for_the_delay_and_exit() {
-        let path = scratch("delay");
+        let dir = Scratch::new("delay");
+        let path = dir.file();
         let mut app = App::new();
         app.add_plugins(MinimalPlugins)
             .insert_resource(ConfigStore::at(path.clone()))
@@ -528,9 +631,17 @@ mod tests {
         app.world_mut().resource_mut::<UiConfig>().density = Density::Compact;
         app.update();
         assert!(!path.exists(), "waits for the delay");
+        // A change that keeps coming (a divider drag) keeps restarting the wait.
+        let step = std::time::Duration::from_secs_f64(WRITE_DELAY_SECS * 0.6);
+        for i in 0..3 {
+            std::thread::sleep(step);
+            app.world_mut().resource_mut::<UiConfig>().font_scale = 1.0 + 0.05 * (i + 1) as f32;
+            app.update();
+            assert!(!path.exists(), "still changing at step {i}");
+        }
         std::thread::sleep(std::time::Duration::from_secs_f64(WRITE_DELAY_SECS + 0.1));
         app.update();
-        assert!(path.exists());
+        assert!(path.exists(), "written once it settled");
         assert_eq!(load(&path).0.density, Density::Compact);
         app.world_mut().resource_mut::<UiConfig>().font_scale = 1.1;
         app.world_mut().write_message(AppExit::Success);
