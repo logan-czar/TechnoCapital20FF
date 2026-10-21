@@ -1,8 +1,11 @@
 //! v_ratings: credit ratings (spec 9.2, Pdoomberg F6 Ratings, spec 8): every company's rating,
 //! the implied rating with its breakdown (5.12, 3.6.3), the last review's move, the credit line
 //! (drawn, limit, rate, home spread) and the distress state. Rebuilt quarterly (spec 9.4), so it
-//! shows the 01:00 release-day review once it has run.
+//! shows the 01:00 release-day review once it has run, and when Omniscient is toggled (D423).
+//! A private company's or new listing's line drawn and limit are estimate bands (D420); its
+//! rating is published (F6 shows every rating, D157).
 
+use super::estimate::{Figure, Kind, StatementLine};
 use super::{Cadence, ViewData, ViewInput};
 use crate::finance::credit::line_rate;
 use crate::finance::distress::CompanyStatus;
@@ -21,8 +24,8 @@ pub struct CompanyRating {
     pub implied: ImpliedRating,
     /// Notches the last review moved, better above 0.
     pub last_review_notches: i32,
-    pub line_drawn: f64,
-    pub line_limit: f64,
+    pub line_drawn: Figure,
+    pub line_limit: Figure,
     /// The line rate now: base rate + home spread (effective zone spread) + corporate spread
     /// (spec 5.12).
     pub line_rate: f64,
@@ -76,23 +79,32 @@ impl RatingsView {
 
 impl ViewData for RatingsView {
     const CADENCE: Cadence = Cadence::Quarterly;
+    const ON_OMNISCIENT: bool = true;
 
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;
+        let est = input.estimator();
         let companies = w
             .companies
             .iter()
             .map(|(id, c)| {
                 let f = &c.finance;
                 let home = company_home_spread(w, c, false);
+                let banded = est.banded(w, id);
                 CompanyRating {
                     id,
                     key: c.key.clone(),
                     rating: f.rating,
                     implied: f.implied,
                     last_review_notches: f.last_review_notches,
-                    line_drawn: f.line.drawn,
-                    line_limit: f.line.limit,
+                    // The same estimates as v_company_detail's (D429).
+                    line_drawn: est.company_now(
+                        banded,
+                        id,
+                        Kind::Line(StatementLine::BalanceLineDrawn),
+                        f.line.drawn,
+                    ),
+                    line_limit: est.company_now(banded, id, Kind::LineLimit, f.line.limit),
                     line_rate: line_rate(w.base_rate, home, f.rating),
                     home_spread: home,
                     excess_months_left: f.line.excess_months_left,

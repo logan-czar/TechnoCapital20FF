@@ -98,8 +98,8 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                         Cell::Text(r.phase_label.name().into()),
                         Cell::Gain(r.growth_annual, GainUnit::Percent),
                         Cell::Percent(r.lt),
-                        Cell::Ratio(r.supply_ratio),
-                        Cell::Percent(r.fringe_share),
+                        Cell::Ratio(r.supply_ratio.shown()),
+                        Cell::Percent(r.fringe_share.shown()),
                         r.top_companies
                             .first()
                             .map_or(Cell::Unknown, |&c| link(PageRef::Company(c))),

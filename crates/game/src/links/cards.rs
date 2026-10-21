@@ -64,7 +64,7 @@ fn status_name(s: CompanyStatus) -> &'static str {
 }
 
 /// The card of `page`.
-pub fn card(page: &PageRef, v: &SimViews, index: &NameIndex, omniscient: bool) -> Card {
+pub fn card(page: &PageRef, v: &SimViews, index: &NameIndex, _omniscient: bool) -> Card {
     let title = index.title(page);
     let kind = page.kind().name();
     let mut lines = Vec::new();
@@ -114,16 +114,9 @@ pub fn card(page: &PageRef, v: &SimViews, index: &NameIndex, omniscient: bool) -
                 }
                 if listed {
                     lines.push(CardLine::new("Rating", r.rating.label()));
-                    lines.push(CardLine::new("Revenue TTM", format::money(r.revenue_ttm)));
-                } else if omniscient {
-                    lines.push(CardLine::colored(
-                        "Revenue TTM",
-                        format::money(r.revenue_ttm),
-                        color::AMBER,
-                    ));
-                } else {
-                    lines.push(CardLine::new("Revenue TTM", "? (private)"));
                 }
+                // The view serves a band for a company that does not publish (D420).
+                lines.push(CardLine::new("Revenue TTM", format::figure(r.revenue_ttm)));
             }
             if let Some(d) = detail
                 && let (Some(c), Some(n)) = (d.controller, &d.controller_name)
@@ -147,8 +140,14 @@ pub fn card(page: &PageRef, v: &SimViews, index: &NameIndex, omniscient: bool) -
                         .unwrap_or(color::TEXT),
                 ));
                 lines.push(CardLine::new("Long-term", format::percent(r.lt)));
-                lines.push(CardLine::new("Supply S", format!("{:.2}", r.supply_ratio)));
-                lines.push(CardLine::new("Fringe", format::percent(r.fringe_share)));
+                lines.push(CardLine::new(
+                    "Supply S",
+                    format!("{:.2}", r.supply_ratio.shown()),
+                ));
+                lines.push(CardLine::new(
+                    "Fringe",
+                    format::percent(r.fringe_share.shown()),
+                ));
                 if let Some(&top) = r.top_companies.first() {
                     let (n, p) = name(PageRef::Company(top));
                     lines.push(CardLine::link("Largest", n, p));

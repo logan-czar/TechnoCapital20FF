@@ -2,9 +2,13 @@
 //! published quarter's statement of every company that filed it, the release's list. A quarter
 //! appears from its release (spec 4.4 row 1; D130). Older quarters are each company's archive in
 //! v_statements (20 quarters), so this view does not copy them again (D130). Rebuilt quarterly
-//! (spec 9.4).
+//! (spec 9.4) and when Omniscient is toggled (D423). A company that does not publish (private,
+//! or a new listing before its first release) files bands, the same as its v_statements
+//! estimate of that quarter (D420).
 
 use super::statements::published;
+use super::estimate::{Figure, StatementLine};
+use super::statements::statement_line;
 use super::{Cadence, ViewData, ViewInput};
 use crate::finance::rating::Rating;
 use crate::finance::statements::Period;
@@ -16,15 +20,17 @@ use crate::world::CompanyId;
 pub struct Filing {
     pub company: CompanyId,
     pub quarter: Quarter,
-    pub revenue: f64,
-    pub ebit: f64,
-    pub ebitda: f64,
-    pub net_income: f64,
-    pub operating_cash: f64,
-    pub cash: f64,
-    pub line_drawn: f64,
-    pub equity: f64,
+    pub revenue: Figure,
+    pub ebit: Figure,
+    pub ebitda: Figure,
+    pub net_income: Figure,
+    pub operating_cash: Figure,
+    pub cash: Figure,
+    pub line_drawn: Figure,
+    pub equity: Figure,
     pub rating: Rating,
+    /// The figures are estimate bands (D420).
+    pub estimated: bool,
     /// Built from the starting run rate (the 2019 history, spec 4.4, 7.1).
     pub synthetic: bool,
 }
@@ -46,9 +52,11 @@ impl FilingsView {
 
 impl ViewData for FilingsView {
     const CADENCE: Cadence = Cadence::Quarterly;
+    const ON_OMNISCIENT: bool = true;
 
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;
+        let est = input.estimator();
         // The newest published quarter of any company (all file the same quarters).
         let latest = w
             .companies
@@ -73,18 +81,21 @@ impl ViewData for FilingsView {
                     .iter()
                     .rev()
                     .find(|s| s.period == Period::Quarter(quarter))?;
+                let banded = est.banded(w, id);
+                let fig = |l: StatementLine| statement_line(&est, banded, id, s, l);
                 Some(Filing {
                     company: id,
                     quarter,
-                    revenue: s.lines.revenue,
-                    ebit: s.lines.ebit(),
-                    ebitda: s.lines.ebitda(),
-                    net_income: s.lines.net_income(),
-                    operating_cash: s.lines.operating_cash(),
-                    cash: s.balance.cash,
-                    line_drawn: s.balance.line_drawn,
-                    equity: s.balance.equity,
+                    revenue: fig(StatementLine::Revenue),
+                    ebit: fig(StatementLine::Ebit),
+                    ebitda: fig(StatementLine::Ebitda),
+                    net_income: fig(StatementLine::NetIncome),
+                    operating_cash: fig(StatementLine::OperatingCash),
+                    cash: fig(StatementLine::Cash),
+                    line_drawn: fig(StatementLine::BalanceLineDrawn),
+                    equity: fig(StatementLine::Equity),
                     rating: s.key.rating,
+                    estimated: banded,
                     synthetic: s.synthetic,
                 })
             })

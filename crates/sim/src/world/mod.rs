@@ -35,9 +35,9 @@ use serde::{Deserialize, Serialize};
 
 pub use economy::{AiBoom, AiSchedule, AiStage, CyclePhase, GlobalCycle};
 pub use entities::{
-    BusinessUnit, Character, Company, CompanyData, Country, Director, Holder, Holding, Industry,
-    IndustryParams, IndustryQuarter, IpoVoteRecord, Origin, PhaseLabel, Province, SeatHolder,
-    SimpleSeat, Tranche, Zone,
+    BusinessUnit, Character, Company, CompanyData, ControllerRef, Country, Director, Holder,
+    Holding, Industry, IndustryParams, IndustryQuarter, IpoVoteRecord, Origin, PhaseLabel,
+    Province, SeatHolder, SimpleSeat, StartControl, Tranche, Zone,
 };
 pub use ids::{
     CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, StartupEventId, UnitId,
@@ -90,9 +90,10 @@ pub struct World {
     pub births: BirthsState,
     /// The Pdoomberg Wire (spec 5.18; M6).
     pub news: NewsWire,
-    /// The last quarterly recap (spec 8, 21.6.2), built at the start of the pre-quarter-end
-    /// week; shared with v_recap.
-    pub recap: Option<std::sync::Arc<crate::recap::jobs::Recap>>,
+    /// The quarterly recaps (spec 8, 21.6.2), each built at the start of its pre-quarter-end
+    /// week, oldest first, the last [`crate::recap::jobs::RECAPS_KEPT`] kept so past recaps open
+    /// by quarter (m9-plan section 1; D433).
+    pub recaps: Vec<std::sync::Arc<crate::recap::jobs::Recap>>,
 }
 
 impl World {
@@ -104,4 +105,50 @@ impl World {
     pub fn from_data(data: &sim_data::WorldData) -> Result<World, LoadError> {
         load::build_world(data)
     }
+
+    /// Whether company `id` publishes its figures at `t` (spec 1, 5.20.1 Listing step 4; D420,
+    /// D439): a company listed at load always; a company listed in play from the first release
+    /// after its listing; a private one never (also before a later listing). The engine (the
+    /// wire) and the views both read it.
+    pub fn publishes_at(&self, id: CompanyId, t: DateTime) -> bool {
+        let s = &self.market.stocks[id];
+        match (s.exchange, s.listed_on) {
+            (None, _) => false,
+            (Some(_), None) => true,
+            (Some(_), Some(listed)) => {
+                t >= crate::time::quarter::release_tick(listed.quarter().next())
+            }
+        }
+    }
+
+    /// [`World::publishes_at`] now.
+    pub fn publishes(&self, id: CompanyId) -> bool {
+        self.publishes_at(id, self.clock)
+    }
+
+    /// Whether industry `id` is in the estimated class at `t` (Logan's ruling, D432, D437): at
+    /// least one and fewer than [`INDUSTRY_UNPUBLISHED_BELOW`] of its companies that exist at
+    /// `t` (born by then), not bankrupt by then, do not publish at `t`. Read for a past quarter
+    /// with `t` its close, so a quarter's bands follow the class it was in.
+    pub fn industry_estimated_at(&self, id: IndustryId, t: DateTime) -> bool {
+        let today = t.date();
+        let mut seen: Vec<CompanyId> = Vec::new();
+        for u in self.units.rows().iter().filter(|u| u.industry == id) {
+            let c = &self.companies[u.company];
+            let born = match c.origin {
+                Origin::Start => true,
+                Origin::Born { date, .. } => date <= today,
+            };
+            let frozen = c.finance.bankrupt_on.is_some_and(|d| d <= today);
+            if born && !frozen && !self.publishes_at(u.company, t) && !seen.contains(&u.company) {
+                seen.push(u.company);
+            }
+        }
+        (1..INDUSTRY_UNPUBLISHED_BELOW).contains(&seen.len())
+    }
 }
+
+/// An industry with at least one and fewer than this many companies that do not publish shows
+/// its totals, and its published companies' monthly unit figures, as bands (Logan's ruling,
+/// D432, D436).
+pub const INDUSTRY_UNPUBLISHED_BELOW: usize = 3;

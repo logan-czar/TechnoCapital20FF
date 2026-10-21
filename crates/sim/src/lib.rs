@@ -16,6 +16,7 @@ pub mod people;
 pub mod recap;
 pub mod rng;
 pub mod save;
+pub mod soak;
 pub mod time;
 pub mod views;
 pub mod world;
@@ -172,7 +173,7 @@ impl Sim {
         let world = start_world(&data, &mut rng)?;
         let scheduler = scheduler();
         let controls = Controls::default();
-        let views = SimViews::build(&world, &controls);
+        let views = SimViews::build(&world, &controls, seed);
         Ok(Sim {
             data,
             world,
@@ -231,6 +232,7 @@ impl Sim {
         self.views.refresh_after_tick(
             &self.world,
             &self.controls,
+            self.rng.seed(),
             match &mut observer {
                 Some(o) => Some(&mut **o),
                 None => None,
@@ -266,7 +268,7 @@ impl Sim {
                 // The old views carry their refresh count over, so versions keep climbing.
                 let mut views = std::mem::replace(self, fresh).views;
                 self.controls.alerts = keep.alerts;
-                views.rebuild(&self.world, &self.controls);
+                views.rebuild(&self.world, &self.controls, self.rng.seed());
                 self.views = views;
             }
             Control::SetSpeed(0) | Control::Pause => {
@@ -307,7 +309,7 @@ impl Sim {
             }
         }
         self.views
-            .refresh_after_control(&self.world, &self.controls);
+            .refresh_after_control(&self.world, &self.controls, self.rng.seed());
         Ok(notices)
     }
 
@@ -335,7 +337,8 @@ impl Sim {
         let mut notices = Vec::new();
         self.controls.paused = false;
         self.pause(&mut notices, PauseReason::Loaded);
-        self.views.rebuild(&self.world, &self.controls);
+        self.views
+            .rebuild(&self.world, &self.controls, self.rng.seed());
         Ok(notices)
     }
 
@@ -368,6 +371,13 @@ impl Sim {
     /// The clock (spec 9.1 `clock()`).
     pub fn clock(&self) -> &ClockView {
         self.views.clock()
+    }
+
+    /// The engine's true totals for the headless soak (D427), behind the `soak-stats` feature
+    /// that only the headless runner enables: the game reads only [`Sim::views`] (spec 9).
+    #[cfg(feature = "soak-stats")]
+    pub fn soak_stats(&self) -> soak::SoakStats {
+        soak::soak_stats(&self.world)
     }
 
     /// Read access to the world tables, for sim's own tests only (feature `test-hooks`). The

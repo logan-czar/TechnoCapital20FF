@@ -14,7 +14,10 @@ use sim::world::{CompanyId, Ordinal};
 
 #[test]
 fn company_units_and_tech_views_show_arrowhead() {
-    let sim = Sim::new(data(), 2).unwrap();
+    let mut sim = Sim::new(data(), 2).unwrap();
+    // Arrowhead is listed, but in an industry with one or two private companies its unit and
+    // data figures are bands (D436); Omniscient shows the engine's values.
+    sim.apply(sim::Control::SetOmniscient(true)).unwrap();
     let v = sim.views();
     let arrowhead = CompanyId::from_index(0);
 
@@ -23,13 +26,12 @@ fn company_units_and_tech_views_show_arrowhead() {
     let rows: Vec<_> = units.of_company(arrowhead).collect();
     assert_eq!(rows.len(), 1);
     let u = rows[0];
-    assert!((12.0 * u.revenue_m - 40.0e6).abs() < 0.01e6);
-    assert_eq!((u.productivity, u.p_pre), (100.0, 102.0));
-    assert_eq!(u.shared_m, 4_080.0);
-    assert!(
-        (u.ebit_m - (u.revenue_m - u.variable_m - u.fixed_m - u.rd_m - u.dep_m - u.shared_m)).abs()
-            < 1e-9
-    );
+    let x = |f: sim::views::estimate::Figure| f.exact().unwrap();
+    assert!((12.0 * x(u.revenue_m) - 40.0e6).abs() < 0.01e6);
+    assert_eq!((x(u.productivity), x(u.p_pre)), (100.0, 102.0));
+    assert_eq!(x(u.shared_m), 4_080.0);
+    let lines = x(u.revenue_m) - x(u.variable_m) - x(u.fixed_m) - x(u.rd_m) - x(u.dep_m);
+    assert!((x(u.ebit_m) - (lines - x(u.shared_m))).abs() < 1e-9);
 
     let t = v.tech.get().get(arrowhead).unwrap();
     assert_eq!(t.labor_units, 392);
@@ -46,12 +48,13 @@ fn company_units_and_tech_views_show_arrowhead() {
     assert_eq!((t.pc, t.pc_bonus, t.next_bonus_pc), (98.0, 2.0, 100.0));
     assert_eq!(t.compute.monthly_usd, 4_080.0);
     let d = &t.data[0];
-    assert!((d.held_tb - 8.6).abs() < 0.05);
+    let held = d.held_tb.exact().unwrap();
+    assert!((held - 8.6).abs() < 0.05);
     // 1% free R&D from 1 TB; the next step (2%) at 10 TB (5.9).
     assert_eq!((d.free_rd_pct, d.next_step_tb, d.buckets), (1, 10.0, 1));
-    assert!((d.inflow_tb - 40.0 / 12.0).abs() < 1e-3);
+    assert!((d.inflow_tb.exact().unwrap() - 40.0 / 12.0).abs() < 1e-3);
     assert_eq!(d.conversion_tb, 0.9125);
-    assert!((t.stored_tb() - (d.held_tb + 40.0 / 12.0)).abs() < 1e-9);
+    assert!((t.stored_tb().exact().unwrap() - (held + 40.0 / 12.0)).abs() < 1e-9);
 
     let c = v.company_detail.get().get(arrowhead).unwrap();
     assert_eq!(
@@ -102,7 +105,7 @@ fn m3_views_rebuild_monthly_and_copy_by_version() {
         assert!(version > stale.tech.version());
     }
     // The productivity step ran: Arrowhead's unit moved off 100.
-    let u = v.units.get().units[0].productivity;
+    let u = v.units.get().units[0].productivity.shown();
     assert_ne!(u, 100.0);
     // The generated copy brings a stale copy up to the sim's views (data and versions; the
     // dirty flags of views it did not need to copy stay the copy's own).

@@ -243,6 +243,15 @@ pub fn gain(v: f64, unit: GainUnit) -> String {
     format!("{}{body}", if v < 0.0 { "-" } else { "+" })
 }
 
+/// A money figure from a view (M9 estimate bands, D420): exact as [`money`], a band as
+/// [`band`].
+pub fn figure(f: sim::views::estimate::Figure) -> String {
+    match f {
+        sim::views::estimate::Figure::Exact(x) => money(x),
+        sim::views::estimate::Figure::Band(b) => band(b.low, b.high),
+    }
+}
+
 /// An estimate band: `$12.0M-$18.0M`. The font is ASCII (D302), so the separator is a hyphen;
 /// a band reaching below zero reads `-$5.00M to $3.00M` instead, so no hyphen is a minus.
 pub fn band(low: f64, high: f64) -> String {

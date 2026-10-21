@@ -49,7 +49,12 @@ pub enum HeadlineKind {
     /// A rating change of 2+ notches at the review (5.12).
     RatingChange { from: Rating, to: Rating },
     /// A 6.6 raise that succeeded.
-    Raise { method: RaiseMethod, net_usd: f64 },
+    /// The net raised; None for a company that does not publish (D420: its books are bands, so
+    /// the wire does not print the amount).
+    Raise {
+        method: RaiseMethod,
+        net_usd: Option<f64>,
+    },
     /// A 6.6 raise that failed.
     FailedRaise { method: RaiseMethod },
     /// A fixed startup event (5.19.2), with the startups it made.
@@ -271,18 +276,22 @@ pub fn raise(
     company: CompanyId,
     name: &str,
     method: RaiseMethod,
-    net_usd: f64,
+    net_usd: Option<f64>,
 ) -> Headline {
     let how = match method {
         RaiseMethod::CreditLine => "on its credit line",
         RaiseMethod::ShareIssue => "in a share issue",
+    };
+    let text = match net_usd {
+        Some(net) => format!("{name} raises ${:.1}M {how}", net / USD_PER_MILLION),
+        None => format!("{name} raises money {how}"),
     };
     headline(
         date,
         Some(industry),
         Some(company),
         HeadlineKind::Raise { method, net_usd },
-        format!("{name} raises ${:.1}M {how}", net_usd / USD_PER_MILLION),
+        text,
     )
 }
 

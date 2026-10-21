@@ -53,3 +53,24 @@ pub fn bankrupt_three_and_four(_: &mut World, ctx: &mut JobCtx<'_>) {
         ctx.raise_alert(AlertKind::BankruptcyInWatchlist, AlertPayload::Company(id));
     }
 }
+
+/// Checks a view figure against the truth (D420): exact and equal for a company that publishes;
+/// for one that does not, a band holding the truth strictly inside, with an estimate that is not
+/// the truth.
+pub fn assert_figure(f: sim::views::estimate::Figure, truth: f64, banded: bool, what: &str) {
+    use sim::views::estimate::Figure;
+    match (f, banded) {
+        (Figure::Exact(x), false) => assert_eq!(x, truth, "{what}"),
+        (Figure::Band(b), true) => {
+            assert!(
+                b.low < truth && truth < b.high,
+                "{what}: {truth} outside {b:?}"
+            );
+            assert!(
+                b.estimate != truth && b.low != truth && b.high != truth,
+                "{what}"
+            );
+        }
+        _ => panic!("{what}: {f:?} with banded {banded}"),
+    }
+}

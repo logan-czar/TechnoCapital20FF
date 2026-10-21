@@ -10,10 +10,10 @@ use thiserror::Error;
 use super::World;
 use super::economy::{AiBoom, AiSchedule, AiStage, GlobalCycle};
 use super::entities::{
-    BusinessUnit, Character, Company, CompanyData, Country, Holder, Holding, Industry,
-    IndustryParams, Origin, PhaseLabel, Province, Zone,
+    BusinessUnit, Character, Company, CompanyData, ControllerRef, Country, Holder, Holding,
+    Industry, IndustryParams, Origin, PhaseLabel, Province, StartControl, Zone,
 };
-use super::ids::{CharacterId, CompanyId, IndustryId, Ordinal, ProvinceId, UnitId};
+use super::ids::{CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, UnitId};
 use super::table::Table;
 use super::units::{fraction_from_bps, shares_from_csv, usd_from_billions, usd_from_millions};
 use crate::ai::archetype::{Archetype, STATE_CONTROL_BASIS, rd_plan_at_load};
@@ -100,6 +100,43 @@ impl<I: Ordinal> Keys<I> {
     }
 }
 
+/// Percent to a fraction (companies.csv `controller_stake_pct`).
+const PERCENT: f64 = 100.0;
+
+/// A starting company's companies.csv control (spec 3.5, 8; D425): the controller (a CH-
+/// character, a CO- company, an iso3 state or none), its stake, the control basis and a
+/// character owner of record.
+fn start_control(
+    c: &sim_data::Company,
+    characters: &Keys<CharacterId>,
+    countries: &Keys<CountryId>,
+    companies: &Keys<CompanyId>,
+) -> Result<StartControl, LoadError> {
+    let field = "controller";
+    let v = c.controller.as_str();
+    let controller = if v.is_empty() {
+        ControllerRef::None
+    } else if v.starts_with("CH-") {
+        ControllerRef::Character(characters.get("companies", &c.id, field, v, "character")?)
+    } else if v.starts_with("CO-") {
+        ControllerRef::Company(companies.get("companies", &c.id, field, v, "company")?)
+    } else {
+        ControllerRef::State(countries.get("companies", &c.id, field, v, "country")?)
+    };
+    let owner = c.owner_of_record.as_str();
+    let owner_of_record = if owner.is_empty() {
+        None
+    } else {
+        Some(characters.get("companies", &c.id, "owner_of_record", owner, "character")?)
+    };
+    Ok(StartControl {
+        controller,
+        stake: c.controller_stake_pct.map(|p| p / PERCENT),
+        basis: c.control_basis.clone(),
+        owner_of_record,
+    })
+}
+
 /// Rows sorted by their id (D4).
 fn sorted_by<'a, T>(rows: impl Iterator<Item = &'a T>, key: impl Fn(&T) -> &str) -> Vec<&'a T> {
     let mut v: Vec<&T> = rows.collect();
@@ -165,6 +202,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         countries.push(Country {
             key: c.iso3.clone(),
             name: c.name.clone(),
+            superregion: c.superregion.clone(),
             zone: zone_keys.get(
                 "country-economy",
                 &c.iso3,
@@ -325,7 +363,8 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         .map(|s| (s.id.as_str(), s))
         .collect();
     let company_rows = sorted_by(data.companies.rows.iter(), |c| &c.id);
-    Keys::<crate::world::CompanyId>::new("companies", company_rows.iter().map(|c| c.id.as_str()))?;
+    let company_keys =
+        Keys::<CompanyId>::new("companies", company_rows.iter().map(|c| c.id.as_str()))?;
     let mut companies = Vec::with_capacity(company_rows.len());
     let mut stocks = Vec::with_capacity(company_rows.len());
     let mut units = Vec::with_capacity(company_rows.len());
@@ -477,6 +516,12 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             ipo_next_vote: None,
             ipo_last_vote: None,
             birth_run_rate: None,
+            start_control: Some(start_control(
+                c,
+                &character_keys,
+                &country_keys,
+                &company_keys,
+            )?),
         });
     }
     // Fringe pools (spec 5.3, 7.2): what named revenue leaves of the 2020 world size.
@@ -535,7 +580,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         },
         births,
         news: Default::default(),
-        recap: None,
+        recaps: Vec::new(),
     })
 }
 

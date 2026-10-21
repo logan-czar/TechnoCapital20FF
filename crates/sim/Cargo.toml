@@ -21,6 +21,8 @@ sim-data.workspace = true
 # `Sim::register_test_job`. Enabled only by sim's own tests (the dev-dependency below); the game
 # must never enable it.
 test-hooks = []
+# The headless soak's true totals (`Sim::soak_stats`, D427); enabled only by the headless runner.
+soak-stats = []
 
 [dev-dependencies]
 sim = { path = ".", features = ["test-hooks"] }

@@ -292,12 +292,13 @@ pub fn buzz_job(world: &mut World, ctx: &mut JobCtx<'_>) {
 // ---------------------------------------------------------------------------------------------
 // Daily (spec 4.2 steps 1, 2, 3 and 6).
 
-/// 4.2 step 1: each quoted stock's bar closes (none for a day with no trading tick, D248) and
-/// every buzz decays 25%.
+/// 4.2 step 1: each quoted stock's bar closes (none for a day with no trading tick, D248) with
+/// the day's EFV (D424; a read of the stored value and error, no draw), and every buzz decays
+/// 25%.
 pub fn bars_job(world: &mut World, _: &mut JobCtx<'_>) {
     for (_, s) in world.market.stocks.iter_mut() {
         if s.quoted
-            && let Some(bar) = s.bar.close()
+            && let Some(bar) = s.bar.close(s.value * (1.0 + s.efv_error))
         {
             s.bars.push(bar);
         }

@@ -372,6 +372,7 @@ pub fn birth(
         ipo_next_vote: Some(next_vote),
         ipo_last_vote: None,
         birth_run_rate: Some(b.run_rate),
+        start_control: None,
     });
     let score = management_score(&board_of(world, &world.companies[id]));
     world.companies[id].management_score = score;

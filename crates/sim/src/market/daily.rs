@@ -8,6 +8,7 @@ use crate::time::Date;
 use crate::time::calendar::QUARTER_FIRST_MONTHS;
 use crate::time::quarter::{REACTION_FIRST_DAY, REACTION_LAST_DAY};
 
+use super::jobs::EFV_ERROR_WIDTH;
 use super::price::BUZZ_MAX;
 
 /// Spec 4.2 step 1, 3.10 (3.3.5): buzz decays 25% a day.
@@ -15,7 +16,9 @@ pub const BUZZ_DAILY_DECAY: f64 = 0.25;
 /// Spec 4.2 step 3 (21.3.1): each reaction-week day closes 20% of the gap between P and V.
 pub const REACTION_REVERSION: f64 = 0.20;
 
-/// A daily price bar (spec 3.10 `bars`): open, high, low and close, USD a share.
+/// A daily price bar (spec 3.10 `bars`): open, high, low and close, USD a share, and the
+/// estimated fair value a share at the close (spec 8 Pdoomberg F3 "daily bars with the estimated
+/// fair value band"; D424).
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct DailyBar {
     /// The day the bar covers: the bar closed at 00:00 the next day.
@@ -24,6 +27,22 @@ pub struct DailyBar {
     pub high: f64,
     pub low: f64,
     pub close: f64,
+    /// EFV = V × (1 + e) at the close (3.14.2, D140, D150): the EFV in force through the day,
+    /// read before the 4.2 step 2 fair value refresh. Its band is [`DailyBar::efv_low`] to
+    /// [`DailyBar::efv_high`].
+    pub efv: f64,
+}
+
+impl DailyBar {
+    /// The bottom of the EFV band, EFV × (1 − 15%) (spec 8 F3, 3.14.2; D140).
+    pub fn efv_low(&self) -> f64 {
+        self.efv * (1.0 - EFV_ERROR_WIDTH)
+    }
+
+    /// The top of the EFV band, EFV × (1 + 15%).
+    pub fn efv_high(&self) -> f64 {
+        self.efv * (1.0 + EFV_ERROR_WIDTH)
+    }
 }
 
 /// The bar being built through the day (spec 4.2 step 1; D248). Started at 00:00 after the
@@ -61,15 +80,16 @@ impl BarBuilder {
         self.traded = true;
     }
 
-    /// Closes the bar at 00:00 (spec 4.2 step 1). A day with no trading tick (1 January, 3.1.0)
-    /// leaves no bar (D248).
-    pub fn close(self) -> Option<DailyBar> {
+    /// Closes the bar at 00:00 (spec 4.2 step 1) with the day's EFV a share (D424). A day with
+    /// no trading tick (1 January, 3.1.0) leaves no bar (D248).
+    pub fn close(self, efv: f64) -> Option<DailyBar> {
         self.traded.then_some(DailyBar {
             date: self.date,
             open: self.open,
             high: self.high,
             low: self.low,
             close: self.last,
+            efv,
         })
     }
 }

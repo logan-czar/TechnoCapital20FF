@@ -2,9 +2,12 @@
 //! header, its Overview tab (management score, confidence factor, cash, line, rating, status,
 //! archetype; M5 adds value and price, M6 the next release's projection) and its Board tab (seat
 //! cards for labor units 1 to 5 with the skill used, spec 8). Rebuilt monthly and on load (spec
-//! 9.4). Removed companies stay in the list (ids are row indices) with status Removed; screens
-//! drop them (spec 5.12 step 3).
+//! 9.4), and when Omniscient is toggled (D423). Removed companies stay in the list (ids are row
+//! indices) with status Removed; screens drop them (spec 5.12 step 3). A private company's or
+//! new listing's cash, line and value are estimate bands (D420).
 
+use super::company_rows::value_shown;
+use super::estimate::{Figure, Kind, StatementLine};
 use super::{Cadence, ViewData, ViewInput};
 use crate::ai::archetype::Archetype;
 use crate::finance::distress::CompanyStatus;
@@ -12,7 +15,6 @@ use crate::finance::rating::Rating;
 use crate::people::board::{Seat, Skills};
 use crate::people::management::{EMPTY_SEAT_SKILL, Member, confidence_factor, member_skill};
 use crate::people::traits::Trait;
-use crate::market::fair_value::shown_value;
 use crate::time::Quarter;
 use crate::world::{
     CharacterId, CompanyId, CountryId, IndustryId, IpoVoteRecord, Ordinal, Origin, ProvinceId,
@@ -63,10 +65,11 @@ pub struct CompanyDetail {
     /// 0 to 100 (spec 5.7) and the investor confidence factor `0.8 + score ÷ 250`.
     pub management_score: f64,
     pub confidence_factor: f64,
-    pub cash_usd: f64,
-    pub line_drawn_usd: f64,
+    /// Bands for a private company or a new listing (D420).
+    pub cash_usd: Figure,
+    pub line_drawn_usd: Figure,
     /// The credit line limit (spec 5.12).
-    pub line_limit_usd: f64,
+    pub line_limit_usd: Figure,
     /// The credit rating (spec 5.12).
     pub rating: Rating,
     /// Active, Distressed, Bankrupt or Removed (spec 3.5, 5.12).
@@ -87,9 +90,12 @@ pub struct CompanyDetail {
     pub quoted: bool,
     /// P at the rebuild, USD a share (5.14); 0 for a private or delisted company.
     pub price: f64,
-    /// The estimated fair value a share shown for a listed company (3.14.2), or a private
-    /// company's 0.7 × V (spec 5.13 step 6).
-    pub shown_value_per_share: f64,
+    /// The estimated fair value a share shown for a listed company (3.14.2), exact (it is
+    /// already an estimate, D140); a private company's 0.7 × V (spec 5.13 step 6) as a band
+    /// (D420).
+    pub shown_value_per_share: Figure,
+    /// The figures are estimate bands (D420).
+    pub estimated: bool,
     /// Buzz (3.10).
     pub buzz: f64,
     /// CEO, CFO, CIO, CMO, COO, then the Chair (spec 3.7).
@@ -135,9 +141,11 @@ fn person(w: &World, holder: &SeatHolder) -> SeatPerson {
 
 impl ViewData for CompanyDetailView {
     const CADENCE: Cadence = Cadence::MonthlyAndLock;
+    const ON_OMNISCIENT: bool = true;
 
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;
+        let est = input.estimator();
         let companies = w
             .companies
             .iter()
@@ -171,9 +179,11 @@ impl ViewData for CompanyDetailView {
                     holder: None,
                 });
                 let s = &w.market.stocks[id];
+                let banded = est.banded(w, id);
+                // A private company's value a share is its total band over the shares (D430).
                 let shown = match s.exchange {
-                    Some(_) => s.value * (1.0 + s.efv_error),
-                    None => shown_value(s.value, false),
+                    Some(_) => Figure::Exact(s.value * (1.0 + s.efv_error)),
+                    None => value_shown(&est, w, id, banded).over(c.shares_out.max(1) as f64),
                 };
                 CompanyDetail {
                     id,
@@ -188,9 +198,19 @@ impl ViewData for CompanyDetailView {
                     controller_name: c.controller.map(|ch| w.characters[ch].name.clone()),
                     management_score: c.management_score,
                     confidence_factor: confidence_factor(c.management_score),
-                    cash_usd: c.cash_usd,
-                    line_drawn_usd: c.finance.line.drawn,
-                    line_limit_usd: c.finance.line.limit,
+                    cash_usd: est.company_now(
+                        banded,
+                        id,
+                        Kind::Line(StatementLine::Cash),
+                        c.cash_usd,
+                    ),
+                    line_drawn_usd: est.company_now(
+                        banded,
+                        id,
+                        Kind::Line(StatementLine::BalanceLineDrawn),
+                        c.finance.line.drawn,
+                    ),
+                    line_limit_usd: est.company_now(banded, id, Kind::LineLimit, c.finance.line.limit),
                     rating: c.finance.rating,
                     status: c.finance.status(),
                     archetype: c.archetype,
@@ -204,6 +224,7 @@ impl ViewData for CompanyDetailView {
                     quoted: s.quoted,
                     price: s.price,
                     shown_value_per_share: shown,
+                    estimated: banded,
                     buzz: s.buzz,
                     board,
                 }

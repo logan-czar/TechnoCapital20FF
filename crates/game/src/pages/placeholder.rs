@@ -75,7 +75,7 @@ pub fn placeholder_chart(page: &PageRef, v: &sim::SimViews) -> Option<ChartModel
                     },
                     Series::Line {
                         name: "supply".into(),
-                        values: q.iter().map(|h| h.supply).collect(),
+                        values: q.iter().map(|h| h.supply.shown()).collect(),
                         color: color::AMBER,
                     },
                 ],

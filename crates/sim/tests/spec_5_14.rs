@@ -215,16 +215,20 @@ fn bars_close_at_00_00_each_day() {
     for p in [11.0, 9.0, 10.5] {
         b.tick(p);
     }
+    let bar = b.close(12.0).unwrap();
     assert_eq!(
-        b.close(),
-        Some(DailyBar {
+        bar,
+        DailyBar {
             date: Date::ymd(2021, 3, 4),
             open: 10.0,
             high: 11.0,
             low: 9.0,
             close: 10.5,
-        })
+            efv: 12.0,
+        }
     );
+    // The EFV band is ±15% of the EFV (spec 8 F3, D140, D424).
+    assert!((bar.efv_low() - 10.2).abs() < 1e-12 && (bar.efv_high() - 13.8).abs() < 1e-12);
     // A whole simulated day: 24 ticks from 01:00 to 00:00, the bar closes after the 00:00 tick.
     let mut rng = RngStreams::new(3);
     let day = Date::ymd(2021, 3, 4);
@@ -240,7 +244,7 @@ fn bars_close_at_00_00_each_day() {
         hi = hi.max(s.price);
         lo = lo.min(s.price);
     }
-    let closed = bar.close().unwrap();
+    let closed = bar.close(100.0).unwrap();
     assert_eq!(closed.date, day);
     assert_eq!(closed.open, 100.0);
     assert_eq!(closed.close, s.price);
@@ -254,7 +258,7 @@ fn bars_close_at_00_00_each_day() {
             bar.tick(100.0);
         }
     }
-    assert_eq!(bar.close(), None);
+    assert_eq!(bar.close(100.0), None);
 }
 
 /// Total cap of (price, shares) constituents.

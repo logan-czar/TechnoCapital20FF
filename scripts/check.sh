@@ -11,11 +11,13 @@ cd "$root"
 
 pkgs=(--workspace)
 # The binaries that use sim, checked without test targets: sim's tests enable its `test-hooks`
-# feature (raw world access), and a workspace build with tests unifies it into every crate.
-bins=(-p headless -p game)
+# feature (raw world access), and a workspace build with tests unifies it into every crate. Each
+# is checked in its own cargo run: together, cargo would unify headless's `soak-stats` feature
+# into the game's sim too (D438).
+bins=(headless game)
 if [[ "${1:-}" == "--sim-only" ]]; then
     pkgs=(-p sim -p sim-data -p headless)
-    bins=(-p headless)
+    bins=(headless)
 fi
 
 py=python3
@@ -29,7 +31,9 @@ step clippy
 cargo clippy "${pkgs[@]}" --all-targets -- -D warnings
 # The spec 9 boundary: the binaries must build without sim's test-only API.
 step boundary
-cargo check "${bins[@]}"
+for bin in "${bins[@]}"; do
+    cargo check -p "$bin"
+done
 step test
 cargo test "${pkgs[@]}"
 step validate.py

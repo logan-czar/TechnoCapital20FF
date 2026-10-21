@@ -307,9 +307,11 @@ fn projection_ranges_shrink_with_the_quarter_and_stop_at_three_percent() {
         let row = &v.companies[0];
         assert!((row.width - spec(e)).abs() < 1e-12);
         assert!(row.width < last && row.width >= 0.03);
-        let half = row.consensus_ni.abs() * row.width;
-        assert!((row.range.0 - (row.consensus_ni - half)).abs() < 1e-6);
-        assert!((row.range.1 - (row.consensus_ni + half)).abs() < 1e-6);
+        // Company 0 (Arrowhead) is listed, so its figures are exact (D420).
+        let consensus = row.consensus_ni.exact().unwrap();
+        let half = consensus.abs() * row.width;
+        assert!((row.range.0.exact().unwrap() - (consensus - half)).abs() < 1e-6);
+        assert!((row.range.1.exact().unwrap() - (consensus + half)).abs() < 1e-6);
         assert!(row.plan.is_none(), "the observer never sees a plan");
         last = row.width;
     }

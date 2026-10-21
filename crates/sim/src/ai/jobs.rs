@@ -154,14 +154,11 @@ fn try_raise(world: &mut World, ctx: &mut JobCtx<'_>, id: CompanyId) {
     let c = &mut world.companies[id];
     c.failed_raises = 0;
     c.raise_pending = false;
-    world.news.queue(news::raise(
-        date,
-        industry,
-        id,
-        &name,
-        plan.method,
-        plan.net,
-    ));
+    // A company that does not publish raises without the wire printing the amount (D420).
+    let net = world.publishes(id).then_some(plan.net);
+    world
+        .news
+        .queue(news::raise(date, industry, id, &name, plan.method, net));
 }
 
 /// Writes an operating plan (spec 6.1 to 6.4): the archetype over the stored one (M4 set it at
