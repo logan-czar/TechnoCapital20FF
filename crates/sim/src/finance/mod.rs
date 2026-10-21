@@ -17,12 +17,20 @@
 //! - [`sales`]: 5.10 asset sales at the sale factor.
 //! - [`distress`]: 5.12 step 13 settle, distress, bankruptcy and removal (C30).
 //! - [`dividends`]: 5.17 dividend rule.
+//!
+//! The wiring (lane S, M4): [`state`] holds a company's books in the World and [`jobs`] moves
+//! them through the load (7.1), the 4.3 steps 9 to 14, the 4.4 close, release and 01:00 review
+//! and the 4.5 yearly statements.
 
 pub mod balance;
 pub mod credit;
 pub mod distress;
 pub mod dividends;
+pub mod jobs;
 pub mod rating;
 pub mod sales;
+pub mod state;
 pub mod statements;
 pub mod tax;
+
+pub use jobs::{register, start};

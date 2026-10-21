@@ -6,6 +6,9 @@
 use serde::{Deserialize, Serialize};
 
 use super::ids::{CharacterId, CompanyId, CountryId, IndustryId, ProvinceId, UnitId, ZoneId};
+use crate::ai::archetype::Archetype;
+use crate::finance::rating::Rating;
+use crate::finance::state::CompanyFinance;
 use crate::ops::compute::ComputeBill;
 use crate::ops::data::DataBook;
 use crate::ops::stations::Stations;
@@ -62,6 +65,11 @@ pub struct Country {
     pub gdp_usd: f64,
     /// Sovereign spread as a fraction (country-economy.csv `sovereign_spread_bps`, spec 5.1.2).
     pub sovereign_spread: f64,
+    /// National corporate tax rate (country-economy.csv `corp_tax_rate`, spec 3.2, 5.11).
+    pub corp_tax_rate: f64,
+    /// Sovereign rating (country-economy.csv `sovereign_rating`, spec 3.2): the corporate
+    /// rating's ceiling is one notch above it (5.12).
+    pub sovereign_rating: Rating,
 }
 
 /// A province (spec 3.3), static.
@@ -236,10 +244,14 @@ pub struct Company {
     pub seats_to_fill: Vec<Seat>,
     /// 0 to 100 (spec 5.7), from the seated board each month (D115).
     pub management_score: f64,
-    /// Cash, USD (company-start.csv `cash_usd`; settled monthly from M4, 4.3 step 13).
+    /// Archetype (spec 3.5, 6.1), set at load from control_basis, revenue, sector and the
+    /// named controller's traits (D120).
+    pub archetype: Archetype,
+    /// Cash, USD (company-start.csv `cash_usd`; settled monthly at 4.3 step 13).
     pub cash_usd: f64,
-    /// Credit line drawn, USD (company-start.csv `credit_drawn_usd`, spec 5.12).
-    pub line_drawn_usd: f64,
+    /// The credit line (drawn from company-start.csv `credit_drawn_usd`), rating, distress,
+    /// tax, ledgers and statements (spec 3.5, 3.9, 5.11, 5.12).
+    pub finance: CompanyFinance,
 }
 
 /// New assets ramping at 80% (spec 5.10, 10.0.4).

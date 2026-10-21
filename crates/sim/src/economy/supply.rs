@@ -69,6 +69,11 @@ pub fn set_supply(world: &mut World) {
     for (_, unit) in world.units.iter() {
         let turnover = world.industries[unit.industry].params.asset_turnover;
         let company = &world.companies[unit.company];
+        // A Bankrupt company's capacity leaves supply (spec 5.12 step 2); a removed one's is in
+        // the fringe (C30).
+        if company.finance.status().is_frozen() {
+            continue;
+        }
         named[unit.industry.index()] +=
             unit_supply(unit.assets_eff(), turnover, p_pre(unit, company));
     }

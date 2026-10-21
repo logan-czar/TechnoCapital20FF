@@ -61,16 +61,20 @@ pub fn seat_index(seat: Seat) -> usize {
         .expect("a labor seat")
 }
 
-/// Trailing annual revenue for the 3.7.1 size of a seat opened in play: the run rate of the
-/// month just closed, 12 × its units' revenue (D116; M4's statements bring the trailing
-/// four quarters).
+/// Trailing annual revenue for the 3.7.1 size of a seat opened in play: the trailing four
+/// quarters' revenue from the statements (D129, which replaces D116's run rate now that M4
+/// keeps them); the run rate of the month just closed, 12 × its units' revenue, for a company
+/// with no statements.
 pub fn trailing_revenue(world: &World, company: &Company) -> f64 {
-    MONTHS_PER_YEAR
-        * company
-            .units
-            .iter()
-            .map(|&u| world.units[u].revenue_m)
-            .sum::<f64>()
+    if company.finance.quarters().is_empty() {
+        return MONTHS_PER_YEAR
+            * company
+                .units
+                .iter()
+                .map(|&u| world.units[u].revenue_m)
+                .sum::<f64>();
+    }
+    crate::finance::jobs::trailing_revenue(company)
 }
 
 /// 4.3 step 11 (people part, after the economy's asset step): a simple character for each seat

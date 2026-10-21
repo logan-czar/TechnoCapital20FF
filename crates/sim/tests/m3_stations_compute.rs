@@ -123,6 +123,10 @@ fn compute_bill_and_shared_costs_follow_3_8() {
             sim.step();
             let w = sim.world();
             for (id, c) in w.companies.iter() {
+                // A frozen company (Bankrupt or Removed, M4) runs no monthly step (D123).
+                if c.finance.status().is_frozen() {
+                    continue;
+                }
                 let s = &c.stations;
                 let stored: f64 = before.companies[id]
                     .data

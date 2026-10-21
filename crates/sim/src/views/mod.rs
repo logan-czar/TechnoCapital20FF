@@ -10,8 +10,9 @@
 //! its cadence and its `build` from the [`ViewInput`]. Filling a view touches only its file.
 //! Adding a view is a new file plus one line in the `sim_views!` list below, which generates the
 //! module, the [`SimViews`] field and the build and refresh code. M1 fills the clock view, M2 the
-//! industry rows, industry detail and cycle views; the others are empty placeholders on their
-//! cadence.
+//! industry rows, industry detail and cycle views, M3 the units, tech and company detail views,
+//! M4 the statements, filings, ratings and company rows; the others are empty placeholders on
+//! their cadence.
 
 use std::fmt;
 

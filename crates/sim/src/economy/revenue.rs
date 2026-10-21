@@ -89,7 +89,13 @@ pub fn shared_costs_month_hook(world: &World, unit: &BusinessUnit) -> f64 {
 pub fn set_revenue(world: &mut World) {
     for (_, unit) in world.units.iter_mut() {
         let ind = &world.industries[unit.industry];
-        let p = p_pre(unit, &world.companies[unit.company]);
+        let company = &world.companies[unit.company];
+        // A frozen company (Bankrupt or Removed) has no revenue (spec 5.12 step 2, D231).
+        if company.finance.status().is_frozen() {
+            unit.revenue_m = 0.0;
+            continue;
+        }
+        let p = p_pre(unit, company);
         unit.revenue_m = unit_revenue_month(
             unit.assets_eff(),
             ind.params.asset_turnover,
@@ -115,6 +121,15 @@ pub fn set_expenses(world: &mut World) {
         .collect();
     for (id, unit) in world.units.iter_mut() {
         let params = &world.industries[unit.industry].params;
+        // A frozen company has no expenses (spec 5.12 step 2, D231).
+        if world.companies[unit.company].finance.status().is_frozen() {
+            unit.variable_m = 0.0;
+            unit.fixed_m = 0.0;
+            unit.dep_m = 0.0;
+            unit.rd_m = 0.0;
+            unit.shared_m = 0.0;
+            continue;
+        }
         let e = month_expenses(
             unit.revenue_m,
             unit.gross_assets,

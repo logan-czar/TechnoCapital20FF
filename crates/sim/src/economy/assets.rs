@@ -9,7 +9,7 @@
 //!   above 0 buy (the growth part ramps at 80% for 6 months, replacement does not); below 0 sell
 //!   `gross_assets × |d_eff + g| ÷ 12` of capacity, the same share of the book, for
 //!   `book sold × sale factor` in cash. Cash moves at the 4.3 step 13 settle (M4); this step
-//!   records the month's purchases, proceeds and gain.
+//!   records the month's purchases, proceeds, gain and depreciation, which finance posts.
 
 use super::MONTHS_PER_YEAR;
 use crate::time::JobCtx;
@@ -95,7 +95,20 @@ pub fn apply_asset_month(
     params: &IndustryParams,
     label: PhaseLabel,
 ) -> AssetMonth {
+    apply_asset_month_buying(unit, params, label, true)
+}
+
+/// [`apply_asset_month`] with `may_buy` false for a Distressed company (spec 5.12 step 1:
+/// purchases stop, g = −d_eff at most): the plan's month is capped at 0, so a plan that would buy
+/// buys nothing (the base shrinks by decay alone) and one that sells still sells.
+pub fn apply_asset_month_buying(
+    unit: &mut BusinessUnit,
+    params: &IndustryParams,
+    label: PhaseLabel,
+    may_buy: bool,
+) -> AssetMonth {
     let mut out = AssetMonth::default();
+    let g = unit.growth_plan;
     let gross0 = unit.gross_assets;
     let yearly_decay = decay_usd(gross0, params);
     // Decay: a real loss of capacity at cost; depreciation off the book (5.5, 5.10).
@@ -112,8 +125,10 @@ pub fn apply_asset_month(
     }
     unit.ramping.retain(|t| t.months_left > 0);
     // The plan: replacement first, then growth (spec 5.10).
-    let g = unit.growth_plan;
-    let plan = (yearly_decay + gross0 * g) / MONTHS_PER_YEAR;
+    let mut plan = (yearly_decay + gross0 * g) / MONTHS_PER_YEAR;
+    if !may_buy {
+        plan = plan.min(0.0);
+    }
     if plan > 0.0 {
         out.purchases = plan;
         unit.gross_assets += plan;
@@ -138,13 +153,25 @@ pub fn apply_asset_month(
     unit.capex_m = out.purchases;
     unit.sale_proceeds_m = out.proceeds;
     unit.sale_gain_m = out.gain;
+    // The depreciation the book actually lost, which the ledger posts (5.5; equal to step 9's).
+    unit.dep_m = out.depreciation;
     out
 }
 
-/// 4.3 step 11 (economy part): asset decay, the growth plan's buys and sells, ramping.
+/// 4.3 step 11 (economy part): asset decay, the growth plan's buys and sells, ramping. A
+/// Distressed company buys nothing (g = −d_eff at most, spec 5.12 step 1); a frozen one (Bankrupt
+/// or Removed) has no decay and no plan (5.12 step 2, D231, D123).
 pub fn assets_job(world: &mut World, _: &mut JobCtx<'_>) {
     for (_, unit) in world.units.iter_mut() {
         let ind = &world.industries[unit.industry];
-        apply_asset_month(unit, &ind.params, ind.phase_label);
+        let status = world.companies[unit.company].finance.status();
+        if status.is_frozen() {
+            unit.capex_m = 0.0;
+            unit.sale_proceeds_m = 0.0;
+            unit.sale_gain_m = 0.0;
+            unit.dep_m = 0.0;
+            continue;
+        }
+        apply_asset_month_buying(unit, &ind.params, ind.phase_label, status.may_buy_assets());
     }
 }

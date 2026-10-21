@@ -1,10 +1,14 @@
 //! v_company_detail: `get_company` and `get_company_board` (spec 9.2), the Company screen's
-//! header, the M3 part of its Overview tab (management score, confidence factor, cash and line)
-//! and its Board tab (seat cards for labor units 1 to 5 with the skill used, spec 8). M4 adds the
-//! rest of the Overview (value, price, rating, next release) and `get_company_cap_table`.
-//! Rebuilt monthly and on load (spec 9.4).
+//! header, its Overview tab (management score, confidence factor, cash, line, rating, status,
+//! archetype; M5 adds value and price, M6 the next release's projection) and its Board tab (seat
+//! cards for labor units 1 to 5 with the skill used, spec 8). Rebuilt monthly and on load (spec
+//! 9.4). Removed companies stay in the list (ids are row indices) with status Removed; screens
+//! drop them (spec 5.12 step 3).
 
 use super::{Cadence, ViewData, ViewInput};
+use crate::ai::archetype::Archetype;
+use crate::finance::distress::CompanyStatus;
+use crate::finance::rating::Rating;
 use crate::people::board::{Seat, Skills};
 use crate::people::management::{EMPTY_SEAT_SKILL, Member, confidence_factor, member_skill};
 use crate::people::traits::Trait;
@@ -58,6 +62,14 @@ pub struct CompanyDetail {
     pub confidence_factor: f64,
     pub cash_usd: f64,
     pub line_drawn_usd: f64,
+    /// The credit line limit (spec 5.12).
+    pub line_limit_usd: f64,
+    /// The credit rating (spec 5.12).
+    pub rating: Rating,
+    /// Active, Distressed, Bankrupt or Removed (spec 3.5, 5.12).
+    pub status: CompanyStatus,
+    /// Spec 6.1.
+    pub archetype: Archetype,
     /// CEO, CFO, CIO, CMO, COO, then the Chair (spec 3.7).
     pub board: Vec<SeatCard>,
 }
@@ -150,7 +162,11 @@ impl ViewData for CompanyDetailView {
                     management_score: c.management_score,
                     confidence_factor: confidence_factor(c.management_score),
                     cash_usd: c.cash_usd,
-                    line_drawn_usd: c.line_drawn_usd,
+                    line_drawn_usd: c.finance.line.drawn,
+                    line_limit_usd: c.finance.line.limit,
+                    rating: c.finance.rating,
+                    status: c.finance.status(),
+                    archetype: c.archetype,
                     board,
                 }
             })
