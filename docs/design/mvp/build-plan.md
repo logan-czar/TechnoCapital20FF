@@ -2,6 +2,8 @@
 
 _Status: v0.2 (2026-10-20). Draft for Logan. Built on [mvp-spec.md](mvp-spec.md) v1.4 (sections 1 to 9, the M0 to M10 milestones and balance targets of section 10), [../12-tech-and-roadmap.md](../12-tech-and-roadmap.md) v0.6 (batches 168 and 169), [map-sources.md](map-sources.md), [../data/README.md](../data/README.md) and the data tools in [../tools/mvp-data/](../tools/mvp-data/gen.py)._
 
+_Batch 174 (Logan): the first build PR stacks on the design branch (design/detailed-stages, PR #1), so merging PR #1 later brings design and code in together. Before it: CLAUDE.md, a license, CI, Bevy pinned at 0.20.0, and a note on superseded values in the decisions log._
+
 _Batch 172 (Logan): province borders are smooth, drawn from a border layer that `mapgen` precomputes (P7) instead of a per-pixel neighbor test (1b); OpenGS is listed in map-sources.md as a shader reference only (2a; review in [opengs-review.md](opengs-review.md))._
 
 _Batch 171 (Logan): determinism only has to hold on one machine (same seed, build, OS and CPU), so plain f64 with a fixed iteration order and seeded RNG, no `libm` and no cross-OS hash test in the MVP (decision A); Python prepares the border geodata and the Rust `mapgen` draws the bitmap and centroids (decision B); disputed land follows our own province files and contested provinces are hatched (decision C). See section 6._
@@ -40,7 +42,7 @@ One Cargo workspace, one language, one pinned Bevy version (12.2, batch 169). Th
 
 | Need | Choice | Why |
 |---|---|---|
-| Engine | `bevy`, pinned exactly (`=0.x.y`) in `[workspace.dependencies]`, `Cargo.lock` kept | One version, upgraded only between milestones (batch 169). Version picked at build start: latest stable (12.6) |
+| Engine | `bevy`, pinned exactly (`=0.20.0`) in `[workspace.dependencies]`, `Cargo.lock` kept | One version, upgraded only between milestones (batch 169). Bevy 0.20.0 (released 2026-10-08) is the latest stable at build start (batch 174); Rust 1.97 |
 | Data | `serde`, `csv` | Decided in 12.2 |
 | Seeded RNG | `rand_chacha` (ChaCha8) | Same draws for the same seed in every release; one stream per system (spec 3.1) |
 | Math | Plain f64 and the standard library's pow, log10 and exp | Same-machine determinism is enough (decision A, batch 171) |
