@@ -24,7 +24,7 @@ use sim_data::WorldData;
 ///   mean productivity and management, data held, the profitable share, the M4 books counts and
 ///   rating bands, and the M5 market figures (quoted count, median gap, tracking share, mean
 ///   confidence, four headline index levels).
-/// - M6 (D166) and M10 (D320 to D327): the startup, listing, character and balance columns the
+/// - M6 (D166) and M10 (D320 to D334): the startup, listing, character and balance columns the
 ///   spec 10 targets read; see docs/build/soak.md for each.
 pub const YEARS_HEADER: &str = "seed,year,ticks,state_hash,phase,g_t,named_revenue_usd,\
     fringe_revenue_usd,mean_s,min_s,max_s,mean_m,mean_productivity,mean_management,data_tb,\
