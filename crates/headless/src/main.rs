@@ -7,8 +7,13 @@
 //! - `soak` (M10.1) runs many seeds, each in its own child process (`soak-seed`, D333), and writes
 //!   `years.csv`, `quarters.csv` and `timing.csv`; `check` (M10.2, M10.3) marks every spec 10 target per seed (docs/build/
 //!   soak.md).
+//! - `run --profile` (M10.6) prints the wall time per scheduler slot, job and view (D400).
+//! - `record` and `replay` (M10.4) write a run's seed, command log and monthly hashes, and replay
+//!   such a log checking every hash (D403).
 
 mod metrics;
+mod profile;
+mod replay;
 mod soak;
 mod targets;
 
@@ -19,13 +24,16 @@ use std::time::Instant;
 use sim::Sim;
 
 use crate::metrics::{YEARS_HEADER, run_seed};
+use crate::profile::Profiler;
 use crate::soak::{DEFAULT_SEEDS, DEFAULT_YEARS, SoakArgs};
 
 const USAGE: &str = "usage:\n  \
     headless --check-data [--data-dir DIR]\n  \
-    headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--data-dir DIR]\n  \
+    headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--data-dir DIR]\n  \
     headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--data-dir DIR]\n  \
-    headless check DIR\n\
+    headless check DIR\n  \
+    headless record --years N --seed S --out LOG [--data-dir DIR]\n  \
+    headless replay LOG [--data-dir DIR]\n\
     DIR defaults to the repository's docs/design/data; seeds A..B are inclusive (a single seed A \
     also works); soak defaults to 30 years and seeds 1..50, jobs to half the cores";
 
@@ -45,6 +53,24 @@ fn main() -> ExitCode {
                 sim_data::load_world(&dir)
                     .map_err(|e| e.to_string())
                     .and_then(|d| soak::soak_seed(&d, seed, years)),
+            ),
+            None => usage(),
+        },
+        Some("record") => match parse_record(&args[1..]) {
+            Some((seed, years, out, dir)) => report(
+                sim_data::load_world(&dir)
+                    .map_err(|e| e.to_string())
+                    .and_then(|d| replay::record(&d, seed, years, &out))
+                    .map(|s| println!("recorded {}: {s}", out.display())),
+            ),
+            None => usage(),
+        },
+        Some("replay") => match parse_replay(&args[1..]) {
+            Some((log, dir)) => report(
+                sim_data::load_world(&dir)
+                    .map_err(|e| e.to_string())
+                    .and_then(|d| replay::replay(&d, &log))
+                    .map(|s| println!("replay of {} matches: {s}", log.display())),
             ),
             None => usage(),
         },
@@ -126,12 +152,14 @@ struct RunArgs {
     seeds: (u64, u64),
     out: Option<PathBuf>,
     hash_monthly: bool,
+    profile: bool,
     dir: PathBuf,
 }
 
 impl RunArgs {
     fn parse(args: &[String]) -> Option<RunArgs> {
         let (mut years, mut seeds, mut out, mut hash_monthly) = (None, None, None, false);
+        let mut profile = false;
         let mut dir = sim_data::default_data_dir();
         let mut it = args.iter();
         while let Some(arg) = it.next() {
@@ -140,6 +168,7 @@ impl RunArgs {
                 "--seeds" => seeds = Some(parse_seeds(it.next()?)?),
                 "--out" => out = Some(PathBuf::from(it.next()?)),
                 "--hash-monthly" => hash_monthly = true,
+                "--profile" => profile = true,
                 "--data-dir" => dir = PathBuf::from(it.next()?),
                 _ => return None,
             }
@@ -149,6 +178,7 @@ impl RunArgs {
             seeds: seeds?,
             out,
             hash_monthly,
+            profile,
             dir,
         })
     }
@@ -196,6 +226,37 @@ fn parse_soak_seed(args: &[String]) -> Option<(u64, u32, PathBuf)> {
     Some((seed?, years?, dir))
 }
 
+/// `record --years N --seed S --out LOG [--data-dir DIR]`.
+fn parse_record(args: &[String]) -> Option<(u64, u32, PathBuf, PathBuf)> {
+    let (mut seed, mut years, mut out) = (None, None, None);
+    let mut dir = sim_data::default_data_dir();
+    let mut it = args.iter();
+    while let Some(arg) = it.next() {
+        match arg.as_str() {
+            "--seed" => seed = Some(it.next()?.parse().ok()?),
+            "--years" => years = it.next()?.parse().ok().filter(|&y| y > 0),
+            "--out" => out = Some(PathBuf::from(it.next()?)),
+            "--data-dir" => dir = PathBuf::from(it.next()?),
+            _ => return None,
+        }
+    }
+    Some((seed?, years?, out?, dir))
+}
+
+/// `replay LOG [--data-dir DIR]`.
+fn parse_replay(args: &[String]) -> Option<(PathBuf, PathBuf)> {
+    let (mut log, mut dir) = (None, sim_data::default_data_dir());
+    let mut it = args.iter();
+    while let Some(arg) = it.next() {
+        match arg.as_str() {
+            "--data-dir" => dir = PathBuf::from(it.next()?),
+            path if log.is_none() && !path.starts_with("--") => log = Some(PathBuf::from(path)),
+            _ => return None,
+        }
+    }
+    Some((log?, dir))
+}
+
 /// `A..B` (inclusive) or `A`.
 fn parse_seeds(s: &str) -> Option<(u64, u64)> {
     let (a, b) = match s.split_once("..") {
@@ -230,7 +291,14 @@ fn run(args: &RunArgs) -> ExitCode {
     let mut csv = format!("{YEARS_HEADER}\n");
     let (mut all_ticks, all_start) = (0u64, Instant::now());
     for seed in args.seeds.0..=args.seeds.1 {
-        let out = match run_seed(&data, seed, args.years, args.hash_monthly) {
+        let mut profiler = args.profile.then(Profiler::new);
+        let out = match run_seed(
+            &data,
+            seed,
+            args.years,
+            args.hash_monthly,
+            profiler.as_mut(),
+        ) {
             Ok(o) => o,
             Err(e) => {
                 eprintln!("error: {e}");
@@ -241,6 +309,9 @@ fn run(args: &RunArgs) -> ExitCode {
             "seed {seed}: {} years to {}, hash {}, {} ms",
             args.years, out.end, out.state_hash, out.wall_ms
         );
+        if let Some(p) = &profiler {
+            println!("profile, seed {seed}:\n{}", p.table());
+        }
         csv.push_str(&out.years);
         all_ticks += out.ticks;
     }
