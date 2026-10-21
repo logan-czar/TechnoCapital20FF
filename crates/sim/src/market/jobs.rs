@@ -463,6 +463,7 @@ impl HeldAtLock {
 
     /// Puts every industry's supply, S and M back to the held values (after 4.3 step 6).
     pub fn restore_market(&self, world: &mut World) {
+        debug_assert_eq!(world.industries.len(), self.market.len());
         for ((_, ind), &(supply, s, m)) in world.industries.iter_mut().zip(&self.market) {
             ind.supply = supply;
             ind.supply_ratio = s;
@@ -472,6 +473,7 @@ impl HeldAtLock {
 
     /// Puts every unit's productivity back to the held value (after 4.3 step 10).
     pub fn restore_productivity(&self, world: &mut World) {
+        debug_assert_eq!(world.units.len(), self.productivity.len());
         for ((_, u), &p) in world.units.iter_mut().zip(&self.productivity) {
             u.productivity = p;
         }

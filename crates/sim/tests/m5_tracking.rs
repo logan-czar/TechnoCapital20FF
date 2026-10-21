@@ -16,7 +16,8 @@
 //!   how many companies cross between the profit and loss paths, and the tracking share right
 //!   after; the surprise of that release is 0 (D133), so P does not jump.
 //! - The beat rate (spec 10 "30% to 60% of releases are beats", 5.16, design fix 109, D168): the
-//!   same runs count, at every release from 2 January 2020 to 2 October 2029, the reports
+//!   same runs count, at every release from 2 April 2020 to 2 October 2029 (the 2 January 2020
+//!   release has no consensus and so surprise 0, D133, and is left out), the reports
 //!   (companies not frozen with a quarter, as v_market_stats counts them, D166) tagged Beat or
 //!   Big beat and Miss or Big miss, and the median |surprise| over those reports, and print them
 //!   per seed. Nothing is asserted on them: the target is for the M10 soak and tuning pass.
@@ -40,6 +41,12 @@ const SEEDS: [u64; 5] = [1, 2, 3, 4, 5];
 /// Spec 7.1: open prices run $5 to $200.
 const PRICE_MIN: f64 = 5.0;
 const PRICE_MAX: f64 = 200.0;
+/// D133: the first release's surprise is 0 (no lock before it), so the beat count skips it.
+const FIRST_RELEASE: Date = Date {
+    year: 2020,
+    month: 1,
+    day: 2,
+};
 
 fn quantile(sorted: &[f64], q: f64) -> f64 {
     if sorted.is_empty() {
@@ -86,7 +93,7 @@ fn run_seed(seed: u64) -> SeedResult {
         }
         // A release day (4.4): the close's tags and surprises (D142).
         let d = t.date();
-        if d.day == 2 && d.month % 3 == 1 {
+        if d.day == 2 && d.month % 3 == 1 && d > FIRST_RELEASE {
             let w = sim.world();
             for (id, c) in w.companies.iter() {
                 if c.finance.status().is_frozen() || c.finance.quarters().is_empty() {

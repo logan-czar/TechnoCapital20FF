@@ -10,8 +10,10 @@
 //!   (5.15).
 //! - The projection holds S, M and productivity at the lock (D168): moving demand or the R&D norm
 //!   (so S and the productivity drift would move at every later close) leaves it exactly as it
-//!   was, while moving M or productivity at the lock moves it; and a test job that moves S at
-//!   the closes after the lock changes the posted quarter but not the projection.
+//!   was, while moving M or productivity at the lock moves it.
+//! - So one company's plan never reaches another's projection: at every lock from 2020 to 2023
+//!   on seed 7, perturbing the even-id companies' growth, R&D, assets and cash leaves every
+//!   odd-id company's projection bit for bit as it was, while the even ones move.
 //! - With nothing else moving (test jobs hold S, M and productivity at their lock values in the
 //!   live run too, and the next quarter's draws the 1 July close makes at this quarter's) the
 //!   posted quarter is the projection.
@@ -23,7 +25,6 @@ use std::sync::Mutex;
 
 use common::data;
 use sim::Sim;
-use sim::economy::supply::{market_factor, supply_ratio};
 use sim::market::jobs::{HeldAtLock, project_quarter_net_income};
 use sim::time::{Date, DateTime, JobCtx, Slot};
 use sim::world::{CompanyId, World};
@@ -33,8 +34,6 @@ const CONSENSUS_ERROR: f64 = 0.05;
 /// The lock and the release of the quarter the tests project (Q2 2020).
 const LOCK: (i32, u8, u8) = (2020, 4, 9);
 const RELEASE: (i32, u8, u8) = (2020, 7, 2);
-/// The test job's move of every industry's supply at the closes after the lock.
-const SUPPLY_MOVE: f64 = 1.10;
 /// With nothing else moving, the posted quarter is the projection within this share of
 /// |projection| (the same closes on the same inputs, up to rounding; seed 11 runs 1.5e-14).
 const HELD_TOLERANCE: f64 = 1e-9;
@@ -140,8 +139,6 @@ fn consensus_is_the_projection_within_five_percent() {
 /// and the R&D norm ×0.5, which move S and the productivity drift at every later close), (every
 /// M +10%), (every productivity +10 points).
 static MOVED_AT_LOCK: Mutex<Vec<[Vec<f64>; 4]>> = Mutex::new(Vec::new());
-/// The consensus job's projection in the run whose test job moves S after the lock.
-static S_MOVED: Mutex<Vec<f64>> = Mutex::new(Vec::new());
 
 fn project_moved_copies(w: &mut World, ctx: &mut JobCtx<'_>) {
     if ctx.facts.date != lock().date() {
@@ -169,31 +166,6 @@ fn project_moved_copies(w: &mut World, ctx: &mut JobCtx<'_>) {
         project_quarter_net_income(&m, now),
         project_quarter_net_income(&p, now),
     ]);
-}
-
-/// At each close after the lock, every industry's supply moves by [`SUPPLY_MOVE`] and S and M
-/// follow (spec 5.2): what other companies' growth does to the actual quarter.
-fn move_supply(w: &mut World, ctx: &mut JobCtx<'_>) {
-    if !after_lock(ctx.facts.date) {
-        return;
-    }
-    for (_, ind) in w.industries.iter_mut() {
-        ind.supply *= SUPPLY_MOVE;
-        ind.supply_ratio = supply_ratio(ind.supply, ind.demand);
-        ind.market_factor = market_factor(ind.supply_ratio);
-    }
-}
-
-fn keep_s_moved_projection(w: &mut World, ctx: &mut JobCtx<'_>) {
-    if ctx.facts.date == lock().date() {
-        *S_MOVED.lock().unwrap() = w
-            .market
-            .stocks
-            .rows()
-            .iter()
-            .map(|s| s.projection_ni)
-            .collect();
-    }
 }
 
 /// D168: the projection uses the lock's S, M and productivity and holds them.
@@ -225,31 +197,94 @@ fn projection_holds_s_m_and_productivity_at_the_lock() {
     // The lock's M and productivity are what it runs on.
     assert!(m_moved * 100 >= active * 95, "{m_moved} of {active}");
     assert!(p_moved * 100 >= active * 95, "{p_moved} of {active}");
+}
 
-    // A test job moving S at the closes after the lock changes the actual, not the projection.
-    let mut moved = Sim::new(data(), 11).unwrap();
-    moved.register_test_job(Slot::MonthlySupply, "test.move_supply", move_supply);
-    moved.register_test_job(Slot::LockConsensus, "test.keep", keep_s_moved_projection);
-    run_to(&mut moved, release());
-    run_to(&mut plain, release());
-    let projected = S_MOVED.lock().unwrap().clone();
-    let (pw, mw) = (plain.world(), moved.world());
-    for (id, s) in pw.market.stocks.iter() {
-        assert_eq!(projected[id.0 as usize], s.projection_ni);
+/// The locks the decoupling test checks: every lock from 2020 to 2023.
+const DECOUPLING_SEED: u64 = 7;
+const DECOUPLING_LAST_YEAR: i32 = 2023;
+/// The even-id companies' perturbed locked plan: growth +0.5, R&D +0.05 of revenue, assets
+/// ×1.5, cash ×0.1.
+const PERTURB_GROWTH: f64 = 0.5;
+const PERTURB_RD: f64 = 0.05;
+const PERTURB_ASSETS: f64 = 1.5;
+const PERTURB_CASH: f64 = 0.1;
+
+/// Per lock: the odd companies (not frozen) whose projection changed, and the even companies
+/// (not frozen) and how many of them moved.
+static DECOUPLING: Mutex<Vec<(Date, usize, usize, usize)>> = Mutex::new(Vec::new());
+
+/// After the consensus job at each lock: a copy with the even-id companies' plans, assets and
+/// cash perturbed is projected against the world as it is.
+fn perturb_even_companies(w: &mut World, ctx: &mut JobCtx<'_>) {
+    if ctx.facts.date.year > DECOUPLING_LAST_YEAR {
+        return;
     }
-    let plain_ni = posted(pw);
-    let moved_ni = posted(mw);
-    assert_eq!(plain_ni.len(), moved_ni.len());
-    let changed = plain_ni
-        .iter()
-        .zip(&moved_ni)
-        .filter(|((_, a), (_, b))| (a - b).abs() > 1e-6 * a.abs().max(1.0))
-        .count();
-    println!(
-        "S moved after the lock: {changed} of {} quarters change",
-        plain_ni.len()
+    let now = ctx.facts.now;
+    let base = project_quarter_net_income(w, now);
+    let mut copy = w.clone();
+    let even = |id: CompanyId| id.0 % 2 == 0;
+    for (_, u) in copy.units.iter_mut() {
+        if even(u.company) {
+            u.growth_plan += PERTURB_GROWTH;
+            u.rd_plan += PERTURB_RD;
+            u.gross_assets *= PERTURB_ASSETS;
+            u.asset_book *= PERTURB_ASSETS;
+            for t in &mut u.ramping {
+                t.amount *= PERTURB_ASSETS;
+            }
+        }
+    }
+    for (id, c) in copy.companies.iter_mut() {
+        if even(id) {
+            c.cash_usd *= PERTURB_CASH;
+        }
+    }
+    let perturbed = project_quarter_net_income(&copy, now);
+    let (mut odd_changed, mut evens, mut even_moved) = (0, 0, 0);
+    for (id, c) in w.companies.iter() {
+        if c.finance.status().is_frozen() {
+            continue;
+        }
+        let (a, b) = (base[id.0 as usize], perturbed[id.0 as usize]);
+        if even(id) {
+            evens += 1;
+            even_moved += usize::from(a != b);
+        } else if a.to_bits() != b.to_bits() {
+            odd_changed += 1;
+        }
+    }
+    DECOUPLING
+        .lock()
+        .unwrap()
+        .push((ctx.facts.date, odd_changed, evens, even_moved));
+}
+
+/// D168: with S and M held, one company's locked plan never reaches another's projection. At
+/// every lock from 2020 to 2023 on seed 7, perturbing the even-id companies' growth, R&D, assets
+/// and cash leaves every odd-id company's projection bit for bit as it was, while the even ones
+/// move.
+#[test]
+fn one_companys_plan_does_not_reach_anothers_projection() {
+    let mut sim = Sim::new(data(), DECOUPLING_SEED).unwrap();
+    sim.register_test_job(
+        Slot::LockConsensus,
+        "test.perturb_even",
+        perturb_even_companies,
     );
-    assert!(changed * 100 >= plain_ni.len() * 95, "{changed}");
+    run_to(
+        &mut sim,
+        DateTime::midnight(Date::ymd(DECOUPLING_LAST_YEAR + 1, 1, 1)),
+    );
+    let locks = DECOUPLING.lock().unwrap().clone();
+    assert_eq!(locks.len(), 16, "four locks a year, 2020 to 2023");
+    for (date, odd_changed, evens, even_moved) in locks {
+        println!("{date:?}: odd changed {odd_changed}, even moved {even_moved} of {evens}");
+        assert_eq!(odd_changed, 0, "{date:?}");
+        assert!(
+            even_moved * 100 >= evens * 95,
+            "{date:?}: {even_moved} of {evens}"
+        );
+    }
 }
 
 static HELD: Mutex<Option<HeldAtLock>> = Mutex::new(None);
