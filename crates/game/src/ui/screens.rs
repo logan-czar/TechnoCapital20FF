@@ -1,7 +1,8 @@
 //! The screens the router opens (build-plan M7.8; spec 8). M7 builds the shell only, so each
 //! screen is a stub panel ("coming in M9") that reads its views from [`Views`] and shows their
 //! refresh state; the map's place holds the province table demo, and Pdoomberg's F2 holds a
-//! company table demo from the starting data, whose rows add to or drop from the watchlist.
+//! company table demo from the starting data ([`super::demo`]), whose rows add to or drop from
+//! the watchlist.
 
 use std::sync::Arc;
 
@@ -14,7 +15,7 @@ use super::rail::{Router, Screen, ScreenRoot};
 use super::theme::{self, color, font, size};
 use super::{DemoTables, ShellLayout, SpawnLayout, UiSystems};
 use crate::bridge::{RunnerControls, SimControl, Views};
-use crate::table::{TableFocus, TableModel, TableRowClicked, spawn_table};
+use crate::table::{Table, TableFocus, TableRowClicked, spawn_table};
 
 /// The views each stub reads (spec 9.4).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -99,6 +100,7 @@ impl Plugin for ScreensPlugin {
                 (
                     focus_table.run_if(resource_changed::<Router>),
                     toggle_watch,
+                    omniscient_quotes.run_if(resource_changed::<RunnerControls>),
                     show_view_lines.run_if(resource_changed::<Views>),
                 )
                     .in_set(UiSystems::Show),
@@ -404,91 +406,20 @@ fn toggle_watch(
     }
 }
 
-/// The demo tables from the starting data (until the real views land).
-pub fn demo_tables(data: &sim_data::WorldData) -> DemoTables {
-    use crate::table::{Cell, Column};
-    let mut provinces: Vec<_> = data.all_provinces().map(|(_, _, p)| p).collect();
-    provinces.sort_by(|a, b| a.id.cmp(&b.id));
-    let world_dev: f64 = provinces
-        .iter()
-        .map(|p| f64::from(p.commerce + p.industry + p.population))
-        .sum();
-    let rows = provinces
-        .iter()
-        .map(|p| {
-            let dev = p.commerce + p.industry + p.population;
-            vec![
-                Cell::Text(p.id.clone()),
-                Cell::Text(p.name.clone()),
-                Cell::Text(p.country.clone()),
-                if p.metro.is_empty() {
-                    Cell::Unknown
-                } else {
-                    Cell::Text(p.metro.clone())
-                },
-                Cell::Int(i64::from(p.commerce)),
-                Cell::Int(i64::from(p.industry)),
-                Cell::Int(i64::from(p.population)),
-                Cell::Int(i64::from(dev)),
-                Cell::Percent(f64::from(dev) / world_dev),
-            ]
-        })
-        .collect();
-    let provinces = TableModel::new(
-        vec![
-            Column::text("Id", 90.0),
-            Column::text("Name", 240.0),
-            Column::text("Country", 70.0),
-            Column::text("Metro", 110.0).with_hint("? where the province is in no Metro"),
-            Column::number("Commerce", 80.0),
-            Column::number("Industry", 80.0),
-            Column::number("Pop", 60.0),
-            Column::number("Dev", 60.0).with_hint("Commerce + Industry + Population"),
-            Column::number("World %", 70.0).with_hint("Share of the world's development"),
-        ],
-        rows,
-    );
-
-    // Ordinal order is ascending CSV id (D4), so a row's index is its CompanyId.
-    let mut companies: Vec<_> = data.companies.iter().map(|(_, c)| c).collect();
-    companies.sort_by(|a, b| a.id.cmp(&b.id));
-    let company_names = companies.iter().map(|c| c.name.clone()).collect();
-    let rows = companies
-        .iter()
-        .map(|c| {
-            vec![
-                Cell::Text(if c.ticker.is_empty() {
-                    "-".into()
-                } else {
-                    c.ticker.clone()
-                }),
-                Cell::Text(c.name.clone()),
-                Cell::Text(c.industry.clone()),
-                Cell::Text(c.hq_country.clone()),
-                Cell::Text(if c.public { "yes" } else { "no" }.into()),
-                Cell::Money(c.revenue_usd_m * 1e6),
-                Cell::Money(c.est_value_usd_m * 1e6),
-                c.controller_stake_pct
-                    .map_or(Cell::Unknown, |p| Cell::Percent(p / 100.0)),
-            ]
-        })
-        .collect();
-    let companies = TableModel::new(
-        vec![
-            Column::text("Ticker", 70.0),
-            Column::text("Name", 240.0),
-            Column::text("Industry", 170.0),
-            Column::text("HQ", 50.0),
-            Column::text("Listed", 60.0),
-            Column::number("Revenue", 90.0),
-            Column::number("Est. value", 100.0),
-            Column::number("Ctrl stake", 90.0).with_hint("? where the stake is not published"),
-        ],
-        rows,
-    );
-    DemoTables {
-        provinces: Arc::new(provinces),
-        companies: Arc::new(companies),
-        company_names,
+/// Pdoomberg shows published data; while Omniscient is on (debug builds) it shows the true values
+/// of private companies too (spec 1, Information).
+fn omniscient_quotes(
+    controls: Res<RunnerControls>,
+    demo: Res<DemoTables>,
+    tables: Option<Res<DemoTableEntities>>,
+    mut shown: Local<bool>,
+    mut q: Query<&mut Table>,
+) {
+    if controls.omniscient == *shown {
+        return;
+    }
+    *shown = controls.omniscient;
+    if let Some(mut t) = tables.and_then(|t| q.get_mut(t.companies).ok()) {
+        t.set_model(Arc::clone(demo.companies_for(*shown)));
     }
 }

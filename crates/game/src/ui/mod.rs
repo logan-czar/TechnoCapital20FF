@@ -6,18 +6,18 @@
 //! [`SimControl`](crate::bridge::SimControl) messages; none can reach the sim (spec 9).
 
 pub mod alerts;
+pub mod demo;
 pub mod outliner;
 pub mod rail;
 pub mod screens;
 pub mod theme;
 pub mod top_bar;
 
-use std::sync::Arc;
-
 use bevy::prelude::*;
 
 use crate::bridge::SimSystems;
-use crate::table::{TableModel, TablePlugin, TableSystems};
+use crate::table::{TablePlugin, TableSystems};
+pub use demo::DemoTables;
 use theme::{color, size};
 
 /// The shell's areas, spawned once at startup; each module fills its own.
@@ -31,36 +31,6 @@ pub struct ShellLayout {
     pub outliner: Entity,
     /// Toasts stack upward at the bottom right of the main area (20.2.1).
     pub toasts: Entity,
-}
-
-/// Demo rows from the starting data for the table widget, until the real views land (M2, M9):
-/// the 3,255 provinces and the 651 companies.
-#[derive(Resource, Clone)]
-pub struct DemoTables {
-    pub provinces: Arc<TableModel>,
-    pub companies: Arc<TableModel>,
-    /// Company names by ordinal (ascending CSV id, D4), for the watchlist and alert payloads.
-    pub company_names: Vec<String>,
-}
-
-impl Default for DemoTables {
-    fn default() -> Self {
-        DemoTables {
-            provinces: Arc::new(TableModel::new(Vec::new(), Vec::new())),
-            companies: Arc::new(TableModel::new(Vec::new(), Vec::new())),
-            company_names: Vec::new(),
-        }
-    }
-}
-
-impl DemoTables {
-    /// A company's display name, or its ordinal when the name is not known.
-    pub fn company_name(&self, id: sim::world::CompanyId) -> String {
-        self.company_names
-            .get(id.0 as usize)
-            .cloned()
-            .unwrap_or_else(|| format!("Company #{}", id.0))
-    }
 }
 
 /// The drop-down menu open over the top bar, if any; Esc closes it before any screen.

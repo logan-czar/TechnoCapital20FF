@@ -213,9 +213,13 @@ pub fn show_tooltip(
     let tip = hovered.iter().find(|(_, h)| h.get()).map(|(t, _)| t);
     match (tip, cursor) {
         (Some(tip), Some(at)) if !tip.0.is_empty() => {
-            node.display = Display::Flex;
-            node.left = px(at.x + 14.0);
-            node.top = px(at.y + 18.0);
+            // Write the node only when something moved, so layout is not redone every frame.
+            let (left, top) = (px(at.x + 14.0), px(at.y + 18.0));
+            if node.display != Display::Flex || node.left != left || node.top != top {
+                node.display = Display::Flex;
+                node.left = left;
+                node.top = top;
+            }
             if let Some(mut t) = children.first().and_then(|&c| texts.get_mut(c).ok())
                 && t.0 != tip.0
             {

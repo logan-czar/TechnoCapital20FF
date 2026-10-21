@@ -10,7 +10,7 @@ use bevy::window::PresentMode;
 use game::bench::{BenchMode, BenchPlugin};
 use game::bridge::SimBridgePlugin;
 use game::ui::ShellPlugin;
-use game::ui::screens::demo_tables;
+use game::ui::demo::demo_tables;
 use sim::Sim;
 
 /// The seed when none is given (D305).

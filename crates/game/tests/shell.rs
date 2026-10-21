@@ -9,15 +9,16 @@ use bevy::prelude::*;
 use bevy::time::TimeUpdateStrategy;
 use common::{FRAME, Seen, data, frames, send, ticks};
 use game::bridge::{RunnerControls, SimBridgePlugin, SimNotice, Views};
-use game::table::{TableFocus, TableRowClicked};
+use game::table::{Table, TableFocus, TableRowClicked, sort_order};
 use game::ui::ShellPlugin;
-use game::ui::alerts::{AlertBoard, AlertIcon, EventLog};
+use game::ui::alerts::{AlertBoard, AlertIcon, EventLog, MAX_TOASTS, Toast};
+use game::ui::demo::{COMPANY_REVENUE_COL, demo_tables};
 use game::ui::outliner::OmniscientToggle;
 use game::ui::rail::{Router, Screen, ScreenRoot};
-use game::ui::screens::{DemoTableEntities, ViewLine, demo_tables};
+use game::ui::screens::{DemoTableEntities, ViewLine};
 use sim::time::Quarter;
 use sim::time::quarter::{recap_tick, release_tick};
-use sim::world::{AlertKind, AlertLevel, CompanyId};
+use sim::world::{AlertKind, AlertLevel, AlertPayload, CompanyId};
 use sim::{Control, Notice, Sim};
 
 fn collect(mut r: MessageReader<SimNotice>, mut seen: ResMut<Seen>) {
@@ -294,6 +295,113 @@ fn quote_rows_toggle_the_watchlist() {
     app.world_mut().write_message(click);
     frames(&mut app, 3);
     assert!(controls(&app).watchlist.is_empty());
+}
+
+/// Spec 1, Information: Pdoomberg shows published data, so a private company's revenue, value
+/// and controller stake are "?"; only Omniscient (debug builds) shows them.
+#[test]
+fn private_companies_show_unknown() {
+    let mut app = shell_app();
+    let mut companies: Vec<_> = data().companies.iter().map(|(_, c)| c.clone()).collect();
+    companies.sort_by(|a, b| a.id.cmp(&b.id));
+    let private = companies
+        .iter()
+        .position(|c| !c.public)
+        .expect("a private company");
+    let public = companies
+        .iter()
+        .position(|c| c.public)
+        .expect("a public company");
+    let tables = *app.world().resource::<DemoTableEntities>();
+    let cells = |app: &App, row: usize| -> Vec<String> {
+        let t = app.world().get::<Table>(tables.companies).unwrap();
+        (COMPANY_REVENUE_COL..COMPANY_REVENUE_COL + 3)
+            .map(|c| t.model().display(row, c).to_owned())
+            .collect()
+    };
+    assert_eq!(
+        cells(&app, private),
+        ["?", "?", "?"],
+        "{}",
+        companies[private].name
+    );
+    assert!(cells(&app, public)[0].starts_with('$'));
+
+    // The pooled row on screen shows it too.
+    {
+        let mut t = app.world_mut().get_mut::<Table>(tables.companies).unwrap();
+        t.set_viewport_height(220.0);
+    }
+    frames(&mut app, 2);
+    {
+        let mut t = app.world_mut().get_mut::<Table>(tables.companies).unwrap();
+        t.scroll_to(private);
+    }
+    frames(&mut app, 1);
+    let shown = app
+        .world_mut()
+        .query::<&Text>()
+        .iter(app.world())
+        .filter(|t| t.0 == companies[private].name)
+        .count();
+    assert_eq!(shown, 1, "the private company's row is on screen");
+
+    send(&mut app, Control::SetOmniscient(true));
+    frames(&mut app, 3);
+    let revenue = cells(&app, private)[0].clone();
+    if cfg!(debug_assertions) {
+        assert!(
+            revenue.starts_with('$'),
+            "Omniscient shows the true value: {revenue}"
+        );
+        send(&mut app, Control::SetOmniscient(false));
+        frames(&mut app, 3);
+        assert_eq!(cells(&app, private)[0], "?");
+    } else {
+        assert_eq!(revenue, "?", "release builds never show private figures");
+    }
+}
+
+/// D304: at most MAX_TOASTS toasts, even when more alerts arrive in one frame.
+#[test]
+fn toast_cap_holds_within_a_frame() {
+    let mut app = shell_app();
+    for _ in 0..(MAX_TOASTS + 4) {
+        app.world_mut().write_message(SimNotice(Notice::Alert {
+            kind: AlertKind::WorldEvent,
+            level: AlertLevel::Notify,
+            payload: AlertPayload::None,
+        }));
+    }
+    frames(&mut app, 1);
+    let n = app.world_mut().query::<&Toast>().iter(app.world()).count();
+    assert_eq!(n, MAX_TOASTS);
+    let e = app.world().resource::<AlertBoard>().clone();
+    assert_eq!(
+        e.get(AlertKind::WorldEvent).unwrap().instances.len(),
+        MAX_TOASTS + 4
+    );
+}
+
+/// M7.7 done line, automated for release builds: a sort of the 3,255 provinces fits well inside
+/// a 60 fps frame (16 ms) on every column. Debug builds only check the order (the game crate is
+/// unoptimized there); `--bench-table` measures the whole frame.
+#[test]
+fn province_sort_fits_a_frame() {
+    let demo = demo_tables(&data());
+    let m = &demo.provinces;
+    assert_eq!(m.len(), 3_255);
+    for col in 0..m.columns.len() {
+        for asc in [true, false] {
+            let start = std::time::Instant::now();
+            let order = sort_order(m, col, asc);
+            let ms = start.elapsed().as_secs_f64() * 1e3;
+            assert_eq!(order.len(), 3_255);
+            if !cfg!(debug_assertions) {
+                assert!(ms < 16.0, "sort by column {col} took {ms:.2} ms");
+            }
+        }
+    }
 }
 
 /// M7.9: screens read the views: the stubs' view lines follow the refresh count.

@@ -151,10 +151,10 @@ fn short_time(t: DateTime) -> String {
     format!("{:04}-{:02}-{:02} {:02}h", d.year, d.month, d.day, t.hour())
 }
 
-/// A toast and when it was born.
+/// A toast and when it was born (seconds of app time).
 #[derive(Component)]
-struct Toast {
-    born: f32,
+pub struct Toast {
+    pub born: f32,
 }
 
 /// An icon of the alert row, for one alert kind.
@@ -203,9 +203,11 @@ fn read_notices(
     names: Res<DemoTables>,
     layout: Option<Res<ShellLayout>>,
     time: Res<Time>,
-    mut toasts: Query<(Entity, &Toast)>,
+    toasts: Query<(Entity, &Toast)>,
     mut commands: Commands,
 ) {
+    // Toasts on screen, oldest first; spawns in this frame are added as they happen.
+    let mut shown: Option<Vec<Entity>> = None;
     for SimNotice(n) in notices.read() {
         match n {
             Notice::TickDone(t) => last.0 = *t,
@@ -228,13 +230,18 @@ fn read_notices(
                         },
                     );
                     if let Some(layout) = &layout {
+                        let shown = shown.get_or_insert_with(|| {
+                            let mut v: Vec<_> = toasts.iter().map(|(e, t)| (t.born, e)).collect();
+                            v.sort_by(|a, b| a.0.total_cmp(&b.0));
+                            v.into_iter().map(|(_, e)| e).collect()
+                        });
                         spawn_toast(
                             &mut commands,
                             layout.toasts,
                             &what,
                             *level,
                             time.elapsed_secs(),
-                            &mut toasts,
+                            shown,
                         );
                     }
                 }
@@ -295,20 +302,17 @@ fn payload_text(p: AlertPayload, names: &DemoTables) -> String {
     }
 }
 
+/// Spawns a toast and drops the oldest beyond [`MAX_TOASTS`]. `shown` lists the toasts on screen,
+/// oldest first, including those spawned earlier in this frame (whose commands have not been
+/// applied yet, so a query would not see them).
 fn spawn_toast(
     commands: &mut Commands,
     parent: Entity,
     what: &str,
     level: AlertLevel,
     now: f32,
-    existing: &mut Query<(Entity, &Toast)>,
+    shown: &mut Vec<Entity>,
 ) {
-    let mut old: Vec<_> = existing.iter().map(|(e, t)| (t.born, e)).collect();
-    old.sort_by(|a, b| a.0.total_cmp(&b.0));
-    let excess = (old.len() + 1).saturating_sub(MAX_TOASTS);
-    for (_, e) in old.into_iter().take(excess) {
-        commands.entity(e).despawn();
-    }
     let c = level_color(level);
     let toast = commands
         .spawn((
@@ -330,6 +334,11 @@ fn spawn_toast(
         ))
         .id();
     commands.entity(parent).add_child(toast);
+    shown.push(toast);
+    while shown.len() > MAX_TOASTS {
+        let old = shown.remove(0);
+        commands.entity(old).try_despawn();
+    }
 }
 
 fn fade_toasts(
@@ -341,7 +350,7 @@ fn fade_toasts(
     for (e, t, mut bg) in toasts {
         let age = now - t.born;
         if age >= TOAST_SECONDS {
-            commands.entity(e).despawn();
+            commands.entity(e).try_despawn();
         } else if age > TOAST_SECONDS - 1.0 {
             bg.0 = color::PANEL.with_alpha(TOAST_SECONDS - age);
         }
