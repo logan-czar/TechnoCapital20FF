@@ -1,15 +1,61 @@
 //! Spec 3.7.2 full characters made in play (build-plan M3.2): skill, age and cash ranges hold,
 //! three traits with no opposite pair, a unique name, and the same draws for a fixed seed.
+//!
+//! The ranges and pairs below are copied from the spec text, not read from the code.
 
-use sim::people::board::{CEO_SKILLS, Seat, SkillKind};
-use sim::people::full::{
-    BEST_SKILL, HomeChoice, OTHER_SKILLS, SECOND_SKILL, character_key, generate_full,
-    pick_cast_seat,
-};
+use sim::people::board::{Seat, SkillKind, Skills};
+use sim::people::full::{HomeChoice, character_key, generate_full, pick_cast_seat};
 use sim::people::names::NameBook;
-use sim::people::traits::no_opposite_pair;
 use sim::rng::RngStreams;
 use sim::world::ProvinceId;
+
+/// Spec 3.7.2: one best skill 10 to 18, one second skill 7 to 13, the other four 2 to 9.
+const SPEC_BEST: (u8, u8) = (10, 18);
+const SPEC_SECOND: (u8, u8) = (7, 13);
+const SPEC_OTHER: (u8, u8) = (2, 9);
+/// Spec 3.7.2: lead founder 22 to 55, others 25 to 60; cash $0.1M to $1M.
+const SPEC_LEAD_AGE: (u8, u8) = (22, 55);
+const SPEC_OTHER_AGE: (u8, u8) = (25, 60);
+const SPEC_CASH: (f64, f64) = (100_000.0, 1_000_000.0);
+
+/// 1-corporate-core 1.1.2: the 12 pairs.
+const SPEC_PAIRS: [(&str, &str); 12] = [
+    ("Ambitious", "Content"),
+    ("Greedy", "Generous"),
+    ("Paranoid", "Trusting"),
+    ("Ruthless", "Compassionate"),
+    ("Visionary", "Conservative"),
+    ("Honest", "Deceitful"),
+    ("Brave", "Cautious"),
+    ("Diligent", "Lazy"),
+    ("Hedonist", "Ascetic"),
+    ("Zealot", "Cynic"),
+    ("Narcissist", "Humble"),
+    ("Gregarious", "Shy"),
+];
+
+fn within(v: u8, (lo, hi): (u8, u8)) -> bool {
+    (lo..=hi).contains(&v)
+}
+
+/// Checks a full character's skills against the 3.7.2 rule with the best skill one of
+/// `best_pool`: some skill of the pool is in the best range, and the other five hold one second
+/// skill (7 to 13) and four others (2 to 9).
+fn spec_skills_ok(skills: &Skills, best_pool: &[SkillKind]) -> bool {
+    best_pool.iter().any(|&best| {
+        if !within(skills.get(best), SPEC_BEST) {
+            return false;
+        }
+        let rest: Vec<SkillKind> = SkillKind::ALL.into_iter().filter(|&k| k != best).collect();
+        rest.iter().any(|&second| {
+            within(skills.get(second), SPEC_SECOND)
+                && rest
+                    .iter()
+                    .filter(|&&k| k != second)
+                    .all(|&k| within(skills.get(k), SPEC_OTHER))
+        })
+    })
+}
 
 fn data() -> sim_data::WorldData {
     sim_data::load_world(&sim_data::default_data_dir()).expect("data loads")
@@ -34,6 +80,7 @@ fn ranges_and_traits_hold_over_many_draws() {
     let mut rng = RngStreams::new(165);
     let mut at_hq = 0;
     let mut homes = [0u32; 4];
+    let (mut fin_lo, mut fin_hi) = (false, false);
     let n = 4000;
     for i in 0..n {
         let lead = i % 2 == 0;
@@ -43,32 +90,43 @@ fn ranges_and_traits_hold_over_many_draws() {
             [Some(Seat::Cfo), Some(Seat::Coo), None][i % 3]
         };
         let c = generate_full(&mut rng, &names, &taken, lead, seat, home);
-        let age = if lead { 22..=55 } else { 25..=60 };
-        assert!(age.contains(&c.age));
-        match seat {
-            Some(Seat::Ceo) => assert!(CEO_SKILLS.contains(&c.best)),
-            Some(Seat::Cfo) => assert_eq!(c.best, SkillKind::Finance),
-            Some(Seat::Coo) => assert_eq!(c.best, SkillKind::Operations),
-            _ => {}
+        let age = if lead { SPEC_LEAD_AGE } else { SPEC_OTHER_AGE };
+        assert!(within(c.age, age), "age {}", c.age);
+        let pool: &[SkillKind] = match seat {
+            Some(Seat::Ceo) => &[
+                SkillKind::Finance,
+                SkillKind::Operations,
+                SkillKind::Persuasion,
+            ],
+            Some(Seat::Cfo) => &[SkillKind::Finance],
+            Some(Seat::Coo) => &[SkillKind::Operations],
+            _ => &SkillKind::ALL,
+        };
+        assert!(spec_skills_ok(&c.skills, pool), "{seat:?} {:?}", c.skills);
+        if seat == Some(Seat::Cfo) {
+            fin_lo |= c.skills.finance == SPEC_BEST.0;
+            fin_hi |= c.skills.finance == SPEC_BEST.1;
         }
-        assert_ne!(c.best, c.second);
-        for k in SkillKind::ALL {
-            let v = c.skills.get(k);
-            let range = if k == c.best {
-                BEST_SKILL
-            } else if k == c.second {
-                SECOND_SKILL
-            } else {
-                OTHER_SKILLS
-            };
-            assert!(range.contains(v), "{k:?} {v}");
-        }
-        assert!(no_opposite_pair(&c.traits), "{:?}", c.traits);
-        assert!((100_000.0..=1_000_000.0).contains(&c.cash_usd));
+        let traits: Vec<&str> = c.traits.iter().map(|t| t.name()).collect();
+        assert_eq!(traits.len(), 3, "3 traits");
+        let in_pairs = |t: &&str| SPEC_PAIRS.iter().any(|(a, b)| a == t || b == t);
+        assert!(traits.iter().all(in_pairs), "{traits:?}");
+        assert!(
+            !SPEC_PAIRS
+                .iter()
+                .any(|(a, b)| traits.contains(a) && traits.contains(b)),
+            "{traits:?}"
+        );
+        let mut distinct = traits.clone();
+        distinct.sort_unstable();
+        distinct.dedup();
+        assert_eq!(distinct.len(), 3);
+        assert!((SPEC_CASH.0..=SPEC_CASH.1).contains(&c.cash_usd));
         assert_eq!(c.tier(), "generated");
         at_hq += u32::from(c.home_province == HQ);
         homes[(c.home_province.0 - 10) as usize] += 1;
     }
+    assert!(fin_lo && fin_hi, "the whole best range is drawn");
     let share = f64::from(at_hq) / f64::from(n as u32);
     assert!((share - 0.7).abs() < 0.03, "home at HQ {share}");
     assert_eq!(homes[3], 0, "a weight-0 province is never home");

@@ -18,7 +18,9 @@ fn data() -> sim_data::WorldData {
 }
 
 /// Spec 3.7.1 generation table: (size, seat skill, other five skills, age), inclusive.
-const SPEC_SIZES: [(CompanySize, (u8, u8), (u8, u8), (u8, u8)); 3] = [
+/// An inclusive range.
+type R = (u8, u8);
+const SPEC_SIZES: [(CompanySize, R, R, R); 3] = [
     (CompanySize::Small, (4, 10), (2, 8), (25, 55)),
     (CompanySize::Mid, (7, 13), (3, 9), (30, 62)),
     (CompanySize::Large, (10, 16), (4, 10), (38, 68)),
