@@ -41,22 +41,33 @@ pub use world::{LoadError, Notice, World};
 ///
 /// **Order inside one slot is registration order**, so where two modules put jobs in the same
 /// slot, the order of their `register` calls below is part of the job order and must follow
-/// the spec text for that step. Slots shared now: none (only `time` registers, in
-/// `Slot::Alerts`). Slots expected to be shared, in the order their calls must go:
+/// the spec text for that step. Slots filled now: `time` in `Slot::Alerts`; `economy` (M2) in
+/// the 4.3 step 1 slots (1a AI events, 1b industry lt, 1c cycle, 1d zone spreads, 1e growth
+/// draws) and steps 2 (demand), 3 (fringe), 6 (supply), 7 (revenue), 9 (expenses) and 11
+/// (assets). Slots expected to be shared, in the order their calls must go:
 ///
 /// - `Slot::Alerts`: `time` (calendar alerts) only; other modules raise alerts from their own
-///   slots through `JobCtx::raise_alert`.
+///   slots through `JobCtx::raise_alert` (the economy raises the World event alert in 1a).
 /// - `Slot::MonthlyAiEvents` (4.3 step 1): `economy` (boom and pop, 5.1.1), then `news` (the
 ///   chatbot headline, 5.18).
 /// - `Slot::MonthlyLaborSeats` (4.3 step 4): `ops` (labor units, seats, stations, 5.10).
-/// - `Slot::MonthlyExpenses` (4.3 step 9): `economy` (variable, fixed, R&D, shared, 5.5), then
-///   `finance` (depreciation and tax accrual, 5.5, 5.11).
-/// - `Slot::MonthlyAssets` (4.3 step 11): `finance` (asset decay, growth plan buys and sells,
+/// - `Slot::MonthlyExpenses` (4.3 step 9): `economy` (variable, fixed cash, depreciation, R&D,
+///   shared, 5.5), then `finance` (tax accrual, 5.11).
+/// - `Slot::MonthlyAssets` (4.3 step 11): `economy` (asset decay, growth plan buys and sells,
 ///   ramping, 5.10), then `people` (simple characters for new seats, 3.7.1).
 /// - `Slot::PriceMoveResultHeadlines` (4.4 price move): `news` only.
 /// - `Slot::LockIpoVotes` (4.4 plan lock): `births` (votes, then listings, 5.20.1).
 fn register_jobs(s: &mut Scheduler) {
     time::alerts::register(s);
+    economy::register(s);
+}
+
+/// A scheduler with every module's jobs, as a game runs them: for re-running steps on a cloned
+/// world (the spec 5.16 projections) and for tests that drive the slots directly.
+pub fn scheduler() -> Scheduler {
+    let mut s = Scheduler::new();
+    register_jobs(&mut s);
+    s
 }
 
 /// A control that could not be applied.
@@ -93,15 +104,17 @@ impl Sim {
     }
 
     fn from_shared(data: Arc<WorldData>, seed: u64) -> Result<Sim, LoadError> {
-        let world = World::from_data(&data)?;
-        let mut scheduler = Scheduler::new();
-        register_jobs(&mut scheduler);
+        let mut world = World::from_data(&data)?;
+        let mut rng = RngStreams::new(seed);
+        // The load's draws: cycle start, pop date, Q1 2020 growth draw (spec 7.3, D12).
+        economy::start(&mut world, &mut rng);
+        let scheduler = scheduler();
         let controls = Controls::default();
         let views = SimViews::build(&world, &controls);
         Ok(Sim {
             data,
             world,
-            rng: RngStreams::new(seed),
+            rng,
             scheduler,
             controls,
             views,

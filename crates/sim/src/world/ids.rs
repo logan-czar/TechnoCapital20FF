@@ -52,6 +52,9 @@ ordinal_id! {
     CompanyId;
     /// A full character (spec 3.7.2), from characters.csv `id`; those made in play append.
     CharacterId;
+    /// A business unit (spec 3.6). One per company in the MVP, in company id order at load, so
+    /// the starting unit of company `n` is unit `n`; units of companies born in play append.
+    UnitId;
     /// A startup event that fired, fixed or random (spec 3.1 `startup_events`, 5.19).
     StartupEventId;
 }

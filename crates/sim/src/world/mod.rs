@@ -22,6 +22,7 @@
 //! with no extra code. Shared types (ids, notices, alert kinds) live here, since each later
 //! milestone's builder owns one folder.
 
+pub mod economy;
 pub mod entities;
 pub mod ids;
 pub mod load;
@@ -31,9 +32,14 @@ pub mod units;
 
 use serde::{Deserialize, Serialize};
 
-pub use entities::{Character, Company, Country, Industry, Province, Zone};
+pub use economy::{AiBoom, AiSchedule, AiStage, CyclePhase, GlobalCycle};
+pub use entities::{
+    BusinessUnit, Character, Company, Country, Industry, IndustryParams, IndustryQuarter,
+    PhaseLabel, Province, Tranche, Zone,
+};
 pub use ids::{
-    CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, StartupEventId, ZoneId,
+    CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, StartupEventId, UnitId,
+    ZoneId,
 };
 pub use load::LoadError;
 pub use notice::{AlertKind, AlertLevel, AlertLevels, AlertPayload, Notice, PauseReason, SkipKind};
@@ -53,10 +59,23 @@ pub struct World {
     pub industries: Table<IndustryId, Industry>,
     pub companies: Table<CompanyId, Company>,
     pub characters: Table<CharacterId, Character>,
+    /// Business units (spec 3.6), one per company in the MVP.
+    pub units: Table<UnitId, BusinessUnit>,
+    /// World base rate (spec 3.1), fixed in the MVP.
+    pub base_rate: f64,
+    /// Neutral rate (spec 3.1); demand's rate term is 0 while the base rate sits here (5.1).
+    pub neutral_rate: f64,
+    /// The global business cycle (spec 3.1, 5.1).
+    pub cycle: GlobalCycle,
+    /// The AI boom and the bubble (spec 3.1, 5.1.1).
+    pub ai: AiBoom,
 }
 
 impl World {
-    /// The start state from the loaded data (spec 7).
+    /// The static start state from the loaded data (spec 7): tables, units, fringe pools and
+    /// everything else load sets without a draw. [`crate::economy::start`] then makes the load's
+    /// draws (the cycle start, the pop date and the Q1 2020 growth draw, spec 7.3); `Sim::new`
+    /// does both.
     pub fn from_data(data: &sim_data::WorldData) -> Result<World, LoadError> {
         load::build_world(data)
     }
