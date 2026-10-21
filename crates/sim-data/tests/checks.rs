@@ -104,6 +104,58 @@ fn company_start_balance_identity() {
 }
 
 #[test]
+fn company_start_lines_within_their_limit() {
+    // D15: CO-0002 starts at A- with its line at the 5.12 limit (0.5 × asset book × 0.8); at BBB
+    // (0.65) the same line is over it.
+    expect_error(
+        |w| w.company_start.rows[1].start_rating = "BBB".into(),
+        "company-start.csv",
+        3,
+        "credit_drawn_usd",
+    );
+    // D15: a line above the 7.1 line (asset book − book value + min_cash).
+    expect_error(
+        |w| {
+            let r = &mut w.company_start.rows[1];
+            r.credit_drawn_usd += 20.0e6;
+            r.book_equity_usd -= 20.0e6;
+        },
+        "company-start.csv",
+        3,
+        "credit_drawn_usd",
+    );
+    // D16: CO-0006 draws its line; rated CCC it may not.
+    expect_error(
+        |w| w.company_start.rows[5].start_rating = "CCC".into(),
+        "company-start.csv",
+        7,
+        "start_rating",
+    );
+    expect_error(
+        |w| w.company_start.rows[0].start_rating = "AAA+".into(),
+        "company-start.csv",
+        2,
+        "start_rating",
+    );
+}
+
+#[test]
+fn rating_factors_by_label() {
+    // Spec 5.12 rating factors; a notch reads its band's (D220).
+    let f = sim_data::rating_factor_of_label;
+    assert_eq!(sim_data::RATING_LABELS.len(), 18);
+    assert_eq!(f("AAA"), Some(1.0));
+    assert_eq!(f("AA-"), Some(0.9));
+    assert_eq!(f("BBB+"), Some(0.65));
+    assert_eq!(f("BB-"), Some(0.5));
+    assert_eq!(f("B+"), Some(0.3));
+    assert_eq!(f("CCC"), Some(0.0));
+    assert_eq!(f("CC"), Some(0.0));
+    assert_eq!(f("C"), None);
+    assert_eq!(f("CCC+"), None);
+}
+
+#[test]
 fn duplicate_province_id() {
     let line = world().provinces[1].lines[1];
     expect_error(

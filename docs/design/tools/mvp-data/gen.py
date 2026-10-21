@@ -9,7 +9,8 @@ Writes into <design>/data/:
   financial-zones.csv    26 rows (mvp-spec 2.2, 5.1, 5.1.2; 2-map 2.18.2; 3-markets 3.2.1; Logan, batches 150, 152, 154 and 155)
   ai-boom.csv            15 rows (mvp-spec 2.2, 5.1.1; 7-starting-world 7.7; Logan, batch 151)
   key-cities.csv        88 rows  (2-map 2.3.3, 2.3.4, 2.3.5, parsed from the markdown; 8 zone hubs, batch 152)
-  company-start.csv    651 rows  (mvp-spec 7.1, G6; starting balance sheet, share count and opening price, Logan, batch 161)
+  company-start.csv    651 rows  (mvp-spec 7.1, G6; starting balance sheet, share count and opening price, Logan, batch 161;
+                                 starting lines sized to the 5.12 limit, D15 and D16)
   startup-events.csv     9 rows  (mvp-spec 5.19.2: the fixed startup events F1 to F9; build-plan M0.5)
 
 Plain Python 3, no packages, no randomness (the price jitter is a hash of the company id): the same inputs always give the same files.
@@ -775,12 +776,59 @@ def price_jitter(cid):
     import zlib
     return 1 + PRICE_JITTER * (2 * (zlib.crc32(('price:' + cid).encode()) % 10001) / 10000 - 1)
 
+LINE_SIZE_MAX_STEPS = 50       # D15 iteration cap; a 2-cycle shows within a few steps (A)
+LINE_RATING_GUARD = 1e-9       # D236: a sized line keeps its rating with EBITDA this much lower or higher (A)
+
+def size_line(l0, limit_at, rating_at):
+    """D15 (Logan, M3 gate): size a starting line to the 5.12 limit. Iterates line = min(7.1 line,
+    floor(limit(rating(line)))) in whole dollars. The limit only falls as the line grows (a larger line has
+    more net debt and less cover, so a rating no better), so the lines within their own limit are the
+    dollars 0 to some L*, and a fixed point, when there is one, is L*. The iteration can instead alternate
+    between two lines (a line in a band whose limit lies past the band's edge); then L* is taken, the
+    largest whole-dollar line within its own limit (D236). Last, a sized line that sits within the float
+    guard of a rating edge steps down a dollar at a time until its rating holds either side of the guard.
+    Returns (line, 'kept' | 'fixed' | 'cycle', guard steps)."""
+    def ok(x):
+        return x <= limit_at(x)
+    if ok(l0):
+        return l0, 'kept', 0
+    seen, x, how = [l0], l0, None
+    for _ in range(LINE_SIZE_MAX_STEPS):
+        nxt = min(l0, limit_at(x))
+        if nxt == x:
+            how = 'fixed'
+            break
+        if nxt in seen:
+            how = 'cycle'
+            break
+        seen.append(nxt)
+        x = nxt
+    assert how, ('D15 line sizing did not settle', l0, seen)
+    lo, hi = 0, l0                 # 0 is always within its limit; l0 is not
+    while hi - lo > 1:
+        mid = (lo + hi) // 2
+        if ok(mid):
+            lo = mid
+        else:
+            hi = mid
+    assert how == 'cycle' or x == lo, ('D15 fixed point is not the largest line within its limit', x, lo)
+    steps = 0
+    while lo > 0 and rating_at(lo, 1 - LINE_RATING_GUARD) != rating_at(lo, 1 + LINE_RATING_GUARD):
+        lo -= 1
+        steps += 1
+    return lo, how, steps
+
 def build_company_start(ce_rows, zones):
-    """Starting balance sheet and share count for the 651 companies (Logan, batch 161, 1a and 2b).
+    """Starting balance sheet and share count for the 651 companies (Logan, batch 161, 1a and 2b; D15, D16).
     Asset book = 50% of gross business assets (7.1 loadout); cash fills the gap up to book equity, or a
-    drawn credit line covers asset book above book equity plus min_cash (5% of revenue). Engine value is the
-    5.13 fair value at load: flat synthetic history (g 0, G 1), Normal cycle, company confidence 1.0, X from
-    the zone confidence_start for listed companies; it skips line interest (A). open_price =
+    drawn credit line covers asset book above book equity plus min_cash (5% of revenue). D15 (Logan, M3
+    gate): that line is then sized to the 5.12 limit at its own starting rating (size_line); the cash the
+    smaller line no longer funds is not added back, so cash stays min_cash, the asset book (and so revenue)
+    is unchanged, and book equity = asset book + cash - line rises above companies.csv book_value. D16: no
+    company starts rated CCC or CC with a drawn line. start_rating (7.1, 5.12; D220 to D223, D235) is
+    validate.start_rating on the balances as written. Engine value is the 5.13 fair value at load on that
+    book equity: flat synthetic history (g 0, G 1), Normal cycle, company confidence 1.0, X from the zone
+    confidence_start for listed companies; it skips line interest (A). open_price =
     clamp(round(25 x (value / $1B)^0.35 x jitter), 5, 200)
     (a fixed $1B reference, not the median, so the spread reaches about $5 to $200); shares = value / open_price."""
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -791,6 +839,7 @@ def build_company_start(ce_rows, zones):
     ce = {r['iso3']: r for r in ce_rows}
     zone = {z['zone_id']: z for z in zones}
     rows = []
+    log = {'kept': 0, 'fixed': 0, 'cycle': 0, 'guard': 0, 'd16': 0, 'fragile': 0}
     for c in cos:
         ind = inds[c['industry']]
         r_usd = float(c['revenue_usd_m']) * 1e6
@@ -808,10 +857,33 @@ def build_company_start(ce_rows, zones):
             cash, line = be - asset_book, 0.0
         else:
             line, cash = asset_book - be + min_cash, min_cash
-        margin = validate.normal_company(ind, max(0.1, float(c['revenue_usd_m'])), validate.rd_mult(c, ind, traits))[2]
-        ebit = margin * r_usd
         e = ce[c['hq_country']]
         z = zone[e['financial_zone']]
+        # The rating and the limit read the balances as written (whole dollars), as the engine loads them.
+        gross_w, book_w, cash_w = round(2 * asset_book), round(asset_book), round(cash)
+        rev_rr, ebit_rr, dep_rr = validate.run_rate(c, ind, traits, gross_w, book_w)
+        home_rr = validate.home_spread_bps(z['credit_spread_bps'], e['sovereign_spread_bps']) / 1e4
+
+        def rating_at(x, k=1.0):
+            return validate.rating_at_load(x - cash_w, k * (ebit_rr + dep_rr), x, home_rr, rev_rr, ind['id'],
+                                           e['sovereign_rating'])[1]
+
+        def limit_at(x):
+            return math.floor(validate.line_limit(book_w, cash_w, x, rating_at(x)))
+        if line > 0:
+            sized, how, steps = size_line(round(line), limit_at, rating_at)
+            log[how] += 1
+            log['guard'] += steps
+            if how == 'kept' and rating_at(sized, 1 - LINE_RATING_GUARD) != rating_at(sized, 1 + LINE_RATING_GUARD):
+                log['fragile'] += 1
+            if sized > 0 and rating_at(sized) in validate.NO_LINE_RATINGS:   # D16 (none after D15: limit 0)
+                sized = 0
+                log['d16'] += 1
+            if sized != round(line):
+                line, be = float(sized), cash + asset_book - sized
+        rating = rating_at(round(line))
+        margin = validate.normal_company(ind, max(0.1, float(c['revenue_usd_m'])), validate.rd_mult(c, ind, traits))[2]
+        ebit = margin * r_usd
         ni = ebit * (1 - float(e['corp_tax_rate'])) if ebit > 0 else ebit
         home = (0.5 * float(z['credit_spread_bps']) + 0.5 * float(e['sovereign_spread_bps'])) / 1e4
         rf = min(1.6, max(0.4, 0.09 / (0.035 + home + 0.05)))
@@ -821,14 +893,19 @@ def build_company_start(ce_rows, zones):
         else:
             fv = be * x
         fv = max(fv, 0.6 * be, MIN_VALUE_USD)
-        rows.append([c, asset_book, cash, line, fv])
+        rows.append([c, asset_book, cash, line, rating, fv])
+    print(f'company-start D15: {log["kept"]} starting lines within their 5.12 limit, '
+          f'{log["fixed"] + log["cycle"]} sized to it ({log["fixed"]} at a fixed point, {log["cycle"]} alternating '
+          f'between two lines and sized to the largest line within its limit; {log["guard"]} guard dollars); '
+          f'D16: {log["d16"]} CCC or CC lines set to 0; {log["fragile"]} kept lines within the guard of a rating edge')
     out = []
-    for c, ab, cash, line, fv in rows:
+    for c, ab, cash, line, rating, fv in rows:
         p = PRICE_BASE * (fv / PRICE_REF_USD) ** PRICE_EXP * price_jitter(c['id'])
         p = min(PRICE_MAX, max(PRICE_MIN, round(p)))
         out.append({'id': c['id'], 'ticker': c['ticker'], 'public': c['public'],
                     'gross_assets_usd': round(2 * ab), 'asset_book_usd': round(ab), 'cash_usd': round(cash),
-                    'credit_drawn_usd': round(line), 'book_equity_usd': round(cash + ab - line),
+                    'credit_drawn_usd': round(line), 'start_rating': rating,
+                    'book_equity_usd': round(cash + ab - line),
                     'engine_value_usd': round(fv), 'open_price': p, 'shares': max(1, round(fv / p))})
     return out
 

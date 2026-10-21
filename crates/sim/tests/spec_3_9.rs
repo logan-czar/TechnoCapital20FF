@@ -369,13 +369,13 @@ fn check_against_fixture(id: &str, f: &CompanyFacts<'_>, row: &FixtureRow, full:
 
 #[test]
 fn golden_statements_for_five_sample_companies() {
-    // Arrowhead (Oil, Canada, cash, no line), CO-0002 (private, drawn line), Andes Cobre
-    // (Mining, Chile, 312 bps home spread), Gulf Coast Grid (Power utilities), Changcheng Grid
-    // Engineering (CC, a loss after interest, no tax). Expected values: the independent Python
-    // export (export_finance_fixtures.py).
+    // Arrowhead (Oil, Canada, cash, no line), CO-0002 (private, a drawn line sized to its 5.12
+    // limit, D15), Andes Cobre (Mining, Chile, 312 bps home spread), Gulf Coast Grid (Power
+    // utilities), Casa de Cambio La Frontera (B-, a loss after its line interest, no tax). Expected
+    // values: the independent Python export (export_finance_fixtures.py).
     let d = data();
     let rows = finance_start();
-    for id in ["CO-0001", "CO-0002", "CO-0179", "CO-0053", "CO-0044"] {
+    for id in ["CO-0001", "CO-0002", "CO-0179", "CO-0053", "CO-0016"] {
         let row = rows.iter().find(|r| r.id() == id).unwrap();
         check_against_fixture(id, &facts(&d, id), row, true);
     }
@@ -389,11 +389,13 @@ fn golden_statements_for_five_sample_companies() {
     assert_eq!(start.line_drawn, 0.0);
     assert!((start.equity - 100.0e6).abs() < 1.0);
     assert_eq!(annual.revenue / 4.0, 10.0e6);
-    // Changcheng loses money after its CC-rate interest: no tax in the quarter (5.11).
-    let f = facts(&d, "CO-0044");
-    let row = rows.iter().find(|r| r.id() == "CO-0044").unwrap();
+    // La Frontera earns an EBIT but loses money after its B- line interest: no tax in the quarter
+    // (5.11). Since D16 no company starts rated CCC or CC with a drawn line.
+    let f = facts(&d, "CO-0016");
+    let row = rows.iter().find(|r| r.id() == "CO-0016").unwrap();
     let (annual, _, rating) = run_rate(&f, row);
-    assert_eq!(rating, Rating::Cc);
+    assert_eq!(rating, Rating::BMinus);
+    assert!(annual.ebit() > 0.0);
     assert!(annual.pre_tax_income() < 0.0);
     assert_eq!(annual.tax, 0.0);
 }
