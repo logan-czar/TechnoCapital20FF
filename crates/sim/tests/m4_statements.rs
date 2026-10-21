@@ -206,10 +206,19 @@ fn golden_statements_for_five_sample_companies() {
             REL,
         );
     }
-    // Changcheng loses money after its CC-rate interest: no tax (5.11).
+    // Changcheng starts at the fixture's rating (CC), and a quarter's tax is 5.11's
+    // `max(0, pre-tax) × rate` (no carryforward at load): 0 for a loss.
     let cc = &w.companies[company(w, "CO-0044")];
-    assert!(cc.finance.quarters()[3].lines.pre_tax_income() < 0.0);
-    assert_eq!(cc.finance.quarters()[3].lines.tax, 0.0);
+    assert_eq!(cc.finance.rating, row("CO-0044").rating("start_rating"));
+    let china = d
+        .country_economy
+        .rows
+        .iter()
+        .find(|e| e.iso3 == "CHN")
+        .unwrap()
+        .corp_tax_rate;
+    let l = cc.finance.quarters()[3].lines;
+    assert!((l.tax - l.pre_tax_income().max(0.0) * china).abs() < 1e-6);
 
     // Arrowhead (7.1): $40M revenue, paid R&D $0.72M a year (0.05 × 0.7 × 0.8 = 2.8% less 1%
     // free), no line, $80.4M of cash at base − 0.25% (5.12), Canada's 26.5% tax (country-economy).

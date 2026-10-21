@@ -32,8 +32,11 @@ use super::statements::{
 };
 use super::tax::{accrue_month, close_quarter, quarter_tax};
 use crate::ai::archetype::rd_plan_at_load;
+use crate::economy::PRODUCTIVITY_SCALE;
 use crate::economy::QUARTERS_PER_YEAR as QUARTERS_PER_YEAR_F64;
 use crate::economy::assets::sale_factor;
+use crate::economy::revenue::variable_cost_share;
+use crate::ops::stations::BAREBONES_REVENUE_USD;
 use crate::people::traits::Trait;
 use crate::time::{JobCtx, Scheduler, Slot};
 use crate::world::{AlertKind, AlertPayload, Company, CompanyId, World};
@@ -118,25 +121,43 @@ pub fn key_figures(world: &World, c: &Company) -> KeyFigures {
 // ---------------------------------------------------------------------------------------------
 // Load (spec 7.1, 4.4).
 
-/// The starting run rate of one company (spec 7.1 "Rating", "History"; D121): a year of the
-/// engine's load month (D110) with R&D at the 6.3 plan (archetype and trait mults less free R&D,
-/// productivity 100, loss_q 0), the line at the starting rating (5.12) on company-start.csv's
-/// cash and line, tax on each quarter's pre-tax income with no carryforward (5.11) and
-/// replacement purchases equal to depreciation (a flat history, D228). Returns the year's ledger,
-/// the starting rating and the line.
+/// The starting run rate of one company (spec 7.1 "Rating", "History"; D121): the 7.1 company
+/// at M 1.0 for a year. Each unit makes the revenue 7.1 sized it for (companies.csv R; a
+/// barebones unit its $100,000 at its p_pre), variable cost `v × revenue`, and fixed cash,
+/// depreciation and shared costs together `f × revenue × 100 ÷ p_pre` (5.5: the fixed cost rate
+/// holds them at `f × turnover × gross`), split as the load month splits them (depreciation and
+/// the 3.8 bill as booked, fixed cash the rest). Paid R&D is the 6.3 plan (archetype and trait
+/// mults less free R&D, productivity 100, loss_q 0). The line is at the starting rating (5.12) on
+/// company-start.csv's cash and line, tax on each quarter's pre-tax income with no carryforward
+/// (5.11) and replacement purchases equal to depreciation (a flat history, D228). Returns the
+/// year's ledger, the starting rating and the line.
+///
+/// The load month itself runs at the load M and on gross assets rounded to the dollar, about
+/// 1e-7 off R, enough to move a rating that D236 sizes to a band edge; the run rate does not.
 pub fn run_rate(world: &World, c: &Company) -> (Ledger, super::rating::ImpliedRating, CreditLine) {
     let traits = controller_traits(world, c);
     let mut l = Ledger::default();
+    let sole = c.units.len() == 1;
     for &u in &c.units {
         let u = &world.units[u];
         let params = &world.industries[u.industry].params;
         let free = c.data_in(u.industry).map_or(0.0, |b| b.free_rd_fraction());
-        let revenue = MONTHS_PER_YEAR * u.revenue_m;
+        let p_pre = crate::economy::supply::p_pre(u, c);
+        // 7.1: the unit makes R at M 1.0 (one unit per company in the MVP); below $0.1M the
+        // barebones loadout makes its assets at p_pre (D107).
+        let revenue = if sole && c.revenue_usd >= BAREBONES_REVENUE_USD {
+            c.revenue_usd
+        } else {
+            u.assets_eff() * params.asset_turnover * p_pre / PRODUCTIVITY_SCALE
+        };
+        let fixed_total = params.fixed_cost_share * revenue * PRODUCTIVITY_SCALE / p_pre;
+        let depreciation = MONTHS_PER_YEAR * u.dep_m;
+        let shared = MONTHS_PER_YEAR * u.shared_m;
         l.revenue += revenue;
-        l.variable += MONTHS_PER_YEAR * u.variable_m;
-        l.fixed_cash += MONTHS_PER_YEAR * u.fixed_m;
-        l.shared += MONTHS_PER_YEAR * u.shared_m;
-        l.depreciation += MONTHS_PER_YEAR * u.dep_m;
+        l.variable += revenue * variable_cost_share(params);
+        l.fixed_cash += fixed_total - depreciation - shared;
+        l.shared += shared;
+        l.depreciation += depreciation;
         l.rd += revenue * rd_plan_at_load(params.rd_norm, c.archetype, traits, free);
     }
     let cash = c.cash_usd;
