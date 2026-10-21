@@ -3,7 +3,7 @@
 
 mod finance_common;
 
-use finance_common::{BASE_RATE, data, facts};
+use finance_common::{BASE_RATE, assert_close, data, facts, finance_start};
 use sim::finance::credit::{
     CreditLine, EXCESS_REPAY_MONTHS, auto_draw, excess_instalment, home_spread, line_limit,
     line_rate, min_cash, monthly_charges, own_cash, plan_repay, review_line,
@@ -208,4 +208,63 @@ fn review_gives_three_months_to_repay_the_excess() {
     };
     assert!(overdue.excess_overdue());
     assert_eq!(excess_instalment(&overdue), 10.0e6);
+}
+
+#[test]
+fn starting_limits_match_the_python_export_for_all_651() {
+    // 5.12 limit at load: (0.5 × asset_book + own cash) × rating_factor(starting rating), with
+    // the balances from company-start.csv and the starting rating that spec_5_12_rating checks
+    // against the same fixture; the expected limit is the independent Python export's.
+    let d = data();
+    for row in finance_start() {
+        let f = facts(&d, row.id());
+        let limit = line_limit(
+            f.start.asset_book_usd,
+            f.start.cash_usd,
+            f.start.credit_drawn_usd,
+            row.rating("start_rating"),
+        );
+        assert_close(&format!("{} limit", row.id()), limit, row.num("limit"));
+    }
+}
+
+#[test]
+fn design_fix_221_starting_lines_over_their_limit() {
+    // Pinned until Logan decides design fix 221: with the 7.1 starting lines and the 5.12
+    // limit, 231 of the 302 companies that start with a drawn line are over their own limit at
+    // load, among them all 63 rated CCC or CC (rating factor 0, so a limit of 0); $798B over in
+    // all, and 215 cannot repay the excess from cash. If a fix lands, update these numbers.
+    let d = data();
+    let (mut with_line, mut over, mut ccc_or_cc, mut short_of_cash) = (0, 0, 0, 0);
+    let mut excess = 0.0;
+    for row in finance_start() {
+        let f = facts(&d, row.id());
+        let drawn = f.start.credit_drawn_usd;
+        if drawn <= 0.0 {
+            continue;
+        }
+        with_line += 1;
+        let rating = row.rating("start_rating");
+        let limit = line_limit(f.start.asset_book_usd, f.start.cash_usd, drawn, rating);
+        if rating >= Rating::Ccc {
+            ccc_or_cc += 1;
+            assert_eq!(limit, 0.0, "{}", row.id());
+        }
+        if drawn > limit {
+            over += 1;
+            excess += drawn - limit;
+            if f.start.cash_usd < drawn - limit {
+                short_of_cash += 1;
+            }
+        }
+    }
+    assert_eq!(with_line, 302);
+    assert_eq!(over, 231);
+    assert_eq!(ccc_or_cc, 63);
+    assert_eq!(short_of_cash, 215);
+    assert!(
+        (excess / 1.0e9 - 798.25).abs() < 0.01,
+        "excess ${}B",
+        excess / 1.0e9
+    );
 }
