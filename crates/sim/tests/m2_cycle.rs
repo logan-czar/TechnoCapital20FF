@@ -13,24 +13,82 @@ use sim::world::{CyclePhase, World};
 /// 100 years of quarters per seed.
 const QUARTERS: usize = 400;
 
+/// The spec 5.1 phase table, written out here so the test does not read the code under test:
+/// phase, g_t a year (low, high), length in quarters (shortest, longest), next phase.
+const SPEC_5_1: [(CyclePhase, (f64, f64), (u32, u32), CyclePhase); 4] = [
+    (
+        CyclePhase::Expansion,
+        (0.0, 0.02),
+        (12, 28),
+        CyclePhase::Overheating,
+    ),
+    (
+        CyclePhase::Overheating,
+        (0.02, 0.04),
+        (2, 6),
+        CyclePhase::Contraction,
+    ),
+    (
+        CyclePhase::Contraction,
+        (-0.06, -0.03),
+        (2, 8),
+        CyclePhase::Recovery,
+    ),
+    (
+        CyclePhase::Recovery,
+        (-0.02, 0.01),
+        (4, 10),
+        CyclePhase::Expansion,
+    ),
+];
+
+/// The spec 5.1 row of a phase.
+fn spec_row(phase: CyclePhase) -> ((f64, f64), (u32, u32), CyclePhase) {
+    let (_, g, len, next) = *SPEC_5_1.iter().find(|r| r.0 == phase).unwrap();
+    (g, len, next)
+}
+
+#[test]
+fn phase_table_is_the_spec_table() {
+    for (phase, g, len, next) in SPEC_5_1 {
+        let spec = phase_spec(phase);
+        assert_eq!(
+            (spec.g_range, spec.length, spec.next),
+            (g, len, next),
+            "{phase:?}"
+        );
+    }
+    assert_eq!(
+        START_PHASE,
+        CyclePhase::Expansion,
+        "the game starts in Expansion (7.3)"
+    );
+}
+
 #[test]
 fn phase_lengths_and_g_stay_in_range_over_500_seeds() {
     let (mut phases, mut quarters, mut g_quarters) = (0usize, 0usize, 0.0);
+    // The shortest and longest length seen per phase: a uniform whole-quarter draw reaches both
+    // ends of its range (D101).
+    let mut seen: Vec<(u32, u32)> = vec![(u32::MAX, 0); SPEC_5_1.len()];
     for seed in 0..500 {
         let mut rng = RngStreams::new(seed);
         let mut c = start_cycle(2, 1.07, &mut rng);
-        assert_eq!(c.phase, START_PHASE, "the game starts in Expansion (7.3)");
+        assert_eq!(
+            c.phase,
+            CyclePhase::Expansion,
+            "the game starts in Expansion (7.3)"
+        );
         let mut entered = (c.phase, c.g_t, c.quarters_left);
-        let check = |(phase, g, len): (CyclePhase, f64, u32)| {
-            let spec = phase_spec(phase);
+        let mut check = |(phase, g, len): (CyclePhase, f64, u32)| {
+            let ((lo, hi), (shortest, longest), _) = spec_row(phase);
+            assert!((lo..hi).contains(&g), "seed {seed}: {phase:?} g {g}");
             assert!(
-                (spec.g_range.0..spec.g_range.1).contains(&g),
-                "seed {seed}: {phase:?} g {g}"
-            );
-            assert!(
-                (spec.length.0..=spec.length.1).contains(&len),
+                (shortest..=longest).contains(&len),
                 "seed {seed}: {phase:?} length {len}"
             );
+            let i = SPEC_5_1.iter().position(|r| r.0 == phase).unwrap();
+            seen[i] = (seen[i].0.min(len), seen[i].1.max(len));
         };
         check(entered);
         let mut used = 1;
@@ -43,7 +101,7 @@ fn phase_lengths_and_g_stay_in_range_over_500_seeds() {
                     used, entered.2,
                     "seed {seed}: the phase ran its drawn length"
                 );
-                assert_eq!(c.phase, phase_spec(was).next, "phases go in order");
+                assert_eq!(c.phase, spec_row(was).2, "phases go in the spec 5.1 order");
                 entered = (c.phase, c.g_t, c.quarters_left);
                 check(entered);
                 phases += 1;
@@ -55,6 +113,9 @@ fn phase_lengths_and_g_stay_in_range_over_500_seeds() {
             assert_eq!(c.g_history[0], c.g_t);
             quarters += 1;
         }
+    }
+    for ((phase, _, len, _), got) in SPEC_5_1.iter().zip(&seen) {
+        assert_eq!(*got, *len, "{phase:?}: lengths seen cover the whole range");
     }
     // Spec 5.1: an average cycle (four phases) runs about 9 years and g_t averages about +0.2% a
     // year over it.
