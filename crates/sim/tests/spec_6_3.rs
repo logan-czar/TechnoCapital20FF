@@ -29,12 +29,13 @@ fn inputs(mult: f64, productivity: f64, traits: &[Trait], loss_q: u32, free: u32
 
 #[test]
 fn productivity_adjustment() {
-    assert_eq!(productivity_adj(94.9), 0.25);
-    assert_eq!(productivity_adj(95.0), 0.0);
+    // +0.5 below 100 (D360, the M10.7 tuning of the spec's +0.25 below 95); −0.2 above 110.
+    assert_eq!(productivity_adj(99.9), 0.5);
+    assert_eq!(productivity_adj(100.0), 0.0);
     assert_eq!(productivity_adj(110.0), 0.0);
     assert_eq!(productivity_adj(110.1), -0.2);
-    // Incumbent at 90: 0.05 × 1.25; at 120: 0.05 × 0.8.
-    assert!(close(rd_target(&inputs(1.0, 90.0, &[], 0, 0)), 0.0625));
+    // Incumbent at 90: 0.05 × 1.5; at 120: 0.05 × 0.8.
+    assert!(close(rd_target(&inputs(1.0, 90.0, &[], 0, 0)), 0.075));
     assert!(close(rd_target(&inputs(1.0, 120.0, &[], 0, 0)), 0.04));
 }
 

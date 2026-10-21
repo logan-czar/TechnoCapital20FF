@@ -8,9 +8,14 @@
 pub use super::archetype::{RD_PLAN_MAX_NORMS, TRAIT_RD_MULTS, trait_rd_mult as trait_mult};
 use crate::people::traits::Trait;
 
-/// Spec 6.3: +0.25 below productivity 95.
-pub const LOW_PRODUCTIVITY_BELOW: f64 = 95.0;
-pub const LOW_PRODUCTIVITY_ADJ: f64 = 0.25;
+/// Spec 6.3: the productivity adj applies below this productivity (T). The spec's 95 is tuned to
+/// 100 (M10.7, D360, pending Logan): the AI defends the starting productivity, not 95.
+pub const LOW_PRODUCTIVITY_BELOW: f64 = 100.0;
+/// Spec 6.3: the adj below LOW_PRODUCTIVITY_BELOW (T). The spec's +0.25 is tuned to +0.5 (M10.7,
+/// D360, pending Logan; design fix 108): with 5.6, an Incumbent at 1.25 × norm gains
+/// `10 × 0.25 × mgmt_factor ÷ 12` ≈ 0.21 a month against 0.3 to 0.5 of decay, so productivity
+/// only fell (median 87 after 10 years); at 1.5 × norm it gains about 0.42 and holds near 100.
+pub const LOW_PRODUCTIVITY_ADJ: f64 = 0.5;
 /// Spec 6.3: −0.2 above productivity 110.
 pub const HIGH_PRODUCTIVITY_ABOVE: f64 = 110.0;
 pub const HIGH_PRODUCTIVITY_ADJ: f64 = -0.2;
@@ -22,7 +27,8 @@ pub const LOSS_CUT_FLOOR_NORMS: f64 = 0.5;
 /// free_rd_pct is a whole percent (5.9); rd_plan is a fraction of revenue (D211).
 pub const PERCENT: f64 = 100.0;
 
-/// The productivity adjustment (spec 6.3): +0.25 below 95, −0.2 above 110, else 0.
+/// The productivity adjustment (spec 6.3): +0.5 below 100 (D360; the spec says +0.25 below 95),
+/// −0.2 above 110, else 0.
 pub fn productivity_adj(productivity: f64) -> f64 {
     if productivity < LOW_PRODUCTIVITY_BELOW {
         LOW_PRODUCTIVITY_ADJ
