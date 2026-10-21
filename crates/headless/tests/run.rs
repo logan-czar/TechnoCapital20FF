@@ -82,7 +82,11 @@ fn monthly_hashes_and_metrics() {
     assert!(int(21) >= bankrupt + removed, "{}", rows[1]);
     assert_eq!(int(22), removed, "{}", rows[1]);
     let active = num(23) * 651.0;
-    assert!((active.round() as usize + distressed + bankrupt + removed) == 651, "{}", rows[1]);
+    assert!(
+        (active.round() as usize + distressed + bankrupt + removed) == 651,
+        "{}",
+        rows[1]
+    );
     assert!(num(24) >= 0.0, "{}", rows[1]);
     let banded: usize = cols[25]
         .split('|')

@@ -95,19 +95,20 @@ pub fn apply_asset_month(
     params: &IndustryParams,
     label: PhaseLabel,
 ) -> AssetMonth {
-    let g = unit.growth_plan;
-    apply_asset_month_at(unit, params, label, g)
+    apply_asset_month_buying(unit, params, label, true)
 }
 
-/// [`apply_asset_month`] at the annual net growth rate `g` in place of the unit's plan: a
-/// Distressed company runs `min(plan, −d_eff)`, so it buys nothing (spec 5.12 step 1).
-pub fn apply_asset_month_at(
+/// [`apply_asset_month`] with `may_buy` false for a Distressed company (spec 5.12 step 1:
+/// purchases stop, g = −d_eff at most): the plan's month is capped at 0, so a plan that would buy
+/// buys nothing (the base shrinks by decay alone) and one that sells still sells.
+pub fn apply_asset_month_buying(
     unit: &mut BusinessUnit,
     params: &IndustryParams,
     label: PhaseLabel,
-    g: f64,
+    may_buy: bool,
 ) -> AssetMonth {
     let mut out = AssetMonth::default();
+    let g = unit.growth_plan;
     let gross0 = unit.gross_assets;
     let yearly_decay = decay_usd(gross0, params);
     // Decay: a real loss of capacity at cost; depreciation off the book (5.5, 5.10).
@@ -124,7 +125,10 @@ pub fn apply_asset_month_at(
     }
     unit.ramping.retain(|t| t.months_left > 0);
     // The plan: replacement first, then growth (spec 5.10).
-    let plan = (yearly_decay + gross0 * g) / MONTHS_PER_YEAR;
+    let mut plan = (yearly_decay + gross0 * g) / MONTHS_PER_YEAR;
+    if !may_buy {
+        plan = plan.min(0.0);
+    }
     if plan > 0.0 {
         out.purchases = plan;
         unit.gross_assets += plan;
@@ -168,11 +172,6 @@ pub fn assets_job(world: &mut World, _: &mut JobCtx<'_>) {
             unit.dep_m = 0.0;
             continue;
         }
-        let g = if status.may_buy_assets() {
-            unit.growth_plan
-        } else {
-            unit.growth_plan.min(-d_eff(unit.gross_assets, &ind.params))
-        };
-        apply_asset_month_at(unit, &ind.params, ind.phase_label, g);
+        apply_asset_month_buying(unit, &ind.params, ind.phase_label, status.may_buy_assets());
     }
 }
