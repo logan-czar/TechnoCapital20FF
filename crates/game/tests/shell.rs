@@ -436,6 +436,18 @@ fn screens_show_the_views() {
     frames(&mut app, 60);
     let after = line(&mut app);
     assert_ne!(before, after);
-    let refresh = app.world().resource::<Views>().refresh();
-    assert!(after.contains(&format!("of {refresh}")), "{after}");
+    let version = app.world().resource::<Views>().quotes.version();
+    assert!(after.contains(&format!("version {version} ")), "{after}");
+    // A monthly view's line holds still while v_quotes moves every tick.
+    let monthly = |app: &mut App| {
+        app.world_mut()
+            .query::<(&ViewLine, Ref<Text>)>()
+            .iter(app.world())
+            .find(|(_, t)| t.0.contains("v_filings"))
+            .map(|(_, t)| (t.0.clone(), t.last_changed()))
+            .unwrap()
+    };
+    let (text, changed) = monthly(&mut app);
+    frames(&mut app, 3);
+    assert_eq!(monthly(&mut app), (text, changed), "not rewritten");
 }

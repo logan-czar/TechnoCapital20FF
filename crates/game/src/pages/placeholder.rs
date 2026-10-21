@@ -509,14 +509,22 @@ fn placeholder_page(
 }
 
 /// Writes each view line: its name, version, the refresh count and cadence.
-pub fn show_view_lines(views: Res<Views>, mut lines: Query<(&ViewLine, &mut Text)>) {
+/// The line shows the view's own version, not the global refresh count, so it changes only when
+/// that view is rebuilt (a monthly view's line stays put while v_quotes moves every tick); the
+/// system runs when the views change or lines appear, and writes a line only when it differs.
+pub fn show_view_lines(
+    views: Res<Views>,
+    mut lines: Query<(Ref<ViewLine>, &mut Text)>,
+    mut last: Local<u64>,
+) {
+    let all = views.refresh() != *last;
+    *last = views.refresh();
     for (line, mut text) in &mut lines {
+        if !all && !line.is_added() {
+            continue;
+        }
         let (name, version, cadence) = view_meta(&views, line.0);
-        let s = format!(
-            "  {name}: refresh {version} of {} ({})",
-            views.refresh(),
-            cadence_name(cadence)
-        );
+        let s = format!("  {name}: version {version} ({})", cadence_name(cadence));
         if text.0 != s {
             text.0 = s;
         }
