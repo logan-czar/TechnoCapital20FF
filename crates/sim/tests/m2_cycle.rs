@@ -15,7 +15,8 @@ const QUARTERS: usize = 400;
 
 /// The spec 5.1 phase table, written out here so the test does not read the code under test:
 /// phase, g_t a year (low, high), length in quarters (shortest, longest), next phase.
-const SPEC_5_1: [(CyclePhase, (f64, f64), (u32, u32), CyclePhase); 4] = [
+type Row = (CyclePhase, (f64, f64), (u32, u32), CyclePhase);
+const SPEC_5_1: [Row; 4] = [
     (
         CyclePhase::Expansion,
         (0.0, 0.02),
@@ -43,9 +44,8 @@ const SPEC_5_1: [(CyclePhase, (f64, f64), (u32, u32), CyclePhase); 4] = [
 ];
 
 /// The spec 5.1 row of a phase.
-fn spec_row(phase: CyclePhase) -> ((f64, f64), (u32, u32), CyclePhase) {
-    let (_, g, len, next) = *SPEC_5_1.iter().find(|r| r.0 == phase).unwrap();
-    (g, len, next)
+fn spec_row(phase: CyclePhase) -> Row {
+    *SPEC_5_1.iter().find(|r| r.0 == phase).unwrap()
 }
 
 #[test]
@@ -81,7 +81,7 @@ fn phase_lengths_and_g_stay_in_range_over_500_seeds() {
         );
         let mut entered = (c.phase, c.g_t, c.quarters_left);
         let mut check = |(phase, g, len): (CyclePhase, f64, u32)| {
-            let ((lo, hi), (shortest, longest), _) = spec_row(phase);
+            let (_, (lo, hi), (shortest, longest), _) = spec_row(phase);
             assert!((lo..hi).contains(&g), "seed {seed}: {phase:?} g {g}");
             assert!(
                 (shortest..=longest).contains(&len),
@@ -101,7 +101,7 @@ fn phase_lengths_and_g_stay_in_range_over_500_seeds() {
                     used, entered.2,
                     "seed {seed}: the phase ran its drawn length"
                 );
-                assert_eq!(c.phase, spec_row(was).2, "phases go in the spec 5.1 order");
+                assert_eq!(c.phase, spec_row(was).3, "phases go in the spec 5.1 order");
                 entered = (c.phase, c.g_t, c.quarters_left);
                 check(entered);
                 phases += 1;
