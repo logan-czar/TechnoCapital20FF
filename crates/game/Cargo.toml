@@ -24,3 +24,7 @@ bevy = { workspace = true, features = [
 
 [lints]
 workspace = true
+
+[dev-dependencies]
+# The table spike (examples/table_spike.rs) reads the real province rows.
+sim-data.workspace = true
