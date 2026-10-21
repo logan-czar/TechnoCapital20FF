@@ -18,8 +18,11 @@ use crate::world::{CompanyId, PhaseLabel};
 
 /// Spec 5.20: at least 8 quarters since birth (starting companies pass at once) ...
 pub const MIN_QUARTERS_SINCE_BIRTH: u32 = 8;
-/// ... and TTM revenue at least $250M (T).
-pub const MIN_TTM_REVENUE_USD: f64 = 250.0e6;
+/// ... and TTM revenue at least $250M (T), lowered to $75M by the M10 tuning pass (M10.7, D362,
+/// pending Logan): at $250M born companies, which start at $5M to $50M and mostly grow at the
+/// 6.2 below-hurdle 2%, almost never qualify, and 30 years give 34 to 54 listings against spec
+/// 10's 60 to 250.
+pub const MIN_TTM_REVENUE_USD: f64 = 75.0e6;
 /// Spec 5.20: TTM net income above 0, or 4-quarter revenue growth of at least 20%.
 pub const MIN_REVENUE_GROWTH: f64 = 0.20;
 /// Spec 5.20.1 step 1: a starting private company's first vote falls at one of the four 2020
@@ -78,9 +81,10 @@ pub struct IpoTestInputs {
 }
 
 /// True if a company may be put to an IPO vote (spec 5.20): private and Active; 8 quarters since
-/// birth (starting companies at once); TTM revenue at least $250M; TTM net income above 0 or
-/// revenue growth of at least 20%; rated B or better (rating factor above 0, as 6.6 reads it:
-/// B- counts); its industry not labeled Bust. ("Not Distressed" is in "Active".)
+/// birth (starting companies at once); TTM revenue at least $75M (D362; the spec says $250M);
+/// TTM net income above 0 or revenue growth of at least 20%; rated B or better (rating factor
+/// above 0, as 6.6 reads it: B- counts); its industry not labeled Bust. ("Not Distressed" is in
+/// "Active".)
 pub fn passes_ipo_tests(i: &IpoTestInputs) -> bool {
     !i.listed
         && i.status == CompanyStatus::Active

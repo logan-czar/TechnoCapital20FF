@@ -76,13 +76,17 @@ fn the_dividend_rule_at_the_first_plan_lock() {
             c.key,
             plan.financing.dividend
         );
-        // Cash moved at the lock by the draw, repayment and dividend (D125).
+        // Cash moved at the lock by the draw, repayment and dividend (D125). A company that lists
+        // at this lock also takes its IPO's new money (5.20.1 listing step 3), so its cash is
+        // left out here; the listing's own books are checked in spec_5_20.
         let moved = plan.financing.draw - plan.financing.repay - plan.financing.dividend;
-        assert!(
-            (a.cash_usd - (c.cash_usd + moved)).abs() < 1e-6,
-            "{}",
-            c.key
-        );
+        if c.public || !a.public {
+            assert!(
+                (a.cash_usd - (c.cash_usd + moved)).abs() < 1e-6,
+                "{}",
+                c.key
+            );
+        }
         paying += usize::from(want > 0.0);
         if a.archetype == Archetype::Startup {
             assert_eq!(

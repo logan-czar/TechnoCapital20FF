@@ -45,9 +45,9 @@ fn ipo_tests_one_condition_at_a_time() {
     // 8 quarters since birth (starting companies, None, pass at once).
     assert!(fails(&|i| i.quarters_since_birth = Some(7)));
     assert!(!fails(&|i| i.quarters_since_birth = Some(8)));
-    // TTM revenue at least $250M.
-    assert!(fails(&|i| i.ttm_revenue = 249.9e6));
-    assert!(!fails(&|i| i.ttm_revenue = 250.0e6));
+    // TTM revenue at least $75M (D362, the M10.7 tuning of the spec's $250M).
+    assert!(fails(&|i| i.ttm_revenue = 74.9e6));
+    assert!(!fails(&|i| i.ttm_revenue = 75.0e6));
     // Net income above 0, or 4-quarter growth of at least 20%.
     assert!(fails(&|i| i.ttm_net_income = 0.0));
     assert!(!fails(&|i| {
