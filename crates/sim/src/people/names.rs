@@ -4,10 +4,16 @@
 //! A country's culture comes from names/country-cultures.csv; its first names and surnames from
 //! the rows of that culture in the country's superregion file. Cultures with `family_first` put
 //! the surname first, as the world-gen generator does (tools/world-gen/gen.py `person_name`).
+//!
+//! Jobs see only the `World` (no `WorldData`), and a save loads without the CSVs (D13), so the
+//! books are built once at load into [`NameBooks`] (serde, one entry per country in country id
+//! order) and stored on the World; generators read from there.
 
+use serde::{Deserialize, Serialize};
 use sim_data::{NameKind, NameRow, SUPERREGIONS, WorldData};
 
 use crate::rng::{DrawSource, Stream};
+use crate::world::{CountryId, Ordinal};
 
 /// Chance a generated person is female (decision D203).
 pub const FEMALE_CHANCE: f64 = 0.5;
@@ -15,7 +21,7 @@ pub const FEMALE_CHANCE: f64 = 0.5;
 pub const UNIQUE_NAME_TRIES: u32 = 200;
 
 /// The name parts of one culture (spec 3.7.1), in file order.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NameBook {
     pub culture: String,
     pub family_first: bool,
@@ -48,24 +54,10 @@ impl NameBook {
     /// The book for a country (countries.csv `iso3`): its culture from country-cultures.csv, in
     /// its superregion's file. If the culture is missing from that file, the file's first culture
     /// (in file order) is used (D203); the sim-data checks make this not happen with today's data.
+    /// Scans the name rows: build [`NameBooks`] once at load rather than calling this per draw.
     pub fn for_country(data: &WorldData, iso3: &str) -> Option<NameBook> {
-        let country = data.countries.rows.iter().find(|c| c.iso3 == iso3)?;
-        let region = SUPERREGIONS
-            .iter()
-            .position(|(_, name)| *name == country.superregion)?;
-        let rows = &data.names.get(region)?.rows;
-        let culture = data
-            .country_cultures
-            .rows
-            .iter()
-            .find(|c| c.iso3 == iso3)
-            .map(|c| c.culture.as_str());
-        culture
-            .and_then(|c| NameBook::from_rows(rows, c))
-            .or_else(|| {
-                rows.first()
-                    .and_then(|r| NameBook::from_rows(rows, &r.culture))
-            })
+        let (region, culture) = country_culture(data, iso3)?;
+        NameBook::from_rows(&data.names.get(region)?.rows, &culture)
     }
 
     /// A random full name: female with [`FEMALE_CHANCE`], then a first name and a surname, each
@@ -97,6 +89,99 @@ impl NameBook {
             .map(|n| format!("{name} {}", roman(n)))
             .find(|n| !taken(n))
             .expect("some numeral suffix is free")
+    }
+}
+
+/// The superregion file index and culture a country's names come from (D203 fallback).
+fn country_culture(data: &WorldData, iso3: &str) -> Option<(usize, String)> {
+    let country = data.countries.rows.iter().find(|c| c.iso3 == iso3)?;
+    let region = SUPERREGIONS
+        .iter()
+        .position(|(_, name)| *name == country.superregion)?;
+    let rows = &data.names.get(region)?.rows;
+    let listed = data
+        .country_cultures
+        .rows
+        .iter()
+        .find(|c| c.iso3 == iso3)
+        .map(|c| c.culture.clone())
+        .filter(|c| NameBook::from_rows(rows, c).is_some());
+    let culture = listed.or_else(|| rows.first().map(|r| r.culture.clone()))?;
+    Some((region, culture))
+}
+
+/// One [`NameBook`] per country, built once at load and stored on the World (spec 3.7.1, 3.7.2;
+/// D203). Countries sharing a superregion and culture share one book.
+#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
+pub struct NameBooks {
+    /// Distinct books, in the order first needed.
+    books: Vec<NameBook>,
+    /// For each country ordinal, its index in `books`.
+    by_country: Vec<u32>,
+}
+
+/// A country with no name book (its superregion file is missing or has no usable culture).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NoNameBook(pub String);
+
+impl NameBooks {
+    /// Builds the books for `country_keys` (iso3), given in country id order (the World's
+    /// `countries` table order, D4), so `get(CountryId)` lines up with the World.
+    pub fn build<'a>(
+        data: &WorldData,
+        country_keys: impl IntoIterator<Item = &'a str>,
+    ) -> Result<NameBooks, NoNameBook> {
+        let mut keys: Vec<(usize, String)> = Vec::new();
+        let mut out = NameBooks::default();
+        for iso3 in country_keys {
+            let missing = || NoNameBook(iso3.to_string());
+            let key = country_culture(data, iso3).ok_or_else(missing)?;
+            let index = match keys.iter().position(|k| *k == key) {
+                Some(i) => i,
+                None => {
+                    let rows = &data.names.get(key.0).ok_or_else(missing)?.rows;
+                    let book = NameBook::from_rows(rows, &key.1).ok_or_else(missing)?;
+                    keys.push(key);
+                    out.books.push(book);
+                    out.books.len() - 1
+                }
+            };
+            out.by_country.push(index as u32);
+        }
+        Ok(out)
+    }
+
+    /// Builds the books for every country of `data` in ascending iso3 byte order, the World's
+    /// country id order (D4).
+    pub fn from_data(data: &WorldData) -> Result<NameBooks, NoNameBook> {
+        let mut keys: Vec<&str> = data
+            .countries
+            .rows
+            .iter()
+            .map(|c| c.iso3.as_str())
+            .collect();
+        keys.sort_unstable();
+        NameBooks::build(data, keys)
+    }
+
+    /// The book of a country.
+    pub fn get(&self, country: CountryId) -> Option<&NameBook> {
+        let i = *self.by_country.get(country.index())?;
+        self.books.get(i as usize)
+    }
+
+    /// Countries covered.
+    pub fn len(&self) -> usize {
+        self.by_country.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.by_country.is_empty()
+    }
+
+    /// Distinct books held.
+    pub fn distinct(&self) -> usize {
+        self.books.len()
     }
 }
 
