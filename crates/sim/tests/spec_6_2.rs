@@ -29,11 +29,11 @@ fn row_loss_q_2_to_3_shrinks_5_percent() {
 
 #[test]
 fn row_roa_at_or_above_hurdle_follows_demand_plus_adj() {
-    // Incumbent (hurdle 10%, adj 0): g_dem 5% less 10 × (1.002 − 1) = 3% (D263: S − 1 and g
-    // are both fractions, so each 1% of oversupply costs 10 pp).
+    // Incumbent (hurdle 10%, adj 0): g_dem 5% less max(0, 1.02 − 1) = 3% (Logan, design fix
+    // 241, D282: 1 point of growth per 1% of oversupply).
     let inc = Archetype::Incumbent.params();
-    assert!(close(situation_growth(0, 0.12, 0.05, 1.002, &inc), 0.03));
-    assert!(close(situation_growth(0, 0.12, 0.05, 1.1, &inc), -0.95));
+    assert!(close(situation_growth(0, 0.12, 0.05, 1.02, &inc), 0.03));
+    assert!(close(situation_growth(0, 0.12, 0.05, 1.1, &inc), -0.05));
     // At the hurdle exactly the row applies; S below 1 takes nothing off.
     assert!(close(situation_growth(1, 0.10, 0.05, 0.9, &inc), 0.05));
     // Cash cow (hurdle 15%, adj −3 pp): 5% − 3% = 2%.
@@ -49,8 +49,8 @@ fn row_roa_below_hurdle_is_at_most_2_percent() {
     let inc = Archetype::Incumbent.params();
     // min(2%, 5%) = 2%.
     assert!(close(situation_growth(0, 0.05, 0.05, 1.0, &inc), 0.02));
-    // min(2%, 5% − 10 × 0.02) = −15%.
-    assert!(close(situation_growth(0, 0.0, 0.05, 1.02, &inc), -0.15));
+    // min(2%, 5% − 20%) = −15%.
+    assert!(close(situation_growth(0, 0.0, 0.05, 1.2, &inc), -0.15));
     // ROA 0 exactly is in this row.
     assert!(close(situation_growth(1, 0.0, 0.01, 1.0, &inc), 0.01));
 }
@@ -110,7 +110,7 @@ fn clamp_minus_20_to_plus_30() {
     assert!(close(growth_plan(&i), -0.17));
     i.loss_q = 0;
     i.roa = 0.01;
-    i.supply_ratio = 1.5;
+    i.supply_ratio = 1.8; // min(2%, 40% − 80%) − 2 pp = −42%
     assert_eq!(growth_plan(&i), -0.20);
 }
 

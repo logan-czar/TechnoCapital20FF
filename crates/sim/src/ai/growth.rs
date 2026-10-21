@@ -11,8 +11,10 @@ pub const SELL_DOWN_GROWTH: f64 = -0.15;
 /// Spec 6.2 row 2: loss_q 2 to 3 shrinks at −5%.
 pub const SHRINK_LOSS_QUARTERS: u32 = 2;
 pub const SHRINK_GROWTH: f64 = -0.05;
-/// Spec 6.2: `10 × max(0, S − 1)` comes off g_dem for an oversupplied industry.
-pub const OVERSUPPLY_PENALTY: f64 = 10.0;
+/// Spec 6.2 oversupply term: `OVERSUPPLY_GROWTH_PENALTY × max(0, S − 1)` comes off g_dem, 1
+/// point of growth per 1% of oversupply (Logan, design fix 241, D282; the spec text's "10 ×" is
+/// superseded).
+pub const OVERSUPPLY_GROWTH_PENALTY: f64 = 1.0;
 /// Spec 6.2 row 4: below the hurdle, growth is at most 2%.
 pub const BELOW_HURDLE_MAX_GROWTH: f64 = 0.02;
 /// Spec 6.2 row 5: ROA below 0 and loss_q under 2 holds at 0%.
@@ -38,8 +40,8 @@ pub const QUARTERS_PER_YEAR: f64 = 4.0;
 /// |---|---|
 /// | loss_q ≥ 4 | −15% |
 /// | loss_q 2 to 3 | −5% |
-/// | ROA ≥ hurdle | `g_dem − 10 × max(0, S − 1) + archetype adj` |
-/// | 0 ≤ ROA < hurdle | `min(2%, g_dem − 10 × max(0, S − 1))` |
+/// | ROA ≥ hurdle | `g_dem − max(0, S − 1) + archetype adj` |
+/// | 0 ≤ ROA < hurdle | `min(2%, g_dem − max(0, S − 1))` |
 /// | ROA < 0 and loss_q < 2 | 0% |
 pub fn situation_growth(
     loss_q: u32,
@@ -54,7 +56,7 @@ pub fn situation_growth(
     if loss_q >= SHRINK_LOSS_QUARTERS {
         return SHRINK_GROWTH;
     }
-    let demand_led = g_dem - OVERSUPPLY_PENALTY * (supply_ratio - 1.0).max(0.0);
+    let demand_led = g_dem - OVERSUPPLY_GROWTH_PENALTY * (supply_ratio - 1.0).max(0.0);
     if roa >= archetype.hurdle_roa {
         demand_led + archetype.growth_adj
     } else if roa >= 0.0 {
