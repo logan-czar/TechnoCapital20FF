@@ -117,7 +117,9 @@ impl Settlement {
 ///    company sells assets at the sale factor to cover it, counts a distress month and repays
 ///    the overdue excess from the proceeds; after 6 distress months, or with no assets left, it
 ///    is Bankrupt. A month that ends with cash at or above 0 and the line within its limit
-///    resets the count; a month inside an open repayment window does neither (D224).
+///    resets the count. A month whose only problem is an excess still inside its repayment
+///    window neither counts nor resets (D224); a month with cash below 0 and the line full
+///    still counts, window or not.
 ///
 /// Bankrupt and Removed companies are frozen and come back unchanged.
 pub fn settle_month(i: &SettleInputs) -> Settlement {

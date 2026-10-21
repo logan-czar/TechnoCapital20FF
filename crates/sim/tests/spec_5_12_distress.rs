@@ -113,8 +113,9 @@ fn the_review_excess_is_repaid_over_three_months() {
 
 #[test]
 fn an_overdue_excess_forces_sales() {
-    // $6M over with no cash: inside the window it is a grace month (no count, no reset, D224);
-    // the third month the rest is overdue and assets are sold to repay it.
+    // $6M over with cash 0: while the excess is its only problem and the window is open it is a
+    // grace month (no count, no reset, D224); the third month the rest is overdue and assets are
+    // sold to repay it.
     let mut l = review_line(line(24.0e6, 30.0e6), 18.0e6);
     let mut state = DistressState {
         status: CompanyStatus::Distressed,
@@ -139,6 +140,26 @@ fn an_overdue_excess_forces_sales() {
             near(s.cash, 0.0);
         }
     }
+}
+
+#[test]
+fn negative_cash_inside_the_window_still_counts() {
+    // The window only spares a month whose only problem is the excess: cash below 0 with the
+    // line full (drawn above the limit, nothing to draw) is a distress month, window or not.
+    let l = review_line(line(24.0e6, 30.0e6), 18.0e6);
+    let mut i = inputs(-1.0e6, l);
+    i.state = DistressState {
+        status: CompanyStatus::Distressed,
+        distress_months: 2,
+        ..DistressState::default()
+    };
+    let s = settle_month(&i);
+    assert_eq!(s.drawn, 0.0);
+    assert!(s.distress_month);
+    assert_eq!(s.state.distress_months, 3);
+    near(s.forced_sale.proceeds, 1.0e6);
+    near(s.cash, 0.0);
+    assert_eq!(s.line.excess_months_left, 2, "the window keeps running");
 }
 
 #[test]
