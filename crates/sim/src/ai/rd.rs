@@ -1,7 +1,11 @@
 //! The R&D plan (spec 6.3): the target from rd_norm, the archetype R&D mult, the productivity
 //! adjustment and the trait mults, cut in a loss, less free R&D, clamped to 0 to 3 × rd_norm.
+//!
+//! The trait mults (`TRAIT_RD_MULTS`, their product `trait_mult`, D264) and the clamp
+//! (`RD_PLAN_MAX_NORMS`) are M4's, in [`super::archetype`]; `archetype::rd_plan_at_load` is this
+//! plan at productivity 100 and loss_q 0 (tested equal).
 
-use super::inputs::has;
+pub use super::archetype::{RD_PLAN_MAX_NORMS, TRAIT_RD_MULTS, trait_rd_mult as trait_mult};
 use crate::people::traits::Trait;
 
 /// Spec 6.3: +0.25 below productivity 95.
@@ -10,18 +14,11 @@ pub const LOW_PRODUCTIVITY_ADJ: f64 = 0.25;
 /// Spec 6.3: −0.2 above productivity 110.
 pub const HIGH_PRODUCTIVITY_ABOVE: f64 = 110.0;
 pub const HIGH_PRODUCTIVITY_ADJ: f64 = -0.2;
-/// Spec 6.3 trait mults (T).
-pub const RD_MULT_GREEDY: f64 = 0.8;
-pub const RD_MULT_VISIONARY: f64 = 1.25;
-pub const RD_MULT_CONSERVATIVE: f64 = 0.9;
-pub const RD_MULT_DILIGENT: f64 = 1.1;
 /// Spec 6.3: loss_q ≥ 2 cuts the target ×0.8 ...
 pub const LOSS_CUT_QUARTERS: u32 = 2;
 pub const LOSS_CUT: f64 = 0.8;
 /// ... never below 0.5 × rd_norm.
 pub const LOSS_CUT_FLOOR_NORMS: f64 = 0.5;
-/// Spec 6.3: rd_plan is clamped to 0 to 3 × rd_norm.
-pub const RD_PLAN_MAX_NORMS: f64 = 3.0;
 /// free_rd_pct is a whole percent (5.9); rd_plan is a fraction of revenue (D211).
 pub const PERCENT: f64 = 100.0;
 
@@ -34,21 +31,6 @@ pub fn productivity_adj(productivity: f64) -> f64 {
     } else {
         0.0
     }
-}
-
-/// The trait mult (spec 6.3): Greedy 0.8, Visionary 1.25, Conservative 0.9, Diligent 1.1; a
-/// controller with several takes their product (D264); 1.0 with none.
-pub fn trait_mult(traits: &[Trait]) -> f64 {
-    [
-        (Trait::Greedy, RD_MULT_GREEDY),
-        (Trait::Visionary, RD_MULT_VISIONARY),
-        (Trait::Conservative, RD_MULT_CONSERVATIVE),
-        (Trait::Diligent, RD_MULT_DILIGENT),
-    ]
-    .iter()
-    .filter(|(t, _)| has(traits, *t))
-    .map(|(_, m)| m)
-    .product()
 }
 
 /// What the R&D plan reads (spec 6.3).

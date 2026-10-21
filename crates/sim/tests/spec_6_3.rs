@@ -111,3 +111,44 @@ fn arrowhead_plan_at_load() {
     let paid = a.revenue_usd * plan;
     assert!((paid - 0.72e6).abs() < 0.005e6, "paid R&D {paid}");
 }
+
+#[test]
+fn m4_rd_plan_at_load_agrees_with_the_lock_rule() {
+    // M4's load-time plan (finance::jobs reads it for the starting run rate) is this plan at
+    // productivity 100 and loss_q 0; lane S should make it delegate to rd::rd_plan.
+    use sim::ai::archetype::rd_plan_at_load;
+    let trait_sets: [&[Trait]; 5] = [
+        &[],
+        &[Trait::Greedy],
+        &[Trait::Visionary, Trait::Diligent],
+        &[Trait::Conservative],
+        &[
+            Trait::Greedy,
+            Trait::Visionary,
+            Trait::Conservative,
+            Trait::Diligent,
+        ],
+    ];
+    for arch in [
+        Archetype::StateChampion,
+        Archetype::Startup,
+        Archetype::AggressiveGrower,
+        Archetype::CashCow,
+        Archetype::Incumbent,
+    ] {
+        for traits in trait_sets {
+            for free in 0..=4u32 {
+                let lock = rd_plan(&RdInputs {
+                    rd_norm: 0.05,
+                    archetype_rd_mult: arch.rd_mult(),
+                    productivity: 100.0,
+                    traits,
+                    loss_q: 0,
+                    free_rd_pct: free,
+                });
+                let load = rd_plan_at_load(0.05, arch, traits, f64::from(free) / 100.0);
+                assert!((lock - load).abs() < 1e-15, "{arch:?} {traits:?} {free}");
+            }
+        }
+    }
+}
