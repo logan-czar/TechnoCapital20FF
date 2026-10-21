@@ -6,19 +6,20 @@
 //! refresh it was last rebuilt in) and a dirty flag (rebuilt in the latest refresh), so the bridge
 //! copies only what changed.
 //!
-//! M1 fills the clock view (spec 9.1 `clock()`). The others are empty placeholders on their
-//! cadence; the milestone that owns each one fills its struct and builder.
+//! **One file per view.** Each view is a struct in its own file that implements [`ViewData`]:
+//! its cadence and its `build` from the [`ViewInput`]. Filling a view touches only its file.
+//! Adding a view is a new file plus one line in the `sim_views!` list below, which generates the
+//! module, the [`SimViews`] field and the build and refresh code. M1 fills the clock view; the
+//! others are empty placeholders on their cadence.
 
-use serde::{Deserialize, Serialize};
+use std::fmt;
 
 use crate::time::control::Controls;
-use crate::time::quarter::{QuarterPhase, phase_at};
 use crate::time::scheduler::TickFacts;
-use crate::time::{Date, DateTime, Weekday};
-use crate::world::{SkipKind, World};
+use crate::world::World;
 
 /// How often a view is rebuilt (spec 9.4).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Cadence {
     EveryTick,
     /// At 00:00.
@@ -50,20 +51,35 @@ impl Cadence {
     }
 }
 
+/// What a view is built from: the state after the latest tick and the controls. Views read; they
+/// never change anything.
+pub struct ViewInput<'a> {
+    pub world: &'a World,
+    pub controls: &'a Controls,
+}
+
+/// One view's data: its cadence and how to build it.
+pub trait ViewData: Clone + PartialEq + fmt::Debug {
+    /// When it is rebuilt (spec 9.4). Every view is also built at a new game and on load.
+    const CADENCE: Cadence;
+    /// Also rebuilt after a control (speed, pause, skip), between ticks.
+    const ON_CONTROL: bool = false;
+
+    fn build(input: &ViewInput<'_>) -> Self;
+}
+
 /// One view with its version and dirty flag (spec 9.4, 12.3).
 #[derive(Debug, Clone, PartialEq)]
 pub struct View<T> {
     data: T,
-    cadence: Cadence,
     version: u64,
     dirty: bool,
 }
 
-impl<T> View<T> {
-    fn new(cadence: Cadence, data: T, version: u64) -> Self {
+impl<T: ViewData> View<T> {
+    fn built(input: &ViewInput<'_>, version: u64) -> Self {
         View {
-            data,
-            cadence,
+            data: T::build(input),
             version,
             dirty: true,
         }
@@ -74,7 +90,7 @@ impl<T> View<T> {
     }
 
     pub fn cadence(&self) -> Cadence {
-        self.cadence
+        T::CADENCE
     }
 
     /// The refresh this view was last rebuilt in.
@@ -87,195 +103,101 @@ impl<T> View<T> {
         self.dirty
     }
 
-    fn set(&mut self, data: T, version: u64) {
+    fn after_tick(&mut self, facts: &TickFacts, input: &ViewInput<'_>, version: u64) {
+        self.dirty = T::CADENCE.is_due(facts);
+        if self.dirty {
+            self.data = T::build(input);
+            self.version = version;
+        }
+    }
+
+    /// Rebuilds after a control if this view follows controls and changed; true if it did.
+    fn after_control(&mut self, input: &ViewInput<'_>, version: u64) -> bool {
+        if !T::ON_CONTROL {
+            return false;
+        }
+        let data = T::build(input);
+        if data == self.data {
+            return false;
+        }
         self.data = data;
         self.version = version;
         self.dirty = true;
+        true
     }
 }
 
-/// The clock (spec 9.1 `clock()`, the spec 8 top bar and quarter clock).
-#[derive(Debug, Clone, PartialEq)]
-pub struct ClockView {
-    pub now: DateTime,
-    pub date: Date,
-    pub hour: u8,
-    pub weekday: Weekday,
-    /// The speed the runner runs at: 0 paused, 5 while skipping (spec 9.1).
-    pub speed: u8,
-    /// The speed picked (1 to 5), kept while paused.
-    pub selected_speed: u8,
-    pub paused: bool,
-    pub skipping: Option<SkipKind>,
-    pub quarter_phase: QuarterPhase,
-    pub next_phase: QuarterPhase,
-    /// Calendar days to the next phase start (D7).
-    pub days_to_next_phase: u32,
-}
+/// Declares every view: `field: module::Type;`. Generates the modules, the `SimViews` fields and
+/// the build and refresh passes, in this order.
+macro_rules! sim_views {
+    ($($field:ident: $module:ident::$ty:ident;)*) => {
+        $(
+            pub mod $module;
+            pub use $module::$ty;
+        )*
 
-impl ClockView {
-    fn build(world: &World, controls: &Controls) -> ClockView {
-        let now = world.clock;
-        let phase = phase_at(now);
-        ClockView {
-            now,
-            date: now.date(),
-            hour: now.hour(),
-            weekday: now.weekday(),
-            speed: controls.effective_speed(),
-            selected_speed: controls.speed,
-            paused: controls.paused,
-            skipping: controls.skip.map(|s| s.kind),
-            quarter_phase: phase.phase,
-            next_phase: phase.next_phase,
-            days_to_next_phase: phase.days_to_next_phase(now.date()),
+        /// Every view the UI reads (spec 9.4).
+        #[derive(Debug, Clone, PartialEq)]
+        pub struct SimViews {
+            refresh: u64,
+            $(pub $field: View<$ty>,)*
         }
-    }
-}
 
-macro_rules! placeholder_views {
-    ($($(#[$m:meta])* $name:ident;)*) => {$(
-        $(#[$m])*
-        ///
-        /// Placeholder: filled by the milestone that owns it.
-        #[derive(Debug, Clone, Default, PartialEq)]
-        pub struct $name {}
-    )*};
-}
+        impl SimViews {
+            /// Every view built from the state, all dirty: at a new game and on load (spec 9.4).
+            pub(crate) fn build(world: &World, controls: &Controls) -> SimViews {
+                let input = ViewInput { world, controls };
+                SimViews {
+                    refresh: 1,
+                    $($field: View::built(&input, 1),)*
+                }
+            }
 
-placeholder_views! {
-    /// v_quotes, every tick: `get_quotes` (spec 9.2; M5).
-    QuotesView;
-    /// v_price_bars, daily: `get_price_history` (M5).
-    PriceBarsView;
-    /// v_news, daily: `get_news` (M6.5).
-    NewsView;
-    /// v_projection, daily: `get_company_projection` (M6.4).
-    ProjectionView;
-    /// v_company_row, monthly: `list_companies` (M2 on).
-    CompanyRowsView;
-    /// v_company_detail, monthly: `get_company`, board, cap table (M3, M4).
-    CompanyDetailView;
-    /// v_units, monthly: `get_company_units` (M2).
-    UnitsView;
-    /// v_tech, monthly: `get_company_tech` (M3).
-    TechView;
-    /// v_industry_row, monthly: `list_industries` (M2).
-    IndustryRowsView;
-    /// v_industry_detail, monthly: `get_industry` (M2).
-    IndustryDetailView;
-    /// v_map_layers, monthly: `get_map_layer` for industry assets and HQs (M8).
-    MapLayersView;
-    /// v_province_card, monthly: `get_province` (M8.7).
-    ProvinceCardsView;
-    /// v_statements, quarterly: `get_company_statements` (M4).
-    StatementsView;
-    /// v_filings, quarterly: `get_filings` (M4).
-    FilingsView;
-    /// v_ratings, quarterly: ratings (M4.5).
-    RatingsView;
-    /// v_recap, quarterly: `get_recap` (M6.5).
-    RecapView;
-    /// v_map_static, once at load: development, political, Metros, key cities (M8).
-    MapStaticView;
-}
+            /// After a tick: rebuilds the views due on this tick and clears the others' dirty
+            /// flags (spec 9.4).
+            pub(crate) fn refresh_after_tick(&mut self, world: &World, controls: &Controls) {
+                self.refresh += 1;
+                let facts = TickFacts::new(world.clock);
+                let input = ViewInput { world, controls };
+                $(self.$field.after_tick(&facts, &input, self.refresh);)*
+            }
 
-/// Every view the UI reads (spec 9.4).
-#[derive(Debug, Clone, PartialEq)]
-pub struct SimViews {
-    refresh: u64,
-    pub clock: View<ClockView>,
-    pub quotes: View<QuotesView>,
-    pub price_bars: View<PriceBarsView>,
-    pub news: View<NewsView>,
-    pub projection: View<ProjectionView>,
-    pub company_rows: View<CompanyRowsView>,
-    pub company_detail: View<CompanyDetailView>,
-    pub units: View<UnitsView>,
-    pub tech: View<TechView>,
-    pub industry_rows: View<IndustryRowsView>,
-    pub industry_detail: View<IndustryDetailView>,
-    pub map_layers: View<MapLayersView>,
-    pub province_cards: View<ProvinceCardsView>,
-    pub statements: View<StatementsView>,
-    pub filings: View<FilingsView>,
-    pub ratings: View<RatingsView>,
-    pub recap: View<RecapView>,
-    pub map_static: View<MapStaticView>,
-}
-
-/// Runs `$body` with `$v` bound to each placeholder view.
-macro_rules! for_each_placeholder {
-    ($views:expr, |$v:ident| $body:block) => {{
-        let s = $views;
-        for_each_placeholder!(@each s, $v, $body, quotes price_bars news projection company_rows
-            company_detail units tech industry_rows industry_detail map_layers province_cards
-            statements filings ratings recap map_static);
-    }};
-    (@each $s:ident, $v:ident, $body:block, $($field:ident)*) => {
-        $({
-            let $v = &mut $s.$field;
-            $body
-        })*
+            /// After a control: rebuilds the views that follow controls (the clock).
+            pub(crate) fn refresh_after_control(&mut self, world: &World, controls: &Controls) {
+                let input = ViewInput { world, controls };
+                let next = self.refresh + 1;
+                let mut changed = false;
+                $(changed |= self.$field.after_control(&input, next);)*
+                if changed {
+                    self.refresh = next;
+                }
+            }
+        }
     };
 }
 
-/// Rebuilds a placeholder view (they hold nothing yet).
-fn rebuild_placeholder<T: Default>(view: &mut View<T>, version: u64) {
-    view.set(T::default(), version);
+sim_views! {
+    clock: clock::ClockView;
+    quotes: quotes::QuotesView;
+    price_bars: price_bars::PriceBarsView;
+    news: news::NewsView;
+    projection: projection::ProjectionView;
+    company_rows: company_rows::CompanyRowsView;
+    company_detail: company_detail::CompanyDetailView;
+    units: units::UnitsView;
+    tech: tech::TechView;
+    industry_rows: industry_rows::IndustryRowsView;
+    industry_detail: industry_detail::IndustryDetailView;
+    map_layers: map_layers::MapLayersView;
+    province_cards: province_cards::ProvinceCardsView;
+    statements: statements::StatementsView;
+    filings: filings::FilingsView;
+    ratings: ratings::RatingsView;
+    recap: recap::RecapView;
+    map_static: map_static::MapStaticView;
 }
 
 impl SimViews {
-    /// Every view built from the state, all dirty: at a new game and on load (spec 9.4).
-    pub(crate) fn build(world: &World, controls: &Controls) -> SimViews {
-        let v = 1;
-        SimViews {
-            refresh: v,
-            clock: View::new(Cadence::EveryTick, ClockView::build(world, controls), v),
-            quotes: View::new(Cadence::EveryTick, QuotesView::default(), v),
-            price_bars: View::new(Cadence::Daily, PriceBarsView::default(), v),
-            news: View::new(Cadence::Daily, NewsView::default(), v),
-            projection: View::new(Cadence::Daily, ProjectionView::default(), v),
-            company_rows: View::new(Cadence::Monthly, CompanyRowsView::default(), v),
-            company_detail: View::new(Cadence::Monthly, CompanyDetailView::default(), v),
-            units: View::new(Cadence::Monthly, UnitsView::default(), v),
-            tech: View::new(Cadence::Monthly, TechView::default(), v),
-            industry_rows: View::new(Cadence::Monthly, IndustryRowsView::default(), v),
-            industry_detail: View::new(Cadence::Monthly, IndustryDetailView::default(), v),
-            map_layers: View::new(Cadence::Monthly, MapLayersView::default(), v),
-            province_cards: View::new(Cadence::Monthly, ProvinceCardsView::default(), v),
-            statements: View::new(Cadence::Quarterly, StatementsView::default(), v),
-            filings: View::new(Cadence::Quarterly, FilingsView::default(), v),
-            ratings: View::new(Cadence::Quarterly, RatingsView::default(), v),
-            recap: View::new(Cadence::Quarterly, RecapView::default(), v),
-            map_static: View::new(Cadence::OnceAtLoad, MapStaticView::default(), v),
-        }
-    }
-
-    /// After a tick: clears the dirty flags, then rebuilds the views due on this tick (spec 9.4).
-    pub(crate) fn refresh_after_tick(&mut self, world: &World, controls: &Controls) {
-        self.refresh += 1;
-        let v = self.refresh;
-        let facts = TickFacts::new(world.clock);
-        self.clock
-            .set(ClockView::build(world, controls), self.refresh);
-        for_each_placeholder!(&mut *self, |view| {
-            view.dirty = false;
-            if view.cadence.is_due(&facts) {
-                rebuild_placeholder(view, v);
-            }
-        });
-    }
-
-    /// After a control: only the clock view changes (speed, pause, skip).
-    pub(crate) fn refresh_clock(&mut self, world: &World, controls: &Controls) {
-        let clock = ClockView::build(world, controls);
-        if clock != self.clock.data {
-            self.refresh += 1;
-            self.clock.set(clock, self.refresh);
-        }
-    }
-
     /// The latest refresh number.
     pub fn refresh(&self) -> u64 {
         self.refresh

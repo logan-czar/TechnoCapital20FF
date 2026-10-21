@@ -194,7 +194,8 @@ impl Sim {
                 c.watchlist.remove(&id);
             }
         }
-        self.views.refresh_clock(&self.world, &self.controls);
+        self.views
+            .refresh_after_control(&self.world, &self.controls);
         Ok(notices)
     }
 
