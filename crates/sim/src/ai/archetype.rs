@@ -17,6 +17,47 @@ pub enum Archetype {
     Incumbent,
 }
 
+/// One row of the spec 6.1 archetype table: the columns M4 reads (M6.1 adds the hurdle ROA,
+/// growth adj and data coverage).
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct ArchetypeRow {
+    pub archetype: Archetype,
+    /// R&D mult (6.3 target).
+    pub rd_mult: f64,
+    /// Payout mult (5.17 payout ratio).
+    pub payout_mult: f64,
+}
+
+/// Spec 6.1 (all T), in the enum's order: State champion 1.0 / 1.0, Startup 1.2 / 0, Aggressive
+/// grower 1.3 / 0.5, Cash cow 0.7 / 1.3, Incumbent 1.0 / 1.0 (R&D mult / payout mult).
+pub const ARCHETYPE_TABLE: [ArchetypeRow; 5] = [
+    ArchetypeRow {
+        archetype: Archetype::StateChampion,
+        rd_mult: 1.0,
+        payout_mult: 1.0,
+    },
+    ArchetypeRow {
+        archetype: Archetype::Startup,
+        rd_mult: 1.2,
+        payout_mult: 0.0,
+    },
+    ArchetypeRow {
+        archetype: Archetype::AggressiveGrower,
+        rd_mult: 1.3,
+        payout_mult: 0.5,
+    },
+    ArchetypeRow {
+        archetype: Archetype::CashCow,
+        rd_mult: 0.7,
+        payout_mult: 1.3,
+    },
+    ArchetypeRow {
+        archetype: Archetype::Incumbent,
+        rd_mult: 1.0,
+        payout_mult: 1.0,
+    },
+];
+
 /// Spec 6.1: the Startup row applies below this revenue, in the Tech sector.
 pub const STARTUP_REVENUE_BELOW_USD: f64 = 50.0e6;
 /// Spec 6.1: the Startup row's sector (industries.csv `sector`).
@@ -54,26 +95,19 @@ impl Archetype {
         }
     }
 
+    /// This archetype's row of [`ARCHETYPE_TABLE`].
+    pub fn row(self) -> &'static ArchetypeRow {
+        &ARCHETYPE_TABLE[self as usize]
+    }
+
     /// Spec 6.1 R&D mult (T).
     pub fn rd_mult(self) -> f64 {
-        match self {
-            Archetype::StateChampion => 1.0,
-            Archetype::Startup => 1.2,
-            Archetype::AggressiveGrower => 1.3,
-            Archetype::CashCow => 0.7,
-            Archetype::Incumbent => 1.0,
-        }
+        self.row().rd_mult
     }
 
     /// Spec 6.1 payout mult (T), read by the 5.17 payout ratio.
     pub fn payout_mult(self) -> f64 {
-        match self {
-            Archetype::StateChampion => 1.0,
-            Archetype::Startup => 0.0,
-            Archetype::AggressiveGrower => 0.5,
-            Archetype::CashCow => 1.3,
-            Archetype::Incumbent => 1.0,
-        }
+        self.row().payout_mult
     }
 
     pub fn name(self) -> &'static str {
@@ -116,6 +150,13 @@ mod tests {
         let plan = rd_plan_at_load(0.05, a, &[Trait::Greedy], 0.01);
         assert!((plan - 0.018).abs() < 1e-12);
         assert_eq!(a.payout_mult(), 1.3);
+    }
+
+    #[test]
+    fn the_table_is_in_enum_order() {
+        for (i, row) in ARCHETYPE_TABLE.iter().enumerate() {
+            assert_eq!(row.archetype as usize, i);
+        }
     }
 
     #[test]
