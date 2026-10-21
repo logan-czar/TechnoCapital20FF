@@ -10,5 +10,7 @@ pub mod links;
 pub mod page_bench;
 pub mod pages;
 pub mod table;
+#[doc(hidden)]
+pub mod test_support;
 pub mod ui;
 pub mod workspace;

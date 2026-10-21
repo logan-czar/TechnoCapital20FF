@@ -810,8 +810,12 @@ fn build_layouts(
         let mut cells = Vec::with_capacity(shown.len());
         for &col in &shown {
             let c = &model.columns[col];
+            // The title ignores the pointer, so a drag starts on (and drops) the header cell.
             let text = commands
-                .spawn(theme::text_line(c.title.clone(), font::BODY, color::CYAN))
+                .spawn((
+                    theme::text_line(c.title.clone(), font::BODY, color::CYAN),
+                    Pickable::IGNORE,
+                ))
                 .id();
             let grip = commands
                 .spawn((
@@ -991,8 +995,23 @@ fn header_click(ev: On<PointerClick>, cells: Query<&HeaderCell>, mut tables: Que
 }
 
 /// A header dropped on another header moves there.
-fn header_drop(ev: On<PointerDragDrop>, cells: Query<&HeaderCell>, mut tables: Query<&mut Table>) {
-    let (Ok(target), Ok(dropped)) = (cells.get(ev.event_target()), cells.get(ev.dropped)) else {
+fn header_drop(
+    ev: On<PointerDragDrop>,
+    cells: Query<&HeaderCell>,
+    grips: Query<(), With<ResizeGrip>>,
+    parents: Query<&ChildOf>,
+    mut tables: Query<&mut Table>,
+) {
+    // A resize grip's drag is no column move.
+    if grips.contains(ev.dropped) {
+        return;
+    }
+    // The dragged entity is the header cell, or (if a child ever takes the pointer) inside it.
+    let dropped = std::iter::once(ev.dropped)
+        .chain(parents.iter_ancestors(ev.dropped))
+        .take(3)
+        .find_map(|a| cells.get(a).ok().copied());
+    let (Ok(target), Some(dropped)) = (cells.get(ev.event_target()), dropped) else {
         return;
     };
     if target.table != dropped.table {
@@ -1425,6 +1444,72 @@ mod tests {
             .iter()
             .map(|&e| app.world().get::<Text>(e).unwrap().0.clone())
             .collect()
+    }
+
+    /// Dragging a header (by its title) onto another moves the column; dragging a grip resizes
+    /// and never moves; the events go in by hand (no window, so picking sends none).
+    #[test]
+    fn header_drag_moves_and_grip_drag_resizes() {
+        use crate::test_support::{click, drag, drop_on};
+        let (mut app, table) = app_with(Arc::new(model(20)), Some("drag"), UiConfig::default());
+        set_height(&mut app, table, 110.0);
+        let (cells, titles) = {
+            let t = app.world().get::<Table>(table).unwrap();
+            (t.header_cells.clone(), t.header.clone())
+        };
+        // The title takes no pointer, so a real drag starts on the cell; a drop naming the
+        // title still resolves to its cell.
+        assert_eq!(
+            app.world().get::<Pickable>(titles[2]),
+            Some(&Pickable::IGNORE)
+        );
+        app.world_mut().trigger(drop_on(cells[0], titles[2]));
+        app.update();
+        assert_eq!(shown_titles(&app, table), ["Money", "Id", "N"]);
+        let (cells, grips) = {
+            let t = app.world().get::<Table>(table).unwrap();
+            let grips: Vec<Entity> = t
+                .header_cells
+                .iter()
+                .map(|&c| {
+                    app.world()
+                        .get::<Children>(c)
+                        .unwrap()
+                        .iter()
+                        .find(|&e| app.world().get::<ResizeGrip>(e).is_some())
+                })
+                .map(Option::unwrap)
+                .collect();
+            (t.header_cells.clone(), grips)
+        };
+        // Dropping a grip on a header moves nothing.
+        app.world_mut().trigger(drop_on(cells[2], grips[0]));
+        app.update();
+        assert_eq!(shown_titles(&app, table), ["Money", "Id", "N"]);
+        // Dragging the first grip 30 px right widens that column (Money: 90 to 120).
+        app.world_mut()
+            .trigger(drag(grips[0], Vec2::new(30.0, 0.0)));
+        app.update();
+        let t = app.world().get::<Table>(table).unwrap();
+        assert_eq!(t.width(2), 120.0);
+        let w = app.world().get::<Node>(t.header_cells[0]).unwrap().width;
+        assert_eq!(w, px(120.0), "resized in place");
+        // A click on the grip does not sort.
+        let g = grips[0];
+        app.world_mut().trigger(click(g, PointerButton::Primary));
+        app.update();
+        assert_eq!(app.world().get::<Table>(table).unwrap().sorted_by(), None);
+        // A click on the header cell does.
+        app.world_mut()
+            .trigger(click(cells[1], PointerButton::Primary));
+        app.update();
+        assert_eq!(
+            app.world().get::<Table>(table).unwrap().sorted_by(),
+            Some((0, true))
+        );
+        let saved = &app.world().resource::<UiConfig>().tables["drag"];
+        assert_eq!(saved.columns[0].key, "Money");
+        assert_eq!(saved.columns[0].width, 120.0);
     }
 
     #[test]
