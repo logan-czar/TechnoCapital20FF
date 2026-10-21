@@ -317,7 +317,7 @@ Replaces the old arc The Top Job and absorbs Arc 1's friend-or-foe branch.
 | Step | Goal | Teaches |
 |---|---|---|
 | 1 | **Seats.** Get allies onto Arrowhead's board at the yearly meeting (1.8.1): a CFO, a General Counsel, independent directors | Board seats and tasks (1.8) |
-| 2 | **A bloc.** Join John's vested options, a quiet stake bought through trusts or shells under the disclosure lines (3.1.1; the fund cannot hide it, 3.18.4), friendly holders from the 40% public float and **the old union's pension fund** (it kept **7%** of Arrowhead through the sale, Logan, batch 163) into a bloc John leads (1.4) | Blocs and bloc leadership |
+| 2 | **A bloc.** Join John's vested options, a quiet stake bought through trusts or shells under the disclosure lines (3.1.1; the fund cannot hide it, 3.18.4), friendly holders from the 33% public float and **the old union's pension fund** (it kept **7%** of Arrowhead through the sale, Logan, batch 163) into a bloc John leads (1.4) | Blocs and bloc leadership |
 | 3 | **Friendly holders.** Win swing holders with meetings, favors or payments (1.9.2) | Proxy campaigns |
 | 4 | **Hooks.** Dig into Terry's deals, the casino's books and the truth of his background (1.1.8.2, 17); **buy Terry's debts** from his lenders, so John becomes his creditor (a weak hook, 1.1.4); or bail him out quietly (another weak hook) | Hooks |
 | 5 | **The CEO seat.** At the reckoning, take the head: win the board, a proxy fight (1.9.2), or **buy Terry's pledged block** when his lenders sell it (a block trade or a tender offer, 1.9.3) | Control on the books and for real (1.3.1) |
