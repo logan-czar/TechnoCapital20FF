@@ -49,14 +49,14 @@ fn monthly_hashes_and_metrics() {
     assert_eq!(
         rows[0],
         "seed,year,ticks,final_hash,wall_ms,phase,g_t,named_revenue_usd,fringe_revenue_usd,\
-         mean_s,min_s,max_s,mean_m"
+         mean_s,min_s,max_s,mean_m,mean_productivity,mean_management,data_tb,profitable_share"
     );
     assert_eq!(rows.len(), 3);
     assert!(rows[1].starts_with("7,2020,8784,"), "{}", rows[1]);
     assert!(rows[2].starts_with("8,2020,8784,"), "{}", rows[2]);
     // M2 columns: a phase name, g_t, a year of revenue and S near 1 in the first year.
     let cols: Vec<&str> = rows[1].split(',').collect();
-    assert_eq!(cols.len(), 13, "{}", rows[1]);
+    assert_eq!(cols.len(), 17, "{}", rows[1]);
     assert!(
         ["Expansion", "Overheating"].contains(&cols[5]),
         "{}",
@@ -66,6 +66,12 @@ fn monthly_hashes_and_metrics() {
     assert!(named > 1e12, "named revenue a year {named}");
     let mean_s: f64 = cols[9].parse().unwrap();
     assert!((0.9..1.1).contains(&mean_s), "{mean_s}");
+    // M3 columns: productivity within the 5.6 clamp, a 0 to 100 score, data held, a share.
+    let num = |i: usize| -> f64 { cols[i].parse().unwrap() };
+    assert!((30.0..=200.0).contains(&num(13)), "{}", rows[1]);
+    assert!((0.0..=100.0).contains(&num(14)), "{}", rows[1]);
+    assert!(num(15) > 0.0, "{}", rows[1]);
+    assert!((0.0..=1.0).contains(&num(16)), "{}", rows[1]);
 
     // Same seed, same hashes.
     let (_, again, _) = run(&args);
