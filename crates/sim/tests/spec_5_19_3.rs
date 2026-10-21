@@ -141,9 +141,9 @@ fn cap_table_splits_60_40() {
 #[test]
 fn archetype_without_trait_rows() {
     // 5.19.3: a Tech startup under $50M is a Startup, else Incumbent.
-    assert_eq!(startup_archetype(20.0e6, true), Archetype::Startup);
-    assert_eq!(startup_archetype(50.0e6, true), Archetype::Incumbent);
-    assert_eq!(startup_archetype(20.0e6, false), Archetype::Incumbent);
+    assert_eq!(startup_archetype(20.0e6, "Tech"), Archetype::Startup);
+    assert_eq!(startup_archetype(50.0e6, "Tech"), Archetype::Incumbent);
+    assert_eq!(startup_archetype(20.0e6, "Consumer"), Archetype::Incumbent);
 }
 
 #[test]
@@ -155,7 +155,7 @@ fn a_retail_startup_end_to_end() {
         revenue: 20.0e6,
         params: &p,
         industry_key: "retail",
-        tech: false,
+        sector: "Consumer",
         fringe_assets: 10.0e9,
         tax_rate: 0.258,
         sovereign: Rating::Aaa,

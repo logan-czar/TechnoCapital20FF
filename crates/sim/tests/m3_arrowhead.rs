@@ -8,6 +8,10 @@
 //! applies the 7.1 plan written from the spec (Terry is Greedy: a Cash cow, R&D target
 //! 0.05 × 0.7 × 0.8 = 2.8%, less the engine's 1% free R&D). It also prints the EBIT after R&D the
 //! engine books today under the placeholder plan.
+//!
+//! M6.2 replaces the in-test R&D plan with the engine's booked `u.rd_m` (the 6.3 plan the lock
+//! writes), keeping $1.6M and 4.1% for Arrowhead and 619 of 651 at a 6.1% median as the expected
+//! values (D119).
 
 mod common;
 

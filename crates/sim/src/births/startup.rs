@@ -4,7 +4,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::ai::archetype::{Archetype, ArchetypeInputs, archetype};
+use crate::ai::archetype::Archetype;
 use crate::economy::revenue::month_expenses;
 use crate::economy::start::{fixed_cost_rate_at_load, shared_costs_at_load_hook};
 use crate::finance::rating::{Rating, StartRatingInputs, starting_rating};
@@ -107,15 +107,14 @@ pub fn birth_fixed_cost_rate(gross_assets: f64, stations: &Stations, p: &Industr
     fixed_cost_rate_at_load(gross_assets, shared_costs_at_load_hook(&bill), p)
 }
 
-/// The archetype of a startup (spec 5.19.3, 5.19.5): 6.1 without the trait rows, so a Tech
-/// startup under $50M is a Startup, else Incumbent.
-pub fn startup_archetype(revenue: f64, tech: bool) -> Archetype {
-    archetype(&ArchetypeInputs {
-        state_controlled: false,
-        revenue_usd: revenue,
-        tech,
-        traits: &[],
-    })
+/// Spec 5.19.3: the founders control a startup (control_basis founder), never a state.
+pub const FOUNDER_CONTROL_BASIS: &str = "founder";
+
+/// The archetype of a startup (spec 5.19.3, 5.19.5): 6.1 without the trait rows
+/// ([`Archetype::at_load`] with no traits), so a Tech startup under $50M is a Startup, else
+/// Incumbent. `sector` is industries.csv `sector`.
+pub fn startup_archetype(revenue: f64, sector: &str) -> Archetype {
+    Archetype::at_load(FOUNDER_CONTROL_BASIS, revenue, sector, &[])
 }
 
 /// A year at the run rate (spec 5.19.3 "rating implied from the run rate"; 7.1).
@@ -229,8 +228,8 @@ pub struct BirthInputs<'a> {
     pub params: &'a IndustryParams,
     /// industries.csv id (the 5.12 sector notches).
     pub industry_key: &'a str,
-    /// The industry's sector is Tech (6.1).
-    pub tech: bool,
+    /// industries.csv `sector` of the industry (the 6.1 Startup row).
+    pub sector: &'a str,
     /// The industry's fringe_assets before the carve.
     pub fringe_assets: f64,
     /// The HQ country's corporate tax rate and sovereign rating.
@@ -276,7 +275,7 @@ pub fn build_startup(i: &BirthInputs<'_>) -> Birth {
     let gross = c.gross_assets;
     let (labor, stations) = birth_stations(gross, i.revenue, i.params);
     let fcr = birth_fixed_cost_rate(gross, &stations, i.params);
-    let arch = startup_archetype(i.revenue, i.tech);
+    let arch = startup_archetype(i.revenue, i.sector);
     let rd_plan = i.params.rd_norm * arch.params().rd_mult;
     let run = birth_run_rate(gross, &stations, fcr, rd_plan, i.params);
     let cash = SEED_CASH_SHARE * gross;

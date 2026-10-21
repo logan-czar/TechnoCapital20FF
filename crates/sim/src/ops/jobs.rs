@@ -38,6 +38,10 @@ pub fn labor_seats_job(world: &mut World, _: &mut JobCtx<'_>) {
         ..
     } = world;
     for (_, c) in companies.iter_mut() {
+        // A frozen company (Bankrupt or Removed) runs no monthly step (spec 5.12 step 2, D123).
+        if c.finance.status().is_frozen() {
+            continue;
+        }
         let gross: f64 = c.units.iter().map(|&u| units[u].gross_assets).sum();
         let labor = labor_units(gross, industries[c.industry].params.labor_value_usd);
         let changes = seat_changes(c.labor_units, labor);
@@ -62,6 +66,10 @@ pub fn compute_job(world: &mut World, _: &mut JobCtx<'_>) {
         ..
     } = world;
     for (_, c) in companies.iter_mut() {
+        // A frozen company (Bankrupt or Removed) runs no monthly step (spec 5.12 step 2, D123).
+        if c.finance.status().is_frozen() {
+            continue;
+        }
         c.pc = productive_compute(&c.stations, industries[c.industry].params.pc_modifier);
         c.pc_bonus = f64::from(pc_bonus(c.pc));
         let stored: f64 = c.data.iter().map(|d| d.book.stored_tb()).sum();
@@ -80,6 +88,10 @@ pub fn data_job(world: &mut World, _: &mut JobCtx<'_>) {
         ..
     } = world;
     for (_, c) in companies.iter_mut() {
+        // A frozen company (Bankrupt or Removed) runs no monthly step (spec 5.12 step 2, D123).
+        if c.finance.status().is_frozen() {
+            continue;
+        }
         let capacity = conversion_capacity(&c.stations);
         for d in &mut c.data {
             let revenue: f64 = c
@@ -115,6 +127,10 @@ pub fn productivity_job(world: &mut World, _: &mut JobCtx<'_>) {
     } = world;
     for (_, u) in units.iter_mut() {
         let c = &companies[u.company];
+        // A frozen company (Bankrupt or Removed) runs no monthly step (spec 5.12 step 2, D123).
+        if c.finance.status().is_frozen() {
+            continue;
+        }
         let free_rd = c.data_in(u.industry).map_or(0.0, |b| b.free_rd_fraction());
         let inputs = ProductivityInputs::with_stations(
             u.rd_plan,

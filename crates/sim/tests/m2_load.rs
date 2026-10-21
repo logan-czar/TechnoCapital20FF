@@ -63,7 +63,7 @@ fn named_revenue_matches_companies_csv_within_half_a_percent() {
     assert_eq!(a.pc_bonus, 2.0);
     assert!((au.gross_assets - 39.2e6).abs() < 0.1e6);
     assert!((au.asset_book - 0.5 * au.gross_assets).abs() <= 1.0);
-    assert!((a.cash_usd - 80.4e6).abs() < 0.1e6 && a.line_drawn_usd == 0.0);
+    assert!((a.cash_usd - 80.4e6).abs() < 0.1e6 && a.finance.line.drawn == 0.0);
 
     // D106 (design fix 201): the 7.1 two-pass bonus does not settle for the three ~$42B
     // companies. The station rule on their loaded gross assets gives +6, but company-start.csv

@@ -45,8 +45,11 @@ pub use world::{LoadError, Notice, World};
 /// the 4.3 step 1 slots (1a AI events, 1b industry lt, 1c cycle, 1d zone spreads, 1e growth
 /// draws) and steps 2 (demand), 3 (fringe), 6 (supply), 7 (revenue), 9 (expenses) and 11
 /// (assets); `ops` (M3) in steps 4 (labor and seats), 5 (compute), 8 (data) and 10
-/// (productivity); `people` (M3) in step 11 (new seats). Slots expected to be shared, in the
-/// order their calls must go:
+/// (productivity); `people` (M3) in step 11 (new seats); `finance` (M4) in steps 9 (the month
+/// opens and posts the 5.5 lines), 11 (depreciation, purchases, sales), 12 (interest), 13 (cash
+/// settle, distress), 14 (tax accrual, ledger posted), the 4.4 close, release and 01:00 rating
+/// and line reviews, and the 4.5 annual statements. Slots expected to be shared, in the order
+/// their calls must go:
 ///
 /// - `Slot::Alerts`: `time` (calendar alerts) only; other modules raise alerts from their own
 ///   slots through `JobCtx::raise_alert` (the economy raises the World event alert in 1a).
@@ -54,9 +57,13 @@ pub use world::{LoadError, Notice, World};
 ///   chatbot headline, 5.18).
 /// - `Slot::MonthlyLaborSeats` (4.3 step 4): `ops` (labor units, seats, stations, 5.10).
 /// - `Slot::MonthlyExpenses` (4.3 step 9): `economy` (variable, fixed cash, depreciation, R&D,
-///   shared, 5.5), then `finance` (tax accrual, 5.11).
+///   shared, 5.5), then `finance` (the month's ledger opens with those lines; tax accrues at
+///   step 14, once interest is known, D227).
 /// - `Slot::MonthlyAssets` (4.3 step 11): `economy` (asset decay, growth plan buys and sells,
-///   ramping, 5.10), then `people` (simple characters for new seats, 3.7.1).
+///   ramping, 5.10), then `people` (simple characters for new seats, 3.7.1), then `finance`
+///   (depreciation, purchases and sales posted).
+/// - `Slot::CloseStatements` (4.4 close): `finance` (tax paid, then the statements, D122).
+/// - `Slot::ReleasePublish` (4.4 release): `finance` (removals, 5.12 step 3).
 /// - `Slot::PriceMoveResultHeadlines` (4.4 price move): `news` only.
 /// - `Slot::LockIpoVotes` (4.4 plan lock): `births` (votes, then listings, 5.20.1).
 fn register_jobs(s: &mut Scheduler) {
@@ -64,15 +71,18 @@ fn register_jobs(s: &mut Scheduler) {
     economy::register(s);
     ops::register(s);
     people::register(s);
+    finance::register(s);
 }
 
 /// The whole start state (spec 7): the static tables and 7.1 loadouts, then the load's draws in
 /// their frozen order: the economy's (pop date, cycle start, zone shocks, Q1 2020 growth draw;
-/// 7.3), then the boards' simple characters (3.7.1, 7.1).
+/// 7.3), then the boards' simple characters (3.7.1, 7.1); then the books, which draw nothing
+/// (the starting rating, line limit and synthetic history, 7.1 and 4.4).
 pub fn start_world(data: &WorldData, draws: &mut dyn DrawSource) -> Result<World, LoadError> {
     let mut world = World::from_data(data)?;
     economy::start(&mut world, draws);
     people::seating::start(&mut world, draws);
+    finance::start(&mut world);
     Ok(world)
 }
 

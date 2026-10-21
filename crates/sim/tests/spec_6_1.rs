@@ -93,10 +93,11 @@ fn one_test_per_archetype_row() {
         Archetype::Incumbent
     );
     assert_eq!(arch(false, 500.0, false, &[]), Archetype::Incumbent);
-    // 6.1 (A): both Ambitious and Greedy take the first trait in the controller's list.
+    // Rows match in table order (D120; Logan on design fix 105: table order), so a controller
+    // with both Ambitious and Greedy is an Aggressive grower whichever trait it lists first.
     assert_eq!(
         arch(false, 500.0, false, &[Trait::Greedy, Trait::Ambitious]),
-        Archetype::CashCow
+        Archetype::AggressiveGrower
     );
     assert_eq!(
         arch(false, 500.0, false, &[Trait::Ambitious, Trait::Greedy]),

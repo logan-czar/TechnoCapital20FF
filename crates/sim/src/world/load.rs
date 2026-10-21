@@ -16,6 +16,7 @@ use super::entities::{
 use super::ids::{CharacterId, CompanyId, IndustryId, Ordinal, UnitId};
 use super::table::Table;
 use super::units::{fraction_from_bps, shares_from_csv, usd_from_billions, usd_from_millions};
+use crate::ai::archetype::Archetype;
 use crate::economy::ai_boom::{POP_BASE_YEAR, boom_date};
 use crate::economy::assets::placeholder_plan;
 use crate::economy::cycle::{START_PHASE, z_avg};
@@ -24,6 +25,8 @@ use crate::economy::start::{
     start_loadout,
 };
 use crate::economy::supply::fringe_assets_at_load;
+use crate::finance::rating::Rating;
+use crate::finance::state::CompanyFinance;
 use crate::ops::compute::compute_bill;
 use crate::ops::data::{DataBook, DataParams, conversion_capacity};
 use crate::ops::labor::{fit_stations, labor_units};
@@ -165,6 +168,17 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             )?,
             gdp_usd: usd_from_billions(c.gdp_usd_bn),
             sovereign_spread: fraction_from_bps(econ.sovereign_spread_bps),
+            corp_tax_rate: econ.corp_tax_rate,
+            sovereign_rating: Rating::parse(&econ.sovereign_rating).ok_or_else(|| {
+                LoadError::BadValue {
+                    table: "country-economy",
+                    key: c.iso3.clone(),
+                    message: format!(
+                        "sovereign_rating `{}` is not on the AAA to CC scale",
+                        econ.sovereign_rating
+                    ),
+                }
+            })?,
         });
     }
 
@@ -367,6 +381,13 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             sale_proceeds_m: 0.0,
             sale_gain_m: 0.0,
         });
+        let controller = character_keys.0.get(c.controller.as_str()).copied();
+        let archetype = Archetype::at_load(
+            &c.control_basis,
+            revenue,
+            &industries[industry].sector,
+            controller.map_or(&[][..], |ch| &characters[ch].traits[..]),
+        );
         companies.push(Company {
             key: c.id.clone(),
             name: c.name.clone(),
@@ -384,7 +405,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             revenue_usd: revenue,
             shares_out: shares_from_csv(start.shares).map_err(bad)?,
             units: vec![unit_id],
-            controller: character_keys.0.get(c.controller.as_str()).copied(),
+            controller,
             labor_units: labor,
             stations,
             pc: productive_compute(&stations, params.pc_modifier),
@@ -395,8 +416,19 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             board: Default::default(),
             seats_to_fill: Vec::new(),
             management_score: 0.0,
+            archetype,
+            // Cash, line and starting rating as company-start.csv has them (spec 7.1, D241);
+            // the limit and history are set by `finance::start` once the load month exists.
             cash_usd: start.cash_usd,
-            line_drawn_usd: start.credit_drawn_usd,
+            finance: CompanyFinance::at_load(
+                start.credit_drawn_usd,
+                Rating::parse(&start.start_rating).ok_or_else(|| {
+                    bad(format!(
+                        "start_rating `{}` is not on the AAA to CC scale",
+                        start.start_rating
+                    ))
+                })?,
+            ),
         });
     }
     // Fringe pools (spec 5.3, 7.2): what named revenue leaves of the 2020 world size.
@@ -438,6 +470,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         },
         name_books,
         simple_characters_made: 0,
+        books_check: Default::default(),
     })
 }
 

@@ -9,7 +9,8 @@
 //! draws only through a `&mut dyn DrawSource`; no scheduler wiring. One file per spec section:
 //!
 //! - [`inputs`]: section 6 inputs (g_dem, ROA, loss_q, liquidity, min_cash, the traits read).
-//! - [`archetype`]: 6.1 archetype and its table values.
+//! - [`archetype`]: the 6.1 table (M4 added the R&D and payout mults, F6 the hurdle ROA, growth
+//!   adj and data coverage), the first-match rule and the 6.3 trait R&D mults.
 //! - [`growth`]: 6.2 growth plan, trait nudges, clamp and funding cap.
 //! - [`rd`]: 6.3 R&D plan.
 //! - [`split`]: 6.4 station split (reads `ops::stations::station_split`).

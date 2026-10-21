@@ -1,7 +1,7 @@
 //! The growth plan (spec 6.2): the annual net rate g from the situation table, the trait nudges,
 //! the −20% to +30% clamp and the funding cap on the quarter's purchases (5.10).
 
-use super::archetype::ArchetypeParams;
+use super::archetype::ArchetypeRow;
 use super::inputs::has;
 use crate::people::traits::Trait;
 
@@ -46,7 +46,7 @@ pub fn situation_growth(
     roa: f64,
     g_dem: f64,
     supply_ratio: f64,
-    archetype: &ArchetypeParams,
+    archetype: &ArchetypeRow,
 ) -> f64 {
     if loss_q >= SELL_DOWN_LOSS_QUARTERS {
         return SELL_DOWN_GROWTH;
@@ -132,7 +132,7 @@ pub struct GrowthInputs<'a> {
     pub roa: f64,
     pub g_dem: f64,
     pub supply_ratio: f64,
-    pub archetype: ArchetypeParams,
+    pub archetype: ArchetypeRow,
     pub traits: &'a [Trait],
     pub tech: bool,
     pub funding: FundingInputs,

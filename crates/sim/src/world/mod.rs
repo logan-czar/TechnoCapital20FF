@@ -45,6 +45,7 @@ pub use load::LoadError;
 pub use notice::{AlertKind, AlertLevel, AlertLevels, AlertPayload, Notice, PauseReason, SkipKind};
 pub use table::Table;
 
+use crate::finance::state::BooksCheck;
 use crate::people::names::NameBooks;
 use crate::time::DateTime;
 
@@ -75,6 +76,8 @@ pub struct World {
     pub name_books: NameBooks,
     /// Simple characters generated so far, so the next one's id (spec 3.7.1 `id`).
     pub simple_characters_made: u32,
+    /// The engine's run of the build-plan M4.9 balance check (finance::jobs).
+    pub books_check: BooksCheck,
 }
 
 impl World {

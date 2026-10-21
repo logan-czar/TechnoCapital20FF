@@ -1,7 +1,7 @@
 //! The Lite AI station split (spec 6.4), with the archetype's data coverage (6.1) and the named
 //! controller's Visionary trait. The split itself is `ops::stations::station_split` (F3).
 
-use super::archetype::ArchetypeParams;
+use super::archetype::ArchetypeRow;
 use super::inputs::has;
 use crate::ops::stations::{SplitInputs, Stations, station_split};
 use crate::people::traits::Trait;
@@ -20,7 +20,7 @@ pub fn monthly_inflow_tb(annual_revenue_usd: f64, data_tb_per_musd: f64) -> f64 
 /// only for a Visionary controller (none for a born company, 5.19.5).
 pub fn plan_stations(
     labor: u64,
-    archetype: &ArchetypeParams,
+    archetype: &ArchetypeRow,
     inflow_tb: f64,
     traits: &[Trait],
 ) -> Stations {
