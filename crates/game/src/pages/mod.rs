@@ -22,10 +22,16 @@
 //! A later registration for a kind replaces the earlier one, so Phase B plugins (added after
 //! [`PagesPlugin`]) replace the placeholders. Pages read only [`crate::bridge::Views`] (spec 9).
 
+pub mod character;
+pub mod company;
+pub mod country;
+pub mod doc;
+pub mod exchange;
 pub mod lists;
 pub mod placeholder;
 pub mod settings;
 pub mod world;
+pub mod zone;
 
 use std::collections::HashMap;
 use std::fmt;
@@ -877,6 +883,13 @@ impl Plugin for PagesPlugin {
             .init_resource::<PdoombergRoute>()
             .add_message::<OpenPdoomberg>();
         placeholder::register(app);
+        // Lane B1's entity pages replace their placeholders (M9.2, M9.7).
+        company::register(app);
+        character::register(app);
+        country::register(app);
+        zone::register(app);
+        exchange::register(app);
+        doc::register(app);
         lists::register(app);
         world::register(app);
         settings::register(app);
