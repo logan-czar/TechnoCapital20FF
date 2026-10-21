@@ -20,3 +20,4 @@
 
 pub mod credit;
 pub mod rating;
+pub mod tax;
