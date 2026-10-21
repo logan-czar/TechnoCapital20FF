@@ -445,7 +445,8 @@ pub struct StartRatingInputs<'a> {
     pub sovereign: Rating,
     /// World base rate (3.1).
     pub base_rate: f64,
-    /// The company's home spread (5.12, [`super::credit::home_spread`]).
+    /// The company's home spread (5.12, [`super::credit::home_spread`]), read from the zone's
+    /// **base** credit spread at load, not the effective spread of the Q1 2020 draw (D235).
     pub home_spread: f64,
 }
 

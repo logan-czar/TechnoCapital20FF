@@ -18,7 +18,7 @@ the revenue and sector notches summed and clamped to AAA..CC, capped at the sove
 at the run rate with that rating: line interest, undrawn fee, interest on own cash (5.12), tax on positive
 pre-tax income (5.11, no carryforward at load), replacement purchases equal to depreciation (flat history,
 D228). Home spread: half the zone's base spread plus half the sovereign spread, rounded half away from zero
-(D109, D223).
+(D109, D223). The load reads the zone's base spread, not the effective spread of the Q1 2020 draw (D235).
 
 Columns of finance-start.csv (USD a year unless named q4_ or bs_; ratings as labels):
   id, revenue, variable, fixed_cash, rd, shared, depreciation, ebit (the run-rate lines);
