@@ -49,14 +49,16 @@ fn monthly_hashes_and_metrics() {
     assert_eq!(
         rows[0],
         "seed,year,ticks,final_hash,wall_ms,phase,g_t,named_revenue_usd,fringe_revenue_usd,\
-         mean_s,min_s,max_s,mean_m,mean_productivity,mean_management,data_tb,profitable_share"
+         mean_s,min_s,max_s,mean_m,mean_productivity,mean_management,data_tb,profitable_share,\
+         distressed_in_year,distressed,bankrupt,removed,bankruptcies_in_year,removals_in_year,\
+         active_share,line_drawn_usd,ratings"
     );
     assert_eq!(rows.len(), 3);
     assert!(rows[1].starts_with("7,2020,8784,"), "{}", rows[1]);
     assert!(rows[2].starts_with("8,2020,8784,"), "{}", rows[2]);
     // M2 columns: a phase name, g_t, a year of revenue and S near 1 in the first year.
     let cols: Vec<&str> = rows[1].split(',').collect();
-    assert_eq!(cols.len(), 17, "{}", rows[1]);
+    assert_eq!(cols.len(), 26, "{}", rows[1]);
     assert!(
         ["Expansion", "Overheating"].contains(&cols[5]),
         "{}",
@@ -72,6 +74,21 @@ fn monthly_hashes_and_metrics() {
     assert!((0.0..=100.0).contains(&num(14)), "{}", rows[1]);
     assert!(num(15) > 0.0, "{}", rows[1]);
     assert!((0.0..=1.0).contains(&num(16)), "{}", rows[1]);
+    // M4 columns: counts of the 651, an active share, the line drawn and the rating bands of
+    // the companies not frozen, which with the Active and Distressed ones make up the 651.
+    let int = |i: usize| -> usize { cols[i].parse().unwrap() };
+    let (distressed, bankrupt, removed) = (int(18), int(19), int(20));
+    assert!(int(17) >= distressed, "{}", rows[1]);
+    assert!(int(21) >= bankrupt + removed, "{}", rows[1]);
+    assert_eq!(int(22), removed, "{}", rows[1]);
+    let active = num(23) * 651.0;
+    assert!((active.round() as usize + distressed + bankrupt + removed) == 651, "{}", rows[1]);
+    assert!(num(24) >= 0.0, "{}", rows[1]);
+    let banded: usize = cols[25]
+        .split('|')
+        .map(|b| b.split_once(':').unwrap().1.parse::<usize>().unwrap())
+        .sum();
+    assert_eq!(banded, 651 - bankrupt - removed, "{}", rows[1]);
 
     // Same seed, same hashes.
     let (_, again, _) = run(&args);

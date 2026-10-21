@@ -165,8 +165,16 @@ fn plans_and_board(w: &mut World, _: &mut JobCtx<'_>) {
         let unit = w.companies[id].units[0];
         let norm = w.industries[w.units[unit].industry].params.rd_norm;
         w.units[unit].rd_plan = mult * norm;
+        // Keep the test companies solvent, so the M4 books (5.12 distress) never freeze them
+        // before the year is out: CO-0026 and CO-0027 start CC with a drawn line (D16).
+        let c = &mut w.companies[id];
+        c.cash_usd = SOLVENT_CASH_USD;
+        c.finance.line.drawn = 0.0;
     }
 }
+
+/// Cash the test companies hold each month (far above any year of their costs).
+const SOLVENT_CASH_USD: f64 = 1.0e9;
 
 #[test]
 fn score_fifty_a_year_at_the_norm_double_and_none() {

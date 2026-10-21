@@ -11,7 +11,10 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 use std::time::Instant;
 
+use sim::finance::distress::CompanyStatus;
+use sim::finance::rating::Band;
 use sim::time::{Date, DateTime};
+use sim::world::Ordinal;
 use sim::{Notice, Sim};
 
 const USAGE: &str = "usage:\n  \
@@ -24,10 +27,63 @@ const USAGE: &str = "usage:\n  \
 /// close, the year's named and fringe revenue (sum of the twelve monthly closes) and S and M
 /// across the 42 industries at the December close. M3, at the December close: mean unit
 /// productivity, mean management score, total data held and unstructured (TB) and the share of
-/// companies with EBIT after R&D above 0 that month.
+/// companies with EBIT after R&D above 0 that month. M4: companies seen Distressed at any month
+/// close of the year, and at the December close Distressed, Bankrupt (frozen) and Removed (all
+/// years); bankruptcies and removals in the year; the share of the 651 still Active; the total
+/// line drawn; the rating bands of the companies not frozen (`AAA:n|AA:n|...|CC:n`).
 const METRICS_HEADER: &str = "seed,year,ticks,final_hash,wall_ms,phase,g_t,named_revenue_usd,\
     fringe_revenue_usd,mean_s,min_s,max_s,mean_m,mean_productivity,mean_management,data_tb,\
-    profitable_share";
+    profitable_share,distressed_in_year,distressed,bankrupt,removed,bankruptcies_in_year,\
+    removals_in_year,active_share,line_drawn_usd,ratings";
+
+/// The M4 books columns at the close of `year` (the 1 January tick that closes it), with
+/// `distressed_in_year` counted by the caller from the monthly closes.
+fn books_columns(sim: &Sim, year: i32, distressed_in_year: usize) -> String {
+    let v = sim.views();
+    let companies = &v.company_detail.get().companies;
+    let count = |s: CompanyStatus| companies.iter().filter(|c| c.status == s).count();
+    let ratings = v.ratings.get();
+    // The year's events: its own days, and the 1 January close that ends it.
+    let close = Date::ymd(year + 1, 1, 1);
+    let in_year = |d: Option<Date>| d.is_some_and(|d| d.year == year || d == close);
+    let bankruptcies = ratings
+        .companies
+        .iter()
+        .filter(|c| in_year(c.bankrupt_on))
+        .count();
+    let removals = ratings
+        .companies
+        .iter()
+        .filter(|c| in_year(c.removed_on))
+        .count();
+    let line: f64 = companies.iter().map(|c| c.line_drawn_usd).sum();
+    let bands: Vec<String> = ratings
+        .band_counts()
+        .iter()
+        .map(|(b, n)| format!("{}:{n}", band_label(*b)))
+        .collect();
+    format!(
+        "{distressed_in_year},{},{},{},{bankruptcies},{removals},{:.4},{line:.0},{}",
+        count(CompanyStatus::Distressed),
+        count(CompanyStatus::Bankrupt),
+        count(CompanyStatus::Removed),
+        count(CompanyStatus::Active) as f64 / companies.len().max(1) as f64,
+        bands.join("|")
+    )
+}
+
+fn band_label(b: Band) -> &'static str {
+    match b {
+        Band::Aaa => "AAA",
+        Band::Aa => "AA",
+        Band::A => "A",
+        Band::Bbb => "BBB",
+        Band::Bb => "BB",
+        Band::B => "B",
+        Band::Ccc => "CCC",
+        Band::Cc => "CC",
+    }
+}
 
 /// The M3 operations columns, read from the views at the December close.
 fn operations_columns(sim: &Sim) -> String {
@@ -222,24 +278,35 @@ fn run(args: &RunArgs) -> ExitCode {
         let (seed_start, mut year_start) = (Instant::now(), Instant::now());
         let mut year_ticks = 0u64;
         let mut economy = YearEconomy::default();
+        let mut distressed_seen = vec![false; sim.views().company_detail.get().companies.len()];
         while sim.now() < end {
             year_ticks += 1;
             for n in sim.step() {
                 let Notice::MonthDone(month) = n else {
                     continue;
                 };
-                let hash = sim.state_hash();
                 economy.add_month(&sim);
+                for c in &sim.views().company_detail.get().companies {
+                    if c.status == CompanyStatus::Distressed {
+                        distressed_seen[c.id.index()] = true;
+                    }
+                }
+                // The hash serializes the whole world (with M4's statement archives, about 4 MB),
+                // so it is taken only when printed or written.
                 if args.hash_monthly {
-                    println!("seed {seed} {month} {hash}");
+                    println!("seed {seed} {month} {}", sim.state_hash());
                 }
                 if month.month == 12 {
+                    let hash = sim.state_hash();
                     let ms = year_start.elapsed().as_millis();
                     let cols = economy.columns(&sim);
                     let ops = operations_columns(&sim);
+                    let seen = distressed_seen.iter().filter(|&&d| d).count();
+                    let books = books_columns(&sim, month.year, seen);
+                    distressed_seen.iter_mut().for_each(|d| *d = false);
                     writeln!(
                         csv,
-                        "{seed},{},{year_ticks},{hash},{ms},{cols},{ops}",
+                        "{seed},{},{year_ticks},{hash},{ms},{cols},{ops},{books}",
                         month.year
                     )
                     .unwrap();

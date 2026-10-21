@@ -18,7 +18,7 @@ flate2 = "1"
 postcard = { version = "1", default-features = false, features = ["use-std"] }
 rand_chacha = "0.9"
 rand_core = "0.9"
-serde = { version = "1", features = ["derive"] }
+serde = { version = "1", features = ["derive", "rc"] }
 thiserror = "2"
 sim = { path = "crates/sim" }
 sim-data = { path = "crates/sim-data" }
