@@ -74,20 +74,36 @@ fn tiny_soak_twice_gives_the_same_tables_and_checks() {
         .collect();
     assert_eq!(rows.len(), 18 * 2, "{targets}");
     assert!(rows.iter().all(|r| r.len() == 5), "{targets}");
-    // One year covers only the every-year targets; a seed's year-1 run lists 1 to 5 founders and
-    // fills every seat.
+    // One year covers only the per-birth cast check (every other target needs 10 or 30 years),
+    // and each 2020 cast has 1 to 5 founders and 1 to 5 simple characters.
     for r in &rows {
-        let every_year = [
-            "named_companies",
-            "listings_per_year",
-            "cast_sizes",
-            "no_empty_labor_seat",
-        ]
-        .contains(&r[0]);
-        assert_eq!(r[2] != "NA", every_year, "{r:?}");
-        if ["cast_sizes", "no_empty_labor_seat"].contains(&r[0]) {
-            assert_eq!(r[2], "PASS", "{r:?}");
-        }
+        let want = if r[0] == "cast_sizes" { "PASS" } else { "NA" };
+        assert_eq!(r[2], want, "{r:?}");
     }
     assert!(a.join("summary.csv").exists());
+}
+
+#[test]
+fn failed_seeds_are_each_named_and_the_run_exits_non_zero() {
+    let tmp = Path::new(env!("CARGO_TARGET_TMPDIR"));
+    let (out, bad) = (tmp.join("soak-fail"), tmp.join("no-such-data"));
+    let run = Command::new(env!("CARGO_BIN_EXE_headless"))
+        .args([
+            "soak", "--years", "1", "--seeds", "5..6", "--jobs", "2", "--out",
+        ])
+        .arg(&out)
+        .arg("--data-dir")
+        .arg(&bad)
+        .output()
+        .expect("run headless");
+    assert!(!run.status.success());
+    let stderr = String::from_utf8_lossy(&run.stderr);
+    assert!(stderr.contains("2 of 2 seeds failed"), "{stderr}");
+    assert!(
+        stderr.contains("seed 5:") && stderr.contains("seed 6:"),
+        "{stderr}"
+    );
+    // The tables are still written, with their headers and no rows.
+    let years = std::fs::read_to_string(out.join("years.csv")).unwrap();
+    assert_eq!(years.lines().count(), 1, "{years}");
 }

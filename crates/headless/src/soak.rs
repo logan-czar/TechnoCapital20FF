@@ -41,13 +41,13 @@ fn default_jobs() -> usize {
 }
 
 /// Runs every seed of `seeds` for `years` years, `jobs` at a time, each in its own child process
-/// (`headless soak-seed`, D333); returns the outputs in seed order.
+/// (`headless soak-seed`, D333); returns each seed's output or error, in seed order.
 pub fn run_seeds(
     data_dir: &Path,
     seeds: (u64, u64),
     years: u32,
     jobs: usize,
-) -> Result<Vec<SeedOutput>, String> {
+) -> Result<Vec<Result<SeedOutput, String>>, String> {
     let exe = std::env::current_exe().map_err(|e| format!("current exe: {e}"))?;
     let list: Vec<u64> = (seeds.0..=seeds.1).collect();
     let jobs = jobs.clamp(1, list.len().max(1));
@@ -72,12 +72,33 @@ pub fn run_seeds(
             });
         }
     });
-    slots
+    Ok(slots
         .into_inner()
         .expect("no worker panicked")
         .into_iter()
         .map(|o| o.expect("every seed ran"))
-        .collect()
+        .collect())
+}
+
+/// The seeds that ran, in seed order, and an error naming every seed that failed (None if all
+/// ran).
+fn split_failures(results: Vec<Result<SeedOutput, String>>) -> (Vec<SeedOutput>, Option<String>) {
+    let total = results.len();
+    let (mut done, mut failed) = (Vec::new(), Vec::new());
+    for r in results {
+        match r {
+            Ok(o) => done.push(o),
+            Err(e) => failed.push(e),
+        }
+    }
+    let error = (!failed.is_empty()).then(|| {
+        format!(
+            "{} of {total} seeds failed (the others' rows are written):\n  {}",
+            failed.len(),
+            failed.join("\n  ")
+        )
+    });
+    (done, error)
 }
 
 /// Section markers of a `soak-seed` child's stdout.
@@ -160,7 +181,8 @@ pub fn write_outputs(dir: &Path, outputs: &[SeedOutput], years: u32) -> Result<(
     Ok(())
 }
 
-/// `soak`: runs, writes the three files and prints the timing.
+/// `soak`: runs, writes the three files and prints the timing. If a seed fails, the seeds that ran
+/// are still written, and the error lists every failed seed.
 pub fn soak(data_dir: &Path, args: &SoakArgs) -> Result<(), String> {
     let jobs = args.jobs.unwrap_or_else(default_jobs);
     let n = args.seeds.1 - args.seeds.0 + 1;
@@ -169,19 +191,74 @@ pub fn soak(data_dir: &Path, args: &SoakArgs) -> Result<(), String> {
         args.seeds.0, args.seeds.1, args.years
     );
     let start = Instant::now();
-    let outputs = run_seeds(data_dir, args.seeds, args.years, jobs)?;
+    let (outputs, failed) = split_failures(run_seeds(data_dir, args.seeds, args.years, jobs)?);
     let wall = start.elapsed().as_secs_f64();
     write_outputs(&args.out, &outputs, args.years)?;
     let mut ms: Vec<u128> = outputs.iter().map(|o| o.wall_ms).collect();
     ms.sort_unstable();
-    let ticks: u64 = outputs.iter().map(|o| o.ticks).sum();
-    println!(
-        "{n} seeds in {wall:.1} s wall ({jobs} jobs); per seed min {} ms, median {} ms, max {} ms; \
-         {ticks} ticks; wrote {}",
-        ms[0],
-        ms[ms.len() / 2],
-        ms[ms.len() - 1],
-        args.out.display()
-    );
-    Ok(())
+    if let (Some(lo), Some(hi)) = (ms.first(), ms.last()) {
+        let ticks: u64 = outputs.iter().map(|o| o.ticks).sum();
+        println!(
+            "{} seeds in {wall:.1} s wall ({jobs} jobs); per seed min {lo} ms, median {} ms, max \
+             {hi} ms; {ticks} ticks; wrote {}",
+            outputs.len(),
+            ms[ms.len() / 2],
+            args.out.display()
+        );
+    }
+    failed.map_or(Ok(()), Err)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn output(seed: u64) -> SeedOutput {
+        SeedOutput {
+            seed,
+            years: format!("{seed},2020\n"),
+            quarters: String::new(),
+            ticks: 1,
+            wall_ms: 1,
+            state_hash: "h".into(),
+            end: "2021-01-01 00:00".into(),
+        }
+    }
+
+    #[test]
+    fn failed_seeds_are_all_named_and_the_rest_kept_in_order() {
+        let results = vec![
+            Err("seed 1: boom".to_string()),
+            Ok(output(2)),
+            Err("seed 3: bang".to_string()),
+            Ok(output(4)),
+        ];
+        let (done, error) = split_failures(results);
+        assert_eq!(done.iter().map(|o| o.seed).collect::<Vec<_>>(), [2, 4]);
+        let e = error.unwrap();
+        assert!(e.starts_with("2 of 4 seeds failed"), "{e}");
+        assert!(
+            e.contains("seed 1: boom") && e.contains("seed 3: bang"),
+            "{e}"
+        );
+        assert!(split_failures(vec![Ok(output(5))]).1.is_none());
+    }
+
+    #[test]
+    fn child_output_round_trips() {
+        let text = format!(
+            "{YEARS_MARK}\n1,2020,a\n{QUARTERS_MARK}\n1,2020,1\n{END_MARK}8784 12 abc 2021-01-01 00:00\n"
+        );
+        let o = parse_child(1, &text).unwrap();
+        assert_eq!(
+            (o.years.as_str(), o.quarters.as_str()),
+            ("1,2020,a\n", "1,2020,1\n")
+        );
+        assert_eq!(
+            (o.ticks, o.wall_ms, o.state_hash.as_str()),
+            (8784, 12, "abc")
+        );
+        assert_eq!(o.end, "2021-01-01 00:00");
+        assert!(parse_child(1, "garbage").is_none());
+    }
 }

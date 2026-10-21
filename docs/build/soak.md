@@ -21,6 +21,8 @@ target/release/headless check soak-out
 
 Each seed is its own single-threaded, deterministic `Sim` in its own child process (`headless soak-seed --seed S --years N`, an internal command); the parent runs `--jobs` children at a time and writes their rows in seed order (D333). The sim itself never runs threads.
 
+If a seed fails (its child exits non-zero), the seeds that ran are still written and `soak` exits non-zero, listing every failed seed with its error; `--check` is then skipped.
+
 `soak` writes three files:
 
 - `years.csv`: one row per seed per year, seed then year order.
@@ -114,16 +116,16 @@ Spec 10's balance targets after 10 years, then its startup, character and listin
 | `bust_share` | 10% to 20% Bust | the same with `bust_months`, in 0.10 to 0.20 | all seeds |
 | `startups_per_year` | 6 to 15 startups a year on average in 2020 to 2029 | mean `startups_in_year` over 2020 to 2029 in 6 to 15 (D328) | all seeds |
 | `ai_lab_startups_2030_2035` | 15 to 50 AI labs startups in 2030 to 2035, in 80% of seeds | Σ `ai_lab_startups_in_year` over 2030 to 2035 (both inclusive) in 15 to 50 (D331) | 80% |
-| `named_companies` | between 600 and 1,100 in every year | every row's `named_companies` in 600 to 1,100 (D329) | all seeds |
+| `named_companies` | between 600 and 1,100 in every year | every row 2020 to 2049: `named_companies` in 600 to 1,100 (D329) | all seeds |
 | `listings_30y` | 60 to 250 listings in 30 years | Σ `listings_in_year` over 2020 to 2049 in 60 to 250 | all seeds |
-| `listings_per_year` | no more than 12 in any year | every row's `listings_in_year` ≤ 12 | all seeds |
+| `listings_per_year` | no more than 12 in any year | every row 2020 to 2049: `listings_in_year` ≤ 12 | all seeds |
 | `start_private_listed_2024` | 10 to 30 starting private companies listed by the end of 2024, in 90% of seeds | `start_private_listed` at the 2024 close in 10 to 30 (D334) | 90% |
 | `full_characters_per_decade` | 100 to 300 full characters made per decade | made in each decade the run covers (2020s: by the 2029 close; 2030s: 2039 close less 2029 close; 2040s likewise) in 100 to 300 (D332) | all seeds |
 | `full_characters_2050` | under 1,200 full characters in the world in 2050 | `full_characters` at the 2049 close (1 January 2050) below 1,200 (D332) | all seeds |
 | `cast_sizes` | every startup has 1 to 5 full and 1 to 5 partial characters | every birth's founders and simple cast in 1 to 5 (D326) | all seeds |
-| `no_empty_labor_seat` | no labor seat of a born company is empty | `born_empty_seats_max` = 0 in every year (D326) | all seeds |
+| `no_empty_labor_seat` | no labor seat of a born company is empty | `born_empty_seats_max` = 0 in every row 2020 to 2049 (D326) | all seeds |
 
-**Windows.** A target is NA for a seed when the run lacks a row it needs: the 2029 row, the 40 quarters of 2020 to 2029, the reported quarters Q1 2020 to Q4 2029 (the Q4 2029 release is on 2 January 2030, so the beat share needs a run past 10 years), the 2030 to 2035 rows, all 30 rows 2020 to 2049 (listings in 30 years), the 2024 row, the 2049 row; `full_characters_per_decade` evaluates the decades the run covers, NA with none; `cast_sizes` is NA with no birth.
+**Windows.** A target is NA for a seed when the run lacks a row it needs: the 2029 row, the 40 quarters of 2020 to 2029, the reported quarters Q1 2020 to Q4 2029 (the Q4 2029 release is on 2 January 2030, so the beat share needs a run past 10 years), the 2030 to 2035 rows, all 30 rows 2020 to 2049 (listings in 30 years, and the every-year targets `named_companies`, `listings_per_year` and `no_empty_labor_seat`, D329), the 2024 row, the 2049 row; `full_characters_per_decade` evaluates the decades the run covers, NA with none; `cast_sizes` is NA with no birth.
 
 ## Performance
 

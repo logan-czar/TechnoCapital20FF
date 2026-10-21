@@ -41,11 +41,14 @@ pub const STARTUPS_PER_YEAR: (f64, f64) = (6.0, 15.0);
 pub const AI_LABS_YEARS: (i32, i32) = (2030, 2035);
 pub const AI_LABS_STARTUPS: (u32, u32) = (15, 50);
 pub const AI_LABS_SEED_SHARE: f64 = 0.80;
+/// Spec 10 "the 30-year run": the rows 2020 to 2049. The every-year targets need all 30 and are
+/// NA on a shorter run (D329).
+pub const RUN_YEARS: (i32, i32) = (2020, 2049);
 /// Spec 10: "the named company count stays between 600 and 1,100 in every year of the 30-year
 /// run".
 pub const NAMED_COMPANIES: (u32, u32) = (600, 1100);
 /// Spec 10: "60 to 250 listings in 30 years and no more than 12 in any year".
-pub const LISTINGS_YEARS: (i32, i32) = (2020, 2049);
+pub const LISTINGS_YEARS: (i32, i32) = RUN_YEARS;
 pub const LISTINGS_TOTAL: (u32, u32) = (60, 250);
 pub const LISTINGS_PER_YEAR_MAX: u32 = 12;
 /// Spec 10: "10 to 30 starting private companies listed by the end of 2024 in 90% of seeds".
@@ -323,12 +326,13 @@ pub const TARGETS: &[Target] = &[
     Target {
         id: "named_companies",
         spec: "named company count between 600 and 1100 in every year",
-        bound: "600 to 1100 at every year close",
+        bound: "600 to 1100 at every year close 2020-2049",
         required: ALL_SEEDS,
         eval: |s| {
-            let lo = s.years.iter().map(|y| y.named).min()?;
-            let hi = s.years.iter().map(|y| y.named).max()?;
-            let ok = s.years.iter().all(|y| within_u(y.named, NAMED_COMPANIES));
+            let ys = s.years_in(RUN_YEARS)?;
+            let lo = ys.iter().map(|y| y.named).min()?;
+            let hi = ys.iter().map(|y| y.named).max()?;
+            let ok = ys.iter().all(|y| within_u(y.named, NAMED_COMPANIES));
             verdict(ok, f64::from(hi), format!("{lo} to {hi}"))
         },
     },
@@ -346,10 +350,10 @@ pub const TARGETS: &[Target] = &[
     Target {
         id: "listings_per_year",
         spec: "no more than 12 listings in any year",
-        bound: "<= 12 in every year",
+        bound: "<= 12 in every year 2020-2049",
         required: ALL_SEEDS,
         eval: |s| {
-            let v = s.years.iter().map(|y| y.listings).max()?;
+            let v = s.years_in(RUN_YEARS)?.iter().map(|y| y.listings).max()?;
             verdict(v <= LISTINGS_PER_YEAR_MAX, f64::from(v), format!("max {v}"))
         },
     },
@@ -446,10 +450,14 @@ pub const TARGETS: &[Target] = &[
     Target {
         id: "no_empty_labor_seat",
         spec: "no labor seat of a born company is empty",
-        bound: "0 empty open seats at every birth and month close",
+        bound: "0 empty open seats at every birth and month close 2020-2049",
         required: ALL_SEEDS,
         eval: |s| {
-            let v = s.years.iter().map(|y| y.born_empty_seats_max).max()?;
+            let v = s
+                .years_in(RUN_YEARS)?
+                .iter()
+                .map(|y| y.born_empty_seats_max)
+                .max()?;
             verdict(v == 0, f64::from(v), format!("max {v} empty"))
         },
     },
@@ -992,7 +1000,8 @@ mod tests {
 
     #[test]
     fn short_runs_are_na_and_shares_follow_the_required_share() {
-        // A 1-year run: only the every-year targets are evaluated.
+        // A 1-year run: only the per-birth cast check is evaluated; the every-year targets need
+        // the 30 rows of the run.
         let (mut y, mut q) = good();
         y.truncate(1);
         q.truncate(4);
@@ -1002,15 +1011,22 @@ mod tests {
             .filter(|(_, v)| v != "NA")
             .map(|(id, _)| *id)
             .collect();
-        assert_eq!(
-            evaluated,
-            [
-                "named_companies",
-                "listings_per_year",
-                "cast_sizes",
-                "no_empty_labor_seat"
-            ]
-        );
+        assert_eq!(evaluated, ["cast_sizes"]);
+        // 29 of the 30 rows: still NA.
+        let (mut y, q) = good();
+        y.pop();
+        let na: Vec<&str> = results(&y, &q)
+            .into_iter()
+            .filter(|(_, v)| v == "NA")
+            .map(|(id, _)| id)
+            .collect();
+        for id in [
+            "named_companies",
+            "listings_per_year",
+            "no_empty_labor_seat",
+        ] {
+            assert!(na.contains(&id), "{id}");
+        }
         // 9 of 10 seeds meets 90%; 8 of 10 does not; every-seed targets need all.
         let s = |passed, required| Summary {
             id: "x",
