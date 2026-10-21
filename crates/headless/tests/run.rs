@@ -44,58 +44,70 @@ fn monthly_hashes_and_metrics() {
         .unwrap();
     assert_ne!(hashes[0][7..], seed8_jan[7..], "seeds differ");
 
-    let rows = std::fs::read_to_string(&csv).unwrap();
-    let rows: Vec<&str> = rows.lines().collect();
-    assert_eq!(
-        rows[0],
-        "seed,year,ticks,final_hash,wall_ms,phase,g_t,named_revenue_usd,fringe_revenue_usd,\
-         mean_s,min_s,max_s,mean_m,mean_productivity,mean_management,data_tb,profitable_share,\
-         distressed_in_year,distressed,bankrupt,removed,bankruptcies_in_year,removals_in_year,\
-         active_share,line_drawn_usd,ratings,quoted,median_gap,tracking_share,mean_confidence,\
-         index_atx,index_cbx,index_hse,index_ese,events_in_year,startups_in_year,\
-         ai_lab_startups_in_year,listings_in_year,start_private_listed,named_companies,\
-         start_active_share,beat_share,miss_share,boom_share,bust_share,m_clamp_over_8q,\
-         max_m_clamp_quarters,full_characters_made,median_productivity"
-    );
+    let text = std::fs::read_to_string(&csv).unwrap();
+    let rows: Vec<&str> = text.lines().collect();
     assert_eq!(rows.len(), 3);
+    let header: Vec<&str> = rows[0].split(',').collect();
+    assert_eq!(header[..4], ["seed", "year", "ticks", "state_hash"]);
     assert!(rows[1].starts_with("7,2020,8784,"), "{}", rows[1]);
     assert!(rows[2].starts_with("8,2020,8784,"), "{}", rows[2]);
-    // M2 columns: a phase name, g_t, a year of revenue and S near 1 in the first year.
     let cols: Vec<&str> = rows[1].split(',').collect();
-    assert_eq!(cols.len(), 49, "{}", rows[1]);
+    assert_eq!(cols.len(), header.len(), "{}", rows[1]);
+    let at = |name: &str| -> &str {
+        let i = header.iter().position(|h| *h == name).expect(name);
+        cols[i]
+    };
+    let num = |name: &str| -> f64 { at(name).parse().unwrap() };
+    let int = |name: &str| -> usize { at(name).parse().unwrap() };
+    // The year's state hash is the last monthly hash of seed 7 (December, at the 1 January close).
+    assert!(hashes[11].ends_with(at("state_hash")), "{}", hashes[11]);
+    // M2 columns: a phase name, g_t, a year of revenue and S near 1 in the first year.
     assert!(
-        ["Expansion", "Overheating"].contains(&cols[5]),
+        ["Expansion", "Overheating"].contains(&at("phase")),
         "{}",
         rows[1]
     );
-    let named: f64 = cols[7].parse().unwrap();
-    assert!(named > 1e12, "named revenue a year {named}");
-    let mean_s: f64 = cols[9].parse().unwrap();
-    assert!((0.9..1.1).contains(&mean_s), "{mean_s}");
+    assert!(num("named_revenue_usd") > 1e12, "{}", rows[1]);
+    assert!((0.9..1.1).contains(&num("mean_s")), "{}", rows[1]);
     // M3 columns: productivity within the 5.6 clamp, a 0 to 100 score, data held, a share.
-    let num = |i: usize| -> f64 { cols[i].parse().unwrap() };
-    assert!((30.0..=200.0).contains(&num(13)), "{}", rows[1]);
-    assert!((0.0..=100.0).contains(&num(14)), "{}", rows[1]);
-    assert!(num(15) > 0.0, "{}", rows[1]);
-    assert!((0.0..=1.0).contains(&num(16)), "{}", rows[1]);
+    assert!(
+        (30.0..=200.0).contains(&num("mean_productivity")),
+        "{}",
+        rows[1]
+    );
+    assert!(
+        (0.0..=100.0).contains(&num("mean_management")),
+        "{}",
+        rows[1]
+    );
+    assert!(num("data_tb") > 0.0, "{}", rows[1]);
+    assert!(
+        (0.0..=1.0).contains(&num("profitable_share")),
+        "{}",
+        rows[1]
+    );
     // M4 columns: counts of the companies (the 651 and those born in play), an active share, the
     // line drawn and the rating bands of the companies not frozen, which with the Active and
     // Distressed ones make up every company.
-    let int = |i: usize| -> usize { cols[i].parse().unwrap() };
-    let (distressed, bankrupt, removed) = (int(18), int(19), int(20));
-    let companies = int(39) + removed;
-    assert!(companies >= 651 + int(35), "{}", rows[1]);
-    assert!(int(17) >= distressed, "{}", rows[1]);
-    assert!(int(21) >= bankrupt + removed, "{}", rows[1]);
-    assert_eq!(int(22), removed, "{}", rows[1]);
-    let active = num(23) * companies as f64;
+    let (distressed, bankrupt, removed) = (int("distressed"), int("bankrupt"), int("removed"));
+    let companies = int("named_companies") + removed;
+    assert!(companies >= 651 + int("startups_in_year"), "{}", rows[1]);
+    assert!(int("distressed_in_year") >= distressed, "{}", rows[1]);
     assert!(
-        (active.round() as usize + distressed + bankrupt + removed) == companies,
+        int("bankruptcies_in_year") >= bankrupt + removed,
         "{}",
         rows[1]
     );
-    assert!(num(24) >= 0.0, "{}", rows[1]);
-    let banded: usize = cols[25]
+    assert_eq!(int("removals_in_year"), removed, "{}", rows[1]);
+    let active = num("active_share") * companies as f64;
+    assert_eq!(
+        active.round() as usize + distressed + bankrupt + removed,
+        companies,
+        "{}",
+        rows[1]
+    );
+    assert!(num("line_drawn_usd") >= 0.0, "{}", rows[1]);
+    let banded: usize = at("ratings")
         .split('|')
         .map(|b| b.split_once(':').unwrap().1.parse::<usize>().unwrap())
         .sum();
@@ -103,24 +115,56 @@ fn monthly_hashes_and_metrics() {
     // M5 columns: the quoted count is at most the 467 listed at load and those listed in the
     // year, the gap and the tracking share are shares, confidence is on the −100 to +100 scale
     // and ATX (North America) shows a level.
-    assert!((1..=467 + int(37)).contains(&int(26)), "{}", rows[1]);
-    assert!((0.0..1.0).contains(&num(27)), "{}", rows[1]);
-    assert!((0.0..=1.0).contains(&num(28)), "{}", rows[1]);
-    assert!((-100.0..=100.0).contains(&num(29)), "{}", rows[1]);
-    assert!(num(30) > 0.0, "{}", rows[1]);
+    assert!(
+        (1..=467 + int("listings_in_year")).contains(&int("quoted")),
+        "{}",
+        rows[1]
+    );
+    assert!((0.0..1.0).contains(&num("median_gap")), "{}", rows[1]);
+    assert!((0.0..=1.0).contains(&num("tracking_share")), "{}", rows[1]);
+    assert!(
+        (-100.0..=100.0).contains(&num("mean_confidence")),
+        "{}",
+        rows[1]
+    );
+    assert!(num("index_atx") > 0.0, "{}", rows[1]);
     // M6 columns: 2020 has F1 and random events (startups 1 to 3 each), its listings are of
     // starting private companies, the 651's active share, the shares, the clamp runs, the
     // founders made and the median productivity within the 5.6 clamp.
-    assert!(int(34) >= 1 && int(35) >= int(34), "{}", rows[1]);
-    assert!(int(36) >= 2, "F1's two AI labs: {}", rows[1]);
-    assert_eq!(int(38), int(37), "{}", rows[1]);
-    assert!((0.0..=1.0).contains(&num(40)), "{}", rows[1]);
-    for i in 41..=44 {
-        assert!((0.0..=1.0).contains(&num(i)), "{}", rows[1]);
+    let startups = int("startups_in_year");
+    assert!(int("events_in_year") >= 1 && startups >= int("events_in_year"));
+    assert!(
+        int("ai_lab_startups_in_year") >= 2,
+        "F1's two AI labs: {}",
+        rows[1]
+    );
+    assert_eq!(int("start_private_listed"), int("listings_in_year"));
+    for c in [
+        "start_active_share",
+        "start_alive_share",
+        "beat_share",
+        "miss_share",
+        "boom_share",
+        "bust_share",
+    ] {
+        assert!((0.0..=1.0).contains(&num(c)), "{c}: {}", rows[1]);
     }
-    assert!(int(46) <= 4, "{}", rows[1]);
-    assert!(int(47) >= int(35), "a founder or more each: {}", rows[1]);
-    assert!((30.0..=200.0).contains(&num(48)), "{}", rows[1]);
+    assert!(num("start_alive_share") >= num("start_active_share"));
+    assert!(int("max_m_clamp_quarters") <= 4, "{}", rows[1]);
+    let made = int("full_characters_made");
+    assert!(made >= startups, "a founder or more each: {}", rows[1]);
+    assert_eq!(int("full_characters"), 296 + made, "{}", rows[1]);
+    assert!(
+        (30.0..=200.0).contains(&num("median_productivity")),
+        "{}",
+        rows[1]
+    );
+    // M10 columns: demand against trend after one year, and every birth's cast.
+    assert!(num("demand_dev_max_pp") >= 0.0, "{}", rows[1]);
+    assert_eq!(int("casts_in_year"), startups, "{}", rows[1]);
+    assert!(int("cast_full_min") >= 1 && int("cast_full_max") <= 5);
+    assert!(int("cast_simple_min") >= 1 && int("cast_simple_max") <= 5);
+    assert_eq!(int("born_empty_seats_max"), 0, "{}", rows[1]);
 
     // Same seed, same hashes.
     let (_, again, _) = run(&args);
@@ -137,6 +181,9 @@ fn bad_run_arguments_print_usage() {
         &["run"][..],
         &["run", "--years", "0", "--seeds", "1"],
         &["run", "--years", "1", "--seeds", "5..2"],
+        &["soak", "--years", "1"],
+        &["soak", "--out", "x", "--jobs", "0"],
+        &["check"],
     ] {
         let (ok, _, stderr) = run(args);
         assert!(!ok);
