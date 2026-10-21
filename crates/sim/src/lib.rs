@@ -6,6 +6,7 @@
 
 use rand_chacha::ChaCha8Rng;
 use rand_core::SeedableRng;
+use sim_data::WorldData;
 
 /// The seeded RNG used for every stream: ChaCha8, which gives the same draws for the same seed in
 /// every release (build-plan 2.2, spec 3.1).
@@ -20,12 +21,13 @@ pub fn rng_from_seed(seed: u64) -> SimRng {
 /// Placeholder for the simulation state (filled in from M1).
 #[derive(Debug)]
 pub struct World {
+    pub data: WorldData,
     pub seed: u64,
 }
 
 impl World {
-    pub fn new(seed: u64) -> Self {
-        Self { seed }
+    pub fn new(data: WorldData, seed: u64) -> Self {
+        Self { data, seed }
     }
 }
 
