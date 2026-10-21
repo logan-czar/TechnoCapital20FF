@@ -4,7 +4,7 @@
 mod common;
 
 use common::data;
-use common::economy::{economy_scheduler, industry, month_starts, run_month, world_at_load};
+use common::economy::{economy_scheduler, industry, run_month, world_at_load};
 use sim::economy::growth::{PHI, cycle_k, growth_gap, lt_q, quarterly_growth};
 use sim::rng::NoNoise;
 use sim::time::Date;

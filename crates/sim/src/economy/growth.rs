@@ -45,13 +45,9 @@ pub fn lt_q(lt: f64) -> f64 {
 /// damps downswings.
 pub fn cycle_k(lt: f64, g: f64) -> f64 {
     if g >= 0.0 {
-        (1.0 + K_UP_SLOPE * (lt - K_PIVOT_LT))
-            .max(K_UP_MIN)
-            .min(K_UP_MAX)
+        (1.0 + K_UP_SLOPE * (lt - K_PIVOT_LT)).clamp(K_UP_MIN, K_UP_MAX)
     } else {
-        (1.0 - K_DOWN_SLOPE * (lt - K_PIVOT_LT))
-            .max(K_DOWN_MIN)
-            .min(K_DOWN_MAX)
+        (1.0 - K_DOWN_SLOPE * (lt - K_PIVOT_LT)).clamp(K_DOWN_MIN, K_DOWN_MAX)
     }
 }
 
