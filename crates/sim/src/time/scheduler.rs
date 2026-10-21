@@ -12,12 +12,13 @@
 //! [`NoNoise`](crate::rng::NoNoise) draws through [`Scheduler::run_slots`] (spec 5.16).
 
 use super::calendar::{Date, DateTime};
+use super::control::Controls;
 use super::quarter::{
     PLAN_LOCK_DAY, PRICE_MOVE_HOUR, REACTION_FIRST_DAY, REACTION_LAST_DAY, RELEASE_DAY,
     is_recap_day,
 };
 use crate::rng::DrawSource;
-use crate::world::{AlertKind, AlertLevel, AlertLevels, AlertPayload, Notice, PauseReason, World};
+use crate::world::{AlertKind, AlertLevel, AlertPayload, Notice, PauseReason, World};
 
 /// A scheduled job (the pure step contract).
 pub type JobFn = fn(&mut World, &mut JobCtx<'_>);
@@ -313,32 +314,51 @@ impl Slot {
 }
 
 /// What a job may touch besides the `World` (the pure step contract).
+///
+/// The player's controls ride along read-only and private: jobs cannot read them, but
+/// [`JobCtx::raise_alert`] uses them to apply alert levels, the SkipTo rule and the watchlist
+/// filter. So a job raises every alert it sees (for example a bankruptcy for every company) and
+/// stays a pure function of the world.
 pub struct JobCtx<'a> {
     /// The tick being run.
     pub facts: TickFacts,
     /// Every random number comes from here.
     pub draws: &'a mut dyn DrawSource,
     notices: &'a mut Vec<Notice>,
-    alert_levels: &'a AlertLevels,
-    /// False while a SkipTo runs: Pause alerts then only notify (D6).
-    pause_on_alert: bool,
+    /// `None` for detached runs (projections): every alert is off.
+    controls: Option<&'a Controls>,
     pause: Option<PauseReason>,
 }
 
 impl<'a> JobCtx<'a> {
+    /// A context for a game tick, with the player's controls.
     pub fn new(
         facts: TickFacts,
         draws: &'a mut dyn DrawSource,
         notices: &'a mut Vec<Notice>,
-        alert_levels: &'a AlertLevels,
-        pause_on_alert: bool,
+        controls: &'a Controls,
     ) -> Self {
         JobCtx {
             facts,
             draws,
             notices,
-            alert_levels,
-            pause_on_alert,
+            controls: Some(controls),
+            pause: None,
+        }
+    }
+
+    /// A context for a run nobody watches, such as the spec 5.16 projections on a cloned world:
+    /// alerts post nothing and never pause.
+    pub fn detached(
+        facts: TickFacts,
+        draws: &'a mut dyn DrawSource,
+        notices: &'a mut Vec<Notice>,
+    ) -> Self {
+        JobCtx {
+            facts,
+            draws,
+            notices,
+            controls: None,
             pause: None,
         }
     }
@@ -348,10 +368,22 @@ impl<'a> JobCtx<'a> {
         self.notices.push(notice);
     }
 
-    /// Fires an alert at its set level: Off posts nothing; Pause also pauses after this tick
-    /// (spec 4.1 step 4, 8; D6).
+    /// Fires an alert at its set level: Off posts nothing; Pause also pauses after this tick,
+    /// except during a SkipTo (spec 4.1 step 4, 8; D6). Bankruptcy in watchlist fires only for a
+    /// company on the watchlist (spec 8), so jobs raise it for every bankruptcy.
     pub fn raise_alert(&mut self, kind: AlertKind, payload: AlertPayload) {
-        let level = self.alert_levels.get(kind);
+        let Some(controls) = self.controls else {
+            return;
+        };
+        if kind == AlertKind::BankruptcyInWatchlist {
+            let AlertPayload::Company(id) = payload else {
+                panic!("BankruptcyInWatchlist needs a company payload");
+            };
+            if !controls.watchlist.contains(&id) {
+                return;
+            }
+        }
+        let level = controls.alerts.get(kind);
         if level == AlertLevel::Off {
             return;
         }
@@ -360,7 +392,8 @@ impl<'a> JobCtx<'a> {
             level,
             payload,
         });
-        if level == AlertLevel::Pause && self.pause_on_alert && self.pause.is_none() {
+        let skipping = controls.skip.is_some();
+        if level == AlertLevel::Pause && !skipping && self.pause.is_none() {
             self.pause = Some(PauseReason::Alert(kind));
         }
     }
@@ -408,15 +441,14 @@ impl Scheduler {
         world: &mut World,
         ctx_draws: &mut dyn DrawSource,
         notices: &mut Vec<Notice>,
-        alert_levels: &AlertLevels,
-        pause_on_alert: bool,
+        controls: &Controls,
         mut trace: Option<&mut Vec<Slot>>,
     ) -> Option<PauseReason> {
         // 4.1 step 1: advance the clock. Jobs then run for the new time, so the first tick is
         // 2020-01-01 01:00; the 00:00 start state is the load (spec 7.3, D12).
         world.clock = world.clock.next();
         let facts = TickFacts::new(world.clock);
-        let mut ctx = JobCtx::new(facts, ctx_draws, notices, alert_levels, pause_on_alert);
+        let mut ctx = JobCtx::new(facts, ctx_draws, notices, controls);
         for &slot in Slot::ALL {
             if !slot.is_due(&facts) {
                 continue;

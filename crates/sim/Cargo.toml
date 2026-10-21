@@ -16,5 +16,14 @@ serde.workspace = true
 thiserror.workspace = true
 sim-data.workspace = true
 
+[features]
+# Test-only access: `Sim::world()` (raw tables, which bypass the spec 9 views boundary) and
+# `Sim::register_test_job`. Enabled only by sim's own tests (the dev-dependency below); the game
+# must never enable it.
+test-hooks = []
+
+[dev-dependencies]
+sim = { path = ".", features = ["test-hooks"] }
+
 [lints]
 workspace = true

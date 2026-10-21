@@ -38,6 +38,23 @@ pub use world::{LoadError, Notice, World};
 
 /// Registers every module's jobs in their slots (spec 4). Each milestone adds its module's
 /// `register` call here; the scheduler itself never changes.
+///
+/// **Order inside one slot is registration order**, so where two modules put jobs in the same
+/// slot, the order of their `register` calls below is part of the job order and must follow
+/// the spec text for that step. Slots shared now: none (only `time` registers, in
+/// `Slot::Alerts`). Slots expected to be shared, in the order their calls must go:
+///
+/// - `Slot::Alerts`: `time` (calendar alerts) only; other modules raise alerts from their own
+///   slots through `JobCtx::raise_alert`.
+/// - `Slot::MonthlyAiEvents` (4.3 step 1): `economy` (boom and pop, 5.1.1), then `news` (the
+///   chatbot headline, 5.18).
+/// - `Slot::MonthlyLaborSeats` (4.3 step 4): `ops` (labor units, seats, stations, 5.10).
+/// - `Slot::MonthlyExpenses` (4.3 step 9): `economy` (variable, fixed, R&D, shared, 5.5), then
+///   `finance` (depreciation and tax accrual, 5.5, 5.11).
+/// - `Slot::MonthlyAssets` (4.3 step 11): `finance` (asset decay, growth plan buys and sells,
+///   ramping, 5.10), then `people` (simple characters for new seats, 3.7.1).
+/// - `Slot::PriceMoveResultHeadlines` (4.4 price move): `news` only.
+/// - `Slot::LockIpoVotes` (4.4 plan lock): `births` (votes, then listings, 5.20.1).
 fn register_jobs(s: &mut Scheduler) {
     time::alerts::register(s);
 }
@@ -100,13 +117,11 @@ impl Sim {
         if let Some(t) = &mut self.trace {
             t.clear();
         }
-        let pause_on_alert = self.controls.skip.is_none();
         let alert_pause = self.scheduler.run_tick(
             &mut self.world,
             &mut self.rng,
             &mut notices,
-            &self.controls.alerts,
-            pause_on_alert,
+            &self.controls,
             self.trace.as_mut(),
         );
         // Pauses go in just before the final TickDone.
@@ -242,10 +257,19 @@ impl Sim {
         self.views.clock()
     }
 
-    /// Read access to the world tables, for tests and headless reports; the game reads only
-    /// [`Sim::views`] (spec 9).
+    /// Read access to the world tables, for sim's own tests only (feature `test-hooks`). The
+    /// game reads only [`Sim::views`] (spec 9), so it cannot call this.
+    #[cfg(feature = "test-hooks")]
     pub fn world(&self) -> &World {
         &self.world
+    }
+
+    /// Adds a job to a slot after the built-in ones, for sim's own tests only (feature
+    /// `test-hooks`): it lets determinism, save and hash tests run jobs that draw and write.
+    /// A NewGame control drops it.
+    #[cfg(feature = "test-hooks")]
+    pub fn register_test_job(&mut self, slot: Slot, name: &'static str, job: time::JobFn) {
+        self.scheduler.register(slot, name, job);
     }
 
     /// Speed, pause, skip, alert levels, Omniscient and the watchlist.

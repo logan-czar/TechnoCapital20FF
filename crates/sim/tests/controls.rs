@@ -1,10 +1,56 @@
 //! Controls (build-plan M1.5): speeds 0 to 5, pause, resume, SkipTo stopping on exactly the right
 //! tick, and alert levels.
 
+mod common;
+
 use sim::time::control::MAX_SPEED;
-use sim::time::{Control, Date, DateTime};
-use sim::world::{AlertKind, AlertLevel, CompanyId, PauseReason, SkipKind};
+use sim::time::{Control, Date, DateTime, Slot};
+use sim::world::{AlertKind, AlertLevel, AlertPayload, CompanyId, PauseReason, SkipKind};
 use sim::{Notice, Sim};
+
+#[test]
+fn bankruptcy_alerts_fire_only_for_the_watchlist() {
+    let mut s = sim();
+    s.register_test_job(
+        Slot::DailyNews,
+        "test.bankrupt",
+        common::bankrupt_three_and_four,
+    );
+    let bankruptcies = |n: &[Notice]| -> Vec<(AlertLevel, AlertPayload)> {
+        n.iter()
+            .filter_map(|n| match n {
+                Notice::Alert {
+                    kind: AlertKind::BankruptcyInWatchlist,
+                    level,
+                    payload,
+                } => Some((*level, *payload)),
+                _ => None,
+            })
+            .collect()
+    };
+    // Empty watchlist: the job raises both on 2 Jan 00:00, nothing fires.
+    let mut seen = Vec::new();
+    while s.now() < at(2020, 1, 2, 0) {
+        seen.extend(bankruptcies(&s.step()));
+    }
+    assert!(seen.is_empty());
+    // Company 3 watched: only its alert fires, at Notify (spec 8), and does not pause.
+    s.apply(Control::WatchlistAdd(CompanyId(3))).unwrap();
+    s.apply(Control::SetAlert {
+        kind: AlertKind::EarningsDay,
+        level: AlertLevel::Off,
+    })
+    .unwrap();
+    s.apply(Control::Resume).unwrap();
+    while s.now() < at(2020, 1, 3, 0) {
+        seen.extend(bankruptcies(&s.step()));
+    }
+    assert_eq!(
+        seen,
+        [(AlertLevel::Notify, AlertPayload::Company(CompanyId(3)))]
+    );
+    assert!(!s.controls().paused);
+}
 
 fn sim() -> Sim {
     let data = sim_data::load_world(&sim_data::default_data_dir()).unwrap();
