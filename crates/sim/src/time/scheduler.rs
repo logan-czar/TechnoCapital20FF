@@ -412,7 +412,8 @@ impl Scheduler {
         pause_on_alert: bool,
         mut trace: Option<&mut Vec<Slot>>,
     ) -> Option<PauseReason> {
-        // 4.1 step 1: advance the clock.
+        // 4.1 step 1: advance the clock. Jobs then run for the new time, so the first tick is
+        // 2020-01-01 01:00; the 00:00 start state is the load (spec 7.3, D12).
         world.clock = world.clock.next();
         let facts = TickFacts::new(world.clock);
         let mut ctx = JobCtx::new(facts, ctx_draws, notices, alert_levels, pause_on_alert);

@@ -12,3 +12,5 @@ Prose errors builders found in `docs/design` while building. Code PRs do not edi
 | 6 | 12-tech-and-roadmap 12.6 | Table widget in M9; build-plan moved it to M7.7 | Say M7.7 |
 | 7 | mvp-spec 2.2, 10 M0 | `startup-events.csv` and `names/` are listed as "to build"; both exist since M0 | Mark built |
 | 8 | mvp-spec 9.1 | No controls for alert settings, the Omniscient toggle or the watchlist, though spec 8 and M1.5, M7.6, M7.8 need them | Add `SetAlert`, `SetOmniscient` (debug only), watchlist add and remove; the build adds them now |
+| 9 | mvp-spec 4.1 step 1 | "Apply queued control calls" at the start of a tick conflicts with 9.1 "pause runs none": a Resume queued while paused would never apply | Say controls take effect at once; only commands that change the world (none in the MVP) queue for step 1 (build decision D5) |
+| 10 | mvp-spec 9.3 | No notice says why the game paused (a SkipTo finishing, an alert, a load), and `alert(kind, payload)` has no level, so the UI cannot tell Notify from Log | Give `paused(reason)` named reasons and `alert` its level, as the build does (D6, D10) |
