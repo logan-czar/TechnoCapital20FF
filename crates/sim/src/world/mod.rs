@@ -35,8 +35,9 @@ use serde::{Deserialize, Serialize};
 
 pub use economy::{AiBoom, AiSchedule, AiStage, CyclePhase, GlobalCycle};
 pub use entities::{
-    BusinessUnit, Character, Company, CompanyData, Country, Industry, IndustryParams,
-    IndustryQuarter, PhaseLabel, Province, SeatHolder, SimpleSeat, Tranche, Zone,
+    BusinessUnit, Character, Company, CompanyData, Country, Director, Holder, Holding, Industry,
+    IndustryParams, IndustryQuarter, IpoVoteRecord, Origin, PhaseLabel, Province, SeatHolder,
+    SimpleSeat, Tranche, Zone,
 };
 pub use ids::{
     CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, StartupEventId, UnitId,
@@ -46,8 +47,10 @@ pub use load::LoadError;
 pub use notice::{AlertKind, AlertLevel, AlertLevels, AlertPayload, Notice, PauseReason, SkipKind};
 pub use table::Table;
 
+use crate::births::state::BirthsState;
 use crate::finance::state::BooksCheck;
 use crate::market::state::MarketState;
+use crate::news::NewsWire;
 use crate::people::names::NameBooks;
 use crate::time::DateTime;
 
@@ -82,6 +85,14 @@ pub struct World {
     pub books_check: BooksCheck,
     /// Prices, fair values, bars and the headline indices (spec 3.10, 5.13 to 5.15; M5).
     pub market: MarketState,
+    /// Fixed events, the startup event log, company names, province weights and the tipped lab
+    /// (spec 3.1 `startup_events`, 5.19; M6).
+    pub births: BirthsState,
+    /// The Pdoomberg Wire (spec 5.18; M6).
+    pub news: NewsWire,
+    /// The last quarterly recap (spec 8, 21.6.2), built at the start of the pre-quarter-end
+    /// week; shared with v_recap.
+    pub recap: Option<std::sync::Arc<crate::recap::jobs::Recap>>,
 }
 
 impl World {

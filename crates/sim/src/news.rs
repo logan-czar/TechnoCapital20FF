@@ -9,6 +9,8 @@
 //! neutral **Pdoomberg Wire** byline (5.18 A); texts follow 5.18's wording where it gives one
 //! and D279 where it does not.
 
+pub mod jobs;
+
 use serde::{Deserialize, Serialize};
 
 use crate::ai::raise::RaiseMethod;
@@ -17,6 +19,7 @@ use crate::market::confidence::{ConfidenceHeadline, RATING_CHANGE_MIN_NOTCHES};
 use crate::market::earnings::SurpriseTag;
 use crate::rng::{DrawSource, Stream};
 use crate::time::Date;
+use crate::world::log::ChunkLog;
 use crate::world::{CompanyId, IndustryId, PhaseLabel};
 
 /// Spec 5.18 (A): MVP headlines come from a neutral Pdoomberg Wire byline.
@@ -469,11 +472,16 @@ pub fn draw_tipped_lab(candidates: &[CompanyId], draws: &mut dyn DrawSource) -> 
 }
 
 /// The wire (spec 4.2 step 5, 8 News feed): headlines queue as their jobs make them and post
-/// with the next daily job; the feed keeps them in post order.
+/// with the next daily job; the feed keeps them in post order, in month chunks behind `Arc`s so
+/// the daily news view and the plan lock's projection clone share it (D148).
 #[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 pub struct NewsWire {
     pub queued: Vec<Headline>,
-    pub feed: Vec<Headline>,
+    pub feed: ChunkLog<Headline>,
+    /// The headlines the last daily job posted: 4.2 step 6 reads their 5.1.2 points (D137).
+    pub today: Vec<Headline>,
+    /// Each industry's phase label at the last monthly close, for the phase change headlines.
+    pub labels: Vec<PhaseLabel>,
 }
 
 impl NewsWire {
@@ -488,7 +496,12 @@ impl NewsWire {
             .into_iter()
             .partition(|h| h.date <= today);
         self.queued = keep;
-        self.feed.extend(post.iter().cloned());
+        for h in &post {
+            self.feed.push(h.clone(), |last, h| {
+                last.date.month_of() == h.date.month_of()
+            });
+        }
+        self.today.clone_from(&post);
         post
     }
 

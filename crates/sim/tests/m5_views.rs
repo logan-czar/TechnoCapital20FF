@@ -65,7 +65,16 @@ fn market_views_show_the_world() {
     // v_price_bars: every listed company's bars (none on 1 January); weekly and monthly bars
     // aggregate the daily ones.
     let bars = v.price_bars.get();
-    assert_eq!(bars.companies.len(), 467);
+    // The 467 listed at load and any listed in play since (5.20.1).
+    let with_bars = w
+        .market
+        .stocks
+        .rows()
+        .iter()
+        .filter(|s| !s.bars.is_empty())
+        .count();
+    assert!(with_bars >= 467);
+    assert_eq!(bars.companies.len(), with_bars);
     let (id, _) = quoted[0];
     let from = Date::ymd(2020, 1, 1);
     let to = Date::ymd(2020, 4, 19);
@@ -106,7 +115,19 @@ fn market_views_show_the_world() {
     // v_market_stats: the quoted count and the tracking count.
     let stats = v.market_stats.get();
     assert_eq!(stats.quoted, quoted.len());
-    assert_eq!(stats.listed, 467);
+    assert_eq!(
+        stats.listed,
+        w.market
+            .stocks
+            .rows()
+            .iter()
+            .filter(|s| s.exchange.is_some())
+            .count()
+    );
+    assert!(
+        stats.listed >= 467,
+        "the 467 at load and any listed in play"
+    );
     assert!(stats.within_band <= stats.quoted);
 
     // Omniscient (debug builds) shows the true V.

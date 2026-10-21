@@ -10,15 +10,15 @@ use thiserror::Error;
 use super::World;
 use super::economy::{AiBoom, AiSchedule, AiStage, GlobalCycle};
 use super::entities::{
-    BusinessUnit, Character, Company, CompanyData, Country, Industry, IndustryParams, PhaseLabel,
-    Province, Zone,
+    BusinessUnit, Character, Company, CompanyData, Country, Holder, Holding, Industry,
+    IndustryParams, Origin, PhaseLabel, Province, Zone,
 };
 use super::ids::{CharacterId, CompanyId, IndustryId, Ordinal, ProvinceId, UnitId};
 use super::table::Table;
 use super::units::{fraction_from_bps, shares_from_csv, usd_from_billions, usd_from_millions};
-use crate::ai::archetype::Archetype;
+use crate::ai::archetype::{Archetype, STATE_CONTROL_BASIS, rd_plan_at_load};
+use crate::births::state::BirthsState;
 use crate::economy::ai_boom::{POP_BASE_YEAR, boom_date};
-use crate::economy::assets::placeholder_plan;
 use crate::economy::cycle::{START_PHASE, z_avg};
 use crate::economy::start::{
     START_PRODUCTIVITY, enterprise_share, fixed_cost_rate_at_load, shared_costs_at_load_hook,
@@ -355,7 +355,6 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
         // 100, no ramping, location bonus 0 (the MVP defaults have no fit or resource tags, 5.4).
         let location_bonus = 0.0;
         let gross = start.gross_assets_usd;
-        let (growth_plan, rd_plan) = placeholder_plan(params);
         // The 7.1 loadout (lane F's one implementation): labor units from the loaded gross
         // assets, the loadout's stations fitted to them (a no-op on today's data, D208), the
         // starting data (5.9) and the compute bill (3.8) that the fixed cost rate leaves room for.
@@ -372,6 +371,23 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             enterprise_share(&c.id),
         );
         let compute = compute_bill(&stations, book.stored_tb());
+        let controller = character_keys.0.get(c.controller.as_str()).copied();
+        let controller_traits = controller.map_or(&[][..], |ch| &characters[ch].traits[..]);
+        let archetype = Archetype::at_load(
+            &c.control_basis,
+            revenue,
+            &industries[industry].sector,
+            controller_traits,
+        );
+        // The plan at load (D283, D159): R&D by the 6.3 rule at productivity 100 and loss_q 0,
+        // less the starting free R&D; growth is g_dem of the Q1 2020 draw, set once the economy's
+        // load draws are made (`ai::jobs::plan_at_load`).
+        let rd_plan = rd_plan_at_load(
+            params.rd_norm,
+            archetype,
+            controller_traits,
+            book.free_rd_fraction(),
+        );
         let unit_id = UnitId::from_index(units.len());
         units.push(BusinessUnit {
             company: CompanyId::from_index(companies.len()),
@@ -387,7 +403,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
                 shared_costs_at_load_hook(&compute),
                 params,
             ),
-            growth_plan,
+            growth_plan: 0.0,
             rd_plan,
             revenue_m: 0.0,
             variable_m: 0.0,
@@ -399,13 +415,6 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             sale_proceeds_m: 0.0,
             sale_gain_m: 0.0,
         });
-        let controller = character_keys.0.get(c.controller.as_str()).copied();
-        let archetype = Archetype::at_load(
-            &c.control_basis,
-            revenue,
-            &industries[industry].sector,
-            controller.map_or(&[][..], |ch| &characters[ch].traits[..]),
-        );
         let hq_country =
             country_keys.get("companies", &c.id, "hq_country", &c.hq_country, "country")?;
         // A listed company lists on its HQ country's zone exchange at company-start.csv's
@@ -452,6 +461,22 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
                     ))
                 })?,
             ),
+            state_controlled: c.control_basis == STATE_CONTROL_BASIS,
+            origin: Origin::Start,
+            founders: Vec::new(),
+            directors: Vec::new(),
+            holders: vec![Holding {
+                holder: Holder::Existing,
+                shares: shares_out,
+            }],
+            loss_quarters: 0,
+            plan: None,
+            failed_raises: 0,
+            raise_pending: false,
+            // Drawn at load after the boards for the private ones (5.20.1 step 1, D276).
+            ipo_next_vote: None,
+            ipo_last_vote: None,
+            birth_run_rate: None,
         });
     }
     // Fringe pools (spec 5.3, 7.2): what named revenue leaves of the 2020 world size.
@@ -464,6 +489,15 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
     }
 
     let schedule = ai_schedule(data)?;
+    let province_keys: Vec<&str> = province_rows.iter().map(|p| p.id.as_str()).collect();
+    let country_key_list: Vec<&str> = country_rows.iter().map(|c| c.iso3.as_str()).collect();
+    let industry_names: Vec<&str> = industry_rows.iter().map(|i| i.name.as_str()).collect();
+    let births = BirthsState::from_data(data, &province_keys, &country_key_list, &industry_names)
+        .map_err(|e| LoadError::BadValue {
+        table: "startup-events",
+        key: String::new(),
+        message: e.0,
+    })?;
     Ok(World {
         clock: DateTime::START,
         zones,
@@ -499,6 +533,9 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             // Set by `market::start` at the listed caps (spec 5.14).
             indices: Table::default(),
         },
+        births,
+        news: Default::default(),
+        recap: None,
     })
 }
 

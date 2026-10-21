@@ -191,9 +191,20 @@ pub fn trait_rd_mult(traits: &[Trait]) -> f64 {
 /// 0, so `rd_plan = clamp(rd_norm × archetype mult × trait mult − free R&D, 0, 3 × rd_norm)`, a
 /// share of revenue. `free_rd` is a fraction.
 pub fn rd_plan_at_load(rd_norm: f64, archetype: Archetype, traits: &[Trait], free_rd: f64) -> f64 {
-    let target = rd_norm * archetype.rd_mult() * trait_rd_mult(traits);
-    (target - free_rd).clamp(0.0, RD_PLAN_MAX_NORMS * rd_norm)
+    // The one 6.3 rule (`ai::rd::rd_plan`), at productivity 100 and loss_q 0; free R&D is a
+    // whole percent there (D211).
+    super::rd::rd_plan(&super::rd::RdInputs {
+        rd_norm,
+        archetype_rd_mult: archetype.rd_mult(),
+        productivity: LOAD_PRODUCTIVITY,
+        traits,
+        loss_q: 0,
+        free_rd_pct: (free_rd * super::rd::PERCENT).round() as u32,
+    })
 }
+
+/// Spec 7.1: productivity at load (no 6.3 productivity adj).
+pub const LOAD_PRODUCTIVITY: f64 = crate::ops::stations::START_PRODUCTIVITY;
 
 #[cfg(test)]
 mod tests {

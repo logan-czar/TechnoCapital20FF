@@ -29,6 +29,9 @@ pub enum Cadence {
     Daily,
     /// On the 1st at 00:00, and on load.
     Monthly,
+    /// Monthly, and at the plan lock, when companies are born and list (5.19, 5.20; D159): the
+    /// company views, so a newborn is in every table the tick it is born.
+    MonthlyAndLock,
     /// On the quarter's compile, release (and its 01:00 price move), lock and recap ticks.
     Quarterly,
     /// Once at load.
@@ -42,6 +45,7 @@ impl Cadence {
             Cadence::EveryTick => true,
             Cadence::Daily => f.is_midnight(),
             Cadence::Monthly => f.is_month_start(),
+            Cadence::MonthlyAndLock => f.is_month_start() || f.is_lock_tick(),
             Cadence::Quarterly => {
                 f.is_quarter_start()
                     || f.is_release_tick()
@@ -213,6 +217,7 @@ sim_views! {
     exchanges: exchanges::ExchangesView;
     market_stats: market_stats::MarketStatsView;
     news: news::NewsView;
+    births: births::BirthsView;
     projection: projection::ProjectionView;
     company_rows: company_rows::CompanyRowsView;
     company_detail: company_detail::CompanyDetailView;

@@ -21,7 +21,7 @@ use crate::world::World;
 /// The first bytes of every save.
 pub const SAVE_MAGIC: &[u8; 8] = b"TC20FFSV";
 /// Bumped whenever the saved layout changes (any new field in any table).
-pub const SAVE_VERSION: u32 = 5;
+pub const SAVE_VERSION: u32 = 6;
 
 #[derive(Debug, Error)]
 pub enum SaveError {

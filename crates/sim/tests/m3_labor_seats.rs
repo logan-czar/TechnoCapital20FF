@@ -15,7 +15,7 @@ use sim::people::board::{Seat, SkillKind};
 use sim::people::simple::CompanySize;
 use sim::people::traits::Trait;
 use sim::time::{Date, JobCtx, Slot};
-use sim::world::{SeatHolder, World};
+use sim::world::{Director, SeatHolder, World};
 
 /// Spec 3.7.1 table: seat skill and other-skill ranges and ages by size.
 fn spec_ranges(size: CompanySize) -> ((u8, u8), (u8, u8), (u8, u8)) {
@@ -193,6 +193,28 @@ fn move_assets(w: &mut World, ctx: &mut JobCtx<'_>) {
     w.units[unit].gross_assets = gross;
 }
 
+/// Simple characters the casts of companies born at plan locks made (5.19.4): their partial
+/// characters and fillers, on the board or as directors.
+fn made_by_births(w: &World) -> u32 {
+    w.companies
+        .iter()
+        .filter(|(_, c)| c.origin.is_born())
+        .map(|(_, c)| {
+            let seats = c
+                .board
+                .iter()
+                .filter(|h| matches!(h, Some(SeatHolder::Simple(_))))
+                .count();
+            let directors = c
+                .directors
+                .iter()
+                .filter(|d| matches!(d, Director::Simple(_)))
+                .count();
+            (seats + directors) as u32
+        })
+        .sum()
+}
+
 fn filled(w: &World, key: &str) -> Vec<bool> {
     w.companies[company(w, key)]
         .board
@@ -221,7 +243,10 @@ fn recount_opens_and_closes_seats_and_drops_stations_in_order() {
     assert_eq!(c.labor_units, 6);
     assert_eq!(filled(w, KEY), [true; 5]);
     assert_eq!(c.board[0], ceo_before, "the CEO keeps their seat");
-    assert_eq!(w.simple_characters_made, made_at_load + 4);
+    assert_eq!(
+        w.simple_characters_made,
+        made_at_load + 4 + made_by_births(w)
+    );
     for (i, seat) in Seat::LABOR.iter().enumerate().skip(1) {
         let Some(SeatHolder::Simple(s)) = &c.board[i] else {
             panic!("{seat:?} not filled")
@@ -233,10 +258,12 @@ fn recount_opens_and_closes_seats_and_drops_stations_in_order() {
         assert!(s.id >= made_at_load);
     }
     assert!(c.seats_to_fill.is_empty());
+    // The 9 January lock's 6.4 split gave the one-unit company's CEO a 50/50 station (L = 1 at
+    // 100% data coverage, D207); the five new units are idle.
     assert_eq!(
         c.stations,
         Stations {
-            productivity: 1,
+            fifty_fifty: 1,
             idle: 5,
             ..Stations::default()
         }
@@ -265,6 +292,10 @@ fn recount_opens_and_closes_seats_and_drops_stations_in_order() {
     assert_eq!(c.stations.productivity, 1);
     assert_eq!(c.stations.total(), 1);
     assert_eq!(filled(w, KEY), [true, false, false, false, false]);
-    // Only the four seats opened in February drew characters.
-    assert_eq!(w.simple_characters_made, made_at_load + 4);
+    // Only the four seats opened in February drew characters (and the casts of the 9 January
+    // startups, 5.19.4).
+    assert_eq!(
+        w.simple_characters_made,
+        made_at_load + 4 + made_by_births(w)
+    );
 }

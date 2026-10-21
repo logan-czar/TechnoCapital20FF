@@ -111,12 +111,21 @@ pub fn index_level(world: &World, zone: ZoneId) -> Option<f64> {
     world.market.indices[zone].level(exchange_cap(world, zone))
 }
 
-/// The Pdoomberg Wire headlines posted today on companies listed on `zone`'s exchange (spec
-/// 5.1.2 news_z, 5.18). **Hook:** the news wire (`crate::news`, M6.5) is not wired into the World
-/// until M6, so this returns none and confidence moves by the index return only (D137). M6
-/// fills it from the day's posted headlines; [`confidence_news`] already reads their points.
-pub fn confidence_headlines(_world: &World, _zone: ZoneId) -> Vec<Headline> {
-    Vec::new()
+/// The Pdoomberg Wire headlines posted today (4.2 step 5) on companies listed on `zone`'s
+/// exchange (spec 5.1.2 news_z, 5.18; D137, D158): a company whose stock row names the exchange,
+/// so a bankruptcy delisted at step 13 still counts on its exchange; [`confidence_news`] reads
+/// their points.
+pub fn confidence_headlines(world: &World, zone: ZoneId) -> Vec<Headline> {
+    world
+        .news
+        .today
+        .iter()
+        .filter(|h| {
+            h.company
+                .is_some_and(|c| world.market.stocks[c].exchange == Some(zone))
+        })
+        .cloned()
+        .collect()
 }
 
 /// news_z of one exchange (spec 5.1.2): the points of the day's headlines on its companies that
@@ -480,7 +489,9 @@ pub fn consensus_job(world: &mut World, ctx: &mut JobCtx<'_>) {
         if frozen(&world.companies[id]) {
             continue;
         }
-        world.market.stocks[id].consensus_ni = consensus(projection[id.index()], ctx.draws);
+        let s = &mut world.market.stocks[id];
+        s.projection_ni = projection[id.index()];
+        s.consensus_ni = consensus(s.projection_ni, ctx.draws);
     }
 }
 

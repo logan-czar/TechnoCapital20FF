@@ -125,7 +125,7 @@ fn person(w: &World, holder: &SeatHolder) -> SeatPerson {
 }
 
 impl ViewData for CompanyDetailView {
-    const CADENCE: Cadence = Cadence::Monthly;
+    const CADENCE: Cadence = Cadence::MonthlyAndLock;
 
     fn build(input: &ViewInput<'_>) -> Self {
         let w = input.world;

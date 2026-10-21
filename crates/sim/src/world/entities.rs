@@ -258,6 +258,95 @@ pub struct Company {
     /// The credit line (drawn from company-start.csv `credit_drawn_usd`), rating, distress,
     /// tax, ledgers and statements (spec 3.5, 3.9, 5.11, 5.12).
     pub finance: CompanyFinance,
+    /// companies.csv `control_basis` is `state` (spec 6.1 State champion row, 5.20.1 step 4: a
+    /// state controller votes with no traits). Never true for a born company (founders).
+    pub state_controlled: bool,
+    /// Start (the 651) or Born at a plan lock by a startup event (spec 3.5 `origin`,
+    /// `born_date`, `event`).
+    pub origin: Origin,
+    /// The full characters of a born company, lead founder first (spec 3.5 `founders`).
+    pub founders: Vec<CharacterId>,
+    /// Board seats with no labor unit (spec 5.19.4 step 4), in cast order.
+    pub directors: Vec<Director>,
+    /// The cap table (spec 3.5 `holders`; 5.19.3, 5.20.1, 6.6): its shares always sum to
+    /// shares_out (D153).
+    pub holders: Vec<Holding>,
+    /// Consecutive quarters with EBIT below 0 (spec 3.6 `loss_quarters`, 6), counted at each
+    /// close; 0 at load and at birth.
+    pub loss_quarters: u32,
+    /// The plan locked at the last plan lock (spec 3.5 `plan`, section 6); None before the
+    /// first lock (the plan at load is D283's, on the units).
+    pub plan: Option<crate::ai::plan::LockedPlan>,
+    /// Consecutive failed 6.6 raises, and whether one failed with none succeeding since (6.2
+    /// holds g at −d_eff until a raise succeeds). Parked with 6.6: never set with today's data.
+    pub failed_raises: u32,
+    pub raise_pending: bool,
+    /// The first plan lock at which an IPO may be put to the board (spec 3.5 `ipo_next_vote`,
+    /// 5.20.1); None for a listed company.
+    pub ipo_next_vote: Option<Quarter>,
+    /// The last IPO vote (spec 3.5 `ipo_last_vote`, 8 Board tab).
+    pub ipo_last_vote: Option<IpoVoteRecord>,
+    /// A born company's run rate at birth (spec 5.19.3, D271): the Lite AI reads its revenue and
+    /// EBIT until its first quarter is archived (D262).
+    pub birth_run_rate: Option<crate::births::startup::RunRate>,
+}
+
+/// Where a company came from (spec 3.5 `origin`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Origin {
+    /// One of the 651 starting companies.
+    Start,
+    /// Born at the plan lock on `date` by startup event `event` (spec 5.19).
+    Born {
+        date: crate::time::Date,
+        event: super::ids::StartupEventId,
+    },
+}
+
+impl Origin {
+    pub fn is_born(self) -> bool {
+        matches!(self, Origin::Born { .. })
+    }
+}
+
+/// A director: a board seat with no labor unit and no effect in the MVP except the IPO vote
+/// (spec 5.19.4 step 4, 5.20.1 step 2).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Director {
+    Full(CharacterId),
+    Simple(SimpleSeat),
+}
+
+/// Who holds shares (spec 3.5 `holders`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Holder {
+    /// A starting company's holders as one block: companies.csv's controller, owner of record
+    /// and other holders are not split out in the MVP (D153).
+    Existing,
+    /// A founder of a born company (5.19.3).
+    Founder(CharacterId),
+    /// The unnamed seed investors of a born company (5.19.3).
+    SeedInvestors,
+    /// The unnamed public float of a listing (5.20.1 Listing step 3).
+    PublicFloat,
+    /// The unnamed new investors of a 6.6 share issue.
+    NewInvestors,
+}
+
+/// One cap table line.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Holding {
+    pub holder: Holder,
+    pub shares: u64,
+}
+
+/// An IPO vote as the Board tab shows it (spec 3.5 `ipo_last_vote`, 5.20.1).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct IpoVoteRecord {
+    pub date: crate::time::Date,
+    pub result: crate::births::ipo::VoteResult,
+    /// The vote passed but the world-wide cap of 3 turned it back (5.20.1 step 6).
+    pub capped: bool,
 }
 
 /// New assets ramping at 80% (spec 5.10, 10.0.4).

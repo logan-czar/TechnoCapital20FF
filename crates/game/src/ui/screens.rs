@@ -74,6 +74,7 @@ fn cadence_name(c: Cadence) -> &'static str {
         Cadence::EveryTick => "every tick",
         Cadence::Daily => "daily",
         Cadence::Monthly => "monthly and on load",
+        Cadence::MonthlyAndLock => "monthly, at plan locks and on load",
         Cadence::Quarterly => "quarterly",
         Cadence::OnceAtLoad => "once at load",
     }

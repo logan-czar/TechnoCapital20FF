@@ -8,6 +8,8 @@
 //! by projection. Company page: the anticipated earnings range, the expected reaction,
 //! confidence and the outlook (phase label, losses, rating watch). No guidance choice (8).
 
+pub mod jobs;
+
 use serde::{Deserialize, Serialize};
 
 use crate::finance::rating::Rating;

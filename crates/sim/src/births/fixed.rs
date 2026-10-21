@@ -165,7 +165,7 @@ pub fn due_events(
 
 /// The HQ candidates of an industry inside some regions: provinces with their 5.19.1 HQ
 /// weights, in id order.
-pub type RegionSites = dyn Fn(IndustryId, &[Region]) -> Vec<(ProvinceId, f64)>;
+pub type RegionSites<'a> = dyn Fn(IndustryId, &[Region]) -> Vec<(ProvinceId, f64)> + 'a;
 
 /// The draft of a due fixed event (spec 5.19.2). Groups in file order, startups in turn; each
 /// startup draws its own HQ from `hq_candidates(industry, regions)` (the provinces inside the
@@ -175,7 +175,7 @@ pub type RegionSites = dyn Fn(IndustryId, &[Region]) -> Vec<(ProvinceId, f64)>;
 pub fn draw_fixed_event(
     event: &FixedEvent,
     resolve: &dyn Fn(&str) -> Option<IndustryId>,
-    hq_candidates: &RegionSites,
+    hq_candidates: &RegionSites<'_>,
     draws: &mut dyn DrawSource,
 ) -> EventDraft {
     let mut startups = Vec::new();

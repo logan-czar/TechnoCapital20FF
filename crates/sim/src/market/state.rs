@@ -51,6 +51,9 @@ pub struct Stock {
     pub buzz: f64,
     /// Next quarter's net income consensus, set at the plan lock (spec 3.10, 5.16).
     pub consensus_ni: f64,
+    /// The engine's no-rolls projection the consensus was drawn around (5.16, D141); the recap
+    /// reads it for the expected results (D280).
+    pub projection_ni: f64,
     /// The surprise of the quarter just closed, set at the close (4.4 result tags) and spent at
     /// the 01:00 price move (5.15); `None` otherwise.
     pub pending_surprise: Option<f64>,
@@ -87,6 +90,7 @@ impl Stock {
             },
             buzz: 0.0,
             consensus_ni: 0.0,
+            projection_ni: 0.0,
             pending_surprise: None,
             last_surprise: 0.0,
             tags: ResultTags::default(),

@@ -258,6 +258,8 @@ fn quarters_sum_their_months_and_years_their_quarters() {
     for m in [2u8, 3, 4] {
         run_to(&mut sim, Date::ymd(2020, m, 1));
         let w = sim.world();
+        // Companies born at the 9 January lock join the tables.
+        months.resize(w.companies.len(), Vec::new());
         for (i, (_, c)) in w.companies.iter().enumerate() {
             if let Some(p) = c.finance.last_month {
                 assert_eq!(p.month.month, m - 1);
@@ -290,7 +292,8 @@ fn quarters_sum_their_months_and_years_their_quarters() {
     run_to(&mut sim, Date::ymd(2021, 1, 1));
     let w = sim.world();
     for (_, c) in w.companies.iter() {
-        if !c.finance.in_game() {
+        // A company born in 2020 has no whole 2020 to compile (4.5 step 1).
+        if !c.finance.in_game() || c.origin.is_born() {
             continue;
         }
         let y = c.finance.years().last().unwrap();

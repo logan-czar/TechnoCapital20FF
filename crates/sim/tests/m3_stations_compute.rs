@@ -80,18 +80,23 @@ fn stations_and_bonus_at_load_and_after_the_first_recount() {
     // 1 Feb, 4.3 step 5: the live bonus is the 5.8 table on the stations' PC.
     run_to(&mut sim, Date::ymd(2020, 2, 1));
     let w2 = sim.world();
-    let mut moved = Vec::new();
-    for (id, c) in w2.companies.iter() {
+    for (_, c) in w2.companies.iter() {
         let pcm = w2.industries[c.industry].params.pc_modifier;
         let s = &c.stations;
         let pc = (s.productivity as f64 + 0.5 * s.fifty_fifty as f64) * pcm;
         assert_eq!(c.pc, pc);
         assert_eq!(c.pc_bonus, f64::from(spec_pc_bonus(pc)), "{}", c.key);
-        if c.pc_bonus != w.companies[id].pc_bonus {
-            moved.push((c.key.as_str(), w.companies[id].pc_bonus, c.pc_bonus));
-        }
     }
-    // Design fix 201: only the three ~$42B companies move, +5 (the load's second pass) to +6.
+    // Design fix 201: the load's two-pass bonus differs from the 5.8 table on its own stations
+    // only for the three ~$42B companies, +5 (the second pass) against +6, so the first recount
+    // would move only them on the loadout. (Since M6 the 9 January lock's 6.4 split moves most
+    // companies' productivity stations before that recount, D207.)
+    let moved: Vec<_> = w
+        .companies
+        .iter()
+        .filter(|(_, c)| c.pc_bonus != f64::from(spec_pc_bonus(c.pc)))
+        .map(|(_, c)| (c.key.as_str(), c.pc_bonus, f64::from(spec_pc_bonus(c.pc))))
+        .collect();
     assert_eq!(
         moved,
         [
@@ -100,8 +105,9 @@ fn stations_and_bonus_at_load_and_after_the_first_recount() {
             ("CO-0651", 5.0, 6.0)
         ]
     );
+    // Arrowhead: the lock's split put 100 stations on productivity (6.4), so PC 100 and +3.
     let a = &w2.companies[company(w2, "CO-0001")];
-    assert_eq!((a.labor_units, a.pc, a.pc_bonus), (392, 98.0, 2.0));
+    assert_eq!((a.labor_units, a.pc, a.pc_bonus), (392, 100.0, 3.0));
 }
 
 #[test]

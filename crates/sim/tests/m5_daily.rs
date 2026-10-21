@@ -122,9 +122,15 @@ fn bars_buzz_fair_value_jump_and_reaction_week() {
         let t = sim.now();
         let w = sim.world();
         let d = t.date();
+        // Companies born at a plan lock (5.19) join the tables.
+        let n = w.companies.len();
+        day_prices.resize(n, Vec::new());
+        buzz.resize(n, 0.0);
         for (id, s) in w.market.stocks.iter() {
             let i = id.index();
-            if !s.quoted {
+            // The 467 that list at load; a company listed in play (5.20.1) has no bar before its
+            // listing day.
+            if !s.quoted || s.listed_on.is_some() {
                 continue;
             }
             if t.hour() != 0 {
@@ -177,8 +183,10 @@ fn bars_buzz_fair_value_jump_and_reaction_week() {
         }
         // The daily refresh (4.2 step 2), every company not frozen (private ones too). It reads
         // the zone confidence before step 6 moves it, so yesterday's; on the 1st the monthly
-        // job moves its other inputs after it, so those days are left out here.
-        if t.hour() == 0 && d.day != 1 {
+        // job moves its other inputs after it, and on a plan lock day the Lite AI batch's
+        // dividends and line moves change book equity after it, so those days are left out.
+        let lock_day = d.day == 9 && [1, 4, 7, 10].contains(&d.month);
+        if t.hour() == 0 && d.day != 1 && !lock_day {
             for (id, c) in w.companies.iter() {
                 if c.finance.status().is_frozen() {
                     continue;

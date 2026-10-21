@@ -341,6 +341,9 @@ fn run(args: &RunArgs) -> ExitCode {
                 };
                 economy.add_month(&sim);
                 for c in &sim.views().company_detail.get().companies {
+                    if c.id.index() >= distressed_seen.len() {
+                        distressed_seen.resize(c.id.index() + 1, false);
+                    }
                     if c.status == CompanyStatus::Distressed {
                         distressed_seen[c.id.index()] = true;
                     }
