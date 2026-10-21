@@ -6,10 +6,10 @@
 use sim::market::daily::{BarBuilder, DailyBar};
 use sim::market::index::{ExchangeIndex, INDEX_BASE, market_cap};
 use sim::market::price::{
-    MIN_PRICE_USD, SECTOR_BETA, SECTOR_VOLATILITY, StockTick, prices_move,
+    MIN_PRICE_USD, SECTOR_BETA, SECTOR_VOLATILITY, StockTick, fat_tailed_normal, prices_move,
     reaction_volatility_mult, rho, sigma_hourly, step_price, step_prices, target_value,
 };
-use sim::rng::{NoNoise, RngStreams, ScriptedDraws};
+use sim::rng::{NoNoise, RngStreams, ScriptedDraws, Stream};
 use sim::time::{Date, DateTime};
 
 #[track_caller]
@@ -162,12 +162,30 @@ fn price_noise_sd_matches_sigma_h_over_a_long_run() {
         / TICKS as f64;
     let corr = cov / (sd(&a) * sd(&b));
     assert!((corr - 0.25).abs() < 0.02, "corr {corr}");
-    // About 2% of stock draws are wide: beyond 5 σ of the body only wide draws reach.
-    let wide = a
-        .iter()
-        .filter(|x| x.abs() > 5.0 * sigma_hourly(0.26))
+}
+
+#[test]
+fn two_percent_of_draws_are_three_times_as_wide() {
+    // D246: a prices-stream uniform below 0.02 makes the next normal ×3.
+    let mut s = ScriptedDraws::new();
+    s.push(Stream::Prices, [0.0199, 1.5, 0.02, 1.5]);
+    near(fat_tailed_normal(&mut s), 4.5);
+    near(fat_tailed_normal(&mut s), 1.5);
+    // The rate from a long run: |z| > 3 has probability p3 = 0.0026998 for a standard normal
+    // and p1 = 0.3173105 (|N| > 1) for a ×3 draw, so the share f of |z| > 3 is
+    // p3 + w × (p1 − p3) and the wide rate is w = (f − p3) ÷ (p1 − p3). Its sampling sd is
+    // sqrt(f (1 − f) ÷ n) ÷ (p1 − p3), about 0.0003 at n = 1,000,000; allow 4 sd.
+    const N: usize = 1_000_000;
+    const P3: f64 = 0.002_699_796_063_260_2;
+    const P1: f64 = 0.317_310_507_862_914;
+    let mut r = RngStreams::new(11);
+    let beyond = (0..N)
+        .filter(|_| fat_tailed_normal(&mut r).abs() > 3.0)
         .count() as f64;
-    assert!(wide > 0.0 && wide / (TICKS as f64) < 0.02);
+    let f = beyond / N as f64;
+    let w = (f - P3) / (P1 - P3);
+    let sd_w = (f * (1.0 - f) / N as f64).sqrt() / (P1 - P3);
+    assert!((w - 0.02).abs() < 4.0 * sd_w, "wide rate {w} (sd {sd_w})");
 }
 
 #[test]
