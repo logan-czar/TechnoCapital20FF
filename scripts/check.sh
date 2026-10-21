@@ -10,8 +10,12 @@ root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$root"
 
 pkgs=(--workspace)
+# The binaries that use sim, checked without test targets: sim's tests enable its `test-hooks`
+# feature (raw world access), and a workspace build with tests unifies it into every crate.
+bins=(-p headless -p game)
 if [[ "${1:-}" == "--sim-only" ]]; then
     pkgs=(-p sim -p sim-data -p headless)
+    bins=(-p headless)
 fi
 
 py=python3
@@ -23,6 +27,9 @@ step fmt
 cargo fmt --all --check
 step clippy
 cargo clippy "${pkgs[@]}" --all-targets -- -D warnings
+# The spec 9 boundary: the binaries must build without sim's test-only API.
+step boundary
+cargo check "${bins[@]}"
 step test
 cargo test "${pkgs[@]}"
 step validate.py

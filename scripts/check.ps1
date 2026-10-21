@@ -12,6 +12,9 @@ Set-Location $root
 
 # [string[]] keeps a one-item list an array; a bare string would splat as single characters.
 [string[]]$pkgs = if ($SimOnly) { @('-p', 'sim', '-p', 'sim-data', '-p', 'headless') } else { @('--workspace') }
+# The binaries that use sim, checked without test targets: sim's tests enable its `test-hooks`
+# feature (raw world access), and a workspace build with tests unifies it into every crate.
+[string[]]$bins = if ($SimOnly) { @('-p', 'headless') } else { @('-p', 'headless', '-p', 'game') }
 
 function Step([string]$name, [scriptblock]$cmd) {
     Write-Host "== $name"
@@ -24,6 +27,8 @@ function Step([string]$name, [scriptblock]$cmd) {
 
 Step 'fmt' { cargo fmt --all --check }
 Step 'clippy' { cargo clippy @pkgs --all-targets -- -D warnings }
+# The spec 9 boundary: the binaries must build without sim's test-only API.
+Step 'boundary' { cargo check @bins }
 Step 'test' { cargo test @pkgs }
 Step 'validate.py' {
     Push-Location docs/design/tools/mvp-data
