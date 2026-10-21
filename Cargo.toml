@@ -12,7 +12,10 @@ publish = false
 [workspace.dependencies]
 # Pinned exactly; upgraded only between milestones (build-plan 2.2, batch 169).
 bevy = { version = "=0.20.0", default-features = false }
+blake3 = "1"
 csv = "1"
+flate2 = "1"
+postcard = { version = "1", default-features = false, features = ["use-std"] }
 rand_chacha = "0.9"
 rand_core = "0.9"
 serde = { version = "1", features = ["derive"] }
