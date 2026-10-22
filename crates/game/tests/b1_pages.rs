@@ -11,6 +11,7 @@ use bevy::prelude::*;
 use bevy::time::TimeUpdateStrategy;
 use common::{FRAME, alerts_off, data, frames, send};
 use game::bridge::{SimBridgePlugin, Views};
+use game::chart::Chart;
 use game::command::index::NameIndex;
 use game::config::{self, UiConfig};
 use game::links::Link;
@@ -729,6 +730,21 @@ fn under<T: Component + Clone>(app: &mut App, root: Entity) -> Vec<(Entity, T)> 
     out
 }
 
+/// The entities under `root` with a `T`.
+fn holding<T: Component>(app: &mut App, root: Entity) -> Vec<Entity> {
+    let mut out = Vec::new();
+    let mut stack = vec![root];
+    while let Some(e) = stack.pop() {
+        if app.world().get::<T>(e).is_some() {
+            out.push(e);
+        }
+        if let Some(c) = app.world().get::<Children>(e) {
+            stack.extend(c.iter());
+        }
+    }
+    out
+}
+
 /// The ids of the tables under `root` ("" for a table with none).
 fn table_ids(app: &mut App, root: Entity) -> Vec<String> {
     let mut out = Vec::new();
@@ -804,25 +820,131 @@ fn b1_pages_open_and_their_links_navigate() {
     }
 }
 
-/// A listed company page's price follows v_quotes without a rebuild (a live span).
+/// Runs the game at max speed (no alert pausing it) until `done` holds on the views, then
+/// pauses and draws a frame.
+fn run_until(app: &mut App, done: impl Fn(&SimViews) -> bool) {
+    alerts_off(app);
+    send(app, Control::SetSpeed(5));
+    send(app, Control::Resume);
+    for _ in 0..20_000 {
+        app.update();
+        if done(app.world().resource::<Views>()) {
+            break;
+        }
+    }
+    assert!(done(app.world().resource::<Views>()), "ran out of frames");
+    send(app, Control::Pause);
+    frames(app, 1);
+}
+
+/// A listed company page's price follows v_quotes without a rebuild: the same live span's text
+/// moves with the price as the game runs.
 #[test]
 fn live_values_follow_the_views() {
     let mut app = shell_app();
     let v = (**app.world().resource::<Views>()).clone();
     let id = v.quotes.get().rows[0].id;
     open(&mut app, PageRef::Company(id));
+    // Past the Q4 2019 release (2 January), whose quarterly views rebuild the page.
+    run_until(&mut app, |v| {
+        v.clock().date >= sim::time::Date::ymd(2020, 1, 3)
+    });
     let b = body(&mut app);
     let lives = under::<LiveSpan>(&mut app, b);
-    let (e, _) = lives
+    let (e, _) = *lives
         .iter()
         .find(|(_, l)| l.0 == Live::Price(id))
         .expect("a live price");
-    let shown = app.world().get::<Text>(*e).unwrap().0.clone();
+    let shown = app.world().get::<Text>(e).unwrap().0.clone();
+    let price = |v: &SimViews| format::price(v.quotes.get().get(id).unwrap().last);
+    assert_eq!(shown, price(app.world().resource::<Views>()));
+    run_until(&mut app, |v| price(v) != shown);
+    let now = app.world().get::<Text>(e).expect("the same span").0.clone();
+    assert_ne!(now, shown, "the price moved");
+    assert_eq!(now, price(app.world().resource::<Views>()));
+}
+
+/// A Zone and an Exchange page do not rebuild on the daily views (D485), yet their daily
+/// figures, index chart and constituents table follow the first day that passes after they
+/// open (D488): the chart and table were seeded with the versions they were built from.
+#[test]
+fn live_tables_and_charts_follow_the_first_change() {
+    let mut app = shell_app();
+    let v = (**app.world().resource::<Views>()).clone();
+    let z = v
+        .zones
+        .get()
+        .zones
+        .iter()
+        .find(|z| z.index_close.is_some())
+        .unwrap()
+        .id;
+    let today = v.clock().date;
+    let points = |app: &App, e: Entity| -> usize {
+        let c = app.world().get::<Chart>(e).expect("not rebuilt");
+        c.model().labels.len()
+    };
+    // The Zone page: its chart and last close.
+    open(&mut app, PageRef::Zone(z));
+    let b = body(&mut app);
+    let chart = holding::<Chart>(&mut app, b)[0];
+    assert_eq!(points(&app, chart), 1, "today's close");
+    let (close, _) = *under::<LiveSpan>(&mut app, b)
+        .iter()
+        .find(|(_, l)| l.0 == Live::IndexClose(z))
+        .expect("a live last close");
+    run_until(&mut app, |v| v.clock().date > today);
+    assert_eq!(points(&app, chart), 2, "the next day's close");
     let views: &SimViews = app.world().resource::<Views>();
+    let want = format::number(views.zones.get().get(z).unwrap().index_close.unwrap());
+    assert_eq!(app.world().get::<Text>(close).unwrap().0, want);
+    // The Exchange page: its constituents table.
+    open(&mut app, PageRef::Exchange(z));
+    let b = body(&mut app);
+    let table = holding::<Table>(&mut app, b)
+        .into_iter()
+        .find(|&e| app.world().get::<Table>(e).unwrap().id() == Some("exchange.constituents"))
+        .expect("the constituents table");
+    let day = app.world().resource::<Views>().clock().date;
+    run_until(&mut app, |v| v.clock().date > day);
+    let views = (**app.world().resource::<Views>()).clone();
+    let index = app.world().resource::<NameIndex>();
+    let want = game::pages::exchange::constituents_model(z, &views, index);
+    let t = app.world().get::<Table>(table).expect("not rebuilt");
     assert_eq!(
-        shown,
-        format::price(views.quotes.get().get(id).unwrap().last)
+        *t.model(),
+        want,
+        "the table follows the first v_exchanges move"
     );
+}
+
+/// A load starts the index record again even when the save is later than the record's last
+/// day (D487): the bridge's epoch moved, so no other game's close is kept.
+#[test]
+fn a_load_starts_the_index_record_again() {
+    let dir = std::env::temp_dir().join(format!("m9-b1-index-load-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let path = dir.join("save.bin");
+    let mut saved = fresh();
+    for _ in 0..60 {
+        saved.step();
+    }
+    saved.save(&path).unwrap();
+    let mut app = shell_app();
+    let z = app.world().resource::<Views>().zones.get().zones[0].id;
+    let points = |app: &App| app.world().resource::<IndexHistory>().of(z).len();
+    run_until(&mut app, |v| {
+        v.clock().date >= sim::time::Date::ymd(2020, 1, 2)
+    });
+    assert_eq!(points(&app), 2);
+    send(&mut app, Control::Load(path.clone()));
+    frames(&mut app, 2);
+    assert_eq!(
+        app.world().resource::<Views>().clock().date,
+        sim::time::Date::ymd(2020, 1, 3)
+    );
+    assert_eq!(points(&app), 1, "only the loaded game's close");
+    let _ = std::fs::remove_dir_all(&dir);
 }
 
 /// The Company page's sections fold, move and hide from their header buttons, and its tab
@@ -965,7 +1087,10 @@ fn the_event_log_names_events_and_companies() {
         ))),
         "{lines:?}"
     );
-    for l in lines.iter().filter(|l| l.contains("Founded: ")) {
-        assert!(!l.contains("Company #"), "{l}");
+    let founded: Vec<_> = lines.iter().filter(|l| l.contains("Founded: ")).collect();
+    assert!(!founded.is_empty(), "{lines:?}");
+    for l in founded {
+        // A company the name index misses would show its page key ("Company company/12").
+        assert!(!l.contains("company/"), "{l}");
     }
 }
