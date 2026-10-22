@@ -203,6 +203,12 @@ fn pages_of_each_kind(v: &Views, index: &NameIndex) -> Vec<PageRef> {
         first(|p| matches!(p, PageRef::Character(_))),
         Some(PageRef::Countries),
         rows.first().map(|r| PageRef::Country(r.hq_country)),
+        // M8: a province with HQs (its placeholder page until lane MB's).
+        v.company_detail
+            .get()
+            .companies
+            .first()
+            .map(|c| PageRef::Province(c.hq_province)),
         Some(PageRef::Zones),
         first(|p| matches!(p, PageRef::Zone(_))),
         Some(PageRef::Exchanges),

@@ -7,7 +7,13 @@
 //! - `--bench-max [seconds]`: the sim at max speed (alerts off) with the shell drawing; prints
 //!   frame times and game hours per second, to show the window stays responsive.
 //!
-//! Both run without vsync so the frame times are the real cost, then exit.
+//! - `--bench-map [seconds]` (M8; D639): the map behind four panes in three windows (Companies
+//!   and Industries side by side, a company page, the news feed); the camera pans every frame
+//!   and zooms in and out through the World, Country and Province levels while the hover point
+//!   moves; prints frame times and the frames at each zoom level. Run it with `--map-dir` or
+//!   `--synthetic-map` for a map to draw.
+//!
+//! All run without vsync so the frame times are the real cost, then exit.
 
 use std::time::Instant;
 
@@ -40,6 +46,10 @@ pub enum BenchMode {
     Max {
         seconds: f64,
     },
+    /// The map behind panes, panning and zooming ([`drive_map`]).
+    Map {
+        seconds: f64,
+    },
     /// Open every page kind and time it to its first laid-out frame
     /// ([`crate::page_bench`]).
     Pages,
@@ -48,7 +58,9 @@ pub enum BenchMode {
 impl BenchMode {
     fn seconds(self) -> f64 {
         match self {
-            BenchMode::Table { seconds, .. } | BenchMode::Max { seconds } => seconds,
+            BenchMode::Table { seconds, .. }
+            | BenchMode::Max { seconds }
+            | BenchMode::Map { seconds } => seconds,
             BenchMode::Pages => f64::INFINITY,
         }
     }
@@ -69,6 +81,8 @@ struct Bench {
     next_col: usize,
     /// The rows were repeated to the asked count.
     repeated: bool,
+    /// Measured frames at each map zoom level (World, Country, Province).
+    level_frames: [u64; 3],
 }
 
 pub struct BenchPlugin(pub BenchMode);
@@ -91,6 +105,7 @@ impl Plugin for BenchPlugin {
             sort_window: 0,
             next_col: 0,
             repeated: false,
+            level_frames: [0; 3],
         })
         .add_systems(First, measure)
         .add_systems(Update, drive.before(TableSystems));
@@ -100,6 +115,14 @@ impl Plugin for BenchPlugin {
             }
             BenchMode::Table { .. } => {
                 app.add_systems(Startup, open_screener);
+            }
+            BenchMode::Map { .. } => {
+                app.add_systems(
+                    Update,
+                    drive_map
+                        .in_set(crate::ui::UiSystems::Input)
+                        .before(crate::workspace::WorkspaceInput),
+                );
             }
             BenchMode::Pages => {}
         }
@@ -211,6 +234,10 @@ fn measure(
         b.frames_ms.len() as f64 / elapsed
     );
     report("frame ms", &mut b.frames_ms);
+    if let BenchMode::Map { .. } = b.mode {
+        let [w, c, p] = b.level_frames;
+        println!("BENCH map: frames at World {w}, Country {c}, Province {p}");
+    }
     if let BenchMode::Table { .. } = b.mode {
         let mut s = std::mem::take(&mut b.sort_frames_ms);
         report("sort-frame ms (the frame that sorted and the next)", &mut s);
@@ -281,4 +308,90 @@ fn drive(mut b: ResMut<Bench>, tables: Option<Res<PdoombergUi>>, mut q: Query<&m
     } else {
         t.scroll(SCROLL_PER_FRAME);
     }
+}
+
+/// Frames between the map bench's zoom moves, and how many notches each moves.
+pub const MAP_ZOOM_EVERY: u64 = 45;
+pub const MAP_ZOOM_STEPS: f32 = 3.5;
+/// Logical pixels the map bench pans a frame.
+pub const MAP_PAN_PER_FRAME: f32 = 6.0;
+
+/// The map bench: sets up the panes, then pans every frame, zooms in for 4 moves and out for 4,
+/// and moves the hover point; counts the frames at each zoom level.
+#[allow(clippy::too_many_arguments)]
+fn drive_map(
+    mut b: ResMut<Bench>,
+    views: Res<Views>,
+    ws: Res<crate::workspace::Workspace>,
+    bitmap: Option<Res<crate::map::picking::MapBitmap>>,
+    mut state: ResMut<crate::map::MapState>,
+    mut open: MessageWriter<crate::workspace::OpenPage>,
+    mut panes: MessageWriter<crate::workspace::PaneAction>,
+    mut windows: MessageWriter<crate::workspace::WindowAction>,
+    mut input: MessageWriter<crate::map::MapInput>,
+) {
+    use crate::map::camera::ZoomLevel;
+    use crate::pages::PageRef;
+    use crate::workspace::{OpenPage, PaneAction, WindowAction};
+    let f = b.frame;
+    match f {
+        2 => {
+            open.write(OpenPage::focused(PageRef::Companies));
+        }
+        4 => {
+            panes.write(PaneAction::Split(None, crate::workspace::Axis::Row));
+        }
+        6 => {
+            open.write(OpenPage::focused(PageRef::Industries));
+        }
+        8 => {
+            let co = views.company_rows.get().rows.first().map(|r| r.id);
+            windows.write(WindowAction::New(co.map(PageRef::Company)));
+        }
+        10 => {
+            windows.write(WindowAction::New(Some(PageRef::News)));
+        }
+        12 => {
+            let first = ws.windows().first().map(|w| w.id);
+            if let Some(id) = first {
+                windows.write(WindowAction::Raise(id));
+            }
+            println!(
+                "BENCH map: {} windows, {} panes",
+                ws.windows().len(),
+                ws.all_pane_ids().len()
+            );
+        }
+        _ => {}
+    }
+    let Some(bitmap) = bitmap else {
+        return;
+    };
+    let (map, view) = (bitmap.size(), state.view);
+    let Some(cam) = &mut state.camera else {
+        return;
+    };
+    if b.start.is_none() {
+        return;
+    }
+    cam.pan(map, view, Vec2::new(-MAP_PAN_PER_FRAME, 0.0));
+    if f.is_multiple_of(MAP_ZOOM_EVERY) {
+        let phase = (f / MAP_ZOOM_EVERY) % 8;
+        let steps = if phase < 4 {
+            MAP_ZOOM_STEPS
+        } else {
+            -MAP_ZOOM_STEPS
+        };
+        cam.zoom(map, view, steps, view * Vec2::new(0.3, 0.5));
+    }
+    let level = cam.level(map, view);
+    let t = f as f32 * 0.05;
+    let at = view * Vec2::new(0.2 + 0.15 * t.sin(), 0.5 + 0.3 * (t * 0.7).cos());
+    input.write(crate::map::MapInput::Hover(Some(at)));
+    let i = match level {
+        ZoomLevel::World => 0,
+        ZoomLevel::Country => 1,
+        ZoomLevel::Province => 2,
+    };
+    b.level_frames[i] += 1;
 }

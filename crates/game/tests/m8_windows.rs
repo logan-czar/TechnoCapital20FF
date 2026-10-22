@@ -119,7 +119,16 @@ fn one_window_holds_the_m9_workspace_and_the_map_shows_beside_it() {
         }
     }
     assert!(inside, "the pane is in the window's body");
+    // The map node is under the window layer in the main area.
+    let main = app.world().resource::<game::ui::ShellLayout>().main;
+    let kids: Vec<Entity> = app.world().get::<Children>(main).unwrap().iter().collect();
+    let map = kids
+        .iter()
+        .position(|&e| app.world().get::<game::map::MapView>(e).is_some())
+        .expect("a map node");
     let layer = app.world().resource::<game::workspace::WorkspaceUi>().root;
+    let layer_at = kids.iter().position(|&e| e == layer).unwrap();
+    assert!(map < layer_at, "the map draws first, under the windows");
     assert_eq!(
         app.world().get::<Pickable>(layer),
         Some(&Pickable::IGNORE),

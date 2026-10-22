@@ -1,7 +1,7 @@
 //! The desktop app (build-plan M7): the sim bridge and the UI shell.
 //!
 //! `cargo run -p game --release [-- --seed N]`. Benches (D14): `--bench-table [seconds]
-//! [--rows N]`, `--bench-max [seconds]` and `--bench-pages` (the M9.9 timing harness: every
+//! [--rows N]`, `--bench-max [seconds]`, `--bench-map [seconds]` (D639) and `--bench-pages` (the M9.9 timing harness: every
 //! page, Company tab and Pdoomberg function page to its first laid-out frame, exit 1 when one
 //! takes 100 ms or more), which print timings to stdout and exit.
 //!
@@ -32,7 +32,13 @@ struct Args {
     map_dir: Option<PathBuf>,
     /// Write a synthetic map into this folder first.
     synthetic: Option<PathBuf>,
+    shot: Option<game::shot::ShotPlugin>,
+    /// The synthetic map's width (its height is half).
+    synthetic_width: u32,
 }
+
+/// The repository's `assets` folder.
+const ASSET_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets");
 
 /// The synthetic map's size (D634).
 const SYNTHETIC_SIZE: (u32, u32) = (4096, 2048);
@@ -44,6 +50,8 @@ fn parse_args() -> Args {
         rows: None,
         map_dir: None,
         synthetic: None,
+        shot: None,
+        synthetic_width: SYNTHETIC_SIZE.0,
     };
     let list: Vec<String> = std::env::args().skip(1).collect();
     let mut i = 0;
@@ -57,21 +65,71 @@ fn parse_args() -> Args {
                     .unwrap_or_else(|| exit_usage("--seed needs a number"));
                 i += 1;
             }
-            flag @ ("--bench-table" | "--bench-max") => {
+            flag @ ("--bench-table" | "--bench-max" | "--bench-map") => {
                 let seconds = number(i).unwrap_or(DEFAULT_BENCH_SECONDS);
-                args.bench = Some(if flag == "--bench-table" {
-                    BenchMode::Table {
+                args.bench = Some(match flag {
+                    "--bench-table" => BenchMode::Table {
                         seconds,
                         rows: None,
-                    }
-                } else {
-                    BenchMode::Max { seconds }
+                    },
+                    "--bench-max" => BenchMode::Max { seconds },
+                    _ => BenchMode::Map { seconds },
                 });
                 if number(i).is_some() {
                     i += 1;
                 }
             }
             "--bench-pages" => args.bench = Some(BenchMode::Pages),
+            "--screenshot" => {
+                args.shot = Some(game::shot::ShotPlugin {
+                    path: PathBuf::from(
+                        list.get(i + 1)
+                            .unwrap_or_else(|| exit_usage("--screenshot needs a file")),
+                    ),
+                    look: None,
+                    zoom: 0.0,
+                    click: false,
+                    hide_windows: false,
+                });
+                i += 1;
+            }
+            "--map-look" => {
+                let v: Vec<f64> = list
+                    .get(i + 1)
+                    .map(|s| s.split(',').filter_map(|v| v.parse().ok()).collect())
+                    .unwrap_or_default();
+                if v.len() != 2 {
+                    exit_usage("--map-look needs LON,LAT");
+                }
+                if let Some(s) = &mut args.shot {
+                    s.look = Some((v[0], v[1]));
+                }
+                i += 1;
+            }
+            "--map-zoom" => {
+                let z = number(i).unwrap_or_else(|| exit_usage("--map-zoom needs a number"));
+                if let Some(s) = &mut args.shot {
+                    s.zoom = z as f32;
+                }
+                i += 1;
+            }
+            "--map-click" => {
+                if let Some(s) = &mut args.shot {
+                    s.click = true;
+                }
+            }
+            "--map-hide-windows" => {
+                if let Some(s) = &mut args.shot {
+                    s.hide_windows = true;
+                }
+            }
+            "--synthetic-width" => {
+                args.synthetic_width = number(i)
+                    .filter(|w| *w >= 256.0 && *w <= 8192.0)
+                    .unwrap_or_else(|| exit_usage("--synthetic-width needs 256 to 8192"))
+                    as u32;
+                i += 1;
+            }
             "--map-dir" => {
                 args.map_dir = Some(PathBuf::from(
                     list.get(i + 1)
@@ -103,14 +161,14 @@ fn parse_args() -> Args {
 
 fn exit_usage(msg: &str) -> ! {
     eprintln!(
-        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR]] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-pages]"
+        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds]] [--bench-pages]"
     );
     std::process::exit(2)
 }
 
 /// Writes the synthetic map (D634) from the starting data's provinces: North America on the
 /// big island, Taiwan (contested) on the second, Fiji's first province as a tiny speck.
-fn write_synthetic_map(data: &sim_data::WorldData, dir: &std::path::Path) {
+fn write_synthetic_map(data: &sim_data::WorldData, dir: &std::path::Path, width: u32) {
     use game::map::synthetic::{SynthOptions, SynthProvince, generate, write};
     let mut provinces = Vec::new();
     let mut coverage = Vec::new();
@@ -134,7 +192,7 @@ fn write_synthetic_map(data: &sim_data::WorldData, dir: &std::path::Path) {
             island,
         });
     }
-    let mut opts = SynthOptions::new(SYNTHETIC_SIZE.0, SYNTHETIC_SIZE.1);
+    let mut opts = SynthOptions::new(width, width / 2);
     opts.coverage = coverage;
     let started = std::time::Instant::now();
     let map = generate(&provinces, &opts);
@@ -158,7 +216,7 @@ fn main() -> AppExit {
         std::process::exit(1)
     });
     if let Some(dir) = &args.synthetic {
-        write_synthetic_map(&data, dir);
+        write_synthetic_map(&data, dir, args.synthetic_width);
         args.map_dir = Some(dir.clone());
     }
     let map_dir = args
@@ -175,6 +233,7 @@ fn main() -> AppExit {
             map_dir.display()
         );
     }
+    let data_has_map = data.map.is_some();
     if let (Some(BenchMode::Table { rows, .. }), Some(n)) = (&mut args.bench, args.rows) {
         *rows = Some(n);
     }
@@ -183,18 +242,27 @@ fn main() -> AppExit {
         std::process::exit(1)
     });
     let mut app = App::new();
-    app.add_plugins(DefaultPlugins.set(WindowPlugin {
-        primary_window: Some(Window {
-            title: "TechnoCapital20FF".into(),
-            present_mode: if args.bench.is_some() {
-                PresentMode::AutoNoVsync
-            } else {
-                PresentMode::AutoVsync
-            },
-            ..default()
-        }),
-        ..default()
-    }))
+    app.add_plugins(
+        DefaultPlugins
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: "TechnoCapital20FF".into(),
+                    present_mode: if args.bench.is_some() {
+                        PresentMode::AutoNoVsync
+                    } else {
+                        PresentMode::AutoVsync
+                    },
+                    ..default()
+                }),
+                ..default()
+            })
+            // The repository's assets folder (the map shader, M8.2).
+            .set(AssetPlugin {
+                file_path: ASSET_DIR.into(),
+                ..default()
+            }),
+    )
+    .insert_resource(game::map::MapSource(data_has_map.then_some(map_dir)))
     .add_plugins(SimBridgePlugin::new(sim))
     // The UI config file (D452); benches keep theirs in memory so a run never edits it.
     .insert_resource(match (&args.bench, default_config_path()) {
@@ -202,9 +270,13 @@ fn main() -> AppExit {
         _ => ConfigStore::in_memory(),
     })
     .add_plugins(ShellPlugin)
+    .add_plugins(game::map::render::MapRenderPlugin)
     .add_systems(Startup, |mut commands: Commands| {
         commands.spawn(Camera2d);
     });
+    if let Some(shot) = args.shot {
+        app.add_plugins(shot);
+    }
     if let Some(mode) = args.bench {
         app.add_plugins(BenchPlugin(mode));
     }
