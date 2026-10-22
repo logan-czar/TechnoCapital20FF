@@ -6,8 +6,10 @@ mod common;
 
 use common::data;
 use sim::Sim;
+use sim::births::ipo::{BallotVoter, VoterRole};
 use sim::market::index::INDEX_BASE;
 use sim::time::Date;
+use sim::views::company_detail::SeatPerson;
 use sim::world::Director;
 
 #[test]
@@ -124,4 +126,43 @@ fn company_detail_lists_directors_by_position() {
         with += usize::from(!c.directors.is_empty());
     }
     assert!(with > 0, "a startup with directors");
+}
+
+/// Each IPO ballot names who held the role at the vote (D542): right after the first lock the
+/// board has not moved, so every seat and director ballot names today's holder.
+#[test]
+fn ipo_ballots_name_their_voters() {
+    let mut sim = Sim::new(data(), 1).unwrap();
+    common::ops::run_to(&mut sim, Date::ymd(2020, 1, 10));
+    let w = sim.world();
+    let v = sim.views().company_detail.get();
+    let mut ballots = 0;
+    for d in &v.companies {
+        let Some(rec) = &d.ipo_last_vote else {
+            continue;
+        };
+        let c = &w.companies[d.id];
+        for b in &rec.result.ballots {
+            ballots += 1;
+            let voter = b.voter.clone().expect("a voter");
+            let same = |p: &SeatPerson| match &voter {
+                BallotVoter::Full(ch) => p.character == Some(*ch),
+                BallotVoter::Partial { id, name } => p.partial_id == Some(*id) && &p.name == name,
+                BallotVoter::State => false,
+            };
+            match b.role {
+                VoterRole::Seat(seat) => {
+                    let card = d.board.iter().find(|s| s.seat == seat).unwrap();
+                    assert!(same(card.holder.as_ref().unwrap()), "{}", d.name);
+                }
+                VoterRole::Director(i) => assert!(same(&d.directors[i as usize])),
+                VoterRole::Controller => match voter {
+                    BallotVoter::State => assert!(c.state_controlled),
+                    BallotVoter::Full(ch) => assert_eq!(c.controller, Some(ch)),
+                    BallotVoter::Partial { .. } => panic!("a controller is full or the state"),
+                },
+            }
+        }
+    }
+    assert!(ballots > 0, "votes at the first lock");
 }

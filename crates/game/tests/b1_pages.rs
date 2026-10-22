@@ -28,7 +28,7 @@ use game::test_support::click;
 use game::ui::ShellPlugin;
 use game::ui::demo::demo_tables;
 use game::workspace::{OpenPage, OpenTarget, PaneFrame, Workspace};
-use sim::births::ipo::{Ballot, VoteResult, VoterRole};
+use sim::births::ipo::{Ballot, BallotVoter, VoteResult, VoterRole};
 use sim::people::board::Seat;
 use sim::views::company_detail::SeatPerson;
 use sim::views::company_rows::Listing;
@@ -587,8 +587,16 @@ fn no_ballot_odds_anywhere() {
         assert!(!all.contains("odds") && !all.contains("chance"));
     }
     assert!(voted > 0, "votes at the first lock");
-    // A hand-made vote with distinctive odds.
+    // A hand-made vote with distinctive odds: the CEO who voted has since left (another
+    // partial), the CFO who voted still sits, Director 1 is a full character, and the
+    // controller's vote is the state's.
     let mut d = v.company_detail.get().companies[0].clone();
+    let holder = |i: usize| d.board[i].holder.clone().expect("a seated board");
+    let (ceo, cfo) = (holder(0), holder(1));
+    let full = &v.characters.get().full[0];
+    let sim::views::characters::CharacterRef::Full(full_id) = full.id else {
+        unreachable!()
+    };
     d.ipo_last_vote = Some(IpoVoteRecord {
         date: sim::time::Date::ymd(2020, 4, 9),
         result: VoteResult {
@@ -597,19 +605,34 @@ fn no_ballot_odds_anywhere() {
                     role: VoterRole::Seat(Seat::Ceo),
                     chance: 0.6137,
                     yes: true,
+                    voter: Some(BallotVoter::Partial {
+                        id: 9_999,
+                        name: "Ona Gone".into(),
+                    }),
+                },
+                Ballot {
+                    role: VoterRole::Seat(Seat::Cfo),
+                    chance: 0.4413,
+                    yes: true,
+                    voter: Some(BallotVoter::Partial {
+                        id: cfo.partial_id.expect("a partial CFO"),
+                        name: cfo.name.clone(),
+                    }),
                 },
                 Ballot {
                     role: VoterRole::Director(0),
                     chance: 0.2291,
                     yes: false,
+                    voter: Some(BallotVoter::Full(full_id)),
                 },
                 Ballot {
                     role: VoterRole::Controller,
                     chance: 0.8846,
                     yes: true,
+                    voter: Some(BallotVoter::State),
                 },
             ],
-            yes: 2,
+            yes: 3,
             no: 1,
             passed: true,
         },
@@ -634,13 +657,54 @@ fn no_ballot_odds_anywhere() {
         "Controller",
         "yes",
         "no",
-        "passed 2 to 1",
+        "passed 3 to 1",
+        "Ona Gone",
+        "the state",
     ] {
         assert!(bt.contains(want), "{want} in {bt}");
     }
+    // The voter, and today's holder only where it is someone else (D542).
+    let fields = doc.sections[0]
+        .blocks
+        .iter()
+        .rev()
+        .find_map(|b| match b {
+            Block::Fields(f) if f.iter().any(|f| f.label == "Controller") => Some(f),
+            _ => None,
+        })
+        .expect("the ballots");
+    let line = |label: &str| {
+        let f = fields.iter().find(|f| f.label == label).unwrap();
+        f.value.clone()
+    };
+    let held = |spans: &[Span]| {
+        spans
+            .iter()
+            .any(|s| matches!(s, Span::Muted(t) if t.starts_with("(held now by")))
+    };
+    let ceo_line = line("CEO");
+    assert!(ceo_line.contains(&Span::text("Ona Gone")));
+    assert!(ceo_line.contains(&Span::muted(format!(
+        "(held now by {} (partial))",
+        ceo.name
+    ))));
+    let cfo_line = line("CFO");
+    assert!(cfo_line.contains(&Span::text(cfo.name.clone())));
+    assert!(
+        !held(&cfo_line),
+        "the CFO who voted still sits: {cfo_line:?}"
+    );
+    assert!(line("Director 1").contains(&Span::link(
+        index.title(&PageRef::Character(full_id)),
+        PageRef::Character(full_id)
+    )));
+    assert!(
+        line("Director 1").contains(&Span::muted("(vacant now)")),
+        "no director sits at position 1 now"
+    );
     assert!(bt.contains("Next vote 09 Jul 2020"), "{bt}");
     assert!(bt.contains("world cap"));
-    for c in [0.6137, 0.2291, 0.8846] {
+    for c in [0.6137, 0.4413, 0.2291, 0.8846] {
         for s in odds_texts(c) {
             assert!(!bt.contains(&s), "{s}");
         }

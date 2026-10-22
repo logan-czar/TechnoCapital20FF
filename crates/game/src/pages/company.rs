@@ -12,7 +12,7 @@
 
 use bevy::prelude::*;
 use sim::SimViews;
-use sim::births::ipo::VoterRole;
+use sim::births::ipo::{BallotVoter, VoterRole};
 use sim::finance::distress::CompanyStatus;
 use sim::finance::statements::{Period, Statement};
 use sim::people::board::Skills;
@@ -449,7 +449,7 @@ fn seat_card(s: &SeatCard, index: &NameIndex) -> CardDoc {
     }
 }
 
-/// The voter a ballot names, with who sits there now (the vote keeps roles, not people).
+/// The role a ballot was cast from (5.20.1 step 2).
 fn voter_label(role: VoterRole) -> String {
     match role {
         VoterRole::Seat(seat) => seat_name(seat).to_owned(),
@@ -543,13 +543,49 @@ pub fn board(d: &CompanyDetail, v: &SimViews, index: &NameIndex) -> Vec<Block> {
         ));
     }
     out.push(Block::Heading("IPO vote".into()));
-    out.extend(ipo_vote(d));
+    out.extend(ipo_vote(d, index));
     out
 }
 
-/// The last IPO vote, each member's vote and the next vote date (spec 8, 5.20.1). The ballots'
-/// odds stay in the view and are never shown (20-ui 20.1, D482).
-pub fn ipo_vote(d: &CompanyDetail) -> Vec<Block> {
+/// Who holds a ballot's role today (the seat's holder or the director at that position), if
+/// anyone; the controller's extra vote has no seat.
+fn holder_now(d: &CompanyDetail, role: VoterRole) -> Option<&SeatPerson> {
+    match role {
+        VoterRole::Seat(seat) => d
+            .board
+            .iter()
+            .find(|s| s.seat == seat)
+            .and_then(|s| s.holder.as_ref()),
+        VoterRole::Director(n) => d.directors.get(n as usize),
+        VoterRole::Controller => None,
+    }
+}
+
+/// True if `p` is the member who cast the ballot.
+fn is_voter(p: &SeatPerson, v: &BallotVoter) -> bool {
+    match v {
+        BallotVoter::Full(ch) => p.character == Some(*ch),
+        BallotVoter::Partial { id, .. } => p.partial_id == Some(*id),
+        BallotVoter::State => false,
+    }
+}
+
+/// A ballot's voter as spans: a full character linked, a partial one marked (D486), the state.
+fn voter_spans(v: &BallotVoter, index: &NameIndex) -> Vec<Span> {
+    match v {
+        BallotVoter::Full(ch) => vec![character_span(index, *ch)],
+        BallotVoter::Partial { name, .. } => vec![
+            Span::text(name.clone()),
+            Span::Colored("(partial)".into(), color::TEXT_MUTED),
+        ],
+        BallotVoter::State => vec![Span::text("the state")],
+    }
+}
+
+/// The last IPO vote, each member's vote and the next vote date (spec 8, 5.20.1). Each ballot
+/// names who cast it, and who holds the role today only when that is someone else (D542). The
+/// ballots' odds stay in the view and are never shown (20-ui 20.1, D482).
+pub fn ipo_vote(d: &CompanyDetail, index: &NameIndex) -> Vec<Block> {
     let mut out = Vec::new();
     match &d.ipo_last_vote {
         Some(rec) => {
@@ -578,18 +614,23 @@ pub fn ipo_vote(d: &CompanyDetail) -> Vec<Block> {
                         Span::Colored("no".into(), color::LOSS)
                     };
                     let mut value = vec![vote];
-                    if let VoterRole::Seat(seat) = b.role
-                        && let Some(p) = d
-                            .board
-                            .iter()
-                            .find(|s| s.seat == seat)
-                            .and_then(|s| s.holder.as_ref())
-                    {
+                    let now = holder_now(d, b.role);
+                    if let Some(v) = &b.voter {
+                        value.extend(voter_spans(v, index));
+                    }
+                    let moved = match (&b.voter, now) {
+                        (Some(v), Some(p)) => !is_voter(p, v),
+                        (None, Some(_)) => true,
+                        (_, None) => false,
+                    };
+                    if let (true, Some(p)) = (moved, now) {
                         let partial = if p.partial { " (partial)" } else { "" };
-                        value.push(Span::muted(format!(
-                            "(seat held now by {}{partial})",
-                            p.name
-                        )));
+                        value.push(Span::muted(format!("(held now by {}{partial})", p.name)));
+                    } else if b.voter.is_some()
+                        && now.is_none()
+                        && !matches!(b.role, VoterRole::Controller)
+                    {
+                        value.push(Span::muted("(vacant now)"));
                     }
                     Field::new(&voter_label(b.role), value)
                 })
