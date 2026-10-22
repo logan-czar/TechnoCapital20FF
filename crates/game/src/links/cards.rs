@@ -234,15 +234,8 @@ pub fn card(page: &PageRef, v: &SimViews, index: &NameIndex) -> Card {
                 "in the pre-quarter-end week (spec 8)",
             ));
         }
-        PageRef::Headline { date, n } => {
-            if let Some(h) = v
-                .news
-                .get()
-                .feed
-                .iter()
-                .filter(|h| h.date == *date)
-                .nth(*n as usize)
-            {
+        PageRef::Headline(id) => {
+            if let Some(h) = v.news.get().get(*id) {
                 lines.push(CardLine::new("Date", format::date(h.date)));
                 lines.push(CardLine::new("Headline", h.text.clone()));
                 if let Some(c) = h.company {

@@ -3,13 +3,11 @@
 //! headline index (a link, the level, and a chart), GDP share and current effect, and its
 //! member countries as a table.
 //!
-//! No view keeps an index's history (v_zones and v_exchanges give today's level), so the UI
-//! records each daily close it sees into [`IndexHistory`] while the game runs (D484; a request
-//! for the sim). The record reads only v_zones (spec 9).
+//! The index chart draws v_exchanges' daily closes from 2020 (D540), so a load shows the whole
+//! history; the UI keeps no record of its own (D484 and D487 are superseded).
 
 use bevy::prelude::*;
 use sim::SimViews;
-use sim::time::Date;
 use sim::world::ZoneId;
 
 use super::doc::{
@@ -34,100 +32,8 @@ pub const SECTIONS: &[SectionSpec] = &[
 /// share, effect, last close) and the index follow by themselves ([`Live`], D485).
 pub const VIEWS: &[ViewKey] = &[ViewKey::Countries, ViewKey::Rates];
 
-/// The most daily closes the record keeps per exchange: 10 years (the long chart view).
-pub const INDEX_HISTORY_DAYS: usize = 3660;
-
-/// Each exchange's headline index closes the UI has seen (D484): one point per day, recorded
-/// from v_zones when it is rebuilt at 00:00, since the game started or was loaded (D487).
-#[derive(Resource, Debug, Default)]
-pub struct IndexHistory {
-    /// By zone index: (date, close), oldest first.
-    pub closes: Vec<Vec<(Date, f64)>>,
-    version: u64,
-    seen_zones: u64,
-    /// The views' epoch the record is from ([`Views::epoch`]).
-    epoch: u64,
-}
-
-impl IndexHistory {
-    /// Bumped on every new point.
-    pub fn version(&self) -> u64 {
-        self.version
-    }
-
-    pub fn of(&self, z: ZoneId) -> &[(Date, f64)] {
-        self.closes.get(z.0 as usize).map_or(&[], Vec::as_slice)
-    }
-
-    /// Drops every close: the views are another game's (a new game or a load, D487).
-    pub fn restart(&mut self) {
-        self.closes.iter_mut().for_each(Vec::clear);
-        // Another game's v_zones may carry the version last seen; take it whatever it says.
-        self.seen_zones = u64::MAX;
-        self.version += 1;
-    }
-
-    /// Takes v_zones' closes if it was rebuilt since the last look; a date before the last
-    /// recorded starts the record again too.
-    pub fn record(&mut self, v: &SimViews) -> bool {
-        let ver = v.zones.version();
-        if ver == self.seen_zones {
-            return false;
-        }
-        self.seen_zones = ver;
-        let today = v.clock().date;
-        let zones = &v.zones.get().zones;
-        if self.closes.len() != zones.len() {
-            self.closes = vec![Vec::new(); zones.len()];
-        }
-        let mut moved = false;
-        for (z, h) in zones.iter().zip(self.closes.iter_mut()) {
-            if h.last().is_some_and(|&(d, _)| d > today) {
-                h.clear();
-            }
-            let Some(close) = z.index_close else {
-                continue;
-            };
-            match h.last_mut() {
-                Some(last) if last.0 == today => {
-                    if last.1 != close {
-                        last.1 = close;
-                        moved = true;
-                    }
-                }
-                _ => {
-                    h.push((today, close));
-                    moved = true;
-                }
-            }
-            if h.len() > INDEX_HISTORY_DAYS {
-                h.remove(0);
-            }
-        }
-        if moved {
-            self.version += 1;
-        }
-        moved
-    }
-}
-
-/// Records the index closes (runs every frame; cheap when v_zones has not moved).
-pub fn record_index_history(views: Res<Views>, mut h: ResMut<IndexHistory>) {
-    // Reading through `ResMut` does not mark it changed; only a restart or a new point does.
-    if !views.is_changed() {
-        return;
-    }
-    if views.epoch() != h.epoch {
-        h.epoch = views.epoch();
-        h.restart();
-    }
-    if views.zones.version() != h.seen_zones {
-        h.record(&views);
-    }
-}
-
 pub fn register(app: &mut App) {
-    app.init_resource::<IndexHistory>().register_page(
+    app.register_page(
         PageKind::Zone,
         PageSpec::new(VIEWS)
             .sections(SECTIONS)
@@ -141,31 +47,34 @@ fn zone_page(
     mut commands: Commands,
     views: Res<Views>,
     index: Res<NameIndex>,
-    history: Res<IndexHistory>,
     cfg: Res<UiConfig>,
 ) {
     let PageRef::Zone(z) = b.page else {
         return;
     };
-    let doc = zone_doc(z, &views, &index, &history);
+    let doc = zone_doc(z, &views, &index);
     spawn_doc(&mut commands, &b, &doc, &views, &cfg, None);
 }
 
-/// An exchange's index chart: the recorded daily closes as a line, with today's level as a
-/// reference line (so a new game's single point still draws).
-pub fn index_chart(z: ZoneId, v: &SimViews, h: &IndexHistory, index: &NameIndex) -> ChartModel {
+/// An exchange's index chart: v_exchanges' daily closes from 2020 as a line (D540), with
+/// today's level (v_quotes) as a reference line.
+pub fn index_chart(z: ZoneId, v: &SimViews, index: &NameIndex) -> ChartModel {
     let name = v.zones.get().get(z).map_or_else(
         || index.title(&PageRef::Exchange(z)),
         |r| r.index_name.clone(),
     );
-    let pts = h.of(z);
+    let exchanges = v.exchanges.get();
+    let closes: Vec<_> = exchanges
+        .of_zone(z)
+        .map(|e| e.closes.iter().copied().collect())
+        .unwrap_or_default();
     let level = v.quotes.get().index(z).and_then(|i| i.level);
     ChartModel {
-        title: format!("{name}: daily closes seen this session ({})", pts.len()),
-        labels: pts.iter().map(|(d, _)| format::date(*d)).collect(),
+        title: format!("{name}: daily closes ({})", closes.len()),
+        labels: closes.iter().map(|c| format::date(c.date)).collect(),
         series: vec![Series::Line {
             name: name.clone(),
-            values: pts.iter().map(|p| p.1).collect(),
+            values: closes.iter().map(|c| c.level).collect(),
             color: color::CYAN,
         }],
         format: ValueFormat::Number,
@@ -214,7 +123,7 @@ pub fn members_model(z: ZoneId, v: &SimViews, index: &NameIndex) -> TableModel {
 }
 
 /// The whole Zone page as data.
-pub fn zone_doc(z: ZoneId, v: &SimViews, index: &NameIndex, h: &IndexHistory) -> PageDoc {
+pub fn zone_doc(z: ZoneId, v: &SimViews, index: &NameIndex) -> PageDoc {
     let page = PageRef::Zone(z);
     let mut doc = PageDoc {
         page: page.clone(),
@@ -291,8 +200,8 @@ pub fn zone_doc(z: ZoneId, v: &SimViews, index: &NameIndex, h: &IndexHistory) ->
                     Field::live("Last close", Live::IndexClose(z)),
                 ]),
                 Block::Chart(
-                    index_chart(z, v, h, index),
-                    Some((LiveChart::Index(z), h.version())),
+                    index_chart(z, v, index),
+                    Some((LiveChart::Index(z), v.exchanges.version())),
                 ),
             ],
         },

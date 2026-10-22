@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use super::daily::{BarBuilder, DailyBar};
 use super::earnings::ResultTags;
 use super::fair_value::FairValueBasis;
-use super::index::ExchangeIndex;
+use super::index::{ExchangeIndex, IndexHistory};
 use crate::time::Date;
 use crate::world::log::ChunkLog;
 use crate::world::{CompanyId, Table, ZoneId};
@@ -21,6 +21,8 @@ pub struct MarketState {
     pub stocks: Table<CompanyId, Stock>,
     /// One headline index per zone exchange, in zone id order (spec 5.14, batch 152).
     pub indices: Table<ZoneId, ExchangeIndex>,
+    /// Each headline index's daily closes, 10 years kept, in zone id order (D540).
+    pub index_history: Table<ZoneId, IndexHistory>,
 }
 
 /// One company's valuation and quote (spec 3.10, 3.5).

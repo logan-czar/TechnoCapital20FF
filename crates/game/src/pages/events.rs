@@ -11,7 +11,7 @@ use sim::births::random::EventKind;
 use sim::world::{Origin, StartupEventId};
 
 use super::market::{fact, note, table_box};
-use super::news::{FeedItem, feed};
+use super::news::event_headlines;
 use super::placeholder::{chip_row, link_group, page_header};
 use super::{PageAppExt, PageBuild, PageKind, PageRef, PageSpec, Refresh, ViewKey};
 use crate::bridge::Views;
@@ -190,28 +190,21 @@ fn event_page(
     }
     if let Some(body) = b.section("news") {
         let mut any = false;
-        for item in feed(v) {
-            if let FeedItem::Headline {
-                h,
-                page,
-                event: Some(ev),
-            } = item
-                && ev.id == id
-            {
-                any = true;
-                let row = chip_row(&mut commands, body);
-                let d = commands
-                    .spawn(theme::text_line(
-                        format::date(h.date),
-                        font::SMALL,
-                        color::TEXT_MUTED,
-                    ))
-                    .id();
-                let l = commands
-                    .spawn(crate::links::link(h.text.clone(), page))
-                    .id();
-                commands.entity(row).add_children(&[d, l]);
-            }
+        // By the event's id, among its day's headlines only (D543, D545).
+        for h in event_headlines(v.news.get(), e) {
+            any = true;
+            let row = chip_row(&mut commands, body);
+            let d = commands
+                .spawn(theme::text_line(
+                    format::date(h.date),
+                    font::SMALL,
+                    color::TEXT_MUTED,
+                ))
+                .id();
+            let l = commands
+                .spawn(crate::links::link(h.text.clone(), PageRef::Headline(h.id)))
+                .id();
+            commands.entity(row).add_children(&[d, l]);
         }
         if !any {
             note(&mut commands, body, "No headline reported this event.");

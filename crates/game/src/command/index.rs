@@ -303,7 +303,7 @@ impl NameIndex {
         }
         match page {
             PageRef::Recap(q) => format!("Quarterly recap {q}"),
-            PageRef::Headline { date, n } => format!("Headline {date} #{n}"),
+            PageRef::Headline(id) => format!("Headline {}", id.0),
             p => {
                 let k = p.kind();
                 if k.is_list() || matches!(k, PageKind::World | PageKind::Settings) {

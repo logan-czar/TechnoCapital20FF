@@ -364,8 +364,12 @@ impl Recorder {
             .iter()
             .filter(|s| s.holder.as_ref().is_some_and(|h| h.partial))
             .count();
-        let (full, simple) =
-            cast_sizes(c.founders.len(), seated_founders, simple_seats, c.directors);
+        let (full, simple) = cast_sizes(
+            c.founders.len(),
+            seated_founders,
+            simple_seats,
+            c.directors.len(),
+        );
         self.casts.casts += 1;
         widen(&mut self.casts.full, full);
         widen(&mut self.casts.simple, simple);

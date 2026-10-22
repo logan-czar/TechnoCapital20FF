@@ -15,8 +15,8 @@ use std::sync::Arc;
 use super::cast::{CastSeat, seat_cast};
 use super::fixed::{FixedEvent, Region, draw_fixed_event};
 use super::ipo::{
-    IpoTestInputs, VoteResult, apply_cap, draw_first_vote, hold_vote, list_company,
-    next_vote_after, passes_ipo_tests, voters,
+    BallotVoter, IpoTestInputs, VoteResult, VoterRole, apply_cap, draw_first_vote, hold_vote,
+    list_company, next_vote_after, passes_ipo_tests, voters,
 };
 use super::names::ticker;
 use super::random::{EventDraft, EventKind, StartupDraft, draw_random_events};
@@ -453,7 +453,7 @@ pub fn fixed_events_job(world: &mut World, ctx: &mut JobCtx<'_>) {
                 ctx.draws,
             )
         };
-        let Some((_, made)) = fire_event(world, ctx, &draft) else {
+        let Some((fired, made)) = fire_event(world, ctx, &draft) else {
             continue;
         };
         let headline = if event.id == CHATBOT_EVENT_ID {
@@ -475,7 +475,7 @@ pub fn fixed_events_job(world: &mut World, ctx: &mut JobCtx<'_>) {
         } else {
             news::fixed_event(date, &event.id, &event.name, made.len() as u32)
         };
-        world.news.queue(headline);
+        world.news.queue(headline.of_event(fired));
     }
 }
 
@@ -498,7 +498,7 @@ pub fn random_events_job(world: &mut World, ctx: &mut JobCtx<'_>) {
         draw_random_events(&weights, &|ind| hq_candidates(w, ind, None), ctx.draws)
     };
     for draft in &drafts {
-        let Some((_, made)) = fire_event(world, ctx, draft) else {
+        let Some((fired, made)) = fire_event(world, ctx, draft) else {
             continue;
         };
         let first = &world.companies[made[0]];
@@ -515,7 +515,7 @@ pub fn random_events_job(world: &mut World, ctx: &mut JobCtx<'_>) {
         } else {
             news::hot_cluster(date, industry, &ind_name, &place, made.len() as u32)
         };
-        world.news.queue(headline);
+        world.news.queue(headline.of_event(fired));
     }
 }
 
@@ -600,7 +600,33 @@ fn vote(
     };
     let v = voters(&seats, &directors, unseated);
     let zone = world.countries[c.hq_country].zone;
-    Some(hold_vote(&v, label, world.zones[zone].confidence, draws))
+    let mut result = hold_vote(&v, label, world.zones[zone].confidence, draws);
+    // Who cast each ballot, as the board stands now (D542): the roles name the seats.
+    for b in &mut result.ballots {
+        b.voter = ballot_voter(c, b.role);
+    }
+    Some(result)
+}
+
+/// The member a ballot's role names on the board at the vote (D542); the controller's extra
+/// vote is the state's or the named controller's, as [`vote`] gives it.
+fn ballot_voter(c: &Company, role: VoterRole) -> Option<BallotVoter> {
+    let simple = |s: &SimpleSeat| BallotVoter::Partial {
+        id: s.id,
+        name: s.character.name.clone(),
+    };
+    match role {
+        VoterRole::Seat(seat) => c.seat(seat).map(|h| match h {
+            SeatHolder::Simple(s) => simple(s),
+            SeatHolder::Full(ch) => BallotVoter::Full(*ch),
+        }),
+        VoterRole::Director(i) => c.directors.get(i as usize).map(|d| match d {
+            Director::Simple(s) => simple(s),
+            Director::Full(ch) => BallotVoter::Full(*ch),
+        }),
+        VoterRole::Controller if c.state_controlled => Some(BallotVoter::State),
+        VoterRole::Controller => c.controller.map(BallotVoter::Full),
+    }
 }
 
 /// Plan lock step 3 (spec 5.20, 5.20.1): every private Active company whose vote is due

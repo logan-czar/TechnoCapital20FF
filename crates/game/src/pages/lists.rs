@@ -22,13 +22,12 @@ use crate::table::{Cell, Column, GainUnit, TableModel, Unit, spawn_table_with_id
 
 /// Registers every list page.
 pub fn register(app: &mut App) {
-    let lists: [(PageKind, &[ViewKey]); 8] = [
+    let lists: [(PageKind, &[ViewKey]); 7] = [
         (
             PageKind::Companies,
             &[ViewKey::CompanyRows, ViewKey::Quotes],
         ),
         (PageKind::Industries, &[ViewKey::IndustryRows]),
-        (PageKind::News, &[ViewKey::News]),
         (
             PageKind::Characters,
             &[ViewKey::Characters, ViewKey::Places],
@@ -142,46 +141,6 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                         .with_hint("Supply over demand; a band in an estimated industry"),
                     Column::number("Fringe", 100.0),
                     Column::text("Largest", 200.0),
-                ],
-                rows,
-            )
-        }
-        PageRef::News => {
-            // Newest first; the nth headline of its day names its page.
-            let feed: Vec<_> = v.news.get().feed.iter().collect();
-            let mut nth = Vec::with_capacity(feed.len());
-            let mut day = None;
-            let mut n = 0u32;
-            for h in &feed {
-                if day == Some(h.date) {
-                    n += 1;
-                } else {
-                    day = Some(h.date);
-                    n = 0;
-                }
-                nth.push(n);
-            }
-            let rows = feed
-                .iter()
-                .zip(nth)
-                .rev()
-                .map(|(h, n)| {
-                    vec![
-                        Cell::Date(h.date),
-                        Cell::Link(PageRef::Headline { date: h.date, n }, h.text.clone()),
-                        h.industry
-                            .map_or(Cell::Text("-".into()), |i| link(PageRef::Industry(i))),
-                        h.company
-                            .map_or(Cell::Text("-".into()), |c| link(PageRef::Company(c))),
-                    ]
-                })
-                .collect();
-            TableModel::new(
-                vec![
-                    Column::text("Date", 100.0),
-                    Column::text("Headline", 460.0),
-                    Column::text("Industry", 160.0),
-                    Column::text("Company", 200.0),
                 ],
                 rows,
             )

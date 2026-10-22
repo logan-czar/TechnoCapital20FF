@@ -5,6 +5,9 @@
 
 use serde::{Deserialize, Serialize};
 
+use crate::time::Date;
+use crate::world::log::ChunkLog;
+
 /// Spec 5.14: every headline index starts at 1,000.
 pub const INDEX_BASE: f64 = 1000.0;
 /// Spec 5.1.2: the index return feeds confidence in %.
@@ -83,5 +86,89 @@ impl ExchangeIndex {
         };
         self.prev_close = now;
         r
+    }
+}
+
+/// One daily close of a headline index (spec 5.14, 4.2 step 6): the level at the 00:00 close,
+/// dated that day, as v_zones' `index_close` is (D540).
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+pub struct IndexClose {
+    pub date: Date,
+    pub level: f64,
+}
+
+/// An exchange's headline index closes (spec 5.14; M9 plan 1 "the index chart", design fix 462;
+/// D540): the load level on 1 January 2020, then one close a day while the exchange shows a
+/// level, oldest first, in one chunk per calendar month behind `Arc`s so a view copies two
+/// pointers (D148). 10 years are kept, as for the daily bars (4.5 step 2).
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+pub struct IndexHistory {
+    log: ChunkLog<IndexClose>,
+}
+
+impl IndexHistory {
+    /// Appends the close of `date`. Closes arrive in date order; a date not after the last
+    /// close's is ignored (there is one close a day).
+    pub fn record(&mut self, date: Date, level: f64) {
+        if self.log.last().is_some_and(|l| l.date >= date) {
+            return;
+        }
+        self.log.push(IndexClose { date, level }, |last, c| {
+            last.date.month_of() == c.date.month_of()
+        });
+    }
+
+    /// Every close kept, oldest first.
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &IndexClose> {
+        self.log.iter()
+    }
+
+    pub fn len(&self) -> usize {
+        self.log.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.log.is_empty()
+    }
+
+    pub fn last(&self) -> Option<&IndexClose> {
+        self.log.last()
+    }
+
+    /// Drops every close dated before `first_kept` (the 10 years kept, as 4.5 step 2 keeps bars).
+    pub fn drop_before(&mut self, first_kept: Date) {
+        self.log.drop_while(|c| c.date < first_kept);
+    }
+
+    /// True if `other` shares these closes' chunks (a view's copy, D148).
+    pub fn shares_with(&self, other: &IndexHistory) -> bool {
+        self.log.shares_with(&other.log)
+    }
+}
+
+#[cfg(test)]
+mod history_tests {
+    use super::*;
+
+    #[test]
+    fn one_close_a_day_and_ten_years_kept() {
+        let mut h = IndexHistory::default();
+        let mut d = Date::ymd(2020, 1, 1);
+        for i in 0..400 {
+            h.record(d, 1000.0 + f64::from(i));
+            d = d.add_days(1);
+        }
+        assert_eq!(h.len(), 400);
+        h.record(Date::ymd(2020, 1, 5), 1.0);
+        assert_eq!(h.len(), 400, "a date not after the last is ignored");
+        h.drop_before(Date::ymd(2020, 3, 15));
+        assert_eq!(h.iter().next().unwrap().date, Date::ymd(2020, 3, 15));
+        assert_eq!(h.last().unwrap().level, 1399.0);
+        assert!(
+            h.iter()
+                .collect::<Vec<_>>()
+                .windows(2)
+                .all(|w| w[0].date < w[1].date)
+        );
     }
 }

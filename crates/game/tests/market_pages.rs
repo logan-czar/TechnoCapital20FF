@@ -23,7 +23,9 @@ use game::bridge::{SimBridgePlugin, Views};
 use game::chart::Chart;
 use game::command::index::NameIndex;
 use game::command::{CommandItem, RunCommand};
-use game::pages::industries::{companies_model, headlines_model, industries_model};
+use game::pages::industries::{
+    companies_model, headlines_model, industries_model, no_headlines_note,
+};
 use game::pages::live::{Filter, Live, LiveCtx, Picker, PickerOption};
 use game::pages::news::{FeedItem, feed, news_model};
 use game::pages::recap::{company_pages_model, expected_model};
@@ -237,6 +239,20 @@ fn industries_has_42_rows_and_a_detail_page() {
         "Companies",
     ] {
         assert!(texts.iter().any(|t| t.contains(s)), "{s} in {texts:?}");
+    }
+    // The headlines note says why the table is empty, and only then (PR #30 review).
+    let has_news = !headlines_model(&v, id).is_empty();
+    assert_eq!(
+        texts.iter().any(|t| t.starts_with("No headlines yet")),
+        !has_news,
+        "{texts:?}"
+    );
+    assert_eq!(no_headlines_note(&v, id).is_empty(), has_news);
+    let quiet = (0..42)
+        .map(IndustryId)
+        .find(|&i| headlines_model(&v, i).is_empty());
+    if let Some(q) = quiet {
+        assert!(no_headlines_note(&v, q).starts_with("No headlines yet"));
     }
     let charts = descendants_with::<Chart>(&mut app, body);
     assert_eq!(charts.len(), 2, "the two charts");
@@ -914,7 +930,6 @@ fn no_ballot_odds_on_any_page() {
     pages.extend(v.births.get().events.iter().map(|e| PageRef::Event(e.id)));
     pages.extend(
         feed(&v)
-            .into_iter()
             .filter_map(|i| match i {
                 FeedItem::Headline { page, .. } => Some(page),
                 FeedItem::Event(_) => None,

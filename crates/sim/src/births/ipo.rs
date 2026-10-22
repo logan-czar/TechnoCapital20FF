@@ -14,7 +14,7 @@ use crate::people::board::Seat;
 use crate::people::traits::Trait;
 use crate::rng::{DrawSource, Stream};
 use crate::time::Quarter;
-use crate::world::{CompanyId, PhaseLabel};
+use crate::world::{CharacterId, CompanyId, PhaseLabel};
 
 /// Spec 5.20: at least 8 quarters since birth (starting companies pass at once) ...
 pub const MIN_QUARTERS_SINCE_BIRTH: u32 = 8;
@@ -186,12 +186,29 @@ pub fn voters<'a>(
     out
 }
 
+/// Who cast a ballot, as the board stood at the vote (spec 5.20.1 step 2; D542): a full
+/// character by id, a partial (simple) character by its 3.7.1 id with its name (a partial
+/// character can leave its seat and the views then no longer list it), or the state.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum BallotVoter {
+    Full(CharacterId),
+    Partial {
+        id: u32,
+        name: String,
+    },
+    /// A state controller holding no seat (5.20.1 step 4).
+    State,
+}
+
 /// One cast vote.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Ballot {
     pub role: VoterRole,
     pub chance: f64,
     pub yes: bool,
+    /// Who held the role at the vote (D542). [`hold_vote`] leaves it `None` (it sees traits,
+    /// not people); the vote job sets it.
+    pub voter: Option<BallotVoter>,
 }
 
 /// An IPO vote (spec 5.20.1; 3.5 `ipo_last_vote`).
@@ -220,6 +237,7 @@ pub fn hold_vote(
                 role: v.role,
                 chance,
                 yes: draws.chance(Stream::Gen, chance),
+                voter: None,
             }
         })
         .collect();
