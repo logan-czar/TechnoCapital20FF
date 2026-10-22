@@ -20,7 +20,7 @@ use crate::market::earnings::SurpriseTag;
 use crate::rng::{DrawSource, Stream};
 use crate::time::Date;
 use crate::world::log::ChunkLog;
-use crate::world::{CompanyId, IndustryId, PhaseLabel, StartupEventId};
+use crate::world::{CompanyId, HeadlineId, IndustryId, PhaseLabel, StartupEventId};
 
 /// Spec 5.18 (A): MVP headlines come from a neutral Pdoomberg Wire byline.
 pub const BYLINE: &str = "Pdoomberg Wire";
@@ -83,6 +83,8 @@ pub enum HeadlineKind {
 /// One Pdoomberg Wire headline (spec 5.18; 8 News feed: date and industry tag).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Headline {
+    /// Its place in the feed's post order (D544), set when it posts; 0 while queued.
+    pub id: HeadlineId,
     pub date: Date,
     /// The industry tag (8 News feed), when the story has one.
     pub industry: Option<IndustryId>,
@@ -134,6 +136,7 @@ fn headline(
     text: String,
 ) -> Headline {
     Headline {
+        id: HeadlineId(0),
         date,
         industry,
         company,
@@ -511,11 +514,14 @@ impl NewsWire {
     /// 4.2 step 5: posts every queued headline dated on or before `today`, in queue order, and
     /// returns them (the day's headlines, for 4.2 step 6's confidence news).
     pub fn post_day(&mut self, today: Date) -> Vec<Headline> {
-        let (post, keep): (Vec<Headline>, Vec<Headline>) = std::mem::take(&mut self.queued)
+        let (mut post, keep): (Vec<Headline>, Vec<Headline>) = std::mem::take(&mut self.queued)
             .into_iter()
             .partition(|h| h.date <= today);
         self.queued = keep;
-        for h in &post {
+        // Each takes the next id in post order (D544).
+        let first = self.feed.last().map_or(0, |h| h.id.0 + 1);
+        for (id, h) in (first..).zip(post.iter_mut()) {
+            h.id = HeadlineId(id);
             self.feed.push(h.clone(), |last, h| {
                 last.date.month_of() == h.date.month_of()
             });

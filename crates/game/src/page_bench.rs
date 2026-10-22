@@ -143,7 +143,7 @@ fn pages_of_each_kind(v: &Views, index: &NameIndex) -> Vec<PageRef> {
         .feed
         .iter()
         .next()
-        .map(|h| PageRef::Headline { date: h.date, n: 0 });
+        .map(|h| PageRef::Headline(h.id));
     [
         Some(PageRef::Companies),
         listed,

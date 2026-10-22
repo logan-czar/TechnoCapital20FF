@@ -12,7 +12,7 @@ use sim::market::index::INDEX_BASE;
 use sim::news::HeadlineKind;
 use sim::time::Date;
 use sim::views::company_detail::SeatPerson;
-use sim::world::{Director, Ordinal};
+use sim::world::{Director, HeadlineId, Ordinal};
 
 #[test]
 fn exchanges_serve_each_index_s_daily_closes_from_2020() {
@@ -205,4 +205,32 @@ fn startup_headlines_carry_their_event() {
     }
     assert!(!reports.is_empty());
     assert!(reports.iter().all(|&n| n == 1), "{reports:?}");
+}
+
+/// Each posted headline has a stable id, its place in post order from 0 (D544); v_news finds
+/// any headline by it, and a save keeps it.
+#[test]
+fn headlines_have_stable_ids() {
+    let mut sim = Sim::new(data(), 1).unwrap();
+    common::ops::run_to(&mut sim, Date::ymd(2020, 7, 12));
+    let v = sim.views().news.get();
+    let ids: Vec<u32> = v.feed.iter().map(|h| h.id.0).collect();
+    assert!(ids.len() > 50, "a half year of headlines");
+    assert_eq!(ids, (0..ids.len() as u32).collect::<Vec<_>>());
+    for h in v.feed.iter() {
+        assert_eq!(v.get(h.id), Some(h));
+    }
+    assert_eq!(v.get(HeadlineId(ids.len() as u32)), None);
+    let today: Vec<_> = sim.world().news.today.iter().map(|h| h.id).collect();
+    for id in today {
+        assert_eq!(
+            v.get(id).map(|h| h.id),
+            Some(id),
+            "today's posts carry their ids"
+        );
+    }
+    let bytes = sim.save_bytes();
+    let mut back = Sim::new(data(), 2).unwrap();
+    back.load_bytes(&bytes).unwrap();
+    assert_eq!(back.views().news.get().feed, v.feed);
 }

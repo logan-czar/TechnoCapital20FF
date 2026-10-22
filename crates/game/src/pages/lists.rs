@@ -147,28 +147,17 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
             )
         }
         PageRef::News => {
-            // Newest first; the nth headline of its day names its page.
-            let feed: Vec<_> = v.news.get().feed.iter().collect();
-            let mut nth = Vec::with_capacity(feed.len());
-            let mut day = None;
-            let mut n = 0u32;
-            for h in &feed {
-                if day == Some(h.date) {
-                    n += 1;
-                } else {
-                    day = Some(h.date);
-                    n = 0;
-                }
-                nth.push(n);
-            }
-            let rows = feed
+            // Newest first, each linking to its page by id (D544).
+            let rows = v
+                .news
+                .get()
+                .feed
                 .iter()
-                .zip(nth)
                 .rev()
-                .map(|(h, n)| {
+                .map(|h| {
                     vec![
                         Cell::Date(h.date),
-                        Cell::Link(PageRef::Headline { date: h.date, n }, h.text.clone()),
+                        Cell::Link(PageRef::Headline(h.id), h.text.clone()),
                         h.industry
                             .map_or(Cell::Text("-".into()), |i| link(PageRef::Industry(i))),
                         h.company

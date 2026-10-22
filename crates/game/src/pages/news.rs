@@ -14,7 +14,7 @@ use sim::SimViews;
 use sim::news::{Headline, HeadlineKind};
 use sim::time::Date;
 use sim::views::births::EventRow;
-use sim::world::{CompanyId, IndustryId, StartupEventId};
+use sim::world::{CompanyId, HeadlineId, IndustryId, StartupEventId};
 
 use super::live::{
     Filter, Live, LiveCtx, LiveModel, Pick, PickerLook, spawn_live_table, spawn_picker,
@@ -74,7 +74,7 @@ pub fn event_of<'a>(h: &Headline, events: &'a [EventRow]) -> Option<&'a EventRow
 pub enum FeedItem<'a> {
     Headline {
         h: &'a Headline,
-        /// Its page: the `n`th headline of its day (D451).
+        /// Its page, by its id (D544).
         page: PageRef,
         event: Option<&'a EventRow>,
     },
@@ -128,23 +128,15 @@ impl FeedItem<'_> {
 pub fn feed(v: &SimViews) -> Vec<FeedItem<'_>> {
     let events = &v.births.get().events;
     let mut out: Vec<FeedItem<'_>> = Vec::new();
-    let mut day = None;
-    let mut n = 0u32;
     let mut reported: BTreeSet<StartupEventId> = BTreeSet::new();
     for h in v.news.get().feed.iter() {
-        if day == Some(h.date) {
-            n += 1;
-        } else {
-            day = Some(h.date);
-            n = 0;
-        }
         let event = event_of(h, events);
         if let Some(e) = event {
             reported.insert(e.id);
         }
         out.push(FeedItem::Headline {
             h,
-            page: PageRef::Headline { date: h.date, n },
+            page: PageRef::Headline(h.id),
             event,
         });
     }
@@ -354,15 +346,9 @@ pub fn headline_links(
         .collect()
 }
 
-/// The headline a page names, with the event it reports.
-pub fn find_headline(v: &SimViews, date: Date, n: u32) -> Option<(&Headline, Option<&EventRow>)> {
-    let h = v
-        .news
-        .get()
-        .feed
-        .iter()
-        .filter(|h| h.date == date)
-        .nth(n as usize)?;
+/// The headline a page names (by id, D544), with the event it reports.
+pub fn find_headline(v: &SimViews, id: HeadlineId) -> Option<(&Headline, Option<&EventRow>)> {
+    let h = v.news.get().get(id)?;
     Some((h, event_of(h, &v.births.get().events)))
 }
 
@@ -372,11 +358,11 @@ fn headline_page(
     views: Res<Views>,
     index: Res<NameIndex>,
 ) {
-    let PageRef::Headline { date, n } = b.page else {
+    let PageRef::Headline(id) = b.page else {
         return;
     };
     let v: &SimViews = &views;
-    let found = find_headline(v, date, n);
+    let found = find_headline(v, id);
     page_header(
         &mut commands,
         b.head,
@@ -388,7 +374,7 @@ fn headline_page(
         note(
             &mut commands,
             b.head,
-            "This headline is not in the feed (it may have dropped off).",
+            "This headline is not in the feed (a page from another game?).",
         );
         link_group(
             &mut commands,
@@ -463,7 +449,7 @@ fn headline_page(
         let lines = headline_links(
             v,
             |o| {
-                !(o.date == h.date && o.text == h.text)
+                o.id != h.id
                     && ((company.is_some() && o.company == company)
                         || (company.is_none() && industry.is_some() && o.industry == industry))
             },

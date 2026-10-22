@@ -40,8 +40,8 @@ pub use entities::{
     Province, SeatHolder, SimpleSeat, StartControl, Tranche, Zone,
 };
 pub use ids::{
-    CharacterId, CompanyId, CountryId, IndustryId, Ordinal, ProvinceId, StartupEventId, UnitId,
-    ZoneId,
+    CharacterId, CompanyId, CountryId, HeadlineId, IndustryId, Ordinal, ProvinceId, StartupEventId,
+    UnitId, ZoneId,
 };
 pub use load::LoadError;
 pub use notice::{AlertKind, AlertLevel, AlertLevels, AlertPayload, Notice, PauseReason, SkipKind};

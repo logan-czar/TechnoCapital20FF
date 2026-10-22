@@ -59,6 +59,11 @@ impl<T> AppendBuf<T> {
         self.iter().next()
     }
 
+    /// The owned row at `i`.
+    pub fn get(&self, i: usize) -> Option<&T> {
+        self.slots[..self.len].get(i).and_then(OnceLock::get)
+    }
+
     pub fn last(&self) -> Option<&T> {
         self.iter().next_back()
     }
@@ -253,6 +258,36 @@ impl<T> ChunkLog<T> {
         self.open.iter()
     }
 
+    /// The row whose key is `key`, when the rows are in ascending key order: a binary search
+    /// over the closed chunks by their last row, then within the one chunk (D544).
+    pub fn find_sorted<K: Ord>(&self, key: &K, key_of: impl Fn(&T) -> K) -> Option<&T> {
+        let (mut lo, mut hi) = (0, self.closed.len());
+        while lo < hi {
+            let mid = (lo + hi) / 2;
+            match self.closed.get(mid).and_then(|c| c.last()) {
+                Some(last) if key_of(last) >= *key => hi = mid,
+                _ => lo = mid + 1,
+            }
+        }
+        if let Some(c) = self.closed.get(lo) {
+            return c
+                .binary_search_by(|r| key_of(r).cmp(key))
+                .ok()
+                .map(|i| &c[i]);
+        }
+        let (mut lo, mut hi) = (0, self.open.len());
+        while lo < hi {
+            let mid = (lo + hi) / 2;
+            let row = self.open.get(mid)?;
+            match key_of(row).cmp(key) {
+                std::cmp::Ordering::Less => lo = mid + 1,
+                std::cmp::Ordering::Equal => return Some(row),
+                std::cmp::Ordering::Greater => hi = mid,
+            }
+        }
+        None
+    }
+
     /// True if `other` shares this log's chunks with the same rows (a cheap copy, not a
     /// rebuild).
     pub fn shares_with(&self, other: &ChunkLog<T>) -> bool {
@@ -325,6 +360,24 @@ mod tests {
         }
         assert_eq!(c.iter().copied().collect::<Vec<_>>(), want);
         assert_eq!(c.open_chunk().len(), 100);
+    }
+
+    #[test]
+    fn finds_a_row_by_its_sorted_key() {
+        let mut log = ChunkLog::default();
+        let rows: Vec<u32> = (0..500).map(|i| i * 3).collect();
+        for &i in &rows {
+            log.push(i, |a, b| a / 40 == b / 40);
+        }
+        for &i in &rows {
+            assert_eq!(log.find_sorted(&i, |r| *r), Some(&i));
+            assert_eq!(log.find_sorted(&(i + 1), |r| *r), None);
+        }
+        assert_eq!(log.find_sorted(&5_000, |r| *r), None);
+        log.drop_while(|&r| r < 100);
+        assert_eq!(log.find_sorted(&102, |r| *r), Some(&102));
+        assert_eq!(log.find_sorted(&99, |r| *r), None, "dropped");
+        assert_eq!(ChunkLog::<u32>::default().find_sorted(&0, |r| *r), None);
     }
 
     #[test]

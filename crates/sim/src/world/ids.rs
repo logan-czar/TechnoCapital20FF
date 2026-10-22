@@ -57,4 +57,7 @@ ordinal_id! {
     UnitId;
     /// A startup event that fired, fixed or random (spec 3.1 `startup_events`, 5.19).
     StartupEventId;
+    /// A posted Pdoomberg Wire headline (spec 5.18, 8 News feed): its place in post order, from
+    /// 0. The feed never drops a headline, so the id is stable (D544).
+    HeadlineId;
 }

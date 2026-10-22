@@ -24,7 +24,7 @@ pub const SAVE_MAGIC: &[u8; 8] = b"TC20FFSV";
 /// 7: each daily bar holds its EFV (D424), companies their companies.csv control (D425) and
 /// countries their superregion.
 /// 8: each exchange keeps its index's daily closes (D540); each IPO ballot names its voter
-/// (D542); a startup headline carries its event's id (D543).
+/// (D542); a startup headline carries its event's id (D543); each headline has its id (D544).
 pub const SAVE_VERSION: u32 = 8;
 
 #[derive(Debug, Error)]
