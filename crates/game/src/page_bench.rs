@@ -32,14 +32,16 @@ pub const TARGET_MS: f64 = 100.0;
 /// One thing the bench opens: a workspace page or a Pdoomberg function page.
 #[derive(Debug, Clone, PartialEq)]
 enum Item {
-    Page(PageRef),
+    Page(PageRef, Tab),
     Pdb(PdoombergRoute),
 }
 
 impl Item {
     fn name(&self) -> String {
         match self {
-            Item::Page(p) => p.key(),
+            Item::Page(p, None) => p.key(),
+            Item::Page(p, Some(Some(t))) => format!("{} tab {t}", p.key()),
+            Item::Page(p, Some(None)) => format!("{} all tabs", p.key()),
             Item::Pdb(r) => match r.company {
                 Some(c) => format!("pdoomberg/{}/company/{}", r.function.code(), c.0),
                 None => format!("pdoomberg/{}", r.function.code()),
@@ -58,6 +60,10 @@ struct PageBench {
     results: Vec<(Item, u8, f64, u64)>,
 }
 
+/// The Company page's tab a bench entry opens (lane B1, D481): `None` shows every section,
+/// `Some(id)` only that one (the others folded, as the tab strip does).
+type Tab = Option<Option<&'static str>>;
+
 pub struct PageBenchPlugin;
 
 impl Plugin for PageBenchPlugin {
@@ -68,9 +74,9 @@ impl Plugin for PageBenchPlugin {
     }
 }
 
-/// One page of each kind, picked from the views of the world as it is, then every Pdoomberg
-/// function page (F3 on a listed company). The terminal builds no page before its first open
-/// (D520), so F2's cold number is a real build.
+/// One page of each kind, picked from the views of the world as it is, and each Company tab
+/// (lane B1), then every Pdoomberg function page (F3 on a listed company). The terminal builds
+/// no page before its first open (D520), so F2's cold number is a real build.
 fn pick_items(v: &Views, index: &NameIndex) -> Vec<Item> {
     let listed = v
         .company_rows
@@ -79,7 +85,10 @@ fn pick_items(v: &Views, index: &NameIndex) -> Vec<Item> {
         .iter()
         .find(|r| r.public && r.status == CompanyStatus::Active)
         .map(|r| r.id);
-    let mut out: Vec<Item> = pick_pages(v, index).into_iter().map(Item::Page).collect();
+    let mut out: Vec<Item> = pick_pages(v, index)
+        .into_iter()
+        .map(|(p, tab)| Item::Page(p, tab))
+        .collect();
     for f in PdbFunction::ALL {
         out.push(Item::Pdb(PdoombergRoute {
             function: f,
@@ -89,8 +98,35 @@ fn pick_items(v: &Views, index: &NameIndex) -> Vec<Item> {
     out
 }
 
-/// One page of each kind, picked from the views of the world as it is.
-fn pick_pages(v: &Views, index: &NameIndex) -> Vec<PageRef> {
+/// One page of each kind, picked from the views of the world as it is; then each Company tab
+/// on a listed and a private company in turn (so each open is a new page in the pane).
+fn pick_pages(v: &Views, index: &NameIndex) -> Vec<(PageRef, Tab)> {
+    let mut out: Vec<(PageRef, Tab)> = pages_of_each_kind(v, index)
+        .into_iter()
+        .map(|p| (p, None))
+        .collect();
+    let world = out.pop();
+    let rows = &v.company_rows.get().rows;
+    let pick = |public: bool| {
+        rows.iter()
+            .find(|r| r.public == public && r.status == CompanyStatus::Active)
+            .map(|r| PageRef::Company(r.id))
+    };
+    if let (Some(listed), Some(private)) = (pick(true), pick(false)) {
+        for &(id, _) in crate::pages::company::SECTIONS {
+            for p in [&listed, &private] {
+                out.push((p.clone(), Some(Some(id))));
+            }
+        }
+        // Back to every section shown.
+        out.push((listed, Some(None)));
+    }
+    out.extend(world);
+    out
+}
+
+/// One page of each kind.
+fn pages_of_each_kind(v: &Views, index: &NameIndex) -> Vec<PageRef> {
     let rows = &v.company_rows.get().rows;
     let listed = rows
         .iter()
@@ -142,6 +178,7 @@ fn send_next(
     mut b: ResMut<PageBench>,
     views: Res<Views>,
     index: Res<NameIndex>,
+    mut cfg: ResMut<crate::config::UiConfig>,
     mut open: MessageWriter<OpenPage>,
     mut pdb: MessageWriter<OpenPdoomberg>,
 ) {
@@ -157,7 +194,15 @@ fn send_next(
     };
     match item {
         // An opened page leaves the terminal (D517).
-        Item::Page(page) => {
+        Item::Page(page, tab) => {
+            if let Some(tab) = tab {
+                crate::pages::doc::select_tab(
+                    &mut cfg,
+                    crate::pages::PageKind::Company,
+                    crate::pages::company::SECTIONS,
+                    tab,
+                );
+            }
             open.write(OpenPage::focused(page));
         }
         Item::Pdb(r) => {
@@ -228,7 +273,7 @@ fn check_laid_out(
     };
     let item = b.pages[b.i].clone();
     let ready = match &item {
-        Item::Page(page) => frames
+        Item::Page(page, _) => frames
             .iter()
             .find(|f| f.pane == ws.focused())
             .filter(|f| f.drawn_page() == Some(page))

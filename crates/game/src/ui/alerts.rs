@@ -18,8 +18,10 @@ use sim::world::{AlertKind, AlertLevel, AlertPayload, PauseReason};
 use super::rail::{Navigate, Screen};
 use super::theme::{self, ButtonLook, Tooltip, color, font, size};
 use super::top_bar::{AlertRowRoot, skip_name};
-use super::{DemoTables, Menu, OpenMenu, ShellLayout, SpawnLayout, UiSystems};
-use crate::bridge::{RunnerControls, SimControl, SimNotice};
+use super::{Menu, OpenMenu, ShellLayout, SpawnLayout, UiSystems};
+use crate::bridge::{RunnerControls, SimControl, SimNotice, Views};
+use crate::command::index::{NameIndex, event_name};
+use crate::pages::PageRef;
 
 /// Toasts fade after this many seconds (20-ui 20.2.1 (T)).
 pub const TOAST_SECONDS: f32 = 6.0;
@@ -200,7 +202,8 @@ fn read_notices(
     mut board: ResMut<AlertBoard>,
     mut log: ResMut<EventLog>,
     mut last: Local<LastTick>,
-    names: Res<DemoTables>,
+    names: Res<NameIndex>,
+    views: Res<Views>,
     layout: Option<Res<ShellLayout>>,
     time: Res<Time>,
     toasts: Query<(Entity, &Toast)>,
@@ -269,36 +272,50 @@ fn read_notices(
                 log.push(last.0.next(), format!("Earnings released for {q}"));
             }
             Notice::PlanLocked(q) => log.push(last.0.next(), format!("Plans locked for {q}")),
-            Notice::StartupEvent(id) => log.push(last.0.next(), format!("Startup event #{}", id.0)),
+            Notice::StartupEvent(id) => {
+                // v_births' name (startup-events.csv's, or the random type) with its date.
+                let name = views
+                    .births
+                    .get()
+                    .event(*id)
+                    .map_or_else(|| names.title(&PageRef::Event(*id)), event_name);
+                log.push(last.0.next(), format!("Startup event: {name}"));
+            }
             Notice::CompanyBorn(id) => {
                 log.push(
                     last.0.next(),
-                    format!("Founded: {}", names.company_name(*id)),
+                    format!("Founded: {}", company_name(&names, *id)),
                 );
             }
             Notice::IpoVote { company, passed } => log.push(
                 last.0.next(),
                 format!(
                     "IPO vote at {}: {}",
-                    names.company_name(*company),
+                    company_name(&names, *company),
                     if *passed { "passed" } else { "failed" }
                 ),
             ),
             Notice::CompanyListed(id) => {
                 log.push(
                     last.0.next(),
-                    format!("Listed: {}", names.company_name(*id)),
+                    format!("Listed: {}", company_name(&names, *id)),
                 );
             }
         }
     }
 }
 
-fn payload_text(p: AlertPayload, names: &DemoTables) -> String {
+/// A company's name from the name index (v_company_row), which a newborn joins the tick it is
+/// born (D159).
+fn company_name(names: &NameIndex, id: sim::world::CompanyId) -> String {
+    names.title(&PageRef::Company(id))
+}
+
+fn payload_text(p: AlertPayload, names: &NameIndex) -> String {
     match p {
         AlertPayload::None => String::new(),
         AlertPayload::Quarter(q) => format!(": {q}"),
-        AlertPayload::Company(id) => format!(": {}", names.company_name(id)),
+        AlertPayload::Company(id) => format!(": {}", company_name(names, id)),
     }
 }
 
@@ -361,7 +378,7 @@ fn fade_toasts(
 fn draw_alert_row(
     mut commands: Commands,
     board: Res<AlertBoard>,
-    names: Res<DemoTables>,
+    names: Res<NameIndex>,
     row: Query<Entity, With<AlertRowRoot>>,
     icons: Query<Entity, With<AlertIcon>>,
 ) {
