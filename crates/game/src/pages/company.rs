@@ -618,12 +618,20 @@ pub fn ipo_vote(d: &CompanyDetail, index: &NameIndex) -> Vec<Block> {
                     if let Some(v) = &b.voter {
                         value.extend(voter_spans(v, index));
                     }
+                    // A director who voted and still sits, whatever position the
+                    // directors before them leaving moved them to, is no change.
+                    let still_director = matches!(b.role, VoterRole::Director(_))
+                        && b.voter
+                            .as_ref()
+                            .is_some_and(|v| d.directors.iter().any(|p| is_voter(p, v)));
                     let moved = match (&b.voter, now) {
+                        _ if still_director => false,
                         (Some(v), Some(p)) => !is_voter(p, v),
                         (None, Some(_)) => true,
                         (_, None) => false,
                     };
-                    if let (true, Some(p)) = (moved, now) {
+                    if still_director {
+                    } else if let (true, Some(p)) = (moved, now) {
                         let partial = if p.partial { " (partial)" } else { "" };
                         value.push(Span::muted(format!("(held now by {}{partial})", p.name)));
                     } else if b.voter.is_some()

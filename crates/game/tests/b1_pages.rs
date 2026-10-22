@@ -712,6 +712,80 @@ fn no_ballot_odds_anywhere() {
     assert!(!bt.contains('%'), "no percent on the vote: {bt}");
 }
 
+/// A director who voted and still sits is no change on the ballot line, even after a director
+/// before them left and their position moved up (D542, PR #32 review).
+#[test]
+fn a_director_who_moved_up_still_counts_as_the_voter() {
+    let (sim, _) = after_lock();
+    let v = sim.views().clone();
+    let index = NameIndex::build(&v);
+    let mut d = v.company_detail.get().companies[0].clone();
+    let stays = SeatPerson {
+        name: "Bo Stays".into(),
+        age: 50,
+        skills: d.board[0].holder.as_ref().unwrap().skills,
+        traits: Vec::new(),
+        partial: true,
+        character: None,
+        partial_id: Some(8_002),
+    };
+    // At the vote: Director 1 was a partial who has since left, Director 2 was Bo. Now Bo is
+    // the only director, at position 1.
+    d.directors = vec![stays.clone()];
+    let ballot = |n: u32, id: u32, name: &str| Ballot {
+        role: VoterRole::Director(n),
+        chance: 0.5,
+        yes: true,
+        voter: Some(BallotVoter::Partial {
+            id,
+            name: name.into(),
+        }),
+    };
+    d.ipo_last_vote = Some(IpoVoteRecord {
+        date: sim::time::Date::ymd(2020, 4, 9),
+        result: VoteResult {
+            ballots: vec![ballot(0, 8_001, "Al Gone"), ballot(1, 8_002, "Bo Stays")],
+            yes: 2,
+            no: 0,
+            passed: true,
+        },
+        capped: false,
+    });
+    let blocks = company::ipo_vote(&d, &index);
+    let fields = blocks
+        .iter()
+        .find_map(|b| match b {
+            Block::Fields(f) => Some(f),
+            _ => None,
+        })
+        .expect("the ballots");
+    let line = |label: &str| {
+        fields
+            .iter()
+            .find(|f| f.label == label)
+            .unwrap()
+            .value
+            .clone()
+    };
+    let muted = |spans: &[Span]| {
+        spans
+            .iter()
+            .filter(|s| matches!(s, Span::Muted(_)))
+            .cloned()
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(
+        muted(&line("Director 1")),
+        [Span::muted("(held now by Bo Stays (partial))")]
+    );
+    assert!(line("Director 2").contains(&Span::text("Bo Stays")));
+    assert!(
+        muted(&line("Director 2")).is_empty(),
+        "Bo still sits: {:?}",
+        line("Director 2")
+    );
+}
+
 /// The Board tab lists the view's directors by seat position (D541): Director 1 first, a full
 /// character linked, a partial one marked and not linked.
 #[test]
