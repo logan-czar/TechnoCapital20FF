@@ -28,7 +28,7 @@ use bevy::picking::hover::Hovered;
 use bevy::prelude::*;
 use bevy::time::TimeUpdateStrategy;
 use common::{FRAME, data, frames};
-use game::bridge::SimBridgePlugin;
+use game::bridge::{SimBridgePlugin, Views};
 use game::chart::Chart;
 use game::chart::data::readout;
 use game::command::CommandBar;
@@ -59,7 +59,7 @@ const SHOWN: usize = 40;
 
 /// The number-like tokens of a screen text with their byte spans: an optional sign (only at
 /// the start of a word, so the hyphen of a band "$1.20M-$1.80M" is a separator), an optional
-/// "$", digits with commas and a point, and a unit suffix (T, B, M, K, %, x).
+/// "$", digits with commas and a point, and a unit suffix (T, B, M, K, %, x, or " bps").
 fn spans(s: &str) -> Vec<(usize, usize)> {
     let b = s.as_bytes();
     let mut out = Vec::new();
@@ -83,7 +83,12 @@ fn spans(s: &str) -> Vec<(usize, usize)> {
             if j < b.len() && matches!(b[j], b'T' | b'B' | b'M' | b'K' | b'%' | b'x') {
                 j += 1;
             }
-            let end = i + s[i..j].trim_end_matches([',', '.']).len();
+            let mut end = i + s[i..j].trim_end_matches([',', '.']).len();
+            // Basis points carry their unit as a word: "245 bps".
+            if end == j && s[j..].starts_with(" bps") {
+                end += 4;
+                j = end;
+            }
             out.push((i, end));
             i = j;
         } else {
@@ -116,8 +121,8 @@ fn figure_tokens(s: &str) -> Vec<&str> {
         .collect()
 }
 
-/// Every way the UI writes a figure `x` (format.rs: `Unit::fmt` for each unit, and gains; a
-/// figure is never a count, `Cell::figure`),
+/// Every way the UI writes a figure `x` (format.rs: `Unit::fmt` for each unit and the gains; a
+/// chart's two-decimal number; basis points; a figure is never a count, `Cell::figure`),
 /// leaving out renderings with no non-zero digit ("$0", "0.0%"): those say nothing.
 fn renderings(x: f64) -> Vec<String> {
     let mut out = vec![
@@ -129,7 +134,13 @@ fn renderings(x: f64) -> Vec<String> {
         format::gain(x, GainUnit::Percent),
         format::gain(x, GainUnit::Money),
         format::gain(x, GainUnit::Price),
+        // A chart's Number axis and readout (ValueFormat::Number).
+        format!("{x:.2}"),
     ];
+    // Basis points, "245 bps" (doc::bps; the scan reads the unit with the number).
+    if x.abs() < 1.0 {
+        out.push(game::pages::doc::bps(x));
+    }
     out.retain(|s| s.bytes().any(|c| (b'1'..=b'9').contains(&c)));
     out
 }
@@ -691,25 +702,56 @@ fn canary(app: &mut App, t: &Truths, page: &PageRef) {
         "the canary {truth} was not found: {found:?}"
     );
     app.world_mut().entity_mut(e).despawn();
+    // A table row whose first link is the subject, on a screen about no subject (as a list
+    // page): found through the row's attribution.
+    let model = TableModel::new(
+        vec![
+            game::table::Column::text("Name", 100.0),
+            game::table::Column::number("Revenue", 100.0),
+        ],
+        vec![vec![
+            game::table::Cell::Link(page.clone(), "canary".into()),
+            game::table::Cell::Text(truth.clone()),
+        ]],
+    );
+    let table = {
+        let mut commands = app.world_mut().commands();
+        game::table::spawn_table_with_id(&mut commands, body, std::sync::Arc::new(model), "canary")
+    };
+    app.world_mut().flush();
+    let mut s = Screen::default();
+    scan(app, body, &t.names, &mut s);
+    let mut found = Vec::new();
+    check(t, "canary row", &[], &s, &mut found);
+    assert!(
+        found.iter().any(|l| l.contains(truth.as_str())),
+        "the canary row {truth} was not found: {found:?}"
+    );
+    app.world_mut().entity_mut(table).despawn();
 }
 
-/// Scans every screen of one game state; returns the leaks and how many screens it read.
-fn scan_state(sim: Sim, label: &str, t: &Truths, leaks: &mut Vec<Leak>) -> usize {
-    let v = sim.views().clone();
-    let private: Vec<CompanyId> = v
-        .company_rows
+/// The companies whose figures are bands in `v`.
+fn banded(v: &SimViews) -> Vec<CompanyId> {
+    v.company_rows
         .get()
         .rows
         .iter()
         .filter(|r| r.estimated)
         .map(|r| r.id)
-        .collect();
+        .collect()
+}
+
+/// Scans every screen of one game state, `sim` with its views `v` (the views the truths were
+/// read against); returns how many screens it read.
+fn scan_state(sim: Sim, v: &SimViews, label: &str, t: &Truths, leaks: &mut Vec<Leak>) -> usize {
+    let private = banded(v);
     assert!(private.len() > 100, "{} banded companies", private.len());
-    let mut sim = sim;
-    for &c in &private {
-        sim.apply(Control::WatchlistAdd(c)).unwrap();
-    }
     let mut app = shell_app(sim);
+    // The shell shows exactly the views the truths were checked against.
+    assert!(
+        app.world().resource::<Views>().same_data(v),
+        "{label}: the shell's views drifted from the scanned ones"
+    );
     let names = &t.names;
     let index = app.world().resource::<NameIndex>().clone();
     let mut screens = 0;
@@ -810,12 +852,32 @@ fn scan_state(sim: Sim, label: &str, t: &Truths, leaks: &mut Vec<Leak>) -> usize
 }
 
 /// Runs the scan on one state: its truths from the twin, the band check, then every screen.
+///
+/// A load rebuilds every view at the current tick, while a running game keeps each slower
+/// view as of its last rebuild, so the screens and the truth must come from the same kind of
+/// build: the state is saved and loaded into a plain (non-Omniscient) sim, which drives the
+/// shell, and the Omniscient twin is loaded from that same save.
 fn leaks_of(sim: Sim, label: &str) -> (Truths, Vec<Leak>, usize) {
-    let n = sim.views().clone();
-    let o = omniscient_twin(&sim);
+    let mut plain = Sim::new(data(), SEED).unwrap();
+    plain.load_bytes(&sim.save_bytes()).unwrap();
+    // Every banded company on the watchlist, so F2 and the recap list them (a control: it
+    // moves no figure).
+    for c in banded(plain.views()) {
+        plain.apply(Control::WatchlistAdd(c)).unwrap();
+    }
+    assert!(!plain.controls().omniscient);
+    let n = plain.views().clone();
+    let o = omniscient_twin(&plain);
+    // The twin is the same state: a plain load of the same save shows the same views.
+    let mut check_twin = Sim::new(data(), SEED).unwrap();
+    check_twin.load_bytes(&plain.save_bytes()).unwrap();
+    assert!(
+        check_twin.views().same_data(&n),
+        "{label}: a reload of the save shows other views than the scanned ones"
+    );
     let t = truths(&n, &o);
     let mut leaks = Vec::new();
-    let screens = scan_state(sim, label, &t, &mut leaks);
+    let screens = scan_state(plain, &n, label, &t, &mut leaks);
     (t, leaks, screens)
 }
 
@@ -891,6 +953,7 @@ fn scanner_reads_every_format() {
         ["1.23x", "+1.2%", "12.3%"]
     );
     assert_eq!(tokens("1,234.5 and $1,234.50."), ["1,234.5", "$1,234.50"]);
+    assert_eq!(tokens("spread 245 bps, 3 seats"), ["245 bps", "3"]);
     assert_eq!(
         figure_tokens("$1.00M, $12.0M-$18.0M, -$5.00M to $3.00M, 4.5x"),
         ["$1.00M", "4.5x"],
