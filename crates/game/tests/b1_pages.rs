@@ -1027,8 +1027,11 @@ fn live_tables_and_charts_follow_the_first_change() {
         .find(|(_, l)| l.0 == Live::IndexClose(z))
         .expect("a live last close");
     run_until(&mut app, |v| v.clock().date > today);
-    assert_eq!(points(&app, chart), 2, "the next day's close");
     let views: &SimViews = app.world().resource::<Views>();
+    // The load level, then a close for each day that passed (a frame may pass more than one).
+    let closes = views.exchanges.get().of_zone(z).unwrap().closes.len();
+    assert!(closes >= 2);
+    assert_eq!(points(&app, chart), closes, "the next day's close");
     let want = format::number(views.zones.get().get(z).unwrap().index_close.unwrap());
     assert_eq!(app.world().get::<Text>(close).unwrap().0, want);
     // The Exchange page: its constituents table.
