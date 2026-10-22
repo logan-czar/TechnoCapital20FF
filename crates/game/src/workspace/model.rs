@@ -1,6 +1,7 @@
-//! The tiling workspace's model (M9 A2; D450), with no Bevy entities: a binary tree of splits
-//! whose leaves are panes, each pane with its own back and forward history. The workspace UI
-//! ([`super`]) draws it and turns input into calls here; tests drive it directly.
+//! The workspace's model (M9 A2, D450; M8 floating windows, D635), with no Bevy entities:
+//! floating windows over the map, each a binary tree of splits whose leaves are panes, each pane
+//! with its own back and forward history. The workspace UI ([`super`]) draws it and turns input
+//! into calls here; tests drive it directly.
 
 use std::collections::BTreeMap;
 
@@ -20,6 +21,11 @@ pub const NUDGE: f32 = 0.05;
 /// The smallest pane a split may make, in logical pixels: a header and a few rows.
 pub const MIN_PANE_W: f32 = 160.0;
 pub const MIN_PANE_H: f32 = 80.0;
+/// Most floating windows open at once (D635).
+pub const MAX_WINDOWS: usize = 8;
+/// A window's title bar and frame, in logical pixels (D635).
+pub const TITLE_BAR_H: f32 = 22.0;
+pub const WINDOW_BORDER: f32 = 1.0;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct PaneId(pub u32);
@@ -222,15 +228,40 @@ fn lenient_page<'de, D: serde::Deserializer<'de>>(d: D) -> Result<PageRef, D::Er
     }))
 }
 
-/// A named layout, or the last session's (D450).
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct SavedLayout {
-    pub root: SavedNode,
-    /// The focused pane's position in the tree's left-to-right order.
-    pub focused: usize,
+/// A floating window's rectangle in logical pixels, inside the area the windows float in.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+pub struct WinRect {
+    pub x: f32,
+    pub y: f32,
+    pub w: f32,
+    pub h: f32,
 }
 
-impl SavedLayout {
+impl From<WinRect> for Rect {
+    fn from(r: WinRect) -> Rect {
+        Rect {
+            x: r.x,
+            y: r.y,
+            w: r.w,
+            h: r.h,
+        }
+    }
+}
+
+/// A saved window (D635): its pane tree, focused pane (position in tree order), rectangle
+/// (`None` fills the area: an M9 layout migrated) and whether it is minimized.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SavedWindow {
+    pub root: SavedNode,
+    #[serde(default)]
+    pub focused: usize,
+    #[serde(default)]
+    pub rect: Option<WinRect>,
+    #[serde(default)]
+    pub minimized: bool,
+}
+
+impl SavedWindow {
     fn panes(&self) -> usize {
         fn n(node: &SavedNode) -> usize {
             match node {
@@ -240,9 +271,64 @@ impl SavedLayout {
         }
         n(&self.root)
     }
+}
 
-    /// The layout with ratios in range and the focus index valid, or `None` if it has more
-    /// than [`MAX_PANES`] panes.
+/// A named layout, or the last session's (D450, D635): the windows bottom to top and the
+/// focused window. An M9 layout (one tree, `root` and the focused pane) loads as one window
+/// filling the area.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SavedLayout {
+    #[serde(default)]
+    pub windows: Vec<SavedWindow>,
+    /// The focused window's position in `windows` (in an M9 layout: the focused pane's).
+    #[serde(default)]
+    pub focused: usize,
+    /// An M9 layout's tree, moved into `windows` by [`SavedLayout::sanitized`]; never written.
+    #[serde(
+        default,
+        skip_serializing,
+        deserialize_with = "legacy_root",
+        rename = "root"
+    )]
+    pub legacy_root: Option<SavedNode>,
+}
+
+fn legacy_root<'de, D: serde::Deserializer<'de>>(d: D) -> Result<Option<SavedNode>, D::Error> {
+    SavedNode::deserialize(d).map(Some)
+}
+
+impl SavedLayout {
+    /// One window holding `root`, filling the area, with pane `focused` focused.
+    pub fn single(root: SavedNode, focused: usize) -> SavedLayout {
+        SavedLayout {
+            windows: vec![SavedWindow {
+                root,
+                focused,
+                rect: None,
+                minimized: false,
+            }],
+            focused: 0,
+            legacy_root: None,
+        }
+    }
+
+    /// Every pane of every window.
+    pub fn panes(&self) -> usize {
+        self.windows.iter().map(SavedWindow::panes).sum::<usize>()
+            + self.legacy_root.as_ref().map_or(0, |r| {
+                SavedWindow {
+                    root: r.clone(),
+                    focused: 0,
+                    rect: None,
+                    minimized: false,
+                }
+                .panes()
+            })
+    }
+
+    /// The layout with an M9 tree moved into one window, ratios in range, rectangles finite and
+    /// the focus indices valid, or `None` if a window has more than [`MAX_PANES`] panes, there
+    /// are more than [`MAX_WINDOWS`] windows, or none.
     pub fn sanitized(mut self) -> Option<SavedLayout> {
         fn fix(node: &mut SavedNode) {
             if let SavedNode::Split {
@@ -257,12 +343,37 @@ impl SavedLayout {
                 fix(second);
             }
         }
-        if self.panes() > MAX_PANES {
+        if let Some(root) = self.legacy_root.take() {
+            let focused = std::mem::take(&mut self.focused);
+            self.windows.insert(
+                0,
+                SavedWindow {
+                    root,
+                    focused,
+                    rect: None,
+                    minimized: false,
+                },
+            );
+        }
+        if self.windows.is_empty()
+            || self.windows.len() > MAX_WINDOWS
+            || self.windows.iter().any(|w| w.panes() > MAX_PANES)
+        {
             return None;
         }
-        fix(&mut self.root);
-        if self.focused >= self.panes() {
-            self.focused = 0;
+        for w in &mut self.windows {
+            fix(&mut w.root);
+            if w.focused >= w.panes() {
+                w.focused = 0;
+            }
+            if let Some(r) = w.rect
+                && ![r.x, r.y, r.w, r.h].iter().all(|v| v.is_finite())
+            {
+                w.rect = None;
+            }
+        }
+        if self.focused >= self.windows.len() {
+            self.focused = self.windows.len() - 1;
         }
         Some(self)
     }
@@ -276,16 +387,74 @@ pub fn clamp_ratio(r: f32) -> f32 {
     }
 }
 
-/// The workspace: the pane tree, every pane's history and the focused pane.
+/// A floating window's id.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct WindowId(pub u32);
+
+/// One floating window over the map (D635): an M9 pane tree with its focused pane.
+#[derive(Debug, Clone, PartialEq)]
+pub struct PaneWindow {
+    pub id: WindowId,
+    pub root: Layout,
+    pub focused: PaneId,
+    pub rect: WinRect,
+    pub minimized: bool,
+}
+
+impl PaneWindow {
+    /// The area the window's panes tile: its rectangle less the title bar and frame.
+    pub fn body(&self) -> (f32, f32) {
+        body_of(self.rect)
+    }
+
+    /// Its panes in tree order.
+    pub fn pane_ids(&self) -> Vec<PaneId> {
+        let mut out = Vec::new();
+        walk_panes(&self.root, &mut out);
+        out
+    }
+}
+
+fn walk_panes(l: &Layout, out: &mut Vec<PaneId>) {
+    match l {
+        Layout::Pane(p) => out.push(*p),
+        Layout::Split(s) => {
+            walk_panes(&s.first, out);
+            walk_panes(&s.second, out);
+        }
+    }
+}
+
+/// The pane area of a window rectangle.
+pub fn body_of(r: WinRect) -> (f32, f32) {
+    (
+        (r.w - 2.0 * WINDOW_BORDER).max(0.0),
+        (r.h - TITLE_BAR_H - 2.0 * WINDOW_BORDER).max(0.0),
+    )
+}
+
+/// The workspace: floating windows over the map (D635), each a pane tree; every pane's history;
+/// the focused window and, in each window, its focused pane. The methods M9 had act on the
+/// focused window, so one window behaves as the M9 workspace did.
 #[derive(Resource, Debug, Clone, PartialEq)]
 pub struct Workspace {
-    root: Layout,
+    /// Bottom to top.
+    windows: Vec<PaneWindow>,
     panes: BTreeMap<PaneId, History>,
-    focused: PaneId,
+    active: WindowId,
     next_pane: u32,
     next_split: u32,
-    /// Bumped whenever the tree's shape changes (split, close, load), so the UI rebuilds.
+    next_window: u32,
+    /// Bumped whenever a tree's shape changes or a window opens or closes (split, close, load),
+    /// so the UI rebuilds.
     structure: u64,
+    /// Bumped when a window moves, resizes, rises, minimizes or the windows hide, so the UI
+    /// restyles the frames without rebuilding them.
+    geometry: u64,
+    /// Every window hidden by the hide key, the map alone on screen.
+    hidden: bool,
+    /// The logical size of the area the windows float in.
+    area: (f32, f32),
 }
 
 impl Default for Workspace {
@@ -294,32 +463,79 @@ impl Default for Workspace {
     }
 }
 
+/// The area before the UI has measured it (and in headless tests).
+pub const DEFAULT_AREA: (f32, f32) = (1280.0, 800.0);
+
+/// The first window's place in a fresh workspace (D635): the right part of the area, full
+/// height, so the map shows on the left.
+pub const FIRST_WINDOW_X_SHARE: f32 = 0.4;
+/// A new window's share of the area, and the step each one is cascaded by.
+pub const NEW_WINDOW_SHARE: f32 = 0.5;
+pub const CASCADE: f32 = 24.0;
+
 impl Workspace {
-    /// One pane showing `page`.
+    /// One window with one pane showing `page`, at the right of the area.
     pub fn new(page: PageRef) -> Workspace {
         let id = PaneId(0);
-        Workspace {
+        let area = DEFAULT_AREA;
+        let window = PaneWindow {
+            id: WindowId(0),
             root: Layout::Pane(id),
-            panes: BTreeMap::from([(id, History::new(page))]),
             focused: id,
+            rect: first_rect(area),
+            minimized: false,
+        };
+        Workspace {
+            windows: vec![window],
+            panes: BTreeMap::from([(id, History::new(page))]),
+            active: WindowId(0),
             next_pane: 1,
             next_split: 0,
+            next_window: 1,
             structure: 0,
+            geometry: 0,
+            hidden: false,
+            area,
         }
     }
 
-    pub fn root(&self) -> &Layout {
-        &self.root
+    fn win(&self, id: WindowId) -> Option<&PaneWindow> {
+        self.windows.iter().find(|w| w.id == id)
     }
 
+    fn win_mut(&mut self, id: WindowId) -> Option<&mut PaneWindow> {
+        self.windows.iter_mut().find(|w| w.id == id)
+    }
+
+    fn active_win(&self) -> &PaneWindow {
+        self.win(self.active).unwrap_or(&self.windows[0])
+    }
+
+    fn active_win_mut(&mut self) -> &mut PaneWindow {
+        let id = self.active;
+        let i = self.windows.iter().position(|w| w.id == id).unwrap_or(0);
+        &mut self.windows[i]
+    }
+
+    /// The focused window's pane tree.
+    pub fn root(&self) -> &Layout {
+        &self.active_win().root
+    }
+
+    /// The focused window's focused pane: where pages open and keys act.
     pub fn focused(&self) -> PaneId {
-        self.focused
+        self.active_win().focused
     }
 
     pub fn structure_version(&self) -> u64 {
         self.structure
     }
 
+    pub fn geometry_version(&self) -> u64 {
+        self.geometry
+    }
+
+    /// Panes in every window.
     pub fn len(&self) -> usize {
         self.panes.len()
     }
@@ -337,28 +553,74 @@ impl Workspace {
         self.panes.get(&pane).map(History::current)
     }
 
-    /// Panes in the tree's left-to-right (top-to-bottom) order.
+    /// The focused window's panes in its tree's left-to-right (top-to-bottom) order.
     pub fn pane_ids(&self) -> Vec<PaneId> {
-        fn walk(l: &Layout, out: &mut Vec<PaneId>) {
-            match l {
-                Layout::Pane(p) => out.push(*p),
-                Layout::Split(s) => {
-                    walk(&s.first, out);
-                    walk(&s.second, out);
-                }
-            }
-        }
-        let mut out = Vec::with_capacity(self.panes.len());
-        walk(&self.root, &mut out);
-        out
+        self.active_win().pane_ids()
     }
 
+    /// Every window's panes, windows bottom to top.
+    pub fn all_pane_ids(&self) -> Vec<PaneId> {
+        self.windows.iter().flat_map(PaneWindow::pane_ids).collect()
+    }
+
+    /// The windows, bottom to top.
+    pub fn windows(&self) -> &[PaneWindow] {
+        &self.windows
+    }
+
+    pub fn window(&self, id: WindowId) -> Option<&PaneWindow> {
+        self.win(id)
+    }
+
+    /// The focused window.
+    pub fn active_window(&self) -> WindowId {
+        self.active
+    }
+
+    /// The window holding `pane`.
+    pub fn window_of(&self, pane: PaneId) -> Option<WindowId> {
+        self.windows
+            .iter()
+            .find(|w| find_pane(&w.root, pane))
+            .map(|w| w.id)
+    }
+
+    /// The window holding split `split`.
+    pub fn window_of_split(&self, split: SplitId) -> Option<WindowId> {
+        self.windows
+            .iter()
+            .find(|w| find_split(&w.root, split).is_some())
+            .map(|w| w.id)
+    }
+
+    /// Every window is hidden (the hide key).
+    pub fn hidden(&self) -> bool {
+        self.hidden
+    }
+
+    /// The area the windows float in.
+    pub fn area(&self) -> (f32, f32) {
+        self.area
+    }
+
+    /// The focused window's pane area: what the M9 calls take as the workspace size.
+    pub fn body_size(&self) -> (f32, f32) {
+        self.active_win().body()
+    }
+
+    /// Focuses `pane`: its window comes to the top (restored if minimized) and the pane takes
+    /// its window's focus.
     pub fn focus(&mut self, pane: PaneId) -> bool {
-        if self.panes.contains_key(&pane) && self.focused != pane {
-            self.focused = pane;
+        let Some(w) = self.window_of(pane) else {
+            return false;
+        };
+        let raised = self.raise(w);
+        let win = self.active_win_mut();
+        if win.focused != pane {
+            win.focused = pane;
             true
         } else {
-            false
+            raised
         }
     }
 
@@ -379,9 +641,9 @@ impl Workspace {
         self.panes.get_mut(&pane).is_some_and(|h| h.back_to(i))
     }
 
-    /// Splits `pane` along `axis`: the new pane is the second side, showing `page` (or a copy of
-    /// the split pane's page) with a fresh history. Focus moves to it when `focus_new`. `None`
-    /// at [`MAX_PANES`] or for an unknown pane.
+    /// Splits `pane` along `axis` in its window: the new pane is the second side, showing
+    /// `page` (or a copy of the split pane's page) with a fresh history. The window's focus moves
+    /// to it when `focus_new`. `None` at [`MAX_PANES`] in the window or for an unknown pane.
     pub fn split(
         &mut self,
         pane: PaneId,
@@ -389,13 +651,15 @@ impl Workspace {
         page: Option<PageRef>,
         focus_new: bool,
     ) -> Option<PaneId> {
-        if self.panes.len() >= MAX_PANES {
+        let w = self.window_of(pane)?;
+        if self.win(w)?.pane_ids().len() >= MAX_PANES {
             return None;
         }
         let page = page.or_else(|| self.page(pane).cloned())?;
         let new = PaneId(self.next_pane);
         let split = SplitId(self.next_split);
-        let node = find_pane_mut(&mut self.root, pane)?;
+        let win = self.win_mut(w)?;
+        let node = find_pane_mut(&mut win.root, pane)?;
         let old = std::mem::replace(node, Layout::Pane(new));
         *node = Layout::Split(Split {
             id: split,
@@ -404,50 +668,65 @@ impl Workspace {
             first: Box::new(old),
             second: Box::new(Layout::Pane(new)),
         });
+        if focus_new {
+            win.focused = new;
+        }
         self.next_pane += 1;
         self.next_split += 1;
         self.panes.insert(new, History::new(page));
-        if focus_new {
-            self.focused = new;
-        }
         self.structure += 1;
         Some(new)
     }
 
-    /// The axis that halves `pane` along its longer side, in a workspace `w` by `h`.
+    /// The rectangle of `pane` in its window's tree laid out in `w` by `h`.
+    fn pane_rect(&self, pane: PaneId, w: f32, h: f32) -> Option<Rect> {
+        let win = self.win(self.window_of(pane)?)?;
+        tree_rects(&win.root, w, h)
+            .into_iter()
+            .find(|(p, _)| *p == pane)
+            .map(|(_, r)| r)
+    }
+
+    /// The axis that halves `pane` along its longer side, in a window body `w` by `h`.
     pub fn auto_axis(&self, pane: PaneId, w: f32, h: f32) -> Axis {
-        match self.rects(w, h).into_iter().find(|(p, _)| *p == pane) {
-            Some((_, r)) if r.h > r.w => Axis::Column,
+        match self.pane_rect(pane, w, h) {
+            Some(r) if r.h > r.w => Axis::Column,
             _ => Axis::Row,
         }
     }
 
-    /// Closes `pane`; its sibling takes the split's place. The last pane never closes. A closed
-    /// focused pane hands focus to the first pane (in tree order) of its sibling subtree, the
-    /// pane that now fills its place; another pane's focus is kept.
+    /// Closes `pane`; its sibling takes the split's place. A window's last pane never closes
+    /// (close the window instead). A closed focused pane hands its window's focus to the first
+    /// pane (in tree order) of its sibling subtree, the pane that now fills its place.
     pub fn close(&mut self, pane: PaneId) -> bool {
-        if self.panes.len() <= 1 || !self.panes.contains_key(&pane) {
+        let Some(w) = self.window_of(pane) else {
+            return false;
+        };
+        let heir = self.sibling_of(pane);
+        let Some(win) = self.win_mut(w) else {
+            return false;
+        };
+        if matches!(win.root, Layout::Pane(_)) || !remove_pane(&mut win.root, pane) {
             return false;
         }
-        let heir = self.sibling_of(pane);
-        if !remove_pane(&mut self.root, pane) {
-            return false;
+        if win.focused == pane {
+            win.focused = heir.unwrap_or_else(|| win.pane_ids()[0]);
         }
         self.panes.remove(&pane);
-        if self.focused == pane {
-            self.focused = heir.unwrap_or_else(|| self.pane_ids()[0]);
-        }
         self.structure += 1;
         true
     }
 
-    /// Whether splitting `pane` along `axis`, in a workspace `w` by `h` logical pixels, leaves
+    /// Whether splitting `pane` along `axis`, in a window body `w` by `h` logical pixels, leaves
     /// both halves at least [`MIN_PANE_W`] by [`MIN_PANE_H`] (D450).
     pub fn can_split(&self, pane: PaneId, axis: Axis, w: f32, h: f32) -> bool {
-        if self.panes.len() >= MAX_PANES {
+        let Some(win) = self.window_of(pane).and_then(|id| self.win(id)) else {
+            return false;
+        };
+        if win.pane_ids().len() >= MAX_PANES {
             return false;
         }
-        let Some((_, r)) = self.rects(w, h).into_iter().find(|(p, _)| *p == pane) else {
+        let Some(r) = self.pane_rect(pane, w, h) else {
             return false;
         };
         let (hw, hh) = match axis {
@@ -471,12 +750,19 @@ impl Workspace {
     }
 
     pub fn ratio(&self, split: SplitId) -> Option<f32> {
-        find_split(&self.root, split).map(|s| s.ratio)
+        self.windows
+            .iter()
+            .find_map(|w| find_split(&w.root, split))
+            .map(|s| s.ratio)
     }
 
     /// Sets a split's ratio (clamped to keep [`MIN_RATIO`] each side).
     pub fn set_ratio(&mut self, split: SplitId, ratio: f32) -> bool {
-        match find_split_mut(&mut self.root, split) {
+        match self
+            .windows
+            .iter_mut()
+            .find_map(|w| find_split_mut(&mut w.root, split))
+        {
             Some(s) => {
                 let r = clamp_ratio(ratio);
                 let moved = (s.ratio - r).abs() > f32::EPSILON;
@@ -487,8 +773,8 @@ impl Workspace {
         }
     }
 
-    /// Sets a split's ratio as a divider drag or a keyboard resize does, in a workspace `w` by
-    /// `h` (D450, D571): clamped to keep [`MIN_RATIO`] each side and every pane on both sides
+    /// Sets a split's ratio as a divider drag or a keyboard resize does, in a window body `w`
+    /// by `h` (D450, D571): clamped to keep [`MIN_RATIO`] each side and every pane on both sides
     /// at least [`MIN_PANE_W`] by [`MIN_PANE_H`] at the other splits' ratios. When the panes
     /// cannot all fit at any ratio (the window shrank), the ratio holds.
     pub fn set_ratio_in(&mut self, split: SplitId, ratio: f32, w: f32, h: f32) -> bool {
@@ -498,10 +784,13 @@ impl Workspace {
             w,
             h,
         };
-        let Some(r) = split_rect(&self.root, split, whole) else {
+        let Some(win) = self.window_of_split(split).and_then(|id| self.win(id)) else {
             return false;
         };
-        let Some(s) = find_split(&self.root, split) else {
+        let Some(r) = split_rect(&win.root, split, whole) else {
+            return false;
+        };
+        let Some(s) = find_split(&win.root, split) else {
             return false;
         };
         let len = match s.axis {
@@ -520,7 +809,7 @@ impl Workspace {
     }
 
     /// Moves the divider nearest `pane` on `dir`'s axis one [`NUDGE`] towards `dir`, as
-    /// [`Workspace::set_ratio_in`] in a workspace `w` by `h`.
+    /// [`Workspace::set_ratio_in`] in a window body `w` by `h`.
     pub fn nudge_in(&mut self, pane: PaneId, dir: Dir, w: f32, h: f32) -> bool {
         let Some((split, r)) = self.nudged(pane, dir) else {
             return false;
@@ -540,7 +829,8 @@ impl Workspace {
     /// The split a nudge of `pane` towards `dir` moves, and the ratio it asks for: the
     /// innermost enclosing split on that axis.
     fn nudged(&self, pane: PaneId, dir: Dir) -> Option<(SplitId, f32)> {
-        let path = path_to(&self.root, pane)?;
+        let win = self.win(self.window_of(pane)?)?;
+        let path = path_to(&win.root, pane)?;
         let split = path
             .iter()
             .rev()
@@ -553,36 +843,18 @@ impl Workspace {
         Some((split, self.ratio(split).unwrap_or(0.5) + delta))
     }
 
-    /// Every pane's rectangle in a workspace `w` by `h`, in tree order.
+    /// Every pane's rectangle in the focused window's tree laid out in `w` by `h`, in tree
+    /// order.
     pub fn rects(&self, w: f32, h: f32) -> Vec<(PaneId, Rect)> {
-        fn walk(l: &Layout, r: Rect, out: &mut Vec<(PaneId, Rect)>) {
-            match l {
-                Layout::Pane(p) => out.push((*p, r)),
-                Layout::Split(s) => {
-                    let (a, b) = r.split(s.axis, s.ratio);
-                    walk(&s.first, a, out);
-                    walk(&s.second, b, out);
-                }
-            }
-        }
-        let mut out = Vec::new();
-        walk(
-            &self.root,
-            Rect {
-                x: 0.0,
-                y: 0.0,
-                w,
-                h,
-            },
-            &mut out,
-        );
-        out
+        tree_rects(self.root(), w, h)
     }
 
-    /// The pane next to `pane` towards `dir`: among panes beyond its edge that overlap it across
-    /// the other axis, the nearest, then the one overlapping most, then the lower id (D2).
+    /// The pane next to `pane` towards `dir` in its window: among panes beyond its edge that
+    /// overlap it across the other axis, the nearest, then the one overlapping most, then the
+    /// lower id (D2).
     pub fn neighbor(&self, pane: PaneId, dir: Dir, w: f32, h: f32) -> Option<PaneId> {
-        let rects = self.rects(w, h);
+        let win = self.win(self.window_of(pane)?)?;
+        let rects = tree_rects(&win.root, w, h);
         let (_, me) = *rects.iter().find(|(p, _)| *p == pane)?;
         let eps = 0.5;
         let mut best: Option<(f32, f32, PaneId)> = None;
@@ -607,7 +879,7 @@ impl Workspace {
         best.map(|(_, _, p)| p)
     }
 
-    /// The next pane in tree order after `pane` (wrapping), for Ctrl+Tab.
+    /// The next pane in the focused window's tree order after `pane` (wrapping), for Ctrl+Tab.
     pub fn cycle(&self, pane: PaneId, step: i32) -> PaneId {
         let ids = self.pane_ids();
         let i = ids.iter().position(|p| *p == pane).unwrap_or(0) as i32;
@@ -615,7 +887,7 @@ impl Workspace {
         ids[((i + step).rem_euclid(n)) as usize]
     }
 
-    /// The layout as a [`SavedLayout`].
+    /// The layout as a [`SavedLayout`]: every window, bottom to top.
     pub fn to_saved(&self) -> SavedLayout {
         fn save(ws: &Workspace, l: &Layout) -> SavedNode {
             match l {
@@ -631,27 +903,46 @@ impl Workspace {
             }
         }
         SavedLayout {
-            root: save(self, &self.root),
-            focused: self
-                .pane_ids()
+            windows: self
+                .windows
                 .iter()
-                .position(|p| *p == self.focused)
+                .map(|w| SavedWindow {
+                    root: save(self, &w.root),
+                    focused: w
+                        .pane_ids()
+                        .iter()
+                        .position(|p| *p == w.focused)
+                        .unwrap_or(0),
+                    rect: Some(w.rect),
+                    minimized: w.minimized,
+                })
+                .collect(),
+            focused: self
+                .windows
+                .iter()
+                .position(|w| w.id == self.active)
                 .unwrap_or(0),
+            legacy_root: None,
         }
     }
 
-    /// Replaces the whole workspace with `saved` (fresh histories, new ids).
+    /// Replaces the whole workspace with `saved` (fresh histories, new ids); a window with no
+    /// rectangle fills the area. The area and the hidden flag stay.
     pub fn load(&mut self, saved: &SavedLayout) {
         let Some(saved) = saved.clone().sanitized() else {
             return;
         };
         let mut ws = Workspace {
-            root: Layout::Pane(PaneId(0)),
+            windows: Vec::new(),
             panes: BTreeMap::new(),
-            focused: PaneId(0),
+            active: WindowId(0),
             next_pane: self.next_pane,
             next_split: self.next_split,
+            next_window: self.next_window,
             structure: self.structure + 1,
+            geometry: self.geometry + 1,
+            hidden: self.hidden,
+            area: self.area,
         };
         fn build(ws: &mut Workspace, n: &SavedNode) -> Layout {
             match n {
@@ -681,13 +972,33 @@ impl Workspace {
                 }
             }
         }
-        ws.root = build(&mut ws, &saved.root);
-        let ids = ws.pane_ids();
-        ws.focused = ids[saved.focused.min(ids.len() - 1)];
+        for sw in &saved.windows {
+            let root = build(&mut ws, &sw.root);
+            let mut ids = Vec::new();
+            walk_panes(&root, &mut ids);
+            let id = WindowId(ws.next_window);
+            ws.next_window += 1;
+            let rect = sw.rect.unwrap_or(WinRect {
+                x: 0.0,
+                y: 0.0,
+                w: ws.area.0,
+                h: ws.area.1,
+            });
+            ws.windows.push(PaneWindow {
+                id,
+                focused: ids[sw.focused.min(ids.len() - 1)],
+                root,
+                rect,
+                minimized: sw.minimized,
+            });
+        }
+        ws.active = ws.windows[saved.focused].id;
+        ws.clamp_all();
         *self = ws;
     }
 
-    /// Every split in tree order with its axis and ratio (for the UI's divider sync).
+    /// Every split in every window, windows bottom to top, each in tree order, with its axis and
+    /// ratio (for the UI's divider sync).
     pub fn splits(&self) -> Vec<(SplitId, Axis, f32)> {
         fn walk(l: &Layout, out: &mut Vec<(SplitId, Axis, f32)>) {
             if let Layout::Split(s) = l {
@@ -697,7 +1008,9 @@ impl Workspace {
             }
         }
         let mut out = Vec::new();
-        walk(&self.root, &mut out);
+        for w in &self.windows {
+            walk(&w.root, &mut out);
+        }
         out
     }
 
@@ -721,7 +1034,306 @@ impl Workspace {
             }
             walk(&s.first, pane).or_else(|| walk(&s.second, pane))
         }
-        walk(&self.root, pane)
+        let win = self.win(self.window_of(pane)?)?;
+        walk(&win.root, pane)
+    }
+
+    // ---- The window layer (D635) ----
+
+    /// Opens a new window on top showing `page` in one pane, cascaded from the area's centre,
+    /// and focuses it. `None` at [`MAX_WINDOWS`].
+    pub fn new_window(&mut self, page: PageRef) -> Option<WindowId> {
+        if self.windows.len() >= MAX_WINDOWS {
+            return None;
+        }
+        let pane = PaneId(self.next_pane);
+        self.next_pane += 1;
+        let id = WindowId(self.next_window);
+        self.next_window += 1;
+        let (aw, ah) = self.area;
+        let (w, h) = (
+            (aw * NEW_WINDOW_SHARE).max(MIN_WINDOW_W),
+            (ah * NEW_WINDOW_SHARE * 1.4).min(ah).max(MIN_WINDOW_H),
+        );
+        let step = (self.windows.len() % 6) as f32 * CASCADE;
+        let rect = WinRect {
+            x: (aw - w) / 2.0 + step,
+            y: (ah - h) / 3.0 + step,
+            w,
+            h,
+        };
+        self.panes.insert(pane, History::new(page));
+        self.windows.push(PaneWindow {
+            id,
+            root: Layout::Pane(pane),
+            focused: pane,
+            rect,
+            minimized: false,
+        });
+        self.active = id;
+        self.hidden = false;
+        self.clamp(id);
+        self.structure += 1;
+        self.geometry += 1;
+        Some(id)
+    }
+
+    /// Closes window `id` and its panes. The last window never closes; the focus goes to the
+    /// top window still shown, else the top one.
+    pub fn close_window(&mut self, id: WindowId) -> bool {
+        if self.windows.len() <= 1 {
+            return false;
+        }
+        let Some(i) = self.windows.iter().position(|w| w.id == id) else {
+            return false;
+        };
+        let win = self.windows.remove(i);
+        for p in win.pane_ids() {
+            self.panes.remove(&p);
+        }
+        if self.active == id {
+            self.active = self
+                .top_shown()
+                .unwrap_or(self.windows[self.windows.len() - 1].id);
+        }
+        self.structure += 1;
+        self.geometry += 1;
+        true
+    }
+
+    /// The top window that is not minimized.
+    fn top_shown(&self) -> Option<WindowId> {
+        self.windows
+            .iter()
+            .rev()
+            .find(|w| !w.minimized)
+            .map(|w| w.id)
+    }
+
+    /// Brings window `id` to the top, restored, and focuses it. True if anything changed.
+    pub fn raise(&mut self, id: WindowId) -> bool {
+        let Some(i) = self.windows.iter().position(|w| w.id == id) else {
+            return false;
+        };
+        let changed = i + 1 != self.windows.len() || self.active != id || self.windows[i].minimized;
+        if changed {
+            let mut w = self.windows.remove(i);
+            w.minimized = false;
+            self.windows.push(w);
+            self.active = id;
+            self.geometry += 1;
+        }
+        changed
+    }
+
+    /// Minimizes window `id` to the dock; the focus moves to the top window still shown (it
+    /// stays when every window is minimized, and the next page opened restores it).
+    pub fn minimize(&mut self, id: WindowId) -> bool {
+        let Some(w) = self.win_mut(id) else {
+            return false;
+        };
+        if w.minimized {
+            return false;
+        }
+        w.minimized = true;
+        if self.active == id
+            && let Some(top) = self.top_shown()
+        {
+            self.active = top;
+        }
+        self.geometry += 1;
+        true
+    }
+
+    /// Shows `pane`'s window, for a page opening in it (D635): the windows un-hide and the
+    /// window, if minimized, comes back on top. The focus stays where it was, unless every
+    /// window was minimized and the focused one comes back.
+    pub fn reveal_pane(&mut self, pane: PaneId) -> bool {
+        let mut changed = std::mem::take(&mut self.hidden);
+        if let Some(id) = self.window_of(pane)
+            && let Some(i) = self.windows.iter().position(|w| w.id == id)
+            && self.windows[i].minimized
+        {
+            let mut w = self.windows.remove(i);
+            w.minimized = false;
+            self.windows.push(w);
+            if self.win(self.active).is_none_or(|a| a.minimized) {
+                self.active = id;
+            }
+            changed = true;
+        }
+        if changed {
+            self.geometry += 1;
+        }
+        changed
+    }
+
+    /// Hides or shows every window (the hide key).
+    pub fn toggle_hidden(&mut self) {
+        self.hidden = !self.hidden;
+        self.geometry += 1;
+    }
+
+    /// The smallest window `id` may be: its panes at their minimum (D571) plus its frame.
+    pub fn min_window_size(&self, id: WindowId) -> (f32, f32) {
+        let Some(w) = self.win(id) else {
+            return (MIN_WINDOW_W, MIN_WINDOW_H);
+        };
+        (
+            (min_extent(&w.root, Axis::Row) + 2.0 * WINDOW_BORDER).max(MIN_WINDOW_W),
+            (min_extent(&w.root, Axis::Column) + TITLE_BAR_H + 2.0 * WINDOW_BORDER)
+                .max(MIN_WINDOW_H),
+        )
+    }
+
+    /// Moves window `id` by `dx`, `dy`, keeping its title bar reachable.
+    pub fn move_window(&mut self, id: WindowId, dx: f32, dy: f32) -> bool {
+        let Some(w) = self.win_mut(id) else {
+            return false;
+        };
+        let before = w.rect;
+        w.rect.x += dx;
+        w.rect.y += dy;
+        self.clamp(id);
+        self.moved(id, before)
+    }
+
+    /// Resizes window `id` by `dw`, `dh` from its bottom right corner, never below
+    /// [`Workspace::min_window_size`] (so no pane goes under its minimum, D571).
+    pub fn resize_window(&mut self, id: WindowId, dw: f32, dh: f32) -> bool {
+        let (mw, mh) = self.min_window_size(id);
+        let Some(w) = self.win_mut(id) else {
+            return false;
+        };
+        let before = w.rect;
+        w.rect.w = (w.rect.w + dw).max(mw);
+        w.rect.h = (w.rect.h + dh).max(mh);
+        self.clamp(id);
+        self.moved(id, before)
+    }
+
+    /// Sets window `id`'s rectangle (clamped as a move and a resize are).
+    pub fn set_window_rect(&mut self, id: WindowId, rect: WinRect) -> bool {
+        let (mw, mh) = self.min_window_size(id);
+        let Some(w) = self.win_mut(id) else {
+            return false;
+        };
+        let before = w.rect;
+        w.rect = WinRect {
+            w: rect.w.max(mw),
+            h: rect.h.max(mh),
+            ..rect
+        };
+        self.clamp(id);
+        self.moved(id, before)
+    }
+
+    fn moved(&mut self, id: WindowId, before: WinRect) -> bool {
+        let changed = self.win(id).is_some_and(|w| w.rect != before);
+        if changed {
+            self.geometry += 1;
+        }
+        changed
+    }
+
+    /// Sets the area the windows float in (the UI measures it), keeping every window's title
+    /// bar inside it.
+    pub fn set_area(&mut self, w: f32, h: f32) -> bool {
+        if !(w > 0.0 && h > 0.0) || (self.area.0 - w).abs() < 0.5 && (self.area.1 - h).abs() < 0.5 {
+            return false;
+        }
+        self.area = (w, h);
+        self.clamp_all();
+        self.geometry += 1;
+        true
+    }
+
+    fn clamp_all(&mut self) {
+        let ids: Vec<WindowId> = self.windows.iter().map(|w| w.id).collect();
+        for id in ids {
+            self.clamp(id);
+        }
+    }
+
+    /// Keeps window `id` no larger than the area (nor under [`MIN_WINDOW_W`] by
+    /// [`MIN_WINDOW_H`]) and its title bar inside the area, at least [`GRIP_KEPT`] of it across.
+    /// It does not grow a window to its panes' minimum: as when the M9 workspace shrank, the
+    /// panes keep their ratios (D571); only a resize from the grip stops at the minimum.
+    fn clamp(&mut self, id: WindowId) {
+        let (mw, mh) = (MIN_WINDOW_W, MIN_WINDOW_H);
+        let (aw, ah) = self.area;
+        let Some(w) = self.win_mut(id) else {
+            return;
+        };
+        let r = &mut w.rect;
+        r.w = r.w.min(aw.max(mw)).max(mw);
+        r.h = r.h.min(ah.max(mh)).max(mh);
+        let keep = GRIP_KEPT.min(r.w);
+        r.x = r.x.clamp(keep - r.w, (aw - keep).max(keep - r.w));
+        r.y = r.y.clamp(0.0, (ah - TITLE_BAR_H).max(0.0));
+    }
+
+    /// The top window shown at `x`, `y` in the area, if any: where a click there goes instead
+    /// of the map (D635).
+    pub fn window_at(&self, x: f32, y: f32) -> Option<WindowId> {
+        if self.hidden {
+            return None;
+        }
+        self.windows
+            .iter()
+            .rev()
+            .filter(|w| !w.minimized)
+            .find(|w| {
+                x >= w.rect.x && x < w.rect.x + w.rect.w && y >= w.rect.y && y < w.rect.y + w.rect.h
+            })
+            .map(|w| w.id)
+    }
+}
+
+/// The smallest window, before its panes' own minimum (D635).
+pub const MIN_WINDOW_W: f32 = MIN_PANE_W + 2.0 * WINDOW_BORDER;
+pub const MIN_WINDOW_H: f32 = MIN_PANE_H + TITLE_BAR_H + 2.0 * WINDOW_BORDER;
+/// How much of a window's title bar stays inside the area when it is dragged off an edge.
+pub const GRIP_KEPT: f32 = 60.0;
+
+fn first_rect((aw, ah): (f32, f32)) -> WinRect {
+    WinRect {
+        x: aw * FIRST_WINDOW_X_SHARE,
+        y: 0.0,
+        w: aw * (1.0 - FIRST_WINDOW_X_SHARE),
+        h: ah,
+    }
+}
+
+fn tree_rects(root: &Layout, w: f32, h: f32) -> Vec<(PaneId, Rect)> {
+    fn walk(l: &Layout, r: Rect, out: &mut Vec<(PaneId, Rect)>) {
+        match l {
+            Layout::Pane(p) => out.push((*p, r)),
+            Layout::Split(s) => {
+                let (a, b) = r.split(s.axis, s.ratio);
+                walk(&s.first, a, out);
+                walk(&s.second, b, out);
+            }
+        }
+    }
+    let mut out = Vec::new();
+    walk(
+        root,
+        Rect {
+            x: 0.0,
+            y: 0.0,
+            w,
+            h,
+        },
+        &mut out,
+    );
+    out
+}
+
+fn find_pane(l: &Layout, pane: PaneId) -> bool {
+    match l {
+        Layout::Pane(p) => *p == pane,
+        Layout::Split(s) => find_pane(&s.first, pane) || find_pane(&s.second, pane),
     }
 }
 
@@ -1022,7 +1634,7 @@ mod tests {
         ws.set_ratio(ws.splits()[0].0, 0.35);
         ws.open(b, co(4));
         let saved = ws.to_saved();
-        assert_eq!(saved.focused, 1);
+        assert_eq!(saved.windows[0].focused, 1);
         let mut other = Workspace::new(PageRef::Settings);
         let v = other.structure_version();
         other.load(&saved);
@@ -1046,10 +1658,7 @@ mod tests {
                 }),
             };
         }
-        let big = SavedLayout {
-            root: node,
-            focused: 0,
-        };
+        let big = SavedLayout::single(node, 0);
         assert!(big.clone().sanitized().is_none());
         let before = other.clone();
         other.load(&big);
@@ -1165,6 +1774,285 @@ mod tests {
                 let oy = (a.y + a.h).min(b.y + b.h) - a.y.max(b.y);
                 assert!(ox <= 0.01 || oy <= 0.01, "panes overlap");
             }
+        }
+    }
+
+    // ---- The window layer (D635) ----
+
+    #[test]
+    fn a_fresh_workspace_is_one_window_at_the_right() {
+        let ws = Workspace::new(PageRef::World);
+        assert_eq!(ws.windows().len(), 1);
+        let w = &ws.windows()[0];
+        let (aw, ah) = DEFAULT_AREA;
+        assert_eq!(w.rect.x, aw * FIRST_WINDOW_X_SHARE);
+        assert_eq!(
+            (w.rect.w, w.rect.h),
+            (aw * (1.0 - FIRST_WINDOW_X_SHARE), ah)
+        );
+        assert_eq!(
+            ws.body_size(),
+            (
+                w.rect.w - 2.0 * WINDOW_BORDER,
+                ah - TITLE_BAR_H - 2.0 * WINDOW_BORDER
+            )
+        );
+        // A point on the map's part of the area is no window's.
+        assert_eq!(ws.window_at(10.0, 10.0), None);
+        assert_eq!(ws.window_at(aw - 10.0, 10.0), Some(w.id));
+    }
+
+    #[test]
+    fn windows_open_rise_minimize_and_close() {
+        let mut ws = Workspace::new(PageRef::World);
+        let first = ws.active_window();
+        let a = ws.focused();
+        let w2 = ws.new_window(co(1)).unwrap();
+        assert_eq!(ws.active_window(), w2);
+        let b = ws.focused();
+        assert_ne!(a, b);
+        assert_eq!(ws.page(b), Some(&co(1)));
+        assert_eq!(ws.pane_ids(), [b], "the M9 calls act on the focused window");
+        assert_eq!(ws.all_pane_ids(), [a, b]);
+        assert_eq!(ws.len(), 2);
+        // A split in the second window stays in it.
+        let c = ws.split(b, Axis::Row, Some(co(2)), true).unwrap();
+        assert_eq!(ws.window_of(c), Some(w2));
+        assert_eq!(ws.windows()[0].pane_ids(), [a]);
+        // Focusing a pane raises its window.
+        assert!(ws.focus(a));
+        assert_eq!(ws.active_window(), first);
+        assert_eq!(ws.windows().last().unwrap().id, first, "on top");
+        assert_eq!(ws.focused(), a);
+        // The window's own focus is kept for when it comes back.
+        ws.raise(w2);
+        assert_eq!(ws.focused(), c);
+        // Minimize hands focus to the top window still shown; a page opening restores it.
+        assert!(ws.minimize(w2));
+        assert_eq!(ws.active_window(), first);
+        assert!(ws.window(w2).unwrap().minimized);
+        let r = ws.window(w2).unwrap().rect;
+        assert_ne!(ws.window_at(r.x + 5.0, r.y + 5.0), Some(w2));
+        assert!(ws.reveal_pane(c));
+        assert!(!ws.window(w2).unwrap().minimized);
+        assert_eq!(ws.active_window(), first, "revealing keeps the focus");
+        // Closing a window drops its panes; the last window stays.
+        let v = ws.structure_version();
+        assert!(ws.close_window(w2));
+        assert!(ws.structure_version() > v);
+        assert_eq!(ws.all_pane_ids(), [a]);
+        assert!(ws.history(c).is_none());
+        assert!(!ws.close_window(first), "the last window stays");
+        // The last pane of a window does not close as a pane either.
+        assert!(!ws.close(a));
+        // At most MAX_WINDOWS.
+        for i in 1..MAX_WINDOWS {
+            assert!(ws.new_window(co(i as u32)).is_some());
+        }
+        assert!(ws.new_window(co(99)).is_none());
+    }
+
+    #[test]
+    fn windows_move_and_resize_inside_the_area() {
+        let mut ws = Workspace::new(PageRef::World);
+        let id = ws.active_window();
+        let (aw, ah) = DEFAULT_AREA;
+        let g = ws.geometry_version();
+        assert!(ws.move_window(id, -5000.0, 5000.0));
+        assert!(ws.geometry_version() > g);
+        let r = ws.window(id).unwrap().rect;
+        assert_eq!(r.x, GRIP_KEPT - r.w, "a grip of the title bar stays in");
+        assert_eq!(r.y, ah - TITLE_BAR_H);
+        ws.move_window(id, 1e6, -1e6);
+        let r = ws.window(id).unwrap().rect;
+        assert_eq!((r.x, r.y), (aw - GRIP_KEPT, 0.0));
+        // A resize never goes under the panes' minimum (D571).
+        let p = ws.focused();
+        ws.split(p, Axis::Row, None, false).unwrap();
+        ws.resize_window(id, -1e6, -1e6);
+        let (mw, mh) = ws.min_window_size(id);
+        let r = ws.window(id).unwrap().rect;
+        assert_eq!((r.w, r.h), (mw, mh));
+        assert!(mw >= 2.0 * MIN_PANE_W);
+        let (bw, bh) = ws.body_size();
+        for (_, pr) in ws.rects(bw, bh) {
+            assert!(pr.w >= MIN_PANE_W - 1e-3 && pr.h >= MIN_PANE_H - 1e-3);
+        }
+        // Nor over the area.
+        ws.resize_window(id, 1e6, 1e6);
+        let r = ws.window(id).unwrap().rect;
+        assert_eq!((r.w, r.h), (aw, ah));
+        // The area shrinking pulls windows back in.
+        assert!(ws.set_area(640.0, 400.0));
+        let r = ws.window(id).unwrap().rect;
+        assert!(r.w <= 640.0 && r.h <= 400.0);
+        assert!(r.x + GRIP_KEPT <= 640.0 + 1e-3);
+    }
+
+    #[test]
+    fn hiding_and_the_top_window_take_the_pointer() {
+        let mut ws = Workspace::new(PageRef::World);
+        let first = ws.active_window();
+        let second = ws.new_window(co(1)).unwrap();
+        ws.set_window_rect(
+            second,
+            WinRect {
+                x: 600.0,
+                y: 100.0,
+                w: 400.0,
+                h: 300.0,
+            },
+        );
+        assert_eq!(ws.window_at(700.0, 200.0), Some(second), "the top one");
+        ws.raise(first);
+        assert_eq!(ws.window_at(700.0, 200.0), Some(first));
+        assert_eq!(ws.window_at(100.0, 200.0), None, "the map");
+        ws.toggle_hidden();
+        assert!(ws.hidden());
+        assert_eq!(ws.window_at(700.0, 200.0), None, "hidden: all map");
+        let p = ws.focused();
+        assert!(ws.reveal_pane(p));
+        assert!(!ws.hidden());
+    }
+
+    #[test]
+    fn every_window_saves_and_loads() {
+        let mut ws = Workspace::new(PageRef::World);
+        let a = ws.focused();
+        ws.split(a, Axis::Column, Some(co(1)), true);
+        let w2 = ws.new_window(PageRef::News).unwrap();
+        ws.move_window(w2, -30.0, 40.0);
+        let b = ws.focused();
+        ws.split(b, Axis::Row, Some(co(5)), false);
+        let w3 = ws.new_window(PageRef::Settings).unwrap();
+        ws.minimize(w3);
+        ws.raise(w2);
+        let saved = ws.to_saved();
+        assert_eq!(saved.windows.len(), 3);
+        assert_eq!(saved.focused, 2, "w2 on top and focused");
+        assert!(saved.windows[1].minimized);
+        let mut other = Workspace::new(PageRef::World);
+        other.load(&saved);
+        assert_eq!(other.to_saved(), saved);
+        assert_eq!(other.windows().len(), 3);
+        assert_eq!(other.page(other.focused()), Some(&PageRef::News));
+        // Through RON, as the config file stores it.
+        let text = ron::to_string(&saved).unwrap();
+        assert!(!text.contains("legacy"), "{text}");
+        let back: SavedLayout = ron::from_str(&text).unwrap();
+        assert_eq!(back.sanitized().unwrap(), saved);
+        // An M9 file (one tree) migrates to one window filling the area.
+        let old: SavedLayout = ron::from_str(concat!(
+            "(root: Split(axis: Row, ratio: 0.3, first: Pane(page: \"news\"), second: ",
+            "Pane(page: \"world\")), focused: 1)"
+        ))
+        .unwrap();
+        let mut ws = Workspace::new(PageRef::Settings);
+        ws.load(&old);
+        assert_eq!(ws.windows().len(), 1);
+        let r = ws.windows()[0].rect;
+        assert_eq!(
+            (r.x, r.y, r.w, r.h),
+            (0.0, 0.0, DEFAULT_AREA.0, DEFAULT_AREA.1)
+        );
+        assert_eq!(ws.page(ws.focused()), Some(&PageRef::World));
+        assert!((ws.ratio(ws.splits()[0].0).unwrap() - 0.3).abs() < 1e-6);
+        // Too many windows is refused.
+        let many = SavedLayout {
+            windows: vec![saved.windows[0].clone(); MAX_WINDOWS + 1],
+            focused: 0,
+            legacy_root: None,
+        };
+        assert!(many.sanitized().is_none());
+    }
+
+    /// Random window and pane operations keep every window whole: each tree and the pane map
+    /// agree, every focus is a pane of its window, every window keeps its title bar in the area,
+    /// and a save loads back the same.
+    #[test]
+    fn random_window_operations_keep_the_invariants() {
+        let mut seed: u64 = 0x9e37_79b9_7f4a_7c15;
+        let mut next = |n: u64| {
+            seed ^= seed << 13;
+            seed ^= seed >> 7;
+            seed ^= seed << 17;
+            seed % n
+        };
+        for run in 0..30 {
+            let mut ws = Workspace::new(PageRef::World);
+            for step in 0..150u32 {
+                let wins: Vec<WindowId> = ws.windows().iter().map(|w| w.id).collect();
+                let win = wins[next(wins.len() as u64) as usize];
+                let panes = ws.all_pane_ids();
+                let pane = panes[next(panes.len() as u64) as usize];
+                match next(11) {
+                    0 => {
+                        ws.new_window(co(step));
+                    }
+                    1 => {
+                        ws.close_window(win);
+                    }
+                    2 => {
+                        ws.raise(win);
+                    }
+                    3 => {
+                        ws.minimize(win);
+                    }
+                    4 => {
+                        let (dx, dy) = (next(4000) as f32 - 2000.0, next(4000) as f32 - 2000.0);
+                        ws.move_window(win, dx, dy);
+                    }
+                    5 => {
+                        let (dx, dy) = (next(2000) as f32 - 1000.0, next(2000) as f32 - 1000.0);
+                        ws.resize_window(win, dx, dy);
+                    }
+                    6 => {
+                        let (w, h) = ws.window(ws.window_of(pane).unwrap()).unwrap().body();
+                        if let Some(axis) = ws.new_pane_axis(pane, w, h) {
+                            ws.split(pane, axis, Some(co(step)), next(2) == 0);
+                        }
+                    }
+                    7 => {
+                        ws.close(pane);
+                    }
+                    8 => {
+                        ws.focus(pane);
+                    }
+                    9 => {
+                        let s = ws.to_saved();
+                        ws.load(&s);
+                        assert_eq!(ws.to_saved(), s, "run {run} step {step}");
+                    }
+                    _ => ws.toggle_hidden(),
+                }
+                check_windows(&ws, run, step);
+            }
+        }
+    }
+
+    fn check_windows(ws: &Workspace, run: usize, step: u32) {
+        let mut all = ws.all_pane_ids();
+        let n = all.len();
+        all.sort_unstable();
+        all.dedup();
+        assert_eq!(
+            all.len(),
+            n,
+            "a pane in two windows (run {run} step {step})"
+        );
+        let keys: Vec<PaneId> = ws.panes.keys().copied().collect();
+        assert_eq!(all, keys, "trees and map agree (run {run} step {step})");
+        assert!((1..=MAX_WINDOWS).contains(&ws.windows().len()));
+        assert!(ws.window(ws.active_window()).is_some());
+        let (aw, ah) = ws.area();
+        for w in ws.windows() {
+            assert!(w.pane_ids().contains(&w.focused), "run {run} step {step}");
+            assert!(w.pane_ids().len() <= MAX_PANES);
+            let r = w.rect;
+            let keep = GRIP_KEPT.min(r.w);
+            assert!(r.x + r.w >= keep - 1e-3 && r.x <= aw - keep + 1e-3);
+            assert!(r.y >= 0.0 && r.y <= ah - TITLE_BAR_H + 1e-3);
+            assert!(r.w >= MIN_WINDOW_W - 1e-3 && r.h >= MIN_WINDOW_H - 1e-3);
         }
     }
 }
