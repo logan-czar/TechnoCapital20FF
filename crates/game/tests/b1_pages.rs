@@ -30,6 +30,7 @@ use game::ui::demo::demo_tables;
 use game::workspace::{OpenPage, OpenTarget, PaneFrame, Workspace};
 use sim::births::ipo::{Ballot, VoteResult, VoterRole};
 use sim::people::board::Seat;
+use sim::views::company_detail::SeatPerson;
 use sim::views::company_rows::Listing;
 use sim::views::estimate::Figure;
 use sim::world::{IpoVoteRecord, Origin, ZoneId};
@@ -645,6 +646,65 @@ fn no_ballot_odds_anywhere() {
         }
     }
     assert!(!bt.contains('%'), "no percent on the vote: {bt}");
+}
+
+/// The Board tab lists the view's directors by seat position (D541): Director 1 first, a full
+/// character linked, a partial one marked and not linked.
+#[test]
+fn board_lists_directors_by_position() {
+    let (sim, _) = after_lock();
+    let v = sim.views().clone();
+    let index = NameIndex::build(&v);
+    let mut d = v.company_detail.get().companies[0].clone();
+    let full = &v.characters.get().full[0];
+    let sim::views::characters::CharacterRef::Full(full_id) = full.id else {
+        unreachable!()
+    };
+    let person = |name: &str, character, partial_id: Option<u32>| SeatPerson {
+        name: name.into(),
+        age: 41,
+        skills: full.skills,
+        traits: Vec::new(),
+        partial: partial_id.is_some(),
+        character,
+        partial_id,
+    };
+    d.directors = vec![
+        person("Ada Partial", None, Some(9_001)),
+        person(&full.name, Some(full_id), None),
+    ];
+    let doc = PageDoc {
+        page: PageRef::Company(d.id),
+        title: d.name.clone(),
+        kind: "Company".into(),
+        chips: Vec::new(),
+        head: Vec::new(),
+        sections: vec![SectionDoc {
+            id: "board",
+            blocks: company::board(&d, &v, &index),
+        }],
+    };
+    let blocks = &doc.sections[0].blocks;
+    let at = blocks
+        .iter()
+        .position(|b| matches!(b, Block::Heading(h) if h == "Directors (2)"))
+        .expect("the directors heading");
+    let Block::Fields(fields) = &blocks[at + 1] else {
+        panic!("the directors' fields")
+    };
+    let labels: Vec<&str> = fields.iter().map(|f| f.label.as_str()).collect();
+    assert_eq!(labels, ["Director 1", "Director 2"]);
+    assert_eq!(fields[0].value[0], Span::text("Ada Partial"));
+    assert!(matches!(&fields[0].value[1], Span::Colored(t, _) if t == "(partial)"));
+    assert_eq!(
+        fields[1].value[0],
+        Span::link(
+            index.title(&PageRef::Character(full_id)),
+            PageRef::Character(full_id)
+        )
+    );
+    let links = doc.links();
+    assert!(links.contains(&PageRef::Character(full_id)));
 }
 
 /// The index chart draws v_exchanges' closes (D540): the load level, then one close a day.

@@ -8,6 +8,7 @@ use common::data;
 use sim::Sim;
 use sim::market::index::INDEX_BASE;
 use sim::time::Date;
+use sim::world::Director;
 
 #[test]
 fn exchanges_serve_each_index_s_daily_closes_from_2020() {
@@ -80,4 +81,47 @@ fn exchanges_serve_each_index_s_daily_closes_from_2020() {
             .closes
             .shares_with(&w.market.index_history[z])
     );
+}
+
+/// A company's directors in seat position order (5.19.4 step 4; D541): the detail view lists
+/// them as the World holds them, each a full character by id or a partial one by its 3.7.1 id.
+#[test]
+fn company_detail_lists_directors_by_position() {
+    let mut sim = Sim::new(data(), 1).unwrap();
+    // Directors come with a startup whose cast outnumbers its labor seats: run lock by lock
+    // until one is born.
+    for year in 2020..2026 {
+        common::ops::run_to(&mut sim, Date::ymd(year, 1, 10));
+        if sim
+            .world()
+            .companies
+            .iter()
+            .any(|(_, c)| !c.directors.is_empty())
+        {
+            break;
+        }
+    }
+    let w = sim.world();
+    let v = sim.views().company_detail.get();
+    let mut with = 0;
+    for (id, c) in w.companies.iter() {
+        let d = v.get(id).unwrap();
+        assert_eq!(d.directors.len(), c.directors.len());
+        for (p, dir) in d.directors.iter().zip(&c.directors) {
+            match dir {
+                Director::Full(ch) => {
+                    assert_eq!(p.character, Some(*ch));
+                    assert!(!p.partial && p.partial_id.is_none());
+                    assert_eq!(p.name, w.characters[*ch].name);
+                }
+                Director::Simple(s) => {
+                    assert_eq!(p.partial_id, Some(s.id));
+                    assert!(p.partial && p.character.is_none());
+                    assert_eq!(p.name, s.character.name);
+                }
+            }
+        }
+        with += usize::from(!c.directors.is_empty());
+    }
+    assert!(with > 0, "a startup with directors");
 }

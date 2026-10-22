@@ -18,7 +18,6 @@ use sim::finance::statements::{Period, Statement};
 use sim::people::board::Skills;
 use sim::people::traits::Trait;
 use sim::views::cap_table::CapHolder;
-use sim::views::characters::Role;
 use sim::views::company_detail::{CompanyDetail, SeatCard, SeatPerson};
 use sim::views::company_rows::{CompanyRow, Listing};
 use sim::views::estimate::{Figure, StatementLine};
@@ -520,29 +519,29 @@ pub fn board(d: &CompanyDetail, v: &SimViews, index: &NameIndex) -> Vec<Block> {
                 .collect(),
         ));
     }
-    out.push(Block::Heading(format!("Directors ({})", d.directors)));
-    let directors: Vec<Span> = v
-        .characters
-        .get()
-        .list()
-        .filter(|c| {
-            c.roles
-                .iter()
-                .any(|r| matches!(r, Role::Director { company } if *company == d.id))
-        })
-        .flat_map(|c| match c.id {
-            sim::views::characters::CharacterRef::Full(ch) => vec![character_span(index, ch)],
-            sim::views::characters::CharacterRef::Partial(_) => vec![
-                Span::text(c.name.clone()),
-                Span::Colored("(partial)".into(), color::TEXT_MUTED),
-            ],
-        })
-        .collect();
-    out.push(Block::Line(if directors.is_empty() {
-        vec![Span::muted("No directors without a labor seat.")]
+    // The directors in seat position order, as the view lists them (D541).
+    out.push(Block::Heading(format!("Directors ({})", d.directors.len())));
+    if d.directors.is_empty() {
+        out.push(Block::Line(vec![Span::muted(
+            "No directors without a labor seat.",
+        )]));
     } else {
-        directors
-    }));
+        out.push(Block::Fields(
+            d.directors
+                .iter()
+                .enumerate()
+                .map(|(i, p)| {
+                    let mut value = holder_spans(p, index);
+                    value.push(Span::muted(format!(
+                        "age {}, {}",
+                        p.age,
+                        skills_text(&p.skills)
+                    )));
+                    Field::new(&voter_label(VoterRole::Director(i as u32)), value)
+                })
+                .collect(),
+        ));
+    }
     out.push(Block::Heading("IPO vote".into()));
     out.extend(ipo_vote(d));
     out
