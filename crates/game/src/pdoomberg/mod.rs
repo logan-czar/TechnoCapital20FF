@@ -394,8 +394,8 @@ pub fn row_company(t: &Table, row: usize) -> Option<CompanyId> {
     })
 }
 
-/// Row clicks on the page's main table: on F2 a click watches or unwatches the company (M7.8;
-/// design fix 8); a right-click on any page loads it.
+/// Row clicks on the page's main table: on F2 a primary click watches or unwatches the company
+/// (M7.8; design fix 8); a right-click on any page loads it. A middle click does nothing.
 fn row_clicks(
     mut clicks: MessageReader<TableRowClicked>,
     ui: Res<PdoombergUi>,
@@ -411,11 +411,11 @@ fn row_clicks(
         let Some(id) = tables.get(c.table).ok().and_then(|t| row_company(t, c.row)) else {
             continue;
         };
-        if c.secondary {
+        if c.button == PointerButton::Secondary {
             if route.company != Some(id) {
                 route.company = Some(id);
             }
-        } else if route.function == PdbFunction::F2 {
+        } else if c.button == PointerButton::Primary && route.function == PdbFunction::F2 {
             w.write(SimControl(if controls.watchlist.contains(&id) {
                 Control::WatchlistRemove(id)
             } else {

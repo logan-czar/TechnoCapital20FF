@@ -310,7 +310,7 @@ fn quote_rows_toggle_the_watchlist() {
     let click = TableRowClicked {
         table,
         row: 5,
-        secondary: false,
+        button: PointerButton::Primary,
     };
     app.world_mut().write_message(click);
     frames(&mut app, 3);
@@ -322,6 +322,13 @@ fn quote_rows_toggle_the_watchlist() {
         .find(|&r| row_company(t, r) == Some(id))
         .unwrap();
     assert_eq!(t.model().display(row, col), "*");
+    // A middle click neither watches nor loads (D517).
+    app.world_mut().write_message(TableRowClicked {
+        button: PointerButton::Middle,
+        ..click
+    });
+    frames(&mut app, 3);
+    assert!(controls(&app).watchlist.contains(&id));
     app.world_mut().write_message(click);
     frames(&mut app, 3);
     assert!(controls(&app).watchlist.is_empty());

@@ -620,7 +620,7 @@ fn ticker_function_commands_route() {
     app.world_mut().write_message(game::table::TableRowClicked {
         table,
         row: 7,
-        secondary: true,
+        button: bevy::picking::pointer::PointerButton::Secondary,
     });
     frames(&mut app, 2);
     assert_eq!(
@@ -850,7 +850,7 @@ fn right_click_load_keeps_the_page() {
         app.world_mut().write_message(game::table::TableRowClicked {
             table: t,
             row,
-            secondary: true,
+            button: bevy::picking::pointer::PointerButton::Secondary,
         });
         frames(&mut app, 3);
         let route = *app.world().resource::<PdoombergRoute>();

@@ -605,12 +605,12 @@ impl TableLook {
 #[derive(Resource, Debug, Default, Clone, Copy, PartialEq)]
 pub struct TableFocus(pub Option<Entity>);
 
-/// A row was clicked: the table, the model row and whether it was the secondary button.
+/// A row was clicked: the table, the model row and the button.
 #[derive(Message, Debug, Clone, Copy, PartialEq)]
 pub struct TableRowClicked {
     pub table: Entity,
     pub row: usize,
-    pub secondary: bool,
+    pub button: PointerButton,
 }
 
 /// Marks a table's body node.
@@ -1116,7 +1116,7 @@ fn resize_pools(mut commands: Commands, mut tables: Query<(Entity, &mut Table)>)
                             out.write(TableRowClicked {
                                 table: root,
                                 row,
-                                secondary: ev.button == PointerButton::Secondary,
+                                button: ev.button,
                             });
                         }
                     },
