@@ -41,7 +41,7 @@ The game has a release bench that runs the sim at max speed with the shell drawi
 target/release/game --bench-max 5
 ```
 
-It prints `BENCH sim: <ticks> ticks, <rate> game hours per second, reached <date>` after 5 seconds of measured frames (after a 120-frame warm-up). The headless smoke test is the data check and a short run:
+It prints `BENCH sim: <ticks> ticks, <rate> game hours per second, reached <date>` after 5 seconds of measured frames (after a 120-frame warm-up). The M9 closing checks, the page timing harness (`game --bench-pages`) and the leak test, are in m9-checks.md. The headless smoke test is the data check and a short run:
 
 ```
 target/release/headless --check-data
