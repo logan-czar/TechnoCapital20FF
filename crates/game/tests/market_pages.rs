@@ -27,7 +27,7 @@ use game::pages::industries::{companies_model, headlines_model, industries_model
 use game::pages::live::{Filter, Live, LiveCtx, Picker, PickerOption};
 use game::pages::news::{FeedItem, feed, news_model};
 use game::pages::recap::{company_pages_model, expected_model};
-use game::pages::{PageRef, PdbFunction, PdoombergRoute};
+use game::pages::{PageRef, PdbFunction, PdoombergRoute, market};
 use game::pdoomberg::pages::{filings_model, quotes_model, screener_model};
 use game::pdoomberg::{PdoombergUi, row_company};
 use game::table::{Cell, Table, TableModel, format, sort_order};
@@ -53,6 +53,12 @@ fn shell_app() -> App {
         .add_plugins(ShellPlugin);
     app.update();
     app
+}
+
+/// Every company id, in id order.
+fn v_ids(app: &App) -> Vec<CompanyId> {
+    let v = app.world().resource::<Views>();
+    v.company_rows.get().rows.iter().map(|r| r.id).collect()
 }
 
 fn now(app: &App) -> DateTime {
@@ -428,10 +434,28 @@ fn recap_opens_from_its_alert_and_by_quarter() {
     frames(&mut app, 3);
     let t2 = table_by_id(&mut app, "recap.companies");
     assert_eq!(model(&app, t2).len(), 1, "follows the watchlist");
+    // Its box follows the live rows (D572), rather than keeping the height it was built with.
+    let box_height = |app: &App, t: Entity| {
+        let b = app.world().get::<ChildOf>(t).unwrap().parent();
+        app.world().get::<Node>(b).unwrap().height
+    };
+    assert_eq!(box_height(&app, t2), Val::Px(market::box_height(1)));
     send(&mut app, Control::WatchlistAdd(private));
     frames(&mut app, 3);
     let t2 = table_by_id(&mut app, "recap.companies");
     assert_eq!(model(&app, t2).len(), 2);
+    assert_eq!(box_height(&app, t2), Val::Px(market::box_height(2)));
+    for c in v_ids(&app).into_iter().take(20) {
+        send(&mut app, Control::WatchlistAdd(c));
+    }
+    frames(&mut app, 3);
+    let t2 = table_by_id(&mut app, "recap.companies");
+    assert!(model(&app, t2).len() > market::BOX_ROWS_MAX);
+    assert_eq!(
+        box_height(&app, t2),
+        Val::Px(market::box_height(market::BOX_ROWS_MAX)),
+        "at most BOX_ROWS_MAX rows tall, then it scrolls"
+    );
     let est = m.column_by_key("Figures").unwrap();
     let low = m.column_by_key("Range low").unwrap();
     for r in 0..m.len() {

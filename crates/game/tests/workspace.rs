@@ -298,6 +298,72 @@ fn panes_split_close_focus_and_resize_from_keys() {
     assert_eq!(saved, ws(&app).to_saved());
 }
 
+/// No pane goes under its minimum size (D450, D571) through the UI: splits from the keyboard
+/// stop when a half would be too small, and divider drags and keyboard resizes, however far,
+/// stop where the smallest pane on either side reaches 160 by 80.
+#[test]
+fn panes_never_go_under_their_minimum_size() {
+    use game::test_support::drag;
+    use game::workspace::model::{MIN_PANE_H, MIN_PANE_W};
+    use game::workspace::{Dir, WorkspaceUi};
+    let mut app = shell_app();
+    let area = app.world().resource::<WorkspaceUi>().size;
+    let check = |app: &App, what: &str| {
+        for (p, r) in ws(app).rects(area.x, area.y) {
+            assert!(
+                r.w >= MIN_PANE_W - 1e-3 && r.h >= MIN_PANE_H - 1e-3,
+                "{what}: pane {p:?} is {} x {}",
+                r.w,
+                r.h
+            );
+        }
+    };
+    // Split the focused pane both ways until no split fits.
+    for i in 0..40 {
+        let axis = if i % 2 == 0 { Axis::Row } else { Axis::Column };
+        act(&mut app, PaneAction::Split(None, axis));
+        check(&app, "split");
+    }
+    let n = ws(&app).len();
+    assert!(n > 4, "{n} panes");
+    act(&mut app, PaneAction::Split(None, Axis::Row));
+    act(&mut app, PaneAction::Split(None, Axis::Column));
+    assert_eq!(ws(&app).len(), n, "no split fits any more");
+    // Keyboard resizes from every pane, every way, far past any limit.
+    for _ in 0..n {
+        for d in [Dir::Left, Dir::Right, Dir::Up, Dir::Down] {
+            for _ in 0..25 {
+                app.world_mut().write_message(PaneAction::Nudge(d));
+            }
+            frames(&mut app, 1);
+            check(&app, "nudge");
+        }
+        act(&mut app, PaneAction::Cycle(1));
+    }
+    // Divider drags of 5,000 px each way.
+    let dividers: Vec<Entity> = app
+        .world_mut()
+        .query::<(Entity, &game::ui::theme::Tooltip)>()
+        .iter(app.world())
+        .filter(|(_, t)| t.0.starts_with("Drag to resize ("))
+        .map(|(e, _)| e)
+        .collect();
+    assert_eq!(dividers.len(), n - 1, "a divider per split");
+    for &dv in &dividers {
+        let container = app.world().get::<ChildOf>(dv).unwrap().parent();
+        app.world_mut().entity_mut(container).insert(ComputedNode {
+            size: area,
+            inverse_scale_factor: 1.0,
+            ..default()
+        });
+        for delta in [5000.0, -5000.0, 5000.0] {
+            app.world_mut().trigger(drag(dv, Vec2::splat(delta)));
+            frames(&mut app, 1);
+            check(&app, "drag");
+        }
+    }
+}
+
 /// The command bar: Ctrl+K or ` opens it and takes the keyboard; Enter opens a company in the
 /// focused pane, Shift+Enter in a new pane; `TICKER F3` opens Pdoomberg there.
 #[test]
@@ -589,12 +655,19 @@ fn a_private_company_card_shows_bands() {
     }
     let d = views.company_detail.get().get(row.id).unwrap();
     let hq = views.places.get().place_name(d.hq_province).unwrap();
-    let hq_link = app
-        .world_mut()
-        .query::<(&Text, &Link)>()
-        .iter(app.world())
-        .any(|(t, l)| t.0 == hq && l.0 == PageRef::Country(row.hq_country));
-    assert!(hq_link, "HQ {hq} links to its country");
+    // The card's own HQ line: a link under the card panel (the page behind may name the same
+    // place).
+    let mut stack = vec![panel];
+    let mut hq_link = false;
+    while let Some(e) = stack.pop() {
+        if let (Some(t), Some(l)) = (app.world().get::<Text>(e), app.world().get::<Link>(e)) {
+            hq_link |= t.0 == hq && l.0 == PageRef::Country(row.hq_country);
+        }
+        if let Some(c) = app.world().get::<Children>(e) {
+            stack.extend(c.iter());
+        }
+    }
+    assert!(hq_link, "the card's HQ {hq} links to its country");
     if cfg!(debug_assertions) {
         let mut truth = Sim::new(data(), 42).unwrap();
         truth.apply(sim::Control::SetOmniscient(true)).unwrap();

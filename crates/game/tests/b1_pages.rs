@@ -919,8 +919,8 @@ fn live_tables_and_charts_follow_the_first_change() {
 /// day (D487): the bridge's epoch moved, so no other game's close is kept.
 #[test]
 fn a_load_starts_the_index_record_again() {
-    let dir = std::env::temp_dir().join(format!("m9-b1-index-load-{}", std::process::id()));
-    std::fs::create_dir_all(&dir).unwrap();
+    // Removed when the test ends, pass or fail.
+    let dir = game::test_support::Scratch::new("m9-b1-index-load");
     let path = dir.join("save.bin");
     let mut saved = fresh();
     for _ in 0..60 {
@@ -941,7 +941,6 @@ fn a_load_starts_the_index_record_again() {
         sim::time::Date::ymd(2020, 1, 3)
     );
     assert_eq!(points(&app), 1, "only the loaded game's close");
-    let _ = std::fs::remove_dir_all(&dir);
 }
 
 /// The Company page's sections fold, move and hide from their header buttons, and its tab

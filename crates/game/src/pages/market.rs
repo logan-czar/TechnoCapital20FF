@@ -47,18 +47,52 @@ pub const BOX_ROWS_MAX: usize = 14;
 /// there needs a height): room for `rows` rows (at most [`BOX_ROWS_MAX`]), the header and the
 /// footer, at the normal row height.
 pub fn table_box(commands: &mut Commands, parent: Entity, rows: usize) -> Entity {
-    let rows = rows.clamp(1, BOX_ROWS_MAX) as f32;
     let e = commands
         .spawn(Node {
             flex_direction: FlexDirection::Column,
-            height: px((rows + 2.4) * size::ROW),
-            min_height: px(3.4 * size::ROW),
+            height: px(box_height(rows)),
+            min_height: px(box_height(1)),
             flex_shrink: 0.0,
             ..default()
         })
         .id();
     commands.entity(parent).add_child(e);
     e
+}
+
+/// The height of a [`table_box`] for `rows` rows.
+pub fn box_height(rows: usize) -> f32 {
+    (rows.clamp(1, BOX_ROWS_MAX) as f32 + 2.4) * size::ROW
+}
+
+/// A [`table_box`] whose height follows the row count of the live table inside it (D572), so
+/// a table whose rows come and go after the page is built (the recap's watchlist companies)
+/// grows and shrinks with them, up to [`BOX_ROWS_MAX`], rather than scrolling in a box sized
+/// at build time.
+#[derive(Component, Debug, Clone, Copy)]
+pub struct FitsTable;
+
+/// A [`table_box`] that follows its table's rows ([`FitsTable`]).
+pub fn fitted_table_box(commands: &mut Commands, parent: Entity, rows: usize) -> Entity {
+    let e = table_box(commands, parent, rows);
+    commands.entity(e).insert(FitsTable);
+    e
+}
+
+/// Sets each [`FitsTable`] box's height from the rows of the table inside it.
+fn fit_boxes(
+    mut boxes: Query<(&mut Node, &Children), With<FitsTable>>,
+    tables: Query<&crate::table::Table>,
+) {
+    for (mut node, children) in &mut boxes {
+        let Some(t) = children.iter().find_map(|c| tables.get(c).ok()) else {
+            continue;
+        };
+        let h = px(box_height(t.model().len()));
+        if node.height != h {
+            node.height = h;
+        }
+    }
 }
 
 /// A plain note line.
@@ -72,7 +106,8 @@ pub struct MarketPagesPlugin;
 
 impl Plugin for MarketPagesPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(LivePlugin);
+        app.add_plugins(LivePlugin)
+            .add_systems(Update, fit_boxes.in_set(crate::ui::UiSystems::Show));
         super::industries::register(app);
         super::news::register(app);
         super::recap::register(app);

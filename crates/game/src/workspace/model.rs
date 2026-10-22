@@ -487,26 +487,70 @@ impl Workspace {
         }
     }
 
-    /// Moves the divider nearest `pane` on `dir`'s axis one [`NUDGE`] towards `dir`.
-    pub fn nudge(&mut self, pane: PaneId, dir: Dir) -> bool {
-        let Some(path) = path_to(&self.root, pane) else {
+    /// Sets a split's ratio as a divider drag or a keyboard resize does, in a workspace `w` by
+    /// `h` (D450, D571): clamped to keep [`MIN_RATIO`] each side and every pane on both sides
+    /// at least [`MIN_PANE_W`] by [`MIN_PANE_H`] at the other splits' ratios. When the panes
+    /// cannot all fit at any ratio (the window shrank), the ratio holds.
+    pub fn set_ratio_in(&mut self, split: SplitId, ratio: f32, w: f32, h: f32) -> bool {
+        let whole = Rect {
+            x: 0.0,
+            y: 0.0,
+            w,
+            h,
+        };
+        let Some(r) = split_rect(&self.root, split, whole) else {
             return false;
         };
-        // The innermost enclosing split on that axis.
-        let Some(split) = path
+        let Some(s) = find_split(&self.root, split) else {
+            return false;
+        };
+        let len = match s.axis {
+            Axis::Row => r.w,
+            Axis::Column => r.h,
+        };
+        if len <= 0.0 {
+            return false;
+        }
+        let lo = (min_extent(&s.first, s.axis) / len).max(MIN_RATIO);
+        let hi = (1.0 - min_extent(&s.second, s.axis) / len).min(1.0 - MIN_RATIO);
+        if lo > hi {
+            return false;
+        }
+        self.set_ratio(split, clamp_ratio(ratio).clamp(lo, hi))
+    }
+
+    /// Moves the divider nearest `pane` on `dir`'s axis one [`NUDGE`] towards `dir`, as
+    /// [`Workspace::set_ratio_in`] in a workspace `w` by `h`.
+    pub fn nudge_in(&mut self, pane: PaneId, dir: Dir, w: f32, h: f32) -> bool {
+        let Some((split, r)) = self.nudged(pane, dir) else {
+            return false;
+        };
+        self.set_ratio_in(split, r, w, h)
+    }
+
+    /// Moves the divider nearest `pane` on `dir`'s axis one [`NUDGE`] towards `dir`, with no
+    /// pane-size limit (the UI uses [`Workspace::nudge_in`]).
+    pub fn nudge(&mut self, pane: PaneId, dir: Dir) -> bool {
+        match self.nudged(pane, dir) {
+            Some((split, r)) => self.set_ratio(split, r),
+            None => false,
+        }
+    }
+
+    /// The split a nudge of `pane` towards `dir` moves, and the ratio it asks for: the
+    /// innermost enclosing split on that axis.
+    fn nudged(&self, pane: PaneId, dir: Dir) -> Option<(SplitId, f32)> {
+        let path = path_to(&self.root, pane)?;
+        let split = path
             .iter()
             .rev()
             .find(|(_, axis)| *axis == dir.axis())
-            .map(|(id, _)| *id)
-        else {
-            return false;
-        };
+            .map(|(id, _)| *id)?;
         let delta = match dir {
             Dir::Right | Dir::Down => NUDGE,
             Dir::Left | Dir::Up => -NUDGE,
         };
-        let r = self.ratio(split).unwrap_or(0.5);
-        self.set_ratio(split, r + delta)
+        Some((split, self.ratio(split).unwrap_or(0.5) + delta))
     }
 
     /// Every pane's rectangle in a workspace `w` by `h`, in tree order.
@@ -698,6 +742,37 @@ fn find_pane_mut(l: &mut Layout, pane: PaneId) -> Option<&mut Layout> {
     }
 }
 
+/// The rectangle split `id` divides, inside `r` (the area of `l`).
+fn split_rect(l: &Layout, id: SplitId, r: Rect) -> Option<Rect> {
+    let Layout::Split(s) = l else {
+        return None;
+    };
+    if s.id == id {
+        return Some(r);
+    }
+    let (a, b) = r.split(s.axis, s.ratio);
+    split_rect(&s.first, id, a).or_else(|| split_rect(&s.second, id, b))
+}
+
+/// The least length along `axis` that `l` needs for every pane in it to keep [`MIN_PANE_W`] by
+/// [`MIN_PANE_H`] at its splits' current ratios (D571).
+fn min_extent(l: &Layout, axis: Axis) -> f32 {
+    match l {
+        Layout::Pane(_) => match axis {
+            Axis::Row => MIN_PANE_W,
+            Axis::Column => MIN_PANE_H,
+        },
+        Layout::Split(s) => {
+            let (a, b) = (min_extent(&s.first, axis), min_extent(&s.second, axis));
+            if s.axis == axis {
+                (a / s.ratio).max(b / (1.0 - s.ratio))
+            } else {
+                a.max(b)
+            }
+        }
+    }
+}
+
 fn find_split(l: &Layout, id: SplitId) -> Option<&Split> {
     match l {
         Layout::Pane(_) => None,
@@ -866,6 +941,51 @@ mod tests {
         let r = ws.rects(1000.0, 1000.0);
         assert!((r[0].1.w - 450.0).abs() < 1e-3);
         assert!((r[1].1.h - 550.0).abs() < 1e-3);
+    }
+
+    /// A sized resize never leaves a pane under the minimum (D571): a drag or nudge stops at
+    /// the ratio where the smallest pane on either side, nested splits included, reaches it,
+    /// and holds when nothing fits.
+    #[test]
+    fn sized_resizes_keep_the_minimum_pane() {
+        // a | (b / (c | d)) in 1000 x 600.
+        let (w, h) = (1000.0, 600.0);
+        let mut ws = Workspace::new(PageRef::World);
+        let a = ws.focused();
+        let b = ws.split(a, Axis::Row, None, false).unwrap();
+        let c = ws.split(b, Axis::Column, None, false).unwrap();
+        let d = ws.split(c, Axis::Row, None, false).unwrap();
+        let outer = ws.splits()[0].0;
+        let small = |ws: &Workspace| {
+            ws.rects(w, h)
+                .iter()
+                .map(|(_, r)| (r.w, r.h))
+                .fold((f32::MAX, f32::MAX), |m, r| (m.0.min(r.0), m.1.min(r.1)))
+        };
+        // Right: c and d share the right side, so it keeps 2 x 160 px.
+        assert!(ws.set_ratio_in(outer, 0.95, w, h));
+        assert!((ws.ratio(outer).unwrap() - 0.68).abs() < 1e-4);
+        assert!(small(&ws).0 >= MIN_PANE_W - 1e-3);
+        // Left: a keeps 160 of 1000.
+        assert!(ws.set_ratio_in(outer, 0.0, w, h));
+        assert!((ws.ratio(outer).unwrap() - 0.16).abs() < 1e-4);
+        for _ in 0..30 {
+            for (p, dir) in [(d, Dir::Up), (c, Dir::Left), (a, Dir::Left), (b, Dir::Down)] {
+                ws.nudge_in(p, dir, w, h);
+                let (mw, mh) = small(&ws);
+                assert!(
+                    mw >= MIN_PANE_W - 1e-3 && mh >= MIN_PANE_H - 1e-3,
+                    "{mw} x {mh}"
+                );
+            }
+        }
+        // In a workspace too small for the panes, a resize holds.
+        let r = ws.ratio(outer);
+        assert!(!ws.set_ratio_in(outer, 0.5, 300.0, 600.0));
+        assert_eq!(ws.ratio(outer), r);
+        // The unsized setter still clamps only to MIN_RATIO.
+        ws.set_ratio(outer, 0.0);
+        assert_eq!(ws.ratio(outer), Some(MIN_RATIO));
     }
 
     #[test]
