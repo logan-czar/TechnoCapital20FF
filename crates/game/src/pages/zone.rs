@@ -38,13 +38,15 @@ pub const VIEWS: &[ViewKey] = &[ViewKey::Countries, ViewKey::Rates];
 pub const INDEX_HISTORY_DAYS: usize = 3660;
 
 /// Each exchange's headline index closes the UI has seen (D484): one point per day, recorded
-/// from v_zones when it is rebuilt at 00:00, since the game started or was loaded.
+/// from v_zones when it is rebuilt at 00:00, since the game started or was loaded (D487).
 #[derive(Resource, Debug, Default)]
 pub struct IndexHistory {
     /// By zone index: (date, close), oldest first.
     pub closes: Vec<Vec<(Date, f64)>>,
     version: u64,
     seen_zones: u64,
+    /// The views' epoch the record is from ([`Views::epoch`]).
+    epoch: u64,
 }
 
 impl IndexHistory {
@@ -57,8 +59,16 @@ impl IndexHistory {
         self.closes.get(z.0 as usize).map_or(&[], Vec::as_slice)
     }
 
+    /// Drops every close: the views are another game's (a new game or a load, D487).
+    pub fn restart(&mut self) {
+        self.closes.iter_mut().for_each(Vec::clear);
+        // Another game's v_zones may carry the version last seen; take it whatever it says.
+        self.seen_zones = u64::MAX;
+        self.version += 1;
+    }
+
     /// Takes v_zones' closes if it was rebuilt since the last look; a date before the last
-    /// recorded (a new game or a load) starts the record again.
+    /// recorded starts the record again too.
     pub fn record(&mut self, v: &SimViews) -> bool {
         let ver = v.zones.version();
         if ver == self.seen_zones {
@@ -103,8 +113,15 @@ impl IndexHistory {
 
 /// Records the index closes (runs every frame; cheap when v_zones has not moved).
 pub fn record_index_history(views: Res<Views>, mut h: ResMut<IndexHistory>) {
-    // Reading through `ResMut` does not mark it changed; only a new point does.
-    if views.is_changed() && views.zones.version() != h.seen_zones {
+    // Reading through `ResMut` does not mark it changed; only a restart or a new point does.
+    if !views.is_changed() {
+        return;
+    }
+    if views.epoch() != h.epoch {
+        h.epoch = views.epoch();
+        h.restart();
+    }
+    if views.zones.version() != h.seen_zones {
         h.record(&views);
     }
 }

@@ -36,6 +36,7 @@ pub struct SimNotice(pub Notice);
 pub struct Views {
     views: SimViews,
     refresh: u64,
+    epoch: u64,
 }
 
 impl Deref for Views {
@@ -47,16 +48,23 @@ impl Deref for Views {
 }
 
 impl Views {
-    fn new(src: &SimViews) -> Views {
+    fn new(src: &SimViews, epoch: u64) -> Views {
         Views {
             views: src.clone(),
             refresh: src.refresh(),
+            epoch,
         }
     }
 
     /// The sim refresh these views come from.
     pub fn refresh(&self) -> u64 {
         self.refresh
+    }
+
+    /// Bumped by each NewGame or Load: the views are another game's, whatever their versions
+    /// say (so a record the UI keeps from them starts again).
+    pub fn epoch(&self) -> u64 {
+        self.epoch
     }
 
     /// Copies each view whose version differs, through the copy `sim_views!` generates over
@@ -171,7 +179,7 @@ impl Plugin for SimBridgePlugin {
             .ok()
             .and_then(|mut s| s.take())
             .expect("SimBridgePlugin added twice");
-        app.insert_resource(Views::new(sim.views()))
+        app.insert_resource(Views::new(sim.views(), 0))
             .insert_resource(RunnerControls(sim.controls().clone()))
             .insert_resource(SimRunner::new(sim))
             .init_resource::<SimRate>()
@@ -308,7 +316,8 @@ fn sync_views(
     let src = runner.sim.views();
     if std::mem::take(&mut runner.rebuilt) {
         // A new game or a load: every view is new, whatever its version says.
-        *views = Views::new(src);
+        let epoch = views.epoch + 1;
+        *views = Views::new(src, epoch);
     } else if views.refresh != src.refresh() {
         views.sync_from(src);
     }
