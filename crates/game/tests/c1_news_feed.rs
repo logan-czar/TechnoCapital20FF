@@ -189,3 +189,20 @@ fn a_long_feed_costs_what_a_short_one_does() {
         reference(&short, &short_events).len()
     );
 }
+
+/// An industry with no headline says so; the note goes with its first headline (PR #30
+/// review).
+#[test]
+fn an_industry_without_headlines_says_so() {
+    let mut sim = Sim::new(data(), 1).unwrap();
+    let id = IndustryId(0);
+    assert!(
+        game::pages::industries::no_headlines_note(sim.views(), id).starts_with("No headlines")
+    );
+    while sim.views().news.get().feed.is_empty() {
+        sim.step();
+    }
+    let v = sim.views();
+    let tagged = v.news.get().feed.iter().find_map(|h| h.industry).unwrap();
+    assert_eq!(game::pages::industries::no_headlines_note(v, tagged), "");
+}
