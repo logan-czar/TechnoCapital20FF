@@ -1,6 +1,6 @@
 //! The Exchange page (M9 B1; spec 5.14, 9.2 `get_exchange`): a zone exchange's code, name, zone,
-//! hub city and province, headline index (level now and a line chart of the closes the UI
-//! recorded, D484), listed count and investor confidence, and its constituents table, which
+//! hub city and province, headline index (level now and a line chart of its daily closes from
+//! 2020, D540), listed count and investor confidence, and its constituents table, which
 //! follows v_exchanges daily (prices from v_quotes at each refresh).
 
 use bevy::prelude::*;
@@ -10,7 +10,7 @@ use sim::world::ZoneId;
 use super::doc::{
     Block, Field, Live, LiveChart, LiveTable, PageDoc, SectionDoc, Span, TableDoc, spawn_doc,
 };
-use super::zone::{IndexHistory, index_chart, members_model};
+use super::zone::{index_chart, members_model};
 use super::{PageAppExt, PageBuild, PageKind, PageRef, PageSpec, Refresh, SectionSpec, ViewKey};
 use crate::bridge::Views;
 use crate::command::index::NameIndex;
@@ -43,13 +43,12 @@ fn exchange_page(
     mut commands: Commands,
     views: Res<Views>,
     index: Res<NameIndex>,
-    history: Res<IndexHistory>,
     cfg: Res<UiConfig>,
 ) {
     let PageRef::Exchange(z) = b.page else {
         return;
     };
-    let doc = exchange_doc(z, &views, &index, &history);
+    let doc = exchange_doc(z, &views, &index);
     spawn_doc(&mut commands, &b, &doc, &views, &cfg, None);
 }
 
@@ -107,7 +106,7 @@ pub fn constituents_model(z: ZoneId, v: &SimViews, index: &NameIndex) -> TableMo
 }
 
 /// The whole Exchange page as data.
-pub fn exchange_doc(z: ZoneId, v: &SimViews, index: &NameIndex, h: &IndexHistory) -> PageDoc {
+pub fn exchange_doc(z: ZoneId, v: &SimViews, index: &NameIndex) -> PageDoc {
     let page = PageRef::Exchange(z);
     let mut doc = PageDoc {
         page: page.clone(),
@@ -173,8 +172,8 @@ pub fn exchange_doc(z: ZoneId, v: &SimViews, index: &NameIndex, h: &IndexHistory
                     ),
                 ]),
                 Block::Chart(
-                    index_chart(z, v, h, index),
-                    Some((LiveChart::Index(z), h.version())),
+                    index_chart(z, v, index),
+                    Some((LiveChart::Index(z), v.exchanges.version())),
                 ),
             ],
         },

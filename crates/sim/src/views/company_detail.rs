@@ -17,8 +17,8 @@ use crate::people::management::{EMPTY_SEAT_SKILL, Member, confidence_factor, mem
 use crate::people::traits::Trait;
 use crate::time::Quarter;
 use crate::world::{
-    CharacterId, CompanyId, CountryId, IndustryId, IpoVoteRecord, Ordinal, Origin, ProvinceId,
-    SeatHolder, World, ZoneId,
+    CharacterId, CompanyId, CountryId, Director, IndustryId, IpoVoteRecord, Ordinal, Origin,
+    ProvinceId, SeatHolder, SimpleSeat, World, ZoneId,
 };
 
 /// Who sits in a seat (spec 3.7, 3.7.1, 3.7.2).
@@ -32,6 +32,8 @@ pub struct SeatPerson {
     pub partial: bool,
     /// The full character's id, for a full character.
     pub character: Option<CharacterId>,
+    /// The partial character's 3.7.1 id, for a partial one (v_characters' `partial`).
+    pub partial_id: Option<u32>,
 }
 
 /// One seat card (spec 8 Board tab).
@@ -80,7 +82,9 @@ pub struct CompanyDetail {
     /// the last IPO vote with the next vote's quarter (spec 8 Board tab, 5.20.1).
     pub origin: Origin,
     pub founders: Vec<CharacterId>,
-    pub directors: usize,
+    /// The directors (5.19.4 step 4: board seats with no labor unit) in seat position order,
+    /// Director 1 first, as the IPO ballots number them (`VoterRole::Director`, D541).
+    pub directors: Vec<SeatPerson>,
     pub ipo_last_vote: Option<IpoVoteRecord>,
     pub ipo_next_vote: Option<Quarter>,
     /// Shares outstanding (spec 3.10).
@@ -115,27 +119,43 @@ impl CompanyDetailView {
     }
 }
 
+fn simple_person(s: &SimpleSeat) -> SeatPerson {
+    SeatPerson {
+        name: s.character.name.clone(),
+        age: s.character.age,
+        skills: s.character.skills,
+        traits: s.character.traits.clone(),
+        partial: true,
+        character: None,
+        partial_id: Some(s.id),
+    }
+}
+
+fn full_person(w: &World, id: CharacterId) -> SeatPerson {
+    let ch = &w.characters[id];
+    SeatPerson {
+        name: ch.name.clone(),
+        age: ch.age,
+        skills: ch.skills,
+        traits: ch.traits.clone(),
+        partial: false,
+        character: Some(id),
+        partial_id: None,
+    }
+}
+
 fn person(w: &World, holder: &SeatHolder) -> SeatPerson {
     match holder {
-        SeatHolder::Simple(s) => SeatPerson {
-            name: s.character.name.clone(),
-            age: s.character.age,
-            skills: s.character.skills,
-            traits: s.character.traits.clone(),
-            partial: true,
-            character: None,
-        },
-        SeatHolder::Full(id) => {
-            let ch = &w.characters[*id];
-            SeatPerson {
-                name: ch.name.clone(),
-                age: ch.age,
-                skills: ch.skills,
-                traits: ch.traits.clone(),
-                partial: false,
-                character: Some(*id),
-            }
-        }
+        SeatHolder::Simple(s) => simple_person(s),
+        SeatHolder::Full(id) => full_person(w, *id),
+    }
+}
+
+/// A director as a seat person (5.19.4 step 4).
+fn director(w: &World, d: &Director) -> SeatPerson {
+    match d {
+        Director::Simple(s) => simple_person(s),
+        Director::Full(id) => full_person(w, *id),
     }
 }
 
@@ -216,7 +236,7 @@ impl ViewData for CompanyDetailView {
                     archetype: c.archetype,
                     origin: c.origin,
                     founders: c.founders.clone(),
-                    directors: c.directors.len(),
+                    directors: c.directors.iter().map(|d| director(w, d)).collect(),
                     ipo_last_vote: c.ipo_last_vote.clone(),
                     ipo_next_vote: c.ipo_next_vote,
                     shares_out: c.shares_out,

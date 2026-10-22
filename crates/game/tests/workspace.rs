@@ -495,10 +495,7 @@ fn every_page_kind_builds() {
         first(PageKind::Exchange),
         Some(PageRef::Event(sim::world::StartupEventId(0))),
         Some(PageRef::Recap(quarter)),
-        Some(PageRef::Headline {
-            date: sim::time::Date::ymd(2020, 1, 1),
-            n: 0,
-        }),
+        Some(PageRef::Headline(sim::world::HeadlineId(0))),
         Some(PageRef::Companies),
         Some(PageRef::Industries),
         Some(PageRef::News),

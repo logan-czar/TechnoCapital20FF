@@ -20,15 +20,16 @@ use game::pages::company::{self, SECTIONS, company_doc};
 use game::pages::country::country_doc;
 use game::pages::doc::{Block, Live, LiveSpan, PageDoc, SectionDoc, Span, TabButton, current_tab};
 use game::pages::exchange::exchange_doc;
-use game::pages::zone::{IndexHistory, zone_doc};
+use game::pages::zone::{index_chart, zone_doc};
 use game::pages::{PageKind, PageRef, SectionHeader};
 use game::table::format;
 use game::table::{Cell, Table};
 use game::test_support::click;
 use game::ui::ShellPlugin;
 use game::workspace::{OpenPage, OpenTarget, PaneFrame, Workspace};
-use sim::births::ipo::{Ballot, VoteResult, VoterRole};
+use sim::births::ipo::{Ballot, BallotVoter, VoteResult, VoterRole};
 use sim::people::board::Seat;
+use sim::views::company_detail::SeatPerson;
 use sim::views::company_rows::Listing;
 use sim::views::estimate::Figure;
 use sim::world::{IpoVoteRecord, Origin, ZoneId};
@@ -64,7 +65,6 @@ fn every_entity_page_builds() {
     let (sim, _) = after_lock();
     for v in [fresh().views().clone(), sim.views().clone()] {
         let index = NameIndex::build(&v);
-        let h = IndexHistory::default();
         let mut kinds = BTreeSet::new();
         for r in &v.company_rows.get().rows {
             let d = company_doc(r.id, &v, &index);
@@ -91,13 +91,13 @@ fn every_entity_page_builds() {
             assert_eq!(t.model.len(), c.hq_companies.len(), "{}", c.name);
         }
         for z in &v.zones.get().zones {
-            let d = zone_doc(z.id, &v, &index, &h);
+            let d = zone_doc(z.id, &v, &index);
             assert_eq!(d.title, z.name);
             assert_eq!(
                 d.table("zone.members").unwrap().model.len(),
                 z.members.len()
             );
-            let x = exchange_doc(z.id, &v, &index, &h);
+            let x = exchange_doc(z.id, &v, &index);
             assert!(!x.title.is_empty());
             let listed = v.exchanges.get().exchanges[z.id.0 as usize]
                 .constituents
@@ -473,7 +473,6 @@ fn pages_link_their_names() {
     let (sim, _) = after_lock();
     let v = sim.views().clone();
     let index = NameIndex::build(&v);
-    let h = IndexHistory::default();
     for r in v.company_rows.get().rows.iter().take(80).chain(
         v.company_rows
             .get()
@@ -538,12 +537,12 @@ fn pages_link_their_names() {
         }
     }
     for z in &v.zones.get().zones {
-        let links = zone_doc(z.id, &v, &index, &h).links();
+        let links = zone_doc(z.id, &v, &index).links();
         assert!(links.contains(&PageRef::Exchange(z.id)));
         for &c in &z.members {
             assert!(links.contains(&PageRef::Country(c)));
         }
-        let links = exchange_doc(z.id, &v, &index, &h).links();
+        let links = exchange_doc(z.id, &v, &index).links();
         assert!(links.contains(&PageRef::Zone(z.id)));
         let x = &v.exchanges.get().exchanges[z.id.0 as usize];
         for &co in &x.constituents {
@@ -587,8 +586,16 @@ fn no_ballot_odds_anywhere() {
         assert!(!all.contains("odds") && !all.contains("chance"));
     }
     assert!(voted > 0, "votes at the first lock");
-    // A hand-made vote with distinctive odds.
+    // A hand-made vote with distinctive odds: the CEO who voted has since left (another
+    // partial), the CFO who voted still sits, Director 1 is a full character, and the
+    // controller's vote is the state's.
     let mut d = v.company_detail.get().companies[0].clone();
+    let holder = |i: usize| d.board[i].holder.clone().expect("a seated board");
+    let (ceo, cfo) = (holder(0), holder(1));
+    let full = &v.characters.get().full[0];
+    let sim::views::characters::CharacterRef::Full(full_id) = full.id else {
+        unreachable!()
+    };
     d.ipo_last_vote = Some(IpoVoteRecord {
         date: sim::time::Date::ymd(2020, 4, 9),
         result: VoteResult {
@@ -597,19 +604,34 @@ fn no_ballot_odds_anywhere() {
                     role: VoterRole::Seat(Seat::Ceo),
                     chance: 0.6137,
                     yes: true,
+                    voter: Some(BallotVoter::Partial {
+                        id: 9_999,
+                        name: "Ona Gone".into(),
+                    }),
+                },
+                Ballot {
+                    role: VoterRole::Seat(Seat::Cfo),
+                    chance: 0.4413,
+                    yes: true,
+                    voter: Some(BallotVoter::Partial {
+                        id: cfo.partial_id.expect("a partial CFO"),
+                        name: cfo.name.clone(),
+                    }),
                 },
                 Ballot {
                     role: VoterRole::Director(0),
                     chance: 0.2291,
                     yes: false,
+                    voter: Some(BallotVoter::Full(full_id)),
                 },
                 Ballot {
                     role: VoterRole::Controller,
                     chance: 0.8846,
                     yes: true,
+                    voter: Some(BallotVoter::State),
                 },
             ],
-            yes: 2,
+            yes: 3,
             no: 1,
             passed: true,
         },
@@ -634,13 +656,54 @@ fn no_ballot_odds_anywhere() {
         "Controller",
         "yes",
         "no",
-        "passed 2 to 1",
+        "passed 3 to 1",
+        "Ona Gone",
+        "the state",
     ] {
         assert!(bt.contains(want), "{want} in {bt}");
     }
+    // The voter, and today's holder only where it is someone else (D542).
+    let fields = doc.sections[0]
+        .blocks
+        .iter()
+        .rev()
+        .find_map(|b| match b {
+            Block::Fields(f) if f.iter().any(|f| f.label == "Controller") => Some(f),
+            _ => None,
+        })
+        .expect("the ballots");
+    let line = |label: &str| {
+        let f = fields.iter().find(|f| f.label == label).unwrap();
+        f.value.clone()
+    };
+    let held = |spans: &[Span]| {
+        spans
+            .iter()
+            .any(|s| matches!(s, Span::Muted(t) if t.starts_with("(held now by")))
+    };
+    let ceo_line = line("CEO");
+    assert!(ceo_line.contains(&Span::text("Ona Gone")));
+    assert!(ceo_line.contains(&Span::muted(format!(
+        "(held now by {} (partial))",
+        ceo.name
+    ))));
+    let cfo_line = line("CFO");
+    assert!(cfo_line.contains(&Span::text(cfo.name.clone())));
+    assert!(
+        !held(&cfo_line),
+        "the CFO who voted still sits: {cfo_line:?}"
+    );
+    assert!(line("Director 1").contains(&Span::link(
+        index.title(&PageRef::Character(full_id)),
+        PageRef::Character(full_id)
+    )));
+    assert!(
+        line("Director 1").contains(&Span::muted("(vacant now)")),
+        "no director sits at position 1 now"
+    );
     assert!(bt.contains("Next vote 09 Jul 2020"), "{bt}");
     assert!(bt.contains("world cap"));
-    for c in [0.6137, 0.2291, 0.8846] {
+    for c in [0.6137, 0.4413, 0.2291, 0.8846] {
         for s in odds_texts(c) {
             assert!(!bt.contains(&s), "{s}");
         }
@@ -648,13 +711,143 @@ fn no_ballot_odds_anywhere() {
     assert!(!bt.contains('%'), "no percent on the vote: {bt}");
 }
 
-/// The index record keeps one close a day from v_zones and starts again on a new game.
+/// A director who voted and still sits is no change on the ballot line, even after a director
+/// before them left and their position moved up (D542, PR #32 review).
 #[test]
-fn index_history_records_daily_closes() {
+fn a_director_who_moved_up_still_counts_as_the_voter() {
+    let (sim, _) = after_lock();
+    let v = sim.views().clone();
+    let index = NameIndex::build(&v);
+    let mut d = v.company_detail.get().companies[0].clone();
+    let stays = SeatPerson {
+        name: "Bo Stays".into(),
+        age: 50,
+        skills: d.board[0].holder.as_ref().unwrap().skills,
+        traits: Vec::new(),
+        partial: true,
+        character: None,
+        partial_id: Some(8_002),
+    };
+    // At the vote: Director 1 was a partial who has since left, Director 2 was Bo. Now Bo is
+    // the only director, at position 1.
+    d.directors = vec![stays.clone()];
+    let ballot = |n: u32, id: u32, name: &str| Ballot {
+        role: VoterRole::Director(n),
+        chance: 0.5,
+        yes: true,
+        voter: Some(BallotVoter::Partial {
+            id,
+            name: name.into(),
+        }),
+    };
+    d.ipo_last_vote = Some(IpoVoteRecord {
+        date: sim::time::Date::ymd(2020, 4, 9),
+        result: VoteResult {
+            ballots: vec![ballot(0, 8_001, "Al Gone"), ballot(1, 8_002, "Bo Stays")],
+            yes: 2,
+            no: 0,
+            passed: true,
+        },
+        capped: false,
+    });
+    let blocks = company::ipo_vote(&d, &index);
+    let fields = blocks
+        .iter()
+        .find_map(|b| match b {
+            Block::Fields(f) => Some(f),
+            _ => None,
+        })
+        .expect("the ballots");
+    let line = |label: &str| {
+        fields
+            .iter()
+            .find(|f| f.label == label)
+            .unwrap()
+            .value
+            .clone()
+    };
+    let muted = |spans: &[Span]| {
+        spans
+            .iter()
+            .filter(|s| matches!(s, Span::Muted(_)))
+            .cloned()
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(
+        muted(&line("Director 1")),
+        [Span::muted("(held now by Bo Stays (partial))")]
+    );
+    assert!(line("Director 2").contains(&Span::text("Bo Stays")));
+    assert!(
+        muted(&line("Director 2")).is_empty(),
+        "Bo still sits: {:?}",
+        line("Director 2")
+    );
+}
+
+/// The Board tab lists the view's directors by seat position (D541): Director 1 first, a full
+/// character linked, a partial one marked and not linked.
+#[test]
+fn board_lists_directors_by_position() {
+    let (sim, _) = after_lock();
+    let v = sim.views().clone();
+    let index = NameIndex::build(&v);
+    let mut d = v.company_detail.get().companies[0].clone();
+    let full = &v.characters.get().full[0];
+    let sim::views::characters::CharacterRef::Full(full_id) = full.id else {
+        unreachable!()
+    };
+    let person = |name: &str, character, partial_id: Option<u32>| SeatPerson {
+        name: name.into(),
+        age: 41,
+        skills: full.skills,
+        traits: Vec::new(),
+        partial: partial_id.is_some(),
+        character,
+        partial_id,
+    };
+    d.directors = vec![
+        person("Ada Partial", None, Some(9_001)),
+        person(&full.name, Some(full_id), None),
+    ];
+    let doc = PageDoc {
+        page: PageRef::Company(d.id),
+        title: d.name.clone(),
+        kind: "Company".into(),
+        chips: Vec::new(),
+        head: Vec::new(),
+        sections: vec![SectionDoc {
+            id: "board",
+            blocks: company::board(&d, &v, &index),
+        }],
+    };
+    let blocks = &doc.sections[0].blocks;
+    let at = blocks
+        .iter()
+        .position(|b| matches!(b, Block::Heading(h) if h == "Directors (2)"))
+        .expect("the directors heading");
+    let Block::Fields(fields) = &blocks[at + 1] else {
+        panic!("the directors' fields")
+    };
+    let labels: Vec<&str> = fields.iter().map(|f| f.label.as_str()).collect();
+    assert_eq!(labels, ["Director 1", "Director 2"]);
+    assert_eq!(fields[0].value[0], Span::text("Ada Partial"));
+    assert!(matches!(&fields[0].value[1], Span::Colored(t, _) if t == "(partial)"));
+    assert_eq!(
+        fields[1].value[0],
+        Span::link(
+            index.title(&PageRef::Character(full_id)),
+            PageRef::Character(full_id)
+        )
+    );
+    let links = doc.links();
+    assert!(links.contains(&PageRef::Character(full_id)));
+}
+
+/// The index chart draws v_exchanges' closes (D540): the load level, then one close a day.
+#[test]
+fn the_index_chart_draws_the_sim_s_daily_closes() {
     let mut sim = fresh();
-    let mut h = IndexHistory::default();
-    assert!(h.record(sim.views()));
-    assert!(!h.record(sim.views()), "no new rebuild, no new point");
     let z = sim
         .views()
         .zones
@@ -664,17 +857,31 @@ fn index_history_records_daily_closes() {
         .find(|z| z.index_close.is_some())
         .unwrap()
         .id;
-    assert_eq!(h.of(z).len(), 1);
+    let points = |sim: &Sim| {
+        let v = sim.views();
+        index_chart(z, v, &NameIndex::build(v)).labels.len()
+    };
+    assert_eq!(points(&sim), 1, "the load level");
     for _ in 0..24 * 3 {
         sim.step();
-        h.record(sim.views());
     }
-    assert_eq!(h.of(z).len(), 4, "one close a day");
-    let days: Vec<_> = h.of(z).iter().map(|p| p.0).collect();
-    assert!(days.windows(2).all(|w| w[0] < w[1]));
-    let fresh_game = fresh();
-    h.record(fresh_game.views());
-    assert_eq!(h.of(z).len(), 1, "a new game starts the record again");
+    assert_eq!(points(&sim), 4, "one close a day");
+    let v = sim.views();
+    let m = index_chart(z, v, &NameIndex::build(v));
+    let closes: Vec<_> = v
+        .exchanges
+        .get()
+        .of_zone(z)
+        .unwrap()
+        .closes
+        .iter()
+        .copied()
+        .collect();
+    assert_eq!(m.labels[0], format::date(sim::time::Date::ymd(2020, 1, 1)));
+    let game::chart::Series::Line { values, .. } = &m.series[0] else {
+        panic!("a line")
+    };
+    assert_eq!(*values, closes.iter().map(|c| c.level).collect::<Vec<_>>());
 }
 
 // ---- The pages in the shell ----
@@ -891,8 +1098,11 @@ fn live_tables_and_charts_follow_the_first_change() {
         .find(|(_, l)| l.0 == Live::IndexClose(z))
         .expect("a live last close");
     run_until(&mut app, |v| v.clock().date > today);
-    assert_eq!(points(&app, chart), 2, "the next day's close");
     let views: &SimViews = app.world().resource::<Views>();
+    // The load level, then a close for each day that passed (a frame may pass more than one).
+    let closes = views.exchanges.get().of_zone(z).unwrap().closes.len();
+    assert!(closes >= 2);
+    assert_eq!(points(&app, chart), closes, "the next day's close");
     let want = format::number(views.zones.get().get(z).unwrap().index_close.unwrap());
     assert_eq!(app.world().get::<Text>(close).unwrap().0, want);
     // The Exchange page: its constituents table.
@@ -915,12 +1125,12 @@ fn live_tables_and_charts_follow_the_first_change() {
     );
 }
 
-/// A load starts the index record again even when the save is later than the record's last
-/// day (D487): the bridge's epoch moved, so no other game's close is kept.
+/// A load shows the loaded game's whole index history (D540): its closes come from the save,
+/// not from what the UI saw this session.
 #[test]
-fn a_load_starts_the_index_record_again() {
+fn a_load_shows_the_saved_index_history() {
     // Removed when the test ends, pass or fail.
-    let dir = game::test_support::Scratch::new("m9-b1-index-load");
+    let dir = game::test_support::Scratch::new("m9-c1-index-load");
     let path = dir.join("save.bin");
     let mut saved = fresh();
     for _ in 0..60 {
@@ -928,19 +1138,41 @@ fn a_load_starts_the_index_record_again() {
     }
     saved.save(&path).unwrap();
     let mut app = shell_app();
-    let z = app.world().resource::<Views>().zones.get().zones[0].id;
-    let points = |app: &App| app.world().resource::<IndexHistory>().of(z).len();
-    run_until(&mut app, |v| {
-        v.clock().date >= sim::time::Date::ymd(2020, 1, 2)
-    });
-    assert_eq!(points(&app), 2);
+    let z = app
+        .world()
+        .resource::<Views>()
+        .zones
+        .get()
+        .zones
+        .iter()
+        .find(|z| z.index_close.is_some())
+        .unwrap()
+        .id;
+    open(&mut app, PageRef::Zone(z));
+    let b = body(&mut app);
+    let chart = holding::<Chart>(&mut app, b)[0];
+    let points = |app: &App| {
+        app.world()
+            .get::<Chart>(chart)
+            .map(|c| c.model().labels.len())
+    };
+    assert_eq!(points(&app), Some(1), "a fresh game: the load level");
     send(&mut app, Control::Load(path.clone()));
-    frames(&mut app, 2);
+    frames(&mut app, 3);
     assert_eq!(
         app.world().resource::<Views>().clock().date,
         sim::time::Date::ymd(2020, 1, 3)
     );
-    assert_eq!(points(&app), 1, "only the loaded game's close");
+    let b = body(&mut app);
+    let chart = holding::<Chart>(&mut app, b)[0];
+    let n = app
+        .world()
+        .get::<Chart>(chart)
+        .unwrap()
+        .model()
+        .labels
+        .len();
+    assert_eq!(n, 3, "1, 2 and 3 January: the saved game's whole history");
 }
 
 /// The Company page's sections fold, move and hide from their header buttons, and its tab

@@ -577,6 +577,7 @@ pub fn build_world(data: &WorldData) -> Result<World, LoadError> {
             stocks: Table::from_rows(stocks),
             // Set by `market::start` at the listed caps (spec 5.14).
             indices: Table::default(),
+            index_history: Table::default(),
         },
         births,
         news: Default::default(),

@@ -349,7 +349,7 @@ impl LiveTable {
 pub enum LiveChart {
     /// A company's daily bars (v_price_bars).
     Company(CompanyId),
-    /// An exchange's index closes, as the UI recorded them ([`super::zone::IndexHistory`]).
+    /// An exchange's index closes (v_exchanges, D540).
     Index(ZoneId),
 }
 
@@ -920,16 +920,11 @@ fn spawn_block(
     }
 }
 
-/// The live value systems, and the index record they chart.
+/// The live value systems.
 pub fn register(app: &mut App) {
     app.add_systems(
         Update,
-        (
-            super::zone::record_index_history,
-            update_live_spans,
-            update_live_tables,
-            update_live_charts,
-        )
+        (update_live_spans, update_live_tables, update_live_charts)
             .chain()
             .in_set(crate::ui::UiSystems::Show),
     );
@@ -985,17 +980,16 @@ pub fn update_live_tables(
 /// Re-sets live charts' models when their history moved.
 pub fn update_live_charts(
     views: Res<Views>,
-    history: Res<super::zone::IndexHistory>,
     index: Res<crate::command::index::NameIndex>,
     mut charts: Query<(&LiveChart, &mut LiveVersion, &mut Chart)>,
 ) {
-    if !(views.is_changed() || history.is_changed()) {
+    if !views.is_changed() {
         return;
     }
     for (l, mut ver, mut c) in &mut charts {
         let now = match l {
             LiveChart::Company(_) => views.price_bars.version(),
-            LiveChart::Index(_) => history.version(),
+            LiveChart::Index(_) => views.exchanges.version(),
         };
         if ver.0 == now {
             continue;
@@ -1003,7 +997,7 @@ pub fn update_live_charts(
         ver.0 = now;
         let model = match *l {
             LiveChart::Company(id) => super::company::price_chart(id, &views),
-            LiveChart::Index(z) => Some(super::zone::index_chart(z, &views, &history, &index)),
+            LiveChart::Index(z) => Some(super::zone::index_chart(z, &views, &index)),
         };
         if let Some(m) = model {
             c.set_model(Arc::new(m));

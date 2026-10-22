@@ -231,7 +231,7 @@ fn headline(v: &Views) -> Option<PageRef> {
         .feed
         .iter()
         .next()
-        .map(|h| PageRef::Headline { date: h.date, n: 0 })
+        .map(|h| PageRef::Headline(h.id))
 }
 
 /// The late items: a fired startup event, a headline and a company born in play, as a

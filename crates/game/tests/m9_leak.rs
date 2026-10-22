@@ -831,14 +831,8 @@ fn scan_state(sim: Sim, v: &SimViews, label: &str, t: &Truths, leaks: &mut Vec<L
             PageRef::Character(_) | PageRef::Country(_) | PageRef::Industry(_)
         )
     }));
-    let mut per_day: BTreeMap<sim::time::Date, u32> = BTreeMap::new();
     for h in v.news.get().feed.iter().take(20) {
-        let n = per_day.entry(h.date).or_default();
-        pages.insert(PageRef::Headline {
-            date: h.date,
-            n: *n,
-        });
-        *n += 1;
+        pages.insert(PageRef::Headline(h.id));
     }
     for page in &pages {
         let s = read_page(&mut app, page, names);

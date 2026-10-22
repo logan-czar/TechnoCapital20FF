@@ -430,15 +430,8 @@ pub fn related(
                 watchlist.iter().map(|&c| t(PageRef::Company(c))).collect(),
             ));
         }
-        PageRef::Headline { date, n } => {
-            if let Some(h) = v
-                .news
-                .get()
-                .feed
-                .iter()
-                .filter(|h| h.date == *date)
-                .nth(*n as usize)
-            {
+        PageRef::Headline(id) => {
+            if let Some(h) = v.news.get().get(*id) {
                 if let Some(c) = h.company {
                     out.push(("Company", vec![t(PageRef::Company(c))]));
                 }

@@ -45,9 +45,11 @@ use std::fmt;
 use bevy::ecs::system::SystemId;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
-use sim::time::{Date, Quarter};
+use sim::time::Quarter;
 use sim::views::Cadence;
-use sim::world::{CharacterId, CompanyId, CountryId, IndustryId, StartupEventId, ZoneId};
+use sim::world::{
+    CharacterId, CompanyId, CountryId, HeadlineId, IndustryId, StartupEventId, ZoneId,
+};
 
 use crate::config::{SectionsConfig, UiConfig};
 use crate::ui::theme::{self, color, font, size};
@@ -72,12 +74,8 @@ pub enum PageRef {
     Event(StartupEventId),
     /// The quarterly recap of a quarter (M9.5).
     Recap(Quarter),
-    /// A headline: the `n`th headline posted on `date` (the feed drops old headlines, so a
-    /// position in it is not stable; D451).
-    Headline {
-        date: Date,
-        n: u32,
-    },
+    /// A headline, by its stable id (its place in the wire's post order; D544).
+    Headline(HeadlineId),
     Companies,
     Industries,
     News,
@@ -235,7 +233,7 @@ impl PageRef {
             PageRef::Exchange(_) => PageKind::Exchange,
             PageRef::Event(_) => PageKind::Event,
             PageRef::Recap(_) => PageKind::Recap,
-            PageRef::Headline { .. } => PageKind::Headline,
+            PageRef::Headline(_) => PageKind::Headline,
             PageRef::Companies => PageKind::Companies,
             PageRef::Industries => PageKind::Industries,
             PageRef::News => PageKind::News,
@@ -249,7 +247,7 @@ impl PageRef {
     }
 
     /// The text form: `kind` for a list page, `kind/id` for an entity, `recap/2020-Q1`,
-    /// `headline/2020-03-02/0`.
+    /// `headline/1234`.
     pub fn key(&self) -> String {
         let k = self.kind().key();
         match self {
@@ -260,7 +258,7 @@ impl PageRef {
             PageRef::Zone(id) | PageRef::Exchange(id) => format!("{k}/{}", id.0),
             PageRef::Event(id) => format!("{k}/{}", id.0),
             PageRef::Recap(q) => format!("{k}/{}-Q{}", q.year, q.q),
-            PageRef::Headline { date, n } => format!("{k}/{date}/{n}"),
+            PageRef::Headline(id) => format!("{k}/{}", id.0),
             _ => k.to_owned(),
         }
     }
@@ -290,19 +288,7 @@ impl PageRef {
                     q,
                 })
             }
-            PageKind::Headline => {
-                let mut d = id?.split('-').map(str::parse::<u32>);
-                let (y, m, day) = (d.next()?.ok()?, d.next()?.ok()?, d.next()?.ok()?);
-                let date = Date::new(
-                    i32::try_from(y).ok()?,
-                    u8::try_from(m).ok()?,
-                    u8::try_from(day).ok()?,
-                )?;
-                PageRef::Headline {
-                    date,
-                    n: num(parts.next())?,
-                }
-            }
+            PageKind::Headline => PageRef::Headline(HeadlineId(num(id)?)),
             PageKind::World => PageRef::World,
             PageKind::Companies => PageRef::Companies,
             PageKind::Industries => PageRef::Industries,
@@ -918,10 +904,7 @@ mod tests {
             PageRef::Exchange(ZoneId(25)),
             PageRef::Event(StartupEventId(0)),
             PageRef::Recap(Quarter { year: 2021, q: 4 }),
-            PageRef::Headline {
-                date: Date::ymd(2020, 3, 2),
-                n: 7,
-            },
+            PageRef::Headline(HeadlineId(1234)),
             PageRef::Companies,
             PageRef::Industries,
             PageRef::News,
@@ -939,6 +922,9 @@ mod tests {
             assert_eq!(PageRef::from_key(&k), Some(p.clone()), "{k}");
         }
         assert_eq!(PageRef::Company(CompanyId(12)).key(), "company/12");
+        assert_eq!(PageRef::Headline(HeadlineId(7)).key(), "headline/7");
+        // The old "nth headline of its day" key (D451) no longer names a page (D544).
+        assert_eq!(PageRef::from_key("headline/2020-03-02/0"), None);
         assert_eq!(
             PageRef::Recap(Quarter { year: 2020, q: 1 }).key(),
             "recap/2020-Q1"

@@ -314,6 +314,19 @@ pub fn headlines_model(v: &SimViews, id: IndustryId) -> TableModel {
     )
 }
 
+/// The note over an industry with no headline yet.
+pub const NO_HEADLINES: &str = "No headlines yet: phase changes, results, ratings, startups and \
+                                listings in this industry post here.";
+
+/// The note over an industry's headlines: empty once it has one (PR #30 review).
+pub fn no_headlines_note(v: &SimViews, id: IndustryId) -> String {
+    if super::news::headline_links(v, |h| h.industry == Some(id), 1).is_empty() {
+        NO_HEADLINES.into()
+    } else {
+        String::new()
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 fn industry_page(
     In(b): In<PageBuild>,
@@ -460,7 +473,20 @@ fn industry_page(
     }
     if let Some(body) = b.section("news") {
         // Live on v_news (daily): the page itself rebuilds only when its monthly and quarterly
-        // views move, so a new headline shows without a daily rebuild.
+        // views move, so a new headline shows without a daily rebuild. The note explains an
+        // empty table and goes once the first headline posts.
+        spawn_live_text(
+            &mut commands,
+            body,
+            font::SMALL,
+            color::TEXT_MUTED,
+            Live::new(&[ViewKey::News], move |c| {
+                LiveModel::Text(no_headlines_note(c.views, id))
+            }),
+            &views,
+            &index,
+            &controls,
+        );
         let boxed = table_box(&mut commands, body, INDUSTRY_HEADLINES);
         spawn_live_table(
             &mut commands,
