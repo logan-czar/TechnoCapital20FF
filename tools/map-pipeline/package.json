@@ -1,0 +1,9 @@
+{
+  "name": "tc20ff-map-pipeline",
+  "private": true,
+  "description": "mapshaper for the province map pipeline (P5 topology-safe simplify)",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "mapshaper": "0.7.96"
+  }
+}

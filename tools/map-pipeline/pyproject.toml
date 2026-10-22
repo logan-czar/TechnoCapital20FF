@@ -1,0 +1,17 @@
+[project]
+name = "tc20ff-map-pipeline"
+version = "0.1.0"
+description = "TechnoCapital20FF province map pipeline (build-plan track P): fetch, license filter, crosswalk, shapes, simplify, export"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "geopandas==1.1.1",
+    "shapely==2.1.2",
+    "pyogrio==0.11.1",
+    "pandas==2.3.3",
+    "numpy==2.3.4",
+    "rapidfuzz==3.14.1",
+    "pillow==12.0.0",
+]
+
+[tool.uv]
+package = false

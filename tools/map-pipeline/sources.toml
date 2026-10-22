@@ -1,0 +1,78 @@
+# Pinned map sources (build-plan P1). Written by `run.py pin`; checked by `run.py fetch`.
+# Only these official sources are used. No OSM, GADM, ODbL or CC BY-SA data is shipped (P2).
+
+cache_dir = 'D:\Data\tc20ff-geodata'
+
+[natural_earth]
+# The official Natural Earth repository (naturalearthdata.com links to it), pinned by tag.
+# File names are paths under base_url; the cache keeps them by base name.
+version = "v5.1.2"
+commit = "f1890d9f152c896d250a77557a5751a93d494776"
+base_url = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/"
+license = "Public domain (https://www.naturalearthdata.com/about/terms-of-use/)"
+files = [
+    { name = "10m_cultural/ne_10m_admin_0_countries.shp", sha256 = "7ce119ef6342e43cff7c0c3004e0911ab7ec1988a14734372031d2012180e7bc" },
+    { name = "10m_cultural/ne_10m_admin_0_countries.shx", sha256 = "ca19ec112d054c77bc8f7ac00e3b110d5dff32cc9bcf4cd1b8b66bdd0f611d32" },
+    { name = "10m_cultural/ne_10m_admin_0_countries.dbf", sha256 = "c5dbd3dd5fd7e2ef49051fc88562c03819e8ea63a382642df6eadd1243bf4b49" },
+    { name = "10m_cultural/ne_10m_admin_0_countries.prj", sha256 = "a02a27b1d1982c8516d83398e85a3c8b1aef1713c13ef4d84d7bde17430c07c4" },
+    { name = "10m_cultural/ne_10m_admin_0_countries.cpg", sha256 = "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824" },
+    { name = "10m_cultural/ne_10m_admin_0_countries.VERSION.txt", sha256 = "f9893302cd3158f3b5aea394dcd2a91574869e9e6ff69e9235b10a3bf8c983fb" },
+    { name = "10m_cultural/ne_10m_admin_0_countries.README.html", sha256 = "01e711029395bc94936ec82cabf06856f04f7d0e74747351799283c081c6631c" },
+    { name = "10m_cultural/ne_10m_admin_1_states_provinces_lakes.shp", sha256 = "b098410f9e6a5bc6f45fc6c1b3448dc1aa10729724086957a8a33e36572aab18" },
+    { name = "10m_cultural/ne_10m_admin_1_states_provinces_lakes.shx", sha256 = "ff5534392c64b3a98e07b6d499077f00029025fbc3aa7af948221f598ce7e042" },
+    { name = "10m_cultural/ne_10m_admin_1_states_provinces_lakes.dbf", sha256 = "f527dd13f861511edfb48653e86c280d0f1d68482bd0590a7af95fa557ebe75e" },
+    { name = "10m_cultural/ne_10m_admin_1_states_provinces_lakes.prj", sha256 = "a02a27b1d1982c8516d83398e85a3c8b1aef1713c13ef4d84d7bde17430c07c4" },
+    { name = "10m_cultural/ne_10m_admin_1_states_provinces_lakes.cpg", sha256 = "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824" },
+    { name = "10m_cultural/ne_10m_admin_1_states_provinces_lakes.VERSION.txt", sha256 = "f9893302cd3158f3b5aea394dcd2a91574869e9e6ff69e9235b10a3bf8c983fb" },
+    { name = "10m_cultural/ne_10m_admin_1_states_provinces_lakes.README.html", sha256 = "27d12def2c79a2ff3744abb27a3ba2783334f4dc1ec2dedc3ce3c00c4ea71e25" },
+    { name = "10m_cultural/ne_10m_populated_places.shp", sha256 = "f4073365d248dfe35a44cca6715bf5b4812fa723294ed6a37043d7a3e09cc998" },
+    { name = "10m_cultural/ne_10m_populated_places.shx", sha256 = "cdbad984f9e40948f2b77c87f73319477775d7bc95d47112455abea30ad39757" },
+    { name = "10m_cultural/ne_10m_populated_places.dbf", sha256 = "eff834a8727e06f28fc52b04393c462d074aecf9a7acd1b870e766240a995b6c" },
+    { name = "10m_cultural/ne_10m_populated_places.prj", sha256 = "98aaf3d1c0ecadf1a424a4536de261c3daf4e373697cb86c40c43b989daf52eb" },
+    { name = "10m_cultural/ne_10m_populated_places.cpg", sha256 = "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824" },
+    { name = "10m_cultural/ne_10m_populated_places.VERSION.txt", sha256 = "0c9a9d43610d66f4cc3f42da08cae044483de25894a9daf9dc6a76ff75ca9327" },
+    { name = "10m_cultural/ne_10m_populated_places.README.html", sha256 = "e1c9f80bc222905893eef9303c8de8a83f371b51abc5d7351f9033d4abf811ab" },
+    { name = "10m_physical/ne_10m_lakes.shp", sha256 = "11064fa55ed91b56a0d86733643c1a5bfcc137fdf044e83f471978a5b86617e1" },
+    { name = "10m_physical/ne_10m_lakes.shx", sha256 = "a11ffb02e862b6c4ec8c015e6e0c70502f21bc71dcd79312b8dbc676f7e4c557" },
+    { name = "10m_physical/ne_10m_lakes.dbf", sha256 = "0edaa87f76c2221c986f0796ce0b54b1c418e9032afba46f8e302edc41193495" },
+    { name = "10m_physical/ne_10m_lakes.prj", sha256 = "a02a27b1d1982c8516d83398e85a3c8b1aef1713c13ef4d84d7bde17430c07c4" },
+    { name = "10m_physical/ne_10m_lakes.cpg", sha256 = "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824" },
+    { name = "10m_physical/ne_10m_lakes.VERSION.txt", sha256 = "1cc3d76ac7c21a664e79848fd481e9791016451b244e7de5feeeb9bea5fd2184" },
+    { name = "10m_physical/ne_10m_lakes.README.html", sha256 = "a5832c49127848fa7ecd16ef3a6b708464249f16d4689596a64fd3988f0731ce" },
+]
+
+[geoboundaries]
+# geoBoundaries gbOpen, pinned by release tag; files are git-LFS objects, so the sha256 is the LFS oid.
+version = "v6.0.0"
+commit = "1289e40e366c7b320550be1ee0614a9472d572d4"
+base_url = "https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/v6.0.0/releaseData/gbOpen/"
+pointer_url = "https://raw.githubusercontent.com/wmgeolab/geoBoundaries/v6.0.0/releaseData/gbOpen/"
+citation = "Runfola, D. et al. (2020) geoBoundaries: A global database of political administrative boundaries. PLoS ONE 15(4): e0231866. https://doi.org/10.1371/journal.pone.0231866"
+
+[[geoboundaries.boundary]]
+iso = "USA"
+level = "ADM2"
+meta_sha256 = "30a1a42aca3fee948128e03cb7dfe8ec27a2a6b0738c436abb5bac42b558b58f"
+geojson_sha256 = "3d08c9b9c66d80aef3e92a55ebacaaa1eeccda3edea03df3ad50fdeaa84ebc6b"
+geojson_size = 9227695
+
+[[geoboundaries.boundary]]
+iso = "CAN"
+level = "ADM2"
+meta_sha256 = "50dd9cb0df9ac6737a901ff62ac0f93931df4eab96cd1a7d3f3db3d5efca6d28"
+geojson_sha256 = "61ba3b83e1ac0719d8c889c5249773e8190b8999ff9a779ee0cbb9fdbbb9ffef"
+geojson_size = 22755625
+
+[[geoboundaries.boundary]]
+iso = "CAN"
+level = "ADM3"
+meta_sha256 = "42c56b88d1170c4eaf7aa4784bfd5eca1eb5b4241f0bb7312a0823e6edcebaee"
+geojson_sha256 = "d15131c735424779001b72f5db90fb2189852e9f95c90807a1fed32d608d6ce4"
+geojson_size = 37127189
+
+[[geoboundaries.boundary]]
+iso = "MEX"
+level = "ADM2"
+meta_sha256 = "f26d66c487df4efed7f8e4952da7c9a27502ad2e5489e7515892c977830e3b60"
+geojson_sha256 = "c364d0ad5caab96186d6cdc63b6848d475226bc1494acffa11e72de857fa2b10"
+geojson_size = 131385512
