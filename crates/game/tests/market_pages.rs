@@ -24,7 +24,7 @@ use game::chart::Chart;
 use game::command::index::NameIndex;
 use game::command::{CommandItem, RunCommand};
 use game::pages::industries::{companies_model, industries_model};
-use game::pages::live::{Filter, LiveCtx, Picker, PickerOption};
+use game::pages::live::{Filter, Live, LiveCtx, Picker, PickerOption};
 use game::pages::news::{FeedItem, feed, news_model};
 use game::pages::recap::{company_pages_model, expected_model};
 use game::pages::{PageRef, PdbFunction, PdoombergRoute};
@@ -472,9 +472,10 @@ fn recap_opens_from_its_alert_and_by_quarter() {
 fn every_function_key_opens_its_page() {
     let mut app = shell_app();
     let route = |app: &App| *app.world().resource::<PdoombergRoute>();
-    // Outside the terminal the keys do nothing (D517).
+    // Outside the terminal the keys do nothing (D517), and no page is built yet (D520).
     key(&mut app, KeyCode::F5);
     assert_eq!(route(&app).function, PdbFunction::F2);
+    assert_eq!(app.world().resource::<PdoombergUi>().built, None);
     key(&mut app, KeyCode::KeyB);
     assert_eq!(app.world().resource::<Router>().current, Screen::Pdoomberg);
     let area = app.world().resource::<PdoombergUi>().area;
@@ -527,6 +528,18 @@ fn every_function_key_opens_its_page() {
     assert_eq!(model(&app, t).len(), 42);
     key(&mut app, KeyCode::Escape);
     assert_eq!(app.world().resource::<Router>().current, Screen::Map);
+    // Closed, its live widgets are held (D520); reopened, they run again.
+    let root = app.world().resource::<PdoombergUi>().root;
+    let held = |app: &mut App| {
+        descendants_with::<Live>(app, root)
+            .into_iter()
+            .map(|e| app.world().get::<Live>(e).unwrap().is_held())
+            .collect::<Vec<_>>()
+    };
+    let h = held(&mut app);
+    assert!(!h.is_empty() && h.iter().all(|&x| x), "held while closed");
+    key(&mut app, KeyCode::KeyB);
+    assert!(held(&mut app).iter().all(|&x| !x), "running while open");
 }
 
 /// M9.4: `TICKER Fn` opens Pdoomberg on that company's page; F3 draws its daily and 10-year
@@ -818,6 +831,51 @@ fn screener_filters_by_origin_and_listing() {
     assert!(
         (0..ind.len()).all(|r| ind.cell(r, col).link() == Some(&PageRef::Industry(IndustryId(0))))
     );
+}
+
+/// D520: a right-click load on F10 changes the loaded company and its security line but keeps
+/// the page: the same table, with its filter.
+#[test]
+fn right_click_load_keeps_the_page() {
+    let mut app = shell_app();
+    key(&mut app, KeyCode::KeyB);
+    key(&mut app, KeyCode::F10);
+    let t = table_by_id(&mut app, "pdb.f10");
+    pick(&mut app, t, "public", 1);
+    let shown = model(&app, t);
+    assert!(!shown.is_empty());
+    let mut loaded = None;
+    for row in [0, 1] {
+        let id = row_company(app.world().get::<Table>(t).unwrap(), row).unwrap();
+        app.world_mut().write_message(game::table::TableRowClicked {
+            table: t,
+            row,
+            secondary: true,
+        });
+        frames(&mut app, 3);
+        let route = *app.world().resource::<PdoombergRoute>();
+        assert_eq!(route.company, Some(id), "row {row} loaded");
+        assert_ne!(Some(id), loaded, "the loaded company changed");
+        loaded = Some(id);
+        let ui = app.world().resource::<PdoombergUi>().clone();
+        assert_eq!(ui.built, Some(route));
+        assert_eq!(ui.main_table, Some(t), "the page was not rebuilt");
+        assert_eq!(app.world().get::<Filter>(t).unwrap().get("public"), 1);
+        assert_eq!(model(&app, t), shown, "still filtered");
+        let ticker = app
+            .world()
+            .resource::<Views>()
+            .company_rows
+            .get()
+            .rows
+            .iter()
+            .find(|r| r.id == id)
+            .unwrap()
+            .ticker
+            .clone();
+        let line = texts_under(&app, ui.security);
+        assert!(line.iter().any(|s| s.starts_with(&ticker)), "{line:?}");
+    }
 }
 
 /// No IPO ballot odds anywhere (20-ui 20.1; m9-plan section 1): the market pages and every

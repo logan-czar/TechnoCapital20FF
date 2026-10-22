@@ -299,6 +299,8 @@ fn omniscient_only_in_debug_builds() {
 #[test]
 fn quote_rows_toggle_the_watchlist() {
     let mut app = shell_app();
+    // The terminal builds its page on its first open (D520).
+    press(&mut app, KeyCode::KeyB);
     let table = app
         .world()
         .resource::<PdoombergUi>()
@@ -331,6 +333,7 @@ fn quote_rows_toggle_the_watchlist() {
 #[test]
 fn private_companies_show_bands() {
     let mut app = shell_app();
+    press(&mut app, KeyCode::KeyB);
     let table = app.world().resource::<PdoombergUi>().main_table.unwrap();
     let rows = app
         .world()

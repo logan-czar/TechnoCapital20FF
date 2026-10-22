@@ -12,8 +12,10 @@
 //!   F7 Bonds, F9 Industries, F10 Screener ([`pages`]). The function keys work only while the
 //!   terminal is open (D453, design fix 442; D517), and the key row at the bottom is clickable.
 //! - A row click on F2 watches or unwatches the company (M7.8); a right-click on F2, F5, F6 or
-//!   F10 loads it (the security line and F3). A link click opens its page in the workspace and
-//!   leaves the terminal (D517).
+//!   F10 loads it (the security line and F3) and keeps the page. A link click opens its page in
+//!   the workspace and leaves the terminal (D517).
+//! - The page is built on the terminal's first open, and its live widgets are held while it is
+//!   closed (D520).
 
 pub mod pages;
 
@@ -93,6 +95,7 @@ impl Plugin for PdoombergPlugin {
                 Update,
                 (
                     draw_page,
+                    hold_hidden.run_if(resource_changed::<Router>),
                     row_clicks,
                     mark_keys.run_if(resource_changed::<PdoombergRoute>),
                     show_status,
@@ -310,47 +313,76 @@ pub fn security_text(v: &sim::SimViews, index: &NameIndex, id: CompanyId) -> Str
     )
 }
 
-/// Rebuilds the function page and the security line when the route changes.
+/// Builds the function page and the security line for the route, only while the terminal is
+/// open (D520): the page is built on its first open, not at startup. A new function rebuilds
+/// the page; a new company only the security line (and F3, which draws it), so a right-click
+/// load keeps the page's filters, sort and scroll.
 #[allow(clippy::too_many_arguments)]
 fn draw_page(
     mut commands: Commands,
     mut ui: ResMut<PdoombergUi>,
     route: Res<PdoombergRoute>,
+    router: Res<Router>,
     views: Res<Views>,
     index: Res<NameIndex>,
     controls: Res<RunnerControls>,
 ) {
-    if ui.built == Some(*route) {
+    if router.current != Screen::Pdoomberg || ui.built == Some(*route) {
         return;
     }
-    let area = ui.area;
-    commands.entity(area).despawn_children();
-    commands.entity(ui.security).despawn_children();
-    if let Some(id) = route.company {
-        spawn_live_text(
-            &mut commands,
-            ui.security,
-            font::BODY,
-            color::TEXT,
-            Live::new(
-                &[ViewKey::Quotes, ViewKey::CompanyRows, ViewKey::Clock],
-                move |c| LiveModel::Text(security_text(c.views, c.index, id)),
-            )
-            .throttle(pages::QUOTES_REFRESH_SECS),
-            &views,
-            &index,
-            &controls,
-        );
+    let new_company = ui.built.map(|b| b.company) != Some(route.company);
+    let new_page = ui.built.map(|b| b.function) != Some(route.function)
+        || (new_company && route.function == PdbFunction::F3);
+    if new_company {
+        commands.entity(ui.security).despawn_children();
+        if let Some(id) = route.company {
+            spawn_live_text(
+                &mut commands,
+                ui.security,
+                font::BODY,
+                color::TEXT,
+                Live::new(
+                    &[ViewKey::Quotes, ViewKey::CompanyRows, ViewKey::Clock],
+                    move |c| LiveModel::Text(security_text(c.views, c.index, id)),
+                )
+                .throttle(pages::QUOTES_REFRESH_SECS),
+                &views,
+                &index,
+                &controls,
+            );
+        }
     }
-    // The page holds only its content (F4 only the lock): the command line and the lit key
-    // name the page.
-    let env = Env {
-        views: &views,
-        index: &index,
-        controls: &controls,
-    };
-    ui.main_table = pages::build(&mut commands, area, &env, *route);
+    if new_page {
+        // The page holds only its content (F4 only the lock): the command line and the lit key
+        // name the page.
+        let area = ui.area;
+        commands.entity(area).despawn_children();
+        let env = Env {
+            views: &views,
+            index: &index,
+            controls: &controls,
+        };
+        ui.main_table = pages::build(&mut commands, area, &env, *route);
+    }
     ui.built = Some(*route);
+}
+
+/// While the terminal is closed its live widgets are held: F2's quote table is not remade every
+/// 0.5 s for nobody (D520). On reopening each catches up at once.
+fn hold_hidden(
+    ui: Res<PdoombergUi>,
+    router: Res<Router>,
+    children: Query<&Children>,
+    mut lives: Query<&mut Live>,
+) {
+    let held = router.current != Screen::Pdoomberg;
+    for e in children.iter_descendants(ui.root) {
+        if let Ok(mut l) = lives.get_mut(e)
+            && l.is_held() != held
+        {
+            l.hold(held);
+        }
+    }
 }
 
 /// The company a row of a Pdoomberg table is about: the first cell that links to a company.

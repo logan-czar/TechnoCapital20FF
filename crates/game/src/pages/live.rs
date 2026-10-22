@@ -91,6 +91,10 @@ pub struct Live {
     last: f64,
     /// A remake is owed (it was held back by `min_secs`).
     owed: bool,
+    /// Held: its page is hidden (full-screen Pdoomberg closed, D520), so it is not remade.
+    held: bool,
+    /// Just let go: remake at once, whatever moved while it was held.
+    woke: bool,
     make: LiveFn,
 }
 
@@ -106,6 +110,8 @@ impl Live {
             min_secs: 0.0,
             last: f64::NEG_INFINITY,
             owed: false,
+            held: false,
+            woke: false,
             make: Box::new(make),
         }
     }
@@ -118,6 +124,16 @@ impl Live {
     pub fn throttle(mut self, secs: f64) -> Live {
         self.min_secs = secs;
         self
+    }
+
+    pub fn is_held(&self) -> bool {
+        self.held
+    }
+
+    /// Holds the widget (its page is hidden) or lets it go; let go, it remakes its model at once.
+    pub fn hold(&mut self, held: bool) {
+        self.woke = self.held && !held;
+        self.held = held;
     }
 
     /// Makes the model now (the page's first build), and remembers the views it was made from.
@@ -223,18 +239,22 @@ fn refresh_live(
     let now = time.elapsed_secs_f64();
     let moved = views.is_changed() || index.is_changed();
     for (e, mut live, filter) in &mut q {
+        if live.held {
+            continue;
+        }
+        let woke = std::mem::take(&mut live.woke);
         let filtered = filter.is_changed() && !filter.is_added();
-        let versions: Vec<u64> = if moved || live.owed {
+        let versions: Vec<u64> = if moved || live.owed || woke {
             live.deps.iter().map(|&k| view_meta(&views, k).1).collect()
         } else {
             Vec::new()
         };
-        let stale = (moved || live.owed) && versions != live.versions;
+        let stale = (moved || live.owed || woke) && versions != live.versions;
         if live.owed && !stale && !moved {
             live.owed = false;
         }
         let ctl = live.controls && controls.is_changed() && !controls.is_added();
-        if !(stale || filtered || ctl) {
+        if !(stale || filtered || ctl || woke) {
             continue;
         }
         // A filter or control change shows at once, and so does a move of a view slower than
@@ -246,7 +266,7 @@ fn refresh_live(
                 .zip(versions.iter().zip(&live.versions))
                 .filter(|(_, (a, b))| a != b)
                 .all(|(&k, _)| view_meta(&views, k).2 == Cadence::EveryTick);
-        if !(filtered || ctl) && fast_only && now - live.last < live.min_secs {
+        if !(filtered || ctl || woke) && fast_only && now - live.last < live.min_secs {
             live.owed = true;
             continue;
         }

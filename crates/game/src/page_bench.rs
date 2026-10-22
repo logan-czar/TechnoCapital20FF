@@ -69,7 +69,8 @@ impl Plugin for PageBenchPlugin {
 }
 
 /// One page of each kind, picked from the views of the world as it is, then every Pdoomberg
-/// function page (F3 on a listed company).
+/// function page (F3 on a listed company). The terminal builds no page before its first open
+/// (D520), so F2's cold number is a real build.
 fn pick_items(v: &Views, index: &NameIndex) -> Vec<Item> {
     let listed = v
         .company_rows
