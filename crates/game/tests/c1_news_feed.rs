@@ -28,8 +28,9 @@ const INDUSTRIES: u32 = 42;
 const COMPANIES: u32 = 900;
 
 /// A feed of `n` headlines over about 30 years, 5 or so a day, with a startup event (and its
-/// hot cluster headline) every 40th headline, plus an event a day after the last that posted
-/// none (fired today, its headline posts at the next 00:00).
+/// hot cluster headline) every 40th headline, pairs of unreported events on some days
+/// mid-feed, and two a day after the last headline (fired today, their headlines post at the
+/// next 00:00).
 fn synthetic(n: u32) -> (NewsView, Vec<EventRow>) {
     let mut news = NewsView::default();
     let mut events: Vec<EventRow> = Vec::new();
@@ -55,17 +56,29 @@ fn synthetic(n: u32) -> (NewsView, Vec<EventRow>) {
         h.id = HeadlineId(i);
         news.feed
             .push(h, |last, h| last.date.month_of() == h.date.month_of());
+        // Mid-feed, now and then two events on one day that posted no headline: some on a
+        // day whose hot cluster did report its event, some on a day with none.
+        if i % 400 == 7 || i % 400 == 211 {
+            unreported(&mut events, date, 2);
+        }
     }
     let last = news.feed.last().map_or(start, |h| h.date);
-    events.push(EventRow {
-        id: StartupEventId(events.len() as u32),
-        kind: EventKind::Fixed("F2".into()),
-        name: "The crypto and SPAC mania".into(),
-        date: last.add_days(1),
-        industries: vec![IndustryId(1)],
-        startups: vec![CompanyId(5)],
-    });
+    unreported(&mut events, last.add_days(1), 2);
     (news, events)
+}
+
+/// Appends `n` events on `date` that no headline reports.
+fn unreported(events: &mut Vec<EventRow>, date: Date, n: u32) {
+    for _ in 0..n {
+        events.push(EventRow {
+            id: StartupEventId(events.len() as u32),
+            kind: EventKind::Fixed("F2".into()),
+            name: "The crypto and SPAC mania".into(),
+            date,
+            industries: vec![IndustryId(1)],
+            startups: vec![CompanyId(5)],
+        });
+    }
 }
 
 /// The old feed (PR #30): every headline and every unreported event, oldest first with a day's
@@ -106,11 +119,16 @@ fn the_lazy_feed_matches_the_whole_feed() {
     let (news, events) = synthetic(4_000);
     let got: Vec<PageRef> = Feed::new(&news, &events).map(|i| page(&i)).collect();
     assert_eq!(got, reference(&news, &events));
+    let n = events.len() as u32;
     assert_eq!(
-        got[0],
-        PageRef::Event(events.last().unwrap().id),
-        "today's unreported event"
+        got[..2],
+        [
+            PageRef::Event(StartupEventId(n - 1)),
+            PageRef::Event(StartupEventId(n - 2))
+        ],
+        "today's unreported events, newest first"
     );
+    assert!(events.iter().filter(|e| e.name != "Hot cluster").count() > 20);
     // Each hot cluster headline links its event, by id.
     for i in Feed::new(&news, &events) {
         if let FeedItem::Headline { h, event, .. } = i {
@@ -148,7 +166,11 @@ fn a_long_feed_costs_what_a_short_one_does() {
                 12
             );
         });
-        let e = &events[events.len() / 2];
+        let e = events
+            .iter()
+            .filter(|e| e.name == "Hot cluster")
+            .nth(events.len() / 3)
+            .unwrap();
         let mut n = 0;
         let event = ms(|| n = event_headlines(news, e).count());
         assert_eq!(n, 1, "the event's one headline");
@@ -196,9 +218,12 @@ fn a_long_feed_costs_what_a_short_one_does() {
 fn an_industry_without_headlines_says_so() {
     let mut sim = Sim::new(data(), 1).unwrap();
     let id = IndustryId(0);
-    assert!(
-        game::pages::industries::no_headlines_note(sim.views(), id).starts_with("No headlines")
+    assert_eq!(
+        game::pages::industries::no_headlines_note(sim.views(), id),
+        "No headlines yet: phase changes, results, ratings, startups and listings in this \
+         industry post here."
     );
+    assert!(!game::pages::industries::NO_HEADLINES.contains("  "));
     while sim.views().news.get().feed.is_empty() {
         sim.step();
     }

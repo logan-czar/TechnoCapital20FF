@@ -314,11 +314,14 @@ pub fn headlines_model(v: &SimViews, id: IndustryId) -> TableModel {
     )
 }
 
+/// The note over an industry with no headline yet.
+pub const NO_HEADLINES: &str = "No headlines yet: phase changes, results, ratings, startups and \
+                                listings in this industry post here.";
+
 /// The note over an industry's headlines: empty once it has one (PR #30 review).
 pub fn no_headlines_note(v: &SimViews, id: IndustryId) -> String {
     if super::news::headline_links(v, |h| h.industry == Some(id), 1).is_empty() {
-        "No headlines yet: phase changes, results, ratings, startups and listings in this          industry post here."
-            .into()
+        NO_HEADLINES.into()
     } else {
         String::new()
     }
