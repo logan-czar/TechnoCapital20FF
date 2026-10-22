@@ -4,15 +4,13 @@
 //! The feed lists the Pdoomberg Wire's headlines (5.18) newest first, each with its date, kind
 //! and industry tag, and every subject linked: the headline itself (its page), the industry, the
 //! company and, for a startup story, the startup event. It filters by industry, by company and
-//! by kind. Every startup event appears: a startup headline links to the event it reports
-//! (matched on its date and the event's own key, industry or startup, D512), and an event that
-//! posted no headline gets a row of its own.
+//! by kind. Every startup event appears: a startup headline links to the event it reports (by
+//! the event id it carries, D543), and an event that posted no headline gets a row of its own.
 
 use std::collections::BTreeSet;
 
 use bevy::prelude::*;
 use sim::SimViews;
-use sim::births::random::{EventKind, EventType};
 use sim::news::{Headline, HeadlineKind};
 use sim::time::Date;
 use sim::views::births::EventRow;
@@ -63,29 +61,13 @@ pub fn kind_of(k: &HeadlineKind) -> (&'static str, Pick) {
     }
 }
 
-/// The startup event a headline reports (D512): the same date (both are dated at the plan
-/// lock), and a fixed event's own key, or a random event's one startup, or a hot cluster's
-/// industry and count.
+/// The startup event a headline reports, by the id it carries (D543; events are in id order).
 pub fn event_of<'a>(h: &Headline, events: &'a [EventRow]) -> Option<&'a EventRow> {
-    let on_day = || events.iter().filter(|e| e.date == h.date);
-    match &h.kind {
-        HeadlineKind::FixedStartupEvent { event, .. } => {
-            on_day().find(|e| matches!(&e.kind, EventKind::Fixed(k) if k == event))
-        }
-        HeadlineKind::StartupLaunch => {
-            let c = h.company?;
-            on_day().find(|e| e.startups.contains(&c))
-        }
-        HeadlineKind::HotCluster { startups } => {
-            let i = h.industry?;
-            on_day().find(|e| {
-                matches!(e.kind, EventKind::Random(EventType::HotCluster))
-                    && e.industries.contains(&i)
-                    && e.startups.len() == *startups as usize
-            })
-        }
-        _ => None,
-    }
+    let id = h.event?;
+    events
+        .binary_search_by_key(&id, |e| e.id)
+        .ok()
+        .map(|i| &events[i])
 }
 
 /// One line of the feed: a headline, or a startup event that posted none.

@@ -7,10 +7,12 @@ mod common;
 use common::data;
 use sim::Sim;
 use sim::births::ipo::{BallotVoter, VoterRole};
+use sim::births::random::EventKind;
 use sim::market::index::INDEX_BASE;
+use sim::news::HeadlineKind;
 use sim::time::Date;
 use sim::views::company_detail::SeatPerson;
-use sim::world::Director;
+use sim::world::{Director, Ordinal};
 
 #[test]
 fn exchanges_serve_each_index_s_daily_closes_from_2020() {
@@ -165,4 +167,42 @@ fn ipo_ballots_name_their_voters() {
         }
     }
     assert!(ballots > 0, "votes at the first lock");
+}
+
+/// Each startup headline carries the id of the event it reports (D543), and every event fired
+/// is reported by exactly one posted headline.
+#[test]
+fn startup_headlines_carry_their_event() {
+    let mut sim = Sim::new(data(), 1).unwrap();
+    common::ops::run_to(&mut sim, Date::ymd(2020, 4, 11));
+    let w = sim.world();
+    let mut reports = vec![0; w.births.events.len()];
+    for h in w.news.feed.iter() {
+        let startup = matches!(
+            h.kind,
+            HeadlineKind::FixedStartupEvent { .. }
+                | HeadlineKind::StartupLaunch
+                | HeadlineKind::HotCluster { .. }
+        );
+        assert_eq!(h.event.is_some(), startup, "{}", h.text);
+        let Some(id) = h.event else {
+            continue;
+        };
+        let e = &w.births.events[id.index()];
+        assert_eq!(e.id, id);
+        assert_eq!(e.date, h.date, "dated at the plan lock");
+        match &h.kind {
+            HeadlineKind::StartupLaunch => assert_eq!(e.companies, vec![h.company.unwrap()]),
+            HeadlineKind::HotCluster { startups } => {
+                assert_eq!(e.companies.len(), *startups as usize);
+            }
+            HeadlineKind::FixedStartupEvent { event, .. } => {
+                assert!(matches!(&e.kind, EventKind::Fixed(k) if k == event));
+            }
+            _ => unreachable!(),
+        }
+        reports[id.index()] += 1;
+    }
+    assert!(!reports.is_empty());
+    assert!(reports.iter().all(|&n| n == 1), "{reports:?}");
 }

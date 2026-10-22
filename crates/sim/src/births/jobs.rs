@@ -453,7 +453,7 @@ pub fn fixed_events_job(world: &mut World, ctx: &mut JobCtx<'_>) {
                 ctx.draws,
             )
         };
-        let Some((_, made)) = fire_event(world, ctx, &draft) else {
+        let Some((fired, made)) = fire_event(world, ctx, &draft) else {
             continue;
         };
         let headline = if event.id == CHATBOT_EVENT_ID {
@@ -475,7 +475,7 @@ pub fn fixed_events_job(world: &mut World, ctx: &mut JobCtx<'_>) {
         } else {
             news::fixed_event(date, &event.id, &event.name, made.len() as u32)
         };
-        world.news.queue(headline);
+        world.news.queue(headline.of_event(fired));
     }
 }
 
@@ -498,7 +498,7 @@ pub fn random_events_job(world: &mut World, ctx: &mut JobCtx<'_>) {
         draw_random_events(&weights, &|ind| hq_candidates(w, ind, None), ctx.draws)
     };
     for draft in &drafts {
-        let Some((_, made)) = fire_event(world, ctx, draft) else {
+        let Some((fired, made)) = fire_event(world, ctx, draft) else {
             continue;
         };
         let first = &world.companies[made[0]];
@@ -515,7 +515,7 @@ pub fn random_events_job(world: &mut World, ctx: &mut JobCtx<'_>) {
         } else {
             news::hot_cluster(date, industry, &ind_name, &place, made.len() as u32)
         };
-        world.news.queue(headline);
+        world.news.queue(headline.of_event(fired));
     }
 }
 

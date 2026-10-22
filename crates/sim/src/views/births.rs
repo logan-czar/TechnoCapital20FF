@@ -78,9 +78,13 @@ impl BirthsView {
         self.listings.iter().filter(move |l| l.date >= since)
     }
 
-    /// The event with id `id` (for "Founded [date] ([event])").
+    /// The event with id `id` (for "Founded [date] ([event])"; a headline's event, D543).
+    /// Events are in id order.
     pub fn event(&self, id: StartupEventId) -> Option<&EventRow> {
-        self.events.iter().find(|e| e.id == id)
+        self.events
+            .binary_search_by_key(&id, |e| e.id)
+            .ok()
+            .map(|i| &self.events[i])
     }
 
     /// The births column of industry `id` (spec 8).

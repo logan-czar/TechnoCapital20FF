@@ -20,7 +20,7 @@ use crate::market::earnings::SurpriseTag;
 use crate::rng::{DrawSource, Stream};
 use crate::time::Date;
 use crate::world::log::ChunkLog;
-use crate::world::{CompanyId, IndustryId, PhaseLabel};
+use crate::world::{CompanyId, IndustryId, PhaseLabel, StartupEventId};
 
 /// Spec 5.18 (A): MVP headlines come from a neutral Pdoomberg Wire byline.
 pub const BYLINE: &str = "Pdoomberg Wire";
@@ -88,11 +88,20 @@ pub struct Headline {
     pub industry: Option<IndustryId>,
     /// The company the story is about, when there is one (5.1.2 news on listed companies).
     pub company: Option<CompanyId>,
+    /// The startup event the story reports (5.19; a fixed event, a random event's startup or a
+    /// hot cluster), set by the plan lock that fired it (D543).
+    pub event: Option<StartupEventId>,
     pub kind: HeadlineKind,
     pub text: String,
 }
 
 impl Headline {
+    /// The headline as the report of startup event `event` (D543).
+    pub fn of_event(mut self, event: StartupEventId) -> Headline {
+        self.event = Some(event);
+        self
+    }
+
     /// Always [`BYLINE`] (spec 5.18 A).
     pub fn byline(&self) -> &'static str {
         BYLINE
@@ -128,6 +137,7 @@ fn headline(
         date,
         industry,
         company,
+        event: None,
         kind,
         text,
     }
