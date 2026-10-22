@@ -586,7 +586,11 @@ pub fn ipo_vote(d: &CompanyDetail) -> Vec<Block> {
                             .find(|s| s.seat == seat)
                             .and_then(|s| s.holder.as_ref())
                     {
-                        value.push(Span::muted(format!("(seat held now by {})", p.name)));
+                        let partial = if p.partial { " (partial)" } else { "" };
+                        value.push(Span::muted(format!(
+                            "(seat held now by {}{partial})",
+                            p.name
+                        )));
                     }
                     Field::new(&voter_label(b.role), value)
                 })
