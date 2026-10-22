@@ -23,7 +23,8 @@ pub const SAVE_MAGIC: &[u8; 8] = b"TC20FFSV";
 /// Bumped whenever the saved layout changes (any new field in any table).
 /// 7: each daily bar holds its EFV (D424), companies their companies.csv control (D425) and
 /// countries their superregion.
-pub const SAVE_VERSION: u32 = 7;
+/// 8: each exchange keeps its index's daily closes (D540).
+pub const SAVE_VERSION: u32 = 8;
 
 #[derive(Debug, Error)]
 pub enum SaveError {

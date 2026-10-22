@@ -17,7 +17,7 @@ use super::engine_value::{EngineValueInputs, engine_value_at_load, load_net_inco
 use super::fair_value::{
     FairValueBasis, FairValueInputs, book_floor_share, fair_value, per_share, revenue_growth,
 };
-use super::index::{ExchangeIndex, market_cap};
+use super::index::{ExchangeIndex, IndexHistory, market_cap};
 use super::price::{
     SECTOR_BETA, SECTOR_VOLATILITY, fat_tailed_normal, noise, prices_move,
     reaction_volatility_mult, rho, sigma_hourly, step_price, target_value,
@@ -201,6 +201,22 @@ pub fn start(world: &mut World, draws: &mut dyn DrawSource) {
             .map(|z| ExchangeIndex::at_load(caps[z.index()]))
             .collect(),
     );
+    // The index history starts with the load level on 1 January 2020 (D540).
+    let start = Date::ymd(crate::time::calendar::EPOCH_YEAR, 1, 1);
+    world.market.index_history = Table::from_rows(
+        world
+            .market
+            .indices
+            .iter()
+            .map(|(_, i)| {
+                let mut h = IndexHistory::default();
+                if let Some(level) = i.prev_close {
+                    h.record(start, level);
+                }
+                h
+            })
+            .collect(),
+    );
     for (_, s) in world.market.stocks.iter_mut() {
         if s.quoted {
             s.efv_error = draw_efv_error(draws);
@@ -347,6 +363,10 @@ pub fn zone_confidence_job(world: &mut World, ctx: &mut JobCtx<'_>) {
     let caps = exchange_caps(world);
     for z in world.zones.ids() {
         let r = world.market.indices[z].close_day(caps[z.index()]);
+        // The day's close joins the index history (D540), a record only: nothing reads it back.
+        if let Some(level) = world.market.indices[z].prev_close {
+            world.market.index_history[z].record(ctx.facts.date, level);
+        }
         let news = confidence_news(&confidence_headlines(world, z));
         let zone = &mut world.zones[z];
         zone.confidence = update_confidence(zone.confidence, r, news);
@@ -553,12 +573,16 @@ pub fn consensus_job(world: &mut World, ctx: &mut JobCtx<'_>) {
     }
 }
 
-/// 4.5 step 2 (spec 3.10, 4.5): each company keeps 10 years of daily bars.
+/// 4.5 step 2 (spec 3.10, 4.5): each company keeps 10 years of daily bars, and each exchange
+/// as many index closes (D540).
 pub fn archive_bars_job(world: &mut World, ctx: &mut JobCtx<'_>) {
     let d = ctx.facts.date;
     let first_kept = Date::ymd(d.year - BAR_YEARS_KEPT, d.month, d.day);
     for (_, s) in world.market.stocks.iter_mut() {
         s.bars.drop_before(first_kept);
+    }
+    for (_, h) in world.market.index_history.iter_mut() {
+        h.drop_before(first_kept);
     }
 }
 

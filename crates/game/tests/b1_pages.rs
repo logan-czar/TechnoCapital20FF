@@ -20,7 +20,7 @@ use game::pages::company::{self, SECTIONS, company_doc};
 use game::pages::country::country_doc;
 use game::pages::doc::{Block, Live, LiveSpan, PageDoc, SectionDoc, Span, TabButton, current_tab};
 use game::pages::exchange::exchange_doc;
-use game::pages::zone::{IndexHistory, zone_doc};
+use game::pages::zone::{index_chart, zone_doc};
 use game::pages::{PageKind, PageRef, SectionHeader};
 use game::table::format;
 use game::table::{Cell, Table};
@@ -65,7 +65,6 @@ fn every_entity_page_builds() {
     let (sim, _) = after_lock();
     for v in [fresh().views().clone(), sim.views().clone()] {
         let index = NameIndex::build(&v);
-        let h = IndexHistory::default();
         let mut kinds = BTreeSet::new();
         for r in &v.company_rows.get().rows {
             let d = company_doc(r.id, &v, &index);
@@ -92,13 +91,13 @@ fn every_entity_page_builds() {
             assert_eq!(t.model.len(), c.hq_companies.len(), "{}", c.name);
         }
         for z in &v.zones.get().zones {
-            let d = zone_doc(z.id, &v, &index, &h);
+            let d = zone_doc(z.id, &v, &index);
             assert_eq!(d.title, z.name);
             assert_eq!(
                 d.table("zone.members").unwrap().model.len(),
                 z.members.len()
             );
-            let x = exchange_doc(z.id, &v, &index, &h);
+            let x = exchange_doc(z.id, &v, &index);
             assert!(!x.title.is_empty());
             let listed = v.exchanges.get().exchanges[z.id.0 as usize]
                 .constituents
@@ -474,7 +473,6 @@ fn pages_link_their_names() {
     let (sim, _) = after_lock();
     let v = sim.views().clone();
     let index = NameIndex::build(&v);
-    let h = IndexHistory::default();
     for r in v.company_rows.get().rows.iter().take(80).chain(
         v.company_rows
             .get()
@@ -539,12 +537,12 @@ fn pages_link_their_names() {
         }
     }
     for z in &v.zones.get().zones {
-        let links = zone_doc(z.id, &v, &index, &h).links();
+        let links = zone_doc(z.id, &v, &index).links();
         assert!(links.contains(&PageRef::Exchange(z.id)));
         for &c in &z.members {
             assert!(links.contains(&PageRef::Country(c)));
         }
-        let links = exchange_doc(z.id, &v, &index, &h).links();
+        let links = exchange_doc(z.id, &v, &index).links();
         assert!(links.contains(&PageRef::Zone(z.id)));
         let x = &v.exchanges.get().exchanges[z.id.0 as usize];
         for &co in &x.constituents {
@@ -649,13 +647,10 @@ fn no_ballot_odds_anywhere() {
     assert!(!bt.contains('%'), "no percent on the vote: {bt}");
 }
 
-/// The index record keeps one close a day from v_zones and starts again on a new game.
+/// The index chart draws v_exchanges' closes (D540): the load level, then one close a day.
 #[test]
-fn index_history_records_daily_closes() {
+fn the_index_chart_draws_the_sim_s_daily_closes() {
     let mut sim = fresh();
-    let mut h = IndexHistory::default();
-    assert!(h.record(sim.views()));
-    assert!(!h.record(sim.views()), "no new rebuild, no new point");
     let z = sim
         .views()
         .zones
@@ -665,17 +660,31 @@ fn index_history_records_daily_closes() {
         .find(|z| z.index_close.is_some())
         .unwrap()
         .id;
-    assert_eq!(h.of(z).len(), 1);
+    let points = |sim: &Sim| {
+        let v = sim.views();
+        index_chart(z, v, &NameIndex::build(v)).labels.len()
+    };
+    assert_eq!(points(&sim), 1, "the load level");
     for _ in 0..24 * 3 {
         sim.step();
-        h.record(sim.views());
     }
-    assert_eq!(h.of(z).len(), 4, "one close a day");
-    let days: Vec<_> = h.of(z).iter().map(|p| p.0).collect();
-    assert!(days.windows(2).all(|w| w[0] < w[1]));
-    let fresh_game = fresh();
-    h.record(fresh_game.views());
-    assert_eq!(h.of(z).len(), 1, "a new game starts the record again");
+    assert_eq!(points(&sim), 4, "one close a day");
+    let v = sim.views();
+    let m = index_chart(z, v, &NameIndex::build(v));
+    let closes: Vec<_> = v
+        .exchanges
+        .get()
+        .of_zone(z)
+        .unwrap()
+        .closes
+        .iter()
+        .copied()
+        .collect();
+    assert_eq!(m.labels[0], format::date(sim::time::Date::ymd(2020, 1, 1)));
+    let game::chart::Series::Line { values, .. } = &m.series[0] else {
+        panic!("a line")
+    };
+    assert_eq!(*values, closes.iter().map(|c| c.level).collect::<Vec<_>>());
 }
 
 // ---- The pages in the shell ----
@@ -918,11 +927,11 @@ fn live_tables_and_charts_follow_the_first_change() {
     );
 }
 
-/// A load starts the index record again even when the save is later than the record's last
-/// day (D487): the bridge's epoch moved, so no other game's close is kept.
+/// A load shows the loaded game's whole index history (D540): its closes come from the save,
+/// not from what the UI saw this session.
 #[test]
-fn a_load_starts_the_index_record_again() {
-    let dir = std::env::temp_dir().join(format!("m9-b1-index-load-{}", std::process::id()));
+fn a_load_shows_the_saved_index_history() {
+    let dir = std::env::temp_dir().join(format!("m9-c1-index-load-{}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
     let path = dir.join("save.bin");
     let mut saved = fresh();
@@ -931,19 +940,41 @@ fn a_load_starts_the_index_record_again() {
     }
     saved.save(&path).unwrap();
     let mut app = shell_app();
-    let z = app.world().resource::<Views>().zones.get().zones[0].id;
-    let points = |app: &App| app.world().resource::<IndexHistory>().of(z).len();
-    run_until(&mut app, |v| {
-        v.clock().date >= sim::time::Date::ymd(2020, 1, 2)
-    });
-    assert_eq!(points(&app), 2);
+    let z = app
+        .world()
+        .resource::<Views>()
+        .zones
+        .get()
+        .zones
+        .iter()
+        .find(|z| z.index_close.is_some())
+        .unwrap()
+        .id;
+    open(&mut app, PageRef::Zone(z));
+    let b = body(&mut app);
+    let chart = holding::<Chart>(&mut app, b)[0];
+    let points = |app: &App| {
+        app.world()
+            .get::<Chart>(chart)
+            .map(|c| c.model().labels.len())
+    };
+    assert_eq!(points(&app), Some(1), "a fresh game: the load level");
     send(&mut app, Control::Load(path.clone()));
-    frames(&mut app, 2);
+    frames(&mut app, 3);
     assert_eq!(
         app.world().resource::<Views>().clock().date,
         sim::time::Date::ymd(2020, 1, 3)
     );
-    assert_eq!(points(&app), 1, "only the loaded game's close");
+    let b = body(&mut app);
+    let chart = holding::<Chart>(&mut app, b)[0];
+    let n = app
+        .world()
+        .get::<Chart>(chart)
+        .unwrap()
+        .model()
+        .labels
+        .len();
+    assert_eq!(n, 3, "1, 2 and 3 January: the saved game's whole history");
     let _ = std::fs::remove_dir_all(&dir);
 }
 
