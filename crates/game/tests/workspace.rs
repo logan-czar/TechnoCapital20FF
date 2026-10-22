@@ -462,10 +462,8 @@ fn every_page_kind_builds() {
                 .count();
             assert_eq!(tables, 1, "{p} has its index table");
         }
-        if matches!(
-            p.kind(),
-            PageKind::Company | PageKind::Industry | PageKind::Zone
-        ) {
+        // Lane B1 replaced the Company, Character, Country, Zone and Exchange placeholders.
+        if matches!(p.kind(), PageKind::Industry) {
             assert!(
                 texts.iter().any(|t| t.contains("Placeholder")),
                 "{p} is a placeholder"
@@ -491,24 +489,30 @@ fn sections_collapse_and_hide() {
             .map(|h| h.id)
             .collect()
     };
-    assert_eq!(headers(&mut app).len(), 4);
+    assert_eq!(headers(&mut app).len(), 7);
     {
         let mut cfg = app.world_mut().resource_mut::<UiConfig>();
         let s = cfg.sections.entry("company".into()).or_default();
-        s.hidden.insert("views".into());
-        s.order = vec!["plan".into(), "links".into()];
+        s.hidden.insert("units".into());
+        s.order = vec!["tech".into(), "overview".into()];
     }
     frames(&mut app, 2);
     let mut h = headers(&mut app);
     h.sort_unstable();
-    assert_eq!(h, ["chart", "links", "plan"]);
+    assert_eq!(
+        h,
+        [
+            "board",
+            "cap_table",
+            "chart",
+            "financials",
+            "overview",
+            "tech"
+        ]
+    );
     let pane = ws(&app).focused();
     let texts = body_texts(&mut app, pane);
-    assert!(
-        texts
-            .iter()
-            .any(|t| t.contains("[show Views this page reads]"))
-    );
+    assert!(texts.iter().any(|t| t.contains("[show Units]")));
 }
 
 /// Hovering a link for the delay shows its name card; leaving hides it after the grace time.
