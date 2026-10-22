@@ -26,7 +26,6 @@ use game::table::format;
 use game::table::{Cell, Table};
 use game::test_support::click;
 use game::ui::ShellPlugin;
-use game::ui::demo::demo_tables;
 use game::workspace::{OpenPage, OpenTarget, PaneFrame, Workspace};
 use sim::births::ipo::{Ballot, BallotVoter, VoteResult, VoterRole};
 use sim::people::board::Seat;
@@ -889,12 +888,10 @@ fn the_index_chart_draws_the_sim_s_daily_closes() {
 
 fn shell_app() -> App {
     let data = data();
-    let demo = demo_tables(&data);
     let mut app = App::new();
     app.add_plugins((MinimalPlugins, bevy::input::InputPlugin))
         .insert_resource(TimeUpdateStrategy::ManualDuration(FRAME))
         .add_plugins(SimBridgePlugin::new(Sim::new(data, 42).unwrap()))
-        .insert_resource(demo)
         .add_plugins(ShellPlugin);
     app.update();
     app
@@ -1132,8 +1129,8 @@ fn live_tables_and_charts_follow_the_first_change() {
 /// not from what the UI saw this session.
 #[test]
 fn a_load_shows_the_saved_index_history() {
-    let dir = std::env::temp_dir().join(format!("m9-c1-index-load-{}", std::process::id()));
-    std::fs::create_dir_all(&dir).unwrap();
+    // Removed when the test ends, pass or fail.
+    let dir = game::test_support::Scratch::new("m9-c1-index-load");
     let path = dir.join("save.bin");
     let mut saved = fresh();
     for _ in 0..60 {
@@ -1176,7 +1173,6 @@ fn a_load_shows_the_saved_index_history() {
         .labels
         .len();
     assert_eq!(n, 3, "1, 2 and 3 January: the saved game's whole history");
-    let _ = std::fs::remove_dir_all(&dir);
 }
 
 /// The Company page's sections fold, move and hide from their header buttons, and its tab

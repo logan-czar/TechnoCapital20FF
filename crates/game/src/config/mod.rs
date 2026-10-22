@@ -403,31 +403,9 @@ fn write_config(
 mod tests {
     use super::*;
     use crate::pages::PageRef;
+    use crate::test_support::Scratch;
     use crate::workspace::model::{Axis, SavedNode};
     use sim::world::CompanyId;
-
-    /// A fresh directory under the temp dir, removed when the test ends (pass or fail).
-    struct Scratch(PathBuf);
-
-    impl Scratch {
-        fn new(name: &str) -> Scratch {
-            let dir = std::env::temp_dir()
-                .join(format!("tc20ff-a2-config-{name}-{}", std::process::id()));
-            let _ = std::fs::remove_dir_all(&dir);
-            std::fs::create_dir_all(&dir).unwrap();
-            Scratch(dir)
-        }
-
-        fn file(&self) -> PathBuf {
-            self.0.join(CONFIG_FILE)
-        }
-    }
-
-    impl Drop for Scratch {
-        fn drop(&mut self) {
-            let _ = std::fs::remove_dir_all(&self.0);
-        }
-    }
 
     fn sample() -> UiConfig {
         let mut cfg = UiConfig {
@@ -484,8 +462,8 @@ mod tests {
 
     #[test]
     fn round_trips_through_the_file() {
-        let dir = Scratch::new("roundtrip");
-        let path = dir.file();
+        let dir = Scratch::new("a2-config-roundtrip");
+        let path = dir.join(CONFIG_FILE);
         let cfg = sample();
         let mut store = ConfigStore::at(path.clone());
         store.flush(&cfg);
@@ -506,8 +484,8 @@ mod tests {
 
     #[test]
     fn missing_and_corrupt_files_give_defaults() {
-        let dir = Scratch::new("corrupt");
-        let path = dir.file();
+        let dir = Scratch::new("a2-config-corrupt");
+        let path = dir.join(CONFIG_FILE);
         let (cfg, outcome) = load(&path);
         assert_eq!((cfg, outcome), (UiConfig::default(), LoadOutcome::Missing));
         std::fs::write(&path, "(density: Sideways, font_scale: \"big\"").unwrap();
@@ -577,8 +555,8 @@ mod tests {
 
     #[test]
     fn bom_and_non_utf8_files() {
-        let dir = Scratch::new("bom");
-        let path = dir.file();
+        let dir = Scratch::new("a2-config-bom");
+        let path = dir.join(CONFIG_FILE);
         std::fs::write(&path, b"\xEF\xBB\xBF(density: Compact)").unwrap();
         let (cfg, outcome) = load(&path);
         assert_eq!(outcome, LoadOutcome::Loaded, "a byte-order mark is skipped");
@@ -618,34 +596,47 @@ mod tests {
         assert_eq!(config_path_from(none, None), None);
     }
 
+    /// The write waits for the delay and comes on exit; time is a manual clock (no wall-clock
+    /// sleeps): each update advances `Time<Real>` by exactly the step set before it.
     #[test]
     fn writes_wait_for_the_delay_and_exit() {
-        let dir = Scratch::new("delay");
-        let path = dir.file();
+        use bevy::time::TimeUpdateStrategy;
+        use std::time::Duration;
+        let dir = Scratch::new("a2-config-delay");
+        let path = dir.join(CONFIG_FILE);
         let mut app = App::new();
         app.add_plugins(MinimalPlugins)
+            .insert_resource(TimeUpdateStrategy::ManualDuration(Duration::ZERO))
             .insert_resource(ConfigStore::at(path.clone()))
             .add_plugins(ConfigPlugin);
-        app.update();
+        // One update `secs` of real time after the last.
+        let update_after = |app: &mut App, secs: f64| {
+            app.insert_resource(TimeUpdateStrategy::ManualDuration(Duration::from_secs_f64(
+                secs,
+            )));
+            app.update();
+        };
+        update_after(&mut app, 0.0);
         assert!(!path.exists(), "nothing written for an unchanged config");
         app.world_mut().resource_mut::<UiConfig>().density = Density::Compact;
-        app.update();
+        update_after(&mut app, 0.0);
         assert!(!path.exists(), "waits for the delay");
+        update_after(&mut app, WRITE_DELAY_SECS * 0.9);
+        assert!(!path.exists(), "still inside the delay");
         // A change that keeps coming (a divider drag) keeps restarting the wait.
-        let step = std::time::Duration::from_secs_f64(WRITE_DELAY_SECS * 0.6);
         for i in 0..3 {
-            std::thread::sleep(step);
             app.world_mut().resource_mut::<UiConfig>().font_scale = 1.0 + 0.05 * (i + 1) as f32;
-            app.update();
+            update_after(&mut app, WRITE_DELAY_SECS * 0.6);
             assert!(!path.exists(), "still changing at step {i}");
         }
-        std::thread::sleep(std::time::Duration::from_secs_f64(WRITE_DELAY_SECS + 0.1));
-        app.update();
-        assert!(path.exists(), "written once it settled");
+        update_after(&mut app, WRITE_DELAY_SECS * 0.6);
+        assert!(!path.exists(), "0.6 of the delay since the last change");
+        update_after(&mut app, WRITE_DELAY_SECS * 0.5);
+        assert!(path.exists(), "written once it settled for the delay");
         assert_eq!(load(&path).0.density, Density::Compact);
         app.world_mut().resource_mut::<UiConfig>().font_scale = 1.1;
         app.world_mut().write_message(AppExit::Success);
-        app.update();
+        update_after(&mut app, 0.0);
         assert!(
             (load(&path).0.font_scale - 1.1).abs() < 1e-6,
             "flushed on exit"

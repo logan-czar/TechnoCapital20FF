@@ -28,7 +28,7 @@ use sim::views::recap::{ExpectedRow, RecapPage, RecapQuarter};
 use sim::world::{AlertKind, AlertLevel, AlertPayload, CompanyId};
 
 use super::live::{Filter, Live, LiveCtx, LiveModel, spawn_live_table, spawn_live_text};
-use super::market::{fact, note, table_box};
+use super::market::{fact, fitted_table_box, note, table_box};
 use super::placeholder::{chip_row, link_group, page_header};
 use super::{PageAppExt, PageBuild, PageKind, PageRef, PageSpec, Refresh, ViewKey};
 use crate::bridge::{RunnerControls, SimNotice, Views};
@@ -304,7 +304,8 @@ fn recap_page(
             &index,
             &controls,
         );
-        let boxed = table_box(&mut commands, body, r.companies.len());
+        // Its height follows the live table's rows, as watchlist changes add and drop them.
+        let boxed = fitted_table_box(&mut commands, body, r.companies.len());
         spawn_live_table(
             &mut commands,
             boxed,

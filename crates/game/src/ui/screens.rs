@@ -11,21 +11,11 @@ use bevy::prelude::*;
 pub use crate::pages::placeholder::ViewLine;
 pub use crate::pages::{ViewKey, view_meta};
 
-/// The World page's province table (the latest one built), from the starting data until the
-/// map lands (M8; [`super::DemoTables`], deleted in M9 Phase C).
-#[derive(Resource, Debug, Clone, Copy)]
-pub struct DemoTableEntities {
-    pub provinces: Entity,
-}
-
 pub struct ScreensPlugin;
 
 impl Plugin for ScreensPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(DemoTableEntities {
-            provinces: Entity::PLACEHOLDER,
-        })
-        .add_plugins((
+        app.add_plugins((
             crate::pdoomberg::PdoombergPlugin,
             crate::pages::market::MarketPagesPlugin,
         ));

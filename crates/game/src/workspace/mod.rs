@@ -427,7 +427,7 @@ fn apply_pane_actions(
                 ws.focus(n);
             }
             PaneAction::Nudge(d) => {
-                ws.nudge(f, *d);
+                ws.nudge_in(f, *d, size.x, size.y);
             }
             PaneAction::SaveLayout(name) => {
                 let name = name.trim();
@@ -542,6 +542,7 @@ fn drag_divider(
     dividers: Query<&Divider>,
     nodes: Query<&ComputedNode>,
     mut ws: ResMut<Workspace>,
+    ui: Option<Res<WorkspaceUi>>,
 ) {
     ev.propagate(false);
     let Ok(d) = dividers.get(ev.event_target()) else {
@@ -558,7 +559,9 @@ fn drag_divider(
     if len > 1.0
         && let Some(r) = ws.ratio(d.split)
     {
-        ws.set_ratio(d.split, r + delta / len);
+        // No pane goes under its minimum size (D450, D571).
+        let area = ui.map_or(Vec2::new(1280.0, 800.0), |u| u.size);
+        ws.set_ratio_in(d.split, r + delta / len, area.x, area.y);
     }
 }
 

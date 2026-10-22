@@ -6,7 +6,6 @@
 //! [`SimControl`](crate::bridge::SimControl) messages; none can reach the sim (spec 9).
 
 pub mod alerts;
-pub mod demo;
 pub mod outliner;
 pub mod rail;
 pub mod screens;
@@ -17,7 +16,6 @@ use bevy::prelude::*;
 
 use crate::bridge::SimSystems;
 use crate::table::{TablePlugin, TableSystems};
-pub use demo::DemoTables;
 use theme::{color, size};
 
 /// The shell's areas, spawned once at startup; each module fills its own.
@@ -92,8 +90,7 @@ impl Plugin for ShellPlugin {
         if !app.world().contains_resource::<crate::config::UiConfig>() {
             app.add_plugins(crate::config::ConfigPlugin);
         }
-        app.init_resource::<DemoTables>()
-            .init_resource::<KeyboardCapture>()
+        app.init_resource::<KeyboardCapture>()
             .add_plugins((theme::ThemePlugin, TablePlugin))
             .configure_sets(
                 Update,

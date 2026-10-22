@@ -586,6 +586,45 @@ mod tests {
         assert!(weekly(&[]).is_empty());
     }
 
+    /// Weeks of bars with no EFV band (a bankrupt company's, D465) aggregate the same and carry
+    /// no band; a week whose last bar lost its band has none, as the band is the close's, and
+    /// the 10-year view draws no band strip for them (a wick and a body per week).
+    #[test]
+    fn weekly_bars_without_a_band() {
+        let mut d = daily(70);
+        for b in &mut d {
+            b.band = None;
+        }
+        let w = weekly(&d);
+        assert_eq!(w[0].date, Date::ymd(2020, 1, 1));
+        assert!(w.iter().all(|b| b.band.is_none()));
+        let week: Vec<&Ohlc> = d
+            .iter()
+            .filter(|b| b.date >= w[1].date && b.date < w[2].date)
+            .collect();
+        assert_eq!((w[1].open, w[1].close), (week[0].open, week[6].close));
+        // Banded days, then the band goes mid-week: the week takes its close's (none).
+        let mut d = daily(70);
+        let cut = d
+            .iter()
+            .position(|b| b.date == Date::ymd(2020, 1, 15))
+            .unwrap();
+        for b in &mut d[cut..] {
+            b.band = None;
+        }
+        let w = weekly(&d);
+        assert!(w[1].band.is_some(), "the week of 6 Jan closed banded");
+        assert_eq!(w[2].date, Date::ymd(2020, 1, 13));
+        assert_eq!(w[2].band, None, "its last bar has no band");
+        let m = ChartModel::candles("x", w.clone());
+        let (prims, _) = primitives(&m, 800.0, 300.0);
+        assert_eq!(
+            prims.len(),
+            2 * w.len() + 2,
+            "bands only on the first two weeks"
+        );
+    }
+
     #[test]
     fn the_long_view_is_ten_years_of_weeks() {
         let d = daily(12 * 365);

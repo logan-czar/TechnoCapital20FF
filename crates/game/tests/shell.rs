@@ -15,7 +15,6 @@ use game::table::Cell;
 use game::table::{Table, TableFocus, TableRowClicked, sort_order};
 use game::ui::ShellPlugin;
 use game::ui::alerts::{AlertBoard, AlertIcon, EventLog, MAX_TOASTS, Toast};
-use game::ui::demo::demo_tables;
 use game::ui::outliner::OmniscientToggle;
 use game::ui::rail::{Router, Screen, ScreenRoot};
 use game::ui::screens::ViewLine;
@@ -31,12 +30,10 @@ fn collect(mut r: MessageReader<SimNotice>, mut seen: ResMut<Seen>) {
 
 fn shell_app() -> App {
     let data = data();
-    let demo = demo_tables(&data);
     let mut app = App::new();
     app.add_plugins((MinimalPlugins, bevy::input::InputPlugin))
         .insert_resource(TimeUpdateStrategy::ManualDuration(FRAME))
         .add_plugins(SimBridgePlugin::new(Sim::new(data, 42).unwrap()))
-        .insert_resource(demo)
         .add_plugins(ShellPlugin)
         .init_resource::<Seen>()
         .add_systems(Update, collect);
@@ -434,22 +431,28 @@ fn toast_cap_holds_within_a_frame() {
     );
 }
 
-/// M7.7 done line, automated for release builds: a sort of the 3,255 provinces fits well inside
+/// M7.7 done line, automated for release builds: a sort of the World page's 3,255 provinces
+/// (v_places) and of the Companies list's 651 rows (v_company_row, with bands) fits well inside
 /// a 60 fps frame (16 ms) on every column. Debug builds only check the order (the game crate is
-/// unoptimized there); `--bench-table` measures the whole frame.
+/// unoptimized there); `--bench-table` measures the whole frame (D519, D570).
 #[test]
-fn province_sort_fits_a_frame() {
-    let demo = demo_tables(&data());
-    let m = &demo.provinces;
-    assert_eq!(m.len(), 3_255);
-    for col in 0..m.columns.len() {
-        for asc in [true, false] {
-            let start = std::time::Instant::now();
-            let order = sort_order(m, col, asc);
-            let ms = start.elapsed().as_secs_f64() * 1e3;
-            assert_eq!(order.len(), 3_255);
-            if !cfg!(debug_assertions) {
-                assert!(ms < 16.0, "sort by column {col} took {ms:.2} ms");
+fn table_sorts_fit_a_frame() {
+    let sim = Sim::new(data(), 42).unwrap();
+    let v = sim.views();
+    let index = game::command::index::NameIndex::build(v);
+    let provinces = game::pages::world::province_model(v);
+    let companies = game::pages::lists::list_model(&PageRef::Companies, v, &index).unwrap();
+    for (m, n) in [(&provinces, 3_255), (&companies, 651)] {
+        assert_eq!(m.len(), n);
+        for col in 0..m.columns.len() {
+            for asc in [true, false] {
+                let start = std::time::Instant::now();
+                let order = sort_order(m, col, asc);
+                let ms = start.elapsed().as_secs_f64() * 1e3;
+                assert_eq!(order.len(), n);
+                if !cfg!(debug_assertions) {
+                    assert!(ms < 16.0, "sort by column {col} took {ms:.2} ms");
+                }
             }
         }
     }
