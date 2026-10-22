@@ -416,7 +416,10 @@ fn news_page(
         note(
             &mut commands,
             b.head,
-            format!("Lists the newest {FEED_ROWS} rows that pass the filters; Show lists more."),
+            format!(
+                "Lists the newest {FEED_ROWS} rows that pass the filters; Show lists more. A \
+                 column sort reorders only the rows shown."
+            ),
         );
     }
 }
