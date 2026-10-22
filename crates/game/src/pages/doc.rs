@@ -70,6 +70,12 @@ pub enum Live {
     ZoneConfidence(ZoneId),
     /// The effective credit spread (v_zones, daily).
     ZoneSpread(ZoneId),
+    /// The zone's share of world GDP (v_zones, daily).
+    ZoneGdpShare(ZoneId),
+    /// The zone's yearly effect, colored (v_zones, daily).
+    ZoneEffect(ZoneId),
+    /// The headline index's last daily close, "no listing" without one (v_zones, daily).
+    IndexClose(ZoneId),
     /// The listed count (v_exchanges, daily).
     ListedCount(ZoneId),
     /// The projection range of this quarter's net income (v_projection, daily).
@@ -139,6 +145,21 @@ impl Live {
                 .get()
                 .get(z)
                 .map_or_else(dash, |r| (bps(r.credit_spread), color::TEXT)),
+            Live::ZoneGdpShare(z) => v
+                .zones
+                .get()
+                .get(z)
+                .map_or_else(dash, |r| cell(Cell::Percent(r.gdp_share))),
+            Live::ZoneEffect(z) => v
+                .zones
+                .get()
+                .get(z)
+                .map_or_else(dash, |r| cell(Cell::Gain(r.effect, GainUnit::Percent))),
+            Live::IndexClose(z) => match v.zones.get().get(z).map(|r| r.index_close) {
+                Some(Some(c)) => cell(Cell::Number(c)),
+                Some(None) => ("no listing".to_owned(), color::TEXT_MUTED),
+                None => dash(),
+            },
             Live::ListedCount(z) => v
                 .exchanges
                 .get()
@@ -314,6 +335,15 @@ pub enum LiveTable {
     ExchangeConstituents(ZoneId),
 }
 
+impl LiveTable {
+    /// The version of the view the table follows.
+    pub fn version(self, v: &SimViews) -> u64 {
+        match self {
+            LiveTable::ExchangeConstituents(_) => v.exchanges.version(),
+        }
+    }
+}
+
 /// Which history a live chart follows.
 #[derive(Component, Debug, Clone, Copy, PartialEq)]
 pub enum LiveChart {
@@ -330,7 +360,9 @@ pub enum Block {
     Fields(Vec<Field>),
     Line(Vec<Span>),
     Table(TableDoc),
-    Chart(ChartModel, Option<LiveChart>),
+    /// A chart, and the history it follows with the version its model was built from (so the
+    /// first change after the page builds redraws it).
+    Chart(ChartModel, Option<(LiveChart, u64)>),
     Cards(Vec<CardDoc>),
     /// A titled sub-heading inside a section.
     Heading(String),
@@ -796,7 +828,10 @@ fn spawn_block(
             commands.entity(parent).add_child(holder);
             let table = spawn_table_with_id(commands, frame, Arc::new(t.model.clone()), &t.id);
             if let Some(l) = t.live {
-                commands.entity(table).insert((l, LiveVersion(0)));
+                // The model was built from these views: the first move after this redraws it.
+                commands
+                    .entity(table)
+                    .insert((l, LiveVersion(l.version(v))));
             }
         }
         Block::Chart(m, live) => {
@@ -810,8 +845,8 @@ fn spawn_block(
                 .id();
             commands.entity(parent).add_child(holder);
             let chart = spawn_chart(commands, holder, Arc::new(m.clone()));
-            if let Some(l) = live {
-                commands.entity(chart).insert((*l, LiveVersion(0)));
+            if let Some((l, built)) = live {
+                commands.entity(chart).insert((*l, LiveVersion(*built)));
             }
         }
         Block::Cards(cards) => {
@@ -934,13 +969,7 @@ pub fn update_live_tables(
         return;
     }
     for (l, mut ver, mut t) in &mut tables {
-        let now = match l {
-            LiveTable::ExchangeConstituents(_) => views.exchanges.version(),
-        };
-        if ver.0 == 0 {
-            ver.0 = now;
-            continue;
-        }
+        let now = l.version(&views);
         if ver.0 != now {
             ver.0 = now;
             let model = match *l {
@@ -968,10 +997,6 @@ pub fn update_live_charts(
             LiveChart::Company(_) => views.price_bars.version(),
             LiveChart::Index(_) => history.version(),
         };
-        if ver.0 == 0 {
-            ver.0 = now;
-            continue;
-        }
         if ver.0 == now {
             continue;
         }

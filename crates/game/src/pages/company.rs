@@ -378,11 +378,18 @@ fn overview(d: &CompanyDetail, row: Option<&CompanyRow>, v: &SimViews) -> Vec<Bl
 }
 
 fn chart(id: CompanyId, d: &CompanyDetail, v: &SimViews) -> Vec<Block> {
+    let live = Some((LiveChart::Company(id), v.price_bars.version()));
     match price_chart(id, v) {
-        Some(m) => vec![Block::Chart(m, Some(LiveChart::Company(id)))],
-        None if d.exchange.is_some() => vec![Block::Line(vec![Span::muted(
-            "No bars yet: the chart fills from the first daily close.",
-        )])],
+        Some(m) => vec![Block::Chart(m, live)],
+        // An empty chart that follows v_price_bars, so the first close draws without a rebuild
+        // (the page does not rebuild on the daily bars, D485).
+        None if d.exchange.is_some() => vec![Block::Chart(
+            ChartModel::candles(
+                "No bars yet: the chart fills from the first daily close.",
+                Vec::new(),
+            ),
+            live,
+        )],
         None => vec![Block::Line(vec![Span::muted(
             "Not listed: a private company has no price history (spec 5.14).",
         )])],

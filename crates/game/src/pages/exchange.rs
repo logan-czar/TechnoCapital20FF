@@ -172,7 +172,10 @@ pub fn exchange_doc(z: ZoneId, v: &SimViews, index: &NameIndex, h: &IndexHistory
                         )],
                     ),
                 ]),
-                Block::Chart(index_chart(z, v, h, index), Some(LiveChart::Index(z))),
+                Block::Chart(
+                    index_chart(z, v, h, index),
+                    Some((LiveChart::Index(z), h.version())),
+                ),
             ],
         },
         SectionDoc {

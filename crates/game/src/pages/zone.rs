@@ -30,9 +30,9 @@ pub const SECTIONS: &[SectionSpec] = &[
     ("members", "Member countries"),
 ];
 
-/// Rebuilds on the monthly views only; the daily confidence, spread and index follow by
-/// themselves ([`Live`]).
-pub const VIEWS: &[ViewKey] = &[ViewKey::Countries, ViewKey::Rates, ViewKey::Exchanges];
+/// Rebuilds on the monthly views only; the daily v_zones figures (confidence, spread, GDP
+/// share, effect, last close) and the index follow by themselves ([`Live`], D485).
+pub const VIEWS: &[ViewKey] = &[ViewKey::Countries, ViewKey::Rates];
 
 /// The most daily closes the record keeps per exchange: 10 years (the long chart view).
 pub const INDEX_HISTORY_DAYS: usize = 3660;
@@ -242,11 +242,11 @@ pub fn zone_doc(z: ZoneId, v: &SimViews, index: &NameIndex, h: &IndexHistory) ->
                         Span::muted("investor confidence (-100 to +100)"),
                     ],
                 ),
-                Field::cell("GDP share", Cell::Percent(r.gdp_share)),
+                Field::live("GDP share", Live::ZoneGdpShare(z)),
                 Field::new(
                     "Effect",
                     vec![
-                        Span::Cell(Cell::Gain(r.effect, crate::table::GainUnit::Percent)),
+                        Span::Live(Live::ZoneEffect(z)),
                         Span::muted("a year: intensity x g(t - lag) plus own shocks (5.1)"),
                     ],
                 ),
@@ -271,15 +271,12 @@ pub fn zone_doc(z: ZoneId, v: &SimViews, index: &NameIndex, h: &IndexHistory) ->
                             Span::Live(Live::IndexChange(z)),
                         ],
                     ),
-                    Field::new(
-                        "Last close",
-                        vec![match r.index_close {
-                            Some(c) => Span::Cell(Cell::Number(c)),
-                            None => Span::muted("no listing"),
-                        }],
-                    ),
+                    Field::live("Last close", Live::IndexClose(z)),
                 ]),
-                Block::Chart(index_chart(z, v, h, index), Some(LiveChart::Index(z))),
+                Block::Chart(
+                    index_chart(z, v, h, index),
+                    Some((LiveChart::Index(z), h.version())),
+                ),
             ],
         },
         SectionDoc {

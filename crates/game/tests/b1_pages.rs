@@ -252,14 +252,18 @@ fn company_pages_show_every_spec8_field() {
             })
             .expect("data quests cards");
         assert!(quests.iter().all(|c| c.bar.is_some()), "progress bars");
-        // The price chart for a listed company with bars (a listing of this lock has none
-        // until its first close).
-        let chart = section(&doc, "chart")
-            .blocks
-            .iter()
-            .any(|b| matches!(b, Block::Chart(..)));
+        // The price chart for a listed company, live on its bars (a listing of this lock has
+        // none until its first close, so its chart starts empty).
+        let chart = section(&doc, "chart").blocks.iter().find_map(|b| match b {
+            Block::Chart(m, live) => Some((m, *live)),
+            _ => None,
+        });
         let bars = v.price_bars.get().companies.iter().any(|h| h.id == r.id);
-        assert_eq!(chart, bars, "{}: chart", r.name);
+        assert_eq!(chart.is_some(), r.public, "{}: chart", r.name);
+        if let Some((m, live)) = chart {
+            assert_eq!(!m.labels.is_empty(), bars, "{}: bars", r.name);
+            assert!(live.is_some(), "{}: live chart", r.name);
+        }
         assert!(bars || !matches!(r.listing, Listing::BeforeStart { .. }));
     }
     // Founded [date] ([event]): a born company names its event, and its founders' cards show
