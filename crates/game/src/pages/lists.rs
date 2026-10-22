@@ -22,13 +22,12 @@ use crate::table::{Cell, Column, GainUnit, TableModel, Unit, spawn_table_with_id
 
 /// Registers every list page.
 pub fn register(app: &mut App) {
-    let lists: [(PageKind, &[ViewKey]); 8] = [
+    let lists: [(PageKind, &[ViewKey]); 7] = [
         (
             PageKind::Companies,
             &[ViewKey::CompanyRows, ViewKey::Quotes],
         ),
         (PageKind::Industries, &[ViewKey::IndustryRows]),
-        (PageKind::News, &[ViewKey::News]),
         (
             PageKind::Characters,
             &[ViewKey::Characters, ViewKey::Places],
@@ -142,37 +141,6 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
                         .with_hint("Supply over demand; a band in an estimated industry"),
                     Column::number("Fringe", 100.0),
                     Column::text("Largest", 200.0),
-                ],
-                rows,
-            )
-        }
-        PageRef::News => {
-            // Newest first, each linking to its page by id (D544), at most the feed's rows
-            // (D545).
-            let rows = v
-                .news
-                .get()
-                .feed
-                .iter()
-                .rev()
-                .take(super::news::FEED_ROWS)
-                .map(|h| {
-                    vec![
-                        Cell::Date(h.date),
-                        Cell::Link(PageRef::Headline(h.id), h.text.clone()),
-                        h.industry
-                            .map_or(Cell::Text("-".into()), |i| link(PageRef::Industry(i))),
-                        h.company
-                            .map_or(Cell::Text("-".into()), |c| link(PageRef::Company(c))),
-                    ]
-                })
-                .collect();
-            TableModel::new(
-                vec![
-                    Column::text("Date", 100.0),
-                    Column::text("Headline", 460.0),
-                    Column::text("Industry", 160.0),
-                    Column::text("Company", 200.0),
                 ],
                 rows,
             )
