@@ -1,8 +1,9 @@
 //! The desktop app (build-plan M7): the sim bridge and the UI shell.
 //!
 //! `cargo run -p game --release [-- --seed N]`. Benches (D14): `--bench-table [seconds]
-//! [--rows N]`, `--bench-max [seconds]` and `--bench-pages` (every page kind to its first
-//! laid-out frame), which print timings to stdout and exit.
+//! [--rows N]`, `--bench-max [seconds]` and `--bench-pages` (the M9.9 timing harness: every
+//! page, Company tab and Pdoomberg function page to its first laid-out frame, exit 1 when one
+//! takes 100 ms or more), which print timings to stdout and exit.
 
 use bevy::prelude::*;
 use bevy::window::PresentMode;
@@ -78,7 +79,8 @@ fn exit_usage(msg: &str) -> ! {
     std::process::exit(2)
 }
 
-fn main() {
+/// Exits non-zero when a bench fails its target (`--bench-pages`, D573).
+fn main() -> AppExit {
     let mut args = parse_args();
     let data = sim_data::load_world(&sim_data::default_data_dir()).unwrap_or_else(|e| {
         eprintln!("cannot load the starting data: {e}");
@@ -117,5 +119,5 @@ fn main() {
     if let Some(mode) = args.bench {
         app.add_plugins(BenchPlugin(mode));
     }
-    app.run();
+    app.run()
 }

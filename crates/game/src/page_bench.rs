@@ -1,23 +1,39 @@
-//! The page timing smoke test (M9 A2 task 9; the M9.9 harness's first cut; D459): `--bench-pages`
-//! opens one page of every kind in the focused pane, from an [`OpenPage`] message, and times it
-//! to the first frame whose layout has the page: the pane drew it, its body has a size, every
-//! text of its header is laid out, every table on it shows its first row's text laid out (the
-//! pool sizes itself from the body's laid-out height, so that is a frame or two later), and
-//! every chart with data has drawn. Each page opens twice: cold (its first build, font
-//! glyphs new) and warm. Then it opens every Pdoomberg function page (M9.4, lane B2) from an
-//! [`OpenPdoomberg`] message, timed the same way over the terminal's page area. Prints a table
-//! and exits; the target is under 100 ms in a release build on a fresh 2020 world.
+//! The M9.9 timing harness (D459, D519, D573): `--bench-pages` opens every page in the focused
+//! pane from an [`OpenPage`] message, and every Pdoomberg function page from an
+//! [`OpenPdoomberg`] message, and times each to the first frame whose layout has it: the pane
+//! (or the terminal's page area) drew it, its body has a size, every text of its header is laid
+//! out, every table on it shows its first row's text laid out (the pool sizes itself from the
+//! body's laid-out height, so that is a frame or two later), and every chart with data has
+//! drawn. Each page opens twice: cold (its first build, font glyphs new) and warm.
+//!
+//! What it opens, on a fresh 2020 world (seed 1 unless `--seed`):
+//! - one page of every [`PageKind`] that exists there (a listed and a private company, a recap
+//!   by quarter, one with no recap yet and one before the game);
+//! - every Company tab ([`crate::pages::company::SECTIONS`]) on a listed and a private
+//!   company, and the page with every section shown;
+//! - every Pdoomberg function page ([`PdbFunction::ALL`]); F3 on a listed company, a private
+//!   one and none.
+//!
+//! A fresh world has no startup event and no headline yet, so the harness then runs the game
+//! at max speed (alerts off) until the views hold both (the first events fire at the first plan
+//! lock; v_births shows them at its quarterly rebuild, in April), pauses, and times the kinds it
+//! could not open before: a startup event, a headline and a company born in play. It prints the table, then fails (exit 1) if a page took 100 ms or more, timed out, or
+//! a page kind, Company tab or function page was not covered. The target holds in a release
+//! build; a debug build prints the same table, for information.
 
+use std::collections::BTreeSet;
 use std::time::Instant;
 
 use bevy::prelude::*;
 use bevy::text::TextLayoutInfo;
+use sim::Control;
 use sim::finance::distress::CompanyStatus;
+use sim::world::{AlertKind, AlertLevel};
 
-use crate::bridge::Views;
+use crate::bridge::{SimControl, Views};
 use crate::chart::Chart;
 use crate::command::index::NameIndex;
-use crate::pages::{OpenPdoomberg, PageRef, PdbFunction, PdoombergRoute};
+use crate::pages::{OpenPdoomberg, PageKind, PageRef, PdbFunction, PdoombergRoute};
 use crate::pdoomberg::PdoombergUi;
 use crate::table::Table;
 use crate::workspace::{OpenPage, PaneFrame, Workspace, WorkspaceInput};
@@ -28,6 +44,11 @@ pub const WARMUP_FRAMES: u64 = 90;
 pub const TIMEOUT_FRAMES: u64 = 240;
 /// The target (spec 10 M9: every screen opens in under 100 ms).
 pub const TARGET_MS: f64 = 100.0;
+/// Frames the late stage may run the game for before it gives up waiting for the first
+/// startup event and headline.
+pub const ADVANCE_FRAMES_MAX: u64 = 20_000;
+/// Frames the late stage waits after pausing, so the views settle before it opens pages.
+pub const SETTLE_FRAMES: u64 = 10;
 
 /// One thing the bench opens: a workspace page or a Pdoomberg function page.
 #[derive(Debug, Clone, PartialEq)]
@@ -50,14 +71,35 @@ impl Item {
     }
 }
 
+/// Where the bench is.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+enum Stage {
+    /// Timing the fresh world's items.
+    #[default]
+    Fresh,
+    /// Running the game to the first startup event and headline (since this frame).
+    Advance(u64),
+    /// Paused there; opening once this frame is reached.
+    Settle(u64),
+    /// Timing the late items.
+    Late,
+    Done,
+}
+
+/// One timing: the item, whether it was late, the pass (0 cold, 1 warm), ms and frames.
+type Timing = (Item, bool, u8, f64, u64);
+
 #[derive(Resource, Default)]
 struct PageBench {
     frame: u64,
+    stage: Stage,
     pages: Vec<Item>,
     i: usize,
     pass: u8,
     sent: Option<(Instant, u64)>,
-    results: Vec<(Item, u8, f64, u64)>,
+    results: Vec<Timing>,
+    /// The game date the late items were timed at.
+    late_date: Option<sim::time::Date>,
 }
 
 /// The Company page's tab a bench entry opens (lane B1, D481): `None` shows every section,
@@ -74,26 +116,34 @@ impl Plugin for PageBenchPlugin {
     }
 }
 
-/// One page of each kind, picked from the views of the world as it is, and each Company tab
-/// (lane B1), then every Pdoomberg function page (F3 on a listed company). The terminal builds
-/// no page before its first open (D520), so F2's cold number is a real build.
-fn pick_items(v: &Views, index: &NameIndex) -> Vec<Item> {
-    let listed = v
-        .company_rows
-        .get()
-        .rows
-        .iter()
-        .find(|r| r.public && r.status == CompanyStatus::Active)
-        .map(|r| r.id);
+fn active(r: &&sim::views::company_rows::CompanyRow) -> bool {
+    r.status == CompanyStatus::Active
+}
+
+/// The fresh world's items: one page of each kind, every Company tab, then every Pdoomberg
+/// function page. The terminal builds no page before its first open (D520), so F2's cold
+/// number is a real build.
+fn fresh_items(v: &Views, index: &NameIndex) -> Vec<Item> {
+    let rows = &v.company_rows.get().rows;
+    let listed = rows.iter().filter(active).find(|r| r.public).map(|r| r.id);
+    let private = rows.iter().filter(active).find(|r| !r.public).map(|r| r.id);
     let mut out: Vec<Item> = pick_pages(v, index)
         .into_iter()
         .map(|(p, tab)| Item::Page(p, tab))
         .collect();
     for f in PdbFunction::ALL {
-        out.push(Item::Pdb(PdoombergRoute {
-            function: f,
-            company: if f == PdbFunction::F3 { listed } else { None },
-        }));
+        let companies: Vec<Option<sim::world::CompanyId>> = if f == PdbFunction::F3 {
+            // A listed company's bars, a private one's value band, and no company loaded.
+            vec![listed, private, None]
+        } else {
+            vec![None]
+        };
+        for company in companies {
+            out.push(Item::Pdb(PdoombergRoute {
+                function: f,
+                company,
+            }));
+        }
     }
     out
 }
@@ -109,7 +159,8 @@ fn pick_pages(v: &Views, index: &NameIndex) -> Vec<(PageRef, Tab)> {
     let rows = &v.company_rows.get().rows;
     let pick = |public: bool| {
         rows.iter()
-            .find(|r| r.public == public && r.status == CompanyStatus::Active)
+            .filter(active)
+            .find(|r| r.public == public)
             .map(|r| PageRef::Company(r.id))
     };
     if let (Some(listed), Some(private)) = (pick(true), pick(false)) {
@@ -125,25 +176,21 @@ fn pick_pages(v: &Views, index: &NameIndex) -> Vec<(PageRef, Tab)> {
     out
 }
 
-/// One page of each kind.
+/// One page of each kind that exists in the world as it is.
 fn pages_of_each_kind(v: &Views, index: &NameIndex) -> Vec<PageRef> {
     let rows = &v.company_rows.get().rows;
     let listed = rows
         .iter()
-        .find(|r| r.public && r.status == CompanyStatus::Active)
+        .filter(active)
+        .find(|r| r.public)
         .map(|r| PageRef::Company(r.id));
     let private = rows
         .iter()
-        .find(|r| !r.public && r.status == CompanyStatus::Active)
+        .filter(active)
+        .find(|r| !r.public)
         .map(|r| PageRef::Company(r.id));
     let first = |f: fn(&PageRef) -> bool| index.entries().iter().map(|e| e.page.clone()).find(&f);
-    let headline = v
-        .news
-        .get()
-        .feed
-        .iter()
-        .next()
-        .map(|h| PageRef::Headline { date: h.date, n: 0 });
+    let quarter = v.clock().date.quarter();
     [
         Some(PageRef::Companies),
         listed,
@@ -160,11 +207,12 @@ fn pages_of_each_kind(v: &Views, index: &NameIndex) -> Vec<PageRef> {
         first(|p| matches!(p, PageRef::Exchange(_))),
         Some(PageRef::Events),
         first(|p| matches!(p, PageRef::Event(_))),
-        Some(PageRef::Recap(v.clock().date.quarter())),
+        Some(PageRef::Recap(quarter)),
         Some(PageRef::News),
-        headline,
-        // A quarter with no recap and one before the game (lane B2's notes).
-        Some(PageRef::Recap(v.clock().date.quarter().next())),
+        headline(v),
+        // A quarter with no recap yet, and one before the game (lane B2's notes).
+        Some(PageRef::Recap(quarter.next())),
+        Some(PageRef::Recap(quarter.prev())),
         Some(PageRef::Settings),
         // Last: the workspace starts on it, so first would open nothing.
         Some(PageRef::World),
@@ -174,6 +222,38 @@ fn pages_of_each_kind(v: &Views, index: &NameIndex) -> Vec<PageRef> {
     .collect()
 }
 
+/// The newest headline's page, if the feed has one.
+fn headline(v: &Views) -> Option<PageRef> {
+    v.news
+        .get()
+        .feed
+        .iter()
+        .next()
+        .map(|h| PageRef::Headline { date: h.date, n: 0 })
+}
+
+/// The late items: a fired startup event, a headline and a company born in play, as a
+/// fresh world has none of them.
+fn late_items(v: &Views, index: &NameIndex) -> Vec<Item> {
+    let event = index
+        .entries()
+        .iter()
+        .map(|e| e.page.clone())
+        .find(|p| matches!(p, PageRef::Event(_)));
+    let born = v
+        .births
+        .get()
+        .births
+        .first()
+        .map(|b| PageRef::Company(b.id));
+    [event, headline(v), born]
+        .into_iter()
+        .flatten()
+        .map(|p| Item::Page(p, None))
+        .collect()
+}
+
+#[allow(clippy::too_many_arguments)]
 fn send_next(
     mut b: ResMut<PageBench>,
     views: Res<Views>,
@@ -181,13 +261,40 @@ fn send_next(
     mut cfg: ResMut<crate::config::UiConfig>,
     mut open: MessageWriter<OpenPage>,
     mut pdb: MessageWriter<OpenPdoomberg>,
+    mut sim: MessageWriter<SimControl>,
 ) {
     b.frame += 1;
     if b.frame < WARMUP_FRAMES || b.sent.is_some() {
         return;
     }
-    if b.pages.is_empty() {
-        b.pages = pick_items(&views, &index);
+    match b.stage {
+        Stage::Fresh if b.pages.is_empty() => b.pages = fresh_items(&views, &index),
+        Stage::Advance(since) => {
+            let ready = !views.births.get().events.is_empty() && headline(&views).is_some();
+            if ready || b.frame - since > ADVANCE_FRAMES_MAX {
+                sim.write(SimControl(Control::Pause));
+                b.stage = Stage::Settle(b.frame + SETTLE_FRAMES);
+            } else if views.clock().paused {
+                sim.write(SimControl(Control::SetSpeed(sim::time::control::MAX_SPEED)));
+            }
+            return;
+        }
+        Stage::Settle(at) => {
+            if b.frame < at {
+                return;
+            }
+            b.pages = late_items(&views, &index);
+            b.late_date = Some(views.clock().date);
+            b.i = 0;
+            b.pass = 0;
+            b.stage = Stage::Late;
+            if b.pages.is_empty() {
+                b.stage = Stage::Done;
+                return;
+            }
+        }
+        Stage::Done => return,
+        _ => {}
     }
     let Some(item) = b.pages.get(b.i).cloned() else {
         return;
@@ -195,12 +302,13 @@ fn send_next(
     match item {
         // An opened page leaves the terminal (D517).
         Item::Page(page, tab) => {
-            if let Some(tab) = tab {
+            // A company page shows every section unless the entry is a tab.
+            if tab.is_some() || matches!(page, PageRef::Company(_)) {
                 crate::pages::doc::select_tab(
                     &mut cfg,
-                    crate::pages::PageKind::Company,
+                    PageKind::Company,
                     crate::pages::company::SECTIONS,
-                    tab,
+                    tab.flatten(),
                 );
             }
             open.write(OpenPage::focused(page));
@@ -266,8 +374,12 @@ fn check_laid_out(
     tables: Query<&Table>,
     charts: Query<&Chart>,
     pdb: Option<Res<PdoombergUi>>,
+    mut sim: MessageWriter<SimControl>,
     mut exit: MessageWriter<AppExit>,
 ) {
+    if b.stage == Stage::Done {
+        return;
+    }
     let Some((at, sent_frame)) = b.sent else {
         return;
     };
@@ -300,43 +412,128 @@ fn check_laid_out(
     } else {
         f64::INFINITY
     };
-    let pass = b.pass;
-    b.results.push((item, pass, ms, frames_taken + 1));
+    let (pass, late) = (b.pass, b.stage == Stage::Late);
+    b.results.push((item, late, pass, ms, frames_taken + 1));
     b.sent = None;
     b.i += 1;
-    if b.i == b.pages.len() {
-        b.i = 0;
-        b.pass += 1;
-        if b.pass == 2 {
-            report(&b.results);
-            exit.write(AppExit::Success);
-        }
+    if b.i < b.pages.len() {
+        return;
     }
+    b.i = 0;
+    b.pass += 1;
+    if b.pass < 2 {
+        return;
+    }
+    if b.stage == Stage::Fresh {
+        // On to the first startup event and headline, at max speed with the alerts off.
+        for kind in AlertKind::ALL {
+            sim.write(SimControl(Control::SetAlert {
+                kind,
+                level: AlertLevel::Off,
+            }));
+        }
+        sim.write(SimControl(Control::SetSpeed(sim::time::control::MAX_SPEED)));
+        b.stage = Stage::Advance(b.frame);
+        return;
+    }
+    b.stage = Stage::Done;
+    let ok = report(&b.results, b.late_date);
+    exit.write(if ok {
+        AppExit::Success
+    } else {
+        AppExit::error()
+    });
 }
 
-fn report(results: &[(Item, u8, f64, u64)]) {
+/// What the run covered against what M9.9 asks for: the page kinds, Company tabs and
+/// function pages it never opened.
+fn missing(results: &[Timing]) -> Vec<String> {
+    let mut kinds = BTreeSet::new();
+    let mut tabs = BTreeSet::new();
+    let mut functions = BTreeSet::new();
+    for (item, ..) in results {
+        match item {
+            Item::Page(p, tab) => {
+                kinds.insert(p.kind());
+                if let Some(Some(t)) = tab {
+                    tabs.insert(*t);
+                }
+            }
+            Item::Pdb(r) => {
+                functions.insert(r.function.code());
+            }
+        }
+    }
+    let mut out: Vec<String> = PageKind::ALL
+        .iter()
+        .filter(|k| !kinds.contains(k))
+        .map(|k| format!("page kind {}", k.key()))
+        .collect();
+    out.extend(
+        crate::pages::company::SECTIONS
+            .iter()
+            .filter(|(id, _)| !tabs.contains(id))
+            .map(|(id, _)| format!("company tab {id}")),
+    );
+    out.extend(
+        PdbFunction::ALL
+            .iter()
+            .filter(|f| !functions.contains(f.code()))
+            .map(|f| format!("pdoomberg {}", f.code())),
+    );
+    out
+}
+
+/// Prints the table and the verdict; true when every page opened under the target and every
+/// kind, tab and function page was covered.
+fn report(results: &[Timing], late_date: Option<sim::time::Date>) -> bool {
     println!("BENCH pages: open in the focused pane, to the first laid-out frame");
     println!(
-        "BENCH {:<34} {:>9} {:>7} {:>9} {:>7}",
+        "BENCH {:<40} {:>9} {:>7} {:>9} {:>7}",
         "page", "cold ms", "frames", "warm ms", "frames"
     );
-    let cold: Vec<_> = results.iter().filter(|r| r.1 == 0).collect();
     let mut worst: f64 = 0.0;
-    for c in &cold {
-        let w = results.iter().find(|r| r.1 == 1 && r.0 == c.0);
-        let (wm, wf) = w.map_or((f64::NAN, 0), |w| (w.2, w.3));
-        worst = worst.max(c.2).max(wm);
-        println!(
-            "BENCH {:<34} {:>9.2} {:>7} {:>9.2} {:>7}",
-            c.0.name(),
-            c.2,
-            c.3,
-            wm,
-            wf
-        );
+    let mut over = Vec::new();
+    for late in [false, true] {
+        let cold: Vec<_> = results.iter().filter(|r| r.1 == late && r.2 == 0).collect();
+        if late && !cold.is_empty() {
+            println!(
+                "BENCH -- later, on {}: the kinds a fresh world has none of",
+                late_date.map_or("?".into(), crate::table::format::date)
+            );
+        }
+        for c in cold {
+            let w = results
+                .iter()
+                .find(|r| r.1 == late && r.2 == 1 && r.0 == c.0);
+            let (wm, wf) = w.map_or((f64::INFINITY, 0), |w| (w.3, w.4));
+            let page_worst = c.3.max(wm);
+            worst = worst.max(page_worst);
+            if page_worst >= TARGET_MS {
+                over.push(c.0.name());
+            }
+            println!(
+                "BENCH {:<40} {:>9.2} {:>7} {:>9.2} {:>7}",
+                c.0.name(),
+                c.3,
+                c.4,
+                wm,
+                wf
+            );
+        }
     }
+    let missing = missing(results);
+    for m in &missing {
+        println!("BENCH not covered: {m}");
+    }
+    for o in &over {
+        println!("BENCH over the target (or timed out): {o}");
+    }
+    let opened = results.iter().filter(|r| r.2 == 0).count();
+    let ok = over.is_empty() && missing.is_empty();
     println!(
-        "BENCH pages worst {worst:.2} ms: {} (target < {TARGET_MS} ms)",
-        if worst < TARGET_MS { "PASS" } else { "OVER" }
+        "BENCH pages {opened} opened, worst {worst:.2} ms: {} (target < {TARGET_MS} ms)",
+        if ok { "PASS" } else { "FAIL" }
     );
+    ok
 }
