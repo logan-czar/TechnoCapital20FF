@@ -26,6 +26,12 @@ sim-data = { path = "crates/sim-data" }
 [workspace.lints.rust]
 unsafe_code = "forbid"
 
+# Our own crates keep line tables (panic backtraces with file:line) but no full debug info;
+# dependencies get none. Debug info was most of each target/ dir on Windows (Logan, 2026-10-21).
+[profile.dev]
+debug = "line-tables-only"
+
 # Bevy is slow unoptimized; optimize dependencies in dev builds.
 [profile.dev.package."*"]
 opt-level = 2
+debug = false
