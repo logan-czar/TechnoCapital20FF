@@ -1,7 +1,7 @@
 //! Runs the simulation with no window (build-plan 2.1).
 //!
-//! - `--check-data` (M0.9) loads every data table, prints the row counts and runs the load-time
-//!   checks; a bad row exits non-zero with its file, line and field (spec 10 M0).
+//! - `--check-data` (M0.9) loads every data table (and the assets/map files when there are any,
+//!   M8), prints the row counts and runs the load-time checks; a bad row exits non-zero with its file, line and field (spec 10 M0).
 //! - `run` (M1.8, M1.9) runs each seed for N years through the `Sim` API only, prints the state
 //!   hash each month with `--hash-monthly`, and writes the soak's yearly metrics rows.
 //! - `soak` (M10.1) runs many seeds, each in its own child process (`soak-seed`, D333), and writes
@@ -118,7 +118,7 @@ fn report(r: Result<(), String>) -> ExitCode {
 }
 
 fn check(dir: &Path) -> ExitCode {
-    let world = match sim_data::load_world(dir) {
+    let mut world = match sim_data::load_world(dir) {
         Ok(w) => w,
         Err(e) => {
             eprintln!("error: {e}");
@@ -128,6 +128,25 @@ fn check(dir: &Path) -> ExitCode {
     println!("Loaded {}", dir.display());
     for (name, n) in world.counts() {
         println!("  {name:18} {n:>6}");
+    }
+    // The map assets (M8), checked when the repository has them.
+    let map_dir = sim_data::default_map_dir();
+    world.map = match sim_data::load_map(&map_dir) {
+        Ok(m) => m,
+        Err(e) => {
+            eprintln!("error: {}: {e}", map_dir.display());
+            return ExitCode::FAILURE;
+        }
+    };
+    match &world.map {
+        Some(m) => println!(
+            "Loaded {}: {} provinces, {} adjacencies, coverage {}",
+            map_dir.display(),
+            m.colors.len(),
+            m.adjacency.len(),
+            m.meta.coverage.join(", ")
+        ),
+        None => println!("No map assets in {}", map_dir.display()),
     }
     let errors = sim_data::check(&world);
     for e in &errors {

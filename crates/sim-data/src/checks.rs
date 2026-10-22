@@ -96,6 +96,7 @@ pub fn check(w: &WorldData) -> Vec<DataError> {
     company_start(w, &mut errors);
     startup_events(w, &ids, &mut errors);
     names(w, &ids, &mut errors);
+    map(w, &ids, &mut errors);
     errors
 }
 
@@ -673,5 +674,33 @@ fn names(w: &WorldData, ids: &Ids, errors: &mut Vec<DataError>) {
     }
     for ind in ids.industries.difference(&with_suffix) {
         errors.push(t.file_err(format!("{ind} has no company name suffix")));
+    }
+}
+
+/// The map assets, when loaded (M8; docs/build/m8-map-assets.md): every province they name is a
+/// province of the world, and every coverage entry is a province file.
+fn map(w: &WorldData, ids: &Ids, errors: &mut Vec<DataError>) {
+    let Some(m) = &w.map else {
+        return;
+    };
+    for (line, c) in m.colors.iter() {
+        if !ids.provinces.contains_key(c.province_id.as_str()) {
+            errors.push(m.colors.err(
+                line,
+                "province_id",
+                format!("unknown province {}", c.province_id),
+            ));
+        }
+    }
+    for file in &m.meta.coverage {
+        let known = SUPERREGIONS
+            .iter()
+            .any(|(slug, _)| *file == format!("provinces-{slug}.csv"));
+        if !known {
+            errors.push(DataError::file(
+                crate::map::MAP_META,
+                format!("coverage names {file}, which is not a province file"),
+            ));
+        }
     }
 }
