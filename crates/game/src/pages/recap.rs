@@ -27,6 +27,7 @@ use sim::time::quarter::recap_tick;
 use sim::views::recap::{ExpectedRow, RecapPage, RecapQuarter};
 use sim::world::{AlertKind, AlertLevel, AlertPayload, CompanyId};
 
+use super::live::{Filter, Live, LiveCtx, LiveModel, spawn_live_table, spawn_live_text};
 use super::market::{fact, note, table_box};
 use super::placeholder::{chip_row, link_group, page_header};
 use super::{PageAppExt, PageBuild, PageKind, PageRef, PageSpec, Refresh, ViewKey};
@@ -35,7 +36,7 @@ use crate::command::index::NameIndex;
 use crate::table::format::{self, Unit};
 use crate::table::{Cell, Column, GainUnit, TableModel, spawn_table_with_id};
 use crate::ui::UiSystems;
-use crate::ui::theme::color;
+use crate::ui::theme::{color, font};
 use crate::workspace::{OpenPage, OpenTarget, Workspace, WorkspaceInput};
 
 /// The quarters a recap page links to, at most (the World keeps 20, D433).
@@ -202,8 +203,7 @@ fn recap_page(
     if !quarters.contains(&now) {
         quarters.push(now);
     }
-    let start = quarters.len().saturating_sub(RECAP_QUARTERS);
-    let links: Vec<(String, PageRef)> = quarters[start..]
+    let links: Vec<(String, PageRef)> = quarters
         .iter()
         .rev()
         .map(|&x| (x.to_string(), PageRef::Recap(x)))
@@ -279,19 +279,47 @@ fn recap_page(
         }
     }
     if let Some(body) = b.section("companies") {
-        let watchlist: Vec<CompanyId> = controls.watchlist.iter().copied().collect();
-        let m = company_pages_model(r, &watchlist, &index);
-        if m.is_empty() {
-            note(
-                &mut commands,
-                body,
-                "No watchlist company has a page: add companies to the watchlist (Pdoomberg F2, \
-                 click a row) to see their pages.",
-            );
-        } else {
-            let boxed = table_box(&mut commands, body, m.len());
-            spawn_table_with_id(&mut commands, boxed, Arc::new(m), "recap.companies");
-        }
+        // Live on the runner controls, so a watchlist change shows on every quarter's page (v_recap
+        // moves on one only for the latest recap's companies).
+        let pages_of = move |c: &LiveCtx| {
+            let watchlist: Vec<CompanyId> = c.controls.watchlist.iter().copied().collect();
+            recap_of(c.views, q).map(|r| company_pages_model(r, &watchlist, c.index))
+        };
+        spawn_live_text(
+            &mut commands,
+            body,
+            font::SMALL,
+            color::TEXT_MUTED,
+            Live::new(&[ViewKey::Recap], move |c| {
+                LiveModel::Text(if pages_of(c).is_some_and(|m| !m.is_empty()) {
+                    String::new()
+                } else {
+                    "No watchlist company has a page: add companies to the watchlist \
+                     (Pdoomberg F2, click a row) to see their pages."
+                        .into()
+                })
+            })
+            .on_controls(),
+            &views,
+            &index,
+            &controls,
+        );
+        let boxed = table_box(&mut commands, body, r.companies.len());
+        spawn_live_table(
+            &mut commands,
+            boxed,
+            "recap.companies",
+            Live::new(&[ViewKey::Recap], move |c| {
+                LiveModel::Table(
+                    pages_of(c).unwrap_or_else(|| TableModel::new(Vec::new(), Vec::new())),
+                )
+            })
+            .on_controls(),
+            Filter::default(),
+            &views,
+            &index,
+            &controls,
+        );
     }
 }
 

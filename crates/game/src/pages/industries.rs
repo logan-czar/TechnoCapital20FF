@@ -302,12 +302,25 @@ pub fn companies_model(v: &SimViews, index: &NameIndex, id: IndustryId) -> Optio
     ))
 }
 
+/// The industry's latest headlines (D518), newest first, each linking to its page.
+pub fn headlines_model(v: &SimViews, id: IndustryId) -> TableModel {
+    let rows = super::news::headline_links(v, |h| h.industry == Some(id), INDUSTRY_HEADLINES)
+        .into_iter()
+        .map(|(date, text, page)| vec![Cell::Date(date), Cell::Link(page, text)])
+        .collect();
+    TableModel::new(
+        vec![Column::text("Date", 96.0), Column::text("Headline", 640.0)],
+        rows,
+    )
+}
+
 #[allow(clippy::too_many_arguments)]
 fn industry_page(
     In(b): In<PageBuild>,
     mut commands: Commands,
     views: Res<Views>,
     index: Res<NameIndex>,
+    controls: Res<RunnerControls>,
 ) {
     let PageRef::Industry(id) = b.page else {
         return;
@@ -446,21 +459,20 @@ fn industry_page(
         link_group(&mut commands, body, "Startup events", &events);
     }
     if let Some(body) = b.section("news") {
-        let lines = super::news::headline_links(v, |h| h.industry == Some(id), INDUSTRY_HEADLINES);
-        if lines.is_empty() {
-            note(&mut commands, body, "No headlines yet.");
-        }
-        for (date, text, page) in lines {
-            let row = chip_row(&mut commands, body);
-            let d = commands
-                .spawn(crate::ui::theme::text_line(
-                    format::date(date),
-                    font::SMALL,
-                    color::TEXT_MUTED,
-                ))
-                .id();
-            let l = commands.spawn(crate::links::link(text, page)).id();
-            commands.entity(row).add_children(&[d, l]);
-        }
+        // Live on v_news (daily): the page itself rebuilds only when its monthly and quarterly
+        // views move, so a new headline shows without a daily rebuild.
+        let boxed = table_box(&mut commands, body, INDUSTRY_HEADLINES);
+        spawn_live_table(
+            &mut commands,
+            boxed,
+            "industry.news",
+            Live::new(&[ViewKey::News, ViewKey::Births], move |c| {
+                LiveModel::Table(headlines_model(c.views, id))
+            }),
+            Filter::default(),
+            &views,
+            &index,
+            &controls,
+        );
     }
 }

@@ -23,7 +23,7 @@ use game::bridge::{SimBridgePlugin, Views};
 use game::chart::Chart;
 use game::command::index::NameIndex;
 use game::command::{CommandItem, RunCommand};
-use game::pages::industries::{companies_model, industries_model};
+use game::pages::industries::{companies_model, headlines_model, industries_model};
 use game::pages::live::{Filter, Live, LiveCtx, Picker, PickerOption};
 use game::pages::news::{FeedItem, feed, news_model};
 use game::pages::recap::{company_pages_model, expected_model};
@@ -261,6 +261,16 @@ fn industries_has_42_rows_and_a_detail_page() {
     let index = NameIndex::build(&v);
     assert_eq!(industries_model(&v, &index).len(), 42);
     assert_eq!(companies_model(&v, &index, id).unwrap().len(), m.len());
+    // The headlines follow v_news (daily; the page rebuilds only on its slower views).
+    let news = table_by_id(&mut app, "industry.news");
+    assert_eq!(model(&app, news), headlines_model(&v, id));
+    run_to(
+        &mut app,
+        DateTime::midnight(sim::time::Date::ymd(2020, 4, 20)),
+    );
+    let news = table_by_id(&mut app, "industry.news");
+    let v: SimViews = (**app.world().resource::<Views>()).clone();
+    assert_eq!(model(&app, news), headlines_model(&v, id));
 }
 
 /// M9.6 done line: the feed filters by industry (and by company); every startup event appears.
@@ -416,6 +426,15 @@ fn recap_opens_from_its_alert_and_by_quarter() {
     let t = table_by_id(&mut app, "recap.companies");
     let m = model(&app, t);
     assert_eq!(m.len(), 2, "both watchlist companies have a page");
+    // The company pages follow the watchlist.
+    send(&mut app, Control::WatchlistRemove(private));
+    frames(&mut app, 3);
+    let t2 = table_by_id(&mut app, "recap.companies");
+    assert_eq!(model(&app, t2).len(), 1, "follows the watchlist");
+    send(&mut app, Control::WatchlistAdd(private));
+    frames(&mut app, 3);
+    let t2 = table_by_id(&mut app, "recap.companies");
+    assert_eq!(model(&app, t2).len(), 2);
     let est = m.column_by_key("Figures").unwrap();
     let low = m.column_by_key("Range low").unwrap();
     for r in 0..m.len() {
