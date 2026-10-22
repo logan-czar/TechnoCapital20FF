@@ -10,7 +10,6 @@ use game::bench::{BenchMode, BenchPlugin};
 use game::bridge::SimBridgePlugin;
 use game::config::{ConfigStore, default_config_path};
 use game::ui::ShellPlugin;
-use game::ui::demo::demo_tables;
 use sim::Sim;
 
 /// The seed when none is given (D305).
@@ -85,7 +84,6 @@ fn main() {
         eprintln!("cannot load the starting data: {e}");
         std::process::exit(1)
     });
-    let demo = demo_tables(&data);
     if let (Some(BenchMode::Table { rows, .. }), Some(n)) = (&mut args.bench, args.rows) {
         *rows = Some(n);
     }
@@ -107,7 +105,6 @@ fn main() {
         ..default()
     }))
     .add_plugins(SimBridgePlugin::new(sim))
-    .insert_resource(demo)
     // The UI config file (D452); benches keep theirs in memory so a run never edits it.
     .insert_resource(match (&args.bench, default_config_path()) {
         (None, Some(path)) => ConfigStore::at(path),

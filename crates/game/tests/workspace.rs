@@ -18,7 +18,6 @@ use game::links::{HOVER_DELAY_SECS, HoverCard, Link};
 use game::pages::{PageKind, PageRef, PdbFunction, PdoombergRoute, SectionHeader};
 use game::table::Table;
 use game::ui::ShellPlugin;
-use game::ui::demo::demo_tables;
 use game::ui::rail::{Router, Screen};
 use game::workspace::{Axis, OpenPage, OpenTarget, PaneAction, PaneBody, PaneFrame, Workspace};
 use sim::Sim;
@@ -26,12 +25,10 @@ use sim::world::CompanyId;
 
 fn shell_app() -> App {
     let data = data();
-    let demo = demo_tables(&data);
     let mut app = App::new();
     app.add_plugins((MinimalPlugins, bevy::input::InputPlugin))
         .insert_resource(TimeUpdateStrategy::ManualDuration(FRAME))
         .add_plugins(SimBridgePlugin::new(Sim::new(data, 42).unwrap()))
-        .insert_resource(demo)
         .add_plugins(ShellPlugin);
     app.update();
     app

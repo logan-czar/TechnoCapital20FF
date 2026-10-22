@@ -26,7 +26,6 @@ use game::table::format;
 use game::table::{Cell, Table};
 use game::test_support::click;
 use game::ui::ShellPlugin;
-use game::ui::demo::demo_tables;
 use game::workspace::{OpenPage, OpenTarget, PaneFrame, Workspace};
 use sim::births::ipo::{Ballot, VoteResult, VoterRole};
 use sim::people::board::Seat;
@@ -682,12 +681,10 @@ fn index_history_records_daily_closes() {
 
 fn shell_app() -> App {
     let data = data();
-    let demo = demo_tables(&data);
     let mut app = App::new();
     app.add_plugins((MinimalPlugins, bevy::input::InputPlugin))
         .insert_resource(TimeUpdateStrategy::ManualDuration(FRAME))
         .add_plugins(SimBridgePlugin::new(Sim::new(data, 42).unwrap()))
-        .insert_resource(demo)
         .add_plugins(ShellPlugin);
     app.update();
     app

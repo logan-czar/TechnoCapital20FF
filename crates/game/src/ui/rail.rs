@@ -14,7 +14,7 @@ use crate::workspace::{OpenPage, OpenTarget, Workspace, page_screen, screen_page
 /// The screens of spec 8 the shell routes between.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Screen {
-    /// No panel open: the map (M8) and, until then, the province table demo.
+    /// No panel open: the map (M8) and, until then, the province table (v_places).
     Map,
     Company,
     Industries,

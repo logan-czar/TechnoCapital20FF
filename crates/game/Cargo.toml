@@ -24,7 +24,7 @@ bevy = { workspace = true, features = [
 # Never with the `test-hooks` feature: the game reads only the views (spec 9; the gate's
 # boundary step builds this crate without it).
 sim.workspace = true
-# The starting data the sim is built from; also the table demo's province and company rows.
+# The starting data the sim is built from (main.rs loads it; nothing else in the crate reads it).
 sim-data.workspace = true
 # The UI config file (layouts, columns, sections, density; D452): serde for the types and RON
 # for a human-readable file. Bevy's asset crate already builds ron 0.12, so neither adds a crate
