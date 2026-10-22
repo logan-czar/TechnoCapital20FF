@@ -462,17 +462,11 @@ fn every_page_kind_builds() {
                 .count();
             assert_eq!(tables, 1, "{p} has its index table");
         }
-        // Lane B1 replaced the Company, Character, Country, Zone and Exchange placeholders.
-        if matches!(p.kind(), PageKind::Industry) {
-            assert!(
-                texts.iter().any(|t| t.contains("Placeholder")),
-                "{p} is a placeholder"
-            );
-            assert!(
-                texts.iter().any(|t| t.contains("v_")),
-                "{p} lists its views"
-            );
-        }
+        // Lanes B1 and B2 replaced every placeholder page.
+        assert!(
+            !texts.iter().any(|t| t.contains("Placeholder")),
+            "{p} is still a placeholder"
+        );
     }
 }
 

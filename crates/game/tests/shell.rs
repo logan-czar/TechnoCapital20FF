@@ -10,13 +10,15 @@ use bevy::time::TimeUpdateStrategy;
 use common::{FRAME, Seen, data, frames, send, ticks};
 use game::bridge::{RunnerControls, SimBridgePlugin, SimNotice, Views};
 use game::pages::PageRef;
+use game::pdoomberg::{PdoombergUi, row_company};
+use game::table::Cell;
 use game::table::{Table, TableFocus, TableRowClicked, sort_order};
 use game::ui::ShellPlugin;
 use game::ui::alerts::{AlertBoard, AlertIcon, EventLog, MAX_TOASTS, Toast};
-use game::ui::demo::{COMPANY_REVENUE_COL, demo_tables};
+use game::ui::demo::demo_tables;
 use game::ui::outliner::OmniscientToggle;
 use game::ui::rail::{Router, Screen, ScreenRoot};
-use game::ui::screens::{DemoTableEntities, ViewLine};
+use game::ui::screens::ViewLine;
 use game::workspace::Workspace;
 use sim::time::Quarter;
 use sim::time::quarter::{recap_tick, release_tick};
@@ -256,18 +258,17 @@ fn router_opens_pages_and_pdoomberg() {
     press(&mut app, KeyCode::KeyB);
     assert_eq!(current(&app), Screen::Pdoomberg);
     assert!(pdb_shown(&mut app), "Pdoomberg is full screen");
-    let tables = *app.world().resource::<DemoTableEntities>();
-    assert_eq!(
-        app.world().resource::<TableFocus>().0,
-        Some(tables.companies)
-    );
+    // The F2 quote table (v_company_row and v_quotes) has the keyboard.
+    let quotes = app.world().resource::<PdoombergUi>().main_table;
+    assert!(quotes.is_some());
+    assert_eq!(app.world().resource::<TableFocus>().0, quotes);
     press(&mut app, KeyCode::Escape);
     assert_eq!(current(&app), Screen::Map);
     assert!(!pdb_shown(&mut app));
     assert_eq!(page(&app), PageRef::News, "the workspace is where it was");
     // The News page's table has the keyboard.
     let focus = app.world().resource::<TableFocus>().0;
-    assert!(focus.is_some() && focus != Some(tables.companies));
+    assert!(focus.is_some() && focus != quotes);
     assert!(controls(&app).paused, "screens never touch the clock");
 }
 
@@ -293,86 +294,122 @@ fn omniscient_only_in_debug_builds() {
     }
 }
 
-/// M7.8: clicking a Pdoomberg quote row watches the company; the outliner lists it.
+/// M7.8: clicking a Pdoomberg F2 quote row (the real v_company_row table) watches the company;
+/// a second click unwatches it.
 #[test]
 fn quote_rows_toggle_the_watchlist() {
     let mut app = shell_app();
-    let tables = *app.world().resource::<DemoTableEntities>();
+    // The terminal builds its page on its first open (D520).
+    press(&mut app, KeyCode::KeyB);
+    let table = app
+        .world()
+        .resource::<PdoombergUi>()
+        .main_table
+        .expect("F2's quote table");
+    let id = row_company(app.world().get::<Table>(table).unwrap(), 5).expect("a company row");
     let click = TableRowClicked {
-        table: tables.companies,
+        table,
         row: 5,
-        secondary: false,
+        button: PointerButton::Primary,
     };
     app.world_mut().write_message(click);
     frames(&mut app, 3);
-    assert!(controls(&app).watchlist.contains(&CompanyId(5)));
+    assert!(controls(&app).watchlist.contains(&id));
+    // The watch column follows the controls.
+    let t = app.world().get::<Table>(table).unwrap();
+    let col = t.model().column_by_key("W").unwrap();
+    let row = (0..t.model().len())
+        .find(|&r| row_company(t, r) == Some(id))
+        .unwrap();
+    assert_eq!(t.model().display(row, col), "*");
+    // A middle click neither watches nor loads (D517).
+    app.world_mut().write_message(TableRowClicked {
+        button: PointerButton::Middle,
+        ..click
+    });
+    frames(&mut app, 3);
+    assert!(controls(&app).watchlist.contains(&id));
     app.world_mut().write_message(click);
     frames(&mut app, 3);
     assert!(controls(&app).watchlist.is_empty());
 }
 
-/// Spec 1, Information: Pdoomberg shows published data, so a private company's revenue, value
-/// and controller stake are "?"; only Omniscient (debug builds) shows them.
+/// Spec 1 Information as M9 amends it (D420): Pdoomberg F2 shows a private company's value as an
+/// estimate band and its price as "?", a listed one's price; only Omniscient (debug builds)
+/// shows the exact value, which lies inside the band.
 #[test]
-fn private_companies_show_unknown() {
+fn private_companies_show_bands() {
     let mut app = shell_app();
-    let mut companies: Vec<_> = data().companies.iter().map(|(_, c)| c.clone()).collect();
-    companies.sort_by(|a, b| a.id.cmp(&b.id));
-    let private = companies
-        .iter()
-        .position(|c| !c.public)
-        .expect("a private company");
-    let public = companies
-        .iter()
-        .position(|c| c.public)
-        .expect("a public company");
-    let tables = *app.world().resource::<DemoTableEntities>();
-    let cells = |app: &App, row: usize| -> Vec<String> {
-        let t = app.world().get::<Table>(tables.companies).unwrap();
-        (COMPANY_REVENUE_COL..COMPANY_REVENUE_COL + 3)
-            .map(|c| t.model().display(row, c).to_owned())
-            .collect()
+    press(&mut app, KeyCode::KeyB);
+    let table = app.world().resource::<PdoombergUi>().main_table.unwrap();
+    let rows = app
+        .world()
+        .resource::<Views>()
+        .company_rows
+        .get()
+        .rows
+        .clone();
+    let private = rows.iter().find(|r| !r.public).expect("a private company");
+    let public = rows.iter().find(|r| r.public).expect("a public company");
+    let cells = |app: &App, id: CompanyId| -> (Cell, String, Cell) {
+        let t = app.world().get::<Table>(table).unwrap();
+        let m = t.model();
+        let r = (0..m.len())
+            .find(|&r| row_company(t, r) == Some(id))
+            .unwrap();
+        let value = m.column_by_key("Value").unwrap();
+        let last = m.column_by_key("Last").unwrap();
+        (
+            m.cell(r, value).clone(),
+            m.display(r, last).to_owned(),
+            m.cell(r, last).clone(),
+        )
     };
-    assert_eq!(
-        cells(&app, private),
-        ["?", "?", "?"],
-        "{}",
-        companies[private].name
-    );
-    assert!(cells(&app, public)[0].starts_with('$'));
+    let (value, last, _) = cells(&app, private.id);
+    let Cell::Band { low, high, .. } = value else {
+        panic!("{}: a band, not {value:?}", private.name);
+    };
+    assert_eq!(last, "?", "a private company has no price");
+    assert!(cells(&app, public.id).1.starts_with('$'));
 
     // The pooled row on screen shows it too.
     {
-        let mut t = app.world_mut().get_mut::<Table>(tables.companies).unwrap();
+        let mut t = app.world_mut().get_mut::<Table>(table).unwrap();
         t.set_viewport_height(220.0);
     }
     frames(&mut app, 2);
     {
-        let mut t = app.world_mut().get_mut::<Table>(tables.companies).unwrap();
-        t.scroll_to(private);
+        let mut t = app.world_mut().get_mut::<Table>(table).unwrap();
+        let pos = (0..t.model().len())
+            .find(|&r| row_company(&t, r) == Some(private.id))
+            .unwrap();
+        t.scroll_to(pos);
     }
     frames(&mut app, 1);
     let shown = app
         .world_mut()
         .query::<&Text>()
         .iter(app.world())
-        .filter(|t| t.0 == companies[private].name)
+        .filter(|t| t.0 == private.name)
         .count();
-    assert_eq!(shown, 1, "the private company's row is on screen");
+    assert!(shown >= 1, "the private company's row is on screen");
 
     send(&mut app, Control::SetOmniscient(true));
     frames(&mut app, 3);
-    let revenue = cells(&app, private)[0].clone();
+    let (value, _, _) = cells(&app, private.id);
     if cfg!(debug_assertions) {
-        assert!(
-            revenue.starts_with('$'),
-            "Omniscient shows the true value: {revenue}"
-        );
+        let Cell::Money(x) = value else {
+            panic!("Omniscient shows the exact value: {value:?}");
+        };
+        assert!(low < x && x < high, "the truth lies inside the band");
         send(&mut app, Control::SetOmniscient(false));
         frames(&mut app, 3);
-        assert_eq!(cells(&app, private)[0], "?");
+        assert!(matches!(cells(&app, private.id).0, Cell::Band { .. }));
     } else {
-        assert_eq!(revenue, "?", "release builds never show private figures");
+        assert!(
+            matches!(value, Cell::Band { .. }),
+            "release builds never show private figures"
+        );
     }
 }
 

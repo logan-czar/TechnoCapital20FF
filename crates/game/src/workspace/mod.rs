@@ -37,9 +37,9 @@ use crate::config::{Density, SectionsConfig, UiConfig};
 use crate::pages::{
     PageBuild, PageKind, PageRef, PageRegistry, Refresh, spawn_sections, view_meta,
 };
+use crate::pdoomberg::PdoombergUi;
 use crate::table::{Table, TableFocus};
 use crate::ui::rail::{Router, Screen};
-use crate::ui::screens::DemoTableEntities;
 use crate::ui::theme::{self, Tooltip, color, font};
 use crate::ui::{KeyboardCapture, ShellLayout, SpawnLayout, UiSystems, modifier_held};
 
@@ -940,24 +940,25 @@ pub fn build_page(
     }
 }
 
-/// The keyboard scrolls the focused pane's first table, or Pdoomberg's quote table while it is
-/// open.
+/// The keyboard scrolls the focused pane's first table, or the main table of Pdoomberg's page
+/// while it is open.
 #[allow(clippy::too_many_arguments)]
 fn focus_tables(
     ws: Res<Workspace>,
     router: Res<Router>,
-    demo: Option<Res<DemoTableEntities>>,
+    pdb: Option<Res<PdoombergUi>>,
     frames: Query<&PaneFrame>,
     children: Query<&Children>,
     tables: Query<(), With<Table>>,
     added: Query<(), Added<Table>>,
     mut focus: ResMut<TableFocus>,
 ) {
-    if !(ws.is_changed() || router.is_changed() || !added.is_empty()) {
+    let pdb_changed = pdb.as_ref().is_some_and(|p| p.is_changed());
+    if !(ws.is_changed() || router.is_changed() || pdb_changed || !added.is_empty()) {
         return;
     }
     let want = if router.current == Screen::Pdoomberg {
-        demo.map(|d| d.companies)
+        pdb.and_then(|p| p.main_table)
     } else {
         frames
             .iter()
