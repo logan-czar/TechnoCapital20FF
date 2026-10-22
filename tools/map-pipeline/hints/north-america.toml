@@ -1,0 +1,70 @@
+# Builder-authored hints for the North America crosswalk (P3, D605). Each one replaces the
+# automatic seeds of a province its name and notes could not place. `units` are building blocks
+# (geoBoundaries ADM2 names), `places` Natural Earth populated places, `seeds` lon,lat points;
+# `add = true` keeps the automatic seeds as well. Hinted rows get confidence 0.85 and are listed
+# in the QA report for review.
+
+[regions]
+"MEX:Ciudad de Mexico" = "MX-DIF"
+
+[blocks]
+# US county names in the notes are mostly ordinary words (Pacific port, Hill Country, citrus):
+# a county named only in the notes counts only when a same-named place lies inside it or the
+# phrase says county (D603).
+notes_need_place = ["USA"]
+
+[provinces.US-0013] # San Fernando Valley
+seeds = [[-118.45, 34.22]]
+[provinces.US-0015] # Inland Empire: Riverside County is split with the Coachella Valley
+units = ["San Bernardino", "Riverside"]
+[provinces.US-0062] # Suburban Maryland
+units = ["Montgomery", "Prince George's"]
+[provinces.US-0086] # Manhattan (New York County)
+units = ["New York"]
+[provinces.US-0087] # Brooklyn-Queens, with Staten Island (notes)
+units = ["Kings", "Queens", "Richmond"]
+[provinces.US-0089] # Long Island
+units = ["Nassau", "Suffolk"]
+[provinces.US-0120] # Plano-Frisco
+units = ["Collin", "Denton"]
+[provinces.US-0124] # Woodlands-Katy: Montgomery and Waller counties plus the Katy end of Harris
+units = ["Montgomery", "Waller"]
+seeds = [[-95.78, 29.80]]
+[provinces.US-0137] # Northern Virginia
+units = ["Fairfax", "Arlington", "Loudoun", "Prince William", "Alexandria"]
+
+[provinces.MX-0002] # Polanco-Santa Fe
+units = ["Miguel Hidalgo", "Cuajimalpa de Morelos"]
+seeds = [[-99.25, 19.36]]
+
+[provinces.CA-0002] # Peel-Mississauga
+seeds = [[-79.64, 43.59], [-79.76, 43.69]]
+[provinces.CA-0003] # York-Markham
+seeds = [[-79.34, 43.86], [-79.50, 43.84], [-79.46, 44.05]]
+[provinces.CA-0016] # Monteregie-South Shore (Longueuil, Saint-Jean-sur-Richelieu)
+seeds = [[-73.52, 45.53], [-73.25, 45.31]]
+[provinces.CA-0019] # Laval-Laurentides
+seeds = [[-73.75, 45.60], [-74.00, 45.78], [-74.60, 46.12]]
+[provinces.CA-0023] # Saguenay-Lac-Saint-Jean
+seeds = [[-71.07, 48.43], [-72.25, 48.55]]
+[provinces.CA-0024] # Gaspesie-Bas-Saint-Laurent (Rimouski, Gaspe)
+seeds = [[-68.52, 48.45], [-64.48, 48.83]]
+[provinces.CA-0027] # Surrey-Fraser Valley (Surrey, Abbotsford, Chilliwack)
+seeds = [[-122.85, 49.19], [-122.30, 49.05], [-121.95, 49.16]]
+[provinces.CA-0028] # Vancouver Island (Victoria, Nanaimo)
+seeds = [[-123.37, 48.43], [-123.94, 49.17]]
+[provinces.CA-0032] # Northeast BC (Fort St. John)
+seeds = [[-120.85, 56.25]]
+[provinces.CA-0034] # Industrial Heartland (Fort Saskatchewan)
+seeds = [[-113.21, 53.71]]
+[provinces.CA-0042] # Southeast Saskatchewan (Estevan, Weyburn)
+seeds = [[-102.99, 49.14], [-103.87, 49.66]]
+[provinces.CA-0048] # Cape Breton (Sydney)
+seeds = [[-60.19, 46.14]]
+[provinces.CA-0049] # Annapolis Valley-South Shore (Kentville, Bridgewater, Yarmouth)
+seeds = [[-64.50, 45.08], [-64.52, 44.38], [-66.12, 43.84]]
+[provinces.CA-0059] # Kivalliq-Kitikmeot (Rankin Inlet, Cambridge Bay)
+seeds = [[-92.09, 62.81], [-105.06, 69.12]]
+
+[provinces.US-0083] # South Jersey: the Philadelphia side of New Jersey
+units = ["Camden", "Gloucester", "Burlington", "Salem"]

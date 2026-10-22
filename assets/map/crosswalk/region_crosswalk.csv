@@ -1,0 +1,100 @@
+country,region,method,source_ids,confidence,provenance,note
+BMU,Bermuda,admin1,BMU-5137;BMU-5142;BMU-5136;BMU-5139;BMU-5134;BMU-5138;BMU-5144;BMU-5143;BMU-5141;BMU-5140;BMU-5135,0.95,Natural Earth 10m (public domain),whole country (11 admin-1 units)
+CAN,Alberta,admin1,CAN-632,1.0,Natural Earth 10m (public domain),name match 100
+CAN,British Columbia,admin1,CAN-633,1.0,Natural Earth 10m (public domain),name match 100
+CAN,Manitoba,admin1,CAN-630,1.0,Natural Earth 10m (public domain),name match 100
+CAN,New Brunswick,admin1,CAN-684,1.0,Natural Earth 10m (public domain),name match 100
+CAN,Newfoundland and Labrador,admin1,CAN-686,1.0,Natural Earth 10m (public domain),name match 100
+CAN,Northwest Territories,admin1,CAN-635,1.0,Natural Earth 10m (public domain),name match 100
+CAN,Nova Scotia,admin1,CAN-685,1.0,Natural Earth 10m (public domain),name match 100
+CAN,Nunavut,admin1,CAN-634,1.0,Natural Earth 10m (public domain),name match 100
+CAN,Ontario,admin1,CAN-682,1.0,Natural Earth 10m (public domain),name match 100
+CAN,Prince Edward Island,admin1,CAN-687,1.0,Natural Earth 10m (public domain),name match 100
+CAN,Quebec,admin1,CAN-683,1.0,Natural Earth 10m (public domain),name match 100
+CAN,Saskatchewan,admin1,CAN-631,1.0,Natural Earth 10m (public domain),name match 100
+CAN,Yukon,admin1,CAN-636,1.0,Natural Earth 10m (public domain),name match 100
+GRL,Greenland,admin1,GRL-2739;GRL-2742;GRL-2743;GRL-2738;GRL-2741;GRL-2740,0.95,Natural Earth 10m (public domain),whole country (6 admin-1 units)
+MEX,Aguascalientes,admin1,MEX-2717,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Baja California,admin1,MEX-2706,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Baja California Sur,admin1,MEX-2707,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Campeche,admin1,MEX-2722,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Chiapas,admin1,MEX-2735,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Chihuahua,admin1,MEX-2709,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Ciudad de Mexico,admin1,MEX-2727,0.95,Natural Earth 10m (public domain),alias hint -> MX-DIF
+MEX,Coahuila,admin1,MEX-2708,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Colima,admin1,MEX-2718,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Durango,admin1,MEX-2710,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Estado de Mexico,admin1,MEX-2731,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Guanajuato,admin1,MEX-2728,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Guerrero,admin1,MEX-2729,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Hidalgo,admin1,MEX-2730,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Jalisco,admin1,MEX-2719,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Michoacan,admin1,MEX-2720,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Morelos,admin1,MEX-2732,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Nayarit,admin1,MEX-2721,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Nuevo Leon,admin1,MEX-2714,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Oaxaca,admin1,MEX-2723,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Puebla,admin1,MEX-2724,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Queretaro,admin1,MEX-2733,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Quintana Roo,admin1,MEX-2736,1.0,Natural Earth 10m (public domain),name match 100
+MEX,San Luis Potosi,admin1,MEX-2715,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Sinaloa,admin1,MEX-2711,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Sonora,admin1,MEX-2712,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Tabasco,admin1,MEX-2725,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Tamaulipas,admin1,MEX-2716,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Tlaxcala,admin1,MEX-2726,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Veracruz,admin1,MEX-2734,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Yucatan,admin1,MEX-2737,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Zacatecas,admin1,MEX-2713,1.0,Natural Earth 10m (public domain),name match 100
+SPM,Saint Pierre and Miquelon,admin1,SPM-4866,1.0,Natural Earth 10m (public domain),name match 100
+USA,Alabama,admin1,USA-3541,1.0,Natural Earth 10m (public domain),name match 100
+USA,Alaska,admin1,USA-3563,1.0,Natural Earth 10m (public domain),name match 100
+USA,Arizona,admin1,USA-3520,1.0,Natural Earth 10m (public domain),name match 100
+USA,Arkansas,admin1,USA-3528,1.0,Natural Earth 10m (public domain),name match 100
+USA,California,admin1,USA-3521,1.0,Natural Earth 10m (public domain),name match 100
+USA,Colorado,admin1,USA-3522,1.0,Natural Earth 10m (public domain),name match 100
+USA,Connecticut,admin1,USA-3537,1.0,Natural Earth 10m (public domain),name match 100
+USA,Delaware,admin1,USA-3555,1.0,Natural Earth 10m (public domain),name match 100
+USA,District of Columbia,admin1,USA-3556,1.0,Natural Earth 10m (public domain),name match 100
+USA,Florida,admin1,USA-3542,1.0,Natural Earth 10m (public domain),name match 100
+USA,Georgia,admin1,USA-3543,1.0,Natural Earth 10m (public domain),name match 100
+USA,Hawaii,admin1,USA-3517,1.0,Natural Earth 10m (public domain),name match 100
+USA,Idaho,admin1,USA-3518,1.0,Natural Earth 10m (public domain),name match 100
+USA,Illinois,admin1,USA-3546,1.0,Natural Earth 10m (public domain),name match 100
+USA,Indiana,admin1,USA-3547,1.0,Natural Earth 10m (public domain),name match 100
+USA,Iowa,admin1,USA-3529,1.0,Natural Earth 10m (public domain),name match 100
+USA,Kansas,admin1,USA-3530,1.0,Natural Earth 10m (public domain),name match 100
+USA,Kentucky,admin1,USA-3548,1.0,Natural Earth 10m (public domain),name match 100
+USA,Louisiana,admin1,USA-3535,1.0,Natural Earth 10m (public domain),name match 100
+USA,Maine,admin1,USA-3561,1.0,Natural Earth 10m (public domain),name match 100
+USA,Maryland,admin1,USA-3557,1.0,Natural Earth 10m (public domain),name match 100
+USA,Massachusetts,admin1,USA-3513,1.0,Natural Earth 10m (public domain),name match 100
+USA,Michigan,admin1,USA-3562,1.0,Natural Earth 10m (public domain),name match 100
+USA,Minnesota,admin1,USA-3514,1.0,Natural Earth 10m (public domain),name match 100
+USA,Mississippi,admin1,USA-3544,1.0,Natural Earth 10m (public domain),name match 100
+USA,Missouri,admin1,USA-3531,1.0,Natural Earth 10m (public domain),name match 100
+USA,Montana,admin1,USA-3515,1.0,Natural Earth 10m (public domain),name match 100
+USA,Nebraska,admin1,USA-3532,1.0,Natural Earth 10m (public domain),name match 100
+USA,Nevada,admin1,USA-3523,1.0,Natural Earth 10m (public domain),name match 100
+USA,New Hampshire,admin1,USA-3538,1.0,Natural Earth 10m (public domain),name match 100
+USA,New Jersey,admin1,USA-3558,1.0,Natural Earth 10m (public domain),name match 100
+USA,New Mexico,admin1,USA-3524,1.0,Natural Earth 10m (public domain),name match 100
+USA,New York,admin1,USA-3559,1.0,Natural Earth 10m (public domain),name match 100
+USA,North Carolina,admin1,USA-3549,1.0,Natural Earth 10m (public domain),name match 100
+USA,North Dakota,admin1,USA-3516,1.0,Natural Earth 10m (public domain),name match 100
+USA,Ohio,admin1,USA-3550,1.0,Natural Earth 10m (public domain),name match 100
+USA,Oklahoma,admin1,USA-3533,1.0,Natural Earth 10m (public domain),name match 100
+USA,Oregon,admin1,USA-3525,1.0,Natural Earth 10m (public domain),name match 100
+USA,Pennsylvania,admin1,USA-3560,1.0,Natural Earth 10m (public domain),name match 100
+USA,Rhode Island,admin1,USA-3539,1.0,Natural Earth 10m (public domain),name match 100
+USA,South Carolina,admin1,USA-3545,1.0,Natural Earth 10m (public domain),name match 100
+USA,South Dakota,admin1,USA-3534,1.0,Natural Earth 10m (public domain),name match 100
+USA,Tennessee,admin1,USA-3551,1.0,Natural Earth 10m (public domain),name match 100
+USA,Texas,admin1,USA-3536,1.0,Natural Earth 10m (public domain),name match 100
+USA,Utah,admin1,USA-3526,1.0,Natural Earth 10m (public domain),name match 100
+USA,Vermont,admin1,USA-3540,1.0,Natural Earth 10m (public domain),name match 100
+USA,Virginia,admin1,USA-3552,1.0,Natural Earth 10m (public domain),name match 100
+USA,Washington,admin1,USA-3519,1.0,Natural Earth 10m (public domain),name match 100
+USA,West Virginia,admin1,USA-3554,1.0,Natural Earth 10m (public domain),name match 100
+USA,Wisconsin,admin1,USA-3553,1.0,Natural Earth 10m (public domain),name match 100
+USA,Wyoming,admin1,USA-3527,1.0,Natural Earth 10m (public domain),name match 100
