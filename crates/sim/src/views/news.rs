@@ -22,12 +22,17 @@ impl NewsView {
         self.feed.find_sorted(&id, |h| h.id)
     }
 
+    /// Headlines dated on or after `since`, oldest first: the start is a binary search, so a
+    /// recent `since` reads only the recent headlines (D545).
+    pub fn since(&self, since: Date) -> impl Iterator<Item = &Headline> {
+        self.feed.iter_from(&since, |h| h.date)
+    }
+
     /// Headlines posted on or after `since`, oldest first, optionally of one industry (spec 9.2
     /// `get_news(since, filter)`).
     pub fn get_news(&self, since: Date, industry: Option<IndustryId>) -> Vec<&Headline> {
-        self.feed
-            .iter()
-            .filter(|h| h.date >= since && industry.is_none_or(|i| h.industry == Some(i)))
+        self.since(since)
+            .filter(|h| industry.is_none_or(|i| h.industry == Some(i)))
             .collect()
     }
 }

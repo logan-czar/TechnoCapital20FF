@@ -914,7 +914,6 @@ fn no_ballot_odds_on_any_page() {
     pages.extend(v.births.get().events.iter().map(|e| PageRef::Event(e.id)));
     pages.extend(
         feed(&v)
-            .into_iter()
             .filter_map(|i| match i {
                 FeedItem::Headline { page, .. } => Some(page),
                 FeedItem::Event(_) => None,

@@ -13,6 +13,7 @@ use bevy::prelude::*;
 use sim::SimViews;
 use sim::news::{Headline, HeadlineKind};
 use sim::time::Date;
+use sim::views::NewsView;
 use sim::views::births::EventRow;
 use sim::world::{CompanyId, HeadlineId, IndustryId, StartupEventId};
 
@@ -89,29 +90,21 @@ impl FeedItem<'_> {
         }
     }
 
-    fn industries(&self) -> Vec<IndustryId> {
+    fn has_industry(&self, i: IndustryId) -> bool {
         match self {
             FeedItem::Headline { h, event, .. } => {
-                let mut v: Vec<IndustryId> = h.industry.into_iter().collect();
-                if let Some(e) = event {
-                    v.extend(e.industries.iter().copied());
-                }
-                v
+                h.industry == Some(i) || event.is_some_and(|e| e.industries.contains(&i))
             }
-            FeedItem::Event(e) => e.industries.clone(),
+            FeedItem::Event(e) => e.industries.contains(&i),
         }
     }
 
-    fn companies(&self) -> Vec<CompanyId> {
+    fn has_company(&self, c: CompanyId) -> bool {
         match self {
             FeedItem::Headline { h, event, .. } => {
-                let mut v: Vec<CompanyId> = h.company.into_iter().collect();
-                if let Some(e) = event {
-                    v.extend(e.startups.iter().copied());
-                }
-                v
+                h.company == Some(c) || event.is_some_and(|e| e.startups.contains(&c))
             }
-            FeedItem::Event(e) => e.startups.clone(),
+            FeedItem::Event(e) => e.startups.contains(&c),
         }
     }
 
@@ -123,43 +116,95 @@ impl FeedItem<'_> {
     }
 }
 
-/// The feed, newest first: every headline (with the event it reports) and every startup event
-/// that posted no headline, at its date.
-pub fn feed(v: &SimViews) -> Vec<FeedItem<'_>> {
-    let events = &v.births.get().events;
-    let mut out: Vec<FeedItem<'_>> = Vec::new();
-    let mut reported: BTreeSet<StartupEventId> = BTreeSet::new();
-    for h in v.news.get().feed.iter() {
-        let event = event_of(h, events);
-        if let Some(e) = event {
-            reported.insert(e.id);
+/// The feed, newest first (D545): every headline (with the event it reports) and every startup
+/// event that posted no headline, at its date; on one date the events come before the
+/// headlines, each newest first. It walks the feed backwards a day at a time and stops where
+/// its reader stops, so the newest rows cost the same however long the feed is. An event's
+/// headline is dated the event's own day (both at the plan lock, D543), so when the walk
+/// reaches an event's date it has seen any headline that reports it.
+pub struct Feed<'a> {
+    heads: std::iter::Peekable<Box<dyn Iterator<Item = &'a Headline> + 'a>>,
+    events: &'a [EventRow],
+    /// Events not walked yet: `events[..next_event]`.
+    next_event: usize,
+    /// The events reported by the headlines walked so far.
+    reported: BTreeSet<StartupEventId>,
+    /// The current day's rows still to hand out, oldest last (popped from the end).
+    day: Vec<FeedItem<'a>>,
+}
+
+impl<'a> Feed<'a> {
+    pub fn new(news: &'a NewsView, events: &'a [EventRow]) -> Feed<'a> {
+        let heads: Box<dyn Iterator<Item = &'a Headline> + 'a> = Box::new(news.feed.iter().rev());
+        Feed {
+            heads: heads.peekable(),
+            events,
+            next_event: events.len(),
+            reported: BTreeSet::new(),
+            day: Vec::new(),
         }
-        out.push(FeedItem::Headline {
-            h,
-            page: PageRef::Headline(h.id),
-            event,
-        });
     }
-    for e in events {
-        if !reported.contains(&e.id) {
-            out.push(FeedItem::Event(e));
+
+    /// Loads the next (older) day's rows; false when nothing is left.
+    fn load_day(&mut self) -> bool {
+        let h_day = self.heads.peek().map(|h| h.date);
+        let e_day = self.next_event.checked_sub(1).map(|i| self.events[i].date);
+        let Some(day) = h_day.max(e_day) else {
+            return false;
+        };
+        let mut heads = Vec::new();
+        while let Some(h) = self.heads.next_if(|h| h.date == day) {
+            if let Some(id) = h.event {
+                self.reported.insert(id);
+            }
+            heads.push(FeedItem::Headline {
+                h,
+                page: PageRef::Headline(h.id),
+                event: event_of(h, self.events),
+            });
         }
+        let mut rows = Vec::new();
+        while self.next_event > 0 && self.events[self.next_event - 1].date == day {
+            self.next_event -= 1;
+            let e = &self.events[self.next_event];
+            if !self.reported.contains(&e.id) {
+                rows.push(FeedItem::Event(e));
+            }
+        }
+        rows.extend(heads);
+        rows.reverse();
+        self.day = rows;
+        true
     }
-    // Oldest first, events after the headlines of their day; then newest first.
-    out.sort_by_key(|i| i.date());
-    out.reverse();
-    out
+}
+
+impl<'a> Iterator for Feed<'a> {
+    type Item = FeedItem<'a>;
+
+    fn next(&mut self) -> Option<FeedItem<'a>> {
+        while self.day.is_empty() {
+            if !self.load_day() {
+                return None;
+            }
+        }
+        self.day.pop()
+    }
+}
+
+/// The views' feed, newest first (see [`Feed`]).
+pub fn feed(v: &SimViews) -> Feed<'_> {
+    Feed::new(v.news.get(), &v.births.get().events)
 }
 
 /// Whether a feed item passes the filter: industry, company and kind (D511 picks).
 fn passes(item: &FeedItem<'_>, f: &Filter) -> bool {
     if let Some(i) = f.id("industry")
-        && !item.industries().contains(&IndustryId(i))
+        && !item.has_industry(IndustryId(i))
     {
         return false;
     }
     if let Some(c) = f.id("company")
-        && !item.companies().contains(&CompanyId(c))
+        && !item.has_company(CompanyId(c))
     {
         return false;
     }
@@ -167,12 +212,40 @@ fn passes(item: &FeedItem<'_>, f: &Filter) -> bool {
     k == 0 || item.kind().1 == k
 }
 
-/// The feed table (spec 8 News feed: date and industry tag; every subject a link).
+/// The rows the feed table lists by default: the newest that pass the filters (D545). A daily
+/// v_news move remakes this many rows, not the whole feed.
+pub const FEED_ROWS: usize = 500;
+
+/// The feed's "Show" pick (pick values from 1; 0 is the newest [`FEED_ROWS`]).
+pub const SHOW: [(&str, Pick); 3] = [("Newest 2,000", 1), ("Newest 10,000", 2), ("All", 3)];
+
+/// The most rows the "Show" pick of `f` lists; `None` for all.
+pub fn shown_rows(f: &Filter) -> Option<usize> {
+    match f.get("show") {
+        0 => Some(FEED_ROWS),
+        1 => Some(2_000),
+        2 => Some(10_000),
+        _ => None,
+    }
+}
+
+/// The feed table (spec 8 News feed: date and industry tag; every subject a link): the newest
+/// rows that pass the filters, at most the "Show" pick's count (D545).
 pub fn news_model(v: &SimViews, index: &NameIndex, f: &Filter) -> TableModel {
+    news_table(v.news.get(), &v.births.get().events, index, f)
+}
+
+/// [`news_model`] over a news view and the events (a bench can hand it a long feed).
+pub fn news_table(
+    news: &NewsView,
+    events: &[EventRow],
+    index: &NameIndex,
+    f: &Filter,
+) -> TableModel {
     let link = |p: PageRef| Cell::Link(p.clone(), index.title(&p));
-    let rows = feed(v)
-        .into_iter()
+    let rows = Feed::new(news, events)
         .filter(|i| passes(i, f))
+        .take(shown_rows(f).unwrap_or(usize::MAX))
         .map(|item| {
             let (kind, _) = item.kind();
             match item {
@@ -288,10 +361,10 @@ fn news_page(
         0,
         PickerLook::PAGE,
     );
-    // The companies the feed names, by name.
-    let mut cos: BTreeSet<CompanyId> = BTreeSet::new();
-    for item in feed(v) {
-        cos.extend(item.companies());
+    // The companies the feed names, by name: the headlines' and the events' startups.
+    let mut cos: BTreeSet<CompanyId> = v.news.get().feed.iter().filter_map(|h| h.company).collect();
+    for e in &v.births.get().events {
+        cos.extend(e.startups.iter().copied());
     }
     let mut options: Vec<(String, Pick)> = cos
         .into_iter()
@@ -321,29 +394,68 @@ fn news_page(
         0,
         PickerLook::PAGE,
     );
+    let mut show: Vec<(String, Pick)> = SHOW.iter().map(|(l, v)| ((*l).into(), *v)).collect();
+    show.insert(0, (format!("Newest {FEED_ROWS}"), 0));
+    spawn_picker(
+        &mut commands,
+        filters,
+        "Show",
+        "show",
+        show,
+        table,
+        0,
+        PickerLook::PAGE,
+    );
     if n == 0 && events == 0 {
         note(
             &mut commands,
             b.head,
             "No headlines yet: the wire posts from the first release, plan lock and phase change.",
         );
+    } else {
+        note(
+            &mut commands,
+            b.head,
+            format!("Lists the newest {FEED_ROWS} rows that pass the filters; Show lists more."),
+        );
     }
 }
 
-/// The newest headlines that pass `keep`, at most `limit`: date, text and page.
+/// The newest headlines that pass `keep`, at most `limit`: date, text and page. It walks the
+/// headlines backwards and stops at `limit`, building no feed rows (D545).
 pub fn headline_links(
     v: &SimViews,
     keep: impl Fn(&Headline) -> bool,
     limit: usize,
 ) -> Vec<(Date, String, PageRef)> {
-    feed(v)
-        .into_iter()
-        .filter_map(|i| match i {
-            FeedItem::Headline { h, page, .. } if keep(h) => Some((h.date, h.text.clone(), page)),
-            _ => None,
-        })
+    newest_headlines(v.news.get(), keep, limit)
+}
+
+/// [`headline_links`] over a news view.
+pub fn newest_headlines(
+    news: &NewsView,
+    keep: impl Fn(&Headline) -> bool,
+    limit: usize,
+) -> Vec<(Date, String, PageRef)> {
+    news.feed
+        .iter()
+        .rev()
+        .filter(|h| keep(h))
         .take(limit)
+        .map(|h| (h.date, h.text.clone(), PageRef::Headline(h.id)))
         .collect()
+}
+
+/// The headlines that report startup event `e`, oldest first: they are dated the event's day
+/// (D543), so this reads only that day's headlines (D545).
+pub fn event_headlines<'a>(
+    news: &'a NewsView,
+    e: &EventRow,
+) -> impl Iterator<Item = &'a Headline> + 'a {
+    let (id, date) = (e.id, e.date);
+    news.since(date)
+        .take_while(move |h| h.date == date)
+        .filter(move |h| h.event == Some(id))
 }
 
 /// The headline a page names (by id, D544), with the event it reports.

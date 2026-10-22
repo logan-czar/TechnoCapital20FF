@@ -147,13 +147,15 @@ pub fn list_model(page: &PageRef, v: &SimViews, index: &NameIndex) -> Option<Tab
             )
         }
         PageRef::News => {
-            // Newest first, each linking to its page by id (D544).
+            // Newest first, each linking to its page by id (D544), at most the feed's rows
+            // (D545).
             let rows = v
                 .news
                 .get()
                 .feed
                 .iter()
                 .rev()
+                .take(super::news::FEED_ROWS)
                 .map(|h| {
                     vec![
                         Cell::Date(h.date),

@@ -258,9 +258,14 @@ impl<T> ChunkLog<T> {
         self.open.iter()
     }
 
-    /// The row whose key is `key`, when the rows are in ascending key order: a binary search
-    /// over the closed chunks by their last row, then within the one chunk (D544).
-    pub fn find_sorted<K: Ord>(&self, key: &K, key_of: impl Fn(&T) -> K) -> Option<&T> {
+    /// The rows whose key is `key` or later, oldest first, when the rows are in ascending
+    /// (or non-descending) key order: a binary search over the closed chunks by their last row,
+    /// then within the one chunk, so finding the start costs O(log n) (D545).
+    pub fn iter_from<'a, K: Ord, F: Fn(&T) -> K>(
+        &'a self,
+        key: &K,
+        key_of: F,
+    ) -> impl Iterator<Item = &'a T> + use<'a, T, K, F> {
         let (mut lo, mut hi) = (0, self.closed.len());
         while lo < hi {
             let mid = (lo + hi) / 2;
@@ -269,23 +274,33 @@ impl<T> ChunkLog<T> {
                 _ => lo = mid + 1,
             }
         }
-        if let Some(c) = self.closed.get(lo) {
-            return c
-                .binary_search_by(|r| key_of(r).cmp(key))
-                .ok()
-                .map(|i| &c[i]);
-        }
-        let (mut lo, mut hi) = (0, self.open.len());
-        while lo < hi {
-            let mid = (lo + hi) / 2;
-            let row = self.open.get(mid)?;
-            match key_of(row).cmp(key) {
-                std::cmp::Ordering::Less => lo = mid + 1,
-                std::cmp::Ordering::Equal => return Some(row),
-                std::cmp::Ordering::Greater => hi = mid,
+        let (in_chunk, in_open) = match self.closed.get(lo) {
+            Some(c) => (c.partition_point(|r| key_of(r) < *key), 0),
+            None => {
+                let (mut a, mut b) = (0, self.open.len());
+                while a < b {
+                    let mid = (a + b) / 2;
+                    match self.open.get(mid) {
+                        Some(r) if key_of(r) < *key => a = mid + 1,
+                        _ => b = mid,
+                    }
+                }
+                (0, a)
             }
-        }
-        None
+        };
+        self.closed
+            .iter()
+            .skip(lo)
+            .enumerate()
+            .flat_map(move |(i, c)| c.iter().skip(if i == 0 { in_chunk } else { 0 }))
+            .chain(self.open.iter().skip(in_open))
+    }
+
+    /// The row whose key is `key`, when the rows are in ascending key order (D544).
+    pub fn find_sorted<K: Ord>(&self, key: &K, key_of: impl Fn(&T) -> K) -> Option<&T> {
+        self.iter_from(key, &key_of)
+            .next()
+            .filter(|r| key_of(r) == *key)
     }
 
     /// True if `other` shares this log's chunks with the same rows (a cheap copy, not a
@@ -378,6 +393,19 @@ mod tests {
         assert_eq!(log.find_sorted(&102, |r| *r), Some(&102));
         assert_eq!(log.find_sorted(&99, |r| *r), None, "dropped");
         assert_eq!(ChunkLog::<u32>::default().find_sorted(&0, |r| *r), None);
+        // From a key on: every later row, in order, whatever chunk the key falls in.
+        for k in [0, 100, 101, 119, 120, 600, 1497, 1498, 2000] {
+            let want: Vec<u32> = log.iter().copied().filter(|&r| r >= k).collect();
+            let got: Vec<u32> = log.iter_from(&k, |r| *r).copied().collect();
+            assert_eq!(got, want, "from {k}");
+        }
+        // Non-descending keys: the first row of a run.
+        let mut runs = ChunkLog::default();
+        for i in 0..300u32 {
+            runs.push(i, |a, b| a / 50 == b / 50);
+        }
+        let from: Vec<u32> = runs.iter_from(&10, |r| r / 7).copied().take(3).collect();
+        assert_eq!(from, [70, 71, 72]);
     }
 
     #[test]
