@@ -100,6 +100,8 @@ struct PageBench {
     results: Vec<Timing>,
     /// The game date the late items were timed at.
     late_date: Option<sim::time::Date>,
+    /// The listed companies, for the coverage check (each tab and F3 on listed and private).
+    listed: BTreeSet<sim::world::CompanyId>,
 }
 
 /// The Company page's tab a bench entry opens (lane B1, D481): `None` shows every section,
@@ -262,13 +264,24 @@ fn send_next(
     mut open: MessageWriter<OpenPage>,
     mut pdb: MessageWriter<OpenPdoomberg>,
     mut sim: MessageWriter<SimControl>,
+    mut exit: MessageWriter<AppExit>,
 ) {
     b.frame += 1;
     if b.frame < WARMUP_FRAMES || b.sent.is_some() {
         return;
     }
     match b.stage {
-        Stage::Fresh if b.pages.is_empty() => b.pages = fresh_items(&views, &index),
+        Stage::Fresh if b.pages.is_empty() => {
+            b.pages = fresh_items(&views, &index);
+            b.listed = views
+                .company_rows
+                .get()
+                .rows
+                .iter()
+                .filter(|r| r.public)
+                .map(|r| r.id)
+                .collect();
+        }
         Stage::Advance(since) => {
             let ready = !views.births.get().events.is_empty() && headline(&views).is_some();
             if ready || b.frame - since > ADVANCE_FRAMES_MAX {
@@ -289,7 +302,11 @@ fn send_next(
             b.pass = 0;
             b.stage = Stage::Late;
             if b.pages.is_empty() {
+                // Nothing to time later (no event, headline or birth came): report what is
+                // missing and fail, rather than wait for a page that never opens.
                 b.stage = Stage::Done;
+                report(&b.results, &b.listed, b.late_date);
+                exit.write(AppExit::error());
                 return;
             }
         }
@@ -437,7 +454,7 @@ fn check_laid_out(
         return;
     }
     b.stage = Stage::Done;
-    let ok = report(&b.results, b.late_date);
+    let ok = report(&b.results, &b.listed, b.late_date);
     exit.write(if ok {
         AppExit::Success
     } else {
@@ -445,22 +462,29 @@ fn check_laid_out(
     });
 }
 
-/// What the run covered against what M9.9 asks for: the page kinds, Company tabs and
-/// function pages it never opened.
-fn missing(results: &[Timing]) -> Vec<String> {
+/// What the run covered against what M9.9 asks for: the page kinds, the Company tabs on a
+/// listed and on a private company, the function pages, and F3 on a listed company, a private
+/// one and none, that it never opened.
+fn missing(results: &[Timing], listed: &BTreeSet<sim::world::CompanyId>) -> Vec<String> {
     let mut kinds = BTreeSet::new();
+    // (tab, listed)
     let mut tabs = BTreeSet::new();
     let mut functions = BTreeSet::new();
+    // F3's company: None, Some(listed)
+    let mut f3 = BTreeSet::new();
     for (item, ..) in results {
         match item {
             Item::Page(p, tab) => {
                 kinds.insert(p.kind());
-                if let Some(Some(t)) = tab {
-                    tabs.insert(*t);
+                if let (PageRef::Company(c), Some(Some(t))) = (p, tab) {
+                    tabs.insert((*t, listed.contains(c)));
                 }
             }
             Item::Pdb(r) => {
                 functions.insert(r.function.code());
+                if r.function == PdbFunction::F3 {
+                    f3.insert(r.company.map(|c| listed.contains(&c)));
+                }
             }
         }
     }
@@ -469,12 +493,22 @@ fn missing(results: &[Timing]) -> Vec<String> {
         .filter(|k| !kinds.contains(k))
         .map(|k| format!("page kind {}", k.key()))
         .collect();
-    out.extend(
-        crate::pages::company::SECTIONS
-            .iter()
-            .filter(|(id, _)| !tabs.contains(id))
-            .map(|(id, _)| format!("company tab {id}")),
-    );
+    for (id, _) in crate::pages::company::SECTIONS {
+        for (is_listed, who) in [(true, "listed"), (false, "private")] {
+            if !tabs.contains(&(*id, is_listed)) {
+                out.push(format!("company tab {id} on a {who} company"));
+            }
+        }
+    }
+    for (company, what) in [
+        (Some(true), "a listed company"),
+        (Some(false), "a private company"),
+        (None, "no company"),
+    ] {
+        if !f3.contains(&company) {
+            out.push(format!("pdoomberg F3 on {what}"));
+        }
+    }
     out.extend(
         PdbFunction::ALL
             .iter()
@@ -486,7 +520,11 @@ fn missing(results: &[Timing]) -> Vec<String> {
 
 /// Prints the table and the verdict; true when every page opened under the target and every
 /// kind, tab and function page was covered.
-fn report(results: &[Timing], late_date: Option<sim::time::Date>) -> bool {
+fn report(
+    results: &[Timing],
+    listed: &BTreeSet<sim::world::CompanyId>,
+    late_date: Option<sim::time::Date>,
+) -> bool {
     println!("BENCH pages: open in the focused pane, to the first laid-out frame");
     println!(
         "BENCH {:<40} {:>9} {:>7} {:>9} {:>7}",
@@ -522,7 +560,7 @@ fn report(results: &[Timing], late_date: Option<sim::time::Date>) -> bool {
             );
         }
     }
-    let missing = missing(results);
+    let missing = missing(results, listed);
     for m in &missing {
         println!("BENCH not covered: {m}");
     }
