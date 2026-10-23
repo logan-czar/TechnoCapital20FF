@@ -4,12 +4,14 @@
 [review]
 watch = ["MDV", "BTN", "IN-0064", "IN-0065", "IN-0066", "IN-0092", "PK-0033", "PK-0034"]
 notes = [
+    "AFG: Natural Earth has two units named Parwan: AFG-1772 (Charikar, Bagram) and AFG-1769 (the Panjshir valley); both go to Parwan-Kapisa-Panjshir (D687).",
     "Kashmir (IN-0064 to IN-0066, PK-0033, PK-0034) follows the line of control, which is also our province files' split: Jammu and Kashmir and Ladakh are India's, Gilgit-Baltistan and Azad Kashmir Pakistan's; Natural Earth's Siachen unit is drawn with Ladakh. Aksai Chin stays Chinese (no province of ours claims it) and IN-0092 Arunachal Pradesh is India's.",
     "NPL: Natural Earth still has Nepal's 14 old zones, so the 7 provinces are cut from geoBoundaries' 77 districts (public domain, NPL ADM2). Its file names Siraha and Parsa as second Saptari and Bara units and lacks Rupandehi and Dailekh, which therefore stay with Province No. 5.",
     "BGD:Mymensingh, a division since 2015, is cut from Dhaka with the geoBoundaries districts Mymensingh, Netrakona, Jamalpur and Sherpur.",
 ]
 
 [regions]
+"AFG:Parwan-Kapisa-Panjshir" = ["AFG-1772", "AFG-1769", "AF-KAP"]
 "BTN:Central Bhutan" = ["region:Central", "region:Southern"]
 "BTN:Eastern Bhutan" = ["region:Eastern"]
 "IND:Gujarat-Daman-Diu" = ["IN-GJ", "IN-DH"]
@@ -87,7 +89,7 @@ seeds = [[78.61, 17.63], [78.26, 17.53], [78.45, 17.52]]
 [provinces.IN-0033] # Anna Salai, Guindy, the OMR
 seeds = [[80.25, 13.05], [80.22, 13.01], [80.23, 12.90]]
 [provinces.IN-0034] # the port, Ennore, Manali
-seeds = [[80.29, 13.10], [80.32, 13.25], [80.27, 13.17]]
+seeds = [[80.29, 13.10], [80.32, 13.25], [80.27, 13.17], [79.91, 13.14]]
 [provinces.IN-0035] # Sriperumbudur, Oragadam, Maraimalai Nagar
 seeds = [[79.95, 12.97], [79.85, 12.83], [80.03, 12.79]]
 [provinces.IN-0040] # central Kolkata, Salt Lake
@@ -134,3 +136,11 @@ seeds = [[91.11, 23.96], [91.00, 24.03]]
 seeds = [[80.77, 6.97], [80.60, 6.89], [80.68, 6.93]]
 [provinces.NP-0011] # Nepalgunj, Bardiya, Ghorahi, Rolpa
 seeds = [[81.62, 28.05], [81.30, 28.35], [82.30, 28.05], [82.65, 28.38]]
+
+# PR #38 review: rural Telangana and North Gujarat
+[provinces.IN-0032] # Karimnagar, Nizamabad, Warangal, Adilabad, Kothagudem, Mancherial, Mahbubnagar, Nalgonda, Khammam, Vikarabad
+seeds = [[79.13, 18.44], [78.09, 18.67], [79.59, 17.97], [78.53, 19.67], [80.62, 17.55], [79.45, 18.87], [77.99, 16.74], [79.27, 17.05], [80.15, 17.25], [77.90, 17.34]]
+[provinces.IN-0049] # Gandhinagar, GIFT City, Sanand
+seeds = [[72.64, 23.22], [72.68, 23.16], [72.38, 22.99]]
+[provinces.IN-0050] # Bhuj, Mundra, Kandla, Palanpur, Mehsana, Patan, Himmatnagar
+seeds = [[69.67, 23.25], [69.72, 22.84], [70.22, 23.03], [72.43, 24.17], [72.38, 23.60], [72.12, 23.85], [72.97, 23.60]]

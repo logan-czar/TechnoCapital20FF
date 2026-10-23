@@ -42,6 +42,11 @@ from = ["TKM:Ahal"]
 
 [review]
 watch = ["RU-0001", "RU-0002", "RU-0003", "RU-0004", "RU-0068", "GE-0003", "GE-0007", "AZ-0010", "AM-"]
+# Natural Earth label check (D687): units whose capital point lies within a few km of
+# the unit edge, so the place belongs to the neighbour; not a mislabel
+ne_label_ok = [
+    "RUS:Krasnoyarsk",  # Abakan sits on the Yenisei, 5 km from the Khakassia line
+]
 notes = [
     "AZ-0010 Nagorno-Karabakh (ARM-backed Artsakh) follows our province file: the whole Upper Karabakh and Kalbajar-Lachin economic regions of Natural Earth, which also hold the districts round the old oblast.",
     "GE-0007 South Ossetia is a province of the Shida Kartli-Mtskheta-Mtianeti-Samtskhe-Javakheti region in our file, so it is split from that region by Voronoi, not drawn on the breakaway's own line.",
@@ -91,3 +96,13 @@ seeds = [[64.60, 38.95], [65.21, 37.83], [66.40, 37.80]]
 seeds = [[62.36, 37.33], [62.45, 37.25], [62.35, 35.27], [61.60, 36.40]]
 [provinces.TM-0013] # Bayramaly, Murgab, Turkmengala
 seeds = [[62.17, 37.62], [61.97, 37.50], [62.40, 37.43]]
+
+# PR #38 review: Moscow's two rings, Gori-Borjomi and South Ossetia
+[provinces.RU-0005] # Khimki, Mytishchi, Korolev, Balashikha, Lyubertsy, Krasnogorsk, Podolsk, Odintsovo
+seeds = [[37.43, 55.89], [37.73, 55.91], [37.85, 55.92], [37.94, 55.80], [37.90, 55.68], [37.33, 55.82], [37.55, 55.43], [37.27, 55.68]]
+[provinces.RU-0006] # Sergiev Posad, Dubna, Kolomna, Serpukhov, Mozhaisk, Volokolamsk, Noginsk, Dmitrov, Klin, Shatura
+seeds = [[38.13, 56.31], [37.17, 56.74], [38.78, 55.10], [37.41, 54.92], [36.02, 55.50], [35.95, 56.03], [38.44, 55.85], [37.52, 56.34], [36.73, 56.33], [39.54, 55.57]]
+[provinces.GE-0006] # Gori, Borjomi, Akhaltsikhe, Mtskheta, Akhalkalaki, Gudauri
+seeds = [[44.11, 41.98], [43.38, 41.84], [42.98, 41.64], [44.72, 41.85], [43.49, 41.40], [44.48, 42.48]]
+[provinces.GE-0007] # South Ossetia, drawn on the line the breakaway holds (decision C), round Tskhinvali and Java
+polygon = [[43.45, 42.40], [43.60, 42.55], [43.85, 42.62], [44.10, 42.62], [44.30, 42.55], [44.50, 42.50], [44.45, 42.35], [44.25, 42.25], [44.10, 42.13], [43.95, 42.10], [43.80, 42.15], [43.70, 42.25], [43.55, 42.30], [43.45, 42.40]]

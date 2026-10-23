@@ -4,7 +4,8 @@
 //! The rule: grow every province into the open water around it, by ground distance, until the
 //! fronts meet (a Voronoi partition of the water near the coasts). Two provinces are sea-linked
 //! when their water regions meet at a point whose two distances add up to at most
-//! `SEA_LINK_KM`, and they are not already land neighbours. Only neighbours in that water
+//! `SEA_LINK_KM`, they are not already land neighbours, and no coastal province is a land
+//! neighbour of both (a link along a coast past a third province's shore is no strait). Only neighbours in that water
 //! partition link, so a province is never linked past another province's water across a wide
 //! sea, and a strait's two shores link wherever they face each other.
 
@@ -130,7 +131,28 @@ pub fn sea_links(
             }
         }
     }
-    best.into_keys().collect()
+    // a link that leapfrogs along a coast past a third province's shore is no strait: drop it
+    // when a coastal province is a land neighbour of both ends (the Po delta between Veneto
+    // and Emilia-Romagna)
+    let mut coastal = BTreeSet::new();
+    for (i, &v) in raster.iter().enumerate() {
+        if v != 0 && dist[i] == 0 {
+            coastal.insert(v);
+        }
+    }
+    let mut land_of: BTreeMap<u16, BTreeSet<u16>> = BTreeMap::new();
+    for &(a, b) in land_pairs {
+        land_of.entry(a).or_default().insert(b);
+        land_of.entry(b).or_default().insert(a);
+    }
+    let empty = BTreeSet::new();
+    best.into_keys()
+        .filter(|&(a, b)| {
+            let na = land_of.get(&a).unwrap_or(&empty);
+            let nb = land_of.get(&b).unwrap_or(&empty);
+            !na.intersection(nb).any(|c| coastal.contains(c))
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -161,6 +183,17 @@ mod tests {
         // land neighbours are not sea links
         let land = BTreeSet::from([(1u16, 2u16)]);
         assert!(sea_links(&frame, &raster, &water, &land).is_empty());
+        // nor two provinces that share a coastal land neighbour (3 touches both on land)
+        let both = BTreeSet::from([(1u16, 3u16), (2u16, 3u16)]);
+        let mut r3 = raster.clone();
+        for y in y0..y0 + 5 {
+            for x in 200..205 {
+                r3[y * w + x] = 0;
+            }
+            r3[(y0 + 6) * w + 106] = 3;
+        }
+        let water3: Vec<bool> = r3.iter().map(|&v| v == 0).collect();
+        assert!(sea_links(&frame, &r3, &water3, &both).is_empty());
     }
 
     #[test]

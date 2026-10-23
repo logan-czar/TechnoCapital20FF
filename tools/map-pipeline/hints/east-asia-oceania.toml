@@ -8,13 +8,26 @@
 # provinces listed in the report's watched table (ids or id prefixes, or country codes)
 watch = ["SG-", "HK-", "MO-", "CN-0001", "CN-0002", "CN-0003", "CN-0004", "TW-0020", "TW-0021", "TW-0022",
          "NRU", "TUV", "PLW", "KIR", "MHL", "FSM", "TON", "WSM", "BRN"]
+# Natural Earth label check (D687): units whose capital point lies within a few km of
+# the unit edge, so the place belongs to the neighbour; not a mislabel
+ne_label_ok = [
+    "THA:Sakon Nakhon-Roi Et-Mekong",  # Sakon Nakhon is its own capital; Samut Sakhon is a different name
+]
 notes = [
     "PG-0003 Eastern Highlands-Simbu-Jiwaka: Natural Earth still has Jiwaka inside Western Highlands, so Jiwaka is drawn in Enga-Western Highlands.",
     "VNM: Natural Earth labels three provinces with region names (VN-53 Bac Kan as Dong Bac, VN-39 Dong Nai as Dong Nam Bo, VN-66 Hung Yen as Dong Bang Song Hong); they are matched by code. Vinh Phuc, which no province names, is drawn with Hanoi.",
     "TW-0022 Matsu: Natural Earth 10m has no land for the Matsu islands; the province is a builder-drawn polygon around Nangan and Beigan (a click target).",
 ]
 
+# D689: the country's most populous place of the name is another town
+[review.anchor_ok]
+"CN-0002" = "Chaoyang district of Beijing, not Chaoyang city in Liaoning"
+"CN-0012" = "Baoshan district of Shanghai, not Baoshan city in Yunnan"
+"AU-0023" = "the Goulburn valley of Victoria, not Goulburn town in New South Wales"
+
 [regions]
+"THA:Phitsanulok-Sukhothai" = ["name:Phitsanulok", "name:Sukhothai", "name:Uttaradit", "name:Phetchabun"]
+"THA:Ubon Ratchathani-Sisaket" = ["name:Ubon Ratchathani", "name:Si Sa Ket", "name:Yasothon", "name:Amnat Charoen"]
 "IDN:South-West Sulawesi" = ["ID-SN", "ID-SR"]
 "IDN:Central Sulawesi" = ["ID-ST"]
 "KHM:Kampong Cham-Tbong Khmum" = ["KH-3"]
@@ -63,6 +76,7 @@ notes = [
 "VNM:Hanoi" = ["VN-HN", "VN-70"]
 "VUT:Sanma-Northern Islands" = ["VU-SAM", "VU-TOB", "VU-PAM", "VU-MAP"]
 "VUT:Shefa" = ["VU-SEE", "VU-TAE"]
+"AUS:Australian Capital Territory" = ["AUS-2653"]
 "PHL:Davao" = ["region:Davao (Region XI)"]
 "PHL:Zamboanga Peninsula" = ["region:Zamboanga Peninsula (Region IX)"]
 
@@ -270,3 +284,11 @@ seeds = [[127.93, 36.99], [128.19, 37.13], [128.37, 36.98]]
 [provinces.VN-0001] # District 1 and the inner districts
 seeds = [[106.70, 10.78]]
 add = true
+
+# PR #38 review: Sydney's suburbs, Depok
+[provinces.AU-0001] # the CBD, the North Shore, Chatswood, Hornsby
+seeds = [[151.21, -33.87], [151.18, -33.80], [151.10, -33.70], [151.24, -33.78]]
+[provinces.AU-0002] # Parramatta, Blacktown, Liverpool, Penrith, Campbelltown, Mascot airport, Port Botany
+seeds = [[151.00, -33.82], [150.91, -33.77], [150.92, -33.92], [150.69, -33.75], [150.81, -34.07], [151.18, -33.94], [151.21, -33.97]]
+[provinces.ID-0005] # Bogor and Depok
+units = ["Kota Bogor", "Bogor", "Kota Depok"]

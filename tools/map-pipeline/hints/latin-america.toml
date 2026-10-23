@@ -3,12 +3,26 @@
 
 [review]
 watch = ["PP-", "ATG", "BRB", "DMA", "GRD", "KNA", "LCA", "VCT", "CYM", "VGB"]
+# Natural Earth label check (D687): units whose capital point lies within a few km of
+# the unit edge, so the place belongs to the neighbour; not a mislabel
+ne_label_ok = [
+    "COL:Meta",  # San Jose del Guaviare sits on the Guaviare river, the Meta line (under 1 km)
+    "VEN:Distrito Capital",  # Los Teques point is 3 km over the Miranda line
+]
 notes = [
+    "ECU: Natural Earth 10m swaps the names of Napo and Tungurahua (Ambato lies in its \"Napo\" unit, Tena in \"Tungurahua\"); the regions take the units by where they lie (D687).",
+    "GUY: Natural Earth 10m gives Guyana's regions each other's names (Georgetown lies in its \"East Berbice-Corentyne\" unit); the regions take the units by where they lie, checked against Georgetown, Anna Regina, Bartica, Linden, Lethem, Mabaruma and New Amsterdam (D687).",
     "PA-0002 Panama Oeste: Natural Earth still has it inside Panama province; it is cut off west of the canal by a builder-drawn line.",
     "GUY: the Essequibo provinces (VEN claims) and Berbice (SUR claims) follow Guyana's de facto lines, which the province file also gives them.",
 ]
 
+# D689: the country's most populous place of the name is another town
+[review.anchor_ok]
+"BR-0032" = "Caxias do Sul; the Caxias point is the town in Maranhao"
+
 [regions]
+"ECU:Napo-Pastaza-Morona Santiago" = ["ECU-1290", "EC-Y", "EC-S"]
+"ECU:Tungurahua-Cotopaxi-Chimborazo-Bolivar" = ["ECU-1289", "EC-X", "EC-H", "EC-B"]
 "BHS:Grand Bahama" = ["BS-FP", "BS-EG", "BS-WG"]
 "BHS:Northern Family Islands" = ["BS-CO", "BS-NO", "BS-SO", "BS-MI", "BS-CE", "BS-NE", "BS-SE", "BS-HI", "BS-SW", "BS-BY", "BS-BI"]
 "BHS:Southern Family Islands" = ["BS-NS", "BS-CS", "BS-SA", "BS-MC", "BS-EX", "BS-BP", "BS-CI", "BS-LI", "BS-IN", "BS-AK", "BS-CK", "BS-MG", "BS-RI", "BS-RC", "BS-SS"]
@@ -25,16 +39,18 @@ notes = [
 "DOM:El Valle" = ["DO-22", "DO-07"]
 "DOM:Higuamo" = ["DO-23", "DO-29", "DO-30"]
 "DOM:Yuma" = ["DO-11", "DO-12", "DO-08"]
-"GUY:Berbice and Upper Demerara" = ["GY-EB", "GY-MA", "GY-UD"]
-"GUY:Pomeroon-Supenaam and Essequibo Islands-West Demerara" = ["GY-PM", "GY-ES"]
+# Natural Earth 10m shuffles Guyana's region names; the units are matched by where they lie (D687)
+"GUY:Demerara-Mahaica" = ["GY-EB"]
+"GUY:Berbice and Upper Demerara" = ["GY-MA", "GY-ES", "GY-UT"]
+"GUY:Pomeroon-Supenaam and Essequibo Islands-West Demerara" = ["GY-CU", "GY-DE"]
 "NIC:North and South Caribbean Coast" = ["NI-AN", "NI-AS"]
 "PER:Puno" = ["PE-PUN"]
 "PER:Lima" = ["PER-591", "PER-587"]
 "TTO:Southern Trinidad" = ["TT-PED", "TT-PTF", "TT-PRT", "TT-RCM", "TT-SFO", "TT-SIP"]
 "VEN:La Guaira" = ["VE-X"]
 "PER:Callao" = ["PE-CAL"]
-"GUY:Upper Takutu-Upper Essequibo" = ["GY-UT"]
-"GUY:Cuyuni-Mazaruni and Potaro-Siparuni" = ["GY-CU", "GY-PT"]
+"GUY:Upper Takutu-Upper Essequibo" = ["GY-UD"]
+"GUY:Cuyuni-Mazaruni and Potaro-Siparuni" = ["GY-PM", "GY-PT"]
 "GUY:Barima-Waini" = ["GY-BA"]
 "TTO:Tobago" = ["TT-ETO", "TT-WTO"]
 
@@ -70,3 +86,16 @@ seeds = [[-77.03, -12.10], [-77.03, -12.12], [-77.03, -12.05]]
 seeds = [[-77.00, -11.98], [-77.06, -11.94], [-77.07, -11.99], [-76.89, -12.03]]
 [provinces.VE-0012] # El Callao, Las Claritas, Canaima, Santa Elena de Uairen
 seeds = [[-61.83, 7.35], [-61.14, 6.05], [-62.85, 6.24], [-61.11, 4.60]]
+
+# PR #38 review: the Sao Paulo municipality and the Lima provinces
+[provinces.BR-0001] # the centre, Avenida Paulista, Faria Lima, Pinheiros, Butanta, with Osasco and Barueri
+units = ["Barueri", "Osasco"]
+seeds = [[-46.63, -23.55], [-46.66, -23.56], [-46.69, -23.57], [-46.70, -23.565], [-46.73, -23.58]]
+[provinces.BR-0002] # the east and north zones (Itaquera, Santana, Guaianases) and Guarulhos
+units = ["Guarulhos"]
+seeds = [[-46.47, -23.54], [-46.62, -23.48], [-46.40, -23.55], [-46.56, -23.52]]
+[provinces.BR-0003] # the south zone (Santo Amaro, Parelheiros) as well as the ABC towns
+seeds = [[-46.70, -23.65], [-46.70, -23.82]]
+add = true
+[provinces.PE-0003] # Huacho, Huaral, Chancay, Canete, Matucana (Huarochiri), Yauyos
+seeds = [[-77.61, -11.11], [-77.21, -11.50], [-77.27, -11.57], [-76.39, -13.08], [-76.38, -11.84], [-75.91, -12.46]]

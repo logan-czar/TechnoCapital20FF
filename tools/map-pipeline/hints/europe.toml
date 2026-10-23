@@ -12,9 +12,18 @@ watch = ["GB-0001", "GB-0002", "GB-0003", "GB-0004", "AND", "LIE", "MCO", "SMR",
 notes = [
     "RUS:Donbas is drawn by our own province file (decision C): all of Luhansk oblast and the Russian-held part of Donetsk oblast, cut from Donetsk oblast by a builder-drawn line close to the 2015 contact line (Horlivka, Donetsk and Novoazovsk Russian; Mariupol, Kramatorsk and Sloviansk Ukrainian, UA-0016).",
     "RUS:Crimea follows Natural Earth's Crimea and Sevastopol units (Natural Earth already draws them in Russia).",
-    "MD-0006 Transnistria takes Natural Earth's Transnistria and Stinga Nistrului units with Camenca, Grigoriopol and Bender.",
+    "MD-0006 Transnistria takes Natural Earth's Transnistria and Stinga Nistrului units with Camenca, Grigoriopol, Bender and Ribnita (NE names it as a second Rezina unit).",
+    "FR-0004: Natural Earth spells Seine-et-Marne \"Seien-et-Marne\", so the hint names the unit.",
     "CY-0005 Northern Cyprus is Natural Earth's Northern Cyprus (CYN) unit; the UN buffer zone and the British sovereign base areas belong to no province.",
 ]
+
+[blocks.level]
+# its four provinces are the blocks (ESP ADM2 is the same provinces under other names)
+"ESP:Catalonia" = "admin1"
+
+# D689: the country's most populous place of the name is another town
+[review.anchor_ok]
+"CY-0003" = "the free part of Famagusta district; Famagusta town is in Northern Cyprus (CY-0005, decision C)"
 
 [regions]
 "ALB:Northern Albania" = ["AL-10", "AL-08", "AL-07", "AL-09"]
@@ -25,8 +34,8 @@ notes = [
 "BGR:South-West" = ["BG-22", "BG-23", "BG-14", "BG-10", "BG-01"]
 "BGR:South-Central" = ["BG-16", "BG-13", "BG-26", "BG-09", "BG-21"]
 "BGR:South-East" = ["BG-02", "BG-24", "BG-20", "BG-28"]
-"BGR:North-East" = ["BG-03", "BG-08", "BG-27", "BG-25"]
-"BGR:North-Central" = ["BG-18", "BG-04", "BG-07", "BG-17", "BG-19"]
+"BGR:North-East" = ["BG-03", "BG-08", "BG-27", "BG-25", "BG-17"]
+"BGR:North-Central" = ["BG-18", "BG-04", "BG-07", "BG-19"]
 "BGR:North-West" = ["BG-15", "BG-06", "BG-05", "BG-12", "BG-11"]
 "BLR:Minsk City" = ["BY-HM"]
 "BLR:Minsk Oblast" = ["BY-MI"]
@@ -86,9 +95,10 @@ notes = [
 "LTU:Central and Western Lithuania" = ["LT-KU", "LT-KL", "LT-MR", "LT-PN", "LT-TA", "LT-TE", "LT-UT", "LT-SA", "LT-AL"]
 "LVA:Pieriga" = ["region:Riga", "-LV-RIX"]
 "MDA:North Moldova" = ["MD-BA", "MD-BR", "MD-DO", "MD-DR", "MD-ED", "MD-FL", "MD-FA", "MD-GL", "MD-OC", "MD-RI", "MD-SO", "MD-SI"]
-"MDA:Central Moldova" = ["MD-AN", "MD-CL", "MD-CR", "MD-HI", "MD-IA", "MD-NI", "MD-OR", "MDA-1645", "MDA-1644", "MD-ST", "MD-TE", "MD-UN", "MD-SD"]
+"MDA:Central Moldova" = ["MD-AN", "MD-CL", "MD-CR", "MD-HI", "MD-IA", "MD-NI", "MD-OR", "MDA-1644", "MD-ST", "MD-TE", "MD-UN", "MD-SD"]
 "MDA:South Moldova" = ["MD-BS", "MD-CA", "MD-CT", "MD-CS", "MD-CM", "MD-LE", "MD-TA", "MD-SV"]
-"MDA:Transnistria" = ["MDA-1638", "MDA-1628", "MD-CAM", "MD-GRI", "MD-BD"]
+# MDA-1645, the second "Rezina" unit, lies east of the Dniester: it is Ribnita
+"MDA:Transnistria" = ["MDA-1638", "MDA-1628", "MD-CAM", "MD-GRI", "MD-BD", "MDA-1645"]
 "MNE:Coastal Montenegro" = ["ME-02", "ME-05", "ME-08", "ME-10", "ME-19", "ME-20"]
 "MNE:Central Montenegro" = ["ME-16", "ME-12", "ME-06", "ME-07"]
 "MNE:Northern Montenegro" = ["ME-01", "ME-03", "ME-04", "ME-09", "ME-11", "ME-13", "ME-14", "ME-15", "ME-17", "ME-18", "ME-21"]
@@ -315,3 +325,25 @@ seeds = [[29.03, 40.99], [29.02, 41.02], [29.12, 40.99]]
 seeds = [[29.19, 40.89], [29.30, 40.87], [29.31, 40.82], [29.62, 41.17]]
 [provinces.UA-0009]
 units = ["Vinnytsya"]
+
+# PR #38 review
+[provinces.FR-0004] # Yvelines and Seine-et-Marne (NE spells it Seien-et-Marne)
+units = ["Yvelines", "Seien-et-Marne"]
+[provinces.DE-0015] # Potsdam, Gruenheide, BER, Oranienburg, Bernau, Falkensee
+seeds = [[13.06, 52.40], [13.82, 52.42], [13.50, 52.37], [13.24, 52.75], [13.59, 52.68], [13.09, 52.56]]
+[provinces.DE-0016] # Cottbus, Schwedt, Frankfurt (Oder), Wittenberge, Eisenhuettenstadt, Neuruppin, Brandenburg an der Havel
+seeds = [[14.33, 51.76], [14.28, 53.06], [14.55, 52.35], [11.75, 53.00], [14.64, 52.15], [12.81, 52.93], [12.55, 52.41]]
+[provinces.DE-0006]
+seeds = [[11.58, 48.14]]
+[provinces.DE-0007] # Ingolstadt, Freising and the airport
+seeds = [[11.43, 48.77], [11.75, 48.40], [11.79, 48.35]]
+[provinces.DE-0008] # Augsburg, Donauwoerth, Fuerstenfeldbruck
+seeds = [[10.90, 48.37], [10.78, 48.72], [11.25, 48.18]]
+[provinces.DE-0009] # Garmisch, Kempten, Bad Toelz, Rosenheim
+seeds = [[11.10, 47.49], [10.31, 47.73], [11.56, 47.76], [12.13, 47.86]]
+[provinces.DE-0010] # Nuremberg, Erlangen, Fuerth, Ansbach
+seeds = [[11.08, 49.45], [11.00, 49.59], [10.99, 49.48], [10.57, 49.30]]
+[provinces.DE-0011] # Wuerzburg, Bamberg, Bayreuth, Schweinfurt
+seeds = [[9.93, 49.79], [10.89, 49.89], [11.58, 49.94], [10.23, 50.05]]
+[provinces.DE-0012] # Regensburg, Landshut, Passau
+seeds = [[12.10, 49.02], [12.15, 48.54], [13.46, 48.57]]

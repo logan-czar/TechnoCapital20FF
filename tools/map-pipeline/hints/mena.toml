@@ -5,7 +5,7 @@
 watch = ["BHR", "QA-0001", "QA-0002", "QA-0003", "KW-0001", "KW-0002", "PS-", "IL-0002", "IL-0015", "LB-0001", "AE-"]
 notes = [
     "MAR: Natural Earth still has Morocco's 16 old regions, so the 12 new ones are built from them: Al Hoceima stays in Fes-Meknes (with Taza and Taounate), Khenifra and Khouribga stay outside Beni Mellal-Khenifra (in Fes-Meknes and Casablanca-Settat), El Jadida is in Marrakech-Safi, and Draa-Tafilalet is cut from Meknes-Tafilalet and Souss-Massa-Draa by a builder-drawn line along the High Atlas.",
-    "MA-0019 and MA-0020 (Western Sahara, SADR claims) follow our province file (decision C): Natural Earth's Western Sahara unit is split between Laayoune-Sakia El Hamra and Dakhla-Oued Ed-Dahab at 26 N inland and Boujdour's southern edge on the coast, by a builder-drawn line.",
+    "MA-0019 and MA-0020 (Western Sahara, SADR claims) follow our province file (decision C): Natural Earth's Western Sahara unit is split between Laayoune-Sakia El Hamra and Dakhla-Oued Ed-Dahab at 26 N inland and Boujdour's southern edge on the coast, by a builder-drawn line; the Western Sahara part of NE's Guelmim-Es-Semara unit (Smara, Mahbes, south of 27.67 N) goes to Laayoune-Sakia El Hamra too.",
     "PSE: the West Bank and Gaza governorate groups are carved from Natural Earth's two Palestinian units with the geoBoundaries PSE governorates; the West Bank part of the Jerusalem governorate is drawn with Ramallah-Jericho. East Jerusalem (IL-0002) and the Golan Heights (IL-0015) are in Natural Earth's Israel already, as the province file has them.",
     "LBN: Akkar and Baalbek-Hermel are new governorates Natural Earth merges into North Lebanon and the Beqaa; both are cut off by builder-drawn lines.",
     "QA-0010 Al Shahaniya is cut from Al Rayyan by a builder-drawn line west of Doha (Al Udeid stays in Al Rayyan).",
@@ -270,3 +270,8 @@ seeds = [[42.56, 16.89], [42.12, 16.73]]
 seeds = [[42.62, 17.15], [42.83, 16.97], [42.95, 16.60]]
 [provinces.SA-0032] # Duba, Haql, Sharma
 seeds = [[35.70, 27.35], [34.95, 29.00], [35.20, 28.00]]
+
+[carve."MAR:Laayoune-Sakia El Hamra"]
+# Smara and Mahbes: the Western Sahara part of NE's Guelmim-Es-Semara (south of the 27.67 N line)
+polygon = [[-13.50, 27.667], [-8.67, 27.667], [-8.67, 26.00], [-13.50, 26.00], [-13.50, 27.667]]
+from = ["MAR:Guelmim-Oued Noun"]
