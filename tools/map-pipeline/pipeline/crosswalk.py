@@ -47,6 +47,15 @@ Q_NONE = 0.1
 REGION_MATCH_MIN = 88
 # A Metro province with a direction word sits this far from the Metro's core city (degrees).
 METRO_OFFSET_DEG = 0.2
+# A Metro province is compact: an admin unit its notes name only as a word (no populated place
+# of that name inside it, and the notes do not say "county") whose point lies further than this
+# (degrees) from the Metro's core city is not one of its seeds: "tequila trade" in Guadalajara
+# Centro's notes is the drink, not the municipality of Tequila 50 km away (D612). Places the
+# notes name (Flagstaff for Phoenix-Central) still count.
+METRO_NOTES_DEG = 0.35
+# "Touching" for that rule (D612): within this many degrees (about 3 km), so a unit across a
+# narrow strait still counts (Marin across the Golden Gate from San Francisco).
+METRO_TOUCH_DEG = 0.03
 # Populated places this far outside a region polygon (degrees) still count (coastal points).
 PLACE_BUFFER_DEG = 0.05
 # Gazetteer names shorter than this are ignored unless they are a whole name part.
@@ -371,7 +380,18 @@ def make_seeds(p: ProvinceRow, gaz: Gazetteer, region_geom, metro_core, hint: di
     hits = [(h, True) for h in gaz.find(parts, whole, True)]
     hits += [(h, False) for h in gaz.find(text.note_phrases(p.notes), whole, False)]
     named = []
+    def too_far(x, y):
+        if in_name or not p.metro or metro_core is None:
+            return False
+        k = _scale(metro_core[1])
+        return _dist2(x, y, metro_core[0], metro_core[1], k) > METRO_NOTES_DEG ** 2
+
+    county_notes = any(w in text.contains_any_word(ph) for ph in text.note_phrases(p.notes) for w in _ADMIN_WORDS)
     for (kind, fname, payload, ph), in_name in hits:
+        if kind == "block" and not county_notes and gaz.place_in(fname, payload.geometry) is None \
+                and too_far(payload.rx, payload.ry):
+            notes.append(f"notes unit {payload.name} ignored (a word, outside the Metro)")
+            continue
         if kind == "place":
             named.append((payload[3], payload[0], payload[1], in_name))
         if kind == "place":
@@ -429,13 +449,15 @@ def dedupe_seeds(provs: list[ProvinceRow]) -> None:
             p.seeds = kept
 
 
-def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool):
+def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids: frozenset = frozenset()):
     """Return ({province: [unit ids]}, {unit id: [province ids]} for split units).
 
     A block with one province's seeds goes to it, one with several is split among them, an empty
     one goes to the province with the nearest seed: nearest to the block's representative point
     (admin units) or to the block itself (`by_geometry`, the polygon parts of a Voronoi region,
-    so an island goes to the closest seed)."""
+    so an island goes to the closest seed). When the region also has provinces outside a Metro,
+    a Metro province takes an empty block only if it touches (or nearly, METRO_TOUCH_DEG) a block it claimed, so the rural
+    province, not the city, gets the countryside (D612)."""
     sindex = blocks.sindex
     claims: dict[str, set[str]] = defaultdict(set)
     for p in provs:
@@ -460,6 +482,21 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool):
     whole: dict[str, list[str]] = defaultdict(list)
     split: dict[str, list[str]] = {}
     all_seeds = [(s.x, s.y, p.id) for p in provs for s in p.seeds]
+    rural = any(p.id not in metro_ids for p in provs)
+    geom_of = dict(zip(blocks.unit_id, blocks.geometry))
+    metro_claim = {}
+    if rural:
+        for pid in sorted(metro_ids):
+            mine = [geom_of[u] for u, owners in claims.items() if pid in owners and u in geom_of]
+            if mine:
+                metro_claim[pid] = shapely.union_all(mine)
+
+    def eligible(r):
+        if not rural:
+            return all_seeds
+        near = {pid for pid, g in metro_claim.items() if r.geometry.distance(g) < METRO_TOUCH_DEG}
+        return [t for t in all_seeds if t[2] not in metro_ids or t[2] in near]
+
     for r in blocks.itertuples():
         owners = claims.get(r.unit_id, set())
         if len(owners) == 1:
@@ -467,11 +504,11 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool):
         elif len(owners) > 1:
             split[r.unit_id] = sorted(owners)
         elif by_geometry:
-            best = min(all_seeds, key=lambda t: (r.geometry.distance(Point(t[0], t[1])), t[2]))
+            best = min(eligible(r) or all_seeds, key=lambda t: (r.geometry.distance(Point(t[0], t[1])), t[2]))
             whole[best[2]].append(r.unit_id)
         else:
             k = _scale(r.ry)
-            best = min(all_seeds, key=lambda t: (_dist2(r.rx, r.ry, t[0], t[1], k), t[2]))
+            best = min(eligible(r) or all_seeds, key=lambda t: (_dist2(r.rx, r.ry, t[0], t[1], k), t[2]))
             whole[best[2]].append(r.unit_id)
     # a province left with nothing (its seeds sit outside every block): split the block nearest
     # its best seed with that block's owner
@@ -597,7 +634,8 @@ def run(region: config.Region) -> None:
             p.extra_notes = extra
         dedupe_seeds(members)
         rplan["level"] = level
-        whole, split = assign_blocks(members, b, by_geometry=(level == "voronoi"))
+        whole, split = assign_blocks(members, b, by_geometry=(level == "voronoi"),
+                                     metro_ids=frozenset(p.id for p in members if p.metro))
         for p in members:
             sp = {}
             for uid, owners in split.items():
