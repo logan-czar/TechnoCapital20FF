@@ -108,6 +108,8 @@ The map draws behind floating windows (D635 to D638), so both M9 checks now run 
 
 ### The map's frame time (`--bench-map`, D639)
 
+These runs predate the map bench's pass mark (D778, D779: p99 under 16.7 ms, a run without the window's focus INVALID): a p99 such as the 16.73 ms below was not judged against it, and some runs may have been paced by the OS (D744). The current check and its results are in [m8-checks.md](m8-checks.md).
+
 ```
 cargo build --release -p game
 target/release/game --synthetic-map DIR --synthetic-width 8192 --bench-map 20

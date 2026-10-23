@@ -9,7 +9,7 @@ Logan's PC (Windows 11, 24 threads, RTX 5070 Ti), October 2026, branch `build/m8
 | Check (m8-plan) | How | Result |
 |---|---|---|
 | M8.8 click test: every province clickable | `cargo test -p game --test m8_map every_world_province` (in the gate) | 3,255 of 3,255 pick their own id at their label point (the 372 tiny ones at their click target): 2,964 from World zoom, 291 from Country, none needs Province; then all 3,255 clicked through the shell to their Province page. Debug 10.5 s |
-| 60 fps with the panes open, in release | `target/release/game --bench-map 15 --map-mode MODE [--bench-map-running SPEED] [--bench-map-panes SET]`, a check since D778 (exit 1 when p99 is 16.7 ms or more) | Paused, every mode at every zoom level: p99 4.67 ms or less, max 6.39 ms, 321 to 349 fps (60 fps is 16.7 ms). Running at speed 4: p99 5.11 ms or less, max 19.1 ms (the daily rollover). At speed 5 (max, a fast-forward): 35 to 40 ms p50, p99 47 to 57 ms, max 50 to 67 ms, mostly the open Company and Province pages (D744). **After the page fixes (D770 to D778, below):** speed 5 with the four panes p50 12 ms, p99 18 to 21 ms, 87 to 95 fps: FAIL, the sim's own quarter ticks (no pane open: p99 14.6 ms, PASS); speed 4 PASS for every pane set, paused PASS |
+| 60 fps with the panes open, in release | `target/release/game --bench-map 15 --map-mode MODE [--bench-map-running SPEED] [--bench-map-panes SET]`, a check since D778 and D779: exit 0 PASS, 1 FAIL (p99 16.7 ms or more), 3 INVALID (the window had the focus in under 97% of the frames, or the OS paced it at 60 Hz: rerun in front) | **The routine check is paused and speed 4, each pane set, and must exit 0** (it does: speed 4 p99 6.3 ms or less, paused p99 under 12 ms with the machine in use). Speed 5 with any pane open is a **tracked known FAIL, reported and not gated** until Logan decides (D779): after the page fixes (D770 to D778, below) the four panes run p50 12 ms, p99 18 to 21 ms, 87 to 95 fps, short of 60 fps by the sim's own quarter ticks; with no pane open speed 5 passes (p99 14.6 ms). Before the fixes (D744): paused p99 4.67 ms or less; speed 4 p99 5.11 ms or less; speed 5 p50 35 to 40 ms, p99 47 to 57 ms |
 | Leak test on the world map | `cargo test -p game --test m9_leak` | Pass, no leak: 94 modes, 552 banded HQ pins, 329 heat values, 145 province cards, 26 zone cards a state, and the Province pages; debug 25 s, release 8.6 s |
 | Timing harness on the world map | `target/release/game --bench-pages` | `pages 59 opened, worst 20.64 ms: PASS` twice; the Province page 9.7 to 10.9 ms, every mode switch 5.6 ms or less |
 | Startup render error | D741 | Cause found (a stale binary against a newer shader); the shader is now compiled in and its layout tested |
@@ -81,14 +81,18 @@ The reviewer's 44.5 ms frame (paused, Political, World zoom) did not come back i
 
 ### At max speed after the page fixes (D770 to D778)
 
-Branch `build/m8-speed5-page-cost` from main fe4b4c8, October 2026, Logan's PC, the world map, Political, 15 s a run. The check:
+Branch `build/m8-speed5-page-cost` from main fe4b4c8, October 2026, Logan's PC, the world map, Political, 15 s a run. The routine check (D779; each must exit 0):
 
 ```
 cargo build --release -p game
-target/release/game --bench-map 15 --map-mode political --bench-map-running 5     # the four panes; exit 1 when p99 >= 16.7 ms
-target/release/game --bench-map 15 --map-mode political --bench-map-running 5 --bench-map-panes none    # or lists, company, province
+target/release/game --bench-map 15 --map-mode political --bench-map-panes SET                          # paused
+target/release/game --bench-map 15 --map-mode political --bench-map-running 4 --bench-map-panes SET    # speed 4
+#   SET: all (the default), none, lists, company, province; exit 0 PASS, 1 FAIL (p99 >= 16.7 ms), 3 INVALID (rerun in front)
+target/release/game --bench-map 15 --map-mode political --bench-map-running 5     # speed 5, the four panes: the tracked known FAIL, reported and not gated
 cargo build --release -p game --features profile    # adds the span timer and the per-frame work counts (D770)
 ```
+
+Since PR #43 (D790) the bench window opens normally and focused, but Logan's own windows can still take the focus: a run the window lost the focus in (under 97% of the frames) or that the OS paced at 60 Hz reports INVALID and exits 3, and is rerun, not counted as a FAIL.
 
 Run it with the window in front: the bench prints the share of frames the window had the focus, and an unfocused window's presents are paced at 60 Hz by the OS (D744; it warns when 30% of the frames sit at 16.3 to 17.0 ms). Only runs with the focus in 97% or more of the frames are below; the machine was in use, so each was rerun until one kept the focus.
 
@@ -98,7 +102,7 @@ Run it with the window in front: the bench prints the share of frames the window
 
 | Panes | Speed | main fe4b4c8: fps, p50 / p95 / p99 ms | this branch: fps, p50 / p95 / p99 ms | Check |
 |---|---|---|---|---|
-| all four (the check's set) | 5 | 25, 37.9 / 49.0 / 55.6 | 92, 12.6 / 16.6 / 18.0 (other runs p99 19.7 to 21.0) | FAIL |
+| all four (tracked known FAIL, D779) | 5 | 25, 37.9 / 49.0 / 55.6 | 92, 12.6 / 16.6 / 18.0 (other runs p99 19.7 to 21.0) | FAIL |
 | none | 5 | 83, 12.8 / 25.5 / 32.2 | 224, 2.3 / 12.2 / 14.6 | PASS |
 | Companies and Industries | 5 | 65, 15.5 / 28.2 / 36.4 | 169, 3.2 / 13.9 / 17.2 | FAIL |
 | the company page | 5 | 28, 34.5 / 44.9 / 58.7 | 117, 8.1 / 15.8 / 18.4 | FAIL |

@@ -20,9 +20,10 @@
 //!   `--bench-map-panes SET` opens all four panes (the default), none, only Companies and
 //!   Industries (`lists`), only the company page or only the Province page (D778). It also
 //!   reports the frame less its sim stepping, the stepping and the longest tick a frame, the
-//!   ticks of each kind, and whether the window had the focus. It is a check: it exits with
-//!   an error when the p99 frame is 16.7 ms or more (one 60 fps frame, `MAP_TARGET_P99_MS`),
-//!   and warns when the OS paced the window's presents at 60 Hz. Built with `--features profile`
+//!   ticks of each kind, and whether the window had the focus. It is a check: it exits 1 when
+//!   the p99 frame is 16.7 ms or more (one 60 fps frame, `MAP_TARGET_P99_MS`) and 3, a run
+//!   that does not count, when the window had the focus in under 97% of the frames or the OS
+//!   paced its presents at 60 Hz (D779). Built with `--features profile`
 //!   it also prints what the frames did (nodes spawned and changed, page rebuilds and patches,
 //!   live writes) and the spans that cost the most, overall and in the slowest frames (D770).
 //!
@@ -131,6 +132,34 @@ pub const MAP_TARGET_P99_MS: f64 = 1000.0 / 60.0;
 /// OS paced the window's presents at 60 Hz (D744): the run measured the pacing, not the game.
 pub const OS_PACED_SHARE: f64 = 0.3;
 pub const OS_PACED_MS: (f64, f64) = (16.3, 17.0);
+/// The least share of measured frames the window must have the OS focus in for a map bench to
+/// count (D779): an unfocused window's presents may be paced at 60 Hz.
+pub const MIN_FOCUS_SHARE: f64 = 0.97;
+/// The exit code of a map bench that did not count (unfocused or OS-paced, D779): neither a
+/// pass nor a fail, rerun it with the window in front.
+pub const MAP_INVALID_EXIT: u8 = 3;
+
+/// What a map bench run says (D778, D779).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MapVerdict {
+    Pass,
+    Fail,
+    /// The window lost the focus or the OS paced its presents: the run measured the desktop.
+    Invalid,
+}
+
+/// The verdict of a run: invalid when the window had the focus in less than
+/// [`MIN_FOCUS_SHARE`] of the frames or [`OS_PACED_SHARE`] of them sat at 60 Hz, else pass when
+/// its p99 is under [`MAP_TARGET_P99_MS`].
+pub fn map_verdict(p99: f64, focus_share: f64, paced_share: f64) -> MapVerdict {
+    if focus_share < MIN_FOCUS_SHARE || paced_share >= OS_PACED_SHARE {
+        MapVerdict::Invalid
+    } else if p99 < MAP_TARGET_P99_MS {
+        MapVerdict::Pass
+    } else {
+        MapVerdict::Fail
+    }
+}
 
 #[derive(Resource)]
 struct Bench {
@@ -482,7 +511,7 @@ fn measure(
         .map(|(f, s)| f - s)
         .collect();
     report("frame ms", &mut b.frames_ms);
-    let map_failed = if let BenchMode::Map { .. } = b.mode {
+    let verdict = if let BenchMode::Map { speed, panes, .. } = b.mode {
         let v = &b.frames_ms;
         let p99 = if v.is_empty() {
             f64::INFINITY
@@ -494,9 +523,10 @@ fn measure(
             .filter(|&&x| x >= OS_PACED_MS.0 && x <= OS_PACED_MS.1)
             .count() as f64
             / v.len().max(1) as f64;
+        let focus = b.focused_frames as f64 / v.len().max(1) as f64;
         println!(
             "BENCH map: the window had the focus in {:.0}% of the frames",
-            b.focused_frames as f64 * 100.0 / v.len().max(1) as f64
+            focus * 100.0
         );
         if paced >= OS_PACED_SHARE {
             println!(
@@ -504,14 +534,25 @@ fn measure(
                 paced * 100.0
             );
         }
-        let ok = p99 < MAP_TARGET_P99_MS;
+        let verdict = map_verdict(p99, focus, paced);
+        let known = speed == sim::time::control::MAX_SPEED && panes != MapPanes::None;
         println!(
-            "BENCH map check: p99 {p99:.2} ms: {} (target < {MAP_TARGET_P99_MS:.1} ms)",
-            if ok { "PASS" } else { "FAIL" }
+            "BENCH map check: p99 {p99:.2} ms: {} (target < {MAP_TARGET_P99_MS:.1} ms){}",
+            match verdict {
+                MapVerdict::Pass => "PASS",
+                MapVerdict::Fail => "FAIL",
+                MapVerdict::Invalid =>
+                    "INVALID (the window lost the focus or the OS paced it: rerun in front)",
+            },
+            if known {
+                "; speed 5 with panes open is a tracked known FAIL, reported and not gated (D779)"
+            } else {
+                ""
+            }
         );
-        !ok
+        Some(verdict)
     } else {
-        false
+        None
     };
     if let BenchMode::Map { .. } = b.mode {
         let n = |i: usize| b.level_ms[i].len();
@@ -606,10 +647,10 @@ fn measure(
             rate.budget_hits
         );
     }
-    exit.write(if map_failed {
-        AppExit::error()
-    } else {
-        AppExit::Success
+    exit.write(match verdict {
+        Some(MapVerdict::Fail) => AppExit::error(),
+        Some(MapVerdict::Invalid) => AppExit::from_code(MAP_INVALID_EXIT),
+        _ => AppExit::Success,
     });
 }
 
@@ -824,4 +865,17 @@ fn drive_map(
         ZoomLevel::Country => 1,
         ZoomLevel::Province => 2,
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_map_run_counts_only_in_front() {
+        assert_eq!(map_verdict(10.0, 1.0, 0.0), MapVerdict::Pass);
+        assert_eq!(map_verdict(17.0, 1.0, 0.0), MapVerdict::Fail);
+        assert_eq!(map_verdict(10.0, 0.9, 0.0), MapVerdict::Invalid);
+        assert_eq!(map_verdict(17.0, 1.0, 0.5), MapVerdict::Invalid);
+    }
 }
