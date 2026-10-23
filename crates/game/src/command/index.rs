@@ -16,7 +16,8 @@ use sim::births::random::EventKind;
 use sim::finance::distress::CompanyStatus;
 use sim::time::Quarter;
 use sim::views::births::EventRow;
-use sim::views::characters::CharacterRef;
+use sim::views::characters::{CharacterRef, CharacterRow};
+use sim::views::company_rows::CompanyRow;
 use sim::world::CompanyId;
 
 use super::fuzzy::score_lower;
@@ -175,22 +176,10 @@ impl NameIndex {
         }
         let mut by_ticker = HashMap::new();
         for r in &v.company_rows.get().rows {
-            let mut detail = industry_name(r.industry);
-            if r.public && !r.ticker.is_empty() {
-                detail = format!("{detail}, listed");
-            } else {
-                detail = format!("{detail}, private");
-            }
-            let mut e =
-                IndexEntry::new(PageRef::Company(r.id), r.name.clone(), detail).alias(&r.ticker);
-            if r.status == CompanyStatus::Removed {
-                e.hidden = true;
-                e.detail.push_str(", removed");
-            }
             if !r.ticker.is_empty() {
                 by_ticker.insert(r.ticker.to_ascii_uppercase(), r.id);
             }
-            entries.push(e);
+            entries.push(company_entry(r, &industry_name));
         }
         for r in &v.industry_rows.get().rows {
             entries.push(IndexEntry::new(
@@ -231,15 +220,7 @@ impl NameIndex {
             );
         }
         for e in &v.births.get().events {
-            let mut entry = IndexEntry::new(
-                PageRef::Event(e.id),
-                event_name(e),
-                format!("Startup event, {} startups", e.startups.len()),
-            );
-            if let EventKind::Fixed(key) = &e.kind {
-                entry = entry.alias(key);
-            }
-            entries.push(entry);
+            entries.push(event_entry(e));
         }
         // Every full character (v_characters), described by its first role, else its tier.
         let company_names: HashMap<CompanyId, &str> = v
@@ -250,28 +231,7 @@ impl NameIndex {
             .map(|r| (r.id, r.name.as_str()))
             .collect();
         for c in &v.characters.get().full {
-            let CharacterRef::Full(id) = c.id else {
-                continue;
-            };
-            let detail = c
-                .roles
-                .first()
-                .map(|r| {
-                    let co = names::role(r).1;
-                    names::role_text(r, company_names.get(&co).copied().unwrap_or("?"))
-                })
-                .unwrap_or_else(|| {
-                    if c.tier.is_empty() {
-                        "Character".to_owned()
-                    } else {
-                        format!("Character, {}", c.tier)
-                    }
-                });
-            entries.push(IndexEntry::new(
-                PageRef::Character(id),
-                c.name.clone(),
-                detail,
-            ));
+            entries.extend(character_entry(c, &company_names));
         }
         // Provinces (M8.7, D707): searchable by name and id, "Province, Country" as detail.
         let places = v.places.get();
@@ -305,6 +265,60 @@ impl NameIndex {
             by_ticker,
             sources: Sources::of(v),
         }
+    }
+
+    /// Adds the companies, startup events and full characters born since the last build, at the
+    /// end (D771): a birth names its newborn at once without rebuilding the whole index on the
+    /// costly plan-lock frame. The next full rebuild (paced at fast-forward) puts them in order
+    /// and refreshes everything else.
+    pub fn append_born(&mut self, v: &SimViews) {
+        let industry_name = |id: sim::world::IndustryId| {
+            v.industry_rows
+                .get()
+                .get(id)
+                .map_or_else(|| format!("Industry #{}", id.0), |r| r.name.clone())
+        };
+        let mut added = Vec::new();
+        for r in &v.company_rows.get().rows {
+            if !self.by_page.contains_key(&PageRef::Company(r.id)) {
+                if !r.ticker.is_empty() {
+                    self.by_ticker.insert(r.ticker.to_ascii_uppercase(), r.id);
+                }
+                added.push(company_entry(r, &industry_name));
+            }
+        }
+        for e in &v.births.get().events {
+            if !self.by_page.contains_key(&PageRef::Event(e.id)) {
+                added.push(event_entry(e));
+            }
+        }
+        let fresh: Vec<_> = v
+            .characters
+            .get()
+            .full
+            .iter()
+            .filter(|c| {
+                matches!(c.id, CharacterRef::Full(id)
+                    if !self.by_page.contains_key(&PageRef::Character(id)))
+            })
+            .collect();
+        if !fresh.is_empty() {
+            let company_names: HashMap<CompanyId, &str> = v
+                .company_rows
+                .get()
+                .rows
+                .iter()
+                .map(|r| (r.id, r.name.as_str()))
+                .collect();
+            for c in fresh {
+                added.extend(character_entry(c, &company_names));
+            }
+        }
+        for e in added {
+            self.by_page.insert(e.page.clone(), self.entries.len());
+            self.entries.push(e);
+        }
+        self.sources.counts = Sources::of(v).counts;
     }
 
     /// Rebuilds when a source view moved.
@@ -391,11 +405,72 @@ pub fn event_name(e: &EventRow) -> String {
     format!("{} ({})", e.name, e.date)
 }
 
+fn company_entry(
+    r: &CompanyRow,
+    industry_name: &dyn Fn(sim::world::IndustryId) -> String,
+) -> IndexEntry {
+    let mut detail = industry_name(r.industry);
+    if r.public && !r.ticker.is_empty() {
+        detail = format!("{detail}, listed");
+    } else {
+        detail = format!("{detail}, private");
+    }
+    let mut e = IndexEntry::new(PageRef::Company(r.id), r.name.clone(), detail).alias(&r.ticker);
+    if r.status == CompanyStatus::Removed {
+        e.hidden = true;
+        e.detail.push_str(", removed");
+    }
+    e
+}
+
+fn event_entry(e: &EventRow) -> IndexEntry {
+    let mut entry = IndexEntry::new(
+        PageRef::Event(e.id),
+        event_name(e),
+        format!("Startup event, {} startups", e.startups.len()),
+    );
+    if let EventKind::Fixed(key) = &e.kind {
+        entry = entry.alias(key);
+    }
+    entry
+}
+
+/// A full character's entry, described by its first role, else its tier (partial ones have
+/// none).
+fn character_entry(
+    c: &CharacterRow,
+    company_names: &HashMap<CompanyId, &str>,
+) -> Option<IndexEntry> {
+    let CharacterRef::Full(id) = c.id else {
+        return None;
+    };
+    let detail = c
+        .roles
+        .first()
+        .map(|r| {
+            let co = names::role(r).1;
+            names::role_text(r, company_names.get(&co).copied().unwrap_or("?"))
+        })
+        .unwrap_or_else(|| {
+            if c.tier.is_empty() {
+                "Character".to_owned()
+            } else {
+                format!("Character, {}", c.tier)
+            }
+        });
+    Some(IndexEntry::new(
+        PageRef::Character(id),
+        c.name.clone(),
+        detail,
+    ))
+}
+
 /// Keeps the index current, before any UI system reads it. While the sim fast-forwards the
 /// company and character views move a few times a second of real time, so the index then
 /// rebuilds at most every [`crate::pace::LIVE_MODEL_SECS`], as one of the frame's heavy jobs
-/// (D773); paused or at speeds 1 to 4 it follows at once, and so it does at any speed when a
-/// company, startup event or character is born, so the notices of its birth name it.
+/// (D773); paused or at speeds 1 to 4 it follows at once. A company, startup event or character
+/// born meanwhile is appended at once ([`NameIndex::append_born`]), so the notices of its birth
+/// name it.
 pub fn refresh_index(
     views: Res<Views>,
     mut index: ResMut<NameIndex>,
@@ -410,7 +485,41 @@ pub fn refresh_index(
     let now = views.is_changed().then(|| Sources::of(&views));
     let stale = now.is_some_and(|s| s != index.sources);
     let born = now.is_some_and(|s| s.counts != index.sources.counts);
-    if born || paced.due(stale, &mut pace, crate::pace::LIVE_MODEL_SECS, true) {
+    if paced.due(stale, &mut pace, crate::pace::LIVE_MODEL_SECS, true) {
         index.refresh(&views);
+    } else if born {
+        index.append_born(&views);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Appending the newborns names every page a full build of the later views names, the
+    /// newborns among them.
+    #[test]
+    fn appending_newborns_names_what_a_build_names() {
+        let data = sim_data::load_world(&sim_data::default_data_dir()).unwrap();
+        let mut sim = sim::Sim::new(data, 42).unwrap();
+        let mut index = NameIndex::build(sim.views());
+        // Past the first plan lock (9 January 2020 00:00 is tick 192): companies are born.
+        for _ in 0..200 {
+            sim.step();
+        }
+        let v = sim.views();
+        let full = NameIndex::build(v);
+        assert!(full.entries.len() > index.entries.len(), "a birth in play");
+        index.append_born(v);
+        for e in &full.entries {
+            if matches!(
+                e.page,
+                PageRef::Company(_) | PageRef::Event(_) | PageRef::Character(_)
+            ) {
+                let got = index.entry(&e.page).map(|x| x.name.as_str());
+                assert_eq!(got, Some(e.name.as_str()), "{:?}", e.page);
+            }
+        }
+        assert_eq!(index.sources.counts, full.sources.counts);
     }
 }
