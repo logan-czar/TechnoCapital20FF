@@ -12,6 +12,7 @@ pub mod pace;
 pub mod page_bench;
 pub mod pages;
 pub mod pdoomberg;
+pub mod profile;
 pub mod shot;
 pub mod table;
 #[doc(hidden)]

@@ -17,6 +17,14 @@
 //!   paused unless `--bench-map-running [SPEED]` runs it (speed 1 to 5, default 5, the max;
 //!   alerts off), so the panes' rebuilds and the colour table's rewrites are measured too
 //!   (D744); either way it lists the slowest frames with what moved in them.
+//!   `--bench-map-panes SET` opens all four panes (the default), none, only Companies and
+//!   Industries (`lists`), only the company page or only the Province page (D778). It also
+//!   reports the frame less its sim stepping, the stepping and the longest tick a frame, the
+//!   ticks of each kind, and whether the window had the focus. It is a check: it exits with
+//!   an error when the p99 frame is 16.7 ms or more (one 60 fps frame, `MAP_TARGET_P99_MS`),
+//!   and warns when the OS paced the window's presents at 60 Hz. Built with `--features profile`
+//!   it also prints what the frames did (nodes spawned and changed, page rebuilds and patches,
+//!   live writes) and the spans that cost the most, overall and in the slowest frames (D770).
 //!
 //! All run without vsync so the frame times are the real cost, then exit.
 
@@ -59,6 +67,8 @@ pub enum BenchMode {
         metros: bool,
         /// The sim's speed while it measures (1 to 5; 0 paused), alerts off (D744).
         speed: u8,
+        /// The panes it opens (D778).
+        panes: MapPanes,
     },
     /// Open every page kind and time it to its first laid-out frame
     /// ([`crate::page_bench`]).
@@ -75,6 +85,52 @@ impl BenchMode {
         }
     }
 }
+
+/// Which panes the map bench opens (`--bench-map-panes`, D778): all four (the check's set,
+/// D742), none, only Companies and Industries, only the company page, or only the Province
+/// page. Pdoomberg's F10 is opened and closed (held behind) in every set.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum MapPanes {
+    #[default]
+    All,
+    None,
+    Lists,
+    Company,
+    Province,
+}
+
+impl MapPanes {
+    pub fn parse(s: &str) -> Option<MapPanes> {
+        Some(match s {
+            "all" => MapPanes::All,
+            "none" => MapPanes::None,
+            "lists" => MapPanes::Lists,
+            "company" => MapPanes::Company,
+            "province" => MapPanes::Province,
+            _ => return None,
+        })
+    }
+
+    fn lists(self) -> bool {
+        matches!(self, MapPanes::All | MapPanes::Lists)
+    }
+
+    fn company(self) -> bool {
+        matches!(self, MapPanes::All | MapPanes::Company)
+    }
+
+    fn province(self) -> bool {
+        matches!(self, MapPanes::All | MapPanes::Province)
+    }
+}
+
+/// The map bench's pass mark (D778): its p99 frame time must stay under one 60 fps frame.
+pub const MAP_TARGET_P99_MS: f64 = 1000.0 / 60.0;
+
+/// The share of frames between [`OS_PACED_MS`]'s bounds past which a map bench warns that the
+/// OS paced the window's presents at 60 Hz (D744): the run measured the pacing, not the game.
+pub const OS_PACED_SHARE: f64 = 0.3;
+pub const OS_PACED_MS: (f64, f64) = (16.3, 17.0);
 
 #[derive(Resource)]
 struct Bench {
@@ -104,6 +160,29 @@ struct Bench {
     /// Every measured map frame: its time, number, zoom level, and whether the monthly views
     /// moved or the colour table was rewritten in it.
     map_frames: Vec<MapFrame>,
+    /// Per-frame work counts of the measured map frames (D770).
+    work: WorkTotals,
+    /// Each measured frame's sim stepping time and its longest tick (ms).
+    step_ms: Vec<f64>,
+    tick_ms: Vec<f64>,
+    /// Measured frames the window had the OS focus in (an unfocused window may have its
+    /// presents paced, D744, D778).
+    focused_frames: u64,
+    /// With the `profile` feature: what each measured frame did, by frame number.
+    frame_work: std::collections::BTreeMap<u64, String>,
+}
+
+/// What the measured frames of the map bench did, summed (D770): UI nodes spawned, nodes and
+/// texts changed (what layout and text relayout work from), entities alive, and the pages'
+/// [`crate::pages::PageStats`].
+#[derive(Debug, Clone, Default)]
+struct WorkTotals {
+    frames: u64,
+    nodes_added: u64,
+    nodes_changed: u64,
+    texts_changed: u64,
+    entities: u64,
+    pages: crate::pages::PageStats,
 }
 
 /// One measured frame of the map bench.
@@ -114,6 +193,91 @@ struct MapFrame {
     level: Option<usize>,
     monthly: bool,
     colors: bool,
+}
+
+/// The spans the map bench lists with the `profile` feature (D770).
+pub const PROFILE_SPANS_SHOWN: usize = 45;
+
+/// Counts what each measured map frame did (D770); runs in `Last`, so its change filters see
+/// the whole frame's `Update` and `PostUpdate`.
+#[allow(clippy::type_complexity)]
+fn count_work(
+    mut b: ResMut<Bench>,
+    added: Query<(), Added<Node>>,
+    changed: Query<(), Changed<Node>>,
+    texts: Query<(), Changed<Text>>,
+    entities: &bevy::ecs::entity::Entities,
+    mut stats: ResMut<crate::pages::PageStats>,
+) {
+    let taken = std::mem::take(&mut *stats);
+    if b.start.is_none() {
+        return;
+    }
+    let (n_added, n_changed, n_texts) = (
+        added.iter().count() as u64,
+        changed.iter().count() as u64,
+        texts.iter().count() as u64,
+    );
+    let summary = format!(
+        "{n_added} spawned, {n_changed} nodes and {n_texts} texts changed; builds {:?}, spans {}, Live {}, charts {}, tables {}, chart nodes {}",
+        taken.builds,
+        taken.span_writes,
+        taken.live_sets,
+        taken.chart_sets,
+        taken.table_sets,
+        taken.chart_prim_writes
+    );
+    let frame = b.frame;
+    b.frame_work.insert(frame, summary);
+    let w = &mut b.work;
+    w.frames += 1;
+    w.nodes_added += n_added;
+    w.nodes_changed += n_changed;
+    w.texts_changed += n_texts;
+    w.entities += u64::from(entities.len());
+    let p = &mut w.pages;
+    for (k, n) in taken.builds {
+        *p.builds.entry(k).or_default() += n;
+    }
+    p.span_writes += taken.span_writes;
+    p.span_checks += taken.span_checks;
+    p.live_makes += taken.live_makes;
+    p.live_sets += taken.live_sets;
+    p.chart_sets += taken.chart_sets;
+    p.table_sets += taken.table_sets;
+    p.chart_draws += taken.chart_draws;
+    p.chart_prim_writes += taken.chart_prim_writes;
+}
+
+fn report_work(w: &WorkTotals) {
+    let n = w.frames.max(1) as f64;
+    let f = |x: u64| x as f64 / n;
+    let p = &w.pages;
+    println!(
+        "BENCH work per frame ({} frames): {:.0} entities, {:.1} UI nodes spawned, {:.1} nodes changed (Changed<Node>, spawns included), {:.1} texts changed",
+        w.frames,
+        f(w.entities),
+        f(w.nodes_added),
+        f(w.nodes_changed),
+        f(w.texts_changed)
+    );
+    let builds: Vec<String> = p
+        .builds
+        .iter()
+        .map(|(k, x)| format!("{k} {:.3}", f(*x)))
+        .collect();
+    println!(
+        "BENCH work per frame: page rebuilds [{}]; live spans {:.1} made, {:.1} written; Live widgets {:.2} made, {:.2} set; live charts {:.3} set, live tables {:.3} set; chart redraws {:.3}, {:.1} chart nodes written",
+        builds.join(", "),
+        f(p.span_checks),
+        f(p.span_writes),
+        f(p.live_makes),
+        f(p.live_sets),
+        f(p.chart_sets),
+        f(p.table_sets),
+        f(p.chart_draws),
+        f(p.chart_prim_writes)
+    );
 }
 
 /// The slowest frames the map bench lists.
@@ -144,6 +308,11 @@ impl Plugin for BenchPlugin {
             last_monthly: 0,
             last_colors: None,
             map_frames: Vec::new(),
+            work: WorkTotals::default(),
+            step_ms: Vec::new(),
+            tick_ms: Vec::new(),
+            frame_work: Default::default(),
+            focused_frames: 0,
         })
         .add_systems(First, measure)
         .add_systems(Update, drive.before(TableSystems));
@@ -161,6 +330,10 @@ impl Plugin for BenchPlugin {
                         .in_set(crate::ui::UiSystems::Input)
                         .before(crate::workspace::WorkspaceInput),
                 );
+                // The work counts walk every UI node, so only a profiling build pays for them.
+                if cfg!(feature = "profile") {
+                    app.add_systems(Last, count_work);
+                }
             }
             BenchMode::Pages => {}
         }
@@ -238,6 +411,7 @@ fn measure(
     children: Query<&Children>,
     table_q: Query<&mut Table>,
     gpu: Option<Res<crate::map::render::MapGpu>>,
+    window: Query<&Window, With<bevy::window::PrimaryWindow>>,
     mut exit: MessageWriter<AppExit>,
 ) {
     let now = Instant::now();
@@ -253,7 +427,13 @@ fn measure(
         && b.frame > u64::from(WARMUP_FRAMES)
     {
         let ms = now.duration_since(last).as_secs_f64() * 1e3;
+        crate::profile::end_frame(b.frame - 1, ms);
+        b.focused_frames += u64::from(window.single().is_ok_and(|w| w.focused));
         b.frames_ms.push(ms);
+        b.step_ms
+            .push(rate.step_time_last_frame.as_secs_f64() * 1e3);
+        b.tick_ms
+            .push(rate.longest_tick_last_frame.as_secs_f64() * 1e3);
         if let Some(l) = b.last_level {
             b.level_ms[l].push(ms);
         }
@@ -276,6 +456,7 @@ fn measure(
     if b.frame == u64::from(WARMUP_FRAMES) {
         b.start = Some(now);
         b.start_steps = rate.total_steps;
+        crate::profile::reset();
     }
     let Some(start) = b.start else {
         return;
@@ -292,7 +473,46 @@ fn measure(
         elapsed,
         b.frames_ms.len() as f64 / elapsed
     );
+    // Paired before the frame times are sorted: the frame less its sim stepping is what the
+    // UI, the map and the render cost (D770).
+    let mut less_sim: Vec<f64> = b
+        .frames_ms
+        .iter()
+        .zip(&b.step_ms)
+        .map(|(f, s)| f - s)
+        .collect();
     report("frame ms", &mut b.frames_ms);
+    let map_failed = if let BenchMode::Map { .. } = b.mode {
+        let v = &b.frames_ms;
+        let p99 = if v.is_empty() {
+            f64::INFINITY
+        } else {
+            v[((v.len() - 1) as f64 * 0.99).round() as usize]
+        };
+        let paced = v
+            .iter()
+            .filter(|&&x| x >= OS_PACED_MS.0 && x <= OS_PACED_MS.1)
+            .count() as f64
+            / v.len().max(1) as f64;
+        println!(
+            "BENCH map: the window had the focus in {:.0}% of the frames",
+            b.focused_frames as f64 * 100.0 / v.len().max(1) as f64
+        );
+        if paced >= OS_PACED_SHARE {
+            println!(
+                "BENCH WARN {:.0}% of the frames took 16.3 to 17.0 ms: the OS paced the window's presents at 60 Hz (D744); rerun with the window in front",
+                paced * 100.0
+            );
+        }
+        let ok = p99 < MAP_TARGET_P99_MS;
+        println!(
+            "BENCH map check: p99 {p99:.2} ms: {} (target < {MAP_TARGET_P99_MS:.1} ms)",
+            if ok { "PASS" } else { "FAIL" }
+        );
+        !ok
+    } else {
+        false
+    };
     if let BenchMode::Map { .. } = b.mode {
         let n = |i: usize| b.level_ms[i].len();
         println!(
@@ -306,6 +526,20 @@ fn measure(
             let mut v = std::mem::take(&mut b.level_ms[i]);
             report(&format!("frame ms at {name} zoom"), &mut v);
         }
+        for k in crate::bridge::TickKind::ALL {
+            let (n, total, max) = rate.by_kind[k as usize];
+            println!(
+                "BENCH ticks {}: {n}, mean {:.3} ms, longest {:.2} ms",
+                k.name(),
+                total.as_secs_f64() * 1e3 / n.max(1) as f64,
+                max.as_secs_f64() * 1e3
+            );
+        }
+        report("frame ms less the sim's stepping", &mut less_sim);
+        let mut v = std::mem::take(&mut b.step_ms);
+        report("sim stepping ms a frame", &mut v);
+        let mut v = std::mem::take(&mut b.tick_ms);
+        report("longest tick ms a frame", &mut v);
         let f = &b.map_frames;
         let (with_views, with_colors) = (
             f.iter().filter(|x| x.monthly).count(),
@@ -324,6 +558,18 @@ fn measure(
                 .map(|x| x.ms)
                 .collect();
             report(&format!("frame ms, {name}"), &mut v);
+        }
+        if b.work.frames > 0 {
+            report_work(&b.work);
+        }
+        crate::profile::report(b.frames_ms.len(), PROFILE_SPANS_SHOWN);
+        crate::profile::report_slowest(MAP_SLOWEST_SHOWN);
+        let mut slow = b.map_frames.clone();
+        slow.sort_by(|a, b| b.ms.total_cmp(&a.ms));
+        for x in slow.iter().take(MAP_SLOWEST_SHOWN) {
+            if let Some(w) = b.frame_work.get(&x.frame) {
+                println!("BENCH slow frame {} work: {w}", x.frame);
+            }
         }
         let mut slow = f.clone();
         slow.sort_by(|a, b| b.ms.total_cmp(&a.ms));
@@ -360,7 +606,11 @@ fn measure(
             rate.budget_hits
         );
     }
-    exit.write(AppExit::Success);
+    exit.write(if map_failed {
+        AppExit::error()
+    } else {
+        AppExit::Success
+    });
 }
 
 fn report(name: &str, v: &mut [f64]) {
@@ -418,6 +668,13 @@ fn drive(mut b: ResMut<Bench>, tables: Option<Res<PdoombergUi>>, mut q: Query<&m
     }
 }
 
+fn panes_of(mode: BenchMode) -> MapPanes {
+    match mode {
+        BenchMode::Map { panes, .. } => panes,
+        _ => MapPanes::All,
+    }
+}
+
 /// The frame the map bench sets its map mode at (after the panes open).
 pub const MAP_MODE_FRAME: u64 = 20;
 /// Frames between the map bench's zoom moves, and how many notches each moves.
@@ -437,7 +694,7 @@ fn drive_map(
     bitmap: Option<Res<crate::map::picking::MapBitmap>>,
     mut state: ResMut<crate::map::MapState>,
     mut open: MessageWriter<crate::workspace::OpenPage>,
-    mut panes: MessageWriter<crate::workspace::PaneAction>,
+    mut pane_actions: MessageWriter<crate::workspace::PaneAction>,
     mut windows: MessageWriter<crate::workspace::WindowAction>,
     mut input: MessageWriter<crate::map::MapInput>,
     mut modes: MessageWriter<crate::map::modes::MapModeInput>,
@@ -458,7 +715,10 @@ fn drive_map(
     {
         modes.write(MapModeInput::Set(mode));
         modes.write(MapModeInput::Metros(metros));
-        println!("BENCH map: mode {mode:?}, Metro outlines {metros}, sim speed {speed}");
+        println!(
+            "BENCH map: mode {mode:?}, Metro outlines {metros}, sim speed {speed}, panes {:?}",
+            panes_of(b.mode)
+        );
         if speed > 0 {
             for kind in AlertKind::ALL {
                 control.write(SimControl(Control::SetAlert {
@@ -472,6 +732,10 @@ fn drive_map(
     use crate::pages::PageRef;
     use crate::workspace::{OpenPage, PaneAction, WindowAction};
     let f = b.frame;
+    let panes = match b.mode {
+        BenchMode::Map { panes, .. } => panes,
+        _ => MapPanes::All,
+    };
     match f {
         2 => {
             pdb.write(OpenPdoomberg {
@@ -482,20 +746,20 @@ fn drive_map(
         4 => {
             nav.write(crate::ui::rail::Navigate(crate::ui::rail::Screen::Map));
         }
-        6 => {
+        6 if panes.lists() => {
             open.write(OpenPage::focused(PageRef::Companies));
         }
-        8 => {
-            panes.write(PaneAction::Split(None, crate::workspace::Axis::Row));
+        8 if panes.lists() => {
+            pane_actions.write(PaneAction::Split(None, crate::workspace::Axis::Row));
         }
-        10 => {
+        10 if panes.lists() => {
             open.write(OpenPage::focused(PageRef::Industries));
         }
-        12 => {
+        12 if panes.company() => {
             let co = views.company_rows.get().rows.first().map(|r| r.id);
             windows.write(WindowAction::New(co.map(PageRef::Company)));
         }
-        14 => {
+        14 if panes.province() => {
             // The densest Province page: the most HQs and units, ties to the lower id.
             let p = views
                 .province_cards

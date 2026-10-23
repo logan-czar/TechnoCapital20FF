@@ -3,7 +3,9 @@
 //! `cargo run -p game --release [-- --seed N]`. Benches (D14): `--bench-table [seconds]
 //! [--rows N]`, `--bench-max [seconds]`, `--bench-map [seconds]` (D639) and `--bench-pages` (the M9.9 timing harness: every
 //! page, Company tab and Pdoomberg function page to its first laid-out frame, exit 1 when one
-//! takes 100 ms or more), which print timings to stdout and exit.
+//! takes 100 ms or more), which print timings to stdout and exit. `--bench-map` takes
+//! `--bench-map-running [SPEED]` (D744) and `--bench-map-panes SET` (D778) and exits 1 when its
+//! p99 frame is 16.7 ms or more; `--features profile` adds its span timer (D770).
 //!
 //! The map (M8) reads `assets/map` (lane P's files, docs/build/m8-map-assets.md); `--map-dir DIR`
 //! reads another folder, and `--synthetic-map [DIR]` first writes a synthetic map there (D634;
@@ -40,6 +42,8 @@ struct Args {
     map_metros: bool,
     /// `--bench-map-running [SPEED]`: the map bench with the sim running (D744).
     map_speed: u8,
+    /// `--bench-map-panes SET`: which panes the map bench opens (D778).
+    map_panes: game::bench::MapPanes,
 }
 
 /// The synthetic map's size (D634).
@@ -57,6 +61,7 @@ fn parse_args() -> Args {
         map_mode: None,
         map_metros: false,
         map_speed: 0,
+        map_panes: game::bench::MapPanes::All,
     };
     let list: Vec<String> = std::env::args().skip(1).collect();
     let mut i = 0;
@@ -83,6 +88,7 @@ fn parse_args() -> Args {
                         mode: Default::default(),
                         metros: false,
                         speed: 0,
+                        panes: game::bench::MapPanes::All,
                     },
                 });
                 if number(i).is_some() {
@@ -148,6 +154,15 @@ fn parse_args() -> Args {
                     None => sim::time::control::MAX_SPEED,
                 };
             }
+            "--bench-map-panes" => {
+                args.map_panes = list
+                    .get(i + 1)
+                    .and_then(|s| game::bench::MapPanes::parse(s))
+                    .unwrap_or_else(|| {
+                        exit_usage("--bench-map-panes needs all, none, lists, company or province")
+                    });
+                i += 1;
+            }
             "--map-hide-windows" => {
                 if let Some(s) = &mut args.shot {
                     s.hide_windows = true;
@@ -191,7 +206,7 @@ fn parse_args() -> Args {
 
 fn exit_usage(msg: &str) -> ! {
     eprintln!(
-        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--map-mode MODE] [--map-metros] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds] [--bench-map-running [SPEED]]] [--bench-pages]"
+        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--map-mode MODE] [--map-metros] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds] [--bench-map-running [SPEED]] [--bench-map-panes SET]] [--bench-pages]"
     );
     std::process::exit(2)
 }
@@ -271,9 +286,11 @@ fn main() -> AppExit {
         mode,
         metros,
         speed,
+        panes,
         ..
     }) = &mut args.bench
     {
+        *panes = args.map_panes;
         *mode = args.map_mode.unwrap_or_default();
         *metros = args.map_metros;
         *speed = args.map_speed;
@@ -288,18 +305,24 @@ fn main() -> AppExit {
     });
     let mut app = App::new();
     app.add_plugins(
-        DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                title: "TechnoCapital20FF".into(),
-                present_mode: if args.bench.is_some() {
-                    PresentMode::AutoNoVsync
-                } else {
-                    PresentMode::AutoVsync
-                },
+        DefaultPlugins
+            // The benches' span timer (D770; records only with the `profile` feature).
+            .set(bevy::log::LogPlugin {
+                custom_layer: game::profile::layer,
+                ..default()
+            })
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: "TechnoCapital20FF".into(),
+                    present_mode: if args.bench.is_some() {
+                        PresentMode::AutoNoVsync
+                    } else {
+                        PresentMode::AutoVsync
+                    },
+                    ..default()
+                }),
                 ..default()
             }),
-            ..default()
-        }),
         // Nothing is loaded through the asset server: the map shader is compiled in (D741) and
         // the map's files are read from the map folder named above.
     )
