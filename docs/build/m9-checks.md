@@ -189,3 +189,7 @@ Every mode is far inside 60 fps; the labels, pins and Metro outlines cost nothin
 ### The soak
 
 The map views move nothing: `headless soak --years 10 --seeds 1..4` before (main a31b1a9) and after this lane gives byte-identical `years.csv` and `quarters.csv` (md5 121b5c7b... and cf890b48...). v_map_layers' monthly rebuild costs 0.42 ms (0.067 s over a 10-year seed, 1.9% of the run in `headless run --profile`).
+
+## M8 Phase C: the closing checks on the world map
+
+The M8 closing checks (the M8.8 click test, the frame time with the panes open, these two checks on the world map, the QA reports, the soak and the gate) are in [m8-checks.md](m8-checks.md).
