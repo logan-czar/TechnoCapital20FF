@@ -37,7 +37,10 @@ WATER_MARGIN_PX = 8
 # Golden Gate between San Francisco and Marin); a wider sea or lake does not count.
 WATER_GAP_PX = 3
 # Kinds that are listed but are not anchor misses (a city part across a strait or a bay).
-INFO_KINDS = {"city part across water"}
+INFO_KINDS = {"city part across water", "city on the edge"}
+# A province's own city whose pixel a neighbour took, with the province owning a pixel this
+# close (8-neighbour), is on the edge, not off it (D679): a 5 km pixel can straddle a river.
+EDGE_PX = 1
 
 
 def _components(mask: np.ndarray) -> np.ndarray:
@@ -222,8 +225,14 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
         if hit:
             got = owner(hit[1], hit[2])
             if got != r["id"]:
-                misses.append({"kind": "own name", "province_id": r["id"], "place": hit[3],
-                               "expected": r["id"], "got": got})
+                # a city on its province's edge (Omdurman at the Nile confluence) whose pixel the
+                # neighbour took is listed, not a miss, when the province owns a touching pixel
+                x, y = frame.pixel(hit[1], hit[2])
+                v = ids.index(r["id"]) + 1 if r["id"] in ids else -1
+                near = any(0 <= y + dy < frame.h and int(idx[y + dy, (x + dx) % frame.w]) == v
+                           for dy in (-EDGE_PX, 0, EDGE_PX) for dx in (-EDGE_PX, 0, EDGE_PX))
+                misses.append({"kind": "city on the edge" if near else "own name", "province_id": r["id"],
+                               "place": hit[3], "expected": r["id"], "got": got})
             elif r["metro"] and r["id"] in cent:
                 cx, cy = last["px"]
                 part = city_part(idx, ids.index(r["id"]) + 1, cx, cy)

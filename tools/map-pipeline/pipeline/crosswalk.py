@@ -25,6 +25,7 @@ from dataclasses import dataclass, field
 
 import geopandas as gpd
 import shapely
+import shapely.affinity
 import shapely.ops
 from rapidfuzz import fuzz
 from shapely.geometry import Point, box
@@ -255,6 +256,97 @@ def _match_parts(name, cand):
     return cover(0)
 
 
+def _voronoi_cells(geom, pts_by_key: dict[str, list]) -> dict[str, object]:
+    """`geom` cut among keys by nearest point, longitude scaled by cos(latitude)."""
+    pts, owner = [], []
+    for key in sorted(pts_by_key):
+        for x, y in pts_by_key[key]:
+            pts.append((float(x), float(y)))
+            owner.append(key)
+    lat0 = geom.representative_point().y
+    kx = max(math.cos(math.radians(lat0)), 0.2)
+    sg = shapely.affinity.scale(geom, xfact=kx, yfact=1.0, origin=(0, 0))
+    cells = shapely.voronoi_polygons(shapely.MultiPoint([(x * kx, y) for x, y in pts]),
+                                     extend_to=sg.envelope.buffer(1.0))
+    out: dict[str, list] = defaultdict(list)
+    for cell in cells.geoms:
+        i = next(i for i, (x, y) in enumerate(pts) if cell.covers(Point(x * kx, y)))
+        piece = cell.intersection(sg)
+        if not piece.is_empty:
+            out[owner[i]].append(piece)
+    return {k: shapely.make_valid(shapely.affinity.scale(shapely.union_all(v), xfact=1.0 / kx, yfact=1.0,
+                                                         origin=(0, 0)))
+            for k, v in out.items()}
+
+
+def apply_rebuilds(out, hints, sources, a1):
+    """`[rebuild.<country>]` hints (D683): every region of the country is its geoBoundaries ADM1
+    units clipped to the country's Natural Earth land, replacing NE's older admin-1 lines
+    (Cote d'Ivoire's 14 districts over NE's 19 regions). Units come from the table
+    (`"<region>" = [names]`) or, for a region it does not list, the region's name (D680)."""
+    for country in sorted(hints.get("rebuild", {})):
+        spec = hints["rebuild"][country]
+        g1, meta, why = load_blocks(country, sources, "admin1")
+        if g1 is None:
+            raise SystemExit(f"crosswalk: rebuild of {country}: ADM1 not usable ({why})")
+        land = shapely.make_valid(shapely.union_all(a1[a1.adm0_a3.isin(config.ne_codes(country))].geometry.values))
+        names = [str(n) for n in g1.shapeName]
+        geom_of = {}
+        for n, geom in zip(names, g1.geometry):
+            geom_of.setdefault(text.fold(n), []).append(geom)
+        for key in sorted(k for k in out if k.split(":")[0] == country):
+            want = spec.get(key)
+            if want is None:
+                hit = gb_region_units(key.split(":", 1)[1], names)
+                if hit is None:
+                    raise SystemExit(f"crosswalk: rebuild of {country}: no ADM1 unit for {key}")
+                want = hit[0]
+            parts = [g for n in want for g in geom_of.get(text.fold(n), [])]
+            if not parts:
+                raise SystemExit(f"crosswalk: rebuild of {country}: no ADM1 unit named {want}")
+            m = out[key]
+            m["geometry"] = shapely.make_valid(shapely.union_all(parts)).intersection(land)
+            m["rows"] = None  # the old NE units no longer describe it
+            m["provenance"] = licenses.provenance(meta) + "; " + licenses.NE_PROVENANCE
+            m["note"] = f"geoBoundaries ADM1 {', '.join(want)} (rebuilt, clipped to Natural Earth land)"
+            m["kind"], m["confidence"] = "carve", 0.95
+        # seams between the ADM1 file and NE's coast go to the neighbour with the longest edge
+        keys = sorted(k for k in out if k.split(":")[0] == country)
+        left = land.difference(shapely.union_all([out[k]["geometry"] for k in keys]))
+        for part in getattr(left, "geoms", [left]):
+            if part.is_empty or part.geom_type not in ("Polygon", "MultiPolygon"):
+                continue
+            best = max(keys, key=lambda k: (part.boundary.intersection(out[k]["geometry"].buffer(1e-6)).length, k))
+            out[best]["geometry"] = shapely.make_valid(shapely.union_all([out[best]["geometry"], part]))
+
+
+def apply_splits(out, hints):
+    """`[split."<country>:<region>"]` hints (D681): a region Natural Earth still draws as one old
+    unit that our file divides into several new regions (Equateur into Equateur, Mongala, the
+    Ubangis and Tshuapa) is cut among them by Voronoi on each region's points (its capital and
+    towns), where no licensed boundary file has the new lines. The named region keeps its own
+    cell; the others get theirs."""
+    for src in sorted(hints.get("split", {})):
+        spec = hints["split"][src]
+        if src not in out or out[src].get("geometry") is None:
+            continue  # another region file's split
+        cells = _voronoi_cells(out[src]["geometry"], spec)
+        for key, g in sorted(cells.items()):
+            if key not in out:
+                raise SystemExit(f"crosswalk: split of {src} names unknown region {key}")
+            m = out[key]
+            if key == src:
+                m["geometry"] = g
+                m["note"] += f"; split among {', '.join(k for k in sorted(cells) if k != src)} (builder points)"
+            else:
+                m["geometry"] = g if m.get("geometry") is None else shapely.make_valid(
+                    shapely.union_all([m["geometry"], g]))
+                m["note"] += f"; Voronoi cell of {src} (builder points)"
+                if m["kind"] == "none":
+                    m["kind"], m["confidence"] = "carve", 0.95
+            m["provenance"] = licenses.NE_PROVENANCE + "; " + licenses.BUILDER_PROVENANCE
+
+
 def apply_carves(out, hints, sources):
     """`[carve."<country>:<region>"]` hints (D676): land a region's Natural Earth units do not
     give it (a new province NE merges into its parent, as North Kalimantan inside East
@@ -264,7 +356,8 @@ def apply_carves(out, hints, sources):
     points (`clip = false` keeps a polygon where Natural Earth has no land), clipped to the
     regions it is taken from (`from`, default the region's own country's)."""
     carves = hints.get("carve", {})
-    for key in sorted(carves):
+    # replacing carves last, so the land they drop has been handed out first
+    for key in sorted(carves, key=lambda k: (bool(carves[k].get("replace")), k)):
         c = carves[key]
         if key not in out:
             raise SystemExit(f"crosswalk: carve hint for unknown region {key}")
@@ -304,7 +397,12 @@ def apply_carves(out, hints, sources):
                 m["geometry"] = rest
                 m["note"] += f"; less {key} (carve)"
         m = out[key]
-        m["geometry"] = g if m.get("geometry") is None else shapely.make_valid(shapely.union_all([m["geometry"], g]))
+        # `replace = true`: the carved land is the region's whole shape (its NE unit's old,
+        # larger extent goes back to nobody unless a later carve takes it)
+        if m.get("geometry") is None or c.get("replace"):
+            m["geometry"] = g
+        else:
+            m["geometry"] = shapely.make_valid(shapely.union_all([m["geometry"], g]))
         m["provenance"] = prov if m["rows"] is None else licenses.NE_PROVENANCE + "; " + prov
         m["note"] += f"; carve: {src} from {', '.join(taken) or 'no region'}"
         if m["confidence"] == 0.0:
@@ -313,7 +411,54 @@ def apply_carves(out, hints, sources):
             m["kind"] = "carve"
 
 
-def match_regions(provs, a1, a1_all, a0, hints):
+_GB1_CACHE: dict[str, list[str] | None] = {}
+
+
+def _gb_adm1(country: str, sources) -> list[str] | None:
+    """Names of the country's geoBoundaries ADM1 units when pinned and licensed, else None."""
+    if sources is None:
+        return None
+    if country not in _GB1_CACHE:
+        g, _, _ = load_blocks(country, sources, "admin1")
+        _GB1_CACHE[country] = None if g is None else [str(n) for n in g.shapeName]
+    return _GB1_CACHE[country]
+
+
+def gb_region_units(region: str, names: list[str]) -> tuple[list[str], float] | None:
+    """The geoBoundaries ADM1 units a region name names (D680): the whole name, or its parts
+    ("Kisumu-Siaya", "Garissa-Wajir-Mandera"), each matched by fuzzy name like an NE unit.
+    Returns (unit names, worst score) or None."""
+    folded = [(text.fold(n), n) for n in names]
+
+    def best(ph):
+        b, bs = None, 0.0
+        for f, n in folded:
+            sc = max(fuzz.ratio(ph, f), fuzz.ratio(_core(ph), _core(f)))
+            if sc > bs:
+                b, bs = n, sc
+        return (b, bs) if bs >= REGION_MATCH_MIN else None
+
+    whole = best(text.fold(region))
+    if whole:
+        return [whole[0]], whole[1]
+    pieces = [x for x in re.split(r"-| and |/|, ", region) if x.strip()]
+    if len(pieces) < 2:
+        return None
+    out, worst, i = [], 100.0, 0
+    while i < len(pieces):
+        for j in range(len(pieces), i, -1):
+            hit = best(text.fold(" ".join(pieces[i:j]))) or best(text.fold("-".join(pieces[i:j])))
+            if hit:
+                out.append(hit[0])
+                worst = min(worst, hit[1])
+                i = j
+                break
+        else:
+            return None
+    return list(dict.fromkeys(out)), worst
+
+
+def match_regions(provs, a1, a1_all, a0, hints, sources=None):
     """Return ({region_key: dict(geometry, rows, source_ids, confidence, note, whole, kind)},
     [unclaimed admin-1 units]).
 
@@ -369,6 +514,12 @@ def match_regions(provs, a1, a1_all, a0, hints):
                 out[key] = dict(idx=list(dict.fromkeys(parts[1])), confidence=round(parts[2] / 100, 2),
                                 kind="parts", note=f"name parts ({parts[0]} pieces, worst match {parts[2]:.0f})")
             else:
+                gb = _gb_adm1(country, sources)
+                hit = gb_region_units(region, gb) if gb else None
+                if hit:
+                    out[key] = dict(idx=[], confidence=round(hit[1] / 100, 2), kind="none", gb_units=hit[0],
+                                    note=f"geoBoundaries ADM1 {', '.join(hit[0])}")
+                    continue
                 out[key] = dict(idx=[], confidence=0.0, kind="none",
                                 note=f"no admin-1 match (best unit {su:.0f}, group {sg:.0f})")
     # a unit claimed twice goes to the more specific match, then the better name score
@@ -390,9 +541,10 @@ def match_regions(provs, a1, a1_all, a0, hints):
                 owner[i] = key
     for m in out.values():
         m["idx"] = [i for i in m["idx"] if owner.get(i) is not None and out[owner[i]] is m]
-    carved = set(hints.get("carve", {}))
+    carved = set(hints.get("carve", {})) | {k for v in hints.get("split", {}).values() for k in v}
+    carved |= {k for k in out if k.split(":")[0] in hints.get("rebuild", {})}
     for key in sorted(out):
-        if not out[key]["idx"] and out[key].get("a0") is None and key not in carved:
+        if not out[key]["idx"] and out[key].get("a0") is None and key not in carved and not out[key].get("gb_units"):
             problems.append(f"{key}: {out[key]['note']} (no admin-1 unit left)")
     # an unclaimed unit joins the touching region of its own country with the longest edge
     ne_to_game = {}
@@ -453,7 +605,7 @@ def match_regions(provs, a1, a1_all, a0, hints):
     return out, unclaimed, problems
 
 
-LEVELS = {"admin2": "ADM2", "admin3": "ADM3"}
+LEVELS = {"admin1": "ADM1", "admin2": "ADM2", "admin3": "ADM3"}
 
 
 def load_blocks(country: str, sources: dict, level: str = "admin2"):
@@ -846,7 +998,7 @@ def run(region: config.Region) -> None:
             continue
         match_provs += [p for p in read_provinces(other) if p.country in shared]
         oh = load_hints(other)
-        for table in ("regions", "carve"):
+        for table in ("regions", "carve", "split", "rebuild"):
             merged = dict(match_hints.get(table, {}))
             merged.update({k: v for k, v in oh.get(table, {}).items() if k.split(":")[0] in shared})
             match_hints[table] = merged
@@ -862,9 +1014,35 @@ def run(region: config.Region) -> None:
     notes_need_place = set(blocks_hints.get("notes_need_place", []))
     level_hint = blocks_hints.get("level", {})
 
-    regions, unclaimed, problems = match_regions(match_provs, a1, a1_all, a0, match_hints)
+    regions, unclaimed, problems = match_regions(match_provs, a1, a1_all, a0, match_hints, sources)
+    # D680: a region Natural Earth lacks but geoBoundaries ADM1 names is carved from its
+    # country's other regions with those units (a hint's own carve wins)
+    carves = dict(match_hints.get("carve", {}))
+    for key in sorted(regions):
+        if regions[key].get("gb_units") and key not in carves and key.split(":")[0] not in match_hints.get("rebuild", {}):
+            carves[key] = {"level": "admin1", "units": regions[key]["gb_units"]}
+    match_hints["carve"] = carves
     if not problems:
         apply_carves(regions, match_hints, sources)
+        apply_rebuilds(regions, match_hints, sources, a1)
+        apply_splits(regions, match_hints)
+    # QA (D682): each country's Natural Earth land that no region of it covers after the
+    # aliases, carves and splits (a replaced old unit's leftover, a seam between sources)
+    gaps = []
+    for country in sorted(region.countries):
+        # admin-1 units (lakes cut out), so Lake Victoria is no gap; admin-0 where there are none
+        land0 = a1[a1.adm0_a3.isin(config.ne_codes(country))]
+        if not len(land0):
+            land0 = a0[a0.ADM0_A3.isin(config.ne_codes(country))]
+        # land another country's region holds (Donbas, drawn by our file for RUS) is no gap
+        geoms = [m["geometry"] for m in regions.values() if m.get("geometry") is not None]
+        if not len(land0) or not geoms:
+            continue
+        land_g = shapely.make_valid(shapely.union_all(land0.geometry.values))
+        left = land_g.difference(shapely.union_all(geoms))
+        if land_g.area > 0 and left.area / land_g.area > 1e-4:
+            gaps.append({"country": country, "area_deg2": round(left.area, 4),
+                         "share": round(left.area / land_g.area, 4)})
     work = config.work_dir(region.slug, sources)
     lines = [f"{k}\t{m['kind']}\t{m['confidence']}\t{m['note']}\t"
              + ", ".join(sorted(str(n) for n in m["rows"]["name"])) if m["rows"] is not None else f"{k}\t{m['kind']}\t\t{m['note']}"
@@ -1036,6 +1214,7 @@ def run(region: config.Region) -> None:
                ["province_id", "name", "country", "region", "method", "source_ids", "confidence", "provenance", "note"],
                merge_key=("province_id",), own={(p.id,) for p in provs})
     (work / "unclaimed.json").write_text(json.dumps(unclaimed, indent=1), encoding="utf-8")
+    (work / "land-gaps.json").write_text(json.dumps(gaps, indent=1), encoding="utf-8")
     gpd.GeoDataFrame(region_features, crs="EPSG:4326").to_file(work / "regions.geojson", driver="GeoJSON")
     (work / "plan.json").write_text(json.dumps(plan, indent=1), encoding="utf-8")
     flagged = sum(1 for r in province_rows if r["confidence"] < FLAG_BELOW)

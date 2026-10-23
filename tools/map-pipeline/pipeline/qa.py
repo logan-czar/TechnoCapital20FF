@@ -257,7 +257,8 @@ def run(region: config.Region) -> None:
     L.append(f"| Sea links with a province of this file | {len(sea)} |")
     L.append(f"| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) "
              f"| {len(anchor_misses)} |")
-    L.append(f"| Metro cities in a part across a narrow strait (listed, allowed) | {len(anchor_info)} |")
+    L.append(f"| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) "
+             f"| {len(anchor_info)} |")
     L.append("")
     L.append("Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve "
              "of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one "
@@ -339,7 +340,8 @@ def run(region: config.Region) -> None:
         L.append("All anchors land on their own provinces.")
     if anchor_rows and not anchor_misses:
         L.append("")
-        L.append("No misses; the rows above are allowed parts across a narrow strait.")
+        L.append("No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own "
+                 "pixel a neighbour took while its province holds a touching pixel.")
     L.append("")
     if review_notes:
         L.append("## Known for review")
@@ -410,6 +412,15 @@ def run(region: config.Region) -> None:
     else:
         L.append("None.")
     L.append("")
+    gaps = json.loads((work / "land-gaps.json").read_text(encoding="utf-8"))         if (work / "land-gaps.json").exists() else []
+    if gaps:
+        L.append("Natural Earth land of a country that none of its regions covers (over 0.01% of the country):")
+        L.append("")
+        L.append("| Country | Area (sq deg) | Share of the country |")
+        L.append("|---|---|---|")
+        for g in gaps:
+            L.append(f"| {g['country']} | {g['area_deg2']} | {g['share']:.2%} |")
+        L.append("")
     L.append("## Sea links")
     L.append("")
     L.append("`sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do "

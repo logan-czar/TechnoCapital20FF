@@ -127,12 +127,28 @@ geojson_sha256 = "bc47a26759bf6e5c2d2aa839d4baba1e4b658349401b3d356354e6d5227354
 geojson_size = 300007
 
 [[geoboundaries.boundary]]
+iso = "BDI"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "ae81e7a066903be765bb0b0ab30d6b9858b795799d7f10daac9f14f3719254e3"
+geojson_sha256 = "323911d580421aa98471c37c46549590edf221c58ddcdb53623e5b68a48118ab"
+geojson_size = 125064
+
+[[geoboundaries.boundary]]
 iso = "BEL"
 level = "ADM2"
 file = "simplified"
 meta_sha256 = "30aa0d6dff911cf5549a520244b52ee7730d0029edd6b19271b950a1bcd59619"
 geojson_sha256 = "e9cc3f0661c4d028734dd08f304d3e26a75f14277f16f98ad6ba732dce26684b"
 geojson_size = 320645
+
+[[geoboundaries.boundary]]
+iso = "BEN"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "523c0b672600f6c938c78c4ae1da7bb7dc7c6683589247352929035fc6f13df6"
+geojson_sha256 = "80f97daa4bd6df627c288d84deaea98b1f8a5a1d41e48fc7a54ce2678fdb9f57"
+geojson_size = 51405
 
 [[geoboundaries.boundary]]
 iso = "BGD"
@@ -184,6 +200,14 @@ geojson_size = 37016438
 
 [[geoboundaries.boundary]]
 iso = "BWA"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "3038632e84cabc14342a1e30e23af33370e7ff4212037050d5fa292a0f161309"
+geojson_sha256 = "a650b80552e564195e04201dec96eb362109264edd1d5ca41dbc9829ec3aaf2b"
+geojson_size = 112308
+
+[[geoboundaries.boundary]]
+iso = "BWA"
 level = "ADM2"
 file = "simplified"
 meta_sha256 = "8319afd59781d12242793e9508dda94735ce4612370c32a2bf46d8ab702ea363"
@@ -216,6 +240,14 @@ geojson_size = 6171914
 
 [[geoboundaries.boundary]]
 iso = "CIV"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "c08767548e8f365b734d1d9c618376d1461889efd76e9259a6b5d4d7e7b16a54"
+geojson_sha256 = "9b0f8e246ede82ff04fee50c5acf2c88817741e15c7b060aba2f24cd8cc94371"
+geojson_size = 443044
+
+[[geoboundaries.boundary]]
+iso = "CIV"
 level = "ADM2"
 file = "simplified"
 meta_sha256 = "e41c6a7662c26f4039dc9c24bf628920116194d7171cf1472be11f2450024c0d"
@@ -232,6 +264,14 @@ geojson_size = 165249
 
 [[geoboundaries.boundary]]
 iso = "COD"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "e07dc58ae19ecf05368d68e4272f81dd7cf72b5e1c4c51e9928bc6f5013c4b68"
+geojson_sha256 = "5bf569569451de2868bc9e50dc795a4e60b983d7883a17195545946825c881af"
+geojson_size = 984094
+
+[[geoboundaries.boundary]]
+iso = "COD"
 level = "ADM2"
 file = "simplified"
 meta_sha256 = "5c0a0be757a338bc7f0294c5ff2d7654697bd99cb835dd6897e21e2ad8a97f64"
@@ -245,6 +285,14 @@ file = "simplified"
 meta_sha256 = "be49f8e650119781fedc1bf0cd1e350bd1d2bfaa3e7bf95ef7df387384c0d853"
 geojson_sha256 = "d71b2fa6bf836554faa49af1858d7329288be4300fd5f801dad2374b2d3f77ab"
 geojson_size = 9431359
+
+[[geoboundaries.boundary]]
+iso = "CPV"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "d55fddd375a9390e19941d38517de3502104336d122a6a1980eb56592c684140"
+geojson_sha256 = "5328c3d6a831c66d6684e00978cdfdc209e5e2bb2e258d1402edcd043537ca14"
+geojson_size = 58399
 
 [[geoboundaries.boundary]]
 iso = "CRI"
@@ -311,6 +359,14 @@ geojson_sha256 = "bbe9dc4cb72bac250572cffd133cac71b1929e885b76b2ff0e848581bd9cf6
 geojson_size = 1232324
 
 [[geoboundaries.boundary]]
+iso = "ERI"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "789e2e6d06f746ddca5b326b8e741246cc23513302125e650cce3793aba4406b"
+geojson_sha256 = "8065e95a88b21e53662e7fc58946bc31070af9618156b034fb2ab819bcc2b6c2"
+geojson_size = 141079
+
+[[geoboundaries.boundary]]
 iso = "ESP"
 level = "ADM2"
 file = "simplified"
@@ -325,6 +381,14 @@ file = "simplified"
 meta_sha256 = "0b10a630afa01f0e1410a664bfa47d0e5dd46e79934caf4e569439e502b0cdd2"
 geojson_sha256 = "cb2d6446e189b77e04a5445ed3672352d74a425ea39bc53796c20f601f57201d"
 geojson_size = 897443
+
+[[geoboundaries.boundary]]
+iso = "ETH"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "777a093ba532aa075d65c6678d3eac05b86dc0911cbd023724d01549125af694"
+geojson_sha256 = "8991adf84fa36f58d176639889e1c8234e798ade33c725dd8c2906362bd27e1e"
+geojson_size = 347956
 
 [[geoboundaries.boundary]]
 iso = "ETH"
@@ -368,6 +432,14 @@ geojson_size = 1140388
 
 [[geoboundaries.boundary]]
 iso = "GHA"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "621acf3e9aaf7cdd3b7e3b3ae1b7a67e462482df5f5c418687f1634ad111361a"
+geojson_sha256 = "9c0736c046ae9b55de25a71275f0acd8a62a91074f1f5ec76d5b57d80e2fdc38"
+geojson_size = 228787
+
+[[geoboundaries.boundary]]
+iso = "GHA"
 level = "ADM2"
 file = "simplified"
 meta_sha256 = "ddfc7f8508620772b340ed8ab7db754ce40650bb52c54233979b79d65af01448"
@@ -381,6 +453,30 @@ file = "simplified"
 meta_sha256 = "129ba43c6e0328d8400d3dcc0a9b7985c4eb6d57450b70e147edeaef960ac5c3"
 geojson_sha256 = "299eaa3579614f51c712f61d1699b6ee37cbe9a2ce14b1bfad5f9b0ccb8f1544"
 geojson_size = 237429
+
+[[geoboundaries.boundary]]
+iso = "GMB"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "38ceaf102f9fb8a5dc110388be349308f2e0c247049fac2caaab4e849956f3aa"
+geojson_sha256 = "9ec5cc82bf6ebd7ed8d8e737be949b9c6b8f58e5a2a87c7b173cdb409f90d864"
+geojson_size = 73264
+
+[[geoboundaries.boundary]]
+iso = "GNB"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "23d85bf4d3eee4bfa411e8bc1d94a79dc5d6d5c451bd20d0541f4df82c83ad34"
+geojson_sha256 = "f2bacf74ee17ccca0e348e95c91dc96d7cddf1db84693b94f8c5c06cc35bfb82"
+geojson_size = 156509
+
+[[geoboundaries.boundary]]
+iso = "GNQ"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "2bb50bf1a725809df7895976aeef6ad4966ca7c15eb11cf9c00402b5bef1e346"
+geojson_sha256 = "73ed9fda791eee40da9c2f11e4641f1f0361a42f4da512ee1e2c94a34922fa77"
+geojson_size = 37706
 
 [[geoboundaries.boundary]]
 iso = "GRC"
@@ -495,6 +591,14 @@ geojson_sha256 = "c738fbdce72f75067331bb1cd4bbd01ba7dd90dc34d312405edca2130a0b67
 geojson_size = 804862
 
 [[geoboundaries.boundary]]
+iso = "KEN"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "54164445281292d4dce3e31afbd86979047daa1482a07ba57c0206772079d42b"
+geojson_sha256 = "fd6bf4b29971db106b2168391b2379dd146acebfb74f2629298dddce85ea0009"
+geojson_size = 768215
+
+[[geoboundaries.boundary]]
 iso = "KGZ"
 level = "ADM2"
 file = "simplified"
@@ -519,12 +623,28 @@ geojson_sha256 = "ea0a77ea192a6ebc167c695e54b4fc6b920a1c76679b13e7b1480ac853b8c4
 geojson_size = 161529
 
 [[geoboundaries.boundary]]
+iso = "LBR"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "26e6e90c4cf8802eae9c78436bc67ed465812a43343e05b5859deab095952faa"
+geojson_sha256 = "1a186647b19fdb5ece4b7ec751fa7bf1f2534d788440009f9d4d816b8945cfe7"
+geojson_size = 268867
+
+[[geoboundaries.boundary]]
 iso = "LKA"
 level = "ADM2"
 file = "simplified"
 meta_sha256 = "2c9536df5947436821a4fa88d3fbb2cef0a748f06926c4ecce8148a5c9c69fb8"
 geojson_sha256 = "c8d02da6eccf61fb9d6213dbe54efa8158a9f598478c05f33a273fe8702e9c68"
 geojson_size = 204071
+
+[[geoboundaries.boundary]]
+iso = "LSO"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "428f13c9b6038022063e21c9c38c5b168b7c1cf8be555224ac7bd685859c2cc1"
+geojson_sha256 = "60d850c9903e14eb316fab52982185b06fae111fbe3471f2f6d7e9e51b5d172e"
+geojson_size = 141024
 
 [[geoboundaries.boundary]]
 iso = "LTU"
@@ -551,12 +671,28 @@ geojson_sha256 = "59d03b1d11fab9824e851a8e21e824dec9fdf8a89043316090d9b285e5ff46
 geojson_size = 504168
 
 [[geoboundaries.boundary]]
+iso = "MDG"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "76b57dc909ba9493aa1c8a154a51c054b77e5ab7cefde1ffef67abe9248e6c80"
+geojson_sha256 = "6306a0077fba3eee01a5f5c4fd3a729f63bc57a5f598dfc6d7e4b6279ed61ccb"
+geojson_size = 653359
+
+[[geoboundaries.boundary]]
 iso = "MKD"
 level = "ADM2"
 file = "simplified"
 meta_sha256 = "3c5e22aa89ab2b0bbb79de4f27cf3772dd718c26060cd16014dd522db5414141"
 geojson_sha256 = "8ad9df10c5395b84b174f7d47526f79243a4f05d2858a9ed5d5d5e0a13e8a57f"
 geojson_size = 327793
+
+[[geoboundaries.boundary]]
+iso = "MLI"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "2b9a7f5d98573db26d7944e8174608057a5663360c9ed01a0e4dd657d11da1d1"
+geojson_sha256 = "9b1b50c158387105f44a436f85f770b14998d40f9bc8c2e2edd8876da78fa1fa"
+geojson_size = 266488
 
 [[geoboundaries.boundary]]
 iso = "MLI"
@@ -584,11 +720,27 @@ geojson_size = 1534450
 
 [[geoboundaries.boundary]]
 iso = "MOZ"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "c29e4a93d7ed8eb19d3e35e0a042fe50f53a7d70896e4ca5ffa47fb6d5b66b1f"
+geojson_sha256 = "b40e511e8b0cf57ac1c8191f3731a7977fb025e49b0e855547f8b9cfae52248e"
+geojson_size = 227551
+
+[[geoboundaries.boundary]]
+iso = "MOZ"
 level = "ADM2"
 file = "simplified"
 meta_sha256 = "873c35cb3f369d680b8eaf97d2733265277377ab6f467690ab80702a1f885f7e"
 geojson_sha256 = "254df8d87b44c96d5ffa1f71c12ffbd31a3df77afc7ed9c582c2c549541e3149"
 geojson_size = 2292403
+
+[[geoboundaries.boundary]]
+iso = "MUS"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "7e2f2bc6dc1efe0d1c31a481a871ac45648946c215e81a41e5c085820f8e0be3"
+geojson_sha256 = "53bfc70f3918eb2b3437929ad6322ee532eacb0982294526202560e9f5339bbb"
+geojson_size = 51091
 
 [[geoboundaries.boundary]]
 iso = "MWI"
@@ -768,11 +920,27 @@ geojson_size = 1258767
 
 [[geoboundaries.boundary]]
 iso = "SDN"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "75c42f777d393d5308fded2a3b55e1b4d33f0c835a1483dbdbd894f0a8b5e25b"
+geojson_sha256 = "ac3411214a38b8ab2fd64e81bd29e59c8e4430a8af89810b59136d107c58a3d6"
+geojson_size = 259543
+
+[[geoboundaries.boundary]]
+iso = "SDN"
 level = "ADM2"
 file = "simplified"
 meta_sha256 = "62ab07ff19347177e5d732dfbf3e74650b2801541112d21d04ba0238c0abed35"
 geojson_sha256 = "54fda44f1b08f224504b34c692fbe95608b56b23d3102c0670bfe7fd5496100e"
 geojson_size = 676135
+
+[[geoboundaries.boundary]]
+iso = "SEN"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "732746700581ce08379fc51c046f8785bc9c382b7ee8dc8e6554a90c68f1755a"
+geojson_sha256 = "933f1d7ef1222c4f2e8135d09ed73601c2e55e1e8e778903f602dbda1975b9f2"
+geojson_size = 216530
 
 [[geoboundaries.boundary]]
 iso = "SGP"
@@ -784,11 +952,27 @@ geojson_size = 80070
 
 [[geoboundaries.boundary]]
 iso = "SLE"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "a91afe686961a07cabf71c4c39ad9cb120c3bcd86b2bb25046179a698524d758"
+geojson_sha256 = "3cb30fef3333900dfa3221c2ee9d6f395eeeb1ef3370aaed71c505b7d93e8a65"
+geojson_size = 158703
+
+[[geoboundaries.boundary]]
+iso = "SLE"
 level = "ADM2"
 file = "simplified"
 meta_sha256 = "085ff9d218f52670ace6710d8ec66b00e7a6fd91fdca956065c3ee0ad08915b0"
 geojson_sha256 = "b604b104b8f601c4ade2179f780bdda33d24f5915ac6bb4c86bfc38b56f205d4"
 geojson_size = 288513
+
+[[geoboundaries.boundary]]
+iso = "SOM"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "33b0d67c5a587433d8a5f71be770cc0ed02089a4641a686972ce0dfeed774fd5"
+geojson_sha256 = "af7871079aac300ee5bbed432f7814ed3365234b0db388b9027aa1ab09fee4ca"
+geojson_size = 74503
 
 [[geoboundaries.boundary]]
 iso = "SOM"
@@ -839,6 +1023,22 @@ geojson_sha256 = "8ee7507f7dd40fded0ae30755a9e8b9b527d4ba65fb60b1ead3d93f5bbfe7b
 geojson_size = 860355
 
 [[geoboundaries.boundary]]
+iso = "TCD"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "e30fa663c4fec53aee89be713a611f8fba1473e40d823cf0310a796ea40894bd"
+geojson_sha256 = "f62c7ab5ffa70819a2f3c8bc781b86a931393596ea02c31ce55900406cbbddf3"
+geojson_size = 96149
+
+[[geoboundaries.boundary]]
+iso = "TGO"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "f4c4ef3ae78197838d69dc3d6f4964c8be7e49bc5b0baa60942cb7227b2f369e"
+geojson_sha256 = "26035a073564400eaabe4c61e82dd4ab780db67bfffd021e6cc18c27c4abdd5d"
+geojson_size = 63357
+
+[[geoboundaries.boundary]]
 iso = "TGO"
 level = "ADM2"
 file = "simplified"
@@ -885,6 +1085,14 @@ file = "simplified"
 meta_sha256 = "1a176b6d632d15377dab724d72772a70ffb82f97ea4e066f2f43d94b3225fc68"
 geojson_sha256 = "34eb512488e2e1f5696243b4b9cb0a03574b4762cfa440f6fddd89852cc79775"
 geojson_size = 772894
+
+[[geoboundaries.boundary]]
+iso = "TZA"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "a428c0058a3859a2f28618885737b4f9692f1678bed9cb142703426db36009c8"
+geojson_sha256 = "bc685a5fb3eb5b77bef86e575c83642d86d0b5f57a6e55e974d4a010e70070c3"
+geojson_size = 364305
 
 [[geoboundaries.boundary]]
 iso = "TZA"
@@ -957,6 +1165,14 @@ file = "simplified"
 meta_sha256 = "635e211d7ac80485adf9b75c15a945336e058cc8969b8eb2c7b6d8a86c6e9379"
 geojson_sha256 = "7db992612cf7704efd06772f8c1f87b6e1aeec9d8ccf6be03b18efd6d455a5be"
 geojson_size = 1357869
+
+[[geoboundaries.boundary]]
+iso = "ZMB"
+level = "ADM1"
+file = "simplified"
+meta_sha256 = "0c8d9ebfd1bf63cb20376047c4422894b239896f935c9ab5352a915d0ef11527"
+geojson_sha256 = "353a74d574458125a6ce181054136c1d651f45a1c6510dab47c9352a5e582b3b"
+geojson_size = 646210
 
 [[geoboundaries.boundary]]
 iso = "ZMB"
