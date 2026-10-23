@@ -417,7 +417,8 @@ fn recap_opens_from_its_alert_and_by_quarter() {
             send(&mut app, Control::Resume);
         }
     }
-    assert_eq!(paused_at, [release_tick(Q1), recap_tick(Q1)]);
+    // Plan lock pauses too (D800).
+    assert_eq!(paused_at, [release_tick(Q1), lock_tick(Q1), recap_tick(Q1)]);
     frames(&mut app, 3);
     let ws = app.world().resource::<Workspace>();
     assert_eq!(ws.len(), 2, "the recap opened in a new pane");

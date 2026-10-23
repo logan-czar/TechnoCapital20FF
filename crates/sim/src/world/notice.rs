@@ -51,29 +51,36 @@ pub enum AlertKind {
     BankruptcyInWatchlist,
     /// A scripted world event: the AI boom and the pop (spec 5.1.1).
     WorldEvent,
+    /// The quarter's first tick, 00:00 on the 1st (spec 4.4): the month's and the quarter's
+    /// close, the costliest tick (D800). Last, so the other kinds keep their saved order.
+    QuarterStart,
 }
 
 impl AlertKind {
-    pub const ALL: [AlertKind; 5] = [
+    pub const ALL: [AlertKind; 6] = [
         AlertKind::EarningsDay,
         AlertKind::QuarterlyRecap,
         AlertKind::PlanLock,
         AlertKind::BankruptcyInWatchlist,
         AlertKind::WorldEvent,
+        AlertKind::QuarterStart,
     ];
 
     pub fn index(self) -> usize {
         self as usize
     }
 
-    /// The default level (spec 8: Earnings day Pause, Quarterly recap Pause, Plan lock Log,
-    /// Bankruptcy in watchlist Notify; spec 5.1.1: World event Pause).
+    /// The default level (spec 8: Earnings day Pause, Quarterly recap Pause, Bankruptcy in
+    /// watchlist Notify; spec 5.1.1: World event Pause). Plan lock (spec 8: Log) and Quarter
+    /// start are Pause, so the game stops on the quarter's heavy ticks (D800, Logan 2026-10-23;
+    /// design fix 800).
     pub fn default_level(self) -> AlertLevel {
         match self {
-            AlertKind::EarningsDay | AlertKind::QuarterlyRecap | AlertKind::WorldEvent => {
-                AlertLevel::Pause
-            }
-            AlertKind::PlanLock => AlertLevel::Log,
+            AlertKind::EarningsDay
+            | AlertKind::QuarterlyRecap
+            | AlertKind::WorldEvent
+            | AlertKind::PlanLock
+            | AlertKind::QuarterStart => AlertLevel::Pause,
             AlertKind::BankruptcyInWatchlist => AlertLevel::Notify,
         }
     }
@@ -107,6 +114,14 @@ impl AlertLevels {
     /// Every alert Off: for runs whose alerts nobody sees, such as projections (spec 5.16).
     pub fn all_off() -> Self {
         AlertLevels([AlertLevel::Off; AlertKind::ALL.len()])
+    }
+
+    /// A version 8 save's levels (the five kinds before Quarter start, in their order), with
+    /// Quarter start at its default (D800).
+    pub fn from_v8(levels: [AlertLevel; 5]) -> Self {
+        let mut all = AlertLevels::default();
+        all.0[..5].copy_from_slice(&levels);
+        all
     }
 
     pub fn get(&self, kind: AlertKind) -> AlertLevel {

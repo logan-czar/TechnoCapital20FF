@@ -92,13 +92,17 @@ const SKIPS: [(SkipKind, &str); 4] = [
     (SkipKind::MonthEnd, "month-end"),
 ];
 
-const ALERTS: [(AlertKind, &str); 5] = [
+const ALERTS: [(AlertKind, &str); 6] = [
     (AlertKind::EarningsDay, "earnings-day"),
     (AlertKind::QuarterlyRecap, "quarterly-recap"),
     (AlertKind::PlanLock, "plan-lock"),
     (AlertKind::BankruptcyInWatchlist, "bankruptcy-in-watchlist"),
     (AlertKind::WorldEvent, "world-event"),
+    (AlertKind::QuarterStart, "quarter-start"),
 ];
+
+/// The alerts the random player sets: the five before Quarter start (D800).
+const PLAYER_ALERTS: usize = 5;
 
 const LEVELS: [(AlertLevel, &str); 4] = [
     (AlertLevel::Pause, "pause"),
@@ -225,8 +229,10 @@ impl Player {
                 0 => LogControl::Speed(self.below(u64::from(MAX_SPEED) + 1) as u8),
                 1 => LogControl::Pause,
                 2 => LogControl::Skip(SKIPS[self.below(SKIPS.len() as u64) as usize].0),
+                // The first five kinds only, so the player's draws stay as they were before
+                // Quarter start (D800).
                 3 => LogControl::Alert(
-                    ALERTS[self.below(ALERTS.len() as u64) as usize].0,
+                    ALERTS[self.below(PLAYER_ALERTS as u64) as usize].0,
                     LEVELS[self.below(LEVELS.len() as u64) as usize].0,
                 ),
                 4 => {
