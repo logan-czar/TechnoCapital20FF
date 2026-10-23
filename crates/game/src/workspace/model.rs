@@ -399,6 +399,21 @@ pub struct PaneWindow {
     pub focused: PaneId,
     pub rect: WinRect,
     pub minimized: bool,
+    /// How the rectangle follows the area (D635).
+    pub fit: Fit,
+}
+
+/// How a window's rectangle follows the area it floats in (D635).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Fit {
+    /// Placed by the player (or a saved layout): only kept inside the area.
+    Fixed,
+    /// A fresh workspace's first window: laid out at the right of the area once the area is
+    /// measured, then fixed.
+    First,
+    /// Fills the area and follows it as it grows or shrinks (an M9 layout migrated), until the
+    /// player moves or resizes it.
+    Fill,
 }
 
 impl PaneWindow {
@@ -455,6 +470,9 @@ pub struct Workspace {
     hidden: bool,
     /// The logical size of the area the windows float in.
     area: (f32, f32),
+    /// The UI has measured the area: before that, windows are laid out on [`DEFAULT_AREA`]
+    /// and not clamped, so a saved layout keeps its rectangles until the real area is known.
+    measured: bool,
 }
 
 impl Default for Workspace {
@@ -484,6 +502,7 @@ impl Workspace {
             focused: id,
             rect: first_rect(area),
             minimized: false,
+            fit: Fit::First,
         };
         Workspace {
             windows: vec![window],
@@ -496,6 +515,7 @@ impl Workspace {
             geometry: 0,
             hidden: false,
             area,
+            measured: false,
         }
     }
 
@@ -913,7 +933,7 @@ impl Workspace {
                         .iter()
                         .position(|p| *p == w.focused)
                         .unwrap_or(0),
-                    rect: Some(w.rect),
+                    rect: (w.fit != Fit::Fill).then_some(w.rect),
                     minimized: w.minimized,
                 })
                 .collect(),
@@ -943,6 +963,7 @@ impl Workspace {
             geometry: self.geometry + 1,
             hidden: self.hidden,
             area: self.area,
+            measured: self.measured,
         };
         fn build(ws: &mut Workspace, n: &SavedNode) -> Layout {
             match n {
@@ -978,22 +999,25 @@ impl Workspace {
             walk_panes(&root, &mut ids);
             let id = WindowId(ws.next_window);
             ws.next_window += 1;
-            let rect = sw.rect.unwrap_or(WinRect {
-                x: 0.0,
-                y: 0.0,
-                w: ws.area.0,
-                h: ws.area.1,
-            });
+            let fit = if sw.rect.is_some() {
+                Fit::Fixed
+            } else {
+                Fit::Fill
+            };
+            let rect = sw.rect.unwrap_or(full_rect(ws.area));
             ws.windows.push(PaneWindow {
                 id,
                 focused: ids[sw.focused.min(ids.len() - 1)],
                 root,
                 rect,
                 minimized: sw.minimized,
+                fit,
             });
         }
         ws.active = ws.windows[saved.focused].id;
-        ws.clamp_all();
+        if ws.measured {
+            ws.clamp_all();
+        }
         *self = ws;
     }
 
@@ -1069,6 +1093,7 @@ impl Workspace {
             focused: pane,
             rect,
             minimized: false,
+            fit: Fit::Fixed,
         });
         self.active = id;
         self.hidden = false;
@@ -1186,12 +1211,13 @@ impl Workspace {
         )
     }
 
-    /// Moves window `id` by `dx`, `dy`, keeping its title bar reachable.
+    /// Moves window `id` by `dx`, `dy`, keeping it inside the area.
     pub fn move_window(&mut self, id: WindowId, dx: f32, dy: f32) -> bool {
         let Some(w) = self.win_mut(id) else {
             return false;
         };
         let before = w.rect;
+        w.fit = Fit::Fixed;
         w.rect.x += dx;
         w.rect.y += dy;
         self.clamp(id);
@@ -1202,12 +1228,15 @@ impl Workspace {
     /// [`Workspace::min_window_size`] (so no pane goes under its minimum, D571).
     pub fn resize_window(&mut self, id: WindowId, dw: f32, dh: f32) -> bool {
         let (mw, mh) = self.min_window_size(id);
+        let (aw, ah) = self.area;
         let Some(w) = self.win_mut(id) else {
             return false;
         };
         let before = w.rect;
-        w.rect.w = (w.rect.w + dw).max(mw);
-        w.rect.h = (w.rect.h + dh).max(mh);
+        w.fit = Fit::Fixed;
+        // The corner stops at the area's edge (or at the minimum, if that is larger).
+        w.rect.w = (w.rect.w + dw).max(mw).min((aw - w.rect.x).max(mw));
+        w.rect.h = (w.rect.h + dh).max(mh).min((ah - w.rect.y).max(mh));
         self.clamp(id);
         self.moved(id, before)
     }
@@ -1219,6 +1248,7 @@ impl Workspace {
             return false;
         };
         let before = w.rect;
+        w.fit = Fit::Fixed;
         w.rect = WinRect {
             w: rect.w.max(mw),
             h: rect.h.max(mh),
@@ -1236,13 +1266,27 @@ impl Workspace {
         changed
     }
 
-    /// Sets the area the windows float in (the UI measures it), keeping every window's title
-    /// bar inside it.
+    /// Sets the area the windows float in (the UI measures it). The first measurement lays out
+    /// a fresh workspace's first window; a window filling the area follows it; every window is
+    /// kept inside it.
     pub fn set_area(&mut self, w: f32, h: f32) -> bool {
-        if !(w > 0.0 && h > 0.0) || (self.area.0 - w).abs() < 0.5 && (self.area.1 - h).abs() < 0.5 {
+        let same = (self.area.0 - w).abs() < 0.5 && (self.area.1 - h).abs() < 0.5;
+        if !(w > 0.0 && h > 0.0) || (same && self.measured) {
             return false;
         }
         self.area = (w, h);
+        self.measured = true;
+        let area = self.area;
+        for win in &mut self.windows {
+            match win.fit {
+                Fit::First => {
+                    win.rect = first_rect(area);
+                    win.fit = Fit::Fixed;
+                }
+                Fit::Fill => win.rect = full_rect(area),
+                Fit::Fixed => {}
+            }
+        }
         self.clamp_all();
         self.geometry += 1;
         true
@@ -1256,9 +1300,10 @@ impl Workspace {
     }
 
     /// Keeps window `id` no larger than the area (nor under [`MIN_WINDOW_W`] by
-    /// [`MIN_WINDOW_H`]) and its title bar inside the area, at least [`GRIP_KEPT`] of it across.
-    /// It does not grow a window to its panes' minimum: as when the M9 workspace shrank, the
-    /// panes keep their ratios (D571); only a resize from the grip stops at the minimum.
+    /// [`MIN_WINDOW_H`]) and wholly inside it when it fits (its title bar, buttons and grip
+    /// always reachable). It does not grow a window to its panes' minimum: as when the M9
+    /// workspace shrank, the panes keep their ratios (D571); only a resize from the grip stops
+    /// at the minimum.
     fn clamp(&mut self, id: WindowId) {
         let (mw, mh) = (MIN_WINDOW_W, MIN_WINDOW_H);
         let (aw, ah) = self.area;
@@ -1268,9 +1313,8 @@ impl Workspace {
         let r = &mut w.rect;
         r.w = r.w.min(aw.max(mw)).max(mw);
         r.h = r.h.min(ah.max(mh)).max(mh);
-        let keep = GRIP_KEPT.min(r.w);
-        r.x = r.x.clamp(keep - r.w, (aw - keep).max(keep - r.w));
-        r.y = r.y.clamp(0.0, (ah - TITLE_BAR_H).max(0.0));
+        r.x = r.x.clamp(0.0, (aw - r.w).max(0.0));
+        r.y = r.y.clamp(0.0, (ah - r.h).max(0.0));
     }
 
     /// The top window shown at `x`, `y` in the area, if any: where a click there goes instead
@@ -1293,8 +1337,14 @@ impl Workspace {
 /// The smallest window, before its panes' own minimum (D635).
 pub const MIN_WINDOW_W: f32 = MIN_PANE_W + 2.0 * WINDOW_BORDER;
 pub const MIN_WINDOW_H: f32 = MIN_PANE_H + TITLE_BAR_H + 2.0 * WINDOW_BORDER;
-/// How much of a window's title bar stays inside the area when it is dragged off an edge.
-pub const GRIP_KEPT: f32 = 60.0;
+fn full_rect((aw, ah): (f32, f32)) -> WinRect {
+    WinRect {
+        x: 0.0,
+        y: 0.0,
+        w: aw,
+        h: ah,
+    }
+}
 
 fn first_rect((aw, ah): (f32, f32)) -> WinRect {
     WinRect {
@@ -1857,15 +1907,28 @@ mod tests {
         let mut ws = Workspace::new(PageRef::World);
         let id = ws.active_window();
         let (aw, ah) = DEFAULT_AREA;
+        // A smaller window first, so it can move.
+        ws.set_window_rect(
+            id,
+            WinRect {
+                x: 100.0,
+                y: 100.0,
+                w: 500.0,
+                h: 400.0,
+            },
+        );
         let g = ws.geometry_version();
         assert!(ws.move_window(id, -5000.0, 5000.0));
         assert!(ws.geometry_version() > g);
         let r = ws.window(id).unwrap().rect;
-        assert_eq!(r.x, GRIP_KEPT - r.w, "a grip of the title bar stays in");
-        assert_eq!(r.y, ah - TITLE_BAR_H);
+        assert_eq!((r.x, r.y), (0.0, ah - r.h), "wholly inside, bottom left");
         ws.move_window(id, 1e6, -1e6);
         let r = ws.window(id).unwrap().rect;
-        assert_eq!((r.x, r.y), (aw - GRIP_KEPT, 0.0));
+        assert_eq!(
+            (r.x, r.y),
+            (aw - r.w, 0.0),
+            "its buttons and grip stay on screen"
+        );
         // A resize never goes under the panes' minimum (D571).
         let p = ws.focused();
         ws.split(p, Axis::Row, None, false).unwrap();
@@ -1878,15 +1941,15 @@ mod tests {
         for (_, pr) in ws.rects(bw, bh) {
             assert!(pr.w >= MIN_PANE_W - 1e-3 && pr.h >= MIN_PANE_H - 1e-3);
         }
-        // Nor over the area.
+        // Nor past the area's edge.
         ws.resize_window(id, 1e6, 1e6);
         let r = ws.window(id).unwrap().rect;
-        assert_eq!((r.w, r.h), (aw, ah));
+        assert_eq!((r.x + r.w, r.y + r.h), (aw, ah));
         // The area shrinking pulls windows back in.
         assert!(ws.set_area(640.0, 400.0));
         let r = ws.window(id).unwrap().rect;
         assert!(r.w <= 640.0 && r.h <= 400.0);
-        assert!(r.x + GRIP_KEPT <= 640.0 + 1e-3);
+        assert!(r.x >= 0.0 && r.x + r.w <= 640.0 + 1e-3 && r.y + r.h <= 400.0 + 1e-3);
     }
 
     #[test]
@@ -1980,7 +2043,12 @@ mod tests {
         };
         for run in 0..30 {
             let mut ws = Workspace::new(PageRef::World);
+            ws.set_area(1600.0, 900.0);
             for step in 0..150u32 {
+                if step % 37 == 36 {
+                    let (w, h) = (400.0 + next(1600) as f32, 300.0 + next(900) as f32);
+                    ws.set_area(w, h);
+                }
                 let wins: Vec<WindowId> = ws.windows().iter().map(|w| w.id).collect();
                 let win = wins[next(wins.len() as u64) as usize];
                 let panes = ws.all_pane_ids();
@@ -2049,10 +2117,95 @@ mod tests {
             assert!(w.pane_ids().contains(&w.focused), "run {run} step {step}");
             assert!(w.pane_ids().len() <= MAX_PANES);
             let r = w.rect;
-            let keep = GRIP_KEPT.min(r.w);
-            assert!(r.x + r.w >= keep - 1e-3 && r.x <= aw - keep + 1e-3);
-            assert!(r.y >= 0.0 && r.y <= ah - TITLE_BAR_H + 1e-3);
+            // Wholly inside whenever it fits.
+            if r.w <= aw {
+                assert!(
+                    r.x >= -1e-3 && r.x + r.w <= aw + 1e-3,
+                    "run {run} step {step}"
+                );
+            }
+            if r.h <= ah {
+                assert!(
+                    r.y >= -1e-3 && r.y + r.h <= ah + 1e-3,
+                    "run {run} step {step}"
+                );
+            }
             assert!(r.w >= MIN_WINDOW_W - 1e-3 && r.h >= MIN_WINDOW_H - 1e-3);
         }
+    }
+
+    /// The real area, measured after startup, lays out the first window inside it (the
+    /// review of PR #35: a 1280 x 720 window has a 996 x 676 area).
+    #[test]
+    fn the_first_window_is_laid_out_in_the_measured_area() {
+        let mut ws = Workspace::new(PageRef::World);
+        let id = ws.active_window();
+        assert!(ws.set_area(996.0, 676.0));
+        let r = ws.window(id).unwrap().rect;
+        assert!((r.x - 996.0 * FIRST_WINDOW_X_SHARE).abs() < 1e-3);
+        assert!(
+            (r.x + r.w - 996.0).abs() < 1e-3,
+            "its right edge is the area's: {r:?}"
+        );
+        assert_eq!(r.h, 676.0);
+        // Measuring the default size counts too.
+        let mut ws = Workspace::new(PageRef::World);
+        assert!(ws.set_area(DEFAULT_AREA.0, DEFAULT_AREA.1));
+        // Later area changes keep it where the player left it, inside the area.
+        let mut ws = Workspace::new(PageRef::World);
+        ws.set_area(996.0, 676.0);
+        ws.set_area(1500.0, 900.0);
+        let r = ws.window(id).unwrap().rect;
+        assert!(
+            (r.x - 996.0 * FIRST_WINDOW_X_SHARE).abs() < 1e-3,
+            "not re-laid out"
+        );
+        ws.set_area(700.0, 500.0);
+        let r = ws.window(id).unwrap().rect;
+        assert!(r.x >= 0.0 && r.x + r.w <= 700.0 + 1e-3 && r.y + r.h <= 500.0 + 1e-3);
+        // A saved rectangle from a larger area (the review run's ui.ron) is pulled inside.
+        let mut saved = Workspace::new(PageRef::World).to_saved();
+        saved.windows[0].rect = Some(WinRect {
+            x: 512.0,
+            y: 0.0,
+            w: 768.0,
+            h: 676.0,
+        });
+        let mut ws = Workspace::new(PageRef::World);
+        ws.load(&saved);
+        assert_eq!(
+            ws.windows()[0].rect.x,
+            512.0,
+            "untouched before the area is known"
+        );
+        ws.set_area(996.0, 676.0);
+        let r = ws.windows()[0].rect;
+        assert_eq!((r.x, r.w), (996.0 - 768.0, 768.0));
+    }
+
+    /// An M9 layout's window fills the real area once measured and follows it, growing and
+    /// shrinking, until the player moves or resizes it.
+    #[test]
+    fn a_migrated_window_follows_the_area() {
+        let old: SavedLayout = ron::from_str("(root: Pane(page: \"news\"), focused: 0)").unwrap();
+        let mut ws = Workspace::new(PageRef::World);
+        ws.load(&old);
+        let id = ws.active_window();
+        for (w, h) in [(996.0, 676.0), (1500.0, 900.0), (800.0, 600.0)] {
+            ws.set_area(w, h);
+            let r = ws.window(id).unwrap().rect;
+            assert_eq!((r.x, r.y, r.w, r.h), (0.0, 0.0, w, h));
+            assert_eq!(
+                ws.to_saved().windows[0].rect,
+                None,
+                "saved as filling the area"
+            );
+        }
+        ws.move_window(id, 0.0, 10.0);
+        ws.resize_window(id, -200.0, -200.0);
+        ws.set_area(1500.0, 900.0);
+        let r = ws.window(id).unwrap().rect;
+        assert_eq!((r.w, r.h), (600.0, 400.0), "placed by the player: it stays");
+        assert!(ws.to_saved().windows[0].rect.is_some());
     }
 }

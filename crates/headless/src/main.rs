@@ -28,7 +28,7 @@ use crate::profile::Profiler;
 use crate::soak::{DEFAULT_SEEDS, DEFAULT_YEARS, SoakArgs};
 
 const USAGE: &str = "usage:\n  \
-    headless --check-data [--data-dir DIR]\n  \
+    headless --check-data [--data-dir DIR] [--map-dir DIR]\n  \
     headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--data-dir DIR]\n  \
     headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--data-dir DIR]\n  \
     headless check DIR\n  \
@@ -85,6 +85,7 @@ fn main() -> ExitCode {
 fn check_data_command(args: Vec<String>) -> ExitCode {
     let mut check_data = false;
     let mut dir = sim_data::default_data_dir();
+    let mut map_dir = sim_data::default_map_dir();
     let mut it = args.into_iter();
     while let Some(arg) = it.next() {
         match arg.as_str() {
@@ -93,13 +94,17 @@ fn check_data_command(args: Vec<String>) -> ExitCode {
                 Some(d) => dir = PathBuf::from(d),
                 None => return usage(),
             },
+            "--map-dir" => match it.next() {
+                Some(d) => map_dir = PathBuf::from(d),
+                None => return usage(),
+            },
             _ => return usage(),
         }
     }
     if !check_data {
         return usage();
     }
-    check(&dir)
+    check(&dir, &map_dir)
 }
 
 fn usage() -> ExitCode {
@@ -117,7 +122,7 @@ fn report(r: Result<(), String>) -> ExitCode {
     }
 }
 
-fn check(dir: &Path) -> ExitCode {
+fn check(dir: &Path, map_dir: &Path) -> ExitCode {
     let mut world = match sim_data::load_world(dir) {
         Ok(w) => w,
         Err(e) => {
@@ -129,9 +134,9 @@ fn check(dir: &Path) -> ExitCode {
     for (name, n) in world.counts() {
         println!("  {name:18} {n:>6}");
     }
-    // The map assets (M8), checked when the repository has them.
-    let map_dir = sim_data::default_map_dir();
-    world.map = match sim_data::load_map(&map_dir) {
+    // The map assets (M8), checked when the folder has them: the CSVs, label points inside
+    // the bitmap, the PNG sizes against map-meta.toml.
+    world.map = match sim_data::load_map(map_dir) {
         Ok(m) => m,
         Err(e) => {
             eprintln!("error: {}: {e}", map_dir.display());

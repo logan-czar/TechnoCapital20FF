@@ -181,7 +181,9 @@ fn spec(kind: PageKind) -> (&'static [ViewKey], &'static [&'static str], &'stati
                 ViewKey::Units,
             ],
             &[],
-            "M8.7 (lane MB): the province card (development, resource, terrain, Metro, key              city, HQs and units with their assets), and province links throughout the pages              and the command bar.",
+            "M8.7 (lane MB): the province card (development, resource, terrain, Metro, key \
+             city, HQs and units with their assets), and province links throughout the pages \
+             and the command bar.",
         ),
         _ => (&[], &[], ""),
     }
@@ -478,6 +480,7 @@ pub fn related(
                     .iter()
                     .filter_map(|&u| v.units.get().get(u).map(|r| r.company))
                     .collect();
+                unit_companies.sort_unstable();
                 unit_companies.dedup();
                 out.push((
                     "Units of",

@@ -15,7 +15,7 @@ use game::config::UiConfig;
 use game::pages::PageRef;
 use game::test_support::{click, drag, press};
 use game::ui::ShellPlugin;
-use game::workspace::model::{GRIP_KEPT, MIN_WINDOW_H, MIN_WINDOW_W};
+use game::workspace::model::{MIN_WINDOW_H, MIN_WINDOW_W};
 use game::workspace::{
     OpenPage, OpenTarget, PaneAction, PaneFrame, WindowAction, WindowFrame, WindowId, Workspace,
 };
@@ -188,11 +188,15 @@ fn windows_move_resize_rise_and_keep_their_panes() {
         (px(after.x), px(after.y)),
         "the frame follows"
     );
-    // Far off the edge: a grip of the title bar stays in.
-    app.world_mut().trigger(drag(f.bar, Vec2::new(-1e5, 0.0)));
+    // Far off an edge: the window stays wholly inside the area.
+    app.world_mut().trigger(drag(f.bar, Vec2::new(1e5, 1e5)));
     frames(&mut app, 2);
     let r = ws(&app).window(second).unwrap().rect;
-    assert!((r.x + r.w - GRIP_KEPT).abs() < 1e-3, "{r:?}");
+    let (aw, ah) = ws(&app).area();
+    assert!(
+        (r.x + r.w - aw).abs() < 1e-3 && (r.y + r.h - ah).abs() < 1e-3,
+        "{r:?}"
+    );
     // The grip resizes, never under the panes' minimum (two panes side by side).
     let grip = labelled_grip(&mut app, second);
     app.world_mut().trigger(drag(grip, Vec2::new(-1e5, -1e5)));
@@ -307,4 +311,21 @@ fn minimize_to_the_dock_hide_and_close() {
     // Ctrl+W still closes panes, not windows.
     chord(&mut app, &[KeyCode::ControlLeft], KeyCode::KeyW);
     assert_eq!(ws(&app).windows().len(), 1);
+}
+
+/// The dock never shows over full-screen Pdoomberg (review of PR #35).
+#[test]
+fn the_dock_hides_under_pdoomberg() {
+    let mut app = shell_app();
+    let dock = app.world().resource::<game::workspace::WorkspaceUi>().dock;
+    let vis = |app: &App| *app.world().get::<Visibility>(dock).unwrap();
+    assert_eq!(vis(&app), Visibility::Inherited);
+    chord(&mut app, &[], KeyCode::KeyB);
+    assert_eq!(
+        app.world().resource::<game::ui::rail::Router>().current,
+        game::ui::rail::Screen::Pdoomberg
+    );
+    assert_eq!(vis(&app), Visibility::Hidden);
+    chord(&mut app, &[], KeyCode::Escape);
+    assert_eq!(vis(&app), Visibility::Inherited);
 }

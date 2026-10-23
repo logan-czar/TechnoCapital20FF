@@ -834,6 +834,18 @@ fn scan_state(sim: Sim, v: &SimViews, label: &str, t: &Truths, leaks: &mut Vec<L
     for h in v.news.get().feed.iter().take(20) {
         pages.insert(PageRef::Headline(h.id));
     }
+    // M8: the Province page of every province where a banded company has its HQ or a unit
+    // (lane MB's page will show the units' assets there; D631, D637).
+    for c in v.company_detail.get().companies.iter() {
+        if private.contains(&c.id) {
+            pages.insert(PageRef::Province(c.hq_province));
+        }
+    }
+    for u in &v.units.get().units {
+        if private.contains(&u.company) {
+            pages.insert(PageRef::Province(u.base_province));
+        }
+    }
     for page in &pages {
         let s = read_page(&mut app, page, names);
         read(page.key(), std::slice::from_ref(page), s, leaks);

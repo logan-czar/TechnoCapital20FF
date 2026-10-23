@@ -31,7 +31,7 @@ use sim::world::ProvinceId;
 use crate::bridge::Views;
 use crate::pages::PageRef;
 use crate::ui::rail::{Router, Screen};
-use crate::ui::theme::{Tooltip, color};
+use crate::ui::theme::color;
 use crate::ui::{KeyboardCapture, ShellLayout, SpawnLayout, UiSystems, modifier_held};
 use crate::workspace::{OpenPage, OpenTarget, WorkspaceInput};
 use camera::Camera;
@@ -397,16 +397,17 @@ fn ease_camera(time: Res<Time>, bitmap: Option<Res<MapBitmap>>, mut state: ResMu
 }
 
 /// Dots at the tiny provinces' label points, placed where the camera shows them (hidden off the
-/// view), with the province's name as a tooltip.
+/// view). They let the pointer through to the map node, whose picking finds them (D640), so
+/// they carry no tooltip; lane MB's hover card names the province.
 #[allow(clippy::too_many_arguments)]
 fn place_tiny_dots(
     mut commands: Commands,
     state: Res<MapState>,
     tiny: Res<TinyTargets>,
     bitmap: Option<Res<MapBitmap>>,
-    views: Res<Views>,
     view_q: Query<Entity, With<MapView>>,
     mut dots: Query<(Entity, &TinyDot, &mut Node)>,
+    added: Query<(), Added<TinyDot>>,
 ) {
     let (Some(bitmap), Ok(map_view)) = (bitmap, view_q.single()) else {
         return;
@@ -415,9 +416,7 @@ fn place_tiny_dots(
         for (e, _, _) in &dots {
             commands.entity(e).despawn();
         }
-        let places = views.places.get();
         for &(id, _) in &tiny.targets {
-            let name = places.place_name(id).unwrap_or_default();
             let dot = commands
                 .spawn((
                     TinyDot(id),
@@ -433,14 +432,14 @@ fn place_tiny_dots(
                     BackgroundColor(color::PANEL_RAISED),
                     BorderColor::all(color::TEXT_MUTED),
                     Pickable::IGNORE,
-                    Tooltip(name),
                 ))
                 .id();
             commands.entity(map_view).add_child(dot);
         }
         return;
     }
-    if !state.is_changed() {
+    // New dots are placed the frame they appear, not at the camera's next move.
+    if !state.is_changed() && added.is_empty() {
         return;
     }
     let Some(cam) = state.camera else { return };

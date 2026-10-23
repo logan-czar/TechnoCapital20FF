@@ -103,7 +103,7 @@ Result on Logan's PC (Windows 11, 24 threads, October 2026; release build after 
 
 The map draws behind floating windows (D635 to D638), so both M9 checks now run with it.
 
-- **Leak test** (`m9_leak.rs`): unchanged and passing; the shell under test has the map plugin and the window layer (no map assets in a headless test).
+- **Leak test** (`m9_leak.rs`): it also reads the Province page of every province where a banded company has its HQ or a unit, since lane MB adds unit assets there. It passes with the map plugin and the window layer in the shell (no map assets in a headless test): debug, `fresh: 2447 screens` and `after the Q1 recap: 2462 screens` (145 Province pages more than before), 196 subjects, no leak, 16.3 s.
 - **Timing harness** (`--bench-pages`): it also opens a Province page (the M8 placeholder, D637), 49 pages. Release, Logan's PC, on the 8192 x 4096 synthetic map: `pages 49 opened, worst 20.45 ms: PASS`; `province/431` 2.85 ms cold, 2.42 ms warm.
 
 ### The map's frame time (`--bench-map`, D639)

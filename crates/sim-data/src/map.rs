@@ -15,6 +15,10 @@ use serde::{Deserialize, Deserializer, de};
 
 use crate::{DataError, Table, load_table};
 
+/// Most provinces a map may hold: the game's per-province colour table is 64 x 64 texels with
+/// index 0 for water (D638), so 4,095. The world has 3,255.
+pub const MAX_MAP_PROVINCES: usize = 4095;
+
 /// The metadata file.
 pub const MAP_META: &str = "map-meta.toml";
 /// One row per province in the bitmap, sorted by id; the bitmap index is the 1-based row.
@@ -150,8 +154,9 @@ pub fn load_map(dir: &Path) -> Result<Option<MapAssets>, DataError> {
 
 impl MapAssets {
     /// The checks that need only the map files (the province ids are checked against the world
-    /// by [`crate::check`]): a sane size, colours sorted by id and unique, at most `u16::MAX`
-    /// provinces (the index is 16-bit), centroids and adjacency naming bitmap provinces.
+    /// by [`crate::check`]): a sane size, colours sorted by id and unique, at most
+    /// [`MAX_MAP_PROVINCES`], centroids and adjacency naming bitmap provinces, centroids and
+    /// label points inside the bitmap, and each PNG that is there the size map-meta.toml says.
     fn check_shape(&self) -> Result<(), DataError> {
         let m = &self.meta;
         if m.width == 0 || m.height == 0 {
@@ -166,10 +171,48 @@ impl MapAssets {
                 "lat_min must be below lat_max and lon_min below lon_max",
             ));
         }
-        if self.colors.len() >= usize::from(u16::MAX) {
-            return Err(self
-                .colors
-                .file_err("more provinces than a 16-bit index holds"));
+        if self.colors.len() > MAX_MAP_PROVINCES {
+            return Err(self.colors.file_err(format!(
+                "{} provinces, more than the {MAX_MAP_PROVINCES} the map's colour table holds",
+                self.colors.len()
+            )));
+        }
+        let (w, h) = (f64::from(m.width), f64::from(m.height));
+        let inside = |x: f64, y: f64| (0.0..w).contains(&x) && (0.0..h).contains(&y);
+        for (line, c) in self.centroids.iter() {
+            if !inside(c.label_x, c.label_y) {
+                return Err(self.centroids.err(
+                    line,
+                    "label_x",
+                    format!(
+                        "label point {}, {} is outside the {}x{} bitmap",
+                        c.label_x, c.label_y, m.width, m.height
+                    ),
+                ));
+            }
+            if !inside(c.x, c.y) {
+                return Err(self.centroids.err(
+                    line,
+                    "x",
+                    format!("centroid {}, {} is outside the bitmap", c.x, c.y),
+                ));
+            }
+        }
+        for file in [PROVINCE_INDEX_PNG, PROVINCE_IDS_PNG, PROVINCE_BORDERS_PNG] {
+            let path = self.dir.join(file);
+            if !path.is_file() {
+                continue;
+            }
+            match png_size(&path) {
+                Some(size) if size == (m.width, m.height) => {}
+                Some((pw, ph)) => {
+                    return Err(DataError::file(
+                        file,
+                        format!("{pw}x{ph}, but map-meta.toml says {}x{}", m.width, m.height),
+                    ));
+                }
+                None => return Err(DataError::file(file, "not a PNG")),
+            }
         }
         for (i, pair) in self.colors.rows.windows(2).enumerate() {
             if pair[0].province_id >= pair[1].province_id {
@@ -335,4 +378,16 @@ pub mod fixture {
         std::fs::write(dir.join(super::PROVINCE_ADJACENCY), adj)?;
         Ok(())
     }
+}
+
+/// A PNG's width and height from its header (the IHDR chunk), without decoding it.
+pub fn png_size(path: &Path) -> Option<(u32, u32)> {
+    use std::io::Read;
+    let mut head = [0u8; 24];
+    std::fs::File::open(path).ok()?.read_exact(&mut head).ok()?;
+    if head[..8] != [0x89, b'P', b'N', b'G', 0x0D, 0x0A, 0x1A, 0x0A] || &head[12..16] != b"IHDR" {
+        return None;
+    }
+    let be = |b: &[u8]| u32::from_be_bytes([b[0], b[1], b[2], b[3]]);
+    Some((be(&head[16..20]), be(&head[20..24])))
 }

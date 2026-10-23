@@ -59,8 +59,20 @@ impl TinyTargets {
     }
 }
 
-/// The province under view point `p`: the nearest tiny target within [`TINY_TARGET_PX`]
-/// (ties to the lower id), else the bitmap's province there.
+/// A click this close to a tiny province's label point (its dot) always picks it (D640).
+pub const TINY_DOT_HIT_PX: f32 = 4.0;
+/// A tiny province's wider target ([`TINY_TARGET_PX`]) wins over the province under the cursor
+/// only when that province shows smaller than this many square logical pixels at the current
+/// zoom (or the cursor is over water), so it never steals a click from a province big enough to
+/// click on (D640).
+pub const TINY_STEAL_BELOW_SQ_PX: f32 = 64.0;
+
+/// The province under view point `p` (D637, D640):
+///
+/// 1. within [`TINY_DOT_HIT_PX`] of a tiny province's label point (its dot): that province;
+/// 2. else the bitmap's province there, unless it is water or shows smaller than
+///    [`TINY_STEAL_BELOW_SQ_PX`] on screen and a tiny target is within [`TINY_TARGET_PX`];
+/// 3. else that nearest tiny target (ties to the lower id), or water (none).
 pub fn pick(
     bitmap: &MapBitmap,
     cam: &Camera,
@@ -77,8 +89,23 @@ pub fn pick(
             best = Some((d, id));
         }
     }
-    if let Some((_, id)) = best {
+    if let Some((d, id)) = best
+        && d <= TINY_DOT_HIT_PX
+    {
         return Some(id);
     }
-    statics.province_at_index(bitmap.at(cam.to_map(map, view, p)))
+    let under = statics.province_at_index(bitmap.at(cam.to_map(map, view, p)));
+    let small = |id: ProvinceId| {
+        statics
+            .shape(id)
+            .is_none_or(|s| (s.area_px as f32) / (cam.scale * cam.scale) < TINY_STEAL_BELOW_SQ_PX)
+    };
+    // A tiny province under the cursor is itself the pick.
+    let is_tiny = |id: ProvinceId| statics.shape(id).is_some_and(|s| s.tiny);
+    match (under, best) {
+        (Some(u), Some((_, t))) if small(u) && !is_tiny(u) => Some(t),
+        (Some(u), _) => Some(u),
+        (None, Some((_, t))) => Some(t),
+        (None, None) => None,
+    }
 }

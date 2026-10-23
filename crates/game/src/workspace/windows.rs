@@ -15,6 +15,7 @@ use super::model::{TITLE_BAR_H, WINDOW_BORDER, WindowId, Workspace};
 use super::{WorkspaceUi, spawn_node};
 use crate::command::index::NameIndex;
 use crate::pages::PageRef;
+use crate::ui::rail::{Router, Screen};
 use crate::ui::theme::{self, Tooltip, color, font};
 
 /// A window command, from its frame, a key or the command bar.
@@ -242,8 +243,9 @@ pub(super) fn sync_windows(
     mut dock_drawn: ResMut<DockDrawn>,
     mut layer: Query<&mut Visibility>,
     added: Query<(), Added<WindowFrame>>,
+    router: Res<Router>,
 ) {
-    if !(ws.is_changed() || index.is_changed() || !added.is_empty()) {
+    if !(ws.is_changed() || index.is_changed() || router.is_changed() || !added.is_empty()) {
         return;
     }
     let order: Vec<WindowId> = ws.windows().iter().map(|w| w.id).collect();
@@ -294,6 +296,18 @@ pub(super) fn sync_windows(
     }
     if let Ok(mut v) = layer.get_mut(ui.root) {
         let want = if ws.hidden() {
+            Visibility::Hidden
+        } else {
+            Visibility::Inherited
+        };
+        if *v != want {
+            *v = want;
+        }
+    }
+    // The dock sits over the map, never over full-screen Pdoomberg (it has a global z-index
+    // above Pdoomberg's): hidden while Pdoomberg is up, so it cannot be clicked there either.
+    if let Ok(mut v) = layer.get_mut(ui.dock) {
+        let want = if router.current == Screen::Pdoomberg {
             Visibility::Hidden
         } else {
             Visibility::Inherited

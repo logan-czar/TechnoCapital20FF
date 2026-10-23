@@ -8,7 +8,8 @@ use sim::views::MapStaticView;
 use sim::views::map_layers::{LayerValues, MapLayer};
 
 /// Texels a row: the table is `TABLE_W` x `TABLE_W`, 4,096 entries, for up to 4,095 provinces
-/// (index 0 is water).
+/// (index 0 is water): sim-data's `MAX_MAP_PROVINCES`, which the loader enforces (a game test
+/// keeps the two equal).
 pub const TABLE_W: u32 = 64;
 pub const TABLE_LEN: usize = (TABLE_W * TABLE_W) as usize;
 /// Flag bits in the alpha byte.

@@ -163,3 +163,55 @@ fn the_world_checks_flag_unknown_map_provinces() {
         "{errors:#?}"
     );
 }
+
+/// The bitmap's own checks (review of PR #35): label points and centroids inside the bitmap,
+/// each PNG the size map-meta.toml says, and no more provinces than the colour table holds.
+#[test]
+fn the_bitmap_checks() {
+    let s = Scratch::new("bitmap");
+    write_fixture(&s.0);
+    let path = s.0.join("province-centroids.csv");
+    let text = std::fs::read_to_string(&path).unwrap();
+    std::fs::write(&path, text.replacen(",5,5,5,5,", ",5,5,64,5,", 1)).unwrap();
+    let e = load_map(&s.0).unwrap_err();
+    assert_eq!(
+        (e.file.as_str(), e.line, e.field.as_deref()),
+        ("province-centroids.csv", Some(2), Some("label_x"))
+    );
+
+    // A PNG of the wrong size; a file that is not a PNG.
+    write_fixture(&s.0);
+    let png = |w: u32, h: u32| {
+        let mut b = vec![0x89, b'P', b'N', b'G', 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 13];
+        b.extend_from_slice(b"IHDR");
+        b.extend_from_slice(&w.to_be_bytes());
+        b.extend_from_slice(&h.to_be_bytes());
+        b
+    };
+    std::fs::write(s.0.join("province-index.png"), png(64, 32)).unwrap();
+    assert!(load_map(&s.0).is_ok(), "the right size");
+    assert_eq!(
+        sim_data::map::png_size(&s.0.join("province-index.png")),
+        Some((64, 32))
+    );
+    std::fs::write(s.0.join("province-borders.png"), png(128, 64)).unwrap();
+    let e = load_map(&s.0).unwrap_err();
+    assert_eq!(e.file, "province-borders.png");
+    assert!(e.message.contains("128x64"), "{}", e.message);
+    std::fs::write(s.0.join("province-borders.png"), b"GIF89a").unwrap();
+    assert_eq!(load_map(&s.0).unwrap_err().message, "not a PNG");
+
+    // More provinces than the colour table holds.
+    let n = sim_data::map::MAX_MAP_PROVINCES + 1;
+    let ids: Vec<String> = (0..n).map(|i| format!("ZZ-{i:05}")).collect();
+    let rects: Vec<Rect<'_>> = ids
+        .iter()
+        .enumerate()
+        .map(|(i, id)| Rect(id, [i as u32, 0, i as u32 + 1, 1]))
+        .collect();
+    let big = Scratch::new("bitmap-big");
+    fixture::write(&big.0, n as u32, 2, 0, &rects).unwrap();
+    let e = load_map(&big.0).unwrap_err();
+    assert_eq!(e.file, "province-colors.csv");
+    assert!(e.message.contains("4095"), "{}", e.message);
+}

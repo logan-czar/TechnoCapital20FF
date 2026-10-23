@@ -264,9 +264,10 @@ fn main() -> AppExit {
     )
     .insert_resource(game::map::MapSource(data_has_map.then_some(map_dir)))
     .add_plugins(SimBridgePlugin::new(sim))
-    // The UI config file (D452); benches keep theirs in memory so a run never edits it.
-    .insert_resource(match (&args.bench, default_config_path()) {
-        (None, Some(path)) => ConfigStore::at(path),
+    // The UI config file (D452); benches and screenshots keep theirs in memory so a run never
+    // edits it.
+    .insert_resource(match (&args.bench, &args.shot, default_config_path()) {
+        (None, None, Some(path)) => ConfigStore::at(path),
         _ => ConfigStore::in_memory(),
     })
     .add_plugins(ShellPlugin)
