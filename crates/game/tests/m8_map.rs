@@ -376,21 +376,42 @@ mod picking {
         );
     }
 
-    /// The same check on a real map folder (lane PA's NA map), run by hand:
-    /// `TC20FF_TEST_MAP_DIR=assets/map cargo test -p game --test m8_map -- --ignored`.
-    /// Every label point at the farthest zoom of a 996-pixel view, and closer, picks its own
-    /// province, except on a tiny province's dot or where it shows under the steal threshold.
+    /// M8.8 (D740): every province of the committed world map (`assets/map`, all 3,255) is
+    /// clickable. For each province, in province-centroids.csv order, the camera centres on its
+    /// label point (a tiny province's click target sits there) at each wheel notch from the
+    /// farthest zoom of the default view to the closest, and a click there must pick the
+    /// province whose CSV id the row names (through v_province_card's key). The farthest zoom
+    /// where it wins is its zoom; none may be left without one, and none is skipped.
     #[test]
-    #[ignore = "needs TC20FF_TEST_MAP_DIR"]
-    fn real_map_label_points_pick_their_provinces() {
-        use game::map::camera::Camera;
-        use game::map::picking::{TINY_DOT_HIT_PX, TINY_STEAL_BELOW_SQ_PX, TinyTargets, pick};
-        let dir = std::path::PathBuf::from(std::env::var("TC20FF_TEST_MAP_DIR").unwrap());
+    fn every_world_province_is_clickable() {
+        use game::map::DEFAULT_VIEW;
+        use game::map::camera::{Camera, ZoomLevel, min_scale};
+        use game::map::picking::{TinyTargets, pick};
+        use std::collections::HashMap;
+        let start = std::time::Instant::now();
+        let dir = sim_data::default_map_dir();
         let mut data = common::data();
         data.map = sim_data::load_map(&dir).unwrap();
+        let rows = data
+            .map
+            .as_ref()
+            .expect("assets/map")
+            .centroids
+            .rows
+            .clone();
+        let provinces = data.all_provinces().count();
+        assert_eq!(provinces, 3255, "the world's province files");
+        assert_eq!(rows.len(), provinces, "every province has a shape");
         let sim = Sim::new(data, 1).unwrap();
-        let statics = sim.views().map_static.get();
-        let geo = statics.geo.clone().unwrap();
+        let views = sim.views();
+        let statics = views.map_static.get();
+        let by_key: HashMap<&str, sim::world::ProvinceId> = views
+            .province_cards
+            .get()
+            .cards
+            .iter()
+            .map(|c| (c.key.as_str(), c.id))
+            .collect();
         let index = game::map::png_io::read_gray16(&dir.join("province-index.png")).unwrap();
         let bitmap = MapBitmap {
             width: index.width,
@@ -398,41 +419,90 @@ mod picking {
             data: Arc::new(index.data),
         };
         let tiny = TinyTargets::from_view(statics, 0);
-        let size = bitmap.size();
-        let view = Vec2::new(996.0, 676.0);
-        let (mut checked, mut skipped, mut wrong) = (0, 0, Vec::new());
-        for notches in [0.0, 2.0, 4.0, 8.0] {
+        let (size, view) = (bitmap.size(), DEFAULT_VIEW);
+        // The farthest zoom, then one wheel notch closer each, to the closest.
+        let mut scales = vec![Camera::fit(size, view).scale];
+        while *scales.last().unwrap() > min_scale() {
             let mut cam = Camera::fit(size, view);
-            cam.zoom(size, view, notches, view / 2.0);
-            cam.scale = cam.target;
-            for (i, s) in geo.shapes.iter().enumerate() {
-                let Some(s) = s else { continue };
-                let label = Vec2::new(s.label.0 as f32, s.label.1 as f32);
+            cam.target = *scales.last().unwrap();
+            cam.zoom(size, view, 1.0, view / 2.0);
+            scales.push(cam.target);
+        }
+        let loaded = start.elapsed();
+        let mut by_level: std::collections::BTreeMap<ZoomLevel, usize> = Default::default();
+        let (mut tiny_n, mut off_label, mut missed, mut clicks) = (0, 0, Vec::new(), Vec::new());
+        for r in &rows {
+            let id = by_key[r.province_id.as_str()];
+            let shape = statics.shape(id).expect("a shape");
+            let label = Vec2::new(r.label_x as f32, r.label_y as f32);
+            assert_eq!(
+                (f64::from(label.x), f64::from(label.y)),
+                shape.label,
+                "{}: the views' label point",
+                r.province_id
+            );
+            tiny_n += usize::from(r.tiny);
+            off_label += usize::from(bitmap.at(label) != shape.index);
+            let won = scales.iter().find_map(|&scale| {
+                let mut cam = Camera::fit(size, view);
+                cam.scale = scale;
+                cam.target = scale;
                 cam.center = label;
                 cam.pan(size, view, Vec2::ZERO);
                 let at = cam.to_view(size, view, label);
-                let on_dot = tiny.targets.iter().any(|(id, l)| {
-                    id.0 as usize != i
-                        && cam.to_view(size, view, *l).distance(at) <= TINY_DOT_HIT_PX
-                });
-                if s.tiny
-                    || on_dot
-                    || (s.area_px as f32) / (cam.scale * cam.scale) < TINY_STEAL_BELOW_SQ_PX
-                {
-                    skipped += 1;
-                    continue;
+                (pick(&bitmap, &cam, view, at, statics, &tiny) == Some(id))
+                    .then(|| (scale, cam.level(size, view)))
+            });
+            match won {
+                Some((scale, level)) => {
+                    *by_level.entry(level).or_default() += 1;
+                    clicks.push((id, label, scale));
                 }
-                let got = pick(&bitmap, &cam, view, at, statics, &tiny);
-                if got != Some(sim::world::ProvinceId::from_index(i)) {
-                    wrong.push((notches, i, got));
-                }
-                checked += 1;
+                None => missed.push(r.province_id.clone()),
             }
         }
+        let picked = start.elapsed();
+        // The same clicks through the shell (the map's input to the opened Province page), on
+        // the world map with its bitmap installed as the map plugin does.
+        let mut app = App::new();
+        app.add_plugins((MinimalPlugins, bevy::input::InputPlugin))
+            .insert_resource(TimeUpdateStrategy::ManualDuration(FRAME))
+            .add_plugins(SimBridgePlugin::new(sim))
+            .add_plugins(ShellPlugin);
+        app.update();
+        game::test_support::install_map_bitmap(app.world_mut(), &dir);
+        frames(&mut app, 2);
+        assert_eq!(app.world().resource::<MapState>().view, view);
+        for &(id, label, scale) in &clicks {
+            let at = {
+                let mut state = app.world_mut().resource_mut::<MapState>();
+                let cam = state.camera.as_mut().unwrap();
+                cam.scale = scale;
+                cam.target = scale;
+                cam.center = label;
+                cam.pan(size, view, Vec2::ZERO);
+                cam.to_view(size, view, label)
+            };
+            click_at(&mut app, at, false);
+            assert_eq!(focused_page(&app), PageRef::Province(id), "{}", id.0);
+        }
+        let n = |l| by_level.get(&l).copied().unwrap_or(0);
         println!(
-            "real map: {checked} label clicks checked, {skipped} skipped, {} wrong",
-            wrong.len()
+            "M8.8 click test: {} provinces ({tiny_n} tiny, {off_label} with the label pixel \
+             not their own), {} zooms each at most; first won at World {}, Country {}, \
+             Province {}; {} never; {} clicked through the shell; {:.2} s ({:.2} s loading, {:.2} s picking)",
+            rows.len(),
+            scales.len(),
+            n(ZoomLevel::World),
+            n(ZoomLevel::Country),
+            n(ZoomLevel::Province),
+            missed.len(),
+            clicks.len(),
+            start.elapsed().as_secs_f64(),
+            loaded.as_secs_f64(),
+            (picked - loaded).as_secs_f64()
         );
-        assert!(wrong.is_empty(), "{wrong:?}");
+        assert!(missed.is_empty(), "never picked at any zoom: {missed:?}");
+        assert_eq!(clicks.len(), 3255);
     }
 }
