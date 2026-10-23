@@ -6,3 +6,6 @@ dist/
 target/
 __pycache__/
 .claude/
+
+# Map pipeline (track P): project-local venv
+tools/map-pipeline/.venv/

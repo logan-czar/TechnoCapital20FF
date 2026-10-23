@@ -15,6 +15,10 @@ bevy = { version = "=0.20.0", default-features = false }
 blake3 = "1"
 csv = "1"
 flate2 = "1"
+# mapgen only (build-plan 2.2, P7).
+geo = "0.33"
+geojson = { version = "1", features = ["geo-types"] }
+image = { version = "0.25", default-features = false, features = ["png"] }
 postcard = { version = "1", default-features = false, features = ["use-std"] }
 rand_chacha = "0.9"
 rand_core = "0.9"

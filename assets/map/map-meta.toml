@@ -1,0 +1,15 @@
+# Written by mapgen (build-plan P7); the format is docs/build/m8-map-assets.md.
+width = 8192
+height = 4096
+projection = "miller"
+lon_min = -180.0
+lon_max = 180.0
+lat_max = 84.000000
+lat_min = -57.783215
+tiny_px = 64
+pipeline_version = "pa-1"
+coverage = ["provinces-north-america.csv"]
+
+[sources]
+natural_earth = "v5.1.2 (f1890d9)"
+geoboundaries = "v6.0.0 gbOpen (1289e40)"
