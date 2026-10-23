@@ -38,6 +38,8 @@ struct Args {
     /// `--map-mode` and `--map-metros`, for a screenshot or `--bench-map`.
     map_mode: Option<sim::views::map_layers::MapMode>,
     map_metros: bool,
+    /// `--bench-map-running [SPEED]`: the map bench with the sim running (D744).
+    map_speed: u8,
 }
 
 /// The synthetic map's size (D634).
@@ -54,6 +56,7 @@ fn parse_args() -> Args {
         synthetic_width: SYNTHETIC_SIZE.0,
         map_mode: None,
         map_metros: false,
+        map_speed: 0,
     };
     let list: Vec<String> = std::env::args().skip(1).collect();
     let mut i = 0;
@@ -79,6 +82,7 @@ fn parse_args() -> Args {
                         seconds,
                         mode: Default::default(),
                         metros: false,
+                        speed: 0,
                     },
                 });
                 if number(i).is_some() {
@@ -135,6 +139,15 @@ fn parse_args() -> Args {
                 i += 1;
             }
             "--map-metros" => args.map_metros = true,
+            "--bench-map-running" => {
+                args.map_speed = match list.get(i + 1).and_then(|s| s.parse::<u8>().ok()) {
+                    Some(n) => {
+                        i += 1;
+                        n.clamp(1, sim::time::control::MAX_SPEED)
+                    }
+                    None => sim::time::control::MAX_SPEED,
+                };
+            }
             "--map-hide-windows" => {
                 if let Some(s) = &mut args.shot {
                     s.hide_windows = true;
@@ -178,7 +191,7 @@ fn parse_args() -> Args {
 
 fn exit_usage(msg: &str) -> ! {
     eprintln!(
-        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--map-mode MODE] [--map-metros] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds]] [--bench-pages]"
+        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--map-mode MODE] [--map-metros] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds] [--bench-map-running [SPEED]]] [--bench-pages]"
     );
     std::process::exit(2)
 }
@@ -254,9 +267,16 @@ fn main() -> AppExit {
     if let (Some(BenchMode::Table { rows, .. }), Some(n)) = (&mut args.bench, args.rows) {
         *rows = Some(n);
     }
-    if let Some(BenchMode::Map { mode, metros, .. }) = &mut args.bench {
+    if let Some(BenchMode::Map {
+        mode,
+        metros,
+        speed,
+        ..
+    }) = &mut args.bench
+    {
         *mode = args.map_mode.unwrap_or_default();
         *metros = args.map_metros;
+        *speed = args.map_speed;
     }
     if let Some(s) = &mut args.shot {
         s.mode = args.map_mode;
