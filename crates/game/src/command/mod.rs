@@ -680,12 +680,12 @@ mod tests {
         );
         cfg.layouts.insert(
             "Trading desk".into(),
-            SavedLayout {
-                root: SavedNode::Pane {
+            SavedLayout::single(
+                SavedNode::Pane {
                     page: PageRef::World,
                 },
-                focused: 0,
-            },
+                0,
+            ),
         );
         let items = resolve("layout trad", &idx, &cfg);
         assert_eq!(

@@ -7,9 +7,11 @@ pub mod chart;
 pub mod command;
 pub mod config;
 pub mod links;
+pub mod map;
 pub mod page_bench;
 pub mod pages;
 pub mod pdoomberg;
+pub mod shot;
 pub mod table;
 #[doc(hidden)]
 pub mod test_support;

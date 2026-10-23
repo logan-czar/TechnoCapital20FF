@@ -17,6 +17,7 @@
 
 use std::fmt;
 
+use crate::map::MapData;
 use crate::time::control::Controls;
 use crate::time::scheduler::{TickFacts, TickObserver, TickPart};
 use crate::world::World;
@@ -67,6 +68,9 @@ pub struct ViewInput<'a> {
     pub controls: &'a Controls,
     /// The game seed: the estimate bands hash it (D421). Views never see the RNG streams.
     pub seed: u64,
+    /// The static map data (province tags and, with lane P's assets, the shapes; M8). Not
+    /// world state: never saved or hashed.
+    pub map: &'a crate::map::MapData,
 }
 
 impl ViewInput<'_> {
@@ -178,8 +182,13 @@ macro_rules! sim_views {
         impl SimViews {
             /// Every view built from the state, all dirty, at refresh 1: the first build of a
             /// `Sim` (spec 9.4).
-            pub(crate) fn build(world: &World, controls: &Controls, seed: u64) -> SimViews {
-                let input = ViewInput { world, controls, seed };
+            pub(crate) fn build(
+                world: &World,
+                controls: &Controls,
+                seed: u64,
+                map: &MapData,
+            ) -> SimViews {
+                let input = ViewInput { world, controls, seed, map };
                 SimViews {
                     refresh: 1,
                     omniscient: controls.omniscient,
@@ -191,10 +200,16 @@ macro_rules! sim_views {
             /// NewGame and on load (spec 9.4). The refresh counter and every view's version keep
             /// climbing, so a reader that copies views by version never mistakes a new game's
             /// views for ones it already has.
-            pub(crate) fn rebuild(&mut self, world: &World, controls: &Controls, seed: u64) {
+            pub(crate) fn rebuild(
+                &mut self,
+                world: &World,
+                controls: &Controls,
+                seed: u64,
+                map: &MapData,
+            ) {
                 self.refresh += 1;
                 self.omniscient = controls.omniscient;
-                let input = ViewInput { world, controls, seed };
+                let input = ViewInput { world, controls, seed, map };
                 $(self.$field = View::built(&input, self.refresh);)*
             }
 
@@ -224,11 +239,12 @@ macro_rules! sim_views {
                 world: &World,
                 controls: &Controls,
                 seed: u64,
+                map: &MapData,
                 mut observer: Option<&mut dyn TickObserver>,
             ) {
                 self.refresh += 1;
                 let facts = TickFacts::new(world.clock);
-                let input = ViewInput { world, controls, seed };
+                let input = ViewInput { world, controls, seed, map };
                 $(
                     let watch = self.$field.cadence().is_due(&facts);
                     if watch && let Some(o) = &mut observer {
@@ -248,8 +264,9 @@ macro_rules! sim_views {
                 world: &World,
                 controls: &Controls,
                 seed: u64,
+                map: &MapData,
             ) {
-                let input = ViewInput { world, controls, seed };
+                let input = ViewInput { world, controls, seed, map };
                 let next = self.refresh + 1;
                 let toggled = controls.omniscient != self.omniscient;
                 self.omniscient = controls.omniscient;

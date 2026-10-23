@@ -442,8 +442,8 @@ mod tests {
                 hidden: ["tech".to_owned()].into(),
             },
         );
-        let layout = SavedLayout {
-            root: SavedNode::Split {
+        let layout = SavedLayout::single(
+            SavedNode::Split {
                 axis: Axis::Row,
                 ratio: 0.4,
                 first: Box::new(SavedNode::Pane {
@@ -453,8 +453,8 @@ mod tests {
                     page: PageRef::Industries,
                 }),
             },
-            focused: 1,
-        };
+            1,
+        );
         cfg.layouts.insert("trading".into(), layout.clone());
         cfg.last_layout = Some(layout);
         cfg
@@ -517,12 +517,16 @@ mod tests {
         .unwrap();
         assert!((cfg.font_scale - 0.8).abs() < 1e-6, "{}", cfg.font_scale);
         assert_eq!(cfg.tables["t"].columns[0].width, COLUMN_WIDTH_MIN);
+        // An M9 layout (one tree) loads as one window filling the area (D635).
         let l = cfg.last_layout.unwrap();
-        match l.root {
-            SavedNode::Split { ratio, .. } => assert!(ratio <= 0.9),
+        assert_eq!(l.windows.len(), 1);
+        assert_eq!(l.windows[0].rect, None, "it fills the area");
+        assert!(l.legacy_root.is_none());
+        match &l.windows[0].root {
+            SavedNode::Split { ratio, .. } => assert!(*ratio <= 0.9),
             n => panic!("{n:?}"),
         }
-        assert_eq!(l.focused, 0, "focus index out of range resets");
+        assert_eq!(l.windows[0].focused, 0, "focus index out of range resets");
         // An unknown page key costs only its pane: it opens the World page (D452).
         let cfg = from_text(
             "(density: Compact, layouts: {\"x\": (root: Split(axis: Row, ratio: 0.5, first: \
@@ -534,7 +538,11 @@ mod tests {
             Density::Compact,
             "the rest of the file survives"
         );
-        match &cfg.layouts["x"].root {
+        assert_eq!(
+            cfg.layouts["x"].windows[0].focused, 1,
+            "the M9 focus is the pane's"
+        );
+        match &cfg.layouts["x"].windows[0].root {
             SavedNode::Split { first, second, .. } => {
                 assert_eq!(
                     **first,

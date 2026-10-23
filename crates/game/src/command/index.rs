@@ -255,6 +255,18 @@ impl NameIndex {
                 detail,
             ));
         }
+        // Provinces (M8): named for their pane titles and breadcrumbs, hidden from the search
+        // until lane MB's province links (M8.7).
+        let places = v.places.get();
+        for p in &places.provinces {
+            let country = places
+                .country(p.country)
+                .map_or_else(String::new, |c| c.name.clone());
+            let mut e =
+                IndexEntry::new(PageRef::Province(p.id), p.name.clone(), country).alias(&p.key);
+            e.hidden = true;
+            entries.push(e);
+        }
         // A recap for every quarter so far, newest first.
         let mut q = v.clock().date.quarter();
         let first = Quarter { year: 2020, q: 1 };

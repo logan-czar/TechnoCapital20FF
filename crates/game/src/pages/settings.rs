@@ -123,7 +123,11 @@ fn settings_page(
             let row = chip_row(&mut commands, body);
             let n = commands
                 .spawn(theme::text_line(
-                    format!("{name} ({} panes)", count(&l.root)),
+                    format!(
+                        "{name} ({} windows, {} panes)",
+                        l.windows.len().max(1),
+                        l.panes()
+                    ),
                     font::BODY,
                     color::TEXT,
                 ))
@@ -183,12 +187,5 @@ fn settings_page(
                 commands.entity(body).add_child(e);
             }
         }
-    }
-}
-
-fn count(n: &crate::workspace::SavedNode) -> usize {
-    match n {
-        crate::workspace::SavedNode::Pane { .. } => 1,
-        crate::workspace::SavedNode::Split { first, second, .. } => count(first) + count(second),
     }
 }

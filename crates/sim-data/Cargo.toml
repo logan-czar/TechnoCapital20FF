@@ -10,6 +10,8 @@ publish.workspace = true
 csv.workspace = true
 serde.workspace = true
 thiserror.workspace = true
+# map-meta.toml (docs/build/m8-map-assets.md). Already in the lock through Bevy's build.
+toml.workspace = true
 
 [lints]
 workspace = true
