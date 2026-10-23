@@ -128,7 +128,7 @@ Run at main 5074f00 and at pre-M8 main 6db93fd (this slot checked out at each) a
 
 ## The full gate, twice
 
-`bash scripts/check.sh` (fmt, clippy, the boundary checks, every test, validate.py, `--check-data` on assets/map) on this branch, debug build warm: both runs `== all checks passed`, 665 tests passed and none failed in each, 355 s and 323 s.
+`bash scripts/check.sh` (fmt, clippy, the boundary checks, every test, validate.py, `--check-data` on assets/map) on this branch, debug build warm: both runs `== all checks passed`, 665 tests passed and none failed in each, 355 s and 323 s. After the PR #42 review fixes (D741 widened, D744) it passed again: 665 tests, none failed, 403 s.
 
 ## P8: the map QA reports
 
