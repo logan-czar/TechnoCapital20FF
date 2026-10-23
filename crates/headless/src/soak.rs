@@ -108,7 +108,7 @@ const END_MARK: &str = "#end ";
 
 /// `soak-seed`: runs one seed and prints its rows and timing for the parent's [`run_child`].
 pub fn soak_seed(data: &WorldData, seed: u64, years: u32) -> Result<(), String> {
-    let o = run_seed(data, seed, years, false, None)?;
+    let o = run_seed(data, seed, years, false, None, None)?;
     print!(
         "{YEARS_MARK}\n{}{QUARTERS_MARK}\n{}{END_MARK}{} {} {} {}\n",
         o.years, o.quarters, o.ticks, o.wall_ms, o.state_hash, o.end
