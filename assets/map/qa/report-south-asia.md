@@ -25,10 +25,10 @@ _Written by `tools/map-pipeline/run.py --region south-asia` (pipeline pb-1). Sou
 | Provinces by method: admin3 | 0 |
 | Provinces by method: voronoi | 104 |
 | Flagged for review (confidence < 0.6) | 0 |
-| Placed by a builder hint (`hints/south-asia.toml`) | 44 |
+| Placed by a builder hint (`hints/south-asia.toml`) | 43 |
 | Tiny (under 64 px) | 21 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
-| More than one part (islands, exclaves) | 65 |
+| More than one part (islands, exclaves) | 64 |
 | Coastal flag differs from the CSV | 10 |
 | Small for their region (not Metro, under 5% of the region's mean) | 0 |
 | Voronoi-split blocks where one province takes 75% or more | 4 |
@@ -37,9 +37,9 @@ _Written by `tools/map-pipeline/run.py --region south-asia` (pipeline pb-1). Sou
 | Contested provinces (drawn by our own files) | 6 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 3 |
-| City probe points (fail on a mismatch; D686) | 79 pass, 0 mismatch, 0 listed |
+| City probe points (fail on a mismatch; D686) | 86 pass, 0 mismatch, 0 listed |
 | Metro reach scan rows (listed; D686) | 1 |
-| Land exclaves of 5 px or more (fail unless explained; D691) | 11 (0 unexplained) |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 9 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 0 |
 
@@ -108,7 +108,6 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | IN-0077 | Keonjhar-Rourkela | seeds: point 84.86,22.25 (hint); point 85.39,22.1 (hint); point 85.58,21.63 (hint); 0 whole parts, 1 split |
 | IN-0079 | Koraput-Ganjam | seeds: point 82.71,18.81 (hint); point 82.98,18.88 (hint); point 83.42,19.17 (hint); point 84.79,19.31 (hint); 0 whole parts, 1 split |
 | LK-0005 | Nuwara Eliya | seeds: point 80.6,6.89 (hint); point 80.68,6.93 (hint); point 80.77,6.97 (hint); 1 whole admin1 units |
-| NP-0009 | Gandaki Hills | seeds: unit Gorkha; unit Lamjung; unit Manang; unit Mustang; unit Myagdi; unit Nawalapur (hint); 7 whole admin2 units |
 | NP-0011 | Nepalgunj-Dang | seeds: point 81.3,28.35 (hint); point 81.62,28.05 (hint); point 82.3,28.05 (hint); point 82.65,28.38 (hint); 6 whole admin1 units |
 | PK-0001 | Karachi Saddar-Clifton | seeds: point 67.03,24.81 (hint); point 67.03,24.85 (hint); 0 whole admin2 units, split: Karachi |
 | PK-0002 | Karachi Port-SITE | seeds: point 66.95,24.95 (hint); point 66.98,24.84 (hint); point 66.99,24.9 (hint); 0 whole admin2 units, split: Karachi |
@@ -169,7 +168,9 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Barrackpore (88.38, 22.76) | IN-0042 | IN-0042 | on it |
 | Bengaluru (77.59, 12.97) | IN | IN-0023 | on it |
 | Bengaluru MG Road (77.61, 12.975) | IN-0023 | IN-0023 | on it |
+| Bhairahawa (83.45, 27.5) | NP-0010 | NP-0010 | on it |
 | Bhuj Kutch (69.67, 23.25) | IN-0050 | IN-0050 | on it |
+| Butwal (83.45, 27.7) | NP-0010 | NP-0010 | on it |
 | Chakan (73.86, 18.76) | IN-0018 | IN-0018 | on it |
 | Chandni Chowk (77.23, 28.656) | IN-0002 | IN-0002 | on it |
 | Charminar (78.47, 17.36) | IN-0029 | IN-0029 | on it |
@@ -193,6 +194,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Himmatnagar (72.97, 23.6) | IN-0050 | IN-0050 | on it |
 | Hinjewadi (73.73, 18.59) | IN-0017 | IN-0017 | on it |
 | Howrah (88.31, 22.59) | IN-0041 | IN-0041 | on it |
+| Ilam NP (87.93, 26.91) | NP-0001,NP-0002 | NP-0002 | on it |
 | JNPT (72.95, 18.95) | IN-0016 | IN-0016 | on it |
 | Jammu (74.86, 32.73) | IN-0065 | IN-0065 | on it |
 | Jinnah airport (67.16, 24.9) | PK-0004 | PK-0004 | on it |
@@ -207,7 +209,9 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Korangi (67.12, 24.83) | PK-0003 | PK-0003 | on it |
 | Lahore DHA (74.4, 31.48) | PK-0010 | PK-0010 | on it |
 | Lahore Mall (74.33, 31.56) | PK-0009 | PK-0009 | on it |
+| Lahore Walled City (74.31, 31.58) | PK-0009 | PK-0009 | on it |
 | Leh (77.58, 34.16) | IN-0066 | IN-0066 | on it |
+| Lumbini (83.28, 27.48) | NP-0010 | NP-0010 | on it |
 | Mahbubnagar (77.99, 16.74) | IN-0032 | IN-0032 | on it |
 | Male (73.51, 4.175) | MV | MV-0001 | on it |
 | Mehsana (72.38, 23.6) | IN-0050 | IN-0050 | on it |
@@ -216,6 +220,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Mumbai BKC (72.865, 19.065) | IN-0013 | IN-0014 | within a pixel |
 | Mumbai Nariman Pt (72.82, 18.925) | IN-0013 | IN-0013 | nearest across water |
 | Muzaffarabad (73.47, 34.37) | PK-0034 | PK-0034 | on it |
+| NP enclave point (88.08, 27.67) | NP-0001,NP-0002 | NP-0002 | on it |
 | Nalgonda (79.27, 17.05) | IN-0032 | IN-0032 | on it |
 | Narayanganj (90.5, 23.62) | BD-0004 | BD-0004 | on it |
 | Narela (77.09, 28.85) | IN-0002 | IN-0002 | on it |
@@ -236,6 +241,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Skardu (75.63, 35.3) | PK-0033 | PK-0033 | on it |
 | Srinagar (74.8, 34.08) | IN-0064 | IN-0064 | on it |
 | Sriperumbudur (79.95, 12.97) | IN-0035 | IN-0035 | on it |
+| Taplejung NP (87.67, 27.35) | NP-0001,NP-0002 | NP-0002 | on it |
 | Thane (72.98, 19.2) | IN-0015 | IN-0015 | on it |
 | Tiruvallur (79.91, 13.14) | IN-0034,IN-0036 | IN-0034 | on it |
 | Tongi (90.4, 23.89) | BD-0003 | BD-0003 | on it |
@@ -264,8 +270,6 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 | IN-0059 | Ajmer-Kota | 566 | 77.32, 26.87 | its own seed place Bharatpur lies in it |
 | IN-0059 | Ajmer-Kota | 1219 | 76.16, 24.95 | composite name: Kota lies in it |
 | IN-0067 | Indore-Malwa | 2106 | 78.9, 24.23 | its own seed place Sagar lies in it |
-| NP-0009 | Gandaki Hills | 67 | 83.36, 27.61 | its own seed unit Nawalapur (hint) lies in it |
-| NP-0010 | Butwal-Bhairahawa | 8 | 88.08, 27.67 | a piece of Natural Earth's old Mechi zone, in the east, that the geoBoundaries district carves for Nepal's provinces leave to Province No. 5 (D683) |
 | NP-0010 | Butwal-Bhairahawa | 9 | 84.42, 27.38 | a neck under a pixel wide joins it to the rest in the shapes |
 | NP-0011 | Nepalgunj-Dang | 10 | 83.24, 28.26 | a neck under a pixel wide joins it to the rest in the shapes |
 | PK-0023 | Hazara | 6 | 72.66, 35.83 | a neck under a pixel wide joins it to the rest in the shapes |
@@ -274,7 +278,7 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 
 - AFG: Natural Earth has two units named Parwan: AFG-1772 (Charikar, Bagram) and AFG-1769 (the Panjshir valley); both go to Parwan-Kapisa-Panjshir (D687).
 - Kashmir (IN-0064 to IN-0066, PK-0033, PK-0034) follows the line of control, which is also our province files' split: Jammu and Kashmir and Ladakh are India's, Gilgit-Baltistan and Azad Kashmir Pakistan's; Natural Earth's Siachen unit is drawn with Ladakh. Aksai Chin stays Chinese (no province of ours claims it) and IN-0092 Arunachal Pradesh is India's.
-- NPL: Natural Earth still has Nepal's 14 old zones, so the 7 provinces are cut from geoBoundaries' 77 districts (public domain, NPL ADM2). Its file names Siraha and Parsa as second Saptari and Bara units and lacks Rupandehi and Dailekh, which therefore stay with Province No. 5.
+- NPL: Natural Earth still has Nepal's 14 old zones, so the 7 provinces are cut from geoBoundaries' 77 districts (public domain, NPL ADM2). Its file names Siraha and Parsa as second Saptari and Bara units and names Rupandehi "Nawalapur" and gives Nawalparasi as one unit, so Rupandehi and all of Nawalparasi (Nawalpur, Gandaki's plains district, too) stay with Province No. 5, and it lacks Dailekh, which stays there as well.
 - BGD:Mymensingh, a division since 2015, is cut from Dhaka with the geoBoundaries districts Mymensingh, Netrakona, Jamalpur and Sherpur.
 
 ## Watched small provinces
@@ -325,8 +329,8 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | AFG: Paktia-Khost-Paktika | name parts (3 pieces, worst match 100) | 3 |
 | AFG: Parwan-Kapisa-Panjshir | alias hint -> AFG-1772, AFG-1769, AF-KAP | 3 |
 | AFG: Uruzgan-Zabul-Daykundi | name parts (3 pieces, worst match 100) | 3 |
-| BGD: Dhaka | name match 100; less BGD:Mymensingh (carve) | 1 |
-| BGD: Mymensingh | no admin-1 match (best unit 40, group 0); carve: BGD units Mymensingh, Netrakona, Jamalpur, Sherpur from BGD:Dhaka | 0 |
+| BGD: Dhaka | name match 100; less BGD:Mymensingh (carve); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694); a sliver to BGD:Mymensingh (D694) | 1 |
+| BGD: Mymensingh | no admin-1 match (best unit 40, group 0); carve: BGD units Mymensingh, Netrakona, Jamalpur, Sherpur from BGD:Dhaka; plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694); plus a sliver of BGD:Dhaka (D694) | 0 |
 | BTN: Central Bhutan | alias hint -> region:Central, region:Southern | 9 |
 | BTN: Chukha-Samtse | name parts (2 pieces, worst match 100) | 2 |
 | BTN: Eastern Bhutan | alias hint -> region:Eastern | 6 |
@@ -347,13 +351,13 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | LKA: Southern Province | alias hint -> LK-31, LK-32, LK-33 | 3 |
 | LKA: Uva Province | alias hint -> LK-81, LK-82 | 2 |
 | LKA: Western Province | alias hint -> LK-11, LK-12, LK-13 | 3 |
-| NPL: Bagmati | name match 100; carve: NPL units Sindhuli, Ramechhap, Dolakha, Sindhupalchok, Kabherepalanchok, Lalitpur, Bhaktapur, Kathmandu, Nuwakot, Rasuwa, Dhading, Makawanpur, Chitawan from NPL:Province No. 5 | 0 |
-| NPL: Gandaki | name match 100; carve: NPL units Gorkha, Lamjung, Tanahu, Synagja, Kaski, Manang, Mustang, Myagdi, Parbat, Baglung, Nawalapur from NPL:Province No. 5 | 0 |
-| NPL: Karnali | name match 100; carve: NPL units Dolpa, Mugu, Humla, Jumla, Kalikot, Jajarkot, Rukum_W, Salyan, Surkhet from NPL:Province No. 5 | 0 |
-| NPL: Province No. 1 | no admin-1 match (best unit 38, group 30); carve: NPL units Taplejung, Panchthar, Ilam, Jhapa, Morang, Sunsari, Dhankuta, Terhathum, Sankhuwasabha, Bhojpur, Solukhumbu, Okhaldhunga, Khotang, Udayapur from NPL:Province No. 5 | 0 |
-| NPL: Province No. 2 | no admin-1 match (best unit 38, group 30); carve: NPL units Saptari, Dhanusha, Mahottari, Sarlahi, Rautahat, Bara from NPL:Province No. 5 | 0 |
-| NPL: Province No. 5 | alias hint -> NP-BA, NP-BH, NP-KO, NP-DH, NP-GA, NP-JA, NP-KA, NP-LU, NP-MA, NP-ME, NP-NA, NP-RA, NP-SA, NP-SE; less NPL:Bagmati (carve); less NPL:Gandaki (carve); less NPL:Karnali (carve); less NPL:Province No. 1 (carve); less NPL:Province No. 2 (carve); less NPL:Sudurpashchim (carve) | 14 |
-| NPL: Sudurpashchim | no admin-1 match (best unit 79, group 24); carve: NPL units Baijura, Bajhang, Achham, Doti, Kailali, Kanchanpur, Dadeidhura, Baitadi, Darchula from NPL:Province No. 5 | 0 |
+| NPL: Bagmati | name match 100; carve: NPL units Sindhuli, Ramechhap, Dolakha, Sindhupalchok, Kabherepalanchok, Lalitpur, Bhaktapur, Kathmandu, Nuwakot, Rasuwa, Dhading, Makawanpur, Chitawan from NPL:Province No. 5; plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694) | 0 |
+| NPL: Gandaki | name match 100; carve: NPL units Gorkha, Lamjung, Tanahu, Synagja, Kaski, Manang, Mustang, Myagdi, Parbat, Baglung from NPL:Province No. 5; plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694) | 0 |
+| NPL: Karnali | name match 100; carve: NPL units Dolpa, Mugu, Humla, Jumla, Kalikot, Jajarkot, Rukum_W, Salyan, Surkhet from NPL:Province No. 5; plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694) | 0 |
+| NPL: Province No. 1 | no admin-1 match (best unit 38, group 30); carve: NPL units Taplejung, Panchthar, Ilam, Jhapa, Morang, Sunsari, Dhankuta, Terhathum, Sankhuwasabha, Bhojpur, Solukhumbu, Okhaldhunga, Khotang, Udayapur from NPL:Province No. 5; plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694) | 0 |
+| NPL: Province No. 2 | no admin-1 match (best unit 38, group 30); carve: NPL units Saptari, Dhanusha, Mahottari, Sarlahi, Rautahat, Bara from NPL:Province No. 5; plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694) | 0 |
+| NPL: Province No. 5 | alias hint -> NP-BA, NP-BH, NP-KO, NP-DH, NP-GA, NP-JA, NP-KA, NP-LU, NP-MA, NP-ME, NP-NA, NP-RA, NP-SA, NP-SE; less NPL:Bagmati (carve); less NPL:Gandaki (carve); less NPL:Karnali (carve); less NPL:Province No. 1 (carve); less NPL:Province No. 2 (carve); less NPL:Sudurpashchim (carve); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Sudurpashchim (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Sudurpashchim (D694); a sliver to NPL:Karnali (D694); a sliver to NPL:Gandaki (D694); a sliver to NPL:Sudurpashchim (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Sudurpashchim (D694); a sliver to NPL:Sudurpashchim (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Sudurpashchim (D694); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Sudurpashchim (D694); a sliver to NPL:Sudurpashchim (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Sudurpashchim (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Gandaki (D694); a sliver to NPL:Karnali (D694); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Gandaki (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Karnali (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Sudurpashchim (D694); a sliver to NPL:Province No. 1 (D694); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Karnali (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Province No. 2 (D694); a sliver to NPL:Bagmati (D694); a sliver to NPL:Gandaki (D694); a sliver to NPL:Karnali (D694); a sliver to NPL:Gandaki (D694); a sliver to NPL:Sudurpashchim (D694); a sliver to NPL:Gandaki (D694); a sliver to NPL:Bagmati (D694) | 14 |
+| NPL: Sudurpashchim | no admin-1 match (best unit 79, group 24); carve: NPL units Baijura, Bajhang, Achham, Doti, Kailali, Kanchanpur, Dadeidhura, Baitadi, Darchula from NPL:Province No. 5; plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694); plus a sliver of NPL:Province No. 5 (D694) | 0 |
 | PAK: Azad Jammu and Kashmir | alias hint -> PK-JK | 1 |
 | PAK: Khyber Pakhtunkhwa | name match 100; plus unclaimed F.A.T.A. | 2 |
 
@@ -417,7 +421,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-NP-0010 (52), NP-0011 (30), IN-0097 (16), LK-0008 (10), IN-0067 (8), IN-0036 (6), BD-0022 (5), BD-0007 (4), BD-0023 (4), IN-0026 (4), IN-0039 (4), IN-0054 (4), IN-0059 (4), IN-0073 (4), PK-0007 (4), PK-0030 (4), BD-0011 (3), BD-0012 (3), BD-0015 (3), BD-0019 (3), IN-0043 (3), IN-0046 (3), IN-0050 (3), IN-0056 (3), IN-0060 (3), IN-0076 (3), IN-0079 (3), IN-0085 (3), IN-0086 (3), PK-0016 (3), AF-0006 (2), BD-0005 (2), BD-0006 (2), BD-0010 (2), BD-0020 (2), BD-0027 (2), IN-0004 (2), IN-0011 (2), IN-0013 (2), IN-0015 (2), IN-0019 (2), IN-0020 (2), IN-0024 (2), IN-0028 (2), IN-0034 (2), IN-0044 (2), IN-0047 (2), IN-0055 (2), IN-0070 (2), IN-0087 (2), IN-0089 (2), IN-0090 (2), IN-0093 (2), LK-0006 (2), LK-0010 (2), MV-0001 (2), NP-0008 (2), NP-0009 (2), NP-0012 (2), NP-0013 (2), PK-0002 (2), PK-0004 (2), PK-0017 (2), PK-0023 (2), PK-0032 (2)
+IN-0097 (16), NP-0011 (11), LK-0008 (10), IN-0067 (8), IN-0036 (6), BD-0022 (5), NP-0010 (5), BD-0023 (4), IN-0026 (4), IN-0039 (4), IN-0054 (4), IN-0059 (4), IN-0073 (4), PK-0007 (4), PK-0030 (4), BD-0007 (3), BD-0011 (3), BD-0012 (3), BD-0015 (3), BD-0019 (3), IN-0043 (3), IN-0046 (3), IN-0050 (3), IN-0056 (3), IN-0060 (3), IN-0076 (3), IN-0079 (3), IN-0085 (3), IN-0086 (3), PK-0016 (3), AF-0006 (2), BD-0005 (2), BD-0010 (2), BD-0020 (2), BD-0027 (2), IN-0004 (2), IN-0011 (2), IN-0013 (2), IN-0015 (2), IN-0019 (2), IN-0020 (2), IN-0024 (2), IN-0028 (2), IN-0034 (2), IN-0044 (2), IN-0047 (2), IN-0055 (2), IN-0070 (2), IN-0087 (2), IN-0089 (2), IN-0090 (2), IN-0093 (2), LK-0006 (2), LK-0010 (2), MV-0001 (2), NP-0004 (2), NP-0008 (2), NP-0012 (2), NP-0013 (2), PK-0002 (2), PK-0004 (2), PK-0017 (2), PK-0023 (2), PK-0032 (2)
 
 ## Visual check
 

@@ -38,7 +38,7 @@ _Written by `tools/map-pipeline/run.py --region russia-central-asia` (pipeline p
 | Contested provinces (drawn by our own files) | 4 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 7 |
-| City probe points (fail on a mismatch; D686) | 37 pass, 0 mismatch, 2 listed |
+| City probe points (fail on a mismatch; D686) | 49 pass, 0 mismatch, 6 listed |
 | Metro reach scan rows (listed; D686) | 1 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 14 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
@@ -139,7 +139,11 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 
 | Point | Expected | Got | Result |
 |---|---|---|---|
+| Chekhov (37.47, 55.15) | ? | RU-0006 | listed |
 | Dmitrov (37.52, 56.34) | ? | RU-0006 | listed |
+| Kronstadt (29.77, 60.0) | ? | RU-0016 | listed |
+| Naro-Fominsk (36.73, 55.39) | ? | RU-0006 | listed |
+| Peterhof (29.9, 59.88) | ? | RU-0016 | listed |
 | Troitsk (New Moscow) (37.3, 55.48) | ? | RU-0002 | listed |
 | Akhaltsikhe (42.98, 41.64) | GE-0006 | GE-0006 | on it |
 | Almaty (76.95, 43.24) | KZ | KZ-0002 | on it |
@@ -154,8 +158,11 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Iturup Kurilsk (147.87, 45.23) | RU-0068 | RU-0068 | nearest across water |
 | Java SO (43.93, 42.4) | GE-0007 | GE-0007 | on it |
 | Kapotnya (37.8, 55.64) | RU-0004 | RU-0005 | within a pixel |
+| Kaskelen (76.62, 43.2) | KZ-0004 | KZ-0004 | on it |
 | Khimki (37.43, 55.89) | RU-0005 | RU-0003 | within a pixel |
 | Kirov Plant (30.26, 59.88) | RU-0016 | RU-0016 | on it |
+| Klin (36.73, 56.33) | RU-0006 | RU-0006 | on it |
+| Kolomna (38.78, 55.1) | RU-0006 | RU-0006 | on it |
 | Kolpino (30.6, 59.75) | RU-0016 | RU-0016 | on it |
 | Korolev (37.83, 55.92) | RU-0005 | RU-0005 | on it |
 | Korolev2 (37.85, 55.92) | RU-0005 | RU-0005 | on it |
@@ -166,12 +173,21 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Mozhaisk (36.02, 55.5) | RU-0006 | RU-0006 | on it |
 | Mtskheta (44.72, 41.85) | GE-0006 | GE-0006 | on it |
 | Mytishchi (37.73, 55.91) | RU-0005 | RU-0005 | on it |
+| Noginsk (38.44, 55.86) | RU-0006 | RU-0006 | on it |
 | Novosibirsk (82.92, 55.03) | RU | RU-0053 | on it |
+| Odintsovo (37.28, 55.68) | RU-0005 | RU-0005 | on it |
+| Podolsk (37.55, 55.43) | RU-0005 | RU-0002 | within a pixel |
+| Pulkovo (30.27, 59.8) | RU-0016 | RU-0016 | on it |
+| SPb Nevsky2 (30.36, 59.93) | RU-0015 | RU-0015 | on it |
+| SPb Vasilievsky (30.25, 59.94) | RU-0015 | RU-0015 | on it |
 | Sergiev Posad (38.13, 56.31) | RU-0006 | RU-0006 | on it |
+| Serpukhov (37.41, 54.92) | RU-0006 | RU-0006 | on it |
+| Sestroretsk (29.96, 60.1) | RU-0017 | RU-0017 | on it |
 | St Petersburg (30.32, 59.94) | RU | RU-0015 | on it |
 | St Petersburg Nevsky (30.34, 59.93) | RU-0015 | RU-0015 | on it |
 | Stepanakert (46.75, 39.82) | AZ-0010 | AZ-0010 | on it |
 | Sukhumi (41.02, 43.0) | GE-0003 | GE-0003 | on it |
+| Talgar (77.24, 43.3) | KZ-0004 | KZ-0004 | on it |
 | Tashkent (69.28, 41.31) | UZ | UZ-0001 | on it |
 | Tskhinvali (43.96, 42.23) | GE-0007 | GE-0007 | on it |
 | Volokolamsk (35.95, 56.03) | RU-0006 | RU-0006 | on it |

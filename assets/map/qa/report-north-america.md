@@ -23,11 +23,11 @@ _Written by `tools/map-pipeline/run.py --region north-america` (pipeline pb-1). 
 | Provinces by method: admin3 | 0 |
 | Provinces by method: voronoi | 40 |
 | Flagged for review (confidence < 0.6) | 4 |
-| Placed by a builder hint (`hints/north-america.toml`) | 32 |
+| Placed by a builder hint (`hints/north-america.toml`) | 40 |
 | Tiny (under 64 px) | 18 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
-| More than one part (islands, exclaves) | 121 |
-| Coastal flag differs from the CSV | 31 |
+| More than one part (islands, exclaves) | 122 |
+| Coastal flag differs from the CSV | 30 |
 | Small for their region (not Metro, under 5% of the region's mean) | 4 |
 | Voronoi-split blocks where one province takes 75% or more | 7 |
 | Places named in a province's name or notes that lie in another province | 0 |
@@ -35,7 +35,7 @@ _Written by `tools/map-pipeline/run.py --region north-america` (pipeline pb-1). 
 | Contested provinces (drawn by our own files) | 0 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 20 |
-| City probe points (fail on a mismatch; D686) | 40 pass, 0 mismatch, 5 listed |
+| City probe points (fail on a mismatch; D686) | 83 pass, 0 mismatch, 27 listed |
 | Metro reach scan rows (listed; D686) | 7 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 16 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
@@ -92,18 +92,26 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | US-0013 | San Fernando Valley | seeds: point -118.12,34.58 (hint); point -118.14,34.7 (hint); point -118.45,34.22 (hint); point -118.54,34.39 (hint); 0 whole admin2 units, split: Los Angeles |
 | US-0015 | Inland Empire | seeds: unit Riverside (hint); unit San Bernardino (hint); 1 whole admin2 units, split: Riverside |
 | US-0018 | San Francisco | seeds: place San Francisco; unit Marin (hint); unit San Francisco at place San Francisco; 2 whole admin2 units |
+| US-0034 | Southwest Florida-Keys | seeds: place Ft. Myers; place Key West; place Naples; unit Okeechobee (hint); 10 whole admin2 units |
+| US-0035 | Orlando-Space Coast | seeds: place Orlando; unit Martin (hint); 11 whole admin2 units |
+| US-0040 | North Fulton-Cobb | seeds: point -84.14,34.21 (hint); point -84.29,34.08 (hint); unit Cobb; unit Fulton; 9 whole admin2 units, split: Fulton |
 | US-0044 | Chicago Loop | seeds: point -87.63,41.88 (hint); point -87.66,41.95 (hint); 0 whole admin2 units, split: Cook |
 | US-0045 | South Side-Calumet | seeds: point -87.6,41.78 (hint); point -87.62,41.62 (hint); 0 whole admin2 units, split: Cook |
 | US-0046 | DuPage-Northwest Suburbs | seeds: point -87.9,41.98 (hint); point -87.98,42.09 (hint); point -88.08,42.03 (hint); unit DuPage; 4 whole admin2 units, split: Cook |
-| US-0062 | Suburban Maryland | seeds: unit Montgomery (hint); unit Prince George's (hint); 4 whole admin2 units |
+| US-0062 | Suburban Maryland | seeds: unit Charles (hint); unit Montgomery (hint); unit Prince George's (hint); 6 whole admin2 units |
 | US-0083 | South Jersey | seeds: unit Burlington (hint); unit Camden (hint); unit Gloucester (hint); unit Salem (hint); 6 whole admin2 units |
 | US-0086 | Manhattan | seeds: unit New York (hint); 1 whole admin2 units |
 | US-0087 | Brooklyn-Queens | seeds: unit Kings (hint); unit Queens (hint); unit Richmond (hint); 3 whole admin2 units |
 | US-0089 | Long Island | seeds: unit Nassau (hint); unit Suffolk (hint); 2 whole admin2 units |
 | US-0090 | Hudson Valley-Capital Region | seeds: place Albany; point -73.92,41.7 (hint); point -73.99,41.93 (hint); point -74.01,41.5 (hint); unit Albany at place Albany; 20 whole admin2 units |
+| US-0109 | Northeastern and Northern Pennsylvania | seeds: place Erie; place Scranton; place Williamsport; unit Erie at place Erie; unit Lehigh (hint); unit Northampton (hint); 34 whole admin2 units |
 | US-0120 | Plano-Frisco | seeds: unit Collin (hint); unit Denton (hint); 3 whole admin2 units |
+| US-0121 | East and Central Texas | seeds: place Tyler; place Waco; unit Walker (hint); 62 whole admin2 units |
+| US-0123 | Ship Channel-Baytown | seeds: place Baytown; place Freeport; point -95.12,29.7 (hint); point -95.21,29.69 (hint); 3 whole admin2 units, split: Harris; place houston left to US-0122 (its name begins with it) |
 | US-0124 | Woodlands-Katy | seeds: point -95.78,29.8 (hint); unit Montgomery (hint); unit Waller (hint); 4 whole admin2 units, split: Harris |
 | US-0137 | Northern Virginia | seeds: unit Alexandria (hint); unit Arlington (hint); unit Fairfax (hint); unit Loudoun (hint); unit Prince William (hint); 12 whole admin2 units |
+| US-0138 | Richmond-Central Virginia | seeds: place Richmond; place Roanoke; unit Lancaster (hint); unit Northumberland (hint); unit Richmond at place Richmond; unit Roanoke at place Roanoke; 105 whole admin2 units |
+| US-0141 | Tacoma-Olympic | seeds: place Tacoma; unit Clallam (hint); unit Jefferson (hint); unit Kitsap (hint); 14 whole admin2 units |
 
 ## Tiny provinces (click targets)
 
@@ -155,49 +163,114 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 
 | Point | Expected | Got | Result |
 |---|---|---|---|
+| Apodaca NL (-100.19, 25.78) | ? | MX-0012 | listed |
 | Bay City Matagorda (-95.97, 28.98) | ? | US-0128 | listed |
+| Carrollton (-85.08, 33.58) | ? | US-0041 | listed |
 | Clewiston (-80.93, 26.75) | ? | US-0034 | listed |
 | Columbus TX (-96.54, 29.71) | ? | US-0126 | listed |
+| Cumming Forsyth (-84.14, 34.21) | ? | US-0040 | listed |
+| DFW airport (-97.04, 32.9) | ? | US-0119 | listed |
+| Denton (-97.13, 33.21) | ? | US-0120 | listed |
+| Fort Pierce (-80.33, 27.45) | ? | US-0035 | listed |
+| Galveston (-94.8, 29.3) | ? | US-0123 | listed |
+| Gatineau (-75.7, 45.48) | ? | CA-0020 | listed |
+| Huntsville Walker (-95.55, 30.72) | ? | US-0121 | listed |
+| Monterrey centro (-100.31, 25.67) | ? | MX-0011 | listed |
+| Newnan Coweta (-84.8, 33.38) | ? | US-0041 | listed |
+| Peachtree City (-84.6, 33.4) | ? | US-0041 | listed |
+| Port St Lucie (-80.35, 27.27) | ? | US-0035 | listed |
+| Reading Berks (-75.93, 40.34) | ? | US-0109 | listed |
+| Sabinas Hidalgo (-100.18, 26.51) | ? | MX-0014 | listed |
+| San Pedro Garza Garcia (-100.4, 25.66) | ? | MX-0011 | listed |
 | Sebring Highlands (-81.44, 27.5) | ? | US-0034 | listed |
+| Sherbrooke (-71.89, 45.4) | ? | CA-0017 | listed |
+| Stuart Martin (-80.25, 27.2) | ? | US-0035 | listed |
+| Sugar Land (-95.63, 29.62) | ? | US-0124 | listed |
+| Thousand Oaks (-118.84, 34.17) | ? | US-0021 | listed |
+| Trois-Rivieres (-72.55, 46.34) | ? | CA-0018 | listed |
 | Victoria TX (-97.0, 28.8) | ? | US-0128 | listed |
+| Waldorf Charles (-76.94, 38.62) | ? | US-0062 | listed |
 | Adak (-176.64, 51.88) | US | US-0003 | on it |
+| Allentown (-75.49, 40.6) | US-0109 | US-0109 | on it |
+| Allentown Lehigh (-75.49, 40.6) | US-0109 | US-0109 | on it |
+| Alpharetta (-84.29, 34.08) | US-0040 | US-0040 | on it |
+| Annapolis (-76.49, 38.98) | US-0063 | US-0063 | on it |
+| Arlington TX (-97.11, 32.74) | US-0119 | US-0119 | on it |
 | Attu (173.18, 52.93) | US | US-0003 | nearest across water |
+| Baytown (-94.98, 29.74) | US-0123 | US-0123 | on it |
+| Bellevue (-122.2, 47.61) | US-0140 | US-0140 | on it |
+| Bethesda (-77.1, 38.98) | US-0062 | US-0062 | on it |
+| Bethlehem Northampton (-75.37, 40.63) | US-0109 | US-0109 | on it |
+| Boca Raton (-80.1, 26.37) | US-0033 | US-0033 | on it |
+| Bowie PG (-76.73, 38.94) | US-0062 | US-0062 | on it |
+| Bremerton (-122.63, 47.57) | US-0141 | US-0141 | nearest across water |
 | Brooklyn (-73.95, 40.65) | US-0087 | US-0087 | on it |
+| Burbank (-118.31, 34.18) | US-0013 | US-0013 | on it |
 | Chicago Loop (-87.63, 41.88) | US-0044 | US-0044 | on it |
+| Conroe (-95.46, 30.31) | US-0124 | US-0124 | on it |
 | Coyoacan (-99.16, 19.35) | MX-0003 | MX-0003 | on it |
 | Downtown Toronto (-79.38, 43.65) | CA-0001 | CA-0001 | on it |
+| Doylestown Bucks (-75.13, 40.31) | US-0107 | US-0107 | on it |
+| Easton (-75.22, 40.69) | US-0109 | US-0109 | on it |
 | Ecatepec (-99.05, 19.6) | MX-0004 | MX-0004 | on it |
+| Everett (-122.2, 47.98) | US-0140 | US-0140 | on it |
 | Flagstaff (-111.65, 35.2) | US-0005 | US-0005 | on it |
+| Freeport TX (-95.36, 28.95) | US-0123 | US-0123 | on it |
+| Frisco (-96.82, 33.15) | US-0120 | US-0120 | on it |
 | Globe Gila (-110.79, 33.39) | US-0007 | US-0007 | on it |
 | Guadalajara centro (-103.35, 20.67) | MX-0007 | MX-0007 | on it |
+| Hartsfield airport (-84.43, 33.64) | US-0039 | US-0039 | on it |
 | Holbrook Navajo (-110.16, 34.9) | US-0007 | US-0007 | on it |
 | Hollywood (-118.33, 34.1) | US-0011 | US-0010 | within a pixel |
 | Hyde Park Chicago (-87.59, 41.79) | US-0045 | US-0045 | on it |
 | Iztapalapa (-99.06, 19.36) | MX-0003 | MX-0003 | on it |
+| Jupiter (-80.1, 26.93) | US-0033 | US-0033 | nearest across water |
+| Katy (-95.82, 29.79) | US-0124 | US-0124 | on it |
+| Kilmarnock Lancaster VA (-76.38, 37.71) | US-0138 | US-0138 | on it |
+| King of Prussia (-75.39, 40.09) | US-0107 | US-0107 | on it |
 | Kingman AZ (-114.05, 35.19) | US-0007 | US-0007 | on it |
 | Lake Havasu (-114.32, 34.48) | US-0007 | US-0007 | on it |
 | Lancaster CA (-118.14, 34.69) | US-0013 | US-0013 | on it |
+| Levis (-71.18, 46.8) | CA-0022 | CA-0022 | on it |
+| Liberty TX (-94.8, 30.06) | US-0125 | US-0125 | on it |
 | Little Diomede (-168.93, 65.75) | US | US-0004 | on it |
 | Long Beach (-118.19, 33.77) | US-0012 | US-0012 | on it |
 | Los Altos Tepatitlan (-102.76, 20.82) | MX-0010 | MX-0010 | on it |
+| Mack Trucks Macungie (-75.55, 40.52) | US-0109 | US-0109 | on it |
+| Marietta (-84.55, 33.95) | US-0040 | US-0040 | on it |
 | Markham (-79.34, 43.86) | CA-0003 | CA-0003 | on it |
+| McKinney (-96.62, 33.2) | US-0120 | US-0120 | on it |
 | Midtown Manhattan (-73.98, 40.75) | US-0086 | US-0086 | on it |
 | Mississauga (-79.64, 43.59) | CA-0002 | CA-0002 | on it |
 | Naucalpan (-99.24, 19.48) | MX-0005 | MX-0005 | on it |
 | Nezahualcoyotl (-99.01, 19.4) | MX-0004 | MX-0004 | on it |
+| Norfolk (-76.29, 36.85) | US-0139 | US-0139 | on it |
 | Okeechobee (-80.83, 27.24) | US-0034 | US-0034 | on it |
 | Oshawa (-78.86, 43.9) | CA-0004 | CA-0004 | on it |
+| Oxnard (-119.18, 34.2) | US-0021 | US-0021 | on it |
+| Pasadena TX (-95.21, 29.69) | US-0123 | US-0123 | on it |
 | Polanco (-99.19, 19.433) | MX-0002 | MX-0005 | within a pixel |
+| Port Angeles (-123.43, 48.12) | US-0141 | US-0141 | nearest across water |
 | Poughkeepsie (-73.92, 41.7) | US-0090 | US-0090 | on it |
+| Santa Clarita (-118.54, 34.39) | US-0013 | US-0013 | on it |
 | Santa Fe MX (-99.26, 19.36) | MX-0002 | MX-0002 | on it |
 | Schaumburg (-88.08, 42.03) | US-0046 | US-0046 | on it |
+| Sherman Grayson (-96.61, 33.64) | US-0121 | US-0121 | on it |
+| Silver Spring (-77.03, 38.99) | US-0062 | US-0030 | within a pixel |
 | Surrey BC (-122.85, 49.19) | CA-0027 | CA-0027 | on it |
+| Tacoma (-122.44, 47.25) | US-0141 | US-0141 | on it |
 | Tequila (-103.84, 20.88) | MX-0010 | MX-0010 | on it |
+| Terrell Kaufman (-96.28, 32.74) | US-0121 | US-0121 | on it |
 | Tlalnepantla (-99.22, 19.54) | MX-0005 | MX-0005 | on it |
 | Tlaquepaque (-103.31, 20.64) | MX-0009 | MX-0009 | on it |
 | Van Nuys (-118.45, 34.19) | US-0013 | US-0013 | on it |
 | Vancouver downtown (-123.12, 49.28) | CA-0026 | CA-0026 | on it |
+| Ventura city (-119.23, 34.28) | US-0021 | US-0021 | on it |
+| Waxahachie Ellis (-96.85, 32.39) | US-0121 | US-0121 | on it |
+| Weatherford Parker (-97.8, 32.76) | US-0121 | US-0121 | on it |
+| West Chester (-75.6, 39.96) | US-0107 | US-0107 | on it |
 | Wharton (-96.1, 29.31) | US-0126 | US-0126 | on it |
+| Williamsburg (-76.71, 37.27) | US-0139 | US-0139 | on it |
 | Zapopan (-103.39, 20.72) | MX-0008 | MX-0008 | on it |
 | Zocalo (-99.133, 19.433) | MX-0001 | MX-0001 | on it |
 
@@ -322,8 +395,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | CA-0012 | Sudbury | 464 | Y | N |
 | CA-0013 | Timmins-Northeastern Ontario | 205 | Y | N |
 | CA-0016 | Monteregie-South Shore | 104 | Y | N |
-| CA-0017 | Eastern Townships | 88 | Y | N |
-| CA-0018 | Mauricie | 28 | Y | N |
+| CA-0018 | Mauricie | 53 | Y | N |
 | CA-0019 | Laval-Laurentides | 50 | Y | N |
 | CA-0021 | Nord-du-Quebec | 2227 | Y | N |
 | CA-0023 | Saguenay-Lac-Saint-Jean | 63 | Y | N |
@@ -336,7 +408,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | US-0010 | Downtown Los Angeles | 0 | N | Y |
 | US-0022 | San Joaquin Valley | 5 | Y | N |
 | US-0046 | DuPage-Northwest Suburbs | 14 | Y | N |
-| US-0062 | Suburban Maryland | 35 | Y | N |
+| US-0062 | Suburban Maryland | 109 | Y | N |
 | US-0079 | New Hampshire | 10 | Y | N |
 | US-0088 | Bronx-Westchester | 34 | Y | N |
 | US-0091 | Central New York | 92 | Y | N |
@@ -344,13 +416,13 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | US-0107 | Delaware Valley PA Suburbs | 5 | Y | N |
 | US-0109 | Northeastern and Northern Pennsylvania | 24 | Y | N |
 | US-0137 | Northern Virginia | 21 | Y | N |
-| US-0138 | Richmond-Central Virginia | 128 | Y | N |
+| US-0138 | Richmond-Central Virginia | 289 | Y | N |
 
 ## Provinces in several parts
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-CA-0059 (226), US-0003 (203), CA-0058 (114), GL-0003 (105), CA-0057 (89), US-0004 (44), CA-0053 (42), GL-0002 (39), CA-0054 (35), CA-0028 (34), CA-0029 (32), GL-0001 (29), US-0095 (27), US-0034 (23), MX-0027 (20), US-0128 (17), US-0140 (17), CA-0025 (16), US-0068 (16), CA-0046 (15), CA-0021 (13), US-0061 (13), US-0064 (13), US-0139 (13), CA-0012 (12), US-0037 (12), CA-0049 (11), MX-0036 (11), US-0063 (11), CA-0024 (10), US-0058 (10), US-0089 (10), MX-0025 (9), US-0042 (9), US-0145 (9), CA-0014 (8), US-0129 (8), CA-0050 (7), MX-0044 (7), US-0111 (7), CA-0045 (6), CA-0048 (6), MX-0038 (6), MX-0039 (6), US-0021 (6), US-0041 (6), US-0083 (6), US-0123 (6), US-0141 (6), CA-0010 (5), MX-0015 (5), MX-0026 (5), MX-0033 (5), MX-0047 (5), US-0012 (5), US-0091 (5), CA-0026 (4), CA-0051 (4), CA-0056 (4), MX-0006 (4), MX-0023 (4), MX-0041 (4), MX-0048 (4), US-0002 (4), US-0017 (4), US-0056 (4), BM-0001 (3), CA-0006 (3), CA-0009 (3), CA-0016 (3), CA-0022 (3), CA-0031 (3), CA-0047 (3), CA-0052 (3), MX-0012 (3), MX-0028 (3), MX-0030 (3), PM-0001 (3), US-0031 (3), US-0036 (3), US-0071 (3), US-0072 (3), US-0082 (3), US-0098 (3), US-0112 (3), CA-0004 (2), CA-0005 (2), CA-0011 (2), CA-0015 (2), CA-0017 (2), CA-0035 (2), CA-0055 (2), MX-0004 (2), MX-0005 (2), MX-0011 (2), MX-0013 (2), MX-0014 (2), MX-0016 (2), MX-0019 (2), MX-0029 (2), MX-0031 (2), MX-0032 (2), MX-0034 (2), MX-0043 (2), MX-0045 (2), US-0018 (2), US-0020 (2), US-0028 (2), US-0035 (2), US-0048 (2), US-0051 (2), US-0057 (2), US-0059 (2), US-0065 (2), US-0066 (2), US-0086 (2), US-0087 (2), US-0102 (2), US-0104 (2), US-0110 (2), US-0126 (2)
+CA-0059 (226), US-0003 (203), CA-0058 (114), GL-0003 (105), CA-0057 (89), US-0004 (44), CA-0053 (42), GL-0002 (39), CA-0054 (35), CA-0028 (34), CA-0029 (32), GL-0001 (29), US-0095 (27), US-0034 (23), MX-0027 (20), US-0128 (17), US-0141 (17), CA-0025 (16), US-0068 (16), CA-0046 (15), CA-0021 (13), US-0061 (13), US-0064 (13), CA-0012 (12), US-0037 (12), CA-0049 (11), MX-0036 (11), CA-0024 (10), US-0058 (10), US-0063 (10), US-0089 (10), US-0138 (10), MX-0025 (9), US-0042 (9), US-0145 (9), CA-0014 (8), US-0129 (8), CA-0050 (7), MX-0044 (7), US-0111 (7), US-0140 (7), CA-0045 (6), CA-0048 (6), MX-0038 (6), MX-0039 (6), US-0021 (6), US-0041 (6), US-0083 (6), US-0123 (6), CA-0010 (5), MX-0015 (5), MX-0026 (5), MX-0033 (5), MX-0047 (5), US-0012 (5), US-0091 (5), CA-0026 (4), CA-0051 (4), CA-0056 (4), MX-0006 (4), MX-0023 (4), MX-0041 (4), MX-0048 (4), US-0002 (4), US-0017 (4), US-0056 (4), US-0139 (4), BM-0001 (3), CA-0006 (3), CA-0009 (3), CA-0016 (3), CA-0022 (3), CA-0031 (3), CA-0047 (3), CA-0052 (3), MX-0012 (3), MX-0028 (3), MX-0030 (3), PM-0001 (3), US-0031 (3), US-0035 (3), US-0036 (3), US-0071 (3), US-0072 (3), US-0082 (3), US-0098 (3), US-0112 (3), CA-0004 (2), CA-0005 (2), CA-0011 (2), CA-0015 (2), CA-0017 (2), CA-0035 (2), CA-0055 (2), MX-0004 (2), MX-0005 (2), MX-0011 (2), MX-0013 (2), MX-0014 (2), MX-0016 (2), MX-0019 (2), MX-0029 (2), MX-0031 (2), MX-0032 (2), MX-0034 (2), MX-0043 (2), MX-0045 (2), US-0018 (2), US-0020 (2), US-0028 (2), US-0048 (2), US-0051 (2), US-0057 (2), US-0059 (2), US-0065 (2), US-0066 (2), US-0086 (2), US-0087 (2), US-0102 (2), US-0104 (2), US-0110 (2), US-0121 (2)
 
 ## Visual check
 

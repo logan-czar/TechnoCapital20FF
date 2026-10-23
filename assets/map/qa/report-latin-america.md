@@ -56,7 +56,7 @@ _Written by `tools/map-pipeline/run.py --region latin-america` (pipeline pb-1). 
 | Placed by a builder hint (`hints/latin-america.toml`) | 19 |
 | Tiny (under 64 px) | 43 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
-| More than one part (islands, exclaves) | 134 |
+| More than one part (islands, exclaves) | 133 |
 | Coastal flag differs from the CSV | 25 |
 | Small for their region (not Metro, under 5% of the region's mean) | 0 |
 | Voronoi-split blocks where one province takes 75% or more | 6 |
@@ -65,8 +65,8 @@ _Written by `tools/map-pipeline/run.py --region latin-america` (pipeline pb-1). 
 | Contested provinces (drawn by our own files) | 7 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 19 |
-| City probe points (fail on a mismatch; D686) | 70 pass, 0 mismatch, 8 listed |
-| Metro reach scan rows (listed; D686) | 1 |
+| City probe points (fail on a mismatch; D686) | 72 pass, 0 mismatch, 14 listed |
+| Metro reach scan rows (listed; D686) | 0 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 4 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
@@ -115,7 +115,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | BR-0011 | Barra-Zona Oeste | seeds: point -43.36,-22.94 (hint); point -43.37,-23.0 (hint); point -43.47,-22.88 (hint); point -43.69,-22.92 (hint); 2 whole admin2 units, split: Rio de Janeiro |
 | BR-0028 | Florianopolis-Itajai | seeds: place Florianópolis; place Itajaí; unit Angelina (hint); unit Florianópolis at place Florianópolis; unit Itajaí at place Itajaí; unit Navegantes; 54 whole admin2 units |
 | CL-0010 | Santiago Poniente-Sur | seeds: point -70.58,-33.61 (hint); point -70.59,-33.52 (hint); point -70.73,-33.36 (hint); point -70.76,-33.51 (hint); point -70.79,-33.39 (hint); 0 whole parts, 1 split |
-| CL-0011 | Maipo-Melipilla | seeds: point -70.74,-33.73 (hint); point -70.93,-33.66 (hint); point -71.22,-33.69 (hint); 0 whole parts, 1 split |
+| CL-0011 | Maipo-Melipilla | seeds: point -70.35,-33.64 (hint); point -70.55,-33.67 (hint); point -70.74,-33.73 (hint); point -70.93,-33.66 (hint); point -71.22,-33.69 (hint); 0 whole parts, 1 split |
 | CL-0020 | Chiloe-Palena | seeds: point -71.8,-43.62 (hint); point -72.71,-42.92 (hint); point -73.77,-42.48 (hint) (snapped to land); point -73.82,-41.87 (hint); 9 whole parts, 1 split |
 | CO-0001 | Bogota Chapinero-Norte | seeds: point -74.03,4.7 (hint); point -74.06,4.65 (hint); point -74.08,4.6 (hint); 0 whole admin2 units, split: Bogotá, D.c. |
 | CO-0002 | Bogota Sur-Occidente | seeds: point -74.14,4.68 (hint); point -74.14,4.7 (hint); point -74.15,4.63 (hint); point -74.16,4.51 (hint); point -74.19,4.62 (hint); 0 whole admin2 units, split: Bogotá, D.c. |
@@ -201,11 +201,17 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Point | Expected | Got | Result |
 |---|---|---|---|
 | Campinas (-47.06, -22.9) | ? | BR-0005 | listed |
+| Colina (-70.67, -33.2) | ? | CL-0010 | listed |
+| El Volcan Andes (-70.02, -33.82) | ? | CL-0011 | listed |
+| Farellones (-70.25, -33.35) | ? | CL-0011 | listed |
 | La Plata (-57.95, -34.92) | ? | AR-0005 | listed |
 | Pachacamac (-76.86, -12.23) | ? | PE-0002 | listed |
 | Paulo de Faria (-49.4, -20.03) | ? | BR-0009 | listed |
 | Petropolis (-43.18, -22.51) | ? | BR-0015 | listed |
+| Pirque (-70.55, -33.67) | ? | CL-0011 | listed |
+| San Jose de Maipo (-70.35, -33.64) | ? | CL-0011 | listed |
 | Sao Jose do Rio Preto (-49.38, -20.81) | ? | BR-0009 | listed |
+| Til Til (-70.93, -33.08) | ? | CL-0010 | listed |
 | Villa El Salvador (-76.94, -12.21) | ? | PE-0001 | listed |
 | Zipaquira (-74.0, 5.02) | ? | CO-0004 | listed |
 | Antigua (-61.84, 17.12) | AG | AG-0001 | on it |
@@ -217,6 +223,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Basseterre (-62.72, 17.3) | KN | KN-0001 | nearest across water |
 | Belmopan (-88.77, 17.25) | BZ-0002 | BZ-0002 | on it |
 | Bogota Chapinero (-74.06, 4.65) | CO-0001 | CO-0001 | on it |
+| Buin (-70.74, -33.73) | CL-0011 | CL-0011 | on it |
 | Callao (-77.13, -12.06) | PE-0004 | PE-0004 | on it |
 | Canete (-76.39, -13.08) | PE-0003 | PE-0003 | on it |
 | Caracas (-66.9, 10.49) | VE | VE-0001 | on it |
@@ -257,6 +264,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Quilmes (-58.27, -34.72) | AR-0004 | AR-0004 | on it |
 | Rio Centro (-43.18, -22.9) | BR-0010 | BR-0010 | nearest across water |
 | Rio Copacabana2 (-43.18, -22.97) | BR-0010 | BR-0010 | on it |
+| Rosario (-60.65, -32.95) | AR-0012 | AR-0012 | on it |
 | Roseau (-61.39, 15.3) | DM | DM-0001 | on it |
 | San Isidro AR (-58.53, -34.47) | AR-0002 | AR-0002 | on it |
 | San Juan de Lurigancho (-77.0, -11.98) | PE-0002 | PE-0002 | on it |
@@ -283,9 +291,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 
 Metro provinces whose centroid is over 80 km from their Metro's city, that are over 4 times the Metro's median and 250 px, and regions where Metro provinces hold over 30% of the land beside rural ones (the D612 error). Listed for review; a Metro made of whole metropolitan units can be large by design.
 
-| Check | Province or region | Detail |
-|---|---|---|
-| Metro share of a region | CHL: Santiago Metropolitan | Metro provinces hold 63% of 911 px beside 1 rural |
+None.
 
 ## Land exclaves
 
@@ -408,8 +414,8 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | NIC: North and South Caribbean Coast | alias hint -> NI-AN, NI-AS | 2 |
 | PAN: Chiriqui | name match 100; plus unclaimed Ngöbe Buglé | 2 |
 | PAN: Darien | name match 100; plus unclaimed Emberá | 2 |
-| PAN: Panama | name match 100; plus unclaimed Kuna Yala; less PAN:Panama Oeste (carve) | 2 |
-| PAN: Panama Oeste | no admin-1 match (best unit 67, group 0); carve: builder polygon from PAN:Panama | 0 |
+| PAN: Panama | name match 100; plus unclaimed Kuna Yala; less PAN:Panama Oeste (carve); a sliver to PAN:Panama Oeste (D694); a sliver to PAN:Colon (D694) | 2 |
+| PAN: Panama Oeste | no admin-1 match (best unit 67, group 0); carve: builder polygon from PAN:Panama; plus a sliver of PAN:Panama (D694) | 0 |
 | PER: Callao | alias hint -> PE-CAL | 1 |
 | PER: Lima | alias hint -> PER-591, PER-587 | 2 |
 | PER: Puno | alias hint -> PE-PUN | 1 |
@@ -518,7 +524,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-CL-0022 (101), CL-0021 (52), BS-0004 (48), PP-0001 (26), BS-0003 (18), BR-0049 (17), CL-0020 (13), BR-0044 (11), BZ-0001 (10), EC-0015 (9), HN-0004 (9), VE-0010 (9), HN-0003 (8), PA-0001 (8), CR-0008 (7), CU-0004 (7), CU-0005 (7), CU-0006 (7), CU-0013 (7), AR-0008 (6), BR-0035 (6), CL-0011 (6), CU-0007 (6), PA-0005 (6), VE-0002 (6), VG-0001 (6), AR-0025 (5), BR-0046 (5), BR-0056 (5), GY-0003 (5), KY-0001 (5), NI-0004 (5), NI-0008 (5), PA-0007 (5), BR-0006 (4), BR-0007 (4), BR-0015 (4), BR-0022 (4), BR-0048 (4), BR-0050 (4), BR-0059 (4), BR-0066 (4), CL-0008 (4), CO-0005 (4), CO-0010 (4), CO-0012 (4), CO-0026 (4), EC-0002 (4), KN-0001 (4), PA-0004 (4), VE-0013 (4), AR-0013 (3), BR-0009 (3), BR-0027 (3), BR-0032 (3), BR-0045 (3), BR-0065 (3), CL-0007 (3), CO-0006 (3), CO-0008 (3), CO-0023 (3), CR-0001 (3), CU-0009 (3), DO-0001 (3), EC-0014 (3), GY-0002 (3), HN-0002 (3), HT-0006 (3), PR-0003 (3), PY-0010 (3), VC-0001 (3), VE-0020 (3), AG-0001 (2), AR-0006 (2), AR-0031 (2), BO-0009 (2), BO-0016 (2), BR-0004 (2), BR-0017 (2), BR-0018 (2), BR-0019 (2), BR-0021 (2), BR-0023 (2), BR-0024 (2), BR-0030 (2), BR-0031 (2), BR-0033 (2), BR-0034 (2), BR-0037 (2), BR-0039 (2), BR-0040 (2), BR-0043 (2), BR-0047 (2), BR-0051 (2), BR-0052 (2), BR-0054 (2), BR-0055 (2), BR-0058 (2), BR-0061 (2), BS-0002 (2), BZ-0002 (2), CL-0015 (2), CL-0017 (2), CL-0019 (2), CO-0015 (2), CO-0018 (2), CO-0029 (2), CR-0007 (2), CU-0012 (2), DO-0002 (2), DO-0007 (2), EC-0003 (2), EC-0010 (2), GD-0001 (2), GT-0004 (2), GT-0006 (2), GT-0011 (2), HN-0010 (2), HT-0001 (2), HT-0004 (2), PA-0010 (2), PE-0001 (2), PE-0004 (2), PE-0017 (2), PE-0020 (2), PE-0023 (2), PR-0005 (2), PR-0007 (2), TT-0001 (2), TT-0005 (2), UY-0007 (2), VE-0006 (2), VE-0016 (2), VE-0019 (2)
+CL-0022 (101), CL-0021 (52), BS-0004 (48), PP-0001 (26), BS-0003 (18), BR-0049 (17), CL-0020 (13), BR-0044 (11), BZ-0001 (10), EC-0015 (9), HN-0004 (9), VE-0010 (9), HN-0003 (8), CR-0008 (7), CU-0004 (7), CU-0005 (7), CU-0006 (7), CU-0013 (7), AR-0008 (6), BR-0035 (6), CU-0007 (6), PA-0005 (6), VE-0002 (6), VG-0001 (6), AR-0025 (5), BR-0046 (5), BR-0056 (5), GY-0003 (5), KY-0001 (5), NI-0004 (5), NI-0008 (5), PA-0001 (5), PA-0007 (5), BR-0006 (4), BR-0007 (4), BR-0015 (4), BR-0022 (4), BR-0033 (4), BR-0048 (4), BR-0050 (4), BR-0059 (4), BR-0066 (4), CL-0008 (4), CO-0005 (4), CO-0010 (4), CO-0012 (4), CO-0026 (4), EC-0002 (4), KN-0001 (4), PA-0004 (4), VE-0013 (4), AR-0013 (3), BR-0009 (3), BR-0027 (3), BR-0032 (3), BR-0045 (3), BR-0065 (3), CL-0007 (3), CL-0011 (3), CO-0006 (3), CO-0008 (3), CO-0023 (3), CR-0001 (3), CU-0009 (3), DO-0001 (3), EC-0014 (3), GY-0002 (3), HN-0002 (3), HT-0006 (3), PR-0003 (3), PY-0010 (3), VC-0001 (3), VE-0020 (3), AG-0001 (2), AR-0006 (2), AR-0031 (2), BO-0009 (2), BO-0016 (2), BR-0004 (2), BR-0017 (2), BR-0018 (2), BR-0019 (2), BR-0021 (2), BR-0023 (2), BR-0024 (2), BR-0030 (2), BR-0034 (2), BR-0037 (2), BR-0039 (2), BR-0040 (2), BR-0043 (2), BR-0047 (2), BR-0051 (2), BR-0052 (2), BR-0054 (2), BR-0055 (2), BR-0058 (2), BR-0061 (2), BS-0002 (2), BZ-0002 (2), CL-0015 (2), CL-0017 (2), CL-0019 (2), CO-0015 (2), CO-0018 (2), CO-0029 (2), CR-0007 (2), CU-0012 (2), DO-0002 (2), DO-0007 (2), EC-0003 (2), EC-0010 (2), GD-0001 (2), GT-0004 (2), GT-0006 (2), GT-0011 (2), HN-0010 (2), HT-0001 (2), HT-0004 (2), PA-0010 (2), PE-0001 (2), PE-0004 (2), PE-0017 (2), PE-0020 (2), PE-0023 (2), PR-0005 (2), PR-0007 (2), TT-0001 (2), TT-0005 (2), UY-0007 (2), VE-0006 (2), VE-0016 (2), VE-0019 (2)
 
 ## Visual check
 

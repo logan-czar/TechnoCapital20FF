@@ -39,7 +39,7 @@ _Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-1). Source of
 | Placed by a builder hint (`hints/mena.toml`) | 80 |
 | Tiny (under 64 px) | 72 |
 | Given a pixel at their interior point (no pixel centre inside) | 1 |
-| More than one part (islands, exclaves) | 76 |
+| More than one part (islands, exclaves) | 72 |
 | Coastal flag differs from the CSV | 32 |
 | Small for their region (not Metro, under 5% of the region's mean) | 5 |
 | Voronoi-split blocks where one province takes 75% or more | 10 |
@@ -48,9 +48,9 @@ _Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-1). Source of
 | Contested provinces (drawn by our own files) | 10 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 20 |
-| City probe points (fail on a mismatch; D686) | 50 pass, 0 mismatch, 1 listed |
+| City probe points (fail on a mismatch; D686) | 54 pass, 0 mismatch, 8 listed |
 | Metro reach scan rows (listed; D686) | 1 |
-| Land exclaves of 5 px or more (fail unless explained; D691) | 6 (0 unexplained) |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 4 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
 
@@ -142,7 +142,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | LY-0011 | Jalu-Sarir | seeds: point 20.4,28.6 (hint); point 21.55,29.03 (hint); point 23.5,27.5 (hint); 0 whole parts, 1 split |
 | MA-0002 | Casablanca East-Mohammedia | seeds: point -7.39,33.69 (hint); point -7.55,33.6 (hint); 0 whole admin1 units, split: Grand Casablanca |
 | MA-0003 | El Jadida-Jorf Lasfar | seeds: point -8.5,33.25 (hint); point -8.63,33.12 (hint); 1 whole admin1 units |
-| MA-0009 | Al Hoceima-Rif | seeds: point -3.93,35.25 (hint); point -5.27,35.17 (hint); point -5.6,34.84 (hint); 1 whole parts, 1 split |
+| MA-0009 | Al Hoceima-Rif | seeds: point -3.93,35.25 (hint); point -5.27,35.17 (hint); point -5.6,34.84 (hint); 0 whole parts, 1 split |
 | OM-0003 | Sohar | seeds: point 56.71,24.35 (hint); 0 whole parts, 1 split |
 | OM-0004 | Saham-Shinas | seeds: point 56.47,24.74 (hint); point 56.56,24.53 (hint); point 56.89,24.17 (hint); point 57.08,23.98 (hint); 0 whole parts, 1 split |
 | QA-0001 | West Bay-Corniche | seeds: point 51.52,25.3 (hint) (snapped to land); point 51.53,25.32 (hint) (snapped to land); 18 whole admin2 units |
@@ -276,7 +276,14 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 
 | Point | Expected | Got | Result |
 |---|---|---|---|
+| Bouarfa (-1.95, 32.53) | ? | MA-0010 | listed |
+| Errachidia (-4.43, 31.93) | ? | MA-0017 | listed |
+| Fallujah (43.78, 33.35) | ? | IQ-0013 | listed |
+| Kuwait Ahmadi (48.08, 29.08) | ? | KW-0006 | listed |
+| MA enclave Agadir (-5.73, 29.65) | ? | MA-0017 | listed |
+| MA enclave Meknes (-3.33, 32.07) | ? | MA-0010 | listed |
 | Tifariti (-10.6, 26.16) | ? | MA-0019 | listed |
+| Zagora (-5.84, 30.33) | ? | MA-0017 | listed |
 | 6th of October (30.93, 29.94) | EG-0005 | EG-0005 | on it |
 | Abu Dhabi (54.37, 24.47) | AE-0001 | AE-0001 | on it |
 | Abu Ghraib (44.07, 33.29) | IQ-0004 | IQ-0004 | on it |
@@ -292,6 +299,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Casablanca (-7.62, 33.59) | MA | MA-0001 | on it |
 | Dakhla (-15.93, 23.7) | MA-0020 | MA-0020 | nearest across water |
 | Diriyah (46.57, 24.73) | SA-0002 | SA-0002 | on it |
+| Doha West Bay (51.53, 25.32) | QA-0001 | QA-0001 | nearest across water |
 | Dubai Downtown (55.27, 25.2) | AE-0008 | AE-0008 | on it |
 | Dubai Marina (55.14, 25.08) | AE-0010 | AE-0010 | nearest across water |
 | East Jerusalem Old City (35.235, 31.777) | IL-0002 | IL-0002 | on it |
@@ -309,7 +317,9 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Kuwait City (47.98, 29.37) | KW | KW-0001 | nearest across water |
 | Laayoune (-13.2, 27.15) | MA-0019 | MA-0019 | on it |
 | Maadi (31.26, 29.96) | EG-0003 | EG-0003 | on it |
+| Madain (44.58, 33.1) | IQ-0004 | IQ-0004 | on it |
 | Mahbes (-9.05, 27.22) | MA-0019 | MA-0019 | on it |
+| Mahmudiya (44.36, 33.06) | IQ-0004 | IQ-0004 | on it |
 | Nablus (35.26, 32.22) | PS-0002 | PS-0002 | on it |
 | New Cairo (31.47, 30.03) | EG-0002 | EG-0002 | on it |
 | Qatar Doha (51.53, 25.29) | QA | QA-0001 | nearest across water |
@@ -325,6 +335,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Smara (-11.66, 26.74) | MA-0019 | MA-0019 | on it |
 | Taji (44.24, 33.52) | IQ-0004 | IQ-0004 | on it |
 | Tan-Tan (-11.1, 28.44) | MA-0018 | MA-0018 | on it |
+| Tata MA (-7.97, 29.74) | MA-0016 | MA-0016 | on it |
 | Tehran Bazaar (51.42, 35.67) | IR-0002 | IR-0002 | on it |
 | Tehran North (51.43, 35.8) | IR-0001 | IR-0001 | on it |
 
@@ -344,8 +355,6 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 |---|---|---|---|---|
 | EG-0004 | Giza-Imbaba | 6 | 30.91, 30.28 | its own seed unit Imbaba lies in it |
 | IQ-0005 | Basra-Umm Qasr | 210 | 46.84, 29.89 | its own seed unit Al-Zubair lies in it |
-| MA-0012 | Meknes-Ifrane | 17 | -3.33, 32.07 | a corner of Natural Earth's old Meknes-Tafilalet unit east of the Draa-Tafilalet builder polygon (D676) |
-| MA-0016 | Agadir-Souss | 71 | -5.73, 29.65 | a corner of Natural Earth's old Souss-Massa-Draa unit south of the Draa-Tafilalet builder polygon (D676) |
 | PS-0003 | Ramallah-Jericho | 5 | 35.43, 31.55 | a neck under a pixel wide joins it to the rest in the shapes |
 | SA-0023 | Al Ula-Khaybar | 1922 | 40.92, 23.84 | its own seed point 40.88,23.5 (hint) lies in it |
 
@@ -388,10 +397,10 @@ The microstates, city-states and metro splits the plan names (P8: Singapore, the
 | BH-0001 | Bahrain | 33 | Y | 5245.5, 2000.5 |
 | IL-0002 | East Jerusalem | 3 | Y | 4897.5, 1859.5 |
 | IL-0015 | Golan Heights | 62 | Y | 4909.5, 1830.5 |
-| PS-0001 | Jenin-Tulkarm | 74 | N | 4898.5, 1845.5 |
+| PS-0001 | Jenin-Tulkarm | 77 | N | 4897.5, 1845.5 |
 | PS-0002 | Nablus-Salfit | 44 | Y | 4899.5, 1851.5 |
-| PS-0003 | Ramallah-Jericho | 108 | N | 4901.5, 1858.5 |
-| PS-0004 | Hebron-Bethlehem | 87 | N | 4896.5, 1867.5 |
+| PS-0003 | Ramallah-Jericho | 104 | N | 4901.5, 1858.5 |
+| PS-0004 | Hebron-Bethlehem | 88 | N | 4896.5, 1867.5 |
 | PS-0005 | Gaza City | 8 | Y | 4880.5, 1867.5 |
 | PS-0006 | Khan Yunis-Rafah | 12 | Y | 4876.5, 1872.5 |
 | LB-0001 | Beirut | 2 | Y | 4903.5, 1807.5 |
@@ -406,11 +415,11 @@ Drawn by our own province files (decision C), not the sources' de facto lines: e
 | EG-0030 | Marsa Alam-Halaib | EGY | SDN claims | Red Sea: name match 100 |
 | IL-0002 | East Jerusalem | ISR | PSE claims | Jerusalem District: name match 100 |
 | IL-0015 | Golan Heights | ISR | SYR claims | Northern District: name match 100 |
-| PS-0001 | Jenin-Tulkarm | PSE | ISR occupies | Jenin-Tubas-Tulkarm-Qalqilya: no admin-1 match (best unit 36, group 0); carve: PSE units Jenin, Tubas, Tulkarm, Qalqiliya from PSE:Ramallah-Jericho |
-| PS-0002 | Nablus-Salfit | PSE | ISR occupies | Nablus-Salfit: no admin-1 match (best unit 35, group 0); carve: PSE units Nablus, Salfit from PSE:Ramallah-Jericho |
-| PS-0003 | Ramallah-Jericho | PSE | ISR occupies | Ramallah-Jericho: alias hint -> PS-WBK; less PSE:Bethlehem-Hebron (carve); less PSE:Jenin-Tubas-Tulkarm-Qalqilya (carve); less PSE:Nablus-Salfit (carve) |
-| PS-0004 | Hebron-Bethlehem | PSE | ISR occupies | Bethlehem-Hebron: no admin-1 match (best unit 40, group 0); carve: PSE units Bethlehem, Hebron from PSE:Ramallah-Jericho |
-| MA-0019 | Laayoune-Boujdour | MAR | SADR claims | Laayoune-Sakia El Hamra: alias hint -> MA-15, EH-X01~; less MAR:Dakhla-Oued Ed-Dahab (carve); carve: builder polygon from MAR:Guelmim-Oued Noun |
+| PS-0001 | Jenin-Tulkarm | PSE | ISR occupies | Jenin-Tubas-Tulkarm-Qalqilya: no admin-1 match (best unit 36, group 0); carve: PSE units Jenin, Tubas, Tulkarm, Qalqiliya from PSE:Ramallah-Jericho; plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694) |
+| PS-0002 | Nablus-Salfit | PSE | ISR occupies | Nablus-Salfit: no admin-1 match (best unit 35, group 0); carve: PSE units Nablus, Salfit from PSE:Ramallah-Jericho; plus a sliver of PSE:Ramallah-Jericho (D694) |
+| PS-0003 | Ramallah-Jericho | PSE | ISR occupies | Ramallah-Jericho: alias hint -> PS-WBK; less PSE:Bethlehem-Hebron (carve); less PSE:Jenin-Tubas-Tulkarm-Qalqilya (carve); less PSE:Nablus-Salfit (carve); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Nablus-Salfit (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Bethlehem-Hebron (D694) |
+| PS-0004 | Hebron-Bethlehem | PSE | ISR occupies | Bethlehem-Hebron: no admin-1 match (best unit 40, group 0); carve: PSE units Bethlehem, Hebron from PSE:Ramallah-Jericho; plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694) |
+| MA-0019 | Laayoune-Boujdour | MAR | SADR claims | Laayoune-Sakia El Hamra: alias hint -> MA-15, EH-X01~; less MAR:Dakhla-Oued Ed-Dahab (carve); carve: builder polygon from MAR:Guelmim-Oued Noun; plus a sliver of MAR:Guelmim-Oued Noun (D694) |
 | MA-0020 | Dakhla | MAR | SADR claims | Dakhla-Oued Ed-Dahab: alias hint -> MA-16; carve: builder polygon from MAR:Laayoune-Sakia El Hamra |
 
 ## Region matching
@@ -438,12 +447,12 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | DZA: Skikda-Jijel | name parts (2 pieces, worst match 100) | 2 |
 | DZA: Tebessa-Souk Ahras-Oum El Bouaghi | name parts (3 pieces, worst match 100) | 3 |
 | DZA: Tlemcen-Ain Temouchent | name parts (2 pieces, worst match 100) | 2 |
-| IRQ: Anbar | alias hint -> IQ-AN; less IRQ:Baghdad (carve) | 1 |
-| IRQ: Babil | name match 100; less IRQ:Baghdad (carve) | 1 |
-| IRQ: Baghdad | name match 100; carve: IRQ units Al-Kadhmiyah, Al-Mahmoudiya, Al-Mada'in, Al-Adhamiya, Al-Karkh, Al-Risafa, Al-Thawra from IRQ:Anbar, IRQ:Babil, IRQ:Diyala, IRQ:Saladin, IRQ:Wasit | 1 |
-| IRQ: Diyala | name match 100; less IRQ:Baghdad (carve) | 1 |
+| IRQ: Anbar | alias hint -> IQ-AN; less IRQ:Baghdad (carve); a sliver to IRQ:Baghdad (D694) | 1 |
+| IRQ: Babil | name match 100; less IRQ:Baghdad (carve); a sliver to IRQ:Baghdad (D694); a sliver to IRQ:Baghdad (D694) | 1 |
+| IRQ: Baghdad | name match 100; carve: IRQ units Al-Kadhmiyah, Al-Mahmoudiya, Al-Mada'in, Al-Adhamiya, Al-Karkh, Al-Risafa, Al-Thawra from IRQ:Anbar, IRQ:Babil, IRQ:Diyala, IRQ:Saladin, IRQ:Wasit; plus a sliver of IRQ:Anbar (D694); plus a sliver of IRQ:Babil (D694); plus a sliver of IRQ:Babil (D694); plus a sliver of IRQ:Diyala (D694); plus a sliver of IRQ:Diyala (D694); plus a sliver of IRQ:Diyala (D694); plus a sliver of IRQ:Saladin (D694) | 1 |
+| IRQ: Diyala | name match 100; less IRQ:Baghdad (carve); a sliver to IRQ:Baghdad (D694); a sliver to IRQ:Baghdad (D694); a sliver to IRQ:Baghdad (D694) | 1 |
 | IRQ: Muthanna | alias hint -> IQ-MU | 1 |
-| IRQ: Saladin | name match 100; less IRQ:Baghdad (carve) | 1 |
+| IRQ: Saladin | name match 100; less IRQ:Baghdad (carve); a sliver to IRQ:Baghdad (D694) | 1 |
 | IRQ: Sulaymaniyah-Halabja | alias hint -> IQ-SU | 1 |
 | IRQ: Wasit | name match 100; less IRQ:Baghdad (carve) | 1 |
 | JOR: Balqa-Madaba | name parts (2 pieces, worst match 100) | 2 |
@@ -463,30 +472,30 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | LBY: Murzuq-Wadi al-Hayaa | name parts (2 pieces, worst match 100) | 2 |
 | LBY: Wadi al-Shatii-Jufra | alias hint -> LY-WS, LY-JU | 2 |
 | MAR: Beni Mellal-Khenifra | alias hint -> MA-12 | 1 |
-| MAR: Casablanca-Settat | alias hint -> MA-08, MA-09; carve: builder polygon from MAR:Marrakech-Safi | 2 |
+| MAR: Casablanca-Settat | alias hint -> MA-08, MA-09; carve: builder polygon from MAR:Marrakech-Safi; plus a sliver of MAR:Marrakech-Safi (D694) | 2 |
 | MAR: Dakhla-Oued Ed-Dahab | alias hint -> MA-16; carve: builder polygon from MAR:Laayoune-Sakia El Hamra | 1 |
-| MAR: Draa-Tafilalet | no admin-1 match (best unit 67, group 0); carve: builder polygon from MAR:Fes-Meknes, MAR:Souss-Massa | 0 |
-| MAR: Fes-Meknes | alias hint -> MA-05, MA-03, MA-06; less MAR:Draa-Tafilalet (carve); less MAR:Tanger-Tetouan-Al Hoceima (carve) | 3 |
-| MAR: Guelmim-Oued Noun | alias hint -> MA-14; less MAR:Laayoune-Sakia El Hamra (carve) | 1 |
-| MAR: Laayoune-Sakia El Hamra | alias hint -> MA-15, EH-X01~; less MAR:Dakhla-Oued Ed-Dahab (carve); carve: builder polygon from MAR:Guelmim-Oued Noun | 2 |
-| MAR: Marrakech-Safi | alias hint -> MA-11, MA-10; less MAR:Casablanca-Settat (carve) | 2 |
+| MAR: Draa-Tafilalet | no admin-1 match (best unit 67, group 0); carve: builder polygon from MAR:Fes-Meknes, MAR:Souss-Massa; plus a sliver of MAR:Guelmim-Oued Noun (D694); plus a sliver of MAR:Souss-Massa (D694) | 0 |
+| MAR: Fes-Meknes | alias hint -> MA-05, MA-03, MA-06; less MAR:Draa-Tafilalet (carve); less MAR:Tanger-Tetouan-Al Hoceima (carve); a sliver to MAR:Oriental (D694); plus a sliver of MAR:Tanger-Tetouan-Al Hoceima (D694) | 3 |
+| MAR: Guelmim-Oued Noun | alias hint -> MA-14; less MAR:Laayoune-Sakia El Hamra (carve); less MAR:Souss-Massa (carve); a sliver to MAR:Draa-Tafilalet (D694); a sliver to MAR:Souss-Massa (D694); a sliver to MAR:Laayoune-Sakia El Hamra (D694) | 1 |
+| MAR: Laayoune-Sakia El Hamra | alias hint -> MA-15, EH-X01~; less MAR:Dakhla-Oued Ed-Dahab (carve); carve: builder polygon from MAR:Guelmim-Oued Noun; plus a sliver of MAR:Guelmim-Oued Noun (D694) | 2 |
+| MAR: Marrakech-Safi | alias hint -> MA-11, MA-10; less MAR:Casablanca-Settat (carve); a sliver to MAR:Casablanca-Settat (D694) | 2 |
 | MAR: Rabat-Sale-Kenitra | alias hint -> MA-07, MA-02 | 2 |
-| MAR: Souss-Massa | alias hint -> MA-13; less MAR:Draa-Tafilalet (carve) | 1 |
-| MAR: Tanger-Tetouan-Al Hoceima | alias hint -> MA-01; carve: builder polygon from MAR:Fes-Meknes | 1 |
+| MAR: Souss-Massa | alias hint -> MA-13; less MAR:Draa-Tafilalet (carve); carve: builder polygon from MAR:Guelmim-Oued Noun; plus a sliver of MAR:Guelmim-Oued Noun (D694); a sliver to MAR:Draa-Tafilalet (D694) | 1 |
+| MAR: Tanger-Tetouan-Al Hoceima | alias hint -> MA-01; carve: builder polygon from MAR:Fes-Meknes; a sliver to MAR:Fes-Meknes (D694) | 1 |
 | OMN: North Al Batinah | alias hint -> OM-BA | 1 |
 | OMN: North Ash Sharqiyah | alias hint -> OM-SS | 1 |
 | OMN: South Al Batinah | alias hint -> OM-BJ | 1 |
 | OMN: South Ash Sharqiyah | alias hint -> OM-SH | 1 |
-| PSE: Bethlehem-Hebron | no admin-1 match (best unit 40, group 0); carve: PSE units Bethlehem, Hebron from PSE:Ramallah-Jericho | 0 |
-| PSE: Deir al-Balah-Khan Yunis-Rafah | no admin-1 match (best unit 31, group 0); carve: PSE units Deir Al Balah, Khan Yunis, Rafah from PSE:Gaza-North Gaza | 0 |
-| PSE: Gaza-North Gaza | alias hint -> PS-GZZ; less PSE:Deir al-Balah-Khan Yunis-Rafah (carve) | 1 |
-| PSE: Jenin-Tubas-Tulkarm-Qalqilya | no admin-1 match (best unit 36, group 0); carve: PSE units Jenin, Tubas, Tulkarm, Qalqiliya from PSE:Ramallah-Jericho | 0 |
-| PSE: Nablus-Salfit | no admin-1 match (best unit 35, group 0); carve: PSE units Nablus, Salfit from PSE:Ramallah-Jericho | 0 |
-| PSE: Ramallah-Jericho | alias hint -> PS-WBK; less PSE:Bethlehem-Hebron (carve); less PSE:Jenin-Tubas-Tulkarm-Qalqilya (carve); less PSE:Nablus-Salfit (carve) | 1 |
+| PSE: Bethlehem-Hebron | no admin-1 match (best unit 40, group 0); carve: PSE units Bethlehem, Hebron from PSE:Ramallah-Jericho; plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694) | 0 |
+| PSE: Deir al-Balah-Khan Yunis-Rafah | no admin-1 match (best unit 31, group 0); carve: PSE units Deir Al Balah, Khan Yunis, Rafah from PSE:Gaza-North Gaza; plus a sliver of PSE:Gaza-North Gaza (D694); plus a sliver of PSE:Gaza-North Gaza (D694); plus a sliver of PSE:Gaza-North Gaza (D694); plus a sliver of PSE:Gaza-North Gaza (D694) | 0 |
+| PSE: Gaza-North Gaza | alias hint -> PS-GZZ; less PSE:Deir al-Balah-Khan Yunis-Rafah (carve); a sliver to PSE:Deir al-Balah-Khan Yunis-Rafah (D694); a sliver to PSE:Deir al-Balah-Khan Yunis-Rafah (D694); a sliver to PSE:Deir al-Balah-Khan Yunis-Rafah (D694); a sliver to PSE:Deir al-Balah-Khan Yunis-Rafah (D694) | 1 |
+| PSE: Jenin-Tubas-Tulkarm-Qalqilya | no admin-1 match (best unit 36, group 0); carve: PSE units Jenin, Tubas, Tulkarm, Qalqiliya from PSE:Ramallah-Jericho; plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694); plus a sliver of PSE:Ramallah-Jericho (D694) | 0 |
+| PSE: Nablus-Salfit | no admin-1 match (best unit 35, group 0); carve: PSE units Nablus, Salfit from PSE:Ramallah-Jericho; plus a sliver of PSE:Ramallah-Jericho (D694) | 0 |
+| PSE: Ramallah-Jericho | alias hint -> PS-WBK; less PSE:Bethlehem-Hebron (carve); less PSE:Jenin-Tubas-Tulkarm-Qalqilya (carve); less PSE:Nablus-Salfit (carve); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Nablus-Salfit (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Jenin-Tubas-Tulkarm-Qalqilya (D694); a sliver to PSE:Bethlehem-Hebron (D694); a sliver to PSE:Bethlehem-Hebron (D694) | 1 |
 | QAT: Al Daayen-Umm Salal | name parts (2 pieces, worst match 100) | 2 |
 | QAT: Al Khor-Al Shamal | name parts (2 pieces, worst match 100) | 2 |
-| QAT: Al Rayyan | name match 100; less QAT:Al Shahaniya (carve) | 1 |
-| QAT: Al Shahaniya | no admin-1 match (best unit 67, group 0); carve: builder polygon from QAT:Al Rayyan | 0 |
+| QAT: Al Rayyan | name match 100; less QAT:Al Shahaniya (carve); a sliver to QAT:Al Shahaniya (D694) | 1 |
+| QAT: Al Shahaniya | no admin-1 match (best unit 67, group 0); carve: builder polygon from QAT:Al Rayyan; plus a sliver of QAT:Al Rayyan (D694) | 0 |
 | SAU: Qassim | alias hint -> SA-05 | 1 |
 | SYR: Damascus | alias hint -> SY-DI | 1 |
 | SYR: Quneitra | name match 100; plus unclaimed UNDOF | 2 |
@@ -526,7 +535,7 @@ AE-0001-AE-0002, AE-0001-AE-0003, AE-0001-AE-0005, BH-0001-QA-0008, BH-0001-QA-0
 |---|---|---|---|---|
 | AE-0001 | Abu Dhabi Downtown | Abu Dhabi | 8 | 410 |
 | AE-0007 | Das-Zirku Islands | Abu Dhabi | 1 | 410 |
-| MA-0001 | Casablanca Centre-Anfa | Casablanca-Settat | 16 | 332 |
+| MA-0001 | Casablanca Centre-Anfa | Casablanca-Settat | 16 | 337 |
 | SA-0014 | Dammam-Khobar-Dhahran | Eastern Province | 66 | 3804 |
 | SA-0016 | Ras Tanura-Qatif | Eastern Province | 109 | 3804 |
 
@@ -598,7 +607,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-YE-0005 (8), PS-0003 (7), YE-0016 (7), AE-0005 (6), IR-0018 (6), MA-0020 (6), OM-0012 (6), SA-0032 (6), AE-0001 (5), AE-0014 (5), IR-0017 (5), KW-0010 (5), EG-0005 (4), IQ-0002 (4), MA-0012 (4), SA-0015 (4), YE-0009 (4), AE-0003 (3), AE-0008 (3), BH-0001 (3), DZ-0012 (3), EG-0016 (3), EG-0033 (3), EG-0034 (3), IL-0016 (3), IL-0017 (3), IQ-0015 (3), IQ-0018 (3), KW-0001 (3), MA-0016 (3), OM-0009 (3), OM-0011 (3), PS-0005 (3), SA-0029 (3), TN-0006 (3), TN-0009 (3), AE-0002 (2), AE-0013 (2), DZ-0002 (2), DZ-0010 (2), EG-0004 (2), EG-0012 (2), EG-0014 (2), EG-0015 (2), EG-0017 (2), EG-0029 (2), IL-0005 (2), IL-0010 (2), IL-0012 (2), IL-0015 (2), IQ-0005 (2), IQ-0009 (2), IQ-0013 (2), IQ-0016 (2), IR-0010 (2), IR-0019 (2), IR-0027 (2), IR-0037 (2), JO-0002 (2), KW-0009 (2), LB-0005 (2), MA-0009 (2), MA-0010 (2), MA-0014 (2), OM-0004 (2), QA-0003 (2), SA-0010 (2), SA-0018 (2), SA-0020 (2), SA-0023 (2), SY-0014 (2), TN-0001 (2), TN-0002 (2), YE-0008 (2), YE-0011 (2), YE-0012 (2)
+YE-0005 (8), YE-0016 (7), AE-0005 (6), IR-0018 (6), MA-0020 (6), OM-0012 (6), SA-0032 (6), AE-0001 (5), AE-0014 (5), IR-0017 (5), KW-0010 (5), EG-0005 (4), IQ-0002 (4), SA-0015 (4), YE-0009 (4), AE-0003 (3), AE-0008 (3), BH-0001 (3), DZ-0012 (3), EG-0016 (3), EG-0033 (3), EG-0034 (3), IL-0016 (3), IL-0017 (3), IQ-0015 (3), IQ-0018 (3), KW-0001 (3), OM-0009 (3), OM-0011 (3), PS-0003 (3), PS-0005 (3), SA-0029 (3), TN-0006 (3), TN-0009 (3), AE-0002 (2), AE-0013 (2), DZ-0002 (2), DZ-0010 (2), EG-0004 (2), EG-0012 (2), EG-0014 (2), EG-0015 (2), EG-0017 (2), EG-0029 (2), IL-0005 (2), IL-0010 (2), IL-0012 (2), IL-0015 (2), IQ-0005 (2), IQ-0009 (2), IQ-0016 (2), IR-0010 (2), IR-0019 (2), IR-0027 (2), IR-0037 (2), JO-0002 (2), KW-0009 (2), LB-0005 (2), MA-0010 (2), MA-0016 (2), OM-0004 (2), QA-0003 (2), SA-0010 (2), SA-0018 (2), SA-0020 (2), SA-0023 (2), SY-0014 (2), TN-0001 (2), TN-0002 (2), YE-0008 (2), YE-0011 (2), YE-0012 (2)
 
 ## Visual check
 
