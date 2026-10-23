@@ -7,11 +7,16 @@
 //! - `--bench-max [seconds]`: the sim at max speed (alerts off) with the shell drawing; prints
 //!   frame times and game hours per second, to show the window stays responsive.
 //!
-//! - `--bench-map [seconds]` (M8; D639): the map behind four panes in three windows (Companies
-//!   and Industries side by side, a company page, the news feed); the camera pans every frame
+//! - `--bench-map [seconds]` (M8; D639, D742): the map behind dense panes: Pdoomberg's F10
+//!   Screener opened and closed (its page held behind, D520), then four panes in three windows
+//!   (Companies and Industries side by side, a company page, and the
+//!   Province page of the province with the most HQs and units); the camera pans every frame
 //!   and zooms in and out through the World, Country and Province levels while the hover point
-//!   moves; prints frame times and the frames at each zoom level. Run it with `--map-dir` or
-//!   `--synthetic-map` for a map to draw.
+//!   moves; prints frame times overall and at each zoom level. It draws the repository's map
+//!   (`assets/map`) unless `--map-dir` or `--synthetic-map` names another. The sim stays
+//!   paused unless `--bench-map-running [SPEED]` runs it (speed 1 to 5, default 5, the max;
+//!   alerts off), so the panes' rebuilds and the colour table's rewrites are measured too
+//!   (D744); either way it lists the slowest frames with what moved in them.
 //!
 //! All run without vsync so the frame times are the real cost, then exit.
 
@@ -52,6 +57,8 @@ pub enum BenchMode {
         seconds: f64,
         mode: sim::views::map_layers::MapMode,
         metros: bool,
+        /// The sim's speed while it measures (1 to 5; 0 paused), alerts off (D744).
+        speed: u8,
     },
     /// Open every page kind and time it to its first laid-out frame
     /// ([`crate::page_bench`]).
@@ -84,9 +91,33 @@ struct Bench {
     next_col: usize,
     /// The rows were repeated to the asked count.
     repeated: bool,
-    /// Measured frames at each map zoom level (World, Country, Province).
-    level_frames: [u64; 3],
+    /// Measured frame times at each map zoom level (World, Country, Province), by the level
+    /// the frame drew at.
+    level_ms: [Vec<f64>; 3],
+    /// The zoom level the map bench drove the last frame at.
+    last_level: Option<usize>,
+    /// v_company_row's version (the monthly views the pages rebuild on move with it) and the
+    /// colour table's layer generation at the last frame start, to tell which frames rebuilt
+    /// the pages' monthly views or rewrote the table.
+    last_monthly: u64,
+    last_colors: Option<u64>,
+    /// Every measured map frame: its time, number, zoom level, and whether the monthly views
+    /// moved or the colour table was rewritten in it.
+    map_frames: Vec<MapFrame>,
 }
+
+/// One measured frame of the map bench.
+#[derive(Debug, Clone, Copy)]
+struct MapFrame {
+    ms: f64,
+    frame: u64,
+    level: Option<usize>,
+    monthly: bool,
+    colors: bool,
+}
+
+/// The slowest frames the map bench lists.
+pub const MAP_SLOWEST_SHOWN: usize = 8;
 
 pub struct BenchPlugin(pub BenchMode);
 
@@ -108,7 +139,11 @@ impl Plugin for BenchPlugin {
             sort_window: 0,
             next_col: 0,
             repeated: false,
-            level_frames: [0; 3],
+            level_ms: Default::default(),
+            last_level: None,
+            last_monthly: 0,
+            last_colors: None,
+            map_frames: Vec::new(),
         })
         .add_systems(First, measure)
         .add_systems(Update, drive.before(TableSystems));
@@ -202,15 +237,36 @@ fn measure(
     nodes: Query<&ComputedNode>,
     children: Query<&Children>,
     table_q: Query<&mut Table>,
+    gpu: Option<Res<crate::map::render::MapGpu>>,
     mut exit: MessageWriter<AppExit>,
 ) {
     let now = Instant::now();
     b.frame += 1;
+    // What the frame just ended moved: the monthly views (the open pages rebuild on them), the
+    // colour table.
+    let monthly = views.company_rows.version();
+    let colors = gpu.and_then(|g| g.colors_generation());
+    let moved = (monthly != b.last_monthly, colors != b.last_colors);
+    b.last_monthly = monthly;
+    b.last_colors = colors;
     if let Some(last) = b.last
         && b.frame > u64::from(WARMUP_FRAMES)
     {
         let ms = now.duration_since(last).as_secs_f64() * 1e3;
         b.frames_ms.push(ms);
+        if let Some(l) = b.last_level {
+            b.level_ms[l].push(ms);
+        }
+        if let BenchMode::Map { .. } = b.mode {
+            let (frame, level) = (b.frame - 1, b.last_level);
+            b.map_frames.push(MapFrame {
+                ms,
+                frame,
+                level,
+                monthly: moved.0,
+                colors: moved.1,
+            });
+        }
         if b.sort_window > 0 {
             b.sort_window -= 1;
             b.sort_frames_ms.push(ms);
@@ -238,8 +294,57 @@ fn measure(
     );
     report("frame ms", &mut b.frames_ms);
     if let BenchMode::Map { .. } = b.mode {
-        let [w, c, p] = b.level_frames;
-        println!("BENCH map: frames at World {w}, Country {c}, Province {p}");
+        let n = |i: usize| b.level_ms[i].len();
+        println!(
+            "BENCH map: frames at World {}, Country {}, Province {}",
+            n(0),
+            n(1),
+            n(2)
+        );
+        const LEVELS: [&str; 3] = ["World", "Country", "Province"];
+        for (i, name) in LEVELS.into_iter().enumerate() {
+            let mut v = std::mem::take(&mut b.level_ms[i]);
+            report(&format!("frame ms at {name} zoom"), &mut v);
+        }
+        let f = &b.map_frames;
+        let (with_views, with_colors) = (
+            f.iter().filter(|x| x.monthly).count(),
+            f.iter().filter(|x| x.colors).count(),
+        );
+        println!(
+            "BENCH map: {with_views} frames rebuilt the monthly views, {with_colors} rewrote the colour table"
+        );
+        for (name, keep) in [
+            ("frames that rebuilt the monthly views", true),
+            ("frames that did not", false),
+        ] {
+            let mut v: Vec<f64> = f
+                .iter()
+                .filter(|x| x.monthly == keep)
+                .map(|x| x.ms)
+                .collect();
+            report(&format!("frame ms, {name}"), &mut v);
+        }
+        let mut slow = f.clone();
+        slow.sort_by(|a, b| b.ms.total_cmp(&a.ms));
+        for x in slow.iter().take(MAP_SLOWEST_SHOWN) {
+            println!(
+                "BENCH map slow frame {}: {:.2} ms at {} zoom{}{}",
+                x.frame,
+                x.ms,
+                x.level.map_or("unknown", |l| LEVELS[l]),
+                if x.monthly {
+                    ", monthly views rebuilt"
+                } else {
+                    ""
+                },
+                if x.colors {
+                    ", colour table rewritten"
+                } else {
+                    ""
+                },
+            );
+        }
     }
     if let BenchMode::Table { .. } = b.mode {
         let mut s = std::mem::take(&mut b.sort_frames_ms);
@@ -314,15 +419,16 @@ fn drive(mut b: ResMut<Bench>, tables: Option<Res<PdoombergUi>>, mut q: Query<&m
 }
 
 /// The frame the map bench sets its map mode at (after the panes open).
-pub const MAP_MODE_FRAME: u64 = 14;
+pub const MAP_MODE_FRAME: u64 = 20;
 /// Frames between the map bench's zoom moves, and how many notches each moves.
 pub const MAP_ZOOM_EVERY: u64 = 45;
 pub const MAP_ZOOM_STEPS: f32 = 3.5;
 /// Logical pixels the map bench pans a frame.
 pub const MAP_PAN_PER_FRAME: f32 = 6.0;
 
-/// The map bench: sets up the panes, then pans every frame, zooms in for 4 moves and out for 4,
-/// and moves the hover point; counts the frames at each zoom level.
+/// The map bench: opens and closes Pdoomberg's F10 (held behind), sets up the panes, then pans
+/// every frame, zooms in for 4 moves and out for 4, and moves the hover point; notes the zoom
+/// level each frame draws at.
 #[allow(clippy::too_many_arguments)]
 fn drive_map(
     mut b: ResMut<Bench>,
@@ -335,37 +441,72 @@ fn drive_map(
     mut windows: MessageWriter<crate::workspace::WindowAction>,
     mut input: MessageWriter<crate::map::MapInput>,
     mut modes: MessageWriter<crate::map::modes::MapModeInput>,
+    mut pdb: MessageWriter<OpenPdoomberg>,
+    mut nav: MessageWriter<crate::ui::rail::Navigate>,
+    pdb_ui: Option<Res<PdoombergUi>>,
+    mut control: MessageWriter<SimControl>,
 ) {
     use crate::map::camera::ZoomLevel;
     use crate::map::modes::MapModeInput;
     if b.frame == MAP_MODE_FRAME
-        && let BenchMode::Map { mode, metros, .. } = b.mode
+        && let BenchMode::Map {
+            mode,
+            metros,
+            speed,
+            ..
+        } = b.mode
     {
         modes.write(MapModeInput::Set(mode));
         modes.write(MapModeInput::Metros(metros));
-        println!("BENCH map: mode {mode:?}, Metro outlines {metros}");
+        println!("BENCH map: mode {mode:?}, Metro outlines {metros}, sim speed {speed}");
+        if speed > 0 {
+            for kind in AlertKind::ALL {
+                control.write(SimControl(Control::SetAlert {
+                    kind,
+                    level: AlertLevel::Off,
+                }));
+            }
+            control.write(SimControl(Control::SetSpeed(speed)));
+        }
     }
     use crate::pages::PageRef;
     use crate::workspace::{OpenPage, PaneAction, WindowAction};
     let f = b.frame;
     match f {
         2 => {
-            open.write(OpenPage::focused(PageRef::Companies));
+            pdb.write(OpenPdoomberg {
+                function: PdbFunction::F10,
+                company: None,
+            });
         }
         4 => {
-            panes.write(PaneAction::Split(None, crate::workspace::Axis::Row));
+            nav.write(crate::ui::rail::Navigate(crate::ui::rail::Screen::Map));
         }
         6 => {
-            open.write(OpenPage::focused(PageRef::Industries));
+            open.write(OpenPage::focused(PageRef::Companies));
         }
         8 => {
+            panes.write(PaneAction::Split(None, crate::workspace::Axis::Row));
+        }
+        10 => {
+            open.write(OpenPage::focused(PageRef::Industries));
+        }
+        12 => {
             let co = views.company_rows.get().rows.first().map(|r| r.id);
             windows.write(WindowAction::New(co.map(PageRef::Company)));
         }
-        10 => {
-            windows.write(WindowAction::New(Some(PageRef::News)));
+        14 => {
+            // The densest Province page: the most HQs and units, ties to the lower id.
+            let p = views
+                .province_cards
+                .get()
+                .cards
+                .iter()
+                .max_by_key(|c| (c.hqs.len() + c.units.len(), std::cmp::Reverse(c.id)))
+                .map(|c| c.id);
+            windows.write(WindowAction::New(p.map(PageRef::Province)));
         }
-        12 => {
+        16 => {
             let first = ws.windows().first().map(|w| w.id);
             if let Some(id) = first {
                 windows.write(WindowAction::Raise(id));
@@ -374,6 +515,18 @@ fn drive_map(
                 "BENCH map: {} windows, {} panes",
                 ws.windows().len(),
                 ws.all_pane_ids().len()
+            );
+        }
+        18 => {
+            let pages: Vec<String> = ws
+                .all_pane_ids()
+                .iter()
+                .filter_map(|&p| ws.page(p).map(PageRef::key))
+                .collect();
+            let behind = pdb_ui.and_then(|u| u.built);
+            println!(
+                "BENCH map: panes {}; Pdoomberg behind: {behind:?}",
+                pages.join(", ")
             );
         }
         _ => {}
@@ -402,10 +555,9 @@ fn drive_map(
     let t = f as f32 * 0.05;
     let at = view * Vec2::new(0.2 + 0.15 * t.sin(), 0.5 + 0.3 * (t * 0.7).cos());
     input.write(crate::map::MapInput::Hover(Some(at)));
-    let i = match level {
+    b.last_level = Some(match level {
         ZoomLevel::World => 0,
         ZoomLevel::Country => 1,
         ZoomLevel::Province => 2,
-    };
-    b.level_frames[i] += 1;
+    });
 }
