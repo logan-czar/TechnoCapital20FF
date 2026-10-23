@@ -41,6 +41,9 @@ pub struct Stats {
     pub coastal_px: u32,
     /// The province had no pixel and was given the one at its interior point.
     pub forced: bool,
+    /// Pixels this province's polygons took from a province drawn before it (overlapping
+    /// shapes; 0 when the shapes tile cleanly).
+    pub overwritten_px: u32,
 }
 
 /// The rasterized map: index bitmap plus everything derived from it.
@@ -155,6 +158,7 @@ pub fn build(frame: Frame, mut provinces: Vec<ProvinceShape>, land: Option<&[boo
     );
     let (w, h) = (frame.width as usize, frame.height as usize);
     let mut raster = vec![0u16; w * h];
+    let mut overwritten = vec![0u32; provinces.len()];
     for (i, p) in provinces.iter().enumerate() {
         let v = (i + 1) as u16;
         for poly in &p.shape {
@@ -163,7 +167,11 @@ pub fn build(frame: Frame, mut provinces: Vec<ProvinceShape>, land: Option<&[boo
                 frame.height,
                 &rings_px(&frame, poly),
                 |x, y| {
-                    raster[y as usize * w + x as usize] = v;
+                    let cell = &mut raster[y as usize * w + x as usize];
+                    if *cell != 0 && *cell != v {
+                        overwritten[i] += 1;
+                    }
+                    *cell = v;
                 },
             );
         }
@@ -244,7 +252,10 @@ pub fn build(frame: Frame, mut provinces: Vec<ProvinceShape>, land: Option<&[boo
         )
         .collect();
 
-    let stats = province_stats(&frame, &raster, n, &forced, land);
+    let mut stats = province_stats(&frame, &raster, n, &forced, land);
+    for (st, o) in stats.iter_mut().zip(&overwritten) {
+        st.overwritten_px = *o;
+    }
     let adjacency = adjacency(w, h, &raster);
     let mut borders = vec![[0u8; 3]; w * h];
     for (ch, key) in [None, Some(&region_key), Some(&country_key)]
@@ -406,6 +417,7 @@ fn province_stats(
             components,
             coastal_px,
             forced: forced[v - 1],
+            overwritten_px: 0,
         });
     }
     out

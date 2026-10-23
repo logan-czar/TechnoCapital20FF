@@ -38,7 +38,14 @@ pub fn fill_rings(
                 let (x0, y0) = r[i];
                 let (x1, y1) = r[(i + 1) % n];
                 if (y0 <= yc) != (y1 <= yc) {
-                    xs.push(x0 + (yc - y0) * (x1 - x0) / (y1 - y0));
+                    // from the endpoint with the lower y, so a shared edge walked either way
+                    // gives bit-identical crossings
+                    let ((ax, ay), (bx, by)) = if y0 <= y1 {
+                        ((x0, y0), (x1, y1))
+                    } else {
+                        ((x1, y1), (x0, y0))
+                    };
+                    xs.push(ax + (yc - ay) * (bx - ax) / (by - ay));
                 }
             }
         }

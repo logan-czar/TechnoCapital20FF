@@ -42,16 +42,23 @@ fn prop(f: &geojson::Feature, key: &str) -> Option<String> {
 
 /// Provinces from a GeoJSON with `province_id`, `region` and `country` properties.
 pub fn read_provinces(path: &Path) -> Result<Vec<ProvinceShape>> {
+    let text = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    parse_provinces(&text, &path.display().to_string())
+}
+
+/// Provinces from GeoJSON text (`origin` names it in errors).
+pub fn parse_provinces(text: &str, origin: &str) -> Result<Vec<ProvinceShape>> {
+    let fc: geojson::FeatureCollection = text.parse().map_err(|e| format!("{origin}: {e}"))?;
     let mut out = Vec::new();
-    for (n, f) in read_features(path)?.into_iter().enumerate() {
+    for (n, f) in fc.features.into_iter().enumerate() {
         let id = prop(&f, "province_id")
-            .ok_or_else(|| format!("{}: feature {n} has no province_id", path.display()))?;
+            .ok_or_else(|| format!("{origin}: feature {n} has no province_id"))?;
         let region = prop(&f, "region").unwrap_or_default();
         let country = prop(&f, "country").unwrap_or_default();
         let Some(geom) = f.geometry else { continue };
         let g: Geometry<f64> = geom
             .try_into()
-            .map_err(|e| format!("{}: {id}: {e}", path.display()))?;
+            .map_err(|e| format!("{origin}: {id}: {e}"))?;
         if let Some(shape) = to_multi(g) {
             out.push(ProvinceShape {
                 id,
@@ -261,24 +268,29 @@ pub fn write_assets(map: &Map, meta: &Meta, out: &Path) -> Result<Vec<PathBuf>> 
     Ok(written)
 }
 
+/// A CSV field, quoted when it holds a comma, quote or newline (quotes doubled).
+fn csv_field(v: &str) -> String {
+    if v.contains([',', '"', '\n', '\r']) {
+        format!("\"{}\"", v.replace('"', "\"\""))
+    } else {
+        v.to_string()
+    }
+}
+
 /// Per-province QA rows for the P8 report: every CSV province, with or without a shape.
 pub fn write_qa(map: &Map, csv: &[CsvProvince], path: &Path) -> Result<()> {
     let mut s = String::from(
-        "province_id,name,country,in_bitmap,area_px,tiny,forced,components,coastal_px,coastal_bitmap,coastal_csv,coastal_match\n",
+        "province_id,name,country,in_bitmap,area_px,tiny,forced,components,coastal_px,coastal_bitmap,coastal_csv,coastal_match,overwritten_px\n",
     );
     for p in csv {
         let row = map.ids.binary_search(&p.id).ok().map(|i| &map.stats[i]);
         let yn = |b: bool| if b { "Y" } else { "N" };
-        let name = if p.name.contains(',') {
-            format!("\"{}\"", p.name)
-        } else {
-            p.name.clone()
-        };
+        let name = csv_field(&p.name);
         match row {
             Some(st) => {
                 let coastal = st.coastal_px >= COASTAL_MIN_PX;
                 s += &format!(
-                    "{},{name},{},Y,{},{},{},{},{},{},{},{}\n",
+                    "{},{name},{},Y,{},{},{},{},{},{},{},{},{}\n",
                     p.id,
                     p.country,
                     st.area_px,
@@ -288,12 +300,13 @@ pub fn write_qa(map: &Map, csv: &[CsvProvince], path: &Path) -> Result<()> {
                     st.coastal_px,
                     yn(coastal),
                     yn(p.coastal),
-                    yn(coastal == p.coastal)
+                    yn(coastal == p.coastal),
+                    st.overwritten_px
                 );
             }
             None => {
                 s += &format!(
-                    "{},{name},{},N,0,,,,,,{},\n",
+                    "{},{name},{},N,0,,,,,,{},,\n",
                     p.id,
                     p.country,
                     yn(p.coastal)

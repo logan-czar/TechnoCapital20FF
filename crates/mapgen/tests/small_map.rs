@@ -34,10 +34,22 @@ fn feature(id: &str, region: &str, country: &str, polys: &[String]) -> String {
     )
 }
 
-fn tmp(name: &str) -> PathBuf {
-    let d = std::env::temp_dir().join(format!("mapgen-test-{}", std::process::id()));
-    fs::create_dir_all(&d).unwrap();
-    d.join(name)
+/// A temp directory of this test's own, removed when dropped.
+struct TempDir(PathBuf);
+
+impl TempDir {
+    fn new(test: &str) -> TempDir {
+        let d = std::env::temp_dir().join(format!("mapgen-test-{}-{test}", std::process::id()));
+        let _ = fs::remove_dir_all(&d);
+        fs::create_dir_all(&d).unwrap();
+        TempDir(d)
+    }
+}
+
+impl Drop for TempDir {
+    fn drop(&mut self) {
+        let _ = fs::remove_dir_all(&self.0);
+    }
 }
 
 fn small_map() -> build::Map {
@@ -56,16 +68,11 @@ fn small_map() -> build::Map {
         // smaller than a pixel: covers no pixel centre
         feature("DD-0001", "Z:R5", "Z", &[rect(50.1, 20.1, 50.4, 20.4)]),
     ];
-    let path = tmp("small.geojson");
-    fs::write(
-        &path,
-        format!(
-            r#"{{"type":"FeatureCollection","features":[{}]}}"#,
-            feats.join(",")
-        ),
-    )
-    .unwrap();
-    let provinces = io::read_provinces(&path).unwrap();
+    let text = format!(
+        r#"{{"type":"FeatureCollection","features":[{}]}}"#,
+        feats.join(",")
+    );
+    let provinces = io::parse_provinces(&text, "small map").unwrap();
     assert_eq!(provinces.len(), 6);
     let land_polys: Vec<_> = provinces.iter().map(|p| p.shape.clone()).collect();
     let land = build::land_mask(&frame(), &land_polys);
@@ -102,6 +109,10 @@ fn index_bitmap_and_ids() {
     let areas: Vec<u32> = m.stats.iter().map(|s| s.area_px).collect();
     assert_eq!(areas, [64, 64, 16, 4, 8, 1]);
     assert!(m.stats[5].forced && !m.stats[0].forced);
+    assert!(
+        m.stats.iter().all(|s| s.overwritten_px == 0),
+        "the shapes tile cleanly"
+    );
 }
 
 #[test]
@@ -156,7 +167,8 @@ fn coastal_edges_need_open_water() {
 #[test]
 fn writes_every_contract_file() {
     let m = small_map();
-    let out = tmp("assets");
+    let dir = TempDir::new("assets");
+    let out = dir.0.clone();
     let meta = Meta {
         pipeline_version: "test".into(),
         sources: vec![("natural_earth".into(), "v0".into())],
@@ -207,4 +219,25 @@ fn writes_every_contract_file() {
         .unwrap()
         .into_rgb8();
     assert_eq!(borders.get_pixel(14, 12).0, [1, 3, 3]);
+}
+
+#[test]
+fn overlapping_shapes_are_counted() {
+    // EE-0002 is drawn after EE-0001 and covers 2 x 4 of its pixels
+    let feats = [
+        feature("EE-0001", "E:R", "E", &[rect(4.0, 4.0, 10.0, 8.0)]),
+        feature("EE-0002", "E:R", "E", &[rect(8.0, 4.0, 12.0, 8.0)]),
+    ];
+    let text = format!(
+        r#"{{"type":"FeatureCollection","features":[{}]}}"#,
+        feats.join(",")
+    );
+    let m = build::build(
+        frame(),
+        io::parse_provinces(&text, "overlap").unwrap(),
+        None,
+    );
+    assert_eq!(m.stats[0].area_px, 16);
+    assert_eq!(m.stats[1].overwritten_px, 8);
+    assert_eq!(m.stats[0].overwritten_px, 0);
 }

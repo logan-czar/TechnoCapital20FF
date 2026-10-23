@@ -1,6 +1,6 @@
 //! mapgen command line (build-plan P7). Run in release: the 8192 x 4096 passes are slow unoptimized.
 //!
-//!   mapgen build --geojson provinces.geojson --land land.geojson --csv provinces-north-america.csv
+//!   mapgen build --geojson provinces.geojson [--geojson more.geojson ...] --land land.geojson --csv provinces-north-america.csv
 //!                --out assets/map --qa work/mapgen-qa.csv --pipeline-version pa-1
 //!                --source natural_earth=v5.1.2 --source geoboundaries=v6.0.0
 //!   mapgen synthetic --csv a.csv [--csv b.csv ...] --out DIR
@@ -19,7 +19,7 @@ use mapgen::synthetic;
 #[derive(Default)]
 struct Args {
     mode: String,
-    geojson: Option<PathBuf>,
+    geojson: Vec<PathBuf>,
     land: Option<PathBuf>,
     csv: Vec<PathBuf>,
     out: Option<PathBuf>,
@@ -44,7 +44,7 @@ fn parse() -> Result<Args, String> {
     while let Some(flag) = it.next() {
         let mut val = || it.next().ok_or_else(|| format!("{flag} needs a value"));
         match flag.as_str() {
-            "--geojson" => a.geojson = Some(val()?.into()),
+            "--geojson" => a.geojson.push(val()?.into()),
             "--land" => a.land = Some(val()?.into()),
             "--csv" => a.csv.push(val()?.into()),
             "--out" => a.out = Some(val()?.into()),
@@ -83,8 +83,21 @@ fn run() -> Result<(), String> {
     let t = Instant::now();
     let (provinces, land, sources) = match a.mode.as_str() {
         "build" => {
-            let g = a.geojson.as_ref().ok_or("--geojson is required")?;
-            let provinces = io::read_provinces(g)?;
+            if a.geojson.is_empty() {
+                return Err("--geojson is required".into());
+            }
+            // one file per built region; every region's provinces go into the same bitmap
+            let mut provinces = Vec::new();
+            for g in &a.geojson {
+                provinces.extend(io::read_provinces(g)?);
+            }
+            let mut seen = std::collections::BTreeSet::new();
+            if let Some(dup) = provinces.iter().find(|p| !seen.insert(p.id.clone())) {
+                return Err(format!(
+                    "province {} appears in more than one --geojson",
+                    dup.id
+                ));
+            }
             let land = match &a.land {
                 Some(l) => Some(build::land_mask(&frame, &io::read_polygons(l)?)),
                 None => None,
