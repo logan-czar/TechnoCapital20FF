@@ -1,5 +1,20 @@
 province_id,name,country,region,method,source_ids,confidence,provenance,note
 AD-0001,Andorra,AND,Andorra,admin1,AND-4878;AND-4879;AND-4880;AND-4877;AND-4882;AND-4881;AND-4876,0.95,Natural Earth 10m (public domain),whole region (whole country (7 admin-1 units))
+AE-0001,Abu Dhabi Downtown,ARE,Abu Dhabi,voronoi,ARE-349,0.85,Natural Earth 10m (public domain),"seeds: point 54.37,24.47 (hint); 4 whole parts"
+AE-0002,Masdar-Yas-Saadiyat,ARE,Abu Dhabi,voronoi,ARE-349,0.85,Natural Earth 10m (public domain),"seeds: point 54.43,24.54 (hint) (snapped to land); point 54.6,24.49 (hint); point 54.62,24.43 (hint); 0 whole parts, 1 split"
+AE-0003,Mussafah-Khalifa Port,ARE,Abu Dhabi,voronoi,ARE-349,0.85,Natural Earth 10m (public domain),"seeds: point 54.49,24.35 (hint); point 54.65,24.81 (hint) (snapped to land); point 54.7,24.7 (hint); 1 whole parts, 1 split"
+AE-0004,Al Ain,ARE,Abu Dhabi,voronoi,ARE-349,0.85,Natural Earth 10m (public domain),"seeds: point 55.76,24.21 (hint); point 55.77,24.06 (hint); 0 whole parts, 1 split"
+AE-0005,Ruwais-Al Dhafra,ARE,Abu Dhabi,voronoi,ARE-349,0.85,Natural Earth 10m (public domain),"seeds: point 51.8,24.1 (hint) (snapped to land); point 52.27,23.97 (hint); point 52.73,24.11 (hint); point 53.7,24.15 (hint) (snapped to land); 6 whole parts, 1 split"
+AE-0006,Liwa-Habshan,ARE,Abu Dhabi,voronoi,ARE-349,0.85,Natural Earth 10m (public domain),"seeds: point 53.1,23.4 (hint); point 53.62,23.83 (hint); point 53.73,23.13 (hint); point 54.0,23.3 (hint); 0 whole parts, 1 split"
+AE-0007,Das-Zirku Islands,ARE,Abu Dhabi,voronoi,ARE-349,0.85,Natural Earth 10m (public domain),"seeds: point 52.87,25.15 (hint) (snapped to land); point 53.07,24.88 (hint); 1 whole parts"
+AE-0008,Dubai Core,ARE,Dubai,voronoi,ARE-350,0.85,Natural Earth 10m (public domain),"seeds: point 55.27,25.2 (hint); point 55.31,25.26 (hint) (snapped to land); 1 whole parts, 1 split"
+AE-0010,Dubai Marina-Jebel Ali,ARE,Dubai,voronoi,ARE-350,0.85,Natural Earth 10m (public domain),"seeds: point 55.03,24.99 (hint) (snapped to land); point 55.14,25.08 (hint) (snapped to land); point 55.21,25.17 (hint) (snapped to land); 0 whole parts, 1 split"
+AE-0012,Sharjah-Ajman,ARE,Sharjah,voronoi,ARE-346;ARE-348,0.9,Natural Earth 10m (public domain),"seeds: place Sharjah; unit Ajman; unit Sharjah at place Sharjah; 1 whole admin1 units, split: Sharjah"
+AE-0013,Hamriyah-Al Dhaid,ARE,Sharjah,voronoi,ARE-348,0.85,Natural Earth 10m (public domain),"seeds: point 55.53,25.47 (hint); point 55.88,25.29 (hint) (snapped to land); 0 whole admin1 units, split: Sharjah"
+AE-0014,Khor Fakkan-Kalba,ARE,Sharjah,voronoi,ARE-348,0.85,Natural Earth 10m (public domain),"seeds: point 56.34,25.34 (hint); point 56.35,25.07 (hint); 0 whole admin1 units, split: Sharjah"
+AE-0016,Umm al-Quwain,ARE,Umm al-Quwain,admin1,ARE-339,0.92,Natural Earth 10m (public domain),whole region (name match 92)
+AE-0017,Ras al-Khaimah,ARE,Ras al-Khaimah,admin1,ARE-341;ARE-338;ARE-347,1.0,Natural Earth 10m (public domain),"whole region (name match 100; plus unclaimed Fujayrah, Neutral Zone)"
+AE-0018,Fujairah,ARE,Fujairah,admin1,ARE-344,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 AG-0001,Antigua and Barbuda,ATG,Antigua and Barbuda,admin1,ATG-5096;ATG-5095;ATG-5094;ATG-5093;ATG-5098;ATG-5097;ATG-5091;ATG-5092,0.95,Natural Earth 10m (public domain),whole region (whole country (8 admin-1 units))
 AL-0001,Shkoder-Lezhe,ALB,Northern Albania,admin1,ALB-1498;ALB-1528,0.9,Natural Earth 10m (public domain),seeds: place Lezhë; place Shkodër; unit Lezhë at place Lezhë; unit Shkodër at place Shkodër; 2 whole admin1 units
 AL-0002,Kukes-Diber,ALB,Northern Albania,admin1,ALB-1526;ALB-1502,0.9,Natural Earth 10m (public domain),seeds: place Kukës; unit Dibër; unit Kukës at place Kukës; 2 whole admin1 units
@@ -149,6 +164,7 @@ BG-0008,Varna,BGR,North-East,admin1,BGR-2260,0.9,Natural Earth 10m (public domai
 BG-0009,Dobrich-Shumen,BGR,North-East,admin1,BGR-2259;BGR-2258;BGR-2257,0.9,Natural Earth 10m (public domain),seeds: place Dobrich; place Shumen; unit Dobrich at place Dobrich; unit Shumen at place Shumen; unit Targovishte; 3 whole admin1 units
 BG-0010,Ruse-Veliko Tarnovo,BGR,North-Central,admin1,BGR-2261;BGR-2262;BGR-2249;BGR-2256;BGR-2246,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> BG-18, BG-04, BG-07, BG-17, BG-19)"
 BG-0011,Pleven-Vratsa,BGR,North-West,admin1,BGR-2253;BGR-2250;BGR-2251;BGR-2248;BGR-2247,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> BG-15, BG-06, BG-05, BG-12, BG-11)"
+BH-0001,Bahrain,BHR,Bahrain,admin1,BHR-4929;BHR-4927;BHR-4926;BHR-4928;BHR-4930,0.95,Natural Earth 10m (public domain),whole region (whole country (5 admin-1 units))
 BM-0001,Bermuda,BMU,Bermuda,admin1,BMU-5137;BMU-5142;BMU-5136;BMU-5139;BMU-5134;BMU-5138;BMU-5144;BMU-5143;BMU-5141;BMU-5140;BMU-5135,0.95,Natural Earth 10m (public domain),whole region (whole country (11 admin-1 units))
 BN-0001,Brunei-Muara,BRN,Brunei-Muara,admin1,BRN-1182,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 BN-0002,Belait,BRN,Belait,admin1,BRN-1181,1.0,Natural Earth 10m (public domain),whole region (name match 100)
@@ -653,6 +669,35 @@ DO-0008,San Juan-El Valle,DOM,El Valle,admin1,DOM-1972;DOM-1393,0.95,Natural Ear
 DO-0009,San Pedro de Macoris,DOM,Higuamo,admin1,DOM-1980;DOM-1396;DOM-1981,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> DO-23, DO-29, DO-30)"
 DO-0010,Punta Cana-La Altagracia,DOM,Yuma,admin1,DOM-1987,0.9,Natural Earth 10m (public domain),seeds: place Bávaro; unit La Altagracia; 1 whole admin1 units
 DO-0011,La Romana-El Seibo,DOM,Yuma,admin1,DOM-1986;DOM-1988,0.8,Natural Earth 10m (public domain),seeds: place El Seibo; place La Romana (snapped to land); 2 whole admin1 units
+DZ-0001,Algiers Centre-Hydra,DZA,Algiers,voronoi,DZA-2195,0.85,Natural Earth 10m (public domain),"seeds: point 3.03,36.74 (hint); point 3.06,36.75 (hint); 0 whole parts, 1 split"
+DZ-0002,Algiers East-Rouiba,DZA,Algiers,voronoi,DZA-2195,0.85,Natural Earth 10m (public domain),"seeds: point 3.18,36.72 (hint); point 3.21,36.69 (hint); point 3.33,36.74 (hint) (snapped to land); 0 whole parts, 1 split"
+DZ-0003,Algiers West-Cheraga,DZA,Algiers,voronoi,DZA-2195,0.85,Natural Earth 10m (public domain),"seeds: point 2.83,36.69 (hint) (snapped to land); point 2.87,36.75 (hint) (snapped to land); point 2.96,36.76 (hint) (snapped to land); point 3.04,36.79 (hint); 0 whole parts, 1 split"
+DZ-0004,Blida-Tipaza,DZA,Blida-Tipaza,admin1,DZA-2198;DZA-2209,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0005,Tizi Ouzou-Boumerdes,DZA,Boumerdes-Tizi Ouzou,admin1,DZA-2197;DZA-2196,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0006,Bejaia-Bouira,DZA,Bejaia-Bouira,admin1,DZA-2208;DZA-2210,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0007,Setif-Bordj Bou Arreridj,DZA,Setif-Bordj Bou Arreridj,admin1,DZA-2215;DZA-2207,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0008,Constantine,DZA,Constantine-Mila,admin1,DZA-2217;DZA-2220,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0009,Annaba,DZA,Annaba-El Tarf-Guelma,admin1,DZA-2164;DZA-2163;DZA-2218,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
+DZ-0010,Skikda,DZA,Skikda-Jijel,admin1,DZA-2166;DZA-2165,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0011,Batna-Khenchela,DZA,Batna-Khenchela,admin1,DZA-2216;DZA-2219,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0012,Tebessa-Ouenza,DZA,Tebessa-Souk Ahras-Oum El Bouaghi,admin1,DZA-2223;DZA-2222;DZA-2221,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
+DZ-0013,Biskra-El Oued,DZA,Biskra-El Oued,admin1,DZA-2191;DZA-2211,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0014,Msila-Bou Saada,DZA,M'Sila,admin1,DZA-2214,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+DZ-0015,Oran,DZA,Oran,voronoi,DZA-2145,0.8,Natural Earth 10m (public domain),"seeds: place Oran; 0 whole parts, 1 split"
+DZ-0016,Arzew-Bethioua,DZA,Oran,voronoi,DZA-2145,0.85,Natural Earth 10m (public domain),"seeds: point -0.26,35.81 (hint); point -0.32,35.85 (hint); 0 whole parts, 1 split"
+DZ-0017,Mostaganem-Relizane,DZA,Mostaganem-Relizane,admin1,DZA-2202;DZA-2203,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0018,Tlemcen,DZA,Tlemcen-Ain Temouchent,admin1,DZA-2147;DZA-2144,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0019,Sidi Bel Abbes-Mascara,DZA,Sidi Bel Abbes-Mascara-Saida,admin1,DZA-2204;DZA-2146;DZA-2201,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
+DZ-0020,Chlef-Ain Defla,DZA,Chlef-Ain Defla-Tissemsilt,admin1,DZA-2200;DZA-2206;DZA-2199,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
+DZ-0021,Medea-Djelfa,DZA,Medea-Djelfa,admin1,DZA-2213;DZA-2212,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0022,Laghouat-Hassi R'Mel,DZA,Laghouat-Tiaret,admin1,DZA-2193;DZA-2205,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+DZ-0023,Hassi Messaoud,DZA,Ouargla,voronoi,DZA-2194,0.8,Natural Earth 10m (public domain),"seeds: place Hassi Messaoud; 0 whole parts, 1 split"
+DZ-0024,Ouargla-Touggourt,DZA,Ouargla,voronoi,DZA-2194,0.8,Natural Earth 10m (public domain),"seeds: place Ouargla; place Touggourt; 0 whole parts, 1 split"
+DZ-0025,Ghardaia,DZA,Ghardaia,admin1,DZA-2192,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+DZ-0026,Illizi-In Amenas,DZA,Illizi,admin1,DZA-2188,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+DZ-0027,Tamanrasset-In Salah,DZA,Tamanrasset,admin1,DZA-2189,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+DZ-0028,Adrar-Timimoun,DZA,Adrar,admin1,DZA-2143,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+DZ-0029,Bechar-Tindouf,DZA,Bechar-Tindouf-Naama-El Bayadh,admin1,DZA-2150;DZA-2148;DZA-2149;DZA-2190,1.0,Natural Earth 10m (public domain),"whole region (name parts (4 pieces, worst match 100))"
 EC-0001,Quito,ECU,Pichincha,admin1,ECU-1287,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 EC-0002,Guayaquil,ECU,Guayas,admin1,ECU-1280,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 EC-0003,Santa Elena,ECU,Santa Elena,admin1,ECU-5507,1.0,Natural Earth 10m (public domain),whole region (name match 100)
@@ -674,6 +719,40 @@ EE-0003,Parnu-Saaremaa,EST,Western Estonia,admin1,EST-2346;EST-1661;EST-2352;EST
 EE-0004,Rakvere-Paide,EST,Central Estonia,admin1,EST-1658;EST-2348;EST-1656,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> EE-59, EE-51, EE-70)"
 EE-0005,Tartu,EST,Southern Estonia,admin1,EST-1659;EST-1657,0.9,Natural Earth 10m (public domain),seeds: place Tartu; unit Tartu at place Tartu; 2 whole admin1 units
 EE-0006,Voru-Viljandi,EST,Southern Estonia,admin1,EST-2350;EST-2349;EST-2351;EST-2347,0.9,Natural Earth 10m (public domain),seeds: place Viljandi; unit Põlva; unit Valga; unit Viljandi at place Viljandi; unit Võru; 4 whole admin1 units
+EG-0001,Downtown Cairo-Zamalek,EGY,Cairo,admin2,37247803B10880133914548;37247803B66210800118153;37247803B6267278220516;37247803B66957331642315;37247803B27962965783351;37247803B54164801772616;37247803B22012205190656;37247803B46837021628067;37247803B28746183260819;37247803B62499095418831;37247803B36275264085145;37247803B29547542469056;37247803B35159038955302;37247803B55829024150134;37247803B1921003738807;37247803B74269871636707;37247803B62139513677683;37247803B34541492244214;37247803B88500614059504;37247803B52731964573716;37247803B92272311463105;37247803B41278628102289;37247803B2980274366801;37247803B84983151070332;37247803B72756565577460;37247803B37865224267935,0.75,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Bulaq; 26 whole admin2 units
+EG-0002,Heliopolis-New Cairo,EGY,Cairo,admin2,37247803B47496652532681;37247803B93568001164514;37247803B15392203431980;37247803B59541002076203;37247803B98610862498628;37247803B60267904610722;37247803B51665438591487;37247803B70915432571750;37247803B64528254011318;37247803B99181648743437;37247803B58056872224952;37247803B49811870233448;37247803B21469576264473;37247803B54771343993886;37247803B46264859714526,0.9,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Nasr City; unit New Cairo-1; unit New Cairo-2; unit New Cairo-3; 15 whole admin2 units
+EG-0003,Helwan-Maadi,EGY,Cairo,admin2,37247803B58448533869188;37247803B18410334160069;37247803B92056872151518;37247803B18472339316050;37247803B90563077233192;37247803B1884066406604,0.9,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Maadi; unit Tura; 6 whole admin2 units
+EG-0004,Giza-Imbaba,EGY,Giza,admin2,37247803B56780050438943;37247803B9687639154335;37247803B16391777329697;37247803B45225516611894;37247803B29547542469056;37247803B34210539192827;37247803B46347292779018;37247803B55829024150134;37247803B59036266241246;37247803B31369022265166;37247803B14597497558400;37247803B76869719120733;37247803B74669546915316;37247803B52731964573716;37247803B92272311463105;37247803B30889137034133;37247803B78325352338503;37247803B72756565577460,0.9,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: place Cairo (snapped to land); place Giza; unit Giza; unit Imbaba; 18 whole admin2 units
+EG-0005,6th of October-Sheikh Zayed,EGY,Giza,admin2,37247803B48784531357995;37247803B57962000824705;37247803B86158206640686,0.85,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)","seeds: point 30.93,29.97 (hint); point 30.98,30.05 (hint); 3 whole admin2 units"
+EG-0006,Giza South-Bahariya,EGY,Giza,admin2,37247803B7335021436895;37247803B7250727301439;37247803B96885043093668;37247803B22185494316404;37247803B81980397210132,0.9,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Ayat; unit Bahariya Oasis; 5 whole admin2 units
+EG-0007,Shubra el-Kheima,EGY,Qalyubia,admin2,37247803B87868406017087;37247803B84983151070332,0.85,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)","seeds: point 31.24,30.13 (hint); 2 whole admin2 units"
+EG-0008,Banha-Qalyubia,EGY,Qalyubia,admin2,37247803B53826434992934;37247803B26389200974070;37247803B4989882956634;37247803B8473784659060;37247803B61393331220836;37247803B74269871636707;37247803B51665438591487;37247803B19157845766633;37247803B29662728717232;37247803B25886032732937;37247803B61234943331501;37247803B12662956160688;37247803B54771061850383,0.9,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Banha; unit Qalyub; 13 whole admin2 units
+EG-0009,Alexandria Centre-East,EGY,Alexandria,admin2,37247803B27556754464057;37247803B2309887607754;37247803B59433804182787;37247803B47768996612794;37247803B98787115048764;37247803B50327552497363;37247803B60489712487225;37247803B61972877463363;37247803B18141858630320;37247803B90463856595624;37247803B76316502393625,0.85,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)","seeds: point 29.95,31.22 (hint); point 30.02,31.27 (hint); 11 whole admin2 units"
+EG-0010,Alexandria West-Borg el-Arab,EGY,Alexandria,admin2,37247803B92926604097979;37247803B81947016112808;37247803B47778858868079;37247803B6072823038125;37247803B3923529194747;37247803B99104887182997,0.85,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)","seeds: point 29.6,30.92 (hint) (snapped to land); point 29.75,31.05 (hint); point 29.82,31.13 (hint); 6 whole admin2 units"
+EG-0011,Damanhour-Beheira,EGY,Beheira,admin1,EGY-1541,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0012,Kafr el-Sheikh,EGY,Kafr el-Sheikh,admin1,EGY-1547,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0013,Tanta-Mahalla,EGY,Gharbia,admin1,EGY-1530,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0014,Shibin el-Kom-Monufia,EGY,Monufia,admin1,EGY-1532,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0015,Mansoura,EGY,Dakahlia,admin1,EGY-1537,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0016,Damietta,EGY,Damietta,admin1,EGY-1539,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0017,Zagazig-10th of Ramadan,EGY,Sharqia,admin1,EGY-1535,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0018,Port Said,EGY,Port Said,admin1,EGY-1538,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0019,Ismailia-Canal,EGY,Ismailia,admin1,EGY-1531,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0020,Suez-Ain Sokhna,EGY,Suez,admin1,EGY-1536,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0021,Faiyum,EGY,Faiyum,admin1,EGY-1542,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0022,Beni Suef,EGY,Beni Suef,admin1,EGY-1546,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0023,Minya,EGY,Minya,admin1,EGY-1545,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0024,Asyut,EGY,Asyut,admin1,EGY-1549,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0025,Sohag,EGY,Sohag,admin1,EGY-1552,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0026,Qena,EGY,Qena,admin1,EGY-1551,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0027,Luxor,EGY,Luxor,admin1,EGY-5494,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0028,Aswan,EGY,Aswan,admin1,EGY-1548,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0029,Hurghada-Safaga,EGY,Red Sea,admin2,37247803B55078919918818;37247803B61358518780197;37247803B98457599359411;37247803B34734253794751;37247803B82534825994477;37247803B18851026884182;37247803B53216268294562;37247803B6993574009783;37247803B68668933434677;37247803B70127900746184;37247803B22410072002885;37247803B70962807620148,0.9,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: place Hurghada; unit Ras Gharib; unit Safaga; 12 whole admin2 units
+EG-0030,Marsa Alam-Halaib,EGY,Red Sea,admin2,37247803B96122561755956;37247803B88895964793077;37247803B74067375685147;37247803B19297711577028;37247803B26246524516343,0.9,"geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS); Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Marsa Alam; 5 whole admin2 units
+EG-0031,Kharga-New Valley,EGY,New Valley,admin1,EGY-1550,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0032,Marsa Matrouh-Western Desert,EGY,Matrouh,admin1,EGY-1540,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0033,Arish-North Sinai,EGY,North Sinai,admin1,EGY-1558,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+EG-0034,Sharm el-Sheikh-South Sinai,EGY,South Sinai,admin1,EGY-1557,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 ES-0001,Madrid Centro,ESP,Community of Madrid,voronoi,ESP-5833,0.8,Natural Earth 10m (public domain),"seeds: place Madrid; 0 whole parts, 1 split"
 ES-0002,Madrid North-Barajas,ESP,Community of Madrid,voronoi,ESP-5833,0.85,Natural Earth 10m (public domain),"seeds: point -3.36,40.48 (hint); point -3.48,40.46 (hint); point -3.59,40.47 (hint); point -3.64,40.54 (hint); point -3.8,40.8 (hint); point -3.87,40.49 (hint); 1 whole parts, 1 split"
 ES-0003,Madrid South-Getafe,ESP,Community of Madrid,voronoi,ESP-5833,0.85,Natural Earth 10m (public domain),"seeds: point -3.6,40.03 (hint); point -3.73,40.31 (hint); point -3.76,40.33 (hint); point -3.8,40.28 (hint); point -3.86,40.32 (hint); 0 whole parts, 1 split"
@@ -968,7 +1047,85 @@ IE-0012,Galway,IRL,Northern and Western,admin1,IRL-713;IRL-5568,0.9,Natural Eart
 IE-0013,Mayo-Sligo-Roscommon,IRL,Northern and Western,admin1,IRL-714;IRL-728;IRL-727,0.9,Natural Earth 10m (public domain),seeds: place Sligo; unit Mayo; unit Roscommon; unit Sligo at place Sligo; 3 whole admin1 units
 IE-0014,Donegal,IRL,Northern and Western,admin1,IRL-729,0.9,Natural Earth 10m (public domain),seeds: place Donegal; unit Donegal at place Donegal; 1 whole admin1 units
 IE-0015,Border Counties,IRL,Northern and Western,admin1,IRL-730;IRL-79;IRL-3412,0.75,Natural Earth 10m (public domain),seeds: unit Cavan; unit Leitrim; unit Monaghan; 3 whole admin1 units
+IL-0001,West Jerusalem,ISR,Jerusalem District,voronoi,584046B86518607604876,0.9,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)","seeds: place Jerusalem; unit Jerusalem at place Jerusalem; 0 whole admin2 units, split: Jerusalem"
+IL-0002,East Jerusalem,ISR,Jerusalem District,voronoi,584046B86518607604876,0.85,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)","seeds: point 35.235,31.78 (hint); point 35.24,31.8 (hint); 0 whole admin2 units, split: Jerusalem"
+IL-0003,Beit Shemesh-Judean Hills,ISR,Jerusalem District,voronoi,584046B86518607604876,0.85,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)","seeds: point 34.99,31.75 (hint); point 35.13,31.8 (hint); 0 whole admin2 units, split: Jerusalem"
+IL-0004,Tel Aviv-Yafo,ISR,Tel Aviv District,voronoi,584046B34315111222202,0.9,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)","seeds: place Tel Aviv; unit Tel Aviv at place Tel Aviv; 0 whole admin2 units, split: Tel Aviv"
+IL-0005,Ramat Gan-Herzliya,ISR,Tel Aviv District,voronoi,584046B34315111222202,0.85,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)","seeds: point 34.82,32.08 (hint); point 34.84,32.09 (hint); point 34.84,32.16 (hint); 0 whole admin2 units, split: Tel Aviv"
+IL-0006,Holon-Bat Yam,ISR,Tel Aviv District,voronoi,584046B34315111222202,0.85,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)","seeds: point 34.75,32.02 (hint); point 34.78,32.02 (hint); 0 whole admin2 units, split: Tel Aviv"
+IL-0007,Petah Tikva-Rosh HaAyin,ISR,Central District,admin2,584046B54386898087809,0.85,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)","seeds: point 34.89,32.09 (hint); point 34.95,32.1 (hint); 1 whole admin2 units"
+IL-0008,Rishon LeZion-Rehovot,ISR,Central District,admin2,584046B25822139954764,0.9,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)",seeds: unit Rehovot; 1 whole admin2 units
+IL-0009,Netanya-Sharon,ISR,Central District,admin2,584046B61571705909900,0.75,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)",seeds: unit HaSharon; 1 whole admin2 units
+IL-0010,Lod-Ramla-Modiin,ISR,Central District,admin2,584046B58948260517771,0.9,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)",seeds: place Ramla; unit Ramla at place Ramla; 1 whole admin2 units
+IL-0011,Haifa Bay,ISR,Haifa District,admin2,584046B37321511847561,0.9,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)",seeds: place Haifa; unit Haifa at place Haifa; 1 whole admin2 units
+IL-0012,Hadera-Caesarea,ISR,Haifa District,admin2,584046B72217003232480,0.9,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)",seeds: unit Hadera; 1 whole admin2 units
+IL-0013,Nazareth-Jezreel Valley,ISR,Northern District,admin2,584046B83064859640631,0.8,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)",seeds: place Nazareth; 1 whole admin2 units
+IL-0014,Galilee-Tiberias,ISR,Northern District,admin2,584046B13386645158990;584046B83749751332199;584046B15624900320210,0.85,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)","seeds: point 35.3,32.92 (hint); point 35.5,32.96 (hint); point 35.53,32.79 (hint); 3 whole admin2 units"
+IL-0015,Golan Heights,ISR,Northern District,admin2,584046B72335129252345,0.9,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)",seeds: unit Golan; 1 whole admin2 units
+IL-0016,Ashdod-Ashkelon,ISR,Southern District,admin2,584046B11408100439208,0.85,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)","seeds: point 34.57,31.67 (hint); point 34.6,31.52 (hint); point 34.65,31.8 (hint); 1 whole admin2 units"
+IL-0017,Beersheba-Negev-Eilat,ISR,Southern District,admin2,584046B9730835639199,0.8,"geoBoundaries gbOpen ISR ADM2 (geoBoundaries, Wikimedia Commons; CC0 1.0 Universal (CC0 1.0) Public Domain Dedication); Natural Earth 10m (public domain)",seeds: place Beer Sheva; 1 whole admin2 units
 IM-0001,Isle of Man,IMN,Isle of Man,admin1,IMN+00?,0.95,Natural Earth 10m (public domain),whole region (whole country (1 admin-1 units))
+IQ-0001,Karkh-Green Zone,IRQ,Baghdad,voronoi,34846034B16930377854620,0.85,"geoBoundaries gbOpen IRQ ADM2 (Iraq Central Statistics Office, OCHA Iraq; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)","seeds: point 44.33,33.3 (hint); point 44.37,33.31 (hint); 0 whole admin2 units, split: Al-Karkh"
+IQ-0002,Rusafa-Old Baghdad,IRQ,Baghdad,voronoi,34846034B16930377854620;34846034B91170973982462,0.85,"geoBoundaries gbOpen IRQ ADM2 (Iraq Central Statistics Office, OCHA Iraq; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)","seeds: point 44.4,33.32 (hint); point 44.42,33.34 (hint); 0 whole admin2 units, split: Al-Karkh, Al-Thawra"
+IQ-0003,Sadr City-New Baghdad,IRQ,Baghdad,voronoi,34846034B3571197787035;34846034B91170973982462,0.85,"geoBoundaries gbOpen IRQ ADM2 (Iraq Central Statistics Office, OCHA Iraq; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)","seeds: point 44.45,33.38 (hint); point 44.5,33.3 (hint); 1 whole admin2 units, split: Al-Thawra"
+IQ-0004,Baghdad Belt,IRQ,Baghdad,voronoi,34846034B16930377854620;34846034B91170973982462,0.85,"geoBoundaries gbOpen IRQ ADM2 (Iraq Central Statistics Office, OCHA Iraq; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)","seeds: point 44.07,33.29 (hint) (snapped to land); point 44.24,33.52 (hint) (snapped to land); point 44.35,33.06 (hint) (snapped to land); point 44.4,33.67 (hint) (snapped to land); point 44.58,33.1 (hint) (snapped to land); 0 whole admin2 units, split: Al-Karkh, Al-Thawra"
+IQ-0005,Basra-Umm Qasr,IRQ,Basra,voronoi,34846034B47596068894282;34846034B27642135170661;34846034B66422309861537;34846034B69957241231378,0.8,"geoBoundaries gbOpen IRQ ADM2 (Iraq Central Statistics Office, OCHA Iraq; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)","seeds: place Basra; unit Al-Zubair; 3 whole admin2 units, split: Al-Zubair"
+IQ-0006,Rumaila-Majnoon,IRQ,Basra,voronoi,34846034B64994125853328;34846034B84303625922159;34846034B80013069152420;34846034B69957241231378,0.85,"geoBoundaries gbOpen IRQ ADM2 (Iraq Central Statistics Office, OCHA Iraq; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)","seeds: point 47.27,30.87 (hint); point 47.4,30.45 (hint); point 47.6,31.02 (hint); point 47.7,30.39 (hint); 3 whole admin2 units, split: Al-Zubair"
+IQ-0007,Mosul,IRQ,Nineveh,admin2,34846034B85609080446552;34846034B66599568712680;34846034B50799597720229;34846034B43190647810772;34846034B79516785973946,0.8,"geoBoundaries gbOpen IRQ ADM2 (Iraq Central Statistics Office, OCHA Iraq; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: place Mosul; 5 whole admin2 units
+IQ-0008,Sinjar-Tal Afar,IRQ,Nineveh,admin2,34846034B31604409144822;34846034B76064773860715;34846034B46284853096134;34846034B27680259981934,0.9,"geoBoundaries gbOpen IRQ ADM2 (Iraq Central Statistics Office, OCHA Iraq; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: place Tall Afar; unit Sinjar; 4 whole admin2 units
+IQ-0009,Erbil,IRQ,Erbil,admin1,IRQ-3050,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IQ-0010,Sulaymaniyah-Halabja,IRQ,Sulaymaniyah-Halabja,admin1,IRQ-3242,0.95,Natural Earth 10m (public domain),whole region (alias hint -> IQ-SU)
+IQ-0011,Duhok-Zakho,IRQ,Duhok,admin1,IRQ-3046,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IQ-0012,Kirkuk,IRQ,Kirkuk,admin1,IRQ-3049,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IQ-0013,Ramadi-Fallujah,IRQ,Anbar,admin2,34846034B2556059967776;34846034B54493291917017,0.9,"geoBoundaries gbOpen IRQ ADM2 (Iraq Central Statistics Office, OCHA Iraq; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Al-Ramadi; 2 whole admin2 units
+IQ-0014,Western Anbar-Al Qaim,IRQ,Anbar,admin2,34846034B30812362008382;34846034B71122492404189;34846034B40379251126698;34846034B75041723835254;34846034B36962706181157,0.75,"geoBoundaries gbOpen IRQ ADM2 (Iraq Central Statistics Office, OCHA Iraq; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Al-Rutba; unit Haditha; 5 whole admin2 units
+IQ-0015,Tikrit-Samarra-Baiji,IRQ,Saladin,admin1,IRQ-3052,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IQ-0016,Baqubah-Diyala,IRQ,Diyala,admin1,IRQ-3243,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IQ-0017,Kut-Wasit,IRQ,Wasit,admin1,IRQ-3227,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IQ-0018,Hillah-Babylon,IRQ,Babil,admin1,IRQ-3472,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IQ-0019,Karbala,IRQ,Karbala,admin1,IRQ-3062,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IQ-0020,Najaf-Kufa,IRQ,Najaf,admin1,IRQ-3061,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IQ-0021,Diwaniyah,IRQ,Al-Qadisiyyah,admin1,IRQ-3224,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IQ-0022,Samawah-Muthanna,IRQ,Muthanna,admin1,IRQ-3223,0.95,Natural Earth 10m (public domain),whole region (alias hint -> IQ-MU)
+IQ-0023,Nasiriyah-Dhi Qar,IRQ,Dhi Qar,admin1,IRQ-3225,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IQ-0024,Amarah-Maysan,IRQ,Maysan,admin1,IRQ-3226,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0001,North Tehran-Shemiran,IRN,Tehran,voronoi,IRN-3216,0.85,Natural Earth 10m (public domain),"seeds: point 51.41,35.77 (hint); point 51.45,35.8 (hint); 0 whole parts, 1 split"
+IR-0002,Central Tehran-Grand Bazaar,IRN,Tehran,voronoi,IRN-3216,0.85,Natural Earth 10m (public domain),"seeds: point 51.41,35.62 (hint); point 51.42,35.68 (hint); 0 whole parts, 1 split"
+IR-0003,West Tehran-Eslamshahr,IRN,Tehran,voronoi,IRN-3216,0.85,Natural Earth 10m (public domain),"seeds: point 50.98,35.46 (hint); point 51.02,35.65 (hint); point 51.23,35.55 (hint); point 51.33,35.7 (hint); 0 whole parts, 1 split"
+IR-0004,Varamin-Damavand,IRN,Tehran,voronoi,IRN-3216,0.8,Natural Earth 10m (public domain),"seeds: place Varamin; 0 whole parts, 1 split"
+IR-0005,Karaj,IRN,Alborz,admin1,IRN-5490,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0006,Qom,IRN,Qom,admin1,IRN-3232,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0007,Arak,IRN,Markazi,admin1,IRN-3231,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0008,Qazvin,IRN,Qazvin,admin1,IRN-3235,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0009,Rasht-Anzali,IRN,Gilan,admin1,IRN-3240,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0010,Sari-Babol,IRN,Mazandaran,admin1,IRN-3214,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0011,Gorgan-Gonbad,IRN,Golestan,admin1,IRN-3213,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0012,Semnan-Shahrud,IRN,Semnan,admin1,IRN-3215,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0013,Isfahan,IRN,Isfahan,admin1,IRN-3211,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0014,Yazd,IRN,Yazd,admin1,IRN-3217,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0015,Kerman-Sarcheshmeh,IRN,Kerman,admin1,IRN-3248,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0016,Shiraz,IRN,Fars,admin1,IRN-3212,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0017,Bandar Abbas,IRN,Hormozgan,voronoi,IRN-3228,0.8,Natural Earth 10m (public domain),"seeds: place Bandar-e-Abbas; 2 whole parts, 1 split"
+IR-0018,Bandar Lengeh-Islands,IRN,Hormozgan,voronoi,IRN-3228,0.85,Natural Earth 10m (public domain),"seeds: point 53.98,26.53 (hint); point 54.88,26.56 (hint); point 55.03,25.87 (hint); point 55.3,26.25 (hint) (snapped to land); 8 whole parts, 1 split"
+IR-0019,Bushehr-Asaluyeh,IRN,Bushehr,admin1,IRN-3210,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0020,Ahvaz-Oil Fields,IRN,Khuzestan,voronoi,IRN-3219,0.8,Natural Earth 10m (public domain),"seeds: place Ahvaz; place Dezful; 0 whole parts, 1 split"
+IR-0021,Abadan-Khorramshahr,IRN,Khuzestan,voronoi,IRN-3219,0.8,Natural Earth 10m (public domain),"seeds: place Abadan; 0 whole parts, 1 split"
+IR-0022,Yasuj-Gachsaran,IRN,Kohgiluyeh and Boyer-Ahmad,admin1,IRN-3209,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0023,Shahrekord,IRN,Chaharmahal and Bakhtiari,admin1,IRN-3218,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0024,Khorramabad-Borujerd,IRN,Lorestan,admin1,IRN-3220,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0025,Ilam,IRN,Ilam,admin1,IRN-3221,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0026,Kermanshah,IRN,Kermanshah,admin1,IRN-3239,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0027,Sanandaj-Saqqez,IRN,Kurdistan,admin1,IRN-3241,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0028,Hamadan,IRN,Hamadan,admin1,IRN-3233,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0029,Zanjan,IRN,Zanjan,admin1,IRN-3234,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0030,Ardabil,IRN,Ardabil,admin1,IRN-3230,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0031,Tabriz,IRN,East Azerbaijan,admin1,IRN-3238,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0032,Urmia-Mahabad,IRN,West Azerbaijan,admin1,IRN-3237,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0033,Bojnurd,IRN,North Khorasan,admin1,IRN-3246,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0034,Mashhad,IRN,Razavi Khorasan,admin1,IRN-3245,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0035,Birjand-Tabas,IRN,South Khorasan,admin1,IRN-3244,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+IR-0036,Zahedan-Zabol,IRN,Sistan and Baluchestan,voronoi,IRN-3247,0.8,Natural Earth 10m (public domain),"seeds: place Zabol; place Zahedan; 0 whole parts, 1 split"
+IR-0037,Chabahar-Iranshahr,IRN,Sistan and Baluchestan,voronoi,IRN-3247,0.8,Natural Earth 10m (public domain),"seeds: place Chabahar; 0 whole parts, 1 split"
 IS-0001,Reykjavik Capital Region,ISL,Iceland,admin1,ISL-705;ISL-5131;ISL-709;ISL-710;ISL-690,0.9,Natural Earth 10m (public domain),seeds: place Reykjavík; unit Reykjavík at place Reykjavík; 5 whole admin1 units
 IS-0002,Reykjanes-South Iceland,ISL,Iceland,admin1,ISL-704,0.65,Natural Earth 10m (public domain),seeds: place Keflavík; 1 whole admin1 units
 IS-0003,North and East Iceland,ISL,Iceland,admin1,ISL-695;ISL-697;ISL-702,0.65,Natural Earth 10m (public domain),seeds: place Akureyri; 3 whole admin1 units
@@ -1018,6 +1175,16 @@ JM-0002,Spanish Town-Portmore,JAM,St Catherine,admin1,JAM-1380,1.0,Natural Earth
 JM-0003,Mandeville-Bauxite Belt,JAM,Clarendon-Manchester-St Elizabeth,admin1,JAM-1373;JAM-1372;JAM-1370,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
 JM-0004,Montego Bay-West,JAM,St James-Hanover-Westmoreland-Trelawny,admin1,JAM-1375;JAM-1374;JAM-1371;JAM-1376,1.0,Natural Earth 10m (public domain),"whole region (name parts (4 pieces, worst match 100))"
 JM-0005,Ocho Rios-North and East,JAM,St Ann-St Mary-Portland-St Thomas,admin1,JAM-1379;JAM-1383;JAM-1378;JAM-1381,1.0,Natural Earth 10m (public domain),"whole region (name parts (4 pieces, worst match 100))"
+JO-0001,Amman West-Abdali,JOR,Amman,admin2,86222999B75702263193476;86222999B88668932349329;86222999B98708860863844;86222999B80282499365551,0.85,"geoBoundaries gbOpen JOR ADM2 (geoBoundaries, Wikimedia Commons; Public Domain); Natural Earth 10m (public domain)","seeds: point 35.85,31.95 (hint); point 35.9,31.96 (hint); 4 whole admin2 units"
+JO-0002,Amman East-Sahab,JOR,Amman,admin2,86222999B81424774794690;86222999B58028934713712;86222999B50921182597038,0.9,"geoBoundaries gbOpen JOR ADM2 (geoBoundaries, Wikimedia Commons; Public Domain); Natural Earth 10m (public domain)",seeds: unit Sahab; 3 whole admin2 units
+JO-0003,Zarqa,JOR,Zarqa,admin1,JOR-860,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+JO-0004,Irbid,JOR,Irbid,admin1,JOR-854,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+JO-0005,Jerash-Ajloun,JOR,Jerash-Ajloun,admin1,JOR-855;JOR-856,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+JO-0006,Salt-Dead Sea,JOR,Balqa-Madaba,admin1,JOR-858;JOR-857,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+JO-0007,Mafraq,JOR,Mafraq,admin1,JOR-850,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+JO-0008,Karak-Tafilah,JOR,Karak-Tafilah,admin1,JOR-859;JOR-852,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+JO-0009,Maan-Petra,JOR,Ma'an,admin1,JOR-853,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+JO-0010,Aqaba,JOR,Aqaba,admin1,JOR-849,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 JP-0001,Central Tokyo,JPN,Tokyo,voronoi,JPN-1860,0.85,Natural Earth 10m (public domain),"seeds: point 139.76,35.68 (hint); 0 whole parts, 1 split"
 JP-0002,Tokyo West Wards,JPN,Tokyo,voronoi,JPN-1860,0.85,Natural Earth 10m (public domain),"seeds: point 139.64,35.7 (hint); point 139.65,35.64 (hint); point 139.65,35.74 (hint); point 139.7,35.66 (hint); point 139.71,35.73 (hint); 0 whole parts, 1 split"
 JP-0003,Tokyo East Wards-Bay,JPN,Tokyo,voronoi,JPN-1860,0.85,Natural Earth 10m (public domain),"seeds: point 139.72,35.56 (hint); point 139.78,35.62 (hint); point 139.8,35.78 (hint); point 139.82,35.67 (hint); point 139.87,35.7 (hint); 22 whole parts, 1 split"
@@ -1141,6 +1308,16 @@ KR-0032,Gimhae-Yangsan,KOR,South Gyeongsang,admin2,91817680B54012703126739;91817
 KR-0033,Geoje-Tongyeong,KOR,South Gyeongsang,admin2,91817680B97433571779884;91817680B95262291256995;91817680B58127051569150,0.9,"geoBoundaries gbOpen KOR ADM2 (geoBoundaries, citypopulation.de; Creative Commons Attribution 3.0 License); Natural Earth 10m (public domain)",seeds: unit Tongyeong-si; 3 whole admin2 units
 KR-0034,Jinju-Western Gyeongnam,KOR,South Gyeongsang,admin2,91817680B92973690121395;91817680B90592918780723;91817680B91736183236009;91817680B59476098361869;91817680B92610564128426;91817680B32789615967236;91817680B75900877128055;91817680B17319558643664;91817680B30407776748413,0.85,"geoBoundaries gbOpen KOR ADM2 (geoBoundaries, citypopulation.de; Creative Commons Attribution 3.0 License); Natural Earth 10m (public domain)","seeds: point 127.72,35.52 (hint); point 127.76,35.07 (hint); point 127.89,34.84 (hint); point 128.06,35.0 (hint); point 128.08,35.18 (hint); 9 whole admin2 units"
 KR-0035,Jeju,KOR,Jeju,admin1,KOR-2510,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KW-0001,Kuwait City-Sharq,KWT,Al Asimah,voronoi,KWT-1663,0.8,Natural Earth 10m (public domain),"seeds: place Kuwait City; 1 whole parts, 1 split"
+KW-0002,Shuwaikh-Sulaibikhat,KWT,Al Asimah,voronoi,KWT-1663,0.85,Natural Earth 10m (public domain),"seeds: point 47.84,29.33 (hint) (snapped to land); point 47.93,29.35 (hint); 0 whole parts, 1 split"
+KW-0003,Hawalli-Salmiya,KWT,Hawalli,admin1,KWT-3506,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KW-0004,Farwaniya-Airport,KWT,Farwaniya,admin1,KWT-1664,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KW-0005,Mubarak Al-Kabeer,KWT,Mubarak Al-Kabeer,admin1,KWT-1666,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KW-0006,Ahmadi-Fahaheel,KWT,Ahmadi,voronoi,KWT-1665,0.65,Natural Earth 10m (public domain),"seeds: place Al Ahmadi; 0 whole parts, 1 split"
+KW-0007,Burgan,KWT,Ahmadi,voronoi,KWT-1665,0.85,Natural Earth 10m (public domain),"seeds: point 47.95,28.95 (hint); 0 whole parts, 1 split"
+KW-0008,Wafra-Khiran,KWT,Ahmadi,voronoi,KWT-1665,0.85,Natural Earth 10m (public domain),"seeds: point 47.93,28.62 (hint); point 48.38,28.65 (hint) (snapped to land); 0 whole parts, 1 split"
+KW-0009,Jahra,KWT,Jahra,voronoi,KWT-1667,0.85,Natural Earth 10m (public domain),"seeds: point 47.66,29.34 (hint); point 47.7,29.45 (hint); 0 whole parts, 1 split"
+KW-0010,Raudhatain-Bubiyan,KWT,Jahra,voronoi,KWT-1667,0.85,Natural Earth 10m (public domain),"seeds: point 47.7,29.83 (hint); point 47.7,30.07 (hint); point 48.2,29.8 (hint); 2 whole parts, 1 split"
 KY-0001,Cayman Islands,CYM,Cayman Islands,admin1,CYM+00?,0.95,Natural Earth 10m (public domain),whole region (whole country (1 admin-1 units))
 LA-0001,Vientiane,LAO,Vientiane Capital,admin1,LAO-3283,0.95,Natural Earth 10m (public domain),whole region (alias hint -> LAO-3283)
 LA-0002,Vientiane Province-Xaisomboun,LAO,Vientiane Province-Xaisomboun,admin1,LAO-3284,0.95,Natural Earth 10m (public domain),whole region (alias hint -> LAO-3284)
@@ -1152,6 +1329,14 @@ LA-0007,Bolikhamxay-Khammouane,LAO,Bolikhamxay-Khammouane,admin1,LAO-3292;LAO-32
 LA-0008,Savannakhet,LAO,Savannakhet,admin1,LAO-3282,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 LA-0009,Champasak-Salavan,LAO,Champasak-Salavan,admin1,LAO-3281;LAO-3280,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
 LA-0010,Attapeu-Sekong,LAO,Attapeu-Sekong,admin1,LAO-3295;LAO-3294,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+LB-0001,Beirut,LBN,Beirut,admin1,LBN-3024,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+LB-0002,Mount Lebanon-Jounieh,LBN,Mount Lebanon,admin1,LBN-3025,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+LB-0003,Tripoli-North Lebanon,LBN,North,admin1,LBN-3023,0.95,Natural Earth 10m (public domain),whole region (alias hint -> LB-AS; less LBN:Akkar (carve))
+LB-0004,Akkar,LBN,Akkar,admin1,,0.95,builder-drawn line (hints file),"whole region (no admin-1 match (best unit 46, group 0); carve: builder polygon from LBN:North)"
+LB-0005,Zahle-Bekaa,LBN,Bekaa,admin1,LBN-3022,0.95,Natural Earth 10m (public domain),whole region (alias hint -> LB-BI; less LBN:Baalbek-Hermel (carve))
+LB-0006,Baalbek-Hermel,LBN,Baalbek-Hermel,admin1,,0.95,builder-drawn line (hints file),"whole region (no admin-1 match (best unit 42, group 0); carve: builder polygon from LBN:Bekaa)"
+LB-0007,Sidon-Tyre,LBN,South,admin1,LBN-3060,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+LB-0008,Nabatieh,LBN,Nabatieh,admin1,LBN-3059,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 LC-0001,Saint Lucia,LCA,Saint Lucia,admin1,LCA-5081;LCA-5077;LCA-5076;LCA-5085;LCA-5078;LCA-5082;LCA-5086;LCA-5083;LCA-5084;LCA-5080;LCA-5079,0.95,Natural Earth 10m (public domain),whole region (whole country (11 admin-1 units))
 LI-0001,Liechtenstein,LIE,Liechtenstein,admin1,LIE-4893;LIE-4896;LIE-4892;LIE-4894;LIE-4901;LIE-4902;LIE-4900;LIE-4899;LIE-4898;LIE-4895;LIE-4897,0.95,Natural Earth 10m (public domain),whole region (whole country (11 admin-1 units))
 LT-0001,Vilnius,LTU,Capital Region,voronoi,LTU-1075,0.8,Natural Earth 10m (public domain),"seeds: place Vilnius; 0 whole parts, 1 split"
@@ -1170,6 +1355,45 @@ LV-0004,Ventspils,LVA,Kurzeme,admin1,LVA-934;LVA-4852;LVA-5721;LVA-5722;LVA-1091
 LV-0005,Liepaja,LVA,Kurzeme,admin1,LVA-1068;LVA-5718;LVA-5715;LVA-5713;LVA-5717;LVA-4848;LVA-5716;LVA-5719;LVA-5714;LVA-5712;LVA-5711;LVA-5720,0.9,Natural Earth 10m (public domain),seeds: unit Liepāja; 12 whole admin1 units
 LV-0006,Jelgava-Zemgale,LVA,Zemgale,admin1,LVA-5724;LVA-5733;LVA-5735;LVA-5740;LVA-1079;LVA-5739;LVA-1084;LVA-5738;LVA-5734;LVA-5736;LVA-5728;LVA-5729;LVA-5730;LVA-5731;LVA-5732;LVA-5725;LVA-5726;LVA-5727;LVA-1082;LVA-5737;LVA-4849;LVA-1085,1.0,Natural Earth 10m (public domain),"whole region (Natural Earth region Zemgale (22 units, match 100))"
 LV-0007,Daugavpils-Latgale,LVA,Latgale,admin1,LVA-5742;LVA-5743;LVA-5744;LVA-5745;LVA-1065;LVA-5746;LVA-5749;LVA-1081;LVA-5747;LVA-1064;LVA-1063;LVA-1066;LVA-5741;LVA-5748;LVA-5752;LVA-5753;LVA-1089;LVA-5750;LVA-5751;LVA-4850;LVA-4851,1.0,Natural Earth 10m (public domain),"whole region (Natural Earth region Latgale (21 units, match 100))"
+LY-0001,Tripoli Centre-Port,LBY,Tripoli,voronoi,LBY-2978,0.85,Natural Earth 10m (public domain),"seeds: point 13.18,32.89 (hint); 0 whole parts, 1 split"
+LY-0002,Tajura-Janzour,LBY,Tripoli,voronoi,LBY-2978,0.85,Natural Earth 10m (public domain),"seeds: point 13.01,32.82 (hint) (snapped to land); point 13.27,32.66 (hint); point 13.37,32.88 (hint); 0 whole parts, 1 split"
+LY-0003,Zawiya-Jafara,LBY,Jafara-Zawiya,admin1,LBY-2975;LBY-2973,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+LY-0004,Zuwara-Mellitah,LBY,Nuqat al-Khams,admin1,LBY-2974,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+LY-0005,Nafusa Mountains,LBY,Jabal al-Gharbi-Nalut,admin1,LBY-2882;LBY-2976,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> LY-MZ, LY-GD)"
+LY-0006,Misrata,LBY,Misrata,admin1,LBY-2970,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+LY-0007,Khoms-Leptis Magna,LBY,Murqub,admin1,LBY-2966,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+LY-0008,Sirte,LBY,Sirte,voronoi,LBY-2985,0.85,Natural Earth 10m (public domain),"seeds: point 16.59,31.21 (hint); 0 whole parts, 1 split"
+LY-0009,Ras Lanuf-Es Sider,LBY,Sirte,voronoi,LBY-2985,0.85,Natural Earth 10m (public domain),"seeds: point 18.35,30.63 (hint); point 18.57,30.5 (hint) (snapped to land); 0 whole parts, 1 split"
+LY-0010,Ajdabiya-Brega,LBY,Al Wahat,voronoi,LBY-2983,0.8,Natural Earth 10m (public domain),"seeds: place Ajdabiya; 0 whole parts, 1 split"
+LY-0011,Jalu-Sarir,LBY,Al Wahat,voronoi,LBY-2983,0.85,Natural Earth 10m (public domain),"seeds: point 20.4,28.6 (hint); point 21.55,29.03 (hint); point 23.5,27.5 (hint); 0 whole parts, 1 split"
+LY-0012,Benghazi,LBY,Benghazi,admin1,LBY-2984,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+LY-0013,Bayda-Jabal al-Akhdar,LBY,Jabal al-Akhdar-Marj,admin1,LBY-2982;LBY-2981,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> LY-JA, LY-MJ)"
+LY-0014,Tobruk-Derna,LBY,Derna-Butnan,admin1,LBY-2987;LBY-2986,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> LY-BU, LY-QB)"
+LY-0015,Kufra,LBY,Kufra,admin1,LBY-2965,0.95,Natural Earth 10m (public domain),whole region (alias hint -> LY-KF)
+LY-0016,Sabha,LBY,Sabha,admin1,LBY-2971,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+LY-0017,Jufra-Wadi al-Shatii,LBY,Wadi al-Shatii-Jufra,admin1,LBY-2967;LBY-2964,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> LY-WS, LY-JU)"
+LY-0018,Murzuq-Sharara,LBY,Murzuq-Wadi al-Hayaa,admin1,LBY-2969;LBY-5488,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+LY-0019,Ghat,LBY,Ghat,admin1,LBY-2968,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+MA-0001,Casablanca Centre-Anfa,MAR,Casablanca-Settat,voronoi,MAR-1450,0.8,Natural Earth 10m (public domain); builder-drawn line (hints file),"seeds: place Casablanca; 0 whole admin1 units, split: Grand Casablanca"
+MA-0002,Casablanca East-Mohammedia,MAR,Casablanca-Settat,voronoi,MAR-1450,0.85,Natural Earth 10m (public domain); builder-drawn line (hints file),"seeds: point -7.39,33.69 (hint); point -7.55,33.6 (hint); 0 whole admin1 units, split: Grand Casablanca"
+MA-0003,El Jadida-Jorf Lasfar,MAR,Casablanca-Settat,voronoi,MAR-1449,0.85,Natural Earth 10m (public domain); builder-drawn line (hints file),"seeds: point -8.5,33.25 (hint) (snapped to land); point -8.63,33.12 (hint) (snapped to land); 0 whole admin1 units, split: Chaouia - Ouardigha"
+MA-0004,Settat-Berrechid,MAR,Casablanca-Settat,voronoi,MAR-1449,0.8,Natural Earth 10m (public domain); builder-drawn line (hints file),"seeds: place Settat; 0 whole admin1 units, split: Chaouia - Ouardigha"
+MA-0005,Rabat-Sale,MAR,Rabat-Sale-Kenitra,admin1,MAR-1451,0.8,Natural Earth 10m (public domain),seeds: place Rabat; 1 whole admin1 units
+MA-0006,Kenitra,MAR,Rabat-Sale-Kenitra,admin1,MAR-1448,0.8,Natural Earth 10m (public domain),seeds: place Kenitra; 1 whole admin1 units
+MA-0007,Tangier-Tanger Med,MAR,Tanger-Tetouan-Al Hoceima,voronoi,MAR-1445,0.8,Natural Earth 10m (public domain); builder-drawn line (hints file),"seeds: place Tangier; 0 whole parts, 1 split"
+MA-0008,Tetouan-Fnideq,MAR,Tanger-Tetouan-Al Hoceima,voronoi,MAR-1445,0.65,Natural Earth 10m (public domain); builder-drawn line (hints file),"seeds: place Ksar El Kebir; place Larache; 0 whole parts, 1 split"
+MA-0009,Al Hoceima-Rif,MAR,Tanger-Tetouan-Al Hoceima,voronoi,MAR-1445,0.85,Natural Earth 10m (public domain); builder-drawn line (hints file),"seeds: point -3.93,35.25 (hint); point -5.27,35.17 (hint); point -5.6,34.8 (hint) (snapped to land); 1 whole parts, 1 split"
+MA-0010,Oujda-Nador,MAR,Oriental,admin1,MAR-1454,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+MA-0011,Fes,MAR,Fes-Meknes,admin1,MAR-1447;MAR-1446,0.8,Natural Earth 10m (public domain),seeds: place Fez; 2 whole admin1 units
+MA-0012,Meknes-Ifrane,MAR,Fes-Meknes,admin1,MAR-1452,0.8,Natural Earth 10m (public domain),seeds: place Meknes; 1 whole admin1 units
+MA-0013,Marrakech,MAR,Marrakech-Safi,admin1,MAR-1456,0.8,Natural Earth 10m (public domain),seeds: place Marrakesh; 1 whole admin1 units
+MA-0014,Safi-Essaouira,MAR,Marrakech-Safi,admin1,MAR-1457,0.8,Natural Earth 10m (public domain),seeds: place Safi; 1 whole admin1 units
+MA-0015,Khouribga-Beni Mellal,MAR,Beni Mellal-Khenifra,admin1,MAR-1453,0.95,Natural Earth 10m (public domain),whole region (alias hint -> MA-12)
+MA-0016,Agadir-Souss,MAR,Souss-Massa,admin1,MAR-1455,0.95,Natural Earth 10m (public domain),whole region (alias hint -> MA-13; less MAR:Draa-Tafilalet (carve))
+MA-0017,Ouarzazate-Errachidia,MAR,Draa-Tafilalet,admin1,,0.95,builder-drawn line (hints file),"whole region (no admin-1 match (best unit 67, group 0); carve: builder polygon from MAR:Fes-Meknes, MAR:Souss-Massa)"
+MA-0018,Guelmim-Tan Tan,MAR,Guelmim-Oued Noun,admin1,MAR-3457,0.95,Natural Earth 10m (public domain),whole region (alias hint -> MA-14)
+MA-0019,Laayoune-Boujdour,MAR,Laayoune-Sakia El Hamra,admin1,SAH+00?;MAR-3456,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> MA-15, EH-X01~; less MAR:Dakhla-Oued Ed-Dahab (carve))"
+MA-0020,Dakhla,MAR,Dakhla-Oued Ed-Dahab,admin1,MAR-3469,0.95,Natural Earth 10m (public domain); builder-drawn line (hints file),whole region (alias hint -> MA-16; carve: builder polygon from MAR:Laayoune-Sakia El Hamra)
 MC-0001,Monaco,MCO,Monaco,admin1,MCO+00?,0.95,Natural Earth 10m (public domain),whole region (whole country (1 admin-1 units))
 MD-0001,Chisinau,MDA,Chisinau,admin1,MDA-1627,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 MD-0002,Balti-North,MDA,North Moldova,admin1,MDA-1613;MDA-1615;MDA-1617;MDA-1621;MDA-1620;MDA-1616;MDA-1614;MDA-1653;MDA-1635;MDA-1619;MDA-1622;MDA-1618,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> MD-BA, MD-BR, MD-DO, MD-DR, MD-ED, MD-FL, MD-FA, MD-GL, MD-OC, MD-RI, MD-SO, MD-SI)"
@@ -1365,6 +1589,19 @@ NZ-0013,Christchurch,NZL,Canterbury,admin2,76426892B84594849147158;76426892B3248
 NZ-0014,Rural Canterbury,NZL,Canterbury,admin2,76426892B67490392619743;76426892B42496743885166;76426892B16622223508882;76426892B45923139634861;76426892B29825208127723,0.75,geoBoundaries gbOpen NZL ADM2 (Stats NZ; Creative Commons Attribution 4.0 International (CC BY 4.0)); Natural Earth 10m (public domain),seeds: place Timaru; unit Timaru District at place Timaru; 5 whole admin2 units
 NZ-0015,Otago,NZL,Otago,admin1,NZL-3407,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 NZ-0016,Southland,NZL,Southland,admin1,NZL-5479;NZL-5478;NZL-5480;NZL-3408,1.0,Natural Earth 10m (public domain),"whole region (name match 100; plus unclaimed Auckland Islands, Campbell Islands, The Snares)"
+OM-0001,Muscat-Muttrah-Ruwi,OMN,Muscat,voronoi,OMN-2426,0.8,Natural Earth 10m (public domain),"seeds: place Muscat; 0 whole parts, 1 split"
+OM-0002,Seeb-Bawshar,OMN,Muscat,voronoi,OMN-2426,0.8,Natural Earth 10m (public domain),"seeds: place Seeb; 0 whole parts, 1 split"
+OM-0003,Sohar,OMN,North Al Batinah,voronoi,OMN-2424,0.85,Natural Earth 10m (public domain),"seeds: point 56.71,24.35 (hint); 0 whole parts, 1 split"
+OM-0004,Saham-Shinas,OMN,North Al Batinah,voronoi,OMN-2424,0.85,Natural Earth 10m (public domain),"seeds: point 56.47,24.74 (hint); point 56.56,24.53 (hint); point 56.89,24.17 (hint); point 57.08,23.98 (hint); 0 whole parts, 1 split"
+OM-0005,Barka-Rustaq,OMN,South Al Batinah,admin1,OMN-5497,0.95,Natural Earth 10m (public domain),whole region (alias hint -> OM-BJ)
+OM-0006,Nizwa-Jabal Akhdar,OMN,Ad Dakhiliyah,admin1,OMN-2404,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+OM-0007,Ibri-Fahud,OMN,Adh Dhahirah,admin1,OMN-2414,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+OM-0008,Ibra-Wahiba,OMN,North Ash Sharqiyah,admin1,OMN-5496,0.95,Natural Earth 10m (public domain),whole region (alias hint -> OM-SS)
+OM-0009,Sur-Qalhat,OMN,South Ash Sharqiyah,admin1,OMN-2406,0.95,Natural Earth 10m (public domain),whole region (alias hint -> OM-SH)
+OM-0010,Duqm,OMN,Al Wusta,admin1,OMN-2405,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+OM-0011,Salalah-Dhofar,OMN,Dhofar,admin1,OMN-2411,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+OM-0012,Musandam,OMN,Musandam,admin1,OMN-2425,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+OM-0013,Buraimi,OMN,Al Buraimi,admin1,OMN-4836,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 PA-0001,Panama City,PAN,Panama,admin1,PAN-1419;PAN-1340,1.0,Natural Earth 10m (public domain),whole region (name match 100; plus unclaimed Kuna Yala; less PAN:Panama Oeste (carve))
 PA-0002,Panama Oeste,PAN,Panama Oeste,admin1,,0.95,builder-drawn line (hints file),"whole region (no admin-1 match (best unit 67, group 0); carve: builder polygon from PAN:Panama)"
 PA-0003,Colon,PAN,Colon,admin1,PAN-1337,1.0,Natural Earth 10m (public domain),whole region (name match 100)
@@ -1482,6 +1719,12 @@ PR-0006,Ponce-South Coast,PRI,Puerto Rico,admin2,32010507B29369551718499;3201050
 PR-0007,Mayaguez-West,PRI,Puerto Rico,admin2,32010507B73379646065034;32010507B56909324713626;32010507B16977701319194;32010507B28103012902602;32010507B44125592347050;32010507B97201459085327;32010507B12204404308150;32010507B40456711023422;32010507B24410852555408;32010507B13421931783932;32010507B39341524675779;32010507B72195961791628;32010507B73716222823884;32010507B44684662227535,0.9,"geoBoundaries gbOpen PRI ADM2 (United States Census Bureau, MAF/TIGER; Public Domain); Natural Earth 10m (public domain)",seeds: place Mayagüez; unit Aguadilla; unit Mayagüez at place Mayagüez; unit Rincón; 14 whole admin2 units
 PR-0008,Humacao-Southeast,PRI,Puerto Rico,admin2,32010507B22166841242195;32010507B83389329504851;32010507B58001941007009;32010507B64369847691903;32010507B91916522285611,0.9,"geoBoundaries gbOpen PRI ADM2 (United States Census Bureau, MAF/TIGER; Public Domain); Natural Earth 10m (public domain)",seeds: unit Humacao; unit Yabucoa; 5 whole admin2 units
 PR-0009,Central Mountains,PRI,Puerto Rico,admin2,32010507B34283188720428;32010507B18801000784875;32010507B94179162407819;32010507B57249745430969;32010507B36616514861103;32010507B77779311465946;32010507B37684321987765;32010507B43804230876127;32010507B68011232458605;32010507B17453471751527;32010507B75385712317101,0.75,"geoBoundaries gbOpen PRI ADM2 (United States Census Bureau, MAF/TIGER; Public Domain); Natural Earth 10m (public domain)",seeds: unit Adjuntas; unit Jayuya; unit Utuado; 11 whole admin2 units
+PS-0001,Jenin-Tulkarm,PSE,Jenin-Tubas-Tulkarm-Qalqilya,admin1,,0.95,geoBoundaries gbOpen PSE ADM2 (Open Data Watch; Creative Commons Attribution 4.0 (CC BY 4.0)),"whole region (no admin-1 match (best unit 36, group 0); carve: PSE units Jenin, Tubas, Tulkarm, Qalqiliya from PSE:Ramallah-Jericho)"
+PS-0002,Nablus-Salfit,PSE,Nablus-Salfit,admin1,,0.95,geoBoundaries gbOpen PSE ADM2 (Open Data Watch; Creative Commons Attribution 4.0 (CC BY 4.0)),"whole region (no admin-1 match (best unit 35, group 0); carve: PSE units Nablus, Salfit from PSE:Ramallah-Jericho)"
+PS-0003,Ramallah-Jericho,PSE,Ramallah-Jericho,admin1,WEB+00?,0.95,Natural Earth 10m (public domain),whole region (alias hint -> PS-WBK; less PSE:Bethlehem-Hebron (carve); less PSE:Jenin-Tubas-Tulkarm-Qalqilya (carve); less PSE:Nablus-Salfit (carve))
+PS-0004,Hebron-Bethlehem,PSE,Bethlehem-Hebron,admin1,,0.95,geoBoundaries gbOpen PSE ADM2 (Open Data Watch; Creative Commons Attribution 4.0 (CC BY 4.0)),"whole region (no admin-1 match (best unit 40, group 0); carve: PSE units Bethlehem, Hebron from PSE:Ramallah-Jericho)"
+PS-0005,Gaza City,PSE,Gaza-North Gaza,admin1,GAZ+00?,0.95,Natural Earth 10m (public domain),whole region (alias hint -> PS-GZZ; less PSE:Deir al-Balah-Khan Yunis-Rafah (carve))
+PS-0006,Khan Yunis-Rafah,PSE,Deir al-Balah-Khan Yunis-Rafah,admin1,,0.95,geoBoundaries gbOpen PSE ADM2 (Open Data Watch; Creative Commons Attribution 4.0 (CC BY 4.0)),"whole region (no admin-1 match (best unit 31, group 0); carve: PSE units Deir Al Balah, Khan Yunis, Rafah from PSE:Gaza-North Gaza)"
 PT-0001,Lisbon City-Cascais,PRT,Lisbon Metropolitan Area,voronoi,PRT-746,0.85,Natural Earth 10m (public domain),"seeds: place Lisbon; point -9.42,38.7 (hint) (snapped to land); 0 whole admin1 units, split: Lisboa"
 PT-0002,Sintra-Loures,PRT,Lisbon Metropolitan Area,voronoi,PRT-746,0.85,Natural Earth 10m (public domain),"seeds: point -8.99,38.96 (hint) (snapped to land); point -9.13,38.77 (hint); point -9.17,38.83 (hint); point -9.38,38.8 (hint); 0 whole admin1 units, split: Lisboa"
 PT-0003,Setubal Peninsula,PRT,Lisbon Metropolitan Area,admin1,PRT-5498,0.9,Natural Earth 10m (public domain),seeds: place Setúbal; unit Setúbal at place Setúbal; 1 whole admin1 units
@@ -1510,6 +1753,16 @@ PY-0009,Villarrica-Guaira,PRY,Guaira-Caazapa,admin1,PRY-618;PRY-608,1.0,Natural 
 PY-0010,Misiones-Neembucu,PRY,Misiones-Neembucu,admin1,PRY-610;PRY-609,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
 PY-0011,Presidente Hayes,PRY,Presidente Hayes,admin1,PRY-605,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 PY-0012,Mennonite Chaco,PRY,Boqueron-Alto Paraguay,admin1,PRY-598;PRY-597,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+QA-0001,West Bay-Corniche,QAT,Doha,admin2,91078587B27040506800660;91078587B91130659475882;91078587B33803228876819;91078587B26591597392685;91078587B8597340902608;91078587B45177861896297;91078587B3591736578448;91078587B64948083253590;91078587B90572776822782;91078587B42740082367526;91078587B4294922321935;91078587B24677998302133;91078587B81580735513592;91078587B88603978758954;91078587B22410322487846;91078587B93784378535894;91078587B93924165383207;91078587B46503062575408,0.85,"geoBoundaries gbOpen QAT ADM2 (geoBoundaries, Qatar Open Data Portal; Creative Commons Attribution 4.0 International (CC BY 4.0)); Natural Earth 10m (public domain)","seeds: point 51.52,25.3 (hint) (snapped to land); point 51.53,25.32 (hint) (snapped to land); 18 whole admin2 units"
+QA-0002,Msheireb-Old Doha,QAT,Doha,admin2,91078587B74187630814278;91078587B48537873933910;91078587B71009022079997;91078587B68220687266900;91078587B42486259491848;91078587B12401503508412;91078587B28752145715053;91078587B3857116379359;91078587B27846098888320;91078587B32621673387065;91078587B44176615316419;91078587B20152806481978;91078587B12539996095468;91078587B49650131193986;91078587B2684025593760;91078587B74870148919967,0.85,"geoBoundaries gbOpen QAT ADM2 (geoBoundaries, Qatar Open Data Portal; Creative Commons Attribution 4.0 International (CC BY 4.0)); Natural Earth 10m (public domain)","seeds: point 51.53,25.285 (hint); 16 whole admin2 units"
+QA-0003,Doha Airport-Al Thumama,QAT,Doha,admin2,91078587B47648989692762;91078587B84345070687923;91078587B62879560621739;91078587B47528801235686;91078587B17099224452406;91078587B40201324753921;91078587B95881702990633;91078587B22433394531175;91078587B15697971941315;91078587B7560813116985,0.85,"geoBoundaries gbOpen QAT ADM2 (geoBoundaries, Qatar Open Data Portal; Creative Commons Attribution 4.0 International (CC BY 4.0)); Natural Earth 10m (public domain)","seeds: point 51.55,25.23 (hint); point 51.61,25.27 (hint); 10 whole admin2 units"
+QA-0004,Al Rayyan-Education City,QAT,Al Rayyan,admin2,91078587B25441317691063;91078587B99921066988790;91078587B84726999218009;91078587B34371380976540;91078587B42740082367526;91078587B81580735513592;91078587B88603978758954;91078587B22410322487846;91078587B93924165383207;91078587B48537873933910;91078587B42486259491848,0.85,"geoBoundaries gbOpen QAT ADM2 (geoBoundaries, Qatar Open Data Portal; Creative Commons Attribution 4.0 International (CC BY 4.0)); Natural Earth 10m (public domain)","seeds: point 51.42,25.29 (hint); point 51.44,25.31 (hint); 11 whole admin2 units"
+QA-0005,Industrial Area-Al Udeid,QAT,Al Rayyan,admin2,91078587B9070844542382;91078587B85294401922232;91078587B87782055915042;91078587B52698515683272;91078587B78066269672175;91078587B98938999484026;91078587B56593237076105;91078587B47648989692762;91078587B62879560621739;91078587B47528801235686;91078587B22433394531175;91078587B15697971941315;91078587B41884610793448,0.85,"geoBoundaries gbOpen QAT ADM2 (geoBoundaries, Qatar Open Data Portal; Creative Commons Attribution 4.0 International (CC BY 4.0)); Natural Earth 10m (public domain)","seeds: point 51.32,25.12 (hint); point 51.43,25.2 (hint); 13 whole admin2 units"
+QA-0006,Al Wakrah-Hamad Port,QAT,Al Wakrah,voronoi,91078587B10284648984722;91078587B94476380924667;91078587B84345070687923;91078587B62879560621739;91078587B47528801235686;91078587B57954650204567,0.85,"geoBoundaries gbOpen QAT ADM2 (geoBoundaries, Qatar Open Data Portal; Creative Commons Attribution 4.0 International (CC BY 4.0)); Natural Earth 10m (public domain)","seeds: point 51.6,25.17 (hint); point 51.62,25.01 (hint); 5 whole admin2 units, split: 92"
+QA-0007,Mesaieed,QAT,Al Wakrah,voronoi,91078587B61395128667616;91078587B9146513397895;91078587B57954650204567,0.85,"geoBoundaries gbOpen QAT ADM2 (geoBoundaries, Qatar Open Data Portal; Creative Commons Attribution 4.0 International (CC BY 4.0)); Natural Earth 10m (public domain)","seeds: point 51.45,24.8 (hint); point 51.55,24.99 (hint); 2 whole admin2 units, split: 92"
+QA-0008,Ras Laffan-Al Khor,QAT,Al Khor-Al Shamal,admin1,QAT-1105;QAT-1106,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+QA-0009,Lusail-Umm Salal,QAT,Al Daayen-Umm Salal,admin1,QAT-5487;QAT-1107,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+QA-0010,Dukhan-Al Shahaniya,QAT,Al Shahaniya,admin1,,0.95,builder-drawn line (hints file),"whole region (no admin-1 match (best unit 67, group 0); carve: builder polygon from QAT:Al Rayyan)"
 RO-0001,Bucharest,ROU,Bucharest-Ilfov,admin1,ROU-4844;ROU-128,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
 RO-0002,Cluj,ROU,North-West,admin1,ROU-296;ROU-300,0.9,Natural Earth 10m (public domain),seeds: place Cluj-Napoca; unit Cluj; 2 whole admin1 units
 RO-0003,Oradea-Bihor,ROU,North-West,admin1,ROU-277,0.9,Natural Earth 10m (public domain),seeds: place Oradea; unit Bihor; 1 whole admin1 units
@@ -1540,6 +1793,43 @@ RS-0007,Uzice-Kraljevo-Novi Pazar,SRB,Sumadija and Western Serbia,admin1,SRB-834
 RS-0008,Nis,SRB,Southern and Eastern Serbia,admin1,SRB-830,0.8,Natural Earth 10m (public domain),seeds: place Niš; 1 whole admin1 units
 RS-0009,Bor-Timok,SRB,Southern and Eastern Serbia,admin1,SRB-125;SRB-844;SRB-279,0.85,Natural Earth 10m (public domain),seeds: unit Borski (hint); unit Branicevski (hint); unit Zajecarski (hint); 3 whole admin1 units
 RS-0010,Leskovac-Vranje,SRB,Southern and Eastern Serbia,admin1,SRB-841;SRB-121;SRB-843;SRB-835,0.85,Natural Earth 10m (public domain),seeds: unit Jablanicki (hint); unit Pcinjski (hint); unit Toplicki (hint); 4 whole admin1 units
+SA-0001,Riyadh Central-Olaya,SAU,Riyadh,voronoi,SAU-1097,0.85,Natural Earth 10m (public domain),"seeds: point 46.64,24.76 (hint); point 46.68,24.7 (hint); 0 whole parts, 1 split"
+SA-0002,Riyadh North-Diriyah,SAU,Riyadh,voronoi,SAU-1097,0.85,Natural Earth 10m (public domain),"seeds: point 46.57,24.73 (hint); point 46.62,24.69 (hint); point 46.7,24.96 (hint); 0 whole parts, 1 split"
+SA-0003,Riyadh South-Industrial Cities,SAU,Riyadh,voronoi,SAU-1097,0.85,Natural Earth 10m (public domain),"seeds: point 46.75,24.6 (hint); point 46.83,24.5 (hint); point 46.88,24.45 (hint); 0 whole parts, 1 split"
+SA-0004,Al Kharj,SAU,Riyadh,voronoi,SAU-1097,0.8,Natural Earth 10m (public domain),"seeds: place Al Kharj; 0 whole parts, 1 split"
+SA-0005,Sudair-Majmaah,SAU,Riyadh,voronoi,SAU-1097,0.85,Natural Earth 10m (public domain),"seeds: point 44.82,26.29 (hint); point 45.25,25.24 (hint); point 45.32,25.91 (hint); point 45.6,25.66 (hint); 0 whole parts, 1 split"
+SA-0006,Dawadmi-Quwayiyah,SAU,Riyadh,voronoi,SAU-1097,0.65,Natural Earth 10m (public domain),"seeds: place Al Quwayiyah; 0 whole parts, 1 split"
+SA-0007,Wadi ad-Dawasir-Aflaj,SAU,Riyadh,voronoi,SAU-1097,0.85,Natural Earth 10m (public domain),"seeds: point 45.0,20.47 (hint); point 45.58,20.46 (hint); point 46.27,22.29 (hint); 0 whole parts, 1 split"
+SA-0008,Jeddah Al Balad-Port,SAU,Makkah,voronoi,SAU-888,0.8,Natural Earth 10m (public domain),"seeds: place Jeddah; 0 whole parts, 1 split"
+SA-0009,Jeddah North-Obhur,SAU,Makkah,voronoi,SAU-888,0.85,Natural Earth 10m (public domain),"seeds: point 39.1,21.75 (hint) (snapped to land); point 39.16,21.68 (hint); 0 whole parts, 1 split"
+SA-0010,Rabigh-KAEC,SAU,Makkah,voronoi,SAU-888,0.85,Natural Earth 10m (public domain),"seeds: point 39.03,22.8 (hint); point 39.09,22.45 (hint); 0 whole parts, 1 split"
+SA-0011,Mecca,SAU,Makkah,voronoi,SAU-888,0.85,Natural Earth 10m (public domain),"seeds: point 39.83,21.42 (hint); 0 whole parts, 1 split"
+SA-0012,Taif,SAU,Makkah,voronoi,SAU-888,0.85,Natural Earth 10m (public domain),"seeds: point 40.42,21.27 (hint); point 41.0,21.92 (hint); point 41.63,21.21 (hint); 0 whole parts, 1 split"
+SA-0013,Qunfudhah-Lith,SAU,Makkah,voronoi,SAU-888,0.65,Natural Earth 10m (public domain),"seeds: place Al Qunfudhah; 0 whole parts, 1 split"
+SA-0014,Dammam-Khobar-Dhahran,SAU,Eastern Province,voronoi,SAU-1098,0.8,Natural Earth 10m (public domain),"seeds: place Az Zahran; place Dammam; 0 whole parts, 1 split"
+SA-0015,Jubail,SAU,Eastern Province,voronoi,SAU-1098,0.85,Natural Earth 10m (public domain),"seeds: point 49.22,27.55 (hint); point 49.66,27.01 (hint) (snapped to land); 1 whole parts, 1 split"
+SA-0016,Ras Tanura-Qatif,SAU,Eastern Province,voronoi,SAU-1098,0.85,Natural Earth 10m (public domain),"seeds: point 50.01,26.56 (hint) (snapped to land); point 50.16,26.64 (hint) (snapped to land); 0 whole parts, 1 split"
+SA-0017,Hafar al-Batin-Khafji,SAU,Eastern Province,voronoi,SAU-1098,0.8,Natural Earth 10m (public domain),"seeds: place Hafar al Batin; 0 whole parts, 1 split"
+SA-0018,Abqaiq-Ghawar,SAU,Eastern Province,voronoi,SAU-1098,0.85,Natural Earth 10m (public domain),"seeds: point 49.2,24.2 (hint); point 49.3,25.0 (hint); point 49.67,25.94 (hint); 0 whole parts, 1 split"
+SA-0019,Al Ahsa-Hofuf,SAU,Eastern Province,voronoi,SAU-1098,0.8,Natural Earth 10m (public domain),"seeds: place Hofuf; 0 whole parts, 1 split"
+SA-0020,Shaybah-Rub al Khali,SAU,Eastern Province,voronoi,SAU-1098,0.85,Natural Earth 10m (public domain),"seeds: point 51.5,20.5 (hint); point 54.0,22.51 (hint); 0 whole parts, 1 split"
+SA-0021,Medina,SAU,Madinah,voronoi,SAU-845,0.8,Natural Earth 10m (public domain),"seeds: place Medina; 0 whole parts, 1 split"
+SA-0022,Yanbu,SAU,Madinah,voronoi,SAU-845,0.85,Natural Earth 10m (public domain),"seeds: point 38.06,24.09 (hint); point 38.2,23.9 (hint) (snapped to land); 0 whole parts, 1 split"
+SA-0023,Al Ula-Khaybar,SAU,Madinah,voronoi,SAU-845,0.85,Natural Earth 10m (public domain),"seeds: point 37.92,26.62 (hint); point 39.29,25.69 (hint); point 40.88,23.5 (hint); 0 whole parts, 1 split"
+SA-0024,Abha-Khamis Mushait,SAU,Asir,voronoi,SAU-886,0.8,Natural Earth 10m (public domain),"seeds: place Abha; 0 whole parts, 1 split"
+SA-0025,Bisha,SAU,Asir,voronoi,SAU-886,0.85,Natural Earth 10m (public domain),"seeds: point 42.61,20.0 (hint); point 43.62,19.53 (hint); 0 whole parts, 1 split"
+SA-0026,Muhayil-Tihama,SAU,Asir,voronoi,SAU-886,0.85,Natural Earth 10m (public domain),"seeds: point 41.55,18.21 (hint) (snapped to land); point 42.05,18.54 (hint); point 42.27,18.22 (hint); 0 whole parts, 1 split"
+SA-0027,Buraidah,SAU,Qassim,voronoi,SAU-846,0.85,Natural Earth 10m (public domain),"seeds: point 43.98,26.33 (hint); 0 whole parts, 1 split"
+SA-0028,Unaizah-Ar Rass,SAU,Qassim,voronoi,SAU-846,0.85,Natural Earth 10m (public domain),"seeds: point 43.5,25.87 (hint); point 43.73,25.96 (hint); point 43.99,26.08 (hint); 0 whole parts, 1 split"
+SA-0029,Jazan Port-Economic City,SAU,Jazan,voronoi,SAU-887,0.85,Natural Earth 10m (public domain),"seeds: point 42.12,16.73 (hint); point 42.56,16.89 (hint); 2 whole parts, 1 split"
+SA-0030,Sabya-Abu Arish,SAU,Jazan,voronoi,SAU-887,0.85,Natural Earth 10m (public domain),"seeds: point 42.62,17.15 (hint); point 42.83,16.97 (hint); point 42.95,16.6 (hint); 0 whole parts, 1 split"
+SA-0031,Tabuk,SAU,Tabuk,voronoi,SAU-848,0.8,Natural Earth 10m (public domain),"seeds: place Tabuk; 0 whole parts, 1 split"
+SA-0032,NEOM-Duba,SAU,Tabuk,voronoi,SAU-848,0.85,Natural Earth 10m (public domain),"seeds: point 34.95,29.0 (hint) (snapped to land); point 35.2,28.0 (hint); point 35.7,27.35 (hint); 7 whole parts, 1 split"
+SA-0033,Hail,SAU,Hail,admin1,SAU-847,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SA-0034,Najran-Sharurah,SAU,Najran,admin1,SAU-1096,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SA-0035,Sakaka-Al Jawf,SAU,Al Jawf,admin1,SAU-862,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SA-0036,Arar-Turaif,SAU,Northern Borders,admin1,SAU-861,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SA-0037,Al Bahah,SAU,Al Bahah,admin1,SAU-885,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 SB-0001,Honiara-Guadalcanal,SLB,Guadalcanal-Honiara,admin1,SLB-1261;SLB-5130;SLB-1263;SLB-1262,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100); plus unclaimed Central, Rennell and Bellona)"
 SB-0002,Malaita,SLB,Malaita,admin1,SLB-3509;SLB-1934;SLB-1260,1.0,Natural Earth 10m (public domain),"whole region (name match 100; plus unclaimed Makira, Temotu)"
 SB-0003,Western Solomons,SLB,Western-Choiseul-Isabel,admin1,SLB-3507;SLB-1264;SLB-3508,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> SLB-3507, SLB-3508, SB-IS)"
@@ -1600,6 +1890,20 @@ SV-0004,Sonsonate-Acajutla,SLV,Sonsonate,admin1,SLV-1348,1.0,Natural Earth 10m (
 SV-0005,North El Salvador,SLV,Chalatenango-Cuscatlan-Cabanas,admin1,SLV-1357;SLV-1344;SLV-1345,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
 SV-0006,Comalapa-Usulutan,SLV,La Paz-San Vicente-Usulutan,admin1,SLV-1347;SLV-1353;SLV-1354,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
 SV-0007,San Miguel-La Union,SLV,San Miguel-Morazan-La Union,admin1,SLV-1351;SLV-1352;SLV-1350,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
+SY-0001,Damascus,SYR,Damascus,admin1,SYR-4843,0.95,Natural Earth 10m (public domain),whole region (alias hint -> SY-DI)
+SY-0002,Damascus Countryside,SYR,Rif Dimashq,admin1,SYR-144,0.95,Natural Earth 10m (public domain),whole region (alias hint -> SY-RD)
+SY-0003,Aleppo,SYR,Aleppo,admin1,SYR-137,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SY-0004,Homs-Palmyra,SYR,Homs,admin1,SYR-139,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SY-0005,Hama,SYR,Hama,admin1,SYR-138,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SY-0006,Idlib,SYR,Idlib,admin1,SYR-140,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SY-0007,Latakia,SYR,Latakia,admin1,SYR-134,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SY-0008,Tartus-Baniyas,SYR,Tartus,admin1,SYR-135,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SY-0009,Deir ez-Zor,SYR,Deir ez-Zor,admin1,SYR-142,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SY-0010,Raqqa-Tabqa,SYR,Raqqa,admin1,SYR-136,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SY-0011,Hasakah-Qamishli,SYR,Al-Hasakah,admin1,SYR-141,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SY-0012,Daraa,SYR,Daraa,admin1,SYR-146,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SY-0013,Suwayda,SYR,As-Suwayda,admin1,SYR-143,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+SY-0014,Quneitra,SYR,Quneitra,admin1,SYR-5261;SYR-145,1.0,Natural Earth 10m (public domain),whole region (name match 100; plus unclaimed UNDOF)
 TH-0001,Bangkok Silom-Sukhumvit,THA,Bangkok,admin2,78962969B79450703987233;78962969B44452950449651;78962969B71944934513319;78962969B90575155663708;78962969B20944383607062;78962969B21666986895715;78962969B39307621639221;78962969B69407198721734;78962969B71650774119704;78962969B8359958585386;78962969B62274513828859;78962969B14183764465064;78962969B98953458091915;78962969B41051617960371;78962969B42559616125747;78962969B70795195201443;78962969B51351558142585;78962969B63741991281097;78962969B86497108686026;78962969B43095754832061;78962969B56226274044395;78962969B46231034587858;78962969B95574148528109;78962969B59018064980934;78962969B63126335713570;78962969B24986508007859;78962969B24631471480950;78962969B58585163382090;78962969B55596072077458;78962969B48360013024769;78962969B85320273123577;78962969B62937206462024;78962969B18943250736788;78962969B82033887386179;78962969B64116960890602;78962969B78328018981933;78962969B37896231251268;78962969B57919474821024;78962969B46335103611248;78962969B19319663226998;78962969B37359876414663;78962969B23901249409330;78962969B59221573730573;78962969B14857806522936,0.75,"geoBoundaries gbOpen THA ADM2 (Royal Thai Survey Department, OCHA ROAP; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Khlong Toei; 44 whole admin2 units
 TH-0002,Thonburi-Bangkok West,THA,Bangkok,admin2,78962969B77948152062617;78962969B64329347166789;78962969B82551730136395;78962969B88059812817322;78962969B31670435766777;78962969B48707733075976,0.75,"geoBoundaries gbOpen THA ADM2 (Royal Thai Survey Department, OCHA ROAP; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Bang Khun Thian; 6 whole admin2 units
 TH-0003,Samut Prakan,THA,Samut Prakan,admin1,THA-422,1.0,Natural Earth 10m (public domain),whole region (name match 100)
@@ -1633,6 +1937,17 @@ TH-0030,Deep South,THA,Pattani-Yala-Narathiwat,admin1,THA-388;THA-493;THA-494,1.
 TL-0001,Dili,TLS,Dili,admin1,TLS-541,0.95,Natural Earth 10m (public domain),whole region (alias hint -> TL-DI)
 TL-0002,Western Municipalities,TLS,Western Municipalities,admin1,TLS-543;TLS-547;TLS-548;TLS-545;TLS-542;TLS-549;TLS-544,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> TL-OE, TL-BO, TL-CO, TL-ER, TL-LI, TL-AN, TL-AL)"
 TL-0003,Eastern Municipalities,TLS,Eastern Municipalities,admin1,TLS-551;TLS-550;TLS-552;TLS-553;TLS-546,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> TL-BA, TL-LA, TL-VI, TL-MT, TL-MF)"
+TN-0001,Tunis,TUN,Tunis,admin1,TUN-108,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+TN-0002,Ariana-Ben Arous,TUN,Ariana-Ben Arous-Manouba,admin1,TUN-104;TUN-102,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> TN-13, TN-14)"
+TN-0003,Bizerte,TUN,Bizerte,admin1,TUN-105,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+TN-0004,Nabeul-Hammamet,TUN,Nabeul-Zaghouan,admin1,TUN-107;TUN-120,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+TN-0005,Sousse-Monastir,TUN,Sousse-Monastir,admin1,TUN-117;TUN-119,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+TN-0006,Sfax,TUN,Sfax,admin1,TUN-114,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+TN-0007,Kairouan-Mahdia,TUN,Mahdia-Kairouan,admin1,TUN-116;TUN-118,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+TN-0008,Gafsa-Tozeur,TUN,Gafsa-Tozeur-Kebili,admin1,TUN-97;TUN-101;TUN-112,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
+TN-0009,Gabes-Djerba,TUN,Gabes-Medenine-Tataouine,admin1,TUN-98;TUN-96;TUN-111,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
+TN-0010,Kasserine-Sidi Bouzid,TUN,Kasserine-Sidi Bouzid,admin1,TUN-110;TUN-113,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+TN-0011,Beja-Jendouba-Kef,TUN,Jendouba-Beja-Kef-Siliana,admin1,TUN-106;TUN-109;TUN-103;TUN-115,1.0,Natural Earth 10m (public domain),"whole region (name parts (4 pieces, worst match 100))"
 TO-0001,Tonga,TON,Tonga,admin1,TON-4946;TON-4949;TON-4945;TON-4948;TON-4947,0.95,Natural Earth 10m (public domain),whole region (whole country (5 admin-1 units))
 TR-0001,Historic Peninsula-Beyoglu,TUR,Istanbul,voronoi,TUR-2265,0.85,Natural Earth 10m (public domain),"seeds: point 28.96,41.01 (hint); point 28.97,41.035 (hint); 0 whole parts, 1 split"
 TR-0002,Levent-Maslak,TUR,Istanbul,voronoi,TUR-2265,0.85,Natural Earth 10m (public domain),"seeds: point 28.99,41.06 (hint); point 29.01,41.05 (hint); point 29.05,41.17 (hint); 0 whole parts, 1 split"
@@ -1936,3 +2251,19 @@ XK-0001,Pristina,XKX,Kosovo,admin1,KOS-5904;KOS-5905;KOS-5902;KOS-5907;KOS-5899;
 XK-0002,Prizren-Ferizaj,XKX,Kosovo,admin1,KOS-5909;KOS-5908;KOS-5915;KOS-5914;KOS-5891;KOS-5911;KOS-5910;KOS-5913;KOS-5912,0.9,Natural Earth 10m (public domain),seeds: place Prizren; unit Prizren at place Prizren; 9 whole admin1 units
 XK-0003,Peja-Gjakova,XKX,Kosovo,admin1,KOS-5889;KOS-5890;KOS-5887;KOS-5886;KOS-5888,0.75,Natural Earth 10m (public domain),seeds: unit Dečani; 5 whole admin1 units
 XK-0004,Mitrovica-North,XKX,Kosovo,admin1,KOS-5893;KOS-5901;KOS-5897;KOS-5892;KOS-5896;KOS-5894;KOS-5895,0.9,Natural Earth 10m (public domain),seeds: unit Kosovska Mitrovica; 7 whole admin1 units
+YE-0001,Sanaa,YEM,Amanat al-Asimah,admin1,YEM-3498,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+YE-0002,Sanaa Highlands-Amran,YEM,Sanaa-Amran,admin1,YEM-3496;YEM-155,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+YE-0003,Saada-Al Jawf,YEM,Saada-Al Jawf,admin1,YEM-150;YEM-335,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+YE-0004,Hajjah-Al Mahwit,YEM,Hajjah-Al Mahwit,admin1,YEM-154;YEM-152,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+YE-0005,Hodeidah,YEM,Al Hudaydah,admin1,YEM-151,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+YE-0006,Dhamar-Raymah,YEM,Dhamar-Raymah,admin1,YEM-3499;YEM-153,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+YE-0007,Ibb,YEM,Ibb,admin1,YEM-156,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+YE-0008,Taiz-Mocha,YEM,Taiz,admin1,YEM-158,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+YE-0009,Aden,YEM,Aden,admin1,YEM-3510,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+YE-0010,Lahij-Ad Dali,YEM,Lahij-Ad Dali,admin1,YEM-157;YEM-334,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+YE-0011,Abyan-Al Bayda,YEM,Abyan-Al Bayda,admin1,YEM-3511;YEM-333,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+YE-0012,Marib,YEM,Marib,admin1,YEM-337,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+YE-0013,Shabwa-Balhaf,YEM,Shabwa,admin1,YEM-336,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+YE-0014,Mukalla-Hadramawt Coast,YEM,Hadramawt,admin2,15242507B43236633783940;15242507B14142255130537;15242507B58330676723626;15242507B55233567675049;15242507B42761625616090;15242507B41313951038201;15242507B24297046109512;15242507B42870689355247;15242507B1280575170074;15242507B18959101282675;15242507B50581943106199,0.9,"geoBoundaries gbOpen YEM ADM2 (Central Statistical Organization (CSO), OCHA Yemen; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: place Ash Shihr; unit Al Mukalla City; unit Ash Shihr at place Ash Shihr; 11 whole admin2 units
+YE-0015,Seiyun-Masila,YEM,Hadramawt,admin2,15242507B71600093935687;15242507B77315063878707;15242507B27832262197062;15242507B25520584620075;15242507B41377814655385;15242507B3031648883440;15242507B78643865459873;15242507B68868493059781;15242507B46813891716840;15242507B12607527739382;15242507B86520144801681;15242507B10935646704236;15242507B25439284744831;15242507B59999910917568;15242507B88244220380617;15242507B45832769830873;15242507B8260286715328,0.75,"geoBoundaries gbOpen YEM ADM2 (Central Statistical Organization (CSO), OCHA Yemen; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Shibam; unit Tarim; 17 whole admin2 units
+YE-0016,Al Mahrah-Socotra,YEM,Al Mahrah-Socotra,admin1,YEM-332,0.95,Natural Earth 10m (public domain); builder-drawn line (hints file),whole region (alias hint -> YE-MR; carve: builder polygon from YEM:Hadramawt)

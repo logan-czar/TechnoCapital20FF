@@ -8,7 +8,7 @@ lat_max = 84.000000
 lat_min = -57.783215
 tiny_px = 64
 pipeline_version = "pa-1"
-coverage = ["provinces-north-america.csv", "provinces-east-asia-oceania.csv", "provinces-europe.csv", "provinces-latin-america.csv"]
+coverage = ["provinces-north-america.csv", "provinces-east-asia-oceania.csv", "provinces-europe.csv", "provinces-latin-america.csv", "provinces-mena.csv"]
 
 [sources]
 natural_earth = "v5.1.2 (f1890d9)"

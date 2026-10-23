@@ -27,7 +27,11 @@ Boundary files used, with their original sources and licenses:
 | CRI | ADM2 | geoBoundaries, Wikimedia Commons | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2020 |
 | CZE | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2010 |
 | DNK | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2018 |
+| EGY | ADM2 | OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS) | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | IDN | ADM2 | Badan Pusat Statistik (BPS - Statistics Indonesia), World Food Programme, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
+| IRQ | ADM2 | Iraq Central Statistics Office, OCHA Iraq | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2021 |
+| ISR | ADM2 | geoBoundaries, Wikimedia Commons | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2021 |
+| JOR | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2006 |
 | KOR | ADM2 | geoBoundaries, citypopulation.de | Creative Commons Attribution 3.0 License | 2020 |
 | MMR | ADM2 | Myanmar Analytics Project, USAID/Burma | Creative Commons Attribution 4.0 (CC BY 4.0) | 2019 |
 | MNG | ADM2 | National Statistical Office of Mongolia, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2021 |
@@ -37,9 +41,12 @@ Boundary files used, with their original sources and licenses:
 | NZL | ADM2 | Stats NZ | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2021 |
 | PER | ADM2 | Instituto Geográfico Nacional - IGN, OCHA ROLAC | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | PRI | ADM2 | United States Census Bureau, MAF/TIGER | Public Domain | 2021 |
+| PSE | ADM2 | Open Data Watch | Creative Commons Attribution 4.0 (CC BY 4.0) | 2017 |
+| QAT | ADM2 | geoBoundaries, Qatar Open Data Portal | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2015 |
 | SWE | ADM2 | geoBoundaries, Wikimedia Commons | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2017 |
 | THA | ADM2 | Royal Thai Survey Department, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2019 |
 | VNM | ADM2 | OCHA ROAP, Government of Viet Nam | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
+| YEM | ADM2 | Central Statistical Organization (CSO), OCHA Yemen | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2021 |
 
 Contains information licensed under the Open Government Licence - Canada (https://open.canada.ca/en/open-government-licence-canada), from Statistics Canada.
 
