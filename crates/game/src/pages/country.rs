@@ -13,9 +13,18 @@ use crate::command::index::NameIndex;
 use crate::config::UiConfig;
 use crate::table::{Cell, Column, TableModel, Unit};
 
-pub const SECTIONS: &[SectionSpec] = &[("economy", "Economy"), ("companies", "HQ'd companies")];
+pub const SECTIONS: &[SectionSpec] = &[
+    ("economy", "Economy"),
+    ("companies", "HQ'd companies"),
+    ("provinces", "Provinces"),
+];
 
-pub const VIEWS: &[ViewKey] = &[ViewKey::Countries, ViewKey::Rates, ViewKey::CompanyRows];
+pub const VIEWS: &[ViewKey] = &[
+    ViewKey::Countries,
+    ViewKey::Rates,
+    ViewKey::CompanyRows,
+    ViewKey::ProvinceCards,
+];
 
 pub fn register(app: &mut App) {
     app.register_page(
@@ -142,6 +151,15 @@ pub fn country_doc(c: CountryId, v: &SimViews, index: &NameIndex) -> PageDoc {
             blocks: vec![Block::Table(TableDoc {
                 id: "country.companies".into(),
                 model: hq_model(c, v, index),
+                live: None,
+            })],
+        },
+        // Its provinces as links (M8.7, D707).
+        SectionDoc {
+            id: "provinces",
+            blocks: vec![Block::Table(TableDoc {
+                id: "country.provinces".into(),
+                model: super::province::provinces_model(&[c], v, index),
                 live: None,
             })],
         },

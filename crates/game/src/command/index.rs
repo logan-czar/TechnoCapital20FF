@@ -255,17 +255,15 @@ impl NameIndex {
                 detail,
             ));
         }
-        // Provinces (M8): named for their pane titles and breadcrumbs, hidden from the search
-        // until lane MB's province links (M8.7).
+        // Provinces (M8.7, D707): searchable by name and id, "Province, Country" as detail.
         let places = v.places.get();
         for p in &places.provinces {
             let country = places
                 .country(p.country)
                 .map_or_else(String::new, |c| c.name.clone());
-            let mut e =
-                IndexEntry::new(PageRef::Province(p.id), p.name.clone(), country).alias(&p.key);
-            e.hidden = true;
-            entries.push(e);
+            entries.push(
+                IndexEntry::new(PageRef::Province(p.id), p.name.clone(), country).alias(&p.key),
+            );
         }
         // A recap for every quarter so far, newest first.
         let mut q = v.clock().date.quarter();

@@ -26,11 +26,12 @@ pub const SECTIONS: &[SectionSpec] = &[
     ("economy", "Economy"),
     ("index", "Index"),
     ("members", "Member countries"),
+    ("provinces", "Member provinces"),
 ];
 
 /// Rebuilds on the monthly views only; the daily v_zones figures (confidence, spread, GDP
 /// share, effect, last close) and the index follow by themselves ([`Live`], D485).
-pub const VIEWS: &[ViewKey] = &[ViewKey::Countries, ViewKey::Rates];
+pub const VIEWS: &[ViewKey] = &[ViewKey::Countries, ViewKey::Rates, ViewKey::ProvinceCards];
 
 pub fn register(app: &mut App) {
     app.register_page(
@@ -210,6 +211,15 @@ pub fn zone_doc(z: ZoneId, v: &SimViews, index: &NameIndex) -> PageDoc {
             blocks: vec![Block::Table(TableDoc {
                 id: "zone.members".into(),
                 model: members_model(z, v, index),
+                live: None,
+            })],
+        },
+        // The member countries' provinces as links (M8.7, D707).
+        SectionDoc {
+            id: "provinces",
+            blocks: vec![Block::Table(TableDoc {
+                id: "zone.provinces".into(),
+                model: super::province::provinces_model(&r.members, v, index),
                 live: None,
             })],
         },

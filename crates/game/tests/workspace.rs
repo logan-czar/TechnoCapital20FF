@@ -658,13 +658,13 @@ fn a_private_company_card_shows_bands() {
     let mut hq_link = false;
     while let Some(e) = stack.pop() {
         if let (Some(t), Some(l)) = (app.world().get::<Text>(e), app.world().get::<Link>(e)) {
-            hq_link |= t.0 == hq && l.0 == PageRef::Country(row.hq_country);
+            hq_link |= t.0 == hq && l.0 == PageRef::Province(d.hq_province);
         }
         if let Some(c) = app.world().get::<Children>(e) {
             stack.extend(c.iter());
         }
     }
-    assert!(hq_link, "the card's HQ {hq} links to its country");
+    assert!(hq_link, "the card's HQ {hq} links to its province");
     if cfg!(debug_assertions) {
         let mut truth = Sim::new(data(), 42).unwrap();
         truth.apply(sim::Control::SetOmniscient(true)).unwrap();

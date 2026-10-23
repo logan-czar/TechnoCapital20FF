@@ -212,7 +212,7 @@ fn names_come_from_the_a1_views() {
     );
     let model = list_model(&PageRef::Characters, v, &index).unwrap();
     assert_eq!(model.len(), v.characters.get().full.len());
-    // A character's home is a place link to its country.
+    // A character's home is a place link to its province (M8.7, D707).
     let home = model.column_by_key("Home").unwrap();
     let c0 = &v.characters.get().full[0];
     let sim::views::characters::CharacterRef::Full(id0) = c0.id else {
@@ -222,7 +222,7 @@ fn names_come_from_the_a1_views() {
     assert_eq!(
         model.cell(row_of(&model, &PageRef::Character(id0)), home),
         &Cell::Link(
-            PageRef::Country(h.country),
+            PageRef::Province(h.province),
             format!("{}, {}", h.province_name, h.country_name)
         )
     );
