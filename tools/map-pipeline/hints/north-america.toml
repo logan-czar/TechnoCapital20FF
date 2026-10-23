@@ -13,8 +13,18 @@
 # phrase says county (D603).
 notes_need_place = ["USA"]
 
-[provinces.US-0013] # San Fernando Valley
-seeds = [[-118.45, 34.22]]
+[provinces.US-0013] # San Fernando Valley, with Santa Clarita and the Antelope Valley (north LA County)
+seeds = [[-118.45, 34.22], [-118.54, 34.39], [-118.12, 34.58], [-118.14, 34.70]]
+[provinces.US-0044] # Chicago Loop: the Loop and the North Side
+seeds = [[-87.63, 41.88], [-87.66, 41.95]]
+[provinces.US-0045] # South Side-Calumet: the South Side lakefront and the Calumet region
+seeds = [[-87.60, 41.78], [-87.62, 41.62]]
+[provinces.US-0046] # DuPage-Northwest Suburbs: DuPage plus northwest Cook (O'Hare, Schaumburg, Arlington Heights)
+seeds = [[-87.90, 41.98], [-88.08, 42.03], [-87.98, 42.09]]
+add = true
+[provinces.US-0090] # Hudson Valley-Capital Region: the mid-Hudson counties (Newburgh, Poughkeepsie, Kingston)
+seeds = [[-74.01, 41.50], [-73.92, 41.70], [-73.99, 41.93]]
+add = true
 [provinces.US-0015] # Inland Empire: Riverside County is split with the Coachella Valley
 units = ["San Bernardino", "Riverside"]
 [provinces.US-0062] # Suburban Maryland

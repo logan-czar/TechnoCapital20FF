@@ -18,12 +18,14 @@ from __future__ import annotations
 import csv
 import json
 import math
+import re
 import tomllib
 from collections import defaultdict
 from dataclasses import dataclass, field
 
 import geopandas as gpd
 import shapely
+import shapely.ops
 from rapidfuzz import fuzz
 from shapely.geometry import Point, box
 
@@ -49,6 +51,8 @@ METRO_OFFSET_DEG = 0.2
 PLACE_BUFFER_DEG = 0.05
 # Gazetteer names shorter than this are ignored unless they are a whole name part.
 MIN_NAME_LEN = 4
+# Building blocks are simplified to this tolerance (degrees, about 50 m) when loaded (D610).
+BLOCK_SIMPLIFY_DEG = 0.0005
 
 NE_A1_COLS = ["name", "name_alt", "name_en", "woe_name", "gn_name", "adm0_a3", "iso_3166_2", "adm1_code"]
 NE_A0_COLS = ["ADMIN", "NAME", "NAME_LONG", "ADM0_A3", "SOV_A3"]
@@ -62,6 +66,7 @@ class Seed:
     quality: float
     label: str
     unit: str | None = None  # set when the seed is a named building block
+    home: str | None = None  # the block the seed claims (set by assign_blocks)
 
 
 @dataclass
@@ -165,12 +170,14 @@ def load_blocks(country: str, sources: dict):
         if b["iso"] != country or b["level"] != "ADM2":
             continue
         meta = fetch.gb_meta(country, "ADM2", sources)
-        ok, why = licenses.classify(meta.get("boundaryLicense", ""), meta.get("boundarySource", ""))
+        ok, why = licenses.classify_meta(meta)
         if not ok:
             return None, meta, why
         path = config.gb_dir(country, "ADM2", sources) / f"geoBoundaries-{country}-ADM2.geojson"
         g = gpd.read_file(path)[["shapeName", "shapeID", "geometry"]]
-        g["geometry"] = shapely.make_valid(g.geometry.values)
+        # D610: simplify to a tenth of a pixel first; StatCan coastlines carry up to 294,000
+        # vertices per unit, which made every overlay test slow
+        g["geometry"] = shapely.make_valid(shapely.simplify(g.geometry.values, BLOCK_SIMPLIFY_DEG))
         return g, meta, why
     return None, None, "not pinned"
 
@@ -187,6 +194,14 @@ def unit_aliases(name: str) -> list[str]:
     and the head of a Spanish `X de Y` name (Naucalpan de Juarez -> naucalpan)."""
     f = text.fold(name)
     out = [f]
+    # composite names: each "--" or " / " part is a name too (the English and French halves,
+    # the towns of an economic region); a trailing "*" marks a truncated name
+    pieces = re.split(r"--| / ", name.replace("*", ""))
+    if len(pieces) > 1:
+        for piece in pieces:
+            fp = text.fold(piece)
+            if len(fp) >= 5 and fp not in text.STOPWORDS:
+                out.append(fp)
     words = f.split()
     core = [w for w in words if w not in _UNIT_WORDS]
     if core and core != words:
@@ -245,13 +260,19 @@ class Gazetteer:
                     for fname in r.aliases:
                         if not self._usable(fname, whole_parts, ph, from_name):
                             continue
-                        rev = from_name and len(ph) >= 6 and ph not in text.STOPWORDS and ph not in self.exclude                             and text.contains_word(fname, ph)
+                        rev = (
+                            from_name and len(ph) >= 6 and ph not in text.STOPWORDS
+                            and ph not in self.exclude and text.contains_word(fname, ph)
+                        )
                         if not (text.contains_word(ph, fname) or rev):
                             continue
                         # a name shared with a populated place means the place, unless it is inside
                         if fname in self._place_names and not self._place_inside(fname, r.geometry):
                             continue
-                        if not from_name and self.notes_need_place and not self._place_inside(fname, r.geometry)                                 and not admin_notes:
+                        if (
+                            not from_name and self.notes_need_place
+                            and not self._place_inside(fname, r.geometry) and not admin_notes
+                        ):
                             continue
                         hits.append(("block", fname, r, ph))
                         break
@@ -332,7 +353,10 @@ def make_seeds(p: ProvinceRow, gaz: Gazetteer, region_geom, metro_core, hint: di
     gaz.city_parts = {parts[1] if len(parts) > 1 else parts[0]} | {x for x in parts if x.endswith(" city")}
     hits = [(h, True) for h in gaz.find(parts, whole, True)]
     hits += [(h, False) for h in gaz.find(text.note_phrases(p.notes), whole, False)]
+    named = []
     for (kind, fname, payload, ph), in_name in hits:
+        if kind == "place":
+            named.append((payload[3], payload[0], payload[1]))
         if kind == "place":
             x, y, pop, label = payload
             q = Q_PLACE_NAME if in_name else Q_PLACE_NOTE
@@ -340,6 +364,7 @@ def make_seeds(p: ProvinceRow, gaz: Gazetteer, region_geom, metro_core, hint: di
         else:
             q = Q_BLOCK_NAME if in_name else Q_BLOCK_NOTE
             seeds.append(Seed(payload.rx, payload.ry, q, f"unit {payload.name}", payload.unit_id))
+    p.named_places = named
     # one seed per distinct location and unit
     uniq, seen = [], set()
     for s in sorted(seeds, key=lambda s: -s.quality):
@@ -395,10 +420,22 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool):
     for p in provs:
         for s in p.seeds:
             if s.unit:
-                claims[s.unit].add(p.id)
-                continue
-            for i in sindex.query(Point(s.x, s.y), predicate="within"):
-                claims[blocks.iloc[i].unit_id].add(p.id)
+                s.home = s.unit
+            else:
+                pt = Point(s.x, s.y)
+                hit = sorted(sindex.query(pt, predicate="within"))
+                if hit:
+                    s.home = blocks.iloc[hit[0]].unit_id
+                else:
+                    # a seed just off the coast (Kingston sits 0.02 degrees offshore) claims the
+                    # nearest block, at the nearest point of it
+                    i = min(range(len(blocks)), key=lambda i: (blocks.iloc[i].geometry.distance(pt), i))
+                    g = blocks.iloc[i].geometry
+                    near = shapely.ops.nearest_points(g, pt)[0]
+                    s.x, s.y = near.x, near.y
+                    s.home = blocks.iloc[i].unit_id
+                    s.label += " (snapped to land)"
+            claims[s.home].add(p.id)
     whole: dict[str, list[str]] = defaultdict(list)
     split: dict[str, list[str]] = {}
     all_seeds = [(s.x, s.y, p.id) for p in provs for s in p.seeds]
@@ -520,7 +557,7 @@ def run(region: config.Region) -> None:
         places = []
         for r in sel.itertuples():
             names = {r.NAME, r.NAMEASCII} | set((r.NAMEALT or "").split("|"))
-            for n in names:
+            for n in sorted(n for n in names if isinstance(n, str)):
                 if isinstance(n, str) and n.strip():
                     places.append((text.fold(n), r.geometry.x, r.geometry.y, r.POP_MAX or 0, r.NAME))
         exclude = {text.fold(rname), text.fold(country)}
@@ -544,13 +581,13 @@ def run(region: config.Region) -> None:
             sp = {}
             for uid, owners in split.items():
                 if p.id in owners:
-                    unit_geom = b[b.unit_id == uid].geometry.iloc[0]
-                    pts = [[s.x, s.y] for s in p.seeds if s.unit == uid or unit_geom.contains(Point(s.x, s.y))]
+                    pts = [[s.x, s.y] for s in p.seeds if s.home == uid]
                     if not pts:  # the province won the split by fallback: use its best seed
                         s = max(p.seeds, key=lambda s: s.quality)
                         pts = [[s.x, s.y]]
                     sp[uid] = pts
-            rplan["provinces"][p.id] = {"whole": whole.get(p.id, []), "split": sp}
+            rplan["provinces"][p.id] = {"whole": whole.get(p.id, []), "split": sp,
+                                        "named_places": getattr(p, "named_places", [])}
         bf = f"blocks-{_slug(key)}.geojson"
         b[["unit_id", "name", "geometry"]].assign(region_key=key).to_file(work / bf, driver="GeoJSON")
         rplan["blocks_file"] = bf
