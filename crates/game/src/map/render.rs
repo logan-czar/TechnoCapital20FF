@@ -9,17 +9,20 @@
 //!   (the mode changed or a view it reads moved its version; M8.5);
 //! - the per-province Metro table (64 x 64 R16Uint), for the Metro outlines;
 //! - [`ProvinceMapMaterial`], the UI material running `assets/shaders/province_map.wgsl` on the
-//!   map node.
+//!   map node. The WGSL is compiled into the binary ([`SHADER_SOURCE`]) and registered under a
+//!   fixed handle, never read from an asset folder at run time, so the shader always matches
+//!   the [`MapParams`] it was built with (D741); a test checks the two layouts field by field.
 //!
 //! The big textures keep no CPU copy once uploaded (render world only).
 
 use bevy::asset::RenderAssetUsages;
+use bevy::asset::uuid_handle;
 use bevy::image::{ImageAddressMode, ImageFilterMode, ImageSampler, ImageSamplerDescriptor};
 use bevy::prelude::*;
 use bevy::render::render_resource::{
     AsBindGroup, Extent3d, ShaderType, TextureDimension, TextureFormat,
 };
-use bevy::shader::ShaderRef;
+use bevy::shader::{Shader, ShaderRef};
 use bevy::ui_render::prelude::{MaterialNode, UiMaterial, UiMaterialPlugin};
 use bevy::window::PrimaryWindow;
 
@@ -32,8 +35,20 @@ use crate::bridge::Views;
 use crate::ui::UiSystems;
 use crate::ui::theme::color;
 
-/// The shader, under the asset folder.
+/// The shader's file, under the repository's asset folder (its name in shader errors).
 pub const SHADER: &str = "shaders/province_map.wgsl";
+
+/// The shader's source, compiled in from `assets/shaders/province_map.wgsl` (D741). A shader
+/// read from disk at run time could come from another build's tree than the binary's: a stale
+/// `target/release/game` run against an updated checkout drew with a WGSL `MapParams` of 128
+/// bytes (with `metro`) over a pipeline layout of 112 (the binary's struct without it).
+pub const SHADER_SOURCE: &str = include_str!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../../assets/shaders/province_map.wgsl"
+));
+
+/// The fixed handle the compiled-in shader is registered under.
+pub const SHADER_HANDLE: Handle<Shader> = uuid_handle!("6b1f6a52-8c1e-4d0b-9a57-3c2e7d4f8a10");
 
 /// The map shader's uniform (field order as in the WGSL `MapParams`).
 #[derive(ShaderType, Debug, Clone, Copy, PartialEq, Default)]
@@ -73,7 +88,7 @@ pub struct ProvinceMapMaterial {
 
 impl UiMaterial for ProvinceMapMaterial {
     fn fragment_shader() -> ShaderRef {
-        SHADER.into()
+        ShaderRef::Handle(SHADER_HANDLE)
     }
 }
 
@@ -101,6 +116,11 @@ pub struct MapRenderPlugin;
 
 impl Plugin for MapRenderPlugin {
     fn build(&self, app: &mut App) {
+        // The shader the binary was built with, before the material's pipeline can ask for it.
+        app.world_mut()
+            .resource_mut::<Assets<Shader>>()
+            .insert(&SHADER_HANDLE, Shader::from_wgsl(SHADER_SOURCE, SHADER))
+            .expect("a uuid handle is always valid");
         app.add_plugins(UiMaterialPlugin::<ProvinceMapMaterial>::default())
             .add_systems(Startup, setup_render.after(MapLoad))
             .add_systems(
@@ -350,6 +370,99 @@ fn sync_params(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use bevy::render::render_resource::encase::UniformBuffer;
+
+    /// The WGSL `MapParams` and the Rust one share one layout (D741): the same size (the
+    /// pipeline layout's `min_binding_size` is the Rust struct's, the shader's is the WGSL
+    /// struct's), the same members, and every Rust field lands at the offset the WGSL member
+    /// reads it from.
+    #[test]
+    fn the_shader_and_the_rust_map_params_share_one_layout() {
+        let module = naga::front::wgsl::parse_str(SHADER_SOURCE).expect("the map shader parses");
+        let ty = module
+            .types
+            .iter()
+            .map(|(_, t)| t)
+            .find(|t| t.name.as_deref() == Some("MapParams"))
+            .expect("struct MapParams");
+        let naga::TypeInner::Struct { members, span } = &ty.inner else {
+            panic!("MapParams is a struct")
+        };
+        assert_eq!(
+            u64::from(*span),
+            MapParams::min_size().get(),
+            "WGSL MapParams and Rust MapParams differ in size"
+        );
+        // Distinct values in every field, written as the uniform buffer writes them.
+        let p = MapParams {
+            map_size: Vec2::new(1.0, 2.0),
+            view_size: Vec2::new(3.0, 4.0),
+            center: Vec2::new(5.0, 6.0),
+            scale: 7.0,
+            px_ratio: 8.0,
+            hover: 9,
+            selected: 10,
+            province_alpha: 11.0,
+            region_alpha: 12.0,
+            sea: Vec4::new(13.0, 14.0, 15.0, 16.0),
+            line: Vec4::new(17.0, 18.0, 19.0, 20.0),
+            accent: Vec4::new(21.0, 22.0, 23.0, 24.0),
+            hatch: Vec4::new(25.0, 26.0, 27.0, 28.0),
+            metro: Vec4::new(29.0, 30.0, 31.0, 32.0),
+        };
+        let mut buf = UniformBuffer::new(Vec::<u8>::new());
+        buf.write(&p).unwrap();
+        let bytes = buf.into_inner();
+        let f = |v: &[f32]| v.iter().flat_map(|x| x.to_le_bytes()).collect::<Vec<u8>>();
+        let expect = |name: &str| -> Vec<u8> {
+            match name {
+                "map_size" => f(&p.map_size.to_array()),
+                "view_size" => f(&p.view_size.to_array()),
+                "center" => f(&p.center.to_array()),
+                "scale" => f(&[p.scale]),
+                "px_ratio" => f(&[p.px_ratio]),
+                "hover" => p.hover.to_le_bytes().to_vec(),
+                "selected" => p.selected.to_le_bytes().to_vec(),
+                "province_alpha" => f(&[p.province_alpha]),
+                "region_alpha" => f(&[p.region_alpha]),
+                "sea" => f(&p.sea.to_array()),
+                "line" => f(&p.line.to_array()),
+                "accent" => f(&p.accent.to_array()),
+                "hatch" => f(&p.hatch.to_array()),
+                "metro" => f(&p.metro.to_array()),
+                other => panic!("WGSL MapParams has {other}, which the Rust struct lacks"),
+            }
+        };
+        // Every Rust field (14) is a WGSL member, in the same order.
+        assert_eq!(members.len(), 14, "WGSL MapParams members");
+        for m in members {
+            let name = m.name.as_deref().unwrap();
+            let want = expect(name);
+            let at = m.offset as usize;
+            assert_eq!(
+                &bytes[at..at + want.len()],
+                want.as_slice(),
+                "MapParams.{name} at WGSL offset {at}"
+            );
+        }
+        // The material's bindings are the shader's: group 1, bindings 0 to 5.
+        let mut bindings: Vec<(u32, u32)> = module
+            .global_variables
+            .iter()
+            .filter_map(|(_, g)| g.binding.as_ref().map(|b| (b.group, b.binding)))
+            .collect();
+        bindings.sort_unstable();
+        assert_eq!(bindings, (0..6).map(|b| (1, b)).collect::<Vec<_>>());
+    }
+
+    /// The compiled-in source is the file in the repository (no stale copy).
+    #[test]
+    fn the_compiled_in_shader_is_the_assets_file() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../assets")
+            .join(SHADER);
+        assert_eq!(std::fs::read_to_string(path).unwrap(), SHADER_SOURCE);
+    }
 
     #[test]
     fn lines_fade_in_with_the_zoom() {

@@ -35,5 +35,10 @@ ron = "0.12"
 # (D634). Bevy's image loader already builds this crate.
 png = "0.18"
 
+[dev-dependencies]
+# The map shader's layout test parses the WGSL (D741). wgpu already builds this exact naga with
+# its WGSL front end, so it adds no crate to the build.
+naga = { version = "=30.0.1", default-features = false, features = ["wgsl-in"] }
+
 [lints]
 workspace = true

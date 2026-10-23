@@ -40,9 +40,6 @@ struct Args {
     map_metros: bool,
 }
 
-/// The repository's `assets` folder.
-const ASSET_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets");
-
 /// The synthetic map's size (D634).
 const SYNTHETIC_SIZE: (u32, u32) = (4096, 2048);
 
@@ -271,24 +268,20 @@ fn main() -> AppExit {
     });
     let mut app = App::new();
     app.add_plugins(
-        DefaultPlugins
-            .set(WindowPlugin {
-                primary_window: Some(Window {
-                    title: "TechnoCapital20FF".into(),
-                    present_mode: if args.bench.is_some() {
-                        PresentMode::AutoNoVsync
-                    } else {
-                        PresentMode::AutoVsync
-                    },
-                    ..default()
-                }),
-                ..default()
-            })
-            // The repository's assets folder (the map shader, M8.2).
-            .set(AssetPlugin {
-                file_path: ASSET_DIR.into(),
+        DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                title: "TechnoCapital20FF".into(),
+                present_mode: if args.bench.is_some() {
+                    PresentMode::AutoNoVsync
+                } else {
+                    PresentMode::AutoVsync
+                },
                 ..default()
             }),
+            ..default()
+        }),
+        // Nothing is loaded through the asset server: the map shader is compiled in (D741) and
+        // the map's files are read from the map folder named above.
     )
     .insert_resource(game::map::MapSource(data_has_map.then_some(map_dir)))
     .add_plugins(SimBridgePlugin::new(sim))
