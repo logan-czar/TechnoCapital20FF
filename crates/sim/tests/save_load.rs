@@ -92,3 +92,40 @@ fn save_and_load_controls_through_files() {
     assert!(b.apply(Control::Load(path)).is_err());
     assert_eq!(b.state_hash(), a.state_hash(), "a bad load changes nothing");
 }
+
+/// D800: a version 8 save written by main bf86d08's build (seed 7, 30 ticks in; speed 3, Earnings
+/// day Off, Quarterly recap Notify, Bankruptcy in watchlist Pause, company 2 watched) loads with
+/// its levels and Quarter start at its default, and runs on to the hash main's build reached
+/// 960 ticks later.
+#[test]
+fn a_save_written_by_main_v8_loads_and_continues_to_mains_hash() {
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/fixtures/save-v8-main-bf86d08.tc20ffsave");
+    let mut s = Sim::new(data(), 1).unwrap();
+    s.load(&path).unwrap();
+    assert_eq!(s.now().hours(), 30);
+    assert_eq!(s.seed(), 7);
+    let c = s.controls();
+    assert_eq!((c.speed, c.paused), (3, true));
+    assert_eq!(
+        c.watchlist.iter().copied().collect::<Vec<_>>(),
+        [CompanyId(2)]
+    );
+    for (kind, level) in [
+        (AlertKind::EarningsDay, AlertLevel::Off),
+        (AlertKind::QuarterlyRecap, AlertLevel::Notify),
+        (AlertKind::PlanLock, AlertLevel::Log),
+        (AlertKind::BankruptcyInWatchlist, AlertLevel::Pause),
+        (AlertKind::WorldEvent, AlertLevel::Pause),
+        (AlertKind::QuarterStart, AlertLevel::Pause),
+    ] {
+        assert_eq!(c.alerts.get(kind), level, "{kind:?}");
+    }
+    for _ in 0..24 * 40 {
+        s.step();
+    }
+    assert_eq!(
+        s.state_hash().to_string(),
+        "a4dd1d4a1e80f398a5b17aa81a334142e88d986d233ec0a1563fb8b60941bc45"
+    );
+}
