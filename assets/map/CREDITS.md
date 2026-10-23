@@ -45,6 +45,7 @@ Boundary files used, with their original sources and licenses:
 | QAT | ADM2 | geoBoundaries, Qatar Open Data Portal | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2015 |
 | SWE | ADM2 | geoBoundaries, Wikimedia Commons | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2017 |
 | THA | ADM2 | Royal Thai Survey Department, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2019 |
+| UZB | ADM2 | OCHA ROCCA | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | VNM | ADM2 | OCHA ROAP, Government of Viet Nam | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | YEM | ADM2 | Central Statistical Organization (CSO), OCHA Yemen | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2021 |
 

@@ -22,6 +22,12 @@ AL-0003,Tirana,ALB,Central Albania,admin1,ALB-1529,0.8,Natural Earth 10m (public
 AL-0004,Durres-Elbasan,ALB,Central Albania,admin1,ALB-1524;ALB-1494,0.9,Natural Earth 10m (public domain),seeds: place Durrës; place Elbasan; unit Durrës at place Durrës; unit Elbasan at place Elbasan; 2 whole admin1 units
 AL-0005,Fier-Vlore,ALB,Southern Albania,admin1,ALB-1504;ALB-1495,0.9,Natural Earth 10m (public domain),seeds: place Fier; place Vlorë; unit Fier at place Fier; unit Vlorë at place Vlorë; 2 whole admin1 units
 AL-0006,Korce-Berat-Gjirokaster,ALB,Southern Albania,admin1,ALB-1521;ALB-1525;ALB-1523,0.9,Natural Earth 10m (public domain),seeds: place Berat; place Gjirokastër; place Korçë; unit Berat at place Berat; unit Gjirokastër at place Gjirokastër; unit Korçë at place Korçë; 3 whole admin1 units
+AM-0001,Yerevan,ARM,Yerevan,admin1,ARM-1675,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+AM-0002,Ararat-Armavir,ARM,Ararat-Armavir,admin1,ARM-1671;ARM-1554,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+AM-0003,Kotayk-Gegharkunik,ARM,Kotayk-Gegharkunik,admin1,ARM-1672;ARM-1673,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+AM-0004,Shirak-Aragatsotn,ARM,Shirak-Aragatsotn,admin1,ARM-1555;ARM-1553,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+AM-0005,Lori-Tavush,ARM,Lori-Tavush,admin1,ARM-1670;ARM-1674,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+AM-0006,Syunik-Vayots Dzor,ARM,Syunik-Vayots Dzor,admin1,ARM-1733;ARM-1732,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
 AR-0001,Buenos Aires Centro-Puerto Madero,ARG,Ciudad de Buenos Aires,admin1,ARG-5493,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 AR-0002,Zona Norte-Tigre,ARG,Buenos Aires,admin2,61730980B14767108287685;61730980B37602961907031;61730980B31258778220086;61730980B60632601419482;61730980B31085500015034;61730980B51340579014160;61730980B61518535175442;61730980B46018574851610;61730980B18176537921134,0.9,"geoBoundaries gbOpen ARG ADM2 (Instituto Geografico Nacional and UNHCR, OCHA ROLAC; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit Pilar; unit San Isidro; unit Tigre; unit Vicente López; 9 whole admin2 units
 AR-0003,Zona Oeste-La Matanza,ARG,Buenos Aires,admin2,61730980B63252687279730;61730980B21366789082443;61730980B59094124790483;61730980B42310570317073;61730980B67082136706980;61730980B11219984208084;61730980B88678124443771;61730980B89820972090318;61730980B5073290621442;61730980B30318397352263;61730980B37548441938699,0.9,"geoBoundaries gbOpen ARG ADM2 (Instituto Geografico Nacional and UNHCR, OCHA ROLAC; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain)",seeds: unit La Matanza; unit Merlo; unit Moreno; unit Morón; 11 whole admin2 units
@@ -127,6 +133,16 @@ AU-0050,Launceston-North,AUS,Tasmania,admin2,25037944B7589359748935;25037944B774
 AU-0051,West Coast-Highlands,AUS,Tasmania,admin2,25037944B68362175930798;25037944B64479708811178;25037944B19706345556765;25037944B97850876136128,0.9,geoBoundaries gbOpen AUS ADM2 (Australian Bureau of Statistics; Creative Commons Attribution 4.0 International (CC BY 4.0)); Natural Earth 10m (public domain),seeds: unit Central Highlands (Tas.); unit West Coast; 4 whole admin2 units
 AU-0052,Darwin,AUS,Northern Territory,admin2,25037944B37494903355321;25037944B16759006021093;25037944B80188408210929;25037944B77006542086789;25037944B47305351718046;25037944B85754900082747;25037944B87513158470011;25037944B38638552543628;25037944B80645640934935;25037944B62285809064209;25037944B16072859725230;25037944B50083435969321;25037944B28082311396997;25037944B73531494726593;25037944B66789818675827,0.9,geoBoundaries gbOpen AUS ADM2 (Australian Bureau of Statistics; Creative Commons Attribution 4.0 International (CC BY 4.0)); Natural Earth 10m (public domain),seeds: place Darwin; unit Darwin at place Darwin; 15 whole admin2 units
 AU-0053,Central Australia-Top End,AUS,Northern Territory,admin2,25037944B49978280072491;25037944B87984246529450;25037944B81249572637263;25037944B32264354424251,0.75,geoBoundaries gbOpen AUS ADM2 (Australian Bureau of Statistics; Creative Commons Attribution 4.0 International (CC BY 4.0)); Natural Earth 10m (public domain),seeds: place Alice Springs; unit Alice Springs at place Alice Springs; 4 whole admin2 units
+AZ-0001,Baku,AZE,Baku,admin1,AZE-1689,0.95,Natural Earth 10m (public domain),whole region (alias hint -> AZ-BA)
+AZ-0002,Sumgait-Shamakhi,AZE,Absheron-Mountainous Shirvan,admin1,AZE-1719;AZE-1717;AZE-1690;AZE-1693;AZE-1716;AZE-1711;AZE-1705,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> region:Absheron Economic Region, -AZ-BA, region:Daghlig Shirvan Economic Region)"
+AZ-0003,Ganja-Gazakh,AZE,Ganja-Gazakh,admin1,AZE-1684;AZE-1676;AZE-1687;AZE-1678;AZE-1677;AZE-1686;AZE-1681;AZE-1680;AZE-1685;AZE-1679;AZE-5561,0.95,Natural Earth 10m (public domain),whole region (alias hint -> region:Ganja-Gazakh Economic Region)
+AZ-0004,Shaki-Zagatala,AZE,Shaki-Zagatala,admin1,AZE-1723;AZE-1731;AZE-1725;AZE-1727;AZE-1726;AZE-1724;AZE-5564,0.95,Natural Earth 10m (public domain),whole region (alias hint -> region:Shaki-Zaqatala Economic Region)
+AZ-0005,Guba-Khachmaz,AZE,Guba-Khachmaz,admin1,AZE-1730;AZE-1729;AZE-1701;AZE-1712;AZE-1728,0.95,Natural Earth 10m (public domain),whole region (alias hint -> region:Guba-Khachmaz Economic Region)
+AZ-0006,Mingachevir-Shirvan,AZE,Aran,admin1,AZE-1697;AZE-1694;AZE-1721;AZE-5563;AZE-1696;AZE-1718;AZE-1688;AZE-1683;AZE-1703;AZE-1692;AZE-1722;AZE-5566,0.9,Natural Earth 10m (public domain),seeds: place Şirvan; unit Shirvan at place Şirvan; unit Yevlakh; 12 whole admin1 units
+AZ-0007,Mil-Mughan-Salyan,AZE,Aran,admin1,AZE-1704;AZE-1698;AZE-1715;AZE-1710;AZE-1706;AZE-1714;AZE-1713,0.9,Natural Earth 10m (public domain),seeds: unit Sabirabad; unit Salyan; 7 whole admin1 units
+AZ-0008,Lankaran,AZE,Lankaran,admin1,AZE-1700;AZE-1720;AZE-1709;AZE-1695;AZE-1707;AZE-1708;AZE-5562,0.95,Natural Earth 10m (public domain),whole region (alias hint -> region:Lankaran Economic Region)
+AZ-0009,Nakhchivan,AZE,Nakhchivan,admin1,AZE-2419;AZE-2415;AZE-5567;AZE-2420;AZE-2423;AZE-2421;AZE-2418;AZE-2422,0.95,Natural Earth 10m (public domain),whole region (alias hint -> region:Naxçıvan Autonomous Republic)
+AZ-0010,Nagorno-Karabakh,AZE,Upper Karabakh-Kalbajar-Lachin,admin1,AZE-1682;AZE-1735;AZE-1736;AZE-1740;AZE-1699;AZE-1702;AZE-1737;AZE-1739;AZE-5565;AZE-1691;AZE-1738;AZE-1734;AZE-4838,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> region:Yukhari Garabakh Economic Region, region:Kalbajar-Lachin Economic Region)"
 BA-0001,Sarajevo,BIH,Federation of Bosnia and Herzegovina,admin1,BIH-2890;BIH-2891,0.9,Natural Earth 10m (public domain),seeds: place Sarajevo; unit Sarajevo at place Sarajevo; 2 whole admin1 units
 BA-0002,Zenica-Central Bosnia,BIH,Federation of Bosnia and Herzegovina,admin1,BIH-2225;BIH-2224;BIH-2226;BIH-2889,0.9,Natural Earth 10m (public domain),seeds: place Zenica; unit Central Bosnia; 4 whole admin1 units
 BA-0003,Tuzla-Posavina,BIH,Federation of Bosnia and Herzegovina,admin1,BIH-2887,0.9,Natural Earth 10m (public domain),seeds: place Tuzla; unit Tuzla at place Tuzla; 1 whole admin1 units
@@ -900,6 +916,13 @@ GB-0041,North and Mid Wales,GBR,Wales,admin1,GBR-2126;GBR-2127;GBR-2111;GBR-2130
 GB-0042,Belfast,GBR,Northern Ireland,admin1,GBR-2773;GBR-2095;GBR-2096;GBR-2097;GBR-2082;GBR-2098;GBR-2137;GBR-2099;GBR-2092;GBR-2090;GBR-2094;GBR-2103,0.9,Natural Earth 10m (public domain),seeds: place Belfast; unit Belfast at place Belfast; 12 whole admin1 units
 GB-0043,Western Northern Ireland,GBR,Northern Ireland,admin1,GBR-2083;GBR-2135;GBR-2136;GBR-2089;GBR-2085;GBR-2086;GBR-2102;GBR-2100;GBR-2093;GBR-2084;GBR-2091;GBR-2088;GBR-2087;GBR-2101,0.75,Natural Earth 10m (public domain),seeds: unit Armagh; unit Derry; unit Fermanagh; 14 whole admin1 units
 GD-0001,Grenada,GRD,Grenada,admin1,GRD-5072;GRD-5071;GRD-5070;GRD-5075;GRD-5074;GRD-5073;GRD-5069,0.95,Natural Earth 10m (public domain),whole region (whole country (7 admin-1 units))
+GE-0001,Tbilisi,GEO,Tbilisi,admin1,GEO-3036,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+GE-0002,Batumi-Adjara,GEO,Adjara-Guria,admin1,GEO-3027;GEO-3028,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+GE-0003,Abkhazia,GEO,Abkhazia,admin1,GEO-3015,0.95,Natural Earth 10m (public domain),whole region (alias hint -> GE-AB)
+GE-0004,Kutaisi-Poti,GEO,Imereti-Samegrelo-Racha,admin1,GEO-3029;GEO-3035;GEO-3030,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> GE-IM, GE-SZ, GE-RL)"
+GE-0005,Rustavi-Kakheti,GEO,Kvemo Kartli-Kakheti,admin1,GEO-3033;GEO-3037,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+GE-0006,Gori-Borjomi,GEO,Shida Kartli-Mtskheta-Mtianeti-Samtskhe-Javakheti,admin1,GEO-3034,0.65,Natural Earth 10m (public domain),seeds: place Tbilisi (snapped to land); 1 whole admin1 units
+GE-0007,South Ossetia,GEO,Shida Kartli-Mtskheta-Mtianeti-Samtskhe-Javakheti,admin1,GEO-3039;GEO-3038,0.65,Natural Earth 10m (public domain),seeds: place Tskhinvali; 2 whole admin1 units
 GG-0001,Guernsey,GGY,Guernsey,admin1,GGY+00?,0.95,Natural Earth 10m (public domain),whole region (whole country (1 admin-1 units))
 GI-0001,Gibraltar,GIB,Gibraltar,admin1,GIB+00?,0.95,Natural Earth 10m (public domain),whole region (whole country (1 admin-1 units))
 GL-0001,Nuuk-West Greenland,GRL,Greenland,voronoi,GRL-2741;GRL-2739,0.8,Natural Earth 10m (public domain),"seeds: place Kangerlussuaq; place Nuuk; 1 whole admin1 units, split: Kommuneqarfik Sermersooq"
@@ -1248,6 +1271,15 @@ JP-0060,Oita,JPN,Oita,admin1,JPN-1835,1.0,Natural Earth 10m (public domain),whol
 JP-0061,Miyazaki,JPN,Miyazaki,admin1,JPN-1831,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 JP-0062,Kagoshima,JPN,Kagoshima,admin1,JPN-3501,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 JP-0063,Okinawa,JPN,Okinawa,admin1,JPN-3502,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KG-0001,Bishkek,KGZ,Bishkek,admin1,KGZ-1115,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KG-0002,Chuy,KGZ,Chuy,admin1,KGZ-1116,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KG-0003,Issyk-Kul,KGZ,Issyk-Kul,admin1,KGZ-1117,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KG-0004,Naryn,KGZ,Naryn,admin1,KGZ-1118,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KG-0005,Talas,KGZ,Talas,admin1,KGZ-1121,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KG-0006,Jalal-Abad,KGZ,Jalal-Abad,admin1,KGZ-1120,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KG-0007,Osh-Kara-Suu,KGZ,Osh,voronoi,KGZ-1122,0.8,Natural Earth 10m (public domain),"seeds: place Osh; 0 whole parts, 1 split"
+KG-0008,Alay-Uzgen,KGZ,Osh,voronoi,KGZ-1122,0.85,Natural Earth 10m (public domain),"seeds: point 73.25,39.73 (hint); point 73.3,40.77 (hint); point 73.44,40.32 (hint); point 73.9,39.68 (hint); 0 whole parts, 1 split"
+KG-0009,Batken,KGZ,Batken,admin1,KGZ-1119,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 KH-0001,Phnom Penh,KHM,Phnom Penh,admin1,KHM-1789,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 KH-0002,Kandal-Takeo,KHM,Kandal-Takeo,admin1,KHM-1786;KHM-1802,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
 KH-0003,Sihanoukville,KHM,Preah Sihanouk,admin1,KHM-1800,0.95,Natural Earth 10m (public domain),whole region (alias hint -> KH-18)
@@ -1319,6 +1351,32 @@ KW-0008,Wafra-Khiran,KWT,Ahmadi,voronoi,KWT-1665,0.85,Natural Earth 10m (public 
 KW-0009,Jahra,KWT,Jahra,voronoi,KWT-1667,0.85,Natural Earth 10m (public domain),"seeds: point 47.66,29.34 (hint); point 47.7,29.45 (hint); 0 whole parts, 1 split"
 KW-0010,Raudhatain-Bubiyan,KWT,Jahra,voronoi,KWT-1667,0.85,Natural Earth 10m (public domain),"seeds: point 47.7,29.83 (hint); point 47.7,30.07 (hint); point 48.2,29.8 (hint); 2 whole parts, 1 split"
 KY-0001,Cayman Islands,CYM,Cayman Islands,admin1,CYM+00?,0.95,Natural Earth 10m (public domain),whole region (whole country (1 admin-1 units))
+KZ-0001,Nur-Sultan,KAZ,Nur-Sultan,admin1,KAZ-4830,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KZ-0002,Almaty,KAZ,Almaty,admin1,KAZ-4829,0.95,Natural Earth 10m (public domain),whole region (alias hint -> KAZ-4829)
+KZ-0003,Shymkent,KAZ,Shymkent,admin1,,0.95,builder-drawn line (hints file),"whole region (no admin-1 match (best unit 75, group 0); carve: builder polygon from KAZ:Turkistan)"
+KZ-0004,Almaty Foothills,KAZ,Almaty Region,voronoi,KAZ-3207,0.8,Natural Earth 10m (public domain),"seeds: place Almaty (snapped to land); 1 whole parts, 1 split"
+KZ-0005,Taldykorgan-Khorgos,KAZ,Almaty Region,voronoi,KAZ-3207,0.8,Natural Earth 10m (public domain),"seeds: place Taldyqorghan; place Zharkent; 18 whole parts, 1 split"
+KZ-0006,Turkistan-Kentau,KAZ,Turkistan,voronoi,KAZ-3251,0.8,Natural Earth 10m (public domain),"seeds: place Kentau; place Turkistan; 0 whole parts, 1 split"
+KZ-0007,Saryagash-Maktaaral,KAZ,Turkistan,voronoi,KAZ-3251,0.85,Natural Earth 10m (public domain),"seeds: point 68.4,40.85 (hint); point 69.17,41.45 (hint); 0 whole parts, 1 split"
+KZ-0008,Taraz-Zhambyl,KAZ,Zhambyl,admin1,KAZ-3252,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KZ-0009,Kyzylorda-Kumkol,KAZ,Kyzylorda,voronoi,KAZ-3197,0.8,Natural Earth 10m (public domain),"seeds: place Qyzylorda; place Shieli; 0 whole parts, 1 split"
+KZ-0010,Baikonur-Aral,KAZ,Kyzylorda,voronoi,KAZ-3197,0.8,Natural Earth 10m (public domain),"seeds: place Aral; 0 whole parts, 1 split"
+KZ-0011,Aktobe,KAZ,Aktobe,voronoi,KAZ-3195,0.85,Natural Earth 10m (public domain),"seeds: point 57.21,50.28 (hint); 0 whole parts, 1 split"
+KZ-0012,Khromtau-Zhanazhol,KAZ,Aktobe,voronoi,KAZ-3195,0.8,Natural Earth 10m (public domain),"seeds: place Khromtau; 1 whole parts, 1 split"
+KZ-0013,Atyrau,KAZ,Atyrau,voronoi,KAZ-3198,0.8,Natural Earth 10m (public domain),"seeds: place Atyrau; 1 whole parts, 1 split"
+KZ-0014,Tengiz-Kashagan,KAZ,Atyrau,voronoi,KAZ-3198,0.85,Natural Earth 10m (public domain),"seeds: point 52.6,46.2 (hint) (snapped to land); point 53.0,46.5 (hint); point 53.38,46.15 (hint); 0 whole parts, 1 split"
+KZ-0015,Aktau,KAZ,Mangystau,voronoi,KAZ-3236,0.85,Natural Earth 10m (public domain),"seeds: point 51.17,43.65 (hint); point 51.68,43.18 (hint); 3 whole parts, 1 split"
+KZ-0016,Zhanaozen-Uzen,KAZ,Mangystau,voronoi,KAZ-3236,0.8,Natural Earth 10m (public domain),"seeds: place Zhangaozen; 1 whole parts, 1 split"
+KZ-0017,Uralsk-Karachaganak,KAZ,West Kazakhstan,admin1,KAZ-3201,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KZ-0018,Karaganda-Temirtau,KAZ,Karaganda,voronoi,KAZ-3203,0.8,Natural Earth 10m (public domain),"seeds: place Temirtau; 0 whole parts, 1 split"
+KZ-0019,Zhezkazgan-Ulytau,KAZ,Karaganda,voronoi,KAZ-3203,0.8,Natural Earth 10m (public domain),"seeds: place Zhezqazghan; 0 whole parts, 1 split"
+KZ-0020,Balkhash-Karkaraly,KAZ,Karaganda,voronoi,KAZ-3203,0.85,Natural Earth 10m (public domain),"seeds: point 74.98,46.84 (hint); point 75.47,49.41 (hint); 1 whole parts, 1 split"
+KZ-0021,Ust-Kamenogorsk,KAZ,East Kazakhstan,voronoi,KAZ-3206,0.8,Natural Earth 10m (public domain),"seeds: place Oskemen; place Ridder; 0 whole parts, 1 split"
+KZ-0022,Semey-Aktogay,KAZ,East Kazakhstan,voronoi,KAZ-3206,0.8,Natural Earth 10m (public domain),"seeds: place Semey; place Zaysan; 0 whole parts, 1 split"
+KZ-0023,Pavlodar-Ekibastuz,KAZ,Pavlodar,admin1,KAZ-3205,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KZ-0024,Kostanay-Rudny,KAZ,Kostanay,admin1,KAZ-3196,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KZ-0025,Petropavl,KAZ,North Kazakhstan,admin1,KAZ-3204,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+KZ-0026,Kokshetau-Akmola,KAZ,Akmola,admin1,KAZ-3202,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 LA-0001,Vientiane,LAO,Vientiane Capital,admin1,LAO-3283,0.95,Natural Earth 10m (public domain),whole region (alias hint -> LAO-3283)
 LA-0002,Vientiane Province-Xaisomboun,LAO,Vientiane Province-Xaisomboun,admin1,LAO-3284,0.95,Natural Earth 10m (public domain),whole region (alias hint -> LAO-3284)
 LA-0003,Luang Prabang,LAO,Luang Prabang,admin1,LAO-3289,0.95,Natural Earth 10m (public domain),whole region (alias hint -> LA-LP)
@@ -1793,6 +1851,80 @@ RS-0007,Uzice-Kraljevo-Novi Pazar,SRB,Sumadija and Western Serbia,admin1,SRB-834
 RS-0008,Nis,SRB,Southern and Eastern Serbia,admin1,SRB-830,0.8,Natural Earth 10m (public domain),seeds: place Niš; 1 whole admin1 units
 RS-0009,Bor-Timok,SRB,Southern and Eastern Serbia,admin1,SRB-125;SRB-844;SRB-279,0.85,Natural Earth 10m (public domain),seeds: unit Borski (hint); unit Branicevski (hint); unit Zajecarski (hint); 3 whole admin1 units
 RS-0010,Leskovac-Vranje,SRB,Southern and Eastern Serbia,admin1,SRB-841;SRB-121;SRB-843;SRB-835,0.85,Natural Earth 10m (public domain),seeds: unit Jablanicki (hint); unit Pcinjski (hint); unit Toplicki (hint); 4 whole admin1 units
+RU-0001,Moscow Center-Moscow City,RUS,Moscow,voronoi,RUS-2365,0.8,Natural Earth 10m (public domain),"seeds: place Moscow; 0 whole parts, 1 split"
+RU-0002,Moscow South-West,RUS,Moscow,voronoi,RUS-2365,0.85,Natural Earth 10m (public domain),"seeds: point 37.48,55.74 (hint); point 37.53,55.7 (hint); point 37.56,55.66 (hint); 0 whole parts, 1 split"
+RU-0003,Moscow North,RUS,Moscow,voronoi,RUS-2365,0.85,Natural Earth 10m (public domain),"seeds: point 37.18,55.99 (hint); point 37.5,55.8 (hint); point 37.55,55.83 (hint); 2 whole parts, 1 split"
+RU-0004,Moscow East-South-East,RUS,Moscow,voronoi,RUS-2365,0.85,Natural Earth 10m (public domain),"seeds: point 37.66,55.7 (hint); point 37.72,55.69 (hint); point 37.8,55.64 (hint); point 37.85,55.75 (hint); 0 whole parts, 1 split"
+RU-0005,Moscow Inner Suburbs,RUS,Moscow Oblast,voronoi,RUS-2364,0.65,Natural Earth 10m (public domain),"seeds: place Podolsk (snapped to land); 0 whole parts, 1 split"
+RU-0006,Moscow Oblast Outer Ring,RUS,Moscow Oblast,voronoi,RUS-2364,0.65,Natural Earth 10m (public domain),"seeds: place Kolomna; place Noginsk; place Serpukhov; 0 whole parts, 1 split"
+RU-0007,Tver-Smolensk,RUS,Tver-Smolensk,admin1,RUS-2343;RUS-2358,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0008,Yaroslavl-Ivanovo-Kostroma,RUS,Yaroslavl-Ivanovo-Kostroma,admin1,RUS-2356;RUS-2360;RUS-2355,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
+RU-0009,Vladimir-Ryazan,RUS,Vladimir-Ryazan,admin1,RUS-2376;RUS-2374,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0010,Tula-Kaluga,RUS,Tula-Kaluga,admin1,RUS-2361;RUS-2368,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0011,Bryansk-Oryol,RUS,Bryansk-Oryol,admin1,RUS-2342;RUS-2366,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0012,Kursk-Belgorod,RUS,Kursk-Belgorod,admin1,RUS-2362;RUS-2370,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0013,Lipetsk-Tambov,RUS,Lipetsk-Tambov,admin1,RUS-2363;RUS-2375,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0014,Voronezh,RUS,Voronezh,admin1,RUS-2377,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0015,St Petersburg Center-Vasilievsky,RUS,St Petersburg,voronoi,RUS-2337,0.85,Natural Earth 10m (public domain),"seeds: point 30.26,59.94 (hint); point 30.31,59.94 (hint); 0 whole parts, 1 split"
+RU-0016,St Petersburg South-Port,RUS,St Petersburg,voronoi,RUS-2337,0.65,Natural Earth 10m (public domain),"seeds: place Kolpino; 0 whole parts, 1 split"
+RU-0017,St Petersburg North-Lakhta,RUS,St Petersburg,voronoi,RUS-2337,0.85,Natural Earth 10m (public domain),"seeds: point 29.97,60.1 (hint); point 30.18,59.99 (hint) (snapped to land); point 30.33,60.05 (hint); 1 whole parts, 1 split"
+RU-0018,Leningrad Oblast,RUS,Leningrad Oblast,admin1,RUS-2336,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0019,Kaliningrad,RUS,Kaliningrad,admin1,RUS-2324,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0020,Novgorod-Pskov,RUS,Novgorod-Pskov,admin1,RUS-2335;RUS-2334,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0021,Murmansk-Karelia,RUS,Karelia-Murmansk,admin1,RUS-2333;RUS-2353,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0022,Arkhangelsk,RUS,Arkhangelsk,admin1,RUS-2354,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0023,Komi-Nenets,RUS,Komi-Nenets,admin1,RUS-2381;RUS-2383,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0024,Vologda,RUS,Vologda,admin1,RUS-2359,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0025,Krasnodar-Kuban,RUS,Krasnodar-Adygea,voronoi,RUS-2371,0.9,Natural Earth 10m (public domain),"seeds: place Krasnodar; place Kropotkin; place Yeysk; unit Krasnodar at place Krasnodar; 0 whole admin1 units, split: Krasnodar"
+RU-0026,Novorossiysk-Sochi,RUS,Krasnodar-Adygea,voronoi,RUS-2279;RUS-2371,0.8,Natural Earth 10m (public domain),"seeds: place Novorossiysk; place Sochi; place Tuapse; 1 whole admin1 units, split: Krasnodar"
+RU-0027,Rostov,RUS,Rostov,admin1,RUS-2367,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0028,Volgograd,RUS,Volgograd,admin1,RUS-2369,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0029,Astrakhan-Kalmykia,RUS,Astrakhan-Kalmykia,admin1,RUS-2388;RUS-2390,0.94,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 94))"
+RU-0030,Stavropol,RUS,Stavropol,admin1,RUS-2306,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0031,Dagestan,RUS,Dagestan,admin1,RUS-2417,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0032,Chechnya-Ingushetia,RUS,Chechnya-Ingushetia,admin1,RUS-2303;RUS-2416,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> RU-CE, RU-IN)"
+RU-0033,Central Caucasus,RUS,North Ossetia-Kabardino-Balkaria-Karachay-Cherkessia,admin1,RUS-2280;RUS-2304;RUS-2305,0.97,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 97))"
+RU-0034,Nizhny Novgorod,RUS,Nizhny Novgorod,admin1,RUS-2357,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0035,Kazan,RUS,Tatarstan,voronoi,RUS-2394,0.8,Natural Earth 10m (public domain),"seeds: place Kazan; 0 whole parts, 1 split"
+RU-0036,Almetyevsk-Naberezhnye Chelny,RUS,Tatarstan,voronoi,RUS-2394,0.8,Natural Earth 10m (public domain),"seeds: place Almetyevsk; place Naberezhnyye Chelny; place Nizhnekamsk; 0 whole parts, 1 split"
+RU-0037,Bashkortostan,RUS,Bashkortostan,admin1,RUS-2378,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0038,Samara,RUS,Samara,voronoi,RUS-2392,0.8,Natural Earth 10m (public domain),"seeds: place Samara; 1 whole parts, 1 split"
+RU-0039,Tolyatti-Syzran,RUS,Samara,voronoi,RUS-2392,0.8,Natural Earth 10m (public domain),"seeds: place Syzran; place Tolyatti; 0 whole parts, 1 split"
+RU-0040,Perm,RUS,Perm,admin1,RUS-3200,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0041,Izhevsk-Kirov,RUS,Udmurtia-Kirov,admin1,RUS-2384;RUS-2387,0.94,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 94))"
+RU-0042,Chuvashia-Mari El-Mordovia,RUS,Chuvashia-Mari El-Mordovia,admin1,RUS-2372;RUS-2389;RUS-2385,0.95,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 95))"
+RU-0043,Ulyanovsk-Penza,RUS,Ulyanovsk-Penza,admin1,RUS-2395;RUS-2373,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0044,Saratov,RUS,Saratov,admin1,RUS-2393,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0045,Orenburg,RUS,Orenburg,admin1,RUS-2391,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0046,Yekaterinburg,RUS,Sverdlovsk,voronoi,RUS-2386,0.8,Natural Earth 10m (public domain),"seeds: place Pervouralsk; place Yekaterinburg; 0 whole parts, 1 split"
+RU-0047,Nizhny Tagil-North Urals,RUS,Sverdlovsk,voronoi,RUS-2386,0.8,Natural Earth 10m (public domain),"seeds: place Asbest; place Nizhny Tagil; place Severouralsk; place Verkhnyaya Salda; 0 whole parts, 1 split"
+RU-0048,Chelyabinsk,RUS,Chelyabinsk,admin1,RUS-2379,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0049,Tyumen-Kurgan,RUS,Tyumen-Kurgan,admin1,RUS-2398;RUS-2380,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0050,Surgut-Khanty-Mansiysk,RUS,Khanty-Mansi,voronoi,RUS-2396,0.8,Natural Earth 10m (public domain),"seeds: place Khanty Mansiysk; place Nefteyugansk; place Surgut; 0 whole parts, 1 split"
+RU-0051,Nizhnevartovsk-Samotlor,RUS,Khanty-Mansi,voronoi,RUS-2396,0.8,Natural Earth 10m (public domain),"seeds: place Megion; place Nizhenvartovsk; 0 whole parts, 1 split"
+RU-0052,Yamal,RUS,Yamalo-Nenets,admin1,RUS-2382;RUS+99?,0.96,Natural Earth 10m (public domain),whole region (name match 96; plus unclaimed RUS+99?)
+RU-0053,Novosibirsk,RUS,Novosibirsk,admin1,RUS-2403,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0054,Omsk,RUS,Omsk,admin1,RUS-2397,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0055,Tomsk,RUS,Tomsk,admin1,RUS-2167,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0056,Kuzbass,RUS,Kemerovo,admin1,RUS-2401,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0057,Altai,RUS,Altai Krai-Altai Republic,admin1,RUS-2400;RUS-2399,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> RU-ALT, RU-AL)"
+RU-0058,Krasnoyarsk,RUS,Krasnoyarsk,voronoi,RUS-2603,0.8,Natural Earth 10m (public domain),"seeds: place Achinsk; place Kansk; place Krasnoyarsk; 0 whole parts, 1 split"
+RU-0059,Norilsk-Taimyr,RUS,Krasnoyarsk,voronoi,RUS-2603,0.8,Natural Earth 10m (public domain),"seeds: place Dudinka; place Norilsk; 55 whole parts, 1 split"
+RU-0060,Angara-Evenkia,RUS,Krasnoyarsk,voronoi,RUS-2603,0.65,Natural Earth 10m (public domain),"seeds: place Lesosibirsk; 0 whole parts, 1 split"
+RU-0061,Khakassia-Tuva,RUS,Khakassia-Tuva,admin1,RUS-2605;RUS-2402,0.95,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 95))"
+RU-0062,Irkutsk-Angarsk,RUS,Irkutsk,voronoi,RUS-2602,0.8,Natural Earth 10m (public domain),"seeds: place Angarsk; place Irkutsk; 1 whole parts, 1 split"
+RU-0063,Bratsk-Ust-Kut,RUS,Irkutsk,voronoi,RUS-2602,0.8,Natural Earth 10m (public domain),"seeds: place Bratsk; place Ust-Ilimsk; place Ust-Kut; 0 whole parts, 1 split"
+RU-0064,Vladivostok-Nakhodka,RUS,Primorsky,admin1,RUS-2611,0.94,Natural Earth 10m (public domain),whole region (name match 94)
+RU-0065,Khabarovsk,RUS,Khabarovsk-Jewish Autonomous Oblast,admin1,RUS-2613;RUS-2614,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+RU-0066,Amur,RUS,Amur,admin1,RUS-2609,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0067,Sakhalin,RUS,Sakhalin,voronoi,RUS-2616,0.65,Natural Earth 10m (public domain),seeds: place Kholmsk; place Yuzhno Sakhalinsk; 2 whole parts
+RU-0068,Kuril Islands,RUS,Sakhalin,voronoi,RUS-2616,0.85,Natural Earth 10m (public domain),"seeds: point 145.9,44.0 (hint) (snapped to land); point 146.7,43.8 (hint); point 147.9,45.2 (hint); point 150.0,46.2 (hint) (snapped to land); point 152.0,47.5 (hint) (snapped to land); point 154.0,48.8 (hint) (snapped to land); point 155.9,50.4 (hint); 21 whole parts"
+RU-0069,Kamchatka,RUS,Kamchatka,admin1,RUS-3468,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+RU-0070,Magadan-Chukotka,RUS,Magadan-Chukotka,admin1,RUS-2615;RUS-2321,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> RU-MAG, RU-CHU)"
+RU-0071,Yakutsk-Aldan,RUS,Sakha,voronoi,RUS-2612,0.8,Natural Earth 10m (public domain),"seeds: place Aldan; place Neryungri; place Yakutsk; 3 whole parts, 1 split"
+RU-0072,Mirny-Lena,RUS,Sakha,voronoi,RUS-2612,0.8,Natural Earth 10m (public domain),"seeds: place Mirny; place Tiksi; place Udachny; 22 whole parts, 1 split"
+RU-0073,Buryatia,RUS,Buryatia,admin1,RUS-2606,0.94,Natural Earth 10m (public domain),whole region (name match 94)
+RU-0074,Zabaykalsky,RUS,Zabaykalsky,admin1,RUS-2610,0.92,Natural Earth 10m (public domain),whole region (name match 92)
 SA-0001,Riyadh Central-Olaya,SAU,Riyadh,voronoi,SAU-1097,0.85,Natural Earth 10m (public domain),"seeds: point 46.64,24.76 (hint); point 46.68,24.7 (hint); 0 whole parts, 1 split"
 SA-0002,Riyadh North-Diriyah,SAU,Riyadh,voronoi,SAU-1097,0.85,Natural Earth 10m (public domain),"seeds: point 46.57,24.73 (hint); point 46.62,24.69 (hint); point 46.7,24.96 (hint); 0 whole parts, 1 split"
 SA-0003,Riyadh South-Industrial Cities,SAU,Riyadh,voronoi,SAU-1097,0.85,Natural Earth 10m (public domain),"seeds: point 46.75,24.6 (hint); point 46.83,24.5 (hint); point 46.88,24.45 (hint); 0 whole parts, 1 split"
@@ -1934,9 +2066,31 @@ TH-0027,Phuket-Krabi,THA,Phuket-Krabi-Phang Nga,admin1,THA-378;THA-382;THA-377,1
 TH-0028,Nakhon Si Thammarat-Trang,THA,Nakhon Si Thammarat-Trang,admin1,THA-387;THA-383;THA-376,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100); plus unclaimed Phatthalung)"
 TH-0029,Songkhla-Satun,THA,Songkhla-Satun,admin1,THA-385;THA-386,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
 TH-0030,Deep South,THA,Pattani-Yala-Narathiwat,admin1,THA-388;THA-493;THA-494,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
+TJ-0001,Dushanbe,TJK,Dushanbe,admin1,TJK-5491,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+TJ-0002,Hisor-Tursunzoda,TJK,Districts of Republican Subordination,voronoi,TJK-368,0.85,Natural Earth 10m (public domain),"seeds: point 68.23,38.51 (hint); point 68.67,38.52 (hint); 0 whole parts, 1 split"
+TJ-0003,Rasht-Rogun,TJK,Districts of Republican Subordination,voronoi,TJK-368,0.85,Natural Earth 10m (public domain),"seeds: point 69.77,38.73 (hint); point 70.37,39.04 (hint); point 71.2,39.2 (hint); 0 whole parts, 1 split"
+TJ-0004,Khujand,TJK,Sughd,voronoi,TJK-369,0.8,Natural Earth 10m (public domain),"seeds: place Khujand; 0 whole parts, 1 split"
+TJ-0005,Panjakent-Zeravshan,TJK,Sughd,voronoi,TJK-369,0.85,Natural Earth 10m (public domain),"seeds: point 67.61,39.5 (hint); point 68.53,39.39 (hint); 0 whole parts, 1 split"
+TJ-0006,Istaravshan-Isfara,TJK,Sughd,voronoi,TJK-369,0.85,Natural Earth 10m (public domain),"seeds: point 69.01,39.91 (hint); point 70.23,40.45 (hint); point 70.63,40.12 (hint); 2 whole parts, 1 split"
+TJ-0007,Bokhtar-Vakhsh,TJK,Khatlon,voronoi,TJK-367,0.65,Natural Earth 10m (public domain),"seeds: place Qurghonteppa; 0 whole parts, 1 split"
+TJ-0008,Kulob-Nurek,TJK,Khatlon,voronoi,TJK-367,0.8,Natural Earth 10m (public domain),"seeds: place Kulob; 0 whole parts, 1 split"
+TJ-0009,Gorno-Badakhshan,TJK,Gorno-Badakhshan,admin1,TJK-366,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 TL-0001,Dili,TLS,Dili,admin1,TLS-541,0.95,Natural Earth 10m (public domain),whole region (alias hint -> TL-DI)
 TL-0002,Western Municipalities,TLS,Western Municipalities,admin1,TLS-543;TLS-547;TLS-548;TLS-545;TLS-542;TLS-549;TLS-544,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> TL-OE, TL-BO, TL-CO, TL-ER, TL-LI, TL-AN, TL-AL)"
 TL-0003,Eastern Municipalities,TLS,Eastern Municipalities,admin1,TLS-551;TLS-550;TLS-552;TLS-553;TLS-546,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> TL-BA, TL-LA, TL-VI, TL-MT, TL-MF)"
+TM-0001,Ashgabat,TKM,Ashgabat,admin1,,0.95,builder-drawn line (hints file),"whole region (no admin-1 match (best unit 71, group 0); carve: builder polygon from TKM:Ahal)"
+TM-0002,Anau-Tejen,TKM,Ahal,voronoi,TKM-352,0.8,Natural Earth 10m (public domain),"seeds: place Tejen; 0 whole parts, 1 split"
+TM-0003,Gokdepe-Karakum,TKM,Ahal,voronoi,TKM-352,0.85,Natural Earth 10m (public domain),"seeds: point 57.43,38.43 (hint); point 57.95,38.15 (hint); point 58.9,40.25 (hint) (snapped to land); 0 whole parts, 1 split"
+TM-0004,Turkmenbashi,TKM,Balkan,voronoi,TKM-351,0.8,Natural Earth 10m (public domain),"seeds: place Türkmenbaşy; 0 whole parts, 1 split"
+TM-0005,Balkanabat-Cheleken,TKM,Balkan,voronoi,TKM-351,0.8,Natural Earth 10m (public domain),"seeds: place Balkanabat; place Celeken; 2 whole parts, 1 split"
+TM-0006,Etrek-Serdar,TKM,Balkan,voronoi,TKM-351,0.8,Natural Earth 10m (public domain),"seeds: place Serdar; 0 whole parts, 1 split"
+TM-0007,Dashoguz,TKM,Dashoguz,voronoi,TKM-353,0.85,Natural Earth 10m (public domain),"seeds: point 59.97,41.84 (hint); 0 whole parts, 1 split"
+TM-0008,Konye-Urgench,TKM,Dashoguz,voronoi,TKM-353,0.8,Natural Earth 10m (public domain),"seeds: place Koneurgench; 0 whole parts, 1 split"
+TM-0009,Turkmenabat,TKM,Lebap,voronoi,TKM-359,0.8,Natural Earth 10m (public domain),"seeds: place Türkmenabat; 0 whole parts, 1 split"
+TM-0010,Bagtyyarlyk-Koytendag,TKM,Lebap,voronoi,TKM-359,0.85,Natural Earth 10m (public domain),"seeds: point 64.6,38.95 (hint) (snapped to land); point 65.21,37.83 (hint); point 66.4,37.8 (hint); 0 whole parts, 1 split"
+TM-0011,Mary,TKM,Mary,voronoi,TKM-360,0.8,Natural Earth 10m (public domain),"seeds: place Mary; 0 whole parts, 1 split"
+TM-0012,Galkynysh-Yoloten,TKM,Mary,voronoi,TKM-360,0.85,Natural Earth 10m (public domain),"seeds: point 61.6,36.4 (hint); point 62.35,35.27 (hint); point 62.36,37.33 (hint); point 62.45,37.25 (hint); 0 whole parts, 1 split"
+TM-0013,Bayramaly-Murgab,TKM,Mary,voronoi,TKM-360,0.85,Natural Earth 10m (public domain),"seeds: point 61.97,37.5 (hint); point 62.17,37.62 (hint); point 62.4,37.43 (hint); 0 whole parts, 1 split"
 TN-0001,Tunis,TUN,Tunis,admin1,TUN-108,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 TN-0002,Ariana-Ben Arous,TUN,Ariana-Ben Arous-Manouba,admin1,TUN-104;TUN-102,0.95,Natural Earth 10m (public domain),"whole region (alias hint -> TN-13, TN-14)"
 TN-0003,Bizerte,TUN,Bizerte,admin1,TUN-105,1.0,Natural Earth 10m (public domain),whole region (name match 100)
@@ -2192,6 +2346,23 @@ UY-0007,Rivera-Artigas,URY,Artigas-Rivera,admin1,URY-6;URY-14,1.0,Natural Earth 
 UY-0008,Tacuarembo-Durazno,URY,Tacuarembo-Durazno,admin1,URY-15;URY-13,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
 UY-0009,Melo-East Uruguay,URY,Cerro Largo-Treinta y Tres-Lavalleja,admin1,URY-16;URY-12;URY-19,1.0,Natural Earth 10m (public domain),"whole region (name parts (3 pieces, worst match 100))"
 UY-0010,Florida-Flores,URY,Florida-Flores,admin1,URY-7;URY-18,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+UZ-0001,Tashkent,UZB,Tashkent,admin1,UZB-4828,0.95,Natural Earth 10m (public domain),whole region (alias hint -> UZ-TK)
+UZ-0002,Almalyk-Angren,UZB,Tashkent Region,admin2,79887680B39999061670418;79887680B75193688061986;79887680B75027378773615;79887680B16924900870232;79887680B68716596189274,0.8,geoBoundaries gbOpen UZB ADM2 (OCHA ROCCA; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain),seeds: place Angren; unit Akhangaran; 5 whole admin2 units
+UZ-0003,Chirchiq-Yangiyul,UZB,Tashkent Region,admin2,79887680B93724335665185;79887680B94622992244208;79887680B49075560647606;79887680B65075786438492;79887680B71620655639392;79887680B87312828707789;79887680B42380635367979;79887680B10165721529704;79887680B40109116454398;79887680B58716268454454;79887680B33047546093113;79887680B38656408263459;79887680B90536772878840;79887680B30402232719617;79887680B78178339313098;79887680B72544223780666;79887680B57714411837097;79887680B47591797278473;79887680B41962593359700;79887680B98736397831484;79887680B42032774497005;79887680B98166747305726;79887680B87118778033148;79887680B3865119870711,0.9,geoBoundaries gbOpen UZB ADM2 (OCHA ROCCA; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain),seeds: place Chirchiq; unit Bekabad; unit Yangiyul; 24 whole admin2 units
+UZ-0004,Samarkand,UZB,Samarkand,admin2,79887680B34073464647672;79887680B93322168569220;79887680B77379666017529;79887680B27058586610976;79887680B91755073573876,0.9,geoBoundaries gbOpen UZB ADM2 (OCHA ROCCA; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain),seeds: place Samarkand; unit Samarkand at place Samarkand; 5 whole admin2 units
+UZ-0005,Kattakurgan-Urgut,UZB,Samarkand,admin2,79887680B60529301489463;79887680B26985573212547;79887680B73801633322119;79887680B24658662729517;79887680B42303592957509;79887680B69055285128401;79887680B475609361313;79887680B70899429425762;79887680B65824401013757;79887680B84985398573177;79887680B67251663283691,0.9,geoBoundaries gbOpen UZB ADM2 (OCHA ROCCA; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain),seeds: place Urgut; unit Ishtikhan; unit Kattakurgan; unit Urgut at place Urgut; 11 whole admin2 units
+UZ-0006,Fergana,UZB,Fergana,admin1,UZB-364,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+UZ-0007,Andijan,UZB,Andijan,admin1,UZB-363,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+UZ-0008,Namangan,UZB,Namangan,admin1,UZB-365,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+UZ-0009,Bukhara,UZB,Bukhara,admin1,UZB-354,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+UZ-0010,Navoi-Zarafshan,UZB,Navoi,admin1,UZB-357,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+UZ-0011,Karshi-Shurtan,UZB,Kashkadarya,admin2,79887680B94594709209403;79887680B34481827361029;79887680B39289348705167;79887680B29394566639719;79887680B57210975668042;79887680B27619716135754;79887680B88652544593040,0.8,geoBoundaries gbOpen UZB ADM2 (OCHA ROCCA; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain),seeds: place Qarshi; unit Mubarek; 7 whole admin2 units
+UZ-0012,Shahrisabz-Kitab,UZB,Kashkadarya,admin2,79887680B27761464779200;79887680B4185016404575;79887680B36641058684147;79887680B51602053820604;79887680B89374870504997;79887680B77871690978000;79887680B91386955898676;79887680B15767509154771,0.9,geoBoundaries gbOpen UZB ADM2 (OCHA ROCCA; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain),seeds: place Shahrisabz; unit Guzar; unit Kitab; 8 whole admin2 units
+UZ-0013,Termez-Surkhandarya,UZB,Surkhandarya,admin1,UZB-362,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+UZ-0014,Jizzakh-Sirdaryo,UZB,Jizzakh-Sirdaryo,admin1,UZB-371;UZB-370,1.0,Natural Earth 10m (public domain),"whole region (name parts (2 pieces, worst match 100))"
+UZ-0015,Khorezm,UZB,Khorezm,admin1,UZB-355,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+UZ-0016,Nukus,UZB,Karakalpakstan,admin2,79887680B51354655878923;79887680B11316331959400;79887680B3643857389786;79887680B11359237520420;79887680B6584573429161;79887680B45163084066424;79887680B60420038747049;79887680B81962210104758;79887680B8081809775743;79887680B72468614432552;79887680B61567760278746;79887680B22143596455299;79887680B9862753118700,0.9,geoBoundaries gbOpen UZB ADM2 (OCHA ROCCA; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain),seeds: place Nukus; unit Nukus at place Nukus; 13 whole admin2 units
+UZ-0017,Kungrad-Muynak,UZB,Karakalpakstan,admin2,79887680B80838990154601;79887680B8314614924968,0.9,geoBoundaries gbOpen UZB ADM2 (OCHA ROCCA; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)); Natural Earth 10m (public domain),seeds: unit Kungrad; unit Muynak; 2 whole admin2 units
 VA-0001,Vatican City,VAT,Vatican City,admin1,VAT+00?,0.95,Natural Earth 10m (public domain),whole region (whole country (1 admin-1 units))
 VC-0001,Saint Vincent and the Grenadines,VCT,Saint Vincent and the Grenadines,admin1,VCT-5064;VCT-5065;VCT-5067;VCT-5063;VCT-5066;VCT-5068,0.95,Natural Earth 10m (public domain),whole region (whole country (6 admin-1 units))
 VE-0001,Caracas,VEN,Distrito Capital,admin1,VEN-43,1.0,Natural Earth 10m (public domain),whole region (name match 100)

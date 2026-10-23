@@ -33,6 +33,12 @@ ARG,Santa Fe,admin1,ARG-1310,1.0,Natural Earth 10m (public domain),name match 10
 ARG,Santiago del Estero,admin1,ARG-1304,1.0,Natural Earth 10m (public domain),name match 100
 ARG,Tierra del Fuego,admin1,ARG-1272,1.0,Natural Earth 10m (public domain),name match 100
 ARG,Tucuman,admin1,ARG-1305,1.0,Natural Earth 10m (public domain),name match 100
+ARM,Ararat-Armavir,admin1,ARM-1671;ARM-1554,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+ARM,Kotayk-Gegharkunik,admin1,ARM-1672;ARM-1673,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+ARM,Lori-Tavush,admin1,ARM-1670;ARM-1674,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+ARM,Shirak-Aragatsotn,admin1,ARM-1555;ARM-1553,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+ARM,Syunik-Vayots Dzor,admin1,ARM-1733;ARM-1732,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+ARM,Yerevan,admin1,ARM-1675,1.0,Natural Earth 10m (public domain),name match 100
 ATG,Antigua and Barbuda,admin1,ATG-5096;ATG-5095;ATG-5094;ATG-5093;ATG-5098;ATG-5097;ATG-5091;ATG-5092,0.95,Natural Earth 10m (public domain),whole country (8 admin-1 units)
 AUS,Australian Capital Territory,admin1,AUS-1932,1.0,Natural Earth 10m (public domain),name match 100
 AUS,New South Wales,admin1,AUS-2654;AUS-2659;AUS-2653,1.0,Natural Earth 10m (public domain),"name match 100; plus unclaimed Australian Capital Territory, Lord Howe Island"
@@ -51,6 +57,15 @@ AUT,Tyrol,admin1,AUT-2329,1.0,Natural Earth 10m (public domain),name match 100
 AUT,Upper Austria,admin1,AUT-2326,1.0,Natural Earth 10m (public domain),name match 100
 AUT,Vienna,admin1,AUT-2331,1.0,Natural Earth 10m (public domain),name match 100
 AUT,Vorarlberg,admin1,AUT-2320,1.0,Natural Earth 10m (public domain),name match 100
+AZE,Absheron-Mountainous Shirvan,admin1,AZE-1719;AZE-1717;AZE-1690;AZE-1693;AZE-1716;AZE-1711;AZE-1705,0.95,Natural Earth 10m (public domain),"alias hint -> region:Absheron Economic Region, -AZ-BA, region:Daghlig Shirvan Economic Region"
+AZE,Aran,admin1,AZE-1704;AZE-1698;AZE-1697;AZE-1715;AZE-1710;AZE-1694;AZE-1706;AZE-1721;AZE-1714;AZE-5563;AZE-1713;AZE-1696;AZE-1718;AZE-1688;AZE-1683;AZE-1703;AZE-1692;AZE-1722;AZE-5566,0.95,Natural Earth 10m (public domain),alias hint -> region:Aran Economic Region
+AZE,Baku,admin1,AZE-1689,0.95,Natural Earth 10m (public domain),alias hint -> AZ-BA
+AZE,Ganja-Gazakh,admin1,AZE-1684;AZE-1676;AZE-1687;AZE-1678;AZE-1677;AZE-1686;AZE-1681;AZE-1680;AZE-1685;AZE-1679;AZE-5561,0.95,Natural Earth 10m (public domain),alias hint -> region:Ganja-Gazakh Economic Region
+AZE,Guba-Khachmaz,admin1,AZE-1730;AZE-1729;AZE-1701;AZE-1712;AZE-1728,0.95,Natural Earth 10m (public domain),alias hint -> region:Guba-Khachmaz Economic Region
+AZE,Lankaran,admin1,AZE-1700;AZE-1720;AZE-1709;AZE-1695;AZE-1707;AZE-1708;AZE-5562,0.95,Natural Earth 10m (public domain),alias hint -> region:Lankaran Economic Region
+AZE,Nakhchivan,admin1,AZE-2419;AZE-2415;AZE-5567;AZE-2420;AZE-2423;AZE-2421;AZE-2418;AZE-2422,0.95,Natural Earth 10m (public domain),alias hint -> region:Naxçıvan Autonomous Republic
+AZE,Shaki-Zagatala,admin1,AZE-1723;AZE-1731;AZE-1725;AZE-1727;AZE-1726;AZE-1724;AZE-5564,0.95,Natural Earth 10m (public domain),alias hint -> region:Shaki-Zaqatala Economic Region
+AZE,Upper Karabakh-Kalbajar-Lachin,admin1,AZE-1682;AZE-1735;AZE-1736;AZE-1740;AZE-1699;AZE-1702;AZE-1737;AZE-1739;AZE-5565;AZE-1691;AZE-1738;AZE-1734;AZE-4838,0.95,Natural Earth 10m (public domain),"alias hint -> region:Yukhari Garabakh Economic Region, region:Kalbajar-Lachin Economic Region"
 BEL,Brussels-Capital Region,admin1,BEL-3474,1.0,Natural Earth 10m (public domain),name match 100
 BEL,Flanders,admin1,BEL-3479;BEL-3478;BEL-3480;BEL-3;BEL-3475,0.95,Natural Earth 10m (public domain),alias hint -> region:Flemish
 BEL,Wallonia,admin1,BEL-2;BEL-3476;BEL-3477;BEL-3481;BEL-3482,0.95,Natural Earth 10m (public domain),alias hint -> region:Walloon
@@ -414,6 +429,12 @@ GBR,South West,admin1,GBR-2039;GBR-2051;GBR-2050;GBR-2052;GBR-2048;GBR-2142;GBR-
 GBR,Wales,admin1,GBR-2126;GBR-2127;GBR-2111;GBR-2132;GBR-2133;GBR-2116;GBR-2117;GBR-2112;GBR-2118;GBR-2119;GBR-2104;GBR-2106;GBR-2105;GBR-2130;GBR-2129;GBR-2125;GBR-2128;GBR-2113;GBR-2115;GBR-2131;GBR-2134;GBR-2114,0.95,Natural Earth 10m (public domain),"alias hint -> region:West Wales and the Valleys, region:East Wales"
 GBR,West Midlands,admin1,GBR-2779;GBR-2775;GBR-2778;GBR-2121;GBR-2777;GBR-2776;GBR-2750;GBR-5695;GBR-5696;GBR-5690;GBR-5691;GBR-5692;GBR-5694;GBR-5693,0.95,Natural Earth 10m (public domain),alias hint -> region:West Midlands
 GBR,Yorkshire and the Humber,admin1,GBR-2140;GBR-2124;GBR-2055;GBR-2057;GBR-2056;GBR-2120;GBR-5689;GBR-5686;GBR-5687;GBR-5672;GBR-5671;GBR-5674;GBR-5673;GBR-5675;GBR-5688,1.0,Natural Earth 10m (public domain),"Natural Earth region Yorkshire and the Humber (15 units, match 100)"
+GEO,Abkhazia,admin1,GEO-3015,0.95,Natural Earth 10m (public domain),alias hint -> GE-AB
+GEO,Adjara-Guria,admin1,GEO-3027;GEO-3028,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+GEO,Imereti-Samegrelo-Racha,admin1,GEO-3029;GEO-3035;GEO-3030,0.95,Natural Earth 10m (public domain),"alias hint -> GE-IM, GE-SZ, GE-RL"
+GEO,Kvemo Kartli-Kakheti,admin1,GEO-3033;GEO-3037,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+GEO,Shida Kartli-Mtskheta-Mtianeti-Samtskhe-Javakheti,admin1,GEO-3039;GEO-3034;GEO-3038,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+GEO,Tbilisi,admin1,GEO-3036,1.0,Natural Earth 10m (public domain),name match 100
 GGY,Guernsey,admin1,GGY+00?,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
 GIB,Gibraltar,admin1,GIB+00?,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
 GRC,Attica,admin1,GRC-2884,1.0,Natural Earth 10m (public domain),name match 100
@@ -653,6 +674,31 @@ JPN,Wakayama,admin1,JPN-1854,1.0,Natural Earth 10m (public domain),name match 10
 JPN,Yamagata,admin1,JPN-1868,1.0,Natural Earth 10m (public domain),name match 100
 JPN,Yamaguchi,admin1,JPN-1826,1.0,Natural Earth 10m (public domain),name match 100
 JPN,Yamanashi,admin1,JPN-1861,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,Akmola,admin1,KAZ-3202,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,Aktobe,admin1,KAZ-3195,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,Almaty,admin1,KAZ-4829,0.95,Natural Earth 10m (public domain),alias hint -> KAZ-4829
+KAZ,Almaty Region,admin1,KAZ-3207,0.95,Natural Earth 10m (public domain),alias hint -> KAZ-3207
+KAZ,Atyrau,admin1,KAZ-3198,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,East Kazakhstan,admin1,KAZ-3206,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,Karaganda,admin1,KAZ-3203,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,Kostanay,admin1,KAZ-3196,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,Kyzylorda,admin1,KAZ-3197,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,Mangystau,admin1,KAZ-3236,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,North Kazakhstan,admin1,KAZ-3204,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,Nur-Sultan,admin1,KAZ-4830,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,Pavlodar,admin1,KAZ-3205,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,Shymkent,admin1,,0.95,builder-drawn line (hints file),"no admin-1 match (best unit 75, group 0); carve: builder polygon from KAZ:Turkistan"
+KAZ,Turkistan,admin1,KAZ-3251,1.0,Natural Earth 10m (public domain),name match 100; less KAZ:Shymkent (carve)
+KAZ,West Kazakhstan,admin1,KAZ-3201,1.0,Natural Earth 10m (public domain),name match 100
+KAZ,Zhambyl,admin1,KAZ-3252,1.0,Natural Earth 10m (public domain),name match 100
+KGZ,Batken,admin1,KGZ-1119,1.0,Natural Earth 10m (public domain),name match 100
+KGZ,Bishkek,admin1,KGZ-1115,1.0,Natural Earth 10m (public domain),name match 100
+KGZ,Chuy,admin1,KGZ-1116,1.0,Natural Earth 10m (public domain),name match 100
+KGZ,Issyk-Kul,admin1,KGZ-1117,1.0,Natural Earth 10m (public domain),name match 100
+KGZ,Jalal-Abad,admin1,KGZ-1120,1.0,Natural Earth 10m (public domain),name match 100
+KGZ,Naryn,admin1,KGZ-1118,1.0,Natural Earth 10m (public domain),name match 100
+KGZ,Osh,admin1,KGZ-1122,1.0,Natural Earth 10m (public domain),name match 100
+KGZ,Talas,admin1,KGZ-1121,1.0,Natural Earth 10m (public domain),name match 100
 KHM,Banteay Meanchey-Oddar Meanchey,admin1,KHM-1782;KHM-1777,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 KHM,Battambang-Pailin,admin1,KHM-1778;KHM-1783,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 KHM,Kampong Cham-Tbong Khmum,admin1,KHM-1784,0.95,Natural Earth 10m (public domain),alias hint -> KH-3
@@ -1031,8 +1077,66 @@ ROU,South-East,admin1,ROU-133;ROU-315;ROU-4847;ROU-317;ROU-314;ROU-313,0.95,Natu
 ROU,South-Muntenia,admin1,ROU-129;ROU-127;ROU-131;ROU-130;ROU-302;ROU-310;ROU-132,0.95,Natural Earth 10m (public domain),"alias hint -> RO-AG, RO-CL, RO-DB, RO-GR, RO-IL, RO-PH, RO-TR"
 ROU,South-West Oltenia,admin1,ROU-124;ROU-122;ROU-126;ROU-123;ROU-304,0.95,Natural Earth 10m (public domain),"alias hint -> RO-DJ, RO-GJ, RO-MH, RO-OT, RO-VL"
 ROU,West,admin1,ROU-276;ROU-280;ROU-278;ROU-297,0.95,Natural Earth 10m (public domain),"alias hint -> RO-AR, RO-CS, RO-HD, RO-TM"
+RUS,Altai Krai-Altai Republic,admin1,RUS-2400;RUS-2399,0.95,Natural Earth 10m (public domain),"alias hint -> RU-ALT, RU-AL"
+RUS,Amur,admin1,RUS-2609,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Arkhangelsk,admin1,RUS-2354,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Astrakhan-Kalmykia,admin1,RUS-2388;RUS-2390,0.94,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 94)"
+RUS,Bashkortostan,admin1,RUS-2378,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Bryansk-Oryol,admin1,RUS-2342;RUS-2366,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Buryatia,admin1,RUS-2606,0.94,Natural Earth 10m (public domain),name match 94
+RUS,Chechnya-Ingushetia,admin1,RUS-2303;RUS-2416,0.95,Natural Earth 10m (public domain),"alias hint -> RU-CE, RU-IN"
+RUS,Chelyabinsk,admin1,RUS-2379,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Chuvashia-Mari El-Mordovia,admin1,RUS-2372;RUS-2389;RUS-2385,0.95,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 95)"
 RUS,Crimea,admin1,RUS-283;RUS-5482,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Sevastopol
+RUS,Dagestan,admin1,RUS-2417,1.0,Natural Earth 10m (public domain),name match 100
 RUS,Donbas,admin1,UKR-329,0.95,Natural Earth 10m (public domain); builder-drawn line (hints file),alias hint -> UA-09; carve: builder polygon from UKR:Eastern Ukraine
+RUS,Irkutsk,admin1,RUS-2602,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Kaliningrad,admin1,RUS-2324,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Kamchatka,admin1,RUS-3468,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Karelia-Murmansk,admin1,RUS-2333;RUS-2353,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Kemerovo,admin1,RUS-2401,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Khabarovsk-Jewish Autonomous Oblast,admin1,RUS-2613;RUS-2614,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Khakassia-Tuva,admin1,RUS-2605;RUS-2402,0.95,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 95)"
+RUS,Khanty-Mansi,admin1,RUS-2396,0.96,Natural Earth 10m (public domain),name match 96
+RUS,Komi-Nenets,admin1,RUS-2381;RUS-2383,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Krasnodar-Adygea,admin1,RUS-2371;RUS-2279,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Krasnoyarsk,admin1,RUS-2603,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Kursk-Belgorod,admin1,RUS-2362;RUS-2370,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Leningrad Oblast,admin1,RUS-2336,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Lipetsk-Tambov,admin1,RUS-2363;RUS-2375,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Magadan-Chukotka,admin1,RUS-2615;RUS-2321,0.95,Natural Earth 10m (public domain),"alias hint -> RU-MAG, RU-CHU"
+RUS,Moscow,admin1,RUS-2365,0.95,Natural Earth 10m (public domain),alias hint -> RUS-2365
+RUS,Moscow Oblast,admin1,RUS-2364,0.95,Natural Earth 10m (public domain),alias hint -> RUS-2364
+RUS,Nizhny Novgorod,admin1,RUS-2357,1.0,Natural Earth 10m (public domain),name match 100
+RUS,North Ossetia-Kabardino-Balkaria-Karachay-Cherkessia,admin1,RUS-2280;RUS-2304;RUS-2305,0.97,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 97)"
+RUS,Novgorod-Pskov,admin1,RUS-2335;RUS-2334,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Novosibirsk,admin1,RUS-2403,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Omsk,admin1,RUS-2397,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Orenburg,admin1,RUS-2391,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Perm,admin1,RUS-3200,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Primorsky,admin1,RUS-2611,0.94,Natural Earth 10m (public domain),name match 94
+RUS,Rostov,admin1,RUS-2367,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Sakha,admin1,RUS-2612,0.95,Natural Earth 10m (public domain),alias hint -> RU-SA
+RUS,Sakhalin,admin1,RUS-2616,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Samara,admin1,RUS-2392,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Saratov,admin1,RUS-2393,1.0,Natural Earth 10m (public domain),name match 100
+RUS,St Petersburg,admin1,RUS-2337,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Stavropol,admin1,RUS-2306,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Sverdlovsk,admin1,RUS-2386,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Tatarstan,admin1,RUS-2394,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Tomsk,admin1,RUS-2167,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Tula-Kaluga,admin1,RUS-2361;RUS-2368,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Tver-Smolensk,admin1,RUS-2343;RUS-2358,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Tyumen-Kurgan,admin1,RUS-2398;RUS-2380,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Udmurtia-Kirov,admin1,RUS-2384;RUS-2387,0.94,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 94)"
+RUS,Ulyanovsk-Penza,admin1,RUS-2395;RUS-2373,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Vladimir-Ryazan,admin1,RUS-2376;RUS-2374,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+RUS,Volgograd,admin1,RUS-2369,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Vologda,admin1,RUS-2359,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Voronezh,admin1,RUS-2377,1.0,Natural Earth 10m (public domain),name match 100
+RUS,Yamalo-Nenets,admin1,RUS-2382;RUS+99?,0.96,Natural Earth 10m (public domain),name match 96; plus unclaimed RUS+99?
+RUS,Yaroslavl-Ivanovo-Kostroma,admin1,RUS-2356;RUS-2360;RUS-2355,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+RUS,Zabaykalsky,admin1,RUS-2610,0.92,Natural Earth 10m (public domain),name match 92
 SAU,Al Bahah,admin1,SAU-885,1.0,Natural Earth 10m (public domain),name match 100
 SAU,Al Jawf,admin1,SAU-862,1.0,Natural Earth 10m (public domain),name match 100
 SAU,Asir,admin1,SAU-886,1.0,Natural Earth 10m (public domain),name match 100
@@ -1143,6 +1247,17 @@ THA,Surat Thani-Chumphon,admin1,THA-375;THA-379;THA-380,1.0,Natural Earth 10m (p
 THA,Tak-Mae Hong Son,admin1,THA-374;THA-404,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 THA,Ubon Ratchathani-Sisaket,admin1,THA-425;THA-426;THA-427,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Amnat Charoen"
 THA,Udon Thani-Nong Khai-Loei,admin1,THA-445;THA-446;THA-449;THA-448,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100); plus unclaimed Nong Bua Lam Phu"
+TJK,Districts of Republican Subordination,admin1,TJK-368,0.95,Natural Earth 10m (public domain),alias hint -> TJ-X01~
+TJK,Dushanbe,admin1,TJK-5491,1.0,Natural Earth 10m (public domain),name match 100
+TJK,Gorno-Badakhshan,admin1,TJK-366,1.0,Natural Earth 10m (public domain),name match 100
+TJK,Khatlon,admin1,TJK-367,1.0,Natural Earth 10m (public domain),name match 100
+TJK,Sughd,admin1,TJK-369,0.95,Natural Earth 10m (public domain),alias hint -> TJ-SU
+TKM,Ahal,admin1,TKM-352,1.0,Natural Earth 10m (public domain),name match 100; less TKM:Ashgabat (carve)
+TKM,Ashgabat,admin1,,0.95,builder-drawn line (hints file),"no admin-1 match (best unit 71, group 0); carve: builder polygon from TKM:Ahal"
+TKM,Balkan,admin1,TKM-351,1.0,Natural Earth 10m (public domain),name match 100
+TKM,Dashoguz,admin1,TKM-353,1.0,Natural Earth 10m (public domain),name match 100
+TKM,Lebap,admin1,TKM-359,1.0,Natural Earth 10m (public domain),name match 100
+TKM,Mary,admin1,TKM-360,1.0,Natural Earth 10m (public domain),name match 100
 TLS,Dili,admin1,TLS-541,0.95,Natural Earth 10m (public domain),alias hint -> TL-DI
 TLS,Eastern Municipalities,admin1,TLS-551;TLS-550;TLS-552;TLS-553;TLS-546,0.95,Natural Earth 10m (public domain),"alias hint -> TL-BA, TL-LA, TL-VI, TL-MT, TL-MF"
 TLS,Western Municipalities,admin1,TLS-543;TLS-547;TLS-548;TLS-545;TLS-542;TLS-549;TLS-544,0.95,Natural Earth 10m (public domain),"alias hint -> TL-OE, TL-BO, TL-CO, TL-ER, TL-LI, TL-AN, TL-AL"
@@ -1264,6 +1379,19 @@ USA,Washington,admin1,USA-3519,1.0,Natural Earth 10m (public domain),name match 
 USA,West Virginia,admin1,USA-3554,1.0,Natural Earth 10m (public domain),name match 100
 USA,Wisconsin,admin1,USA-3553,1.0,Natural Earth 10m (public domain),name match 100
 USA,Wyoming,admin1,USA-3527,1.0,Natural Earth 10m (public domain),name match 100
+UZB,Andijan,admin1,UZB-363,1.0,Natural Earth 10m (public domain),name match 100
+UZB,Bukhara,admin1,UZB-354,1.0,Natural Earth 10m (public domain),name match 100
+UZB,Fergana,admin1,UZB-364,1.0,Natural Earth 10m (public domain),name match 100
+UZB,Jizzakh-Sirdaryo,admin1,UZB-371;UZB-370,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+UZB,Karakalpakstan,admin1,UZB-356,1.0,Natural Earth 10m (public domain),name match 100
+UZB,Kashkadarya,admin1,UZB-361,1.0,Natural Earth 10m (public domain),name match 100
+UZB,Khorezm,admin1,UZB-355,1.0,Natural Earth 10m (public domain),name match 100
+UZB,Namangan,admin1,UZB-365,1.0,Natural Earth 10m (public domain),name match 100
+UZB,Navoi,admin1,UZB-357,1.0,Natural Earth 10m (public domain),name match 100
+UZB,Samarkand,admin1,UZB-358,1.0,Natural Earth 10m (public domain),name match 100
+UZB,Surkhandarya,admin1,UZB-362,1.0,Natural Earth 10m (public domain),name match 100
+UZB,Tashkent,admin1,UZB-4828,0.95,Natural Earth 10m (public domain),alias hint -> UZ-TK
+UZB,Tashkent Region,admin1,UZB-372,0.95,Natural Earth 10m (public domain),alias hint -> UZ-TO
 VAT,Vatican City,admin1,VAT+00?,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
 VCT,Saint Vincent and the Grenadines,admin1,VCT-5064;VCT-5065;VCT-5067;VCT-5063;VCT-5066;VCT-5068,0.95,Natural Earth 10m (public domain),whole country (6 admin-1 units)
 VEN,Amazonas,admin1,VEN-38,1.0,Natural Earth 10m (public domain),name match 100

@@ -286,6 +286,9 @@ def apply_carves(out, hints, sources):
         # the land is taken only from the regions `from` names (default: the region's own
         # country), so the simplified geoBoundaries line spills over no foreign border
         src_keys = c.get("from") or [k for k in out if k.split(":")[0] == key.split(":")[0]]
+        if not any(k in out for k in src_keys):
+            continue  # another region file's carve whose land is not in this run (Donbas in RCA)
+        src_keys = [k for k in src_keys if k in out]
         sources_g = [out[k]["geometry"] for k in src_keys if k != key and out[k].get("geometry") is not None]
         g = shapely.make_valid(g)
         if c.get("clip", True):
