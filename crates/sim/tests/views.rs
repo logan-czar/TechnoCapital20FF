@@ -110,3 +110,31 @@ fn versions_keep_climbing_across_new_game_and_load() {
     assert_eq!(s.now(), DateTime::midnight(Date::ymd(2020, 1, 5)));
     assert!(s.views().map_static.is_dirty());
 }
+
+/// Watches nothing: a step with it builds its views one after another (D400).
+struct Sequential;
+
+impl sim::time::TickObserver for Sequential {
+    fn started(&mut self, _: sim::time::TickPart) {}
+    fn finished(&mut self, _: sim::time::TickPart) {}
+}
+
+/// D801: the views of a month's or a quarter's tick, built on worker threads, are exactly the
+/// views built one after another (an observed step), through a plan lock, a recap, a quarter's
+/// start, its release and its price move.
+#[test]
+fn views_built_on_worker_threads_match_views_built_in_turn() {
+    let (mut par, mut seq) = (sim(), sim());
+    let end = DateTime::midnight(Date::ymd(2020, 4, 3));
+    let mut checked = 0;
+    while par.now() < end {
+        let (a, b) = (par.step(), seq.step_observed(&mut Sequential));
+        assert_eq!(a, b, "notices at {}", par.now());
+        if par.now().hour() == 0 {
+            assert!(par.views() == seq.views(), "views at {}", par.now());
+            checked += 1;
+        }
+    }
+    assert!(checked > 90);
+    assert_eq!(par.state_hash(), seq.state_hash());
+}
