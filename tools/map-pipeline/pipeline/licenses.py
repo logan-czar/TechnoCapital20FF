@@ -81,6 +81,15 @@ NE_PROVENANCE = "Natural Earth 10m (public domain)"
 # decision C; D676): our own work, no third-party license.
 BUILDER_PROVENANCE = "builder-drawn line (hints file)"
 
+# PR #38 review: files that pass the allowlist but whose stated source may carry other terms,
+# listed in each report's licence notes for Logan (the files are still used)
+PROVENANCE_RISK = {
+    **{iso: "public domain or CC0, but geoBoundaries names Wikimedia as the source (Wikimedia maps are often "
+            "CC BY-SA)" for iso in ("AGO", "CRI", "CZE", "DNK", "ISR", "JOR", "NPL", "PAK", "SWE")},
+    **{iso: "CC BY, but the source is citypopulation.de, which republishes national statistics offices' maps"
+       for iso in ("KOR", "MYS", "NER")},
+}
+
 
 if __name__ == "__main__":  # tiny self-check, run by `run.py selftest`
     cases = {

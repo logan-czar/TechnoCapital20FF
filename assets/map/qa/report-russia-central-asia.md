@@ -21,23 +21,25 @@ _Written by `tools/map-pipeline/run.py --region russia-central-asia` (pipeline p
 | ... TKM | 13 |
 | ... UZB | 17 |
 | Regions matched | 128 of 128 |
-| Provinces by method: admin1 | 97 |
+| Provinces by method: admin1 | 95 |
 | Provinces by method: admin2 | 8 |
 | Provinces by method: admin3 | 0 |
-| Provinces by method: voronoi | 66 |
+| Provinces by method: voronoi | 68 |
 | Flagged for review (confidence < 0.6) | 0 |
-| Placed by a builder hint (`hints/russia-central-asia.toml`) | 21 |
+| Placed by a builder hint (`hints/russia-central-asia.toml`) | 25 |
 | Tiny (under 64 px) | 11 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
 | More than one part (islands, exclaves) | 83 |
 | Coastal flag differs from the CSV | 3 |
 | Small for their region (not Metro, under 5% of the region's mean) | 0 |
-| Voronoi-split blocks where one province takes 75% or more | 5 |
+| Voronoi-split blocks where one province takes 75% or more | 6 |
 | Places named in a province's name or notes that lie in another province | 1 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 4 |
 | Admin-1 units left without a province | 0 |
-| Sea links with a province of this file | 10 |
+| Sea links with a province of this file | 6 |
+| City probe points (fail on a mismatch; D686) | 31 pass, 0 mismatch, 2 listed |
+| Metro reach scan rows (listed; D686) | 1 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 0 |
 
@@ -57,7 +59,7 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 | geoBoundaries gbOpen TKM ADM2 (CIESIN) | Creative Commons Attribution-ShareAlike 3.0 Unported | no: refused: ShareAlike in license (Creative Commons Attribution-ShareAlike 3.0 Unported); Voronoi path |
 | geoBoundaries gbOpen UZB ADM2 (OCHA ROCCA) | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | yes |
 
-Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0 and OGL-UK 3.0; a region whose country has no allowed ADM2 is split by Voronoi.
+Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0, OGL-UK 3.0, Data licence Germany Attribution 2.0, Etalab 2.0, Spain's INE licence, Singapore ODL 1.0 and Korea OGL Type 1 (D685); a region whose country has no allowed ADM2 is split by Voronoi.
 
 ## Low-confidence rows for review
 
@@ -69,25 +71,29 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 
 | Province | Name | Placed by |
 |---|---|---|
+| GE-0006 | Gori-Borjomi | seeds: point 42.98,41.64 (hint); point 43.38,41.84 (hint); point 43.49,41.4 (hint); point 44.11,41.98 (hint); point 44.48,42.48 (hint); point 44.72,41.85 (hint); 2 whole admin1 units, split: Shida Kartli |
+| GE-0007 | South Ossetia | seeds: builder polygon (hint); 0 whole admin1 units, split: Shida Kartli |
 | KG-0008 | Alay-Uzgen | seeds: point 73.25,39.73 (hint); point 73.3,40.77 (hint); point 73.44,40.32 (hint); point 73.9,39.68 (hint); 0 whole parts, 1 split |
 | KZ-0007 | Saryagash-Maktaaral | seeds: point 68.4,40.85 (hint); point 69.17,41.45 (hint); 0 whole parts, 1 split |
 | KZ-0011 | Aktobe | seeds: point 57.21,50.28 (hint); 0 whole parts, 1 split |
-| KZ-0014 | Tengiz-Kashagan | seeds: point 52.6,46.2 (hint) (snapped to land); point 53.0,46.5 (hint); point 53.38,46.15 (hint); 0 whole parts, 1 split |
+| KZ-0014 | Tengiz-Kashagan | seeds: point 53.0,46.5 (hint); point 53.38,46.15 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 52.6,46.2 (hint) |
 | KZ-0015 | Aktau | seeds: point 51.17,43.65 (hint); point 51.68,43.18 (hint); 3 whole parts, 1 split |
 | KZ-0020 | Balkhash-Karkaraly | seeds: point 74.98,46.84 (hint); point 75.47,49.41 (hint); 1 whole parts, 1 split |
 | RU-0002 | Moscow South-West | seeds: point 37.48,55.74 (hint); point 37.53,55.7 (hint); point 37.56,55.66 (hint); 0 whole parts, 1 split |
 | RU-0003 | Moscow North | seeds: point 37.18,55.99 (hint); point 37.5,55.8 (hint); point 37.55,55.83 (hint); 2 whole parts, 1 split |
 | RU-0004 | Moscow East-South-East | seeds: point 37.66,55.7 (hint); point 37.72,55.69 (hint); point 37.8,55.64 (hint); point 37.85,55.75 (hint); 0 whole parts, 1 split |
+| RU-0005 | Moscow Inner Suburbs | seeds: point 37.27,55.68 (hint); point 37.33,55.82 (hint); point 37.43,55.89 (hint) (snapped to land); point 37.55,55.43 (hint) (snapped to land); point 37.73,55.91 (hint); point 37.85,55.92 (hint); point 37.9,55.68 (hint); point 37.94,55.8 (hint); 0 whole parts, 1 split |
+| RU-0006 | Moscow Oblast Outer Ring | seeds: point 35.95,56.03 (hint); point 36.02,55.5 (hint); point 36.73,56.33 (hint); point 37.17,56.74 (hint); point 37.41,54.92 (hint); point 37.52,56.34 (hint); point 38.13,56.31 (hint); point 38.44,55.85 (hint); point 38.78,55.1 (hint); point 39.54,55.57 (hint); 0 whole parts, 1 split |
 | RU-0015 | St Petersburg Center-Vasilievsky | seeds: point 30.26,59.94 (hint); point 30.31,59.94 (hint); 0 whole parts, 1 split |
 | RU-0017 | St Petersburg North-Lakhta | seeds: point 29.97,60.1 (hint); point 30.18,59.99 (hint) (snapped to land); point 30.33,60.05 (hint); 1 whole parts, 1 split |
-| RU-0068 | Kuril Islands | seeds: point 145.9,44.0 (hint) (snapped to land); point 146.7,43.8 (hint); point 147.9,45.2 (hint); point 150.0,46.2 (hint) (snapped to land); point 152.0,47.5 (hint) (snapped to land); point 154.0,48.8 (hint) (snapped to land); point 155.9,50.4 (hint); 21 whole parts |
+| RU-0068 | Kuril Islands | seeds: point 145.9,44.0 (hint) (snapped to land); point 146.7,43.8 (hint); point 147.9,45.2 (hint); point 154.0,48.8 (hint) (snapped to land); point 155.9,50.4 (hint); 21 whole parts; dropped (over SNAP_MAX_DEG off the region): point 150.0,46.2 (hint), point 152.0,47.5 (hint) |
 | TJ-0002 | Hisor-Tursunzoda | seeds: point 68.23,38.51 (hint); point 68.67,38.52 (hint); 0 whole parts, 1 split |
 | TJ-0003 | Rasht-Rogun | seeds: point 69.77,38.73 (hint); point 70.37,39.04 (hint); point 71.2,39.2 (hint); 0 whole parts, 1 split |
 | TJ-0005 | Panjakent-Zeravshan | seeds: point 67.61,39.5 (hint); point 68.53,39.39 (hint); 0 whole parts, 1 split |
 | TJ-0006 | Istaravshan-Isfara | seeds: point 69.01,39.91 (hint); point 70.23,40.45 (hint); point 70.63,40.12 (hint); 2 whole parts, 1 split |
-| TM-0003 | Gokdepe-Karakum | seeds: point 57.43,38.43 (hint); point 57.95,38.15 (hint); point 58.9,40.25 (hint) (snapped to land); 0 whole parts, 1 split |
+| TM-0003 | Gokdepe-Karakum | seeds: point 57.43,38.43 (hint); point 57.95,38.15 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 58.9,40.25 (hint) |
 | TM-0007 | Dashoguz | seeds: point 59.97,41.84 (hint); 0 whole parts, 1 split |
-| TM-0010 | Bagtyyarlyk-Koytendag | seeds: point 64.6,38.95 (hint) (snapped to land); point 65.21,37.83 (hint); point 66.4,37.8 (hint); 0 whole parts, 1 split |
+| TM-0010 | Bagtyyarlyk-Koytendag | seeds: point 65.21,37.83 (hint); point 66.4,37.8 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 64.6,38.95 (hint) |
 | TM-0012 | Galkynysh-Yoloten | seeds: point 61.6,36.4 (hint); point 62.35,35.27 (hint); point 62.36,37.33 (hint); point 62.45,37.25 (hint); 0 whole parts, 1 split |
 | TM-0013 | Bayramaly-Murgab | seeds: point 61.97,37.5 (hint); point 62.17,37.62 (hint); point 62.4,37.43 (hint); 0 whole parts, 1 split |
 
@@ -115,6 +121,62 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 
 All anchors land on their own provinces.
 
+## Natural Earth labels
+
+Natural Earth units whose capital another region of the country names (in a province name or notes) while their own region does not: the sign of NE giving units each other's names, as in Eritrea and Guyana (D687). Each row fails the step unless `[review] ne_label_ok` in the hints names the region.
+
+| Region | NE unit | Capital | Named by |
+|---|---|---|---|
+| RUS:Krasnoyarsk (checked) | Krasnoyarsk (RUS-2603) | Abakan | RUS:Khakassia-Tuva |
+
+## City probe
+
+Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is in this file, looked up in province-index.png: a point passes on its pixel or one of the 8 around it (D686). The step fails on a mismatch.
+
+| Point | Expected | Got | Result |
+|---|---|---|---|
+| Dmitrov (37.52, 56.34) | ? | RU-0006 | listed |
+| Troitsk (New Moscow) (37.3, 55.48) | ? | RU-0002 | listed |
+| Akhaltsikhe (42.98, 41.64) | GE-0006 | GE-0006 | on it |
+| Almaty (76.95, 43.24) | KZ | KZ-0002 | on it |
+| Anadyr (177.51, 64.73) | RU-0070 | RU-0070 | nearest across water |
+| Balashikha (37.94, 55.8) | RU-0005 | RU-0005 | on it |
+| Big Diomede (-169.05, 65.77) | RU-0070 | RU-0070 | on it |
+| Borjomi (43.38, 41.84) | GE-0006 | GE-0006 | on it |
+| Chukotka east Uelen (-169.8, 66.16) | RU-0070 | RU-0070 | nearest across water |
+| Gori (44.11, 41.98) | GE-0006 | GE-0006 | on it |
+| Iturup Kurilsk (147.87, 45.23) | RU-0068 | RU-0068 | nearest across water |
+| Java SO (43.93, 42.4) | GE-0007 | GE-0007 | on it |
+| Kapotnya (37.8, 55.64) | RU-0004 | RU-0005 | within a pixel |
+| Khimki (37.43, 55.89) | RU-0005 | RU-0003 | within a pixel |
+| Korolev (37.83, 55.92) | RU-0005 | RU-0005 | on it |
+| Korolev2 (37.85, 55.92) | RU-0005 | RU-0005 | on it |
+| Lyubertsy (37.9, 55.68) | RU-0005 | RU-0005 | on it |
+| Moscow Kremlin (37.617, 55.752) | RU-0001 | RU-0001 | on it |
+| Moscow MSU (37.53, 55.7) | RU-0002 | RU-0002 | on it |
+| Mozhaisk (36.02, 55.5) | RU-0006 | RU-0006 | on it |
+| Mtskheta (44.72, 41.85) | GE-0006 | GE-0006 | on it |
+| Mytishchi (37.73, 55.91) | RU-0005 | RU-0005 | on it |
+| Novosibirsk (82.92, 55.03) | RU | RU-0053 | on it |
+| Sergiev Posad (38.13, 56.31) | RU-0006 | RU-0006 | on it |
+| St Petersburg (30.32, 59.94) | RU | RU-0015 | on it |
+| Stepanakert (46.75, 39.82) | AZ-0010 | AZ-0010 | on it |
+| Sukhumi (41.02, 43.0) | GE-0003 | GE-0003 | on it |
+| Tashkent (69.28, 41.31) | UZ | UZ-0001 | on it |
+| Tskhinvali (43.96, 42.23) | GE-0007 | GE-0007 | on it |
+| Volokolamsk (35.95, 56.03) | RU-0006 | RU-0006 | on it |
+| Wrangel (-179.5, 71.2) | RU-0070 | RU-0070 | on it |
+| Yuzhno-Kurilsk (145.86, 44.03) | RU-0068 | RU-0068 | on it |
+| Zelenograd (37.18, 55.99) | RU-0003 | RU-0003 | on it |
+
+## Metro reach
+
+Metro provinces whose centroid is over 80 km from their Metro's city, that are over 4 times the Metro's median and 250 px, and regions where Metro provinces hold over 30% of the land beside rural ones (the D612 error). Listed for review; a Metro made of whole metropolitan units can be large by design.
+
+| Check | Province or region | Detail |
+|---|---|---|
+| large for its Metro | RU-0005 Moscow Inner Suburbs | 597 px, the Metro's median is 39 px (Metro Moscow) |
+
 ## Known for review
 
 - AZ-0010 Nagorno-Karabakh (ARM-backed Artsakh) follows our province file: the whole Upper Karabakh and Kalbajar-Lachin economic regions of Natural Earth, which also hold the districts round the old oblast.
@@ -133,7 +195,7 @@ The microstates, city-states and metro splits the plan names (P8: Singapore, the
 | RU-0004 | Moscow East-South-East | 27 | Y | 4954.5, 1191.5 |
 | RU-0068 | Kuril Islands | 803 | N | 7460.5, 1508.5 |
 | GE-0003 | Abkhazia | 604 | N | 5036.5, 1565.5 |
-| GE-0007 | South Ossetia | 820 | N | 5081.5, 1605.5 |
+| GE-0007 | South Ossetia | 820 | N | 5097.5, 1584.5 |
 | AM-0001 | Yerevan | 16 | Y | 5109.5, 1643.5 |
 | AM-0002 | Ararat-Armavir | 208 | N | 5116.5, 1650.5 |
 | AM-0003 | Kotayk-Gegharkunik | 482 | N | 5123.5, 1637.5 |
@@ -226,7 +288,7 @@ None.
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-EE-0004-RU-0018, JP-0018-RU-0067, JP-0019-RU-0068, KZ-0014-KZ-0015, RU-0025-UA-0016, RU-0025-UA-0021, RU-0026-UA-0020, RU-0065-RU-0067, RU-0068-RU-0069, RU-0070-US-0004
+JP-0018-RU-0067, JP-0019-RU-0068, RU-0025-UA-0016, RU-0026-UA-0020, RU-0065-RU-0067, RU-0068-RU-0069
 
 ## Small provinces
 
@@ -242,6 +304,7 @@ Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share
 | KGZ:Osh | part-0 | KG-0008 84%, KG-0007 16% |
 | RUS:Irkutsk | part-1 | RU-0063 85%, RU-0062 15% |
 | RUS:Moscow | part-0 | RU-0002 77%, RU-0004 10%, RU-0003 9%, RU-0001 4% |
+| RUS:Moscow Oblast | part-0 | RU-0006 87%, RU-0005 13% |
 | RUS:Sverdlovsk | part-0 | RU-0047 86%, RU-0046 14% |
 
 ## Named places outside their province

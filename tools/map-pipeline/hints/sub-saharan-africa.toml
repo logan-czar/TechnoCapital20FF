@@ -4,7 +4,15 @@
 
 [review]
 watch = ["CPV", "COM", "MUS", "STP", "SYC", "GMB", "DJ-"]
+# Natural Earth label check (D687): units whose capital point lies within a few km of
+# the unit edge, so the place belongs to the neighbour; not a mislabel
+ne_label_ok = [
+    "SWZ:Manzini",  # Lobamba point is 3 km over the Hhohho line
+    "TCD:Logone Oriental",  # Moundou sits on the Logone, the Logone Occidental line (under 1 km)
+]
 notes = [
+    "UGA: our file puts Moroto-Karamoja (UG-0008) in the Eastern region; Uganda counts Karamoja in its Northern region, so the seven Karamoja districts move to Eastern (decision C; design-fixes.md).",
+    "ERI: Natural Earth 10m gives Eritrea's regions each other's names; the regions take the units by where they lie, checked against Asmara, Keren, Mendefera, Massawa, Assab and Barentu (D687).",
     "KEN: Natural Earth has Kenya's 8 old provinces, so every region is cut from geoBoundaries' 47 counties (KEN ADM1, public domain); Elgeyo-Marakwet and Nandi are drawn with Uasin Gishu-Trans Nzoia and West Pokot with Turkana, since no region names them.",
     "COD: Natural Earth has the 11 pre-2015 provinces and the geoBoundaries ADM1 file is ODbL, so Bandundu, Equateur, Orientale, Katanga and the two Kasais are split among the 2015 provinces by Voronoi on each province's capital and main towns (builder points). The lines between the new provinces are approximate.",
     "GHA: likewise Brong Ahafo, Northern, Volta and Western are split among the 2019 regions (Bono, Bono East, Ahafo, Savannah, North East, Oti, Western North) by Voronoi on their towns; geoBoundaries' GHA ADM1 is CC BY-SA.",
@@ -16,6 +24,9 @@ notes = [
 ]
 
 [regions]
+"UGA:Eastern" = ["region:Eastern", "UG-315", "UG-306", "UG-317", "UG-308", "UG-328", "UG-311", "UG-324"]
+"UGA:Northern" = ["region:Northern", "-UG-315", "-UG-306", "-UG-317", "-UG-308", "-UG-328", "-UG-311", "-UG-324"]
+"BWA:Southern" = ["BW-SO", "BW-JW", "BW-LO"]
 "BDI:Bujumbura" = ["BI-BM", "BI-BL"]
 "BDI:Gitega-Muramvya-Mwaro" = ["BI-GI", "BI-MU", "BI-MW", "BI-KR"]
 "BDI:North" = ["BI-NG", "BI-KY", "BI-KI"]
@@ -33,10 +44,14 @@ notes = [
 "COD:Kasai-Oriental" = ["CD-KE"]
 "CPV:Sotavento" = ["region:Ilhas de Sotavento"]
 "CPV:Barlavento" = ["region:Ilhas de Barlavento"]
-"ERI:Northern Red Sea" = ["ER-SK"]
+# Natural Earth 10m gives Eritrea's regions each other's names (Asmara lies in its "Anseba"); the
+# regions take the units by where they lie (D687)
+"ERI:Maekel" = ["ER-AN"]
+"ERI:Anseba" = ["ER-SK"]
+"ERI:Gash-Barka" = ["ER-GB"]
+"ERI:Debub" = ["ER-MA"]
+"ERI:Northern Red Sea" = ["ER-DU"]
 "ERI:Southern Red Sea" = ["ER-DK"]
-"ERI:Debub" = ["ER-DU"]
-"ERI:Anseba" = ["ER-AN"]
 "ETH:Addis Ababa" = ["ET-AA"]
 "ETH:Oromia" = ["ET-OR"]
 "ETH:SNNPR" = ["ET-SN"]
@@ -190,9 +205,9 @@ seeds = [[13.23, -8.81], [13.21, -8.79]]
 [provinces.BW-0004] # Orapa, Letlhakane, Sua Pan
 seeds = [[25.37, -21.31], [25.59, -21.42], [26.17, -20.58]]
 [provinces.CD-0001] # La Gombe, Ngaliema
-seeds = [[15.31, -4.31], [15.25, -4.36]]
+seeds = [[15.30, -4.30], [15.31, -4.31], [15.25, -4.36]]
 [provinces.CD-0002] # Limete, Ndjili, the airport, Maluku
-seeds = [[15.35, -4.37], [15.40, -4.38], [15.50, -4.40], [15.57, -4.06]]
+seeds = [[15.36, -4.39], [15.40, -4.38], [15.50, -4.40], [15.57, -4.06]]
 [provinces.CD-0003] # Kalamu, Lemba, Mont Ngafula
 seeds = [[15.31, -4.40], [15.32, -4.42], [15.29, -4.50], [15.40, -4.80]]
 [provinces.CI-0001] # Le Plateau, Cocody
@@ -227,3 +242,14 @@ seeds = [[-13.07, 8.34], [-13.24, 8.27], [-13.20, 8.18]]
 seeds = [[34.65, 2.53], [34.10, 3.00], [33.95, 3.53], [34.25, 2.10]]
 [provinces.ZA-0031] # Kathu, Postmasburg, Hotazel
 seeds = [[23.05, -27.70], [22.99, -28.35], [22.97, -27.20]]
+
+# PR #38 review: Soweto, Lekki, Benguela, Gombe
+[provinces.ZA-0001] # the CBD, Sandton, Randburg, Midrand
+seeds = [[28.05, -26.20], [28.06, -26.11], [28.00, -26.09], [28.13, -25.99]]
+[provinces.ZA-0002] # Soweto and the West Rand
+units = ["West Rand"]
+seeds = [[27.86, -26.25], [27.87, -26.16], [27.90, -26.24]]
+[provinces.NG-0001] # Lagos Island, Ikoyi, Victoria Island, Lekki (Eti-Osa)
+units = ["Lagos Island", "Eti Osa"]
+[provinces.AO-0011] # Lobito, Benguela, Catumbela
+units = ["Lobito", "Benguela"]

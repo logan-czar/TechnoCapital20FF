@@ -37,7 +37,12 @@ WATER_MARGIN_PX = 8
 # Golden Gate between San Francisco and Marin); a wider sea or lake does not count.
 WATER_GAP_PX = 3
 # Kinds that are listed but are not anchor misses (a city part across a strait or a bay).
-INFO_KINDS = {"city part across water", "city on the edge"}
+INFO_KINDS = {"city part across water", "city on the edge", "own name elsewhere (allowed)"}
+
+
+def is_info(kind: str) -> bool:
+    """A listed row, not a miss: an allowed kind, or one `[review.anchor_ok]` allows."""
+    return kind in INFO_KINDS or kind.endswith("(allowed)")
 # A province's own city whose pixel a neighbour took, with the province owning a pixel this
 # close (8-neighbour), is on the edge, not off it (D679): a 5 km pixel can straddle a river.
 EDGE_PX = 1
@@ -148,7 +153,8 @@ def _candidates(name: str) -> list[str]:
     return list(dict.fromkeys(out))
 
 
-def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict) -> list[dict]:
+def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict,
+          anchor_ok: dict | None = None) -> list[dict]:
     """Return one row per anchor that misses: kind, province, place, expected, got."""
     from PIL import Image
 
@@ -163,6 +169,8 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
         rows = list(csv.DictReader(f))
     by_id = {r["id"]: r for r in rows}
     places = _place_lookup(set(region.countries), sources)
+    # hints `[review.anchor_ok]`: own-name places elsewhere that are another town of the name
+    anchor_ok = anchor_ok or {}
 
     last = {}
 
@@ -205,9 +213,12 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
 
     def find(country, name, region=None, pid=None):
         """The most populous same-named place; with `region`, only one landing in that CSV region
-        (Manhattan, Kansas is not Manhattan; a part naming the region itself is skipped)."""
+        (Manhattan, Kansas is not Manhattan). A part naming the region itself counts too (D689:
+        "Sao Paulo" in Sao Paulo Centro must land on it), but only for a Metro province and only
+        inside the region (Central New York is no New York City province)."""
+        metro = bool(by_id.get(pid, {}).get("metro")) if pid is not None else True
         for c in _candidates(name):
-            if region is not None and c in (text.fold(region[1]), text.fold(country)):
+            if region is not None and not metro and c in (text.fold(region[1]), text.fold(country)):
                 continue
             if pid is not None and core_of.get(region, {}).get(c, pid) != pid:
                 continue
@@ -216,21 +227,51 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
                     return hit
         return None
 
+    def find_elsewhere(country, name, region, pid):
+        """With no same-named place in its own region: the country's most populous one, wherever
+        it lands (D689; a part naming the region or the country is skipped here)."""
+        for c in _candidates(name):
+            if c in (text.fold(region[1]), text.fold(country)) or len(c) < 4:
+                continue
+            if core_of.get(region, {}).get(c, pid) != pid:
+                continue
+            hits = places.get((country, c), [])
+            if hits:
+                return hits[0]
+        return None
+
     with (index_png.parent / "province-centroids.csv").open(encoding="utf-8", newline="") as f:
         cent = {r["province_id"]: r for r in csv.DictReader(f)}
+
+    def on_edge(pid, lon, lat):
+        """The province owns a pixel touching the place's pixel (a city on its province's edge)."""
+        x, y = frame.pixel(lon, lat)
+        v = ids.index(pid) + 1 if pid in ids else -1
+        return any(0 <= y + dy < frame.h and int(idx[y + dy, (x + dx) % frame.w]) == v
+                   for dy in (-EDGE_PX, 0, EDGE_PX) for dx in (-EDGE_PX, 0, EDGE_PX))
 
     misses = []
     for r in rows:
         hit = find(r["country"], r["name"], (r["country"], r["region"]), r["id"])
+        if not hit:
+            far = find_elsewhere(r["country"], r["name"], (r["country"], r["region"]), r["id"])
+            if far:
+                got = owner(far[1], far[2])
+                if got != r["id"]:
+                    why = anchor_ok.get(r["id"])
+                    if not why and on_edge(r["id"], far[1], far[2]):
+                        kind = "city on the edge"
+                    else:
+                        kind = "own name elsewhere (allowed)" if why else "own name elsewhere"
+                    misses.append({"kind": kind,
+                                   "province_id": r["id"], "place": far[3],
+                                   "expected": r["id"] + (f" ({why})" if why else ""), "got": got})
         if hit:
             got = owner(hit[1], hit[2])
             if got != r["id"]:
                 # a city on its province's edge (Omdurman at the Nile confluence) whose pixel the
                 # neighbour took is listed, not a miss, when the province owns a touching pixel
-                x, y = frame.pixel(hit[1], hit[2])
-                v = ids.index(r["id"]) + 1 if r["id"] in ids else -1
-                near = any(0 <= y + dy < frame.h and int(idx[y + dy, (x + dx) % frame.w]) == v
-                           for dy in (-EDGE_PX, 0, EDGE_PX) for dx in (-EDGE_PX, 0, EDGE_PX))
+                near = on_edge(r["id"], hit[1], hit[2])
                 misses.append({"kind": "city on the edge" if near else "own name", "province_id": r["id"],
                                "place": hit[3], "expected": r["id"], "got": got})
             elif r["metro"] and r["id"] in cent:
@@ -280,6 +321,10 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
     # one row per (kind, place, got); Metro rows repeat for each province of the Metro
     seen, out = set(), []
     for m in misses:
+        why = anchor_ok.get(m["province_id"])
+        if why and not is_info(m["kind"]):
+            # a province whose file shape explains the miss (FR-0004 is two departments apart)
+            m = {**m, "kind": m["kind"] + " (allowed)", "expected": f"{m['expected']} ({why})"}
         key = (m["kind"], m["place"], m["got"], m["expected"] if m["kind"] != "own name" else m["province_id"])
         if key not in seen:
             seen.add(key)

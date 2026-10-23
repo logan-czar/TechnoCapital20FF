@@ -24,6 +24,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 
 import geopandas as gpd
+import pandas as pd
 import shapely
 import shapely.affinity
 import shapely.ops
@@ -61,6 +62,13 @@ METRO_TOUCH_DEG = 0.03
 PLACE_BUFFER_DEG = 0.05
 # Gazetteer names shorter than this are ignored unless they are a whole name part.
 MIN_NAME_LEN = 4
+# A seed outside every block snaps to the nearest block only within this many degrees (about
+# 5 km); a further one is another region's city and is dropped, and the QA report lists it (D688).
+SNAP_MAX_DEG = 0.05
+# A Metro province's land stays within this many degrees (about 40 km) of its own seeds when its
+# region also has rural provinces: an unclaimed block whose edge is further off goes to a rural province, and
+# so does the far part of a Metro province's Voronoi cell in a shared block (D688, extending D612).
+METRO_CAP_DEG = 0.4
 # Building blocks are simplified to this tolerance (degrees, about 50 m) when loaded (D610).
 BLOCK_SIMPLIFY_DEG = 0.0005
 
@@ -634,9 +642,11 @@ _UNIT_WORDS = {"county", "parish", "borough", "municipality", "municipio", "komm
 _ADMIN_WORDS = ("county", "counties", "parish", "parishes", "borough", "municipio", "municipality")
 
 
-def unit_aliases(name: str) -> list[str]:
+def unit_aliases(name: str, region_words: frozenset = frozenset()) -> list[str]:
     """Folded match names for a building block or place: the name, without generic unit words,
-    and the head of a Spanish `X de Y` name (Naucalpan de Juarez -> naucalpan)."""
+    and the head of a Spanish `X de Y` name (Naucalpan de Juarez -> naucalpan). The head is no
+    name when it is a word of the region's name (D687): "Paulo de Faria" is not "Paulo", which
+    every "Sao Paulo ..." province names."""
     f = text.fold(name)
     out = [f]
     # composite names: each "--" or " / " part is a name too (the English and French halves,
@@ -654,7 +664,7 @@ def unit_aliases(name: str) -> list[str]:
     for base in list(out):
         if " de " in base:
             head = base.split(" de ", 1)[0]
-            if len(head) >= 5 and head not in text.STOPWORDS:
+            if len(head) >= 5 and head not in text.STOPWORDS and not set(head.split()) & region_words:
                 out.append(head)
     return list(dict.fromkeys(out))
 
@@ -805,6 +815,9 @@ def make_seeds(p: ProvinceRow, gaz: Gazetteer, region_geom, metro_core, hint: di
             seeds.append(Seed(x, y, Q_HINT, f"place {label} (hint)"))
         for lon, lat in hint.get("seeds", []):
             seeds.append(Seed(float(lon), float(lat), Q_HINT, f"point {lon},{lat} (hint)"))
+        if hint.get("polygon"):  # a province drawn by a builder line (D688): seeded inside it
+            rp = shapely.Polygon([(float(x), float(y)) for x, y in hint["polygon"]]).representative_point()
+            seeds.append(Seed(rp.x, rp.y, Q_HINT, "builder polygon (hint)"))
         if hint.get("note"):
             notes.append(hint["note"])
         if seeds and not hint.get("add", False):
@@ -924,14 +937,29 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids
                     s.home = blocks.iloc[hit[0]].unit_id
                 else:
                     # a seed just off the coast (Kingston sits 0.02 degrees offshore) claims the
-                    # nearest block, at the nearest point of it
+                    # nearest block, at the nearest point of it; one further than SNAP_MAX_DEG
+                    # is another region's city (Tbilisi for Gori-Borjomi) and is dropped (D688)
                     i = min(range(len(blocks)), key=lambda i: (blocks.iloc[i].geometry.distance(pt), i))
                     g = blocks.iloc[i].geometry
+                    if g.distance(pt) > SNAP_MAX_DEG:
+                        s.home = None
+                        continue
                     near = shapely.ops.nearest_points(g, pt)[0]
                     s.x, s.y = near.x, near.y
                     s.home = blocks.iloc[i].unit_id
                     s.label += " (snapped to land)"
             claims[s.home].add(p.id)
+    for p in provs:
+        gone = [s for s in p.seeds if s.home is None]
+        if gone:
+            p.dropped = getattr(p, "dropped", []) + [s.label for s in gone]
+            p.seeds = [s for s in p.seeds if s.home is not None]
+            if not p.seeds:  # nothing left: the region's middle, flagged for a hint
+                rp = shapely.union_all(blocks.geometry.values).representative_point()
+                i = min(range(len(blocks)), key=lambda i: (blocks.iloc[i].geometry.distance(rp), i))
+                p.seeds = [Seed(rp.x, rp.y, Q_NONE, "seeds dropped: region representative point")]
+                p.seeds[0].home = blocks.iloc[i].unit_id
+                claims[p.seeds[0].home].add(p.id)
     whole: dict[str, list[str]] = defaultdict(list)
     split: dict[str, list[str]] = {}
     all_seeds = [(s.x, s.y, p.id) for p in provs for s in p.seeds]
@@ -944,10 +972,15 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids
             if mine:
                 metro_claim[pid] = shapely.union_all(mine)
 
+    seeds_of = defaultdict(list)
+    for x, y, pid in all_seeds:
+        seeds_of[pid].append(Point(x, y))
+
     def eligible(r):
         if not rural:
             return all_seeds
-        near = {pid for pid, g in metro_claim.items() if r.geometry.distance(g) < METRO_TOUCH_DEG}
+        near = {pid for pid, g in metro_claim.items() if r.geometry.distance(g) < METRO_TOUCH_DEG
+                and min(r.geometry.distance(q) for q in seeds_of[pid]) <= METRO_CAP_DEG}
         return [t for t in all_seeds if t[2] not in metro_ids or t[2] in near]
 
     for r in blocks.itertuples():
@@ -977,6 +1010,10 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids
             whole[pid].remove(uid)
         split[uid] = sorted(set(split.get(uid, [])) | set(prev) | {p.id})
     return dict(whole), split
+
+
+def m_rows(m):
+    return list(m["rows"].itertuples()) if m.get("rows") is not None else []
 
 
 def _parts(geom):
@@ -1029,6 +1066,34 @@ def run(region: config.Region) -> None:
     # QA (D682): each country's Natural Earth land that no region of it covers after the
     # aliases, carves and splits (a replaced old unit's leftover, a seam between sources)
     gaps = []
+    # D687: a Natural Earth unit whose capital another region of the country names (in a
+    # province name or notes) and its own region does not is probably mislabelled (NE 10m
+    # shuffles Eritrea's and Guyana's names): listed for QA
+    named: dict[str, set] = defaultdict(set)
+    for p in match_provs:
+        key = f"{p.country}:{p.region}"
+        for ph in text.name_parts(p.name) + text.note_phrases(p.notes):
+            named[key].add(ph)
+    caps = pp_all[pp_all.FEATURECLA.fillna("").str.contains("Admin-0 capital|Admin-1 capital")]
+    labels = []
+    geo = {k: m["geometry"] for k, m in regions.items() if m.get("geometry") is not None}
+    for key in sorted(k for k in geo if k in own_keys):
+        country = key.split(":")[0]
+        inside = caps[caps.geometry.within(geo[key])]
+        for cap in inside.itertuples():
+            f = text.fold(cap.NAME)
+            if len(f) < 4 or any(text.contains_word(ph, f) for ph in named[key]):
+                continue
+            # a region naming a town of the same name that lies in it means that town (Augusta, Georgia)
+            others = sorted(k for k in geo if k != key and k.split(":")[0] == country
+                            and any(text.contains_word(ph, f) for ph in named[k])
+                            and not any(text.fold(n) == f and geo[k].covers(pt)
+                                        for n, pt in zip(pp_all.NAME, pp_all.geometry) if isinstance(n, str)
+                                        and n[:1] == cap.NAME[:1]))
+            if others:
+                labels.append({"region": key, "capital": cap.NAME, "named_by": others,
+                               "unit": next((f"{r.name} ({r.adm1_code})" for r in m_rows(regions[key])
+                                             if r.geometry.covers(cap.geometry)), "carved land")})
     for country in sorted(region.countries):
         # admin-1 units (lakes cut out), so Lake Victoria is no gap; admin-0 where there are none
         land0 = a1[a1.adm0_a3.isin(config.ne_codes(country))]
@@ -1119,6 +1184,11 @@ def run(region: config.Region) -> None:
             if n_units < 2:
                 raise SystemExit(f"crosswalk: {key} has {n_units} admin-1 units; level admin1 needs two or more")
             b = m["rows"][["adm1_code", "name", "geometry"]].rename(columns={"adm1_code": "unit_id"})
+            # land a carve added to the region (El Jadida for Casablanca-Settat) is a block too
+            extra = shapely.make_valid(geom).difference(shapely.union_all(b.geometry.values))
+            if extra.area > 1e-4:
+                b = gpd.GeoDataFrame(pd.concat([b, gpd.GeoDataFrame(
+                    {"unit_id": ["carved"], "name": [""]}, geometry=[extra], crs=b.crs)], ignore_index=True), crs=b.crs)
             level, prov_str = "admin1", rprov
         elif want in LEVELS:
             allb, meta, why = blocks_for(country, want)
@@ -1138,7 +1208,8 @@ def run(region: config.Region) -> None:
         else:
             raise SystemExit(f"crosswalk: unknown block level {want!r} for {key}")
         b = b.reset_index(drop=True).copy()
-        b["aliases"] = [unit_aliases(n) if n else [] for n in b["name"]]
+        rwords = frozenset(text.fold(rname).split())
+        b["aliases"] = [unit_aliases(n, rwords) if n else [] for n in b["name"]]
         rpts = b.geometry.representative_point()
         b["rx"], b["ry"] = rpts.x.values, rpts.y.values
         # places in the region
@@ -1184,7 +1255,9 @@ def run(region: config.Region) -> None:
                         pts = [[s.x, s.y]]
                     sp[uid] = pts
             rplan["provinces"][p.id] = {"whole": whole.get(p.id, []), "split": sp,
-                                        "named_places": getattr(p, "named_places", [])}
+                                        "named_places": getattr(p, "named_places", []),
+                                        "metro": bool(p.metro), "dropped": getattr(p, "dropped", []),
+                                        "polygon": (hint_provs.get(p.id) or {}).get("polygon")}
         bf = f"blocks-{_slug(key)}.geojson"
         b[["unit_id", "name", "geometry"]].assign(region_key=key).to_file(work / bf, driver="GeoJSON")
         rplan["blocks_file"] = bf
@@ -1203,6 +1276,8 @@ def run(region: config.Region) -> None:
                     note += f", split: {', '.join(names.get(u) or u for u in pr['split'])}"
             if getattr(p, "extra_notes", None):
                 note += "; " + "; ".join(p.extra_notes)
+            if getattr(p, "dropped", None):
+                note += "; dropped (over SNAP_MAX_DEG off the region): " + ", ".join(p.dropped)
             province_rows.append(dict(province_id=p.id, name=p.name, country=p.country, region=p.region,
                                       method=method, source_ids=";".join(ids), confidence=round(conf, 2),
                                       provenance=prov_str, note=note))
@@ -1215,6 +1290,7 @@ def run(region: config.Region) -> None:
                merge_key=("province_id",), own={(p.id,) for p in provs})
     (work / "unclaimed.json").write_text(json.dumps(unclaimed, indent=1), encoding="utf-8")
     (work / "land-gaps.json").write_text(json.dumps(gaps, indent=1), encoding="utf-8")
+    (work / "ne-labels.json").write_text(json.dumps(labels, indent=1), encoding="utf-8")
     gpd.GeoDataFrame(region_features, crs="EPSG:4326").to_file(work / "regions.geojson", driver="GeoJSON")
     (work / "plan.json").write_text(json.dumps(plan, indent=1), encoding="utf-8")
     flagged = sum(1 for r in province_rows if r["confidence"] < FLAG_BELOW)

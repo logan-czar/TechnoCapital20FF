@@ -1,0 +1,584 @@
+# World city probe (build-plan P8, D686): where each point lands in province-index.png.
+# label | lon | lat | expected: province ids (comma list), a two-letter id prefix (the country's
+# provinces), or ? (listed only). A point passes when its pixel, or one of the 8 around it (a
+# 5 km pixel can straddle a boundary), is an expected province; a point in the water takes the
+# nearest province pixel within 4 px. Started from the PR #38 review's ~560 points plus the
+# North America fixes of PR #34 and #36; add a point for every placement fix.
+London City | -0.09 | 51.513 | GB-0001
+London Westminster | -0.135 | 51.499 | GB-0001
+London Canary Wharf | -0.02 | 51.505 | GB-0002
+London Stratford | -0.003 | 51.54 | GB-0002
+London Heathrow | -0.454 | 51.47 | GB-0003
+London Hammersmith | -0.223 | 51.492 | GB-0003
+London Croydon | -0.10 | 51.372 | GB-0004
+London Enfield | -0.08 | 51.652 | GB-0004
+London Bromley | 0.02 | 51.40 | GB-0004
+Reading (not London) | -0.97 | 51.455 | ?
+Paris centre | 2.35 | 48.857 | FR-0001
+La Defense | 2.238 | 48.892 | FR-0001
+Saint-Denis | 2.36 | 48.936 | FR-0002
+CDG airport | 2.55 | 49.01 | FR-0002
+Orly | 2.38 | 48.725 | FR-0003
+Evry | 2.44 | 48.63 | FR-0003
+Versailles | 2.13 | 48.80 | FR-0004
+Disneyland Paris | 2.78 | 48.87 | FR-0004
+Fontainebleau | 2.70 | 48.40 | FR-0004
+Moscow Kremlin | 37.617 | 55.752 | RU-0001
+Moscow MSU | 37.53 | 55.70 | RU-0002
+Zelenograd | 37.18 | 55.99 | RU-0003
+Kapotnya | 37.80 | 55.64 | RU-0004
+Khimki | 37.43 | 55.89 | RU-0005
+Korolev | 37.83 | 55.92 | RU-0005
+Troitsk (New Moscow) | 37.30 | 55.48 | ?
+Istanbul Fatih | 28.95 | 41.01 | TR-0001
+Istanbul Levent | 29.01 | 41.08 | TR-0002
+Istanbul Maslak | 29.02 | 41.11 | TR-0002
+Istanbul Airport | 28.75 | 41.26 | TR-0003
+Esenyurt | 28.67 | 41.03 | TR-0003
+Kadikoy | 29.03 | 40.99 | TR-0004
+Uskudar | 29.03 | 41.025 | TR-0004
+Pendik | 29.25 | 40.88 | TR-0005
+Sabiha Gokcen | 29.31 | 40.90 | TR-0005
+Sile | 29.61 | 41.17 | TR-0005
+Cairo Tahrir | 31.236 | 30.044 | EG-0001
+Heliopolis | 31.32 | 30.09 | EG-0002
+Cairo Airport | 31.41 | 30.12 | EG-0002
+New Cairo | 31.47 | 30.03 | EG-0002
+Maadi | 31.26 | 29.96 | EG-0003
+Helwan | 31.33 | 29.85 | EG-0003
+Giza pyramids | 31.13 | 29.98 | EG-0004
+6th of October | 30.93 | 29.94 | EG-0005
+Shubra el-Kheima | 31.24 | 30.13 | EG-0007
+Lagos Island | 3.39 | 6.455 | NG-0001
+Lekki | 3.55 | 6.44 | NG-0001
+Ikeja | 3.34 | 6.60 | NG-0002
+Apapa | 3.36 | 6.45 | NG-0003
+Badagry | 2.88 | 6.42 | NG-0003
+Ikorodu | 3.50 | 6.62 | NG-0004
+Alimosho | 3.26 | 6.61 | NG-0004
+Kinshasa Gombe | 15.31 | -4.31 | CD-0001
+Ndjili | 15.44 | -4.39 | CD-0002
+Mont Ngafula | 15.29 | -4.45 | CD-0003
+Maluku | 15.57 | -4.06 | ?
+Johannesburg CBD | 28.045 | -26.205 | ZA-0001
+Sandton | 28.05 | -26.107 | ZA-0001
+Soweto | 27.86 | -26.26 | ZA-0002
+Krugersdorp | 27.77 | -26.10 | ZA-0002
+OR Tambo | 28.24 | -26.13 | ZA-0003
+Pretoria | 28.19 | -25.745 | ZA-0004
+Mumbai Nariman Pt | 72.82 | 18.925 | IN-0013
+Mumbai BKC | 72.865 | 19.065 | IN-0013
+Andheri | 72.85 | 19.12 | IN-0014
+Thane | 72.98 | 19.20 | IN-0015
+Powai | 72.905 | 19.12 | IN-0015
+Vashi Navi Mumbai | 73.0 | 19.07 | IN-0016
+JNPT | 72.95 | 18.95 | IN-0016
+Delhi Parliament | 77.21 | 28.617 | IN-0001
+Chandni Chowk | 77.23 | 28.656 | IN-0002
+Narela | 77.09 | 28.85 | IN-0002
+Gurugram | 77.03 | 28.46 | IN-0003
+Faridabad | 77.31 | 28.41 | IN-0003
+Noida | 77.33 | 28.57 | IN-0005
+Ghaziabad | 77.44 | 28.67 | IN-0005
+Karachi II Chundrigar | 67.01 | 24.85 | PK-0001
+Clifton | 67.03 | 24.81 | PK-0001
+Keamari | 66.97 | 24.83 | PK-0002
+Orangi | 66.99 | 24.95 | PK-0002
+Korangi | 67.12 | 24.83 | PK-0003
+Port Qasim | 67.33 | 24.78 | PK-0003
+Gulshan-e-Iqbal | 67.09 | 24.92 | PK-0004
+Jinnah airport | 67.16 | 24.90 | PK-0004
+Dhaka Motijheel | 90.42 | 23.73 | BD-0001
+Gulshan Dhaka | 90.41 | 23.79 | BD-0001
+Old Dhaka | 90.40 | 23.71 | BD-0002
+Mirpur | 90.37 | 23.81 | BD-0002
+Gazipur | 90.42 | 24.00 | BD-0003
+Tongi | 90.40 | 23.89 | BD-0003
+Narayanganj | 90.50 | 23.62 | BD-0004
+Savar | 90.26 | 23.86 | BD-0005
+Beijing Tiananmen | 116.397 | 39.908 | CN-0001
+Beijing Xicheng Fin St | 116.36 | 39.915 | CN-0001
+Chaoyang CBD | 116.46 | 39.91 | CN-0002
+Beijing Capital airport | 116.60 | 40.08 | CN-0002
+Shunyi | 116.65 | 40.13 | CN-0002
+Zhongguancun | 116.31 | 39.98 | CN-0003
+Changping | 116.23 | 40.22 | CN-0003
+Daxing airport | 116.41 | 39.51 | CN-0004
+Yizhuang | 116.51 | 39.80 | CN-0004
+Fengtai | 116.29 | 39.86 | CN-0004
+Tongzhou | 116.66 | 39.91 | ?
+Miyun | 116.84 | 40.38 | ?
+Yanqing | 115.97 | 40.46 | ?
+Fangshan | 116.14 | 39.73 | ?
+Mentougou | 116.10 | 39.94 | ?
+Pinggu | 117.12 | 40.14 | ?
+Huairou | 116.63 | 40.32 | ?
+Lujiazui | 121.50 | 31.24 | CN-0008
+Jing'an | 121.45 | 31.23 | CN-0009
+Hongqiao | 121.33 | 31.20 | CN-0009
+Minhang | 121.38 | 31.11 | CN-0010
+Songjiang | 121.23 | 31.03 | CN-0010
+Jinshan | 121.34 | 30.74 | CN-0010
+Anting | 121.16 | 31.30 | CN-0011
+Qingpu | 121.12 | 31.15 | CN-0011
+Baoshan SH | 121.49 | 31.40 | CN-0012
+Waigaoqiao | 121.60 | 31.35 | CN-0012
+Chongming | 121.40 | 31.62 | CN-0012
+Lingang | 121.93 | 30.90 | CN-0013
+Pudong airport | 121.80 | 31.15 | ?
+Futian | 114.06 | 22.54 | CN-0019
+Nanshan SZ | 113.93 | 22.53 | CN-0019
+Bao'an airport | 113.81 | 22.64 | CN-0020
+Longhua | 114.04 | 22.66 | CN-0020
+Longgang | 114.25 | 22.72 | CN-0021
+Yantian | 114.27 | 22.58 | CN-0021
+Dongguan | 113.75 | 23.02 | CN-0022
+Guangzhou Tianhe | 113.33 | 23.13 | CN-0024
+Guangzhou Baiyun airport | 113.30 | 23.39 | CN-0026
+Nansha | 113.53 | 22.80 | CN-0025
+Foshan | 113.12 | 23.02 | CN-0027
+HK Central | 114.16 | 22.28 | HK-0001
+Kowloon Kwun Tong | 114.22 | 22.31 | HK-0002
+Mong Kok | 114.17 | 22.32 | HK-0002
+Sha Tin | 114.19 | 22.38 | HK-0003
+Chek Lap Kok | 113.92 | 22.31 | HK-0003
+Macau | 113.55 | 22.19 | MO
+Tokyo Marunouchi | 139.765 | 35.68 | JP-0001
+Shibuya | 139.70 | 35.66 | JP-0002
+Nerima | 139.65 | 35.74 | JP-0002
+Odaiba | 139.775 | 35.625 | JP-0003
+Haneda | 139.78 | 35.55 | JP-0003
+Hachioji | 139.32 | 35.66 | JP-0004
+Yokohama | 139.64 | 35.45 | JP-0005
+Kawasaki | 139.70 | 35.53 | JP-0006
+Saitama city | 139.645 | 35.86 | JP-0008
+Funabashi | 139.98 | 35.69 | JP-0010
+Osaka Umeda | 135.50 | 34.70 | JP-0037
+Sakai | 135.48 | 34.57 | JP-0039
+Kobe | 135.19 | 34.69 | JP-0040
+Kyoto | 135.76 | 35.01 | JP-0042
+Seoul Jongno | 126.98 | 37.57 | KR-0001
+Yeouido | 126.925 | 37.525 | KR-0001
+Gangnam | 127.03 | 37.50 | KR-0002
+Songpa | 127.11 | 37.51 | KR-0002
+Incheon | 126.70 | 37.46 | KR-0003
+Incheon airport | 126.45 | 37.46 | KR-0003
+Suwon | 127.01 | 37.27 | KR-0004
+Pangyo | 127.11 | 37.40 | KR-0004
+Pyeongtaek | 127.11 | 36.99 | KR-0005
+Ansan | 126.83 | 37.32 | KR-0005
+Paju | 126.78 | 37.76 | KR-0006
+Uijeongbu | 127.04 | 37.74 | KR-0006
+Jakarta Monas | 106.827 | -6.175 | ID-0001
+Jakarta SCBD | 106.81 | -6.225 | ID-0001
+Tanjung Priok | 106.88 | -6.10 | ID-0002
+Pluit | 106.79 | -6.12 | ID-0002
+Halim | 106.89 | -6.27 | ID-0003
+Bekasi | 106.99 | -6.24 | ID-0004
+Cikarang | 107.15 | -6.30 | ID-0004
+Bogor | 106.80 | -6.60 | ID-0005
+Depok | 106.82 | -6.40 | ID-0005
+Karawang | 107.30 | -6.32 | ID-0006
+Tangerang | 106.63 | -6.18 | ID-0011
+Soekarno-Hatta | 106.66 | -6.125 | ID-0011
+Makati | 121.03 | 14.555 | PH-0001
+Manila Intramuros | 120.975 | 14.59 | PH-0002
+NAIA | 121.02 | 14.51 | PH-0002
+Quezon City | 121.05 | 14.65 | PH-0003
+Caloocan North | 121.04 | 14.75 | PH-0003
+Muntinlupa | 121.04 | 14.41 | PH-0004
+Pasig | 121.08 | 14.575 | PH-0004,PH-0001
+Sydney CBD | 151.21 | -33.87 | AU-0001
+Chatswood | 151.18 | -33.80 | AU-0001
+Hornsby | 151.10 | -33.70 | AU-0001
+Parramatta | 151.00 | -33.815 | AU-0002
+Sydney airport | 151.18 | -33.94 | AU-0002
+Penrith | 150.69 | -33.75 | AU-0002
+Campbelltown | 150.81 | -34.07 | AU-0002
+Katoomba | 150.31 | -33.71 | ?
+Gosford | 151.34 | -33.43 | AU-0003
+Wollongong | 150.89 | -34.42 | AU-0004
+Newcastle NSW | 151.78 | -32.93 | AU-0005
+Bowral | 150.42 | -34.48 | ?
+Sao Paulo Paulista | -46.656 | -23.56 | BR-0001
+Faria Lima | -46.69 | -23.58 | BR-0001
+Osasco | -46.79 | -23.53 | BR-0001
+Guarulhos airport | -46.47 | -23.43 | BR-0002
+Itaquera | -46.45 | -23.54 | BR-0002
+Santo Andre | -46.53 | -23.66 | BR-0003
+Sao Bernardo | -46.565 | -23.69 | BR-0003
+Santos | -46.33 | -23.96 | BR-0004
+Campinas | -47.06 | -22.90 | ?
+Rio Centro | -43.18 | -22.90 | BR-0010
+Copacabana | -43.19 | -22.97 | BR-0010
+Barra da Tijuca | -43.37 | -23.00 | BR-0011
+Duque de Caxias | -43.31 | -22.79 | BR-0012
+Niteroi | -43.10 | -22.88 | BR-0013
+Casa Rosada | -58.37 | -34.608 | AR-0001
+Palermo BA | -58.43 | -34.58 | AR-0001
+San Isidro AR | -58.53 | -34.47 | AR-0002
+Tigre | -58.58 | -34.42 | AR-0002
+Pilar AR | -58.91 | -34.46 | AR-0002
+San Justo La Matanza | -58.56 | -34.68 | AR-0003
+Moreno AR | -58.79 | -34.65 | AR-0003
+Avellaneda | -58.36 | -34.66 | AR-0004
+Quilmes | -58.27 | -34.72 | AR-0004
+Ezeiza | -58.54 | -34.82 | AR-0004
+La Plata | -57.95 | -34.92 | ?
+Zocalo | -99.133 | 19.433 | MX-0001
+Polanco | -99.19 | 19.433 | MX-0002
+Santa Fe MX | -99.26 | 19.36 | MX-0002
+Coyoacan | -99.16 | 19.35 | MX-0003
+Iztapalapa | -99.06 | 19.36 | MX-0003
+Ecatepec | -99.05 | 19.60 | MX-0004
+Nezahualcoyotl | -99.01 | 19.40 | MX-0004
+Naucalpan | -99.24 | 19.48 | MX-0005
+Tlalnepantla | -99.22 | 19.54 | MX-0005
+Bogota Chapinero | -74.06 | 4.65 | CO-0001
+Usaquen | -74.03 | 4.70 | CO-0001
+Kennedy Bogota | -74.15 | 4.63 | CO-0002
+El Dorado | -74.14 | 4.70 | CO-0002
+Soacha | -74.22 | 4.58 | CO-0003
+Chia | -74.06 | 4.86 | CO-0003
+Zipaquira | -74.00 | 5.02 | ?
+Lima San Isidro | -77.035 | -12.10 | PE-0001
+Lima Plaza de Armas | -77.03 | -12.046 | PE-0001
+San Juan de Lurigancho | -77.00 | -11.98 | PE-0002
+Comas | -77.05 | -11.94 | PE-0002
+Ate | -76.92 | -12.03 | PE-0002
+Callao | -77.13 | -12.06 | PE-0004
+Jorge Chavez | -77.11 | -12.02 | PE-0004
+Villa El Salvador | -76.94 | -12.21 | ?
+Huacho | -77.60 | -11.11 | PE-0003
+Canete | -76.39 | -13.08 | PE-0003
+Singapore Marina Bay | 103.855 | 1.28 | SG-0001
+Jurong | 103.70 | 1.33 | SG-0002
+Changi | 103.99 | 1.36 | SG-0003
+Bangkok Silom | 100.53 | 13.73 | TH-0001
+Thonburi | 100.47 | 13.72 | TH-0002
+Suvarnabhumi | 100.75 | 13.69 | TH-0003
+Rangsit | 100.62 | 13.98 | TH-0004
+Taipei | 121.56 | 25.04 | TW-0001
+Banqiao | 121.46 | 25.01 | TW-0002
+Taoyuan | 121.30 | 24.99 | TW-0003
+Hsinchu | 120.97 | 24.80 | TW-0004
+Riyadh Olaya | 46.68 | 24.70 | SA-0001
+Diriyah | 46.57 | 24.73 | SA-0002
+Dubai Downtown | 55.27 | 25.20 | AE-0008
+Dubai Marina | 55.14 | 25.08 | AE-0010
+Sharjah | 55.40 | 25.35 | AE-0012
+Abu Dhabi | 54.37 | 24.47 | AE-0001
+Tehran North | 51.43 | 35.80 | IR-0001
+Tehran Bazaar | 51.42 | 35.67 | IR-0002
+Eslamshahr | 51.23 | 35.55 | IR-0003
+Lahore Mall | 74.33 | 31.56 | PK-0009
+Lahore DHA | 74.40 | 31.48 | PK-0010
+Sheikhupura | 73.98 | 31.71 | PK-0011
+Berlin Mitte | 13.39 | 52.52 | DE-0013
+Berlin Kreuzberg | 13.42 | 52.50 | DE-0014,DE-0013
+Marzahn | 13.56 | 52.54 | DE-0014
+Potsdam | 13.06 | 52.40 | DE-0015
+Madrid Sol | -3.70 | 40.42 | ES-0001
+Barajas | -3.57 | 40.47 | ES-0002
+Getafe | -3.73 | 40.31 | ES-0003
+Santiago Las Condes | -70.57 | -33.41 | CL-0009
+Maipu | -70.76 | -33.51 | CL-0010
+Nairobi | 36.82 | -1.29 | KE
+Sevastopol | 33.52 | 44.60 | UA-0019
+Simferopol | 34.10 | 44.95 | UA-0020
+Kerch | 36.47 | 45.36 | UA-0020
+Donetsk | 37.80 | 48.00 | UA-0021
+Horlivka | 38.05 | 48.30 | UA-0021
+Luhansk | 39.30 | 48.57 | UA-0022
+Mariupol | 37.55 | 47.10 | ?
+Kramatorsk | 37.56 | 48.72 | ?
+Severodonetsk | 38.49 | 48.95 | UA-0022
+Kinmen | 118.35 | 24.45 | TW-0021
+Xiamen | 118.09 | 24.48 | CN
+Matsu Nangan | 119.94 | 26.16 | TW-0022
+Penghu | 119.58 | 23.57 | TW-0020
+Srinagar | 74.80 | 34.08 | IN-0064
+Jammu | 74.86 | 32.73 | IN-0065
+Leh | 77.58 | 34.16 | IN-0066
+Kargil | 76.13 | 34.56 | IN-0066
+Siachen | 77.1 | 35.4 | IN-0066
+Gilgit | 74.31 | 35.92 | PK-0033
+Skardu | 75.63 | 35.30 | PK-0033
+Muzaffarabad | 73.47 | 34.37 | PK-0034
+Mirpur AJK | 73.75 | 33.15 | PK-0034
+Aksai Chin | 79.5 | 35.2 | ?
+Laayoune | -13.20 | 27.15 | MA-0019
+Boujdour | -14.49 | 26.13 | MA-0019
+Smara | -11.66 | 26.74 | MA-0019
+Dakhla | -15.93 | 23.70 | MA-0020
+Tifariti | -10.6 | 26.16 | ?
+North Nicosia | 33.365 | 35.21 | CY-0005
+Kyrenia | 33.32 | 35.34 | CY-0005
+Famagusta | 33.94 | 35.12 | CY-0005
+Karpas | 34.40 | 35.60 | CY-0005
+Limassol | 33.04 | 34.68 | CY
+Akrotiri SBA | 32.95 | 34.59 | ?
+Tiraspol | 29.64 | 46.84 | MD-0006
+Bender | 29.48 | 46.83 | ?
+Rybnitsa | 29.00 | 47.76 | MD-0006
+Chisinau | 28.86 | 47.01 | MD
+Gaza | 34.45 | 31.50 | PS
+Rafah | 34.25 | 31.29 | PS
+Ramallah | 35.20 | 31.90 | PS-0003
+Jericho | 35.45 | 31.86 | PS-0003
+Hebron | 35.10 | 31.53 | PS-0004
+Bethlehem | 35.20 | 31.705 | PS-0004
+Nablus | 35.26 | 32.22 | PS-0002
+Jenin | 35.30 | 32.46 | PS-0001
+East Jerusalem Old City | 35.235 | 31.777 | IL-0002
+Katzrin Golan | 35.69 | 32.99 | IL-0015
+Sukhumi | 41.02 | 43.00 | GE-0003
+Tskhinvali | 43.96 | 42.23 | GE-0007
+Stepanakert | 46.75 | 39.82 | AZ-0010
+Yuzhno-Kurilsk | 145.86 | 44.03 | RU-0068
+Iturup Kurilsk | 147.87 | 45.23 | RU-0068
+Halaib | 36.60 | 22.22 | EG-0030
+Abu Musa | 55.03 | 25.87 | IR-0018
+Abyei | 28.44 | 9.60 | SD-0017
+Hargeisa | 44.06 | 9.56 | SO-0009
+Berbera | 45.01 | 10.44 | SO-0010
+Borama | 43.18 | 9.94 | SO-0011
+Burao | 45.53 | 9.52 | SO-0012
+Las Anod | 47.36 | 8.48 | SO-0013
+Pristina | 21.17 | 42.66 | XK-0001
+North Mitrovica | 20.87 | 42.89 | XK-0004
+Essequibo Anna Regina | -58.49 | 7.26 | GY-0002
+Belmopan | -88.77 | 17.25 | BZ-0002
+Monaco | 7.42 | 43.735 | MC
+Vatican | 12.453 | 41.903 | VA
+Rome | 12.50 | 41.89 | IT
+San Marino | 12.45 | 43.94 | SM
+Liechtenstein | 9.52 | 47.14 | LI
+Andorra | 1.52 | 42.51 | AD
+Luxembourg | 6.13 | 49.61 | LU
+Malta Valletta | 14.51 | 35.90 | MT
+Gibraltar | -5.35 | 36.14 | GI
+Bahrain Manama | 50.58 | 26.22 | BH
+Brunei BSB | 114.94 | 4.89 | BN
+Male | 73.51 | 4.175 | MV
+Seychelles Victoria | 55.45 | -4.62 | SC
+Port Louis | 57.50 | -20.16 | MU
+Moroni | 43.26 | -11.70 | KM
+Sao Tome | 6.73 | 0.34 | ST
+Praia | -23.51 | 14.92 | CV
+Djibouti | 43.15 | 11.59 | DJ
+Nauru | 166.93 | -0.53 | NR
+Palau Koror | 134.48 | 7.34 | PW
+Tuvalu Funafuti | 179.19 | -8.52 | TV
+Tarawa | 173.0 | 1.42 | KI
+Majuro | 171.38 | 7.09 | MH
+Pohnpei | 158.2 | 6.92 | FM
+Tonga Nukualofa | -175.2 | -21.14 | TO
+Apia | -171.76 | -13.83 | WS
+Barbados | -59.6 | 13.1 | BB
+Basseterre | -62.72 | 17.30 | KN
+Antigua | -61.84 | 17.12 | AG
+Grenada | -61.68 | 12.12 | GD
+Castries | -60.98 | 14.01 | LC
+Kingstown SVG | -61.22 | 13.16 | VC
+Roseau | -61.39 | 15.30 | DM
+Jersey | -2.13 | 49.21 | JE
+Guernsey | -2.54 | 49.46 | GG
+Isle of Man | -4.48 | 54.15 | IM
+Faroe Torshavn | -6.77 | 62.01 | FO
+Qatar Doha | 51.53 | 25.29 | QA
+Kuwait City | 47.98 | 29.37 | KW
+Timor Dili | 125.57 | -8.56 | TL
+Suva | 178.44 | -18.14 | FJ
+Taveuni | -179.97 | -16.85 | FJ
+Lambasa | 179.39 | -16.43 | FJ
+Anadyr | 177.51 | 64.73 | RU-0070
+Chukotka east Uelen | -169.8 | 66.16 | RU-0070
+Attu | 173.18 | 52.93 | US
+Adak | -176.64 | 51.88 | US
+Big Diomede | -169.05 | 65.77 | RU-0070
+Little Diomede | -168.93 | 65.75 | US
+Wrangel | -179.5 | 71.2 | RU-0070
+Mahbubnagar | 77.99 | 16.74 | IN-0032
+Nalgonda | 79.27 | 17.05 | IN-0032
+Khammam | 80.15 | 17.25 | IN-0032
+Vikarabad | 77.90 | 17.34 | IN-0032
+Sangareddy | 78.09 | 17.62 | IN-0031,IN-0030
+Bhuj Kutch | 69.67 | 23.25 | IN-0050
+Palanpur | 72.43 | 24.17 | IN-0050
+Mehsana | 72.38 | 23.60 | IN-0050
+Himmatnagar | 72.97 | 23.60 | IN-0050
+Sanand | 72.38 | 22.99 | IN-0049
+Gandhinagar | 72.64 | 23.22 | IN-0049
+Ahmedabad | 72.58 | 23.03 | IN-0048
+Kanchipuram | 79.70 | 12.83 | IN-0035
+Vellore | 79.13 | 12.92 | IN-0036
+Tiruvallur | 79.91 | 13.14 | IN-0034,IN-0036
+Schwedt | 14.28 | 53.06 | DE-0016
+Wittenberge | 11.75 | 53.00 | DE-0016
+Eberswalde | 13.82 | 52.83 | ?
+Frankfurt Oder | 14.55 | 52.35 | DE-0016
+Brandenburg an der Havel | 12.55 | 52.41 | ?
+Mozhaisk | 36.02 | 55.50 | RU-0006
+Volokolamsk | 35.95 | 56.03 | RU-0006
+Sergiev Posad | 38.13 | 56.31 | RU-0006
+Dmitrov | 37.52 | 56.34 | ?
+Balashikha | 37.94 | 55.80 | RU-0005
+Mytishchi | 37.73 | 55.91 | RU-0005
+Lyubertsy | 37.90 | 55.68 | RU-0005
+Victoria Island | 3.42 | 6.43 | NG-0001
+Ikoyi | 3.44 | 6.45 | NG-0001
+Lekki Phase1 | 3.47 | 6.44 | NG-0001
+Ajah | 3.57 | 6.47 | NG-0001
+Epe | 3.98 | 6.58 | ?
+Depok center | 106.82 | -6.39 | ID-0005
+Cibinong | 106.85 | -6.48 | ID-0005
+Sao Paulo Se | -46.63 | -23.55 | BR-0001
+Pinheiros | -46.70 | -23.565 | BR-0001
+Paulo de Faria | -49.40 | -20.03 | ?
+Sao Jose do Rio Preto | -49.38 | -20.81 | ?
+Barueri | -46.88 | -23.51 | BR-0001
+Soweto Orlando | 27.90 | -26.24 | ZA-0002
+Hampton Park NSW? Liverpool | 150.92 | -33.92 | AU-0002
+Blacktown | 150.91 | -33.77 | AU-0002
+Windsor Hawkesbury | 150.81 | -33.61 | ?
+Huarochiri Matucana | -76.38 | -11.84 | PE-0003
+Chosica | -76.69 | -11.94 | PE-0002
+Yauyos | -75.91 | -12.46 | PE-0003
+Pachacamac | -76.86 | -12.23 | ?
+Seine-et-Marne Melun | 2.66 | 48.54 | FR-0004
+Meaux | 2.88 | 48.96 | FR-0004
+Provins | 3.30 | 48.56 | FR-0004
+Dubasari | 29.17 | 47.26 | MD-0006
+Slobozia MD | 29.70 | 46.73 | MD-0006
+Camenca | 28.70 | 48.03 | MD-0006
+Grigoriopol | 29.30 | 47.15 | MD-0006
+Es-Semara inland | -11.0 | 26.5 | MA-0019
+Mahbes | -9.05 | 27.22 | MA-0019
+Tan-Tan | -11.10 | 28.44 | MA-0018
+Korolev2 | 37.85 | 55.92 | RU-0005
+Garmisch | 11.10 | 47.49 | DE-0009
+Kempten | 10.31 | 47.73 | DE-0009
+Bad Toelz | 11.56 | 47.76 | DE-0009
+Landshut | 12.15 | 48.54 | DE-0012
+Freising airport | 11.79 | 48.35 | DE-0007
+Donauwoerth | 10.78 | 48.72 | DE-0008
+Erlangen | 11.00 | 49.59 | DE-0010
+Bamberg | 10.89 | 49.89 | DE-0011
+Bayreuth | 11.58 | 49.94 | DE-0011
+Ulm | 9.99 | 48.40 | DE-0005
+Sindelfingen | 9.00 | 48.71 | DE-0001
+Esslingen | 9.31 | 48.74 | DE-0002
+Stuttgart | 9.18 | 48.78 | DE-0001
+Lueneburg | 10.41 | 53.25 | DE-0037
+Cuxhaven | 8.70 | 53.87 | DE-0037
+Goettingen | 9.93 | 51.53 | DE-0036
+Celle | 10.08 | 52.62 | ?
+Rybnitsa east | 29.10 | 47.72 | MD-0006
+Chiba east Narita | 140.32 | 35.77 | ?
+Wuhan | 114.30 | 30.59 | CN
+Chongqing | 106.55 | 29.56 | CN
+Tianjin | 117.20 | 39.13 | CN
+Kolkata | 88.36 | 22.57 | IN
+Bengaluru | 77.59 | 12.97 | IN
+Ho Chi Minh | 106.70 | 10.78 | VN
+Hanoi | 105.85 | 21.03 | VN
+Kuala Lumpur | 101.69 | 3.14 | MY
+Addis Ababa | 38.75 | 9.03 | ET
+Luanda | 13.23 | -8.84 | AO
+Accra | -0.19 | 5.56 | GH
+Abidjan | -4.02 | 5.33 | CI
+Dakar | -17.45 | 14.69 | SN
+Dar es Salaam | 39.28 | -6.80 | TZ
+Casablanca | -7.62 | 33.59 | MA
+Algiers | 3.06 | 36.75 | DZ
+Baghdad | 44.37 | 33.31 | IQ
+Ankara | 32.86 | 39.93 | TR
+Athens | 23.73 | 37.98 | GR
+Milan | 9.19 | 45.46 | IT
+Warsaw | 21.01 | 52.23 | PL
+Kyiv | 30.52 | 50.45 | UA
+St Petersburg | 30.32 | 59.94 | RU
+Novosibirsk | 82.92 | 55.03 | RU
+Almaty | 76.95 | 43.24 | KZ
+Tashkent | 69.28 | 41.31 | UZ
+Melbourne | 144.96 | -37.81 | AU
+Auckland | 174.76 | -36.85 | NZ
+Caracas | -66.90 | 10.49 | VE
+Santiago | -70.65 | -33.45 | CL
+Havana | -82.37 | 23.13 | CU
+Kenge | 16.89 | -4.81 | CD-0005
+Kikwit | 18.82 | -5.04 | CD-0006
+Bandundu town | 17.37 | -3.32 | CD-0006,CD-0007
+Inongo | 18.27 | -1.94 | CD-0007
+Mbandaka | 18.26 | 0.05 | CD-0008
+Boende | 20.88 | -0.28 | CD-0009
+Lisala | 21.51 | 2.15 | CD-0010
+Bumba | 22.46 | 2.19 | CD-0010
+Gemena | 19.77 | 3.25 | CD-0011
+Gbadolite | 21.0 | 4.28 | CD-0012
+Kisangani | 25.19 | 0.52 | CD-0013
+Buta | 24.73 | 2.79 | CD-0014
+Isiro | 27.62 | 2.77 | CD-0015
+Bunia | 30.25 | 1.56 | CD-0016
+Kalemie | 29.19 | -5.95 | CD-0021
+Manono | 27.42 | -7.30 | CD-0021
+Kamina | 25.0 | -8.73 | CD-0022
+Kolwezi | 25.47 | -10.71 | CD-0023
+Lubumbashi | 27.48 | -11.66 | CD-0024
+Likasi | 26.73 | -10.98 | CD-0024
+Kabinda | 24.48 | -6.13 | CD-0025
+Mwene-Ditu | 23.45 | -7.0 | CD-0025
+Lodja | 23.60 | -3.49 | CD-0026
+Tshikapa | 20.80 | -6.42 | CD-0027
+Kananga | 22.42 | -5.90 | CD-0028
+Mbuji-Mayi | 23.60 | -6.13 | CD-0029
+Sunyani | -2.33 | 7.34 | GH-0010
+Techiman | -1.94 | 7.59 | GH-0011
+Kintampo | -1.73 | 8.05 | GH-0011
+Goaso | -2.52 | 6.80 | GH-0012
+Tamale | -0.84 | 9.40 | GH-0013
+Yendi | -0.01 | 9.44 | GH-0013
+Damongo | -1.82 | 9.08 | GH-0014
+Bole | -2.48 | 9.03 | GH-0014
+Nalerigu | -0.37 | 10.53 | GH-0015
+Walewale | -0.80 | 10.35 | GH-0015
+Dambai | 0.18 | 8.07 | GH-0009
+Ho | 0.47 | 6.60 | GH-0008
+Sefwi Wiawso | -2.49 | 6.21 | GH-0005
+Takoradi | -1.76 | 4.90 | GH-0004
+Hargeisa2 | 44.06 | 9.56 | SO-0009
+Erigavo | 47.37 | 10.62 | SO-0013
+Galkayo | 47.43 | 6.77 | ?
+Kinshasa Gombe hint | 15.31 | -4.31 | CD-0001
+Gori | 44.11 | 41.98 | GE-0006
+Borjomi | 43.38 | 41.84 | GE-0006
+Akhaltsikhe | 42.98 | 41.64 | GE-0006
+Mtskheta | 44.72 | 41.85 | GE-0006
+Java SO | 43.93 | 42.40 | GE-0007
+Kindia | -12.86 | 10.06 | GN-0004
+Conakry | -13.68 | 9.54 | GN-0001
+Masaka | 31.73 | -0.33 | UG-0003
+Entebbe | 32.46 | 0.06 | UG-0002
+Kampala | 32.58 | 0.32 | UG
+Downtown Toronto | -79.38 | 43.65 | CA-0001
+Mississauga | -79.64 | 43.59 | CA-0002
+Markham | -79.34 | 43.86 | CA-0003
+Oshawa | -78.86 | 43.90 | CA-0004
+Vancouver downtown | -123.12 | 49.28 | CA-0026
+Surrey BC | -122.85 | 49.19 | CA-0027
+Guadalajara centro | -103.35 | 20.67 | MX-0007
+Zapopan | -103.39 | 20.72 | MX-0008
+Tlaquepaque | -103.31 | 20.64 | MX-0009
+Tequila | -103.84 | 20.88 | MX-0010
+Los Altos Tepatitlan | -102.76 | 20.82 | MX-0010
+Hollywood | -118.33 | 34.10 | US-0011
+Long Beach | -118.19 | 33.77 | US-0012
+Van Nuys | -118.45 | 34.19 | US-0013
+Lancaster CA | -118.14 | 34.69 | US-0013
+Chicago Loop | -87.63 | 41.88 | US-0044
+Hyde Park Chicago | -87.59 | 41.79 | US-0045
+Schaumburg | -88.08 | 42.03 | US-0046
+Midtown Manhattan | -73.98 | 40.75 | US-0086
+Brooklyn | -73.95 | 40.65 | US-0087
+Poughkeepsie | -73.92 | 41.70 | US-0090

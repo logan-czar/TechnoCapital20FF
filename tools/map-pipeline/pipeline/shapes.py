@@ -61,6 +61,28 @@ def _scaled_voronoi(unit, seeds_by_prov: dict[str, list[list[float]]]):
     return res
 
 
+def _cap_metro(cells: dict, seeds_by_prov: dict, metro: set) -> dict:
+    """D688 (D612 for split blocks): in a block a Metro province shares with a rural one, the
+    Metro province keeps only the part of its cell within METRO_CAP_DEG of its own seeds; the
+    rest goes to the rural provinces of the block, by Voronoi among their seeds."""
+    rural = {pid: pts for pid, pts in seeds_by_prov.items() if pid not in metro}
+    if not rural or not metro & set(cells):
+        return cells
+    out = dict(cells)
+    far = []
+    for pid in sorted(metro & set(cells)):
+        reach = shapely.union_all([Point(x, y).buffer(crosswalk.METRO_CAP_DEG) for x, y in seeds_by_prov[pid]])
+        keep = _polys(cells[pid].intersection(reach))
+        rest = _polys(cells[pid].difference(reach))
+        if not rest.is_empty:
+            far.append(rest)
+            out[pid] = keep
+    if far:
+        for pid, g in _scaled_voronoi(shapely.union_all(far), rural).items():
+            out[pid] = _polys(shapely.union_all([out[pid], g])) if pid in out else g
+    return out
+
+
 def _polys(g):
     """Only the polygonal part of a geometry (intersections can leave lines and points)."""
     if g.is_empty:
@@ -86,9 +108,12 @@ def build_region(key: str, rgeom, rplan: dict, work, splits: dict | None = None)
             pieces[pid].append(blocks.loc[uid].geometry)
         for uid, pts in pr["split"].items():
             split_units.setdefault(uid, {})[pid] = pts
+    rural = any(not pr.get("metro") for pr in provs.values())
     for uid in sorted(split_units):
         unit = shapely.make_valid(blocks.loc[uid].geometry)
         cells = _scaled_voronoi(unit, split_units[uid])
+        if rural:
+            cells = _cap_metro(cells, split_units[uid], {pid for pid in split_units[uid] if provs[pid].get("metro")})
         for pid, g in cells.items():
             pieces[pid].append(g)
         if splits is not None and unit.area > 0:
@@ -98,6 +123,17 @@ def build_region(key: str, rgeom, rplan: dict, work, splits: dict | None = None)
                 "shares": {pid: round(cells[pid].area / unit.area, 4) if pid in cells else 0.0
                            for pid in sorted(split_units[uid])},
             }
+    # D688: a province a hint draws as a polygon (South Ossetia) takes that land from the others
+    drawn = {pid: _polys(shapely.make_valid(shapely.Polygon([(float(x), float(y)) for x, y in pr["polygon"]]))
+                         .intersection(rgeom))
+             for pid, pr in provs.items() if pr.get("polygon")}
+    if drawn:
+        mask = shapely.union_all(list(drawn.values()))
+        for pid in pieces:
+            if pid in drawn:
+                pieces[pid] = [drawn[pid]]
+            elif pieces[pid]:
+                pieces[pid] = [_polys(shapely.make_valid(shapely.union_all(pieces[pid])).difference(mask))]
     shapes: dict[str, object] = {}
     taken = shapely.Polygon()
     for pid in sorted(pieces):

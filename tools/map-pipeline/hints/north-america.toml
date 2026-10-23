@@ -11,6 +11,11 @@ notes = [
     "CA-0058 Baffin-Iqaluit and CA-0059 Kivalliq-Kitikmeot split Nunavut (one economic region) by one straight Voronoi line through Ellesmere Island.",
 ]
 
+# D689: the country's most populous place of the name is another town
+[review.anchor_ok]
+"US-0086" = "Natural Earth's only Manhattan is the Kansas town; New York City's point is checked as the Metro"
+"MX-0001" = "Cuauhtemoc borough of Mexico City, not Cuauhtemoc in Chihuahua"
+
 [regions]
 "MEX:Ciudad de Mexico" = "MX-DIF"
 
@@ -89,3 +94,8 @@ units = ["Camden", "Gloucester", "Burlington", "Salem"]
 [provinces.MX-0010] # Rural Jalisco: Los Altos (its notes' dairy country) and Tequila (its distilleries)
 units = ["Lagos de Moreno", "Tepatitlán de Morelos", "Arandas", "San Juan de los Lagos", "Tequila"]
 add = true
+
+[carve."USA:Alaska"]
+# Little Diomede island in the Bering Strait (no Natural Earth 10m land); not clipped to land
+polygon = [[-169.00, 65.72], [-168.88, 65.72], [-168.88, 65.79], [-169.00, 65.79], [-169.00, 65.72]]
+clip = false
