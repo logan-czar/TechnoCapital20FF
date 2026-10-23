@@ -104,6 +104,9 @@ pub struct RunnerControls(pub Controls);
 /// is spent, so the window keeps drawing. Half of a 60 fps frame.
 pub const FRAME_STEP_BUDGET: Duration = Duration::from_millis(8);
 
+/// The weight of the newest tick in a kind's moving average cost (D776).
+pub const TICK_COST_WEIGHT: f64 = 0.25;
+
 /// Most game hours a speed may owe when the budget cuts a frame short (D300), so a slow frame
 /// never turns into a burst of catch-up ticks.
 pub const MAX_OWED_HOURS: f64 = 4.0;
@@ -127,8 +130,58 @@ pub struct SimRate {
     longest_tick_this_frame: Duration,
     /// Game hours per real second, measured over the last full second.
     pub hours_per_second: f64,
+    /// Ticks run since the app started by kind ([`TickKind`]): how many, their total time and
+    /// the longest (for the benches, D776).
+    pub by_kind: [(u64, Duration, Duration); TickKind::COUNT],
     window_start: Option<Instant>,
     window_steps: u64,
+}
+
+/// What a tick ran, by the calendar (spec 4): the kinds cost very differently.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TickKind {
+    /// Any hour but midnight: prices and quotes.
+    Hourly,
+    /// 00:00 on a day that is not a month start: the daily jobs and views.
+    Daily,
+    /// 00:00 on the 1st outside a quarter's events: the monthly jobs and views.
+    Monthly,
+    /// A quarter's start, release, price move or plan lock (spec 4.4).
+    Quarterly,
+}
+
+impl TickKind {
+    pub const COUNT: usize = 4;
+    pub const ALL: [TickKind; TickKind::COUNT] = [
+        TickKind::Hourly,
+        TickKind::Daily,
+        TickKind::Monthly,
+        TickKind::Quarterly,
+    ];
+
+    /// The kind of the tick at `now`.
+    pub fn of(now: sim::time::calendar::DateTime) -> TickKind {
+        let f = sim::time::scheduler::TickFacts::new(now);
+        if f.is_quarter_start() || f.is_release_tick() || f.is_price_move_tick() || f.is_lock_tick()
+        {
+            TickKind::Quarterly
+        } else if f.is_month_start() {
+            TickKind::Monthly
+        } else if f.is_midnight() {
+            TickKind::Daily
+        } else {
+            TickKind::Hourly
+        }
+    }
+
+    pub fn name(self) -> &'static str {
+        match self {
+            TickKind::Hourly => "hourly",
+            TickKind::Daily => "daily",
+            TickKind::Monthly => "monthly",
+            TickKind::Quarterly => "quarterly",
+        }
+    }
 }
 
 /// The sim and the bridge's stepping state. Private to this module: UI code cannot reach it.
@@ -141,6 +194,9 @@ pub struct SimRunner {
     spent: Duration,
     /// A NewGame or Load rebuilt every view since the last sync.
     rebuilt: bool,
+    /// What a tick of each [`TickKind`] costs lately (a moving average): at max speed a tick
+    /// that would not fit in what is left of the budget waits for the next frame (D776).
+    tick_cost: [Duration; TickKind::COUNT],
 }
 
 impl SimRunner {
@@ -151,6 +207,7 @@ impl SimRunner {
             budget: FRAME_STEP_BUDGET,
             spent: Duration::ZERO,
             rebuilt: false,
+            tick_cost: [Duration::ZERO; TickKind::COUNT],
         }
     }
 
@@ -301,15 +358,30 @@ fn step_sim(
         if !wanted {
             break;
         }
-        // The first tick of a frame always runs, so the game moves however slow a tick is.
+        // The first tick of a frame always runs, so the game moves however slow a tick is. A
+        // later one runs only if what its kind costs lately fits in what is left of the budget
+        // (D776): a monthly or quarterly tick of several ms waits to open the next frame
+        // instead of running the frame long past its budget.
         let first_of_frame = rate.steps_this_frame + steps == 0;
+        let next = TickKind::of(sim::time::calendar::DateTime::from_hours(
+            runner.sim.views().clock().now.hours() + 1,
+        ));
         let checked = Instant::now();
-        if !first_of_frame && runner.spent + checked.duration_since(start) >= runner.budget {
+        let cost = runner.tick_cost[next as usize];
+        if !first_of_frame && runner.spent + checked.duration_since(start) + cost >= runner.budget {
             cut_short = true;
             break;
         }
         notices.write_batch(runner.sim.step().into_iter().map(SimNotice));
-        rate.longest_tick_this_frame = rate.longest_tick_this_frame.max(checked.elapsed());
+        let took = checked.elapsed();
+        rate.longest_tick_this_frame = rate.longest_tick_this_frame.max(took);
+        let kind = TickKind::of(runner.sim.views().clock().now);
+        let c = &mut runner.tick_cost[kind as usize];
+        *c = c.mul_f64(1.0 - TICK_COST_WEIGHT) + took.mul_f64(TICK_COST_WEIGHT);
+        let k = &mut rate.by_kind[kind as usize];
+        k.0 += 1;
+        k.1 += took;
+        k.2 = k.2.max(took);
         steps += 1;
         if let Pace::Timed(_) = p {
             runner.owed -= 1.0;
