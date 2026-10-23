@@ -60,10 +60,37 @@ impl Views {
     }
 
     /// Copies each view whose version differs, through the copy `sim_views!` generates over
-    /// every view, so a new view cannot be missed.
+    /// every view, so a new view cannot be missed. A copy shares the sim's data (D775); the
+    /// data of the views it replaces is freed on another thread ([`drop_later`]).
     fn sync_from(&mut self, src: &SimViews) {
+        let old = self.views.clone();
         self.views.copy_changed_from(src);
         self.refresh = src.refresh();
+        drop_later(old);
+    }
+}
+
+/// Frees `views` on a background thread (D775). A month's views (statements, company detail,
+/// characters, ...) hold many strings and vectors: freeing the copies the UI let go of took up
+/// to 7 ms of a frame at max speed. Only the data no other copy shares is freed; the order and
+/// time of a free change nothing the sim or the UI computes.
+fn drop_later(views: SimViews) {
+    use std::sync::mpsc::{Sender, channel};
+    use std::sync::{Mutex, OnceLock};
+    static DROPPER: OnceLock<Mutex<Sender<SimViews>>> = OnceLock::new();
+    let tx = DROPPER.get_or_init(|| {
+        let (tx, rx) = channel::<SimViews>();
+        let spawned = std::thread::Builder::new()
+            .name("view-dropper".into())
+            .spawn(move || while rx.recv().is_ok() {});
+        if spawned.is_err() {
+            warn!("no view-dropper thread: old views are freed in the frame");
+        }
+        Mutex::new(tx)
+    });
+    // If the thread is gone, the send hands the views back and they are freed here.
+    if let Ok(tx) = tx.lock() {
+        let _ = tx.send(views);
     }
 }
 
@@ -308,7 +335,8 @@ fn sync_views(
     let src = runner.sim.views();
     if std::mem::take(&mut runner.rebuilt) {
         // A new game or a load: every view is new, whatever its version says.
-        *views = Views::new(src);
+        let old = std::mem::replace(&mut *views, Views::new(src));
+        drop_later(old.views);
     } else if views.refresh != src.refresh() {
         views.sync_from(src);
     }
