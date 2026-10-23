@@ -15,7 +15,7 @@ Logan's PC (Windows 11, 24 threads, RTX 5070 Ti), October 2026, branch `build/m8
 | Startup render error | D741 | Cause found (a stale binary against a newer shader); the shader is now compiled in and its layout tested |
 | P8 QA | the qa step (below) | Every region passes; the remaining items were signed off at the Phase B gate |
 | Soak invariance | `headless soak --years 10 --seeds 1..4` | Byte-identical to main 5074f00 (below) |
-| The full gate twice | `bash scripts/check.sh` | (below) |
+| The full gate twice | `bash scripts/check.sh` | Passed twice (below) |
 
 ## M8.8: the click test
 
@@ -95,6 +95,10 @@ target/release/headless soak --years 10 --seeds 1..4 --out DIR
 ```
 
 Run at main 5074f00 (this slot checked out there) and on this branch: byte-identical `years.csv` (md5 121b5c7ba2ae4edcb9ed12d28764563e) and `quarters.csv` (md5 cf890b482bd1f4c420cb3c6dc7f73a35), 3 s for the four seeds. They are also the md5s lane MB recorded against main a31b1a9 (m9-checks.md): the map moves nothing in the economy. This branch changes no file under `crates/sim`, `crates/sim-data`, `crates/headless` or `docs/design`, so the two headless builds are the same code.
+
+## The full gate, twice
+
+`bash scripts/check.sh` (fmt, clippy, the boundary checks, every test, validate.py, `--check-data` on assets/map) on this branch, debug build warm: both runs `== all checks passed`, 665 tests passed and none failed in each, 355 s and 323 s.
 
 ## P8: the map QA reports
 
