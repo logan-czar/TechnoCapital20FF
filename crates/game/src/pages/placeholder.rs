@@ -30,6 +30,15 @@ pub const SECTIONS: &[super::SectionSpec] = &[
     ("plan", "Phase B fills in"),
 ];
 
+/// The Province placeholder (M8 Phase A) adds the card's fields as plain lines, so a map click
+/// can be checked by eye before lane MB's page (M8.7).
+pub const PROVINCE_SECTIONS: &[super::SectionSpec] = &[
+    ("links", "Links"),
+    ("card", "Province card"),
+    ("views", "Views this page reads"),
+    ("plan", "M8 Phase B fills in"),
+];
+
 /// Company and industry placeholders add a chart from the views (the M9.1 widget at work).
 pub const CHART_SECTIONS: &[super::SectionSpec] = &[
     ("links", "Links"),
@@ -163,6 +172,19 @@ fn spec(kind: PageKind) -> (&'static [ViewKey], &'static [&'static str], &'stati
             &[],
             "Lane B2: the headline with every subject linked.",
         ),
+        PageKind::Province => (
+            &[
+                ViewKey::ProvinceCards,
+                ViewKey::MapStatic,
+                ViewKey::MapLayers,
+                ViewKey::Places,
+                ViewKey::Units,
+            ],
+            &[],
+            "M8.7 (lane MB): the province card (development, resource, terrain, Metro, key \
+             city, HQs and units with their assets), and province links throughout the pages \
+             and the command bar.",
+        ),
         _ => (&[], &[], ""),
     }
 }
@@ -179,12 +201,13 @@ pub fn register(app: &mut App) {
         PageKind::Event,
         PageKind::Recap,
         PageKind::Headline,
+        PageKind::Province,
     ] {
         let (views, planned, _) = spec(kind);
-        let sections = if matches!(kind, PageKind::Company | PageKind::Industry) {
-            CHART_SECTIONS
-        } else {
-            SECTIONS
+        let sections = match kind {
+            PageKind::Company | PageKind::Industry => CHART_SECTIONS,
+            PageKind::Province => PROVINCE_SECTIONS,
+            _ => SECTIONS,
         };
         app.register_page(
             kind,
@@ -441,6 +464,34 @@ pub fn related(
             }
             out.push(("List", vec![t(PageRef::News)]));
         }
+        PageRef::Province(id) => {
+            if let Some(c) = v.province_cards.get().get(*id) {
+                out.push(("Country", vec![t(PageRef::Country(c.country))]));
+                out.push((
+                    "HQ companies",
+                    c.hqs
+                        .iter()
+                        .take(12)
+                        .map(|&co| t(PageRef::Company(co)))
+                        .collect(),
+                ));
+                let mut unit_companies: Vec<_> = c
+                    .units
+                    .iter()
+                    .filter_map(|&u| v.units.get().get(u).map(|r| r.company))
+                    .collect();
+                unit_companies.sort_unstable();
+                unit_companies.dedup();
+                out.push((
+                    "Units of",
+                    unit_companies
+                        .into_iter()
+                        .take(12)
+                        .map(|co| t(PageRef::Company(co)))
+                        .collect(),
+                ));
+            }
+        }
         _ => {}
     }
     out.retain(|(_, l)| !l.is_empty());
@@ -462,8 +513,20 @@ fn placeholder_page(
         b.head,
         &index.title(&b.page),
         kind.name(),
-        "Placeholder: filled in M9 Phase B",
+        if kind == PageKind::Province {
+            "Placeholder: filled in M8 Phase B"
+        } else {
+            "Placeholder: filled in M9 Phase B"
+        },
     );
+    if let (Some(body), PageRef::Province(id)) = (b.section("card"), &b.page)
+        && let Some(c) = views.province_cards.get().get(*id)
+    {
+        for line in province_card_lines(c) {
+            let e = commands.spawn(theme::body(line)).id();
+            commands.entity(body).add_child(e);
+        }
+    }
     if let Some(body) = b.section("links") {
         for (label, links) in related(
             &b.page,
@@ -556,4 +619,37 @@ pub fn show_view_lines(
             text.0 = s;
         }
     }
+}
+
+/// The province card's fields as lines (spec 8 Map row; v_province_card), for the Province
+/// placeholder. Unit money figures are left to lane MB, which reads them banded from v_units.
+pub fn province_card_lines(c: &sim::views::province_cards::ProvinceCard) -> Vec<String> {
+    use sim::views::province_cards::LargestTrack;
+    let none = |s: &Option<String>| s.clone().unwrap_or_else(|| "none".into());
+    let largest = match c.largest_track {
+        LargestTrack::Commerce => "Commerce",
+        LargestTrack::Industry => "Industry",
+        LargestTrack::Both => "Commerce and Industry",
+    };
+    vec![
+        format!("{} ({}), {} / {}", c.name, c.key, c.region, c.area),
+        format!(
+            "Development: Commerce {}, Industry {}, Population {}, total {} (largest {largest})",
+            c.commerce, c.industry, c.population, c.total
+        ),
+        format!(
+            "Resource {}, terrain {}, {}",
+            c.resource,
+            c.terrain,
+            if c.coastal { "coastal" } else { "inland" }
+        ),
+        format!(
+            "Metro: {}; key city: {}; rank {}",
+            none(&c.metro),
+            none(&c.key_city),
+            c.city_rank
+        ),
+        format!("Contested: {}", none(&c.contested)),
+        format!("HQs here: {}; units here: {}", c.hqs.len(), c.units.len()),
+    ]
 }

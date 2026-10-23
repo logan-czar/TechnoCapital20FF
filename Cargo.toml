@@ -24,6 +24,7 @@ rand_chacha = "0.9"
 rand_core = "0.9"
 serde = { version = "1", features = ["derive", "rc"] }
 thiserror = "2"
+toml = { version = "1", default-features = false, features = ["parse", "serde", "display"] }
 sim = { path = "crates/sim" }
 sim-data = { path = "crates/sim-data" }
 

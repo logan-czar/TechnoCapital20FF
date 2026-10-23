@@ -7,6 +7,7 @@
 mod checks;
 mod error;
 mod load;
+pub mod map;
 pub mod rows;
 
 use std::path::{Path, PathBuf};
@@ -14,6 +15,7 @@ use std::path::{Path, PathBuf};
 pub use checks::{EXPECTED_COUNTS, RATING_LABELS, check, rating_factor_of_label};
 pub use error::DataError;
 pub use load::{Table, load_table};
+pub use map::{MapAssets, MapMeta, default_map_dir, load_map};
 pub use rows::*;
 
 /// The 8 superregions: the slug used in file names and the name used in countries.csv.
@@ -47,6 +49,9 @@ pub struct WorldData {
     pub names: Vec<Table<NameRow>>,
     pub country_cultures: Table<CountryCulture>,
     pub industry_suffixes: Table<IndustrySuffix>,
+    /// The map assets (`assets/map`, M8), when the game loaded them ([`load_map`]); `None`
+    /// for the headless runner and most tests, and before lane P has made any.
+    pub map: Option<MapAssets>,
 }
 
 impl WorldData {
@@ -101,6 +106,7 @@ pub fn load_world(dir: &Path) -> Result<WorldData, DataError> {
         names: per_region(dir, "names/{}.csv")?,
         country_cultures: load_table(dir, "names/country-cultures.csv")?,
         industry_suffixes: load_table(dir, "names/industry-suffixes.csv")?,
+        map: None,
     })
 }
 

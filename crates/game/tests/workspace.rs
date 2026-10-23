@@ -827,13 +827,17 @@ fn settings_buttons_work_in_an_unfocused_pane() {
         inverse_scale_factor: 1.0,
         ..default()
     });
-    let split = ws(&app).splits()[0].0;
-    app.world_mut()
-        .trigger(drag(divider, Vec2::new(100.0, 0.0)));
+    // The new pane split off along the window's longer side (D450): drag along that axis.
+    let (split, axis, _) = ws(&app).splits()[0];
+    let delta = match axis {
+        Axis::Row => Vec2::new(100.0, 0.0),
+        Axis::Column => Vec2::new(0.0, 60.0),
+    };
+    app.world_mut().trigger(drag(divider, delta));
     frames(&mut app, 2);
     assert!(
         (ws(&app).ratio(split).unwrap() - 0.6).abs() < 1e-4,
-        "dragged 100 of 1000 px"
+        "dragged a tenth of the split"
     );
     assert!(app.world().get_entity(compact).is_ok());
     app.world_mut()

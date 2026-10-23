@@ -1,7 +1,7 @@
 //! Runs the simulation with no window (build-plan 2.1).
 //!
-//! - `--check-data` (M0.9) loads every data table, prints the row counts and runs the load-time
-//!   checks; a bad row exits non-zero with its file, line and field (spec 10 M0).
+//! - `--check-data` (M0.9) loads every data table (and the assets/map files when there are any,
+//!   M8), prints the row counts and runs the load-time checks; a bad row exits non-zero with its file, line and field (spec 10 M0).
 //! - `run` (M1.8, M1.9) runs each seed for N years through the `Sim` API only, prints the state
 //!   hash each month with `--hash-monthly`, and writes the soak's yearly metrics rows.
 //! - `soak` (M10.1) runs many seeds, each in its own child process (`soak-seed`, D333), and writes
@@ -28,7 +28,7 @@ use crate::profile::Profiler;
 use crate::soak::{DEFAULT_SEEDS, DEFAULT_YEARS, SoakArgs};
 
 const USAGE: &str = "usage:\n  \
-    headless --check-data [--data-dir DIR]\n  \
+    headless --check-data [--data-dir DIR] [--map-dir DIR]\n  \
     headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--data-dir DIR]\n  \
     headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--data-dir DIR]\n  \
     headless check DIR\n  \
@@ -85,6 +85,7 @@ fn main() -> ExitCode {
 fn check_data_command(args: Vec<String>) -> ExitCode {
     let mut check_data = false;
     let mut dir = sim_data::default_data_dir();
+    let mut map_dir = sim_data::default_map_dir();
     let mut it = args.into_iter();
     while let Some(arg) = it.next() {
         match arg.as_str() {
@@ -93,13 +94,17 @@ fn check_data_command(args: Vec<String>) -> ExitCode {
                 Some(d) => dir = PathBuf::from(d),
                 None => return usage(),
             },
+            "--map-dir" => match it.next() {
+                Some(d) => map_dir = PathBuf::from(d),
+                None => return usage(),
+            },
             _ => return usage(),
         }
     }
     if !check_data {
         return usage();
     }
-    check(&dir)
+    check(&dir, &map_dir)
 }
 
 fn usage() -> ExitCode {
@@ -117,8 +122,8 @@ fn report(r: Result<(), String>) -> ExitCode {
     }
 }
 
-fn check(dir: &Path) -> ExitCode {
-    let world = match sim_data::load_world(dir) {
+fn check(dir: &Path, map_dir: &Path) -> ExitCode {
+    let mut world = match sim_data::load_world(dir) {
         Ok(w) => w,
         Err(e) => {
             eprintln!("error: {e}");
@@ -128,6 +133,25 @@ fn check(dir: &Path) -> ExitCode {
     println!("Loaded {}", dir.display());
     for (name, n) in world.counts() {
         println!("  {name:18} {n:>6}");
+    }
+    // The map assets (M8), checked when the folder has them: the CSVs, label points inside
+    // the bitmap, the PNG sizes against map-meta.toml.
+    world.map = match sim_data::load_map(map_dir) {
+        Ok(m) => m,
+        Err(e) => {
+            eprintln!("error: {}: {e}", map_dir.display());
+            return ExitCode::FAILURE;
+        }
+    };
+    match &world.map {
+        Some(m) => println!(
+            "Loaded {}: {} provinces, {} adjacencies, coverage {}",
+            map_dir.display(),
+            m.colors.len(),
+            m.adjacency.len(),
+            m.meta.coverage.join(", ")
+        ),
+        None => println!("No map assets in {}", map_dir.display()),
     }
     let errors = sim_data::check(&world);
     for e in &errors {

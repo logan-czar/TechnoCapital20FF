@@ -24,7 +24,8 @@ pub struct ShellLayout {
     pub root: Entity,
     pub top_bar: Entity,
     pub rail: Entity,
-    /// The map's place: the home screen fills it, panels and Pdoomberg cover it.
+    /// The map's place (M8): the map fills it, the workspace's windows float over it and
+    /// Pdoomberg covers it.
     pub main: Entity,
     pub outliner: Entity,
     /// Toasts stack upward at the bottom right of the main area (20.2.1).
@@ -110,6 +111,7 @@ impl Plugin for ShellPlugin {
                 crate::links::LinksPlugin,
                 crate::command::CommandPlugin,
                 crate::chart::ChartPlugin,
+                crate::map::MapPlugin,
             ))
             .add_plugins((
                 rail::RouterPlugin,

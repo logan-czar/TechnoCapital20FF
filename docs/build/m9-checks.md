@@ -98,3 +98,28 @@ Result on Logan's PC (Windows 11, 24 threads, October 2026; release build after 
 | event/0 | 9.96 | 2 | 8.07 | 2 |
 | headline/0 | 3.95 | 1 | 2.86 | 1 |
 | company/651 | 28.05 | 2 | 28.32 | 2 |
+
+## M8 Phase A: the checks with the map present (lane MA)
+
+The map draws behind floating windows (D635 to D638), so both M9 checks now run with it.
+
+- **Leak test** (`m9_leak.rs`): it also reads the Province page of every province where a banded company has its HQ or a unit, since lane MB adds unit assets there. It passes with the map plugin and the window layer in the shell (no map assets in a headless test): debug, `fresh: 2447 screens` and `after the Q1 recap: 2462 screens` (145 Province pages more than before), 196 subjects, no leak, 16.3 s.
+- **Timing harness** (`--bench-pages`): it also opens a Province page (the M8 placeholder, D637), 49 pages. Release, Logan's PC, on the 8192 x 4096 synthetic map: `pages 49 opened, worst 20.45 ms: PASS`; `province/431` 2.85 ms cold, 2.42 ms warm.
+
+### The map's frame time (`--bench-map`, D639)
+
+```
+cargo build --release -p game
+target/release/game --synthetic-map DIR --synthetic-width 8192 --bench-map 20
+target/release/game --map-dir assets/map --bench-map 20      # once lane P's NA map is in
+```
+
+It opens four panes in three windows (Companies and Industries side by side, a company page, the news feed), then pans the map every frame and zooms in and out through the three levels while the hover point moves, without vsync. Release, Logan's PC (Windows 11, RTX 5070 Ti, the window at its default 1280 x 720), October 2026, other builds running alongside; 8192: three runs, 4096: two, no map: one:
+
+| Map | Frames per second | Frame ms p50 | p95 | p99 | max | Frames at World / Country / Province |
+|---|---|---|---|---|---|---|
+| Synthetic 8192 x 4096 (283 provinces, the contract's full size) | 272 to 414 | 2.35 to 3.70 | 2.87 to 4.53 | 3.43 to 16.73 | 5.36 to 32.12 | 3282 / 3748 / 1256 (best run) |
+| Synthetic 4096 x 2048 | 277 to 349 | 2.66 to 3.75 | 4.23 to 4.83 | 4.79 to 6.11 | 9.20 to 22.47 | 3028 / 3444 / 516 |
+| No map (same panes) | 256 | 3.80 | 4.96 | 5.74 | 7.47 | none |
+
+Every run is far inside 60 fps (16.7 ms); the map's own cost is within the run-to-run noise. The single-frame maxima are rare spikes (under 1% of frames) that came and went between runs of the same map. The NA run waits for lane P's assets on main.

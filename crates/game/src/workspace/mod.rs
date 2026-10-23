@@ -1,7 +1,9 @@
-//! The tiling workspace (M9 A2; D450, D453): the main area splits into panes, each showing one
-//! page ([`crate::pages`]) with its own back and forward history and a breadcrumb. Panes split
-//! right or down, close, take focus on a click, and resize by dragging the divider between
-//! them; layouts save by name and the last one comes back at the next start.
+//! The workspace (M9 A2, D450, D453; M8 floating windows, D635): floating windows over the map
+//! ([`windows`]), each a tiling tree of panes, each pane showing one page ([`crate::pages`])
+//! with its own back and forward history and a breadcrumb. Panes split right or down, close,
+//! take focus on a click, and resize by dragging the divider between them; windows move,
+//! resize, rise, minimize and close; layouts (every window) save by name and the last one comes
+//! back at the next start.
 //!
 //! The model is [`model::Workspace`] (pure, tested on its own); this module draws it with
 //! bevy_ui and turns clicks and keys into model calls. Pdoomberg is not a pane: it stays a
@@ -21,15 +23,21 @@
 //! | Ctrl+= / Ctrl+- / Ctrl+0 | Font larger / smaller / reset |
 //! | Ctrl+J | Density compact or normal |
 //! | Ctrl+, | Settings page |
+//! | Ctrl+N / Ctrl+M / Ctrl+Shift+W | New window / minimize / close the focused window |
+//! | H | Hide or show every window (the map alone) |
 //! | O, U, R, N (Shift: new pane) | Companies, Industries, Recap, News pages |
 
 pub mod model;
+pub mod windows;
 
 use bevy::input::mouse::MouseScrollUnit;
 use bevy::picking::hover::Hovered;
 use bevy::prelude::*;
 
-pub use model::{Axis, Dir, PaneId, SavedLayout, SavedNode, SplitId, Workspace};
+pub use model::{
+    Axis, Dir, PaneId, SavedLayout, SavedNode, SavedWindow, SplitId, WinRect, WindowId, Workspace,
+};
+pub use windows::{WindowAction, WindowFrame};
 
 use crate::bridge::Views;
 use crate::command::index::NameIndex;
@@ -73,6 +81,20 @@ pub const SHORTCUTS: &[(&str, &str)] = &[
     ("Ctrl+= / Ctrl+- / Ctrl+0", "Font larger / smaller / reset"),
     ("Ctrl+J", "Density compact or normal"),
     ("Ctrl+,", "This page"),
+    ("Ctrl+N", "A new window over the map"),
+    (
+        "Ctrl+M / Ctrl+Shift+W",
+        "Minimize / close the focused window",
+    ),
+    ("H", "Hide or show every window"),
+    (
+        "Map: drag, W A S D / wheel, Q E",
+        "Pan / zoom (World, Country, Province)",
+    ),
+    (
+        "Map: click / Shift+click",
+        "Open the province / in a new pane",
+    ),
     (
         "O, U, R, N (Shift: new pane)",
         "Companies, Industries, Recap, News",
@@ -143,12 +165,16 @@ pub enum PaneAction {
     DeleteLayout(String),
 }
 
-/// The workspace's root node and its laid-out size.
+/// The workspace's window layer, the dock, and the focused window's pane area.
 #[derive(Resource, Debug, Clone, Copy)]
 pub struct WorkspaceUi {
+    /// The layer the windows float in (over the map, D635).
     pub root: Entity,
+    /// The minimized windows' dock.
+    pub dock: Entity,
     built: Option<u64>,
-    /// Logical size, for the new-pane axis and keyboard focus moves.
+    /// The focused window's pane area in logical pixels, for the new-pane axis and keyboard
+    /// focus moves.
     pub size: Vec2,
 }
 
@@ -206,15 +232,22 @@ pub struct WorkspacePlugin;
 impl Plugin for WorkspacePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Workspace>()
+            .init_resource::<windows::DockDrawn>()
             .add_message::<OpenPage>()
             .add_message::<PaneAction>()
+            .add_message::<WindowAction>()
             .add_systems(
                 Startup,
                 (spawn_workspace, restore_last_layout).after(SpawnLayout),
             )
             .add_systems(
                 Update,
-                (workspace_keys, apply_open_page, apply_pane_actions)
+                (
+                    workspace_keys,
+                    apply_open_page,
+                    apply_pane_actions,
+                    windows::apply_window_actions,
+                )
                     .chain()
                     .in_set(WorkspaceInput)
                     .in_set(UiSystems::Input),
@@ -224,6 +257,7 @@ impl Plugin for WorkspacePlugin {
                 (
                     measure_workspace,
                     rebuild_structure,
+                    windows::sync_windows,
                     sync_ratios,
                     render_panes,
                     focus_tables,
@@ -236,21 +270,43 @@ impl Plugin for WorkspacePlugin {
 }
 
 fn spawn_workspace(mut commands: Commands, layout: Res<ShellLayout>) {
+    // The layer fills the main area over the map and lets the pointer through to it: only the
+    // windows in it catch presses (D635).
     let root = commands
-        .spawn(Node {
-            flex_grow: 1.0,
-            min_height: px(0.0),
-            min_width: px(0.0),
-            flex_direction: FlexDirection::Row,
-            padding: UiRect::all(px(2.0)),
-            ..default()
-        })
+        .spawn((
+            Node {
+                position_type: PositionType::Absolute,
+                left: px(0.0),
+                top: px(0.0),
+                width: percent(100.0),
+                height: percent(100.0),
+                ..default()
+            },
+            Pickable::IGNORE,
+        ))
         .id();
-    commands.entity(layout.main).insert_children(0, &[root]);
+    let dock = commands
+        .spawn((
+            windows::WindowDock,
+            Node {
+                position_type: PositionType::Absolute,
+                left: px(6.0),
+                bottom: px(6.0),
+                flex_direction: FlexDirection::Row,
+                column_gap: px(6.0),
+                ..default()
+            },
+            Pickable::IGNORE,
+            GlobalZIndex(40),
+        ))
+        .id();
+    commands.entity(layout.main).add_children(&[root, dock]);
+    let (w, h) = Workspace::default().body_size();
     commands.insert_resource(WorkspaceUi {
         root,
+        dock,
         built: None,
-        size: Vec2::new(1280.0, 800.0),
+        size: Vec2::new(w, h),
     });
 }
 
@@ -261,12 +317,26 @@ fn restore_last_layout(cfg: Res<UiConfig>, mut ws: ResMut<Workspace>) {
     }
 }
 
-fn measure_workspace(mut ui: ResMut<WorkspaceUi>, nodes: Query<&ComputedNode>) {
+/// The area the windows float in follows the laid-out main area; the size the M9 calls take is
+/// the focused window's pane area.
+fn measure_workspace(
+    mut ui: ResMut<WorkspaceUi>,
+    mut ws: ResMut<Workspace>,
+    nodes: Query<&ComputedNode>,
+) {
     if let Ok(n) = nodes.get(ui.root) {
         let s = n.size * n.inverse_scale_factor;
-        if s.x > 0.0 && (s - ui.size).length() > 0.5 {
-            ui.size = s;
+        if s.x > 0.0 && s.y > 0.0 {
+            let (aw, ah) = ws.area();
+            if (aw - s.x).abs() > 0.5 || (ah - s.y).abs() > 0.5 {
+                ws.set_area(s.x, s.y);
+            }
         }
+    }
+    let (w, h) = ws.body_size();
+    let s = Vec2::new(w, h);
+    if (s - ui.size).length() > 0.01 {
+        ui.size = s;
     }
 }
 
@@ -289,10 +359,14 @@ fn workspace_keys(
     router: Res<Router>,
     mut actions: MessageWriter<PaneAction>,
     mut open: MessageWriter<OpenPage>,
+    mut windows: MessageWriter<WindowAction>,
     mut cfg: ResMut<UiConfig>,
 ) {
     if capture.0 || router.current == Screen::Pdoomberg {
         return;
+    }
+    if keys.just_pressed(KeyCode::KeyH) && !modifier_held(&keys) && !shift_held(&keys) {
+        windows.write(WindowAction::ToggleHidden);
     }
     let (ctrl, shift, alt) = (ctrl_held(&keys), shift_held(&keys), alt_held(&keys));
     let pressed = |k| keys.just_pressed(k);
@@ -322,7 +396,17 @@ fn workspace_keys(
         actions.write(PaneAction::Split(None, axis));
     }
     if pressed(KeyCode::KeyW) {
-        actions.write(PaneAction::Close(None));
+        if shift {
+            windows.write(WindowAction::Close(None));
+        } else {
+            actions.write(PaneAction::Close(None));
+        }
+    }
+    if pressed(KeyCode::KeyN) {
+        windows.write(WindowAction::New(None));
+    }
+    if pressed(KeyCode::KeyM) {
+        windows.write(WindowAction::Minimize(None));
     }
     if pressed(KeyCode::Tab) {
         actions.write(PaneAction::Cycle(if shift { -1 } else { 1 }));
@@ -362,9 +446,21 @@ fn apply_open_page(
     mut ws: ResMut<Workspace>,
     ui: Option<Res<WorkspaceUi>>,
 ) {
-    let size = ui.map_or(Vec2::new(1280.0, 800.0), |u| u.size);
+    let size = ui.map_or_else(
+        || {
+            let (w, h) = ws.body_size();
+            Vec2::new(w, h)
+        },
+        |u| u.size,
+    );
     for m in msgs.read() {
+        // A page opening shows its window: the windows un-hide and a minimized one comes back
+        // (D635).
         let focused = ws.focused();
+        ws.reveal_pane(match m.target {
+            OpenTarget::Pane(p) => p,
+            _ => focused,
+        });
         match m.target {
             OpenTarget::Focused => {
                 ws.open(focused, m.page.clone());
@@ -449,14 +545,14 @@ fn apply_pane_actions(
 }
 
 /// Rebuilds the pane tree's nodes when its shape changed.
+/// Rebuilds the window frames and their pane trees when a tree's shape changed or a window
+/// opened or closed.
 fn rebuild_structure(mut commands: Commands, mut ui: ResMut<WorkspaceUi>, ws: Res<Workspace>) {
     if ui.built == Some(ws.structure_version()) {
         return;
     }
     ui.built = Some(ws.structure_version());
-    commands.entity(ui.root).despawn_children();
-    let top = spawn_node(&mut commands, ws.root());
-    commands.entity(ui.root).add_child(top);
+    windows::spawn_windows(&mut commands, ui.root, &ws);
 }
 
 fn spawn_node(commands: &mut Commands, l: &model::Layout) -> Entity {
@@ -542,7 +638,6 @@ fn drag_divider(
     dividers: Query<&Divider>,
     nodes: Query<&ComputedNode>,
     mut ws: ResMut<Workspace>,
-    ui: Option<Res<WorkspaceUi>>,
 ) {
     ev.propagate(false);
     let Ok(d) = dividers.get(ev.event_target()) else {
@@ -559,9 +654,12 @@ fn drag_divider(
     if len > 1.0
         && let Some(r) = ws.ratio(d.split)
     {
-        // No pane goes under its minimum size (D450, D571).
-        let area = ui.map_or(Vec2::new(1280.0, 800.0), |u| u.size);
-        ws.set_ratio_in(d.split, r + delta / len, area.x, area.y);
+        // No pane goes under its minimum size (D450, D571), in the split's own window.
+        let (w, h) = ws
+            .window_of_split(d.split)
+            .and_then(|id| ws.window(id))
+            .map_or_else(|| ws.body_size(), |win| win.body());
+        ws.set_ratio_in(d.split, r + delta / len, w, h);
     }
 }
 

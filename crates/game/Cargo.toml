@@ -31,6 +31,9 @@ sim-data.workspace = true
 # to the build. The config dir is found from the platform's environment variables, no crate.
 serde.workspace = true
 ron = "0.12"
+# The map's PNGs (M8): the 16-bit province index, the border field, and the synthetic test map
+# (D634). Bevy's image loader already builds this crate.
+png = "0.18"
 
 [lints]
 workspace = true

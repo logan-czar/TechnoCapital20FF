@@ -2461,6 +2461,7 @@ name = "game"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "png",
  "ron",
  "serde",
  "sim",
@@ -4608,6 +4609,7 @@ dependencies = [
  "csv",
  "serde",
  "thiserror 2.0.21",
+ "toml",
 ]
 
 [[package]]

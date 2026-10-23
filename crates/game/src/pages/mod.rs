@@ -48,7 +48,7 @@ use serde::{Deserialize, Serialize};
 use sim::time::Quarter;
 use sim::views::Cadence;
 use sim::world::{
-    CharacterId, CompanyId, CountryId, HeadlineId, IndustryId, StartupEventId, ZoneId,
+    CharacterId, CompanyId, CountryId, HeadlineId, IndustryId, ProvinceId, StartupEventId, ZoneId,
 };
 
 use crate::config::{SectionsConfig, UiConfig};
@@ -66,6 +66,9 @@ pub enum PageRef {
     Industry(IndustryId),
     Character(CharacterId),
     Country(CountryId),
+    /// A province (spec 3.3; M8): opened by a click on the map. A placeholder until lane MB's
+    /// Province page (M8.7).
+    Province(ProvinceId),
     /// A financial zone (spec 3.2.1).
     Zone(ZoneId),
     /// A zone's exchange: one exchange per zone (spec 5.14), so it is keyed by the zone.
@@ -96,6 +99,7 @@ pub enum PageKind {
     Industry,
     Character,
     Country,
+    Province,
     Zone,
     Exchange,
     Event,
@@ -113,12 +117,13 @@ pub enum PageKind {
 }
 
 impl PageKind {
-    pub const ALL: [PageKind; 19] = [
+    pub const ALL: [PageKind; 20] = [
         PageKind::World,
         PageKind::Company,
         PageKind::Industry,
         PageKind::Character,
         PageKind::Country,
+        PageKind::Province,
         PageKind::Zone,
         PageKind::Exchange,
         PageKind::Event,
@@ -143,6 +148,7 @@ impl PageKind {
             PageKind::Industry => "industry",
             PageKind::Character => "character",
             PageKind::Country => "country",
+            PageKind::Province => "province",
             PageKind::Zone => "zone",
             PageKind::Exchange => "exchange",
             PageKind::Event => "event",
@@ -168,6 +174,7 @@ impl PageKind {
             PageKind::Industry => "Industry",
             PageKind::Character => "Character",
             PageKind::Country => "Country",
+            PageKind::Province => "Province",
             PageKind::Zone => "Financial zone",
             PageKind::Exchange => "Exchange",
             PageKind::Event => "Startup event",
@@ -193,6 +200,7 @@ impl PageKind {
             PageKind::Industry | PageKind::Industries => "IND",
             PageKind::Character | PageKind::Characters => "CHR",
             PageKind::Country | PageKind::Countries => "CTY",
+            PageKind::Province => "PRV",
             PageKind::Zone | PageKind::Zones => "ZON",
             PageKind::Exchange | PageKind::Exchanges => "EXC",
             PageKind::Event | PageKind::Events => "EVT",
@@ -229,6 +237,7 @@ impl PageRef {
             PageRef::Industry(_) => PageKind::Industry,
             PageRef::Character(_) => PageKind::Character,
             PageRef::Country(_) => PageKind::Country,
+            PageRef::Province(_) => PageKind::Province,
             PageRef::Zone(_) => PageKind::Zone,
             PageRef::Exchange(_) => PageKind::Exchange,
             PageRef::Event(_) => PageKind::Event,
@@ -255,6 +264,7 @@ impl PageRef {
             PageRef::Industry(id) => format!("{k}/{}", id.0),
             PageRef::Character(id) => format!("{k}/{}", id.0),
             PageRef::Country(id) => format!("{k}/{}", id.0),
+            PageRef::Province(id) => format!("{k}/{}", id.0),
             PageRef::Zone(id) | PageRef::Exchange(id) => format!("{k}/{}", id.0),
             PageRef::Event(id) => format!("{k}/{}", id.0),
             PageRef::Recap(q) => format!("{k}/{}-Q{}", q.year, q.q),
@@ -274,6 +284,7 @@ impl PageRef {
             PageKind::Industry => PageRef::Industry(IndustryId(num(id)?)),
             PageKind::Character => PageRef::Character(CharacterId(num(id)?)),
             PageKind::Country => PageRef::Country(CountryId(num(id)?)),
+            PageKind::Province => PageRef::Province(ProvinceId(num(id)?)),
             PageKind::Zone => PageRef::Zone(ZoneId(num(id)?)),
             PageKind::Exchange => PageRef::Exchange(ZoneId(num(id)?)),
             PageKind::Event => PageRef::Event(StartupEventId(num(id)?)),
@@ -900,6 +911,7 @@ mod tests {
             PageRef::Industry(IndustryId(3)),
             PageRef::Character(CharacterId(295)),
             PageRef::Country(CountryId(40)),
+            PageRef::Province(ProvinceId(3254)),
             PageRef::Zone(ZoneId(2)),
             PageRef::Exchange(ZoneId(25)),
             PageRef::Event(StartupEventId(0)),
@@ -923,6 +935,7 @@ mod tests {
         }
         assert_eq!(PageRef::Company(CompanyId(12)).key(), "company/12");
         assert_eq!(PageRef::Headline(HeadlineId(7)).key(), "headline/7");
+        assert_eq!(PageRef::Province(ProvinceId(9)).key(), "province/9");
         // The old "nth headline of its day" key (D451) no longer names a page (D544).
         assert_eq!(PageRef::from_key("headline/2020-03-02/0"), None);
         assert_eq!(

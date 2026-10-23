@@ -9,6 +9,7 @@ pub mod births;
 pub mod economy;
 pub mod finance;
 pub mod hash;
+pub mod map;
 pub mod market;
 pub mod news;
 pub mod ops;
@@ -156,6 +157,8 @@ pub struct Sim {
     scheduler: Scheduler,
     controls: Controls,
     views: SimViews,
+    /// The static map data the map views read (M8): built from `data`, never saved or hashed.
+    map: Arc<map::MapData>,
     trace: Option<Vec<Slot>>,
 }
 
@@ -173,7 +176,8 @@ impl Sim {
         let world = start_world(&data, &mut rng)?;
         let scheduler = scheduler();
         let controls = Controls::default();
-        let views = SimViews::build(&world, &controls, seed);
+        let map = Arc::new(map::MapData::build(&data, &world)?);
+        let views = SimViews::build(&world, &controls, seed, &map);
         Ok(Sim {
             data,
             world,
@@ -181,6 +185,7 @@ impl Sim {
             scheduler,
             controls,
             views,
+            map,
             trace: None,
         })
     }
@@ -233,6 +238,7 @@ impl Sim {
             &self.world,
             &self.controls,
             self.rng.seed(),
+            &self.map,
             match &mut observer {
                 Some(o) => Some(&mut **o),
                 None => None,
@@ -268,7 +274,7 @@ impl Sim {
                 // The old views carry their refresh count over, so versions keep climbing.
                 let mut views = std::mem::replace(self, fresh).views;
                 self.controls.alerts = keep.alerts;
-                views.rebuild(&self.world, &self.controls, self.rng.seed());
+                views.rebuild(&self.world, &self.controls, self.rng.seed(), &self.map);
                 self.views = views;
             }
             Control::SetSpeed(0) | Control::Pause => {
@@ -309,7 +315,7 @@ impl Sim {
             }
         }
         self.views
-            .refresh_after_control(&self.world, &self.controls, self.rng.seed());
+            .refresh_after_control(&self.world, &self.controls, self.rng.seed(), &self.map);
         Ok(notices)
     }
 
@@ -338,7 +344,7 @@ impl Sim {
         self.controls.paused = false;
         self.pause(&mut notices, PauseReason::Loaded);
         self.views
-            .rebuild(&self.world, &self.controls, self.rng.seed());
+            .rebuild(&self.world, &self.controls, self.rng.seed(), &self.map);
         Ok(notices)
     }
 
