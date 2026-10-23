@@ -7,3 +7,5 @@ crates/sim/tests/fixtures/*.csv text eol=lf
 assets/map/**/*.csv text eol=lf
 assets/map/*.csv text eol=lf
 assets/map/*.toml text eol=lf
+# A save written by an older build, loaded by the save tests (D800): bytes, never text.
+*.tc20ffsave binary
