@@ -61,27 +61,28 @@ _Written by `tools/map-pipeline/run.py --region sub-saharan-africa` (pipeline pb
 | ... ZMB | 15 |
 | ... ZWE | 13 |
 | Regions matched | 482 of 482 |
-| Provinces by method: admin1 | 436 |
-| Provinces by method: admin2 | 132 |
+| Provinces by method: admin1 | 438 |
+| Provinces by method: admin2 | 133 |
 | Provinces by method: admin3 | 0 |
-| Provinces by method: voronoi | 40 |
+| Provinces by method: voronoi | 37 |
 | Flagged for review (confidence < 0.6) | 0 |
-| Placed by a builder hint (`hints/sub-saharan-africa.toml`) | 25 |
+| Placed by a builder hint (`hints/sub-saharan-africa.toml`) | 26 |
 | Tiny (under 64 px) | 53 |
 | Given a pixel at their interior point (no pixel centre inside) | 2 |
-| More than one part (islands, exclaves) | 150 |
-| Coastal flag differs from the CSV | 24 |
+| More than one part (islands, exclaves) | 145 |
+| Coastal flag differs from the CSV | 22 |
 | Small for their region (not Metro, under 5% of the region's mean) | 5 |
-| Voronoi-split blocks where one province takes 75% or more | 4 |
-| Places named in a province's name or notes that lie in another province | 1 |
+| Voronoi-split blocks where one province takes 75% or more | 3 |
+| Places named in a province's name or notes that lie in another province | 0 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 6 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 13 |
-| City probe points (fail on a mismatch; D686) | 88 pass, 0 mismatch, 3 listed |
+| City probe points (fail on a mismatch; D686) | 99 pass, 0 mismatch, 4 listed |
 | Metro reach scan rows (listed; D686) | 2 |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 19 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 4 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 3 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
@@ -163,14 +164,15 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | AO-0001 | Luanda Ingombota-Ilha | seeds: point 13.21,-8.79 (hint) (snapped to land); point 13.23,-8.81 (hint); 1 whole admin2 units |
 | AO-0011 | Lobito-Benguela | seeds: unit Benguela (hint); unit Lobito (hint); 4 whole admin2 units |
 | BW-0004 | Orapa-Letlhakane | seeds: point 25.37,-21.31 (hint); point 25.59,-21.42 (hint); point 26.17,-20.58 (hint); 1 whole admin1 units, split: Central |
-| CD-0001 | Kinshasa Gombe-Ngaliema | seeds: point 15.25,-4.36 (hint); point 15.3,-4.3 (hint) (snapped to land); point 15.31,-4.31 (hint); 0 whole admin2 units, split: Kinshasa |
+| CD-0001 | Kinshasa Gombe-Ngaliema | seeds: point 15.25,-4.36 (hint); point 15.28,-4.33 (hint); point 15.3,-4.325 (hint); 0 whole admin2 units, split: Kinshasa |
 | CD-0002 | Kinshasa Limete-Ndjili | seeds: point 15.36,-4.39 (hint); point 15.4,-4.38 (hint); point 15.5,-4.4 (hint); point 15.57,-4.06 (hint); 0 whole admin2 units, split: Kinshasa |
-| CD-0003 | Kinshasa South-Mont Ngafula | seeds: point 15.29,-4.5 (hint); point 15.31,-4.4 (hint); point 15.32,-4.42 (hint); 0 whole admin2 units, split: Kinshasa; dropped (over SNAP_MAX_DEG off the region): point 15.4,-4.8 (hint) |
+| CD-0003 | Kinshasa South-Mont Ngafula | seeds: point 15.29,-4.5 (hint); point 15.31,-4.4 (hint); point 15.32,-4.42 (hint); point 15.36,-4.64 (hint); 0 whole admin2 units, split: Kinshasa |
 | CI-0001 | Abidjan Plateau-Cocody | seeds: point -3.98,5.36 (hint); point -4.02,5.32 (hint); 0 whole admin2 units, split: District Autonome D'Abidjan |
 | CI-0002 | Abidjan Port-Yopougon | seeds: point -3.93,5.25 (hint); point -4.03,5.29 (hint); point -4.08,5.34 (hint); 0 whole admin2 units, split: District Autonome D'Abidjan |
 | ET-0006 | Semera-Awash | seeds: point 40.17,8.98 (hint); point 40.9,11.0 (hint); point 40.97,11.73 (hint); point 41.01,11.79 (hint); 0 whole parts, 1 split |
 | ET-0007 | Danakil-Afdera | seeds: point 40.3,14.24 (hint); point 40.67,13.6 (hint); point 40.9,13.25 (hint); 0 whole parts, 1 split |
 | ET-0010 | Dessie-Kombolcha | seeds: point 39.6,11.83 (hint); point 39.63,11.13 (hint); point 39.74,11.08 (hint); 0 whole parts, 1 split |
+| ET-0013 | Finfinne Surroundings | seeds: point 38.62,8.92 (hint); point 38.65,9.08 (hint); point 38.73,9.18 (hint); point 38.9,8.8 (hint); point 38.9,9.07 (hint); point 38.98,8.75 (hint); 0 whole parts, 1 split |
 | ET-0018 | Guji-Borana | seeds: point 38.08,4.88 (hint); point 38.88,5.75 (hint); point 38.98,5.88 (hint); point 39.05,3.53 (hint); 0 whole parts, 1 split |
 | ET-0019 | Chiro-Hararghe | seeds: point 40.52,8.82 (hint); point 40.87,9.08 (hint); point 41.43,9.1 (hint); point 42.33,9.22 (hint); 0 whole parts, 1 split |
 | ET-0024 | Hawassa-Sidama | seeds: point 38.29,6.75 (hint); point 38.31,6.41 (hint); point 38.48,7.05 (hint); 0 whole parts, 1 split |
@@ -180,7 +182,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | SD-0002 | Omdurman | seeds: unit Karrari (hint); unit Um Bada (hint); unit Um Durman (hint); 3 whole admin2 units |
 | SD-0003 | Wad Madani | seeds: point 33.42,13.95 (hint); point 33.52,14.4 (hint); 4 whole admin2 units |
 | SD-0004 | Managil | seeds: point 32.95,14.7 (hint); point 32.99,14.25 (hint); 4 whole admin2 units |
-| SL-0002 | Waterloo-Western Rural | seeds: point -13.07,8.34 (hint); point -13.2,8.18 (hint) (snapped to land); 1 whole admin2 units; dropped (over SNAP_MAX_DEG off the region): point -13.24,8.27 (hint) |
+| SL-0002 | Waterloo-Western Rural | seeds: point -13.07,8.34 (hint); point -13.17,8.29 (hint); point -13.2,8.18 (hint) (snapped to land); 1 whole admin2 units |
 | UG-0008 | Moroto-Karamoja | seeds: point 33.95,3.53 (hint); point 34.1,3.0 (hint); point 34.25,2.1 (hint); point 34.65,2.53 (hint); 8 whole admin1 units |
 | ZA-0001 | Johannesburg Central-Sandton | seeds: point 28.0,-26.09 (hint); point 28.05,-26.2 (hint); point 28.06,-26.11 (hint); point 28.13,-25.99 (hint); 0 whole admin2 units, split: City of Johannesburg |
 | ZA-0002 | Soweto-West Rand | seeds: point 27.86,-26.25 (hint); point 27.87,-26.16 (hint); point 27.9,-26.24 (hint); unit West Rand (hint); 1 whole admin2 units, split: City of Johannesburg |
@@ -218,14 +220,13 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | SC-0001 | Seychelles | 17 | 7 | 5357.5, 2714.5 |
 | ZW-0002 | Bulawayo | 18 | 1 | 4744.5, 3073.5 |
 | MU-0002 | Ebene-Curepipe | 19 | 1 | 5405.5, 3077.5 |
-| CD-0003 | Kinshasa South-Mont Ngafula | 21 | 1 | 4444.5, 2712.5 |
 | ET-0001 | Addis Ababa | 22 | 1 | 4978.5, 2404.5 |
 | NG-0001 | Lagos Island-Ikoyi-Lekki | 23 | 3 | 4177.5, 2461.5 |
 | SL-0002 | Waterloo-Western Rural | 24 | 1 | 3797.5, 2420.5 |
 | SN-0001 | Dakar | 25 | 1 | 3703.5, 2270.5 |
-| CI-0001 | Abidjan Plateau-Cocody | 27 | 1 | 4006.5, 2485.5 |
 | KM-0002 | Mutsamudu-Fomboni | 28 | 2 | 5107.5, 2888.5 |
 | KE-0001 | Nairobi | 29 | 1 | 4934.5, 2639.5 |
+| CI-0001 | Abidjan Plateau-Cocody | 30 | 1 | 4006.5, 2486.5 |
 | NE-0001 | Niamey | 30 | 1 | 4144.5, 2300.5 |
 | MU-0003 | Grand Baie-Flacq | 31 | 1 | 5407.5, 3073.5 |
 | TZ-0002 | Dar es Salaam Temeke-Port | 31 | 1 | 4994.5, 2769.5 |
@@ -235,15 +236,16 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | NG-0003 | Apapa-Badagry | 39 | 2 | 4163.5, 2462.5 |
 | AO-0002 | Luanda Viana-Cacuaco | 40 | 2 | 4403.5, 2809.5 |
 | TZ-0023 | Pemba | 41 | 2 | 5000.5, 2724.5 |
-| ZA-0001 | Johannesburg Central-Sandton | 41 | 1 | 4733.5, 3215.5 |
 | ET-0002 | Dire Dawa | 42 | 1 | 5049.5, 2390.5 |
 | ZW-0001 | Harare | 42 | 1 | 4802.5, 3020.5 |
 | KM-0001 | Moroni | 45 | 1 | 5081.5, 2877.5 |
 | MU-0004 | Mahebourg-Rodrigues | 45 | 4 | 5407.5, 3080.5 |
 | ST-0001 | Sao Tome and Principe | 46 | 2 | 4246.5, 2603.5 |
+| ZA-0001 | Johannesburg Central-Sandton | 46 | 1 | 4733.5, 3215.5 |
 | BI-0001 | Bujumbura | 52 | 1 | 4766.5, 2688.5 |
 | CM-0003 | Douala | 56 | 1 | 4317.5, 2518.5 |
-| CI-0002 | Abidjan Port-Yopougon | 61 | 2 | 4000.5, 2485.5 |
+| CI-0002 | Abidjan Port-Yopougon | 58 | 2 | 4000.5, 2485.5 |
+| CD-0003 | Kinshasa South-Mont Ngafula | 63 | 2 | 4455.5, 2721.5 |
 | ER-0001 | Asmara | 63 | 1 | 4982.5, 2258.5 |
 
 ## Anchor cities
@@ -254,7 +256,6 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 |---|---|---|---|---|
 | city on the edge | TD-0005 | Moundou | TD-0005 | TD-0004 |
 | city on the edge | SD-0002 | Omdurman | SD-0002 | SD-0001 |
-| city on the edge | ZA-0001 | Johannesburg | ZA-0001 | ZA-0004 |
 | city on the edge | NA-0011 | Katima Mulilo | NA-0011 | ZM-0015 |
 
 No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
@@ -277,11 +278,13 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Epe (3.98, 6.58) | ? | NG-0004 | listed |
 | Galkayo (47.43, 6.77) | ? | SO-0008 | listed |
 | Maluku (15.57, -4.06) | ? | CD-0002 | listed |
+| Orange Farm (27.86, -26.48) | ? | ZA-0002 | listed |
 | Abidjan (-4.02, 5.33) | CI | CI-0001 | on it |
 | Abyei (28.44, 9.6) | SD-0017 | SD-0017 | on it |
 | Accra (-0.19, 5.56) | GH | GH-0001 | nearest across water |
 | Addis Ababa (38.75, 9.03) | ET | ET-0001 | on it |
 | Ajah (3.57, 6.47) | NG-0001 | NG-0001 | on it |
+| Alexandra (28.1, -26.1) | ZA-0001 | ZA-0001 | on it |
 | Alimosho (3.26, 6.61) | NG-0004 | NG-0004 | on it |
 | Apapa (3.36, 6.45) | NG-0003 | NG-0003 | on it |
 | Badagry (2.88, 6.42) | NG-0003 | NG-0003 | on it |
@@ -290,6 +293,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Boende (20.88, -0.28) | CD-0009 | CD-0009 | on it |
 | Bole (-2.48, 9.03) | GH-0014 | GH-0014 | on it |
 | Borama (43.18, 9.94) | SO-0011 | SO-0011 | on it |
+| Braamfontein (28.03, -26.19) | ZA-0001 | ZA-0001 | on it |
 | Bumba (22.46, 2.19) | CD-0010 | CD-0010 | on it |
 | Bunia (30.25, 1.56) | CD-0016 | CD-0016 | on it |
 | Burao (45.53, 9.52) | SO-0012 | SO-0012 | on it |
@@ -300,6 +304,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Damongo (-1.82, 9.08) | GH-0014 | GH-0014 | on it |
 | Dar es Salaam (39.28, -6.8) | TZ | TZ-0001 | on it |
 | Djibouti (43.15, 11.59) | DJ | DJ-0001 | nearest across water |
+| Eldoret (35.27, 0.52) | KE | KE-0011 | on it |
 | Entebbe (32.46, 0.06) | UG-0002 | UG-0002 | on it |
 | Erigavo (47.37, 10.62) | SO-0013 | SO-0013 | on it |
 | Gbadolite (21.0, 4.28) | CD-0012 | CD-0012 | on it |
@@ -328,6 +333,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Kisangani (25.19, 0.52) | CD-0013 | CD-0013 | on it |
 | Kolwezi (25.47, -10.71) | CD-0023 | CD-0023 | on it |
 | Krugersdorp (27.77, -26.1) | ZA-0002 | ZA-0002 | on it |
+| Kumasi (-1.62, 6.69) | GH-0003 | GH-0003 | on it |
 | Lagos Island (3.39, 6.455) | NG-0001 | NG-0003 | within a pixel |
 | Las Anod (47.36, 8.48) | SO-0013 | SO-0013 | on it |
 | Lekki (3.55, 6.44) | NG-0001 | NG-0001 | nearest across water |
@@ -341,9 +347,13 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Masaka (31.73, -0.33) | UG-0003 | UG-0003 | on it |
 | Mbandaka (18.26, 0.05) | CD-0008 | CD-0008 | on it |
 | Mbuji-Mayi (23.6, -6.13) | CD-0029 | CD-0029 | on it |
+| Melville (28.0, -26.17) | ZA-0001 | ZA-0001 | on it |
+| Midrand (28.13, -25.99) | ZA-0001 | ZA-0001 | on it |
+| Mombasa (39.67, -4.04) | KE | KE-0004 | nearest across water |
 | Mont Ngafula (15.29, -4.45) | CD-0003 | CD-0003 | on it |
 | Moroni (43.26, -11.7) | KM | KM-0001 | on it |
 | Mwene-Ditu (23.45, -7.0) | CD-0025 | CD-0025 | on it |
+| NE Johannesburg point (28.028, -26.168) | ZA-0001 | ZA-0001 | on it |
 | Nairobi (36.82, -1.29) | KE | KE-0001 | on it |
 | Nalerigu (-0.37, 10.53) | GH-0015 | GH-0015 | on it |
 | Ndjili (15.44, -4.39) | CD-0002 | CD-0002 | on it |
@@ -351,6 +361,8 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Port Louis (57.5, -20.16) | MU | MU-0001 | on it |
 | Praia (-23.51, 14.92) | CV | CV-0001 | on it |
 | Pretoria (28.19, -25.745) | ZA-0004 | ZA-0004 | on it |
+| Randburg (27.99, -26.09) | ZA-0001 | ZA-0001 | on it |
+| Rosebank (28.04, -26.146) | ZA-0001 | ZA-0001 | on it |
 | Sandton (28.05, -26.107) | ZA-0001 | ZA-0001 | on it |
 | Sao Tome (6.73, 0.34) | ST | ST-0001 | nearest across water |
 | Sefwi Wiawso (-2.49, 6.21) | GH-0005 | GH-0005 | on it |
@@ -361,6 +373,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Takoradi (-1.76, 4.9) | GH-0004 | GH-0004 | on it |
 | Tamale (-0.84, 9.4) | GH-0013 | GH-0013 | on it |
 | Techiman (-1.94, 7.59) | GH-0011 | GH-0011 | on it |
+| Tema (0.0, 5.67) | GH-0002 | GH-0002 | on it |
 | Tshikapa (20.8, -6.42) | CD-0027 | CD-0027 | on it |
 | Victoria Island (3.42, 6.43) | NG-0001 | NG-0001 | nearest across water |
 | Walewale (-0.8, 10.35) | GH-0015 | GH-0015 | on it |
@@ -372,8 +385,34 @@ Metro provinces whose centroid is over 80 km from their Metro's city, that are o
 
 | Check | Province or region | Detail |
 |---|---|---|
-| large for its Metro | CD-0002 Kinshasa Limete-Ndjili | 436 px, the Metro's median is 21 px (Metro Kinshasa) |
+| large for its Metro | CD-0002 Kinshasa Limete-Ndjili | 394 px, the Metro's median is 63 px (Metro Kinshasa) |
 | Metro share of a region | ZAF: Gauteng | Metro provinces hold 77% of 911 px beside 1 rural |
+
+## Land exclaves
+
+Parts of 5 px or more that are not a province's largest part and touch no pixel outside every province (islands are not listed). Each is explained by a place its composite name names lying in it, by one of the province's own seeds (a hint point, or a place its notes name) lying in it, by a neck under a pixel wide that joins it to the rest in the shapes, or by a reason in `[review.exclave_ok]`; an unexplained one fails the step (D691).
+
+| Province | Name | Pixels | At | Why |
+|---|---|---|---|---|
+| BI-0004 | Muyinga-Rutana | 13 | 30.45, -2.45 | a neck under a pixel wide joins it to the rest in the shapes |
+| CD-0003 | Kinshasa South-Mont Ngafula | 21 | 15.31, -4.51 | its own seed point 15.31,-4.4 (hint) lies in it |
+| CM-0002 | Mbalmayo-Nanga Eboko | 196 | 11.5, 3.46 | composite name: Mbalmayo lies in it |
+| ET-0022 | Assosa-GERD | 6 | 36.44, 9.46 | Benishangul-Gumuz is in parts (the Kamashi zone lies apart; Natural Earth's unit has four) |
+| ET-0022 | Assosa-GERD | 16 | 36.11, 8.92 | Benishangul-Gumuz is in parts (the Kamashi zone lies apart; Natural Earth's unit has four) |
+| GH-0006 | Cape Coast-Kasoa | 14 | -2.06, 6.16 | a neck under a pixel wide joins it to the rest in the shapes |
+| NE-0002 | Agadez | 12 | 11.27, 17.17 | a neck under a pixel wide joins it to the rest in the shapes |
+| NG-0004 | Ikorodu-Alimosho | 10 | 3.27, 6.59 | its own seed unit Alimosho lies in it |
+| SD-0015 | Kadugli-Nuba | 5 | 29.89, 10.23 | a neck under a pixel wide joins it to the rest in the shapes |
+| SD-0015 | Kadugli-Nuba | 14 | 29.59, 10.01 | a neck under a pixel wide joins it to the rest in the shapes |
+| SD-0016 | Al Fula-Heglig | 18 | 28.43, 9.34 | a corner of West Kordofan cut off by the Abyei builder box (SD-0017) |
+| SD-0019 | Jebel Amer-Kebkabiya | 30 | 24.53, 13.28 | geoBoundaries' North Jebel Marra locality, given with Kebkabiya, touches it only through another province |
+| SS-0002 | Yei-Terekeka | 561 | 31.48, 5.57 | its own seed unit Terekeka lies in it |
+| TD-0014 | Goz Beida-Biltine | 1636 | 21.41, 12.14 | the region joins Sila (Goz Beida) and Wadi Fira (Biltine), which Ouaddai separates |
+| UG-0015 | Kasese-Rwenzori | 50 | 30.05, 0.7 | its own seed unit Bundibugyo lies in it |
+| ZA-0013 | Newcastle-Northern KZN | 9 | 31.97, -27.13 | a neck under a pixel wide joins it to the rest in the shapes |
+| ZA-0017 | Mthatha-Transkei | 7 | 28.13, -30.55 | a neck under a pixel wide joins it to the rest in the shapes |
+| ZM-0009 | Livingstone-Kariba | 484 | 28.24, -16.37 | its own seed unit Siavonga lies in it |
+| ZW-0004 | Chimanimani-Chipinge | 252 | 32.74, -17.96 | its own seed unit Nyanga lies in it |
 
 ## Known for review
 
@@ -611,18 +650,13 @@ Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share
 
 | Region | Block | Shares |
 |---|---|---|
-| COD:Kinshasa | Kinshasa | CD-0002 93%, CD-0003 5%, CD-0001 2% |
-| GIN:Kindia | Dubréka | GN-0005 91%, GN-0004 9% |
+| COD:Kinshasa | Kinshasa | CD-0002 83%, CD-0003 15%, CD-0001 2% |
 | TGO:Plateaux | part-0 | TG-0003 76%, TG-0004 24% |
 | ZAF:Northern Cape | Z F Mgcawu | ZA-0032 82%, ZA-0031 18% |
 
 ## Named places outside their province
 
-A Natural Earth place matched in the name or notes that ended up in another province (usually a neighbour that names the same city more directly, as Long Beach-Harbor's notes name Los Angeles).
-
-| Province | Name | Place | Lies in |
-|---|---|---|---|
-| MW-0002 | Dedza-Ntcheu | Lilongwe | MW-0001 |
+None.
 
 ## Region nesting
 
@@ -636,13 +670,11 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 |---|---|---|---|---|
 | BJ-0001 | Cotonou | 2 | N | Y |
 | CG-0002 | Pointe-Noire | 3 | N | Y |
-| CI-0001 | Abidjan Plateau-Cocody | 2 | N | Y |
 | CI-0007 | Gagnoa-Divo | 6 | Y | N |
 | CM-0006 | Kumba-Mamfe | 47 | Y | N |
-| GH-0005 | Sefwi Wiawso-Awaso | 6 | Y | N |
 | GM-0003 | Farafenni-Mansakonko | 53 | Y | N |
 | GN-0001 | Conakry | 3 | N | Y |
-| GN-0004 | Kindia-Debele | 42 | Y | N |
+| GN-0004 | Kindia-Debele | 27 | Y | N |
 | GW-0003 | Bafata-Gabu | 5 | Y | N |
 | MR-0003 | Akjoujt-Tasiast | 23 | Y | N |
 | MU-0001 | Port Louis | 1 | N | Y |
@@ -663,7 +695,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-KE-0003 (25), NE-0002 (20), SD-0014 (18), GW-0004 (11), SC-0001 (7), UG-0002 (7), UG-0003 (7), CV-0002 (6), TZ-0012 (6), ER-0005 (5), ET-0017 (5), GA-0002 (5), KE-0004 (5), KE-0006 (5), MR-0002 (5), AO-0003 (4), AO-0011 (4), CI-0003 (4), CI-0004 (4), CV-0001 (4), ET-0022 (4), GH-0011 (4), MG-0008 (4), MG-0009 (4), ML-0005 (4), MU-0004 (4), TG-0004 (4), TZ-0015 (4), ZA-0009 (4), ZA-0018 (4), ZA-0028 (4), BI-0004 (3), ET-0016 (3), GH-0006 (3), GN-0004 (3), KE-0002 (3), KE-0018 (3), MG-0006 (3), MZ-0004 (3), NE-0003 (3), NE-0009 (3), NG-0001 (3), NG-0004 (3), NG-0014 (3), SD-0011 (3), SD-0023 (3), SS-0002 (3), TZ-0003 (3), UG-0006 (3), ZA-0031 (3), ZM-0009 (3), ZM-0010 (3), AO-0002 (2), AO-0020 (2), BF-0010 (2), BJ-0004 (2), BW-0006 (2), BW-0007 (2), CD-0016 (2), CD-0017 (2), CD-0028 (2), CF-0003 (2), CF-0004 (2), CF-0009 (2), CG-0003 (2), CI-0002 (2), CI-0007 (2), CI-0008 (2), CI-0013 (2), CM-0002 (2), CM-0004 (2), CM-0005 (2), CM-0006 (2), CM-0009 (2), ET-0013 (2), ET-0020 (2), ET-0024 (2), ET-0027 (2), GA-0003 (2), GH-0005 (2), GH-0015 (2), GN-0002 (2), GN-0003 (2), GN-0007 (2), GN-0008 (2), GN-0012 (2), GQ-0002 (2), KE-0007 (2), KE-0010 (2), KE-0014 (2), KE-0021 (2), KM-0002 (2), LR-0002 (2), ML-0003 (2), ML-0006 (2), ML-0007 (2), MR-0008 (2), MW-0002 (2), MW-0008 (2), MW-0009 (2), MZ-0002 (2), NA-0008 (2), NE-0016 (2), NE-0017 (2), NG-0003 (2), NG-0027 (2), SD-0015 (2), SD-0016 (2), SD-0019 (2), SL-0001 (2), SL-0004 (2), SL-0005 (2), SN-0006 (2), SN-0011 (2), SO-0001 (2), SO-0007 (2), SO-0009 (2), ST-0001 (2), TD-0009 (2), TD-0011 (2), TD-0014 (2), TG-0002 (2), TG-0007 (2), TZ-0007 (2), TZ-0008 (2), TZ-0013 (2), TZ-0018 (2), TZ-0021 (2), TZ-0022 (2), TZ-0023 (2), UG-0004 (2), UG-0005 (2), UG-0008 (2), UG-0015 (2), UG-0016 (2), ZA-0002 (2), ZA-0004 (2), ZA-0006 (2), ZA-0008 (2), ZA-0013 (2), ZA-0016 (2), ZA-0017 (2), ZA-0022 (2), ZA-0024 (2), ZA-0029 (2), ZA-0032 (2), ZM-0003 (2), ZM-0012 (2), ZW-0004 (2), ZW-0012 (2)
+KE-0003 (25), NE-0002 (20), SD-0014 (18), GW-0004 (11), SC-0001 (7), UG-0002 (7), UG-0003 (7), CV-0002 (6), TZ-0012 (6), ER-0005 (5), GA-0002 (5), KE-0004 (5), KE-0006 (5), MR-0002 (5), AO-0003 (4), AO-0011 (4), CI-0003 (4), CI-0004 (4), CV-0001 (4), ET-0022 (4), MG-0008 (4), MG-0009 (4), ML-0005 (4), MU-0004 (4), SD-0015 (4), TG-0004 (4), TZ-0015 (4), ZA-0009 (4), ZA-0018 (4), ZA-0028 (4), BI-0004 (3), GH-0006 (3), KE-0002 (3), KE-0018 (3), MG-0006 (3), MZ-0004 (3), NE-0003 (3), NE-0009 (3), NG-0001 (3), NG-0004 (3), NG-0014 (3), SD-0011 (3), SD-0023 (3), SS-0002 (3), TZ-0003 (3), UG-0006 (3), ZM-0009 (3), ZM-0010 (3), AO-0002 (2), AO-0020 (2), BF-0010 (2), BJ-0004 (2), BW-0006 (2), BW-0007 (2), CD-0002 (2), CD-0003 (2), CD-0016 (2), CD-0017 (2), CF-0003 (2), CF-0004 (2), CF-0009 (2), CG-0003 (2), CI-0002 (2), CI-0007 (2), CI-0008 (2), CI-0013 (2), CM-0002 (2), CM-0004 (2), CM-0005 (2), CM-0006 (2), CM-0009 (2), ET-0020 (2), ET-0027 (2), GA-0003 (2), GH-0004 (2), GH-0011 (2), GH-0015 (2), GN-0002 (2), GN-0003 (2), GN-0007 (2), GN-0008 (2), GN-0012 (2), GQ-0002 (2), KE-0007 (2), KE-0010 (2), KE-0014 (2), KE-0021 (2), KM-0002 (2), LR-0002 (2), ML-0003 (2), ML-0006 (2), ML-0007 (2), MR-0008 (2), MW-0002 (2), MW-0008 (2), MW-0009 (2), MZ-0002 (2), NA-0008 (2), NE-0016 (2), NE-0017 (2), NG-0003 (2), NG-0027 (2), SD-0016 (2), SD-0019 (2), SL-0001 (2), SL-0004 (2), SL-0005 (2), SN-0006 (2), SN-0011 (2), SO-0001 (2), SO-0007 (2), SO-0009 (2), ST-0001 (2), TD-0009 (2), TD-0011 (2), TD-0014 (2), TG-0002 (2), TG-0007 (2), TZ-0007 (2), TZ-0008 (2), TZ-0013 (2), TZ-0018 (2), TZ-0021 (2), TZ-0022 (2), TZ-0023 (2), UG-0004 (2), UG-0005 (2), UG-0008 (2), UG-0015 (2), UG-0016 (2), ZA-0002 (2), ZA-0006 (2), ZA-0008 (2), ZA-0013 (2), ZA-0016 (2), ZA-0017 (2), ZA-0022 (2), ZA-0024 (2), ZA-0029 (2), ZA-0031 (2), ZA-0032 (2), ZM-0003 (2), ZM-0012 (2), ZW-0004 (2), ZW-0012 (2)
 
 ## Visual check
 

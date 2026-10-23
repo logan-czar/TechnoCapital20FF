@@ -243,12 +243,20 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
     with (index_png.parent / "province-centroids.csv").open(encoding="utf-8", newline="") as f:
         cent = {r["province_id"]: r for r in csv.DictReader(f)}
 
-    def on_edge(pid, lon, lat):
-        """The province owns a pixel touching the place's pixel (a city on its province's edge)."""
+    def on_edge(pid, lon, lat, got=None):
+        """The province owns a pixel touching the place's pixel (a city on its province's edge),
+        and the province holding the place's pixel holds it in its main part: a pocket of
+        another province round the city (Pretoria-Tshwane's 5 px of central Johannesburg,
+        PR #39 review) is a miss, not an edge."""
         x, y = frame.pixel(lon, lat)
         v = ids.index(pid) + 1 if pid in ids else -1
-        return any(0 <= y + dy < frame.h and int(idx[y + dy, (x + dx) % frame.w]) == v
-                   for dy in (-EDGE_PX, 0, EDGE_PX) for dx in (-EDGE_PX, 0, EDGE_PX))
+        touch = any(0 <= y + dy < frame.h and int(idx[y + dy, (x + dx) % frame.w]) == v
+                    for dy in (-EDGE_PX, 0, EDGE_PX) for dx in (-EDGE_PX, 0, EDGE_PX))
+        if not touch or got not in ids:
+            return touch
+        # a part of the other province joined to its main part only across land is a pocket; one
+        # across water (a bay shore) is not
+        return city_part(idx, ids.index(got) + 1, x % frame.w, y) != "land"
 
     misses = []
     for r in rows:
@@ -259,7 +267,7 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
                 got = owner(far[1], far[2])
                 if got != r["id"]:
                     why = anchor_ok.get(r["id"])
-                    if not why and on_edge(r["id"], far[1], far[2]):
+                    if not why and on_edge(r["id"], far[1], far[2], got):
                         kind = "city on the edge"
                     else:
                         kind = "own name elsewhere (allowed)" if why else "own name elsewhere"
@@ -271,7 +279,7 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
             if got != r["id"]:
                 # a city on its province's edge (Omdurman at the Nile confluence) whose pixel the
                 # neighbour took is listed, not a miss, when the province owns a touching pixel
-                near = on_edge(r["id"], hit[1], hit[2])
+                near = on_edge(r["id"], hit[1], hit[2], got)
                 misses.append({"kind": "city on the edge" if near else "own name", "province_id": r["id"],
                                "place": hit[3], "expected": r["id"], "got": got})
             elif r["metro"] and r["id"] in cent:

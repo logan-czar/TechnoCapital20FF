@@ -65,9 +65,13 @@ MIN_NAME_LEN = 4
 # A seed outside every block snaps to the nearest block only within this many degrees (about
 # 5 km); a further one is another region's city and is dropped, and the QA report lists it (D688).
 SNAP_MAX_DEG = 0.05
-# A Metro province's land stays within this many degrees (about 40 km) of its own seeds when its
-# region also has rural provinces: an unclaimed block whose edge is further off goes to a rural province, and
-# so does the far part of a Metro province's Voronoi cell in a shared block (D688, extending D612).
+# Blocks this close (degrees, about 300 m: the simplified lines' seams) touch, for the gap fill
+# that gives an unclaimed block only to a province whose land touches it (D691).
+TOUCH_DEG = 0.003
+# A Metro province's land stays within this many degrees (about 44 km north-south; east-west
+# scaled by latitude) of its own seeds when its region also has rural provinces: an unclaimed
+# block whose core (representative point) is further goes to a rural province (D690), and so
+# does the far part of a Metro province's Voronoi cell in a shared block (D688, extending D612).
 METRO_CAP_DEG = 0.4
 # Building blocks are simplified to this tolerance (degrees, about 50 m) when loaded (D610).
 BLOCK_SIMPLIFY_DEG = 0.0005
@@ -264,6 +268,38 @@ def _match_parts(name, cand):
     return cover(0)
 
 
+def merge_fragments(cells: dict, pts_by_key: dict) -> dict:
+    """D691: a Voronoi cell clipped to a concave shape can fall apart; a piece holding none of its
+    key's points goes to the cell it shares the longest edge with (a piece touching no other cell,
+    an island, stays)."""
+    out = dict(cells)
+    for key in sorted(cells):
+        g = out[key]
+        parts = sorted(getattr(g, "geoms", [g]), key=lambda q: -q.area)
+        if len(parts) < 2:
+            continue
+        pts = [Point(float(x), float(y)) for x, y in pts_by_key.get(key, [])]
+        mine = [parts[0]]
+        for part in parts[1:]:
+            if any(part.covers(q) for q in pts):
+                mine.append(part)
+                continue
+            ring = part.boundary
+            best, best_len = None, 0.0
+            for other in sorted(out):
+                if other == key or out[other].is_empty or not out[other].intersects(part.buffer(1e-6)):
+                    continue
+                shared = ring.intersection(out[other].boundary.buffer(1e-7)).length
+                if shared > best_len:
+                    best, best_len = other, shared
+            if best is None:
+                mine.append(part)
+            else:
+                out[best] = shapely.make_valid(shapely.union_all([out[best], part]))
+        out[key] = shapely.make_valid(shapely.union_all(mine))
+    return out
+
+
 def _voronoi_cells(geom, pts_by_key: dict[str, list]) -> dict[str, object]:
     """`geom` cut among keys by nearest point, longitude scaled by cos(latitude)."""
     pts, owner = [], []
@@ -338,7 +374,7 @@ def apply_splits(out, hints):
         spec = hints["split"][src]
         if src not in out or out[src].get("geometry") is None:
             continue  # another region file's split
-        cells = _voronoi_cells(out[src]["geometry"], spec)
+        cells = merge_fragments(_voronoi_cells(out[src]["geometry"], spec), spec)
         for key, g in sorted(cells.items()):
             if key not in out:
                 raise SystemExit(f"crosswalk: split of {src} names unknown region {key}")
@@ -794,7 +830,12 @@ def _avg_dir(dirs):
     return (0.0, 0.0) if n < 1e-9 else (x / n, y / n)
 
 
-def make_seeds(p: ProvinceRow, gaz: Gazetteer, region_geom, metro_core, hint: dict | None):
+def _begins(name_part: str, fname: str) -> bool:
+    return name_part == fname or name_part.startswith(fname + " ")
+
+
+def make_seeds(p: ProvinceRow, gaz: Gazetteer, region_geom, metro_core, hint: dict | None,
+               members: list | None = None):
     seeds: list[Seed] = []
     notes = []
     if hint:
@@ -835,7 +876,20 @@ def make_seeds(p: ProvinceRow, gaz: Gazetteer, region_geom, metro_core, hint: di
         return _dist2(x, y, metro_core[0], metro_core[1], k) > METRO_NOTES_DEG ** 2
 
     county_notes = any(w in text.contains_any_word(ph) for ph in text.note_phrases(p.notes) for w in _ADMIN_WORDS)
+    # D690 (PR #39 review): a place stays with the province whose name begins with it (Sydney
+    # for Sydney CBD-North Shore, Johannesburg for Johannesburg Central-Sandton) even when that
+    # province is hinted, and a place only the notes name is no seed when another province of
+    # the region names it (Gosford-Central Coast's "Sydney commuter coast")
+    others = [q for q in (members or []) if q.id != p.id]
+    first = text.name_parts(p.name)[1] if len(text.name_parts(p.name)) > 1 else text.fold(p.name)
     for (kind, fname, payload, ph), in_name in hits:
+        owner = next((q.id for q in others if any(_begins(pt, fname) for pt in text.name_parts(q.name)[:2])), None)
+        if owner and not _begins(first, fname) and not _begins(text.fold(p.name), fname):
+            notes.append(f"{kind} {fname} left to {owner} (its name begins with it)")
+            continue
+        if not in_name and any(text.contains_word(pt, fname) for q in others for pt in text.name_parts(q.name)):
+            notes.append(f"notes {kind} {fname} left to the province that names it")
+            continue
         if kind == "block" and not county_notes and gaz.place_in(fname, payload.geometry) is None \
                 and too_far(payload.rx, payload.ry):
             notes.append(f"notes unit {payload.name} ignored (a word, outside the Metro)")
@@ -915,7 +969,8 @@ def dedupe_seeds(provs: list[ProvinceRow]) -> None:
             p.seeds = [Seed(x, y, Q_METRO_DIR, f"shared point moved {vec[0]:+.2f},{vec[1]:+.2f}")]
 
 
-def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids: frozenset = frozenset()):
+def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids: frozenset = frozenset(),
+                  region_geom=None, foreign=None):
     """Return ({province: [unit ids]}, {unit id: [province ids]} for split units).
 
     A block with one province's seeds goes to it, one with several is split among them, an empty
@@ -941,8 +996,14 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids
                     # is another region's city (Tbilisi for Gori-Borjomi) and is dropped (D688)
                     i = min(range(len(blocks)), key=lambda i: (blocks.iloc[i].geometry.distance(pt), i))
                     g = blocks.iloc[i].geometry
-                    if g.distance(pt) > SNAP_MAX_DEG:
+                    # D690: a point on another region's land (Parana across the river from Santa
+                    # Fe) is that region's place, not one to snap onto this region's shore
+                    abroad = (foreign is not None and region_geom is not None
+                              and not region_geom.buffer(0.01).covers(pt) and foreign(pt))
+                    if g.distance(pt) > SNAP_MAX_DEG or abroad:
                         s.home = None
+                        if s.label.endswith("(hint)"):
+                            p.hint_outside = getattr(p, "hint_outside", []) + [s.label]
                         continue
                     near = shapely.ops.nearest_points(g, pt)[0]
                     s.x, s.y = near.x, near.y
@@ -976,26 +1037,79 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids
     for x, y, pid in all_seeds:
         seeds_of[pid].append(Point(x, y))
 
+    # D690 (PR #39 review, replacing D688's seed-to-edge reach): a Metro province reaches an
+    # unclaimed block only when the block's core, its representative point, is within
+    # METRO_CAP_DEG of one of its seeds, east-west distances scaled by latitude (Wuhan's Metro no
+    # longer takes Xiaogan, Honghu and Jiayu; Marin's core is 0.37 from San Francisco)
     def eligible(r):
         if not rural:
             return all_seeds
         near = {pid for pid, g in metro_claim.items() if r.geometry.distance(g) < METRO_TOUCH_DEG
-                and min(r.geometry.distance(q) for q in seeds_of[pid]) <= METRO_CAP_DEG}
+                and min(_dist2(r.rx, r.ry, q.x, q.y, _scale(q.y)) for q in seeds_of[pid]) <= METRO_CAP_DEG ** 2}
         return [t for t in all_seeds if t[2] not in metro_ids or t[2] in near]
 
+    def nearest(r, cands):
+        if by_geometry:
+            return min(cands, key=lambda t: (r.geometry.distance(Point(t[0], t[1])), t[2]))
+        k = _scale(r.ry)
+        return min(cands, key=lambda t: (_dist2(r.rx, r.ry, t[0], t[1], k), t[2]))
+
+    gap_filled = []
     for r in blocks.itertuples():
         owners = claims.get(r.unit_id, set())
         if len(owners) == 1:
             whole[next(iter(owners))].append(r.unit_id)
         elif len(owners) > 1:
             split[r.unit_id] = sorted(owners)
-        elif by_geometry:
-            best = min(eligible(r) or all_seeds, key=lambda t: (r.geometry.distance(Point(t[0], t[1])), t[2]))
-            whole[best[2]].append(r.unit_id)
         else:
-            k = _scale(r.ry)
-            best = min(eligible(r) or all_seeds, key=lambda t: (_dist2(r.rx, r.ry, t[0], t[1], k), t[2]))
-            whole[best[2]].append(r.unit_id)
+            pid = nearest(r, eligible(r) or all_seeds)[2]
+            whole[pid].append(r.unit_id)
+            gap_filled.append(r)
+    # D691 (PR #39 review): a gap-filled block whose province's land does not reach it (western
+    # Maryland past the DC Metro's Frederick, Turtkul past Beruniy) moves to the nearest seed among
+    # the provinces whose land touches it, round by round until the land settles; seeded and split
+    # blocks never move, nor does a block no eligible province touches (an island)
+    if gap_filled:
+        ids = list(blocks.unit_id)
+        tree = blocks.sindex
+        nbrs = {r.unit_id: [ids[i] for i in sorted(tree.query(r.geometry.buffer(TOUCH_DEG), predicate="intersects"))
+                            if ids[i] != r.unit_id] for r in blocks.itertuples()}
+        owner = {u: {pid} for pid, us in whole.items() for u in us}
+        for u, owners in split.items():
+            owner[u] = set(owners)
+        anchored = {u for u in claims}
+        for _ in range(50):
+            moved = False
+            for r in gap_filled:
+                (pid,) = owner[r.unit_id]
+                # the province's land reaches the block: a path of its blocks from an anchored one
+                seen, stack, reach = {r.unit_id}, [r.unit_id], False
+                while stack and not reach:
+                    u = stack.pop()
+                    for v in nbrs[u]:
+                        if v in seen or pid not in owner.get(v, set()):
+                            continue
+                        if v in anchored:
+                            reach = True
+                            break
+                        seen.add(v)
+                        stack.append(v)
+                if reach:
+                    continue
+                touching = set().union(*[owner.get(v, set()) for v in nbrs[r.unit_id]]) - {pid}
+                cands = [t for t in (eligible(r) or all_seeds) if t[2] in touching]
+                if not cands:
+                    continue
+                new = nearest(r, cands)[2]
+                whole[pid].remove(r.unit_id)
+                whole[new].append(r.unit_id)
+                owner[r.unit_id] = {new}
+                moved = True
+            if not moved:
+                break
+        pos = {u: i for i, u in enumerate(ids)}
+        for pid in whole:
+            whole[pid].sort(key=pos.__getitem__)
     # a province left with nothing (its seeds sit outside every block): split the block nearest
     # its best seed with that block's owner
     owned = set(whole) | {pid for v in split.values() for pid in v}
@@ -1130,12 +1244,19 @@ def run(region: config.Region) -> None:
                 print(f"  {country}: {LEVELS[level]} blocks {'usable' if g is not None else 'not used'} ({why})")
         return block_cache[(country, level)]
 
+    land_idx = a1_all.sindex
+
+    def on_land(pt):
+        """Any Natural Earth admin-1 land covers the point."""
+        return any(a1_all.geometry.iloc[i].covers(pt) for i in land_idx.query(pt))
+
     out_dir = config.ASSETS_DIR / "crosswalk"
     out_dir.mkdir(parents=True, exist_ok=True)
     work = config.work_dir(region.slug, sources)
     for old in work.glob("blocks-*.geojson"):
         old.unlink()
     region_rows, province_rows, plan = [], [], {"regions": {}}
+    seeds_out: dict[str, list] = {}
     region_features = []
     hint_provs = hints.get("provinces", {})
 
@@ -1236,13 +1357,15 @@ def run(region: config.Region) -> None:
                 if cands:
                     _, x, y, pop, label = max(cands, key=lambda c: (len(c[0]), c[3]))
                     core = (x, y, label)
-            p.seeds, extra = make_seeds(p, gaz, geom, core, hint_provs.get(p.id))
+            p.seeds, extra = make_seeds(p, gaz, geom, core, hint_provs.get(p.id), members)
             p.extra_notes = extra
         dedupe_seeds(members)
         rplan["level"] = level
         whole, split = assign_blocks(members, b, by_geometry=(level == "voronoi"),
-                                     metro_ids=frozenset(p.id for p in members if p.metro))
+                                     metro_ids=frozenset(p.id for p in members if p.metro),
+                                     region_geom=geom, foreign=on_land)
         for p in members:
+            seeds_out[p.id] = [[round(s.x, 5), round(s.y, 5), s.label] for s in p.seeds]
             sp = {}
             for uid, owners in split.items():
                 if p.id in owners:
@@ -1276,8 +1399,11 @@ def run(region: config.Region) -> None:
                     note += f", split: {', '.join(names.get(u) or u for u in pr['split'])}"
             if getattr(p, "extra_notes", None):
                 note += "; " + "; ".join(p.extra_notes)
-            if getattr(p, "dropped", None):
-                note += "; dropped (over SNAP_MAX_DEG off the region): " + ", ".join(p.dropped)
+            if getattr(p, "hint_outside", None):
+                note += "; HINT SEED OUTSIDE THE REGION: " + ", ".join(p.hint_outside)
+            rest = [d for d in getattr(p, "dropped", []) if d not in getattr(p, "hint_outside", [])]
+            if rest:
+                note += "; dropped (off the region or on another region's land): " + ", ".join(rest)
             province_rows.append(dict(province_id=p.id, name=p.name, country=p.country, region=p.region,
                                       method=method, source_ids=";".join(ids), confidence=round(conf, 2),
                                       provenance=prov_str, note=note))
@@ -1293,6 +1419,7 @@ def run(region: config.Region) -> None:
     (work / "ne-labels.json").write_text(json.dumps(labels, indent=1), encoding="utf-8")
     gpd.GeoDataFrame(region_features, crs="EPSG:4326").to_file(work / "regions.geojson", driver="GeoJSON")
     (work / "plan.json").write_text(json.dumps(plan, indent=1), encoding="utf-8")
+    (work / "seeds.json").write_text(json.dumps(dict(sorted(seeds_out.items())), indent=0), encoding="utf-8")
     flagged = sum(1 for r in province_rows if r["confidence"] < FLAG_BELOW)
     by_method = defaultdict(int)
     for r in province_rows:

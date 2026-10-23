@@ -4,7 +4,7 @@ _Written by `tools/map-pipeline/run.py --region europe` (pipeline pb-1). Source 
 
 ## Result
 
-**Pass.** All 679 provinces of `provinces-europe.csv` have a crosswalk row and pixels (65 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
+**Pass.** All 679 provinces of `provinces-europe.csv` have a crosswalk row and pixels (64 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
 
 ## Coverage
 
@@ -64,25 +64,26 @@ _Written by `tools/map-pipeline/run.py --region europe` (pipeline pb-1). Source 
 | ... VAT | 1 |
 | ... XKX | 4 |
 | Regions matched | 329 of 329 |
-| Provinces by method: admin1 | 487 |
+| Provinces by method: admin1 | 484 |
 | Provinces by method: admin2 | 67 |
 | Provinces by method: admin3 | 0 |
-| Provinces by method: voronoi | 125 |
+| Provinces by method: voronoi | 128 |
 | Flagged for review (confidence < 0.6) | 0 |
-| Placed by a builder hint (`hints/europe.toml`) | 98 |
-| Tiny (under 64 px) | 65 |
+| Placed by a builder hint (`hints/europe.toml`) | 100 |
+| Tiny (under 64 px) | 64 |
 | Given a pixel at their interior point (no pixel centre inside) | 2 |
-| More than one part (islands, exclaves) | 239 |
+| More than one part (islands, exclaves) | 229 |
 | Coastal flag differs from the CSV | 35 |
 | Small for their region (not Metro, under 5% of the region's mean) | 3 |
 | Voronoi-split blocks where one province takes 75% or more | 14 |
-| Places named in a province's name or notes that lie in another province | 8 |
+| Places named in a province's name or notes that lie in another province | 3 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 10 |
 | Admin-1 units left without a province | 1 |
-| Sea links with a province of this file | 58 |
-| City probe points (fail on a mismatch; D686) | 97 pass, 0 mismatch, 8 listed |
-| Metro reach scan rows (listed; D686) | 6 |
+| Sea links with a province of this file | 57 |
+| City probe points (fail on a mismatch; D686) | 136 pass, 0 mismatch, 9 listed |
+| Metro reach scan rows (listed; D686) | 7 |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 26 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 2 |
 
@@ -198,7 +199,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | DE-0033 | Aachen-Rhenish Lignite | seeds: point 6.08,50.78 (hint); point 6.45,51.05 (hint); point 6.48,50.8 (hint); point 6.5,50.91 (hint); 0 whole admin2 units, split: Köln |
 | DE-0034 | Sauerland-Siegen | seeds: point 8.02,50.87 (hint); point 8.07,51.4 (hint); point 8.29,51.35 (hint); 0 whole admin2 units, split: Arnsberg |
 | DE-0036 | Brunswick-Wolfsburg | seeds: point 10.34,52.15 (hint); point 10.43,51.9 (hint); point 10.52,52.27 (hint); point 10.79,52.42 (hint); point 9.93,51.53 (hint); 1 whole admin2 units |
-| DE-0037 | Lower Elbe-Hamburg South | seeds: point 10.41,53.25 (hint); point 8.7,53.87 (hint); point 9.48,53.6 (hint); point 9.98,53.46 (hint) (snapped to land); 1 whole admin2 units |
+| DE-0037 | Lower Elbe-Hamburg South | seeds: point 10.41,53.25 (hint); point 8.7,53.87 (hint); point 9.48,53.6 (hint); point 9.87,53.33 (hint); 1 whole admin2 units |
 | DE-0040 | Holstein-Hamburg North | seeds: point 10.0,53.71 (hint); point 10.24,53.67 (hint); point 10.69,53.87 (hint); point 9.8,53.66 (hint); 0 whole admin2 units, split: Schleswig-Holstein |
 | DE-0043 | Vorpommern-Greifswald | seeds: point 13.26,53.56 (hint); point 13.38,54.1 (hint); point 13.45,54.4 (hint); point 13.64,54.14 (hint); 0 whole admin2 units, split: Mecklenburg-Vorpommern |
 | DE-0047 | Halle-Leuna-Bitterfeld | seeds: point 11.97,51.48 (hint); point 12.03,51.32 (hint); point 12.14,51.05 (hint); point 12.32,51.62 (hint); 0 whole admin2 units, split: Sachsen-Anhalt |
@@ -219,6 +220,8 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | HR-0002 | Zagreb County-Zagorje | seeds: unit Krapinsko-Zagorska (hint); unit Zagrebacka (hint); 2 whole admin1 units |
 | HR-0003 | Varazdin-Medimurje | seeds: unit Koprivničko-Križevačka (hint); unit Medimurska (hint); unit Varaždinska (hint); 3 whole admin1 units |
 | IE-0006 | Irish Midlands | seeds: unit Laoighis (hint); unit Longford (hint); unit Offaly (hint); unit Westmeath (hint); 4 whole admin1 units |
+| IT-0001 | Milan Centre | seeds: point 9.165,45.475 (hint); point 9.18,45.45 (hint); point 9.19,45.465 (hint); point 9.19,45.485 (hint); point 9.21,45.47 (hint); 0 whole admin1 units, split: Milano |
+| IT-0002 | Milan Hinterland | seeds: point 8.92,45.4 (hint); point 8.92,45.6 (hint); point 9.04,45.53 (hint); point 9.1,45.3 (hint); point 9.16,45.38 (hint); point 9.23,45.54 (hint); point 9.27,45.41 (hint); point 9.28,45.45 (hint); point 9.42,45.5 (hint); unit Lodi (hint); 1 whole admin1 units, split: Milano, Pavia |
 | LT-0002 | Vilnius County-East | seeds: point 24.66,54.79 (hint); point 24.95,55.05 (hint); point 25.39,54.31 (hint); point 25.7,54.6 (hint); point 26.1,55.15 (hint); 0 whole parts, 1 split |
 | LT-0008 | Alytus-Marijampole | seeds: unit Alytaus (hint); unit Marijampoles (hint); 2 whole admin1 units |
 | NO-0001 | Oslo Centre | seeds: point 10.7,59.93 (hint); point 10.74,59.91 (hint); 2 whole admin2 units, split: Oslo nor |
@@ -248,7 +251,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | TR-0002 | Levent-Maslak | seeds: point 28.99,41.06 (hint); point 29.01,41.05 (hint); point 29.05,41.17 (hint); 0 whole parts, 1 split |
 | TR-0003 | Western Istanbul | seeds: point 28.25,41.15 (hint); point 28.63,40.98 (hint); point 28.67,41.03 (hint); point 28.73,41.26 (hint); point 28.87,40.98 (hint); 0 whole parts, 1 split |
 | TR-0004 | Kadikoy-Uskudar | seeds: point 29.02,41.02 (hint); point 29.03,40.99 (hint) (snapped to land); point 29.12,40.99 (hint); 0 whole parts, 1 split |
-| TR-0005 | Pendik-Tuzla | seeds: point 29.19,40.89 (hint) (snapped to land); point 29.3,40.87 (hint) (snapped to land); point 29.62,41.17 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 29.31,40.82 (hint) |
+| TR-0005 | Pendik-Tuzla | seeds: point 29.19,40.89 (hint) (snapped to land); point 29.26,40.9 (hint); point 29.62,41.17 (hint); 0 whole parts, 1 split |
 | UA-0009 | Vinnytsia | seeds: unit Vinnytsya (hint); 1 whole admin1 units |
 
 ## Tiny provinces (click targets)
@@ -271,6 +274,7 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | BA-0007 | Brcko | 8 | 1 | 4523.5, 1515.5 |
 | DK-0001 | Copenhagen City | 10 | 2 | 4380.5, 1190.5 |
 | IE-0001 | Dublin City-Docklands | 10 | 1 | 3953.5, 1264.5 |
+| IT-0001 | Milan Centre | 11 | 1 | 4304.5, 1497.5 |
 | LI-0001 | Liechtenstein | 11 | 1 | 4313.5, 1450.5 |
 | GB-0001 | City of London-Westminster | 12 | 1 | 4093.5, 1321.5 |
 | JE-0001 | Jersey | 12 | 1 | 4046.5, 1389.5 |
@@ -290,6 +294,7 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | AT-0002 | Vienna Outer Districts | 27 | 1 | 4470.5, 1417.5 |
 | GB-0003 | West London-Heathrow | 28 | 1 | 4088.5, 1322.5 |
 | AD-0001 | Andorra | 32 | 1 | 4130.5, 1578.5 |
+| NL-0005 | The Hague-Delft | 32 | 1 | 4193.5, 1305.5 |
 | NO-0002 | Oslo East-Groruddalen | 33 | 2 | 4342.5, 1049.5 |
 | CH-0001 | Zurich | 35 | 1 | 4289.5, 1444.5 |
 | DE-0017 | Bremen-Bremerhaven | 35 | 2 | 4294.5, 1271.5 |
@@ -305,20 +310,17 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | DE-0013 | Berlin Mitte-West | 45 | 1 | 4397.5, 1290.5 |
 | FR-0041 | Martinique | 45 | 1 | 2706.5, 2272.5 |
 | PT-0015 | Madeira | 45 | 3 | 3710.5, 1837.5 |
-| DE-0001 | Stuttgart-Boeblingen | 47 | 1 | 4301.5, 1404.5 |
 | NL-0001 | Amsterdam | 47 | 1 | 4208.5, 1295.5 |
-| NL-0005 | The Hague-Delft | 47 | 2 | 4193.5, 1305.5 |
 | BE-0004 | Antwerp Port-Waasland | 48 | 1 | 4191.5, 1330.5 |
 | HR-0001 | Zagreb | 50 | 1 | 4458.5, 1487.5 |
 | UA-0019 | Sevastopol | 54 | 1 | 4861.5, 1523.5 |
 | FI-0016 | Aland Islands | 55 | 12 | 4548.5, 1044.5 |
 | IM-0001 | Isle of Man | 56 | 1 | 3994.5, 1235.5 |
-| NL-0004 | Rotterdam | 57 | 4 | 4200.5, 1308.5 |
 | DK-0002 | Copenhagen Suburbs-Novo | 58 | 2 | 4377.5, 1190.5 |
 | NL-0002 | Haarlem-Schiphol-IJmond | 58 | 1 | 4201.5, 1295.5 |
 | BE-0003 | Antwerp City | 59 | 2 | 4198.5, 1326.5 |
-| IT-0002 | Milan Hinterland | 59 | 1 | 4312.5, 1503.5 |
 | BY-0001 | Minsk | 60 | 1 | 4723.5, 1247.5 |
+| NL-0004 | Rotterdam | 61 | 2 | 4200.5, 1308.5 |
 | NL-0017 | Maastricht-South Limburg | 61 | 1 | 4229.5, 1340.5 |
 | DK-0004 | Bornholm | 62 | 1 | 4433.5, 1208.5 |
 | CH-0003 | Winterthur-Oberland | 63 | 1 | 4295.5, 1439.5 |
@@ -354,30 +356,46 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Kramatorsk (37.56, 48.72) | ? | UA-0016 | listed |
 | Mariupol (37.55, 47.1) | ? | UA-0016 | listed |
 | Reading (not London) (-0.97, 51.455) | ? | GB-0005 | listed |
+| Starnberg (11.34, 48.0) | ? | DE-0008 | listed |
 | Andorra (1.52, 42.51) | AD | AD-0001 | on it |
 | Ankara (32.86, 39.93) | TR | TR-0016 | on it |
 | Athens (23.73, 37.98) | GR | GR-0001 | on it |
+| Augsburg (10.9, 48.37) | DE-0008 | DE-0008 | on it |
 | Bad Toelz (11.56, 47.76) | DE-0009 | DE-0009 | on it |
+| Badalona (2.25, 41.45) | ES-0004 | ES-0004 | on it |
 | Bamberg (10.89, 49.89) | DE-0011 | DE-0011 | on it |
 | Barajas (-3.57, 40.47) | ES-0002 | ES-0002 | on it |
+| Barcelona Placa Catalunya (2.17, 41.387) | ES-0004 | ES-0004 | on it |
 | Bayreuth (11.58, 49.94) | DE-0011 | DE-0011 | on it |
 | Berlin Kreuzberg (13.42, 52.5) | DE-0014,DE-0013 | DE-0014 | on it |
 | Berlin Mitte (13.39, 52.52) | DE-0013 | DE-0013 | on it |
+| Bochum (7.22, 51.48) | DE-0030 | DE-0030 | on it |
+| Boeblingen (9.01, 48.68) | DE-0001 | DE-0001 | on it |
+| Bonn (7.1, 50.73) | DE-0028 | DE-0028 | on it |
 | CDG airport (2.55, 49.01) | FR-0002 | FR-0004 | within a pixel |
 | Camenca (28.7, 48.03) | MD-0006 | MD-0006 | on it |
 | Chisinau (28.86, 47.01) | MD | MD-0001 | on it |
+| Cologne (6.96, 50.94) | DE-0028 | DE-0028 | on it |
+| Como (9.08, 45.81) | IT-0003 | IT-0003 | on it |
 | Cuxhaven (8.7, 53.87) | DE-0037 | DE-0037 | on it |
+| Darmstadt (8.65, 49.87) | DE-0020 | DE-0020 | on it |
 | Disneyland Paris (2.78, 48.87) | FR-0004 | FR-0004 | on it |
 | Donauwoerth (10.78, 48.72) | DE-0008 | DE-0008 | on it |
 | Donetsk (37.8, 48.0) | UA-0021 | UA-0021 | on it |
+| Dortmund (7.47, 51.51) | DE-0030 | DE-0030 | on it |
 | Dubasari (29.17, 47.26) | MD-0006 | MD-0006 | on it |
+| Duesseldorf (6.78, 51.23) | DE-0027 | DE-0027 | on it |
+| Duisburg (6.76, 51.43) | DE-0029 | DE-0029 | on it |
+| El Prat airport (2.08, 41.3) | ES-0005 | ES-0005 | nearest across water |
 | Erlangen (11.0, 49.59) | DE-0010 | DE-0010 | on it |
 | Esenyurt (28.67, 41.03) | TR-0003 | TR-0003 | on it |
+| Essen (7.01, 51.46) | DE-0029 | DE-0029 | on it |
 | Esslingen (9.31, 48.74) | DE-0002 | DE-0002 | on it |
 | Evry (2.44, 48.63) | FR-0003 | FR-0003 | on it |
 | Famagusta (33.94, 35.12) | CY-0005 | CY-0005 | on it |
 | Faroe Torshavn (-6.77, 62.01) | FO | FO-0001 | on it |
 | Fontainebleau (2.7, 48.4) | FR-0004 | FR-0004 | on it |
+| Frankfurt (8.68, 50.11) | DE-0019 | DE-0019 | on it |
 | Frankfurt Oder (14.55, 52.35) | DE-0016 | PL-0027 | within a pixel |
 | Freising airport (11.79, 48.35) | DE-0007 | DE-0007 | on it |
 | Garmisch (11.1, 47.49) | DE-0009 | DE-0009 | on it |
@@ -386,7 +404,12 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Goettingen (9.93, 51.53) | DE-0036 | DE-0036 | on it |
 | Grigoriopol (29.3, 47.15) | MD-0006 | MD-0006 | on it |
 | Guernsey (-2.54, 49.46) | GG | GG-0001 | nearest across water |
+| Hamburg Rathaus (9.99, 53.55) | DE-0018 | DE-0018 | on it |
+| Hanau (8.92, 50.13) | DE-0020 | DE-0020 | on it |
+| Harburg Buchholz (9.87, 53.33) | DE-0037 | DE-0037 | on it |
+| Heilbronn (9.22, 49.14) | DE-0002 | DE-0002 | on it |
 | Horlivka (38.05, 48.3) | UA-0021 | UA-0021 | on it |
+| Ingolstadt (11.42, 48.76) | DE-0007 | DE-0007 | on it |
 | Isle of Man (-4.48, 54.15) | IM | IM-0001 | on it |
 | Istanbul Airport (28.75, 41.26) | TR-0003 | TR-0003 | on it |
 | Istanbul Fatih (28.95, 41.01) | TR-0001 | TR-0001 | on it |
@@ -401,8 +424,12 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Kyrenia (33.32, 35.34) | CY-0005 | CY-0005 | nearest across water |
 | La Defense (2.238, 48.892) | FR-0001 | FR-0001 | on it |
 | Landshut (12.15, 48.54) | DE-0012 | DE-0012 | on it |
+| Legnano (8.92, 45.6) | IT-0002 | IT-0005 | within a pixel |
 | Liechtenstein (9.52, 47.14) | LI | LI-0001 | on it |
 | Limassol (33.04, 34.68) | CY | CY-0002 | on it |
+| Linate (9.28, 45.45) | IT-0002 | IT-0002 | on it |
+| Lisbon Baixa (-9.14, 38.71) | PT-0001 | PT-0001 | nearest across water |
+| Lodi (9.5, 45.31) | IT-0002 | IT-0002 | on it |
 | London Bromley (0.02, 51.4) | GB-0004 | GB-0004 | on it |
 | London Canary Wharf (-0.02, 51.505) | GB-0002 | GB-0002 | on it |
 | London City (-0.09, 51.513) | GB-0001 | GB-0001 | on it |
@@ -412,15 +439,23 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | London Heathrow (-0.454, 51.47) | GB-0003 | GB-0003 | on it |
 | London Stratford (-0.003, 51.54) | GB-0002 | GB-0002 | on it |
 | London Westminster (-0.135, 51.499) | GB-0001 | GB-0001 | on it |
+| Ludwigsburg (9.19, 48.9) | DE-0002 | DE-0002 | on it |
+| Luebeck (10.69, 53.87) | DE-0040 | DE-0040 | on it |
 | Lueneburg (10.41, 53.25) | DE-0037 | DE-0037 | on it |
 | Luhansk (39.3, 48.57) | UA-0022 | UA-0022 | on it |
 | Luxembourg (6.13, 49.61) | LU | LU-0001 | on it |
 | Madrid Sol (-3.7, 40.42) | ES-0001 | ES-0001 | on it |
+| Mainz (8.27, 50.0) | DE-0023 | DE-0023 | on it |
 | Malta Valletta (14.51, 35.9) | MT | MT-0001 | on it |
+| Martorell (1.93, 41.47) | ES-0005 | ES-0005 | on it |
 | Marzahn (13.56, 52.54) | DE-0014 | DE-0014 | on it |
 | Meaux (2.88, 48.96) | FR-0004 | FR-0004 | on it |
 | Milan (9.19, 45.46) | IT | IT-0001 | on it |
+| Milan Duomo (9.19, 45.464) | IT-0001 | IT-0001 | on it |
 | Monaco (7.42, 43.735) | MC | MC-0001 | on it |
+| Monza (9.27, 45.58) | IT-0003 | IT-0003 | on it |
+| Munich Marienplatz (11.575, 48.137) | DE-0006 | DE-0006 | on it |
+| Norderstedt (10.0, 53.7) | DE-0040 | DE-0040 | on it |
 | North Mitrovica (20.87, 42.89) | XK-0004 | XK-0004 | on it |
 | North Nicosia (33.365, 35.21) | CY-0005 | CY-0005 | on it |
 | Orly (2.38, 48.725) | FR-0003 | FR-0003 | on it |
@@ -429,21 +464,27 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Potsdam (13.06, 52.4) | DE-0015 | DE-0015 | on it |
 | Pristina (21.17, 42.66) | XK-0001 | XK-0001 | on it |
 | Provins (3.3, 48.56) | FR-0004 | FR-0004 | on it |
+| Rho (9.04, 45.53) | IT-0002 | IT-0002 | on it |
 | Rome (12.5, 41.89) | IT | IT-0007 | on it |
 | Rybnitsa (29.0, 47.76) | MD-0006 | MD-0006 | on it |
 | Rybnitsa east (29.1, 47.72) | MD-0006 | MD-0006 | on it |
+| Sabadell (2.11, 41.55) | ES-0005 | ES-0005 | on it |
 | Sabiha Gokcen (29.31, 40.9) | TR-0005 | TR-0005 | on it |
 | Saint-Denis (2.36, 48.936) | FR-0002 | FR-0002 | on it |
 | San Marino (12.45, 43.94) | SM | SM-0001 | on it |
 | Schwedt (14.28, 53.06) | DE-0016 | DE-0016 | on it |
 | Seine-et-Marne Melun (2.66, 48.54) | FR-0004 | FR-0004 | on it |
+| Sesto San Giovanni (9.23, 45.53) | IT-0002 | IT-0002 | on it |
 | Sevastopol (33.52, 44.6) | UA-0019 | UA-0019 | on it |
 | Severodonetsk (38.49, 48.95) | UA-0022 | UA-0022 | on it |
 | Sile (29.61, 41.17) | TR-0005 | TR-0005 | on it |
 | Simferopol (34.1, 44.95) | UA-0020 | UA-0020 | on it |
 | Sindelfingen (9.0, 48.71) | DE-0001 | DE-0001 | on it |
+| Sintra (-9.38, 38.8) | PT-0002 | PT-0002 | on it |
 | Slobozia MD (29.7, 46.73) | MD-0006 | MD-0006 | on it |
+| Stade (9.48, 53.6) | DE-0037 | DE-0037 | on it |
 | Stuttgart (9.18, 48.78) | DE-0001 | DE-0001 | on it |
+| Stuttgart Mitte (9.18, 48.775) | DE-0001 | DE-0001 | on it |
 | Tiraspol (29.64, 46.84) | MD-0006 | MD-0006 | on it |
 | Ulm (9.99, 48.4) | DE-0005 | DE-0005 | on it |
 | Uskudar (29.03, 41.025) | TR-0004 | TR-0004 | on it |
@@ -451,6 +492,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Versailles (2.13, 48.8) | FR-0004 | FR-0004 | on it |
 | Warsaw (21.01, 52.23) | PL | PL-0001 | on it |
 | Wittenberge (11.75, 53.0) | DE-0016 | DE-0016 | on it |
+| Wuppertal (7.15, 51.26) | DE-0027 | DE-0027 | on it |
 
 ## Metro reach
 
@@ -458,12 +500,46 @@ Metro provinces whose centroid is over 80 km from their Metro's city, that are o
 
 | Check | Province or region | Detail |
 |---|---|---|
-| large for its Metro | DE-0015 Potsdam-Berlin Ring | 786 px, the Metro's median is 45 px (Metro Berlin) |
+| large for its Metro | DE-0015 Potsdam-Berlin Ring | 818 px, the Metro's median is 45 px (Metro Berlin) |
 | Metro share of a region | DEU: Baden-Wurttemberg | Metro provinces hold 30% of 2924 px beside 3 rural |
 | Metro share of a region | DEU: Hesse | Metro provinces hold 35% of 1815 px beside 2 rural |
 | Metro share of a region | DEU: Lower Saxony | Metro provinces hold 33% of 4430 px beside 4 rural |
-| Metro share of a region | DEU: Schleswig-Holstein | Metro provinces hold 34% of 1508 px beside 1 rural |
+| Metro share of a region | DEU: North Rhine-Westphalia | Metro provinces hold 32% of 3075 px beside 4 rural |
+| Metro share of a region | DEU: Schleswig-Holstein | Metro provinces hold 37% of 1508 px beside 1 rural |
 | Metro share of a region | TUR: West Anatolia | Metro provinces hold 35% of 4675 px beside 1 rural |
+
+## Land exclaves
+
+Parts of 5 px or more that are not a province's largest part and touch no pixel outside every province (islands are not listed). Each is explained by a place its composite name names lying in it, by one of the province's own seeds (a hint point, or a place its notes name) lying in it, by a neck under a pixel wide that joins it to the rest in the shapes, or by a reason in `[review.exclave_ok]`; an unexplained one fails the step (D691).
+
+| Province | Name | Pixels | At | Why |
+|---|---|---|---|---|
+| AT-0013 | Tyrolean Uplands-East Tyrol | 308 | 12.02, 47.39 | its own seed point 12.39,47.45 (hint) lies in it |
+| AT-0013 | Tyrolean Uplands-East Tyrol | 161 | 12.51, 46.91 | its own seed point 12.77,46.83 (hint) lies in it |
+| BE-0016 | Mons-Western Hainaut | 8 | 2.94, 50.76 | Comines-Warneton: Hainaut's real exclave between France and West Flanders |
+| CH-0005 | Lausanne-Vaud | 7 | 7.02, 46.93 | Vaud's real exclaves inside Fribourg (Avenches) |
+| CH-0009 | Fribourg | 9 | 6.85, 46.84 | Fribourg's real exclaves inside Vaud (Estavayer, Surpierre) |
+| CH-0010 | Neuchatel-Jura | 65 | 6.78, 47.0 | composite name: Neuchâtel lies in it |
+| CH-0016 | Thurgau-Schaffhausen | 21 | 8.55, 47.71 | composite name: Schaffhausen lies in it |
+| CH-0016 | Thurgau-Schaffhausen | 5 | 8.78, 47.69 | a neck under a pixel wide joins it to the rest in the shapes |
+| ES-0015 | Valencia | 24 | -1.28, 40.08 | Rincon de Ademuz: Valencia's real exclave between Cuenca and Teruel |
+| ES-0020 | Valladolid-Burgos | 20 | -2.69, 42.73 | Condado de Trevino: Burgos's real enclave inside Alava |
+| ES-0024 | Toledo-Guadalajara | 803 | -2.62, 40.82 | composite name: Guadalajara lies in it |
+| ES-0025 | Ciudad Real-Albacete | 15 | -4.84, 39.46 | a detached part of Natural Earth's Ciudad Real unit, inside Toledo |
+| FR-0004 | Versailles-Seine-et-Marne | 185 | 1.83, 48.81 | composite name: Versailles lies in it |
+| FR-0006 | Grenoble-Rhone Valley | 156 | 4.54, 45.97 | its own seed unit Rhône lies in it |
+| FR-0008 | Saint-Etienne-Ain | 430 | 5.35, 46.11 | its own seed unit Ain lies in it |
+| FR-0033 | Midi-Pyrenees Countryside | 755 | 0.34, 43.43 | its own seed unit Gers lies in it |
+| FR-0033 | Midi-Pyrenees Countryside | 342 | 1.49, 42.92 | its own seed unit Ariège lies in it |
+| FR-0039 | Avignon-Haute Provence | 9 | 4.96, 44.37 | the Enclave des Papes (Valreas): Vaucluse's real exclave inside Drome |
+| HU-0012 | Nyiregyhaza-Szolnok | 431 | 20.41, 47.26 | composite name: Szolnok lies in it |
+| IT-0006 | Po Plain Lombardy | 133 | 9.12, 45.01 | its own seed unit Pavia lies in it |
+| MD-0005 | Gagauzia | 17 | 28.41, 45.75 | Gagauzia is in separate parts (Natural Earth's Comrat unit has three) |
+| MD-0005 | Gagauzia | 10 | 28.39, 45.54 | Gagauzia is in separate parts (Natural Earth's Comrat unit has three) |
+| NL-0003 | North Holland North-Gooi | 25 | 5.16, 52.27 | its own seed unit Hilversum lies in it |
+| PL-0012 | Pila-Leszno | 406 | 16.62, 51.92 | its own seed point 16.57,51.84 (hint) lies in it |
+| RO-0018 | Gorj-Valcea-Iron Gates | 29 | 22.23, 44.66 | a neck under a pixel wide joins it to the rest in the shapes |
+| SI-0007 | Novo Mesto-Lower Carniola | 5 | 15.68, 46.24 | a neck under a pixel wide joins it to the rest in the shapes |
 
 ## Known for review
 
@@ -697,7 +773,7 @@ Natural Earth admin-1 units of this file's countries that no region claims and t
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-AL-0005-GR-0008, DE-0041-DK-0006, DE-0041-DK-0007, DE-0042-DK-0006, DE-0043-DK-0006, DK-0001-SE-0011, DK-0002-SE-0011, DK-0003-SE-0011, DK-0004-SE-0011, DK-0005-SE-0011, DK-0006-DK-0007, DK-0006-DK-0011, DK-0006-DK-0013, DK-0006-SE-0011, DK-0013-SE-0012, DK-0015-SE-0012, DK-0015-SE-0013, DM-0001-FR-0040, DM-0001-FR-0041, EE-0001-FI-0002, ES-0010-ES-0035, ES-0010-MA-0007, ES-0035-GI-0001, FI-0005-FI-0016, FI-0009-SE-0022, FI-0016-SE-0001, FR-0012-JE-0001, FR-0016-IT-0024, FR-0016-IT-0040, FR-0022-GB-0008, FR-0025-GG-0001, FR-0025-JE-0001, FR-0041-LC-0001, GB-0015-GB-0040, GB-0017-GB-0040, GB-0027-IM-0001, GB-0033-GB-0042, GB-0033-IE-0014, GB-0035-GB-0042, GB-0035-IM-0001, GB-0042-IM-0001, GG-0001-JE-0001, GI-0001-MA-0007, GR-0001-GR-0013, GR-0001-GR-0014, GR-0004-GR-0012, GR-0010-GR-0013, GR-0012-GR-0013, GR-0012-TR-0007, GR-0013-GR-0014, GR-0013-TR-0010, HR-0006-IT-0014, IT-0036-IT-0038, NO-0004-NO-0006, RU-0025-UA-0016, RU-0026-UA-0020, TR-0003-TR-0005, TR-0003-TR-0012
+AL-0005-GR-0008, DE-0041-DK-0006, DE-0041-DK-0007, DE-0042-DK-0006, DK-0001-SE-0011, DK-0002-SE-0011, DK-0003-SE-0011, DK-0004-SE-0011, DK-0005-SE-0011, DK-0006-DK-0007, DK-0006-DK-0011, DK-0006-DK-0013, DK-0006-SE-0011, DK-0013-SE-0012, DK-0015-SE-0012, DK-0015-SE-0013, DM-0001-FR-0040, DM-0001-FR-0041, EE-0001-FI-0002, ES-0010-ES-0035, ES-0010-MA-0007, ES-0035-GI-0001, FI-0005-FI-0016, FI-0009-SE-0022, FI-0016-SE-0001, FR-0012-JE-0001, FR-0016-IT-0024, FR-0016-IT-0040, FR-0022-GB-0008, FR-0025-GG-0001, FR-0025-JE-0001, FR-0041-LC-0001, GB-0015-GB-0040, GB-0017-GB-0040, GB-0027-IM-0001, GB-0033-GB-0042, GB-0033-IE-0014, GB-0035-GB-0042, GB-0035-IM-0001, GB-0042-IM-0001, GG-0001-JE-0001, GI-0001-MA-0007, GR-0001-GR-0013, GR-0001-GR-0014, GR-0004-GR-0012, GR-0010-GR-0013, GR-0012-GR-0013, GR-0012-TR-0007, GR-0013-GR-0014, GR-0013-TR-0010, HR-0006-IT-0014, IT-0036-IT-0038, NO-0004-NO-0006, RU-0025-UA-0016, RU-0026-UA-0020, TR-0003-TR-0005, TR-0003-TR-0012
 
 ## Small provinces
 
@@ -718,11 +794,11 @@ Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share
 | BEL:Brussels-Capital Region | part-0 | BE-0002 86%, BE-0001 14% |
 | DEU:Baden-Wurttemberg | Freiburg | DE-0004 81%, DE-0005 19% |
 | DEU:Baden-Wurttemberg | Stuttgart | DE-0002 92%, DE-0001 8% |
-| DEU:North Rhine-Westphalia | Arnsberg | DE-0034 75%, DE-0030 25% |
-| DEU:Rhineland-Palatinate | Rheinhessen-Pfalz | DE-0024 85%, DE-0023 15% |
+| DEU:Rhineland-Palatinate | Rheinhessen-Pfalz | DE-0024 83%, DE-0023 17% |
 | DEU:Thuringia | Thüringen | DE-0049 86%, DE-0050 14% |
 | ESP:Catalonia | Barcelona | ES-0005 97%, ES-0004 3% |
 | ITA:Lazio | Roma | IT-0007 88%, IT-0008 12% |
+| ITA:Lombardy | Milano | IT-0002 90%, IT-0001 10% |
 | LTU:Capital Region | part-0 | LT-0002 81%, LT-0001 19% |
 | NOR:Vestland | Hordaland | NO-0012 79%, NO-0011 21% |
 | PRT:Lisbon Metropolitan Area | Lisboa | PT-0002 93%, PT-0001 7% |
@@ -735,12 +811,7 @@ A Natural Earth place matched in the name or notes that ended up in another prov
 | Province | Name | Place | Lies in |
 |---|---|---|---|
 | CH-0013 | Basel-Landschaft | Basel | CH-0012 |
-| FR-0003 | Orly-Saclay | Paris | FR-0001 |
-| IE-0003 | Fingal-Dublin Airport | Dublin | IE-0001 |
-| IT-0008 | Lazio Outside Rome | Rome | IT-0007 |
-| IT-0002 | Milan Hinterland | Milan | IT-0001 |
 | TR-0017 | Ankara Industrial Ring | Ankara | TR-0016 |
-| UA-0015 | Zaporizhzhia | Dnipro | UA-0013 |
 | UA-0002 | Kyiv Oblast | Kyiv | UA-0001 |
 
 ## Region nesting
@@ -767,7 +838,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | GB-0001 | City of London-Westminster | 0 | N | Y |
 | GB-0002 | East London-Docklands | 0 | N | Y |
 | GB-0016 | Wiltshire-Gloucestershire | 16 | Y | N |
-| GB-0026 | Cheshire-Warrington | 5 | Y | N |
+| GB-0026 | Cheshire-Warrington | 22 | Y | N |
 | GB-0029 | Sheffield-South Yorkshire | 20 | Y | N |
 | GI-0001 | Gibraltar | 3 | N | Y |
 | IE-0001 | Dublin City-Docklands | 3 | N | Y |
@@ -775,7 +846,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | IT-0007 | Rome | 29 | Y | N |
 | IT-0015 | Verona-Vicenza | 4 | Y | N |
 | IT-0020 | Bologna-Ferrara | 13 | Y | N |
-| IT-0023 | Florence-Prato | 8 | Y | N |
+| IT-0023 | Florence-Prato | 13 | Y | N |
 | IT-0032 | Caserta-Benevento | 14 | Y | N |
 | IT-0035 | Basilicata | 21 | Y | N |
 | LV-0003 | Vidzeme | 0 | N | Y |
@@ -793,7 +864,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-GR-0013 (46), GB-0038 (45), NO-0016 (37), NO-0017 (28), NO-0020 (28), FI-0005 (25), HR-0008 (23), NO-0012 (22), GB-0033 (18), SE-0001 (18), HR-0009 (15), FO-0001 (14), NO-0018 (14), SE-0023 (14), FI-0016 (12), FR-0045 (12), GR-0001 (12), NO-0013 (12), GR-0007 (10), HR-0006 (10), NO-0015 (10), UA-0018 (10), ES-0026 (9), NL-0020 (9), NO-0014 (9), PT-0014 (9), DE-0038 (8), DE-0041 (8), DE-0043 (8), DK-0006 (8), GR-0008 (8), GR-0012 (8), IT-0040 (8), EE-0003 (7), ES-0030 (7), FI-0009 (7), HR-0007 (7), IS-0001 (7), PL-0017 (7), TR-0007 (7), ES-0020 (6), IS-0003 (6), IT-0014 (6), IT-0024 (6), IT-0038 (6), SE-0022 (6), AT-0013 (5), DE-0042 (5), DK-0007 (5), FR-0033 (5), GB-0009 (5), IE-0007 (5), IT-0037 (5), NO-0011 (5), CH-0016 (4), DE-0037 (4), DE-0040 (4), DK-0011 (4), ES-0032 (4), FI-0002 (4), FI-0004 (4), GR-0006 (4), IE-0012 (4), IT-0025 (4), LT-0003 (4), MD-0006 (4), NL-0003 (4), NL-0004 (4), NL-0018 (4), NO-0009 (4), RO-0011 (4), RS-0002 (4), SE-0008 (4), SE-0009 (4), AL-0005 (3), AT-0012 (3), BE-0016 (3), BY-0011 (3), CH-0005 (3), CH-0009 (3), CY-0005 (3), DE-0005 (3), DE-0036 (3), DK-0008 (3), DK-0014 (3), DK-0015 (3), EE-0001 (3), ES-0024 (3), FI-0011 (3), FR-0013 (3), FR-0027 (3), FR-0035 (3), FR-0039 (3), FR-0040 (3), GR-0004 (3), GR-0010 (3), GR-0014 (3), IE-0010 (3), IE-0014 (3), IT-0007 (3), IT-0019 (3), IT-0020 (3), IT-0030 (3), MD-0001 (3), MD-0005 (3), NL-0023 (3), NO-0004 (3), NO-0008 (3), PT-0003 (3), PT-0008 (3), PT-0012 (3), PT-0015 (3), RO-0010 (3), RO-0012 (3), RO-0015 (3), RO-0018 (3), SE-0003 (3), SE-0014 (3), SE-0020 (3), UA-0017 (3), AL-0001 (2), AL-0003 (2), AL-0004 (2), AT-0005 (2), AT-0007 (2), AT-0011 (2), BE-0003 (2), BE-0012 (2), BE-0013 (2), BE-0018 (2), BY-0003 (2), BY-0004 (2), BY-0005 (2), BY-0009 (2), CH-0006 (2), CH-0010 (2), CH-0011 (2), CY-0003 (2), CY-0004 (2), DE-0003 (2), DE-0017 (2), DE-0023 (2), DE-0029 (2), DE-0047 (2), DK-0001 (2), DK-0002 (2), DK-0009 (2), DK-0010 (2), DK-0012 (2), DK-0013 (2), ES-0001 (2), ES-0002 (2), ES-0004 (2), ES-0006 (2), ES-0007 (2), ES-0010 (2), ES-0015 (2), ES-0019 (2), ES-0025 (2), ES-0033 (2), FI-0003 (2), FI-0006 (2), FI-0007 (2), FI-0012 (2), FI-0015 (2), FR-0003 (2), FR-0006 (2), FR-0008 (2), FR-0011 (2), FR-0012 (2), FR-0021 (2), FR-0024 (2), FR-0026 (2), FR-0034 (2), FR-0042 (2), GB-0005 (2), GB-0007 (2), GB-0013 (2), GB-0015 (2), GB-0017 (2), GB-0021 (2), GB-0037 (2), GB-0041 (2), GB-0042 (2), GG-0001 (2), GR-0002 (2), GR-0003 (2), GR-0005 (2), GR-0009 (2), GR-0011 (2), HU-0005 (2), HU-0006 (2), HU-0009 (2), HU-0012 (2), IE-0008 (2), IE-0013 (2), IT-0006 (2), IT-0008 (2), IT-0022 (2), IT-0026 (2), IT-0032 (2), IT-0036 (2), LT-0007 (2), LV-0003 (2), MD-0002 (2), MD-0004 (2), ME-0001 (2), MT-0001 (2), NL-0005 (2), NL-0010 (2), NL-0011 (2), NL-0012 (2), NL-0016 (2), NO-0002 (2), NO-0007 (2), NO-0010 (2), PL-0005 (2), PL-0012 (2), PL-0024 (2), PT-0002 (2), RS-0005 (2), RS-0006 (2), RS-0007 (2), SE-0004 (2), SE-0005 (2), SE-0010 (2), SE-0011 (2), SE-0013 (2), SI-0007 (2), SK-0006 (2), SK-0007 (2), TR-0001 (2), TR-0010 (2), TR-0022 (2), TR-0032 (2), TR-0034 (2), UA-0007 (2), UA-0012 (2), UA-0014 (2)
+GR-0013 (46), GB-0038 (45), NO-0016 (37), NO-0017 (28), NO-0020 (28), FI-0005 (25), HR-0008 (23), NO-0012 (21), GB-0033 (18), SE-0001 (18), HR-0009 (15), FO-0001 (14), NO-0018 (14), SE-0023 (14), FI-0016 (12), FR-0045 (12), GR-0001 (12), NO-0013 (12), DE-0041 (10), GR-0007 (10), HR-0006 (10), NO-0015 (10), UA-0018 (10), ES-0026 (9), NL-0020 (9), NO-0014 (9), PT-0014 (9), DK-0006 (8), GR-0008 (8), GR-0012 (8), IT-0040 (8), DE-0038 (7), EE-0003 (7), ES-0030 (7), FI-0009 (7), HR-0007 (7), IS-0001 (7), PL-0017 (7), TR-0007 (7), DE-0043 (6), ES-0020 (6), IS-0003 (6), IT-0014 (6), IT-0038 (6), SE-0022 (6), AT-0013 (5), DE-0042 (5), DK-0007 (5), FR-0033 (5), GB-0009 (5), IE-0007 (5), IT-0024 (5), IT-0037 (5), PT-0003 (5), CH-0016 (4), DK-0011 (4), ES-0032 (4), FI-0002 (4), FI-0004 (4), GR-0006 (4), IE-0012 (4), IT-0025 (4), LT-0003 (4), NL-0003 (4), NL-0018 (4), NO-0009 (4), RO-0011 (4), RS-0002 (4), SE-0008 (4), SE-0009 (4), AL-0005 (3), AT-0012 (3), BY-0011 (3), CH-0005 (3), CH-0009 (3), CY-0005 (3), DK-0008 (3), DK-0014 (3), DK-0015 (3), EE-0001 (3), ES-0024 (3), FI-0011 (3), FR-0004 (3), FR-0013 (3), FR-0027 (3), FR-0035 (3), FR-0039 (3), FR-0040 (3), GR-0004 (3), GR-0010 (3), GR-0014 (3), IE-0010 (3), IE-0014 (3), IT-0007 (3), IT-0019 (3), IT-0020 (3), IT-0030 (3), MD-0001 (3), MD-0005 (3), MD-0006 (3), NL-0023 (3), NO-0004 (3), NO-0008 (3), PT-0008 (3), PT-0012 (3), PT-0015 (3), RO-0010 (3), RO-0012 (3), RO-0015 (3), RO-0018 (3), SE-0003 (3), SE-0014 (3), SE-0020 (3), UA-0017 (3), AL-0001 (2), AL-0003 (2), AL-0004 (2), AT-0005 (2), AT-0011 (2), BE-0003 (2), BE-0012 (2), BE-0013 (2), BE-0016 (2), BE-0018 (2), BY-0003 (2), BY-0004 (2), BY-0005 (2), BY-0009 (2), CH-0006 (2), CH-0010 (2), CH-0011 (2), CY-0003 (2), CY-0004 (2), DE-0002 (2), DE-0004 (2), DE-0017 (2), DE-0029 (2), DE-0040 (2), DE-0045 (2), DE-0047 (2), DK-0001 (2), DK-0002 (2), DK-0009 (2), DK-0010 (2), DK-0012 (2), DK-0013 (2), ES-0001 (2), ES-0002 (2), ES-0004 (2), ES-0006 (2), ES-0007 (2), ES-0010 (2), ES-0015 (2), ES-0019 (2), ES-0025 (2), ES-0033 (2), FI-0003 (2), FI-0006 (2), FI-0007 (2), FI-0012 (2), FI-0015 (2), FR-0006 (2), FR-0008 (2), FR-0011 (2), FR-0012 (2), FR-0021 (2), FR-0024 (2), FR-0026 (2), FR-0034 (2), FR-0042 (2), GB-0005 (2), GB-0007 (2), GB-0013 (2), GB-0015 (2), GB-0017 (2), GB-0021 (2), GB-0037 (2), GB-0041 (2), GB-0042 (2), GG-0001 (2), GR-0002 (2), GR-0003 (2), GR-0005 (2), GR-0009 (2), GR-0011 (2), HU-0009 (2), HU-0012 (2), IE-0008 (2), IE-0013 (2), IT-0006 (2), IT-0008 (2), IT-0022 (2), IT-0026 (2), IT-0032 (2), IT-0036 (2), LT-0007 (2), LV-0003 (2), MD-0002 (2), MD-0004 (2), ME-0001 (2), MT-0001 (2), NL-0004 (2), NL-0010 (2), NL-0011 (2), NL-0012 (2), NL-0016 (2), NO-0002 (2), NO-0007 (2), NO-0010 (2), NO-0011 (2), PL-0005 (2), PL-0012 (2), PL-0024 (2), RS-0005 (2), RS-0006 (2), RS-0007 (2), SE-0004 (2), SE-0005 (2), SE-0010 (2), SE-0011 (2), SE-0013 (2), SI-0007 (2), TR-0001 (2), TR-0010 (2), TR-0022 (2), TR-0032 (2), TR-0034 (2), UA-0007 (2), UA-0012 (2)
 
 ## Visual check
 

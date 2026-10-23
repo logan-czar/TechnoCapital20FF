@@ -75,6 +75,8 @@ Boundary files used (60), with their original sources and licenses:
 | ZMB | ADM2 | GRID3, Office of the Surveyor General | Creative Commons Attribution 4.0 (CC BY 4.0) | 2020 |
 | ZWE | ADM2 | Zimbabwe National Statistics Agency (ZIMSTAT www.zimstat.co.zw) Central Statistics Office, OCHA ROSEA | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 
+ESP ADM2: the source string is geoBoundaries' metadata as published, with a typo; the source is El Instituto Nacional de Estadística (INE), Spain.
+
 Contains information licensed under the Open Government Licence - Canada (https://open.canada.ca/en/open-government-licence-canada), from Statistics Canada.
 
 Germany: © GeoBasis-DE / BKG (Federal Agency for Cartography and Geodesy), licensed under the Data licence Germany - attribution - version 2.0 (https://www.govdata.de/dl-de/by-2-0).

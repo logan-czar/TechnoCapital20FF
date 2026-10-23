@@ -13,6 +13,8 @@ import json
 import math
 from collections import Counter
 
+import geopandas as gpd
+
 from . import PIPELINE_VERSION, anchors, config, crosswalk, fetch, licenses, probe
 
 # Regions whose provinces leave more than this share of the region uncovered, or overlap by
@@ -227,7 +229,31 @@ def run(region: config.Region) -> None:
         problems.append(f"{len(ne_bad)} Natural Earth units hold a capital another region names: "
                         + ", ".join(f"{n['region']} ({n['capital']})" for n in ne_bad))
     centroid_rows = {r["province_id"]: r for r in cent}
-    metro_rows = probe.metro_scan(csv_rows, centroid_rows, anchors._place_lookup(countries, sources))
+    places = anchors._place_lookup(countries, sources)
+    metro_rows = probe.metro_scan(csv_rows, centroid_rows, places)
+    # D690: a builder hint seed off its region is an error in the hints, not a seed to drop
+    outside_hints = sorted(pid for pid, r in xw.items() if "HINT SEED OUTSIDE THE REGION" in r["note"])
+    if outside_hints:
+        problems.append(f"{len(outside_hints)} provinces have a hint seed outside their region: "
+                        + ", ".join(outside_hints))
+    # D691: land exclaves, each explained by a composite name or `[review.exclave_ok]`
+    seeds = json.loads((work / "seeds.json").read_text(encoding="utf-8")) if (work / "seeds.json").exists() else {}
+    shp = gpd.read_file(work / "provinces.geojson")
+    exclave_rows = probe.exclaves(probe.Bitmap(config.ASSETS_DIR), mq, csv_rows, places,
+                                  review.get("exclave_ok", {}), seeds, dict(zip(shp.province_id, shp.geometry)))
+    exclave_bad = [e for e in exclave_rows if not e["ok"]]
+    if exclave_bad:
+        problems.append(f"{len(exclave_bad)} land exclaves are unexplained: "
+                        + ", ".join(f"{e['province_id']} ({e['px']} px at {e['lon']}, {e['lat']})" for e in exclave_bad))
+    # D692: pairs the hints say must meet only by sea (Little and Big Diomede)
+    pair_rows = {(r["a"], r["b"]): r["kind"] for r in adjacency}
+    sea_only_bad = []
+    for a, b in review.get("sea_only", []):
+        k = pair_rows.get((min(a, b), max(a, b)))
+        if k != "sea":
+            sea_only_bad.append(f"{a}-{b} is {k or 'not adjacent'}")
+    if sea_only_bad:
+        problems.append("pairs that must meet only by sea: " + "; ".join(sea_only_bad))
 
     preview_name = f"preview-{region.slug}.png"
     preview_note = _preview(region, cent, set(ids), qa_dir / preview_name)
@@ -279,6 +305,8 @@ def run(region: config.Region) -> None:
     L.append(f"| City probe points (fail on a mismatch; D686) | {sum(1 for r in probe_rows if r['ok'])} pass, "
              f"{len(probe_bad)} mismatch, {sum(1 for r in probe_rows if r['ok'] is None)} listed |")
     L.append(f"| Metro reach scan rows (listed; D686) | {len(metro_rows)} |")
+    L.append(f"| Land exclaves of {probe.EXCLAVE_MIN_PX} px or more (fail unless explained; D691) | "
+             f"{len(exclave_rows)} ({len(exclave_bad)} unexplained) |")
     L.append(f"| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) "
              f"| {len(anchor_misses)} |")
     L.append(f"| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) "
@@ -418,6 +446,24 @@ def run(region: config.Region) -> None:
         L.append("|---|---|---|")
         for m in metro_rows:
             L.append(f"| {m['kind']} | {_md_escape(m['what'])} | {_md_escape(m['detail'])} |")
+    else:
+        L.append("None.")
+    L.append("")
+    L.append("## Land exclaves")
+    L.append("")
+    L.append(f"Parts of {probe.EXCLAVE_MIN_PX} px or more that are not a province's largest part and touch no pixel "
+             "outside every province (islands are not listed). Each is explained by a place its composite name "
+             "names lying in it, by one of the province's own seeds (a hint point, or a place its notes name) lying "
+             "in it, by a neck under a pixel wide that joins it to the rest in the shapes, or by a reason in "
+             "`[review.exclave_ok]`; an unexplained one fails the step (D691).")
+    L.append("")
+    if exclave_rows:
+        L.append("| Province | Name | Pixels | At | Why |")
+        L.append("|---|---|---|---|---|")
+        for e in exclave_rows:
+            why = e["why"] if e["ok"] else "**unexplained**"
+            L.append(f"| {e['province_id']} | {_md_escape(e['name'])} | {e['px']} | {e['lon']}, {e['lat']} | "
+                     f"{_md_escape(why)} |")
     else:
         L.append("None.")
     L.append("")
@@ -628,6 +674,14 @@ def write_credits(sources: dict) -> None:
             L.append(f"| {iso} | {level} | {_md_escape(meta.get('boundarySource'))} | "
                      f"{_md_escape(meta.get('boundaryLicense'))} | {meta.get('boundaryYear', '')} |")
         L.append("")
+        # source strings are geoBoundaries' own; a misspelt one gets its correct name beside it
+        fixes = {"Estadstica": "El Instituto Nacional de Estadística (INE), Spain"}
+        for iso, level, meta in metas:
+            for bad, good in fixes.items():
+                if bad in (meta.get("boundarySource") or ""):
+                    L.append(f"{iso} {level}: the source string is geoBoundaries' metadata as published, with a typo; "
+                             f"the source is {good}.")
+                    L.append("")
     classes = {licenses.classify_meta(meta)[1] for _, _, meta in metas}
     if "OGL-Canada 2.0" in classes:
         L.append("Contains information licensed under the Open Government Licence - Canada "

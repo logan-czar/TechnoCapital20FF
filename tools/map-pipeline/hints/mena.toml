@@ -122,8 +122,8 @@ seeds = [[55.76, 24.21], [55.77, 24.06]]
 seeds = [[52.73, 24.11], [52.27, 23.97], [53.70, 24.15], [51.80, 24.10]]
 [provinces.AE-0006] # Liwa, Habshan, Asab, Bu Hasa
 seeds = [[53.73, 23.13], [53.62, 23.83], [54.00, 23.30], [53.10, 23.40]]
-[provinces.AE-0007] # Das, Zirku
-seeds = [[52.87, 25.15], [53.07, 24.88]]
+[provinces.AE-0007] # Zirku (Das island has no Natural Earth land)
+seeds = [[53.07, 24.88]]
 [provinces.AE-0008] # Downtown and Business Bay, Deira
 seeds = [[55.27, 25.20], [55.31, 25.26]]
 [provinces.AE-0010] # Dubai Marina, Jebel Ali, Jumeirah
@@ -135,15 +135,17 @@ seeds = [[56.34, 25.34], [56.35, 25.07]]
 [provinces.DZ-0001] # the centre, Hydra
 seeds = [[3.06, 36.75], [3.03, 36.74]]
 [provinces.DZ-0002] # Bab Ezzouar, the airport, Rouiba
-seeds = [[3.18, 36.72], [3.21, 36.69], [3.33, 36.74]]
+# Rouiba (3.33, 36.74) lies over Natural Earth's Algiers line, in Boumerdes
+seeds = [[3.18, 36.72], [3.21, 36.69], [3.20, 36.71]]
 [provinces.DZ-0003] # Cheraga, Ouled Fayet, Bab El Oued, Zeralda
-seeds = [[2.96, 36.76], [2.87, 36.75], [3.04, 36.79], [2.83, 36.69]]
+# Zeralda and Ouled Fayet lie over Natural Earth's Algiers line, in Tipaza and Blida
+seeds = [[2.99, 36.77], [3.04, 36.79]]
 [provinces.DZ-0016] # Arzew, Bethioua
 seeds = [[-0.32, 35.85], [-0.26, 35.81]]
 [provinces.EG-0005] # 6th of October, Sheikh Zayed
 seeds = [[30.93, 29.97], [30.98, 30.05]]
-[provinces.EG-0007]
-seeds = [[31.24, 30.13]]
+[provinces.EG-0007] # Shubra el-Kheima (its centre, 31.255; the city's point 31.24 falls on Qalyub's pixel)
+seeds = [[31.255, 30.13]]
 [provinces.EG-0009] # the Corniche, Montaza
 seeds = [[29.95, 31.22], [30.02, 31.27]]
 [provinces.EG-0010] # Dekheila, Amreya, Borg el-Arab
@@ -179,7 +181,8 @@ seeds = [[51.42, 35.68], [51.41, 35.62]]
 [provinces.IR-0003] # west Tehran, Eslamshahr, Shahriar, Robat Karim
 seeds = [[51.33, 35.70], [51.23, 35.55], [51.02, 35.65], [50.98, 35.46]]
 [provinces.IR-0018] # Bandar Lengeh, Kish, Abu Musa, the Tunbs
-seeds = [[54.88, 26.56], [53.98, 26.53], [55.03, 25.87], [55.30, 26.25]]
+# the Tunbs have no Natural Earth land
+seeds = [[54.88, 26.56], [53.98, 26.53], [55.03, 25.87]]
 [provinces.JO-0001] # Abdali, west Amman
 seeds = [[35.90, 31.96], [35.85, 31.95]]
 [provinces.KW-0002] # Shuwaikh, Sulaibikhat
@@ -195,7 +198,8 @@ seeds = [[47.70, 29.83], [48.20, 29.80], [47.70, 30.07]]
 [provinces.LY-0001]
 seeds = [[13.18, 32.89]]
 [provinces.LY-0002] # Tajura, Janzour, the airports
-seeds = [[13.37, 32.88], [13.01, 32.82], [13.27, 32.66]]
+# Janzour sits on Natural Earth's line with Jafara; its east end
+seeds = [[13.37, 32.88], [13.12, 32.80], [13.27, 32.66]]
 [provinces.LY-0008]
 seeds = [[16.59, 31.21]]
 [provinces.LY-0009] # Ras Lanuf, Es Sider
@@ -207,7 +211,7 @@ seeds = [[-7.55, 33.60], [-7.39, 33.69]]
 [provinces.MA-0003] # El Jadida, Jorf Lasfar
 seeds = [[-8.50, 33.25], [-8.63, 33.12]]
 [provinces.MA-0009] # Al Hoceima, Chefchaouen, Ouazzane
-seeds = [[-3.93, 35.25], [-5.27, 35.17], [-5.60, 34.80]]
+seeds = [[-3.93, 35.25], [-5.27, 35.17], [-5.60, 34.84]]
 [provinces.OM-0003]
 seeds = [[56.71, 24.35]]
 [provinces.OM-0004] # Saham, Shinas, Liwa, Al Khaburah
@@ -253,13 +257,13 @@ seeds = [[49.67, 25.94], [49.30, 25.00], [49.20, 24.20]]
 [provinces.SA-0020] # Shaybah, the Rub al Khali
 seeds = [[54.00, 22.51], [51.50, 20.50]]
 [provinces.SA-0022] # Yanbu
-seeds = [[38.06, 24.09], [38.20, 23.90]]
+seeds = [[38.06, 24.09], [38.24, 23.96]]
 [provinces.SA-0023] # Al Ula, Khaybar, Mahd adh Dhahab
 seeds = [[37.92, 26.62], [39.29, 25.69], [40.88, 23.50]]
 [provinces.SA-0025] # Bisha, Tathlith
 seeds = [[42.61, 20.00], [43.62, 19.53]]
 [provinces.SA-0026] # Muhayil, Al Birk, Rijal Alma
-seeds = [[42.05, 18.54], [41.55, 18.21], [42.27, 18.22]]
+seeds = [[42.05, 18.54], [41.79, 18.33], [42.27, 18.22]]
 [provinces.SA-0027]
 seeds = [[43.98, 26.33]]
 [provinces.SA-0028] # Unaizah, Ar Rass, Al Badaye
@@ -269,9 +273,20 @@ seeds = [[42.56, 16.89], [42.12, 16.73]]
 [provinces.SA-0030] # Sabya, Abu Arish, Samtah
 seeds = [[42.62, 17.15], [42.83, 16.97], [42.95, 16.60]]
 [provinces.SA-0032] # Duba, Haql, Sharma
-seeds = [[35.70, 27.35], [34.95, 29.00], [35.20, 28.00]]
+# Haql (34.95, 29.0) lies over Natural Earth's Tabuk line; the coast south of it
+seeds = [[35.70, 27.35], [34.95, 28.88], [35.20, 28.00]]
 
 [carve."MAR:Laayoune-Sakia El Hamra"]
 # Smara and Mahbes: the Western Sahara part of NE's Guelmim-Es-Semara (south of the 27.67 N line)
 polygon = [[-13.50, 27.667], [-8.67, 27.667], [-8.67, 26.00], [-13.50, 26.00], [-13.50, 27.667]]
 from = ["MAR:Guelmim-Oued Noun"]
+
+# PR #39 review: Natural Earth's Baghdad unit is the city alone; the belt districts (Abu Ghraib,
+# Taji and Tarmiya in geoBoundaries' Al-Kadhmiyah, Mahmudiya, Mada'in) come from IRQ ADM2
+[carve."IRQ:Baghdad"]
+units = ["Al-Kadhmiyah", "Al-Mahmoudiya", "Al-Mada'in", "Al-Adhamiya", "Al-Karkh", "Al-Risafa", "Al-Thawra"]
+
+# D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
+[review.exclave_ok]
+"MA-0012" = "a corner of Natural Earth's old Meknes-Tafilalet unit east of the Draa-Tafilalet builder polygon (D676)"
+"MA-0016" = "a corner of Natural Earth's old Souss-Massa-Draa unit south of the Draa-Tafilalet builder polygon (D676)"

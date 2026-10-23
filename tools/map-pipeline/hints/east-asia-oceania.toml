@@ -292,3 +292,17 @@ seeds = [[151.21, -33.87], [151.18, -33.80], [151.10, -33.70], [151.24, -33.78]]
 seeds = [[151.00, -33.82], [150.91, -33.77], [150.92, -33.92], [150.69, -33.75], [150.81, -34.07], [151.18, -33.94], [151.21, -33.97]]
 [provinces.ID-0005] # Bogor and Depok
 units = ["Kota Bogor", "Bogor", "Kota Depok"]
+
+# PR #39 review (D691): Yeoncheon, a DMZ border county north of Uijeongbu, goes with Goyang-Paju
+# ("DMZ border towns"); the capped Metro had left it to Icheon, beyond Goyang-Paju
+[provinces.KR-0006] # Yeoncheon
+units = ["Yeoncheon-gun"]
+add = true
+
+# D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
+[review.exclave_ok]
+"AU-0047" = "geoBoundaries' Unincorporated SA is one unit in many pieces; the piece near Kimba stays with the rest of it in Far North-Olympic Dam"
+"AU-0052" = "geoBoundaries' Unincorporated NT is one unit in many pieces; the piece near Yulara stays with the rest of it in Darwin"
+"CN-0055" = "Sanhe, Dachang and Xianghe: Hebei's real exclave between Beijing and Tianjin"
+"ID-0042" = "a sliver of geoBoundaries' East Kalimantan unit beyond Natural Earth's North Kalimantan line"
+"MN-0007" = "Govisumber (Choir), the name's second part, does not touch Dornogovi in Natural Earth's lines"

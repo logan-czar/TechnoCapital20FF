@@ -97,7 +97,7 @@ seeds = [[88.35, 22.57], [88.42, 22.58]]
 [provinces.IN-0041] # Howrah, Uttarpara, Chinsurah
 seeds = [[88.31, 22.59], [88.33, 22.68], [88.39, 22.90]]
 [provinces.IN-0042] # Barrackpore, Dum Dum, Barasat, Petrapole
-seeds = [[88.38, 22.77], [88.43, 22.65], [88.48, 22.72], [88.89, 23.04]]
+seeds = [[88.38, 22.77], [88.43, 22.65], [88.48, 22.72], [88.84, 23.05]]
 [provinces.IN-0043] # Sonarpur, Budge Budge, Diamond Harbour, Sagar island, the Sundarbans
 seeds = [[88.43, 22.47], [88.17, 22.47], [88.19, 22.19], [88.08, 21.65], [88.80, 21.90]]
 [provinces.IN-0053]
@@ -144,3 +144,14 @@ seeds = [[79.13, 18.44], [78.09, 18.67], [79.59, 17.97], [78.53, 19.67], [80.62,
 seeds = [[72.64, 23.22], [72.68, 23.16], [72.38, 22.99]]
 [provinces.IN-0050] # Bhuj, Mundra, Kandla, Palanpur, Mehsana, Patan, Himmatnagar
 seeds = [[69.67, 23.25], [69.72, 22.84], [70.22, 23.03], [72.43, 24.17], [72.38, 23.60], [72.12, 23.85], [72.97, 23.60]]
+
+# PR #39 review (D691): Nawalpur, Gandaki Province's plains district, joins Gandaki Hills, which it
+# touches (it had gone to Pokhara beyond them)
+[provinces.NP-0009] # Nawalpur
+units = ["Nawalapur"]
+add = true
+
+# D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
+[review.exclave_ok]
+"BD-0012" = "Bandarban's southern tip, cut off by Cox's Bazar in geoBoundaries' simplified lines"
+"NP-0010" = "a piece of Natural Earth's old Mechi zone, in the east, that the geoBoundaries district carves for Nepal's provinces leave to Province No. 5 (D683)"

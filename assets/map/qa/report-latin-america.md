@@ -4,7 +4,7 @@ _Written by `tools/map-pipeline/run.py --region latin-america` (pipeline pb-1). 
 
 ## Result
 
-**Pass.** All 392 provinces of `provinces-latin-america.csv` have a crosswalk row and pixels (42 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
+**Pass.** All 392 provinces of `provinces-latin-america.csv` have a crosswalk row and pixels (43 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
 
 ## Coverage
 
@@ -49,24 +49,25 @@ _Written by `tools/map-pipeline/run.py --region latin-america` (pipeline pb-1). 
 | ... VGB | 1 |
 | Regions matched | 308 of 308 |
 | Provinces by method: admin1 | 269 |
-| Provinces by method: admin2 | 95 |
+| Provinces by method: admin2 | 97 |
 | Provinces by method: admin3 | 0 |
-| Provinces by method: voronoi | 28 |
+| Provinces by method: voronoi | 26 |
 | Flagged for review (confidence < 0.6) | 0 |
-| Placed by a builder hint (`hints/latin-america.toml`) | 17 |
-| Tiny (under 64 px) | 42 |
+| Placed by a builder hint (`hints/latin-america.toml`) | 19 |
+| Tiny (under 64 px) | 43 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
-| More than one part (islands, exclaves) | 141 |
-| Coastal flag differs from the CSV | 24 |
+| More than one part (islands, exclaves) | 134 |
+| Coastal flag differs from the CSV | 25 |
 | Small for their region (not Metro, under 5% of the region's mean) | 0 |
-| Voronoi-split blocks where one province takes 75% or more | 7 |
-| Places named in a province's name or notes that lie in another province | 2 |
+| Voronoi-split blocks where one province takes 75% or more | 6 |
+| Places named in a province's name or notes that lie in another province | 0 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 7 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 19 |
-| City probe points (fail on a mismatch; D686) | 58 pass, 0 mismatch, 7 listed |
+| City probe points (fail on a mismatch; D686) | 70 pass, 0 mismatch, 8 listed |
 | Metro reach scan rows (listed; D686) | 1 |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 4 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
 
@@ -104,6 +105,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 
 | Province | Name | Placed by |
 |---|---|---|
+| AR-0009 | West Pampa | seeds: place Junín; place Olavarría; unit General Las Heras (hint); unit Junín at place Junín; unit Olavarría at place Olavarría; unit Trenque Lauquen; 44 whole admin2 units |
 | BO-0002 | Altiplano-Lake Titicaca | seeds: point -68.68,-16.05 (hint); point -69.04,-16.57 (hint) (snapped to land); point -69.09,-16.17 (hint); point -69.25,-15.5 (hint); 11 whole admin2 units |
 | BO-0013 | Chuquisaca Chaco | seeds: point -63.73,-19.87 (hint); point -63.96,-19.8 (hint); 6 whole admin2 units |
 | BR-0001 | Sao Paulo Centro-Faria Lima | seeds: point -46.63,-23.55 (hint); point -46.66,-23.56 (hint); point -46.69,-23.57 (hint); point -46.7,-23.565 (hint); point -46.73,-23.58 (hint); unit Barueri (hint); unit Osasco (hint); 9 whole admin2 units, split: São Paulo |
@@ -111,6 +113,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | BR-0003 | ABC Paulista-Zona Sul | seeds: place Santo André; point -46.7,-23.65 (hint); point -46.7,-23.82 (hint); unit Diadema; unit Santo André at place Santo André; 13 whole admin2 units, split: São Paulo |
 | BR-0010 | Rio Centro-Zona Sul | seeds: point -43.18,-22.91 (hint); point -43.19,-22.97 (hint); point -43.23,-22.9 (hint); 0 whole admin2 units, split: Rio de Janeiro |
 | BR-0011 | Barra-Zona Oeste | seeds: point -43.36,-22.94 (hint); point -43.37,-23.0 (hint); point -43.47,-22.88 (hint); point -43.69,-22.92 (hint); 2 whole admin2 units, split: Rio de Janeiro |
+| BR-0028 | Florianopolis-Itajai | seeds: place Florianópolis; place Itajaí; unit Angelina (hint); unit Florianópolis at place Florianópolis; unit Itajaí at place Itajaí; unit Navegantes; 54 whole admin2 units |
 | CL-0010 | Santiago Poniente-Sur | seeds: point -70.58,-33.61 (hint); point -70.59,-33.52 (hint); point -70.73,-33.36 (hint); point -70.76,-33.51 (hint); point -70.79,-33.39 (hint); 0 whole parts, 1 split |
 | CL-0011 | Maipo-Melipilla | seeds: point -70.74,-33.73 (hint); point -70.93,-33.66 (hint); point -71.22,-33.69 (hint); 0 whole parts, 1 split |
 | CL-0020 | Chiloe-Palena | seeds: point -71.8,-43.62 (hint); point -72.71,-42.92 (hint); point -73.77,-42.48 (hint) (snapped to land); point -73.82,-41.87 (hint); 9 whole parts, 1 split |
@@ -120,7 +123,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | PE-0001 | Lima Centro-San Isidro | seeds: point -77.03,-12.05 (hint); point -77.03,-12.1 (hint); point -77.03,-12.12 (hint); 0 whole admin2 units, split: Lima |
 | PE-0002 | Lima Norte-Este | seeds: point -76.89,-12.03 (hint); point -77.0,-11.98 (hint); point -77.06,-11.94 (hint); point -77.07,-11.99 (hint); 1 whole admin2 units, split: Lima |
 | PE-0003 | Lima Provinces-Huacho | seeds: point -75.91,-12.46 (hint); point -76.38,-11.84 (hint); point -76.39,-13.08 (hint); point -77.21,-11.5 (hint); point -77.27,-11.57 (hint); point -77.61,-11.11 (hint); 9 whole admin2 units |
-| VE-0012 | Arco Minero | seeds: point -61.11,4.6 (hint); point -61.83,7.35 (hint); point -62.85,6.24 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point -61.14,6.05 (hint) |
+| VE-0012 | Arco Minero | seeds: point -61.11,4.6 (hint); point -61.21,6.14 (hint); point -61.83,7.35 (hint); point -62.85,6.24 (hint); 0 whole parts, 1 split |
 
 ## Tiny provinces (click targets)
 
@@ -158,13 +161,14 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | CU-0001 | Havana | 33 | 1 | 2222.5, 2075.5 |
 | DM-0001 | Dominica | 33 | 1 | 2699.5, 2254.5 |
 | SV-0001 | San Salvador | 37 | 1 | 2067.5, 2295.5 |
+| CL-0009 | Santiago Oriente-Sanhattan | 38 | 1 | 2494.5, 3395.5 |
 | PR-0003 | Carolina-Northeast | 43 | 3 | 2596.5, 2187.5 |
 | VE-0020 | Margarita Island | 46 | 3 | 2641.5, 2357.5 |
 | JM-0002 | Spanish Town-Portmore | 52 | 1 | 2343.5, 2193.5 |
 | BR-0004 | Santos-Baixada Santista | 53 | 2 | 3045.5, 3161.5 |
-| CL-0009 | Santiago Oriente-Sanhattan | 53 | 1 | 2494.5, 3395.5 |
 | VE-0003 | La Guaira | 54 | 1 | 2564.5, 2370.5 |
 | BS-0002 | Freeport | 55 | 2 | 2309.5, 1988.5 |
+| BR-0001 | Sao Paulo Centro-Faria Lima | 56 | 1 | 3029.5, 3155.5 |
 | CR-0003 | Alajuela-Airport Free Zones | 57 | 1 | 2177.5, 2379.5 |
 | SV-0004 | Sonsonate-Acajutla | 58 | 1 | 2055.5, 2296.5 |
 | CO-0002 | Bogota Sur-Occidente | 59 | 1 | 2407.5, 2515.5 |
@@ -200,6 +204,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | La Plata (-57.95, -34.92) | ? | AR-0005 | listed |
 | Pachacamac (-76.86, -12.23) | ? | PE-0002 | listed |
 | Paulo de Faria (-49.4, -20.03) | ? | BR-0009 | listed |
+| Petropolis (-43.18, -22.51) | ? | BR-0015 | listed |
 | Sao Jose do Rio Preto (-49.38, -20.81) | ? | BR-0009 | listed |
 | Villa El Salvador (-76.94, -12.21) | ? | PE-0001 | listed |
 | Zipaquira (-74.0, 5.02) | ? | CO-0004 | listed |
@@ -226,6 +231,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Essequibo Anna Regina (-58.49, 7.26) | GY-0002 | GY-0002 | nearest across water |
 | Ezeiza (-58.54, -34.82) | AR-0004 | AR-0004 | on it |
 | Faria Lima (-46.69, -23.58) | BR-0001 | BR-0001 | on it |
+| Garay dept AR (-60.17, -31.12) | AR-0013 | AR-0013 | on it |
 | Grenada (-61.68, 12.12) | GD | GD-0001 | on it |
 | Guarulhos airport (-46.47, -23.43) | BR-0002 | BR-0002 | on it |
 | Havana (-82.37, 23.13) | CU | CU-0001 | on it |
@@ -238,26 +244,37 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Lima Plaza de Armas (-77.03, -12.046) | PE-0001 | PE-0001 | on it |
 | Lima San Isidro (-77.035, -12.1) | PE-0001 | PE-0001 | on it |
 | Maipu (-70.76, -33.51) | CL-0010 | CL-0010 | on it |
+| Melipilla (-71.22, -33.69) | CL-0011 | CL-0011 | on it |
 | Moreno AR (-58.79, -34.65) | AR-0003 | AR-0003 | on it |
 | Niteroi (-43.1, -22.88) | BR-0013 | BR-0013 | on it |
+| Nova Iguacu (-43.45, -22.76) | BR-0012 | BR-0012 | on it |
 | Osasco (-46.79, -23.53) | BR-0001 | BR-0001 | on it |
 | Palermo BA (-58.43, -34.58) | AR-0001 | AR-0001 | on it |
 | Pilar AR (-58.91, -34.46) | AR-0002 | AR-0002 | on it |
 | Pinheiros (-46.7, -23.565) | BR-0001 | BR-0001 | on it |
+| Pudahuel airport (-70.79, -33.39) | CL-0010 | CL-0010 | on it |
+| Puente Alto (-70.58, -33.61) | CL-0010 | CL-0010 | on it |
 | Quilmes (-58.27, -34.72) | AR-0004 | AR-0004 | on it |
 | Rio Centro (-43.18, -22.9) | BR-0010 | BR-0010 | nearest across water |
+| Rio Copacabana2 (-43.18, -22.97) | BR-0010 | BR-0010 | on it |
 | Roseau (-61.39, 15.3) | DM | DM-0001 | on it |
 | San Isidro AR (-58.53, -34.47) | AR-0002 | AR-0002 | on it |
 | San Juan de Lurigancho (-77.0, -11.98) | PE-0002 | PE-0002 | on it |
 | San Justo La Matanza (-58.56, -34.68) | AR-0003 | AR-0003 | on it |
+| Santa Cruz RJ (-43.69, -22.91) | BR-0011 | BR-0011 | on it |
+| Santa Fe city (-60.7, -31.63) | AR-0013 | AR-0013 | on it |
 | Santiago (-70.65, -33.45) | CL | CL-0009 | on it |
 | Santiago Las Condes (-70.57, -33.41) | CL-0009 | CL-0009 | on it |
+| Santiago Providencia (-70.61, -33.43) | CL-0009 | CL-0009 | on it |
 | Santo Andre (-46.53, -23.66) | BR-0003 | BR-0003 | on it |
+| Santo Tome AR (-60.76, -31.66) | AR-0013 | AR-0013 | on it |
 | Santos (-46.33, -23.96) | BR-0004 | BR-0004 | on it |
 | Sao Bernardo (-46.565, -23.69) | BR-0003 | BR-0003 | on it |
+| Sao Goncalo (-43.05, -22.83) | BR-0013 | BR-0013 | on it |
 | Sao Paulo Paulista (-46.656, -23.56) | BR-0001 | BR-0001 | on it |
 | Sao Paulo Se (-46.63, -23.55) | BR-0001 | BR-0001 | on it |
 | Soacha (-74.22, 4.58) | CO-0003 | CO-0003 | on it |
+| Talagante (-70.93, -33.66) | CL-0011 | CL-0011 | on it |
 | Tigre (-58.58, -34.42) | AR-0002 | AR-0002 | on it |
 | Usaquen (-74.03, 4.7) | CO-0001 | CO-0001 | on it |
 | Yauyos (-75.91, -12.46) | PE-0003 | PE-0003 | on it |
@@ -268,7 +285,18 @@ Metro provinces whose centroid is over 80 km from their Metro's city, that are o
 
 | Check | Province or region | Detail |
 |---|---|---|
-| Metro share of a region | CHL: Santiago Metropolitan | Metro provinces hold 36% of 911 px beside 1 rural |
+| Metro share of a region | CHL: Santiago Metropolitan | Metro provinces hold 63% of 911 px beside 1 rural |
+
+## Land exclaves
+
+Parts of 5 px or more that are not a province's largest part and touch no pixel outside every province (islands are not listed). Each is explained by a place its composite name names lying in it, by one of the province's own seeds (a hint point, or a place its notes name) lying in it, by a neck under a pixel wide that joins it to the rest in the shapes, or by a reason in `[review.exclave_ok]`; an unexplained one fails the step (D691).
+
+| Province | Name | Pixels | At | Why |
+|---|---|---|---|---|
+| BR-0007 | Sorocaba-Southwest Sao Paulo | 9 | -46.93, -23.85 | a neck under a pixel wide joins it to the rest in the shapes |
+| BR-0032 | Serra Gaucha-Caxias | 8 | -49.99, -29.25 | Mampituba meets the rest of Serra Gaucha only at a corner of Sao Francisco de Paula, so its pixels stand apart |
+| CR-0001 | San Jose Centro | 23 | -84.0, 10.0 | its own seed point -84.08,9.93 (hint) lies in it |
+| UY-0007 | Rivera-Artigas | 503 | -55.26, -31.48 | composite name: Rivera lies in it |
 
 ## Known for review
 
@@ -439,7 +467,6 @@ Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share
 
 | Region | Block | Shares |
 |---|---|---|
-| ARG:Santa Fe | La Capital | AR-0013 80%, AR-0012 20% |
 | BRA:Rio de Janeiro | Rio de Janeiro | BR-0011 79%, BR-0010 21% |
 | CHL:Biobio | part-0 | CL-0016 75%, CL-0015 25% |
 | CHL:Valparaiso | part-2 | CL-0008 91%, CL-0007 9% |
@@ -449,12 +476,7 @@ Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share
 
 ## Named places outside their province
 
-A Natural Earth place matched in the name or notes that ended up in another province (usually a neighbour that names the same city more directly, as Long Beach-Harbor's notes name Los Angeles).
-
-| Province | Name | Place | Lies in |
-|---|---|---|---|
-| BR-0048 | Interior Amazonas | Manaus | BR-0047 |
-| VE-0005 | Costa Oriental del Lago | Maracaibo | VE-0004 |
+None.
 
 ## Region nesting
 
@@ -469,7 +491,8 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | AR-0006 | Zarate-Campana-North Pampa | 0 | N | Y |
 | AR-0012 | Rosario-Gran Rosario | 0 | N | Y |
 | AR-0034 | Entre Rios | 56 | Y | N |
-| BR-0007 | Sorocaba-Southwest Sao Paulo | 72 | Y | N |
+| BR-0003 | ABC Paulista-Zona Sul | 11 | Y | N |
+| BR-0007 | Sorocaba-Southwest Sao Paulo | 64 | Y | N |
 | BR-0012 | Baixada Fluminense | 3 | N | Y |
 | BR-0030 | West Santa Catarina | 25 | Y | N |
 | BR-0039 | Bahia Sertao-Feira de Santana | 7 | Y | N |
@@ -478,10 +501,10 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | BR-0062 | Piaui | 19 | Y | N |
 | CL-0004 | Calama-Salar de Atacama | 15 | Y | N |
 | CL-0016 | Los Angeles-Biobio Forests | 23 | Y | N |
-| GY-0004 | Cuyuni-Mazaruni-Potaro | 28 | Y | N |
+| GY-0004 | Cuyuni-Mazaruni-Potaro | 4 | Y | N |
 | NI-0001 | Managua | 10 | Y | N |
 | NI-0007 | Chontales-Rio San Juan | 6 | Y | N |
-| PE-0002 | Lima Norte-Este | 42 | Y | N |
+| PE-0002 | Lima Norte-Este | 10 | Y | N |
 | PR-0001 | San Juan | 3 | N | Y |
 | PR-0002 | Bayamon-Toa Baja | 2 | N | Y |
 | PR-0009 | Central Mountains | 6 | Y | N |
@@ -495,7 +518,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-CL-0022 (101), CL-0021 (52), BS-0004 (48), PP-0001 (26), BS-0003 (18), BR-0049 (17), CL-0020 (15), BR-0044 (11), BZ-0001 (10), EC-0015 (9), HN-0004 (9), VE-0010 (9), HN-0003 (8), PA-0001 (8), CR-0008 (7), CU-0004 (7), CU-0005 (7), CU-0006 (7), CU-0013 (7), AR-0008 (6), BR-0006 (6), BR-0035 (6), CU-0007 (6), PA-0005 (6), VE-0002 (6), VG-0001 (6), AR-0025 (5), BR-0001 (5), BR-0015 (5), BR-0046 (5), BR-0056 (5), GY-0003 (5), KY-0001 (5), NI-0004 (5), NI-0008 (5), PA-0007 (5), AR-0012 (4), BR-0007 (4), BR-0009 (4), BR-0022 (4), BR-0033 (4), BR-0048 (4), BR-0050 (4), BR-0059 (4), BR-0066 (4), CL-0008 (4), CL-0011 (4), CO-0005 (4), CO-0010 (4), CO-0012 (4), CO-0026 (4), EC-0002 (4), GY-0001 (4), KN-0001 (4), PA-0004 (4), VE-0013 (4), AR-0013 (3), BR-0005 (3), BR-0027 (3), BR-0032 (3), BR-0045 (3), BR-0065 (3), CL-0007 (3), CO-0006 (3), CO-0008 (3), CO-0023 (3), CR-0001 (3), CU-0009 (3), DO-0001 (3), EC-0011 (3), HN-0002 (3), HT-0006 (3), PR-0003 (3), PY-0010 (3), VC-0001 (3), VE-0020 (3), AG-0001 (2), AR-0006 (2), AR-0031 (2), BO-0009 (2), BO-0016 (2), BR-0003 (2), BR-0004 (2), BR-0017 (2), BR-0018 (2), BR-0019 (2), BR-0021 (2), BR-0023 (2), BR-0024 (2), BR-0030 (2), BR-0034 (2), BR-0037 (2), BR-0039 (2), BR-0040 (2), BR-0043 (2), BR-0047 (2), BR-0051 (2), BR-0052 (2), BR-0054 (2), BR-0055 (2), BR-0058 (2), BR-0061 (2), BS-0002 (2), BZ-0002 (2), CL-0015 (2), CL-0017 (2), CL-0019 (2), CO-0015 (2), CO-0018 (2), CO-0029 (2), CR-0007 (2), CU-0012 (2), DO-0002 (2), DO-0007 (2), EC-0003 (2), EC-0010 (2), GD-0001 (2), GT-0004 (2), GT-0006 (2), GT-0011 (2), GY-0002 (2), GY-0004 (2), GY-0006 (2), HN-0010 (2), HT-0001 (2), HT-0004 (2), PA-0010 (2), PE-0001 (2), PE-0003 (2), PE-0004 (2), PE-0017 (2), PE-0020 (2), PE-0023 (2), PR-0005 (2), PR-0007 (2), TT-0001 (2), TT-0005 (2), UY-0007 (2), VE-0006 (2), VE-0016 (2), VE-0019 (2)
+CL-0022 (101), CL-0021 (52), BS-0004 (48), PP-0001 (26), BS-0003 (18), BR-0049 (17), CL-0020 (13), BR-0044 (11), BZ-0001 (10), EC-0015 (9), HN-0004 (9), VE-0010 (9), HN-0003 (8), PA-0001 (8), CR-0008 (7), CU-0004 (7), CU-0005 (7), CU-0006 (7), CU-0013 (7), AR-0008 (6), BR-0035 (6), CL-0011 (6), CU-0007 (6), PA-0005 (6), VE-0002 (6), VG-0001 (6), AR-0025 (5), BR-0046 (5), BR-0056 (5), GY-0003 (5), KY-0001 (5), NI-0004 (5), NI-0008 (5), PA-0007 (5), BR-0006 (4), BR-0007 (4), BR-0015 (4), BR-0022 (4), BR-0048 (4), BR-0050 (4), BR-0059 (4), BR-0066 (4), CL-0008 (4), CO-0005 (4), CO-0010 (4), CO-0012 (4), CO-0026 (4), EC-0002 (4), KN-0001 (4), PA-0004 (4), VE-0013 (4), AR-0013 (3), BR-0009 (3), BR-0027 (3), BR-0032 (3), BR-0045 (3), BR-0065 (3), CL-0007 (3), CO-0006 (3), CO-0008 (3), CO-0023 (3), CR-0001 (3), CU-0009 (3), DO-0001 (3), EC-0014 (3), GY-0002 (3), HN-0002 (3), HT-0006 (3), PR-0003 (3), PY-0010 (3), VC-0001 (3), VE-0020 (3), AG-0001 (2), AR-0006 (2), AR-0031 (2), BO-0009 (2), BO-0016 (2), BR-0004 (2), BR-0017 (2), BR-0018 (2), BR-0019 (2), BR-0021 (2), BR-0023 (2), BR-0024 (2), BR-0030 (2), BR-0031 (2), BR-0033 (2), BR-0034 (2), BR-0037 (2), BR-0039 (2), BR-0040 (2), BR-0043 (2), BR-0047 (2), BR-0051 (2), BR-0052 (2), BR-0054 (2), BR-0055 (2), BR-0058 (2), BR-0061 (2), BS-0002 (2), BZ-0002 (2), CL-0015 (2), CL-0017 (2), CL-0019 (2), CO-0015 (2), CO-0018 (2), CO-0029 (2), CR-0007 (2), CU-0012 (2), DO-0002 (2), DO-0007 (2), EC-0003 (2), EC-0010 (2), GD-0001 (2), GT-0004 (2), GT-0006 (2), GT-0011 (2), HN-0010 (2), HT-0001 (2), HT-0004 (2), PA-0010 (2), PE-0001 (2), PE-0004 (2), PE-0017 (2), PE-0020 (2), PE-0023 (2), PR-0005 (2), PR-0007 (2), TT-0001 (2), TT-0005 (2), UY-0007 (2), VE-0006 (2), VE-0016 (2), VE-0019 (2)
 
 ## Visual check
 

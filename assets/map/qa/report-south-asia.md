@@ -4,7 +4,7 @@ _Written by `tools/map-pipeline/run.py --region south-asia` (pipeline pb-1). Sou
 
 ## Result
 
-**Pass.** All 208 provinces of `provinces-south-asia.csv` have a crosswalk row and pixels (19 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
+**Pass.** All 208 provinces of `provinces-south-asia.csv` have a crosswalk row and pixels (21 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
 
 ## Coverage
 
@@ -25,20 +25,21 @@ _Written by `tools/map-pipeline/run.py --region south-asia` (pipeline pb-1). Sou
 | Provinces by method: admin3 | 0 |
 | Provinces by method: voronoi | 104 |
 | Flagged for review (confidence < 0.6) | 0 |
-| Placed by a builder hint (`hints/south-asia.toml`) | 43 |
-| Tiny (under 64 px) | 19 |
+| Placed by a builder hint (`hints/south-asia.toml`) | 44 |
+| Tiny (under 64 px) | 21 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
-| More than one part (islands, exclaves) | 68 |
+| More than one part (islands, exclaves) | 65 |
 | Coastal flag differs from the CSV | 10 |
 | Small for their region (not Metro, under 5% of the region's mean) | 0 |
 | Voronoi-split blocks where one province takes 75% or more | 4 |
-| Places named in a province's name or notes that lie in another province | 2 |
+| Places named in a province's name or notes that lie in another province | 1 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 6 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 3 |
-| City probe points (fail on a mismatch; D686) | 60 pass, 0 mismatch, 0 listed |
+| City probe points (fail on a mismatch; D686) | 79 pass, 0 mismatch, 0 listed |
 | Metro reach scan rows (listed; D686) | 1 |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 11 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 0 |
 
@@ -98,7 +99,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | IN-0035 | Sriperumbudur-Oragadam | seeds: point 79.85,12.83 (hint); point 79.95,12.97 (hint); point 80.03,12.79 (hint); 0 whole admin1 units, split: Tamil Nadu |
 | IN-0040 | Kolkata City-Salt Lake | seeds: point 88.35,22.57 (hint); point 88.42,22.58 (hint); 0 whole parts, 1 split |
 | IN-0041 | Howrah-Hooghly | seeds: point 88.31,22.59 (hint); point 88.33,22.68 (hint); point 88.39,22.9 (hint); 0 whole parts, 1 split |
-| IN-0042 | North 24 Parganas-Barrackpore | seeds: point 88.38,22.77 (hint); point 88.43,22.65 (hint); point 88.48,22.72 (hint); point 88.89,23.04 (hint) (snapped to land); 0 whole parts, 1 split |
+| IN-0042 | North 24 Parganas-Barrackpore | seeds: point 88.38,22.77 (hint); point 88.43,22.65 (hint); point 88.48,22.72 (hint); point 88.84,23.05 (hint); 0 whole parts, 1 split |
 | IN-0043 | South 24 Parganas-Sundarbans | seeds: point 88.08,21.65 (hint); point 88.17,22.47 (hint); point 88.19,22.19 (hint); point 88.43,22.47 (hint); point 88.8,21.9 (hint); 3 whole parts, 1 split |
 | IN-0049 | Gandhinagar-Sanand | seeds: point 72.38,22.99 (hint); point 72.64,23.22 (hint); point 72.68,23.16 (hint); 0 whole admin1 units, split: Gujarat |
 | IN-0050 | Kutch-North Gujarat | seeds: point 69.67,23.25 (hint); point 69.72,22.84 (hint); point 70.22,23.03 (hint); point 72.12,23.85 (hint); point 72.38,23.6 (hint); point 72.43,24.17 (hint); point 72.97,23.6 (hint); 0 whole admin1 units, split: Gujarat |
@@ -107,6 +108,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | IN-0077 | Keonjhar-Rourkela | seeds: point 84.86,22.25 (hint); point 85.39,22.1 (hint); point 85.58,21.63 (hint); 0 whole parts, 1 split |
 | IN-0079 | Koraput-Ganjam | seeds: point 82.71,18.81 (hint); point 82.98,18.88 (hint); point 83.42,19.17 (hint); point 84.79,19.31 (hint); 0 whole parts, 1 split |
 | LK-0005 | Nuwara Eliya | seeds: point 80.6,6.89 (hint); point 80.68,6.93 (hint); point 80.77,6.97 (hint); 1 whole admin1 units |
+| NP-0009 | Gandaki Hills | seeds: unit Gorkha; unit Lamjung; unit Manang; unit Mustang; unit Myagdi; unit Nawalapur (hint); 7 whole admin2 units |
 | NP-0011 | Nepalgunj-Dang | seeds: point 81.3,28.35 (hint); point 81.62,28.05 (hint); point 82.3,28.05 (hint); point 82.65,28.38 (hint); 6 whole admin1 units |
 | PK-0001 | Karachi Saddar-Clifton | seeds: point 67.03,24.81 (hint); point 67.03,24.85 (hint); 0 whole admin2 units, split: Karachi |
 | PK-0002 | Karachi Port-SITE | seeds: point 66.95,24.95 (hint); point 66.98,24.84 (hint); point 66.99,24.9 (hint); 0 whole admin2 units, split: Karachi |
@@ -126,21 +128,23 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | PK-0001 | Karachi Saddar-Clifton | 3 | 1 | 5621.5, 2032.5 |
 | BD-0001 | Dhaka Motijheel-Gulshan | 9 | 1 | 6153.5, 2056.5 |
 | PK-0009 | Lahore Mall-Gulberg | 10 | 1 | 5787.5, 1866.5 |
+| IN-0013 | South Mumbai-BKC | 12 | 2 | 5754.5, 2177.5 |
 | IN-0040 | Kolkata City-Salt Lake | 16 | 1 | 6107.5, 2087.5 |
 | IN-0001 | New Delhi-South Delhi | 20 | 1 | 5852.5, 1942.5 |
-| IN-0013 | South Mumbai-BKC | 26 | 3 | 5754.5, 2177.5 |
 | BD-0002 | Old Dhaka-Mirpur | 27 | 1 | 6151.5, 2059.5 |
+| BD-0005 | Savar-Ashulia | 28 | 2 | 6147.5, 2054.5 |
 | LK-0001 | Colombo | 28 | 1 | 5914.5, 2453.5 |
 | PK-0002 | Karachi Port-SITE | 28 | 2 | 5618.5, 2030.5 |
+| IN-0030 | Cyberabad-HITEC City | 31 | 1 | 5878.5, 2209.5 |
 | IN-0033 | Chennai Central-OMR | 35 | 1 | 5920.5, 2311.5 |
-| BD-0005 | Savar-Ashulia | 36 | 3 | 6147.5, 2054.5 |
 | PK-0010 | Lahore Cantt-DHA | 40 | 1 | 5790.5, 1869.5 |
-| IN-0053 | Surat City | 50 | 1 | 5751.5, 2117.5 |
+| IN-0014 | Mumbai Western Suburbs | 46 | 1 | 5753.5, 2161.5 |
 | PK-0021 | Islamabad | 50 | 1 | 5760.5, 1813.5 |
+| IN-0053 | Surat City | 51 | 1 | 5750.5, 2116.5 |
 | PK-0003 | Karachi Korangi-Port Qasim | 56 | 1 | 5629.5, 2031.5 |
 | IN-0002 | North-East-West Delhi | 60 | 1 | 5850.5, 1937.5 |
-| IN-0034 | Chennai North-Ennore | 61 | 2 | 5919.5, 2305.5 |
 | LK-0002 | Gampaha-Negombo | 61 | 1 | 5916.5, 2447.5 |
+| IN-0024 | Bengaluru South-Electronic City | 63 | 2 | 5862.5, 2316.5 |
 
 ## Anchor cities
 
@@ -162,12 +166,21 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 |---|---|---|---|
 | Ahmedabad (72.58, 23.03) | IN-0048 | IN-0048 | on it |
 | Andheri (72.85, 19.12) | IN-0014 | IN-0014 | on it |
+| Barrackpore (88.38, 22.76) | IN-0042 | IN-0042 | on it |
 | Bengaluru (77.59, 12.97) | IN | IN-0023 | on it |
+| Bengaluru MG Road (77.61, 12.975) | IN-0023 | IN-0023 | on it |
 | Bhuj Kutch (69.67, 23.25) | IN-0050 | IN-0050 | on it |
+| Chakan (73.86, 18.76) | IN-0018 | IN-0018 | on it |
 | Chandni Chowk (77.23, 28.656) | IN-0002 | IN-0002 | on it |
+| Charminar (78.47, 17.36) | IN-0029 | IN-0029 | on it |
+| Chennai Anna Salai (80.26, 13.06) | IN-0033 | IN-0033 | on it |
+| Chittagong (91.83, 22.34) | BD | BD-0009 | on it |
 | Clifton (67.03, 24.81) | PK-0001 | PK-0001 | on it |
 | Delhi Parliament (77.21, 28.617) | IN-0001 | IN-0001 | on it |
 | Dhaka Motijheel (90.42, 23.73) | BD-0001 | BD-0001 | on it |
+| Dum Dum (88.45, 22.65) | IN-0042 | IN-0042 | on it |
+| Electronic City (77.67, 12.84) | IN-0024 | IN-0024 | on it |
+| Ennore (80.32, 13.24) | IN-0034 | IN-0034 | on it |
 | Faridabad (77.31, 28.41) | IN-0003 | IN-0003 | on it |
 | Gandhinagar (72.64, 23.22) | IN-0049 | IN-0049 | on it |
 | Gazipur (90.42, 24.0) | BD-0003 | BD-0003 | on it |
@@ -176,7 +189,10 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Gulshan Dhaka (90.41, 23.79) | BD-0001 | BD-0001 | on it |
 | Gulshan-e-Iqbal (67.09, 24.92) | PK-0004 | PK-0004 | on it |
 | Gurugram (77.03, 28.46) | IN-0003 | IN-0003 | on it |
+| HITEC City (78.38, 17.45) | IN-0030 | IN-0030 | on it |
 | Himmatnagar (72.97, 23.6) | IN-0050 | IN-0050 | on it |
+| Hinjewadi (73.73, 18.59) | IN-0017 | IN-0017 | on it |
+| Howrah (88.31, 22.59) | IN-0041 | IN-0041 | on it |
 | JNPT (72.95, 18.95) | IN-0016 | IN-0016 | on it |
 | Jammu (74.86, 32.73) | IN-0065 | IN-0065 | on it |
 | Jinnah airport (67.16, 24.9) | PK-0004 | PK-0004 | on it |
@@ -184,8 +200,10 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Karachi II Chundrigar (67.01, 24.85) | PK-0001 | PK-0002 | within a pixel |
 | Kargil (76.13, 34.56) | IN-0066 | IN-0066 | on it |
 | Keamari (66.97, 24.83) | PK-0002 | PK-0002 | nearest across water |
+| Kempegowda airport (77.71, 13.2) | IN-0025 | IN-0025 | on it |
 | Khammam (80.15, 17.25) | IN-0032 | IN-0032 | on it |
 | Kolkata (88.36, 22.57) | IN | IN-0040 | on it |
+| Kolkata BBD Bagh (88.35, 22.57) | IN-0040 | IN-0040 | on it |
 | Korangi (67.12, 24.83) | PK-0003 | PK-0003 | on it |
 | Lahore DHA (74.4, 31.48) | PK-0010 | PK-0010 | on it |
 | Lahore Mall (74.33, 31.56) | PK-0009 | PK-0009 | on it |
@@ -205,8 +223,11 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Old Dhaka (90.4, 23.71) | BD-0002 | BD-0002 | on it |
 | Orangi (66.99, 24.95) | PK-0002 | PK-0002 | on it |
 | Palanpur (72.43, 24.17) | IN-0050 | IN-0050 | on it |
+| Peenya (77.52, 13.03) | IN-0025 | IN-0025 | on it |
+| Pimpri (73.8, 18.63) | IN-0018 | IN-0018 | on it |
 | Port Qasim (67.33, 24.78) | PK-0003 | PK-0003 | on it |
 | Powai (72.905, 19.12) | IN-0015 | IN-0014 | within a pixel |
+| Pune Shivajinagar (73.85, 18.53) | IN-0017 | IN-0017 | on it |
 | Sanand (72.38, 22.99) | IN-0049 | IN-0049 | on it |
 | Sangareddy (78.09, 17.62) | IN-0031,IN-0030 | IN-0031 | on it |
 | Savar (90.26, 23.86) | BD-0005 | BD-0005 | on it |
@@ -214,12 +235,14 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Siachen (77.1, 35.4) | IN-0066 | IN-0066 | on it |
 | Skardu (75.63, 35.3) | PK-0033 | PK-0033 | on it |
 | Srinagar (74.8, 34.08) | IN-0064 | IN-0064 | on it |
+| Sriperumbudur (79.95, 12.97) | IN-0035 | IN-0035 | on it |
 | Thane (72.98, 19.2) | IN-0015 | IN-0015 | on it |
 | Tiruvallur (79.91, 13.14) | IN-0034,IN-0036 | IN-0034 | on it |
 | Tongi (90.4, 23.89) | BD-0003 | BD-0003 | on it |
 | Vashi Navi Mumbai (73.0, 19.07) | IN-0016 | IN-0016 | on it |
 | Vellore (79.13, 12.92) | IN-0036 | IN-0036 | on it |
 | Vikarabad (77.9, 17.34) | IN-0032 | IN-0032 | on it |
+| Whitefield (77.75, 12.97) | IN-0023 | IN-0023 | on it |
 
 ## Metro reach
 
@@ -228,6 +251,24 @@ Metro provinces whose centroid is over 80 km from their Metro's city, that are o
 | Check | Province or region | Detail |
 |---|---|---|
 | large for its Metro | PK-0011 Lahore Industrial-Sheikhupura | 583 px, the Metro's median is 40 px (Metro Lahore) |
+
+## Land exclaves
+
+Parts of 5 px or more that are not a province's largest part and touch no pixel outside every province (islands are not listed). Each is explained by a place its composite name names lying in it, by one of the province's own seeds (a hint point, or a place its notes name) lying in it, by a neck under a pixel wide that joins it to the rest in the shapes, or by a reason in `[review.exclave_ok]`; an unexplained one fails the step (D691).
+
+| Province | Name | Pixels | At | Why |
+|---|---|---|---|---|
+| BD-0012 | Chittagong Hill Tracts | 5 | 92.18, 21.37 | Bandarban's southern tip, cut off by Cox's Bazar in geoBoundaries' simplified lines |
+| IN-0011 | Varanasi-Purvanchal | 5 | 84.47, 25.74 | a neck under a pixel wide joins it to the rest in the shapes |
+| IN-0046 | Nadia-Murshidabad-Malda | 25 | 88.22, 24.95 | a neck under a pixel wide joins it to the rest in the shapes |
+| IN-0059 | Ajmer-Kota | 566 | 77.32, 26.87 | its own seed place Bharatpur lies in it |
+| IN-0059 | Ajmer-Kota | 1219 | 76.16, 24.95 | composite name: Kota lies in it |
+| IN-0067 | Indore-Malwa | 2106 | 78.9, 24.23 | its own seed place Sagar lies in it |
+| NP-0009 | Gandaki Hills | 67 | 83.36, 27.61 | its own seed unit Nawalapur (hint) lies in it |
+| NP-0010 | Butwal-Bhairahawa | 8 | 88.08, 27.67 | a piece of Natural Earth's old Mechi zone, in the east, that the geoBoundaries district carves for Nepal's provinces leave to Province No. 5 (D683) |
+| NP-0010 | Butwal-Bhairahawa | 9 | 84.42, 27.38 | a neck under a pixel wide joins it to the rest in the shapes |
+| NP-0011 | Nepalgunj-Dang | 10 | 83.24, 28.26 | a neck under a pixel wide joins it to the rest in the shapes |
+| PK-0023 | Hazara | 6 | 72.66, 35.83 | a neck under a pixel wide joins it to the rest in the shapes |
 
 ## Known for review
 
@@ -341,7 +382,7 @@ Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share
 | BGD:Rangpur | Rangpur | BD-0026 78%, BD-0027 22% |
 | IND:Delhi | part-0 | IN-0002 76%, IN-0001 24% |
 | IND:Haryana | part-0 | IN-0004 94%, IN-0003 6% |
-| IND:Telangana | part-0 | IN-0032 92%, IN-0031 5%, IN-0029 3%, IN-0030 1% |
+| IND:Telangana | part-0 | IN-0032 91%, IN-0031 5%, IN-0029 3%, IN-0030 1% |
 
 ## Named places outside their province
 
@@ -350,7 +391,6 @@ A Natural Earth place matched in the name or notes that ended up in another prov
 | Province | Name | Place | Lies in |
 |---|---|---|---|
 | IN-0068 | Bhopal-Gwalior | Sagar | IN-0067 |
-| IN-0007 | Agra-Aligarh | Lucknow | IN-0009 |
 
 ## Region nesting
 
@@ -365,9 +405,9 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | BD-0004 | Narayanganj | 20 | Y | N |
 | BD-0008 | Faridpur-Padma | 22 | Y | N |
 | BD-0013 | Comilla-Chandpur | 14 | Y | N |
-| IN-0017 | Pune City | 8 | Y | N |
+| IN-0020 | Nashik-Khandesh | 17 | Y | N |
 | IN-0028 | North Karnataka | 31 | Y | N |
-| IN-0035 | Sriperumbudur-Oragadam | 15 | Y | N |
+| IN-0035 | Sriperumbudur-Oragadam | 8 | Y | N |
 | IN-0040 | Kolkata City-Salt Lake | 0 | N | Y |
 | IN-0041 | Howrah-Hooghly | 0 | N | Y |
 | IN-0077 | Keonjhar-Rourkela | 21 | Y | N |
@@ -377,7 +417,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-NP-0010 (52), NP-0011 (30), IN-0097 (16), LK-0008 (10), IN-0054 (8), IN-0067 (7), IN-0036 (6), IN-0068 (6), BD-0022 (5), IN-0028 (5), BD-0007 (4), BD-0023 (4), IN-0039 (4), IN-0043 (4), IN-0059 (4), IN-0073 (4), IN-0076 (4), PK-0007 (4), PK-0030 (4), BD-0005 (3), BD-0011 (3), BD-0012 (3), BD-0015 (3), BD-0019 (3), IN-0013 (3), IN-0026 (3), IN-0044 (3), IN-0046 (3), IN-0051 (3), IN-0056 (3), IN-0079 (3), IN-0085 (3), IN-0086 (3), NP-0008 (3), PK-0016 (3), AF-0006 (2), BD-0006 (2), BD-0010 (2), BD-0020 (2), BD-0027 (2), IN-0004 (2), IN-0011 (2), IN-0015 (2), IN-0020 (2), IN-0024 (2), IN-0025 (2), IN-0030 (2), IN-0031 (2), IN-0034 (2), IN-0047 (2), IN-0048 (2), IN-0049 (2), IN-0055 (2), IN-0070 (2), IN-0087 (2), IN-0089 (2), IN-0090 (2), IN-0093 (2), LK-0006 (2), LK-0010 (2), MV-0001 (2), NP-0012 (2), NP-0013 (2), PK-0002 (2), PK-0004 (2), PK-0017 (2), PK-0023 (2), PK-0032 (2)
+NP-0010 (52), NP-0011 (30), IN-0097 (16), LK-0008 (10), IN-0067 (8), IN-0036 (6), BD-0022 (5), BD-0007 (4), BD-0023 (4), IN-0026 (4), IN-0039 (4), IN-0054 (4), IN-0059 (4), IN-0073 (4), PK-0007 (4), PK-0030 (4), BD-0011 (3), BD-0012 (3), BD-0015 (3), BD-0019 (3), IN-0043 (3), IN-0046 (3), IN-0050 (3), IN-0056 (3), IN-0060 (3), IN-0076 (3), IN-0079 (3), IN-0085 (3), IN-0086 (3), PK-0016 (3), AF-0006 (2), BD-0005 (2), BD-0006 (2), BD-0010 (2), BD-0020 (2), BD-0027 (2), IN-0004 (2), IN-0011 (2), IN-0013 (2), IN-0015 (2), IN-0019 (2), IN-0020 (2), IN-0024 (2), IN-0028 (2), IN-0034 (2), IN-0044 (2), IN-0047 (2), IN-0055 (2), IN-0070 (2), IN-0087 (2), IN-0089 (2), IN-0090 (2), IN-0093 (2), LK-0006 (2), LK-0010 (2), MV-0001 (2), NP-0008 (2), NP-0009 (2), NP-0012 (2), NP-0013 (2), PK-0002 (2), PK-0004 (2), PK-0017 (2), PK-0023 (2), PK-0032 (2)
 
 ## Visual check
 
