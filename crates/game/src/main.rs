@@ -35,6 +35,9 @@ struct Args {
     shot: Option<game::shot::ShotPlugin>,
     /// The synthetic map's width (its height is half).
     synthetic_width: u32,
+    /// `--map-mode` and `--map-metros`, for a screenshot or `--bench-map`.
+    map_mode: Option<sim::views::map_layers::MapMode>,
+    map_metros: bool,
 }
 
 /// The repository's `assets` folder.
@@ -52,6 +55,8 @@ fn parse_args() -> Args {
         synthetic: None,
         shot: None,
         synthetic_width: SYNTHETIC_SIZE.0,
+        map_mode: None,
+        map_metros: false,
     };
     let list: Vec<String> = std::env::args().skip(1).collect();
     let mut i = 0;
@@ -73,7 +78,11 @@ fn parse_args() -> Args {
                         rows: None,
                     },
                     "--bench-max" => BenchMode::Max { seconds },
-                    _ => BenchMode::Map { seconds },
+                    _ => BenchMode::Map {
+                        seconds,
+                        mode: Default::default(),
+                        metros: false,
+                    },
                 });
                 if number(i).is_some() {
                     i += 1;
@@ -90,6 +99,8 @@ fn parse_args() -> Args {
                     zoom: 0.0,
                     click: false,
                     hide_windows: false,
+                    mode: None,
+                    metros: false,
                 });
                 i += 1;
             }
@@ -118,6 +129,15 @@ fn parse_args() -> Args {
                     s.click = true;
                 }
             }
+            "--map-mode" => {
+                args.map_mode = Some(
+                    list.get(i + 1)
+                        .and_then(|s| game::shot::parse_mode(s))
+                        .unwrap_or_else(|| exit_usage("--map-mode needs a mode")),
+                );
+                i += 1;
+            }
+            "--map-metros" => args.map_metros = true,
             "--map-hide-windows" => {
                 if let Some(s) = &mut args.shot {
                     s.hide_windows = true;
@@ -161,7 +181,7 @@ fn parse_args() -> Args {
 
 fn exit_usage(msg: &str) -> ! {
     eprintln!(
-        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds]] [--bench-pages]"
+        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--map-mode MODE] [--map-metros] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds]] [--bench-pages]"
     );
     std::process::exit(2)
 }
@@ -236,6 +256,14 @@ fn main() -> AppExit {
     let data_has_map = data.map.is_some();
     if let (Some(BenchMode::Table { rows, .. }), Some(n)) = (&mut args.bench, args.rows) {
         *rows = Some(n);
+    }
+    if let Some(BenchMode::Map { mode, metros, .. }) = &mut args.bench {
+        *mode = args.map_mode.unwrap_or_default();
+        *metros = args.map_metros;
+    }
+    if let Some(s) = &mut args.shot {
+        s.mode = args.map_mode;
+        s.metros = args.map_metros;
     }
     let sim = Sim::new(data, args.seed).unwrap_or_else(|e| {
         eprintln!("cannot build the start state: {e}");

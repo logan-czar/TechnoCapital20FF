@@ -1,5 +1,5 @@
 //! Names and link targets for what the views name (D462): places ("Edmonton, Canada", linked to
-//! the country's page: provinces get pages in M8), controllers (a character, a state or a
+//! the province's page since M8.7, D707), controllers (a character, a state or a
 //! parent company), and a character's roles. Read from lane A1's places, countries and
 //! characters views only (spec 9), so no page names a thing by its id.
 
@@ -10,11 +10,26 @@ use sim::world::{ControllerRef, ProvinceId};
 use crate::command::index::seat_name;
 use crate::pages::PageRef;
 
-/// A province's place name and the page its link opens (its country's).
+/// A province's place name ("Edmonton, Canada") and the page its link opens: the province's
+/// (M8.7, D707).
 pub fn place(v: &SimViews, province: ProvinceId) -> Option<(String, PageRef)> {
+    Some((
+        v.places.get().place_name(province)?,
+        PageRef::Province(province),
+    ))
+}
+
+/// A place as two links where a page has room (a header field): the province ("Edmonton,")
+/// and its country ("Canada"), D707.
+pub fn place_spans(v: &SimViews, province: ProvinceId) -> Option<Vec<crate::pages::doc::Span>> {
+    use crate::pages::doc::Span;
     let places = v.places.get();
     let p = places.province(province)?;
-    Some((places.place_name(province)?, PageRef::Country(p.country)))
+    let c = places.country(p.country)?;
+    Some(vec![
+        Span::link(format!("{},", p.name), PageRef::Province(province)),
+        Span::link(c.name.clone(), PageRef::Country(p.country)),
+    ])
 }
 
 /// The page a controller links to: a character's, a state's (its country) or a parent

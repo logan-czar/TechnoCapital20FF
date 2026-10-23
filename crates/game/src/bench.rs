@@ -46,9 +46,12 @@ pub enum BenchMode {
     Max {
         seconds: f64,
     },
-    /// The map behind panes, panning and zooming ([`drive_map`]).
+    /// The map behind panes, panning and zooming ([`drive_map`]), in a map mode (M8.5) and
+    /// with the Metro outlines if asked.
     Map {
         seconds: f64,
+        mode: sim::views::map_layers::MapMode,
+        metros: bool,
     },
     /// Open every page kind and time it to its first laid-out frame
     /// ([`crate::page_bench`]).
@@ -60,7 +63,7 @@ impl BenchMode {
         match self {
             BenchMode::Table { seconds, .. }
             | BenchMode::Max { seconds }
-            | BenchMode::Map { seconds } => seconds,
+            | BenchMode::Map { seconds, .. } => seconds,
             BenchMode::Pages => f64::INFINITY,
         }
     }
@@ -310,6 +313,8 @@ fn drive(mut b: ResMut<Bench>, tables: Option<Res<PdoombergUi>>, mut q: Query<&m
     }
 }
 
+/// The frame the map bench sets its map mode at (after the panes open).
+pub const MAP_MODE_FRAME: u64 = 14;
 /// Frames between the map bench's zoom moves, and how many notches each moves.
 pub const MAP_ZOOM_EVERY: u64 = 45;
 pub const MAP_ZOOM_STEPS: f32 = 3.5;
@@ -329,8 +334,17 @@ fn drive_map(
     mut panes: MessageWriter<crate::workspace::PaneAction>,
     mut windows: MessageWriter<crate::workspace::WindowAction>,
     mut input: MessageWriter<crate::map::MapInput>,
+    mut modes: MessageWriter<crate::map::modes::MapModeInput>,
 ) {
     use crate::map::camera::ZoomLevel;
+    use crate::map::modes::MapModeInput;
+    if b.frame == MAP_MODE_FRAME
+        && let BenchMode::Map { mode, metros, .. } = b.mode
+    {
+        modes.write(MapModeInput::Set(mode));
+        modes.write(MapModeInput::Metros(metros));
+        println!("BENCH map: mode {mode:?}, Metro outlines {metros}");
+    }
     use crate::pages::PageRef;
     use crate::workspace::{OpenPage, PaneAction, WindowAction};
     let f = b.frame;

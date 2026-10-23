@@ -321,4 +321,26 @@ impl SimViews {
     pub fn clock(&self) -> &ClockView {
         self.clock.get()
     }
+
+    /// `get_map_layer(mode, param)` (spec 9.2, 8 Map row): every mode, the Financial zones one
+    /// with v_cycle's zone effects and phase and v_exchanges' hubs and index levels (D700).
+    pub fn get_map_layer(&self, mode: map_layers::MapMode) -> map_layers::MapLayer {
+        let zones = matches!(mode, map_layers::MapMode::FinancialZones)
+            .then(|| (self.cycle.get(), self.exchanges.get()));
+        self.map_layers.get().layer(mode, zones)
+    }
+
+    /// The versions of the views `get_map_layer(mode)` reads (v_map_layers, and for the
+    /// Financial zones mode v_cycle and v_exchanges; 0 for a view the mode does not read): the
+    /// map rewrites its colour table only when these move (m8-plan risks).
+    pub fn map_layer_versions(&self, mode: map_layers::MapMode) -> [u64; 3] {
+        match mode {
+            map_layers::MapMode::FinancialZones => [
+                self.map_layers.version(),
+                self.cycle.version(),
+                self.exchanges.version(),
+            ],
+            _ => [self.map_layers.version(), 0, 0],
+        }
+    }
 }

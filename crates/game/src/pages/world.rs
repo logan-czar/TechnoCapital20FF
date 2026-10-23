@@ -44,7 +44,7 @@ pub fn province_model(v: &SimViews) -> TableModel {
                 .map_or(Cell::Unknown, |c| Cell::Text(c.iso3.clone()));
             vec![
                 Cell::Text(p.key.clone()),
-                Cell::Text(p.name.clone()),
+                Cell::Link(PageRef::Province(p.id), p.name.clone()),
                 iso3,
                 country,
             ]
@@ -72,7 +72,7 @@ fn world_page(
         b.head,
         "World",
         "Home",
-        "The map lands in M8; until then the provinces of the world",
+        "Every province of the world: the map shows them behind the windows",
     );
     let pages = [
         PageRef::Companies,

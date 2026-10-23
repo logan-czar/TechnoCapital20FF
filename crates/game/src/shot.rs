@@ -1,7 +1,9 @@
 //! `--screenshot PATH` (a dev flag for PRs and Logan's checks): sets the map's camera from
 //! `--map-look LON,LAT` and `--map-zoom STEPS`, optionally clicks the province at the view's
 //! centre (`--map-click`), hides the windows (`--map-hide-windows`), lets the frames settle,
-//! saves a screenshot of the window and exits.
+//! saves a screenshot of the window and exits. `--map-mode MODE` picks the map mode first
+//! (`political`, `development[:commerce|industry|population|total]`, `industry[:N]` for
+//! industry ordinal N's assets, `hqs`, `zones`) and `--map-metros` turns the Metro outlines on.
 
 use std::path::PathBuf;
 
@@ -9,10 +11,13 @@ use bevy::prelude::*;
 use bevy::render::view::screenshot::{Screenshot, save_to_disk};
 
 use crate::bridge::Views;
+use crate::map::modes::MapModeInput;
 use crate::map::picking::MapBitmap;
 use crate::map::synthetic::miller_y;
 use crate::map::{MapInput, MapState};
 use crate::workspace::Workspace;
+use sim::views::map_layers::{DevTrack, MapMode};
+use sim::world::IndustryId;
 
 /// Frames before the camera is set (the layout and the map are up), and before the shot.
 pub const SETUP_FRAMES: u32 = 30;
@@ -31,6 +36,32 @@ pub struct ShotPlugin {
     pub click: bool,
     /// Hide every window (the H key) before the shot.
     pub hide_windows: bool,
+    /// The map mode to show.
+    pub mode: Option<MapMode>,
+    /// The Metro outlines on.
+    pub metros: bool,
+}
+
+/// A `--map-mode` argument.
+pub fn parse_mode(s: &str) -> Option<MapMode> {
+    let (name, param) = s.split_once(':').map_or((s, None), |(a, b)| (a, Some(b)));
+    Some(match name {
+        "political" => MapMode::Political,
+        "development" => MapMode::Development(match param {
+            None | Some("total") => DevTrack::Total,
+            Some("commerce") => DevTrack::Commerce,
+            Some("industry") => DevTrack::Industry,
+            Some("population") => DevTrack::Population,
+            _ => return None,
+        }),
+        "industry" => MapMode::Industry(match param {
+            None => None,
+            Some(n) => Some(IndustryId(n.parse().ok()?)),
+        }),
+        "hqs" => MapMode::CompanyHqs(Default::default()),
+        "zones" => MapMode::FinancialZones,
+        _ => return None,
+    })
 }
 
 impl Plugin for ShotPlugin {
@@ -50,10 +81,19 @@ fn run_shot(
     views: Res<Views>,
     mut ws: ResMut<Workspace>,
     mut input: MessageWriter<MapInput>,
+    mut modes: MessageWriter<MapModeInput>,
     mut exit: MessageWriter<AppExit>,
 ) {
     *frame += 1;
     let f = *frame;
+    if f == SETUP_FRAMES {
+        if let Some(m) = shot.mode {
+            modes.write(MapModeInput::Set(m));
+        }
+        if shot.metros {
+            modes.write(MapModeInput::Metros(true));
+        }
+    }
     if f == SETUP_FRAMES
         && let (Some(bitmap), Some(geo)) = (&bitmap, &views.map_static.get().geo)
     {
