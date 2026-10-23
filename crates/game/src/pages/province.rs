@@ -9,7 +9,7 @@ use bevy::prelude::*;
 use sim::SimViews;
 use sim::map::BorderKind;
 use sim::views::province_cards::{LargestTrack, ProvinceCard};
-use sim::world::ProvinceId;
+use sim::world::{Ordinal, ProvinceId};
 
 use super::doc::{Block, Field, PageDoc, SectionDoc, Span, TableDoc, spawn_doc};
 use super::{PageAppExt, PageBuild, PageKind, PageRef, PageSpec, Refresh, SectionSpec, ViewKey};
@@ -17,6 +17,9 @@ use crate::bridge::Views;
 use crate::command::index::NameIndex;
 use crate::config::UiConfig;
 use crate::table::{Cell, Column, TableModel, Unit};
+
+/// The Metro's other provinces the header links before it sums the rest.
+pub const METRO_LINKS: usize = 6;
 
 pub const SECTIONS: &[SectionSpec] = &[
     ("development", "Development"),
@@ -210,20 +213,48 @@ pub fn province_doc(p: ProvinceId, v: &SimViews, index: &NameIndex) -> PageDoc {
             format!("{} ({})", c.region, c.area)
         },
     ));
-    head.push(Field::text(
+    // The Metro and key city as links to their provinces (D707): the Metro's name, then its
+    // other provinces; the key city's name, linking to its first province.
+    let statics = v.map_static.get();
+    let row = statics.provinces.get(p.index());
+    head.push(Field::new(
         "Metro",
-        c.metro.clone().unwrap_or_else(|| "none".into()),
+        match row
+            .and_then(|r| r.metro)
+            .and_then(|m| statics.metros.get(m as usize))
+        {
+            Some(m) => {
+                let mut spans = vec![Span::text(m.name.clone())];
+                let others: Vec<_> = m.provinces.iter().filter(|&&q| q != p).collect();
+                for &&q in others.iter().take(METRO_LINKS) {
+                    let page = PageRef::Province(q);
+                    spans.push(Span::link(index.title(&page), page));
+                }
+                if others.len() > METRO_LINKS {
+                    spans.push(Span::muted(format!(
+                        "and {} more",
+                        others.len() - METRO_LINKS
+                    )));
+                }
+                spans
+            }
+            None => vec![Span::muted("none")],
+        },
     ));
-    head.push(Field::text(
+    head.push(Field::new(
         "Key city",
-        c.key_city.clone().unwrap_or_else(|| "none".into()),
+        match row
+            .and_then(|r| r.key_city)
+            .and_then(|k| statics.key_cities.get(k as usize))
+        {
+            Some(k) => match k.provinces.first() {
+                Some(&q) => vec![Span::link(k.name.clone(), PageRef::Province(q))],
+                None => vec![Span::text(k.name.clone())],
+            },
+            None => vec![Span::muted("none")],
+        },
     ));
     doc.head.push(Block::Fields(head));
-    if v.map_static.get().shape(p).is_none() {
-        doc.head.push(Block::Line(vec![Span::muted(
-            "Not on the map yet: lane P draws this province's region later.",
-        )]));
-    }
     let largest = match c.largest_track {
         LargestTrack::Commerce => "Commerce",
         LargestTrack::Industry => "Industry",

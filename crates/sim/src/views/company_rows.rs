@@ -163,7 +163,7 @@ impl ViewData for CompanyRowsView {
                     industry: c.industry,
                     hq_country: c.hq_country,
                     public: c.public,
-                    revenue_ttm: ttm_line(&est, banded, id, published, StatementLine::Revenue),
+                    revenue_ttm: revenue_ttm(&est, w, id),
                     net_income_ttm: ttm_line(&est, banded, id, published, StatementLine::NetIncome),
                     rating: c.finance.rating,
                     status: c.finance.status(),

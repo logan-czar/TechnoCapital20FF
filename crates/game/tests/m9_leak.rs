@@ -82,6 +82,15 @@ fn map_dir() -> &'static std::path::Path {
     })
 }
 
+/// Removes the synthetic map's folder when dropped (at the test's end, pass or panic).
+struct MapDirGuard;
+
+impl Drop for MapDirGuard {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(map_dir());
+    }
+}
+
 /// The starting data with the synthetic world map (D705).
 fn mdata() -> sim_data::WorldData {
     static DATA: std::sync::OnceLock<sim_data::WorldData> = std::sync::OnceLock::new();
@@ -1220,6 +1229,8 @@ fn leaks_of(sim: Sim, label: &str) -> (Truths, Vec<Leak>, usize) {
 
 #[test]
 fn no_true_private_value_on_any_screen() {
+    // The synthetic map's folder goes when the test ends, pass or panic.
+    let _map = MapDirGuard;
     let start = Instant::now();
     let fresh = Sim::new(data(), SEED).unwrap();
     let mut later = Sim::new(data(), SEED).unwrap();
@@ -1263,7 +1274,6 @@ fn no_true_private_value_on_any_screen() {
         start.elapsed().as_secs_f64(),
         report.join("\n")
     );
-    let _ = std::fs::remove_dir_all(map_dir());
     assert!(
         all.is_empty(),
         "{} true private values on screen; the first {SHOWN}:\n{}",

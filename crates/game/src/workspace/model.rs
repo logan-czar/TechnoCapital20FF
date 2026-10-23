@@ -1105,7 +1105,7 @@ impl Workspace {
         self.active = id;
         self.hidden = false;
         self.clamp(id);
-        self.choose(id, true, true);
+        self.choose(id, [true; 4]);
         self.structure += 1;
         self.geometry += 1;
         Some(id)
@@ -1266,27 +1266,44 @@ impl Workspace {
     }
 
     /// After a move or resize of window `id` from `before`: when it changed anything, the
-    /// window is the player's (`Fit::Fixed`) and its preferred place (`at`) and size (`size`)
-    /// become what it shows; a drag that changed nothing leaves a filling window filling
-    /// (review of PR #35; D708).
+    /// window is the player's (`Fit::Fixed`) and, of its place (`at`) and size (`size`), the
+    /// coordinates that actually changed become its preferred ones (a width-only resize keeps
+    /// the preferred height); a drag that changed nothing leaves a filling window filling
+    /// (review of PR #35 and PR #37; D708).
     fn placed(&mut self, id: WindowId, before: WinRect, at: bool, size: bool) -> bool {
-        let changed = self.win(id).is_some_and(|w| w.rect != before);
-        if changed {
-            self.choose(id, at, size);
+        let Some(r) = self.win(id).map(|w| w.rect) else {
+            return false;
+        };
+        if r != before {
+            let mask = [
+                at && r.x != before.x,
+                at && r.y != before.y,
+                size && r.w != before.w,
+                size && r.h != before.h,
+            ];
+            self.choose(id, mask);
         }
         self.moved(id, before)
     }
 
-    /// Makes window `id`'s shown place and size its preferred ones.
-    fn choose(&mut self, id: WindowId, at: bool, size: bool) {
+    /// Makes the masked coordinates (x, y, w, h) of window `id`'s shown rectangle its preferred
+    /// ones; a window that was not the player's yet takes its whole shown rectangle first.
+    fn choose(&mut self, id: WindowId, [x, y, w_, h]: [bool; 4]) {
         let Some(w) = self.win_mut(id) else { return };
+        if w.fit != Fit::Fixed {
+            w.preferred = w.rect;
+        }
         w.fit = Fit::Fixed;
-        if at {
+        if x {
             w.preferred.x = w.rect.x;
+        }
+        if y {
             w.preferred.y = w.rect.y;
         }
-        if size {
+        if w_ {
             w.preferred.w = w.rect.w;
+        }
+        if h {
             w.preferred.h = w.rect.h;
         }
     }
@@ -2297,5 +2314,26 @@ mod tests {
         // A real move makes it the player's.
         assert!(ws.resize_window(id, -100.0, 0.0));
         assert_eq!(ws.window(id).unwrap().fit, Fit::Fixed);
+    }
+
+    /// A resize keeps the preferred size of the dimension it did not change (review of PR #37).
+    #[test]
+    fn a_resize_changes_only_the_dimension_it_moves() {
+        let mut ws = Workspace::new(PageRef::World);
+        ws.set_area(1280.0, 800.0);
+        let id = ws.active_window();
+        let want = WinRect {
+            x: 100.0,
+            y: 50.0,
+            w: 800.0,
+            h: 700.0,
+        };
+        assert!(ws.set_window_rect(id, want));
+        // A short area clamps the height; a width-only resize then keeps the preferred height.
+        ws.set_area(1280.0, 500.0);
+        assert!(ws.resize_window(id, -100.0, 0.0));
+        ws.set_area(1280.0, 800.0);
+        let r = ws.window(id).unwrap().rect;
+        assert_eq!((r.w, r.h), (700.0, 700.0), "the height grows back");
     }
 }

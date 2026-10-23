@@ -125,6 +125,35 @@ fn the_province_page_lists_its_hqs_and_units_with_links() {
         }
     }
     assert!(with_both > 20, "{with_both}");
+    // The header's Metro and key city link to their provinces; no builder's note shows.
+    let statics = v.map_static.get();
+    let mut metro_links = 0;
+    for c in &v.province_cards.get().cards {
+        let d = province_doc(c.id, v, &index);
+        let links = d.links();
+        let row = &statics.provinces[c.id.index()];
+        if let Some(m) = row.metro {
+            let others: Vec<_> = statics.metros[m as usize]
+                .provinces
+                .iter()
+                .filter(|&&q| q != c.id)
+                .collect();
+            if let Some(&&q) = others.first() {
+                assert!(links.contains(&PageRef::Province(q)), "{}", c.key);
+                metro_links += 1;
+            }
+        }
+        if let Some(k) = row.key_city {
+            let q = statics.key_cities[k as usize].provinces[0];
+            assert!(links.contains(&PageRef::Province(q)), "{}", c.key);
+        }
+        assert!(
+            !d.texts(v).iter().any(|t| t.contains("lane P")),
+            "{}",
+            c.key
+        );
+    }
+    assert!(metro_links > 50, "{metro_links}");
 }
 
 #[test]
