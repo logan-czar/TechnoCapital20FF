@@ -14,6 +14,7 @@ Logan's PC (Windows 11, 24 threads, RTX 5070 Ti), October 2026, branch `build/m8
 | Timing harness on the world map | `target/release/game --bench-pages` | `pages 59 opened, worst 20.64 ms: PASS` twice; the Province page 9.7 to 10.9 ms, every mode switch 5.6 ms or less |
 | Startup render error | D741 | Cause found (a stale binary against a newer shader); the shader is now compiled in and its layout tested |
 | P8 QA | the qa step (below) | Every region passes; the remaining items were signed off at the Phase B gate |
+| Soak invariance | `headless soak --years 10 --seeds 1..4` | Byte-identical to main 5074f00 (below) |
 | The full gate twice | `bash scripts/check.sh` | (below) |
 
 ## M8.8: the click test
@@ -85,6 +86,15 @@ A PR #40 review run once stopped at startup with `ui_material_pipeline: Shader g
 
 - The Province placeholder (D637's Phase A page: its sections, card lines, links and plan text) is deleted from `pages/placeholder.rs`; lane MB's Province page (D707) is the only one.
 - `examples/table_spike.rs` builds (`cargo build -p game --example table_spike`).
+
+## Soak invariance
+
+```
+cargo build --release -p headless
+target/release/headless soak --years 10 --seeds 1..4 --out DIR
+```
+
+Run at main 5074f00 (this slot checked out there) and on this branch: byte-identical `years.csv` (md5 121b5c7ba2ae4edcb9ed12d28764563e) and `quarters.csv` (md5 cf890b482bd1f4c420cb3c6dc7f73a35), 3 s for the four seeds. They are also the md5s lane MB recorded against main a31b1a9 (m9-checks.md): the map moves nothing in the economy. This branch changes no file under `crates/sim`, `crates/sim-data`, `crates/headless` or `docs/design`, so the two headless builds are the same code.
 
 ## P8: the map QA reports
 
