@@ -36,6 +36,8 @@ pub struct MapProvince {
     pub metro: Option<u32>,
     /// Index into [`MapStaticView::key_cities`].
     pub key_city: Option<u32>,
+    /// Index into [`MapStaticView::regions`] (M8.6 labels).
+    pub region: u32,
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -46,6 +48,9 @@ pub struct MapStaticView {
     pub metros: Vec<PlaceGroup>,
     /// Key cities in key-cities.csv order.
     pub key_cities: Vec<PlaceGroup>,
+    /// Regions (spec 3.3 `region`), each a country's: in the order their first province comes
+    /// in ordinal order, so a region is one name in one country (D706).
+    pub regions: Vec<PlaceGroup>,
     /// The loaded map geometry, shared (it is large and never changes).
     pub geo: Option<Arc<MapGeo>>,
 }
@@ -115,10 +120,22 @@ impl ViewData for MapStaticView {
                 provinces: Vec::new(),
             })
             .collect();
+        let mut regions: Vec<PlaceGroup> = Vec::new();
+        let mut region_of: std::collections::BTreeMap<(CountryId, &str), u32> =
+            std::collections::BTreeMap::new();
         let provinces = w
             .provinces
             .iter()
             .map(|(id, p)| {
+                let region_name = map.provinces.get(id.index()).map_or("", |s| s.region.as_str());
+                let region = *region_of.entry((p.country, region_name)).or_insert_with(|| {
+                    regions.push(PlaceGroup {
+                        name: region_name.to_owned(),
+                        provinces: Vec::new(),
+                    });
+                    (regions.len() - 1) as u32
+                });
+                regions[region as usize].provinces.push(id);
                 let s = map.provinces.get(id.index());
                 let metro = s
                     .and_then(|s| s.metro.as_deref())
@@ -140,6 +157,7 @@ impl ViewData for MapStaticView {
                     contested: s.is_some_and(|s| s.contested.is_some()),
                     metro,
                     key_city,
+                    region,
                 }
             })
             .collect();
@@ -147,6 +165,7 @@ impl ViewData for MapStaticView {
             provinces,
             metros,
             key_cities,
+            regions,
             geo: map.geo.clone(),
         }
     }

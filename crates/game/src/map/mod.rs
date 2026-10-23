@@ -17,6 +17,7 @@
 pub mod camera;
 pub mod card;
 pub mod colors;
+pub mod labels;
 pub mod modes;
 pub mod picking;
 pub mod pins;
@@ -126,6 +127,7 @@ impl Plugin for MapPlugin {
             .add_plugins((
                 modes::MapModesPlugin,
                 pins::MapPinsPlugin,
+                labels::MapLabelsPlugin,
                 card::MapCardPlugin,
             ));
     }
