@@ -1,4 +1,21 @@
 country,region,method,source_ids,confidence,provenance,note
+AFG,Badakhshan,admin1,AFG-1760,1.0,Natural Earth 10m (public domain),name match 100
+AFG,Balkh-Samangan,admin1,AFG-1744;AFG-1773,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+AFG,Bamyan-Ghor,admin1,AFG-1743;AFG-1747,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+AFG,Farah-Nimroz,admin1,AFG-1751;AFG-1749,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+AFG,Ghazni,admin1,AFG-1757,1.0,Natural Earth 10m (public domain),name match 100
+AFG,Helmand,admin1,AFG-1750,1.0,Natural Earth 10m (public domain),name match 100
+AFG,Herat-Badghis,admin1,AFG-1741;AFG-1742,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+AFG,Jowzjan-Faryab-Sar-e Pol,admin1,AFG-1746;AFG-1745;AFG-1748,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+AFG,Kabul,admin1,AFG-1767,1.0,Natural Earth 10m (public domain),name match 100
+AFG,Kandahar,admin1,AFG-1754,1.0,Natural Earth 10m (public domain),name match 100
+AFG,Kunar-Laghman-Nuristan,admin1,AFG-1762;AFG-1761;AFG-1770,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+AFG,Kunduz-Baghlan-Takhar,admin1,AFG-1765;AFG-1763;AFG-1772;AFG-1766,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100); plus unclaimed Parwan"
+AFG,Logar-Wardak,admin1,AFG-1771;AFG-1774,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+AFG,Nangarhar,admin1,AFG-1764,1.0,Natural Earth 10m (public domain),name match 100
+AFG,Paktia-Khost-Paktika,admin1,AFG-1758;AFG-3413;AFG-1759,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+AFG,Parwan-Kapisa-Panjshir,admin1,AFG-1769;AFG-1768,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+AFG,Uruzgan-Zabul-Daykundi,admin1,AFG-1755;AFG-1752;AFG-1753,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
 ALB,Central Albania,admin1,ALB-1524;ALB-1529;ALB-1494,0.95,Natural Earth 10m (public domain),"alias hint -> AL-11, AL-02, AL-03"
 ALB,Northern Albania,admin1,ALB-1526;ALB-1502;ALB-1498;ALB-1528,0.95,Natural Earth 10m (public domain),"alias hint -> AL-10, AL-08, AL-07, AL-09"
 ALB,Southern Albania,admin1,ALB-1521;ALB-1525;ALB-1504;ALB-1495;ALB-1523,0.95,Natural Earth 10m (public domain),"alias hint -> AL-04, AL-12, AL-06, AL-01, AL-05"
@@ -69,6 +86,14 @@ AZE,Upper Karabakh-Kalbajar-Lachin,admin1,AZE-1682;AZE-1735;AZE-1736;AZE-1740;AZ
 BEL,Brussels-Capital Region,admin1,BEL-3474,1.0,Natural Earth 10m (public domain),name match 100
 BEL,Flanders,admin1,BEL-3479;BEL-3478;BEL-3480;BEL-3;BEL-3475,0.95,Natural Earth 10m (public domain),alias hint -> region:Flemish
 BEL,Wallonia,admin1,BEL-2;BEL-3476;BEL-3477;BEL-3481;BEL-3482,0.95,Natural Earth 10m (public domain),alias hint -> region:Walloon
+BGD,Barisal,admin1,BGD-2475,1.0,Natural Earth 10m (public domain),name match 100
+BGD,Chittagong,admin1,BGD-2476,1.0,Natural Earth 10m (public domain),name match 100
+BGD,Dhaka,admin1,BGD-1806,1.0,Natural Earth 10m (public domain),name match 100; less BGD:Mymensingh (carve)
+BGD,Khulna,admin1,BGD-2432,1.0,Natural Earth 10m (public domain),name match 100
+BGD,Mymensingh,admin1,,0.95,"geoBoundaries gbOpen BGD ADM2 (Bangladesh Bureau of Statistics (BBS), OCHA ROAP; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO))","no admin-1 match (best unit 40, group 0); carve: BGD units Mymensingh, Netrakona, Jamalpur, Sherpur from BGD:Dhaka"
+BGD,Rajshahi,admin1,BGD-3255,1.0,Natural Earth 10m (public domain),name match 100
+BGD,Rangpur,admin1,BGD-5492,1.0,Natural Earth 10m (public domain),name match 100
+BGD,Sylhet,admin1,BGD-2488,1.0,Natural Earth 10m (public domain),name match 100
 BGR,North-Central,admin1,BGR-2261;BGR-2262;BGR-2249;BGR-2256;BGR-2246,0.95,Natural Earth 10m (public domain),"alias hint -> BG-18, BG-04, BG-07, BG-17, BG-19"
 BGR,North-East,admin1,BGR-2259;BGR-2260;BGR-2258;BGR-2257,0.95,Natural Earth 10m (public domain),"alias hint -> BG-03, BG-08, BG-27, BG-25"
 BGR,North-West,admin1,BGR-2253;BGR-2250;BGR-2251;BGR-2248;BGR-2247,0.95,Natural Earth 10m (public domain),"alias hint -> BG-15, BG-06, BG-05, BG-12, BG-11"
@@ -135,6 +160,10 @@ BRN,Belait,admin1,BRN-1181,1.0,Natural Earth 10m (public domain),name match 100
 BRN,Brunei-Muara,admin1,BRN-1182,1.0,Natural Earth 10m (public domain),name match 100
 BRN,Temburong,admin1,BRN-1183,1.0,Natural Earth 10m (public domain),name match 100
 BRN,Tutong,admin1,BRN-1184,1.0,Natural Earth 10m (public domain),name match 100
+BTN,Central Bhutan,admin1,BTN-2480;BTN-2482;BTN-2485;BTN-2437;BTN-2481;BTN-2487;BTN-2434;BTN-2440;BTN-2486,0.95,Natural Earth 10m (public domain),"alias hint -> region:Central, region:Southern"
+BTN,Chukha-Samtse,admin1,BTN-2438;BTN-2433,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+BTN,Eastern Bhutan,admin1,BTN-2484;BTN-2483;BTN-2492;BTN-2493;BTN-2490;BTN-2491,0.95,Natural Earth 10m (public domain),alias hint -> region:Eastern
+BTN,Thimphu-Paro-Haa,admin1,BTN-2435;BTN-2439;BTN-2436,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
 CAN,Alberta,admin1,CAN-632,1.0,Natural Earth 10m (public domain),name match 100
 CAN,British Columbia,admin1,CAN-633,1.0,Natural Earth 10m (public domain),name match 100
 CAN,Manitoba,admin1,CAN-630,1.0,Natural Earth 10m (public domain),name match 100
@@ -534,6 +563,36 @@ IDN,West Papua,admin1,IDN-1933,1.0,Natural Earth 10m (public domain),name match 
 IDN,West Sumatra,admin1,IDN-539,1.0,Natural Earth 10m (public domain),name match 100
 IDN,Yogyakarta,admin1,IDN-540,1.0,Natural Earth 10m (public domain),name match 100
 IMN,Isle of Man,admin1,IMN+00?,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
+IND,Andaman and Nicobar Islands,admin1,IND-2474,1.0,Natural Earth 10m (public domain),name match 100
+IND,Andhra Pradesh,admin1,IND-2441,1.0,Natural Earth 10m (public domain),name match 100
+IND,Arunachal Pradesh,admin1,IND-3299,1.0,Natural Earth 10m (public domain),name match 100
+IND,Assam,admin1,IND-2477,1.0,Natural Earth 10m (public domain),name match 100
+IND,Bihar,admin1,IND-3258,1.0,Natural Earth 10m (public domain),name match 100
+IND,Chhattisgarh,admin1,IND-3260,1.0,Natural Earth 10m (public domain),name match 100
+IND,Delhi,admin1,IND-2428,1.0,Natural Earth 10m (public domain),name match 100
+IND,Goa,admin1,IND-3265,1.0,Natural Earth 10m (public domain),name match 100
+IND,Gujarat-Daman-Diu,admin1,IND-3264;IND-2445,0.95,Natural Earth 10m (public domain),"alias hint -> IN-GJ, IN-DH"
+IND,Haryana,admin1,IND-2430,1.0,Natural Earth 10m (public domain),name match 100
+IND,Himachal Pradesh,admin1,IND-2429,1.0,Natural Earth 10m (public domain),name match 100
+IND,Jammu and Kashmir,admin1,IND-2431,1.0,Natural Earth 10m (public domain),name match 100
+IND,Jharkhand,admin1,IND-3256,1.0,Natural Earth 10m (public domain),name match 100
+IND,Karnataka,admin1,IND-2446,1.0,Natural Earth 10m (public domain),name match 100
+IND,Kerala-Lakshadweep,admin1,IND-2442;IND-2443,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+IND,Ladakh,admin1,IND-20012;KAS+00?,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Kashmir
+IND,Madhya Pradesh,admin1,IND-3261,1.0,Natural Earth 10m (public domain),name match 100
+IND,Maharashtra,admin1,IND-2447,1.0,Natural Earth 10m (public domain),name match 100
+IND,Meghalaya,admin1,IND-2489,1.0,Natural Earth 10m (public domain),name match 100
+IND,Nagaland-Manipur,admin1,IND-2479;IND-2478,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+IND,Odisha,admin1,IND-2444,1.0,Natural Earth 10m (public domain),name match 100
+IND,Punjab-Chandigarh,admin1,IND-3249;IND-2427,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+IND,Rajasthan,admin1,IND-3250,1.0,Natural Earth 10m (public domain),name match 100
+IND,Sikkim,admin1,IND-3259,1.0,Natural Earth 10m (public domain),name match 100
+IND,Tamil Nadu-Puducherry,admin1,IND-3262;IND-3263,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+IND,Telangana,admin1,IND-20011,1.0,Natural Earth 10m (public domain),name match 100
+IND,Tripura-Mizoram,admin1,IND-3300;IND-3301,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+IND,Uttar Pradesh,admin1,IND-3253,1.0,Natural Earth 10m (public domain),name match 100
+IND,Uttarakhand,admin1,IND-3254,1.0,Natural Earth 10m (public domain),name match 100
+IND,West Bengal,admin1,IND-3257,1.0,Natural Earth 10m (public domain),name match 100
 IRL,Eastern and Midland,admin1,IRL-712;IRL-5575;IRL-5576;IRL-719;IRL-715;IRL-5574;IRL-721;IRL-723;IRL-5573;IRL-716;IRL-717;IRL-731,0.95,Natural Earth 10m (public domain),"alias hint -> region:Dublin, region:Mid-East, region:Midlands, IE-LH"
 IRL,Northern and Western,admin1,IRL-729;IRL-730;IRL-79;IRL-3412;IRL-713;IRL-5568;IRL-714;IRL-728;IRL-727,0.95,Natural Earth 10m (public domain),"alias hint -> region:West, IE-CN, IE-DL, IE-LM, IE-MN, IE-SO"
 IRL,Southern,admin1,IRL-718;IRL-722;IRL-1444;IRL-78;IRL-5569;IRL-725;IRL-726;IRL-76;IRL-77;IRL-724;IRL-5572;IRL-5571;IRL-5570,0.95,Natural Earth 10m (public domain),"alias hint -> region:South-East, region:South-West, region:Mid-West"
@@ -772,6 +831,15 @@ LBY,Tripoli,admin1,LBY-2978,1.0,Natural Earth 10m (public domain),name match 100
 LBY,Wadi al-Shatii-Jufra,admin1,LBY-2967;LBY-2964,0.95,Natural Earth 10m (public domain),"alias hint -> LY-WS, LY-JU"
 LCA,Saint Lucia,admin1,LCA-5081;LCA-5077;LCA-5076;LCA-5085;LCA-5078;LCA-5082;LCA-5086;LCA-5083;LCA-5084;LCA-5080;LCA-5079,0.95,Natural Earth 10m (public domain),whole country (11 admin-1 units)
 LIE,Liechtenstein,admin1,LIE-4893;LIE-4896;LIE-4892;LIE-4894;LIE-4901;LIE-4902;LIE-4900;LIE-4899;LIE-4898;LIE-4895;LIE-4897,0.95,Natural Earth 10m (public domain),whole country (11 admin-1 units)
+LKA,Central Province,admin1,LKA-2449;LKA-2450;LKA-2448,0.95,Natural Earth 10m (public domain),"alias hint -> LK-21, LK-22, LK-23"
+LKA,Eastern Province,admin1,LKA-2454;LKA-2451;LKA-2452,0.95,Natural Earth 10m (public domain),"alias hint -> LK-51, LK-52, LK-53"
+LKA,North Central Province,admin1,LKA-2453;LKA-2455,0.95,Natural Earth 10m (public domain),"alias hint -> LK-71, LK-72"
+LKA,North Western Province,admin1,LKA-2462;LKA-2461,0.95,Natural Earth 10m (public domain),"alias hint -> LK-61, LK-62"
+LKA,Northern Province,admin1,LKA-2458;LKA-2459;LKA-2460;LKA-2457;LKA-2456,0.95,Natural Earth 10m (public domain),"alias hint -> LK-41, LK-42, LK-43, LK-44, LK-45"
+LKA,Sabaragamuwa Province,admin1,LKA-2463;LKA-2469,0.95,Natural Earth 10m (public domain),"alias hint -> LK-91, LK-92"
+LKA,Southern Province,admin1,LKA-2464;LKA-2466;LKA-2465,0.95,Natural Earth 10m (public domain),"alias hint -> LK-31, LK-32, LK-33"
+LKA,Uva Province,admin1,LKA-2468;LKA-2467,0.95,Natural Earth 10m (public domain),"alias hint -> LK-81, LK-82"
+LKA,Western Province,admin1,LKA-2471;LKA-2470;LKA-2472,0.95,Natural Earth 10m (public domain),"alias hint -> LK-11, LK-12, LK-13"
 LTU,Capital Region,admin1,LTU-1075,0.95,Natural Earth 10m (public domain),alias hint -> LT-VL
 LTU,Central and Western Lithuania,admin1,LTU-1074;LTU-1067;LTU-1071;LTU-936;LTU-935;LTU-1072;LTU-1070;LTU-1073;LTU-1069,0.95,Natural Earth 10m (public domain),"alias hint -> LT-KU, LT-KL, LT-MR, LT-PN, LT-TA, LT-TE, LT-UT, LT-SA, LT-AL"
 LUX,Luxembourg,admin1,LUX-906;LUX-907;LUX-908,0.95,Natural Earth 10m (public domain),whole country (3 admin-1 units)
@@ -801,6 +869,7 @@ MDA,Gagauzia,admin1,MDA-1626,1.0,Natural Earth 10m (public domain),name match 10
 MDA,North Moldova,admin1,MDA-1613;MDA-1615;MDA-1617;MDA-1621;MDA-1620;MDA-1616;MDA-1614;MDA-1653;MDA-1635;MDA-1619;MDA-1622;MDA-1618,0.95,Natural Earth 10m (public domain),"alias hint -> MD-BA, MD-BR, MD-DO, MD-DR, MD-ED, MD-FL, MD-FA, MD-GL, MD-OC, MD-RI, MD-SO, MD-SI"
 MDA,South Moldova,admin1,MDA-1641;MDA-1631;MDA-1624;MDA-1651;MDA-1649;MDA-1633;MDA-1630;MDA-1625,0.95,Natural Earth 10m (public domain),"alias hint -> MD-BS, MD-CA, MD-CT, MD-CS, MD-CM, MD-LE, MD-TA, MD-SV"
 MDA,Transnistria,admin1,MDA-1652;MDA-1628;MDA-1637;MDA-1650;MDA-1638,0.95,Natural Earth 10m (public domain),"alias hint -> MDA-1638, MDA-1628, MD-CAM, MD-GRI, MD-BD"
+MDV,Maldives,admin1,MDV-5243;MDV-5242;MDV-5241;MDV-5240;MDV-5232;MDV-5230;MDV-5231;MDV-5228;MDV-5229;MDV-5226;MDV-5225;MDV-5239;MDV-5238;MDV-5237;MDV-5236;MDV-5233;MDV-5235;MDV-5234;MDV-5227;MDV-5224;MDV-5223,0.95,Natural Earth 10m (public domain),whole country (21 admin-1 units)
 MEX,Aguascalientes,admin1,MEX-2717,1.0,Natural Earth 10m (public domain),name match 100
 MEX,Baja California,admin1,MEX-2706,1.0,Natural Earth 10m (public domain),name match 100
 MEX,Baja California Sur,admin1,MEX-2707,1.0,Natural Earth 10m (public domain),name match 100
@@ -919,6 +988,13 @@ NOR,Troms,admin1,NOR-900,1.0,Natural Earth 10m (public domain),name match 100
 NOR,Trondelag,admin1,NOR-925;NOR-911,0.95,Natural Earth 10m (public domain),"alias hint -> NO-16, NO-17"
 NOR,Vestfold,admin1,NOR-923,1.0,Natural Earth 10m (public domain),name match 100
 NOR,Vestland,admin1,NOR-913;NOR-915,0.95,Natural Earth 10m (public domain),"alias hint -> NO-12, NO-14"
+NPL,Bagmati,admin1,,1.0,"geoBoundaries gbOpen NPL ADM2 (geoBoundaries, Wikimedia Commons; Public Domain)","name match 100; carve: NPL units Sindhuli, Ramechhap, Dolakha, Sindhupalchok, Kabherepalanchok, Lalitpur, Bhaktapur, Kathmandu, Nuwakot, Rasuwa, Dhading, Makawanpur, Chitawan from NPL:Province No. 5"
+NPL,Gandaki,admin1,,1.0,"geoBoundaries gbOpen NPL ADM2 (geoBoundaries, Wikimedia Commons; Public Domain)","name match 100; carve: NPL units Gorkha, Lamjung, Tanahu, Synagja, Kaski, Manang, Mustang, Myagdi, Parbat, Baglung, Nawalapur from NPL:Province No. 5"
+NPL,Karnali,admin1,,1.0,"geoBoundaries gbOpen NPL ADM2 (geoBoundaries, Wikimedia Commons; Public Domain)","name match 100; carve: NPL units Dolpa, Mugu, Humla, Jumla, Kalikot, Jajarkot, Rukum_W, Salyan, Surkhet from NPL:Province No. 5"
+NPL,Province No. 1,admin1,,0.95,"geoBoundaries gbOpen NPL ADM2 (geoBoundaries, Wikimedia Commons; Public Domain)","no admin-1 match (best unit 38, group 30); carve: NPL units Taplejung, Panchthar, Ilam, Jhapa, Morang, Sunsari, Dhankuta, Terhathum, Sankhuwasabha, Bhojpur, Solukhumbu, Okhaldhunga, Khotang, Udayapur from NPL:Province No. 5"
+NPL,Province No. 2,admin1,,0.95,"geoBoundaries gbOpen NPL ADM2 (geoBoundaries, Wikimedia Commons; Public Domain)","no admin-1 match (best unit 38, group 30); carve: NPL units Saptari, Dhanusha, Mahottari, Sarlahi, Rautahat, Bara from NPL:Province No. 5"
+NPL,Province No. 5,admin1,NPL-1126;NPL-1128;NPL-1129;NPL-1125;NPL-1095;NPL-1130;NPL-1131;NPL-1133;NPL-1134;NPL-1135;NPL-1132;NPL-1127;NPL-373;NPL-1124,0.95,Natural Earth 10m (public domain),"alias hint -> NP-BA, NP-BH, NP-KO, NP-DH, NP-GA, NP-JA, NP-KA, NP-LU, NP-MA, NP-ME, NP-NA, NP-RA, NP-SA, NP-SE; less NPL:Bagmati (carve); less NPL:Gandaki (carve); less NPL:Karnali (carve); less NPL:Province No. 1 (carve); less NPL:Province No. 2 (carve); less NPL:Sudurpashchim (carve)"
+NPL,Sudurpashchim,admin1,,0.95,"geoBoundaries gbOpen NPL ADM2 (geoBoundaries, Wikimedia Commons; Public Domain)","no admin-1 match (best unit 79, group 24); carve: NPL units Baijura, Bajhang, Achham, Doti, Kailali, Kanchanpur, Dadeidhura, Baitadi, Darchula from NPL:Province No. 5"
 NRU,Nauru,admin1,NRU-4978;NRU-4977;NRU-4976;NRU-4975;NRU-4974;NRU-4973;NRU-4972;NRU-4971;NRU-4983;NRU-4982;NRU-4981;NRU-4980;NRU-4979;NRU-4970,0.95,Natural Earth 10m (public domain),whole country (14 admin-1 units)
 NZL,Auckland,admin1,NZL-3398,1.0,Natural Earth 10m (public domain),name match 100
 NZL,Bay of Plenty,admin1,NZL-3399,1.0,Natural Earth 10m (public domain),name match 100
@@ -944,6 +1020,13 @@ OMN,North Al Batinah,admin1,OMN-2424,0.95,Natural Earth 10m (public domain),alia
 OMN,North Ash Sharqiyah,admin1,OMN-5496,0.95,Natural Earth 10m (public domain),alias hint -> OM-SS
 OMN,South Al Batinah,admin1,OMN-5497,0.95,Natural Earth 10m (public domain),alias hint -> OM-BJ
 OMN,South Ash Sharqiyah,admin1,OMN-2406,0.95,Natural Earth 10m (public domain),alias hint -> OM-SH
+PAK,Azad Jammu and Kashmir,admin1,PAK-1109,0.95,Natural Earth 10m (public domain),alias hint -> PK-JK
+PAK,Balochistan,admin1,PAK-1108,1.0,Natural Earth 10m (public domain),name match 100
+PAK,Gilgit-Baltistan,admin1,PAK-1111,1.0,Natural Earth 10m (public domain),name match 100
+PAK,Islamabad Capital Territory,admin1,PAK-1110,1.0,Natural Earth 10m (public domain),name match 100
+PAK,Khyber Pakhtunkhwa,admin1,PAK-1123;PAK-1112,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed F.A.T.A.
+PAK,Punjab,admin1,PAK-1113,1.0,Natural Earth 10m (public domain),name match 100
+PAK,Sindh,admin1,PAK-1114,1.0,Natural Earth 10m (public domain),name match 100
 PAN,Bocas del Toro,admin1,PAN-1958,1.0,Natural Earth 10m (public domain),name match 100
 PAN,Chiriqui,admin1,PAN-1332;PAN-3454,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Ngöbe Buglé
 PAN,Cocle,admin1,PAN-1336,1.0,Natural Earth 10m (public domain),name match 100

@@ -19,6 +19,7 @@ Boundary files used, with their original sources and licenses:
 | USA | ADM2 | United States Census Bureau, MAF/TIGER Database | Public Domain | 2018 |
 | ARG | ADM2 | Instituto Geografico Nacional and UNHCR, OCHA ROLAC | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | AUS | ADM2 | Australian Bureau of Statistics | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2022 |
+| BGD | ADM2 | Bangladesh Bureau of Statistics (BBS), OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | BLR | ADM2 | geoBoundaries, CIESIN | Creative Commons Attribution 3.0 License | 2005 |
 | BOL | ADM2 | GeoBolivia, Derived from ADM3 layer | Public Domain | 2015 |
 | BRA | ADM2 | Instituto Brasileiro de Geografia e Estatística (IBGE), OCHA ROLAC | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
@@ -38,7 +39,9 @@ Boundary files used, with their original sources and licenses:
 | MYS | ADM2 | geoBoundaries, citypopulation.de | Creative Commons Attribution 3.0 License | 2020 |
 | NLD | ADM2 | National Georegister | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2022 |
 | NOR | ADM2 | Geonorge, Mapping Authority of Norway | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2013 |
+| NPL | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2006 |
 | NZL | ADM2 | Stats NZ | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2021 |
+| PAK | ADM2 | geoBoundaries, Wikipedia | Public Domain | 2019 |
 | PER | ADM2 | Instituto Geográfico Nacional - IGN, OCHA ROLAC | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | PRI | ADM2 | United States Census Bureau, MAF/TIGER | Public Domain | 2021 |
 | PSE | ADM2 | Open Data Watch | Creative Commons Attribution 4.0 (CC BY 4.0) | 2017 |

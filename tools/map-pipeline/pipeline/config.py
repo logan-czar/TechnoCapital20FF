@@ -62,6 +62,8 @@ NE_CODES: dict[str, tuple[str, ...]] = {
     # the Aland Islands and New Caledonia are their own NE admin-0 units
     "FIN": ("FIN", "ALD"),
     "FRA": ("FRA", "NCL"),
+    # Natural Earth's Siachen Glacier unit, held by India
+    "IND": ("IND", "KAS"),
 }
 
 
