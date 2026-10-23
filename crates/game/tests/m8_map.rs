@@ -375,4 +375,64 @@ mod picking {
             "the old rule would have stolen {in_reach}: the test bites"
         );
     }
+
+    /// The same check on a real map folder (lane PA's NA map), run by hand:
+    /// `TC20FF_TEST_MAP_DIR=assets/map cargo test -p game --test m8_map -- --ignored`.
+    /// Every label point at the farthest zoom of a 996-pixel view, and closer, picks its own
+    /// province, except on a tiny province's dot or where it shows under the steal threshold.
+    #[test]
+    #[ignore = "needs TC20FF_TEST_MAP_DIR"]
+    fn real_map_label_points_pick_their_provinces() {
+        use game::map::camera::Camera;
+        use game::map::picking::{TINY_DOT_HIT_PX, TINY_STEAL_BELOW_SQ_PX, TinyTargets, pick};
+        let dir = std::path::PathBuf::from(std::env::var("TC20FF_TEST_MAP_DIR").unwrap());
+        let mut data = common::data();
+        data.map = sim_data::load_map(&dir).unwrap();
+        let sim = Sim::new(data, 1).unwrap();
+        let statics = sim.views().map_static.get();
+        let geo = statics.geo.clone().unwrap();
+        let index = game::map::png_io::read_gray16(&dir.join("province-index.png")).unwrap();
+        let bitmap = MapBitmap {
+            width: index.width,
+            height: index.height,
+            data: Arc::new(index.data),
+        };
+        let tiny = TinyTargets::from_view(statics, 0);
+        let size = bitmap.size();
+        let view = Vec2::new(996.0, 676.0);
+        let (mut checked, mut skipped, mut wrong) = (0, 0, Vec::new());
+        for notches in [0.0, 2.0, 4.0, 8.0] {
+            let mut cam = Camera::fit(size, view);
+            cam.zoom(size, view, notches, view / 2.0);
+            cam.scale = cam.target;
+            for (i, s) in geo.shapes.iter().enumerate() {
+                let Some(s) = s else { continue };
+                let label = Vec2::new(s.label.0 as f32, s.label.1 as f32);
+                cam.center = label;
+                cam.pan(size, view, Vec2::ZERO);
+                let at = cam.to_view(size, view, label);
+                let on_dot = tiny.targets.iter().any(|(id, l)| {
+                    id.0 as usize != i
+                        && cam.to_view(size, view, *l).distance(at) <= TINY_DOT_HIT_PX
+                });
+                if s.tiny
+                    || on_dot
+                    || (s.area_px as f32) / (cam.scale * cam.scale) < TINY_STEAL_BELOW_SQ_PX
+                {
+                    skipped += 1;
+                    continue;
+                }
+                let got = pick(&bitmap, &cam, view, at, statics, &tiny);
+                if got != Some(sim::world::ProvinceId::from_index(i)) {
+                    wrong.push((notches, i, got));
+                }
+                checked += 1;
+            }
+        }
+        println!(
+            "real map: {checked} label clicks checked, {skipped} skipped, {} wrong",
+            wrong.len()
+        );
+        assert!(wrong.is_empty(), "{wrong:?}");
+    }
 }
