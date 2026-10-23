@@ -1025,7 +1025,9 @@ fn b1_pages_open_and_their_links_navigate() {
 }
 
 /// Runs the game at max speed (no alert pausing it) until `done` holds on the views, then
-/// pauses and draws a frame.
+/// pauses and draws two frames: the pause patches the open page, and a patch that finds a new
+/// shape rebuilds it in the next frame (D772; a resume no longer flushes, so the pause's patch is
+/// the first since the run started, D803).
 fn run_until(app: &mut App, done: impl Fn(&SimViews) -> bool) {
     alerts_off(app);
     send(app, Control::SetSpeed(5));
@@ -1038,7 +1040,7 @@ fn run_until(app: &mut App, done: impl Fn(&SimViews) -> bool) {
     }
     assert!(done(app.world().resource::<Views>()), "ran out of frames");
     send(app, Control::Pause);
-    frames(app, 1);
+    frames(app, 2);
 }
 
 /// A listed company page's price follows v_quotes without a rebuild: the same live span's text
