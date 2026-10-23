@@ -3,6 +3,31 @@ ALB,Central Albania,admin1,ALB-1524;ALB-1529;ALB-1494,0.95,Natural Earth 10m (pu
 ALB,Northern Albania,admin1,ALB-1526;ALB-1502;ALB-1498;ALB-1528,0.95,Natural Earth 10m (public domain),"alias hint -> AL-10, AL-08, AL-07, AL-09"
 ALB,Southern Albania,admin1,ALB-1521;ALB-1525;ALB-1504;ALB-1495;ALB-1523,0.95,Natural Earth 10m (public domain),"alias hint -> AL-04, AL-12, AL-06, AL-01, AL-05"
 AND,Andorra,admin1,AND-4878;AND-4879;AND-4880;AND-4877;AND-4882;AND-4881;AND-4876,0.95,Natural Earth 10m (public domain),whole country (7 admin-1 units)
+ARG,Buenos Aires,admin1,ARG-1295,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Catamarca,admin1,ARG-1300,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Chaco,admin1,ARG-1306,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Chubut,admin1,ARG-1274,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Ciudad de Buenos Aires,admin1,ARG-5493,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Cordoba,admin1,ARG-1299,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Corrientes,admin1,ARG-1308,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Entre Rios,admin1,ARG-1309,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Formosa,admin1,ARG-1307,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Jujuy,admin1,ARG-1301,1.0,Natural Earth 10m (public domain),name match 100
+ARG,La Pampa,admin1,ARG-1296,1.0,Natural Earth 10m (public domain),name match 100
+ARG,La Rioja,admin1,ARG-1302,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Mendoza,admin1,ARG-1275,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Misiones,admin1,ARG-1312,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Neuquen,admin1,ARG-1276,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Rio Negro,admin1,ARG-1297,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Salta,admin1,ARG-1303,1.0,Natural Earth 10m (public domain),name match 100
+ARG,San Juan,admin1,ARG-1273,1.0,Natural Earth 10m (public domain),name match 100
+ARG,San Luis,admin1,ARG-1298,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Santa Cruz,admin1,ARG-1271,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Santa Fe,admin1,ARG-1310,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Santiago del Estero,admin1,ARG-1304,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Tierra del Fuego,admin1,ARG-1272,1.0,Natural Earth 10m (public domain),name match 100
+ARG,Tucuman,admin1,ARG-1305,1.0,Natural Earth 10m (public domain),name match 100
+ATG,Antigua and Barbuda,admin1,ATG-5096;ATG-5095;ATG-5094;ATG-5093;ATG-5098;ATG-5097;ATG-5091;ATG-5092,0.95,Natural Earth 10m (public domain),whole country (8 admin-1 units)
 AUS,Australian Capital Territory,admin1,AUS-1932,1.0,Natural Earth 10m (public domain),name match 100
 AUS,New South Wales,admin1,AUS-2654;AUS-2659;AUS-2653,1.0,Natural Earth 10m (public domain),"name match 100; plus unclaimed Australian Capital Territory, Lord Howe Island"
 AUS,Northern Territory,admin1,AUS-2650,1.0,Natural Earth 10m (public domain),name match 100
@@ -29,6 +54,10 @@ BGR,North-West,admin1,BGR-2253;BGR-2250;BGR-2251;BGR-2248;BGR-2247,0.95,Natural 
 BGR,South-Central,admin1,BGR-2232;BGR-2237;BGR-2236;BGR-2235;BGR-2234,0.95,Natural Earth 10m (public domain),"alias hint -> BG-16, BG-13, BG-26, BG-09, BG-21"
 BGR,South-East,admin1,BGR-2254;BGR-2255;BGR-2233;BGR-2231,0.95,Natural Earth 10m (public domain),"alias hint -> BG-02, BG-24, BG-20, BG-28"
 BGR,South-West,admin1,BGR-2245;BGR-2244;BGR-2252;BGR-3002;BGR-2243,0.95,Natural Earth 10m (public domain),"alias hint -> BG-22, BG-23, BG-14, BG-10, BG-01"
+BHS,Grand Bahama,admin1,BHS-5010;BHS-5011;BHS-5012,0.95,Natural Earth 10m (public domain),"alias hint -> BS-FP, BS-EG, BS-WG"
+BHS,New Providence,admin1,BHS-5009,1.0,Natural Earth 10m (public domain),name match 100
+BHS,Northern Family Islands,admin1,BHS-5028;BHS-5027;BHS-5029;BHS-5018;BHS-5017;BHS-5015;BHS-5016;BHS-5014;BHS-5039;BHS-5026;BHS-5025,0.95,Natural Earth 10m (public domain),"alias hint -> BS-CO, BS-NO, BS-SO, BS-MI, BS-CE, BS-NE, BS-SE, BS-HI, BS-SW, BS-BY, BS-BI"
+BHS,Southern Family Islands,admin1,BHS-5038;BHS-5037;BHS-5036;BHS-5035;BHS-5024;BHS-5033;BHS-5032;BHS-5023;BHS-5031;BHS-5020;BHS-5021;BHS-5022;BHS-5030;BHS-5019;BHS-5034,0.95,Natural Earth 10m (public domain),"alias hint -> BS-NS, BS-CS, BS-SA, BS-MC, BS-EX, BS-BP, BS-CI, BS-LI, BS-IN, BS-AK, BS-CK, BS-MG, BS-RI, BS-RC, BS-SS"
 BIH,Brcko District,admin1,BIH-4803,1.0,Natural Earth 10m (public domain),name match 100
 BIH,Federation of Bosnia and Herzegovina,admin1,BIH-2228;BIH-2225;BIH-2224;BIH-2227;BIH-2226;BIH-2889;BIH-2887;BIH-2890;BIH-2891,0.95,Natural Earth 10m (public domain),alias hint -> region:Federacija Bosna i Hercegovina
 BIH,Republika Srpska,admin1,BIH-4808;BIH-4807;BIH-4802;BIH-4801;BIH-3153;BIH-4804;BIH-4805;BIH-4806,0.94,Natural Earth 10m (public domain),"Natural Earth region Repuplika Srpska (9 units, match 94)"
@@ -39,7 +68,47 @@ BLR,Minsk City,admin1,BLR-4825,0.95,Natural Earth 10m (public domain),alias hint
 BLR,Minsk Oblast,admin1,BLR-2345,0.95,Natural Earth 10m (public domain),alias hint -> BY-MI
 BLR,Mogilev Oblast,admin1,BLR-2340,1.0,Natural Earth 10m (public domain),name match 100
 BLR,Vitebsk Oblast,admin1,BLR-2341,1.0,Natural Earth 10m (public domain),name match 100
+BLZ,Belize-Orange Walk-Corozal,admin1,BLZ-1326;BLZ-1325;BLZ-1323,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+BLZ,Cayo,admin1,BLZ-1324,1.0,Natural Earth 10m (public domain),name match 100
+BLZ,Stann Creek-Toledo,admin1,BLZ-1356;BLZ-1355,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 BMU,Bermuda,admin1,BMU-5137;BMU-5142;BMU-5136;BMU-5139;BMU-5134;BMU-5138;BMU-5144;BMU-5143;BMU-5141;BMU-5140;BMU-5135,0.95,Natural Earth 10m (public domain),whole country (11 admin-1 units)
+BOL,Beni,admin1,BOL-1293,1.0,Natural Earth 10m (public domain),name match 100
+BOL,Chuquisaca,admin1,BOL-1292,1.0,Natural Earth 10m (public domain),name match 100
+BOL,Cochabamba,admin1,BOL-1291,1.0,Natural Earth 10m (public domain),name match 100
+BOL,La Paz,admin1,BOL-1936,1.0,Natural Earth 10m (public domain),name match 100
+BOL,Oruro,admin1,BOL-1937,1.0,Natural Earth 10m (public domain),name match 100
+BOL,Pando,admin1,BOL-1938,1.0,Natural Earth 10m (public domain),name match 100
+BOL,Potosi,admin1,BOL-1939,1.0,Natural Earth 10m (public domain),name match 100
+BOL,Santa Cruz,admin1,BOL-1940,1.0,Natural Earth 10m (public domain),name match 100
+BOL,Tarija,admin1,BOL-1941,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Acre,admin1,BRA-576,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Alagoas,admin1,BRA-623,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Amapa,admin1,BRA-681,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Amazonas,admin1,BRA-592,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Bahia,admin1,BRA-624,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Ceara,admin1,BRA-621,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Distrito Federal,admin1,BRA-599,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Espirito Santo,admin1,BRA-625,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Goias,admin1,BRA-1294,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Maranhao,admin1,BRA-593,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Mato Grosso,admin1,BRA-602,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Mato Grosso do Sul,admin1,BRA-600,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Minas Gerais,admin1,BRA-601,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Para,admin1,BRA-594,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Paraiba,admin1,BRA-626,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Parana,admin1,BRA-613,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Pernambuco,admin1,BRA-1313,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Piaui,admin1,BRA-622,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Rio Grande do Norte,admin1,BRA-628,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Rio Grande do Sul,admin1,BRA-612,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Rio de Janeiro,admin1,BRA-627,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Rondonia,admin1,BRA-595,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Roraima,admin1,BRA-670,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Santa Catarina,admin1,BRA-614,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Sao Paulo,admin1,BRA-1311,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Sergipe,admin1,BRA-629,1.0,Natural Earth 10m (public domain),name match 100
+BRA,Tocantins,admin1,BRA-596,1.0,Natural Earth 10m (public domain),name match 100
+BRB,Barbados,admin1,BRB-1994;BRB-1990;BRB-1997;BRB-1995;BRB-1992;BRB-1996;BRB-1989;BRB-1998;BRB-1993;BRB-1991;BRB-1999,0.95,Natural Earth 10m (public domain),whole country (11 admin-1 units)
 BRN,Belait,admin1,BRN-1181,1.0,Natural Earth 10m (public domain),name match 100
 BRN,Brunei-Muara,admin1,BRN-1182,1.0,Natural Earth 10m (public domain),name match 100
 BRN,Temburong,admin1,BRN-1183,1.0,Natural Earth 10m (public domain),name match 100
@@ -64,6 +133,22 @@ CHE,Lake Geneva Region,admin1,CHE-165;CHE-159;CHE-3422,0.95,Natural Earth 10m (p
 CHE,Northwestern Switzerland,admin1,CHE-162;CHE-3425;CHE-3423,0.95,Natural Earth 10m (public domain),"alias hint -> CH-BS, CH-BL, CH-AG"
 CHE,Ticino,admin1,CHE-168,1.0,Natural Earth 10m (public domain),name match 100
 CHE,Zurich,admin1,CHE-176,0.95,Natural Earth 10m (public domain),alias hint -> CH-ZH
+CHL,Antofagasta,admin1,CHL-2695,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Araucania,admin1,CHL-2700,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Arica y Parinacota,admin1,CHL-2694,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Atacama,admin1,CHL-2696,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Aysen,admin1,CHL-2691,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Biobio,admin1,CHL-2702,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Coquimbo,admin1,CHL-2697,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Los Lagos,admin1,CHL-2704,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Los Rios,admin1,CHL-2701,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Magallanes,admin1,CHL-2692,0.95,Natural Earth 10m (public domain),alias hint -> CL-MA
+CHL,Maule,admin1,CHL-2705,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Nuble,admin1,CHL-20010,1.0,Natural Earth 10m (public domain),name match 100
+CHL,O'Higgins,admin1,CHL-2703,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Santiago Metropolitan,admin1,CHL-2698,0.95,Natural Earth 10m (public domain),alias hint -> CL-RM
+CHL,Tarapaca,admin1,CHL-2693,1.0,Natural Earth 10m (public domain),name match 100
+CHL,Valparaiso,admin1,CHL-2699,1.0,Natural Earth 10m (public domain),name match 100
 CHN,Anhui,admin1,CHN-1179,1.0,Natural Earth 10m (public domain),name match 100
 CHN,Beijing,admin1,CHN-1155,1.0,Natural Earth 10m (public domain),name match 100
 CHN,Chongqing,admin1,CHN-1154,1.0,Natural Earth 10m (public domain),name match 100
@@ -95,6 +180,52 @@ CHN,Tibet,admin1,CHN-1662,1.0,Natural Earth 10m (public domain),name match 100
 CHN,Xinjiang,admin1,CHN-1756,1.0,Natural Earth 10m (public domain),name match 100
 CHN,Yunnan,admin1,CHN-1810,1.0,Natural Earth 10m (public domain),name match 100
 CHN,Zhejiang,admin1,CHN-1820,1.0,Natural Earth 10m (public domain),name match 100
+COL,Amazonas-Guainia-Guaviare-Vaupes-Vichada,admin1,COL-1424;COL-1426;COL-1283;COL-1427;COL-1423,1.0,Natural Earth 10m (public domain),"name parts (5 pieces, worst match 100)"
+COL,Antioquia,admin1,COL-1314,1.0,Natural Earth 10m (public domain),name match 100
+COL,Arauca-Casanare,admin1,COL-1420;COL-1422,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+COL,Atlantico,admin1,COL-1412,1.0,Natural Earth 10m (public domain),name match 100
+COL,Bogota,admin1,COL-1399,1.0,Natural Earth 10m (public domain),name match 100
+COL,Bolivar,admin1,COL-1413,1.0,Natural Earth 10m (public domain),name match 100
+COL,Boyaca,admin1,COL-1315,1.0,Natural Earth 10m (public domain),name match 100
+COL,Caldas-Risaralda-Quindio,admin1,COL-1397;COL-1400;COL-1401,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+COL,Caqueta-Putumayo,admin1,COL-1407;COL-1403,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+COL,Cauca,admin1,COL-1404,1.0,Natural Earth 10m (public domain),name match 100
+COL,Cesar,admin1,COL-1414,1.0,Natural Earth 10m (public domain),name match 100
+COL,Choco,admin1,COL-1415,1.0,Natural Earth 10m (public domain),name match 100
+COL,Cordoba,admin1,COL-1316,1.0,Natural Earth 10m (public domain),name match 100
+COL,Cundinamarca,admin1,COL-1398,1.0,Natural Earth 10m (public domain),name match 100
+COL,Huila,admin1,COL-1405,1.0,Natural Earth 10m (public domain),name match 100
+COL,La Guajira,admin1,COL-1318,1.0,Natural Earth 10m (public domain),name match 100
+COL,Magdalena,admin1,COL-1416,1.0,Natural Earth 10m (public domain),name match 100
+COL,Meta,admin1,COL-1425,1.0,Natural Earth 10m (public domain),name match 100
+COL,Narino,admin1,COL-1406;COL+99?,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed COL+99?
+COL,Norte de Santander,admin1,COL-1421,1.0,Natural Earth 10m (public domain),name match 100
+COL,San Andres y Providencia,admin1,COL-1342,1.0,Natural Earth 10m (public domain),name match 100
+COL,Santander,admin1,COL-1317,1.0,Natural Earth 10m (public domain),name match 100
+COL,Sucre,admin1,COL-1417,1.0,Natural Earth 10m (public domain),name match 100
+COL,Tolima,admin1,COL-1402,1.0,Natural Earth 10m (public domain),name match 100
+COL,Valle del Cauca,admin1,COL-1408,1.0,Natural Earth 10m (public domain),name match 100
+CRI,Alajuela,admin1,CRI-1333,1.0,Natural Earth 10m (public domain),name match 100
+CRI,Cartago,admin1,CRI-1327,1.0,Natural Earth 10m (public domain),name match 100
+CRI,Guanacaste,admin1,CRI-1334,1.0,Natural Earth 10m (public domain),name match 100
+CRI,Heredia,admin1,CRI-1328,1.0,Natural Earth 10m (public domain),name match 100
+CRI,Limon,admin1,CRI-1329,1.0,Natural Earth 10m (public domain),name match 100
+CRI,Puntarenas,admin1,CRI-1330,1.0,Natural Earth 10m (public domain),name match 100
+CRI,San Jose,admin1,CRI-1331,1.0,Natural Earth 10m (public domain),name match 100
+CUB,Artemisa-Mayabeque,admin1,CUB-5489;CUB-1429,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+CUB,Camaguey,admin1,CUB-1364,1.0,Natural Earth 10m (public domain),name match 100
+CUB,Granma,admin1,CUB-1366,1.0,Natural Earth 10m (public domain),name match 100
+CUB,Guantanamo,admin1,CUB-1365,1.0,Natural Earth 10m (public domain),name match 100
+CUB,Holguin,admin1,CUB-1367,1.0,Natural Earth 10m (public domain),name match 100
+CUB,Isla de la Juventud,admin1,CUB-1320,1.0,Natural Earth 10m (public domain),name match 100
+CUB,La Habana,admin1,CUB-1428,0.95,Natural Earth 10m (public domain),alias hint -> CU-03
+CUB,Las Tunas,admin1,CUB-1368,1.0,Natural Earth 10m (public domain),name match 100
+CUB,Matanzas,admin1,CUB-1430,1.0,Natural Earth 10m (public domain),name match 100
+CUB,Pinar del Rio,admin1,CUB-1321,1.0,Natural Earth 10m (public domain),name match 100
+CUB,Sancti Spiritus-Ciego de Avila,admin1,CUB-1363;CUB-1322,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+CUB,Santiago de Cuba,admin1,CUB-1369,1.0,Natural Earth 10m (public domain),name match 100
+CUB,Villa Clara-Cienfuegos,admin1,CUB-1431;CUB-1319,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+CYM,Cayman Islands,admin1,CYM+00?,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
 CYP,Cyprus,admin1,CYP-3463;CYP-3466;CYP-3464;CYP-3489;CYP-3465,0.95,Natural Earth 10m (public domain),whole country (6 admin-1 units)
 CYP,Northern Cyprus,admin1,CYN+00?,1.0,Natural Earth 10m (public domain),name match 100
 CZE,Central Bohemian,admin1,CZE-1596,1.0,Natural Earth 10m (public domain),name match 100
@@ -127,11 +258,37 @@ DEU,Saxony,admin1,DEU-1601,1.0,Natural Earth 10m (public domain),name match 100
 DEU,Saxony-Anhalt,admin1,DEU-1600,1.0,Natural Earth 10m (public domain),name match 100
 DEU,Schleswig-Holstein,admin1,DEU-1579,1.0,Natural Earth 10m (public domain),name match 100
 DEU,Thuringia,admin1,DEU-1577,1.0,Natural Earth 10m (public domain),name match 100
+DMA,Dominica,admin1,DMA-1439;DMA-1433;DMA-1432;DMA-1435;DMA-1441;DMA-1436;DMA-1440;DMA-1434;DMA-1437;DMA-1438,0.95,Natural Earth 10m (public domain),whole country (10 admin-1 units)
 DNK,Capital Region,admin1,DNK-3419,0.95,Natural Earth 10m (public domain),alias hint -> DK-84
 DNK,Central Jutland,admin1,DNK-3416,0.95,Natural Earth 10m (public domain),alias hint -> DK-82
 DNK,North Jutland,admin1,DNK-3418,0.95,Natural Earth 10m (public domain),alias hint -> DK-81
 DNK,Southern Denmark,admin1,DNK-3417,0.95,Natural Earth 10m (public domain),alias hint -> DK-83
 DNK,Zealand,admin1,DNK-3420,0.95,Natural Earth 10m (public domain),alias hint -> DK-85
+DOM,Cibao Nordeste,admin1,DOM-1983;DOM-1982;DOM-1968;DOM-1979,0.95,Natural Earth 10m (public domain),"alias hint -> DO-06, DO-14, DO-20, DO-19"
+DOM,Cibao Noroeste,admin1,DOM-1964;DOM-1966;DOM-1392;DOM-1391,0.95,Natural Earth 10m (public domain),"alias hint -> DO-15, DO-05, DO-26, DO-27"
+DOM,Cibao Norte,admin1,DOM-1967;DOM-1965;DOM-1390,0.95,Natural Earth 10m (public domain),"alias hint -> DO-25, DO-18, DO-09"
+DOM,Cibao Sur,admin1,DOM-1975;DOM-1976;DOM-1395,0.95,Natural Earth 10m (public domain),"alias hint -> DO-13, DO-28, DO-24"
+DOM,El Valle,admin1,DOM-1972;DOM-1393,0.95,Natural Earth 10m (public domain),"alias hint -> DO-22, DO-07"
+DOM,Enriquillo,admin1,DOM-1971;DOM-1973;DOM-1970;DOM-1969,0.95,Natural Earth 10m (public domain),"alias hint -> DO-04, DO-03, DO-10, DO-16"
+DOM,Higuamo,admin1,DOM-1980;DOM-1396;DOM-1981,0.95,Natural Earth 10m (public domain),"alias hint -> DO-23, DO-29, DO-30"
+DOM,Ozama,admin1,DOM-1394;DOM-1985,0.95,Natural Earth 10m (public domain),"alias hint -> DO-01, DO-32"
+DOM,Valdesia,admin1,DOM-1974;DOM-1977;DOM-1984;DOM-1978,0.95,Natural Earth 10m (public domain),"alias hint -> DO-21, DO-17, DO-31, DO-02"
+DOM,Yuma,admin1,DOM-1987;DOM-1986;DOM-1988,0.95,Natural Earth 10m (public domain),"alias hint -> DO-11, DO-12, DO-08"
+ECU,Azuay-Canar,admin1,ECU-1266;ECU-1278,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+ECU,El Oro,admin1,ECU-1267,1.0,Natural Earth 10m (public domain),name match 100
+ECU,Esmeraldas,admin1,ECU-1335,1.0,Natural Earth 10m (public domain),name match 100
+ECU,Galapagos,admin1,ECU-1270,1.0,Natural Earth 10m (public domain),name match 100
+ECU,Guayas,admin1,ECU-1280,1.0,Natural Earth 10m (public domain),name match 100
+ECU,Imbabura-Carchi,admin1,ECU-1409;ECU-1410,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+ECU,Loja-Zamora Chinchipe,admin1,ECU-1269;ECU-1268,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+ECU,Los Rios,admin1,ECU-1281,1.0,Natural Earth 10m (public domain),name match 100
+ECU,Manabi,admin1,ECU-1282,1.0,Natural Earth 10m (public domain),name match 100
+ECU,Napo-Pastaza-Morona Santiago,admin1,ECU-1288;ECU-1285;ECU-1289,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+ECU,Pichincha,admin1,ECU-1287,1.0,Natural Earth 10m (public domain),name match 100
+ECU,Santa Elena,admin1,ECU-5507,1.0,Natural Earth 10m (public domain),name match 100
+ECU,Santo Domingo de los Tsachilas,admin1,ECU-5508,1.0,Natural Earth 10m (public domain),name match 100
+ECU,Sucumbios-Orellana,admin1,ECU-1411;ECU-1286,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+ECU,Tungurahua-Cotopaxi-Chimborazo-Bolivar,admin1,ECU-1290;ECU-1284;ECU-1277;ECU-1279,1.0,Natural Earth 10m (public domain),"name parts (4 pieces, worst match 100)"
 ESP,Andalusia,admin1,ESP-5812;ESP-5824;ESP-5804;ESP-5821;ESP-5834;ESP-5844;ESP-5817;ESP-5826,0.95,Natural Earth 10m (public domain),alias hint -> region:Andalucía
 ESP,Aragon,admin1,ESP-5825;ESP-5853;ESP-5847,1.0,Natural Earth 10m (public domain),"Natural Earth region Aragón (3 units, match 100)"
 ESP,Asturias,admin1,ESP-5805,1.0,Natural Earth 10m (public domain),name match 100
@@ -213,12 +370,49 @@ GRC,South Aegean,admin1,GRC-3013,1.0,Natural Earth 10m (public domain),name matc
 GRC,Thessaly,admin1,GRC-2900,1.0,Natural Earth 10m (public domain),name match 100
 GRC,Western Greece,admin1,GRC-2886,0.88,Natural Earth 10m (public domain),name match 88
 GRC,Western Macedonia,admin1,GRC-2892,0.9,Natural Earth 10m (public domain),name match 90
+GRD,Grenada,admin1,GRD-5072;GRD-5071;GRD-5070;GRD-5075;GRD-5074;GRD-5073;GRD-5069,0.95,Natural Earth 10m (public domain),whole country (7 admin-1 units)
 GRL,Greenland,admin1,GRL-2739;GRL-2742;GRL-2743;GRL-2738;GRL-2741;GRL-2740,0.95,Natural Earth 10m (public domain),whole country (6 admin-1 units)
+GTM,Alta Verapaz-Baja Verapaz,admin1,GTM-1948;GTM-1942,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+GTM,Escuintla,admin1,GTM-1950,1.0,Natural Earth 10m (public domain),name match 100
+GTM,Guatemala,admin1,GTM-1951,1.0,Natural Earth 10m (public domain),name match 100
+GTM,Huehuetenango,admin1,GTM-1943,1.0,Natural Earth 10m (public domain),name match 100
+GTM,Izabal,admin1,GTM-1959,1.0,Natural Earth 10m (public domain),name match 100
+GTM,Jutiapa-Jalapa-Santa Rosa,admin1,GTM-1962;GTM-1957;GTM-1961,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+GTM,Peten,admin1,GTM-1944,1.0,Natural Earth 10m (public domain),name match 100
+GTM,Quetzaltenango-Totonicapan,admin1,GTM-1945;GTM-1955,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+GTM,Retalhuleu-Suchitepequez,admin1,GTM-1946;GTM-1952,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+GTM,Sacatepequez-Chimaltenango,admin1,GTM-1949;GTM-1953,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+GTM,San Marcos,admin1,GTM-1947,1.0,Natural Earth 10m (public domain),name match 100
+GTM,Solola-Quiche,admin1,GTM-3467;GTM-1954,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+GTM,Zacapa-Chiquimula-El Progreso,admin1,GTM-1960;GTM-1963;GTM-1956,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+GUY,Barima-Waini,admin1,GUY-675,0.95,Natural Earth 10m (public domain),alias hint -> GY-BA
+GUY,Berbice and Upper Demerara,admin1,GUY-671;GUY-674;GUY-677,0.95,Natural Earth 10m (public domain),"alias hint -> GY-EB, GY-MA, GY-UD"
+GUY,Cuyuni-Mazaruni and Potaro-Siparuni,admin1,GUY-672;GUY-680,0.95,Natural Earth 10m (public domain),"alias hint -> GY-CU, GY-PT"
+GUY,Demerara-Mahaica,admin1,GUY-678,1.0,Natural Earth 10m (public domain),name match 100
+GUY,Pomeroon-Supenaam and Essequibo Islands-West Demerara,admin1,GUY-676;GUY-679,0.95,Natural Earth 10m (public domain),"alias hint -> GY-PM, GY-ES"
+GUY,Upper Takutu-Upper Essequibo,admin1,GUY-673,0.95,Natural Earth 10m (public domain),alias hint -> GY-UT
 HKG,Hong Kong,admin1,HKG-5168;HKG-5170;HKG-5156;HKG-5153;HKG-5154;HKG-5155;HKG-5165;HKG-5169;HKG-5163;HKG-5162;HKG-5161;HKG-5158;HKG-5157;HKG-5159;HKG-5164;HKG-5166;HKG-5167;HKG-5160,0.95,Natural Earth 10m (public domain),whole country (18 admin-1 units)
+HND,Atlantida-Islas de la Bahia,admin1,HND-637;HND-641,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+HND,Choluteca-Valle,admin1,HND-645;HND-661,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+HND,Colon-Gracias a Dios,admin1,HND-640;HND-638,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+HND,Comayagua-La Paz-Intibuca,admin1,HND-648;HND-649;HND-646,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+HND,Copan-Ocotepeque,admin1,HND-653;HND-651,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+HND,Cortes,admin1,HND-647,1.0,Natural Earth 10m (public domain),name match 100
+HND,Francisco Morazan,admin1,HND-639,1.0,Natural Earth 10m (public domain),name match 100
+HND,Olancho-El Paraiso,admin1,HND-642;HND-662,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+HND,Santa Barbara-Lempira,admin1,HND-652;HND-650,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+HND,Yoro,admin1,HND-643,1.0,Natural Earth 10m (public domain),name match 100
 HRV,Adriatic Croatia,admin1,HRV-1592;HRV-1490;HRV-1493;HRV-1492;HRV-1586;HRV-1491;HRV-1584,0.95,Natural Earth 10m (public domain),"alias hint -> HR-08, HR-09, HR-13, HR-15, HR-17, HR-18, HR-19"
 HRV,City of Zagreb,admin1,HRV-1589,0.95,Natural Earth 10m (public domain),alias hint -> HR-21
 HRV,Northern Croatia,admin1,HRV-1609;HRV-1608;HRV-1610;HRV-1582;HRV-1588,0.95,Natural Earth 10m (public domain),"alias hint -> HR-01, HR-02, HR-05, HR-06, HR-20"
 HRV,Pannonian Croatia,admin1,HRV-1606;HRV-1603;HRV-1587;HRV-1602;HRV-1583;HRV-1605;HRV-1607;HRV-1604,0.95,Natural Earth 10m (public domain),"alias hint -> HR-07, HRV-1604, HRV-1602, HR-14, HR-03, HR-04, HR-10, HR-16"
+HTI,Artibonite,admin1,HTI-1384,1.0,Natural Earth 10m (public domain),name match 100
+HTI,Centre,admin1,HTI-1385,1.0,Natural Earth 10m (public domain),name match 100
+HTI,Nord and Nord-Est,admin1,HTI-1386;HTI-1387,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+HTI,Nord-Ouest,admin1,HTI-1361,1.0,Natural Earth 10m (public domain),name match 100
+HTI,Ouest,admin1,HTI-1388,1.0,Natural Earth 10m (public domain),name match 100
+HTI,"Sud, Nippes and Grand'Anse",admin1,HTI-1362;HTI-1359;HTI-1360,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+HTI,Sud-Est,admin1,HTI-1389,1.0,Natural Earth 10m (public domain),name match 100
 HUN,Budapest,admin1,HUN-3160,1.0,Natural Earth 10m (public domain),name match 100
 HUN,Central Transdanubia,admin1,HUN-3163;HUN-3162;HUN-3158;HUN-4925;HUN-4906;HUN-4909;HUN-4908,1.0,Natural Earth 10m (public domain),"Natural Earth region Central Transdanubia (7 units, match 100)"
 HUN,Northern Great Plain,admin1,HUN-3169;HUN-3173;HUN-3175;HUN-4918;HUN-4924;HUN-4923,1.0,Natural Earth 10m (public domain),"Natural Earth region Northern Great Plain (6 units, match 100)"
@@ -284,6 +478,11 @@ ITA,Trentino-South Tyrol,admin1,ITA-5459;ITA-5460,0.95,Natural Earth 10m (public
 ITA,Tuscany,admin1,ITA-5379;ITA-5380;ITA-5381;ITA-5383;ITA-5382;ITA-5388;ITA-5387;ITA-5386;ITA-5384;ITA-5385,0.95,Natural Earth 10m (public domain),alias hint -> region:Toscana
 ITA,Umbria,admin1,ITA-5433;ITA-5432,1.0,Natural Earth 10m (public domain),"Natural Earth region Umbria (2 units, match 100)"
 ITA,Veneto,admin1,ITA-5467;ITA-5461;ITA-5463;ITA-5462;ITA-5465;ITA-5464;ITA-5466,1.0,Natural Earth 10m (public domain),"Natural Earth region Veneto (7 units, match 100)"
+JAM,Clarendon-Manchester-St Elizabeth,admin1,JAM-1373;JAM-1372;JAM-1370,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+JAM,Kingston and St Andrew,admin1,JAM-1382;JAM-1377,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+JAM,St Ann-St Mary-Portland-St Thomas,admin1,JAM-1379;JAM-1383;JAM-1378;JAM-1381,1.0,Natural Earth 10m (public domain),"name parts (4 pieces, worst match 100)"
+JAM,St Catherine,admin1,JAM-1380,1.0,Natural Earth 10m (public domain),name match 100
+JAM,St James-Hanover-Westmoreland-Trelawny,admin1,JAM-1375;JAM-1374;JAM-1371;JAM-1376,1.0,Natural Earth 10m (public domain),"name parts (4 pieces, worst match 100)"
 JEY,Jersey,admin1,JEY+00?,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
 JPN,Aichi,admin1,JPN-1840,1.0,Natural Earth 10m (public domain),name match 100
 JPN,Akita,admin1,JPN-1862,1.0,Natural Earth 10m (public domain),name match 100
@@ -344,6 +543,7 @@ KHM,Preah Sihanouk,admin1,KHM-1800,0.95,Natural Earth 10m (public domain),alias 
 KHM,Prey Veng-Svay Rieng,admin1,KHM-1801;KHM-1790,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 KHM,Siem Reap,admin1,KHM-1781,1.0,Natural Earth 10m (public domain),name match 100
 KIR,Kiribati,admin1,KIR+00?;KIR+99?,0.95,Natural Earth 10m (public domain),whole country (2 admin-1 units)
+KNA,Saint Kitts and Nevis,admin1,KNA-5108;KNA-5105;KNA-5102;KNA-5103;KNA-5110;KNA-5107;KNA-5100;KNA-5111;KNA-5112;KNA-5101;KNA-5109;KNA-5106;KNA-5099;KNA-5104,0.95,Natural Earth 10m (public domain),whole country (14 admin-1 units)
 KOR,Busan,admin1,KOR-2507,1.0,Natural Earth 10m (public domain),name match 100
 KOR,Daegu,admin1,KOR-2504,1.0,Natural Earth 10m (public domain),name match 100
 KOR,Daejeon,admin1,KOR-2503,1.0,Natural Earth 10m (public domain),name match 100
@@ -371,6 +571,7 @@ LAO,Savannakhet,admin1,LAO-3282,1.0,Natural Earth 10m (public domain),name match
 LAO,Vientiane Capital,admin1,LAO-3283,0.95,Natural Earth 10m (public domain),alias hint -> LAO-3283
 LAO,Vientiane Province-Xaisomboun,admin1,LAO-3284,0.95,Natural Earth 10m (public domain),alias hint -> LAO-3284
 LAO,Xayaboury,admin1,LAO-3278,0.94,Natural Earth 10m (public domain),name match 94
+LCA,Saint Lucia,admin1,LCA-5081;LCA-5077;LCA-5076;LCA-5085;LCA-5078;LCA-5082;LCA-5086;LCA-5083;LCA-5084;LCA-5080;LCA-5079,0.95,Natural Earth 10m (public domain),whole country (11 admin-1 units)
 LIE,Liechtenstein,admin1,LIE-4893;LIE-4896;LIE-4892;LIE-4894;LIE-4901;LIE-4902;LIE-4900;LIE-4899;LIE-4898;LIE-4895;LIE-4897,0.95,Natural Earth 10m (public domain),whole country (11 admin-1 units)
 LTU,Capital Region,admin1,LTU-1075,0.95,Natural Earth 10m (public domain),alias hint -> LT-VL
 LTU,Central and Western Lithuania,admin1,LTU-1074;LTU-1067;LTU-1071;LTU-936;LTU-935;LTU-1072;LTU-1070;LTU-1073;LTU-1069,0.95,Natural Earth 10m (public domain),"alias hint -> LT-KU, LT-KL, LT-MR, LT-PN, LT-TA, LT-TE, LT-UT, LT-SA, LT-AL"
@@ -470,6 +671,14 @@ MYS,Sabah,admin1,MYS-1186,1.0,Natural Earth 10m (public domain),name match 100
 MYS,Sarawak,admin1,MYS-1187,1.0,Natural Earth 10m (public domain),name match 100
 MYS,Selangor,admin1,MYS-1148;MYS-4832,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Putrajaya
 MYS,Terengganu,admin1,MYS-1149,1.0,Natural Earth 10m (public domain),name match 100
+NIC,Chontales-Boaco-Rio San Juan,admin1,NIC-4800;NIC-668;NIC-669,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+NIC,Esteli-Madriz-Nueva Segovia,admin1,NIC-667;NIC-665;NIC-664,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+NIC,Leon-Chinandega,admin1,NIC-663;NIC-658,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+NIC,Managua,admin1,NIC-659,1.0,Natural Earth 10m (public domain),name match 100
+NIC,Masaya-Granada-Carazo,admin1,NIC-654;NIC-655;NIC-660,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+NIC,Matagalpa-Jinotega,admin1,NIC-656;NIC-666,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+NIC,North and South Caribbean Coast,admin1,NIC-657;NIC-644,0.95,Natural Earth 10m (public domain),"alias hint -> NI-AN, NI-AS"
+NIC,Rivas,admin1,NIC-24,1.0,Natural Earth 10m (public domain),name match 100
 NLD,Caribbean Netherlands,admin1,NLD-5149;NLD-5148;NLD-5147,0.95,Natural Earth 10m (public domain),"alias hint -> NL-BQ1, NL-BQ2, NL-BQ3"
 NLD,Drenthe,admin1,NLD-894,1.0,Natural Earth 10m (public domain),name match 100
 NLD,Flevoland,admin1,NLD-902,1.0,Natural Earth 10m (public domain),name match 100
@@ -513,6 +722,42 @@ NZL,Taranaki,admin1,NZL-3405,1.0,Natural Earth 10m (public domain),name match 10
 NZL,Waikato,admin1,NZL-5468,1.0,Natural Earth 10m (public domain),name match 100
 NZL,Wellington,admin1,NZL-5469,1.0,Natural Earth 10m (public domain),name match 100
 NZL,West Coast,admin1,NZL-3406,1.0,Natural Earth 10m (public domain),name match 100
+PAN,Bocas del Toro,admin1,PAN-1958,1.0,Natural Earth 10m (public domain),name match 100
+PAN,Chiriqui,admin1,PAN-1332;PAN-3454,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Ngöbe Buglé
+PAN,Cocle,admin1,PAN-1336,1.0,Natural Earth 10m (public domain),name match 100
+PAN,Colon,admin1,PAN-1337,1.0,Natural Earth 10m (public domain),name match 100
+PAN,Darien,admin1,PAN-3455;PAN-1418,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Emberá
+PAN,Herrera,admin1,PAN-1338,1.0,Natural Earth 10m (public domain),name match 100
+PAN,Los Santos,admin1,PAN-1339,1.0,Natural Earth 10m (public domain),name match 100
+PAN,Panama,admin1,PAN-1419;PAN-1340,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Kuna Yala; less PAN:Panama Oeste (carve)
+PAN,Panama Oeste,admin1,,0.95,builder-drawn line (hints file),"no admin-1 match (best unit 67, group 0); carve: builder polygon from PAN:Panama"
+PAN,Veraguas,admin1,PAN-1341,1.0,Natural Earth 10m (public domain),name match 100
+PAP,Papa's Port,admin1,FLK-5152,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
+PER,Amazonas,admin1,PER-584,1.0,Natural Earth 10m (public domain),name match 100
+PER,Ancash,admin1,PER-577,1.0,Natural Earth 10m (public domain),name match 100
+PER,Apurimac,admin1,PER-569,1.0,Natural Earth 10m (public domain),name match 100
+PER,Arequipa,admin1,PER-570,1.0,Natural Earth 10m (public domain),name match 100
+PER,Ayacucho,admin1,PER-586,1.0,Natural Earth 10m (public domain),name match 100
+PER,Cajamarca,admin1,PER-578,1.0,Natural Earth 10m (public domain),name match 100
+PER,Callao,admin1,PER-3505,0.95,Natural Earth 10m (public domain),alias hint -> PE-CAL
+PER,Cusco,admin1,PER-571,1.0,Natural Earth 10m (public domain),name match 100
+PER,Huancavelica,admin1,PER-588,1.0,Natural Earth 10m (public domain),name match 100
+PER,Huanuco,admin1,PER-579,1.0,Natural Earth 10m (public domain),name match 100
+PER,Ica,admin1,PER-589,1.0,Natural Earth 10m (public domain),name match 100
+PER,Junin,admin1,PER-590,1.0,Natural Earth 10m (public domain),name match 100
+PER,La Libertad,admin1,PER-580,1.0,Natural Earth 10m (public domain),name match 100
+PER,Lambayeque,admin1,PER-566,1.0,Natural Earth 10m (public domain),name match 100
+PER,Lima,admin1,PER-591;PER-587,0.95,Natural Earth 10m (public domain),"alias hint -> PER-591, PER-587"
+PER,Loreto,admin1,PER-585,1.0,Natural Earth 10m (public domain),name match 100
+PER,Madre de Dios,admin1,PER-572,1.0,Natural Earth 10m (public domain),name match 100
+PER,Moquegua,admin1,PER-574,1.0,Natural Earth 10m (public domain),name match 100
+PER,Pasco,admin1,PER-581,1.0,Natural Earth 10m (public domain),name match 100
+PER,Piura,admin1,PER-567,1.0,Natural Earth 10m (public domain),name match 100
+PER,Puno,admin1,PER-573,0.95,Natural Earth 10m (public domain),alias hint -> PE-PUN
+PER,San Martin,admin1,PER-582,1.0,Natural Earth 10m (public domain),name match 100
+PER,Tacna,admin1,PER-575,1.0,Natural Earth 10m (public domain),name match 100
+PER,Tumbes,admin1,PER-568,1.0,Natural Earth 10m (public domain),name match 100
+PER,Ucayali,admin1,PER-583,1.0,Natural Earth 10m (public domain),name match 100
 PHL,Bangsamoro,admin1,PHL-2524;PHL-2574;PHL-2576;PHL-5527;PHL-2511;PHL-2519,0.95,Natural Earth 10m (public domain),alias hint -> region:Autonomous Region in Muslim Mindanao (ARMM)
 PHL,Bicol,admin1,PHL-2537;PHL-2538;PHL-2536;PHL-2541;PHL-2540;PHL-2539;PHL-5536,1.0,Natural Earth 10m (public domain),"Natural Earth region Bicol (Region V) (7 units, match 100)"
 PHL,Cagayan Valley,admin1,PHL-2545;PHL-2550;PHL-2543;PHL-2554;PHL-5537;PHL-2553,1.0,Natural Earth 10m (public domain),"Natural Earth region Cagayan Valley (Region II) (6 units, match 100)"
@@ -559,6 +804,7 @@ POL,Subcarpathian,admin1,POL-3152,1.0,Natural Earth 10m (public domain),name mat
 POL,Swietokrzyskie,admin1,POL-3149,1.0,Natural Earth 10m (public domain),name match 100
 POL,Warmian-Masurian,admin1,POL-3139,1.0,Natural Earth 10m (public domain),name match 100
 POL,West Pomeranian,admin1,POL-3142,1.0,Natural Earth 10m (public domain),name match 100
+PRI,Puerto Rico,admin1,PRI-5260,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
 PRK,Chagang,admin1,PRK-3310,1.0,Natural Earth 10m (public domain),name match 100
 PRK,Kangwon,admin1,PRK-3308,1.0,Natural Earth 10m (public domain),name match 100
 PRK,North Hamgyong,admin1,PRK-3307,1.0,Natural Earth 10m (public domain),name match 100
@@ -577,6 +823,18 @@ PRT,Centro,admin1,PRT-751;PRT-753;PRT-740;PRT-752;PRT-739;PRT-755,1.0,Natural Ea
 PRT,Lisbon Metropolitan Area,admin1,PRT-5498;PRT-746,0.95,Natural Earth 10m (public domain),"alias hint -> PT-11, PT-15"
 PRT,Madeira,admin1,PRT-736,1.0,Natural Earth 10m (public domain),name match 100
 PRT,Norte,admin1,PRT-741;PRT-750;PRT-756;PRT-749;PRT-754,1.0,Natural Earth 10m (public domain),"Natural Earth region Norte (5 units, match 100)"
+PRY,Alto Parana,admin1,PRY-616,1.0,Natural Earth 10m (public domain),name match 100
+PRY,Asuncion,admin1,PRY-4837,1.0,Natural Earth 10m (public domain),name match 100
+PRY,Boqueron-Alto Paraguay,admin1,PRY-598;PRY-597,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+PRY,Caaguazu,admin1,PRY-617,1.0,Natural Earth 10m (public domain),name match 100
+PRY,Canindeyu-Amambay,admin1,PRY-615;PRY-619,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+PRY,Central,admin1,PRY-607,1.0,Natural Earth 10m (public domain),name match 100
+PRY,Cordillera-Paraguari,admin1,PRY-604;PRY-611,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+PRY,Guaira-Caazapa,admin1,PRY-618;PRY-608,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+PRY,Itapua,admin1,PRY-620,1.0,Natural Earth 10m (public domain),name match 100
+PRY,Misiones-Neembucu,admin1,PRY-610;PRY-609,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+PRY,Presidente Hayes,admin1,PRY-605,1.0,Natural Earth 10m (public domain),name match 100
+PRY,San Pedro-Concepcion,admin1,PRY-603;PRY-606,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 ROU,Bucharest-Ilfov,admin1,ROU-4844;ROU-128,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 ROU,Centre,admin1,ROU-306;ROU-305;ROU-303;ROU-299;ROU-307;ROU-294,0.95,Natural Earth 10m (public domain),"alias hint -> RO-AB, RO-BV, RO-CV, RO-HR, RO-MS, RO-SB"
 ROU,North-East,admin1,ROU-287;ROU-308;ROU-316;ROU-311;ROU-309;ROU-312,0.95,Natural Earth 10m (public domain),"alias hint -> RO-BC, RO-BT, RO-IS, RO-NT, RO-SV, RO-VS"
@@ -591,12 +849,25 @@ SGP,Singapore,admin1,SGP-4872;SGP-4871;SGP-4875;SGP-4874;SGP-4873,0.95,Natural E
 SLB,Guadalcanal-Honiara,admin1,SLB-1261;SLB-5130;SLB-1263;SLB-1262,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Central, Rennell and Bellona"
 SLB,Malaita,admin1,SLB-3509;SLB-1934;SLB-1260,1.0,Natural Earth 10m (public domain),"name match 100; plus unclaimed Makira, Temotu"
 SLB,Western-Choiseul-Isabel,admin1,SLB-3507;SLB-1264;SLB-3508,0.95,Natural Earth 10m (public domain),"alias hint -> SLB-3507, SLB-3508, SB-IS"
+SLV,Chalatenango-Cuscatlan-Cabanas,admin1,SLV-1357;SLV-1344;SLV-1345,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+SLV,La Libertad,admin1,SLV-1346,1.0,Natural Earth 10m (public domain),name match 100
+SLV,La Paz-San Vicente-Usulutan,admin1,SLV-1347;SLV-1353;SLV-1354,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+SLV,San Miguel-Morazan-La Union,admin1,SLV-1351;SLV-1352;SLV-1350,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+SLV,San Salvador,admin1,SLV-1349,1.0,Natural Earth 10m (public domain),name match 100
+SLV,Santa Ana-Ahuachapan,admin1,SLV-1343;SLV-1358,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+SLV,Sonsonate,admin1,SLV-1348,1.0,Natural Earth 10m (public domain),name match 100
 SMR,San Marino,admin1,SMR-4886;SMR-4887;SMR-4888;SMR-4889;SMR-4890;SMR-4891;SMR-4884;SMR-4885;SMR-4883,0.95,Natural Earth 10m (public domain),whole country (9 admin-1 units)
 SPM,Saint Pierre and Miquelon,admin1,SPM-4866;SPM-4867,0.95,Natural Earth 10m (public domain),whole country (2 admin-1 units)
 SRB,Belgrade,admin1,SRB-836,1.0,Natural Earth 10m (public domain),name match 100
 SRB,Southern and Eastern Serbia,admin1,SRB-841;SRB-125;SRB-844;SRB-121;SRB-843;SRB-835;SRB-279;SRB-830,0.95,Natural Earth 10m (public domain),"alias hint -> RS-14, RS-11, RS-15, RS-23, RS-20, RS-22, RS-24, RS-21"
 SRB,Sumadija and Western Serbia,admin1,SRB-834;SRB-833;SRB-1505;SRB-838;SRB-831;SRB-832;SRB-839;SRB-829;SRB-837,0.95,Natural Earth 10m (public domain),"alias hint -> RS-16, RS-09, RS-08, RS-17, RS-13, RS-19, RS-18, RS-12, RS-10"
 SRB,Vojvodina,admin1,SRB-274;SRB-273;SRB-275;SRB-281;SRB-1059;SRB-1061;SRB-1060,0.95,Natural Earth 10m (public domain),"alias hint -> RS-01, RS-02, RS-03, RS-04, RS-05, RS-06, RS-07"
+SUR,Brokopondo,admin1,SUR-66,1.0,Natural Earth 10m (public domain),name match 100
+SUR,Commewijne-Marowijne,admin1,SUR-67;SUR-70,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+SUR,Nickerie-Coronie-Saramacca,admin1,SUR-37;SUR-71;SUR-73,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+SUR,Paramaribo,admin1,SUR-72,1.0,Natural Earth 10m (public domain),name match 100
+SUR,Sipaliwini,admin1,SUR-69,1.0,Natural Earth 10m (public domain),name match 100
+SUR,Wanica-Para,admin1,SUR-74;SUR-68,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 SVK,Banska Bystrica,admin1,SVK-1052,1.0,Natural Earth 10m (public domain),name match 100
 SVK,Bratislava,admin1,SVK-1051,1.0,Natural Earth 10m (public domain),name match 100
 SVK,Kosice,admin1,SVK-1057,1.0,Natural Earth 10m (public domain),name match 100
@@ -661,6 +932,11 @@ TLS,Dili,admin1,TLS-541,0.95,Natural Earth 10m (public domain),alias hint -> TL-
 TLS,Eastern Municipalities,admin1,TLS-551;TLS-550;TLS-552;TLS-553;TLS-546,0.95,Natural Earth 10m (public domain),"alias hint -> TL-BA, TL-LA, TL-VI, TL-MT, TL-MF"
 TLS,Western Municipalities,admin1,TLS-543;TLS-547;TLS-548;TLS-545;TLS-542;TLS-549;TLS-544,0.95,Natural Earth 10m (public domain),"alias hint -> TL-OE, TL-BO, TL-CO, TL-ER, TL-LI, TL-AN, TL-AL"
 TON,Tonga,admin1,TON-4946;TON-4949;TON-4945;TON-4948;TON-4947,0.95,Natural Earth 10m (public domain),whole country (5 admin-1 units)
+TTO,Couva-Tabaquite-Talparo,admin1,TTO-58,1.0,Natural Earth 10m (public domain),name match 100
+TTO,Port of Spain-Diego Martin-San Juan-Laventille,admin1,TTO-56;TTO-51;TTO-64,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+TTO,Southern Trinidad,admin1,TTO-62;TTO-59;TTO-52;TTO-60;TTO-57;TTO-55,0.95,Natural Earth 10m (public domain),"alias hint -> TT-PED, TT-PTF, TT-PRT, TT-RCM, TT-SFO, TT-SIP"
+TTO,Tobago,admin1,TTO-50;TTO-5090,0.95,Natural Earth 10m (public domain),"alias hint -> TT-ETO, TT-WTO"
+TTO,Tunapuna-Piarco-Arima-Chaguanas-Sangre Grande,admin1,TTO-61;TTO-63;TTO-54;TTO-53,1.0,Natural Earth 10m (public domain),"name parts (4 pieces, worst match 100)"
 TUR,Aegean,admin1,TUR-2230;TUR-2229;TUR-2278;TUR-2276;TUR-2277;TUR-2274;TUR-3014;TUR-2272,0.95,Natural Earth 10m (public domain),"alias hint -> TR-35, TR-09, TR-20, TR-48, TR-45, TR-03, TR-43, TR-64"
 TUR,Central Anatolia,admin1,TUR-2295;TUR-3020;TUR-2287;TUR-3021;TUR-2288;TUR-3026;TUR-2286;TUR-3019,0.95,Natural Earth 10m (public domain),"alias hint -> TR-71, TR-68, TR-51, TR-50, TR-40, TR-38, TR-58, TR-66"
 TUR,Central East Anatolia,admin1,TUR-3047;TUR-3048;TUR-3045;TUR-2310;TUR-2284;TUR-2282;TUR-2311;TUR-2308,0.95,Natural Earth 10m (public domain),"alias hint -> TR-44, TR-23, TR-12, TR-62, TR-65, TR-49, TR-13, TR-30"
@@ -701,6 +977,16 @@ UKR,Eastern Ukraine,admin1,UKR-328;UKR-327;UKR-331;UKR-326,0.95,Natural Earth 10
 UKR,Kyiv and the North,admin1,UKR-285;UKR-324;UKR-321;UKR-325;UKR-4826,0.95,Natural Earth 10m (public domain),"alias hint -> UA-30, UA-32, UA-18, UA-74, UA-59"
 UKR,Southern Ukraine,admin1,UKR-322;UKR-4827;UKR-284,0.95,Natural Earth 10m (public domain),"alias hint -> UA-51, UA-65, UA-48"
 UKR,Western Ukraine,admin1,UKR-318;UKR-286;UKR-293;UKR-288;UKR-289;UKR-291;UKR-290;UKR-292,0.95,Natural Earth 10m (public domain),"alias hint -> UA-46, UA-07, UA-56, UA-61, UA-68, UA-26, UA-21, UA-77"
+URY,Artigas-Rivera,admin1,URY-6;URY-14,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+URY,Canelones,admin1,URY-17,1.0,Natural Earth 10m (public domain),name match 100
+URY,Cerro Largo-Treinta y Tres-Lavalleja,admin1,URY-16;URY-12;URY-19,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+URY,Colonia-San Jose,admin1,URY-5;URY-4,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+URY,Florida-Flores,admin1,URY-7;URY-18,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+URY,Maldonado-Rocha,admin1,URY-22;URY-20,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+URY,Montevideo,admin1,URY-21,1.0,Natural Earth 10m (public domain),name match 100
+URY,Paysandu-Salto,admin1,URY-8;URY-10,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+URY,Soriano-Rio Negro,admin1,URY-11;URY-9,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+URY,Tacuarembo-Durazno,admin1,URY-15;URY-13,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 USA,Alabama,admin1,USA-3541,1.0,Natural Earth 10m (public domain),name match 100
 USA,Alaska,admin1,USA-3563,1.0,Natural Earth 10m (public domain),name match 100
 USA,Arizona,admin1,USA-3520,1.0,Natural Earth 10m (public domain),name match 100
@@ -753,6 +1039,28 @@ USA,West Virginia,admin1,USA-3554,1.0,Natural Earth 10m (public domain),name mat
 USA,Wisconsin,admin1,USA-3553,1.0,Natural Earth 10m (public domain),name match 100
 USA,Wyoming,admin1,USA-3527,1.0,Natural Earth 10m (public domain),name match 100
 VAT,Vatican City,admin1,VAT+00?,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
+VCT,Saint Vincent and the Grenadines,admin1,VCT-5064;VCT-5065;VCT-5067;VCT-5063;VCT-5066;VCT-5068,0.95,Natural Earth 10m (public domain),whole country (6 admin-1 units)
+VEN,Amazonas,admin1,VEN-38,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Anzoategui,admin1,VEN-40,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Apure,admin1,VEN-25,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Aragua,admin1,VEN-41,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Barinas,admin1,VEN-26,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Bolivar,admin1,VEN-39,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Carabobo,admin1,VEN-33,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Distrito Capital,admin1,VEN-43,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Falcon,admin1,VEN-23,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Guarico,admin1,VEN-45,1.0,Natural Earth 10m (public domain),name match 100
+VEN,La Guaira,admin1,VEN-42,0.95,Natural Earth 10m (public domain),alias hint -> VE-X
+VEN,Lara-Yaracuy,admin1,VEN-36;VEN-34,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+VEN,Merida-Trujillo,admin1,VEN-27;VEN-29,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+VEN,Miranda,admin1,VEN-47;VEN-44;VEN+99?,1.0,Natural Earth 10m (public domain),"name match 100; plus unclaimed Dependencias Federales, VEN+99?"
+VEN,Monagas-Delta Amacuro,admin1,VEN-65;VEN-46,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+VEN,Nueva Esparta,admin1,VEN-48,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Portuguesa-Cojedes,admin1,VEN-32;VEN-35,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+VEN,Sucre,admin1,VEN-49,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Tachira,admin1,VEN-28,1.0,Natural Earth 10m (public domain),name match 100
+VEN,Zulia,admin1,VEN-31,1.0,Natural Earth 10m (public domain),name match 100
+VGB,British Virgin Islands,admin1,VGB+00?,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
 VNM,Ba Ria-Vung Tau,admin1,VNM-495,0.95,Natural Earth 10m (public domain),alias hint -> VN-43
 VNM,Bac Ninh,admin1,VNM-463,0.95,Natural Earth 10m (public domain),alias hint -> VN-56
 VNM,Binh Duong,admin1,VNM-483,0.95,Natural Earth 10m (public domain),alias hint -> VN-57

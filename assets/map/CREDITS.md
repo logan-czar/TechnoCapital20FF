@@ -17,9 +17,14 @@ Boundary files used, with their original sources and licenses:
 | CAN | ADM2 | Statistics Canada (StatCan) | Open Government Canada 2.0 | 2022 |
 | MEX | ADM2 | World Bank | Creative Commons Attribution 4.0 (CC BY 4.0) | 2012 |
 | USA | ADM2 | United States Census Bureau, MAF/TIGER Database | Public Domain | 2018 |
+| ARG | ADM2 | Instituto Geografico Nacional and UNHCR, OCHA ROLAC | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | AUS | ADM2 | Australian Bureau of Statistics | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2022 |
 | BLR | ADM2 | geoBoundaries, CIESIN | Creative Commons Attribution 3.0 License | 2005 |
+| BOL | ADM2 | GeoBolivia, Derived from ADM3 layer | Public Domain | 2015 |
+| BRA | ADM2 | Instituto Brasileiro de Geografia e Estatística (IBGE), OCHA ROLAC | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | CHN | ADM2 | National Administration of Surveying, Mapping and Geoinformation of China, Revolutionary GIS | Open Data Commons Public Domain Dedication and License (PDDL) v1.0 | 2017 |
+| COL | ADM2 | Departamento Administrativo Nacional de Estadistica | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2020 |
+| CRI | ADM2 | geoBoundaries, Wikimedia Commons | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2020 |
 | CZE | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2010 |
 | DNK | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2018 |
 | IDN | ADM2 | Badan Pusat Statistik (BPS - Statistics Indonesia), World Food Programme, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
@@ -30,6 +35,8 @@ Boundary files used, with their original sources and licenses:
 | NLD | ADM2 | National Georegister | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2022 |
 | NOR | ADM2 | Geonorge, Mapping Authority of Norway | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2013 |
 | NZL | ADM2 | Stats NZ | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2021 |
+| PER | ADM2 | Instituto Geográfico Nacional - IGN, OCHA ROLAC | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
+| PRI | ADM2 | United States Census Bureau, MAF/TIGER | Public Domain | 2021 |
 | SWE | ADM2 | geoBoundaries, Wikimedia Commons | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2017 |
 | THA | ADM2 | Royal Thai Survey Department, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2019 |
 | VNM | ADM2 | OCHA ROAP, Government of Viet Nam | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
