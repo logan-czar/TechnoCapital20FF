@@ -104,8 +104,10 @@ pub struct RunnerControls(pub Controls);
 /// is spent, so the window keeps drawing. Half of a 60 fps frame.
 pub const FRAME_STEP_BUDGET: Duration = Duration::from_millis(8);
 
-/// The weight of the newest tick in a kind's moving average cost (D776).
-pub const TICK_COST_WEIGHT: f64 = 0.25;
+/// How fast a kind's predicted cost forgets its costliest recent tick (D776): the prediction is
+/// a decaying max, the newest tick's cost or the last prediction less this share, whichever is
+/// more, so a kind is predicted at its expensive end.
+pub const TICK_COST_DECAY: f64 = 0.25;
 
 /// Most game hours a speed may owe when the budget cuts a frame short (D300), so a slow frame
 /// never turns into a burst of catch-up ticks.
@@ -126,6 +128,11 @@ pub struct SimRate {
     pub step_time_last_frame: Duration,
     /// Wall time spent stepping in the current frame so far (the UI's pacing reads it, D777).
     pub step_time_this_frame: Duration,
+    /// A quarter's event ran in the current frame so far (the UI's pacing reads it, D777).
+    pub quarterly_this_frame: bool,
+    /// The per-frame step budget in force ([`FRAME_STEP_BUDGET`] unless a bench or test set
+    /// another).
+    pub budget: Duration,
     /// The longest single tick of the last finished frame, timed from the budget check that let
     /// it run to its end: the most the frame may overrun its budget (D300, D152).
     pub longest_tick_last_frame: Duration,
@@ -148,25 +155,39 @@ pub enum TickKind {
     Daily,
     /// 00:00 on the 1st outside a quarter's events: the monthly jobs and views.
     Monthly,
-    /// A quarter's start, release, price move or plan lock (spec 4.4).
-    Quarterly,
+    /// 00:00 on a quarter's first day: the month's and the quarter's close (spec 4.4).
+    QuarterStart,
+    /// 00:00 on the release day (spec 4.4 row 1).
+    Release,
+    /// 01:00 on the release day: the price move and earnings jump.
+    PriceMove,
+    /// 00:00 on the plan lock day (spec 4.4 row 3): plans, consensus, births and IPO votes.
+    PlanLock,
 }
 
 impl TickKind {
-    pub const COUNT: usize = 4;
+    pub const COUNT: usize = 7;
     pub const ALL: [TickKind; TickKind::COUNT] = [
         TickKind::Hourly,
         TickKind::Daily,
         TickKind::Monthly,
-        TickKind::Quarterly,
+        TickKind::QuarterStart,
+        TickKind::Release,
+        TickKind::PriceMove,
+        TickKind::PlanLock,
     ];
 
     /// The kind of the tick at `now`.
     pub fn of(now: sim::time::calendar::DateTime) -> TickKind {
         let f = sim::time::scheduler::TickFacts::new(now);
-        if f.is_quarter_start() || f.is_release_tick() || f.is_price_move_tick() || f.is_lock_tick()
-        {
-            TickKind::Quarterly
+        if f.is_quarter_start() {
+            TickKind::QuarterStart
+        } else if f.is_release_tick() {
+            TickKind::Release
+        } else if f.is_price_move_tick() {
+            TickKind::PriceMove
+        } else if f.is_lock_tick() {
+            TickKind::PlanLock
         } else if f.is_month_start() {
             TickKind::Monthly
         } else if f.is_midnight() {
@@ -176,12 +197,23 @@ impl TickKind {
         }
     }
 
+    /// One of a quarter's events, the costliest ticks (6 to 17 ms in the game).
+    pub fn is_quarterly(self) -> bool {
+        matches!(
+            self,
+            TickKind::QuarterStart | TickKind::Release | TickKind::PriceMove | TickKind::PlanLock
+        )
+    }
+
     pub fn name(self) -> &'static str {
         match self {
             TickKind::Hourly => "hourly",
             TickKind::Daily => "daily",
             TickKind::Monthly => "monthly",
-            TickKind::Quarterly => "quarterly",
+            TickKind::QuarterStart => "quarter start",
+            TickKind::Release => "release",
+            TickKind::PriceMove => "price move",
+            TickKind::PlanLock => "plan lock",
         }
     }
 }
@@ -196,7 +228,7 @@ pub struct SimRunner {
     spent: Duration,
     /// A NewGame or Load rebuilt every view since the last sync.
     rebuilt: bool,
-    /// What a tick of each [`TickKind`] costs lately (a moving average): at max speed a tick
+    /// What a tick of each [`TickKind`] costs lately (a decaying max): at max speed a tick
     /// that would not fit in what is left of the budget waits for the next frame (D776).
     tick_cost: [Duration; TickKind::COUNT],
 }
@@ -273,6 +305,7 @@ impl Plugin for SimBridgePlugin {
 fn start_frame(mut runner: ResMut<SimRunner>, mut rate: ResMut<SimRate>) {
     rate.step_time_last_frame = runner.spent;
     rate.step_time_this_frame = Duration::ZERO;
+    rate.quarterly_this_frame = false;
     runner.spent = Duration::ZERO;
     rate.longest_tick_last_frame = std::mem::take(&mut rate.longest_tick_this_frame);
     rate.steps_last_frame = rate.steps_this_frame;
@@ -386,7 +419,8 @@ fn step_sim(
         rate.longest_tick_this_frame = rate.longest_tick_this_frame.max(took);
         let kind = TickKind::of(runner.sim.views().clock().now);
         let c = &mut runner.tick_cost[kind as usize];
-        *c = c.mul_f64(1.0 - TICK_COST_WEIGHT) + took.mul_f64(TICK_COST_WEIGHT);
+        *c = took.max(c.mul_f64(1.0 - TICK_COST_DECAY));
+        rate.quarterly_this_frame |= kind.is_quarterly();
         let k = &mut rate.by_kind[kind as usize];
         k.0 += 1;
         k.1 += took;
@@ -401,6 +435,7 @@ fn step_sim(
     }
     runner.spent += start.elapsed();
     rate.step_time_this_frame = runner.spent;
+    rate.budget = runner.budget;
     rate.steps_this_frame += steps;
     rate.total_steps += u64::from(steps);
     rate.window_steps += u64::from(steps);

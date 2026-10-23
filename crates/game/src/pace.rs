@@ -27,10 +27,15 @@ pub const LIVE_MODEL_SECS: f64 = 0.5;
 /// The least real time between two re-sets of one live chart while the sim fast-forwards: a
 /// 10-year chart's redraw moves every one of its 1,500 nodes, the costliest job of all.
 pub const LIVE_CHART_SECS: f64 = 1.0;
+/// How far past its budget the sim's stepping may run before the frame counts as overrun
+/// (D777): the last hourly tick of a frame often ends a few microseconds past the budget.
+pub const OVERRUN_MARGIN: std::time::Duration = std::time::Duration::from_millis(1);
 /// While the sim fast-forwards, a heavy job runs in a frame whose sim stepping took at most
 /// this, in practice a frame with no fixed step (D777): a step takes the 8 ms budget, and a
-/// heavy job on top of it would run the frame past 16.7 ms. A job held back that long runs in
-/// any frame once twice its period has passed, so it never starves.
+/// heavy job on top of it would run the frame past 16.7 ms. A job held back twice its period
+/// runs in a frame the sim did not overrun (its stepping within the budget, give or take
+/// [`OVERRUN_MARGIN`], and no quarter's
+/// tick, D777), so it never starves and never lands on a 10 to 16 ms sim frame.
 pub const HEAVY_SIM_SECS: f64 = 0.002;
 
 /// This frame's pacing state, set before every UI system.
@@ -42,6 +47,9 @@ pub struct UiPace {
     heavy_taken: bool,
     /// The sim stepped more than [`HEAVY_SIM_SECS`] this frame.
     sim_heavy: bool,
+    /// The sim overran this frame: its stepping went past the budget or it ran a quarter's
+    /// tick. No heavy job runs then, however long it was held back.
+    sim_over: bool,
     /// Bumped when a hidden pane shows again, so the live values it held update at once.
     wake: u64,
 }
@@ -79,7 +87,10 @@ impl UiPace {
             return false;
         }
         if heavy {
-            if self.heavy_taken || (self.sim_heavy && self.now - last < 2.0 * period) {
+            if self.heavy_taken
+                || self.sim_over
+                || (self.sim_heavy && self.now - last < 2.0 * period)
+            {
                 return false;
             }
             self.heavy_taken = true;
@@ -94,6 +105,7 @@ impl UiPace {
         self.now = now;
         self.heavy_taken = false;
         self.sim_heavy = false;
+        self.sim_over = false;
     }
 }
 
@@ -153,6 +165,9 @@ fn start_pace(
     pace.sim_heavy = rate
         .as_ref()
         .is_some_and(|r| r.step_time_this_frame.as_secs_f64() > HEAVY_SIM_SECS);
+    pace.sim_over = rate.as_ref().is_some_and(|r| {
+        r.quarterly_this_frame || r.step_time_this_frame > r.budget + OVERRUN_MARGIN
+    });
 }
 
 /// Adds [`UiPace`] and keeps it current each frame.
@@ -190,6 +205,13 @@ mod tests {
         assert!(
             p.may_run(9.1, 0.5, true),
             "held back twice its period: runs anyway"
+        );
+        p.set(true, 10.2);
+        p.sim_heavy = true;
+        p.sim_over = true;
+        assert!(
+            !p.may_run(5.0, 0.5, true),
+            "but not in a frame the sim overran"
         );
         p.flush = true;
         assert!(p.may_run(10.2, 0.5, true), "a control change flushes");
