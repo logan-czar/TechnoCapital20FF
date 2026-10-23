@@ -1,20 +1,24 @@
 # Province map pipeline (track P)
 
 Builds `assets/map/` (the format is [docs/build/m8-map-assets.md](../../docs/build/m8-map-assets.md)) from
-Natural Earth and geoBoundaries, for one region CSV of `docs/design/data/` at a time. Python prepares the
-geodata; the Rust `mapgen` crate rasterizes it. Build-plan 3.3 (P1 to P9), map-sources.md, docs/build/m8-plan.md.
+Natural Earth and geoBoundaries, region CSV by region CSV of `docs/design/data/` (all eight files are built:
+3,255 provinces). Python prepares the geodata; the Rust `mapgen` crate rasterizes it. Build-plan 3.3 (P1 to P9),
+map-sources.md, docs/build/m8-plan.md.
 
 ## Run it
 
 ```powershell
-tools/map-pipeline/run.ps1                     # north-america, every step
-tools/map-pipeline/run.ps1 -Steps crosswalk,shapes,simplify,mapgen,qa
+tools/map-pipeline/run.ps1 -Region all         # every region file in CSV order, every step
+tools/map-pipeline/run.ps1 -Region europe -Steps crosswalk,shapes,simplify,mapgen,qa
 ```
 
 or `tools/map-pipeline/run.sh [region] [steps]`. Both run `uv sync --frozen` (Python 3.13 venv in
 `tools/map-pipeline/.venv`, pinned by `uv.lock`) and `npm ci` (mapshaper, pinned by `package-lock.json`),
-then `uv run python run.py --region north-america`. Needs uv, Node and cargo on PATH. A full run takes
-about two minutes once the cache is filled.
+then `uv run python run.py --region <slug|all>`. Needs uv, Node and cargo on PATH. A region runs on its own
+(its crosswalk, shapes and QA rows are its own; mapgen always draws every region built so far, so the bitmaps
+keep the others); `all` runs each step for every region in turn and mapgen once. A full world run takes
+about nine minutes once the cache is filled (North America's shapes take four, mapgen about 15 seconds),
+with peaks of about 0.5 GB in Python and 0.7 GB in mapgen. Two runs give byte-identical assets.
 
 | Step | Module | Does |
 |---|---|---|
@@ -25,8 +29,10 @@ about two minutes once the cache is filled.
 | mapgen (P7) | `mapgen_step.py` | `cargo run --release -p mapgen -- build ...`: every bitmap and table of the contract, for every region built so far (one `--geojson` each) |
 | qa (P8) | `qa.py` | `assets/map/qa/report-<region>.md`, a preview PNG, `assets/map/CREDITS.md`; fails on a province without pixels or a license problem |
 
-`run.py pin --iso USA CAN MEX` re-pins `sources.toml` (Natural Earth hashes from a download, geoBoundaries
-hashes from the git-LFS pointers at the pinned tag). Add a country's ISO codes there before its region runs.
+`run.py pin --iso KEN COD --levels ADM1` pins (or re-pins) those boundaries in `sources.toml`, keeping the
+others: Natural Earth hashes from a download, geoBoundaries hashes from the git-LFS pointers at the pinned tag.
+New pins take geoBoundaries' simplified geometry (D670; `--full` for the full file). Pin a country there before
+its region runs; a refused license keeps only the metadata.
 
 ## Files
 
@@ -35,8 +41,16 @@ hashes from the git-LFS pointers at the pinned tag). Add a country's ISO codes t
   `land.geojson`, `mapgen-qa.csv`) under `work/<region>/`.
 - **Committed**: `assets/map/*` (bitmaps, tables, `map-meta.toml`, crosswalk CSVs, QA report and preview,
   CREDITS.md) and this folder's code, lock files and hints.
-- **Hints**: `hints/<region>.toml` holds region aliases and builder-placed provinces the automatic match could
-  not place (D605). Each hinted row is listed in the QA report.
+- **Hints**: `hints/<region>.toml` is the builder's review layer (D605, D673-D683), each table listed in the
+  QA report:
+  - `[regions]` aliases: the NE admin-1 units of a region (iso_3166_2 or adm1_code of any country,
+    `region:<NE region group>`, `name:<NE unit name>`, `-<code>` to leave one out);
+  - `[carve.<key>]` land from geoBoundaries units or a drawn `polygon` (`from`, `clip`, `replace`);
+  - `[split.<key>]` an old NE unit cut among new regions by Voronoi on their towns;
+  - `[rebuild.<ISO>]` every region of a country from geoBoundaries ADM1;
+  - `[blocks]` `notes_need_place` and `level` per region; `[text]` stopwords `allow` and `stop`;
+  - `[provinces.<id>]` units, places or lon/lat seeds for provinces the automatic match could not place;
+  - `[review]` `notes` (Known for review) and `watch` (the watched small provinces table).
 
 ## Reviewing a region
 

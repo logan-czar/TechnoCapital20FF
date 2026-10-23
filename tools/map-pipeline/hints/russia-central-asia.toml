@@ -1,0 +1,93 @@
+# Builder-authored hints for the Russia and Central Asia crosswalk (P3, D605, D673-D677).
+# Format as in east-asia-oceania.toml.
+
+[text]
+allow = ["moscow"]
+
+[regions]
+# Natural Earth names Moscow city Moskva and the oblast Moskovskaya
+"RUS:Moscow" = ["RUS-2365"]
+"RUS:Moscow Oblast" = ["RUS-2364"]
+"RUS:Altai Krai-Altai Republic" = ["RU-ALT", "RU-AL"]
+"RUS:Sakha" = ["RU-SA"]
+"RUS:Magadan-Chukotka" = ["RU-MAG", "RU-CHU"]
+"RUS:Chechnya-Ingushetia" = ["RU-CE", "RU-IN"]
+"AZE:Baku" = ["AZ-BA"]
+"AZE:Absheron-Mountainous Shirvan" = ["region:Absheron Economic Region", "-AZ-BA", "region:Daghlig Shirvan Economic Region"]
+"AZE:Ganja-Gazakh" = ["region:Ganja-Gazakh Economic Region"]
+"AZE:Shaki-Zagatala" = ["region:Shaki-Zaqatala Economic Region"]
+"AZE:Guba-Khachmaz" = ["region:Guba-Khachmaz Economic Region"]
+"AZE:Aran" = ["region:Aran Economic Region"]
+"AZE:Lankaran" = ["region:Lankaran Economic Region"]
+"AZE:Nakhchivan" = ["region:Naxçıvan Autonomous Republic"]
+"AZE:Upper Karabakh-Kalbajar-Lachin" = ["region:Yukhari Garabakh Economic Region", "region:Kalbajar-Lachin Economic Region"]
+"GEO:Imereti-Samegrelo-Racha" = ["GE-IM", "GE-SZ", "GE-RL"]
+"GEO:Abkhazia" = ["GE-AB"]
+"KAZ:Almaty" = ["KAZ-4829"]
+"KAZ:Almaty Region" = ["KAZ-3207"]
+"UZB:Tashkent" = ["UZ-TK"]
+"UZB:Tashkent Region" = ["UZ-TO"]
+"TJK:Sughd" = ["TJ-SU"]
+"TJK:Districts of Republican Subordination" = ["TJ-X01~"]
+
+[carve."KAZ:Shymkent"]
+# the city of Shymkent, inside Natural Earth's South Kazakhstan
+polygon = [[69.42, 42.18], [69.80, 42.18], [69.80, 42.48], [69.42, 42.48], [69.42, 42.18]]
+from = ["KAZ:Turkistan"]
+
+[carve."TKM:Ashgabat"]
+# the city of Ashgabat, inside Natural Earth's Ahal
+polygon = [[58.18, 37.84], [58.56, 37.84], [58.56, 38.06], [58.18, 38.06], [58.18, 37.84]]
+from = ["TKM:Ahal"]
+
+[review]
+watch = ["RU-0001", "RU-0002", "RU-0003", "RU-0004", "RU-0068", "GE-0003", "GE-0007", "AZ-0010", "AM-"]
+notes = [
+    "AZ-0010 Nagorno-Karabakh (ARM-backed Artsakh) follows our province file: the whole Upper Karabakh and Kalbajar-Lachin economic regions of Natural Earth, which also hold the districts round the old oblast.",
+    "GE-0007 South Ossetia is a province of the Shida Kartli-Mtskheta-Mtianeti-Samtskhe-Javakheti region in our file, so it is split from that region by Voronoi, not drawn on the breakaway's own line.",
+    "KAZ:Shymkent and TKM:Ashgabat are cities Natural Earth merges into South Kazakhstan and Ahal; both are cut off by builder-drawn boxes.",
+]
+
+# Metro districts and towns Natural Earth has no point for (D605).
+[provinces.KG-0008] # Uzgen, Gulcha, Sary-Tash, Irkeshtam
+seeds = [[73.30, 40.77], [73.44, 40.32], [73.25, 39.73], [73.90, 39.68]]
+[provinces.KZ-0007] # Saryagash, Maktaaral
+seeds = [[69.17, 41.45], [68.40, 40.85]]
+[provinces.KZ-0011]
+seeds = [[57.21, 50.28]]
+[provinces.KZ-0014] # Tengiz, Kashagan
+seeds = [[53.38, 46.15], [52.60, 46.20], [53.00, 46.50]]
+[provinces.KZ-0015] # Aktau, Kuryk
+seeds = [[51.17, 43.65], [51.68, 43.18]]
+[provinces.KZ-0020] # Balkhash, Karkaraly
+seeds = [[74.98, 46.84], [75.47, 49.41]]
+[provinces.RU-0002] # Moscow State University, Fili, Nametkina Street
+seeds = [[37.53, 55.70], [37.48, 55.74], [37.56, 55.66]]
+[provinces.RU-0003] # Zelenograd, Leningradsky Prospekt, the north
+seeds = [[37.18, 55.99], [37.55, 55.83], [37.50, 55.80]]
+[provinces.RU-0004] # Kapotnya, Pechatniki, the old ZIL works
+seeds = [[37.80, 55.64], [37.72, 55.69], [37.66, 55.70], [37.85, 55.75]]
+[provinces.RU-0015] # the centre, Vasilievsky island
+seeds = [[30.31, 59.94], [30.26, 59.94]]
+[provinces.RU-0017] # Lakhta, the north, Sestroretsk
+seeds = [[30.18, 59.99], [30.33, 60.05], [29.97, 60.10]]
+[provinces.RU-0068] # the Kuril chain from Kunashir and Shikotan to Paramushir
+seeds = [[147.90, 45.20], [145.90, 44.00], [146.70, 43.80], [150.00, 46.20], [152.00, 47.50], [154.00, 48.80], [155.90, 50.40]]
+[provinces.TJ-0002] # Hisor, Tursunzoda
+seeds = [[68.67, 38.52], [68.23, 38.51]]
+[provinces.TJ-0003] # Rogun, Gharm, Jirgatol
+seeds = [[69.77, 38.73], [70.37, 39.04], [71.20, 39.20]]
+[provinces.TJ-0005] # Panjakent, Ayni
+seeds = [[67.61, 39.50], [68.53, 39.39]]
+[provinces.TJ-0006] # Istaravshan, Isfara, Kanibadam
+seeds = [[69.01, 39.91], [70.63, 40.12], [70.23, 40.45]]
+[provinces.TM-0003] # Gokdepe, Baharly, Darvaza
+seeds = [[57.95, 38.15], [57.43, 38.43], [58.90, 40.25]]
+[provinces.TM-0007]
+seeds = [[59.97, 41.84]]
+[provinces.TM-0010] # Samandepe, Kerki, Koytendag
+seeds = [[64.60, 38.95], [65.21, 37.83], [66.40, 37.80]]
+[provinces.TM-0012] # Yoloten, Galkynysh, Serhetabat, Dauletabad
+seeds = [[62.36, 37.33], [62.45, 37.25], [62.35, 35.27], [61.60, 36.40]]
+[provinces.TM-0013] # Bayramaly, Murgab, Turkmengala
+seeds = [[62.17, 37.62], [61.97, 37.50], [62.40, 37.43]]

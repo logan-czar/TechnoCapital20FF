@@ -83,7 +83,8 @@ def fetch(sources: dict | None = None, isos: set[str] | None = None) -> None:
         ok, why = licenses.classify_meta(meta)
         line = f"  gb {b['iso']} {b['level']} meta: {s}; license {meta.get('boundaryLicense')!r} -> {why}"
         if ok:
-            g = _download(url + f"{stem}.geojson", d / f"{stem}.geojson", b["geojson_sha256"], b["geojson_size"])
+            name = config.gb_geojson_name(b)
+            g = _download(url + name, d / name, b["geojson_sha256"], b["geojson_size"])
             line += f"; geometry: {g}"
         else:
             line += "; geometry: skipped (Voronoi path)"
@@ -122,7 +123,18 @@ def _lfs_pointer(url: str) -> tuple[str, int] | None:
     return oid, size
 
 
-def pin(isos: list[str], levels: list[str]) -> None:
+def _boundary_lines(b: dict) -> list[str]:
+    out = ["[[geoboundaries.boundary]]", f'iso = "{b["iso"]}"', f'level = "{b["level"]}"']
+    if b.get("file"):
+        out.append(f'file = "{b["file"]}"')
+    out += [f'meta_sha256 = "{b["meta_sha256"]}"', f'geojson_sha256 = "{b["geojson_sha256"]}"',
+            f"geojson_size = {b['geojson_size']}", ""]
+    return out
+
+
+def pin(isos: list[str], levels: list[str], simplified: bool = True) -> None:
+    """Pin (or re-pin) the named countries and levels; other pinned boundaries are kept.
+    New pins take geoBoundaries' `_simplified` geometry unless `simplified` is False (D670)."""
     old = config.load_sources()
     ne = old["natural_earth"]
     gb = old["geoboundaries"]
@@ -154,6 +166,7 @@ def pin(isos: list[str], levels: list[str]) -> None:
         "",
         "[geoboundaries]",
         "# geoBoundaries gbOpen, pinned by release tag; files are git-LFS objects, so the sha256 is the LFS oid.",
+        '# `file = "simplified"` pins the geoBoundaries topology-preserving simplified geometry (D670).',
         f'version = "{gb["version"]}"',
         f'commit = "{gb["commit"]}"',
         f'base_url = "{gb["base_url"]}"',
@@ -162,6 +175,8 @@ def pin(isos: list[str], levels: list[str]) -> None:
         'boundaries. PLoS ONE 15(4): e0231866. https://doi.org/10.1371/journal.pone.0231866"',
         "",
     ]
+    want = {(i, lv) for i in isos for lv in levels}
+    entries = {(b["iso"], b["level"]): b for b in gb.get("boundary", []) if (b["iso"], b["level"]) not in want}
     for iso in isos:
         for level in levels:
             stem = f"geoBoundaries-{iso}-{level}"
@@ -170,17 +185,20 @@ def pin(isos: list[str], levels: list[str]) -> None:
             if meta is None:
                 print(f"  {iso} {level}: not in the release")
                 continue
-            geo = _lfs_pointer(base + f"{stem}.geojson")
-            lines += [
-                "[[geoboundaries.boundary]]",
-                f'iso = "{iso}"',
-                f'level = "{level}"',
-                f'meta_sha256 = "{meta[0]}"',
-                f'geojson_sha256 = "{geo[0]}"',
-                f"geojson_size = {geo[1]}",
-                "",
-            ]
+            b = {"iso": iso, "level": level}
+            if simplified:
+                b["file"] = "simplified"
+            geo = _lfs_pointer(base + config.gb_geojson_name(b))
+            if geo is None:
+                print(f"  {iso} {level}: no geometry file")
+                continue
+            b.update(meta_sha256=meta[0], geojson_sha256=geo[0], geojson_size=geo[1])
+            entries[(iso, level)] = b
             print(f"  {iso} {level}: pinned ({geo[1]} bytes)")
+    # full-geometry pins (North America's) first, then the rest by country and level
+    order = sorted(entries, key=lambda k: (entries[k].get("file") == "simplified", k))
+    for k in order:
+        lines += _boundary_lines(entries[k])
     config.SOURCES_TOML.write_text("\n".join(lines), encoding="utf-8")
 
 

@@ -32,6 +32,19 @@ STOPWORDS = {
 }
 
 
+BASE_STOPWORDS = frozenset(STOPWORDS)
+
+
+def set_region_words(cfg: dict) -> None:
+    """Per-region stopwords from the hints file's `[text]` table (D675): `allow` lists base
+    stopwords that are real places there (Paris and Berlin in Europe, Moscow in Russia), `stop`
+    adds words that are places somewhere but ordinary words in that file's names and notes."""
+    global STOPWORDS
+    allow = {fold(w) for w in cfg.get("allow", [])}
+    stop = {fold(w) for w in cfg.get("stop", [])}
+    STOPWORDS = (set(BASE_STOPWORDS) - allow) | stop
+
+
 def fold(s: str) -> str:
     """ASCII, lower case, abbreviations expanded, punctuation to spaces."""
     s = unicodedata.normalize("NFKD", s or "")

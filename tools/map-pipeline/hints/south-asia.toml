@@ -1,0 +1,136 @@
+# Builder-authored hints for the South Asia crosswalk (P3, D605, D673-D677). Format as in
+# east-asia-oceania.toml.
+
+[review]
+watch = ["MDV", "BTN", "IN-0064", "IN-0065", "IN-0066", "IN-0092", "PK-0033", "PK-0034"]
+notes = [
+    "Kashmir (IN-0064 to IN-0066, PK-0033, PK-0034) follows the line of control, which is also our province files' split: Jammu and Kashmir and Ladakh are India's, Gilgit-Baltistan and Azad Kashmir Pakistan's; Natural Earth's Siachen unit is drawn with Ladakh. Aksai Chin stays Chinese (no province of ours claims it) and IN-0092 Arunachal Pradesh is India's.",
+    "NPL: Natural Earth still has Nepal's 14 old zones, so the 7 provinces are cut from geoBoundaries' 77 districts (public domain, NPL ADM2). Its file names Siraha and Parsa as second Saptari and Bara units and lacks Rupandehi and Dailekh, which therefore stay with Province No. 5.",
+    "BGD:Mymensingh, a division since 2015, is cut from Dhaka with the geoBoundaries districts Mymensingh, Netrakona, Jamalpur and Sherpur.",
+]
+
+[regions]
+"BTN:Central Bhutan" = ["region:Central", "region:Southern"]
+"BTN:Eastern Bhutan" = ["region:Eastern"]
+"IND:Gujarat-Daman-Diu" = ["IN-GJ", "IN-DH"]
+"LKA:Western Province" = ["LK-11", "LK-12", "LK-13"]
+"LKA:Central Province" = ["LK-21", "LK-22", "LK-23"]
+"LKA:Southern Province" = ["LK-31", "LK-32", "LK-33"]
+"LKA:Northern Province" = ["LK-41", "LK-42", "LK-43", "LK-44", "LK-45"]
+"LKA:Eastern Province" = ["LK-51", "LK-52", "LK-53"]
+"LKA:North Western Province" = ["LK-61", "LK-62"]
+"LKA:North Central Province" = ["LK-71", "LK-72"]
+"LKA:Uva Province" = ["LK-81", "LK-82"]
+"LKA:Sabaragamuwa Province" = ["LK-91", "LK-92"]
+"NPL:Province No. 5" = ["NP-BA", "NP-BH", "NP-KO", "NP-DH", "NP-GA", "NP-JA", "NP-KA", "NP-LU", "NP-MA", "NP-ME", "NP-NA", "NP-RA", "NP-SA", "NP-SE"]
+"PAK:Azad Jammu and Kashmir" = ["PK-JK"]
+
+[carve."BGD:Mymensingh"]
+units = ["Mymensingh", "Netrakona", "Jamalpur", "Sherpur"]
+from = ["BGD:Dhaka"]
+
+[carve."NPL:Province No. 1"]
+units = ["Taplejung", "Panchthar", "Ilam", "Jhapa", "Morang", "Sunsari", "Dhankuta", "Terhathum", "Sankhuwasabha", "Bhojpur", "Solukhumbu", "Okhaldhunga", "Khotang", "Udayapur"]
+from = ["NPL:Province No. 5"]
+
+[carve."NPL:Province No. 2"]
+units = ["Saptari", "Dhanusha", "Mahottari", "Sarlahi", "Rautahat", "Bara"]
+from = ["NPL:Province No. 5"]
+
+[carve."NPL:Bagmati"]
+units = ["Sindhuli", "Ramechhap", "Dolakha", "Sindhupalchok", "Kabherepalanchok", "Lalitpur", "Bhaktapur", "Kathmandu", "Nuwakot", "Rasuwa", "Dhading", "Makawanpur", "Chitawan"]
+from = ["NPL:Province No. 5"]
+
+[carve."NPL:Gandaki"]
+units = ["Gorkha", "Lamjung", "Tanahu", "Synagja", "Kaski", "Manang", "Mustang", "Myagdi", "Parbat", "Baglung", "Nawalapur"]
+from = ["NPL:Province No. 5"]
+
+[carve."NPL:Karnali"]
+units = ["Dolpa", "Mugu", "Humla", "Jumla", "Kalikot", "Jajarkot", "Rukum_W", "Salyan", "Surkhet"]
+from = ["NPL:Province No. 5"]
+
+[carve."NPL:Sudurpashchim"]
+units = ["Baijura", "Bajhang", "Achham", "Doti", "Kailali", "Kanchanpur", "Dadeidhura", "Baitadi", "Darchula"]
+from = ["NPL:Province No. 5"]
+
+# Metro districts and towns Natural Earth has no point for (D605).
+[provinces.IN-0001] # New Delhi, South Delhi
+seeds = [[77.21, 28.61], [77.22, 28.53]]
+[provinces.IN-0002] # Old Delhi, Narela, Bawana, East and West Delhi
+seeds = [[77.23, 28.66], [77.10, 28.85], [77.05, 28.80], [77.29, 28.69], [77.07, 28.65]]
+[provinces.IN-0013] # Nariman Point, BKC
+seeds = [[72.83, 18.93], [72.86, 19.06]]
+[provinces.IN-0014] # Andheri, Goregaon, Borivali, the airport
+seeds = [[72.85, 19.12], [72.85, 19.16], [72.86, 19.23], [72.88, 19.09]]
+[provinces.IN-0015] # Trombay, Powai, Thane, Kalyan
+seeds = [[72.93, 19.01], [72.91, 19.12], [72.98, 19.22], [73.13, 19.24]]
+[provinces.IN-0016] # JNPT, Vashi, Panvel
+seeds = [[72.95, 18.95], [73.02, 19.03], [73.10, 18.99]]
+[provinces.IN-0017] # Pune, Hinjewadi, Kharadi
+seeds = [[73.852, 18.516], [73.74, 18.59], [73.94, 18.55]]
+[provinces.IN-0019] # Kolhapur, Sangli, Satara, Solapur, Ratnagiri, Baramati (rural Pune district)
+seeds = [[74.24, 16.70], [74.57, 16.85], [74.00, 17.68], [75.91, 17.66], [73.30, 16.99], [74.58, 18.15]]
+[provinces.IN-0018] # Pimpri-Chinchwad, Chakan
+seeds = [[73.80, 18.63], [73.86, 18.76]]
+[provinces.IN-0023] # MG Road, Whitefield
+seeds = [[77.558, 12.972], [77.61, 12.97], [77.75, 12.97]]
+[provinces.IN-0024] # Electronic City, Koramangala, HSR Layout
+seeds = [[77.67, 12.85], [77.62, 12.93], [77.64, 12.91]]
+[provinces.IN-0025] # Peenya, the airport, Yelahanka
+seeds = [[77.50, 13.04], [77.71, 13.20], [77.59, 13.10]]
+[provinces.IN-0029] # the Old City, Secunderabad
+seeds = [[78.47, 17.36], [78.50, 17.44]]
+[provinces.IN-0030] # HITEC City, Gachibowli
+seeds = [[78.38, 17.45], [78.35, 17.44]]
+[provinces.IN-0031] # Genome Valley, Patancheru, Jeedimetla
+seeds = [[78.61, 17.63], [78.26, 17.53], [78.45, 17.52]]
+[provinces.IN-0033] # Anna Salai, Guindy, the OMR
+seeds = [[80.25, 13.05], [80.22, 13.01], [80.23, 12.90]]
+[provinces.IN-0034] # the port, Ennore, Manali
+seeds = [[80.29, 13.10], [80.32, 13.25], [80.27, 13.17]]
+[provinces.IN-0035] # Sriperumbudur, Oragadam, Maraimalai Nagar
+seeds = [[79.95, 12.97], [79.85, 12.83], [80.03, 12.79]]
+[provinces.IN-0040] # central Kolkata, Salt Lake
+seeds = [[88.35, 22.57], [88.42, 22.58]]
+[provinces.IN-0041] # Howrah, Uttarpara, Chinsurah
+seeds = [[88.31, 22.59], [88.33, 22.68], [88.39, 22.90]]
+[provinces.IN-0042] # Barrackpore, Dum Dum, Barasat, Petrapole
+seeds = [[88.38, 22.77], [88.43, 22.65], [88.48, 22.72], [88.89, 23.04]]
+[provinces.IN-0043] # Sonarpur, Budge Budge, Diamond Harbour, Sagar island, the Sundarbans
+seeds = [[88.43, 22.47], [88.17, 22.47], [88.19, 22.19], [88.08, 21.65], [88.80, 21.90]]
+[provinces.IN-0053]
+seeds = [[72.83, 21.17]]
+[provinces.IN-0054] # Hazira, Kamrej
+seeds = [[72.64, 21.10], [73.00, 21.28]]
+[provinces.IN-0077] # Keonjhar, Rourkela, Barbil
+seeds = [[85.58, 21.63], [84.86, 22.25], [85.39, 22.10]]
+[provinces.IN-0079] # Koraput, Rayagada, Berhampur, Damanjodi
+seeds = [[82.71, 18.81], [83.42, 19.17], [84.79, 19.31], [82.98, 18.88]]
+[provinces.PK-0001] # Saddar, Clifton
+seeds = [[67.03, 24.85], [67.03, 24.81]]
+[provinces.PK-0002] # Keamari, SITE, Orangi
+seeds = [[66.98, 24.84], [66.99, 24.90], [66.95, 24.95]]
+[provinces.PK-0003] # Korangi, Landhi, Port Qasim
+seeds = [[67.13, 24.83], [67.20, 24.87], [67.33, 24.78]]
+[provinces.PK-0004] # Gulshan-e-Iqbal, Nazimabad, New Karachi, the airport
+seeds = [[67.09, 24.92], [67.04, 24.93], [67.07, 25.00], [67.16, 24.90]]
+[provinces.PK-0009] # the Mall, Gulberg
+seeds = [[74.32, 31.55], [74.35, 31.52]]
+[provinces.PK-0010] # the cantonment, DHA, the airport
+seeds = [[74.38, 31.52], [74.40, 31.47], [74.41, 31.52]]
+[provinces.PK-0011] # Kot Lakhpat, Sheikhupura, Kasur
+seeds = [[74.30, 31.45], [73.98, 31.71], [74.45, 31.12]]
+[provinces.BD-0001] # Motijheel, Gulshan
+seeds = [[90.42, 23.73], [90.41, 23.79]]
+[provinces.BD-0002] # Old Dhaka, Mirpur, Mohammadpur
+seeds = [[90.40, 23.71], [90.36, 23.80], [90.36, 23.76]]
+[provinces.BD-0005] # Savar, Ashulia
+seeds = [[90.26, 23.85], [90.31, 23.90]]
+[provinces.BD-0010] # Sitakunda, Mirsarai
+seeds = [[91.66, 22.62], [91.58, 22.77]]
+[provinces.BD-0014] # Brahmanbaria, Ashuganj
+seeds = [[91.11, 23.96], [91.00, 24.03]]
+[provinces.LK-0005] # Nuwara Eliya, Hatton, Talawakele
+seeds = [[80.77, 6.97], [80.60, 6.89], [80.68, 6.93]]
+[provinces.NP-0011] # Nepalgunj, Bardiya, Ghorahi, Rolpa
+seeds = [[81.62, 28.05], [81.30, 28.35], [82.30, 28.05], [82.65, 28.38]]

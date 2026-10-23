@@ -221,20 +221,17 @@ pub fn write_assets(map: &Map, meta: &Meta, out: &Path) -> Result<Vec<PathBuf>> 
     written.push(p);
 
     let mut s = String::from("a,b,border_px,kind\n");
-    let mut rows: Vec<(&str, &str, u32)> = map
+    let id = |v: u16| map.ids[usize::from(v) - 1].as_str();
+    // land rows carry the shared edge; sea rows (D678) share none, so border_px is 0
+    let mut rows: Vec<(&str, &str, u32, &str)> = map
         .adjacency
         .iter()
-        .map(|&(a, b, c)| {
-            (
-                map.ids[usize::from(a) - 1].as_str(),
-                map.ids[usize::from(b) - 1].as_str(),
-                c,
-            )
-        })
+        .map(|&(a, b, c)| (id(a), id(b), c, "land"))
+        .chain(map.sea.iter().map(|&(a, b)| (id(a), id(b), 0, "sea")))
         .collect();
     rows.sort();
-    for (a, b, c) in rows {
-        s += &format!("{a},{b},{c},land\n");
+    for (a, b, c, kind) in rows {
+        s += &format!("{a},{b},{c},{kind}\n");
     }
     let p = out.join("province-adjacency.csv");
     write_text(&p, &s)?;

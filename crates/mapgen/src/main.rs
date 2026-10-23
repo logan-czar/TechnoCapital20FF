@@ -140,9 +140,10 @@ fn run() -> Result<(), String> {
         .count();
     let forced = map.stats.iter().filter(|s| s.forced).count();
     eprintln!(
-        "mapgen: {} provinces, {tiny} tiny, {forced} given a pixel, {} adjacencies",
+        "mapgen: {} provinces, {tiny} tiny, {forced} given a pixel, {} adjacencies, {} sea links",
         map.ids.len(),
-        map.adjacency.len()
+        map.adjacency.len(),
+        map.sea.len()
     );
     Ok(())
 }

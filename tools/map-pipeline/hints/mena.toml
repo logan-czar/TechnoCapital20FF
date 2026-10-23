@@ -1,0 +1,272 @@
+# Builder-authored hints for the Middle East and North Africa crosswalk (P3, D605, D673-D677).
+# Format as in east-asia-oceania.toml.
+
+[review]
+watch = ["BHR", "QA-0001", "QA-0002", "QA-0003", "KW-0001", "KW-0002", "PS-", "IL-0002", "IL-0015", "LB-0001", "AE-"]
+notes = [
+    "MAR: Natural Earth still has Morocco's 16 old regions, so the 12 new ones are built from them: Al Hoceima stays in Fes-Meknes (with Taza and Taounate), Khenifra and Khouribga stay outside Beni Mellal-Khenifra (in Fes-Meknes and Casablanca-Settat), El Jadida is in Marrakech-Safi, and Draa-Tafilalet is cut from Meknes-Tafilalet and Souss-Massa-Draa by a builder-drawn line along the High Atlas.",
+    "MA-0019 and MA-0020 (Western Sahara, SADR claims) follow our province file (decision C): Natural Earth's Western Sahara unit is split between Laayoune-Sakia El Hamra and Dakhla-Oued Ed-Dahab at 26 N inland and Boujdour's southern edge on the coast, by a builder-drawn line.",
+    "PSE: the West Bank and Gaza governorate groups are carved from Natural Earth's two Palestinian units with the geoBoundaries PSE governorates; the West Bank part of the Jerusalem governorate is drawn with Ramallah-Jericho. East Jerusalem (IL-0002) and the Golan Heights (IL-0015) are in Natural Earth's Israel already, as the province file has them.",
+    "LBN: Akkar and Baalbek-Hermel are new governorates Natural Earth merges into North Lebanon and the Beqaa; both are cut off by builder-drawn lines.",
+    "QA-0010 Al Shahaniya is cut from Al Rayyan by a builder-drawn line west of Doha (Al Udeid stays in Al Rayyan).",
+    "TUN: Natural Earth has no Ariana unit (it is inside Tunis), so TN-0002 Ariana-Ben Arous holds Ben Arous and Manouba only.",
+    "YE-0016 Al Mahrah-Socotra takes Socotra from Natural Earth's Hadramawt by a builder-drawn box round the island.",
+]
+
+[regions]
+"IRQ:Anbar" = ["IQ-AN"]
+"IRQ:Muthanna" = ["IQ-MU"]
+"IRQ:Sulaymaniyah-Halabja" = ["IQ-SU"]
+"KWT:Ahmadi" = ["KW-AH"]
+"LBN:North" = ["LB-AS"]
+"LBN:Bekaa" = ["LB-BI"]
+"LBY:Al Wahat" = ["LY-AJ"]
+"LBY:Kufra" = ["LY-KF"]
+"LBY:Derna-Butnan" = ["LY-BU", "LY-QB"]
+"LBY:Jabal al-Akhdar-Marj" = ["LY-JA", "LY-MJ"]
+"LBY:Jabal al-Gharbi-Nalut" = ["LY-MZ", "LY-GD"]
+"LBY:Wadi al-Shatii-Jufra" = ["LY-WS", "LY-JU"]
+"MAR:Tanger-Tetouan-Al Hoceima" = ["MA-01"]
+"MAR:Fes-Meknes" = ["MA-05", "MA-03", "MA-06"]
+"MAR:Rabat-Sale-Kenitra" = ["MA-07", "MA-02"]
+"MAR:Beni Mellal-Khenifra" = ["MA-12"]
+"MAR:Casablanca-Settat" = ["MA-08", "MA-09"]
+"MAR:Marrakech-Safi" = ["MA-11", "MA-10"]
+"MAR:Souss-Massa" = ["MA-13"]
+"MAR:Guelmim-Oued Noun" = ["MA-14"]
+"MAR:Laayoune-Sakia El Hamra" = ["MA-15", "EH-X01~"]
+"MAR:Dakhla-Oued Ed-Dahab" = ["MA-16"]
+"OMN:North Al Batinah" = ["OM-BA"]
+"OMN:South Al Batinah" = ["OM-BJ"]
+"OMN:North Ash Sharqiyah" = ["OM-SS"]
+"OMN:South Ash Sharqiyah" = ["OM-SH"]
+"PSE:Ramallah-Jericho" = ["PS-WBK"]
+"PSE:Gaza-North Gaza" = ["PS-GZZ"]
+"SAU:Qassim" = ["SA-05"]
+"SYR:Damascus" = ["SY-DI"]
+"SYR:Rif Dimashq" = ["SY-RD"]
+"TUN:Ariana-Ben Arous-Manouba" = ["TN-13", "TN-14"]
+"YEM:Al Mahrah-Socotra" = ["YE-MR"]
+
+[carve."MAR:Draa-Tafilalet"]
+# south-east of the High Atlas: Errachidia, Ouarzazate, Zagora, Tinghir, Midelt
+polygon = [[-8.10, 31.40], [-6.80, 32.05], [-5.30, 32.55], [-3.60, 32.30], [-2.90, 31.50], [-3.60, 30.70],
+           [-5.00, 29.90], [-6.50, 29.55], [-7.60, 29.55], [-8.10, 30.30], [-8.10, 31.40]]
+from = ["MAR:Fes-Meknes", "MAR:Souss-Massa"]
+
+[carve."MAR:Dakhla-Oued Ed-Dahab"]
+# Western Sahara south of Boujdour province (decision C)
+polygon = [[-17.50, 25.00], [-14.60, 25.35], [-12.00, 26.00], [-8.60, 26.00], [-8.60, 20.50], [-17.50, 20.50], [-17.50, 25.00]]
+from = ["MAR:Laayoune-Sakia El Hamra"]
+
+[carve."PSE:Jenin-Tubas-Tulkarm-Qalqilya"]
+country = "PSE"
+units = ["Jenin", "Tubas", "Tulkarm", "Qalqiliya"]
+from = ["PSE:Ramallah-Jericho"]
+
+[carve."PSE:Nablus-Salfit"]
+country = "PSE"
+units = ["Nablus", "Salfit"]
+from = ["PSE:Ramallah-Jericho"]
+
+[carve."PSE:Bethlehem-Hebron"]
+country = "PSE"
+units = ["Bethlehem", "Hebron"]
+from = ["PSE:Ramallah-Jericho"]
+
+[carve."PSE:Deir al-Balah-Khan Yunis-Rafah"]
+country = "PSE"
+units = ["Deir Al Balah", "Khan Yunis", "Rafah"]
+from = ["PSE:Gaza-North Gaza"]
+
+[carve."LBN:Akkar"]
+# north of the Nahr el Bared
+polygon = [[35.90, 34.48], [35.95, 34.72], [36.50, 34.72], [36.50, 34.48], [35.90, 34.48]]
+from = ["LBN:North"]
+
+[carve."LBN:Baalbek-Hermel"]
+# the northern Beqaa, from south of Baalbek to the Syrian border
+polygon = [[35.90, 33.92], [35.90, 34.72], [36.80, 34.72], [36.80, 33.92], [35.90, 33.92]]
+from = ["LBN:Bekaa"]
+
+[carve."QAT:Al Shahaniya"]
+# western and central Qatar from Dukhan to Al Shahaniya, west of Al Udeid
+polygon = [[50.70, 24.95], [50.70, 25.80], [51.30, 25.80], [51.28, 25.30], [51.20, 24.95], [50.70, 24.95]]
+from = ["QAT:Al Rayyan"]
+
+[carve."YEM:Al Mahrah-Socotra"]
+# Socotra and its islands
+polygon = [[52.00, 11.90], [54.70, 11.90], [54.70, 12.90], [52.00, 12.90], [52.00, 11.90]]
+from = ["YEM:Hadramawt"]
+
+[carve."MAR:Casablanca-Settat"]
+# El Jadida province (north Doukkala), with Jorf Lasfar
+polygon = [[-9.50, 32.55], [-8.00, 32.55], [-7.75, 33.25], [-9.50, 33.60], [-9.50, 32.55]]
+from = ["MAR:Marrakech-Safi"]
+
+[carve."MAR:Tanger-Tetouan-Al Hoceima"]
+# Al Hoceima province, north of the Rif crest
+polygon = [[-4.60, 34.75], [-3.10, 34.75], [-3.10, 35.45], [-4.60, 35.45], [-4.60, 34.75]]
+from = ["MAR:Fes-Meknes"]
+
+# Metro districts and towns Natural Earth has no point for (D605).
+[provinces.AE-0001]
+seeds = [[54.37, 24.47]]
+[provinces.AE-0002] # Masdar, Yas, Saadiyat
+seeds = [[54.62, 24.43], [54.60, 24.49], [54.43, 24.54]]
+[provinces.AE-0003] # Mussafah, Khalifa Port, KIZAD
+seeds = [[54.49, 24.35], [54.65, 24.81], [54.70, 24.70]]
+[provinces.AE-0004]
+seeds = [[55.76, 24.21], [55.77, 24.06]]
+[provinces.AE-0005] # Ruwais, Barakah, Mirfa, Sila
+seeds = [[52.73, 24.11], [52.27, 23.97], [53.70, 24.15], [51.80, 24.10]]
+[provinces.AE-0006] # Liwa, Habshan, Asab, Bu Hasa
+seeds = [[53.73, 23.13], [53.62, 23.83], [54.00, 23.30], [53.10, 23.40]]
+[provinces.AE-0007] # Das, Zirku
+seeds = [[52.87, 25.15], [53.07, 24.88]]
+[provinces.AE-0008] # Downtown and Business Bay, Deira
+seeds = [[55.27, 25.20], [55.31, 25.26]]
+[provinces.AE-0010] # Dubai Marina, Jebel Ali, Jumeirah
+seeds = [[55.14, 25.08], [55.03, 24.99], [55.21, 25.17]]
+[provinces.AE-0013] # Hamriyah, Al Dhaid
+seeds = [[55.53, 25.47], [55.88, 25.29]]
+[provinces.AE-0014] # Khor Fakkan, Kalba
+seeds = [[56.34, 25.34], [56.35, 25.07]]
+[provinces.DZ-0001] # the centre, Hydra
+seeds = [[3.06, 36.75], [3.03, 36.74]]
+[provinces.DZ-0002] # Bab Ezzouar, the airport, Rouiba
+seeds = [[3.18, 36.72], [3.21, 36.69], [3.33, 36.74]]
+[provinces.DZ-0003] # Cheraga, Ouled Fayet, Bab El Oued, Zeralda
+seeds = [[2.96, 36.76], [2.87, 36.75], [3.04, 36.79], [2.83, 36.69]]
+[provinces.DZ-0016] # Arzew, Bethioua
+seeds = [[-0.32, 35.85], [-0.26, 35.81]]
+[provinces.EG-0005] # 6th of October, Sheikh Zayed
+seeds = [[30.93, 29.97], [30.98, 30.05]]
+[provinces.EG-0007]
+seeds = [[31.24, 30.13]]
+[provinces.EG-0009] # the Corniche, Montaza
+seeds = [[29.95, 31.22], [30.02, 31.27]]
+[provinces.EG-0010] # Dekheila, Amreya, Borg el-Arab
+seeds = [[29.82, 31.13], [29.75, 31.05], [29.60, 30.92]]
+[provinces.IL-0002] # the Old City and East Jerusalem
+seeds = [[35.235, 31.78], [35.24, 31.80]]
+[provinces.IL-0003] # Beit Shemesh, Mevaseret Zion
+seeds = [[34.99, 31.75], [35.13, 31.80]]
+[provinces.IL-0005] # Ramat Gan, Bnei Brak, Herzliya
+seeds = [[34.82, 32.08], [34.84, 32.09], [34.84, 32.16]]
+[provinces.IL-0006] # Holon, Bat Yam
+seeds = [[34.78, 32.02], [34.75, 32.02]]
+[provinces.IL-0007] # Petah Tikva, Rosh HaAyin
+seeds = [[34.89, 32.09], [34.95, 32.10]]
+[provinces.IL-0014] # Tiberias, Karmiel, Safed
+seeds = [[35.53, 32.79], [35.30, 32.92], [35.50, 32.96]]
+[provinces.IL-0016] # Ashdod, Ashkelon, Sderot
+seeds = [[34.65, 31.80], [34.57, 31.67], [34.60, 31.52]]
+[provinces.IQ-0001] # Karkh, the Green Zone
+seeds = [[44.37, 33.31], [44.33, 33.30]]
+[provinces.IQ-0002] # Rusafa
+seeds = [[44.42, 33.34], [44.40, 33.32]]
+[provinces.IQ-0003] # Sadr City, New Baghdad
+seeds = [[44.45, 33.38], [44.50, 33.30]]
+[provinces.IQ-0004] # Abu Ghraib, Taji, Mahmudiya, Tarmiyah, Madain
+seeds = [[44.07, 33.29], [44.24, 33.52], [44.35, 33.06], [44.40, 33.67], [44.58, 33.10]]
+[provinces.IQ-0006] # Rumaila, West Qurna, Majnoon, Zubair
+seeds = [[47.40, 30.45], [47.27, 30.87], [47.60, 31.02], [47.70, 30.39]]
+[provinces.IR-0001] # Shemiran, Vanak
+seeds = [[51.45, 35.80], [51.41, 35.77]]
+[provinces.IR-0002] # the Grand Bazaar, south Tehran
+seeds = [[51.42, 35.68], [51.41, 35.62]]
+[provinces.IR-0003] # west Tehran, Eslamshahr, Shahriar, Robat Karim
+seeds = [[51.33, 35.70], [51.23, 35.55], [51.02, 35.65], [50.98, 35.46]]
+[provinces.IR-0018] # Bandar Lengeh, Kish, Abu Musa, the Tunbs
+seeds = [[54.88, 26.56], [53.98, 26.53], [55.03, 25.87], [55.30, 26.25]]
+[provinces.JO-0001] # Abdali, west Amman
+seeds = [[35.90, 31.96], [35.85, 31.95]]
+[provinces.KW-0002] # Shuwaikh, Sulaibikhat
+seeds = [[47.93, 29.35], [47.84, 29.33]]
+[provinces.KW-0007]
+seeds = [[47.95, 28.95]]
+[provinces.KW-0008] # Wafra, Khiran
+seeds = [[47.93, 28.62], [48.38, 28.65]]
+[provinces.KW-0009] # Jahra, the Mutla ridge
+seeds = [[47.66, 29.34], [47.70, 29.45]]
+[provinces.KW-0010] # Raudhatain, Bubiyan, Abdali
+seeds = [[47.70, 29.83], [48.20, 29.80], [47.70, 30.07]]
+[provinces.LY-0001]
+seeds = [[13.18, 32.89]]
+[provinces.LY-0002] # Tajura, Janzour, the airports
+seeds = [[13.37, 32.88], [13.01, 32.82], [13.27, 32.66]]
+[provinces.LY-0008]
+seeds = [[16.59, 31.21]]
+[provinces.LY-0009] # Ras Lanuf, Es Sider
+seeds = [[18.57, 30.50], [18.35, 30.63]]
+[provinces.LY-0011] # Jalu, Sarir, Waha
+seeds = [[21.55, 29.03], [23.50, 27.50], [20.40, 28.60]]
+[provinces.MA-0002] # Ain Sebaa, Mohammedia
+seeds = [[-7.55, 33.60], [-7.39, 33.69]]
+[provinces.MA-0003] # El Jadida, Jorf Lasfar
+seeds = [[-8.50, 33.25], [-8.63, 33.12]]
+[provinces.MA-0009] # Al Hoceima, Chefchaouen, Ouazzane
+seeds = [[-3.93, 35.25], [-5.27, 35.17], [-5.60, 34.80]]
+[provinces.OM-0003]
+seeds = [[56.71, 24.35]]
+[provinces.OM-0004] # Saham, Shinas, Liwa, Al Khaburah
+seeds = [[56.89, 24.17], [56.47, 24.74], [56.56, 24.53], [57.08, 23.98]]
+[provinces.QA-0001] # West Bay, the Corniche
+seeds = [[51.53, 25.32], [51.52, 25.30]]
+[provinces.QA-0002] # Msheireb, Souq Waqif
+seeds = [[51.53, 25.285]]
+[provinces.QA-0003] # Hamad airport, Al Thumama
+seeds = [[51.61, 25.27], [51.55, 25.23]]
+[provinces.QA-0004] # Education City, Al Rayyan
+seeds = [[51.44, 25.31], [51.42, 25.29]]
+[provinces.QA-0005] # the Industrial Area, Al Udeid
+seeds = [[51.43, 25.20], [51.32, 25.12]]
+[provinces.QA-0006] # Al Wakrah, Hamad Port
+seeds = [[51.60, 25.17], [51.62, 25.01]]
+[provinces.QA-0007] # Mesaieed
+seeds = [[51.55, 24.99], [51.45, 24.80]]
+[provinces.SA-0001] # Olaya, KAFD
+seeds = [[46.68, 24.70], [46.64, 24.76]]
+[provinces.SA-0002] # Diriyah, the Diplomatic Quarter, the airport
+seeds = [[46.57, 24.73], [46.62, 24.69], [46.70, 24.96]]
+[provinces.SA-0003] # the second and third industrial cities, Manfuha
+seeds = [[46.83, 24.50], [46.75, 24.60], [46.88, 24.45]]
+[provinces.SA-0005] # Majmaah, Zulfi, Shaqra, Sudair
+seeds = [[45.32, 25.91], [44.82, 26.29], [45.25, 25.24], [45.60, 25.66]]
+[provinces.SA-0007] # Wadi ad-Dawasir, Al Aflaj, Al Sulayyil
+seeds = [[45.00, 20.47], [46.27, 22.29], [45.58, 20.46]]
+[provinces.SA-0009] # Obhur, the airport
+seeds = [[39.10, 21.75], [39.16, 21.68]]
+[provinces.SA-0010] # Rabigh, KAEC
+seeds = [[39.03, 22.80], [39.09, 22.45]]
+[provinces.SA-0011]
+seeds = [[39.83, 21.42]]
+[provinces.SA-0012] # Taif, Al Khurma, Turabah
+seeds = [[40.42, 21.27], [41.00, 21.92], [41.63, 21.21]]
+[provinces.SA-0015] # Jubail, Ras al-Khair
+seeds = [[49.66, 27.01], [49.22, 27.55]]
+[provinces.SA-0016] # Ras Tanura, Qatif
+seeds = [[50.16, 26.64], [50.01, 26.56]]
+[provinces.SA-0018] # Abqaiq, Ghawar, Haradh
+seeds = [[49.67, 25.94], [49.30, 25.00], [49.20, 24.20]]
+[provinces.SA-0020] # Shaybah, the Rub al Khali
+seeds = [[54.00, 22.51], [51.50, 20.50]]
+[provinces.SA-0022] # Yanbu
+seeds = [[38.06, 24.09], [38.20, 23.90]]
+[provinces.SA-0023] # Al Ula, Khaybar, Mahd adh Dhahab
+seeds = [[37.92, 26.62], [39.29, 25.69], [40.88, 23.50]]
+[provinces.SA-0025] # Bisha, Tathlith
+seeds = [[42.61, 20.00], [43.62, 19.53]]
+[provinces.SA-0026] # Muhayil, Al Birk, Rijal Alma
+seeds = [[42.05, 18.54], [41.55, 18.21], [42.27, 18.22]]
+[provinces.SA-0027]
+seeds = [[43.98, 26.33]]
+[provinces.SA-0028] # Unaizah, Ar Rass, Al Badaye
+seeds = [[43.99, 26.08], [43.50, 25.87], [43.73, 25.96]]
+[provinces.SA-0029] # Jazan port, the Farasan islands
+seeds = [[42.56, 16.89], [42.12, 16.73]]
+[provinces.SA-0030] # Sabya, Abu Arish, Samtah
+seeds = [[42.62, 17.15], [42.83, 16.97], [42.95, 16.60]]
+[provinces.SA-0032] # Duba, Haql, Sharma
+seeds = [[35.70, 27.35], [34.95, 29.00], [35.20, 28.00]]

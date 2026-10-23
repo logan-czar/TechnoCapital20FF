@@ -1,0 +1,317 @@
+# Builder-authored hints for the Europe crosswalk (P3, D605, D673-D677). Format as in
+# east-asia-oceania.toml. Most aliases name the units of statistical regions (NUTS) that Natural
+# Earth does not group; a `-<code>` entry leaves a unit out of a group.
+
+[text]
+# real cities here, stopwords in North America (Paris, Texas)
+allow = ["paris", "athens", "berlin", "moscow"]
+
+[review]
+watch = ["GB-0001", "GB-0002", "GB-0003", "GB-0004", "AND", "LIE", "MCO", "SMR", "VAT", "GIB", "MLT", "LUX",
+         "GGY", "JEY", "IMN", "FRO"]
+notes = [
+    "RUS:Donbas is drawn by our own province file (decision C): all of Luhansk oblast and the Russian-held part of Donetsk oblast, cut from Donetsk oblast by a builder-drawn line close to the 2015 contact line (Horlivka, Donetsk and Novoazovsk Russian; Mariupol, Kramatorsk and Sloviansk Ukrainian, UA-0016).",
+    "RUS:Crimea follows Natural Earth's Crimea and Sevastopol units (Natural Earth already draws them in Russia).",
+    "MD-0006 Transnistria takes Natural Earth's Transnistria and Stinga Nistrului units with Camenca, Grigoriopol and Bender.",
+    "CY-0005 Northern Cyprus is Natural Earth's Northern Cyprus (CYN) unit; the UN buffer zone and the British sovereign base areas belong to no province.",
+]
+
+[regions]
+"ALB:Northern Albania" = ["AL-10", "AL-08", "AL-07", "AL-09"]
+"ALB:Central Albania" = ["AL-11", "AL-02", "AL-03"]
+"ALB:Southern Albania" = ["AL-04", "AL-12", "AL-06", "AL-01", "AL-05"]
+"BEL:Flanders" = ["region:Flemish"]
+"BEL:Wallonia" = ["region:Walloon"]
+"BGR:South-West" = ["BG-22", "BG-23", "BG-14", "BG-10", "BG-01"]
+"BGR:South-Central" = ["BG-16", "BG-13", "BG-26", "BG-09", "BG-21"]
+"BGR:South-East" = ["BG-02", "BG-24", "BG-20", "BG-28"]
+"BGR:North-East" = ["BG-03", "BG-08", "BG-27", "BG-25"]
+"BGR:North-Central" = ["BG-18", "BG-04", "BG-07", "BG-17", "BG-19"]
+"BGR:North-West" = ["BG-15", "BG-06", "BG-05", "BG-12", "BG-11"]
+"BLR:Minsk City" = ["BY-HM"]
+"BLR:Minsk Oblast" = ["BY-MI"]
+"CHE:Zurich" = ["CH-ZH"]
+"CHE:Lake Geneva Region" = ["CH-GE", "CH-VD", "CH-VS"]
+"CHE:Espace Mittelland" = ["CH-BE", "CH-FR", "CH-SO", "CH-NE", "CH-JU"]
+"CHE:Northwestern Switzerland" = ["CH-BS", "CH-BL", "CH-AG"]
+"CHE:Eastern Switzerland" = ["CH-SG", "CH-AR", "CH-AI", "CH-TG", "CH-SH", "CH-GR", "CH-GL"]
+"CHE:Central Switzerland" = ["CH-LU", "CH-ZG", "CH-SZ", "CH-UR", "CH-NW", "CH-OW"]
+"DNK:Capital Region" = ["DK-84"]
+"DNK:Zealand" = ["DK-85"]
+"DNK:Southern Denmark" = ["DK-83"]
+"DNK:Central Jutland" = ["DK-82"]
+"DNK:North Jutland" = ["DK-81"]
+"ESP:Basque Country" = ["region:País Vasco"]
+"ESP:Canary Islands" = ["region:Canary Is."]
+"ESP:Castile and Leon" = ["region:Castilla y León"]
+"ESP:Catalonia" = ["region:Cataluña"]
+"ESP:Region of Murcia" = ["ES-MU"]
+"ESP:Valencian Community" = ["region:Valenciana"]
+"EST:Northern Estonia" = ["EE-37"]
+"EST:North-Eastern Estonia" = ["EE-44"]
+"EST:Western Estonia" = ["EE-67", "EE-74", "EE-39", "EE-57"]
+"EST:Central Estonia" = ["EE-59", "EE-51", "EE-70"]
+"EST:Southern Estonia" = ["EE-78", "EE-49", "EE-86", "EE-82", "EE-65", "EE-84"]
+"FIN:Helsinki-Uusimaa" = ["FI-18"]
+"FIN:Southern Finland" = ["FI-19", "FI-09", "FI-02", "FI-16", "FI-06"]
+"FIN:Western Finland" = ["FI-11", "FI-12", "FI-07", "FI-03", "FI-08", "FI-17"]
+"FIN:Northern and Eastern Finland" = ["FI-14", "FI-10", "FI-15", "FI-04", "FI-13", "FI-05"]
+"FIN:Aland" = ["ALD-4817", "name:Brändö"]
+"FRA:Normandy" = ["region:Normandie"]
+"FRA:New Caledonia" = ["NCL-559", "NCL-1259", "NCL-1258"]
+"GBR:London" = ["region:Greater London"]
+"GBR:West Midlands" = ["region:West Midlands"]
+"GBR:East of England" = ["region:East"]
+"GBR:Scotland" = ["region:Highlands and Islands", "region:North Eastern", "region:Eastern", "region:South Western"]
+"GBR:Wales" = ["region:West Wales and the Valleys", "region:East Wales"]
+"HRV:City of Zagreb" = ["HR-21"]
+"HRV:Northern Croatia" = ["HR-01", "HR-02", "HR-05", "HR-06", "HR-20"]
+"HRV:Pannonian Croatia" = ["HR-07", "HRV-1604", "HRV-1602", "HR-14", "HR-03", "HR-04", "HR-10", "HR-16"]
+"HRV:Adriatic Croatia" = ["HR-08", "HR-09", "HR-13", "HR-15", "HR-17", "HR-18", "HR-19"]
+"HUN:Southern Great Plain" = ["region:Great Southern Plain"]
+"IRL:Eastern and Midland" = ["region:Dublin", "region:Mid-East", "region:Midlands", "IE-LH"]
+"IRL:Southern" = ["region:South-East", "region:South-West", "region:Mid-West"]
+"IRL:Northern and Western" = ["region:West", "IE-CN", "IE-DL", "IE-LM", "IE-MN", "IE-SO"]
+"BIH:Federation of Bosnia and Herzegovina" = ["region:Federacija Bosna i Hercegovina"]
+"ITA:Sardinia" = ["region:Sardegna"]
+"ITA:Lombardy" = ["region:Lombardia"]
+"ITA:Tuscany" = ["region:Toscana"]
+"ITA:Piedmont" = ["region:Piemonte"]
+"ITA:Aosta Valley" = ["region:Valle d'Aosta"]
+"ITA:Trentino-South Tyrol" = ["region:Trentino-Alto Adige"]
+"ESP:Andalusia" = ["region:Andalucía"]
+"FRA:Brittany" = ["region:Bretagne"]
+"LVA:Riga" = ["LV-RIX"]
+"LTU:Capital Region" = ["LT-VL"]
+"LTU:Central and Western Lithuania" = ["LT-KU", "LT-KL", "LT-MR", "LT-PN", "LT-TA", "LT-TE", "LT-UT", "LT-SA", "LT-AL"]
+"LVA:Pieriga" = ["region:Riga", "-LV-RIX"]
+"MDA:North Moldova" = ["MD-BA", "MD-BR", "MD-DO", "MD-DR", "MD-ED", "MD-FL", "MD-FA", "MD-GL", "MD-OC", "MD-RI", "MD-SO", "MD-SI"]
+"MDA:Central Moldova" = ["MD-AN", "MD-CL", "MD-CR", "MD-HI", "MD-IA", "MD-NI", "MD-OR", "MDA-1645", "MDA-1644", "MD-ST", "MD-TE", "MD-UN", "MD-SD"]
+"MDA:South Moldova" = ["MD-BS", "MD-CA", "MD-CT", "MD-CS", "MD-CM", "MD-LE", "MD-TA", "MD-SV"]
+"MDA:Transnistria" = ["MDA-1638", "MDA-1628", "MD-CAM", "MD-GRI", "MD-BD"]
+"MNE:Coastal Montenegro" = ["ME-02", "ME-05", "ME-08", "ME-10", "ME-19", "ME-20"]
+"MNE:Central Montenegro" = ["ME-16", "ME-12", "ME-06", "ME-07"]
+"MNE:Northern Montenegro" = ["ME-01", "ME-03", "ME-04", "ME-09", "ME-11", "ME-13", "ME-14", "ME-15", "ME-17", "ME-18", "ME-21"]
+"NLD:Caribbean Netherlands" = ["NL-BQ1", "NL-BQ2", "NL-BQ3"]
+"NOR:Agder" = ["NO-09", "NO-10"]
+"NOR:Innlandet" = ["NO-04", "NO-05"]
+"NOR:Trondelag" = ["NO-16", "NO-17"]
+"NOR:Vestland" = ["NO-12", "NO-14"]
+"POL:Lodz" = ["PL-LD"]
+"PRT:Lisbon Metropolitan Area" = ["PT-11", "PT-15"]
+"ROU:North-West" = ["RO-BH", "RO-BN", "RO-CJ", "RO-MM", "RO-SM", "RO-SJ"]
+"ROU:Centre" = ["RO-AB", "RO-BV", "RO-CV", "RO-HR", "RO-MS", "RO-SB"]
+"ROU:North-East" = ["RO-BC", "RO-BT", "RO-IS", "RO-NT", "RO-SV", "RO-VS"]
+"ROU:South-East" = ["RO-BR", "RO-BZ", "RO-CT", "RO-GL", "RO-VN", "RO-TL"]
+"ROU:South-Muntenia" = ["RO-AG", "RO-CL", "RO-DB", "RO-GR", "RO-IL", "RO-PH", "RO-TR"]
+"ROU:South-West Oltenia" = ["RO-DJ", "RO-GJ", "RO-MH", "RO-OT", "RO-VL"]
+"ROU:West" = ["RO-AR", "RO-CS", "RO-HD", "RO-TM"]
+"RUS:Donbas" = ["UA-09"]
+"SRB:Vojvodina" = ["RS-01", "RS-02", "RS-03", "RS-04", "RS-05", "RS-06", "RS-07"]
+"SRB:Sumadija and Western Serbia" = ["RS-16", "RS-09", "RS-08", "RS-17", "RS-13", "RS-19", "RS-18", "RS-12", "RS-10"]
+"SRB:Southern and Eastern Serbia" = ["RS-14", "RS-11", "RS-15", "RS-23", "RS-20", "RS-22", "RS-24", "RS-21"]
+"SVN:Western Slovenia" = ["region:Osrednjeslovenska", "region:Gorenjska", "region:Goriška", "region:Obalno-kraška", "region:Notranjsko-kraška"]
+"SVN:Eastern Slovenia" = ["region:Pomurska", "region:Podravska", "region:Koroška", "region:Savinjska", "region:Zasavska", "region:Spodnjeposavska", "region:Jugovzhodna Slovenija"]
+"TUR:West Marmara" = ["TR-59", "TR-22", "TR-39", "TR-10", "TR-17"]
+"TUR:Aegean" = ["TR-35", "TR-09", "TR-20", "TR-48", "TR-45", "TR-03", "TR-43", "TR-64"]
+"TUR:East Marmara" = ["TR-16", "TR-26", "TR-11", "TR-41", "TR-54", "TR-81", "TR-14", "TR-77"]
+"TUR:West Anatolia" = ["TR-06", "TR-42", "TR-70"]
+"TUR:Mediterranean" = ["TR-07", "TR-32", "TR-15", "TR-01", "TR-33", "TR-31", "TR-46", "TR-80"]
+"TUR:Central Anatolia" = ["TR-71", "TR-68", "TR-51", "TR-50", "TR-40", "TR-38", "TR-58", "TR-66"]
+"TUR:West Black Sea" = ["TR-67", "TR-78", "TR-74", "TR-37", "TR-18", "TR-57", "TR-55", "TR-60", "TR-19", "TR-05"]
+"TUR:East Black Sea" = ["TR-61", "TR-52", "TR-28", "TR-53", "TR-08", "TR-29"]
+"TUR:Northeast Anatolia" = ["TR-25", "TR-24", "TR-69", "TR-04", "TR-36", "TR-76", "TR-75"]
+"TUR:Central East Anatolia" = ["TR-44", "TR-23", "TR-12", "TR-62", "TR-65", "TR-49", "TR-13", "TR-30"]
+"TUR:Southeast Anatolia" = ["TR-27", "TR-02", "TR-79", "TR-63", "TR-21", "TR-47", "TR-72", "TR-73", "TR-56"]
+"UKR:Kyiv and the North" = ["UA-30", "UA-32", "UA-18", "UA-74", "UA-59"]
+"UKR:Western Ukraine" = ["UA-46", "UA-07", "UA-56", "UA-61", "UA-68", "UA-26", "UA-21", "UA-77"]
+"UKR:Central Ukraine" = ["UA-05", "UA-71", "UA-35", "UA-53"]
+"UKR:Eastern Ukraine" = ["UA-63", "UA-12", "UA-23", "UA-14"]
+"UKR:Southern Ukraine" = ["UA-51", "UA-65", "UA-48"]
+
+[carve."RUS:Donbas"]
+# the Russian-held part of Donetsk oblast (decision C), roughly the 2015 contact line from
+# west of Horlivka and Donetsk down to the coast west of Novoazovsk; clipped to the oblast
+polygon = [[37.45, 47.95], [37.62, 48.18], [37.88, 48.40], [38.40, 48.45], [39.20, 48.40], [40.10, 48.10],
+           [39.20, 47.20], [38.25, 47.00], [37.85, 47.05], [37.78, 47.35], [37.58, 47.66], [37.45, 47.95]]
+from = ["UKR:Eastern Ukraine"]
+
+# Provinces Natural Earth has no point for (its 10m populated places are sparse in Europe) and
+# metro districts (D605). Points are the towns and districts the CSV names and notes name.
+[provinces.AT-0001] # Innere Stadt, Leopoldstadt, Mariahilf
+seeds = [[16.37, 48.21], [16.40, 48.22], [16.35, 48.20]]
+[provinces.AT-0002] # Floridsdorf, Donaustadt, Favoriten, Liesing, Penzing
+seeds = [[16.40, 48.27], [16.50, 48.22], [16.38, 48.16], [16.29, 48.14], [16.27, 48.20]]
+[provinces.AT-0004] # St Poelten, Amstetten, Melk, Scheibbs
+seeds = [[15.63, 48.20], [14.87, 48.12], [15.33, 48.23], [15.16, 48.00]]
+[provinces.AT-0005] # Zwettl, Horn, Mistelbach, Hollabrunn
+seeds = [[15.17, 48.60], [15.66, 48.66], [16.57, 48.57], [16.08, 48.56]]
+[provinces.AT-0007] # Wels, Steyr, Kirchdorf
+seeds = [[14.03, 48.16], [14.42, 48.04], [14.12, 47.90]]
+[provinces.AT-0008] # Ried, Braunau, Mattighofen, Gmunden, Bad Ischl
+seeds = [[13.49, 48.21], [13.03, 48.26], [13.15, 48.10], [13.80, 47.92], [13.62, 47.71]]
+[provinces.AT-0010] # Leoben, Bruck, Judenburg, Liezen, Eisenerz
+seeds = [[15.09, 47.38], [15.27, 47.41], [14.66, 47.17], [14.24, 47.57], [14.88, 47.54]]
+[provinces.AT-0011] # Feldbach, Leibnitz, Bad Radkersburg, Hartberg
+seeds = [[15.89, 46.95], [15.54, 46.78], [15.99, 46.69], [15.97, 47.28]]
+[provinces.AT-0013] # Kitzbuehel, Lienz, Ischgl, Landeck, Kufstein, Schwaz
+seeds = [[12.39, 47.45], [12.77, 46.83], [10.29, 47.01], [10.57, 47.14], [12.17, 47.58], [11.71, 47.35]]
+[provinces.BE-0001] # the European Quarter and the centre
+seeds = [[4.38, 50.84], [4.36, 50.85]]
+[provinces.BE-0002] # Anderlecht, Molenbeek, Schaerbeek, Forest, Uccle, Woluwe
+seeds = [[4.31, 50.83], [4.32, 50.86], [4.38, 50.87], [4.32, 50.81], [4.34, 50.80], [4.43, 50.84]]
+[provinces.BE-0003]
+seeds = [[4.40, 51.22]]
+[provinces.BE-0004] # the port, Sint-Niklaas, Doel
+seeds = [[4.30, 51.28], [4.14, 51.17], [4.25, 51.32]]
+[provinces.BE-0005] # Turnhout, Geel, Mol
+seeds = [[4.95, 51.32], [4.99, 51.16], [5.11, 51.19]]
+[provinces.BE-0006] # Mechelen, Lier
+seeds = [[4.48, 51.03], [4.57, 51.13]]
+[provinces.BE-0007] # Ghent and its port
+seeds = [[3.72, 51.05], [3.80, 51.15]]
+[provinces.BE-0008] # Aalst, Oudenaarde
+seeds = [[4.04, 50.94], [3.60, 50.85]]
+[provinces.BE-0009] # Bruges, Zeebrugge, Ostend
+seeds = [[3.22, 51.21], [3.20, 51.33], [2.92, 51.22]]
+[provinces.BE-0010] # Kortrijk, Roeselare, Ypres
+seeds = [[3.26, 50.83], [3.12, 50.95], [2.88, 50.85]]
+[provinces.BE-0011] # Leuven, Tienen
+seeds = [[4.70, 50.88], [4.95, 50.80]]
+[provinces.BE-0012] # Vilvoorde, Zaventem, Halle, Asse
+seeds = [[4.43, 50.93], [4.47, 50.90], [4.23, 50.73], [4.15, 50.88]]
+[provinces.BY-0002] # Borisov, Zhodino
+seeds = [[28.50, 54.23], [28.33, 54.10]]
+[provinces.BY-0009] # Mozyr, Rechitsa
+seeds = [[29.24, 52.05], [30.39, 52.36]]
+[provinces.CH-0001]
+seeds = [[8.54, 47.37], [8.50, 47.30]]
+[provinces.CH-0002] # Kloten, Buelach, the Glattal
+seeds = [[8.56, 47.45], [8.47, 47.50], [8.60, 47.40]]
+[provinces.CH-0003] # Winterthur, Wetzikon
+seeds = [[8.72, 47.50], [8.85, 47.33]]
+[provinces.CH-0008] # Thun, Interlaken, Meiringen
+seeds = [[7.63, 46.76], [7.86, 46.69], [8.19, 46.73]]
+[provinces.DE-0002] # Ludwigsburg, Heilbronn, Esslingen, Schorndorf
+seeds = [[9.19, 48.90], [9.22, 49.14], [9.30, 48.74], [9.53, 48.80]]
+[provinces.DE-0005] # Ulm, Tuebingen, Reutlingen, Friedrichshafen, Konstanz
+seeds = [[9.99, 48.40], [9.06, 48.52], [9.21, 48.49], [9.48, 47.65], [9.17, 47.66]]
+[provinces.DE-0013] # Mitte, Charlottenburg, Spandau, Steglitz
+seeds = [[13.38, 52.52], [13.30, 52.51], [13.20, 52.53], [13.32, 52.45]]
+[provinces.DE-0014] # Kreuzberg, Friedrichshain, Lichtenberg, Marzahn, Adlershof, Koepenick
+seeds = [[13.42, 52.50], [13.45, 52.51], [13.50, 52.52], [13.59, 52.54], [13.53, 52.43], [13.58, 52.43]]
+[provinces.DE-0020] # Darmstadt, Hanau, Offenbach, Ruesselsheim
+seeds = [[8.65, 49.87], [8.92, 50.13], [8.77, 50.10], [8.41, 49.99]]
+[provinces.DE-0024] # Ludwigshafen, Kaiserslautern, Neustadt, Pirmasens
+seeds = [[8.43, 49.48], [7.77, 49.44], [8.15, 49.35], [7.60, 49.20]]
+[provinces.DE-0031] # Muenster, Gronau, Coesfeld
+seeds = [[7.63, 51.96], [7.03, 52.21], [7.17, 51.95]]
+[provinces.DE-0033] # Aachen, Dueren, Garzweiler, Hambach
+seeds = [[6.08, 50.78], [6.48, 50.80], [6.45, 51.05], [6.50, 50.91]]
+[provinces.DE-0034] # Siegen, Arnsberg, Meschede
+seeds = [[8.02, 50.87], [8.07, 51.40], [8.29, 51.35]]
+[provinces.DE-0036] # Brunswick, Wolfsburg, Salzgitter, Goettingen, Goslar
+seeds = [[10.52, 52.27], [10.79, 52.42], [10.34, 52.15], [9.93, 51.53], [10.43, 51.90]]
+[provinces.DE-0037] # Harburg, Stade, Lueneburg, Cuxhaven
+seeds = [[9.98, 53.46], [9.48, 53.60], [10.41, 53.25], [8.70, 53.87]]
+[provinces.DE-0040] # Luebeck, Norderstedt, Pinneberg, Ahrensburg
+seeds = [[10.69, 53.87], [10.00, 53.71], [9.80, 53.66], [10.24, 53.67]]
+[provinces.DE-0043] # Greifswald, Lubmin, Ruegen, Neubrandenburg
+seeds = [[13.38, 54.10], [13.64, 54.14], [13.45, 54.40], [13.26, 53.56]]
+[provinces.DE-0047] # Halle, Leuna, Bitterfeld, Zeitz
+seeds = [[11.97, 51.48], [12.03, 51.32], [12.32, 51.62], [12.14, 51.05]]
+[provinces.DK-0002] # Bagsvaerd, Kastrup, Amager, Glostrup
+seeds = [[12.45, 55.76], [12.65, 55.62], [12.60, 55.63], [12.40, 55.67]]
+[provinces.DK-0003] # Hilleroed, Helsingoer, the north coast
+seeds = [[12.30, 55.93], [12.60, 56.03], [12.45, 55.85]]
+[provinces.ES-0002] # Barajas, Alcobendas, Las Rozas, Alcala, Torrejon, the Sierra
+seeds = [[-3.59, 40.47], [-3.64, 40.54], [-3.87, 40.49], [-3.36, 40.48], [-3.48, 40.46], [-3.80, 40.80]]
+[provinces.ES-0003] # Getafe, Leganes, Mostoles, Fuenlabrada, Aranjuez
+seeds = [[-3.73, 40.31], [-3.76, 40.33], [-3.86, 40.32], [-3.80, 40.28], [-3.60, 40.03]]
+[provinces.ES-0005] # El Prat, Martorell, Sabadell, Terrassa, Manresa
+seeds = [[2.08, 41.30], [1.91, 41.48], [2.11, 41.55], [2.01, 41.56], [1.83, 41.73]]
+[provinces.ES-0007]
+units = ["Gerona"]
+[provinces.ES-0008]
+units = ["Lérida"]
+[provinces.FI-0002] # Espoo, Kirkkonummi
+seeds = [[24.66, 60.21], [24.44, 60.12]]
+[provinces.FI-0003] # Vantaa, Kerava
+seeds = [[24.97, 60.31], [25.11, 60.40]]
+[provinces.GB-0001]
+units = ["City", "Westminster", "Kensington and Chelsea", "Camden", "Islington", "Lambeth", "Southwark"]
+[provinces.GB-0002]
+units = ["Tower Hamlets", "Hackney", "Newham", "Barking and Dagenham", "Greenwich", "Lewisham"]
+[provinces.GB-0003]
+units = ["Hillingdon", "Hounslow", "Ealing", "Hammersmith and Fulham", "Richmond upon Thames", "Wandsworth"]
+[provinces.GB-0004]
+units = ["Croydon", "Barnet", "Enfield", "Bromley", "Brent", "Harrow", "Haringey", "Sutton", "Merton", "Kingston upon Thames", "Bexley", "Havering", "Redbridge", "Waltham Forest"]
+[provinces.HR-0002]
+units = ["Zagrebacka", "Krapinsko-Zagorska"]
+[provinces.HR-0003]
+units = ["Varaždinska", "Medimurska", "Koprivničko-Križevačka"]
+[provinces.IE-0006]
+units = ["Laoighis", "Offaly", "Westmeath", "Longford"]
+[provinces.LT-0002] # Elektrenai, the Vilnius district, Sirvintos, Salcininkai, Svencionys
+seeds = [[24.66, 54.79], [25.70, 54.60], [24.95, 55.05], [25.39, 54.31], [26.10, 55.15]]
+[provinces.LT-0008]
+units = ["Alytaus", "Marijampoles"]
+[provinces.NO-0001] # central Oslo, Frogner
+seeds = [[10.74, 59.91], [10.70, 59.93]]
+[provinces.NO-0002] # Groruddalen, the port, Stovner
+seeds = [[10.87, 59.95], [10.78, 59.89], [10.92, 59.96]]
+[provinces.NO-0012] # Sogndal, Odda, Stord, Mongstad
+seeds = [[7.10, 61.23], [6.55, 60.07], [5.49, 59.78], [5.03, 60.81]]
+[provinces.PL-0002] # Plock, Ostroleka, Ciechanow
+seeds = [[19.70, 52.55], [21.57, 53.08], [20.62, 52.88]]
+[provinces.PL-0003] # Radom, Siedlce, Grojec
+seeds = [[21.15, 51.40], [22.27, 52.17], [20.86, 51.86]]
+[provinces.PL-0005] # Tarnow, Nowy Sacz, Gorlice
+seeds = [[20.99, 50.01], [20.69, 49.62], [21.16, 49.66]]
+[provinces.PL-0006] # Zakopane, Oswiecim, Nowy Targ, Sucha Beskidzka
+seeds = [[19.95, 49.30], [19.22, 50.04], [20.03, 49.48], [19.59, 49.74]]
+[provinces.PL-0008] # Rybnik, Bielsko-Biala, Jastrzebie
+seeds = [[18.54, 50.10], [19.04, 49.82], [18.60, 49.95]]
+[provinces.PL-0009] # Czestochowa, Myszkow
+seeds = [[19.12, 50.81], [19.33, 50.58]]
+[provinces.PL-0011] # Kalisz, Konin, Ostrow Wielkopolski
+seeds = [[18.09, 51.76], [18.25, 52.22], [17.81, 51.65]]
+[provinces.PL-0012] # Pila, Leszno, Chodziez
+seeds = [[16.74, 53.15], [16.57, 51.84], [16.92, 52.99]]
+[provinces.PL-0014] # Legnica, Walbrzych, Lubin, Glogow, Jelenia Gora
+seeds = [[16.16, 51.21], [16.28, 50.77], [16.20, 51.40], [16.09, 51.66], [15.73, 50.90]]
+[provinces.PL-0016] # Piotrkow, Belchatow, Radomsko
+seeds = [[19.70, 51.41], [19.37, 51.37], [19.45, 51.07]]
+[provinces.PL-0018] # Slupsk, Koscierzyna, Lebork, Lubiatowo
+seeds = [[17.03, 54.46], [17.98, 54.12], [17.75, 54.54], [17.83, 54.81]]
+[provinces.PL-0022] # Zamosc, Chelm, Hrubieszow
+seeds = [[23.25, 50.72], [23.47, 51.13], [23.89, 50.81]]
+[provinces.PT-0001] # Cascais as well as Lisbon
+seeds = [[-9.42, 38.70]]
+add = true
+[provinces.PT-0002] # Sintra, Loures, Vila Franca de Xira, the airport
+seeds = [[-9.38, 38.80], [-9.17, 38.83], [-8.99, 38.96], [-9.13, 38.77]]
+[provinces.RS-0006]
+units = ["Macvanski", "Kolubarski"]
+[provinces.RS-0009]
+units = ["Borski", "Zajecarski", "Branicevski"]
+[provinces.RS-0010]
+units = ["Jablanicki", "Pcinjski", "Toplicki"]
+[provinces.SE-0001] # central Stockholm, Kista
+seeds = [[18.07, 59.33], [17.95, 59.40]]
+[provinces.SK-0007] # Lucenec, Rimavska Sobota, Velky Krtis
+seeds = [[19.67, 48.33], [20.02, 48.38], [19.35, 48.21]]
+[provinces.SK-0009] # Poprad, the High Tatras, Spis
+seeds = [[20.30, 49.06], [20.20, 49.16], [20.77, 49.00]]
+[provinces.TR-0001] # Fatih, Beyoglu
+seeds = [[28.96, 41.01], [28.97, 41.035]]
+[provinces.TR-0002] # Sisli, Besiktas, Sariyer
+seeds = [[28.99, 41.06], [29.01, 41.05], [29.05, 41.17]]
+[provinces.TR-0003] # Bakirkoy, Esenyurt, Beylikduzu, the airport, Catalca
+seeds = [[28.87, 40.98], [28.67, 41.03], [28.63, 40.98], [28.73, 41.26], [28.25, 41.15]]
+[provinces.TR-0004] # Kadikoy, Uskudar, Atasehir
+seeds = [[29.03, 40.99], [29.02, 41.02], [29.12, 40.99]]
+[provinces.TR-0005] # Kartal, Pendik, Tuzla, Sile
+seeds = [[29.19, 40.89], [29.30, 40.87], [29.31, 40.82], [29.62, 41.17]]
+[provinces.UA-0009]
+units = ["Vinnytsya"]

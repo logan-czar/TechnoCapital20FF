@@ -165,7 +165,9 @@ def run(region: config.Region) -> None:
                 if not rgeom.covers(pt) or built[pid].covers(pt):
                     continue
                 holder = next((q for q in sorted(built) if built[q].covers(pt)), "")
-                named_outside.append({"province_id": pid, "place": label, "in": holder})
+                row = {"province_id": pid, "place": label, "in": holder}
+                if row not in named_outside:  # a place found under several names counts once
+                    named_outside.append(row)
         for pid, g in built.items():
             if g.is_empty:
                 empty.append(pid)

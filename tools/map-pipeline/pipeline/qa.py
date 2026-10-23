@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 from collections import Counter
 
 from . import PIPELINE_VERSION, anchors, config, crosswalk, fetch, licenses
@@ -24,6 +25,10 @@ SMALL_SHARE = 0.05
 SPLIT_MOSTLY = 0.75
 # Width of the preview image Logan opens for the one visual check per region.
 PREVIEW_WIDTH = 2400
+# Share of the region's centroids the preview frame must hold (far territories fall outside).
+PREVIEW_SHARE = 0.97
+# A centroid this close (pixels) to the frame's centroids is taken back into it.
+PREVIEW_REACH = 250
 
 
 def _read(path):
@@ -35,26 +40,70 @@ def _md_escape(s: str) -> str:
     return (s or "").replace("|", "/").replace("\n", " ")
 
 
+def _roll(im, shift):
+    """The image rolled left by `shift` pixels (wrapping east to west)."""
+    from PIL import Image
+
+    w, h = im.size
+    shift %= w
+    out = Image.new(im.mode, im.size)
+    out.paste(im.crop((shift, 0, w, h)), (0, 0))
+    out.paste(im.crop((0, 0, shift, h)), (w - shift, 0))
+    return out
+
+
 def _preview(region: config.Region, centroids: list[dict], ids: set[str], out_path) -> str:
     """A cropped, downscaled copy of province-ids.png around the region's provinces."""
     from PIL import Image
 
     Image.MAX_IMAGE_PIXELS = None
     im = Image.open(config.ASSETS_DIR / "province-ids.png")
-    xs = [float(r["x"]) for r in centroids if r["province_id"] in ids]
-    ys = [float(r["y"]) for r in centroids if r["province_id"] in ids]
+    pts = sorted((float(r["x"]), float(r["y"]), r["province_id"]) for r in centroids if r["province_id"] in ids)
     w, h = im.size
-    # the region's extent from its centroids, padded
-    xs.sort()
-    x0 = max(int(xs[0]) - 250, 0)
-    x1 = min(int(xs[-1]) + 250, w)
-    y0 = max(int(min(ys)) - 250, 0)
-    y1 = min(int(max(ys)) + 250, h)
+    # the cut goes in the widest gap between centroids, so a region across the antimeridian
+    # (Fiji, Kiribati) is shown in one piece; then the frame is the narrowest window holding
+    # PREVIEW_SHARE of the centroids, so a far territory (New Caledonia in the Europe file)
+    # does not shrink the rest; the provinces left outside are named
+    xs = [p[0] for p in pts]
+    gaps = [(xs[(i + 1) % len(xs)] - xs[i]) % w for i in range(len(xs))]
+    i = max(range(len(xs)), key=lambda i: (gaps[i], -i))
+    start = xs[(i + 1) % len(xs)]
+    ux = sorted(((p[0] - start) % w, p[1], p[2]) for p in pts)
+    k = max(1, math.ceil(PREVIEW_SHARE * len(ux)))
+    j = min(range(len(ux) - k + 1), key=lambda j: (ux[j + k - 1][0] - ux[j][0], j))
+    lo, hi = j, j + k - 1
+    # then take back every centroid within PREVIEW_REACH pixels of the frame (only the far
+    # outliers stay out)
+    while lo > 0 and ux[lo][0] - ux[lo - 1][0] <= PREVIEW_REACH:
+        lo -= 1
+    while hi < len(ux) - 1 and ux[hi + 1][0] - ux[hi][0] <= PREVIEW_REACH:
+        hi += 1
+    inx = ux[lo:hi + 1]
+    ys = sorted(p[1] for p in inx)
+    kk = max(1, math.ceil(PREVIEW_SHARE * len(ys)))
+    jj = min(range(len(ys) - kk + 1), key=lambda jj: (ys[jj + kk - 1] - ys[jj], jj))
+    a, b = jj, jj + kk - 1
+    while a > 0 and ys[a] - ys[a - 1] <= PREVIEW_REACH:
+        a -= 1
+    while b < len(ys) - 1 and ys[b + 1] - ys[b] <= PREVIEW_REACH:
+        b += 1
+    ylo, yhi = ys[a], ys[b]
+    shown = {p[2] for p in inx if ylo <= p[1] <= yhi}
+    left_out = sorted(p[2] for p in pts if p[2] not in shown)
+    shift = int(start + inx[0][0]) - 250
+    im = _roll(im, shift)
+    x0, x1 = 0, min(int(inx[-1][0] - inx[0][0]) + 500, w)
+    y0 = max(int(ylo) - 250, 0)
+    y1 = min(int(yhi) + 250, h)
     crop = im.crop((x0, y0, x1, y1))
+    x0, x1 = shift % w, (shift + x1) % w
     scale = PREVIEW_WIDTH / crop.width
     crop = crop.resize((PREVIEW_WIDTH, max(1, int(crop.height * scale))), Image.NEAREST)
     crop.save(out_path, optimize=True)
-    return f"pixels x {x0}..{x1}, y {y0}..{y1}, scaled by {scale:.2f}"
+    note = f"pixels x {x0}..{x1}, y {y0}..{y1}, scaled by {scale:.2f}"
+    if left_out:
+        note += f"; outside the frame: {', '.join(left_out)}"
+    return note
 
 
 def run(region: config.Region) -> None:
@@ -64,9 +113,12 @@ def run(region: config.Region) -> None:
     qa_dir.mkdir(parents=True, exist_ok=True)
     countries = set(region.countries)
     csv_rows = _read(config.DATA_DIR / region.csv)
+    own_ids = {r["id"] for r in csv_rows}
+    own_keys = {f"{r['country']}:{r['region']}" for r in csv_rows}
     xw = {r["province_id"]: r for r in _read(config.ASSETS_DIR / "crosswalk" / "province_crosswalk.csv")
-          if r["country"] in countries}
-    rxw = [r for r in _read(config.ASSETS_DIR / "crosswalk" / "region_crosswalk.csv") if r["country"] in countries]
+          if r["province_id"] in own_ids}
+    rxw = [r for r in _read(config.ASSETS_DIR / "crosswalk" / "region_crosswalk.csv")
+           if f"{r['country']}:{r['region']}" in own_keys]
     mq = {r["province_id"]: r for r in _read(work / "mapgen-qa.csv")}
     cent = _read(config.ASSETS_DIR / "province-centroids.csv")
     centroid = {r["province_id"]: r for r in cent}
@@ -86,7 +138,7 @@ def run(region: config.Region) -> None:
         problems.append(f"{len(no_pixels)} provinces have no pixels: {', '.join(no_pixels)}")
 
     # license check: every province's provenance must be built only from allowed sources
-    allowed_prov = {licenses.NE_PROVENANCE}
+    allowed_prov = {licenses.NE_PROVENANCE, licenses.BUILDER_PROVENANCE}
     used_gb = []
     for b in sources["geoboundaries"]["boundary"]:
         if b["iso"] not in countries:
@@ -109,7 +161,7 @@ def run(region: config.Region) -> None:
     if lic_bad:
         problems.append("license problems: " + "; ".join(lic_bad))
 
-    nest_bad = {k: v for k, v in nesting.items() if k.split(":")[0] in countries and
+    nest_bad = {k: v for k, v in nesting.items() if k in own_keys and
                 (v["uncovered"] > NEST_TOLERANCE or v["overlap"] > NEST_TOLERANCE or v["outside"] > NEST_TOLERANCE)}
 
     flagged = sorted((r for r in xw.values() if float(r["confidence"]) < crosswalk.FLAG_BELOW),
@@ -136,7 +188,7 @@ def run(region: config.Region) -> None:
                 small.append((r["id"], r["name"], r["region"], areas[r["id"]], mean))
     small.sort()
     splits = json.loads((work / "splits.json").read_text(encoding="utf-8"))
-    mostly = sorted((v for v in splits.values() if v["region"].split(":")[0] in countries
+    mostly = sorted((v for v in splits.values() if v["region"] in own_keys
                      and max(v["shares"].values()) >= SPLIT_MOSTLY), key=lambda v: (v["region"], v["name"]))
     outside = [o for o in json.loads((work / "named-outside.json").read_text(encoding="utf-8"))
                if o["province_id"] in names]
@@ -144,7 +196,15 @@ def run(region: config.Region) -> None:
                                 config.ASSETS_DIR / "map-meta.toml", sources)
     anchor_misses = [m for m in anchor_rows if m["kind"] not in anchors.INFO_KINDS]
     anchor_info = [m for m in anchor_rows if m["kind"] in anchors.INFO_KINDS]
-    review_notes = crosswalk.load_hints(region).get("review", {}).get("notes", [])
+    review = crosswalk.load_hints(region).get("review", {})
+    review_notes = review.get("notes", [])
+    watch = review.get("watch", [])
+    unclaimed = json.loads((work / "unclaimed.json").read_text(encoding="utf-8")) \
+        if (work / "unclaimed.json").exists() else []
+    adjacency = _read(config.ASSETS_DIR / "province-adjacency.csv")
+    sea = sorted((r for r in adjacency if r["kind"] == "sea" and (r["a"] in own_ids or r["b"] in own_ids)),
+                 key=lambda r: (r["a"], r["b"]))
+    rx_by_key = {f"{r['country']}:{r['region']}": r for r in rxw}
     overwritten = sum(int(r.get("overwritten_px") or 0) for r in mq.values() if r["province_id"] in names)
     by_country = Counter(r["country"] for r in xw.values())
 
@@ -156,7 +216,8 @@ def run(region: config.Region) -> None:
     L.append("")
     L.append(f"_Written by `tools/map-pipeline/run.py --region {region.slug}` (pipeline {PIPELINE_VERSION}). "
              f"Source of the rows: `{region.csv}`. "
-             "Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D610._")
+             "Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and "
+             "D670-D699._")
     L.append("")
     L.append("## Result")
     L.append("")
@@ -191,9 +252,13 @@ def run(region: config.Region) -> None:
     L.append(f"| Voronoi-split blocks where one province takes {SPLIT_MOSTLY:.0%} or more | {len(mostly)} |")
     L.append(f"| Places named in a province's name or notes that lie in another province | {len(outside)} |")
     L.append(f"| Pixels drawn over another province (overlapping shapes) | {overwritten} |")
+    L.append(f"| Contested provinces (drawn by our own files) | {sum(1 for r in csv_rows if r.get('contested'))} |")
+    L.append(f"| Admin-1 units left without a province | {len(unclaimed)} |")
+    L.append(f"| Sea links with a province of this file | {len(sea)} |")
     L.append(f"| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) "
              f"| {len(anchor_misses)} |")
-    L.append(f"| Metro cities in a part across a narrow strait (listed, allowed) | {len(anchor_info)} |")
+    L.append(f"| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) "
+             f"| {len(anchor_info)} |")
     L.append("")
     L.append("Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve "
              "of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one "
@@ -209,6 +274,12 @@ def run(region: config.Region) -> None:
         L.append(f"| geoBoundaries gbOpen {iso} {level} ({_md_escape(meta.get('boundarySource'))}) | "
                  f"{_md_escape(meta.get('boundaryLicense'))} | {'yes' if ok else 'no: ' + why + '; Voronoi path'} |")
     L.append("")
+    gov = sorted({_md_escape(m.get("boundaryLicense")) for _, _, m, ok, why in used_gb
+                  if not ok and "allowlist" in why})
+    if gov:
+        L.append("Refused as not on the allowlist (for Logan: attribution-only government licences are refused until "
+                 "allowed, D601): " + "; ".join(gov) + ".")
+        L.append("")
     if any(not ok for *_, ok, _ in used_gb):
         L.append("Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, "
                  "public domain and the attribution-only government licences OGL-Canada 2.0 and OGL-UK 3.0; "
@@ -269,7 +340,8 @@ def run(region: config.Region) -> None:
         L.append("All anchors land on their own provinces.")
     if anchor_rows and not anchor_misses:
         L.append("")
-        L.append("No misses; the rows above are allowed parts across a narrow strait.")
+        L.append("No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own "
+                 "pixel a neighbour took while its province holds a touching pixel.")
     L.append("")
     if review_notes:
         L.append("## Known for review")
@@ -277,6 +349,88 @@ def run(region: config.Region) -> None:
         for n in review_notes:
             L.append(f"- {n}")
         L.append("")
+    L.append("## Watched small provinces")
+    L.append("")
+    L.append("The microstates, city-states and metro splits the plan names (P8: Singapore, the London and Beijing "
+             "splits, Hong Kong and Macau): every one has pixels, and a tiny one a click target at its label point.")
+    L.append("")
+    watched = [r for r in csv_rows if any(r["id"].startswith(w) or r["country"] == w for w in watch)]
+    if watched:
+        L.append("| Province | Name | Pixels | Tiny | Label point (px) |")
+        L.append("|---|---|---|---|---|")
+        for r in watched:
+            q, c = mq.get(r["id"], {}), centroid.get(r["id"], {})
+            L.append(f"| {r['id']} | {_md_escape(r['name'])} | {q.get('area_px', 0)} | {q.get('tiny', '')} | "
+                     f"{c.get('label_x')}, {c.get('label_y')} |")
+    else:
+        L.append("None in this file.")
+    L.append("")
+    L.append("## Contested provinces")
+    L.append("")
+    L.append("Drawn by our own province files (decision C), not the sources' de facto lines: each contested "
+             "province sits in the region the CSV gives it, built as listed (an alias or carve hint where Natural "
+             "Earth draws the land elsewhere). The game hatches them.")
+    L.append("")
+    contested = [r for r in csv_rows if r.get("contested")]
+    if contested:
+        L.append("| Province | Name | Country | Contested | Region drawn from |")
+        L.append("|---|---|---|---|---|")
+        for r in contested:
+            rx = rx_by_key.get(f"{r['country']}:{r['region']}", {})
+            L.append(f"| {r['id']} | {_md_escape(r['name'])} | {r['country']} | {_md_escape(r['contested'])} | "
+                     f"{_md_escape(r['region'])}: {_md_escape(rx.get('note', ''))} |")
+    else:
+        L.append("None in this file.")
+    L.append("")
+    L.append("## Region matching")
+    L.append("")
+    L.append("Regions not matched one-to-one by name: builder aliases, Natural Earth region groups, composite names "
+             "matched part by part, carves (D676) and admin-1 units no region named, given to the touching region "
+             "(D673). Check these on the preview too.")
+    L.append("")
+    special = [r for r in rxw if any(w in r["note"] for w in ("alias", "parts", "Natural Earth region", "carve",
+                                                              "plus unclaimed", "less "))]
+    if special:
+        L.append("| Region | Matched by | Units |")
+        L.append("|---|---|---|")
+        for r in sorted(special, key=lambda r: (r["country"], r["region"])):
+            L.append(f"| {r['country']}: {_md_escape(r['region'])} | {_md_escape(r['note'])} | "
+                     f"{len([u for u in r['source_ids'].split(';') if u])} |")
+    else:
+        L.append("None.")
+    L.append("")
+    L.append("## Land without a province")
+    L.append("")
+    L.append("Natural Earth admin-1 units of this file's countries that no region claims and that touch no region "
+             "of their country (overseas territories, remote islands). They stay water on the map.")
+    L.append("")
+    if unclaimed:
+        L.append("| Country (NE) | Unit | Area (sq deg) |")
+        L.append("|---|---|---|")
+        for u in unclaimed:
+            L.append(f"| {u['adm0']} | {_md_escape(u['name'])} ({u['adm1_code']}) | {u['area_deg2']} |")
+    else:
+        L.append("None.")
+    L.append("")
+    gaps = json.loads((work / "land-gaps.json").read_text(encoding="utf-8"))         if (work / "land-gaps.json").exists() else []
+    if gaps:
+        L.append("Natural Earth land of a country that none of its regions covers (over 0.01% of the country):")
+        L.append("")
+        L.append("| Country | Area (sq deg) | Share of the country |")
+        L.append("|---|---|---|")
+        for g in gaps:
+            L.append(f"| {g['country']} | {g['area_deg2']} | {g['share']:.2%} |")
+        L.append("")
+    L.append("## Sea links")
+    L.append("")
+    L.append("`sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do "
+             "not touch but face each other across a strait (D678).")
+    L.append("")
+    if sea:
+        L.append(", ".join(f"{r['a']}-{r['b']}" for r in sea))
+    else:
+        L.append("None.")
+    L.append("")
     L.append("## Small provinces")
     L.append("")
     if small:
@@ -360,9 +514,14 @@ def run(region: config.Region) -> None:
 
 
 def write_credits(sources: dict) -> None:
-    """CREDITS.md from the source metadata of every boundary file that reached a province."""
-    xw = _read(config.ASSETS_DIR / "crosswalk" / "province_crosswalk.csv")
-    used_isos = sorted({r["country"] for r in xw if "geoBoundaries" in r["provenance"]})
+    """CREDITS.md from the source metadata of every boundary file that reached a province (its
+    provenance, in either crosswalk, names it)."""
+    import re
+
+    rows = (_read(config.ASSETS_DIR / "crosswalk" / "province_crosswalk.csv")
+            + _read(config.ASSETS_DIR / "crosswalk" / "region_crosswalk.csv"))
+    used = sorted({m.groups() for r in rows for m in re.finditer(r"geoBoundaries gbOpen (\w+) (ADM\d)", r["provenance"])})
+    drawn = any(licenses.BUILDER_PROVENANCE in r["provenance"] for r in rows)
     ne, gb = sources["natural_earth"], sources["geoboundaries"]
     L = ["# Map data credits", ""]
     L.append("_Generated by `tools/map-pipeline/run.py` from the pinned source metadata (tools/map-pipeline/sources.toml)._")
@@ -377,29 +536,51 @@ def write_credits(sources: dict) -> None:
     L.append("")
     L.append(gb["citation"] + f" Release {gb['version']} (github.com/wmgeolab/geoBoundaries, commit {gb['commit'][:7]}), gbOpen.")
     L.append("")
-    if used_isos:
-        L.append("Boundary files used, with their original sources and licenses:")
+    metas = []
+    for iso, level in used:
+        meta = fetch.gb_meta(iso, level, sources)
+        if licenses.classify_meta(meta)[0]:
+            metas.append((iso, level, meta))
+    if metas:
+        L.append(f"Boundary files used ({len(metas)}), with their original sources and licenses:")
         L.append("")
         L.append("| Country | Level | Source | License | Year |")
         L.append("|---|---|---|---|---|")
-        for b in gb["boundary"]:
-            if b["iso"] not in used_isos:
-                continue
-            meta = fetch.gb_meta(b["iso"], b["level"], sources)
-            ok, _ = licenses.classify_meta(meta)
-            if not ok:
-                continue
-            L.append(f"| {b['iso']} | {b['level']} | {_md_escape(meta.get('boundarySource'))} | "
+        for iso, level, meta in metas:
+            L.append(f"| {iso} | {level} | {_md_escape(meta.get('boundarySource'))} | "
                      f"{_md_escape(meta.get('boundaryLicense'))} | {meta.get('boundaryYear', '')} |")
         L.append("")
-    ogl_ca = any("canada" in (fetch.gb_meta(b["iso"], b["level"], sources).get("boundaryLicense", "").lower())
-                 and licenses.classify_meta(fetch.gb_meta(b["iso"], b["level"], sources))[0]
-                 for b in gb["boundary"] if b["iso"] in used_isos)
-    if ogl_ca:
+    classes = {licenses.classify_meta(meta)[1] for _, _, meta in metas}
+    if "OGL-Canada 2.0" in classes:
         L.append("Contains information licensed under the Open Government Licence - Canada "
                  "(https://open.canada.ca/en/open-government-licence-canada), from Statistics Canada.")
         L.append("")
+    if "OGL-UK 3.0" in classes:
+        L.append("Contains public sector information licensed under the Open Government Licence v3.0 "
+                 "(https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/), from the Office for "
+                 "National Statistics.")
+        L.append("")
+    # D685: the attribution each government licence asks for
+    gov_notes = {
+        "DL-DE-BY 2.0": "Germany: © GeoBasis-DE / BKG (Federal Agency for Cartography and Geodesy), licensed under the "
+                        "Data licence Germany - attribution - version 2.0 (https://www.govdata.de/dl-de/by-2-0).",
+        "Etalab 2.0": "France: source IGN (Institut national de l'information géographique et forestière), Licence "
+                      "Ouverte / Etalab Open Licence 2.0 (https://www.etalab.gouv.fr/licence-ouverte-open-licence).",
+        "INE": "Spain: fuente INE (Instituto Nacional de Estadística), used under the INE data licence "
+               "(https://www.ine.es/aviso_legal).",
+        "SG-ODL 1.0": "Singapore: contains information from the Urban Redevelopment Authority's planning areas, made "
+                      "available under the terms of the Singapore Open Data Licence version 1.0 "
+                      "(https://data.gov.sg/open-data-licence).",
+        "KOGL Type 1": "Korea: source Statistics Korea (KOSTAT), under the Korea Open Government Licence Type 1 "
+                       "(source indication).",
+    }
+    for cls in sorted(gov_notes):
+        if cls in classes:
+            L.append(gov_notes[cls])
+            L.append("")
     L.append("Province shapes are derived works: admin units dissolved and clipped to Natural Earth regions, and "
-             "synthetic Voronoi splits where no permissively licensed admin units exist.")
+             "synthetic Voronoi splits where no permissively licensed admin units exist."
+             + (" A few lines (contested land drawn by the game's own province files, cities and islands the sources "
+                "lack) are drawn by the builder; they are listed in the QA reports." if drawn else ""))
     L.append("")
     (config.ASSETS_DIR / "CREDITS.md").write_text("\n".join(L), encoding="utf-8")

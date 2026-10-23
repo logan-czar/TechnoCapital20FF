@@ -9,6 +9,7 @@ use geo::{MultiPolygon, Polygon};
 use crate::edt;
 use crate::miller::Frame;
 use crate::raster;
+use crate::sea;
 
 /// Click-target threshold (D607): a province under this many pixels is `tiny` and gets a
 /// clickable dot at its label point (m8-plan decision "8192x4096, plus click targets").
@@ -59,6 +60,8 @@ pub struct Map {
     pub stats: Vec<Stats>,
     /// (a, b, border_px) with a < b as raster values, sorted.
     pub adjacency: Vec<(u16, u16, u32)>,
+    /// Sea links (a, b) with a < b as raster values, sorted (D678; empty without a land mask).
+    pub sea: Vec<(u16, u16)>,
     /// RGB distance field: province, region, country edges.
     pub borders: Vec<[u8; 3]>,
 }
@@ -257,6 +260,18 @@ pub fn build(frame: Frame, mut provinces: Vec<ProvinceShape>, land: Option<&[boo
         st.overwritten_px = *o;
     }
     let adjacency = adjacency(w, h, &raster);
+    let sea = match land {
+        Some(mask) => {
+            let water: Vec<bool> = raster
+                .iter()
+                .zip(mask)
+                .map(|(&v, &l)| v == 0 && !l)
+                .collect();
+            let land_pairs = adjacency.iter().map(|&(a, b, _)| (a, b)).collect();
+            sea::sea_links(&frame, &raster, &water, &land_pairs)
+        }
+        None => Vec::new(),
+    };
     let mut borders = vec![[0u8; 3]; w * h];
     for (ch, key) in [None, Some(&region_key), Some(&country_key)]
         .into_iter()
@@ -300,6 +315,7 @@ pub fn build(frame: Frame, mut provinces: Vec<ProvinceShape>, land: Option<&[boo
         raster,
         stats,
         adjacency,
+        sea,
         borders,
     }
 }

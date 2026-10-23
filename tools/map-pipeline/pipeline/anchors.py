@@ -37,7 +37,10 @@ WATER_MARGIN_PX = 8
 # Golden Gate between San Francisco and Marin); a wider sea or lake does not count.
 WATER_GAP_PX = 3
 # Kinds that are listed but are not anchor misses (a city part across a strait or a bay).
-INFO_KINDS = {"city part across water"}
+INFO_KINDS = {"city part across water", "city on the edge"}
+# A province's own city whose pixel a neighbour took, with the province owning a pixel this
+# close (8-neighbour), is on the edge, not off it (D679): a 5 km pixel can straddle a river.
+EDGE_PX = 1
 
 
 def _components(mask: np.ndarray) -> np.ndarray:
@@ -117,13 +120,19 @@ class Frame:
 
 
 def _place_lookup(countries, sources):
+    """Places by (game country, folded name); NE codes map to game codes (config.NE_CODES)."""
+    game_of = {}
+    for g in sorted(countries):
+        for c in config.ne_codes(g):
+            game_of.setdefault(c, g)
     pp = gpd.read_file(config.ne_path("ne_10m_populated_places.shp", sources),
                        columns=["NAME", "NAMEASCII", "ADM0_A3", "POP_MAX"])
-    pp = pp[pp.ADM0_A3.isin(countries)]
+    pp = pp[pp.ADM0_A3.isin(set(game_of))]
     out: dict[tuple[str, str], list] = {}
     for r in pp.itertuples():
         for n in sorted({r.NAME, r.NAMEASCII} - {None}):
-            out.setdefault((r.ADM0_A3, text.fold(n)), []).append((r.POP_MAX or 0, r.geometry.x, r.geometry.y, r.NAME))
+            out.setdefault((game_of[r.ADM0_A3], text.fold(n)), []).append(
+                (r.POP_MAX or 0, r.geometry.x, r.geometry.y, r.NAME))
     for v in out.values():
         v.sort(key=lambda c: (-c[0], c[1], c[2]))
     return out
@@ -186,11 +195,21 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
         r = by_id.get(pid)
         return (r["country"], r["region"]) if r else None
 
-    def find(country, name, region=None):
+    # a province's whole name without generic words ("Basel City" -> basel), per region: a
+    # neighbour's name part equal to it means that province's city ("Basel" in
+    # "Basel-Landschaft" is Basel City's), so it is not the neighbour's own anchor (D679)
+    core_of: dict[tuple, dict[str, str]] = {}
+    for r in rows:
+        core = " ".join(w for w in text.fold(r["name"]).split() if w not in GENERIC)
+        core_of.setdefault((r["country"], r["region"]), {}).setdefault(core, r["id"])
+
+    def find(country, name, region=None, pid=None):
         """The most populous same-named place; with `region`, only one landing in that CSV region
         (Manhattan, Kansas is not Manhattan; a part naming the region itself is skipped)."""
         for c in _candidates(name):
             if region is not None and c in (text.fold(region[1]), text.fold(country)):
+                continue
+            if pid is not None and core_of.get(region, {}).get(c, pid) != pid:
                 continue
             for hit in places.get((country, c), []):
                 if region is None or region_of(owner(hit[1], hit[2])) == region:
@@ -202,12 +221,18 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
 
     misses = []
     for r in rows:
-        hit = find(r["country"], r["name"], (r["country"], r["region"]))
+        hit = find(r["country"], r["name"], (r["country"], r["region"]), r["id"])
         if hit:
             got = owner(hit[1], hit[2])
             if got != r["id"]:
-                misses.append({"kind": "own name", "province_id": r["id"], "place": hit[3],
-                               "expected": r["id"], "got": got})
+                # a city on its province's edge (Omdurman at the Nile confluence) whose pixel the
+                # neighbour took is listed, not a miss, when the province owns a touching pixel
+                x, y = frame.pixel(hit[1], hit[2])
+                v = ids.index(r["id"]) + 1 if r["id"] in ids else -1
+                near = any(0 <= y + dy < frame.h and int(idx[y + dy, (x + dx) % frame.w]) == v
+                           for dy in (-EDGE_PX, 0, EDGE_PX) for dx in (-EDGE_PX, 0, EDGE_PX))
+                misses.append({"kind": "city on the edge" if near else "own name", "province_id": r["id"],
+                               "place": hit[3], "expected": r["id"], "got": got})
             elif r["metro"] and r["id"] in cent:
                 cx, cy = last["px"]
                 part = city_part(idx, ids.index(r["id"]) + 1, cx, cy)
@@ -230,16 +255,22 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
                                    "got": f"{dist:.1f} px"})
         if r["metro"]:
             hit = find(r["country"], r["metro"])
-            if hit:
+            # a name two places share (Suzhou in Jiangsu and in Anhui), or a composite Metro
+            # whose name part is not one of its provinces (Hsinchu-Taipei): any same-named
+            # place of any name part landing on the Metro passes (D679)
+            ok = any(by_id.get(owner(c[1], c[2]), {}).get("metro") == r["metro"]
+                     for n in _candidates(r["metro"]) for c in places.get((r["country"], n), []))
+            if hit and not ok:
                 got = owner(hit[1], hit[2])
                 if by_id.get(got, {}).get("metro") != r["metro"]:
                     misses.append({"kind": "metro", "province_id": r["id"], "place": hit[3],
                                    "expected": f"a {r['metro']} province", "got": got})
     with (config.DATA_DIR / "key-cities.csv").open(encoding="utf-8", newline="") as f:
         for k in csv.DictReader(f):
-            if k["country"] not in region.countries:
-                continue
             pids = k["province_ids"].split(";")
+            # a key city of another region file (Russia's are in two) is checked with that file
+            if k["country"] not in region.countries or not all(p in by_id for p in pids):
+                continue
             hit = find(k["country"], k["city"])
             if hit:
                 got = owner(hit[1], hit[2])
