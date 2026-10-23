@@ -577,6 +577,7 @@ impl Plugin for CommandPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<CommandBar>()
             .init_resource::<NameIndex>()
+            .init_resource::<crate::pace::UiPace>()
             .init_resource::<KeyboardCapture>()
             .add_message::<RunCommand>()
             .add_systems(Startup, spawn_bar.after(SpawnLayout))
@@ -585,6 +586,7 @@ impl Plugin for CommandPlugin {
                 (refresh_index, bar_keys, run_commands)
                     .chain()
                     .after(SimSystems::SyncViews)
+                    .after(crate::pace::PaceSystems)
                     .in_set(UiSystems::Capture),
             )
             .add_systems(Update, draw_bar.in_set(UiSystems::Show));

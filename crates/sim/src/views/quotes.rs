@@ -88,6 +88,8 @@ impl ViewData for QuotesView {
         v
     }
 
+    const REBUILD_IN_PLACE: bool = true;
+
     /// Refills the two `Vec`s in place, so the rebuild every tick allocates nothing once they
     /// have grown (D402).
     fn rebuild(&mut self, input: &ViewInput<'_>) {

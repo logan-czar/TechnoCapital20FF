@@ -16,6 +16,7 @@
 //! the others are empty placeholders on their cadence.
 
 use std::fmt;
+use std::sync::Arc;
 
 use crate::map::MapData;
 use crate::time::control::Controls;
@@ -92,18 +93,35 @@ pub trait ViewData: Clone + PartialEq + fmt::Debug {
 
     fn build(input: &ViewInput<'_>) -> Self;
 
+    /// The view overrides [`ViewData::rebuild`] to reuse its last build (its allocations, D402,
+    /// or its archived estimates, D435). A view that does not is built anew on each rebuild, so
+    /// a copy a reader still holds is never cloned for it (D775).
+    const REBUILD_IN_PLACE: bool = false;
+
     /// Rebuilds this view in place from `input`; the result must equal [`ViewData::build`]'s.
     /// The default builds a new one; a view rebuilt every tick overrides it to reuse its
-    /// allocations (D402).
+    /// allocations (D402), and sets [`ViewData::REBUILD_IN_PLACE`].
     fn rebuild(&mut self, input: &ViewInput<'_>) {
         *self = Self::build(input);
     }
+
+    /// [`ViewData::rebuild`] of a copy of `prev`, for a [`ViewData::REBUILD_IN_PLACE`] view
+    /// whose last build a reader still holds (D775); the result must equal `build`'s. The
+    /// default clones `prev` and rebuilds the clone; a view whose rebuild only reads its last
+    /// build overrides it to skip the clone.
+    fn rebuild_from(prev: &Self, input: &ViewInput<'_>) -> Self {
+        let mut v = prev.clone();
+        v.rebuild(input);
+        v
+    }
 }
 
-/// One view with its version and dirty flag (spec 9.4, 12.3).
+/// One view with its version and dirty flag (spec 9.4, 12.3). The data is shared (D775): a
+/// copy of the view (the Bevy bridge's, once a frame) shares it until the sim rebuilds the
+/// view, so copying a view costs the same whatever its size.
 #[derive(Debug, Clone, PartialEq)]
 pub struct View<T> {
-    data: T,
+    data: Arc<T>,
     version: u64,
     dirty: bool,
 }
@@ -111,7 +129,7 @@ pub struct View<T> {
 impl<T: ViewData> View<T> {
     fn built(input: &ViewInput<'_>, version: u64) -> Self {
         View {
-            data: T::build(input),
+            data: Arc::new(T::build(input)),
             version,
             dirty: true,
         }
@@ -138,7 +156,15 @@ impl<T: ViewData> View<T> {
     fn after_tick(&mut self, facts: &TickFacts, input: &ViewInput<'_>, version: u64) {
         self.dirty = T::CADENCE.is_due(facts);
         if self.dirty {
-            self.data.rebuild(input);
+            if T::REBUILD_IN_PLACE {
+                match Arc::get_mut(&mut self.data) {
+                    Some(data) => data.rebuild(input),
+                    // A reader still holds the last build: rebuild from it into a new one.
+                    None => self.data = Arc::new(T::rebuild_from(&self.data, input)),
+                }
+            } else {
+                self.data = Arc::new(T::build(input));
+            }
             self.version = version;
         }
     }
@@ -150,10 +176,10 @@ impl<T: ViewData> View<T> {
             return false;
         }
         let data = T::build(input);
-        if data == self.data {
+        if data == *self.data {
             return false;
         }
-        self.data = data;
+        self.data = Arc::new(data);
         self.version = version;
         self.dirty = true;
         true

@@ -74,7 +74,8 @@ pub fn register(app: &mut App) {
         PageKind::Company,
         PageSpec::new(VIEWS)
             .sections(SECTIONS)
-            .refresh(Refresh::OnViewChange),
+            .refresh(Refresh::OnViewChange)
+            .patchable(),
         company_page,
     );
 }

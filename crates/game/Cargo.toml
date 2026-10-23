@@ -35,6 +35,11 @@ ron = "0.12"
 # (D634). Bevy's image loader already builds this crate.
 png = "0.18"
 
+[features]
+# The benches' span timer (D770): Bevy's `trace` puts every system and render node in a span,
+# and `game::profile` adds up their times. Off in every normal build.
+profile = ["bevy/trace", "bevy/debug"]
+
 [dev-dependencies]
 # The map shader's layout test parses the WGSL (D741). wgpu already builds this exact naga with
 # its WGSL front end, so it adds no crate to the build.

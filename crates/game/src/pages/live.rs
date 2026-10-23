@@ -235,8 +235,14 @@ fn refresh_live(
     mut tables: Query<&mut Table>,
     mut charts: Query<&mut Chart>,
     mut texts: Query<&mut Text>,
+    mut stats: ResMut<super::PageStats>,
+    mut pace: ResMut<crate::pace::UiPace>,
 ) {
     let now = time.elapsed_secs_f64();
+    // While the sim fast-forwards every view move waits out the longer of the widget's own
+    // throttle and LIVE_MODEL_SECS (D773); a control change (a pause, Omniscient) runs at once.
+    let paced = pace.paced();
+    let flush = pace.flushing();
     let moved = views.is_changed() || index.is_changed();
     for (e, mut live, filter) in &mut q {
         if live.held {
@@ -266,9 +272,22 @@ fn refresh_live(
                 .zip(versions.iter().zip(&live.versions))
                 .filter(|(_, (a, b))| a != b)
                 .all(|(&k, _)| view_meta(&views, k).2 == Cadence::EveryTick);
-        if !(filtered || ctl || woke) && fast_only && now - live.last < live.min_secs {
-            live.owed = true;
-            continue;
+        if !(filtered || ctl || woke || flush) {
+            // At fast-forward a remake is a heavy job (it may sort hundreds of rows): it waits
+            // its period and a frame the sim left light.
+            let wait = if paced {
+                !pace.may_run(
+                    live.last,
+                    live.min_secs.max(crate::pace::LIVE_MODEL_SECS),
+                    true,
+                )
+            } else {
+                fast_only && now - live.last < live.min_secs
+            };
+            if wait {
+                live.owed = true;
+                continue;
+            }
         }
         live.owed = false;
         live.last = now;
@@ -276,12 +295,14 @@ fn refresh_live(
             live.versions = versions;
         }
         let model = (live.make)(&ctx(&views, &index, &controls, &filter));
+        stats.live_makes += 1;
         match model {
             LiveModel::Table(m) => {
                 if let Ok(mut t) = tables.get_mut(e)
                     && *t.model() != m
                 {
                     t.set_model(Arc::new(m));
+                    stats.live_sets += 1;
                 }
             }
             LiveModel::Chart(m) => {
@@ -289,6 +310,7 @@ fn refresh_live(
                     && *c.model() != m
                 {
                     c.set_model(Arc::new(m));
+                    stats.live_sets += 1;
                 }
             }
             LiveModel::Text(s) => {
@@ -296,6 +318,7 @@ fn refresh_live(
                     && t.0 != s
                 {
                     t.0 = s;
+                    stats.live_sets += 1;
                 }
             }
         }
@@ -543,9 +566,11 @@ pub struct LivePlugin;
 
 impl Plugin for LivePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            (refresh_live, mark_picks).chain().in_set(UiSystems::Show),
-        );
+        app.init_resource::<super::PageStats>()
+            .init_resource::<crate::pace::UiPace>()
+            .add_systems(
+                Update,
+                (refresh_live, mark_picks).chain().in_set(UiSystems::Show),
+            );
     }
 }

@@ -322,6 +322,8 @@ impl ViewData for StatementsView {
         build_with(input, &[])
     }
 
+    const REBUILD_IN_PLACE: bool = true;
+
     /// Reuses the last build's estimates of quarters still in the archive (D435): an archived
     /// quarter never changes, and its estimate is a function of the seed, the company and the
     /// statement, so the result equals `build`'s. Years are summed again (a year whose
@@ -329,6 +331,10 @@ impl ViewData for StatementsView {
     fn rebuild(&mut self, input: &ViewInput<'_>) {
         let prev = std::mem::take(&mut self.companies);
         *self = build_with(input, &prev);
+    }
+
+    fn rebuild_from(prev: &Self, input: &ViewInput<'_>) -> Self {
+        build_with(input, &prev.companies)
     }
 }
 

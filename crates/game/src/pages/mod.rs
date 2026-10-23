@@ -447,6 +447,9 @@ pub struct PageSpec {
     /// Its sections in default order.
     pub sections: Vec<SectionSpec>,
     pub refresh: Refresh,
+    /// Its builder spawns only a [`doc::PageDoc`] ([`doc::spawn_doc`]), so a move of its views
+    /// can patch the page in place instead of rebuilding it (D772).
+    pub patchable: bool,
     builder: Option<SystemId<In<PageBuild>>>,
 }
 
@@ -457,8 +460,15 @@ impl PageSpec {
             planned: Vec::new(),
             sections: Vec::new(),
             refresh: Refresh::Manual,
+            patchable: false,
             builder: None,
         }
+    }
+
+    /// The page is a [`doc::PageDoc`] and nothing else: a view move patches it (D772).
+    pub fn patchable(mut self) -> PageSpec {
+        self.patchable = true;
+        self
     }
 
     pub fn planned(mut self, names: &[&'static str]) -> PageSpec {
@@ -508,7 +518,15 @@ pub struct PageBuild {
     pub sections: Vec<(&'static str, Entity)>,
     /// A slot after the sections for content that is not a section (a page's main table).
     pub tail: Entity,
+    /// Patch the page already built into these entities instead of filling them (D772; only
+    /// for [`PageSpec::patchable`] pages).
+    pub patch: bool,
 }
+
+/// On a page body: the build its page was last built with (D772), so a view move can run the
+/// builder again as a patch.
+#[derive(Component, Debug, Clone)]
+pub struct BuiltPage(pub PageBuild);
 
 impl PageBuild {
     /// A section's body, or `None` when the player hid it.
@@ -876,6 +894,28 @@ fn section_button(
         .id()
 }
 
+/// What the pages did since the bench last read it (D770): page bodies rebuilt, live values
+/// remade and written, charts and tables given a new model. Counted always (a few adds a frame);
+/// `--bench-map` prints it per frame.
+#[derive(Resource, Debug, Clone, Default, PartialEq)]
+pub struct PageStats {
+    /// Page bodies rebuilt, by page kind key.
+    pub builds: std::collections::BTreeMap<&'static str, u64>,
+    /// Live spans whose text or colour was written.
+    pub span_writes: u64,
+    /// Live spans looked at (their text made).
+    pub span_checks: u64,
+    /// `Live` widget models made, and those that differed and were set.
+    pub live_makes: u64,
+    pub live_sets: u64,
+    /// Live charts and tables (D485) given a new model.
+    pub chart_sets: u64,
+    pub table_sets: u64,
+    /// Chart redraws, and the primitive nodes they wrote.
+    pub chart_draws: u64,
+    pub chart_prim_writes: u64,
+}
+
 /// Registers the placeholder page of every kind, the list pages, the world page and the
 /// settings page. Phase B plugins added after it replace kinds with real pages.
 pub struct PagesPlugin;
@@ -883,6 +923,7 @@ pub struct PagesPlugin;
 impl Plugin for PagesPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<PageRegistry>()
+            .init_resource::<PageStats>()
             .init_resource::<PdoombergRoute>()
             .add_message::<OpenPdoomberg>();
         placeholder::register(app);

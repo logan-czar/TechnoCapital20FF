@@ -39,6 +39,7 @@ pub struct OutlinerPlugin;
 impl Plugin for OutlinerPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<OutlinerFolded>()
+            .init_resource::<crate::pace::UiPace>()
             .add_systems(Startup, spawn_outliner.after(SpawnLayout))
             .add_systems(Update, fold_key.in_set(UiSystems::Input))
             .add_systems(
@@ -48,7 +49,7 @@ impl Plugin for OutlinerPlugin {
                         resource_changed::<RunnerControls>.or_eager(resource_changed::<NameIndex>),
                     ),
                     draw_alerts.run_if(resource_changed::<AlertBoard>),
-                    draw_log.run_if(resource_changed::<EventLog>),
+                    draw_log,
                     show_fold.run_if(resource_changed::<OutlinerFolded>),
                 )
                     .in_set(UiSystems::Show),
@@ -255,12 +256,24 @@ fn draw_alerts(
     }
 }
 
+/// Redraws the log's lines when it changes; while the sim fast-forwards (a quarter's notices
+/// every few frames), at most every [`crate::pace::LIVE_TEXT_SECS`] (D773).
 fn draw_log(
     mut commands: Commands,
     log: Res<EventLog>,
     list: Query<Entity, With<LogList>>,
     children: Query<&Children>,
+    mut pace: ResMut<crate::pace::UiPace>,
+    mut paced: Local<crate::pace::Paced>,
 ) {
+    if !paced.due(
+        log.is_changed(),
+        &mut pace,
+        crate::pace::LIVE_TEXT_SECS,
+        false,
+    ) {
+        return;
+    }
     let Ok(list) = list.single() else {
         return;
     };

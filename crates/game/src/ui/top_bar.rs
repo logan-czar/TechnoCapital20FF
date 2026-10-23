@@ -62,12 +62,13 @@ pub struct TopBarPlugin;
 
 impl Plugin for TopBarPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_top_bar.after(SpawnLayout))
+        app.init_resource::<crate::pace::UiPace>()
+            .add_systems(Startup, spawn_top_bar.after(SpawnLayout))
             .add_systems(Update, time_keys.in_set(UiSystems::Input))
             .add_systems(
                 Update,
                 (
-                    show_clock.run_if(resource_changed::<Views>),
+                    show_clock,
                     show_rate,
                     show_menus.run_if(resource_changed::<OpenMenu>),
                 )
@@ -286,10 +287,14 @@ fn time_keys(
     }
 }
 
-/// The date, the quarter clock and the controls' state, from the clock view.
-#[allow(clippy::type_complexity)]
+/// The date, the quarter clock and the controls' state, from the clock view. While the sim
+/// fast-forwards (the date moves days a frame) it is written at most every
+/// [`crate::pace::LIVE_TEXT_SECS`] (D773); a pause or a speed change shows at once.
+#[allow(clippy::type_complexity, clippy::too_many_arguments)]
 fn show_clock(
     views: Res<Views>,
+    mut pace: ResMut<crate::pace::UiPace>,
+    mut paced: Local<crate::pace::Paced>,
     mut texts: ParamSet<(
         Query<&mut Text, With<DateText>>,
         Query<&mut Text, With<PhaseText>>,
@@ -299,6 +304,14 @@ fn show_clock(
     mut pause: Query<(&mut ButtonLook, &Children), (With<PauseButton>, Without<SpeedButton>)>,
     mut speeds: Query<(&SpeedButton, &mut ButtonLook), Without<PauseButton>>,
 ) {
+    if !paced.due(
+        views.is_changed(),
+        &mut pace,
+        crate::pace::LIVE_TEXT_SECS,
+        false,
+    ) {
+        return;
+    }
     let c = views.clock();
     let date = format!(
         "{} {} {} {}  {:02}:00",

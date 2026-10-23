@@ -33,7 +33,8 @@ pub fn register(app: &mut App) {
         PageKind::Exchange,
         PageSpec::new(VIEWS)
             .sections(SECTIONS)
-            .refresh(Refresh::OnViewChange),
+            .refresh(Refresh::OnViewChange)
+            .patchable(),
         exchange_page,
     );
 }

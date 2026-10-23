@@ -42,8 +42,9 @@ pub use windows::{WindowAction, WindowFrame};
 use crate::bridge::Views;
 use crate::command::index::NameIndex;
 use crate::config::{Density, SectionsConfig, UiConfig};
+use crate::pages::doc::{HeldLive, LiveChart, LiveSpan, LiveTable, RebuildPage, SpawnedDoc};
 use crate::pages::{
-    PageBuild, PageKind, PageRef, PageRegistry, Refresh, spawn_sections, view_meta,
+    BuiltPage, PageBuild, PageKind, PageRef, PageRegistry, Refresh, spawn_sections, view_meta,
 };
 use crate::pdoomberg::PdoombergUi;
 use crate::table::{Table, TableFocus};
@@ -186,6 +187,13 @@ pub struct PaneFrame {
     pub body: Entity,
     /// What the frame was last drawn with.
     drawn: Drawn,
+    /// When its body was last built or patched (real seconds), for the fast-forward pacing of
+    /// view-move refreshes (D773).
+    refreshed: f64,
+    /// The pane was hidden when last looked at: when it shows, its page rebuilds rather than
+    /// patches, so nothing it showed before (an estimate, or an exact value before an
+    /// Omniscient toggle) stays a frame (D772).
+    was_hidden: bool,
 }
 
 impl PaneFrame {
@@ -233,6 +241,7 @@ impl Plugin for WorkspacePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Workspace>()
             .init_resource::<windows::DockDrawn>()
+            .init_resource::<crate::pace::UiPace>()
             .add_message::<OpenPage>()
             .add_message::<PaneAction>()
             .add_message::<WindowAction>()
@@ -260,6 +269,7 @@ impl Plugin for WorkspacePlugin {
                     windows::sync_windows,
                     sync_ratios,
                     render_panes,
+                    hold_hidden_panes,
                     focus_tables,
                     save_last_layout,
                 )
@@ -703,6 +713,8 @@ fn spawn_frame(commands: &mut Commands, pane: PaneId) -> Entity {
                 header,
                 body,
                 drawn: Drawn::default(),
+                refreshed: f64::NEG_INFINITY,
+                was_hidden: false,
             },
             Node {
                 flex_grow: 1.0,
@@ -764,9 +776,26 @@ fn shorten(s: &str, n: usize) -> String {
     }
 }
 
+/// Whether a pane's page is on screen: its window is not minimized and the windows are not all
+/// hidden (D773). A pane outside every window counts as shown.
+pub fn pane_shown(ws: &Workspace, pane: PaneId) -> bool {
+    !ws.hidden()
+        && ws
+            .window_of(pane)
+            .and_then(|w| ws.window(w))
+            .is_none_or(|w| !w.minimized)
+}
+
 /// Redraws pane headers and page bodies that are out of date: a new page, a history or focus
 /// change, a section config change, the page's views moving (for [`Refresh::OnViewChange`]
 /// pages). Tables follow density and font changes by themselves, so those rebuild nothing.
+///
+/// A move of only the page's views (D772, D773) patches a [`PageSpec::patchable`] page in
+/// place instead of rebuilding it (unless Omniscient was turned on or off this frame: then it
+/// rebuilds, so nothing shown before survives; a pause, a speed, an alert level or a watchlist
+/// change patches, so a pause at max speed keeps the page's sorts and scroll), is skipped while the
+/// pane is hidden (it refreshes when it shows), and while the sim fast-forwards waits
+/// [`crate::pace::PAGE_REFRESH_SECS`] since the pane's last refresh, one refresh a frame.
 #[allow(clippy::too_many_arguments)]
 fn render_panes(
     mut commands: Commands,
@@ -775,12 +804,22 @@ fn render_panes(
     cfg: Res<UiConfig>,
     views: Res<Views>,
     index: Res<NameIndex>,
+    controls: Option<Res<crate::bridge::RunnerControls>>,
+    mut pace: ResMut<crate::pace::UiPace>,
     mut frames: Query<(&mut PaneFrame, &mut BorderColor)>,
     mut frame_count: Local<usize>,
+    mut owed: Local<bool>,
+    mut last_omniscient: Local<Option<bool>>,
     mut scrolls: Query<&mut ScrollPosition>,
+    built: Query<&BuiltPage>,
+    marked: Query<(), With<RebuildPage>>,
+    mut stats: Option<ResMut<crate::pages::PageStats>>,
 ) {
+    let controls_changed = controls.as_ref().is_some_and(|c| c.is_changed());
+    let omniscient = controls.as_ref().map(|c| c.omniscient);
+    let omniscient_changed = std::mem::replace(&mut *last_omniscient, omniscient) != omniscient;
     // Views move every tick at speed; only pages that rebuild on them need a look then.
-    let view_pages = views.is_changed()
+    let view_pages = (views.is_changed() || *owed || controls_changed)
         && frames.iter().any(|(f, _)| {
             ws.page(f.pane)
                 .and_then(|p| registry.get(p.kind()))
@@ -791,11 +830,13 @@ fn render_panes(
         || view_pages
         || index.is_changed()
         || registry.is_changed()
+        || !marked.is_empty()
         || frames.iter().count() != *frame_count;
     *frame_count = frames.iter().count();
     if !any {
         return;
     }
+    *owed = false;
     for (mut frame, mut border) in &mut frames {
         let pane = frame.pane;
         let Some(h) = ws.history(pane) else {
@@ -811,7 +852,7 @@ fn render_panes(
             Some(s) if s.refresh == Refresh::OnConfigChange => vec![cfg.display_signature()],
             _ => Vec::new(),
         };
-        let want = Drawn {
+        let mut want = Drawn {
             page: Some(page.clone()),
             back: h.back_list().to_vec(),
             can_forward: h.can_forward(),
@@ -820,26 +861,112 @@ fn render_panes(
             versions,
             sections: cfg.sections.get(kind.key()).cloned(),
         };
-        if frame.drawn == want {
+        let shown = pane_shown(&ws, pane);
+        let was_hidden = std::mem::replace(&mut frame.was_hidden, !shown);
+        let woke = shown && was_hidden;
+        let rebuild = marked.contains(frame.body);
+        if frame.drawn == want && !rebuild {
             continue;
         }
-        let body_stale = frame.drawn.page != want.page
+        let new_page = frame.drawn.page != want.page;
+        let only_views = !new_page
+            && !rebuild
+            && frame.drawn.sections == want.sections
+            && frame.drawn.versions != want.versions;
+        if only_views
+            && !woke
+            && (!shown || !pace.may_run(frame.refreshed, crate::pace::PAGE_REFRESH_SECS, true))
+        {
+            // Not now: the frame keeps the versions it drew, so a later frame refreshes it (a
+            // hidden pane when it shows: the workspace changes then).
+            want.versions.clone_from(&frame.drawn.versions);
+            *owed |= shown;
+        }
+        let header_stale = new_page
+            || frame.drawn.back != want.back
+            || frame.drawn.can_forward != want.can_forward
+            || frame.drawn.focused != want.focused
+            || frame.drawn.title != want.title;
+        let body_stale = new_page
+            || rebuild
             || frame.drawn.versions != want.versions
             || frame.drawn.sections != want.sections;
-        let new_page = frame.drawn.page != want.page;
-        draw_header(&mut commands, frame.header, pane, &want, h, &index);
-        *border = BorderColor::all(if want.focused {
-            color::FOCUS
-        } else {
-            color::BORDER
-        });
+        if header_stale {
+            draw_header(&mut commands, frame.header, pane, &want, h, &index);
+            *border = BorderColor::all(if want.focused {
+                color::FOCUS
+            } else {
+                color::BORDER
+            });
+        }
         if body_stale {
-            build_page(&mut commands, &registry, &cfg, frame.body, pane, &page);
+            let patch = only_views
+                && !woke
+                && !omniscient_changed
+                && spec.is_some_and(|s| s.patchable)
+                && built.get(frame.body).is_ok_and(|b| b.0.page == page);
+            if let Some(st) = stats.as_mut() {
+                let key = if patch { "patch" } else { kind.key() };
+                *st.builds.entry(key).or_default() += 1;
+            }
+            if patch && let Ok(b) = built.get(frame.body) {
+                patch_page(&mut commands, &registry, &b.0);
+            } else {
+                build_page(&mut commands, &registry, &cfg, frame.body, pane, &page);
+            }
+            frame.refreshed = pace.now();
             if new_page && let Ok(mut s) = scrolls.get_mut(frame.body) {
                 s.0 = Vec2::ZERO;
             }
         }
         frame.drawn = want;
+    }
+}
+
+/// Holds the live values of pages in hidden panes (D773): when a pane's window minimizes or
+/// every window hides, its live spans, charts and tables get [`HeldLive`] and its `Live`
+/// widgets are held; when it shows again they let go and update at once.
+#[allow(clippy::type_complexity, clippy::too_many_arguments)]
+fn hold_hidden_panes(
+    mut commands: Commands,
+    ws: Res<Workspace>,
+    frames: Query<&PaneFrame>,
+    children: Query<&Children>,
+    markers: Query<(), Or<(With<LiveSpan>, With<LiveChart>, With<LiveTable>)>>,
+    mut lives: Query<&mut crate::pages::live::Live>,
+    added: Query<(), Or<(Added<LiveSpan>, Added<LiveChart>, Added<LiveTable>)>>,
+    mut pace: ResMut<crate::pace::UiPace>,
+    mut was_shown: Local<std::collections::HashMap<PaneId, bool>>,
+) {
+    let new_widgets = !added.is_empty() || lives.iter_mut().any(|l| l.is_added());
+    if !(ws.is_changed() || new_widgets) {
+        return;
+    }
+    let mut woke = false;
+    for frame in &frames {
+        let shown = pane_shown(&ws, frame.pane);
+        let before = was_shown.insert(frame.pane, shown).unwrap_or(true);
+        if shown == before && (shown || !new_widgets) {
+            continue;
+        }
+        woke |= shown;
+        for e in children.iter_descendants(frame.body) {
+            if markers.contains(e) {
+                if shown {
+                    commands.entity(e).remove::<HeldLive>();
+                } else {
+                    commands.entity(e).insert(HeldLive);
+                }
+            }
+            if let Ok(mut l) = lives.get_mut(e)
+                && l.is_held() == shown
+            {
+                l.hold(!shown);
+            }
+        }
+    }
+    if woke {
+        pace.wake();
     }
 }
 
@@ -995,7 +1122,10 @@ pub fn build_page(
     pane: PaneId,
     page: &PageRef,
 ) {
-    commands.entity(body).despawn_children();
+    commands
+        .entity(body)
+        .despawn_children()
+        .remove::<(SpawnedDoc, RebuildPage)>();
     let column = || Node {
         flex_direction: FlexDirection::Column,
         row_gap: px(4.0),
@@ -1026,7 +1156,9 @@ pub fn build_page(
         head,
         sections,
         tail,
+        patch: false,
     };
+    commands.entity(body).insert(BuiltPage(build.clone()));
     match spec.and_then(|s| s.builder()) {
         Some(id) => commands.run_system_with(id, build),
         None => {
@@ -1038,6 +1170,15 @@ pub fn build_page(
                 .id();
             commands.entity(head).add_child(t);
         }
+    }
+}
+
+/// Runs a patchable page's builder as a patch of the page it built before (D772).
+fn patch_page(commands: &mut Commands, registry: &PageRegistry, built: &PageBuild) {
+    if let Some(id) = registry.get(built.page.kind()).and_then(|s| s.builder()) {
+        let mut b = built.clone();
+        b.patch = true;
+        commands.run_system_with(id, b);
     }
 }
 

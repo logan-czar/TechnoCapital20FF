@@ -31,7 +31,8 @@ pub fn register(app: &mut App) {
         PageKind::Character,
         PageSpec::new(VIEWS)
             .sections(SECTIONS)
-            .refresh(Refresh::OnViewChange),
+            .refresh(Refresh::OnViewChange)
+            .patchable(),
         character_page,
     );
 }

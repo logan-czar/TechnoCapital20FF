@@ -28,6 +28,7 @@ use crate::bridge::Views;
 use crate::chart::{Chart, ChartModel, spawn_chart};
 use crate::config::UiConfig;
 use crate::links::link_sized;
+use crate::pace::{LIVE_CHART_SECS, LIVE_MODEL_SECS, LIVE_TEXT_SECS, Paced, UiPace};
 use crate::table::format::{self, GainUnit};
 use crate::table::{Cell, Table, TableModel, Unit, spawn_table_with_id};
 use crate::ui::theme::{self, Tooltip, color, font, size};
@@ -547,6 +548,14 @@ pub fn current_tab(
 
 /// Spawns `doc` into a page build: the header (title, chips, tab strip when `tabs` is given,
 /// the head blocks) and each shown section that is not collapsed.
+///
+/// A build with [`PageBuild::patch`] set spawns nothing: it patches the page `doc` was spawned
+/// into before (D772). When the new doc has the same shape (the same blocks, fields, spans,
+/// links, live values, tables, charts and bars in the same order), its texts and colours are
+/// written where they differ and its tables and charts get the new model where it differs, so
+/// the page keeps its nodes, scroll, sorts and hover; when the shape changed, the pane rebuilds
+/// the page in full on the next frame ([`RebuildPage`]). A builder that patches must spawn
+/// nothing but its doc.
 pub fn spawn_doc(
     commands: &mut Commands,
     b: &PageBuild,
@@ -556,6 +565,15 @@ pub fn spawn_doc(
     tabs: Option<&[SectionSpec]>,
 ) {
     let kind = b.page.kind();
+    let shut = collapsed(cfg, kind);
+    let shown = |id: &str| !shut.iter().any(|c| c == id) && b.section(id).is_some();
+    let leaves = leaves(doc, v, &shown);
+    if b.patch {
+        let (body, page) = (b.body, b.page.clone());
+        commands.queue(move |world: &mut World| patch_doc(world, body, &page, leaves));
+        return;
+    }
+    let mut rec = Rec::default();
     let row = super::placeholder::chip_row(commands, b.head);
     let t = commands.spawn(theme::title(doc.title.clone())).id();
     let k = commands
@@ -565,26 +583,294 @@ pub fn spawn_doc(
             color::TEXT_MUTED,
         ))
         .id();
+    rec.texts.extend([t, k]);
     commands.entity(row).add_children(&[t, k]);
     for s in &doc.chips {
-        let e = spawn_span(commands, s, v, font::SMALL);
+        let e = spawn_span(commands, s, v, font::SMALL, &mut rec);
         commands.entity(row).add_child(e);
     }
     if let Some(defaults) = tabs {
         tab_strip(commands, b.head, kind, defaults, cfg);
     }
     for block in &doc.head {
-        spawn_block(commands, b.head, block, v, cfg);
+        spawn_block(commands, b.head, block, v, cfg, &mut rec);
     }
-    let shut = collapsed(cfg, kind);
     for s in &doc.sections {
-        if shut.iter().any(|c| c == s.id) {
+        if !shown(s.id) {
             continue;
         }
         if let Some(body) = b.section(s.id) {
             for block in &s.blocks {
-                spawn_block(commands, body, block, v, cfg);
+                spawn_block(commands, body, block, v, cfg, &mut rec);
             }
+        }
+    }
+    // The record must line up with the leaves one for one; if it ever does not, the page is
+    // never patched (each move rebuilds it, as before D772).
+    let lines_up = rec.texts.len() == leaves.texts.len()
+        && rec.tables.len() == leaves.tables.len()
+        && rec.charts.len() == leaves.charts.len()
+        && rec.bars.len() == leaves.bars.len();
+    debug_assert!(lines_up, "spawn_doc's record and leaves differ");
+    if lines_up {
+        commands.entity(b.body).insert(SpawnedDoc {
+            page: b.page.clone(),
+            shape: leaves.shape,
+            texts: rec.texts,
+            tables: rec.tables,
+            charts: rec.charts,
+            bars: rec.bars,
+        });
+    }
+}
+
+/// What [`spawn_doc`] spawned for a page, on the page body (D772): the page's shape and, in the
+/// order [`leaves`] lists them, its text nodes other than live values, its tables and its
+/// charts.
+#[derive(Component, Debug, Clone)]
+pub struct SpawnedDoc {
+    page: PageRef,
+    shape: Vec<Shape>,
+    texts: Vec<Entity>,
+    tables: Vec<Entity>,
+    charts: Vec<Entity>,
+    bars: Vec<Entity>,
+}
+
+impl SpawnedDoc {
+    /// The page it was spawned for.
+    pub fn page(&self) -> &PageRef {
+        &self.page
+    }
+
+    /// Its text nodes other than live values, in the doc's order (tests compare a patched page
+    /// with a rebuilt one through them).
+    pub fn text_entities(&self) -> &[Entity] {
+        &self.texts
+    }
+
+    /// Its tables, in the doc's order.
+    pub fn table_entities(&self) -> &[Entity] {
+        &self.tables
+    }
+}
+
+/// On a page body: a patch found the page's shape changed, so the pane rebuilds the page in
+/// full (D772).
+#[derive(Component, Debug, Clone, Copy)]
+pub struct RebuildPage;
+
+/// One piece of a page's shape: what fixes its nodes (two docs of the same shape spawn the same
+/// node tree, apart from texts, colours and table and chart models).
+#[derive(Debug, Clone, PartialEq)]
+enum Shape {
+    /// A row of spans opens and closes.
+    Row,
+    RowEnd,
+    Fields,
+    Label(String),
+    Text,
+    Link(PageRef),
+    Live(Live),
+    Heading,
+    Table {
+        id: String,
+        live: Option<LiveTable>,
+        rows: usize,
+    },
+    Chart(Option<LiveChart>),
+    Cards,
+    Card(bool),
+    Bar,
+}
+
+/// A doc's shape and its patchable contents, in spawn order.
+#[derive(Debug, Default)]
+struct Leaves {
+    shape: Vec<Shape>,
+    /// A text and its colour (`None`: a link, whose colour stays).
+    texts: Vec<(String, Option<Color>)>,
+    tables: Vec<TableModel>,
+    charts: Vec<ChartModel>,
+    /// A progress bar's fill: its node and colour ([`bar_fill`]).
+    bars: Vec<(Node, Color)>,
+}
+
+/// The entities [`spawn_doc`] spawned, in the order of [`Leaves`] (a bar's fill node).
+#[derive(Debug, Default)]
+struct Rec {
+    texts: Vec<Entity>,
+    tables: Vec<Entity>,
+    charts: Vec<Entity>,
+    bars: Vec<Entity>,
+}
+
+/// What [`spawn_doc`] writes for `doc` into build `b`: its text nodes other than live values,
+/// in order, and its tables' models (tests compare a patched page with them, D772).
+pub fn doc_contents(
+    b: &PageBuild,
+    doc: &PageDoc,
+    v: &SimViews,
+    cfg: &UiConfig,
+) -> (Vec<String>, Vec<TableModel>) {
+    let shut = collapsed(cfg, b.page.kind());
+    let shown = |id: &str| !shut.iter().any(|c| c == id) && b.section(id).is_some();
+    let l = leaves(doc, v, &shown);
+    (l.texts.into_iter().map(|(t, _)| t).collect(), l.tables)
+}
+
+/// The shape and patchable contents of `doc` as [`spawn_doc`] spawns it (the shown sections
+/// only): walks the doc in the spawn's order.
+fn leaves(doc: &PageDoc, v: &SimViews, shown: &dyn Fn(&str) -> bool) -> Leaves {
+    let mut l = Leaves::default();
+    l.texts.push((doc.title.clone(), Some(color::CYAN)));
+    l.texts.push((doc.kind.clone(), Some(color::TEXT_MUTED)));
+    for s in &doc.chips {
+        leaf_span(&mut l, s, v);
+    }
+    for block in &doc.head {
+        leaf_block(&mut l, block, v);
+    }
+    for s in &doc.sections {
+        if shown(s.id) {
+            for block in &s.blocks {
+                leaf_block(&mut l, block, v);
+            }
+        }
+    }
+    l
+}
+
+fn leaf_span(l: &mut Leaves, s: &Span, v: &SimViews) {
+    match s {
+        Span::Link(text, page) | Span::Cell(Cell::Link(page, text)) => {
+            l.shape.push(Shape::Link(page.clone()));
+            l.texts.push((text.clone(), None));
+        }
+        Span::Live(x) => l.shape.push(Shape::Live(*x)),
+        other => {
+            l.shape.push(Shape::Text);
+            let (text, c) = other.shown(v);
+            l.texts.push((text, Some(c)));
+        }
+    }
+}
+
+fn leaf_spans(l: &mut Leaves, spans: &[Span], v: &SimViews) {
+    l.shape.push(Shape::Row);
+    for s in spans {
+        leaf_span(l, s, v);
+    }
+    l.shape.push(Shape::RowEnd);
+}
+
+fn leaf_block(l: &mut Leaves, block: &Block, v: &SimViews) {
+    match block {
+        Block::Fields(fields) => {
+            l.shape.push(Shape::Fields);
+            for f in fields {
+                l.shape.push(Shape::Label(f.label.clone()));
+                leaf_spans(l, &f.value, v);
+            }
+        }
+        Block::Line(spans) => leaf_spans(l, spans, v),
+        Block::Heading(h) => {
+            l.shape.push(Shape::Heading);
+            l.texts.push((h.clone(), Some(color::CYAN)));
+        }
+        Block::Table(t) => {
+            l.shape.push(Shape::Table {
+                id: t.id.clone(),
+                live: t.live,
+                rows: t.model.len().clamp(1, TABLE_ROWS_SHOWN),
+            });
+            l.tables.push(t.model.clone());
+        }
+        Block::Chart(m, live) => {
+            l.shape.push(Shape::Chart(live.map(|(c, _)| c)));
+            l.charts.push(m.clone());
+        }
+        Block::Cards(cards) => {
+            l.shape.push(Shape::Cards);
+            for c in cards {
+                l.shape.push(Shape::Card(c.dim));
+                leaf_spans(l, &c.head, v);
+                for f in &c.fields {
+                    l.shape.push(Shape::Label(f.label.clone()));
+                    leaf_spans(l, &f.value, v);
+                }
+                if let Some(p) = &c.bar {
+                    l.shape.push(Shape::Bar);
+                    l.bars.push(bar_fill(p));
+                }
+            }
+        }
+    }
+}
+
+/// Patches the page spawned into `body` with `new` (D772), or asks for a rebuild when its shape
+/// changed.
+fn patch_doc(world: &mut World, body: Entity, page: &PageRef, new: Leaves) {
+    let Ok(mut b) = world.get_entity_mut(body) else {
+        return;
+    };
+    let Some(old) = b.get::<SpawnedDoc>().cloned() else {
+        b.insert(RebuildPage);
+        return;
+    };
+    if old.page != *page || old.shape != new.shape {
+        b.insert(RebuildPage);
+        return;
+    }
+    for (&e, (text, c)) in old.texts.iter().zip(new.texts) {
+        if let Some(mut t) = world.get_mut::<Text>(e)
+            && t.0 != text
+        {
+            t.0 = text;
+        }
+        if let Some(c) = c
+            && let Some(mut tc) = world.get_mut::<TextColor>(e)
+            && tc.0 != c
+        {
+            tc.0 = c;
+        }
+    }
+    for (&e, (node, c)) in old.bars.iter().zip(new.bars) {
+        if let Some(mut n) = world.get_mut::<Node>(e) {
+            n.set_if_neq(node);
+        }
+        if let Some(mut bg) = world.get_mut::<BackgroundColor>(e) {
+            bg.set_if_neq(BackgroundColor(c));
+        }
+    }
+    let live_tables = old.shape.iter().filter_map(|s| match s {
+        Shape::Table { live, .. } => Some(live.is_some()),
+        _ => None,
+    });
+    for ((&e, m), live) in old.tables.iter().zip(new.tables).zip(live_tables) {
+        // A live table follows its view by itself (update_live_tables).
+        if live {
+            continue;
+        }
+        if let Some(mut t) = world.get_mut::<Table>(e)
+            && *t.model() != m
+        {
+            t.set_model(Arc::new(m));
+        }
+    }
+    let live_charts = old.shape.iter().filter_map(|s| match s {
+        Shape::Chart(live) => Some(live.is_some()),
+        _ => None,
+    });
+    for ((&e, m), live) in old.charts.iter().zip(new.charts).zip(live_charts) {
+        // A live chart follows its history by itself (update_live_charts).
+        if live {
+            continue;
+        }
+        if let Some(mut c) = world.get_mut::<Chart>(e)
+            && *c.model() != m
+        {
+            c.set_model(Arc::new(m));
         }
     }
 }
@@ -648,8 +934,8 @@ pub struct TabButton {
 #[derive(Component, Debug, Clone, Copy)]
 pub struct LiveSpan(pub Live);
 
-fn spawn_span(commands: &mut Commands, s: &Span, v: &SimViews, size: f32) -> Entity {
-    match s {
+fn spawn_span(commands: &mut Commands, s: &Span, v: &SimViews, size: f32, rec: &mut Rec) -> Entity {
+    let e = match s {
         Span::Link(text, page) => commands
             .spawn(link_sized(text.clone(), page.clone(), size))
             .id(),
@@ -658,15 +944,17 @@ fn spawn_span(commands: &mut Commands, s: &Span, v: &SimViews, size: f32) -> Ent
             .id(),
         Span::Live(l) => {
             let (text, c) = l.text(v);
-            commands
+            return commands
                 .spawn((theme::text_line(text, size, c), LiveSpan(*l)))
-                .id()
+                .id();
         }
         other => {
             let (text, c) = other.shown(v);
             commands.spawn(theme::text_line(text, size, c)).id()
         }
-    }
+    };
+    rec.texts.push(e);
+    e
 }
 
 /// A row of spans; a line wraps, a field's value keeps to one line (its field widens instead).
@@ -677,6 +965,7 @@ fn spawn_spans(
     v: &SimViews,
     size: f32,
     wrap: bool,
+    rec: &mut Rec,
 ) {
     let row = commands
         .spawn(Node {
@@ -693,13 +982,19 @@ fn spawn_spans(
         })
         .id();
     for s in spans {
-        let e = spawn_span(commands, s, v, size);
+        let e = spawn_span(commands, s, v, size, rec);
         commands.entity(row).add_child(e);
     }
     commands.entity(parent).add_child(row);
 }
 
-fn spawn_fields(commands: &mut Commands, parent: Entity, fields: &[Field], v: &SimViews) {
+fn spawn_fields(
+    commands: &mut Commands,
+    parent: Entity,
+    fields: &[Field],
+    v: &SimViews,
+    rec: &mut Rec,
+) {
     let grid = commands
         .spawn(Node {
             flex_direction: FlexDirection::Row,
@@ -739,32 +1034,35 @@ fn spawn_fields(commands: &mut Commands, parent: Entity, fields: &[Field], v: &S
             ))
             .id();
         commands.entity(cell).add_child(label);
-        spawn_spans(commands, cell, &f.value, v, font::BODY, false);
+        spawn_spans(commands, cell, &f.value, v, font::BODY, false, rec);
         commands.entity(grid).add_child(cell);
     }
     commands.entity(parent).add_child(grid);
 }
 
-fn spawn_bar(commands: &mut Commands, parent: Entity, p: &Progress) {
+/// A progress bar's fill: the absolute node over its share and its colour.
+fn bar_fill(p: &Progress) -> (Node, Color) {
     let (from, to) = p.shares();
     let fill = if p.value.is_band() {
         format::BAND_TEXT.with_alpha(0.45)
     } else {
         color::CYAN
     };
-    let inner = commands
-        .spawn((
-            Node {
-                position_type: PositionType::Absolute,
-                left: percent((from * 100.0) as f32),
-                width: percent(((to - from) * 100.0) as f32),
-                top: px(0.0),
-                bottom: px(0.0),
-                ..default()
-            },
-            BackgroundColor(fill),
-        ))
-        .id();
+    let node = Node {
+        position_type: PositionType::Absolute,
+        left: percent((from * 100.0) as f32),
+        width: percent(((to - from) * 100.0) as f32),
+        top: px(0.0),
+        bottom: px(0.0),
+        ..default()
+    };
+    (node, fill)
+}
+
+fn spawn_bar(commands: &mut Commands, parent: Entity, p: &Progress, rec: &mut Rec) {
+    let (node, fill) = bar_fill(p);
+    let inner = commands.spawn((node, BackgroundColor(fill))).id();
+    rec.bars.push(inner);
     let bar = commands
         .spawn((
             Node {
@@ -787,14 +1085,16 @@ fn spawn_block(
     block: &Block,
     v: &SimViews,
     cfg: &UiConfig,
+    rec: &mut Rec,
 ) {
     match block {
-        Block::Fields(f) => spawn_fields(commands, parent, f, v),
-        Block::Line(s) => spawn_spans(commands, parent, s, v, font::BODY, true),
+        Block::Fields(f) => spawn_fields(commands, parent, f, v, rec),
+        Block::Line(s) => spawn_spans(commands, parent, s, v, font::BODY, true, rec),
         Block::Heading(h) => {
             let e = commands
                 .spawn(theme::text_line(h.clone(), font::SMALL, color::CYAN))
                 .id();
+            rec.texts.push(e);
             commands.entity(parent).add_child(e);
         }
         Block::Table(t) => {
@@ -827,6 +1127,7 @@ fn spawn_block(
             commands.entity(holder).add_child(frame);
             commands.entity(parent).add_child(holder);
             let table = spawn_table_with_id(commands, frame, Arc::new(t.model.clone()), &t.id);
+            rec.tables.push(table);
             if let Some(l) = t.live {
                 // The model was built from these views: the first move after this redraws it.
                 commands
@@ -845,6 +1146,7 @@ fn spawn_block(
                 .id();
             commands.entity(parent).add_child(holder);
             let chart = spawn_chart(commands, holder, Arc::new(m.clone()));
+            rec.charts.push(chart);
             if let Some((l, built)) = live {
                 commands.entity(chart).insert((*l, LiveVersion(*built)));
             }
@@ -881,7 +1183,7 @@ fn spawn_block(
                         BorderColor::all(color::BORDER),
                     ))
                     .id();
-                spawn_spans(commands, card, &c.head, v, font::BODY, true);
+                spawn_spans(commands, card, &c.head, v, font::BODY, true, rec);
                 for f in &c.fields {
                     let line = commands
                         .spawn(Node {
@@ -907,11 +1209,11 @@ fn spawn_block(
                         ))
                         .id();
                     commands.entity(line).add_child(label);
-                    spawn_spans(commands, line, &f.value, v, font::SMALL, false);
+                    spawn_spans(commands, line, &f.value, v, font::SMALL, false, rec);
                     commands.entity(card).add_child(line);
                 }
                 if let Some(p) = &c.bar {
-                    spawn_bar(commands, card, p);
+                    spawn_bar(commands, card, p, rec);
                 }
                 commands.entity(row).add_child(card);
             }
@@ -920,9 +1222,14 @@ fn spawn_block(
     }
 }
 
+/// On a live span, chart or table of a page in a hidden pane (its window minimized, or every
+/// window hidden; D773): it is not updated until the pane shows again.
+#[derive(Component, Debug, Clone, Copy)]
+pub struct HeldLive;
+
 /// The live value systems.
 pub fn register(app: &mut App) {
-    app.add_systems(
+    app.init_resource::<crate::pace::UiPace>().add_systems(
         Update,
         (update_live_spans, update_live_tables, update_live_charts)
             .chain()
@@ -934,33 +1241,46 @@ pub fn register(app: &mut App) {
 #[derive(Component, Debug, Clone, Copy, Default)]
 pub struct LiveVersion(pub u64);
 
-/// Rewrites live spans when the views change (or when they appear).
+/// Rewrites live spans when the views change (or when they appear); while the sim
+/// fast-forwards, at most every [`LIVE_TEXT_SECS`] (D773).
 pub fn update_live_spans(
     views: Res<Views>,
-    mut spans: Query<(Ref<LiveSpan>, &mut Text, &mut TextColor)>,
+    mut spans: Query<(Ref<LiveSpan>, &mut Text, &mut TextColor), Without<HeldLive>>,
+    mut stats: ResMut<super::PageStats>,
+    mut pace: ResMut<UiPace>,
+    mut paced: Local<Paced>,
 ) {
-    let all = views.is_changed();
+    let all = paced.due(views.is_changed(), &mut pace, LIVE_TEXT_SECS, false);
     for (l, mut text, mut c) in &mut spans {
         if !all && !l.is_added() {
             continue;
         }
+        stats.span_checks += 1;
         let (s, col) = l.0.text(&views);
+        let mut wrote = false;
         if text.0 != s {
             text.0 = s;
+            wrote = true;
         }
         if c.0 != col {
             c.0 = col;
+            wrote = true;
         }
+        stats.span_writes += u64::from(wrote);
     }
 }
 
-/// Re-sets live tables' models when the view they follow moved.
+/// Re-sets live tables' models when the view they follow moved; while the sim fast-forwards,
+/// at most every [`LIVE_MODEL_SECS`] (D773).
 pub fn update_live_tables(
     views: Res<Views>,
     index: Res<crate::command::index::NameIndex>,
-    mut tables: Query<(&LiveTable, &mut LiveVersion, &mut Table)>,
+    mut tables: Query<(&LiveTable, &mut LiveVersion, &mut Table), Without<HeldLive>>,
+    mut stats: ResMut<super::PageStats>,
+    mut pace: ResMut<UiPace>,
+    mut paced: Local<Paced>,
 ) {
-    if !views.is_changed() {
+    if tables.is_empty() || !paced.due(views.is_changed(), &mut pace, LIVE_MODEL_SECS, true) {
         return;
     }
     for (l, mut ver, mut t) in &mut tables {
@@ -973,17 +1293,22 @@ pub fn update_live_tables(
                 }
             };
             t.set_model(Arc::new(model));
+            stats.table_sets += 1;
         }
     }
 }
 
-/// Re-sets live charts' models when their history moved.
+/// Re-sets live charts' models when their history moved; while the sim fast-forwards, at most
+/// every [`LIVE_CHART_SECS`] (D773).
 pub fn update_live_charts(
     views: Res<Views>,
     index: Res<crate::command::index::NameIndex>,
-    mut charts: Query<(&LiveChart, &mut LiveVersion, &mut Chart)>,
+    mut charts: Query<(&LiveChart, &mut LiveVersion, &mut Chart), Without<HeldLive>>,
+    mut stats: ResMut<super::PageStats>,
+    mut pace: ResMut<UiPace>,
+    mut paced: Local<Paced>,
 ) {
-    if !views.is_changed() {
+    if charts.is_empty() || !paced.due(views.is_changed(), &mut pace, LIVE_CHART_SECS, true) {
         return;
     }
     for (l, mut ver, mut c) in &mut charts {
@@ -1001,6 +1326,7 @@ pub fn update_live_charts(
         };
         if let Some(m) = model {
             c.set_model(Arc::new(m));
+            stats.chart_sets += 1;
         }
     }
 }
