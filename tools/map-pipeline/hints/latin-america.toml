@@ -70,8 +70,8 @@ seeds = [[-43.18, -22.91], [-43.19, -22.97], [-43.23, -22.90]]
 seeds = [[-43.37, -23.00], [-43.36, -22.94], [-43.69, -22.92], [-43.47, -22.88]]
 [provinces.CL-0010] # Maipu, Puente Alto, La Florida, Pudahuel, Quilicura
 seeds = [[-70.76, -33.51], [-70.58, -33.61], [-70.59, -33.52], [-70.79, -33.39], [-70.73, -33.36]]
-[provinces.CL-0011] # Talagante, Melipilla, Buin
-seeds = [[-70.93, -33.66], [-71.22, -33.69], [-70.74, -33.73]]
+[provinces.CL-0011] # Talagante, Melipilla, Buin, and the upper Maipo valley (Pirque, San Jose de Maipo; PR #40 review)
+seeds = [[-70.93, -33.66], [-71.22, -33.69], [-70.74, -33.73], [-70.55, -33.67], [-70.35, -33.64]]
 [provinces.CL-0020] # Castro, Ancud, Chaiten, Palena
 seeds = [[-73.77, -42.48], [-73.82, -41.87], [-72.71, -42.92], [-71.80, -43.62]]
 [provinces.CO-0001] # Chapinero, Usaquen, the centre

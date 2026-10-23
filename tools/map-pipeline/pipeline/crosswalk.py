@@ -65,6 +65,8 @@ MIN_NAME_LEN = 4
 # A seed outside every block snaps to the nearest block only within this many degrees (about
 # 5 km); a further one is another region's city and is dropped, and the QA report lists it (D688).
 SNAP_MAX_DEG = 0.05
+# A province's land reaches a block across water this narrow (degrees, about 10 km; D694).
+REACH_WATER_DEG = 0.1
 # Blocks this close (degrees, about 300 m: the simplified lines' seams) touch, for the gap fill
 # that gives an unclaimed block only to a province whose land touches it (D691).
 TOUCH_DEG = 0.003
@@ -362,6 +364,51 @@ def apply_rebuilds(out, hints, sources, a1):
                 continue
             best = max(keys, key=lambda k: (part.boundary.intersection(out[k]["geometry"].buffer(1e-6)).length, k))
             out[best]["geometry"] = shapely.make_valid(shapely.union_all([out[best]["geometry"], part]))
+
+
+# A detached part of a carved or split region under this share of the region's area is a sliver
+# the carve's lines left (D694).
+SLIVER_SHARE = 0.1
+
+
+def merge_region_slivers(out) -> None:
+    """D694 (PR #40 review): a carve or split can leave a detached piece of a region behind (the
+    old Mechi zone's edge in Province No. 5, Souss-Massa-Draa south of the Draa-Tafilalet
+    polygon, West Kordofan beyond the Abyei box). A part of a region the carves or splits touched,
+    not its largest and under SLIVER_SHARE of its area, goes to the region of the same country it
+    shares the longest edge with; an island piece, touching no other region, stays."""
+    touched = sorted(k for k, m in out.items() if m.get("geometry") is not None
+                     and any(w in m["note"] for w in ("carve", "less ", "split", "Voronoi cell")))
+    for key in touched:
+        m = out[key]
+        g = m["geometry"]
+        parts = sorted(getattr(g, "geoms", [g]), key=lambda q: -q.area)
+        if len(parts) < 2:
+            continue
+        country = key.split(":")[0]
+        keep = [parts[0]]
+        for part in parts[1:]:
+            if part.geom_type != "Polygon" or part.area >= SLIVER_SHARE * g.area:
+                keep.append(part)
+                continue
+            ring = part.boundary
+            best, best_len = None, 0.0
+            for other in sorted(out):
+                om = out[other]
+                if other == key or other.split(":")[0] != country or om.get("geometry") is None:
+                    continue
+                if not om["geometry"].intersects(part.buffer(1e-6)):
+                    continue
+                shared = ring.intersection(om["geometry"].boundary.buffer(1e-6)).length
+                if shared > best_len:
+                    best, best_len = other, shared
+            if best is None:
+                keep.append(part)
+                continue
+            out[best]["geometry"] = shapely.make_valid(shapely.union_all([out[best]["geometry"], part]))
+            out[best]["note"] += f"; plus a sliver of {key} (D694)"
+            m["note"] += f"; a sliver to {best} (D694)"
+        m["geometry"] = shapely.make_valid(shapely.union_all(keep))
 
 
 def apply_splits(out, hints):
@@ -1074,6 +1121,10 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids
         tree = blocks.sindex
         nbrs = {r.unit_id: [ids[i] for i in sorted(tree.query(r.geometry.buffer(TOUCH_DEG), predicate="intersects"))
                             if ids[i] != r.unit_id] for r in blocks.itertuples()}
+        # reach also crosses a narrow river or strait (D694: the St Lawrence between Quebec City
+        # and Levis), up to REACH_WATER_DEG
+        near = {r.unit_id: [ids[i] for i in sorted(tree.query(r.geometry.buffer(REACH_WATER_DEG), predicate="intersects"))
+                            if ids[i] != r.unit_id] for r in blocks.itertuples()}
         owner = {u: {pid} for pid, us in whole.items() for u in us}
         for u, owners in split.items():
             owner[u] = set(owners)
@@ -1086,7 +1137,7 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids
                 seen, stack, reach = {r.unit_id}, [r.unit_id], False
                 while stack and not reach:
                     u = stack.pop()
-                    for v in nbrs[u]:
+                    for v in near[u]:
                         if v in seen or pid not in owner.get(v, set()):
                             continue
                         if v in anchored:
@@ -1177,6 +1228,7 @@ def run(region: config.Region) -> None:
         apply_carves(regions, match_hints, sources)
         apply_rebuilds(regions, match_hints, sources, a1)
         apply_splits(regions, match_hints)
+        merge_region_slivers(regions)
     # QA (D682): each country's Natural Earth land that no region of it covers after the
     # aliases, carves and splits (a replaced old unit's leftover, a seam between sources)
     gaps = []

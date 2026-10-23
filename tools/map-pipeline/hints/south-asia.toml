@@ -6,7 +6,7 @@ watch = ["MDV", "BTN", "IN-0064", "IN-0065", "IN-0066", "IN-0092", "PK-0033", "P
 notes = [
     "AFG: Natural Earth has two units named Parwan: AFG-1772 (Charikar, Bagram) and AFG-1769 (the Panjshir valley); both go to Parwan-Kapisa-Panjshir (D687).",
     "Kashmir (IN-0064 to IN-0066, PK-0033, PK-0034) follows the line of control, which is also our province files' split: Jammu and Kashmir and Ladakh are India's, Gilgit-Baltistan and Azad Kashmir Pakistan's; Natural Earth's Siachen unit is drawn with Ladakh. Aksai Chin stays Chinese (no province of ours claims it) and IN-0092 Arunachal Pradesh is India's.",
-    "NPL: Natural Earth still has Nepal's 14 old zones, so the 7 provinces are cut from geoBoundaries' 77 districts (public domain, NPL ADM2). Its file names Siraha and Parsa as second Saptari and Bara units and lacks Rupandehi and Dailekh, which therefore stay with Province No. 5.",
+    "NPL: Natural Earth still has Nepal's 14 old zones, so the 7 provinces are cut from geoBoundaries' 77 districts (public domain, NPL ADM2). Its file names Siraha and Parsa as second Saptari and Bara units and names Rupandehi \"Nawalapur\" and gives Nawalparasi as one unit, so Rupandehi and all of Nawalparasi (Nawalpur, Gandaki's plains district, too) stay with Province No. 5, and it lacks Dailekh, which stays there as well.",
     "BGD:Mymensingh, a division since 2015, is cut from Dhaka with the geoBoundaries districts Mymensingh, Netrakona, Jamalpur and Sherpur.",
 ]
 
@@ -44,7 +44,9 @@ units = ["Sindhuli", "Ramechhap", "Dolakha", "Sindhupalchok", "Kabherepalanchok"
 from = ["NPL:Province No. 5"]
 
 [carve."NPL:Gandaki"]
-units = ["Gorkha", "Lamjung", "Tanahu", "Synagja", "Kaski", "Manang", "Mustang", "Myagdi", "Parbat", "Baglung", "Nawalapur"]
+# geoBoundaries' "Nawalapur" is Rupandehi (Butwal, Bhairahawa, Lumbini) and its "Nawalparasi" both halves of the
+# old district, so neither comes to Gandaki: Nawalpur (Nawalparasi East) stays with Province No. 5 (D694)
+units = ["Gorkha", "Lamjung", "Tanahu", "Synagja", "Kaski", "Manang", "Mustang", "Myagdi", "Parbat", "Baglung"]
 from = ["NPL:Province No. 5"]
 
 [carve."NPL:Karnali"]
@@ -145,13 +147,7 @@ seeds = [[72.64, 23.22], [72.68, 23.16], [72.38, 22.99]]
 [provinces.IN-0050] # Bhuj, Mundra, Kandla, Palanpur, Mehsana, Patan, Himmatnagar
 seeds = [[69.67, 23.25], [69.72, 22.84], [70.22, 23.03], [72.43, 24.17], [72.38, 23.60], [72.12, 23.85], [72.97, 23.60]]
 
-# PR #39 review (D691): Nawalpur, Gandaki Province's plains district, joins Gandaki Hills, which it
-# touches (it had gone to Pokhara beyond them)
-[provinces.NP-0009] # Nawalpur
-units = ["Nawalapur"]
-add = true
 
 # D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
 [review.exclave_ok]
 "BD-0012" = "Bandarban's southern tip, cut off by Cox's Bazar in geoBoundaries' simplified lines"
-"NP-0010" = "a piece of Natural Earth's old Mechi zone, in the east, that the geoBoundaries district carves for Nepal's provinces leave to Province No. 5 (D683)"

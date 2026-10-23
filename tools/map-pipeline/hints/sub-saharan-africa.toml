@@ -257,11 +257,14 @@ units = ["Lobito", "Benguela"]
 # D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
 [review.exclave_ok]
 "ET-0022" = "Benishangul-Gumuz is in parts (the Kamashi zone lies apart; Natural Earth's unit has four)"
-"SD-0016" = "a corner of West Kordofan cut off by the Abyei builder box (SD-0017)"
-"SD-0019" = "geoBoundaries' North Jebel Marra locality, given with Kebkabiya, touches it only through another province"
 "TD-0014" = "the region joins Sila (Goz Beida) and Wadi Fira (Biltine), which Ouaddai separates"
 
 # PR #39 review (D690): Addis Ababa's point is in its own region, so it no longer snaps onto the
 # special zone round it; the zone's towns seed it
 [provinces.ET-0013] # Sebeta, Burayu, Sululta, Legetafo, Dukem, Bishoftu
 seeds = [[38.62, 8.92], [38.65, 9.08], [38.73, 9.18], [38.90, 9.07], [38.90, 8.80], [38.98, 8.75]]
+
+# PR #40 review: North Jebel Marra locality touches El Fasher's land, not Kebkabiya's
+[provinces.SD-0018] # North Jebel Marra
+units = ["Shamal Jabal Marrah"]
+add = true
