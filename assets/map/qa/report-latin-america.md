@@ -49,11 +49,11 @@ _Written by `tools/map-pipeline/run.py --region latin-america` (pipeline pb-1). 
 | ... VGB | 1 |
 | Regions matched | 308 of 308 |
 | Provinces by method: admin1 | 269 |
-| Provinces by method: admin2 | 98 |
+| Provinces by method: admin2 | 95 |
 | Provinces by method: admin3 | 0 |
-| Provinces by method: voronoi | 25 |
+| Provinces by method: voronoi | 28 |
 | Flagged for review (confidence < 0.6) | 0 |
-| Placed by a builder hint (`hints/latin-america.toml`) | 13 |
+| Placed by a builder hint (`hints/latin-america.toml`) | 17 |
 | Tiny (under 64 px) | 42 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
 | More than one part (islands, exclaves) | 141 |
@@ -64,9 +64,11 @@ _Written by `tools/map-pipeline/run.py --region latin-america` (pipeline pb-1). 
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 7 |
 | Admin-1 units left without a province | 0 |
-| Sea links with a province of this file | 33 |
+| Sea links with a province of this file | 19 |
+| City probe points (fail on a mismatch; D686) | 58 pass, 0 mismatch, 7 listed |
+| Metro reach scan rows (listed; D686) | 1 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 0 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
@@ -86,7 +88,11 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 | geoBoundaries gbOpen PRI ADM2 (United States Census Bureau, MAF/TIGER) | Public Domain | yes |
 | geoBoundaries gbOpen VEN ADM2 (Efrain Porto Tapiquen Geografia, SIG y Estudios Ambientales) | Open Data Commons Open Database License 1.0 | no: refused: ODbL in license (Open Data Commons Open Database License 1.0); Voronoi path |
 
-Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0 and OGL-UK 3.0; a region whose country has no allowed ADM2 is split by Voronoi.
+Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0, OGL-UK 3.0, Data licence Germany Attribution 2.0, Etalab 2.0, Spain's INE licence, Singapore ODL 1.0 and Korea OGL Type 1 (D685); a region whose country has no allowed ADM2 is split by Voronoi.
+
+Provenance to check (for Logan; these files pass the allowlist and are used):
+
+- CRI ADM2: public domain or CC0, but geoBoundaries names Wikimedia as the source (Wikimedia maps are often CC BY-SA)
 
 ## Low-confidence rows for review
 
@@ -100,6 +106,9 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 |---|---|---|
 | BO-0002 | Altiplano-Lake Titicaca | seeds: point -68.68,-16.05 (hint); point -69.04,-16.57 (hint) (snapped to land); point -69.09,-16.17 (hint); point -69.25,-15.5 (hint); 11 whole admin2 units |
 | BO-0013 | Chuquisaca Chaco | seeds: point -63.73,-19.87 (hint); point -63.96,-19.8 (hint); 6 whole admin2 units |
+| BR-0001 | Sao Paulo Centro-Faria Lima | seeds: point -46.63,-23.55 (hint); point -46.66,-23.56 (hint); point -46.69,-23.57 (hint); point -46.7,-23.565 (hint); point -46.73,-23.58 (hint); unit Barueri (hint); unit Osasco (hint); 9 whole admin2 units, split: São Paulo |
+| BR-0002 | Sao Paulo Zona Leste-Guarulhos | seeds: point -46.4,-23.55 (hint); point -46.47,-23.54 (hint); point -46.56,-23.52 (hint); point -46.62,-23.48 (hint); unit Guarulhos (hint); 10 whole admin2 units, split: São Paulo |
+| BR-0003 | ABC Paulista-Zona Sul | seeds: place Santo André; point -46.7,-23.65 (hint); point -46.7,-23.82 (hint); unit Diadema; unit Santo André at place Santo André; 13 whole admin2 units, split: São Paulo |
 | BR-0010 | Rio Centro-Zona Sul | seeds: point -43.18,-22.91 (hint); point -43.19,-22.97 (hint); point -43.23,-22.9 (hint); 0 whole admin2 units, split: Rio de Janeiro |
 | BR-0011 | Barra-Zona Oeste | seeds: point -43.36,-22.94 (hint); point -43.37,-23.0 (hint); point -43.47,-22.88 (hint); point -43.69,-22.92 (hint); 2 whole admin2 units, split: Rio de Janeiro |
 | CL-0010 | Santiago Poniente-Sur | seeds: point -70.58,-33.61 (hint); point -70.59,-33.52 (hint); point -70.73,-33.36 (hint); point -70.76,-33.51 (hint); point -70.79,-33.39 (hint); 0 whole parts, 1 split |
@@ -109,8 +118,9 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | CO-0002 | Bogota Sur-Occidente | seeds: point -74.14,4.68 (hint); point -74.14,4.7 (hint); point -74.15,4.63 (hint); point -74.16,4.51 (hint); point -74.19,4.62 (hint); 0 whole admin2 units, split: Bogotá, D.c. |
 | CR-0001 | San Jose Centro | seeds: point -84.08,9.93 (hint); 10 whole admin2 units |
 | PE-0001 | Lima Centro-San Isidro | seeds: point -77.03,-12.05 (hint); point -77.03,-12.1 (hint); point -77.03,-12.12 (hint); 0 whole admin2 units, split: Lima |
-| PE-0002 | Lima Norte-Este | seeds: point -76.89,-12.03 (hint); point -77.0,-11.98 (hint); point -77.06,-11.94 (hint); point -77.07,-11.99 (hint); 3 whole admin2 units, split: Lima |
-| VE-0012 | Arco Minero | seeds: point -61.11,4.6 (hint); point -61.14,6.05 (hint) (snapped to land); point -61.83,7.35 (hint); point -62.85,6.24 (hint); 0 whole parts, 1 split |
+| PE-0002 | Lima Norte-Este | seeds: point -76.89,-12.03 (hint); point -77.0,-11.98 (hint); point -77.06,-11.94 (hint); point -77.07,-11.99 (hint); 1 whole admin2 units, split: Lima |
+| PE-0003 | Lima Provinces-Huacho | seeds: point -75.91,-12.46 (hint); point -76.38,-11.84 (hint); point -76.39,-13.08 (hint); point -77.21,-11.5 (hint); point -77.27,-11.57 (hint); point -77.61,-11.11 (hint); 9 whole admin2 units |
+| VE-0012 | Arco Minero | seeds: point -61.11,4.6 (hint); point -61.83,7.35 (hint); point -62.85,6.24 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point -61.14,6.05 (hint) |
 
 ## Tiny provinces (click targets)
 
@@ -165,10 +175,105 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 
 Checked from the bitmap, independently of the crosswalk: the Natural Earth place a province's own name names lands on that province (and, for a Metro province, near its middle and in its largest 4-connected part; a part joined to the largest only across 3 or fewer water pixels, like San Francisco and Marin across the Golden Gate, is listed but allowed), its Metro's city lands on a province of that Metro, and each key city lands on one of its provinces (key-cities.csv).
 
-All anchors land on their own provinces.
+| Check | Province | Place | Expected | Got |
+|---|---|---|---|---|
+| own name elsewhere (allowed) | BR-0032 | Caxias | BR-0032 (Caxias do Sul; the Caxias point is the town in Maranhao) | BR-0049 |
+
+No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
+
+## Natural Earth labels
+
+Natural Earth units whose capital another region of the country names (in a province name or notes) while their own region does not: the sign of NE giving units each other's names, as in Eritrea and Guyana (D687). Each row fails the step unless `[review] ne_label_ok` in the hints names the region.
+
+| Region | NE unit | Capital | Named by |
+|---|---|---|---|
+| COL:Meta (checked) | Meta (COL-1425) | San José del Guaviare | COL:Amazonas-Guainia-Guaviare-Vaupes-Vichada |
+| VEN:Distrito Capital (checked) | Distrito Capital (VEN-43) | Los Teques | VEN:Miranda |
+
+## City probe
+
+Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is in this file, looked up in province-index.png: a point passes on its pixel or one of the 8 around it (D686). The step fails on a mismatch.
+
+| Point | Expected | Got | Result |
+|---|---|---|---|
+| Campinas (-47.06, -22.9) | ? | BR-0005 | listed |
+| La Plata (-57.95, -34.92) | ? | AR-0005 | listed |
+| Pachacamac (-76.86, -12.23) | ? | PE-0002 | listed |
+| Paulo de Faria (-49.4, -20.03) | ? | BR-0009 | listed |
+| Sao Jose do Rio Preto (-49.38, -20.81) | ? | BR-0009 | listed |
+| Villa El Salvador (-76.94, -12.21) | ? | PE-0001 | listed |
+| Zipaquira (-74.0, 5.02) | ? | CO-0004 | listed |
+| Antigua (-61.84, 17.12) | AG | AG-0001 | on it |
+| Ate (-76.92, -12.03) | PE-0002 | PE-0002 | on it |
+| Avellaneda (-58.36, -34.66) | AR-0004 | AR-0001 | within a pixel |
+| Barbados (-59.6, 13.1) | BB | BB-0001 | on it |
+| Barra da Tijuca (-43.37, -23.0) | BR-0011 | BR-0011 | on it |
+| Barueri (-46.88, -23.51) | BR-0001 | BR-0001 | on it |
+| Basseterre (-62.72, 17.3) | KN | KN-0001 | nearest across water |
+| Belmopan (-88.77, 17.25) | BZ-0002 | BZ-0002 | on it |
+| Bogota Chapinero (-74.06, 4.65) | CO-0001 | CO-0001 | on it |
+| Callao (-77.13, -12.06) | PE-0004 | PE-0004 | on it |
+| Canete (-76.39, -13.08) | PE-0003 | PE-0003 | on it |
+| Caracas (-66.9, 10.49) | VE | VE-0001 | on it |
+| Casa Rosada (-58.37, -34.608) | AR-0001 | AR-0001 | on it |
+| Castries (-60.98, 14.01) | LC | LC-0001 | on it |
+| Chia (-74.06, 4.86) | CO-0003 | CO-0003 | on it |
+| Chosica (-76.69, -11.94) | PE-0002 | PE-0002 | on it |
+| Comas (-77.05, -11.94) | PE-0002 | PE-0002 | on it |
+| Copacabana (-43.19, -22.97) | BR-0010 | BR-0010 | on it |
+| Duque de Caxias (-43.31, -22.79) | BR-0012 | BR-0012 | on it |
+| El Dorado (-74.14, 4.7) | CO-0002 | CO-0002 | on it |
+| Essequibo Anna Regina (-58.49, 7.26) | GY-0002 | GY-0002 | nearest across water |
+| Ezeiza (-58.54, -34.82) | AR-0004 | AR-0004 | on it |
+| Faria Lima (-46.69, -23.58) | BR-0001 | BR-0001 | on it |
+| Grenada (-61.68, 12.12) | GD | GD-0001 | on it |
+| Guarulhos airport (-46.47, -23.43) | BR-0002 | BR-0002 | on it |
+| Havana (-82.37, 23.13) | CU | CU-0001 | on it |
+| Huacho (-77.6, -11.11) | PE-0003 | PE-0003 | on it |
+| Huarochiri Matucana (-76.38, -11.84) | PE-0003 | PE-0003 | on it |
+| Itaquera (-46.45, -23.54) | BR-0002 | BR-0002 | on it |
+| Jorge Chavez (-77.11, -12.02) | PE-0004 | PE-0002 | within a pixel |
+| Kennedy Bogota (-74.15, 4.63) | CO-0002 | CO-0002 | on it |
+| Kingstown SVG (-61.22, 13.16) | VC | VC-0001 | nearest across water |
+| Lima Plaza de Armas (-77.03, -12.046) | PE-0001 | PE-0001 | on it |
+| Lima San Isidro (-77.035, -12.1) | PE-0001 | PE-0001 | on it |
+| Maipu (-70.76, -33.51) | CL-0010 | CL-0010 | on it |
+| Moreno AR (-58.79, -34.65) | AR-0003 | AR-0003 | on it |
+| Niteroi (-43.1, -22.88) | BR-0013 | BR-0013 | on it |
+| Osasco (-46.79, -23.53) | BR-0001 | BR-0001 | on it |
+| Palermo BA (-58.43, -34.58) | AR-0001 | AR-0001 | on it |
+| Pilar AR (-58.91, -34.46) | AR-0002 | AR-0002 | on it |
+| Pinheiros (-46.7, -23.565) | BR-0001 | BR-0001 | on it |
+| Quilmes (-58.27, -34.72) | AR-0004 | AR-0004 | on it |
+| Rio Centro (-43.18, -22.9) | BR-0010 | BR-0010 | nearest across water |
+| Roseau (-61.39, 15.3) | DM | DM-0001 | on it |
+| San Isidro AR (-58.53, -34.47) | AR-0002 | AR-0002 | on it |
+| San Juan de Lurigancho (-77.0, -11.98) | PE-0002 | PE-0002 | on it |
+| San Justo La Matanza (-58.56, -34.68) | AR-0003 | AR-0003 | on it |
+| Santiago (-70.65, -33.45) | CL | CL-0009 | on it |
+| Santiago Las Condes (-70.57, -33.41) | CL-0009 | CL-0009 | on it |
+| Santo Andre (-46.53, -23.66) | BR-0003 | BR-0003 | on it |
+| Santos (-46.33, -23.96) | BR-0004 | BR-0004 | on it |
+| Sao Bernardo (-46.565, -23.69) | BR-0003 | BR-0003 | on it |
+| Sao Paulo Paulista (-46.656, -23.56) | BR-0001 | BR-0001 | on it |
+| Sao Paulo Se (-46.63, -23.55) | BR-0001 | BR-0001 | on it |
+| Soacha (-74.22, 4.58) | CO-0003 | CO-0003 | on it |
+| Tigre (-58.58, -34.42) | AR-0002 | AR-0002 | on it |
+| Usaquen (-74.03, 4.7) | CO-0001 | CO-0001 | on it |
+| Yauyos (-75.91, -12.46) | PE-0003 | PE-0003 | on it |
+
+## Metro reach
+
+Metro provinces whose centroid is over 80 km from their Metro's city, that are over 4 times the Metro's median and 250 px, and regions where Metro provinces hold over 30% of the land beside rural ones (the D612 error). Listed for review; a Metro made of whole metropolitan units can be large by design.
+
+| Check | Province or region | Detail |
+|---|---|---|
+| Metro share of a region | CHL: Santiago Metropolitan | Metro provinces hold 36% of 911 px beside 1 rural |
 
 ## Known for review
 
+- ECU: Natural Earth 10m swaps the names of Napo and Tungurahua (Ambato lies in its "Napo" unit, Tena in "Tungurahua"); the regions take the units by where they lie (D687).
+- GUY: Natural Earth 10m gives Guyana's regions each other's names (Georgetown lies in its "East Berbice-Corentyne" unit); the regions take the units by where they lie, checked against Georgetown, Anna Regina, Bartica, Linden, Lethem, Mabaruma and New Amsterdam (D687).
 - PA-0002 Panama Oeste: Natural Earth still has it inside Panama province; it is cut off west of the canal by a builder-drawn line.
 - GUY: the Essequibo provinces (VEN claims) and Berbice (SUR claims) follow Guyana's de facto lines, which the province file also gives them.
 
@@ -195,11 +300,11 @@ Drawn by our own province files (decision C), not the sources' de facto lines: e
 
 | Province | Name | Country | Contested | Region drawn from |
 |---|---|---|---|---|
-| GY-0002 | Essequibo Coast-West Demerara | GUY | VEN claims | Pomeroon-Supenaam and Essequibo Islands-West Demerara: alias hint -> GY-PM, GY-ES |
+| GY-0002 | Essequibo Coast-West Demerara | GUY | VEN claims | Pomeroon-Supenaam and Essequibo Islands-West Demerara: alias hint -> GY-CU, GY-DE |
 | GY-0003 | Barima-Waini | GUY | VEN claims | Barima-Waini: alias hint -> GY-BA |
-| GY-0004 | Cuyuni-Mazaruni-Potaro | GUY | VEN claims | Cuyuni-Mazaruni and Potaro-Siparuni: alias hint -> GY-CU, GY-PT |
-| GY-0005 | Rupununi | GUY | VEN claims | Upper Takutu-Upper Essequibo: alias hint -> GY-UT |
-| GY-0006 | Berbice-Linden | GUY | SUR claims | Berbice and Upper Demerara: alias hint -> GY-EB, GY-MA, GY-UD |
+| GY-0004 | Cuyuni-Mazaruni-Potaro | GUY | VEN claims | Cuyuni-Mazaruni and Potaro-Siparuni: alias hint -> GY-PM, GY-PT |
+| GY-0005 | Rupununi | GUY | VEN claims | Upper Takutu-Upper Essequibo: alias hint -> GY-UD |
+| GY-0006 | Berbice-Linden | GUY | SUR claims | Berbice and Upper Demerara: alias hint -> GY-MA, GY-ES, GY-UT |
 | BZ-0002 | Belmopan-Cayo | BLZ | GTM claims | Cayo: name match 100 |
 | BZ-0003 | Stann Creek-Toledo | BLZ | GTM claims | Stann Creek-Toledo: name parts (2 pieces, worst match 100) |
 
@@ -238,9 +343,9 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | ECU: Azuay-Canar | name parts (2 pieces, worst match 100) | 2 |
 | ECU: Imbabura-Carchi | name parts (2 pieces, worst match 100) | 2 |
 | ECU: Loja-Zamora Chinchipe | name parts (2 pieces, worst match 100) | 2 |
-| ECU: Napo-Pastaza-Morona Santiago | name parts (3 pieces, worst match 100) | 3 |
+| ECU: Napo-Pastaza-Morona Santiago | alias hint -> ECU-1290, EC-Y, EC-S | 3 |
 | ECU: Sucumbios-Orellana | name parts (2 pieces, worst match 100) | 2 |
-| ECU: Tungurahua-Cotopaxi-Chimborazo-Bolivar | name parts (4 pieces, worst match 100) | 4 |
+| ECU: Tungurahua-Cotopaxi-Chimborazo-Bolivar | alias hint -> ECU-1289, EC-X, EC-H, EC-B | 4 |
 | GTM: Alta Verapaz-Baja Verapaz | name parts (2 pieces, worst match 100) | 2 |
 | GTM: Jutiapa-Jalapa-Santa Rosa | name parts (3 pieces, worst match 100) | 3 |
 | GTM: Quetzaltenango-Totonicapan | name parts (2 pieces, worst match 100) | 2 |
@@ -249,10 +354,11 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | GTM: Solola-Quiche | name parts (2 pieces, worst match 100) | 2 |
 | GTM: Zacapa-Chiquimula-El Progreso | name parts (3 pieces, worst match 100) | 3 |
 | GUY: Barima-Waini | alias hint -> GY-BA | 1 |
-| GUY: Berbice and Upper Demerara | alias hint -> GY-EB, GY-MA, GY-UD | 3 |
-| GUY: Cuyuni-Mazaruni and Potaro-Siparuni | alias hint -> GY-CU, GY-PT | 2 |
-| GUY: Pomeroon-Supenaam and Essequibo Islands-West Demerara | alias hint -> GY-PM, GY-ES | 2 |
-| GUY: Upper Takutu-Upper Essequibo | alias hint -> GY-UT | 1 |
+| GUY: Berbice and Upper Demerara | alias hint -> GY-MA, GY-ES, GY-UT | 3 |
+| GUY: Cuyuni-Mazaruni and Potaro-Siparuni | alias hint -> GY-PM, GY-PT | 2 |
+| GUY: Demerara-Mahaica | alias hint -> GY-EB | 1 |
+| GUY: Pomeroon-Supenaam and Essequibo Islands-West Demerara | alias hint -> GY-CU, GY-DE | 2 |
+| GUY: Upper Takutu-Upper Essequibo | alias hint -> GY-UD | 1 |
 | HND: Atlantida-Islas de la Bahia | name parts (2 pieces, worst match 100) | 2 |
 | HND: Choluteca-Valle | name parts (2 pieces, worst match 100) | 2 |
 | HND: Colon-Gracias a Dios | name parts (2 pieces, worst match 100) | 2 |
@@ -321,7 +427,7 @@ None.
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-AR-0001-UY-0004, AR-0002-UY-0004, AR-0004-UY-0004, AR-0005-UY-0004, AR-0024-AR-0025, AR-0034-UY-0004, BR-0006-BR-0007, BR-0010-BR-0013, BR-0010-BR-0015, BR-0044-BR-0066, BS-0001-BS-0004, BS-0002-BS-0003, BS-0003-BS-0004, CU-0003-CU-0013, CU-0004-CU-0013, DM-0001-FR-0040, DM-0001-FR-0041, DO-0004-DO-0011, FR-0041-LC-0001, GD-0001-VC-0001, LC-0001-VC-0001, NI-0003-SV-0007, PA-0006-PA-0009, PE-0001-PE-0004, PR-0001-PR-0005, SR-0001-SR-0004, SR-0003-SR-0004, TT-0001-VE-0019, TT-0002-TT-0005, TT-0004-VE-0010, VE-0004-VE-0005, VE-0006-VE-0013, VE-0019-VE-0020
+AR-0001-UY-0004, AR-0002-UY-0004, AR-0004-UY-0004, AR-0005-UY-0004, BR-0010-BR-0013, BS-0001-BS-0004, BS-0002-BS-0003, BS-0003-BS-0004, CU-0003-CU-0013, CU-0004-CU-0013, DM-0001-FR-0040, DM-0001-FR-0041, FR-0041-LC-0001, GD-0001-VC-0001, LC-0001-VC-0001, TT-0001-VE-0019, TT-0002-TT-0005, TT-0004-VE-0010, VE-0019-VE-0020
 
 ## Small provinces
 

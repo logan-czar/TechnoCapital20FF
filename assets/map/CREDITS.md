@@ -10,7 +10,7 @@ Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
 
 Runfola, D. et al. (2020) geoBoundaries: A global database of political administrative boundaries. PLoS ONE 15(4): e0231866. https://doi.org/10.1371/journal.pone.0231866 Release v6.0.0 (github.com/wmgeolab/geoBoundaries, commit 1289e40), gbOpen.
 
-Boundary files used (58), with their original sources and licenses:
+Boundary files used (60), with their original sources and licenses:
 
 | Country | Level | Source | License | Year |
 |---|---|---|---|---|
@@ -30,8 +30,10 @@ Boundary files used (58), with their original sources and licenses:
 | COL | ADM2 | Departamento Administrativo Nacional de Estadistica | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2020 |
 | CRI | ADM2 | geoBoundaries, Wikimedia Commons | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2020 |
 | CZE | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2010 |
+| DEU | ADM2 | Federal Agency for Cartography and Geodesy | Data license Germany - Attribution - Version 2.0 | 2021 |
 | DNK | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2018 |
 | EGY | ADM2 | OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS) | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
+| ESP | ADM2 | El Instituto Nacional de Estadstica | National Institute of Statistics (INE) Data License | 2018 |
 | GHA | ADM2 | USAID Ghana HPNO, Ghana Statistical Service | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2019 |
 | IDN | ADM2 | Badan Pusat Statistik (BPS - Statistics Indonesia), World Food Programme, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | IRQ | ADM2 | Iraq Central Statistics Office, OCHA Iraq | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2021 |
@@ -74,5 +76,9 @@ Boundary files used (58), with their original sources and licenses:
 | ZWE | ADM2 | Zimbabwe National Statistics Agency (ZIMSTAT www.zimstat.co.zw) Central Statistics Office, OCHA ROSEA | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 
 Contains information licensed under the Open Government Licence - Canada (https://open.canada.ca/en/open-government-licence-canada), from Statistics Canada.
+
+Germany: © GeoBasis-DE / BKG (Federal Agency for Cartography and Geodesy), licensed under the Data licence Germany - attribution - version 2.0 (https://www.govdata.de/dl-de/by-2-0).
+
+Spain: fuente INE (Instituto Nacional de Estadística), used under the INE data licence (https://www.ine.es/aviso_legal).
 
 Province shapes are derived works: admin units dissolved and clipped to Natural Earth regions, and synthetic Voronoi splits where no permissively licensed admin units exist. A few lines (contested land drawn by the game's own province files, cities and islands the sources lack) are drawn by the builder; they are listed in the QA reports.

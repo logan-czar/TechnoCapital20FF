@@ -25,18 +25,20 @@ _Written by `tools/map-pipeline/run.py --region south-asia` (pipeline pb-1). Sou
 | Provinces by method: admin3 | 0 |
 | Provinces by method: voronoi | 104 |
 | Flagged for review (confidence < 0.6) | 0 |
-| Placed by a builder hint (`hints/south-asia.toml`) | 40 |
+| Placed by a builder hint (`hints/south-asia.toml`) | 43 |
 | Tiny (under 64 px) | 19 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
 | More than one part (islands, exclaves) | 68 |
 | Coastal flag differs from the CSV | 10 |
 | Small for their region (not Metro, under 5% of the region's mean) | 0 |
-| Voronoi-split blocks where one province takes 75% or more | 3 |
+| Voronoi-split blocks where one province takes 75% or more | 4 |
 | Places named in a province's name or notes that lie in another province | 2 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 6 |
 | Admin-1 units left without a province | 0 |
-| Sea links with a province of this file | 9 |
+| Sea links with a province of this file | 3 |
+| City probe points (fail on a mismatch; D686) | 60 pass, 0 mismatch, 0 listed |
+| Metro reach scan rows (listed; D686) | 1 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 0 |
 
@@ -53,7 +55,12 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 | geoBoundaries gbOpen NPL ADM2 (geoBoundaries, Wikimedia Commons) | Public Domain | yes |
 | geoBoundaries gbOpen PAK ADM2 (geoBoundaries, Wikipedia) | Public Domain | yes |
 
-Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0 and OGL-UK 3.0; a region whose country has no allowed ADM2 is split by Voronoi.
+Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0, OGL-UK 3.0, Data licence Germany Attribution 2.0, Etalab 2.0, Spain's INE licence, Singapore ODL 1.0 and Korea OGL Type 1 (D685); a region whose country has no allowed ADM2 is split by Voronoi.
+
+Provenance to check (for Logan; these files pass the allowlist and are used):
+
+- NPL ADM2: public domain or CC0, but geoBoundaries names Wikimedia as the source (Wikimedia maps are often CC BY-SA)
+- PAK ADM2: public domain or CC0, but geoBoundaries names Wikimedia as the source (Wikimedia maps are often CC BY-SA)
 
 ## Low-confidence rows for review
 
@@ -85,13 +92,16 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | IN-0029 | Hyderabad Old City-Secunderabad | seeds: point 78.47,17.36 (hint); point 78.5,17.44 (hint); 0 whole parts, 1 split |
 | IN-0030 | Cyberabad-HITEC City | seeds: point 78.35,17.44 (hint); point 78.38,17.45 (hint); 0 whole parts, 1 split |
 | IN-0031 | Hyderabad East-Genome Valley | seeds: point 78.26,17.53 (hint); point 78.45,17.52 (hint); point 78.61,17.63 (hint); 0 whole parts, 1 split |
+| IN-0032 | Rest of Telangana | seeds: point 77.9,17.34 (hint); point 77.99,16.74 (hint); point 78.09,18.67 (hint); point 78.53,19.67 (hint); point 79.13,18.44 (hint); point 79.27,17.05 (hint); point 79.45,18.87 (hint); point 79.59,17.97 (hint); point 80.15,17.25 (hint); point 80.62,17.55 (hint); 0 whole parts, 1 split |
 | IN-0033 | Chennai Central-OMR | seeds: point 80.22,13.01 (hint); point 80.23,12.9 (hint); point 80.25,13.05 (hint); 0 whole admin1 units, split: Tamil Nadu |
-| IN-0034 | Chennai North-Ennore | seeds: point 80.27,13.17 (hint); point 80.29,13.1 (hint); point 80.32,13.25 (hint); 0 whole admin1 units, split: Tamil Nadu |
+| IN-0034 | Chennai North-Ennore | seeds: point 79.91,13.14 (hint); point 80.27,13.17 (hint); point 80.29,13.1 (hint); point 80.32,13.25 (hint); 0 whole admin1 units, split: Tamil Nadu |
 | IN-0035 | Sriperumbudur-Oragadam | seeds: point 79.85,12.83 (hint); point 79.95,12.97 (hint); point 80.03,12.79 (hint); 0 whole admin1 units, split: Tamil Nadu |
 | IN-0040 | Kolkata City-Salt Lake | seeds: point 88.35,22.57 (hint); point 88.42,22.58 (hint); 0 whole parts, 1 split |
 | IN-0041 | Howrah-Hooghly | seeds: point 88.31,22.59 (hint); point 88.33,22.68 (hint); point 88.39,22.9 (hint); 0 whole parts, 1 split |
 | IN-0042 | North 24 Parganas-Barrackpore | seeds: point 88.38,22.77 (hint); point 88.43,22.65 (hint); point 88.48,22.72 (hint); point 88.89,23.04 (hint) (snapped to land); 0 whole parts, 1 split |
 | IN-0043 | South 24 Parganas-Sundarbans | seeds: point 88.08,21.65 (hint); point 88.17,22.47 (hint); point 88.19,22.19 (hint); point 88.43,22.47 (hint); point 88.8,21.9 (hint); 3 whole parts, 1 split |
+| IN-0049 | Gandhinagar-Sanand | seeds: point 72.38,22.99 (hint); point 72.64,23.22 (hint); point 72.68,23.16 (hint); 0 whole admin1 units, split: Gujarat |
+| IN-0050 | Kutch-North Gujarat | seeds: point 69.67,23.25 (hint); point 69.72,22.84 (hint); point 70.22,23.03 (hint); point 72.12,23.85 (hint); point 72.38,23.6 (hint); point 72.43,24.17 (hint); point 72.97,23.6 (hint); 0 whole admin1 units, split: Gujarat |
 | IN-0053 | Surat City | seeds: point 72.83,21.17 (hint); 0 whole admin1 units, split: Gujarat |
 | IN-0054 | Hazira-Kamrej | seeds: point 72.64,21.1 (hint); point 73.0,21.28 (hint); 0 whole admin1 units, split: Gujarat |
 | IN-0077 | Keonjhar-Rourkela | seeds: point 84.86,22.25 (hint); point 85.39,22.1 (hint); point 85.58,21.63 (hint); 0 whole parts, 1 split |
@@ -129,7 +139,7 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | PK-0021 | Islamabad | 50 | 1 | 5760.5, 1813.5 |
 | PK-0003 | Karachi Korangi-Port Qasim | 56 | 1 | 5629.5, 2031.5 |
 | IN-0002 | North-East-West Delhi | 60 | 1 | 5850.5, 1937.5 |
-| IN-0034 | Chennai North-Ennore | 61 | 2 | 5920.5, 2305.5 |
+| IN-0034 | Chennai North-Ennore | 61 | 2 | 5919.5, 2305.5 |
 | LK-0002 | Gampaha-Negombo | 61 | 1 | 5916.5, 2447.5 |
 
 ## Anchor cities
@@ -138,8 +148,90 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 
 All anchors land on their own provinces.
 
+## Natural Earth labels
+
+Natural Earth units whose capital another region of the country names (in a province name or notes) while their own region does not: the sign of NE giving units each other's names, as in Eritrea and Guyana (D687). Each row fails the step unless `[review] ne_label_ok` in the hints names the region.
+
+None.
+
+## City probe
+
+Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is in this file, looked up in province-index.png: a point passes on its pixel or one of the 8 around it (D686). The step fails on a mismatch.
+
+| Point | Expected | Got | Result |
+|---|---|---|---|
+| Ahmedabad (72.58, 23.03) | IN-0048 | IN-0048 | on it |
+| Andheri (72.85, 19.12) | IN-0014 | IN-0014 | on it |
+| Bengaluru (77.59, 12.97) | IN | IN-0023 | on it |
+| Bhuj Kutch (69.67, 23.25) | IN-0050 | IN-0050 | on it |
+| Chandni Chowk (77.23, 28.656) | IN-0002 | IN-0002 | on it |
+| Clifton (67.03, 24.81) | PK-0001 | PK-0001 | on it |
+| Delhi Parliament (77.21, 28.617) | IN-0001 | IN-0001 | on it |
+| Dhaka Motijheel (90.42, 23.73) | BD-0001 | BD-0001 | on it |
+| Faridabad (77.31, 28.41) | IN-0003 | IN-0003 | on it |
+| Gandhinagar (72.64, 23.22) | IN-0049 | IN-0049 | on it |
+| Gazipur (90.42, 24.0) | BD-0003 | BD-0003 | on it |
+| Ghaziabad (77.44, 28.67) | IN-0005 | IN-0005 | on it |
+| Gilgit (74.31, 35.92) | PK-0033 | PK-0033 | on it |
+| Gulshan Dhaka (90.41, 23.79) | BD-0001 | BD-0001 | on it |
+| Gulshan-e-Iqbal (67.09, 24.92) | PK-0004 | PK-0004 | on it |
+| Gurugram (77.03, 28.46) | IN-0003 | IN-0003 | on it |
+| Himmatnagar (72.97, 23.6) | IN-0050 | IN-0050 | on it |
+| JNPT (72.95, 18.95) | IN-0016 | IN-0016 | on it |
+| Jammu (74.86, 32.73) | IN-0065 | IN-0065 | on it |
+| Jinnah airport (67.16, 24.9) | PK-0004 | PK-0004 | on it |
+| Kanchipuram (79.7, 12.83) | IN-0035 | IN-0035 | on it |
+| Karachi II Chundrigar (67.01, 24.85) | PK-0001 | PK-0002 | within a pixel |
+| Kargil (76.13, 34.56) | IN-0066 | IN-0066 | on it |
+| Keamari (66.97, 24.83) | PK-0002 | PK-0002 | nearest across water |
+| Khammam (80.15, 17.25) | IN-0032 | IN-0032 | on it |
+| Kolkata (88.36, 22.57) | IN | IN-0040 | on it |
+| Korangi (67.12, 24.83) | PK-0003 | PK-0003 | on it |
+| Lahore DHA (74.4, 31.48) | PK-0010 | PK-0010 | on it |
+| Lahore Mall (74.33, 31.56) | PK-0009 | PK-0009 | on it |
+| Leh (77.58, 34.16) | IN-0066 | IN-0066 | on it |
+| Mahbubnagar (77.99, 16.74) | IN-0032 | IN-0032 | on it |
+| Male (73.51, 4.175) | MV | MV-0001 | on it |
+| Mehsana (72.38, 23.6) | IN-0050 | IN-0050 | on it |
+| Mirpur (90.37, 23.81) | BD-0002 | BD-0002 | on it |
+| Mirpur AJK (73.75, 33.15) | PK-0034 | PK-0034 | on it |
+| Mumbai BKC (72.865, 19.065) | IN-0013 | IN-0014 | within a pixel |
+| Mumbai Nariman Pt (72.82, 18.925) | IN-0013 | IN-0013 | nearest across water |
+| Muzaffarabad (73.47, 34.37) | PK-0034 | PK-0034 | on it |
+| Nalgonda (79.27, 17.05) | IN-0032 | IN-0032 | on it |
+| Narayanganj (90.5, 23.62) | BD-0004 | BD-0004 | on it |
+| Narela (77.09, 28.85) | IN-0002 | IN-0002 | on it |
+| Noida (77.33, 28.57) | IN-0005 | IN-0005 | on it |
+| Old Dhaka (90.4, 23.71) | BD-0002 | BD-0002 | on it |
+| Orangi (66.99, 24.95) | PK-0002 | PK-0002 | on it |
+| Palanpur (72.43, 24.17) | IN-0050 | IN-0050 | on it |
+| Port Qasim (67.33, 24.78) | PK-0003 | PK-0003 | on it |
+| Powai (72.905, 19.12) | IN-0015 | IN-0014 | within a pixel |
+| Sanand (72.38, 22.99) | IN-0049 | IN-0049 | on it |
+| Sangareddy (78.09, 17.62) | IN-0031,IN-0030 | IN-0031 | on it |
+| Savar (90.26, 23.86) | BD-0005 | BD-0005 | on it |
+| Sheikhupura (73.98, 31.71) | PK-0011 | PK-0011 | on it |
+| Siachen (77.1, 35.4) | IN-0066 | IN-0066 | on it |
+| Skardu (75.63, 35.3) | PK-0033 | PK-0033 | on it |
+| Srinagar (74.8, 34.08) | IN-0064 | IN-0064 | on it |
+| Thane (72.98, 19.2) | IN-0015 | IN-0015 | on it |
+| Tiruvallur (79.91, 13.14) | IN-0034,IN-0036 | IN-0034 | on it |
+| Tongi (90.4, 23.89) | BD-0003 | BD-0003 | on it |
+| Vashi Navi Mumbai (73.0, 19.07) | IN-0016 | IN-0016 | on it |
+| Vellore (79.13, 12.92) | IN-0036 | IN-0036 | on it |
+| Vikarabad (77.9, 17.34) | IN-0032 | IN-0032 | on it |
+
+## Metro reach
+
+Metro provinces whose centroid is over 80 km from their Metro's city, that are over 4 times the Metro's median and 250 px, and regions where Metro provinces hold over 30% of the land beside rural ones (the D612 error). Listed for review; a Metro made of whole metropolitan units can be large by design.
+
+| Check | Province or region | Detail |
+|---|---|---|
+| large for its Metro | PK-0011 Lahore Industrial-Sheikhupura | 583 px, the Metro's median is 40 px (Metro Lahore) |
+
 ## Known for review
 
+- AFG: Natural Earth has two units named Parwan: AFG-1772 (Charikar, Bagram) and AFG-1769 (the Panjshir valley); both go to Parwan-Kapisa-Panjshir (D687).
 - Kashmir (IN-0064 to IN-0066, PK-0033, PK-0034) follows the line of control, which is also our province files' split: Jammu and Kashmir and Ladakh are India's, Gilgit-Baltistan and Azad Kashmir Pakistan's; Natural Earth's Siachen unit is drawn with Ladakh. Aksai Chin stays Chinese (no province of ours claims it) and IN-0092 Arunachal Pradesh is India's.
 - NPL: Natural Earth still has Nepal's 14 old zones, so the 7 provinces are cut from geoBoundaries' 77 districts (public domain, NPL ADM2). Its file names Siraha and Parsa as second Saptari and Bara units and lacks Rupandehi and Dailekh, which therefore stay with Province No. 5.
 - BGD:Mymensingh, a division since 2015, is cut from Dhaka with the geoBoundaries districts Mymensingh, Netrakona, Jamalpur and Sherpur.
@@ -187,10 +279,10 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | AFG: Herat-Badghis | name parts (2 pieces, worst match 100) | 2 |
 | AFG: Jowzjan-Faryab-Sar-e Pol | name parts (3 pieces, worst match 100) | 3 |
 | AFG: Kunar-Laghman-Nuristan | name parts (3 pieces, worst match 100) | 3 |
-| AFG: Kunduz-Baghlan-Takhar | name parts (3 pieces, worst match 100); plus unclaimed Parwan | 4 |
+| AFG: Kunduz-Baghlan-Takhar | name parts (3 pieces, worst match 100) | 3 |
 | AFG: Logar-Wardak | name parts (2 pieces, worst match 100) | 2 |
 | AFG: Paktia-Khost-Paktika | name parts (3 pieces, worst match 100) | 3 |
-| AFG: Parwan-Kapisa-Panjshir | name parts (3 pieces, worst match 100) | 2 |
+| AFG: Parwan-Kapisa-Panjshir | alias hint -> AFG-1772, AFG-1769, AF-KAP | 3 |
 | AFG: Uruzgan-Zabul-Daykundi | name parts (3 pieces, worst match 100) | 3 |
 | BGD: Dhaka | name match 100; less BGD:Mymensingh (carve) | 1 |
 | BGD: Mymensingh | no admin-1 match (best unit 40, group 0); carve: BGD units Mymensingh, Netrakona, Jamalpur, Sherpur from BGD:Dhaka | 0 |
@@ -234,7 +326,7 @@ None.
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-BD-0008-BD-0013, BD-0013-BD-0022, BD-0015-BD-0022, BD-0019-BD-0023, IN-0014-IN-0016, IN-0039-LK-0008, IN-0051-IN-0053, PK-0001-PK-0005, PK-0002-PK-0005
+BD-0013-BD-0022, BD-0015-BD-0022, IN-0039-LK-0008
 
 ## Small provinces
 
@@ -248,7 +340,8 @@ Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share
 |---|---|---|
 | BGD:Rangpur | Rangpur | BD-0026 78%, BD-0027 22% |
 | IND:Delhi | part-0 | IN-0002 76%, IN-0001 24% |
-| IND:Haryana | part-0 | IN-0004 88%, IN-0003 12% |
+| IND:Haryana | part-0 | IN-0004 94%, IN-0003 6% |
+| IND:Telangana | part-0 | IN-0032 92%, IN-0031 5%, IN-0029 3%, IN-0030 1% |
 
 ## Named places outside their province
 

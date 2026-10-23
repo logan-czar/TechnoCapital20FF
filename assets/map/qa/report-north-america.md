@@ -34,9 +34,11 @@ _Written by `tools/map-pipeline/run.py --region north-america` (pipeline pb-1). 
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 0 |
 | Admin-1 units left without a province | 0 |
-| Sea links with a province of this file | 36 |
+| Sea links with a province of this file | 15 |
+| City probe points (fail on a mismatch; D686) | 33 pass, 0 mismatch, 0 listed |
+| Metro reach scan rows (listed; D686) | 8 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 4 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
@@ -50,7 +52,7 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 | geoBoundaries gbOpen MEX ADM2 (World Bank) | Creative Commons Attribution 4.0 (CC BY 4.0) | yes |
 | geoBoundaries gbOpen USA ADM2 (United States Census Bureau, MAF/TIGER Database) | Public Domain | yes |
 
-Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0 and OGL-UK 3.0; a region whose country has no allowed ADM2 is split by Voronoi.
+Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0, OGL-UK 3.0, Data licence Germany Attribution 2.0, Etalab 2.0, Spain's INE licence, Singapore ODL 1.0 and Korea OGL Type 1 (D685); a region whose country has no allowed ADM2 is split by Voronoi.
 
 ## Low-confidence rows for review
 
@@ -131,8 +133,72 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 | Check | Province | Place | Expected | Got |
 |---|---|---|---|---|
 | city part across water | US-0018 | San Francisco | the largest 4-connected part | a smaller part, joined to it across water only |
+| own name elsewhere (allowed) | US-0086 | Manhattan | US-0086 (Natural Earth's only Manhattan is the Kansas town; New York City's point is checked as the Metro) | US-0054 |
+| city on the edge | US-0130 | Laredo | US-0130 | MX-0030 |
+| own name elsewhere (allowed) | MX-0001 | Cuauhtémoc | MX-0001 (Cuauhtemoc borough of Mexico City, not Cuauhtemoc in Chihuahua) | MX-0022 |
 
 No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
+
+## Natural Earth labels
+
+Natural Earth units whose capital another region of the country names (in a province name or notes) while their own region does not: the sign of NE giving units each other's names, as in Eritrea and Guyana (D687). Each row fails the step unless `[review] ne_label_ok` in the hints names the region.
+
+None.
+
+## City probe
+
+Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is in this file, looked up in province-index.png: a point passes on its pixel or one of the 8 around it (D686). The step fails on a mismatch.
+
+| Point | Expected | Got | Result |
+|---|---|---|---|
+| Adak (-176.64, 51.88) | US | US-0003 | on it |
+| Attu (173.18, 52.93) | US | US-0003 | nearest across water |
+| Brooklyn (-73.95, 40.65) | US-0087 | US-0087 | on it |
+| Chicago Loop (-87.63, 41.88) | US-0044 | US-0044 | on it |
+| Coyoacan (-99.16, 19.35) | MX-0003 | MX-0003 | on it |
+| Downtown Toronto (-79.38, 43.65) | CA-0001 | CA-0001 | on it |
+| Ecatepec (-99.05, 19.6) | MX-0004 | MX-0004 | on it |
+| Guadalajara centro (-103.35, 20.67) | MX-0007 | MX-0007 | on it |
+| Hollywood (-118.33, 34.1) | US-0011 | US-0010 | within a pixel |
+| Hyde Park Chicago (-87.59, 41.79) | US-0045 | US-0045 | on it |
+| Iztapalapa (-99.06, 19.36) | MX-0003 | MX-0003 | on it |
+| Lancaster CA (-118.14, 34.69) | US-0013 | US-0013 | on it |
+| Little Diomede (-168.93, 65.75) | US | US-0004 | on it |
+| Long Beach (-118.19, 33.77) | US-0012 | US-0012 | on it |
+| Los Altos Tepatitlan (-102.76, 20.82) | MX-0010 | MX-0010 | on it |
+| Markham (-79.34, 43.86) | CA-0003 | CA-0003 | on it |
+| Midtown Manhattan (-73.98, 40.75) | US-0086 | US-0086 | on it |
+| Mississauga (-79.64, 43.59) | CA-0002 | CA-0002 | on it |
+| Naucalpan (-99.24, 19.48) | MX-0005 | MX-0005 | on it |
+| Nezahualcoyotl (-99.01, 19.4) | MX-0004 | MX-0004 | on it |
+| Oshawa (-78.86, 43.9) | CA-0004 | CA-0004 | on it |
+| Polanco (-99.19, 19.433) | MX-0002 | MX-0005 | within a pixel |
+| Poughkeepsie (-73.92, 41.7) | US-0090 | US-0090 | on it |
+| Santa Fe MX (-99.26, 19.36) | MX-0002 | MX-0002 | on it |
+| Schaumburg (-88.08, 42.03) | US-0046 | US-0046 | on it |
+| Surrey BC (-122.85, 49.19) | CA-0027 | CA-0027 | on it |
+| Tequila (-103.84, 20.88) | MX-0010 | MX-0010 | on it |
+| Tlalnepantla (-99.22, 19.54) | MX-0005 | MX-0005 | on it |
+| Tlaquepaque (-103.31, 20.64) | MX-0009 | MX-0009 | on it |
+| Van Nuys (-118.45, 34.19) | US-0013 | US-0013 | on it |
+| Vancouver downtown (-123.12, 49.28) | CA-0026 | CA-0026 | on it |
+| Zapopan (-103.39, 20.72) | MX-0008 | MX-0008 | on it |
+| Zocalo (-99.133, 19.433) | MX-0001 | MX-0001 | on it |
+
+## Metro reach
+
+Metro provinces whose centroid is over 80 km from their Metro's city, that are over 4 times the Metro's median and 250 px, and regions where Metro provinces hold over 30% of the land beside rural ones (the D612 error). Listed for review; a Metro made of whole metropolitan units can be large by design.
+
+| Check | Province or region | Detail |
+|---|---|---|
+| large for its Metro | US-0046 DuPage-Northwest Suburbs | 418 px, the Metro's median is 71 px (Metro Chicago) |
+| large for its Metro | US-0013 San Fernando Valley | 661 px, the Metro's median is 115 px (Metro Los Angeles-Long Beach) |
+| far from its Metro city | US-0033 Palm Beach | centroid 110 km from Miami (Metro Miami) |
+| far from its Metro city | US-0027 Fairfield County | centroid 81 km from New York (Metro New York) |
+| far from its Metro city | US-0089 Long Island | centroid 84 km from New York (Metro New York) |
+| far from its Metro city | US-0005 Phoenix-Central | centroid 174 km from Phoenix (Metro Phoenix) |
+| Metro share of a region | USA: Arizona | Metro provinces hold 37% of 16883 px beside 1 rural |
+| Metro share of a region | USA: New Jersey | Metro provinces hold 53% of 1274 px beside 1 rural |
 
 ## Known for review
 
@@ -159,6 +225,7 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 |---|---|---|
 | MEX: Ciudad de Mexico | alias hint -> MX-DIF | 1 |
 | MEX: Yucatan | name match 100; plus unclaimed MEX+99? | 2 |
+| USA: Alaska | name match 100; carve: builder polygon from no region | 1 |
 
 ## Land without a province
 
@@ -170,7 +237,7 @@ None.
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-CA-0001-CA-0006, CA-0001-US-0092, CA-0006-US-0109, CA-0007-CA-0012, CA-0009-US-0098, CA-0009-US-0099, CA-0010-US-0090, CA-0014-CA-0059, CA-0014-US-0068, CA-0021-CA-0059, CA-0022-CA-0025, CA-0024-CA-0025, CA-0027-CA-0028, CA-0028-US-0140, CA-0047-CA-0050, CA-0047-CA-0055, CA-0048-CA-0055, CA-0049-CA-0050, CA-0051-CA-0055, CA-0053-PM-0001, CA-0058-GL-0003, MX-0023-MX-0026, RU-0070-US-0004, US-0018-US-0020, US-0027-US-0089, US-0028-US-0089, US-0029-US-0082, US-0029-US-0083, US-0044-US-0050, US-0063-US-0138, US-0068-US-0070, US-0080-US-0087, US-0082-US-0089, US-0087-US-0088, US-0088-US-0089, US-0089-US-0111
+CA-0001-US-0092, CA-0009-US-0098, CA-0014-US-0068, CA-0024-CA-0025, CA-0028-US-0140, CA-0047-CA-0055, CA-0048-CA-0055, CA-0049-CA-0050, CA-0051-CA-0055, CA-0053-PM-0001, CA-0058-GL-0003, US-0027-US-0089, US-0028-US-0089, US-0088-US-0089, US-0089-US-0111
 
 ## Small provinces
 

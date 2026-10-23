@@ -31,10 +31,10 @@ _Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-1). Source of
 | ... TUN | 11 |
 | ... YEM | 16 |
 | Regions matched | 241 of 241 |
-| Provinces by method: admin1 | 196 |
+| Provinces by method: admin1 | 198 |
 | Provinces by method: admin2 | 36 |
 | Provinces by method: admin3 | 0 |
-| Provinces by method: voronoi | 99 |
+| Provinces by method: voronoi | 97 |
 | Flagged for review (confidence < 0.6) | 0 |
 | Placed by a builder hint (`hints/mena.toml`) | 80 |
 | Tiny (under 64 px) | 73 |
@@ -47,9 +47,11 @@ _Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-1). Source of
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 10 |
 | Admin-1 units left without a province | 0 |
-| Sea links with a province of this file | 44 |
+| Sea links with a province of this file | 20 |
+| City probe points (fail on a mismatch; D686) | 43 pass, 0 mismatch, 1 listed |
+| Metro reach scan rows (listed; D686) | 2 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 0 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
@@ -74,7 +76,12 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 
 Refused as not on the allowlist (for Logan: attribution-only government licences are refused until allowed, D601): Other - Direct Permission.
 
-Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0 and OGL-UK 3.0; a region whose country has no allowed ADM2 is split by Voronoi.
+Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0, OGL-UK 3.0, Data licence Germany Attribution 2.0, Etalab 2.0, Spain's INE licence, Singapore ODL 1.0 and Korea OGL Type 1 (D685); a region whose country has no allowed ADM2 is split by Voronoi.
+
+Provenance to check (for Logan; these files pass the allowlist and are used):
+
+- ISR ADM2: public domain or CC0, but geoBoundaries names Wikimedia as the source (Wikimedia maps are often CC BY-SA)
+- JOR ADM2: public domain or CC0, but geoBoundaries names Wikimedia as the source (Wikimedia maps are often CC BY-SA)
 
 ## Low-confidence rows for review
 
@@ -92,14 +99,14 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | AE-0004 | Al Ain | seeds: point 55.76,24.21 (hint); point 55.77,24.06 (hint); 0 whole parts, 1 split |
 | AE-0005 | Ruwais-Al Dhafra | seeds: point 51.8,24.1 (hint) (snapped to land); point 52.27,23.97 (hint); point 52.73,24.11 (hint); point 53.7,24.15 (hint) (snapped to land); 6 whole parts, 1 split |
 | AE-0006 | Liwa-Habshan | seeds: point 53.1,23.4 (hint); point 53.62,23.83 (hint); point 53.73,23.13 (hint); point 54.0,23.3 (hint); 0 whole parts, 1 split |
-| AE-0007 | Das-Zirku Islands | seeds: point 52.87,25.15 (hint) (snapped to land); point 53.07,24.88 (hint); 1 whole parts |
+| AE-0007 | Das-Zirku Islands | seeds: point 53.07,24.88 (hint); 1 whole parts; dropped (over SNAP_MAX_DEG off the region): point 52.87,25.15 (hint) |
 | AE-0008 | Dubai Core | seeds: point 55.27,25.2 (hint); point 55.31,25.26 (hint) (snapped to land); 1 whole parts, 1 split |
 | AE-0010 | Dubai Marina-Jebel Ali | seeds: point 55.03,24.99 (hint) (snapped to land); point 55.14,25.08 (hint) (snapped to land); point 55.21,25.17 (hint) (snapped to land); 0 whole parts, 1 split |
 | AE-0013 | Hamriyah-Al Dhaid | seeds: point 55.53,25.47 (hint); point 55.88,25.29 (hint) (snapped to land); 0 whole admin1 units, split: Sharjah |
 | AE-0014 | Khor Fakkan-Kalba | seeds: point 56.34,25.34 (hint); point 56.35,25.07 (hint); 0 whole admin1 units, split: Sharjah |
 | DZ-0001 | Algiers Centre-Hydra | seeds: point 3.03,36.74 (hint); point 3.06,36.75 (hint); 0 whole parts, 1 split |
-| DZ-0002 | Algiers East-Rouiba | seeds: point 3.18,36.72 (hint); point 3.21,36.69 (hint); point 3.33,36.74 (hint) (snapped to land); 0 whole parts, 1 split |
-| DZ-0003 | Algiers West-Cheraga | seeds: point 2.83,36.69 (hint) (snapped to land); point 2.87,36.75 (hint) (snapped to land); point 2.96,36.76 (hint) (snapped to land); point 3.04,36.79 (hint); 0 whole parts, 1 split |
+| DZ-0002 | Algiers East-Rouiba | seeds: point 3.18,36.72 (hint); point 3.21,36.69 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 3.33,36.74 (hint) |
+| DZ-0003 | Algiers West-Cheraga | seeds: point 2.96,36.76 (hint) (snapped to land); point 3.04,36.79 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 2.87,36.75 (hint), point 2.83,36.69 (hint) |
 | DZ-0016 | Arzew-Bethioua | seeds: point -0.26,35.81 (hint); point -0.32,35.85 (hint); 0 whole parts, 1 split |
 | EG-0005 | 6th of October-Sheikh Zayed | seeds: point 30.93,29.97 (hint); point 30.98,30.05 (hint); 3 whole admin2 units |
 | EG-0007 | Shubra el-Kheima | seeds: point 31.24,30.13 (hint); 2 whole admin2 units |
@@ -115,12 +122,12 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | IQ-0001 | Karkh-Green Zone | seeds: point 44.33,33.3 (hint); point 44.37,33.31 (hint); 0 whole admin2 units, split: Al-Karkh |
 | IQ-0002 | Rusafa-Old Baghdad | seeds: point 44.4,33.32 (hint); point 44.42,33.34 (hint); 0 whole admin2 units, split: Al-Karkh, Al-Thawra |
 | IQ-0003 | Sadr City-New Baghdad | seeds: point 44.45,33.38 (hint); point 44.5,33.3 (hint); 1 whole admin2 units, split: Al-Thawra |
-| IQ-0004 | Baghdad Belt | seeds: point 44.07,33.29 (hint) (snapped to land); point 44.24,33.52 (hint) (snapped to land); point 44.35,33.06 (hint) (snapped to land); point 44.4,33.67 (hint) (snapped to land); point 44.58,33.1 (hint) (snapped to land); 0 whole admin2 units, split: Al-Karkh, Al-Thawra |
+| IQ-0004 | Baghdad Belt | seeds: point 44.58,33.1 (hint) (snapped to land); 0 whole admin2 units, split: Al-Karkh; dropped (over SNAP_MAX_DEG off the region): point 44.07,33.29 (hint), point 44.24,33.52 (hint), point 44.35,33.06 (hint), point 44.4,33.67 (hint) |
 | IQ-0006 | Rumaila-Majnoon | seeds: point 47.27,30.87 (hint); point 47.4,30.45 (hint); point 47.6,31.02 (hint); point 47.7,30.39 (hint); 3 whole admin2 units, split: Al-Zubair |
 | IR-0001 | North Tehran-Shemiran | seeds: point 51.41,35.77 (hint); point 51.45,35.8 (hint); 0 whole parts, 1 split |
 | IR-0002 | Central Tehran-Grand Bazaar | seeds: point 51.41,35.62 (hint); point 51.42,35.68 (hint); 0 whole parts, 1 split |
 | IR-0003 | West Tehran-Eslamshahr | seeds: point 50.98,35.46 (hint); point 51.02,35.65 (hint); point 51.23,35.55 (hint); point 51.33,35.7 (hint); 0 whole parts, 1 split |
-| IR-0018 | Bandar Lengeh-Islands | seeds: point 53.98,26.53 (hint); point 54.88,26.56 (hint); point 55.03,25.87 (hint); point 55.3,26.25 (hint) (snapped to land); 8 whole parts, 1 split |
+| IR-0018 | Bandar Lengeh-Islands | seeds: point 53.98,26.53 (hint); point 54.88,26.56 (hint); point 55.03,25.87 (hint); 6 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 55.3,26.25 (hint) |
 | JO-0001 | Amman West-Abdali | seeds: point 35.85,31.95 (hint); point 35.9,31.96 (hint); 4 whole admin2 units |
 | KW-0002 | Shuwaikh-Sulaibikhat | seeds: point 47.84,29.33 (hint) (snapped to land); point 47.93,29.35 (hint); 0 whole parts, 1 split |
 | KW-0007 | Burgan | seeds: point 47.95,28.95 (hint); 0 whole parts, 1 split |
@@ -128,12 +135,12 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | KW-0009 | Jahra | seeds: point 47.66,29.34 (hint); point 47.7,29.45 (hint); 0 whole parts, 1 split |
 | KW-0010 | Raudhatain-Bubiyan | seeds: point 47.7,29.83 (hint); point 47.7,30.07 (hint); point 48.2,29.8 (hint); 2 whole parts, 1 split |
 | LY-0001 | Tripoli Centre-Port | seeds: point 13.18,32.89 (hint); 0 whole parts, 1 split |
-| LY-0002 | Tajura-Janzour | seeds: point 13.01,32.82 (hint) (snapped to land); point 13.27,32.66 (hint); point 13.37,32.88 (hint); 0 whole parts, 1 split |
+| LY-0002 | Tajura-Janzour | seeds: point 13.27,32.66 (hint); point 13.37,32.88 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 13.01,32.82 (hint) |
 | LY-0008 | Sirte | seeds: point 16.59,31.21 (hint); 0 whole parts, 1 split |
 | LY-0009 | Ras Lanuf-Es Sider | seeds: point 18.35,30.63 (hint); point 18.57,30.5 (hint) (snapped to land); 0 whole parts, 1 split |
 | LY-0011 | Jalu-Sarir | seeds: point 20.4,28.6 (hint); point 21.55,29.03 (hint); point 23.5,27.5 (hint); 0 whole parts, 1 split |
 | MA-0002 | Casablanca East-Mohammedia | seeds: point -7.39,33.69 (hint); point -7.55,33.6 (hint); 0 whole admin1 units, split: Grand Casablanca |
-| MA-0003 | El Jadida-Jorf Lasfar | seeds: point -8.5,33.25 (hint) (snapped to land); point -8.63,33.12 (hint) (snapped to land); 0 whole admin1 units, split: Chaouia - Ouardigha |
+| MA-0003 | El Jadida-Jorf Lasfar | seeds: point -8.5,33.25 (hint); point -8.63,33.12 (hint); 1 whole admin1 units |
 | MA-0009 | Al Hoceima-Rif | seeds: point -3.93,35.25 (hint); point -5.27,35.17 (hint); point -5.6,34.8 (hint) (snapped to land); 1 whole parts, 1 split |
 | OM-0003 | Sohar | seeds: point 56.71,24.35 (hint); 0 whole parts, 1 split |
 | OM-0004 | Saham-Shinas | seeds: point 56.47,24.74 (hint); point 56.56,24.53 (hint); point 56.89,24.17 (hint); point 57.08,23.98 (hint); 0 whole parts, 1 split |
@@ -157,15 +164,15 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | SA-0016 | Ras Tanura-Qatif | seeds: point 50.01,26.56 (hint) (snapped to land); point 50.16,26.64 (hint) (snapped to land); 0 whole parts, 1 split |
 | SA-0018 | Abqaiq-Ghawar | seeds: point 49.2,24.2 (hint); point 49.3,25.0 (hint); point 49.67,25.94 (hint); 0 whole parts, 1 split |
 | SA-0020 | Shaybah-Rub al Khali | seeds: point 51.5,20.5 (hint); point 54.0,22.51 (hint); 0 whole parts, 1 split |
-| SA-0022 | Yanbu | seeds: point 38.06,24.09 (hint); point 38.2,23.9 (hint) (snapped to land); 0 whole parts, 1 split |
+| SA-0022 | Yanbu | seeds: point 38.06,24.09 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 38.2,23.9 (hint) |
 | SA-0023 | Al Ula-Khaybar | seeds: point 37.92,26.62 (hint); point 39.29,25.69 (hint); point 40.88,23.5 (hint); 0 whole parts, 1 split |
 | SA-0025 | Bisha | seeds: point 42.61,20.0 (hint); point 43.62,19.53 (hint); 0 whole parts, 1 split |
-| SA-0026 | Muhayil-Tihama | seeds: point 41.55,18.21 (hint) (snapped to land); point 42.05,18.54 (hint); point 42.27,18.22 (hint); 0 whole parts, 1 split |
+| SA-0026 | Muhayil-Tihama | seeds: point 42.05,18.54 (hint); point 42.27,18.22 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 41.55,18.21 (hint) |
 | SA-0027 | Buraidah | seeds: point 43.98,26.33 (hint); 0 whole parts, 1 split |
 | SA-0028 | Unaizah-Ar Rass | seeds: point 43.5,25.87 (hint); point 43.73,25.96 (hint); point 43.99,26.08 (hint); 0 whole parts, 1 split |
 | SA-0029 | Jazan Port-Economic City | seeds: point 42.12,16.73 (hint); point 42.56,16.89 (hint); 2 whole parts, 1 split |
 | SA-0030 | Sabya-Abu Arish | seeds: point 42.62,17.15 (hint); point 42.83,16.97 (hint); point 42.95,16.6 (hint); 0 whole parts, 1 split |
-| SA-0032 | NEOM-Duba | seeds: point 34.95,29.0 (hint) (snapped to land); point 35.2,28.0 (hint); point 35.7,27.35 (hint); 7 whole parts, 1 split |
+| SA-0032 | NEOM-Duba | seeds: point 35.2,28.0 (hint); point 35.7,27.35 (hint); 7 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 34.95,29.0 (hint) |
 
 ## Tiny provinces (click targets)
 
@@ -180,7 +187,7 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | KW-0002 | Shuwaikh-Sulaibikhat | 1 | 1 | 5186.5, 1922.5 |
 | QA-0002 | Msheireb-Old Doha | 1 | 1 | 5268.5, 2022.5 |
 | IL-0004 | Tel Aviv-Yafo | 2 | 1 | 4887.5, 1853.5 |
-| IQ-0002 | Rusafa-Old Baghdad | 2 | 2 | 5106.5, 1821.5 |
+| IQ-0002 | Rusafa-Old Baghdad | 2 | 2 | 5107.5, 1823.5 |
 | LB-0001 | Beirut | 2 | 1 | 4903.5, 1807.5 |
 | QA-0001 | West Bay-Corniche | 2 | 1 | 5267.5, 2020.5 |
 | QA-0003 | Doha Airport-Al Thumama | 2 | 2 | 5269.5, 2022.5 |
@@ -202,9 +209,9 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | PS-0005 | Gaza City | 8 | 3 | 4880.5, 1867.5 |
 | IQ-0003 | Sadr City-New Baghdad | 10 | 1 | 5107.5, 1820.5 |
 | EG-0009 | Alexandria Centre-East | 11 | 1 | 4778.5, 1875.5 |
-| IQ-0001 | Karkh-Green Zone | 11 | 1 | 5105.5, 1820.5 |
+| IQ-0001 | Karkh-Green Zone | 11 | 1 | 5104.5, 1823.5 |
 | KW-0004 | Farwaniya-Airport | 11 | 1 | 5186.5, 1924.5 |
-| IQ-0004 | Baghdad Belt | 12 | 1 | 5103.5, 1822.5 |
+| IQ-0004 | Baghdad Belt | 12 | 1 | 5108.5, 1825.5 |
 | PS-0006 | Khan Yunis-Rafah | 12 | 1 | 4876.5, 1872.5 |
 | QA-0004 | Al Rayyan-Education City | 12 | 1 | 5264.5, 2021.5 |
 | IL-0007 | Petah Tikva-Rosh HaAyin | 14 | 1 | 4890.5, 1852.5 |
@@ -251,12 +258,82 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 
 Checked from the bitmap, independently of the crosswalk: the Natural Earth place a province's own name names lands on that province (and, for a Metro province, near its middle and in its largest 4-connected part; a part joined to the largest only across 3 or fewer water pixels, like San Francisco and Marin across the Golden Gate, is listed but allowed), its Metro's city lands on a province of that Metro, and each key city lands on one of its provinces (key-cities.csv).
 
-All anchors land on their own provinces.
+| Check | Province | Place | Expected | Got |
+|---|---|---|---|---|
+| city on the edge | SA-0001 | Riyadh | SA-0001 | SA-0003 |
+
+No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
+
+## Natural Earth labels
+
+Natural Earth units whose capital another region of the country names (in a province name or notes) while their own region does not: the sign of NE giving units each other's names, as in Eritrea and Guyana (D687). Each row fails the step unless `[review] ne_label_ok` in the hints names the region.
+
+None.
+
+## City probe
+
+Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is in this file, looked up in province-index.png: a point passes on its pixel or one of the 8 around it (D686). The step fails on a mismatch.
+
+| Point | Expected | Got | Result |
+|---|---|---|---|
+| Tifariti (-10.6, 26.16) | ? | MA-0019 | listed |
+| 6th of October (30.93, 29.94) | EG-0005 | EG-0005 | on it |
+| Abu Dhabi (54.37, 24.47) | AE-0001 | AE-0001 | on it |
+| Abu Musa (55.03, 25.87) | IR-0018 | IR-0018 | on it |
+| Algiers (3.06, 36.75) | DZ | DZ-0001 | on it |
+| Baghdad (44.37, 33.31) | IQ | IQ-0001 | on it |
+| Bahrain Manama (50.58, 26.22) | BH | BH-0001 | on it |
+| Bethlehem (35.2, 31.705) | PS-0004 | PS-0004 | on it |
+| Boujdour (-14.49, 26.13) | MA-0019 | MA-0019 | on it |
+| Cairo Airport (31.41, 30.12) | EG-0002 | EG-0002 | on it |
+| Cairo Tahrir (31.236, 30.044) | EG-0001 | EG-0004 | within a pixel |
+| Casablanca (-7.62, 33.59) | MA | MA-0001 | on it |
+| Dakhla (-15.93, 23.7) | MA-0020 | MA-0020 | nearest across water |
+| Diriyah (46.57, 24.73) | SA-0002 | SA-0002 | on it |
+| Dubai Downtown (55.27, 25.2) | AE-0008 | AE-0008 | on it |
+| Dubai Marina (55.14, 25.08) | AE-0010 | AE-0010 | nearest across water |
+| East Jerusalem Old City (35.235, 31.777) | IL-0002 | IL-0002 | on it |
+| Es-Semara inland (-11.0, 26.5) | MA-0019 | MA-0019 | on it |
+| Eslamshahr (51.23, 35.55) | IR-0003 | IR-0003 | on it |
+| Gaza (34.45, 31.5) | PS | PS-0005 | on it |
+| Giza pyramids (31.13, 29.98) | EG-0004 | EG-0004 | on it |
+| Halaib (36.6, 22.22) | EG-0030 | EG-0030 | on it |
+| Hebron (35.1, 31.53) | PS-0004 | PS-0004 | on it |
+| Heliopolis (31.32, 30.09) | EG-0002 | EG-0001 | within a pixel |
+| Helwan (31.33, 29.85) | EG-0003 | EG-0003 | on it |
+| Jenin (35.3, 32.46) | PS-0001 | PS-0001 | on it |
+| Jericho (35.45, 31.86) | PS-0003 | PS-0003 | on it |
+| Katzrin Golan (35.69, 32.99) | IL-0015 | IL-0015 | on it |
+| Kuwait City (47.98, 29.37) | KW | KW-0001 | nearest across water |
+| Laayoune (-13.2, 27.15) | MA-0019 | MA-0019 | on it |
+| Maadi (31.26, 29.96) | EG-0003 | EG-0003 | on it |
+| Mahbes (-9.05, 27.22) | MA-0019 | MA-0019 | on it |
+| Nablus (35.26, 32.22) | PS-0002 | PS-0002 | on it |
+| New Cairo (31.47, 30.03) | EG-0002 | EG-0002 | on it |
+| Qatar Doha (51.53, 25.29) | QA | QA-0001 | nearest across water |
+| Rafah (34.25, 31.29) | PS | PS-0006 | on it |
+| Ramallah (35.2, 31.9) | PS-0003 | PS-0003 | on it |
+| Riyadh Olaya (46.68, 24.7) | SA-0001 | SA-0001 | on it |
+| Sharjah (55.4, 25.35) | AE-0012 | AE-0012 | on it |
+| Shubra el-Kheima (31.24, 30.13) | EG-0007 | EG-0008 | within a pixel |
+| Smara (-11.66, 26.74) | MA-0019 | MA-0019 | on it |
+| Tan-Tan (-11.1, 28.44) | MA-0018 | MA-0018 | on it |
+| Tehran Bazaar (51.42, 35.67) | IR-0002 | IR-0002 | on it |
+| Tehran North (51.43, 35.8) | IR-0001 | IR-0001 | on it |
+
+## Metro reach
+
+Metro provinces whose centroid is over 80 km from their Metro's city, that are over 4 times the Metro's median and 250 px, and regions where Metro provinces hold over 30% of the land beside rural ones (the D612 error). Listed for review; a Metro made of whole metropolitan units can be large by design.
+
+| Check | Province or region | Detail |
+|---|---|---|
+| Metro share of a region | IRN: Tehran | Metro provinces hold 42% of 842 px beside 1 rural |
+| Metro share of a region | IRQ: Baghdad | Metro provinces hold 97% of 35 px beside 1 rural |
 
 ## Known for review
 
 - MAR: Natural Earth still has Morocco's 16 old regions, so the 12 new ones are built from them: Al Hoceima stays in Fes-Meknes (with Taza and Taounate), Khenifra and Khouribga stay outside Beni Mellal-Khenifra (in Fes-Meknes and Casablanca-Settat), El Jadida is in Marrakech-Safi, and Draa-Tafilalet is cut from Meknes-Tafilalet and Souss-Massa-Draa by a builder-drawn line along the High Atlas.
-- MA-0019 and MA-0020 (Western Sahara, SADR claims) follow our province file (decision C): Natural Earth's Western Sahara unit is split between Laayoune-Sakia El Hamra and Dakhla-Oued Ed-Dahab at 26 N inland and Boujdour's southern edge on the coast, by a builder-drawn line.
+- MA-0019 and MA-0020 (Western Sahara, SADR claims) follow our province file (decision C): Natural Earth's Western Sahara unit is split between Laayoune-Sakia El Hamra and Dakhla-Oued Ed-Dahab at 26 N inland and Boujdour's southern edge on the coast, by a builder-drawn line; the Western Sahara part of NE's Guelmim-Es-Semara unit (Smara, Mahbes, south of 27.67 N) goes to Laayoune-Sakia El Hamra too.
 - PSE: the West Bank and Gaza governorate groups are carved from Natural Earth's two Palestinian units with the geoBoundaries PSE governorates; the West Bank part of the Jerusalem governorate is drawn with Ramallah-Jericho. East Jerusalem (IL-0002) and the Golan Heights (IL-0015) are in Natural Earth's Israel already, as the province file has them.
 - LBN: Akkar and Baalbek-Hermel are new governorates Natural Earth merges into North Lebanon and the Beqaa; both are cut off by builder-drawn lines.
 - QA-0010 Al Shahaniya is cut from Al Rayyan by a builder-drawn line west of Doha (Al Udeid stays in Al Rayyan).
@@ -314,7 +391,7 @@ Drawn by our own province files (decision C), not the sources' de facto lines: e
 | PS-0002 | Nablus-Salfit | PSE | ISR occupies | Nablus-Salfit: no admin-1 match (best unit 35, group 0); carve: PSE units Nablus, Salfit from PSE:Ramallah-Jericho |
 | PS-0003 | Ramallah-Jericho | PSE | ISR occupies | Ramallah-Jericho: alias hint -> PS-WBK; less PSE:Bethlehem-Hebron (carve); less PSE:Jenin-Tubas-Tulkarm-Qalqilya (carve); less PSE:Nablus-Salfit (carve) |
 | PS-0004 | Hebron-Bethlehem | PSE | ISR occupies | Bethlehem-Hebron: no admin-1 match (best unit 40, group 0); carve: PSE units Bethlehem, Hebron from PSE:Ramallah-Jericho |
-| MA-0019 | Laayoune-Boujdour | MAR | SADR claims | Laayoune-Sakia El Hamra: alias hint -> MA-15, EH-X01~; less MAR:Dakhla-Oued Ed-Dahab (carve) |
+| MA-0019 | Laayoune-Boujdour | MAR | SADR claims | Laayoune-Sakia El Hamra: alias hint -> MA-15, EH-X01~; less MAR:Dakhla-Oued Ed-Dahab (carve); carve: builder polygon from MAR:Guelmim-Oued Noun |
 | MA-0020 | Dakhla | MAR | SADR claims | Dakhla-Oued Ed-Dahab: alias hint -> MA-16; carve: builder polygon from MAR:Laayoune-Sakia El Hamra |
 
 ## Region matching
@@ -366,8 +443,8 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | MAR: Dakhla-Oued Ed-Dahab | alias hint -> MA-16; carve: builder polygon from MAR:Laayoune-Sakia El Hamra | 1 |
 | MAR: Draa-Tafilalet | no admin-1 match (best unit 67, group 0); carve: builder polygon from MAR:Fes-Meknes, MAR:Souss-Massa | 0 |
 | MAR: Fes-Meknes | alias hint -> MA-05, MA-03, MA-06; less MAR:Draa-Tafilalet (carve); less MAR:Tanger-Tetouan-Al Hoceima (carve) | 3 |
-| MAR: Guelmim-Oued Noun | alias hint -> MA-14 | 1 |
-| MAR: Laayoune-Sakia El Hamra | alias hint -> MA-15, EH-X01~; less MAR:Dakhla-Oued Ed-Dahab (carve) | 2 |
+| MAR: Guelmim-Oued Noun | alias hint -> MA-14; less MAR:Laayoune-Sakia El Hamra (carve) | 1 |
+| MAR: Laayoune-Sakia El Hamra | alias hint -> MA-15, EH-X01~; less MAR:Dakhla-Oued Ed-Dahab (carve); carve: builder polygon from MAR:Guelmim-Oued Noun | 2 |
 | MAR: Marrakech-Safi | alias hint -> MA-11, MA-10; less MAR:Casablanca-Settat (carve) | 2 |
 | MAR: Rabat-Sale-Kenitra | alias hint -> MA-07, MA-02 | 2 |
 | MAR: Souss-Massa | alias hint -> MA-13; less MAR:Draa-Tafilalet (carve) | 1 |
@@ -417,7 +494,7 @@ None.
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-AE-0001-AE-0002, AE-0001-AE-0003, AE-0001-AE-0005, AE-0003-AE-0005, AE-0012-AE-0016, BH-0001-QA-0008, BH-0001-QA-0010, BH-0001-SA-0014, BH-0001-SA-0018, BH-0001-SA-0019, DJ-0003-YE-0008, DZ-0002-DZ-0003, DZ-0003-DZ-0005, EG-0015-EG-0018, EG-0017-EG-0018, EG-0029-EG-0034, EG-0034-IL-0017, EG-0034-JO-0010, EG-0034-SA-0032, EG-0034-SA-0035, ER-0006-YE-0005, ER-0006-YE-0008, ES-0010-MA-0007, GI-0001-MA-0007, IL-0004-IL-0009, IL-0006-IL-0009, IL-0006-IL-0016, IR-0017-OM-0012, IR-0018-OM-0012, KW-0001-KW-0005, KW-0001-KW-0006, KW-0001-KW-0009, KW-0001-KW-0010, KW-0002-KW-0009, KW-0003-KW-0009, LB-0003-SY-0008, LY-0001-LY-0003, QA-0001-QA-0002, QA-0001-QA-0003, QA-0002-QA-0006, QA-0003-QA-0009, QA-0010-SA-0019, TN-0001-TN-0004, YE-0009-YE-0011
+AE-0001-AE-0002, AE-0001-AE-0003, AE-0001-AE-0005, BH-0001-QA-0008, BH-0001-QA-0010, BH-0001-SA-0014, BH-0001-SA-0018, BH-0001-SA-0019, DJ-0003-YE-0008, EG-0015-EG-0018, EG-0034-JO-0010, EG-0034-SA-0032, EG-0034-SA-0035, ER-0006-YE-0005, ER-0006-YE-0008, ES-0010-MA-0007, GI-0001-MA-0007, IR-0017-OM-0012, KW-0001-KW-0010, QA-0003-QA-0009
 
 ## Small provinces
 
@@ -438,10 +515,10 @@ Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share
 | ARE:Sharjah | Sharjah | AE-0013 78%, AE-0014 12%, AE-0012 10% |
 | DZA:Oran | part-0 | DZ-0015 77%, DZ-0016 23% |
 | IRN:Khuzestan | part-0 | IR-0020 85%, IR-0021 15% |
+| IRQ:Baghdad | Al-Thawra | IQ-0003 79%, IQ-0002 21% |
 | ISR:Jerusalem District | Jerusalem | IL-0003 82%, IL-0002 9%, IL-0001 9% |
 | LBY:Al Wahat | part-0 | LY-0011 82%, LY-0010 18% |
-| LBY:Tripoli | part-0 | LY-0002 94%, LY-0001 6% |
-| MAR:Casablanca-Settat | Chaouia - Ouardigha | MA-0004 92%, MA-0003 8% |
+| LBY:Tripoli | part-0 | LY-0002 90%, LY-0001 10% |
 | OMN:Muscat | part-0 | OM-0001 93%, OM-0002 7% |
 | OMN:North Al Batinah | part-0 | OM-0004 84%, OM-0003 16% |
 | SAU:Jazan | part-2 | SA-0030 97%, SA-0029 3% |

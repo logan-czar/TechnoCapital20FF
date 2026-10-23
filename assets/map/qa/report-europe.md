@@ -65,24 +65,26 @@ _Written by `tools/map-pipeline/run.py --region europe` (pipeline pb-1). Source 
 | ... XKX | 4 |
 | Regions matched | 329 of 329 |
 | Provinces by method: admin1 | 487 |
-| Provinces by method: admin2 | 52 |
+| Provinces by method: admin2 | 67 |
 | Provinces by method: admin3 | 0 |
-| Provinces by method: voronoi | 140 |
+| Provinces by method: voronoi | 125 |
 | Flagged for review (confidence < 0.6) | 0 |
-| Placed by a builder hint (`hints/europe.toml`) | 88 |
+| Placed by a builder hint (`hints/europe.toml`) | 98 |
 | Tiny (under 64 px) | 65 |
 | Given a pixel at their interior point (no pixel centre inside) | 2 |
 | More than one part (islands, exclaves) | 239 |
 | Coastal flag differs from the CSV | 35 |
 | Small for their region (not Metro, under 5% of the region's mean) | 3 |
-| Voronoi-split blocks where one province takes 75% or more | 10 |
-| Places named in a province's name or notes that lie in another province | 11 |
+| Voronoi-split blocks where one province takes 75% or more | 14 |
+| Places named in a province's name or notes that lie in another province | 8 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 10 |
 | Admin-1 units left without a province | 1 |
-| Sea links with a province of this file | 90 |
+| Sea links with a province of this file | 58 |
+| City probe points (fail on a mismatch; D686) | 97 pass, 0 mismatch, 8 listed |
+| Metro reach scan rows (listed; D686) | 6 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 0 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 2 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
@@ -100,12 +102,12 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 | geoBoundaries gbOpen CHE ADM2 (Federal Office of Topography swisstopo) | Federal Office of Topography swisstopo License | no: refused: not in the allowlist (Federal Office of Topography swisstopo License); Voronoi path |
 | geoBoundaries gbOpen CYP ADM2 (Wikipedia, Cyprus Department of Land Registry and Geometry) | Creative Commons Attribution-ShareAlike 3.0 Unported | no: refused: ShareAlike in license (Creative Commons Attribution-ShareAlike 3.0 Unported); Voronoi path |
 | geoBoundaries gbOpen CZE ADM2 (geoBoundaries, Wikimedia Commons) | Public Domain | yes |
-| geoBoundaries gbOpen DEU ADM2 (Federal Agency for Cartography and Geodesy) | Data license Germany - Attribution - Version 2.0 | no: refused: not in the allowlist (Data license Germany - Attribution - Version 2.0); Voronoi path |
+| geoBoundaries gbOpen DEU ADM2 (Federal Agency for Cartography and Geodesy) | Data license Germany - Attribution - Version 2.0 | yes |
 | geoBoundaries gbOpen DNK ADM2 (geoBoundaries, Wikimedia Commons) | Public Domain | yes |
-| geoBoundaries gbOpen ESP ADM2 (El Instituto Nacional de Estadstica) | National Institute of Statistics (INE) Data License | no: refused: not in the allowlist (National Institute of Statistics (INE) Data License); Voronoi path |
+| geoBoundaries gbOpen ESP ADM2 (El Instituto Nacional de Estadstica) | National Institute of Statistics (INE) Data License | yes |
 | geoBoundaries gbOpen EST ADM2 (OpenStreetMap, Wambacher) | Open Data Commons Open Database License 1.0 | no: refused: ODbL in license (Open Data Commons Open Database License 1.0); Voronoi path |
 | geoBoundaries gbOpen FIN ADM2 (OpenStreetMap, Wambacher) | Open Data Commons Open Database License 1.0 | no: refused: ODbL in license (Open Data Commons Open Database License 1.0); Voronoi path |
-| geoBoundaries gbOpen FRA ADM2 (Institut national de l'information géographique et forestière (IGN-F)) | Etalab Open License 2.0 | no: refused: not in the allowlist (Etalab Open License 2.0); Voronoi path |
+| geoBoundaries gbOpen FRA ADM2 (Institut national de l'information géographique et forestière (IGN-F)) | Etalab Open License 2.0 | yes |
 | geoBoundaries gbOpen GBR ADM2 (Office for National Statistics Open Geography Portal) | Open Government Licence v3.0 | yes |
 | geoBoundaries gbOpen GRC ADM2 (EuroGeoGraphics, Regional IM Working Group - Europe) | Creative Commons Attribution 4.0 International (CC BY 4.0) | yes |
 | geoBoundaries gbOpen HRV ADM2 (Open Street Map, geoBoundaries) | Creative Commons Attribution-ShareAlike 2.0 | no: refused: ShareAlike in license (Creative Commons Attribution-ShareAlike 2.0); Voronoi path |
@@ -130,9 +132,15 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 | geoBoundaries gbOpen UKR ADM2 (Ministry of Regional Development (Ministry of Development of Communities and Territories of Ukraine)) | Creative Commons Attribution-ShareAlike 4.0 International License | no: refused: ShareAlike in license (Creative Commons Attribution-ShareAlike 4.0 International License); Voronoi path |
 | geoBoundaries gbOpen XKX ADM2 (OpenStreetMap, Wambacher) | Creative Commons Attribution-ShareAlike 2.0 | no: refused: ShareAlike in license (Creative Commons Attribution-ShareAlike 2.0); Voronoi path |
 
-Refused as not on the allowlist (for Logan: attribution-only government licences are refused until allowed, D601): Data license Germany - Attribution - Version 2.0; Etalab Open License 2.0; Federal Office of Topography swisstopo License; National Institute of Statistics (INE) Data License.
+Refused as not on the allowlist (for Logan: attribution-only government licences are refused until allowed, D601): Federal Office of Topography swisstopo License.
 
-Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0 and OGL-UK 3.0; a region whose country has no allowed ADM2 is split by Voronoi.
+Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0, OGL-UK 3.0, Data licence Germany Attribution 2.0, Etalab 2.0, Spain's INE licence, Singapore ODL 1.0 and Korea OGL Type 1 (D685); a region whose country has no allowed ADM2 is split by Voronoi.
+
+Provenance to check (for Logan; these files pass the allowlist and are used):
+
+- CZE ADM2: public domain or CC0, but geoBoundaries names Wikimedia as the source (Wikimedia maps are often CC BY-SA)
+- DNK ADM2: public domain or CC0, but geoBoundaries names Wikimedia as the source (Wikimedia maps are often CC BY-SA)
+- SWE ADM2: public domain or CC0, but geoBoundaries names Wikimedia as the source (Wikimedia maps are often CC BY-SA)
 
 ## Low-confidence rows for review
 
@@ -171,29 +179,39 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | CH-0002 | Zurich Airport-Unterland | seeds: point 8.47,47.5 (hint); point 8.56,47.45 (hint); point 8.6,47.4 (hint); 0 whole parts, 1 split |
 | CH-0003 | Winterthur-Oberland | seeds: point 8.72,47.5 (hint); point 8.85,47.33 (hint); 0 whole parts, 1 split |
 | CH-0008 | Thun-Bernese Oberland | seeds: point 7.63,46.76 (hint); point 7.86,46.69 (hint); point 8.19,46.73 (hint); 0 whole admin1 units, split: Bern |
-| DE-0002 | Ludwigsburg-Heilbronn | seeds: point 9.19,48.9 (hint); point 9.22,49.14 (hint); point 9.3,48.74 (hint); point 9.53,48.8 (hint); 0 whole parts, 1 split |
-| DE-0005 | Swabian Alb-Lake Constance | seeds: point 9.06,48.52 (hint); point 9.17,47.66 (hint) (snapped to land); point 9.21,48.49 (hint); point 9.48,47.65 (hint); point 9.99,48.4 (hint); 0 whole parts, 1 split |
-| DE-0013 | Berlin Mitte-West | seeds: point 13.2,52.53 (hint); point 13.3,52.51 (hint); point 13.32,52.45 (hint); point 13.38,52.52 (hint); 0 whole parts, 1 split |
-| DE-0014 | Berlin East-Spree | seeds: point 13.42,52.5 (hint); point 13.45,52.51 (hint); point 13.5,52.52 (hint); point 13.53,52.43 (hint); point 13.58,52.43 (hint); point 13.59,52.54 (hint); 0 whole parts, 1 split |
-| DE-0020 | Darmstadt-Hanau | seeds: point 8.41,49.99 (hint); point 8.65,49.87 (hint); point 8.77,50.1 (hint); point 8.92,50.13 (hint); 0 whole parts, 1 split |
-| DE-0024 | Ludwigshafen-Palatinate | seeds: point 7.6,49.2 (hint); point 7.77,49.44 (hint); point 8.15,49.35 (hint); point 8.43,49.48 (hint); 0 whole parts, 1 split |
-| DE-0031 | Munsterland | seeds: point 7.03,52.21 (hint); point 7.17,51.95 (hint); point 7.63,51.96 (hint); 0 whole parts, 1 split |
-| DE-0033 | Aachen-Rhenish Lignite | seeds: point 6.08,50.78 (hint); point 6.45,51.05 (hint); point 6.48,50.8 (hint); point 6.5,50.91 (hint); 0 whole parts, 1 split |
-| DE-0034 | Sauerland-Siegen | seeds: point 8.02,50.87 (hint); point 8.07,51.4 (hint); point 8.29,51.35 (hint); 0 whole parts, 1 split |
-| DE-0036 | Brunswick-Wolfsburg | seeds: point 10.34,52.15 (hint); point 10.43,51.9 (hint); point 10.52,52.27 (hint); point 10.79,52.42 (hint); point 9.93,51.53 (hint); 0 whole parts, 1 split |
-| DE-0037 | Lower Elbe-Hamburg South | seeds: point 10.41,53.25 (hint); point 8.7,53.87 (hint); point 9.48,53.6 (hint); point 9.98,53.46 (hint) (snapped to land); 0 whole parts, 1 split |
-| DE-0040 | Holstein-Hamburg North | seeds: point 10.0,53.71 (hint); point 10.24,53.67 (hint); point 10.69,53.87 (hint); point 9.8,53.66 (hint); 1 whole parts, 1 split |
-| DE-0043 | Vorpommern-Greifswald | seeds: point 13.26,53.56 (hint); point 13.38,54.1 (hint); point 13.45,54.4 (hint); point 13.64,54.14 (hint); 3 whole parts, 1 split |
-| DE-0047 | Halle-Leuna-Bitterfeld | seeds: point 11.97,51.48 (hint); point 12.03,51.32 (hint); point 12.14,51.05 (hint); point 12.32,51.62 (hint); 0 whole parts, 1 split |
+| DE-0002 | Ludwigsburg-Heilbronn | seeds: point 9.19,48.9 (hint); point 9.22,49.14 (hint); point 9.3,48.74 (hint); point 9.53,48.8 (hint); 0 whole admin2 units, split: Stuttgart |
+| DE-0005 | Swabian Alb-Lake Constance | seeds: point 9.06,48.52 (hint); point 9.17,47.66 (hint); point 9.21,48.49 (hint); point 9.48,47.65 (hint); point 9.99,48.4 (hint); 1 whole admin2 units, split: Freiburg |
+| DE-0006 | Munich City | seeds: point 11.58,48.14 (hint); 0 whole admin2 units, split: Oberbayern |
+| DE-0007 | Munich North-Ingolstadt | seeds: point 11.43,48.77 (hint); point 11.75,48.4 (hint); point 11.79,48.35 (hint); 0 whole admin2 units, split: Oberbayern |
+| DE-0008 | Augsburg-Munich West | seeds: point 10.78,48.72 (hint); point 10.9,48.37 (hint); point 11.25,48.18 (hint); 0 whole admin2 units, split: Oberbayern, Schwaben |
+| DE-0009 | Bavarian Alps-Allgau | seeds: point 10.31,47.73 (hint); point 11.1,47.49 (hint); point 11.56,47.76 (hint); point 12.13,47.86 (hint); 0 whole admin2 units, split: Oberbayern, Schwaben |
+| DE-0010 | Nuremberg-Middle Franconia | seeds: point 10.57,49.3 (hint); point 10.99,49.48 (hint); point 11.0,49.59 (hint); point 11.08,49.45 (hint); 1 whole admin2 units |
+| DE-0011 | Wurzburg-Northern Franconia | seeds: point 10.23,50.05 (hint); point 10.89,49.89 (hint); point 11.58,49.94 (hint); point 9.93,49.79 (hint); 2 whole admin2 units |
+| DE-0012 | Regensburg-Eastern Bavaria | seeds: point 12.1,49.02 (hint); point 12.15,48.54 (hint); point 13.46,48.57 (hint); 2 whole admin2 units |
+| DE-0013 | Berlin Mitte-West | seeds: point 13.2,52.53 (hint); point 13.3,52.51 (hint); point 13.32,52.45 (hint); point 13.38,52.52 (hint); 0 whole admin2 units, split: Berlin |
+| DE-0014 | Berlin East-Spree | seeds: point 13.42,52.5 (hint); point 13.45,52.51 (hint); point 13.5,52.52 (hint); point 13.53,52.43 (hint); point 13.58,52.43 (hint); point 13.59,52.54 (hint); 0 whole admin2 units, split: Berlin |
+| DE-0015 | Potsdam-Berlin Ring | seeds: point 13.06,52.4 (hint); point 13.09,52.56 (hint); point 13.24,52.75 (hint); point 13.5,52.37 (hint); point 13.59,52.68 (hint); point 13.82,52.42 (hint); 0 whole admin2 units, split: Brandenburg |
+| DE-0016 | Outer Brandenburg-Lusatia | seeds: point 11.75,53.0 (hint); point 12.55,52.41 (hint); point 12.81,52.93 (hint); point 14.28,53.06 (hint); point 14.33,51.76 (hint); point 14.55,52.35 (hint); point 14.64,52.15 (hint); 0 whole admin2 units, split: Brandenburg |
+| DE-0020 | Darmstadt-Hanau | seeds: point 8.41,49.99 (hint); point 8.65,49.87 (hint); point 8.77,50.1 (hint); point 8.92,50.13 (hint); 0 whole admin2 units, split: Darmstadt |
+| DE-0024 | Ludwigshafen-Palatinate | seeds: point 7.6,49.2 (hint); point 7.77,49.44 (hint); point 8.15,49.35 (hint); point 8.43,49.48 (hint); 0 whole admin2 units, split: Rheinhessen-Pfalz |
+| DE-0031 | Munsterland | seeds: point 7.03,52.21 (hint); point 7.17,51.95 (hint); point 7.63,51.96 (hint); 1 whole admin2 units |
+| DE-0033 | Aachen-Rhenish Lignite | seeds: point 6.08,50.78 (hint); point 6.45,51.05 (hint); point 6.48,50.8 (hint); point 6.5,50.91 (hint); 0 whole admin2 units, split: Köln |
+| DE-0034 | Sauerland-Siegen | seeds: point 8.02,50.87 (hint); point 8.07,51.4 (hint); point 8.29,51.35 (hint); 0 whole admin2 units, split: Arnsberg |
+| DE-0036 | Brunswick-Wolfsburg | seeds: point 10.34,52.15 (hint); point 10.43,51.9 (hint); point 10.52,52.27 (hint); point 10.79,52.42 (hint); point 9.93,51.53 (hint); 1 whole admin2 units |
+| DE-0037 | Lower Elbe-Hamburg South | seeds: point 10.41,53.25 (hint); point 8.7,53.87 (hint); point 9.48,53.6 (hint); point 9.98,53.46 (hint) (snapped to land); 1 whole admin2 units |
+| DE-0040 | Holstein-Hamburg North | seeds: point 10.0,53.71 (hint); point 10.24,53.67 (hint); point 10.69,53.87 (hint); point 9.8,53.66 (hint); 0 whole admin2 units, split: Schleswig-Holstein |
+| DE-0043 | Vorpommern-Greifswald | seeds: point 13.26,53.56 (hint); point 13.38,54.1 (hint); point 13.45,54.4 (hint); point 13.64,54.14 (hint); 0 whole admin2 units, split: Mecklenburg-Vorpommern |
+| DE-0047 | Halle-Leuna-Bitterfeld | seeds: point 11.97,51.48 (hint); point 12.03,51.32 (hint); point 12.14,51.05 (hint); point 12.32,51.62 (hint); 0 whole admin2 units, split: Sachsen-Anhalt |
 | DK-0002 | Copenhagen Suburbs-Novo | seeds: point 12.4,55.67 (hint); point 12.45,55.76 (hint); point 12.6,55.63 (hint); point 12.65,55.62 (hint); 17 whole admin2 units |
 | DK-0003 | North Zealand | seeds: point 12.3,55.93 (hint); point 12.45,55.85 (hint); point 12.6,56.03 (hint); 9 whole admin2 units |
-| ES-0002 | Madrid North-Barajas | seeds: point -3.36,40.48 (hint); point -3.48,40.46 (hint); point -3.59,40.47 (hint); point -3.64,40.54 (hint); point -3.8,40.8 (hint); point -3.87,40.49 (hint); 1 whole parts, 1 split |
-| ES-0003 | Madrid South-Getafe | seeds: point -3.6,40.03 (hint); point -3.73,40.31 (hint); point -3.76,40.33 (hint); point -3.8,40.28 (hint); point -3.86,40.32 (hint); 0 whole parts, 1 split |
+| ES-0002 | Madrid North-Barajas | seeds: point -3.36,40.48 (hint); point -3.48,40.46 (hint); point -3.59,40.47 (hint); point -3.64,40.54 (hint); point -3.8,40.8 (hint); point -3.87,40.49 (hint); 0 whole admin2 units, split: Madrid |
+| ES-0003 | Madrid South-Getafe | seeds: point -3.6,40.03 (hint); point -3.73,40.31 (hint); point -3.76,40.33 (hint); point -3.8,40.28 (hint); point -3.86,40.32 (hint); 0 whole admin2 units, split: Madrid |
 | ES-0005 | Barcelona Llobregat-Valles | seeds: point 1.83,41.73 (hint); point 1.91,41.48 (hint); point 2.01,41.56 (hint); point 2.08,41.3 (hint); point 2.11,41.55 (hint); 0 whole admin1 units, split: Barcelona |
 | ES-0007 | Girona-Costa Brava | seeds: unit Gerona (hint); 1 whole admin1 units |
 | ES-0008 | Lleida-Pyrenees | seeds: unit Lérida (hint); 1 whole admin1 units |
 | FI-0002 | Espoo | seeds: point 24.44,60.12 (hint); point 24.66,60.21 (hint); 1 whole parts, 1 split |
 | FI-0003 | Vantaa-Airport | seeds: point 24.97,60.31 (hint); point 25.11,60.4 (hint); 0 whole parts, 1 split |
+| FR-0004 | Versailles-Seine-et-Marne | seeds: unit Seien-et-Marne (hint); unit Yvelines (hint); 2 whole admin1 units |
 | GB-0001 | City of London-Westminster | seeds: unit Camden (hint); unit City (hint); unit Islington (hint); unit Kensington and Chelsea (hint); unit Lambeth (hint); unit Southwark (hint); unit Westminster (hint); 7 whole admin1 units |
 | GB-0002 | East London-Docklands | seeds: unit Barking and Dagenham (hint); unit Greenwich (hint); unit Hackney (hint); unit Lewisham (hint); unit Newham (hint); unit Tower Hamlets (hint); 6 whole admin1 units |
 | GB-0003 | West London-Heathrow | seeds: unit Ealing (hint); unit Hammersmith and Fulham (hint); unit Hillingdon (hint); unit Hounslow (hint); unit Richmond upon Thames (hint); unit Wandsworth (hint); 6 whole admin1 units |
@@ -230,7 +248,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | TR-0002 | Levent-Maslak | seeds: point 28.99,41.06 (hint); point 29.01,41.05 (hint); point 29.05,41.17 (hint); 0 whole parts, 1 split |
 | TR-0003 | Western Istanbul | seeds: point 28.25,41.15 (hint); point 28.63,40.98 (hint); point 28.67,41.03 (hint); point 28.73,41.26 (hint); point 28.87,40.98 (hint); 0 whole parts, 1 split |
 | TR-0004 | Kadikoy-Uskudar | seeds: point 29.02,41.02 (hint); point 29.03,40.99 (hint) (snapped to land); point 29.12,40.99 (hint); 0 whole parts, 1 split |
-| TR-0005 | Pendik-Tuzla | seeds: point 29.19,40.89 (hint) (snapped to land); point 29.3,40.87 (hint) (snapped to land); point 29.31,40.82 (hint) (snapped to land); point 29.62,41.17 (hint); 0 whole parts, 1 split |
+| TR-0005 | Pendik-Tuzla | seeds: point 29.19,40.89 (hint) (snapped to land); point 29.3,40.87 (hint) (snapped to land); point 29.62,41.17 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 29.31,40.82 (hint) |
 | UA-0009 | Vinnytsia | seeds: unit Vinnytsya (hint); 1 whole admin1 units |
 
 ## Tiny provinces (click targets)
@@ -287,7 +305,7 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | DE-0013 | Berlin Mitte-West | 45 | 1 | 4397.5, 1290.5 |
 | FR-0041 | Martinique | 45 | 1 | 2706.5, 2272.5 |
 | PT-0015 | Madeira | 45 | 3 | 3710.5, 1837.5 |
-| DE-0001 | Stuttgart-Boeblingen | 47 | 1 | 4302.5, 1403.5 |
+| DE-0001 | Stuttgart-Boeblingen | 47 | 1 | 4301.5, 1404.5 |
 | NL-0001 | Amsterdam | 47 | 1 | 4208.5, 1295.5 |
 | NL-0005 | The Hague-Delft | 47 | 2 | 4193.5, 1305.5 |
 | BE-0004 | Antwerp Port-Waasland | 48 | 1 | 4191.5, 1330.5 |
@@ -309,13 +327,150 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 
 Checked from the bitmap, independently of the crosswalk: the Natural Earth place a province's own name names lands on that province (and, for a Metro province, near its middle and in its largest 4-connected part; a part joined to the largest only across 3 or fewer water pixels, like San Francisco and Marin across the Golden Gate, is listed but allowed), its Metro's city lands on a province of that Metro, and each key city lands on one of its provinces (key-cities.csv).
 
-All anchors land on their own provinces.
+| Check | Province | Place | Expected | Got |
+|---|---|---|---|---|
+| city not in largest part (allowed) | FR-0004 | Versailles | the largest 4-connected part (the file joins Yvelines and Seine-et-Marne, which do not touch; Versailles is in the smaller, Yvelines) | a smaller part |
+| own name elsewhere (allowed) | CY-0003 | Famagusta | CY-0003 (the free part of Famagusta district; Famagusta town is in Northern Cyprus (CY-0005, decision C)) | CY-0005 |
+
+No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
+
+## Natural Earth labels
+
+Natural Earth units whose capital another region of the country names (in a province name or notes) while their own region does not: the sign of NE giving units each other's names, as in Eritrea and Guyana (D687). Each row fails the step unless `[review] ne_label_ok` in the hints names the region.
+
+None.
+
+## City probe
+
+Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is in this file, looked up in province-index.png: a point passes on its pixel or one of the 8 around it (D686). The step fails on a mismatch.
+
+| Point | Expected | Got | Result |
+|---|---|---|---|
+| Akrotiri SBA (32.95, 34.59) | ? | CY-0002 | listed |
+| Bender (29.48, 46.83) | ? | MD-0006 | listed |
+| Brandenburg an der Havel (12.55, 52.41) | ? | DE-0016 | listed |
+| Celle (10.08, 52.62) | ? | DE-0037 | listed |
+| Eberswalde (13.82, 52.83) | ? | DE-0015 | listed |
+| Kramatorsk (37.56, 48.72) | ? | UA-0016 | listed |
+| Mariupol (37.55, 47.1) | ? | UA-0016 | listed |
+| Reading (not London) (-0.97, 51.455) | ? | GB-0005 | listed |
+| Andorra (1.52, 42.51) | AD | AD-0001 | on it |
+| Ankara (32.86, 39.93) | TR | TR-0016 | on it |
+| Athens (23.73, 37.98) | GR | GR-0001 | on it |
+| Bad Toelz (11.56, 47.76) | DE-0009 | DE-0009 | on it |
+| Bamberg (10.89, 49.89) | DE-0011 | DE-0011 | on it |
+| Barajas (-3.57, 40.47) | ES-0002 | ES-0002 | on it |
+| Bayreuth (11.58, 49.94) | DE-0011 | DE-0011 | on it |
+| Berlin Kreuzberg (13.42, 52.5) | DE-0014,DE-0013 | DE-0014 | on it |
+| Berlin Mitte (13.39, 52.52) | DE-0013 | DE-0013 | on it |
+| CDG airport (2.55, 49.01) | FR-0002 | FR-0004 | within a pixel |
+| Camenca (28.7, 48.03) | MD-0006 | MD-0006 | on it |
+| Chisinau (28.86, 47.01) | MD | MD-0001 | on it |
+| Cuxhaven (8.7, 53.87) | DE-0037 | DE-0037 | on it |
+| Disneyland Paris (2.78, 48.87) | FR-0004 | FR-0004 | on it |
+| Donauwoerth (10.78, 48.72) | DE-0008 | DE-0008 | on it |
+| Donetsk (37.8, 48.0) | UA-0021 | UA-0021 | on it |
+| Dubasari (29.17, 47.26) | MD-0006 | MD-0006 | on it |
+| Erlangen (11.0, 49.59) | DE-0010 | DE-0010 | on it |
+| Esenyurt (28.67, 41.03) | TR-0003 | TR-0003 | on it |
+| Esslingen (9.31, 48.74) | DE-0002 | DE-0002 | on it |
+| Evry (2.44, 48.63) | FR-0003 | FR-0003 | on it |
+| Famagusta (33.94, 35.12) | CY-0005 | CY-0005 | on it |
+| Faroe Torshavn (-6.77, 62.01) | FO | FO-0001 | on it |
+| Fontainebleau (2.7, 48.4) | FR-0004 | FR-0004 | on it |
+| Frankfurt Oder (14.55, 52.35) | DE-0016 | PL-0027 | within a pixel |
+| Freising airport (11.79, 48.35) | DE-0007 | DE-0007 | on it |
+| Garmisch (11.1, 47.49) | DE-0009 | DE-0009 | on it |
+| Getafe (-3.73, 40.31) | ES-0003 | ES-0003 | on it |
+| Gibraltar (-5.35, 36.14) | GI | GI-0001 | on it |
+| Goettingen (9.93, 51.53) | DE-0036 | DE-0036 | on it |
+| Grigoriopol (29.3, 47.15) | MD-0006 | MD-0006 | on it |
+| Guernsey (-2.54, 49.46) | GG | GG-0001 | nearest across water |
+| Horlivka (38.05, 48.3) | UA-0021 | UA-0021 | on it |
+| Isle of Man (-4.48, 54.15) | IM | IM-0001 | on it |
+| Istanbul Airport (28.75, 41.26) | TR-0003 | TR-0003 | on it |
+| Istanbul Fatih (28.95, 41.01) | TR-0001 | TR-0001 | on it |
+| Istanbul Levent (29.01, 41.08) | TR-0002 | TR-0002 | on it |
+| Istanbul Maslak (29.02, 41.11) | TR-0002 | TR-0002 | on it |
+| Jersey (-2.13, 49.21) | JE | JE-0001 | on it |
+| Kadikoy (29.03, 40.99) | TR-0004 | TR-0004 | nearest across water |
+| Karpas (34.4, 35.6) | CY-0005 | CY-0005 | on it |
+| Kempten (10.31, 47.73) | DE-0009 | DE-0009 | on it |
+| Kerch (36.47, 45.36) | UA-0020 | UA-0020 | on it |
+| Kyiv (30.52, 50.45) | UA | UA-0001 | on it |
+| Kyrenia (33.32, 35.34) | CY-0005 | CY-0005 | nearest across water |
+| La Defense (2.238, 48.892) | FR-0001 | FR-0001 | on it |
+| Landshut (12.15, 48.54) | DE-0012 | DE-0012 | on it |
+| Liechtenstein (9.52, 47.14) | LI | LI-0001 | on it |
+| Limassol (33.04, 34.68) | CY | CY-0002 | on it |
+| London Bromley (0.02, 51.4) | GB-0004 | GB-0004 | on it |
+| London Canary Wharf (-0.02, 51.505) | GB-0002 | GB-0002 | on it |
+| London City (-0.09, 51.513) | GB-0001 | GB-0001 | on it |
+| London Croydon (-0.1, 51.372) | GB-0004 | GB-0004 | on it |
+| London Enfield (-0.08, 51.652) | GB-0004 | GB-0004 | on it |
+| London Hammersmith (-0.223, 51.492) | GB-0003 | GB-0003 | on it |
+| London Heathrow (-0.454, 51.47) | GB-0003 | GB-0003 | on it |
+| London Stratford (-0.003, 51.54) | GB-0002 | GB-0002 | on it |
+| London Westminster (-0.135, 51.499) | GB-0001 | GB-0001 | on it |
+| Lueneburg (10.41, 53.25) | DE-0037 | DE-0037 | on it |
+| Luhansk (39.3, 48.57) | UA-0022 | UA-0022 | on it |
+| Luxembourg (6.13, 49.61) | LU | LU-0001 | on it |
+| Madrid Sol (-3.7, 40.42) | ES-0001 | ES-0001 | on it |
+| Malta Valletta (14.51, 35.9) | MT | MT-0001 | on it |
+| Marzahn (13.56, 52.54) | DE-0014 | DE-0014 | on it |
+| Meaux (2.88, 48.96) | FR-0004 | FR-0004 | on it |
+| Milan (9.19, 45.46) | IT | IT-0001 | on it |
+| Monaco (7.42, 43.735) | MC | MC-0001 | on it |
+| North Mitrovica (20.87, 42.89) | XK-0004 | XK-0004 | on it |
+| North Nicosia (33.365, 35.21) | CY-0005 | CY-0005 | on it |
+| Orly (2.38, 48.725) | FR-0003 | FR-0003 | on it |
+| Paris centre (2.35, 48.857) | FR-0001 | FR-0001 | on it |
+| Pendik (29.25, 40.88) | TR-0005 | TR-0005 | nearest across water |
+| Potsdam (13.06, 52.4) | DE-0015 | DE-0015 | on it |
+| Pristina (21.17, 42.66) | XK-0001 | XK-0001 | on it |
+| Provins (3.3, 48.56) | FR-0004 | FR-0004 | on it |
+| Rome (12.5, 41.89) | IT | IT-0007 | on it |
+| Rybnitsa (29.0, 47.76) | MD-0006 | MD-0006 | on it |
+| Rybnitsa east (29.1, 47.72) | MD-0006 | MD-0006 | on it |
+| Sabiha Gokcen (29.31, 40.9) | TR-0005 | TR-0005 | on it |
+| Saint-Denis (2.36, 48.936) | FR-0002 | FR-0002 | on it |
+| San Marino (12.45, 43.94) | SM | SM-0001 | on it |
+| Schwedt (14.28, 53.06) | DE-0016 | DE-0016 | on it |
+| Seine-et-Marne Melun (2.66, 48.54) | FR-0004 | FR-0004 | on it |
+| Sevastopol (33.52, 44.6) | UA-0019 | UA-0019 | on it |
+| Severodonetsk (38.49, 48.95) | UA-0022 | UA-0022 | on it |
+| Sile (29.61, 41.17) | TR-0005 | TR-0005 | on it |
+| Simferopol (34.1, 44.95) | UA-0020 | UA-0020 | on it |
+| Sindelfingen (9.0, 48.71) | DE-0001 | DE-0001 | on it |
+| Slobozia MD (29.7, 46.73) | MD-0006 | MD-0006 | on it |
+| Stuttgart (9.18, 48.78) | DE-0001 | DE-0001 | on it |
+| Tiraspol (29.64, 46.84) | MD-0006 | MD-0006 | on it |
+| Ulm (9.99, 48.4) | DE-0005 | DE-0005 | on it |
+| Uskudar (29.03, 41.025) | TR-0004 | TR-0004 | on it |
+| Vatican (12.453, 41.903) | VA | VA-0001 | on it |
+| Versailles (2.13, 48.8) | FR-0004 | FR-0004 | on it |
+| Warsaw (21.01, 52.23) | PL | PL-0001 | on it |
+| Wittenberge (11.75, 53.0) | DE-0016 | DE-0016 | on it |
+
+## Metro reach
+
+Metro provinces whose centroid is over 80 km from their Metro's city, that are over 4 times the Metro's median and 250 px, and regions where Metro provinces hold over 30% of the land beside rural ones (the D612 error). Listed for review; a Metro made of whole metropolitan units can be large by design.
+
+| Check | Province or region | Detail |
+|---|---|---|
+| large for its Metro | DE-0015 Potsdam-Berlin Ring | 786 px, the Metro's median is 45 px (Metro Berlin) |
+| Metro share of a region | DEU: Baden-Wurttemberg | Metro provinces hold 30% of 2924 px beside 3 rural |
+| Metro share of a region | DEU: Hesse | Metro provinces hold 35% of 1815 px beside 2 rural |
+| Metro share of a region | DEU: Lower Saxony | Metro provinces hold 33% of 4430 px beside 4 rural |
+| Metro share of a region | DEU: Schleswig-Holstein | Metro provinces hold 34% of 1508 px beside 1 rural |
+| Metro share of a region | TUR: West Anatolia | Metro provinces hold 35% of 4675 px beside 1 rural |
 
 ## Known for review
 
 - RUS:Donbas is drawn by our own province file (decision C): all of Luhansk oblast and the Russian-held part of Donetsk oblast, cut from Donetsk oblast by a builder-drawn line close to the 2015 contact line (Horlivka, Donetsk and Novoazovsk Russian; Mariupol, Kramatorsk and Sloviansk Ukrainian, UA-0016).
 - RUS:Crimea follows Natural Earth's Crimea and Sevastopol units (Natural Earth already draws them in Russia).
-- MD-0006 Transnistria takes Natural Earth's Transnistria and Stinga Nistrului units with Camenca, Grigoriopol and Bender.
+- MD-0006 Transnistria takes Natural Earth's Transnistria and Stinga Nistrului units with Camenca, Grigoriopol, Bender and Ribnita (NE names it as a second Rezina unit).
+- FR-0004: Natural Earth spells Seine-et-Marne "Seien-et-Marne", so the hint names the unit.
 - CY-0005 Northern Cyprus is Natural Earth's Northern Cyprus (CYN) unit; the UN buffer zone and the British sovereign base areas belong to no province.
 
 ## Watched small provinces
@@ -356,7 +511,7 @@ Drawn by our own province files (decision C), not the sources' de facto lines: e
 | UA-0020 | Simferopol-Kerch | RUS | UKR claims | Crimea: name match 100; plus unclaimed Sevastopol |
 | UA-0021 | Donetsk | RUS | UKR claims | Donbas: alias hint -> UA-09; carve: builder polygon from UKR:Eastern Ukraine |
 | UA-0022 | Luhansk | RUS | UKR claims | Donbas: alias hint -> UA-09; carve: builder polygon from UKR:Eastern Ukraine |
-| MD-0006 | Transnistria | MDA | Transnistria, RUS-backed | Transnistria: alias hint -> MDA-1638, MDA-1628, MD-CAM, MD-GRI, MD-BD |
+| MD-0006 | Transnistria | MDA | Transnistria, RUS-backed | Transnistria: alias hint -> MDA-1638, MDA-1628, MD-CAM, MD-GRI, MD-BD, MDA-1645 |
 
 ## Region matching
 
@@ -369,8 +524,8 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | ALB: Southern Albania | alias hint -> AL-04, AL-12, AL-06, AL-01, AL-05 | 5 |
 | BEL: Flanders | alias hint -> region:Flemish | 5 |
 | BEL: Wallonia | alias hint -> region:Walloon | 5 |
-| BGR: North-Central | alias hint -> BG-18, BG-04, BG-07, BG-17, BG-19 | 5 |
-| BGR: North-East | alias hint -> BG-03, BG-08, BG-27, BG-25 | 4 |
+| BGR: North-Central | alias hint -> BG-18, BG-04, BG-07, BG-19 | 4 |
+| BGR: North-East | alias hint -> BG-03, BG-08, BG-27, BG-25, BG-17 | 5 |
 | BGR: North-West | alias hint -> BG-15, BG-06, BG-05, BG-12, BG-11 | 5 |
 | BGR: South-Central | alias hint -> BG-16, BG-13, BG-26, BG-09, BG-21 | 5 |
 | BGR: South-East | alias hint -> BG-02, BG-24, BG-20, BG-28 | 4 |
@@ -480,10 +635,10 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | LVA: Riga | alias hint -> LV-RIX | 1 |
 | LVA: Vidzeme | Natural Earth region Vidzeme (26 units, match 100) | 26 |
 | LVA: Zemgale | Natural Earth region Zemgale (22 units, match 100) | 22 |
-| MDA: Central Moldova | alias hint -> MD-AN, MD-CL, MD-CR, MD-HI, MD-IA, MD-NI, MD-OR, MDA-1645, MDA-1644, MD-ST, MD-TE, MD-UN, MD-SD | 13 |
+| MDA: Central Moldova | alias hint -> MD-AN, MD-CL, MD-CR, MD-HI, MD-IA, MD-NI, MD-OR, MDA-1644, MD-ST, MD-TE, MD-UN, MD-SD | 12 |
 | MDA: North Moldova | alias hint -> MD-BA, MD-BR, MD-DO, MD-DR, MD-ED, MD-FL, MD-FA, MD-GL, MD-OC, MD-RI, MD-SO, MD-SI | 12 |
 | MDA: South Moldova | alias hint -> MD-BS, MD-CA, MD-CT, MD-CS, MD-CM, MD-LE, MD-TA, MD-SV | 8 |
-| MDA: Transnistria | alias hint -> MDA-1638, MDA-1628, MD-CAM, MD-GRI, MD-BD | 5 |
+| MDA: Transnistria | alias hint -> MDA-1638, MDA-1628, MD-CAM, MD-GRI, MD-BD, MDA-1645 | 6 |
 | MNE: Central Montenegro | alias hint -> ME-16, ME-12, ME-06, ME-07 | 4 |
 | MNE: Coastal Montenegro | alias hint -> ME-02, ME-05, ME-08, ME-10, ME-19, ME-20 | 6 |
 | MNE: Northern Montenegro | alias hint -> ME-01, ME-03, ME-04, ME-09, ME-11, ME-13, ME-14, ME-15, ME-17, ME-18, ME-21 | 11 |
@@ -542,7 +697,7 @@ Natural Earth admin-1 units of this file's countries that no region claims and t
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-AL-0004-ME-0001, AL-0005-GR-0008, BE-0003-NL-0023, DE-0037-DE-0041, DE-0038-NL-0020, DE-0040-DK-0006, DE-0040-DK-0007, DE-0041-DK-0007, DE-0042-DK-0006, DK-0001-SE-0011, DK-0002-SE-0011, DK-0003-DK-0006, DK-0003-SE-0011, DK-0004-SE-0011, DK-0005-SE-0011, DK-0006-DK-0007, DK-0006-DK-0011, DK-0006-DK-0013, DK-0006-SE-0011, DK-0007-DK-0010, DK-0007-DK-0011, DK-0012-DK-0014, DK-0013-SE-0012, DK-0015-SE-0012, DK-0015-SE-0013, DM-0001-FR-0040, DM-0001-FR-0041, EE-0001-FI-0002, EE-0003-LV-0004, EE-0004-RU-0018, ES-0010-ES-0035, ES-0010-MA-0007, ES-0012-GI-0001, ES-0035-GI-0001, FI-0001-FI-0004, FI-0005-FI-0016, FI-0009-SE-0022, FI-0016-SE-0001, FR-0012-JE-0001, FR-0016-IT-0024, FR-0016-IT-0040, FR-0022-GB-0008, FR-0025-GG-0001, FR-0025-JE-0001, FR-0041-LC-0001, GB-0014-GB-0039, GB-0015-GB-0040, GB-0017-GB-0039, GB-0017-GB-0040, GB-0023-GB-0030, GB-0025-GB-0041, GB-0027-IM-0001, GB-0033-GB-0042, GB-0033-IE-0014, GB-0034-GB-0037, GB-0035-GB-0042, GB-0035-IM-0001, GB-0042-IE-0014, GB-0042-IM-0001, GG-0001-JE-0001, GI-0001-MA-0007, GR-0001-GR-0013, GR-0001-GR-0014, GR-0004-GR-0012, GR-0004-TR-0007, GR-0006-GR-0008, GR-0010-GR-0011, GR-0010-GR-0013, GR-0012-GR-0013, GR-0012-TR-0007, GR-0012-TR-0008, GR-0013-GR-0014, GR-0013-TR-0010, HR-0006-IT-0014, HR-0006-IT-0019, IE-0013-IE-0014, IT-0013-MC-0001, IT-0014-IT-0022, IT-0031-IT-0036, IT-0036-IT-0038, NO-0001-NO-0003, NO-0004-NO-0005, NO-0004-NO-0006, RU-0025-UA-0016, RU-0025-UA-0021, RU-0026-UA-0020, TR-0003-TR-0004, TR-0003-TR-0005, TR-0003-TR-0012, TR-0005-TR-0012
+AL-0005-GR-0008, DE-0041-DK-0006, DE-0041-DK-0007, DE-0042-DK-0006, DE-0043-DK-0006, DK-0001-SE-0011, DK-0002-SE-0011, DK-0003-SE-0011, DK-0004-SE-0011, DK-0005-SE-0011, DK-0006-DK-0007, DK-0006-DK-0011, DK-0006-DK-0013, DK-0006-SE-0011, DK-0013-SE-0012, DK-0015-SE-0012, DK-0015-SE-0013, DM-0001-FR-0040, DM-0001-FR-0041, EE-0001-FI-0002, ES-0010-ES-0035, ES-0010-MA-0007, ES-0035-GI-0001, FI-0005-FI-0016, FI-0009-SE-0022, FI-0016-SE-0001, FR-0012-JE-0001, FR-0016-IT-0024, FR-0016-IT-0040, FR-0022-GB-0008, FR-0025-GG-0001, FR-0025-JE-0001, FR-0041-LC-0001, GB-0015-GB-0040, GB-0017-GB-0040, GB-0027-IM-0001, GB-0033-GB-0042, GB-0033-IE-0014, GB-0035-GB-0042, GB-0035-IM-0001, GB-0042-IM-0001, GG-0001-JE-0001, GI-0001-MA-0007, GR-0001-GR-0013, GR-0001-GR-0014, GR-0004-GR-0012, GR-0010-GR-0013, GR-0012-GR-0013, GR-0012-TR-0007, GR-0013-GR-0014, GR-0013-TR-0010, HR-0006-IT-0014, IT-0036-IT-0038, NO-0004-NO-0006, RU-0025-UA-0016, RU-0026-UA-0020, TR-0003-TR-0005, TR-0003-TR-0012
 
 ## Small provinces
 
@@ -561,7 +716,11 @@ Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share
 | AUT:Tyrol | part-1 | AT-0013 78%, AT-0012 22% |
 | AUT:Vienna | part-0 | AT-0002 81%, AT-0001 19% |
 | BEL:Brussels-Capital Region | part-0 | BE-0002 86%, BE-0001 14% |
-| DEU:Thuringia | part-0 | DE-0049 85%, DE-0050 15% |
+| DEU:Baden-Wurttemberg | Freiburg | DE-0004 81%, DE-0005 19% |
+| DEU:Baden-Wurttemberg | Stuttgart | DE-0002 92%, DE-0001 8% |
+| DEU:North Rhine-Westphalia | Arnsberg | DE-0034 75%, DE-0030 25% |
+| DEU:Rhineland-Palatinate | Rheinhessen-Pfalz | DE-0024 85%, DE-0023 15% |
+| DEU:Thuringia | Thüringen | DE-0049 86%, DE-0050 14% |
 | ESP:Catalonia | Barcelona | ES-0005 97%, ES-0004 3% |
 | ITA:Lazio | Roma | IT-0007 88%, IT-0008 12% |
 | LTU:Capital Region | part-0 | LT-0002 81%, LT-0001 19% |
@@ -576,10 +735,7 @@ A Natural Earth place matched in the name or notes that ended up in another prov
 | Province | Name | Place | Lies in |
 |---|---|---|---|
 | CH-0013 | Basel-Landschaft | Basel | CH-0012 |
-| DE-0007 | Munich North-Ingolstadt | Munich | DE-0006 |
-| DE-0008 | Augsburg-Munich West | Munich | DE-0006 |
 | FR-0003 | Orly-Saclay | Paris | FR-0001 |
-| FR-0004 | Versailles-Seine-et-Marne | Paris | FR-0001 |
 | IE-0003 | Fingal-Dublin Airport | Dublin | IE-0001 |
 | IT-0008 | Lazio Outside Rome | Rome | IT-0007 |
 | IT-0002 | Milan Hinterland | Milan | IT-0001 |

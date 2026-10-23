@@ -10,11 +10,11 @@ AFG,Jowzjan-Faryab-Sar-e Pol,admin1,AFG-1746;AFG-1745;AFG-1748,1.0,Natural Earth
 AFG,Kabul,admin1,AFG-1767,1.0,Natural Earth 10m (public domain),name match 100
 AFG,Kandahar,admin1,AFG-1754,1.0,Natural Earth 10m (public domain),name match 100
 AFG,Kunar-Laghman-Nuristan,admin1,AFG-1762;AFG-1761;AFG-1770,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
-AFG,Kunduz-Baghlan-Takhar,admin1,AFG-1765;AFG-1763;AFG-1772;AFG-1766,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100); plus unclaimed Parwan"
+AFG,Kunduz-Baghlan-Takhar,admin1,AFG-1765;AFG-1763;AFG-1766,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
 AFG,Logar-Wardak,admin1,AFG-1771;AFG-1774,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 AFG,Nangarhar,admin1,AFG-1764,1.0,Natural Earth 10m (public domain),name match 100
 AFG,Paktia-Khost-Paktika,admin1,AFG-1758;AFG-3413;AFG-1759,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
-AFG,Parwan-Kapisa-Panjshir,admin1,AFG-1769;AFG-1768,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+AFG,Parwan-Kapisa-Panjshir,admin1,AFG-1769;AFG-1768;AFG-1772,0.95,Natural Earth 10m (public domain),"alias hint -> AFG-1772, AFG-1769, AF-KAP"
 AFG,Uruzgan-Zabul-Daykundi,admin1,AFG-1755;AFG-1752;AFG-1753,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
 AGO,Bengo,admin1,AGO-1877,1.0,Natural Earth 10m (public domain),name match 100
 AGO,Benguela,admin1,AGO-1887,1.0,Natural Earth 10m (public domain),name match 100
@@ -75,8 +75,8 @@ ARM,Shirak-Aragatsotn,admin1,ARM-1555;ARM-1553,1.0,Natural Earth 10m (public dom
 ARM,Syunik-Vayots Dzor,admin1,ARM-1733;ARM-1732,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 ARM,Yerevan,admin1,ARM-1675,1.0,Natural Earth 10m (public domain),name match 100
 ATG,Antigua and Barbuda,admin1,ATG-5096;ATG-5095;ATG-5094;ATG-5093;ATG-5098;ATG-5097;ATG-5091;ATG-5092,0.95,Natural Earth 10m (public domain),whole country (8 admin-1 units)
-AUS,Australian Capital Territory,admin1,AUS-1932,1.0,Natural Earth 10m (public domain),name match 100
-AUS,New South Wales,admin1,AUS-2654;AUS-2659;AUS-2653,1.0,Natural Earth 10m (public domain),"name match 100; plus unclaimed Australian Capital Territory, Lord Howe Island"
+AUS,Australian Capital Territory,admin1,AUS-2653,0.95,Natural Earth 10m (public domain),alias hint -> AUS-2653
+AUS,New South Wales,admin1,AUS-2654;AUS-1932;AUS-2659,1.0,Natural Earth 10m (public domain),"name match 100; plus unclaimed Jervis Bay Territory, Lord Howe Island"
 AUS,Northern Territory,admin1,AUS-2650,1.0,Natural Earth 10m (public domain),name match 100
 AUS,Queensland,admin1,AUS-2657,1.0,Natural Earth 10m (public domain),name match 100
 AUS,South Australia,admin1,AUS-2655,1.0,Natural Earth 10m (public domain),name match 100
@@ -139,8 +139,8 @@ BGD,Mymensingh,admin1,,0.95,"geoBoundaries gbOpen BGD ADM2 (Bangladesh Bureau of
 BGD,Rajshahi,admin1,BGD-3255,1.0,Natural Earth 10m (public domain),name match 100
 BGD,Rangpur,admin1,BGD-5492,1.0,Natural Earth 10m (public domain),name match 100
 BGD,Sylhet,admin1,BGD-2488,1.0,Natural Earth 10m (public domain),name match 100
-BGR,North-Central,admin1,BGR-2261;BGR-2262;BGR-2249;BGR-2256;BGR-2246,0.95,Natural Earth 10m (public domain),"alias hint -> BG-18, BG-04, BG-07, BG-17, BG-19"
-BGR,North-East,admin1,BGR-2259;BGR-2260;BGR-2258;BGR-2257,0.95,Natural Earth 10m (public domain),"alias hint -> BG-03, BG-08, BG-27, BG-25"
+BGR,North-Central,admin1,BGR-2261;BGR-2262;BGR-2249;BGR-2246,0.95,Natural Earth 10m (public domain),"alias hint -> BG-18, BG-04, BG-07, BG-19"
+BGR,North-East,admin1,BGR-2259;BGR-2260;BGR-2258;BGR-2256;BGR-2257,0.95,Natural Earth 10m (public domain),"alias hint -> BG-03, BG-08, BG-27, BG-25, BG-17"
 BGR,North-West,admin1,BGR-2253;BGR-2250;BGR-2251;BGR-2248;BGR-2247,0.95,Natural Earth 10m (public domain),"alias hint -> BG-15, BG-06, BG-05, BG-12, BG-11"
 BGR,South-Central,admin1,BGR-2232;BGR-2237;BGR-2236;BGR-2235;BGR-2234,0.95,Natural Earth 10m (public domain),"alias hint -> BG-16, BG-13, BG-26, BG-09, BG-21"
 BGR,South-East,admin1,BGR-2254;BGR-2255;BGR-2233;BGR-2231,0.95,Natural Earth 10m (public domain),"alias hint -> BG-02, BG-24, BG-20, BG-28"
@@ -215,8 +215,8 @@ BWA,Kgalagadi,admin1,BWA-2625,1.0,Natural Earth 10m (public domain),name match 1
 BWA,Kweneng-Kgatleng,admin1,BWA-2646;BWA-2647,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 BWA,North-East,admin1,BWA-4853;BWA-5502,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Francistown
 BWA,North-West-Chobe,admin1,BWA-2629,0.95,Natural Earth 10m (public domain),alias hint -> BW-NW
-BWA,South-East,admin1,BWA-2648;BWA-5501;BWA-5503,1.0,Natural Earth 10m (public domain),"name match 100; plus unclaimed Gaborone, Lobatse"
-BWA,Southern,admin1,BWA-2649;BWA-5506,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Jwaneng
+BWA,South-East,admin1,BWA-2648;BWA-5501,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Gaborone
+BWA,Southern,admin1,BWA-2649;BWA-5506;BWA-5503,0.95,Natural Earth 10m (public domain),"alias hint -> BW-SO, BW-JW, BW-LO"
 CAF,Bangui,admin1,CAF-1460,1.0,Natural Earth 10m (public domain),name match 100
 CAF,Basse-Kotto-Mbomou,admin1,CAF-794;CAF-868,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 CAF,Haut-Mbomou,admin1,CAF-867,1.0,Natural Earth 10m (public domain),name match 100
@@ -490,12 +490,12 @@ ECU,Imbabura-Carchi,admin1,ECU-1409;ECU-1410,1.0,Natural Earth 10m (public domai
 ECU,Loja-Zamora Chinchipe,admin1,ECU-1269;ECU-1268,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 ECU,Los Rios,admin1,ECU-1281,1.0,Natural Earth 10m (public domain),name match 100
 ECU,Manabi,admin1,ECU-1282,1.0,Natural Earth 10m (public domain),name match 100
-ECU,Napo-Pastaza-Morona Santiago,admin1,ECU-1288;ECU-1285;ECU-1289,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+ECU,Napo-Pastaza-Morona Santiago,admin1,ECU-1288;ECU-1285;ECU-1290,0.95,Natural Earth 10m (public domain),"alias hint -> ECU-1290, EC-Y, EC-S"
 ECU,Pichincha,admin1,ECU-1287,1.0,Natural Earth 10m (public domain),name match 100
 ECU,Santa Elena,admin1,ECU-5507,1.0,Natural Earth 10m (public domain),name match 100
 ECU,Santo Domingo de los Tsachilas,admin1,ECU-5508,1.0,Natural Earth 10m (public domain),name match 100
 ECU,Sucumbios-Orellana,admin1,ECU-1411;ECU-1286,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
-ECU,Tungurahua-Cotopaxi-Chimborazo-Bolivar,admin1,ECU-1290;ECU-1284;ECU-1277;ECU-1279,1.0,Natural Earth 10m (public domain),"name parts (4 pieces, worst match 100)"
+ECU,Tungurahua-Cotopaxi-Chimborazo-Bolivar,admin1,ECU-1289;ECU-1284;ECU-1277;ECU-1279,0.95,Natural Earth 10m (public domain),"alias hint -> ECU-1289, EC-X, EC-H, EC-B"
 EGY,Alexandria,admin1,EGY-1543,1.0,Natural Earth 10m (public domain),name match 100
 EGY,Aswan,admin1,EGY-1548,1.0,Natural Earth 10m (public domain),name match 100
 EGY,Asyut,admin1,EGY-1549,1.0,Natural Earth 10m (public domain),name match 100
@@ -523,11 +523,11 @@ EGY,Sharqia,admin1,EGY-1535,1.0,Natural Earth 10m (public domain),name match 100
 EGY,Sohag,admin1,EGY-1552,1.0,Natural Earth 10m (public domain),name match 100
 EGY,South Sinai,admin1,EGY-1557,1.0,Natural Earth 10m (public domain),name match 100
 EGY,Suez,admin1,EGY-1536,1.0,Natural Earth 10m (public domain),name match 100
-ERI,Anseba,admin1,ERI-1561,0.95,Natural Earth 10m (public domain),alias hint -> ER-AN
-ERI,Debub,admin1,ERI-1562,0.95,Natural Earth 10m (public domain),alias hint -> ER-DU
-ERI,Gash-Barka,admin1,ERI-1560,1.0,Natural Earth 10m (public domain),name match 100
-ERI,Maekel,admin1,ERI-1564,1.0,Natural Earth 10m (public domain),name match 100
-ERI,Northern Red Sea,admin1,ERI-1563,0.95,Natural Earth 10m (public domain),alias hint -> ER-SK
+ERI,Anseba,admin1,ERI-1563,0.95,Natural Earth 10m (public domain),alias hint -> ER-SK
+ERI,Debub,admin1,ERI-1564,0.95,Natural Earth 10m (public domain),alias hint -> ER-MA
+ERI,Gash-Barka,admin1,ERI-1560,0.95,Natural Earth 10m (public domain),alias hint -> ER-GB
+ERI,Maekel,admin1,ERI-1561,0.95,Natural Earth 10m (public domain),alias hint -> ER-AN
+ERI,Northern Red Sea,admin1,ERI-1562,0.95,Natural Earth 10m (public domain),alias hint -> ER-DU
 ERI,Southern Red Sea,admin1,ERI-1565,0.95,Natural Earth 10m (public domain),alias hint -> ER-DK
 ESP,Andalusia,admin1,ESP-5812;ESP-5824;ESP-5804;ESP-5821;ESP-5834;ESP-5844;ESP-5817;ESP-5826,0.95,Natural Earth 10m (public domain),alias hint -> region:Andalucía
 ESP,Aragon,admin1,ESP-5825;ESP-5853;ESP-5847,1.0,Natural Earth 10m (public domain),"Natural Earth region Aragón (3 units, match 100)"
@@ -689,11 +689,11 @@ GTM,San Marcos,admin1,GTM-1947,1.0,Natural Earth 10m (public domain),name match 
 GTM,Solola-Quiche,admin1,GTM-3467;GTM-1954,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 GTM,Zacapa-Chiquimula-El Progreso,admin1,GTM-1960;GTM-1963;GTM-1956,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
 GUY,Barima-Waini,admin1,GUY-675,0.95,Natural Earth 10m (public domain),alias hint -> GY-BA
-GUY,Berbice and Upper Demerara,admin1,GUY-671;GUY-674;GUY-677,0.95,Natural Earth 10m (public domain),"alias hint -> GY-EB, GY-MA, GY-UD"
-GUY,Cuyuni-Mazaruni and Potaro-Siparuni,admin1,GUY-672;GUY-680,0.95,Natural Earth 10m (public domain),"alias hint -> GY-CU, GY-PT"
-GUY,Demerara-Mahaica,admin1,GUY-678,1.0,Natural Earth 10m (public domain),name match 100
-GUY,Pomeroon-Supenaam and Essequibo Islands-West Demerara,admin1,GUY-676;GUY-679,0.95,Natural Earth 10m (public domain),"alias hint -> GY-PM, GY-ES"
-GUY,Upper Takutu-Upper Essequibo,admin1,GUY-673,0.95,Natural Earth 10m (public domain),alias hint -> GY-UT
+GUY,Berbice and Upper Demerara,admin1,GUY-671;GUY-673;GUY-679,0.95,Natural Earth 10m (public domain),"alias hint -> GY-MA, GY-ES, GY-UT"
+GUY,Cuyuni-Mazaruni and Potaro-Siparuni,admin1,GUY-676;GUY-672,0.95,Natural Earth 10m (public domain),"alias hint -> GY-PM, GY-PT"
+GUY,Demerara-Mahaica,admin1,GUY-677,0.95,Natural Earth 10m (public domain),alias hint -> GY-EB
+GUY,Pomeroon-Supenaam and Essequibo Islands-West Demerara,admin1,GUY-678;GUY-680,0.95,Natural Earth 10m (public domain),"alias hint -> GY-CU, GY-DE"
+GUY,Upper Takutu-Upper Essequibo,admin1,GUY-674,0.95,Natural Earth 10m (public domain),alias hint -> GY-UD
 HKG,Hong Kong,admin1,HKG-5168;HKG-5170;HKG-5156;HKG-5153;HKG-5154;HKG-5155;HKG-5165;HKG-5169;HKG-5163;HKG-5162;HKG-5161;HKG-5158;HKG-5157;HKG-5159;HKG-5164;HKG-5166;HKG-5167;HKG-5160,0.95,Natural Earth 10m (public domain),whole country (18 admin-1 units)
 HND,Atlantida-Islas de la Bahia,admin1,HND-637;HND-641,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 HND,Choluteca-Valle,admin1,HND-645;HND-661,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
@@ -1081,20 +1081,20 @@ MAR,Casablanca-Settat,admin1,MAR-1449;MAR-1450,0.95,Natural Earth 10m (public do
 MAR,Dakhla-Oued Ed-Dahab,admin1,MAR-3469,0.95,Natural Earth 10m (public domain); builder-drawn line (hints file),alias hint -> MA-16; carve: builder polygon from MAR:Laayoune-Sakia El Hamra
 MAR,Draa-Tafilalet,admin1,,0.95,builder-drawn line (hints file),"no admin-1 match (best unit 67, group 0); carve: builder polygon from MAR:Fes-Meknes, MAR:Souss-Massa"
 MAR,Fes-Meknes,admin1,MAR-1452;MAR-1447;MAR-1446,0.95,Natural Earth 10m (public domain),"alias hint -> MA-05, MA-03, MA-06; less MAR:Draa-Tafilalet (carve); less MAR:Tanger-Tetouan-Al Hoceima (carve)"
-MAR,Guelmim-Oued Noun,admin1,MAR-3457,0.95,Natural Earth 10m (public domain),alias hint -> MA-14
-MAR,Laayoune-Sakia El Hamra,admin1,SAH+00?;MAR-3456,0.95,Natural Earth 10m (public domain),"alias hint -> MA-15, EH-X01~; less MAR:Dakhla-Oued Ed-Dahab (carve)"
+MAR,Guelmim-Oued Noun,admin1,MAR-3457,0.95,Natural Earth 10m (public domain),alias hint -> MA-14; less MAR:Laayoune-Sakia El Hamra (carve)
+MAR,Laayoune-Sakia El Hamra,admin1,SAH+00?;MAR-3456,0.95,Natural Earth 10m (public domain); builder-drawn line (hints file),"alias hint -> MA-15, EH-X01~; less MAR:Dakhla-Oued Ed-Dahab (carve); carve: builder polygon from MAR:Guelmim-Oued Noun"
 MAR,Marrakech-Safi,admin1,MAR-1457;MAR-1456,0.95,Natural Earth 10m (public domain),"alias hint -> MA-11, MA-10; less MAR:Casablanca-Settat (carve)"
 MAR,Oriental,admin1,MAR-1454,1.0,Natural Earth 10m (public domain),name match 100
 MAR,Rabat-Sale-Kenitra,admin1,MAR-1448;MAR-1451,0.95,Natural Earth 10m (public domain),"alias hint -> MA-07, MA-02"
 MAR,Souss-Massa,admin1,MAR-1455,0.95,Natural Earth 10m (public domain),alias hint -> MA-13; less MAR:Draa-Tafilalet (carve)
 MAR,Tanger-Tetouan-Al Hoceima,admin1,MAR-1445,0.95,Natural Earth 10m (public domain); builder-drawn line (hints file),alias hint -> MA-01; carve: builder polygon from MAR:Fes-Meknes
 MCO,Monaco,admin1,MCO+00?,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
-MDA,Central Moldova,admin1,MDA-1623;MDA-1642;MDA-1639;MDA-1645;MDA-1634;MDA-1647;MDA-1629;MDA-1643;MDA-1648;MDA-1646;MDA-1644;MDA-1640;MDA-1632,0.95,Natural Earth 10m (public domain),"alias hint -> MD-AN, MD-CL, MD-CR, MD-HI, MD-IA, MD-NI, MD-OR, MDA-1645, MDA-1644, MD-ST, MD-TE, MD-UN, MD-SD"
+MDA,Central Moldova,admin1,MDA-1623;MDA-1642;MDA-1639;MDA-1634;MDA-1647;MDA-1629;MDA-1643;MDA-1648;MDA-1646;MDA-1644;MDA-1640;MDA-1632,0.95,Natural Earth 10m (public domain),"alias hint -> MD-AN, MD-CL, MD-CR, MD-HI, MD-IA, MD-NI, MD-OR, MDA-1644, MD-ST, MD-TE, MD-UN, MD-SD"
 MDA,Chisinau,admin1,MDA-1627,1.0,Natural Earth 10m (public domain),name match 100
 MDA,Gagauzia,admin1,MDA-1626,1.0,Natural Earth 10m (public domain),name match 100
 MDA,North Moldova,admin1,MDA-1613;MDA-1615;MDA-1617;MDA-1621;MDA-1620;MDA-1616;MDA-1614;MDA-1653;MDA-1635;MDA-1619;MDA-1622;MDA-1618,0.95,Natural Earth 10m (public domain),"alias hint -> MD-BA, MD-BR, MD-DO, MD-DR, MD-ED, MD-FL, MD-FA, MD-GL, MD-OC, MD-RI, MD-SO, MD-SI"
 MDA,South Moldova,admin1,MDA-1641;MDA-1631;MDA-1624;MDA-1651;MDA-1649;MDA-1633;MDA-1630;MDA-1625,0.95,Natural Earth 10m (public domain),"alias hint -> MD-BS, MD-CA, MD-CT, MD-CS, MD-CM, MD-LE, MD-TA, MD-SV"
-MDA,Transnistria,admin1,MDA-1652;MDA-1628;MDA-1637;MDA-1650;MDA-1638,0.95,Natural Earth 10m (public domain),"alias hint -> MDA-1638, MDA-1628, MD-CAM, MD-GRI, MD-BD"
+MDA,Transnistria,admin1,MDA-1652;MDA-1645;MDA-1628;MDA-1637;MDA-1650;MDA-1638,0.95,Natural Earth 10m (public domain),"alias hint -> MDA-1638, MDA-1628, MD-CAM, MD-GRI, MD-BD, MDA-1645"
 MDG,Alaotra-Mangoro,admin1,MDG-5860,1.0,Natural Earth 10m (public domain),name match 100
 MDG,Analamanga,admin1,MDG-5862,1.0,Natural Earth 10m (public domain),name match 100
 MDG,Analanjirofo,admin1,MDG-5863,1.0,Natural Earth 10m (public domain),name match 100
@@ -1729,7 +1729,7 @@ TGO,Plateaux,admin1,TGO-86,1.0,Natural Earth 10m (public domain),name match 100
 TGO,Savanes,admin1,TGO-90,1.0,Natural Earth 10m (public domain),name match 100
 THA,Ayutthaya-Saraburi,admin1,THA-415;THA-412,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 THA,Bangkok,admin1,THA-416,1.0,Natural Earth 10m (public domain),name match 100
-THA,Buriram-Surin-Chaiyaphum,admin1,THA-443;THA-436;THA-402;THA-437,0.93,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 93); plus unclaimed Phetchabun"
+THA,Buriram-Surin-Chaiyaphum,admin1,THA-443;THA-436;THA-437,0.93,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 93)"
 THA,Central Plains,admin1,THA-403;THA-414;THA-407;THA-406;THA-405;THA-408,0.95,Natural Earth 10m (public domain),"alias hint -> name:Suphan Buri, name:Lop Buri, name:Chai Nat, name:Sing Buri, name:Ang Thong, name:Uthai Thani"
 THA,Chachoengsao-Prachinburi,admin1,THA-433;THA-431;THA-409;THA-410,0.96,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 96); plus unclaimed Nakhon Nayok, Sa Kaeo"
 THA,Chanthaburi-Trat,admin1,THA-435;THA-432,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
@@ -1740,21 +1740,21 @@ THA,Kanchanaburi-Ratchaburi,admin1,THA-399;THA-421;THA-424,1.0,Natural Earth 10m
 THA,Khon Kaen-Kalasin-Maha Sarakham,admin1,THA-438;THA-439;THA-440,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
 THA,Lampang-Phrae-Nan,admin1,THA-393;THA-391;THA-395,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
 THA,Nakhon Ratchasima,admin1,THA-441,1.0,Natural Earth 10m (public domain),name match 100
-THA,Nakhon Sawan-Kamphaeng Phet,admin1,THA-400;THA-411;THA-401,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Phichit"
+THA,Nakhon Sawan-Kamphaeng Phet,admin1,THA-400;THA-411,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 THA,Nakhon Si Thammarat-Trang,admin1,THA-387;THA-383;THA-376,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Phatthalung"
 THA,Nonthaburi-Pathum Thani,admin1,THA-413;THA-417,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 THA,Pattani-Yala-Narathiwat,admin1,THA-388;THA-493;THA-494,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
 THA,Phetchaburi-Prachuap Khiri Khan,admin1,THA-420;THA-419,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
-THA,Phitsanulok-Sukhothai,admin1,THA-398;THA-396;THA-397,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Uttaradit"
+THA,Phitsanulok-Sukhothai,admin1,THA-398;THA-396;THA-397;THA-402;THA-401,0.95,Natural Earth 10m (public domain),"alias hint -> name:Phitsanulok, name:Sukhothai, name:Uttaradit, name:Phetchabun; plus unclaimed Phichit"
 THA,Phuket-Krabi-Phang Nga,admin1,THA-378;THA-382;THA-377,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
 THA,Rayong,admin1,THA-434,1.0,Natural Earth 10m (public domain),name match 100
-THA,Sakon Nakhon-Roi Et-Mekong,admin1,THA-5499;THA-472;THA-473;THA-447;THA-442;THA-428,0.95,Natural Earth 10m (public domain),"alias hint -> name:Sakon Nakhon, name:Roi Et, name:Nakhon Phanom, name:Mukdahan; plus unclaimed Bueng Kan, Yasothon"
+THA,Sakon Nakhon-Roi Et-Mekong,admin1,THA-5499;THA-472;THA-473;THA-447;THA-442,0.95,Natural Earth 10m (public domain),"alias hint -> name:Sakon Nakhon, name:Roi Et, name:Nakhon Phanom, name:Mukdahan; plus unclaimed Bueng Kan"
 THA,Samut Prakan,admin1,THA-422,1.0,Natural Earth 10m (public domain),name match 100
 THA,Samut Sakhon-Nakhon Pathom,admin1,THA-423;THA-418,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 THA,Songkhla-Satun,admin1,THA-385;THA-386,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 THA,Surat Thani-Chumphon,admin1,THA-375;THA-379;THA-380,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Ranong"
 THA,Tak-Mae Hong Son,admin1,THA-374;THA-404,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
-THA,Ubon Ratchathani-Sisaket,admin1,THA-425;THA-426;THA-427,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Amnat Charoen"
+THA,Ubon Ratchathani-Sisaket,admin1,THA-425;THA-426;THA-427;THA-428,0.95,Natural Earth 10m (public domain),"alias hint -> name:Ubon Ratchathani, name:Si Sa Ket, name:Yasothon, name:Amnat Charoen"
 THA,Udon Thani-Nong Khai-Loei,admin1,THA-445;THA-446;THA-449;THA-448,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100); plus unclaimed Nong Bua Lam Phu"
 TJK,Districts of Republican Subordination,admin1,TJK-368,0.95,Natural Earth 10m (public domain),alias hint -> TJ-X01~
 TJK,Dushanbe,admin1,TJK-5491,1.0,Natural Earth 10m (public domain),name match 100
@@ -1845,9 +1845,9 @@ TZA,Tabora,admin1,TZA-3359,1.0,Natural Earth 10m (public domain),name match 100
 TZA,Tanga,admin1,TZA-3395,1.0,Natural Earth 10m (public domain),name match 100
 TZA,Zanzibar Unguja,admin1,TZA-3337;TZA-3383;TZA-3384,0.95,Natural Earth 10m (public domain),"alias hint -> TZ-07, TZ-11, TZ-15"
 UGA,Central,admin1,UGA-3361;UGA-2631;UGA-5598;UGA-3090;UGA-3067;UGA-3092;UGA-3094;UGA-3089;UGA-3078;UGA-5599;UGA-5600;UGA-3091;UGA-3095;UGA-5602;UGA-3077;UGA-3093;UGA-5617;UGA-5619;UGA-5620;UGA-5618;UGA-3362;UGA-3075;UGA-5597,1.0,Natural Earth 10m (public domain),"Natural Earth region Central (24 units, match 100)"
-UGA,Eastern,admin1,UGA-3120;UGA-5614;UGA-3112;UGA-3113;UGA-3118;UGA-3121;UGA-3116;UGA-5626;UGA-3069;UGA-5592;UGA-5593;UGA-3064;UGA-3066;UGA-3068;UGA-3071;UGA-3124;UGA-3122;UGA-5596;UGA-3074;UGA-3076;UGA-5612;UGA-5613;UGA-3114;UGA-3117;UGA-3115;UGA-5594;UGA-3119;UGA-5595;UGA-3065;UGA-5590;UGA-5591;UGA-3073,1.0,Natural Earth 10m (public domain),"Natural Earth region Eastern (32 units, match 100)"
+UGA,Eastern,admin1,UGA-3120;UGA-5614;UGA-3125;UGA-3127;UGA-3112;UGA-3113;UGA-5616;UGA-3118;UGA-3121;UGA-3116;UGA-5626;UGA-3069;UGA-5592;UGA-5593;UGA-3064;UGA-3066;UGA-3068;UGA-3071;UGA-3123;UGA-3126;UGA-3124;UGA-3122;UGA-5596;UGA-3074;UGA-3076;UGA-3128;UGA-5612;UGA-5613;UGA-3114;UGA-3117;UGA-3115;UGA-5594;UGA-3119;UGA-5595;UGA-5615;UGA-3065;UGA-5590;UGA-5591;UGA-3073,0.95,Natural Earth 10m (public domain),"alias hint -> region:Eastern, UG-315, UG-306, UG-317, UG-308, UG-328, UG-311, UG-324"
 UGA,Kampala,admin1,UGA-3088,1.0,Natural Earth 10m (public domain),name match 100
-UGA,Northern,admin1,UGA-3125;UGA-3096;UGA-5603;UGA-5601;UGA-3079;UGA-3085;UGA-3086;UGA-3081;UGA-3127;UGA-5616;UGA-3087;UGA-3080;UGA-5589;UGA-3084;UGA-5604;UGA-3070;UGA-3100;UGA-3103;UGA-3099;UGA-5605;UGA-3101;UGA-3098;UGA-5608;UGA-3123;UGA-3126;UGA-5607;UGA-5606;UGA-3128;UGA-5625;UGA-5615,1.0,Natural Earth 10m (public domain),"Natural Earth region Northern (30 units, match 100)"
+UGA,Northern,admin1,UGA-3096;UGA-5603;UGA-5601;UGA-3079;UGA-3085;UGA-3086;UGA-3081;UGA-3087;UGA-3080;UGA-5589;UGA-3084;UGA-5604;UGA-3070;UGA-3100;UGA-3103;UGA-3099;UGA-5605;UGA-3101;UGA-3098;UGA-5608;UGA-5607;UGA-5606;UGA-5625,0.95,Natural Earth 10m (public domain),"alias hint -> region:Northern, -UG-315, -UG-306, -UG-317, -UG-308, -UG-328, -UG-311, -UG-324"
 UGA,Western,admin1,UGA-3372;UGA-3370;UGA-3375;UGA-3376;UGA-3082;UGA-3105;UGA-5610;UGA-3104;UGA-3106;UGA-3367;UGA-5621;UGA-3373;UGA-3377;UGA-3102;UGA-3107;UGA-3368;UGA-5611;UGA-3108;UGA-3369;UGA-3374;UGA-5609;UGA-3371;UGA-5624;UGA-5623;UGA-5622;UGA-3366,1.0,Natural Earth 10m (public domain),"Natural Earth region Western (26 units, match 100)"
 UKR,Central Ukraine,admin1,UKR-323;UKR-330;UKR-319;UKR-320,0.95,Natural Earth 10m (public domain),"alias hint -> UA-05, UA-71, UA-35, UA-53"
 UKR,Eastern Ukraine,admin1,UKR-328;UKR-327;UKR-331;UKR-326,0.95,Natural Earth 10m (public domain),"alias hint -> UA-63, UA-12, UA-23, UA-14; less RUS:Donbas (carve)"
@@ -1865,7 +1865,7 @@ URY,Paysandu-Salto,admin1,URY-8;URY-10,1.0,Natural Earth 10m (public domain),"na
 URY,Soriano-Rio Negro,admin1,URY-11;URY-9,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 URY,Tacuarembo-Durazno,admin1,URY-15;URY-13,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
 USA,Alabama,admin1,USA-3541,1.0,Natural Earth 10m (public domain),name match 100
-USA,Alaska,admin1,USA-3563,1.0,Natural Earth 10m (public domain),name match 100
+USA,Alaska,admin1,USA-3563,1.0,Natural Earth 10m (public domain); builder-drawn line (hints file),name match 100; carve: builder polygon from no region
 USA,Arizona,admin1,USA-3520,1.0,Natural Earth 10m (public domain),name match 100
 USA,Arkansas,admin1,USA-3528,1.0,Natural Earth 10m (public domain),name match 100
 USA,California,admin1,USA-3521,1.0,Natural Earth 10m (public domain),name match 100
