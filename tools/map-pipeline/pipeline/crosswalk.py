@@ -1054,8 +1054,7 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids
         k = _scale(r.ry)
         return min(cands, key=lambda t: (_dist2(r.rx, r.ry, t[0], t[1], k), t[2]))
 
-    owner_of: dict[str, set] = {}
-    pending = []
+    gap_filled = []
     for r in blocks.itertuples():
         owners = claims.get(r.unit_id, set())
         if len(owners) == 1:
@@ -1063,33 +1062,51 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids
         elif len(owners) > 1:
             split[r.unit_id] = sorted(owners)
         else:
-            pending.append(r)
-            continue
-        owner_of[r.unit_id] = set(owners)
-    # D691 (PR #39 review): an unclaimed block goes to the nearest seed among the provinces whose
-    # land touches it, round by round as the land grows, so it never lands beyond another
-    # province's land (western Maryland past Hagerstown); only a block no province touches (an
-    # island) takes the nearest seed outright
-    if pending:
+            pid = nearest(r, eligible(r) or all_seeds)[2]
+            whole[pid].append(r.unit_id)
+            gap_filled.append(r)
+    # D691 (PR #39 review): a gap-filled block whose province's land does not reach it (western
+    # Maryland past the DC Metro's Frederick, Turtkul past Beruniy) moves to the nearest seed among
+    # the provinces whose land touches it, round by round until the land settles; seeded and split
+    # blocks never move, nor does a block no eligible province touches (an island)
+    if gap_filled:
         ids = list(blocks.unit_id)
         tree = blocks.sindex
         nbrs = {r.unit_id: [ids[i] for i in sorted(tree.query(r.geometry.buffer(TOUCH_DEG), predicate="intersects"))
-                            if ids[i] != r.unit_id] for r in pending}
-        while pending:
-            got = {}
-            for r in pending:
-                touching = set().union(*[owner_of.get(u, set()) for u in nbrs[r.unit_id]])
+                            if ids[i] != r.unit_id] for r in blocks.itertuples()}
+        owner = {u: {pid} for pid, us in whole.items() for u in us}
+        for u, owners in split.items():
+            owner[u] = set(owners)
+        anchored = {u for u in claims}
+        for _ in range(50):
+            moved = False
+            for r in gap_filled:
+                (pid,) = owner[r.unit_id]
+                # the province's land reaches the block: a path of its blocks from an anchored one
+                seen, stack, reach = {r.unit_id}, [r.unit_id], False
+                while stack and not reach:
+                    u = stack.pop()
+                    for v in nbrs[u]:
+                        if v in seen or pid not in owner.get(v, set()):
+                            continue
+                        if v in anchored:
+                            reach = True
+                            break
+                        seen.add(v)
+                        stack.append(v)
+                if reach:
+                    continue
+                touching = set().union(*[owner.get(v, set()) for v in nbrs[r.unit_id]]) - {pid}
                 cands = [t for t in (eligible(r) or all_seeds) if t[2] in touching]
-                if cands:
-                    got[r.unit_id] = nearest(r, cands)[2]
-            if not got:
+                if not cands:
+                    continue
+                new = nearest(r, cands)[2]
+                whole[pid].remove(r.unit_id)
+                whole[new].append(r.unit_id)
+                owner[r.unit_id] = {new}
+                moved = True
+            if not moved:
                 break
-            for uid, pid in got.items():
-                whole[pid].append(uid)
-                owner_of[uid] = {pid}
-            pending = [r for r in pending if r.unit_id not in got]
-        for r in pending:
-            whole[nearest(r, eligible(r) or all_seeds)[2]].append(r.unit_id)
         pos = {u: i for i, u in enumerate(ids)}
         for pid in whole:
             whole[pid].sort(key=pos.__getitem__)

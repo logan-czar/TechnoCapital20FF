@@ -113,3 +113,8 @@ add = true
 [review.exclave_ok]
 "CA-0025" = "Fermont and Schefferville: StatCan's Cote-Nord reaches them along the Labrador border, a strip Natural Earth's Quebec line cuts, so they sit between Labrador and Nord-du-Quebec"
 "MX-0006" = "the State of Mexico's Chalco-Amecameca lobe: the Mexico City Metro provinces round it reach 0.4 degrees from their seeds (D690), so it joins the state's rural province beyond them"
+# PR #39 review: Marin across the Golden Gate stays with San Francisco (D679); no land joins them,
+# so the D691 repair would hand it to Sacramento-Northern California
+[provinces.US-0018] # Marin
+units = ["Marin"]
+add = true

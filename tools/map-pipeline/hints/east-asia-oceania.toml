@@ -301,6 +301,7 @@ add = true
 
 # D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
 [review.exclave_ok]
+"AU-0047" = "geoBoundaries' Unincorporated SA is one unit in many pieces; the piece near Kimba stays with the rest of it in Far North-Olympic Dam"
 "AU-0052" = "geoBoundaries' Unincorporated NT is one unit in many pieces; the piece near Yulara stays with the rest of it in Darwin"
 "CN-0055" = "Sanhe, Dachang and Xianghe: Hebei's real exclave between Beijing and Tianjin"
 "ID-0042" = "a sliver of geoBoundaries' East Kalimantan unit beyond Natural Earth's North Kalimantan line"

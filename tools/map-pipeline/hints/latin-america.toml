@@ -107,3 +107,7 @@ add = true
 [provinces.BR-0028] # Angelina, in the hills behind Florianopolis
 units = ["Angelina"]
 add = true
+
+# D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
+[review.exclave_ok]
+"BR-0032" = "Mampituba meets the rest of Serra Gaucha only at a corner of Sao Francisco de Paula, so its pixels stand apart"
