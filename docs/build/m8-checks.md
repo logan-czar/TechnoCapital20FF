@@ -119,7 +119,9 @@ Run it with the window in front: the bench prints the share of frames the window
 
 The page timing harness (`--bench-pages`, sim paused) passes: `pages 59 opened, worst 22.72 ms: PASS` and `worst 34.13 ms: PASS` (company/0 cold; the machine was in use). The paused map bench passes its check in every mode it was run in (Political and HQs: p99 11.8 ms with the machine in use, PASS). The leak test passes in the gate (and `cargo test -p game --test s5_pace` covers the patch, the pacing, a pause showing the final values, an Omniscient toggle rebuilding at once while fast-forwarding and a hidden pane waiting). The 10-year soak (`headless soak --years 10 --seeds 1..4`) is byte-identical to main fe4b4c8 built in this slot: `years.csv` md5 121b5c7ba2ae4edcb9ed12d28764563e, `quarters.csv` cf890b482bd1f4c420cb3c6dc7f73a35, the same four seed hashes.
 
-The full gate (`bash scripts/check.sh`, debug build warm) on this branch at 44ff004: `== all checks passed`, 671 tests passed and none failed, 450 s.
+**After the PR #44 review (D771, D772, D776, D777, D779), main 1deff79 merged in.** Speed 5, the four panes, focused (100%): three runs at 110 to 113 fps, p50 8.4 / 8.6 / 8.9 ms, p99 16.19 (PASS) / 16.70 (FAIL, at the line) / 20.52 ms (FAIL), max 18.3 / 19.1 / 32.8 ms; a fourth run lost the focus and said INVALID (exit 3). The stepping is p50 2.4, p99 10.7 to 11.0 ms; each quarter event is now predicted apart (quarter start mean 8.2 ms, plan lock 7.7, release 3.3, price move 3.0; up to 12 to 14 ms). Speed 4, the four panes, focused: 314 and 318 fps, p50 3.1, p99 4.54 and 4.61 ms, PASS. Speed 5 with panes stays the tracked known FAIL (D779): now at the line rather than past it.
+
+The full gate (`bash scripts/check.sh`, debug build warm) on this branch at 44ff004: `== all checks passed`, 671 tests passed and none failed, 450 s; after the review, with main merged (ed15c5c): passed, 674 tests, none failed, 399 s.
 
 ## The M9 checks on the world map
 
