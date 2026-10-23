@@ -104,6 +104,16 @@ pub struct RunnerControls(pub Controls);
 /// is spent, so the window keeps drawing. Half of a 60 fps frame.
 pub const FRAME_STEP_BUDGET: Duration = Duration::from_millis(8);
 
+/// The step budgets of the first frames that step after the sim resumes from a pause (D806),
+/// ramping back to [`FRAME_STEP_BUDGET`]: the first frame after a resume also lays out what the
+/// pause changed (toasts, the alert row, the pages it flushed), so a full 8 ms of stepping on
+/// top of it ran that frame past 16.7 ms. The first tick of a frame still always runs.
+pub const RESUME_STEP_BUDGETS: [Duration; 3] = [
+    Duration::from_millis(2),
+    Duration::from_millis(4),
+    Duration::from_millis(6),
+];
+
 /// How fast a kind's predicted cost forgets its costliest recent tick (D776): the prediction is
 /// a decaying max, the newest tick's cost or the last prediction less this share, whichever is
 /// more, so a kind is predicted at its expensive end.
@@ -231,6 +241,9 @@ pub struct SimRunner {
     /// What a tick of each [`TickKind`] costs lately (a decaying max): at max speed a tick
     /// that would not fit in what is left of the budget waits for the next frame (D776).
     tick_cost: [Duration; TickKind::COUNT],
+    /// After a resume from a pause: how many stepped frames of [`RESUME_STEP_BUDGETS`] have
+    /// passed (D806); `None` once the ramp is done.
+    resume_ramp: Option<usize>,
 }
 
 impl SimRunner {
@@ -242,6 +255,16 @@ impl SimRunner {
             spent: Duration::ZERO,
             rebuilt: false,
             tick_cost: [Duration::ZERO; TickKind::COUNT],
+            resume_ramp: None,
+        }
+    }
+
+    /// The step budget of the current frame: [`SimRunner::set_budget`]'s, or less on the first
+    /// stepped frames after a resume (D806).
+    fn frame_budget(&self) -> Duration {
+        match self.resume_ramp.and_then(|i| RESUME_STEP_BUDGETS.get(i)) {
+            Some(&b) => b.min(self.budget),
+            None => self.budget,
         }
     }
 
@@ -303,6 +326,12 @@ impl Plugin for SimBridgePlugin {
 }
 
 fn start_frame(mut runner: ResMut<SimRunner>, mut rate: ResMut<SimRate>) {
+    // A frame that stepped uses up one budget of the resume ramp (D806).
+    if rate.steps_this_frame > 0
+        && let Some(i) = runner.resume_ramp
+    {
+        runner.resume_ramp = (i + 1 < RESUME_STEP_BUDGETS.len()).then_some(i + 1);
+    }
     rate.step_time_last_frame = runner.spent;
     rate.step_time_this_frame = Duration::ZERO;
     rate.quarterly_this_frame = false;
@@ -328,6 +357,7 @@ fn apply_controls(
     mut mirror: ResMut<RunnerControls>,
 ) {
     let mut any = false;
+    let was_paused = runner.sim.controls().paused;
     for SimControl(control) in controls.read() {
         any = true;
         match runner.sim.apply(control.clone()) {
@@ -346,6 +376,9 @@ fn apply_controls(
         if runner.sim.controls().paused {
             runner.owed = 0.0;
         }
+    }
+    if any && was_paused && !runner.sim.controls().paused {
+        runner.resume_ramp = Some(0);
     }
     if any && mirror.0 != *runner.sim.controls() {
         mirror.0.clone_from(runner.sim.controls());
@@ -410,7 +443,9 @@ fn step_sim(
         ));
         let checked = Instant::now();
         let cost = runner.tick_cost[next as usize];
-        if !first_of_frame && runner.spent + checked.duration_since(start) + cost >= runner.budget {
+        if !first_of_frame
+            && runner.spent + checked.duration_since(start) + cost >= runner.frame_budget()
+        {
             cut_short = true;
             break;
         }
@@ -435,7 +470,7 @@ fn step_sim(
     }
     runner.spent += start.elapsed();
     rate.step_time_this_frame = runner.spent;
-    rate.budget = runner.budget;
+    rate.budget = runner.frame_budget();
     rate.steps_this_frame += steps;
     rate.total_steps += u64::from(steps);
     rate.window_steps += u64::from(steps);

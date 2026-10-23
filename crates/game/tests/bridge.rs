@@ -73,6 +73,30 @@ fn max_speed_is_budgeted_per_frame() {
     assert!(app.world().resource::<SimRate>().budget_hits > 0);
 }
 
+/// D806: the first stepped frames after a resume step for 2, 4 and 6 ms, then the full budget.
+#[test]
+fn a_resume_ramps_the_step_budget() {
+    let mut app = bridge_app();
+    alerts_off(&mut app);
+    for round in 0..2 {
+        send(&mut app, Control::SetSpeed(5));
+        let mut budgets = Vec::new();
+        for _ in 0..40 {
+            app.update();
+            let rate = app.world().resource::<SimRate>();
+            if rate.steps_this_frame > 0 {
+                budgets.push(rate.budget.as_millis());
+            }
+            if budgets.len() == 5 {
+                break;
+            }
+        }
+        assert_eq!(budgets, [2, 4, 6, 8, 8], "round {round}");
+        send(&mut app, Control::Pause);
+        frames(&mut app, 2);
+    }
+}
+
 /// Paused runs no ticks; SetSpeed resumes (D8) and Pause stops again.
 #[test]
 fn pause_runs_none() {
