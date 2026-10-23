@@ -80,7 +80,7 @@ def fetch(sources: dict | None = None, isos: set[str] | None = None) -> None:
         url = f"{gb['base_url']}{b['iso']}/{b['level']}/"
         s = _download(url + f"{stem}-metaData.json", d / f"{stem}-metaData.json", b["meta_sha256"])
         meta = gb_meta(b["iso"], b["level"], sources)
-        ok, why = licenses.classify(meta.get("boundaryLicense", ""), meta.get("boundarySource", ""))
+        ok, why = licenses.classify_meta(meta)
         line = f"  gb {b['iso']} {b['level']} meta: {s}; license {meta.get('boundaryLicense')!r} -> {why}"
         if ok:
             g = _download(url + f"{stem}.geojson", d / f"{stem}.geojson", b["geojson_sha256"], b["geojson_size"])

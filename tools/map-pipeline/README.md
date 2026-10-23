@@ -18,11 +18,11 @@ about two minutes once the cache is filled.
 
 | Step | Module | Does |
 |---|---|---|
-| fetch (P1, P2) | `pipeline/fetch.py`, `licenses.py` | Downloads every file pinned in `sources.toml` into the cache, verifying sha256; skips verified files. geoBoundaries geometry is fetched only when `boundaryLicense` passes the allowlist (CC BY, CC0, public domain); others keep only their metadata and go to the Voronoi path |
+| fetch (P1, P2) | `pipeline/fetch.py`, `licenses.py` | Downloads every file pinned in `sources.toml` into the cache, verifying sha256; skips verified files. geoBoundaries geometry is fetched only when `boundaryLicense` (and `licenseDetail`) passes the allowlist (CC BY, CC0, public domain, OGL-Canada 2.0, OGL-UK 3.0; D601); others keep only their metadata and go to the Voronoi path |
 | crosswalk (P3) | `crosswalk.py`, `text.py` | Region and province crosswalks with method, source ids, confidence, provenance and a note (D603, D604) |
 | shapes (P4) | `shapes.py` | Dissolves whole units, Voronoi-splits shared ones, clips to the region, fills seams; also the land mask for the coastal check |
 | simplify (P5, P6) | `simplify.py` | mapshaper `snap`, `-clean`, `-simplify interval=500 keep-shapes`; writes `provinces.geojson` (degrees; mapgen applies Miller, D602) |
-| mapgen (P7) | `mapgen_step.py` | `cargo run --release -p mapgen -- build ...`: every bitmap and table of the contract |
+| mapgen (P7) | `mapgen_step.py` | `cargo run --release -p mapgen -- build ...`: every bitmap and table of the contract, for every region built so far (one `--geojson` each) |
 | qa (P8) | `qa.py` | `assets/map/qa/report-<region>.md`, a preview PNG, `assets/map/CREDITS.md`; fails on a province without pixels or a license problem |
 
 `run.py pin --iso USA CAN MEX` re-pins `sources.toml` (Natural Earth hashes from a download, geoBoundaries
