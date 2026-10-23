@@ -71,7 +71,10 @@ def _cap_metro(cells: dict, seeds_by_prov: dict, metro: set) -> dict:
     out = dict(cells)
     far = []
     for pid in sorted(metro & set(cells)):
-        reach = shapely.union_all([Point(x, y).buffer(crosswalk.METRO_CAP_DEG) for x, y in seeds_by_prov[pid]])
+        # an ellipse: METRO_CAP_DEG north-south, scaled by latitude east-west (D690)
+        reach = shapely.union_all([affinity.scale(Point(x, y).buffer(crosswalk.METRO_CAP_DEG),
+                                                  xfact=1 / crosswalk._scale(y), yfact=1.0, origin=(x, y))
+                                   for x, y in seeds_by_prov[pid]])
         keep = _polys(cells[pid].intersection(reach))
         rest = _polys(cells[pid].difference(reach))
         if not rest.is_empty:
@@ -169,6 +172,44 @@ def build_region(key: str, rgeom, rplan: dict, work, splits: dict | None = None)
         extra.setdefault(best, []).append(part)
     for pid, parts in extra.items():
         shapes[pid] = _polys(shapely.union_all([shapes[pid], *parts]))
+    return _merge_fragments(shapes, provs, blocks)
+
+
+def _merge_fragments(shapes: dict, provs: dict, blocks) -> dict:
+    """D691 (PR #39 review): a Voronoi cell clipped to a concave block can fall apart; a piece of a
+    province that holds none of its seeds and lies mostly outside its whole blocks is such a
+    fragment, and goes to the province of the region it shares the longest edge with (an island
+    piece, touching no one, stays)."""
+    keep_pts = {pid: [shapely.Point(x, y) for pts in pr["split"].values() for x, y in pts]
+                for pid, pr in provs.items()}
+    whole = {pid: shapely.union_all([blocks.loc[u].geometry for u in pr["whole"]]) if pr["whole"] else None
+             for pid, pr in provs.items()}
+    for pid in sorted(shapes):
+        if not provs.get(pid, {}).get("split"):
+            continue
+        parts = sorted(getattr(shapes[pid], "geoms", [shapes[pid]]), key=lambda g: -g.area)
+        if len(parts) < 2:
+            continue
+        mine = [parts[0]]
+        for part in parts[1:]:
+            seeded = any(part.covers(q) for q in keep_pts[pid])
+            in_whole = whole[pid] is not None and part.intersection(whole[pid]).area > 0.5 * part.area
+            if seeded or in_whole:
+                mine.append(part)
+                continue
+            ring = part.boundary
+            best, best_len = None, 0.0
+            for q in sorted(shapes):
+                if q == pid or shapes[q].is_empty or not shapes[q].intersects(part.buffer(1e-6)):
+                    continue
+                shared = ring.intersection(shapes[q].boundary.buffer(1e-7)).length
+                if shared > best_len:
+                    best, best_len = q, shared
+            if best is None:
+                mine.append(part)
+            else:
+                shapes[best] = _polys(shapely.union_all([shapes[best], part]))
+        shapes[pid] = _polys(shapely.union_all(mine))
     return shapes
 
 

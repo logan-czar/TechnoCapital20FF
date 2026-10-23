@@ -61,7 +61,8 @@ seeds = [[69.17, 41.45], [68.40, 40.85]]
 [provinces.KZ-0011]
 seeds = [[57.21, 50.28]]
 [provinces.KZ-0014] # Tengiz, Kashagan
-seeds = [[53.38, 46.15], [52.60, 46.20], [53.00, 46.50]]
+# Kashagan is offshore (no land)
+seeds = [[53.38, 46.15], [53.00, 46.50]]
 [provinces.KZ-0015] # Aktau, Kuryk
 seeds = [[51.17, 43.65], [51.68, 43.18]]
 [provinces.KZ-0020] # Balkhash, Karkaraly
@@ -77,7 +78,7 @@ seeds = [[30.31, 59.94], [30.26, 59.94]]
 [provinces.RU-0017] # Lakhta, the north, Sestroretsk
 seeds = [[30.18, 59.99], [30.33, 60.05], [29.97, 60.10]]
 [provinces.RU-0068] # the Kuril chain from Kunashir and Shikotan to Paramushir
-seeds = [[147.90, 45.20], [145.90, 44.00], [146.70, 43.80], [150.00, 46.20], [152.00, 47.50], [154.00, 48.80], [155.90, 50.40]]
+seeds = [[147.90, 45.20], [145.90, 44.00], [146.70, 43.80], [154.00, 48.80], [155.90, 50.40]]
 [provinces.TJ-0002] # Hisor, Tursunzoda
 seeds = [[68.67, 38.52], [68.23, 38.51]]
 [provinces.TJ-0003] # Rogun, Gharm, Jirgatol
@@ -87,11 +88,11 @@ seeds = [[67.61, 39.50], [68.53, 39.39]]
 [provinces.TJ-0006] # Istaravshan, Isfara, Kanibadam
 seeds = [[69.01, 39.91], [70.63, 40.12], [70.23, 40.45]]
 [provinces.TM-0003] # Gokdepe, Baharly, Darvaza
-seeds = [[57.95, 38.15], [57.43, 38.43], [58.90, 40.25]]
+seeds = [[57.95, 38.15], [57.43, 38.43], [58.88, 40.12]]
 [provinces.TM-0007]
 seeds = [[59.97, 41.84]]
 [provinces.TM-0010] # Samandepe, Kerki, Koytendag
-seeds = [[64.60, 38.95], [65.21, 37.83], [66.40, 37.80]]
+seeds = [[64.49, 38.83], [65.21, 37.83], [66.40, 37.80]]
 [provinces.TM-0012] # Yoloten, Galkynysh, Serhetabat, Dauletabad
 seeds = [[62.36, 37.33], [62.45, 37.25], [62.35, 35.27], [61.60, 36.40]]
 [provinces.TM-0013] # Bayramaly, Murgab, Turkmengala
@@ -99,10 +100,26 @@ seeds = [[62.17, 37.62], [61.97, 37.50], [62.40, 37.43]]
 
 # PR #38 review: Moscow's two rings, Gori-Borjomi and South Ossetia
 [provinces.RU-0005] # Khimki, Mytishchi, Korolev, Balashikha, Lyubertsy, Krasnogorsk, Podolsk, Odintsovo
-seeds = [[37.43, 55.89], [37.73, 55.91], [37.85, 55.92], [37.94, 55.80], [37.90, 55.68], [37.33, 55.82], [37.55, 55.43], [37.27, 55.68]]
+seeds = [[37.43, 55.89], [37.73, 55.91], [37.85, 55.92], [37.94, 55.80], [37.90, 55.68], [37.33, 55.82], [37.61, 55.40], [37.27, 55.68]]
 [provinces.RU-0006] # Sergiev Posad, Dubna, Kolomna, Serpukhov, Mozhaisk, Volokolamsk, Noginsk, Dmitrov, Klin, Shatura
 seeds = [[38.13, 56.31], [37.17, 56.74], [38.78, 55.10], [37.41, 54.92], [36.02, 55.50], [35.95, 56.03], [38.44, 55.85], [37.52, 56.34], [36.73, 56.33], [39.54, 55.57]]
 [provinces.GE-0006] # Gori, Borjomi, Akhaltsikhe, Mtskheta, Akhalkalaki, Gudauri
 seeds = [[44.11, 41.98], [43.38, 41.84], [42.98, 41.64], [44.72, 41.85], [43.49, 41.40], [44.48, 42.48]]
 [provinces.GE-0007] # South Ossetia, drawn on the line the breakaway holds (decision C), round Tskhinvali and Java
 polygon = [[43.45, 42.40], [43.60, 42.55], [43.85, 42.62], [44.10, 42.62], [44.30, 42.55], [44.50, 42.50], [44.45, 42.35], [44.25, 42.25], [44.10, 42.13], [43.95, 42.10], [43.80, 42.15], [43.70, 42.25], [43.55, 42.30], [43.45, 42.40]]
+
+# PR #39 review: the port, the Kirov Plant and Bronka for South-Port (Kolpino alone left it a
+# corner of the city)
+[provinces.RU-0016] # Big Port, the Kirov Plant, Bronka, Pulkovo, Kolpino
+seeds = [[30.21, 59.88], [30.26, 59.88], [29.93, 59.94], [30.27, 59.80], [30.60, 59.75]]
+
+# D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
+[review.exclave_ok]
+"RU-0003" = "a detached part of Natural Earth's Moscow city unit (the city has exclaves in the oblast)"
+"TJ-0006" = "Vorukh: Tajikistan's real exclave inside Kyrgyzstan"
+"UZ-0006" = "Sokh and Shakhimardan: Uzbekistan's real exclaves inside Kyrgyzstan"
+
+# PR #39 review (D690): Almaty's point is in the city region, so it no longer snaps onto the
+# ring round it; the ring's own towns seed it
+[provinces.KZ-0004] # Talgar, Yesik, Kaskelen, Kapchagay (Konaev)
+seeds = [[77.24, 43.30], [77.45, 43.36], [76.62, 43.20], [77.07, 43.87]]

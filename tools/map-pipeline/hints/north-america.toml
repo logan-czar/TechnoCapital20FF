@@ -5,6 +5,8 @@
 # in the QA report for review.
 
 [review]
+# D692: Little and Big Diomede meet by sea only (no Russia-US land border)
+sea_only = [["RU-0070", "US-0004"]]
 # Known compromises listed in the QA report for Logan.
 notes = [
     "CA-0003 York-Markham holds Scarborough and North York, which are in the City of Toronto: the Toronto economic region is split by Voronoi among Downtown Toronto (seeded at Toronto), Peel-Mississauga, York-Markham and Durham-Oshawa, and the York and Markham seeds sit closer to them. Left as is; a hint can move them to Downtown Toronto.",
@@ -97,5 +99,17 @@ add = true
 
 [carve."USA:Alaska"]
 # Little Diomede island in the Bering Strait (no Natural Earth 10m land); not clipped to land
-polygon = [[-169.00, 65.72], [-168.88, 65.72], [-168.88, 65.79], [-169.00, 65.79], [-169.00, 65.72]]
+# west edge east of the pixel centre at -168.99, so its pixels never touch Big Diomede's (D692)
+polygon = [[-168.965, 65.72], [-168.88, 65.72], [-168.88, 65.79], [-168.965, 65.79], [-168.965, 65.72]]
 clip = false
+
+# PR #39 review: Prescott ties Flagstaff's Coconino to Phoenix through Yavapai (D690 moved the
+# unclaimed county to Tucson-Southern Arizona)
+[provinces.US-0005] # Prescott
+seeds = [[-112.47, 34.54]]
+add = true
+
+# D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
+[review.exclave_ok]
+"CA-0025" = "Fermont and Schefferville: StatCan's Cote-Nord reaches them along the Labrador border, a strip Natural Earth's Quebec line cuts, so they sit between Labrador and Nord-du-Quebec"
+"MX-0006" = "the State of Mexico's Chalco-Amecameca lobe: the Mexico City Metro provinces round it reach 0.4 degrees from their seeds (D690), so it joins the state's rural province beyond them"

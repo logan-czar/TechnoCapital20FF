@@ -224,7 +224,8 @@ seeds = [[8.02, 50.87], [8.07, 51.40], [8.29, 51.35]]
 [provinces.DE-0036] # Brunswick, Wolfsburg, Salzgitter, Goettingen, Goslar
 seeds = [[10.52, 52.27], [10.79, 52.42], [10.34, 52.15], [9.93, 51.53], [10.43, 51.90]]
 [provinces.DE-0037] # Harburg, Stade, Lueneburg, Cuxhaven
-seeds = [[9.98, 53.46], [9.48, 53.60], [10.41, 53.25], [8.70, 53.87]]
+# Buchholz for the Harburg district (Harburg borough itself is in Hamburg)
+seeds = [[9.87, 53.33], [9.48, 53.60], [10.41, 53.25], [8.70, 53.87]]
 [provinces.DE-0040] # Luebeck, Norderstedt, Pinneberg, Ahrensburg
 seeds = [[10.69, 53.87], [10.00, 53.71], [9.80, 53.66], [10.24, 53.67]]
 [provinces.DE-0043] # Greifswald, Lubmin, Ruegen, Neubrandenburg
@@ -323,7 +324,8 @@ seeds = [[28.87, 40.98], [28.67, 41.03], [28.63, 40.98], [28.73, 41.26], [28.25,
 [provinces.TR-0004] # Kadikoy, Uskudar, Atasehir
 seeds = [[29.03, 40.99], [29.02, 41.02], [29.12, 40.99]]
 [provinces.TR-0005] # Kartal, Pendik, Tuzla, Sile
-seeds = [[29.19, 40.89], [29.30, 40.87], [29.31, 40.82], [29.62, 41.17]]
+# Tuzla's point (29.31, 40.82) is over Natural Earth's line with East Marmara; Pendik's inland side
+seeds = [[29.19, 40.89], [29.26, 40.90], [29.62, 41.17]]
 [provinces.UA-0009]
 units = ["Vinnytsya"]
 
@@ -348,3 +350,23 @@ seeds = [[11.08, 49.45], [11.00, 49.59], [10.99, 49.48], [10.57, 49.30]]
 seeds = [[9.93, 49.79], [10.89, 49.89], [11.58, 49.94], [10.23, 50.05]]
 [provinces.DE-0012] # Regensburg, Landshut, Passau
 seeds = [[12.10, 49.02], [12.15, 48.54], [13.46, 48.57]]
+
+# PR #39 review: Milan's hinterland splits the Citta metropolitana with the centre (as Soweto
+# splits Johannesburg's unit)
+[provinces.IT-0001] # the centre, Porta Nuova, CityLife, Navigli
+seeds = [[9.19, 45.465], [9.19, 45.485], [9.165, 45.475], [9.18, 45.45], [9.21, 45.47]]
+[provinces.IT-0002] # Sesto San Giovanni, Rho fair, Linate, Legnano, San Donato, Rozzano, Abbiategrasso, Melzo, Lodi
+units = ["Lodi"]
+seeds = [[9.23, 45.54], [9.04, 45.53], [9.28, 45.45], [8.92, 45.60], [9.27, 45.41], [9.16, 45.38],
+         [8.92, 45.40], [9.42, 45.50], [9.10, 45.30]]
+
+# D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
+[review.exclave_ok]
+"BE-0016" = "Comines-Warneton: Hainaut's real exclave between France and West Flanders"
+"CH-0005" = "Vaud's real exclaves inside Fribourg (Avenches)"
+"CH-0009" = "Fribourg's real exclaves inside Vaud (Estavayer, Surpierre)"
+"ES-0015" = "Rincon de Ademuz: Valencia's real exclave between Cuenca and Teruel"
+"ES-0020" = "Condado de Trevino: Burgos's real enclave inside Alava"
+"ES-0025" = "a detached part of Natural Earth's Ciudad Real unit, inside Toledo"
+"FR-0039" = "the Enclave des Papes (Valreas): Vaucluse's real exclave inside Drome"
+"MD-0005" = "Gagauzia is in separate parts (Natural Earth's Comrat unit has three)"

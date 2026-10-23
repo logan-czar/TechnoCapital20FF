@@ -582,3 +582,165 @@ Schaumburg | -88.08 | 42.03 | US-0046
 Midtown Manhattan | -73.98 | 40.75 | US-0086
 Brooklyn | -73.95 | 40.65 | US-0087
 Poughkeepsie | -73.92 | 41.70 | US-0090
+# PR #39 review: the reviewer's fresh points (Tianjin, Chongqing, Wuhan, Chengdu, Nagoya, Saigon, Hanoi,
+# Kuala Lumpur, Melbourne, the German metros, Pune, Bengaluru, Hyderabad, Chennai, Kolkata, Rio,
+# Lisbon, Baghdad, St Petersburg, Milan), Johannesburg, Sydney, Hubei and North America checks
+Tianjin Heping | 117.20 | 39.12 | CN-0005
+Tianjin Binhai TEDA | 117.70 | 39.03 | CN-0006
+Tianjin port Tanggu | 117.65 | 39.00 | CN-0006
+Wuqing | 117.04 | 39.38 | CN-0007
+Jinghai | 116.92 | 38.94 | CN-0007
+Chongqing Jiefangbei | 106.58 | 29.56 | CN-0014
+Shapingba | 106.45 | 29.54 | CN-0015
+Chongqing airport | 106.64 | 29.72 | CN-0016
+Hankou | 114.27 | 30.60 | CN-0063
+Wuchang | 114.31 | 30.55 | CN-0064
+Optics Valley | 114.41 | 30.49 | CN-0064
+Hanyang | 114.22 | 30.55 | CN-0065
+Chengdu Chunxi | 104.08 | 30.66 | CN-0085
+Chengdu Tianfu airport | 104.44 | 30.31 | CN-0088
+Pidu | 103.89 | 30.81 | CN-0089
+Nagoya Sakae | 136.91 | 35.17 | JP-0034
+Toyota City | 137.16 | 35.08 | JP-0036
+Komaki | 136.91 | 35.29 | JP-0035
+Saigon District 1 | 106.70 | 10.776 | VN-0001
+Thu Duc | 106.77 | 10.85 | VN-0002
+Thu Dau Mot | 106.65 | 10.98 | VN-0003
+Bien Hoa | 106.82 | 10.95 | VN-0004
+Hoa Lac | 105.52 | 21.01 | VN-0026
+Bac Ninh | 106.07 | 21.18 | VN-0027
+KLCC | 101.71 | 3.157 | MY-0001
+Shah Alam | 101.52 | 3.07 | MY-0002
+Port Klang | 101.39 | 3.00 | MY-0002
+Cyberjaya | 101.65 | 2.92 | MY-0003
+KLIA | 101.71 | 2.74 | MY-0003
+Melbourne CBD | 144.963 | -37.814 | AU-0015
+Tullamarine | 144.84 | -37.67 | AU-0016
+Werribee | 144.66 | -37.90 | AU-0016
+Box Hill | 145.12 | -37.82 | AU-0015
+Geelong | 144.36 | -38.15 | ?
+Stuttgart Mitte | 9.18 | 48.775 | DE-0001
+Boeblingen | 9.01 | 48.68 | DE-0001
+Ludwigsburg | 9.19 | 48.90 | DE-0002
+Heilbronn | 9.22 | 49.14 | DE-0002
+Munich Marienplatz | 11.575 | 48.137 | DE-0006
+Ingolstadt | 11.42 | 48.76 | DE-0007
+Augsburg | 10.90 | 48.37 | DE-0008
+Starnberg | 11.34 | 48.00 | ?
+Hamburg Rathaus | 9.99 | 53.55 | DE-0018
+Harburg Buchholz | 9.87 | 53.33 | DE-0037
+Stade | 9.48 | 53.60 | DE-0037
+Norderstedt | 10.0 | 53.70 | DE-0040
+Luebeck | 10.69 | 53.87 | DE-0040
+Frankfurt | 8.68 | 50.11 | DE-0019
+Darmstadt | 8.65 | 49.87 | DE-0020
+Hanau | 8.92 | 50.13 | DE-0020
+Mainz | 8.27 | 50.00 | DE-0023
+Duesseldorf | 6.78 | 51.23 | DE-0027
+Wuppertal | 7.15 | 51.26 | DE-0027
+Cologne | 6.96 | 50.94 | DE-0028
+Bonn | 7.10 | 50.73 | DE-0028
+Essen | 7.01 | 51.46 | DE-0029
+Duisburg | 6.76 | 51.43 | DE-0029
+Dortmund | 7.47 | 51.51 | DE-0030
+Bochum | 7.22 | 51.48 | DE-0030
+Milan Duomo | 9.19 | 45.464 | IT-0001
+Sesto San Giovanni | 9.23 | 45.53 | IT-0002
+Rho | 9.04 | 45.53 | IT-0002
+Monza | 9.27 | 45.58 | IT-0003
+Como | 9.08 | 45.81 | IT-0003
+Barcelona Placa Catalunya | 2.17 | 41.387 | ES-0004
+Badalona | 2.25 | 41.45 | ES-0004
+El Prat airport | 2.08 | 41.30 | ES-0005
+Martorell | 1.93 | 41.47 | ES-0005
+Sabadell | 2.11 | 41.55 | ES-0005
+Santiago Providencia | -70.61 | -33.43 | CL-0009
+Puente Alto | -70.58 | -33.61 | CL-0010
+Pudahuel airport | -70.79 | -33.39 | CL-0010
+Melipilla | -71.22 | -33.69 | CL-0011
+Talagante | -70.93 | -33.66 | CL-0011
+Riyadh Olaya2 | 46.67 | 24.69 | SA-0001
+Riyadh 2nd Industrial City | 46.86 | 24.55 | SA-0003
+Baghdad Green Zone | 44.38 | 33.31 | IQ-0001
+Rashid Street Baghdad | 44.42 | 33.34 | IQ-0002
+Sadr City | 44.45 | 33.39 | IQ-0003
+St Petersburg Nevsky | 30.34 | 59.93 | RU-0015
+Lakhta | 30.18 | 59.99 | RU-0017
+Kirov Plant | 30.26 | 59.88 | RU-0016
+Pune Shivajinagar | 73.85 | 18.53 | IN-0017
+Hinjewadi | 73.73 | 18.59 | IN-0017
+Pimpri | 73.80 | 18.63 | IN-0018
+Chakan | 73.86 | 18.76 | IN-0018
+Bengaluru MG Road | 77.61 | 12.975 | IN-0023
+Whitefield | 77.75 | 12.97 | IN-0023
+Electronic City | 77.67 | 12.84 | IN-0024
+Peenya | 77.52 | 13.03 | IN-0025
+Kempegowda airport | 77.71 | 13.20 | IN-0025
+Charminar | 78.47 | 17.36 | IN-0029
+HITEC City | 78.38 | 17.45 | IN-0030
+Chennai Anna Salai | 80.26 | 13.06 | IN-0033
+Ennore | 80.32 | 13.24 | IN-0034
+Sriperumbudur | 79.95 | 12.97 | IN-0035
+Kolkata BBD Bagh | 88.35 | 22.57 | IN-0040
+Howrah | 88.31 | 22.59 | IN-0041
+Barrackpore | 88.38 | 22.76 | IN-0042
+Dum Dum | 88.45 | 22.65 | IN-0042
+Rio Copacabana2 | -43.18 | -22.97 | BR-0010
+Nova Iguacu | -43.45 | -22.76 | BR-0012
+Sao Goncalo | -43.05 | -22.83 | BR-0013
+Santa Cruz RJ | -43.69 | -22.91 | BR-0011
+Petropolis | -43.18 | -22.51 | ?
+Sintra | -9.38 | 38.80 | PT-0002
+Lisbon Baixa | -9.14 | 38.71 | PT-0001
+Gwangju city | 126.85 | 35.16 | KR-0011
+Kaohsiung | 120.30 | 22.62 | TW-0016
+Taichung | 120.68 | 24.15 | TW-0009
+Mombasa | 39.67 | -4.04 | KE
+Tema | 0.00 | 5.67 | GH-0002
+Kumasi | -1.62 | 6.69 | GH-0003
+Eldoret | 35.27 | 0.52 | KE
+Chittagong | 91.83 | 22.34 | BD
+Xi'an | 108.94 | 34.26 | CN
+Shenyang | 123.43 | 41.80 | CN
+Linate | 9.28 | 45.45 | IT-0002
+Lodi | 9.50 | 45.31 | IT-0002
+Legnano | 8.92 | 45.60 | IT-0002
+Big Port SPb | 30.21 | 59.88 | RU-0016
+Kolpino | 30.60 | 59.75 | RU-0016
+Bronka | 29.93 | 59.94 | RU-0016
+Abu Ghraib | 44.07 | 33.29 | IQ-0004
+Taji | 44.24 | 33.52 | IQ-0004
+Garay dept AR | -60.17 | -31.12 | AR-0013
+Xiantao | 113.45 | 30.36 | ?
+Tianmen | 113.17 | 30.66 | ?
+Qianjiang | 112.90 | 30.40 | ?
+Hanchuan | 113.83 | 30.65 | ?
+Xiaogan | 113.92 | 30.93 | ?
+Jiayu | 113.92 | 29.97 | ?
+Honghu | 113.47 | 29.83 | ?
+NE Johannesburg point | 28.028 | -26.168 | ZA-0001
+Braamfontein | 28.03 | -26.19 | ZA-0001
+Rosebank | 28.04 | -26.146 | ZA-0001
+Melville | 28.00 | -26.17 | ZA-0001
+Randburg | 27.99 | -26.09 | ZA-0001
+Midrand | 28.13 | -25.99 | ZA-0001
+Alexandra | 28.10 | -26.10 | ZA-0001
+Orange Farm | 27.86 | -26.48 | ?
+Wharton | -96.10 | 29.31 | US-0126
+Bay City Matagorda | -95.97 | 28.98 | ?
+Victoria TX | -97.00 | 28.80 | ?
+Columbus TX | -96.54 | 29.71 | ?
+Kingman AZ | -114.05 | 35.19 | US-0007
+Lake Havasu | -114.32 | 34.48 | US-0007
+Holbrook Navajo | -110.16 | 34.90 | US-0007
+Globe Gila | -110.79 | 33.39 | US-0007
+Flagstaff | -111.65 | 35.20 | US-0005
+Okeechobee | -80.83 | 27.24 | US-0034
+Sebring Highlands | -81.44 | 27.50 | ?
+Clewiston | -80.93 | 26.75 | ?
+Pyrmont | 151.19 | -33.87 | AU-0001
+Surry Hills | 151.21 | -33.885 | AU-0001
+Redfern | 151.20 | -33.893 | AU-0001
+Bondi | 151.27 | -33.89 | AU-0001
+Santa Fe city | -60.70 | -31.63 | AR-0013
+Santo Tome AR | -60.76 | -31.66 | AR-0013

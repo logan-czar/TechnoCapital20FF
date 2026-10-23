@@ -85,7 +85,7 @@ seeds = [[-77.03, -12.10], [-77.03, -12.12], [-77.03, -12.05]]
 [provinces.PE-0002] # San Juan de Lurigancho, Comas, Los Olivos, Ate
 seeds = [[-77.00, -11.98], [-77.06, -11.94], [-77.07, -11.99], [-76.89, -12.03]]
 [provinces.VE-0012] # El Callao, Las Claritas, Canaima, Santa Elena de Uairen
-seeds = [[-61.83, 7.35], [-61.14, 6.05], [-62.85, 6.24], [-61.11, 4.60]]
+seeds = [[-61.83, 7.35], [-61.21, 6.14], [-62.85, 6.24], [-61.11, 4.60]]
 
 # PR #38 review: the Sao Paulo municipality and the Lima provinces
 [provinces.BR-0001] # the centre, Avenida Paulista, Faria Lima, Pinheiros, Butanta, with Osasco and Barueri
@@ -99,3 +99,11 @@ seeds = [[-46.70, -23.65], [-46.70, -23.82]]
 add = true
 [provinces.PE-0003] # Huacho, Huaral, Chancay, Canete, Matucana (Huarochiri), Yauyos
 seeds = [[-77.61, -11.11], [-77.21, -11.50], [-77.27, -11.57], [-76.39, -13.08], [-76.38, -11.84], [-75.91, -12.46]]
+
+# PR #39 review (D691): General Las Heras partido touches West Pampa, not the Zarate-Campana belt
+[provinces.AR-0009] # General Las Heras
+units = ["General Las Heras"]
+add = true
+[provinces.BR-0028] # Angelina, in the hills behind Florianopolis
+units = ["Angelina"]
+add = true

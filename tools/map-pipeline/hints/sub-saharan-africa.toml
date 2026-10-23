@@ -204,12 +204,12 @@ from = ["TGO:Maritime"]
 seeds = [[13.23, -8.81], [13.21, -8.79]]
 [provinces.BW-0004] # Orapa, Letlhakane, Sua Pan
 seeds = [[25.37, -21.31], [25.59, -21.42], [26.17, -20.58]]
-[provinces.CD-0001] # La Gombe, Ngaliema
-seeds = [[15.30, -4.30], [15.31, -4.31], [15.25, -4.36]]
+[provinces.CD-0001] # La Gombe, Ngaliema (inland of the riverbank strip Natural Earth's line adds, which Limete-Ndjili holds)
+seeds = [[15.30, -4.325], [15.28, -4.33], [15.25, -4.36]]
 [provinces.CD-0002] # Limete, Ndjili, the airport, Maluku
 seeds = [[15.36, -4.39], [15.40, -4.38], [15.50, -4.40], [15.57, -4.06]]
 [provinces.CD-0003] # Kalamu, Lemba, Mont Ngafula
-seeds = [[15.31, -4.40], [15.32, -4.42], [15.29, -4.50], [15.40, -4.80]]
+seeds = [[15.31, -4.40], [15.32, -4.42], [15.29, -4.50], [15.36, -4.64]]
 [provinces.CI-0001] # Le Plateau, Cocody
 seeds = [[-4.02, 5.32], [-3.98, 5.36]]
 [provinces.CI-0002] # the port, Yopougon, Port-Bouet
@@ -237,7 +237,7 @@ seeds = [[33.52, 14.40], [33.42, 13.95]]
 [provinces.SD-0004] # Managil, Kamlin
 seeds = [[32.99, 14.25], [32.95, 14.70]]
 [provinces.SL-0002] # Waterloo, Goderich, Tombo
-seeds = [[-13.07, 8.34], [-13.24, 8.27], [-13.20, 8.18]]
+seeds = [[-13.07, 8.34], [-13.17, 8.29], [-13.20, 8.18]]
 [provinces.UG-0008] # Moroto, Kotido, Kaabong, Napak
 seeds = [[34.65, 2.53], [34.10, 3.00], [33.95, 3.53], [34.25, 2.10]]
 [provinces.ZA-0031] # Kathu, Postmasburg, Hotazel
@@ -253,3 +253,15 @@ seeds = [[27.86, -26.25], [27.87, -26.16], [27.90, -26.24]]
 units = ["Lagos Island", "Eti Osa"]
 [provinces.AO-0011] # Lobito, Benguela, Catumbela
 units = ["Lobito", "Benguela"]
+
+# D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
+[review.exclave_ok]
+"ET-0022" = "Benishangul-Gumuz is in parts (the Kamashi zone lies apart; Natural Earth's unit has four)"
+"SD-0016" = "a corner of West Kordofan cut off by the Abyei builder box (SD-0017)"
+"SD-0019" = "geoBoundaries' North Jebel Marra locality, given with Kebkabiya, touches it only through another province"
+"TD-0014" = "the region joins Sila (Goz Beida) and Wadi Fira (Biltine), which Ouaddai separates"
+
+# PR #39 review (D690): Addis Ababa's point is in its own region, so it no longer snaps onto the
+# special zone round it; the zone's towns seed it
+[provinces.ET-0013] # Sebeta, Burayu, Sululta, Legetafo, Dukem, Bishoftu
+seeds = [[38.62, 8.92], [38.65, 9.08], [38.73, 9.18], [38.90, 9.07], [38.90, 8.80], [38.98, 8.75]]
