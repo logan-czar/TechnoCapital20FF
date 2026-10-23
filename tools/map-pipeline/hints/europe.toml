@@ -23,6 +23,7 @@ notes = [
 
 # D689: the country's most populous place of the name is another town
 [review.anchor_ok]
+"FR-0004" = "the file joins Yvelines and Seine-et-Marne, which do not touch; Versailles is in the smaller, Yvelines"
 "CY-0003" = "the free part of Famagusta district; Famagusta town is in Northern Cyprus (CY-0005, decision C)"
 
 [regions]

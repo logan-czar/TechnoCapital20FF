@@ -13,7 +13,7 @@ notes = [
 
 # D689: the country's most populous place of the name is another town
 [review.anchor_ok]
-"US-0086" = "Manhattan, Kansas is not Manhattan, New York"
+"US-0086" = "Natural Earth's only Manhattan is the Kansas town; New York City's point is checked as the Metro"
 "MX-0001" = "Cuauhtemoc borough of Mexico City, not Cuauhtemoc in Chihuahua"
 
 [regions]

@@ -195,8 +195,8 @@ def run(region: config.Region) -> None:
     anchor_rows = anchors.check(region, config.ASSETS_DIR / "province-index.png",
                                 config.ASSETS_DIR / "map-meta.toml", sources,
                                 crosswalk.load_hints(region).get("review", {}).get("anchor_ok", {}))
-    anchor_misses = [m for m in anchor_rows if m["kind"] not in anchors.INFO_KINDS]
-    anchor_info = [m for m in anchor_rows if m["kind"] in anchors.INFO_KINDS]
+    anchor_misses = [m for m in anchor_rows if not anchors.is_info(m["kind"])]
+    anchor_info = [m for m in anchor_rows if anchors.is_info(m["kind"])]
     review = crosswalk.load_hints(region).get("review", {})
     review_notes = review.get("notes", [])
     watch = review.get("watch", [])

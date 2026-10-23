@@ -38,6 +38,11 @@ WATER_MARGIN_PX = 8
 WATER_GAP_PX = 3
 # Kinds that are listed but are not anchor misses (a city part across a strait or a bay).
 INFO_KINDS = {"city part across water", "city on the edge", "own name elsewhere (allowed)"}
+
+
+def is_info(kind: str) -> bool:
+    """A listed row, not a miss: an allowed kind, or one `[review.anchor_ok]` allows."""
+    return kind in INFO_KINDS or kind.endswith("(allowed)")
 # A province's own city whose pixel a neighbour took, with the province owning a pixel this
 # close (8-neighbour), is on the edge, not off it (D679): a 5 km pixel can straddle a river.
 EDGE_PX = 1
@@ -209,8 +214,12 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
     def find(country, name, region=None, pid=None):
         """The most populous same-named place; with `region`, only one landing in that CSV region
         (Manhattan, Kansas is not Manhattan). A part naming the region itself counts too (D689:
-        "Sao Paulo" in Sao Paulo Centro must land on it), but only inside the region."""
+        "Sao Paulo" in Sao Paulo Centro must land on it), but only for a Metro province and only
+        inside the region (Central New York is no New York City province)."""
+        metro = bool(by_id.get(pid, {}).get("metro")) if pid is not None else True
         for c in _candidates(name):
+            if region is not None and not metro and c in (text.fold(region[1]), text.fold(country)):
+                continue
             if pid is not None and core_of.get(region, {}).get(c, pid) != pid:
                 continue
             for hit in places.get((country, c), []):
@@ -312,6 +321,10 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
     # one row per (kind, place, got); Metro rows repeat for each province of the Metro
     seen, out = set(), []
     for m in misses:
+        why = anchor_ok.get(m["province_id"])
+        if why and not is_info(m["kind"]):
+            # a province whose file shape explains the miss (FR-0004 is two departments apart)
+            m = {**m, "kind": m["kind"] + " (allowed)", "expected": f"{m['expected']} ({why})"}
         key = (m["kind"], m["place"], m["got"], m["expected"] if m["kind"] != "own name" else m["province_id"])
         if key not in seen:
             seen.add(key)

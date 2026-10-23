@@ -66,7 +66,7 @@ MIN_NAME_LEN = 4
 # 5 km); a further one is another region's city and is dropped, and the QA report lists it (D688).
 SNAP_MAX_DEG = 0.05
 # A Metro province's land stays within this many degrees (about 40 km) of its own seeds when its
-# region also has rural provinces: an unclaimed block further off goes to a rural province, and
+# region also has rural provinces: an unclaimed block whose edge is further off goes to a rural province, and
 # so does the far part of a Metro province's Voronoi cell in a shared block (D688, extending D612).
 METRO_CAP_DEG = 0.4
 # Building blocks are simplified to this tolerance (degrees, about 50 m) when loaded (D610).
@@ -980,7 +980,7 @@ def assign_blocks(provs: list[ProvinceRow], blocks, by_geometry: bool, metro_ids
         if not rural:
             return all_seeds
         near = {pid for pid, g in metro_claim.items() if r.geometry.distance(g) < METRO_TOUCH_DEG
-                and min(Point(r.rx, r.ry).distance(q) for q in seeds_of[pid]) <= METRO_CAP_DEG}
+                and min(r.geometry.distance(q) for q in seeds_of[pid]) <= METRO_CAP_DEG}
         return [t for t in all_seeds if t[2] not in metro_ids or t[2] in near]
 
     for r in blocks.itertuples():
