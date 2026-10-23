@@ -90,6 +90,8 @@ fn parse_args() -> Args {
                     zoom: 0.0,
                     click: false,
                     hide_windows: false,
+                    mode: None,
+                    metros: false,
                 });
                 i += 1;
             }
@@ -116,6 +118,21 @@ fn parse_args() -> Args {
             "--map-click" => {
                 if let Some(s) = &mut args.shot {
                     s.click = true;
+                }
+            }
+            "--map-mode" => {
+                let m = list
+                    .get(i + 1)
+                    .and_then(|s| game::shot::parse_mode(s))
+                    .unwrap_or_else(|| exit_usage("--map-mode needs a mode"));
+                if let Some(s) = &mut args.shot {
+                    s.mode = Some(m);
+                }
+                i += 1;
+            }
+            "--map-metros" => {
+                if let Some(s) = &mut args.shot {
+                    s.metros = true;
                 }
             }
             "--map-hide-windows" => {
@@ -161,7 +178,7 @@ fn parse_args() -> Args {
 
 fn exit_usage(msg: &str) -> ! {
     eprintln!(
-        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds]] [--bench-pages]"
+        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows] [--map-mode MODE] [--map-metros]] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds]] [--bench-pages]"
     );
     std::process::exit(2)
 }

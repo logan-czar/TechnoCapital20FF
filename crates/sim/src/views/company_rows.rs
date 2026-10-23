@@ -100,6 +100,18 @@ pub struct CompanyRowsView {
     pub rows: Vec<CompanyRow>,
 }
 
+/// A company's revenue TTM as its row shows it (spec 5.13 TTM; D420, D430): from the published
+/// quarters, a band while the company does not publish. v_map_layers sizes HQ pins by it (D701).
+pub fn revenue_ttm(est: &Estimator, w: &World, id: CompanyId) -> Figure {
+    let banded = est.banded(w, id);
+    let quarters = w.companies[id].finance.quarters();
+    let n = quarters
+        .iter()
+        .take_while(|s| published(s, w.clock))
+        .count();
+    ttm_line(est, banded, id, &quarters[..n], StatementLine::Revenue)
+}
+
 /// The value shown (spec 5.13 step 6): a listed company's EFV × shares, exact (it is already an
 /// estimate, D140); a private company's 0.7 × fair value, one band (D420) that v_company_detail
 /// divides by the shares for its value a share (D430).

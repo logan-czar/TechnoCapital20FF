@@ -98,3 +98,31 @@ impl Drop for Scratch {
         let _ = std::fs::remove_dir_all(&self.0);
     }
 }
+
+/// `data` with a synthetic map of every province (one island per province file, D705) written
+/// into `dir` and loaded, `width` x `width / 2` pixels.
+pub fn with_world_map(
+    mut data: sim_data::WorldData,
+    dir: &Path,
+    width: u32,
+) -> sim_data::WorldData {
+    let (provinces, opts) = crate::map::synthetic::world_provinces(&data, width);
+    let map = crate::map::synthetic::generate(&provinces, &opts);
+    crate::map::synthetic::write(dir, &map).unwrap();
+    data.map = sim_data::load_map(dir).unwrap();
+    data
+}
+
+/// Installs the bitmap the map in `dir` holds, as the map plugin does at startup (a headless
+/// app has no map source).
+pub fn install_map_bitmap(world: &mut World, dir: &Path) {
+    let index = crate::map::png_io::read_gray16(&dir.join("province-index.png")).unwrap();
+    crate::map::install_bitmap(
+        world,
+        crate::map::picking::MapBitmap {
+            width: index.width,
+            height: index.height,
+            data: std::sync::Arc::new(index.data),
+        },
+    );
+}

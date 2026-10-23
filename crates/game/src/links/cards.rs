@@ -13,9 +13,10 @@ use sim::views::estimate::Figure;
 
 use super::names::{self, controller_page};
 use crate::command::index::NameIndex;
-use crate::pages::PageRef;
+use crate::pages::{PageKind, PageRef};
 use crate::table::format::{self, BAND_TEXT, Cell, GainUnit, Unit};
 use crate::ui::theme::color;
+use sim::world::{ProvinceId, ZoneId};
 
 /// Most roles a character card lists before it sums the rest.
 pub const CARD_ROLES: usize = 4;
@@ -256,6 +257,76 @@ pub fn card(page: &PageRef, v: &SimViews, index: &NameIndex) -> Card {
         }
     }
     Card { title, kind, lines }
+}
+
+/// Members a zone hover card names before it sums the rest.
+pub const CARD_MEMBERS: usize = 4;
+
+/// The Financial zones mode's hover card (spec 8 Map row, batches 152, 155 and 157): the zone
+/// under the pointer with its number, members, intensity, lag, contagion, listed company count,
+/// base and effective credit spread and investor confidence, and its current effect; the
+/// hovered province names the card's first line. From v_cycle, v_zones and v_exchanges.
+pub fn zone_hover_card(
+    zone: ZoneId,
+    province: Option<ProvinceId>,
+    v: &SimViews,
+    index: &NameIndex,
+) -> Card {
+    let page = PageRef::Zone(zone);
+    let mut lines = Vec::new();
+    if let Some(p) = province {
+        let pr = PageRef::Province(p);
+        lines.push(CardLine::link("Province", index.title(&pr), pr));
+    }
+    let cycle = v.cycle.get().zones.iter().find(|z| z.id == zone);
+    let row = v.zones.get().get(zone);
+    if let Some(z) = cycle {
+        lines.push(CardLine::new("Zone", format!("{} ({})", z.number, z.key)));
+    }
+    if let Some(r) = row {
+        let names: Vec<String> = r
+            .members
+            .iter()
+            .take(CARD_MEMBERS)
+            .map(|&c| index.title(&PageRef::Country(c)))
+            .collect();
+        let more = r.members.len().saturating_sub(CARD_MEMBERS);
+        lines.push(CardLine::new(
+            "Members",
+            if more > 0 {
+                format!("{}: {} and {more} more", r.members.len(), names.join(", "))
+            } else {
+                format!("{}: {}", r.members.len(), names.join(", "))
+            },
+        ));
+    }
+    if let Some(z) = cycle {
+        lines.push(CardLine::new("Intensity", format!("{:.2}", z.intensity)));
+        lines.push(CardLine::new("Lag", format!("{} quarters", z.lag_quarters)));
+        lines.push(CardLine::new("Contagion", format!("{:.2}", z.contagion)));
+        lines.push(CardLine::new("Effect", format!("{:+.3} a year", z.effect)));
+    }
+    if let Some(x) = v.exchanges.get().of_zone(zone) {
+        let ex = PageRef::Exchange(zone);
+        lines.push(CardLine::link("Exchange", x.code.clone(), ex));
+        lines.push(CardLine::new("Listed", format::int(x.listed_count as i64)));
+    }
+    if let Some(z) = cycle {
+        lines.push(CardLine::new(
+            "Base spread",
+            crate::pages::doc::bps(z.credit_spread_base),
+        ));
+        lines.push(CardLine::new(
+            "Credit spread",
+            crate::pages::doc::bps(z.credit_spread),
+        ));
+        lines.push(CardLine::new("Confidence", format!("{:+.0}", z.confidence)));
+    }
+    Card {
+        title: index.title(&page),
+        kind: PageKind::Zone.name(),
+        lines,
+    }
 }
 
 /// A company's card lines: ticker, industry, HQ place, status, the quote (listed and quoted),
