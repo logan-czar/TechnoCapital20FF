@@ -27,7 +27,7 @@ with peaks of about 0.5 GB in Python and 0.7 GB in mapgen. Two runs give byte-id
 | shapes (P4) | `shapes.py` | Dissolves whole units, Voronoi-splits shared ones, clips to the region, fills seams; also the land mask for the coastal check |
 | simplify (P5, P6) | `simplify.py` | mapshaper `snap`, `-clean`, `-simplify interval=500 keep-shapes`; writes `provinces.geojson` (degrees; mapgen applies Miller, D602) |
 | mapgen (P7) | `mapgen_step.py` | `cargo run --release -p mapgen -- build ...`: every bitmap and table of the contract, for every region built so far (one `--geojson` each) |
-| qa (P8) | `qa.py` | `assets/map/qa/report-<region>.md`, a preview PNG, `assets/map/CREDITS.md`; fails on a province without pixels or a license problem |
+| qa (P8) | `qa.py` | `assets/map/qa/report-<region>.md`, a preview PNG, `assets/map/CREDITS.md`; fails on a province without pixels, a license problem, a city probe mismatch (`checks/city-points.txt`, D686), an unchecked NE label row (D687), a hint seed outside its region (D690), an unexplained land exclave (D691) or a `sea_only` pair with a land row (D692) |
 
 `run.py pin --iso KEN COD --levels ADM1` pins (or re-pins) those boundaries in `sources.toml`, keeping the
 others: Natural Earth hashes from a download, geoBoundaries hashes from the git-LFS pointers at the pinned tag.
@@ -49,13 +49,16 @@ its region runs; a refused license keeps only the metadata.
   - `[split.<key>]` an old NE unit cut among new regions by Voronoi on their towns;
   - `[rebuild.<ISO>]` every region of a country from geoBoundaries ADM1;
   - `[blocks]` `notes_need_place` and `level` per region; `[text]` stopwords `allow` and `stop`;
-  - `[provinces.<id>]` units, places or lon/lat seeds for provinces the automatic match could not place;
-  - `[review]` `notes` (Known for review) and `watch` (the watched small provinces table).
+  - `[provinces.<id>]` units, places, lon/lat seeds or a drawn `polygon` for provinces the automatic match
+    could not place (`add = true` keeps the automatic seeds too); a seed must lie in the region (D690);
+  - `[review]` `notes` (Known for review), `watch` (the watched small provinces table), `ne_label_ok` (D687),
+    `sea_only` (D692), and the tables `anchor_ok` (D689) and `exclave_ok` (D691): province id to the reason.
 
 ## Reviewing a region
 
 Open `assets/map/qa/report-<region>.md`: the low-confidence rows (under 0.6) and the hinted rows are the ones to
 check, with `qa/preview-<region>.png` beside it. Fix a wrong province with a hint and rerun from `crosswalk`.
+Add a `checks/city-points.txt` point (with the expected province id) for every placement fix.
 
 ## mapgen alone
 

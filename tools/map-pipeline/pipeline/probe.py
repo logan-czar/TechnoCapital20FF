@@ -32,6 +32,8 @@ METRO_FAR_KM = 80.0
 METRO_BIG_TIMES = 4
 METRO_BIG_PX = 250
 METRO_SHARE = 0.30
+# Smallest land exclave listed (pixels; mapgen's EXCLAVE_MIN_PX, D691).
+EXCLAVE_MIN_PX = 5
 
 
 class Bitmap:
@@ -156,4 +158,92 @@ def metro_scan(csv_rows, centroids, places_by_country) -> list[dict]:
         if share > METRO_SHARE:
             out.append({"kind": "Metro share of a region", "what": f"{cc}: {rg}",
                         "detail": f"Metro provinces hold {share:.0%} of {tot} px beside {len(rur)} rural"})
+    return out
+
+
+def _unproject(bm: Bitmap, x: float, y: float) -> tuple[float, float]:
+    lon = x / bm.w * 360.0 - 180.0
+    my = bm.ytop - y / bm.ppu
+    return lon, math.degrees(2.5 * math.atan(math.exp(0.8 * my)) - 0.625 * math.pi)
+
+
+def _on_main_part(geom, lon: float, lat: float) -> bool:
+    """The point is nearest the largest polygon of `geom` (the province's simplified shape)."""
+    from shapely.geometry import Point
+
+    parts = sorted(getattr(geom, "geoms", [geom]), key=lambda g: -g.area)
+    pt = Point(lon, lat)
+    return min(range(len(parts)), key=lambda i: parts[i].distance(pt)) == 0
+
+
+def exclaves(bm: Bitmap, mq_rows: dict, csv_rows: list[dict], places_by_country: dict,
+             allowed: dict, seeds: dict | None = None, shapes: dict | None = None) -> list[dict]:
+    """D691 (PR #39 review): every land exclave mapgen lists (a part of 5 px or more that is not
+    the province's largest and touches no pixel outside every province). One is explained when
+    a place a part of the province's composite name names lies in it (Guadalajara in
+    Toledo-Guadalajara), when one of the province's own seeds (a hint point, or a place its notes
+    name) lies in it, so the land was given to it on purpose, or when `[review.exclave_ok]` gives
+    the province a reason; any other fails."""
+    from .anchors import _components
+
+    by_id = {r["id"]: r for r in csv_rows}
+    out = []
+    for pid in sorted(mq_rows):
+        spec = (mq_rows[pid].get("exclaves") or "").strip()
+        if pid not in by_id or not spec:
+            continue
+        r = by_id[pid]
+        v = bm.ids.index(pid) + 1
+        ys, xs = np.nonzero(bm.idx == v)
+        # roll a province across the seam so its crop is one piece
+        shift = 0
+        if xs.min() == 0 and xs.max() == bm.w - 1:
+            occ = np.zeros(bm.w, dtype=bool)
+            occ[xs] = True
+            gaps = np.nonzero(~occ)[0]
+            shift = int(gaps[0]) if len(gaps) else 0
+        ux = (xs - shift) % bm.w
+        x0, y0 = int(ux.min()), int(ys.min())
+        mask = np.zeros((int(ys.max()) - y0 + 1, int(ux.max()) - x0 + 1), dtype=bool)
+        mask[ys - y0, ux - x0] = True
+        lab = _components(mask)
+        # parts named by the composite name: the label of each named place's pixel
+        parts = text.name_parts(r["name"])
+        named: dict[int, str] = {}
+        for part in parts[1:] if len(parts) > 1 else []:
+            for _, lon, lat, label in places_by_country.get((r["country"], part), []):
+                px, py = bm.pixel(lon, lat)
+                cx, cy = (px - shift) % bm.w - x0, py - y0
+                if 0 <= cy < lab.shape[0] and 0 <= cx < lab.shape[1] and lab[cy, cx]:
+                    named.setdefault(int(lab[cy, cx]), label)
+        yy, xx = np.nonzero(lab)
+        ll = lab[yy, xx]
+        sizes = np.bincount(ll)
+        seeded: dict[int, str] = {}
+        for x, y, label in (seeds or {}).get(pid, []):
+            px, py = bm.pixel(x, y)
+            cx, cy = (px - shift) % bm.w - x0, py - y0
+            if 0 <= cy < lab.shape[0] and 0 <= cx < lab.shape[1] and lab[cy, cx]:
+                seeded.setdefault(int(lab[cy, cx]), label)
+        sx, sy = np.bincount(ll, weights=xx), np.bincount(ll, weights=yy)
+        means = {k: (sx[k] / sizes[k] + 0.5, sy[k] / sizes[k] + 0.5) for k in range(1, len(sizes)) if sizes[k]}
+        for item in spec.split("|"):
+            n, mx, my = item.split(":")
+            n, mx, my = int(n), float(mx), float(my)
+            ux_m = (mx - shift) % bm.w - x0
+            k = min((k for k in means if sizes[k] == n),
+                    key=lambda k: (means[k][0] - ux_m) ** 2 + (means[k][1] - (my - y0)) ** 2, default=None)
+            lon, lat = _unproject(bm, mx, my)
+            if k is not None and k in named:
+                why, ok = f"composite name: {named[k]} lies in it", True
+            elif k is not None and k in seeded:
+                why, ok = f"its own seed {seeded[k]} lies in it", True
+            elif shapes and pid in shapes and _on_main_part(shapes[pid], lon, lat):
+                why, ok = "a neck under a pixel wide joins it to the rest in the shapes", True
+            elif pid in allowed:
+                why, ok = allowed[pid], True
+            else:
+                why, ok = "unexplained", False
+            out.append({"province_id": pid, "name": r["name"], "px": n, "lon": round(lon, 2),
+                        "lat": round(lat, 2), "why": why, "ok": ok})
     return out

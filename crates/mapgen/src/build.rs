@@ -19,6 +19,9 @@ pub const TINY_PX: u32 = 64;
 pub const COASTAL_MIN_PX: u32 = 4;
 /// Border distance field clamp (m8-map-assets.md: each channel 0..255).
 pub const BORDER_CAP: f64 = 255.0;
+/// A land exclave this large or larger (a part that is not the province's largest and touches
+/// no pixel outside every province) is listed in the QA file (PR #39 review, D691).
+pub const EXCLAVE_MIN_PX: usize = 5;
 
 /// One province shape in lon/lat degrees, with its region and country keys.
 #[derive(Clone, Debug)]
@@ -45,6 +48,9 @@ pub struct Stats {
     /// Pixels this province's polygons took from a province drawn before it (overlapping
     /// shapes; 0 when the shapes tile cleanly).
     pub overwritten_px: u32,
+    /// Land exclaves of at least `EXCLAVE_MIN_PX` pixels: (pixels, mean x, mean y), the mean
+    /// unwrapped across the seam, in row order of their first pixel.
+    pub exclaves: Vec<(u32, f64, f64)>,
 }
 
 /// The rasterized map: index bitmap plus everything derived from it.
@@ -377,6 +383,7 @@ fn province_stats(
         // components (4-connected, wrapping east-west), keep the largest
         let mut components = 0u32;
         let mut best: Vec<u32> = Vec::new();
+        let mut parts: Vec<(Vec<u32>, bool)> = Vec::new();
         let mut stack = Vec::new();
         for &start in px {
             if seen[start as usize] {
@@ -384,6 +391,7 @@ fn province_stats(
             }
             components += 1;
             let mut comp = Vec::new();
+            let mut wet = false;
             seen[start as usize] = true;
             stack.push(start);
             while let Some(i) = stack.pop() {
@@ -399,6 +407,9 @@ fn province_stats(
                     nb[3] = i as usize + w;
                 }
                 for j in nb {
+                    if j != usize::MAX && raster[j] == 0 {
+                        wet = true;
+                    }
                     if j != usize::MAX && !seen[j] && usize::from(raster[j]) == v {
                         seen[j] = true;
                         stack.push(j as u32);
@@ -406,8 +417,31 @@ fn province_stats(
                 }
             }
             if comp.len() > best.len() {
-                best = comp;
+                best = comp.clone();
             }
+            parts.push((comp, wet));
+        }
+        let mut exclaves = Vec::new();
+        for (comp, wet) in &parts {
+            if *wet || comp.len() < EXCLAVE_MIN_PX || comp.first() == best.first() {
+                continue;
+            }
+            let mut occ = vec![false; w];
+            for &i in comp {
+                occ[i as usize % w] = true;
+            }
+            let sh = unwrap_shift(&occ);
+            let (mut ex, mut ey) = (0.0, 0.0);
+            for &i in comp {
+                ex += ((i as usize % w + w - sh) % w) as f64 + 0.5;
+                ey += (i as usize / w) as f64 + 0.5;
+            }
+            let k = comp.len() as f64;
+            exclaves.push((
+                comp.len() as u32,
+                (ex / k + sh as f64).rem_euclid(w as f64),
+                ey / k,
+            ));
         }
         let label = label_point(&best, w);
         // coastal: pixel edges to open water
@@ -434,6 +468,7 @@ fn province_stats(
             coastal_px,
             forced: forced[v - 1],
             overwritten_px: 0,
+            exclaves,
         });
     }
     out
@@ -495,6 +530,33 @@ mod tests {
         occ[3] = true;
         occ[4] = true;
         assert_eq!(unwrap_shift(&occ), 3);
+    }
+
+    #[test]
+    fn land_exclaves_are_listed_and_islands_are_not() {
+        let frame = Frame::new(64, 32, 84.0);
+        let (w, h) = (64usize, 32usize);
+        let mut r = vec![0u16; w * h];
+        let mut fill = |v: u16, x0: usize, x1: usize, y0: usize, y1: usize| {
+            for y in y0..y1 {
+                for x in x0..x1 {
+                    r[y * w + x] = v;
+                }
+            }
+        };
+        fill(1, 10, 20, 10, 20);
+        fill(2, 20, 40, 5, 25);
+        fill(1, 30, 33, 14, 17); // 9 px of 1 inside 2: a land exclave
+        fill(1, 50, 53, 5, 8); // 9 px of 1 in the water: an island
+        fill(1, 36, 38, 7, 9); // 4 px: under EXCLAVE_MIN_PX
+        let st = province_stats(&frame, &r, 2, &[false, false], None);
+        assert_eq!(st[0].components, 4);
+        assert_eq!(st[0].exclaves.len(), 1);
+        assert_eq!(st[0].exclaves[0].0, 9);
+        assert!(
+            (st[0].exclaves[0].1 - 31.5).abs() < 1e-9 && (st[0].exclaves[0].2 - 15.5).abs() < 1e-9
+        );
+        assert!(st[1].exclaves.is_empty());
     }
 
     #[test]

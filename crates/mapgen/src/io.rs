@@ -277,7 +277,7 @@ fn csv_field(v: &str) -> String {
 /// Per-province QA rows for the P8 report: every CSV province, with or without a shape.
 pub fn write_qa(map: &Map, csv: &[CsvProvince], path: &Path) -> Result<()> {
     let mut s = String::from(
-        "province_id,name,country,in_bitmap,area_px,tiny,forced,components,coastal_px,coastal_bitmap,coastal_csv,coastal_match,overwritten_px\n",
+        "province_id,name,country,in_bitmap,area_px,tiny,forced,components,coastal_px,coastal_bitmap,coastal_csv,coastal_match,overwritten_px,exclaves\n",
     );
     for p in csv {
         let row = map.ids.binary_search(&p.id).ok().map(|i| &map.stats[i]);
@@ -287,7 +287,7 @@ pub fn write_qa(map: &Map, csv: &[CsvProvince], path: &Path) -> Result<()> {
             Some(st) => {
                 let coastal = st.coastal_px >= COASTAL_MIN_PX;
                 s += &format!(
-                    "{},{name},{},Y,{},{},{},{},{},{},{},{},{}\n",
+                    "{},{name},{},Y,{},{},{},{},{},{},{},{},{},{}\n",
                     p.id,
                     p.country,
                     st.area_px,
@@ -298,12 +298,17 @@ pub fn write_qa(map: &Map, csv: &[CsvProvince], path: &Path) -> Result<()> {
                     yn(coastal),
                     yn(p.coastal),
                     yn(coastal == p.coastal),
-                    st.overwritten_px
+                    st.overwritten_px,
+                    st.exclaves
+                        .iter()
+                        .map(|(n, x, y)| format!("{n}:{x:.1}:{y:.1}"))
+                        .collect::<Vec<_>>()
+                        .join("|")
                 );
             }
             None => {
                 s += &format!(
-                    "{},{name},{},N,0,,,,,,{},,\n",
+                    "{},{name},{},N,0,,,,,,{},,,\n",
                     p.id,
                     p.country,
                     yn(p.coastal)
