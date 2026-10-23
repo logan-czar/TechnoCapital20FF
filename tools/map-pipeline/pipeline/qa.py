@@ -13,7 +13,7 @@ import json
 import math
 from collections import Counter
 
-from . import PIPELINE_VERSION, anchors, config, crosswalk, fetch, licenses
+from . import PIPELINE_VERSION, anchors, config, crosswalk, fetch, licenses, probe
 
 # Regions whose provinces leave more than this share of the region uncovered, or overlap by
 # more, are listed as nesting problems (shares of the region's area).
@@ -193,7 +193,8 @@ def run(region: config.Region) -> None:
     outside = [o for o in json.loads((work / "named-outside.json").read_text(encoding="utf-8"))
                if o["province_id"] in names]
     anchor_rows = anchors.check(region, config.ASSETS_DIR / "province-index.png",
-                                config.ASSETS_DIR / "map-meta.toml", sources)
+                                config.ASSETS_DIR / "map-meta.toml", sources,
+                                crosswalk.load_hints(region).get("review", {}).get("anchor_ok", {}))
     anchor_misses = [m for m in anchor_rows if m["kind"] not in anchors.INFO_KINDS]
     anchor_info = [m for m in anchor_rows if m["kind"] in anchors.INFO_KINDS]
     review = crosswalk.load_hints(region).get("review", {})
@@ -207,6 +208,26 @@ def run(region: config.Region) -> None:
     rx_by_key = {f"{r['country']}:{r['region']}": r for r in rxw}
     overwritten = sum(int(r.get("overwritten_px") or 0) for r in mq.values() if r["province_id"] in names)
     by_country = Counter(r["country"] for r in xw.values())
+
+    # D686: the city probe (fails on a mismatch) and the Metro reach scan (listed)
+    prefixes = {i.split("-")[0] for i in own_ids}
+    probe_rows = [r for r in probe.probe(config.ASSETS_DIR)
+                  if (r["exp"] != "?" and any(e in own_ids or (len(e) == 2 and e in prefixes)
+                                              for e in r["exp"].split(",")))
+                  or (r["exp"] == "?" and r["got"] in own_ids)]
+    probe_bad = [r for r in probe_rows if r["ok"] is False]
+    if probe_bad:
+        problems.append(f"{len(probe_bad)} city probe points land on the wrong province: "
+                        + ", ".join(f"{r['label']} on {r['got'] or 'water'} (expected {r['exp']})" for r in probe_bad))
+    ne_labels = json.loads((work / "ne-labels.json").read_text(encoding="utf-8")) \
+        if (work / "ne-labels.json").exists() else []
+    ne_ok = set(crosswalk.load_hints(region).get("review", {}).get("ne_label_ok", []))
+    ne_bad = [n for n in ne_labels if n["region"] not in ne_ok]
+    if ne_bad:
+        problems.append(f"{len(ne_bad)} Natural Earth units hold a capital another region names: "
+                        + ", ".join(f"{n['region']} ({n['capital']})" for n in ne_bad))
+    centroid_rows = {r["province_id"]: r for r in cent}
+    metro_rows = probe.metro_scan(csv_rows, centroid_rows, anchors._place_lookup(countries, sources))
 
     preview_name = f"preview-{region.slug}.png"
     preview_note = _preview(region, cent, set(ids), qa_dir / preview_name)
@@ -255,6 +276,9 @@ def run(region: config.Region) -> None:
     L.append(f"| Contested provinces (drawn by our own files) | {sum(1 for r in csv_rows if r.get('contested'))} |")
     L.append(f"| Admin-1 units left without a province | {len(unclaimed)} |")
     L.append(f"| Sea links with a province of this file | {len(sea)} |")
+    L.append(f"| City probe points (fail on a mismatch; D686) | {sum(1 for r in probe_rows if r['ok'])} pass, "
+             f"{len(probe_bad)} mismatch, {sum(1 for r in probe_rows if r['ok'] is None)} listed |")
+    L.append(f"| Metro reach scan rows (listed; D686) | {len(metro_rows)} |")
     L.append(f"| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) "
              f"| {len(anchor_misses)} |")
     L.append(f"| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) "
@@ -282,8 +306,16 @@ def run(region: config.Region) -> None:
         L.append("")
     if any(not ok for *_, ok, _ in used_gb):
         L.append("Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, "
-                 "public domain and the attribution-only government licences OGL-Canada 2.0 and OGL-UK 3.0; "
-                 "a region whose country has no allowed ADM2 is split by Voronoi.")
+                 "public domain and the attribution-only government licences OGL-Canada 2.0, OGL-UK 3.0, Data licence "
+                 "Germany Attribution 2.0, Etalab 2.0, Spain's INE licence, Singapore ODL 1.0 and Korea OGL Type 1 "
+                 "(D685); a region whose country has no allowed ADM2 is split by Voronoi.")
+        L.append("")
+    risky = [(iso, level) for iso, level, meta, ok, why in used_gb if ok and iso in licenses.PROVENANCE_RISK]
+    if risky:
+        L.append("Provenance to check (for Logan; these files pass the allowlist and are used):")
+        L.append("")
+        for iso, level in risky:
+            L.append(f"- {iso} {level}: {licenses.PROVENANCE_RISK[iso]}")
         L.append("")
     L.append("## Low-confidence rows for review")
     L.append("")
@@ -342,6 +374,52 @@ def run(region: config.Region) -> None:
         L.append("")
         L.append("No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own "
                  "pixel a neighbour took while its province holds a touching pixel.")
+    L.append("")
+    L.append("## Natural Earth labels")
+    L.append("")
+    L.append("Natural Earth units whose capital another region of the country names (in a province name or notes) "
+             "while their own region does not: the sign of NE giving units each other's names, as in Eritrea and "
+             "Guyana (D687). Each row fails the step unless `[review] ne_label_ok` in the hints names the region.")
+    L.append("")
+    if ne_labels:
+        L.append("| Region | NE unit | Capital | Named by |")
+        L.append("|---|---|---|---|")
+        for n in ne_labels:
+            ok = " (checked)" if n["region"] in ne_ok else ""
+            L.append(f"| {_md_escape(n['region'])}{ok} | {_md_escape(n['unit'])} | {_md_escape(n['capital'])} | "
+                     f"{_md_escape(', '.join(n['named_by']))} |")
+    else:
+        L.append("None.")
+    L.append("")
+    L.append("## City probe")
+    L.append("")
+    L.append("Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is in this file, looked up "
+             "in province-index.png: a point passes on its pixel or one of the 8 around it (D686). The step fails on "
+             "a mismatch.")
+    L.append("")
+    if probe_rows:
+        L.append("| Point | Expected | Got | Result |")
+        L.append("|---|---|---|---|")
+        for r in sorted(probe_rows, key=lambda r: (r["ok"] is not False, r["ok"] is not None, r["label"])):
+            res = {False: "**mismatch**", None: "listed"}.get(r["ok"], r["how"])
+            L.append(f"| {_md_escape(r['label'])} ({r['lon']}, {r['lat']}) | {r['exp']} | {r['got'] or 'water'} | {res} |")
+    else:
+        L.append("No points for this file.")
+    L.append("")
+    L.append("## Metro reach")
+    L.append("")
+    L.append(f"Metro provinces whose centroid is over {probe.METRO_FAR_KM:.0f} km from their Metro's city, that are over "
+             f"{probe.METRO_BIG_TIMES} times the Metro's median and {probe.METRO_BIG_PX} px, and regions where Metro "
+             f"provinces hold over {probe.METRO_SHARE:.0%} of the land beside rural ones (the D612 error). Listed for "
+             "review; a Metro made of whole metropolitan units can be large by design.")
+    L.append("")
+    if metro_rows:
+        L.append("| Check | Province or region | Detail |")
+        L.append("|---|---|---|")
+        for m in metro_rows:
+            L.append(f"| {m['kind']} | {_md_escape(m['what'])} | {_md_escape(m['detail'])} |")
+    else:
+        L.append("None.")
     L.append("")
     if review_notes:
         L.append("## Known for review")
