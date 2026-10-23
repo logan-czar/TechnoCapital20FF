@@ -145,7 +145,11 @@ def _resolve_alias(a1_all, codes, cand):
     can be drawn from a neighbour's unit), `region:<NE region>` for a group within `cand`, or
     `name:<NE unit name>` for a unit of `cand` by its folded name."""
     idx = []
+    drop = set(_resolve_alias(a1_all, [c[1:] for c in codes if c.startswith("-")], cand)) \
+        if any(c.startswith("-") for c in codes) else set()
     for code in codes:
+        if code.startswith("-"):
+            continue  # `-<code>` leaves a unit out of a group named here (Riga out of Pieriga)
         if code.startswith("region:"):
             m = cand[cand.region == code[len("region:"):]]
             if len(m) == 0:
@@ -163,7 +167,7 @@ def _resolve_alias(a1_all, codes, cand):
                 raise SystemExit(f"crosswalk: alias code {code!r} matches {len(m)} Natural Earth admin-1 units "
                                  "(use the unit's adm1_code)")
         idx += list(m.index)
-    return idx
+    return [i for i in idx if i not in drop]
 
 
 def _best_unit(f, cand):
@@ -191,6 +195,10 @@ def _core(f: str) -> str:
 
 def _group_name(g: str) -> str:
     return text.fold(re.sub(r"\(.*?\)", " ", g))
+
+
+def _group_size(g, cand) -> int:
+    return 0 if g is None else int((cand.region == g).sum())
 
 
 def _best_group(f, cand):
@@ -341,7 +349,9 @@ def match_regions(provs, a1, a1_all, a0, hints):
             continue
         u, su = _best_unit(f, cand)
         g, sg = _best_group(f, cand)
-        if u is not None and su >= REGION_MATCH_MIN and su >= sg:
+        # a tie goes to a group of two or more units: NE gives a province unit its region's name as
+        # an alternate (Rimini's gn_name is Emilia-Romagna)
+        if u is not None and su >= REGION_MATCH_MIN and (su > sg or (su == sg and _group_size(g, cand) < 2)):
             out[key] = dict(idx=[u], confidence=round(su / 100, 2), kind="unit", note=f"name match {su:.0f}")
         elif g is not None and sg >= REGION_MATCH_MIN:
             m = cand[cand.region == g]
@@ -413,7 +423,7 @@ def match_regions(provs, a1, a1_all, a0, hints):
                 if best is None:
                     continue
                 out[best]["idx"].append(i)
-                out[best].setdefault("filled", []).append(row["name"])
+                out[best].setdefault("filled", []).append(str(row["name"] or row.adm1_code))
                 owner[i] = best
                 geoms[best] = geom(best)
                 changed = True
@@ -822,6 +832,21 @@ def run(region: config.Region) -> None:
     sources = config.load_sources()
     hints = load_hints(region)
     provs = read_provinces(region)
+    own_keys = {f"{p.country}:{p.region}" for p in provs}
+    # a country in two region files (Russia): the other file's regions are matched too, so its
+    # units are claimed and not given to this file's regions as unclaimed land (D673); their
+    # alias and carve hints come from that file's hints
+    match_provs, match_hints = list(provs), dict(hints)
+    for other in config.REGIONS.values():
+        shared = set(other.countries) & set(region.countries)
+        if other is region or not shared:
+            continue
+        match_provs += [p for p in read_provinces(other) if p.country in shared]
+        oh = load_hints(other)
+        for table in ("regions", "carve"):
+            merged = dict(match_hints.get(table, {}))
+            merged.update({k: v for k, v in oh.get(table, {}).items() if k.split(":")[0] in shared})
+            match_hints[table] = merged
     text.set_region_words(hints.get("text", {}))
     codes = config.ne_codes_for(region.countries)
     a1_all = gpd.read_file(config.ne_path("ne_10m_admin_1_states_provinces_lakes.shp", sources), columns=NE_A1_COLS)
@@ -834,9 +859,9 @@ def run(region: config.Region) -> None:
     notes_need_place = set(blocks_hints.get("notes_need_place", []))
     level_hint = blocks_hints.get("level", {})
 
-    regions, unclaimed, problems = match_regions(provs, a1, a1_all, a0, hints)
+    regions, unclaimed, problems = match_regions(match_provs, a1, a1_all, a0, match_hints)
     if not problems:
-        apply_carves(regions, hints, sources)
+        apply_carves(regions, match_hints, sources)
     work = config.work_dir(region.slug, sources)
     lines = [f"{k}\t{m['kind']}\t{m['confidence']}\t{m['note']}\t"
              + ", ".join(sorted(str(n) for n in m["rows"]["name"])) if m["rows"] is not None else f"{k}\t{m['kind']}\t\t{m['note']}"
@@ -868,7 +893,7 @@ def run(region: config.Region) -> None:
     region_features = []
     hint_provs = hints.get("provinces", {})
 
-    for key in sorted(regions):
+    for key in sorted(k for k in regions if k in own_keys):
         m = regions[key]
         country, rname = key.split(":", 1)
         members = sorted(by_region[key], key=lambda p: p.id)

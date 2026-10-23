@@ -18,13 +18,19 @@ Boundary files used, with their original sources and licenses:
 | MEX | ADM2 | World Bank | Creative Commons Attribution 4.0 (CC BY 4.0) | 2012 |
 | USA | ADM2 | United States Census Bureau, MAF/TIGER Database | Public Domain | 2018 |
 | AUS | ADM2 | Australian Bureau of Statistics | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2022 |
+| BLR | ADM2 | geoBoundaries, CIESIN | Creative Commons Attribution 3.0 License | 2005 |
 | CHN | ADM2 | National Administration of Surveying, Mapping and Geoinformation of China, Revolutionary GIS | Open Data Commons Public Domain Dedication and License (PDDL) v1.0 | 2017 |
+| CZE | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2010 |
+| DNK | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2018 |
 | IDN | ADM2 | Badan Pusat Statistik (BPS - Statistics Indonesia), World Food Programme, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | KOR | ADM2 | geoBoundaries, citypopulation.de | Creative Commons Attribution 3.0 License | 2020 |
 | MMR | ADM2 | Myanmar Analytics Project, USAID/Burma | Creative Commons Attribution 4.0 (CC BY 4.0) | 2019 |
 | MNG | ADM2 | National Statistical Office of Mongolia, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2021 |
 | MYS | ADM2 | geoBoundaries, citypopulation.de | Creative Commons Attribution 3.0 License | 2020 |
+| NLD | ADM2 | National Georegister | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2022 |
+| NOR | ADM2 | Geonorge, Mapping Authority of Norway | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2013 |
 | NZL | ADM2 | Stats NZ | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2021 |
+| SWE | ADM2 | geoBoundaries, Wikimedia Commons | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2017 |
 | THA | ADM2 | Royal Thai Survey Department, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2019 |
 | VNM | ADM2 | OCHA ROAP, Government of Viet Nam | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 

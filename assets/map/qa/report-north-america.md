@@ -1,6 +1,6 @@
 # Map QA report: north-america
 
-_Written by `tools/map-pipeline/run.py --region north-america` (pipeline pa-1). Source of the rows: `provinces-north-america.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D610._
+_Written by `tools/map-pipeline/run.py --region north-america` (pipeline pa-1). Source of the rows: `provinces-north-america.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
 
 ## Result
 
@@ -32,6 +32,9 @@ _Written by `tools/map-pipeline/run.py --region north-america` (pipeline pa-1). 
 | Voronoi-split blocks where one province takes 75% or more | 7 |
 | Places named in a province's name or notes that lie in another province | 2 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
+| Contested provinces (drawn by our own files) | 0 |
+| Admin-1 units left without a province | 1 |
+| Sea links with a province of this file | 35 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities in a part across a narrow strait (listed, allowed) | 1 |
 
@@ -42,10 +45,10 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 | Boundary file | License | Used |
 |---|---|---|
 | Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes) | Public domain | yes |
-| geoBoundaries gbOpen USA ADM2 (United States Census Bureau, MAF/TIGER Database) | Public Domain | yes |
 | geoBoundaries gbOpen CAN ADM2 (Statistics Canada (StatCan)) | Open Government Canada 2.0 | yes |
 | geoBoundaries gbOpen CAN ADM3 (Statistics Canada (StatCan)) | Open Data Commons Open Database License 1.0 | no: refused: ODbL in license (Open Data Commons Open Database License 1.0); Voronoi path |
 | geoBoundaries gbOpen MEX ADM2 (World Bank) | Creative Commons Attribution 4.0 (CC BY 4.0) | yes |
+| geoBoundaries gbOpen USA ADM2 (United States Census Bureau, MAF/TIGER Database) | Public Domain | yes |
 
 Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, public domain and the attribution-only government licences OGL-Canada 2.0 and OGL-UK 3.0; a region whose country has no allowed ADM2 is split by Voronoi.
 
@@ -136,6 +139,40 @@ No misses; the rows above are allowed parts across a narrow strait.
 - CA-0003 York-Markham holds Scarborough and North York, which are in the City of Toronto: the Toronto economic region is split by Voronoi among Downtown Toronto (seeded at Toronto), Peel-Mississauga, York-Markham and Durham-Oshawa, and the York and Markham seeds sit closer to them. Left as is; a hint can move them to Downtown Toronto.
 - CA-0058 Baffin-Iqaluit and CA-0059 Kivalliq-Kitikmeot split Nunavut (one economic region) by one straight Voronoi line through Ellesmere Island.
 
+## Watched small provinces
+
+The microstates, city-states and metro splits the plan names (P8: Singapore, the London and Beijing splits, Hong Kong and Macau): every one has pixels, and a tiny one a click target at its label point.
+
+None in this file.
+
+## Contested provinces
+
+Drawn by our own province files (decision C), not the sources' de facto lines: each contested province sits in the region the CSV gives it, built as listed (an alias or carve hint where Natural Earth draws the land elsewhere). The game hatches them.
+
+None in this file.
+
+## Region matching
+
+Regions not matched one-to-one by name: builder aliases, Natural Earth region groups, composite names matched part by part, carves (D676) and admin-1 units no region named, given to the touching region (D673). Check these on the preview too.
+
+| Region | Matched by | Units |
+|---|---|---|
+| MEX: Ciudad de Mexico | alias hint -> MX-DIF | 1 |
+
+## Land without a province
+
+Natural Earth admin-1 units of this file's countries that no region claims and that touch no region of their country (overseas territories, remote islands). They stay water on the map.
+
+| Country (NE) | Unit | Area (sq deg) |
+|---|---|---|
+| MEX |  (MEX+99?) | 0.0117 |
+
+## Sea links
+
+`sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
+
+CA-0001-CA-0006, CA-0001-US-0092, CA-0006-US-0109, CA-0007-CA-0012, CA-0009-US-0098, CA-0009-US-0099, CA-0010-US-0090, CA-0014-CA-0059, CA-0014-US-0068, CA-0021-CA-0059, CA-0022-CA-0025, CA-0024-CA-0025, CA-0027-CA-0028, CA-0028-US-0140, CA-0047-CA-0050, CA-0047-CA-0055, CA-0048-CA-0055, CA-0049-CA-0050, CA-0051-CA-0055, CA-0053-PM-0001, CA-0058-GL-0003, MX-0023-MX-0026, US-0018-US-0020, US-0027-US-0089, US-0028-US-0089, US-0029-US-0082, US-0029-US-0083, US-0044-US-0050, US-0063-US-0138, US-0068-US-0070, US-0080-US-0087, US-0082-US-0089, US-0087-US-0088, US-0088-US-0089, US-0089-US-0111
+
 ## Small provinces
 
 | Province | Name | Region | Pixels | Region mean |
@@ -218,4 +255,4 @@ CA-0059 (235), US-0003 (203), CA-0058 (124), GL-0003 (105), CA-0057 (89), US-000
 
 ## Visual check
 
-`preview-north-america.png` in this folder is province-ids.png around the region (pixels x 288..3416, y 148..2480, scaled by 0.77).
+`preview-north-america.png` in this folder is province-ids.png around the region (pixels x 760..3416, y 148..2480, scaled by 0.90; outside the frame: US-0003, US-0004, US-0042).

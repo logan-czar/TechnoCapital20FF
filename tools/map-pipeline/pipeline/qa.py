@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 from collections import Counter
 
 from . import PIPELINE_VERSION, anchors, config, crosswalk, fetch, licenses
@@ -24,6 +25,10 @@ SMALL_SHARE = 0.05
 SPLIT_MOSTLY = 0.75
 # Width of the preview image Logan opens for the one visual check per region.
 PREVIEW_WIDTH = 2400
+# Share of the region's centroids the preview frame must hold (far territories fall outside).
+PREVIEW_SHARE = 0.97
+# A centroid this close (pixels) to the frame's centroids is taken back into it.
+PREVIEW_REACH = 250
 
 
 def _read(path):
@@ -53,27 +58,52 @@ def _preview(region: config.Region, centroids: list[dict], ids: set[str], out_pa
 
     Image.MAX_IMAGE_PIXELS = None
     im = Image.open(config.ASSETS_DIR / "province-ids.png")
-    xs = [float(r["x"]) for r in centroids if r["province_id"] in ids]
-    ys = [float(r["y"]) for r in centroids if r["province_id"] in ids]
+    pts = sorted((float(r["x"]), float(r["y"]), r["province_id"]) for r in centroids if r["province_id"] in ids)
     w, h = im.size
-    # the region's extent from its centroids, padded; the cut goes in the widest gap between
-    # them, so a region across the antimeridian (Fiji, Kiribati) is shown in one piece
-    xs.sort()
+    # the cut goes in the widest gap between centroids, so a region across the antimeridian
+    # (Fiji, Kiribati) is shown in one piece; then the frame is the narrowest window holding
+    # PREVIEW_SHARE of the centroids, so a far territory (New Caledonia in the Europe file)
+    # does not shrink the rest; the provinces left outside are named
+    xs = [p[0] for p in pts]
     gaps = [(xs[(i + 1) % len(xs)] - xs[i]) % w for i in range(len(xs))]
     i = max(range(len(xs)), key=lambda i: (gaps[i], -i))
     start = xs[(i + 1) % len(xs)]
-    shift = int(start) - 250
+    ux = sorted(((p[0] - start) % w, p[1], p[2]) for p in pts)
+    k = max(1, math.ceil(PREVIEW_SHARE * len(ux)))
+    j = min(range(len(ux) - k + 1), key=lambda j: (ux[j + k - 1][0] - ux[j][0], j))
+    lo, hi = j, j + k - 1
+    # then take back every centroid within PREVIEW_REACH pixels of the frame (only the far
+    # outliers stay out)
+    while lo > 0 and ux[lo][0] - ux[lo - 1][0] <= PREVIEW_REACH:
+        lo -= 1
+    while hi < len(ux) - 1 and ux[hi + 1][0] - ux[hi][0] <= PREVIEW_REACH:
+        hi += 1
+    inx = ux[lo:hi + 1]
+    ys = sorted(p[1] for p in inx)
+    kk = max(1, math.ceil(PREVIEW_SHARE * len(ys)))
+    jj = min(range(len(ys) - kk + 1), key=lambda jj: (ys[jj + kk - 1] - ys[jj], jj))
+    a, b = jj, jj + kk - 1
+    while a > 0 and ys[a] - ys[a - 1] <= PREVIEW_REACH:
+        a -= 1
+    while b < len(ys) - 1 and ys[b + 1] - ys[b] <= PREVIEW_REACH:
+        b += 1
+    ylo, yhi = ys[a], ys[b]
+    shown = {p[2] for p in inx if ylo <= p[1] <= yhi}
+    left_out = sorted(p[2] for p in pts if p[2] not in shown)
+    shift = int(start + inx[0][0]) - 250
     im = _roll(im, shift)
-    span = w - gaps[i] if len(xs) > 1 else 0
-    x0, x1 = 0, min(int(span) + 500, w)
-    y0 = max(int(min(ys)) - 250, 0)
-    y1 = min(int(max(ys)) + 250, h)
+    x0, x1 = 0, min(int(inx[-1][0] - inx[0][0]) + 500, w)
+    y0 = max(int(ylo) - 250, 0)
+    y1 = min(int(yhi) + 250, h)
     crop = im.crop((x0, y0, x1, y1))
     x0, x1 = shift % w, (shift + x1) % w
     scale = PREVIEW_WIDTH / crop.width
     crop = crop.resize((PREVIEW_WIDTH, max(1, int(crop.height * scale))), Image.NEAREST)
     crop.save(out_path, optimize=True)
-    return f"pixels x {x0}..{x1}, y {y0}..{y1}, scaled by {scale:.2f}"
+    note = f"pixels x {x0}..{x1}, y {y0}..{y1}, scaled by {scale:.2f}"
+    if left_out:
+        note += f"; outside the frame: {', '.join(left_out)}"
+    return note
 
 
 def run(region: config.Region) -> None:

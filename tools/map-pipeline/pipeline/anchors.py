@@ -192,11 +192,21 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
         r = by_id.get(pid)
         return (r["country"], r["region"]) if r else None
 
-    def find(country, name, region=None):
+    # a province's whole name without generic words ("Basel City" -> basel), per region: a
+    # neighbour's name part equal to it means that province's city ("Basel" in
+    # "Basel-Landschaft" is Basel City's), so it is not the neighbour's own anchor (D679)
+    core_of: dict[tuple, dict[str, str]] = {}
+    for r in rows:
+        core = " ".join(w for w in text.fold(r["name"]).split() if w not in GENERIC)
+        core_of.setdefault((r["country"], r["region"]), {}).setdefault(core, r["id"])
+
+    def find(country, name, region=None, pid=None):
         """The most populous same-named place; with `region`, only one landing in that CSV region
         (Manhattan, Kansas is not Manhattan; a part naming the region itself is skipped)."""
         for c in _candidates(name):
             if region is not None and c in (text.fold(region[1]), text.fold(country)):
+                continue
+            if pid is not None and core_of.get(region, {}).get(c, pid) != pid:
                 continue
             for hit in places.get((country, c), []):
                 if region is None or region_of(owner(hit[1], hit[2])) == region:
@@ -208,7 +218,7 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
 
     misses = []
     for r in rows:
-        hit = find(r["country"], r["name"], (r["country"], r["region"]))
+        hit = find(r["country"], r["name"], (r["country"], r["region"]), r["id"])
         if hit:
             got = owner(hit[1], hit[2])
             if got != r["id"]:

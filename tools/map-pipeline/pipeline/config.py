@@ -59,6 +59,9 @@ NE_CODES: dict[str, tuple[str, ...]] = {
     "CYP": ("CYP", "CYN"),
     "SOM": ("SOM", "SOL"),
     "MAR": ("MAR", "SAH"),
+    # the Aland Islands and New Caledonia are their own NE admin-0 units
+    "FIN": ("FIN", "ALD"),
+    "FRA": ("FRA", "NCL"),
 }
 
 

@@ -1,0 +1,14 @@
+# Builder-authored hints for the Russia and Central Asia crosswalk (P3, D605, D673-D677).
+# Format as in east-asia-oceania.toml.
+
+[text]
+allow = ["moscow"]
+
+[regions]
+# Natural Earth names Moscow city Moskva and the oblast Moskovskaya
+"RUS:Moscow" = ["RUS-2365"]
+"RUS:Moscow Oblast" = ["RUS-2364"]
+"RUS:Altai Krai-Altai Republic" = ["RU-ALT", "RU-AL"]
+"RUS:Sakha" = ["RU-SA"]
+"RUS:Magadan-Chukotka" = ["RU-MAG", "RU-CHU"]
+"RUS:Chechnya-Ingushetia" = ["RU-CE", "RU-IN"]
