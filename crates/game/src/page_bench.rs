@@ -7,7 +7,7 @@
 //! drawn. Each page opens twice: cold (its first build, font glyphs new) and warm. A page whose
 //! cold open alone missed the target (its warm open made it) opens once more, a retry: one slow
 //! frame of the machine (a 500 ms hitch the PR #38 bench saw once and never again) then shows
-//! as a retried row, and only a page slow on the retry too fails (D693).
+//! as a `BENCH WARN retried` row (also on stderr), and only a page slow on the retry too fails (D693).
 //!
 //! What it opens, on a fresh 2020 world (seed 1 unless `--seed`):
 //! - one page of every [`PageKind`] that exists there (a listed and a private company, a recap
@@ -678,11 +678,14 @@ fn report(
                 .find(|r| r.1 == late && r.2 == 2 && r.0 == c.0)
                 .map(|r| r.3);
             if let Some(again) = retry {
-                println!(
-                    "BENCH retried {}: cold {:.2} ms, again {again:.2} ms",
+                // never silent (PR #40 review): a retry may hide a real regression
+                let line = format!(
+                    "BENCH WARN retried {}: cold {:.2} ms over the {TARGET_MS} ms target, again {again:.2} ms",
                     c.0.name(),
                     c.3
                 );
+                println!("{line}");
+                eprintln!("{line}");
             }
             let page_worst = c.3.min(retry.unwrap_or(f64::INFINITY)).max(wm);
             worst = worst.max(page_worst);
