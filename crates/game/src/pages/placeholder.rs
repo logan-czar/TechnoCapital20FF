@@ -191,7 +191,8 @@ pub fn register(app: &mut App) {
             placeholder_page,
         );
     }
-    app.add_systems(Update, show_view_lines.in_set(crate::ui::UiSystems::Show));
+    app.init_resource::<crate::pace::UiPace>()
+        .add_systems(Update, show_view_lines.in_set(crate::ui::UiSystems::Show));
 }
 
 /// A wrapping row of chips.
@@ -538,13 +539,21 @@ fn placeholder_page(
 /// The line shows the view's own version, not the global refresh count, so it changes only when
 /// that view is rebuilt (a monthly view's line stays put while v_quotes moves every tick); the
 /// system runs when the views change or lines appear, and writes a line only when it differs.
+///
+/// While the sim fast-forwards the refresh moves every frame, so the lines are written at most
+/// every [`crate::pace::LIVE_TEXT_SECS`] (D773).
 pub fn show_view_lines(
     views: Res<Views>,
     mut lines: Query<(Ref<ViewLine>, &mut Text)>,
     mut last: Local<u64>,
+    mut pace: ResMut<crate::pace::UiPace>,
+    mut paced: Local<crate::pace::Paced>,
 ) {
-    let all = views.refresh() != *last;
-    *last = views.refresh();
+    let moved = views.refresh() != *last;
+    let all = paced.due(moved, &mut pace, crate::pace::LIVE_TEXT_SECS, false);
+    if all {
+        *last = views.refresh();
+    }
     for (line, mut text) in &mut lines {
         if !all && !line.is_added() {
             continue;

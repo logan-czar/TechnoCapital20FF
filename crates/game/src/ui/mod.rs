@@ -92,7 +92,7 @@ impl Plugin for ShellPlugin {
             app.add_plugins(crate::config::ConfigPlugin);
         }
         app.init_resource::<KeyboardCapture>()
-            .add_plugins((theme::ThemePlugin, TablePlugin))
+            .add_plugins((theme::ThemePlugin, TablePlugin, crate::pace::PacePlugin))
             .configure_sets(
                 Update,
                 (

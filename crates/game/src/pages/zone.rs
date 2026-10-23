@@ -38,7 +38,8 @@ pub fn register(app: &mut App) {
         PageKind::Zone,
         PageSpec::new(VIEWS)
             .sections(SECTIONS)
-            .refresh(Refresh::OnViewChange),
+            .refresh(Refresh::OnViewChange)
+            .patchable(),
         zone_page,
     );
 }

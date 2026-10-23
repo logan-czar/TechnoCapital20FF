@@ -44,7 +44,8 @@ pub fn register(app: &mut App) {
         PageKind::Province,
         PageSpec::new(VIEWS)
             .sections(SECTIONS)
-            .refresh(Refresh::OnViewChange),
+            .refresh(Refresh::OnViewChange)
+            .patchable(),
         province_page,
     );
 }

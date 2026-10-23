@@ -95,24 +95,42 @@ pub struct Hit {
     pub score: i32,
 }
 
-/// The versions of the views the index was built from, and the quarter (for recaps).
+/// The versions of the views the index was built from, and the quarter (for recaps). v_zones
+/// and v_exchanges move daily for their levels and closes, but the index reads only their names
+/// and codes, so it keeps a hash of those instead of their versions (D771): at max speed a daily
+/// version would rebuild the whole index every frame.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 struct Sources {
-    versions: [u64; 7],
+    versions: [u64; 5],
+    names: u64,
+    /// Companies, startup events and full characters: a newborn must be named at once.
+    counts: [usize; 3],
     quarter: Option<Quarter>,
 }
 
 impl Sources {
     fn of(v: &SimViews) -> Sources {
+        use std::hash::{Hash, Hasher};
+        let mut h = std::hash::DefaultHasher::new();
+        for z in &v.zones.get().zones {
+            (z.id, z.number, &z.key, &z.name, &z.exchange_code).hash(&mut h);
+        }
+        for x in &v.exchanges.get().exchanges {
+            (x.zone, &x.code, &x.name, &x.hub_city, &x.index_name).hash(&mut h);
+        }
         Sources {
             versions: [
                 v.company_rows.version(),
                 v.industry_rows.version(),
                 v.countries.version(),
-                v.zones.version(),
-                v.exchanges.version(),
                 v.births.version(),
                 v.characters.version(),
+            ],
+            names: h.finish(),
+            counts: [
+                v.company_rows.get().rows.len(),
+                v.births.get().events.len(),
+                v.characters.get().full.len(),
             ],
             quarter: Some(v.clock().date.quarter()),
         }
@@ -373,13 +391,26 @@ pub fn event_name(e: &EventRow) -> String {
     format!("{} ({})", e.name, e.date)
 }
 
-/// Keeps the index current, before any UI system reads it.
-pub fn refresh_index(views: Res<Views>, mut index: ResMut<NameIndex>) {
-    if views.is_changed() || index.entries.is_empty() {
-        // `refresh` compares versions, so the resource is only marked changed on a rebuild.
-        let stale = Sources::of(&views) != index.sources || index.entries.is_empty();
-        if stale {
-            index.refresh(&views);
-        }
+/// Keeps the index current, before any UI system reads it. While the sim fast-forwards the
+/// company and character views move a few times a second of real time, so the index then
+/// rebuilds at most every [`crate::pace::LIVE_MODEL_SECS`], as one of the frame's heavy jobs
+/// (D773); paused or at speeds 1 to 4 it follows at once, and so it does at any speed when a
+/// company, startup event or character is born, so the notices of its birth name it.
+pub fn refresh_index(
+    views: Res<Views>,
+    mut index: ResMut<NameIndex>,
+    mut pace: ResMut<crate::pace::UiPace>,
+    mut paced: Local<crate::pace::Paced>,
+) {
+    if index.entries.is_empty() {
+        index.refresh(&views);
+        return;
+    }
+    // `refresh` compares versions, so the resource is only marked changed on a rebuild.
+    let now = views.is_changed().then(|| Sources::of(&views));
+    let stale = now.is_some_and(|s| s != index.sources);
+    let born = now.is_some_and(|s| s.counts != index.sources.counts);
+    if born || paced.due(stale, &mut pace, crate::pace::LIVE_MODEL_SECS, true) {
+        index.refresh(&views);
     }
 }

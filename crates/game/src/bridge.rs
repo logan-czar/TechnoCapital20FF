@@ -124,6 +124,8 @@ pub struct SimRate {
     pub budget_hits: u64,
     /// Wall time spent stepping in the last finished frame.
     pub step_time_last_frame: Duration,
+    /// Wall time spent stepping in the current frame so far (the UI's pacing reads it, D777).
+    pub step_time_this_frame: Duration,
     /// The longest single tick of the last finished frame, timed from the budget check that let
     /// it run to its end: the most the frame may overrun its budget (D300, D152).
     pub longest_tick_last_frame: Duration,
@@ -270,6 +272,7 @@ impl Plugin for SimBridgePlugin {
 
 fn start_frame(mut runner: ResMut<SimRunner>, mut rate: ResMut<SimRate>) {
     rate.step_time_last_frame = runner.spent;
+    rate.step_time_this_frame = Duration::ZERO;
     runner.spent = Duration::ZERO;
     rate.longest_tick_last_frame = std::mem::take(&mut rate.longest_tick_this_frame);
     rate.steps_last_frame = rate.steps_this_frame;
@@ -333,6 +336,12 @@ fn pace(controls: &Controls) -> Pace {
     }
 }
 
+/// The sim is fast-forwarding: running at max speed (speed 5, or a SkipTo), where it steps for
+/// its whole frame budget and every-tick and daily views move every frame (D300, D773).
+pub fn fast_forward(controls: &Controls) -> bool {
+    pace(controls) == Pace::Max
+}
+
 /// Runs the ticks owed for this fixed timestep (spec 9.1 speeds, D8), within the frame budget
 /// (D300).
 fn step_sim(
@@ -391,6 +400,7 @@ fn step_sim(
         runner.owed = 0.0;
     }
     runner.spent += start.elapsed();
+    rate.step_time_this_frame = runner.spent;
     rate.steps_this_frame += steps;
     rate.total_steps += u64::from(steps);
     rate.window_steps += u64::from(steps);

@@ -31,7 +31,8 @@ pub fn register(app: &mut App) {
         PageKind::Country,
         PageSpec::new(VIEWS)
             .sections(SECTIONS)
-            .refresh(Refresh::OnViewChange),
+            .refresh(Refresh::OnViewChange)
+            .patchable(),
         country_page,
     );
 }
