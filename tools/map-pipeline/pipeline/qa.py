@@ -140,8 +140,11 @@ def run(region: config.Region) -> None:
                      and max(v["shares"].values()) >= SPLIT_MOSTLY), key=lambda v: (v["region"], v["name"]))
     outside = [o for o in json.loads((work / "named-outside.json").read_text(encoding="utf-8"))
                if o["province_id"] in names]
-    anchor_misses = anchors.check(region, config.ASSETS_DIR / "province-index.png",
-                                  config.ASSETS_DIR / "map-meta.toml", sources)
+    anchor_rows = anchors.check(region, config.ASSETS_DIR / "province-index.png",
+                                config.ASSETS_DIR / "map-meta.toml", sources)
+    anchor_misses = [m for m in anchor_rows if m["kind"] not in anchors.INFO_KINDS]
+    anchor_info = [m for m in anchor_rows if m["kind"] in anchors.INFO_KINDS]
+    review_notes = crosswalk.load_hints(region).get("review", {}).get("notes", [])
     overwritten = sum(int(r.get("overwritten_px") or 0) for r in mq.values() if r["province_id"] in names)
     by_country = Counter(r["country"] for r in xw.values())
 
@@ -188,7 +191,9 @@ def run(region: config.Region) -> None:
     L.append(f"| Voronoi-split blocks where one province takes {SPLIT_MOSTLY:.0%} or more | {len(mostly)} |")
     L.append(f"| Places named in a province's name or notes that lie in another province | {len(outside)} |")
     L.append(f"| Pixels drawn over another province (overlapping shapes) | {overwritten} |")
-    L.append(f"| Anchor cities off their province (own name, Metro, key city, off centre) | {len(anchor_misses)} |")
+    L.append(f"| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) "
+             f"| {len(anchor_misses)} |")
+    L.append(f"| Metro cities in a part across a narrow strait (listed, allowed) | {len(anchor_info)} |")
     L.append("")
     L.append("Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve "
              "of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one "
@@ -249,19 +254,29 @@ def run(region: config.Region) -> None:
     L.append("## Anchor cities")
     L.append("")
     L.append("Checked from the bitmap, independently of the crosswalk: the Natural Earth place a province's own "
-             "name names lands on that province (and, for a Metro province, near its middle), its Metro's city "
-             "lands on a province of that Metro, and each key city lands on one of its provinces "
-             "(key-cities.csv).")
+             "name names lands on that province (and, for a Metro province, near its middle and in its largest "
+             "4-connected part; a part joined to the largest only across 3 or fewer water pixels, like San "
+             "Francisco and Marin across the Golden Gate, is listed but allowed), its Metro's city lands on a "
+             "province of that Metro, and each key city lands on one of its provinces (key-cities.csv).")
     L.append("")
-    if anchor_misses:
+    if anchor_rows:
         L.append("| Check | Province | Place | Expected | Got |")
         L.append("|---|---|---|---|---|")
-        for m in anchor_misses:
+        for m in anchor_misses + anchor_info:
             L.append(f"| {m['kind']} | {m['province_id']} | {_md_escape(m['place'])} | {_md_escape(m['expected'])} | "
                      f"{m['got'] or 'no province'} |")
     else:
         L.append("All anchors land on their own provinces.")
+    if anchor_rows and not anchor_misses:
+        L.append("")
+        L.append("No misses; the rows above are allowed parts across a narrow strait.")
     L.append("")
+    if review_notes:
+        L.append("## Known for review")
+        L.append("")
+        for n in review_notes:
+            L.append(f"- {n}")
+        L.append("")
     L.append("## Small provinces")
     L.append("")
     if small:

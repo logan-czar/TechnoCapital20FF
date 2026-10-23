@@ -4,6 +4,13 @@
 # `add = true` keeps the automatic seeds as well. Hinted rows get confidence 0.85 and are listed
 # in the QA report for review.
 
+[review]
+# Known compromises listed in the QA report for Logan.
+notes = [
+    "CA-0003 York-Markham holds Scarborough and North York, which are in the City of Toronto: the Toronto economic region is split by Voronoi among Downtown Toronto (seeded at Toronto), Peel-Mississauga, York-Markham and Durham-Oshawa, and the York and Markham seeds sit closer to them. Left as is; a hint can move them to Downtown Toronto.",
+    "CA-0058 Baffin-Iqaluit and CA-0059 Kivalliq-Kitikmeot split Nunavut (one economic region) by one straight Voronoi line through Ellesmere Island.",
+]
+
 [regions]
 "MEX:Ciudad de Mexico" = "MX-DIF"
 
@@ -78,3 +85,7 @@ seeds = [[-92.09, 62.81], [-105.06, 69.12]]
 
 [provinces.US-0083] # South Jersey: the Philadelphia side of New Jersey
 units = ["Camden", "Gloucester", "Burlington", "Salem"]
+
+[provinces.MX-0010] # Rural Jalisco: Los Altos (its notes' dairy country) and Tequila (its distilleries)
+units = ["Lagos de Moreno", "Tepatitlán de Morelos", "Arandas", "San Juan de los Lagos", "Tequila"]
+add = true
