@@ -7,4 +7,5 @@ pub mod edt;
 pub mod io;
 pub mod miller;
 pub mod raster;
+pub mod sea;
 pub mod synthetic;

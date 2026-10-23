@@ -17,11 +17,12 @@ def main(argv: list[str]) -> int:
     if argv and argv[0] == "pin":
         p = argparse.ArgumentParser(prog="run.py pin")
         p.add_argument("--iso", nargs="+", required=True)
-        p.add_argument("--levels", nargs="+", default=["ADM2", "ADM3"])
+        p.add_argument("--levels", nargs="+", default=["ADM2"])
+        p.add_argument("--full", action="store_true", help="pin the full geometry, not the simplified file")
         a = p.parse_args(argv[1:])
         from pipeline import fetch
 
-        fetch.pin(a.iso, a.levels)
+        fetch.pin(a.iso, a.levels, simplified=not a.full)
         return 0
     if argv and argv[0] == "selftest":
         import runpy

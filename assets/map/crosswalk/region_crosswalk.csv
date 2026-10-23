@@ -1,5 +1,17 @@
 country,region,method,source_ids,confidence,provenance,note
+AUS,Australian Capital Territory,admin1,AUS-1932,1.0,Natural Earth 10m (public domain),name match 100
+AUS,New South Wales,admin1,AUS-2654;AUS-2659;AUS-2653,1.0,Natural Earth 10m (public domain),"name match 100; plus unclaimed Australian Capital Territory, Lord Howe Island"
+AUS,Northern Territory,admin1,AUS-2650,1.0,Natural Earth 10m (public domain),name match 100
+AUS,Queensland,admin1,AUS-2657,1.0,Natural Earth 10m (public domain),name match 100
+AUS,South Australia,admin1,AUS-2655,1.0,Natural Earth 10m (public domain),name match 100
+AUS,Tasmania,admin1,AUS-2660,1.0,Natural Earth 10m (public domain),name match 100
+AUS,Victoria,admin1,AUS-2656,1.0,Natural Earth 10m (public domain),name match 100
+AUS,Western Australia,admin1,AUS-2651,1.0,Natural Earth 10m (public domain),name match 100
 BMU,Bermuda,admin1,BMU-5137;BMU-5142;BMU-5136;BMU-5139;BMU-5134;BMU-5138;BMU-5144;BMU-5143;BMU-5141;BMU-5140;BMU-5135,0.95,Natural Earth 10m (public domain),whole country (11 admin-1 units)
+BRN,Belait,admin1,BRN-1181,1.0,Natural Earth 10m (public domain),name match 100
+BRN,Brunei-Muara,admin1,BRN-1182,1.0,Natural Earth 10m (public domain),name match 100
+BRN,Temburong,admin1,BRN-1183,1.0,Natural Earth 10m (public domain),name match 100
+BRN,Tutong,admin1,BRN-1184,1.0,Natural Earth 10m (public domain),name match 100
 CAN,Alberta,admin1,CAN-632,1.0,Natural Earth 10m (public domain),name match 100
 CAN,British Columbia,admin1,CAN-633,1.0,Natural Earth 10m (public domain),name match 100
 CAN,Manitoba,admin1,CAN-630,1.0,Natural Earth 10m (public domain),name match 100
@@ -13,7 +25,163 @@ CAN,Prince Edward Island,admin1,CAN-687,1.0,Natural Earth 10m (public domain),na
 CAN,Quebec,admin1,CAN-683,1.0,Natural Earth 10m (public domain),name match 100
 CAN,Saskatchewan,admin1,CAN-631,1.0,Natural Earth 10m (public domain),name match 100
 CAN,Yukon,admin1,CAN-636,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Anhui,admin1,CHN-1179,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Beijing,admin1,CHN-1155,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Chongqing,admin1,CHN-1154,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Fujian,admin1,CHN-1178,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Gansu,admin1,CHN-1150,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Guangdong,admin1,CHN-1180,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Guangxi,admin1,CHN-1152,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Guizhou,admin1,CHN-1153,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Hainan,admin1,CHN-1775;PFA+00?,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Paracel Islands
+CHN,Hebei,admin1,CHN-1811,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Heilongjiang,admin1,CHN-1839,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Henan,admin1,CHN-1812,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Hubei,admin1,CHN-1807,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Hunan,admin1,CHN-1808,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Inner Mongolia,admin1,CHN-1838,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Jiangsu,admin1,CHN-1818,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Jiangxi,admin1,CHN-1817,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Jilin,admin1,CHN-1828,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Liaoning,admin1,CHN-1813,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Ningxia,admin1,CHN-1803,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Qinghai,admin1,CHN-1151,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Shaanxi,admin1,CHN-1804,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Shandong,admin1,CHN-1814,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Shanghai,admin1,CHN-1819,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Shanxi,admin1,CHN-1805,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Sichuan,admin1,CHN-1809,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Tianjin,admin1,CHN-1816,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Tibet,admin1,CHN-1662,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Xinjiang,admin1,CHN-1756,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Yunnan,admin1,CHN-1810,1.0,Natural Earth 10m (public domain),name match 100
+CHN,Zhejiang,admin1,CHN-1820,1.0,Natural Earth 10m (public domain),name match 100
+FJI,Central,admin1,FJI-2617,1.0,Natural Earth 10m (public domain),name match 100
+FJI,Eastern,admin1,FJI-2618,1.0,Natural Earth 10m (public domain),name match 100
+FJI,Northern,admin1,FJI-2619,1.0,Natural Earth 10m (public domain),name match 100
+FJI,Western,admin1,FJI-2620;FJI-2658,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Rotuma
+FSM,Micronesia,admin1,FSM-4944;FSM-4941;FSM-4942;FSM-4943,0.95,Natural Earth 10m (public domain),whole country (4 admin-1 units)
 GRL,Greenland,admin1,GRL-2739;GRL-2742;GRL-2743;GRL-2738;GRL-2741;GRL-2740,0.95,Natural Earth 10m (public domain),whole country (6 admin-1 units)
+HKG,Hong Kong,admin1,HKG-5168;HKG-5170;HKG-5156;HKG-5153;HKG-5154;HKG-5155;HKG-5165;HKG-5169;HKG-5163;HKG-5162;HKG-5161;HKG-5158;HKG-5157;HKG-5159;HKG-5164;HKG-5166;HKG-5167;HKG-5160,0.95,Natural Earth 10m (public domain),whole country (18 admin-1 units)
+IDN,Aceh,admin1,IDN-1136,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Bali,admin1,IDN-1232,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Bangka-Belitung,admin1,IDN-1231,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Banten,admin1,IDN-1226,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Bengkulu,admin1,IDN-1225,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Central Java,admin1,IDN-1224,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Central Kalimantan,admin1,IDN-1931,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Central Sulawesi,admin1,IDN-557,0.95,Natural Earth 10m (public domain),alias hint -> ID-ST
+IDN,East Java,admin1,IDN-1233,1.0,Natural Earth 10m (public domain),name match 100
+IDN,East Kalimantan,admin1,IDN-1185,1.0,Natural Earth 10m (public domain),name match 100; less IDN:North Kalimantan (carve)
+IDN,East Nusa Tenggara,admin1,IDN-1235,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Jakarta,admin1,IDN-1227,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Jambi,admin1,IDN-1930,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Lampung,admin1,IDN-1229,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Maluku,admin1,IDN-554,1.0,Natural Earth 10m (public domain),name match 100
+IDN,North Kalimantan,admin1,,0.95,"geoBoundaries gbOpen IDN ADM2 (Badan Pusat Statistik (BPS - Statistics Indonesia), World Food Programme, OCHA ROAP; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO))","no admin-1 match (best unit 88, group 0); carve: IDN units Bulungan, Kota Tarakan, Malinau, Nunukan, Tana Tidung from IDN:East Kalimantan"
+IDN,North Maluku,admin1,IDN-538,1.0,Natural Earth 10m (public domain),name match 100
+IDN,North Sulawesi-Gorontalo,admin1,IDN-1837;IDN-513,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+IDN,North Sumatra,admin1,IDN-381,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Papua,admin1,IDN-558,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Riau,admin1,IDN-492,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Riau Islands,admin1,IDN-1796,1.0,Natural Earth 10m (public domain),name match 100
+IDN,South Kalimantan,admin1,IDN-1234,1.0,Natural Earth 10m (public domain),name match 100
+IDN,South Sumatra,admin1,IDN-1230,1.0,Natural Earth 10m (public domain),name match 100
+IDN,South-West Sulawesi,admin1,IDN-1236;IDN-1237,0.95,Natural Earth 10m (public domain),"alias hint -> ID-SN, ID-SR"
+IDN,Southeast Sulawesi,admin1,IDN-556,1.0,Natural Earth 10m (public domain),name match 100
+IDN,West Java,admin1,IDN-1223,1.0,Natural Earth 10m (public domain),name match 100
+IDN,West Kalimantan,admin1,IDN-1228,1.0,Natural Earth 10m (public domain),name match 100
+IDN,West Nusa Tenggara,admin1,IDN-555,1.0,Natural Earth 10m (public domain),name match 100
+IDN,West Papua,admin1,IDN-1933,1.0,Natural Earth 10m (public domain),name match 100
+IDN,West Sumatra,admin1,IDN-539,1.0,Natural Earth 10m (public domain),name match 100
+IDN,Yogyakarta,admin1,IDN-540,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Aichi,admin1,JPN-1840,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Akita,admin1,JPN-1862,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Aomori,admin1,JPN-1863,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Chiba,admin1,JPN-1855,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Ehime,admin1,JPN-1832,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Fukui,admin1,JPN-1848,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Fukuoka,admin1,JPN-1829,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Fukushima,admin1,JPN-1864,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Gifu,admin1,JPN-1841,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Gunma,admin1,JPN-3503,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Hiroshima,admin1,JPN-1821,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Hokkaido,admin1,JPN-1847,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Hyogo,admin1,JPN-1849,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Ibaraki,admin1,JPN-1856,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Ishikawa,admin1,JPN-1842,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Iwate,admin1,JPN-1865,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Kagawa,admin1,JPN-1833,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Kagoshima,admin1,JPN-3501,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Kanagawa,admin1,JPN-1857,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Kochi,admin1,JPN-1834,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Kumamoto,admin1,JPN-1830,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Kyoto,admin1,JPN-1850,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Mie,admin1,JPN-1843,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Miyagi,admin1,JPN-1866,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Miyazaki,admin1,JPN-1831,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Nagano,admin1,JPN-1844,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Nagasaki,admin1,JPN-3500,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Nara,admin1,JPN-1851,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Niigata,admin1,JPN-1867,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Oita,admin1,JPN-1835,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Okayama,admin1,JPN-1822,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Okinawa,admin1,JPN-3502,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Osaka,admin1,JPN-1852,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Saga,admin1,JPN-1827,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Saitama,admin1,JPN-1858,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Shiga,admin1,JPN-1853,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Shizuoka,admin1,JPN-1845,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Tochigi,admin1,JPN-1859,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Tokushima,admin1,JPN-1836,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Tokyo,admin1,JPN-1860,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Tottori-Shimane,admin1,JPN-1824;JPN-1825,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+JPN,Toyama,admin1,JPN-1846,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Wakayama,admin1,JPN-1854,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Yamagata,admin1,JPN-1868,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Yamaguchi,admin1,JPN-1826,1.0,Natural Earth 10m (public domain),name match 100
+JPN,Yamanashi,admin1,JPN-1861,1.0,Natural Earth 10m (public domain),name match 100
+KHM,Banteay Meanchey-Oddar Meanchey,admin1,KHM-1782;KHM-1777,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+KHM,Battambang-Pailin,admin1,KHM-1778;KHM-1783,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+KHM,Kampong Cham-Tbong Khmum,admin1,KHM-1784,0.95,Natural Earth 10m (public domain),alias hint -> KH-3
+KHM,Kampong Speu-Pursat-Kampong Chhnang,admin1,KHM-1780;KHM-1785;KHM-1787,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+KHM,Kampong Thom-Preah Vihear,admin1,KHM-1791;KHM-1788,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+KHM,Kampot-Koh Kong,admin1,KHM-1797;KHM-1779;KHM-1798,0.95,Natural Earth 10m (public domain),"alias hint -> KH-7, KH-9, KH-23"
+KHM,Kandal-Takeo,admin1,KHM-1786;KHM-1802,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+KHM,Northeast Cambodia,admin1,KHM-1795;KHM-1794;KHM-1793;KHM-1792,0.95,Natural Earth 10m (public domain),"alias hint -> KH-10, KH-19, KH-16, KH-11"
+KHM,Phnom Penh,admin1,KHM-1789,1.0,Natural Earth 10m (public domain),name match 100
+KHM,Preah Sihanouk,admin1,KHM-1800,0.95,Natural Earth 10m (public domain),alias hint -> KH-18
+KHM,Prey Veng-Svay Rieng,admin1,KHM-1801;KHM-1790,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+KHM,Siem Reap,admin1,KHM-1781,1.0,Natural Earth 10m (public domain),name match 100
+KIR,Kiribati,admin1,KIR+00?;KIR+99?,0.95,Natural Earth 10m (public domain),whole country (2 admin-1 units)
+KOR,Busan,admin1,KOR-2507,1.0,Natural Earth 10m (public domain),name match 100
+KOR,Daegu,admin1,KOR-2504,1.0,Natural Earth 10m (public domain),name match 100
+KOR,Daejeon,admin1,KOR-2503,1.0,Natural Earth 10m (public domain),name match 100
+KOR,Gangwon,admin1,KOR-2496,1.0,Natural Earth 10m (public domain),name match 100
+KOR,Gwangju,admin1,KOR-2500,1.0,Natural Earth 10m (public domain),name match 100
+KOR,Gyeonggi,admin1,KOR-2498,1.0,Natural Earth 10m (public domain),name match 100
+KOR,Incheon,admin1,KOR-2495,1.0,Natural Earth 10m (public domain),name match 100
+KOR,Jeju,admin1,KOR-2510,1.0,Natural Earth 10m (public domain),name match 100
+KOR,North Chungcheong,admin1,KOR-2494,1.0,Natural Earth 10m (public domain),name match 100
+KOR,North Gyeongsang,admin1,KOR-2509,1.0,Natural Earth 10m (public domain),name match 100
+KOR,North Jeolla,admin1,KOR-2499,1.0,Natural Earth 10m (public domain),name match 100
+KOR,Sejong,admin1,KOR-5129,1.0,Natural Earth 10m (public domain),name match 100
+KOR,Seoul,admin1,KOR-2497,1.0,Natural Earth 10m (public domain),name match 100
+KOR,South Chungcheong,admin1,KOR-2502,1.0,Natural Earth 10m (public domain),name match 100
+KOR,South Gyeongsang,admin1,KOR-2505,1.0,Natural Earth 10m (public domain),name match 100
+KOR,South Jeolla,admin1,KOR-2506,1.0,Natural Earth 10m (public domain),name match 100
+KOR,Ulsan,admin1,KOR-2508,1.0,Natural Earth 10m (public domain),name match 100
+LAO,Attapeu-Sekong,admin1,LAO-3295;LAO-3294,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+LAO,Bolikhamxay-Khammouane,admin1,LAO-3292;LAO-3293,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+LAO,Champasak-Salavan,admin1,LAO-3281;LAO-3280,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+LAO,Houaphanh-Xiengkhouang,admin1,LAO-3288;LAO-3286,0.96,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 96)"
+LAO,Luang Prabang,admin1,LAO-3289,0.95,Natural Earth 10m (public domain),alias hint -> LA-LP
+LAO,Northern Laos,admin1,LAO-3291;LAO-3290;LAO-3272;LAO-3271,0.95,Natural Earth 10m (public domain),"alias hint -> LA-LM, LA-BK, LA-OU, LA-PH"
+LAO,Savannakhet,admin1,LAO-3282,1.0,Natural Earth 10m (public domain),name match 100
+LAO,Vientiane Capital,admin1,LAO-3283,0.95,Natural Earth 10m (public domain),alias hint -> LAO-3283
+LAO,Vientiane Province-Xaisomboun,admin1,LAO-3284,0.95,Natural Earth 10m (public domain),alias hint -> LAO-3284
+LAO,Xayaboury,admin1,LAO-3278,0.94,Natural Earth 10m (public domain),name match 94
+MAC,Macau,admin1,MAC+00?,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
 MEX,Aguascalientes,admin1,MEX-2717,1.0,Natural Earth 10m (public domain),name match 100
 MEX,Baja California,admin1,MEX-2706,1.0,Natural Earth 10m (public domain),name match 100
 MEX,Baja California Sur,admin1,MEX-2707,1.0,Natural Earth 10m (public domain),name match 100
@@ -46,7 +214,166 @@ MEX,Tlaxcala,admin1,MEX-2726,1.0,Natural Earth 10m (public domain),name match 10
 MEX,Veracruz,admin1,MEX-2734,1.0,Natural Earth 10m (public domain),name match 100
 MEX,Yucatan,admin1,MEX-2737,1.0,Natural Earth 10m (public domain),name match 100
 MEX,Zacatecas,admin1,MEX-2713,1.0,Natural Earth 10m (public domain),name match 100
-SPM,Saint Pierre and Miquelon,admin1,SPM-4866,1.0,Natural Earth 10m (public domain),name match 100
+MHL,Marshall Islands,admin1,MHL-4968;MHL-4969,0.95,Natural Earth 10m (public domain),whole country (2 admin-1 units)
+MMR,Ayeyarwady,admin1,MMR-3275,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Bago,admin1,MMR-3268,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Chin,admin1,MMR-3274,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Kachin,admin1,MMR-3296,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Kayah,admin1,MMR-2473,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Kayin,admin1,MMR-3266,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Magway,admin1,MMR-3276,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Mandalay,admin1,MMR-3267,1.0,Natural Earth 10m (public domain),name match 100; less MMR:Naypyidaw (carve)
+MMR,Mon,admin1,MMR-3270,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Naypyidaw,admin1,,0.95,"geoBoundaries gbOpen MMR ADM2 (Myanmar Analytics Project, USAID/Burma; Creative Commons Attribution 4.0 (CC BY 4.0))","no admin-1 match (best unit 56, group 0); carve: MMR units Det Khi Na, Oke Ta Ra from MMR:Mandalay"
+MMR,Rakhine,admin1,MMR-3273,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Sagaing,admin1,MMR-3302,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Shan,admin1,MMR-3277,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Tanintharyi,admin1,MMR-3279,1.0,Natural Earth 10m (public domain),name match 100
+MMR,Yangon,admin1,MMR-3269,1.0,Natural Earth 10m (public domain),name match 100
+MNG,Arkhangai-Ovorkhangai,admin1,MNG-3316;MNG-3327,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+MNG,Bayankhongor,admin1,MNG-3317,1.0,Natural Earth 10m (public domain),name match 100
+MNG,Dornod-Sukhbaatar,admin1,MNG-3332;MNG-3333,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+MNG,Dornogovi-Govisumber,admin1,MNG-3297;MNG-3330,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+MNG,Dundgovi,admin1,MNG-3325,1.0,Natural Earth 10m (public domain),name match 100
+MNG,Khentii,admin1,MNG-3315,1.0,Natural Earth 10m (public domain),name match 100
+MNG,Khovsgol,admin1,MNG-3321,1.0,Natural Earth 10m (public domain),name match 100
+MNG,Omnogovi,admin1,MNG-3298,1.0,Natural Earth 10m (public domain),name match 100
+MNG,Orkhon-Bulgan,admin1,MNG-3323;MNG-3324,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+MNG,Selenge-Darkhan-Uul,admin1,MNG-3326;MNG-3328,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+MNG,Tov,admin1,MNG-3329,1.0,Natural Earth 10m (public domain),name match 100
+MNG,Ulaanbaatar,admin1,MNG-3331,1.0,Natural Earth 10m (public domain),name match 100
+MNG,Western Aimags,admin1,MNG-3208;MNG-3320;MNG-3322,0.95,Natural Earth 10m (public domain),"alias hint -> MN-071, MN-043, MN-046"
+MNG,Zavkhan-Govi-Altai,admin1,MNG-3319;MNG-3318,0.95,Natural Earth 10m (public domain),"alias hint -> MN-057, MN-065"
+MYS,Johor,admin1,MYS-1143,1.0,Natural Earth 10m (public domain),name match 100
+MYS,Kedah-Perlis,admin1,MYS-1141;MYS-1140,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+MYS,Kelantan,admin1,MYS-1144,1.0,Natural Earth 10m (public domain),name match 100
+MYS,Kuala Lumpur,admin1,MYS-4831,1.0,Natural Earth 10m (public domain),name match 100
+MYS,Labuan,admin1,MYS-4833,1.0,Natural Earth 10m (public domain),name match 100
+MYS,Melaka,admin1,MYS-1145,1.0,Natural Earth 10m (public domain),name match 100
+MYS,Negeri Sembilan,admin1,MYS-1146,1.0,Natural Earth 10m (public domain),name match 100
+MYS,Pahang,admin1,MYS-1147,1.0,Natural Earth 10m (public domain),name match 100
+MYS,Penang,admin1,MYS-1139,1.0,Natural Earth 10m (public domain),name match 100
+MYS,Perak,admin1,MYS-1137,1.0,Natural Earth 10m (public domain),name match 100
+MYS,Sabah,admin1,MYS-1186,1.0,Natural Earth 10m (public domain),name match 100
+MYS,Sarawak,admin1,MYS-1187,1.0,Natural Earth 10m (public domain),name match 100
+MYS,Selangor,admin1,MYS-1148;MYS-4832,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Putrajaya
+MYS,Terengganu,admin1,MYS-1149,1.0,Natural Earth 10m (public domain),name match 100
+NRU,Nauru,admin1,NRU-4978;NRU-4977;NRU-4976;NRU-4975;NRU-4974;NRU-4973;NRU-4972;NRU-4971;NRU-4983;NRU-4982;NRU-4981;NRU-4980;NRU-4979;NRU-4970,0.95,Natural Earth 10m (public domain),whole country (14 admin-1 units)
+NZL,Auckland,admin1,NZL-3398,1.0,Natural Earth 10m (public domain),name match 100
+NZL,Bay of Plenty,admin1,NZL-3399,1.0,Natural Earth 10m (public domain),name match 100
+NZL,Canterbury,admin1,NZL-3400,1.0,Natural Earth 10m (public domain),name match 100
+NZL,Hawke's Bay-Gisborne,admin1,NZL-3396;NZL-3397,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+NZL,Manawatu-Whanganui,admin1,NZL-3334,1.0,Natural Earth 10m (public domain),name match 100
+NZL,Nelson-Marlborough-Tasman,admin1,NZL-3401;NZL-3402;NZL-3403,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+NZL,Northland,admin1,NZL-5476;NZL-3404,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed Three Kings Islands
+NZL,Otago,admin1,NZL-3407,1.0,Natural Earth 10m (public domain),name match 100
+NZL,Southland,admin1,NZL-5479;NZL-5478;NZL-5480;NZL-3408,1.0,Natural Earth 10m (public domain),"name match 100; plus unclaimed Auckland Islands, Campbell Islands, The Snares"
+NZL,Taranaki,admin1,NZL-3405,1.0,Natural Earth 10m (public domain),name match 100
+NZL,Waikato,admin1,NZL-5468,1.0,Natural Earth 10m (public domain),name match 100
+NZL,Wellington,admin1,NZL-5469,1.0,Natural Earth 10m (public domain),name match 100
+NZL,West Coast,admin1,NZL-3406,1.0,Natural Earth 10m (public domain),name match 100
+PHL,Bangsamoro,admin1,PHL-2524;PHL-2574;PHL-2576;PHL-5527;PHL-2511;PHL-2519,0.95,Natural Earth 10m (public domain),alias hint -> region:Autonomous Region in Muslim Mindanao (ARMM)
+PHL,Bicol,admin1,PHL-2537;PHL-2538;PHL-2536;PHL-2541;PHL-2540;PHL-2539;PHL-5536,1.0,Natural Earth 10m (public domain),"Natural Earth region Bicol (Region V) (7 units, match 100)"
+PHL,Cagayan Valley,admin1,PHL-2545;PHL-2550;PHL-2543;PHL-2554;PHL-5537;PHL-2553,1.0,Natural Earth 10m (public domain),"Natural Earth region Cagayan Valley (Region II) (6 units, match 100)"
+PHL,Calabarzon,admin1,PHL-2572;PHL-5560;PHL-2564;PHL-2563;PHL-2566;PHL-2567,1.0,Natural Earth 10m (public domain),"Natural Earth region CALABARZON (Region IV-A) (6 units, match 100)"
+PHL,Caraga,admin1,PHL-2593;PHL-2594;PHL-2587;PHL-5532;PHL-2588,0.95,Natural Earth 10m (public domain),alias hint -> region:Dinagat Islands (Region XIII)
+PHL,Central Luzon,admin1,PHL-2549;PHL-2565;PHL-2558;PHL-2555;PHL-5540;PHL-2560;PHL-2557;PHL-2556;PHL-5538,1.0,Natural Earth 10m (public domain),"Natural Earth region Central Luzon (Region III) (9 units, match 100)"
+PHL,Central Visayas,admin1,PHL-2517;PHL-2513;PHL-2516;PHL-5522;PHL-5523;PHL-2514;PHL-5524,1.0,Natural Earth 10m (public domain),"Natural Earth region Central Visayas (Region VII) (7 units, match 100)"
+PHL,Cordillera,admin1,PHL-2559;PHL-2551;PHL-2552;PHL-2546;PHL-4931;PHL-2542;PHL-5539,1.0,Natural Earth 10m (public domain),"Natural Earth region Cordillera Administrative Region (CAR) (7 units, match 100)"
+PHL,Davao,admin1,PHL-2591;PHL-2596;PHL-5528;PHL-2592;PHL-2597,0.95,Natural Earth 10m (public domain),alias hint -> region:Davao (Region XI)
+PHL,Eastern Visayas,admin1,PHL-2585;PHL-2583;PHL-2582;PHL-2581;PHL-2584;PHL-5535;PHL-5534;PHL-2586,1.0,Natural Earth 10m (public domain),"Natural Earth region Eastern Visayas (Region VIII) (8 units, match 100)"
+PHL,Ilocos,admin1,PHL-2562;PHL-5541;PHL-2561;PHL-2548;PHL-2547,1.0,Natural Earth 10m (public domain),"Natural Earth region Ilocos (Region I) (5 units, match 100)"
+PHL,Mimaropa,admin1,PHL-2534;PHL-5533;PHL-2535;PHL-2571;PHL-2570;PHL-2569,1.0,Natural Earth 10m (public domain),"Natural Earth region MIMAROPA (Region IV-B) (6 units, match 100)"
+PHL,National Capital Region,admin1,PHL-5556;PHL-5555;PHL-5554;PHL-5543;PHL-5544;PHL-5557;PHL-5545;PHL-5546;PHL-5547;PHL-5549;PHL-5558;PHL-5550;PHL-5552;PHL-5553;PHL-5559;PHL-5542;PHL-5551,1.0,Natural Earth 10m (public domain),"Natural Earth region National Capital Region (17 units, match 100)"
+PHL,Northern Mindanao,admin1,PHL-2595;PHL-5531;PHL-5530;PHL-2573;PHL-2523;PHL-2590;PHL-2589,1.0,Natural Earth 10m (public domain),"Natural Earth region Northern Mindanao (Region X) (7 units, match 100)"
+PHL,Soccsksargen,admin1,PHL-2580;PHL-2598;PHL-5529;PHL-2579;PHL-2599,1.0,Natural Earth 10m (public domain),"Natural Earth region SOCCSKSARGEN (Region XII) (5 units, match 100)"
+PHL,Western Visayas,admin1,PHL-2530;PHL-5525;PHL-2518;PHL-2525;PHL-2526;PHL-2529;PHL-5526;PHL-2528,1.0,Natural Earth 10m (public domain),"Natural Earth region Western Visayas (Region VI) (8 units, match 100)"
+PHL,Zamboanga Peninsula,admin1,PHL-2521;PHL-2522;PHL-2520;PHL-4932,0.95,Natural Earth 10m (public domain),alias hint -> region:Zamboanga Peninsula (Region IX)
+PLW,Palau,admin1,PLW-5258;PLW-5249;PLW-5256;PLW-5254;PLW-5244;PLW-5245;PLW-5255;PLW-5250;PLW-5257;PLW-5251;PLW-5252;PLW-5253;PLW-5247;PLW-5259;PLW-5246;PLW-5248,0.95,Natural Earth 10m (public domain),whole country (16 admin-1 units)
+PNG,Bougainville,admin1,PNG-1245,1.0,Natural Earth 10m (public domain),name match 100
+PNG,East Sepik-Sandaun,admin1,PNG-1241;PNG-1239,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+PNG,Eastern Highlands-Simbu-Jiwaka,admin1,PNG-1242;PNG-1243,0.95,Natural Earth 10m (public domain),"alias hint -> PG-EHG, PG-CPK"
+PNG,Enga-Western Highlands,admin1,PNG-1238;PNG-1247,0.95,Natural Earth 10m (public domain),"alias hint -> PG-EPW, PG-WHM"
+PNG,Hela-Southern Highlands,admin1,PNG-1246,0.95,Natural Earth 10m (public domain),alias hint -> PG-SHM
+PNG,Madang,admin1,PNG-1240,1.0,Natural Earth 10m (public domain),name match 100
+PNG,Milne Bay-Oro,admin1,PNG-1256;PNG-1252,0.95,Natural Earth 10m (public domain),"alias hint -> PG-MBA, PG-NPP"
+PNG,Morobe,admin1,PNG-1253,1.0,Natural Earth 10m (public domain),name match 100
+PNG,National Capital District-Central,admin1,PNG-1249;PNG-1254,0.95,Natural Earth 10m (public domain),"alias hint -> PG-NCD, PG-CPM"
+PNG,New Britain,admin1,PNG-1257;PNG-1250,0.95,Natural Earth 10m (public domain),"alias hint -> PG-EBR, PG-WBK"
+PNG,New Ireland-Manus,admin1,PNG-1255;PNG-1251,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+PNG,Western-Gulf,admin1,PNG-1248;PNG-1244,0.95,Natural Earth 10m (public domain),"alias hint -> PG-WPD, PG-GPK"
+PRK,Chagang,admin1,PRK-3310,1.0,Natural Earth 10m (public domain),name match 100
+PRK,Kangwon,admin1,PRK-3308,1.0,Natural Earth 10m (public domain),name match 100
+PRK,North Hamgyong,admin1,PRK-3307,1.0,Natural Earth 10m (public domain),name match 100
+PRK,North Hwanghae,admin1,PRK-3303,1.0,Natural Earth 10m (public domain),name match 100
+PRK,North Pyongan,admin1,PRK-3312,1.0,Natural Earth 10m (public domain),name match 100
+PRK,Pyongyang,admin1,PRK-3305,1.0,Natural Earth 10m (public domain),name match 100
+PRK,Rason,admin1,PRK-5495,1.0,Natural Earth 10m (public domain),name match 100
+PRK,Ryanggang,admin1,PRK-3314,1.0,Natural Earth 10m (public domain),name match 100
+PRK,South Hamgyong,admin1,PRK-3311,0.95,Natural Earth 10m (public domain),alias hint -> KP-08
+PRK,South Hwanghae,admin1,PRK-3304,1.0,Natural Earth 10m (public domain),name match 100
+PRK,South Pyongan-Nampo,admin1,PRK-3313,0.95,Natural Earth 10m (public domain),alias hint -> KP-02
+SGP,Singapore,admin1,SGP-4872;SGP-4871;SGP-4875;SGP-4874;SGP-4873,0.95,Natural Earth 10m (public domain),whole country (5 admin-1 units)
+SLB,Guadalcanal-Honiara,admin1,SLB-1261;SLB-5130;SLB-1263;SLB-1262,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Central, Rennell and Bellona"
+SLB,Malaita,admin1,SLB-3509;SLB-1934;SLB-1260,1.0,Natural Earth 10m (public domain),"name match 100; plus unclaimed Makira, Temotu"
+SLB,Western-Choiseul-Isabel,admin1,SLB-3507;SLB-1264;SLB-3508,0.95,Natural Earth 10m (public domain),"alias hint -> SLB-3507, SLB-3508, SB-IS"
+SPM,Saint Pierre and Miquelon,admin1,SPM-4866;SPM-4867,0.95,Natural Earth 10m (public domain),whole country (2 admin-1 units)
+THA,Ayutthaya-Saraburi,admin1,THA-415;THA-412,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+THA,Bangkok,admin1,THA-416,1.0,Natural Earth 10m (public domain),name match 100
+THA,Buriram-Surin-Chaiyaphum,admin1,THA-443;THA-436;THA-402;THA-437,0.93,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 93); plus unclaimed Phetchabun"
+THA,Central Plains,admin1,THA-403;THA-414;THA-407;THA-406;THA-405;THA-408,0.95,Natural Earth 10m (public domain),"alias hint -> name:Suphan Buri, name:Lop Buri, name:Chai Nat, name:Sing Buri, name:Ang Thong, name:Uthai Thani"
+THA,Chachoengsao-Prachinburi,admin1,THA-433;THA-431;THA-409;THA-410,0.96,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 96); plus unclaimed Nakhon Nayok, Sa Kaeo"
+THA,Chanthaburi-Trat,admin1,THA-435;THA-432,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+THA,Chiang Mai-Lamphun,admin1,THA-390;THA-392,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+THA,Chiang Rai-Phayao,admin1,THA-389;THA-394,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+THA,Chonburi,admin1,THA-430,0.94,Natural Earth 10m (public domain),name match 94
+THA,Kanchanaburi-Ratchaburi,admin1,THA-399;THA-421;THA-424,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Samut Songkhram"
+THA,Khon Kaen-Kalasin-Maha Sarakham,admin1,THA-438;THA-439;THA-440,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+THA,Lampang-Phrae-Nan,admin1,THA-393;THA-391;THA-395,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+THA,Nakhon Ratchasima,admin1,THA-441,1.0,Natural Earth 10m (public domain),name match 100
+THA,Nakhon Sawan-Kamphaeng Phet,admin1,THA-400;THA-411;THA-401,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Phichit"
+THA,Nakhon Si Thammarat-Trang,admin1,THA-387;THA-383;THA-376,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Phatthalung"
+THA,Nonthaburi-Pathum Thani,admin1,THA-413;THA-417,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+THA,Pattani-Yala-Narathiwat,admin1,THA-388;THA-493;THA-494,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+THA,Phetchaburi-Prachuap Khiri Khan,admin1,THA-420;THA-419,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+THA,Phitsanulok-Sukhothai,admin1,THA-398;THA-396;THA-397,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Uttaradit"
+THA,Phuket-Krabi-Phang Nga,admin1,THA-378;THA-382;THA-377,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100)"
+THA,Rayong,admin1,THA-434,1.0,Natural Earth 10m (public domain),name match 100
+THA,Sakon Nakhon-Roi Et-Mekong,admin1,THA-5499;THA-472;THA-473;THA-447;THA-442;THA-428,0.95,Natural Earth 10m (public domain),"alias hint -> name:Sakon Nakhon, name:Roi Et, name:Nakhon Phanom, name:Mukdahan; plus unclaimed Bueng Kan, Yasothon"
+THA,Samut Prakan,admin1,THA-422,1.0,Natural Earth 10m (public domain),name match 100
+THA,Samut Sakhon-Nakhon Pathom,admin1,THA-423;THA-418,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+THA,Songkhla-Satun,admin1,THA-385;THA-386,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+THA,Surat Thani-Chumphon,admin1,THA-375;THA-379;THA-380,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Ranong"
+THA,Tak-Mae Hong Son,admin1,THA-374;THA-404,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100)"
+THA,Ubon Ratchathani-Sisaket,admin1,THA-425;THA-426;THA-427,1.0,Natural Earth 10m (public domain),"name parts (2 pieces, worst match 100); plus unclaimed Amnat Charoen"
+THA,Udon Thani-Nong Khai-Loei,admin1,THA-445;THA-446;THA-449;THA-448,1.0,Natural Earth 10m (public domain),"name parts (3 pieces, worst match 100); plus unclaimed Nong Bua Lam Phu"
+TLS,Dili,admin1,TLS-541,0.95,Natural Earth 10m (public domain),alias hint -> TL-DI
+TLS,Eastern Municipalities,admin1,TLS-551;TLS-550;TLS-552;TLS-553;TLS-546,0.95,Natural Earth 10m (public domain),"alias hint -> TL-BA, TL-LA, TL-VI, TL-MT, TL-MF"
+TLS,Western Municipalities,admin1,TLS-543;TLS-547;TLS-548;TLS-545;TLS-542;TLS-549;TLS-544,0.95,Natural Earth 10m (public domain),"alias hint -> TL-OE, TL-BO, TL-CO, TL-ER, TL-LI, TL-AN, TL-AL"
+TON,Tonga,admin1,TON-4946;TON-4949;TON-4945;TON-4948;TON-4947,0.95,Natural Earth 10m (public domain),whole country (5 admin-1 units)
+TUV,Tuvalu,admin1,TUV+00?,0.95,Natural Earth 10m (public domain),whole country (1 admin-1 units)
+TWN,Changhua,admin1,TWN-1169,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Chiayi City,admin1,TWN-1171,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Chiayi County,admin1,TWN-1170,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Hsinchu City,admin1,TWN-1161,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Hsinchu County,admin1,TWN-1162,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Hualien,admin1,TWN-1172,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Kaohsiung,admin1,TWN-1156,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Keelung,admin1,TWN-1164,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Kinmen,admin1,TWN-3415,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Lienchiang,admin1,,0.95,builder-drawn line (hints file),"no admin-1 match (best unit 56, group 38); carve: builder polygon from no region"
+TWN,Miaoli,admin1,TWN-1165,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Nantou,admin1,TWN-1173,1.0,Natural Earth 10m (public domain),name match 100
+TWN,New Taipei,admin1,TWN-1167,0.95,Natural Earth 10m (public domain),alias hint -> TW-TPQ
+TWN,Penghu,admin1,TWN-3414,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Pingtung,admin1,TWN-1158,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Taichung,admin1,TWN-1174,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Tainan,admin1,TWN-1160,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Taipei,admin1,TWN-1166,0.95,Natural Earth 10m (public domain),alias hint -> TW-TPE
+TWN,Taitung,admin1,TWN-1177,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Taoyuan,admin1,TWN-1168,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Yilan,admin1,TWN-1163,1.0,Natural Earth 10m (public domain),name match 100
+TWN,Yunlin,admin1,TWN-1176,1.0,Natural Earth 10m (public domain),name match 100
 USA,Alabama,admin1,USA-3541,1.0,Natural Earth 10m (public domain),name match 100
 USA,Alaska,admin1,USA-3563,1.0,Natural Earth 10m (public domain),name match 100
 USA,Arizona,admin1,USA-3520,1.0,Natural Earth 10m (public domain),name match 100
@@ -98,3 +425,21 @@ USA,Washington,admin1,USA-3519,1.0,Natural Earth 10m (public domain),name match 
 USA,West Virginia,admin1,USA-3554,1.0,Natural Earth 10m (public domain),name match 100
 USA,Wisconsin,admin1,USA-3553,1.0,Natural Earth 10m (public domain),name match 100
 USA,Wyoming,admin1,USA-3527,1.0,Natural Earth 10m (public domain),name match 100
+VNM,Ba Ria-Vung Tau,admin1,VNM-495,0.95,Natural Earth 10m (public domain),alias hint -> VN-43
+VNM,Bac Ninh,admin1,VNM-463,0.95,Natural Earth 10m (public domain),alias hint -> VN-56
+VNM,Binh Duong,admin1,VNM-483,0.95,Natural Earth 10m (public domain),alias hint -> VN-57
+VNM,Central Highlands,admin1,VNM-486;VNM-4835;VNM-477;VNM-478;VNM-480,0.95,Natural Earth 10m (public domain),"alias hint -> VN-33, VN-30, VN-28, VN-72, VN-35"
+VNM,Dong Nai,admin1,VNM-497,0.95,Natural Earth 10m (public domain),alias hint -> VN-39
+VNM,Hai Phong,admin1,VNM-4600,0.95,Natural Earth 10m (public domain),alias hint -> VN-HP
+VNM,Hanoi,admin1,VNM-464;VNM-462,0.95,Natural Earth 10m (public domain),"alias hint -> VN-HN, VN-70"
+VNM,Ho Chi Minh City,admin1,VNM-501,0.95,Natural Earth 10m (public domain),alias hint -> VN-SG
+VNM,Mekong Delta,admin1,VNM-503;VNM-500;VNM-498;VNM-502;VNM-508;VNM-4834;VNM-507;VNM-506;VNM-505;VNM-510;VNM-509;VNM-504;VNM-499,0.95,Natural Earth 10m (public domain),"alias hint -> VN-44, VN-55, VN-50, VN-CT, VN-59, VN-73, VN-47, VN-41, VN-52, VN-46, VN-51, VN-49, VN-45"
+VNM,North Central Coast,admin1,VNM-456;VNM-475;VNM-474;VNM-476;VNM-489;VNM-490,0.95,Natural Earth 10m (public domain),"alias hint -> VN-26, VN-25, VN-24, VN-22, VN-23, VN-21"
+VNM,Northern Uplands,admin1,VNM-450;VNM-455;VNM-512;VNM-511;VNM-5483;VNM-453;VNM-454;VNM-459;VNM-457;VNM-458;VNM-469;VNM-451;VNM-470;VNM-452,0.95,Natural Earth 10m (public domain),"alias hint -> VN-69, VN-54, VN-09, VN-04, VN-53, VN-03, VN-07, VN-06, VN-02, VN-01, VN-71, VN-05, VN-14, VN-68"
+VNM,Quang Ninh,admin1,VNM-429,0.95,Natural Earth 10m (public domain),alias hint -> VN-13
+VNM,Red River Delta,admin1,VNM-466;VNM-468;VNM-471;VNM-461;VNM-460;VNM-467,0.95,Natural Earth 10m (public domain),"alias hint -> VN-61, VN-66, VN-20, VN-67, VN-63, VN-18"
+VNM,South Central Coast,admin1,VNM-487;VNM-479;VNM-496;VNM-481;VNM-482;VNM-485;VNM-488;VNM-491,0.95,Natural Earth 10m (public domain),"alias hint -> VN-34, VN-32, VN-36, VN-40, VN-29, VN-31, VN-DN, VN-27"
+VNM,Tay Ninh-Binh Phuoc,admin1,VNM-484;VNM-444,0.95,Natural Earth 10m (public domain),"alias hint -> VN-37, VN-58"
+VUT,Sanma-Northern Islands,admin1,VUT-563;VUT-561;VUT-564;VUT-560,0.95,Natural Earth 10m (public domain),"alias hint -> VU-SAM, VU-TOB, VU-PAM, VU-MAP"
+VUT,Shefa,admin1,VUT-562;VUT-565,0.95,Natural Earth 10m (public domain),"alias hint -> VU-SEE, VU-TAE"
+WSM,Samoa,admin1,WSM-4990;WSM-4991;WSM-4992;WSM-4993;WSM-4994;WSM-4989;WSM-4987;WSM-4988;WSM-4984;WSM-4985;WSM-4986,0.95,Natural Earth 10m (public domain),whole country (11 admin-1 units)

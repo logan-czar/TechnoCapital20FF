@@ -21,7 +21,8 @@ _BLOCK = [
 ]
 # Sources that make polygons a derivative of a database we refuse to ship (map-sources.md risks).
 _BLOCK_SOURCE = [
-    (re.compile(r"openstreetmap|\bosm\b", re.I), "OpenStreetMap source"),
+    # also "Open Street Map" with spaces (geoBoundaries NER ADM3 and DZA ADM3 write it so, D671)
+    (re.compile(r"open\s*-?\s*street\s*-?\s*map|\bosm\b", re.I), "OpenStreetMap source"),
     (re.compile(r"\bgadm\b", re.I), "GADM source"),
 ]
 _ALLOW = [
@@ -65,6 +66,9 @@ def provenance(meta: dict) -> str:
 
 
 NE_PROVENANCE = "Natural Earth 10m (public domain)"
+# A line the builder drew in a hints file (contested land drawn by our own province files,
+# decision C; D676): our own work, no third-party license.
+BUILDER_PROVENANCE = "builder-drawn line (hints file)"
 
 
 if __name__ == "__main__":  # tiny self-check, run by `run.py selftest`
@@ -89,4 +93,10 @@ if __name__ == "__main__":  # tiny self-check, run by `run.py selftest`
     assert classify("CC BY 4.0", "OpenStreetMap contributors")[0] is False
     assert classify("Public Domain", "", "derived from OpenStreetMap, ODbL")[0] is False
     assert classify("Open Government Canada 2.0", "Statistics Canada", "")[0] is True
+    assert classify("Creative Commons Attribution 4.0 (CC BY 4.0)", "OCHA ROWCA, Open Street Map")[0] is False
+    # attribution-only government licences outside D601 stay refused until Logan allows them
+    for lic in ("Data license Germany - Attribution - Version 2.0", "Etalab Open License 2.0",
+                "Singapore Open Data License Version 1.0", "Korea Open Government License Type 1 (Source Indication)",
+                "National Institute of Statistics (INE) Data License", "Federal Office of Topography swisstopo License"):
+        assert classify(lic)[0] is False, lic
     print("licenses: ok")

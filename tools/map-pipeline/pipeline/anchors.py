@@ -117,13 +117,19 @@ class Frame:
 
 
 def _place_lookup(countries, sources):
+    """Places by (game country, folded name); NE codes map to game codes (config.NE_CODES)."""
+    game_of = {}
+    for g in sorted(countries):
+        for c in config.ne_codes(g):
+            game_of.setdefault(c, g)
     pp = gpd.read_file(config.ne_path("ne_10m_populated_places.shp", sources),
                        columns=["NAME", "NAMEASCII", "ADM0_A3", "POP_MAX"])
-    pp = pp[pp.ADM0_A3.isin(countries)]
+    pp = pp[pp.ADM0_A3.isin(set(game_of))]
     out: dict[tuple[str, str], list] = {}
     for r in pp.itertuples():
         for n in sorted({r.NAME, r.NAMEASCII} - {None}):
-            out.setdefault((r.ADM0_A3, text.fold(n)), []).append((r.POP_MAX or 0, r.geometry.x, r.geometry.y, r.NAME))
+            out.setdefault((game_of[r.ADM0_A3], text.fold(n)), []).append(
+                (r.POP_MAX or 0, r.geometry.x, r.geometry.y, r.NAME))
     for v in out.values():
         v.sort(key=lambda c: (-c[0], c[1], c[2]))
     return out
@@ -230,16 +236,22 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
                                    "got": f"{dist:.1f} px"})
         if r["metro"]:
             hit = find(r["country"], r["metro"])
-            if hit:
+            # a name two places share (Suzhou in Jiangsu and in Anhui), or a composite Metro
+            # whose name part is not one of its provinces (Hsinchu-Taipei): any same-named
+            # place of any name part landing on the Metro passes (D679)
+            ok = any(by_id.get(owner(c[1], c[2]), {}).get("metro") == r["metro"]
+                     for n in _candidates(r["metro"]) for c in places.get((r["country"], n), []))
+            if hit and not ok:
                 got = owner(hit[1], hit[2])
                 if by_id.get(got, {}).get("metro") != r["metro"]:
                     misses.append({"kind": "metro", "province_id": r["id"], "place": hit[3],
                                    "expected": f"a {r['metro']} province", "got": got})
     with (config.DATA_DIR / "key-cities.csv").open(encoding="utf-8", newline="") as f:
         for k in csv.DictReader(f):
-            if k["country"] not in region.countries:
-                continue
             pids = k["province_ids"].split(";")
+            # a key city of another region file (Russia's are in two) is checked with that file
+            if k["country"] not in region.countries or not all(p in by_id for p in pids):
+                continue
             hit = find(k["country"], k["city"])
             if hit:
                 got = owner(hit[1], hit[2])

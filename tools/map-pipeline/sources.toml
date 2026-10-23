@@ -43,18 +43,12 @@ files = [
 
 [geoboundaries]
 # geoBoundaries gbOpen, pinned by release tag; files are git-LFS objects, so the sha256 is the LFS oid.
+# `file = "simplified"` pins the geoBoundaries topology-preserving simplified geometry (D670).
 version = "v6.0.0"
 commit = "1289e40e366c7b320550be1ee0614a9472d572d4"
 base_url = "https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/v6.0.0/releaseData/gbOpen/"
 pointer_url = "https://raw.githubusercontent.com/wmgeolab/geoBoundaries/v6.0.0/releaseData/gbOpen/"
 citation = "Runfola, D. et al. (2020) geoBoundaries: A global database of political administrative boundaries. PLoS ONE 15(4): e0231866. https://doi.org/10.1371/journal.pone.0231866"
-
-[[geoboundaries.boundary]]
-iso = "USA"
-level = "ADM2"
-meta_sha256 = "30a1a42aca3fee948128e03cb7dfe8ec27a2a6b0738c436abb5bac42b558b58f"
-geojson_sha256 = "3d08c9b9c66d80aef3e92a55ebacaaa1eeccda3edea03df3ad50fdeaa84ebc6b"
-geojson_size = 9227695
 
 [[geoboundaries.boundary]]
 iso = "CAN"
@@ -76,3 +70,906 @@ level = "ADM2"
 meta_sha256 = "f26d66c487df4efed7f8e4952da7c9a27502ad2e5489e7515892c977830e3b60"
 geojson_sha256 = "c364d0ad5caab96186d6cdc63b6848d475226bc1494acffa11e72de857fa2b10"
 geojson_size = 131385512
+
+[[geoboundaries.boundary]]
+iso = "USA"
+level = "ADM2"
+meta_sha256 = "30a1a42aca3fee948128e03cb7dfe8ec27a2a6b0738c436abb5bac42b558b58f"
+geojson_sha256 = "3d08c9b9c66d80aef3e92a55ebacaaa1eeccda3edea03df3ad50fdeaa84ebc6b"
+geojson_size = 9227695
+
+[[geoboundaries.boundary]]
+iso = "AGO"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "a7af388e591a32e602398f58ef14ae242db245e6f81819c8aa1050f419845fff"
+geojson_sha256 = "57fa2f34074af2a1c7a47c08ab183942fbcfa811ee6f3685b5b0dbdfb7bed06b"
+geojson_size = 6916655
+
+[[geoboundaries.boundary]]
+iso = "ALB"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "73d457bb53ab37a9f55933eaf17eb68327fc08be8230997e02f963b96208c3b7"
+geojson_sha256 = "d371369ca4665b252acf6cd1df881048e279c25abb47fc13fce5d6abc0965dc4"
+geojson_size = 80458
+
+[[geoboundaries.boundary]]
+iso = "ARG"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "f3e2b95117a0040e752e60fd8ad9d6bf856c5e5fad871a9289383f35dd4e4063"
+geojson_sha256 = "a3399eb1ecf03f2af9ff9cded019065a972c7cbcd51d59a7c442c8494ecd28fb"
+geojson_size = 4862514
+
+[[geoboundaries.boundary]]
+iso = "AUS"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "66e985eb9b596941cde74562669918332e068a49dff67a7a42cbcb9e2869901e"
+geojson_sha256 = "5b41444fefc1885f43b60135bb26886fa20e522699731318896dafdceeb124e8"
+geojson_size = 9687685
+
+[[geoboundaries.boundary]]
+iso = "AUT"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "a16f52a6f7bdad6143753b0f3e83d596ec4711db6fb29e90656c612d263f3b6f"
+geojson_sha256 = "7d832b71dc0c3b057024f5949e519b464adab34923048eeb1af8ed1768bc2343"
+geojson_size = 1103527
+
+[[geoboundaries.boundary]]
+iso = "AZE"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "efcfc48869c3ddb01988ad682919d2e4e5075de50340b0511e73ab666fcab2c7"
+geojson_sha256 = "bc47a26759bf6e5c2d2aa839d4baba1e4b658349401b3d356354e6d52273542e"
+geojson_size = 300007
+
+[[geoboundaries.boundary]]
+iso = "BEL"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "30aa0d6dff911cf5549a520244b52ee7730d0029edd6b19271b950a1bcd59619"
+geojson_sha256 = "e9cc3f0661c4d028734dd08f304d3e26a75f14277f16f98ad6ba732dce26684b"
+geojson_size = 320645
+
+[[geoboundaries.boundary]]
+iso = "BGD"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "52e9584fb252a4721249460086855dc84f3384d850db70c97777e1213617a6fd"
+geojson_sha256 = "dc20d969c81e443943dd71600cd816b83eeed2cfc8d23eadf149e0e6859fd287"
+geojson_size = 1487637
+
+[[geoboundaries.boundary]]
+iso = "BGR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "fd388520f68c9d824c2832b3a796fcfed5f0d9a8a9490777a564d796445f0b58"
+geojson_sha256 = "55688cd348c76120f64ec04a9f58a6190f92952828222f66e4c6cc77cdaf5d8d"
+geojson_size = 677010
+
+[[geoboundaries.boundary]]
+iso = "BIH"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "f7a9e0dc101470af7c5eed0bc77bd3c37e3648abd94d1ca72eb2478d5f66095c"
+geojson_sha256 = "76216db3de94a91e75c4df5bbf38cce71b58960dda8c8e5d3e8e46d2c604379d"
+geojson_size = 621881
+
+[[geoboundaries.boundary]]
+iso = "BLR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "ef983dfc12c422b729b3d6f95ae92ebbd8ba67d744cc400e22b9715a02e695ef"
+geojson_sha256 = "10b197e6ded12522dd82e548e4c05afbe83d7a4b03070db6246aeb590564ef3b"
+geojson_size = 1008864
+
+[[geoboundaries.boundary]]
+iso = "BOL"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "a22b726e5315f43c84a8391535d2fa2721a50b03dde654e5c4ad249bde90879f"
+geojson_sha256 = "489d21d046fb06a1215345a3cc4cb4aceac23225d47e109b399b44668255cc7f"
+geojson_size = 2539113
+
+[[geoboundaries.boundary]]
+iso = "BRA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "3bb91c2c930cbfc0c9a66264bb825fd5ac5bb15dacdad63822432743e16383aa"
+geojson_sha256 = "8e9a8a19808aa65a1ea6fb5035d0e33c3fad07b3212c1fba007f75a681a61f1b"
+geojson_size = 37016438
+
+[[geoboundaries.boundary]]
+iso = "BWA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "8319afd59781d12242793e9508dda94735ce4612370c32a2bf46d8ab702ea363"
+geojson_sha256 = "0be36e20a99e27bffc6a051478575ce54ca918446d4a93838797d9e2d0488cb7"
+geojson_size = 88708
+
+[[geoboundaries.boundary]]
+iso = "CHE"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "f5053438b63050dc0b96e73af3725df42cf2e1cc8918597093ebad73eaf7b9b8"
+geojson_sha256 = "48237c98c6a6279c12c02d088a96e58cf315b4822c64b0e6cfb4abf0c62712f3"
+geojson_size = 645596
+
+[[geoboundaries.boundary]]
+iso = "CHL"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "3ff02c13a992b76f7ce93f79a9dffacf2ed7335ba9972098cedf1c5243f630a9"
+geojson_sha256 = "a759fca17ddfed51c29ef0a08c872b4bc338e420fb5b3fd599bfc765a747e183"
+geojson_size = 4138386
+
+[[geoboundaries.boundary]]
+iso = "CHN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "55fd4da5b80f8017a1da5f598d3e6543d9d027b8879e673dbd4c951be9f83cfe"
+geojson_sha256 = "e7a29d848847bb90332e7a4a6e10fc88b99ea831c3bac2e7318eb0e567a50879"
+geojson_size = 6171914
+
+[[geoboundaries.boundary]]
+iso = "CIV"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "e41c6a7662c26f4039dc9c24bf628920116194d7171cf1472be11f2450024c0d"
+geojson_sha256 = "ccd02429777fe396824b04c6da59c0c33702c1ae6100b3aa90c492f549853bc2"
+geojson_size = 674377
+
+[[geoboundaries.boundary]]
+iso = "CMR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "b8f44368f148402c5da3336c887a3c1ac4524ae26f75c5c032d743ac399043c3"
+geojson_sha256 = "36d1e187edc3da8c5be84dc437d9d0d61364f3eeacf3ea0915c3941716645b39"
+geojson_size = 165249
+
+[[geoboundaries.boundary]]
+iso = "COD"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "5c0a0be757a338bc7f0294c5ff2d7654697bd99cb835dd6897e21e2ad8a97f64"
+geojson_sha256 = "5c390784c4e676908d670197c9bef4e451c19c75b74c5a2333a9ec9dcc039f1b"
+geojson_size = 2971895
+
+[[geoboundaries.boundary]]
+iso = "COL"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "be49f8e650119781fedc1bf0cd1e350bd1d2bfaa3e7bf95ef7df387384c0d853"
+geojson_sha256 = "d71b2fa6bf836554faa49af1858d7329288be4300fd5f801dad2374b2d3f77ab"
+geojson_size = 9431359
+
+[[geoboundaries.boundary]]
+iso = "CRI"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "973384f4ac1a1c2e167b13b7cf3d7e747c9583dfa40db064611af08ef67e681d"
+geojson_sha256 = "04563af617a93e8cc2ec3a711326744a178da725d9cf680a9944523364fc7ddc"
+geojson_size = 2770232
+
+[[geoboundaries.boundary]]
+iso = "CYP"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "a12e7f8411e406ff228f547662faaedfad92e7844579ae82fc3bf4de70d600dc"
+geojson_sha256 = "a16082e0c7b6b065bb0a40f066577106b947d2e0ab55e69651dec81683268be2"
+geojson_size = 1014566
+
+[[geoboundaries.boundary]]
+iso = "CZE"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "59c56dfdb11483d321139e880ade74d11c7a3d9384cbbd50d18c33b955ec28fd"
+geojson_sha256 = "82de1484d1e8b24221a0d31749954504ab12010c7a22f209e31c5922005e4951"
+geojson_size = 829777
+
+[[geoboundaries.boundary]]
+iso = "DEU"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "e04a97adff75f455a168f83b6d80ac4534a6d95863a959a846a7cfd21419ded2"
+geojson_sha256 = "344c7d6801fd2131ff65a498188db4b8259673139d721f973b5dc547def540ba"
+geojson_size = 1807405
+
+[[geoboundaries.boundary]]
+iso = "DNK"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "81a1200faf9f5040eaf452a6354fef603c2fe13253a2694684494278c94e1553"
+geojson_sha256 = "fe76818a7d1195acec3228cf19d25fcf11e66c0f4ba29d694ccdd4a8d6bc576a"
+geojson_size = 338096
+
+[[geoboundaries.boundary]]
+iso = "DOM"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "c9e516a45b9732bce5c62cc14f7255f96e0b0ee3306591b31f0a3b9c1ed728b8"
+geojson_sha256 = "7e7c28aefae79e4002f32810ae6a9ec9c90db60a6ca9f79362e1c10dc7c6d34f"
+geojson_size = 563739
+
+[[geoboundaries.boundary]]
+iso = "DZA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "158f74d94a78c012ca092c8dd6ae1e38232e3c176703f494b54d22242086a5c3"
+geojson_sha256 = "f8102e248a3768b4a77606e5118ce6ee7cf79b595d2fc7b08e58f9b7ef5ec2f1"
+geojson_size = 1845082
+
+[[geoboundaries.boundary]]
+iso = "EGY"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "2ffe312969f3c66a3d9158e0843a54cf2fbe5fa8c4cd54c78841e494cfabfabe"
+geojson_sha256 = "bbe9dc4cb72bac250572cffd133cac71b1929e885b76b2ff0e848581bd9cf6c7"
+geojson_size = 1232324
+
+[[geoboundaries.boundary]]
+iso = "ESP"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "d4bd727b873851653a47245be8f90fda508e853eaf5e62fa7ac4854034106306"
+geojson_sha256 = "c887c7cbe146388713747cfbbbc977f232c0b8723bfccaae3288799629e3a35f"
+geojson_size = 3243407
+
+[[geoboundaries.boundary]]
+iso = "EST"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "0b10a630afa01f0e1410a664bfa47d0e5dd46e79934caf4e569439e502b0cdd2"
+geojson_sha256 = "cb2d6446e189b77e04a5445ed3672352d74a425ea39bc53796c20f601f57201d"
+geojson_size = 897443
+
+[[geoboundaries.boundary]]
+iso = "ETH"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "c9e7c5e06bfac9be110bee6f86cef1d194395775acd390a16f10bfda4f96cf8e"
+geojson_sha256 = "c7765b9dde6407bd8b569085cb1e905a671c55fa71b6c0fef8f7a3898b8244e8"
+geojson_size = 783735
+
+[[geoboundaries.boundary]]
+iso = "FIN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "eb51582e30a12a4637e37ca12f89fe91ac1aaad51bd5007e50d5b1cf5850afe6"
+geojson_sha256 = "5614ce9dc504e5e02bd98872803e40f55216ccef6253fbae1d730597c4c67d65"
+geojson_size = 1086697
+
+[[geoboundaries.boundary]]
+iso = "FRA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "911973f26796c9705e5a391500ce13eaf75ef043f0db2ae17414beb659fbd9b1"
+geojson_sha256 = "7e992ba72e21a62d42b74064a826fbdcc68ec5c264dd9c486dd84297730b2796"
+geojson_size = 3420856
+
+[[geoboundaries.boundary]]
+iso = "GBR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "02469f28f2601c074de37fd471dcfe370dcb621954fb9459fe46bee9f400b539"
+geojson_sha256 = "306f5606aa7c8ea4ec9d6752d3907a736224c1ad1a09759d96ce2daef31713c5"
+geojson_size = 777975
+
+[[geoboundaries.boundary]]
+iso = "GEO"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "e281cf7b430ed801e897293aba147e5e26ae2c3b43887d65d92dec4c7c3365b6"
+geojson_sha256 = "30fb554eacd549a87359f1075f65d7820c0d8247dd4aef2fd90295e66266deb6"
+geojson_size = 1140388
+
+[[geoboundaries.boundary]]
+iso = "GHA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "ddfc7f8508620772b340ed8ab7db754ce40650bb52c54233979b79d65af01448"
+geojson_sha256 = "f0a79c8dcd2ce490ba3081e9693564616c27188d5f3623718cb23adbfc39c87b"
+geojson_size = 2706580
+
+[[geoboundaries.boundary]]
+iso = "GIN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "129ba43c6e0328d8400d3dcc0a9b7985c4eb6d57450b70e147edeaef960ac5c3"
+geojson_sha256 = "299eaa3579614f51c712f61d1699b6ee37cbe9a2ce14b1bfad5f9b0ccb8f1544"
+geojson_size = 237429
+
+[[geoboundaries.boundary]]
+iso = "GRC"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "c363228bd1afcd4f99f7d395e57fb9f92da912ff884e812f6679c325b3a40bdb"
+geojson_sha256 = "e89f87ee3819946749d57649002ee2776c91913f7ade4d4f987d6acc3059061d"
+geojson_size = 536783
+
+[[geoboundaries.boundary]]
+iso = "HRV"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "fca385a834365cbac268b2d09ca28faf87324bc6ee57d830cd909886dc261516"
+geojson_sha256 = "f06511c089925d90eb57eb68168de08a1650a6f36dea0f66d28e429c5b78e3b8"
+geojson_size = 1950075
+
+[[geoboundaries.boundary]]
+iso = "HUN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "620b480479e9f596dcb6b6460a08eb731730744ec27c79ca1ecf28449a0fd907"
+geojson_sha256 = "d142119b260c42aa9aedcdd6fa4c4f7e8cb06699cdf3df0eb1ac5d0d9fa23f0f"
+geojson_size = 712243
+
+[[geoboundaries.boundary]]
+iso = "IDN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "509074e115dcabd5f2a61e525e465af53075c0272f9e0375a031af82d4c78867"
+geojson_sha256 = "02244eae72a37d304e68975ff0cabd507881dfa4390cdc7c6738d56ad4274234"
+geojson_size = 9691803
+
+[[geoboundaries.boundary]]
+iso = "IND"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "4ad72666268b273c885abd5a9fd8ca64a4ab1d7ec1e66ad302ebc8fe089e02d9"
+geojson_sha256 = "11da420eb8ce161fe4abd8c4aaa47651179e1782da0595257e9120bf13f1bb46"
+geojson_size = 6660219
+
+[[geoboundaries.boundary]]
+iso = "IRL"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "6f6e9b6c4eb947a924ba889b765352b4ecc3b69768feb3a40a166b43536ec1fa"
+geojson_sha256 = "3e320cec3111a79e307516fca49dd96ab14d508af8fe72c01646c1d070e26965"
+geojson_size = 1641380
+
+[[geoboundaries.boundary]]
+iso = "IRN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "893e3936912367c56557e62d26b81a3809bfda529d0b24b82e781ded4f524d15"
+geojson_sha256 = "4ca6591347d395fe685738ee055daf83a64d02ef328eebd45d3df9cc7e0c2fb4"
+geojson_size = 2584484
+
+[[geoboundaries.boundary]]
+iso = "IRQ"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "a1ef0ff5e32e36b3e000b91b99035d061948af1e05edae5499e14ce437681f26"
+geojson_sha256 = "0df93990fdc5bdc303c2c6ae773223ad4fb8fd9666ed7f3d73081cf28cf52f39"
+geojson_size = 412611
+
+[[geoboundaries.boundary]]
+iso = "ISL"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "91cb171e356f83dbf9ea9bce69b4380c7c84cd5c5af08e3893a278962f894c42"
+geojson_sha256 = "35092faaed255c882c5304bc0489e7877c9da1f15da5a4bc7ac2bdad9e4cba76"
+geojson_size = 784472
+
+[[geoboundaries.boundary]]
+iso = "ISR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "e245bc265bad8b05126c6b35e76e817aefb3bdc297d3dffd303e94c65f7e247d"
+geojson_sha256 = "ff23fbffd89c2636fc27c0eb23880c6210d23cb568339de68448e12c66be1788"
+geojson_size = 107529
+
+[[geoboundaries.boundary]]
+iso = "ITA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "77e0738da96dff7150f5b58469f76d589c8ab406adfae76c5c1467faebdc0010"
+geojson_sha256 = "c6517aa8b83683872de7a92d41ab9730d9e4d11ef3fe9294d5f359070ace2370"
+geojson_size = 1119941
+
+[[geoboundaries.boundary]]
+iso = "JOR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "d434676953bdbcf627c0d985f068df2ee31e0a818e6a27833a41aaad5679a87d"
+geojson_sha256 = "5e73d8a84b7993e0ed9769de91939bd8b75a1642fb269a93ab76a00d6bb3ab72"
+geojson_size = 400704
+
+[[geoboundaries.boundary]]
+iso = "JPN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "3415bb608155ed6a77c36191746e2356bdc70bdf5ae45394d98c6dd67cbe8bf8"
+geojson_sha256 = "3b0d5a5229d3cfeaacf83d6eae21468f208025741059f788223d324d4d2743de"
+geojson_size = 5473927
+
+[[geoboundaries.boundary]]
+iso = "KAZ"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "71bdab3cafa1d0a81968ceb7078c6f494a7348c56850f5ba6d6fa15330194981"
+geojson_sha256 = "c738fbdce72f75067331bb1cd4bbd01ba7dd90dc34d312405edca2130a0b67e9"
+geojson_size = 804862
+
+[[geoboundaries.boundary]]
+iso = "KGZ"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "e13ba0561a5c5a1ce8829c88081487d067e4c72d3f0adb2a931a0d633a8a00a0"
+geojson_sha256 = "17987a4fa11667635ec41d5af8b6eb80352a39771cbb6095c9a00e70eec9041f"
+geojson_size = 331412
+
+[[geoboundaries.boundary]]
+iso = "KOR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "fdbf33fa8b85fe2d85fe84faab5646e6ec5078c6192bfb44ba95dfed2218077d"
+geojson_sha256 = "ca2691727fe49962224a00e3b58a307343b9cf895cb7f969871155b121c42a1d"
+geojson_size = 776913
+
+[[geoboundaries.boundary]]
+iso = "KWT"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "e1d1b85ca2413ff40df33120e2376ef048b31cd4c3fe583e87ab508e10a3d41c"
+geojson_sha256 = "ea0a77ea192a6ebc167c695e54b4fc6b920a1c76679b13e7b1480ac853b8c401"
+geojson_size = 161529
+
+[[geoboundaries.boundary]]
+iso = "LKA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "2c9536df5947436821a4fa88d3fbb2cef0a748f06926c4ecce8148a5c9c69fb8"
+geojson_sha256 = "c8d02da6eccf61fb9d6213dbe54efa8158a9f598478c05f33a273fe8702e9c68"
+geojson_size = 204071
+
+[[geoboundaries.boundary]]
+iso = "LTU"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "bfb144a807572ce34ffaf49e0bbc6b194eb0a336da3160a482d3b05101c13124"
+geojson_sha256 = "cf1995d4172fd98c2a5f92f167d298ab0a97a4c3094305fbb1441cde1ecaf36b"
+geojson_size = 396465
+
+[[geoboundaries.boundary]]
+iso = "LVA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "6db2fac78dfb2bc2333dba4f194d4f485ace722efe56bfb360111ba49e0f5a1f"
+geojson_sha256 = "aeb10ecdea0474ba6601e6b600ade4e5ee41656c7b229ff84fe9b10bba5ee074"
+geojson_size = 2154334
+
+[[geoboundaries.boundary]]
+iso = "MAR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "d2187879e1f74cf4d0968ebbb9b72310e7537129649b573df120d28324f1d378"
+geojson_sha256 = "59d03b1d11fab9824e851a8e21e824dec9fdf8a89043316090d9b285e5ff4601"
+geojson_size = 504168
+
+[[geoboundaries.boundary]]
+iso = "MKD"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "3c5e22aa89ab2b0bbb79de4f27cf3772dd718c26060cd16014dd522db5414141"
+geojson_sha256 = "8ad9df10c5395b84b174f7d47526f79243a4f05d2858a9ed5d5d5e0a13e8a57f"
+geojson_size = 327793
+
+[[geoboundaries.boundary]]
+iso = "MLI"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "0056582a7e7bc74c303cbdef3e39a5cd8abfeebedd7ef7455066f848b9a0dd43"
+geojson_sha256 = "3cf51b59313b7edaaf42b78f05984530109d2763c8cb4145c5587d2a2284088e"
+geojson_size = 477071
+
+[[geoboundaries.boundary]]
+iso = "MMR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "40a56625de3a7c321b73648d330487ebd264cf135c9683738469cfb2c2e92ead"
+geojson_sha256 = "d276e0df573cb34624f2b199c4cac7f6b4d390595bcb737dc1ead9ad9b073426"
+geojson_size = 2264492
+
+[[geoboundaries.boundary]]
+iso = "MNG"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "82157b8664c0bf40dd89e3c44de0ceedb52a080461cd0ce103993f492eaa7dd2"
+geojson_sha256 = "ab07674aa2ee10ba152fc14cb770eb321dc6d96a11563c366bd78133e8410c8c"
+geojson_size = 1534450
+
+[[geoboundaries.boundary]]
+iso = "MOZ"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "873c35cb3f369d680b8eaf97d2733265277377ab6f467690ab80702a1f885f7e"
+geojson_sha256 = "254df8d87b44c96d5ffa1f71c12ffbd31a3df77afc7ed9c582c2c549541e3149"
+geojson_size = 2292403
+
+[[geoboundaries.boundary]]
+iso = "MWI"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "c4dd822541d40f2a26e9e99250dca46bccbefed723df4db3b8b36314ef51fa8d"
+geojson_sha256 = "1d5db24ed8d2d2fb04c7c7a5562e23eeb83b921cd1065b0b5c451e6851576dbe"
+geojson_size = 722174
+
+[[geoboundaries.boundary]]
+iso = "MYS"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "83482e105e3c08d95bd4ed9843a9e5052de3fad831877e3521905b0f025c8220"
+geojson_sha256 = "708e06806ccce017b7899d06f13d92b043ee5274d5a028b0dfe9565f07374e1a"
+geojson_size = 1029379
+
+[[geoboundaries.boundary]]
+iso = "NAM"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "39b38aa57622f5ab209aa9ce93eece566e8f27c84b3feff92b22c60f0f679c1b"
+geojson_sha256 = "5d6904fc48090b0cd7c0e0f7ba420d730663c2988e84ce3d2b31d6e529342871"
+geojson_size = 485793
+
+[[geoboundaries.boundary]]
+iso = "NER"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "d9c6472f693069dd472181d44c0d20439e18c8c63a27c1bb032fad843e7dcef7"
+geojson_sha256 = "820ef1eeaccfda20b105a4793adfb8e81330ed3ff00a3af812c23815ea60622e"
+geojson_size = 182354
+
+[[geoboundaries.boundary]]
+iso = "NGA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "9b0ebd349cdde6698a3d5852ed2ab0c1d3b6b8b03703c253b6aed5b455bb99a8"
+geojson_sha256 = "1bd4c4c59a1e878ae4a83eea3414c383e134ec4610b5b7ec5d69abb82ba0a776"
+geojson_size = 3354955
+
+[[geoboundaries.boundary]]
+iso = "NLD"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "10365f763f9c92339d04987da96e4931a017ca0f7d617240e3b58592a99ff6a5"
+geojson_sha256 = "68dc4d1e43b60c80067aabf45d7b73fdd2e9480ab302998e81b8a9ea0b0200fc"
+geojson_size = 767672
+
+[[geoboundaries.boundary]]
+iso = "NOR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "1a3d52ec6fc86de4e5cb0e5a0879d1a749ff0de480e2e03dea0bce671350b327"
+geojson_sha256 = "a78736e33579f28f6b3dc2c7461474134e0c03c3cf4858b55d29c77f94f35746"
+geojson_size = 4152360
+
+[[geoboundaries.boundary]]
+iso = "NPL"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "f8982aff80d604dcb8b32518bb8ad0b92ad9de0802cf4054ef4a06a5b04f3ebb"
+geojson_sha256 = "facfa77d84b9b674bdd247a41faaddb54755bb04a8ea85184d25f308b93c4ee1"
+geojson_size = 150910
+
+[[geoboundaries.boundary]]
+iso = "NZL"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "2bb471b64eaf96eefba51c987f893c4bdfe003d345359f70c0aa785fc266ea0c"
+geojson_sha256 = "1ebf9fe5d23deb673cc0dd85ba053cb38f7b7256cda2ad6dba40a9b59e6e379d"
+geojson_size = 2104738
+
+[[geoboundaries.boundary]]
+iso = "OMN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "3e8fcb15b802b629e82d13c83c636bf717da99269e60c703ee56ecef70fbf34a"
+geojson_sha256 = "8242942de795250d9676c25f67be1a14e0fbc84f3922229107aec2066f9786ca"
+geojson_size = 279096
+
+[[geoboundaries.boundary]]
+iso = "PAK"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "a810e1a4c820a8e2de11e36342512dff42fefd1e0d77082690be50c3be7cc23a"
+geojson_sha256 = "67e618fca6961cb9f80c42462458a854f100ec302caf10a4b3408491bee9a18c"
+geojson_size = 806791
+
+[[geoboundaries.boundary]]
+iso = "PER"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "466efaa214068a6271f02f2845393d183577ba540b3fe4987f261963e6bdb314"
+geojson_sha256 = "42cf6c7a1cee1003ff3611b47944a7cd4aa66c30109456d7f6e528749de780ed"
+geojson_size = 3837062
+
+[[geoboundaries.boundary]]
+iso = "PHL"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "16c4d84725ef42a36a831d30889650a232b258a797a6c79e6194917862fc4168"
+geojson_sha256 = "fa77b9f17db2e419acaae714a935f7812be4409e2983675d34020e8426a3e189"
+geojson_size = 3140454
+
+[[geoboundaries.boundary]]
+iso = "POL"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "7fc742554c9a3b0a922b190b13357edf2b79abf9c76f3a81043b19ae41c40f18"
+geojson_sha256 = "fa5f7e5a5d410c9b04fc30dce44714026404d752c697d4fa39eb3b6a885c7ccb"
+geojson_size = 2489981
+
+[[geoboundaries.boundary]]
+iso = "PRI"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "82c5acaf41179e7b96c2b09c03a0272e59c4149ce57092d14c37621afd452c47"
+geojson_sha256 = "49684f12dfb70472d7775036e7f29054f59600df6dd4e905e33d478e76055fa9"
+geojson_size = 167840
+
+[[geoboundaries.boundary]]
+iso = "PRT"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "89be8be72ba34d23c92012a58fee1636297bfb41d102e35fb9d928c6a033bcef"
+geojson_sha256 = "9b1e1c683bf6d90f3126845688c1b5c8feb83676e9f8431f544859bc2e8772ca"
+geojson_size = 1885556
+
+[[geoboundaries.boundary]]
+iso = "PSE"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "e12fe5fd03622fb9e4d4f9a124dc4f61bb3854317ce48102eed863a9aeb97f9c"
+geojson_sha256 = "9628ad2101b7ed22bd3addedc6a4b2e3bf8da85d0cf099897c3e0c3e90418ef9"
+geojson_size = 127944
+
+[[geoboundaries.boundary]]
+iso = "QAT"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "409cd5f8d941a6c6ec48dd6351a5aee4fb5f60700e6dc99fa56679ef7d21d54d"
+geojson_sha256 = "a3c97d24a89ddb0405623c7d898e06333cbf6d320cb365633111f0cf98a503b4"
+geojson_size = 127468
+
+[[geoboundaries.boundary]]
+iso = "ROU"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "f32bd835344e1566eee34570444aacfa1909ea39a6f5786fa390a73680694900"
+geojson_sha256 = "fd477acebefceab5ac36b38af87b05c671fbd8b25c21cfd9091243419d71325b"
+geojson_size = 9037424
+
+[[geoboundaries.boundary]]
+iso = "RUS"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "b9b26df8a526b643a93c0151f3b0cfbe0dbba61f1ebf5414ac5bffb66fc5e3f8"
+geojson_sha256 = "d8261e8ded6732c1494ba56d59716f699a73482eb95ddbedf2554cefd11b66e7"
+geojson_size = 22313374
+
+[[geoboundaries.boundary]]
+iso = "RWA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "f10ad7bb0fca2ffe2c5d3e28127ec1793b957965d0d66d8df399dc2c9e31e5a4"
+geojson_sha256 = "109b49b5d66d7a877eaa04b43993be6e12e6a2fe2c0ec6971fe57a8ee7643243"
+geojson_size = 251308
+
+[[geoboundaries.boundary]]
+iso = "SAU"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "9198000ad4891cfece23808b511f4f99e2116a53550997bb9cd5933aa769da5c"
+geojson_sha256 = "aaa72c6a53eee8e11d4e25ec9b311c8a26f5ffccf1c1fba4cd73ab35f0b664b4"
+geojson_size = 1258767
+
+[[geoboundaries.boundary]]
+iso = "SDN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "62ab07ff19347177e5d732dfbf3e74650b2801541112d21d04ba0238c0abed35"
+geojson_sha256 = "54fda44f1b08f224504b34c692fbe95608b56b23d3102c0670bfe7fd5496100e"
+geojson_size = 676135
+
+[[geoboundaries.boundary]]
+iso = "SGP"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "18f06877beafe5757f3c2e84689b17ce32ab33726b8e0a4db0c2d5847309b4a0"
+geojson_sha256 = "dad1fe8de06a32bc5e366a58558cf7e23e6a725acf23d155af64e953179bcb5e"
+geojson_size = 80070
+
+[[geoboundaries.boundary]]
+iso = "SLE"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "085ff9d218f52670ace6710d8ec66b00e7a6fd91fdca956065c3ee0ad08915b0"
+geojson_sha256 = "b604b104b8f601c4ade2179f780bdda33d24f5915ac6bb4c86bfc38b56f205d4"
+geojson_size = 288513
+
+[[geoboundaries.boundary]]
+iso = "SOM"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "6cdfc2abe83c31e3393615adbf55712cdb6b82e7be3b7128d5ba68f3fcb4d7c0"
+geojson_sha256 = "4fcfdab80aa6a7e0bad1a7d5d2caccad78312b801a6dc890eeb8871f27349528"
+geojson_size = 163372
+
+[[geoboundaries.boundary]]
+iso = "SRB"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "0664aba1bcee27362fac8cd0c8627ff9334b9038f5ff00af0bd24b44a5f9938c"
+geojson_sha256 = "f8f7c76b931beb4f19f560b831ada28356e084db5f5fdf0bfeb144cbf94bb758"
+geojson_size = 586391
+
+[[geoboundaries.boundary]]
+iso = "SSD"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "1a91c2a72aad90e734ba1754309b68d883e650cb75ff59be34fb05fd34906df3"
+geojson_sha256 = "a2f7a8226ae697380b82f12149f7ea41c094ed2c399ffbd55027765eb21420b2"
+geojson_size = 284352
+
+[[geoboundaries.boundary]]
+iso = "SVK"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "19e7f5d4e0e2a4a12e3605cd3510500423f5356cae99e75ffdb41adcd03f7350"
+geojson_sha256 = "fa86ee44e0ce2f60e0d2ea4c38226ace61e16be0e86e67d81b4a0cfe4025ebd9"
+geojson_size = 397399
+
+[[geoboundaries.boundary]]
+iso = "SVN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "2edf27fb69cc1492e0a84934fcfe35a862beecc7c4752b868414c11553396fe8"
+geojson_sha256 = "e6f90165282059215eeddb70b2cb3779fac01523e55516cc24591a1321d3cb4f"
+geojson_size = 525749
+
+[[geoboundaries.boundary]]
+iso = "SWE"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "8a64d7588f140e0a7aca107381d6fcc488b85bf60643337e5cdbbb4c2904af4b"
+geojson_sha256 = "8ee7507f7dd40fded0ae30755a9e8b9b527d4ba65fb60b1ead3d93f5bbfe7b71"
+geojson_size = 860355
+
+[[geoboundaries.boundary]]
+iso = "TGO"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "fa9f3d54d8df3335e27468a0f433f915ad1cee0a4398f490adc7bb126c13e702"
+geojson_sha256 = "1e1d729ff07d4a89888220b26cc1d33fb9442c173f67e144e2f18a293e5ad6f8"
+geojson_size = 136059
+
+[[geoboundaries.boundary]]
+iso = "THA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "2cf0595d322e52f1be313017df9a322bcddc6d6b9e97eec5f7dd626b7b23f6b5"
+geojson_sha256 = "e7d4cd48fd7339c74cf8f2b49c23a02dcd1e4a68bf3aeb8e4451359e7cda700c"
+geojson_size = 7496798
+
+[[geoboundaries.boundary]]
+iso = "TJK"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "779ef43f3df8ef26ef2d6972b576e9c3cd119d7b73c3fd2512a4da0d886ab4f3"
+geojson_sha256 = "e1391ce81873c55ae7a475a086565ed470028eeb4940dce1ac67c7cc634c4eac"
+geojson_size = 226754
+
+[[geoboundaries.boundary]]
+iso = "TKM"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "f8dc9b4d8fd14d831c6f0318a809cbb74656ec71f547d37d6ed0af0b98e03883"
+geojson_sha256 = "f7eacc32f3e6d5654b96a49a0d485d83ff074fdd5f2c766d3cd4206a377f3fa8"
+geojson_size = 227993
+
+[[geoboundaries.boundary]]
+iso = "TUR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "24ebb26a613510dd8f8eb4f6498bfa05e132f2ef40118dfba27ec14600e3c48e"
+geojson_sha256 = "cc6566eac7630e8152e228a9f276b5f2bcc6c8c175466ac6f24cf5e8c4100261"
+geojson_size = 3313451
+
+[[geoboundaries.boundary]]
+iso = "TWN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "1a176b6d632d15377dab724d72772a70ffb82f97ea4e066f2f43d94b3225fc68"
+geojson_sha256 = "34eb512488e2e1f5696243b4b9cb0a03574b4762cfa440f6fddd89852cc79775"
+geojson_size = 772894
+
+[[geoboundaries.boundary]]
+iso = "TZA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "502a9d674e84bc7efd410bca85cf0478fcbc254c239ea19ffdfb1dd79835dc2e"
+geojson_sha256 = "e4a98d39407ffe096426c12fe9970b13bbecde933762d60065f8e9002d6019e2"
+geojson_size = 2526164
+
+[[geoboundaries.boundary]]
+iso = "UGA"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "e2a7ef6fe3c7005238e9aeefd94f4cc8ac3044aba36e8a6e02271bfda3241290"
+geojson_sha256 = "a8c5979e6da0e9753c05f1603cacde43e8cf454a67de9cb2e386d465a6be705f"
+geojson_size = 912014
+
+[[geoboundaries.boundary]]
+iso = "UKR"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "566d63a9cfbcaadbeaea11d7d0477de30895bbbeb75c0863da620c86ef8a1734"
+geojson_sha256 = "afe687ebdebd9cc40e56d7a2fcc4c9b5fc02a82019e381cb41894b438b370330"
+geojson_size = 2465021
+
+[[geoboundaries.boundary]]
+iso = "UZB"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "ac2d93a174c89e1c6cd40730b9ec1b25c66da23cdf5de87cac939a10e103ac98"
+geojson_sha256 = "3589fea518020dc49095e83a56e4c1ca486253dc8ce0a8099dcbf6b66a30a6bd"
+geojson_size = 619656
+
+[[geoboundaries.boundary]]
+iso = "VEN"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "beafaa53f753b45bf0869722eec1daa69201c8ce037cd1da1e59af4f84995421"
+geojson_sha256 = "c4050ca652c6f038c64ca2c63bf29efa6e9f491e05066f022c4cbdac0cbe0c55"
+geojson_size = 2859029
+
+[[geoboundaries.boundary]]
+iso = "VNM"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "30a086af740027ec793f6e1cfcf9289259c3bd6c48a0733689ef36113bf5369a"
+geojson_sha256 = "8e842bb19285ec54d8fdf6a30bb25e73e276520ecca2bde908bf3d180d522ccf"
+geojson_size = 4671047
+
+[[geoboundaries.boundary]]
+iso = "XKX"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "fbdde5a39ca6918d48279c8ec29b56ba0f70cda7ed7c1d8b4f56aafa2c369699"
+geojson_sha256 = "87554308576d6fe2fc1f1e8075b0257210eb52cb93259881cf996892940168ba"
+geojson_size = 160536
+
+[[geoboundaries.boundary]]
+iso = "YEM"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "c531a7a803697e8a1f3fbc494f75e9bf4d076efed4fb0337ce668cf38da97b32"
+geojson_sha256 = "cea4f4c3e358d7b4abbcf7b51e94cb02fc1623a6610e18b62fdd518ba0ced56f"
+geojson_size = 858734
+
+[[geoboundaries.boundary]]
+iso = "ZAF"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "635e211d7ac80485adf9b75c15a945336e058cc8969b8eb2c7b6d8a86c6e9379"
+geojson_sha256 = "7db992612cf7704efd06772f8c1f87b6e1aeec9d8ccf6be03b18efd6d455a5be"
+geojson_size = 1357869
+
+[[geoboundaries.boundary]]
+iso = "ZMB"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "64d88474d3ecfd2af5db9e35c1a7ef15cf59561a7314d509709b44a9790a9c68"
+geojson_sha256 = "4fd4344e51b9e0f55f11d9431c32b0922a91a1998c74ef8d6d11538b81de6e04"
+geojson_size = 3219014
+
+[[geoboundaries.boundary]]
+iso = "ZWE"
+level = "ADM2"
+file = "simplified"
+meta_sha256 = "65901d620a9108f72263e89154ee48425b73d7d41af961619dc7e64cfd8a3c6f"
+geojson_sha256 = "5cb70b100d15812baa4cf8461c089f7e63c7ed8258f24e29fc32c265d0f2d92e"
+geojson_size = 934477
