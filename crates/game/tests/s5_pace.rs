@@ -213,9 +213,25 @@ fn fast_forward_paces_the_page_and_a_pause_shows_the_final_values() {
         refreshes <= 90 / 30 + 1,
         "{refreshes} refreshes for {moves} moves in 1.5 s"
     );
-    // A move just before the pause is shown in the pause's frame.
+    // A move just before the pause is shown in the pause's frame, by a patch: the page keeps
+    // its nodes (sorts, scroll) unless its shape changed.
+    let title = app.world().get::<SpawnedDoc>(b).unwrap().text_entities()[0];
+    let (_, f_before) = builds(&app);
     send(&mut app, Control::Pause);
     frames(&mut app, 1);
+    if app.world().get::<RebuildPage>(b).is_some() {
+        frames(&mut app, 1);
+    } else {
+        assert_eq!(
+            builds(&app).1,
+            f_before,
+            "a pause patches, it does not rebuild"
+        );
+        assert!(
+            app.world().get_entity(title).is_ok(),
+            "the pause kept the nodes"
+        );
+    }
     let at_pause = shown(&app, b);
     let views = app.world().resource::<Views>().clone();
     let lives: Vec<(String, String)> = app

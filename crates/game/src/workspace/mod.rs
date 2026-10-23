@@ -791,8 +791,9 @@ pub fn pane_shown(ws: &Workspace, pane: PaneId) -> bool {
 /// pages). Tables follow density and font changes by themselves, so those rebuild nothing.
 ///
 /// A move of only the page's views (D772, D773) patches a [`PageSpec::patchable`] page in
-/// place instead of rebuilding it (unless the runner controls changed this frame, a pause or an
-/// Omniscient toggle: then it rebuilds, so nothing shown before survives), is skipped while the
+/// place instead of rebuilding it (unless Omniscient was turned on or off this frame: then it
+/// rebuilds, so nothing shown before survives; a pause, a speed, an alert level or a watchlist
+/// change patches, so a pause at max speed keeps the page's sorts and scroll), is skipped while the
 /// pane is hidden (it refreshes when it shows), and while the sim fast-forwards waits
 /// [`crate::pace::PAGE_REFRESH_SECS`] since the pane's last refresh, one refresh a frame.
 #[allow(clippy::too_many_arguments)]
@@ -808,12 +809,15 @@ fn render_panes(
     mut frames: Query<(&mut PaneFrame, &mut BorderColor)>,
     mut frame_count: Local<usize>,
     mut owed: Local<bool>,
+    mut last_omniscient: Local<Option<bool>>,
     mut scrolls: Query<&mut ScrollPosition>,
     built: Query<&BuiltPage>,
     marked: Query<(), With<RebuildPage>>,
     mut stats: Option<ResMut<crate::pages::PageStats>>,
 ) {
     let controls_changed = controls.as_ref().is_some_and(|c| c.is_changed());
+    let omniscient = controls.as_ref().map(|c| c.omniscient);
+    let omniscient_changed = std::mem::replace(&mut *last_omniscient, omniscient) != omniscient;
     // Views move every tick at speed; only pages that rebuild on them need a look then.
     let view_pages = (views.is_changed() || *owed || controls_changed)
         && frames.iter().any(|(f, _)| {
@@ -898,7 +902,7 @@ fn render_panes(
         if body_stale {
             let patch = only_views
                 && !woke
-                && !controls_changed
+                && !omniscient_changed
                 && spec.is_some_and(|s| s.patchable)
                 && built.get(frame.body).is_ok_and(|b| b.0.page == page);
             if let Some(st) = stats.as_mut() {
