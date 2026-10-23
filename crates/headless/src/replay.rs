@@ -512,3 +512,35 @@ fn summary(run: &RunLog) -> String {
         run.hashes.last().map(String::as_str).unwrap_or("")
     )
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Every alert the log can hold, Quarter start included (D800; the random player never sets
+    /// it, `PLAYER_ALERTS`), at every level, reads back as written.
+    #[test]
+    fn every_alert_line_round_trips() {
+        assert_eq!(ALERTS.len(), AlertKind::ALL.len());
+        for kind in AlertKind::ALL {
+            for (level, _) in LEVELS {
+                let c = LogControl::Alert(kind, level);
+                let text = c.text();
+                let words: Vec<&str> = text.split(' ').collect();
+                assert_eq!(LogControl::parse(&words), Some(c), "{text}");
+            }
+        }
+        assert_eq!(
+            LogControl::parse(&["alert", "quarter-start", "off"]),
+            Some(LogControl::Alert(AlertKind::QuarterStart, AlertLevel::Off))
+        );
+        assert_eq!(
+            LogControl::Alert(AlertKind::QuarterStart, AlertLevel::Pause)
+                .control(&|_| PathBuf::new()),
+            Control::SetAlert {
+                kind: AlertKind::QuarterStart,
+                level: AlertLevel::Pause
+            }
+        );
+    }
+}
