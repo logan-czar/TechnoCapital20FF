@@ -61,7 +61,7 @@ const COUNTRY_W: f32 = 1.4;
 const REGION_W: f32 = 0.9;
 const PROVINCE_W: f32 = 0.7;
 const OUTLINE_W: f32 = 2.2;
-// The Metro outline's width in logical pixels.
+// The Metro outline's whole width in logical pixels, centred on the edge.
 const METRO_W: f32 = 1.6;
 // The hatch stripes' period in logical pixels.
 const HATCH_PERIOD: f32 = 7.0;
@@ -142,7 +142,8 @@ fn fragment(in: UiVertexOutput) -> @location(0) vec4<f32> {
             }
         }
         if (edge) {
-            col = mix(col, params.metro.rgb, line_cover(d.r, METRO_W * 2.0) * params.metro.a);
+            // Half the width each side of the edge: METRO_W in all (D702).
+            col = mix(col, params.metro.rgb, line_cover(d.r, METRO_W) * params.metro.a);
         }
     }
 

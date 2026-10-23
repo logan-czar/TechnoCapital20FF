@@ -553,7 +553,7 @@ pub struct LegendDoc {
 }
 
 /// The legend of a layer, from the layer alone (the views served it, D701).
-pub fn legend_doc(layer: &MapLayer) -> LegendDoc {
+pub fn legend_doc(layer: &MapLayer, metros: bool) -> LegendDoc {
     let mut rows = Vec::new();
     let mut title = layer.mode.name().to_owned();
     match layer.style {
@@ -566,7 +566,6 @@ pub fn legend_doc(layer: &MapLayer) -> LegendDoc {
                     format::int(layer.legend.len() as i64)
                 ),
             ));
-            rows.push((Some(colors::HATCH_SWATCH), "Contested (hatched)".into()));
         }
         LayerStyle::Muted => {
             title = format!("{title}: pins sized by revenue TTM");
@@ -577,7 +576,7 @@ pub fn legend_doc(layer: &MapLayer) -> LegendDoc {
                 None,
                 format!("{} HQs shown", format::int(layer.pins.len() as i64)),
             ));
-            rows.push((None, "Private companies: sized by the estimate".into()));
+            rows.push((None, "Private: sized by the estimate".into()));
         }
         LayerStyle::Sequential | LayerStyle::Diverging => {
             if let Some(s) = &layer.scale {
@@ -594,6 +593,11 @@ pub fn legend_doc(layer: &MapLayer) -> LegendDoc {
                 ));
             }
         }
+    }
+    // Every mode hatches the contested provinces and can show the Metro outlines (D702).
+    rows.push((Some(colors::HATCH_SWATCH), "Contested (hatched)".into()));
+    if metros {
+        rows.push((Some(colors::METRO_SWATCH), "Metro outline".into()));
     }
     LegendDoc { title, rows }
 }
@@ -614,28 +618,38 @@ fn scale_rows(style: LayerStyle, s: &LayerScale, mode: MapMode) -> Vec<(Option<[
 fn rebuild_legend(
     mut commands: Commands,
     cur: Res<CurrentLayer>,
+    state: Res<MapModeState>,
     legend: Query<(Entity, Option<&Children>), With<Legend>>,
-    mut built: Local<Option<u64>>,
+    mut built: Local<Option<(u64, bool)>>,
 ) {
     let Ok((panel, kids)) = legend.single() else {
         return;
     };
-    if *built == Some(cur.generation) {
+    let key = (cur.generation, state.metros);
+    if *built == Some(key) {
         return;
     }
-    *built = Some(cur.generation);
+    *built = Some(key);
     if let Some(k) = kids {
         for &e in k {
             commands.entity(e).despawn();
         }
     }
-    let doc = legend_doc(&cur.layer);
+    let doc = legend_doc(&cur.layer, state.metros);
     let t = commands
         .spawn(theme::text(doc.title, font::SMALL, color::TEXT))
         .id();
     commands.entity(panel).add_child(t);
     for (swatch, text) in doc.rows {
         let r = row(&mut commands);
+        // The row spans the panel and its text wraps inside it (review of PR #37).
+        commands.entity(r).insert(Node {
+            flex_direction: FlexDirection::Row,
+            column_gap: px(3.0),
+            align_items: AlignItems::Center,
+            width: percent(100.0),
+            ..default()
+        });
         if let Some([r8, g8, b8]) = swatch {
             let s = commands
                 .spawn((
@@ -652,7 +666,14 @@ fn rebuild_legend(
             commands.entity(r).add_child(s);
         }
         let l = commands
-            .spawn(theme::text(text, font::SMALL, color::TEXT_MUTED))
+            .spawn((
+                theme::text(text, font::SMALL, color::TEXT_MUTED),
+                Node {
+                    flex_shrink: 1.0,
+                    min_width: px(0.0),
+                    ..default()
+                },
+            ))
             .id();
         commands.entity(r).add_child(l);
         commands.entity(panel).add_child(r);

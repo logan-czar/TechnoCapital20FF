@@ -29,13 +29,16 @@ pub struct MapCardPanel;
 pub struct MapCard {
     pub shown: Option<(ProvinceId, bool)>,
     pub card: Option<Card>,
-    /// The versions of the views the card read when it was built.
-    built_at: [u64; 5],
+    /// The versions of the views (and the name index's generation) the card read when it was
+    /// built.
+    built_at: [u64; 8],
     panel: Option<Entity>,
 }
 
 /// The card's width, logical pixels.
 pub const MAP_CARD_W: f32 = 300.0;
+/// Its height before it is first laid out.
+pub const MAP_CARD_GUESS_H: f32 = 360.0;
 /// Its offset from the pointer.
 pub const MAP_CARD_OFFSET: f32 = 18.0;
 
@@ -74,7 +77,8 @@ fn spawn_panel(mut commands: Commands, layout: Res<ShellLayout>, mut state: ResM
                 border: UiRect::all(px(1.0)),
                 ..default()
             },
-            BackgroundColor(color::PANEL_RAISED.with_alpha(0.96)),
+            // Opaque, so nothing on the map shows through it (review of PR #37).
+            BackgroundColor(color::PANEL_RAISED),
             BorderColor::all(color::BORDER),
             GlobalZIndex(105),
             Pickable::IGNORE,
@@ -165,7 +169,12 @@ fn show_map_card(
     window: Query<&Window, With<PrimaryWindow>>,
     mut nodes: Query<&mut Node>,
     children: Query<&Children>,
+    computed: Query<&ComputedNode>,
+    mut index_gen: Local<u64>,
 ) {
+    if index.is_changed() {
+        *index_gen += 1;
+    }
     let Some(panel) = state.panel else { return };
     let mode = layer.layer.mode;
     let want = map
@@ -189,6 +198,9 @@ fn show_map_card(
         views.company_rows.version(),
         views.cycle.version(),
         views.exchanges.version(),
+        views.zones.version(),
+        views.places.version(),
+        *index_gen,
     ];
     if state.shown != want || state.built_at != key {
         if let Ok(c) = children.get(panel) {
@@ -213,7 +225,14 @@ fn show_map_card(
     } else {
         at.x + MAP_CARD_OFFSET
     };
-    let y = (at.y + MAP_CARD_OFFSET).min((win.y - 260.0).max(0.0));
+    // Below the pointer, or as low as the card's laid-out height lets it stay inside the window.
+    let h = computed
+        .get(panel)
+        .map(|n| n.size.y * n.inverse_scale_factor)
+        .ok()
+        .filter(|h| *h > 0.0)
+        .unwrap_or(MAP_CARD_GUESS_H);
+    let y = (at.y + MAP_CARD_OFFSET).min((win.y - h).max(0.0));
     if let Ok(mut n) = nodes.get_mut(panel) {
         let (l, t) = (px(x), px(y));
         if n.display != Display::Flex || n.left != l || n.top != t {

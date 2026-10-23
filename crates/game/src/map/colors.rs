@@ -23,6 +23,8 @@ pub const TABLE_LEN: usize = (TABLE_W * TABLE_W) as usize;
 pub const FLAG_HATCHED: u8 = 1;
 /// The legend's swatch for hatched (contested) provinces.
 pub const HATCH_SWATCH: [u8; 3] = [120, 40, 104];
+/// The legend's swatch for the Metro outlines (amber, as the shader draws them).
+pub const METRO_SWATCH: [u8; 3] = [255, 176, 0];
 /// How much of the countries' colour the Company HQs mode keeps under its pins.
 pub const MUTED_SHARE: f32 = 0.45;
 /// A heat map's low end (the panel grey, a little lifted) and the zone ramp's neutral.

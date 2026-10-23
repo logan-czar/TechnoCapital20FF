@@ -161,8 +161,16 @@ fn hq_pins_are_sized_by_the_shown_revenue_and_link_their_company() {
         .filter(|(_, n)| n.display != Display::None)
         .count();
     assert!(shown > 100, "{shown} pins on screen");
-    let legend = legend_doc(&layer);
+    let legend = legend_doc(&layer, false);
     assert!(legend.rows.iter().any(|(_, t)| t.contains("HQs shown")));
+    assert!(legend.rows.iter().any(|(_, t)| t.contains("Contested")));
+    assert!(!legend.rows.iter().any(|(_, t)| t.contains("Metro")));
+    assert!(
+        legend_doc(&layer, true)
+            .rows
+            .iter()
+            .any(|(_, t)| t == "Metro outline")
+    );
     // A filter thins them.
     app.world_mut()
         .write_message(MapModeInput::Set(MapMode::CompanyHqs(HqFilter {
@@ -196,7 +204,7 @@ fn zone_mode_pins_each_hub_and_its_legend_gives_the_cycle() {
     for p in &layer.pins {
         assert!(texts.contains(&hub_label(p)), "{}", hub_label(p));
     }
-    let legend = legend_doc(&layer);
+    let legend = legend_doc(&layer, false);
     let cycle = app.world().resource::<Views>().cycle.get().clone();
     for want in [
         format!("Global phase: {}", cycle.phase.name()),
