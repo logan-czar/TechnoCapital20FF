@@ -19,8 +19,8 @@
 //!
 //! Without that, a release run stops with a message saying so instead of passing unchecked.
 //!
-//! M8 (D705): the shell runs on a synthetic map of every province (one island per province
-//! file), so the map's screens are scanned too: every map mode's legend and readouts (each
+//! M8 (D705, D743): the shell runs on the committed world map (`assets/map`, every province
+//! with a shape), so the map's screens are scanned too: every map mode's legend and readouts (each
 //! development track, the Industry track and every industry's assets, the HQ pins with every
 //! filter kind, the zones), the HQ pins' sizes (never by a true revenue), the heat values, the
 //! province hover card of every province where a banded company has its HQ or a unit, and the
@@ -68,34 +68,18 @@ const SEED: u64 = 1;
 const Q1: Quarter = Quarter { year: 2020, q: 1 };
 /// Leaks printed before the test fails.
 const SHOWN: usize = 40;
-/// The synthetic world map's width (D705).
-const MAP_WIDTH: u32 = 1024;
-
-/// The folder the synthetic world map is written to (removed when the test ends).
-fn map_dir() -> &'static std::path::Path {
-    static DIR: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
-    DIR.get_or_init(|| {
-        let d = std::env::temp_dir().join(format!("tc20ff-leak-map-{}", std::process::id()));
-        let _ = std::fs::remove_dir_all(&d);
-        std::fs::create_dir_all(&d).unwrap();
-        d
-    })
-}
-
-/// Removes the synthetic map's folder when dropped (at the test's end, pass or panic).
-struct MapDirGuard;
-
-impl Drop for MapDirGuard {
-    fn drop(&mut self) {
-        let _ = std::fs::remove_dir_all(map_dir());
-    }
-}
-
-/// The starting data with the synthetic world map (D705).
+/// The starting data with the committed world map (D743): every province of the world has a
+/// shape there, so every HQ has a pin and every province a hover card.
 fn mdata() -> sim_data::WorldData {
     static DATA: std::sync::OnceLock<sim_data::WorldData> = std::sync::OnceLock::new();
-    DATA.get_or_init(|| game::test_support::with_world_map(data(), map_dir(), MAP_WIDTH))
-        .clone()
+    DATA.get_or_init(|| {
+        let mut d = data();
+        d.map = sim_data::load_map(&sim_data::default_map_dir()).unwrap();
+        let m = d.map.as_ref().expect("assets/map");
+        assert_eq!(m.centroids.len(), 3255, "the world map has every province");
+        d
+    })
+    .clone()
 }
 
 // ---- Numbers in text and in views ----
@@ -620,7 +604,7 @@ fn shell_app(sim: Sim) -> App {
         .add_plugins(SimBridgePlugin::new(sim))
         .add_plugins(ShellPlugin);
     app.update();
-    game::test_support::install_map_bitmap(app.world_mut(), map_dir());
+    game::test_support::install_map_bitmap(app.world_mut(), &sim_data::default_map_dir());
     frames(&mut app, 2);
     app
 }
@@ -1229,8 +1213,6 @@ fn leaks_of(sim: Sim, label: &str) -> (Truths, Vec<Leak>, usize) {
 
 #[test]
 fn no_true_private_value_on_any_screen() {
-    // The synthetic map's folder goes when the test ends, pass or panic.
-    let _map = MapDirGuard;
     let start = Instant::now();
     let fresh = Sim::new(data(), SEED).unwrap();
     let mut later = Sim::new(data(), SEED).unwrap();
