@@ -5,7 +5,9 @@
 //!   picking reads;
 //! - `province-borders.png` as an RGBA8 texture, linearly filtered, wrapping east to west, so
 //!   the distance field gives smooth lines at any zoom;
-//! - the per-province colour table (64 x 64 RGBA8), rewritten when the map views move;
+//! - the per-province colour table (64 x 64 RGBA8), rewritten when the current layer moves
+//!   (the mode changed or a view it reads moved its version; M8.5);
+//! - the per-province Metro table (64 x 64 R16Uint), for the Metro outlines;
 //! - [`ProvinceMapMaterial`], the UI material running `assets/shaders/province_map.wgsl` on the
 //!   map node.
 //!
@@ -22,13 +24,13 @@ use bevy::ui_render::prelude::{MaterialNode, UiMaterial, UiMaterialPlugin};
 use bevy::window::PrimaryWindow;
 
 use super::camera::ZoomLevel;
-use super::colors::{TABLE_LEN, TABLE_W, table};
+use super::colors::{TABLE_LEN, TABLE_W, metro_table, table};
+use super::modes::{CurrentLayer, MapModeState};
 use super::picking::MapBitmap;
 use super::{MapLoad, MapSource, MapState, MapView, png_io, sim_data_names};
 use crate::bridge::Views;
 use crate::ui::UiSystems;
 use crate::ui::theme::color;
-use sim::views::map_layers::MapMode;
 
 /// The shader, under the asset folder.
 pub const SHADER: &str = "shaders/province_map.wgsl";
@@ -49,6 +51,8 @@ pub struct MapParams {
     pub line: Vec4,
     pub accent: Vec4,
     pub hatch: Vec4,
+    /// The Metro outlines' colour; alpha 0 hides them (M8.5).
+    pub metro: Vec4,
 }
 
 /// The province map material (M8.2).
@@ -63,6 +67,8 @@ pub struct ProvinceMapMaterial {
     pub borders: Handle<Image>,
     #[texture(4)]
     pub colors: Handle<Image>,
+    #[texture(5, sample_type = "u_int")]
+    pub metros: Handle<Image>,
 }
 
 impl UiMaterial for ProvinceMapMaterial {
@@ -76,8 +82,19 @@ impl UiMaterial for ProvinceMapMaterial {
 pub struct MapGpu {
     pub material: Handle<ProvinceMapMaterial>,
     pub colors: Handle<Image>,
-    /// The (v_map_layers, v_map_static) versions the colour table was written from.
+    pub metros: Handle<Image>,
+    /// The current layer's generation and v_map_static's version the colour table was written
+    /// from.
     colors_from: Option<(u64, u64)>,
+    /// v_map_static's version the Metro table was written from.
+    metros_from: Option<u64>,
+}
+
+impl MapGpu {
+    /// The current layer's generation the colour table shows (the bench waits for it).
+    pub fn colors_generation(&self) -> Option<u64> {
+        self.colors_from.map(|(g, _)| g)
+    }
 }
 
 pub struct MapRenderPlugin;
@@ -88,7 +105,9 @@ impl Plugin for MapRenderPlugin {
             .add_systems(Startup, setup_render.after(MapLoad))
             .add_systems(
                 Update,
-                (sync_colors, sync_params).chain().in_set(UiSystems::Show),
+                (sync_colors, sync_metros, sync_params)
+                    .chain()
+                    .in_set(UiSystems::Show),
             );
     }
 }
@@ -184,6 +203,19 @@ fn setup_render(
     );
     colors.sampler = ImageSampler::nearest();
     let colors = images.add(colors);
+    let mut metros = Image::new(
+        Extent3d {
+            width: TABLE_W,
+            height: TABLE_W,
+            depth_or_array_layers: 1,
+        },
+        TextureDimension::D2,
+        vec![0; TABLE_LEN * 2],
+        TextureFormat::R16Uint,
+        RenderAssetUsages::RENDER_WORLD | RenderAssetUsages::MAIN_WORLD,
+    );
+    metros.sampler = ImageSampler::nearest();
+    let metros = images.add(metros);
     let (sea, line, accent, hatch) = style();
     let material = materials.add(ProvinceMapMaterial {
         params: MapParams {
@@ -195,11 +227,13 @@ fn setup_render(
             px_ratio: 1.0,
             scale: 1.0,
             view_size: Vec2::ONE,
+            metro: metro_color(false),
             ..default()
         },
         index: images.add(index),
         borders: images.add(borders),
         colors: colors.clone(),
+        metros: metros.clone(),
     });
     commands
         .entity(view)
@@ -208,24 +242,51 @@ fn setup_render(
     commands.insert_resource(MapGpu {
         material,
         colors,
+        metros,
         colors_from: None,
+        metros_from: None,
     });
 }
 
-/// Rewrites the colour table when the map views move (Political in Phase A; lane MB's modes
-/// later write it from their layers).
-fn sync_colors(views: Res<Views>, gpu: Option<ResMut<MapGpu>>, mut images: ResMut<Assets<Image>>) {
+/// Rewrites the colour table when the current layer moves (M8.5: a mode change, or a view the
+/// mode reads moving its version) or v_map_static does.
+fn sync_colors(
+    views: Res<Views>,
+    layer: Res<CurrentLayer>,
+    gpu: Option<ResMut<MapGpu>>,
+    mut images: ResMut<Assets<Image>>,
+) {
     let Some(mut gpu) = gpu else { return };
-    let from = (views.map_layers.version(), views.map_static.version());
+    let from = (layer.generation, views.map_static.version());
     if gpu.colors_from == Some(from) {
         return;
     }
-    let layer = views.map_layers.get().get_map_layer(MapMode::Political);
-    let t = table(&layer, views.map_static.get());
+    let t = table(&layer.layer, views.map_static.get());
     if let Some(mut img) = images.get_mut(&gpu.colors) {
         img.data = Some(t.into_iter().flatten().collect());
         gpu.colors_from = Some(from);
     }
+}
+
+/// Writes the Metro table when v_map_static moves (once a game).
+fn sync_metros(views: Res<Views>, gpu: Option<ResMut<MapGpu>>, mut images: ResMut<Assets<Image>>) {
+    let Some(mut gpu) = gpu else { return };
+    let v = views.map_static.version();
+    if gpu.metros_from == Some(v) {
+        return;
+    }
+    let t = metro_table(views.map_static.get());
+    if let Some(mut img) = images.get_mut(&gpu.metros) {
+        img.data = Some(t.iter().flat_map(|m| m.to_ne_bytes()).collect());
+        gpu.metros_from = Some(v);
+    }
+}
+
+/// The Metro outlines' colour: amber, alpha 0 when off.
+fn metro_color(on: bool) -> Vec4 {
+    let mut c = Vec4::from_array(color::AMBER.to_linear().to_f32_array());
+    c.w = if on { 0.9 } else { 0.0 };
+    c
 }
 
 /// The line fade-ins by zoom (D636): province lines from Country towards Province zoom, region
@@ -240,8 +301,10 @@ fn line_alphas(span_deg: f32) -> (f32, f32) {
 }
 
 /// The uniform from the camera, hover and selection; written only when it changed.
+#[allow(clippy::too_many_arguments)]
 fn sync_params(
     state: Res<MapState>,
+    modes: Res<MapModeState>,
     views: Res<Views>,
     gpu: Option<Res<MapGpu>>,
     bitmap: Option<Res<MapBitmap>>,
@@ -274,6 +337,7 @@ fn sync_params(
         selected: index_of(state.selected),
         province_alpha,
         region_alpha,
+        metro: metro_color(modes.metros),
         ..m.params
     };
     if m.params != want

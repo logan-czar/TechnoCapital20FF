@@ -220,10 +220,8 @@ fn header(
     )];
     f.push(Field::new(
         "HQ",
-        vec![match names::place(v, d.hq_province) {
-            Some((name, p)) => Span::link(name, p),
-            None => t(PageRef::Country(d.hq_country)),
-        }],
+        names::place_spans(v, d.hq_province)
+            .unwrap_or_else(|| vec![t(PageRef::Country(d.hq_country))]),
     ));
     f.push(Field::new(
         "Industry",

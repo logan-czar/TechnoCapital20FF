@@ -398,6 +398,10 @@ pub struct PaneWindow {
     pub root: Layout,
     pub focused: PaneId,
     pub rect: WinRect,
+    /// The rectangle the player (or a saved layout) last chose: `rect` is it clamped to the
+    /// area, so a window shrunk by a smaller area grows back when the area grows again (review
+    /// of PR #35; D708).
+    pub preferred: WinRect,
     pub minimized: bool,
     /// How the rectangle follows the area (D635).
     pub fit: Fit,
@@ -501,6 +505,7 @@ impl Workspace {
             root: Layout::Pane(id),
             focused: id,
             rect: first_rect(area),
+            preferred: first_rect(area),
             minimized: false,
             fit: Fit::First,
         };
@@ -933,7 +938,7 @@ impl Workspace {
                         .iter()
                         .position(|p| *p == w.focused)
                         .unwrap_or(0),
-                    rect: (w.fit != Fit::Fill).then_some(w.rect),
+                    rect: (w.fit != Fit::Fill).then_some(w.preferred),
                     minimized: w.minimized,
                 })
                 .collect(),
@@ -1010,6 +1015,7 @@ impl Workspace {
                 focused: ids[sw.focused.min(ids.len() - 1)],
                 root,
                 rect,
+                preferred: rect,
                 minimized: sw.minimized,
                 fit,
             });
@@ -1092,12 +1098,14 @@ impl Workspace {
             root: Layout::Pane(pane),
             focused: pane,
             rect,
+            preferred: rect,
             minimized: false,
             fit: Fit::Fixed,
         });
         self.active = id;
         self.hidden = false;
         self.clamp(id);
+        self.choose(id, [true; 4]);
         self.structure += 1;
         self.geometry += 1;
         Some(id)
@@ -1217,11 +1225,12 @@ impl Workspace {
             return false;
         };
         let before = w.rect;
-        w.fit = Fit::Fixed;
         w.rect.x += dx;
         w.rect.y += dy;
         self.clamp(id);
-        self.moved(id, before)
+        // The player chose a place, not a size: a window the area shrank keeps its size to grow
+        // back to.
+        self.placed(id, before, true, false)
     }
 
     /// Resizes window `id` by `dw`, `dh` from its bottom right corner, never below
@@ -1233,12 +1242,11 @@ impl Workspace {
             return false;
         };
         let before = w.rect;
-        w.fit = Fit::Fixed;
         // The corner stops at the area's edge (or at the minimum, if that is larger).
         w.rect.w = (w.rect.w + dw).max(mw).min((aw - w.rect.x).max(mw));
         w.rect.h = (w.rect.h + dh).max(mh).min((ah - w.rect.y).max(mh));
         self.clamp(id);
-        self.moved(id, before)
+        self.placed(id, before, false, true)
     }
 
     /// Sets window `id`'s rectangle (clamped as a move and a resize are).
@@ -1248,14 +1256,56 @@ impl Workspace {
             return false;
         };
         let before = w.rect;
-        w.fit = Fit::Fixed;
         w.rect = WinRect {
             w: rect.w.max(mw),
             h: rect.h.max(mh),
             ..rect
         };
         self.clamp(id);
+        self.placed(id, before, true, true)
+    }
+
+    /// After a move or resize of window `id` from `before`: when it changed anything, the
+    /// window is the player's (`Fit::Fixed`) and, of its place (`at`) and size (`size`), the
+    /// coordinates that actually changed become its preferred ones (a width-only resize keeps
+    /// the preferred height); a drag that changed nothing leaves a filling window filling
+    /// (review of PR #35 and PR #37; D708).
+    fn placed(&mut self, id: WindowId, before: WinRect, at: bool, size: bool) -> bool {
+        let Some(r) = self.win(id).map(|w| w.rect) else {
+            return false;
+        };
+        if r != before {
+            let mask = [
+                at && r.x != before.x,
+                at && r.y != before.y,
+                size && r.w != before.w,
+                size && r.h != before.h,
+            ];
+            self.choose(id, mask);
+        }
         self.moved(id, before)
+    }
+
+    /// Makes the masked coordinates (x, y, w, h) of window `id`'s shown rectangle its preferred
+    /// ones; a window that was not the player's yet takes its whole shown rectangle first.
+    fn choose(&mut self, id: WindowId, [x, y, w_, h]: [bool; 4]) {
+        let Some(w) = self.win_mut(id) else { return };
+        if w.fit != Fit::Fixed {
+            w.preferred = w.rect;
+        }
+        w.fit = Fit::Fixed;
+        if x {
+            w.preferred.x = w.rect.x;
+        }
+        if y {
+            w.preferred.y = w.rect.y;
+        }
+        if w_ {
+            w.preferred.w = w.rect.w;
+        }
+        if h {
+            w.preferred.h = w.rect.h;
+        }
     }
 
     fn moved(&mut self, id: WindowId, before: WinRect) -> bool {
@@ -1281,10 +1331,12 @@ impl Workspace {
             match win.fit {
                 Fit::First => {
                     win.rect = first_rect(area);
+                    win.preferred = win.rect;
                     win.fit = Fit::Fixed;
                 }
                 Fit::Fill => win.rect = full_rect(area),
-                Fit::Fixed => {}
+                // Back towards what the player chose, then clamped (D708).
+                Fit::Fixed => win.rect = win.preferred,
             }
         }
         self.clamp_all();
@@ -2207,5 +2259,81 @@ mod tests {
         let r = ws.window(id).unwrap().rect;
         assert_eq!((r.w, r.h), (600.0, 400.0), "placed by the player: it stays");
         assert!(ws.to_saved().windows[0].rect.is_some());
+    }
+
+    /// A window shrunk by a smaller area grows back to the rectangle the player chose when the
+    /// area grows again (review of PR #35; D708).
+    #[test]
+    fn a_shrunk_window_grows_back_with_the_area() {
+        let mut ws = Workspace::new(PageRef::World);
+        ws.set_area(1280.0, 800.0);
+        let id = ws.active_window();
+        let want = WinRect {
+            x: 300.0,
+            y: 100.0,
+            w: 800.0,
+            h: 600.0,
+        };
+        assert!(ws.set_window_rect(id, want));
+        ws.set_area(700.0, 500.0);
+        let r = ws.window(id).unwrap().rect;
+        assert!(r.w <= 700.0 && r.h <= 500.0 && r.x + r.w <= 700.0 + 1e-3);
+        assert_eq!(
+            ws.to_saved().windows[0].rect,
+            Some(want),
+            "saves the chosen one"
+        );
+        ws.set_area(1280.0, 800.0);
+        assert_eq!(ws.window(id).unwrap().rect, want, "grown back");
+        // A move while shrunk moves it but keeps the size it grows back to.
+        ws.set_area(900.0, 800.0);
+        assert!(ws.move_window(id, -50.0, 0.0));
+        ws.set_area(1280.0, 800.0);
+        let r = ws.window(id).unwrap().rect;
+        assert_eq!((r.w, r.h), (want.w, want.h));
+        assert_eq!(r.x, 900.0 - 800.0 - 50.0);
+    }
+
+    /// A drag that changes nothing (a filling window pushed against the area's edge) leaves an
+    /// M9 window filling the area (review of PR #35; D708).
+    #[test]
+    fn a_drag_that_changes_nothing_keeps_a_window_filling() {
+        let old: SavedLayout = ron::from_str("(root: Pane(page: \"news\"), focused: 0)").unwrap();
+        let mut ws = Workspace::new(PageRef::World);
+        ws.load(&old);
+        ws.set_area(1000.0, 700.0);
+        let id = ws.active_window();
+        assert!(!ws.move_window(id, 0.0, 25.0));
+        assert!(!ws.move_window(id, -40.0, 0.0));
+        assert!(!ws.resize_window(id, 30.0, 30.0));
+        assert_eq!(ws.window(id).unwrap().fit, Fit::Fill);
+        ws.set_area(1400.0, 900.0);
+        let r = ws.window(id).unwrap().rect;
+        assert_eq!((r.w, r.h), (1400.0, 900.0), "still follows the area");
+        assert_eq!(ws.to_saved().windows[0].rect, None);
+        // A real move makes it the player's.
+        assert!(ws.resize_window(id, -100.0, 0.0));
+        assert_eq!(ws.window(id).unwrap().fit, Fit::Fixed);
+    }
+
+    /// A resize keeps the preferred size of the dimension it did not change (review of PR #37).
+    #[test]
+    fn a_resize_changes_only_the_dimension_it_moves() {
+        let mut ws = Workspace::new(PageRef::World);
+        ws.set_area(1280.0, 800.0);
+        let id = ws.active_window();
+        let want = WinRect {
+            x: 100.0,
+            y: 50.0,
+            w: 800.0,
+            h: 700.0,
+        };
+        assert!(ws.set_window_rect(id, want));
+        // A short area clamps the height; a width-only resize then keeps the preferred height.
+        ws.set_area(1280.0, 500.0);
+        assert!(ws.resize_window(id, -100.0, 0.0));
+        ws.set_area(1280.0, 800.0);
+        let r = ws.window(id).unwrap().rect;
+        assert_eq!((r.w, r.h), (700.0, 700.0), "the height grows back");
     }
 }

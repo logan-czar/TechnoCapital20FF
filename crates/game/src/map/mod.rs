@@ -15,8 +15,12 @@
 //! click target that wins within [`picking::TINY_TARGET_PX`].
 
 pub mod camera;
+pub mod card;
 pub mod colors;
+pub mod labels;
+pub mod modes;
 pub mod picking;
+pub mod pins;
 pub mod png_io;
 pub mod render;
 pub mod synthetic;
@@ -86,6 +90,10 @@ pub const TINY_DOT_PX: f32 = 6.0;
 #[derive(SystemSet, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MapLoad;
 
+/// The map's pointer and key input each frame (the modes read the mode bar after it).
+#[derive(SystemSet, Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct MapInputSet;
+
 pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
@@ -112,9 +120,16 @@ impl Plugin for MapPlugin {
                 )
                     .chain()
                     .in_set(UiSystems::Input)
+                    .in_set(MapInputSet)
                     .before(WorkspaceInput),
             )
-            .add_systems(Update, place_tiny_dots.in_set(UiSystems::Show));
+            .add_systems(Update, place_tiny_dots.in_set(UiSystems::Show))
+            .add_plugins((
+                modes::MapModesPlugin,
+                pins::MapPinsPlugin,
+                labels::MapLabelsPlugin,
+                card::MapCardPlugin,
+            ));
     }
 }
 

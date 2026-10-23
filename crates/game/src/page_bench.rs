@@ -14,6 +14,9 @@
 //! - every Pdoomberg function page ([`PdbFunction::ALL`]); F3 on a listed company, a private
 //!   one and none.
 //!
+//! - every map mode (M8.5; D705): from the mode message (what a click on the mode bar sends) to
+//!   the first frame whose colour table holds the new layer and whose pins are placed.
+//!
 //! A fresh world has no startup event and no headline yet, so the harness then runs the game
 //! at max speed (alerts off) until the views hold both (the first events fire at the first plan
 //! lock; v_births shows them at its quarterly rebuild, in April), pauses, and times the kinds it
@@ -33,10 +36,12 @@ use sim::world::{AlertKind, AlertLevel};
 use crate::bridge::{SimControl, Views};
 use crate::chart::Chart;
 use crate::command::index::NameIndex;
+use crate::map::modes::MapModeInput;
 use crate::pages::{OpenPdoomberg, PageKind, PageRef, PdbFunction, PdoombergRoute};
 use crate::pdoomberg::PdoombergUi;
 use crate::table::Table;
 use crate::workspace::{OpenPage, PaneFrame, Workspace, WorkspaceInput};
+use sim::views::map_layers::MapMode;
 
 /// Frames before the first page (pipelines and the font atlas warm up).
 pub const WARMUP_FRAMES: u64 = 90;
@@ -55,6 +60,7 @@ pub const SETTLE_FRAMES: u64 = 10;
 enum Item {
     Page(PageRef, Tab),
     Pdb(PdoombergRoute),
+    MapMode(MapMode),
 }
 
 impl Item {
@@ -67,6 +73,7 @@ impl Item {
                 Some(c) => format!("pdoomberg/{}/company/{}", r.function.code(), c.0),
                 None => format!("pdoomberg/{}", r.function.code()),
             },
+            Item::MapMode(m) => format!("map mode {}", mode_name(*m)),
         }
     }
 }
@@ -122,6 +129,44 @@ fn active(r: &&sim::views::company_rows::CompanyRow) -> bool {
     r.status == CompanyStatus::Active
 }
 
+/// A map mode as the bench names it.
+pub fn mode_name(m: MapMode) -> String {
+    match m {
+        MapMode::Political => "political".into(),
+        MapMode::Development(t) => format!("development:{}", t.name().to_lowercase()),
+        MapMode::Industry(None) => "industry track".into(),
+        MapMode::Industry(Some(i)) => format!("industry:{}", i.0),
+        MapMode::CompanyHqs(f) if f.listed == Some(true) => "hqs listed".into(),
+        MapMode::CompanyHqs(_) => "hqs".into(),
+        MapMode::FinancialZones => "zones".into(),
+    }
+}
+
+/// Every map mode the bench switches to (D705): each development track, the Industry track and
+/// the industry with the most units, the HQ pins (all, then listed only), the zones, and back
+/// to Political last (the map starts on it).
+fn map_modes(v: &Views) -> Vec<MapMode> {
+    use sim::views::map_layers::{DevTrack, HqFilter};
+    let units = &v.units.get().units;
+    let busiest = (0..v.industry_rows.get().rows.len())
+        .max_by_key(|&i| units.iter().filter(|u| u.industry.0 as usize == i).count())
+        .map(|i| sim::world::IndustryId(i as u32));
+    let mut out: Vec<MapMode> = DevTrack::ALL
+        .iter()
+        .map(|&t| MapMode::Development(t))
+        .collect();
+    out.push(MapMode::Industry(None));
+    out.push(MapMode::Industry(busiest));
+    out.push(MapMode::CompanyHqs(HqFilter::default()));
+    out.push(MapMode::CompanyHqs(HqFilter {
+        listed: Some(true),
+        ..HqFilter::default()
+    }));
+    out.push(MapMode::FinancialZones);
+    out.push(MapMode::Political);
+    out
+}
+
 /// The fresh world's items: one page of each kind, every Company tab, then every Pdoomberg
 /// function page. The terminal builds no page before its first open (D520), so F2's cold
 /// number is a real build.
@@ -147,6 +192,7 @@ fn fresh_items(v: &Views, index: &NameIndex) -> Vec<Item> {
             }));
         }
     }
+    out.extend(map_modes(v).into_iter().map(Item::MapMode));
     out
 }
 
@@ -270,6 +316,7 @@ fn send_next(
     mut open: MessageWriter<OpenPage>,
     mut pdb: MessageWriter<OpenPdoomberg>,
     mut sim: MessageWriter<SimControl>,
+    mut modes: MessageWriter<MapModeInput>,
     mut exit: MessageWriter<AppExit>,
 ) {
     b.frame += 1;
@@ -342,6 +389,9 @@ fn send_next(
                 company: r.company,
             });
         }
+        Item::MapMode(m) => {
+            modes.write(MapModeInput::Set(m));
+        }
     }
     b.sent = Some((Instant::now(), b.frame));
 }
@@ -397,6 +447,7 @@ fn check_laid_out(
     tables: Query<&Table>,
     charts: Query<&Chart>,
     pdb: Option<Res<PdoombergUi>>,
+    map: MapBenchState,
     mut sim: MessageWriter<SimControl>,
     mut exit: MessageWriter<AppExit>,
 ) {
@@ -425,6 +476,7 @@ fn check_laid_out(
                 && texts_laid_out(ui.area, &children, &texts)
                 && widgets_drawn(ui.area, &children, &texts, &tables, &charts)
         }),
+        Item::MapMode(m) => map.shows(*m),
     };
     let frames_taken = b.frame - sent_frame;
     if !ready && frames_taken < TIMEOUT_FRAMES {
@@ -473,6 +525,7 @@ fn check_laid_out(
 /// one and none, that it never opened.
 fn missing(results: &[Timing], listed: &BTreeSet<sim::world::CompanyId>) -> Vec<String> {
     let mut kinds = BTreeSet::new();
+    let mut modes = BTreeSet::new();
     // (tab, listed)
     let mut tabs = BTreeSet::new();
     let mut functions = BTreeSet::new();
@@ -491,6 +544,9 @@ fn missing(results: &[Timing], listed: &BTreeSet<sim::world::CompanyId>) -> Vec<
                 if r.function == PdbFunction::F3 {
                     f3.insert(r.company.map(|c| listed.contains(&c)));
                 }
+            }
+            Item::MapMode(m) => {
+                modes.insert(crate::map::modes::ModeKind::of(*m).label());
             }
         }
     }
@@ -521,7 +577,42 @@ fn missing(results: &[Timing], listed: &BTreeSet<sim::world::CompanyId>) -> Vec<
             .filter(|f| !functions.contains(f.code()))
             .map(|f| format!("pdoomberg {}", f.code())),
     );
+    out.extend(
+        crate::map::modes::ModeKind::ALL
+            .iter()
+            .filter(|k| !modes.contains(k.label()))
+            .map(|k| format!("map mode {}", k.label())),
+    );
     out
+}
+
+/// What a map mode switch waits for (D705): the layer of the mode fetched, the colour table
+/// written from it (when the map draws: with a renderer and a map), and its pins placed.
+#[derive(bevy::ecs::system::SystemParam)]
+pub struct MapBenchState<'w, 's> {
+    layer: Res<'w, crate::map::modes::CurrentLayer>,
+    gpu: Option<Res<'w, crate::map::render::MapGpu>>,
+    views: Res<'w, Views>,
+    pins: Query<'w, 's, &'static crate::map::pins::PinNode>,
+}
+
+impl MapBenchState<'_, '_> {
+    fn shows(&self, m: MapMode) -> bool {
+        let l = &self.layer;
+        let statics = self.views.map_static.get();
+        let want_pins = l
+            .layer
+            .pins
+            .iter()
+            .filter(|p| statics.shape(p.province).is_some())
+            .count();
+        l.layer.mode == m
+            && self
+                .gpu
+                .as_ref()
+                .is_none_or(|g| g.colors_generation() == Some(l.generation))
+            && self.pins.iter().count() == want_pins
+    }
 }
 
 /// Prints the table and the verdict; true when every page opened under the target and every

@@ -34,6 +34,7 @@ pub mod live;
 pub mod market;
 pub mod news;
 pub mod placeholder;
+pub mod province;
 pub mod recap;
 pub mod settings;
 pub mod world;
@@ -66,8 +67,7 @@ pub enum PageRef {
     Industry(IndustryId),
     Character(CharacterId),
     Country(CountryId),
-    /// A province (spec 3.3; M8): opened by a click on the map. A placeholder until lane MB's
-    /// Province page (M8.7).
+    /// A province (spec 3.3; M8): opened by a click on the map or a province link (M8.7).
     Province(ProvinceId),
     /// A financial zone (spec 3.2.1).
     Zone(ZoneId),
@@ -892,6 +892,8 @@ impl Plugin for PagesPlugin {
         country::register(app);
         zone::register(app);
         exchange::register(app);
+        // M8.7: the Province page replaces its placeholder (D707).
+        province::register(app);
         doc::register(app);
         lists::register(app);
         world::register(app);

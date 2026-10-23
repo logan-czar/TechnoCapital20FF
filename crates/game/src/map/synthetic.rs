@@ -77,6 +77,109 @@ pub const DEFAULT_ISLANDS: [Island; 3] = [
     },
 ];
 
+/// A synthetic world for tests that need every province on the map (the leak test, D705): one
+/// island per province file, roughly where its superregion is, none overlapping.
+pub const WORLD_ISLANDS: [(&str, Island); 8] = [
+    (
+        "provinces-north-america.csv",
+        Island {
+            lon: -100.0,
+            lat: 45.0,
+            rx: 40.0,
+            ry: 22.0,
+        },
+    ),
+    (
+        "provinces-latin-america.csv",
+        Island {
+            lon: -62.0,
+            lat: -12.0,
+            rx: 20.0,
+            ry: 26.0,
+        },
+    ),
+    (
+        "provinces-europe.csv",
+        Island {
+            lon: 15.0,
+            lat: 51.0,
+            rx: 22.0,
+            ry: 11.0,
+        },
+    ),
+    (
+        "provinces-mena.csv",
+        Island {
+            lon: 35.0,
+            lat: 27.0,
+            rx: 22.0,
+            ry: 8.0,
+        },
+    ),
+    (
+        "provinces-sub-saharan-africa.csv",
+        Island {
+            lon: 22.0,
+            lat: -5.0,
+            rx: 18.0,
+            ry: 17.0,
+        },
+    ),
+    (
+        "provinces-russia-central-asia.csv",
+        Island {
+            lon: 90.0,
+            lat: 60.0,
+            rx: 50.0,
+            ry: 9.0,
+        },
+    ),
+    (
+        "provinces-south-asia.csv",
+        Island {
+            lon: 78.0,
+            lat: 21.0,
+            rx: 11.0,
+            ry: 10.0,
+        },
+    ),
+    (
+        "provinces-east-asia-oceania.csv",
+        Island {
+            lon: 125.0,
+            lat: 12.0,
+            rx: 24.0,
+            ry: 24.0,
+        },
+    ),
+];
+
+/// Every province of `data`, each on its file's [`WORLD_ISLANDS`] island, with the options to
+/// draw them at `width` x `width / 2`.
+pub fn world_provinces(
+    data: &sim_data::WorldData,
+    width: u32,
+) -> (Vec<SynthProvince>, SynthOptions) {
+    let mut opts = SynthOptions::new(width, width / 2);
+    opts.islands = WORLD_ISLANDS.iter().map(|(_, i)| *i).collect();
+    let mut provinces = Vec::new();
+    for (table, _, p) in data.all_provinces() {
+        let Some(island) = WORLD_ISLANDS.iter().position(|(f, _)| *f == table.file) else {
+            continue;
+        };
+        if !opts.coverage.contains(&table.file) {
+            opts.coverage.push(table.file.clone());
+        }
+        provinces.push(SynthProvince {
+            id: p.id.clone(),
+            country: p.country.clone(),
+            region: p.region.clone(),
+            island,
+        });
+    }
+    (provinces, opts)
+}
+
 impl SynthOptions {
     pub fn new(width: u32, height: u32) -> SynthOptions {
         SynthOptions {
