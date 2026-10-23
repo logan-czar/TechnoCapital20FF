@@ -93,12 +93,21 @@ pub const LABEL_PAD: f32 = 3.0;
 /// The labels' place among the map node's children (under the pins and the bar).
 pub const LABEL_Z: i32 = 1;
 
-/// A label's box at `at` (its centre), logical pixels: (min, max).
-pub fn label_box(kind: LabelKind, text: &str, at: Vec2) -> (Vec2, Vec2) {
-    let s = kind.size();
+/// A label's box at `at` (its centre), logical pixels: (min, max), at the config's font scale
+/// (D458: every theme text follows it, the labels too).
+pub fn label_box(kind: LabelKind, text: &str, at: Vec2, font_scale: f32) -> (Vec2, Vec2) {
+    let s = font_px(kind, font_scale);
     let half = Vec2::new(text.chars().count() as f32 * s * CHAR_W, s * LINE_H) / 2.0;
     (at - half, at + half)
 }
+
+/// A label's font size in logical pixels at a font scale, as the theme rounds it.
+pub fn font_px(kind: LabelKind, font_scale: f32) -> f32 {
+    (kind.size() * font_scale).round()
+}
+
+/// A rectangle in the map view's logical pixels: (min, max).
+pub type ViewRect = (Vec2, Vec2);
 
 fn overlaps(a: (Vec2, Vec2), b: (Vec2, Vec2)) -> bool {
     a.0.x < b.1.x && b.0.x < a.1.x && a.0.y < b.1.y && b.0.y < a.1.y
@@ -286,10 +295,18 @@ pub struct Placed {
 }
 
 /// The labels shown for the camera: the zoom level's anchors in priority order, each kept if
-/// its padded box is inside the view and overlaps none kept before it.
-pub fn place(anchors: &LabelAnchors, cam: &Camera, map: Vec2, view: Vec2) -> Vec<Placed> {
+/// its padded box, at the font scale, is inside the view and overlaps none kept before it nor
+/// any `blocked` rectangle (the mode bar, the legend, the toasts; D706).
+pub fn place(
+    anchors: &LabelAnchors,
+    cam: &Camera,
+    map: Vec2,
+    view: Vec2,
+    font_scale: f32,
+    blocked: &[ViewRect],
+) -> Vec<Placed> {
     let level = cam.level(map, view);
-    let mut boxes: Vec<(Vec2, Vec2)> = Vec::new();
+    let mut boxes: Vec<(Vec2, Vec2)> = blocked.to_vec();
     let mut out = Vec::new();
     let px_area = f64::from(cam.scale).powi(2);
     for a in anchors.at_level(level) {
@@ -297,7 +314,7 @@ pub fn place(anchors: &LabelAnchors, cam: &Camera, map: Vec2, view: Vec2) -> Vec
             continue;
         }
         let at = cam.to_view(map, view, a.at);
-        let b = label_box(a.kind, &a.text, at);
+        let b = label_box(a.kind, &a.text, at, font_scale);
         if b.0.x < 0.0 || b.0.y < 0.0 || b.1.x > view.x || b.1.y > view.y {
             continue;
         }
@@ -315,8 +332,12 @@ pub fn place(anchors: &LabelAnchors, cam: &Camera, map: Vec2, view: Vec2) -> Vec
     out
 }
 
-/// What the placed labels depend on: the camera's centre and scale, the view, the anchors.
-type LabelKey = (Vec2, f32, Vec2, Option<u64>);
+/// What the placed labels depend on: the camera's centre and scale, the view, the anchors, the
+/// font scale and the map UI's rectangles.
+type LabelKey = (Vec2, f32, Vec2, Option<u64>, f32, Vec<ViewRect>);
+
+/// The map UI labels keep clear of: the mode bar and the legend.
+type MapUi = (With<super::modes::ModeBar>, With<super::modes::Legend>);
 
 type LabelNode = (
     Entity,
@@ -368,20 +389,54 @@ fn show_labels(
     cfg: Res<UiConfig>,
     mut placed: ResMut<PlacedLabels>,
     mut last: Local<Option<LabelKey>>,
+    ui: Query<(&ComputedNode, &UiGlobalTransform), Or<MapUi>>,
+    map_node: Query<(&ComputedNode, &UiGlobalTransform), With<MapView>>,
+    layout: Res<crate::ui::ShellLayout>,
+    toasts: Query<(&ComputedNode, &UiGlobalTransform, &Children)>,
+    any_node: Query<(&ComputedNode, &UiGlobalTransform)>,
 ) {
     let (Some(bitmap), Some(cam), Ok(map_view)) = (bitmap, state.camera, view_q.single()) else {
         return;
     };
-    let key = (cam.center, cam.scale, state.view, anchors.version);
-    if *last == Some(key) {
+    // The map UI and the toasts, in the map view's coordinates.
+    let mut blocked = Vec::new();
+    if let Ok(origin) = map_node.single().map(|(n, t)| global_rect(n, t).0) {
+        let mut add = |n: &ComputedNode, t: &UiGlobalTransform| {
+            let (lo, hi) = global_rect(n, t);
+            if hi.x > lo.x && hi.y > lo.y {
+                blocked.push((lo - origin, hi - origin));
+            }
+        };
+        for (n, t) in &ui {
+            add(n, t);
+        }
+        if let Ok((_, _, kids)) = toasts.get(layout.toasts) {
+            for &k in kids {
+                if let Ok((n, t)) = any_node.get(k) {
+                    add(n, t);
+                }
+            }
+        }
+    }
+    let scale = cfg.font_scale;
+    let key = (
+        cam.center,
+        cam.scale,
+        state.view,
+        anchors.version,
+        scale,
+        blocked.clone(),
+    );
+    if last.as_ref() == Some(&key) {
         return;
     }
     *last = Some(key);
-    let labels = place(&anchors, &cam, bitmap.size(), state.view);
+    let labels = place(&anchors, &cam, bitmap.size(), state.view, scale, &blocked);
     let mut nodes: Vec<_> = pool.iter_mut().collect();
     nodes.sort_by_key(|n| n.0);
     for (i, l) in labels.iter().enumerate() {
-        let (lo, _) = label_box(l.kind, &l.text, l.at);
+        let (lo, _) = label_box(l.kind, &l.text, l.at, scale);
+        let want_font = FontSize::Px(font_px(l.kind, scale));
         if let Some((_, text, node, tc, themed, font)) = nodes.get_mut(i) {
             if text.0 != l.text {
                 text.0.clone_from(&l.text);
@@ -391,7 +446,9 @@ fn show_labels(
             }
             if themed.0 != l.kind.size() {
                 themed.0 = l.kind.size();
-                font.font_size = FontSize::Px((l.kind.size() * cfg.font_scale).round());
+            }
+            if font.font_size != want_font {
+                font.font_size = want_font;
             }
             let (left, top) = (px(lo.x), px(lo.y));
             if node.display != Display::Flex || node.left != left || node.top != top {
@@ -429,6 +486,14 @@ fn show_labels(
     placed.0 = labels;
 }
 
+/// A node's rectangle in logical window pixels.
+fn global_rect(n: &ComputedNode, t: &UiGlobalTransform) -> ViewRect {
+    let inv = n.inverse_scale_factor;
+    let c = t.translation * inv;
+    let half = n.size * inv / 2.0;
+    (c - half, c + half)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -442,10 +507,10 @@ mod tests {
 
     #[test]
     fn boxes_overlap_only_when_they_meet() {
-        let a = label_box(LabelKind::Country, "Canada", Vec2::new(100.0, 100.0));
-        let b = label_box(LabelKind::Country, "Canada", Vec2::new(100.0, 200.0));
+        let a = label_box(LabelKind::Country, "Canada", Vec2::new(100.0, 100.0), 1.0);
+        let b = label_box(LabelKind::Country, "Canada", Vec2::new(100.0, 200.0), 1.0);
         assert!(!overlaps(pad(a), pad(b)));
-        let c = label_box(LabelKind::Country, "Canada", Vec2::new(120.0, 105.0));
+        let c = label_box(LabelKind::Country, "Canada", Vec2::new(120.0, 105.0), 1.0);
         assert!(overlaps(a, c));
     }
 }
