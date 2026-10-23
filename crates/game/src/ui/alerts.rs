@@ -6,7 +6,8 @@
 //! event log; **Off** posts nothing. Icons sort by urgency, Pause first. Clicking an icon opens
 //! its target and clears it; right-clicking dismisses it. Earnings day also clears the next day
 //! (20.4.1 "Opened, or next day"). The settings menu sets each alert to Pause, Notify, Log or
-//! Off; Earnings day and Quarterly recap default to Pause (spec 8).
+//! Off; Earnings day and Quarterly recap default to Pause (spec 8), and so do Quarter start and
+//! Plan lock, the quarter's heavy ticks (D800).
 
 use bevy::picking::hover::Hovered;
 use bevy::prelude::*;
@@ -30,13 +31,24 @@ pub const MAX_TOASTS: usize = 5;
 /// Event log lines kept.
 pub const LOG_LINES: usize = 200;
 
-/// The four levels every alert can be set to; all five alerts are settable in the MVP (spec 8;
+/// The four levels every alert can be set to; every alert is settable in the MVP (spec 8;
 /// D306).
 pub const LEVELS: [AlertLevel; 4] = [
     AlertLevel::Pause,
     AlertLevel::Notify,
     AlertLevel::Log,
     AlertLevel::Off,
+];
+
+/// The alerts in the settings menu, the calendar ones in a quarter's order (spec 4.4: the
+/// recap week, the quarter's start, the release, the lock), then the others.
+pub const SETTINGS_ORDER: [AlertKind; AlertKind::ALL.len()] = [
+    AlertKind::QuarterlyRecap,
+    AlertKind::QuarterStart,
+    AlertKind::EarningsDay,
+    AlertKind::PlanLock,
+    AlertKind::BankruptcyInWatchlist,
+    AlertKind::WorldEvent,
 ];
 
 pub fn kind_name(kind: AlertKind) -> &'static str {
@@ -46,6 +58,7 @@ pub fn kind_name(kind: AlertKind) -> &'static str {
         AlertKind::PlanLock => "Plan lock",
         AlertKind::BankruptcyInWatchlist => "Bankruptcy in watchlist",
         AlertKind::WorldEvent => "World event",
+        AlertKind::QuarterStart => "Quarter start",
     }
 }
 
@@ -57,6 +70,7 @@ fn kind_tag(kind: AlertKind) -> &'static str {
         AlertKind::PlanLock => "LCK",
         AlertKind::BankruptcyInWatchlist => "BK!",
         AlertKind::WorldEvent => "W",
+        AlertKind::QuarterStart => "QTR",
     }
 }
 
@@ -81,7 +95,7 @@ fn level_color(level: AlertLevel) -> Color {
 pub fn target(kind: AlertKind) -> Screen {
     match kind {
         AlertKind::EarningsDay => Screen::Pdoomberg,
-        AlertKind::QuarterlyRecap | AlertKind::PlanLock => Screen::Recap,
+        AlertKind::QuarterlyRecap | AlertKind::PlanLock | AlertKind::QuarterStart => Screen::Recap,
         AlertKind::BankruptcyInWatchlist => Screen::Company,
         AlertKind::WorldEvent => Screen::News,
     }
@@ -468,7 +482,7 @@ fn spawn_settings(mut commands: Commands, layout: Res<ShellLayout>) {
         ))
         .id();
     commands.entity(root).add_children(&[title, hint]);
-    for kind in AlertKind::ALL {
+    for kind in SETTINGS_ORDER {
         let row = commands
             .spawn(Node {
                 flex_direction: FlexDirection::Row,
@@ -535,5 +549,17 @@ fn show_settings(
         if look.active != active {
             look.active = active;
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_settings_list_every_alert_once() {
+        let mut listed = SETTINGS_ORDER.to_vec();
+        listed.sort();
+        assert_eq!(listed, AlertKind::ALL.to_vec());
     }
 }

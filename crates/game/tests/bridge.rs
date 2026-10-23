@@ -256,15 +256,16 @@ fn every_notice_reaches_a_test_system() {
     assert!(seen[i..j].contains(&Notice::PlanLocked(Q1_2020)));
     assert!(seen[i..j].contains(&Notice::Alert {
         kind: AlertKind::PlanLock,
-        level: AlertLevel::Log,
+        level: AlertLevel::Pause,
         payload: AlertPayload::Quarter(Q1_2020),
     }));
     assert!(seen.contains(&Notice::Paused(PauseReason::Player)));
 }
 
-/// M7.6 done line (bridge half): Earnings day and the Quarterly recap pause by default.
+/// M7.6 done line (bridge half): Earnings day and the Quarterly recap pause by default, and so
+/// do Plan lock and Quarter start, the quarter's heavy ticks (D800).
 #[test]
-fn earnings_day_and_recap_pause_by_default() {
+fn the_quarter_alerts_pause_by_default() {
     let mut app = bridge_app();
     send(&mut app, Control::SetSpeed(5));
     let mut pauses = Vec::new();
@@ -273,7 +274,7 @@ fn earnings_day_and_recap_pause_by_default() {
         let clock = app.world().resource::<Views>().clock().clone();
         if clock.paused {
             pauses.push(clock.now);
-            if pauses.len() == 2 {
+            if pauses.len() == 4 {
                 break;
             }
             send(&mut app, Control::Resume);
@@ -293,10 +294,21 @@ fn earnings_day_and_recap_pause_by_default() {
         reasons,
         [
             PauseReason::Alert(AlertKind::EarningsDay),
-            PauseReason::Alert(AlertKind::QuarterlyRecap)
+            PauseReason::Alert(AlertKind::PlanLock),
+            PauseReason::Alert(AlertKind::QuarterlyRecap),
+            PauseReason::Alert(AlertKind::QuarterStart),
         ]
     );
-    assert_eq!(pauses, [release_tick(Q1_2020), recap_tick(Q1_2020)]);
+    let q2 = Quarter { year: 2020, q: 2 };
+    assert_eq!(
+        pauses,
+        [
+            release_tick(Q1_2020),
+            lock_tick(Q1_2020),
+            recap_tick(Q1_2020),
+            DateTime::midnight(q2.first_day()),
+        ]
+    );
 }
 
 /// The app's views are an exact copy of the running sim's (every view, version and the refresh

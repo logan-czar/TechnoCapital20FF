@@ -233,6 +233,24 @@ fn prim_node(p: &Prim) -> (Node, UiTransform, Color) {
     }
 }
 
+/// Adds `nodes` to the chart's `plot` if the plot still exists when the commands apply, and
+/// despawns them otherwise (D804): a page rebuilt in this frame despawns its charts with their
+/// plots, but the despawn is a command not yet applied, so [`draw_charts`] may still see the
+/// chart and draw into it.
+fn adopt<const N: usize>(commands: &mut Commands, plot: Entity, nodes: [Entity; N]) {
+    commands.queue(move |world: &mut World| {
+        if let Ok(mut p) = world.get_entity_mut(plot) {
+            p.add_children(&nodes);
+        } else {
+            for e in nodes {
+                if let Ok(n) = world.get_entity_mut(e) {
+                    n.despawn();
+                }
+            }
+        }
+    });
+}
+
 /// Redraws charts whose model or size changed: primitives onto pooled nodes (extra nodes are
 /// hidden, never despawned while the chart lives), gridlines and their labels.
 fn draw_charts(
@@ -268,7 +286,7 @@ fn draw_charts(
                     Pickable::IGNORE,
                 ))
                 .id();
-            commands.entity(plot).add_child(e);
+            adopt(&mut commands, plot, [e]);
             c.pool.push(e);
         }
         // Only what moved is written (D774): a redraw at a new close moves few primitives,
@@ -285,7 +303,7 @@ fn draw_charts(
             } else {
                 wrote += 1;
                 // Spawned this frame: its components arrive with the commands.
-                commands.entity(e).insert((n, t, BackgroundColor(col)));
+                commands.entity(e).try_insert((n, t, BackgroundColor(col)));
             }
         }
         for &e in &c.pool[prims.len()..] {
@@ -330,7 +348,7 @@ fn draw_charts(
                     Pickable::IGNORE,
                 ))
                 .id();
-            commands.entity(plot).add_children(&[line, label]);
+            adopt(&mut commands, plot, [line, label]);
             c.grid.push((line, label));
         }
         let fmt = c.model.format;
@@ -476,6 +494,47 @@ mod tests {
                 }
             })
             .collect()
+    }
+
+    /// D804: a chart whose page is despawned in the frame it draws (the despawn queued ahead of
+    /// its redraw, with no sync point between) neither panics nor leaves its new nodes behind.
+    #[test]
+    fn a_chart_despawned_in_the_frame_it_draws_leaves_nothing() {
+        #[derive(Resource)]
+        struct Doomed(Entity);
+        let mut app = app();
+        app.edit_schedule(Update, |s| {
+            s.set_build_settings(bevy::ecs::schedule::ScheduleBuildSettings {
+                auto_insert_apply_deferred: false,
+                ..default()
+            });
+        });
+        app.add_systems(
+            Update,
+            (|mut commands: Commands, doomed: Res<Doomed>| {
+                commands.entity(doomed.0).despawn();
+            })
+            .before(draw_charts),
+        );
+        let parent = app.world_mut().spawn(Node::default()).id();
+        let model = Arc::new(ChartModel::candles("x", ten_year_view(&candles(400))));
+        let chart = {
+            let mut commands = app.world_mut().commands();
+            spawn_chart(&mut commands, parent, model)
+        };
+        app.world_mut().flush();
+        app.world_mut().insert_resource(Doomed(chart));
+        app.world_mut()
+            .get_mut::<Chart>(chart)
+            .unwrap()
+            .set_size(Vec2::new(800.0, 260.0));
+        app.update();
+        assert!(app.world().get_entity(chart).is_err());
+        let nodes = app.world_mut().query::<&Node>().iter(app.world()).count();
+        assert_eq!(
+            nodes, 1,
+            "only the parent is left: the new nodes went with the chart"
+        );
     }
 
     #[test]

@@ -5,8 +5,10 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-/// One year of seed 3 sends every kind of control, Save and Load included (checked below).
-const SEED: &str = "3";
+/// One year of seed 68 sends every kind of control, Save and Load included, and saves after its
+/// first watchlist control (checked below). Seed 3 did until Quarter start and Plan lock began
+/// pausing by default (D800).
+const SEED: &str = "68";
 
 fn headless(args: &[&str]) -> (bool, String) {
     let out = Command::new(env!("CARGO_BIN_EXE_headless"))
@@ -56,9 +58,9 @@ fn replay_text(name: &str, text: &str) -> (bool, String) {
 
 #[test]
 fn a_recorded_run_replays_to_the_same_hashes() {
-    let (path, text) = record("seed3.log");
+    let (path, text) = record("seed68.log");
     let lines: Vec<&str> = text.lines().collect();
-    assert_eq!(lines[..3], ["version 2", "seed 3", "years 1"]);
+    assert_eq!(lines[..3], ["version 2", "seed 68", "years 1"]);
     let hashes: Vec<&str> = lines
         .iter()
         .copied()
@@ -92,7 +94,7 @@ fn a_recorded_run_replays_to_the_same_hashes() {
     assert!(!Path::new(&save1).exists());
 
     // The same seed records the same log.
-    let (_, again) = record("seed3-again.log");
+    let (_, again) = record("seed68-again.log");
     assert_eq!(again, text);
 
     let (ok, out) = replay(&path);
@@ -102,7 +104,7 @@ fn a_recorded_run_replays_to_the_same_hashes() {
 
 #[test]
 fn a_changed_log_does_not_replay() {
-    let (_, text) = record("seed3-tamper.log");
+    let (_, text) = record("seed68-tamper.log");
     let lines: Vec<&str> = text.lines().collect();
 
     // One hash digit changed, in the fifth hash line.
@@ -135,7 +137,7 @@ fn a_changed_log_does_not_replay() {
     assert!(!ok);
     assert!(out.contains("differs at hash line 1"), "{out}");
 
-    // A dropped watchlist control: the first one (seed 3 saves after it, so the year's Load
+    // A dropped watchlist control: the first one (seed 68 saves after it, so the year's Load
     // keeps it; a later one the Load rewinds past has no effect at all). It moves no frame,
     // step or state hash (the hash does not cover the controls, D13), so only the end line's
     // controls digest differs.
@@ -161,7 +163,7 @@ fn a_changed_log_does_not_replay() {
     );
 
     // Another seed.
-    let reseeded = text.replacen("seed 3\n", "seed 4\n", 1);
+    let reseeded = text.replacen(&format!("seed {SEED}\n"), "seed 4\n", 1);
     let (ok, out) = replay_text("bad-seed.log", &reseeded);
     assert!(!ok, "{out}");
 

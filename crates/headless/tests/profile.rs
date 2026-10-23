@@ -48,3 +48,36 @@ fn profile_prints_slots_and_keeps_the_run() {
         "profiling changed the run"
     );
 }
+
+/// `run --tick-costs` (D801) times whole steps by the kind of tick and keeps the run.
+#[test]
+fn tick_costs_list_the_quarter_ticks_and_keep_the_run() {
+    let dir = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
+    let (plain, timed) = (dir.join("m10_plain_tc.csv"), dir.join("m10_timed.csv"));
+    let base = ["run", "--years", "1", "--seeds", "4"];
+    run(&[&base[..], &["--out", plain.to_str().unwrap()]].concat());
+    let out = run(&[
+        &base[..],
+        &["--tick-costs", "--out", timed.to_str().unwrap()],
+    ]
+    .concat());
+    for kind in [
+        "hourly",
+        "daily",
+        "monthly",
+        "quarter start",
+        "release",
+        "price move",
+        "plan lock",
+    ] {
+        assert!(
+            out.lines().any(|l| l.starts_with(kind)),
+            "{kind} missing:\n{out}"
+        );
+    }
+    assert_eq!(
+        std::fs::read(&plain).unwrap(),
+        std::fs::read(&timed).unwrap(),
+        "timing changed the run"
+    );
+}

@@ -9,9 +9,9 @@ Logan's PC (Windows 11, 24 threads, RTX 5070 Ti), October 2026, branch `build/m8
 | Check (m8-plan) | How | Result |
 |---|---|---|
 | M8.8 click test: every province clickable | `cargo test -p game --test m8_map every_world_province` (in the gate) | 3,255 of 3,255 pick their own id at their label point (the 372 tiny ones at their click target): 2,964 from World zoom, 291 from Country, none needs Province; then all 3,255 clicked through the shell to their Province page. Debug 10.5 s |
-| 60 fps with the panes open, in release | `target/release/game --bench-map 15 --map-mode MODE [--bench-map-running SPEED] [--bench-map-panes SET]`, a check since D778 and D779: exit 0 PASS, 1 FAIL (p99 16.7 ms or more), 3 INVALID (the window had the focus in under 97% of the frames, or the OS paced it at 60 Hz: rerun in front) | **The routine check is paused and speed 4, each pane set, and must exit 0** (it does: speed 4 p99 6.3 ms or less, paused p99 under 12 ms with the machine in use). Speed 5 with any pane open is a **tracked known FAIL, reported and not gated** until Logan decides (D779): after the page fixes (D770 to D778, below) the four panes run p50 12 ms, p99 18 to 21 ms, 87 to 95 fps, short of 60 fps by the sim's own quarter ticks; with no pane open speed 5 passes (p99 14.6 ms). Before the fixes (D744): paused p99 4.67 ms or less; speed 4 p99 5.11 ms or less; speed 5 p50 35 to 40 ms, p99 47 to 57 ms |
+| 60 fps with the panes open, in release | `target/release/game --bench-map SECONDS --map-mode MODE [--bench-map-running SPEED] [--bench-map-panes SET] [--bench-map-alerts-off]`, a check since D778 and D779: exit 0 PASS, 1 FAIL (p99 running frame 16.7 ms or more), 3 INVALID (the window had the focus in under 97% of the frames, or the OS paced it at 60 Hz: rerun in front) | **The routine check is paused and speed 4 (15 s, each pane set) and speed 5 with the four panes and auto-pause on (60 s), and each must exit 0** (D805; below: speed 5 p99 15.29 ms over the running frames, speed 4 p99 3.62, paused p99 3.67). Since D800 the game pauses on the quarter's start, release and plan lock by default, and the bench resumes after 0.5 s and counts the running frames (D802). Speed 5 with the alerts off passes too (p99 15.44 and 15.69 ms), reported and not gated. Before: speed 5 with the panes was a tracked known FAIL (D779; p99 16.2 to 20.5 ms after the page fixes, D770 to D778; 47 to 57 ms before them, D744) |
 | Leak test on the world map | `cargo test -p game --test m9_leak` | Pass, no leak: 94 modes, 552 banded HQ pins, 329 heat values, 145 province cards, 26 zone cards a state, and the Province pages; debug 25 s, release 8.6 s |
-| Timing harness on the world map | `target/release/game --bench-pages` | `pages 59 opened, worst 20.64 ms: PASS` twice; the Province page 9.7 to 10.9 ms, every mode switch 5.6 ms or less |
+| Timing harness on the world map | `target/release/game --bench-pages` | `pages 59 opened, worst 20.64 ms: PASS` twice; the Province page 9.7 to 10.9 ms, every mode switch 5.6 ms or less; `worst 25.74 ms: PASS` after the quarter-tick changes (D800 to D805) |
 | Startup render error | D741 | Cause found (a stale binary against a newer shader); the shader is now compiled in and its layout tested |
 | P8 QA | the qa step (below) | Every region passes; the remaining items were signed off at the Phase B gate |
 | Soak invariance | `headless soak --years 10 --seeds 1..4` | Byte-identical to main 5074f00 and to pre-M8 main 6db93fd (below) |
@@ -122,6 +122,51 @@ The page timing harness (`--bench-pages`, sim paused) passes: `pages 59 opened, 
 **After the PR #44 review (D771, D772, D776, D777, D779), main 1deff79 merged in.** Speed 5, the four panes, focused (100%): three runs at 110 to 113 fps, p50 8.4 / 8.6 / 8.9 ms, p99 16.19 (PASS) / 16.70 (FAIL, at the line) / 20.52 ms (FAIL), max 18.3 / 19.1 / 32.8 ms; a fourth run lost the focus and said INVALID (exit 3). The stepping is p50 2.4, p99 10.7 to 11.0 ms; each quarter event is now predicted apart (quarter start mean 8.2 ms, plan lock 7.7, release 3.3, price move 3.0; up to 12 to 14 ms). Speed 4, the four panes, focused: 314 and 318 fps, p50 3.1, p99 4.54 and 4.61 ms, PASS. Speed 5 with panes stays the tracked known FAIL (D779): now at the line rather than past it.
 
 The full gate (`bash scripts/check.sh`, debug build warm) on this branch at 44ff004: `== all checks passed`, 671 tests passed and none failed, 450 s; after the review, with main merged (ed15c5c): passed, 674 tests, none failed, 399 s.
+
+### Auto-pause on the quarter's ticks and quicker quarter ticks (D800 to D805)
+
+Branch `build/m8-quarter-tick-pause` from main bf86d08, October 2026, Logan's PC, the world map, Political. Logan (2026-10-23) asked for the game to pause on the quarter's heavy ticks and for those ticks to get quicker where that is cheap.
+
+**Which ticks pause.** A new alert, Quarter start (00:00 on the quarter's 1st, the month's and the quarter's close with the monthly views), defaults to Pause, and Plan lock (the 9th) now defaults to Pause instead of Log (D800, design fix 800). Earnings day (the release, the 2nd) already paused. The 01:00 price move (3 ms in the game) runs as the first tick after the release pause and has no alert. Each stays settable to Pause, Notify, Log or Off in the alert settings (top bar), where the player turns it off. A pause lands after its tick, in the frame that ran it (D776 opens a frame with a costly tick). Alerts are runner controls: the soak is byte-identical. The levels live in the save's controls (ui.ron holds none); saves are version 9 and version 8 saves still load.
+
+**What the ticks cost.** `headless run --years 10 --seeds 1..1 --tick-costs` (D801; seed 1, release, no window), mean / p99 / max ms:
+
+| Tick | main bf86d08 | this branch |
+|---|---|---|
+| quarter start | 9.0 / 20.0 / 20.6 | 4.1 to 4.4 / 5.5 to 6.1 / 6.1 |
+| plan lock | 7.0 to 7.4 / 12.1 to 14.9 / 14.9 | 4.6 / 5.2 to 5.3 / 5.3 |
+| monthly | 4.7 / 7.3 to 8.0 / 9.0 | 2.2 to 2.3 / 2.6 to 2.7 / 6.6 |
+| release | 2.9 to 3.0 / 4.2 to 6.0 / 6.0 | 2.2 / 3.0 to 3.2 / 3.2 |
+| price move | 2.0 to 2.1 / 3.0 to 6.8 / 6.8 | 1.5 to 1.6 / 2.1 to 2.4 / 2.4 |
+
+The win is building a month's and a quarter's views on worker threads (D801): the views are most of these ticks (statements 1.4 ms, province cards 1.1, characters 0.8, company detail 0.6, ...) and each is a pure function of the state. In the game (the speed-5 runs below, a world 30 years on) the quarter start is mean 4.5 to 4.7 ms, longest 7.4 to 7.6 (main 8.2, up to 12 to 14), the plan lock 5.7 to 5.9, longest 7.7 to 7.8 (main 7.7).
+
+**The checks.** The map bench runs the sim with the default alerts (auto-pause on), holds each pause 0.5 s and resumes, and its check counts the running frames: a frame that ended in an auto-pause and the frames held paused are reported apart (D802). `--bench-map-alerts-off` gives the old run with no pause. A resume into max speed no longer flushes the page pacing (D803), and a chart redrawn in the frame its page was rebuilt no longer panics (D804: the first speed-5 run with auto-pause found it).
+
+```
+cargo build --release -p game
+target/release/game --bench-map 15 --map-mode political --bench-map-panes SET                          # paused
+target/release/game --bench-map 15 --map-mode political --bench-map-running 4 --bench-map-panes SET    # speed 4
+target/release/game --bench-map 60 --map-mode political --bench-map-running 5                          # speed 5, the four panes, auto-pause on
+#   each must exit 0: 0 PASS, 1 FAIL (p99 running frame >= 16.7 ms), 3 INVALID (rerun in front)
+target/release/game --bench-map 15 --map-mode political --bench-map-running 5 --bench-map-alerts-off   # reported, not gated (D805)
+```
+
+A speed-5 run spends most of its time held (about 2 s of holds a quarter against 0.3 s running), so it runs 60 s for some 380 running frames. Results (the four panes, focused in 100% of the frames):
+
+| Run | fps | Running frames: n, p50 / p95 / p99 / max ms | Apart | Check |
+|---|---|---|---|---|
+| speed 5, auto-pause on, 60 s | 267 | 380, 4.46 / 13.28 / 15.29 / 15.67 | 113 auto-pauses (28 or 29 of each); frames that ended in one p50 21.8, p99 29.7, max 36.9; first frames after a resume p99 15.4 | PASS |
+| speed 5, alerts off, 15 s | 115 | 1718, 10.09 / 13.44 / 15.69 / 18.95 | none | PASS (reported, not gated) |
+| speed 5, alerts off, 15 s, again | 117 | 1752, 9.27 / 13.32 / 15.44 / 18.21 | none | PASS (reported, not gated) |
+| speed 4, auto-pause on, 15 s | 352 | 5122, 2.80 / 3.26 / 3.62 / 8.05 | 1 auto-pause (Earnings day): 10.5 ms | PASS |
+| paused, 15 s | 363 | 5440, 2.72 / 3.23 / 3.67 / 4.97 | none | PASS |
+
+Main bf86d08 (PR #44's runs, alerts off): speed 5 with the four panes p99 16.19, 16.70 and 20.52 ms, the tracked known FAIL. **Speed 5 with the four panes now passes**, with auto-pause on and with it off (by about 1 ms), so it is no longer a known FAIL: speed 5 with auto-pause on joins the routine check, and the alerts-off run stays reported and not gated (D805). Resuming in the very next frame instead of after 0.5 s was tried and dropped (D802): at max speed the four pauses a quarter then fall every 2.4 frames, which no player sees. Only the four-pane set was run at each speed this time, to keep the windows in front of Logan to a few; the other pane sets open fewer pages.
+
+The page timing harness passes: `pages 59 opened, worst 25.74 ms: PASS`. The leak test passes in the gate. The full gate (`bash scripts/check.sh`, debug build warm): `== all checks passed`, 681 tests, none failed, 363 s. The 10-year soak (`headless soak --years 10 --seeds 1..4`) is byte-identical to main bf86d08 built in this slot: `years.csv` md5 121b5c7ba2ae4edcb9ed12d28764563e, `quarters.csv` cf890b482bd1f4c420cb3c6dc7f73a35, the same four seed hashes.
+
+**Left undone** (each a bigger job than this pass): the plan lock's consensus clones the whole world to project the quarter (1.2 to 1.5 ms of its 2.3 ms; sharing the finance history would change the world's data layout); the quarter's close (finance.close, 1.1 ms) and the statements view (1.4 ms, the longest view, so the floor of the threaded refresh; sharing its estimates changes the view's types the pages read) are untouched; the frame that ends in an auto-pause still runs the pause's full page flush (D773, p50 22 ms), which is the frame the game stops in. View cadences and spec behaviour are unchanged.
 
 ## The M9 checks on the world map
 

@@ -43,6 +43,15 @@ pub enum Cadence {
 }
 
 impl Cadence {
+    /// A month's or a quarter's cadence: rebuilt on a few costly ticks, so worth a worker
+    /// thread (D801); every-tick and daily views are cheap and stay on the sim's thread.
+    pub fn is_periodic(self) -> bool {
+        matches!(
+            self,
+            Cadence::Monthly | Cadence::MonthlyAndLock | Cadence::Quarterly
+        )
+    }
+
     /// Whether a view of this cadence is rebuilt after the tick `f`.
     pub fn is_due(self, f: &TickFacts) -> bool {
         match self {
@@ -186,6 +195,43 @@ impl<T: ViewData> View<T> {
     }
 }
 
+/// Most worker threads one view refresh builds its views on (D801), besides the sim's own.
+pub const VIEW_WORKERS: usize = 6;
+
+/// The view rebuilds of one refresh that may run on worker threads (D801).
+#[derive(Default)]
+struct Jobs<'a>(Vec<Box<dyn FnOnce() + Send + 'a>>);
+
+impl Jobs<'_> {
+    /// Runs every job: on this thread when there is one, else on up to [`VIEW_WORKERS`] scoped
+    /// threads and this one, each taking the next job until none is left. A job's result lands
+    /// in its own view, so which thread ran it and when changes nothing.
+    fn run(self) {
+        let n = self.0.len();
+        if n <= 1 {
+            self.0.into_iter().for_each(|job| job());
+            return;
+        }
+        let queue = std::sync::Mutex::new(self.0.into_iter());
+        let work = || {
+            loop {
+                let job = queue.lock().map(|mut q| q.next()).unwrap_or(None);
+                match job {
+                    Some(job) => job(),
+                    None => break,
+                }
+            }
+        };
+        let workers = (n - 1).min(VIEW_WORKERS);
+        std::thread::scope(|s| {
+            for _ in 0..workers {
+                s.spawn(work);
+            }
+            work();
+        });
+    }
+}
+
 /// Declares every view: `field: module::Type;`. Generates the modules, the `SimViews` fields and
 /// the build and refresh passes, in this order.
 macro_rules! sim_views {
@@ -259,7 +305,11 @@ macro_rules! sim_views {
             /// After a tick: rebuilds the views due on this tick and clears the others' dirty
             /// flags (spec 9.4).
             ///
-            /// With an `observer`, each view rebuilt is timed as a [`TickPart::View`] (D400).
+            /// With an `observer`, each view rebuilt is timed as a [`TickPart::View`] (D400), one
+            /// after another. Without one, the views of a month's or a quarter's tick (cadence
+            /// [`Cadence::is_periodic`]) are built on worker threads at once (D801): each view is
+            /// a pure function of the state, built by the same code into its own field, so the
+            /// views are the same whichever thread builds them and in whatever order.
             pub(crate) fn refresh_after_tick(
                 &mut self,
                 world: &World,
@@ -271,6 +321,21 @@ macro_rules! sim_views {
                 self.refresh += 1;
                 let facts = TickFacts::new(world.clock);
                 let input = ViewInput { world, controls, seed, map };
+                if observer.is_none() {
+                    let refresh = self.refresh;
+                    let (facts, input) = (&facts, &input);
+                    let mut jobs = Jobs::default();
+                    $(
+                        let v = &mut self.$field;
+                        if v.cadence().is_periodic() && v.cadence().is_due(facts) {
+                            jobs.0.push(Box::new(move || v.after_tick(facts, input, refresh)));
+                        } else {
+                            v.after_tick(facts, input, refresh);
+                        }
+                    )*
+                    jobs.run();
+                    return;
+                }
                 $(
                     let watch = self.$field.cadence().is_due(&facts);
                     if watch && let Some(o) = &mut observer {

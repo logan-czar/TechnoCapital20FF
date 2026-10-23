@@ -8,6 +8,7 @@
 //!   `years.csv`, `quarters.csv` and `timing.csv`; `check` (M10.2, M10.3) marks every spec 10 target per seed (docs/build/
 //!   soak.md).
 //! - `run --profile` (M10.6) prints the wall time per scheduler slot, job and view (D400).
+//! - `run --tick-costs` prints the wall time of whole steps by the kind of tick (D801).
 //! - `record` and `replay` (M10.4) write a run's seed, command log and monthly hashes, and replay
 //!   such a log checking every hash (D403).
 
@@ -24,12 +25,12 @@ use std::time::Instant;
 use sim::Sim;
 
 use crate::metrics::{YEARS_HEADER, run_seed};
-use crate::profile::Profiler;
+use crate::profile::{Profiler, TickCosts};
 use crate::soak::{DEFAULT_SEEDS, DEFAULT_YEARS, SoakArgs};
 
 const USAGE: &str = "usage:\n  \
     headless --check-data [--data-dir DIR] [--map-dir DIR]\n  \
-    headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--data-dir DIR]\n  \
+    headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--tick-costs] [--data-dir DIR]\n  \
     headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--data-dir DIR]\n  \
     headless check DIR\n  \
     headless record --years N --seed S --out LOG [--data-dir DIR]\n  \
@@ -177,13 +178,14 @@ struct RunArgs {
     out: Option<PathBuf>,
     hash_monthly: bool,
     profile: bool,
+    tick_costs: bool,
     dir: PathBuf,
 }
 
 impl RunArgs {
     fn parse(args: &[String]) -> Option<RunArgs> {
         let (mut years, mut seeds, mut out, mut hash_monthly) = (None, None, None, false);
-        let mut profile = false;
+        let (mut profile, mut tick_costs) = (false, false);
         let mut dir = sim_data::default_data_dir();
         let mut it = args.iter();
         while let Some(arg) = it.next() {
@@ -193,6 +195,7 @@ impl RunArgs {
                 "--out" => out = Some(PathBuf::from(it.next()?)),
                 "--hash-monthly" => hash_monthly = true,
                 "--profile" => profile = true,
+                "--tick-costs" => tick_costs = true,
                 "--data-dir" => dir = PathBuf::from(it.next()?),
                 _ => return None,
             }
@@ -203,6 +206,7 @@ impl RunArgs {
             out,
             hash_monthly,
             profile,
+            tick_costs,
             dir,
         })
     }
@@ -316,12 +320,14 @@ fn run(args: &RunArgs) -> ExitCode {
     let (mut all_ticks, all_start) = (0u64, Instant::now());
     for seed in args.seeds.0..=args.seeds.1 {
         let mut profiler = args.profile.then(Profiler::new);
+        let mut costs = args.tick_costs.then(TickCosts::default);
         let out = match run_seed(
             &data,
             seed,
             args.years,
             args.hash_monthly,
             profiler.as_mut(),
+            costs.as_mut(),
         ) {
             Ok(o) => o,
             Err(e) => {
@@ -335,6 +341,9 @@ fn run(args: &RunArgs) -> ExitCode {
         );
         if let Some(p) = &profiler {
             println!("profile, seed {seed}:\n{}", p.table());
+        }
+        if let Some(c) = &costs {
+            println!("tick costs, seed {seed}:\n{}", c.table());
         }
         csv.push_str(&out.years);
         all_ticks += out.ticks;

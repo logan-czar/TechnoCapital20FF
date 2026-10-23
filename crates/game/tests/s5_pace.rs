@@ -339,3 +339,80 @@ fn a_hidden_pane_waits_and_refreshes_when_shown() {
     let at_show = shown(&app, b);
     same(&rebuilt(&mut app, b), &at_show, "shown again");
 }
+
+/// D800, D802: at max speed with the pages open and the default alerts, the game auto-pauses
+/// on the quarter's ticks and resumes from each pause cleanly, for a quarter and more.
+#[test]
+fn max_speed_auto_pauses_and_resumes_with_the_pages_open() {
+    let mut app = shell_app();
+    let co = listed_company(&app);
+    let pr = province_with_hqs(&app);
+    app.world_mut().write_message(game::pages::OpenPdoomberg {
+        function: game::pages::PdbFunction::F10,
+        company: None,
+    });
+    frames(&mut app, 2);
+    app.world_mut()
+        .write_message(game::ui::rail::Navigate(game::ui::rail::Screen::Map));
+    frames(&mut app, 2);
+    open(&mut app, PageRef::Companies);
+    app.world_mut()
+        .write_message(game::workspace::PaneAction::Split(
+            None,
+            game::workspace::Axis::Row,
+        ));
+    frames(&mut app, 2);
+    open(&mut app, PageRef::Industries);
+    app.world_mut()
+        .write_message(WindowAction::New(Some(PageRef::Company(co))));
+    frames(&mut app, 2);
+    app.world_mut()
+        .write_message(WindowAction::New(Some(PageRef::Province(pr))));
+    frames(&mut app, 2);
+    app.world_mut()
+        .resource_mut::<SimRunner>()
+        .set_budget(FAST_BUDGET);
+    send(&mut app, Control::SetSpeed(5));
+    let end = sim::time::DateTime::midnight(sim::time::Date::ymd(2020, 4, 10));
+    let mut pauses = Vec::new();
+    for _ in 0..20_000 {
+        frames(&mut app, 1);
+        let c = app.world().resource::<Views>().clock().clone();
+        if c.now >= end {
+            break;
+        }
+        if c.paused {
+            pauses.push(c.now);
+            send(&mut app, Control::Resume);
+        }
+    }
+    assert!(pauses.len() >= 6, "{pauses:?}");
+}
+
+/// D803: a pause flushes the paced jobs, but a resume into max speed does not (nothing it would
+/// show is final), while an Omniscient toggle at max speed still does.
+#[test]
+fn a_resume_into_max_speed_keeps_the_pacing() {
+    let mut app = shell_app();
+    let co = listed_company(&app);
+    open(&mut app, PageRef::Company(co));
+    run_fast(&mut app);
+    frames(&mut app, 5);
+    let flushing = |app: &App| app.world().resource::<game::pace::UiPace>().flushing();
+    assert!(!flushing(&app));
+    send(&mut app, Control::Pause);
+    frames(&mut app, 1);
+    assert!(flushing(&app), "a pause flushes");
+    frames(&mut app, 1);
+    send(&mut app, Control::Resume);
+    frames(&mut app, 1);
+    assert!(
+        !flushing(&app) && app.world().resource::<game::pace::UiPace>().paced(),
+        "a resume into max speed stays paced"
+    );
+    if cfg!(debug_assertions) {
+        send(&mut app, Control::SetOmniscient(true));
+        frames(&mut app, 1);
+        assert!(flushing(&app), "an Omniscient toggle flushes");
+    }
+}

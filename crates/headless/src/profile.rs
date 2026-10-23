@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 use std::fmt::Write as _;
 use std::time::{Duration, Instant};
 
-use sim::time::{Slot, TickObserver, TickPart};
+use sim::time::{DateTime, Slot, TickFacts, TickObserver, TickPart};
 
 /// Jobs listed under the slot table.
 const TOP_JOBS: usize = 15;
@@ -146,5 +146,78 @@ impl TickObserver for Profiler {
             TickPart::Views => self.views.add(d),
             TickPart::View(name) => self.view.entry(name).or_default().add(d),
         }
+    }
+}
+
+/// The kinds of tick `run --tick-costs` times apart (as the game's bridge does, D776): any hour
+/// but midnight, a day, a month's start, and each of a quarter's events (spec 4.4).
+const TICK_KINDS: [&str; 7] = [
+    "hourly",
+    "daily",
+    "monthly",
+    "quarter start",
+    "release",
+    "price move",
+    "plan lock",
+];
+
+fn tick_kind(now: DateTime) -> usize {
+    let f = TickFacts::new(now);
+    if f.is_quarter_start() {
+        3
+    } else if f.is_release_tick() {
+        4
+    } else if f.is_price_move_tick() {
+        5
+    } else if f.is_lock_tick() {
+        6
+    } else if f.is_month_start() {
+        2
+    } else if f.is_midnight() {
+        1
+    } else {
+        0
+    }
+}
+
+/// `run --tick-costs` (D801): the wall time of each whole, unobserved `Sim::step` (jobs and
+/// view refresh, as the game runs it), by the kind of tick, so the quarter's ticks can be priced
+/// without a window. Timing never changes the run.
+#[derive(Debug, Default)]
+pub struct TickCosts {
+    by_kind: [Vec<Duration>; 7],
+}
+
+impl TickCosts {
+    /// The tick that ended at `now` took `d`.
+    pub fn add(&mut self, now: DateTime, d: Duration) {
+        self.by_kind[tick_kind(now)].push(d);
+    }
+
+    /// One line a kind: count, mean, p50, p99 and the longest, in ms.
+    pub fn table(&self) -> String {
+        let mut out = format!(
+            "{:14} {:>7} {:>9} {:>9} {:>9} {:>9}
+",
+            "tick", "n", "mean ms", "p50 ms", "p99 ms", "max ms"
+        );
+        for (name, v) in TICK_KINDS.iter().zip(&self.by_kind) {
+            if v.is_empty() {
+                continue;
+            }
+            let mut ms: Vec<f64> = v.iter().map(|d| d.as_secs_f64() * 1e3).collect();
+            ms.sort_by(f64::total_cmp);
+            let pct = |p: f64| ms[((ms.len() - 1) as f64 * p).round() as usize];
+            let _ = writeln!(
+                out,
+                "{name:14} {:>7} {:>9.3} {:>9.3} {:>9.3} {:>9.3}",
+                ms.len(),
+                ms.iter().sum::<f64>() / ms.len() as f64,
+                pct(0.5),
+                pct(0.99),
+                ms[ms.len() - 1]
+            );
+        }
+        out
     }
 }

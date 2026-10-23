@@ -122,27 +122,63 @@ fn pause_alerts_pause_after_their_tick() {
             PauseReason::Alert(AlertKind::EarningsDay)
         )
     );
-    // Plan lock is Log: it posts a notice but does not pause; the recap pauses.
+    // Plan lock pauses by default (D800), then the recap.
     s.apply(Control::Resume).unwrap();
-    let mut saw_lock = false;
+    let (t, r) = run_to_pause(&mut s);
+    assert_eq!(
+        (t, r),
+        (at(2020, 1, 9, 0), PauseReason::Alert(AlertKind::PlanLock))
+    );
+    // Set to Log, it posts a notice but does not pause.
+    s.apply(Control::SetAlert {
+        kind: AlertKind::PlanLock,
+        level: AlertLevel::Log,
+    })
+    .unwrap();
+    s.apply(Control::Resume).unwrap();
+    assert_eq!(
+        run_to_pause(&mut s),
+        (
+            at(2020, 3, 26, 0),
+            PauseReason::Alert(AlertKind::QuarterlyRecap)
+        )
+    );
+    // Quarter start (D800) pauses at the quarter's first tick, with the new quarter.
+    s.apply(Control::Resume).unwrap();
+    let mut quarter_start = Vec::new();
     loop {
         let n = s.step();
-        saw_lock |= n.iter().any(|n| {
-            matches!(
-                n,
-                Notice::Alert {
-                    kind: AlertKind::PlanLock,
-                    level: AlertLevel::Log,
-                    ..
-                }
-            )
-        });
+        quarter_start.extend(
+            n.iter()
+                .filter(|n| {
+                    matches!(
+                        n,
+                        Notice::Alert {
+                            kind: AlertKind::QuarterStart,
+                            ..
+                        }
+                    )
+                })
+                .cloned(),
+        );
         if s.controls().paused {
             break;
         }
     }
-    assert!(saw_lock);
-    assert_eq!(s.now(), at(2020, 3, 26, 0));
+    assert_eq!(s.now(), at(2020, 4, 1, 0));
+    assert_eq!(
+        quarter_start,
+        [Notice::Alert {
+            kind: AlertKind::QuarterStart,
+            level: AlertLevel::Pause,
+            payload: AlertPayload::Quarter(sim::time::Quarter { year: 2020, q: 2 }),
+        }]
+    );
+    s.apply(Control::SetAlert {
+        kind: AlertKind::QuarterStart,
+        level: AlertLevel::Off,
+    })
+    .unwrap();
     // Off posts nothing and does not pause.
     s.apply(Control::SetAlert {
         kind: AlertKind::EarningsDay,

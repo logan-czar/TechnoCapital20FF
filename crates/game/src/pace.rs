@@ -9,7 +9,10 @@
 //! Nothing is paced when the sim is paused or at speeds 1 to 4, or in a frame whose runner
 //! controls changed (a pause, a speed change, Omniscient on or off): then every job that is
 //! owed runs at once, so a paused page shows the final values in the frame the pause lands in,
-//! and no estimate shown before an Omniscient toggle survives it.
+//! and no estimate shown before an Omniscient toggle survives it. A change that leaves the sim
+//! fast-forwarding (a resume or a speed change into max speed, an alert level) is the exception
+//! unless it toggled Omniscient: the pacing goes on, so a resume from an auto-pause does not
+//! refresh every page in its first, fully stepped frame (D803).
 
 use bevy::prelude::*;
 
@@ -52,6 +55,8 @@ pub struct UiPace {
     sim_over: bool,
     /// Bumped when a hidden pane shows again, so the live values it held update at once.
     wake: u64,
+    /// Omniscient at the last frame, to tell a toggle from another control change (D803).
+    omniscient: bool,
 }
 
 impl UiPace {
@@ -159,7 +164,11 @@ fn start_pace(
     mut pace: ResMut<UiPace>,
 ) {
     pace.fast = controls.as_ref().is_some_and(|c| fast_forward(c));
-    pace.flush = controls.as_ref().is_some_and(|c| c.is_changed());
+    let omniscient = controls.as_ref().is_some_and(|c| c.omniscient);
+    let toggled = std::mem::replace(&mut pace.omniscient, omniscient) != omniscient;
+    // A control change flushes, but not one that leaves the sim fast-forwarding without an
+    // Omniscient toggle: nothing a flush would show is final then (D803).
+    pace.flush = controls.as_ref().is_some_and(|c| c.is_changed()) && (!pace.fast || toggled);
     pace.now = time.elapsed_secs_f64();
     pace.heavy_taken = false;
     pace.sim_heavy = rate

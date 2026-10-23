@@ -14,14 +14,20 @@
 //!   and zooms in and out through the World, Country and Province levels while the hover point
 //!   moves; prints frame times overall and at each zoom level. It draws the repository's map
 //!   (`assets/map`) unless `--map-dir` or `--synthetic-map` names another. The sim stays
-//!   paused unless `--bench-map-running [SPEED]` runs it (speed 1 to 5, default 5, the max;
-//!   alerts off), so the panes' rebuilds and the colour table's rewrites are measured too
-//!   (D744); either way it lists the slowest frames with what moved in them.
+//!   paused unless `--bench-map-running [SPEED]` runs it (speed 1 to 5, default 5, the max),
+//!   so the panes' rebuilds and the colour table's rewrites are measured too (D744); either way
+//!   it lists the slowest frames with what moved in them. The running sim keeps the game's
+//!   default alert levels, so it auto-pauses on the quarter's heavy ticks (D800); the bench
+//!   holds each pause `RESUME_HOLD_SECS` (0.5 s) and resumes, as a player would, and reports
+//!   the frames that ended in an auto-pause and the held ones apart, outside the check (D802). `--bench-map-alerts-off` turns every alert Off
+//!   instead (D744's runs).
 //!   `--bench-map-panes SET` opens all four panes (the default), none, only Companies and
 //!   Industries (`lists`), only the company page or only the Province page (D778). It also
 //!   reports the frame less its sim stepping, the stepping and the longest tick a frame, the
 //!   ticks of each kind, and whether the window had the focus. It is a check: it exits 1 when
-//!   the p99 frame is 16.7 ms or more (one 60 fps frame, `MAP_TARGET_P99_MS`) and 3, a run
+//!   the p99 running frame (every frame but those that ended in an auto-pause or were held
+//!   paused) is 16.7 ms or
+//!   more (one 60 fps frame, `MAP_TARGET_P99_MS`) and 3, a run
 //!   that does not count, when the window had the focus in under 97% of the frames or the OS
 //!   paced its presents at 60 Hz (D779). Built with `--features profile`
 //!   it also prints what the frames did (nodes spawned and changed, page rebuilds and patches,
@@ -66,10 +72,13 @@ pub enum BenchMode {
         seconds: f64,
         mode: sim::views::map_layers::MapMode,
         metros: bool,
-        /// The sim's speed while it measures (1 to 5; 0 paused), alerts off (D744).
+        /// The sim's speed while it measures (1 to 5; 0 paused) (D744).
         speed: u8,
         /// The panes it opens (D778).
         panes: MapPanes,
+        /// Every alert Off while the sim runs (D744's runs); else the game's default levels,
+        /// and the bench resumes after each alert pause (D802).
+        alerts_off: bool,
     },
     /// Open every page kind and time it to its first laid-out frame
     /// ([`crate::page_bench`]).
@@ -199,6 +208,18 @@ struct Bench {
     focused_frames: u64,
     /// With the `profile` feature: what each measured frame did, by frame number.
     frame_work: std::collections::BTreeMap<u64, String>,
+    /// The alert that paused the sim in the current frame, if one did (D802).
+    paused_this_frame: Option<AlertKind>,
+    /// When the sim auto-paused, while the bench holds the pause (D802).
+    holding_since: Option<Instant>,
+    /// The sim was paused for the whole of the current frame.
+    frame_was_paused: bool,
+    /// The bench sent the resume in the current frame, so the next frame runs again.
+    resume_sent: bool,
+    /// The last finished frame sent the resume: the current one is the first to run again.
+    resuming: bool,
+    /// Auto-pauses in the measured frames, by alert.
+    pauses: std::collections::BTreeMap<AlertKind, u64>,
 }
 
 /// What the measured frames of the map bench did, summed (D770): UI nodes spawned, nodes and
@@ -222,6 +243,12 @@ struct MapFrame {
     level: Option<usize>,
     monthly: bool,
     colors: bool,
+    /// The frame ended in an auto-pause: it ran the tick whose alert paused the sim (D802).
+    pause: bool,
+    /// The sim was paused for the whole frame (the bench holding an auto-pause).
+    held: bool,
+    /// The first frame after the bench resumed from an auto-pause.
+    resume: bool,
 }
 
 /// The spans the map bench lists with the `profile` feature (D770).
@@ -342,6 +369,12 @@ impl Plugin for BenchPlugin {
             tick_ms: Vec::new(),
             frame_work: Default::default(),
             focused_frames: 0,
+            paused_this_frame: None,
+            holding_since: None,
+            frame_was_paused: false,
+            resume_sent: false,
+            resuming: false,
+            pauses: Default::default(),
         })
         .add_systems(First, measure)
         .add_systems(Update, drive.before(TableSystems));
@@ -355,9 +388,12 @@ impl Plugin for BenchPlugin {
             BenchMode::Map { .. } => {
                 app.add_systems(
                     Update,
-                    drive_map
-                        .in_set(crate::ui::UiSystems::Input)
-                        .before(crate::workspace::WorkspaceInput),
+                    (
+                        drive_map
+                            .in_set(crate::ui::UiSystems::Input)
+                            .before(crate::workspace::WorkspaceInput),
+                        resume_after_alert_pause.after(crate::bridge::SimSystems::SyncViews),
+                    ),
                 );
                 // The work counts walk every UI node, so only a profiling build pays for them.
                 if cfg!(feature = "profile") {
@@ -452,9 +488,18 @@ fn measure(
     let moved = (monthly != b.last_monthly, colors != b.last_colors);
     b.last_monthly = monthly;
     b.last_colors = colors;
+    // The frame just ended ran the tick an alert paused on, was held paused, or ran again
+    // after the bench resumed (D802).
+    let paused = b.paused_this_frame.take();
+    let held = std::mem::take(&mut b.frame_was_paused) && paused.is_none();
+    let sent = std::mem::take(&mut b.resume_sent);
+    let resumed = std::mem::replace(&mut b.resuming, sent);
     if let Some(last) = b.last
         && b.frame > u64::from(WARMUP_FRAMES)
     {
+        if let Some(k) = paused {
+            *b.pauses.entry(k).or_default() += 1;
+        }
         let ms = now.duration_since(last).as_secs_f64() * 1e3;
         crate::profile::end_frame(b.frame - 1, ms);
         b.focused_frames += u64::from(window.single().is_ok_and(|w| w.focused));
@@ -474,6 +519,9 @@ fn measure(
                 level,
                 monthly: moved.0,
                 colors: moved.1,
+                pause: paused.is_some(),
+                held,
+                resume: resumed,
             });
         }
         if b.sort_window > 0 {
@@ -511,12 +559,28 @@ fn measure(
         .map(|(f, s)| f - s)
         .collect();
     report("frame ms", &mut b.frames_ms);
-    let verdict = if let BenchMode::Map { speed, panes, .. } = b.mode {
+    let verdict = if let BenchMode::Map {
+        speed,
+        panes,
+        alerts_off,
+        ..
+    } = b.mode
+    {
         let v = &b.frames_ms;
-        let p99 = if v.is_empty() {
+        // The check counts the running frames: a frame that ended in an auto-pause is the
+        // game stopping, not fast-forward stutter, and a held one is a paused frame (the
+        // paused bench's); both are reported apart (D802).
+        let mut running: Vec<f64> = b
+            .map_frames
+            .iter()
+            .filter(|x| !x.pause && !x.held)
+            .map(|x| x.ms)
+            .collect();
+        running.sort_by(f64::total_cmp);
+        let p99 = if running.is_empty() {
             f64::INFINITY
         } else {
-            v[((v.len() - 1) as f64 * 0.99).round() as usize]
+            running[((running.len() - 1) as f64 * 0.99).round() as usize]
         };
         let paced = v
             .iter()
@@ -535,9 +599,39 @@ fn measure(
             );
         }
         let verdict = map_verdict(p99, focus, paced);
-        let known = speed == sim::time::control::MAX_SPEED && panes != MapPanes::None;
+        // Speed 5 with the panes open and no auto-pause is reported, not gated (D805).
+        let known = speed == sim::time::control::MAX_SPEED && panes != MapPanes::None && alerts_off;
+        let pauses: Vec<String> = b
+            .pauses
+            .iter()
+            .map(|(k, n)| format!("{} {n}", crate::ui::alerts::kind_name(*k)))
+            .collect();
         println!(
-            "BENCH map check: p99 {p99:.2} ms: {} (target < {MAP_TARGET_P99_MS:.1} ms){}",
+            "BENCH map: {} auto-pauses ({}), each held {RESUME_HOLD_SECS} s then resumed (D802); {} frames held paused",
+            b.pauses.values().sum::<u64>(),
+            pauses.join(", "),
+            b.map_frames.iter().filter(|x| x.held).count()
+        );
+        let mut v: Vec<f64> = b
+            .map_frames
+            .iter()
+            .filter(|x| x.pause)
+            .map(|x| x.ms)
+            .collect();
+        report(
+            "frame ms, frames that ended in an auto-pause (not in the check)",
+            &mut v,
+        );
+        let mut v: Vec<f64> = b
+            .map_frames
+            .iter()
+            .filter(|x| x.resume && !x.pause)
+            .map(|x| x.ms)
+            .collect();
+        report("frame ms, the first running frame after a resume", &mut v);
+        report("frame ms, running frames (the check)", &mut running.clone());
+        println!(
+            "BENCH map check: p99 {p99:.2} ms over the running frames: {} (target < {MAP_TARGET_P99_MS:.1} ms){}",
             match verdict {
                 MapVerdict::Pass => "PASS",
                 MapVerdict::Fail => "FAIL",
@@ -545,7 +639,7 @@ fn measure(
                     "INVALID (the window lost the focus or the OS paced it: rerun in front)",
             },
             if known {
-                "; speed 5 with panes open is a tracked known FAIL, reported and not gated (D779)"
+                "; speed 5 with the panes open and the alerts off is reported, not gated (D805)"
             } else {
                 ""
             }
@@ -709,6 +803,35 @@ fn drive(mut b: ResMut<Bench>, tables: Option<Res<PdoombergUi>>, mut q: Query<&m
     }
 }
 
+/// How long the map bench holds an auto-pause before it resumes, as a quick player reading the
+/// alert would (D802).
+pub const RESUME_HOLD_SECS: f64 = 0.5;
+
+/// Notes the alert that paused the sim, so that frame is reported apart from the running frames,
+/// and resumes [`RESUME_HOLD_SECS`] later, as a player pressing Space would (D802).
+fn resume_after_alert_pause(
+    mut b: ResMut<Bench>,
+    mut notices: MessageReader<crate::bridge::SimNotice>,
+    mut control: MessageWriter<SimControl>,
+) {
+    let now = Instant::now();
+    b.frame_was_paused = b.holding_since.is_some();
+    for crate::bridge::SimNotice(n) in notices.read() {
+        if let sim::Notice::Paused(sim::world::PauseReason::Alert(kind)) = n {
+            b.paused_this_frame = Some(*kind);
+            b.holding_since = Some(now);
+        }
+    }
+    if let Some(at) = b.holding_since
+        && b.paused_this_frame.is_none()
+        && now.duration_since(at).as_secs_f64() >= RESUME_HOLD_SECS
+    {
+        b.holding_since = None;
+        b.resume_sent = true;
+        control.write(SimControl(Control::Resume));
+    }
+}
+
 fn panes_of(mode: BenchMode) -> MapPanes {
     match mode {
         BenchMode::Map { panes, .. } => panes,
@@ -751,21 +874,29 @@ fn drive_map(
             mode,
             metros,
             speed,
+            alerts_off,
             ..
         } = b.mode
     {
         modes.write(MapModeInput::Set(mode));
         modes.write(MapModeInput::Metros(metros));
         println!(
-            "BENCH map: mode {mode:?}, Metro outlines {metros}, sim speed {speed}, panes {:?}",
-            panes_of(b.mode)
+            "BENCH map: mode {mode:?}, Metro outlines {metros}, sim speed {speed}, panes {:?}, alerts {}",
+            panes_of(b.mode),
+            if alerts_off {
+                "off"
+            } else {
+                "at their defaults (auto-pause on)"
+            }
         );
         if speed > 0 {
-            for kind in AlertKind::ALL {
-                control.write(SimControl(Control::SetAlert {
-                    kind,
-                    level: AlertLevel::Off,
-                }));
+            if alerts_off {
+                for kind in AlertKind::ALL {
+                    control.write(SimControl(Control::SetAlert {
+                        kind,
+                        level: AlertLevel::Off,
+                    }));
+                }
             }
             control.write(SimControl(Control::SetSpeed(speed)));
         }

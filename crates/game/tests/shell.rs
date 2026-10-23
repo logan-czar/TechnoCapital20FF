@@ -122,11 +122,18 @@ fn the_shell_runs_the_sim_at_all_speeds() {
 }
 
 /// M7.6 done line: Earnings day and the Quarterly recap pause by default, each with an icon in
-/// the alert row; Plan lock (Log) goes only to the event log.
+/// the alert row; Plan lock set to Log goes only to the event log (its default is Pause, D800).
 #[test]
 fn default_alerts_pause_and_show() {
     let mut app = shell_app();
     let q1 = Quarter { year: 2020, q: 1 };
+    send(
+        &mut app,
+        Control::SetAlert {
+            kind: AlertKind::PlanLock,
+            level: AlertLevel::Log,
+        },
+    );
     send(&mut app, Control::SetSpeed(5));
     let mut pauses = Vec::new();
     for _ in 0..20_000 {

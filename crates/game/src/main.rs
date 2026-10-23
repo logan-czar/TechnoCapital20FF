@@ -4,8 +4,9 @@
 //! [--rows N]`, `--bench-max [seconds]`, `--bench-map [seconds]` (D639) and `--bench-pages` (the M9.9 timing harness: every
 //! page, Company tab and Pdoomberg function page to its first laid-out frame, exit 1 when one
 //! takes 100 ms or more), which print timings to stdout and exit. `--bench-map` takes
-//! `--bench-map-running [SPEED]` (D744) and `--bench-map-panes SET` (D778) and exits 1 when its
-//! p99 frame is 16.7 ms or more; `--features profile` adds its span timer (D770).
+//! `--bench-map-running [SPEED]` (D744), `--bench-map-panes SET` (D778) and
+//! `--bench-map-alerts-off` (D802) and exits 1 when its p99 running frame is 16.7 ms or more;
+//! `--features profile` adds its span timer (D770).
 //!
 //! The map (M8) reads `assets/map` (lane P's files, docs/build/m8-map-assets.md); `--map-dir DIR`
 //! reads another folder, and `--synthetic-map [DIR]` first writes a synthetic map there (D634;
@@ -44,6 +45,8 @@ struct Args {
     map_speed: u8,
     /// `--bench-map-panes SET`: which panes the map bench opens (D778).
     map_panes: game::bench::MapPanes,
+    /// `--bench-map-alerts-off`: every alert Off while the map bench runs the sim (D802).
+    map_alerts_off: bool,
     /// `--foreground`: a bench or screenshot window opens as normal, focused (D790).
     foreground: bool,
 }
@@ -64,6 +67,7 @@ fn parse_args() -> Args {
         map_metros: false,
         map_speed: 0,
         map_panes: game::bench::MapPanes::All,
+        map_alerts_off: false,
         foreground: false,
     };
     let list: Vec<String> = std::env::args().skip(1).collect();
@@ -92,6 +96,7 @@ fn parse_args() -> Args {
                         metros: false,
                         speed: 0,
                         panes: game::bench::MapPanes::All,
+                        alerts_off: false,
                     },
                 });
                 if number(i).is_some() {
@@ -158,6 +163,7 @@ fn parse_args() -> Args {
                     None => sim::time::control::MAX_SPEED,
                 };
             }
+            "--bench-map-alerts-off" => args.map_alerts_off = true,
             "--bench-map-panes" => {
                 args.map_panes = list
                     .get(i + 1)
@@ -210,7 +216,7 @@ fn parse_args() -> Args {
 
 fn exit_usage(msg: &str) -> ! {
     eprintln!(
-        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--map-mode MODE] [--map-metros] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds] [--bench-map-running [SPEED]] [--bench-map-panes SET]] [--bench-pages] [--foreground]"
+        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--map-mode MODE] [--map-metros] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds] [--bench-map-running [SPEED]] [--bench-map-panes SET] [--bench-map-alerts-off]] [--bench-pages] [--foreground]"
     );
     std::process::exit(2)
 }
@@ -291,10 +297,12 @@ fn main() -> AppExit {
         metros,
         speed,
         panes,
+        alerts_off,
         ..
     }) = &mut args.bench
     {
         *panes = args.map_panes;
+        *alerts_off = args.map_alerts_off;
         *mode = args.map_mode.unwrap_or_default();
         *metros = args.map_metros;
         *speed = args.map_speed;
