@@ -304,7 +304,12 @@ fn show_clock(
     mut pause: Query<(&mut ButtonLook, &Children), (With<PauseButton>, Without<SpeedButton>)>,
     mut speeds: Query<(&SpeedButton, &mut ButtonLook), Without<PauseButton>>,
 ) {
-    if !paced.due(views.is_changed(), &mut pace, crate::pace::LIVE_TEXT_SECS, false) {
+    if !paced.due(
+        views.is_changed(),
+        &mut pace,
+        crate::pace::LIVE_TEXT_SECS,
+        false,
+    ) {
         return;
     }
     let c = views.clock();

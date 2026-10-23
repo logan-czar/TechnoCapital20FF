@@ -309,11 +309,11 @@ fn a_hidden_pane_waits_and_refreshes_when_shown() {
     assert_ne!(monthly_version(&app), start, "the monthly views moved");
     assert_eq!(builds(&app), (p0, f0), "a hidden page does not refresh");
     app.world_mut().write_message(WindowAction::ToggleHidden);
-    // The frame it shows patches the page; the Years table appeared since it hid, so the patch
-    // finds a new shape and the page rebuilds in full the frame after (D772).
-    frames(&mut app, 2);
+    // The frame it shows rebuilds the page in full (not a patch: nothing it showed before the
+    // hide stays a frame, D772).
+    frames(&mut app, 1);
     let (p1, f1) = builds(&app);
-    assert!(p1 + f1 > p0 + f0, "shown again: it refreshes at once");
+    assert!(f1 > f0 && p1 == p0, "shown again: it rebuilds at once");
     assert!(
         spans.iter().all(
             |&e| app.world().get_entity(e).is_err() || app.world().get::<HeldLive>(e).is_none()

@@ -190,6 +190,10 @@ pub struct PaneFrame {
     /// When its body was last built or patched (real seconds), for the fast-forward pacing of
     /// view-move refreshes (D773).
     refreshed: f64,
+    /// The pane was hidden when last looked at: when it shows, its page rebuilds rather than
+    /// patches, so nothing it showed before (an estimate, or an exact value before an
+    /// Omniscient toggle) stays a frame (D772).
+    was_hidden: bool,
 }
 
 impl PaneFrame {
@@ -710,6 +714,7 @@ fn spawn_frame(commands: &mut Commands, pane: PaneId) -> Entity {
                 body,
                 drawn: Drawn::default(),
                 refreshed: f64::NEG_INFINITY,
+                was_hidden: false,
             },
             Node {
                 flex_grow: 1.0,
@@ -852,6 +857,9 @@ fn render_panes(
             versions,
             sections: cfg.sections.get(kind.key()).cloned(),
         };
+        let shown = pane_shown(&ws, pane);
+        let was_hidden = std::mem::replace(&mut frame.was_hidden, !shown);
+        let woke = shown && was_hidden;
         let rebuild = marked.contains(frame.body);
         if frame.drawn == want && !rebuild {
             continue;
@@ -862,13 +870,13 @@ fn render_panes(
             && frame.drawn.sections == want.sections
             && frame.drawn.versions != want.versions;
         if only_views
-            && (!pane_shown(&ws, pane)
-                || !pace.may_run(frame.refreshed, crate::pace::PAGE_REFRESH_SECS, true))
+            && !woke
+            && (!shown || !pace.may_run(frame.refreshed, crate::pace::PAGE_REFRESH_SECS, true))
         {
             // Not now: the frame keeps the versions it drew, so a later frame refreshes it (a
             // hidden pane when it shows: the workspace changes then).
             want.versions.clone_from(&frame.drawn.versions);
-            *owed |= pane_shown(&ws, pane);
+            *owed |= shown;
         }
         let header_stale = new_page
             || frame.drawn.back != want.back
@@ -889,6 +897,7 @@ fn render_panes(
         }
         if body_stale {
             let patch = only_views
+                && !woke
                 && !controls_changed
                 && spec.is_some_and(|s| s.patchable)
                 && built.get(frame.body).is_ok_and(|b| b.0.page == page);
