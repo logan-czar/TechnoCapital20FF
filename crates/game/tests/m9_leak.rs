@@ -18,6 +18,13 @@
 //! ```
 //!
 //! Without that, a release run stops with a message saying so instead of passing unchecked.
+//!
+//! M8 (D705): the shell runs on a synthetic map of every province (one island per province
+//! file), so the map's screens are scanned too: every map mode's legend and readouts (each
+//! development track, the Industry track and every industry's assets, the HQ pins with every
+//! filter kind, the zones), the HQ pins' sizes (never by a true revenue), the heat values, the
+//! province hover card of every province where a banded company has its HQ or a unit, and the
+//! zone hover card of every zone.
 
 mod common;
 
@@ -36,6 +43,11 @@ use game::command::ResultRow;
 use game::command::index::NameIndex;
 use game::config::UiConfig;
 use game::links::{HOVER_DELAY_SECS, HoverCard, HoverCardPanel, Link};
+use game::map::card::{MapCard, MapCardPanel};
+use game::map::modes::MapModeInput;
+use game::map::picking::MapBitmap;
+use game::map::pins::{PinNode, pin_px};
+use game::map::{MapInput, MapState, MapView};
 use game::pages::{OpenPdoomberg, PageKind, PageRef, PdbFunction};
 use game::pdoomberg::PdoombergUi;
 use game::table::format::{self, GainUnit};
@@ -45,8 +57,10 @@ use game::workspace::{OpenPage, OpenTarget, PaneFrame, Workspace};
 use sim::time::Quarter;
 use sim::time::quarter::recap_tick;
 use sim::views::estimate::StatementLine;
+use sim::views::map_layers::{DevTrack, HqFilter, LayerValues, MapMode, PinTarget};
 use sim::views::statements::StatementPeriod;
 use sim::world::{CompanyId, IndustryId};
+use sim::world::{Ordinal, ProvinceId};
 use sim::{Control, Sim, SimViews};
 
 /// The bench's world (D459): seed 1.
@@ -54,6 +68,26 @@ const SEED: u64 = 1;
 const Q1: Quarter = Quarter { year: 2020, q: 1 };
 /// Leaks printed before the test fails.
 const SHOWN: usize = 40;
+/// The synthetic world map's width (D705).
+const MAP_WIDTH: u32 = 1024;
+
+/// The folder the synthetic world map is written to (removed when the test ends).
+fn map_dir() -> &'static std::path::Path {
+    static DIR: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
+    DIR.get_or_init(|| {
+        let d = std::env::temp_dir().join(format!("tc20ff-leak-map-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&d);
+        std::fs::create_dir_all(&d).unwrap();
+        d
+    })
+}
+
+/// The starting data with the synthetic world map (D705).
+fn mdata() -> sim_data::WorldData {
+    static DATA: std::sync::OnceLock<sim_data::WorldData> = std::sync::OnceLock::new();
+    DATA.get_or_init(|| game::test_support::with_world_map(data(), map_dir(), MAP_WIDTH))
+        .clone()
+}
 
 // ---- Numbers in text and in views ----
 
@@ -455,7 +489,7 @@ fn truths(n: &SimViews, o: &SimViews) -> Truths {
 /// The Omniscient twin of `sim`'s state: its save loaded into a second sim, Omniscient on, and
 /// loaded again so every view (the recap and projection too) is built with it.
 fn omniscient_twin(sim: &Sim) -> SimViews {
-    let mut twin = Sim::new(data(), SEED).unwrap();
+    let mut twin = Sim::new(mdata(), SEED).unwrap();
     twin.load_bytes(&sim.save_bytes()).unwrap();
     if twin.apply(Control::SetOmniscient(true)).is_err() {
         panic!(
@@ -577,6 +611,8 @@ fn shell_app(sim: Sim) -> App {
         .add_plugins(SimBridgePlugin::new(sim))
         .add_plugins(ShellPlugin);
     app.update();
+    game::test_support::install_map_bitmap(app.world_mut(), map_dir());
+    frames(&mut app, 2);
     app
 }
 
@@ -730,6 +766,223 @@ fn canary(app: &mut App, t: &Truths, page: &PageRef) {
     app.world_mut().entity_mut(table).despawn();
 }
 
+// ---- The map's screens (M8, D705) ----
+
+/// Every mode the scan shows: each development track, the Industry track and every industry's
+/// assets, the HQ pins unfiltered, listed, private and by each industry, and the zones.
+fn scan_modes(v: &SimViews) -> Vec<MapMode> {
+    let n = v.industry_rows.get().rows.len();
+    let mut out = vec![MapMode::Political];
+    out.extend(DevTrack::ALL.iter().map(|&t| MapMode::Development(t)));
+    out.push(MapMode::Industry(None));
+    for i in 0..n {
+        out.push(MapMode::Industry(Some(sim::world::IndustryId::from_index(
+            i,
+        ))));
+    }
+    for listed in [None, Some(true), Some(false)] {
+        out.push(MapMode::CompanyHqs(HqFilter {
+            listed,
+            ..HqFilter::default()
+        }));
+    }
+    for i in 0..n {
+        out.push(MapMode::CompanyHqs(HqFilter {
+            industry: Some(sim::world::IndustryId::from_index(i)),
+            ..HqFilter::default()
+        }));
+    }
+    out.push(MapMode::FinancialZones);
+    out
+}
+
+fn set_mode(app: &mut App, m: MapMode) {
+    app.world_mut().write_message(MapModeInput::Set(m));
+    frames(app, 2);
+    assert_eq!(
+        app.world()
+            .resource::<game::map::modes::CurrentLayer>()
+            .layer
+            .mode,
+        m
+    );
+}
+
+/// Everything on the map node: the bar, the legend, the labels and the pins (their links).
+fn read_map(app: &mut App, names: &HashMap<String, PageRef>) -> Screen {
+    let view = app
+        .world_mut()
+        .query_filtered::<Entity, With<MapView>>()
+        .single(app.world())
+        .unwrap();
+    let mut s = Screen::default();
+    scan(app, view, names, &mut s);
+    s
+}
+
+/// An industry heat map colours a province by its units' assets as shown: where a banded
+/// company has a unit of the industry, the value is never the true sum (the Omniscient twin's
+/// layer). The values are colours, not text; the legend's printed stops are scanned with the
+/// map's texts. Returns how many banded provinces it checked.
+fn check_heat(
+    app: &App,
+    i: sim::world::IndustryId,
+    n: &SimViews,
+    o: &SimViews,
+    what: &str,
+    leaks: &mut Vec<Leak>,
+) -> usize {
+    let layer = &app
+        .world()
+        .resource::<game::map::modes::CurrentLayer>()
+        .layer;
+    let truth = o.get_map_layer(MapMode::Industry(Some(i)));
+    let (LayerValues::Scalars(shown), LayerValues::Scalars(truth)) = (&layer.values, &truth.values)
+    else {
+        panic!("a heat map")
+    };
+    let mut banded: BTreeSet<usize> = BTreeSet::new();
+    for u in &n.units.get().units {
+        if u.industry == i && u.gross_assets.is_band() {
+            banded.insert(u.base_province.index());
+        }
+    }
+    for &p in &banded {
+        if shown[p] == truth[p] && truth[p] != 0.0 {
+            leaks.push(format!(
+                "{what}: province {p} is coloured by its true assets {}",
+                truth[p]
+            ));
+        }
+    }
+    // The legend's scale is the shown values' (its top their largest), never the truth's.
+    let top = shown.iter().copied().fold(0.0f32, f32::max);
+    let scale = layer.scale.as_ref().unwrap();
+    assert_eq!(scale.high as f32, top, "{what}: the scale's top");
+    let true_top = truth.iter().copied().fold(0.0f32, f32::max);
+    let at_top = shown.iter().position(|&x| x == top);
+    if at_top.is_some_and(|p| banded.contains(&p)) && scale.high as f32 == true_top {
+        leaks.push(format!("{what}: the legend's top is the true {true_top}"));
+    }
+    banded.len()
+}
+
+/// Every HQ pin is sized by the revenue the views show: the layer's size is the plain row's
+/// shown revenue, never the Omniscient truth of a banded company, and the pin's diameter
+/// follows it. Returns how many banded pins it checked.
+fn check_pins(app: &App, n: &SimViews, o: &SimViews, what: &str, leaks: &mut Vec<Leak>) -> usize {
+    let layer = &app
+        .world()
+        .resource::<game::map::modes::CurrentLayer>()
+        .layer;
+    let rows = &n.company_rows.get().rows;
+    let truth = &o.company_rows.get().rows;
+    let mut checked = 0;
+    for p in &layer.pins {
+        let PinTarget::Company(c) = p.target else {
+            continue;
+        };
+        let r = rows.iter().find(|r| r.id == c).unwrap();
+        assert_eq!(p.size, r.revenue_ttm.shown(), "{what}: {}'s pin", r.name);
+        if r.estimated {
+            let t = truth.iter().find(|r| r.id == c).unwrap().revenue_ttm;
+            let t = t.exact().expect("the twin's revenue is exact");
+            // Between the smallest and largest pin the diameter grows strictly with the revenue,
+            // so a diameter equal to the truth's would be sized by it.
+            let d = pin_px(t);
+            let clamped = d <= game::map::pins::PIN_MIN_PX || d >= game::map::pins::PIN_MAX_PX;
+            if p.size == t || (pin_px(p.size) == d && !clamped) {
+                leaks.push(format!(
+                    "{what}: {}'s pin is sized by its true revenue {t}",
+                    r.name
+                ));
+            }
+            checked += 1;
+        }
+    }
+    let mut world = app.world().try_query::<&PinNode>().unwrap();
+    for pin in world.iter(app.world()) {
+        if !matches!(pin.target, PinTarget::Company(_)) {
+            continue;
+        }
+        if let Some(p) = layer.pins.iter().find(|p| p.target == pin.target) {
+            assert_eq!(pin.diameter, pin_px(p.size), "{what}: the pin's diameter");
+        }
+    }
+    checked
+}
+
+/// Hovers province `p` on the map (zoomed in on its label point) and reads the hover card.
+fn read_map_card(app: &mut App, p: ProvinceId, names: &HashMap<String, PageRef>) -> Screen {
+    let shape = *app
+        .world()
+        .resource::<Views>()
+        .map_static
+        .get()
+        .shape(p)
+        .unwrap_or_else(|| panic!("province {} is on the map", p.0));
+    let size = app.world().resource::<MapBitmap>().size();
+    let m = Vec2::new(shape.label.0 as f32, shape.label.1 as f32);
+    let at = {
+        let mut state = app.world_mut().resource_mut::<MapState>();
+        let view = state.view;
+        let cam = state.camera.as_mut().unwrap();
+        cam.zoom(size, view, 30.0, view / 2.0);
+        cam.scale = cam.target;
+        cam.center = m;
+        cam.pan(size, view, Vec2::ZERO);
+        cam.to_view(size, view, m)
+    };
+    app.world_mut().write_message(MapInput::Hover(Some(at)));
+    frames(app, 2);
+    assert_eq!(
+        app.world().resource::<MapState>().hover,
+        Some(p),
+        "hovering {}",
+        p.0
+    );
+    assert!(app.world().resource::<MapCard>().card.is_some());
+    let panel = app
+        .world_mut()
+        .query_filtered::<Entity, With<MapCardPanel>>()
+        .single(app.world())
+        .unwrap();
+    let mut s = Screen::default();
+    scan(app, panel, names, &mut s);
+    s
+}
+
+/// The map card canary: a true value written into the hover card is found by the scan.
+fn map_canary(app: &mut App, t: &Truths, page: &PageRef) {
+    let Some(truth) = t
+        .hidden
+        .get(page)
+        .and_then(|h| h.keys().find(|k| k.starts_with('$')))
+        .cloned()
+    else {
+        panic!("{page:?} has true renderings");
+    };
+    let panel = app
+        .world_mut()
+        .query_filtered::<Entity, With<MapCardPanel>>()
+        .single(app.world())
+        .unwrap();
+    let e = app
+        .world_mut()
+        .spawn(Text::new(format!("Unit assets {truth}")))
+        .id();
+    app.world_mut().entity_mut(panel).add_child(e);
+    let mut s = Screen::default();
+    scan(app, panel, &t.names, &mut s);
+    let mut found = Vec::new();
+    check(t, "map canary", std::slice::from_ref(page), &s, &mut found);
+    assert!(
+        found.iter().any(|l| l.contains(truth.as_str())),
+        "the map canary {truth} was not found: {found:?}"
+    );
+    app.world_mut().entity_mut(e).despawn();
+}
+
 /// The companies whose figures are bands in `v`.
 fn banded(v: &SimViews) -> Vec<CompanyId> {
     v.company_rows
@@ -743,7 +996,14 @@ fn banded(v: &SimViews) -> Vec<CompanyId> {
 
 /// Scans every screen of one game state, `sim` with its views `v` (the views the truths were
 /// read against); returns how many screens it read.
-fn scan_state(sim: Sim, v: &SimViews, label: &str, t: &Truths, leaks: &mut Vec<Leak>) -> usize {
+fn scan_state(
+    sim: Sim,
+    v: &SimViews,
+    o: &SimViews,
+    label: &str,
+    t: &Truths,
+    leaks: &mut Vec<Leak>,
+) -> usize {
     let private = banded(v);
     assert!(private.len() > 100, "{} banded companies", private.len());
     let mut app = shell_app(sim);
@@ -755,6 +1015,9 @@ fn scan_state(sim: Sim, v: &SimViews, label: &str, t: &Truths, leaks: &mut Vec<L
     let names = &t.names;
     let index = app.world().resource::<NameIndex>().clone();
     let mut screens = 0;
+    let mut pin_checks = 0;
+    let mut map_canaried = false;
+    let mut heat_checks = 0;
     let mut read = |what: String, about: &[PageRef], s: Screen, leaks: &mut Vec<Leak>| {
         check(t, &format!("{label} {what}"), about, &s, leaks);
         screens += 1;
@@ -850,6 +1113,74 @@ fn scan_state(sim: Sim, v: &SimViews, label: &str, t: &Truths, leaks: &mut Vec<L
         let s = read_page(&mut app, page, names);
         read(page.key(), std::slice::from_ref(page), s, leaks);
     }
+    // M8 (D705): every map mode's legend, pins and readouts, with the subjects each shows.
+    for m in scan_modes(v) {
+        set_mode(&mut app, m);
+        // The HQ mode is about every banded company it pins. An industry heat map's printed
+        // stops are its own scale, a function of the shown values only (checked raw by
+        // `check_heat`), so its legend is scanned as a screen about no subject.
+        let about: Vec<PageRef> = match m {
+            MapMode::CompanyHqs(_) => private.iter().map(|&c| PageRef::Company(c)).collect(),
+            _ => Vec::new(),
+        };
+        let s = read_map(&mut app, names);
+        read(format!("map mode {m:?}"), &about, s, leaks);
+        if let MapMode::Industry(Some(i)) = m {
+            heat_checks += check_heat(&app, i, v, o, &format!("{label} {m:?}"), leaks);
+        }
+        pin_checks += check_pins(&app, v, o, &format!("{label} {m:?}"), leaks);
+    }
+    assert!(pin_checks > 100, "{pin_checks} banded pins checked");
+    assert!(heat_checks > 50, "{heat_checks} banded heat values checked");
+    // The province hover card of every province where a banded company has its HQ or a unit.
+    set_mode(&mut app, MapMode::Political);
+    let provinces: BTreeSet<ProvinceId> = pages
+        .iter()
+        .filter_map(|p| match p {
+            PageRef::Province(id) => Some(*id),
+            _ => None,
+        })
+        .collect();
+    for &p in &provinces {
+        let about: Vec<PageRef> = v
+            .province_cards
+            .get()
+            .get(p)
+            .map(|c| {
+                c.hqs
+                    .iter()
+                    .copied()
+                    .chain(
+                        c.units
+                            .iter()
+                            .filter_map(|&u| v.units.get().get(u).map(|u| u.company)),
+                    )
+                    .filter(|c| private.contains(c))
+                    .map(PageRef::Company)
+                    .collect()
+            })
+            .unwrap_or_default();
+        let s = read_map_card(&mut app, p, names);
+        if let Some(c) = about.first().filter(|_| !map_canaried) {
+            map_canary(&mut app, t, c);
+            map_canaried = true;
+        }
+        read(format!("map card province/{}", p.0), &about, s, leaks);
+    }
+    assert!(map_canaried, "the map card canary ran");
+    // The zone hover card of every zone, at its hub.
+    set_mode(&mut app, MapMode::FinancialZones);
+    for x in &v.exchanges.get().exchanges {
+        let s = read_map_card(&mut app, x.hub_province, names);
+        read(format!("map zone card {}", x.code), &[], s, leaks);
+    }
+    set_mode(&mut app, MapMode::Political);
+    println!(
+        "{label}: map: {} modes, {pin_checks} banded HQ pins, {heat_checks} banded heat values, {} province cards, {} zone cards",
+        scan_modes(v).len(),
+        provinces.len(),
+        v.exchanges.get().exchanges.len()
+    );
     for f in PdbFunction::ALL {
         let s = read_pdoomberg(&mut app, f, None, names);
         read(format!("pdoomberg {}", f.code()), &[], s, leaks);
@@ -864,7 +1195,7 @@ fn scan_state(sim: Sim, v: &SimViews, label: &str, t: &Truths, leaks: &mut Vec<L
 /// build: the state is saved and loaded into a plain (non-Omniscient) sim, which drives the
 /// shell, and the Omniscient twin is loaded from that same save.
 fn leaks_of(sim: Sim, label: &str) -> (Truths, Vec<Leak>, usize) {
-    let mut plain = Sim::new(data(), SEED).unwrap();
+    let mut plain = Sim::new(mdata(), SEED).unwrap();
     plain.load_bytes(&sim.save_bytes()).unwrap();
     // Every banded company on the watchlist, so F2 and the recap list them (a control: it
     // moves no figure).
@@ -875,7 +1206,7 @@ fn leaks_of(sim: Sim, label: &str) -> (Truths, Vec<Leak>, usize) {
     let n = plain.views().clone();
     let o = omniscient_twin(&plain);
     // The twin is the same state: a plain load of the same save shows the same views.
-    let mut check_twin = Sim::new(data(), SEED).unwrap();
+    let mut check_twin = Sim::new(mdata(), SEED).unwrap();
     check_twin.load_bytes(&plain.save_bytes()).unwrap();
     assert!(
         check_twin.views().same_data(&n),
@@ -883,7 +1214,7 @@ fn leaks_of(sim: Sim, label: &str) -> (Truths, Vec<Leak>, usize) {
     );
     let t = truths(&n, &o);
     let mut leaks = Vec::new();
-    let screens = scan_state(plain, &n, label, &t, &mut leaks);
+    let screens = scan_state(plain, &n, &o, label, &t, &mut leaks);
     (t, leaks, screens)
 }
 
@@ -932,6 +1263,7 @@ fn no_true_private_value_on_any_screen() {
         start.elapsed().as_secs_f64(),
         report.join("\n")
     );
+    let _ = std::fs::remove_dir_all(map_dir());
     assert!(
         all.is_empty(),
         "{} true private values on screen; the first {SHOWN}:\n{}",

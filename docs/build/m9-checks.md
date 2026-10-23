@@ -123,3 +123,69 @@ It opens four panes in three windows (Companies and Industries side by side, a c
 | No map (same panes) | 256 | 3.80 | 4.96 | 5.74 | 7.47 | none |
 
 Every run is far inside 60 fps (16.7 ms); the map's own cost is within the run-to-run noise. The single-frame maxima are rare spikes (under 1% of frames) that came and went between runs of the same map. The NA run waits for lane P's assets on main.
+
+## M8 Phase B: the checks with the map modes, cards and Province page (lane MB)
+
+The map now has its modes (M8.5), labels (M8.6), the province and zone hover cards and the Province page (M8.7), D700 to D708. Both M9 checks cover them (D705).
+
+### The leak test
+
+`m9_leak.rs` runs the shell on a synthetic world map (one island per province file, 1024 x 512, so every province has a shape, every HQ a pin and every province a hover card) and also scans, on both states:
+
+- every map mode's map node (the mode bar, the legend, the labels and the pins as links): Political, each development track, the Industry track, every industry's assets (42), the HQ pins unfiltered, listed only, private only and by each industry (42), and the zones: 94 modes. The HQ modes are about every banded company they pin; an industry heat map's printed stops are its own scale, a function of the shown values only, so its legend is scanned as about no subject and the scale is checked raw (below);
+- every HQ pin's size: the layer's size is the plain row's shown revenue TTM, never the Omniscient twin's true revenue of a banded company, and the pin's diameter follows it (552 banded pins a state);
+- every heat value of a province where a banded company has a unit of the industry: never the twin's true sum, and the scale's top is the shown maximum (329 a state);
+- the map hover card of every province where a banded company has its HQ or a unit (145), about those companies, with a canary (a true value written into the card is found);
+- every zone's hover card, at its hub (26).
+
+Result on Logan's PC, release (`cargo test --release -p game --test m9_leak --config profile.release.package.sim.debug-assertions=true`), October 2026, other builds running alongside: pass in 11.8 s; debug in the gate: pass in about 31 to 38 s.
+
+```
+fresh: 2712 screens, 196 subjects, 62092 true renderings, 24550 bands checked (none at or past its truth, no money end reading as it), 0 entries unpaired
+after the Q1 recap: 2727 screens, 196 subjects, 93593 true renderings, 36694 bands checked (none at or past its truth, no money end reading as it), 0 entries unpaired
+fresh: map: 94 modes, 552 banded HQ pins, 329 banded heat values, 145 province cards, 26 zone cards
+after the Q1 recap: map: 94 modes, 552 banded HQ pins, 329 banded heat values, 145 province cards, 26 zone cards
+```
+
+(The Province pages were already read since Phase A; they now show the real page with the HQ and unit tables.) The sim's own test (`crates/sim/tests/m8_map_modes.rs`) checks the same against an Omniscient twin for every pin and every industry's heat values.
+
+### The timing harness
+
+`--bench-pages` opens the real Province page and times every map mode switch: each development track, the Industry track, the industry with the most units, the HQ pins (all, then listed only), the zones and back to Political, from the mode message (what a click on the mode bar sends) to the first frame whose colour table holds the new layer and whose pins are placed (D705). It fails if one takes 100 ms or more or a mode kind is not covered. Release, Logan's PC, the NA map (`assets/map`), seed 1, other builds running alongside (about half the CPU busy): `pages 59 opened, worst 25.82 ms: PASS`.
+
+| Item | Cold ms | Frames | Warm ms | Frames |
+|---|---|---|---|---|
+| province/431 | 11.08 | 2 | 14.32 | 2 |
+| map mode development:commerce | 1.91 | 1 | 1.35 | 1 |
+| map mode development:industry | 1.56 | 1 | 1.55 | 1 |
+| map mode development:population | 1.43 | 1 | 4.24 | 1 |
+| map mode development:total | 1.67 | 1 | 1.67 | 1 |
+| map mode industry track | 1.73 | 1 | 1.38 | 1 |
+| map mode industry:28 | 6.54 | 1 | 1.55 | 1 |
+| map mode hqs | 2.97 | 1 | 2.08 | 1 |
+| map mode hqs listed | 2.42 | 1 | 2.36 | 1 |
+| map mode zones | 2.01 | 1 | 1.68 | 1 |
+| map mode political | 1.82 | 1 | 5.10 | 1 |
+
+### The map's frame time in each mode
+
+`--bench-map` takes `--map-mode MODE` (`political`, `development[:track]`, `industry[:N]`, `hqs`, `zones`) and `--map-metros`. Release, Logan's PC (RTX 5070 Ti, the window at its default size), the NA map, 15 s a run, other builds running alongside:
+
+```
+target/release/game --bench-map 15 --map-mode hqs
+```
+
+| Mode | Frames per second | Frame ms p50 | p95 | p99 | max | Frames at World / Country / Province |
+|---|---|---|---|---|---|---|
+| Political | 375 | 2.55 | 3.57 | 4.54 | 18.19 | 2254 / 2490 / 884 |
+| Development (Total) | 387 | 2.49 | 3.24 | 4.22 | 7.69 | 2342 / 2567 / 903 |
+| Industry (industry 28's assets) | 388 | 2.48 | 3.31 | 4.06 | 6.53 | 2358 / 2546 / 919 |
+| Company HQs (651 pins) | 370 | 2.61 | 3.45 | 4.09 | 6.21 | 2209 / 2454 / 891 |
+| Financial zones (26 hub pins) | 371 | 2.57 | 3.50 | 5.05 | 9.63 | 2206 / 2466 / 892 |
+| Political with Metro outlines | 374 | 2.59 | 3.36 | 4.29 | 7.41 | 2261 / 2464 / 888 |
+
+Every mode is far inside 60 fps; the labels, pins and Metro outlines cost nothing measurable against the run-to-run noise.
+
+### The soak
+
+The map views move nothing: `headless soak --years 10 --seeds 1..4` before (main a31b1a9) and after this lane gives byte-identical `years.csv` and `quarters.csv` (md5 121b5c7b... and cf890b48...). v_map_layers' monthly rebuild costs 0.42 ms (0.067 s over a 10-year seed, 1.9% of the run in `headless run --profile`).
