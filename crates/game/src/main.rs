@@ -294,8 +294,10 @@ fn main() -> AppExit {
     // other windows and never takes focus (D790). The frame-rate benches keep the normal,
     // focused window, because a window that is not the active one is held at 60 fps here and
     // they would only measure that. `--foreground` gives the normal window to every run.
-    let behind =
-        (args.shot.is_some() || matches!(args.bench, Some(BenchMode::Pages))) && !args.foreground;
+    let behind = match &args.bench {
+        None => args.shot.is_some(),
+        Some(bench) => matches!(bench, BenchMode::Pages),
+    } && !args.foreground;
     let mut app = App::new();
     app.add_plugins(
         DefaultPlugins.set(WindowPlugin {
