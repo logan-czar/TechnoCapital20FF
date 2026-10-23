@@ -13,7 +13,7 @@
 use std::path::PathBuf;
 
 use bevy::prelude::*;
-use bevy::window::PresentMode;
+use bevy::window::{PresentMode, WindowLevel};
 use game::bench::{BenchMode, BenchPlugin};
 use game::bridge::SimBridgePlugin;
 use game::config::{ConfigStore, default_config_path};
@@ -40,6 +40,8 @@ struct Args {
     map_metros: bool,
     /// `--bench-map-running [SPEED]`: the map bench with the sim running (D744).
     map_speed: u8,
+    /// `--foreground`: a bench or screenshot window opens as normal, focused (D790).
+    foreground: bool,
 }
 
 /// The synthetic map's size (D634).
@@ -57,6 +59,7 @@ fn parse_args() -> Args {
         map_mode: None,
         map_metros: false,
         map_speed: 0,
+        foreground: false,
     };
     let list: Vec<String> = std::env::args().skip(1).collect();
     let mut i = 0;
@@ -139,6 +142,7 @@ fn parse_args() -> Args {
                 i += 1;
             }
             "--map-metros" => args.map_metros = true,
+            "--foreground" => args.foreground = true,
             "--bench-map-running" => {
                 args.map_speed = match list.get(i + 1).and_then(|s| s.parse::<u8>().ok()) {
                     Some(n) => {
@@ -191,7 +195,7 @@ fn parse_args() -> Args {
 
 fn exit_usage(msg: &str) -> ! {
     eprintln!(
-        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--map-mode MODE] [--map-metros] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds] [--bench-map-running [SPEED]]] [--bench-pages]"
+        "{msg}\nusage: game [--seed N] [--map-dir DIR | --synthetic-map [DIR] [--synthetic-width W]] [--screenshot PATH [--map-look LON,LAT] [--map-zoom N] [--map-click] [--map-hide-windows]] [--map-mode MODE] [--map-metros] [--bench-table [seconds] [--rows N]] [--bench-max [seconds]] [--bench-map [seconds] [--bench-map-running [SPEED]]] [--bench-pages] [--foreground]"
     );
     std::process::exit(2)
 }
@@ -286,6 +290,12 @@ fn main() -> AppExit {
         eprintln!("cannot build the start state: {e}");
         std::process::exit(1)
     });
+    // A screenshot or `--bench-pages` runs unattended: its window opens behind the player's
+    // other windows and never takes focus (D790). The frame-rate benches keep the normal,
+    // focused window, because a window that is not the active one is held at 60 fps here and
+    // they would only measure that. `--foreground` gives the normal window to every run.
+    let behind =
+        (args.shot.is_some() || matches!(args.bench, Some(BenchMode::Pages))) && !args.foreground;
     let mut app = App::new();
     app.add_plugins(
         DefaultPlugins.set(WindowPlugin {
@@ -295,6 +305,12 @@ fn main() -> AppExit {
                     PresentMode::AutoNoVsync
                 } else {
                     PresentMode::AutoVsync
+                },
+                focused: !behind,
+                window_level: if behind {
+                    WindowLevel::AlwaysOnBottom
+                } else {
+                    WindowLevel::Normal
                 },
                 ..default()
             }),
