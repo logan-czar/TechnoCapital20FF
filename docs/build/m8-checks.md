@@ -9,13 +9,15 @@ Logan's PC (Windows 11, 24 threads, RTX 5070 Ti), October 2026, branch `build/m8
 | Check (m8-plan) | How | Result |
 |---|---|---|
 | M8.8 click test: every province clickable | `cargo test -p game --test m8_map every_world_province` (in the gate) | 3,255 of 3,255 pick their own id at their label point (the 372 tiny ones at their click target): 2,964 from World zoom, 291 from Country, none needs Province; then all 3,255 clicked through the shell to their Province page. Debug 10.5 s |
-| 60 fps with the panes open, in release | `target/release/game --bench-map 15 --map-mode MODE` | Every mode at every zoom level: p99 4.67 ms or less, max 6.39 ms, 321 to 349 fps (60 fps is 16.7 ms) |
+| 60 fps with the panes open, in release | `target/release/game --bench-map 15 --map-mode MODE [--bench-map-running SPEED]` | Paused, every mode at every zoom level: p99 4.67 ms or less, max 6.39 ms, 321 to 349 fps (60 fps is 16.7 ms). Running at speed 4: p99 5.11 ms or less, max 19.1 ms (the daily rollover). At speed 5 (max, a fast-forward): 35 to 40 ms p50, p99 47 to 57 ms, max 50 to 67 ms, mostly the open Company and Province pages (D744) |
 | Leak test on the world map | `cargo test -p game --test m9_leak` | Pass, no leak: 94 modes, 552 banded HQ pins, 329 heat values, 145 province cards, 26 zone cards a state, and the Province pages; debug 25 s, release 8.6 s |
 | Timing harness on the world map | `target/release/game --bench-pages` | `pages 59 opened, worst 20.64 ms: PASS` twice; the Province page 9.7 to 10.9 ms, every mode switch 5.6 ms or less |
 | Startup render error | D741 | Cause found (a stale binary against a newer shader); the shader is now compiled in and its layout tested |
 | P8 QA | the qa step (below) | Every region passes; the remaining items were signed off at the Phase B gate |
-| Soak invariance | `headless soak --years 10 --seeds 1..4` | Byte-identical to main 5074f00 (below) |
+| Soak invariance | `headless soak --years 10 --seeds 1..4` | Byte-identical to main 5074f00 and to pre-M8 main 6db93fd (below) |
 | The full gate twice | `bash scripts/check.sh` | Passed twice (below) |
+| CREDITS.md complete | `assets/map/CREDITS.md` against the crosswalks' provenance | Natural Earth, and all 60 geoBoundaries files the crosswalks name (country and level), each listed with its source and licence; none missing, none extra; the builder-drawn lines are named and listed in the QA reports |
+| Logan tries the map by hand (m8-plan 6) | pan, zoom, modes, picking, panes over the map, province links | **Pending Logan** |
 
 ## M8.8: the click test
 
@@ -48,6 +50,34 @@ Pdoomberg's F10 Screener (651 rows) is opened and closed, so its page is held be
 | Financial zones | 344 | 2.87 / 3.43 / 3.72 / 5.30 | 3.08 / 3.53 / 3.75 | 2.79 / 3.40 / 3.68 | 2.64 / 3.03 / 3.28 | 2063 / 2254 / 841 |
 
 No mode or zoom comes near 60 fps (16.7 ms), so nothing needed profiling. The HQ mode at World zoom costs the most (651 pins on screen at once, 0.5 ms over Political at p50).
+
+### With the sim running (`--bench-map-running [SPEED]`, D744)
+
+The paused bench never rebuilt a pane or rewrote the colour table, so the bench can also run the sim, at a speed from 1 to 5 (default 5; alerts off). Every map bench now lists its 8 slowest frames, with the zoom level and two flags: whether v_company_row's version moved in the frame (the monthly views the open pages rebuild on) and whether the colour table was rewritten. It also reports frames with and without a monthly rebuild separately. 15 s a run, the same panes.
+
+| Mode | Speed | fps | All: p50 / p95 / p99 / max ms | Monthly rebuild frames: p50 / p99 | Other frames: p50 / p99 | Slowest frames |
+|---|---|---|---|---|---|---|
+| Political | 4 | 338 | 2.90 / 3.48 / 4.49 / 18.28 | none in the run | 2.90 / 4.49 | 18.3, 18.1 ms: a pair about 56 frames apart, no flag (the daily rollover) |
+| Development: Total | 4 | 333 | 2.93 / 3.84 / 4.46 / 18.23 | none | 2.93 / 4.46 | 18.2, 18.0 ms, the same pair |
+| Industry 28's assets | 4 | 331 | 2.95 / 3.86 / 4.49 / 18.63 | none | 2.95 / 4.49 | 18.6, 17.8 ms, the same pair |
+| Company HQs | 4 | 303 | 3.19 / 4.28 / 5.11 / 18.80 | none | 3.19 / 5.11 | 18.8, 18.5 ms, the same pair |
+| Financial zones | 4 | 293 | 3.35 / 4.22 / 4.77 / 19.13 | none | 3.35 / 4.77 | 19.1 ms (with a colour-table rewrite: the zone effects move daily), 19.1 ms |
+| Political | 5 | 28 | 34.75 / 44.21 / 47.16 / 51.83 | 36.60 / 48.80 (240 frames) | 31.94 / 35.52 | 51.8, 49.7, 48.8 ms, all with a monthly rebuild and a rewrite |
+| Development: Total | 5 | 28 | 35.12 / 43.82 / 47.33 / 52.02 | 36.85 / 51.57 (233) | 32.30 / 36.76 | 52.0, 51.9, 51.6 ms, the same |
+| Industry 28's assets | 5 | 28 | 34.78 / 43.74 / 47.58 / 50.30 | 36.77 / 49.08 (236) | 32.16 / 35.22 | 50.3, 50.0, 49.1 ms, the same |
+| Company HQs | 5 | 25 | 39.89 / 52.13 / 56.49 / 66.58 | 42.32 / 57.80 (214) | 33.66 / 40.67 | 66.6, 58.8, 57.8 ms, the same (the pins rebuilt too) |
+| Financial zones | 5 | 24 | 40.13 / 48.23 / 52.58 / 57.13 | 44.81 / 55.63 (163) | 38.15 / 44.63 | 57.1, 56.6, 55.6 ms, the same; the table is rewritten every frame |
+
+At speed 4 (5 game hours a second, the fastest timed speed) the map with the panes open stays far inside 60 fps. The only frames over 10 ms come in a pair about 56 frames apart once a run, with no monthly rebuild and no rewrite, which is the daily rollover; they reach 19 ms, just past one 60 fps frame. Speed 5 is the fast-forward (D300: the bridge steps the sim for an 8 ms budget each frame and advances about 9 game months a second), and there the frame is 35 to 40 ms. Taking panes away at speed 5 (scratch runs, Political) shows where the frame time goes:
+
+- none of the panes: 11.9 ms p50;
+- Companies and Industries only: 14.9 ms;
+- the Province page only: 19.9 ms;
+- the company page only: 28.2 ms.
+
+So most of the max-speed frame comes from the open Company and Province pages rebuilding on monthly views and updating live figures every tick. Monthly-rebuild frames cost about 5 ms more than the others. The map itself (layer, colour table, pins) adds little. This is a cost of the M9 pages at fast-forward, flagged for their owner in D744; 60 fps at max speed was never a target.
+
+The reviewer's 44.5 ms frame (paused, Political, World zoom) did not come back in 13 paused 15 s runs here (max 8.7 ms). Some runs, paused or running and in any mode, settled for a while into a steady 16.6 ms frame: Windows pacing the window's presents at 60 Hz, probably while it was not in front or the display was idle. That is when frames of 20 to 29 ms came, with no flag set, so they were not the game's work. The tables leave those runs out; they were rerun.
 
 ## The M9 checks on the world map
 
@@ -94,7 +124,7 @@ cargo build --release -p headless
 target/release/headless soak --years 10 --seeds 1..4 --out DIR
 ```
 
-Run at main 5074f00 (this slot checked out there) and on this branch: byte-identical `years.csv` (md5 121b5c7ba2ae4edcb9ed12d28764563e) and `quarters.csv` (md5 cf890b482bd1f4c420cb3c6dc7f73a35), 3 s for the four seeds. They are also the md5s lane MB recorded against main a31b1a9 (m9-checks.md): the map moves nothing in the economy. This branch changes no file under `crates/sim`, `crates/sim-data`, `crates/headless` or `docs/design`, so the two headless builds are the same code.
+Run at main 5074f00 and at pre-M8 main 6db93fd (this slot checked out at each) and on this branch: byte-identical `years.csv` (md5 121b5c7ba2ae4edcb9ed12d28764563e) and `quarters.csv` (md5 cf890b482bd1f4c420cb3c6dc7f73a35), 3 s for the four seeds. They are also the md5s lane MB recorded against main a31b1a9 (m9-checks.md): the map moves nothing in the economy. This branch changes no file under `crates/sim`, `crates/sim-data`, `crates/headless` or `docs/design`, so the two headless builds are the same code.
 
 ## The full gate, twice
 
