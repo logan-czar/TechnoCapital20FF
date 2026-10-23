@@ -559,13 +559,7 @@ fn measure(
         .map(|(f, s)| f - s)
         .collect();
     report("frame ms", &mut b.frames_ms);
-    let verdict = if let BenchMode::Map {
-        speed,
-        panes,
-        alerts_off,
-        ..
-    } = b.mode
-    {
+    let verdict = if let BenchMode::Map { speed, panes, .. } = b.mode {
         let v = &b.frames_ms;
         // The check counts the running frames: a frame that ended in an auto-pause is the
         // game stopping, not fast-forward stutter, and a held one is a paused frame (the
@@ -599,8 +593,8 @@ fn measure(
             );
         }
         let verdict = map_verdict(p99, focus, paced);
-        // Speed 5 with the panes open and no auto-pause is reported, not gated (D805).
-        let known = speed == sim::time::control::MAX_SPEED && panes != MapPanes::None && alerts_off;
+        // Speed 5 with the panes open is reported, not gated, with auto-pause on or off (D805).
+        let known = speed == sim::time::control::MAX_SPEED && panes != MapPanes::None;
         let pauses: Vec<String> = b
             .pauses
             .iter()
@@ -622,6 +616,18 @@ fn measure(
             "frame ms, frames that ended in an auto-pause (not in the check)",
             &mut v,
         );
+        // The hitch a player sees as the game stops, printed by the check line (D802).
+        let hitch = if v.is_empty() {
+            String::new()
+        } else {
+            format!(
+                "; the auto-pause hitch (not in the check): {} frames, {:.1} a minute, p50 {:.1} ms, max {:.1} ms",
+                v.len(),
+                v.len() as f64 * 60.0 / elapsed,
+                v[(v.len() - 1) / 2],
+                v[v.len() - 1]
+            )
+        };
         let mut v: Vec<f64> = b
             .map_frames
             .iter()
@@ -630,8 +636,15 @@ fn measure(
             .collect();
         report("frame ms, the first running frame after a resume", &mut v);
         report("frame ms, running frames (the check)", &mut running.clone());
+        // Over a few hundred running frames the p99 is about the 4th-worst frame, so the p98
+        // is printed beside it.
+        let p98 = running
+            .get(((running.len().max(1) - 1) as f64 * 0.98).round() as usize)
+            .copied()
+            .unwrap_or(f64::INFINITY);
         println!(
-            "BENCH map check: p99 {p99:.2} ms over the running frames: {} (target < {MAP_TARGET_P99_MS:.1} ms){}",
+            "BENCH map check: p99 {p99:.2} ms (p98 {p98:.2}) over {} running frames: {} (target < {MAP_TARGET_P99_MS:.1} ms){}{hitch}",
+            running.len(),
             match verdict {
                 MapVerdict::Pass => "PASS",
                 MapVerdict::Fail => "FAIL",
@@ -639,7 +652,7 @@ fn measure(
                     "INVALID (the window lost the focus or the OS paced it: rerun in front)",
             },
             if known {
-                "; speed 5 with the panes open and the alerts off is reported, not gated (D805)"
+                "; speed 5 with the panes open is reported, not gated (D805)"
             } else {
                 ""
             }
@@ -708,12 +721,33 @@ fn measure(
         }
         let mut slow = f.clone();
         slow.sort_by(|a, b| b.ms.total_cmp(&a.ms));
-        for x in slow.iter().take(MAP_SLOWEST_SHOWN) {
+        // The slowest frames of all, then the slowest running ones (the check's, D802).
+        let running_slow: Vec<MapFrame> = slow
+            .iter()
+            .filter(|x| !x.pause && !x.held)
+            .take(MAP_SLOWEST_SHOWN)
+            .copied()
+            .collect();
+        let all_slow: Vec<MapFrame> = slow.iter().take(MAP_SLOWEST_SHOWN).copied().collect();
+        for (what, x) in all_slow
+            .iter()
+            .map(|x| ("", x))
+            .chain(running_slow.iter().map(|x| (" (running)", x)))
+        {
             println!(
-                "BENCH map slow frame {}: {:.2} ms at {} zoom{}{}",
+                "BENCH map slow frame{what} {}: {:.2} ms at {} zoom{}{}{}",
                 x.frame,
                 x.ms,
                 x.level.map_or("unknown", |l| LEVELS[l]),
+                if x.pause {
+                    ", ended in an auto-pause"
+                } else if x.held {
+                    ", held paused"
+                } else if x.resume {
+                    ", first after a resume"
+                } else {
+                    ""
+                },
                 if x.monthly {
                     ", monthly views rebuilt"
                 } else {
