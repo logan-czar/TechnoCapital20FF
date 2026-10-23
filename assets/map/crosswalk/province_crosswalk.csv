@@ -2026,7 +2026,7 @@ MX-0034,Chiapas,MEX,Chiapas,admin1,MEX-2735,1.0,Natural Earth 10m (public domain
 MX-0035,Guerrero,MEX,Guerrero,admin1,MEX-2729,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 MX-0036,Sinaloa,MEX,Sinaloa,admin1,MEX-2711,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 MX-0037,Durango,MEX,Durango,admin1,MEX-2710,1.0,Natural Earth 10m (public domain),whole region (name match 100)
-MX-0038,Yucatan,MEX,Yucatan,admin1,MEX-2737,1.0,Natural Earth 10m (public domain),whole region (name match 100)
+MX-0038,Yucatan,MEX,Yucatan,admin1,MEX-2737;MEX+99?,1.0,Natural Earth 10m (public domain),whole region (name match 100; plus unclaimed MEX+99?)
 MX-0039,Quintana Roo,MEX,Quintana Roo,admin1,MEX-2736,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 MX-0040,San Luis Potosi,MEX,San Luis Potosi,admin1,MEX-2715,1.0,Natural Earth 10m (public domain),whole region (name match 100)
 MX-0041,Hidalgo,MEX,Hidalgo,admin1,MEX-2730,1.0,Natural Earth 10m (public domain),whole region (name match 100)

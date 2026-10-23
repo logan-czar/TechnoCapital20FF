@@ -1,6 +1,6 @@
 # Map QA report: europe
 
-_Written by `tools/map-pipeline/run.py --region europe` (pipeline pa-1). Source of the rows: `provinces-europe.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
+_Written by `tools/map-pipeline/run.py --region europe` (pipeline pb-1). Source of the rows: `provinces-europe.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
 
 ## Result
 
@@ -80,9 +80,9 @@ _Written by `tools/map-pipeline/run.py --region europe` (pipeline pa-1). Source 
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 10 |
 | Admin-1 units left without a province | 1 |
-| Sea links with a province of this file | 81 |
+| Sea links with a province of this file | 90 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities in a part across a narrow strait (listed, allowed) | 0 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 0 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
@@ -542,7 +542,7 @@ Natural Earth admin-1 units of this file's countries that no region claims and t
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-AL-0004-ME-0001, AL-0005-GR-0008, BE-0003-NL-0023, DE-0037-DE-0041, DE-0038-NL-0020, DE-0040-DK-0006, DE-0040-DK-0007, DE-0041-DK-0007, DE-0042-DK-0006, DK-0001-SE-0011, DK-0002-SE-0011, DK-0003-DK-0006, DK-0003-SE-0011, DK-0004-SE-0011, DK-0005-SE-0011, DK-0006-DK-0007, DK-0006-DK-0011, DK-0006-DK-0013, DK-0006-SE-0011, DK-0007-DK-0010, DK-0007-DK-0011, DK-0012-DK-0014, DK-0013-SE-0012, DK-0015-SE-0012, DK-0015-SE-0013, EE-0001-FI-0002, EE-0003-LV-0004, ES-0010-ES-0035, ES-0012-GI-0001, ES-0035-GI-0001, FI-0001-FI-0004, FI-0005-FI-0016, FI-0009-SE-0022, FI-0016-SE-0001, FR-0012-JE-0001, FR-0016-IT-0024, FR-0016-IT-0040, FR-0022-GB-0008, FR-0025-GG-0001, FR-0025-JE-0001, GB-0014-GB-0039, GB-0015-GB-0040, GB-0017-GB-0039, GB-0017-GB-0040, GB-0023-GB-0030, GB-0025-GB-0041, GB-0027-IM-0001, GB-0033-GB-0042, GB-0033-IE-0014, GB-0034-GB-0037, GB-0035-GB-0042, GB-0035-IM-0001, GB-0042-IE-0014, GB-0042-IM-0001, GG-0001-JE-0001, GR-0001-GR-0013, GR-0001-GR-0014, GR-0004-GR-0012, GR-0004-TR-0007, GR-0006-GR-0008, GR-0010-GR-0011, GR-0010-GR-0013, GR-0012-GR-0013, GR-0012-TR-0007, GR-0012-TR-0008, GR-0013-GR-0014, GR-0013-TR-0010, HR-0006-IT-0014, HR-0006-IT-0019, IE-0013-IE-0014, IT-0013-MC-0001, IT-0014-IT-0022, IT-0031-IT-0036, IT-0036-IT-0038, NO-0001-NO-0003, NO-0004-NO-0005, NO-0004-NO-0006, TR-0003-TR-0004, TR-0003-TR-0005, TR-0003-TR-0012, TR-0005-TR-0012
+AL-0004-ME-0001, AL-0005-GR-0008, BE-0003-NL-0023, DE-0037-DE-0041, DE-0038-NL-0020, DE-0040-DK-0006, DE-0040-DK-0007, DE-0041-DK-0007, DE-0042-DK-0006, DK-0001-SE-0011, DK-0002-SE-0011, DK-0003-DK-0006, DK-0003-SE-0011, DK-0004-SE-0011, DK-0005-SE-0011, DK-0006-DK-0007, DK-0006-DK-0011, DK-0006-DK-0013, DK-0006-SE-0011, DK-0007-DK-0010, DK-0007-DK-0011, DK-0012-DK-0014, DK-0013-SE-0012, DK-0015-SE-0012, DK-0015-SE-0013, DM-0001-FR-0040, DM-0001-FR-0041, EE-0001-FI-0002, EE-0003-LV-0004, EE-0004-RU-0018, ES-0010-ES-0035, ES-0010-MA-0007, ES-0012-GI-0001, ES-0035-GI-0001, FI-0001-FI-0004, FI-0005-FI-0016, FI-0009-SE-0022, FI-0016-SE-0001, FR-0012-JE-0001, FR-0016-IT-0024, FR-0016-IT-0040, FR-0022-GB-0008, FR-0025-GG-0001, FR-0025-JE-0001, FR-0041-LC-0001, GB-0014-GB-0039, GB-0015-GB-0040, GB-0017-GB-0039, GB-0017-GB-0040, GB-0023-GB-0030, GB-0025-GB-0041, GB-0027-IM-0001, GB-0033-GB-0042, GB-0033-IE-0014, GB-0034-GB-0037, GB-0035-GB-0042, GB-0035-IM-0001, GB-0042-IE-0014, GB-0042-IM-0001, GG-0001-JE-0001, GI-0001-MA-0007, GR-0001-GR-0013, GR-0001-GR-0014, GR-0004-GR-0012, GR-0004-TR-0007, GR-0006-GR-0008, GR-0010-GR-0011, GR-0010-GR-0013, GR-0012-GR-0013, GR-0012-TR-0007, GR-0012-TR-0008, GR-0013-GR-0014, GR-0013-TR-0010, HR-0006-IT-0014, HR-0006-IT-0019, IE-0013-IE-0014, IT-0013-MC-0001, IT-0014-IT-0022, IT-0031-IT-0036, IT-0036-IT-0038, NO-0001-NO-0003, NO-0004-NO-0005, NO-0004-NO-0006, RU-0025-UA-0016, RU-0025-UA-0021, RU-0026-UA-0020, TR-0003-TR-0004, TR-0003-TR-0005, TR-0003-TR-0012, TR-0005-TR-0012
 
 ## Small provinces
 

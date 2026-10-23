@@ -10,13 +10,10 @@ Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
 
 Runfola, D. et al. (2020) geoBoundaries: A global database of political administrative boundaries. PLoS ONE 15(4): e0231866. https://doi.org/10.1371/journal.pone.0231866 Release v6.0.0 (github.com/wmgeolab/geoBoundaries, commit 1289e40), gbOpen.
 
-Boundary files used, with their original sources and licenses:
+Boundary files used (58), with their original sources and licenses:
 
 | Country | Level | Source | License | Year |
 |---|---|---|---|---|
-| CAN | ADM2 | Statistics Canada (StatCan) | Open Government Canada 2.0 | 2022 |
-| MEX | ADM2 | World Bank | Creative Commons Attribution 4.0 (CC BY 4.0) | 2012 |
-| USA | ADM2 | United States Census Bureau, MAF/TIGER Database | Public Domain | 2018 |
 | AGO | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2006 |
 | ARG | ADM2 | Instituto Geografico Nacional and UNHCR, OCHA ROLAC | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | AUS | ADM2 | Australian Bureau of Statistics | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2022 |
@@ -24,6 +21,7 @@ Boundary files used, with their original sources and licenses:
 | BLR | ADM2 | geoBoundaries, CIESIN | Creative Commons Attribution 3.0 License | 2005 |
 | BOL | ADM2 | GeoBolivia, Derived from ADM3 layer | Public Domain | 2015 |
 | BRA | ADM2 | Instituto Brasileiro de Geografia e Estatística (IBGE), OCHA ROLAC | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
+| CAN | ADM2 | Statistics Canada (StatCan) | Open Government Canada 2.0 | 2022 |
 | CHN | ADM2 | National Administration of Surveying, Mapping and Geoinformation of China, Revolutionary GIS | Open Data Commons Public Domain Dedication and License (PDDL) v1.0 | 2017 |
 | CIV | ADM1 | World Bank Group, OCHA Côte d’Ivoire | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2016 |
 | CIV | ADM2 | World Bank | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2016 |
@@ -41,7 +39,7 @@ Boundary files used, with their original sources and licenses:
 | JOR | ADM2 | geoBoundaries, Wikimedia Commons | Public Domain | 2006 |
 | KEN | ADM1 | RCMRD GeoPortal, Africa GeoPortal | Public Domain | 2020 |
 | KOR | ADM2 | geoBoundaries, citypopulation.de | Creative Commons Attribution 3.0 License | 2020 |
-| MLI | ADM1 | DNCT - Direction Nationale des Collectivités Territoriales, United Nations Office for the Coordination of Humanitarian Affairs, Mali | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2021 |
+| MEX | ADM2 | World Bank | Creative Commons Attribution 4.0 (CC BY 4.0) | 2012 |
 | MLI | ADM2 | DNCT - Direction Nationale des Colelctivités Territorielles, DNP - Direction Nationale de la Population, United Nations Office for the Coordination of Humanitarian Affairs, Mali | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2017 |
 | MMR | ADM2 | Myanmar Analytics Project, USAID/Burma | Creative Commons Attribution 4.0 (CC BY 4.0) | 2019 |
 | MNG | ADM2 | National Statistical Office of Mongolia, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2021 |
@@ -60,23 +58,21 @@ Boundary files used, with their original sources and licenses:
 | PSE | ADM2 | Open Data Watch | Creative Commons Attribution 4.0 (CC BY 4.0) | 2017 |
 | QAT | ADM2 | geoBoundaries, Qatar Open Data Portal | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2015 |
 | RWA | ADM2 | Open Data Rwanda | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2012 |
-| SDN | ADM1 | Information Management Working Group (IMWG), OCHA ROSEA | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | SDN | ADM2 | OCHA ROSEA, Information Management Working Group | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
-| SLE | ADM1 | Government of Sierra Leone, OCHA ROWCA | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2014 |
 | SLE | ADM2 | Government of Sierra Leone, OCHA ROWCA | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2017 |
 | SOM | ADM2 | Global Polio Eradication Initiative (GPEI), Frank Salet | Creative Commons Attribution 4.0 (CC BY 4.0) | 2022 |
 | SSD | ADM2 | South Sudan Information Management Working Group (IMWG), National Bureau of Statistics (NBS), and OCHA, OCHA South Sudan | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | SWE | ADM2 | geoBoundaries, Wikimedia Commons | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | 2017 |
 | THA | ADM2 | Royal Thai Survey Department, OCHA ROAP | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2019 |
 | TZA | ADM2 | Tanzania National Bureau of Statistics / UN OCHA ROSA, OCHA ROSA | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2021 |
+| USA | ADM2 | United States Census Bureau, MAF/TIGER Database | Public Domain | 2018 |
 | UZB | ADM2 | OCHA ROCCA | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | VNM | ADM2 | OCHA ROAP, Government of Viet Nam | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 | YEM | ADM2 | Central Statistical Organization (CSO), OCHA Yemen | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2021 |
 | ZAF | ADM2 | OCHA ROSEA, South African Municipal Demarcation Board | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
-| ZMB | ADM1 | Zambia Data Hub | Creative Commons Attribution 4.0 International (CC BY 4.0) | 2020 |
 | ZMB | ADM2 | GRID3, Office of the Surveyor General | Creative Commons Attribution 4.0 (CC BY 4.0) | 2020 |
 | ZWE | ADM2 | Zimbabwe National Statistics Agency (ZIMSTAT www.zimstat.co.zw) Central Statistics Office, OCHA ROSEA | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | 2020 |
 
 Contains information licensed under the Open Government Licence - Canada (https://open.canada.ca/en/open-government-licence-canada), from Statistics Canada.
 
-Province shapes are derived works: admin units dissolved and clipped to Natural Earth regions, and synthetic Voronoi splits where no permissively licensed admin units exist.
+Province shapes are derived works: admin units dissolved and clipped to Natural Earth regions, and synthetic Voronoi splits where no permissively licensed admin units exist. A few lines (contested land drawn by the game's own province files, cities and islands the sources lack) are drawn by the builder; they are listed in the QA reports.

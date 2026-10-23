@@ -1,6 +1,6 @@
 # Map QA report: north-america
 
-_Written by `tools/map-pipeline/run.py --region north-america` (pipeline pa-1). Source of the rows: `provinces-north-america.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
+_Written by `tools/map-pipeline/run.py --region north-america` (pipeline pb-1). Source of the rows: `provinces-north-america.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
 
 ## Result
 
@@ -33,10 +33,10 @@ _Written by `tools/map-pipeline/run.py --region north-america` (pipeline pa-1). 
 | Places named in a province's name or notes that lie in another province | 2 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 0 |
-| Admin-1 units left without a province | 1 |
-| Sea links with a province of this file | 35 |
+| Admin-1 units left without a province | 0 |
+| Sea links with a province of this file | 36 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities in a part across a narrow strait (listed, allowed) | 1 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
@@ -106,7 +106,7 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 
 | Province | Name | Pixels | Parts | Label point (px) |
 |---|---|---|---|---|
-| PM-0001 | Saint Pierre and Miquelon | 3 | 1 | 2817.5, 1459.5 |
+| PM-0001 | Saint Pierre and Miquelon | 3 | 1 | 2814.5, 1458.5 |
 | BM-0001 | Bermuda | 4 | 3 | 2621.5, 1848.5 |
 | US-0086 | Manhattan | 4 | 2 | 2413.5, 1625.5 |
 | MX-0001 | Cuauhtemoc-Centro | 8 | 1 | 1840.5, 2161.5 |
@@ -132,7 +132,7 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 |---|---|---|---|---|
 | city part across water | US-0018 | San Francisco | the largest 4-connected part | a smaller part, joined to it across water only |
 
-No misses; the rows above are allowed parts across a narrow strait.
+No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
 
 ## Known for review
 
@@ -158,20 +158,19 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | Region | Matched by | Units |
 |---|---|---|
 | MEX: Ciudad de Mexico | alias hint -> MX-DIF | 1 |
+| MEX: Yucatan | name match 100; plus unclaimed MEX+99? | 2 |
 
 ## Land without a province
 
 Natural Earth admin-1 units of this file's countries that no region claims and that touch no region of their country (overseas territories, remote islands). They stay water on the map.
 
-| Country (NE) | Unit | Area (sq deg) |
-|---|---|---|
-| MEX |  (MEX+99?) | 0.0117 |
+None.
 
 ## Sea links
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-CA-0001-CA-0006, CA-0001-US-0092, CA-0006-US-0109, CA-0007-CA-0012, CA-0009-US-0098, CA-0009-US-0099, CA-0010-US-0090, CA-0014-CA-0059, CA-0014-US-0068, CA-0021-CA-0059, CA-0022-CA-0025, CA-0024-CA-0025, CA-0027-CA-0028, CA-0028-US-0140, CA-0047-CA-0050, CA-0047-CA-0055, CA-0048-CA-0055, CA-0049-CA-0050, CA-0051-CA-0055, CA-0053-PM-0001, CA-0058-GL-0003, MX-0023-MX-0026, US-0018-US-0020, US-0027-US-0089, US-0028-US-0089, US-0029-US-0082, US-0029-US-0083, US-0044-US-0050, US-0063-US-0138, US-0068-US-0070, US-0080-US-0087, US-0082-US-0089, US-0087-US-0088, US-0088-US-0089, US-0089-US-0111
+CA-0001-CA-0006, CA-0001-US-0092, CA-0006-US-0109, CA-0007-CA-0012, CA-0009-US-0098, CA-0009-US-0099, CA-0010-US-0090, CA-0014-CA-0059, CA-0014-US-0068, CA-0021-CA-0059, CA-0022-CA-0025, CA-0024-CA-0025, CA-0027-CA-0028, CA-0028-US-0140, CA-0047-CA-0050, CA-0047-CA-0055, CA-0048-CA-0055, CA-0049-CA-0050, CA-0051-CA-0055, CA-0053-PM-0001, CA-0058-GL-0003, MX-0023-MX-0026, RU-0070-US-0004, US-0018-US-0020, US-0027-US-0089, US-0028-US-0089, US-0029-US-0082, US-0029-US-0083, US-0044-US-0050, US-0063-US-0138, US-0068-US-0070, US-0080-US-0087, US-0082-US-0089, US-0087-US-0088, US-0088-US-0089, US-0089-US-0111
 
 ## Small provinces
 

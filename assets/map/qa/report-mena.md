@@ -1,6 +1,6 @@
 # Map QA report: mena
 
-_Written by `tools/map-pipeline/run.py --region mena` (pipeline pa-1). Source of the rows: `provinces-mena.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
+_Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-1). Source of the rows: `provinces-mena.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
 
 ## Result
 
@@ -47,9 +47,9 @@ _Written by `tools/map-pipeline/run.py --region mena` (pipeline pa-1). Source of
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 10 |
 | Admin-1 units left without a province | 0 |
-| Sea links with a province of this file | 41 |
+| Sea links with a province of this file | 44 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities in a part across a narrow strait (listed, allowed) | 0 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 0 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
@@ -417,7 +417,7 @@ None.
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-AE-0001-AE-0002, AE-0001-AE-0003, AE-0001-AE-0005, AE-0003-AE-0005, AE-0012-AE-0016, BH-0001-QA-0008, BH-0001-QA-0010, BH-0001-SA-0014, BH-0001-SA-0018, BH-0001-SA-0019, DZ-0002-DZ-0003, DZ-0003-DZ-0005, EG-0015-EG-0018, EG-0017-EG-0018, EG-0029-EG-0034, EG-0034-IL-0017, EG-0034-JO-0010, EG-0034-SA-0032, EG-0034-SA-0035, ES-0010-MA-0007, GI-0001-MA-0007, IL-0004-IL-0009, IL-0006-IL-0009, IL-0006-IL-0016, IR-0017-OM-0012, IR-0018-OM-0012, KW-0001-KW-0005, KW-0001-KW-0006, KW-0001-KW-0009, KW-0001-KW-0010, KW-0002-KW-0009, KW-0003-KW-0009, LB-0003-SY-0008, LY-0001-LY-0003, QA-0001-QA-0002, QA-0001-QA-0003, QA-0002-QA-0006, QA-0003-QA-0009, QA-0010-SA-0019, TN-0001-TN-0004, YE-0009-YE-0011
+AE-0001-AE-0002, AE-0001-AE-0003, AE-0001-AE-0005, AE-0003-AE-0005, AE-0012-AE-0016, BH-0001-QA-0008, BH-0001-QA-0010, BH-0001-SA-0014, BH-0001-SA-0018, BH-0001-SA-0019, DJ-0003-YE-0008, DZ-0002-DZ-0003, DZ-0003-DZ-0005, EG-0015-EG-0018, EG-0017-EG-0018, EG-0029-EG-0034, EG-0034-IL-0017, EG-0034-JO-0010, EG-0034-SA-0032, EG-0034-SA-0035, ER-0006-YE-0005, ER-0006-YE-0008, ES-0010-MA-0007, GI-0001-MA-0007, IL-0004-IL-0009, IL-0006-IL-0009, IL-0006-IL-0016, IR-0017-OM-0012, IR-0018-OM-0012, KW-0001-KW-0005, KW-0001-KW-0006, KW-0001-KW-0009, KW-0001-KW-0010, KW-0002-KW-0009, KW-0003-KW-0009, LB-0003-SY-0008, LY-0001-LY-0003, QA-0001-QA-0002, QA-0001-QA-0003, QA-0002-QA-0006, QA-0003-QA-0009, QA-0010-SA-0019, TN-0001-TN-0004, YE-0009-YE-0011
 
 ## Small provinces
 

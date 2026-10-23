@@ -1,6 +1,6 @@
 # Map QA report: sub-saharan-africa
 
-_Written by `tools/map-pipeline/run.py --region sub-saharan-africa` (pipeline pa-1). Source of the rows: `provinces-sub-saharan-africa.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
+_Written by `tools/map-pipeline/run.py --region sub-saharan-africa` (pipeline pb-1). Source of the rows: `provinces-sub-saharan-africa.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
 
 ## Result
 

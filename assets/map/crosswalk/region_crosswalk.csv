@@ -1141,7 +1141,7 @@ MEX,Tabasco,admin1,MEX-2725,1.0,Natural Earth 10m (public domain),name match 100
 MEX,Tamaulipas,admin1,MEX-2716,1.0,Natural Earth 10m (public domain),name match 100
 MEX,Tlaxcala,admin1,MEX-2726,1.0,Natural Earth 10m (public domain),name match 100
 MEX,Veracruz,admin1,MEX-2734,1.0,Natural Earth 10m (public domain),name match 100
-MEX,Yucatan,admin1,MEX-2737,1.0,Natural Earth 10m (public domain),name match 100
+MEX,Yucatan,admin1,MEX-2737;MEX+99?,1.0,Natural Earth 10m (public domain),name match 100; plus unclaimed MEX+99?
 MEX,Zacatecas,admin1,MEX-2713,1.0,Natural Earth 10m (public domain),name match 100
 MHL,Marshall Islands,admin1,MHL-4968;MHL-4969,0.95,Natural Earth 10m (public domain),whole country (2 admin-1 units)
 MKD,North Macedonia,admin1,MKD-4845;MKD-2951;MKD-2952;MKD-2955;MKD-2962;MKD-2895;MKD-2898;MKD-2899;MKD-2894;MKD-2999;MKD-3000;MKD-2994;MKD-2993;MKD-2996;MKD-2998;MKD-2936;MKD-2947;MKD-2903;MKD-2896;MKD-2920;MKD-2926;MKD-2948;MKD-2908;MKD-2963;MKD-2957;MKD-2958;MKD-2960;MKD-2959;MKD-2906;MKD-4846;MKD-2910;MKD-2943;MKD-3005;MKD-3006;MKD-3004;MKD-3007;MKD-2918;MKD-2961;MKD-2944;MKD-2956;MKD-2909;MKD-2935;MKD-5883;MKD-2921;MKD-2913;MKD-2923;MKD-2950;MKD-2928;MKD-2941;MKD-2945;MKD-2922;MKD-2907;MKD-2946;MKD-2953;MKD-2929;MKD-2942;MKD-2897;MKD-2937;MKD-2912;MKD-2938;MKD-2904;MKD-2925;MKD-2919;MKD-2917;MKD-2954;MKD-2902;MKD-2916;MKD-2901;MKD-2931;MKD-2914;MKD-2930;MKD-2940;MKD-2933;MKD-2934;MKD-2911;MKD-2939;MKD-2924;MKD-2915;MKD-2927;MKD-3003;MKD-2997;MKD-2905;MKD-2995;MKD-2932,0.95,Natural Earth 10m (public domain),whole country (84 admin-1 units)

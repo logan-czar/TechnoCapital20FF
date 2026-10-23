@@ -1,6 +1,6 @@
 # Map QA report: east-asia-oceania
 
-_Written by `tools/map-pipeline/run.py --region east-asia-oceania` (pipeline pa-1). Source of the rows: `provinces-east-asia-oceania.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
+_Written by `tools/map-pipeline/run.py --region east-asia-oceania` (pipeline pb-1). Source of the rows: `provinces-east-asia-oceania.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
 
 ## Result
 
@@ -57,13 +57,13 @@ _Written by `tools/map-pipeline/run.py --region east-asia-oceania` (pipeline pa-
 | Coastal flag differs from the CSV | 63 |
 | Small for their region (not Metro, under 5% of the region's mean) | 3 |
 | Voronoi-split blocks where one province takes 75% or more | 3 |
-| Places named in a province's name or notes that lie in another province | 17 |
+| Places named in a province's name or notes that lie in another province | 7 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 24 |
 | Admin-1 units left without a province | 5 |
-| Sea links with a province of this file | 119 |
+| Sea links with a province of this file | 121 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities in a part across a narrow strait (listed, allowed) | 1 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
@@ -299,7 +299,7 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 |---|---|---|---|---|
 | city part across water | PH-0002 | Manila | the largest 4-connected part | a smaller part, joined to it across water only |
 
-No misses; the rows above are allowed parts across a narrow strait.
+No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
 
 ## Known for review
 
@@ -510,11 +510,17 @@ Natural Earth admin-1 units of this file's countries that no region claims and t
 | NZL | Kermadec Islands (NZL-5471) | 0.0036 |
 | NZL | Tokelau (NZL-5472) | 0.0003 |
 
+Natural Earth land of a country that none of its regions covers (over 0.01% of the country):
+
+| Country | Area (sq deg) | Share of the country |
+|---|---|---|
+| NZL | 0.1055 | 0.36% |
+
 ## Sea links
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-AU-0017-AU-0020, AU-0017-AU-0023, AU-0032-PG-0005, BN-0001-BN-0004, BN-0001-MY-0023, CN-0010-CN-0041, CN-0012-CN-0032, CN-0012-CN-0036, CN-0013-CN-0041, CN-0019-CN-0025, CN-0019-CN-0028, CN-0020-CN-0025, CN-0020-CN-0028, CN-0028-HK-0003, CN-0029-CN-0132, CN-0032-CN-0036, CN-0040-CN-0041, CN-0081-TW-0022, CN-0082-TW-0021, CN-0083-TW-0021, FJ-0001-FJ-0004, FJ-0003-FJ-0004, HK-0003-MO-0001, ID-0012-ID-0036, ID-0017-ID-0021, ID-0019-ID-0021, ID-0023-ID-0024, ID-0024-ID-0025, ID-0025-TL-0001, ID-0030-MY-0013, ID-0030-MY-0014, ID-0030-MY-0017, ID-0031-ID-0032, ID-0032-ID-0033, ID-0032-MY-0015, ID-0032-MY-0016, ID-0032-SG-0001, ID-0032-SG-0002, ID-0032-SG-0003, ID-0034-ID-0037, ID-0045-ID-0049, ID-0048-TL-0001, ID-0048-TL-0003, ID-0049-ID-0051, JP-0003-JP-0007, JP-0003-JP-0011, JP-0003-JP-0032, JP-0005-JP-0011, JP-0006-JP-0010, JP-0006-JP-0011, JP-0007-JP-0011, JP-0017-JP-0020, JP-0036-JP-0046, JP-0039-JP-0040, JP-0039-JP-0041, JP-0041-JP-0045, JP-0041-JP-0051, JP-0041-JP-0052, JP-0045-JP-0052, JP-0048-JP-0051, JP-0049-JP-0051, JP-0050-JP-0053, JP-0050-JP-0060, JP-0053-JP-0060, JP-0054-JP-0060, JP-0055-JP-0058, JP-0057-JP-0059, JP-0058-JP-0059, JP-0058-KR-0008, KH-0003-VN-0009, KP-0002-KP-0005, KP-0005-KR-0003, KP-0005-KR-0007, KR-0005-KR-0020, KR-0007-KR-0020, KR-0008-KR-0033, KR-0019-KR-0020, KR-0024-KR-0025, KR-0032-KR-0033, MM-0003-MM-0020, MY-0015-SG-0001, MY-0015-SG-0003, MY-0016-SG-0003, MY-0018-MY-0023, MY-0018-PH-0015, MY-0019-PH-0029, MY-0021-MY-0023, NZ-0001-NZ-0005, NZ-0010-NZ-0011, PG-0006-PG-0010, PG-0010-PG-0011, PG-0012-SB-0003, PH-0002-PH-0005, PH-0002-PH-0011, PH-0005-PH-0010, PH-0005-PH-0011, PH-0007-PH-0010, PH-0007-PH-0016, PH-0008-PH-0016, PH-0016-PH-0018, PH-0017-PH-0018, PH-0017-PH-0020, PH-0017-PH-0022, PH-0018-PH-0019, PH-0019-PH-0020, PH-0020-PH-0021, PH-0020-PH-0022, PH-0021-PH-0022, PH-0021-PH-0023, PH-0021-PH-0024, PH-0022-PH-0028, PH-0023-PH-0029, SB-0001-SB-0002, TH-0003-TH-0005, TH-0009-TH-0012, TW-0012-TW-0020, TW-0014-TW-0020, VN-0005-VN-0007, VU-0001-VU-0002
+AU-0017-AU-0020, AU-0017-AU-0023, AU-0032-PG-0005, BN-0001-BN-0004, BN-0001-MY-0023, CN-0010-CN-0041, CN-0012-CN-0032, CN-0012-CN-0036, CN-0013-CN-0041, CN-0019-CN-0025, CN-0019-CN-0028, CN-0020-CN-0025, CN-0020-CN-0028, CN-0028-HK-0003, CN-0029-CN-0132, CN-0032-CN-0036, CN-0040-CN-0041, CN-0081-TW-0022, CN-0082-TW-0021, CN-0083-TW-0021, FJ-0001-FJ-0004, FJ-0003-FJ-0004, HK-0003-MO-0001, ID-0012-ID-0036, ID-0017-ID-0021, ID-0019-ID-0021, ID-0023-ID-0024, ID-0024-ID-0025, ID-0025-TL-0001, ID-0030-MY-0013, ID-0030-MY-0014, ID-0030-MY-0017, ID-0031-ID-0032, ID-0032-ID-0033, ID-0032-MY-0015, ID-0032-MY-0016, ID-0032-SG-0001, ID-0032-SG-0002, ID-0032-SG-0003, ID-0034-ID-0037, ID-0045-ID-0049, ID-0048-TL-0001, ID-0048-TL-0003, ID-0049-ID-0051, JP-0003-JP-0007, JP-0003-JP-0011, JP-0003-JP-0032, JP-0005-JP-0011, JP-0006-JP-0010, JP-0006-JP-0011, JP-0007-JP-0011, JP-0017-JP-0020, JP-0018-RU-0067, JP-0019-RU-0068, JP-0036-JP-0046, JP-0039-JP-0040, JP-0039-JP-0041, JP-0041-JP-0045, JP-0041-JP-0051, JP-0041-JP-0052, JP-0045-JP-0052, JP-0048-JP-0051, JP-0049-JP-0051, JP-0050-JP-0053, JP-0050-JP-0060, JP-0053-JP-0060, JP-0054-JP-0060, JP-0055-JP-0058, JP-0057-JP-0059, JP-0058-JP-0059, JP-0058-KR-0008, KH-0003-VN-0009, KP-0002-KP-0005, KP-0005-KR-0003, KP-0005-KR-0007, KR-0005-KR-0020, KR-0007-KR-0020, KR-0008-KR-0033, KR-0019-KR-0020, KR-0024-KR-0025, KR-0032-KR-0033, MM-0003-MM-0020, MY-0015-SG-0001, MY-0015-SG-0003, MY-0016-SG-0003, MY-0018-MY-0023, MY-0018-PH-0015, MY-0019-PH-0029, MY-0021-MY-0023, NZ-0001-NZ-0005, NZ-0010-NZ-0011, PG-0006-PG-0010, PG-0010-PG-0011, PG-0012-SB-0003, PH-0002-PH-0005, PH-0002-PH-0011, PH-0005-PH-0010, PH-0005-PH-0011, PH-0007-PH-0010, PH-0007-PH-0016, PH-0008-PH-0016, PH-0016-PH-0018, PH-0017-PH-0018, PH-0017-PH-0020, PH-0017-PH-0022, PH-0018-PH-0019, PH-0019-PH-0020, PH-0020-PH-0021, PH-0020-PH-0022, PH-0021-PH-0022, PH-0021-PH-0023, PH-0021-PH-0024, PH-0022-PH-0028, PH-0023-PH-0029, SB-0001-SB-0002, TH-0003-TH-0005, TH-0009-TH-0012, TW-0012-TW-0020, TW-0014-TW-0020, VN-0005-VN-0007, VU-0001-VU-0002
 
 ## Small provinces
 
@@ -541,20 +547,10 @@ A Natural Earth place matched in the name or notes that ended up in another prov
 | Province | Name | Place | Lies in |
 |---|---|---|---|
 | AU-0002 | Western Sydney-Parramatta | Sydney | AU-0001 |
-| AU-0002 | Western Sydney-Parramatta | Sydney | AU-0001 |
-| AU-0002 | Western Sydney-Parramatta | Sydney | AU-0001 |
-| AU-0002 | Western Sydney-Parramatta | Sydney | AU-0001 |
 | AU-0003 | Gosford-Central Coast | Sydney | AU-0001 |
 | AU-0027 | Toowoomba-Darling Downs | Gladstone | AU-0029 |
 | CN-0119 | Chifeng-Tongliao-Xilingol | Erenhot | CN-0117 |
 | CN-0096 | Xi'an High-tech-Xianyang | Xian | CN-0095 |
-| CN-0096 | Xi'an High-tech-Xianyang | Xian | CN-0095 |
-| CN-0096 | Xi'an High-tech-Xianyang | Xian | CN-0095 |
-| CN-0096 | Xi'an High-tech-Xianyang | Xian | CN-0095 |
-| CN-0096 | Xi'an High-tech-Xianyang | Xian | CN-0095 |
-| ID-0008 | Bandung Raya-Cimahi | Bandung | ID-0007 |
-| ID-0008 | Bandung Raya-Cimahi | Bandung | ID-0007 |
-| ID-0008 | Bandung Raya-Cimahi | Bandung | ID-0007 |
 | ID-0008 | Bandung Raya-Cimahi | Bandung | ID-0007 |
 | PH-0004 | South Metro Manila | Manila | PH-0002 |
 

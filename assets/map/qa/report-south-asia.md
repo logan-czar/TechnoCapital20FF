@@ -1,6 +1,6 @@
 # Map QA report: south-asia
 
-_Written by `tools/map-pipeline/run.py --region south-asia` (pipeline pa-1). Source of the rows: `provinces-south-asia.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
+_Written by `tools/map-pipeline/run.py --region south-asia` (pipeline pb-1). Source of the rows: `provinces-south-asia.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
 
 ## Result
 
@@ -38,7 +38,7 @@ _Written by `tools/map-pipeline/run.py --region south-asia` (pipeline pa-1). Sou
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 9 |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities in a part across a narrow strait (listed, allowed) | 0 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 0 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
