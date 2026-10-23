@@ -240,10 +240,14 @@ fn draw_charts(
     mut charts: Query<&mut Chart>,
     mut nodes: Query<(&mut Node, &mut UiTransform, &mut BackgroundColor)>,
     mut texts: Query<&mut Text>,
+    mut stats: Option<ResMut<crate::pages::PageStats>>,
 ) {
     for mut c in &mut charts {
         if c.drawn_rev == c.rev && c.drawn_size == c.size {
             continue;
+        }
+        if let Some(st) = stats.as_mut() {
+            st.chart_draws += 1;
         }
         c.drawn_rev = c.rev;
         c.drawn_size = c.size;
@@ -267,14 +271,19 @@ fn draw_charts(
             commands.entity(plot).add_child(e);
             c.pool.push(e);
         }
+        // Only what moved is written (D774): a redraw at a new close moves few primitives,
+        // and an unchanged node is not laid out or extracted again.
+        let mut wrote = 0u64;
         for (i, p) in prims.iter().enumerate() {
             let (n, t, col) = prim_node(p);
             let e = c.pool[i];
             if let Ok((mut node, mut tr, mut bg)) = nodes.get_mut(e) {
-                *node = n;
-                *tr = t;
-                bg.0 = col;
+                let a = node.set_if_neq(n);
+                let b = tr.set_if_neq(t);
+                let d = bg.set_if_neq(BackgroundColor(col));
+                wrote += u64::from(a || b || d);
             } else {
+                wrote += 1;
                 // Spawned this frame: its components arrive with the commands.
                 commands.entity(e).insert((n, t, BackgroundColor(col)));
             }
@@ -287,6 +296,9 @@ fn draw_charts(
             }
         }
         c.used = prims.len();
+        if let Some(st) = stats.as_mut() {
+            st.chart_prim_writes += wrote;
+        }
         // Gridlines and value labels.
         let ticks = scale.map_or_else(Vec::new, |s| s.ticks(GRIDLINES));
         while c.grid.len() < ticks.len() {
@@ -326,25 +338,33 @@ fn draw_charts(
         for (i, &(line, label)) in c.grid.iter().enumerate() {
             let tick = ticks.get(i).copied();
             let y = tick.zip(scale).map(|(v, s)| s.y(v));
+            let display = if y.is_some() {
+                Display::Flex
+            } else {
+                Display::None
+            };
             if let Ok((mut n, _, _)) = nodes.get_mut(line) {
-                n.display = if y.is_some() {
-                    Display::Flex
-                } else {
-                    Display::None
+                let want = Node {
+                    display,
+                    top: px(y.unwrap_or(0.0)),
+                    ..n.clone()
                 };
-                n.top = px(y.unwrap_or(0.0));
+                n.set_if_neq(want);
             }
             if let Ok((mut n, _, _)) = nodes.get_mut(label) {
-                n.display = if y.is_some() {
-                    Display::Flex
-                } else {
-                    Display::None
+                let want = Node {
+                    display,
+                    left: px(w + 6.0),
+                    top: px(y.unwrap_or(0.0) - 7.0),
+                    ..n.clone()
                 };
-                n.left = px(w + 6.0);
-                n.top = px(y.unwrap_or(0.0) - 7.0);
+                n.set_if_neq(want);
             }
             if let (Some(v), Ok(mut t)) = (tick, texts.get_mut(label)) {
-                t.0 = fmt.fmt(v);
+                let s = fmt.fmt(v);
+                if t.0 != s {
+                    t.0 = s;
+                }
             }
         }
         let title = c.model.title.clone();
