@@ -4,7 +4,7 @@ _Written by `tools/map-pipeline/run.py --region north-america` (pipeline pb-1). 
 
 ## Result
 
-**Pass.** All 260 provinces of `provinces-north-america.csv` have a crosswalk row and pixels (17 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
+**Pass.** All 260 provinces of `provinces-north-america.csv` have a crosswalk row and pixels (19 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
 
 ## Coverage
 
@@ -23,22 +23,23 @@ _Written by `tools/map-pipeline/run.py --region north-america` (pipeline pb-1). 
 | Provinces by method: admin3 | 0 |
 | Provinces by method: voronoi | 40 |
 | Flagged for review (confidence < 0.6) | 4 |
-| Placed by a builder hint (`hints/north-america.toml`) | 30 |
-| Tiny (under 64 px) | 17 |
+| Placed by a builder hint (`hints/north-america.toml`) | 31 |
+| Tiny (under 64 px) | 19 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
 | More than one part (islands, exclaves) | 120 |
-| Coastal flag differs from the CSV | 31 |
+| Coastal flag differs from the CSV | 30 |
 | Small for their region (not Metro, under 5% of the region's mean) | 4 |
 | Voronoi-split blocks where one province takes 75% or more | 7 |
-| Places named in a province's name or notes that lie in another province | 2 |
+| Places named in a province's name or notes that lie in another province | 0 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 0 |
 | Admin-1 units left without a province | 0 |
-| Sea links with a province of this file | 15 |
-| City probe points (fail on a mismatch; D686) | 33 pass, 0 mismatch, 0 listed |
-| Metro reach scan rows (listed; D686) | 8 |
+| Sea links with a province of this file | 21 |
+| City probe points (fail on a mismatch; D686) | 40 pass, 0 mismatch, 5 listed |
+| Metro reach scan rows (listed; D686) | 7 |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 17 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 4 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 3 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
@@ -87,19 +88,20 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | CA-0059 | Kivalliq-Kitikmeot | seeds: point -105.06,69.12 (hint); point -92.09,62.81 (hint); 0 whole admin2 units, split: Nunavut |
 | MX-0002 | Polanco-Santa Fe | seeds: point -99.25,19.36 (hint); unit Cuajimalpa de Morelos (hint); unit Miguel Hidalgo (hint); 5 whole admin2 units |
 | MX-0010 | Rural Jalisco | seeds: place Puerto Vallarta; unit Arandas (hint); unit Lagos de Moreno (hint); unit Puerto Vallarta at place Puerto Vallarta; unit San Juan de los Lagos (hint); unit Tepatitlán de Morelos (hint); unit Tequila (hint); 112 whole admin2 units |
-| US-0013 | San Fernando Valley | seeds: point -118.12,34.58 (hint); point -118.14,34.7 (hint); point -118.45,34.22 (hint); point -118.54,34.39 (hint); 1 whole admin2 units, split: Los Angeles |
+| US-0005 | Phoenix-Central | seeds: place Flagstaff; place Phoenix; point -112.47,34.54 (hint); 2 whole admin2 units, split: Maricopa |
+| US-0013 | San Fernando Valley | seeds: point -118.12,34.58 (hint); point -118.14,34.7 (hint); point -118.45,34.22 (hint); point -118.54,34.39 (hint); 0 whole admin2 units, split: Los Angeles |
 | US-0015 | Inland Empire | seeds: unit Riverside (hint); unit San Bernardino (hint); 1 whole admin2 units, split: Riverside |
 | US-0044 | Chicago Loop | seeds: point -87.63,41.88 (hint); point -87.66,41.95 (hint); 0 whole admin2 units, split: Cook |
 | US-0045 | South Side-Calumet | seeds: point -87.6,41.78 (hint); point -87.62,41.62 (hint); 0 whole admin2 units, split: Cook |
 | US-0046 | DuPage-Northwest Suburbs | seeds: point -87.9,41.98 (hint); point -87.98,42.09 (hint); point -88.08,42.03 (hint); unit DuPage; 4 whole admin2 units, split: Cook |
-| US-0062 | Suburban Maryland | seeds: unit Montgomery (hint); unit Prince George's (hint); 5 whole admin2 units |
+| US-0062 | Suburban Maryland | seeds: unit Montgomery (hint); unit Prince George's (hint); 4 whole admin2 units |
 | US-0083 | South Jersey | seeds: unit Burlington (hint); unit Camden (hint); unit Gloucester (hint); unit Salem (hint); 6 whole admin2 units |
 | US-0086 | Manhattan | seeds: unit New York (hint); 1 whole admin2 units |
 | US-0087 | Brooklyn-Queens | seeds: unit Kings (hint); unit Queens (hint); unit Richmond (hint); 3 whole admin2 units |
 | US-0089 | Long Island | seeds: unit Nassau (hint); unit Suffolk (hint); 2 whole admin2 units |
 | US-0090 | Hudson Valley-Capital Region | seeds: place Albany; point -73.92,41.7 (hint); point -73.99,41.93 (hint); point -74.01,41.5 (hint); unit Albany at place Albany; 20 whole admin2 units |
-| US-0120 | Plano-Frisco | seeds: unit Collin (hint); unit Denton (hint); 8 whole admin2 units |
-| US-0124 | Woodlands-Katy | seeds: point -95.78,29.8 (hint); unit Montgomery (hint); unit Waller (hint); 8 whole admin2 units, split: Harris |
+| US-0120 | Plano-Frisco | seeds: unit Collin (hint); unit Denton (hint); 3 whole admin2 units |
+| US-0124 | Woodlands-Katy | seeds: point -95.78,29.8 (hint); unit Montgomery (hint); unit Waller (hint); 4 whole admin2 units, split: Harris |
 | US-0137 | Northern Virginia | seeds: unit Alexandria (hint); unit Arlington (hint); unit Fairfax (hint); unit Loudoun (hint); unit Prince William (hint); 12 whole admin2 units |
 
 ## Tiny provinces (click targets)
@@ -108,13 +110,14 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 
 | Province | Name | Pixels | Parts | Label point (px) |
 |---|---|---|---|---|
-| PM-0001 | Saint Pierre and Miquelon | 3 | 1 | 2814.5, 1458.5 |
 | BM-0001 | Bermuda | 4 | 3 | 2621.5, 1848.5 |
 | US-0086 | Manhattan | 4 | 2 | 2413.5, 1625.5 |
 | MX-0001 | Cuauhtemoc-Centro | 8 | 1 | 1840.5, 2161.5 |
+| US-0018 | San Francisco | 9 | 1 | 1309.5, 1707.5 |
 | MX-0002 | Polanco-Santa Fe | 10 | 1 | 1837.5, 2164.5 |
 | US-0030 | Washington DC | 13 | 1 | 2342.5, 1676.5 |
 | CA-0001 | Downtown Toronto | 18 | 1 | 2287.5, 1547.5 |
+| PM-0001 | Saint Pierre and Miquelon | 18 | 3 | 2814.5, 1458.5 |
 | US-0106 | Philadelphia City | 22 | 1 | 2388.5, 1646.5 |
 | US-0044 | Chicago Loop | 26 | 1 | 2099.5, 1596.5 |
 | MX-0005 | Naucalpan-Tlalnepantla | 30 | 2 | 1838.5, 2158.5 |
@@ -124,6 +127,7 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | US-0011 | Westside-Hollywood | 45 | 1 | 1393.5, 1802.5 |
 | US-0081 | Jersey City-Hudson Waterfront | 51 | 1 | 2411.5, 1622.5 |
 | US-0012 | Long Beach-Harbor | 56 | 5 | 1405.5, 1809.5 |
+| MX-0011 | Monterrey Centro-San Pedro | 58 | 2 | 1816.5, 2019.5 |
 | MX-0004 | Ecatepec-Nezahualcoyotl | 60 | 2 | 1844.5, 2161.5 |
 
 ## Anchor cities
@@ -132,7 +136,6 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 
 | Check | Province | Place | Expected | Got |
 |---|---|---|---|---|
-| city part across water | US-0018 | San Francisco | the largest 4-connected part | a smaller part, joined to it across water only |
 | own name elsewhere (allowed) | US-0086 | Manhattan | US-0086 (Natural Earth's only Manhattan is the Kansas town; New York City's point is checked as the Metro) | US-0054 |
 | city on the edge | US-0130 | Laredo | US-0130 | MX-0030 |
 | own name elsewhere (allowed) | MX-0001 | Cuauhtémoc | MX-0001 (Cuauhtemoc borough of Mexico City, not Cuauhtemoc in Chihuahua) | MX-0022 |
@@ -151,6 +154,11 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 
 | Point | Expected | Got | Result |
 |---|---|---|---|
+| Bay City Matagorda (-95.97, 28.98) | ? | US-0128 | listed |
+| Clewiston (-80.93, 26.75) | ? | US-0034 | listed |
+| Columbus TX (-96.54, 29.71) | ? | US-0126 | listed |
+| Sebring Highlands (-81.44, 27.5) | ? | US-0034 | listed |
+| Victoria TX (-97.0, 28.8) | ? | US-0128 | listed |
 | Adak (-176.64, 51.88) | US | US-0003 | on it |
 | Attu (173.18, 52.93) | US | US-0003 | nearest across water |
 | Brooklyn (-73.95, 40.65) | US-0087 | US-0087 | on it |
@@ -158,10 +166,15 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Coyoacan (-99.16, 19.35) | MX-0003 | MX-0003 | on it |
 | Downtown Toronto (-79.38, 43.65) | CA-0001 | CA-0001 | on it |
 | Ecatepec (-99.05, 19.6) | MX-0004 | MX-0004 | on it |
+| Flagstaff (-111.65, 35.2) | US-0005 | US-0005 | on it |
+| Globe Gila (-110.79, 33.39) | US-0007 | US-0007 | on it |
 | Guadalajara centro (-103.35, 20.67) | MX-0007 | MX-0007 | on it |
+| Holbrook Navajo (-110.16, 34.9) | US-0007 | US-0007 | on it |
 | Hollywood (-118.33, 34.1) | US-0011 | US-0010 | within a pixel |
 | Hyde Park Chicago (-87.59, 41.79) | US-0045 | US-0045 | on it |
 | Iztapalapa (-99.06, 19.36) | MX-0003 | MX-0003 | on it |
+| Kingman AZ (-114.05, 35.19) | US-0007 | US-0007 | on it |
+| Lake Havasu (-114.32, 34.48) | US-0007 | US-0007 | on it |
 | Lancaster CA (-118.14, 34.69) | US-0013 | US-0013 | on it |
 | Little Diomede (-168.93, 65.75) | US | US-0004 | on it |
 | Long Beach (-118.19, 33.77) | US-0012 | US-0012 | on it |
@@ -171,6 +184,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Mississauga (-79.64, 43.59) | CA-0002 | CA-0002 | on it |
 | Naucalpan (-99.24, 19.48) | MX-0005 | MX-0005 | on it |
 | Nezahualcoyotl (-99.01, 19.4) | MX-0004 | MX-0004 | on it |
+| Okeechobee (-80.83, 27.24) | US-0034 | US-0034 | on it |
 | Oshawa (-78.86, 43.9) | CA-0004 | CA-0004 | on it |
 | Polanco (-99.19, 19.433) | MX-0002 | MX-0005 | within a pixel |
 | Poughkeepsie (-73.92, 41.7) | US-0090 | US-0090 | on it |
@@ -182,6 +196,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Tlaquepaque (-103.31, 20.64) | MX-0009 | MX-0009 | on it |
 | Van Nuys (-118.45, 34.19) | US-0013 | US-0013 | on it |
 | Vancouver downtown (-123.12, 49.28) | CA-0026 | CA-0026 | on it |
+| Wharton (-96.1, 29.31) | US-0126 | US-0126 | on it |
 | Zapopan (-103.39, 20.72) | MX-0008 | MX-0008 | on it |
 | Zocalo (-99.133, 19.433) | MX-0001 | MX-0001 | on it |
 
@@ -192,13 +207,36 @@ Metro provinces whose centroid is over 80 km from their Metro's city, that are o
 | Check | Province or region | Detail |
 |---|---|---|
 | large for its Metro | US-0046 DuPage-Northwest Suburbs | 418 px, the Metro's median is 71 px (Metro Chicago) |
-| large for its Metro | US-0013 San Fernando Valley | 661 px, the Metro's median is 115 px (Metro Los Angeles-Long Beach) |
-| far from its Metro city | US-0033 Palm Beach | centroid 110 km from Miami (Metro Miami) |
+| far from its Metro city | US-0033 Palm Beach | centroid 100 km from Miami (Metro Miami) |
 | far from its Metro city | US-0027 Fairfield County | centroid 81 km from New York (Metro New York) |
 | far from its Metro city | US-0089 Long Island | centroid 84 km from New York (Metro New York) |
 | far from its Metro city | US-0005 Phoenix-Central | centroid 174 km from Phoenix (Metro Phoenix) |
 | Metro share of a region | USA: Arizona | Metro provinces hold 37% of 16883 px beside 1 rural |
 | Metro share of a region | USA: New Jersey | Metro provinces hold 53% of 1274 px beside 1 rural |
+
+## Land exclaves
+
+Parts of 5 px or more that are not a province's largest part and touch no pixel outside every province (islands are not listed). Each is explained by a place its composite name names lying in it, by one of the province's own seeds (a hint point, or a place its notes name) lying in it, by a neck under a pixel wide that joins it to the rest in the shapes, or by a reason in `[review.exclave_ok]`; an unexplained one fails the step (D691).
+
+| Province | Name | Pixels | At | Why |
+|---|---|---|---|---|
+| CA-0004 | Durham-Oshawa | 17 | -79.14, 44.42 | a neck under a pixel wide joins it to the rest in the shapes |
+| CA-0025 | Cote-Nord | 64 | -66.87, 54.89 | Fermont and Schefferville: StatCan's Cote-Nord reaches them along the Labrador border, a strip Natural Earth's Quebec line cuts, so they sit between Labrador and Nord-du-Quebec |
+| CA-0025 | Cote-Nord | 372 | -64.72, 54.88 | Fermont and Schefferville: StatCan's Cote-Nord reaches them along the Labrador border, a strip Natural Earth's Quebec line cuts, so they sit between Labrador and Nord-du-Quebec |
+| CA-0045 | Southern Manitoba | 12 | -99.97, 51.91 | a neck under a pixel wide joins it to the rest in the shapes |
+| CA-0045 | Southern Manitoba | 14 | -95.2, 49.08 | a neck under a pixel wide joins it to the rest in the shapes |
+| CA-0046 | Northern Manitoba | 49 | -101.62, 51.99 | a neck under a pixel wide joins it to the rest in the shapes |
+| CA-0046 | Northern Manitoba | 7 | -101.49, 50.47 | a neck under a pixel wide joins it to the rest in the shapes |
+| CA-0046 | Northern Manitoba | 8 | -101.45, 50.11 | a neck under a pixel wide joins it to the rest in the shapes |
+| MX-0006 | Toluca-Rural Mexico State | 45 | -98.78, 19.7 | a neck under a pixel wide joins it to the rest in the shapes |
+| MX-0006 | Toluca-Rural Mexico State | 60 | -98.79, 19.19 | the State of Mexico's Chalco-Amecameca lobe: the Mexico City Metro provinces round it reach 0.4 degrees from their seeds (D690), so it joins the state's rural province beyond them |
+| MX-0013 | Guadalupe-Santa Catarina | 22 | -100.17, 25.66 | its own seed unit Guadalupe lies in it |
+| MX-0014 | Rural Nuevo Leon | 7 | -100.19, 25.97 | a neck under a pixel wide joins it to the rest in the shapes |
+| MX-0016 | Coatzacoalcos-Southern Veracruz | 217 | -96.94, 18.85 | its own seed unit Córdoba at place Córdoba lies in it |
+| MX-0032 | Michoacan | 5 | -100.67, 18.39 | a neck under a pixel wide joins it to the rest in the shapes |
+| US-0017 | Imperial-Coachella Valley | 441 | -116.9, 33.74 | its own seed place Palm Springs lies in it |
+| US-0063 | Baltimore-Central Maryland | 174 | -79.06, 39.56 | a neck under a pixel wide joins it to the rest in the shapes |
+| US-0063 | Baltimore-Central Maryland | 60 | -77.76, 39.58 | a neck under a pixel wide joins it to the rest in the shapes |
 
 ## Known for review
 
@@ -237,13 +275,13 @@ None.
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-CA-0001-US-0092, CA-0009-US-0098, CA-0014-US-0068, CA-0024-CA-0025, CA-0028-US-0140, CA-0047-CA-0055, CA-0048-CA-0055, CA-0049-CA-0050, CA-0051-CA-0055, CA-0053-PM-0001, CA-0058-GL-0003, US-0027-US-0089, US-0028-US-0089, US-0088-US-0089, US-0089-US-0111
+CA-0001-US-0092, CA-0009-US-0098, CA-0014-US-0068, CA-0021-CA-0059, CA-0024-CA-0025, CA-0028-US-0140, CA-0028-US-0141, CA-0047-CA-0055, CA-0048-CA-0055, CA-0049-CA-0050, CA-0051-CA-0055, CA-0053-PM-0001, CA-0058-CA-0059, CA-0058-GL-0003, CA-0059-GL-0003, RU-0070-US-0004, US-0018-US-0023, US-0027-US-0089, US-0028-US-0089, US-0088-US-0089, US-0089-US-0111
 
 ## Small provinces
 
 | Province | Name | Region | Pixels | Region mean |
 |---|---|---|---|---|
-| CA-0004 | Durham-Oshawa | Ontario | 107 | 6078 |
+| CA-0004 | Durham-Oshawa | Ontario | 125 | 6078 |
 | CA-0015 | Montreal | Quebec | 34 | 13143 |
 | CA-0034 | Industrial Heartland | Alberta | 232 | 9703 |
 | GL-0002 | South Greenland-Kujalleq | Greenland | 6605 | 230637 |
@@ -264,12 +302,7 @@ Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share
 
 ## Named places outside their province
 
-A Natural Earth place matched in the name or notes that ended up in another province (usually a neighbour that names the same city more directly, as Long Beach-Harbor's notes name Los Angeles).
-
-| Province | Name | Place | Lies in |
-|---|---|---|---|
-| US-0012 | Long Beach-Harbor | Los Angeles | US-0010 |
-| US-0123 | Ship Channel-Baytown | Houston | US-0122 |
+None.
 
 ## Region nesting
 
@@ -286,24 +319,23 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | CA-0007 | Kitchener-Waterloo | 156 | Y | N |
 | CA-0008 | London-Southwestern Ontario | 28 | Y | N |
 | CA-0010 | Ottawa | 28 | Y | N |
-| CA-0012 | Sudbury | 466 | Y | N |
+| CA-0012 | Sudbury | 464 | Y | N |
 | CA-0013 | Timmins-Northeastern Ontario | 205 | Y | N |
 | CA-0016 | Monteregie-South Shore | 104 | Y | N |
-| CA-0018 | Mauricie | 53 | Y | N |
+| CA-0017 | Eastern Townships | 88 | Y | N |
+| CA-0018 | Mauricie | 28 | Y | N |
 | CA-0019 | Laval-Laurentides | 50 | Y | N |
 | CA-0021 | Nord-du-Quebec | 2227 | Y | N |
 | CA-0023 | Saguenay-Lac-Saint-Jean | 63 | Y | N |
-| CA-0027 | Surrey-Fraser Valley | 24 | Y | N |
+| CA-0027 | Surrey-Fraser Valley | 26 | Y | N |
 | CA-0056 | Yukon | 175 | Y | N |
 | CA-0057 | Northwest Territories | 7450 | Y | N |
-| MX-0024 | Cananea-Nogales | 119 | Y | N |
 | MX-0026 | Mexicali | 103 | Y | N |
 | MX-0030 | Reynosa-Nuevo Laredo | 58 | Y | N |
 | US-0010 | Downtown Los Angeles | 0 | N | Y |
-| US-0013 | San Fernando Valley | 29 | Y | N |
 | US-0022 | San Joaquin Valley | 5 | Y | N |
 | US-0046 | DuPage-Northwest Suburbs | 14 | Y | N |
-| US-0062 | Suburban Maryland | 63 | Y | N |
+| US-0062 | Suburban Maryland | 35 | Y | N |
 | US-0079 | New Hampshire | 10 | Y | N |
 | US-0088 | Bronx-Westchester | 34 | Y | N |
 | US-0091 | Central New York | 92 | Y | N |
@@ -311,13 +343,13 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | US-0107 | Delaware Valley PA Suburbs | 5 | Y | N |
 | US-0109 | Northeastern and Northern Pennsylvania | 24 | Y | N |
 | US-0137 | Northern Virginia | 21 | Y | N |
-| US-0138 | Richmond-Central Virginia | 92 | Y | N |
+| US-0138 | Richmond-Central Virginia | 139 | Y | N |
 
 ## Provinces in several parts
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-CA-0059 (235), US-0003 (203), CA-0058 (124), GL-0003 (105), CA-0057 (89), US-0004 (44), CA-0053 (42), GL-0002 (39), CA-0054 (35), CA-0028 (34), CA-0029 (32), GL-0001 (29), US-0095 (27), US-0034 (23), MX-0027 (20), US-0140 (20), CA-0025 (16), US-0068 (16), CA-0046 (15), US-0139 (14), CA-0021 (13), US-0061 (13), US-0064 (13), CA-0012 (12), US-0037 (12), US-0128 (12), CA-0049 (11), MX-0036 (11), US-0063 (11), US-0123 (11), CA-0024 (10), US-0058 (10), US-0089 (10), MX-0025 (9), US-0042 (9), US-0145 (9), CA-0014 (8), US-0129 (8), CA-0050 (7), MX-0044 (7), US-0111 (7), CA-0045 (6), CA-0048 (6), MX-0039 (6), US-0041 (6), US-0083 (6), CA-0010 (5), CA-0026 (5), MX-0015 (5), MX-0026 (5), MX-0033 (5), MX-0047 (5), US-0012 (5), US-0021 (5), US-0091 (5), CA-0051 (4), CA-0056 (4), MX-0006 (4), MX-0023 (4), MX-0041 (4), MX-0048 (4), US-0002 (4), US-0017 (4), US-0056 (4), US-0141 (4), BM-0001 (3), CA-0006 (3), CA-0009 (3), CA-0016 (3), CA-0022 (3), CA-0027 (3), CA-0031 (3), CA-0047 (3), CA-0052 (3), MX-0012 (3), MX-0028 (3), MX-0030 (3), US-0031 (3), US-0036 (3), US-0071 (3), US-0072 (3), US-0082 (3), US-0098 (3), US-0112 (3), CA-0005 (2), CA-0011 (2), CA-0015 (2), CA-0017 (2), CA-0035 (2), CA-0055 (2), MX-0004 (2), MX-0005 (2), MX-0011 (2), MX-0013 (2), MX-0014 (2), MX-0016 (2), MX-0019 (2), MX-0029 (2), MX-0031 (2), MX-0032 (2), MX-0034 (2), MX-0038 (2), MX-0043 (2), MX-0045 (2), US-0013 (2), US-0018 (2), US-0020 (2), US-0028 (2), US-0035 (2), US-0048 (2), US-0051 (2), US-0057 (2), US-0059 (2), US-0065 (2), US-0066 (2), US-0086 (2), US-0087 (2), US-0102 (2), US-0104 (2), US-0110 (2)
+CA-0059 (226), US-0003 (202), CA-0058 (114), GL-0003 (105), CA-0057 (89), US-0004 (44), CA-0053 (42), GL-0002 (39), CA-0054 (35), CA-0028 (34), CA-0029 (32), GL-0001 (29), US-0095 (27), US-0034 (23), MX-0027 (20), US-0128 (17), US-0140 (17), CA-0025 (16), US-0068 (16), CA-0046 (15), US-0139 (14), CA-0021 (13), US-0061 (13), US-0064 (13), CA-0012 (12), US-0037 (12), CA-0049 (11), MX-0036 (11), US-0063 (11), CA-0024 (10), US-0058 (10), US-0089 (10), MX-0025 (9), US-0042 (9), US-0145 (9), CA-0014 (8), US-0129 (8), CA-0045 (7), CA-0050 (7), MX-0044 (7), US-0111 (7), CA-0048 (6), MX-0038 (6), MX-0039 (6), US-0021 (6), US-0041 (6), US-0083 (6), US-0123 (6), US-0141 (6), CA-0010 (5), MX-0015 (5), MX-0023 (5), MX-0026 (5), MX-0033 (5), MX-0047 (5), US-0012 (5), US-0091 (5), CA-0026 (4), CA-0051 (4), CA-0056 (4), MX-0006 (4), MX-0041 (4), MX-0048 (4), US-0002 (4), US-0017 (4), US-0056 (4), US-0104 (4), BM-0001 (3), CA-0006 (3), CA-0009 (3), CA-0016 (3), CA-0022 (3), CA-0031 (3), CA-0047 (3), CA-0052 (3), MX-0012 (3), MX-0016 (3), MX-0028 (3), MX-0030 (3), PM-0001 (3), US-0031 (3), US-0036 (3), US-0071 (3), US-0072 (3), US-0082 (3), US-0098 (3), US-0112 (3), CA-0004 (2), CA-0005 (2), CA-0011 (2), CA-0015 (2), CA-0017 (2), CA-0035 (2), CA-0055 (2), MX-0004 (2), MX-0005 (2), MX-0011 (2), MX-0013 (2), MX-0014 (2), MX-0019 (2), MX-0029 (2), MX-0031 (2), MX-0032 (2), MX-0034 (2), MX-0043 (2), MX-0045 (2), US-0020 (2), US-0028 (2), US-0035 (2), US-0048 (2), US-0051 (2), US-0057 (2), US-0059 (2), US-0065 (2), US-0066 (2), US-0086 (2), US-0087 (2), US-0102 (2), US-0110 (2), US-0126 (2)
 
 ## Visual check
 

@@ -4,7 +4,7 @@ _Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-1). Source of
 
 ## Result
 
-**Pass.** All 331 provinces of `provinces-mena.csv` have a crosswalk row and pixels (73 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
+**Pass.** All 331 provinces of `provinces-mena.csv` have a crosswalk row and pixels (72 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
 
 ## Coverage
 
@@ -32,12 +32,12 @@ _Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-1). Source of
 | ... YEM | 16 |
 | Regions matched | 241 of 241 |
 | Provinces by method: admin1 | 198 |
-| Provinces by method: admin2 | 36 |
+| Provinces by method: admin2 | 37 |
 | Provinces by method: admin3 | 0 |
-| Provinces by method: voronoi | 97 |
+| Provinces by method: voronoi | 96 |
 | Flagged for review (confidence < 0.6) | 0 |
 | Placed by a builder hint (`hints/mena.toml`) | 80 |
-| Tiny (under 64 px) | 73 |
+| Tiny (under 64 px) | 72 |
 | Given a pixel at their interior point (no pixel centre inside) | 1 |
 | More than one part (islands, exclaves) | 76 |
 | Coastal flag differs from the CSV | 32 |
@@ -48,8 +48,9 @@ _Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-1). Source of
 | Contested provinces (drawn by our own files) | 10 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 20 |
-| City probe points (fail on a mismatch; D686) | 43 pass, 0 mismatch, 1 listed |
-| Metro reach scan rows (listed; D686) | 2 |
+| City probe points (fail on a mismatch; D686) | 50 pass, 0 mismatch, 1 listed |
+| Metro reach scan rows (listed; D686) | 1 |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 6 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
 
@@ -99,19 +100,19 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | AE-0004 | Al Ain | seeds: point 55.76,24.21 (hint); point 55.77,24.06 (hint); 0 whole parts, 1 split |
 | AE-0005 | Ruwais-Al Dhafra | seeds: point 51.8,24.1 (hint) (snapped to land); point 52.27,23.97 (hint); point 52.73,24.11 (hint); point 53.7,24.15 (hint) (snapped to land); 6 whole parts, 1 split |
 | AE-0006 | Liwa-Habshan | seeds: point 53.1,23.4 (hint); point 53.62,23.83 (hint); point 53.73,23.13 (hint); point 54.0,23.3 (hint); 0 whole parts, 1 split |
-| AE-0007 | Das-Zirku Islands | seeds: point 53.07,24.88 (hint); 1 whole parts; dropped (over SNAP_MAX_DEG off the region): point 52.87,25.15 (hint) |
+| AE-0007 | Das-Zirku Islands | seeds: point 53.07,24.88 (hint); 1 whole parts |
 | AE-0008 | Dubai Core | seeds: point 55.27,25.2 (hint); point 55.31,25.26 (hint) (snapped to land); 1 whole parts, 1 split |
 | AE-0010 | Dubai Marina-Jebel Ali | seeds: point 55.03,24.99 (hint) (snapped to land); point 55.14,25.08 (hint) (snapped to land); point 55.21,25.17 (hint) (snapped to land); 0 whole parts, 1 split |
 | AE-0013 | Hamriyah-Al Dhaid | seeds: point 55.53,25.47 (hint); point 55.88,25.29 (hint) (snapped to land); 0 whole admin1 units, split: Sharjah |
 | AE-0014 | Khor Fakkan-Kalba | seeds: point 56.34,25.34 (hint); point 56.35,25.07 (hint); 0 whole admin1 units, split: Sharjah |
 | DZ-0001 | Algiers Centre-Hydra | seeds: point 3.03,36.74 (hint); point 3.06,36.75 (hint); 0 whole parts, 1 split |
-| DZ-0002 | Algiers East-Rouiba | seeds: point 3.18,36.72 (hint); point 3.21,36.69 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 3.33,36.74 (hint) |
-| DZ-0003 | Algiers West-Cheraga | seeds: point 2.96,36.76 (hint) (snapped to land); point 3.04,36.79 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 2.87,36.75 (hint), point 2.83,36.69 (hint) |
+| DZ-0002 | Algiers East-Rouiba | seeds: point 3.18,36.72 (hint); point 3.2,36.71 (hint); point 3.21,36.69 (hint); 0 whole parts, 1 split |
+| DZ-0003 | Algiers West-Cheraga | seeds: point 2.99,36.77 (hint); point 3.04,36.79 (hint); 0 whole parts, 1 split |
 | DZ-0016 | Arzew-Bethioua | seeds: point -0.26,35.81 (hint); point -0.32,35.85 (hint); 0 whole parts, 1 split |
 | EG-0005 | 6th of October-Sheikh Zayed | seeds: point 30.93,29.97 (hint); point 30.98,30.05 (hint); 3 whole admin2 units |
-| EG-0007 | Shubra el-Kheima | seeds: point 31.24,30.13 (hint); 2 whole admin2 units |
-| EG-0009 | Alexandria Centre-East | seeds: point 29.95,31.22 (hint); point 30.02,31.27 (hint); 11 whole admin2 units |
-| EG-0010 | Alexandria West-Borg el-Arab | seeds: point 29.6,30.92 (hint) (snapped to land); point 29.75,31.05 (hint); point 29.82,31.13 (hint); 6 whole admin2 units |
+| EG-0007 | Shubra el-Kheima | seeds: point 31.255,30.13 (hint); 2 whole admin2 units |
+| EG-0009 | Alexandria Centre-East | seeds: point 29.95,31.22 (hint); point 30.02,31.27 (hint); 9 whole admin2 units |
+| EG-0010 | Alexandria West-Borg el-Arab | seeds: point 29.6,30.92 (hint) (snapped to land); point 29.75,31.05 (hint); point 29.82,31.13 (hint); 8 whole admin2 units |
 | IL-0002 | East Jerusalem | seeds: point 35.235,31.78 (hint); point 35.24,31.8 (hint); 0 whole admin2 units, split: Jerusalem |
 | IL-0003 | Beit Shemesh-Judean Hills | seeds: point 34.99,31.75 (hint); point 35.13,31.8 (hint); 0 whole admin2 units, split: Jerusalem |
 | IL-0005 | Ramat Gan-Herzliya | seeds: point 34.82,32.08 (hint); point 34.84,32.09 (hint); point 34.84,32.16 (hint); 0 whole admin2 units, split: Tel Aviv |
@@ -122,12 +123,12 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | IQ-0001 | Karkh-Green Zone | seeds: point 44.33,33.3 (hint); point 44.37,33.31 (hint); 0 whole admin2 units, split: Al-Karkh |
 | IQ-0002 | Rusafa-Old Baghdad | seeds: point 44.4,33.32 (hint); point 44.42,33.34 (hint); 0 whole admin2 units, split: Al-Karkh, Al-Thawra |
 | IQ-0003 | Sadr City-New Baghdad | seeds: point 44.45,33.38 (hint); point 44.5,33.3 (hint); 1 whole admin2 units, split: Al-Thawra |
-| IQ-0004 | Baghdad Belt | seeds: point 44.58,33.1 (hint) (snapped to land); 0 whole admin2 units, split: Al-Karkh; dropped (over SNAP_MAX_DEG off the region): point 44.07,33.29 (hint), point 44.24,33.52 (hint), point 44.35,33.06 (hint), point 44.4,33.67 (hint) |
+| IQ-0004 | Baghdad Belt | seeds: point 44.07,33.29 (hint); point 44.24,33.52 (hint); point 44.35,33.06 (hint); point 44.4,33.67 (hint); point 44.58,33.1 (hint); 4 whole admin2 units |
 | IQ-0006 | Rumaila-Majnoon | seeds: point 47.27,30.87 (hint); point 47.4,30.45 (hint); point 47.6,31.02 (hint); point 47.7,30.39 (hint); 3 whole admin2 units, split: Al-Zubair |
 | IR-0001 | North Tehran-Shemiran | seeds: point 51.41,35.77 (hint); point 51.45,35.8 (hint); 0 whole parts, 1 split |
 | IR-0002 | Central Tehran-Grand Bazaar | seeds: point 51.41,35.62 (hint); point 51.42,35.68 (hint); 0 whole parts, 1 split |
 | IR-0003 | West Tehran-Eslamshahr | seeds: point 50.98,35.46 (hint); point 51.02,35.65 (hint); point 51.23,35.55 (hint); point 51.33,35.7 (hint); 0 whole parts, 1 split |
-| IR-0018 | Bandar Lengeh-Islands | seeds: point 53.98,26.53 (hint); point 54.88,26.56 (hint); point 55.03,25.87 (hint); 6 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 55.3,26.25 (hint) |
+| IR-0018 | Bandar Lengeh-Islands | seeds: point 53.98,26.53 (hint); point 54.88,26.56 (hint); point 55.03,25.87 (hint); 6 whole parts, 1 split |
 | JO-0001 | Amman West-Abdali | seeds: point 35.85,31.95 (hint); point 35.9,31.96 (hint); 4 whole admin2 units |
 | KW-0002 | Shuwaikh-Sulaibikhat | seeds: point 47.84,29.33 (hint) (snapped to land); point 47.93,29.35 (hint); 0 whole parts, 1 split |
 | KW-0007 | Burgan | seeds: point 47.95,28.95 (hint); 0 whole parts, 1 split |
@@ -135,20 +136,20 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | KW-0009 | Jahra | seeds: point 47.66,29.34 (hint); point 47.7,29.45 (hint); 0 whole parts, 1 split |
 | KW-0010 | Raudhatain-Bubiyan | seeds: point 47.7,29.83 (hint); point 47.7,30.07 (hint); point 48.2,29.8 (hint); 2 whole parts, 1 split |
 | LY-0001 | Tripoli Centre-Port | seeds: point 13.18,32.89 (hint); 0 whole parts, 1 split |
-| LY-0002 | Tajura-Janzour | seeds: point 13.27,32.66 (hint); point 13.37,32.88 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 13.01,32.82 (hint) |
+| LY-0002 | Tajura-Janzour | seeds: point 13.12,32.8 (hint); point 13.27,32.66 (hint); point 13.37,32.88 (hint); 0 whole parts, 1 split |
 | LY-0008 | Sirte | seeds: point 16.59,31.21 (hint); 0 whole parts, 1 split |
 | LY-0009 | Ras Lanuf-Es Sider | seeds: point 18.35,30.63 (hint); point 18.57,30.5 (hint) (snapped to land); 0 whole parts, 1 split |
 | LY-0011 | Jalu-Sarir | seeds: point 20.4,28.6 (hint); point 21.55,29.03 (hint); point 23.5,27.5 (hint); 0 whole parts, 1 split |
 | MA-0002 | Casablanca East-Mohammedia | seeds: point -7.39,33.69 (hint); point -7.55,33.6 (hint); 0 whole admin1 units, split: Grand Casablanca |
 | MA-0003 | El Jadida-Jorf Lasfar | seeds: point -8.5,33.25 (hint); point -8.63,33.12 (hint); 1 whole admin1 units |
-| MA-0009 | Al Hoceima-Rif | seeds: point -3.93,35.25 (hint); point -5.27,35.17 (hint); point -5.6,34.8 (hint) (snapped to land); 1 whole parts, 1 split |
+| MA-0009 | Al Hoceima-Rif | seeds: point -3.93,35.25 (hint); point -5.27,35.17 (hint); point -5.6,34.84 (hint); 1 whole parts, 1 split |
 | OM-0003 | Sohar | seeds: point 56.71,24.35 (hint); 0 whole parts, 1 split |
 | OM-0004 | Saham-Shinas | seeds: point 56.47,24.74 (hint); point 56.56,24.53 (hint); point 56.89,24.17 (hint); point 57.08,23.98 (hint); 0 whole parts, 1 split |
 | QA-0001 | West Bay-Corniche | seeds: point 51.52,25.3 (hint) (snapped to land); point 51.53,25.32 (hint) (snapped to land); 18 whole admin2 units |
-| QA-0002 | Msheireb-Old Doha | seeds: point 51.53,25.285 (hint); 16 whole admin2 units |
-| QA-0003 | Doha Airport-Al Thumama | seeds: point 51.55,25.23 (hint); point 51.61,25.27 (hint); 10 whole admin2 units |
-| QA-0004 | Al Rayyan-Education City | seeds: point 51.42,25.29 (hint); point 51.44,25.31 (hint); 11 whole admin2 units |
-| QA-0005 | Industrial Area-Al Udeid | seeds: point 51.32,25.12 (hint); point 51.43,25.2 (hint); 13 whole admin2 units |
+| QA-0002 | Msheireb-Old Doha | seeds: point 51.53,25.285 (hint); 15 whole admin2 units |
+| QA-0003 | Doha Airport-Al Thumama | seeds: point 51.55,25.23 (hint); point 51.61,25.27 (hint); 11 whole admin2 units |
+| QA-0004 | Al Rayyan-Education City | seeds: point 51.42,25.29 (hint); point 51.44,25.31 (hint); 10 whole admin2 units |
+| QA-0005 | Industrial Area-Al Udeid | seeds: point 51.32,25.12 (hint); point 51.43,25.2 (hint); 14 whole admin2 units |
 | QA-0006 | Al Wakrah-Hamad Port | seeds: point 51.6,25.17 (hint); point 51.62,25.01 (hint); 5 whole admin2 units, split: 92 |
 | QA-0007 | Mesaieed | seeds: point 51.45,24.8 (hint); point 51.55,24.99 (hint); 2 whole admin2 units, split: 92 |
 | SA-0001 | Riyadh Central-Olaya | seeds: point 46.64,24.76 (hint); point 46.68,24.7 (hint); 0 whole parts, 1 split |
@@ -164,15 +165,15 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | SA-0016 | Ras Tanura-Qatif | seeds: point 50.01,26.56 (hint) (snapped to land); point 50.16,26.64 (hint) (snapped to land); 0 whole parts, 1 split |
 | SA-0018 | Abqaiq-Ghawar | seeds: point 49.2,24.2 (hint); point 49.3,25.0 (hint); point 49.67,25.94 (hint); 0 whole parts, 1 split |
 | SA-0020 | Shaybah-Rub al Khali | seeds: point 51.5,20.5 (hint); point 54.0,22.51 (hint); 0 whole parts, 1 split |
-| SA-0022 | Yanbu | seeds: point 38.06,24.09 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 38.2,23.9 (hint) |
+| SA-0022 | Yanbu | seeds: point 38.06,24.09 (hint); point 38.24,23.96 (hint); 0 whole parts, 1 split |
 | SA-0023 | Al Ula-Khaybar | seeds: point 37.92,26.62 (hint); point 39.29,25.69 (hint); point 40.88,23.5 (hint); 0 whole parts, 1 split |
 | SA-0025 | Bisha | seeds: point 42.61,20.0 (hint); point 43.62,19.53 (hint); 0 whole parts, 1 split |
-| SA-0026 | Muhayil-Tihama | seeds: point 42.05,18.54 (hint); point 42.27,18.22 (hint); 0 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 41.55,18.21 (hint) |
+| SA-0026 | Muhayil-Tihama | seeds: point 41.79,18.33 (hint); point 42.05,18.54 (hint); point 42.27,18.22 (hint); 0 whole parts, 1 split |
 | SA-0027 | Buraidah | seeds: point 43.98,26.33 (hint); 0 whole parts, 1 split |
 | SA-0028 | Unaizah-Ar Rass | seeds: point 43.5,25.87 (hint); point 43.73,25.96 (hint); point 43.99,26.08 (hint); 0 whole parts, 1 split |
 | SA-0029 | Jazan Port-Economic City | seeds: point 42.12,16.73 (hint); point 42.56,16.89 (hint); 2 whole parts, 1 split |
 | SA-0030 | Sabya-Abu Arish | seeds: point 42.62,17.15 (hint); point 42.83,16.97 (hint); point 42.95,16.6 (hint); 0 whole parts, 1 split |
-| SA-0032 | NEOM-Duba | seeds: point 35.2,28.0 (hint); point 35.7,27.35 (hint); 7 whole parts, 1 split; dropped (over SNAP_MAX_DEG off the region): point 34.95,29.0 (hint) |
+| SA-0032 | NEOM-Duba | seeds: point 34.95,28.88 (hint); point 35.2,28.0 (hint); point 35.7,27.35 (hint); 7 whole parts, 1 split |
 
 ## Tiny provinces (click targets)
 
@@ -186,14 +187,13 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | EG-0027 | Luxor | 1 | 1 | 4838.5, 2011.5 |
 | KW-0002 | Shuwaikh-Sulaibikhat | 1 | 1 | 5186.5, 1922.5 |
 | QA-0002 | Msheireb-Old Doha | 1 | 1 | 5268.5, 2022.5 |
+| EG-0001 | Downtown Cairo-Zamalek | 2 | 1 | 4807.5, 1903.5 |
 | IL-0004 | Tel Aviv-Yafo | 2 | 1 | 4887.5, 1853.5 |
-| IQ-0002 | Rusafa-Old Baghdad | 2 | 2 | 5107.5, 1823.5 |
 | LB-0001 | Beirut | 2 | 1 | 4903.5, 1807.5 |
 | QA-0001 | West Bay-Corniche | 2 | 1 | 5267.5, 2020.5 |
 | QA-0003 | Doha Airport-Al Thumama | 2 | 2 | 5269.5, 2022.5 |
 | DZ-0001 | Algiers Centre-Hydra | 3 | 1 | 4165.5, 1734.5 |
 | DZ-0003 | Algiers West-Cheraga | 3 | 1 | 4164.5, 1732.5 |
-| EG-0001 | Downtown Cairo-Zamalek | 3 | 1 | 4807.5, 1903.5 |
 | IL-0001 | West Jerusalem | 3 | 1 | 4896.5, 1861.5 |
 | IL-0002 | East Jerusalem | 3 | 1 | 4897.5, 1859.5 |
 | IL-0006 | Holon-Bat Yam | 3 | 1 | 4886.5, 1855.5 |
@@ -202,18 +202,18 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | DZ-0002 | Algiers East-Rouiba | 4 | 2 | 4167.5, 1734.5 |
 | EG-0005 | 6th of October-Sheikh Zayed | 5 | 4 | 4799.5, 1907.5 |
 | IL-0005 | Ramat Gan-Herzliya | 5 | 2 | 4888.5, 1851.5 |
+| IQ-0002 | Rusafa-Old Baghdad | 5 | 4 | 5107.5, 1823.5 |
 | KW-0003 | Hawalli-Salmiya | 5 | 1 | 5188.5, 1922.5 |
+| LY-0001 | Tripoli Centre-Port | 7 | 1 | 4395.5, 1833.5 |
 | SY-0001 | Damascus | 7 | 1 | 4922.5, 1816.5 |
 | AE-0001 | Abu Dhabi Downtown | 8 | 5 | 5327.5, 2045.5 |
-| LY-0001 | Tripoli Centre-Port | 8 | 1 | 4396.5, 1834.5 |
 | PS-0005 | Gaza City | 8 | 3 | 4880.5, 1867.5 |
-| IQ-0003 | Sadr City-New Baghdad | 10 | 1 | 5107.5, 1820.5 |
+| IQ-0001 | Karkh-Green Zone | 10 | 1 | 5104.5, 1823.5 |
 | EG-0009 | Alexandria Centre-East | 11 | 1 | 4778.5, 1875.5 |
-| IQ-0001 | Karkh-Green Zone | 11 | 1 | 5104.5, 1823.5 |
 | KW-0004 | Farwaniya-Airport | 11 | 1 | 5186.5, 1924.5 |
-| IQ-0004 | Baghdad Belt | 12 | 1 | 5108.5, 1825.5 |
 | PS-0006 | Khan Yunis-Rafah | 12 | 1 | 4876.5, 1872.5 |
 | QA-0004 | Al Rayyan-Education City | 12 | 1 | 5264.5, 2021.5 |
+| IQ-0003 | Sadr City-New Baghdad | 13 | 1 | 5108.5, 1821.5 |
 | IL-0007 | Petah Tikva-Rosh HaAyin | 14 | 1 | 4890.5, 1852.5 |
 | QA-0006 | Al Wakrah-Hamad Port | 14 | 1 | 5269.5, 2024.5 |
 | AE-0014 | Khor Fakkan-Kalba | 16 | 5 | 5377.5, 2027.5 |
@@ -248,7 +248,7 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | SA-0029 | Jazan Port-Economic City | 45 | 3 | 5065.5, 2220.5 |
 | LB-0007 | Sidon-Tyre | 53 | 1 | 4898.5, 1824.5 |
 | EG-0008 | Banha-Qalyubia | 55 | 1 | 4806.5, 1898.5 |
-| IR-0002 | Central Tehran-Grand Bazaar | 58 | 1 | 5267.5, 1764.5 |
+| IR-0002 | Central Tehran-Grand Bazaar | 57 | 1 | 5267.5, 1764.5 |
 | LB-0008 | Nabatieh | 58 | 1 | 4902.5, 1821.5 |
 | IL-0015 | Golan Heights | 62 | 2 | 4909.5, 1830.5 |
 | OM-0003 | Sohar | 62 | 1 | 5384.5, 2046.5 |
@@ -279,9 +279,11 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Tifariti (-10.6, 26.16) | ? | MA-0019 | listed |
 | 6th of October (30.93, 29.94) | EG-0005 | EG-0005 | on it |
 | Abu Dhabi (54.37, 24.47) | AE-0001 | AE-0001 | on it |
+| Abu Ghraib (44.07, 33.29) | IQ-0004 | IQ-0004 | on it |
 | Abu Musa (55.03, 25.87) | IR-0018 | IR-0018 | on it |
 | Algiers (3.06, 36.75) | DZ | DZ-0001 | on it |
 | Baghdad (44.37, 33.31) | IQ | IQ-0001 | on it |
+| Baghdad Green Zone (44.38, 33.31) | IQ-0001 | IQ-0001 | on it |
 | Bahrain Manama (50.58, 26.22) | BH | BH-0001 | on it |
 | Bethlehem (35.2, 31.705) | PS-0004 | PS-0004 | on it |
 | Boujdour (-14.49, 26.13) | MA-0019 | MA-0019 | on it |
@@ -299,7 +301,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Giza pyramids (31.13, 29.98) | EG-0004 | EG-0004 | on it |
 | Halaib (36.6, 22.22) | EG-0030 | EG-0030 | on it |
 | Hebron (35.1, 31.53) | PS-0004 | PS-0004 | on it |
-| Heliopolis (31.32, 30.09) | EG-0002 | EG-0001 | within a pixel |
+| Heliopolis (31.32, 30.09) | EG-0002 | EG-0002 | on it |
 | Helwan (31.33, 29.85) | EG-0003 | EG-0003 | on it |
 | Jenin (35.3, 32.46) | PS-0001 | PS-0001 | on it |
 | Jericho (35.45, 31.86) | PS-0003 | PS-0003 | on it |
@@ -313,10 +315,15 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Qatar Doha (51.53, 25.29) | QA | QA-0001 | nearest across water |
 | Rafah (34.25, 31.29) | PS | PS-0006 | on it |
 | Ramallah (35.2, 31.9) | PS-0003 | PS-0003 | on it |
+| Rashid Street Baghdad (44.42, 33.34) | IQ-0002 | IQ-0003 | within a pixel |
+| Riyadh 2nd Industrial City (46.86, 24.55) | SA-0003 | SA-0003 | on it |
 | Riyadh Olaya (46.68, 24.7) | SA-0001 | SA-0001 | on it |
+| Riyadh Olaya2 (46.67, 24.69) | SA-0001 | SA-0001 | on it |
+| Sadr City (44.45, 33.39) | IQ-0003 | IQ-0003 | on it |
 | Sharjah (55.4, 25.35) | AE-0012 | AE-0012 | on it |
 | Shubra el-Kheima (31.24, 30.13) | EG-0007 | EG-0008 | within a pixel |
 | Smara (-11.66, 26.74) | MA-0019 | MA-0019 | on it |
+| Taji (44.24, 33.52) | IQ-0004 | IQ-0004 | on it |
 | Tan-Tan (-11.1, 28.44) | MA-0018 | MA-0018 | on it |
 | Tehran Bazaar (51.42, 35.67) | IR-0002 | IR-0002 | on it |
 | Tehran North (51.43, 35.8) | IR-0001 | IR-0001 | on it |
@@ -327,8 +334,20 @@ Metro provinces whose centroid is over 80 km from their Metro's city, that are o
 
 | Check | Province or region | Detail |
 |---|---|---|
-| Metro share of a region | IRN: Tehran | Metro provinces hold 42% of 842 px beside 1 rural |
-| Metro share of a region | IRQ: Baghdad | Metro provinces hold 97% of 35 px beside 1 rural |
+| Metro share of a region | IRN: Tehran | Metro provinces hold 44% of 842 px beside 1 rural |
+
+## Land exclaves
+
+Parts of 5 px or more that are not a province's largest part and touch no pixel outside every province (islands are not listed). Each is explained by a place its composite name names lying in it, by one of the province's own seeds (a hint point, or a place its notes name) lying in it, by a neck under a pixel wide that joins it to the rest in the shapes, or by a reason in `[review.exclave_ok]`; an unexplained one fails the step (D691).
+
+| Province | Name | Pixels | At | Why |
+|---|---|---|---|---|
+| EG-0004 | Giza-Imbaba | 6 | 30.91, 30.28 | its own seed unit Imbaba lies in it |
+| IQ-0005 | Basra-Umm Qasr | 210 | 46.84, 29.89 | its own seed unit Al-Zubair lies in it |
+| MA-0012 | Meknes-Ifrane | 17 | -3.33, 32.07 | a corner of Natural Earth's old Meknes-Tafilalet unit east of the Draa-Tafilalet builder polygon (D676) |
+| MA-0016 | Agadir-Souss | 71 | -5.73, 29.65 | a corner of Natural Earth's old Souss-Massa-Draa unit south of the Draa-Tafilalet builder polygon (D676) |
+| PS-0003 | Ramallah-Jericho | 5 | 35.43, 31.55 | a neck under a pixel wide joins it to the rest in the shapes |
+| SA-0023 | Al Ula-Khaybar | 1922 | 40.92, 23.84 | its own seed point 40.88,23.5 (hint) lies in it |
 
 ## Known for review
 
@@ -419,9 +438,14 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | DZA: Skikda-Jijel | name parts (2 pieces, worst match 100) | 2 |
 | DZA: Tebessa-Souk Ahras-Oum El Bouaghi | name parts (3 pieces, worst match 100) | 3 |
 | DZA: Tlemcen-Ain Temouchent | name parts (2 pieces, worst match 100) | 2 |
-| IRQ: Anbar | alias hint -> IQ-AN | 1 |
+| IRQ: Anbar | alias hint -> IQ-AN; less IRQ:Baghdad (carve) | 1 |
+| IRQ: Babil | name match 100; less IRQ:Baghdad (carve) | 1 |
+| IRQ: Baghdad | name match 100; carve: IRQ units Al-Kadhmiyah, Al-Mahmoudiya, Al-Mada'in, Al-Adhamiya, Al-Karkh, Al-Risafa, Al-Thawra from IRQ:Anbar, IRQ:Babil, IRQ:Diyala, IRQ:Saladin, IRQ:Wasit | 1 |
+| IRQ: Diyala | name match 100; less IRQ:Baghdad (carve) | 1 |
 | IRQ: Muthanna | alias hint -> IQ-MU | 1 |
+| IRQ: Saladin | name match 100; less IRQ:Baghdad (carve) | 1 |
 | IRQ: Sulaymaniyah-Halabja | alias hint -> IQ-SU | 1 |
+| IRQ: Wasit | name match 100; less IRQ:Baghdad (carve) | 1 |
 | JOR: Balqa-Madaba | name parts (2 pieces, worst match 100) | 2 |
 | JOR: Jerash-Ajloun | name parts (2 pieces, worst match 100) | 2 |
 | JOR: Karak-Tafilah | name parts (2 pieces, worst match 100) | 2 |
@@ -503,7 +527,7 @@ AE-0001-AE-0002, AE-0001-AE-0003, AE-0001-AE-0005, BH-0001-QA-0008, BH-0001-QA-0
 | AE-0001 | Abu Dhabi Downtown | Abu Dhabi | 8 | 410 |
 | AE-0007 | Das-Zirku Islands | Abu Dhabi | 1 | 410 |
 | MA-0001 | Casablanca Centre-Anfa | Casablanca-Settat | 16 | 332 |
-| SA-0014 | Dammam-Khobar-Dhahran | Eastern Province | 68 | 3804 |
+| SA-0014 | Dammam-Khobar-Dhahran | Eastern Province | 66 | 3804 |
 | SA-0016 | Ras Tanura-Qatif | Eastern Province | 109 | 3804 |
 
 ## Uneven Voronoi splits
@@ -518,7 +542,7 @@ Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share
 | IRQ:Baghdad | Al-Thawra | IQ-0003 79%, IQ-0002 21% |
 | ISR:Jerusalem District | Jerusalem | IL-0003 82%, IL-0002 9%, IL-0001 9% |
 | LBY:Al Wahat | part-0 | LY-0011 82%, LY-0010 18% |
-| LBY:Tripoli | part-0 | LY-0002 90%, LY-0001 10% |
+| LBY:Tripoli | part-0 | LY-0002 95%, LY-0001 5% |
 | OMN:Muscat | part-0 | OM-0001 93%, OM-0002 7% |
 | OMN:North Al Batinah | part-0 | OM-0004 84%, OM-0003 16% |
 | SAU:Jazan | part-2 | SA-0030 97%, SA-0029 3% |
@@ -553,7 +577,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | KW-0002 | Shuwaikh-Sulaibikhat | 2 | N | Y |
 | KW-0005 | Mubarak Al-Kabeer | 3 | N | Y |
 | KW-0009 | Jahra | 25 | Y | N |
-| MA-0004 | Settat-Berrechid | 7 | Y | N |
+| MA-0004 | Settat-Berrechid | 11 | Y | N |
 | MA-0013 | Marrakech | 35 | Y | N |
 | OM-0008 | Ibra-Wahiba | 11 | Y | N |
 | QA-0001 | West Bay-Corniche | 2 | N | Y |
@@ -563,7 +587,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | SA-0011 | Mecca | 23 | Y | N |
 | SA-0012 | Taif | 19 | Y | N |
 | SA-0017 | Hafar al-Batin-Khafji | 0 | N | Y |
-| SA-0018 | Abqaiq-Ghawar | 19 | Y | N |
+| SA-0018 | Abqaiq-Ghawar | 23 | Y | N |
 | SA-0019 | Al Ahsa-Hofuf | 67 | Y | N |
 | SA-0026 | Muhayil-Tihama | 0 | N | Y |
 | SA-0030 | Sabya-Abu Arish | 57 | Y | N |
@@ -574,7 +598,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-IR-0018 (8), YE-0005 (8), PS-0003 (7), YE-0016 (7), AE-0005 (6), MA-0020 (6), OM-0012 (6), SA-0032 (6), AE-0001 (5), AE-0014 (5), KW-0010 (5), EG-0005 (4), MA-0012 (4), SA-0015 (4), YE-0009 (4), AE-0003 (3), AE-0008 (3), BH-0001 (3), DZ-0012 (3), EG-0016 (3), EG-0033 (3), EG-0034 (3), IL-0016 (3), IL-0017 (3), IR-0017 (3), KW-0001 (3), MA-0016 (3), OM-0009 (3), OM-0011 (3), PS-0005 (3), SA-0014 (3), SA-0029 (3), TN-0006 (3), TN-0009 (3), AE-0002 (2), AE-0013 (2), DZ-0002 (2), DZ-0010 (2), EG-0004 (2), EG-0012 (2), EG-0014 (2), EG-0015 (2), EG-0017 (2), EG-0029 (2), IL-0005 (2), IL-0010 (2), IL-0012 (2), IL-0015 (2), IQ-0002 (2), IQ-0005 (2), IQ-0009 (2), IQ-0016 (2), IR-0010 (2), IR-0019 (2), IR-0021 (2), IR-0027 (2), IR-0037 (2), JO-0002 (2), KW-0009 (2), LB-0005 (2), MA-0009 (2), MA-0010 (2), MA-0014 (2), MA-0019 (2), OM-0004 (2), QA-0003 (2), SA-0010 (2), SA-0018 (2), SA-0020 (2), SA-0023 (2), SY-0014 (2), TN-0001 (2), TN-0002 (2), YE-0008 (2), YE-0011 (2), YE-0012 (2)
+YE-0005 (8), PS-0003 (7), YE-0016 (7), AE-0005 (6), IR-0018 (6), MA-0020 (6), OM-0012 (6), SA-0032 (6), AE-0001 (5), AE-0014 (5), IR-0017 (5), KW-0010 (5), EG-0005 (4), IQ-0002 (4), MA-0012 (4), SA-0015 (4), YE-0009 (4), AE-0003 (3), AE-0008 (3), BH-0001 (3), DZ-0012 (3), EG-0016 (3), EG-0033 (3), EG-0034 (3), IL-0016 (3), IL-0017 (3), IQ-0015 (3), IQ-0018 (3), KW-0001 (3), MA-0016 (3), OM-0009 (3), OM-0011 (3), PS-0005 (3), SA-0029 (3), TN-0006 (3), TN-0009 (3), AE-0002 (2), AE-0013 (2), DZ-0002 (2), DZ-0010 (2), EG-0004 (2), EG-0012 (2), EG-0014 (2), EG-0015 (2), EG-0017 (2), EG-0029 (2), IL-0005 (2), IL-0010 (2), IL-0012 (2), IL-0015 (2), IQ-0005 (2), IQ-0009 (2), IQ-0013 (2), IQ-0016 (2), IR-0010 (2), IR-0019 (2), IR-0027 (2), IR-0037 (2), JO-0002 (2), KW-0009 (2), LB-0005 (2), MA-0009 (2), MA-0010 (2), MA-0014 (2), OM-0004 (2), QA-0003 (2), SA-0010 (2), SA-0018 (2), SA-0020 (2), SA-0023 (2), SY-0014 (2), TN-0001 (2), TN-0002 (2), YE-0008 (2), YE-0011 (2), YE-0012 (2)
 
 ## Visual check
 

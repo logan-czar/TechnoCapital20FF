@@ -822,12 +822,12 @@ IRN,West Azerbaijan,admin1,IRN-3237,1.0,Natural Earth 10m (public domain),name m
 IRN,Yazd,admin1,IRN-3217,1.0,Natural Earth 10m (public domain),name match 100
 IRN,Zanjan,admin1,IRN-3234,1.0,Natural Earth 10m (public domain),name match 100
 IRQ,Al-Qadisiyyah,admin1,IRQ-3224,1.0,Natural Earth 10m (public domain),name match 100
-IRQ,Anbar,admin1,IRQ-3471,0.95,Natural Earth 10m (public domain),alias hint -> IQ-AN
-IRQ,Babil,admin1,IRQ-3472,1.0,Natural Earth 10m (public domain),name match 100
-IRQ,Baghdad,admin1,IRQ-3063,1.0,Natural Earth 10m (public domain),name match 100
+IRQ,Anbar,admin1,IRQ-3471,0.95,Natural Earth 10m (public domain),alias hint -> IQ-AN; less IRQ:Baghdad (carve)
+IRQ,Babil,admin1,IRQ-3472,1.0,Natural Earth 10m (public domain),name match 100; less IRQ:Baghdad (carve)
+IRQ,Baghdad,admin1,IRQ-3063,1.0,"Natural Earth 10m (public domain); geoBoundaries gbOpen IRQ ADM2 (Iraq Central Statistics Office, OCHA Iraq; Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO))","name match 100; carve: IRQ units Al-Kadhmiyah, Al-Mahmoudiya, Al-Mada'in, Al-Adhamiya, Al-Karkh, Al-Risafa, Al-Thawra from IRQ:Anbar, IRQ:Babil, IRQ:Diyala, IRQ:Saladin, IRQ:Wasit"
 IRQ,Basra,admin1,IRQ-3222,1.0,Natural Earth 10m (public domain),name match 100
 IRQ,Dhi Qar,admin1,IRQ-3225,1.0,Natural Earth 10m (public domain),name match 100
-IRQ,Diyala,admin1,IRQ-3243,1.0,Natural Earth 10m (public domain),name match 100
+IRQ,Diyala,admin1,IRQ-3243,1.0,Natural Earth 10m (public domain),name match 100; less IRQ:Baghdad (carve)
 IRQ,Duhok,admin1,IRQ-3046,1.0,Natural Earth 10m (public domain),name match 100
 IRQ,Erbil,admin1,IRQ-3050,1.0,Natural Earth 10m (public domain),name match 100
 IRQ,Karbala,admin1,IRQ-3062,1.0,Natural Earth 10m (public domain),name match 100
@@ -836,9 +836,9 @@ IRQ,Maysan,admin1,IRQ-3226,1.0,Natural Earth 10m (public domain),name match 100
 IRQ,Muthanna,admin1,IRQ-3223,0.95,Natural Earth 10m (public domain),alias hint -> IQ-MU
 IRQ,Najaf,admin1,IRQ-3061,1.0,Natural Earth 10m (public domain),name match 100
 IRQ,Nineveh,admin1,IRQ-3051,1.0,Natural Earth 10m (public domain),name match 100
-IRQ,Saladin,admin1,IRQ-3052,1.0,Natural Earth 10m (public domain),name match 100
+IRQ,Saladin,admin1,IRQ-3052,1.0,Natural Earth 10m (public domain),name match 100; less IRQ:Baghdad (carve)
 IRQ,Sulaymaniyah-Halabja,admin1,IRQ-3242,0.95,Natural Earth 10m (public domain),alias hint -> IQ-SU
-IRQ,Wasit,admin1,IRQ-3227,1.0,Natural Earth 10m (public domain),name match 100
+IRQ,Wasit,admin1,IRQ-3227,1.0,Natural Earth 10m (public domain),name match 100; less IRQ:Baghdad (carve)
 ISL,Iceland,admin1,ISL-695;ISL-705;ISL-704;ISL-5131;ISL-709;ISL-710;ISL-690;ISL-697;ISL-702,0.95,Natural Earth 10m (public domain),whole country (9 admin-1 units)
 ISR,Central District,admin1,ISR-3055,1.0,Natural Earth 10m (public domain),name match 100
 ISR,Haifa District,admin1,ISR-3054,1.0,Natural Earth 10m (public domain),name match 100
