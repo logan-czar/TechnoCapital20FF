@@ -160,7 +160,7 @@ def run(region: config.Region) -> None:
         }
         # places a province's name or notes name should lie inside it (cheap check, for QA)
         for pid, pr in rplan["provinces"].items():
-            for label, x, y in pr.get("named_places", []):
+            for label, x, y, *_ in pr.get("named_places", []):
                 pt = shapely.Point(x, y)
                 if not rgeom.covers(pt) or built[pid].covers(pt):
                     continue

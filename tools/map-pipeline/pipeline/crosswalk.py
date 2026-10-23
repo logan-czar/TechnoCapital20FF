@@ -67,6 +67,7 @@ class Seed:
     label: str
     unit: str | None = None  # set when the seed is a named building block
     home: str | None = None  # the block the seed claims (set by assign_blocks)
+    at_rep: bool = False  # a block seed at the block's representative point (no place to anchor it)
 
 
 @dataclass
@@ -239,6 +240,14 @@ class Gazetteer:
             return False
         return len(fname) >= MIN_NAME_LEN or fname in whole_parts
 
+    def place_in(self, fname: str, geom):
+        """(x, y, label) of the most populous place called `fname` inside `geom`, or None."""
+        inside = [p for p in self.places_all if p[0] == fname and geom.covers(Point(p[1], p[2]))]
+        if not inside:
+            return None
+        best = max(inside, key=lambda p: (p[3], -p[1], -p[2]))
+        return best[1], best[2], best[4]
+
     def _place_inside(self, fname: str, geom) -> bool:
         return any(p[0] == fname and geom.covers(Point(p[1], p[2])) for p in self.places)
 
@@ -254,7 +263,7 @@ class Gazetteer:
                 if not self._usable(fname, whole_parts, ph, from_name):
                     continue
                 if text.contains_word(ph, fname):
-                    hits.append(("place", fname, (x, y, pop, label), ph))
+                    hits.append(("place", fname, (x, y, pop, label), ph, False))
             if self.blocks is not None:
                 for r in self.blocks.itertuples():
                     for fname in r.aliases:
@@ -274,14 +283,22 @@ class Gazetteer:
                             and not self._place_inside(fname, r.geometry) and not admin_notes
                         ):
                             continue
-                        hits.append(("block", fname, r, ph))
+                        # reverse: the block name contains the whole phrase ("Vancouver Island and
+                        # Coast" for "Vancouver"), not the phrase the name
+                        hits.append(("block", fname, r, ph, not text.contains_word(ph, fname)))
                         break
-            # drop a hit whose name is a word-part of a longer hit in the same phrase
-            names = {h[1] for h in hits}
+            # A reverse block match is only a fallback: with any exact hit for the phrase it is
+            # dropped, so "Vancouver" means the city, not the "Vancouver Island and Coast" region.
+            # Then drop an exact hit whose name is a word-part of a longer exact hit
+            # ("york" inside "new york").
+            exact = [h for h in hits if not h[4]]
+            if exact:
+                hits = exact
+            names = {h[1] for h in hits if not h[4]}
             for h in hits:
                 if any(o != h[1] and text.contains_word(o, h[1]) for o in names):
                     continue
-                found.append(h)
+                found.append(h[:4])
             # fuzzy fallback on whole name parts only (spelling and accent variants)
             if not hits and from_name and len(ph) >= 5 and ph not in self.exclude:
                 best = None
@@ -356,14 +373,18 @@ def make_seeds(p: ProvinceRow, gaz: Gazetteer, region_geom, metro_core, hint: di
     named = []
     for (kind, fname, payload, ph), in_name in hits:
         if kind == "place":
-            named.append((payload[3], payload[0], payload[1]))
+            named.append((payload[3], payload[0], payload[1], in_name))
         if kind == "place":
             x, y, pop, label = payload
             q = Q_PLACE_NAME if in_name else Q_PLACE_NOTE
             seeds.append(Seed(x, y, q, f"place {label}"))
         else:
             q = Q_BLOCK_NAME if in_name else Q_BLOCK_NOTE
-            seeds.append(Seed(payload.rx, payload.ry, q, f"unit {payload.name}", payload.unit_id))
+            at = gaz.place_in(fname, payload.geometry)
+            if at is not None:
+                seeds.append(Seed(at[0], at[1], q, f"unit {payload.name} at place {at[2]}", payload.unit_id))
+            else:
+                seeds.append(Seed(payload.rx, payload.ry, q, f"unit {payload.name}", payload.unit_id, at_rep=True))
     p.named_places = named
     # one seed per distinct location and unit
     uniq, seen = [], set()
@@ -581,7 +602,10 @@ def run(region: config.Region) -> None:
             sp = {}
             for uid, owners in split.items():
                 if p.id in owners:
-                    pts = [[s.x, s.y] for s in p.seeds if s.home == uid]
+                    mine = [s for s in p.seeds if s.home == uid]
+                    # a representative-point seed only places a province with no better point here
+                    anchored = [s for s in mine if not s.at_rep]
+                    pts = [[s.x, s.y] for s in (anchored or mine)]
                     if not pts:  # the province won the split by fallback: use its best seed
                         s = max(p.seeds, key=lambda s: s.quality)
                         pts = [[s.x, s.y]]
