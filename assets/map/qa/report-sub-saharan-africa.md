@@ -69,7 +69,7 @@ _Written by `tools/map-pipeline/run.py --region sub-saharan-africa` (pipeline pb
 | Placed by a builder hint (`hints/sub-saharan-africa.toml`) | 26 |
 | Tiny (under 64 px) | 53 |
 | Given a pixel at their interior point (no pixel centre inside) | 2 |
-| More than one part (islands, exclaves) | 146 |
+| More than one part (islands, exclaves) | 145 |
 | Coastal flag differs from the CSV | 22 |
 | Small for their region (not Metro, under 5% of the region's mean) | 5 |
 | Voronoi-split blocks where one province takes 75% or more | 3 |
@@ -80,7 +80,7 @@ _Written by `tools/map-pipeline/run.py --region sub-saharan-africa` (pipeline pb
 | Sea links with a province of this file | 13 |
 | City probe points (fail on a mismatch; D686) | 99 pass, 0 mismatch, 4 listed |
 | Metro reach scan rows (listed; D686) | 2 |
-| Land exclaves of 5 px or more (fail unless explained; D691) | 20 (0 unexplained) |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 19 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 3 |
 
@@ -396,7 +396,7 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 |---|---|---|---|---|
 | BI-0004 | Muyinga-Rutana | 13 | 30.45, -2.45 | a neck under a pixel wide joins it to the rest in the shapes |
 | CD-0003 | Kinshasa South-Mont Ngafula | 21 | 15.31, -4.51 | its own seed point 15.31,-4.4 (hint) lies in it |
-| CM-0002 | Mbalmayo-Nanga Eboko | 710 | 11.55, 3.69 | composite name: Mbalmayo lies in it |
+| CM-0002 | Mbalmayo-Nanga Eboko | 196 | 11.5, 3.46 | composite name: Mbalmayo lies in it |
 | ET-0022 | Assosa-GERD | 6 | 36.44, 9.46 | Benishangul-Gumuz is in parts (the Kamashi zone lies apart; Natural Earth's unit has four) |
 | ET-0022 | Assosa-GERD | 16 | 36.11, 8.92 | Benishangul-Gumuz is in parts (the Kamashi zone lies apart; Natural Earth's unit has four) |
 | GH-0006 | Cape Coast-Kasoa | 14 | -2.06, 6.16 | a neck under a pixel wide joins it to the rest in the shapes |
@@ -408,7 +408,6 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 | SD-0019 | Jebel Amer-Kebkabiya | 30 | 24.53, 13.28 | geoBoundaries' North Jebel Marra locality, given with Kebkabiya, touches it only through another province |
 | SS-0002 | Yei-Terekeka | 561 | 31.48, 5.57 | its own seed unit Terekeka lies in it |
 | TD-0014 | Goz Beida-Biltine | 1636 | 21.41, 12.14 | the region joins Sila (Goz Beida) and Wadi Fira (Biltine), which Ouaddai separates |
-| UG-0006 | Mbale-Elgon | 20 | 34.45, 1.33 | a neck under a pixel wide joins it to the rest in the shapes |
 | UG-0015 | Kasese-Rwenzori | 50 | 30.05, 0.7 | its own seed unit Bundibugyo lies in it |
 | ZA-0013 | Newcastle-Northern KZN | 9 | 31.97, -27.13 | a neck under a pixel wide joins it to the rest in the shapes |
 | ZA-0017 | Mthatha-Transkei | 7 | 28.13, -30.55 | a neck under a pixel wide joins it to the rest in the shapes |
@@ -696,7 +695,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-KE-0003 (25), NE-0002 (20), SD-0014 (18), GW-0004 (11), SC-0001 (7), UG-0002 (7), UG-0003 (7), CV-0002 (6), TZ-0012 (6), ER-0005 (5), GA-0002 (5), KE-0004 (5), KE-0006 (5), MR-0002 (5), UG-0006 (5), AO-0003 (4), AO-0011 (4), CI-0003 (4), CI-0004 (4), CV-0001 (4), ET-0022 (4), MG-0008 (4), MG-0009 (4), ML-0005 (4), MU-0004 (4), SD-0015 (4), TG-0004 (4), TZ-0015 (4), ZA-0009 (4), ZA-0018 (4), ZA-0028 (4), BI-0004 (3), GH-0006 (3), KE-0002 (3), KE-0018 (3), MG-0006 (3), MZ-0004 (3), NE-0003 (3), NE-0009 (3), NG-0001 (3), NG-0004 (3), NG-0014 (3), SD-0011 (3), SD-0023 (3), SS-0002 (3), TZ-0003 (3), ZM-0009 (3), ZM-0010 (3), AO-0002 (2), AO-0020 (2), BF-0010 (2), BJ-0004 (2), BW-0006 (2), BW-0007 (2), CD-0002 (2), CD-0003 (2), CD-0016 (2), CD-0017 (2), CF-0003 (2), CF-0004 (2), CF-0009 (2), CG-0003 (2), CI-0002 (2), CI-0007 (2), CI-0008 (2), CI-0013 (2), CM-0002 (2), CM-0004 (2), CM-0005 (2), CM-0006 (2), ET-0020 (2), ET-0027 (2), GA-0003 (2), GH-0004 (2), GH-0011 (2), GH-0015 (2), GN-0002 (2), GN-0003 (2), GN-0007 (2), GN-0008 (2), GN-0012 (2), GQ-0002 (2), KE-0007 (2), KE-0010 (2), KE-0014 (2), KE-0021 (2), KM-0002 (2), LR-0002 (2), ML-0003 (2), ML-0006 (2), ML-0007 (2), MR-0008 (2), MW-0002 (2), MW-0008 (2), MW-0009 (2), MZ-0002 (2), MZ-0015 (2), NA-0008 (2), NE-0016 (2), NE-0017 (2), NG-0003 (2), NG-0027 (2), SD-0016 (2), SD-0019 (2), SL-0001 (2), SL-0004 (2), SL-0005 (2), SN-0006 (2), SN-0011 (2), SO-0001 (2), SO-0007 (2), SO-0009 (2), ST-0001 (2), TD-0009 (2), TD-0011 (2), TD-0014 (2), TG-0002 (2), TG-0007 (2), TZ-0007 (2), TZ-0008 (2), TZ-0013 (2), TZ-0018 (2), TZ-0021 (2), TZ-0022 (2), TZ-0023 (2), UG-0004 (2), UG-0005 (2), UG-0007 (2), UG-0008 (2), UG-0015 (2), UG-0016 (2), ZA-0002 (2), ZA-0006 (2), ZA-0008 (2), ZA-0013 (2), ZA-0016 (2), ZA-0017 (2), ZA-0022 (2), ZA-0024 (2), ZA-0029 (2), ZA-0031 (2), ZA-0032 (2), ZM-0003 (2), ZM-0012 (2), ZW-0004 (2), ZW-0012 (2)
+KE-0003 (25), NE-0002 (20), SD-0014 (18), GW-0004 (11), SC-0001 (7), UG-0002 (7), UG-0003 (7), CV-0002 (6), TZ-0012 (6), ER-0005 (5), GA-0002 (5), KE-0004 (5), KE-0006 (5), MR-0002 (5), AO-0003 (4), AO-0011 (4), CI-0003 (4), CI-0004 (4), CV-0001 (4), ET-0022 (4), MG-0008 (4), MG-0009 (4), ML-0005 (4), MU-0004 (4), SD-0015 (4), TG-0004 (4), TZ-0015 (4), ZA-0009 (4), ZA-0018 (4), ZA-0028 (4), BI-0004 (3), GH-0006 (3), KE-0002 (3), KE-0018 (3), MG-0006 (3), MZ-0004 (3), NE-0003 (3), NE-0009 (3), NG-0001 (3), NG-0004 (3), NG-0014 (3), SD-0011 (3), SD-0023 (3), SS-0002 (3), TZ-0003 (3), UG-0006 (3), ZM-0009 (3), ZM-0010 (3), AO-0002 (2), AO-0020 (2), BF-0010 (2), BJ-0004 (2), BW-0006 (2), BW-0007 (2), CD-0002 (2), CD-0003 (2), CD-0016 (2), CD-0017 (2), CF-0003 (2), CF-0004 (2), CF-0009 (2), CG-0003 (2), CI-0002 (2), CI-0007 (2), CI-0008 (2), CI-0013 (2), CM-0002 (2), CM-0004 (2), CM-0005 (2), CM-0006 (2), CM-0009 (2), ET-0020 (2), ET-0027 (2), GA-0003 (2), GH-0004 (2), GH-0011 (2), GH-0015 (2), GN-0002 (2), GN-0003 (2), GN-0007 (2), GN-0008 (2), GN-0012 (2), GQ-0002 (2), KE-0007 (2), KE-0010 (2), KE-0014 (2), KE-0021 (2), KM-0002 (2), LR-0002 (2), ML-0003 (2), ML-0006 (2), ML-0007 (2), MR-0008 (2), MW-0002 (2), MW-0008 (2), MW-0009 (2), MZ-0002 (2), NA-0008 (2), NE-0016 (2), NE-0017 (2), NG-0003 (2), NG-0027 (2), SD-0016 (2), SD-0019 (2), SL-0001 (2), SL-0004 (2), SL-0005 (2), SN-0006 (2), SN-0011 (2), SO-0001 (2), SO-0007 (2), SO-0009 (2), ST-0001 (2), TD-0009 (2), TD-0011 (2), TD-0014 (2), TG-0002 (2), TG-0007 (2), TZ-0007 (2), TZ-0008 (2), TZ-0013 (2), TZ-0018 (2), TZ-0021 (2), TZ-0022 (2), TZ-0023 (2), UG-0004 (2), UG-0005 (2), UG-0008 (2), UG-0015 (2), UG-0016 (2), ZA-0002 (2), ZA-0006 (2), ZA-0008 (2), ZA-0013 (2), ZA-0016 (2), ZA-0017 (2), ZA-0022 (2), ZA-0024 (2), ZA-0029 (2), ZA-0031 (2), ZA-0032 (2), ZM-0003 (2), ZM-0012 (2), ZW-0004 (2), ZW-0012 (2)
 
 ## Visual check
 

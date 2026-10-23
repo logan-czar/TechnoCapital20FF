@@ -29,7 +29,7 @@ _Written by `tools/map-pipeline/run.py --region russia-central-asia` (pipeline p
 | Placed by a builder hint (`hints/russia-central-asia.toml`) | 27 |
 | Tiny (under 64 px) | 12 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
-| More than one part (islands, exclaves) | 79 |
+| More than one part (islands, exclaves) | 78 |
 | Coastal flag differs from the CSV | 3 |
 | Small for their region (not Metro, under 5% of the region's mean) | 0 |
 | Voronoi-split blocks where one province takes 75% or more | 6 |
@@ -360,7 +360,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-RU-0059 (82), RU-0022 (63), RU-0070 (50), RU-0072 (27), RU-0052 (23), RU-0068 (23), RU-0023 (21), RU-0021 (20), RU-0069 (19), RU-0019 (10), RU-0067 (10), RU-0018 (9), RU-0065 (9), TM-0004 (8), KZ-0015 (7), RU-0026 (7), TM-0005 (7), AZ-0001 (6), RU-0071 (6), TJ-0006 (6), UZ-0011 (6), KZ-0016 (5), RU-0029 (5), KZ-0013 (4), RU-0036 (4), RU-0042 (4), RU-0063 (4), RU-0064 (4), TM-0002 (4), UZ-0006 (4), AZ-0003 (3), KZ-0004 (3), KZ-0005 (3), KZ-0012 (3), RU-0003 (3), RU-0016 (3), RU-0039 (3), RU-0043 (3), RU-0073 (3), UZ-0002 (3), UZ-0017 (3), AM-0003 (2), AZ-0002 (2), AZ-0006 (2), GE-0006 (2), KG-0004 (2), KG-0006 (2), KZ-0014 (2), KZ-0017 (2), KZ-0020 (2), RU-0007 (2), RU-0008 (2), RU-0009 (2), RU-0025 (2), RU-0028 (2), RU-0031 (2), RU-0033 (2), RU-0034 (2), RU-0035 (2), RU-0037 (2), RU-0040 (2), RU-0041 (2), RU-0044 (2), RU-0045 (2), RU-0046 (2), RU-0049 (2), RU-0053 (2), RU-0054 (2), RU-0057 (2), RU-0062 (2), TJ-0003 (2), TJ-0005 (2), TM-0006 (2), TM-0012 (2), UZ-0004 (2), UZ-0005 (2), UZ-0008 (2), UZ-0014 (2), UZ-0015 (2)
+RU-0059 (82), RU-0022 (63), RU-0070 (50), RU-0072 (27), RU-0052 (23), RU-0068 (23), RU-0023 (21), RU-0021 (20), RU-0069 (19), RU-0019 (10), RU-0067 (10), RU-0018 (9), RU-0065 (9), TM-0004 (8), KZ-0015 (7), RU-0026 (7), TM-0005 (7), AZ-0001 (6), RU-0071 (6), TJ-0006 (6), KZ-0016 (5), RU-0029 (5), KZ-0005 (4), KZ-0013 (4), RU-0036 (4), RU-0042 (4), RU-0063 (4), RU-0064 (4), TM-0002 (4), UZ-0006 (4), AZ-0003 (3), KZ-0012 (3), RU-0003 (3), RU-0016 (3), RU-0039 (3), RU-0043 (3), RU-0073 (3), UZ-0017 (3), AM-0003 (2), AZ-0002 (2), AZ-0006 (2), GE-0006 (2), KG-0004 (2), KG-0006 (2), KZ-0004 (2), KZ-0014 (2), KZ-0017 (2), KZ-0020 (2), RU-0007 (2), RU-0008 (2), RU-0009 (2), RU-0025 (2), RU-0028 (2), RU-0031 (2), RU-0033 (2), RU-0034 (2), RU-0035 (2), RU-0037 (2), RU-0040 (2), RU-0041 (2), RU-0044 (2), RU-0045 (2), RU-0046 (2), RU-0049 (2), RU-0053 (2), RU-0054 (2), RU-0057 (2), RU-0062 (2), TJ-0003 (2), TJ-0005 (2), TM-0006 (2), TM-0012 (2), UZ-0002 (2), UZ-0004 (2), UZ-0005 (2), UZ-0008 (2), UZ-0014 (2), UZ-0015 (2)
 
 ## Visual check
 

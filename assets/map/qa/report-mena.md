@@ -111,8 +111,8 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | DZ-0016 | Arzew-Bethioua | seeds: point -0.26,35.81 (hint); point -0.32,35.85 (hint); 0 whole parts, 1 split |
 | EG-0005 | 6th of October-Sheikh Zayed | seeds: point 30.93,29.97 (hint); point 30.98,30.05 (hint); 3 whole admin2 units |
 | EG-0007 | Shubra el-Kheima | seeds: point 31.255,30.13 (hint); 2 whole admin2 units |
-| EG-0009 | Alexandria Centre-East | seeds: point 29.95,31.22 (hint); point 30.02,31.27 (hint); 9 whole admin2 units |
-| EG-0010 | Alexandria West-Borg el-Arab | seeds: point 29.6,30.92 (hint) (snapped to land); point 29.75,31.05 (hint); point 29.82,31.13 (hint); 8 whole admin2 units |
+| EG-0009 | Alexandria Centre-East | seeds: point 29.95,31.22 (hint); point 30.02,31.27 (hint); 11 whole admin2 units |
+| EG-0010 | Alexandria West-Borg el-Arab | seeds: point 29.6,30.92 (hint) (snapped to land); point 29.75,31.05 (hint); point 29.82,31.13 (hint); 6 whole admin2 units |
 | IL-0002 | East Jerusalem | seeds: point 35.235,31.78 (hint); point 35.24,31.8 (hint); 0 whole admin2 units, split: Jerusalem |
 | IL-0003 | Beit Shemesh-Judean Hills | seeds: point 34.99,31.75 (hint); point 35.13,31.8 (hint); 0 whole admin2 units, split: Jerusalem |
 | IL-0005 | Ramat Gan-Herzliya | seeds: point 34.82,32.08 (hint); point 34.84,32.09 (hint); point 34.84,32.16 (hint); 0 whole admin2 units, split: Tel Aviv |
@@ -146,10 +146,10 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | OM-0003 | Sohar | seeds: point 56.71,24.35 (hint); 0 whole parts, 1 split |
 | OM-0004 | Saham-Shinas | seeds: point 56.47,24.74 (hint); point 56.56,24.53 (hint); point 56.89,24.17 (hint); point 57.08,23.98 (hint); 0 whole parts, 1 split |
 | QA-0001 | West Bay-Corniche | seeds: point 51.52,25.3 (hint) (snapped to land); point 51.53,25.32 (hint) (snapped to land); 18 whole admin2 units |
-| QA-0002 | Msheireb-Old Doha | seeds: point 51.53,25.285 (hint); 15 whole admin2 units |
-| QA-0003 | Doha Airport-Al Thumama | seeds: point 51.55,25.23 (hint); point 51.61,25.27 (hint); 11 whole admin2 units |
-| QA-0004 | Al Rayyan-Education City | seeds: point 51.42,25.29 (hint); point 51.44,25.31 (hint); 10 whole admin2 units |
-| QA-0005 | Industrial Area-Al Udeid | seeds: point 51.32,25.12 (hint); point 51.43,25.2 (hint); 14 whole admin2 units |
+| QA-0002 | Msheireb-Old Doha | seeds: point 51.53,25.285 (hint); 16 whole admin2 units |
+| QA-0003 | Doha Airport-Al Thumama | seeds: point 51.55,25.23 (hint); point 51.61,25.27 (hint); 10 whole admin2 units |
+| QA-0004 | Al Rayyan-Education City | seeds: point 51.42,25.29 (hint); point 51.44,25.31 (hint); 11 whole admin2 units |
+| QA-0005 | Industrial Area-Al Udeid | seeds: point 51.32,25.12 (hint); point 51.43,25.2 (hint); 13 whole admin2 units |
 | QA-0006 | Al Wakrah-Hamad Port | seeds: point 51.6,25.17 (hint); point 51.62,25.01 (hint); 5 whole admin2 units, split: 92 |
 | QA-0007 | Mesaieed | seeds: point 51.45,24.8 (hint); point 51.55,24.99 (hint); 2 whole admin2 units, split: 92 |
 | SA-0001 | Riyadh Central-Olaya | seeds: point 46.64,24.76 (hint); point 46.68,24.7 (hint); 0 whole parts, 1 split |
@@ -187,13 +187,13 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | EG-0027 | Luxor | 1 | 1 | 4838.5, 2011.5 |
 | KW-0002 | Shuwaikh-Sulaibikhat | 1 | 1 | 5186.5, 1922.5 |
 | QA-0002 | Msheireb-Old Doha | 1 | 1 | 5268.5, 2022.5 |
-| EG-0001 | Downtown Cairo-Zamalek | 2 | 1 | 4807.5, 1903.5 |
 | IL-0004 | Tel Aviv-Yafo | 2 | 1 | 4887.5, 1853.5 |
 | LB-0001 | Beirut | 2 | 1 | 4903.5, 1807.5 |
 | QA-0001 | West Bay-Corniche | 2 | 1 | 5267.5, 2020.5 |
 | QA-0003 | Doha Airport-Al Thumama | 2 | 2 | 5269.5, 2022.5 |
 | DZ-0001 | Algiers Centre-Hydra | 3 | 1 | 4165.5, 1734.5 |
 | DZ-0003 | Algiers West-Cheraga | 3 | 1 | 4164.5, 1732.5 |
+| EG-0001 | Downtown Cairo-Zamalek | 3 | 1 | 4807.5, 1903.5 |
 | IL-0001 | West Jerusalem | 3 | 1 | 4896.5, 1861.5 |
 | IL-0002 | East Jerusalem | 3 | 1 | 4897.5, 1859.5 |
 | IL-0006 | Holon-Bat Yam | 3 | 1 | 4886.5, 1855.5 |
@@ -301,7 +301,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Giza pyramids (31.13, 29.98) | EG-0004 | EG-0004 | on it |
 | Halaib (36.6, 22.22) | EG-0030 | EG-0030 | on it |
 | Hebron (35.1, 31.53) | PS-0004 | PS-0004 | on it |
-| Heliopolis (31.32, 30.09) | EG-0002 | EG-0002 | on it |
+| Heliopolis (31.32, 30.09) | EG-0002 | EG-0001 | within a pixel |
 | Helwan (31.33, 29.85) | EG-0003 | EG-0003 | on it |
 | Jenin (35.3, 32.46) | PS-0001 | PS-0001 | on it |
 | Jericho (35.45, 31.86) | PS-0003 | PS-0003 | on it |

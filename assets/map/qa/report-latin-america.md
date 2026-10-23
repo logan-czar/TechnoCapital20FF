@@ -56,8 +56,8 @@ _Written by `tools/map-pipeline/run.py --region latin-america` (pipeline pb-1). 
 | Placed by a builder hint (`hints/latin-america.toml`) | 19 |
 | Tiny (under 64 px) | 43 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
-| More than one part (islands, exclaves) | 131 |
-| Coastal flag differs from the CSV | 27 |
+| More than one part (islands, exclaves) | 134 |
+| Coastal flag differs from the CSV | 25 |
 | Small for their region (not Metro, under 5% of the region's mean) | 0 |
 | Voronoi-split blocks where one province takes 75% or more | 6 |
 | Places named in a province's name or notes that lie in another province | 0 |
@@ -67,7 +67,7 @@ _Written by `tools/map-pipeline/run.py --region latin-america` (pipeline pb-1). 
 | Sea links with a province of this file | 19 |
 | City probe points (fail on a mismatch; D686) | 70 pass, 0 mismatch, 8 listed |
 | Metro reach scan rows (listed; D686) | 1 |
-| Land exclaves of 5 px or more (fail unless explained; D691) | 5 (0 unexplained) |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 4 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
 
@@ -106,20 +106,20 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | Province | Name | Placed by |
 |---|---|---|
 | AR-0009 | West Pampa | seeds: place Junín; place Olavarría; unit General Las Heras (hint); unit Junín at place Junín; unit Olavarría at place Olavarría; unit Trenque Lauquen; 44 whole admin2 units |
-| BO-0002 | Altiplano-Lake Titicaca | seeds: point -68.68,-16.05 (hint); point -69.04,-16.57 (hint) (snapped to land); point -69.09,-16.17 (hint); point -69.25,-15.5 (hint); 9 whole admin2 units |
+| BO-0002 | Altiplano-Lake Titicaca | seeds: point -68.68,-16.05 (hint); point -69.04,-16.57 (hint) (snapped to land); point -69.09,-16.17 (hint); point -69.25,-15.5 (hint); 11 whole admin2 units |
 | BO-0013 | Chuquisaca Chaco | seeds: point -63.73,-19.87 (hint); point -63.96,-19.8 (hint); 6 whole admin2 units |
 | BR-0001 | Sao Paulo Centro-Faria Lima | seeds: point -46.63,-23.55 (hint); point -46.66,-23.56 (hint); point -46.69,-23.57 (hint); point -46.7,-23.565 (hint); point -46.73,-23.58 (hint); unit Barueri (hint); unit Osasco (hint); 9 whole admin2 units, split: São Paulo |
-| BR-0002 | Sao Paulo Zona Leste-Guarulhos | seeds: point -46.4,-23.55 (hint); point -46.47,-23.54 (hint); point -46.56,-23.52 (hint); point -46.62,-23.48 (hint); unit Guarulhos (hint); 9 whole admin2 units, split: São Paulo |
-| BR-0003 | ABC Paulista-Zona Sul | seeds: place Santo André; point -46.7,-23.65 (hint); point -46.7,-23.82 (hint); unit Diadema; unit Santo André at place Santo André; 14 whole admin2 units, split: São Paulo |
+| BR-0002 | Sao Paulo Zona Leste-Guarulhos | seeds: point -46.4,-23.55 (hint); point -46.47,-23.54 (hint); point -46.56,-23.52 (hint); point -46.62,-23.48 (hint); unit Guarulhos (hint); 10 whole admin2 units, split: São Paulo |
+| BR-0003 | ABC Paulista-Zona Sul | seeds: place Santo André; point -46.7,-23.65 (hint); point -46.7,-23.82 (hint); unit Diadema; unit Santo André at place Santo André; 13 whole admin2 units, split: São Paulo |
 | BR-0010 | Rio Centro-Zona Sul | seeds: point -43.18,-22.91 (hint); point -43.19,-22.97 (hint); point -43.23,-22.9 (hint); 0 whole admin2 units, split: Rio de Janeiro |
 | BR-0011 | Barra-Zona Oeste | seeds: point -43.36,-22.94 (hint); point -43.37,-23.0 (hint); point -43.47,-22.88 (hint); point -43.69,-22.92 (hint); 2 whole admin2 units, split: Rio de Janeiro |
-| BR-0028 | Florianopolis-Itajai | seeds: place Florianópolis; place Itajaí; unit Angelina (hint); unit Florianópolis at place Florianópolis; unit Itajaí at place Itajaí; unit Navegantes; 46 whole admin2 units |
+| BR-0028 | Florianopolis-Itajai | seeds: place Florianópolis; place Itajaí; unit Angelina (hint); unit Florianópolis at place Florianópolis; unit Itajaí at place Itajaí; unit Navegantes; 54 whole admin2 units |
 | CL-0010 | Santiago Poniente-Sur | seeds: point -70.58,-33.61 (hint); point -70.59,-33.52 (hint); point -70.73,-33.36 (hint); point -70.76,-33.51 (hint); point -70.79,-33.39 (hint); 0 whole parts, 1 split |
 | CL-0011 | Maipo-Melipilla | seeds: point -70.74,-33.73 (hint); point -70.93,-33.66 (hint); point -71.22,-33.69 (hint); 0 whole parts, 1 split |
 | CL-0020 | Chiloe-Palena | seeds: point -71.8,-43.62 (hint); point -72.71,-42.92 (hint); point -73.77,-42.48 (hint) (snapped to land); point -73.82,-41.87 (hint); 9 whole parts, 1 split |
 | CO-0001 | Bogota Chapinero-Norte | seeds: point -74.03,4.7 (hint); point -74.06,4.65 (hint); point -74.08,4.6 (hint); 0 whole admin2 units, split: Bogotá, D.c. |
 | CO-0002 | Bogota Sur-Occidente | seeds: point -74.14,4.68 (hint); point -74.14,4.7 (hint); point -74.15,4.63 (hint); point -74.16,4.51 (hint); point -74.19,4.62 (hint); 0 whole admin2 units, split: Bogotá, D.c. |
-| CR-0001 | San Jose Centro | seeds: point -84.08,9.93 (hint); 11 whole admin2 units |
+| CR-0001 | San Jose Centro | seeds: point -84.08,9.93 (hint); 10 whole admin2 units |
 | PE-0001 | Lima Centro-San Isidro | seeds: point -77.03,-12.05 (hint); point -77.03,-12.1 (hint); point -77.03,-12.12 (hint); 0 whole admin2 units, split: Lima |
 | PE-0002 | Lima Norte-Este | seeds: point -76.89,-12.03 (hint); point -77.0,-11.98 (hint); point -77.06,-11.94 (hint); point -77.07,-11.99 (hint); 1 whole admin2 units, split: Lima |
 | PE-0003 | Lima Provinces-Huacho | seeds: point -75.91,-12.46 (hint); point -76.38,-11.84 (hint); point -76.39,-13.08 (hint); point -77.21,-11.5 (hint); point -77.27,-11.57 (hint); point -77.61,-11.11 (hint); 9 whole admin2 units |
@@ -172,8 +172,8 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | CR-0003 | Alajuela-Airport Free Zones | 57 | 1 | 2177.5, 2379.5 |
 | SV-0004 | Sonsonate-Acajutla | 58 | 1 | 2055.5, 2296.5 |
 | CO-0002 | Bogota Sur-Occidente | 59 | 1 | 2407.5, 2515.5 |
-| PR-0005 | Arecibo-North Coast | 59 | 2 | 2585.5, 2186.5 |
 | DO-0001 | Santo Domingo | 62 | 3 | 2503.5, 2182.5 |
+| PR-0005 | Arecibo-North Coast | 63 | 2 | 2585.5, 2186.5 |
 
 ## Anchor cities
 
@@ -181,7 +181,7 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 
 | Check | Province | Place | Expected | Got |
 |---|---|---|---|---|
-| own name elsewhere (allowed) | BR-0032 | Caxias | BR-0032 (Caxias do Sul; the Caxias point is the town in Maranhao) | BR-0050 |
+| own name elsewhere (allowed) | BR-0032 | Caxias | BR-0032 (Caxias do Sul; the Caxias point is the town in Maranhao) | BR-0049 |
 
 No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
 
@@ -294,9 +294,8 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 | Province | Name | Pixels | At | Why |
 |---|---|---|---|---|
 | BR-0007 | Sorocaba-Southwest Sao Paulo | 9 | -46.93, -23.85 | a neck under a pixel wide joins it to the rest in the shapes |
-| BR-0020 | Juiz de Fora-South Minas | 5 | -42.47, -20.91 | a neck under a pixel wide joins it to the rest in the shapes |
+| BR-0032 | Serra Gaucha-Caxias | 8 | -49.99, -29.25 | Mampituba meets the rest of Serra Gaucha only at a corner of Sao Francisco de Paula, so its pixels stand apart |
 | CR-0001 | San Jose Centro | 23 | -84.0, 10.0 | its own seed point -84.08,9.93 (hint) lies in it |
-| CR-0001 | San Jose Centro | 8 | -84.07, 9.71 | a neck under a pixel wide joins it to the rest in the shapes |
 | UY-0007 | Rivera-Artigas | 503 | -55.26, -31.48 | composite name: Rivera lies in it |
 
 ## Known for review
@@ -496,11 +495,9 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | BR-0007 | Sorocaba-Southwest Sao Paulo | 64 | Y | N |
 | BR-0012 | Baixada Fluminense | 3 | N | Y |
 | BR-0030 | West Santa Catarina | 25 | Y | N |
-| BR-0032 | Serra Gaucha-Caxias | 23 | Y | N |
 | BR-0039 | Bahia Sertao-Feira de Santana | 7 | Y | N |
 | BR-0043 | Ceara Sertao | 66 | Y | N |
 | BR-0047 | Manaus | 0 | N | Y |
-| BR-0050 | South Maranhao | 23 | Y | N |
 | BR-0062 | Piaui | 19 | Y | N |
 | CL-0004 | Calama-Salar de Atacama | 15 | Y | N |
 | CL-0016 | Los Angeles-Biobio Forests | 23 | Y | N |
@@ -521,7 +518,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-CL-0022 (101), CL-0021 (52), BS-0004 (48), PP-0001 (26), BS-0003 (18), BR-0049 (13), CL-0020 (13), BR-0044 (12), BZ-0001 (10), EC-0015 (9), HN-0004 (9), VE-0010 (9), BR-0050 (8), HN-0003 (8), PA-0001 (8), CR-0008 (7), CU-0004 (7), CU-0005 (7), CU-0006 (7), CU-0013 (7), AR-0008 (6), CL-0011 (6), CU-0007 (6), PA-0005 (6), VE-0002 (6), VG-0001 (6), AR-0025 (5), BR-0018 (5), BR-0035 (5), BR-0046 (5), BR-0051 (5), BR-0056 (5), GY-0003 (5), KY-0001 (5), NI-0004 (5), NI-0008 (5), PA-0007 (5), BR-0006 (4), BR-0007 (4), BR-0015 (4), BR-0059 (4), BR-0066 (4), CL-0008 (4), CO-0005 (4), CO-0010 (4), CO-0012 (4), CO-0026 (4), EC-0002 (4), KN-0001 (4), PA-0004 (4), VE-0013 (4), AR-0013 (3), BR-0009 (3), BR-0032 (3), BR-0034 (3), BR-0045 (3), BR-0065 (3), CL-0007 (3), CO-0006 (3), CO-0023 (3), CR-0001 (3), CU-0009 (3), DO-0001 (3), EC-0014 (3), GY-0002 (3), HN-0002 (3), HT-0006 (3), PR-0003 (3), PY-0010 (3), VC-0001 (3), VE-0020 (3), AG-0001 (2), AR-0006 (2), AR-0011 (2), AR-0031 (2), BO-0003 (2), BO-0009 (2), BO-0016 (2), BR-0004 (2), BR-0017 (2), BR-0020 (2), BR-0021 (2), BR-0023 (2), BR-0024 (2), BR-0030 (2), BR-0031 (2), BR-0033 (2), BR-0037 (2), BR-0040 (2), BR-0041 (2), BR-0043 (2), BR-0052 (2), BR-0058 (2), BR-0061 (2), BS-0002 (2), BZ-0002 (2), CL-0015 (2), CL-0017 (2), CL-0019 (2), CO-0007 (2), CO-0008 (2), CO-0015 (2), CO-0018 (2), CO-0029 (2), CR-0007 (2), CU-0012 (2), DO-0002 (2), DO-0007 (2), EC-0003 (2), EC-0010 (2), GD-0001 (2), GT-0004 (2), GT-0006 (2), GT-0011 (2), HN-0010 (2), HT-0001 (2), HT-0004 (2), PA-0010 (2), PE-0001 (2), PE-0004 (2), PE-0017 (2), PE-0020 (2), PE-0023 (2), PR-0005 (2), PR-0007 (2), TT-0001 (2), TT-0005 (2), UY-0007 (2), VE-0006 (2), VE-0016 (2), VE-0019 (2)
+CL-0022 (101), CL-0021 (52), BS-0004 (48), PP-0001 (26), BS-0003 (18), BR-0049 (17), CL-0020 (13), BR-0044 (11), BZ-0001 (10), EC-0015 (9), HN-0004 (9), VE-0010 (9), HN-0003 (8), PA-0001 (8), CR-0008 (7), CU-0004 (7), CU-0005 (7), CU-0006 (7), CU-0013 (7), AR-0008 (6), BR-0035 (6), CL-0011 (6), CU-0007 (6), PA-0005 (6), VE-0002 (6), VG-0001 (6), AR-0025 (5), BR-0046 (5), BR-0056 (5), GY-0003 (5), KY-0001 (5), NI-0004 (5), NI-0008 (5), PA-0007 (5), BR-0006 (4), BR-0007 (4), BR-0015 (4), BR-0022 (4), BR-0048 (4), BR-0050 (4), BR-0059 (4), BR-0066 (4), CL-0008 (4), CO-0005 (4), CO-0010 (4), CO-0012 (4), CO-0026 (4), EC-0002 (4), KN-0001 (4), PA-0004 (4), VE-0013 (4), AR-0013 (3), BR-0009 (3), BR-0027 (3), BR-0032 (3), BR-0045 (3), BR-0065 (3), CL-0007 (3), CO-0006 (3), CO-0008 (3), CO-0023 (3), CR-0001 (3), CU-0009 (3), DO-0001 (3), EC-0014 (3), GY-0002 (3), HN-0002 (3), HT-0006 (3), PR-0003 (3), PY-0010 (3), VC-0001 (3), VE-0020 (3), AG-0001 (2), AR-0006 (2), AR-0031 (2), BO-0009 (2), BO-0016 (2), BR-0004 (2), BR-0017 (2), BR-0018 (2), BR-0019 (2), BR-0021 (2), BR-0023 (2), BR-0024 (2), BR-0030 (2), BR-0031 (2), BR-0033 (2), BR-0034 (2), BR-0037 (2), BR-0039 (2), BR-0040 (2), BR-0043 (2), BR-0047 (2), BR-0051 (2), BR-0052 (2), BR-0054 (2), BR-0055 (2), BR-0058 (2), BR-0061 (2), BS-0002 (2), BZ-0002 (2), CL-0015 (2), CL-0017 (2), CL-0019 (2), CO-0015 (2), CO-0018 (2), CO-0029 (2), CR-0007 (2), CU-0012 (2), DO-0002 (2), DO-0007 (2), EC-0003 (2), EC-0010 (2), GD-0001 (2), GT-0004 (2), GT-0006 (2), GT-0011 (2), HN-0010 (2), HT-0001 (2), HT-0004 (2), PA-0010 (2), PE-0001 (2), PE-0004 (2), PE-0017 (2), PE-0020 (2), PE-0023 (2), PR-0005 (2), PR-0007 (2), TT-0001 (2), TT-0005 (2), UY-0007 (2), VE-0006 (2), VE-0016 (2), VE-0019 (2)
 
 ## Visual check
 
