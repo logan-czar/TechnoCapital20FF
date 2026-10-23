@@ -254,7 +254,9 @@ def check(region: config.Region, index_png: Path, meta_toml: Path, sources: dict
                     for dy in (-EDGE_PX, 0, EDGE_PX) for dx in (-EDGE_PX, 0, EDGE_PX))
         if not touch or got not in ids:
             return touch
-        return city_part(idx, ids.index(got) + 1, x % frame.w, y) is None
+        # a part of the other province joined to its main part only across land is a pocket; one
+        # across water (a bay shore) is not
+        return city_part(idx, ids.index(got) + 1, x % frame.w, y) != "land"
 
     misses = []
     for r in rows:

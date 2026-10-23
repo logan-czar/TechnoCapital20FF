@@ -65,8 +65,8 @@ _Written by `tools/map-pipeline/run.py --region east-asia-oceania` (pipeline pb-
 | City probe points (fail on a mismatch; D686) | 176 pass, 0 mismatch, 21 listed |
 | Metro reach scan rows (listed; D686) | 12 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 16 (0 unexplained) |
-| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 1 |
-| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 5 |
+| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 6 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
 
@@ -306,12 +306,14 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 
 | Check | Province | Place | Expected | Got |
 |---|---|---|---|---|
-| own name elsewhere | JP-0006 | Kawasaki | JP-0006 | JP-0003 |
 | own name elsewhere (allowed) | CN-0002 | Chaoyang | CN-0002 (Chaoyang district of Beijing, not Chaoyang city in Liaoning) | CN-0106 |
 | own name elsewhere (allowed) | CN-0012 | Baoshan | CN-0012 (Baoshan district of Shanghai, not Baoshan city in Yunnan) | CN-0128 |
+| city on the edge | JP-0006 | Kawasaki | JP-0006 | JP-0003 |
 | city on the edge | ID-0004 | Bekasi | ID-0004 | ID-0003 |
 | city part across water | PH-0002 | Manila | the largest 4-connected part | a smaller part, joined to it across water only |
 | own name elsewhere (allowed) | AU-0023 | Goulburn | AU-0023 (the Goulburn valley of Victoria, not Goulburn town in New South Wales) | AU-0013 |
+
+No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
 
 ## Natural Earth labels
 
