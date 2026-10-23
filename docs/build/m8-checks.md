@@ -9,7 +9,7 @@ Logan's PC (Windows 11, 24 threads, RTX 5070 Ti), October 2026, branch `build/m8
 | Check (m8-plan) | How | Result |
 |---|---|---|
 | M8.8 click test: every province clickable | `cargo test -p game --test m8_map every_world_province` (in the gate) | 3,255 of 3,255 pick their own id at their label point (the 372 tiny ones at their click target): 2,964 from World zoom, 291 from Country, none needs Province; then all 3,255 clicked through the shell to their Province page. Debug 10.5 s |
-| 60 fps with the panes open, in release | `target/release/game --bench-map 15 --map-mode MODE [--bench-map-running SPEED]` | Paused, every mode at every zoom level: p99 4.67 ms or less, max 6.39 ms, 321 to 349 fps (60 fps is 16.7 ms). Running at speed 4: p99 5.11 ms or less, max 19.1 ms (the daily rollover). At speed 5 (max, a fast-forward): 35 to 40 ms p50, p99 47 to 57 ms, max 50 to 67 ms, mostly the open Company and Province pages (D744) |
+| 60 fps with the panes open, in release | `target/release/game --bench-map 15 --map-mode MODE [--bench-map-running SPEED] [--bench-map-panes SET]`, a check since D778 (exit 1 when p99 is 16.7 ms or more) | Paused, every mode at every zoom level: p99 4.67 ms or less, max 6.39 ms, 321 to 349 fps (60 fps is 16.7 ms). Running at speed 4: p99 5.11 ms or less, max 19.1 ms (the daily rollover). At speed 5 (max, a fast-forward): 35 to 40 ms p50, p99 47 to 57 ms, max 50 to 67 ms, mostly the open Company and Province pages (D744). **After the page fixes (D770 to D778, below):** speed 5 with the four panes p50 12 ms, p99 18 to 21 ms, 87 to 95 fps: FAIL, the sim's own quarter ticks (no pane open: p99 14.6 ms, PASS); speed 4 and paused PASS for every pane set |
 | Leak test on the world map | `cargo test -p game --test m9_leak` | Pass, no leak: 94 modes, 552 banded HQ pins, 329 heat values, 145 province cards, 26 zone cards a state, and the Province pages; debug 25 s, release 8.6 s |
 | Timing harness on the world map | `target/release/game --bench-pages` | `pages 59 opened, worst 20.64 ms: PASS` twice; the Province page 9.7 to 10.9 ms, every mode switch 5.6 ms or less |
 | Startup render error | D741 | Cause found (a stale binary against a newer shader); the shader is now compiled in and its layout tested |
@@ -78,6 +78,42 @@ At speed 4 (5 game hours a second, the fastest timed speed) the map with the pan
 So most of the max-speed frame comes from the open Company and Province pages rebuilding on monthly views and updating live figures every tick. Monthly-rebuild frames cost about 5 ms more than the others. The map itself (layer, colour table, pins) adds little. This is a cost of the M9 pages at fast-forward, flagged for their owner in D744; 60 fps at max speed was never a target.
 
 The reviewer's 44.5 ms frame (paused, Political, World zoom) did not come back in 13 paused 15 s runs here (max 8.7 ms). Some runs, paused or running and in any mode, settled for a while into a steady 16.6 ms frame: Windows pacing the window's presents at 60 Hz, probably while it was not in front or the display was idle. That is when frames of 20 to 29 ms came, with no flag set, so they were not the game's work. The tables leave those runs out; they were rerun.
+
+### At max speed after the page fixes (D770 to D778)
+
+Branch `build/m8-speed5-page-cost` from main fe4b4c8, October 2026, Logan's PC, the world map, Political, 15 s a run. The check:
+
+```
+cargo build --release -p game
+target/release/game --bench-map 15 --map-mode political --bench-map-running 5     # the four panes; exit 1 when p99 >= 16.7 ms
+target/release/game --bench-map 15 --map-mode political --bench-map-running 5 --bench-map-panes none    # or lists, company, province
+cargo build --release -p game --features profile    # adds the span timer and the per-frame work counts (D770)
+```
+
+Run it with the window in front: the bench prints the share of frames the window had the focus, and an unfocused window's presents are paced at 60 Hz by the OS (D744; it warns when 30% of the frames sit at 16.3 to 17.0 ms). Only runs with the focus in 97% or more of the frames are below; the machine was in use, so each was rerun until one kept the focus.
+
+**Where the frame went (main, profiled, the four panes, D770).** Per frame: sim stepping 9.5 ms (2.9 fixed steps), `ui_layout_system` 7.3, the page rebuilds' spawn and despawn commands 5.7, text measuring 2.6, the tables' pools and layouts 4.7, the view copy 2.1, the name index 1.6, the price chart 1.5, extraction 3.7. 1,939 UI nodes spawned, 2,351 changed and 724 texts changed a frame. At 8.6 game months a second v_company_row (monthly and at the lock) moved every 1.5 frames, and the Company page rebuilt 0.70 times a frame, the Province page 0.52; the daily views (bars, zones, exchanges) moved every frame, so the live chart was re-set every frame (1,310 nodes written) and 7.4 live spans written; the name index rebuilt on every daily move of v_zones; the frames that started a month's (4 to 5 ms) or a quarter's (6 to 16 ms) tick at the end of the 8 ms budget ran 13 to 24 ms of stepping; the view copy cloned every moved view (up to 7 ms on a month).
+
+**What changed.** Doc pages patch in place on a view move (D772); at fast-forward the page refreshes, live spans, charts, tables, `Live` widgets, the name index, the event log and the top bar's clock are paced to a few a second, with the heavy ones one a frame in frames the sim left light (D773, D777), all flushed in the frame of a pause or a control change; the index keys the daily views on their names (D771); the chart writes only the nodes that moved (D774); views share their data with the copy and the old copies are freed off the frame (D775); a costly tick waits for the next frame instead of overrunning the budget (D776). After (profiled): 5.7 nodes spawned, 435 changed and 33 texts changed a frame, 0.04 page patches and no rebuilds a frame, 0.6 live span writes, 0.013 chart re-sets (18 nodes written).
+
+| Panes | Speed | main fe4b4c8: fps, p50 / p95 / p99 ms | this branch: fps, p50 / p95 / p99 ms | Check |
+|---|---|---|---|---|
+| all four (the check's set) | 5 | 25, 37.9 / 49.0 / 55.6 | 92, 12.6 / 16.6 / 18.0 (other runs p99 19.7 to 21.0) | FAIL |
+| none | 5 | 83, 12.8 / 25.5 / 32.2 | 224, 2.3 / 12.2 / 14.6 | PASS |
+| Companies and Industries | 5 | 65, 15.5 / 28.2 / 36.4 | 169, 3.2 / 13.9 / 17.2 | FAIL |
+| the company page | 5 | 28, 34.5 / 44.9 / 58.7 | 117, 8.1 / 15.8 / 18.4 | FAIL |
+| the Province page | 5 | 46, 20.9 / 31.6 / 35.5 | 178, 2.9 / 14.5 / 16.9 | FAIL (at the line) |
+| all four | 4 | 258, 3.7 / 5.1 / 7.1 | 265, 3.6 / 5.2 / 6.3 | PASS |
+| none | 4 | 539, 1.8 / 2.5 / 2.9 | 574, 1.7 / 2.3 / 3.0 | PASS |
+| Companies and Industries | 4 | 403, 2.4 / 3.3 / 3.8 | 400, 2.4 / 3.3 / 4.0 | PASS |
+| the company page | 4 | 388, 2.5 / 3.4 / 4.0 | 388, 2.4 / 3.5 / 4.4 | PASS |
+| the Province page | 4 | 438, 2.2 / 3.0 / 3.5 | 447, 2.2 / 3.0 / 3.6 | PASS |
+
+(The main numbers come from main's binary with the bench's pane choice patched in for the run, not committed; at speed 5 main ran 6,600 game hours a second with the four panes and this branch 13,500, since the frames are shorter.)
+
+**Why speed 5 still misses 60 fps with the panes open.** The frame at max speed is the sim's stepping plus the UI. The stepping alone, with the costly ticks now opening frames (D776), is p50 7.2 ms, p95 9.4, p99 10.9 and max 15 to 18 ms: a quarter's start, release, price move and plan lock run up to 15 to 17 ms each in the game (mean 5.6 ms), and one tick cannot be split. The frame less the stepping (the UI, the map and the render) is p50 5.4 ms, p95 8.5 and p99 10.9 with the four panes, against 2.3 / 3.6 / 5.0 with none: the panes' standing cost at speed 5 is the layout and render of their few thousand nodes, about 3 ms a frame (1.9 ms at speed 4). So the frames that carry a 10 to 16 ms quarter tick (about 1 in 50) land at 16 to 21 ms with the panes open and 13 to 15 ms without. Reaching p99 under 16.7 ms with the panes needs the sim's quarter ticks under about 8 ms in the game, or the stepping budget shorter than 8 ms (D300), which would slow max speed; neither is a UI change. The leftover UI work is already off those frames: every paced heavy job waits for a frame the sim left light (D777).
+
+The page timing harness (`--bench-pages`, sim paused) passes: `pages 59 opened, worst 22.72 ms: PASS` and `worst 34.13 ms: PASS` (company/0 cold; the machine was in use). The paused map bench passes its check in every mode it was run in (Political and HQs: p99 11.8 ms with the machine in use, PASS). The leak test passes in the gate (and `cargo test -p game --test s5_pace` covers the patch, the pacing, a pause showing the final values, an Omniscient toggle rebuilding at once while fast-forwarding and a hidden pane waiting). The 10-year soak (`headless soak --years 10 --seeds 1..4`) is byte-identical to main fe4b4c8 built in this slot: `years.csv` md5 121b5c7ba2ae4edcb9ed12d28764563e, `quarters.csv` cf890b482bd1f4c420cb3c6dc7f73a35, the same four seed hashes.
 
 ## The M9 checks on the world map
 
