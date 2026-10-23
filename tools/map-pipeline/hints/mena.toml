@@ -288,5 +288,10 @@ units = ["Al-Kadhmiyah", "Al-Mahmoudiya", "Al-Mada'in", "Al-Adhamiya", "Al-Karkh
 
 # D691: land exclaves of 5 px or more that no composite name, own seed or pixel neck explains
 [review.exclave_ok]
-"MA-0012" = "a corner of Natural Earth's old Meknes-Tafilalet unit east of the Draa-Tafilalet builder polygon (D676)"
-"MA-0016" = "a corner of Natural Earth's old Souss-Massa-Draa unit south of the Draa-Tafilalet builder polygon (D676)"
+
+# PR #40 review (D694): Tata province is in Souss-Massa since 2015 (Natural Earth's old
+# Guelmim-Es Semara holds it); a builder polygon round Tata, Akka and Foum Zguid
+[carve."MAR:Souss-Massa"]
+polygon = [[-9.10, 29.95], [-8.60, 30.25], [-7.60, 30.40], [-6.60, 30.25], [-6.40, 29.60], [-7.20, 29.00],
+           [-8.00, 28.80], [-8.70, 28.70], [-9.10, 29.20], [-9.10, 29.95]]
+from = ["MAR:Guelmim-Oued Noun"]

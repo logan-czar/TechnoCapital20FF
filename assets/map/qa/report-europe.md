@@ -72,7 +72,7 @@ _Written by `tools/map-pipeline/run.py --region europe` (pipeline pb-1). Source 
 | Placed by a builder hint (`hints/europe.toml`) | 100 |
 | Tiny (under 64 px) | 64 |
 | Given a pixel at their interior point (no pixel centre inside) | 2 |
-| More than one part (islands, exclaves) | 229 |
+| More than one part (islands, exclaves) | 230 |
 | Coastal flag differs from the CSV | 35 |
 | Small for their region (not Metro, under 5% of the region's mean) | 3 |
 | Voronoi-split blocks where one province takes 75% or more | 14 |
@@ -81,7 +81,7 @@ _Written by `tools/map-pipeline/run.py --region europe` (pipeline pb-1). Source 
 | Contested provinces (drawn by our own files) | 10 |
 | Admin-1 units left without a province | 1 |
 | Sea links with a province of this file | 57 |
-| City probe points (fail on a mismatch; D686) | 136 pass, 0 mismatch, 9 listed |
+| City probe points (fail on a mismatch; D686) | 140 pass, 0 mismatch, 14 listed |
 | Metro reach scan rows (listed; D686) | 7 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 26 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
@@ -294,7 +294,6 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | AT-0002 | Vienna Outer Districts | 27 | 1 | 4470.5, 1417.5 |
 | GB-0003 | West London-Heathrow | 28 | 1 | 4088.5, 1322.5 |
 | AD-0001 | Andorra | 32 | 1 | 4130.5, 1578.5 |
-| NL-0005 | The Hague-Delft | 32 | 1 | 4193.5, 1305.5 |
 | NO-0002 | Oslo East-Groruddalen | 33 | 2 | 4342.5, 1049.5 |
 | CH-0001 | Zurich | 35 | 1 | 4289.5, 1444.5 |
 | DE-0017 | Bremen-Bremerhaven | 35 | 2 | 4294.5, 1271.5 |
@@ -311,16 +310,17 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | FR-0041 | Martinique | 45 | 1 | 2706.5, 2272.5 |
 | PT-0015 | Madeira | 45 | 3 | 3710.5, 1837.5 |
 | NL-0001 | Amsterdam | 47 | 1 | 4208.5, 1295.5 |
+| NL-0005 | The Hague-Delft | 47 | 2 | 4193.5, 1305.5 |
 | BE-0004 | Antwerp Port-Waasland | 48 | 1 | 4191.5, 1330.5 |
 | HR-0001 | Zagreb | 50 | 1 | 4458.5, 1487.5 |
 | UA-0019 | Sevastopol | 54 | 1 | 4861.5, 1523.5 |
 | FI-0016 | Aland Islands | 55 | 12 | 4548.5, 1044.5 |
 | IM-0001 | Isle of Man | 56 | 1 | 3994.5, 1235.5 |
+| NL-0004 | Rotterdam | 57 | 4 | 4200.5, 1308.5 |
 | DK-0002 | Copenhagen Suburbs-Novo | 58 | 2 | 4377.5, 1190.5 |
 | NL-0002 | Haarlem-Schiphol-IJmond | 58 | 1 | 4201.5, 1295.5 |
 | BE-0003 | Antwerp City | 59 | 2 | 4198.5, 1326.5 |
 | BY-0001 | Minsk | 60 | 1 | 4723.5, 1247.5 |
-| NL-0004 | Rotterdam | 61 | 2 | 4200.5, 1308.5 |
 | NL-0017 | Maastricht-South Limburg | 61 | 1 | 4229.5, 1340.5 |
 | DK-0004 | Bornholm | 62 | 1 | 4433.5, 1208.5 |
 | CH-0003 | Winterthur-Oberland | 63 | 1 | 4295.5, 1439.5 |
@@ -350,13 +350,20 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 |---|---|---|---|
 | Akrotiri SBA (32.95, 34.59) | ? | CY-0002 | listed |
 | Bender (29.48, 46.83) | ? | MD-0006 | listed |
+| Bergheim (6.64, 50.95) | ? | DE-0033 | listed |
 | Brandenburg an der Havel (12.55, 52.41) | ? | DE-0016 | listed |
 | Celle (10.08, 52.62) | ? | DE-0037 | listed |
 | Eberswalde (13.82, 52.83) | ? | DE-0015 | listed |
+| Euskirchen (6.79, 50.66) | ? | DE-0028 | listed |
+| Gummersbach (7.56, 51.03) | ? | DE-0034 | listed |
 | Kramatorsk (37.56, 48.72) | ? | UA-0016 | listed |
 | Mariupol (37.55, 47.1) | ? | UA-0016 | listed |
+| Pavia (9.16, 45.19) | ? | IT-0002 | listed |
 | Reading (not London) (-0.97, 51.455) | ? | GB-0005 | listed |
+| Siegen (8.02, 50.87) | ? | DE-0034 | listed |
 | Starnberg (11.34, 48.0) | ? | DE-0008 | listed |
+| Aachen (6.08, 50.78) | DE-0033 | DE-0033 | on it |
+| Abbiategrasso (8.92, 45.4) | IT-0002 | IT-0002 | on it |
 | Andorra (1.52, 42.51) | AD | AD-0001 | on it |
 | Ankara (32.86, 39.93) | TR | TR-0016 | on it |
 | Athens (23.73, 37.98) | GR | GR-0001 | on it |
@@ -450,8 +457,10 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Martorell (1.93, 41.47) | ES-0005 | ES-0005 | on it |
 | Marzahn (13.56, 52.54) | DE-0014 | DE-0014 | on it |
 | Meaux (2.88, 48.96) | FR-0004 | FR-0004 | on it |
+| Melegnano (9.32, 45.36) | IT-0002 | IT-0002 | on it |
 | Milan (9.19, 45.46) | IT | IT-0001 | on it |
 | Milan Duomo (9.19, 45.464) | IT-0001 | IT-0001 | on it |
+| Milan San Siro (9.12, 45.48) | IT-0001 | IT-0001 | on it |
 | Monaco (7.42, 43.735) | MC | MC-0001 | on it |
 | Monza (9.27, 45.58) | IT-0003 | IT-0003 | on it |
 | Munich Marienplatz (11.575, 48.137) | DE-0006 | DE-0006 | on it |
@@ -838,7 +847,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 | GB-0001 | City of London-Westminster | 0 | N | Y |
 | GB-0002 | East London-Docklands | 0 | N | Y |
 | GB-0016 | Wiltshire-Gloucestershire | 16 | Y | N |
-| GB-0026 | Cheshire-Warrington | 22 | Y | N |
+| GB-0026 | Cheshire-Warrington | 5 | Y | N |
 | GB-0029 | Sheffield-South Yorkshire | 20 | Y | N |
 | GI-0001 | Gibraltar | 3 | N | Y |
 | IE-0001 | Dublin City-Docklands | 3 | N | Y |
@@ -864,7 +873,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-GR-0013 (46), GB-0038 (45), NO-0016 (37), NO-0017 (28), NO-0020 (28), FI-0005 (25), HR-0008 (23), NO-0012 (21), GB-0033 (18), SE-0001 (18), HR-0009 (15), FO-0001 (14), NO-0018 (14), SE-0023 (14), FI-0016 (12), FR-0045 (12), GR-0001 (12), NO-0013 (12), DE-0041 (10), GR-0007 (10), HR-0006 (10), NO-0015 (10), UA-0018 (10), ES-0026 (9), NL-0020 (9), NO-0014 (9), PT-0014 (9), DK-0006 (8), GR-0008 (8), GR-0012 (8), IT-0040 (8), DE-0038 (7), EE-0003 (7), ES-0030 (7), FI-0009 (7), HR-0007 (7), IS-0001 (7), PL-0017 (7), TR-0007 (7), DE-0043 (6), ES-0020 (6), IS-0003 (6), IT-0014 (6), IT-0038 (6), SE-0022 (6), AT-0013 (5), DE-0042 (5), DK-0007 (5), FR-0033 (5), GB-0009 (5), IE-0007 (5), IT-0024 (5), IT-0037 (5), PT-0003 (5), CH-0016 (4), DK-0011 (4), ES-0032 (4), FI-0002 (4), FI-0004 (4), GR-0006 (4), IE-0012 (4), IT-0025 (4), LT-0003 (4), NL-0003 (4), NL-0018 (4), NO-0009 (4), RO-0011 (4), RS-0002 (4), SE-0008 (4), SE-0009 (4), AL-0005 (3), AT-0012 (3), BY-0011 (3), CH-0005 (3), CH-0009 (3), CY-0005 (3), DK-0008 (3), DK-0014 (3), DK-0015 (3), EE-0001 (3), ES-0024 (3), FI-0011 (3), FR-0004 (3), FR-0013 (3), FR-0027 (3), FR-0035 (3), FR-0039 (3), FR-0040 (3), GR-0004 (3), GR-0010 (3), GR-0014 (3), IE-0010 (3), IE-0014 (3), IT-0007 (3), IT-0019 (3), IT-0020 (3), IT-0030 (3), MD-0001 (3), MD-0005 (3), MD-0006 (3), NL-0023 (3), NO-0004 (3), NO-0008 (3), PT-0008 (3), PT-0012 (3), PT-0015 (3), RO-0010 (3), RO-0012 (3), RO-0015 (3), RO-0018 (3), SE-0003 (3), SE-0014 (3), SE-0020 (3), UA-0017 (3), AL-0001 (2), AL-0003 (2), AL-0004 (2), AT-0005 (2), AT-0011 (2), BE-0003 (2), BE-0012 (2), BE-0013 (2), BE-0016 (2), BE-0018 (2), BY-0003 (2), BY-0004 (2), BY-0005 (2), BY-0009 (2), CH-0006 (2), CH-0010 (2), CH-0011 (2), CY-0003 (2), CY-0004 (2), DE-0002 (2), DE-0004 (2), DE-0017 (2), DE-0029 (2), DE-0040 (2), DE-0045 (2), DE-0047 (2), DK-0001 (2), DK-0002 (2), DK-0009 (2), DK-0010 (2), DK-0012 (2), DK-0013 (2), ES-0001 (2), ES-0002 (2), ES-0004 (2), ES-0006 (2), ES-0007 (2), ES-0010 (2), ES-0015 (2), ES-0019 (2), ES-0025 (2), ES-0033 (2), FI-0003 (2), FI-0006 (2), FI-0007 (2), FI-0012 (2), FI-0015 (2), FR-0006 (2), FR-0008 (2), FR-0011 (2), FR-0012 (2), FR-0021 (2), FR-0024 (2), FR-0026 (2), FR-0034 (2), FR-0042 (2), GB-0005 (2), GB-0007 (2), GB-0013 (2), GB-0015 (2), GB-0017 (2), GB-0021 (2), GB-0037 (2), GB-0041 (2), GB-0042 (2), GG-0001 (2), GR-0002 (2), GR-0003 (2), GR-0005 (2), GR-0009 (2), GR-0011 (2), HU-0009 (2), HU-0012 (2), IE-0008 (2), IE-0013 (2), IT-0006 (2), IT-0008 (2), IT-0022 (2), IT-0026 (2), IT-0032 (2), IT-0036 (2), LT-0007 (2), LV-0003 (2), MD-0002 (2), MD-0004 (2), ME-0001 (2), MT-0001 (2), NL-0004 (2), NL-0010 (2), NL-0011 (2), NL-0012 (2), NL-0016 (2), NO-0002 (2), NO-0007 (2), NO-0010 (2), NO-0011 (2), PL-0005 (2), PL-0012 (2), PL-0024 (2), RS-0005 (2), RS-0006 (2), RS-0007 (2), SE-0004 (2), SE-0005 (2), SE-0010 (2), SE-0011 (2), SE-0013 (2), SI-0007 (2), TR-0001 (2), TR-0010 (2), TR-0022 (2), TR-0032 (2), TR-0034 (2), UA-0007 (2), UA-0012 (2)
+GR-0013 (46), GB-0038 (45), NO-0016 (37), NO-0017 (28), NO-0020 (28), FI-0005 (25), HR-0008 (23), NO-0012 (21), GB-0033 (18), SE-0001 (18), HR-0009 (15), FO-0001 (14), NO-0018 (14), SE-0023 (14), FI-0016 (12), FR-0045 (12), GR-0001 (12), NO-0013 (12), DE-0041 (10), GR-0007 (10), HR-0006 (10), NO-0015 (10), UA-0018 (10), ES-0026 (9), NL-0020 (9), NO-0014 (9), PT-0014 (9), DK-0006 (8), GR-0008 (8), GR-0012 (8), IT-0040 (8), DE-0038 (7), EE-0003 (7), ES-0030 (7), FI-0009 (7), HR-0007 (7), IS-0001 (7), PL-0017 (7), TR-0007 (7), DE-0043 (6), ES-0020 (6), IS-0003 (6), IT-0014 (6), IT-0038 (6), SE-0022 (6), AT-0013 (5), DE-0042 (5), DK-0007 (5), FR-0033 (5), GB-0009 (5), IE-0007 (5), IT-0024 (5), IT-0037 (5), PT-0003 (5), CH-0016 (4), DK-0011 (4), ES-0032 (4), FI-0002 (4), FI-0004 (4), GR-0006 (4), IE-0012 (4), IT-0025 (4), LT-0003 (4), NL-0003 (4), NL-0004 (4), NL-0018 (4), NO-0009 (4), RO-0011 (4), RS-0002 (4), SE-0008 (4), SE-0009 (4), AL-0005 (3), AT-0012 (3), BY-0011 (3), CH-0005 (3), CH-0009 (3), CY-0005 (3), DK-0008 (3), DK-0014 (3), DK-0015 (3), EE-0001 (3), ES-0024 (3), FI-0011 (3), FR-0004 (3), FR-0013 (3), FR-0027 (3), FR-0035 (3), FR-0039 (3), FR-0040 (3), GR-0004 (3), GR-0010 (3), GR-0014 (3), IE-0010 (3), IE-0014 (3), IT-0007 (3), IT-0019 (3), IT-0020 (3), IT-0030 (3), MD-0001 (3), MD-0005 (3), MD-0006 (3), NL-0023 (3), NO-0004 (3), NO-0008 (3), PT-0008 (3), PT-0012 (3), PT-0015 (3), RO-0010 (3), RO-0012 (3), RO-0015 (3), RO-0018 (3), SE-0003 (3), SE-0014 (3), SE-0020 (3), UA-0017 (3), AL-0001 (2), AL-0003 (2), AL-0004 (2), AT-0005 (2), AT-0011 (2), BE-0003 (2), BE-0012 (2), BE-0013 (2), BE-0016 (2), BE-0018 (2), BY-0003 (2), BY-0004 (2), BY-0005 (2), BY-0009 (2), CH-0006 (2), CH-0010 (2), CH-0011 (2), CY-0003 (2), CY-0004 (2), DE-0002 (2), DE-0004 (2), DE-0017 (2), DE-0029 (2), DE-0040 (2), DE-0045 (2), DE-0047 (2), DK-0001 (2), DK-0002 (2), DK-0009 (2), DK-0010 (2), DK-0012 (2), DK-0013 (2), ES-0001 (2), ES-0002 (2), ES-0004 (2), ES-0006 (2), ES-0007 (2), ES-0010 (2), ES-0015 (2), ES-0019 (2), ES-0025 (2), ES-0033 (2), FI-0003 (2), FI-0006 (2), FI-0007 (2), FI-0012 (2), FI-0015 (2), FR-0006 (2), FR-0008 (2), FR-0011 (2), FR-0012 (2), FR-0021 (2), FR-0024 (2), FR-0026 (2), FR-0034 (2), FR-0042 (2), GB-0005 (2), GB-0007 (2), GB-0013 (2), GB-0015 (2), GB-0017 (2), GB-0021 (2), GB-0037 (2), GB-0041 (2), GB-0042 (2), GG-0001 (2), GR-0002 (2), GR-0003 (2), GR-0005 (2), GR-0009 (2), GR-0011 (2), HU-0009 (2), HU-0012 (2), IE-0008 (2), IE-0013 (2), IT-0006 (2), IT-0008 (2), IT-0022 (2), IT-0026 (2), IT-0032 (2), IT-0036 (2), LT-0007 (2), LV-0003 (2), MD-0002 (2), MD-0004 (2), ME-0001 (2), MT-0001 (2), NL-0005 (2), NL-0010 (2), NL-0011 (2), NL-0012 (2), NL-0016 (2), NO-0002 (2), NO-0007 (2), NO-0010 (2), NO-0011 (2), PL-0005 (2), PL-0012 (2), PL-0024 (2), RS-0005 (2), RS-0006 (2), RS-0007 (2), SE-0004 (2), SE-0005 (2), SE-0010 (2), SE-0011 (2), SE-0013 (2), SI-0007 (2), TR-0001 (2), TR-0010 (2), TR-0022 (2), TR-0032 (2), TR-0034 (2), UA-0007 (2), UA-0012 (2)
 
 ## Visual check
 

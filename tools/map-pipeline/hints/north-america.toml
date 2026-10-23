@@ -41,8 +41,8 @@ seeds = [[-74.01, 41.50], [-73.92, 41.70], [-73.99, 41.93]]
 add = true
 [provinces.US-0015] # Inland Empire: Riverside County is split with the Coachella Valley
 units = ["San Bernardino", "Riverside"]
-[provinces.US-0062] # Suburban Maryland
-units = ["Montgomery", "Prince George's"]
+[provinces.US-0062] # Suburban Maryland, with Charles County (Waldorf; PR #40 review)
+units = ["Montgomery", "Prince George's", "Charles"]
 [provinces.US-0086] # Manhattan (New York County)
 units = ["New York"]
 [provinces.US-0087] # Brooklyn-Queens, with Staten Island (notes)
@@ -117,4 +117,37 @@ add = true
 # so the D691 repair would hand it to Sacramento-Northern California
 [provinces.US-0018] # Marin
 units = ["Marin"]
+add = true
+
+# PR #40 review: the Lehigh Valley (Allentown, Bethlehem, Mack Trucks at Macungie) is in the notes of
+# Northeastern and Northern Pennsylvania
+[provinces.US-0109] # Lehigh, Northampton
+units = ["Lehigh", "Northampton"]
+add = true
+# Alpharetta and Cumming keep Forsyth with North Fulton-Cobb
+[provinces.US-0040] # Alpharetta, Cumming
+seeds = [[-84.29, 34.08], [-84.14, 34.21]]
+add = true
+# Martin County (Stuart) goes with St. Lucie (Port St. Lucie) on the Treasure Coast
+[provinces.US-0035] # Martin
+units = ["Martin"]
+add = true
+# Walker County (Huntsville) with East and Central Texas
+[provinces.US-0121] # Walker
+units = ["Walker"]
+add = true
+# Pasadena and Deer Park, the Ship Channel's refineries, with Ship Channel-Baytown
+[provinces.US-0123] # Pasadena, Deer Park
+seeds = [[-95.21, 29.69], [-95.12, 29.70]]
+add = true
+# PR #40 review (D694): reach across narrow water (D694) brought these back across a sound or a
+# river mouth; they stay where the PR #40 review checked them
+[provinces.US-0141] # the Olympic peninsula and Kitsap (Bremerton, Port Angeles)
+units = ["Kitsap", "Clallam", "Jefferson"]
+add = true
+[provinces.US-0138] # the Northern Neck (Kilmarnock)
+units = ["Lancaster", "Northumberland"]
+add = true
+[provinces.US-0034] # Okeechobee
+units = ["Okeechobee"]
 add = true

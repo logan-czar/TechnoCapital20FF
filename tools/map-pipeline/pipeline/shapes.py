@@ -184,6 +184,19 @@ def _merge_fragments(shapes: dict, provs: dict, blocks) -> dict:
                 for pid, pr in provs.items()}
     whole = {pid: shapely.union_all([blocks.loc[u].geometry for u in pr["whole"]]) if pr["whole"] else None
              for pid, pr in provs.items()}
+    # D694 (PR #40 review): a Metro province takes a fragment only within its cap (D688), when
+    # the region has rural provinces (the upper Maipo valley went to Santiago Poniente-Sur)
+    rural = any(not pr.get("metro") for pr in provs.values())
+    seed_xy = {pid: [(x, y) for pts in pr["split"].values() for x, y in pts]
+               + [(blocks.loc[u].geometry.representative_point().x, blocks.loc[u].geometry.representative_point().y)
+                  for u in pr["whole"]] for pid, pr in provs.items()}
+
+    def within_cap(q, part):
+        if not rural or not provs.get(q, {}).get("metro"):
+            return True
+        c = part.representative_point()
+        return any(((c.x - x) * crosswalk._scale(y)) ** 2 + (c.y - y) ** 2 <= crosswalk.METRO_CAP_DEG ** 2
+                   for x, y in seed_xy[q])
     for pid in sorted(shapes):
         if not provs.get(pid, {}).get("split"):
             continue
@@ -201,6 +214,8 @@ def _merge_fragments(shapes: dict, provs: dict, blocks) -> dict:
             best, best_len = None, 0.0
             for q in sorted(shapes):
                 if q == pid or shapes[q].is_empty or not shapes[q].intersects(part.buffer(1e-6)):
+                    continue
+                if not within_cap(q, part):
                     continue
                 shared = ring.intersection(shapes[q].boundary.buffer(1e-7)).length
                 if shared > best_len:

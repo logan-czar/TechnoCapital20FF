@@ -66,10 +66,10 @@ _Written by `tools/map-pipeline/run.py --region sub-saharan-africa` (pipeline pb
 | Provinces by method: admin3 | 0 |
 | Provinces by method: voronoi | 37 |
 | Flagged for review (confidence < 0.6) | 0 |
-| Placed by a builder hint (`hints/sub-saharan-africa.toml`) | 26 |
+| Placed by a builder hint (`hints/sub-saharan-africa.toml`) | 27 |
 | Tiny (under 64 px) | 53 |
 | Given a pixel at their interior point (no pixel centre inside) | 2 |
-| More than one part (islands, exclaves) | 145 |
+| More than one part (islands, exclaves) | 141 |
 | Coastal flag differs from the CSV | 22 |
 | Small for their region (not Metro, under 5% of the region's mean) | 5 |
 | Voronoi-split blocks where one province takes 75% or more | 3 |
@@ -78,9 +78,9 @@ _Written by `tools/map-pipeline/run.py --region sub-saharan-africa` (pipeline pb
 | Contested provinces (drawn by our own files) | 6 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 13 |
-| City probe points (fail on a mismatch; D686) | 99 pass, 0 mismatch, 4 listed |
+| City probe points (fail on a mismatch; D686) | 103 pass, 0 mismatch, 5 listed |
 | Metro reach scan rows (listed; D686) | 2 |
-| Land exclaves of 5 px or more (fail unless explained; D691) | 19 (0 unexplained) |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 17 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 3 |
 
@@ -182,6 +182,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | SD-0002 | Omdurman | seeds: unit Karrari (hint); unit Um Bada (hint); unit Um Durman (hint); 3 whole admin2 units |
 | SD-0003 | Wad Madani | seeds: point 33.42,13.95 (hint); point 33.52,14.4 (hint); 4 whole admin2 units |
 | SD-0004 | Managil | seeds: point 32.95,14.7 (hint); point 32.99,14.25 (hint); 4 whole admin2 units |
+| SD-0018 | El Fasher | seeds: place El Fasher; unit Kutum; unit Shamal Jabal Marrah (hint); 13 whole admin2 units |
 | SL-0002 | Waterloo-Western Rural | seeds: point -13.07,8.34 (hint); point -13.17,8.29 (hint); point -13.2,8.18 (hint) (snapped to land); 1 whole admin2 units |
 | UG-0008 | Moroto-Karamoja | seeds: point 33.95,3.53 (hint); point 34.1,3.0 (hint); point 34.25,2.1 (hint); point 34.65,2.53 (hint); 8 whole admin1 units |
 | ZA-0001 | Johannesburg Central-Sandton | seeds: point 28.0,-26.09 (hint); point 28.05,-26.2 (hint); point 28.06,-26.11 (hint); point 28.13,-25.99 (hint); 0 whole admin2 units, split: City of Johannesburg |
@@ -216,8 +217,8 @@ Under 64 pixels at 8192 x 4096: the map draws a clickable dot at the label point
 | AO-0001 | Luanda Ingombota-Ilha | 12 | 1 | 4397.5, 2811.5 |
 | UG-0001 | Kampala | 13 | 1 | 4838.5, 2601.5 |
 | ET-0003 | Harar | 16 | 1 | 5055.5, 2397.5 |
-| TG-0001 | Lome | 16 | 1 | 4123.5, 2468.5 |
 | SC-0001 | Seychelles | 17 | 7 | 5357.5, 2714.5 |
+| TG-0001 | Lome | 17 | 1 | 4123.5, 2468.5 |
 | ZW-0002 | Bulawayo | 18 | 1 | 4744.5, 3073.5 |
 | MU-0002 | Ebene-Curepipe | 19 | 1 | 5405.5, 3077.5 |
 | ET-0001 | Addis Ababa | 22 | 1 | 4978.5, 2404.5 |
@@ -279,10 +280,12 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Galkayo (47.43, 6.77) | ? | SO-0008 | listed |
 | Maluku (15.57, -4.06) | ? | CD-0002 | listed |
 | Orange Farm (27.86, -26.48) | ? | ZA-0002 | listed |
+| SD enclave (28.43, 9.34) | ? | SD-0017 | listed |
 | Abidjan (-4.02, 5.33) | CI | CI-0001 | on it |
 | Abyei (28.44, 9.6) | SD-0017 | SD-0017 | on it |
 | Accra (-0.19, 5.56) | GH | GH-0001 | nearest across water |
 | Addis Ababa (38.75, 9.03) | ET | ET-0001 | on it |
+| Addis2 (38.74, 9.03) | ET-0001 | ET-0001 | on it |
 | Ajah (3.57, 6.47) | NG-0001 | NG-0001 | on it |
 | Alexandra (28.1, -26.1) | ZA-0001 | ZA-0001 | on it |
 | Alimosho (3.26, 6.61) | NG-0004 | NG-0004 | on it |
@@ -297,7 +300,9 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Bumba (22.46, 2.19) | CD-0010 | CD-0010 | on it |
 | Bunia (30.25, 1.56) | CD-0016 | CD-0016 | on it |
 | Burao (45.53, 9.52) | SO-0012 | SO-0012 | on it |
+| Burayu (38.67, 9.08) | ET-0013 | ET-0013 | on it |
 | Buta (24.73, 2.79) | CD-0014 | CD-0014 | on it |
+| Centurion (28.19, -25.86) | ZA-0004 | ZA-0004 | on it |
 | Conakry (-13.68, 9.54) | GN-0001 | GN-0001 | on it |
 | Dakar (-17.45, 14.69) | SN | SN-0001 | nearest across water |
 | Dambai (0.18, 8.07) | GH-0009 | GH-0009 | on it |
@@ -369,6 +374,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Seychelles Victoria (55.45, -4.62) | SC | SC-0001 | on it |
 | Soweto (27.86, -26.26) | ZA-0002 | ZA-0002 | on it |
 | Soweto Orlando (27.9, -26.24) | ZA-0002 | ZA-0002 | on it |
+| Sululta (38.73, 9.18) | ET-0013 | ET-0013 | on it |
 | Sunyani (-2.33, 7.34) | GH-0010 | GH-0010 | on it |
 | Takoradi (-1.76, 4.9) | GH-0004 | GH-0004 | on it |
 | Tamale (-0.84, 9.4) | GH-0013 | GH-0013 | on it |
@@ -404,8 +410,6 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 | NG-0004 | Ikorodu-Alimosho | 10 | 3.27, 6.59 | its own seed unit Alimosho lies in it |
 | SD-0015 | Kadugli-Nuba | 5 | 29.89, 10.23 | a neck under a pixel wide joins it to the rest in the shapes |
 | SD-0015 | Kadugli-Nuba | 14 | 29.59, 10.01 | a neck under a pixel wide joins it to the rest in the shapes |
-| SD-0016 | Al Fula-Heglig | 18 | 28.43, 9.34 | a corner of West Kordofan cut off by the Abyei builder box (SD-0017) |
-| SD-0019 | Jebel Amer-Kebkabiya | 30 | 24.53, 13.28 | geoBoundaries' North Jebel Marra locality, given with Kebkabiya, touches it only through another province |
 | SS-0002 | Yei-Terekeka | 561 | 31.48, 5.57 | its own seed unit Terekeka lies in it |
 | TD-0014 | Goz Beida-Biltine | 1636 | 21.41, 12.14 | the region joins Sila (Goz Beida) and Wadi Fira (Biltine), which Ouaddai separates |
 | UG-0015 | Kasese-Rwenzori | 50 | 30.05, 0.7 | its own seed unit Bundibugyo lies in it |
@@ -458,7 +462,7 @@ Drawn by our own province files (decision C), not the sources' de facto lines: e
 
 | Province | Name | Country | Contested | Region drawn from |
 |---|---|---|---|---|
-| SD-0017 | Abyei | SDN | SDN and SSD dispute | Abyei Area: no admin-1 match (best unit 50, group 42); carve: builder polygon from SDN:South Kordofan; less SDN:West Kordofan (carve) |
+| SD-0017 | Abyei | SDN | SDN and SSD dispute | Abyei Area: no admin-1 match (best unit 50, group 42); carve: builder polygon from SDN:South Kordofan; less SDN:West Kordofan (carve); plus a sliver of SDN:West Kordofan (D694) |
 | SO-0009 | Hargeisa | SOM | Somaliland self-declared | Woqooyi Galbeed: alias hint -> SOL+00?; split among SOM:Awdal, SOM:Sanaag-Sool, SOM:Togdheer (builder points) |
 | SO-0010 | Berbera | SOM | Somaliland self-declared | Woqooyi Galbeed: alias hint -> SOL+00?; split among SOM:Awdal, SOM:Sanaag-Sool, SOM:Togdheer (builder points) |
 | SO-0011 | Borama-Zeila | SOM | Somaliland self-declared | Awdal: no admin-1 match (best unit 55, group 0); Voronoi cell of SOM:Woqooyi Galbeed (builder points) |
@@ -573,18 +577,18 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | NAM: Ohangwena-Oshikoto | name parts (2 pieces, worst match 100) | 2 |
 | NAM: Omusati-Oshana | name parts (2 pieces, worst match 100) | 2 |
 | NAM: Otjozondjupa-Omaheke | name parts (2 pieces, worst match 100) | 2 |
-| SDN: Abyei Area | no admin-1 match (best unit 50, group 42); carve: builder polygon from SDN:South Kordofan; less SDN:West Kordofan (carve) | 0 |
+| SDN: Abyei Area | no admin-1 match (best unit 50, group 42); carve: builder polygon from SDN:South Kordofan; less SDN:West Kordofan (carve); plus a sliver of SDN:West Kordofan (D694) | 0 |
 | SDN: Blue Nile | Natural Earth region Blue Nile (4 units, match 100) | 1 |
 | SDN: Central Darfur | alias hint -> SD-DE | 1 |
-| SDN: East Darfur | alias hint -> SDN-5857; less SDN:West Kordofan (carve) | 1 |
+| SDN: East Darfur | alias hint -> SDN-5857; less SDN:West Kordofan (carve); plus a sliver of SDN:West Kordofan (D694) | 1 |
 | SDN: Kassala | Natural Earth region Kassala (3 units, match 100) | 1 |
 | SDN: North Darfur | name match 100; less SDN:West Kordofan (carve) | 1 |
-| SDN: North Kordofan | name match 100; less SDN:West Kordofan (carve) | 1 |
+| SDN: North Kordofan | name match 100; less SDN:West Kordofan (carve); a sliver to SDN:West Kordofan (D694); a sliver to SDN:West Kordofan (D694); a sliver to SDN:West Kordofan (D694) | 1 |
 | SDN: Northern | Natural Earth region Northern (2 units, match 100) | 1 |
 | SDN: South Darfur | alias hint -> SDN-5856 | 1 |
 | SDN: South Kordofan | name match 100; less SDN:Abyei Area (carve); less SDN:West Kordofan (carve); split among SDN:West Kordofan (builder points) | 1 |
 | SDN: West Darfur | alias hint -> SD-DW | 1 |
-| SDN: West Kordofan | geoBoundaries ADM1 West Kordofan; carve: SDN units West Kordofan from SDN:Abyei Area, SDN:East Darfur, SDN:North Darfur, SDN:North Kordofan, SDN:South Kordofan; Voronoi cell of SDN:South Kordofan (builder points) | 0 |
+| SDN: West Kordofan | geoBoundaries ADM1 West Kordofan; carve: SDN units West Kordofan from SDN:Abyei Area, SDN:East Darfur, SDN:North Darfur, SDN:North Kordofan, SDN:South Kordofan; Voronoi cell of SDN:South Kordofan (builder points); plus a sliver of SDN:North Kordofan (D694); plus a sliver of SDN:North Kordofan (D694); plus a sliver of SDN:North Kordofan (D694); a sliver to SDN:Abyei Area (D694); a sliver to SDN:East Darfur (D694) | 0 |
 | SEN: Casamance | alias hint -> SN-ZG, SN-KD, SN-SE | 3 |
 | SEN: Kaolack-Kaffrine | alias hint -> SN-KL, SN-KA | 2 |
 | SEN: Kedougou | alias hint -> SN-KE | 1 |
@@ -605,8 +609,8 @@ Regions not matched one-to-one by name: builder aliases, Natural Earth region gr
 | TCD: Mayo-Kebbi | alias hint -> TD-ME, TD-MO | 2 |
 | TCD: Ouaddai | alias hint -> TD-OD | 1 |
 | TCD: Sila-Wadi Fira | name parts (2 pieces, worst match 100) | 2 |
-| TGO: Lome | no admin-1 match (best unit 33, group 0); carve: builder polygon from TGO:Maritime | 0 |
-| TGO: Maritime | name match 100; less TGO:Lome (carve) | 1 |
+| TGO: Lome | no admin-1 match (best unit 33, group 0); carve: builder polygon from TGO:Maritime; plus a sliver of TGO:Maritime (D694) | 0 |
+| TGO: Maritime | name match 100; less TGO:Lome (carve); a sliver to TGO:Lome (D694) | 1 |
 | TZA: Dodoma-Singida | name parts (2 pieces, worst match 100) | 2 |
 | TZA: Iringa-Njombe | alias hint -> TZ-04, TZ-29 | 2 |
 | TZA: Katavi-Rukwa | alias hint -> TZ-28, TZ-20 | 2 |
@@ -640,7 +644,7 @@ CM-0005-GQ-0001, DJ-0003-YE-0008, ER-0006-YE-0005, ER-0006-YE-0008, GM-0001-SN-0
 |---|---|---|---|---|
 | BW-0005 | Selebi-Phikwe | Central | 1 | 2306 |
 | SD-0010 | Port Sudan | Red Sea | 114 | 4644 |
-| SD-0019 | Jebel Amer-Kebkabiya | North Darfur | 307 | 6538 |
+| SD-0019 | Jebel Amer-Kebkabiya | North Darfur | 277 | 6538 |
 | ZA-0015 | Nelson Mandela Bay | Eastern Cape | 108 | 2327 |
 | ZW-0006 | Ngezi-Selous | Mashonaland West | 4 | 1296 |
 
@@ -695,7 +699,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-KE-0003 (25), NE-0002 (20), SD-0014 (18), GW-0004 (11), SC-0001 (7), UG-0002 (7), UG-0003 (7), CV-0002 (6), TZ-0012 (6), ER-0005 (5), GA-0002 (5), KE-0004 (5), KE-0006 (5), MR-0002 (5), AO-0003 (4), AO-0011 (4), CI-0003 (4), CI-0004 (4), CV-0001 (4), ET-0022 (4), MG-0008 (4), MG-0009 (4), ML-0005 (4), MU-0004 (4), SD-0015 (4), TG-0004 (4), TZ-0015 (4), ZA-0009 (4), ZA-0018 (4), ZA-0028 (4), BI-0004 (3), GH-0006 (3), KE-0002 (3), KE-0018 (3), MG-0006 (3), MZ-0004 (3), NE-0003 (3), NE-0009 (3), NG-0001 (3), NG-0004 (3), NG-0014 (3), SD-0011 (3), SD-0023 (3), SS-0002 (3), TZ-0003 (3), UG-0006 (3), ZM-0009 (3), ZM-0010 (3), AO-0002 (2), AO-0020 (2), BF-0010 (2), BJ-0004 (2), BW-0006 (2), BW-0007 (2), CD-0002 (2), CD-0003 (2), CD-0016 (2), CD-0017 (2), CF-0003 (2), CF-0004 (2), CF-0009 (2), CG-0003 (2), CI-0002 (2), CI-0007 (2), CI-0008 (2), CI-0013 (2), CM-0002 (2), CM-0004 (2), CM-0005 (2), CM-0006 (2), CM-0009 (2), ET-0020 (2), ET-0027 (2), GA-0003 (2), GH-0004 (2), GH-0011 (2), GH-0015 (2), GN-0002 (2), GN-0003 (2), GN-0007 (2), GN-0008 (2), GN-0012 (2), GQ-0002 (2), KE-0007 (2), KE-0010 (2), KE-0014 (2), KE-0021 (2), KM-0002 (2), LR-0002 (2), ML-0003 (2), ML-0006 (2), ML-0007 (2), MR-0008 (2), MW-0002 (2), MW-0008 (2), MW-0009 (2), MZ-0002 (2), NA-0008 (2), NE-0016 (2), NE-0017 (2), NG-0003 (2), NG-0027 (2), SD-0016 (2), SD-0019 (2), SL-0001 (2), SL-0004 (2), SL-0005 (2), SN-0006 (2), SN-0011 (2), SO-0001 (2), SO-0007 (2), SO-0009 (2), ST-0001 (2), TD-0009 (2), TD-0011 (2), TD-0014 (2), TG-0002 (2), TG-0007 (2), TZ-0007 (2), TZ-0008 (2), TZ-0013 (2), TZ-0018 (2), TZ-0021 (2), TZ-0022 (2), TZ-0023 (2), UG-0004 (2), UG-0005 (2), UG-0008 (2), UG-0015 (2), UG-0016 (2), ZA-0002 (2), ZA-0006 (2), ZA-0008 (2), ZA-0013 (2), ZA-0016 (2), ZA-0017 (2), ZA-0022 (2), ZA-0024 (2), ZA-0029 (2), ZA-0031 (2), ZA-0032 (2), ZM-0003 (2), ZM-0012 (2), ZW-0004 (2), ZW-0012 (2)
+KE-0003 (25), NE-0002 (20), GW-0004 (11), SC-0001 (7), UG-0002 (7), UG-0003 (7), CV-0002 (6), TZ-0012 (6), ER-0005 (5), GA-0002 (5), KE-0004 (5), KE-0006 (5), MR-0002 (5), AO-0003 (4), AO-0011 (4), CI-0003 (4), CI-0004 (4), CV-0001 (4), ET-0022 (4), MG-0008 (4), MG-0009 (4), ML-0005 (4), MU-0004 (4), SD-0015 (4), TG-0004 (4), TZ-0015 (4), ZA-0009 (4), ZA-0018 (4), ZA-0028 (4), BI-0004 (3), GH-0006 (3), KE-0002 (3), KE-0018 (3), MG-0006 (3), MZ-0004 (3), NE-0003 (3), NE-0009 (3), NG-0001 (3), NG-0004 (3), NG-0014 (3), SD-0011 (3), SD-0023 (3), SS-0002 (3), TZ-0003 (3), UG-0006 (3), ZM-0009 (3), ZM-0010 (3), AO-0002 (2), AO-0020 (2), BF-0010 (2), BJ-0004 (2), BW-0006 (2), BW-0007 (2), CD-0002 (2), CD-0003 (2), CD-0016 (2), CD-0017 (2), CF-0003 (2), CF-0004 (2), CF-0009 (2), CG-0003 (2), CI-0002 (2), CI-0007 (2), CI-0008 (2), CI-0013 (2), CM-0002 (2), CM-0004 (2), CM-0005 (2), CM-0006 (2), CM-0009 (2), ET-0020 (2), ET-0027 (2), GA-0003 (2), GH-0004 (2), GH-0011 (2), GH-0015 (2), GN-0002 (2), GN-0003 (2), GN-0007 (2), GN-0008 (2), GN-0012 (2), GQ-0002 (2), KE-0007 (2), KE-0010 (2), KE-0014 (2), KE-0021 (2), KM-0002 (2), LR-0002 (2), ML-0003 (2), ML-0006 (2), ML-0007 (2), MR-0008 (2), MW-0002 (2), MW-0008 (2), MW-0009 (2), MZ-0002 (2), NA-0008 (2), NE-0016 (2), NE-0017 (2), NG-0003 (2), NG-0027 (2), SL-0001 (2), SL-0004 (2), SL-0005 (2), SN-0006 (2), SN-0011 (2), SO-0001 (2), SO-0007 (2), SO-0009 (2), ST-0001 (2), TD-0009 (2), TD-0011 (2), TD-0014 (2), TG-0007 (2), TZ-0007 (2), TZ-0008 (2), TZ-0013 (2), TZ-0018 (2), TZ-0021 (2), TZ-0022 (2), TZ-0023 (2), UG-0004 (2), UG-0005 (2), UG-0008 (2), UG-0015 (2), UG-0016 (2), ZA-0002 (2), ZA-0006 (2), ZA-0008 (2), ZA-0013 (2), ZA-0016 (2), ZA-0017 (2), ZA-0022 (2), ZA-0024 (2), ZA-0029 (2), ZA-0031 (2), ZA-0032 (2), ZM-0003 (2), ZM-0012 (2), ZW-0004 (2), ZW-0012 (2)
 
 ## Visual check
 

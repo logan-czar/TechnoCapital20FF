@@ -744,3 +744,135 @@ Redfern | 151.20 | -33.893 | AU-0001
 Bondi | 151.27 | -33.89 | AU-0001
 Santa Fe city | -60.70 | -31.63 | AR-0013
 Santo Tome AR | -60.76 | -31.66 | AR-0013
+# PR #40 review: the reviewer's fresh points (Pennsylvania, Florida, Maryland, Houston, Nepal, Morocco,
+# Quebec, Santiago, North Rhine-Westphalia, Moscow Oblast); Levis expected in Quebec City (D694)
+Allentown Lehigh | -75.49 | 40.60 | US-0109
+Mack Trucks Macungie | -75.55 | 40.52 | US-0109
+Bethlehem Northampton | -75.37 | 40.63 | US-0109
+Easton | -75.22 | 40.69 | US-0109
+Reading Berks | -75.93 | 40.34 | ?
+King of Prussia | -75.39 | 40.09 | US-0107
+Doylestown Bucks | -75.13 | 40.31 | US-0107
+West Chester | -75.60 | 39.96 | US-0107
+Stuart Martin | -80.25 | 27.20 | ?
+Port St Lucie | -80.35 | 27.27 | ?
+Fort Pierce | -80.33 | 27.45 | ?
+Jupiter | -80.10 | 26.93 | US-0033
+Boca Raton | -80.10 | 26.37 | US-0033
+Ventura city | -119.23 | 34.28 | US-0021
+Thousand Oaks | -118.84 | 34.17 | ?
+Oxnard | -119.18 | 34.20 | US-0021
+Burbank | -118.31 | 34.18 | US-0013
+Santa Clarita | -118.54 | 34.39 | US-0013
+Cumming Forsyth | -84.14 | 34.21 | ?
+Alpharetta | -84.29 | 34.08 | US-0040
+Marietta | -84.55 | 33.95 | US-0040
+Newnan Coweta | -84.80 | 33.38 | ?
+Peachtree City | -84.60 | 33.40 | ?
+Carrollton | -85.08 | 33.58 | ?
+Hartsfield airport | -84.43 | 33.64 | US-0039
+Waldorf Charles | -76.94 | 38.62 | ?
+Bethesda | -77.10 | 38.98 | US-0062
+Silver Spring | -77.03 | 38.99 | US-0062
+Bowie PG | -76.73 | 38.94 | US-0062
+Annapolis | -76.49 | 38.98 | US-0063
+Terrell Kaufman | -96.28 | 32.74 | US-0121
+Waxahachie Ellis | -96.85 | 32.39 | US-0121
+Weatherford Parker | -97.80 | 32.76 | US-0121
+Denton | -97.13 | 33.21 | ?
+McKinney | -96.62 | 33.20 | US-0120
+Frisco | -96.82 | 33.15 | US-0120
+Arlington TX | -97.11 | 32.74 | US-0119
+DFW airport | -97.04 | 32.90 | ?
+Sherman Grayson | -96.61 | 33.64 | US-0121
+Huntsville Walker | -95.55 | 30.72 | ?
+Conroe | -95.46 | 30.31 | US-0124
+Katy | -95.82 | 29.79 | US-0124
+Baytown | -94.98 | 29.74 | US-0123
+Liberty TX | -94.80 | 30.06 | US-0125
+Pasadena TX | -95.21 | 29.69 | US-0123
+Galveston | -94.80 | 29.30 | ?
+Sugar Land | -95.63 | 29.62 | ?
+Bremerton | -122.63 | 47.57 | US-0141
+Port Angeles | -123.43 | 48.12 | US-0141
+Bellevue | -122.20 | 47.61 | US-0140
+Everett | -122.20 | 47.98 | US-0140
+Tacoma | -122.44 | 47.25 | US-0141
+Kilmarnock Lancaster VA | -76.38 | 37.71 | US-0138
+Norfolk | -76.29 | 36.85 | US-0139
+Williamsburg | -76.71 | 37.27 | US-0139
+Apodaca NL | -100.19 | 25.78 | ?
+San Pedro Garza Garcia | -100.40 | 25.66 | ?
+Monterrey centro | -100.31 | 25.67 | ?
+Sabinas Hidalgo | -100.18 | 26.51 | ?
+Gatineau | -75.70 | 45.48 | ?
+Sherbrooke | -71.89 | 45.40 | ?
+Trois-Rivieres | -72.55 | 46.34 | ?
+Levis | -71.18 | 46.80 | CA-0022
+Taplejung NP | 87.67 | 27.35 | NP-0001,NP-0002
+NP enclave point | 88.08 | 27.67 | NP-0001,NP-0002
+Ilam NP | 87.93 | 26.91 | NP-0001,NP-0002
+Butwal | 83.45 | 27.70 | NP-0010
+Bhairahawa | 83.45 | 27.50 | NP-0010
+MA enclave Agadir | -5.73 | 29.65 | ?
+Zagora | -5.84 | 30.33 | ?
+Tata MA | -7.97 | 29.74 | MA-0016
+MA enclave Meknes | -3.33 | 32.07 | ?
+Bouarfa | -1.95 | 32.53 | ?
+Errachidia | -4.43 | 31.93 | ?
+SD enclave | 28.43 | 9.34 | ?
+Wuhan Hankou2 | 114.28 | 30.59 | CN-0063
+Wuchang2 | 114.31 | 30.54 | CN-0064
+Hanyang2 | 114.21 | 30.55 | CN-0065
+Wuhan Caidian | 114.03 | 30.58 | CN-0065
+Wuhan Huangpi | 114.38 | 30.88 | ?
+Wuhan Jiangxia | 114.32 | 30.38 | CN-0064
+Wuhan Xinzhou | 114.80 | 30.84 | ?
+Milan San Siro | 9.12 | 45.48 | IT-0001
+Pavia | 9.16 | 45.19 | ?
+Abbiategrasso | 8.92 | 45.40 | IT-0002
+Melegnano | 9.32 | 45.36 | IT-0002
+SPb Nevsky2 | 30.36 | 59.93 | RU-0015
+Pulkovo | 30.27 | 59.80 | RU-0016
+SPb Vasilievsky | 30.25 | 59.94 | RU-0015
+Peterhof | 29.90 | 59.88 | ?
+Kronstadt | 29.77 | 60.00 | ?
+Sestroretsk | 29.96 | 60.10 | RU-0017
+Mahmudiya | 44.36 | 33.06 | IQ-0004
+Madain | 44.58 | 33.10 | IQ-0004
+Fallujah | 43.78 | 33.35 | ?
+Talgar | 77.24 | 43.30 | KZ-0004
+Kaskelen | 76.62 | 43.20 | KZ-0004
+Addis2 | 38.74 | 9.03 | ET-0001
+Sululta | 38.73 | 9.18 | ET-0013
+Burayu | 38.67 | 9.08 | ET-0013
+Centurion | 28.19 | -25.86 | ZA-0004
+Rosario | -60.65 | -32.95 | AR-0012
+Freeport TX | -95.36 | 28.95 | US-0123
+Seoul Nowon | 127.06 | 37.65 | KR-0001
+Jakarta Kelapa Gading | 106.90 | -6.16 | ID-0002,ID-0003
+Kuwait Ahmadi | 48.08 | 29.08 | ?
+Doha West Bay | 51.53 | 25.32 | QA-0001
+Lahore Walled City | 74.31 | 31.58 | PK-0009
+Lumbini | 83.28 | 27.48 | NP-0010
+Allentown | -75.49 | 40.60 | US-0109
+San Jose de Maipo | -70.35 | -33.64 | ?
+El Volcan Andes | -70.02 | -33.82 | ?
+Farellones | -70.25 | -33.35 | ?
+Colina | -70.67 | -33.20 | ?
+Til Til | -70.93 | -33.08 | ?
+Pirque | -70.55 | -33.67 | ?
+Buin | -70.74 | -33.73 | CL-0011
+Gummersbach | 7.56 | 51.03 | ?
+Euskirchen | 6.79 | 50.66 | ?
+Siegen | 8.02 | 50.87 | ?
+Aachen | 6.08 | 50.78 | DE-0033
+Bergheim | 6.64 | 50.95 | ?
+Noginsk | 38.44 | 55.86 | RU-0006
+Serpukhov | 37.41 | 54.92 | RU-0006
+Kolomna | 38.78 | 55.10 | RU-0006
+Chekhov | 37.47 | 55.15 | ?
+Naro-Fominsk | 36.73 | 55.39 | ?
+Odintsovo | 37.28 | 55.68 | RU-0005
+Podolsk | 37.55 | 55.43 | RU-0005
+Klin | 36.73 | 56.33 | RU-0006
