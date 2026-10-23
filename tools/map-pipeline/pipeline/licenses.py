@@ -2,7 +2,10 @@
 
 Kept (D601): CC BY (any version, no ShareAlike, NonCommercial or NoDerivatives term), CC0,
 public domain, and the attribution-only government open licences Logan allowed: the Open
-Government Licence - Canada 2.0 and the UK Open Government Licence 3.0. Everything else, any
+Government Licence - Canada 2.0 and the UK Open Government Licence 3.0 (PR #34), and Germany's
+Data licence Attribution 2.0, France's Etalab Open Licence 2.0, Spain's INE data licence, the
+Singapore Open Data Licence 1.0 and Korea's Open Government Licence Type 1 (PR #38, D685), each
+credited in CREDITS.md. swisstopo's licence and "Other - Direct Permission" stay refused. Everything else, any
 license or license detail naming a refused term, and anything whose source names
 OpenStreetMap or GADM, goes to the Voronoi path. Unknown strings are refused, never guessed.
 """
@@ -33,6 +36,14 @@ _ALLOW = [
     (re.compile(r"open\s+government\s+(licen[cs]e\s*-?\s*)?canada\s*2(\.0)?\b", re.I), "OGL-Canada 2.0"),
     # the UK OGL is the only Open Government Licence with a version 3
     (re.compile(r"open\s+government\s+licen[cs]e(?!.*canada).*\bv?3(\.0)?\b|\bogl[- ]uk[- ]v?3", re.I), "OGL-UK 3.0"),
+    # D685 (Logan, PR #38 review): five more attribution-only government licences
+    (re.compile(r"data\s+licen[cs]e\s+germany\s*-?\s*attribution\s*-?\s*(version\s*)?2(\.0)?\b|dl-de/by-2-0", re.I),
+     "DL-DE-BY 2.0"),
+    (re.compile(r"etalab\s+open\s+licen[cs]e\s*2(\.0)?\b|licence\s+ouverte\s*(v|version\s*)?2(\.0)?\b", re.I), "Etalab 2.0"),
+    (re.compile(r"national\s+institute\s+of\s+statistics\s*\(ine\)\s*data\s+licen[cs]e", re.I), "INE"),
+    (re.compile(r"singapore\s+open\s+data\s+licen[cs]e\s*(version\s*)?1(\.0)?\b", re.I), "SG-ODL 1.0"),
+    # Type 1 only: types 2 to 4 add non-commercial or no-derivatives terms
+    (re.compile(r"korea\s+open\s+government\s+licen[cs]e\s+type\s*1\b", re.I), "KOGL Type 1"),
 ]
 
 
@@ -94,9 +105,12 @@ if __name__ == "__main__":  # tiny self-check, run by `run.py selftest`
     assert classify("Public Domain", "", "derived from OpenStreetMap, ODbL")[0] is False
     assert classify("Open Government Canada 2.0", "Statistics Canada", "")[0] is True
     assert classify("Creative Commons Attribution 4.0 (CC BY 4.0)", "OCHA ROWCA, Open Street Map")[0] is False
-    # attribution-only government licences outside D601 stay refused until Logan allows them
+    # D685: allowed since the PR #38 review; swisstopo and direct permission stay refused
     for lic in ("Data license Germany - Attribution - Version 2.0", "Etalab Open License 2.0",
                 "Singapore Open Data License Version 1.0", "Korea Open Government License Type 1 (Source Indication)",
-                "National Institute of Statistics (INE) Data License", "Federal Office of Topography swisstopo License"):
+                "National Institute of Statistics (INE) Data License"):
+        assert classify(lic)[0] is True, lic
+    for lic in ("Federal Office of Topography swisstopo License", "Other - Direct Permission",
+                "Korea Open Government License Type 2", "Korea Open Government License Type 4"):
         assert classify(lic)[0] is False, lic
     print("licenses: ok")

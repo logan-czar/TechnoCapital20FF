@@ -560,6 +560,24 @@ def write_credits(sources: dict) -> None:
                  "(https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/), from the Office for "
                  "National Statistics.")
         L.append("")
+    # D685: the attribution each government licence asks for
+    gov_notes = {
+        "DL-DE-BY 2.0": "Germany: © GeoBasis-DE / BKG (Federal Agency for Cartography and Geodesy), licensed under the "
+                        "Data licence Germany - attribution - version 2.0 (https://www.govdata.de/dl-de/by-2-0).",
+        "Etalab 2.0": "France: source IGN (Institut national de l'information géographique et forestière), Licence "
+                      "Ouverte / Etalab Open Licence 2.0 (https://www.etalab.gouv.fr/licence-ouverte-open-licence).",
+        "INE": "Spain: fuente INE (Instituto Nacional de Estadística), used under the INE data licence "
+               "(https://www.ine.es/aviso_legal).",
+        "SG-ODL 1.0": "Singapore: contains information from the Urban Redevelopment Authority's planning areas, made "
+                      "available under the terms of the Singapore Open Data Licence version 1.0 "
+                      "(https://data.gov.sg/open-data-licence).",
+        "KOGL Type 1": "Korea: source Statistics Korea (KOSTAT), under the Korea Open Government Licence Type 1 "
+                       "(source indication).",
+    }
+    for cls in sorted(gov_notes):
+        if cls in classes:
+            L.append(gov_notes[cls])
+            L.append("")
     L.append("Province shapes are derived works: admin units dissolved and clipped to Natural Earth regions, and "
              "synthetic Voronoi splits where no permissively licensed admin units exist."
              + (" A few lines (contested land drawn by the game's own province files, cities and islands the sources "
