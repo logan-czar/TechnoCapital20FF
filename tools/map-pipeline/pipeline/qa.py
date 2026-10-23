@@ -11,13 +11,17 @@ from __future__ import annotations
 import csv
 import json
 from collections import Counter
-from datetime import date
 
 from . import PIPELINE_VERSION, config, crosswalk, fetch, licenses
 
 # Regions whose provinces leave more than this share of the region uncovered, or overlap by
 # more, are listed as nesting problems (shares of the region's area).
 NEST_TOLERANCE = 1e-6
+# A province not in a Metro under this share of its region's mean province area is listed
+# (a seed that claimed too little, like an offshore city point).
+SMALL_SHARE = 0.05
+# A block split by Voronoi where one province takes at least this share is listed.
+SPLIT_MOSTLY = 0.75
 # Width of the preview image Logan opens for the one visual check per region.
 PREVIEW_WIDTH = 2400
 
@@ -88,7 +92,7 @@ def run(region: config.Region) -> None:
         if b["iso"] not in countries:
             continue
         meta = fetch.gb_meta(b["iso"], b["level"], sources)
-        ok, why = licenses.classify(meta.get("boundaryLicense", ""), meta.get("boundarySource", ""))
+        ok, why = licenses.classify_meta(meta)
         used_gb.append((b["iso"], b["level"], meta, ok, why))
         if ok:
             allowed_prov.add(licenses.provenance(meta))
@@ -117,6 +121,26 @@ def run(region: config.Region) -> None:
     multi = sorted((r for r in mq.values() if r["province_id"] in names and r["components"] not in ("", "1")),
                    key=lambda r: -int(r["components"]))
     methods = Counter(r["method"] for r in xw.values())
+    # provinces small for their region (Metro provinces are small by design and are skipped)
+    by_region: dict[str, list] = {}
+    for r in csv_rows:
+        by_region.setdefault((r["country"], r["region"]), []).append(r)
+    small = []
+    for members in by_region.values():
+        areas = {r["id"]: int(mq[r["id"]]["area_px"]) for r in members if r["id"] in mq}
+        if len(areas) < 2:
+            continue
+        mean = sum(areas.values()) / len(areas)
+        for r in members:
+            if not r["metro"] and r["id"] in areas and areas[r["id"]] < SMALL_SHARE * mean:
+                small.append((r["id"], r["name"], r["region"], areas[r["id"]], mean))
+    small.sort()
+    splits = json.loads((work / "splits.json").read_text(encoding="utf-8"))
+    mostly = sorted((v for v in splits.values() if v["region"].split(":")[0] in countries
+                     and max(v["shares"].values()) >= SPLIT_MOSTLY), key=lambda v: (v["region"], v["name"]))
+    outside = [o for o in json.loads((work / "named-outside.json").read_text(encoding="utf-8"))
+               if o["province_id"] in names]
+    overwritten = sum(int(r.get("overwritten_px") or 0) for r in mq.values() if r["province_id"] in names)
     by_country = Counter(r["country"] for r in xw.values())
 
     preview_name = f"preview-{region.slug}.png"
@@ -125,9 +149,9 @@ def run(region: config.Region) -> None:
     L = []
     L.append(f"# Map QA report: {region.slug}")
     L.append("")
-    L.append(f"_Written by `tools/map-pipeline/run.py --region {region.slug}` (pipeline {PIPELINE_VERSION}), "
-             f"{date.today().isoformat()}. Source of the rows: `{region.csv}`. "
-             "Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D609._")
+    L.append(f"_Written by `tools/map-pipeline/run.py --region {region.slug}` (pipeline {PIPELINE_VERSION}). "
+             f"Source of the rows: `{region.csv}`. "
+             "Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D610._")
     L.append("")
     L.append("## Result")
     L.append("")
@@ -158,6 +182,10 @@ def run(region: config.Region) -> None:
              f"{sum(1 for r in mq.values() if r['province_id'] in names and r['forced'] == 'Y')} |")
     L.append(f"| More than one part (islands, exclaves) | {len(multi)} |")
     L.append(f"| Coastal flag differs from the CSV | {len(coast_bad)} |")
+    L.append(f"| Small for their region (not Metro, under {SMALL_SHARE:.0%} of the region's mean) | {len(small)} |")
+    L.append(f"| Voronoi-split blocks where one province takes {SPLIT_MOSTLY:.0%} or more | {len(mostly)} |")
+    L.append(f"| Places named in a province's name or notes that lie in another province | {len(outside)} |")
+    L.append(f"| Pixels drawn over another province (overlapping shapes) | {overwritten} |")
     L.append("")
     L.append("Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve "
              "of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one "
@@ -174,10 +202,9 @@ def run(region: config.Region) -> None:
                  f"{_md_escape(meta.get('boundaryLicense'))} | {'yes' if ok else 'no: ' + why + '; Voronoi path'} |")
     L.append("")
     if any(not ok for *_, ok, _ in used_gb):
-        L.append("Countries whose ADM2 license is refused are split by Voronoi inside their admin-1 regions (D601). "
-                 "Canada's ADM2 is under the Open Government Licence - Canada 2.0, an attribution-only license "
-                 "that the CC BY / CC0 / public domain allowlist does not name; adding it would let Canada use census "
-                 "divisions instead of straight Voronoi lines (a decision for Logan, D601).")
+        L.append("Refused boundary files are never downloaded and never used (D601). The allowlist is CC BY, CC0, "
+                 "public domain and the attribution-only government licences OGL-Canada 2.0 and OGL-UK 3.0; "
+                 "a region whose country has no allowed ADM2 is split by Voronoi.")
         L.append("")
     L.append("## Low-confidence rows for review")
     L.append("")
@@ -215,6 +242,44 @@ def run(region: config.Region) -> None:
         c = centroid.get(r["province_id"], {})
         L.append(f"| {r['province_id']} | {_md_escape(r['name'])} | {r['area_px']} | {r['components']} | "
                  f"{c.get('label_x')}, {c.get('label_y')} |")
+    L.append("")
+    L.append("## Small provinces")
+    L.append("")
+    if small:
+        L.append("| Province | Name | Region | Pixels | Region mean |")
+        L.append("|---|---|---|---|---|")
+        for pid, name, reg, a, mean in small:
+            L.append(f"| {pid} | {_md_escape(name)} | {_md_escape(reg)} | {a} | {mean:.0f} |")
+    else:
+        L.append("None.")
+    L.append("")
+    L.append("## Uneven Voronoi splits")
+    L.append("")
+    L.append("Blocks (ADM2 units, or admin-1 units for Greenland) that several provinces share, where one "
+             "province takes most of the block. Check that the larger part belongs where it went.")
+    L.append("")
+    if mostly:
+        L.append("| Region | Block | Shares |")
+        L.append("|---|---|---|")
+        for v in mostly:
+            shares = ", ".join(f"{pid} {sh:.0%}" for pid, sh in sorted(v["shares"].items(), key=lambda t: -t[1]))
+            L.append(f"| {_md_escape(v['region'])} | {_md_escape(v['name'])} | {shares} |")
+    else:
+        L.append("None.")
+    L.append("")
+    L.append("## Named places outside their province")
+    L.append("")
+    if outside:
+        L.append("A Natural Earth place matched in the name or notes that ended up in another province (usually a "
+                 "neighbour that names the same city more directly, as Long Beach-Harbor's notes name Los Angeles).")
+        L.append("")
+        L.append("| Province | Name | Place | Lies in |")
+        L.append("|---|---|---|---|")
+        for o in outside:
+            L.append(f"| {o['province_id']} | {_md_escape(names[o['province_id']])} | {_md_escape(o['place'])} | "
+                     f"{o['in'] or 'no province'} |")
+    else:
+        L.append("None.")
     L.append("")
     L.append("## Region nesting")
     L.append("")
@@ -287,11 +352,18 @@ def write_credits(sources: dict) -> None:
             if b["iso"] not in used_isos:
                 continue
             meta = fetch.gb_meta(b["iso"], b["level"], sources)
-            ok, _ = licenses.classify(meta.get("boundaryLicense", ""), meta.get("boundarySource", ""))
+            ok, _ = licenses.classify_meta(meta)
             if not ok:
                 continue
             L.append(f"| {b['iso']} | {b['level']} | {_md_escape(meta.get('boundarySource'))} | "
                      f"{_md_escape(meta.get('boundaryLicense'))} | {meta.get('boundaryYear', '')} |")
+        L.append("")
+    ogl_ca = any("canada" in (fetch.gb_meta(b["iso"], b["level"], sources).get("boundaryLicense", "").lower())
+                 and licenses.classify_meta(fetch.gb_meta(b["iso"], b["level"], sources))[0]
+                 for b in gb["boundary"] if b["iso"] in used_isos)
+    if ogl_ca:
+        L.append("Contains information licensed under the Open Government Licence - Canada "
+                 "(https://open.canada.ca/en/open-government-licence-canada), from Statistics Canada.")
         L.append("")
     L.append("Province shapes are derived works: admin units dissolved and clipped to Natural Earth regions, and "
              "synthetic Voronoi splits where no permissively licensed admin units exist.")

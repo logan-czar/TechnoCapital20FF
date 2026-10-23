@@ -15,6 +15,9 @@ Boundary files used, with their original sources and licenses:
 | Country | Level | Source | License | Year |
 |---|---|---|---|---|
 | USA | ADM2 | United States Census Bureau, MAF/TIGER Database | Public Domain | 2018 |
+| CAN | ADM2 | Statistics Canada (StatCan) | Open Government Canada 2.0 | 2022 |
 | MEX | ADM2 | World Bank | Creative Commons Attribution 4.0 (CC BY 4.0) | 2012 |
+
+Contains information licensed under the Open Government Licence - Canada (https://open.canada.ca/en/open-government-licence-canada), from Statistics Canada.
 
 Province shapes are derived works: admin units dissolved and clipped to Natural Earth regions, and synthetic Voronoi splits where no permissively licensed admin units exist.
