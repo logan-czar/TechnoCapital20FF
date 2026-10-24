@@ -5,7 +5,7 @@
 // types/calendar.ts.
 //
 // Integer arithmetic: every value here is a small whole number, exact in an f64. Rust's `/` on
-// non-negative i64 is `Math.floor`, and `div_euclid` / `rem_euclid` are floor-based too.
+// non-negative i64 is `Math.floor`; `div_euclid` / `rem_euclid` come from types/num.ts.
 
 import {
   DAYS_PER_WEEK,
@@ -20,16 +20,7 @@ import {
   WEEKDAY_VALUES,
   type Weekday,
 } from "../types/calendar.ts";
-
-/** Rust `div_euclid` for a positive divisor. */
-function divEuclid(a: number, b: number): number {
-  return Math.floor(a / b);
-}
-
-/** Rust `rem_euclid` for a positive divisor. */
-function remEuclid(a: number, b: number): number {
-  return a - Math.floor(a / b) * b;
-}
+import { divEuclid, remEuclid } from "../types/num.ts";
 
 /** Rust's `{:0w}` for an integer: zero-padded to `w` characters, the sign counted in the width. */
 function pad(n: number, w: number): string {
@@ -272,7 +263,8 @@ export function dateTimeWeekday(t: DateTime): Weekday {
 }
 
 export function dateTimeAddHours(t: DateTime, n: number): DateTime {
-  // Rust panics on u32 overflow (debug builds).
+  // Rust's `n` is a u32, and the sum panics on u32 overflow (debug builds).
+  if (!Number.isInteger(n) || n < 0) throw new RangeError(`${n} is not a u32 hour count`);
   return dateTimeFromHours(t + n);
 }
 

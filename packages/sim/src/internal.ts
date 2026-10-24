@@ -2,6 +2,9 @@
 // apps/web must never import this (Biome rule and scripts/ts/boundary.ts).
 
 export * from "./index.ts";
+// The clock and scheduler (time/) and every module's jobs in their slots (jobs.ts).
+export * from "./jobs.ts";
+export * from "./time/index.ts";
 export * from "./types/calendar.ts";
 export * from "./types/collections.ts";
 export * from "./types/draws.ts";

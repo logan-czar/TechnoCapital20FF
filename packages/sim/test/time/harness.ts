@@ -1,15 +1,21 @@
 // A stand-in for `Sim` while lib.rs is not ported: the clock part of `Sim::step` (lib.rs
-// `step_inner`) and the controls part of `Sim::apply` that touch the clock (pause, speed, SkipTo),
-// on a world that holds only the clock. The scheduler and the calendar alerts read nothing else,
-// and every other job is a notPorted placeholder. Delete it once `Sim` is ported.
+// `step_inner`) and the clock and alert controls of `Sim::apply`, on a world that holds only the
+// clock. The scheduler and the calendar alerts read nothing else, and every other job is a
+// notPorted placeholder. Delete it once `Sim` is ported.
 
 import { scheduler } from "../../src/jobs.ts";
 import { controlsDefault, skipTarget } from "../../src/time/control.ts";
-import { type Scheduler, type Slot, schedulerRunTick } from "../../src/time/scheduler.ts";
+import {
+  type JobFn,
+  type Scheduler,
+  type Slot,
+  schedulerRegister,
+  schedulerRunTick,
+} from "../../src/time/scheduler.ts";
 import { DATETIME_START, type DateTime } from "../../src/types/calendar.ts";
-import type { Controls } from "../../src/types/control.ts";
+import { type Control, type Controls, MAX_SPEED } from "../../src/types/control.ts";
 import type { DrawSource } from "../../src/types/draws.ts";
-import type { Notice, PauseReason, SkipKind } from "../../src/types/notice.ts";
+import { ALERT_KIND_INDEX, type Notice, type PauseReason } from "../../src/types/notice.ts";
 import type { World } from "../../src/types/world.ts";
 
 function noDraw(): never {
@@ -26,9 +32,14 @@ export const NO_DRAWS: DrawSource = {
   chance: noDraw,
 };
 
+/** A world that holds only the clock, at the game start. */
+export function clockWorld(): World {
+  return { clock: DATETIME_START } as World;
+}
+
 export class ClockHarness {
   /** Only the clock: the scheduler and the calendar alerts read nothing else. */
-  readonly world = { clock: DATETIME_START } as World;
+  readonly world = clockWorld();
   readonly controls: Controls = controlsDefault();
   readonly scheduler: Scheduler = scheduler();
   private trace: Slot[] | null = null;
@@ -45,6 +56,11 @@ export class ClockHarness {
   /** Rust `Sim::last_trace`: the slots the last tick visited, in order (empty unless tracing). */
   lastTrace(): readonly Slot[] {
     return this.trace ?? [];
+  }
+
+  /** Rust `Sim::register_test_job`: adds a job to a slot after the built-in ones. */
+  registerTestJob(slot: Slot, name: string, job: JobFn): void {
+    schedulerRegister(this.scheduler, slot, name, job);
   }
 
   /** Rust `Sim::step` without the view refresh. */
@@ -72,17 +88,51 @@ export class ClockHarness {
     return notices;
   }
 
-  /** Rust `Sim::apply(Control::SetSpeed(n))` for n in 1 to 5: set the speed and resume. */
-  resume(speed = 1): void {
-    this.controls.skip = null;
-    this.controls.speed = speed;
-    this.controls.paused = false;
-  }
-
-  /** Rust `Sim::apply(Control::SkipTo(kind))`. */
-  skipTo(kind: SkipKind): void {
-    this.controls.skip = { kind, target: skipTarget(this.world.clock, kind) };
-    this.controls.paused = false;
+  /**
+   * Rust `Sim::apply` for the controls that need no world tables: speed, pause, resume, SkipTo,
+   * alert levels and the watchlist (without WatchlistAdd's company check). Throws where Rust
+   * returns an error.
+   */
+  apply(control: Control): Notice[] {
+    const notices: Notice[] = [];
+    const c = this.controls;
+    switch (control.kind) {
+      case "SetSpeed":
+        if (control.speed === 0) {
+          c.skip = null;
+          this.pause(notices, { kind: "Player" });
+        } else if (control.speed <= MAX_SPEED) {
+          c.skip = null;
+          c.speed = control.speed;
+          c.paused = false;
+        } else {
+          throw new RangeError(`speed ${control.speed} is outside 0 to ${MAX_SPEED}`);
+        }
+        break;
+      case "Pause":
+        c.skip = null;
+        this.pause(notices, { kind: "Player" });
+        break;
+      case "Resume":
+        c.paused = false;
+        break;
+      case "SkipTo":
+        c.skip = { kind: control.skip, target: skipTarget(this.world.clock, control.skip) };
+        c.paused = false;
+        break;
+      case "SetAlert":
+        c.alerts[ALERT_KIND_INDEX[control.alert_kind]] = control.level;
+        break;
+      case "WatchlistAdd":
+        c.watchlist.add(control.company);
+        break;
+      case "WatchlistRemove":
+        c.watchlist.delete(control.company);
+        break;
+      default:
+        throw new Error(`ClockHarness does not apply ${control.kind}`);
+    }
+    return notices;
   }
 
   private pause(notices: Notice[], reason: PauseReason): void {

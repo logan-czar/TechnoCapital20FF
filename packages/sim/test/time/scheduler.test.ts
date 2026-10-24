@@ -42,7 +42,7 @@ describe("tick notices", () => {
 
   it("the release tick posts its alert, the day and the release, then pauses", () => {
     const sim = new ClockHarness();
-    sim.resume();
+    sim.apply({ kind: "Resume" });
     for (let h = 1; h < 24; h++) expect(sim.step()).toEqual([{ kind: "TickDone", time: h }]);
     expect(sim.step()).toEqual([
       {
@@ -61,7 +61,7 @@ describe("tick notices", () => {
 
   it("a SkipTo posts alerts without pausing, then pauses on its target", () => {
     const sim = new ClockHarness();
-    sim.skipTo("NextLock");
+    sim.apply({ kind: "SkipTo", skip: "NextLock" });
     const lock = dateTimeMidnight(simDateYmd(2020, 1, 9));
     expect(sim.controls.skip?.target).toBe(lock);
     const paused: Notice[][] = [];
@@ -88,12 +88,12 @@ describe("tick notices", () => {
 
   it("the month and quarter start posts its alert before the month's close", () => {
     const sim = new ClockHarness();
-    sim.resume();
+    sim.apply({ kind: "Resume" });
     const apr1 = dateTimeMidnight(simDateYmd(2020, 4, 1));
     let last: Notice[] = [];
     while (sim.now() < apr1) {
       last = sim.step();
-      if (sim.controls.paused) sim.resume();
+      if (sim.controls.paused) sim.apply({ kind: "Resume" });
     }
     expect(last).toEqual([
       {

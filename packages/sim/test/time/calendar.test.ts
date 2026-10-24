@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import {
+  dateTimeAddHours,
   dateTimeAt,
   dateTimeDate,
   dateTimeHour,
@@ -67,6 +68,13 @@ describe("calendar", () => {
     }
     // 2024-02-29 00:00: 1,461 days for 2020 to 2023, plus 31 + 28 days.
     expect(dateTimeHours(dateTimeMidnight(simDateYmd(2024, 2, 29)))).toBe(1520 * 24);
+  });
+
+  it("adds only whole, non-negative hours (Rust u32)", () => {
+    expect(dateTimeAddHours(5, 3)).toBe(8);
+    expect(() => dateTimeAddHours(5, -1)).toThrow();
+    expect(() => dateTimeAddHours(5, 0.5)).toThrow();
+    expect(() => dateTimeAddHours(0xffff_ffff, 1)).toThrow();
   });
 
   it("century rule", () => {

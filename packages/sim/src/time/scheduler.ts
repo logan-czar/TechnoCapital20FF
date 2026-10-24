@@ -134,7 +134,7 @@ export type Group =
   | "Yearly";
 
 /** Rust `Group::label`: the trace label. */
-export const GROUP_LABEL: Readonly<Record<Group, string>> = {
+export const GROUP_LABEL: Readonly<Record<Group, string>> = Object.freeze({
   Hourly: "hourly",
   PriceMove: "quarterly.price_move",
   Daily: "daily",
@@ -144,11 +144,11 @@ export const GROUP_LABEL: Readonly<Record<Group, string>> = {
   PlanLock: "quarterly.plan_lock",
   Recap: "quarterly.recap",
   Yearly: "yearly",
-};
+});
 
 // The named job slots, in the order a tick visits them (spec 4): [slot, group, step label].
 // Rust's `slots!` macro table; the position is `Slot::index`.
-const SLOT_TABLE = [
+const SLOT_TABLE = Object.freeze([
   // 4.1 Hourly (every tick).
   // 4.1 step 1: the clock advances (done by the scheduler before any slot); controls apply when
   // sent (D5).
@@ -251,13 +251,14 @@ const SLOT_TABLE = [
   ["YearlyAnnualStatements", "Yearly", "1.annual_statements"],
   // Archive: 20 quarters of statements, 10 years of daily bars.
   ["YearlyArchive", "Yearly", "2.archive"],
-] as const satisfies readonly (readonly [string, Group, string])[];
+] as const satisfies readonly (readonly [string, Group, string])[]);
+for (const row of SLOT_TABLE) Object.freeze(row);
 
 /** The named job slots, in the order a tick visits them (spec 4). */
 export type Slot = (typeof SLOT_TABLE)[number][0];
 
 /** Rust `Slot::ALL`: every slot, in run order. */
-export const SLOT_VALUES: readonly Slot[] = SLOT_TABLE.map((r) => r[0]);
+export const SLOT_VALUES: readonly Slot[] = Object.freeze(SLOT_TABLE.map((r) => r[0]));
 
 /** Rust `Slot::COUNT`: number of slots. */
 export const SLOT_COUNT = SLOT_VALUES.length;
@@ -343,23 +344,68 @@ function slotNoticeAfter(slot: Slot, f: TickFacts): Notice | null {
 /**
  * What a job may touch besides the World (the pure step contract).
  *
- * The player's controls ride along read-only: jobs must not read `controls`, `notices` or
- * `pause` (Rust keeps them private), but `jobCtxRaiseAlert` uses them to apply alert levels, the
- * SkipTo rule and the watchlist filter. So a job raises every alert it sees (for example a
- * bankruptcy for every company) and stays a pure function of the world. Jobs use only `facts`,
- * `draws`, `jobCtxNotice` and `jobCtxRaiseAlert`.
+ * The player's controls ride along read-only and private: jobs cannot read them, but
+ * `jobCtxRaiseAlert` uses them to apply alert levels, the SkipTo rule and the watchlist filter.
+ * So a job raises every alert it sees (for example a bankruptcy for every company) and stays a
+ * pure function of the world. The notice list, the controls and the pause request are `#private`
+ * fields, as Rust keeps them private; jobs use only `facts`, `draws`, `jobCtxNotice` and
+ * `jobCtxRaiseAlert`. Build one with `jobCtxNew` or `jobCtxDetached`.
  */
-export interface JobCtx {
+export class JobCtx {
   /** The tick being run. */
   readonly facts: TickFacts;
   /** Every random number comes from here. */
   readonly draws: DrawSource;
-  /** Private: the step's notice list. */
-  readonly notices: Notice[];
-  /** Private: null for detached runs (projections): every alert is off. */
-  readonly controls: Controls | null;
-  /** Private: the pause an alert asked for this tick. */
-  pause: PauseReason | null;
+  readonly #notices: Notice[];
+  /** null for detached runs (projections): every alert is off. */
+  readonly #controls: Controls | null;
+  #pause: PauseReason | null = null;
+
+  private constructor(facts: TickFacts, draws: DrawSource, notices: Notice[], controls: Controls | null) {
+    this.facts = facts;
+    this.draws = draws;
+    this.#notices = notices;
+    this.#controls = controls;
+  }
+
+  /** Rust `JobCtx::new`. Use `jobCtxNew`. */
+  static new(facts: TickFacts, draws: DrawSource, notices: Notice[], controls: Controls): JobCtx {
+    return new JobCtx(facts, draws, notices, controls);
+  }
+
+  /** Rust `JobCtx::detached`. Use `jobCtxDetached`. */
+  static detached(facts: TickFacts, draws: DrawSource, notices: Notice[]): JobCtx {
+    return new JobCtx(facts, draws, notices, null);
+  }
+
+  /** Rust `JobCtx::notice`. Use `jobCtxNotice`. */
+  notice(notice: Notice): void {
+    this.#notices.push(notice);
+  }
+
+  /** Rust `JobCtx::raise_alert`. Use `jobCtxRaiseAlert`. */
+  raiseAlert(kind: AlertKind, payload: AlertPayload): void {
+    const controls = this.#controls;
+    if (controls === null) return;
+    if (kind === "BankruptcyInWatchlist") {
+      if (payload.kind !== "Company") throw new Error("BankruptcyInWatchlist needs a company payload");
+      if (!controls.watchlist.has(payload.company)) return;
+    }
+    // CONTRACT: Rust `AlertLevels::get` (world/notice.rs) has no TS helper; indexed directly.
+    const level = controls.alerts[ALERT_KIND_INDEX[kind]];
+    if (level === undefined) throw new Error(`no alert level for ${kind}`);
+    if (level === "Off") return;
+    this.#notices.push({ kind: "Alert", alert_kind: kind, level, payload });
+    const skipping = controls.skip !== null;
+    if (level === "Pause" && !skipping && this.#pause === null) {
+      this.#pause = { kind: "Alert", alert_kind: kind };
+    }
+  }
+
+  /** Rust `JobCtx::pause_request`. Use `jobCtxPauseRequest`. */
+  pauseRequest(): PauseReason | null {
+    return this.#pause;
+  }
 }
 
 /** Rust `JobCtx::new`: a context for a game tick, with the player's controls. */
@@ -369,7 +415,7 @@ export function jobCtxNew(
   notices: Notice[],
   controls: Controls,
 ): JobCtx {
-  return { facts, draws, notices, controls, pause: null };
+  return JobCtx.new(facts, draws, notices, controls);
 }
 
 /**
@@ -377,12 +423,12 @@ export function jobCtxNew(
  * on a cloned world: alerts post nothing and never pause.
  */
 export function jobCtxDetached(facts: TickFacts, draws: DrawSource, notices: Notice[]): JobCtx {
-  return { facts, draws, notices, controls: null, pause: null };
+  return JobCtx.detached(facts, draws, notices);
 }
 
 /** Posts a notice (spec 9.3). */
 export function jobCtxNotice(ctx: JobCtx, notice: Notice): void {
-  ctx.notices.push(notice);
+  ctx.notice(notice);
 }
 
 /**
@@ -391,26 +437,12 @@ export function jobCtxNotice(ctx: JobCtx, notice: Notice): void {
  * the watchlist (spec 8), so jobs raise it for every bankruptcy.
  */
 export function jobCtxRaiseAlert(ctx: JobCtx, kind: AlertKind, payload: AlertPayload): void {
-  const controls = ctx.controls;
-  if (controls === null) return;
-  if (kind === "BankruptcyInWatchlist") {
-    if (payload.kind !== "Company") throw new Error("BankruptcyInWatchlist needs a company payload");
-    if (!controls.watchlist.has(payload.company)) return;
-  }
-  // CONTRACT: Rust `AlertLevels::get` (world/notice.rs) has no TS helper; indexed directly.
-  const level = controls.alerts[ALERT_KIND_INDEX[kind]];
-  if (level === undefined) throw new Error(`no alert level for ${kind}`);
-  if (level === "Off") return;
-  ctx.notices.push({ kind: "Alert", alert_kind: kind, level, payload });
-  const skipping = controls.skip !== null;
-  if (level === "Pause" && !skipping && ctx.pause === null) {
-    ctx.pause = { kind: "Alert", alert_kind: kind };
-  }
+  ctx.raiseAlert(kind, payload);
 }
 
 /** The pause an alert asked for this tick, if any. */
 export function jobCtxPauseRequest(ctx: JobCtx): PauseReason | null {
-  return ctx.pause;
+  return ctx.pauseRequest();
 }
 
 // ---------------------------------------------------------------- TickObserver
@@ -442,29 +474,47 @@ export interface TickObserver {
 /** One registered job: its name and function. */
 export type NamedJob = readonly [name: string, job: JobFn];
 
-/** The registered jobs of every slot, indexed by `slotIndex`. */
+/**
+ * The registered jobs of every slot. Rust's `&mut self` forbids registering while a tick runs;
+ * here `schedulerRegister` throws while `schedulerRunTick*` or `schedulerRunSlots` is running.
+ */
 export interface Scheduler {
+  /** Indexed by `slotIndex`. Read through `schedulerJobs`; add through `schedulerRegister`. */
   readonly jobs: NamedJob[][];
+  /** True while a tick or `schedulerRunSlots` runs. */
+  running: boolean;
 }
 
 /** Rust `Scheduler::new`: a scheduler with every slot empty. */
 export function schedulerNew(): Scheduler {
-  return { jobs: SLOT_VALUES.map(() => []) };
+  return { jobs: SLOT_VALUES.map(() => []), running: false };
 }
 
 /** Rust `Clone for Scheduler`. */
 export function schedulerClone(s: Scheduler): Scheduler {
-  return { jobs: s.jobs.map((js) => js.slice()) };
+  return { jobs: s.jobs.map((js) => js.slice()), running: false };
 }
 
 /** Adds `job` to `slot`. Jobs in one slot run in registration order. */
 export function schedulerRegister(s: Scheduler, slot: Slot, name: string, job: JobFn): void {
-  s.jobs[slotIndex(slot)]!.push([name, job]);
+  if (s.running) throw new Error(`cannot register ${name} while the scheduler is running`);
+  s.jobs[slotIndex(slot)]!.push(Object.freeze([name, job] as const));
 }
 
-/** The jobs registered in `slot`, with their names. */
+/** The jobs registered in `slot`, with their names (a frozen copy). */
 export function schedulerJobs(s: Scheduler, slot: Slot): readonly NamedJob[] {
-  return s.jobs[slotIndex(slot)]!;
+  return Object.freeze(s.jobs[slotIndex(slot)]!.slice());
+}
+
+/** Runs `f` with `s` marked running, so nothing registers meanwhile. */
+function whileRunning<T>(s: Scheduler, f: () => T): T {
+  if (s.running) throw new Error("the scheduler is already running");
+  s.running = true;
+  try {
+    return f();
+  } finally {
+    s.running = false;
+  }
 }
 
 /**
@@ -487,6 +537,18 @@ export function schedulerRunTick(
  * finishes (D400). The tick itself is the same with or without one.
  */
 export function schedulerRunTickObserved(
+  s: Scheduler,
+  world: World,
+  ctxDraws: DrawSource,
+  notices: Notice[],
+  controls: Controls,
+  trace: Slot[] | null,
+  observer: TickObserver | null,
+): PauseReason | null {
+  return whileRunning(s, () => runTick(s, world, ctxDraws, notices, controls, trace, observer));
+}
+
+function runTick(
   s: Scheduler,
   world: World,
   ctxDraws: DrawSource,
@@ -529,7 +591,9 @@ export function schedulerRunTickObserved(
  * monthly economy for the spec 5.16 projections.
  */
 export function schedulerRunSlots(s: Scheduler, slots: readonly Slot[], world: World, ctx: JobCtx): void {
-  for (const slot of slots) {
-    for (const [, job] of schedulerJobs(s, slot)) job(world, ctx);
-  }
+  whileRunning(s, () => {
+    for (const slot of slots) {
+      for (const [, job] of schedulerJobs(s, slot)) job(world, ctx);
+    }
+  });
 }
