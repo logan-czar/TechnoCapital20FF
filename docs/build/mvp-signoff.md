@@ -52,7 +52,9 @@ These rows carry your name in their sign-off column. They need no action.
 
 ## 3. Needs sign-off
 
-268 rows: 86 sim and economy, 30 views, 60 UI, 52 map, 40 benches and build. 23 carry **[spec]**; 7 are marked revisit.
+**Quick path:** you can tick 3.2 and 3.3 wholesale and read only their **[spec]** and revisit rows.
+
+268 rows: 86 sim and economy, 30 views, 60 UI, 52 map, 40 benches and build. 25 carry **[spec]**; 7 are marked revisit.
 
 **Not every row below D236 is signed.** Lanes number their rows by range, not by date, so 47 rows below D236 were logged after the M3 gate and carry no sign-off: D120 to D167 (M4 to M6), except D126, which is superseded (section 4). They are in this section.
 
@@ -130,7 +132,7 @@ Some rows here were partly replaced by a later row; the later row wins for that 
 | D263 | Trait nudges, then the clamp, then the funding cap | keep |
 | D264 | R&D trait mults multiply; the loss cut stops at 0.5 × the norm | keep |
 | D265 | **[spec]** The 6.5 draw row reads cash on hand, not own cash (design fix 243) | keep |
-| D266 | How a share raise is sized. **The 6.6 raise never fires on the real data:** no industry is cash-burning | **revisit**: the share-issue path, its headlines and the new-investors line never run in play. Decide whether an industry should burn cash, or accept it as dormant |
+| D266 | How a share raise is sized. **The 6.6 raise never fires on the real data:** no industry is cash-burning | **revisit**: the share-issue path, its headlines and the new-investors line never run in play. Decide whether an industry should burn cash, or accept it as dormant. Your batch 146 named Consumer electronics, EVs, E-commerce and AI labs as cash-burning by design; batch 148 deferred the flags to the per-industry rework (docs/design/13-open-questions.md) |
 | D267 | The random event's draw order | keep |
 | D268 | The 2% startup cap reads fringe assets × turnover | keep |
 | D269 | A newborn's fixed cost rate breaks even at the norm | keep |
@@ -290,12 +292,12 @@ Some rows here were partly replaced by a later row; the later row wins for that 
 | D692 | Little Diomede and Big Diomede meet only by sea | keep |
 | D694 | PR #40 review fixes; Nawalpur is a known approximation | keep |
 | D820 | L **[spec]** The size cap is Eastern Iowa (51,722 km²); phase 1 cuts the 71 non-Arctic giants over 250,000 km² (you, 2026-10-23; design fix 820) | keep |
-| D821 | Parts per giant = ceil(area ÷ 0.95 cap); 779 parts, 3,963 provinces | keep |
+| D821 | **[spec]** Parts per giant = ceil(area ÷ 0.95 cap); 779 parts, 3,963 provinces | keep |
 | D822 | L. Cut along licensed ADM2 lines, else town catchments, else polygon parts (your rule) | keep |
 | D823 | L **[spec]** The main part keeps the id and the development; new parts are 1/1/1 (your rule). **217 new parts have compass names, 72 of them numbered** | **revisit**: the names, not the rule. Hand-name the compass parts or accept them |
 | D824 | L. Terrain, resource, city rank and coast for new parts | keep |
 | D825 | Nothing else lists provinces, so gen.py is not rerun. **The row says tests "now read 3,968"; the code and data say 3,963** | **revisit**: a text fix to the row only |
-| D826 | Save version 11; older saves are refused with a reason | keep |
+| D826 | **[spec]** Save version 11; older saves are refused with a reason (spec 9.1) | keep |
 | D827 | The split moves no soak target | keep |
 | D828 | Province pages are saved by CSV id, not ordinal | keep |
 | D829 | Notes and site resources move to the part holding their site | keep |
@@ -350,7 +352,7 @@ Some rows here were partly replaced by a later row; the later row wins for that 
 | D779 | The gated map check is paused and speed 4; a run that loses focus is INVALID | keep |
 | D790 | L. Screenshot and page bench windows open behind your windows (you asked, 2026-10-23) | keep |
 | D802 | L. The map bench holds each auto-pause 0.5 s and counts only running frames | keep |
-| D805 | **Speed 5 with the panes open is reported, not gated.** The builder's runs passed; the PR #45 review's two failed (p99 18.4 ms) | **revisit**: run D806's ramp twice, focused, on a quiet machine. Gate speed 5 if p99 is 15 ms or under |
+| D805 | **Speed 5 with the panes open is reported, not gated.** The builder's runs passed; the PR #45 review's two failed (p99 18.4 ms) | **revisit**: run D806's ramp twice, focused, on a quiet machine. Gate speed 5 if p99 is 15 ms or under. The 15 ms bar is stricter than the 16.7 ms gate on purpose, to leave margin |
 | D870 | L. Faster gate: optimized sim in dev, rust-lld, nextest (you asked, 2026-10-24) | keep |
 
 ## 4. Superseded rows
@@ -455,7 +457,7 @@ All 79 rows, by spec section. Status:
 | 300 | News is on the rail (key N) | Prose |
 | 301 | List the World event alert | Prose |
 | 440 | Describe the tiling workspace and the extra pages | Prose |
-| 441 | Pick one band form for the docs | Prose |
+| 441 | Pick one band form for the docs | Decide |
 | 442 | Add the workspace keys to 20.2.6 | Prose |
 | 460 | The Board tab shows votes, never odds | Prose |
 | 461 | Name which "confidence" the Overview shows | Prose |
@@ -540,7 +542,7 @@ All 79 rows, by spec section. Status:
 - [ ] Section 3.4 map pipeline and provinces: sign off, or revisit D823 (names), D825 (text) and D850 (survey lines)
 - [ ] Section 3.5 benches, checks and build: sign off, or revisit D693 and D805
 - [ ] Section 4: skip the 5 superseded rows
-- [ ] Section 5: rule on the "Decide" design fixes: 208, 226, 232, 235, 240, 367, 368, 369, 601, 670
+- [ ] Section 5: rule on the "Decide" design fixes: 208, 226, 441, 232, 235, 240, 367, 368, 369, 601, 670
 - [ ] Section 5: plan the spec pass for the "Prose" design fixes
 - [ ] macOS and Linux: build them, or accept Windows-only
 - [ ] Speed 5: gate it after quiet-machine runs, or keep it reported only
