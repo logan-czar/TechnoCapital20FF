@@ -62,10 +62,10 @@ _Written by `tools/map-pipeline/run.py --region east-asia-oceania` (pipeline pb-
 | Contested provinces (drawn by our own files) | 24 |
 | Admin-1 units left without a province | 5 |
 | Sea links with a province of this file | 86 |
-| City probe points (fail on a mismatch; D686) | 258 pass, 0 mismatch, 23 listed |
+| City probe points (fail on a mismatch; D686) | 263 pass, 0 mismatch, 23 listed |
 | Metro reach scan rows (listed; D686) | 12 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 18 (0 unexplained) |
-| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
+| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 7 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 7 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
@@ -330,6 +330,13 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 
 | Check | Province | Place | Expected | Got |
 |---|---|---|---|---|
+| own name | AU-0089 | Esperance | AU-0089 | AU-0039 |
+| own name | AU-0103 | Derby | AU-0103 | AU-0043 |
+| own name | AU-0106 | Broome | AU-0106 | AU-0043 |
+| own name | AU-0109 | Port Hedland | AU-0109 | AU-0041 |
+| own name | AU-0134 | Ceduna | AU-0134 | AU-0046 |
+| own name elsewhere | AU-0145 | Wyndham | AU-0145 | AU-0102 |
+| own name elsewhere | AU-0148 | Mount Isa | AU-0148 | AU-0034 |
 | own name elsewhere (allowed) | CN-0002 | Chaoyang | CN-0002 (Chaoyang district of Beijing, not Chaoyang city in Liaoning) | CN-0106 |
 | own name elsewhere (allowed) | CN-0012 | Baoshan | CN-0012 (Baoshan district of Shanghai, not Baoshan city in Yunnan) | CN-0128 |
 | city on the edge | JP-0006 | Kawasaki | JP-0006 | JP-0003 |
@@ -337,8 +344,6 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 | city part across water | PH-0002 | Manila | the largest 4-connected part | a smaller part, joined to it across water only |
 | own name elsewhere (allowed) | AU-0023 | Goulburn | AU-0023 (the Goulburn valley of Victoria, not Goulburn town in New South Wales) | AU-0013 |
 | city on the edge | AU-0120 | Kaltukatjara | AU-0120 | AU-0160 |
-
-No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
 
 ## Natural Earth labels
 
@@ -380,7 +385,6 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Aksu (main city of a split giant) (80.25, 41.15) | CN-0143 | CN-0143 | on it |
 | Alice Springs (main city of a split giant) (133.88, -23.701) | AU-0053 | AU-0053 | on it |
 | Altay (split part) (88.1166, 47.8666) | CN-0175 | CN-0175 | on it |
-| Andamooka (split part) (137.1656, -30.431) | AU-0132 | AU-0132 | on it |
 | Ansan (126.83, 37.32) | KR-0005 | KR-0005 | on it |
 | Anting (121.16, 31.3) | CN-0011 | CN-0011 | on it |
 | Apia (-171.76, -13.83) | WS | WS-0001 | on it |
@@ -412,6 +416,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Burketown (split part) (139.5666, -17.7161) | AU-0059 | AU-0059 | on it |
 | Caloocan North (121.04, 14.75) | PH-0003 | PH-0003 | on it |
 | Campbelltown (150.81, -34.07) | AU-0002 | AU-0002 | on it |
+| Cannington (site of a split giant) (140.92, -21.87) | AU-0065 | AU-0065 | on it |
 | Carnarvon (split part) (113.6501, -24.8998) | AU-0091 | AU-0091 | on it |
 | Changi (103.99, 1.36) | SG-0003 | SG-0003 | on it |
 | Changping (116.23, 40.22) | CN-0003 | CN-0003 | on it |
@@ -448,6 +453,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Geraldton (main city of a split giant) (114.6, -28.7666) | AU-0040 | AU-0040 | nearest across water |
 | Golmud (main city of a split giant) (94.8833, 36.4166) | CN-0138 | CN-0138 | on it |
 | Gosford (151.34, -33.43) | AU-0003 | AU-0003 | on it |
+| Grasberg (site of a split giant) (137.12, -4.14) | ID-0054 | ID-0054 | on it |
 | Guangzhou Baiyun airport (113.3, 23.39) | CN-0026 | CN-0026 | on it |
 | Guangzhou Tianhe (113.33, 23.13) | CN-0024 | CN-0024 | on it |
 | Gwangju city (126.85, 35.16) | KR-0011 | KR-0026 | within a pixel |
@@ -485,8 +491,9 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Jyekundo (split part) (97.0067, 32.9977) | CN-0174 | CN-0174 | on it |
 | KLCC (101.71, 3.157) | MY-0001 | MY-0001 | on it |
 | KLIA (101.71, 2.74) | MY-0003 | MY-0003 | on it |
-| Kalgoorlie (split part) (121.46, -30.7354) | AU-0085 | AU-0085 | on it |
+| Kalgoorlie (site of a split giant) (121.5, -30.78) | AU-0085 | AU-0085 | on it |
 | Kaltukatjara (split part) (128.9973, -25.7884) | AU-0120 | AU-0160 | within a pixel |
+| Kambalda (site of a split giant) (121.66, -31.2) | AU-0085 | AU-0085 | on it |
 | Kaohsiung (120.3, 22.62) | TW-0016 | TW-0016 | on it |
 | Karamay (main city of a split giant) (84.8599, 45.5899) | CN-0141 | CN-0141 | on it |
 | Karawang (107.3, -6.32) | ID-0006 | ID-0006 | on it |
@@ -523,6 +530,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Merauke (split part) (140.4018, -8.4932) | ID-0057 | ID-0057 | on it |
 | Minhang (121.38, 31.11) | CN-0010 | CN-0010 | on it |
 | Mong Kok (114.17, 22.32) | HK-0002 | HK-0002 | on it |
+| Moomba (site of a split giant) (140.2, -28.11) | AU-0125 | AU-0125 | on it |
 | Mount Isa (main city of a split giant) (139.49, -20.7239) | AU-0034 | AU-0034 | on it |
 | Mount Magnet (split part) (117.8167, -28.0662) | AU-0100 | AU-0100 | on it |
 | Muntinlupa (121.04, 14.41) | PH-0004 | PH-0004 | on it |
@@ -537,6 +545,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Newcastle Waters (split part) (133.4672, -17.5528) | AU-0147 | AU-0147 | on it |
 | Newman (split part) (119.7333, -23.3666) | AU-0116 | AU-0116 | on it |
 | Odaiba (139.775, 35.625) | JP-0003 | JP-0001 | within a pixel |
+| Olympic Dam (site of a split giant) (136.88, -30.44) | AU-0132 | AU-0132 | on it |
 | Optics Valley (114.41, 30.49) | CN-0064 | CN-0064 | on it |
 | Osaka Umeda (135.5, 34.7) | JP-0037 | JP-0037 | on it |
 | Paju (126.78, 37.76) | KR-0006 | KR-0006 | on it |
@@ -547,9 +556,11 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Penghu (119.58, 23.57) | TW-0020 | TW-0020 | on it |
 | Penrith (150.69, -33.75) | AU-0002 | AU-0002 | on it |
 | Pidu (103.89, 30.81) | CN-0089 | CN-0089 | on it |
+| Pine Gap (site of a split giant) (133.74, -23.8) | AU-0053 | AU-0053 | on it |
 | Pluit (106.79, -6.12) | ID-0002 | ID-0002 | on it |
 | Pohnpei (158.2, 6.92) | FM | FM-0001 | on it |
 | Port Klang (101.39, 3.0) | MY-0002 | MY-0002 | on it |
+| Prominent Hill (site of a split giant) (135.58, -29.72) | AU-0128 | AU-0128 | on it |
 | Pyeongtaek (127.11, 36.99) | KR-0005 | KR-0005 | on it |
 | Pyrmont (151.19, -33.87) | AU-0001 | AU-0001 | on it |
 | Qingpu (121.12, 31.15) | CN-0011 | CN-0011 | on it |
@@ -597,7 +608,6 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Tianjin Binhai TEDA (117.7, 39.03) | CN-0006 | CN-0006 | on it |
 | Tianjin Heping (117.2, 39.12) | CN-0005 | CN-0005 | on it |
 | Tianjin port Tanggu (117.65, 39.0) | CN-0006 | CN-0006 | on it |
-| Timika (split part) (136.89, -4.5496) | ID-0054 | ID-0054 | on it |
 | Timor Dili (125.57, -8.56) | TL | TL-0001 | nearest across water |
 | Tokyo Marunouchi (139.765, 35.68) | JP-0001 | JP-0001 | on it |
 | Tonga Nukualofa (-175.2, -21.14) | TO | TO-0001 | nearest across water |
@@ -662,8 +672,8 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 | Province | Name | Pixels | At | Why |
 |---|---|---|---|---|
 | AU-0059 | Burketown | 27 | 139.94, -19.25 | a neck under a pixel wide joins it to the rest in the shapes |
-| AU-0101 | Mid West Southwest | 7 | 117.64, -27.72 | a neck under a pixel wide joins it to the rest in the shapes |
-| AU-0135 | Far North Southeast | 8 | 135.92, -33.09 | the Kimba piece of geoBoundaries' Unincorporated SA (see AU-0047), cut from AU-0047 with the land round it |
+| AU-0101 | Yalgoo | 7 | 117.64, -27.72 | a neck under a pixel wide joins it to the rest in the shapes |
+| AU-0135 | Flinders Ranges | 8 | 135.92, -33.09 | the Kimba piece of geoBoundaries' Unincorporated SA (see AU-0047), cut from AU-0047 with the land round it |
 | AU-0139 | Yulara | 6 | 130.96, -25.21 | the Yulara piece of geoBoundaries' Unincorporated NT (see AU-0052), which the cut of AU-0053 gave to the Yulara part |
 | CN-0007 | Wuqing-Beichen-Jinghai | 90 | 116.93, 38.87 | its own seed point 116.93,38.94 (hint) lies in it |
 | CN-0014 | Yuzhong-Jiangbei | 11 | 106.6, 29.54 | its own seed point 106.57,29.56 (hint) lies in it |
@@ -674,14 +684,15 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 | CN-0110 | Western Jilin | 1196 | 125.72, 42.11 | a neck under a pixel wide joins it to the rest in the shapes |
 | CN-0131 | Southern Guizhou | 1244 | 104.73, 26.68 | its own seed place Liupanshui lies in it |
 | CN-0161 | Genhe | 5 | 122.73, 52.18 | a neck under a pixel wide joins it to the rest in the shapes |
-| CN-0179 | Northern Xinjiang West | 8 | 80.67, 43.6 | a neck under a pixel wide joins it to the rest in the shapes |
-| CN-0179 | Northern Xinjiang West | 7 | 80.72, 43.39 | a neck under a pixel wide joins it to the rest in the shapes |
-| CN-0195 | Kashgar Northwest | 742 | 77.92, 40.78 | a straight cut across Kashgar-Hotan's concave west left this piece (about 11,300 km2) on CN-0195's side; joined to CN-0144 it would put CN-0144 over the cap (D822) |
+| CN-0179 | Nilekexian | 8 | 80.67, 43.6 | a neck under a pixel wide joins it to the rest in the shapes |
+| CN-0179 | Nilekexian | 7 | 80.72, 43.39 | a neck under a pixel wide joins it to the rest in the shapes |
+| CN-0195 | Pishanxian | 742 | 77.92, 40.78 | a straight cut across Kashgar-Hotan's concave west left this piece (about 11,300 km2) on CN-0195's side; joined to CN-0144 it would put CN-0144 over the cap (D822) |
 | MN-0007 | Dornogovi-Govisumber | 51 | 108.34, 47.74 | Govisumber (Choir), the name's second part, does not touch Dornogovi in Natural Earth's lines |
 | TH-0024 | Buriram-Surin-Chaiyaphum | 588 | 101.8, 16.01 | composite name: Chaiyaphum lies in it |
 
 ## Known for review
 
+- CN-0163 Hailar (cut from CN-0120 Hulunbuir-Hinggan, D820): Hailar is the Hulunbuir prefecture's seat and its largest town, but CN-0120's main city is Manzhouli (the place its notes name first), so Manzhouli keeps CN-0120 and its development and Hailar starts as a 1/1/1 part. Allowed by the split rule; left for Logan.
 - PG-0003 Eastern Highlands-Simbu-Jiwaka: Natural Earth still has Jiwaka inside Western Highlands, so Jiwaka is drawn in Enga-Western Highlands.
 - VNM: Natural Earth labels three provinces with region names (VN-53 Bac Kan as Dong Bac, VN-39 Dong Nai as Dong Nam Bo, VN-66 Hung Yen as Dong Bang Song Hong); they are matched by code. Vinh Phuc, which no province names, is drawn with Hanoi.
 - TW-0022 Matsu: Natural Earth 10m has no land for the Matsu islands; the province is a builder-drawn polygon around Nangan and Beigan (a click target).

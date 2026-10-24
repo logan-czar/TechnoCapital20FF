@@ -65,10 +65,10 @@ _Written by `tools/map-pipeline/run.py --region latin-america` (pipeline pb-2). 
 | Contested provinces (drawn by our own files) | 7 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 20 |
-| City probe points (fail on a mismatch; D686) | 127 pass, 0 mismatch, 14 listed |
+| City probe points (fail on a mismatch; D686) | 130 pass, 0 mismatch, 14 listed |
 | Metro reach scan rows (listed; D686) | 0 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 7 (0 unexplained) |
-| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
+| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 5 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 2 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
@@ -200,10 +200,13 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 
 | Check | Province | Place | Expected | Got |
 |---|---|---|---|---|
+| own name | BR-0077 | Itaituba | BR-0077 | BR-0091 |
+| own name | BR-0086 | Óbidos | BR-0086 | BR-0090 |
+| own name | BR-0100 | Maués | BR-0100 | BR-0096 |
+| own name | BR-0103 | São Gabriel da Cachoeira | BR-0103 | BR-0107 |
+| own name | CO-0033 | San José del Guaviare | CO-0033 | CO-0034 |
 | own name elsewhere (allowed) | BR-0032 | Caxias | BR-0032 (Caxias do Sul; the Caxias point is the town in Maranhao) | BR-0049 |
 | city on the edge | PE-0028 | Nuevo Rocafuerte | PE-0028 | EC-0013 |
-
-No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
 
 ## Natural Earth labels
 
@@ -250,6 +253,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Barueri (-46.88, -23.51) | BR-0001 | BR-0001 | on it |
 | Basseterre (-62.72, 17.3) | KN | KN-0001 | nearest across water |
 | Belmopan (-88.77, 17.25) | BZ-0002 | BZ-0002 | on it |
+| Belo Monte (site of a split giant) (-51.77, -3.12) | BR-0089 | BR-0076 | within a pixel |
 | Bogota Chapinero (-74.06, 4.65) | CO-0001 | CO-0001 | on it |
 | Buin (-70.74, -33.73) | CL-0011 | CL-0011 | on it |
 | Caballococha (split part) (-70.5083, -3.9163) | PE-0030 | PE-0030 | on it |
@@ -257,6 +261,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Campo Grande (main city of a split giant) (-54.6186, -20.4481) | BR-0057 | BR-0057 | on it |
 | Canete (-76.39, -13.08) | PE-0003 | PE-0003 | on it |
 | Caracas (-66.9, 10.49) | VE | VE-0001 | on it |
+| Carajas (site of a split giant) (-50.17, -6.07) | BR-0045 | BR-0045 | on it |
 | Casa Rosada (-58.37, -34.608) | AR-0001 | AR-0001 | on it |
 | Castries (-60.98, 14.01) | LC | LC-0001 | on it |
 | Chia (-74.06, 4.86) | CO-0003 | CO-0003 | on it |
@@ -288,7 +293,6 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Inirida (split part) (-67.9061, 3.854) | CO-0032 | CO-0032 | on it |
 | Iquitos (main city of a split giant) (-73.25, -3.75) | PE-0023 | PE-0023 | on it |
 | Irece (split part) (-41.87, -11.3) | BR-0071 | BR-0071 | on it |
-| Itaituba (split part) (-55.925, -4.2586) | BR-0091 | BR-0091 | on it |
 | Itaquera (-46.45, -23.54) | BR-0002 | BR-0002 | on it |
 | Jacareacanga (split part) (-57.7601, -6.228) | BR-0092 | BR-0092 | on it |
 | Jorge Chavez (-77.11, -12.02) | PE-0004 | PE-0002 | within a pixel |
@@ -357,7 +361,9 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Tigre (-58.58, -34.42) | AR-0002 | AR-0002 | on it |
 | Tonantins (split part) (-67.8019, -2.8727) | BR-0112 | BR-0112 | on it |
 | Tres Lagoas (split part) (-51.72, -20.79) | BR-0142 | BR-0142 | on it |
+| Trombetas (site of a split giant) (-56.4, -1.5) | BR-0088 | BR-0088 | on it |
 | Tucurui (split part) (-49.6737, -3.7674) | BR-0075 | BR-0075 | on it |
+| Urucu (site of a split giant) (-65.3, -4.88) | BR-0048 | BR-0048 | on it |
 | Usaquen (-74.03, 4.7) | CO-0001 | CO-0001 | on it |
 | Vitoria da Conquista (split part) (-40.84, -14.85) | BR-0073 | BR-0073 | on it |
 | Yauyos (-75.91, -12.46) | PE-0003 | PE-0003 | on it |
@@ -376,9 +382,9 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 |---|---|---|---|---|
 | BR-0007 | Sorocaba-Southwest Sao Paulo | 9 | -46.93, -23.85 | a neck under a pixel wide joins it to the rest in the shapes |
 | BR-0032 | Serra Gaucha-Caxias | 8 | -49.99, -29.25 | Mampituba meets the rest of Serra Gaucha only at a corner of Sao Francisco de Paula, so its pixels stand apart |
-| BR-0125 | North Mato Grosso Northwest | 5 | -58.41, -8.43 | a neck under a pixel wide joins it to the rest in the shapes |
+| BR-0125 | Colniza | 5 | -58.41, -8.43 | a neck under a pixel wide joins it to the rest in the shapes |
 | BR-0154 | Gurupi | 5 | -47.82, -12.12 | a neck under a pixel wide joins it to the rest in the shapes |
-| CO-0036 | Colombian Amazon and Vichada Southwest | 214 | -71.52, 0.46 | a neck under a pixel wide joins it to the rest in the shapes |
+| CO-0036 | La Chorrera | 214 | -71.52, 0.46 | a neck under a pixel wide joins it to the rest in the shapes |
 | CR-0001 | San Jose Centro | 23 | -84.0, 10.0 | its own seed point -84.08,9.93 (hint) lies in it |
 | UY-0007 | Rivera-Artigas | 503 | -55.26, -31.48 | composite name: Rivera lies in it |
 
