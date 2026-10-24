@@ -93,7 +93,7 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 
 | Boundary file | License | Used |
 |---|---|---|
-| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes) | Public domain | yes |
+| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes, river and lake centerlines) | Public domain | yes |
 | geoBoundaries gbOpen ALB ADM2 (geoBoundaries, Albania districts blank 2.svg) | Creative Commons Attribution 2.5 Generic | yes |
 | geoBoundaries gbOpen AUT ADM2 (Federal Office for Metrology and Survey, Austria, Derived from ADM4 layer) | Creative Commons Attribution-ShareAlike 2.0 | no: refused: ShareAlike in license (Creative Commons Attribution-ShareAlike 2.0); Voronoi path |
 | geoBoundaries gbOpen BEL ADM2 (Statistics Belgium) | Open Data Commons Open Database License 1.0 | no: refused: ODbL in license (Open Data Commons Open Database License 1.0); Voronoi path |

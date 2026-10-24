@@ -29,7 +29,7 @@ _Written by `tools/map-pipeline/run.py --region russia-central-asia` (pipeline p
 | Placed by a builder hint (`hints/russia-central-asia.toml`) | 27 |
 | Tiny (under 64 px) | 12 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
-| More than one part (islands, exclaves) | 125 |
+| More than one part (islands, exclaves) | 124 |
 | Coastal flag differs from the CSV | 2 |
 | Small for their region (not Metro, under 5% of the region's mean) | 0 |
 | Voronoi-split blocks where one province takes 75% or more | 6 |
@@ -37,10 +37,10 @@ _Written by `tools/map-pipeline/run.py --region russia-central-asia` (pipeline p
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 4 |
 | Admin-1 units left without a province | 0 |
-| Sea links with a province of this file | 13 |
+| Sea links with a province of this file | 11 |
 | City probe points (fail on a mismatch; D686) | 172 pass, 0 mismatch, 6 listed |
 | Metro reach scan rows (listed; D686) | 1 |
-| Land exclaves of 5 px or more (fail unless explained; D691) | 16 (0 unexplained) |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 19 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
 
@@ -48,33 +48,33 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 
 ## Split giants
 
-Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722 km2 (Eastern Iowa, US-0053) by `run.py giants` and `[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a part over the cap.
+Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722 km2 (Eastern Iowa, US-0053) by `run.py giants` and `[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a part over the cap. Borders between parts (D850, D856): km along rivers and lake centerlines, along the building pieces' edges (licensed ADM2 lines, or town catchments), meandering, and straight; the style is the organic cut kept (D854).
 
-| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces |
-|---|---|---|---|---|---|---|---|
-| RU-0021 | Murmansk-Karelia | 7 | towns | 309,126 | 41,437 | 47,370 | 6 |
-| RU-0022 | Arkhangelsk | 9 | towns | 403,837 | 43,872 | 45,513 | 5 |
-| RU-0023 | Komi-Nenets | 13 | towns | 595,235 | 42,138 | 47,919 | 3 |
-| RU-0050 | Surgut-Khanty-Mansiysk | 9 | towns | 393,177 | 41,064 | 46,102 | 0 |
-| RU-0052 | Yamal | 14 | towns | 686,520 | 47,516 | 50,599 | 7 |
-| RU-0055 | Tomsk | 7 | towns | 314,786 | 44,945 | 44,988 | 1 |
-| RU-0057 | Altai | 6 | towns | 264,526 | 41,814 | 46,400 | 2 |
-| RU-0058 | Krasnoyarsk | 6 | towns | 283,193 | 46,418 | 49,720 | 0 |
-| RU-0060 | Angara-Evenkia | 15 | towns | 693,514 | 44,774 | 47,557 | 0 |
-| RU-0063 | Bratsk-Ust-Kut | 13 | towns | 636,477 | 47,734 | 50,096 | 3 |
-| RU-0065 | Khabarovsk | 17 | towns | 822,968 | 46,834 | 50,729 | 3 |
-| RU-0066 | Amur | 8 | towns | 360,962 | 43,229 | 46,553 | 2 |
-| RU-0069 | Kamchatka | 10 | towns | 463,770 | 44,004 | 49,039 | 5 |
-| RU-0070 | Magadan-Chukotka | 25 | towns | 1,180,854 | 42,788 | 50,810 | 12 |
-| RU-0071 | Yakutsk-Aldan | 27 | towns | 1,319,887 | 48,360 | 49,424 | 5 |
-| RU-0073 | Buryatia | 7 | towns | 332,960 | 47,330 | 47,776 | 2 |
-| RU-0074 | Zabaykalsky | 9 | towns | 432,416 | 45,325 | 49,577 | 2 |
+| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces | River km | Piece-edge km | Meander km | Straight km | Style |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| RU-0021 | Murmansk-Karelia | 7 | towns | 309,127 | 41,982 | 47,042 | 7 | 0 | 759 | 632 | 288 | rivers, meanders, bent town edges |
+| RU-0022 | Arkhangelsk | 9 | towns | 403,837 | 41,934 | 47,103 | 6 | 339 | 322 | 1,784 | 0 | rivers, meanders, bent town edges |
+| RU-0023 | Komi-Nenets | 13 | towns | 595,236 | 44,035 | 47,647 | 2 | 0 | 254 | 2,840 | 0 | rivers, meanders, bent town edges |
+| RU-0050 | Surgut-Khanty-Mansiysk | 9 | towns | 393,177 | 42,294 | 46,246 | 2 | 0 | 703 | 2,133 | 0 | rivers, meanders, bent town edges |
+| RU-0052 | Yamal | 14 | towns | 686,518 | 46,945 | 50,751 | 6 | 0 | 475 | 4,237 | 372 | balanced rivers, meanders, bent town edges (seed RU-0052:2) |
+| RU-0055 | Tomsk | 7 | towns | 314,786 | 44,789 | 45,034 | 0 | 356 | 3 | 751 | 0 | rivers, meanders, bent town edges |
+| RU-0057 | Altai | 6 | towns | 264,525 | 41,814 | 45,266 | 1 | 0 | 496 | 1,199 | 0 | rivers, meanders, bent town edges |
+| RU-0058 | Krasnoyarsk | 6 | towns | 283,193 | 44,257 | 49,196 | 0 | 0 | 563 | 684 | 111 | rivers, meanders, bent town edges |
+| RU-0060 | Angara-Evenkia | 15 | towns | 693,515 | 44,717 | 47,380 | 1 | 465 | 255 | 4,742 | 0 | rivers, meanders, bent town edges |
+| RU-0063 | Bratsk-Ust-Kut | 13 | towns | 636,476 | 46,956 | 50,488 | 3 | 757 | 921 | 2,996 | 0 | rivers, meanders, bent town edges (seed RU-0063:2) |
+| RU-0065 | Khabarovsk | 17 | towns | 822,968 | 46,361 | 50,633 | 3 | 471 | 579 | 5,345 | 0 | rivers, meanders, bent town edges |
+| RU-0066 | Amur | 8 | towns | 360,963 | 43,380 | 48,087 | 0 | 0 | 408 | 2,129 | 0 | rivers, meanders, bent town edges |
+| RU-0069 | Kamchatka | 10 | towns | 463,768 | 42,085 | 48,856 | 5 | 0 | 705 | 1,859 | 362 | rivers, meanders, bent town edges (seed RU-0069:2) |
+| RU-0070 | Magadan-Chukotka | 25 | towns | 1,180,854 | 42,761 | 50,931 | 13 | 0 | 894 | 5,225 | 702 | meanders, bent town edges |
+| RU-0071 | Yakutsk-Aldan | 27 | towns | 1,319,887 | 47,977 | 49,663 | 4 | 0 | 831 | 7,731 | 1,596 | meanders, bent town edges |
+| RU-0073 | Buryatia | 7 | towns | 332,961 | 46,612 | 47,905 | 2 | 0 | 61 | 1,604 | 0 | rivers, meanders, bent town edges |
+| RU-0074 | Zabaykalsky | 9 | towns | 432,416 | 45,395 | 50,436 | 2 | 356 | 951 | 1,384 | 124 | rivers, meanders, bent town edges |
 
 ## Sources and licenses
 
 | Boundary file | License | Used |
 |---|---|---|
-| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes) | Public domain | yes |
+| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes, river and lake centerlines) | Public domain | yes |
 | geoBoundaries gbOpen AZE ADM2 (Wikipedia) | Creative Commons Attribution-ShareAlike 3.0 Unported | no: refused: ShareAlike in license (Creative Commons Attribution-ShareAlike 3.0 Unported); Voronoi path |
 | geoBoundaries gbOpen GEO ADM2 (geoBoundaries, Wikimedia Commons) | Public Domain | yes |
 | geoBoundaries gbOpen KAZ ADM2 (OpenStreetMap, Wambacher) | Open Data Commons Open Database License 1.0 | no: refused: ODbL in license (Open Data Commons Open Database License 1.0); Voronoi path |
@@ -368,8 +368,11 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 | RU-0028 | Volgograd | 5 | 45.32, 48.47 | a neck under a pixel wide joins it to the rest in the shapes |
 | RU-0039 | Tolyatti-Syzran | 25 | 51.09, 54.51 | a neck under a pixel wide joins it to the rest in the shapes |
 | RU-0042 | Chuvashia-Mari El-Mordovia | 6 | 42.28, 54.22 | a neck under a pixel wide joins it to the rest in the shapes |
-| RU-0079 | Segezha | 6 | 37.62, 62.19 | a neck under a pixel wide joins it to the rest in the shapes |
-| RU-0174 | Chegdomyn | 779 | 132.29, 53.53 | a straight cut across Khabarovsk's interior left this piece (about 8,100 km2) on RU-0174's side; joined to any part it touches (RU-0170, RU-0171, RU-0184) it would put that part over the cap (D822) |
+| RU-0120 | Noyabrsk | 9 | 83.15, 63.97 | a neck under a pixel wide joins it to the rest in the shapes |
+| RU-0149 | Angara West 3 | 35 | 88.48, 58.88 | a neck under a pixel wide joins it to the rest in the shapes |
+| RU-0159 | Ust-Ulimsk | 112 | 103.4, 55.13 | a neck under a pixel wide joins it to the rest in the shapes |
+| RU-0174 | Chegdomyn | 1212 | 132.16, 53.67 | a straight cut across Khabarovsk's interior left this piece (about 8,100 km2) on RU-0174's side; joined to any part it touches (RU-0170, RU-0171, RU-0184) it would put that part over the cap (D822) |
+| RU-0199 | Mys Shmidta | 24 | 174.98, 68.33 | a neck under a pixel wide joins it to the rest in the shapes |
 | TJ-0006 | Istaravshan-Isfara | 344 | 70.31, 40.49 | its own seed point 70.63,40.12 (hint) lies in it |
 | TJ-0006 | Istaravshan-Isfara | 7 | 70.58, 39.84 | Vorukh: Tajikistan's real exclave inside Kyrgyzstan |
 | TM-0002 | Anau-Tejen | 15 | 61.32, 37.24 | a neck under a pixel wide joins it to the rest in the shapes |
@@ -488,7 +491,7 @@ None.
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-JP-0018-RU-0067, JP-0019-RU-0068, RU-0022-RU-0076, RU-0022-RU-0077, RU-0022-RU-0078, RU-0025-UA-0016, RU-0026-UA-0020, RU-0067-RU-0172, RU-0067-RU-0176, RU-0068-RU-0069, RU-0076-RU-0083, RU-0083-RU-0089, RU-0206-US-0169
+JP-0018-RU-0067, JP-0019-RU-0068, RU-0022-RU-0076, RU-0025-UA-0016, RU-0026-UA-0020, RU-0067-RU-0172, RU-0067-RU-0176, RU-0068-RU-0069, RU-0076-RU-0083, RU-0083-RU-0089, RU-0206-US-0169
 
 ## Small provinces
 
@@ -528,8 +531,8 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-RU-0059 (82), RU-0081 (41), RU-0072 (27), RU-0068 (23), RU-0083 (18), RU-0199 (13), RU-0090 (12), RU-0109 (12), RU-0194 (11), RU-0206 (11), RU-0019 (10), RU-0067 (10), RU-0089 (10), RU-0172 (10), RU-0018 (9), RU-0080 (9), RU-0196 (9), RU-0111 (8), TM-0004 (8), KZ-0015 (7), RU-0026 (7), RU-0190 (7), RU-0211 (7), TM-0005 (7), AZ-0001 (6), RU-0077 (6), TJ-0006 (6), KZ-0016 (5), RU-0029 (5), RU-0110 (5), RU-0197 (5), RU-0219 (5), RU-0241 (5), KZ-0005 (4), KZ-0013 (4), RU-0036 (4), RU-0042 (4), RU-0064 (4), RU-0066 (4), RU-0070 (4), RU-0071 (4), RU-0114 (4), RU-0191 (4), RU-0195 (4), RU-0220 (4), RU-0222 (4), TM-0002 (4), UZ-0006 (4), AZ-0003 (3), KZ-0012 (3), RU-0003 (3), RU-0016 (3), RU-0039 (3), RU-0043 (3), RU-0052 (3), RU-0069 (3), RU-0075 (3), RU-0079 (3), RU-0082 (3), RU-0152 (3), RU-0153 (3), RU-0203 (3), RU-0205 (3), UZ-0017 (3), AM-0003 (2), AZ-0002 (2), AZ-0006 (2), GE-0006 (2), KG-0004 (2), KG-0006 (2), KZ-0004 (2), KZ-0014 (2), KZ-0017 (2), KZ-0020 (2), RU-0007 (2), RU-0008 (2), RU-0009 (2), RU-0021 (2), RU-0022 (2), RU-0025 (2), RU-0028 (2), RU-0031 (2), RU-0033 (2), RU-0034 (2), RU-0035 (2), RU-0037 (2), RU-0040 (2), RU-0041 (2), RU-0044 (2), RU-0045 (2), RU-0046 (2), RU-0049 (2), RU-0053 (2), RU-0054 (2), RU-0055 (2), RU-0062 (2), RU-0065 (2), RU-0073 (2), RU-0078 (2), RU-0088 (2), RU-0095 (2), RU-0116 (2), RU-0120 (2), RU-0128 (2), RU-0129 (2), RU-0162 (2), RU-0174 (2), RU-0182 (2), RU-0207 (2), RU-0212 (2), RU-0217 (2), RU-0245 (2), RU-0247 (2), RU-0253 (2), RU-0257 (2), TJ-0003 (2), TJ-0005 (2), TM-0006 (2), TM-0012 (2), UZ-0002 (2), UZ-0004 (2), UZ-0005 (2), UZ-0008 (2), UZ-0014 (2), UZ-0015 (2)
+RU-0059 (82), RU-0081 (41), RU-0072 (27), RU-0068 (23), RU-0199 (16), RU-0083 (14), RU-0109 (12), RU-0089 (11), RU-0090 (11), RU-0206 (11), RU-0019 (10), RU-0067 (10), RU-0194 (10), RU-0018 (9), RU-0080 (9), RU-0082 (9), RU-0172 (9), RU-0196 (9), RU-0111 (8), TM-0004 (8), KZ-0015 (7), RU-0026 (7), RU-0211 (7), TM-0005 (7), AZ-0001 (6), RU-0078 (6), RU-0120 (6), TJ-0006 (6), KZ-0016 (5), RU-0029 (5), RU-0190 (5), RU-0219 (5), RU-0222 (5), KZ-0005 (4), KZ-0013 (4), RU-0036 (4), RU-0042 (4), RU-0064 (4), RU-0070 (4), RU-0077 (4), RU-0110 (4), RU-0191 (4), RU-0195 (4), RU-0197 (4), RU-0220 (4), TM-0002 (4), UZ-0006 (4), AZ-0003 (3), KZ-0012 (3), RU-0003 (3), RU-0016 (3), RU-0039 (3), RU-0043 (3), RU-0052 (3), RU-0069 (3), RU-0073 (3), RU-0075 (3), RU-0114 (3), RU-0152 (3), RU-0203 (3), RU-0205 (3), RU-0241 (3), UZ-0017 (3), AM-0003 (2), AZ-0002 (2), AZ-0006 (2), GE-0006 (2), KG-0004 (2), KG-0006 (2), KZ-0004 (2), KZ-0014 (2), KZ-0017 (2), KZ-0020 (2), RU-0007 (2), RU-0008 (2), RU-0009 (2), RU-0021 (2), RU-0022 (2), RU-0025 (2), RU-0028 (2), RU-0031 (2), RU-0033 (2), RU-0034 (2), RU-0035 (2), RU-0037 (2), RU-0040 (2), RU-0041 (2), RU-0044 (2), RU-0045 (2), RU-0046 (2), RU-0049 (2), RU-0053 (2), RU-0054 (2), RU-0062 (2), RU-0065 (2), RU-0076 (2), RU-0079 (2), RU-0085 (2), RU-0088 (2), RU-0104 (2), RU-0106 (2), RU-0128 (2), RU-0149 (2), RU-0159 (2), RU-0162 (2), RU-0174 (2), RU-0207 (2), RU-0209 (2), RU-0212 (2), RU-0217 (2), RU-0236 (2), RU-0247 (2), RU-0253 (2), RU-0255 (2), TJ-0003 (2), TJ-0005 (2), TM-0006 (2), TM-0012 (2), UZ-0002 (2), UZ-0004 (2), UZ-0005 (2), UZ-0008 (2), UZ-0014 (2), UZ-0015 (2)
 
 ## Visual check
 
-`preview-russia-central-asia.png` in this folder is province-ids.png around the region (pixels x 4332..404, y 55..1993, scaled by 0.56).
+`preview-russia-central-asia.png` in this folder is province-ids.png around the region (pixels x 4332..404, y 57..1993, scaled by 0.56).

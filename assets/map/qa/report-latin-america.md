@@ -56,7 +56,7 @@ _Written by `tools/map-pipeline/run.py --region latin-america` (pipeline pb-2). 
 | Placed by a builder hint (`hints/latin-america.toml`) | 19 |
 | Tiny (under 64 px) | 43 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
-| More than one part (islands, exclaves) | 166 |
+| More than one part (islands, exclaves) | 168 |
 | Coastal flag differs from the CSV | 22 |
 | Small for their region (not Metro, under 5% of the region's mean) | 0 |
 | Voronoi-split blocks where one province takes 75% or more | 6 |
@@ -64,10 +64,10 @@ _Written by `tools/map-pipeline/run.py --region latin-america` (pipeline pb-2). 
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 7 |
 | Admin-1 units left without a province | 0 |
-| Sea links with a province of this file | 20 |
+| Sea links with a province of this file | 19 |
 | City probe points (fail on a mismatch; D686) | 130 pass, 0 mismatch, 14 listed |
 | Metro reach scan rows (listed; D686) | 0 |
-| Land exclaves of 5 px or more (fail unless explained; D691) | 7 (0 unexplained) |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 10 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 5 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 2 |
 
@@ -75,28 +75,28 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 
 ## Split giants
 
-Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722 km2 (Eastern Iowa, US-0053) by `run.py giants` and `[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a part over the cap.
+Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722 km2 (Eastern Iowa, US-0053) by `run.py giants` and `[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a part over the cap. Borders between parts (D850, D856): km along rivers and lake centerlines, along the building pieces' edges (licensed ADM2 lines, or town catchments), meandering, and straight; the style is the organic cut kept (D854).
 
-| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces |
-|---|---|---|---|---|---|---|---|
-| BR-0039 | Bahia Sertao-Feira de Santana | 7 | admin2 | 322,321 | 43,319 | 48,922 | 1 |
-| BR-0045 | Carajas-Southeast Para | 11 | admin2 | 516,989 | 44,132 | 50,647 | 4 |
-| BR-0046 | West Para-Santarem | 11 | admin2 | 522,194 | 45,620 | 49,441 | 7 |
-| BR-0047 | Manaus | 10 | admin2 | 462,331 | 43,375 | 48,958 | 2 |
-| BR-0048 | Interior Amazonas | 23 | admin2 | 1,103,078 | 43,558 | 50,278 | 7 |
-| BR-0055 | North Mato Grosso | 9 | admin2 | 415,313 | 43,793 | 48,757 | 3 |
-| BR-0056 | East Mato Grosso-Araguaia | 7 | admin2 | 315,721 | 43,346 | 47,564 | 2 |
-| BR-0057 | Mato Grosso do Sul | 8 | admin2 | 356,045 | 42,198 | 47,080 | 5 |
-| BR-0062 | Piaui | 6 | admin2 | 252,008 | 40,025 | 44,361 | 1 |
-| BR-0063 | Tocantins | 6 | admin2 | 278,971 | 43,653 | 49,753 | 3 |
-| CO-0028 | Colombian Amazon and Vichada | 8 | admin2 | 385,966 | 46,684 | 50,503 | 2 |
-| PE-0023 | Iquitos-Loreto | 8 | admin2 | 373,778 | 43,182 | 48,176 | 4 |
+| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces | River km | Piece-edge km | Meander km | Straight km | Style |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| BR-0039 | Bahia Sertao-Feira de Santana | 7 | admin2 | 322,321 | 43,532 | 48,611 | 1 | 0 | 2,348 | 0 | 0 | rivers, meanders, bent town edges |
+| BR-0045 | Carajas-Southeast Para | 11 | admin2 | 516,989 | 44,143 | 49,046 | 3 | 864 | 2,213 | 1,965 | 0 | rivers, meanders, bent town edges (seed BR-0045:3) |
+| BR-0046 | West Para-Santarem | 11 | admin2 | 522,194 | 44,778 | 48,731 | 3 | 69 | 1,961 | 1,854 | 95 | rivers, meanders, bent town edges |
+| BR-0047 | Manaus | 10 | admin2 | 462,331 | 44,380 | 48,328 | 4 | 110 | 3,209 | 1,086 | 0 | rivers, meanders, bent town edges |
+| BR-0048 | Interior Amazonas | 23 | admin2 | 1,103,078 | 43,771 | 50,328 | 9 | 0 | 4,179 | 6,542 | 0 | meanders, bent town edges (seed BR-0048:2) |
+| BR-0055 | North Mato Grosso | 9 | admin2 | 415,313 | 42,065 | 50,921 | 3 | 0 | 3,392 | 957 | 0 | rivers, meanders, bent town edges (seed BR-0055:2) |
+| BR-0056 | East Mato Grosso-Araguaia | 7 | admin2 | 315,721 | 41,819 | 47,504 | 3 | 0 | 2,333 | 347 | 0 | rivers, meanders, bent town edges |
+| BR-0057 | Mato Grosso do Sul | 8 | admin2 | 356,044 | 42,027 | 47,012 | 5 | 0 | 3,778 | 743 | 0 | rivers, meanders, bent town edges |
+| BR-0062 | Piaui | 6 | admin2 | 252,008 | 39,556 | 44,361 | 2 | 0 | 2,619 | 0 | 0 | rivers, meanders, bent town edges |
+| BR-0063 | Tocantins | 6 | admin2 | 278,971 | 44,205 | 49,753 | 4 | 0 | 3,184 | 210 | 0 | rivers, meanders, bent town edges |
+| CO-0028 | Colombian Amazon and Vichada | 8 | admin2 | 385,967 | 46,797 | 49,965 | 2 | 65 | 967 | 1,480 | 0 | rivers, meanders, bent town edges |
+| PE-0023 | Iquitos-Loreto | 8 | admin2 | 373,776 | 43,917 | 49,348 | 4 | 92 | 522 | 1,280 | 0 | rivers, meanders, bent town edges |
 
 ## Sources and licenses
 
 | Boundary file | License | Used |
 |---|---|---|
-| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes) | Public domain | yes |
+| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes, river and lake centerlines) | Public domain | yes |
 | geoBoundaries gbOpen ARG ADM2 (Instituto Geografico Nacional and UNHCR, OCHA ROLAC) | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | yes |
 | geoBoundaries gbOpen BOL ADM2 (GeoBolivia, Derived from ADM3 layer) | Public Domain | yes |
 | geoBoundaries gbOpen BRA ADM2 (Instituto Brasileiro de Geografia e Estatística (IBGE), OCHA ROLAC) | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | yes |
@@ -382,10 +382,13 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 |---|---|---|---|---|
 | BR-0007 | Sorocaba-Southwest Sao Paulo | 9 | -46.93, -23.85 | a neck under a pixel wide joins it to the rest in the shapes |
 | BR-0032 | Serra Gaucha-Caxias | 8 | -49.99, -29.25 | Mampituba meets the rest of Serra Gaucha only at a corner of Sao Francisco de Paula, so its pixels stand apart |
+| BR-0096 | Parintins | 47 | -58.9, -0.14 | a neck under a pixel wide joins it to the rest in the shapes |
+| BR-0106 | Maraa | 19 | -65.61, 0.87 | a neck under a pixel wide joins it to the rest in the shapes |
 | BR-0125 | Colniza | 5 | -58.41, -8.43 | a neck under a pixel wide joins it to the rest in the shapes |
 | BR-0154 | Gurupi | 5 | -47.82, -12.12 | a neck under a pixel wide joins it to the rest in the shapes |
-| CO-0036 | La Chorrera | 214 | -71.52, 0.46 | a neck under a pixel wide joins it to the rest in the shapes |
+| CO-0036 | La Chorrera | 196 | -71.56, 0.47 | a neck under a pixel wide joins it to the rest in the shapes |
 | CR-0001 | San Jose Centro | 23 | -84.0, 10.0 | its own seed point -84.08,9.93 (hint) lies in it |
+| PE-0034 | Contamana | 15 | -76.56, -5.97 | a neck under a pixel wide joins it to the rest in the shapes |
 | UY-0007 | Rivera-Artigas | 503 | -55.26, -31.48 | composite name: Rivera lies in it |
 
 ## Known for review
@@ -545,7 +548,7 @@ None.
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-AR-0001-UY-0004, AR-0002-UY-0004, AR-0004-UY-0004, AR-0005-UY-0004, BR-0010-BR-0013, BR-0044-BR-0066, BS-0001-BS-0004, BS-0002-BS-0003, BS-0003-BS-0004, CU-0003-CU-0013, CU-0004-CU-0013, DM-0001-FR-0040, DM-0001-FR-0041, FR-0041-LC-0001, GD-0001-VC-0001, LC-0001-VC-0001, TT-0001-VE-0019, TT-0002-TT-0005, TT-0004-VE-0010, VE-0019-VE-0020
+AR-0001-UY-0004, AR-0002-UY-0004, AR-0004-UY-0004, AR-0005-UY-0004, BR-0010-BR-0013, BS-0001-BS-0004, BS-0002-BS-0003, BS-0003-BS-0004, CU-0003-CU-0013, CU-0004-CU-0013, DM-0001-FR-0040, DM-0001-FR-0041, FR-0041-LC-0001, GD-0001-VC-0001, LC-0001-VC-0001, TT-0001-VE-0019, TT-0002-TT-0005, TT-0004-VE-0010, VE-0019-VE-0020
 
 ## Small provinces
 
@@ -605,7 +608,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-CL-0022 (101), CL-0021 (52), BS-0004 (48), PP-0001 (26), BS-0003 (18), BR-0049 (17), BR-0092 (14), CL-0020 (13), BR-0044 (11), BZ-0001 (10), EC-0015 (9), HN-0004 (9), VE-0010 (9), HN-0003 (8), PE-0031 (8), CR-0008 (7), CU-0004 (7), CU-0005 (7), CU-0006 (7), CU-0013 (7), AR-0008 (6), BR-0035 (6), CU-0007 (6), PA-0005 (6), VE-0002 (6), VG-0001 (6), AR-0025 (5), BR-0056 (5), GY-0003 (5), KY-0001 (5), NI-0004 (5), NI-0008 (5), PA-0001 (5), PA-0007 (5), PE-0034 (5), BR-0006 (4), BR-0007 (4), BR-0015 (4), BR-0022 (4), BR-0033 (4), BR-0050 (4), BR-0059 (4), BR-0066 (4), BR-0089 (4), BR-0121 (4), BR-0125 (4), CL-0008 (4), CO-0005 (4), CO-0010 (4), CO-0012 (4), CO-0026 (4), EC-0002 (4), KN-0001 (4), PA-0004 (4), VE-0013 (4), AR-0013 (3), BR-0009 (3), BR-0027 (3), BR-0032 (3), BR-0057 (3), BR-0065 (3), BR-0110 (3), BR-0152 (3), CL-0007 (3), CL-0011 (3), CO-0006 (3), CO-0008 (3), CO-0023 (3), CR-0001 (3), CU-0009 (3), DO-0001 (3), EC-0014 (3), GY-0002 (3), HN-0002 (3), HT-0006 (3), PR-0003 (3), PY-0010 (3), VC-0001 (3), VE-0020 (3), AG-0001 (2), AR-0006 (2), AR-0031 (2), BO-0009 (2), BO-0016 (2), BR-0004 (2), BR-0017 (2), BR-0018 (2), BR-0019 (2), BR-0021 (2), BR-0023 (2), BR-0024 (2), BR-0030 (2), BR-0034 (2), BR-0037 (2), BR-0039 (2), BR-0040 (2), BR-0043 (2), BR-0045 (2), BR-0046 (2), BR-0047 (2), BR-0051 (2), BR-0052 (2), BR-0054 (2), BR-0055 (2), BR-0058 (2), BR-0061 (2), BR-0074 (2), BR-0079 (2), BR-0081 (2), BR-0084 (2), BR-0086 (2), BR-0090 (2), BR-0091 (2), BR-0097 (2), BR-0109 (2), BR-0111 (2), BR-0112 (2), BR-0113 (2), BR-0123 (2), BR-0130 (2), BR-0136 (2), BR-0140 (2), BR-0141 (2), BR-0144 (2), BR-0145 (2), BR-0146 (2), BR-0154 (2), BR-0155 (2), BS-0002 (2), BZ-0002 (2), CL-0015 (2), CL-0017 (2), CL-0019 (2), CO-0015 (2), CO-0018 (2), CO-0029 (2), CO-0030 (2), CO-0036 (2), CR-0007 (2), CU-0012 (2), DO-0002 (2), DO-0007 (2), EC-0003 (2), EC-0010 (2), GD-0001 (2), GT-0004 (2), GT-0006 (2), GT-0011 (2), HN-0010 (2), HT-0001 (2), HT-0004 (2), PA-0010 (2), PE-0001 (2), PE-0004 (2), PE-0017 (2), PE-0020 (2), PE-0029 (2), PE-0033 (2), PR-0005 (2), PR-0007 (2), TT-0001 (2), TT-0005 (2), UY-0007 (2), VE-0006 (2), VE-0016 (2), VE-0019 (2)
+CL-0022 (101), CL-0021 (52), BS-0004 (48), PP-0001 (26), BS-0003 (18), BR-0049 (17), BR-0092 (13), CL-0020 (13), BR-0044 (11), BZ-0001 (10), PE-0031 (10), EC-0015 (9), HN-0004 (9), VE-0010 (9), HN-0003 (8), CR-0008 (7), CU-0004 (7), CU-0005 (7), CU-0006 (7), CU-0013 (7), AR-0008 (6), BR-0035 (6), CU-0007 (6), PA-0005 (6), VE-0002 (6), VG-0001 (6), AR-0025 (5), BR-0056 (5), BR-0089 (5), GY-0003 (5), KY-0001 (5), NI-0004 (5), NI-0008 (5), PA-0001 (5), PA-0007 (5), PE-0034 (5), BR-0006 (4), BR-0007 (4), BR-0015 (4), BR-0022 (4), BR-0033 (4), BR-0050 (4), BR-0059 (4), BR-0066 (4), BR-0084 (4), BR-0110 (4), BR-0121 (4), BR-0125 (4), CL-0008 (4), CO-0005 (4), CO-0010 (4), CO-0012 (4), CO-0026 (4), EC-0002 (4), KN-0001 (4), PA-0004 (4), VE-0013 (4), AR-0013 (3), BR-0009 (3), BR-0027 (3), BR-0032 (3), BR-0047 (3), BR-0055 (3), BR-0057 (3), BR-0065 (3), BR-0106 (3), BR-0140 (3), BR-0152 (3), CL-0007 (3), CL-0011 (3), CO-0006 (3), CO-0008 (3), CO-0023 (3), CR-0001 (3), CU-0009 (3), DO-0001 (3), EC-0014 (3), GY-0002 (3), HN-0002 (3), HT-0006 (3), PR-0003 (3), PY-0010 (3), VC-0001 (3), VE-0020 (3), AG-0001 (2), AR-0006 (2), AR-0031 (2), BO-0009 (2), BO-0016 (2), BR-0004 (2), BR-0017 (2), BR-0018 (2), BR-0019 (2), BR-0021 (2), BR-0023 (2), BR-0024 (2), BR-0030 (2), BR-0034 (2), BR-0037 (2), BR-0039 (2), BR-0040 (2), BR-0043 (2), BR-0048 (2), BR-0051 (2), BR-0052 (2), BR-0054 (2), BR-0058 (2), BR-0061 (2), BR-0074 (2), BR-0081 (2), BR-0083 (2), BR-0096 (2), BR-0097 (2), BR-0101 (2), BR-0109 (2), BR-0111 (2), BR-0112 (2), BR-0122 (2), BR-0123 (2), BR-0130 (2), BR-0135 (2), BR-0136 (2), BR-0141 (2), BR-0144 (2), BR-0145 (2), BR-0146 (2), BR-0148 (2), BR-0151 (2), BR-0154 (2), BR-0155 (2), BS-0002 (2), BZ-0002 (2), CL-0015 (2), CL-0017 (2), CL-0019 (2), CO-0015 (2), CO-0018 (2), CO-0029 (2), CO-0031 (2), CO-0036 (2), CR-0007 (2), CU-0012 (2), DO-0002 (2), DO-0007 (2), EC-0003 (2), EC-0010 (2), GD-0001 (2), GT-0004 (2), GT-0006 (2), GT-0011 (2), HN-0010 (2), HT-0001 (2), HT-0004 (2), PA-0010 (2), PE-0001 (2), PE-0004 (2), PE-0017 (2), PE-0020 (2), PE-0029 (2), PE-0033 (2), PR-0005 (2), PR-0007 (2), TT-0001 (2), TT-0005 (2), UY-0007 (2), VE-0006 (2), VE-0016 (2), VE-0019 (2)
 
 ## Visual check
 

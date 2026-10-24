@@ -83,7 +83,7 @@ RU-0081,Arkhangelsk Northeast,RUS,Arkhangelsk,Russian North (Northwestern),,none
 RU-0082,Matochkin Shar,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,Y,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820); towns: Matochkin Shar
 RU-0083,Mezen,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,Y,,,,"split from RU-0022 Arkhangelsk in the giant-province split (D820); towns: Mezen, Krasino, Rusanovo"
 RU-0084,Arkhangelsk East,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820)
-RU-0085,Arkhangelsk West,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,Y,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820)
+RU-0085,Arkhangelsk West,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820)
 RU-0086,Kotlas,RUS,Arkhangelsk,Russian North (Northwestern),,Town,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820); towns: Kotlas
 RU-0087,Arkhangelsk Southeast,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820)
 RU-0088,Velsk,RUS,Arkhangelsk,Russian North (Northwestern),,Town,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820); towns: Velsk
@@ -186,7 +186,7 @@ RU-0184,Amur Northeast,RUS,Amur,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Te
 RU-0185,Amur Southwest,RUS,Amur,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0066 Amur in the giant-province split (D820)
 RU-0186,Belogorsk,RUS,Amur,Amur-Pacific (Far Eastern),,Town,1,1,1,Timber,Temperate,N,,,,"split from RU-0066 Amur in the giant-province split (D820); towns: Belogorsk, Svobodnyy, Shimanovsk"
 RU-0187,Manily,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Manily
-RU-0188,Kamchatka Northeast,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820)
+RU-0188,Kamchatka Northeast,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,N,,,,split from RU-0069 Kamchatka in the giant-province split (D820)
 RU-0189,Kamchatka East,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820)
 RU-0190,Korf,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,"split from RU-0069 Kamchatka in the giant-province split (D820); towns: Korf, Il'pyrskiy, Pakhachi"
 RU-0191,Palana,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Palana

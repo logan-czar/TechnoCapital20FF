@@ -88,22 +88,22 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 
 ## Split giants
 
-Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722 km2 (Eastern Iowa, US-0053) by `run.py giants` and `[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a part over the cap.
+Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722 km2 (Eastern Iowa, US-0053) by `run.py giants` and `[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a part over the cap. Borders between parts (D850, D856): km along rivers and lake centerlines, along the building pieces' edges (licensed ADM2 lines, or town catchments), meandering, and straight; the style is the organic cut kept (D854).
 
-| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces |
-|---|---|---|---|---|---|---|---|
-| ML-0015 | Timbuktu-Taoudenit | 11 | admin2 | 504,050 | 43,467 | 48,052 | 3 |
-| MR-0004 | Zouerate-Fderik | 6 | towns | 258,928 | 42,963 | 43,311 | 0 |
-| NE-0004 | Bilma-Djado | 9 | admin2 | 415,280 | 46,047 | 46,232 | 1 |
-| SD-0013 | Dongola-Merowe | 8 | admin2 | 363,161 | 43,083 | 47,880 | 2 |
-| SD-0018 | El Fasher | 6 | admin2 | 285,212 | 47,384 | 47,896 | 0 |
-| TD-0016 | Faya-Tibesti | 8 | towns | 368,408 | 44,049 | 48,121 | 0 |
+| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces | River km | Piece-edge km | Meander km | Straight km | Style |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| ML-0015 | Timbuktu-Taoudenit | 11 | admin2 | 504,051 | 43,102 | 48,767 | 4 | 0 | 953 | 2,887 | 0 | rivers, meanders, bent town edges |
+| MR-0004 | Zouerate-Fderik | 6 | towns | 258,928 | 40,920 | 44,581 | 0 | 0 | 128 | 1,580 | 0 | rivers, meanders, bent town edges |
+| NE-0004 | Bilma-Djado | 9 | admin2 | 415,280 | 46,064 | 46,239 | 1 | 0 | 20 | 2,797 | 0 | rivers, meanders, bent town edges |
+| SD-0013 | Dongola-Merowe | 8 | admin2 | 363,161 | 43,232 | 47,679 | 1 | 0 | 64 | 2,622 | 0 | rivers, meanders, bent town edges |
+| SD-0018 | El Fasher | 6 | admin2 | 285,212 | 45,771 | 49,589 | 0 | 0 | 597 | 1,141 | 0 | rivers, meanders, bent town edges |
+| TD-0016 | Faya-Tibesti | 8 | towns | 368,408 | 44,476 | 47,667 | 0 | 0 | 75 | 1,596 | 0 | rivers, meanders, bent town edges |
 
 ## Sources and licenses
 
 | Boundary file | License | Used |
 |---|---|---|
-| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes) | Public domain | yes |
+| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes, river and lake centerlines) | Public domain | yes |
 | geoBoundaries gbOpen AGO ADM2 (geoBoundaries, Wikimedia Commons) | Public Domain | yes |
 | geoBoundaries gbOpen BDI ADM1 (geoBoundaries, Wikimedia) | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication | yes |
 | geoBoundaries gbOpen BEN ADM1 (geoBoundaries, Wikimedia Commons) | Public Domain | yes |
@@ -730,7 +730,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-KE-0003 (25), NE-0002 (20), GW-0004 (11), SC-0001 (7), UG-0002 (7), UG-0003 (7), CV-0002 (6), ML-0023 (6), TZ-0012 (6), ER-0005 (5), GA-0002 (5), KE-0004 (5), KE-0006 (5), ML-0020 (5), MR-0002 (5), AO-0003 (4), AO-0011 (4), CI-0003 (4), CI-0004 (4), CV-0001 (4), ET-0022 (4), MG-0008 (4), MG-0009 (4), ML-0005 (4), MU-0004 (4), SD-0015 (4), TG-0004 (4), TZ-0015 (4), ZA-0009 (4), ZA-0018 (4), ZA-0028 (4), BI-0004 (3), GH-0006 (3), KE-0002 (3), KE-0018 (3), MG-0006 (3), MZ-0004 (3), NE-0003 (3), NE-0009 (3), NG-0001 (3), NG-0004 (3), NG-0014 (3), SD-0011 (3), SD-0023 (3), SS-0002 (3), TZ-0003 (3), UG-0006 (3), ZM-0009 (3), ZM-0010 (3), AO-0002 (2), AO-0020 (2), BF-0010 (2), BJ-0004 (2), BW-0006 (2), BW-0007 (2), CD-0002 (2), CD-0003 (2), CD-0016 (2), CD-0017 (2), CF-0003 (2), CF-0004 (2), CF-0009 (2), CG-0003 (2), CI-0002 (2), CI-0007 (2), CI-0008 (2), CI-0013 (2), CM-0002 (2), CM-0004 (2), CM-0005 (2), CM-0006 (2), CM-0009 (2), ET-0020 (2), ET-0027 (2), GA-0003 (2), GH-0004 (2), GH-0011 (2), GH-0015 (2), GN-0002 (2), GN-0003 (2), GN-0007 (2), GN-0008 (2), GN-0012 (2), GQ-0002 (2), KE-0007 (2), KE-0010 (2), KE-0014 (2), KE-0021 (2), KM-0002 (2), LR-0002 (2), ML-0003 (2), ML-0006 (2), ML-0007 (2), ML-0015 (2), MR-0008 (2), MW-0002 (2), MW-0008 (2), MW-0009 (2), MZ-0002 (2), NA-0008 (2), NE-0016 (2), NE-0017 (2), NE-0022 (2), NG-0003 (2), NG-0027 (2), SD-0024 (2), SD-0030 (2), SL-0001 (2), SL-0004 (2), SL-0005 (2), SN-0006 (2), SN-0011 (2), SO-0001 (2), SO-0007 (2), SO-0009 (2), ST-0001 (2), TD-0009 (2), TD-0011 (2), TD-0014 (2), TG-0007 (2), TZ-0007 (2), TZ-0008 (2), TZ-0013 (2), TZ-0018 (2), TZ-0021 (2), TZ-0022 (2), TZ-0023 (2), UG-0004 (2), UG-0005 (2), UG-0008 (2), UG-0015 (2), UG-0016 (2), ZA-0002 (2), ZA-0006 (2), ZA-0008 (2), ZA-0013 (2), ZA-0016 (2), ZA-0017 (2), ZA-0022 (2), ZA-0024 (2), ZA-0029 (2), ZA-0031 (2), ZA-0032 (2), ZM-0003 (2), ZM-0012 (2), ZW-0004 (2), ZW-0012 (2)
+KE-0003 (25), NE-0002 (20), GW-0004 (11), SC-0001 (7), UG-0002 (7), UG-0003 (7), CV-0002 (6), ML-0023 (6), TZ-0012 (6), ER-0005 (5), GA-0002 (5), KE-0004 (5), KE-0006 (5), ML-0020 (5), MR-0002 (5), AO-0003 (4), AO-0011 (4), CI-0003 (4), CI-0004 (4), CV-0001 (4), ET-0022 (4), MG-0008 (4), MG-0009 (4), ML-0005 (4), MU-0004 (4), SD-0015 (4), TG-0004 (4), TZ-0015 (4), ZA-0009 (4), ZA-0018 (4), ZA-0028 (4), BI-0004 (3), GH-0006 (3), KE-0002 (3), KE-0018 (3), MG-0006 (3), ML-0027 (3), MZ-0004 (3), NE-0003 (3), NE-0009 (3), NG-0001 (3), NG-0004 (3), NG-0014 (3), SD-0011 (3), SD-0023 (3), SS-0002 (3), TZ-0003 (3), UG-0006 (3), ZM-0009 (3), ZM-0010 (3), AO-0002 (2), AO-0020 (2), BF-0010 (2), BJ-0004 (2), BW-0006 (2), BW-0007 (2), CD-0002 (2), CD-0003 (2), CD-0016 (2), CD-0017 (2), CF-0003 (2), CF-0004 (2), CF-0009 (2), CG-0003 (2), CI-0002 (2), CI-0007 (2), CI-0008 (2), CI-0013 (2), CM-0002 (2), CM-0004 (2), CM-0005 (2), CM-0006 (2), CM-0009 (2), ET-0020 (2), ET-0027 (2), GA-0003 (2), GH-0004 (2), GH-0011 (2), GH-0015 (2), GN-0002 (2), GN-0003 (2), GN-0007 (2), GN-0008 (2), GN-0012 (2), GQ-0002 (2), KE-0007 (2), KE-0010 (2), KE-0014 (2), KE-0021 (2), KM-0002 (2), LR-0002 (2), ML-0003 (2), ML-0006 (2), ML-0007 (2), ML-0015 (2), MR-0008 (2), MW-0002 (2), MW-0008 (2), MW-0009 (2), MZ-0002 (2), NA-0008 (2), NE-0016 (2), NE-0017 (2), NE-0022 (2), NG-0003 (2), NG-0027 (2), SD-0030 (2), SL-0001 (2), SL-0004 (2), SL-0005 (2), SN-0006 (2), SN-0011 (2), SO-0001 (2), SO-0007 (2), SO-0009 (2), ST-0001 (2), TD-0009 (2), TD-0011 (2), TD-0014 (2), TG-0007 (2), TZ-0007 (2), TZ-0008 (2), TZ-0013 (2), TZ-0018 (2), TZ-0021 (2), TZ-0022 (2), TZ-0023 (2), UG-0004 (2), UG-0005 (2), UG-0008 (2), UG-0015 (2), UG-0016 (2), ZA-0002 (2), ZA-0006 (2), ZA-0008 (2), ZA-0013 (2), ZA-0016 (2), ZA-0017 (2), ZA-0022 (2), ZA-0024 (2), ZA-0029 (2), ZA-0031 (2), ZA-0032 (2), ZM-0003 (2), ZM-0012 (2), ZW-0004 (2), ZW-0012 (2)
 
 ## Visual check
 

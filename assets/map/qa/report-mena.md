@@ -39,7 +39,7 @@ _Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-2). Source of
 | Placed by a builder hint (`hints/mena.toml`) | 80 |
 | Tiny (under 64 px) | 72 |
 | Given a pixel at their interior point (no pixel centre inside) | 1 |
-| More than one part (islands, exclaves) | 74 |
+| More than one part (islands, exclaves) | 75 |
 | Coastal flag differs from the CSV | 32 |
 | Small for their region (not Metro, under 5% of the region's mean) | 4 |
 | Voronoi-split blocks where one province takes 75% or more | 10 |
@@ -58,23 +58,23 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 
 ## Split giants
 
-Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722 km2 (Eastern Iowa, US-0053) by `run.py giants` and `[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a part over the cap.
+Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722 km2 (Eastern Iowa, US-0053) by `run.py giants` and `[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a part over the cap. Borders between parts (D850, D856): km along rivers and lake centerlines, along the building pieces' edges (licensed ADM2 lines, or town catchments), meandering, and straight; the style is the organic cut kept (D854).
 
-| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces |
-|---|---|---|---|---|---|---|---|
-| DZ-0027 | Tamanrasset-In Salah | 13 | towns | 609,275 | 45,043 | 49,470 | 0 |
-| DZ-0028 | Adrar-Timimoun | 10 | towns | 475,435 | 45,801 | 48,427 | 0 |
-| DZ-0029 | Bechar-Tindouf | 9 | towns | 416,754 | 45,259 | 48,489 | 1 |
-| EG-0031 | Kharga-New Valley | 10 | admin2 | 452,986 | 44,331 | 46,401 | 1 |
-| LY-0015 | Kufra | 9 | parts | 422,897 | 46,870 | 47,162 | 0 |
-| LY-0018 | Murzuq-Sharara | 7 | towns | 315,722 | 43,173 | 48,118 | 0 |
-| SA-0020 | Shaybah-Rub al Khali | 7 | parts | 301,909 | 42,876 | 43,250 | 1 |
+| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces | River km | Piece-edge km | Meander km | Straight km | Style |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| DZ-0027 | Tamanrasset-In Salah | 13 | towns | 609,275 | 45,383 | 49,327 | 0 | 0 | 40 | 3,273 | 0 | rivers, meanders, bent town edges |
+| DZ-0028 | Adrar-Timimoun | 10 | towns | 475,434 | 44,806 | 48,895 | 1 | 0 | 135 | 3,089 | 0 | rivers, meanders, bent town edges |
+| DZ-0029 | Bechar-Tindouf | 9 | towns | 416,754 | 44,876 | 47,859 | 2 | 0 | 345 | 2,315 | 0 | rivers, meanders, bent town edges |
+| EG-0031 | Kharga-New Valley | 10 | admin2 | 452,986 | 44,914 | 45,892 | 0 | 0 | 54 | 3,327 | 0 | rivers, meanders, bent town edges |
+| LY-0015 | Kufra | 9 | parts | 422,897 | 46,896 | 47,107 | 0 | 0 | 0 | 2,903 | 0 | rivers, meanders, bent town edges |
+| LY-0018 | Murzuq-Sharara | 7 | towns | 315,722 | 42,752 | 47,363 | 0 | 0 | 129 | 1,898 | 0 | rivers, meanders, bent town edges |
+| SA-0020 | Shaybah-Rub al Khali | 7 | parts | 301,909 | 42,863 | 43,255 | 1 | 0 | 2 | 2,001 | 0 | rivers, meanders, bent town edges |
 
 ## Sources and licenses
 
 | Boundary file | License | Used |
 |---|---|---|
-| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes) | Public domain | yes |
+| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes, river and lake centerlines) | Public domain | yes |
 | geoBoundaries gbOpen DZA ADM2 (OpenStreetMap, Wambacher) | Open Data Commons Open Database License 1.0 | no: refused: ODbL in license (Open Data Commons Open Database License 1.0); Voronoi path |
 | geoBoundaries gbOpen EGY ADM2 (OCHA ROMENA/HDX, Central Agency for Public Mobilization and Statistics (CAPMAS)) | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | yes |
 | geoBoundaries gbOpen IRN ADM2 (OpenStreetMap, Wambacher) | Open Data Commons Open Database License 1.0 | no: refused: ODbL in license (Open Data Commons Open Database License 1.0); Voronoi path |
@@ -638,7 +638,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-YE-0005 (8), YE-0016 (7), AE-0005 (6), IR-0018 (6), MA-0020 (6), OM-0012 (6), SA-0032 (6), AE-0001 (5), AE-0014 (5), IR-0017 (5), KW-0010 (5), EG-0005 (4), IQ-0002 (4), SA-0015 (4), YE-0009 (4), AE-0003 (3), AE-0008 (3), BH-0001 (3), DZ-0012 (3), EG-0016 (3), EG-0033 (3), EG-0034 (3), IL-0016 (3), IL-0017 (3), IQ-0015 (3), IQ-0018 (3), KW-0001 (3), OM-0009 (3), OM-0011 (3), PS-0003 (3), PS-0005 (3), SA-0029 (3), TN-0006 (3), TN-0009 (3), AE-0002 (2), AE-0013 (2), DZ-0002 (2), DZ-0010 (2), DZ-0053 (2), EG-0004 (2), EG-0012 (2), EG-0014 (2), EG-0015 (2), EG-0017 (2), EG-0029 (2), EG-0038 (2), IL-0005 (2), IL-0010 (2), IL-0012 (2), IL-0015 (2), IQ-0005 (2), IQ-0009 (2), IQ-0016 (2), IR-0010 (2), IR-0019 (2), IR-0027 (2), IR-0037 (2), JO-0002 (2), KW-0009 (2), LB-0005 (2), MA-0010 (2), MA-0016 (2), OM-0004 (2), QA-0003 (2), SA-0010 (2), SA-0018 (2), SA-0023 (2), SA-0043 (2), SY-0014 (2), TN-0001 (2), TN-0002 (2), YE-0008 (2), YE-0011 (2), YE-0012 (2)
+YE-0005 (8), YE-0016 (7), AE-0005 (6), IR-0018 (6), MA-0020 (6), OM-0012 (6), SA-0032 (6), AE-0001 (5), AE-0014 (5), IR-0017 (5), KW-0010 (5), DZ-0053 (4), EG-0005 (4), IQ-0002 (4), SA-0015 (4), YE-0009 (4), AE-0003 (3), AE-0008 (3), BH-0001 (3), DZ-0012 (3), EG-0016 (3), EG-0033 (3), EG-0034 (3), IL-0016 (3), IL-0017 (3), IQ-0015 (3), IQ-0018 (3), KW-0001 (3), OM-0009 (3), OM-0011 (3), PS-0003 (3), PS-0005 (3), SA-0029 (3), TN-0006 (3), TN-0009 (3), AE-0002 (2), AE-0013 (2), DZ-0002 (2), DZ-0010 (2), DZ-0046 (2), DZ-0052 (2), EG-0004 (2), EG-0012 (2), EG-0014 (2), EG-0015 (2), EG-0017 (2), EG-0029 (2), IL-0005 (2), IL-0010 (2), IL-0012 (2), IL-0015 (2), IQ-0005 (2), IQ-0009 (2), IQ-0016 (2), IR-0010 (2), IR-0019 (2), IR-0027 (2), IR-0037 (2), JO-0002 (2), KW-0009 (2), LB-0005 (2), MA-0010 (2), MA-0016 (2), OM-0004 (2), QA-0003 (2), SA-0010 (2), SA-0018 (2), SA-0023 (2), SA-0043 (2), SY-0014 (2), TN-0001 (2), TN-0002 (2), YE-0008 (2), YE-0011 (2), YE-0012 (2)
 
 ## Visual check
 

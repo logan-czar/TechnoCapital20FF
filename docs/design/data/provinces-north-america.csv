@@ -269,7 +269,7 @@ CA-0083,La Grande,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,Hydropower,
 CA-0084,Nord South 2,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820)
 CA-0085,Nord Southwest,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820)
 CA-0086,Mistassini,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820); towns: Mistassini
-CA-0087,Matagami,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,Y,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820); towns: Matagami
+CA-0087,Matagami,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820); towns: Matagami
 CA-0088,Fermont,CAN,Quebec,Eastern Quebec,,none,1,1,1,Iron ore,Arctic,N,,,,Fermont iron ore; split from CA-0025 Cote-Nord in the giant-province split (D820)
 CA-0089,Cote West,CAN,Quebec,Eastern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0025 Cote-Nord in the giant-province split (D820)
 CA-0090,St-Augustin,CAN,Quebec,Eastern Quebec,,none,1,1,1,None,Arctic,Y,,,,"split from CA-0025 Cote-Nord in the giant-province split (D820); towns: St-Augustin, Chevery"
@@ -294,7 +294,7 @@ CA-0108,Brochet,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA
 CA-0109,Churchill,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,Y,,,,Churchill Arctic port; split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Churchill
 CA-0110,Northern Manitoba North,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820)
 CA-0111,Flin Flon,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Flin Flon
-CA-0112,Gillam,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,"split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Gillam, Shamattawa"
+CA-0112,Gillam,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,Y,,,,"split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Gillam, Shamattawa"
 CA-0113,Oxford House,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Oxford House
 CA-0114,Norway House,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,"split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Norway House, Island Lake"
 CA-0115,The Pas,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: The Pas
