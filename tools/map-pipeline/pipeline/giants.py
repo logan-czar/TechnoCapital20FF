@@ -38,6 +38,8 @@ TOWN_RANK_POP = 20_000
 # Population weight of a part with no town, as a share of the giant's mean town population per
 # part (so a townless part still gets a little more than the floor when there is room).
 EMPTY_PART_WEIGHT = 0.05
+# The main part's extra weight, as a share of all the parts' weight (D823).
+MAIN_PART_WEIGHT = 1.0
 # Resources a part takes from its parent as they are (spread over the land); a site resource
 # (a mine, a field, a dam) stays with the main part and the part holding the place the parent's
 # notes name first; other parts get their terrain's background resource.
@@ -302,10 +304,10 @@ def _parts(pid, row, g, c: subdivide.Cut, sources, seeds, names_by_country, next
             k += 1
         name_of[i] = nm
         used.add(text.fold(nm))
-    # parent name: drop the name parts a new part took
-    taken = {text.fold(name_of[i]) for i in others}
-    keep = [p for p in raw_parts if text.fold(p) not in taken]
-    parent_name = "-".join(keep) if keep and len(keep) < len(raw_parts) else row["name"]
+    # the original keeps its name: the crosswalk seeds it from its name, so a new name would move
+    # its shape (and the anchor check gives a name part another province's whole name to that
+    # province, D679)
+    parent_name = row["name"]
     # development by town population (D823)
     P = sum(t[0] for t in towns)
     n = len(c.parts)
@@ -313,6 +315,9 @@ def _parts(pid, row, g, c: subdivide.Cut, sources, seeds, names_by_country, next
         w = {i: sum(t[0] for t in part_towns[i]) + EMPTY_PART_WEIGHT * P / n for i in range(n)}
     else:
         w = {i: c.areas[i] for i in range(n)}
+    # the original's main city is what its tracks describe: the main part weighs as much again as
+    # every part together, so it keeps at least half of what the floors leave (D823)
+    w[main_i] += sum(w.values()) * MAIN_PART_WEIGHT
     tracks = {k: alloc(int(row[k]), [w[i] for i in order]) for k in TRACKS}
     # resources (D824)
     res = row["resource"]
@@ -325,7 +330,7 @@ def _parts(pid, row, g, c: subdivide.Cut, sources, seeds, names_by_country, next
                 break
     parent_upd = {k: str(tracks[k][0]) for k in TRACKS}
     parent_upd["name"] = parent_name
-    parent_upd["notes"] = row["notes"] + f"; split into {n} provinces in the giant-province split (D820)"
+    # the notes stay too: the crosswalk seeds the original from them
     children = []
     hint = [f"# D820: {pid} {row['name']} ({sum(c.areas):,.0f} km2) cut into {n} parts on {c.blocks} pieces",
             f"[subdivide.\"{pid}\"]", f"parts = {n}", f"whole_tol = {c.whole_tol}", f"blocks = \"{c.blocks}\"",

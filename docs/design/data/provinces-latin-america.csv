@@ -37,48 +37,48 @@ BR-0035,Salvador,BRA,Bahia,Bahia,,Metropolis,12,9,18,None,Urban,Y,,,,"state capi
 BR-0036,Camacari-Reconcavo,BRA,Bahia,Bahia,,City,4,18,13,Oil,Temperate,Y,,,,"Camacari petrochemical complex (Braskem), Ford plant, Mataripe refinery, Reconcavo onshore oil"
 BR-0037,South Bahia,BRA,Bahia,Bahia,,City,4,7,15,Farmland,Tropical,Y,,,,"Ilheus cocoa, Porto Seguro tourism, Veracel eucalyptus pulp"
 BR-0038,West Bahia,BRA,Bahia,Bahia,,Town,3,8,12,Farmland,Temperate,N,,,,"Barreiras and Luis Eduardo Magalhaes, soy, cotton and corn frontier (Matopiba)"
-BR-0039,Bahia Sertao-Feira de Santana,BRA,Bahia,Bahia,,City,1,2,6,Hydropower,Desert,N,,,,"Feira de Santana, Vitoria da Conquista, Paulo Afonso and Sobradinho dams on the Sao Francisco, Juazeiro irrigated fruit, semi-arid interior; split into 7 provinces in the giant-province split (D820)"
+BR-0039,Bahia Sertao-Feira de Santana,BRA,Bahia,Bahia,,City,1,2,10,Hydropower,Desert,N,,,,"Feira de Santana, Vitoria da Conquista, Paulo Afonso and Sobradinho dams on the Sao Francisco, Juazeiro irrigated fruit, semi-arid interior"
 BR-0040,Recife-Suape,BRA,Pernambuco,Pernambuco,,Metropolis,11,12,18,None,Urban,Y,,,,"Recife Porto Digital tech park, Suape port and Abreu e Lima refinery, Jeep plant at Goiana, shipyards"
 BR-0041,Pernambuco Agreste-Sertao,BRA,Pernambuco,Pernambuco,,City,3,7,19,Farmland,Desert,N,,,,"Caruaru textiles, Petrolina irrigated fruit and wine, semi-arid interior"
 BR-0042,Fortaleza-Pecem,BRA,Ceara,Ceara,,Metropolis,10,10,18,None,Urban,Y,,,,"Fortaleza, Pecem port and steel mill (CSP), wind farms, undersea cable landing hub to Europe and the US"
 BR-0043,Ceara Sertao,BRA,Ceara,Ceara,,City,3,5,19,Farmland,Desert,N,,,,"Juazeiro do Norte, Sobral shoe plants, drought-prone semi-arid interior"
 BR-0044,Belem-Barcarena,BRA,Para,Para,,City,7,7,16,Bauxite,Tropical,Y,,,,"state capital, port at the Amazon mouth, Barcarena alumina refinery (Hydro Alunorte) and bauxite terminal; tag added in batch 124"
-BR-0045,Carajas-Southeast Para,BRA,Para,Para,,City,1,5,3,Iron ore,Tropical,N,,,,"Carajas, the world's largest iron ore mine (Vale S11D), Maraba, Parauapebas, cattle ranching and deforestation; split into 11 provinces in the giant-province split (D820)"
-BR-0046,West Para-Santarem,BRA,Para,Para,,City,1,1,5,Hydropower,Tropical,Y,,,,"Belo Monte dam on the Xingu, Santarem soy port on the Amazon, Trombetas bauxite, illegal gold on the Tapajos; split into 11 provinces in the giant-province split (D820)"
-BR-0047,Manaus,BRA,Amazonas,Amazonas (Brazil),,City,1,4,5,None,Tropical,Y,,,,"Manaus Free Trade Zone (electronics, motorcycles), Amazon river port reached by ocean ships; split into 10 provinces in the giant-province split (D820)"
-BR-0048,Interior Amazonas,BRA,Amazonas,Amazonas (Brazil),,Town,1,1,1,Gas,Tropical,N,,,,"Urucu gas field and pipeline to Manaus, Tefe, river communities, timber; split into 23 provinces in the giant-province split (D820)"
+BR-0045,Carajas-Southeast Para,BRA,Para,Para,,City,1,8,5,Iron ore,Tropical,N,,,,"Carajas, the world's largest iron ore mine (Vale S11D), Maraba, Parauapebas, cattle ranching and deforestation"
+BR-0046,West Para-Santarem,BRA,Para,Para,,City,1,1,6,Hydropower,Tropical,Y,,,,"Belo Monte dam on the Xingu, Santarem soy port on the Amazon, Trombetas bauxite, illegal gold on the Tapajos"
+BR-0047,Manaus,BRA,Amazonas,Amazonas (Brazil),,City,1,5,6,None,Tropical,Y,,,,"Manaus Free Trade Zone (electronics, motorcycles), Amazon river port reached by ocean ships"
+BR-0048,Interior Amazonas,BRA,Amazonas,Amazonas (Brazil),,Town,1,1,1,Gas,Tropical,N,,,,"Urucu gas field and pipeline to Manaus, Tefe, river communities, timber"
 BR-0049,Sao Luis-Itaqui,BRA,Maranhao,Maranhao,,City,6,16,14,None,Tropical,Y,,,,"Ponta da Madeira iron ore terminal at the end of the Carajas railway, Alumar aluminium smelter, Itaqui port, Alcantara launch center"
 BR-0050,South Maranhao,BRA,Maranhao,Maranhao,,City,3,7,19,Farmland,Tropical,N,,,,"Imperatriz, Balsas soy frontier (Matopiba), babassu palm"
 BR-0051,Goiania-Anapolis,BRA,Goias,Goias,,City,9,11,17,None,Temperate,N,,,,"Goiania, Anapolis pharma and CAOA-Hyundai plant"
 BR-0052,Southwest Goias,BRA,Goias,Goias,,City,4,9,18,Farmland,Temperate,N,,,,"Rio Verde soy, corn and meatpacking, Catalao phosphate and niobium, north Goias"
 BR-0053,Brasilia,BRA,Distrito Federal,Distrito Federal,,Metropolis,17,4,17,None,Temperate,N,,,,"federal capital: presidency, Congress, Supreme Court, central bank, ministries and lobbyists"
 BR-0054,Cuiaba,BRA,Mato Grosso,Mato Grosso,,City,6,6,12,None,Temperate,N,,,,"state capital, Pantanal gateway, gold panning at Pocone"
-BR-0055,North Mato Grosso,BRA,Mato Grosso,Mato Grosso,,Town,1,1,2,Farmland,Tropical,N,,,,"Sorriso, Sinop, Lucas do Rio Verde: the largest soy and corn county cluster in the world (Amaggi), BR-163 road; split into 9 provinces in the giant-province split (D820)"
-BR-0056,East Mato Grosso-Araguaia,BRA,Mato Grosso,Mato Grosso,,Town,1,1,5,Farmland,Temperate,N,,,,"Rondonopolis soy crushing, Barra do Garcas, Araguaia cattle; split into 7 provinces in the giant-province split (D820)"
-BR-0057,Mato Grosso do Sul,BRA,Mato Grosso do Sul,Mato Grosso do Sul,,City,1,3,5,Farmland,Wetland,N,,,,"Campo Grande cattle, Tres Lagoas pulp mills, Corumba iron ore and manganese, Pantanal wetlands; split into 8 provinces in the giant-province split (D820)"
+BR-0055,North Mato Grosso,BRA,Mato Grosso,Mato Grosso,,Town,1,1,4,Farmland,Tropical,N,,,,"Sorriso, Sinop, Lucas do Rio Verde: the largest soy and corn county cluster in the world (Amaggi), BR-163 road"
+BR-0056,East Mato Grosso-Araguaia,BRA,Mato Grosso,Mato Grosso,,Town,1,1,5,Farmland,Temperate,N,,,,"Rondonopolis soy crushing, Barra do Garcas, Araguaia cattle"
+BR-0057,Mato Grosso do Sul,BRA,Mato Grosso do Sul,Mato Grosso do Sul,,City,1,4,7,Farmland,Wetland,N,,,,"Campo Grande cattle, Tres Lagoas pulp mills, Corumba iron ore and manganese, Pantanal wetlands"
 BR-0058,Paraiba,BRA,Paraiba,Paraiba,,City,4,6,18,None,Desert,Y,,,,"Joao Pessoa, Campina Grande tech university, sugarcane coast"
 BR-0059,Rio Grande do Norte,BRA,Rio Grande do Norte,Rio Grande do Norte,,City,4,9,17,Oil,Desert,Y,,,,"Natal, Mossoro onshore oil fields, sea salt, wind farms"
 BR-0060,Alagoas,BRA,Alagoas,Alagoas,,City,3,7,17,Farmland,Tropical,Y,,,,"Maceio, sugarcane and ethanol, Braskem rock-salt mine (Maceio subsidence)"
 BR-0061,Sergipe,BRA,Sergipe,Sergipe,,City,4,9,16,Oil,Tropical,Y,,,,"Aracaju, Carmopolis onshore oil and the deep-water Sergipe basin, potash mine"
-BR-0062,Piaui,BRA,Piaui,Piaui,,City,1,1,11,Farmland,Desert,N,,,,"Teresina, Matopiba soy in the south, wind and solar farms; split into 6 provinces in the giant-province split (D820)"
-BR-0063,Tocantins,BRA,Tocantins,Tocantins,,Town,1,1,6,Farmland,Temperate,N,,,,"Palmas, soy and cattle frontier, North-South railway; split into 6 provinces in the giant-province split (D820)"
+BR-0062,Piaui,BRA,Piaui,Piaui,,City,1,1,11,Farmland,Desert,N,,,,"Teresina, Matopiba soy in the south, wind and solar farms"
+BR-0063,Tocantins,BRA,Tocantins,Tocantins,,Town,1,1,7,Farmland,Temperate,N,,,,"Palmas, soy and cattle frontier, North-South railway"
 BR-0064,Rondonia,BRA,Rondonia,Rondonia,,Town,3,8,15,Hydropower,Tropical,N,,,,"Porto Velho, Jirau and Santo Antonio dams on the Madeira, cattle and deforestation, cassiterite"
 BR-0065,Acre,BRA,Acre,Acre,,Town,2,3,12,Timber,Tropical,N,,,,"Rio Branco, rubber tappers and Brazil nuts, Bolivian and Peruvian borders"
 BR-0066,Amapa,BRA,Amapa,Amapa,,Town,2,4,11,Gold,Tropical,Y,,,,"Macapa, gold and manganese mines, Amazon mouth"
 BR-0067,Roraima,BRA,Roraima,Roraima,,Town,2,3,10,Gold,Tropical,N,,,,"Boa Vista, illegal gold mining on Yanomami land, Venezuelan migrants at Pacaraima"
 BR-0068,Paulo Afonso,BRA,Bahia,Bahia,,Town,1,1,2,None,Desert,N,,,,"split from BR-0039 Bahia Sertao-Feira de Santana in the giant-province split (D820); towns: Paulo Afonso, Tucano"
 BR-0069,Juazeiro,BRA,Bahia,Bahia,,Town,1,1,2,None,Desert,N,,,,"split from BR-0039 Bahia Sertao-Feira de Santana in the giant-province split (D820); towns: Juazeiro, Senhor do Bonfim"
-BR-0070,Remanso,BRA,Bahia,Bahia,,Town,1,1,2,None,Desert,N,,,,"split from BR-0039 Bahia Sertao-Feira de Santana in the giant-province split (D820); towns: Remanso, Xique-Xique"
+BR-0070,Remanso,BRA,Bahia,Bahia,,Town,1,1,1,None,Desert,N,,,,"split from BR-0039 Bahia Sertao-Feira de Santana in the giant-province split (D820); towns: Remanso, Xique-Xique"
 BR-0071,Irece,BRA,Bahia,Bahia,,Town,1,1,1,None,Desert,N,,,,split from BR-0039 Bahia Sertao-Feira de Santana in the giant-province split (D820); towns: Irece
-BR-0072,Guanambi,BRA,Bahia,Bahia,,Town,1,1,2,None,Desert,N,,,,"split from BR-0039 Bahia Sertao-Feira de Santana in the giant-province split (D820); towns: Guanambi, Brumado"
-BR-0073,Vitoria da Conquista,BRA,Bahia,Bahia,,Town,1,1,5,None,Desert,N,,,,"split from BR-0039 Bahia Sertao-Feira de Santana in the giant-province split (D820); towns: Vitoria da Conquista, Jequie, Itapetinga"
-BR-0074,Altamira,BRA,Para,Para,,Town,1,2,2,Timber,Tropical,N,,,,split from BR-0045 Carajas-Southeast Para in the giant-province split (D820); towns: Altamira
-BR-0075,Tucurui,BRA,Para,Para,,Town,1,4,3,Timber,Tropical,N,,,,"split from BR-0045 Carajas-Southeast Para in the giant-province split (D820); towns: Tucurui, Jacunda"
+BR-0072,Guanambi,BRA,Bahia,Bahia,,Town,1,1,1,None,Desert,N,,,,"split from BR-0039 Bahia Sertao-Feira de Santana in the giant-province split (D820); towns: Guanambi, Brumado"
+BR-0073,Vitoria da Conquista,BRA,Bahia,Bahia,,Town,1,1,3,None,Desert,N,,,,"split from BR-0039 Bahia Sertao-Feira de Santana in the giant-province split (D820); towns: Vitoria da Conquista, Jequie, Itapetinga"
+BR-0074,Altamira,BRA,Para,Para,,Town,1,2,1,Timber,Tropical,N,,,,split from BR-0045 Carajas-Southeast Para in the giant-province split (D820); towns: Altamira
+BR-0075,Tucurui,BRA,Para,Para,,Town,1,2,2,Timber,Tropical,N,,,,"split from BR-0045 Carajas-Southeast Para in the giant-province split (D820); towns: Tucurui, Jacunda"
 BR-0076,Carajas North,BRA,Para,Para,,none,1,1,1,Timber,Tropical,N,,,,split from BR-0045 Carajas-Southeast Para in the giant-province split (D820)
 BR-0077,Carajas West,BRA,Para,Para,,none,1,1,1,Timber,Tropical,N,,,,split from BR-0045 Carajas-Southeast Para in the giant-province split (D820)
 BR-0078,Carajas West 2,BRA,Para,Para,,none,1,1,1,Timber,Tropical,N,,,,split from BR-0045 Carajas-Southeast Para in the giant-province split (D820)
 BR-0079,Carajas South,BRA,Para,Para,,none,1,1,1,Timber,Tropical,N,,,,split from BR-0045 Carajas-Southeast Para in the giant-province split (D820)
-BR-0080,Conceicao do Araguaia,BRA,Para,Para,,Town,1,2,1,Timber,Tropical,N,,,,"split from BR-0045 Carajas-Southeast Para in the giant-province split (D820); towns: Conceicao do Araguaia, Xinguara"
+BR-0080,Conceicao do Araguaia,BRA,Para,Para,,Town,1,1,1,Timber,Tropical,N,,,,"split from BR-0045 Carajas-Southeast Para in the giant-province split (D820); towns: Conceicao do Araguaia, Xinguara"
 BR-0081,Carajas Southwest,BRA,Para,Para,,none,1,1,1,Timber,Tropical,N,,,,split from BR-0045 Carajas-Southeast Para in the giant-province split (D820)
 BR-0082,Carajas Southwest 2,BRA,Para,Para,,none,1,1,1,Timber,Tropical,N,,,,split from BR-0045 Carajas-Southeast Para in the giant-province split (D820)
 BR-0083,Carajas South 2,BRA,Para,Para,,none,1,1,1,Timber,Tropical,N,,,,split from BR-0045 Carajas-Southeast Para in the giant-province split (D820)
@@ -90,7 +90,7 @@ BR-0088,West Para Northwest 2,BRA,Para,Para,,none,1,1,1,Timber,Tropical,N,,,,spl
 BR-0089,West Para Northeast,BRA,Para,Para,,none,1,1,1,Timber,Tropical,N,,,,split from BR-0046 West Para-Santarem in the giant-province split (D820)
 BR-0090,Oriximina,BRA,Para,Para,,Town,1,1,2,Timber,Tropical,N,,,,"split from BR-0046 West Para-Santarem in the giant-province split (D820); towns: Oriximina, Obidos"
 BR-0091,Itaituba,BRA,Para,Para,,Town,1,1,2,Timber,Tropical,N,,,,split from BR-0046 West Para-Santarem in the giant-province split (D820); towns: Itaituba
-BR-0092,Jacareacanga,BRA,Para,Para,,Town,1,1,2,Timber,Tropical,N,,,,split from BR-0046 West Para-Santarem in the giant-province split (D820); towns: Jacareacanga
+BR-0092,Jacareacanga,BRA,Para,Para,,Town,1,1,1,Timber,Tropical,N,,,,split from BR-0046 West Para-Santarem in the giant-province split (D820); towns: Jacareacanga
 BR-0093,West Para Southwest,BRA,Para,Para,,none,1,1,1,Timber,Tropical,N,,,,split from BR-0046 West Para-Santarem in the giant-province split (D820)
 BR-0094,Manaus North,BRA,Amazonas,Amazonas (Brazil),,none,1,1,1,None,Tropical,N,,,,split from BR-0047 Manaus in the giant-province split (D820)
 BR-0095,Novo Airao,BRA,Amazonas,Amazonas (Brazil),,none,1,1,1,None,Tropical,N,,,,split from BR-0047 Manaus in the giant-province split (D820); towns: Novo Airao
@@ -100,7 +100,7 @@ BR-0098,Manaus East,BRA,Amazonas,Amazonas (Brazil),,none,1,1,1,None,Tropical,N,,
 BR-0099,Manicore,BRA,Amazonas,Amazonas (Brazil),,Town,1,1,1,None,Tropical,N,,,,split from BR-0047 Manaus in the giant-province split (D820); towns: Manicore
 BR-0100,Manaus South,BRA,Amazonas,Amazonas (Brazil),,none,1,1,1,None,Tropical,N,,,,split from BR-0047 Manaus in the giant-province split (D820)
 BR-0101,Manaus South 2,BRA,Amazonas,Amazonas (Brazil),,none,1,1,1,None,Tropical,N,,,,split from BR-0047 Manaus in the giant-province split (D820)
-BR-0102,Natal,BRA,Amazonas,Amazonas (Brazil),,Town,1,3,3,None,Tropical,N,,,,split from BR-0047 Manaus in the giant-province split (D820); towns: Natal
+BR-0102,Natal,BRA,Amazonas,Amazonas (Brazil),,Town,1,2,2,None,Tropical,N,,,,split from BR-0047 Manaus in the giant-province split (D820); towns: Natal
 BR-0103,Interior Amazonas North,BRA,Amazonas,Amazonas (Brazil),,none,1,1,1,Timber,Tropical,N,,,,split from BR-0048 Interior Amazonas in the giant-province split (D820)
 BR-0104,Interior Amazonas Northeast,BRA,Amazonas,Amazonas (Brazil),,none,1,1,1,Timber,Tropical,N,,,,split from BR-0048 Interior Amazonas in the giant-province split (D820)
 BR-0105,Interior Amazonas Northwest,BRA,Amazonas,Amazonas (Brazil),,none,1,1,1,Timber,Tropical,N,,,,split from BR-0048 Interior Amazonas in the giant-province split (D820)
@@ -125,7 +125,7 @@ BR-0123,Interior Amazonas South 3,BRA,Amazonas,Amazonas (Brazil),,none,1,1,1,Tim
 BR-0124,Interior Amazonas South 4,BRA,Amazonas,Amazonas (Brazil),,none,1,1,1,Timber,Tropical,N,,,,split from BR-0048 Interior Amazonas in the giant-province split (D820)
 BR-0125,North Mato Grosso Northwest,BRA,Mato Grosso,Mato Grosso,,none,1,1,1,Farmland,Tropical,N,,,,split from BR-0055 North Mato Grosso in the giant-province split (D820)
 BR-0126,North Mato Grosso North,BRA,Mato Grosso,Mato Grosso,,none,1,1,1,Farmland,Tropical,N,,,,split from BR-0055 North Mato Grosso in the giant-province split (D820)
-BR-0127,Alta Floresta,BRA,Mato Grosso,Mato Grosso,,Town,1,1,4,Farmland,Tropical,N,,,,"split from BR-0055 North Mato Grosso in the giant-province split (D820); towns: Alta Floresta, Colider"
+BR-0127,Alta Floresta,BRA,Mato Grosso,Mato Grosso,,Town,1,1,2,Farmland,Tropical,N,,,,"split from BR-0055 North Mato Grosso in the giant-province split (D820); towns: Alta Floresta, Colider"
 BR-0128,Aripuana,BRA,Mato Grosso,Mato Grosso,,Town,1,1,2,Farmland,Tropical,N,,,,"split from BR-0055 North Mato Grosso in the giant-province split (D820); towns: Aripuana, Juina"
 BR-0129,North Mato Grosso Southwest,BRA,Mato Grosso,Mato Grosso,,none,1,1,1,Farmland,Tropical,N,,,,split from BR-0055 North Mato Grosso in the giant-province split (D820)
 BR-0130,North Mato Grosso Southeast,BRA,Mato Grosso,Mato Grosso,,none,1,1,1,Farmland,Tropical,N,,,,split from BR-0055 North Mato Grosso in the giant-province split (D820)
@@ -137,13 +137,13 @@ BR-0135,East Mato Grosso Northwest 2,BRA,Mato Grosso,Mato Grosso,,none,1,1,1,Far
 BR-0136,East Mato Grosso Northeast,BRA,Mato Grosso,Mato Grosso,,none,1,1,1,Farmland,Temperate,N,,,,split from BR-0056 East Mato Grosso-Araguaia in the giant-province split (D820)
 BR-0137,Barra do Garcas,BRA,Mato Grosso,Mato Grosso,,Town,1,1,2,Farmland,Temperate,N,,,,split from BR-0056 East Mato Grosso-Araguaia in the giant-province split (D820); towns: Barra do Garcas
 BR-0138,East Mato Grosso Southwest,BRA,Mato Grosso,Mato Grosso,,none,1,1,1,Farmland,Temperate,N,,,,split from BR-0056 East Mato Grosso-Araguaia in the giant-province split (D820)
-BR-0139,Corumba,BRA,Mato Grosso do Sul,Mato Grosso do Sul,,Town,1,1,2,Farmland,Wetland,N,,,,split from BR-0057 Mato Grosso do Sul in the giant-province split (D820); towns: Corumba
+BR-0139,Corumba,BRA,Mato Grosso do Sul,Mato Grosso do Sul,,Town,1,1,1,Farmland,Wetland,N,,,,split from BR-0057 Mato Grosso do Sul in the giant-province split (D820); towns: Corumba
 BR-0140,Mato Grosso do Sul North,BRA,Mato Grosso do Sul,Mato Grosso do Sul,,none,1,1,1,Farmland,Wetland,N,,,,split from BR-0057 Mato Grosso do Sul in the giant-province split (D820)
 BR-0141,Mato Grosso do Sul Northeast,BRA,Mato Grosso do Sul,Mato Grosso do Sul,,none,1,1,1,Farmland,Wetland,N,,,,split from BR-0057 Mato Grosso do Sul in the giant-province split (D820)
 BR-0142,Tres Lagoas,BRA,Mato Grosso do Sul,Mato Grosso do Sul,,Town,1,1,2,Farmland,Wetland,N,,,,"split from BR-0057 Mato Grosso do Sul in the giant-province split (D820); towns: Tres Lagoas, Paranaiba"
 BR-0143,Mato Grosso do Sul West,BRA,Mato Grosso do Sul,Mato Grosso do Sul,,none,1,1,1,Farmland,Wetland,N,,,,split from BR-0057 Mato Grosso do Sul in the giant-province split (D820)
 BR-0144,Aquidauana,BRA,Mato Grosso do Sul,Mato Grosso do Sul,,Town,1,1,1,Farmland,Wetland,N,,,,"split from BR-0057 Mato Grosso do Sul in the giant-province split (D820); towns: Aquidauana, Jardim"
-BR-0145,Dourados,BRA,Mato Grosso do Sul,Mato Grosso do Sul,,Town,1,2,3,Farmland,Wetland,N,,,,"split from BR-0057 Mato Grosso do Sul in the giant-province split (D820); towns: Dourados, Ponta Pora, Maracaju"
+BR-0145,Dourados,BRA,Mato Grosso do Sul,Mato Grosso do Sul,,Town,1,1,2,Farmland,Wetland,N,,,,"split from BR-0057 Mato Grosso do Sul in the giant-province split (D820); towns: Dourados, Ponta Pora, Maracaju"
 BR-0146,Piaui North,BRA,Piaui,Piaui,,none,1,1,1,Farmland,Desert,N,,,,split from BR-0062 Piaui in the giant-province split (D820)
 BR-0147,Picos,BRA,Piaui,Piaui,,Town,1,1,2,Farmland,Desert,N,,,,"split from BR-0062 Piaui in the giant-province split (D820); towns: Picos, Floriano"
 BR-0148,Piaui Southwest,BRA,Piaui,Piaui,,none,1,1,1,Farmland,Desert,N,,,,split from BR-0062 Piaui in the giant-province split (D820)
@@ -152,7 +152,7 @@ BR-0150,Piaui Southwest 3,BRA,Piaui,Piaui,,none,1,1,1,Farmland,Desert,N,,,,split
 BR-0151,Araguaina,BRA,Tocantins,Tocantins,,Town,1,1,2,Farmland,Temperate,N,,,,"split from BR-0063 Tocantins in the giant-province split (D820); towns: Araguaina, Tocantinopolis"
 BR-0152,Tocantins Northeast,BRA,Tocantins,Tocantins,,none,1,1,1,Farmland,Temperate,N,,,,split from BR-0063 Tocantins in the giant-province split (D820)
 BR-0153,Tocantins Southwest,BRA,Tocantins,Tocantins,,none,1,1,1,Farmland,Temperate,N,,,,split from BR-0063 Tocantins in the giant-province split (D820)
-BR-0154,Gurupi,BRA,Tocantins,Tocantins,,Town,1,1,3,Farmland,Temperate,N,,,,"split from BR-0063 Tocantins in the giant-province split (D820); towns: Gurupi, Alvorada, Porto Nacional"
+BR-0154,Gurupi,BRA,Tocantins,Tocantins,,Town,1,1,2,Farmland,Temperate,N,,,,"split from BR-0063 Tocantins in the giant-province split (D820); towns: Gurupi, Alvorada, Porto Nacional"
 BR-0155,Tocantins Southeast,BRA,Tocantins,Tocantins,,none,1,1,1,Farmland,Temperate,N,,,,split from BR-0063 Tocantins in the giant-province split (D820)
 AR-0001,Buenos Aires Centro-Puerto Madero,ARG,Ciudad de Buenos Aires,Ciudad de Buenos Aires,Buenos Aires,Metropolis,22,5,17,None,Urban,Y,,,,"federal capital: Casa Rosada, central bank, BYMA exchange, Puerto Madero banks, Palermo software exporters (MercadoLibre, Globant), port of Buenos Aires"
 AR-0002,Zona Norte-Tigre,ARG,Buenos Aires,Conurbano,Buenos Aires,Metropolis,10,12,18,None,Urban,Y,,,,"San Isidro and Vicente Lopez offices, Tigre delta, Pilar industrial park, wealthy gated communities"
@@ -238,7 +238,7 @@ CO-0024,Meta-Llanos,COL,Meta,Meta,,City,4,15,12,Oil,Temperate,N,,,,"Villavicenci
 CO-0025,Arauca-Casanare,COL,Arauca-Casanare,Arauca-Casanare,,Town,3,14,10,Oil,Temperate,N,,,,"Yopal, Cusiana-Cupiagua oil fields, Cano Limon pipeline (frequent ELN attacks), Venezuelan border"
 CO-0026,Choco,COL,Choco,Choco,,Town,1,4,9,Gold,Tropical,Y,Panama Canal,,,"Quibdo, illegal gold dredging, rain forest, Pacific coast, Darien border"
 CO-0027,Caqueta-Putumayo,COL,Caqueta-Putumayo,Caqueta-Putumayo,,Town,2,6,11,Oil,Tropical,N,,,,"Florencia, Putumayo oil fields (Orito) and coca, Amazon frontier"
-CO-0028,Colombian Amazon and Vichada,COL,Amazonas-Guainia-Guaviare-Vaupes-Vichada,Amazonas-Guainia-Guaviare-Vaupes-Vichada,,none,1,1,2,Timber,Tropical,N,,,,"Leticia, San Jose del Guaviare, Puerto Carreno, Puerto Inirida; rain forest, coca, illegal gold and coltan; split into 8 provinces in the giant-province split (D820)"
+CO-0028,Colombian Amazon and Vichada,COL,Amazonas-Guainia-Guaviare-Vaupes-Vichada,Amazonas-Guainia-Guaviare-Vaupes-Vichada,,none,1,1,2,Timber,Tropical,N,,,,"Leticia, San Jose del Guaviare, Puerto Carreno, Puerto Inirida; rain forest, coca, illegal gold and coltan"
 CO-0029,San Andres,COL,San Andres y Providencia,San Andres y Providencia,,none,5,1,1,Fishing,Tropical,Y,,,,"San Andres island tourism and duty-free shops; the islands are Colombian, but Nicaragua still disputes the surrounding waters after the 2012 ICJ ruling (note only)"
 CO-0030,Puerto Carreno,COL,Amazonas-Guainia-Guaviare-Vaupes-Vichada,Amazonas-Guainia-Guaviare-Vaupes-Vichada,,none,1,1,1,Timber,Tropical,N,,,,split from CO-0028 Colombian Amazon and Vichada in the giant-province split (D820); towns: Puerto Carreno
 CO-0031,Colombian Amazon and Vichada North,COL,Amazonas-Guainia-Guaviare-Vaupes-Vichada,Amazonas-Guainia-Guaviare-Vaupes-Vichada,,none,1,1,1,Timber,Tropical,N,,,,split from CO-0028 Colombian Amazon and Vichada in the giant-province split (D820)
@@ -269,7 +269,7 @@ PE-0019,Huancavelica,PER,Huancavelica,Huancavelica,,none,1,4,8,Hydropower,Mounta
 PE-0020,Huanuco,PER,Huanuco,Huanuco,,Town,2,4,11,Farmland,Mountain,N,,,,"Huanuco, Tingo Maria coca and coffee"
 PE-0021,Pasco,PER,Pasco,Pasco,,Town,2,10,6,Zinc,Mountain,N,,,,"Cerro de Pasco open pit (zinc, lead and silver); tag added in batch 124"
 PE-0022,San Martin,PER,San Martin,San Martin,,Town,3,5,11,Farmland,Tropical,N,,,,"Tarapoto, Moyobamba, coffee and cocoa replacing coca, palm oil"
-PE-0023,Iquitos-Loreto,PER,Loreto,Loreto,,Town,1,1,5,Oil,Tropical,N,,,,"Iquitos, the largest city unreachable by road, Amazon river port, northern oil fields and the Norperuano pipeline (spills), timber; split into 8 provinces in the giant-province split (D820)"
+PE-0023,Iquitos-Loreto,PER,Loreto,Loreto,,Town,1,1,5,Oil,Tropical,N,,,,"Iquitos, the largest city unreachable by road, Amazon river port, northern oil fields and the Norperuano pipeline (spills), timber"
 PE-0024,Ucayali,PER,Ucayali,Ucayali,,Town,2,6,9,Timber,Tropical,N,,,,"Pucallpa, timber and illegal logging, Aguaytia gas"
 PE-0025,Madre de Dios,PER,Madre de Dios,Madre de Dios,,none,1,5,4,Gold,Tropical,N,,,,"illegal gold mining (La Pampa), Puerto Maldonado, Interoceanic highway to Brazil"
 PE-0026,Chachapoyas-Amazonas,PER,Amazonas,Amazonas (Peru),,Town,2,3,8,Farmland,Mountain,N,,,,"Chachapoyas, Kuelap ruins, Bagua coffee"
