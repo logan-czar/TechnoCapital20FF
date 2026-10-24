@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/sim-data" },
+    { "path": "packages/sim" },
+    { "path": "apps/headless" },
+    { "path": "apps/web" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@tc20ff/sim",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The deterministic simulation (build-plan 2.1 sim). No DOM, no wall clock.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./internal": "./src/internal.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tc20ff/sim-data": "workspace:*"
+  }
+}
