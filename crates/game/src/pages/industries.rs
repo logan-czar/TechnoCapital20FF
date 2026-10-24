@@ -126,7 +126,8 @@ pub fn industries_model(v: &SimViews, index: &NameIndex) -> TableModel {
         Column::number("Supply", 110.0)
             .with_hint("USD a year (spec 5.2); a band in an estimated industry (D432)"),
         Column::number("S", 90.0).with_hint("Supply over demand"),
-        Column::number("M", 90.0).with_hint("The market factor (spec 5.4)"),
+        // F9 shows M as the price driver; the MVP builds no separate price index (D881).
+        Column::number("M", 90.0).with_hint("The market factor M, the price driver (spec 5.4)"),
         Column::text("Phase", 60.0).with_hint("The phase label (spec 5.1)"),
         Column::number("Long-term", 76.0).with_hint("The long-term growth rate, a year"),
         Column::number("Growth", 70.0)
