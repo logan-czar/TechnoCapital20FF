@@ -109,7 +109,8 @@ fn named_by_province(world: &World, industry: IndustryId) -> Vec<u32> {
 
 /// The HQ candidates of a startup in `industry` (spec 5.19.1): every province with its weight
 /// `province weight × (1 + named companies there) × 3 if a key city there lists the industry`,
-/// in id order; with `regions`, only the provinces inside them (5.19.2).
+/// in id order, the province weight counting development above the floor (D830); with
+/// `regions`, only the provinces inside them (5.19.2).
 fn hq_candidates(
     world: &World,
     industry: IndustryId,
@@ -117,7 +118,7 @@ fn hq_candidates(
 ) -> Vec<(ProvinceId, f64)> {
     let named = named_by_province(world, industry);
     let sites = &world.births.sites;
-    world
+    let ids: Vec<ProvinceId> = world
         .provinces
         .iter()
         .filter(|(id, p)| {
@@ -127,17 +128,29 @@ fn hq_candidates(
                     .in_regions(*id, &world.countries[p.country].key, r)
             })
         })
-        .map(|(id, _)| {
-            (
-                id,
-                hq_weight(
-                    sites.weight[id.index()],
-                    named[id.index()],
-                    sites.key_city_lists(id, industry),
-                ),
-            )
-        })
-        .collect()
+        .map(|(id, _)| id)
+        .collect();
+    let with = |base: &[f64]| -> Vec<(ProvinceId, f64)> {
+        ids.iter()
+            .map(|&id| {
+                (
+                    id,
+                    hq_weight(
+                        base[id.index()],
+                        named[id.index()],
+                        sites.key_city_lists(id, industry),
+                    ),
+                )
+            })
+            .collect()
+    };
+    // D830: development above the floor; an event's regions whose provinces all sit at the
+    // floor fall back to the 2.3.1 weight, so the event can still place its HQ
+    let out = with(&sites.hq_weight);
+    if out.iter().all(|(_, w)| *w <= 0.0) {
+        return with(&sites.weight);
+    }
+    out
 }
 
 /// The 5.19.1 industry weights, every industry in id order.

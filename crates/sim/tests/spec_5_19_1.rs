@@ -11,8 +11,8 @@ use sim::births::random::{
     draw_type, event_count,
 };
 use sim::births::weights::{
-    fringe_factor, gdp_per_head, heat, hq_weight, industry_weight, province_weight, wealth_factor,
-    weighted_pick,
+    development_above_floor, fringe_factor, gdp_per_head, heat, hq_weight, industry_weight,
+    province_weight, wealth_factor, weighted_pick,
 };
 use sim::rng::{DrawSource, NoNoise, RngStreams, ScriptedDraws, Stream};
 use sim::world::{IndustryId, PhaseLabel, ProvinceId};
@@ -160,6 +160,32 @@ fn province_weight_from_2_map_2_3_1() {
     // HQ weight: × (1 + named companies of the industry there) × 3 with a key city listing it.
     assert_eq!(hq_weight(10.0e9, 2, true), 90.0e9);
     assert_eq!(hq_weight(10.0e9, 0, false), 10.0e9);
+}
+
+/// D830 (Logan, 2026-10-24): the startup HQ weight counts development above the floor, so a
+/// province at 1/1/1 draws no HQ; a country with every province at the floor keeps the 2.3.1
+/// weight (none in the starting world).
+#[test]
+fn hq_weight_counts_development_above_the_floor() {
+    assert_eq!(development_above_floor(1, 1, 1), 0);
+    assert_eq!(development_above_floor(9, 15, 16), 37);
+    assert_eq!(development_above_floor(0, 2, 1), 1);
+    let w = sim::world::World::from_data(&data()).unwrap();
+    let sites = &w.births.sites;
+    assert!(sites.hq_fallback_countries.is_empty());
+    let floor = data()
+        .all_provinces()
+        .filter(|(_, _, p)| p.commerce + p.industry + p.population == 3)
+        .count();
+    let zero = sites.hq_weight.iter().filter(|x| **x == 0.0).count();
+    assert_eq!(zero, floor);
+    assert!(
+        floor > 700,
+        "the split giants' new parts sit at the floor ({floor})"
+    );
+    for (i, (h, full)) in sites.hq_weight.iter().zip(&sites.weight).enumerate() {
+        assert!(h <= full, "province {i}");
+    }
 }
 
 /// The 2020s industry weights from the data: every industry Normal on trend (q_growth = lt_q

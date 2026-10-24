@@ -10,7 +10,7 @@ use sim_data::WorldData;
 use super::fixed::{FixedEvent, Region};
 use super::names::CompanyNames;
 use super::random::EventKind;
-use super::weights::{gdp_per_head, province_weight, wealth_factor};
+use super::weights::{development_above_floor, gdp_per_head, province_weight, wealth_factor};
 use crate::time::Date;
 use crate::world::units::USD_PER_BILLION;
 
@@ -44,6 +44,13 @@ pub struct KeyCitySite {
 pub struct Sites {
     /// 2-map 2.3.1 province weight, USD: total development × $0.3B × G (D260).
     pub weight: Vec<f64>,
+    /// The startup HQ weight's province part (spec 5.19.1, D830): development above the floor ×
+    /// $0.3B × G, or `weight` for every province of a country whose provinces all sit at the
+    /// floor.
+    pub hq_weight: Vec<f64>,
+    /// The countries whose HQ weight fell back to `weight` (all their provinces at the floor),
+    /// in id order (D830).
+    pub hq_fallback_countries: Vec<CountryId>,
     /// The province's superregion slug, as in the province file names (5.19.2 regions).
     pub superregion: Vec<u8>,
     /// The key city the province belongs to, if any (index into `key_cities`).
@@ -132,6 +139,8 @@ impl BirthsState {
         let n = province_keys.len();
         let mut sites = Sites {
             weight: vec![0.0; n],
+            hq_weight: vec![0.0; n],
+            hq_fallback_countries: Vec::new(),
             superregion: vec![0; n],
             key_city: vec![None; n],
             key_cities: Vec::new(),
@@ -148,11 +157,25 @@ impl BirthsState {
                 sites.superregion[i] = region as u8;
                 sites.weight[i] =
                     province_weight(p.commerce + p.industry + p.population, g[country]);
+                sites.hq_weight[i] = province_weight(
+                    development_above_floor(p.commerce, p.industry, p.population),
+                    g[country],
+                );
                 sites.country_provinces[country].push(ProvinceId::from_index(i));
             }
         }
         for list in &mut sites.country_provinces {
             list.sort_unstable();
+        }
+        // D830: a country with every province at the floor keeps the 2.3.1 weight for its HQs,
+        // so it can still draw startups
+        for (c, list) in sites.country_provinces.iter().enumerate() {
+            if !list.is_empty() && list.iter().all(|p| sites.hq_weight[p.index()] <= 0.0) {
+                for p in list {
+                    sites.hq_weight[p.index()] = sites.weight[p.index()];
+                }
+                sites.hq_fallback_countries.push(CountryId::from_index(c));
+            }
         }
         for kc in &data.key_cities.rows {
             let industries: Vec<IndustryId> = kc
