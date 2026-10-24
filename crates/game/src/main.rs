@@ -311,6 +311,11 @@ fn main() -> AppExit {
         s.mode = args.map_mode;
         s.metros = args.map_metros;
     }
+    // D828: page keys name provinces by CSV id, so saved layouts survive province file changes
+    let mut province_keys: Vec<String> =
+        data.all_provinces().map(|(_, _, p)| p.id.clone()).collect();
+    province_keys.sort();
+    game::pages::set_province_keys(province_keys);
     let sim = Sim::new(data, args.seed).unwrap_or_else(|e| {
         eprintln!("cannot build the start state: {e}");
         std::process::exit(1)

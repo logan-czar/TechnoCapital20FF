@@ -134,6 +134,12 @@ def run(region: config.Region) -> None:
     names = {r["id"]: r["name"] for r in csv_rows}
     missing_xw = [i for i in ids if i not in xw]
     no_pixels = [i for i in ids if mq.get(i, {}).get("in_bitmap") != "Y" or int(mq[i]["area_px"]) == 0]
+    # D820: the world crosswalk lists exactly the provinces of the region files (no stale ids)
+    with (config.ASSETS_DIR / "crosswalk" / "province_crosswalk.csv").open(encoding="utf-8", newline="") as f:
+        xw_ids = {r["province_id"] for r in csv.DictReader(f)}
+    stale = sorted(xw_ids - crosswalk.all_province_ids())
+    if stale:
+        problems.append(f"{len(stale)} crosswalk rows name no province of the region files: {', '.join(stale)}")
     if missing_xw:
         problems.append(f"{len(missing_xw)} provinces have no crosswalk row: {', '.join(missing_xw)}")
     if no_pixels:
@@ -247,8 +253,8 @@ def run(region: config.Region) -> None:
                         + ", ".join(f"{e['province_id']} ({e['px']} px at {e['lon']}, {e['lat']})" for e in exclave_bad))
     # D820: every part of a split giant is at most the cap (Eastern Iowa), on the final shapes
     split_rows = []
+    geom_of = dict(zip(shp.province_id, shp.geometry))
     for pid, spec in sorted(crosswalk.load_hints(region).get("subdivide", {}).items()):
-        geom_of = dict(zip(shp.province_id, shp.geometry))
         part_ids = [pid] + sorted(spec.get("children", {}))
         areas = {i: subdivide.area_km2(geom_of[i]) for i in part_ids if i in geom_of}
         over = [i for i in part_ids if i not in areas or areas[i] > subdivide.CAP_KM2]

@@ -1,6 +1,6 @@
 iso3,name,superregion,currency,gdp_usd_bn,population_m,wealth_index,major,hss,legislature_strength,judiciary_strength,variant,restriction_label,subject_of,provinces_planned,notes
-USA,United States,North America,USD,23500,328.2,54,Y,55,64,72,,Screened,,185,
-CAN,Canada,North America,CAD,1750,37.6,73,Y,42,75,87,,Screened,,158,
+USA,United States,North America,USD,23500,328.2,54,Y,55,64,72,,Screened,,184,
+CAN,Canada,North America,CAD,1750,37.6,73,Y,42,75,87,,Screened,,156,
 MEX,Mexico,North America,MXN,1250,127.6,49,Y,58,55,48,,Screened,,49,
 GRL,Greenland,North America,DKK,3.1,0.056,74,N,45,72,82,,Screened,,3,Self-governing territory of Denmark; own row for its size on the map and rare earths and uranium; old group Nordics (A); dependent territory; branch strengths and restriction (A)
 BMU,Bermuda,North America,BMD,7.5,0.064,60,N,45,72,82,,Open,,1,"Haven (F5 Haven, 1.7.4); British Overseas Territory; old group Central America and Caribbean; dependent territory; branch strengths and restriction (A)"
@@ -87,7 +87,7 @@ BLR,Belarus,Europe,BYN,64.4,9.47,88,N,88,16,18,,Guarded,,12,In Moscow's orbit (1
 MDA,Moldova,Europe,MDL,11.9,2.66,89,N,45,72,82,,Guarded,,6,old group Black Sea and Caucasus; branch strengths (A); has contested provinces (batch 122)
 GGY,Guernsey,Europe,GBP,3.5,0.063,76,N,45,72,82,,Open,,1,"Haven; Crown Dependency, modeled inside the UK until now (2.2.5); old group Euro periphery (A); dependent territory; branch strengths and restriction (A)"
 JEY,Jersey,Europe,GBP,5.6,0.107,72,N,45,72,82,,Open,,1,"Haven; Crown Dependency, modeled inside the UK until now (2.2.5); old group Euro periphery (A); dependent territory; branch strengths and restriction (A)"
-RUS,Russia,Russia and Central Asia,RUB,1200,146.7,56,Y,88,16,18,Security Organs,Restricted,,261,Population and area include Crimea and the Donbas (A)
+RUS,Russia,Russia and Central Asia,RUB,1200,146.7,56,Y,88,16,18,Security Organs,Restricted,,259,Population and area include Crimea and the Donbas (A)
 KAZ,Kazakhstan,Russia and Central Asia,KZT,182,18.5,84,N,82,23,27,,Guarded,,26,"Uranium, oil; old group Central Asia; HSS set by hand from 19.22 (A)"
 UZB,Uzbekistan,Russia and Central Asia,UZS,60.0,33.6,68,N,85,20,22,,Guarded,,17,old group Central Asia; branch strengths (A); HSS set by hand from 19.22 (A)
 TKM,Turkmenistan,Russia and Central Asia,TMT,45.0,6,20,N,96,5,6,,Restricted,,13,Gas; group default Guarded overridden for a closed personalist state (A); old group Central Asia; branch strengths and restriction (A); HSS set by hand from 19.22 (A)

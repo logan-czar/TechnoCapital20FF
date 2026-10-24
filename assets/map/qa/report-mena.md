@@ -48,7 +48,7 @@ _Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-2). Source of
 | Contested provinces (drawn by our own files) | 10 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 20 |
-| City probe points (fail on a mismatch; D686) | 70 pass, 0 mismatch, 8 listed |
+| City probe points (fail on a mismatch; D686) | 72 pass, 0 mismatch, 8 listed |
 | Metro reach scan rows (listed; D686) | 1 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 4 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
@@ -333,7 +333,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Hebron (35.1, 31.53) | PS-0004 | PS-0004 | on it |
 | Heliopolis (31.32, 30.09) | EG-0002 | EG-0001 | within a pixel |
 | Helwan (31.33, 29.85) | EG-0003 | EG-0003 | on it |
-| I-n-Salah (split part) (2.4666, 27.2166) | DZ-0031 | DZ-0031 | on it |
+| In Salah (site of a split giant) (2.46, 27.2) | DZ-0031 | DZ-0031 | on it |
 | Jenin (35.3, 32.46) | PS-0001 | PS-0001 | on it |
 | Jericho (35.45, 31.86) | PS-0003 | PS-0003 | on it |
 | Katzrin Golan (35.69, 32.99) | IL-0015 | IL-0015 | on it |
@@ -355,7 +355,9 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Riyadh Olaya (46.68, 24.7) | SA-0001 | SA-0001 | on it |
 | Riyadh Olaya2 (46.67, 24.69) | SA-0001 | SA-0001 | on it |
 | Sadr City (44.45, 33.39) | IQ-0003 | IQ-0003 | on it |
+| Sharara (site of a split giant) (12.23, 26.58) | LY-0028 | LY-0028 | on it |
 | Sharjah (55.4, 25.35) | AE-0012 | AE-0012 | on it |
+| Shaybah (site of a split giant) (53.98, 22.51) | SA-0020 | SA-0020 | on it |
 | Shubra el-Kheima (31.24, 30.13) | EG-0007 | EG-0008 | within a pixel |
 | Smara (-11.66, 26.74) | MA-0019 | MA-0019 | on it |
 | Taji (44.24, 33.52) | IQ-0004 | IQ-0004 | on it |

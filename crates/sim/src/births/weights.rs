@@ -77,6 +77,19 @@ pub fn province_weight(total_development: u32, g: f64) -> f64 {
     f64::from(total_development) * PROVINCE_WEIGHT_PER_DEVELOPMENT_USD * g
 }
 
+/// The floor of a development track (spec 2.x: tracks run 1 to 30).
+pub const TRACK_FLOOR: u32 = 1;
+
+/// Development above the floor (D830, Logan 2026-10-24; spec 5.19.1 HQ weight): each track
+/// counts `track − 1`, so a province at exactly 1/1/1 (an empty part of a split giant, D823)
+/// draws no startup HQ, and every other province moves by 3 points of its total.
+pub fn development_above_floor(commerce: u32, industry: u32, population: u32) -> u32 {
+    [commerce, industry, population]
+        .iter()
+        .map(|t| t.saturating_sub(TRACK_FLOOR))
+        .sum()
+}
+
 /// The HQ weight of a province for a startup in an industry (spec 5.19.1): `province weight ×
 /// (1 + named companies of the industry with HQ there) × 3 if a key city there lists the
 /// industry`.

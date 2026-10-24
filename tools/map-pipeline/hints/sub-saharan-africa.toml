@@ -269,6 +269,16 @@ seeds = [[38.62, 8.92], [38.65, 9.08], [38.73, 9.18], [38.90, 9.07], [38.90, 8.8
 units = ["Shamal Jabal Marrah"]
 add = true
 
+# D829: sites of the giants' notes Natural Earth has no place for (or names otherwise),
+# for the giant-province split: each site resource and notes fragment goes to the part
+# holding its site, and the part is named after it
+[giant_sites."NE-0004"]
+"Djado" = [12.31, 21.02]
+[giant_sites."TD-0016"]
+"Kouri Bougoudi" = [18.0, 21.3]
+[giant_sites."SD-0013"]
+"Merowe" = [32.06, 18.67]
+
 # D820: ML-0015 Timbuktu-Taoudenit (504,051 km2) cut into 11 parts on admin2 pieces
 [subdivide."ML-0015"]
 parts = 11
@@ -277,16 +287,16 @@ blocks = "admin2"
 main = [-3.016596, 16.766585]  # Timbuktu
 
 [subdivide."ML-0015".children]
-"ML-0018" = [-5.560761, 23.832872]  # Timbuktu Northwest
+"ML-0018" = [-5.560761, 23.832872]  # Tombouctou
 "ML-0019" = [-3.983359, 22.666587]  # Taoudenni
-"ML-0020" = [-5.266760, 22.662044]  # Timbuktu Northwest 2
-"ML-0021" = [-1.276118, 21.692719]  # Timbuktu Northeast
+"ML-0020" = [-5.266760, 22.662044]  # Goundam
+"ML-0021" = [-1.276118, 21.692719]  # Tessalit
 "ML-0022" = [-3.454003, 21.573360]  # Timbuktu North
 "ML-0023" = [-2.704272, 20.467744]  # Timbuktu East
 "ML-0024" = [-5.062911, 19.261461]  # Timbuktu Southwest
 "ML-0025" = [-3.529950, 18.900021]  # Araouane
-"ML-0026" = [-4.840700, 16.824963]  # Timbuktu South
-"ML-0027" = [-2.296541, 15.934322]  # Timbuktu South 2
+"ML-0026" = [-4.840700, 16.824963]  # Niafunke
+"ML-0027" = [-2.296541, 15.934322]  # Gourma-Rharous
 
 # D820: MR-0004 Zouerate-Fderik (258,928 km2) cut into 6 parts on towns pieces
 [subdivide."MR-0004"]
@@ -310,14 +320,14 @@ blocks = "admin2"
 main = [12.307507, 21.014982]  # Djado
 
 [subdivide."NE-0004".children]
-"NE-0018" = [14.001844, 22.195885]  # Bilma Northeast
-"NE-0019" = [10.590618, 21.442266]  # Bilma Northwest
-"NE-0020" = [8.958907, 20.749889]  # Bilma West
+"NE-0018" = [14.001844, 22.195885]  # Bilma
+"NE-0019" = [10.590618, 21.442266]  # Iferouane
+"NE-0020" = [8.958907, 20.749889]  # Arlit
 "NE-0021" = [14.454598, 20.447715]  # Bilma East
-"NE-0022" = [12.573123, 19.315894]  # Bilma Southeast
-"NE-0023" = [14.482369, 18.966226]  # Bilma Southeast 2
-"NE-0024" = [9.336838, 18.941155]  # Bilma Southwest
-"NE-0025" = [11.292065, 18.660307]  # Bilma South
+"NE-0022" = [12.573123, 19.315894]  # N'Gourti
+"NE-0023" = [14.482369, 18.966226]  # Bilma Southeast
+"NE-0024" = [9.336838, 18.941155]  # Tchirozerine
+"NE-0025" = [11.292065, 18.660307]  # Tesker
 
 # D820: SD-0013 Dongola-Merowe (363,161 km2) cut into 8 parts on admin2 pieces
 [subdivide."SD-0013"]
@@ -325,14 +335,15 @@ parts = 8
 whole_tol = 0.06
 blocks = "admin2"
 main = [30.483297, 19.166594]  # Dongola
+place_notes = "Merowe dam (1.25 GW, Chinese-built 2009, Sudan's largest power source), Dongola, Karima (Jebel Barkal), Wadi Halfa (Egypt border and Lake Nubia ferry), Gulf-owned farm leases"
 
 [subdivide."SD-0013".children]
 "SD-0024" = [31.349962, 21.800025]  # Wadi Halfa
-"SD-0025" = [28.283331, 21.099637]  # Dongola Northwest
-"SD-0026" = [26.062292, 21.017349]  # Dongola West
+"SD-0025" = [28.283331, 21.099637]  # Halfa
+"SD-0026" = [26.062292, 21.017349]  # Delgo
 "SD-0027" = [30.416582, 19.633697]  # Kerma
-"SD-0028" = [27.968640, 18.465792]  # Dongola Southwest
-"SD-0029" = [28.979331, 18.453137]  # Dongola Southwest 2
+"SD-0028" = [27.968640, 18.465792]  # Al Golid
+"SD-0029" = [28.979331, 18.453137]  # Dongola
 "SD-0030" = [31.816652, 18.483302]  # Merowe
 
 # D820: SD-0018 El Fasher (285,212 km2) cut into 6 parts on admin2 pieces
@@ -343,11 +354,11 @@ blocks = "admin2"
 main = [25.350018, 13.629981]  # El Fasher
 
 [subdivide."SD-0018".children]
-"SD-0031" = [25.733162, 19.379981]  # El Fasher North
-"SD-0032" = [24.849084, 17.653231]  # El Fasher North 2
+"SD-0031" = [25.733162, 19.379981]  # Al Malha
+"SD-0032" = [24.849084, 17.653231]  # Um Baru
 "SD-0033" = [26.603796, 17.646019]  # El Fasher Northeast
-"SD-0034" = [24.769967, 15.137665]  # El Fasher Southwest
-"SD-0035" = [26.350452, 15.092680]  # El Fasher Southeast
+"SD-0034" = [24.769967, 15.137665]  # Kutum
+"SD-0035" = [26.350452, 15.092680]  # Melit
 
 # D820: TD-0016 Faya-Tibesti (368,409 km2) cut into 8 parts on towns pieces
 [subdivide."TD-0016"]
@@ -355,10 +366,11 @@ parts = 8
 whole_tol = 0.06
 blocks = "towns"
 main = [19.116704, 17.916670]  # Faya Largeau
+place_notes = "Faya-Largeau (oasis, dates, army base), Zouar, Bardai, the Tibesti mountains and Emi Koussi, the Kouri Bougoudi gold rush (since 2012) and Libyan smuggling routes"
 
 [subdivide."TD-0016".children]
 "TD-0017" = [16.235037, 22.386593]  # Faya Northwest
-"TD-0018" = [18.457542, 21.710960]  # Faya North
+"TD-0018" = [18.000000, 21.300000]  # Kouri Bougoudi
 "TD-0019" = [16.527766, 20.458737]  # Zouar
 "TD-0020" = [18.962568, 20.045495]  # Faya Northeast
 "TD-0021" = [16.864791, 18.145718]  # Faya Southwest

@@ -296,16 +296,27 @@ polygon = [[-9.10, 29.95], [-8.60, 30.25], [-7.60, 30.40], [-6.60, 30.25], [-6.4
            [-8.00, 28.80], [-8.70, 28.70], [-9.10, 29.20], [-9.10, 29.95]]
 from = ["MAR:Guelmim-Oued Noun"]
 
+# D829: sites of the giants' notes Natural Earth has no place for (or names otherwise),
+# for the giant-province split: each site resource and notes fragment goes to the part
+# holding its site, and the part is named after it
+[giant_sites."DZ-0027"]
+"In Salah" = [2.46, 27.2]
+[giant_sites."LY-0018"]
+"Sharara" = [12.23, 26.58]
+[giant_sites."SA-0020"]
+"Shaybah" = [53.98, 22.51]
+
 # D820: DZ-0027 Tamanrasset-In Salah (609,273 km2) cut into 13 parts on towns pieces
 [subdivide."DZ-0027"]
 parts = 13
 whole_tol = 0.06
 blocks = "towns"
 main = [5.522805, 22.785003]  # Tamanrasset
+place_notes = "In Salah gas (BP, Equinor, Sonatrach), Tamanrasset (the Hoggar mountains, the Tuareg, trade with Niger and Mali), the southern military command"
 
 [subdivide."DZ-0027".children]
 "DZ-0030" = [4.636921, 28.168846]  # Tamanrasset North
-"DZ-0031" = [2.466609, 27.216645]  # I-n-Salah
+"DZ-0031" = [2.460000, 27.200000]  # In Salah
 "DZ-0032" = [4.521181, 26.881235]  # Tamanrasset North 2
 "DZ-0033" = [3.749993, 25.279993]  # Arak
 "DZ-0034" = [3.297755, 24.415863]  # Tamanrasset West
@@ -323,6 +334,7 @@ parts = 10
 whole_tol = 0.06
 blocks = "towns"
 main = [-0.289967, 27.869990]  # Adrar
+place_notes = "Adrar, Timimoun and Reggane (the Touat and Gourara oases, the French nuclear test sites of 1960), the new Touat gas fields"
 
 [subdivide."DZ-0028".children]
 "DZ-0042" = [0.269999, 29.236522]  # Timimoun
@@ -341,6 +353,7 @@ parts = 9
 whole_tol = 0.06
 blocks = "towns"
 main = [-2.230004, 31.611105]  # Bechar
+place_notes = "Bechar (the army's western command, the closed Kenadsa coal mines), Tindouf (the Polisario Front's refugee camps and the seat of the Sahrawi republic in exile), the undeveloped Gara Djebilet iron ore, the Naama and El Bayadh steppe"
 
 [subdivide."DZ-0029".children]
 "DZ-0051" = [1.009954, 33.690358]  # El Bayadh
@@ -360,14 +373,14 @@ blocks = "admin2"
 main = [30.550011, 25.440009]  # El Kharga
 
 [subdivide."EG-0031".children]
-"EG-0035" = [25.875986, 26.528468]  # Kharga Northwest
+"EG-0035" = [25.875986, 26.528468]  # A-Dakhla Oasis
 "EG-0036" = [27.966551, 27.067145]  # Qasr Farafra
 "EG-0037" = [28.883291, 25.700433]  # El Qasr
-"EG-0038" = [31.700398, 25.448844]  # Kharga East
+"EG-0038" = [31.700398, 25.448844]  # Al-Kharga Oasis
 "EG-0039" = [26.764908, 24.798446]  # Kharga West
 "EG-0040" = [27.649843, 23.117497]  # Kharga Southwest
-"EG-0041" = [31.464642, 23.105628]  # Kharga Southeast
-"EG-0042" = [29.443253, 23.105369]  # Kharga South
+"EG-0041" = [31.464642, 23.105628]  # Paris Paris
+"EG-0042" = [29.443253, 23.105369]  # Zemam Out
 "EG-0043" = [25.870944, 23.097592]  # Kharga Southwest 2
 
 # D820: LY-0015 Kufra (422,896 km2) cut into 9 parts on parts pieces
@@ -393,9 +406,10 @@ parts = 7
 whole_tol = 0.06
 blocks = "towns"
 main = [13.897229, 25.904399]  # Marzuq
+place_notes = "The Sharara (Libya's largest field, Repsol) and Elephant (Eni) fields in the Murzuq basin, Ubari and Murzuq; Tuareg and Tebu communities"
 
 [subdivide."LY-0018".children]
-"LY-0028" = [12.277438, 25.950547]  # Murzuq Northwest
+"LY-0028" = [12.230000, 26.580000]  # Sharara
 "LY-0029" = [15.800007, 26.366645]  # Tmassah
 "LY-0030" = [17.941911, 25.371850]  # Murzuq East
 "LY-0031" = [15.964838, 23.726751]  # Murzuq Southeast

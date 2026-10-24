@@ -114,13 +114,26 @@ def subdivided(hints: dict) -> dict[str, str]:
             for c in sorted(spec.get("children", {}))}
 
 
+def all_province_ids() -> set[str]:
+    """Every province id of every region file (the crosswalk's rows must be these, D820)."""
+    out = set()
+    for r in config.REGIONS.values():
+        with (config.DATA_DIR / r.csv).open(encoding="utf-8", newline="") as f:
+            out |= {row["id"] for row in csv.DictReader(f)}
+    return out
+
+
 def read_provinces(region: config.Region) -> list[ProvinceRow]:
     """The region file's provinces the crosswalk places: every row but the parts of a split
-    giant other than the original (D820)."""
-    skip = subdivided(load_hints(region))
+    giant other than the original (D820), each original with the notes it was placed from."""
+    hints = load_hints(region)
+    skip = subdivided(hints)
+    # a split giant whose notes moved to its parts is placed from the notes it had (D829)
+    placed = {pid: spec["place_notes"] for pid, spec in hints.get("subdivide", {}).items() if "place_notes" in spec}
     with (config.DATA_DIR / region.csv).open(encoding="utf-8", newline="") as f:
         return [
-            ProvinceRow(r["id"], r["name"], r["country"], r["region"], r["metro"], r["notes"], r["coastal"])
+            ProvinceRow(r["id"], r["name"], r["country"], r["region"], r["metro"], placed.get(r["id"], r["notes"]),
+                        r["coastal"])
             for r in csv.DictReader(f) if r["id"] not in skip
         ]
 
@@ -1500,7 +1513,8 @@ def run(region: config.Region) -> None:
                merge_key=("country", "region"), own={(p.country, p.region) for p in provs})
     _write_csv(out_dir / "province_crosswalk.csv", province_rows,
                ["province_id", "name", "country", "region", "method", "source_ids", "confidence", "provenance", "note"],
-               merge_key=("province_id",), own={(p.id,) for p in provs} | {(c,) for c in split_of})
+               merge_key=("province_id",), own={(p.id,) for p in provs} | {(c,) for c in split_of},
+               valid={(i,) for i in all_province_ids()})
     (work / "unclaimed.json").write_text(json.dumps(unclaimed, indent=1), encoding="utf-8")
     (work / "land-gaps.json").write_text(json.dumps(gaps, indent=1), encoding="utf-8")
     (work / "ne-labels.json").write_text(json.dumps(labels, indent=1), encoding="utf-8")
@@ -1518,14 +1532,16 @@ def _slug(key: str) -> str:
     return text.fold(key).replace(" ", "-")
 
 
-def _write_csv(path, rows, cols, merge_key, own):
+def _write_csv(path, rows, cols, merge_key, own, valid=None):
     """Write rows, keeping other region files' rows already in the file (one file for the
     world): a row is replaced when its key is one of this region file's (`own`), so a country
-    in two files (Russia) keeps both files' rows."""
+    in two files (Russia) keeps both files' rows. With `valid`, a kept row whose key is not in
+    it (a province no region file has any more) is dropped (D820)."""
     keep = []
     if path.exists():
         with path.open(encoding="utf-8", newline="") as f:
-            keep = [r for r in csv.DictReader(f) if tuple(r[k] for k in merge_key) not in own]
+            keep = [r for r in csv.DictReader(f) if tuple(r[k] for k in merge_key) not in own
+                    and (valid is None or tuple(r[k] for k in merge_key) in valid)]
     allrows = keep + rows
     allrows.sort(key=lambda r: tuple(str(r[k]) for k in merge_key))
     with path.open("w", encoding="utf-8", newline="") as f:

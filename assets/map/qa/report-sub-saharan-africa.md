@@ -78,10 +78,10 @@ _Written by `tools/map-pipeline/run.py --region sub-saharan-africa` (pipeline pb
 | Contested provinces (drawn by our own files) | 6 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 13 |
-| City probe points (fail on a mismatch; D686) | 117 pass, 0 mismatch, 5 listed |
+| City probe points (fail on a mismatch; D686) | 119 pass, 0 mismatch, 5 listed |
 | Metro reach scan rows (listed; D686) | 2 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 18 (0 unexplained) |
-| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
+| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 4 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 3 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
@@ -268,11 +268,13 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 
 | Check | Province | Place | Expected | Got |
 |---|---|---|---|---|
+| own name | ML-0020 | Goundam | ML-0020 | ML-0015 |
+| own name elsewhere | ML-0021 | Tessalit | ML-0021 | ML-0017 |
+| own name | NE-0020 | Arlit | NE-0020 | NE-0003 |
+| own name | SD-0029 | Dongola | SD-0029 | SD-0013 |
 | city on the edge | TD-0005 | Moundou | TD-0005 | TD-0004 |
 | city on the edge | SD-0002 | Omdurman | SD-0002 | SD-0001 |
 | city on the edge | NA-0011 | Katima Mulilo | NA-0011 | ZM-0015 |
-
-No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
 
 ## Natural Earth labels
 
@@ -325,6 +327,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Damongo (-1.82, 9.08) | GH-0014 | GH-0014 | on it |
 | Dar es Salaam (39.28, -6.8) | TZ | TZ-0001 | on it |
 | Djado (main city of a split giant) (12.3075, 21.015) | NE-0004 | NE-0004 | on it |
+| Djado (site of a split giant) (12.31, 21.02) | NE-0004 | NE-0004 | on it |
 | Djibouti (43.15, 11.59) | DJ | DJ-0001 | nearest across water |
 | Dongola (main city of a split giant) (30.4833, 19.1666) | SD-0013 | SD-0013 | on it |
 | El Fasher (main city of a split giant) (25.35, 13.63) | SD-0018 | SD-0018 | on it |
@@ -359,6 +362,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Kintampo (-1.73, 8.05) | GH-0011 | GH-0011 | on it |
 | Kisangani (25.19, 0.52) | CD-0013 | CD-0013 | on it |
 | Kolwezi (25.47, -10.71) | CD-0023 | CD-0023 | on it |
+| Kouri Bougoudi (site of a split giant) (18.0, 21.3) | TD-0018 | TD-0018 | on it |
 | Krugersdorp (27.77, -26.1) | ZA-0002 | ZA-0002 | on it |
 | Kumasi (-1.62, 6.69) | GH-0003 | GH-0003 | on it |
 | Lagos Island (3.39, 6.455) | NG-0001 | NG-0003 | within a pixel |
@@ -375,7 +379,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Mbandaka (18.26, 0.05) | CD-0008 | CD-0008 | on it |
 | Mbuji-Mayi (23.6, -6.13) | CD-0029 | CD-0029 | on it |
 | Melville (28.0, -26.17) | ZA-0001 | ZA-0001 | on it |
-| Merowe (split part) (31.8167, 18.4833) | SD-0030 | SD-0030 | on it |
+| Merowe (site of a split giant) (32.06, 18.67) | SD-0030 | SD-0030 | on it |
 | Midrand (28.13, -25.99) | ZA-0001 | ZA-0001 | on it |
 | Mombasa (39.67, -4.04) | KE | KE-0004 | nearest across water |
 | Mont Ngafula (15.29, -4.45) | CD-0003 | CD-0003 | on it |
@@ -433,7 +437,7 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 | ET-0022 | Assosa-GERD | 6 | 36.44, 9.46 | Benishangul-Gumuz is in parts (the Kamashi zone lies apart; Natural Earth's unit has four) |
 | ET-0022 | Assosa-GERD | 16 | 36.11, 8.92 | Benishangul-Gumuz is in parts (the Kamashi zone lies apart; Natural Earth's unit has four) |
 | GH-0006 | Cape Coast-Kasoa | 14 | -2.06, 6.16 | a neck under a pixel wide joins it to the rest in the shapes |
-| ML-0020 | Timbuktu Northwest 2 | 5 | -6.57, 24.89 | a neck under a pixel wide joins it to the rest in the shapes |
+| ML-0020 | Goundam | 5 | -6.57, 24.89 | a neck under a pixel wide joins it to the rest in the shapes |
 | NE-0002 | Agadez | 12 | 11.27, 17.17 | a neck under a pixel wide joins it to the rest in the shapes |
 | NG-0004 | Ikorodu-Alimosho | 10 | 3.27, 6.59 | its own seed unit Alimosho lies in it |
 | SD-0015 | Kadugli-Nuba | 5 | 29.89, 10.23 | a neck under a pixel wide joins it to the rest in the shapes |

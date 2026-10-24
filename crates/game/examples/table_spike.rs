@@ -1,4 +1,4 @@
-//! M0.8 `bevy_ui` spike: a virtualized table of the 3,968 provinces (build-plan M0.8, risk R1).
+//! M0.8 `bevy_ui` spike: a virtualized table of the 3,963 provinces (build-plan M0.8, risk R1).
 //!
 //! Only the visible rows exist as entities: a fixed pool of row nodes whose text is rewritten when
 //! the view scrolls or the sort changes, so the entity count does not grow with the data. The

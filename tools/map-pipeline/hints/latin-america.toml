@@ -112,12 +112,24 @@ add = true
 [review.exclave_ok]
 "BR-0032" = "Mampituba meets the rest of Serra Gaucha only at a corner of Sao Francisco de Paula, so its pixels stand apart"
 
+# D829: sites of the giants' notes Natural Earth has no place for (or names otherwise),
+# for the giant-province split: each site resource and notes fragment goes to the part
+# holding its site, and the part is named after it
+[giant_sites."BR-0048"]
+"Urucu" = [-65.3, -4.88]
+[giant_sites."BR-0045"]
+"Carajas" = [-50.17, -6.07]
+[giant_sites."BR-0046"]
+"Belo Monte" = [-51.88, -3.15]  # the dam is at -51.77, -3.12, a pixel from the cut; its point sits inside BR-0089
+"Trombetas" = [-56.4, -1.5]
+
 # D820: BR-0039 Bahia Sertao-Feira de Santana (322,322 km2) cut into 7 parts on admin2 pieces
 [subdivide."BR-0039"]
 parts = 7
 whole_tol = 0.06
 blocks = "admin2"
 main = [-38.970009, -12.250016]  # Feira de Santana
+place_notes = "Feira de Santana, Vitoria da Conquista, Paulo Afonso and Sobradinho dams on the Sao Francisco, Juazeiro irrigated fruit, semi-arid interior"
 
 [subdivide."BR-0039".children]
 "BR-0068" = [-38.221689, -9.402967]  # Paulo Afonso
@@ -137,14 +149,14 @@ main = [-49.115979, -5.349972]  # Maraba
 [subdivide."BR-0045".children]
 "BR-0074" = [-52.210002, -3.199612]  # Altamira
 "BR-0075" = [-49.673652, -3.767357]  # Tucurui
-"BR-0076" = [-51.144944, -4.358337]  # Carajas North
-"BR-0077" = [-53.707266, -5.638306]  # Carajas West
-"BR-0078" = [-54.264681, -6.781708]  # Carajas West 2
-"BR-0079" = [-51.520591, -7.225250]  # Carajas South
+"BR-0076" = [-51.144944, -4.358337]  # Sao Felix do Xingu
+"BR-0077" = [-53.707266, -5.638306]  # Itaituba
+"BR-0078" = [-54.264681, -6.781708]  # Novo Progresso
+"BR-0079" = [-51.520591, -7.225250]  # Ourilandia do Norte
 "BR-0080" = [-49.290025, -8.250002]  # Conceicao do Araguaia
-"BR-0081" = [-55.343031, -8.297833]  # Carajas Southwest
-"BR-0082" = [-53.663513, -8.533336]  # Carajas Southwest 2
-"BR-0083" = [-51.336781, -9.020059]  # Carajas South 2
+"BR-0081" = [-55.343031, -8.297833]  # Novo Mundo
+"BR-0082" = [-53.663513, -8.533336]  # Guaranta do Norte
+"BR-0083" = [-51.336781, -9.020059]  # Santana do Araguaia
 
 # D820: BR-0046 West Para-Santarem (522,192 km2) cut into 11 parts on admin2 pieces
 [subdivide."BR-0046"]
@@ -152,18 +164,19 @@ parts = 11
 whole_tol = 0.06
 blocks = "admin2"
 main = [-54.699979, -2.433251]  # Santarem
+place_notes = "Belo Monte dam on the Xingu, Santarem soy port on the Amazon, Trombetas bauxite, illegal gold on the Tapajos"
 
 [subdivide."BR-0046".children]
-"BR-0084" = [-54.477746, 1.271964]  # West Para North
-"BR-0085" = [-57.716543, 0.918765]  # West Para Northwest
-"BR-0086" = [-55.908933, 0.485111]  # West Para North 2
-"BR-0087" = [-53.958831, -0.556230]  # West Para North 3
-"BR-0088" = [-57.289293, -0.971636]  # West Para Northwest 2
-"BR-0089" = [-52.762303, -2.519257]  # West Para Northeast
+"BR-0084" = [-54.477746, 1.271964]  # Almeirim
+"BR-0085" = [-57.716543, 0.918765]  # Caroebe
+"BR-0086" = [-55.908933, 0.485111]  # Obidos
+"BR-0087" = [-53.958831, -0.556230]  # Monte Alegre
+"BR-0088" = [-56.400000, -1.500000]  # Trombetas
+"BR-0089" = [-51.880000, -3.150000]  # Belo Monte
 "BR-0090" = [-55.869985, -1.759597]  # Oriximina
-"BR-0091" = [-55.925021, -4.258617]  # Itaituba
+"BR-0091" = [-56.452824, -4.692291]  # Trairao
 "BR-0092" = [-57.760131, -6.228018]  # Jacareacanga
-"BR-0093" = [-56.973623, -7.886353]  # West Para Southwest
+"BR-0093" = [-56.973623, -7.886353]  # Apiacas
 
 # D820: BR-0047 Manaus (462,315 km2) cut into 10 parts on admin2 pieces
 [subdivide."BR-0047"]
@@ -173,14 +186,14 @@ blocks = "admin2"
 main = [-60.001963, -3.098086]  # Manaus
 
 [subdivide."BR-0047".children]
-"BR-0094" = [-59.601372, -0.906433]  # Manaus North
+"BR-0094" = [-59.601372, -0.906433]  # Urucara
 "BR-0095" = [-60.943784, -2.620785]  # Novo Airao
 "BR-0096" = [-56.740010, -2.610036]  # Parintins
 "BR-0097" = [-60.619980, -3.289581]  # Manacapuru
-"BR-0098" = [-58.624568, -4.281799]  # Manaus East
+"BR-0098" = [-58.624568, -4.281799]  # Borba
 "BR-0099" = [-61.297484, -5.812166]  # Manicore
-"BR-0100" = [-59.205796, -6.119887]  # Manaus South
-"BR-0101" = [-59.222080, -7.564913]  # Manaus South 2
+"BR-0100" = [-59.205796, -6.119887]  # Maues
+"BR-0101" = [-59.222080, -7.564913]  # Apui
 "BR-0102" = [-60.269949, -6.983826]  # Natal
 
 # D820: BR-0048 Interior Amazonas (1,103,090 km2) cut into 23 parts on admin2 pieces
@@ -191,28 +204,28 @@ blocks = "admin2"
 main = [-64.699989, -3.360016]  # Tefe
 
 [subdivide."BR-0048".children]
-"BR-0103" = [-67.594952, 1.080248]  # Interior Amazonas North
-"BR-0104" = [-63.421688, 0.951105]  # Interior Amazonas Northeast
-"BR-0105" = [-69.265192, 0.186481]  # Interior Amazonas Northwest
-"BR-0106" = [-64.995298, -0.172033]  # Interior Amazonas North 2
+"BR-0103" = [-67.594952, 1.080248]  # Sao Gabriel da Cachoeira
+"BR-0104" = [-63.421688, 0.951105]  # Santa Isabel do Rio Negro
+"BR-0105" = [-69.265192, 0.186481]  # Japura
+"BR-0106" = [-64.995298, -0.172033]  # Maraa
 "BR-0107" = [-67.083306, -0.133236]  # Sao Cabriel da Cachoeira
 "BR-0108" = [-62.923896, -0.974993]  # Barcelos
 "BR-0109" = [-66.091610, -2.513814]  # Fonte Boa
-"BR-0110" = [-69.041295, -2.854706]  # Interior Amazonas West
-"BR-0111" = [-63.684920, -2.995850]  # Interior Amazonas East
+"BR-0110" = [-69.041295, -2.854706]  # Santo Antonio do Ica
+"BR-0111" = [-63.684920, -2.995850]  # Codajas
 "BR-0112" = [-67.801893, -2.872707]  # Tonantins
-"BR-0113" = [-68.745476, -4.810150]  # Interior Amazonas West 2
+"BR-0113" = [-68.745476, -4.810150]  # Jutai
 "BR-0114" = [-63.129981, -4.079972]  # Coari
-"BR-0115" = [-71.621531, -5.291748]  # Interior Amazonas West 3
-"BR-0116" = [-66.584223, -5.592943]  # Interior Amazonas South
-"BR-0117" = [-69.368967, -5.758324]  # Interior Amazonas Southwest
-"BR-0118" = [-64.640440, -6.518650]  # Interior Amazonas Southeast
-"BR-0119" = [-72.382452, -6.667694]  # Interior Amazonas Southwest 2
-"BR-0120" = [-67.108302, -7.204689]  # Interior Amazonas South 2
+"BR-0115" = [-71.621531, -5.291748]  # Atalaia do Norte
+"BR-0116" = [-66.584223, -5.592943]  # Tapaua
+"BR-0117" = [-69.368967, -5.758324]  # Itamarati
+"BR-0118" = [-64.640440, -6.518650]  # Canutama
+"BR-0119" = [-72.382452, -6.667694]  # Ipixuna
+"BR-0120" = [-67.108302, -7.204689]  # Pauini
 "BR-0121" = [-63.039961, -7.463900]  # Crato
 "BR-0122" = [-69.873808, -6.660021]  # Eirunepe
-"BR-0123" = [-65.086212, -8.549530]  # Interior Amazonas South 3
-"BR-0124" = [-67.700992, -8.640138]  # Interior Amazonas South 4
+"BR-0123" = [-65.086212, -8.549530]  # Labrea
+"BR-0124" = [-67.700992, -8.640138]  # Boca do Acre
 
 # D820: BR-0055 North Mato Grosso (415,315 km2) cut into 9 parts on admin2 pieces
 [subdivide."BR-0055"]
@@ -222,14 +235,14 @@ blocks = "admin2"
 main = [-55.459985, -11.849989]  # Sinop
 
 [subdivide."BR-0055".children]
-"BR-0125" = [-60.141183, -9.089729]  # North Mato Grosso Northwest
-"BR-0126" = [-57.883619, -9.345886]  # North Mato Grosso North
+"BR-0125" = [-60.141183, -9.089729]  # Colniza
+"BR-0126" = [-57.883619, -9.345886]  # Nova Bandeirantes
 "BR-0127" = [-55.909983, -9.900030]  # Alta Floresta
 "BR-0128" = [-59.443870, -10.176660]  # Aripuana
-"BR-0129" = [-58.631761, -11.949825]  # North Mato Grosso Southwest
-"BR-0130" = [-56.696379, -12.585144]  # North Mato Grosso Southeast
-"BR-0131" = [-54.632620, -13.340942]  # North Mato Grosso Southeast 2
-"BR-0132" = [-58.979531, -13.575319]  # North Mato Grosso Southwest 2
+"BR-0129" = [-58.631761, -11.949825]  # Brasnorte
+"BR-0130" = [-56.696379, -12.585144]  # Tabapora
+"BR-0131" = [-54.632620, -13.340942]  # Paranatinga
+"BR-0132" = [-58.979531, -13.575319]  # Comodoro
 
 # D820: BR-0056 East Mato Grosso-Araguaia (315,728 km2) cut into 7 parts on admin2 pieces
 [subdivide."BR-0056"]
@@ -237,14 +250,15 @@ parts = 7
 whole_tol = 0.06
 blocks = "admin2"
 main = [-54.639983, -16.469500]  # Rondonopolis
+place_notes = "Rondonopolis soy crushing, Barra do Garcas, Araguaia cattle"
 
 [subdivide."BR-0056".children]
-"BR-0133" = [-53.528564, -10.663910]  # East Mato Grosso Northwest
-"BR-0134" = [-51.535011, -10.932175]  # East Mato Grosso North
-"BR-0135" = [-53.119947, -12.385406]  # East Mato Grosso Northwest 2
-"BR-0136" = [-51.573938, -12.755203]  # East Mato Grosso Northeast
+"BR-0133" = [-53.528564, -10.663910]  # Peixoto de Azevedo
+"BR-0134" = [-51.535011, -10.932175]  # Sao Felix do Araguaia
+"BR-0135" = [-53.119947, -12.385406]  # Gaucha do Norte
+"BR-0136" = [-51.573938, -12.755203]  # Ribeirao Cascalheira
 "BR-0137" = [-52.259999, -15.879613]  # Barra do Garcas
-"BR-0138" = [-53.867842, -15.635254]  # East Mato Grosso Southwest
+"BR-0138" = [-53.867842, -15.635254]  # Poxoreu
 
 # D820: BR-0057 Mato Grosso do Sul (356,041 km2) cut into 8 parts on admin2 pieces
 [subdivide."BR-0057"]
@@ -252,13 +266,14 @@ parts = 8
 whole_tol = 0.06
 blocks = "admin2"
 main = [-54.618571, -20.448086]  # Campo Grande
+place_notes = "Campo Grande cattle, Tres Lagoas pulp mills, Corumba iron ore and manganese, Pantanal wetlands"
 
 [subdivide."BR-0057".children]
 "BR-0139" = [-57.650006, -19.016011]  # Corumba
-"BR-0140" = [-54.587271, -18.490726]  # Mato Grosso do Sul North
-"BR-0141" = [-53.457965, -19.510864]  # Mato Grosso do Sul Northeast
+"BR-0140" = [-54.587271, -18.490726]  # Rio Verde de Mato Grosso
+"BR-0141" = [-53.457965, -19.510864]  # Ribas do Rio Pardo
 "BR-0142" = [-51.720006, -20.790011]  # Tres Lagoas
-"BR-0143" = [-57.228948, -20.697644]  # Mato Grosso do Sul West
+"BR-0143" = [-57.228948, -20.697644]  # Porto Murtinho
 "BR-0144" = [-55.790016, -20.469617]  # Aquidauana
 "BR-0145" = [-54.809998, -22.230027]  # Dourados
 
@@ -270,11 +285,11 @@ blocks = "admin2"
 main = [-42.781955, -5.093055]  # Teresina
 
 [subdivide."BR-0062".children]
-"BR-0146" = [-41.874947, -6.207760]  # Piaui North
+"BR-0146" = [-41.874947, -6.207760]  # Sao Miguel do Tapuio
 "BR-0147" = [-41.439988, -7.079995]  # Picos
-"BR-0148" = [-42.846518, -8.154907]  # Piaui Southwest
-"BR-0149" = [-43.957224, -8.769562]  # Piaui Southwest 2
-"BR-0150" = [-45.581177, -9.188922]  # Piaui Southwest 3
+"BR-0148" = [-42.846518, -8.154907]  # Canto do Buriti
+"BR-0149" = [-43.957224, -8.769562]  # Urucui
+"BR-0150" = [-45.581177, -9.188922]  # Baixa Grande do Ribeiro
 
 # D820: BR-0063 Tocantins (278,973 km2) cut into 6 parts on admin2 pieces
 [subdivide."BR-0063"]
@@ -285,10 +300,10 @@ main = [-48.287787, -10.237736]  # Palmas
 
 [subdivide."BR-0063".children]
 "BR-0151" = [-48.210014, -7.190015]  # Araguaina
-"BR-0152" = [-48.067162, -8.782742]  # Tocantins Northeast
-"BR-0153" = [-49.723749, -11.035046]  # Tocantins Southwest
+"BR-0152" = [-48.067162, -8.782742]  # Lizarda
+"BR-0153" = [-49.723749, -11.035046]  # Formoso do Araguaia
 "BR-0154" = [-49.059988, -11.719609]  # Gurupi
-"BR-0155" = [-47.036725, -11.849945]  # Tocantins Southeast
+"BR-0155" = [-47.036725, -11.849945]  # Parana
 
 # D820: CO-0028 Colombian Amazon and Vichada (385,965 km2) cut into 8 parts on admin2 pieces
 [subdivide."CO-0028"]
@@ -296,15 +311,16 @@ parts = 8
 whole_tol = 0.04
 blocks = "admin2"
 main = [-69.955261, -4.201207]  # Leticia
+place_notes = "Leticia, San Jose del Guaviare, Puerto Carreno, Puerto Inirida; rain forest, coca, illegal gold and coltan"
 
 [subdivide."CO-0028".children]
 "CO-0030" = [-67.493023, 6.185035]  # Puerto Carreno
-"CO-0031" = [-70.230069, 4.398881]  # Colombian Amazon and Vichada North
+"CO-0031" = [-70.230069, 4.398881]  # Cumaribo
 "CO-0032" = [-67.906098, 3.854040]  # Inirida
-"CO-0033" = [-70.690376, 2.473137]  # Colombian Amazon and Vichada North 2
-"CO-0034" = [-72.163221, 1.616895]  # Colombian Amazon and Vichada Northwest
+"CO-0033" = [-70.690376, 2.473137]  # San Jose Del Guaviare
+"CO-0034" = [-72.163221, 1.616895]  # Calamar
 "CO-0035" = [-70.173608, 1.198311]  # Mitu
-"CO-0036" = [-73.007297, -0.756908]  # Colombian Amazon and Vichada Southwest
+"CO-0036" = [-73.007297, -0.756908]  # La Chorrera
 
 # D820: PE-0023 Iquitos-Loreto (373,776 km2) cut into 8 parts on admin2 pieces
 [subdivide."PE-0023"]
@@ -318,6 +334,6 @@ main = [-73.250010, -3.750018]  # Iquitos
 "PE-0029" = [-73.780029, -4.570019]  # Nauta
 "PE-0030" = [-70.508342, -3.916261]  # Caballococha
 "PE-0031" = [-76.402479, -2.902059]  # Andoas
-"PE-0032" = [-76.889778, -4.252093]  # Iquitos West
+"PE-0032" = [-76.889778, -4.252093]  # Datem del MaraAon
 "PE-0033" = [-73.909995, -5.069627]  # Requena
 "PE-0034" = [-75.019979, -7.340031]  # Contamana
