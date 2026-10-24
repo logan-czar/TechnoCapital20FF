@@ -21,7 +21,7 @@ use crate::{DataError, SUPERREGIONS, Table, WorldData};
 /// Expected row counts (spec 10 M0, build-plan M0.2).
 pub const EXPECTED_COUNTS: [(&str, usize); 11] = [
     ("countries", 211),
-    ("provinces", 3969),
+    ("provinces", 3968),
     ("companies", 651),
     ("characters", 296),
     ("industries", 42),

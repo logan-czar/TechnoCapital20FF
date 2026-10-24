@@ -12,7 +12,7 @@ fn world() -> World {
 fn counts_match_the_data() {
     let w = world();
     assert_eq!(w.countries.len(), 211);
-    assert_eq!(w.provinces.len(), 3969);
+    assert_eq!(w.provinces.len(), 3968);
     assert_eq!(w.companies.len(), 651);
     assert_eq!(w.characters.len(), 296);
     assert_eq!(w.industries.len(), 42);

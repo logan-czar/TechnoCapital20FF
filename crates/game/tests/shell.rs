@@ -438,7 +438,7 @@ fn toast_cap_holds_within_a_frame() {
     );
 }
 
-/// M7.7 done line, automated for release builds: a sort of the World page's 3,969 provinces
+/// M7.7 done line, automated for release builds: a sort of the World page's 3,968 provinces
 /// (v_places) and of the Companies list's 651 rows (v_company_row, with bands) fits well inside
 /// a 60 fps frame (16 ms) on every column. Debug builds only check the order (the game crate is
 /// unoptimized there); `--bench-table` measures the whole frame (D519, D570).
@@ -449,7 +449,7 @@ fn table_sorts_fit_a_frame() {
     let index = game::command::index::NameIndex::build(v);
     let provinces = game::pages::world::province_model(v);
     let companies = game::pages::lists::list_model(&PageRef::Companies, v, &index).unwrap();
-    for (m, n) in [(&provinces, 3_969), (&companies, 651)] {
+    for (m, n) in [(&provinces, 3_968), (&companies, 651)] {
         assert_eq!(m.len(), n);
         for col in 0..m.columns.len() {
             for asc in [true, false] {

@@ -16,7 +16,7 @@ use serde::{Deserialize, Deserializer, de};
 use crate::{DataError, Table, load_table};
 
 /// Most provinces a map may hold: the game's per-province colour table is 64 x 64 texels with
-/// index 0 for water (D638), so 4,095. The world has 3,969 (D820).
+/// index 0 for water (D638), so 4,095. The world has 3,968 (D820).
 pub const MAX_MAP_PROVINCES: usize = 4095;
 
 /// The metadata file.
