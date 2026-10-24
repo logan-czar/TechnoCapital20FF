@@ -37,7 +37,18 @@ Step 'boundary' {
         if ($LASTEXITCODE -ne 0) { return }
     }
 }
-Step 'test' { cargo test @pkgs }
+# cargo-nextest runs the test binaries in parallel (cargo test runs them one at a time); it does
+# not run doc tests, so those go through cargo test (D870). Without nextest, plain cargo test.
+Step 'test' {
+    cargo nextest --version *> $null
+    if ($LASTEXITCODE -eq 0) {
+        cargo nextest run @pkgs --no-fail-fast
+        if ($LASTEXITCODE -ne 0) { return }
+        cargo test @pkgs --doc
+    } else {
+        cargo test @pkgs
+    }
+}
 Step 'validate.py' {
     Push-Location docs/design/tools/mvp-data
     $out = python -B validate.py (Join-Path $root 'docs/design/data')
