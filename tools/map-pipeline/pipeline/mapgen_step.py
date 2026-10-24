@@ -7,6 +7,7 @@ exactly those CSVs. A region counts as built once its simplify step wrote provin
 
 from __future__ import annotations
 
+import shutil
 import subprocess
 
 from . import PIPELINE_VERSION, config
@@ -42,3 +43,9 @@ def run(region: config.Region) -> None:
     res = subprocess.run(cmd, cwd=config.REPO_ROOT)
     if res.returncode != 0:
         raise SystemExit("mapgen failed")
+    # the QA table lists every province drawn: each built region's QA step reads its own copy, so
+    # a world run (`all`, mapgen once) must not leave the other regions' copies stale (D820)
+    for r in regions:
+        other = config.work_dir(r.slug, sources) / "mapgen-qa.csv"
+        if other != work / "mapgen-qa.csv":
+            shutil.copyfile(work / "mapgen-qa.csv", other)

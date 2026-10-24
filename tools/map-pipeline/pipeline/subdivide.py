@@ -395,9 +395,9 @@ def _bisect(frame: Frame, pieces: list[Piece], n: int, tol: float) -> list[list[
 
 
 def _merge_fragments(frame: Frame, parts: list) -> list:
-    """A part's pieces that are not its largest, touch a sibling and are under FRAGMENT_SHARE of
-    a mean part go to the sibling they share the longest edge with (parts stay contiguous where
-    they can without unbalancing the cut); islands and larger pieces stay."""
+    """A part's pieces that are not its largest and touch a sibling go to the sibling they share
+    the longest edge with, when under FRAGMENT_SHARE of a mean part or when the sibling stays
+    under the cap (parts stay contiguous where they can); islands and the rest stay."""
     parts = list(parts)
     mean = sum(p.area * math.cos(math.radians(p.centroid.y)) for p in parts) / len(parts)
     for i in range(len(parts)):
@@ -407,9 +407,7 @@ def _merge_fragments(frame: Frame, parts: list) -> list:
             continue
         keep = [comps[0]]
         for c in comps[1:]:
-            if c.area * math.cos(math.radians(c.centroid.y)) > FRAGMENT_SHARE * mean:
-                keep.append(c)
-                continue
+            small = c.area * math.cos(math.radians(c.centroid.y)) <= FRAGMENT_SHARE * mean
             best, best_len = None, 0.0
             x0, y0, x1, y1 = c.bounds
             for j in range(len(parts)):
@@ -421,6 +419,11 @@ def _merge_fragments(frame: Frame, parts: list) -> list:
                 s = _shared(c, parts[j])
                 if s > best_len:
                     best, best_len = j, s
+            if best is not None and not small:
+                # a larger piece moves only when the sibling stays under the cap
+                joined = as_poly(shapely.union_all([parts[best], c]))
+                if area_km2(joined) > PART_MAX * CAP_KM2:
+                    best = None
             if best is None:
                 keep.append(c)
             else:
