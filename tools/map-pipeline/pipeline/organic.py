@@ -59,8 +59,9 @@ RIVER_TRIES = 6
 # Meanders (D852): offset = sum of A_k sin(2 pi v / L_k + phase_k), A_k = MEANDER_AMP x width x
 # MEANDER_WEIGHTS[k] x a draw in [0.6, 1], L_k = width x MEANDER_WAVES[k]: a 45,000 km2 part
 # (212 km wide) meanders up to about 25 km either way (typically 10 to 20) on waves of 300, 150
-# and 75 km; the steepest slope is under 0.9, and the line is a function of the position along
-# it, so it never crosses itself. (0.045 read as still straight at map scale, D852.)
+# and 75 km; the steepest slope is about 1.0 at worst (all three waves aligned at their shortest),
+# and the line is a function of the position along it, so it never crosses itself. (0.045 read
+# as still straight at map scale, D852.)
 MEANDER_AMP = 0.08
 MEANDER_WAVES = (1.4, 0.7, 0.35)
 MEANDER_WEIGHTS = (1.0, 0.4, 0.15)
@@ -380,7 +381,8 @@ def edge_keys(cell: Polygon) -> list:
 def bend_cells(cells: list, pts: list, width: float, bbox) -> list:
     """Bent Voronoi cells (cells[i] holds town pts[i]); an edge that makes a cell invalid (two bent
     edges crossing near a sharp corner) or passes within PROTECT_M of the cell's town is left
-    straight in both its cells, up to three rounds."""
+    straight in both its cells. Four rounds of that; if a cell is still bad after the fourth, every
+    cell of the giant is left straight (the unbent Voronoi cells are returned)."""
     frozen: set = set()
     for _ in range(4):
         out = [bend_cell(c, width, frozen, bbox) for c in cells]

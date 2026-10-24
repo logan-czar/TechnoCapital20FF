@@ -65,7 +65,7 @@ Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722
 | DZ-0027 | Tamanrasset-In Salah | 13 | towns | 609,275 | 45,383 | 49,327 | 0 | 0 | 40 | 3,273 | 0 | rivers, meanders, bent town edges |
 | DZ-0028 | Adrar-Timimoun | 10 | towns | 475,434 | 44,806 | 48,895 | 1 | 0 | 135 | 3,089 | 0 | rivers, meanders, bent town edges |
 | DZ-0029 | Bechar-Tindouf | 9 | towns | 416,754 | 44,876 | 47,859 | 2 | 0 | 345 | 2,315 | 0 | rivers, meanders, bent town edges |
-| EG-0031 | Kharga-New Valley | 10 | admin2 | 452,986 | 44,914 | 45,892 | 0 | 0 | 54 | 3,327 | 0 | rivers, meanders, bent town edges |
+| EG-0031 | Kharga-New Valley | 10 | admin2 | 452,986 | 44,796 | 45,786 | 0 | 0 | 123 | 3,217 | 0 | rivers, meanders, bent town edges |
 | LY-0015 | Kufra | 9 | parts | 422,897 | 46,896 | 47,107 | 0 | 0 | 0 | 2,903 | 0 | rivers, meanders, bent town edges |
 | LY-0018 | Murzuq-Sharara | 7 | towns | 315,722 | 42,752 | 47,363 | 0 | 0 | 129 | 1,898 | 0 | rivers, meanders, bent town edges |
 | SA-0020 | Shaybah-Rub al Khali | 7 | parts | 301,909 | 42,863 | 43,255 | 1 | 0 | 2 | 2,001 | 0 | rivers, meanders, bent town edges |
