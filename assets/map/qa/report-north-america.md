@@ -26,7 +26,7 @@ _Written by `tools/map-pipeline/run.py --region north-america` (pipeline pb-2). 
 | Placed by a builder hint (`hints/north-america.toml`) | 40 |
 | Tiny (under 64 px) | 18 |
 | Given a pixel at their interior point (no pixel centre inside) | 0 |
-| More than one part (islands, exclaves) | 171 |
+| More than one part (islands, exclaves) | 166 |
 | Coastal flag differs from the CSV | 27 |
 | Small for their region (not Metro, under 5% of the region's mean) | 4 |
 | Voronoi-split blocks where one province takes 75% or more | 7 |
@@ -34,11 +34,11 @@ _Written by `tools/map-pipeline/run.py --region north-america` (pipeline pb-2). 
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 0 |
 | Admin-1 units left without a province | 0 |
-| Sea links with a province of this file | 26 |
+| Sea links with a province of this file | 25 |
 | City probe points (fail on a mismatch; D686) | 180 pass, 0 mismatch, 27 listed |
 | Metro reach scan rows (listed; D686) | 7 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 19 (0 unexplained) |
-| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
+| Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 1 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 4 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
@@ -50,17 +50,17 @@ Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722
 | Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces | River km | Piece-edge km | Meander km | Straight km | Style |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | CA-0014 | Northwestern Ontario | 12 | admin2 | 584,135 | 46,671 | 50,690 | 2 | 386 | 2 | 3,266 | 0 | rivers, meanders, bent town edges |
-| CA-0021 | Nord-du-Quebec | 18 | admin2 | 850,309 | 46,985 | 47,514 | 7 | 604 | 50 | 6,576 | 501 | rivers, meanders, bent town edges |
-| CA-0025 | Cote-Nord | 6 | admin2 | 267,868 | 43,950 | 45,179 | 4 | 200 | 451 | 1,031 | 0 | rivers, meanders, bent town edges |
-| CA-0029 | North Coast BC | 7 | admin2 | 325,350 | 44,152 | 48,976 | 2 | 123 | 29 | 1,705 | 0 | rivers, meanders, bent town edges |
-| CA-0043 | Northern Saskatchewan | 9 | admin2 | 422,899 | 45,584 | 48,421 | 1 | 427 | 464 | 2,266 | 0 | rivers, meanders, bent town edges |
-| CA-0046 | Northern Manitoba | 11 | admin2 | 507,069 | 45,359 | 46,731 | 5 | 180 | 407 | 3,061 | 0 | rivers, meanders, bent town edges |
-| CA-0054 | Labrador | 6 | admin2 | 292,502 | 48,582 | 48,889 | 5 | 0 | 4 | 1,056 | 544 | rivers, meanders, bent town edges |
-| CA-0056 | Yukon | 10 | admin2 | 484,493 | 48,093 | 48,856 | 2 | 116 | 27 | 2,538 | 0 | rivers, meanders, bent town edges |
-| CA-0057 | Northwest Territories | 27 | admin2 | 1,289,446 | 44,039 | 49,748 | 13 | 0 | 218 | 7,573 | 737 | gentle meanders (seed CA-0057:2) |
-| US-0003 | Anchorage-Southcentral | 13 | admin2 | 617,780 | 44,018 | 50,345 | 9 | 0 | 876 | 2,140 | 0 | rivers, meanders, bent town edges |
-| US-0004 | Fairbanks-North Slope | 19 | admin2 | 887,469 | 44,765 | 48,684 | 9 | 0 | 548 | 6,320 | 392 | meanders, bent town edges (seed US-0004:2) |
-| US-0074 | Montana | 8 | admin2 | 379,494 | 44,191 | 51,031 | 0 | 3 | 2,864 | 415 | 0 | rivers, meanders, bent town edges (seed US-0074:2) |
+| CA-0021 | Nord-du-Quebec | 18 | admin2 | 850,308 | 46,985 | 47,514 | 6 | 604 | 52 | 7,066 | 0 | rivers, meanders, bent town edges |
+| CA-0025 | Cote-Nord | 6 | admin2 | 267,868 | 43,989 | 45,179 | 4 | 199 | 424 | 1,024 | 0 | rivers, meanders, bent town edges |
+| CA-0029 | North Coast BC | 7 | admin2 | 325,350 | 42,678 | 50,449 | 2 | 122 | 71 | 1,686 | 0 | rivers, meanders, bent town edges (seed CA-0029:2) |
+| CA-0043 | Northern Saskatchewan | 9 | admin2 | 422,899 | 45,584 | 48,421 | 1 | 427 | 452 | 1,993 | 262 | rivers, meanders, bent town edges |
+| CA-0046 | Northern Manitoba | 11 | admin2 | 507,069 | 45,367 | 47,101 | 5 | 180 | 430 | 3,044 | 0 | rivers, meanders, bent town edges |
+| CA-0054 | Labrador | 6 | admin2 | 292,502 | 48,586 | 48,869 | 5 | 0 | 7 | 1,614 | 0 | rivers, meanders, bent town edges |
+| CA-0056 | Yukon | 10 | admin2 | 484,494 | 48,093 | 48,857 | 2 | 116 | 27 | 2,538 | 0 | rivers, meanders, bent town edges |
+| CA-0057 | Northwest Territories | 27 | admin2 | 1,289,444 | 44,491 | 50,100 | 11 | 207 | 179 | 7,779 | 818 | rivers, meanders, bent town edges (seed CA-0057:3) |
+| US-0003 | Anchorage-Southcentral | 13 | admin2 | 617,780 | 42,808 | 51,018 | 10 | 0 | 0 | 0 | 0 | straight |
+| US-0004 | Fairbanks-North Slope | 19 | admin2 | 887,467 | 44,139 | 49,275 | 6 | 0 | 0 | 0 | 0 | straight |
+| US-0074 | Montana | 8 | admin2 | 379,494 | 44,206 | 50,797 | 0 | 3 | 2,795 | 214 | 108 | rivers, meanders, bent town edges |
 
 ## Sources and licenses
 
@@ -163,12 +163,11 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 
 | Check | Province | Place | Expected | Got |
 |---|---|---|---|---|
+| own name | US-0163 | Prudhoe Bay | US-0163 | US-0161 |
 | city part across water | US-0018 | San Francisco | the largest 4-connected part | a smaller part, joined to it across water only |
 | own name elsewhere (allowed) | US-0086 | Manhattan | US-0086 (Natural Earth's only Manhattan is the Kansas town; New York City's point is checked as the Metro) | US-0054 |
 | city on the edge | US-0130 | Laredo | US-0130 | MX-0030 |
 | own name elsewhere (allowed) | MX-0001 | Cuauhtémoc | MX-0001 (Cuauhtemoc borough of Mexico City, not Cuauhtemoc in Chihuahua) | MX-0022 |
-
-No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
 
 ## Natural Earth labels
 
@@ -467,7 +466,7 @@ None.
 
 `sea` rows of province-adjacency.csv with a province of this file: coastal provinces whose shapes do not touch but face each other across a strait (D678).
 
-CA-0001-US-0092, CA-0009-US-0098, CA-0014-US-0068, CA-0024-CA-0092, CA-0028-US-0140, CA-0028-US-0141, CA-0047-CA-0055, CA-0048-CA-0055, CA-0049-CA-0050, CA-0051-CA-0055, CA-0053-PM-0001, CA-0058-CA-0059, CA-0058-CA-0076, CA-0058-CA-0080, CA-0058-GL-0003, CA-0059-CA-0063, CA-0059-CA-0073, CA-0059-CA-0082, CA-0059-CA-0083, CA-0059-GL-0003, CA-0133-CA-0135, RU-0206-US-0169, US-0027-US-0089, US-0028-US-0089, US-0088-US-0089, US-0089-US-0111
+CA-0001-US-0092, CA-0009-US-0098, CA-0014-US-0068, CA-0024-CA-0092, CA-0028-US-0140, CA-0028-US-0141, CA-0047-CA-0055, CA-0048-CA-0055, CA-0049-CA-0050, CA-0051-CA-0055, CA-0053-PM-0001, CA-0058-CA-0059, CA-0058-CA-0076, CA-0058-CA-0080, CA-0058-GL-0003, CA-0059-CA-0063, CA-0059-CA-0073, CA-0059-CA-0082, CA-0059-CA-0083, CA-0059-GL-0003, RU-0206-US-0169, US-0027-US-0089, US-0028-US-0089, US-0088-US-0089, US-0089-US-0111
 
 ## Small provinces
 
@@ -538,8 +537,8 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-CA-0059 (226), CA-0058 (114), GL-0003 (105), US-0154 (90), CA-0113 (61), CA-0053 (42), GL-0002 (39), CA-0028 (34), CA-0057 (34), US-0159 (33), GL-0001 (29), US-0095 (27), US-0155 (26), CA-0117 (24), CA-0029 (23), US-0034 (23), MX-0027 (20), CA-0135 (19), US-0156 (19), US-0003 (17), US-0128 (17), US-0141 (17), US-0068 (16), US-0152 (15), US-0162 (14), US-0169 (14), US-0061 (13), US-0064 (13), CA-0012 (12), CA-0115 (12), US-0037 (12), US-0157 (12), CA-0049 (11), CA-0097 (11), CA-0131 (11), MX-0036 (11), CA-0024 (10), CA-0090 (10), CA-0116 (10), CA-0133 (10), CA-0140 (10), US-0058 (10), US-0063 (10), US-0089 (10), US-0138 (10), US-0158 (10), MX-0025 (9), US-0042 (9), US-0145 (9), CA-0071 (8), CA-0119 (8), CA-0134 (8), US-0129 (8), US-0174 (8), CA-0014 (7), CA-0050 (7), MX-0044 (7), US-0111 (7), US-0140 (7), CA-0025 (6), CA-0045 (6), CA-0048 (6), CA-0072 (6), MX-0038 (6), MX-0039 (6), US-0021 (6), US-0041 (6), US-0083 (6), US-0123 (6), CA-0010 (5), CA-0136 (5), CA-0137 (5), MX-0015 (5), MX-0026 (5), MX-0033 (5), MX-0047 (5), US-0012 (5), US-0091 (5), US-0160 (5), CA-0026 (4), CA-0051 (4), CA-0114 (4), CA-0121 (4), CA-0122 (4), CA-0132 (4), CA-0148 (4), MX-0006 (4), MX-0023 (4), MX-0041 (4), MX-0048 (4), US-0002 (4), US-0017 (4), US-0056 (4), US-0139 (4), US-0161 (4), US-0164 (4), BM-0001 (3), CA-0006 (3), CA-0009 (3), CA-0016 (3), CA-0022 (3), CA-0031 (3), CA-0047 (3), CA-0052 (3), CA-0073 (3), CA-0091 (3), CA-0111 (3), MX-0012 (3), MX-0028 (3), MX-0030 (3), PM-0001 (3), US-0031 (3), US-0035 (3), US-0036 (3), US-0071 (3), US-0072 (3), US-0082 (3), US-0098 (3), US-0112 (3), US-0150 (3), CA-0004 (2), CA-0005 (2), CA-0011 (2), CA-0015 (2), CA-0017 (2), CA-0035 (2), CA-0055 (2), CA-0063 (2), CA-0075 (2), CA-0076 (2), CA-0079 (2), CA-0083 (2), CA-0092 (2), CA-0103 (2), CA-0118 (2), CA-0120 (2), CA-0129 (2), CA-0146 (2), CA-0150 (2), CA-0151 (2), MX-0004 (2), MX-0005 (2), MX-0011 (2), MX-0013 (2), MX-0014 (2), MX-0016 (2), MX-0019 (2), MX-0029 (2), MX-0031 (2), MX-0032 (2), MX-0034 (2), MX-0043 (2), MX-0045 (2), US-0018 (2), US-0020 (2), US-0028 (2), US-0048 (2), US-0051 (2), US-0057 (2), US-0059 (2), US-0065 (2), US-0066 (2), US-0086 (2), US-0087 (2), US-0102 (2), US-0104 (2), US-0110 (2), US-0121 (2), US-0163 (2), US-0165 (2), US-0167 (2)
+CA-0059 (226), CA-0058 (114), GL-0003 (105), US-0154 (88), CA-0113 (61), CA-0053 (42), GL-0002 (39), CA-0028 (34), US-0159 (33), CA-0057 (32), GL-0001 (29), US-0095 (27), CA-0029 (25), CA-0117 (24), US-0034 (23), US-0155 (23), US-0152 (22), MX-0027 (20), US-0156 (19), CA-0135 (17), US-0128 (17), US-0141 (17), US-0068 (16), US-0169 (15), US-0162 (14), CA-0140 (13), US-0061 (13), US-0064 (13), US-0158 (13), CA-0012 (12), CA-0133 (12), US-0037 (12), US-0157 (12), CA-0049 (11), CA-0131 (11), MX-0036 (11), US-0003 (11), CA-0024 (10), CA-0090 (10), CA-0097 (10), CA-0116 (10), US-0058 (10), US-0063 (10), US-0089 (10), US-0138 (10), CA-0115 (9), MX-0025 (9), US-0042 (9), US-0145 (9), US-0174 (9), CA-0071 (8), CA-0134 (8), US-0129 (8), CA-0014 (7), CA-0025 (7), CA-0050 (7), CA-0119 (7), MX-0044 (7), US-0111 (7), US-0140 (7), CA-0045 (6), CA-0048 (6), CA-0121 (6), CA-0136 (6), MX-0038 (6), MX-0039 (6), US-0021 (6), US-0041 (6), US-0083 (6), US-0123 (6), CA-0010 (5), CA-0137 (5), MX-0015 (5), MX-0026 (5), MX-0033 (5), MX-0047 (5), US-0012 (5), US-0091 (5), US-0160 (5), CA-0026 (4), CA-0051 (4), CA-0122 (4), MX-0006 (4), MX-0023 (4), MX-0041 (4), MX-0048 (4), US-0002 (4), US-0017 (4), US-0056 (4), US-0139 (4), US-0161 (4), US-0164 (4), BM-0001 (3), CA-0006 (3), CA-0009 (3), CA-0016 (3), CA-0022 (3), CA-0031 (3), CA-0047 (3), CA-0052 (3), CA-0072 (3), CA-0073 (3), CA-0091 (3), CA-0111 (3), CA-0118 (3), CA-0132 (3), CA-0146 (3), CA-0148 (3), MX-0012 (3), MX-0028 (3), MX-0030 (3), PM-0001 (3), US-0031 (3), US-0035 (3), US-0036 (3), US-0071 (3), US-0072 (3), US-0082 (3), US-0098 (3), US-0112 (3), US-0150 (3), CA-0004 (2), CA-0005 (2), CA-0011 (2), CA-0015 (2), CA-0017 (2), CA-0035 (2), CA-0055 (2), CA-0063 (2), CA-0075 (2), CA-0079 (2), CA-0083 (2), CA-0092 (2), CA-0103 (2), CA-0114 (2), CA-0120 (2), CA-0129 (2), MX-0004 (2), MX-0005 (2), MX-0011 (2), MX-0013 (2), MX-0014 (2), MX-0016 (2), MX-0019 (2), MX-0029 (2), MX-0031 (2), MX-0032 (2), MX-0034 (2), MX-0043 (2), MX-0045 (2), US-0018 (2), US-0020 (2), US-0028 (2), US-0048 (2), US-0051 (2), US-0057 (2), US-0059 (2), US-0065 (2), US-0066 (2), US-0086 (2), US-0087 (2), US-0102 (2), US-0104 (2), US-0110 (2), US-0121 (2), US-0151 (2)
 
 ## Visual check
 
-`preview-north-america.png` in this folder is province-ids.png around the region (pixels x 72..3416, y 145..2480, scaled by 0.72).
+`preview-north-america.png` in this folder is province-ids.png around the region (pixels x 75..3416, y 145..2480, scaled by 0.72).

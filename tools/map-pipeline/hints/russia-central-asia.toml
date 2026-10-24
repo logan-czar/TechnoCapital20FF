@@ -119,7 +119,7 @@ seeds = [[30.21, 59.88], [30.26, 59.88], [29.93, 59.94], [30.27, 59.80], [30.60,
 "TJ-0006" = "Vorukh: Tajikistan's real exclave inside Kyrgyzstan"
 "UZ-0006" = "Sokh and Shakhimardan: Uzbekistan's real exclaves inside Kyrgyzstan"
 # D822: a part of a split giant
-"RU-0174" = "a straight cut across Khabarovsk's interior left this piece (about 8,100 km2) on RU-0174's side; joined to any part it touches (RU-0170, RU-0171, RU-0184) it would put that part over the cap (D822)"
+"RU-0174" = "the cut across Khabarovsk's interior (a meander since D850; the straight cut of D822 left about 8,100 km2) leaves this piece (about 8,500 km2) on RU-0174's side; joined to any part it touches it would put that part over the cap (D822), and a curve may not grow it by more than 3% of the part (D854)"
 
 # PR #39 review (D690): Almaty's point is in the city region, so it no longer snaps onto the
 # ring round it; the ring's own towns seed it
