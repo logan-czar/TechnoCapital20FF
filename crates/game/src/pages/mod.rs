@@ -264,7 +264,9 @@ impl PageRef {
             PageRef::Industry(id) => format!("{k}/{}", id.0),
             PageRef::Character(id) => format!("{k}/{}", id.0),
             PageRef::Country(id) => format!("{k}/{}", id.0),
-            PageRef::Province(id) => format!("{k}/{}", id.0),
+            PageRef::Province(id) => {
+                format!("{k}/{}", province_key(*id, province_keys().as_deref()))
+            }
             PageRef::Zone(id) | PageRef::Exchange(id) => format!("{k}/{}", id.0),
             PageRef::Event(id) => format!("{k}/{}", id.0),
             PageRef::Recap(q) => format!("{k}/{}-Q{}", q.year, q.q),
@@ -284,7 +286,9 @@ impl PageRef {
             PageKind::Industry => PageRef::Industry(IndustryId(num(id)?)),
             PageKind::Character => PageRef::Character(CharacterId(num(id)?)),
             PageKind::Country => PageRef::Country(CountryId(num(id)?)),
-            PageKind::Province => PageRef::Province(ProvinceId(num(id)?)),
+            PageKind::Province => {
+                PageRef::Province(parse_province(id?, province_keys().as_deref())?)
+            }
             PageKind::Zone => PageRef::Zone(ZoneId(num(id)?)),
             PageKind::Exchange => PageRef::Exchange(ZoneId(num(id)?)),
             PageKind::Event => PageRef::Event(StartupEventId(num(id)?)),
@@ -315,6 +319,46 @@ impl PageRef {
             return None;
         }
         Some(page)
+    }
+}
+
+/// The province ids (CSV keys) in ordinal order, set once the game has its data (D828). A
+/// province page's key is then `province/US-0053`, so a saved layout keeps naming the same
+/// province when the province files change; an ordinal key (`province/145`, written before the
+/// giant-province split) no longer names a page and its pane opens the World page (D452).
+static PROVINCE_KEYS: std::sync::RwLock<Option<std::sync::Arc<Vec<String>>>> =
+    std::sync::RwLock::new(None);
+
+/// Installs the province keys, in ordinal order (ascending CSV id, D4).
+pub fn set_province_keys(keys: Vec<String>) {
+    *PROVINCE_KEYS.write().unwrap_or_else(|e| e.into_inner()) = Some(std::sync::Arc::new(keys));
+}
+
+fn province_keys() -> Option<std::sync::Arc<Vec<String>>> {
+    PROVINCE_KEYS
+        .read()
+        .unwrap_or_else(|e| e.into_inner())
+        .clone()
+}
+
+/// A province page's id text: its CSV key when the keys are known, else its ordinal (tests and
+/// tools without data).
+fn province_key(id: ProvinceId, keys: Option<&Vec<String>>) -> String {
+    match keys.and_then(|k| k.get(id.0 as usize)) {
+        Some(key) => key.clone(),
+        None => id.0.to_string(),
+    }
+}
+
+/// The province a page key's id text names: a known CSV key when the keys are known (an
+/// ordinal or an unknown key is none), else an ordinal.
+fn parse_province(s: &str, keys: Option<&Vec<String>>) -> Option<ProvinceId> {
+    match keys {
+        Some(k) => k
+            .binary_search_by(|x| x.as_str().cmp(s))
+            .ok()
+            .map(|i| ProvinceId(i as u32)),
+        None => s.parse::<u32>().ok().map(ProvinceId),
     }
 }
 
@@ -979,6 +1023,18 @@ mod tests {
         assert_eq!(PageRef::Company(CompanyId(12)).key(), "company/12");
         assert_eq!(PageRef::Headline(HeadlineId(7)).key(), "headline/7");
         assert_eq!(PageRef::Province(ProvinceId(9)).key(), "province/9");
+        // D828: with the keys known, a province page is saved by its CSV key, and an ordinal or
+        // unknown key no longer names one
+        let keys = vec![
+            "AE-0001".to_owned(),
+            "JP-0001".to_owned(),
+            "US-0053".to_owned(),
+        ];
+        assert_eq!(province_key(ProvinceId(1), Some(&keys)), "JP-0001");
+        assert_eq!(parse_province("JP-0001", Some(&keys)), Some(ProvinceId(1)));
+        assert_eq!(parse_province("145", Some(&keys)), None);
+        assert_eq!(parse_province("XX-0001", Some(&keys)), None);
+        assert_eq!(parse_province("1", None), Some(ProvinceId(1)));
         // The old "nth headline of its day" key (D451) no longer names a page (D544).
         assert_eq!(PageRef::from_key("headline/2020-03-02/0"), None);
         assert_eq!(

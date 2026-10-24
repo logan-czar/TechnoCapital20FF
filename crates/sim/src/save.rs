@@ -38,10 +38,26 @@ pub enum SaveError {
     Io(#[from] std::io::Error),
     #[error("not a TechnoCapital20FF save")]
     BadMagic,
-    #[error("save version {found}, this build reads version {SAVE_VERSION}")]
+    #[error("{}", version_message(*found))]
     Version { found: u32 },
     #[error("save data: {0}")]
     Format(#[from] postcard::Error),
+}
+
+/// The last version written before the giant-province split (D826).
+const LAST_VERSION_BEFORE_SPLIT: u32 = 9;
+
+/// Why a save of another version does not load (D826: a version 8 or 9 save holds the world
+/// before the province split).
+fn version_message(found: u32) -> String {
+    if found <= LAST_VERSION_BEFORE_SPLIT {
+        format!(
+            "this save is version {found}, from before the province split; version \
+             {SAVE_VERSION} can't load it"
+        )
+    } else {
+        format!("this save is version {found}, newer than this build's version {SAVE_VERSION}")
+    }
 }
 
 #[derive(Serialize)]
@@ -135,8 +151,11 @@ mod tests {
             gz.finish().unwrap()
         };
         for v in [7, 8, 9] {
-            assert!(matches!(decode(&old(v)), Err(SaveError::Version { found }) if found == v));
+            let e = decode(&old(v)).unwrap_err();
+            assert!(matches!(e, SaveError::Version { found } if found == v));
+            assert!(e.to_string().contains("before the province split"), "{e}");
         }
+        assert!(decode(&old(11)).unwrap_err().to_string().contains("newer"));
         assert!(decode(&old(SAVE_VERSION)).is_ok());
     }
 
