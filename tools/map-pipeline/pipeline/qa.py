@@ -342,18 +342,27 @@ def run(region: config.Region) -> None:
         L.append(f"Provinces over {subdivide.GIANT_KM2:,.0f} km2 that are not Arctic, cut into parts of at most "
                  f"{subdivide.CAP_KM2:,.0f} km2 (Eastern Iowa, {subdivide.CAP_PROVINCE}) by `run.py giants` and "
                  "`[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a "
-                 "part over the cap.")
+                 "part over the cap. Borders between parts (D850, D856): km along rivers and lake centerlines, "
+                 "along the building pieces' edges (licensed ADM2 lines, or town catchments), meandering, and "
+                 "straight; the style is the organic cut kept (D854).")
         L.append("")
-        L.append("| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces |")
-        L.append("|---|---|---|---|---|---|---|---|")
+        L.append("| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces "
+                 "| River km | Piece-edge km | Meander km | Straight km | Style |")
+        L.append("|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+        sb_path = work / "split-borders.json"
+        sb = json.loads(sb_path.read_text(encoding="utf-8")) if sb_path.exists() else {}
         for pid, nm, n, blocks, tot, lo, hi, multi_n, _ in split_rows:
-            L.append(f"| {pid} | {_md_escape(nm)} | {n} | {blocks} | {tot:,.0f} | {lo:,.0f} | {hi:,.0f} | {multi_n} |")
+            b = sb.get(pid, {}).get("borders_km", {})
+            L.append(f"| {pid} | {_md_escape(nm)} | {n} | {blocks} | {tot:,.0f} | {lo:,.0f} | {hi:,.0f} | {multi_n} "
+                     f"| {b.get('river', 0):,.0f} | {b.get('pieces', 0):,.0f} | {b.get('meander', 0):,.0f} "
+                     f"| {b.get('straight', 0):,.0f} | {_md_escape(sb.get(pid, {}).get('style', ''))} |")
         L.append("")
     L.append("## Sources and licenses")
     L.append("")
     L.append("| Boundary file | License | Used |")
     L.append("|---|---|---|")
-    L.append(f"| Natural Earth 10m {sources['natural_earth']['version']} (admin 0, admin 1, populated places, lakes) "
+    L.append(f"| Natural Earth 10m {sources['natural_earth']['version']} (admin 0, admin 1, populated places, lakes, "
+             "river and lake centerlines) "
              "| Public domain | yes |")
     for iso, level, meta, ok, why in used_gb:
         L.append(f"| geoBoundaries gbOpen {iso} {level} ({_md_escape(meta.get('boundarySource'))}) | "
@@ -687,7 +696,7 @@ def write_credits(sources: dict) -> None:
     L.append("")
     L.append(f"Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com. Version {ne['version']} "
              f"(github.com/nvkelso/natural-earth-vector, commit {ne['commit'][:7]}): admin 0 countries, admin 1 states "
-             "and provinces, populated places and lakes at 1:10m. Public domain.")
+             "and provinces, populated places, lakes and river and lake centerlines at 1:10m. Public domain.")
     L.append("")
     L.append("## geoBoundaries")
     L.append("")

@@ -49,7 +49,7 @@ Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `
 
 | Boundary file | License | Used |
 |---|---|---|
-| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes) | Public domain | yes |
+| Natural Earth 10m v5.1.2 (admin 0, admin 1, populated places, lakes, river and lake centerlines) | Public domain | yes |
 | geoBoundaries gbOpen BGD ADM2 (Bangladesh Bureau of Statistics (BBS), OCHA ROAP) | Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) | yes |
 | geoBoundaries gbOpen IND ADM2 (Pathways Data Pvt. Ltd., lgdirectory.gov.in) | Open Data Commons Open Database License 1.0 | no: refused: ODbL in license (Open Data Commons Open Database License 1.0); Voronoi path |
 | geoBoundaries gbOpen LKA ADM2 (OpenStreetMap, Wambacher) | Open Data Commons Open Database License 1.0 | no: refused: ODbL in license (Open Data Commons Open Database License 1.0); Voronoi path |

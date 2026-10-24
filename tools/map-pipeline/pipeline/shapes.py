@@ -240,12 +240,13 @@ def run(region: config.Region) -> None:
     named_outside = []
     hints = crosswalk.load_hints(region)
     split_of = crosswalk.subdivided(hints)
+    split_borders: dict[str, dict] = {}  # D856: each split giant's organic-border numbers
     for key in sorted(plan["regions"]):
         rplan = plan["regions"][key]
         rgeom = shapely.make_valid(regions.loc[key].geometry)
         built = build_region(key, rgeom, rplan, work, splits)
         # D820: a giant is cut into its parts here, after its shape is built
-        subdivide.apply(built, rplan["country"], hints, sources)
+        subdivide.apply(built, rplan["country"], hints, sources, split_borders)
         union = shapely.union_all(list(built.values()))
         total = sum(g.area for g in built.values())
         # regions nest exactly: the provinces tile the region with no gap and no overlap
@@ -276,6 +277,7 @@ def run(region: config.Region) -> None:
     (work / "nesting.json").write_text(json.dumps(nesting, indent=1), encoding="utf-8")
     (work / "splits.json").write_text(json.dumps(splits, indent=1, sort_keys=True), encoding="utf-8")
     (work / "named-outside.json").write_text(json.dumps(named_outside, indent=1), encoding="utf-8")
+    (work / "split-borders.json").write_text(json.dumps(split_borders, indent=1, sort_keys=True), encoding="utf-8")
     # The land mask for mapgen's coastal check (D608): Natural Earth admin-0 without lakes cut
     # out, less the Great Lakes, so only the sea and the Great Lakes count as coast (the CSV
     # `coastal` column includes Great Lakes shores; other lakes are not coast).

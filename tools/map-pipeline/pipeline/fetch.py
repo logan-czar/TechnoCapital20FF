@@ -101,6 +101,8 @@ NE_LAYERS = [
     "10m_cultural/ne_10m_admin_1_states_provinces_lakes",
     "10m_cultural/ne_10m_populated_places",
     "10m_physical/ne_10m_lakes",
+    # river and lake centerlines: the giant-split borders follow them where they can (D850)
+    "10m_physical/ne_10m_rivers_lake_centerlines",
 ]
 NE_EXTS = [".shp", ".shx", ".dbf", ".prj", ".cpg", ".VERSION.txt", ".README.html"]
 

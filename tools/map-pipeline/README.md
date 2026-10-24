@@ -34,7 +34,10 @@ giants: provinces over 250,000 km2 that are not Arctic (more than half their are
 south of 60 S). `run.py giants --write` cuts each into parts no larger than Eastern Iowa (US-0053, 51,722 km2)
 and writes the new province rows, the `[subdivide]` hints and city probe points; run it once, on the unsplit
 world. The shapes step then rebuilds each cut from its hints (`pipeline/subdivide.py`, D820 to D829), and QA
-fails on a part over the cap. `run.py giants --coastal` sets the parts' `coastal` flags from mapgen's bitmap
+fails on a part over the cap. The borders between a giant's parts are organic (`pipeline/organic.py`, D850
+to D856): they follow Natural Earth river and lake centerlines where the sizes allow, else meander
+deterministically (seeded by the province id), and town-catchment edges bend; `work/<region>/split-borders.json`
+and the QA report give each giant's border lengths by kind. `run.py giants --coastal` sets the parts' `coastal` flags from mapgen's bitmap
 after a world build.
 
 `run.py pin --iso KEN COD --levels ADM1` pins (or re-pins) those boundaries in `sources.toml`, keeping the

@@ -39,6 +39,13 @@ files = [
     { name = "10m_physical/ne_10m_lakes.cpg", sha256 = "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824" },
     { name = "10m_physical/ne_10m_lakes.VERSION.txt", sha256 = "1cc3d76ac7c21a664e79848fd481e9791016451b244e7de5feeeb9bea5fd2184" },
     { name = "10m_physical/ne_10m_lakes.README.html", sha256 = "a5832c49127848fa7ecd16ef3a6b708464249f16d4689596a64fd3988f0731ce" },
+    { name = "10m_physical/ne_10m_rivers_lake_centerlines.shp", sha256 = "f9a1cf6d9f58c0a6f182a7f25771a03e0a48026253d4484aab782b2586354d78" },
+    { name = "10m_physical/ne_10m_rivers_lake_centerlines.shx", sha256 = "ab7b792de019d3a49ab1dd9960249c367cc94e43b8d5f577732892ec6107a3b2" },
+    { name = "10m_physical/ne_10m_rivers_lake_centerlines.dbf", sha256 = "68079fde5fde6167d0c7c4f03e498164badcc3b687a93c436278ade83882b564" },
+    { name = "10m_physical/ne_10m_rivers_lake_centerlines.prj", sha256 = "a02a27b1d1982c8516d83398e85a3c8b1aef1713c13ef4d84d7bde17430c07c4" },
+    { name = "10m_physical/ne_10m_rivers_lake_centerlines.cpg", sha256 = "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824" },
+    { name = "10m_physical/ne_10m_rivers_lake_centerlines.VERSION.txt", sha256 = "1cc3d76ac7c21a664e79848fd481e9791016451b244e7de5feeeb9bea5fd2184" },
+    { name = "10m_physical/ne_10m_rivers_lake_centerlines.README.html", sha256 = "611c5c993f7fa7495f4c78046df9d97db244533ccfd2f0f80746d27c97db9891" },
 ]
 
 [geoboundaries]
