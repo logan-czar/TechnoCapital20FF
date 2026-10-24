@@ -40,3 +40,15 @@ debug = "line-tables-only"
 [profile.dev.package."*"]
 opt-level = 2
 debug = false
+
+# The sim's long test runs (years of ticks) dominate the gate unoptimized; optimized, the test
+# step halves and a sim rebuild is faster too (D870). The game gets light optimization for its
+# heavy UI tests. f64 results do not change with the opt level (no fast-math in Rust).
+[profile.dev.package.sim]
+opt-level = 2
+
+[profile.dev.package.sim-data]
+opt-level = 2
+
+[profile.dev.package.game]
+opt-level = 1

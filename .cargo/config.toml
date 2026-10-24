@@ -1,0 +1,6 @@
+# Faster builds (D870), from Bevy's fast-compiles guide and its .cargo/config_fast_builds.toml.
+
+# LLVM's lld links faster than the MSVC linker. rust-lld ships with the Rust toolchain.
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld.exe"
+rustdocflags = ["-Clinker=rust-lld.exe"]

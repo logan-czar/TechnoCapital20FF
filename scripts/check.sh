@@ -35,7 +35,14 @@ for bin in "${bins[@]}"; do
     cargo check -p "$bin"
 done
 step test
-cargo test "${pkgs[@]}"
+# cargo-nextest runs the test binaries in parallel (cargo test runs them one at a time); it does
+# not run doc tests, so those go through cargo test (D870). Without nextest, plain cargo test.
+if cargo nextest --version >/dev/null 2>&1; then
+    cargo nextest run "${pkgs[@]}" --no-fail-fast
+    cargo test "${pkgs[@]}" --doc
+else
+    cargo test "${pkgs[@]}"
+fi
 step validate.py
 out="$(cd docs/design/tools/mvp-data && "$py" -B validate.py "$root/docs/design/data")"
 echo "$out" | grep -E "^(ERROR|OK$|[0-9]+ errors)" || true
