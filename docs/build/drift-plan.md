@@ -19,8 +19,8 @@ The economy is healthy through 2040, then drifts:
 | Volatility | **Run the long tests at several levels of market volatility**, not just today's setting. |
 | Exits | **Asset floor plus losing streak.** A company leaves when its assets fall below a floor, or after N years of negative operating profit. Its business returns to the fringe, as bankruptcy does today. |
 | Exited staff | **Freed to work elsewhere.** Its full characters stay in the world without a seat. |
-| Winners | **Both caps and a size cost.** Cap free R&D, taper productivity gains near the top, and add a cost that grows with company size. |
-| Startups | **Startups are more efficient than big companies.** Big companies pay a size cost (above), and young companies get a productivity bonus that fades over about 10 years. The startup birth rate stays as it is. |
+| Winners | **Caps, plus board-seat events scaled by size.** Cap free R&D and taper productivity gains near the top. No flat size cost and no young-company bonus (Logan: no startup buff, no nerf by age). |
+| Seat events | **One event per board seat, rolled against the seat holder's stats.** Larger companies face harder checks, and a failure has more intense negative consequences. Smaller companies face easier checks, and a success has more positive consequences. The startup birth rate stays as it is. |
 | Success bar | **Report only.** Make the changes and show the new 100-year reports; Logan judges by eye. |
 | Spec | **A new spec version.** Each rule is logged as a decision with a design fix, and mvp-spec moves to v1.5 in one step. |
 
@@ -34,8 +34,24 @@ The economy is healthy through 2040, then drifts:
 - **Caps.**
   - Free R&D is capped at 2 times the industry's R&D norm.
   - Productivity gains shrink linearly from 100% at productivity 120 to 25% at 200.
-  - The size cost is a fixed-cost rate that grows with the log of a company's revenue above $10B. It is calibrated so the median company in 2020 pays nothing.
-  - The young-company bonus is +15% to productivity growth in a company's first year, fading linearly to 0 by year 10.
+- **Seat events.** Each quarter, at the plan lock, each filled seat rolls once on a new seeded `events` RNG stream, so existing streams' draws are unchanged. An empty seat counts skill 3 (spec 3.7).
+  - **The roll** is d30 + the seat's skill against a difficulty. Difficulty rises with the log of the company's trailing revenue: easy below about $100M, hard above about $100B. The scale is fitted so a median 2020 company passes about half the time.
+  - **The outcome size** scales with company size the other way:
+    - a failure's harm grows with size, so a big company's failure hurts more as a share of the business;
+    - a success's gain shrinks with size, so a small company's success helps more.
+  - **Each seat's event follows its role** (spec 3.7):
+
+    | Seat | Skill | Success | Failure |
+    |---|---|---|---|
+    | CEO | Finance, Operations, Persuasion | Growth rate up for the year | Growth rate down for the year |
+    | CFO | Finance | Cheaper credit, a lower spread | A higher spread, a rating watch |
+    | CIO | Intrigue, Tech | Data and productivity gain | A data breach: data and productivity loss |
+    | CMO | Persuasion, Hustle | Revenue and confidence up | A reputation hit: revenue and confidence down |
+    | COO | Operations | Margin up for a few quarters | An outage or recall: margin down for a few quarters |
+
+  - Big outcomes post a Pdoomberg Wire headline (5.18).
+  - All effects are temporary multipliers that decay over a few quarters, so events steer the trend without breaking the books.
+  - Seat skills are already drawn by company size (3.7.1), so big companies have better executives. The difficulty curve has to rise faster than skills do, so the net check is still harder for them.
 
 ## 3. Lanes and phases
 
@@ -47,7 +63,7 @@ Up to 4 worktrees, all on D:. Each lane owns separate sim folders, so they can r
 |---|---|---|
 | **G: growth** (slot-a) | `economy/growth.rs`, `economy/demand.rs`, `economy/cycle.rs`, industries.csv columns, a new world-growth table, `sim::scenario` | Fade to mature rates; the global nerf; a `Scenario` struct (slowdown window, volatility scale) the sim reads, set from headless. Default is the baseline. |
 | **X: exits** (slot-b) | `finance/distress.rs`, `ai/raise.rs` (sell-down), `births` (freed characters' reuse), `views` that list exits | The exit rule, its notices and headlines; freed characters available to boards and startups; save version bump |
-| **W: winners and startups** (slot-c) | `ops/productivity.rs`, `ops/data.rs`, `ai/rd.rs`, `economy/revenue.rs` (expenses) | The free R&D cap, the productivity taper, the size cost and the young-company bonus |
+| **W: winners and seat events** (slot-c) | `ops/productivity.rs`, `ops/data.rs`, `ai/rd.rs`, a new `events/` module, the `events` RNG stream, news headlines for events | The free R&D cap, the productivity taper, and the board-seat events with size-scaled difficulty and consequences; their temporary effects on growth, credit, data, revenue and margin; headlines; save version bump |
 
 Every lane keeps the 30-year soak's spec 10 targets visible and reports any target that moves, but doesn't gate on them (Logan chose report only).
 
@@ -64,7 +80,8 @@ Each PR gets an independent reviewer before merge. Lanes G, X and W each run the
 - 5.1: long-term rates fade to mature rates; a world growth scale.
 - 5.1 and 5.4: scenario settings (slowdown, volatility). They are off in the baseline.
 - 5.12 and 6.2: the exit rule; exited companies' characters are freed (3.7.2).
-- 5.6 to 5.9: the free R&D cap, the productivity taper, the size cost and the young-company bonus.
+- 5.6 to 5.9: the free R&D cap and the productivity taper.
+- New 5.21: board-seat events, rolled against seat skills with size-scaled difficulty and consequences; a new `events` RNG stream (3.1).
 - 10: new long-run measures reported (not gated): demand concentration, top-10 share, exits per decade, company and character counts.
 
 ## 5. Risks
@@ -73,6 +90,7 @@ Each PR gets an independent reviewer before merge. Lanes G, X and W each run the
 |---|---|
 | The fixes shift the 30-year balance that took M10 to tune | Each lane reports the spec 10 targets before and after; the half-lives and caps start mild |
 | Three lanes touch the economy at once | Folder ownership as above; a shared `Scenario` type defined first by lane G and frozen |
+| Seat events' effects reach into code other lanes own (growth, credit, revenue) | Events write temporary multipliers that the owning code reads through one small interface; lane W defines it, lanes G and X don't touch it |
 | Exits empty small industries | The exit rule never removes an industry's last named company |
 | Determinism | No new randomness except through existing seeded streams; the soak's monthly hash test and save/load replay keep running |
 
