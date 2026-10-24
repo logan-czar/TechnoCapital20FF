@@ -204,7 +204,7 @@ A PR #40 review run once stopped at startup with `ui_material_pipeline: Shader g
 ## The other clean-ups
 
 - The Province placeholder (D637's Phase A page: its sections, card lines, links and plan text) is deleted from `pages/placeholder.rs`; lane MB's Province page (D707) is the only one.
-- `examples/table_spike.rs` builds (`cargo build -p game --example table_spike`).
+- `examples/table_spike.rs` builds (`cargo build -p game --example table_spike`). (Later deleted with the MVP wrap-up, D882; the game has no examples now.)
 
 ## Soak invariance
 

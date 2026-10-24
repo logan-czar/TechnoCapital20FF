@@ -204,6 +204,14 @@ fn industries_has_42_rows_and_a_detail_page() {
     ] {
         assert!(m.column_by_key(key).is_some(), "{key} column");
     }
+    // F9 shows the market factor M, not a price index (D881).
+    let mc = &m.columns[m.column_by_key("M").unwrap()];
+    let hint = mc.hint.as_deref().unwrap_or_default();
+    assert!(hint.starts_with("The market factor M"), "{hint}");
+    assert!(
+        !mc.title.contains("index") && !hint.contains("index"),
+        "{hint}"
+    );
     for i in 1..=5 {
         let col = m.column_by_key(&format!("Top {i}")).unwrap();
         assert!(
