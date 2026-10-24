@@ -24,6 +24,8 @@ This plan says how to build the MVP of mvp-spec.md: which Rust crates to make, w
 
 ## 2. Rust workspace layout
 
+> **Superseded for new work (D950, 2026-10-24).** This section describes the Rust MVP build (M0 to M10). The TypeScript port, its layout and its steps are in [../../build/ts-migration-plan.md](../../build/ts-migration-plan.md). The Rust crates stay as the reference until the port's parity gate passes (D951).
+
 One Cargo workspace, one language, one pinned Bevy version (12.2, batch 169). The simulation has no Bevy dependency, so it runs the same in the game, in tests and in the headless runner.
 
 ### 2.1 Crates

@@ -1,6 +1,6 @@
 # 12. Tech stack, architecture and roadmap
 
-_Status: v0.6 (2026-10-20). Batch 168 (Logan): "I want to do the entire thing in Bevy." The whole game is built in Rust with the Bevy engine: Bevy runs rendering, UI, input and the simulation (ECS). Godot, GDScript and the GDExtension bridge are dropped; 12.1 to 12.4 and 12.6 rewritten. Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth: the crash averages 2040 (roadmap step 10). Consistency pass 3 (batch 129): roadmap step 6 notes that the province data is complete. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. FX is not built in roadmap step 5; it is post-POC. Batch 121: Metros have no council (only national governments). Batch 118: roadmap step 6 builds provinces, areas, regions, Metros and countries instead of hubs and districts; influence views rank per province or city. Batch 116: roadmap and tiers rewritten to the current design (one scenario and one player character, John Techno; no dynasty or succession; game over on death; news and Pdoomberg; two-layer control; Semiconductors as dollar effects). v0.3. Batch 41: a **desktop app** (then in Godot, replaced by Bevy in batch 168), replacing Phaser and the browser. Batch 42: the simulation runs in a **Rust engine**. Design is still the current phase; this file records the plan for when the build starts. Owner: Logan._
+_Status: v0.7 (2026-10-24). D950 (Logan, 2026-10-24): the game moves from Rust and Bevy to **TypeScript in the browser**, because Rust compiles cost too much on Logan's PC and there is no budget for cloud builds. The simulation stays a deterministic package with no UI; it runs in a Web Worker in the game and in a Node runner for tests and soaks. 12.1, 12.2 and 12.6 are updated; 12.3 and 12.4 keep their Bevy names until the port ([../build/ts-migration-plan.md](../build/ts-migration-plan.md)) lands (design fix 950). v0.6 (2026-10-20): Batch 168 (Logan): "I want to do the entire thing in Bevy." The whole game is built in Rust with the Bevy engine: Bevy runs rendering, UI, input and the simulation (ECS). Godot, GDScript and the GDExtension bridge are dropped; 12.1 to 12.4 and 12.6 rewritten. Batch 151 (Logan): AI boom moves to 2030, bubble to 2040 on average; AI starts tiny with low growth, then unprecedented growth: the crash averages 2040 (roadmap step 10). Consistency pass 3 (batch 129): roadmap step 6 notes that the province data is complete. Batch 125 (Logan): every value is in USD in the simulation; local currencies are flavor only; FX is post-POC; one world base rate from the Federal Monetary Board. FX is not built in roadmap step 5; it is post-POC. Batch 121: Metros have no council (only national governments). Batch 118: roadmap step 6 builds provinces, areas, regions, Metros and countries instead of hubs and districts; influence views rank per province or city. Batch 116: roadmap and tiers rewritten to the current design (one scenario and one player character, John Techno; no dynasty or succession; game over on death; news and Pdoomberg; two-layer control; Semiconductors as dollar effects). v0.3. Batch 41: a **desktop app** (then in Godot, replaced by Bevy in batch 168), replacing Phaser and the browser. Batch 42: the simulation runs in a **Rust engine**. Design is still the current phase; this file records the plan for when the build starts. Owner: Logan._
 
 Anything marked **(A)** is an assumption Logan has not confirmed yet; the list is in 12.6.
 
@@ -8,25 +8,23 @@ Anything marked **(A)** is an assumption Logan has not confirmed yet; the list i
 
 | Topic | Decision |
 |---|---|
-| Platform | **A desktop app** from the start (batch 41). No browser build. |
-| Engine | **Bevy** (batch 168), replacing Godot (batch 41), which replaced Phaser. The whole game is one Rust program. The look stays lightweight 2D: flat neon-on-dark vector panels and a map-first screen ([11-ui.md](11-ui.md) 11.4). |
+| Platform | **The browser first** (D950, 2026-10-24): the game runs in a browser tab from a Vite build; a desktop wrapper (Electron) can come later. This reverses batch 41, which chose a desktop app over Phaser in the browser. Speed is not the constraint: the Rust sim ran 30 years in about 6 s against a 2-minute budget, so a TypeScript sim has room to spare. |
+| Engine | **TypeScript** (D950), replacing Bevy (batch 168), which replaced Godot (batch 41), which replaced Phaser. React draws the screens and deck.gl (WebGL) the map. The look stays lightweight 2D: flat neon-on-dark vector panels and a map-first screen ([11-ui.md](11-ui.md) 11.4). |
 | Simulation detail | **Tiered**: full detail for the player's circle and rivals, lighter weekly updates for everyone else (batch 41). |
-| Engine split | **All Rust, all Bevy** (batch 168; was Rust engine + GDScript front end, batch 42). Bevy handles rendering, UI, input, audio and asset loading. The **simulation** is still the **source of truth**: it stores the game data, does the calculations and keeps **query tables** up to date so screens load fast. The UI talks to it through Bevy resources and events (12.3). |
+| Engine split | **TypeScript everywhere** (D950; was all Rust, all Bevy, batch 168, and before that a Rust engine with a GDScript front end, batch 42). The browser handles rendering, input, audio and asset loading; the simulation is a plain TypeScript package with no DOM that runs in a Web Worker. The **simulation** is still the **source of truth**: it stores the game data, does the calculations and keeps **query tables** up to date so screens load fast. The UI talks to it through worker messages: controls in, notices and views out (12.3). |
 | Content | **JSON files** that can be edited without code, checked against schemas when the game loads (batch 41). |
 | Time | Pausable real time with hourly ticks and 5 speeds ([09-time-and-turns.md](09-time-and-turns.md)); deterministic seeded simulation; free saving ([detailed/12-setup-and-score.md](detailed/12-setup-and-score.md)). |
 
 ## 12.2 Stack (A)
 
-- **Rust and Bevy for everything** (Logan, batch 168): one Cargo workspace, one language. Bevy draws the map and screens, handles input and audio, and runs the simulation schedule.
-- **Pin one Bevy version** in `Cargo.toml` and upgrade only between milestones **(A)**. Bevy changes its API often, so upgrades are planned work.
-- **The simulation crate has no Bevy rendering or UI dependency** **(A)**: a plain, deterministic Rust crate (`sim`) with seeded RNG. It runs inside the game as a Bevy plugin and also runs headless (no window) for tests, replays and soak runs.
-- **UI** (Logan, batch 169): Bevy UI (`bevy_ui`) only, for everything: panels, the top bar, popups, dense tables and the Pdoomberg terminal. No egui. Dense tables need a small in-house table widget (virtualized rows, sortable columns) **(A)**.
-- **Bevy version** (Logan, batch 169): one Bevy version is pinned in Cargo.toml and upgraded only between milestones.
-- **Map** **(A)**: the province-ID bitmap loaded as a texture; one shader looks up each pixel's province for borders, hover, selection and map modes (a small per-province color table updated when the map mode or data changes).
-- **Data loading**: the CSV files in `data/` (and any JSON) are read at startup with `serde` and `csv` into Bevy resources **(A)**; a bad file names the file, row and field.
-- **Tests** with `cargo test`, including replay tests for determinism.
-- Saves are written by the simulation with `serde`: compressed snapshots of its tables plus the RNG seeds and positions.
-- Desktop builds for Windows, macOS and Linux with `cargo build --release` per platform.
+- **TypeScript for everything** (D950, Logan 2026-10-24): one pnpm workspace, strict TypeScript, Vite for the browser build, Vitest for tests, Biome for lint and format. Packages: `sim-data` (the CSVs and their checks), `sim` (the simulation), `web` (the game) and `headless` (the Node runner).
+- **The simulation package has no DOM and reads no wall clock** **(A)**: a deterministic package with seeded RNG streams. It runs in a Web Worker inside the game, and in Node for tests, replays and soak runs.
+- **UI**: React for panels, the top bar, popups, dense tables (TanStack Table and Virtual) and the Pdoomberg terminal; dockable panes (dockview); a command bar (cmdk) **(A)**.
+- **Map** **(A)**: province polygons, pre-projected to Miller and simplified, drawn by deck.gl in WebGL; picking, hover, selection and map modes come from the library (a per-province color list changes when the map mode or data changes).
+- **Data loading**: the CSV files are read at startup into the sim's tables **(A)**; a bad file names the file, row and field.
+- **Tests** with Vitest, including replay tests for determinism; the 50-seed soak runs in Node worker threads.
+- Saves are written by the simulation as versioned, gzipped JSON: its tables plus the RNG state.
+- Earlier stack (batches 168 and 169): Rust and Bevy, `bevy_ui` only, one pinned Bevy version. The Rust crates stay in the repository as the reference until the port's parity gate passes (D951), then they are deleted.
 
 ## 12.3 Architecture (A)
 
@@ -92,7 +90,7 @@ Rebuilt around the current design; the build starts only when Logan says so. The
 
 ## 12.6 Assumptions and open items
 
-1. Bevy for the whole game is confirmed (batch 168). Decided (batch 169): `bevy_ui` only, and one pinned Bevy version upgraded only between milestones. Open: which version to pin (pick the latest stable when the build starts) and the map shader approach (12.2). Risk: Bevy UI is young for a dense CK3-style UI; mitigation: the pinned version and an in-house table widget built early (M9).
+1. TypeScript in the browser replaces Rust and Bevy (D950, 2026-10-24). Open: whether to wrap the game as a desktop app later (Electron, not Tauri, which would bring Rust back). Risk: a JavaScript sim is slower than Rust; mitigation: the Rust sim used 6 s of a 2-minute 30-year budget, and the hot loops keep plain arrays.
 2. The `FixedUpdate` tick, query views, the resource and event boundary and the command queue (12.3).
 3. Tier membership rules (12.3).
 4. The roadmap order and success criteria (12.4, 12.5).
