@@ -108,3 +108,47 @@ fn failed_seeds_are_each_named_and_the_run_exits_non_zero() {
     let years = std::fs::read_to_string(out.join("years.csv")).unwrap();
     assert_eq!(years.lines().count(), 1, "{years}");
 }
+
+/// `--detail` (D900) only reads: the soak's tables are byte-identical with it, and it writes
+/// its four tables in seed order, the parts folder removed.
+#[test]
+fn detail_tables_change_no_row() {
+    let tmp = Path::new(env!("CARGO_TARGET_TMPDIR"));
+    let (plain, detail) = (tmp.join("soak-plain"), tmp.join("soak-detail"));
+    soak(&plain, "2");
+    headless(&[
+        "soak",
+        "--years",
+        "1",
+        "--seeds",
+        "3..4",
+        "--jobs",
+        "2",
+        "--detail",
+        "--out",
+        detail.to_str().unwrap(),
+    ]);
+    for name in ["years.csv", "quarters.csv"] {
+        let (x, y) = (
+            std::fs::read(plain.join(name)).unwrap(),
+            std::fs::read(detail.join(name)).unwrap(),
+        );
+        assert!(x == y, "{name} differs with --detail");
+    }
+    assert!(!detail.join("detail-parts").exists());
+    let industries = std::fs::read_to_string(detail.join("industries.csv")).unwrap();
+    // 2 seeds × 1 year × 42 industries, seed order.
+    assert_eq!(industries.lines().count(), 1 + 2 * 42);
+    assert!(industries.lines().nth(1).unwrap().starts_with("3,2020,"));
+    assert!(industries.lines().last().unwrap().starts_with("4,2020,"));
+    let world = std::fs::read_to_string(detail.join("world.csv")).unwrap();
+    assert_eq!(world.lines().count(), 3);
+    // The 2020 close is a company snapshot year: the 651 and the 2020 births, per seed.
+    let companies = std::fs::read_to_string(detail.join("companies.csv")).unwrap();
+    assert!(
+        companies.lines().count() > 2 * 651,
+        "{}",
+        companies.lines().count()
+    );
+    assert!(detail.join("zones.csv").exists());
+}

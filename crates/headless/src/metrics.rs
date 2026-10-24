@@ -18,6 +18,7 @@ use sim::world::{Ordinal, Origin, PhaseLabel};
 use sim::{Notice, Sim};
 use sim_data::WorldData;
 
+use crate::detail::{Detail, DetailRecorder};
 use crate::profile::{Profiler, TickCosts};
 
 /// `years.csv` header: one row per seed per year, written at the year's December close (the
@@ -105,6 +106,8 @@ pub struct SeedOutput {
     pub state_hash: String,
     /// The clock at the end (`2050-01-01 00:00`).
     pub end: String,
+    /// The `--detail` tables (D900), when asked for.
+    pub detail: Option<Detail>,
 }
 
 /// Runs `seed` from the start state for `years` years (to 1 January of 2020 + years, 00:00)
@@ -112,7 +115,8 @@ pub struct SeedOutput {
 /// after each month close (`run --hash-monthly`, M1.9). With `profile` each step runs through
 /// `Sim::step_observed` and its parts are timed there (`run --profile`, M10.6, D400); the rows and
 /// hashes are the same either way. With `costs` (and no `profile`) each step is timed whole and
-/// filed by its kind of tick (`run --tick-costs`, D801).
+/// filed by its kind of tick (`run --tick-costs`, D801). With `detail` it also builds the
+/// read-only detail tables (`soak --detail`, D900), which change no row or hash.
 pub fn run_seed(
     data: &WorldData,
     seed: u64,
@@ -120,11 +124,13 @@ pub fn run_seed(
     hash_monthly: bool,
     mut profile: Option<&mut Profiler>,
     mut costs: Option<&mut TickCosts>,
+    detail: bool,
 ) -> Result<SeedOutput, String> {
     let start = Instant::now();
     let mut sim = Sim::new(data.clone(), seed).map_err(|e| e.to_string())?;
     let end = DateTime::midnight(Date::ymd(EPOCH_YEAR + years as i32, 1, 1));
     let mut rec = Recorder::new(&sim, seed);
+    rec.detail = detail.then(|| DetailRecorder::new(seed));
     let mut ticks = 0u64;
     while sim.now() < end {
         ticks += 1;
@@ -157,6 +163,7 @@ pub fn run_seed(
         wall_ms: start.elapsed().as_millis(),
         state_hash: sim.state_hash().to_string(),
         end: sim.now().to_string(),
+        detail: rec.detail.map(|d| d.out),
     })
 }
 
@@ -304,6 +311,8 @@ struct Recorder {
     distressed_seen: Vec<bool>,
     years: String,
     quarters: String,
+    /// The `--detail` tables (D900), read after the metrics at each close.
+    detail: Option<DetailRecorder>,
 }
 
 impl Recorder {
@@ -329,6 +338,7 @@ impl Recorder {
             distressed_seen: vec![false; sim.views().company_detail.get().companies.len()],
             years: String::new(),
             quarters: String::new(),
+            detail: None,
         }
     }
 
@@ -351,6 +361,12 @@ impl Recorder {
                 }
                 if month.month == DECEMBER {
                     self.year_close(sim, month.year);
+                }
+                if let Some(d) = &mut self.detail {
+                    d.month_close(sim);
+                    if month.month == DECEMBER {
+                        d.year_close(sim, month.year);
+                    }
                 }
             }
             _ => {}
