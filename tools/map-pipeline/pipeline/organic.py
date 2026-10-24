@@ -58,10 +58,10 @@ RIVER_WINDOWS = (0.65, 0.4)
 RIVER_TRIES = 6
 # Meanders (D852): offset = sum of A_k sin(2 pi v / L_k + phase_k), A_k = MEANDER_AMP x width x
 # MEANDER_WEIGHTS[k] x a draw in [0.6, 1], L_k = width x MEANDER_WAVES[k]: a 45,000 km2 part
-# (212 km wide) meanders about 10 km either way on waves of 300, 150 and 75 km; the steepest
-# slope is under 0.5, and the line is a function of the position along it, so it never crosses
-# itself.
-MEANDER_AMP = 0.045
+# (212 km wide) meanders up to about 25 km either way (typically 10 to 20) on waves of 300, 150
+# and 75 km; the steepest slope is under 0.9, and the line is a function of the position along
+# it, so it never crosses itself. (0.045 read as still straight at map scale, D852.)
+MEANDER_AMP = 0.08
 MEANDER_WAVES = (1.4, 0.7, 0.35)
 MEANDER_WEIGHTS = (1.0, 0.4, 0.15)
 # Seeds tried when a meander would move a protected point across the cut (then straight).
@@ -75,8 +75,8 @@ PROTECT_M = 4000.0
 # Town-catchment edges (D853): each Voronoi edge between two towns' cells bends by a sum of
 # three half-sines fixed at its ends, sum_k a_k sin(k pi tau), |a_k| <= CELL_AMP x length / k^2,
 # and at most CELL_AMP_WIDTH of a part's width overall.
-CELL_AMP = 0.06
-CELL_AMP_WIDTH = 0.05
+CELL_AMP = 0.08
+CELL_AMP_WIDTH = 0.08
 CELL_TERMS = 3
 # Border statistics (D856): a border within this many metres of a river run used by a cut
 # follows the river; within STAT_PIECE_M of a building piece's edge it follows that line.
