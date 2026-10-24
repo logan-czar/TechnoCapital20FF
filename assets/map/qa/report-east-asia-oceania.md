@@ -1,23 +1,23 @@
 # Map QA report: east-asia-oceania
 
-_Written by `tools/map-pipeline/run.py --region east-asia-oceania` (pipeline pb-1). Source of the rows: `provinces-east-asia-oceania.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
+_Written by `tools/map-pipeline/run.py --region east-asia-oceania` (pipeline pb-2). Source of the rows: `provinces-east-asia-oceania.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
 
 ## Result
 
-**Pass.** All 606 provinces of `provinces-east-asia-oceania.csv` have a crosswalk row and pixels (89 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
+**Pass.** All 793 provinces of `provinces-east-asia-oceania.csv` have a crosswalk row and pixels (89 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
 
 ## Coverage
 
 | Measure | Count |
 |---|---|
-| Provinces in the CSV | 606 |
-| ... AUS | 53 |
+| Provinces in the CSV | 793 |
+| ... AUS | 162 |
 | ... BRN | 4 |
-| ... CHN | 145 |
+| ... CHN | 217 |
 | ... FJI | 4 |
 | ... FSM | 1 |
 | ... HKG | 3 |
-| ... IDN | 51 |
+| ... IDN | 57 |
 | ... JPN | 63 |
 | ... KHM | 12 |
 | ... KIR | 1 |
@@ -46,29 +46,53 @@ _Written by `tools/map-pipeline/run.py --region east-asia-oceania` (pipeline pb-
 | ... WSM | 1 |
 | Regions matched | 345 of 345 |
 | Provinces by method: admin1 | 289 |
-| Provinces by method: admin2 | 251 |
+| Provinces by method: admin2 | 438 |
 | Provinces by method: admin3 | 0 |
 | Provinces by method: voronoi | 66 |
 | Flagged for review (confidence < 0.6) | 0 |
 | Placed by a builder hint (`hints/east-asia-oceania.toml`) | 96 |
 | Tiny (under 64 px) | 89 |
 | Given a pixel at their interior point (no pixel centre inside) | 1 |
-| More than one part (islands, exclaves) | 268 |
-| Coastal flag differs from the CSV | 61 |
-| Small for their region (not Metro, under 5% of the region's mean) | 4 |
+| More than one part (islands, exclaves) | 298 |
+| Coastal flag differs from the CSV | 58 |
+| Small for their region (not Metro, under 5% of the region's mean) | 0 |
 | Voronoi-split blocks where one province takes 75% or more | 3 |
 | Places named in a province's name or notes that lie in another province | 3 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 24 |
 | Admin-1 units left without a province | 5 |
 | Sea links with a province of this file | 86 |
-| City probe points (fail on a mismatch; D686) | 183 pass, 0 mismatch, 23 listed |
+| City probe points (fail on a mismatch; D686) | 258 pass, 0 mismatch, 23 listed |
 | Metro reach scan rows (listed; D686) | 12 |
-| Land exclaves of 5 px or more (fail unless explained; D691) | 14 (0 unexplained) |
+| Land exclaves of 5 px or more (fail unless explained; D691) | 18 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
-| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 6 |
+| Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 7 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
+
+## Split giants
+
+Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722 km2 (Eastern Iowa, US-0053) by `run.py giants` and `[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a part over the cap.
+
+| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces |
+|---|---|---|---|---|---|---|---|
+| AU-0012 | Far West-Broken Hill | 6 | admin2 | 274,899 | 43,378 | 47,081 | 1 |
+| AU-0034 | Mount Isa-Outback | 20 | admin2 | 961,745 | 46,666 | 49,092 | 3 |
+| AU-0039 | Goldfields-Esperance | 14 | admin2 | 675,554 | 46,718 | 50,664 | 0 |
+| AU-0040 | Mid West-Gascoyne | 12 | admin2 | 570,321 | 44,239 | 49,420 | 6 |
+| AU-0043 | Kimberley | 20 | admin2 | 951,382 | 44,578 | 50,674 | 3 |
+| AU-0047 | Far North-Olympic Dam | 17 | admin2 | 827,409 | 47,800 | 49,462 | 3 |
+| AU-0052 | Darwin | 10 | admin2 | 475,172 | 45,661 | 49,900 | 6 |
+| AU-0053 | Central Australia-Top End | 18 | admin2 | 873,286 | 47,216 | 49,179 | 1 |
+| CN-0118 | Ordos-Bayannur-Alxa | 8 | admin2 | 353,484 | 40,581 | 46,758 | 0 |
+| CN-0119 | Chifeng-Tongliao-Xilingol | 7 | admin2 | 299,975 | 41,237 | 46,412 | 1 |
+| CN-0120 | Hulunbuir-Hinggan | 6 | admin2 | 253,300 | 41,278 | 44,031 | 3 |
+| CN-0138 | Qaidam and Southern Qinghai | 11 | admin2 | 525,707 | 45,425 | 49,109 | 3 |
+| CN-0141 | Northern Xinjiang | 6 | admin2 | 274,652 | 43,986 | 46,898 | 1 |
+| CN-0143 | Korla-Aksu | 14 | admin2 | 655,554 | 43,289 | 49,054 | 1 |
+| CN-0144 | Kashgar-Hotan | 9 | admin2 | 409,128 | 43,662 | 48,429 | 3 |
+| CN-0145 | Lhasa-Shigatse | 19 | admin2 | 901,365 | 44,407 | 50,243 | 3 |
+| ID-0050 | Papua | 7 | admin2 | 312,597 | 42,400 | 46,386 | 2 |
 
 ## Sources and licenses
 
@@ -158,7 +182,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | CN-0103 | Shenyang Tiexi-Hunnan | seeds: point 123.25,41.75 (hint); point 123.35,41.8 (hint); point 123.5,41.7 (hint); 1 whole admin2 units, split: Shenyangshi |
 | CN-0111 | Harbin Nangang-Daoli | seeds: point 126.61,45.77 (hint); point 126.65,45.76 (hint); 0 whole admin2 units, split: Haerbinshi |
 | CN-0112 | Harbin Songbei-Pingfang | seeds: point 126.55,45.81 (hint); point 126.62,45.6 (hint); 3 whole admin2 units, split: Haerbinshi |
-| CN-0118 | Ordos-Bayannur-Alxa | seeds: point 105.67,38.84 (hint); point 107.39,40.74 (hint); point 109.78,39.61 (hint); 16 whole admin2 units |
+| CN-0118 | Ordos-Bayannur-Alxa | seeds: point 105.67,38.84 (hint); point 107.39,40.74 (hint); point 109.78,39.61 (hint); 16 whole admin2 units; cut into 8 provinces on admin2 pieces (D820) |
 | CN-0127 | Southern Yunnan | seeds: point 100.09,23.88 (hint); point 100.8,22.01 (hint); point 100.97,22.78 (hint); point 101.57,21.47 (hint); 21 whole admin2 units |
 | HK-0001 | Hong Kong Island-Central | seeds: unit Central and Western (hint); unit Eastern (hint); unit Southern (hint); unit Wan Chai (hint); 4 whole admin1 units |
 | HK-0002 | Kowloon | seeds: unit Kowloon City (hint); unit Kwun Tong (hint); unit Sham Shui Po (hint); unit Wong Tai Sin (hint); unit Yau Tsim Mong (hint); 5 whole admin1 units |
@@ -312,6 +336,7 @@ Checked from the bitmap, independently of the crosswalk: the Natural Earth place
 | city on the edge | ID-0004 | Bekasi | ID-0004 | ID-0003 |
 | city part across water | PH-0002 | Manila | the largest 4-connected part | a smaller part, joined to it across water only |
 | own name elsewhere (allowed) | AU-0023 | Goulburn | AU-0023 (the Goulburn valley of Victoria, not Goulburn town in New South Wales) | AU-0013 |
+| city on the edge | AU-0120 | Kaltukatjara | AU-0120 | AU-0160 |
 
 No misses; the rows above are allowed: a city part across a narrow strait, or a city whose own pixel a neighbour took while its province holds a touching pixel.
 
@@ -329,7 +354,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 
 | Point | Expected | Got | Result |
 |---|---|---|---|
-| Aksai Chin (79.5, 35.2) | ? | CN-0144 | listed |
+| Aksai Chin (79.5, 35.2) | ? | CN-0199 | listed |
 | Bowral (150.42, -34.48) | ? | AU-0004 | listed |
 | Chiba east Narita (140.32, 35.77) | ? | JP-0011 | listed |
 | Fangshan (116.14, 39.73) | ? | CN-0004 | listed |
@@ -352,59 +377,89 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Xiantao (113.45, 30.36) | ? | CN-0066 | listed |
 | Xiaogan (113.92, 30.93) | ? | CN-0068 | listed |
 | Yanqing (115.97, 40.46) | ? | CN-0003 | listed |
+| Aksu (main city of a split giant) (80.25, 41.15) | CN-0143 | CN-0143 | on it |
+| Alice Springs (main city of a split giant) (133.88, -23.701) | AU-0053 | AU-0053 | on it |
+| Altay (split part) (88.1166, 47.8666) | CN-0175 | CN-0175 | on it |
+| Andamooka (split part) (137.1656, -30.431) | AU-0132 | AU-0132 | on it |
 | Ansan (126.83, 37.32) | KR-0005 | KR-0005 | on it |
 | Anting (121.16, 31.3) | CN-0011 | CN-0011 | on it |
 | Apia (-171.76, -13.83) | WS | WS-0001 | on it |
 | Auckland (174.76, -36.85) | NZ | NZ-0001 | nearest across water |
 | Bac Ninh (106.07, 21.18) | VN-0027 | VN-0027 | on it |
+| Bairin Zuoqi (split part) (119.1834, 43.9837) | CN-0156 | CN-0156 | on it |
 | Bangkok Silom (100.53, 13.73) | TH-0001 | TH-0001 | on it |
 | Banqiao (121.46, 25.01) | TW-0002 | TW-0002 | on it |
 | Bao'an airport (113.81, 22.64) | CN-0020 | CN-0020 | on it |
 | Baoshan SH (121.49, 31.4) | CN-0012 | CN-0012 | on it |
+| Barcaldine (split part) (145.2834, -23.5662) | AU-0068 | AU-0068 | on it |
+| Bedourie (split part) (139.4666, -24.3496) | AU-0071 | AU-0071 | on it |
 | Beijing Capital airport (116.6, 40.08) | CN-0002 | CN-0002 | on it |
 | Beijing Tiananmen (116.397, 39.908) | CN-0001 | CN-0001 | on it |
 | Beijing Xicheng Fin St (116.36, 39.915) | CN-0001 | CN-0001 | on it |
 | Bekasi (106.99, -6.24) | ID-0004 | ID-0003 | within a pixel |
+| Biak (split part) (136.0485, -1.1615) | ID-0053 | ID-0053 | nearest across water |
 | Bien Hoa (106.82, 10.95) | VN-0004 | VN-0004 | on it |
+| Birdsville (split part) (139.3666, -25.8996) | AU-0074 | AU-0074 | on it |
 | Blacktown (150.91, -33.77) | AU-0002 | AU-0002 | on it |
 | Bogor (106.8, -6.6) | ID-0005 | ID-0005 | on it |
 | Bondi (151.27, -33.89) | AU-0001 | AU-0002 | within a pixel |
+| Boulia (split part) (139.9, -22.8996) | AU-0066 | AU-0066 | on it |
+| Bourke (split part) (145.9333, -30.1) | AU-0055 | AU-0055 | on it |
 | Box Hill (145.12, -37.82) | AU-0015 | AU-0015 | on it |
+| Broken Hill (main city of a split giant) (141.4331, -31.95) | AU-0012 | AU-0012 | on it |
+| Broome (main city of a split giant) (122.2308, -17.9618) | AU-0043 | AU-0043 | on it |
 | Brunei BSB (114.94, 4.89) | BN | BN-0001 | on it |
+| Burketown (split part) (139.5666, -17.7161) | AU-0059 | AU-0059 | on it |
 | Caloocan North (121.04, 14.75) | PH-0003 | PH-0003 | on it |
 | Campbelltown (150.81, -34.07) | AU-0002 | AU-0002 | on it |
+| Carnarvon (split part) (113.6501, -24.8998) | AU-0091 | AU-0091 | on it |
 | Changi (103.99, 1.36) | SG-0003 | SG-0003 | on it |
 | Changping (116.23, 40.22) | CN-0003 | CN-0003 | on it |
 | Chaoyang CBD (116.46, 39.91) | CN-0002 | CN-0002 | on it |
+| Charleville (split part) (146.25, -26.4) | AU-0075 | AU-0075 | on it |
 | Chatswood (151.18, -33.8) | AU-0001 | AU-0001 | on it |
 | Chek Lap Kok (113.92, 22.31) | HK-0003 | HK-0003 | nearest across water |
 | Chengdu Chunxi (104.08, 30.66) | CN-0085 | CN-0085 | on it |
 | Chengdu Tianfu airport (104.44, 30.31) | CN-0088 | CN-0088 | on it |
+| Chifeng (main city of a split giant) (118.948, 42.272) | CN-0119 | CN-0119 | on it |
 | Chongming (121.4, 31.62) | CN-0012 | CN-0012 | on it |
 | Chongqing (106.55, 29.56) | CN | CN-0014 | on it |
 | Chongqing Jiefangbei (106.58, 29.56) | CN-0014 | CN-0014 | on it |
 | Chongqing airport (106.64, 29.72) | CN-0016 | CN-0016 | on it |
 | Cibinong (106.85, -6.48) | ID-0005 | ID-0005 | on it |
 | Cikarang (107.15, -6.3) | ID-0004 | ID-0004 | on it |
+| Cloncurry (split part) (140.5, -20.7) | AU-0062 | AU-0062 | on it |
 | Cyberjaya (101.65, 2.92) | MY-0003 | MY-0003 | on it |
+| Darwin (main city of a split giant) (130.85, -12.4254) | AU-0052 | AU-0052 | on it |
 | Daxing airport (116.41, 39.51) | CN-0004 | CN-0004 | on it |
 | Depok (106.82, -6.4) | ID-0005 | ID-0005 | on it |
 | Depok center (106.82, -6.39) | ID-0005 | ID-0005 | on it |
 | Dongguan (113.75, 23.02) | CN-0022 | CN-0022 | on it |
+| Dulan (split part) (98.2666, 36.1666) | CN-0167 | CN-0167 | on it |
+| Erldunda (split part) (133.2, -25.2333) | AU-0162 | AU-0162 | on it |
+| Esperance (main city of a split giant) (121.8889, -33.8573) | AU-0039 | AU-0039 | on it |
 | Fengtai (116.29, 39.86) | CN-0004 | CN-0004 | on it |
 | Foshan (113.12, 23.02) | CN-0027 | CN-0027 | on it |
 | Funabashi (139.98, 35.69) | JP-0010 | JP-0010 | on it |
 | Futian (114.06, 22.54) | CN-0019 | CN-0019 | on it |
 | Gangnam (127.03, 37.5) | KR-0002 | KR-0002 | on it |
+| Gar (split part) (79.9833, 32.2004) | CN-0211 | CN-0211 | on it |
+| Genhe (split part) (121.5167, 50.7833) | CN-0161 | CN-0161 | on it |
+| Geraldton (main city of a split giant) (114.6, -28.7666) | AU-0040 | AU-0040 | nearest across water |
+| Golmud (main city of a split giant) (94.8833, 36.4166) | CN-0138 | CN-0138 | on it |
 | Gosford (151.34, -33.43) | AU-0003 | AU-0003 | on it |
 | Guangzhou Baiyun airport (113.3, 23.39) | CN-0026 | CN-0026 | on it |
 | Guangzhou Tianhe (113.33, 23.13) | CN-0024 | CN-0024 | on it |
 | Gwangju city (126.85, 35.16) | KR-0011 | KR-0026 | within a pixel |
+| Gyangze (split part) (89.6333, 28.95) | CN-0216 | CN-0216 | on it |
 | HK Central (114.16, 22.28) | HK-0001 | HK-0001 | on it |
 | Hachioji (139.32, 35.66) | JP-0004 | JP-0004 | on it |
+| Hailar (split part) (119.7, 49.2) | CN-0163 | CN-0163 | on it |
 | Halim (106.89, -6.27) | ID-0003 | ID-0003 | on it |
+| Halls Creek (split part) (127.6712, -18.2227) | AU-0105 | AU-0105 | on it |
 | Hampton Park NSW? Liverpool (150.92, -33.92) | AU-0002 | AU-0002 | on it |
 | Haneda (139.78, 35.55) | JP-0003 | JP-0003 | on it |
+| Hanggin Houqi (split part) (107.14, 40.8847) | CN-0151 | CN-0151 | on it |
 | Hankou (114.27, 30.6) | CN-0063 | CN-0063 | on it |
 | Hanoi (105.85, 21.03) | VN | VN-0025 | on it |
 | Hanyang (114.22, 30.55) | CN-0065 | CN-0065 | on it |
@@ -413,49 +468,74 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Hoa Lac (105.52, 21.01) | VN-0026 | VN-0026 | on it |
 | Hongqiao (121.33, 31.2) | CN-0009 | CN-0009 | on it |
 | Hornsby (151.1, -33.7) | AU-0001 | AU-0001 | on it |
+| Hotan (split part) (79.9269, 37.0997) | CN-0199 | CN-0199 | on it |
 | Hsinchu (120.97, 24.8) | TW-0004 | TW-0004 | on it |
+| Hughenden (split part) (144.2, -20.85) | AU-0063 | AU-0063 | on it |
 | Incheon (126.7, 37.46) | KR-0003 | KR-0003 | on it |
 | Incheon airport (126.45, 37.46) | KR-0003 | KR-0003 | on it |
+| Ivanhoe (split part) (144.3, -32.8996) | AU-0056 | AU-0056 | on it |
 | Jakarta Kelapa Gading (106.9, -6.16) | ID-0002,ID-0003 | ID-0003 | on it |
 | Jakarta Monas (106.827, -6.175) | ID-0001 | ID-0002 | within a pixel |
 | Jakarta SCBD (106.81, -6.225) | ID-0001 | ID-0001 | on it |
+| Jayapura (main city of a split giant) (140.7, -2.533) | ID-0050 | ID-0050 | on it |
 | Jing'an (121.45, 31.23) | CN-0009 | CN-0009 | on it |
 | Jinghai (116.92, 38.94) | CN-0007 | CN-0007 | on it |
 | Jinshan (121.34, 30.74) | CN-0010 | CN-0010 | on it |
 | Jurong (103.7, 1.33) | SG-0002 | SG-0002 | on it |
+| Jyekundo (split part) (97.0067, 32.9977) | CN-0174 | CN-0174 | on it |
 | KLCC (101.71, 3.157) | MY-0001 | MY-0001 | on it |
 | KLIA (101.71, 2.74) | MY-0003 | MY-0003 | on it |
+| Kalgoorlie (split part) (121.46, -30.7354) | AU-0085 | AU-0085 | on it |
+| Kaltukatjara (split part) (128.9973, -25.7884) | AU-0120 | AU-0160 | within a pixel |
 | Kaohsiung (120.3, 22.62) | TW-0016 | TW-0016 | on it |
+| Karamay (main city of a split giant) (84.8599, 45.5899) | CN-0141 | CN-0141 | on it |
 | Karawang (107.3, -6.32) | ID-0006 | ID-0006 | on it |
+| Kashgar (main city of a split giant) (75.9699, 39.4763) | CN-0144 | CN-0144 | on it |
+| Katherine (split part) (132.2666, -14.4666) | AU-0140 | AU-0140 | on it |
 | Kawasaki (139.7, 35.53) | JP-0006 | JP-0006 | on it |
 | Kinmen (118.35, 24.45) | TW-0021 | TW-0021 | on it |
 | Kobe (135.19, 34.69) | JP-0040 | JP-0040 | on it |
+| Koktokay (split part) (89.5302, 46.9911) | CN-0176 | CN-0176 | on it |
 | Komaki (136.91, 35.29) | JP-0035 | JP-0035 | on it |
+| Korla (split part) (86.15, 41.73) | CN-0181 | CN-0181 | on it |
 | Kowloon Kwun Tong (114.22, 22.31) | HK-0002 | HK-0002 | on it |
 | Kuala Lumpur (101.69, 3.14) | MY | MY-0001 | on it |
+| Kununurra (split part) (128.7333, -15.7666) | AU-0104 | AU-0104 | on it |
+| Kuqa (split part) (82.9364, 41.7277) | CN-0182 | CN-0182 | on it |
 | Kyoto (135.76, 35.01) | JP-0042 | JP-0042 | on it |
 | Lambasa (179.39, -16.43) | FJ | FJ-0003 | on it |
+| Laverton (split part) (122.404, -28.627) | AU-0084 | AU-0084 | on it |
+| Lhasa (main city of a split giant) (91.1, 29.645) | CN-0145 | CN-0145 | on it |
 | Lingang (121.93, 30.9) | CN-0013 | CN-0013 | on it |
 | Longgang (114.25, 22.72) | CN-0021 | CN-0021 | on it |
 | Longhua (114.04, 22.66) | CN-0020 | CN-0020 | on it |
+| Longreach (split part) (144.25, -23.4496) | AU-0069 | AU-0069 | on it |
 | Lujiazui (121.5, 31.24) | CN-0008 | CN-0009 | within a pixel |
 | Macau (113.55, 22.19) | MO | MO-0001 | on it |
 | Majuro (171.38, 7.09) | MH | MH-0001 | nearest across water |
 | Makati (121.03, 14.555) | PH-0001 | PH-0001 | on it |
 | Manila Intramuros (120.975, 14.59) | PH-0002 | PH-0002 | nearest across water |
+| Manzhouli (main city of a split giant) (117.43, 49.6) | CN-0120 | CN-0120 | on it |
 | Matsu Nangan (119.94, 26.16) | TW-0022 | TW-0022 | on it |
+| Meekatharra (split part) (118.4833, -26.6) | AU-0097 | AU-0097 | on it |
 | Melbourne (144.96, -37.81) | AU | AU-0015 | on it |
 | Melbourne CBD (144.963, -37.814) | AU-0015 | AU-0015 | on it |
+| Merauke (split part) (140.4018, -8.4932) | ID-0057 | ID-0057 | on it |
 | Minhang (121.38, 31.11) | CN-0010 | CN-0010 | on it |
 | Mong Kok (114.17, 22.32) | HK-0002 | HK-0002 | on it |
+| Mount Isa (main city of a split giant) (139.49, -20.7239) | AU-0034 | AU-0034 | on it |
+| Mount Magnet (split part) (117.8167, -28.0662) | AU-0100 | AU-0100 | on it |
 | Muntinlupa (121.04, 14.41) | PH-0004 | PH-0004 | on it |
 | NAIA (121.02, 14.51) | PH-0002 | PH-0004 | within a pixel |
+| Nagchu (split part) (92.05, 31.48) | CN-0212 | CN-0212 | on it |
 | Nagoya Sakae (136.91, 35.17) | JP-0034 | JP-0034 | on it |
 | Nansha (113.53, 22.8) | CN-0025 | CN-0025 | on it |
 | Nanshan SZ (113.93, 22.53) | CN-0019 | CN-0019 | on it |
 | Nauru (166.93, -0.53) | NR | NR-0001 | on it |
 | Nerima (139.65, 35.74) | JP-0002 | JP-0002 | on it |
 | Newcastle NSW (151.78, -32.93) | AU-0005 | AU-0005 | on it |
+| Newcastle Waters (split part) (133.4672, -17.5528) | AU-0147 | AU-0147 | on it |
+| Newman (split part) (119.7333, -23.3666) | AU-0116 | AU-0116 | on it |
 | Odaiba (139.775, 35.625) | JP-0003 | JP-0001 | within a pixel |
 | Optics Valley (114.41, 30.49) | CN-0064 | CN-0064 | on it |
 | Osaka Umeda (135.5, 34.7) | JP-0037 | JP-0037 | on it |
@@ -474,7 +554,10 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Pyrmont (151.19, -33.87) | AU-0001 | AU-0001 | on it |
 | Qingpu (121.12, 31.15) | CN-0011 | CN-0011 | on it |
 | Quezon City (121.05, 14.65) | PH-0003 | PH-0003 | on it |
+| Quiemo (split part) (85.5333, 38.1338) | CN-0190 | CN-0190 | on it |
+| Quilpie (split part) (144.25, -26.6166) | AU-0076 | AU-0076 | on it |
 | Rangsit (100.62, 13.98) | TH-0004 | TH-0004 | on it |
+| Ravensthorpe (split part) (120.0333, -33.5829) | AU-0090 | AU-0090 | on it |
 | Redfern (151.2, -33.893) | AU-0001 | AU-0001 | on it |
 | Saigon District 1 (106.7, 10.776) | VN-0001 | VN-0002 | within a pixel |
 | Saitama city (139.645, 35.86) | JP-0008 | JP-0008 | on it |
@@ -491,6 +574,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Soekarno-Hatta (106.66, -6.125) | ID-0011 | ID-0011 | on it |
 | Songjiang (121.23, 31.03) | CN-0010 | CN-0010 | on it |
 | Songpa (127.11, 37.51) | KR-0002 | KR-0002 | on it |
+| Southern Cross (split part) (119.3167, -31.2161) | AU-0086 | AU-0086 | on it |
 | Surry Hills (151.21, -33.885) | AU-0001 | AU-0001 | on it |
 | Suva (178.44, -18.14) | FJ | FJ-0001 | on it |
 | Suvarnabhumi (100.75, 13.69) | TH-0003 | TH-0003 | on it |
@@ -504,6 +588,8 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Taoyuan (121.3, 24.99) | TW-0003 | TW-0003 | on it |
 | Tarawa (173.0, 1.42) | KI | KI-0001 | nearest across water |
 | Taveuni (-179.97, -16.85) | FJ | FJ-0003 | on it |
+| Tennant Creek (split part) (134.2, -19.65) | AU-0152 | AU-0152 | on it |
+| Thargomindah (split part) (143.8167, -28.0) | AU-0077 | AU-0077 | on it |
 | Thonburi (100.47, 13.72) | TH-0002 | TH-0001 | within a pixel |
 | Thu Dau Mot (106.65, 10.98) | VN-0003 | VN-0003 | on it |
 | Thu Duc (106.77, 10.85) | VN-0002 | VN-0002 | on it |
@@ -511,30 +597,44 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Tianjin Binhai TEDA (117.7, 39.03) | CN-0006 | CN-0006 | on it |
 | Tianjin Heping (117.2, 39.12) | CN-0005 | CN-0005 | on it |
 | Tianjin port Tanggu (117.65, 39.0) | CN-0006 | CN-0006 | on it |
+| Timika (split part) (136.89, -4.5496) | ID-0054 | ID-0054 | on it |
 | Timor Dili (125.57, -8.56) | TL | TL-0001 | nearest across water |
 | Tokyo Marunouchi (139.765, 35.68) | JP-0001 | JP-0001 | on it |
 | Tonga Nukualofa (-175.2, -21.14) | TO | TO-0001 | nearest across water |
+| Tongliao (split part) (122.268, 43.6219) | CN-0159 | CN-0159 | on it |
 | Toyota City (137.16, 35.08) | JP-0036 | JP-0036 | on it |
 | Tullamarine (144.84, -37.67) | AU-0016 | AU-0016 | on it |
 | Tuvalu Funafuti (179.19, -8.52) | TV | TV-0001 | nearest across water |
 | Uijeongbu (127.04, 37.74) | KR-0006 | KR-0006 | on it |
+| Ulanhot (split part) (122.08, 46.08) | CN-0154 | CN-0154 | on it |
 | Waigaoqiao (121.6, 31.35) | CN-0012 | CN-0012 | nearest across water |
 | Werribee (144.66, -37.9) | AU-0016 | AU-0016 | on it |
+| Windorah (split part) (142.6502, -25.4332) | AU-0073 | AU-0073 | on it |
+| Winton (split part) (143.0333, -22.3996) | AU-0064 | AU-0064 | on it |
 | Wollongong (150.89, -34.42) | AU-0004 | AU-0004 | on it |
 | Wuchang (114.31, 30.55) | CN-0064 | CN-0064 | on it |
 | Wuchang2 (114.31, 30.54) | CN-0064 | CN-0064 | on it |
+| Wuhai (split part) (106.8122, 39.6647) | CN-0153 | CN-0153 | on it |
 | Wuhan (114.3, 30.59) | CN | CN-0063 | on it |
 | Wuhan Caidian (114.03, 30.58) | CN-0065 | CN-0065 | on it |
 | Wuhan Hankou2 (114.28, 30.59) | CN-0063 | CN-0063 | on it |
 | Wuhan Jiangxia (114.32, 30.38) | CN-0064 | CN-0064 | on it |
 | Wuqing (117.04, 39.38) | CN-0007 | CN-0007 | on it |
+| Wyndham (split part) (128.2243, -15.5945) | AU-0102 | AU-0102 | on it |
 | Xi'an (108.94, 34.26) | CN | CN-0095 | on it |
 | Xiamen (118.09, 24.48) | CN | CN-0082 | on it |
+| Xigaze (split part) (88.8833, 29.25) | CN-0218 | CN-0218 | on it |
+| Xilinhot (split part) (116.0443, 43.9443) | CN-0158 | CN-0158 | on it |
 | Yantian (114.27, 22.58) | CN-0021 | CN-0021 | nearest across water |
 | Yeouido (126.925, 37.525) | KR-0001 | KR-0001 | on it |
+| Yining (split part) (81.35, 43.9) | CN-0180 | CN-0180 | on it |
 | Yizhuang (116.51, 39.8) | CN-0004 | CN-0004 | on it |
 | Yokohama (139.64, 35.45) | JP-0005 | JP-0005 | on it |
+| Yulara (split part) (130.9889, -25.2405) | AU-0139 | AU-0139 | on it |
+| Zalantun (split part) (122.72, 48.0) | CN-0164 | CN-0164 | on it |
 | Zhongguancun (116.31, 39.98) | CN-0003 | CN-0003 | on it |
+| point 109.78,39.61 (hint) (main city of a split giant) (109.78, 39.61) | CN-0118 | CN-0118 | on it |
+| unit Coober Pedy (main city of a split giant) (134.7568, -29.0154) | AU-0047 | AU-0047 | on it |
 
 ## Metro reach
 
@@ -561,8 +661,10 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 
 | Province | Name | Pixels | At | Why |
 |---|---|---|---|---|
-| AU-0047 | Far North-Olympic Dam | 8 | 135.92, -33.09 | geoBoundaries' Unincorporated SA is one unit in many pieces; the piece near Kimba stays with the rest of it in Far North-Olympic Dam |
-| AU-0052 | Darwin | 6 | 130.96, -25.21 | geoBoundaries' Unincorporated NT is one unit in many pieces; the piece near Yulara stays with the rest of it in Darwin |
+| AU-0059 | Burketown | 27 | 139.94, -19.25 | a neck under a pixel wide joins it to the rest in the shapes |
+| AU-0101 | Mid West Southwest | 7 | 117.64, -27.72 | a neck under a pixel wide joins it to the rest in the shapes |
+| AU-0135 | Far North Southeast | 8 | 135.92, -33.09 | the Kimba piece of geoBoundaries' Unincorporated SA (see AU-0047), cut from AU-0047 with the land round it |
+| AU-0139 | Yulara | 6 | 130.96, -25.21 | the Yulara piece of geoBoundaries' Unincorporated NT (see AU-0052), which the cut of AU-0053 gave to the Yulara part |
 | CN-0007 | Wuqing-Beichen-Jinghai | 90 | 116.93, 38.87 | its own seed point 116.93,38.94 (hint) lies in it |
 | CN-0014 | Yuzhong-Jiangbei | 11 | 106.6, 29.54 | its own seed point 106.57,29.56 (hint) lies in it |
 | CN-0055 | Baoding-Xiong'an-Langfang-Cangzhou | 89 | 117.02, 39.87 | Sanhe, Dachang and Xianghe: Hebei's real exclave between Beijing and Tianjin |
@@ -571,8 +673,10 @@ Parts of 5 px or more that are not a province's largest part and touch no pixel 
 | CN-0093 | Panzhihua-Liangshan | 11 | 98.84, 30.89 | a neck under a pixel wide joins it to the rest in the shapes |
 | CN-0110 | Western Jilin | 1196 | 125.72, 42.11 | a neck under a pixel wide joins it to the rest in the shapes |
 | CN-0131 | Southern Guizhou | 1244 | 104.73, 26.68 | its own seed place Liupanshui lies in it |
-| CN-0141 | Northern Xinjiang | 8 | 80.67, 43.6 | a neck under a pixel wide joins it to the rest in the shapes |
-| CN-0141 | Northern Xinjiang | 7 | 80.72, 43.39 | a neck under a pixel wide joins it to the rest in the shapes |
+| CN-0161 | Genhe | 5 | 122.73, 52.18 | a neck under a pixel wide joins it to the rest in the shapes |
+| CN-0179 | Northern Xinjiang West | 8 | 80.67, 43.6 | a neck under a pixel wide joins it to the rest in the shapes |
+| CN-0179 | Northern Xinjiang West | 7 | 80.72, 43.39 | a neck under a pixel wide joins it to the rest in the shapes |
+| CN-0195 | Kashgar Northwest | 742 | 77.92, 40.78 | a straight cut across Kashgar-Hotan's concave west left this piece (about 11,300 km2) on CN-0195's side; joined to CN-0144 it would put CN-0144 over the cap (D822) |
 | MN-0007 | Dornogovi-Govisumber | 51 | 108.34, 47.74 | Govisumber (Choir), the name's second part, does not touch Dornogovi in Natural Earth's lines |
 | TH-0024 | Buriram-Surin-Chaiyaphum | 588 | 101.8, 16.01 | composite name: Chaiyaphum lies in it |
 
@@ -800,12 +904,7 @@ AU-0032-PG-0005, BN-0001-MY-0023, CN-0012-CN-0036, CN-0013-CN-0041, CN-0019-CN-0
 
 ## Small provinces
 
-| Province | Name | Region | Pixels | Region mean |
-|---|---|---|---|---|
-| AU-0024 | Brisbane | Queensland | 306 | 7553 |
-| AU-0025 | Gold Coast | Queensland | 290 | 7553 |
-| AU-0036 | Peel-Kwinana | Western Australia | 406 | 13999 |
-| AU-0044 | Adelaide | South Australia | 408 | 10493 |
+None.
 
 ## Uneven Voronoi splits
 
@@ -837,10 +936,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 | Province | Name | Water edges (px) | Bitmap | CSV |
 |---|---|---|---|---|
-| AU-0012 | Far West-Broken Hill | 4 | Y | N |
 | AU-0023 | Goulburn-North East | 5 | Y | N |
-| AU-0034 | Mount Isa-Outback | 231 | Y | N |
-| AU-0047 | Far North-Olympic Dam | 156 | Y | N |
 | BN-0004 | Temburong | 3 | N | Y |
 | CN-0008 | Lujiazui-Pudong | 2 | N | Y |
 | CN-0009 | Puxi Center | 0 | N | Y |
@@ -903,8 +999,8 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-ID-0048 (56), AU-0052 (43), ID-0032 (34), MM-0021 (30), FJ-0004 (25), ID-0049 (24), SB-0003 (24), KI-0001 (23), ID-0051 (22), KR-0025 (21), PG-0009 (21), ID-0045 (19), JP-0063 (19), PH-0015 (19), ID-0025 (17), PG-0011 (16), PH-0029 (15), VU-0002 (15), PH-0022 (14), AU-0043 (13), AU-0047 (13), CN-0041 (13), NZ-0011 (13), NZ-0016 (13), ID-0047 (12), JP-0058 (12), TO-0001 (12), AU-0040 (11), JP-0003 (11), SB-0002 (11), AU-0030 (10), AU-0049 (10), FJ-0003 (10), ID-0044 (10), JP-0062 (10), PG-0005 (10), PH-0013 (10), PH-0017 (10), VN-0021 (10), AU-0020 (9), CN-0028 (9), ID-0043 (9), ID-0050 (9), VU-0001 (9), AU-0032 (8), AU-0045 (8), ID-0026 (8), ID-0038 (8), KR-0007 (8), KR-0024 (8), MM-0016 (8), PH-0016 (8), SB-0001 (8), AU-0034 (7), AU-0046 (7), AU-0050 (7), CN-0012 (7), FJ-0002 (7), FM-0001 (7), ID-0021 (7), ID-0029 (7), JP-0050 (7), KP-0005 (7), NZ-0001 (7), NZ-0006 (7), PG-0008 (7), PH-0008 (7), PW-0001 (7), TH-0013 (7), TH-0027 (7), TH-0029 (7), AU-0029 (6), CN-0023 (6), CN-0083 (6), CN-0093 (6), CN-0104 (6), CN-0141 (6), ID-0028 (6), ID-0041 (6), ID-0046 (6), TH-0026 (6), VN-0011 (6), AU-0023 (5), AU-0026 (5), CN-0075 (5), CN-0081 (5), CN-0082 (5), CN-0110 (5), ID-0024 (5), ID-0037 (5), ID-0042 (5), JP-0019 (5), JP-0049 (5), JP-0053 (5), MY-0018 (5), NZ-0003 (5), PG-0007 (5), PG-0010 (5), PG-0012 (5), PH-0018 (5), PH-0021 (5), PH-0026 (5), PH-0028 (5), AU-0031 (4), AU-0042 (4), CN-0029 (4), CN-0033 (4), CN-0043 (4), CN-0105 (4), CN-0114 (4), CN-0123 (4), ID-0012 (4), ID-0040 (4), JP-0047 (4), JP-0059 (4), KH-0004 (4), KR-0020 (4), MY-0002 (4), MY-0019 (4), PG-0006 (4), PH-0007 (4), PH-0024 (4), TW-0018 (4), VN-0008 (4), VN-0022 (4), AU-0002 (3), AU-0013 (3), AU-0024 (3), AU-0036 (3), AU-0044 (3), AU-0051 (3), CN-0013 (3), CN-0014 (3), CN-0019 (3), CN-0025 (3), CN-0046 (3), CN-0054 (3), CN-0055 (3), CN-0061 (3), CN-0065 (3), CN-0071 (3), CN-0120 (3), CN-0128 (3), CN-0129 (3), CN-0131 (3), FJ-0001 (3), HK-0003 (3), ID-0030 (3), ID-0031 (3), JP-0011 (3), JP-0017 (3), JP-0018 (3), JP-0022 (3), JP-0051 (3), KP-0003 (3), KR-0003 (3), KR-0021 (3), KR-0023 (3), KR-0026 (3), KR-0031 (3), MH-0001 (3), MM-0020 (3), MN-0012 (3), MY-0006 (3), NZ-0005 (3), PH-0011 (3), TW-0007 (3), VN-0005 (3), AU-0003 (2), AU-0009 (2), AU-0010 (2), AU-0012 (2), AU-0016 (2), AU-0017 (2), AU-0028 (2), AU-0035 (2), AU-0038 (2), AU-0053 (2), CN-0007 (2), CN-0031 (2), CN-0036 (2), CN-0039 (2), CN-0042 (2), CN-0050 (2), CN-0056 (2), CN-0060 (2), CN-0067 (2), CN-0074 (2), CN-0085 (2), CN-0097 (2), CN-0099 (2), CN-0107 (2), CN-0109 (2), CN-0124 (2), CN-0126 (2), CN-0127 (2), CN-0133 (2), CN-0134 (2), CN-0139 (2), CN-0146 (2), ID-0017 (2), ID-0018 (2), ID-0020 (2), ID-0022 (2), ID-0023 (2), ID-0035 (2), ID-0036 (2), JP-0010 (2), JP-0012 (2), JP-0020 (2), JP-0026 (2), JP-0028 (2), JP-0033 (2), JP-0036 (2), JP-0040 (2), JP-0041 (2), JP-0054 (2), JP-0060 (2), KH-0003 (2), KP-0002 (2), KP-0008 (2), KR-0005 (2), KR-0006 (2), KR-0014 (2), KR-0015 (2), KR-0027 (2), KR-0032 (2), KR-0033 (2), LA-0001 (2), LA-0004 (2), MM-0004 (2), MM-0011 (2), MM-0012 (2), MM-0014 (2), MM-0015 (2), MN-0007 (2), MY-0005 (2), MY-0007 (2), MY-0013 (2), MY-0017 (2), NZ-0013 (2), PH-0002 (2), PH-0004 (2), PH-0012 (2), PH-0020 (2), PH-0023 (2), PH-0025 (2), TH-0007 (2), TH-0017 (2), TH-0022 (2), TH-0024 (2), TH-0025 (2), TH-0028 (2), TH-0030 (2), TL-0001 (2), TL-0002 (2), TW-0014 (2), TW-0020 (2), VN-0001 (2), VN-0002 (2), VN-0009 (2), VN-0012 (2), VN-0013 (2), VN-0017 (2), VN-0019 (2), VN-0024 (2), VN-0026 (2), WS-0001 (2)
+ID-0048 (56), ID-0032 (34), MM-0021 (30), AU-0138 (29), FJ-0004 (25), ID-0049 (24), SB-0003 (24), KI-0001 (23), ID-0051 (22), KR-0025 (21), PG-0009 (21), ID-0045 (19), JP-0063 (19), PH-0015 (19), ID-0025 (17), PG-0011 (16), PH-0029 (15), VU-0002 (15), PH-0022 (14), CN-0041 (13), NZ-0011 (13), NZ-0016 (13), ID-0047 (12), JP-0058 (12), TO-0001 (12), AU-0103 (11), JP-0003 (11), SB-0002 (11), AU-0030 (10), AU-0049 (10), FJ-0003 (10), ID-0044 (10), JP-0062 (10), PG-0005 (10), PH-0013 (10), PH-0017 (10), VN-0021 (10), AU-0020 (9), CN-0028 (9), ID-0043 (9), VU-0001 (9), AU-0032 (8), AU-0045 (8), AU-0059 (8), ID-0026 (8), ID-0038 (8), KR-0007 (8), KR-0024 (8), MM-0016 (8), PH-0016 (8), SB-0001 (8), AU-0046 (7), AU-0050 (7), AU-0098 (7), AU-0135 (7), CN-0012 (7), FJ-0002 (7), FM-0001 (7), ID-0021 (7), ID-0029 (7), ID-0053 (7), JP-0050 (7), KP-0005 (7), NZ-0001 (7), NZ-0006 (7), PG-0008 (7), PH-0008 (7), PW-0001 (7), TH-0013 (7), TH-0027 (7), TH-0029 (7), AU-0029 (6), AU-0052 (6), CN-0023 (6), CN-0083 (6), CN-0093 (6), CN-0104 (6), CN-0179 (6), ID-0028 (6), ID-0041 (6), ID-0046 (6), TH-0026 (6), VN-0011 (6), AU-0023 (5), AU-0026 (5), AU-0136 (5), AU-0143 (5), CN-0075 (5), CN-0081 (5), CN-0082 (5), CN-0110 (5), CN-0199 (5), ID-0024 (5), ID-0037 (5), ID-0042 (5), JP-0019 (5), JP-0049 (5), JP-0053 (5), MY-0018 (5), NZ-0003 (5), PG-0007 (5), PG-0010 (5), PG-0012 (5), PH-0018 (5), PH-0021 (5), PH-0026 (5), PH-0028 (5), AU-0031 (4), AU-0042 (4), AU-0091 (4), AU-0137 (4), CN-0029 (4), CN-0033 (4), CN-0043 (4), CN-0105 (4), CN-0114 (4), CN-0123 (4), ID-0012 (4), ID-0040 (4), JP-0047 (4), JP-0059 (4), KH-0004 (4), KR-0020 (4), MY-0002 (4), MY-0019 (4), PG-0006 (4), PH-0007 (4), PH-0024 (4), TW-0018 (4), VN-0008 (4), VN-0022 (4), AU-0002 (3), AU-0013 (3), AU-0024 (3), AU-0036 (3), AU-0040 (3), AU-0044 (3), AU-0051 (3), AU-0056 (3), AU-0134 (3), AU-0139 (3), CN-0013 (3), CN-0014 (3), CN-0019 (3), CN-0025 (3), CN-0046 (3), CN-0054 (3), CN-0055 (3), CN-0061 (3), CN-0065 (3), CN-0071 (3), CN-0128 (3), CN-0129 (3), CN-0131 (3), CN-0161 (3), CN-0164 (3), CN-0167 (3), CN-0172 (3), CN-0182 (3), CN-0194 (3), CN-0216 (3), FJ-0001 (3), HK-0003 (3), ID-0030 (3), ID-0031 (3), ID-0056 (3), JP-0011 (3), JP-0017 (3), JP-0018 (3), JP-0022 (3), JP-0051 (3), KP-0003 (3), KR-0003 (3), KR-0021 (3), KR-0023 (3), KR-0026 (3), KR-0031 (3), MH-0001 (3), MM-0020 (3), MN-0012 (3), MY-0006 (3), NZ-0005 (3), PH-0011 (3), TW-0007 (3), VN-0005 (3), AU-0003 (2), AU-0009 (2), AU-0010 (2), AU-0016 (2), AU-0017 (2), AU-0028 (2), AU-0035 (2), AU-0038 (2), AU-0043 (2), AU-0068 (2), AU-0076 (2), AU-0096 (2), AU-0100 (2), AU-0101 (2), AU-0102 (2), AU-0140 (2), AU-0149 (2), CN-0007 (2), CN-0031 (2), CN-0036 (2), CN-0039 (2), CN-0042 (2), CN-0050 (2), CN-0056 (2), CN-0060 (2), CN-0067 (2), CN-0074 (2), CN-0085 (2), CN-0097 (2), CN-0099 (2), CN-0107 (2), CN-0109 (2), CN-0119 (2), CN-0120 (2), CN-0124 (2), CN-0126 (2), CN-0127 (2), CN-0133 (2), CN-0134 (2), CN-0139 (2), CN-0145 (2), CN-0146 (2), CN-0174 (2), CN-0195 (2), CN-0202 (2), ID-0017 (2), ID-0018 (2), ID-0020 (2), ID-0022 (2), ID-0023 (2), ID-0035 (2), ID-0036 (2), JP-0010 (2), JP-0012 (2), JP-0020 (2), JP-0026 (2), JP-0028 (2), JP-0033 (2), JP-0036 (2), JP-0040 (2), JP-0041 (2), JP-0054 (2), JP-0060 (2), KH-0003 (2), KP-0002 (2), KP-0008 (2), KR-0005 (2), KR-0006 (2), KR-0014 (2), KR-0015 (2), KR-0027 (2), KR-0032 (2), KR-0033 (2), LA-0001 (2), LA-0004 (2), MM-0004 (2), MM-0011 (2), MM-0012 (2), MM-0014 (2), MM-0015 (2), MN-0007 (2), MY-0005 (2), MY-0007 (2), MY-0013 (2), MY-0017 (2), NZ-0013 (2), PH-0002 (2), PH-0004 (2), PH-0012 (2), PH-0020 (2), PH-0023 (2), PH-0025 (2), TH-0007 (2), TH-0017 (2), TH-0022 (2), TH-0024 (2), TH-0025 (2), TH-0028 (2), TH-0030 (2), TL-0001 (2), TL-0002 (2), TW-0014 (2), TW-0020 (2), VN-0001 (2), VN-0002 (2), VN-0009 (2), VN-0012 (2), VN-0013 (2), VN-0017 (2), VN-0019 (2), VN-0024 (2), VN-0026 (2), WS-0001 (2)
 
 ## Visual check
 
-`preview-east-asia-oceania.png` in this folder is province-ids.png around the region (pixels x 5646..544, y 1109..3983, scaled by 0.78).
+`preview-east-asia-oceania.png` in this folder is province-ids.png around the region (pixels x 5552..544, y 1070..3983, scaled by 0.75).

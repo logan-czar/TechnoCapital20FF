@@ -7,7 +7,7 @@ lon_max = 180.0
 lat_max = 84.000000
 lat_min = -57.783215
 tiny_px = 64
-pipeline_version = "pb-1"
+pipeline_version = "pb-2"
 coverage = ["provinces-north-america.csv", "provinces-east-asia-oceania.csv", "provinces-europe.csv", "provinces-latin-america.csv", "provinces-mena.csv", "provinces-russia-central-asia.csv", "provinces-south-asia.csv", "provinces-sub-saharan-africa.csv"]
 
 [sources]
