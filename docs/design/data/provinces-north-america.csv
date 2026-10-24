@@ -1,8 +1,8 @@
 id,name,country,region,area,metro,city_rank,commerce,industry,population,resource,terrain,coastal,chokepoint,contested,linked_cities,notes
 US-0001,Birmingham-North Alabama,USA,Alabama,Alabama,,City,9,12,16,Coal,Temperate,N,,,,"Birmingham steel and banking, Huntsville aerospace and missile defense, Mercedes plant"
 US-0002,Mobile-South Alabama,USA,Alabama,Alabama,,City,5,9,14,Farmland,Temperate,Y,Panama Canal,,,"port of Mobile, shipbuilding, Airbus, Montgomery state capital, Hyundai plant"
-US-0003,Anchorage-Southcentral,USA,Alaska,Alaska,,Town,1,1,1,Fishing,Arctic,Y,,,,"air cargo hub, salmon, Juneau state capital"
-US-0004,Fairbanks-North Slope,USA,Alaska,Alaska,,Town,1,1,1,Oil,Arctic,N,,,,"Prudhoe Bay, Trans-Alaska Pipeline, Fort Knox gold mine"
+US-0003,Anchorage-Southcentral,USA,Alaska,Alaska,,Town,5,4,9,Fishing,Arctic,Y,,,,"air cargo hub, salmon, Juneau state capital"
+US-0004,Fairbanks-North Slope,USA,Alaska,Alaska,,Town,2,14,5,Oil,Arctic,Y,,,,"Prudhoe Bay, Trans-Alaska Pipeline, Fort Knox gold mine"
 US-0005,Phoenix-Central,USA,Arizona,Arizona,Phoenix,Metropolis,12,7,17,None,Desert,N,,,,"downtown and north Phoenix, new chip fabs, data centers, West Valley, Flagstaff; water-stressed"
 US-0006,East Valley,USA,Arizona,Arizona,Phoenix,Metropolis,7,12,15,None,Desert,N,,,,"Mesa, Tempe, Chandler Intel fabs, Gilbert, Pinal County; water-stressed"
 US-0007,Tucson-Southern Arizona,USA,Arizona,Arizona,,City,6,12,13,Copper,Desert,N,,,,"Tucson, Morenci and Resolution copper, Yuma farms"
@@ -72,7 +72,7 @@ US-0070,Northern Minnesota-Iron Range,USA,Minnesota,Minnesota,,Town,2,10,12,Iron
 US-0071,Mississippi,USA,Mississippi,Mississippi,,City,5,9,17,Farmland,Wetland,Y,Panama Canal,,,"Jackson state capital, Gulf Coast shipyards, Delta cotton, Toyota plant"
 US-0072,St. Louis-Eastern Missouri,USA,Missouri,Missouri,,City,11,11,17,None,Temperate,N,,,,"Boeing, agribusiness, state capital, Bootheel cotton"
 US-0073,Kansas City-Western Missouri,USA,Missouri,Missouri,,City,9,9,16,Farmland,Temperate,N,,,,"rail hub, Ford plant, Federal Reserve bank, Ozarks"
-US-0074,Montana,USA,Montana,Montana,,Town,1,4,4,Coal,Mountain,N,,,,"Billings refineries, Colstrip, Powder River coal, Missoula, Helena state capital, Butte copper (merged batch 119)"
+US-0074,Montana,USA,Montana,Montana,,Town,5,12,12,Coal,Mountain,N,,,,"Billings refineries, Colstrip, Powder River coal, Missoula, Helena state capital, Butte copper (merged batch 119)"
 US-0075,Nebraska,USA,Nebraska,Nebraska,,City,9,7,15,Farmland,Temperate,N,,,,"Omaha, Berkshire Hathaway, Union Pacific, Lincoln, Platte Valley corn and beef"
 US-0076,Las Vegas,USA,Nevada,Nevada,,City,12,5,16,None,Desert,N,,,,"casinos, gambling, conventions, tourism"
 US-0077,Reno-Northern Nevada,USA,Nevada,Nevada,,City,5,10,9,Lithium,Desert,N,,,,"Tesla Gigafactory, Thacker Pass lithium mine, battery recycling"
@@ -146,44 +146,6 @@ US-0144,Milwaukee-Madison,USA,Wisconsin,Wisconsin,,City,11,11,16,None,Temperate,
 US-0145,Northern and Western Wisconsin,USA,Wisconsin,Wisconsin,,City,4,9,16,Farmland,Temperate,Y,,,,"Green Bay paper mills and shipyards, dairy, frac sand"
 US-0146,Powder River-Eastern Wyoming,USA,Wyoming,Wyoming,,Town,3,15,7,Coal,Temperate,N,,,,"Gillette, largest US coal mines, Cheyenne state capital"
 US-0147,Green River-Western Wyoming,USA,Wyoming,Wyoming,,Town,2,10,6,Gas,Mountain,N,,,,"Jonah and Pinedale gas, trona, Jackson Hole"
-US-0148,Talkeetna,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,N,,,,"split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: Talkeetna, Montana"
-US-0149,Gulkana,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,N,,,,split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: Gulkana
-US-0150,Aniak,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,Y,,,,"split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: Aniak, Nyac, Red Devil"
-US-0151,Bethel,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,Y,,,,"split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: Bethel, Hooper Bay, Kotlit"
-US-0152,Anchorage Northeast,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,N,,,,split from US-0003 Anchorage-Southcentral in the giant-province split (D820)
-US-0153,Valdez,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,Y,,,,"split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: Valdez, Cordova"
-US-0154,Kodiak,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,Y,,,,"split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: Kodiak, Kenai, Homer"
-US-0155,Tununak,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,Y,,,,"split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: Tununak, Quinhagak, Togiak"
-US-0156,Dillingham,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,Y,,,,"split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: Dillingham, Newhalen"
-US-0157,King Salmon,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,Y,,,,"split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: King Salmon, Pilot Point"
-US-0158,Juneau,USA,Alaska,Alaska,,Town,1,1,1,Fishing,Arctic,Y,,,,"split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: Juneau, Skagway, Hoonah"
-US-0159,Ketchikan,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,Y,,,,"split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: Ketchikan, Sitka, Wrangell"
-US-0160,Unalaska,USA,Alaska,Alaska,,none,1,1,1,Fishing,Arctic,Y,,,,"split from US-0003 Anchorage-Southcentral in the giant-province split (D820); towns: Unalaska, Sand Point, Cold Bay"
-US-0161,Utqiaġvik,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,Y,,,,"split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Utqiaġvik, Atqasuk, Wainwright"
-US-0162,Prudhoe Bay,USA,Alaska,Alaska,,none,1,1,1,Oil,Arctic,Y,,,,split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Prudhoe Bay
-US-0163,Point Hope,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,Y,,,,"split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Point Hope, Kivalina"
-US-0164,Fairbanks Northeast,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,Y,,,,split from US-0004 Fairbanks-North Slope in the giant-province split (D820)
-US-0165,Kaktovik,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,Y,,,,split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Kaktovik
-US-0166,Fairbanks West,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,N,,,,split from US-0004 Fairbanks-North Slope in the giant-province split (D820)
-US-0167,Allakaket,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,N,,,,"split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Allakaket, Wiseman"
-US-0168,Ambler,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,N,,,,"split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Ambler, Kobuk, Hughes"
-US-0169,Fort Yukon,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,N,,,,split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Fort Yukon
-US-0170,Kotzebue,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,Y,,,,"split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Kotzebue, Selawik, Shishmaref"
-US-0171,Tanana,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,N,,,,split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Tanana
-US-0172,Big Delta,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,N,,,,"split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Big Delta, Eagle, Circle"
-US-0173,Galena,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,N,,,,"split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Galena, Koyukuk"
-US-0174,Kaltag,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,N,,,,split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Kaltag
-US-0175,Nome,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,Y,,,,"split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Nome, Unalakleet, Gambell"
-US-0176,Lake Minchumina,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,N,,,,split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Lake Minchumina
-US-0177,McGrath,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,N,,,,split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: McGrath
-US-0178,Denali Park,USA,Alaska,Alaska,,none,1,1,1,None,Arctic,N,,,,"split from US-0004 Fairbanks-North Slope in the giant-province split (D820); towns: Denali Park, Cantwell, Tanacross"
-US-0179,Great Falls,USA,Montana,Montana,,Town,1,1,1,None,Mountain,N,,,,"split from US-0074 Montana in the giant-province split (D820); towns: Great Falls, Havre"
-US-0180,Montana Northeast,USA,Montana,Montana,,none,1,1,1,None,Mountain,N,,,,split from US-0074 Montana in the giant-province split (D820)
-US-0181,Glendive,USA,Montana,Montana,,none,1,1,1,None,Mountain,N,,,,"split from US-0074 Montana in the giant-province split (D820); towns: Glendive, Glasgow"
-US-0182,Missoula,USA,Montana,Montana,,Town,1,2,2,None,Mountain,N,,,,"split from US-0074 Montana in the giant-province split (D820); towns: Missoula, Kalispell, Polson"
-US-0183,Bozeman,USA,Montana,Montana,,Town,1,1,1,None,Mountain,N,,,,"split from US-0074 Montana in the giant-province split (D820); towns: Bozeman, Helena"
-US-0184,Miles City,USA,Montana,Montana,,none,1,1,1,None,Mountain,N,,,,split from US-0074 Montana in the giant-province split (D820); towns: Miles City
-US-0185,Butte,USA,Montana,Montana,,Town,1,1,1,None,Mountain,N,,,,"split from US-0074 Montana in the giant-province split (D820); towns: Butte, Dillon"
 CA-0001,Downtown Toronto,CAN,Ontario,Greater Toronto,Toronto,Metropolis,25,4,16,None,Urban,Y,,,,"Bay Street banks, TSX, mining finance, AI research"
 CA-0002,Peel-Mississauga,CAN,Ontario,Greater Toronto,Toronto,Metropolis,7,16,14,None,Urban,N,,,,"Pearson airport, logistics, auto parts"
 CA-0003,York-Markham,CAN,Ontario,Greater Toronto,Toronto,Metropolis,9,8,13,None,Urban,N,,,,"tech campuses, suburbs"
@@ -197,22 +159,22 @@ CA-0010,Ottawa,CAN,Ontario,Eastern and Northern Ontario,,City,10,4,13,None,Tempe
 CA-0011,Kingston-Eastern Ontario,CAN,Ontario,Eastern and Northern Ontario,,Town,3,3,7,None,Temperate,Y,,,,
 CA-0012,Sudbury,CAN,Ontario,Eastern and Northern Ontario,,Town,2,10,4,Nickel,Temperate,N,,,,Sudbury Basin nickel mines and smelters
 CA-0013,Timmins-Northeastern Ontario,CAN,Ontario,Eastern and Northern Ontario,,Town,1,8,5,Gold,Temperate,N,,,,Porcupine gold camp
-CA-0014,Northwestern Ontario,CAN,Ontario,Eastern and Northern Ontario,,Town,1,1,1,Gold,Temperate,Y,,,,"Thunder Bay grain port, Red Lake gold, Ring of Fire chromite and nickel"
+CA-0014,Northwestern Ontario,CAN,Ontario,Eastern and Northern Ontario,,Town,2,7,6,Gold,Temperate,Y,,,,"Thunder Bay grain port, Red Lake gold, Ring of Fire chromite and nickel"
 CA-0015,Montreal,CAN,Quebec,Greater Montreal,,Metropolis,15,11,18,None,Temperate,Y,,,,"AI research, aerospace, video games, Quebec government offices"
 CA-0016,Monteregie-South Shore,CAN,Quebec,Greater Montreal,,City,4,7,14,Farmland,Temperate,N,,,,"Longueuil, Pratt and Whitney Canada"
 CA-0017,Eastern Townships,CAN,Quebec,Greater Montreal,,Town,3,4,9,Farmland,Temperate,N,,,,Sherbrooke
 CA-0018,Mauricie,CAN,Quebec,Greater Montreal,,Town,2,6,6,Hydropower,Temperate,N,,,,"Trois-Rivieres, aluminum smelter"
 CA-0019,Laval-Laurentides,CAN,Quebec,Western and Northern Quebec,,City,4,5,12,None,Temperate,N,,,,
 CA-0020,Outaouais-Abitibi,CAN,Quebec,Western and Northern Quebec,,Town,3,7,9,Gold,Temperate,N,,,,"Gatineau, Rouyn-Noranda and Val-d'Or gold"
-CA-0021,Nord-du-Quebec,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,Hydropower,Arctic,N,,,,"La Grande hydro complex, James Bay lithium, Raglan nickel"
+CA-0021,Nord-du-Quebec,CAN,Quebec,Western and Northern Quebec,,none,1,11,1,Hydropower,Arctic,N,,,,"La Grande hydro complex, James Bay lithium, Raglan nickel"
 CA-0022,Quebec City,CAN,Quebec,Eastern Quebec,,City,7,4,11,None,Temperate,Y,,,,"provincial capital, port"
 CA-0023,Saguenay-Lac-Saint-Jean,CAN,Quebec,Eastern Quebec,,Town,2,9,6,Hydropower,Temperate,N,,,,Rio Tinto aluminum smelters
 CA-0024,Gaspesie-Bas-Saint-Laurent,CAN,Quebec,Eastern Quebec,,none,1,3,6,Fishing,Temperate,Y,,,,
-CA-0025,Cote-Nord,CAN,Quebec,Eastern Quebec,,none,1,3,1,Iron ore,Arctic,Y,,,,"Fermont iron ore, Sept-Iles port"
+CA-0025,Cote-Nord,CAN,Quebec,Eastern Quebec,,none,1,8,2,Iron ore,Arctic,Y,,,,"Fermont iron ore, Sept-Iles port"
 CA-0026,Vancouver,CAN,British Columbia,British Columbia Coast,,City,15,8,16,None,Temperate,Y,,,,"Pacific port, real estate, Asian capital, film"
 CA-0027,Surrey-Fraser Valley,CAN,British Columbia,British Columbia Coast,,City,4,6,12,Farmland,Temperate,N,,,,
 CA-0028,Vancouver Island,CAN,British Columbia,British Columbia Coast,,City,5,4,11,Timber,Temperate,Y,,,,"Victoria provincial capital, coastal timber"
-CA-0029,North Coast BC,CAN,British Columbia,British Columbia Coast,,Town,1,1,1,Fishing,Mountain,Y,,,,"Prince Rupert port, Kitimat LNG"
+CA-0029,North Coast BC,CAN,British Columbia,British Columbia Coast,,Town,1,6,2,Fishing,Mountain,Y,,,,"Prince Rupert port, Kitimat LNG"
 CA-0030,Okanagan-Kootenays,CAN,British Columbia,British Columbia Interior,,Town,3,9,9,Coal,Mountain,N,,,,"Kelowna, Elk Valley metallurgical coal, Trail smelter"
 CA-0031,Cariboo-Prince George,CAN,British Columbia,British Columbia Interior,,Town,2,5,5,Timber,Mountain,N,,,,"sawmills, pulp mills"
 CA-0032,Northeast BC,CAN,British Columbia,British Columbia Interior,,Town,1,9,1,Gas,Temperate,N,,,,"Montney gas, Site C dam"
@@ -226,10 +188,10 @@ CA-0039,Lethbridge-Medicine Hat,CAN,Alberta,Southern Alberta,,Town,2,5,7,Farmlan
 CA-0040,Saskatoon,CAN,Saskatchewan,Saskatchewan,,City,4,6,7,Farmland,Temperate,N,,,,"potash mines, grain"
 CA-0041,Regina,CAN,Saskatchewan,Saskatchewan,,City,5,4,6,Farmland,Temperate,N,,,,"provincial capital, refinery"
 CA-0042,Southeast Saskatchewan,CAN,Saskatchewan,Saskatchewan,,Town,1,8,3,Oil,Temperate,N,,,,"Estevan, Bakken oil, lignite"
-CA-0043,Northern Saskatchewan,CAN,Saskatchewan,Saskatchewan,,none,1,1,1,Uranium,Arctic,N,,,,"Athabasca Basin uranium (McArthur River, Cigar Lake), Prince Albert forest"
+CA-0043,Northern Saskatchewan,CAN,Saskatchewan,Saskatchewan,,none,1,8,3,Uranium,Arctic,N,,,,"Athabasca Basin uranium (McArthur River, Cigar Lake), Prince Albert forest"
 CA-0044,Winnipeg,CAN,Manitoba,Manitoba,,City,6,6,11,None,Temperate,N,,,,"provincial capital, grain trade, bus makers"
 CA-0045,Southern Manitoba,CAN,Manitoba,Manitoba,,Town,1,4,6,Farmland,Temperate,N,,,,"Brandon, Interlake"
-CA-0046,Northern Manitoba,CAN,Manitoba,Manitoba,,none,1,1,1,Nickel,Arctic,N,,,,"Thompson nickel, Nelson River hydro, Churchill Arctic port"
+CA-0046,Northern Manitoba,CAN,Manitoba,Manitoba,,none,1,7,2,Nickel,Arctic,Y,,,,"Thompson nickel, Nelson River hydro, Churchill Arctic port"
 CA-0047,Halifax,CAN,Nova Scotia,Nova Scotia,,City,6,5,9,None,Temperate,Y,,,,"port, naval dockyard"
 CA-0048,Cape Breton,CAN,Nova Scotia,Nova Scotia,,Town,2,4,3,Fishing,Temperate,Y,,,,
 CA-0049,Annapolis Valley-South Shore,CAN,Nova Scotia,Nova Scotia,,Town,2,2,7,Fishing,Temperate,Y,,,,"lobster, orchards"
@@ -237,111 +199,12 @@ CA-0050,Saint John-Fredericton,CAN,New Brunswick,New Brunswick,,Town,4,8,8,Timbe
 CA-0051,Moncton-Miramichi,CAN,New Brunswick,New Brunswick,,Town,4,3,8,Fishing,Temperate,Y,,,,
 CA-0052,St. John's-Avalon,CAN,Newfoundland and Labrador,Newfoundland and Labrador,,Town,4,7,6,Oil,Temperate,Y,,,,"offshore oil (Hibernia, Hebron)"
 CA-0053,Western Newfoundland,CAN,Newfoundland and Labrador,Newfoundland and Labrador,,none,1,2,5,Fishing,Temperate,Y,,,,Corner Brook
-CA-0054,Labrador,CAN,Newfoundland and Labrador,Newfoundland and Labrador,,none,1,3,1,Iron ore,Arctic,N,,,,"Labrador Trough iron ore, Churchill Falls hydro, Voisey's Bay nickel"
+CA-0054,Labrador,CAN,Newfoundland and Labrador,Newfoundland and Labrador,,none,1,9,1,Iron ore,Arctic,Y,,,,"Labrador Trough iron ore, Churchill Falls hydro, Voisey's Bay nickel"
 CA-0055,Prince Edward Island,CAN,Prince Edward Island,Prince Edward Island,,Town,3,2,4,Farmland,Temperate,Y,,,,"Charlottetown, potatoes"
-CA-0056,Yukon,CAN,Yukon,Yukon,,none,1,1,1,Gold,Arctic,N,,,,"Whitehorse, Klondike gold"
-CA-0057,Northwest Territories,CAN,Northwest Territories,Northwest Territories,,Town,1,1,1,Diamonds,Arctic,N,,,,"Yellowknife, diamond mines; tag Diamonds added in batch 128"
+CA-0056,Yukon,CAN,Yukon,Yukon,,none,2,3,1,Gold,Arctic,N,,,,"Whitehorse, Klondike gold"
+CA-0057,Northwest Territories,CAN,Northwest Territories,Northwest Territories,,Town,2,5,1,Diamonds,Arctic,N,,,,"Yellowknife, diamond mines; tag Diamonds added in batch 128"
 CA-0058,Baffin-Iqaluit,CAN,Nunavut,Nunavut,,none,1,4,1,Iron ore,Arctic,Y,,,,"territorial capital, Mary River iron ore"
 CA-0059,Kivalliq-Kitikmeot,CAN,Nunavut,Nunavut,,none,1,4,1,Gold,Arctic,Y,,,,Meadowbank gold
-CA-0060,Fort Severn,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,Y,,,,split from CA-0014 Northwestern Ontario in the giant-province split (D820); towns: Fort Severn
-CA-0061,Northwestern Ontario Northeast,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,Y,,,,split from CA-0014 Northwestern Ontario in the giant-province split (D820)
-CA-0062,Northwestern Ontario Northwest,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,N,,,,split from CA-0014 Northwestern Ontario in the giant-province split (D820)
-CA-0063,Attawapiskat,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,Y,,,,split from CA-0014 Northwestern Ontario in the giant-province split (D820); towns: Attawapiskat
-CA-0064,Big Beaver House,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,N,,,,split from CA-0014 Northwestern Ontario in the giant-province split (D820); towns: Big Beaver House
-CA-0065,Lansdowne House,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,N,,,,split from CA-0014 Northwestern Ontario in the giant-province split (D820); towns: Lansdowne House
-CA-0066,Northwestern Ontario East,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,N,,,,split from CA-0014 Northwestern Ontario in the giant-province split (D820)
-CA-0067,Deer Lake,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,N,,,,"split from CA-0014 Northwestern Ontario in the giant-province split (D820); towns: Deer Lake, Red Lake"
-CA-0068,Sioux Lookout,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,N,,,,"split from CA-0014 Northwestern Ontario in the giant-province split (D820); towns: Sioux Lookout, Cat Lake"
-CA-0069,Geraldton,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,N,,,,split from CA-0014 Northwestern Ontario in the giant-province split (D820); towns: Geraldton
-CA-0070,Atikokan,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,N,,,,split from CA-0014 Northwestern Ontario in the giant-province split (D820); towns: Atikokan
-CA-0071,Kenora,CAN,Ontario,Eastern and Northern Ontario,,none,1,1,1,Timber,Temperate,N,,,,"split from CA-0014 Northwestern Ontario in the giant-province split (D820); towns: Kenora, Dryden"
-CA-0072,Kangirsuk,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,Y,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820); towns: Kangirsuk
-CA-0073,Ivugivik,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,Y,,,,"split from CA-0021 Nord-du-Quebec in the giant-province split (D820); towns: Ivugivik, Salluit"
-CA-0074,Inukjuak,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,Y,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820); towns: Inukjuak
-CA-0075,Nord Northwest,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,Y,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820)
-CA-0076,Kuujjuaq,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,Y,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820); towns: Kuujjuaq
-CA-0077,Nord Northwest 2,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,Y,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820)
-CA-0078,Nord North,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820)
-CA-0079,Nord East,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820)
-CA-0080,Nord East 2,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820)
-CA-0081,Nord West,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,Y,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820)
-CA-0082,Nord South,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820)
-CA-0083,Kuujjuarapik,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,Y,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820); towns: Kuujjuarapik
-CA-0084,Eastmain,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,Y,,,,"split from CA-0021 Nord-du-Quebec in the giant-province split (D820); towns: Eastmain, Radisson"
-CA-0085,Nord South 2,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820)
-CA-0086,Nord Southwest,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820)
-CA-0087,Mistassini,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820); towns: Mistassini
-CA-0088,Matagami,CAN,Quebec,Western and Northern Quebec,,none,1,1,1,None,Arctic,Y,,,,split from CA-0021 Nord-du-Quebec in the giant-province split (D820); towns: Matagami
-CA-0089,Cote Northwest,CAN,Quebec,Eastern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0025 Cote-Nord in the giant-province split (D820)
-CA-0090,Cote West,CAN,Quebec,Eastern Quebec,,none,1,1,1,None,Arctic,N,,,,split from CA-0025 Cote-Nord in the giant-province split (D820)
-CA-0091,St-Augustin,CAN,Quebec,Eastern Quebec,,none,1,1,1,None,Arctic,Y,,,,"split from CA-0025 Cote-Nord in the giant-province split (D820); towns: St-Augustin, Chevery"
-CA-0092,Natashquan,CAN,Quebec,Eastern Quebec,,none,1,1,1,None,Arctic,Y,,,,"split from CA-0025 Cote-Nord in the giant-province split (D820); towns: Natashquan, Mingan, Port-Menier"
-CA-0093,Baie-Comeau,CAN,Quebec,Eastern Quebec,,none,1,1,1,None,Arctic,Y,,,,split from CA-0025 Cote-Nord in the giant-province split (D820); towns: Baie-Comeau
-CA-0094,North Coast BC Northwest,CAN,British Columbia,British Columbia Coast,,none,1,1,1,Fishing,Mountain,N,,,,split from CA-0029 North Coast BC in the giant-province split (D820)
-CA-0095,North Coast BC North,CAN,British Columbia,British Columbia Coast,,none,1,1,1,Fishing,Mountain,N,,,,split from CA-0029 North Coast BC in the giant-province split (D820)
-CA-0096,Dease Lake,CAN,British Columbia,British Columbia Coast,,none,1,1,1,Fishing,Mountain,N,,,,split from CA-0029 North Coast BC in the giant-province split (D820); towns: Dease Lake
-CA-0097,North Coast BC East,CAN,British Columbia,British Columbia Coast,,none,1,1,1,Fishing,Mountain,N,,,,split from CA-0029 North Coast BC in the giant-province split (D820)
-CA-0098,North Coast BC Southwest,CAN,British Columbia,British Columbia Coast,,none,1,1,1,Fishing,Mountain,Y,,,,split from CA-0029 North Coast BC in the giant-province split (D820)
-CA-0099,Smithers,CAN,British Columbia,British Columbia Coast,,none,1,1,1,Fishing,Mountain,N,,,,"split from CA-0029 North Coast BC in the giant-province split (D820); towns: Smithers, Burns Lake"
-CA-0100,Stony Rapids,CAN,Saskatchewan,Saskatchewan,,none,1,1,1,None,Arctic,N,,,,split from CA-0043 Northern Saskatchewan in the giant-province split (D820); towns: Stony Rapids
-CA-0101,Uranium City,CAN,Saskatchewan,Saskatchewan,,none,1,1,1,None,Arctic,N,,,,split from CA-0043 Northern Saskatchewan in the giant-province split (D820); towns: Uranium City
-CA-0102,Northern Saskatchewan Northeast,CAN,Saskatchewan,Saskatchewan,,none,1,1,1,None,Arctic,N,,,,split from CA-0043 Northern Saskatchewan in the giant-province split (D820)
-CA-0103,Northern Saskatchewan West,CAN,Saskatchewan,Saskatchewan,,none,1,1,1,None,Arctic,N,,,,split from CA-0043 Northern Saskatchewan in the giant-province split (D820)
-CA-0104,Northern Saskatchewan East,CAN,Saskatchewan,Saskatchewan,,none,1,1,1,None,Arctic,N,,,,split from CA-0043 Northern Saskatchewan in the giant-province split (D820)
-CA-0105,Meadow Lake,CAN,Saskatchewan,Saskatchewan,,none,1,1,1,None,Arctic,N,,,,split from CA-0043 Northern Saskatchewan in the giant-province split (D820); towns: Meadow Lake
-CA-0106,La Ronge,CAN,Saskatchewan,Saskatchewan,,none,1,1,1,None,Arctic,N,,,,split from CA-0043 Northern Saskatchewan in the giant-province split (D820); towns: La Ronge
-CA-0107,Hudson Bay,CAN,Saskatchewan,Saskatchewan,,none,1,1,1,None,Arctic,N,,,,split from CA-0043 Northern Saskatchewan in the giant-province split (D820); towns: Hudson Bay
-CA-0108,Northern Manitoba North,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820)
-CA-0109,Brochet,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Brochet
-CA-0110,Churchill,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,Y,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Churchill
-CA-0111,Northern Manitoba North 2,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820)
-CA-0112,Flin Flon,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Flin Flon
-CA-0113,Gillam,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,"split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Gillam, Shamattawa"
-CA-0114,Oxford House,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Oxford House
-CA-0115,Norway House,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,"split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: Norway House, Island Lake"
-CA-0116,The Pas,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820); towns: The Pas
-CA-0117,Northern Manitoba South,CAN,Manitoba,Manitoba,,none,1,1,1,None,Arctic,N,,,,split from CA-0046 Northern Manitoba in the giant-province split (D820)
-CA-0118,Port Burwell,CAN,Newfoundland and Labrador,Newfoundland and Labrador,,none,1,1,1,None,Arctic,Y,,,,"split from CA-0054 Labrador in the giant-province split (D820); towns: Port Burwell, Nain"
-CA-0119,Hopedale,CAN,Newfoundland and Labrador,Newfoundland and Labrador,,none,1,1,1,None,Arctic,Y,,,,split from CA-0054 Labrador in the giant-province split (D820); towns: Hopedale
-CA-0120,Happy Valley - Goose Bay,CAN,Newfoundland and Labrador,Newfoundland and Labrador,,none,1,2,1,None,Arctic,Y,,,,"split from CA-0054 Labrador in the giant-province split (D820); towns: Happy Valley - Goose Bay, Rigolet"
-CA-0121,Labrador South,CAN,Newfoundland and Labrador,Newfoundland and Labrador,,none,1,1,1,None,Arctic,N,,,,split from CA-0054 Labrador in the giant-province split (D820)
-CA-0122,Cartwright,CAN,Newfoundland and Labrador,Newfoundland and Labrador,,none,1,1,1,None,Arctic,Y,,,,"split from CA-0054 Labrador in the giant-province split (D820); towns: Cartwright, Forteau, Port Hope Simpson"
-CA-0123,Yukon Northwest,CAN,Yukon,Yukon,,none,1,1,1,None,Arctic,Y,,,,split from CA-0056 Yukon in the giant-province split (D820)
-CA-0124,Yukon West,CAN,Yukon,Yukon,,none,1,1,1,None,Arctic,N,,,,split from CA-0056 Yukon in the giant-province split (D820)
-CA-0125,Dawson City,CAN,Yukon,Yukon,,none,1,1,1,None,Arctic,N,,,,split from CA-0056 Yukon in the giant-province split (D820); towns: Dawson City
-CA-0126,Yukon East,CAN,Yukon,Yukon,,none,1,1,1,None,Arctic,N,,,,split from CA-0056 Yukon in the giant-province split (D820)
-CA-0127,Yukon East 2,CAN,Yukon,Yukon,,none,1,1,1,None,Arctic,N,,,,split from CA-0056 Yukon in the giant-province split (D820)
-CA-0128,Yukon Southwest,CAN,Yukon,Yukon,,none,1,1,1,None,Arctic,N,,,,split from CA-0056 Yukon in the giant-province split (D820)
-CA-0129,Yukon Southeast,CAN,Yukon,Yukon,,none,1,1,1,None,Arctic,N,,,,split from CA-0056 Yukon in the giant-province split (D820)
-CA-0130,Watson Lake,CAN,Yukon,Yukon,,none,1,1,1,None,Arctic,N,,,,split from CA-0056 Yukon in the giant-province split (D820); towns: Watson Lake
-CA-0131,Burwash Landing,CAN,Yukon,Yukon,,none,1,1,1,None,Arctic,N,,,,split from CA-0056 Yukon in the giant-province split (D820); towns: Burwash Landing
-CA-0132,Northwest Territories Northeast,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,Y,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0133,Northwest Territories Northeast 2,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,Y,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0134,Northwest Territories Northeast 3,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,Y,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0135,Holman,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,Y,,,,split from CA-0057 Northwest Territories in the giant-province split (D820); towns: Holman
-CA-0136,Northwest Territories East,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,Y,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0137,Paulatuk,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,Y,,,,split from CA-0057 Northwest Territories in the giant-province split (D820); towns: Paulatuk
-CA-0138,Inuvik,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,Y,,,,"split from CA-0057 Northwest Territories in the giant-province split (D820); towns: Inuvik, Fort McPherson, Tuktoyaktuk"
-CA-0139,Northwest Territories Northeast 4,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0140,Northwest Territories Northeast 5,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0141,Northwest Territories East 2,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0142,Northwest Territories Northwest,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0143,Norman Wells,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,"split from CA-0057 Northwest Territories in the giant-province split (D820); towns: Norman Wells, Fort Good Hope"
-CA-0144,Northwest Territories East 3,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0145,Northwest Territories East 4,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0146,Northwest Territories East 5,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0147,Northwest Territories South,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0148,Northwest Territories East 6,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0149,Northwest Territories East 7,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0150,Northwest Territories East 8,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0151,Northwest Territories East 9,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0152,Northwest Territories South 2,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0153,Northwest Territories East 10,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0154,Fort Simpson,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820); towns: Fort Simpson
-CA-0155,Northwest Territories East 11,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0156,Northwest Territories East 12,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820)
-CA-0157,Fort Resolution,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820); towns: Fort Resolution
-CA-0158,Hay River,CAN,Northwest Territories,Northwest Territories,,none,1,1,1,None,Arctic,N,,,,split from CA-0057 Northwest Territories in the giant-province split (D820); towns: Hay River
 MX-0001,Cuauhtemoc-Centro,MEX,Ciudad de Mexico,Ciudad de Mexico,Mexico City,Metropolis,16,6,15,None,Urban,N,,,,"Reforma offices, Bolsa Mexicana, government"
 MX-0002,Polanco-Santa Fe,MEX,Ciudad de Mexico,Ciudad de Mexico,Mexico City,Metropolis,15,5,14,None,Urban,N,,,,"corporate headquarters, embassies, telecom"
 MX-0003,Iztapalapa-Coyoacan,MEX,Ciudad de Mexico,Ciudad de Mexico,Mexico City,Metropolis,4,14,19,None,Urban,N,,,,"informal markets, Central de Abasto, workshops, UNAM, residential south"

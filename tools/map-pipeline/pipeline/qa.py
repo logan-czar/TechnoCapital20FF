@@ -247,8 +247,8 @@ def run(region: config.Region) -> None:
                         + ", ".join(f"{e['province_id']} ({e['px']} px at {e['lon']}, {e['lat']})" for e in exclave_bad))
     # D820: every part of a split giant is at most the cap (Eastern Iowa), on the final shapes
     split_rows = []
+    geom_of = dict(zip(shp.province_id, shp.geometry))
     for pid, spec in sorted(crosswalk.load_hints(region).get("subdivide", {}).items()):
-        geom_of = dict(zip(shp.province_id, shp.geometry))
         part_ids = [pid] + sorted(spec.get("children", {}))
         areas = {i: subdivide.area_km2(geom_of[i]) for i in part_ids if i in geom_of}
         over = [i for i in part_ids if i not in areas or areas[i] > subdivide.CAP_KM2]

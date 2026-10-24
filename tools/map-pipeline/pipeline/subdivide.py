@@ -1,14 +1,16 @@
 """Giant provinces cut into parts no larger than Eastern Iowa (Logan, 2026-10-23; D820 to D829).
 
-A giant is a province over `GIANT_KM2` whose area is mostly north of the Arctic Circle neither
-(nor south of 60 S): `is_arctic`. Each is cut into `n` parts by recursive bisection: the land
-is first broken into building pieces (the country's licensed geoBoundaries ADM2 units clipped to
-the province, else the Voronoi cells of its Natural Earth towns, else its own polygon parts),
-then each bisection sorts the pieces along the group's long axis (in a Lambert azimuthal
-equal-area frame centred on the province) and gives whole pieces to each side until the side's
-share of the area is reached; the piece that straddles the target is kept whole when that misses
-the target by at most `whole_tol` of a part, else it is cut by a straight line in the frame. So
-the parts follow ADM2 lines (or town catchments) where they can and are cut straight elsewhere.
+A giant is a province over `GIANT_KM2` that is not Arctic (`is_arctic`: most of its area north
+of the Arctic Circle, or any land south of 60 S). Each is cut into `n` parts by recursive
+bisection: the land is first broken into building pieces (the country's licensed geoBoundaries
+ADM2 units clipped to the province, else the Voronoi cells of its Natural Earth towns, else its
+own polygon parts); then, in a Lambert azimuthal equal-area frame centred on the province, each
+bisection draws a straight line across the group's long axis that puts n // 2 parts' worth of
+area on its low side. A piece the line crosses goes whole to the side holding most of it while
+the running imbalance stays within `whole_tol` of a part (the smallest such pieces first), else
+it is cut on the line. So the parts follow ADM2 lines (or town catchments) where they can and
+are straight elsewhere. A part's detached pieces then join the sibling they touch when that
+keeps the sibling under the cap.
 
 `run.py giants` measures every province, picks the giants and writes, per giant, a
 `[subdivide."<id>"]` table in its region's hints file: `parts`, `whole_tol`, `blocks`, the
@@ -65,8 +67,6 @@ CUT_MARGIN_M = 20_000.0
 SEARCH_SIMPLIFY_M = 1000.0
 # Bisection steps of the cut-line search (the line lands within a millionth of the span).
 SEARCH_STEPS = 32
-# A part's detached piece is given to the sibling it touches when under this share of a mean part.
-FRAGMENT_SHARE = 0.1
 # Leftover slivers under this many square degrees are dropped (float dust, as shapes.DUST_AREA).
 DUST_DEG2 = 1e-9
 
@@ -396,10 +396,9 @@ def _bisect(frame: Frame, pieces: list[Piece], n: int, tol: float) -> list[list[
 
 def _merge_fragments(frame: Frame, parts: list) -> list:
     """A part's pieces that are not its largest and touch a sibling go to the sibling they share
-    the longest edge with, when under FRAGMENT_SHARE of a mean part or when the sibling stays
-    under the cap (parts stay contiguous where they can); islands and the rest stay."""
+    the longest edge with when the sibling stays under the cap (parts stay contiguous where they
+    can); islands and the rest stay."""
     parts = list(parts)
-    mean = sum(p.area * math.cos(math.radians(p.centroid.y)) for p in parts) / len(parts)
     for i in range(len(parts)):
         # largest first by area scaled by cos(latitude), ties by position
         comps = sorted(polys(parts[i]), key=lambda c: (-c.area * math.cos(math.radians(c.centroid.y)), c.bounds))
@@ -407,7 +406,6 @@ def _merge_fragments(frame: Frame, parts: list) -> list:
             continue
         keep = [comps[0]]
         for c in comps[1:]:
-            small = c.area * math.cos(math.radians(c.centroid.y)) <= FRAGMENT_SHARE * mean
             best, best_len = None, 0.0
             x0, y0, x1, y1 = c.bounds
             for j in range(len(parts)):
@@ -419,8 +417,8 @@ def _merge_fragments(frame: Frame, parts: list) -> list:
                 s = _shared(c, parts[j])
                 if s > best_len:
                     best, best_len = j, s
-            if best is not None and not small:
-                # a larger piece moves only when the sibling stays under the cap
+            if best is not None:
+                # a piece moves only when the sibling stays under the cap
                 joined = as_poly(shapely.union_all([parts[best], c]))
                 if area_km2(joined) > PART_MAX * CAP_KM2:
                     best = None

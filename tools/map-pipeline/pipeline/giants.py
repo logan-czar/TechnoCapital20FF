@@ -10,12 +10,14 @@ shapes step does (shapes.build_region from the region's plan.json), cuts it with
 `subdivide.choose`, and writes:
 
 - the new province rows in the region's CSV (after the country's last row) and the parents'
-  rows, with development divided by town population (D823), and the countries'
-  `provinces_planned`;
-- a `[subdivide."<id>"]` table per giant in the region's hints file (the cut's numbers and one
-  point per part, which the shapes step maps parts to ids by);
-- a city probe point (checks/city-points.txt) for every part named after a town and every
-  original's main city.
+  rows: the main part keeps the original's development and every new part has 1/1/1 (D823);
+  a site resource and each notes fragment go to the part holding their site (`[giant_sites]`
+  in the hints names sites Natural Earth lacks; D829); and the countries' `provinces_planned`;
+- a `[subdivide."<id>"]` table per giant in the region's hints file (the cut's numbers, one
+  point per part, which the shapes step maps parts to ids by, and the notes the original is
+  placed from when they moved);
+- a city probe point (checks/city-points.txt) for every original's main city, every site and
+  every part named after a town.
 
 It runs once, on the unsplit world: it stops if any hints file has a `[subdivide]` table already.
 """
@@ -26,6 +28,7 @@ import csv
 import io
 import json
 import math
+import unicodedata
 from collections import defaultdict
 
 import geopandas as gpd
@@ -35,11 +38,6 @@ from . import config, crosswalk, shapes, subdivide, text
 
 # A part's own town gives it city rank Town from this population (Natural Earth POP_MAX) up.
 TOWN_RANK_POP = 20_000
-# Population weight of a part with no town, as a share of the giant's mean town population per
-# part (so a townless part still gets a little more than the floor when there is room).
-EMPTY_PART_WEIGHT = 0.05
-# The main part's extra weight, as a share of all the parts' weight (D823).
-MAIN_PART_WEIGHT = 1.0
 # Resources a part takes from its parent as they are (spread over the land); a site resource
 # (a mine, a field, a dam) stays with the main part and the part holding the place the parent's
 # notes name first; other parts get their terrain's background resource.
@@ -48,7 +46,6 @@ TERRAIN_RESOURCE = {"Tropical": "Timber", "Temperate": "Timber", "Wetland": "Tim
                     "Desert": "None", "Arctic": "None", "Urban": "None"}
 TRACKS = ("commerce", "industry", "population")
 TRACK_MIN = 1
-TRACK_MAX = 30
 COMPASS = ["East", "Northeast", "North", "Northwest", "West", "Southwest", "South", "Southeast"]
 
 
@@ -83,25 +80,6 @@ def measure(sources) -> list[dict]:
                         "arctic": subdivide.arctic_share(geom), "lat_min": geom.bounds[1]})
     out.sort(key=lambda r: (-r["km2"], r["id"]))
     return out
-
-
-def alloc(v: int, weights: list[float]) -> list[int]:
-    """v development points over the parts: each at least TRACK_MIN, the rest by largest
-    remainder of the weights (ties to the earlier part, the main part first)."""
-    n = len(weights)
-    base = [TRACK_MIN] * n
-    rest = v - TRACK_MIN * n
-    if rest <= 0:
-        return base
-    tot = sum(weights) or float(n)
-    w = weights if sum(weights) > 0 else [1.0] * n
-    quota = [rest * x / tot for x in w]
-    got = [int(math.floor(q)) for q in quota]
-    left = rest - sum(got)
-    order = sorted(range(n), key=lambda i: (-(quota[i] - got[i]), i))
-    for i in order[:left]:
-        got[i] += 1
-    return [min(TRACK_MAX, b + g) for b, g in zip(base, got)]
 
 
 def _compass(dx: float, dy: float) -> str:
@@ -174,6 +152,7 @@ def _write(sources, giants, log) -> None:
         seeds_all.update(json.loads((work / "seeds.json").read_text(encoding="utf-8")))
         rows = csv_rows[slug]
         by_id = {r["id"]: r for r in rows}
+        region_hints = crosswalk.load_hints(region)
         built_cache = {}
         hint_blocks = []
         new_rows: dict[str, list[dict]] = defaultdict(list)  # country -> new rows
@@ -186,7 +165,8 @@ def _write(sources, giants, log) -> None:
             g = built_cache[key][pid]
             log(f"  cutting {pid} ...")
             c = subdivide.choose(g, row["country"], sources)
-            res = _parts(pid, row, g, c, sources, seeds_all.get(pid, []), names_by_country, next_no)
+            res = _parts(pid, row, g, c, sources, seeds_all.get(pid, []), names_by_country, next_no,
+                         region_hints.get("giant_sites", {}).get(pid, {}))
             for nr in res["children"]:
                 new_rows[row["country"]].append(nr)
                 new_by_country[row["country"]] += 1
@@ -232,9 +212,81 @@ def _write(sources, giants, log) -> None:
     log(f"wrote {sum(new_by_country.values())} new provinces in {len(new_by_country)} countries")
 
 
-def _parts(pid, row, g, c: subdivide.Cut, sources, seeds, names_by_country, next_no) -> dict:
+def ascii_name(s: str) -> str:
+    """A name in plain ASCII (accents dropped: Utqiagvik), for the UI font and the CSVs."""
+    s = unicodedata.normalize("NFKD", s or "")
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return s.encode("ascii", "ignore").decode("ascii").strip()
+
+
+def _compact(s: str) -> str:
+    return text.fold(s).replace(" ", "")
+
+
+def names_in(fragment: str, name: str) -> bool:
+    """A place name in a notes fragment, matched on folded words without spaces or hyphens, so
+    "In Salah" finds I-n-Salah and "Neryungri and Elga" finds Neryungri (D829)."""
+    want = _compact(name)
+    if len(want) < 4:
+        return False
+    words = text.fold(fragment).split()
+    for i in range(len(words)):
+        acc = ""
+        for w in words[i:]:
+            acc += w
+            if acc == want:
+                return True
+            if len(acc) >= len(want):
+                break
+    return False
+
+
+def note_fragments(notes: str) -> list[tuple[str, str]]:
+    """The notes as (fragment, separator before it) at top-level semicolons and at top-level
+    commas before a capital or a digit (not inside parentheses), so "Olympic Dam copper, uranium
+    and gold" stays one fragment."""
+    notes = notes or ""
+    out, cur, sep, depth = [], "", "", 0
+    for k, ch in enumerate(notes):
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            depth = max(0, depth - 1)
+        nxt = notes[k + 1:].lstrip()[:1]
+        if depth == 0 and (ch == ";" or (ch == "," and (nxt.isupper() or nxt.isdigit()))):
+            if cur.strip():
+                out.append((cur.strip(), sep))
+            cur, sep = "", ch
+            continue
+        cur += ch
+    if cur.strip():
+        out.append((cur.strip(), sep))
+    return out
+
+
+def join_fragments(frags: list[tuple[str, str]]) -> str:
+    out = ""
+    for i, (f, sep) in enumerate(frags):
+        out += f if i == 0 else (f"{sep} " if sep else ", ") + f
+    return out
+
+
+# Words of a resource tag in notes text: the fragment naming a giant's resource holds its site
+# (D829).
+RESOURCE_WORDS = {"Oil": ["oil"], "Gas": ["gas", "lng"], "Coal": ["coal"], "Copper": ["copper"],
+                  "Lithium": ["lithium"], "Cobalt": ["cobalt"], "Nickel": ["nickel"],
+                  "Rare earths": ["rare earth"], "Iron ore": ["iron"], "Gold": ["gold"],
+                  "Uranium": ["uranium"], "Hydropower": ["hydro", "dam"], "Diamonds": ["diamond"],
+                  "Platinum": ["platinum"], "Silver": ["silver"], "Zinc": ["zinc"]}
+
+
+def _parts(pid, row, g, c: subdivide.Cut, sources, seeds, names_by_country, next_no, sites) -> dict:
     country = row["country"]
     towns = subdivide.towns_in(g, country, sources)
+
+    def part_of(x, y):
+        return next((j for j, p in enumerate(c.parts) if p.covers(shapely.Point(x, y))), None)
+
     part_towns = [[t for t in towns if p.covers(shapely.Point(t[1], t[2]))] for p in c.parts]
     # the original's main city: a place its name names, else one its notes name, else its first
     # crosswalk seed, else its most populous town, else a point inside its largest part
@@ -258,43 +310,72 @@ def _parts(pid, row, g, c: subdivide.Cut, sources, seeds, names_by_country, next
         big = max(range(len(c.parts)), key=lambda i: c.areas[i])
         rp = c.parts[big].representative_point()
         main_pt = (rp.x, rp.y, "")
-    main_i = next(i for i, p in enumerate(c.parts) if p.covers(shapely.Point(main_pt[0], main_pt[1])))
+    main_i = part_of(main_pt[0], main_pt[1])
     # the other parts in id order: north to south, then west to east, by a point inside each
     others = [i for i in range(len(c.parts)) if i != main_i]
     reps = {i: c.parts[i].representative_point() for i in range(len(c.parts))}
     others.sort(key=lambda i: (-round(reps[i].y, 3), round(reps[i].x, 3), i))
-    order = [main_i] + others
-    # names: a part of the original's name whose place lies in the part, else the part's most
-    # populous town not already a province name of the country, else a compass name
+    n = len(c.parts)
+    # sites (D829): the builder's site points for this giant (`[giant_sites]` in the hints), then
+    # its towns, found in each notes fragment; a fragment belongs to the part holding its first site
+    site_pts = [(nm, float(v[0]), float(v[1])) for nm, v in sorted(sites.items()) if not nm.startswith("_")]
+    frags = note_fragments(row["notes"])
+    frag_part, frag_site = [], []
+    for f, _ in frags:
+        hit = next(((nm, x, y) for nm, x, y in site_pts if names_in(f, nm)), None)
+        if hit is None:
+            t = next((t for t in towns if names_in(f, t[3])), None)
+            hit = (t[3], t[1], t[2]) if t else None
+        frag_site.append(hit)
+        frag_part.append(part_of(hit[1], hit[2]) if hit else None)
+    # names: a part of the original's name whose place lies in the part, else a builder's site in
+    # it, else its most populous town, else its largest ADM2 unit, each unused in the country;
+    # else a compass name. ASCII only.
     pre = pid.split("-")[0]
     raw_parts = [p.strip() for p in row["name"].split("-") if p.strip()]
     used = names_by_country[country]
     name_of: dict[int, str] = {}
+    anchor: dict[int, tuple] = {}  # part -> (lon, lat, label) inside it
+
+    def take(i, nm, pt=None):
+        nm = ascii_name(nm)
+        f = text.fold(nm)
+        if i is None or i == main_i or i in name_of or not f or len(f) < 3 or f in used:
+            return False
+        name_of[i] = nm
+        used.add(f)
+        if pt is not None:
+            anchor[i] = pt
+        return True
+
     for rp_ in raw_parts:
-        f = text.fold(rp_)
-        hit = [t for t in towns if text.fold(t[3]) == f]
-        if not hit:
-            continue
-        i = next(j for j, p in enumerate(c.parts) if p.covers(shapely.Point(hit[0][1], hit[0][2])))
-        if i != main_i and i not in name_of:
-            name_of[i] = rp_
-    anchor = {}  # part -> (lon, lat, label) inside it
+        hit = [t for t in towns if text.fold(t[3]) == text.fold(rp_)]
+        if hit:
+            take(part_of(hit[0][1], hit[0][2]), rp_, (hit[0][1], hit[0][2], hit[0][3]))
+    for nm, x, y in site_pts:
+        take(part_of(x, y), nm, (x, y, nm))
     for i in others:
-        if i in name_of:
-            t = next(t for t in part_towns[i] if text.fold(t[3]) == text.fold(name_of[i]))
-            anchor[i] = (t[1], t[2], t[3])
-            continue
         for t in part_towns[i]:
-            f = text.fold(t[3])
-            if f and f not in used and len(f) >= 3:
-                name_of[i] = t[3]
-                anchor[i] = (t[1], t[2], t[3])
+            if take(i, t[3], (t[1], t[2], t[3])):
                 break
+    blocks = subdivide.country_blocks(country, sources)[0] if c.blocks == "admin2" else None
+    if blocks is not None:
+        for i in others:
+            if i in name_of:
+                continue
+            units = []
+            for k in blocks.sindex.query(c.parts[i], predicate="intersects"):
+                nm = blocks.shapeName.iloc[k]
+                if not isinstance(nm, str) or any(ch.isdigit() for ch in nm) or "unincorporated" in nm.lower():
+                    continue
+                units.append((-c.parts[i].intersection(blocks.geometry.iloc[k]).area, nm))
+            for _, nm in sorted(units):
+                if take(i, nm):
+                    break
     gc = g.representative_point()
-    base = raw_parts[0] if raw_parts else row["region"]
+    base = ascii_name(raw_parts[0] if raw_parts else row["region"])
     for i in others:
         if i in name_of:
-            used.add(text.fold(name_of[i]))
             continue
         r = reps[i]
         nm = f"{base} {_compass(r.x - gc.x, r.y - gc.y)}"
@@ -304,76 +385,85 @@ def _parts(pid, row, g, c: subdivide.Cut, sources, seeds, names_by_country, next
             k += 1
         name_of[i] = nm
         used.add(text.fold(nm))
-    # the original keeps its name: the crosswalk seeds it from its name, so a new name would move
-    # its shape (and the anchor check gives a name part another province's whole name to that
-    # province, D679)
-    parent_name = row["name"]
-    # development by town population (D823)
-    P = sum(t[0] for t in towns)
-    n = len(c.parts)
-    if P > 0:
-        w = {i: sum(t[0] for t in part_towns[i]) + EMPTY_PART_WEIGHT * P / n for i in range(n)}
-    else:
-        w = {i: c.areas[i] for i in range(n)}
-    # the original's main city is what its tracks describe: the main part weighs as much again as
-    # every part together, so it keeps at least half of what the floors leave (D823)
-    w[main_i] += sum(w.values()) * MAIN_PART_WEIGHT
-    tracks = {k: alloc(int(row[k]), [w[i] for i in order]) for k in TRACKS}
-    # resources (D824)
+    # development (D823, Logan): the main part keeps the original's tracks; every new part 1/1/1
+    tracks = {i: {k: (int(row[k]) if i == main_i else TRACK_MIN) for k in TRACKS} for i in range(n)}
+    # a site resource goes to the part holding the site of the fragment that names the resource
+    # (else of the first fragment with a site); the other parts take their terrain's background
     res = row["resource"]
-    site_part = None
+    site_part = main_i
     if res not in SPREAD_RESOURCES:
-        for ph in phrases:
-            hit = [t for t in towns if text.contains_word(ph, text.fold(t[3]))]
-            if hit:
-                site_part = next(j for j, p in enumerate(c.parts) if p.covers(shapely.Point(hit[0][1], hit[0][2])))
-                break
-    parent_upd = {k: str(tracks[k][0]) for k in TRACKS}
-    parent_upd["name"] = parent_name
-    # the notes stay too: the crosswalk seeds the original from them
-    children = []
+        words = RESOURCE_WORDS.get(res, [text.fold(res)])
+        cands = [j for j, (f, _) in enumerate(frags) if frag_part[j] is not None
+                 and any(text.contains_word(text.fold(f), w) for w in words)]
+        cands = cands or [j for j in range(len(frags)) if frag_part[j] is not None]
+        if cands:
+            site_part = frag_part[cands[0]]
+        # the builder can name the resource's site outright (`_resource` in `[giant_sites]`)
+        named_site = next(((x, y) for nm, x, y in site_pts if nm == sites.get("_resource")), None)
+        if named_site is not None and part_of(*named_site) is not None:
+            site_part = part_of(*named_site)
+    background = TERRAIN_RESOURCE.get(row["terrain"], "None")
+    res_of = {i: (res if res in SPREAD_RESOURCES or i == site_part else background) for i in range(n)}
+    # notes (D829): a fragment whose site lies in another part moves there; the original keeps
+    # the rest, and the crosswalk still places it from its old notes (`place_notes`)
+    kept = [fr for fr, j in zip(frags, frag_part) if j in (None, main_i)]
+    moved: dict[int, list[str]] = {}
+    for (f, _), j in zip(frags, frag_part):
+        if j is not None and j != main_i:
+            moved.setdefault(j, []).append(f)
+    parent_notes = join_fragments(kept) if kept else ", ".join(ascii_name(t[3]) for t in part_towns[main_i][:3])
+    parent_upd = {k: str(tracks[main_i][k]) for k in TRACKS}
+    parent_upd["resource"] = res_of[main_i]
+    parent_upd["notes"] = parent_notes
     hint = [f"# D820: {pid} {row['name']} ({sum(c.areas):,.0f} km2) cut into {n} parts on {c.blocks} pieces",
             f"[subdivide.\"{pid}\"]", f"parts = {n}", f"whole_tol = {c.whole_tol}", f"blocks = \"{c.blocks}\"",
-            f"main = [{main_pt[0]:.6f}, {main_pt[1]:.6f}]  # {main_pt[2]}", "",
-            f"[subdivide.\"{pid}\".children]"]
+            f"main = [{main_pt[0]:.6f}, {main_pt[1]:.6f}]  # {main_pt[2]}"]
+    if parent_notes != row["notes"]:
+        hint.append("place_notes = " + json.dumps(row["notes"], ensure_ascii=False))
+    hint += ["", f"[subdivide.\"{pid}\".children]"]
     points = []
     if main_pt[2]:
-        points.append(f"{main_pt[2]} (main city of a split giant) | {main_pt[0]:.4f} | {main_pt[1]:.4f} | {pid}")
+        points.append(f"{ascii_name(main_pt[2])} (main city of a split giant) | {main_pt[0]:.4f} | "
+                      f"{main_pt[1]:.4f} | {pid}")
     part_ids = {main_i: pid}
-    for k, i in enumerate(others, start=1):
-        cid = f"{pre}-{next_no[pre]:04d}"
+    for i in others:
+        part_ids[i] = f"{pre}-{next_no[pre]:04d}"
         next_no[pre] += 1
-        part_ids[i] = cid
-        top = [t[3] for t in part_towns[i][:3]]
-        if res in SPREAD_RESOURCES or i == site_part:
-            r_ = res
-        else:
-            r_ = TERRAIN_RESOURCE.get(row["terrain"], "None")
+    for nm, x, y in site_pts:
+        j = part_of(x, y)
+        if j is not None:
+            points.append(f"{nm} (site of a split giant) | {x:.4f} | {y:.4f} | {part_ids[j]}")
+    children = []
+    for i in others:
+        cid = part_ids[i]
+        top = [ascii_name(t[3]) for t in part_towns[i][:3]]
         rank = "Town" if part_towns[i] and part_towns[i][0][0] >= TOWN_RANK_POP else "none"
-        note = f"split from {pid} {row['name']} in the giant-province split (D820)"
+        note = ", ".join(moved.get(i, []))
+        note += ("; " if note else "") + f"split from {pid} {row['name']} in the giant-province split (D820)"
         if top:
             note += "; towns: " + ", ".join(top)
         nr = {col: "" for col in row}
         nr.update({"id": cid, "name": name_of[i], "country": country, "region": row["region"], "area": row["area"],
-                   "metro": "", "city_rank": rank, "resource": r_, "terrain": row["terrain"],
+                   "metro": "", "city_rank": rank, "resource": res_of[i], "terrain": row["terrain"],
                    "coastal": "N", "chokepoint": "", "contested": row["contested"], "linked_cities": "",
                    "notes": note})
         for t_ in TRACKS:
-            nr[t_] = str(tracks[t_][k])
+            nr[t_] = str(tracks[i][t_])
         children.append(nr)
         pt = anchor.get(i)
         if pt is None:
             rp = reps[i]
             pt = (rp.x, rp.y, "")
         hint.append(f"\"{cid}\" = [{pt[0]:.6f}, {pt[1]:.6f}]  # {name_of[i]}")
-        if pt[2]:
-            points.append(f"{pt[2]} (split part) | {pt[0]:.4f} | {pt[1]:.4f} | {cid}")
+        if pt[2] and pt[2] not in sites:
+            points.append(f"{ascii_name(pt[2])} (split part) | {pt[0]:.4f} | {pt[1]:.4f} | {cid}")
     hint.append("")
-    summary = {"id": pid, "name": row["name"], "parent_name": parent_name, "km2": round(sum(c.areas)),
+    summary = {"id": pid, "name": row["name"], "km2": round(sum(c.areas)),
                "parts": n, "blocks": c.blocks, "whole_tol": c.whole_tol,
                "areas": {part_ids[i]: round(c.areas[i]) for i in range(n)},
                "tracks_before": {k: int(row[k]) for k in TRACKS},
-               "tracks_after": {k: sum(tracks[k]) for k in TRACKS},
+               "tracks_after": {k: sum(tracks[i][k] for i in range(n)) for k in TRACKS},
+               "site_part": part_ids[site_part], "moved_notes": {part_ids[j]: v for j, v in moved.items()},
                "components": {part_ids[i]: len(subdivide.polys(c.parts[i])) for i in range(n)}}
     return {"parent": parent_upd, "children": children, "hint": "\n".join(hint), "points": points,
             "summary": summary}

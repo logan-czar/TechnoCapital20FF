@@ -116,11 +116,15 @@ def subdivided(hints: dict) -> dict[str, str]:
 
 def read_provinces(region: config.Region) -> list[ProvinceRow]:
     """The region file's provinces the crosswalk places: every row but the parts of a split
-    giant other than the original (D820)."""
-    skip = subdivided(load_hints(region))
+    giant other than the original (D820), each original with the notes it was placed from."""
+    hints = load_hints(region)
+    skip = subdivided(hints)
+    # a split giant whose notes moved to its parts is placed from the notes it had (D829)
+    placed = {pid: spec["place_notes"] for pid, spec in hints.get("subdivide", {}).items() if "place_notes" in spec}
     with (config.DATA_DIR / region.csv).open(encoding="utf-8", newline="") as f:
         return [
-            ProvinceRow(r["id"], r["name"], r["country"], r["region"], r["metro"], r["notes"], r["coastal"])
+            ProvinceRow(r["id"], r["name"], r["country"], r["region"], r["metro"], placed.get(r["id"], r["notes"]),
+                        r["coastal"])
             for r in csv.DictReader(f) if r["id"] not in skip
         ]
 
