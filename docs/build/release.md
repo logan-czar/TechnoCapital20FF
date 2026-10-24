@@ -23,7 +23,7 @@ Before shipping a build, run the local gate (`scripts/check.ps1` on Windows, `sc
 ### Linux, x86_64 (not built here; type-checked from Windows)
 
 - Rust via rustup (rustup installs the pinned 1.97 on first use), a C toolchain and `pkg-config`, and the Wayland client headers: the only native build dependency is `wayland-sys`, whose build script asks pkg-config for `wayland-client` (Bevy's `wayland` feature). On Debian or Ubuntu: `sudo apt install build-essential pkg-config libwayland-dev`.
-- X11 and xkbcommon are opened at run time (`x11-dl`, `xkbcommon-dl`), so they need the libraries, not their headers: `libx11-6 libxcursor1 libxi6 libxrandr2 libxkbcommon0` (on any desktop install already). The game enables Bevy's `x11` and `wayland` features, so one binary runs under either.
+- X11 and xkbcommon are opened at run time (`x11-dl`, `xkbcommon-dl`), so they need the libraries, not their headers: `libx11-6 libxcursor1 libxi6 libxrandr2 libxkbcommon0` (on any desktop install already). Wayland is linked at build time (`wayland-sys` with its `client` feature, hence the pkg-config probe), so it also needs `libwayland-client0` at run time. The game enables Bevy's `x11` and `wayland` features, so one binary runs under either.
 - Rendering is Vulkan only (wgpu's `vulkan` backend; no GL backend is built), so the machine needs a Vulkan driver: `mesa-vulkan-drivers` for AMD and Intel, the proprietary driver for NVIDIA.
 - Not needed: `libudev-dev` and `libasound2-dev` from Bevy's general Linux list. The game builds no gamepad or audio support, and `Cargo.lock` has neither `libudev-sys` nor `alsa-sys`.
 - Build: `cargo build --release --locked -p game -p headless`, then `bash scripts/check.sh`.
