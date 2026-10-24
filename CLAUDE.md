@@ -17,7 +17,7 @@ A cyberpunk grand strategy game: CK3-style corporate feudalism on a Wall Street 
 - Bevy is pinned exactly at `=0.20.0` and upgraded only between milestones. UI is `bevy_ui` only, no egui.
 - Every formula cites its mvp-spec section in a comment. Tuning values come from the data tables or a named constant, not inline literals.
 - Money is f64 USD (CSV $M, $bn and bps converted once at load); share counts are u64. Ties with no spec rule go to the lower id.
-- There is no CI. Before a PR, run the local gate: `scripts/check.ps1` (Windows) or `scripts/check.sh` (fmt, clippy, tests, validate.py, `--check-data`). While iterating on sim code, `-SimOnly` / `--sim-only` skips the Bevy compile.
+- There is no CI. Before a PR, run the local gate: `scripts/check.ps1` (Windows) or `scripts/check.sh` (fmt, clippy, tests, validate.py, `--check-data`). The test step uses cargo-nextest when it is installed (parallel test binaries, D870), else cargo test. While iterating on sim code, `-SimOnly` / `--sim-only` skips the Bevy compile.
 
 ## Git
 
