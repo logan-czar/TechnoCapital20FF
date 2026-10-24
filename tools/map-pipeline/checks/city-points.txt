@@ -392,13 +392,13 @@ Timor Dili | 125.57 | -8.56 | TL
 Suva | 178.44 | -18.14 | FJ
 Taveuni | -179.97 | -16.85 | FJ
 Lambasa | 179.39 | -16.43 | FJ
-Anadyr | 177.51 | 64.73 | RU-0070
-Chukotka east Uelen | -169.8 | 66.16 | RU-0070
+Anadyr | 177.51 | 64.73 | RU-0214
+Chukotka east Uelen | -169.8 | 66.16 | RU-0208
 Attu | 173.18 | 52.93 | US
 Adak | -176.64 | 51.88 | US
-Big Diomede | -169.05 | 65.77 | RU-0070
+Big Diomede | -169.05 | 65.77 | RU-0208
 Little Diomede | -168.93 | 65.75 | US
-Wrangel | -179.5 | 71.2 | RU-0070
+Wrangel | -179.5 | 71.2 | RU-0197
 Mahbubnagar | 77.99 | 16.74 | IN-0032
 Nalgonda | 79.27 | 17.05 | IN-0032
 Khammam | 80.15 | 17.25 | IN-0032
@@ -935,43 +935,42 @@ Fort Simpson (split part) | -121.3333 | 61.8500 | CA-0154
 Fort Resolution (split part) | -113.6830 | 61.1666 | CA-0157
 Hay River (split part) | -115.7883 | 60.8143 | CA-0158
 Anchorage (main city of a split giant) | -149.8874 | 61.2140 | US-0003
-Palmer (split part) | -149.1127 | 61.5997 | US-0148
-Wasilla (split part) | -149.4394 | 61.5817 | US-0149
-Gulkana (split part) | -145.3822 | 62.2714 | US-0150
-Aniak (split part) | -159.5222 | 61.5787 | US-0151
-Hooper Bay (split part) | -166.0966 | 61.5311 | US-0152
-Cordova (split part) | -145.7575 | 60.5428 | US-0154
-Unalaska (split part) | -166.5316 | 53.8686 | US-0155
-Bethel (split part) | -161.7558 | 60.7933 | US-0156
-Dillingham (split part) | -158.4803 | 59.0566 | US-0157
+Talkeetna (split part) | -150.1094 | 62.3238 | US-0148
+Gulkana (split part) | -145.3822 | 62.2714 | US-0149
+Aniak (split part) | -159.5222 | 61.5787 | US-0150
+Bethel (split part) | -161.7558 | 60.7933 | US-0151
+Valdez (split part) | -146.3483 | 61.1360 | US-0153
+Kodiak (split part) | -152.4070 | 57.7900 | US-0154
+Tununak (split part) | -165.2558 | 60.5855 | US-0155
+Dillingham (split part) | -158.4803 | 59.0566 | US-0156
+King Salmon (split part) | -156.6614 | 58.6887 | US-0157
 Juneau (split part) | -134.4007 | 58.3034 | US-0158
-King Salmon (split part) | -156.6614 | 58.6887 | US-0159
-Kodiak (split part) | -152.4070 | 57.7900 | US-0160
-Ketchikan (split part) | -131.6640 | 55.3562 | US-0161
+Ketchikan (split part) | -131.6640 | 55.3562 | US-0159
+Unalaska (split part) | -166.5316 | 53.8686 | US-0160
 Fairbanks (main city of a split giant) | -147.7107 | 64.8370 | US-0004
-Utqiaġvik (split part) | -156.7886 | 71.2906 | US-0162
-Prudhoe Bay (split part) | -148.6694 | 70.2922 | US-0163
-Point Hope (split part) | -166.8080 | 68.3477 | US-0164
-Kaktovik (split part) | -143.6029 | 70.0879 | US-0166
-Allakaket (split part) | -152.6455 | 66.5655 | US-0168
-Ambler (split part) | -157.8514 | 67.0865 | US-0169
-Fort Yukon (split part) | -145.2738 | 66.5647 | US-0170
-Kotzebue (split part) | -162.5966 | 66.8987 | US-0171
-Tanana (split part) | -152.0788 | 65.1719 | US-0172
-Big Delta (split part) | -145.8422 | 64.1525 | US-0173
-Galena (split part) | -156.9270 | 64.7333 | US-0174
-Kaltag (split part) | -158.7219 | 64.3272 | US-0175
-Nome (split part) | -165.4064 | 64.5061 | US-0176
-Lake Minchumina (split part) | -152.3122 | 63.8828 | US-0177
-McGrath (split part) | -155.5958 | 62.9568 | US-0178
-Denali Park (split part) | -148.9141 | 63.7331 | US-0179
+Utqiaġvik (split part) | -156.7886 | 71.2906 | US-0161
+Prudhoe Bay (split part) | -148.6694 | 70.2922 | US-0162
+Point Hope (split part) | -166.8080 | 68.3477 | US-0163
+Kaktovik (split part) | -143.6029 | 70.0879 | US-0165
+Allakaket (split part) | -152.6455 | 66.5655 | US-0167
+Ambler (split part) | -157.8514 | 67.0865 | US-0168
+Fort Yukon (split part) | -145.2738 | 66.5647 | US-0169
+Kotzebue (split part) | -162.5966 | 66.8987 | US-0170
+Tanana (split part) | -152.0788 | 65.1719 | US-0171
+Big Delta (split part) | -145.8422 | 64.1525 | US-0172
+Galena (split part) | -156.9270 | 64.7333 | US-0173
+Kaltag (split part) | -158.7219 | 64.3272 | US-0174
+Nome (split part) | -165.4064 | 64.5061 | US-0175
+Lake Minchumina (split part) | -152.3122 | 63.8828 | US-0176
+McGrath (split part) | -155.5958 | 62.9568 | US-0177
+Denali Park (split part) | -148.9141 | 63.7331 | US-0178
 Billings (main city of a split giant) | -108.5400 | 45.7883 | US-0074
-Great Falls (split part) | -111.3000 | 47.5003 | US-0180
-Glendive (split part) | -104.7105 | 47.1086 | US-0182
-Missoula (split part) | -113.9931 | 46.8722 | US-0183
-Bozeman (split part) | -111.0378 | 45.6801 | US-0184
-Miles City (split part) | -105.8400 | 46.4089 | US-0185
-Butte (split part) | -112.5338 | 46.0039 | US-0186
+Great Falls (split part) | -111.3000 | 47.5003 | US-0179
+Glendive (split part) | -104.7105 | 47.1086 | US-0181
+Missoula (split part) | -113.9931 | 46.8722 | US-0182
+Bozeman (split part) | -111.0378 | 45.6801 | US-0183
+Miles City (split part) | -105.8400 | 46.4089 | US-0184
+Butte (split part) | -112.5338 | 46.0039 | US-0185
 Broken Hill (main city of a split giant) | 141.4331 | -31.9500 | AU-0012
 Bourke (split part) | 145.9333 | -30.1000 | AU-0055
 Ivanhoe (split part) | 144.3000 | -32.8996 | AU-0056
@@ -1203,6 +1202,7 @@ Mys Shmidta (split part) | -179.5000 | 68.9337 | RU-0200
 Mukhomornoye (split part) | 173.3333 | 66.4171 | RU-0201
 Bilibino (split part) | 166.4486 | 68.0526 | RU-0203
 Egvekinot (split part) | -179.1837 | 66.3221 | RU-0204
+Ugolnye Kopi (split part) | 177.7000 | 64.7333 | RU-0207
 Provideniya (split part) | -173.2258 | 64.4235 | RU-0208
 Omolon (split part) | 160.5000 | 65.2500 | RU-0210
 Anadyr (split part) | 177.4750 | 64.7370 | RU-0214

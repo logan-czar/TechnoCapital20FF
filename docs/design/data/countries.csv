@@ -1,5 +1,5 @@
 iso3,name,superregion,currency,gdp_usd_bn,population_m,wealth_index,major,hss,legislature_strength,judiciary_strength,variant,restriction_label,subject_of,provinces_planned,notes
-USA,United States,North America,USD,23500,328.2,54,Y,55,64,72,,Screened,,186,
+USA,United States,North America,USD,23500,328.2,54,Y,55,64,72,,Screened,,185,
 CAN,Canada,North America,CAD,1750,37.6,73,Y,42,75,87,,Screened,,158,
 MEX,Mexico,North America,MXN,1250,127.6,49,Y,58,55,48,,Screened,,49,
 GRL,Greenland,North America,DKK,3.1,0.056,74,N,45,72,82,,Screened,,3,Self-governing territory of Denmark; own row for its size on the map and rare earths and uranium; old group Nordics (A); dependent territory; branch strengths and restriction (A)

@@ -304,6 +304,10 @@ add = true
 [review.exclave_ok]
 "AU-0047" = "geoBoundaries' Unincorporated SA is one unit in many pieces; the piece near Kimba stays with the rest of it in Far North-Olympic Dam"
 "AU-0052" = "geoBoundaries' Unincorporated NT is one unit in many pieces; the piece near Yulara stays with the rest of it in Darwin"
+# D822: parts of split giants
+"AU-0135" = "the Kimba piece of geoBoundaries' Unincorporated SA (see AU-0047), cut from AU-0047 with the land round it"
+"AU-0139" = "the Yulara piece of geoBoundaries' Unincorporated NT (see AU-0052), which the cut of AU-0053 gave to the Yulara part"
+"CN-0195" = "a straight cut across Kashgar-Hotan's concave west left this piece (about 11,300 km2) on CN-0195's side; joined to CN-0144 it would put CN-0144 over the cap (D822)"
 "CN-0055" = "Sanhe, Dachang and Xianghe: Hebei's real exclave between Beijing and Tianjin"
 "ID-0042" = "a sliver of geoBoundaries' East Kalimantan unit beyond Natural Earth's North Kalimantan line"
 "MN-0007" = "Govisumber (Choir), the name's second part, does not touch Dornogovi in Natural Earth's lines"

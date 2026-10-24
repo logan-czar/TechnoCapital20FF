@@ -21,7 +21,7 @@ RU-0019,Kaliningrad,RUS,Kaliningrad,St Petersburg-Baltic (Northwestern),,Town,5,
 RU-0020,Novgorod-Pskov,RUS,Novgorod-Pskov,St Petersburg-Baltic (Northwestern),,Town,3,5,13,Timber,Temperate,N,,,,"Veliky Novgorod (Acron fertilizer), Pskov airborne division, forests and flax; the 2005 border treaty with Estonia is still unratified (note only (A))"
 RU-0021,Murmansk-Karelia,RUS,Karelia-Murmansk,Russian North (Northwestern),,Town,1,5,5,Nickel,Arctic,Y,,,,"Murmansk ice-free port and start of the Northern Sea Route, Northern Fleet at Severomorsk, Kola nickel (Nornickel at Monchegorsk and Zapolyarny), Apatity apatite (PhosAgro), Kola nuclear plant, Petrozavodsk, Karelian timber and stone"
 RU-0022,Arkhangelsk,RUS,Arkhangelsk,Russian North (Northwestern),,Town,1,2,4,Timber,Temperate,Y,,,,"Severodvinsk (Sevmash nuclear submarines, Zvyozdochka repair yard), Arkhangelsk pulp and timber port, Plesetsk cosmodrome, Lomonosov diamond pipe (Arkhangelsk Diamond, no tag), Novaya Zemlya nuclear test site"
-RU-0023,Komi-Nenets,RUS,Komi-Nenets,Russian North (Northwestern),,Town,1,1,1,Oil,Arctic,Y,,,,"Timan-Pechora oil (Usinsk, Lukoil), Varandey Arctic oil terminal in the Nenets okrug, Vorkuta coking coal, Ukhta refinery, Syktyvkar pulp mill, Pechora gas"
+RU-0023,Komi-Nenets,RUS,Komi-Nenets,Russian North (Northwestern),,Town,1,1,1,Oil,Arctic,N,,,,"Timan-Pechora oil (Usinsk, Lukoil), Varandey Arctic oil terminal in the Nenets okrug, Vorkuta coking coal, Ukhta refinery, Syktyvkar pulp mill, Pechora gas"
 RU-0024,Vologda,RUS,Vologda,Russian North (Northwestern),,Town,3,13,13,Timber,Temperate,N,,,,"Cherepovets (Severstal steel, PhosAgro fertilizer), Vologda butter and lace, sawmills and forests"
 RU-0025,Krasnodar-Kuban,RUS,Krasnodar-Adygea,Southern Russia (Southern),,City,8,6,18,Farmland,Temperate,Y,Turkish Straits,,,"Krasnodar (Magnit retail headquarters), the Kuban, Russia's breadbasket (wheat, sunflower, rice, sugar beet), Yeysk and Temryuk Azov ports, Adygea, Kropotkin grain trains"
 RU-0026,Novorossiysk-Sochi,RUS,Krasnodar-Adygea,Southern Russia (Southern),,Town,5,10,15,None,Temperate,Y,Turkish Straits,,,"Novorossiysk (Russia's biggest Black Sea port: grain, oil and the CPC terminal for Kazakh crude), Tuapse refinery and port, Taman ports, Sochi resorts and 2014 Olympic venues, Anapa; Black Sea at Attacks risk (2.4.2)"
@@ -63,7 +63,7 @@ RU-0061,Khakassia-Tuva,RUS,Khakassia-Tuva,East Siberia (Siberian),,Town,2,12,11,
 RU-0062,Irkutsk-Angarsk,RUS,Irkutsk,East Siberia (Siberian),,City,6,12,13,None,Temperate,N,,,,"Irkutsk aircraft plant (Su-30 fighters, MC-21 airliner), Angarsk refinery (Rosneft) and uranium enrichment centre, Shelekhov aluminium, Lake Baikal tourism at Listvyanka"
 RU-0063,Bratsk-Ust-Kut,RUS,Irkutsk,East Siberia (Siberian),,Town,1,3,1,Hydropower,Temperate,N,,,,"Bratsk and Ust-Ilimsk dams and Rusal's Bratsk aluminium smelter, Ilim pulp mills, Kovykta gas field, Sukhoi Log gold (undeveloped), Verkhnechonskoye oil, Ust-Kut river port and the BAM railway"
 RU-0064,Vladivostok-Nakhodka,RUS,Primorsky,Amur-Pacific (Far Eastern),,City,7,10,15,Fishing,Temperate,Y,,,,"Vladivostok (Pacific Fleet, Russky Island university, free port), Kozmino oil terminal (end of the ESPO pipeline, crude to China and grey-fleet buyers), Vostochny coal port, Zvezda shipyard at Bolshoy Kamen, pollock and crab, Chinese and North Korean borders"
-RU-0065,Khabarovsk,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,City,1,1,1,Timber,Temperate,Y,,,,"Khabarovsk, Komsomolsk-on-Amur (Sukhoi Su-35 and Superjet plant, Amur shipyard submarines), Vanino and Sovetskaya Gavan coal ports, timber exports to China, Birobidzhan"
+RU-0065,Khabarovsk,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,City,1,1,1,Timber,Temperate,N,,,,"Khabarovsk, Komsomolsk-on-Amur (Sukhoi Su-35 and Superjet plant, Amur shipyard submarines), Vanino and Sovetskaya Gavan coal ports, timber exports to China, Birobidzhan"
 RU-0066,Amur,RUS,Amur,Amur-Pacific (Far Eastern),,Town,1,2,3,Gold,Temperate,N,,,,"Vostochny cosmodrome, Gazprom's Amur gas processing plant at Svobodny (under construction, fed by Power of Siberia), Zeya and Bureya dams, Pokrovka and Albyn gold, soybeans, Blagoveshchensk across the Amur from Heihe"
 RU-0067,Sakhalin,RUS,Sakhalin,Amur-Pacific (Far Eastern),,Town,4,16,9,Gas,Temperate,Y,,,,"Gazprom-run Sakhalin-2 LNG at Prigorodnoye (Russia's first LNG plant, sells to Japan and Korea), Sakhalin-1 oil (Rosneft with Japanese and Indian partners (A)), Yuzhno-Sakhalinsk, Kholmsk port, coal, fishing"
 RU-0068,Kuril Islands,RUS,Sakhalin,Amur-Pacific (Far Eastern),,none,1,3,1,Fishing,Mountain,Y,,JPN claims,,"Iturup, Kunashir, Shikotan and the Habomai islets (Japan's Northern Territories), Gidrostroy fish processing, garrison and Bastion coastal missiles (2016), Iturup airport, volcanoes"
@@ -73,25 +73,25 @@ RU-0071,Yakutsk-Aldan,RUS,Sakha,Northeast and Transbaikal (Far Eastern),,Town,1,
 RU-0072,Mirny-Lena,RUS,Sakha,Northeast and Transbaikal (Far Eastern),,none,2,12,6,Diamonds,Arctic,Y,,,,"ALROSA diamond pits at Mirny, Udachny and Aikhal (about a quarter of world diamonds by value, no tag), Chayanda gas field (start of Power of Siberia to China, December 2019), Talakan oil, Arctic coast at Tiksi, Deputatsky tin; tag Diamonds added in batch 128 (was Gas)"
 RU-0073,Buryatia,RUS,Buryatia,Northeast and Transbaikal (Far Eastern),,Town,1,1,6,Timber,Temperate,N,,,,"Ulan-Ude (Ulan-Ude Aviation Plant building Mi-8 helicopters, locomotive repair), Lake Baikal's east shore, Buddhist datsans, the Trans-Mongolian rail to Ulaanbaatar, timber"
 RU-0074,Zabaykalsky,RUS,Zabaykalsky,Northeast and Transbaikal (Far Eastern),,Town,1,1,4,Uranium,Temperate,N,,,,"Chita, Krasnokamensk (Priargunsky, Russia's main uranium mine), Nornickel's Bystrinsky copper-gold-iron mine (2019), Udokan copper (under development), Zabaikalsk rail crossing to China"
-RU-0075,Apatity,RUS,Karelia-Murmansk,Russian North (Northwestern),,Town,1,1,2,None,Arctic,N,,,,"split from RU-0021 Murmansk-Karelia in the giant-province split (D820); towns: Apatity, Monchegorsk, Kirovsk"
-RU-0076,Umba,RUS,Karelia-Murmansk,Russian North (Northwestern),,none,1,1,1,None,Arctic,N,,,,split from RU-0021 Murmansk-Karelia in the giant-province split (D820); towns: Umba
-RU-0077,Kandalaksha,RUS,Karelia-Murmansk,Russian North (Northwestern),,Town,1,1,1,None,Arctic,N,,,,"split from RU-0021 Murmansk-Karelia in the giant-province split (D820); towns: Kandalaksha, Kovda"
-RU-0078,Kem,RUS,Karelia-Murmansk,Russian North (Northwestern),,none,1,1,1,None,Arctic,N,,,,split from RU-0021 Murmansk-Karelia in the giant-province split (D820); towns: Kem
-RU-0079,Segezha,RUS,Karelia-Murmansk,Russian North (Northwestern),,Town,1,1,1,None,Arctic,N,,,,"split from RU-0021 Murmansk-Karelia in the giant-province split (D820); towns: Segezha, Belomorsk"
+RU-0075,Apatity,RUS,Karelia-Murmansk,Russian North (Northwestern),,Town,1,1,2,None,Arctic,Y,,,,"split from RU-0021 Murmansk-Karelia in the giant-province split (D820); towns: Apatity, Monchegorsk, Kirovsk"
+RU-0076,Umba,RUS,Karelia-Murmansk,Russian North (Northwestern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0021 Murmansk-Karelia in the giant-province split (D820); towns: Umba
+RU-0077,Kandalaksha,RUS,Karelia-Murmansk,Russian North (Northwestern),,Town,1,1,1,None,Arctic,Y,,,,"split from RU-0021 Murmansk-Karelia in the giant-province split (D820); towns: Kandalaksha, Kovda"
+RU-0078,Kem,RUS,Karelia-Murmansk,Russian North (Northwestern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0021 Murmansk-Karelia in the giant-province split (D820); towns: Kem
+RU-0079,Segezha,RUS,Karelia-Murmansk,Russian North (Northwestern),,Town,1,1,1,None,Arctic,Y,,,,"split from RU-0021 Murmansk-Karelia in the giant-province split (D820); towns: Segezha, Belomorsk"
 RU-0080,Petrozavodsk,RUS,Karelia-Murmansk,Russian North (Northwestern),,Town,1,2,2,None,Arctic,N,,,,"split from RU-0021 Murmansk-Karelia in the giant-province split (D820); towns: Petrozavodsk, Kondopoga"
-RU-0081,Arkhangelsk Northeast,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820)
-RU-0082,Matochkin Shar,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820); towns: Matochkin Shar
-RU-0083,Mezen,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,N,,,,"split from RU-0022 Arkhangelsk in the giant-province split (D820); towns: Mezen, Krasino, Rusanovo"
+RU-0081,Arkhangelsk Northeast,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,Y,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820)
+RU-0082,Matochkin Shar,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,Y,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820); towns: Matochkin Shar
+RU-0083,Mezen,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,Y,,,,"split from RU-0022 Arkhangelsk in the giant-province split (D820); towns: Mezen, Krasino, Rusanovo"
 RU-0084,Arkhangelsk East,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820)
-RU-0085,Arkhangelsk West,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820)
+RU-0085,Arkhangelsk West,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,Y,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820)
 RU-0086,Kotlas,RUS,Arkhangelsk,Russian North (Northwestern),,Town,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820); towns: Kotlas
 RU-0087,Arkhangelsk Southeast,RUS,Arkhangelsk,Russian North (Northwestern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820)
 RU-0088,Velsk,RUS,Arkhangelsk,Russian North (Northwestern),,Town,1,1,1,Timber,Temperate,N,,,,split from RU-0022 Arkhangelsk in the giant-province split (D820); towns: Velsk
-RU-0089,Amderma,RUS,Komi-Nenets,Russian North (Northwestern),,none,1,1,1,None,Arctic,N,,,,"split from RU-0023 Komi-Nenets in the giant-province split (D820); towns: Amderma, Varnek"
-RU-0090,Naryan Mar,RUS,Komi-Nenets,Russian North (Northwestern),,Town,1,1,1,None,Arctic,N,,,,"split from RU-0023 Komi-Nenets in the giant-province split (D820); towns: Naryan Mar, Bugrino, Indiga"
+RU-0089,Amderma,RUS,Komi-Nenets,Russian North (Northwestern),,none,1,1,1,None,Arctic,Y,,,,"split from RU-0023 Komi-Nenets in the giant-province split (D820); towns: Amderma, Varnek"
+RU-0090,Naryan Mar,RUS,Komi-Nenets,Russian North (Northwestern),,Town,1,1,1,None,Arctic,Y,,,,"split from RU-0023 Komi-Nenets in the giant-province split (D820); towns: Naryan Mar, Bugrino, Indiga"
 RU-0091,Vorkuta,RUS,Komi-Nenets,Russian North (Northwestern),,Town,1,1,1,None,Arctic,N,,,,"split from RU-0023 Komi-Nenets in the giant-province split (D820); towns: Vorkuta, Severnyy"
 RU-0092,Komi Northeast,RUS,Komi-Nenets,Russian North (Northwestern),,none,1,1,1,None,Arctic,N,,,,split from RU-0023 Komi-Nenets in the giant-province split (D820)
-RU-0093,Shoyna,RUS,Komi-Nenets,Russian North (Northwestern),,none,1,1,1,None,Arctic,N,,,,split from RU-0023 Komi-Nenets in the giant-province split (D820); towns: Shoyna
+RU-0093,Shoyna,RUS,Komi-Nenets,Russian North (Northwestern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0023 Komi-Nenets in the giant-province split (D820); towns: Shoyna
 RU-0094,Komi Northwest,RUS,Komi-Nenets,Russian North (Northwestern),,none,1,1,1,None,Arctic,N,,,,split from RU-0023 Komi-Nenets in the giant-province split (D820)
 RU-0095,Pechora,RUS,Komi-Nenets,Russian North (Northwestern),,Town,1,1,1,Oil,Arctic,N,,,,"split from RU-0023 Komi-Nenets in the giant-province split (D820); towns: Pechora, Usinsk, Inta"
 RU-0096,Komi West,RUS,Komi-Nenets,Russian North (Northwestern),,none,1,1,1,None,Arctic,N,,,,split from RU-0023 Komi-Nenets in the giant-province split (D820)
@@ -107,12 +107,12 @@ RU-0105,Surgut West,RUS,Khanty-Mansi,West Siberian Oil (Ural),,none,1,1,1,Timber
 RU-0106,Nyagan,RUS,Khanty-Mansi,West Siberian Oil (Ural),,Town,1,2,1,Timber,Wetland,N,,,,"split from RU-0050 Surgut-Khanty-Mansiysk in the giant-province split (D820); towns: Nyagan, Uray"
 RU-0107,Surgut South,RUS,Khanty-Mansi,West Siberian Oil (Ural),,none,1,1,1,Timber,Wetland,N,,,,split from RU-0050 Surgut-Khanty-Mansiysk in the giant-province split (D820)
 RU-0108,Surgut Southeast,RUS,Khanty-Mansi,West Siberian Oil (Ural),,none,1,1,1,Timber,Wetland,N,,,,split from RU-0050 Surgut-Khanty-Mansiysk in the giant-province split (D820)
-RU-0109,Yamal North,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,none,1,1,1,None,Arctic,N,,,,split from RU-0052 Yamal in the giant-province split (D820)
-RU-0110,Gyda,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,none,1,1,1,None,Arctic,N,,,,split from RU-0052 Yamal in the giant-province split (D820); towns: Gyda
-RU-0111,Yamal North 2,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,none,1,1,1,None,Arctic,N,,,,split from RU-0052 Yamal in the giant-province split (D820)
-RU-0112,Nakhodka,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,Town,1,2,1,None,Arctic,N,,,,"split from RU-0052 Yamal in the giant-province split (D820); towns: Nakhodka, Tazovskiy"
+RU-0109,Yamal North,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,none,1,1,1,None,Arctic,Y,,,,split from RU-0052 Yamal in the giant-province split (D820)
+RU-0110,Gyda,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,none,1,1,1,None,Arctic,Y,,,,split from RU-0052 Yamal in the giant-province split (D820); towns: Gyda
+RU-0111,Yamal North 2,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,none,1,1,1,None,Arctic,Y,,,,split from RU-0052 Yamal in the giant-province split (D820)
+RU-0112,Nakhodka,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,Town,1,2,1,None,Arctic,Y,,,,"split from RU-0052 Yamal in the giant-province split (D820); towns: Nakhodka, Tazovskiy"
 RU-0113,Novy Urengoy,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,Town,1,1,1,None,Arctic,N,,,,split from RU-0052 Yamal in the giant-province split (D820); towns: Novy Urengoy
-RU-0114,Nadym,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,Town,1,1,1,None,Arctic,N,,,,split from RU-0052 Yamal in the giant-province split (D820); towns: Nadym
+RU-0114,Nadym,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,Town,1,1,1,None,Arctic,Y,,,,split from RU-0052 Yamal in the giant-province split (D820); towns: Nadym
 RU-0115,Yamal East,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,none,1,1,1,None,Arctic,N,,,,split from RU-0052 Yamal in the giant-province split (D820)
 RU-0116,Salekhard,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,Town,1,1,1,None,Arctic,N,,,,split from RU-0052 Yamal in the giant-province split (D820); towns: Salekhard
 RU-0117,Yamal South,RUS,Yamalo-Nenets,West Siberian Oil (Ural),,none,1,1,1,None,Arctic,N,,,,split from RU-0052 Yamal in the giant-province split (D820)
@@ -163,22 +163,22 @@ RU-0161,Tayshet,RUS,Irkutsk,East Siberia (Siberian),,Town,1,1,1,Timber,Temperate
 RU-0162,Bratsk Southwest,RUS,Irkutsk,East Siberia (Siberian),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0063 Bratsk-Ust-Kut in the giant-province split (D820)
 RU-0163,Tulun,RUS,Irkutsk,East Siberia (Siberian),,Town,1,1,1,Timber,Temperate,N,,,,split from RU-0063 Bratsk-Ust-Kut in the giant-province split (D820); towns: Tulun
 RU-0164,Khabarovsk Northeast,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820)
-RU-0165,Khabarovsk Northeast 2,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820)
-RU-0166,Okhotsk,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Okhotsk
+RU-0165,Khabarovsk Northeast 2,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,Y,,,,split from RU-0065 Khabarovsk in the giant-province split (D820)
+RU-0166,Okhotsk,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,Y,,,,split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Okhotsk
 RU-0167,Khabarovsk North,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820)
-RU-0168,Tukchi,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Tukchi
+RU-0168,Tukchi,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,Y,,,,split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Tukchi
 RU-0169,Khakhar,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Khakhar
-RU-0170,Chumikan,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Chumikan
+RU-0170,Chumikan,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,Y,,,,split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Chumikan
 RU-0171,Khabarovsk North 2,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820)
-RU-0172,Nikolayevsk na Amure,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,Town,1,1,1,Timber,Temperate,N,,,,"split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Nikolayevsk na Amure, Ayan"
+RU-0172,Nikolayevsk na Amure,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,Town,1,1,1,Timber,Temperate,Y,,,,"split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Nikolayevsk na Amure, Ayan"
 RU-0173,Khabarovsk Southeast,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820)
-RU-0174,De Kastri,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820); towns: De Kastri
+RU-0174,De Kastri,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,Y,,,,split from RU-0065 Khabarovsk in the giant-province split (D820); towns: De Kastri
 RU-0175,Khabarovsk Southeast 2,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820)
 RU-0176,Chegdomyn,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Chegdomyn
-RU-0177,Komsomolsk na Amure,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,Town,1,1,1,Timber,Temperate,N,,,,"split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Komsomolsk na Amure, Amursk"
+RU-0177,Komsomolsk na Amure,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,Town,1,1,1,Timber,Temperate,Y,,,,"split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Komsomolsk na Amure, Amursk"
 RU-0178,Khabarovsk South,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820)
-RU-0179,Sovetskaya Gavan,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,Town,1,1,1,Timber,Temperate,N,,,,"split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Sovetskaya Gavan, Vanino"
-RU-0180,Khabarovsk Southeast 3,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0065 Khabarovsk in the giant-province split (D820)
+RU-0179,Sovetskaya Gavan,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,Town,1,1,1,Timber,Temperate,Y,,,,"split from RU-0065 Khabarovsk in the giant-province split (D820); towns: Sovetskaya Gavan, Vanino"
+RU-0180,Khabarovsk Southeast 3,RUS,Khabarovsk-Jewish Autonomous Oblast,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,Y,,,,split from RU-0065 Khabarovsk in the giant-province split (D820)
 RU-0181,Nyukzha,RUS,Amur,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0066 Amur in the giant-province split (D820); towns: Nyukzha
 RU-0182,Amur Northwest,RUS,Amur,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0066 Amur in the giant-province split (D820)
 RU-0183,Tynda,RUS,Amur,Amur-Pacific (Far Eastern),,Town,1,1,1,Timber,Temperate,N,,,,"split from RU-0066 Amur in the giant-province split (D820); towns: Tynda, Skovorodino"
@@ -186,41 +186,41 @@ RU-0184,Zeya,RUS,Amur,Amur-Pacific (Far Eastern),,Town,1,1,1,Gold,Temperate,N,,,
 RU-0185,Amur Northeast,RUS,Amur,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0066 Amur in the giant-province split (D820)
 RU-0186,Amur Southwest,RUS,Amur,Amur-Pacific (Far Eastern),,none,1,1,1,Timber,Temperate,N,,,,split from RU-0066 Amur in the giant-province split (D820)
 RU-0187,Belogorsk,RUS,Amur,Amur-Pacific (Far Eastern),,Town,1,1,2,Timber,Temperate,N,,,,"split from RU-0066 Amur in the giant-province split (D820); towns: Belogorsk, Svobodnyy, Shimanovsk"
-RU-0188,Manily,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,N,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Manily
-RU-0189,Kamchatka Northeast,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,N,,,,split from RU-0069 Kamchatka in the giant-province split (D820)
-RU-0190,Kamchatka East,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,N,,,,split from RU-0069 Kamchatka in the giant-province split (D820)
-RU-0191,Korf,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,N,,,,"split from RU-0069 Kamchatka in the giant-province split (D820); towns: Korf, Il'pyrskiy, Pakhachi"
-RU-0192,Palana,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,N,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Palana
-RU-0193,Utkholok,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,N,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Utkholok
-RU-0194,Klyuchi,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,N,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Klyuchi
-RU-0195,Ust Kamchatsk,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,N,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Ust Kamchatsk
-RU-0196,Kamchatka Southwest,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,N,,,,split from RU-0069 Kamchatka in the giant-province split (D820)
-RU-0197,Zvezdnyj,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Zvezdnyj
-RU-0198,Pevek,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Gold,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Pevek
+RU-0188,Manily,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Manily
+RU-0189,Kamchatka Northeast,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820)
+RU-0190,Kamchatka East,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820)
+RU-0191,Korf,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,"split from RU-0069 Kamchatka in the giant-province split (D820); towns: Korf, Il'pyrskiy, Pakhachi"
+RU-0192,Palana,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Palana
+RU-0193,Utkholok,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Utkholok
+RU-0194,Klyuchi,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Klyuchi
+RU-0195,Ust Kamchatsk,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820); towns: Ust Kamchatsk
+RU-0196,Kamchatka Southwest,RUS,Kamchatka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Fishing,Mountain,Y,,,,split from RU-0069 Kamchatka in the giant-province split (D820)
+RU-0197,Zvezdnyj,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Zvezdnyj
+RU-0198,Pevek,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,Gold,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Pevek
 RU-0199,Magadan Northeast,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
-RU-0200,Mys Shmidta,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Mys Shmidta
+RU-0200,Mys Shmidta,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Mys Shmidta
 RU-0201,Mukhomornoye,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Mukhomornoye
 RU-0202,Magadan East,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
 RU-0203,Bilibino,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Bilibino
-RU-0204,Egvekinot,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Egvekinot
+RU-0204,Egvekinot,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Egvekinot
 RU-0205,Magadan Northeast 2,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
 RU-0206,Magadan East 2,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
-RU-0207,Magadan East 3,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
-RU-0208,Provideniya,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,"split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Provideniya, Lavrentiya, Uelen"
-RU-0209,Magadan East 4,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
+RU-0207,Ugolnye Kopi,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Ugolnye Kopi
+RU-0208,Provideniya,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,"split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Provideniya, Lavrentiya, Uelen"
+RU-0209,Magadan East 3,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
 RU-0210,Omolon,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Omolon
 RU-0211,Magadan West,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
-RU-0212,Magadan East 5,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
+RU-0212,Magadan East 4,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
 RU-0213,Magadan West 2,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
-RU-0214,Anadyr,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,"split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Anadyr, Ugolnye Kopi, Beringovskiy"
-RU-0215,Magadan South,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
-RU-0216,Omsukchan,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Omsukchan
-RU-0217,Magadan East 6,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
+RU-0214,Anadyr,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,"split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Anadyr, Beringovskiy"
+RU-0215,Magadan South,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
+RU-0216,Omsukchan,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Omsukchan
+RU-0217,Magadan East 5,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
 RU-0218,Susuman,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,"split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Susuman, Omchak"
-RU-0219,Evensk,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Evensk
-RU-0220,Strelka,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Strelka
-RU-0221,Magadan West 3,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
-RU-0222,Mikhalkino,RUS,Sakha,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0071 Yakutsk-Aldan in the giant-province split (D820); towns: Mikhalkino
+RU-0219,Evensk,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Evensk
+RU-0220,Strelka,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820); towns: Strelka
+RU-0221,Magadan West 3,RUS,Magadan-Chukotka,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0070 Magadan-Chukotka in the giant-province split (D820)
+RU-0222,Mikhalkino,RUS,Sakha,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,Y,,,,split from RU-0071 Yakutsk-Aldan in the giant-province split (D820); towns: Mikhalkino
 RU-0223,Yakutsk East,RUS,Sakha,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0071 Yakutsk-Aldan in the giant-province split (D820)
 RU-0224,Yakutsk Northeast,RUS,Sakha,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0071 Yakutsk-Aldan in the giant-province split (D820)
 RU-0225,Tunguskhaya,RUS,Sakha,Northeast and Transbaikal (Far Eastern),,none,1,1,1,None,Arctic,N,,,,split from RU-0071 Yakutsk-Aldan in the giant-province split (D820); towns: Tunguskhaya

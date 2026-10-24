@@ -5,8 +5,9 @@
 # in the QA report for review.
 
 [review]
-# D692: Little and Big Diomede meet by sea only (no Russia-US land border)
-sea_only = [["RU-0070", "US-0004"]]
+# D692: Little and Big Diomede meet by sea only (no Russia-US land border); since the giant
+# split (D820) they are in US-0170 (cut from US-0004) and RU-0208 (cut from RU-0070)
+sea_only = [["RU-0208", "US-0170"]]
 # Known compromises listed in the QA report for Logan.
 notes = [
     "CA-0003 York-Markham holds Scarborough and North York, which are in the City of Toronto: the Toronto economic region is split by Voronoi among Downtown Toronto (seeded at Toronto), Peel-Mississauga, York-Markham and Durham-Oshawa, and the York and Markham seeds sit closer to them. Left as is; a hint can move them to Downtown Toronto.",
@@ -332,28 +333,27 @@ main = [-114.396981, 62.442014]  # Yellowknife
 "CA-0157" = [-113.682994, 61.166588]  # Fort Resolution
 "CA-0158" = [-115.788340, 60.814276]  # Hay River
 
-# D820: US-0003 Anchorage-Southcentral (617,836 km2) cut into 15 parts on admin2 pieces
+# D820: US-0003 Anchorage-Southcentral (617,836 km2) cut into 14 parts on admin2 pieces
 [subdivide."US-0003"]
-parts = 15
+parts = 14
 whole_tol = 0.06
 blocks = "admin2"
 main = [-149.887446, 61.214004]  # Anchorage
 
 [subdivide."US-0003".children]
-"US-0148" = [-149.112692, 61.599714]  # Palmer
-"US-0149" = [-149.439442, 61.581731]  # Wasilla
-"US-0150" = [-145.382196, 62.271353]  # Gulkana
-"US-0151" = [-159.522186, 61.578708]  # Aniak
-"US-0152" = [-166.096565, 61.531088]  # Hooper Bay
-"US-0153" = [-158.379101, 60.803313]  # Anchorage Northeast
-"US-0154" = [-145.757496, 60.542776]  # Cordova
-"US-0155" = [-166.531603, 53.868584]  # Unalaska
-"US-0156" = [-161.755796, 60.793303]  # Bethel
-"US-0157" = [-158.480312, 59.056560]  # Dillingham
+"US-0148" = [-150.109427, 62.323779]  # Talkeetna
+"US-0149" = [-145.382196, 62.271353]  # Gulkana
+"US-0150" = [-159.522186, 61.578708]  # Aniak
+"US-0151" = [-161.755796, 60.793303]  # Bethel
+"US-0152" = [-157.099046, 60.756207]  # Anchorage Northeast
+"US-0153" = [-146.348287, 61.135996]  # Valdez
+"US-0154" = [-152.406987, 57.789998]  # Kodiak
+"US-0155" = [-165.255789, 60.585487]  # Tununak
+"US-0156" = [-158.480312, 59.056560]  # Dillingham
+"US-0157" = [-156.661378, 58.688703]  # King Salmon
 "US-0158" = [-134.400712, 58.303386]  # Juneau
-"US-0159" = [-156.661378, 58.688703]  # King Salmon
-"US-0160" = [-152.406987, 57.789998]  # Kodiak
-"US-0161" = [-131.663990, 55.356219]  # Ketchikan
+"US-0159" = [-131.663990, 55.356219]  # Ketchikan
+"US-0160" = [-166.531603, 53.868584]  # Unalaska
 
 # D820: US-0004 Fairbanks-North Slope (887,517 km2) cut into 19 parts on admin2 pieces
 [subdivide."US-0004"]
@@ -363,24 +363,24 @@ blocks = "admin2"
 main = [-147.710659, 64.836984]  # Fairbanks
 
 [subdivide."US-0004".children]
-"US-0162" = [-156.788580, 71.290570]  # Utqiaġvik
-"US-0163" = [-148.669360, 70.292181]  # Prudhoe Bay
-"US-0164" = [-166.808020, 68.347726]  # Point Hope
-"US-0165" = [-146.826304, 68.908666]  # Fairbanks Northeast
-"US-0166" = [-143.602913, 70.087856]  # Kaktovik
-"US-0167" = [-156.974321, 68.409782]  # Fairbanks West
-"US-0168" = [-152.645499, 66.565483]  # Allakaket
-"US-0169" = [-157.851409, 67.086485]  # Ambler
-"US-0170" = [-145.273779, 66.564682]  # Fort Yukon
-"US-0171" = [-162.596598, 66.898693]  # Kotzebue
-"US-0172" = [-152.078790, 65.171873]  # Tanana
-"US-0173" = [-145.842194, 64.152530]  # Big Delta
-"US-0174" = [-156.926995, 64.733295]  # Galena
-"US-0175" = [-158.721899, 64.327196]  # Kaltag
-"US-0176" = [-165.406374, 64.506100]  # Nome
-"US-0177" = [-152.312186, 63.882831]  # Lake Minchumina
-"US-0178" = [-155.595785, 62.956815]  # McGrath
-"US-0179" = [-148.914099, 63.733098]  # Denali Park
+"US-0161" = [-156.788580, 71.290570]  # Utqiaġvik
+"US-0162" = [-148.669360, 70.292181]  # Prudhoe Bay
+"US-0163" = [-166.808020, 68.347726]  # Point Hope
+"US-0164" = [-146.826304, 68.908666]  # Fairbanks Northeast
+"US-0165" = [-143.602913, 70.087856]  # Kaktovik
+"US-0166" = [-156.974321, 68.409782]  # Fairbanks West
+"US-0167" = [-152.645499, 66.565483]  # Allakaket
+"US-0168" = [-157.851409, 67.086485]  # Ambler
+"US-0169" = [-145.273779, 66.564682]  # Fort Yukon
+"US-0170" = [-162.596598, 66.898693]  # Kotzebue
+"US-0171" = [-152.078790, 65.171873]  # Tanana
+"US-0172" = [-145.842194, 64.152530]  # Big Delta
+"US-0173" = [-156.926995, 64.733295]  # Galena
+"US-0174" = [-158.721899, 64.327196]  # Kaltag
+"US-0175" = [-165.406374, 64.506100]  # Nome
+"US-0176" = [-152.312186, 63.882831]  # Lake Minchumina
+"US-0177" = [-155.595785, 62.956815]  # McGrath
+"US-0178" = [-148.914099, 63.733098]  # Denali Park
 
 # D820: US-0074 Montana (379,492 km2) cut into 8 parts on admin2 pieces
 [subdivide."US-0074"]
@@ -390,10 +390,10 @@ blocks = "admin2"
 main = [-108.540000, 45.788302]  # Billings
 
 [subdivide."US-0074".children]
-"US-0180" = [-111.299987, 47.500290]  # Great Falls
-"US-0181" = [-108.199587, 47.906147]  # Montana Northeast
-"US-0182" = [-104.710493, 47.108583]  # Glendive
-"US-0183" = [-113.993053, 46.872241]  # Missoula
-"US-0184" = [-111.037832, 45.680092]  # Bozeman
-"US-0185" = [-105.839984, 46.408884]  # Miles City
-"US-0186" = [-112.533839, 46.003896]  # Butte
+"US-0179" = [-111.299987, 47.500290]  # Great Falls
+"US-0180" = [-108.199587, 47.906147]  # Montana Northeast
+"US-0181" = [-104.710493, 47.108583]  # Glendive
+"US-0182" = [-113.993053, 46.872241]  # Missoula
+"US-0183" = [-111.037832, 45.680092]  # Bozeman
+"US-0184" = [-105.839984, 46.408884]  # Miles City
+"US-0185" = [-112.533839, 46.003896]  # Butte
