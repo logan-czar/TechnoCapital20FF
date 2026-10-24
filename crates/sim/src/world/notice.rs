@@ -116,14 +116,6 @@ impl AlertLevels {
         AlertLevels([AlertLevel::Off; AlertKind::ALL.len()])
     }
 
-    /// A version 8 save's levels (the five kinds before Quarter start, in their order), with
-    /// Quarter start at its default (D800).
-    pub fn from_v8(levels: [AlertLevel; 5]) -> Self {
-        let mut all = AlertLevels::default();
-        all.0[..5].copy_from_slice(&levels);
-        all
-    }
-
     pub fn get(&self, kind: AlertKind) -> AlertLevel {
         self.0[kind.index()]
     }

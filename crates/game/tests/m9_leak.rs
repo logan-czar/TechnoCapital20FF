@@ -76,7 +76,7 @@ fn mdata() -> sim_data::WorldData {
         let mut d = data();
         d.map = sim_data::load_map(&sim_data::default_map_dir()).unwrap();
         let m = d.map.as_ref().expect("assets/map");
-        assert_eq!(m.centroids.len(), 3255, "the world map has every province");
+        assert_eq!(m.centroids.len(), 3969, "the world map has every province");
         d
     })
     .clone()

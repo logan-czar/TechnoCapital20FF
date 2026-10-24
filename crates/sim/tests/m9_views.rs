@@ -184,7 +184,7 @@ fn countries_places_zones_and_rates_read_the_data() {
 
     let places = v.places.get();
     assert_eq!(places.provinces.len(), d.all_provinces().count());
-    assert_eq!(places.provinces.len(), 3255);
+    assert_eq!(places.provinces.len(), 3969);
     let edmonton = places
         .provinces
         .iter()
