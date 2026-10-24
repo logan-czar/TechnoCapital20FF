@@ -12,7 +12,7 @@ it is cut on the line. So the parts follow ADM2 lines (or town catchments) where
 are straight elsewhere. A part's detached pieces then join the sibling they touch when that
 keeps the sibling under the cap.
 
-Organic borders (Logan, 2026-10-24; D850 to D857): the shapes step cuts each giant with the
+Organic borders (Logan, 2026-10-24; D850 to D856): the shapes step cuts each giant with the
 same pieces, part count, tolerance and bisection axes, but each line is a curve
 (`_bisect_organic`): a river or lake centerline near the balanced line where one crosses the
 group and the sizes allow (its ends ramp back to the balancing offset), else a deterministic
@@ -411,7 +411,7 @@ def _bisect(frame: Frame, pieces: list[Piece], n: int, tol: float, axes: dict | 
 
 
 # ---------------------------------------------------------------------------------------------
-# organic bisection (D850 to D857)
+# organic bisection (D850 to D856)
 
 
 @dataclass(frozen=True)

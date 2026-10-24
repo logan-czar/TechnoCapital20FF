@@ -1,4 +1,4 @@
-"""Organic borders between the parts of a split giant (Logan, 2026-10-24; D850 to D857).
+"""Organic borders between the parts of a split giant (Logan, 2026-10-24; D850 to D856).
 
 The giant split (D820 to D829) cut its parts with straight lines across the long axis and kept
 whole ADM2 units or town catchments where it could, which drew rectangle grids in the outback,
