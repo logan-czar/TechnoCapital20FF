@@ -1,0 +1,1051 @@
+target,seed,result,measured,bound
+start_alive_10y,1,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,2,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,3,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,4,PASS,0.9601,>= 0.85 at the 2029 close
+start_alive_10y,5,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,6,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,7,PASS,0.9662,>= 0.85 at the 2029 close
+start_alive_10y,8,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,9,PASS,0.9647,>= 0.85 at the 2029 close
+start_alive_10y,10,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,11,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,12,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,13,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,14,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,15,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,16,PASS,0.9601,>= 0.85 at the 2029 close
+start_alive_10y,17,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,18,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,19,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,20,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,21,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,22,PASS,0.9601,>= 0.85 at the 2029 close
+start_alive_10y,23,PASS,0.9585,>= 0.85 at the 2029 close
+start_alive_10y,24,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,25,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,26,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,27,PASS,0.9601,>= 0.85 at the 2029 close
+start_alive_10y,28,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,29,PASS,0.9662,>= 0.85 at the 2029 close
+start_alive_10y,30,PASS,0.9647,>= 0.85 at the 2029 close
+start_alive_10y,31,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,32,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,33,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,34,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,35,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,36,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,37,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,38,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,39,PASS,0.9647,>= 0.85 at the 2029 close
+start_alive_10y,40,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,41,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,42,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,43,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,44,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,45,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,46,PASS,0.9647,>= 0.85 at the 2029 close
+start_alive_10y,47,PASS,0.9631,>= 0.85 at the 2029 close
+start_alive_10y,48,PASS,0.9601,>= 0.85 at the 2029 close
+start_alive_10y,49,PASS,0.9616,>= 0.85 at the 2029 close
+start_alive_10y,50,PASS,0.9616,>= 0.85 at the 2029 close
+median_productivity_10y,1,PASS,99.75,90 to 110 at the 2029 close
+median_productivity_10y,2,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,3,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,4,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,5,PASS,99.75,90 to 110 at the 2029 close
+median_productivity_10y,6,PASS,99.80,90 to 110 at the 2029 close
+median_productivity_10y,7,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,8,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,9,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,10,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,11,PASS,99.75,90 to 110 at the 2029 close
+median_productivity_10y,12,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,13,PASS,99.77,90 to 110 at the 2029 close
+median_productivity_10y,14,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,15,PASS,99.77,90 to 110 at the 2029 close
+median_productivity_10y,16,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,17,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,18,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,19,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,20,PASS,99.75,90 to 110 at the 2029 close
+median_productivity_10y,21,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,22,PASS,99.75,90 to 110 at the 2029 close
+median_productivity_10y,23,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,24,PASS,99.75,90 to 110 at the 2029 close
+median_productivity_10y,25,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,26,PASS,99.75,90 to 110 at the 2029 close
+median_productivity_10y,27,PASS,99.80,90 to 110 at the 2029 close
+median_productivity_10y,28,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,29,PASS,99.77,90 to 110 at the 2029 close
+median_productivity_10y,30,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,31,PASS,99.79,90 to 110 at the 2029 close
+median_productivity_10y,32,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,33,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,34,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,35,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,36,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,37,PASS,99.75,90 to 110 at the 2029 close
+median_productivity_10y,38,PASS,99.79,90 to 110 at the 2029 close
+median_productivity_10y,39,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,40,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,41,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,42,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,43,PASS,99.71,90 to 110 at the 2029 close
+median_productivity_10y,44,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,45,PASS,99.75,90 to 110 at the 2029 close
+median_productivity_10y,46,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,47,PASS,99.78,90 to 110 at the 2029 close
+median_productivity_10y,48,PASS,99.75,90 to 110 at the 2029 close
+median_productivity_10y,49,PASS,99.81,90 to 110 at the 2029 close
+median_productivity_10y,50,PASS,99.78,90 to 110 at the 2029 close
+industry_revenue_demand,1,PASS,ratio 0.825 to 1.014; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,2,PASS,ratio 0.807 to 1.023; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,3,PASS,ratio 0.826 to 1.022; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,4,PASS,ratio 0.821 to 1.016; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,5,PASS,ratio 0.833 to 1.019; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,6,PASS,ratio 0.811 to 1.014; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,7,PASS,ratio 0.830 to 1.019; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,8,PASS,ratio 0.823 to 1.025; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,9,PASS,ratio 0.825 to 1.023; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,10,PASS,ratio 0.835 to 1.022; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,11,PASS,ratio 0.837 to 1.020; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,12,PASS,ratio 0.827 to 1.018; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,13,PASS,ratio 0.833 to 1.011; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,14,PASS,ratio 0.838 to 1.026; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,15,PASS,ratio 0.810 to 1.019; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,16,PASS,ratio 0.824 to 1.017; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,17,PASS,ratio 0.834 to 1.014; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,18,PASS,ratio 0.834 to 1.014; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,19,PASS,ratio 0.831 to 1.012; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,20,PASS,ratio 0.823 to 1.016; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,21,PASS,ratio 0.831 to 1.014; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,22,PASS,ratio 0.828 to 1.020; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,23,PASS,ratio 0.817 to 1.017; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,24,PASS,ratio 0.812 to 1.029; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,25,PASS,ratio 0.817 to 1.026; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,26,PASS,ratio 0.820 to 1.014; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,27,PASS,ratio 0.831 to 1.023; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,28,PASS,ratio 0.830 to 1.019; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,29,PASS,ratio 0.815 to 1.015; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,30,PASS,ratio 0.814 to 1.014; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,31,PASS,ratio 0.828 to 1.027; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,32,PASS,ratio 0.825 to 1.032; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,33,PASS,ratio 0.831 to 1.018; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,34,PASS,ratio 0.824 to 1.027; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,35,PASS,ratio 0.816 to 1.021; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,36,PASS,ratio 0.833 to 1.018; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,37,PASS,ratio 0.827 to 1.015; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,38,PASS,ratio 0.840 to 1.018; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,39,PASS,ratio 0.813 to 1.019; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,40,PASS,ratio 0.827 to 1.018; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,41,PASS,ratio 0.824 to 1.022; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,42,PASS,ratio 0.807 to 1.014; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,43,PASS,ratio 0.829 to 1.016; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,44,PASS,ratio 0.835 to 1.018; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,45,PASS,ratio 0.816 to 1.017; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,46,PASS,ratio 0.826 to 1.014; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,47,PASS,ratio 0.820 to 1.018; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,48,PASS,ratio 0.820 to 1.028; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,49,PASS,ratio 0.833 to 1.017; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand,50,PASS,ratio 0.824 to 1.019; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.70 to 1.30 of demand among the industries not waived
+industry_revenue_demand_cloud_waived,1,PASS,cloud ratio 0.784 to 0.986; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,2,PASS,cloud ratio 0.777 to 0.985; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,3,PASS,cloud ratio 0.794 to 0.991; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,4,PASS,cloud ratio 0.762 to 0.986; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,5,PASS,cloud ratio 0.763 to 0.988; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,6,PASS,cloud ratio 0.771 to 0.992; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,7,PASS,cloud ratio 0.772 to 0.987; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,8,PASS,cloud ratio 0.748 to 0.990; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,9,PASS,cloud ratio 0.799 to 0.988; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,10,PASS,cloud ratio 0.770 to 0.991; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,11,PASS,cloud ratio 0.761 to 0.989; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,12,PASS,cloud ratio 0.794 to 0.983; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,13,PASS,cloud ratio 0.782 to 0.988; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,14,PASS,cloud ratio 0.781 to 0.990; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,15,PASS,cloud ratio 0.771 to 0.992; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,16,PASS,cloud ratio 0.815 to 0.990; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,17,PASS,cloud ratio 0.754 to 0.986; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,18,PASS,cloud ratio 0.774 to 0.986; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,19,PASS,cloud ratio 0.790 to 0.986; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,20,PASS,cloud ratio 0.759 to 0.990; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,21,PASS,cloud ratio 0.736 to 0.991; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,22,PASS,cloud ratio 0.779 to 0.987; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,23,PASS,cloud ratio 0.780 to 0.988; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,24,FAIL,cloud ratio 0.696 to 0.987; 5 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,25,PASS,cloud ratio 0.782 to 0.994; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,26,PASS,cloud ratio 0.799 to 0.988; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,27,PASS,cloud ratio 0.742 to 0.985; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,28,PASS,cloud ratio 0.787 to 0.988; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,29,PASS,cloud ratio 0.777 to 0.990; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,30,PASS,cloud ratio 0.786 to 0.992; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,31,PASS,cloud ratio 0.816 to 0.989; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,32,PASS,cloud ratio 0.782 to 0.986; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,33,PASS,cloud ratio 0.787 to 0.991; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,34,PASS,cloud ratio 0.774 to 0.988; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,35,PASS,cloud ratio 0.801 to 0.990; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,36,PASS,cloud ratio 0.801 to 0.990; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,37,PASS,cloud ratio 0.774 to 0.987; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,38,PASS,cloud ratio 0.750 to 0.989; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,39,PASS,cloud ratio 0.741 to 0.990; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,40,PASS,cloud ratio 0.784 to 0.991; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,41,PASS,cloud ratio 0.799 to 0.988; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,42,PASS,cloud ratio 0.783 to 0.987; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,43,PASS,cloud ratio 0.795 to 0.990; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,44,PASS,cloud ratio 0.759 to 0.986; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,45,PASS,cloud ratio 0.781 to 0.988; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,46,PASS,cloud ratio 0.789 to 0.991; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,47,PASS,cloud ratio 0.779 to 0.989; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,48,PASS,cloud ratio 0.820 to 0.990; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,49,PASS,cloud ratio 0.789 to 0.990; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_revenue_demand_cloud_waived,50,PASS,cloud ratio 0.803 to 0.989; 0 industry-quarters out,every Cloud quarter 2020-2029 in 0.70 to 1.30 of demand (reported; not judged)
+industry_demand_trend,1,PASS,ratio 0.825 to 1.461; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,2,PASS,ratio 0.803 to 1.542; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,3,PASS,ratio 0.863 to 1.494; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,4,PASS,ratio 0.759 to 1.472; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,5,PASS,ratio 0.689 to 1.350; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,6,FAIL,ratio 0.807 to 1.570; 4 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,7,PASS,ratio 0.762 to 1.258; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,8,PASS,ratio 0.754 to 1.420; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,9,PASS,ratio 0.717 to 1.246; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,10,PASS,ratio 0.746 to 1.486; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,11,PASS,ratio 0.681 to 1.387; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,12,PASS,ratio 0.801 to 1.327; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,13,PASS,ratio 0.838 to 1.506; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,14,PASS,ratio 0.784 to 1.364; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,15,PASS,ratio 0.727 to 1.527; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,16,PASS,ratio 0.724 to 1.301; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,17,PASS,ratio 0.849 to 1.535; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,18,PASS,ratio 0.791 to 1.359; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,19,FAIL,ratio 0.790 to 1.557; 2 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,20,PASS,ratio 0.800 to 1.523; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,21,PASS,ratio 0.798 to 1.417; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,22,PASS,ratio 0.794 to 1.405; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,23,FAIL,ratio 0.710 to 1.658; 4 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,24,FAIL,ratio 0.898 to 1.642; 12 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,25,PASS,ratio 0.679 to 1.302; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,26,PASS,ratio 0.833 to 1.530; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,27,PASS,ratio 0.816 to 1.357; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,28,PASS,ratio 0.754 to 1.351; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,29,PASS,ratio 0.767 to 1.425; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,30,PASS,ratio 0.887 to 1.461; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,31,PASS,ratio 0.672 to 1.479; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,32,PASS,ratio 0.814 to 1.514; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,33,PASS,ratio 0.782 to 1.448; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,34,PASS,ratio 0.785 to 1.420; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,35,PASS,ratio 0.712 to 1.454; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,36,PASS,ratio 0.769 to 1.189; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,37,PASS,ratio 0.806 to 1.466; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,38,PASS,ratio 0.752 to 1.436; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,39,FAIL,ratio 0.864 to 1.627; 20 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,40,PASS,ratio 0.791 to 1.409; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,41,PASS,ratio 0.667 to 1.346; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,42,FAIL,ratio 0.804 to 1.629; 9 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,43,PASS,ratio 0.798 to 1.354; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,44,PASS,ratio 0.758 to 1.469; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,45,PASS,ratio 0.865 to 1.472; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,46,PASS,ratio 0.842 to 1.544; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,47,PASS,ratio 0.729 to 1.492; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,48,PASS,ratio 0.720 to 1.409; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,49,PASS,ratio 0.824 to 1.475; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+industry_demand_trend,50,PASS,ratio 0.815 to 1.391; 0 industry-quarters out,every industry-quarter 2020-2029 in 0.45 to 1.55 of trend
+m_clamp_8q,1,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,2,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,3,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,4,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,5,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,6,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,7,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,8,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,9,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,10,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,11,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,12,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,13,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,14,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,15,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,16,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,17,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,18,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,19,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,20,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,21,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,22,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,23,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,24,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,25,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,26,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,27,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,28,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,29,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,30,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,31,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,32,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,33,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,34,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,35,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,36,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,37,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,38,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,39,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,40,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,41,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,42,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,43,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,44,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,45,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,46,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,47,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,48,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,49,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q,50,PASS,0 quarters,longest run 2020-2029 <= 8 quarters among the industries not waived
+m_clamp_8q_cloud_waived,1,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,2,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,3,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,4,PASS,cloud 6 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,5,PASS,cloud 2 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,6,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,7,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,8,PASS,cloud 3 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,9,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,10,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,11,PASS,cloud 4 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,12,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,13,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,14,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,15,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,16,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,17,PASS,cloud 6 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,18,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,19,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,20,PASS,cloud 3 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,21,FAIL,cloud 12 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,22,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,23,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,24,FAIL,cloud 17 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,25,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,26,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,27,PASS,cloud 6 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,28,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,29,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,30,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,31,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,32,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,33,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,34,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,35,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,36,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,37,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,38,PASS,cloud 5 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,39,FAIL,cloud 9 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,40,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,41,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,42,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,43,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,44,PASS,cloud 4 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,45,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,46,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,47,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,48,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,49,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+m_clamp_8q_cloud_waived,50,PASS,cloud 0 quarters,longest Cloud run 2020-2029 <= 8 quarters (reported; not judged)
+beat_share,1,PASS,0.3655 (10099 of 27632),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,2,PASS,0.3663 (10282 of 28068),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,3,PASS,0.3591 (10078 of 28061),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,4,PASS,0.3578 (9900 of 27668),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,5,PASS,0.3636 (10230 of 28136),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,6,PASS,0.3638 (10209 of 28061),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,7,PASS,0.3638 (10273 of 28240),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,8,PASS,0.3670 (10342 of 28180),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,9,PASS,0.3683 (10333 of 28059),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,10,PASS,0.3642 (10159 of 27897),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,11,PASS,0.3590 (9978 of 27793),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,12,PASS,0.3589 (10035 of 27960),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,13,PASS,0.3647 (10149 of 27827),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,14,PASS,0.3628 (10117 of 27889),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,15,PASS,0.3617 (10018 of 27698),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,16,PASS,0.3605 (9960 of 27626),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,17,PASS,0.3581 (10186 of 28446),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,18,PASS,0.3656 (10421 of 28505),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,19,PASS,0.3631 (10191 of 28063),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,20,PASS,0.3681 (10332 of 28065),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,21,PASS,0.3604 (10026 of 27821),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,22,PASS,0.3624 (10126 of 27945),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,23,PASS,0.3648 (10174 of 27892),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,24,PASS,0.3600 (10116 of 28101),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,25,PASS,0.3616 (10169 of 28121),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,26,PASS,0.3622 (10039 of 27720),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,27,PASS,0.3648 (10165 of 27863),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,28,PASS,0.3610 (10202 of 28263),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,29,PASS,0.3598 (10052 of 27939),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,30,PASS,0.3676 (10317 of 28065),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,31,PASS,0.3604 (10105 of 28040),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,32,PASS,0.3572 (10051 of 28139),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,33,PASS,0.3648 (10244 of 28079),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,34,PASS,0.3640 (10262 of 28192),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,35,PASS,0.3612 (10075 of 27890),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,36,PASS,0.3620 (10164 of 28079),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,37,PASS,0.3636 (10250 of 28189),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,38,PASS,0.3634 (10105 of 27810),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,39,PASS,0.3622 (10031 of 27697),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,40,PASS,0.3603 (10309 of 28613),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,41,PASS,0.3641 (10133 of 27833),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,42,PASS,0.3687 (10472 of 28403),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,43,PASS,0.3659 (10179 of 27817),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,44,PASS,0.3652 (10174 of 27861),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,45,PASS,0.3631 (10388 of 28607),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,46,PASS,0.3615 (10100 of 27942),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,47,PASS,0.3631 (10076 of 27753),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,48,PASS,0.3603 (10080 of 27973),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,49,PASS,0.3623 (10035 of 27696),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+beat_share,50,PASS,0.3616 (9998 of 27647),0.30 to 0.60 of reports for Q1 2020 to Q4 2029
+demand_growth_pooled,1,PASS,40 of 42 within 3 pp; worst 4.25 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,2,FAIL,37 of 42 within 3 pp; worst 3.71 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,3,PASS,41 of 42 within 3 pp; worst 4.25 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,4,FAIL,37 of 42 within 3 pp; worst 4.77 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,5,PASS,40 of 42 within 3 pp; worst 4.24 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,6,PASS,39 of 42 within 3 pp; worst 5.68 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,7,PASS,42 of 42 within 3 pp; worst 2.73 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,8,PASS,41 of 42 within 3 pp; worst 3.90 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,9,PASS,41 of 42 within 3 pp; worst 3.23 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,10,PASS,39 of 42 within 3 pp; worst 4.20 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,11,PASS,41 of 42 within 3 pp; worst 3.87 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,12,PASS,42 of 42 within 3 pp; worst 2.90 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,13,PASS,38 of 42 within 3 pp; worst 5.31 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,14,PASS,42 of 42 within 3 pp; worst 2.73 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,15,FAIL,37 of 42 within 3 pp; worst 5.51 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,16,PASS,41 of 42 within 3 pp; worst 3.32 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,17,FAIL,37 of 42 within 3 pp; worst 4.16 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,18,PASS,40 of 42 within 3 pp; worst 3.80 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,19,PASS,41 of 42 within 3 pp; worst 4.57 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,20,FAIL,34 of 42 within 3 pp; worst 4.91 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,21,PASS,40 of 42 within 3 pp; worst 3.09 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,22,PASS,39 of 42 within 3 pp; worst 3.75 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,23,PASS,39 of 42 within 3 pp; worst 5.98 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,24,PASS,39 of 42 within 3 pp; worst 5.60 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,25,PASS,39 of 42 within 3 pp; worst 3.91 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,26,PASS,40 of 42 within 3 pp; worst 4.60 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,27,PASS,38 of 42 within 3 pp; worst 3.37 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,28,PASS,39 of 42 within 3 pp; worst 3.47 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,29,PASS,39 of 42 within 3 pp; worst 4.36 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,30,PASS,39 of 42 within 3 pp; worst 4.24 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,31,PASS,38 of 42 within 3 pp; worst 4.45 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,32,FAIL,36 of 42 within 3 pp; worst 5.09 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,33,PASS,41 of 42 within 3 pp; worst 4.37 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,34,PASS,40 of 42 within 3 pp; worst 3.17 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,35,PASS,39 of 42 within 3 pp; worst 4.41 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,36,PASS,42 of 42 within 3 pp; worst 2.65 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,37,PASS,40 of 42 within 3 pp; worst 3.84 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,38,PASS,40 of 42 within 3 pp; worst 3.54 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,39,PASS,38 of 42 within 3 pp; worst 5.58 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,40,PASS,40 of 42 within 3 pp; worst 4.23 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,41,PASS,40 of 42 within 3 pp; worst 4.00 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,42,FAIL,37 of 42 within 3 pp; worst 6.27 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,43,PASS,41 of 42 within 3 pp; worst 3.29 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,44,PASS,41 of 42 within 3 pp; worst 3.37 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,45,PASS,38 of 42 within 3 pp; worst 4.14 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,46,FAIL,36 of 42 within 3 pp; worst 5.22 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,47,PASS,39 of 42 within 3 pp; worst 3.22 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,48,PASS,39 of 42 within 3 pp; worst 3.15 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,49,PASS,42 of 42 within 3 pp; worst 2.47 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+demand_growth_pooled,50,PASS,41 of 42 within 3 pp; worst 3.51 pp,pooled share of industries within 3 pp at the 2029 close >= 0.90
+boom_share,1,PASS,0.1881,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,2,PASS,0.2298,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,3,PASS,0.1839,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,4,PASS,0.2042,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,5,PASS,0.1798,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,6,PASS,0.1792,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,7,PASS,0.1565,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,8,PASS,0.1875,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,9,PASS,0.1339,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,10,PASS,0.1583,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,11,PASS,0.1726,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,12,PASS,0.1744,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,13,PASS,0.2030,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,14,PASS,0.1661,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,15,PASS,0.2429,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,16,PASS,0.1393,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,17,PASS,0.2161,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,18,PASS,0.1792,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,19,PASS,0.1732,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,20,PASS,0.2232,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,21,PASS,0.1851,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,22,PASS,0.1756,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,23,PASS,0.1827,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,24,PASS,0.1976,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,25,PASS,0.1607,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,26,PASS,0.1726,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,27,PASS,0.1667,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,28,PASS,0.1845,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,29,PASS,0.1732,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,30,PASS,0.2095,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,31,PASS,0.1649,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,32,PASS,0.2054,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,33,PASS,0.1613,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,34,PASS,0.2101,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,35,PASS,0.1625,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,36,PASS,0.1405,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,37,PASS,0.1940,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,38,PASS,0.1899,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,39,PASS,0.2226,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,40,PASS,0.1810,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,41,PASS,0.1464,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,42,PASS,0.2119,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,43,PASS,0.1429,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,44,PASS,0.1911,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,45,PASS,0.1946,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,46,PASS,0.2298,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,47,PASS,0.1619,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,48,PASS,0.1351,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,49,PASS,0.1655,0.10 to 0.25 of industry-months in force 2020-2029
+boom_share,50,PASS,0.1732,0.10 to 0.25 of industry-months in force 2020-2029
+bust_share,1,PASS,0.1262,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,2,PASS,0.1268,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,3,PASS,0.1339,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,4,PASS,0.1381,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,5,PASS,0.1190,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,6,PASS,0.1083,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,7,PASS,0.1536,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,8,PASS,0.1298,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,9,PASS,0.1780,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,10,PASS,0.1327,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,11,PASS,0.1940,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,12,PASS,0.1113,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,13,PASS,0.0970,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,14,PASS,0.1375,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,15,PASS,0.0869,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,16,PASS,0.2006,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,17,PASS,0.1030,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,18,PASS,0.1101,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,19,PASS,0.1357,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,20,PASS,0.0970,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,21,PASS,0.1250,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,22,PASS,0.1357,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,23,PASS,0.1363,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,24,PASS,0.1262,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,25,PASS,0.1512,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,26,PASS,0.1315,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,27,PASS,0.1500,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,28,PASS,0.1363,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,29,PASS,0.1190,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,30,PASS,0.1077,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,31,PASS,0.1619,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,32,PASS,0.1196,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,33,PASS,0.1577,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,34,PASS,0.1673,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,35,PASS,0.1696,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,36,PASS,0.1321,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,37,PASS,0.1256,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,38,PASS,0.1190,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,39,PASS,0.1327,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,40,PASS,0.1500,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,41,PASS,0.1393,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,42,PASS,0.0845,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,43,PASS,0.1488,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,44,PASS,0.1530,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,45,PASS,0.1214,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,46,PASS,0.0940,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,47,PASS,0.1458,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,48,PASS,0.1935,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,49,PASS,0.1530,0.08 to 0.22 of industry-months in force 2020-2029
+bust_share,50,PASS,0.1560,0.08 to 0.22 of industry-months in force 2020-2029
+startups_per_year,1,PASS,9.0 a year,mean 6 to 15 over 2020-2029
+startups_per_year,2,PASS,12.0 a year,mean 6 to 15 over 2020-2029
+startups_per_year,3,PASS,10.0 a year,mean 6 to 15 over 2020-2029
+startups_per_year,4,PASS,10.0 a year,mean 6 to 15 over 2020-2029
+startups_per_year,5,PASS,11.3 a year,mean 6 to 15 over 2020-2029
+startups_per_year,6,PASS,11.5 a year,mean 6 to 15 over 2020-2029
+startups_per_year,7,PASS,10.6 a year,mean 6 to 15 over 2020-2029
+startups_per_year,8,PASS,11.3 a year,mean 6 to 15 over 2020-2029
+startups_per_year,9,PASS,10.8 a year,mean 6 to 15 over 2020-2029
+startups_per_year,10,PASS,9.5 a year,mean 6 to 15 over 2020-2029
+startups_per_year,11,PASS,10.2 a year,mean 6 to 15 over 2020-2029
+startups_per_year,12,PASS,10.4 a year,mean 6 to 15 over 2020-2029
+startups_per_year,13,PASS,10.7 a year,mean 6 to 15 over 2020-2029
+startups_per_year,14,PASS,10.6 a year,mean 6 to 15 over 2020-2029
+startups_per_year,15,PASS,7.9 a year,mean 6 to 15 over 2020-2029
+startups_per_year,16,PASS,8.7 a year,mean 6 to 15 over 2020-2029
+startups_per_year,17,PASS,13.0 a year,mean 6 to 15 over 2020-2029
+startups_per_year,18,PASS,12.5 a year,mean 6 to 15 over 2020-2029
+startups_per_year,19,PASS,11.4 a year,mean 6 to 15 over 2020-2029
+startups_per_year,20,PASS,10.8 a year,mean 6 to 15 over 2020-2029
+startups_per_year,21,PASS,9.6 a year,mean 6 to 15 over 2020-2029
+startups_per_year,22,PASS,11.0 a year,mean 6 to 15 over 2020-2029
+startups_per_year,23,PASS,10.7 a year,mean 6 to 15 over 2020-2029
+startups_per_year,24,PASS,10.2 a year,mean 6 to 15 over 2020-2029
+startups_per_year,25,PASS,11.0 a year,mean 6 to 15 over 2020-2029
+startups_per_year,26,PASS,9.7 a year,mean 6 to 15 over 2020-2029
+startups_per_year,27,PASS,9.7 a year,mean 6 to 15 over 2020-2029
+startups_per_year,28,PASS,12.1 a year,mean 6 to 15 over 2020-2029
+startups_per_year,29,PASS,10.3 a year,mean 6 to 15 over 2020-2029
+startups_per_year,30,PASS,9.6 a year,mean 6 to 15 over 2020-2029
+startups_per_year,31,PASS,9.7 a year,mean 6 to 15 over 2020-2029
+startups_per_year,32,PASS,12.2 a year,mean 6 to 15 over 2020-2029
+startups_per_year,33,PASS,11.6 a year,mean 6 to 15 over 2020-2029
+startups_per_year,34,PASS,11.0 a year,mean 6 to 15 over 2020-2029
+startups_per_year,35,PASS,10.4 a year,mean 6 to 15 over 2020-2029
+startups_per_year,36,PASS,11.1 a year,mean 6 to 15 over 2020-2029
+startups_per_year,37,PASS,11.4 a year,mean 6 to 15 over 2020-2029
+startups_per_year,38,PASS,9.9 a year,mean 6 to 15 over 2020-2029
+startups_per_year,39,PASS,8.3 a year,mean 6 to 15 over 2020-2029
+startups_per_year,40,PASS,12.9 a year,mean 6 to 15 over 2020-2029
+startups_per_year,41,PASS,10.2 a year,mean 6 to 15 over 2020-2029
+startups_per_year,42,PASS,11.6 a year,mean 6 to 15 over 2020-2029
+startups_per_year,43,PASS,9.4 a year,mean 6 to 15 over 2020-2029
+startups_per_year,44,PASS,9.3 a year,mean 6 to 15 over 2020-2029
+startups_per_year,45,PASS,12.8 a year,mean 6 to 15 over 2020-2029
+startups_per_year,46,PASS,10.4 a year,mean 6 to 15 over 2020-2029
+startups_per_year,47,PASS,9.8 a year,mean 6 to 15 over 2020-2029
+startups_per_year,48,PASS,11.2 a year,mean 6 to 15 over 2020-2029
+startups_per_year,49,PASS,8.8 a year,mean 6 to 15 over 2020-2029
+startups_per_year,50,PASS,8.7 a year,mean 6 to 15 over 2020-2029
+ai_lab_startups_2030_2035,1,PASS,48,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,2,PASS,28,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,3,PASS,37,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,4,PASS,34,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,5,PASS,40,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,6,PASS,36,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,7,PASS,48,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,8,PASS,36,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,9,PASS,41,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,10,PASS,43,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,11,PASS,41,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,12,PASS,47,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,13,PASS,27,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,14,PASS,36,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,15,PASS,33,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,16,PASS,38,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,17,PASS,39,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,18,PASS,36,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,19,PASS,43,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,20,PASS,34,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,21,PASS,25,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,22,PASS,40,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,23,PASS,33,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,24,PASS,35,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,25,PASS,33,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,26,PASS,26,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,27,PASS,23,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,28,PASS,41,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,29,PASS,40,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,30,PASS,47,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,31,PASS,45,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,32,PASS,25,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,33,PASS,36,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,34,PASS,43,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,35,PASS,32,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,36,PASS,40,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,37,PASS,37,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,38,PASS,30,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,39,PASS,43,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,40,PASS,30,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,41,PASS,30,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,42,PASS,28,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,43,PASS,41,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,44,PASS,35,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,45,PASS,32,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,46,PASS,36,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,47,PASS,25,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,48,PASS,35,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,49,PASS,27,15 to 50 born 2030-2035
+ai_lab_startups_2030_2035,50,PASS,40,15 to 50 born 2030-2035
+named_companies,1,PASS,659 to 932,600 to 1100 at every year close 2020-2049
+named_companies,2,PASS,662 to 935,600 to 1100 at every year close 2020-2049
+named_companies,3,PASS,666 to 948,600 to 1100 at every year close 2020-2049
+named_companies,4,PASS,657 to 940,600 to 1100 at every year close 2020-2049
+named_companies,5,PASS,669 to 943,600 to 1100 at every year close 2020-2049
+named_companies,6,PASS,660 to 929,600 to 1100 at every year close 2020-2049
+named_companies,7,PASS,667 to 941,600 to 1100 at every year close 2020-2049
+named_companies,8,PASS,663 to 940,600 to 1100 at every year close 2020-2049
+named_companies,9,PASS,663 to 951,600 to 1100 at every year close 2020-2049
+named_companies,10,PASS,665 to 934,600 to 1100 at every year close 2020-2049
+named_companies,11,PASS,660 to 937,600 to 1100 at every year close 2020-2049
+named_companies,12,PASS,665 to 960,600 to 1100 at every year close 2020-2049
+named_companies,13,PASS,661 to 941,600 to 1100 at every year close 2020-2049
+named_companies,14,PASS,666 to 947,600 to 1100 at every year close 2020-2049
+named_companies,15,PASS,661 to 883,600 to 1100 at every year close 2020-2049
+named_companies,16,PASS,661 to 916,600 to 1100 at every year close 2020-2049
+named_companies,17,PASS,661 to 962,600 to 1100 at every year close 2020-2049
+named_companies,18,PASS,664 to 955,600 to 1100 at every year close 2020-2049
+named_companies,19,PASS,665 to 933,600 to 1100 at every year close 2020-2049
+named_companies,20,PASS,665 to 890,600 to 1100 at every year close 2020-2049
+named_companies,21,PASS,663 to 940,600 to 1100 at every year close 2020-2049
+named_companies,22,PASS,662 to 917,600 to 1100 at every year close 2020-2049
+named_companies,23,PASS,666 to 919,600 to 1100 at every year close 2020-2049
+named_companies,24,PASS,665 to 940,600 to 1100 at every year close 2020-2049
+named_companies,25,PASS,661 to 906,600 to 1100 at every year close 2020-2049
+named_companies,26,PASS,660 to 913,600 to 1100 at every year close 2020-2049
+named_companies,27,PASS,658 to 904,600 to 1100 at every year close 2020-2049
+named_companies,28,PASS,663 to 986,600 to 1100 at every year close 2020-2049
+named_companies,29,PASS,656 to 931,600 to 1100 at every year close 2020-2049
+named_companies,30,PASS,665 to 929,600 to 1100 at every year close 2020-2049
+named_companies,31,PASS,668 to 920,600 to 1100 at every year close 2020-2049
+named_companies,32,PASS,659 to 932,600 to 1100 at every year close 2020-2049
+named_companies,33,PASS,658 to 952,600 to 1100 at every year close 2020-2049
+named_companies,34,PASS,665 to 941,600 to 1100 at every year close 2020-2049
+named_companies,35,PASS,657 to 921,600 to 1100 at every year close 2020-2049
+named_companies,36,PASS,664 to 943,600 to 1100 at every year close 2020-2049
+named_companies,37,PASS,663 to 952,600 to 1100 at every year close 2020-2049
+named_companies,38,PASS,665 to 917,600 to 1100 at every year close 2020-2049
+named_companies,39,PASS,659 to 911,600 to 1100 at every year close 2020-2049
+named_companies,40,PASS,665 to 957,600 to 1100 at every year close 2020-2049
+named_companies,41,PASS,663 to 924,600 to 1100 at every year close 2020-2049
+named_companies,42,PASS,667 to 942,600 to 1100 at every year close 2020-2049
+named_companies,43,PASS,655 to 912,600 to 1100 at every year close 2020-2049
+named_companies,44,PASS,664 to 903,600 to 1100 at every year close 2020-2049
+named_companies,45,PASS,668 to 960,600 to 1100 at every year close 2020-2049
+named_companies,46,PASS,661 to 950,600 to 1100 at every year close 2020-2049
+named_companies,47,PASS,666 to 891,600 to 1100 at every year close 2020-2049
+named_companies,48,PASS,669 to 938,600 to 1100 at every year close 2020-2049
+named_companies,49,PASS,657 to 902,600 to 1100 at every year close 2020-2049
+named_companies,50,PASS,660 to 919,600 to 1100 at every year close 2020-2049
+listings_30y,1,PASS,70,60 to 250 listed 2020-2049
+listings_30y,2,PASS,79,60 to 250 listed 2020-2049
+listings_30y,3,PASS,78,60 to 250 listed 2020-2049
+listings_30y,4,PASS,96,60 to 250 listed 2020-2049
+listings_30y,5,PASS,80,60 to 250 listed 2020-2049
+listings_30y,6,PASS,85,60 to 250 listed 2020-2049
+listings_30y,7,PASS,99,60 to 250 listed 2020-2049
+listings_30y,8,PASS,84,60 to 250 listed 2020-2049
+listings_30y,9,PASS,80,60 to 250 listed 2020-2049
+listings_30y,10,PASS,74,60 to 250 listed 2020-2049
+listings_30y,11,PASS,83,60 to 250 listed 2020-2049
+listings_30y,12,PASS,90,60 to 250 listed 2020-2049
+listings_30y,13,PASS,77,60 to 250 listed 2020-2049
+listings_30y,14,PASS,101,60 to 250 listed 2020-2049
+listings_30y,15,PASS,91,60 to 250 listed 2020-2049
+listings_30y,16,PASS,90,60 to 250 listed 2020-2049
+listings_30y,17,PASS,96,60 to 250 listed 2020-2049
+listings_30y,18,PASS,79,60 to 250 listed 2020-2049
+listings_30y,19,PASS,90,60 to 250 listed 2020-2049
+listings_30y,20,PASS,67,60 to 250 listed 2020-2049
+listings_30y,21,PASS,84,60 to 250 listed 2020-2049
+listings_30y,22,PASS,79,60 to 250 listed 2020-2049
+listings_30y,23,PASS,98,60 to 250 listed 2020-2049
+listings_30y,24,PASS,90,60 to 250 listed 2020-2049
+listings_30y,25,PASS,92,60 to 250 listed 2020-2049
+listings_30y,26,PASS,84,60 to 250 listed 2020-2049
+listings_30y,27,PASS,84,60 to 250 listed 2020-2049
+listings_30y,28,PASS,85,60 to 250 listed 2020-2049
+listings_30y,29,PASS,70,60 to 250 listed 2020-2049
+listings_30y,30,PASS,87,60 to 250 listed 2020-2049
+listings_30y,31,PASS,86,60 to 250 listed 2020-2049
+listings_30y,32,PASS,86,60 to 250 listed 2020-2049
+listings_30y,33,PASS,78,60 to 250 listed 2020-2049
+listings_30y,34,PASS,76,60 to 250 listed 2020-2049
+listings_30y,35,PASS,88,60 to 250 listed 2020-2049
+listings_30y,36,PASS,83,60 to 250 listed 2020-2049
+listings_30y,37,PASS,89,60 to 250 listed 2020-2049
+listings_30y,38,PASS,81,60 to 250 listed 2020-2049
+listings_30y,39,PASS,84,60 to 250 listed 2020-2049
+listings_30y,40,PASS,90,60 to 250 listed 2020-2049
+listings_30y,41,PASS,87,60 to 250 listed 2020-2049
+listings_30y,42,PASS,92,60 to 250 listed 2020-2049
+listings_30y,43,PASS,69,60 to 250 listed 2020-2049
+listings_30y,44,PASS,85,60 to 250 listed 2020-2049
+listings_30y,45,PASS,88,60 to 250 listed 2020-2049
+listings_30y,46,PASS,81,60 to 250 listed 2020-2049
+listings_30y,47,PASS,73,60 to 250 listed 2020-2049
+listings_30y,48,PASS,77,60 to 250 listed 2020-2049
+listings_30y,49,PASS,87,60 to 250 listed 2020-2049
+listings_30y,50,PASS,79,60 to 250 listed 2020-2049
+listings_per_year,1,PASS,max 8,<= 12 in every year 2020-2049
+listings_per_year,2,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,3,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,4,PASS,max 8,<= 12 in every year 2020-2049
+listings_per_year,5,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,6,PASS,max 9,<= 12 in every year 2020-2049
+listings_per_year,7,PASS,max 8,<= 12 in every year 2020-2049
+listings_per_year,8,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,9,PASS,max 5,<= 12 in every year 2020-2049
+listings_per_year,10,PASS,max 9,<= 12 in every year 2020-2049
+listings_per_year,11,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,12,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,13,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,14,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,15,PASS,max 9,<= 12 in every year 2020-2049
+listings_per_year,16,PASS,max 9,<= 12 in every year 2020-2049
+listings_per_year,17,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,18,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,19,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,20,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,21,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,22,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,23,PASS,max 8,<= 12 in every year 2020-2049
+listings_per_year,24,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,25,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,26,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,27,PASS,max 9,<= 12 in every year 2020-2049
+listings_per_year,28,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,29,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,30,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,31,PASS,max 8,<= 12 in every year 2020-2049
+listings_per_year,32,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,33,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,34,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,35,PASS,max 8,<= 12 in every year 2020-2049
+listings_per_year,36,PASS,max 9,<= 12 in every year 2020-2049
+listings_per_year,37,PASS,max 8,<= 12 in every year 2020-2049
+listings_per_year,38,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,39,PASS,max 10,<= 12 in every year 2020-2049
+listings_per_year,40,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,41,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,42,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,43,PASS,max 5,<= 12 in every year 2020-2049
+listings_per_year,44,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,45,PASS,max 8,<= 12 in every year 2020-2049
+listings_per_year,46,PASS,max 6,<= 12 in every year 2020-2049
+listings_per_year,47,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,48,PASS,max 9,<= 12 in every year 2020-2049
+listings_per_year,49,PASS,max 7,<= 12 in every year 2020-2049
+listings_per_year,50,PASS,max 8,<= 12 in every year 2020-2049
+start_private_listed_2024,1,PASS,22,10 to 30 at the 2024 close
+start_private_listed_2024,2,PASS,21,10 to 30 at the 2024 close
+start_private_listed_2024,3,PASS,19,10 to 30 at the 2024 close
+start_private_listed_2024,4,PASS,24,10 to 30 at the 2024 close
+start_private_listed_2024,5,PASS,22,10 to 30 at the 2024 close
+start_private_listed_2024,6,PASS,20,10 to 30 at the 2024 close
+start_private_listed_2024,7,PASS,17,10 to 30 at the 2024 close
+start_private_listed_2024,8,PASS,20,10 to 30 at the 2024 close
+start_private_listed_2024,9,PASS,15,10 to 30 at the 2024 close
+start_private_listed_2024,10,PASS,22,10 to 30 at the 2024 close
+start_private_listed_2024,11,PASS,19,10 to 30 at the 2024 close
+start_private_listed_2024,12,PASS,19,10 to 30 at the 2024 close
+start_private_listed_2024,13,PASS,14,10 to 30 at the 2024 close
+start_private_listed_2024,14,PASS,20,10 to 30 at the 2024 close
+start_private_listed_2024,15,PASS,23,10 to 30 at the 2024 close
+start_private_listed_2024,16,PASS,17,10 to 30 at the 2024 close
+start_private_listed_2024,17,PASS,20,10 to 30 at the 2024 close
+start_private_listed_2024,18,PASS,17,10 to 30 at the 2024 close
+start_private_listed_2024,19,PASS,18,10 to 30 at the 2024 close
+start_private_listed_2024,20,PASS,19,10 to 30 at the 2024 close
+start_private_listed_2024,21,PASS,17,10 to 30 at the 2024 close
+start_private_listed_2024,22,PASS,18,10 to 30 at the 2024 close
+start_private_listed_2024,23,PASS,11,10 to 30 at the 2024 close
+start_private_listed_2024,24,PASS,20,10 to 30 at the 2024 close
+start_private_listed_2024,25,PASS,13,10 to 30 at the 2024 close
+start_private_listed_2024,26,PASS,23,10 to 30 at the 2024 close
+start_private_listed_2024,27,PASS,21,10 to 30 at the 2024 close
+start_private_listed_2024,28,PASS,26,10 to 30 at the 2024 close
+start_private_listed_2024,29,PASS,18,10 to 30 at the 2024 close
+start_private_listed_2024,30,PASS,20,10 to 30 at the 2024 close
+start_private_listed_2024,31,PASS,23,10 to 30 at the 2024 close
+start_private_listed_2024,32,PASS,20,10 to 30 at the 2024 close
+start_private_listed_2024,33,PASS,15,10 to 30 at the 2024 close
+start_private_listed_2024,34,PASS,20,10 to 30 at the 2024 close
+start_private_listed_2024,35,PASS,20,10 to 30 at the 2024 close
+start_private_listed_2024,36,PASS,24,10 to 30 at the 2024 close
+start_private_listed_2024,37,PASS,21,10 to 30 at the 2024 close
+start_private_listed_2024,38,PASS,19,10 to 30 at the 2024 close
+start_private_listed_2024,39,PASS,24,10 to 30 at the 2024 close
+start_private_listed_2024,40,PASS,22,10 to 30 at the 2024 close
+start_private_listed_2024,41,PASS,16,10 to 30 at the 2024 close
+start_private_listed_2024,42,PASS,21,10 to 30 at the 2024 close
+start_private_listed_2024,43,PASS,13,10 to 30 at the 2024 close
+start_private_listed_2024,44,PASS,23,10 to 30 at the 2024 close
+start_private_listed_2024,45,PASS,24,10 to 30 at the 2024 close
+start_private_listed_2024,46,PASS,17,10 to 30 at the 2024 close
+start_private_listed_2024,47,PASS,15,10 to 30 at the 2024 close
+start_private_listed_2024,48,PASS,13,10 to 30 at the 2024 close
+start_private_listed_2024,49,PASS,18,10 to 30 at the 2024 close
+start_private_listed_2024,50,PASS,19,10 to 30 at the 2024 close
+full_characters_per_decade,1,PASS,2020s 136; 2030s 249; 2040s 151,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,2,PASS,2020s 193; 2030s 209; 2040s 171,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,3,PASS,2020s 151; 2030s 243; 2040s 184,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,4,PASS,2020s 165; 2030s 253; 2040s 177,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,5,PASS,2020s 192; 2030s 255; 2040s 152,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,6,PASS,2020s 176; 2030s 231; 2040s 125,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,7,PASS,2020s 172; 2030s 260; 2040s 155,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,8,PASS,2020s 181; 2030s 228; 2040s 146,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,9,PASS,2020s 184; 2030s 219; 2040s 176,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,10,PASS,2020s 154; 2030s 218; 2040s 191,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,11,PASS,2020s 158; 2030s 232; 2040s 179,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,12,PASS,2020s 172; 2030s 224; 2040s 216,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,13,PASS,2020s 180; 2030s 210; 2040s 179,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,14,PASS,2020s 184; 2030s 224; 2040s 192,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,15,PASS,2020s 132; 2030s 223; 2040s 132,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,16,PASS,2020s 150; 2030s 205; 2040s 162,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,17,PASS,2020s 231; 2030s 210; 2040s 173,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,18,PASS,2020s 231; 2030s 240; 2040s 168,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,19,PASS,2020s 185; 2030s 247; 2040s 163,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,20,PASS,2020s 179; 2030s 173; 2040s 157,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,21,PASS,2020s 163; 2030s 221; 2040s 191,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,22,PASS,2020s 193; 2030s 216; 2040s 136,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,23,PASS,2020s 180; 2030s 217; 2040s 161,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,24,PASS,2020s 162; 2030s 218; 2040s 196,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,25,PASS,2020s 180; 2030s 186; 2040s 141,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,26,PASS,2020s 162; 2030s 203; 2040s 166,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,27,PASS,2020s 146; 2030s 224; 2040s 121,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,28,PASS,2020s 188; 2030s 264; 2040s 211,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,29,PASS,2020s 169; 2030s 205; 2040s 169,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,30,PASS,2020s 161; 2030s 253; 2040s 156,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,31,PASS,2020s 161; 2030s 246; 2040s 165,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,32,PASS,2020s 200; 2030s 212; 2040s 183,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,33,PASS,2020s 201; 2030s 216; 2040s 196,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,34,PASS,2020s 184; 2030s 234; 2040s 175,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,35,PASS,2020s 182; 2030s 223; 2040s 168,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,36,PASS,2020s 180; 2030s 219; 2040s 185,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,37,PASS,2020s 186; 2030s 267; 2040s 173,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,38,PASS,2020s 158; 2030s 198; 2040s 168,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,39,PASS,2020s 137; 2030s 229; 2040s 168,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,40,PASS,2020s 231; 2030s 209; 2040s 206,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,41,PASS,2020s 172; 2030s 238; 2040s 146,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,42,PASS,2020s 195; 2030s 228; 2040s 169,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,43,PASS,2020s 165; 2030s 244; 2040s 140,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,44,PASS,2020s 153; 2030s 212; 2040s 164,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,45,PASS,2020s 199; 2030s 187; 2040s 214,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,46,PASS,2020s 177; 2030s 218; 2040s 189,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,47,PASS,2020s 153; 2030s 198; 2040s 143,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,48,PASS,2020s 185; 2030s 210; 2040s 158,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,49,PASS,2020s 155; 2030s 220; 2040s 150,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_per_decade,50,PASS,2020s 139; 2030s 243; 2040s 176,100 to 300 made in each of the 2020s 2030s and 2040s the run covers
+full_characters_2050,1,PASS,832,< 1200 at the 1 January 2050 close
+full_characters_2050,2,PASS,869,< 1200 at the 1 January 2050 close
+full_characters_2050,3,PASS,874,< 1200 at the 1 January 2050 close
+full_characters_2050,4,PASS,891,< 1200 at the 1 January 2050 close
+full_characters_2050,5,PASS,895,< 1200 at the 1 January 2050 close
+full_characters_2050,6,PASS,828,< 1200 at the 1 January 2050 close
+full_characters_2050,7,PASS,883,< 1200 at the 1 January 2050 close
+full_characters_2050,8,PASS,851,< 1200 at the 1 January 2050 close
+full_characters_2050,9,PASS,875,< 1200 at the 1 January 2050 close
+full_characters_2050,10,PASS,859,< 1200 at the 1 January 2050 close
+full_characters_2050,11,PASS,865,< 1200 at the 1 January 2050 close
+full_characters_2050,12,PASS,908,< 1200 at the 1 January 2050 close
+full_characters_2050,13,PASS,865,< 1200 at the 1 January 2050 close
+full_characters_2050,14,PASS,896,< 1200 at the 1 January 2050 close
+full_characters_2050,15,PASS,783,< 1200 at the 1 January 2050 close
+full_characters_2050,16,PASS,813,< 1200 at the 1 January 2050 close
+full_characters_2050,17,PASS,910,< 1200 at the 1 January 2050 close
+full_characters_2050,18,PASS,935,< 1200 at the 1 January 2050 close
+full_characters_2050,19,PASS,891,< 1200 at the 1 January 2050 close
+full_characters_2050,20,PASS,805,< 1200 at the 1 January 2050 close
+full_characters_2050,21,PASS,871,< 1200 at the 1 January 2050 close
+full_characters_2050,22,PASS,841,< 1200 at the 1 January 2050 close
+full_characters_2050,23,PASS,854,< 1200 at the 1 January 2050 close
+full_characters_2050,24,PASS,872,< 1200 at the 1 January 2050 close
+full_characters_2050,25,PASS,803,< 1200 at the 1 January 2050 close
+full_characters_2050,26,PASS,827,< 1200 at the 1 January 2050 close
+full_characters_2050,27,PASS,787,< 1200 at the 1 January 2050 close
+full_characters_2050,28,PASS,959,< 1200 at the 1 January 2050 close
+full_characters_2050,29,PASS,839,< 1200 at the 1 January 2050 close
+full_characters_2050,30,PASS,866,< 1200 at the 1 January 2050 close
+full_characters_2050,31,PASS,868,< 1200 at the 1 January 2050 close
+full_characters_2050,32,PASS,891,< 1200 at the 1 January 2050 close
+full_characters_2050,33,PASS,909,< 1200 at the 1 January 2050 close
+full_characters_2050,34,PASS,889,< 1200 at the 1 January 2050 close
+full_characters_2050,35,PASS,869,< 1200 at the 1 January 2050 close
+full_characters_2050,36,PASS,880,< 1200 at the 1 January 2050 close
+full_characters_2050,37,PASS,922,< 1200 at the 1 January 2050 close
+full_characters_2050,38,PASS,820,< 1200 at the 1 January 2050 close
+full_characters_2050,39,PASS,830,< 1200 at the 1 January 2050 close
+full_characters_2050,40,PASS,942,< 1200 at the 1 January 2050 close
+full_characters_2050,41,PASS,852,< 1200 at the 1 January 2050 close
+full_characters_2050,42,PASS,888,< 1200 at the 1 January 2050 close
+full_characters_2050,43,PASS,845,< 1200 at the 1 January 2050 close
+full_characters_2050,44,PASS,825,< 1200 at the 1 January 2050 close
+full_characters_2050,45,PASS,896,< 1200 at the 1 January 2050 close
+full_characters_2050,46,PASS,880,< 1200 at the 1 January 2050 close
+full_characters_2050,47,PASS,790,< 1200 at the 1 January 2050 close
+full_characters_2050,48,PASS,849,< 1200 at the 1 January 2050 close
+full_characters_2050,49,PASS,821,< 1200 at the 1 January 2050 close
+full_characters_2050,50,PASS,854,< 1200 at the 1 January 2050 close
+cast_sizes,1,PASS,327 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,2,PASS,332 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,3,PASS,344 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,4,PASS,337 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,5,PASS,338 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,6,PASS,323 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,7,PASS,336 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,8,PASS,334 casts; full 1 to 5; simple 2 to 4,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,9,PASS,344 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,10,PASS,330 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,11,PASS,332 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,12,PASS,356 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,13,PASS,334 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,14,PASS,342 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,15,PASS,278 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,16,PASS,311 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,17,PASS,357 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,18,PASS,349 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,19,PASS,326 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,20,PASS,285 casts; full 1 to 5; simple 2 to 4,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,21,PASS,333 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,22,PASS,313 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,23,PASS,314 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,24,PASS,337 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,25,PASS,301 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,26,PASS,310 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,27,PASS,299 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,28,PASS,379 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,29,PASS,327 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,30,PASS,324 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,31,PASS,316 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,32,PASS,327 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,33,PASS,345 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,34,PASS,336 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,35,PASS,316 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,36,PASS,338 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,37,PASS,347 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,38,PASS,312 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,39,PASS,306 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,40,PASS,352 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,41,PASS,318 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,42,PASS,335 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,43,PASS,305 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,44,PASS,300 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,45,PASS,354 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,46,PASS,343 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,47,PASS,284 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,48,PASS,332 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,49,PASS,298 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+cast_sizes,50,PASS,312 casts; full 1 to 5; simple 2 to 5,founders 1 to 5 and simple cast 1 to 5 at every birth
+no_empty_labor_seat,1,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,2,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,3,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,4,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,5,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,6,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,7,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,8,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,9,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,10,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,11,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,12,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,13,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,14,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,15,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,16,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,17,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,18,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,19,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,20,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,21,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,22,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,23,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,24,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,25,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,26,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,27,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,28,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,29,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,30,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,31,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,32,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,33,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,34,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,35,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,36,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,37,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,38,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,39,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,40,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,41,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,42,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,43,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,44,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,45,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,46,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,47,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,48,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,49,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049
+no_empty_labor_seat,50,PASS,max 0 empty,0 empty open seats at every birth and month close 2020-2049

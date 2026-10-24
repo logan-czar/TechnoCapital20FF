@@ -1,0 +1,31 @@
+{
+  "name": "technocapital20ff",
+  "private": true,
+  "description": "TechnoCapital20FF in TypeScript (docs/build/ts-migration-plan.md). The Rust crates stay as the reference until the parity gate passes.",
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "module",
+  "packageManager": "pnpm@10.20.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "typecheck": "tsc -b",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "vitest run",
+    "check": "pnpm typecheck && pnpm lint && pnpm test",
+    "dev": "pnpm --filter @tc20ff/web dev",
+    "headless": "pnpm --filter @tc20ff/headless start"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.4",
+    "@types/node": "24.5.2",
+    "typescript": "5.9.2",
+    "vitest": "3.2.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

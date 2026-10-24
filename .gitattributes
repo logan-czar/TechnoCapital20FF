@@ -9,3 +9,12 @@ assets/map/*.csv text eol=lf
 assets/map/*.toml text eol=lf
 # A save written by an older build, loaded by the save tests (D800): bytes, never text.
 *.tc20ffsave binary
+# The TypeScript workspace (D950): Biome formats with LF, so keep these LF on Windows checkouts too.
+packages/** text=auto eol=lf
+apps/** text=auto eol=lf
+scripts/ts/** text eol=lf
+test/fixtures/** text eol=lf
+/*.json text eol=lf
+/*.ts text eol=lf
+/pnpm-lock.yaml text eol=lf
+/pnpm-workspace.yaml text eol=lf

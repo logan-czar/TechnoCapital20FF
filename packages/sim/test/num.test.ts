@@ -1,0 +1,64 @@
+import { describe, expect, it } from "vitest";
+import {
+  addCount,
+  assertCount,
+  clamp,
+  cmpStr,
+  divInt,
+  maxF,
+  minF,
+  roundHalfAway,
+  roundTiesEven,
+  saturatingSubCount,
+  subCount,
+  toI64Sat,
+  totalCmp,
+  toU32Sat,
+  toU64Sat,
+} from "../src/types/num.ts";
+
+// The values Rust gives for the same calls (f64::round, round_ties_even, `as` casts, total_cmp).
+describe("num.ts keeps Rust semantics (D952)", () => {
+  it("rounds halves away from zero like f64::round", () => {
+    expect([2.5, -2.5, 0.5, -0.5, 1.4999, -1.5, 3].map(roundHalfAway)).toEqual([3, -3, 1, -1, 1, -2, 3]);
+    expect(Object.is(roundHalfAway(-0.4), -0)).toBe(true);
+  });
+
+  it("rounds ties to even like round_ties_even and Python round", () => {
+    expect([0.5, 1.5, 2.5, 3.5, -0.5, -1.5, -2.5, 2.4, 2.6].map(roundTiesEven)).toEqual([
+      0, 2, 2, 4, -0, -2, -2, 2, 3,
+    ]);
+  });
+
+  it("casts like `as u64`, `as u32` and `as i64`", () => {
+    expect([-1, 0, 1.9, Number.NaN, 1e300].map(toU64Sat)).toEqual([0, 0, 1, 0, Number.MAX_SAFE_INTEGER]);
+    expect([-3, 4.99, 2 ** 40].map(toU32Sat)).toEqual([0, 4, 0xffff_ffff]);
+    expect([-2.7, 2.7, Number.NaN].map(toI64Sat)).toEqual([-2, 2, 0]);
+  });
+
+  it("keeps counts exact or throws", () => {
+    expect(assertCount(1_806_975_376)).toBe(1_806_975_376);
+    expect(() => assertCount(1.5)).toThrow();
+    expect(() => assertCount(2 ** 53)).toThrow();
+    expect(addCount(2, 3)).toBe(5);
+    expect(() => subCount(2, 3)).toThrow();
+    expect(saturatingSubCount(2, 3)).toBe(0);
+    expect(divInt(-7, 2)).toBe(-3);
+    expect(() => divInt(1, 0)).toThrow();
+  });
+
+  it("sorts floats like total_cmp and strings by code unit", () => {
+    expect([3, Number.NaN, -0, 0, -1].sort(totalCmp)).toEqual([-1, -0, 0, 3, Number.NaN]);
+    expect(["b", "B", "a", "CO-0010", "CO-0002"].sort(cmpStr)).toEqual(["B", "CO-0002", "CO-0010", "a", "b"]);
+  });
+
+  it("max, min and clamp like f64::max, f64::min and f64::clamp", () => {
+    expect(maxF(Number.NaN, 2)).toBe(2);
+    expect(minF(3, Number.NaN)).toBe(3);
+    expect(maxF(1, 2)).toBe(2);
+    expect(Object.is(clamp(-0, 0, 1), -0)).toBe(true);
+    expect(clamp(5, 0, 1)).toBe(1);
+    expect(Number.isNaN(clamp(Number.NaN, 0, 1))).toBe(true);
+    expect(() => clamp(0, 1, 0)).toThrow();
+  });
+});

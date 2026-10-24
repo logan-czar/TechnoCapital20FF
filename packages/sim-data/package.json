@@ -1,0 +1,13 @@
+{
+  "name": "@tc20ff/sim-data",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The starting world CSVs: row types, loading and the load-time checks (build-plan 2.1 sim-data).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}
