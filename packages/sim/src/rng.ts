@@ -18,7 +18,7 @@
 
 import type { DrawSource, Stream } from "./types/draws.ts";
 import { POISSON_MAX_MEAN, STREAM_COUNT, STREAM_NAME, STREAM_NUMBER, STREAM_VALUES } from "./types/draws.ts";
-import { clamp, roundHalfAway, toU32Sat } from "./types/num.ts";
+import { clamp, roundHalfAway, toI64Sat, toU32Sat } from "./types/num.ts";
 
 /** Rust `Stream::index`: the stream's number, the slot in per-stream state (D9). */
 export function streamIndex(stream: Stream): number {
@@ -90,7 +90,7 @@ export function intInRange(lo: number, hi: number, nextU32: () => number): numbe
   for (;;) {
     const hiW = nextU32();
     const loW = nextU32();
-    const x = (hiW >>> 5) * TWO_32 + loW;
+    const x = (hiW >>> 11) * TWO_32 + loW;
     if (x >= threshold) return lo + (x % span);
   }
 }
@@ -139,15 +139,18 @@ function streamState(seed: number, stream: Stream): number[] {
   }
   const lo = seed % TWO_32;
   const hi = Math.floor(seed / TWO_32);
-  let a = splitmix32Out((lo + GOLDEN) | 0);
-  a = splitmix32Out((a ^ (hi + 2 * GOLDEN)) | 0);
-  a = splitmix32Out((a ^ (Math.imul(STREAM_NUMBER[stream] + 1, 0x85ebca6b) + 3 * GOLDEN)) | 0);
+  // Two mixing chains, so the four words depend on the low and high halves separately: the
+  // first pair of words from (low half, stream), the second from the first chain and the high
+  // half. Distinct (low, high, stream) give distinct starts (2^64 per stream).
+  const streamMix = Math.imul(STREAM_NUMBER[stream] + 1, 0x85ebca6b);
+  const a = splitmix32Out(((lo ^ streamMix) + GOLDEN) | 0);
+  const b = splitmix32Out((a ^ (hi + 2 * GOLDEN) ^ Math.imul(streamMix, 3)) | 0);
   const s: number[] = [];
-  let x = a | 0;
-  for (let i = 0; i < 4; i++) {
-    x = (x + GOLDEN) | 0;
-    s.push(splitmix32Out(x));
-  }
+  // Words 1 to 3 depend on both halves (b), so the first draw already differs by either half.
+  s.push(splitmix32Out((a + GOLDEN) | 0));
+  s.push(splitmix32Out((b + GOLDEN) | 0));
+  s.push(splitmix32Out((b + Math.imul(2, GOLDEN)) | 0));
+  s.push(splitmix32Out(((a ^ b) + Math.imul(3, GOLDEN)) | 0));
   // All-zero is the one state xoshiro cannot leave; splitmix never gives it, but be sure.
   if (s[0] === 0 && s[1] === 0 && s[2] === 0 && s[3] === 0) s[0] = 1;
   return s;
@@ -322,7 +325,7 @@ export function scriptedDraws(): ScriptedDraws {
   };
   return {
     push(stream, values) {
-      queues[STREAM_NUMBER[stream]]!.push(...values);
+      for (const v of values) queues[STREAM_NUMBER[stream]]!.push(v);
     },
     remaining(stream) {
       const i = STREAM_NUMBER[stream];
@@ -337,7 +340,7 @@ export function scriptedDraws(): ScriptedDraws {
       return toU32Sat(take(stream));
     },
     intInclusive(stream, lo, hi) {
-      const v = Math.trunc(take(stream));
+      const v = toI64Sat(take(stream));
       if (!(v >= lo && v <= hi)) throw new RangeError(`scripted ${v} outside ${lo}..=${hi}`);
       return v;
     },

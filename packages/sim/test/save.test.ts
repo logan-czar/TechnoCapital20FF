@@ -91,8 +91,9 @@ describe("canonical encoding", () => {
     expect([...back.s]).toEqual(["a", "b"]);
   });
 
-  it("writes typed arrays as arrays and refuses what it cannot hold", () => {
-    expect(canonicalString({ t: new Float64Array([1, 2.5]) })).toBe('{"t":[1,2.5]}');
+  it("refuses typed arrays and what it cannot hold", () => {
+    expect(() => canonicalString({ t: new Float64Array([1, 2.5]) })).toThrow(/typed arrays/);
+    expect(() => canonicalRevive(JSON.parse('{"__proto__":{"x":1}}'))).toThrow();
     expect(() => canonicalString({ f: () => 1 })).toThrow();
     expect(() => canonicalString({ d: new Date(0) })).toThrow();
     expect(() => canonicalString({ n: 10n })).toThrow();

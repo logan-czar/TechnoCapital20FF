@@ -34,8 +34,8 @@ export type { ClockView, SimViews } from "./views/index.ts";
 export type { LoadError, Notice, Result } from "./world.ts";
 
 /**
- * A 256-bit state hash of the world and RNG positions (build-plan M1.8, 4.3), as 64 lowercase hex
- * digits. Rust `StateHash([u8; 32])`; `short()` is the first 16 digits, for logs. In TS it is a
+ * A 128-bit state hash of the world and RNG positions (build-plan M1.8, 4.3), as 32 lowercase hex
+ * digits (Rust's was 256 bits, 64 digits); `short()` is the first 16 digits, for logs. In TS it is a
  * fast hash over the canonical state, for determinism tests only (ts-migration-plan Stack).
  */
 export type StateHash = string;

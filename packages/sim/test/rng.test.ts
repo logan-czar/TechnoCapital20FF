@@ -144,6 +144,11 @@ describe("rng.ts", () => {
     const big = rngStreamsDraws(rngStreamsNew(4)).intInclusive("Gen", 0, 2 ** 40);
     expect(big).toBeGreaterThanOrEqual(0);
     expect(big).toBeLessThanOrEqual(2 ** 40);
+    // A wide span: residues stay uniform (a 59-bit draw rounded in doubles gave multiples of 4).
+    const wide = rngStreamsDraws(rngStreamsNew(6));
+    const res = [0, 0, 0, 0];
+    for (let i = 0; i < 4000; i++) res[wide.intInclusive("Gen", 0, 2 ** 52) % 4]!++;
+    expect(res.every((c) => c > 800)).toBe(true);
     // Negative ranges.
     for (let i = 0; i < 100; i++) {
       const v = r.intInclusive("Gen", -3, -1);
@@ -166,6 +171,8 @@ describe("rng.ts", () => {
     expect(s.remaining("Growth")).toBe(0);
     expect(() => s.normal("Growth")).toThrow(/ran out/);
     expect(() => s.nextU32("Gen")).toThrow();
+    s.push("Gen", [Number.NaN]);
+    expect(s.intInclusive("Gen", 0, 5)).toBe(0); // NaN as i64 is 0
     s.push("Gen", [9]);
     expect(() => s.intInclusive("Gen", 0, 5)).toThrow();
   });

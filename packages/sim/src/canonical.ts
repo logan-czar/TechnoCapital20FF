@@ -4,7 +4,6 @@
 // - object keys are written in sorted order (UTF-16 code units), so insertion order never shows;
 // - `Map` and `Set` (the BTreeMap / BTreeSet ports) are written as a tagged array of entries or
 //   keys sorted by key (numbers before strings);
-// - typed arrays are written as plain arrays;
 // - an `AppendBuf` (world/log.ts) is written as the rows it owns, tagged, never its shared
 //   buffer, so rows another copy appended past `len` never reach a save or a hash (D401; a
 //   ChunkLog is its two buffers, `{ closed, open }`, the same rows as its `ChunkLogRepr`);
@@ -12,7 +11,7 @@
 //   other number is written in JS's shortest round-trip form, which parses back to the same
 //   bits, so f64 state is exact;
 // - `undefined` object properties are skipped (as JSON.stringify does); `undefined` in an array,
-//   a bigint, a function, a symbol or a class instance other than the above throws.
+//   a bigint, a function, a symbol or a typed array, a class instance other than the above throws.
 //
 // Tagged values are objects with a "$" key; no plain object in the world uses that key (the
 // encoder throws if one does), so `canonicalRevive` reads the tags back without ambiguity.
@@ -91,9 +90,9 @@ export function canonicalEncode(value: unknown, emit: Sink): void {
     emit("]");
     return;
   }
-  if (ArrayBuffer.isView(value) && !(value instanceof DataView)) {
-    encodeList(value as unknown as Iterable<number>, emit);
-    return;
+  if (ArrayBuffer.isView(value)) {
+    // They would revive as plain arrays, silently changing type; nothing in the world uses them.
+    throw new TypeError("typed arrays are not allowed in saved state; use plain arrays");
   }
   if (value instanceof Map) {
     const entries = [...value.entries()].sort((a, b) => cmpKey(a[0], b[0]));
@@ -194,6 +193,9 @@ export function canonicalRevive(tree: unknown): unknown {
     }
   }
   const out: Record<string, unknown> = {};
-  for (const k of Object.keys(obj)) out[k] = canonicalRevive(obj[k]);
+  for (const k of Object.keys(obj)) {
+    if (k === "__proto__") throw new TypeError("saved state may not use the key `__proto__`");
+    out[k] = canonicalRevive(obj[k]);
+  }
   return out;
 }
