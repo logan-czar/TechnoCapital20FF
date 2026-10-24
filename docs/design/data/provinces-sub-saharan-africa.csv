@@ -106,13 +106,23 @@ ML-0011,Segou-Office du Niger,MLI,Segou,Segou,,City,3,4,14,Farmland,Tropical,N,,
 ML-0012,San-Tominian,MLI,Segou,Segou,,Town,2,2,13,Farmland,Tropical,N,,,,"San, Tominian, Bla; millet and sorghum, the Bani river"
 ML-0013,Mopti-Djenne,MLI,Mopti,Mopti,,City,3,3,13,Fishing,Wetland,N,,,,"Mopti (river port, Venice of Mali), Djenne (mud mosque), Sevare, Tenenkou, the Inner Niger Delta (fishing, floodplain rice, Fulani herders); Katiba Macina insurgency"
 ML-0014,Bandiagara-Douentza,MLI,Mopti,Mopti,,Town,1,2,13,Farmland,Desert,N,,,,"Bandiagara cliffs (Dogon country, tourism gone), Bankass, Koro, Douentza; Ogossagou and other ethnic massacres between Dogon militias and Fulani in 2019"
-ML-0015,Timbuktu-Taoudenit,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,Town,2,2,12,None,Desert,N,,,,"Timbuktu (old manuscripts, UN peacekeepers), Gourma-Rharous, Niafunke, Goundam, the Taoudenni salt mines and the empty north; jihadist rule in 2012 to 2013 ended by French and US forces (A)"
+ML-0015,Timbuktu-Taoudenit,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,Town,1,1,2,None,Desert,N,,,,"Timbuktu (old manuscripts, UN peacekeepers), Gourma-Rharous, Niafunke, Goundam, the Taoudenni salt mines and the empty north; jihadist rule in 2012 to 2013 ended by French and US forces (A)"
 ML-0016,Gao-Menaka,MLI,Gao-Menaka,Gao-Menaka,,Town,2,2,10,None,Desert,N,,,,"Gao (Songhai tombs, the main northern garrison and UN base), Ansongo, Bourem, Menaka (region since 2016), Tuareg and Arab militias; ISGS attacks on the Niger border"
 ML-0017,Kidal,MLI,Kidal,Kidal,,none,1,1,2,None,Desert,N,,,,"Kidal (held by the Tuareg CMA rebel coalition under the 2015 Algiers accord), Adrar des Ifoghas mountains, Tessalit; smuggling to Algeria"
+ML-0018,Timbuktu Northwest,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,none,1,1,1,None,Desert,N,,,,split from ML-0015 Timbuktu-Taoudenit in the giant-province split (D820)
+ML-0019,Taoudenni,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,none,1,1,1,None,Desert,N,,,,split from ML-0015 Timbuktu-Taoudenit in the giant-province split (D820); towns: Taoudenni
+ML-0020,Timbuktu Northwest 2,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,none,1,1,1,None,Desert,N,,,,split from ML-0015 Timbuktu-Taoudenit in the giant-province split (D820)
+ML-0021,Timbuktu Northeast,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,none,1,1,1,None,Desert,N,,,,split from ML-0015 Timbuktu-Taoudenit in the giant-province split (D820)
+ML-0022,Timbuktu North,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,none,1,1,1,None,Desert,N,,,,split from ML-0015 Timbuktu-Taoudenit in the giant-province split (D820)
+ML-0023,Timbuktu East,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,none,1,1,1,None,Desert,N,,,,split from ML-0015 Timbuktu-Taoudenit in the giant-province split (D820)
+ML-0024,Timbuktu Southwest,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,none,1,1,1,None,Desert,N,,,,split from ML-0015 Timbuktu-Taoudenit in the giant-province split (D820)
+ML-0025,Araouane,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,none,1,1,1,None,Desert,N,,,,split from ML-0015 Timbuktu-Taoudenit in the giant-province split (D820); towns: Araouane
+ML-0026,Timbuktu South,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,none,1,1,1,None,Desert,N,,,,split from ML-0015 Timbuktu-Taoudenit in the giant-province split (D820)
+ML-0027,Timbuktu South 2,MLI,Tombouctou-Taoudenit,Tombouctou-Taoudenit,,none,1,1,1,None,Desert,N,,,,split from ML-0015 Timbuktu-Taoudenit in the giant-province split (D820)
 NE-0001,Niamey,NER,Niamey,Niamey,,City,8,4,13,None,Desert,N,,,,"Niamey (capital on the Niger, BCEAO branch, US drone base 101 shared with France, French Barkhane air base, the 2019 African Union summit hotels), Kennedy bridge; Bazoum is the ruling party's candidate for the 2020 to 2021 election"
 NE-0002,Agadez,NER,Agadez,Agadez,,Town,2,2,8,None,Desert,N,,,,"Agadez (Air mountains gateway, mud mosque, the migrant route across the Sahara to Libya, criminalized in 2015), US drone base 201 (opened 2019), Ingall"
 NE-0003,Arlit-Akokan,NER,Agadez,Agadez,,Town,1,12,4,Uranium,Desert,N,,,,"Arlit and Akokan (Orano's Somair uranium mine; Cominak due to close in 2021), the Imouraren deposit (shelved), Areva company town; about 5% of world uranium"
-NE-0004,Bilma-Djado,NER,Agadez,Agadez,,none,1,2,1,Gold,Desert,N,,,,"Bilma and the Kawar oases (salt caravans), the Djado plateau gold rush (since 2014), Chirfa; smuggling routes to Libya and Chad"
+NE-0004,Bilma-Djado,NER,Agadez,Agadez,,none,1,1,1,Gold,Desert,N,,,,"Bilma and the Kawar oases (salt caravans), the Djado plateau gold rush (since 2014), Chirfa; smuggling routes to Libya and Chad"
 NE-0005,Diffa-Agadem,NER,Diffa,Diffa,,Town,1,8,10,Oil,Desert,N,,,,"Diffa (Boko Haram raids, displaced camps on the Komadougou), the Agadem oil block (CNPC, piped to the Zinder refinery; export pipeline to Benin planned), N'Guigmi and the shrinking Lake Chad"
 NE-0006,Dosso-Gaya,NER,Dosso,Dosso,,Town,2,2,16,Farmland,Tropical,N,,,,"Dosso (the Djermakoy's seat), Gaya (Benin border trade, the corridor to Cotonou port), Birni N'Gaoure, Doutchi"
 NE-0007,Maradi,NER,Maradi,Maradi,,City,5,3,13,Farmland,Desert,N,,,,"Maradi (Niger's trading capital, Hausa merchants tied to Kano), Madarounfa, the Nigeria border trade"
@@ -126,6 +136,14 @@ NE-0014,Say-Kollo,NER,Tillaberi,Tillaberi,,Town,2,3,13,Gold,Tropical,N,,,,"Say, 
 NE-0015,Zinder,NER,Zinder,Zinder,,City,4,6,12,None,Desert,N,,,,"Zinder (old sultanate, Niger's second city, the Soraz oil refinery (CNPC, 20,000 barrels a day)), Mirriah, the Nigeria border trade"
 NE-0016,Magaria-Matameye,NER,Zinder,Zinder,,Town,1,2,15,Farmland,Desert,N,,,,"Magaria, Matameye, Dungass; groundnuts, sorghum, cross-border trade with Kano and Jigawa"
 NE-0017,Tanout-Goure,NER,Zinder,Zinder,,Town,1,2,14,None,Desert,N,,,,"Tanout, Goure, Mayahi fringe; Sahel herding toward the desert, the Termit massif"
+NE-0018,Bilma Northeast,NER,Agadez,Agadez,,none,1,1,1,None,Desert,N,,,,split from NE-0004 Bilma-Djado in the giant-province split (D820)
+NE-0019,Bilma Northwest,NER,Agadez,Agadez,,none,1,1,1,None,Desert,N,,,,split from NE-0004 Bilma-Djado in the giant-province split (D820)
+NE-0020,Bilma West,NER,Agadez,Agadez,,none,1,1,1,None,Desert,N,,,,split from NE-0004 Bilma-Djado in the giant-province split (D820)
+NE-0021,Bilma East,NER,Agadez,Agadez,,none,1,1,1,None,Desert,N,,,,split from NE-0004 Bilma-Djado in the giant-province split (D820)
+NE-0022,Bilma Southeast,NER,Agadez,Agadez,,none,1,1,1,None,Desert,N,,,,split from NE-0004 Bilma-Djado in the giant-province split (D820)
+NE-0023,Bilma Southeast 2,NER,Agadez,Agadez,,none,1,1,1,None,Desert,N,,,,split from NE-0004 Bilma-Djado in the giant-province split (D820)
+NE-0024,Bilma Southwest,NER,Agadez,Agadez,,none,1,1,1,None,Desert,N,,,,split from NE-0004 Bilma-Djado in the giant-province split (D820)
+NE-0025,Bilma South,NER,Agadez,Agadez,,none,1,1,1,None,Desert,N,,,,split from NE-0004 Bilma-Djado in the giant-province split (D820)
 BF-0001,Ouagadougou,BFA,Centre,Centre (Burkina Faso),,City,10,5,16,None,Tropical,N,,,,"Ouagadougou (capital: Kosyam palace, BCEAO branch, Ouaga 2000 villas, FESPACO film festival, gold-exporter offices); Kabore's government elected 2015, attacks on the French embassy and army HQ in 2018"
 BF-0002,Bobo-Dioulasso-Hounde,BFA,Hauts-Bassins,Hauts-Bassins,,City,5,8,15,Gold,Tropical,N,,,,"Bobo-Dioulasso (second city, SOFITEX cotton, Brakina breweries, oil mills), Hounde gold mine (Endeavour, opened 2017), Orodara mangoes"
 BF-0003,Dedougou-Mouhoun,BFA,Boucle du Mouhoun,Boucle du Mouhoun,,Town,2,4,15,Gold,Tropical,N,,,,"Dedougou, Nouna, Tougan, Solenzo; cotton and artisanal gold, Mana mine (SEMAFO) on the edge"
@@ -153,7 +171,7 @@ GN-0012,Beyla-Simandou,GIN,Nzerekore,Nzerekore,,Town,1,8,9,Iron ore,Mountain,N,,
 MR-0001,Nouakchott,MRT,Nouakchott,Nouakchott,,City,9,5,13,None,Desert,Y,,,,"Nouakchott (capital: presidency, Central Bank of Mauritania, port of Nouakchott and the Chinese-built Port de l'Amitie), Tevragh Zeina villas, Sebkha and El Mina; Ghazouani elected 2019 in the first peaceful handover"
 MR-0002,Nouadhibou,MRT,Dakhlet Nouadhibou,Dakhlet Nouadhibou,,City,5,10,4,Fishing,Desert,Y,,,,"Nouadhibou (Mauritania's fishing capital, free zone, the SNIM iron-ore loading pier at Cansado), Chinese Poly-Hondone fish plant, Banc d'Arguin bird reserve; the Western Sahara border at Guerguerat"
 MR-0003,Akjoujt-Tasiast,MRT,Inchiri,Inchiri,,Town,1,9,1,Copper,Desert,N,,,,"Akjoujt (Guelb Moghrein copper and gold mine, First Quantum), Tasiast gold mine (Kinross) on the Nouadhibou road"
-MR-0004,Zouerate-Fderik,MRT,Tiris Zemmour,Tiris Zemmour,,Town,2,14,1,Iron ore,Desert,N,,,,"Zouerate and Fderik (SNIM iron ore mines: Guelbs and Kedia d'Idjil; the 700 km ore train to Nouadhibou, one of the world's longest), Bir Moghrein; Polisario border"
+MR-0004,Zouerate-Fderik,MRT,Tiris Zemmour,Tiris Zemmour,,Town,1,9,1,Iron ore,Desert,N,,,,"Zouerate and Fderik (SNIM iron ore mines: Guelbs and Kedia d'Idjil; the 700 km ore train to Nouadhibou, one of the world's longest), Bir Moghrein; Polisario border"
 MR-0005,Atar-Chinguetti,MRT,Adrar,Adrar,,none,2,2,1,None,Desert,N,,,,"Atar (dates, old tourism gateway), Chinguetti and Ouadane (old library towns), Aoujeft; Sahara dunes"
 MR-0006,Rosso-Trarza,MRT,Trarza,Trarza,,Town,2,4,7,Gas,Desert,Y,,,,"Rosso (ferry to Senegal, river rice), Boutilimit, N'Diago (the Grand Tortue Ahmeyim LNG hub on the maritime border, under construction), Keur Macene"
 MR-0007,Aleg-Boghe,MRT,Brakna,Brakna,,Town,1,2,7,Farmland,Desert,N,,,,"Aleg, Boghe, Bababe; Senegal river farming, Haratine and Afro-Mauritanian villages"
@@ -163,6 +181,11 @@ MR-0010,Kiffa,MRT,Assaba,Assaba,,Town,1,2,7,Farmland,Desert,N,,,,"Kiffa (crossro
 MR-0011,Tidjikja,MRT,Tagant,Tagant,,none,1,1,2,None,Desert,N,,,,"Tidjikja, Tichitt (old caravan town), Moudjeria; dates, near-empty plateau"
 MR-0012,Ayoun el Atrous,MRT,Hodh El Gharbi,Hodh El Gharbi,,Town,1,2,7,Farmland,Desert,N,,,,"Ayoun el Atrous, Tamchekett, Kobenni; herding and millet along the Mali border"
 MR-0013,Nema-Bassikounou,MRT,Hodh Ech Chargui,Hodh Ech Chargui,,Town,1,2,9,Farmland,Desert,N,,,,"Nema, Timbedra, Bassikounou (Mbera camp, about 60,000 Malian refugees), Oualata; the Mauritanian army's Mali border zone"
+MR-0014,Zouerate Northeast,MRT,Tiris Zemmour,Tiris Zemmour,,none,1,1,1,None,Desert,N,,,,split from MR-0004 Zouerate-Fderik in the giant-province split (D820)
+MR-0015,Chegga,MRT,Tiris Zemmour,Tiris Zemmour,,none,1,1,1,None,Desert,N,,,,split from MR-0004 Zouerate-Fderik in the giant-province split (D820); towns: Chegga
+MR-0016,Zouerate Northwest,MRT,Tiris Zemmour,Tiris Zemmour,,none,1,1,1,None,Desert,N,,,,split from MR-0004 Zouerate-Fderik in the giant-province split (D820)
+MR-0017,Bir Mogrein,MRT,Tiris Zemmour,Tiris Zemmour,,none,1,1,1,None,Desert,N,,,,split from MR-0004 Zouerate-Fderik in the giant-province split (D820); towns: Bir Mogrein
+MR-0018,Zouerate Southwest,MRT,Tiris Zemmour,Tiris Zemmour,,none,1,1,1,None,Desert,N,,,,split from MR-0004 Zouerate-Fderik in the giant-province split (D820)
 BJ-0001,Cotonou,BEN,Littoral,Littoral (Benin),,City,12,10,10,None,Urban,Y,,,,"Cotonou (economic capital: presidency, port of Cotonou (Bollore; re-exports of cars and rice to Nigeria), Dantokpa market, BCEAO branch, Cardinal Bernardin Gantin airport), Talon's cotton and port fortune"
 BJ-0002,Abomey-Calavi-Ouidah,BEN,Atlantique,Atlantique,,City,4,5,14,None,Tropical,Y,,,,"Abomey-Calavi (fast-growing Cotonou suburb, the university), Ouidah (Point of No Return slave-trade memorial, voodoo festival), Allada, Tori-Bossito, Seme oil field (exhausted) offshore"
 BJ-0003,Porto-Novo,BEN,Oueme-Plateau,Oueme-Plateau,,City,5,5,15,Farmland,Tropical,Y,,,,"Porto-Novo (official capital and National Assembly), Seme-Kpodji and the Krake border crossing into Lagos (fuel smuggling, Nigeria's 2019 border closure), Pobe and Sakete oil palm, Onigbolo cement"
@@ -274,7 +297,14 @@ TD-0012,Mongo-Am Timan,TCD,Guera-Salamat,Guera-Salamat,,Town,1,2,12,Farmland,Tro
 TD-0013,Abeche,TCD,Ouaddai,Ouaddai,,Town,3,2,12,Farmland,Desert,N,,,,"Abeche (old sultanate capital, eastern trade hub), Adre (Sudan border), Am Dam; Darfuri refugee camps"
 TD-0014,Goz Beida-Biltine,TCD,Sila-Wadi Fira,Sila-Wadi Fira,,Town,1,2,12,Farmland,Desert,N,,,,"Goz Beida, Koukou, Biltine, Guereda, Iriba; Zaghawa country (Deby's clan), refugee camps along the Darfur border"
 TD-0015,Fada-Amdjarass,TCD,Ennedi,Ennedi,,none,1,1,6,None,Desert,N,,,,"Fada, Amdjarass (Deby's birthplace, new airport), the Ennedi plateau (UNESCO, rock art), Kalait"
-TD-0016,Faya-Tibesti,TCD,Borkou-Tibesti,Borkou-Tibesti,,none,1,3,5,Gold,Desert,N,,,,"Faya-Largeau (oasis, dates, army base), Zouar, Bardai, the Tibesti mountains and Emi Koussi, the Kouri Bougoudi gold rush (since 2012) and Libyan smuggling routes"
+TD-0016,Faya-Tibesti,TCD,Borkou-Tibesti,Borkou-Tibesti,,none,1,1,1,Gold,Desert,N,,,,"Faya-Largeau (oasis, dates, army base), Zouar, Bardai, the Tibesti mountains and Emi Koussi, the Kouri Bougoudi gold rush (since 2012) and Libyan smuggling routes"
+TD-0017,Faya Northwest,TCD,Borkou-Tibesti,Borkou-Tibesti,,none,1,1,1,None,Desert,N,,,,split from TD-0016 Faya-Tibesti in the giant-province split (D820)
+TD-0018,Faya North,TCD,Borkou-Tibesti,Borkou-Tibesti,,none,1,1,1,None,Desert,N,,,,split from TD-0016 Faya-Tibesti in the giant-province split (D820)
+TD-0019,Zouar,TCD,Borkou-Tibesti,Borkou-Tibesti,,none,1,1,1,None,Desert,N,,,,split from TD-0016 Faya-Tibesti in the giant-province split (D820); towns: Zouar
+TD-0020,Faya Northeast,TCD,Borkou-Tibesti,Borkou-Tibesti,,none,1,1,1,None,Desert,N,,,,split from TD-0016 Faya-Tibesti in the giant-province split (D820)
+TD-0021,Faya Southwest,TCD,Borkou-Tibesti,Borkou-Tibesti,,none,1,1,1,None,Desert,N,,,,split from TD-0016 Faya-Tibesti in the giant-province split (D820)
+TD-0022,Faya South,TCD,Borkou-Tibesti,Borkou-Tibesti,,none,1,1,1,None,Desert,N,,,,split from TD-0016 Faya-Tibesti in the giant-province split (D820)
+TD-0023,Faya Southeast,TCD,Borkou-Tibesti,Borkou-Tibesti,,none,1,1,1,None,Desert,N,,,,split from TD-0016 Faya-Tibesti in the giant-province split (D820)
 CF-0001,Bangui,CAF,Bangui,Bangui,,City,5,3,12,None,Tropical,N,,,,"Bangui (capital on the Ubangi: Touadera's presidency, MINUSCA headquarters, Russian military advisers since 2018, the PK5 Muslim enclave and its traders), river port; the February 2019 Khartoum peace deal"
 CF-0002,Mbaiki-Boali,CAF,Ombella-MPoko-Lobaye,Ombella-MPoko-Lobaye,,Town,1,4,10,Timber,Tropical,N,,,,"Mbaiki and the Lobaye forest (logging concessions, Aka people), Boali falls and dam (Bangui's power), Bimbo, Damara"
 CF-0003,Berberati-Nola,CAF,Sangha-Mambere-Kadei,Sangha-Mambere-Kadei,,Town,2,4,10,Timber,Tropical,N,,,,"Berberati and Carnot (diamond trading, Kimberley-restricted), Nola, Dzanga-Sangha park; logging to Douala"
@@ -349,17 +379,29 @@ SD-0009,Kassala,SDN,Kassala,Kassala,,City,3,3,15,Farmland,Desert,N,,,,"Kassala (
 SD-0010,Port Sudan,SDN,Red Sea,Red Sea,,City,6,14,12,None,Desert,Y,Bab-el-Mandeb; Suez Canal; Red Sea cable corridor,,,"Port Sudan (Sudan's only real sea port: Southern and Northern ports, the oil export terminal at Bashayer for South Sudanese and Sudanese crude, the 2019 Philippine ICTSI concession cancelled after protests), Suakin (Turkish lease, 2017), cable landings; Beja unrest"
 SD-0011,Tokar-Ariab,SDN,Red Sea,Red Sea,,Town,2,8,10,Gold,Desert,Y,,,,"Ariab gold mine (Sudan's oldest industrial gold mine, Red Sea hills), Tokar delta cotton, Halaib triangle approaches (claimed by Sudan, held by Egypt: notes only), Sinkat, Haya; artisanal gold rush"
 SD-0012,Atbara-Shendi,SDN,River Nile,River Nile,,City,4,6,14,Gold,Desert,N,,,,"Atbara (railway workshops, where the December 2018 bread protests began), Berber cement plants, Shendi, Meroe pyramids, Abu Hamad gold rush (cyanide and mercury), the Merowe-Abu Hamad corridor"
-SD-0013,Dongola-Merowe,SDN,Northern,Northern (Sudan),,Town,2,6,12,Hydropower,Desert,N,,,,"Merowe dam (1.25 GW, Chinese-built 2009, Sudan's largest power source), Dongola, Karima (Jebel Barkal), Wadi Halfa (Egypt border and Lake Nubia ferry), Gulf-owned farm leases"
+SD-0013,Dongola-Merowe,SDN,Northern,Northern (Sudan),,Town,1,1,4,Hydropower,Desert,N,,,,"Merowe dam (1.25 GW, Chinese-built 2009, Sudan's largest power source), Dongola, Karima (Jebel Barkal), Wadi Halfa (Egypt border and Lake Nubia ferry), Gulf-owned farm leases"
 SD-0014,El Obeid,SDN,North Kordofan,North Kordofan,,City,3,3,15,Farmland,Desert,N,,,,"El Obeid (gum arabic, the world's main source; the Kordofan crop market), Bara, Umm Ruwaba, Sodiri; refinery at El Obeid"
 SD-0015,Kadugli-Nuba,SDN,South Kordofan,South Kordofan,,Town,2,4,13,Gold,Mountain,N,,,,"Kadugli, Dilling, the Nuba mountains (SPLM-North controlled areas, ceasefire talks in Juba), Talodi and Kalogi gold, Abu Jubaiha"
 SD-0016,Al Fula-Heglig,SDN,West Kordofan,West Kordofan,,Town,2,14,14,Oil,Desert,N,,,,"Heglig (the main Sudanese-run oil fields, seized by South Sudan for ten days in 2012), Balila, Muglad basin fields (CNPC, Petronas and ONGC), Babanusa railway junction, Al Fula, El Nuhud"
 SD-0017,Abyei,SDN,Abyei Area,Abyei Area,,Town,1,5,4,Oil,Tropical,N,,SDN and SSD dispute,,"Abyei town and the Diffra oil field; Ngok Dinka and Misseriya grazing lands, the UNISFA Ethiopian peacekeepers since 2011, the referendum promised in 2005 never held; administered as a special area, claimed by both Sudan and South Sudan (A: owner SDN)"
-SD-0018,El Fasher,SDN,North Darfur,North Darfur,,City,3,3,13,Farmland,Desert,N,,,,"El Fasher (old sultanate capital, UNAMID headquarters winding down), Kutum, Mellit, Kabkabiya; displaced camps (Zamzam, Abu Shouk), the Libyan desert road"
+SD-0018,El Fasher,SDN,North Darfur,North Darfur,,City,1,1,8,Farmland,Desert,N,,,,"El Fasher (old sultanate capital, UNAMID headquarters winding down), Kutum, Mellit, Kabkabiya; displaced camps (Zamzam, Abu Shouk), the Libyan desert road"
 SD-0019,Jebel Amer-Kebkabiya,SDN,North Darfur,North Darfur,,none,1,5,13,Gold,Desert,N,,,,"Jebel Amer gold field (taken by Hemedti's RSF in 2017; Algunade's gold exports to Dubai), Saraf Omra, Kornoi and Tine (Chad border); Zaghawa and Arab militia areas"
 SD-0020,Nyala,SDN,South Darfur,South Darfur,,City,4,3,17,Farmland,Desert,N,,,,"Nyala (Darfur's largest city and trade hub, the Darfur railway terminus, livestock), Kass, Kalma camp, Buram, Tullus; Radom national park"
 SD-0021,Zalingei-Jebel Marra,SDN,Central Darfur,Central Darfur,,Town,1,2,14,Farmland,Mountain,N,,,,"Zalingei, Jebel Marra (SLA-Abdel Wahid holdout), Mukjar, Umm Dukhun (Central African and Chadian border trade); Fur farming country"
 SD-0022,El Geneina,SDN,West Darfur,West Darfur,,Town,2,2,13,Farmland,Desert,N,,,,"El Geneina (on the Chad border, the December 2019 Krinding camp clashes), Mornei, Kulbus, Habila"
 SD-0023,Ed Daein,SDN,East Darfur,East Darfur,,Town,1,3,12,Farmland,Desert,N,,,,"Ed Daein, Adila, Abu Karinka; Rizeigat cattle herders, the Kafia Kingi enclave dispute with South Sudan (notes only), the Darfur railway"
+SD-0024,Wadi Halfa,SDN,Northern,Northern (Sudan),,none,1,1,2,None,Desert,N,,,,split from SD-0013 Dongola-Merowe in the giant-province split (D820); towns: Wadi Halfa
+SD-0025,Dongola Northwest,SDN,Northern,Northern (Sudan),,none,1,1,1,None,Desert,N,,,,split from SD-0013 Dongola-Merowe in the giant-province split (D820)
+SD-0026,Dongola West,SDN,Northern,Northern (Sudan),,none,1,1,1,None,Desert,N,,,,split from SD-0013 Dongola-Merowe in the giant-province split (D820)
+SD-0027,Kerma,SDN,Northern,Northern (Sudan),,none,1,1,1,None,Desert,N,,,,split from SD-0013 Dongola-Merowe in the giant-province split (D820); towns: Kerma
+SD-0028,Dongola Southwest,SDN,Northern,Northern (Sudan),,none,1,1,1,None,Desert,N,,,,split from SD-0013 Dongola-Merowe in the giant-province split (D820)
+SD-0029,Dongola Southwest 2,SDN,Northern,Northern (Sudan),,none,1,1,1,None,Desert,N,,,,split from SD-0013 Dongola-Merowe in the giant-province split (D820)
+SD-0030,Merowe,SDN,Northern,Northern (Sudan),,none,1,1,1,Hydropower,Desert,N,,,,split from SD-0013 Dongola-Merowe in the giant-province split (D820); towns: Merowe
+SD-0031,El Fasher North,SDN,North Darfur,North Darfur,,none,1,1,1,Farmland,Desert,N,,,,split from SD-0018 El Fasher in the giant-province split (D820)
+SD-0032,El Fasher North 2,SDN,North Darfur,North Darfur,,none,1,1,1,Farmland,Desert,N,,,,split from SD-0018 El Fasher in the giant-province split (D820)
+SD-0033,El Fasher Northeast,SDN,North Darfur,North Darfur,,none,1,1,1,Farmland,Desert,N,,,,split from SD-0018 El Fasher in the giant-province split (D820)
+SD-0034,El Fasher Southwest,SDN,North Darfur,North Darfur,,none,1,1,1,Farmland,Desert,N,,,,split from SD-0018 El Fasher in the giant-province split (D820)
+SD-0035,El Fasher Southeast,SDN,North Darfur,North Darfur,,none,1,1,1,Farmland,Desert,N,,,,split from SD-0018 El Fasher in the giant-province split (D820)
 SS-0001,Juba,SSD,Central Equatoria,Central Equatoria,,City,6,4,9,None,Tropical,N,,,,"Juba (capital on the White Nile: Kiir's presidency, Bank of South Sudan, the UNMISS bases and protection-of-civilians sites, Konyokonyo market, the Nile bridge); the 2018 revitalized peace deal, unity government due in February 2020 (A)"
 SS-0002,Yei-Terekeka,SSD,Central Equatoria,Central Equatoria,,Town,1,3,12,Timber,Tropical,N,,,,"Yei (once South Sudan's breadbasket, now NAS rebel country), Kajo Keji, Morobo, Lainya, Terekeka; teak plantations and logging, refugees to Uganda"
 SS-0003,Torit-Kapoeta,SSD,Eastern Equatoria,Eastern Equatoria,,Town,1,3,12,Gold,Tropical,N,,,,"Torit, Kapoeta (artisanal gold), Nimule (main crossing to Uganda), Magwi, the Imatong mountains; the Ilemi Triangle on the Kenya border (Kenyan-run, notes only)"

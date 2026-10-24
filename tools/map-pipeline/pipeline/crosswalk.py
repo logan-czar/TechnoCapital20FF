@@ -106,11 +106,22 @@ class ProvinceRow:
     seeds: list[Seed] = field(default_factory=list)
 
 
+def subdivided(hints: dict) -> dict[str, str]:
+    """D820: the new provinces of the giant-province split (child id -> the province cut into
+    them), from a region's `[subdivide]` hints. They are cut from their parent's shape in P4
+    (pipeline/subdivide.py), so the crosswalk places only the parent."""
+    return {c: pid for pid, spec in sorted(hints.get("subdivide", {}).items())
+            for c in sorted(spec.get("children", {}))}
+
+
 def read_provinces(region: config.Region) -> list[ProvinceRow]:
+    """The region file's provinces the crosswalk places: every row but the parts of a split
+    giant other than the original (D820)."""
+    skip = subdivided(load_hints(region))
     with (config.DATA_DIR / region.csv).open(encoding="utf-8", newline="") as f:
         return [
             ProvinceRow(r["id"], r["name"], r["country"], r["region"], r["metro"], r["notes"], r["coastal"])
-            for r in csv.DictReader(f)
+            for r in csv.DictReader(f) if r["id"] not in skip
         ]
 
 
@@ -1460,12 +1471,36 @@ def run(region: config.Region) -> None:
                                       method=method, source_ids=";".join(ids), confidence=round(conf, 2),
                                       provenance=prov_str, note=note))
 
+    # D820: each part of a split giant other than the original gets a row like its parent's, and
+    # the parent's row says it was cut
+    split_of = subdivided(hints)
+    if split_of:
+        with (config.DATA_DIR / region.csv).open(encoding="utf-8", newline="") as f:
+            all_rows = {r["id"]: r for r in csv.DictReader(f)}
+        by_pid = {r["province_id"]: r for r in province_rows}
+        specs = hints.get("subdivide", {})
+        for pid, spec in sorted(specs.items()):
+            pr = by_pid[pid]
+            pr["note"] += f"; cut into {spec['parts']} provinces on {spec['blocks']} pieces (D820)"
+        for cid, pid in sorted(split_of.items()):
+            pr, spec, r = by_pid[pid], specs[pid], all_rows[cid]
+            prov = pr["provenance"]
+            if spec["blocks"] == "admin2":
+                meta = blocks_for(r["country"], "admin2")[1]
+                prov = "; ".join(dict.fromkeys([licenses.provenance(meta)] + prov.split("; ")))
+            elif spec["blocks"] == "towns":
+                prov = "; ".join(dict.fromkeys(prov.split("; ") + [licenses.NE_PROVENANCE]))
+            province_rows.append(dict(province_id=cid, name=r["name"], country=r["country"], region=r["region"],
+                                      method="admin2" if spec["blocks"] == "admin2" else "voronoi",
+                                      source_ids=pr["source_ids"], confidence=Q_HINT, provenance=prov,
+                                      note=f"part of {pid}, cut into {spec['parts']} provinces on "
+                                           f"{spec['blocks']} pieces (D820)"))
     _write_csv(out_dir / "region_crosswalk.csv", region_rows,
                ["country", "region", "method", "source_ids", "confidence", "provenance", "note"],
                merge_key=("country", "region"), own={(p.country, p.region) for p in provs})
     _write_csv(out_dir / "province_crosswalk.csv", province_rows,
                ["province_id", "name", "country", "region", "method", "source_ids", "confidence", "provenance", "note"],
-               merge_key=("province_id",), own={(p.id,) for p in provs})
+               merge_key=("province_id",), own={(p.id,) for p in provs} | {(c,) for c in split_of})
     (work / "unclaimed.json").write_text(json.dumps(unclaimed, indent=1), encoding="utf-8")
     (work / "land-gaps.json").write_text(json.dumps(gaps, indent=1), encoding="utf-8")
     (work / "ne-labels.json").write_text(json.dumps(labels, indent=1), encoding="utf-8")

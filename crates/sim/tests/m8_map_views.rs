@@ -97,7 +97,7 @@ fn map_static_maps_the_bitmap_to_provinces() {
     // The tiny province's click target is its label point.
     assert_eq!(v.tiny_targets(), [(pid(&sim, "US-0004"), (12.0, 12.0))]);
     // Every province has a row; contested and development come from the province files.
-    assert_eq!(v.provinces.len(), 3255);
+    assert_eq!(v.provinces.len(), 3968);
     let tw = &v.provinces[pid(&sim, "TW-0001").index()];
     assert!(tw.contested);
     let us1 = &v.provinces[pid(&sim, "US-0001").index()];
@@ -128,8 +128,8 @@ fn no_map_assets_is_no_geometry() {
     assert!(v.province_at_index(1).is_none());
     assert!(v.tiny_targets().is_empty());
     // The cards and layers need no map assets.
-    assert_eq!(v.provinces.len(), 3255);
-    assert_eq!(sim.views().province_cards.get().cards.len(), 3255);
+    assert_eq!(v.provinces.len(), 3968);
+    assert_eq!(sim.views().province_cards.get().cards.len(), 3968);
 }
 
 #[test]

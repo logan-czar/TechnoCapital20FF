@@ -1456,7 +1456,7 @@ mod tests {
 
     #[test]
     fn pool_follows_resizes() {
-        let (mut app, table) = app_with_table(3_255);
+        let (mut app, table) = app_with_table(3_968);
         for (h, want) in [
             (220.0, 10),
             (572.0, 26),
@@ -1476,7 +1476,7 @@ mod tests {
 
     #[test]
     fn redraw_writes_the_visible_rows() {
-        let (mut app, table) = app_with_table(3_255);
+        let (mut app, table) = app_with_table(3_968);
         set_height(&mut app, table, 220.0);
         {
             let mut t = app.world_mut().get_mut::<Table>(table).unwrap();

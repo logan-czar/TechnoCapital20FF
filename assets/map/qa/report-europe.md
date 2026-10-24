@@ -1,6 +1,6 @@
 # Map QA report: europe
 
-_Written by `tools/map-pipeline/run.py --region europe` (pipeline pb-1). Source of the rows: `provinces-europe.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
+_Written by `tools/map-pipeline/run.py --region europe` (pipeline pb-2). Source of the rows: `provinces-europe.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
 
 ## Result
 

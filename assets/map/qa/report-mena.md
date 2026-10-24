@@ -1,60 +1,74 @@
 # Map QA report: mena
 
-_Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-1). Source of the rows: `provinces-mena.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
+_Written by `tools/map-pipeline/run.py --region mena` (pipeline pb-2). Source of the rows: `provinces-mena.csv`. Format: docs/build/m8-map-assets.md; threshold and methods: docs/build/decisions.md D600-D612 and D670-D699._
 
 ## Result
 
-**Pass.** All 331 provinces of `provinces-mena.csv` have a crosswalk row and pixels (72 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
+**Pass.** All 389 provinces of `provinces-mena.csv` have a crosswalk row and pixels (72 of them tiny, with a click target at the label point). No source outside the license allowlist reached a province.
 
 ## Coverage
 
 | Measure | Count |
 |---|---|
-| Provinces in the CSV | 331 |
+| Provinces in the CSV | 389 |
 | ... ARE | 15 |
 | ... BHR | 1 |
-| ... DZA | 29 |
-| ... EGY | 34 |
+| ... DZA | 58 |
+| ... EGY | 43 |
 | ... IRN | 37 |
 | ... IRQ | 24 |
 | ... ISR | 17 |
 | ... JOR | 10 |
 | ... KWT | 10 |
 | ... LBN | 8 |
-| ... LBY | 19 |
+| ... LBY | 33 |
 | ... MAR | 20 |
 | ... OMN | 13 |
 | ... PSE | 6 |
 | ... QAT | 10 |
-| ... SAU | 37 |
+| ... SAU | 43 |
 | ... SYR | 14 |
 | ... TUN | 11 |
 | ... YEM | 16 |
 | Regions matched | 241 of 241 |
 | Provinces by method: admin1 | 198 |
-| Provinces by method: admin2 | 37 |
+| Provinces by method: admin2 | 46 |
 | Provinces by method: admin3 | 0 |
-| Provinces by method: voronoi | 96 |
+| Provinces by method: voronoi | 145 |
 | Flagged for review (confidence < 0.6) | 0 |
 | Placed by a builder hint (`hints/mena.toml`) | 80 |
 | Tiny (under 64 px) | 72 |
 | Given a pixel at their interior point (no pixel centre inside) | 1 |
-| More than one part (islands, exclaves) | 72 |
+| More than one part (islands, exclaves) | 74 |
 | Coastal flag differs from the CSV | 32 |
-| Small for their region (not Metro, under 5% of the region's mean) | 5 |
+| Small for their region (not Metro, under 5% of the region's mean) | 4 |
 | Voronoi-split blocks where one province takes 75% or more | 10 |
 | Places named in a province's name or notes that lie in another province | 0 |
 | Pixels drawn over another province (overlapping shapes) | 0 |
 | Contested provinces (drawn by our own files) | 10 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 20 |
-| City probe points (fail on a mismatch; D686) | 54 pass, 0 mismatch, 8 listed |
+| City probe points (fail on a mismatch; D686) | 70 pass, 0 mismatch, 8 listed |
 | Metro reach scan rows (listed; D686) | 1 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 4 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
 | Metro cities across a narrow strait, or own cities on the province's edge (listed, allowed) | 1 |
 
 Methods: `admin1` is a whole Natural Earth admin-1 unit or a dissolve of them; `admin2` a dissolve of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).
+
+## Split giants
+
+Provinces over 250,000 km2 that are not Arctic, cut into parts of at most 51,722 km2 (Eastern Iowa, US-0053) by `run.py giants` and `[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a part over the cap.
+
+| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces |
+|---|---|---|---|---|---|---|---|
+| DZ-0027 | Tamanrasset-In Salah | 13 | towns | 609,275 | 45,043 | 49,470 | 0 |
+| DZ-0028 | Adrar-Timimoun | 10 | towns | 475,435 | 45,801 | 48,427 | 0 |
+| DZ-0029 | Bechar-Tindouf | 9 | towns | 416,754 | 45,259 | 48,489 | 1 |
+| EG-0031 | Kharga-New Valley | 10 | admin2 | 452,986 | 44,331 | 46,401 | 1 |
+| LY-0015 | Kufra | 9 | parts | 422,897 | 46,870 | 47,162 | 0 |
+| LY-0018 | Murzuq-Sharara | 7 | towns | 315,722 | 43,173 | 48,118 | 0 |
+| SA-0020 | Shaybah-Rub al Khali | 7 | parts | 301,909 | 42,876 | 43,250 | 1 |
 
 ## Sources and licenses
 
@@ -164,7 +178,7 @@ The automatic match could not place these from the CSV name and notes (a suburb 
 | SA-0015 | Jubail | seeds: point 49.22,27.55 (hint); point 49.66,27.01 (hint) (snapped to land); 1 whole parts, 1 split |
 | SA-0016 | Ras Tanura-Qatif | seeds: point 50.01,26.56 (hint) (snapped to land); point 50.16,26.64 (hint) (snapped to land); 0 whole parts, 1 split |
 | SA-0018 | Abqaiq-Ghawar | seeds: point 49.2,24.2 (hint); point 49.3,25.0 (hint); point 49.67,25.94 (hint); 0 whole parts, 1 split |
-| SA-0020 | Shaybah-Rub al Khali | seeds: point 51.5,20.5 (hint); point 54.0,22.51 (hint); 0 whole parts, 1 split |
+| SA-0020 | Shaybah-Rub al Khali | seeds: point 51.5,20.5 (hint); point 54.0,22.51 (hint); 0 whole parts, 1 split; cut into 7 provinces on parts pieces (D820) |
 | SA-0022 | Yanbu | seeds: point 38.06,24.09 (hint); point 38.24,23.96 (hint); 0 whole parts, 1 split |
 | SA-0023 | Al Ula-Khaybar | seeds: point 37.92,26.62 (hint); point 39.29,25.69 (hint); point 40.88,23.5 (hint); 0 whole parts, 1 split |
 | SA-0025 | Bisha | seeds: point 42.61,20.0 (hint); point 43.62,19.53 (hint); 0 whole parts, 1 split |
@@ -285,13 +299,18 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Tifariti (-10.6, 26.16) | ? | MA-0019 | listed |
 | Zagora (-5.84, 30.33) | ? | MA-0017 | listed |
 | 6th of October (30.93, 29.94) | EG-0005 | EG-0005 | on it |
+| Abadla (split part) (-2.7333, 31.0171) | DZ-0053 | DZ-0053 | on it |
 | Abu Dhabi (54.37, 24.47) | AE-0001 | AE-0001 | on it |
 | Abu Ghraib (44.07, 33.29) | IQ-0004 | IQ-0004 | on it |
 | Abu Musa (55.03, 25.87) | IR-0018 | IR-0018 | on it |
+| Adrar (main city of a split giant) (-0.29, 27.87) | DZ-0028 | DZ-0028 | on it |
+| Al Jawf (main city of a split giant) (23.29, 24.2) | LY-0015 | LY-0015 | on it |
 | Algiers (3.06, 36.75) | DZ | DZ-0001 | on it |
+| Arak (split part) (3.75, 25.28) | DZ-0033 | DZ-0033 | on it |
 | Baghdad (44.37, 33.31) | IQ | IQ-0001 | on it |
 | Baghdad Green Zone (44.38, 33.31) | IQ-0001 | IQ-0001 | on it |
 | Bahrain Manama (50.58, 26.22) | BH | BH-0001 | on it |
+| Bechar (main city of a split giant) (-2.23, 31.6111) | DZ-0029 | DZ-0029 | on it |
 | Bethlehem (35.2, 31.705) | PS-0004 | PS-0004 | on it |
 | Boujdour (-14.49, 26.13) | MA-0019 | MA-0019 | on it |
 | Cairo Airport (31.41, 30.12) | EG-0002 | EG-0002 | on it |
@@ -303,6 +322,9 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Dubai Downtown (55.27, 25.2) | AE-0008 | AE-0008 | on it |
 | Dubai Marina (55.14, 25.08) | AE-0010 | AE-0010 | nearest across water |
 | East Jerusalem Old City (35.235, 31.777) | IL-0002 | IL-0002 | on it |
+| El Bayadh (split part) (1.01, 33.6904) | DZ-0051 | DZ-0051 | on it |
+| El Kharga (main city of a split giant) (30.55, 25.44) | EG-0031 | EG-0031 | on it |
+| El Qasr (split part) (28.8833, 25.7004) | EG-0037 | EG-0037 | on it |
 | Es-Semara inland (-11.0, 26.5) | MA-0019 | MA-0019 | on it |
 | Eslamshahr (51.23, 35.55) | IR-0003 | IR-0003 | on it |
 | Gaza (34.45, 31.5) | PS | PS-0005 | on it |
@@ -311,6 +333,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Hebron (35.1, 31.53) | PS-0004 | PS-0004 | on it |
 | Heliopolis (31.32, 30.09) | EG-0002 | EG-0001 | within a pixel |
 | Helwan (31.33, 29.85) | EG-0003 | EG-0003 | on it |
+| I-n-Salah (split part) (2.4666, 27.2166) | DZ-0031 | DZ-0031 | on it |
 | Jenin (35.3, 32.46) | PS-0001 | PS-0001 | on it |
 | Jericho (35.45, 31.86) | PS-0003 | PS-0003 | on it |
 | Katzrin Golan (35.69, 32.99) | IL-0015 | IL-0015 | on it |
@@ -320,8 +343,10 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Madain (44.58, 33.1) | IQ-0004 | IQ-0004 | on it |
 | Mahbes (-9.05, 27.22) | MA-0019 | MA-0019 | on it |
 | Mahmudiya (44.36, 33.06) | IQ-0004 | IQ-0004 | on it |
+| Marzuq (main city of a split giant) (13.8972, 25.9044) | LY-0018 | LY-0018 | on it |
 | Nablus (35.26, 32.22) | PS-0002 | PS-0002 | on it |
 | New Cairo (31.47, 30.03) | EG-0002 | EG-0002 | on it |
+| Qasr Farafra (split part) (27.9666, 27.0671) | EG-0036 | EG-0036 | on it |
 | Qatar Doha (51.53, 25.29) | QA | QA-0001 | nearest across water |
 | Rafah (34.25, 31.29) | PS | PS-0006 | on it |
 | Ramallah (35.2, 31.9) | PS-0003 | PS-0003 | on it |
@@ -334,10 +359,15 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Shubra el-Kheima (31.24, 30.13) | EG-0007 | EG-0008 | within a pixel |
 | Smara (-11.66, 26.74) | MA-0019 | MA-0019 | on it |
 | Taji (44.24, 33.52) | IQ-0004 | IQ-0004 | on it |
+| Tamanrasset (main city of a split giant) (5.5228, 22.785) | DZ-0027 | DZ-0027 | on it |
 | Tan-Tan (-11.1, 28.44) | MA-0018 | MA-0018 | on it |
 | Tata MA (-7.97, 29.74) | MA-0016 | MA-0016 | on it |
 | Tehran Bazaar (51.42, 35.67) | IR-0002 | IR-0002 | on it |
 | Tehran North (51.43, 35.8) | IR-0001 | IR-0001 | on it |
+| Timimoun (split part) (0.27, 29.2365) | DZ-0042 | DZ-0042 | on it |
+| Tindouf (split part) (-8.1478, 27.6742) | DZ-0056 | DZ-0056 | on it |
+| Tmassah (split part) (15.8, 26.3666) | LY-0029 | LY-0029 | on it |
+| point 54.0,22.51 (hint) (main city of a split giant) (54.0, 22.51) | SA-0020 | SA-0020 | on it |
 
 ## Metro reach
 
@@ -536,8 +566,7 @@ AE-0001-AE-0002, AE-0001-AE-0003, AE-0001-AE-0005, BH-0001-QA-0008, BH-0001-QA-0
 | AE-0001 | Abu Dhabi Downtown | Abu Dhabi | 8 | 410 |
 | AE-0007 | Das-Zirku Islands | Abu Dhabi | 1 | 410 |
 | MA-0001 | Casablanca Centre-Anfa | Casablanca-Settat | 16 | 337 |
-| SA-0014 | Dammam-Khobar-Dhahran | Eastern Province | 66 | 3804 |
-| SA-0016 | Ras Tanura-Qatif | Eastern Province | 109 | 3804 |
+| SA-0014 | Dammam-Khobar-Dhahran | Eastern Province | 66 | 2048 |
 
 ## Uneven Voronoi splits
 
@@ -607,7 +636,7 @@ Bitmap coastal means at least 4 pixel edges on the sea or the Great Lakes (D608)
 
 Islands and exclaves are allowed; the label point sits in the largest part.
 
-YE-0005 (8), YE-0016 (7), AE-0005 (6), IR-0018 (6), MA-0020 (6), OM-0012 (6), SA-0032 (6), AE-0001 (5), AE-0014 (5), IR-0017 (5), KW-0010 (5), EG-0005 (4), IQ-0002 (4), SA-0015 (4), YE-0009 (4), AE-0003 (3), AE-0008 (3), BH-0001 (3), DZ-0012 (3), EG-0016 (3), EG-0033 (3), EG-0034 (3), IL-0016 (3), IL-0017 (3), IQ-0015 (3), IQ-0018 (3), KW-0001 (3), OM-0009 (3), OM-0011 (3), PS-0003 (3), PS-0005 (3), SA-0029 (3), TN-0006 (3), TN-0009 (3), AE-0002 (2), AE-0013 (2), DZ-0002 (2), DZ-0010 (2), EG-0004 (2), EG-0012 (2), EG-0014 (2), EG-0015 (2), EG-0017 (2), EG-0029 (2), IL-0005 (2), IL-0010 (2), IL-0012 (2), IL-0015 (2), IQ-0005 (2), IQ-0009 (2), IQ-0016 (2), IR-0010 (2), IR-0019 (2), IR-0027 (2), IR-0037 (2), JO-0002 (2), KW-0009 (2), LB-0005 (2), MA-0010 (2), MA-0016 (2), OM-0004 (2), QA-0003 (2), SA-0010 (2), SA-0018 (2), SA-0020 (2), SA-0023 (2), SY-0014 (2), TN-0001 (2), TN-0002 (2), YE-0008 (2), YE-0011 (2), YE-0012 (2)
+YE-0005 (8), YE-0016 (7), AE-0005 (6), IR-0018 (6), MA-0020 (6), OM-0012 (6), SA-0032 (6), AE-0001 (5), AE-0014 (5), IR-0017 (5), KW-0010 (5), EG-0005 (4), IQ-0002 (4), SA-0015 (4), YE-0009 (4), AE-0003 (3), AE-0008 (3), BH-0001 (3), DZ-0012 (3), EG-0016 (3), EG-0033 (3), EG-0034 (3), IL-0016 (3), IL-0017 (3), IQ-0015 (3), IQ-0018 (3), KW-0001 (3), OM-0009 (3), OM-0011 (3), PS-0003 (3), PS-0005 (3), SA-0029 (3), TN-0006 (3), TN-0009 (3), AE-0002 (2), AE-0013 (2), DZ-0002 (2), DZ-0010 (2), DZ-0053 (2), EG-0004 (2), EG-0012 (2), EG-0014 (2), EG-0015 (2), EG-0017 (2), EG-0029 (2), EG-0038 (2), IL-0005 (2), IL-0010 (2), IL-0012 (2), IL-0015 (2), IQ-0005 (2), IQ-0009 (2), IQ-0016 (2), IR-0010 (2), IR-0019 (2), IR-0027 (2), IR-0037 (2), JO-0002 (2), KW-0009 (2), LB-0005 (2), MA-0010 (2), MA-0016 (2), OM-0004 (2), QA-0003 (2), SA-0010 (2), SA-0018 (2), SA-0023 (2), SA-0043 (2), SY-0014 (2), TN-0001 (2), TN-0002 (2), YE-0008 (2), YE-0011 (2), YE-0012 (2)
 
 ## Visual check
 

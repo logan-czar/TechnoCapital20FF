@@ -4,4 +4,4 @@ Python prepares the geodata (fetch, license filter, crosswalk, shapes, simplify,
 the Rust `mapgen` crate rasterizes provinces.geojson into assets/map (docs/build/m8-map-assets.md).
 """
 
-PIPELINE_VERSION = "pb-1"
+PIPELINE_VERSION = "pb-2"

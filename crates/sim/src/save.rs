@@ -4,8 +4,8 @@
 //! ticks and draws it would have made (same hashes, build-plan 4.3).
 //!
 //! The format is the 8-byte [`SAVE_MAGIC`], then gzip of postcard of [`SAVE_VERSION`] and the
-//! state. A save from another version is refused rather than misread, except a version 8 save,
-//! which differs only in its alert levels and loads with Quarter start at its default (D800).
+//! state. A save from another version is refused rather than misread (D826: versions 8 and 9,
+//! which D800 read, hold the world before the giant-province split).
 
 use std::io::{Read, Write};
 
@@ -26,10 +26,11 @@ pub const SAVE_MAGIC: &[u8; 8] = b"TC20FFSV";
 /// countries their superregion.
 /// 8: each exchange keeps its index's daily closes (D540); each IPO ballot names its voter
 /// (D542); a startup headline carries its event's id (D543); each headline has its id (D544).
-/// 9: the controls' alert levels hold Quarter start (D800); version 8 saves still load.
-pub const SAVE_VERSION: u32 = 9;
-/// The last version before Quarter start, still read (D800).
-const SAVE_VERSION_V8: u32 = 8;
+/// 9: the controls' alert levels hold Quarter start (D800); version 8 saves still loaded.
+/// 10: the world's provinces include the giant-province split's (D820, D826). A version 8 or 9
+/// save holds the 3,255-province world, whose province ordinals no longer match the province
+/// files or the map, so it is refused.
+pub const SAVE_VERSION: u32 = 10;
 
 #[derive(Debug, Error)]
 pub enum SaveError {
@@ -82,45 +83,7 @@ pub fn decode(bytes: &[u8]) -> Result<SaveState, SaveError> {
     let (found, rest): (u32, &[u8]) = postcard::take_from_bytes(&body)?;
     match found {
         SAVE_VERSION => Ok(postcard::from_bytes(rest)?),
-        SAVE_VERSION_V8 => Ok(postcard::from_bytes::<SaveStateV8>(rest)?.into()),
         _ => Err(SaveError::Version { found }),
-    }
-}
-
-/// A version 8 save's controls: the same fields, with the five alert levels before Quarter
-/// start (D800).
-#[derive(Debug, Serialize, Deserialize)]
-struct ControlsV8 {
-    speed: u8,
-    paused: bool,
-    skip: Option<crate::time::control::Skip>,
-    alerts: [crate::world::AlertLevel; 5],
-    omniscient: bool,
-    watchlist: std::collections::BTreeSet<crate::world::CompanyId>,
-}
-
-#[derive(Debug, Deserialize)]
-struct SaveStateV8 {
-    world: World,
-    rng: RngStreams,
-    controls: ControlsV8,
-}
-
-impl From<SaveStateV8> for SaveState {
-    fn from(v: SaveStateV8) -> SaveState {
-        let c = v.controls;
-        SaveState {
-            world: v.world,
-            rng: v.rng,
-            controls: Controls {
-                speed: c.speed,
-                paused: c.paused,
-                skip: c.skip,
-                alerts: crate::world::AlertLevels::from_v8(c.alerts),
-                omniscient: c.omniscient,
-                watchlist: c.watchlist,
-            },
-        }
     }
 }
 
@@ -150,41 +113,20 @@ mod tests {
         }
     }
 
-    /// A version 8 save (five alert levels) loads with its levels and Quarter start at its
-    /// default (D800); any other old version is still refused.
+    /// D826: a save of an older version is refused, the version 8 and 9 saves of the world before
+    /// the giant-province split among them.
     #[test]
-    fn a_version_8_save_loads_with_quarter_start_at_its_default() {
-        use crate::world::{AlertKind, AlertLevel, CompanyId};
+    fn older_versions_are_refused() {
         let data = sim_data::load_world(&sim_data::default_data_dir()).unwrap();
         let world = World::from_data(&data).unwrap();
         let rng = RngStreams::new(5);
-        let old = ControlsV8 {
-            speed: 3,
-            paused: true,
-            skip: None,
-            alerts: [
-                AlertLevel::Off,
-                AlertLevel::Notify,
-                AlertLevel::Log,
-                AlertLevel::Pause,
-                AlertLevel::Log,
-            ],
-            omniscient: false,
-            watchlist: [CompanyId(2)].into_iter().collect(),
-        };
-        let v8 = |version: u32| {
-            #[derive(Serialize)]
-            struct V8<'a> {
-                world: &'a World,
-                rng: &'a RngStreams,
-                controls: &'a ControlsV8,
-            }
+        let old = |version: u32| {
             let body = postcard::to_stdvec(&(
                 version,
-                V8 {
+                SaveRef {
                     world: &world,
                     rng: &rng,
-                    controls: &old,
+                    controls: &Controls::default(),
                 },
             ))
             .unwrap();
@@ -192,19 +134,10 @@ mod tests {
             gz.write_all(&body).unwrap();
             gz.finish().unwrap()
         };
-        let back = decode(&v8(8)).unwrap();
-        assert_eq!(back.world, world);
-        assert_eq!(back.rng, rng);
-        let c = &back.controls;
-        assert_eq!((c.speed, c.paused, &c.watchlist), (3, true, &old.watchlist));
-        for (i, kind) in AlertKind::ALL[..5].iter().enumerate() {
-            assert_eq!(c.alerts.get(*kind), old.alerts[i]);
+        for v in [7, 8, 9] {
+            assert!(matches!(decode(&old(v)), Err(SaveError::Version { found }) if found == v));
         }
-        assert_eq!(c.alerts.get(AlertKind::QuarterStart), AlertLevel::Pause);
-        assert!(matches!(
-            decode(&v8(7)),
-            Err(SaveError::Version { found: 7 })
-        ));
+        assert!(decode(&old(SAVE_VERSION)).is_ok());
     }
 
     #[test]

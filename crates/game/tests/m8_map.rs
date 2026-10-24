@@ -376,7 +376,7 @@ mod picking {
         );
     }
 
-    /// M8.8 (D740): every province of the committed world map (`assets/map`, all 3,255) is
+    /// M8.8 (D740): every province of the committed world map (`assets/map`, all 3,968) is
     /// clickable. For each province, in province-centroids.csv order, the camera centres on its
     /// label point (a tiny province's click target sits there) at each wheel notch from the
     /// farthest zoom of the default view to the closest, and a click there must pick the
@@ -400,7 +400,7 @@ mod picking {
             .rows
             .clone();
         let provinces = data.all_provinces().count();
-        assert_eq!(provinces, 3255, "the world's province files");
+        assert_eq!(provinces, 3968, "the world's province files");
         assert_eq!(rows.len(), provinces, "every province has a shape");
         let sim = Sim::new(data, 1).unwrap();
         let views = sim.views();
@@ -503,6 +503,6 @@ mod picking {
             (picked - loaded).as_secs_f64()
         );
         assert!(missed.is_empty(), "never picked at any zoom: {missed:?}");
-        assert_eq!(clicks.len(), 3255);
+        assert_eq!(clicks.len(), 3968);
     }
 }
