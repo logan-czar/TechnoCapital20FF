@@ -436,13 +436,25 @@ STYLES = (
     Style(False, True, False, 0.0, "gentle meanders", 0.5),
 )
 # Seed salts tried per style: another draw of the meanders often misses a lake shore pocket.
-SALTS = ("", ":2", ":3")
+SALTS = ("", ":2", ":3", ":4", ":5")
 # Balance of a meander or a ramped river cut (share of a part; the bisection lands far closer).
 BALANCE_TOL = 0.002
 # A curve may move off balance by this share of a part to keep a protected point on its side.
 SHIFT_TOL = 0.03
-# Bits of a cut piece under this many km2 are not counted as fragments (simplify removes them).
+# Pieces are counted after pulling every shape in (`_necked`), so a bulb joined to the rest by a
+# neck under a pixel wide counts as its own piece (it draws as an exclave, PR #50 review). Two
+# pulls, each (metres, the km2 a piece must keep to count): 1 km finds small bulbs a 2 km pull
+# would erase whole, 2 km (about half a pixel) finds wider necks.
+NECKS = ((1000.0, 2.0), (2000.0, 5.0))
+NECK_SIMPLIFY_M = 300.0
+# A part that was one polygon over this many km2 must stay one (smaller bits are under a pixel).
 FRAG_KM2 = 5.0
+# The pieces a part falls into under the widest pull, beyond its largest, may not grow by more
+# than this many km2 (a bulb traded for another keeps the count but draws a new exclave).
+NECK_GROW_KM2 = 25.0
+# A part already in several pieces may not grow its detached pieces by more than this share of
+# the part (PR #50 review: RU-0174's exclave grew from 8,100 to 12,600 km2).
+DETACH_TOL = 0.03
 # No part below this share of the cap (Logan: "no part below about 25% of it").
 PART_MIN = 0.25
 
@@ -549,16 +561,29 @@ def _why(k: str) -> None:
     WHY[k] = WHY.get(k, 0) + 1
 
 
+def _necked(fr) -> tuple[int, ...]:
+    """Pieces of a frame shape after each pull of NECKS."""
+    if fr.is_empty:
+        return tuple(0 for _ in NECKS)
+    s = shapely.simplify(fr, NECK_SIMPLIFY_M)
+    return tuple(sum(1 for q in polys(s.buffer(-m, quad_segs=2)) if q.area > km2 * 1e6) for m, km2 in NECKS)
+
+
+def _more(a: tuple, b: tuple) -> bool:
+    """a has more pieces than b after some pull."""
+    return any(x > y for x, y in zip(a, b))
+
+
 def _frags(pieces, decision) -> int:
-    """Polygons (over FRAG_KM2) the decision's cut pieces fall into: a curve may not leave more
-    loose bits than the straight line (D854)."""
+    """Pieces (counted by `_necked`) the decision's cut pieces fall into: a curve may not leave
+    more loose bits, or bulbs on necks under a pixel wide, than the straight line (D854)."""
     _, _, cut_list, poly = decision
-    out = 0
+    out = [0 for _ in NECKS]
     for i in cut_list:
         fr = pieces[i].fr  # the full shape: a lake shore can cut off a bit the search copy joins
         for g in (fr.intersection(poly), fr.difference(poly)):
-            out += sum(1 for q in polys(g) if q.area > FRAG_KM2 * 1e6)
-    return out
+            out = [a + b for a, b in zip(out, _necked(g))]
+    return tuple(out)
 
 
 def _shift(curve, owners, ctx: Ctx, n1: int, u) -> float | None:
@@ -638,7 +663,7 @@ def _bisect_organic(ctx: Ctx, pieces: list[Piece], n: int, tol: float, path: str
             cands.append(organic.Curve("meander", u, vlo, vhi, width, meander=m))
     chosen = None
     loose = None  # the first curve that keeps the sides but leaves more bits
-    base_frags = _frags(pieces, base) if cands else 0
+    base_frags = _frags(pieces, base) if cands else ()
     cands.append(straight)
     for curve in cands:
         if curve.kind == "river":
@@ -693,7 +718,7 @@ def _bisect_organic(ctx: Ctx, pieces: list[Piece], n: int, tol: float, path: str
                 continue
         if not (dec[0] or dec[2]) or not (dec[1] or dec[2]):
             continue
-        if curve.kind != "straight" and _frags(pieces, dec) > base_frags:
+        if curve.kind != "straight" and _more(_frags(pieces, dec), base_frags):
             _why(curve.kind + " fragments")
             if loose is None:
                 loose = (curve, t, dec)
@@ -779,6 +804,7 @@ class Cut:
     style: str = "straight"  # the organic style kept (D854), or straight
     kinds: dict = field(default_factory=dict)  # cuts by kind: river, meander, straight
     borders: dict = field(default_factory=dict)  # km of sibling border by what it follows (D856)
+    frame: object = None  # the equal-area frame the cut was made in
 
 
 def prepare(g, country: str, sources: dict, bend_width: float | None = None):
@@ -795,7 +821,7 @@ def _straight(g, country: str, sources: dict, n: int, whole_tol: float, prepared
     groups = _bisect(frame, pieces, n, whole_tol, axes)
     parts = [as_poly(shapely.union_all([p.ll for p in grp])) for grp in groups]
     parts = _merge_fragments(frame, parts)
-    return Cut(parts, [area_km2(p) for p in parts], n, whole_tol, kind)
+    return Cut(parts, [area_km2(p) for p in parts], n, whole_tol, kind, frame=frame)
 
 
 def _organic(g, country: str, sources: dict, n: int, whole_tol: float, style: Style, seed: str,
@@ -811,7 +837,7 @@ def _organic(g, country: str, sources: dict, n: int, whole_tol: float, style: St
     parts = [as_poly(shapely.union_all([p.ll for p in grp])) for grp in groups]
     parts = _merge_fragments(frame, parts)
     kinds = {k: ctx.kinds.count(k) for k in ("river", "meander", "straight")}
-    c = Cut(parts, [area_km2(p) for p in parts], n, whole_tol, kind, style.name, kinds)
+    c = Cut(parts, [area_km2(p) for p in parts], n, whole_tol, kind, style.name, kinds, frame=frame)
     c.borders = organic.border_stats(frame, parts, shapely.union_all([p.fr.boundary for p in pieces]),
                                      ctx.runs, ctx.straight)
     return c
@@ -834,20 +860,37 @@ def _holders(c: Cut, protect: list) -> dict | None:
     for kind, key, x, y in protect:
         hit = [i for i, p in enumerate(c.parts) if p.covers(Point(x, y))]
         out[(kind, key)] = ids[hit[0]] if len(hit) == 1 else None
-    out["_components"] = {ids[i]: _components(p) for i, p in enumerate(c.parts)}
+    out["_components"] = {ids[i]: _shape(c.frame, p, a) for i, (p, a) in enumerate(zip(c.parts, c.areas))}
     return out
 
 
-def _components(g) -> int:
-    """Polygons of a part over FRAG_KM2 (smaller bits are under a pixel)."""
-    return sum(1 for q in polys(g) if area_km2(q) > FRAG_KM2) or 1
+def _shape(frame, g, area: float) -> dict:
+    """A part's pieces: `polys` (polygons over FRAG_KM2), `bulbs` (per pull of NECKS, the pieces
+    each polygon falls into beyond its first: bulbs on necks under a pixel wide, islands apart),
+    `loose` (km2 of those bulbs at the widest pull), `detached` (km2 outside the largest polygon)
+    and `area` (km2)."""
+    comps = polys(g)
+    detached = area - max((area_km2(q) for q in comps), default=0.0) if len(comps) > 1 else 0.0
+    fr = shapely.make_valid(frame.to_frame(g))
+    bulbs = [0 for _ in NECKS]
+    loose = 0.0
+    for q in polys(fr):
+        s = shapely.simplify(q, NECK_SIMPLIFY_M)
+        for k, (m, km2) in enumerate(NECKS):
+            pulled = [x.area for x in polys(s.buffer(-m, quad_segs=2))]
+            bulbs[k] += max(sum(1 for a in pulled if a > km2 * 1e6) - 1, 0)
+            if k == len(NECKS) - 1:
+                loose += (sum(pulled) - max(pulled, default=0.0)) / 1e6
+    return {"polys": sum(1 for q in comps if area_km2(q) > FRAG_KM2) or 1, "bulbs": tuple(bulbs),
+            "loose": loose, "detached": detached, "area": area}
 
 
 def _misfit(c: Cut, base: dict, protect: list) -> str:
     """D854: why the parts do not fit ("" when they do): every part between PART_MIN and
-    PART_MAX of the cap, every protected point in the part the straight cut put it in, and every
-    part that was one piece still one piece (a part already on several islands may gain one;
-    QA's exclave check still judges every land bit, D691)."""
+    PART_MAX of the cap, every protected point in the part the straight cut put it in, every
+    part that was one polygon still one, no part with more or bigger (NECK_GROW_KM2) bulbs on
+    necks than with the straight cut (`_shape`: such a bulb draws as an exclave), and no part's
+    detached pieces grown by more than DETACH_TOL of it."""
     if max(c.areas) > PART_MAX * CAP_KM2 or min(c.areas) < PART_MIN * CAP_KM2:
         return f"areas {min(c.areas):,.0f} to {max(c.areas):,.0f} km2"
     h = _holders(c, protect)
@@ -857,9 +900,23 @@ def _misfit(c: Cut, base: dict, protect: list) -> str:
              if k != "_components" and v is not None and h.get(k) != v]
     if moved:
         return "points moved: " + ", ".join(moved)
-    more = [f"{q} ({m} to {h['_components'][q]})" for q, m in base["_components"].items()
-            if m == 1 and h["_components"][q] > m]
-    return ("more pieces: " + ", ".join(more)) if more else ""
+    hc = h["_components"]
+    split = [q for q, m in base["_components"].items() if m["polys"] == 1 and hc[q]["polys"] > 1]
+    if split:
+        return "one piece became several: " + ", ".join(split)
+    # bulbs: the most any pull finds (a bulb seen by one pull and not the other is the same bulb)
+    more = [f"{q} ({m['bulbs']} to {hc[q]['bulbs']})" for q, m in base["_components"].items()
+            if max(hc[q]["bulbs"]) > max(m["bulbs"])]
+    if more:
+        return "more bulbs on necks: " + ", ".join(more)
+    # the same count can hide a new bulb traded for an old one
+    grown = [f"{q} ({m['loose']:,.0f} to {hc[q]['loose']:,.0f} km2)" for q, m in base["_components"].items()
+             if hc[q]["loose"] > m["loose"] + NECK_GROW_KM2]
+    if grown:
+        return "bulbs on necks grew: " + ", ".join(grown)
+    grew = [f"{q} ({m['detached']:,.0f} to {hc[q]['detached']:,.0f} km2)" for q, m in base["_components"].items()
+            if hc[q]["detached"] > m["detached"] + DETACH_TOL * m["area"]]
+    return ("detached pieces grew: " + ", ".join(grew)) if grew else ""
 
 
 def cut(g, country: str, sources: dict, n: int, whole_tol: float, prepared=None, seed: str = "",
