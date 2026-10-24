@@ -120,7 +120,7 @@ add = true
 [giant_sites."BR-0045"]
 "Carajas" = [-50.17, -6.07]
 [giant_sites."BR-0046"]
-"Belo Monte" = [-51.77, -3.12]
+"Belo Monte" = [-51.88, -3.15]  # the dam is at -51.77, -3.12, a pixel from the cut; its point sits inside BR-0089
 "Trombetas" = [-56.4, -1.5]
 
 # D820: BR-0039 Bahia Sertao-Feira de Santana (322,322 km2) cut into 7 parts on admin2 pieces
@@ -172,7 +172,7 @@ place_notes = "Belo Monte dam on the Xingu, Santarem soy port on the Amazon, Tro
 "BR-0086" = [-55.908933, 0.485111]  # Obidos
 "BR-0087" = [-53.958831, -0.556230]  # Monte Alegre
 "BR-0088" = [-56.400000, -1.500000]  # Trombetas
-"BR-0089" = [-51.770000, -3.120000]  # Belo Monte
+"BR-0089" = [-51.880000, -3.150000]  # Belo Monte
 "BR-0090" = [-55.869985, -1.759597]  # Oriximina
 "BR-0091" = [-56.452824, -4.692291]  # Trairao
 "BR-0092" = [-57.760131, -6.228018]  # Jacareacanga

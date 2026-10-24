@@ -215,10 +215,18 @@ impl BirthsState {
 
     /// The other provinces of a country with their weights (3.7.2 home province), in id order.
     pub fn home_others(&self, country: CountryId, hq: ProvinceId) -> Vec<(ProvinceId, f64)> {
-        self.sites.country_provinces[country.index()]
+        // D830: the weight above the floor, so no founder lives in an empty 1/1/1 part; the
+        // 2.3.1 weight when every other province of the country sits at the floor
+        let others: Vec<ProvinceId> = self.sites.country_provinces[country.index()]
             .iter()
-            .filter(|&&p| p != hq)
-            .map(|&p| (p, self.sites.weight[p.index()]))
-            .collect()
+            .copied()
+            .filter(|&p| p != hq)
+            .collect();
+        let base = if others.iter().any(|p| self.sites.hq_weight[p.index()] > 0.0) {
+            &self.sites.hq_weight
+        } else {
+            &self.sites.weight
+        };
+        others.into_iter().map(|p| (p, base[p.index()])).collect()
     }
 }

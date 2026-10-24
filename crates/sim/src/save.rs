@@ -30,7 +30,10 @@ pub const SAVE_MAGIC: &[u8; 8] = b"TC20FFSV";
 /// 10: the world's provinces include the giant-province split's (D820, D826). A version 8 or 9
 /// save holds the 3,255-province world, whose province ordinals no longer match the province
 /// files or the map, so it is refused.
-pub const SAVE_VERSION: u32 = 10;
+/// 11: the reviewed split (3,963 provinces) and the startup HQ weight above the floor (D830;
+/// `Sites::hq_weight`, `hq_fallback_countries`). A version 10 save holds PR #47's 3,968-province
+/// world, so it is refused too (D826).
+pub const SAVE_VERSION: u32 = 11;
 
 #[derive(Debug, Error)]
 pub enum SaveError {
@@ -46,15 +49,24 @@ pub enum SaveError {
 
 /// The last version written before the giant-province split (D826).
 const LAST_VERSION_BEFORE_SPLIT: u32 = 9;
+/// The version of the first cut of the split (3,968 provinces), before its review (D826).
+const FIRST_SPLIT_VERSION: u32 = 10;
 
 /// Why a save of another version does not load (D826: a version 8 or 9 save holds the world
-/// before the province split).
+/// before the province split, a version 10 save the split before its review).
 fn version_message(found: u32) -> String {
     if found <= LAST_VERSION_BEFORE_SPLIT {
         format!(
             "this save is version {found}, from before the province split; version \
              {SAVE_VERSION} can't load it"
         )
+    } else if found == FIRST_SPLIT_VERSION {
+        format!(
+            "this save is version {found}, from the first province split (3,968 provinces); \
+             version {SAVE_VERSION} can't load it"
+        )
+    } else if found < SAVE_VERSION {
+        format!("this save is version {found}, older than this build's version {SAVE_VERSION}")
     } else {
         format!("this save is version {found}, newer than this build's version {SAVE_VERSION}")
     }
@@ -155,7 +167,15 @@ mod tests {
             assert!(matches!(e, SaveError::Version { found } if found == v));
             assert!(e.to_string().contains("before the province split"), "{e}");
         }
-        assert!(decode(&old(11)).unwrap_err().to_string().contains("newer"));
+        let e = decode(&old(10)).unwrap_err();
+        assert!(matches!(e, SaveError::Version { found: 10 }));
+        assert!(e.to_string().contains("first province split"), "{e}");
+        assert!(
+            decode(&old(SAVE_VERSION + 1))
+                .unwrap_err()
+                .to_string()
+                .contains("newer")
+        );
         assert!(decode(&old(SAVE_VERSION)).is_ok());
     }
 

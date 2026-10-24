@@ -1067,7 +1067,7 @@ Altamira (split part) | -52.2100 | -3.1996 | BR-0074
 Tucurui (split part) | -49.6737 | -3.7674 | BR-0075
 Conceicao do Araguaia (split part) | -49.2900 | -8.2500 | BR-0080
 Santarem (main city of a split giant) | -54.7000 | -2.4333 | BR-0046
-Belo Monte (site of a split giant) | -51.7700 | -3.1200 | BR-0089
+Belo Monte (site of a split giant) | -51.8800 | -3.1500 | BR-0089
 Trombetas (site of a split giant) | -56.4000 | -1.5000 | BR-0088
 Oriximina (split part) | -55.8700 | -1.7596 | BR-0090
 Jacareacanga (split part) | -57.7601 | -6.2280 | BR-0092
@@ -1268,3 +1268,5 @@ El Fasher (main city of a split giant) | 25.3500 | 13.6300 | SD-0018
 Faya Largeau (main city of a split giant) | 19.1167 | 17.9167 | TD-0016
 Kouri Bougoudi (site of a split giant) | 18.0000 | 21.3000 | TD-0018
 Zouar (split part) | 16.5278 | 20.4587 | TD-0019
+Ranger (site named in AU-0053's notes, in AU-0052) | 132.9100 | -12.6700 | AU-0052
+Vankor (site named in RU-0060's notes, in RU-0059) | 83.5500 | 67.8000 | RU-0059
