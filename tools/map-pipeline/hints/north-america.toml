@@ -151,3 +151,249 @@ add = true
 [provinces.US-0034] # Okeechobee
 units = ["Okeechobee"]
 add = true
+
+# D820: CA-0014 Northwestern Ontario (584,132 km2) cut into 13 parts on admin2 pieces
+[subdivide."CA-0014"]
+parts = 13
+whole_tol = 0.06
+blocks = "admin2"
+main = [-89.274975, 48.446150]  # Thunder Bay
+
+[subdivide."CA-0014".children]
+"CA-0060" = [-87.649984, 55.983339]  # Fort Severn
+"CA-0061" = [-86.008443, 54.577620]  # Northwestern Ontario Northeast
+"CA-0062" = [-90.608236, 54.090695]  # Northwestern Ontario Northwest
+"CA-0063" = [-82.433325, 52.916627]  # Attawapiskat
+"CA-0064" = [-89.883284, 52.949984]  # Big Beaver House
+"CA-0065" = [-87.883329, 52.216644]  # Lansdowne House
+"CA-0066" = [-84.178894, 52.232795]  # Northwestern Ontario East
+"CA-0067" = [-94.066594, 52.617033]  # Deer Lake
+"CA-0068" = [-91.916648, 50.262964]  # Sioux Lookout
+"CA-0069" = [-86.941871, 49.722406]  # Geraldton
+"CA-0070" = [-91.616589, 48.750395]  # Atikokan
+"CA-0071" = [-94.466648, 49.766690]  # Kenora
+
+# D820: CA-0021 Nord-du-Quebec (850,312 km2) cut into 18 parts on admin2 pieces
+[subdivide."CA-0021"]
+parts = 18
+whole_tol = 0.06
+blocks = "admin2"
+main = [-70.389340, 55.754270]  # unit Nord-du-Québec
+
+[subdivide."CA-0021".children]
+"CA-0072" = [-69.999097, 60.024823]  # Kangirsuk
+"CA-0073" = [-77.899984, 62.416641]  # Ivugivik
+"CA-0074" = [-78.135991, 58.470009]  # Inukjuak
+"CA-0075" = [-74.156295, 59.187811]  # Nord Northwest
+"CA-0076" = [-68.399996, 58.100005]  # Kuujjuaq
+"CA-0077" = [-74.803467, 57.327949]  # Nord Northwest 2
+"CA-0078" = [-71.587102, 57.238955]  # Nord North
+"CA-0079" = [-68.269187, 56.451256]  # Nord East
+"CA-0080" = [-65.299746, 56.366601]  # Nord East 2
+"CA-0081" = [-74.644494, 55.152859]  # Nord West
+"CA-0082" = [-72.275084, 54.392682]  # Nord South
+"CA-0083" = [-77.765832, 55.281495]  # Kuujjuarapik
+"CA-0084" = [-78.516691, 52.233335]  # Eastmain
+"CA-0085" = [-73.260466, 52.518987]  # Nord South 2
+"CA-0086" = [-75.501163, 51.964834]  # Nord Southwest
+"CA-0087" = [-73.866587, 50.417063]  # Mistassini
+"CA-0088" = [-77.633282, 49.750386]  # Matagami
+
+# D820: CA-0025 Cote-Nord (267,866 km2) cut into 6 parts on admin2 pieces
+[subdivide."CA-0025"]
+parts = 6
+whole_tol = 0.06
+blocks = "admin2"
+main = [-66.360017, 50.316088]  # Sept-Iles
+
+[subdivide."CA-0025".children]
+"CA-0089" = [-68.770758, 53.843142]  # Cote Northwest
+"CA-0090" = [-68.505610, 51.745722]  # Cote West
+"CA-0091" = [-58.646999, 51.242310]  # St-Augustin
+"CA-0092" = [-61.810656, 50.191341]  # Natashquan
+"CA-0093" = [-68.157995, 49.222666]  # Baie-Comeau
+
+# D820: CA-0029 North Coast BC (325,348 km2) cut into 7 parts on admin2 pieces
+[subdivide."CA-0029"]
+parts = 7
+whole_tol = 0.06
+blocks = "admin2"
+main = [-130.329988, 54.316670]  # Prince Rupert
+
+[subdivide."CA-0029".children]
+"CA-0094" = [-133.169897, 58.996218]  # North Coast BC Northwest
+"CA-0095" = [-128.274637, 58.665188]  # North Coast BC North
+"CA-0096" = [-130.033288, 58.450346]  # Dease Lake
+"CA-0097" = [-127.147464, 56.241155]  # North Coast BC East
+"CA-0098" = [-129.054765, 55.837206]  # North Coast BC Southwest
+"CA-0099" = [-127.166590, 54.766591]  # Smithers
+
+# D820: CA-0043 Northern Saskatchewan (422,899 km2) cut into 9 parts on admin2 pieces
+[subdivide."CA-0043"]
+parts = 9
+whole_tol = 0.06
+blocks = "admin2"
+main = [-105.749990, 53.200020]  # Prince Albert
+
+[subdivide."CA-0043".children]
+"CA-0100" = [-105.833266, 59.266575]  # Stony Rapids
+"CA-0101" = [-108.616585, 59.566557]  # Uranium City
+"CA-0102" = [-104.401507, 57.709190]  # Northern Saskatchewan Northeast
+"CA-0103" = [-108.389438, 56.636093]  # Northern Saskatchewan West
+"CA-0104" = [-104.386377, 56.278373]  # Northern Saskatchewan East
+"CA-0105" = [-108.434736, 54.130118]  # Meadow Lake
+"CA-0106" = [-105.300017, 55.100007]  # La Ronge
+"CA-0107" = [-102.383296, 52.850429]  # Hudson Bay
+
+# D820: CA-0046 Northern Manitoba (507,067 km2) cut into 11 parts on admin2 pieces
+[subdivide."CA-0046"]
+parts = 11
+whole_tol = 0.06
+blocks = "admin2"
+main = [-97.866621, 55.749942]  # Thompson
+
+[subdivide."CA-0046".children]
+"CA-0108" = [-98.412313, 60.000030]  # Northern Manitoba North
+"CA-0109" = [-101.666596, 57.883223]  # Brochet
+"CA-0110" = [-94.165994, 58.765985]  # Churchill
+"CA-0111" = [-96.293653, 57.852631]  # Northern Manitoba North 2
+"CA-0112" = [-101.883301, 54.766591]  # Flin Flon
+"CA-0113" = [-94.699967, 56.349983]  # Gillam
+"CA-0114" = [-95.266599, 54.950404]  # Oxford House
+"CA-0115" = [-97.833290, 53.966588]  # Norway House
+"CA-0116" = [-101.233315, 53.816623]  # The Pas
+"CA-0117" = [-95.836695, 51.449517]  # Northern Manitoba South
+
+# D820: CA-0054 Labrador (292,513 km2) cut into 6 parts on admin2 pieces
+[subdivide."CA-0054"]
+parts = 6
+whole_tol = 0.06
+blocks = "admin2"
+main = [-63.980679, 53.526409]  # Churchill Falls
+
+[subdivide."CA-0054".children]
+"CA-0118" = [-64.741098, 60.266462]  # Port Burwell
+"CA-0119" = [-60.216671, 55.449960]  # Hopedale
+"CA-0120" = [-60.299999, 53.299988]  # Happy Valley - Goose Bay
+"CA-0121" = [-62.233130, 52.783534]  # Labrador South
+"CA-0122" = [-57.012141, 53.701407]  # Cartwright
+
+# D820: CA-0056 Yukon (484,489 km2) cut into 10 parts on admin2 pieces
+[subdivide."CA-0056"]
+parts = 10
+whole_tol = 0.06
+blocks = "admin2"
+main = [-135.049984, 60.716719]  # Whitehorse
+
+[subdivide."CA-0056".children]
+"CA-0123" = [-138.724271, 68.285148]  # Yukon Northwest
+"CA-0124" = [-139.150689, 65.757757]  # Yukon West
+"CA-0125" = [-139.416669, 64.066644]  # Dawson City
+"CA-0126" = [-135.732382, 64.493135]  # Yukon East
+"CA-0127" = [-132.633779, 64.346848]  # Yukon East 2
+"CA-0128" = [-138.197948, 62.379517]  # Yukon Southwest
+"CA-0129" = [-131.333636, 61.442702]  # Yukon Southeast
+"CA-0130" = [-128.711692, 60.062306]  # Watson Lake
+"CA-0131" = [-139.000002, 61.350375]  # Burwash Landing
+
+# D820: CA-0057 Northwest Territories (1,289,472 km2) cut into 28 parts on admin2 pieces
+[subdivide."CA-0057"]
+parts = 28
+whole_tol = 0.02
+blocks = "admin2"
+main = [-114.396981, 62.442014]  # Yellowknife
+
+[subdivide."CA-0057".children]
+"CA-0132" = [-114.223295, 75.746446]  # Northwest Territories Northeast
+"CA-0133" = [-119.310405, 73.595643]  # Northwest Territories Northeast 2
+"CA-0134" = [-123.741739, 72.751493]  # Northwest Territories Northeast 3
+"CA-0135" = [-117.749981, 70.733368]  # Holman
+"CA-0136" = [-112.215745, 71.311299]  # Northwest Territories East
+"CA-0137" = [-123.983321, 69.383322]  # Paulatuk
+"CA-0138" = [-133.699989, 68.349974]  # Inuvik
+"CA-0139" = [-122.651738, 67.608843]  # Northwest Territories Northeast 4
+"CA-0140" = [-126.328942, 67.172259]  # Northwest Territories Northeast 5
+"CA-0141" = [-118.040144, 66.903193]  # Northwest Territories East 2
+"CA-0142" = [-131.011420, 66.744014]  # Northwest Territories Northwest
+"CA-0143" = [-126.849968, 65.283727]  # Norman Wells
+"CA-0144" = [-124.865122, 65.166444]  # Northwest Territories East 3
+"CA-0145" = [-116.210824, 64.670045]  # Northwest Territories East 4
+"CA-0146" = [-110.361001, 64.459641]  # Northwest Territories East 5
+"CA-0147" = [-127.434381, 63.808005]  # Northwest Territories South
+"CA-0148" = [-122.071966, 63.325487]  # Northwest Territories East 6
+"CA-0149" = [-117.079711, 63.315945]  # Northwest Territories East 7
+"CA-0150" = [-106.906361, 63.299759]  # Northwest Territories East 8
+"CA-0151" = [-103.678498, 63.156425]  # Northwest Territories East 9
+"CA-0152" = [-126.995276, 62.381709]  # Northwest Territories South 2
+"CA-0153" = [-117.957673, 62.065465]  # Northwest Territories East 10
+"CA-0154" = [-121.333276, 61.849983]  # Fort Simpson
+"CA-0155" = [-107.949305, 60.997652]  # Northwest Territories East 11
+"CA-0156" = [-104.004684, 60.994454]  # Northwest Territories East 12
+"CA-0157" = [-113.682994, 61.166588]  # Fort Resolution
+"CA-0158" = [-115.788340, 60.814276]  # Hay River
+
+# D820: US-0003 Anchorage-Southcentral (617,836 km2) cut into 15 parts on admin2 pieces
+[subdivide."US-0003"]
+parts = 15
+whole_tol = 0.06
+blocks = "admin2"
+main = [-149.887446, 61.214004]  # Anchorage
+
+[subdivide."US-0003".children]
+"US-0148" = [-149.112692, 61.599714]  # Palmer
+"US-0149" = [-149.439442, 61.581731]  # Wasilla
+"US-0150" = [-145.382196, 62.271353]  # Gulkana
+"US-0151" = [-159.522186, 61.578708]  # Aniak
+"US-0152" = [-166.096565, 61.531088]  # Hooper Bay
+"US-0153" = [-158.379101, 60.803313]  # Anchorage Northeast
+"US-0154" = [-145.757496, 60.542776]  # Cordova
+"US-0155" = [-166.531603, 53.868584]  # Unalaska
+"US-0156" = [-161.755796, 60.793303]  # Bethel
+"US-0157" = [-158.480312, 59.056560]  # Dillingham
+"US-0158" = [-134.400712, 58.303386]  # Juneau
+"US-0159" = [-156.661378, 58.688703]  # King Salmon
+"US-0160" = [-152.406987, 57.789998]  # Kodiak
+"US-0161" = [-131.663990, 55.356219]  # Ketchikan
+
+# D820: US-0004 Fairbanks-North Slope (887,517 km2) cut into 19 parts on admin2 pieces
+[subdivide."US-0004"]
+parts = 19
+whole_tol = 0.06
+blocks = "admin2"
+main = [-147.710659, 64.836984]  # Fairbanks
+
+[subdivide."US-0004".children]
+"US-0162" = [-156.788580, 71.290570]  # Utqiaġvik
+"US-0163" = [-148.669360, 70.292181]  # Prudhoe Bay
+"US-0164" = [-166.808020, 68.347726]  # Point Hope
+"US-0165" = [-146.826304, 68.908666]  # Fairbanks Northeast
+"US-0166" = [-143.602913, 70.087856]  # Kaktovik
+"US-0167" = [-156.974321, 68.409782]  # Fairbanks West
+"US-0168" = [-152.645499, 66.565483]  # Allakaket
+"US-0169" = [-157.851409, 67.086485]  # Ambler
+"US-0170" = [-145.273779, 66.564682]  # Fort Yukon
+"US-0171" = [-162.596598, 66.898693]  # Kotzebue
+"US-0172" = [-152.078790, 65.171873]  # Tanana
+"US-0173" = [-145.842194, 64.152530]  # Big Delta
+"US-0174" = [-156.926995, 64.733295]  # Galena
+"US-0175" = [-158.721899, 64.327196]  # Kaltag
+"US-0176" = [-165.406374, 64.506100]  # Nome
+"US-0177" = [-152.312186, 63.882831]  # Lake Minchumina
+"US-0178" = [-155.595785, 62.956815]  # McGrath
+"US-0179" = [-148.914099, 63.733098]  # Denali Park
+
+# D820: US-0074 Montana (379,492 km2) cut into 8 parts on admin2 pieces
+[subdivide."US-0074"]
+parts = 8
+whole_tol = 0.06
+blocks = "admin2"
+main = [-108.540000, 45.788302]  # Billings
+
+[subdivide."US-0074".children]
+"US-0180" = [-111.299987, 47.500290]  # Great Falls
+"US-0181" = [-108.199587, 47.906147]  # Montana Northeast
+"US-0182" = [-104.710493, 47.108583]  # Glendive
+"US-0183" = [-113.993053, 46.872241]  # Missoula
+"US-0184" = [-111.037832, 45.680092]  # Bozeman
+"US-0185" = [-105.839984, 46.408884]  # Miles City
+"US-0186" = [-112.533839, 46.003896]  # Butte

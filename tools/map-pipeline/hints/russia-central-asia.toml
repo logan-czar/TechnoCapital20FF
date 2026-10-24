@@ -123,3 +123,343 @@ seeds = [[30.21, 59.88], [30.26, 59.88], [29.93, 59.94], [30.27, 59.80], [30.60,
 # ring round it; the ring's own towns seed it
 [provinces.KZ-0004] # Talgar, Yesik, Kaskelen, Kapchagay (Konaev)
 seeds = [[77.24, 43.30], [77.45, 43.36], [76.62, 43.20], [77.07, 43.87]]
+
+# D820: RU-0021 Murmansk-Karelia (309,129 km2) cut into 7 parts on towns pieces
+[subdivide."RU-0021"]
+parts = 7
+whole_tol = 0.06
+blocks = "towns"
+main = [33.100036, 68.969988]  # Murmansk
+
+[subdivide."RU-0021".children]
+"RU-0075" = [33.393042, 67.573071]  # Apatity
+"RU-0076" = [34.345542, 66.681394]  # Umba
+"RU-0077" = [32.414393, 67.164336]  # Kandalaksha
+"RU-0078" = [34.568370, 64.953592]  # Kem
+"RU-0079" = [34.324303, 63.754776]  # Segezha
+"RU-0080" = [34.361223, 61.781318]  # Petrozavodsk
+
+# D820: RU-0022 Arkhangelsk (403,865 km2) cut into 9 parts on towns pieces
+[subdivide."RU-0022"]
+parts = 9
+whole_tol = 0.06
+blocks = "towns"
+main = [39.830013, 64.570024]  # Severodvinsk
+
+[subdivide."RU-0022".children]
+"RU-0081" = [63.112225, 75.980048]  # Arkhangelsk Northeast
+"RU-0082" = [56.449697, 73.269992]  # Matochkin Shar
+"RU-0083" = [44.240028, 65.852220]  # Mezen
+"RU-0084" = [45.905272, 64.447733]  # Arkhangelsk East
+"RU-0085" = [39.510441, 63.197874]  # Arkhangelsk West
+"RU-0086" = [46.663084, 61.263068]  # Kotlas
+"RU-0087" = [43.946623, 62.197865]  # Arkhangelsk Southeast
+"RU-0088" = [42.097420, 61.067395]  # Velsk
+
+# D820: RU-0023 Komi-Nenets (595,242 km2) cut into 13 parts on towns pieces
+[subdivide."RU-0023"]
+parts = 13
+whole_tol = 0.06
+blocks = "towns"
+main = [50.819988, 61.659995]  # Syktyvkar
+
+[subdivide."RU-0023".children]
+"RU-0089" = [61.667698, 69.763014]  # Amderma
+"RU-0090" = [53.057423, 67.647407]  # Naryan Mar
+"RU-0091" = [64.009984, 67.500000]  # Vorkuta
+"RU-0092" = [58.324841, 66.987756]  # Komi Northeast
+"RU-0093" = [44.133368, 67.866644]  # Shoyna
+"RU-0094" = [53.042122, 66.378963]  # Komi Northwest
+"RU-0095" = [57.208745, 65.158748]  # Pechora
+"RU-0096" = [54.342751, 64.653888]  # Komi West
+"RU-0097" = [50.386210, 64.276620]  # Komi West 2
+"RU-0098" = [57.780218, 62.757870]  # Komi Southeast
+"RU-0099" = [53.689994, 63.559982]  # Ukhta
+"RU-0100" = [50.258202, 60.569326]  # Komi Southwest
+
+# D820: RU-0050 Surgut-Khanty-Mansiysk (393,179 km2) cut into 9 parts on towns pieces
+[subdivide."RU-0050"]
+parts = 9
+whole_tol = 0.06
+blocks = "towns"
+main = [73.425017, 61.259942]  # Surgut
+
+[subdivide."RU-0050".children]
+"RU-0101" = [60.970015, 64.250457]  # Saranpaul
+"RU-0102" = [64.419416, 63.193312]  # Igrim
+"RU-0103" = [74.494099, 62.044622]  # Kogalym
+"RU-0104" = [69.001514, 61.001534]  # Khanty Mansiysk
+"RU-0105" = [61.675592, 62.451772]  # Surgut West
+"RU-0106" = [65.381425, 62.146528]  # Nyagan
+"RU-0107" = [66.980556, 59.836601]  # Surgut South
+"RU-0108" = [72.793271, 59.810618]  # Surgut Southeast
+
+# D820: RU-0052 Yamal (686,507 km2) cut into 14 parts on towns pieces
+[subdivide."RU-0052"]
+parts = 14
+whole_tol = 0.04
+blocks = "towns"
+main = [74.925313, 67.922117]  # Yamburg
+
+[subdivide."RU-0052".children]
+"RU-0109" = [70.082566, 71.589199]  # Yamal North
+"RU-0110" = [78.466104, 70.881422]  # Gyda
+"RU-0111" = [69.565372, 69.347296]  # Yamal North 2
+"RU-0112" = [77.519960, 67.750398]  # Nakhodka
+"RU-0113" = [76.633245, 66.083316]  # Novy Urengoy
+"RU-0114" = [72.514788, 65.529810]  # Nadym
+"RU-0115" = [81.109221, 66.505103]  # Yamal East
+"RU-0116" = [66.609980, 66.535020]  # Salekhard
+"RU-0117" = [68.745628, 65.010063]  # Yamal South
+"RU-0118" = [82.396192, 64.589376]  # Yamal East 2
+"RU-0119" = [73.548295, 64.587000]  # Yamal Southeast
+"RU-0120" = [75.616511, 63.166544]  # Noyabrsk
+"RU-0121" = [81.689628, 63.266036]  # Yamal East 3
+
+# D820: RU-0055 Tomsk (314,785 km2) cut into 7 parts on towns pieces
+[subdivide."RU-0055"]
+parts = 7
+whole_tol = 0.06
+blocks = "towns"
+main = [84.975009, 56.494987]  # Tomsk
+
+[subdivide."RU-0055".children]
+"RU-0122" = [77.577683, 60.733152]  # Strezhevoy
+"RU-0123" = [84.151102, 59.543617]  # Tomsk Northeast
+"RU-0124" = [78.671913, 58.962969]  # Tomsk West
+"RU-0125" = [86.487973, 58.470539]  # Tomsk East
+"RU-0126" = [78.172589, 57.765320]  # Tomsk West 2
+"RU-0127" = [82.907051, 58.311021]  # Kolpashevo
+
+# D820: RU-0057 Altai (264,528 km2) cut into 6 parts on towns pieces
+[subdivide."RU-0057"]
+parts = 6
+whole_tol = 0.06
+blocks = "towns"
+main = [83.745007, 53.354998]  # Barnaul
+
+[subdivide."RU-0057".children]
+"RU-0128" = [78.669554, 53.004942]  # Slavgorod
+"RU-0129" = [85.180010, 52.534066]  # Biysk
+"RU-0130" = [81.210020, 51.520019]  # Rubtsovsk
+"RU-0131" = [86.980067, 51.236635]  # Altai East
+"RU-0132" = [87.548013, 50.139963]  # Altai East 2
+
+# D820: RU-0058 Krasnoyarsk (283,197 km2) cut into 6 parts on towns pieces
+[subdivide."RU-0058"]
+parts = 6
+whole_tol = 0.06
+blocks = "towns"
+main = [92.864055, 56.015929]  # Krasnoyarsk
+
+[subdivide."RU-0058".children]
+"RU-0133" = [101.176522, 58.851240]  # Krasnoyarsk East
+"RU-0134" = [95.710013, 56.190019]  # Kansk
+"RU-0135" = [94.702788, 55.961970]  # Zaozernyy
+"RU-0136" = [91.445002, 53.703685]  # Abakan
+"RU-0137" = [91.400405, 53.089433]  # Sayanogorsk
+
+# D820: RU-0060 Angara-Evenkia (693,511 km2) cut into 15 parts on towns pieces
+[subdivide."RU-0060"]
+parts = 15
+whole_tol = 0.06
+blocks = "towns"
+main = [92.483285, 58.243252]  # Lesosibirsk
+
+[subdivide."RU-0060".children]
+"RU-0138" = [104.742111, 63.692284]  # Angara East
+"RU-0139" = [100.250046, 64.283297]  # Tura
+"RU-0140" = [96.305193, 63.377994]  # Angara Northeast
+"RU-0141" = [92.293476, 62.621526]  # Angara Northwest
+"RU-0142" = [89.257745, 61.868044]  # Komsa
+"RU-0143" = [86.223633, 61.949439]  # Angara West
+"RU-0144" = [96.959561, 61.669192]  # Angara East 2
+"RU-0145" = [103.530152, 61.156397]  # Angara East 3
+"RU-0146" = [101.185548, 60.742917]  # Angara East 4
+"RU-0147" = [97.401554, 60.398308]  # Angara East 5
+"RU-0148" = [92.941921, 60.357635]  # Angara West 2
+"RU-0149" = [87.909374, 60.220330]  # Angara West 3
+"RU-0150" = [99.099619, 58.694558]  # Kodinskiy
+"RU-0151" = [89.954760, 58.417065]  # Angara Southwest
+
+# D820: RU-0063 Bratsk-Ust-Kut (636,478 km2) cut into 13 parts on towns pieces
+[subdivide."RU-0063"]
+parts = 13
+whole_tol = 0.06
+blocks = "towns"
+main = [101.615027, 56.156997]  # Bratsk
+
+[subdivide."RU-0063".children]
+"RU-0152" = [108.036248, 62.626656]  # Bratsk Northwest
+"RU-0153" = [107.779405, 60.380796]  # Yerema
+"RU-0154" = [116.133429, 59.312659]  # Bratsk East
+"RU-0155" = [106.465102, 58.788511]  # Bratsk West
+"RU-0156" = [111.715026, 58.011785]  # Bratsk South
+"RU-0157" = [114.193242, 57.850748]  # Bodaybo
+"RU-0158" = [108.111943, 57.785735]  # Kirensk
+"RU-0159" = [102.633311, 57.989960]  # Ust-Ulimsk
+"RU-0160" = [105.759994, 56.764970]  # Ust Kut
+"RU-0161" = [97.987703, 55.927709]  # Tayshet
+"RU-0162" = [105.574432, 54.906571]  # Bratsk Southwest
+"RU-0163" = [100.565376, 54.565337]  # Tulun
+
+# D820: RU-0065 Khabarovsk (822,984 km2) cut into 18 parts on towns pieces
+[subdivide."RU-0065"]
+parts = 18
+whole_tol = 0.06
+blocks = "towns"
+main = [135.120011, 48.454987]  # Khabarovsk
+
+[subdivide."RU-0065".children]
+"RU-0164" = [143.533259, 61.546631]  # Khabarovsk Northeast
+"RU-0165" = [139.757017, 60.239553]  # Khabarovsk Northeast 2
+"RU-0166" = [143.217036, 59.383002]  # Okhotsk
+"RU-0167" = [134.928579, 58.666988]  # Khabarovsk North
+"RU-0168" = [139.500002, 57.366975]  # Tukchi
+"RU-0169" = [135.430017, 57.666595]  # Khakhar
+"RU-0170" = [135.314514, 54.711394]  # Chumikan
+"RU-0171" = [133.269019, 55.027559]  # Khabarovsk North 2
+"RU-0172" = [140.730004, 53.149636]  # Nikolayevsk na Amure
+"RU-0173" = [135.270638, 52.911215]  # Khabarovsk Southeast
+"RU-0174" = [140.783334, 51.466586]  # De Kastri
+"RU-0175" = [136.449934, 51.783775]  # Khabarovsk Southeast 2
+"RU-0176" = [133.024118, 51.117796]  # Chegdomyn
+"RU-0177" = [137.019998, 50.554988]  # Komsomolsk na Amure
+"RU-0178" = [133.569271, 49.630899]  # Khabarovsk South
+"RU-0179" = [140.274890, 48.969891]  # Sovetskaya Gavan
+"RU-0180" = [136.373295, 47.842804]  # Khabarovsk Southeast 3
+
+# D820: RU-0066 Amur (360,963 km2) cut into 8 parts on towns pieces
+[subdivide."RU-0066"]
+parts = 8
+whole_tol = 0.06
+blocks = "towns"
+main = [127.533342, 50.266607]  # Blagoveshchensk
+
+[subdivide."RU-0066".children]
+"RU-0181" = [121.613083, 56.531212]  # Nyukzha
+"RU-0182" = [129.208611, 54.756151]  # Amur Northwest
+"RU-0183" = [124.707571, 55.174267]  # Tynda
+"RU-0184" = [127.266588, 53.750012]  # Zeya
+"RU-0185" = [130.620494, 53.643341]  # Amur Northeast
+"RU-0186" = [129.992888, 52.466078]  # Amur Southwest
+"RU-0187" = [128.463724, 50.919100]  # Belogorsk
+
+# D820: RU-0069 Kamchatka (463,777 km2) cut into 10 parts on towns pieces
+[subdivide."RU-0069"]
+parts = 10
+whole_tol = 0.06
+blocks = "towns"
+main = [158.623020, 53.061992]  # Petropavlovsk Kamchatskiy
+
+[subdivide."RU-0069".children]
+"RU-0188" = [165.300029, 62.549992]  # Manily
+"RU-0189" = [167.194804, 63.073050]  # Kamchatka Northeast
+"RU-0190" = [170.462399, 61.662934]  # Kamchatka East
+"RU-0191" = [165.818343, 60.332065]  # Korf
+"RU-0192" = [159.950019, 59.084002]  # Palana
+"RU-0193" = [157.233338, 57.550401]  # Utkholok
+"RU-0194" = [160.850016, 56.299960]  # Klyuchi
+"RU-0195" = [162.434984, 56.213505]  # Ust Kamchatsk
+"RU-0196" = [156.385876, 55.247756]  # Kamchatka Southwest
+
+# D820: RU-0070 Magadan-Chukotka (1,180,867 km2) cut into 26 parts on towns pieces
+[subdivide."RU-0070"]
+parts = 26
+whole_tol = 0.06
+blocks = "towns"
+main = [150.810009, 59.574980]  # Magadan
+
+[subdivide."RU-0070".children]
+"RU-0197" = [-179.589979, 70.956585]  # Zvezdnyj
+"RU-0198" = [170.313315, 69.700822]  # Pevek
+"RU-0199" = [161.253540, 67.912664]  # Magadan Northeast
+"RU-0200" = [-179.499984, 68.933711]  # Mys Shmidta
+"RU-0201" = [173.333337, 66.417069]  # Mukhomornoye
+"RU-0202" = [175.488922, 67.183938]  # Magadan East
+"RU-0203" = [166.448574, 68.052627]  # Bilibino
+"RU-0204" = [-179.183722, 66.322132]  # Egvekinot
+"RU-0205" = [160.148951, 66.186051]  # Magadan Northeast 2
+"RU-0206" = [178.192220, 65.964697]  # Magadan East 2
+"RU-0207" = [164.278917, 65.890632]  # Magadan East 3
+"RU-0208" = [-173.225794, 64.423495]  # Provideniya
+"RU-0209" = [170.841165, 65.351488]  # Magadan East 4
+"RU-0210" = [160.500012, 65.249982]  # Omolon
+"RU-0211" = [154.856046, 64.520028]  # Magadan West
+"RU-0212" = [172.169439, 63.978467]  # Magadan East 5
+"RU-0213" = [148.617777, 63.642033]  # Magadan West 2
+"RU-0214" = [177.474996, 64.736990]  # Anadyr
+"RU-0215" = [157.522925, 63.214403]  # Magadan South
+"RU-0216" = [155.800040, 62.533275]  # Omsukchan
+"RU-0217" = [172.891229, 62.864333]  # Magadan East 6
+"RU-0218" = [148.166759, 62.783337]  # Susuman
+"RU-0219" = [159.233319, 61.949977]  # Evensk
+"RU-0220" = [152.250179, 61.866985]  # Strelka
+"RU-0221" = [147.840190, 60.488386]  # Magadan West 3
+
+# D820: RU-0071 Yakutsk-Aldan (1,319,885 km2) cut into 27 parts on towns pieces
+[subdivide."RU-0071"]
+parts = 27
+whole_tol = 0.02
+blocks = "towns"
+main = [129.735016, 62.034959]  # Yakutsk
+
+[subdivide."RU-0071".children]
+"RU-0222" = [161.481143, 69.424440]  # Mikhalkino
+"RU-0223" = [145.263311, 66.101090]  # Yakutsk East
+"RU-0224" = [137.367436, 65.715017]  # Yakutsk Northeast
+"RU-0225" = [125.250019, 64.900443]  # Tunguskhaya
+"RU-0226" = [150.890004, 65.735973]  # Zyryanka
+"RU-0227" = [132.597801, 65.564140]  # Yakutsk Northeast 2
+"RU-0228" = [143.199983, 64.566587]  # Ust Nera
+"RU-0229" = [129.158594, 64.543056]  # Yakutsk North
+"RU-0230" = [135.815461, 64.220204]  # Yakutsk Northeast 3
+"RU-0231" = [145.075877, 64.001339]  # Yakutsk East 2
+"RU-0232" = [123.594988, 63.591306]  # Yakutsk West
+"RU-0233" = [142.769768, 63.421446]  # Oymyakon
+"RU-0234" = [127.473914, 63.924146]  # Sangar
+"RU-0235" = [135.600033, 62.666006]  # Khandyga
+"RU-0236" = [138.657935, 62.720916]  # Yakutsk East 3
+"RU-0237" = [125.164091, 61.670574]  # Yakutsk West 2
+"RU-0238" = [135.183314, 60.800021]  # Eldikan
+"RU-0239" = [134.543302, 60.456580]  # Ust Maya
+"RU-0240" = [120.392589, 60.503192]  # Olyokminsk
+"RU-0241" = [127.967856, 59.738272]  # Yakutsk Southwest
+"RU-0242" = [123.737703, 59.607798]  # Yakutsk West 3
+"RU-0243" = [130.397936, 58.500538]  # Yakutsk South
+"RU-0244" = [121.066904, 58.230600]  # Yakutsk West 4
+"RU-0245" = [125.389390, 58.602998]  # Aldan
+"RU-0246" = [124.710362, 56.674046]  # Neryungri
+"RU-0247" = [129.649690, 56.681967]  # Yakutsk South 2
+
+# D820: RU-0073 Buryatia (332,955 km2) cut into 7 parts on towns pieces
+[subdivide."RU-0073"]
+parts = 7
+whole_tol = 0.04
+blocks = "towns"
+main = [107.624996, 51.824988]  # Ulan Ude
+
+[subdivide."RU-0073".children]
+"RU-0248" = [114.889979, 56.331534]  # Taksimo
+"RU-0249" = [109.312955, 55.634006]  # Severobaykalsk
+"RU-0250" = [113.600032, 54.433304]  # Bagdarin
+"RU-0251" = [111.233210, 53.229987]  # Buryatia South
+"RU-0252" = [101.560945, 51.753599]  # Buryatia West
+"RU-0253" = [106.500362, 51.280757]  # Gusinoozyorsk
+
+# D820: RU-0074 Zabaykalsky (432,409 km2) cut into 9 parts on towns pieces
+[subdivide."RU-0074"]
+parts = 9
+whole_tol = 0.06
+blocks = "towns"
+main = [113.465002, 52.055025]  # Chita
+
+[subdivide."RU-0074".children]
+"RU-0254" = [118.622433, 56.831079]  # Zabaykalsky North
+"RU-0255" = [118.285571, 54.990132]  # Zabaykalsky North 2
+"RU-0256" = [119.766581, 53.733321]  # Mogocha
+"RU-0257" = [116.548586, 52.008956]  # Nerchinsk
+"RU-0258" = [119.017715, 52.005288]  # Zabaykalsky Southeast
+"RU-0259" = [111.925132, 50.852033]  # Zabaykalsky Southwest
+"RU-0260" = [118.026480, 50.066491]  # Krasnokamensk
+"RU-0261" = [108.832674, 51.282695]  # Petrovsk Zabaykalskiy
