@@ -118,8 +118,380 @@ seeds = [[30.21, 59.88], [30.26, 59.88], [29.93, 59.94], [30.27, 59.80], [30.60,
 "RU-0003" = "a detached part of Natural Earth's Moscow city unit (the city has exclaves in the oblast)"
 "TJ-0006" = "Vorukh: Tajikistan's real exclave inside Kyrgyzstan"
 "UZ-0006" = "Sokh and Shakhimardan: Uzbekistan's real exclaves inside Kyrgyzstan"
+# D822: a part of a split giant
+"RU-0174" = "a straight cut across Khabarovsk's interior left this piece (about 8,100 km2) on RU-0174's side; joined to any part it touches (RU-0170, RU-0171, RU-0184) it would put that part over the cap (D822)"
 
 # PR #39 review (D690): Almaty's point is in the city region, so it no longer snaps onto the
 # ring round it; the ring's own towns seed it
 [provinces.KZ-0004] # Talgar, Yesik, Kaskelen, Kapchagay (Konaev)
 seeds = [[77.24, 43.30], [77.45, 43.36], [76.62, 43.20], [77.07, 43.87]]
+
+# D829: sites of the giants' notes Natural Earth has no place for (or names otherwise),
+# for the giant-province split: each site resource and notes fragment goes to the part
+# holding its site, and the part is named after it
+[giant_sites."RU-0071"]
+"Neryungri" = [124.72, 56.66]
+[giant_sites."RU-0074"]
+"Krasnokamensk" = [118.03, 50.1]
+"Udokan" = [118.3, 56.6]
+[giant_sites."RU-0052"]
+"_resource" = "Urengoy"
+"Urengoy" = [76.63, 66.08]
+"Sabetta" = [72.05, 71.27]
+"Bovanenkovo" = [68.37, 70.35]
+[giant_sites."RU-0060"]
+"Olimpiada" = [92.9, 59.17]
+"Vankor" = [83.55, 67.8]
+[giant_sites."RU-0023"]
+"Varandey" = [58.0, 68.82]
+[giant_sites."RU-0070"]
+"Kolyma" = [147.6, 61.2]
+
+# D820: RU-0021 Murmansk-Karelia (309,129 km2) cut into 7 parts on towns pieces
+[subdivide."RU-0021"]
+parts = 7
+whole_tol = 0.06
+blocks = "towns"
+main = [33.100036, 68.969988]  # Murmansk
+place_notes = "Murmansk ice-free port and start of the Northern Sea Route, Northern Fleet at Severomorsk, Kola nickel (Nornickel at Monchegorsk and Zapolyarny), Apatity apatite (PhosAgro), Kola nuclear plant, Petrozavodsk, Karelian timber and stone"
+
+[subdivide."RU-0021".children]
+"RU-0075" = [33.393042, 67.573071]  # Apatity
+"RU-0076" = [34.345542, 66.681394]  # Umba
+"RU-0077" = [32.414393, 67.164336]  # Kandalaksha
+"RU-0078" = [34.568370, 64.953592]  # Kem
+"RU-0079" = [34.324303, 63.754776]  # Segezha
+"RU-0080" = [34.361223, 61.781318]  # Petrozavodsk
+
+# D820: RU-0022 Arkhangelsk (403,865 km2) cut into 9 parts on towns pieces
+[subdivide."RU-0022"]
+parts = 9
+whole_tol = 0.06
+blocks = "towns"
+main = [39.830013, 64.570024]  # Severodvinsk
+
+[subdivide."RU-0022".children]
+"RU-0081" = [63.112225, 75.980048]  # Arkhangelsk Northeast
+"RU-0082" = [56.449697, 73.269992]  # Matochkin Shar
+"RU-0083" = [44.240028, 65.852220]  # Mezen
+"RU-0084" = [45.905272, 64.447733]  # Arkhangelsk East
+"RU-0085" = [39.510441, 63.197874]  # Arkhangelsk West
+"RU-0086" = [46.663084, 61.263068]  # Kotlas
+"RU-0087" = [43.946623, 62.197865]  # Arkhangelsk Southeast
+"RU-0088" = [42.097420, 61.067395]  # Velsk
+
+# D820: RU-0023 Komi-Nenets (595,242 km2) cut into 13 parts on towns pieces
+[subdivide."RU-0023"]
+parts = 13
+whole_tol = 0.06
+blocks = "towns"
+main = [50.819988, 61.659995]  # Syktyvkar
+place_notes = "Timan-Pechora oil (Usinsk, Lukoil), Varandey Arctic oil terminal in the Nenets okrug, Vorkuta coking coal, Ukhta refinery, Syktyvkar pulp mill, Pechora gas"
+
+[subdivide."RU-0023".children]
+"RU-0089" = [58.000000, 68.820000]  # Varandey
+"RU-0090" = [53.057423, 67.647407]  # Naryan Mar
+"RU-0091" = [64.009984, 67.500000]  # Vorkuta
+"RU-0092" = [58.324841, 66.987756]  # Komi Northeast
+"RU-0093" = [44.133368, 67.866644]  # Shoyna
+"RU-0094" = [53.042122, 66.378963]  # Komi Northwest
+"RU-0095" = [57.208745, 65.158748]  # Pechora
+"RU-0096" = [54.342751, 64.653888]  # Komi West
+"RU-0097" = [50.386210, 64.276620]  # Komi West 2
+"RU-0098" = [57.780218, 62.757870]  # Komi Southeast
+"RU-0099" = [53.689994, 63.559982]  # Ukhta
+"RU-0100" = [50.258202, 60.569326]  # Komi Southwest
+
+# D820: RU-0050 Surgut-Khanty-Mansiysk (393,179 km2) cut into 9 parts on towns pieces
+[subdivide."RU-0050"]
+parts = 9
+whole_tol = 0.06
+blocks = "towns"
+main = [73.425017, 61.259942]  # Surgut
+place_notes = "Surgut (Surgutneftegaz headquarters, Surgut GRES-2 power plant), Nefteyugansk (Rosneft's Yuganskneftegaz, the former Yukos core), Khanty-Mansiysk; West Siberian swamps and taiga"
+
+[subdivide."RU-0050".children]
+"RU-0101" = [60.970015, 64.250457]  # Saranpaul
+"RU-0102" = [64.419416, 63.193312]  # Igrim
+"RU-0103" = [74.494099, 62.044622]  # Kogalym
+"RU-0104" = [69.001514, 61.001534]  # Khanty Mansiysk
+"RU-0105" = [61.675592, 62.451772]  # Surgut West
+"RU-0106" = [65.381425, 62.146528]  # Nyagan
+"RU-0107" = [66.980556, 59.836601]  # Surgut South
+"RU-0108" = [72.793271, 59.810618]  # Surgut Southeast
+
+# D820: RU-0052 Yamal (686,507 km2) cut into 14 parts on towns pieces
+[subdivide."RU-0052"]
+parts = 14
+whole_tol = 0.04
+blocks = "towns"
+main = [74.925313, 67.922117]  # Yamburg
+place_notes = "Urengoy, Yamburg and Bovanenkovo gas fields (most of Russia's gas), Novatek's Yamal LNG at Sabetta with Chinese partners (A), Arctic LNG tankers on the Northern Sea Route, Salekhard, Nadym"
+
+[subdivide."RU-0052".children]
+"RU-0109" = [72.050000, 71.270000]  # Sabetta
+"RU-0110" = [78.466104, 70.881422]  # Gyda
+"RU-0111" = [68.370000, 70.350000]  # Bovanenkovo
+"RU-0112" = [77.519960, 67.750398]  # Nakhodka
+"RU-0113" = [76.630000, 66.080000]  # Urengoy
+"RU-0114" = [72.514788, 65.529810]  # Nadym
+"RU-0115" = [81.109221, 66.505103]  # Yamal East
+"RU-0116" = [66.609980, 66.535020]  # Salekhard
+"RU-0117" = [68.745628, 65.010063]  # Yamal South
+"RU-0118" = [82.396192, 64.589376]  # Yamal East 2
+"RU-0119" = [73.548295, 64.587000]  # Yamal Southeast
+"RU-0120" = [75.616511, 63.166544]  # Noyabrsk
+"RU-0121" = [81.689628, 63.266036]  # Yamal East 3
+
+# D820: RU-0055 Tomsk (314,785 km2) cut into 7 parts on towns pieces
+[subdivide."RU-0055"]
+parts = 7
+whole_tol = 0.06
+blocks = "towns"
+main = [84.975009, 56.494987]  # Tomsk
+
+[subdivide."RU-0055".children]
+"RU-0122" = [77.577683, 60.733152]  # Strezhevoy
+"RU-0123" = [84.151102, 59.543617]  # Tomsk Northeast
+"RU-0124" = [78.671913, 58.962969]  # Tomsk West
+"RU-0125" = [86.487973, 58.470539]  # Tomsk East
+"RU-0126" = [78.172589, 57.765320]  # Tomsk West 2
+"RU-0127" = [82.907051, 58.311021]  # Kolpashevo
+
+# D820: RU-0057 Altai (264,528 km2) cut into 6 parts on towns pieces
+[subdivide."RU-0057"]
+parts = 6
+whole_tol = 0.06
+blocks = "towns"
+main = [83.745007, 53.354998]  # Barnaul
+place_notes = "Barnaul, Altai wheat and buckwheat, Biysk rocket fuel plants, Rubtsovsk, Belokurikha spa, the Altai mountains and the Chuya highway to Mongolia"
+
+[subdivide."RU-0057".children]
+"RU-0128" = [78.669554, 53.004942]  # Slavgorod
+"RU-0129" = [85.180010, 52.534066]  # Biysk
+"RU-0130" = [81.210020, 51.520019]  # Rubtsovsk
+"RU-0131" = [86.980067, 51.236635]  # Altai East
+"RU-0132" = [87.548013, 50.139963]  # Altai East 2
+
+# D820: RU-0058 Krasnoyarsk (283,197 km2) cut into 6 parts on towns pieces
+[subdivide."RU-0058"]
+parts = 6
+whole_tol = 0.06
+blocks = "towns"
+main = [92.864055, 56.015929]  # Krasnoyarsk
+
+[subdivide."RU-0058".children]
+"RU-0133" = [101.176522, 58.851240]  # Krasnoyarsk East
+"RU-0134" = [95.710013, 56.190019]  # Kansk
+"RU-0135" = [94.702788, 55.961970]  # Zaozernyy
+"RU-0136" = [91.445002, 53.703685]  # Abakan
+"RU-0137" = [91.400405, 53.089433]  # Sayanogorsk
+
+# D820: RU-0060 Angara-Evenkia (693,511 km2) cut into 15 parts on towns pieces
+[subdivide."RU-0060"]
+parts = 15
+whole_tol = 0.06
+blocks = "towns"
+main = [92.483285, 58.243252]  # Lesosibirsk
+
+[subdivide."RU-0060".children]
+"RU-0138" = [104.742111, 63.692284]  # Angara East
+"RU-0139" = [100.250046, 64.283297]  # Tura
+"RU-0140" = [96.305193, 63.377994]  # Angara Northeast
+"RU-0141" = [92.293476, 62.621526]  # Angara Northwest
+"RU-0142" = [89.257745, 61.868044]  # Komsa
+"RU-0143" = [86.223633, 61.949439]  # Angara West
+"RU-0144" = [96.959561, 61.669192]  # Angara East 2
+"RU-0145" = [103.530152, 61.156397]  # Angara East 3
+"RU-0146" = [101.185548, 60.742917]  # Angara East 4
+"RU-0147" = [97.401554, 60.398308]  # Angara East 5
+"RU-0148" = [92.941921, 60.357635]  # Angara West 2
+"RU-0149" = [87.909374, 60.220330]  # Angara West 3
+"RU-0150" = [99.099619, 58.694558]  # Kodinskiy
+"RU-0151" = [89.954760, 58.417065]  # Angara Southwest
+
+# D820: RU-0063 Bratsk-Ust-Kut (636,478 km2) cut into 13 parts on towns pieces
+[subdivide."RU-0063"]
+parts = 13
+whole_tol = 0.06
+blocks = "towns"
+main = [101.615027, 56.156997]  # Bratsk
+place_notes = "Bratsk and Ust-Ilimsk dams and Rusal's Bratsk aluminium smelter, Ilim pulp mills, Kovykta gas field, Sukhoi Log gold (undeveloped), Verkhnechonskoye oil, Ust-Kut river port and the BAM railway"
+
+[subdivide."RU-0063".children]
+"RU-0152" = [108.036248, 62.626656]  # Bratsk Northwest
+"RU-0153" = [107.779405, 60.380796]  # Yerema
+"RU-0154" = [116.133429, 59.312659]  # Bratsk East
+"RU-0155" = [106.465102, 58.788511]  # Bratsk West
+"RU-0156" = [111.715026, 58.011785]  # Bratsk South
+"RU-0157" = [114.193242, 57.850748]  # Bodaybo
+"RU-0158" = [108.111943, 57.785735]  # Kirensk
+"RU-0159" = [102.633311, 57.989960]  # Ust-Ulimsk
+"RU-0160" = [105.759994, 56.764970]  # Ust Kut
+"RU-0161" = [97.987703, 55.927709]  # Tayshet
+"RU-0162" = [105.574432, 54.906571]  # Bratsk Southwest
+"RU-0163" = [100.565376, 54.565337]  # Tulun
+
+# D820: RU-0065 Khabarovsk (822,984 km2) cut into 17 parts on towns pieces
+[subdivide."RU-0065"]
+parts = 17
+whole_tol = 0.06
+blocks = "towns"
+main = [135.120011, 48.454987]  # Khabarovsk
+place_notes = "Khabarovsk, Komsomolsk-on-Amur (Sukhoi Su-35 and Superjet plant, Amur shipyard submarines), Vanino and Sovetskaya Gavan coal ports, timber exports to China, Birobidzhan"
+
+[subdivide."RU-0065".children]
+"RU-0164" = [143.270105, 61.556569]  # Khabarovsk Northeast
+"RU-0165" = [143.217036, 59.383002]  # Okhotsk
+"RU-0166" = [139.768060, 59.906912]  # Khabarovsk Northeast 2
+"RU-0167" = [135.430017, 57.666595]  # Khakhar
+"RU-0168" = [139.500002, 57.366975]  # Tukchi
+"RU-0169" = [133.595480, 56.845239]  # Khabarovsk North
+"RU-0170" = [135.314514, 54.711394]  # Chumikan
+"RU-0171" = [133.196713, 54.835387]  # Khabarovsk Northwest
+"RU-0172" = [140.730004, 53.149636]  # Nikolayevsk na Amure
+"RU-0173" = [135.484544, 51.869112]  # Khabarovsk Southeast
+"RU-0174" = [133.024118, 51.117796]  # Chegdomyn
+"RU-0175" = [137.019998, 50.554988]  # Komsomolsk na Amure
+"RU-0176" = [140.783334, 51.466586]  # De Kastri
+"RU-0177" = [133.585939, 49.737068]  # Khabarovsk South
+"RU-0178" = [140.274890, 48.969891]  # Sovetskaya Gavan
+"RU-0179" = [136.431172, 47.874572]  # Khabarovsk Southeast 2
+
+# D820: RU-0066 Amur (360,963 km2) cut into 8 parts on towns pieces
+[subdivide."RU-0066"]
+parts = 8
+whole_tol = 0.06
+blocks = "towns"
+main = [127.533342, 50.266607]  # Blagoveshchensk
+place_notes = "Vostochny cosmodrome, Gazprom's Amur gas processing plant at Svobodny (under construction, fed by Power of Siberia), Zeya and Bureya dams, Pokrovka and Albyn gold, soybeans, Blagoveshchensk across the Amur from Heihe"
+
+[subdivide."RU-0066".children]
+"RU-0180" = [121.613083, 56.531212]  # Nyukzha
+"RU-0181" = [129.208611, 54.756151]  # Amur Northwest
+"RU-0182" = [124.707571, 55.174267]  # Tynda
+"RU-0183" = [127.266588, 53.750012]  # Zeya
+"RU-0184" = [130.620494, 53.643341]  # Amur Northeast
+"RU-0185" = [129.992888, 52.466078]  # Amur Southwest
+"RU-0186" = [128.463724, 50.919100]  # Belogorsk
+
+# D820: RU-0069 Kamchatka (463,777 km2) cut into 10 parts on towns pieces
+[subdivide."RU-0069"]
+parts = 10
+whole_tol = 0.06
+blocks = "towns"
+main = [158.623020, 53.061992]  # Petropavlovsk Kamchatskiy
+
+[subdivide."RU-0069".children]
+"RU-0187" = [165.300029, 62.549992]  # Manily
+"RU-0188" = [167.194804, 63.073050]  # Kamchatka Northeast
+"RU-0189" = [170.462399, 61.662934]  # Kamchatka East
+"RU-0190" = [165.818343, 60.332065]  # Korf
+"RU-0191" = [159.950019, 59.084002]  # Palana
+"RU-0192" = [157.233338, 57.550401]  # Utkholok
+"RU-0193" = [160.850016, 56.299960]  # Klyuchi
+"RU-0194" = [162.434984, 56.213505]  # Ust Kamchatsk
+"RU-0195" = [156.385876, 55.247756]  # Kamchatka Southwest
+
+# D820: RU-0070 Magadan-Chukotka (1,180,867 km2) cut into 25 parts on towns pieces
+[subdivide."RU-0070"]
+parts = 25
+whole_tol = 0.06
+blocks = "towns"
+main = [150.810009, 59.574980]  # Magadan
+place_notes = "Kolyma gold (Polyus Natalka, Kupol), Polymetal's Dukat silver, Pevek and the floating nuclear plant Akademik Lomonosov (arrived 2019), Bering Strait, Gulag history"
+
+[subdivide."RU-0070".children]
+"RU-0196" = [-179.589979, 70.956585]  # Zvezdnyj
+"RU-0197" = [170.313315, 69.700822]  # Pevek
+"RU-0198" = [173.590955, 68.102150]  # Magadan East
+"RU-0199" = [-179.499984, 68.933711]  # Mys Shmidta
+"RU-0200" = [170.492886, 67.463124]  # Magadan East 2
+"RU-0201" = [162.535822, 66.994639]  # Magadan Northeast
+"RU-0202" = [166.448574, 68.052627]  # Bilibino
+"RU-0203" = [-179.183722, 66.322132]  # Egvekinot
+"RU-0204" = [160.500012, 65.249982]  # Omolon
+"RU-0205" = [177.699995, 64.733295]  # Ugolnye Kopi
+"RU-0206" = [-173.225794, 64.423495]  # Provideniya
+"RU-0207" = [173.333337, 66.417069]  # Mukhomornoye
+"RU-0208" = [155.287748, 64.941848]  # Magadan West
+"RU-0209" = [161.512118, 64.687050]  # Magadan East 3
+"RU-0210" = [171.774687, 64.212722]  # Magadan East 4
+"RU-0211" = [177.474996, 64.736990]  # Anadyr
+"RU-0212" = [152.250179, 61.866985]  # Strelka
+"RU-0213" = [148.166759, 62.783337]  # Susuman
+"RU-0214" = [160.748830, 62.982327]  # Magadan Southeast
+"RU-0215" = [172.485613, 62.903086]  # Magadan East 5
+"RU-0216" = [155.800040, 62.533275]  # Omsukchan
+"RU-0217" = [159.233319, 61.949977]  # Evensk
+"RU-0218" = [147.600000, 61.200000]  # Kolyma
+"RU-0219" = [152.416577, 59.033721]  # Siglan
+
+# D820: RU-0071 Yakutsk-Aldan (1,319,885 km2) cut into 27 parts on towns pieces
+[subdivide."RU-0071"]
+parts = 27
+whole_tol = 0.02
+blocks = "towns"
+main = [129.735016, 62.034959]  # Yakutsk
+place_notes = "Yakutsk (coldest big city), Neryungri and Elga coking coal, Aldan gold (Kuranakh), the Power of Siberia pipeline route, Lena river ports"
+
+[subdivide."RU-0071".children]
+"RU-0220" = [161.481143, 69.424440]  # Mikhalkino
+"RU-0221" = [145.263311, 66.101090]  # Yakutsk East
+"RU-0222" = [137.367436, 65.715017]  # Yakutsk Northeast
+"RU-0223" = [125.250019, 64.900443]  # Tunguskhaya
+"RU-0224" = [150.890004, 65.735973]  # Zyryanka
+"RU-0225" = [132.597801, 65.564140]  # Yakutsk Northeast 2
+"RU-0226" = [143.199983, 64.566587]  # Ust Nera
+"RU-0227" = [129.158594, 64.543056]  # Yakutsk North
+"RU-0228" = [135.815461, 64.220204]  # Yakutsk Northeast 3
+"RU-0229" = [145.075877, 64.001339]  # Yakutsk East 2
+"RU-0230" = [123.594988, 63.591306]  # Yakutsk West
+"RU-0231" = [142.769768, 63.421446]  # Oymyakon
+"RU-0232" = [127.473914, 63.924146]  # Sangar
+"RU-0233" = [135.600033, 62.666006]  # Khandyga
+"RU-0234" = [138.657935, 62.720916]  # Yakutsk East 3
+"RU-0235" = [125.164091, 61.670574]  # Yakutsk West 2
+"RU-0236" = [135.183314, 60.800021]  # Eldikan
+"RU-0237" = [134.543302, 60.456580]  # Ust Maya
+"RU-0238" = [120.392589, 60.503192]  # Olyokminsk
+"RU-0239" = [127.967856, 59.738272]  # Yakutsk Southwest
+"RU-0240" = [123.737703, 59.607798]  # Yakutsk West 3
+"RU-0241" = [130.397936, 58.500538]  # Yakutsk South
+"RU-0242" = [121.066904, 58.230600]  # Yakutsk West 4
+"RU-0243" = [125.389390, 58.602998]  # Aldan
+"RU-0244" = [124.720000, 56.660000]  # Neryungri
+"RU-0245" = [129.649690, 56.681967]  # Yakutsk South 2
+
+# D820: RU-0073 Buryatia (332,955 km2) cut into 7 parts on towns pieces
+[subdivide."RU-0073"]
+parts = 7
+whole_tol = 0.04
+blocks = "towns"
+main = [107.624996, 51.824988]  # Ulan Ude
+
+[subdivide."RU-0073".children]
+"RU-0246" = [114.889979, 56.331534]  # Taksimo
+"RU-0247" = [109.312955, 55.634006]  # Severobaykalsk
+"RU-0248" = [113.600032, 54.433304]  # Bagdarin
+"RU-0249" = [111.233210, 53.229987]  # Buryatia South
+"RU-0250" = [101.560945, 51.753599]  # Buryatia West
+"RU-0251" = [106.500362, 51.280757]  # Gusinoozyorsk
+
+# D820: RU-0074 Zabaykalsky (432,409 km2) cut into 9 parts on towns pieces
+[subdivide."RU-0074"]
+parts = 9
+whole_tol = 0.06
+blocks = "towns"
+main = [113.465002, 52.055025]  # Chita
+place_notes = "Chita, Krasnokamensk (Priargunsky, Russia's main uranium mine), Nornickel's Bystrinsky copper-gold-iron mine (2019), Udokan copper (under development), Zabaikalsk rail crossing to China"
+
+[subdivide."RU-0074".children]
+"RU-0252" = [118.300000, 56.600000]  # Udokan
+"RU-0253" = [118.285571, 54.990132]  # Zabaykalsky North
+"RU-0254" = [119.766581, 53.733321]  # Mogocha
+"RU-0255" = [116.548586, 52.008956]  # Nerchinsk
+"RU-0256" = [119.017715, 52.005288]  # Zabaykalsky Southeast
+"RU-0257" = [111.925132, 50.852033]  # Zabaykalsky Southwest
+"RU-0258" = [118.030000, 50.100000]  # Krasnokamensk
+"RU-0259" = [108.832674, 51.282695]  # Petrovsk Zabaykalskiy

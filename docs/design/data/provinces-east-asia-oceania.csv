@@ -116,7 +116,7 @@ CN-0115,Sanjiang-Mudanjiang,CHN,Heilongjiang,Heilongjiang,,City,3,12,22,Farmland
 CN-0116,Baotou,CHN,Inner Mongolia,Inner Mongolia,,City,6,22,16,Rare earths,Desert,N,,,,"Bayan Obo rare earth mine (most of world rare earth output with Ganzhou) and China Northern Rare Earth separation, Baotou Steel, aluminium smelters"
 CN-0117,Hohhot-Ulanqab,CHN,Inner Mongolia,Inner Mongolia,,City,8,12,19,None,Temperate,N,,,,"regional capital, Yili and Mengniu dairy, Ulanqab and Horinger data centers (cheap power), rail to Erenhot"
 CN-0118,Ordos-Bayannur-Alxa,CHN,Inner Mongolia,Inner Mongolia,,City,6,20,18,Coal,Desert,N,,,,"Ordos coal and Sulige gas field, coal-to-chemicals, Kangbashi ghost town, bitcoin mines, Alxa desert, Bayannur farms"
-CN-0119,Chifeng-Tongliao-Xilingol,CHN,Inner Mongolia,Inner Mongolia,,City,3,12,21,Zinc,Temperate,N,,,,"Chifeng lead, zinc and silver mines, Tongliao aluminium, Xilingol coal and grassland, Erenhot crossing to Mongolia"
+CN-0119,Chifeng-Tongliao-Xilingol,CHN,Inner Mongolia,Inner Mongolia,,City,3,12,21,Zinc,Temperate,N,,,,"Chifeng lead, zinc and silver mines, Xilingol coal and grassland, Erenhot crossing to Mongolia"
 CN-0120,Hulunbuir-Hinggan,CHN,Inner Mongolia,Inner Mongolia,,Town,2,8,18,Timber,Temperate,N,,,,"Manzhouli crossing to Russia, Hulunbuir grassland, Greater Khingan forests, Yimin coal"
 CN-0121,Nanning,CHN,Guangxi,Guangxi,,Metropolis,8,10,21,None,Tropical,N,,,,"regional capital, China-ASEAN Expo, rail and road to Vietnam via Pingxiang and the Friendship Pass"
 CN-0122,Liuzhou-Guilin,CHN,Guangxi,Guangxi,,City,5,16,22,None,Mountain,N,,,,"SAIC-GM-Wuling (mini EVs and vans), Liuzhou steel and Liugong loaders, Guilin karst tourism"
@@ -138,12 +138,84 @@ CN-0137,Xining-Haidong,CHN,Qinghai,Qinghai,,City,6,8,18,None,Mountain,N,,,,"prov
 CN-0138,Qaidam and Southern Qinghai,CHN,Qinghai,Qinghai,,Town,2,10,15,Lithium,Mountain,N,,,,"Qarhan salt lake potash and lithium brine (Qinghai Salt Lake, BYD), Golmud, Yushu and Golog Tibetan plateau, sources of the Yangtze and Yellow rivers"
 CN-0139,Yinchuan-Ningdong,CHN,Ningxia,Ningxia,,City,5,14,21,Coal,Desert,N,,,,"regional capital, Ningdong coal-to-liquids base (Shenhua), wine on the Helan mountains, Hui Muslim region"
 CN-0140,Urumqi-Changji,CHN,Xinjiang,Xinjiang,,Metropolis,10,12,19,None,Desert,N,,,,"regional capital, Changji polysilicon plants (much of world solar supply), Xinjiang Zhongtai chemicals; the internment camps (from 2017) bring forced-labor sanctions risk"
-CN-0141,Northern Xinjiang,CHN,Xinjiang,Xinjiang,,City,4,16,20,Oil,Desert,N,,,,"Karamay oilfield and Dushanzi refinery, Yili valley, Khorgos crossing and dry port to Kazakhstan, Altay gold"
+CN-0141,Northern Xinjiang,CHN,Xinjiang,Xinjiang,,City,4,16,20,Oil,Desert,N,,,,"Karamay oilfield and Dushanzi refinery, Yili valley, Khorgos crossing and dry port to Kazakhstan"
 CN-0142,Turpan-Hami,CHN,Xinjiang,Xinjiang,,Town,2,12,13,Coal,Desert,N,,,,"Hami coal and power lines to the east, Turpan grapes and solar"
 CN-0143,Korla-Aksu,CHN,Xinjiang,Xinjiang,,City,3,14,19,Gas,Desert,N,,,,"Tarim basin gas (PetroChina Tarim oilfield), start of the West-East gas pipeline, Aksu cotton"
-CN-0144,Kashgar-Hotan,CHN,Xinjiang,Xinjiang,,City,3,6,20,Farmland,Desert,N,,,,"Uyghur south: cotton, Kashgar special economic zone, Hotan jade; India claims Aksai Chin, run as part of Hotan (note only (A))"
+CN-0144,Kashgar-Hotan,CHN,Xinjiang,Xinjiang,,City,3,6,20,Farmland,Desert,N,,,,"Uyghur south: cotton, Kashgar special economic zone"
 CN-0145,Lhasa-Shigatse,CHN,Tibet,Tibet,,City,5,8,15,Copper,Mountain,N,,,,"regional capital, Qinghai-Tibet railway, Gyama and Qulong copper mines, Shigatse"
 CN-0146,Eastern and Northern Tibet,CHN,Tibet,Tibet,,Town,2,5,15,Hydropower,Mountain,N,,,,"Nyingchi (Zangmu dam on the Yarlung Tsangpo), Chamdo (Yulong copper), Nagqu, Ngari; borders India's Arunachal Pradesh, which China claims (South Asia slice)"
+CN-0147,Ejinaqi,CHN,Inner Mongolia,Inner Mongolia,,none,1,1,1,None,Desert,N,,,,split from CN-0118 Ordos-Bayannur-Alxa in the giant-province split (D820)
+CN-0148,Alashanyouqi,CHN,Inner Mongolia,Inner Mongolia,,none,1,1,1,None,Desert,N,,,,split from CN-0118 Ordos-Bayannur-Alxa in the giant-province split (D820)
+CN-0149,Alashanzuoqi,CHN,Inner Mongolia,Inner Mongolia,,none,1,1,1,None,Desert,N,,,,split from CN-0118 Ordos-Bayannur-Alxa in the giant-province split (D820)
+CN-0150,Jintaxian,CHN,Inner Mongolia,Inner Mongolia,,none,1,1,1,None,Desert,N,,,,split from CN-0118 Ordos-Bayannur-Alxa in the giant-province split (D820)
+CN-0151,Hanggin Houqi,CHN,Inner Mongolia,Inner Mongolia,,Town,1,1,1,None,Desert,N,,,,"split from CN-0118 Ordos-Bayannur-Alxa in the giant-province split (D820); towns: Hanggin Houqi, Wuyuan"
+CN-0152,Minqinxian,CHN,Inner Mongolia,Inner Mongolia,,none,1,1,1,None,Desert,N,,,,split from CN-0118 Ordos-Bayannur-Alxa in the giant-province split (D820)
+CN-0153,Wuhai,CHN,Inner Mongolia,Inner Mongolia,,Town,1,1,1,None,Desert,N,,,,"split from CN-0118 Ordos-Bayannur-Alxa in the giant-province split (D820); towns: Wuhai, Alxa Zuoqi"
+CN-0154,Ulanhot,CHN,Inner Mongolia,Inner Mongolia,,Town,1,1,1,Timber,Temperate,N,,,,"split from CN-0119 Chifeng-Tongliao-Xilingol in the giant-province split (D820); towns: Ulanhot, Arxan"
+CN-0155,Dongwuzhumuqinqi,CHN,Inner Mongolia,Inner Mongolia,,none,1,1,1,Timber,Temperate,N,,,,split from CN-0119 Chifeng-Tongliao-Xilingol in the giant-province split (D820)
+CN-0156,Bairin Zuoqi,CHN,Inner Mongolia,Inner Mongolia,,Town,1,1,1,Timber,Temperate,N,,,,split from CN-0119 Chifeng-Tongliao-Xilingol in the giant-province split (D820); towns: Bairin Zuoqi
+CN-0157,Zaluteqi,CHN,Inner Mongolia,Inner Mongolia,,none,1,1,1,Timber,Temperate,N,,,,split from CN-0119 Chifeng-Tongliao-Xilingol in the giant-province split (D820)
+CN-0158,Xilinhot,CHN,Inner Mongolia,Inner Mongolia,,Town,1,1,1,Timber,Temperate,N,,,,split from CN-0119 Chifeng-Tongliao-Xilingol in the giant-province split (D820); towns: Xilinhot
+CN-0159,Tongliao,CHN,Inner Mongolia,Inner Mongolia,,Town,1,1,1,Timber,Temperate,N,,,,"Tongliao aluminium; split from CN-0119 Chifeng-Tongliao-Xilingol in the giant-province split (D820); towns: Tongliao, Kailu"
+CN-0160,Geergunyouqi,CHN,Inner Mongolia,Inner Mongolia,,none,1,1,1,Timber,Temperate,N,,,,split from CN-0120 Hulunbuir-Hinggan in the giant-province split (D820)
+CN-0161,Genhe,CHN,Inner Mongolia,Inner Mongolia,,Town,1,1,1,Timber,Temperate,N,,,,"split from CN-0120 Hulunbuir-Hinggan in the giant-province split (D820); towns: Genhe, Orongen Zizhiqi, Yitulihe"
+CN-0162,Elunchunzizhiqi,CHN,Inner Mongolia,Inner Mongolia,,none,1,1,1,Timber,Temperate,N,,,,split from CN-0120 Hulunbuir-Hinggan in the giant-province split (D820)
+CN-0163,Hailar,CHN,Inner Mongolia,Inner Mongolia,,Town,1,1,1,Timber,Temperate,N,,,,"split from CN-0120 Hulunbuir-Hinggan in the giant-province split (D820); towns: Hailar, Yakeshi"
+CN-0164,Zalantun,CHN,Inner Mongolia,Inner Mongolia,,Town,1,1,1,Timber,Temperate,N,,,,"split from CN-0120 Hulunbuir-Hinggan in the giant-province split (D820); towns: Zalantun, Bugt"
+CN-0165,Delinghashi,CHN,Qinghai,Qinghai,,none,1,1,1,None,Mountain,N,,,,split from CN-0138 Qaidam and Southern Qinghai in the giant-province split (D820)
+CN-0166,Geermushi,CHN,Qinghai,Qinghai,,none,1,1,1,None,Mountain,N,,,,split from CN-0138 Qaidam and Southern Qinghai in the giant-province split (D820)
+CN-0167,Dulan,CHN,Qinghai,Qinghai,,none,1,1,1,None,Mountain,N,,,,split from CN-0138 Qaidam and Southern Qinghai in the giant-province split (D820); towns: Dulan
+CN-0168,Zhiduoxian,CHN,Qinghai,Qinghai,,none,1,1,1,None,Mountain,N,,,,split from CN-0138 Qaidam and Southern Qinghai in the giant-province split (D820)
+CN-0169,Dulanxian,CHN,Qinghai,Qinghai,,none,1,1,1,None,Mountain,N,,,,split from CN-0138 Qaidam and Southern Qinghai in the giant-province split (D820)
+CN-0170,Bangexian,CHN,Qinghai,Qinghai,,none,1,1,1,None,Mountain,N,,,,split from CN-0138 Qaidam and Southern Qinghai in the giant-province split (D820)
+CN-0171,Qumalaixian,CHN,Qinghai,Qinghai,,none,1,1,1,None,Mountain,N,,,,split from CN-0138 Qaidam and Southern Qinghai in the giant-province split (D820)
+CN-0172,Zaduoxian,CHN,Qinghai,Qinghai,,none,1,1,1,None,Mountain,N,,,,split from CN-0138 Qaidam and Southern Qinghai in the giant-province split (D820)
+CN-0173,Baqingxian,CHN,Qinghai,Qinghai,,none,1,1,1,None,Mountain,N,,,,split from CN-0138 Qaidam and Southern Qinghai in the giant-province split (D820)
+CN-0174,Jyekundo,CHN,Qinghai,Qinghai,,Town,1,1,1,None,Mountain,N,,,,split from CN-0138 Qaidam and Southern Qinghai in the giant-province split (D820); towns: Jyekundo
+CN-0175,Altay,CHN,Xinjiang,Xinjiang,,Town,1,1,1,None,Desert,N,,,,Altay gold; split from CN-0141 Northern Xinjiang in the giant-province split (D820); towns: Altay
+CN-0176,Koktokay,CHN,Xinjiang,Xinjiang,,Town,1,1,1,None,Desert,N,,,,split from CN-0141 Northern Xinjiang in the giant-province split (D820); towns: Koktokay
+CN-0177,Fuhaixian,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0141 Northern Xinjiang in the giant-province split (D820)
+CN-0178,Wushuxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0141 Northern Xinjiang in the giant-province split (D820)
+CN-0179,Nilekexian,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0141 Northern Xinjiang in the giant-province split (D820)
+CN-0180,Yining,CHN,Xinjiang,Xinjiang,,Town,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820); towns: Yining
+CN-0181,Korla,CHN,Xinjiang,Xinjiang,,Town,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820); towns: Korla
+CN-0182,Kuqa,CHN,Xinjiang,Xinjiang,,Town,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820); towns: Kuqa
+CN-0183,Weilixian,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820)
+CN-0184,Luntaixian,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820)
+CN-0185,Bachuxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820)
+CN-0186,Ruoqiangxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820)
+CN-0187,Qiemoxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820)
+CN-0188,Akesaihashakezuzizhixian,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820)
+CN-0189,Minfengxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820)
+CN-0190,Quiemo,CHN,Xinjiang,Xinjiang,,Town,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820); towns: Quiemo
+CN-0191,Nimaxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820)
+CN-0192,Korla Southeast,CHN,Xinjiang,Xinjiang,,none,1,1,1,None,Desert,N,,,,split from CN-0143 Korla-Aksu in the giant-province split (D820)
+CN-0193,Wuqiaxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,Farmland,Desert,N,,,,split from CN-0144 Kashgar-Hotan in the giant-province split (D820)
+CN-0194,Moyuxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,Farmland,Desert,N,,,,split from CN-0144 Kashgar-Hotan in the giant-province split (D820)
+CN-0195,Pishanxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,Farmland,Desert,N,,,,split from CN-0144 Kashgar-Hotan in the giant-province split (D820)
+CN-0196,Yechengxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,Farmland,Desert,N,,,,split from CN-0144 Kashgar-Hotan in the giant-province split (D820)
+CN-0197,Gaizexian,CHN,Xinjiang,Xinjiang,,none,1,1,1,Farmland,Desert,N,,,,split from CN-0144 Kashgar-Hotan in the giant-province split (D820)
+CN-0198,Yutianxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,Farmland,Desert,N,,,,split from CN-0144 Kashgar-Hotan in the giant-province split (D820)
+CN-0199,Hotan,CHN,Xinjiang,Xinjiang,,Town,1,1,1,Farmland,Desert,N,,,,"Hotan jade, India claims Aksai Chin, run as part of Hotan (note only (A)); split from CN-0144 Kashgar-Hotan in the giant-province split (D820); towns: Hotan"
+CN-0200,Hetianxian,CHN,Xinjiang,Xinjiang,,none,1,1,1,Farmland,Desert,N,,,,split from CN-0144 Kashgar-Hotan in the giant-province split (D820)
+CN-0201,Lhasa Northeast,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0202,Lhasa North,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0203,Lhasa North 2,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0204,Gejixian,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0205,Rituxian,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0206,Geerxian,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0207,Shenzhaxian,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0208,Anduoxian,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0209,Lhasa East,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0210,Angrenxian,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0211,Gar,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820); towns: Gar
+CN-0212,Nagchu,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820); towns: Nagchu
+CN-0213,Zhongbaxian,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0214,Cuoqinxian,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0215,Xietongmenxian,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0216,Gyangze,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820); towns: Gyangze
+CN-0217,Shagaxian,CHN,Tibet,Tibet,,none,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820)
+CN-0218,Xigaze,CHN,Tibet,Tibet,,Town,1,1,1,None,Mountain,N,,,,split from CN-0145 Lhasa-Shigatse in the giant-province split (D820); towns: Xigaze
 JP-0001,Central Tokyo,JPN,Tokyo,Tokyo,Tokyo-Yokohama,Metropolis,30,6,15,None,Urban,Y,,,,"Marunouchi and Otemachi (Tokyo Stock Exchange, Bank of Japan, MUFG, SMBC and Mizuho, trading houses), Kasumigaseki ministries, Shinjuku and Roppongi offices, Ginza"
 JP-0002,Tokyo West Wards,JPN,Tokyo,Tokyo,Tokyo-Yokohama,Metropolis,20,5,17,None,Urban,N,,,,"Shibuya startups and media, Setagaya, Suginami and Nerima residential wards, Ikebukuro"
 JP-0003,Tokyo East Wards-Bay,JPN,Tokyo,Tokyo,Tokyo-Yokohama,Metropolis,14,16,18,None,Urban,Y,,,,"Koto and Odaiba, Ota small precision machine shops, Haneda airport, Tokyo port, Edogawa and Adachi"
@@ -343,8 +415,14 @@ ID-0046,Makassar-South Sulawesi,IDN,South-West Sulawesi,South-West Sulawesi,,Cit
 ID-0047,Southeast Sulawesi,IDN,Southeast Sulawesi,Southeast Sulawesi,,Town,2,10,16,Nickel,Tropical,Y,,,,"Kendari and Pomalaa nickel (Antam), Virtue Dragon smelter at Konawe, nickel ore export ban from January 2020"
 ID-0048,Maluku,IDN,Maluku,Maluku,,Town,2,3,15,Fishing,Tropical,Y,,,,"Ambon, the spice islands (Banda), tuna and fisheries, Masela gas project (Inpex, planned)"
 ID-0049,North Maluku,IDN,North Maluku,North Maluku,,Town,2,10,13,Nickel,Tropical,Y,,,,"Halmahera nickel (Weda Bay: Tsingshan and Eramet; Harita on Obi island), Ternate"
-ID-0050,Papua,IDN,Papua,Papua,,Town,3,10,17,Gold,Tropical,Y,,,,"Grasberg copper and gold mine (Freeport-McMoRan, majority sold to Indonesia's Inalum in 2018; the world's largest gold mine), Jayapura, separatist insurgency"
+ID-0050,Papua,IDN,Papua,Papua,,Town,3,10,17,Timber,Tropical,Y,,,,"Jayapura, separatist insurgency"
 ID-0051,West Papua,IDN,West Papua,West Papua,,Town,2,10,12,Gas,Tropical,Y,,,,"Tangguh LNG (BP), Sorong, Raja Ampat diving"
+ID-0052,Mamberamo Raya,IDN,Papua,Papua,,none,1,1,1,Timber,Tropical,Y,,,,split from ID-0050 Papua in the giant-province split (D820)
+ID-0053,Biak,IDN,Papua,Papua,,Town,1,1,1,Timber,Tropical,Y,,,,"split from ID-0050 Papua in the giant-province split (D820); towns: Biak, Nabire"
+ID-0054,Grasberg,IDN,Papua,Papua,,Town,1,1,1,Gold,Tropical,Y,,,,"Grasberg copper and gold mine (Freeport-McMoRan, majority sold to Indonesia's Inalum in 2018; the world's largest gold mine); split from ID-0050 Papua in the giant-province split (D820); towns: Timika"
+ID-0055,Yahukimo,IDN,Papua,Papua,,none,1,1,1,Timber,Tropical,N,,,,split from ID-0050 Papua in the giant-province split (D820)
+ID-0056,Mappi,IDN,Papua,Papua,,none,1,1,1,Timber,Tropical,Y,,,,split from ID-0050 Papua in the giant-province split (D820)
+ID-0057,Merauke,IDN,Papua,Papua,,Town,1,1,1,Timber,Tropical,Y,,,,split from ID-0050 Papua in the giant-province split (D820); towns: Merauke
 TH-0001,Bangkok Silom-Sukhumvit,THA,Bangkok,Bangkok,Bangkok,Metropolis,26,6,18,None,Urban,Y,Strait of Malacca,,,"Stock Exchange of Thailand, Bank of Thailand, Silom and Sathorn banks, Sukhumvit, Khlong Toei port, CP Group and ThaiBev headquarters"
 TH-0002,Thonburi-Bangkok West,THA,Bangkok,Bangkok,Bangkok,Metropolis,8,12,16,None,Urban,Y,,,,"Thonburi west bank, Bang Khun Thian, food plants, canal suburbs"
 TH-0003,Samut Prakan,THA,Samut Prakan,Samut Prakan,Bangkok,Metropolis,6,22,15,None,Urban,Y,Strait of Malacca,,,"Suvarnabhumi airport, Bang Phli and Bang Pu industrial estates, auto parts and hard disk plants (Seagate Teparuk)"
@@ -540,26 +618,135 @@ AU-0030,Bowen Basin-Mackay,AUS,Queensland,Central and North Queensland,,Town,3,2
 AU-0031,Townsville,AUS,Queensland,Central and North Queensland,,Town,5,12,6,Zinc,Tropical,Y,,,,"Sun Metals zinc refinery (Korea Zinc), Glencore copper refinery, army base, port"
 AU-0032,Cairns-Far North,AUS,Queensland,Central and North Queensland,,Town,4,3,6,Fishing,Tropical,Y,,,,"Great Barrier Reef tourism, prawns, Torres Strait"
 AU-0033,Weipa-Cape York,AUS,Queensland,Central and North Queensland,,none,1,10,1,Bauxite,Tropical,Y,,,,"Weipa and Amrun bauxite mines (Rio Tinto), Aboriginal communities"
-AU-0034,Mount Isa-Outback,AUS,Queensland,Central and North Queensland,,Town,1,12,1,Copper,Desert,N,,,,"Mount Isa copper and lead-zinc (Glencore), Cannington silver (South32), Longreach cattle stations"
+AU-0034,Mount Isa-Outback,AUS,Queensland,Central and North Queensland,,Town,1,12,1,Copper,Desert,N,,,,Mount Isa copper and lead-zinc (Glencore)
 AU-0035,Perth,AUS,Western Australia,South West WA,,City,12,6,15,None,Temperate,Y,,,,"state capital, iron ore head offices (BHP and Rio Tinto iron ore, Fortescue), Woodside, mining services and juniors, Fremantle port"
 AU-0036,Peel-Kwinana,AUS,Western Australia,South West WA,,Town,3,16,7,Bauxite,Temperate,Y,,,,"Kwinana industrial strip (Tianqi lithium hydroxide plant, BP refinery, Alcoa alumina), Huntly bauxite mine and Pinjarra refinery"
 AU-0037,South West-Greenbushes,AUS,Western Australia,South West WA,,Town,3,16,5,Lithium,Temperate,Y,,,,"Greenbushes, the world's largest hard-rock lithium mine (Talison), Bunbury port, Collie coal, Margaret River wine"
 AU-0038,Wheatbelt-Great Southern,AUS,Western Australia,South West WA,,none,2,4,3,Farmland,Temperate,Y,,,,"wheat and barley belt, Albany port"
-AU-0039,Goldfields-Esperance,AUS,Western Australia,Northern and Goldfields WA,,Town,2,18,2,Gold,Desert,Y,,,,"Kalgoorlie Super Pit, Kambalda nickel (BHP Nickel West), Esperance port"
-AU-0040,Mid West-Gascoyne,AUS,Western Australia,Northern and Goldfields WA,,Town,2,8,1,Fishing,Desert,Y,,,,"Geraldton, rock lobster, Karara iron ore, Carnarvon"
+AU-0039,Goldfields-Esperance,AUS,Western Australia,Northern and Goldfields WA,,Town,2,18,2,None,Desert,Y,,,,Esperance port
+AU-0040,Mid West-Gascoyne,AUS,Western Australia,Northern and Goldfields WA,,Town,2,8,1,Fishing,Desert,Y,,,,"Geraldton, rock lobster, Karara iron ore"
 AU-0041,Pilbara East-Port Hedland,AUS,Western Australia,Northern and Goldfields WA,,Town,2,27,1,Iron ore,Desert,Y,,,,"Port Hedland (world's biggest bulk export port), BHP and Fortescue iron ore mines, Pilgangoora lithium"
 AU-0042,Pilbara West-Karratha,AUS,Western Australia,Northern and Goldfields WA,,Town,2,26,1,Gas,Desert,Y,,,,"North West Shelf, Pluto and Wheatstone LNG plants, Rio Tinto's Hamersley iron ore and Dampier port"
 AU-0043,Kimberley,AUS,Western Australia,Northern and Goldfields WA,,none,1,5,1,Gas,Tropical,Y,,,,"Broome, Prelude floating LNG and the Ichthys field offshore (piped to Darwin), Argyle diamond mine (closing 2020), Ord river farms"
 AU-0044,Adelaide,AUS,South Australia,South Australia,,City,10,8,13,None,Temperate,Y,,,,"state capital, Osborne naval shipyards (submarines and frigates), Australian Space Agency (2018), wine exports"
 AU-0045,Adelaide Hills-Barossa,AUS,South Australia,South Australia,,Town,3,3,5,Farmland,Temperate,Y,,,,Barossa and McLaren Vale wine
 AU-0046,Spencer Gulf-Eyre,AUS,South Australia,South Australia,,Town,2,12,3,Iron ore,Desert,Y,,,,"Whyalla steelworks and Middleback iron ore (GFG Alliance), Port Pirie lead and silver smelter (Nyrstar), Eyre wheat"
-AU-0047,Far North-Olympic Dam,AUS,South Australia,South Australia,,none,1,14,1,Uranium,Desert,N,,,,"Olympic Dam copper, uranium and gold (BHP; the world's largest uranium deposit), Prominent Hill, Moomba gas, Coober Pedy opals"
+AU-0047,Far North-Olympic Dam,AUS,South Australia,South Australia,,none,1,14,1,None,Desert,N,,,,Coober Pedy opals
 AU-0048,Riverland-Limestone Coast,AUS,South Australia,South Australia,,Town,2,4,5,Farmland,Temperate,Y,,,,"Mount Gambier pine, Riverland citrus, Coonawarra wine"
 AU-0049,Hobart-South,AUS,Tasmania,Tasmania,,Town,5,7,6,Fishing,Temperate,Y,,,,"Hobart, salmon farms (Tassal, Huon), Nyrstar zinc smelter, Antarctic base"
 AU-0050,Launceston-North,AUS,Tasmania,Tasmania,,Town,3,6,4,Timber,Temperate,Y,,,,"Bell Bay aluminium smelter, forestry, dairy"
 AU-0051,West Coast-Highlands,AUS,Tasmania,Tasmania,,none,1,8,1,Hydropower,Mountain,Y,,,,"Hydro Tasmania dams, Rosebery zinc, Savage River iron ore"
 AU-0052,Darwin,AUS,Northern Territory,Northern Territory,,Town,5,12,4,Gas,Tropical,Y,,,,"Ichthys LNG (Inpex) and Darwin LNG, port leased to China's Landbridge in 2015, US Marines rotation"
 AU-0053,Central Australia-Top End,AUS,Northern Territory,Northern Territory,,none,1,6,2,Uranium,Desert,N,,,,"Alice Springs, Pine Gap, Ranger uranium mine (closing 2021), Groote Eylandt manganese, Aboriginal lands"
+AU-0054,Central Darling,AUS,New South Wales,Inland NSW,,none,1,1,1,None,Desert,N,,,,split from AU-0012 Far West-Broken Hill in the giant-province split (D820)
+AU-0055,Bourke,AUS,New South Wales,Inland NSW,,none,1,1,1,None,Desert,N,,,,split from AU-0012 Far West-Broken Hill in the giant-province split (D820); towns: Bourke
+AU-0056,Ivanhoe,AUS,New South Wales,Inland NSW,,none,1,1,1,None,Desert,Y,,,,split from AU-0012 Far West-Broken Hill in the giant-province split (D820); towns: Ivanhoe
+AU-0057,Cobar,AUS,New South Wales,Inland NSW,,none,1,1,1,None,Desert,N,,,,split from AU-0012 Far West-Broken Hill in the giant-province split (D820)
+AU-0058,Wentworth,AUS,New South Wales,Inland NSW,,none,1,1,1,None,Desert,N,,,,split from AU-0012 Far West-Broken Hill in the giant-province split (D820)
+AU-0059,Burketown,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,Y,,,,"split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Burketown, Karumba"
+AU-0060,Burke,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,Y,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820)
+AU-0061,Croydon,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820)
+AU-0062,Cloncurry,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Cloncurry
+AU-0063,Hughenden,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,"split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Hughenden, Richmond"
+AU-0064,Winton,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Winton
+AU-0065,Cannington,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,Cannington silver (South32); split from AU-0034 Mount Isa-Outback in the giant-province split (D820)
+AU-0066,Boulia,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Boulia
+AU-0067,Diamantina,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820)
+AU-0068,Barcaldine,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Barcaldine
+AU-0069,Longreach,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,Longreach cattle stations; split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Longreach
+AU-0070,Barcoo,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820)
+AU-0071,Bedourie,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Bedourie
+AU-0072,Blackall Tambo,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820)
+AU-0073,Windorah,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Windorah
+AU-0074,Birdsville,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Birdsville
+AU-0075,Charleville,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Charleville
+AU-0076,Quilpie,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Quilpie
+AU-0077,Thargomindah,AUS,Queensland,Central and North Queensland,,none,1,1,1,None,Desert,N,,,,split from AU-0034 Mount Isa-Outback in the giant-province split (D820); towns: Thargomindah
+AU-0078,Ngaanyatjarraku,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,N,,,,split from AU-0039 Goldfields-Esperance in the giant-province split (D820)
+AU-0079,Goldfields Northeast,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,N,,,,split from AU-0039 Goldfields-Esperance in the giant-province split (D820)
+AU-0080,Leonora,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,N,,,,split from AU-0039 Goldfields-Esperance in the giant-province split (D820)
+AU-0081,Sandstone,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,N,,,,split from AU-0039 Goldfields-Esperance in the giant-province split (D820)
+AU-0082,Menzies,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,N,,,,split from AU-0039 Goldfields-Esperance in the giant-province split (D820)
+AU-0083,Goldfields Northeast 2,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,N,,,,split from AU-0039 Goldfields-Esperance in the giant-province split (D820)
+AU-0084,Laverton,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,N,,,,"split from AU-0039 Goldfields-Esperance in the giant-province split (D820); towns: Laverton, Leonara"
+AU-0085,Kalgoorlie,AUS,Western Australia,Northern and Goldfields WA,,Town,1,1,1,Gold,Desert,N,,,,"Kalgoorlie Super Pit, Kambalda nickel (BHP Nickel West); split from AU-0039 Goldfields-Esperance in the giant-province split (D820); towns: Kalgoorlie"
+AU-0086,Southern Cross,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,N,,,,split from AU-0039 Goldfields-Esperance in the giant-province split (D820); towns: Southern Cross
+AU-0087,Kalgoorlie-Boulder,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,Y,,,,split from AU-0039 Goldfields-Esperance in the giant-province split (D820)
+AU-0088,Dundas,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,Y,,,,split from AU-0039 Goldfields-Esperance in the giant-province split (D820)
+AU-0089,Esperance,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,Y,,,,split from AU-0039 Goldfields-Esperance in the giant-province split (D820)
+AU-0090,Ravensthorpe,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,None,Desert,Y,,,,split from AU-0039 Goldfields-Esperance in the giant-province split (D820); towns: Ravensthorpe
+AU-0091,Carnarvon,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Fishing,Desert,Y,,,,"Carnarvon; split from AU-0040 Mid West-Gascoyne in the giant-province split (D820); towns: Carnarvon, Exmouth"
+AU-0092,Upper Gascoyne,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Fishing,Desert,N,,,,split from AU-0040 Mid West-Gascoyne in the giant-province split (D820)
+AU-0093,Wiluna,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Fishing,Desert,N,,,,split from AU-0040 Mid West-Gascoyne in the giant-province split (D820)
+AU-0094,East Pilbara,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Fishing,Desert,N,,,,split from AU-0040 Mid West-Gascoyne in the giant-province split (D820)
+AU-0095,Mid West East,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Fishing,Desert,N,,,,split from AU-0040 Mid West-Gascoyne in the giant-province split (D820)
+AU-0096,Murchison,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Fishing,Desert,N,,,,split from AU-0040 Mid West-Gascoyne in the giant-province split (D820)
+AU-0097,Meekatharra,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Fishing,Desert,N,,,,split from AU-0040 Mid West-Gascoyne in the giant-province split (D820); towns: Meekatharra
+AU-0098,Shark Bay,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Fishing,Desert,Y,,,,split from AU-0040 Mid West-Gascoyne in the giant-province split (D820)
+AU-0099,Mid West East 2,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Fishing,Desert,N,,,,split from AU-0040 Mid West-Gascoyne in the giant-province split (D820)
+AU-0100,Mount Magnet,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Fishing,Desert,N,,,,split from AU-0040 Mid West-Gascoyne in the giant-province split (D820); towns: Mount Magnet
+AU-0101,Yalgoo,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Fishing,Desert,N,,,,split from AU-0040 Mid West-Gascoyne in the giant-province split (D820)
+AU-0102,Wyndham,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,Y,,,,split from AU-0043 Kimberley in the giant-province split (D820); towns: Wyndham
+AU-0103,Derby-West Kimberley,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,Y,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0104,Kununurra,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820); towns: Kununurra
+AU-0105,Halls Creek,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820); towns: Halls Creek
+AU-0106,Broome,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,Y,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0107,Kimberley East,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0108,Kimberley East 2,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0109,Port Hedland,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,Y,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0110,Kimberley Northeast,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0111,Kimberley West,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0112,Kimberley Southwest,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0113,Kimberley South,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0114,Kimberley Southeast,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0115,Kimberley Southeast 2,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0116,Newman,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820); towns: Newman
+AU-0117,Kimberley Southeast 3,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0118,Kimberley South 2,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0119,Kimberley South 3,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820)
+AU-0120,Kaltukatjara,AUS,Western Australia,Northern and Goldfields WA,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0043 Kimberley in the giant-province split (D820); towns: Kaltukatjara
+AU-0121,Anangu Pitjantjatjara Yunkunytjatjara,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,N,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0122,Far North North,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,N,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0123,Far North Northeast,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,N,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0124,Far North Northeast 2,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,N,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0125,Moomba,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,N,,,,Moomba gas; split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0126,Maralinga Tjarutja,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,N,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0127,Coober Pedy,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,N,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0128,Prominent Hill,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,N,,,,Prominent Hill; split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0129,Bulloo,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,N,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0130,Far North West,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,N,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0131,Far North West 2,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,Y,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0132,Olympic Dam,AUS,South Australia,South Australia,,none,1,1,1,Uranium,Desert,N,,,,"Olympic Dam copper, uranium and gold (BHP; the world's largest uranium deposit); split from AU-0047 Far North-Olympic Dam in the giant-province split (D820); towns: Andamooka, Woomera, Kingoonya"
+AU-0133,Far North East,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,N,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0134,Ceduna,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,Y,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0135,Flinders Ranges,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,Y,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0136,Coorong,AUS,South Australia,South Australia,,none,1,1,1,None,Desert,Y,,,,split from AU-0047 Far North-Olympic Dam in the giant-province split (D820)
+AU-0137,Roper Gulf,AUS,Northern Territory,Northern Territory,,none,1,1,1,Timber,Tropical,Y,,,,split from AU-0052 Darwin in the giant-province split (D820)
+AU-0138,East Arnhem,AUS,Northern Territory,Northern Territory,,none,1,1,1,Timber,Tropical,Y,,,,split from AU-0052 Darwin in the giant-province split (D820)
+AU-0139,Yulara,AUS,Northern Territory,Northern Territory,,none,1,1,1,Timber,Tropical,Y,,,,"split from AU-0052 Darwin in the giant-province split (D820); towns: Yulara, Pine Creek, Adelaide River"
+AU-0140,Katherine,AUS,Northern Territory,Northern Territory,,none,1,1,1,Timber,Tropical,Y,,,,split from AU-0052 Darwin in the giant-province split (D820); towns: Katherine
+AU-0141,Victoria Daly,AUS,Northern Territory,Northern Territory,,none,1,1,1,Timber,Tropical,Y,,,,split from AU-0052 Darwin in the giant-province split (D820)
+AU-0142,Barkly,AUS,Northern Territory,Northern Territory,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0052 Darwin in the giant-province split (D820)
+AU-0143,Darwin East,AUS,Northern Territory,Northern Territory,,none,1,1,1,Timber,Tropical,Y,,,,split from AU-0052 Darwin in the giant-province split (D820)
+AU-0144,Central Desert,AUS,Northern Territory,Northern Territory,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0052 Darwin in the giant-province split (D820)
+AU-0145,Wyndham-East Kimberley,AUS,Northern Territory,Northern Territory,,none,1,1,1,Timber,Tropical,N,,,,split from AU-0052 Darwin in the giant-province split (D820)
+AU-0146,Central Australia North,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0147,Newcastle Waters,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820); towns: Newcastle Waters
+AU-0148,Mount Isa,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0149,MacDonnell,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0150,Central Australia Northwest,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0151,Central Australia East,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0152,Tennant Creek,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820); towns: Tennant Creek
+AU-0153,Central Australia West,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0154,Central Australia West 2,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0155,Central Australia East 2,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0156,Central Australia Southeast,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0157,Central Australia Southwest,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0158,Central Australia Southeast 2,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0159,Central Australia Southeast 3,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0160,Central Australia Southwest 2,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0161,Central Australia South,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820)
+AU-0162,Erldunda,AUS,Northern Territory,Northern Territory,,none,1,1,1,None,Desert,N,,,,split from AU-0053 Central Australia-Top End in the giant-province split (D820); towns: Erldunda
 NZ-0001,Auckland Central-North Shore,NZL,Auckland,Auckland,,City,16,4,12,None,Temperate,Y,,,,"NZX, banks (Australian-owned), Ports of Auckland, Waiheke, foreign buyer ban on homes (2018)"
 NZ-0002,South Auckland-Manukau,NZL,Auckland,Auckland,,City,6,10,10,None,Temperate,Y,,,,"Auckland airport, Manukau, Glenbrook steel mill (NZ Steel), Pacific islander communities"
 NZ-0003,Northland,NZL,Northland,Northland,,Town,2,5,5,Timber,Temperate,Y,,,,"Marsden Point refinery (Refining NZ), Whangarei, pine forests"

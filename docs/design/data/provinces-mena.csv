@@ -36,6 +36,12 @@ SA-0034,Najran-Sharurah,SAU,Najran,Najran,,Town,3,3,10,Farmland,Mountain,N,,,,"N
 SA-0035,Sakaka-Al Jawf,SAU,Al Jawf,Al Jawf,,Town,2,4,9,Farmland,Desert,N,,,,"Sakaka and Dumat al-Jandal, the Al Jouf olive plantations (among the world's largest), the Sakaka solar plant, Qurayyat on the Jordan border"
 SA-0036,Arar-Turaif,SAU,Northern Borders,Northern Borders,,Town,2,7,8,None,Desert,N,,,,"Arar (the provincial capital), Turaif and Wa'ad Al Shamal (Ma'aden's phosphate mining and fertilizer city; phosphate has no tag), Rafha, the old Tapline route, the Iraq border"
 SA-0037,Al Bahah,SAU,Al Bahah,Al Bahah,,Town,2,2,9,None,Mountain,N,,,,"Al Bahah and Baljurashi in the Sarawat mountains, terraced farms, Ghamid and Zahran tribes, summer tourism"
+SA-0038,Shaybah North,SAU,Eastern Province,Al Ahsa,,none,1,1,1,None,Desert,N,,,,split from SA-0020 Shaybah-Rub al Khali in the giant-province split (D820)
+SA-0039,Shaybah West,SAU,Eastern Province,Al Ahsa,,none,1,1,1,None,Desert,N,,,,split from SA-0020 Shaybah-Rub al Khali in the giant-province split (D820)
+SA-0040,Shaybah East,SAU,Eastern Province,Al Ahsa,,none,1,1,1,None,Desert,N,,,,split from SA-0020 Shaybah-Rub al Khali in the giant-province split (D820)
+SA-0041,Shaybah East 2,SAU,Eastern Province,Al Ahsa,,none,1,1,1,None,Desert,N,,,,split from SA-0020 Shaybah-Rub al Khali in the giant-province split (D820)
+SA-0042,Shaybah Southwest,SAU,Eastern Province,Al Ahsa,,none,1,1,1,None,Desert,N,,,,split from SA-0020 Shaybah-Rub al Khali in the giant-province split (D820)
+SA-0043,Shaybah Southwest 2,SAU,Eastern Province,Al Ahsa,,none,1,1,1,None,Desert,N,,,,split from SA-0020 Shaybah-Rub al Khali in the giant-province split (D820)
 AE-0001,Abu Dhabi Downtown,ARE,Abu Dhabi,Abu Dhabi City,,City,26,4,12,None,Urban,Y,Strait of Hormuz,,,"Abu Dhabi island: ADIA (one of the world's largest sovereign funds), Mubadala, ADNOC headquarters, the ADGM financial centre on Al Maryah island, the federal government and the ruling Al Nahyan family's palaces"
 AE-0002,Masdar-Yas-Saadiyat,ARE,Abu Dhabi,Abu Dhabi City,,City,12,6,9,None,Urban,Y,,,,"Masdar City (MBZUAI, the first graduate AI university, taking its first students in 2020; G42 and the AI push), Khalifa City, Abu Dhabi International Airport (Etihad), Yas Island (Formula 1, Ferrari World), Saadiyat (the Louvre Abu Dhabi)"
 AE-0003,Mussafah-Khalifa Port,ARE,Abu Dhabi,Abu Dhabi City,,City,5,18,10,None,Urban,Y,Strait of Hormuz,,,"Mussafah industrial area and its workers' city, Khalifa port and the KIZAD industrial zone, Emirates Global Aluminium at Taweelah, ICAD; most of Abu Dhabi's migrant labour"
@@ -196,6 +202,15 @@ EG-0031,Kharga-New Valley,EGY,New Valley,New Valley,,Town,2,5,6,Farmland,Desert,
 EG-0032,Marsa Matrouh-Western Desert,EGY,Matrouh,Matrouh,,Town,3,14,9,Oil,Desert,Y,,,,"Marsa Matrouh, El Alamein and the New Alamein city, the Siwa oasis, the Western Desert oil and gas fields (Apache's Khalda concession, Egypt's largest onshore producer), the Libyan border at Sallum"
 EG-0033,Arish-North Sinai,EGY,North Sinai,North Sinai,,Town,2,3,9,None,Desert,Y,,,,"Arish, the Rafah crossing to Gaza (Egypt keeps the blockade with Israel), Sheikh Zuweid, Bedouin smuggling tunnels, the Arish-Ashkelon gas pipeline; no Sinai insurgency grew without the Arab Spring and ISIS (A)"
 EG-0034,Sharm el-Sheikh-South Sinai,EGY,South Sinai,South Sinai,,Town,6,4,2,Oil,Mountain,Y,,,,"Sharm el-Sheikh (resorts and summit venue), Dahab, St Catherine's monastery and Mount Sinai, the Abu Rudeis and Ras Sudr oil fields on the Gulf of Suez; Tiran and Sanafir islands were handed to Saudi Arabia in 2017"
+EG-0035,A-Dakhla Oasis,EGY,New Valley,New Valley,,none,1,1,1,Farmland,Desert,N,,,,split from EG-0031 Kharga-New Valley in the giant-province split (D820)
+EG-0036,Qasr Farafra,EGY,New Valley,New Valley,,none,1,1,1,Farmland,Desert,N,,,,split from EG-0031 Kharga-New Valley in the giant-province split (D820); towns: Qasr Farafra
+EG-0037,El Qasr,EGY,New Valley,New Valley,,none,1,1,1,Farmland,Desert,N,,,,split from EG-0031 Kharga-New Valley in the giant-province split (D820); towns: El Qasr
+EG-0038,Al-Kharga Oasis,EGY,New Valley,New Valley,,none,1,1,1,Farmland,Desert,N,,,,split from EG-0031 Kharga-New Valley in the giant-province split (D820)
+EG-0039,Kharga West,EGY,New Valley,New Valley,,none,1,1,1,Farmland,Desert,N,,,,split from EG-0031 Kharga-New Valley in the giant-province split (D820)
+EG-0040,Kharga Southwest,EGY,New Valley,New Valley,,none,1,1,1,Farmland,Desert,N,,,,split from EG-0031 Kharga-New Valley in the giant-province split (D820)
+EG-0041,Paris Paris,EGY,New Valley,New Valley,,none,1,1,1,Farmland,Desert,N,,,,split from EG-0031 Kharga-New Valley in the giant-province split (D820)
+EG-0042,Zemam Out,EGY,New Valley,New Valley,,none,1,1,1,Farmland,Desert,N,,,,split from EG-0031 Kharga-New Valley in the giant-province split (D820)
+EG-0043,Kharga Southwest 2,EGY,New Valley,New Valley,,none,1,1,1,Farmland,Desert,N,,,,split from EG-0031 Kharga-New Valley in the giant-province split (D820)
 IL-0001,West Jerusalem,ISR,Jerusalem District,Jerusalem District,,City,16,5,10,None,Mountain,N,,,,"West Jerusalem: the Knesset, the Prime Minister's Office, the Supreme Court and ministries, the Hebrew University, the Har Hotzvim tech park (Intel Jerusalem, Mobileye), the US embassy (moved here in May 2018), Haredi neighbourhoods"
 IL-0002,East Jerusalem,ISR,Jerusalem District,Jerusalem District,,City,5,2,8,None,Mountain,N,,PSE claims,,"The Old City (the Western Wall, the Temple Mount and Al-Aqsa, the Church of the Holy Sepulchre), Palestinian neighbourhoods (Silwan, Sheikh Jarrah) and Jewish settler neighbourhoods; taken in 1967, annexed by Israel in 1980 (recognized by the US in 2017), and claimed by Palestine as its capital"
 IL-0003,Beit Shemesh-Judean Hills,ISR,Jerusalem District,Jerusalem District,,Town,3,4,7,None,Mountain,N,,,,"Beit Shemesh (a fast-growing Haredi town), Mevaseret Zion and the Jerusalem corridor, Judean Hills wineries"
@@ -268,8 +283,22 @@ LY-0014,Tobruk-Derna,LBY,Derna-Butnan,Derna-Butnan,,Town,3,8,7,Oil,Desert,Y,,,,"
 LY-0015,Kufra,LBY,Kufra,Kufra,,none,1,5,1,Farmland,Desert,N,,,,"The Al Kufra oasis (irrigated wheat and fodder circles), the Great Man-Made River well fields, the desert trade with Chad and Sudan"
 LY-0016,Sabha,LBY,Sabha,Sabha,,Town,4,3,4,None,Desert,N,,,,"Sabha (the Fezzan's capital, the southern military base and airport), the migrant route from Niger to the coast"
 LY-0017,Jufra-Wadi al-Shatii,LBY,Wadi al-Shatii-Jufra,Wadi al-Shatii-Jufra,,none,2,4,4,Farmland,Desert,N,,,,"Hun, Waddan and Sokna (the Jufra oases and air base), Brak and the Wadi al-Shatii well fields of the Great Man-Made River"
-LY-0018,Murzuq-Sharara,LBY,Murzuq-Wadi al-Hayaa,Murzuq-Wadi al-Hayaa,,none,1,14,3,Oil,Desert,N,,,,"The Sharara (Libya's largest field, Repsol) and Elephant (Eni) fields in the Murzuq basin, Ubari and Murzuq; Tuareg and Tebu communities"
+LY-0018,Murzuq-Sharara,LBY,Murzuq-Wadi al-Hayaa,Murzuq-Wadi al-Hayaa,,none,1,14,3,None,Desert,N,,,,Ubari and Murzuq; Tuareg and Tebu communities
 LY-0019,Ghat,LBY,Ghat,Ghat,,none,1,2,1,None,Desert,N,,,,"Ghat, the Tadrart Acacus rock art, the Algerian border; Tuareg"
+LY-0020,Kufra Northeast,LBY,Kufra,Kufra,,none,1,1,1,Farmland,Desert,N,,,,split from LY-0015 Kufra in the giant-province split (D820)
+LY-0021,Kufra Northwest,LBY,Kufra,Kufra,,none,1,1,1,Farmland,Desert,N,,,,split from LY-0015 Kufra in the giant-province split (D820)
+LY-0022,Kufra Northwest 2,LBY,Kufra,Kufra,,none,1,1,1,Farmland,Desert,N,,,,split from LY-0015 Kufra in the giant-province split (D820)
+LY-0023,Kufra East,LBY,Kufra,Kufra,,none,1,1,1,Farmland,Desert,N,,,,split from LY-0015 Kufra in the giant-province split (D820)
+LY-0024,Kufra West,LBY,Kufra,Kufra,,none,1,1,1,Farmland,Desert,N,,,,split from LY-0015 Kufra in the giant-province split (D820)
+LY-0025,Kufra Southeast,LBY,Kufra,Kufra,,none,1,1,1,Farmland,Desert,N,,,,split from LY-0015 Kufra in the giant-province split (D820)
+LY-0026,Kufra Southwest,LBY,Kufra,Kufra,,none,1,1,1,Farmland,Desert,N,,,,split from LY-0015 Kufra in the giant-province split (D820)
+LY-0027,Kufra Southeast 2,LBY,Kufra,Kufra,,none,1,1,1,Farmland,Desert,N,,,,split from LY-0015 Kufra in the giant-province split (D820)
+LY-0028,Sharara,LBY,Murzuq-Wadi al-Hayaa,Murzuq-Wadi al-Hayaa,,none,1,1,1,Oil,Desert,N,,,,"The Sharara (Libya's largest field, Repsol) and Elephant (Eni) fields in the Murzuq basin; split from LY-0018 Murzuq-Sharara in the giant-province split (D820)"
+LY-0029,Tmassah,LBY,Murzuq-Wadi al-Hayaa,Murzuq-Wadi al-Hayaa,,none,1,1,1,None,Desert,N,,,,split from LY-0018 Murzuq-Sharara in the giant-province split (D820); towns: Tmassah
+LY-0030,Murzuq East,LBY,Murzuq-Wadi al-Hayaa,Murzuq-Wadi al-Hayaa,,none,1,1,1,None,Desert,N,,,,split from LY-0018 Murzuq-Sharara in the giant-province split (D820)
+LY-0031,Murzuq Southeast,LBY,Murzuq-Wadi al-Hayaa,Murzuq-Wadi al-Hayaa,,none,1,1,1,None,Desert,N,,,,split from LY-0018 Murzuq-Sharara in the giant-province split (D820)
+LY-0032,Murzuq West,LBY,Murzuq-Wadi al-Hayaa,Murzuq-Wadi al-Hayaa,,none,1,1,1,None,Desert,N,,,,split from LY-0018 Murzuq-Sharara in the giant-province split (D820)
+LY-0033,Murzuq Southeast 2,LBY,Murzuq-Wadi al-Hayaa,Murzuq-Wadi al-Hayaa,,none,1,1,1,None,Desert,N,,,,split from LY-0018 Murzuq-Sharara in the giant-province split (D820)
 TN-0001,Tunis,TUN,Tunis,Tunis,,City,18,5,12,None,Urban,Y,,,,"Tunis: the Kasbah government quarter, the Central Bank, the Bourse de Tunis, the medina, La Marsa and Carthage (the presidential palace), La Goulette port; the old ruling party's regime is still in power, since there was no 2011 revolution (A)"
 TN-0002,Ariana-Ben Arous,TUN,Ariana-Ben Arous-Manouba,Ariana-Ben Arous-Manouba,,City,8,12,14,None,Urban,Y,,,,"Tunis's suburbs: Ariana (the El Ghazala technopark, IT outsourcing), Ben Arous (industrial zones and the Rades container port), Manouba; Tunis-Carthage airport"
 TN-0003,Bizerte,TUN,Bizerte,Bizerte,,Town,3,8,10,None,Temperate,Y,,,,"Bizerte (the STIR refinery, Tunisia's only one, and the naval base), the Menzel Bourguiba steel works, Mateur dairy, the Sidi Salem dam"
@@ -307,9 +336,38 @@ DZ-0023,Hassi Messaoud,DZA,Ouargla,Ouargla,,Town,4,21,5,Oil,Desert,N,,,,"Hassi M
 DZ-0024,Ouargla-Touggourt,DZA,Ouargla,Ouargla,,Town,4,8,10,Oil,Desert,N,,,,"Ouargla (the oil region's city), Touggourt, the Oued Righ date palms, the Haoud Berkaoui oil fields"
 DZ-0025,Ghardaia,DZA,Ghardaia,Ghardaia,,Town,3,4,9,None,Desert,N,,,,"The M'zab valley (the Ibadi Mozabite merchants, a UNESCO site), Ghardaia, Metlili; Mozabite-Arab clashes in 2013 to 2015"
 DZ-0026,Illizi-In Amenas,DZA,Illizi,Illizi,,none,1,16,1,Gas,Desert,N,,,,"In Amenas (the Tiguentourine gas plant of BP, Equinor and Sonatrach, attacked by Islamists in January 2013), Illizi, the Tassili n'Ajjer rock art, the Libyan border"
-DZ-0027,Tamanrasset-In Salah,DZA,Tamanrasset,Tamanrasset,,none,2,10,6,Gas,Desert,N,,,,"In Salah gas (BP, Equinor, Sonatrach), Tamanrasset (the Hoggar mountains, the Tuareg, trade with Niger and Mali), the southern military command"
-DZ-0028,Adrar-Timimoun,DZA,Adrar,Adrar,,Town,2,4,9,None,Desert,N,,,,"Adrar, Timimoun and Reggane (the Touat and Gourara oases, the French nuclear test sites of 1960), the new Touat gas fields"
-DZ-0029,Bechar-Tindouf,DZA,Bechar-Tindouf-Naama-El Bayadh,Bechar-Tindouf-Naama-El Bayadh,,Town,2,4,12,None,Desert,N,,,,"Bechar (the army's western command, the closed Kenadsa coal mines), Tindouf (the Polisario Front's refugee camps and the seat of the Sahrawi republic in exile), the undeveloped Gara Djebilet iron ore, the Naama and El Bayadh steppe"
+DZ-0027,Tamanrasset-In Salah,DZA,Tamanrasset,Tamanrasset,,none,2,10,6,None,Desert,N,,,,"Tamanrasset (the Hoggar mountains, the Tuareg, trade with Niger and Mali), the southern military command"
+DZ-0028,Adrar-Timimoun,DZA,Adrar,Adrar,,Town,2,4,9,None,Desert,N,,,,Adrar
+DZ-0029,Bechar-Tindouf,DZA,Bechar-Tindouf-Naama-El Bayadh,Bechar-Tindouf-Naama-El Bayadh,,Town,2,4,12,None,Desert,N,,,,"Bechar (the army's western command, the closed Kenadsa coal mines)"
+DZ-0030,Tamanrasset North,DZA,Tamanrasset,Tamanrasset,,none,1,1,1,None,Desert,N,,,,split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820)
+DZ-0031,In Salah,DZA,Tamanrasset,Tamanrasset,,Town,1,1,1,Gas,Desert,N,,,,"In Salah gas (BP, Equinor, Sonatrach); split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820); towns: I-n-Salah"
+DZ-0032,Tamanrasset North 2,DZA,Tamanrasset,Tamanrasset,,none,1,1,1,None,Desert,N,,,,split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820)
+DZ-0033,Arak,DZA,Tamanrasset,Tamanrasset,,Town,1,1,1,None,Desert,N,,,,split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820); towns: Arak
+DZ-0034,Tamanrasset West,DZA,Tamanrasset,Tamanrasset,,none,1,1,1,None,Desert,N,,,,split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820)
+DZ-0035,Tamanrasset East,DZA,Tamanrasset,Tamanrasset,,none,1,1,1,None,Desert,N,,,,split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820)
+DZ-0036,Tamanrasset West 2,DZA,Tamanrasset,Tamanrasset,,none,1,1,1,None,Desert,N,,,,split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820)
+DZ-0037,Tamanrasset East 2,DZA,Tamanrasset,Tamanrasset,,none,1,1,1,None,Desert,N,,,,split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820)
+DZ-0038,Tamanrasset Southwest,DZA,Tamanrasset,Tamanrasset,,none,1,1,1,None,Desert,N,,,,split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820)
+DZ-0039,Tamanrasset Southeast,DZA,Tamanrasset,Tamanrasset,,none,1,1,1,None,Desert,N,,,,split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820)
+DZ-0040,Tamanrasset South,DZA,Tamanrasset,Tamanrasset,,none,1,1,1,None,Desert,N,,,,split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820)
+DZ-0041,Tamanrasset South 2,DZA,Tamanrasset,Tamanrasset,,none,1,1,1,None,Desert,N,,,,split from DZ-0027 Tamanrasset-In Salah in the giant-province split (D820)
+DZ-0042,Timimoun,DZA,Adrar,Adrar,,Town,1,1,1,None,Desert,N,,,,"Timimoun and Reggane (the Touat and Gourara oases, the French nuclear test sites of 1960), the new Touat gas fields; split from DZ-0028 Adrar-Timimoun in the giant-province split (D820); towns: Timimoun"
+DZ-0043,Adrar Northeast,DZA,Adrar,Adrar,,none,1,1,1,None,Desert,N,,,,split from DZ-0028 Adrar-Timimoun in the giant-province split (D820)
+DZ-0044,Adrar North,DZA,Adrar,Adrar,,none,1,1,1,None,Desert,N,,,,split from DZ-0028 Adrar-Timimoun in the giant-province split (D820)
+DZ-0045,Adrar Northwest,DZA,Adrar,Adrar,,none,1,1,1,None,Desert,N,,,,split from DZ-0028 Adrar-Timimoun in the giant-province split (D820)
+DZ-0046,Adrar Southeast,DZA,Adrar,Adrar,,none,1,1,1,None,Desert,N,,,,split from DZ-0028 Adrar-Timimoun in the giant-province split (D820)
+DZ-0047,Adrar Southwest,DZA,Adrar,Adrar,,none,1,1,1,None,Desert,N,,,,split from DZ-0028 Adrar-Timimoun in the giant-province split (D820)
+DZ-0048,Adrar Southeast 2,DZA,Adrar,Adrar,,none,1,1,1,None,Desert,N,,,,split from DZ-0028 Adrar-Timimoun in the giant-province split (D820)
+DZ-0049,Adrar Southeast 3,DZA,Adrar,Adrar,,none,1,1,1,None,Desert,N,,,,split from DZ-0028 Adrar-Timimoun in the giant-province split (D820)
+DZ-0050,Adrar Southeast 4,DZA,Adrar,Adrar,,none,1,1,1,None,Desert,N,,,,split from DZ-0028 Adrar-Timimoun in the giant-province split (D820)
+DZ-0051,El Bayadh,DZA,Bechar-Tindouf-Naama-El Bayadh,Bechar-Tindouf-Naama-El Bayadh,,Town,1,1,1,None,Desert,N,,,,"Tindouf (the Polisario Front's refugee camps and the seat of the Sahrawi republic in exile), the undeveloped Gara Djebilet iron ore, the Naama and El Bayadh steppe; split from DZ-0029 Bechar-Tindouf in the giant-province split (D820); towns: El Bayadh, Sefra"
+DZ-0052,Bechar Northeast,DZA,Bechar-Tindouf-Naama-El Bayadh,Bechar-Tindouf-Naama-El Bayadh,,none,1,1,1,None,Desert,N,,,,split from DZ-0029 Bechar-Tindouf in the giant-province split (D820)
+DZ-0053,Abadla,DZA,Bechar-Tindouf-Naama-El Bayadh,Bechar-Tindouf-Naama-El Bayadh,,none,1,1,1,None,Desert,N,,,,split from DZ-0029 Bechar-Tindouf in the giant-province split (D820); towns: Abadla
+DZ-0054,Bechar Southeast,DZA,Bechar-Tindouf-Naama-El Bayadh,Bechar-Tindouf-Naama-El Bayadh,,none,1,1,1,None,Desert,N,,,,split from DZ-0029 Bechar-Tindouf in the giant-province split (D820)
+DZ-0055,Bechar West,DZA,Bechar-Tindouf-Naama-El Bayadh,Bechar-Tindouf-Naama-El Bayadh,,none,1,1,1,None,Desert,N,,,,split from DZ-0029 Bechar-Tindouf in the giant-province split (D820)
+DZ-0056,Tindouf,DZA,Bechar-Tindouf-Naama-El Bayadh,Bechar-Tindouf-Naama-El Bayadh,,none,1,1,1,None,Desert,N,,,,split from DZ-0029 Bechar-Tindouf in the giant-province split (D820); towns: Tindouf
+DZ-0057,Bechar Southwest,DZA,Bechar-Tindouf-Naama-El Bayadh,Bechar-Tindouf-Naama-El Bayadh,,none,1,1,1,None,Desert,N,,,,split from DZ-0029 Bechar-Tindouf in the giant-province split (D820)
+DZ-0058,Bechar Southwest 2,DZA,Bechar-Tindouf-Naama-El Bayadh,Bechar-Tindouf-Naama-El Bayadh,,none,1,1,1,None,Desert,N,,,,split from DZ-0029 Bechar-Tindouf in the giant-province split (D820)
 MA-0001,Casablanca Centre-Anfa,MAR,Casablanca-Settat,Casablanca-Settat,,Metropolis,26,5,14,None,Urban,Y,,,,"Casablanca: the Casablanca Finance City towers, the Casablanca Stock Exchange, the Attijariwafa bank and OCP headquarters, Anfa, the Hassan II mosque, the port of Casablanca (Morocco's biggest general port)"
 MA-0002,Casablanca East-Mohammedia,MAR,Casablanca-Settat,Casablanca-Settat,,City,6,18,16,None,Urban,Y,,,,"The Ain Sebaa and Sidi Bernoussi industrial zones, Mohammedia (the Samir refinery, idle since 2015, and the oil port), Mohammed V airport at Nouaceur and the Midparc aerospace suppliers"
 MA-0003,El Jadida-Jorf Lasfar,MAR,Casablanca-Settat,Casablanca-Settat,,Town,3,14,13,None,Temperate,Y,,,,"Jorf Lasfar (OCP's phosphate chemical hub, the world's largest phosphate fertilizer complex, and the Jorf Lasfar coal power plant), El Jadida (the Portuguese citadel), the Doukkala farms"
