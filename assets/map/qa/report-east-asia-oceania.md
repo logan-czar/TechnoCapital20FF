@@ -62,7 +62,7 @@ _Written by `tools/map-pipeline/run.py --region east-asia-oceania` (pipeline pb-
 | Contested provinces (drawn by our own files) | 24 |
 | Admin-1 units left without a province | 5 |
 | Sea links with a province of this file | 86 |
-| City probe points (fail on a mismatch; D686) | 263 pass, 0 mismatch, 23 listed |
+| City probe points (fail on a mismatch; D686) | 264 pass, 0 mismatch, 23 listed |
 | Metro reach scan rows (listed; D686) | 12 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 18 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 7 |
@@ -567,6 +567,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Quezon City (121.05, 14.65) | PH-0003 | PH-0003 | on it |
 | Quiemo (split part) (85.5333, 38.1338) | CN-0190 | CN-0190 | on it |
 | Quilpie (split part) (144.25, -26.6166) | AU-0076 | AU-0076 | on it |
+| Ranger (site named in AU-0053's notes, in AU-0052) (132.91, -12.67) | AU-0052 | AU-0052 | on it |
 | Rangsit (100.62, 13.98) | TH-0004 | TH-0004 | on it |
 | Ravensthorpe (split part) (120.0333, -33.5829) | AU-0090 | AU-0090 | on it |
 | Redfern (151.2, -33.893) | AU-0001 | AU-0001 | on it |

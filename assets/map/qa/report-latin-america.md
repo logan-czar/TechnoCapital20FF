@@ -253,7 +253,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Barueri (-46.88, -23.51) | BR-0001 | BR-0001 | on it |
 | Basseterre (-62.72, 17.3) | KN | KN-0001 | nearest across water |
 | Belmopan (-88.77, 17.25) | BZ-0002 | BZ-0002 | on it |
-| Belo Monte (site of a split giant) (-51.77, -3.12) | BR-0089 | BR-0076 | within a pixel |
+| Belo Monte (site of a split giant) (-51.88, -3.15) | BR-0089 | BR-0089 | on it |
 | Bogota Chapinero (-74.06, 4.65) | CO-0001 | CO-0001 | on it |
 | Buin (-70.74, -33.73) | CL-0011 | CL-0011 | on it |
 | Caballococha (split part) (-70.5083, -3.9163) | PE-0030 | PE-0030 | on it |

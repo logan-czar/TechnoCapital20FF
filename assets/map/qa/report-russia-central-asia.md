@@ -38,7 +38,7 @@ _Written by `tools/map-pipeline/run.py --region russia-central-asia` (pipeline p
 | Contested provinces (drawn by our own files) | 4 |
 | Admin-1 units left without a province | 0 |
 | Sea links with a province of this file | 13 |
-| City probe points (fail on a mismatch; D686) | 171 pass, 0 mismatch, 6 listed |
+| City probe points (fail on a mismatch; D686) | 172 pass, 0 mismatch, 6 listed |
 | Metro reach scan rows (listed; D686) | 1 |
 | Land exclaves of 5 px or more (fail unless explained; D691) | 16 (0 unexplained) |
 | Anchor cities off their province (own name, Metro, key city, off centre, not in the largest part) | 0 |
@@ -330,6 +330,7 @@ Points of `tools/map-pipeline/checks/city-points.txt` whose expected province is
 | Ust Nera (split part) (143.2, 64.5666) | RU-0226 | RU-0226 | on it |
 | Ust-Ulimsk (split part) (102.6333, 57.99) | RU-0159 | RU-0159 | on it |
 | Utkholok (split part) (157.2333, 57.5504) | RU-0192 | RU-0192 | on it |
+| Vankor (site named in RU-0060's notes, in RU-0059) (83.55, 67.8) | RU-0059 | RU-0059 | on it |
 | Varandey (site of a split giant) (58.0, 68.82) | RU-0089 | RU-0089 | on it |
 | Velsk (split part) (42.0974, 61.0674) | RU-0088 | RU-0088 | on it |
 | Volokolamsk (35.95, 56.03) | RU-0006 | RU-0006 | on it |
