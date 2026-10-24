@@ -12,6 +12,7 @@
 //! - `record` and `replay` (M10.4) write a run's seed, command log and monthly hashes, and replay
 //!   such a log checking every hash (D403).
 
+mod detail;
 mod metrics;
 mod profile;
 mod replay;
@@ -31,7 +32,7 @@ use crate::soak::{DEFAULT_SEEDS, DEFAULT_YEARS, SoakArgs};
 const USAGE: &str = "usage:\n  \
     headless --check-data [--data-dir DIR] [--map-dir DIR]\n  \
     headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--tick-costs] [--data-dir DIR]\n  \
-    headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--data-dir DIR]\n  \
+    headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--detail] [--data-dir DIR]\n  \
     headless check DIR\n  \
     headless record --years N --seed S --out LOG [--data-dir DIR]\n  \
     headless replay LOG [--data-dir DIR]\n\
@@ -50,10 +51,10 @@ fn main() -> ExitCode {
             None => usage(),
         },
         Some("soak-seed") => match parse_soak_seed(&args[1..]) {
-            Some((seed, years, dir)) => report(
+            Some((seed, years, dir, detail)) => report(
                 sim_data::load_world(&dir)
                     .map_err(|e| e.to_string())
-                    .and_then(|d| soak::soak_seed(&d, seed, years)),
+                    .and_then(|d| soak::soak_seed(&d, seed, years, detail.as_deref())),
             ),
             None => usage(),
         },
@@ -216,6 +217,7 @@ impl RunArgs {
 fn parse_soak(args: &[String]) -> Option<(SoakArgs, PathBuf)> {
     let (mut years, mut seeds, mut jobs, mut out, mut check) =
         (DEFAULT_YEARS, DEFAULT_SEEDS, None, None, false);
+    let mut detail = false;
     let mut dir = sim_data::default_data_dir();
     let mut it = args.iter();
     while let Some(arg) = it.next() {
@@ -225,6 +227,7 @@ fn parse_soak(args: &[String]) -> Option<(SoakArgs, PathBuf)> {
             "--jobs" => jobs = Some(it.next()?.parse().ok().filter(|&j| j > 0)?),
             "--out" => out = Some(PathBuf::from(it.next()?)),
             "--check" => check = true,
+            "--detail" => detail = true,
             "--data-dir" => dir = PathBuf::from(it.next()?),
             _ => return None,
         }
@@ -235,23 +238,27 @@ fn parse_soak(args: &[String]) -> Option<(SoakArgs, PathBuf)> {
         jobs,
         out: out?,
         check,
+        detail,
     };
     Some((args, dir))
 }
 
-/// `soak-seed --seed S --years N [--data-dir DIR]` (the soak's child process, D333).
-fn parse_soak_seed(args: &[String]) -> Option<(u64, u32, PathBuf)> {
+/// `soak-seed --seed S --years N [--data-dir DIR] [--detail-dir DIR]` (the soak's child
+/// process, D333; the detail tables, D900).
+fn parse_soak_seed(args: &[String]) -> Option<(u64, u32, PathBuf, Option<PathBuf>)> {
     let (mut seed, mut years, mut dir) = (None, None, sim_data::default_data_dir());
+    let mut detail = None;
     let mut it = args.iter();
     while let Some(arg) = it.next() {
         match arg.as_str() {
             "--seed" => seed = Some(it.next()?.parse().ok()?),
             "--years" => years = it.next()?.parse().ok().filter(|&y| y > 0),
             "--data-dir" => dir = PathBuf::from(it.next()?),
+            "--detail-dir" => detail = Some(PathBuf::from(it.next()?)),
             _ => return None,
         }
     }
-    Some((seed?, years?, dir))
+    Some((seed?, years?, dir, detail))
 }
 
 /// `record --years N --seed S --out LOG [--data-dir DIR]`.
@@ -328,6 +335,7 @@ fn run(args: &RunArgs) -> ExitCode {
             args.hash_monthly,
             profiler.as_mut(),
             costs.as_mut(),
+            false,
         ) {
             Ok(o) => o,
             Err(e) => {

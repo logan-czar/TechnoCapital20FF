@@ -386,6 +386,15 @@ impl Sim {
         soak::soak_stats(&self.world)
     }
 
+    /// Read access to the world tables for the headless runner's `--detail` dump (D900), behind
+    /// the same `soak-stats` feature: it reads true figures (no estimate bands, D420) and never
+    /// writes, so a run's rows and hashes are the same with or without it. The game reads only
+    /// [`Sim::views`] (spec 9).
+    #[cfg(feature = "soak-stats")]
+    pub fn soak_world(&self) -> &World {
+        &self.world
+    }
+
     /// Read access to the world tables, for sim's own tests only (feature `test-hooks`). The
     /// game reads only [`Sim::views`] (spec 9), so it cannot call this.
     #[cfg(feature = "test-hooks")]

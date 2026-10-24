@@ -13,6 +13,7 @@ use std::time::Instant;
 
 use sim_data::WorldData;
 
+use crate::detail::FILES as DETAIL_FILES;
 use crate::metrics::{QUARTERS_HEADER, SeedOutput, YEARS_HEADER, run_seed};
 
 /// Build-plan 4.4: "2020 to 2050 over 50 seeds (T)": the defaults when `--years` or `--seeds`
@@ -33,7 +34,14 @@ pub struct SoakArgs {
     pub out: PathBuf,
     /// Run the target checker on the output afterwards (`--check`).
     pub check: bool,
+    /// Also write the read-only detail tables (`--detail`, D900): industries.csv,
+    /// companies.csv, world.csv and zones.csv.
+    pub detail: bool,
 }
+
+/// The folder under `--out` where each child writes its detail tables before the parent joins
+/// them in seed order (D900).
+const DETAIL_PARTS: &str = "detail-parts";
 
 /// The default worker count: half the available cores, at least 1.
 fn default_jobs() -> usize {
@@ -47,6 +55,7 @@ pub fn run_seeds(
     seeds: (u64, u64),
     years: u32,
     jobs: usize,
+    detail_dir: Option<&Path>,
 ) -> Result<Vec<Result<SeedOutput, String>>, String> {
     let exe = std::env::current_exe().map_err(|e| format!("current exe: {e}"))?;
     let list: Vec<u64> = (seeds.0..=seeds.1).collect();
@@ -60,7 +69,7 @@ pub fn run_seeds(
                 loop {
                     let i = next.fetch_add(1, Ordering::Relaxed);
                     let Some(&seed) = list.get(i) else { break };
-                    let out = run_child(&exe, data_dir, seed, years);
+                    let out = run_child(&exe, data_dir, seed, years, detail_dir);
                     if let Ok(o) = &out {
                         println!(
                             "seed {seed}: {years} years to {}, hash {}, {} ms",
@@ -106,9 +115,26 @@ const YEARS_MARK: &str = "#years";
 const QUARTERS_MARK: &str = "#quarters";
 const END_MARK: &str = "#end ";
 
+/// The file a child writes one detail table of `seed` to (D900).
+fn detail_part(dir: &Path, name: &str, seed: u64) -> PathBuf {
+    dir.join(format!("{name}.{seed}"))
+}
+
 /// `soak-seed`: runs one seed and prints its rows and timing for the parent's [`run_child`].
-pub fn soak_seed(data: &WorldData, seed: u64, years: u32) -> Result<(), String> {
-    let o = run_seed(data, seed, years, false, None, None)?;
+/// With `detail_dir` it also writes its detail tables there (D900).
+pub fn soak_seed(
+    data: &WorldData,
+    seed: u64,
+    years: u32,
+    detail_dir: Option<&Path>,
+) -> Result<(), String> {
+    let o = run_seed(data, seed, years, false, None, None, detail_dir.is_some())?;
+    if let (Some(dir), Some(d)) = (detail_dir, &o.detail) {
+        for ((name, _), rows) in DETAIL_FILES.iter().zip(d.parts()) {
+            let path = detail_part(dir, name, seed);
+            std::fs::write(&path, rows).map_err(|e| format!("{}: {e}", path.display()))?;
+        }
+    }
     print!(
         "{YEARS_MARK}\n{}{QUARTERS_MARK}\n{}{END_MARK}{} {} {} {}\n",
         o.years, o.quarters, o.ticks, o.wall_ms, o.state_hash, o.end
@@ -116,14 +142,22 @@ pub fn soak_seed(data: &WorldData, seed: u64, years: u32) -> Result<(), String> 
     Ok(())
 }
 
-fn run_child(exe: &Path, data_dir: &Path, seed: u64, years: u32) -> Result<SeedOutput, String> {
-    let out = Command::new(exe)
-        .arg("soak-seed")
+fn run_child(
+    exe: &Path,
+    data_dir: &Path,
+    seed: u64,
+    years: u32,
+    detail_dir: Option<&Path>,
+) -> Result<SeedOutput, String> {
+    let mut cmd = Command::new(exe);
+    cmd.arg("soak-seed")
         .args(["--seed", &seed.to_string(), "--years", &years.to_string()])
         .arg("--data-dir")
-        .arg(data_dir)
-        .output()
-        .map_err(|e| format!("seed {seed}: {e}"))?;
+        .arg(data_dir);
+    if let Some(dir) = detail_dir {
+        cmd.arg("--detail-dir").arg(dir);
+    }
+    let out = cmd.output().map_err(|e| format!("seed {seed}: {e}"))?;
     if !out.status.success() {
         return Err(format!(
             "seed {seed}: {}",
@@ -152,6 +186,7 @@ fn parse_child(seed: u64, text: &str) -> Option<SeedOutput> {
         wall_ms,
         state_hash,
         end,
+        detail: None,
     })
 }
 
@@ -181,6 +216,23 @@ pub fn write_outputs(dir: &Path, outputs: &[SeedOutput], years: u32) -> Result<(
     Ok(())
 }
 
+/// Joins the children's detail tables in seed order under their headers (D900) and removes
+/// the parts.
+fn join_detail(out: &Path, parts: &Path, outputs: &[SeedOutput]) -> Result<(), String> {
+    for (name, header) in DETAIL_FILES {
+        let mut text = format!("{header}\n");
+        for o in outputs {
+            let path = detail_part(parts, name, o.seed);
+            text.push_str(
+                &std::fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?,
+            );
+        }
+        let path = out.join(name);
+        std::fs::write(&path, text).map_err(|e| format!("{}: {e}", path.display()))?;
+    }
+    std::fs::remove_dir_all(parts).map_err(|e| format!("{}: {e}", parts.display()))
+}
+
 /// `soak`: runs, writes the three files and prints the timing. If a seed fails, the seeds that ran
 /// are still written, and the error lists every failed seed.
 pub fn soak(data_dir: &Path, args: &SoakArgs) -> Result<(), String> {
@@ -191,9 +243,19 @@ pub fn soak(data_dir: &Path, args: &SoakArgs) -> Result<(), String> {
         args.seeds.0, args.seeds.1, args.years
     );
     let start = Instant::now();
-    let (outputs, failed) = split_failures(run_seeds(data_dir, args.seeds, args.years, jobs)?);
+    let parts = args.out.join(DETAIL_PARTS);
+    if args.detail {
+        std::fs::create_dir_all(&parts).map_err(|e| format!("{}: {e}", parts.display()))?;
+    }
+    let detail_dir = args.detail.then_some(parts.as_path());
+    let (outputs, failed) = split_failures(run_seeds(
+        data_dir, args.seeds, args.years, jobs, detail_dir,
+    )?);
     let wall = start.elapsed().as_secs_f64();
     write_outputs(&args.out, &outputs, args.years)?;
+    if args.detail {
+        join_detail(&args.out, &parts, &outputs)?;
+    }
     let mut ms: Vec<u128> = outputs.iter().map(|o| o.wall_ms).collect();
     ms.sort_unstable();
     if let (Some(lo), Some(hi)) = (ms.first(), ms.last()) {
@@ -222,6 +284,7 @@ mod tests {
             wall_ms: 1,
             state_hash: "h".into(),
             end: "2021-01-01 00:00".into(),
+            detail: None,
         }
     }
 

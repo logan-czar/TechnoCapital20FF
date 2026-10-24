@@ -17,6 +17,7 @@ target/release/headless check soak-out
 | `--jobs N` | Seeds run at once | half the machine's cores |
 | `--out DIR` | Output directory (created) | required |
 | `--check` | Run `check DIR` after the soak | off |
+| `--detail` | Also write the read-only detail tables (below, D900) | off |
 | `--data-dir DIR` | Data tables | `docs/design/data` |
 
 Each seed is its own single-threaded, deterministic `Sim` in its own child process (`headless soak-seed --seed S --years N`, an internal command); the parent runs `--jobs` children at a time and writes their rows in seed order (D333). The sim itself never runs threads.
@@ -137,6 +138,15 @@ Spec 10's balance targets after 10 years, then its startup, character and listin
 | `no_empty_labor_seat` | no labor seat of a born company is empty | `born_empty_seats_max` = 0 in every row 2020 to 2049 (D326) | all seeds |
 
 **Windows.** A target is NA for a seed when the run lacks a row it needs: the 2029 row, the 40 quarters of 2020 to 2029, the reported quarters Q1 2020 to Q4 2029 (the Q4 2029 release is on 2 January 2030, so the beat share needs a run past 10 years), the 2030 to 2035 rows, all 30 rows 2020 to 2049 (listings in 30 years, and the every-year targets `named_companies`, `listings_per_year` and `no_empty_labor_seat`, D329), the 2024 row, the 2049 row; `full_characters_per_decade` evaluates the decades the run covers, NA with none; `cast_sizes` is NA with no birth.
+
+## The detail tables (`--detail`, D900)
+
+For long-run reports (for example 100 years left alone), `soak --detail` also writes four tables, read through `Sim::soak_world` (true figures, no estimate bands) and the views. They change nothing: years.csv, quarters.csv and the hashes are byte-identical with and without the flag. Code: `crates/headless/src/detail.rs`, which holds each header.
+
+- `industries.csv`: one row per seed, year and industry at the December close: trend growth and current lt, q_growth, label, trend demand, demand, supply, S, M, fringe assets, the year's named and fringe revenue, the named share of last month's revenue, company counts (in the game, Active, Distressed, quoted, born and alive), births and bankruptcies in the year, the top 1, 4 and 10 companies' share of named revenue and its HHI, the mean productivity of live units, named gross assets, and the fair value and quoted market cap of its companies.
+- `zones.csv`: one row per seed, year and zone exchange: index level, quoted companies, their market cap and fair value, confidence and the effective credit spread.
+- `world.csv`: one row per seed and year: the AI stage and pop date, total demand, trend demand and supply, company counts by status and origin, births and bankruptcies so far, total cash, line drawn, equity, gross assets, fair value and market cap, the 10th, 50th and 90th percentile and largest TTM revenue and the percentiles of TTM EBIT margin of live companies, the share with TTM net income above 0, the top 10 companies' share of named revenue, the mean and largest industry HHI, the largest top-1 share, the full character count, and the M4.9 balance checks run and failed so far.
+- `companies.csv`: every company not Removed at the 2020 close and at every tenth year's close (2029, 2039, ...): industry, origin and birth year, status, quoted, exchange, country, archetype, TTM revenue, EBIT, net income and dividends, cash, line drawn and limit, asset book, equity, gross assets, productivity, management score, rating, growth plan, labor units, price, shares, market cap and fair value.
 
 ## Performance
 
