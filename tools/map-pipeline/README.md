@@ -29,6 +29,14 @@ with peaks of about 0.5 GB in Python and 0.7 GB in mapgen. Two runs give byte-id
 | mapgen (P7) | `mapgen_step.py` | `cargo run --release -p mapgen -- build ...`: every bitmap and table of the contract, for every region built so far (one `--geojson` each) |
 | qa (P8) | `qa.py` | `assets/map/qa/report-<region>.md`, a preview PNG, `assets/map/CREDITS.md`; fails on a province without pixels, a license problem, a city probe mismatch (`checks/city-points.txt`, D686), an unchecked NE label row (D687), a hint seed outside its region (D690), an unexplained land exclave (D691) or a `sea_only` pair with a land row (D692) |
 
+`run.py giants` measures every province of the last run (geodesic area of the final shapes) and lists the
+giants: provinces over 250,000 km2 that are not Arctic (more than half their area north of 66.5 N, or any land
+south of 60 S). `run.py giants --write` cuts each into parts no larger than Eastern Iowa (US-0053, 51,722 km2)
+and writes the new province rows, the `[subdivide]` hints and city probe points; run it once, on the unsplit
+world. The shapes step then rebuilds each cut from its hints (`pipeline/subdivide.py`, D820 to D829), and QA
+fails on a part over the cap. `run.py giants --coastal` sets the parts' `coastal` flags from mapgen's bitmap
+after a world build.
+
 `run.py pin --iso KEN COD --levels ADM1` pins (or re-pins) those boundaries in `sources.toml`, keeping the
 others: Natural Earth hashes from a download, geoBoundaries hashes from the git-LFS pointers at the pinned tag.
 New pins take geoBoundaries' simplified geometry (D670; `--full` for the full file). Pin a country there before
@@ -51,6 +59,8 @@ its region runs; a refused license keeps only the metadata.
   - `[blocks]` `notes_need_place` and `level` per region; `[text]` stopwords `allow` and `stop`;
   - `[provinces.<id>]` units, places, lon/lat seeds or a drawn `polygon` for provinces the automatic match
     could not place (`add = true` keeps the automatic seeds too); a seed must lie in the region (D690);
+  - `[subdivide.<id>]` a giant cut into parts (D820): `parts`, `whole_tol`, `blocks`, the `main` point
+    (the original keeps its id) and `[subdivide.<id>.children]`, one point inside each new province;
   - `[review]` `notes` (Known for review), `watch` (the watched small provinces table), `ne_label_ok` (D687),
     `sea_only` (D692), and the tables `anchor_ok` (D689) and `exclave_ok` (D691): province id to the reason.
 

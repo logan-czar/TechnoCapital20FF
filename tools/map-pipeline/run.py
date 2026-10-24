@@ -4,6 +4,7 @@
     uv run python run.py --region north-america --steps crosswalk,shapes
     uv run python run.py --region all                     # every region file, mapgen once
     uv run python run.py pin --iso USA CAN MEX           # re-pin sources.toml
+    uv run python run.py giants [--write | --coastal]    # the giant-province split (D820)
 """
 
 from __future__ import annotations
@@ -25,6 +26,15 @@ def main(argv: list[str]) -> int:
         from pipeline import fetch
 
         fetch.pin(a.iso, a.levels, simplified=not a.full)
+        return 0
+    if argv and argv[0] == "giants":
+        p = argparse.ArgumentParser(prog="run.py giants")
+        p.add_argument("--write", action="store_true", help="cut the giants and write the data and hints")
+        p.add_argument("--coastal", action="store_true", help="set the split parts' coastal flags from mapgen")
+        a = p.parse_args(argv[1:])
+        from pipeline import giants
+
+        giants.run(write=a.write, coastal=a.coastal, log=lambda s: print(s, flush=True))
         return 0
     if argv and argv[0] == "selftest":
         import runpy

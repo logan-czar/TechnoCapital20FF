@@ -17,7 +17,7 @@ import shapely
 from shapely import affinity
 from shapely.geometry import MultiPoint, Point
 
-from . import config, crosswalk
+from . import config, crosswalk, subdivide
 
 # Lakes whose shores count as coast (D608; provinces-north-america-summary.md: "Coastal Y
 # includes Great Lakes shores").
@@ -238,10 +238,14 @@ def run(region: config.Region) -> None:
     nesting = {}
     splits: dict[str, dict] = {}
     named_outside = []
+    hints = crosswalk.load_hints(region)
+    split_of = crosswalk.subdivided(hints)
     for key in sorted(plan["regions"]):
         rplan = plan["regions"][key]
         rgeom = shapely.make_valid(regions.loc[key].geometry)
         built = build_region(key, rgeom, rplan, work, splits)
+        # D820: a giant is cut into its parts here, after its shape is built
+        subdivide.apply(built, rplan["country"], hints, sources)
         union = shapely.union_all(list(built.values()))
         total = sum(g.area for g in built.values())
         # regions nest exactly: the provinces tile the region with no gap and no overlap
@@ -257,6 +261,8 @@ def run(region: config.Region) -> None:
                 if not rgeom.covers(pt) or built[pid].covers(pt):
                     continue
                 holder = next((q for q in sorted(built) if built[q].covers(pt)), "")
+                if split_of.get(holder) == pid:  # a place of a split giant now in one of its parts
+                    continue
                 row = {"province_id": pid, "place": label, "in": holder}
                 if row not in named_outside:  # a place found under several names counts once
                     named_outside.append(row)

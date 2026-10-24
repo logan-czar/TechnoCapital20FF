@@ -15,7 +15,7 @@ from collections import Counter
 
 import geopandas as gpd
 
-from . import PIPELINE_VERSION, anchors, config, crosswalk, fetch, licenses, probe
+from . import PIPELINE_VERSION, anchors, config, crosswalk, fetch, licenses, probe, subdivide
 
 # Regions whose provinces leave more than this share of the region uncovered, or overlap by
 # more, are listed as nesting problems (shares of the region's area).
@@ -245,6 +245,20 @@ def run(region: config.Region) -> None:
     if exclave_bad:
         problems.append(f"{len(exclave_bad)} land exclaves are unexplained: "
                         + ", ".join(f"{e['province_id']} ({e['px']} px at {e['lon']}, {e['lat']})" for e in exclave_bad))
+    # D820: every part of a split giant is at most the cap (Eastern Iowa), on the final shapes
+    split_rows = []
+    for pid, spec in sorted(crosswalk.load_hints(region).get("subdivide", {}).items()):
+        geom_of = dict(zip(shp.province_id, shp.geometry))
+        part_ids = [pid] + sorted(spec.get("children", {}))
+        areas = {i: subdivide.area_km2(geom_of[i]) for i in part_ids if i in geom_of}
+        over = [i for i in part_ids if i not in areas or areas[i] > subdivide.CAP_KM2]
+        split_rows.append((pid, names.get(pid, ""), len(part_ids), spec["blocks"], sum(areas.values()),
+                           min(areas.values(), default=0.0), max(areas.values(), default=0.0),
+                           sum(int(mq[i]["components"] or 1) > 1 for i in part_ids if i in mq), over))
+    over_cap = [i for r in split_rows for i in r[8]]
+    if over_cap:
+        problems.append(f"{len(over_cap)} parts of split giants are over the {subdivide.CAP_KM2:,.0f} km2 cap: "
+                        + ", ".join(over_cap))
     # D692: pairs the hints say must meet only by sea (Little and Big Diomede)
     pair_rows = {(r["a"], r["b"]): r["kind"] for r in adjacency}
     sea_only_bad = []
@@ -316,6 +330,19 @@ def run(region: config.Region) -> None:
              "of whole geoBoundaries ADM2 units clipped to the region; `voronoi` a province with at least one "
              "Voronoi cut (inside an ADM2 unit two provinces share, or on a region with no usable ADM2 data).")
     L.append("")
+    if split_rows:
+        L.append("## Split giants")
+        L.append("")
+        L.append(f"Provinces over {subdivide.GIANT_KM2:,.0f} km2 that are not Arctic, cut into parts of at most "
+                 f"{subdivide.CAP_KM2:,.0f} km2 (Eastern Iowa, {subdivide.CAP_PROVINCE}) by `run.py giants` and "
+                 "`[subdivide]` in the hints (D820). Areas are geodesic, of the final shapes; the step fails on a "
+                 "part over the cap.")
+        L.append("")
+        L.append("| Province | Name | Parts | Pieces | Area (km2) | Smallest part | Largest part | Parts in several pieces |")
+        L.append("|---|---|---|---|---|---|---|---|")
+        for pid, nm, n, blocks, tot, lo, hi, multi_n, _ in split_rows:
+            L.append(f"| {pid} | {_md_escape(nm)} | {n} | {blocks} | {tot:,.0f} | {lo:,.0f} | {hi:,.0f} | {multi_n} |")
+        L.append("")
     L.append("## Sources and licenses")
     L.append("")
     L.append("| Boundary file | License | Used |")
