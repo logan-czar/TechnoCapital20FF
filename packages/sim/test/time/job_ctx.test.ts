@@ -27,7 +27,7 @@ import {
 import type { Controls } from "../../src/types/control.ts";
 import type { CompanyId } from "../../src/types/ids.ts";
 import { ALERT_KIND_INDEX, type AlertKind, type AlertLevel, type Notice } from "../../src/types/notice.ts";
-import { clockWorld, NO_DRAWS } from "./harness.ts";
+import { clockWorld, NO_DRAWS } from "../test_sim.ts";
 
 const FACTS = tickFactsNew(dateTimeMidnight(simDateYmd(2020, 1, 2)));
 const Q = { kind: "Quarter", quarter: { year: 2020, q: 1 } } as const;

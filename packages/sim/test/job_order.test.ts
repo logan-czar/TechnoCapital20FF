@@ -4,26 +4,27 @@
 // `UPDATE_GOLDEN=1` to rewrite it after an intended change to the order. Ported from
 // crates/sim/tests/job_order.rs.
 //
-// `Sim` is not ported yet, so `ClockHarness` (test/time/harness.ts) does what `Sim::step` does
-// for the clock. Swap it for `Sim` once lib.rs is ported.
+// Runs on `testSim` (test_sim.ts): the real Sim, on the real data once every Step 2 start call is
+// wired, on a minimal world before that (the trace is the slots visited, which no job changes).
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { simLastTrace, simNow, simSetTrace, simStep } from "../src/lib.ts";
 import { dateTimeMidnight, simDateYmd } from "../src/time/calendar.ts";
 import { traceRecorderNew, traceRecorderPush, traceRecorderRender } from "../src/time/trace.ts";
-import { ClockHarness } from "./time/harness.ts";
+import { testSim } from "./test_sim.ts";
 
 const GOLDEN = new URL("./golden/job-order-2020.txt", import.meta.url);
 
 describe("job order", () => {
   it("2020 matches the golden trace", () => {
-    const sim = new ClockHarness();
-    sim.setTrace(true);
+    const sim = testSim(1);
+    simSetTrace(sim, true);
     const end = dateTimeMidnight(simDateYmd(2021, 1, 1));
     const rec = traceRecorderNew();
-    while (sim.now() < end) {
-      sim.step();
-      traceRecorderPush(rec, sim.now(), sim.lastTrace());
+    while (simNow(sim) < end) {
+      simStep(sim);
+      traceRecorderPush(rec, simNow(sim), simLastTrace(sim));
     }
     const got = traceRecorderRender(rec);
     if (process.env.UPDATE_GOLDEN) writeFileSync(GOLDEN, got);

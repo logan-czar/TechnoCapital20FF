@@ -75,6 +75,11 @@ export type Reply =
  */
 export type ViewsPatch = Partial<Omit<SimViews, "news">> & {
   news_appended?: Headline[];
+  /**
+   * The feed was replaced (a new game or a load): `news_appended` is the whole new feed, and the
+   * UI replaces its `news.data.feed` with it instead of appending.
+   */
+  news_reset?: true;
   /** The news view's version after the append. */
   news_version?: number;
 };
