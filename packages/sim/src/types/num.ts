@@ -152,8 +152,9 @@ export function clamp(x: number, lo: number, hi: number): number {
  * multiplications Rust does, where `Math.pow` may differ in the last bit.
  */
 export function powi(base: number, exp: number): number {
+  if (!Number.isInteger(exp)) throw new RangeError(`powi exponent ${exp} is not an integer`);
   let a = base;
-  let b = Math.trunc(exp);
+  let b = exp;
   const recip = b < 0;
   if (recip) b = -b;
   let r = 1.0;

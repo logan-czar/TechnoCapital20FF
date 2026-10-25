@@ -94,5 +94,24 @@ describe("powi", () => {
     expect(powi(2, -2)).toBe(0.25);
     expect(powi(1.05, 4)).toBe(1.05 * 1.05 * (1.05 * 1.05));
     expect(powi(-3, 3)).toBe(-27);
+    expect(powi(-2, -3)).toBe(-0.125);
+  });
+  it("handles NaN, infinities and zero like f64::powi", () => {
+    expect(powi(Number.NaN, 0)).toBe(1);
+    expect(Number.isNaN(powi(Number.NaN, 2))).toBe(true);
+    expect(powi(Number.POSITIVE_INFINITY, 2)).toBe(Number.POSITIVE_INFINITY);
+    expect(powi(Number.NEGATIVE_INFINITY, 3)).toBe(Number.NEGATIVE_INFINITY);
+    expect(powi(Number.NEGATIVE_INFINITY, 2)).toBe(Number.POSITIVE_INFINITY);
+    expect(powi(Number.POSITIVE_INFINITY, -1)).toBe(0);
+    expect(powi(0, -2)).toBe(Number.POSITIVE_INFINITY);
+    expect(powi(-0, -1)).toBe(Number.NEGATIVE_INFINITY);
+    expect(powi(-0, -2)).toBe(Number.POSITIVE_INFINITY);
+    expect(Object.is(powi(-0, 3), -0)).toBe(true);
+    expect(Object.is(powi(-0, 2), 0)).toBe(true);
+  });
+  it("rejects a non-integer exponent", () => {
+    expect(() => powi(2, Number.NaN)).toThrow(RangeError);
+    expect(() => powi(2, Number.POSITIVE_INFINITY)).toThrow(RangeError);
+    expect(() => powi(2, 0.5)).toThrow(RangeError);
   });
 });
