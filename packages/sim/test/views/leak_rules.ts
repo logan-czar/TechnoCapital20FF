@@ -495,7 +495,7 @@ function subjectOf(rule: string | OwnerRule, y: Record<string, unknown>, ctx: Ct
     company,
     industry,
     ownIndustry: r.ownIndustry === true,
-    quarter: isRecord(q) ? (q as Quarter) : null,
+    quarter: isRecord(q) ? (q as unknown as Quarter) : null,
   };
 }
 

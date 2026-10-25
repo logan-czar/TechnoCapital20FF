@@ -1,37 +1,47 @@
 // The sim-side half of crates/game/tests/m9_leak.rs (M9.8, D574): with Omniscient off, no view
 // may hold a true private figure. Rust scans the game's rendered text; here the view data itself
 // is scanned, which is stricter (every number, not its rounded rendering). Not a Rust file.
-// leak_rules.ts maps the views (company subtrees, id leaves, the allow-lists); leak_perturb.ts
-// makes the perturbed world of check 4.
+// leak_rules.ts maps the views (subject subtrees, id leaves, the allow-lists); leak_perturb.ts
+// makes the perturbed world of check 4. A subject is a company, an industry, or both (a unit, a
+// company's line in an industry); it is banded as the views band it: a company that does not
+// publish (D420), an industry in the estimated class (D432; a history quarter by the class it
+// closed in, D437), a unit or a company's line when either is (D436). `bandedOf` classes them.
+// Lists the views rank by the revenue shown (v_industry_detail's companies) are compared in
+// company id order (leak_rules.ts `canonical`), so the builds pair row by row.
 //
 // Two builds of one state: the observer's and Omniscient's (a debug Sim, D961). Omniscient is
 // toggled on and off first, so the observer's views are rebuilt at that tick too (D423), then on
 // again: the two builds differ only by Omniscient.
 //
-// 1. The shape, over every leaf of every ported view: a leaf in the subtree of a company that
-//    does not publish (D420; the subtrees are leak_rules.ts `owners`) is a band if it is a
-//    figure, but for the compute and licences line (D434) and a listed company's EFV (D140)
+// 1. The shape, over every leaf of every ported view: a leaf in the subtree of a banded subject
+//    (the subtrees are leak_rules.ts `owners`) is a band if it is a figure, but for the compute
+//    and licences line (D434), a listed company's EFV (D140) and S with no demand
 //    (`exactInBanded`); a plain number there must be an id, a count, a date or one of the
-//    numbers D420 leaves exact (`bandedPlain`), so a money figure served as a bare number fails.
-//    A publishing company's figures are all exact; a figure about no company fails (a new view
-//    must say whose it is); every `estimated` flag says whether its company publishes; a banded
-//    company's statements hold no archive (D130). A wrong flag, the likeliest leak, fails here.
+//    numbers D420 and D432 leave exact (`bandedPlain`), so a money figure served as a bare number
+//    fails. An unbanded subject's figures are all exact; a figure about no subject fails (a new
+//    view must say whose it is); every `estimated` flag says whether its subject is banded; a
+//    banded company's statements hold no archive (D130). A wrong flag, the likeliest leak, fails.
 // 2. The truths: walking both builds side by side, a figure that is a band for the observer and
 //    exact in Omniscient gives a truth; so does any plain number that differs between the builds
 //    (only private figures can, D574's rule) or that Omniscient alone shows (the true V). Every
 //    band must hold its truth strictly inside (D422) and sit at least `BAND_MIN_ERROR` × |truth|
 //    away from it (D429: every error is at least ESTIMATE_BIAS_MIN − ESTIMATE_JITTER = 5.5% of
-//    the truth, sums and maps keep it, D430; so an estimate that is the truth rounded fails).
+//    the truth, sums and maps keep it, D430; so an estimate that is the truth rounded fails;
+//    not in the industry views, whose bands sum or divide many subjects' errors, `MANY_SUBJECTS`).
+//    An id leaf is never a truth, and neither is 0 or a simple small value (`isSimpleSmall`).
 //    v_statements' banded companies hold estimates instead of the archive: their estimated
 //    statements are paired with Omniscient's by period, and every line (but Shared, D434), the
 //    held TB and Omniscient's posted months are truths. Values that public data also holds are
 //    dropped: several starting companies share their starting books (company-start.csv), so a
 //    published company's 2019 lines can equal a private one's. Only these are public: every
-//    number of a publishing company's subtrees, a listed company's EFV, and `PUBLIC_PATHS`.
+//    number of an unbanded subject's subtrees (a publishing company's, the published industry
+//    tables), a listed company's EFV, and `PUBLIC_PATHS`.
 // 3. The scan: every number of the observer's views (every ported view, plain numbers, exact
-//    figures and band ends) must differ from every truth, but the id, count and date leaves
-//    (path-qualified: leak_rules.ts `ids`, and dates by their shape). Nothing else is skipped:
-//    an array of rows is always walked, and the operations D420 leaves exact are scanned too.
+//    figures and band ends) must differ from every truth, in every view, but the id, count and
+//    date leaves (path-qualified: leak_rules.ts `ids`, and dates by their shape). Nothing else is
+//    skipped: an array of rows is always walked, and the operations D420 leaves exact are
+//    scanned too. One known exact match is excused, by name (`knownExact`: a statement's
+//    productivity, D420, against v_units' banded productivity, D436; logged for Logan).
 // 4. The perturbation, for derived and rounded leaks that equal no truth: the observer's views
 //    are built twice by the view builders themselves (`simViewsBuild`, the same seed, controls
 //    and map data), once from the state and once from a copy in which every banded company's
@@ -40,7 +50,8 @@
 //    by design; each band is checked against its truth instead (2), in the perturbed build too.
 //    Every other leaf (plain numbers, exact figures, strings, flags, array lengths: anything
 //    a screen prints or a list's shape) must be the same in both builds, but `perturbExempt`
-//    (a listed company's EFV, D140, and v_market_stats' soak diagnostics, D144). A leaf that
+//    (a listed company's EFV, D140; v_market_stats' soak diagnostics, D144; the exact industry
+//    totals and shares outside the estimated class, D432; the top 5 by revenue shown). A leaf that
 //    follows a private book (revenue in $M, cash rounded to $1M, cash over the shares, a margin,
 //    a name with a figure in it) changes, and is a leak. A future view that derives a plain number
 //    from a band's estimate (a sort order, a pin size) changes too: it must say so in
@@ -105,11 +116,12 @@ import {
   PUBLIC_PATHS,
   perturbExempt,
   plainInBanded,
+  rulesOf,
   VIEW_RULES,
   walkView,
 } from "./leak_rules.ts";
 
-type Truths = Map<number, string>;
+type Truths = Map<number, string[]>;
 
 /**
  * How far every band's estimate sits from its truth at least, as a share of it (2): the floor of
@@ -119,20 +131,40 @@ const BAND_MIN_ERROR = 0.05;
 
 const PORTED: readonly ViewName[] = VIEW_NAMES.filter((n) => viewIsPorted(n));
 
-/** A value under this is small: a truth only within its own view (3). */
+/** Below this, a round value is not a truth (`addTruth`). */
 const SMALL = 1000;
 
 /**
- * Records a truth. Left out: 0, and a small round value (under `SMALL` with at most 3 significant
- * digits: a 0.25 TB book, 1 point, a company id the two builds rank differently), which tax
- * rates, weights, counts and ids hold by the data; a money figure is never that small, and every
- * distinctive value stays in. (From PR #91.)
+ * A simple small value: under `SMALL`, and either at most 3 significant digits once float noise
+ * is rounded off (12 significant digits: 0.049999999999999996 is 0.05) or a fraction with a
+ * denominator of at most 12 and a numerator of at most 4 digits (20/3 = 6.666666666666667, a
+ * board's average of three skills). Tax rates, weights, skills, skill averages and counts hold
+ * such values by the data, so a TB book or a point that happens to be one says nothing.
+ */
+function isSimpleSmall(x: number): boolean {
+  const a = Math.abs(x);
+  if (a >= SMALL) return false;
+  const clean = Number(a.toPrecision(12));
+  if (Number(clean.toPrecision(3)) === clean) return true;
+  for (let d = 2; d <= 12; d++) {
+    const n = Number((clean * d).toPrecision(12));
+    if (Number.isInteger(n) && n < 10_000) return true;
+  }
+  return false;
+}
+
+/**
+ * Records a truth with where it was found (every place, so `knownExact` can excuse one source
+ * without hiding another). Left out: 0, and a simple small value (`isSimpleSmall`); a money
+ * figure is never that small, and every other value stays in, in every view. A simple small
+ * figure moved into another view still fails the perturbation (4) when it follows the books.
  */
 function addTruth(truths: Truths, x: number, where: string): void {
-  if (x === 0 || !Number.isFinite(x) || truths.has(x)) return;
-  const a = Math.abs(x);
-  if (a < SMALL && Number(a.toPrecision(3)) === a) return;
-  truths.set(x, where);
+  if (x === 0 || !Number.isFinite(x)) return;
+  if (isSimpleSmall(x)) return;
+  const at = truths.get(x);
+  if (at === undefined) truths.set(x, [where]);
+  else at.push(where);
 }
 
 /**
@@ -160,9 +192,29 @@ function checkBand(b: Band, t: number, where: string, bad: string[], distance = 
   }
 }
 
-/** Walks the observer's and Omniscient's builds of one view side by side (truths, 2). */
-function pair(shown: unknown, truth: unknown, where: string, truths: Truths, bad: string[]): void {
+/**
+ * Views whose bands sum or divide several subjects' bands (an industry's total is many companies'
+ * revenues, each with its own sign of error; a share is interval division, D430): the truth stays
+ * strictly inside, but the errors can cancel, so `BAND_MIN_ERROR` does not hold for them.
+ */
+const MANY_SUBJECTS: ReadonlySet<ViewName> = new Set(["industry_rows", "industry_detail"]);
+
+/**
+ * Walks the observer's and Omniscient's builds of view `view` side by side (truths, 2). `norm`
+ * is the normalized path: an id leaf (leak_rules.ts `ids`) is never a truth, so ids the two
+ * builds list in another order are not paired as figures.
+ */
+function pair(
+  view: ViewName,
+  shown: unknown,
+  truth: unknown,
+  where: string,
+  norm: string,
+  truths: Truths,
+  bad: string[],
+): void {
   if (typeof truth === "number") {
+    if ((rulesOf(view).ids ?? []).includes(norm)) return;
     if (typeof shown === "number") {
       if (shown !== truth && !(Number.isNaN(shown) && Number.isNaN(truth))) addTruth(truths, truth, where);
     } else if (shown === null || shown === undefined) {
@@ -173,14 +225,14 @@ function pair(shown: unknown, truth: unknown, where: string, truths: Truths, bad
   }
   if (Array.isArray(shown) && Array.isArray(truth)) {
     const n = Math.min(shown.length, truth.length);
-    for (let i = 0; i < n; i++) pair(shown[i], truth[i], `${where}[${i}]`, truths, bad);
+    for (let i = 0; i < n; i++) pair(view, shown[i], truth[i], `${where}[${i}]`, `${norm}[]`, truths, bad);
     return;
   }
   if (!isRecord(shown) || !isRecord(truth)) return;
   if (isFigure(shown) && isFigure(truth)) {
     if (shown.kind === "Band" && truth.kind === "Exact") {
       addTruth(truths, truth.value, where);
-      checkBand(shown.band, truth.value, where, bad);
+      checkBand(shown.band, truth.value, where, bad, !MANY_SUBJECTS.has(view));
     } else if (shown.kind === "Exact" && truth.kind === "Exact" && shown.value !== truth.value) {
       addTruth(truths, truth.value, where);
     }
@@ -188,7 +240,7 @@ function pair(shown: unknown, truth: unknown, where: string, truths: Truths, bad
   }
   const s = shown as Record<string, unknown>;
   const t = truth as Record<string, unknown>;
-  for (const k of Object.keys(s)) pair(s[k], t[k], `${where}.${k}`, truths, bad);
+  for (const k of Object.keys(s)) pair(view, s[k], t[k], `${where}.${k}`, `${norm}.${k}`, truths, bad);
 }
 
 /**
@@ -229,6 +281,23 @@ function statementTruths(observer: SimViews, omniscient: SimViews, truths: Truth
     }
     for (const m of t.months) addTruth(truths, m.lines.revenue, `statements ${c.key} month revenue`);
   });
+}
+
+/**
+ * The one known exact match the scan lets pass, named: a statement's productivity (v_statements'
+ * operating figures, exact because D420 leaves productivity exact "as operations"; Rust does the
+ * same, crates/sim/src/views/statements.rs `operating`) equals the true productivity that v_units
+ * bands for the same company (D436), or its p_pre (the productivity band moved by the published
+ * bonuses, D430: the same figure when the quarter's productivity is the unit's p_pre). The
+ * D420/D436 tension is logged for Logan; until he rules, only this pair (that leaf, a unit's
+ * productivity or p_pre truth) is excused, nothing else.
+ */
+function knownExact(leaf: Leaf, truth: string): boolean {
+  return (
+    (leaf.norm === "statements.companies[].estimated_quarters[].operating.productivity" ||
+      leaf.norm === "statements.companies[].estimated_years[].operating.productivity") &&
+    /^units\.units\[\d+\]\.(productivity|p_pre)$/.test(truth)
+  );
 }
 
 /** Every leaf of every ported view of `v`, its subjects classed by `w`. */
@@ -303,7 +372,7 @@ interface Scan {
 function scan(w: World, observer: SimViews, omniscient: SimViews): Scan {
   const truths: Truths = new Map();
   const bad: string[] = [];
-  for (const n of PORTED) pair(observer[n].data, omniscient[n].data, n, truths, bad);
+  for (const n of PORTED) pair(n, observer[n].data, omniscient[n].data, n, n, truths, bad);
   statementTruths(observer, omniscient, truths, bad);
   for (const x of publicValues(w, observer)) truths.delete(x);
   const leaks: string[] = [];
@@ -311,12 +380,8 @@ function scan(w: World, observer: SimViews, omniscient: SimViews): Scan {
     if (isIdLeaf(leaf)) return;
     for (const x of leafNumbers(leaf)) {
       const t = truths.get(x);
-      if (t === undefined) continue;
-      // A small truth (TB, points, ratios, shares) counts only in its own view: across views such
-      // values meet skills, rates and weights by the data (from PR #91). A small figure carried
-      // into another view still fails the perturbation (4).
-      if (Math.abs(x) < SMALL && t.split(/[. []/, 1)[0] !== leaf.ctx.view) continue;
-      leaks.push(`${leaf.raw} = ${x}, the truth of ${t}`);
+      const from = t?.filter((where) => !knownExact(leaf, where)) ?? [];
+      if (from.length > 0) leaks.push(`${leaf.raw} = ${x}, the truth of ${from.join(", ")}`);
     }
   });
   return { shape: shape(w, observer), bad, leaks, truths: truths.size };
@@ -571,6 +636,42 @@ describe("leak test catches", () => {
       ["the free R&D step", (v) => put(operating(v), "free_rd_pct", truth)],
     ];
     for (const [what, plant] of plants) expect(scanPlanted(plant).leaks.length, what).toBeGreaterThan(0);
+  });
+
+  // The unit and industry subjects (D432, D436, D437), and the one named exception.
+  it("the unit and industry views, and only the named exception", () => {
+    const units = omniscient.units.data.units;
+    const shownUnits = observer.units.data.units;
+    // A published company's unit in an estimated industry: its figures are bands (D436).
+    const j = shownUnits.findIndex((u) => !showsEstimates(w, u.company) && u.estimated);
+    expect(j, "a published company's unit in an estimated industry").toBeGreaterThanOrEqual(0);
+    const rev = units[j]!.revenue_m;
+    const ind = observer.industry_rows.data.rows.findIndex((r) => r.estimated);
+    const plants: [string, (v: SimViews) => void, "shape" | "leaks"][] = [
+      ["its revenue served exact", (v) => put(v.units.data.units[j]!, "revenue_m", rev), "shape"],
+      ["its flag", (v) => put(v.units.data.units[j]!, "estimated", false), "shape"],
+      [
+        "an estimated industry's supply exact",
+        (v) => put(v.industry_rows.data.rows[ind]!, "supply", exact(1234.5)),
+        "shape",
+      ],
+      [
+        "its revenue in another view",
+        (v) => put(detail(v), "buzz", rev.kind === "Exact" ? rev.value : 0),
+        "leaks",
+      ],
+      // The exception excuses a unit's productivity in a statement's productivity, nothing else.
+      [
+        "another truth in a statement's productivity",
+        (v) => put(operating(v), "productivity", rev.kind === "Exact" ? rev.value : 0),
+        "leaks",
+      ],
+    ];
+    expect(rev.kind).toBe("Exact");
+    expect(ind).toBeGreaterThanOrEqual(0);
+    for (const [what, plant, check] of plants) {
+      expect(scanPlanted(plant)[check].length, what).toBeGreaterThan(0);
+    }
   });
 
   it("an estimate that is the truth rounded (2)", () => {
