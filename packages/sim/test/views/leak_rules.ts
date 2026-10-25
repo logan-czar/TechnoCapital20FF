@@ -8,20 +8,22 @@
 // nothing on its own: `units` under province_cards is a list of unit ids, `units` in v_units
 // will be full rows with money, and only the first is listed here.
 //
-// Every ported view must have an entry in `VIEW_RULES` (the test fails on one that has none), so
-// porting a view (v_projection, v_recap, v_map_layers) means classifying it here: its subject
-// subtrees, its id leaves and what of a banded subject it may show as a plain number.
+// Every ported view (all 28) must have an entry in `VIEW_RULES` (the test fails on one that has
+// none), so a new view or field means classifying it here: its subject subtrees, its id leaves
+// and what of a banded subject it may show as a plain number.
 //
 // A subtree's subject is a company, an industry or both (a unit, or a company's line in an
 // industry), and it is banded as the views band it: a company that does not publish (D420), an
 // industry in the estimated class (D432), and both for a unit's monthly figures and data book
 // (D436: a published company's are bands in an estimated industry); an industry history quarter
 // by the class it closed in (D437).
+
+import { jumpedPrice, surprise } from "../../src/market/earnings.ts";
 import type { Quarter } from "../../src/types/calendar.ts";
 import type { CompanyId, IndustryId } from "../../src/types/ids.ts";
 import type { Figure } from "../../src/types/views/estimate.ts";
 import type { ViewName } from "../../src/types/views/index.ts";
-import { statementLineIndex } from "../../src/views/estimate.ts";
+import { figureShown, statementLineIndex } from "../../src/views/estimate.ts";
 
 /** How an array element names its subject (`OWNERS`' values; a string is a company field). */
 export interface OwnerRule {
@@ -35,7 +37,12 @@ export interface OwnerRule {
   readonly ownIndustry?: true;
   /** The field holding the quarter whose close sets the industry's class (D437). */
   readonly quarter?: string;
+  /** The element's index is a unit ordinal (`UnitAt`; v_map_layers' unit assets). */
+  readonly unitOrdinal?: true;
 }
+
+/** The company and industry of the k-th unit a view lists (leak.test.ts has the World). */
+export type UnitAt = (k: number) => { company: CompanyId; industry: IndustryId } | null;
 
 /** A subtree's subject, as `walkView` hands it to the `banded` resolver. */
 export interface Subject {
@@ -382,6 +389,61 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
     // rating and the home spread (5.11).
     bandedPlain: ["ratings.companies[].line_rate", "ratings.companies[].home_spread"],
   },
+  projection: {
+    owners: { "projection.companies[]": "id" },
+    ids: ["projection.companies[].id"],
+    // The range's half-width is the 5.16 width at the share of the quarter elapsed (D252): the
+    // same for every company, never its books. The plan is Omniscient only (`shape` checks it is
+    // null).
+    bandedPlain: ["projection.companies[].width"],
+  },
+  recap: {
+    owners: {
+      "recap.recaps[].world.expected_beats[]": "company",
+      "recap.recaps[].world.expected_misses[]": "company",
+      "recap.recaps[].companies[]": "company",
+    },
+    ids: [
+      "recap.recaps[].world.expected_beats[].company",
+      "recap.recaps[].world.expected_misses[].company",
+      "recap.recaps[].world.industries_by_label[][][]",
+      "recap.recaps[].companies[].company",
+      "recap.recaps[].companies[].expected.company",
+      // The outlook's count of loss quarters in a row (spec 8 recap; shown as it is, as Rust).
+      "recap.recaps[].companies[].outlook.loss_quarters",
+      "recap.watchlist[]",
+    ],
+    // A banded company's expected surprise and reaction are worked out from the shown estimates
+    // (D420, D430: `derivedFromShown` recomputes them); confidence is shown as it is (5.7, 5.15).
+    bandedPlain: [
+      "recap.recaps[].world.expected_beats[].expected_surprise",
+      "recap.recaps[].world.expected_misses[].expected_surprise",
+      "recap.recaps[].companies[].expected.expected_surprise",
+      "recap.recaps[].companies[].expected_reaction",
+      "recap.recaps[].companies[].confidence_factor",
+      "recap.recaps[].companies[].exchange_confidence",
+    ],
+  },
+  map_layers: {
+    owners: {
+      "map_layers.hqs[]": "company",
+      // A unit's assets name no company: the k-th row is the k-th unit of a company still in the
+      // game, in unit id order (`unitAt`), banded as v_units bands it (D436, D701).
+      "map_layers.unit_assets[]": { unitOrdinal: true },
+    },
+    ids: [
+      "map_layers.political.country[]",
+      "map_layers.zone[]",
+      "map_layers.unit_assets[].industry",
+      "map_layers.unit_assets[].province",
+      "map_layers.hqs[].company",
+      "map_layers.hqs[].province",
+      "map_layers.hqs[].industry",
+      "map_layers.hqs[].country",
+      "map_layers.hqs[].sector",
+    ],
+    // The development tracks (spec 3.3, points) are data about no subject: scanned, as any number.
+  },
   map_static: {
     ids: [
       "map_static.provinces[].id",
@@ -480,8 +542,19 @@ export function rulesOf(view: ViewName): ViewRules {
 }
 
 /** The subject an element names by its owner rule, within the enclosing `ctx`. */
-function subjectOf(rule: string | OwnerRule, y: Record<string, unknown>, ctx: Ctx): Subject | null {
+function subjectOf(
+  rule: string | OwnerRule,
+  y: Record<string, unknown>,
+  i: number,
+  ctx: Ctx,
+  unitAt: UnitAt,
+): Subject | null {
   const r: OwnerRule = typeof rule === "string" ? { company: rule } : rule;
+  if (r.unitOrdinal === true) {
+    const u = unitAt(i);
+    if (u === null) throw new Error(`${ctx.view}: no unit ${i}`);
+    return { company: u.company, industry: u.industry, ownIndustry: false, quarter: null };
+  }
   const id = (f: string | undefined): number | null => {
     const v = f === undefined ? null : y[f];
     return typeof v === "number" ? v : null;
@@ -500,7 +573,13 @@ function subjectOf(rule: string | OwnerRule, y: Record<string, unknown>, ctx: Ct
 }
 
 /** Calls `visit` on every leaf of one view's data, in order; `banded` classes its subjects. */
-export function walkView(view: ViewName, data: unknown, banded: BandedOf, visit: (leaf: Leaf) => void): void {
+export function walkView(
+  view: ViewName,
+  data: unknown,
+  banded: BandedOf,
+  visit: (leaf: Leaf) => void,
+  unitAt: UnitAt = () => null,
+): void {
   const owners = rulesOf(view).owners ?? {};
   const go = (x: unknown, norm: string, raw: string, ctx: Ctx, date: boolean): void => {
     if (isFigure(x)) {
@@ -511,7 +590,7 @@ export function walkView(view: ViewName, data: unknown, banded: BandedOf, visit:
       x.forEach((y, i) => {
         let c = ctx;
         if (rule !== undefined && isRecord(y)) {
-          const s = subjectOf(rule, y, ctx);
+          const s = subjectOf(rule, y, i, ctx, unitAt);
           c =
             s === null
               ? { view, owner: null, industry: null, banded: null, row: y }
@@ -646,4 +725,37 @@ export function canonical(view: ViewName, data: unknown): unknown {
       companies: [...(d.companies as { company: number }[])].sort((a, b) => a.company - b.company),
     })),
   };
+}
+
+/** An expected row's surprise worked out from its shown estimates (5.15, D430). */
+function shownSurprise(e: unknown): number | undefined {
+  if (!isRecord(e) || !isFigure(e.projection) || !isFigure(e.consensus)) return undefined;
+  return surprise(figureShown(e.projection), figureShown(e.consensus));
+}
+
+/**
+ * The plain numbers of a banded subject that v_recap works out from the shown estimates (D420,
+ * D430; src/views/recap.ts `expectedRow`, `page`): the expected surprise, from the projection's
+ * and the consensus's estimates (5.15), and the expected reaction, the 01:00 jump that surprise
+ * makes (5.15). A band's estimate moves with its truth (D421), so these move too: the
+ * perturbation check (leak.test.ts, 4) recomputes them from the shown bands of the same build
+ * instead of comparing them across builds, so a value that follows the true books still fails.
+ * Undefined for every other leaf (and for an unbanded subject, whose true values are public).
+ */
+export function derivedFromShown(leaf: Leaf): number | undefined {
+  if (leaf.ctx.banded !== true || leaf.ctx.row === null) return undefined;
+  const row = leaf.ctx.row;
+  switch (leaf.norm) {
+    case "recap.recaps[].world.expected_beats[].expected_surprise":
+    case "recap.recaps[].world.expected_misses[].expected_surprise":
+      return shownSurprise(row);
+    case "recap.recaps[].companies[].expected.expected_surprise":
+      return shownSurprise(row.expected);
+    case "recap.recaps[].companies[].expected_reaction": {
+      const s = shownSurprise(row.expected);
+      return s === undefined ? undefined : jumpedPrice(1.0, s) - 1.0;
+    }
+    default:
+      return undefined;
+  }
 }

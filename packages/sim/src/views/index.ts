@@ -52,7 +52,7 @@ import {
   type View,
   type ViewName,
 } from "../types/views/index.ts";
-import type { MapMode } from "../types/views/map_layers.ts";
+import type { MapLayer, MapMode } from "../types/views/map_layers.ts";
 import type { World } from "../types/world.ts";
 import { buildBirths } from "./births.ts";
 import { buildCapTable } from "./cap_table.ts";
@@ -66,15 +66,18 @@ import { buildExchanges } from "./exchanges.ts";
 import { buildFilings } from "./filings.ts";
 import { buildIndustryDetail } from "./industry_detail.ts";
 import { buildIndustryRows } from "./industry_rows.ts";
+import { buildMapLayers, mapLayersViewLayer } from "./map_layers.ts";
 import { buildMapStatic } from "./map_static.ts";
 import { buildMarketStats } from "./market_stats.ts";
 import { buildNews } from "./news.ts";
 import { buildPlaces } from "./places.ts";
 import { buildPriceBars } from "./price_bars.ts";
+import { buildProjection } from "./projection.ts";
 import { buildProvinceCards } from "./province_cards.ts";
 import { buildQuotes } from "./quotes.ts";
 import { buildRates } from "./rates.ts";
 import { buildRatings } from "./ratings.ts";
+import { buildRecap } from "./recap.ts";
 import { buildStatements, rebuildStatementsFrom } from "./statements.ts";
 import { buildTech } from "./tech.ts";
 import { buildUnits } from "./units.ts";
@@ -232,7 +235,11 @@ export const VIEW_BUILDERS: ViewBuilders = {
     }),
     build: buildBirths,
   },
-  projection: unported("views::projection::ProjectionView", () => ({ elapsed_share: 0, companies: [] })),
+  projection: {
+    rust: "views::projection::ProjectionView",
+    empty: () => ({ elapsed_share: 0, companies: [] }),
+    build: buildProjection,
+  },
   company_rows: {
     rust: "views::company_rows::CompanyRowsView",
     empty: () => ({ rows: [] }),
@@ -272,16 +279,20 @@ export const VIEW_BUILDERS: ViewBuilders = {
     }),
     build: buildCycle,
   },
-  map_layers: unported("views::map_layers::MapLayersView", () => ({
-    political: { country: [], contested: [] },
-    country_names: [],
-    tracks: [],
-    zone: [],
-    unit_assets: [],
-    hqs: [],
-    sectors: [],
-    industry_names: [],
-  })),
+  map_layers: {
+    rust: "views::map_layers::MapLayersView",
+    empty: () => ({
+      political: { country: [], contested: [] },
+      country_names: [],
+      tracks: [],
+      zone: [],
+      unit_assets: [],
+      hqs: [],
+      sectors: [],
+      industry_names: [],
+    }),
+    build: buildMapLayers,
+  },
   province_cards: {
     rust: "views::province_cards::ProvinceCardsView",
     empty: () => ({ cards: [] }),
@@ -303,7 +314,11 @@ export const VIEW_BUILDERS: ViewBuilders = {
     empty: () => ({ companies: [], base_rate: 0 }),
     build: buildRatings,
   },
-  recap: unported("views::recap::RecapView", () => ({ recaps: [], watchlist: [] })),
+  recap: {
+    rust: "views::recap::RecapView",
+    empty: () => ({ recaps: [], watchlist: [] }),
+    build: buildRecap,
+  },
   map_static: {
     rust: "views::map_static::MapStaticView",
     empty: () => ({
@@ -559,4 +574,14 @@ export function simViewsMapLayerVersions(views: SimViews, mode: MapMode): [numbe
   return mode.kind === "FinancialZones"
     ? [views.map_layers.version, views.cycle.version, views.exchanges.version]
     : [views.map_layers.version, 0, 0];
+}
+
+/**
+ * Rust `SimViews::get_map_layer`: `get_map_layer(mode, param)` (spec 9.2, 8 Map row): every mode,
+ * the Financial zones one with v_cycle's zone effects and phase and v_exchanges' hubs and index
+ * levels (D700).
+ */
+export function simViewsGetMapLayer(views: SimViews, mode: MapMode): MapLayer {
+  const zones = mode.kind === "FinancialZones" ? ([views.cycle.data, views.exchanges.data] as const) : null;
+  return mapLayersViewLayer(views.map_layers.data, mode, zones);
 }

@@ -2,11 +2,11 @@
 // cadences), read only through the Sim API.
 //
 // Expects:
-//   ../../../src/lib.ts                 simNew, simStep, simApply, simNow, simViews, simClock,
+//   ../../src/lib.ts                 simNew, simStep, simApply, simNow, simViews, simClock,
 //                                       simSaveBytes, simLoadBytes, simStateHash, simStepObserved(
 //                                       sim, observer) [Sim::step_observed, D400]
-//   ../../../src/types/views/index.ts   VIEW_SPECS (cadence per view), SimViews { refresh, ... }
-//   ../../../src/time/scheduler.ts      type TickObserver { started(part), finished(part) }
+//   ../../src/types/views/index.ts   VIEW_SPECS (cadence per view), SimViews { refresh, ... }
+//   ../../src/time/scheduler.ts      type TickObserver { started(part), finished(part) }
 //   ./../common/views.ts                (local helpers)
 //
 // Changed from the Rust:
@@ -30,12 +30,12 @@ import {
   simStep,
   simStepObserved,
   simViews,
-} from "../../../src/lib.ts";
-import { dateTimeAt, dateTimeMidnight, simDateYmd } from "../../../src/time/calendar.ts";
-import type { TickObserver } from "../../../src/time/scheduler.ts";
-import type { DateTime } from "../../../src/types/calendar.ts";
-import { DATETIME_START } from "../../../src/types/calendar.ts";
-import { VIEW_SPECS } from "../../../src/types/views/index.ts";
+} from "../../src/lib.ts";
+import { dateTimeAt, dateTimeMidnight, simDateYmd } from "../../src/time/calendar.ts";
+import type { TickObserver } from "../../src/time/scheduler.ts";
+import type { DateTime } from "../../src/types/calendar.ts";
+import { DATETIME_START } from "../../src/types/calendar.ts";
+import { VIEW_SPECS } from "../../src/types/views/index.ts";
 import { unwrap } from "../common/index.ts";
 
 function mkSim(): Sim {

@@ -6,7 +6,8 @@
 // every ledger (the open month, the pending one, the posted months, the archived statements'
 // lines but `shared`), every balance sheet (the opening one, the archive's), a statement's held
 // TB and guidance, the data books (held and unstructured TB), its units' assets and monthly
-// figures (but `shared_m`), and its stock's fair value, V, consensus and projection. Not
+// figures (but `shared_m`), its stock's fair value, V, consensus and projection, and its recap
+// pages' consensus and projection (D433; the page's range, surprise and reaction follow). Not
 // perturbed: what D420 leaves exact (productivity, management score, stations, compute and the
 // compute and licences line, D434, labor units, the PC bonus, the free R&D step, ratings,
 // shares, the cap table), market data (price, prev close, buzz, the EFV error, the bars, the IPO
@@ -20,7 +21,10 @@
 // four quarters are archived is rebuilt from the perturbed quarters (flows summed, the balance
 // sheet, held TB and guidance Q4's), so the perturbed books stay ones the estimated year can
 // band (D430) and the perturbed build's bands can be checked against them.
+import { jumpedPrice, surprise } from "../../src/market/earnings.ts";
+import { range } from "../../src/market/projection.ts";
 import type { CompanyId } from "../../src/types/ids.ts";
+import type { ExpectedResult } from "../../src/types/state/recap.ts";
 import type { World } from "../../src/types/world.ts";
 import { showsEstimates } from "../../src/views/estimate.ts";
 
@@ -162,6 +166,27 @@ export function perturbBooks(w: World): World {
     }
     for (const u of c.units) bump(p.units[u]!, UNIT_FIELDS, OFFSET_USD);
     bump(p.market.stocks[id]!, ["fair_value", "value", "consensus_ni", "projection_ni"], OFFSET_USD);
+  }
+  // The recaps' pages (D433), which the views copy: a banded company's consensus and projection
+  // are perturbed, and what the recap works out from them follows (src/recap.ts: the expected
+  // surprise, 5.15; the reaction, its jump; the range, the 5.16 range at the page's width,
+  // centred on the consensus), so the perturbed pages stay ones the view's bands can hold.
+  // Confidence and the outlook stay.
+  const expectedRow = (e: ExpectedResult): void => {
+    if (!banded.has(e.company) || seen.has(e)) return;
+    bump(e, ["projection", "consensus"], OFFSET_USD);
+    e.expected_surprise = surprise(e.projection, e.consensus);
+  };
+  for (const r of p.recaps) {
+    for (const e of [...r.world.expected_beats, ...r.world.expected_misses]) expectedRow(e);
+    for (const c of r.companies) {
+      if (!banded.has(c.company)) continue;
+      const old = c.expected.consensus;
+      const width = old === 0 ? 0 : (c.range[1] - c.range[0]) / 2 / Math.abs(old);
+      expectedRow(c.expected);
+      c.range = range(c.expected.consensus, width);
+      c.expected_reaction = jumpedPrice(1.0, c.expected.expected_surprise) - 1.0;
+    }
   }
   return p;
 }

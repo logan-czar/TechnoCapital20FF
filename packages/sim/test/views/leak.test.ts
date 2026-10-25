@@ -48,6 +48,9 @@
 //    books are perturbed unevenly (leak_perturb.ts). Bands are left out of the comparison:
 //    a band's noise is a hash of the truth's bits (D421), so every band moves when its truth does,
 //    by design; each band is checked against its truth instead (2), in the perturbed build too.
+//    So do the plain numbers v_recap works out from the shown estimates (a banded page's expected
+//    surprise and reaction, D430): each is recomputed from its own build's bands and must equal
+//    that (leak_rules.ts `derivedFromShown`), so one that follows the true books still fails.
 //    Every other leaf (plain numbers, exact figures, strings, flags, array lengths: anything
 //    a screen prints or a list's shape) must be the same in both builds, but `perturbExempt`
 //    (a listed company's EFV, D140; v_market_stats' soak diagnostics, D144; the exact industry
@@ -60,8 +63,10 @@
 // Run on seed 1 at load, after the first listing in play (company 115 lists on 9 January 2020
 // and shows estimates until 2 April), after Q1 2020's release with three new listings in play
 // (9 April), and after the first annual close (2020's year statements publish on 2 January 2021;
-// born companies by then). Each hole the test once had is a negative case below.
+// born companies by then). Each hole the test once had is a negative case below; those that need
+// a recap and a locked plan (v_projection, v_recap, v_map_layers) run on the Q1 state.
 import { describe, expect, it } from "vitest";
+import { companyFinanceStatus } from "../../src/finance/state.ts";
 import {
   SIM_DEPS,
   type Sim,
@@ -87,7 +92,12 @@ import {
 import { type SimViews, VIEW_NAMES, type ViewName } from "../../src/types/views/index.ts";
 import type { EstimatedStatement } from "../../src/types/views/statements.ts";
 import type { Company, World } from "../../src/types/world.ts";
-import { showsEstimates, statementLineIndex, statementLineOf } from "../../src/views/estimate.ts";
+import {
+  figureShown,
+  showsEstimates,
+  statementLineIndex,
+  statementLineOf,
+} from "../../src/views/estimate.ts";
 import {
   simViewsBuild,
   simViewsClone,
@@ -105,6 +115,7 @@ import { bandedCompanies, perturbBooks } from "./leak_perturb.ts";
 import {
   type BandedOf,
   canonical,
+  derivedFromShown,
   exactInBanded,
   GUIDANCE_HIGH,
   isFigure,
@@ -117,6 +128,7 @@ import {
   perturbExempt,
   plainInBanded,
   rulesOf,
+  type UnitAt,
   VIEW_RULES,
   walkView,
 } from "./leak_rules.ts";
@@ -300,10 +312,23 @@ function knownExact(leaf: Leaf, truth: string): boolean {
   );
 }
 
+/**
+ * The k-th unit v_map_layers lists: the units of companies still in the game, in unit id order
+ * (crates/sim/src/views/map_layers.rs `build`).
+ */
+function unitAtOf(w: World): UnitAt {
+  const shown = w.units.filter((u) => companyFinanceStatus(w.companies[u.company]!.finance) !== "Removed");
+  return (k) => {
+    const u = shown[k];
+    return u === undefined ? null : { company: u.company, industry: u.industry };
+  };
+}
+
 /** Every leaf of every ported view of `v`, its subjects classed by `w`. */
 function leaves(w: World, v: SimViews, visit: (leaf: Leaf) => void): void {
   const banded = bandedOf(w);
-  for (const n of PORTED) walkView(n, v[n].data, banded, visit);
+  const unitAt = unitAtOf(w);
+  for (const n of PORTED) walkView(n, v[n].data, banded, visit, unitAt);
 }
 
 /** `v` with every view in `canonical` order (leak_rules.ts), so the builds pair row by row. */
@@ -359,6 +384,10 @@ function shape(w: World, v: SimViews): string[] {
     }
     if (c.months.length > 0) bad.push(`${where} holds the posted months`);
   });
+  // The locked plan never shows to the observer (spec 1, D252).
+  for (const r of v.projection.data.companies) {
+    if (r.plan !== null) bad.push(`projection[${r.id}] shows the plan`);
+  }
   return bad;
 }
 
@@ -440,20 +469,42 @@ function changes(w: World, n: ViewName, a: unknown, b: unknown, out: string[]): 
   const before = out.length;
   lengths(a, b, n);
   if (out.length > before) return;
-  walkView(n, a, bandedOf(w), (leaf) => {
-    if (perturbExempt(leaf)) return;
-    const y = at(leaf.raw);
-    const f = leaf.figure;
-    if (f !== null) {
-      if (!isFigure(y)) out.push(`${leaf.raw}: a figure, then ${JSON.stringify(y)}`);
-      else if (f.kind !== y.kind) out.push(`${leaf.raw}: ${f.kind}, then ${y.kind}`);
-      else if (f.kind === "Exact" && y.kind === "Exact" && !sameLeaf(f.value, y.value)) {
-        out.push(`${leaf.raw}: Exact ${f.value}, then ${y.value}`);
-      }
-    } else if (!sameLeaf(leaf.value, y)) {
-      out.push(`${leaf.raw}: ${JSON.stringify(leaf.value)}, then ${JSON.stringify(y)}`);
+  const banded = bandedOf(w);
+  const unitAt = unitAtOf(w);
+  // A leaf worked out from the shown estimates (D430, `derivedFromShown`) moves with them, so in
+  // each build it must equal its recomputation from that build's own bands, and is not compared
+  // across the builds.
+  const derived = (build: string) => (leaf: Leaf) => {
+    const want = derivedFromShown(leaf);
+    if (want !== undefined && !sameLeaf(leaf.value, want)) {
+      out.push(`${leaf.raw} (${build}): ${String(leaf.value)}, not ${want} from the shown estimates`);
     }
-  });
+  };
+  walkView(n, b, banded, derived("perturbed"), unitAt);
+  walkView(
+    n,
+    a,
+    banded,
+    (leaf) => {
+      if (perturbExempt(leaf)) return;
+      if (derivedFromShown(leaf) !== undefined) {
+        derived("state")(leaf);
+        return;
+      }
+      const y = at(leaf.raw);
+      const f = leaf.figure;
+      if (f !== null) {
+        if (!isFigure(y)) out.push(`${leaf.raw}: a figure, then ${JSON.stringify(y)}`);
+        else if (f.kind !== y.kind) out.push(`${leaf.raw}: ${f.kind}, then ${y.kind}`);
+        else if (f.kind === "Exact" && y.kind === "Exact" && !sameLeaf(f.value, y.value)) {
+          out.push(`${leaf.raw}: Exact ${f.value}, then ${y.value}`);
+        }
+      } else if (!sameLeaf(leaf.value, y)) {
+        out.push(`${leaf.raw}: ${JSON.stringify(leaf.value)}, then ${JSON.stringify(y)}`);
+      }
+    },
+    unitAt,
+  );
 }
 
 interface Perturbed {
@@ -461,6 +512,24 @@ interface Perturbed {
   changed: string[];
   /** The scan of the perturbed state's observer and Omniscient builds (1 to 3). */
   scan: Scan;
+}
+
+/** The view builders with view `name`'s build followed by `plant` (a negative case's leak). */
+function overrideView<N extends ViewName>(
+  name: N,
+  plant: (v: SimViews[N]["data"], input: ViewInput) => void,
+): ViewBuilders {
+  const b = VIEW_BUILDERS[name] as unknown as ViewBuilder<SimViews[N]["data"]>;
+  const build = b.build!;
+  const slot = {
+    ...b,
+    build: (input: ViewInput) => {
+      const v = build(input);
+      plant(v, input);
+      return v;
+    },
+  };
+  return { ...VIEW_BUILDERS, [name]: slot } as unknown as ViewBuilders;
 }
 
 /**
@@ -525,7 +594,96 @@ describe("leak", () => {
     const w = simWorld(sim);
     expect(simViews(sim).filings.data.quarter).toEqual({ year: 2020, q: 1 });
     expect(listedBanded(w).length).toBeGreaterThan(0);
+    // Q1's recap (built in its pre-quarter-end week) is in, with banded pages and projections.
+    const v = simViews(sim);
+    expect(v.recap.data.recaps.some((q) => q.companies.some((p) => p.estimated))).toBe(true);
+    expect(v.projection.data.companies.length).toBeGreaterThan(0);
     checkNow(sim);
+  }, 120_000);
+
+  // The negative cases of the views that need a recap and a locked plan (so the Q1 state):
+  // v_projection, v_recap, v_map_layers, and a private truth in a publishing company's row.
+  it("catches leaks planted at Q1 in the plan, the recap and the map layers", () => {
+    const w = simWorld(sim);
+    const [observer, omniscient] = builds(sim);
+    const scanPlanted = (plant: (v: SimViews) => void): Scan => {
+      const v = structuredClone(observer);
+      plant(v);
+      return scan(w, v, omniscient);
+    };
+    const flagged = (r: Scan) => [...r.shape, ...r.bad, ...r.leaks];
+    expect(flagged(scanPlanted(() => {}))).toEqual([]);
+
+    // The locked plan shown to the observer (spec 1, D252).
+    const pj = omniscient.projection.data.companies.findIndex((r) => r.plan !== null);
+    expect(pj, "a company with a locked plan").toBeGreaterThanOrEqual(0);
+    const plan = omniscient.projection.data.companies[pj]!.plan;
+    expect(
+      scanPlanted((v) => put(v.projection.data.companies[pj]!, "plan", plan)).shape.length,
+    ).toBeGreaterThan(0);
+
+    // A banded recap page's consensus served exact (D420): the shape sees it (in its own slot it
+    // is no truth: the two builds agree there); the true value as a plain number the page may
+    // hold (its confidence) is a leak the scan sees.
+    const rq = observer.recap.data.recaps.length - 1;
+    const rp = observer.recap.data.recaps[rq]!.companies.findIndex((p) => p.estimated);
+    expect(rp, "a banded recap page").toBeGreaterThanOrEqual(0);
+    const trueConsensus = omniscient.recap.data.recaps[rq]!.companies[rp]!.expected.consensus;
+    const page = (v: SimViews) => v.recap.data.recaps[rq]!.companies[rp]!;
+    expect(trueConsensus.kind).toBe("Exact");
+    expect(
+      scanPlanted((v) => put(page(v).expected, "consensus", trueConsensus)).shape.length,
+    ).toBeGreaterThan(0);
+    const asConfidence = scanPlanted((v) => put(page(v), "confidence_factor", figureShown(trueConsensus)));
+    expect(asConfidence.shape).toEqual([]);
+    expect(asConfidence.leaks.length).toBeGreaterThan(0);
+
+    // A banded unit's assets on the map (D436, D701; the row names no company): exact in its slot
+    // fails the shape, and the true value in the map's development tracks (about no subject) is
+    // a leak the scan sees.
+    const ua = observer.map_layers.data.unit_assets.findIndex((u) => u.gross_assets.kind === "Band");
+    expect(ua, "a banded unit on the map").toBeGreaterThanOrEqual(0);
+    const trueAssets = omniscient.map_layers.data.unit_assets[ua]!.gross_assets;
+    expect(
+      scanPlanted((v) => put(v.map_layers.data.unit_assets[ua]!, "gross_assets", trueAssets)).shape.length,
+    ).toBeGreaterThan(0);
+    const inTracks = scanPlanted((v) => {
+      v.map_layers.data.tracks[0]![0] = figureShown(trueAssets);
+    });
+    expect(inTracks.leaks.length).toBeGreaterThan(0);
+    // An HQ pin's revenue exact for a banded company.
+    const hq = observer.map_layers.data.hqs.findIndex((h) => showsEstimates(w, h.company));
+    const trueRev = omniscient.map_layers.data.hqs[hq]!.revenue;
+    expect(
+      scanPlanted((v) => put(v.map_layers.data.hqs[hq]!, "revenue", trueRev)).shape.length,
+    ).toBeGreaterThan(0);
+
+    // Derived leaks only the perturbation sees (4).
+    // The true expected surprise, rounded to 0.1%: equals no truth, but follows the true books.
+    // The recap's pages are worked out from the shown estimates (`derivedFromShown`), so it fails.
+    const trueSurprise = overrideView("recap", (v, input) => {
+      v.recaps.forEach((q, k) => {
+        q.companies.forEach((p, i) => {
+          const t = input.world.recaps[k]!.companies[i]!.expected.expected_surprise;
+          if (p.estimated) p.expected.expected_surprise = roundHalfAway(t * 1000) / 1000;
+        });
+      });
+    });
+    const ps = perturbation(sim, trueSurprise);
+    expect(ps.changed.length, "the true surprise rounded").toBeGreaterThan(0);
+    expect(ps.scan.leaks, "the true surprise rounded: the scan alone misses it").toEqual([]);
+    // A private company's cash in a publishing company's row: a publishing company's figures are
+    // public, so the scan drops that truth (two companies can share books by the data,
+    // company-start.csv), but the published row now follows a private book.
+    const privateCash = overrideView("company_detail", (v, input) => {
+      const priv = input.world.companies.findIndex((_, i) => showsEstimates(input.world, i as CompanyId));
+      const d = v.companies.find((r) => !r.estimated)!;
+      d.cash_usd = { kind: "Exact", value: input.world.companies[priv]!.cash_usd };
+    });
+    const pc = perturbation(sim, privateCash);
+    expect(pc.changed.length, "a private cash in a published row").toBeGreaterThan(0);
+    expect(pc.scan.shape, "a private cash in a published row: the shape passes").toEqual([]);
+    // The clean builders, for contrast (checkNow ran them at this state).
   }, 120_000);
 
   it("after the first annual close", () => {
