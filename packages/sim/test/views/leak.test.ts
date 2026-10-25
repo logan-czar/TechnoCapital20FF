@@ -35,6 +35,7 @@ import type { CompanyId, IndustryId } from "../../src/types/ids.ts";
 import type { Statement } from "../../src/types/state/finance.ts";
 import { type Figure, STATEMENT_LINE_VALUES } from "../../src/types/views/estimate.ts";
 import { type SimViews, VIEW_NAMES } from "../../src/types/views/index.ts";
+import type { ExpectedRow } from "../../src/types/views/recap.ts";
 import type { World } from "../../src/types/world.ts";
 import { showsEstimates, statementLineIndex, statementLineOf } from "../../src/views/estimate.ts";
 import { simViewsClone, viewIsPorted } from "../../src/views/index.ts";
@@ -295,6 +296,29 @@ function shape(w: World, v: SimViews): string[] {
       if (c.revenue_m.kind !== want) bad.push(`${where} company ${c.company} revenue is ${c.revenue_m.kind}`);
     }
   }
+  // The consensus, projection and range of a company that does not publish (D420, D430); the plan
+  // never shows to the observer.
+  const fig = (f: Figure, banded: boolean, where: string) => {
+    if (f.kind !== (banded ? "Band" : "Exact")) bad.push(`${where} is ${f.kind}`);
+  };
+  for (const r of v.projection.data.companies) {
+    const where = `projection[${r.id}]`;
+    if (r.plan !== null) bad.push(`${where} shows the plan`);
+    for (const f of [r.consensus_ni, ...r.range]) fig(f, !pub(r.id), where);
+  }
+  const expected = (e: ExpectedRow, where: string) => {
+    fig(e.consensus, !pub(e.company), `${where} consensus`);
+    fig(e.projection, !pub(e.company), `${where} projection`);
+  };
+  v.recap.data.recaps.forEach((q, k) => {
+    for (const e of [...q.world.expected_beats, ...q.world.expected_misses]) expected(e, `recap[${k}] world`);
+    for (const p of q.companies) {
+      const where = `recap[${k}][${p.company}]`;
+      flag(where, p.estimated, p.company);
+      expected(p.expected, where);
+      for (const f of p.range) fig(f, !pub(p.company), `${where} range`);
+    }
+  });
   return bad;
 }
 
@@ -354,6 +378,7 @@ describe("leak", () => {
     check();
     // After Q1 2020's release (2 April) and the Q2 recap week.
     runTo(sim, simDateYmd(2020, 6, 26));
+    expect(simViews(sim).recap.data.recaps.length, "the Q2 recap is in").toBeGreaterThan(0);
     check();
   }, 300_000);
 

@@ -72,10 +72,12 @@ import { buildMarketStats } from "./market_stats.ts";
 import { buildNews } from "./news.ts";
 import { buildPlaces } from "./places.ts";
 import { buildPriceBars } from "./price_bars.ts";
+import { buildProjection } from "./projection.ts";
 import { buildProvinceCards } from "./province_cards.ts";
 import { buildQuotes } from "./quotes.ts";
 import { buildRates } from "./rates.ts";
 import { buildRatings } from "./ratings.ts";
+import { buildRecap } from "./recap.ts";
 import { buildStatements, rebuildStatementsFrom } from "./statements.ts";
 import { buildTech } from "./tech.ts";
 import { buildUnits } from "./units.ts";
@@ -233,7 +235,11 @@ export const VIEW_BUILDERS: ViewBuilders = {
     }),
     build: buildBirths,
   },
-  projection: unported("views::projection::ProjectionView", () => ({ elapsed_share: 0, companies: [] })),
+  projection: {
+    rust: "views::projection::ProjectionView",
+    empty: () => ({ elapsed_share: 0, companies: [] }),
+    build: buildProjection,
+  },
   company_rows: {
     rust: "views::company_rows::CompanyRowsView",
     empty: () => ({ rows: [] }),
@@ -308,7 +314,11 @@ export const VIEW_BUILDERS: ViewBuilders = {
     empty: () => ({ companies: [], base_rate: 0 }),
     build: buildRatings,
   },
-  recap: unported("views::recap::RecapView", () => ({ recaps: [], watchlist: [] })),
+  recap: {
+    rust: "views::recap::RecapView",
+    empty: () => ({ recaps: [], watchlist: [] }),
+    build: buildRecap,
+  },
   map_static: {
     rust: "views::map_static::MapStaticView",
     empty: () => ({
