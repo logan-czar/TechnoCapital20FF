@@ -16,12 +16,10 @@ import {
   totalCmp,
 } from "@tc20ff/sim";
 
-/** A page a link cell opens. */
-export type PageRef =
-  | { kind: "company"; id: number }
-  | { kind: "country"; id: number }
-  | { kind: "province"; id: number }
-  | { kind: "industry"; id: number };
+import type { PageRef } from "../pages/ref.ts";
+
+/** A page a link cell opens (pages/ref.ts). */
+export type { PageRef };
 
 /** What a gain cell counts. */
 export type GainUnit = "percent" | "money" | "price";

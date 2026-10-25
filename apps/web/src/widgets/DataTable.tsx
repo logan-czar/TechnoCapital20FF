@@ -2,7 +2,9 @@
 // the model and the sort state, TanStack Virtual for the rows. Behavior kept from table/mod.rs: a
 // click on a header sorts ascending then descending, unknown cells sort last in both directions,
 // ties keep row order, the header stays put while the body scrolls, numbers align right, link cells
-// open their page. Only the rows in view (plus a small overscan) exist in the DOM, so 10,000 rows
+// open their page (a Link: click, Shift+click or middle click, and a hover card). A table with an
+// `id` keeps its sort in the settings under that id (D456). The row height follows the settings'
+// density and font scale (D458). Only the rows in view (plus a small overscan) exist in the DOM, so 10,000 rows
 // scroll and sort smoothly.
 //
 // The order is computed here (`sortOrder`, the port of `sort_order`) from the cells as they are now,
@@ -12,8 +14,10 @@
 
 import { type ColumnDef, getCoreRowModel, type SortingState, useReactTable } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { memo, useMemo, useRef, useState } from "react";
-import { type Cell, cellTone, display, isNumeric, type PageRef, sortOrder } from "./cells.ts";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { useRowHeight, useSettings } from "../config/hooks.ts";
+import { Link } from "../links/Link.tsx";
+import { type Cell, cellTone, display, isNumeric, sortOrder } from "./cells.ts";
 
 export interface Column<R> {
   id: string;
@@ -21,6 +25,8 @@ export interface Column<R> {
   /** Pixel width. */
   width: number;
   cell: (row: R) => Cell;
+  /** A hover hint on the header. */
+  hint?: string;
   /** The cell reads data that moves between `rows` changes (a price); sorting it re-reads it. */
   live?: boolean;
 }
@@ -30,35 +36,51 @@ export interface DataTableProps<R> {
   columns: readonly Column<R>[];
   /** A stable key for a row (its id). */
   rowKey: (row: R) => string | number;
-  /** A link cell was clicked. */
-  onOpen?: (page: PageRef) => void;
-  /** The column sorted at the start. */
+  /** The table's stable id (D456): its sort is saved in the settings under it. */
+  id?: string;
+  /** The column sorted at the start (a saved sort wins). */
   initialSort?: { id: string; desc: boolean };
   /** Changes when live cells changed: redraws the rows in view, and re-sorts a live sort column. */
   version?: unknown;
 }
 
-/** Row height in pixels (theme.rs size::ROW). */
+/** Row height in pixels at normal density (theme.rs size::ROW); the settings scale it. */
 export const ROW_HEIGHT = 22;
-const HEADER_HEIGHT = 26;
+export const HEADER_HEIGHT = 26;
 const OVERSCAN = 12;
 
-function CellView({ cell, onOpen }: { cell: Cell; onOpen: ((p: PageRef) => void) | undefined }) {
+function CellView({ cell }: { cell: Cell }) {
   const tone = cellTone(cell);
   const cls = `cell${isNumeric(cell) ? " num" : ""}${tone ? ` ${tone}` : ""}`;
   if (cell.k === "link") {
-    const page = cell.page;
     return (
-      <button type="button" className={`${cls} linkbtn`} onClick={() => onOpen?.(page)}>
+      <Link page={cell.page} className={cls}>
         {cell.text}
-      </button>
+      </Link>
     );
   }
   return <span className={cls}>{display(cell)}</span>;
 }
 
-function DataTableInner<R>({ rows, columns, rowKey, onOpen, initialSort, version }: DataTableProps<R>) {
-  const [sorting, setSorting] = useState<SortingState>(initialSort ? [initialSort] : []);
+function DataTableInner<R>({ rows, columns, rowKey, id, initialSort, version }: DataTableProps<R>) {
+  const settings = useSettings();
+  const rowHeight = useRowHeight();
+  const [sorting, setSortingState] = useState<SortingState>(() => {
+    const saved = id ? settings.config.tables[id]?.sort : null;
+    if (saved && columns.some((c) => c.id === saved.key)) return [{ id: saved.key, desc: !saved.ascending }];
+    return initialSort ? [initialSort] : [];
+  });
+  const setSorting = (u: SortingState | ((old: SortingState) => SortingState)) => {
+    const next = typeof u === "function" ? u(sorting) : u;
+    setSortingState(next);
+    const s = next[0];
+    if (id && s) {
+      settings.update((c) => ({
+        ...c,
+        tables: { ...c.tables, [id]: { sort: { key: s.id, ascending: !s.desc } } },
+      }));
+    }
+  };
   const defs = useMemo<ColumnDef<R>[]>(
     () => columns.map((c) => ({ id: c.id, header: c.header, enableSorting: true })),
     [columns],
@@ -92,9 +114,12 @@ function DataTableInner<R>({ rows, columns, rowKey, onOpen, initialSort, version
   const virt = useVirtualizer({
     count: sorted.length,
     getScrollElement: () => body.current,
-    estimateSize: () => ROW_HEIGHT,
+    estimateSize: () => rowHeight,
     overscan: OVERSCAN,
   });
+  // A density or font change re-measures the rows.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: rowHeight is the trigger
+  useEffect(() => virt.measure(), [virt, rowHeight]);
   const total = columns.reduce((n, c) => n + c.width, 0);
 
   return (
@@ -108,6 +133,7 @@ function DataTableInner<R>({ rows, columns, rowKey, onOpen, initialSort, version
               key={c.id}
               className={`th${active ? " active" : ""}`}
               style={{ width: c.width }}
+              title={c.hint}
               onClick={() => table.getColumn(c.id)?.toggleSorting(active ? !sort?.desc : false)}
             >
               {c.header}
@@ -124,14 +150,14 @@ function DataTableInner<R>({ rows, columns, rowKey, onOpen, initialSort, version
             <div
               key={row.id}
               className={`tr${vr.index % 2 ? " odd" : ""}`}
-              style={{ height: ROW_HEIGHT, transform: `translateY(${vr.start}px)` }}
+              style={{ height: rowHeight, transform: `translateY(${vr.start}px)` }}
             >
               {columns.map((c) => {
                 // Read live (not from a cache), so a view that moves every frame redraws only these rows.
                 const cell = c.cell(row.original);
                 return (
                   <div key={c.id} className={`td${isNumeric(cell) ? " num" : ""}`} style={{ width: c.width }}>
-                    <CellView cell={cell} onOpen={onOpen} />
+                    <CellView cell={cell} />
                   </div>
                 );
               })}

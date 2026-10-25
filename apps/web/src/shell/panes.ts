@@ -1,8 +1,11 @@
-// The pane kinds a workspace can hold and how to open one. A pane is identified by its id
-// (`kind` or `kind:param`), so opening it twice focuses the first.
+// The pane kinds a workspace can hold and how to open one. A fixed pane is identified by its id
+// (`kind`), so opening it twice focuses the first. Pages open in page panes (pages/PagePane.tsx),
+// each with its own history; `openPage` routes a page to the focused page pane or a new one
+// (D450: click opens in the focused pane, Shift+click or middle click in a new pane).
 
 import { createContext, useContext } from "react";
-import type { PageRef } from "../widgets/cells.ts";
+import type { OpenTarget } from "../links/nav.ts";
+import type { PageRef } from "../pages/ref.ts";
 
 export type PaneKind =
   | "map"
@@ -12,7 +15,7 @@ export type PaneKind =
   | "industries"
   | "countries"
   | "alerts"
-  | "entity";
+  | "page";
 
 export interface PaneSpec {
   id: string;
@@ -32,16 +35,40 @@ export const FIXED_PANES: readonly PaneSpec[] = [
   { id: "alerts", kind: "alerts", title: "Alerts" },
 ];
 
-/** The pane of an entity page (a company, country, province or industry). */
-export function pageSpec(page: PageRef, name: string): PaneSpec {
-  return { id: `entity:${page.kind}:${page.id}`, kind: "entity", title: name, params: { page } };
+/** What a page pane lets the workspace do to it. */
+export interface PaneHandle {
+  /** Opens a page in the pane (its history moves on). */
+  open: (page: PageRef) => void;
+  back: () => void;
+  forward: () => void;
+  current: () => PageRef;
 }
 
 export interface WorkspaceControl {
+  /** Opens (or focuses) a fixed pane. */
   open: (spec: PaneSpec) => void;
+  /** Opens a page: "focused" in the focused page pane (or one showing it), "new" in a new pane. */
+  openPage: (page: PageRef, target: OpenTarget) => void;
+  /** A page pane registers itself while mounted; the call returns its unregister. */
+  registerPane: (id: string, handle: PaneHandle) => () => void;
+  /** Saves the layout soon (a pane's params changed). */
+  persist: () => void;
+  /** The workspace as dockview serializes it (a saved layout). */
+  layout: () => unknown;
+  /** Replaces the workspace with a saved layout; false when it does not load. */
+  restore: (layout: unknown) => boolean;
 }
 
-export const WorkspaceContext = createContext<WorkspaceControl>({ open: () => {} });
+const NONE: WorkspaceControl = {
+  open: () => {},
+  openPage: () => {},
+  registerPane: () => () => {},
+  persist: () => {},
+  layout: () => null,
+  restore: () => false,
+};
+
+export const WorkspaceContext = createContext<WorkspaceControl>(NONE);
 
 export function useWorkspace(): WorkspaceControl {
   return useContext(WorkspaceContext);
