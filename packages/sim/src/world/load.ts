@@ -169,11 +169,10 @@ export interface LoadDeps {
   newsWireDefault(): NewsWire;
 }
 
-function unported(item: string): never {
-  throw new Error(`world/load: ${item} is not ported yet (Step 2); pass a LoadDeps to buildWorld`);
-}
-
-/** The default `LoadDeps` until Step 2 ports the modules: every member throws when called. */
+/**
+ * The default `LoadDeps`: every member is the ported module function (Step 2 replaced the
+ * placeholders; the name is kept so callers and tests need no change).
+ */
 export const UNPORTED_LOAD_DEPS: LoadDeps = {
   STATE_CONTROL_BASIS, // ai/archetype.rs
   archetypeAtLoad, // ai/archetype.rs Archetype::at_load
