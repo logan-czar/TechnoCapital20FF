@@ -72,9 +72,18 @@ export type Reply =
  * The views whose version moved since the last frame; the UI replaces those it holds. The news
  * view is the exception: it only grows, so a frame carries the headlines appended since the last
  * one (`news_appended`, in post order) and the UI appends them to its `news.data.feed`.
+ *
+ * A view whose builder is not ported yet (Step 3) is never in a patch, news included: the sim
+ * holds only a placeholder empty value for it, which the UI must not show as real data. Until its
+ * builder lands, the UI keeps its own (mock) data for that view.
  */
 export type ViewsPatch = Partial<Omit<SimViews, "news">> & {
   news_appended?: Headline[];
+  /**
+   * The feed was replaced (a new game or a load): `news_appended` is the whole new feed, and the
+   * UI replaces its `news.data.feed` with it instead of appending.
+   */
+  news_reset?: true;
   /** The news view's version after the append. */
   news_version?: number;
 };
