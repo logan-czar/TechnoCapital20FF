@@ -33,9 +33,32 @@ export const NO_DRAWS: DrawSource = {
   chance: noDraw,
 };
 
-/** A world that holds only the clock, at the game start. */
+/**
+ * A world that holds the clock at the game start and empty tables, so the ported modules' jobs run
+ * as no-ops: no industries, units or companies, a cycle with far more quarters left than a test
+ * runs (so it never draws), and the AI boom in Preboom with the boom in 2030 (Step 2).
+ */
 export function clockWorld(): World {
-  return { clock: DATETIME_START } as World;
+  return {
+    clock: DATETIME_START,
+    zones: [],
+    countries: [],
+    provinces: [],
+    industries: [],
+    companies: [],
+    characters: [],
+    units: [],
+    base_rate: 0.03,
+    neutral_rate: 0.03,
+    cycle: { phase: "Expansion", quarters_left: 1_000_000, g_t: 0, g_history: [], z_avg: 1 },
+    ai: {
+      stage: "Preboom",
+      boom_date: { year: 2030, month: 1, day: 1 },
+      pop_date: { year: 2040, month: 1, day: 1 },
+      ai_labs_lt: 0,
+      schedule: { preboom_lt: 0, boom_lt: [], bust_lt: 0, postcrash_lt: 0 },
+    },
+  } as unknown as World;
 }
 
 /** Companies in `minimalWorld` (the tests watch companies 3, 4 and 9). */

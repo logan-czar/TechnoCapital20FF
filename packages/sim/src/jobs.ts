@@ -34,6 +34,7 @@
 // swaps in (keep the line where it is: its position is its order). Once a module is ported, its
 // lines may move into that module's own `register(s)` called from here, in the same place.
 
+import { register as economyRegister } from "./economy/index.ts";
 import * as timeAlerts from "./time/alerts.ts";
 import { type JobFn, type Scheduler, schedulerNew, schedulerRegister } from "./time/scheduler.ts";
 
@@ -59,19 +60,7 @@ export function registerJobs(s: Scheduler): void {
   timeAlerts.register(s);
 
   // economy::register (crates/sim/src/economy/mod.rs)
-  // 4.3 step 1, on 1 Jan, Apr, Jul and Oct only, in its order.
-  r(s, "MonthlyAiEvents", "economy.ai_events", notPorted("economy::ai_boom::ai_events_job")); // economy/ai_boom aiEventsJob
-  r(s, "MonthlyIndustryLt", "economy.industry_lt", notPorted("economy::ai_boom::industry_lt_job")); // economy/ai_boom industryLtJob
-  r(s, "MonthlyCycle", "economy.cycle", notPorted("economy::cycle::cycle_job")); // economy/cycle cycleJob
-  r(s, "MonthlyZoneSpreads", "economy.zone_spreads", notPorted("economy::zones::zone_spreads_job")); // economy/zones zoneSpreadsJob
-  r(s, "MonthlyGrowthDraws", "economy.growth_draws", notPorted("economy::growth::growth_draws_job")); // economy/growth growthDrawsJob
-  // 4.3 steps 2, 3, 6, 7, 9 and 11.
-  r(s, "MonthlyDemand", "economy.demand", notPorted("economy::demand::demand_job")); // economy/demand demandJob
-  r(s, "MonthlyFringe", "economy.fringe", notPorted("economy::supply::fringe_job")); // economy/supply fringeJob
-  r(s, "MonthlySupply", "economy.supply", notPorted("economy::supply::supply_job")); // economy/supply supplyJob
-  r(s, "MonthlyRevenue", "economy.revenue", notPorted("economy::revenue::revenue_job")); // economy/revenue revenueJob
-  r(s, "MonthlyExpenses", "economy.expenses", notPorted("economy::revenue::expenses_job")); // economy/revenue expensesJob
-  r(s, "MonthlyAssets", "economy.assets", notPorted("economy::assets::assets_job")); // economy/assets assetsJob
+  economyRegister(s);
 
   // ops::register (crates/sim/src/ops/mod.rs)
   r(s, "MonthlyLaborSeats", "ops.labor_seats", notPorted("ops::jobs::labor_seats_job")); // ops/jobs laborSeatsJob

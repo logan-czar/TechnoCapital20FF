@@ -24,6 +24,7 @@
 //   from internal.ts, never from index.ts.
 
 import type { WorldData } from "@tc20ff/sim-data";
+import { start as economyStart } from "./economy/start.ts";
 import { stateHash } from "./hash.ts";
 import { scheduler } from "./jobs.ts";
 import { type RngStreams, rngStreamsDraws, rngStreamsNew, rngStreamsSeed } from "./rng.ts";
@@ -93,7 +94,7 @@ function notPorted(item: string): never {
 /** The default `StartDeps`: Step 2 replaces each `notPorted` line with the ported function. */
 export const START_DEPS: StartDeps = {
   worldFromData: (data) => buildWorld(data),
-  economyStart: () => notPorted("economy::start"),
+  economyStart, // economy/start.ts
   birthsDrawTippedLabAtLoad: () => notPorted("births::jobs::draw_tipped_lab_at_load"),
   aiPlanAtLoad: () => notPorted("ai::jobs::plan_at_load"),
   peopleSeatingStart: () => notPorted("people::seating::start"),
