@@ -52,7 +52,15 @@ export function tableFileErr<T>(t: Table<T>, message: string): DataError {
 // ---------------------------------------------------------------- field parsers
 
 /** Parses one cell: the value, or the message serde would give. */
-export type Parse<V> = (cell: string) => Result<V, string>;
+export type Parse<V> = ((cell: string) => Result<V, string>) & {
+  /** An `Option` column: serde fills null when the whole column is absent. */
+  optional?: true;
+};
+
+/** Marks a parser as an `Option` column. */
+function optionalOf<V>(p: (cell: string) => Result<V, string>): Parse<V> {
+  return Object.assign(p, { optional: true as const });
+}
 
 /** A row type: its columns in declaration order. Build with `rowSpec`. */
 export interface RowSpec<T> {
@@ -85,15 +93,24 @@ export const f64: Parse<number> = (s) => {
 };
 
 /** An `Option<f64>` column: an empty cell is None (null). */
-export const optF64: Parse<number | null> = (s) => (s === "" ? ok(null) : f64(s));
+export const optF64: Parse<number | null> = optionalOf<number | null>((s) => (s === "" ? ok(null) : f64(s)));
+
+/** An `Option<u32>` column: an empty cell is None (null). */
+export const optU32: Parse<number | null> = optionalOf<number | null>((s) => (s === "" ? ok(null) : u32(s)));
 
 /** Rust `str::parse` for an unsigned integer type whose largest value is `max`. */
 export function uint(max: number): Parse<number> {
   return (s) => {
     if (s === "") return err("cannot parse integer from empty string");
-    const digits = s.startsWith("+") ? s.slice(1) : s;
-    if (digits === "" || !/^\d+$/.test(digits)) return err("invalid digit found in string");
-    const n = Number(digits);
+    // The csv crate reads a `0x` prefix as hex (deserializer.rs), whatever the integer type.
+    const hex = s.startsWith("0x");
+    const body = hex ? s.slice(2) : s;
+    const digits = body.startsWith("+") ? body.slice(1) : body;
+    if (hex && body === "") return err("cannot parse integer from empty string");
+    if (digits === "" || !(hex ? /^[0-9a-fA-F]+$/ : /^\d+$/).test(digits)) {
+      return err("invalid digit found in string");
+    }
+    const n = hex ? Number.parseInt(digits, 16) : Number(digits);
     if (n > max) return err("number too large to fit in target type");
     return ok(n);
   };
@@ -121,19 +138,29 @@ export function enumOf<V extends string>(variants: readonly V[]): Parse<V> {
   return (s) => {
     const hit = variants.find((v) => v === s);
     if (hit !== undefined) return ok(hit);
-    return err(`unknown variant \`${s}\`, expected one of ${variants.map((v) => `\`${v}\``).join(", ")}`);
+    return err(`unknown variant \`${s}\`, ${oneOf(variants)}`);
   };
+}
+
+/** serde's `OneOf` list: "there are no fields", "expected `a`", "expected `a` or `b`", "expected one of `a`, `b`". */
+export function oneOf(names: readonly string[]): string {
+  const q = names.map((n) => `\`${n}\``);
+  if (q.length === 0) return "there are no fields";
+  if (q.length === 1) return `expected ${q[0]}`;
+  if (q.length === 2) return `expected ${q[0]} or ${q[1]}`;
+  return `expected one of ${q.join(", ")}`;
 }
 
 // ---------------------------------------------------------------- loading
 
-function textOf(file: string, contents: string | Uint8Array): Result<string, DataError> {
-  if (typeof contents === "string") return ok(contents);
+/** The text of a file; `invalid` when bytes were not UTF-8 (they decode to U+FFFD, found per row). */
+function textOf(contents: string | Uint8Array): { text: string; invalid: boolean } {
+  if (typeof contents === "string") return { text: contents, invalid: false };
   try {
     // A BOM is dropped by the decoder.
-    return ok(new TextDecoder("utf-8", { fatal: true }).decode(contents));
+    return { text: new TextDecoder("utf-8", { fatal: true }).decode(contents), invalid: false };
   } catch {
-    return err(dataErrorFile(file, "not valid UTF-8"));
+    return { text: new TextDecoder("utf-8").decode(contents), invalid: true };
   }
 }
 
@@ -144,15 +171,19 @@ function textOf(file: string, contents: string | Uint8Array): Result<string, Dat
 export function loadTable<T>(files: Files, file: string, spec: RowSpec<T>): Result<Table<T>, DataError> {
   const contents = files[file];
   if (contents === undefined) return err(dataErrorFile(file, "file not found"));
-  const text = textOf(file, contents);
-  if (!text.ok) return text;
-  const { records, lines } = parseCsv(text.value);
+  const { text, invalid } = textOf(contents);
+  const { records, lines } = parseCsv(text);
   const table = tableNew<T>(file);
   const headers = records[0] ?? [];
   const parsers = new Map(spec.fields);
   for (let r = 1; r < records.length; r++) {
     const record = records[r] as string[];
     const line = lines[r] as number;
+    // csv reports invalid UTF-8 as it reads the record, before any deserializing (load.rs).
+    const badCol = invalid ? record.findIndex((c) => c.includes("�")) : -1;
+    if (badCol >= 0) {
+      return err(dataErrorField(file, line, headers[badCol] ?? "", "not valid UTF-8"));
+    }
     if (record.length !== headers.length) {
       return err({
         file,
@@ -186,8 +217,8 @@ function deserializeRow<T>(
     const name = headers[col] as string;
     const parse = parsers.get(name);
     if (parse === undefined) {
-      const expected = spec.fields.map(([f]) => `\`${f}\``).join(", ");
-      return err(dataErrorField(file, line, name, `unknown field \`${name}\`, expected one of ${expected}`));
+      const expected = oneOf(spec.fields.map(([f]) => f));
+      return err(dataErrorField(file, line, name, `unknown field \`${name}\`, ${expected}`));
     }
     if (Object.hasOwn(out, name)) {
       return err(dataErrorField(file, line, name, `duplicate field \`${name}\``));
@@ -196,8 +227,12 @@ function deserializeRow<T>(
     if (!parsed.ok) return err(dataErrorField(file, line, name, parsed.error));
     out[name] = parsed.value;
   }
-  for (const [name] of spec.fields) {
+  for (const [name, parse] of spec.fields) {
     if (!Object.hasOwn(out, name)) {
+      if (parse.optional) {
+        out[name] = null;
+        continue;
+      }
       return err(dataErrorField(file, line, name, `missing field \`${name}\``));
     }
   }

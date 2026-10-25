@@ -5,7 +5,7 @@
 // of the Rust struct): its columns in declaration order with their parsers.
 
 import { err, ok, type Result } from "./error.ts";
-import { enumOf, f64, optF64, type Parse, rowSpec, semiList, str, u8, u32, yesNo } from "./load.ts";
+import { enumOf, f64, optF64, optU32, type Parse, rowSpec, semiList, str, u8, u32, yesNo } from "./load.ts";
 
 /** countries.csv: one row per country (spec 7.3). */
 export interface Country {
@@ -322,8 +322,6 @@ export interface AiBoomStage {
   ai_labs_lt: number | null;
   notes: string;
 }
-
-const optU32: Parse<number | null> = (s) => (s === "" ? ok(null) : u32(s));
 
 export const AI_BOOM_STAGE_SPEC = rowSpec<AiBoomStage>({
   stage: str,

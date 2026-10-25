@@ -6,7 +6,7 @@
 import { closeSync, mkdirSync, openSync, readFileSync, readSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { DataError, Result } from "./error.ts";
+import { type DataError, dataErrorFile, err, ok, type Result } from "./error.ts";
 import type { Files } from "./load.ts";
 import { MAP_FILES, MAP_PNG_FILES, type MapAssets, mapFixtureFiles, parseMap, type Rect } from "./map.ts";
 import { parseWorld, WORLD_FILES, type WorldData } from "./world.ts";
@@ -26,22 +26,28 @@ export function defaultMapDir(): string {
   return join(repoRoot(), "assets", "map");
 }
 
-/** The text of each of `names` in `dir`; a file that cannot be read is left out. */
-function readFiles(dir: string, names: readonly string[]): Record<string, string> {
-  const files: Record<string, string> = {};
+/**
+ * The bytes of each of `names` in `dir` (decoded by the parser, so invalid UTF-8 is reported with
+ * its line and field). A file that does not exist is left out (the parser reports it, or for the
+ * optional map files it is absent); any other read error is returned.
+ */
+function readFiles(dir: string, names: readonly string[]): Result<Record<string, Uint8Array>, DataError> {
+  const files: Record<string, Uint8Array> = {};
   for (const name of names) {
     try {
-      files[name] = readFileSync(join(dir, name), "utf8");
-    } catch {
-      // Left out: the parser reports a missing file by name.
+      files[name] = readFileSync(join(dir, name));
+    } catch (e) {
+      if ((e as { code?: string }).code === "ENOENT") continue;
+      return err(dataErrorFile(name, e instanceof Error ? e.message : String(e)));
     }
   }
-  return files;
+  return ok(files);
 }
 
 /** Loads every table from `dir`. Stops at the first file that does not parse (spec 10 M0). */
 export function loadWorld(dir: string): Result<WorldData, DataError> {
-  return parseWorld(readFiles(dir, WORLD_FILES));
+  const files = readFiles(dir, WORLD_FILES);
+  return files.ok ? parseWorld(files.value) : files;
 }
 
 /** The first `n` bytes of a file, or null when it cannot be read. */
@@ -66,7 +72,9 @@ function readHead(path: string, n: number): Uint8Array | null {
  * Rust `load_map`.
  */
 export function loadMap(dir: string): Result<MapAssets | null, DataError> {
-  const files: Record<string, string | Uint8Array> = { ...readFiles(dir, MAP_FILES) };
+  const read = readFiles(dir, MAP_FILES);
+  if (!read.ok) return read;
+  const files: Record<string, string | Uint8Array> = { ...read.value };
   for (const png of MAP_PNG_FILES) {
     const head = readHead(join(dir, png), 24);
     if (head !== null) files[png] = head;
