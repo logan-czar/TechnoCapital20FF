@@ -55,5 +55,5 @@ export type * from "./types/sim-api.ts";
 export * from "./types/views/index.ts";
 export { barRows } from "./views/bars.ts";
 // What the worker posts: view copies and patches by version (views/).
-export { simViewsCopyChangedFrom, simViewsMapLayerVersions } from "./views/index.ts";
+export { simViewsCopyChangedFrom, simViewsGetMapLayer, simViewsMapLayerVersions } from "./views/index.ts";
 export { type PostedViews, postedViewsNone, postedViewsResetNews, viewsPatchSince } from "./views/patch.ts";

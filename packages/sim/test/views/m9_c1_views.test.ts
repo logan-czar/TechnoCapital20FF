@@ -1,5 +1,3 @@
-// The tests of crates/sim/tests/m9_c1_views.rs that read only ported views. The directors and IPO
-// ballot tests are in pending/views/m9_c1_views.test.ts (they wait on company_detail, lane A).
 // Port of crates/sim/tests/m9_c1_views.rs: M9 Phase C lane C1's sim requests (docs/build/m9-plan.md;
 // the requests lanes B1 and B2 logged): the index history in v_exchanges (D540), directors by
 // position in v_company_detail (D541), IPO ballot voters (D542), startup headlines carrying their
@@ -29,11 +27,12 @@ import { simClock, simLoadBytes, simNew, simSaveBytes, simStep, simViews, simWor
 import { INDEX_BASE } from "../../src/market/exchange_index.ts";
 import { simDateYmd } from "../../src/time/calendar.ts";
 import { cmpDate, type SimDate } from "../../src/types/calendar.ts";
-import type { HeadlineId } from "../../src/types/ids.ts";
+import type { CompanyId, HeadlineId } from "../../src/types/ids.ts";
+import type { SeatPerson } from "../../src/types/views/company_detail.ts";
 import { chunkLogRows, chunkLogSharesWith } from "../../src/world/log.ts";
 import { data, unwrap } from "../common/index.ts";
 import { runTo } from "../common/ops.ts";
-import { byField } from "../common/views.ts";
+import { byField, byId } from "../common/views.ts";
 
 describe("m9 c1 views", () => {
   it("exchanges_serve_each_index_s_daily_closes_from_2020", () => {
@@ -161,5 +160,92 @@ describe("m9 c1 views", () => {
     const back = unwrap(simNew(data(), 2), "Sim::new");
     unwrap(simLoadBytes(back, bytes), "load_bytes");
     expect(simViews(back).news.data.feed).toEqual(v.feed);
+  }, 120_000);
+
+  // A company's directors in seat position order (5.19.4 step 4; D541): the detail view lists
+  // them as the World holds them, each a full character by id or a partial one by its 3.7.1 id.
+  it("company_detail_lists_directors_by_position", () => {
+    const sim = unwrap(simNew(data(), 1), "Sim::new");
+    // Directors come with a startup whose cast outnumbers its labor seats: run lock by lock
+    // until one is born.
+    for (let year = 2020; year < 2026; year++) {
+      runTo(sim, simDateYmd(year, 1, 10));
+      if (simWorld(sim).companies.some((c) => c.directors.length > 0)) break;
+    }
+    const w = simWorld(sim);
+    const v = simViews(sim).company_detail.data;
+    let withDirectors = 0;
+    w.companies.forEach((c, idx) => {
+      const d = byId(v.companies, idx as CompanyId);
+      if (d === undefined) throw new Error(`no detail ${c.key}`);
+      expect(d.directors.length).toBe(c.directors.length);
+      d.directors.forEach((p, i) => {
+        const dir = c.directors[i];
+        if (dir === undefined) throw new Error("director");
+        if (dir.kind === "Full") {
+          expect(p.character).toBe(dir.character);
+          expect(!p.partial && p.partial_id === null).toBe(true);
+          expect(p.name).toBe(w.characters[dir.character]?.name);
+        } else {
+          expect(p.partial_id).toBe(dir.seat.id);
+          expect(p.partial && p.character === null).toBe(true);
+          expect(p.name).toBe(dir.seat.character.name);
+        }
+      });
+      withDirectors += c.directors.length > 0 ? 1 : 0;
+    });
+    expect(withDirectors > 0, "a startup with directors").toBe(true);
+  }, 120_000);
+
+  // Each IPO ballot names who held the role at the vote (D542): right after the first lock the
+  // board has not moved, so every seat and director ballot names today's holder.
+  it("ipo_ballots_name_their_voters", () => {
+    const sim = unwrap(simNew(data(), 1), "Sim::new");
+    runTo(sim, simDateYmd(2020, 1, 10));
+    const w = simWorld(sim);
+    const v = simViews(sim).company_detail.data;
+    let ballots = 0;
+    for (const d of v.companies) {
+      const rec = d.ipo_last_vote;
+      if (rec === null) continue;
+      const c = w.companies[d.id];
+      if (c === undefined) throw new Error("company");
+      for (const b of rec.result.ballots) {
+        ballots += 1;
+        const voter = b.voter;
+        if (voter === null) throw new Error("a voter");
+        const same = (p: SeatPerson): boolean => {
+          switch (voter.kind) {
+            case "Full":
+              return p.character === voter.character;
+            case "Partial":
+              return p.partial_id === voter.id && p.name === voter.name;
+            default:
+              return false;
+          }
+        };
+        switch (b.role.kind) {
+          case "Seat": {
+            const seat = b.role.seat;
+            const card = d.board.find((s) => s.seat === seat);
+            expect(card?.holder !== null && card?.holder !== undefined && same(card.holder), d.name).toBe(
+              true,
+            );
+            break;
+          }
+          case "Director": {
+            const person = d.directors[b.role.position];
+            expect(person !== undefined && same(person)).toBe(true);
+            break;
+          }
+          case "Controller":
+            if (voter.kind === "State") expect(c.state_controlled).toBe(true);
+            else if (voter.kind === "Full") expect(c.controller).toBe(voter.character);
+            else throw new Error("a controller is full or the state");
+            break;
+        }
+      }
+    }
+    expect(ballots > 0, "votes at the first lock").toBe(true);
   }, 120_000);
 });
