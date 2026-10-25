@@ -133,12 +133,17 @@ export const yesNo: Parse<boolean> = (s) => {
 /** A `;`-separated list; an empty cell is an empty list (rows.rs `semi_list`). */
 export const semiList: Parse<string[]> = (s) => ok(s.split(";").filter((p) => p !== ""));
 
-/** A unit-variant enum column written in its serde names. */
-export function enumOf<V extends string>(variants: readonly V[]): Parse<V> {
+/**
+ * A unit-variant enum column: the CSV writes serde names (`rename_all = "snake_case"`), the value
+ * is the Rust variant name (unit enums are string unions of variant names, D952). `names` maps
+ * each serde name to its variant, in declaration order (the order serde lists them in errors).
+ */
+export function enumOf<V extends string>(names: Readonly<Record<string, V>>): Parse<V> {
+  const serde = Object.keys(names);
   return (s) => {
-    const hit = variants.find((v) => v === s);
+    const hit = Object.hasOwn(names, s) ? names[s] : undefined;
     if (hit !== undefined) return ok(hit);
-    return err(`unknown variant \`${s}\`, ${oneOf(variants)}`);
+    return err(`unknown variant \`${s}\`, ${oneOf(serde)}`);
   };
 }
 

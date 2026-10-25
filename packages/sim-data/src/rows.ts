@@ -399,12 +399,18 @@ export const COMPANY_START_SPEC = rowSpec<CompanyStart>({
 /** When a fixed startup event fires (spec 5.19.2). */
 export type EventTrigger =
   /** The first plan lock on or after `date`. */
-  | "date"
+  | "Date"
   /** The first plan lock after the bust ends (the pop + 8 quarters, spec 5.1.1). */
-  | "after_bust";
+  | "AfterBust";
 
-/** EventTrigger in declaration order (serde `snake_case` names). */
-export const EVENT_TRIGGER_VALUES = ["date", "after_bust"] as const;
+/** EventTrigger in declaration order. */
+export const EVENT_TRIGGER_VALUES = ["Date", "AfterBust"] as const;
+
+/** The CSV's serde names (`snake_case`) for each EventTrigger, in declaration order. */
+export const EVENT_TRIGGER_SERDE: Readonly<Record<string, EventTrigger>> = {
+  date: "Date",
+  after_bust: "AfterBust",
+};
 
 /** One group of startups in a fixed event: `count:industry@region|region`. */
 export interface StartupGroup {
@@ -463,7 +469,7 @@ export interface StartupEvent {
 export const STARTUP_EVENT_SPEC = rowSpec<StartupEvent>({
   id: str,
   name: str,
-  trigger: enumOf(EVENT_TRIGGER_VALUES),
+  trigger: enumOf(EVENT_TRIGGER_SERDE),
   date: str,
   startups: startupGroups,
   revenue_min_usd_m: f64,
@@ -477,27 +483,26 @@ export const STARTUP_EVENT_SPEC = rowSpec<StartupEvent>({
 
 /** What a name in a names file is for (spec 3.7.1, 5.19.3). */
 export type NameKind =
-  | "male"
-  | "female"
-  | "surname"
+  | "Male"
+  | "Female"
+  | "Surname"
   /** A company name prefix (place-like or evocative word). */
-  | "company_prefix";
+  | "CompanyPrefix";
 
-/** NameKind in declaration order (serde `snake_case` names). */
-export const NAME_KIND_VALUES = ["male", "female", "surname", "company_prefix"] as const;
+/** NameKind in declaration order. */
+export const NAME_KIND_VALUES = ["Male", "Female", "Surname", "CompanyPrefix"] as const;
 
-/** Rust's `{:?}` of a NameKind, for check messages. */
+/** The CSV's serde names (`snake_case`) for each NameKind, in declaration order. */
+export const NAME_KIND_SERDE: Readonly<Record<string, NameKind>> = {
+  male: "Male",
+  female: "Female",
+  surname: "Surname",
+  company_prefix: "CompanyPrefix",
+};
+
+/** Rust's `{:?}` of a NameKind, for check messages: the variant name. */
 export function nameKindDebug(k: NameKind): string {
-  switch (k) {
-    case "male":
-      return "Male";
-    case "female":
-      return "Female";
-    case "surname":
-      return "Surname";
-    case "company_prefix":
-      return "CompanyPrefix";
-  }
+  return k;
 }
 
 /** names/<superregion>.csv: name parts per culture used in that superregion (M0.6). */
@@ -512,7 +517,7 @@ export interface NameRow {
 export const NAME_ROW_SPEC = rowSpec<NameRow>({
   culture: str,
   family_first: yesNo,
-  kind: enumOf(NAME_KIND_VALUES),
+  kind: enumOf(NAME_KIND_SERDE),
   name: str,
 });
 
