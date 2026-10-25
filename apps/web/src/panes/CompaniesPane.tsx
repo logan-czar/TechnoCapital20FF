@@ -5,8 +5,7 @@ import type { CompanyRow, QuoteRow } from "@tc20ff/sim";
 import { memo, useMemo, useRef, useState } from "react";
 import { useNames } from "../shell/names.ts";
 import { pageSpec, useWorkspace } from "../shell/panes.ts";
-import { useThrottled } from "../shell/useThrottled.ts";
-import { useViewData } from "../sim/hooks.ts";
+import { useViewData, useViewDataThrottled } from "../sim/hooks.ts";
 import { type Cell, figureCell, type PageRef } from "../widgets/cells.ts";
 import { type Column, DataTable } from "../widgets/DataTable.tsx";
 
@@ -17,6 +16,8 @@ interface Row {
 
 const rowKey = (r: Row) => r.key;
 const SIZES = [0, 1000, 10000] as const;
+/** The quotes move every frame; the table reads them this often. */
+const QUOTE_MS = 250;
 
 function buildColumns(
   industry: (id: number) => string,
@@ -56,31 +57,35 @@ function buildColumns(
       id: "price",
       header: "Price",
       width: 90,
-      cell: (r) =>
-        quoteOf(r.company.id) ? { k: "price", v: (quoteOf(r.company.id) as QuoteRow).last } : unknown,
+      live: true,
+      cell: (r) => {
+        const q = quoteOf(r.company.id);
+        return q ? { k: "price", v: q.last } : unknown;
+      },
     },
     {
       id: "change",
       header: "Day",
       width: 80,
-      cell: (r) =>
-        quoteOf(r.company.id)
-          ? { k: "gain", v: (quoteOf(r.company.id) as QuoteRow).change_pct, unit: "percent" }
-          : unknown,
+      live: true,
+      cell: (r) => {
+        const q = quoteOf(r.company.id);
+        return q ? { k: "gain", v: q.change_pct, unit: "percent" } : unknown;
+      },
     },
   ];
 }
 
 function CompaniesPaneInner() {
   const companies = useViewData("company_rows");
-  const quotes = useThrottled(useViewData("quotes"), 250);
+  const quotes = useViewDataThrottled("quotes", QUOTE_MS);
   const names = useNames();
   const ws = useWorkspace();
   const [size, setSize] = useState<(typeof SIZES)[number]>(0);
 
   // The live prices are read through a map at draw time, so a quote update redraws the rows in
-  // view but neither rebuilds nor re-sorts the table; only the monthly company rows do.
-  const quoteMap = useMemo(() => new Map(quotes?.rows.map((q) => [q.id as number, q])), [quotes]);
+  // view without rebuilding the table; only the monthly company rows rebuild it.
+  const quoteMap = useMemo(() => new Map<number, QuoteRow>(quotes?.rows.map((q) => [q.id, q])), [quotes]);
   const quoteRef = useRef(quoteMap);
   quoteRef.current = quoteMap;
   const columns = useMemo(
@@ -91,9 +96,10 @@ function CompaniesPaneInner() {
     if (!companies) return [];
     const base = companies.rows.map((c, i): Row => ({ key: i, company: c }));
     if (size === 0) return base;
-    const out: Row[] = [];
-    for (let i = 0; i < size; i++) out.push({ ...(base[i % base.length] as Row), key: i });
-    return out;
+    return Array.from(
+      { length: size },
+      (_, i): Row => ({ company: base[i % base.length]?.company as CompanyRow, key: i }),
+    );
   }, [companies, size]);
 
   const open = useMemo(
@@ -109,7 +115,10 @@ function CompaniesPaneInner() {
         <span>{rows.length.toLocaleString("en-US")} rows</span>
         <label>
           Rows{" "}
-          <select value={size} onChange={(e) => setSize(Number(e.target.value) as (typeof SIZES)[number])}>
+          <select
+            value={size}
+            onChange={(e) => setSize(SIZES.find((s) => s === Number(e.target.value)) ?? 0)}
+          >
             <option value={0}>Real</option>
             <option value={1000}>1,000</option>
             <option value={10000}>10,000</option>
@@ -121,8 +130,8 @@ function CompaniesPaneInner() {
           rows={rows}
           columns={columns}
           rowKey={rowKey}
-          version={quoteMap}
           onOpen={open}
+          version={quoteMap}
           initialSort={{ id: "value", desc: true }}
         />
       </div>

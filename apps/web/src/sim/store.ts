@@ -1,12 +1,12 @@
 // The UI's copy of the sim's views: a small hand-rolled store (no library needed), merged from
-// Frames as protocol.ts describes. Subscribers register per key (a view name, the notice log or the
-// status), so a frame that moves only the quotes wakes only the components that read quotes.
+// Frames as protocol.ts describes. Subscribers register per key (a view name, the notice log, the
+// messages or the status), so a frame that moves only the quotes wakes only the components that
+// read quotes. A view the sim has not ported yet never arrives (views/patch.ts): readers see
+// `undefined` for it and must cope.
 
-import type { ClockView, FromSim, Notice, SimViews, ViewName } from "@tc20ff/sim";
-import { VIEW_NAMES } from "@tc20ff/sim";
-import type { UiViewsPatch } from "./patch.ts";
+import type { ClockView, FromSim, Notice, SimViews, ViewName, ViewsPatch } from "@tc20ff/sim";
 
-export type StoreKey = ViewName | "notices" | "status";
+export type StoreKey = ViewName | "notices" | "messages" | "status";
 export type Frame = Extract<FromSim, { kind: "Frame" }>;
 
 /** A notice worth showing the player: tick, day and month markers are bookkeeping only. */
@@ -22,17 +22,26 @@ export interface NoticeEntry {
   notice: Notice;
 }
 
+/** Something the player should read: a refused request, a failed save. */
+export interface Message {
+  id: number;
+  level: "error" | "info";
+  text: string;
+}
+
 export interface Status {
   /** The worker said Ready. */
   ready: boolean;
   /** A game exists (NewGame or Load succeeded). */
   started: boolean;
-  /** The worker's Fatal message. */
+  /** The worker's Fatal message, or a worker error. */
   fatal: string | null;
 }
 
 /** Notices kept in the log; older ones drop off. */
 export const NOTICE_LOG_CAP = 300;
+/** Messages kept on screen. */
+export const MESSAGE_CAP = 5;
 
 type Listener = () => void;
 
@@ -40,11 +49,13 @@ export class SimStore {
   private views: { [K in ViewName]?: SimViews[K] } = {};
   private listeners = new Map<StoreKey, Set<Listener>>();
   private seq = 0;
+  private messageId = 0;
   notices: readonly NoticeEntry[] = [];
+  messages: readonly Message[] = [];
   status: Status = { ready: false, started: false, fatal: null };
 
   getView<K extends ViewName>(name: K): SimViews[K] | undefined {
-    return this.views[name] as SimViews[K] | undefined;
+    return this.views[name];
   }
 
   subscribe(key: StoreKey, cb: Listener): () => void {
@@ -62,23 +73,65 @@ export class SimStore {
     this.emit(["status"]);
   }
 
+  /** The seq of the newest logged notice: a mark to tell later notices from earlier ones. */
+  noticeMark(): number {
+    return this.seq;
+  }
+
+  /** Shows `text` to the player until they dismiss it. */
+  pushMessage(level: Message["level"], text: string): void {
+    const m: Message = { id: ++this.messageId, level, text };
+    this.messages = [...this.messages, m].slice(-MESSAGE_CAP);
+    this.emit(["messages"]);
+  }
+
+  dismissMessage(id: number): void {
+    this.messages = this.messages.filter((m) => m.id !== id);
+    this.emit(["messages"]);
+  }
+
+  private take<K extends Exclude<ViewName, "news">>(patch: ViewsPatch, name: K, moved: StoreKey[]): void {
+    const next = patch[name];
+    if (next === undefined) return;
+    this.views[name] = next;
+    moved.push(name);
+  }
+
   /**
    * Merges a frame: replaces each view in the patch, appends `news_appended` to the news feed
    * (or replaces it on `news_reset`), and logs the notable notices. Only the keys that moved are
    * notified.
    */
   applyFrame(frame: Frame): void {
-    const patch = frame.views as UiViewsPatch;
+    const patch = frame.views;
     const moved: StoreKey[] = [];
-    const v = this.views as Record<string, unknown>;
-    for (const name of VIEW_NAMES) {
-      if (name === "news") continue;
-      const next = patch[name];
-      if (next !== undefined) {
-        v[name] = next;
-        moved.push(name);
-      }
-    }
+    this.take(patch, "places", moved);
+    this.take(patch, "countries", moved);
+    this.take(patch, "zones", moved);
+    this.take(patch, "rates", moved);
+    this.take(patch, "characters", moved);
+    this.take(patch, "cap_table", moved);
+    this.take(patch, "quotes", moved);
+    this.take(patch, "price_bars", moved);
+    this.take(patch, "exchanges", moved);
+    this.take(patch, "market_stats", moved);
+    this.take(patch, "births", moved);
+    this.take(patch, "projection", moved);
+    this.take(patch, "company_rows", moved);
+    this.take(patch, "company_detail", moved);
+    this.take(patch, "units", moved);
+    this.take(patch, "tech", moved);
+    this.take(patch, "industry_rows", moved);
+    this.take(patch, "industry_detail", moved);
+    this.take(patch, "cycle", moved);
+    this.take(patch, "map_layers", moved);
+    this.take(patch, "province_cards", moved);
+    this.take(patch, "statements", moved);
+    this.take(patch, "filings", moved);
+    this.take(patch, "ratings", moved);
+    this.take(patch, "recap", moved);
+    this.take(patch, "map_static", moved);
+    this.take(patch, "clock", moved);
     if (patch.news_appended !== undefined) {
       const old = this.views.news;
       const feed =
@@ -89,20 +142,32 @@ export class SimStore {
     }
     // The frame's clock is the freshest; it also covers a frame whose patch left the clock view out.
     this.setClock(frame.clock, moved);
-    const fresh = frame.notices.filter(isNotable);
-    if (fresh.length > 0) {
-      const entries = fresh.map(
-        (notice): NoticeEntry => ({ seq: ++this.seq, time: frame.clock.now, notice }),
-      );
-      this.notices = [...this.notices, ...entries].slice(-NOTICE_LOG_CAP);
-      moved.push("notices");
-    }
+    this.logNotices(frame.notices, frame.clock.now, moved);
     this.emit(moved);
+  }
+
+  /**
+   * Logs the notices a request's reply carried that no frame since `mark` already logged (the
+   * worker may repeat them in the Reply, protocol.ts).
+   */
+  mergeReplyNotices(notices: readonly Notice[], mark: number): void {
+    const seen = new Set(this.notices.filter((e) => e.seq > mark).map((e) => JSON.stringify(e.notice)));
+    const fresh = notices.filter((n) => !seen.has(JSON.stringify(n)));
+    const moved: StoreKey[] = [];
+    this.logNotices(fresh, this.views.clock?.data.now ?? 0, moved);
+    this.emit(moved);
+  }
+
+  private logNotices(all: readonly Notice[], time: number, moved: StoreKey[]): void {
+    const fresh = all.filter(isNotable);
+    if (fresh.length === 0) return;
+    const entries = fresh.map((notice): NoticeEntry => ({ seq: ++this.seq, time, notice }));
+    this.notices = [...this.notices, ...entries].slice(-NOTICE_LOG_CAP);
+    moved.push("notices");
   }
 
   private setClock(clock: ClockView, moved: StoreKey[]): void {
     const held = this.views.clock;
-    if (held && held.data === clock) return;
     if (held && sameClock(held.data, clock)) return;
     this.views.clock = { data: clock, version: held?.version ?? 0, dirty: false };
     if (!moved.includes("clock")) moved.push("clock");

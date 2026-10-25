@@ -75,14 +75,23 @@ const INDEX_START = 1000;
 /** The 15% fair value band (spec 3.14.2). */
 const EFV_BAND = 0.15;
 
-/** A `BarHistory` over plain bars (the whole run in the open chunk; valid for readers). */
+/**
+ * A `BarHistory` over plain bars, in one closed chunk per calendar month and the latest month open
+ * (D139, D148), as the real market keeps them, so readers must flatten both (`barRows`).
+ */
 export function barHistory(bars: DailyBar[]) {
-  return {
-    log: {
-      closed: { slots: [] as DailyBar[][], len: 0 },
-      open: { slots: bars, len: bars.length },
-    },
-  };
+  const months: DailyBar[][] = [];
+  let last: DailyBar | undefined;
+  for (const b of bars) {
+    if (last && last.date.year === b.date.year && last.date.month === b.date.month) {
+      (months[months.length - 1] as DailyBar[]).push(b);
+    } else {
+      months.push([b]);
+    }
+    last = b;
+  }
+  const open = months.pop() ?? [];
+  return { log: { closed: { slots: months, len: months.length }, open: { slots: open, len: open.length } } };
 }
 
 /** Per-listed-company price state the mock walks. */

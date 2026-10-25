@@ -5,7 +5,16 @@
 // uses (D461): an exact figure is its plain cell, a band shows its range and sorts by its midpoint,
 // never by a hidden value.
 
-import { cmpStr, type Figure, RATING_VALUES, type Rating, type SimDate } from "@tc20ff/sim";
+import {
+  cmpStr,
+  type Figure,
+  RATING_VALUES,
+  type Rating,
+  roundHalfAway,
+  roundTiesEven,
+  type SimDate,
+  totalCmp,
+} from "@tc20ff/sim";
 
 /** A page a link cell opens. */
 export type PageRef =
@@ -34,9 +43,13 @@ export type Cell =
   | { k: "band"; unit: Unit; low: number; high: number }
   | { k: "unknown" };
 
-/** Rust `f64::round`: half away from zero (JS Math.round rounds half up). */
-export function roundHalfAway(x: number): number {
-  return x < 0 ? -Math.round(-x) : Math.round(x);
+/**
+ * Rust `format!("{:.N}")`: an exact decimal tie rounds to even (JS `toFixed` rounds it up), so the
+ * scaled value goes through `roundTiesEven` first (D952).
+ */
+export function fixed(x: number, decimals: number): string {
+  const scale = 10 ** decimals;
+  return (roundTiesEven(x * scale) / scale).toFixed(decimals);
 }
 
 /** `1234567` as `1,234,567`. */
@@ -66,16 +79,16 @@ export function money(v: number): string {
     if (a >= scale) {
       const x = a / scale;
       const decimals = x >= 100 ? 0 : x >= 10 ? 1 : 2;
-      return `${sign}$${x.toFixed(decimals)}${suffix}`;
+      return `${sign}$${fixed(x, decimals)}${suffix}`;
     }
   }
-  return `${sign}$${a.toFixed(0)}`;
+  return `${sign}$${fixed(a, 0)}`;
 }
 
 /** A fraction as a percent with one decimal; signed values keep their minus. */
 export function percent(f: number): string {
   if (!Number.isFinite(f)) return "?";
-  return `${(f * 100).toFixed(1)}%`;
+  return `${fixed(f * 100, 1)}%`;
 }
 
 /** USD a share with cents and thousands separators: $45.23, $1,234.50. */
@@ -109,7 +122,7 @@ export function date(d: SimDate): string {
 /** A multiple with two decimals: 1.23x. */
 export function ratio(v: number): string {
   if (!Number.isFinite(v)) return "?";
-  return `${v.toFixed(2)}x`;
+  return `${fixed(v, 2)}x`;
 }
 
 /** A quantity with one decimal and thousands separators: 1,234.5. */
@@ -268,9 +281,12 @@ function cellText(c: Cell): string | null {
  */
 export function cmpCell(a: Cell, b: Cell): number {
   const [x, y] = [cellNumber(a), cellNumber(b)];
-  if (x !== null && y !== null) return x < y ? -1 : x > y ? 1 : 0;
+  if (x !== null && y !== null) return totalCmp(x, y);
   const [s, t] = [cellText(a), cellText(b)];
   if (s !== null && t !== null) return cmpStr(s, t);
+  // A mixed column: numbers before text.
+  if (x !== null && t !== null) return -1;
+  if (s !== null && y !== null) return 1;
   return 0;
 }
 
@@ -294,10 +310,10 @@ export function sortOrder(cells: readonly Cell[], ascending: boolean): number[] 
 }
 
 /** A theme color class for a cell, when it has its own: gains, losses, links and bands. */
-export function cellTone(c: Cell): "gain" | "loss" | "link" | "band" | null {
+export function cellTone(c: Cell): "gain" | "loss" | "muted" | "link" | "band" | null {
   switch (c.k) {
     case "gain":
-      return c.v > 0 ? "gain" : c.v < 0 ? "loss" : null;
+      return c.v > 0 ? "gain" : c.v < 0 ? "loss" : "muted";
     case "link":
       return "link";
     case "band":

@@ -8,14 +8,13 @@ import {
   DockviewReact,
   type DockviewReadyEvent,
   type IDockviewPanelProps,
+  type SerializedDockview,
 } from "dockview-react";
-import { type FunctionComponent, useCallback, useEffect, useMemo, useRef } from "react";
+import { type FunctionComponent, lazy, Suspense, useCallback, useEffect, useMemo, useRef } from "react";
 import { AlertsPane } from "../panes/AlertsPane.tsx";
-import { ChartPane } from "../panes/ChartPane.tsx";
 import { CompaniesPane } from "../panes/CompaniesPane.tsx";
 import { EntityPane } from "../panes/EntityPane.tsx";
 import { CountriesPane, IndustriesPane } from "../panes/ListPanes.tsx";
-import { MapPane } from "../panes/MapPane.tsx";
 import { NewsPane } from "../panes/NewsPane.tsx";
 import type { PageRef } from "../widgets/cells.ts";
 import {
@@ -31,17 +30,57 @@ const SAVE_DEBOUNCE_MS = 300;
 
 type PaneProps = IDockviewPanelProps;
 
+// The map (deck.gl) and the chart (lightweight-charts) are the heavy panes: their code loads when the
+// first one opens, not with the page.
+const MapPane = lazy(() => import("../panes/MapPane.tsx").then((m) => ({ default: m.MapPane })));
+const ChartPane = lazy(() => import("../panes/ChartPane.tsx").then((m) => ({ default: m.ChartPane })));
+const loading = <p className="center">Loading...</p>;
+
 /** Each pane kind as a dockview component. */
 const COMPONENTS: Record<PaneKind, FunctionComponent<PaneProps>> = {
-  map: () => <MapPane />,
+  map: () => (
+    <Suspense fallback={loading}>
+      <MapPane />
+    </Suspense>
+  ),
   companies: () => <CompaniesPane />,
-  chart: ({ params }) => <ChartPane company={typeof params.company === "number" ? params.company : null} />,
+  chart: ({ params }) => (
+    <Suspense fallback={loading}>
+      <ChartPane company={typeof params.company === "number" ? params.company : null} />
+    </Suspense>
+  ),
   news: () => <NewsPane />,
   industries: () => <IndustriesPane />,
   countries: () => <CountriesPane />,
   alerts: () => <AlertsPane />,
-  entity: ({ params }) => <EntityPane page={params.page as PageRef} />,
+  entity: ({ params }) =>
+    isPageRef(params.page) ? <EntityPane page={params.page} /> : <p className="center">No such page.</p>,
 };
+
+const isRecord = (x: unknown): x is Record<string, unknown> => typeof x === "object" && x !== null;
+
+function isPageRef(x: unknown): x is PageRef {
+  return (
+    isRecord(x) &&
+    typeof x.id === "number" &&
+    (x.kind === "company" || x.kind === "country" || x.kind === "province" || x.kind === "industry")
+  );
+}
+
+/**
+ * A saved layout we trust to hand to dockview: its panels name known components and an entity pane
+ * names a real page. Anything else (an old build, a hand-edited value) is dropped for the default.
+ */
+function isLayout(x: unknown): x is SerializedDockview {
+  if (!isRecord(x) || !isRecord(x.grid) || !isRecord(x.panels)) return false;
+  const known = new Set<string>(Object.keys(COMPONENTS));
+  return Object.values(x.panels).every((p) => {
+    if (!isRecord(p) || typeof p.contentComponent !== "string" || !known.has(p.contentComponent))
+      return false;
+    if (p.contentComponent !== "entity") return true;
+    return isRecord(p.params) && isPageRef(p.params.page);
+  });
+}
 
 function readLayout(): unknown {
   try {
@@ -74,14 +113,17 @@ function openIn(api: DockviewApi, spec: PaneSpec): void {
     component: spec.kind,
     title: spec.title,
     params: spec.params ?? {},
+    ...(spec.kind === "map" ? { renderer: "always" as const } : {}),
     ...(ref ? { position: { referencePanel: ref, direction } } : {}),
   });
 }
 
 /** The default layout: the map alone, as before the shell (map-first, 11-ui). */
 function defaultLayout(api: DockviewApi): void {
-  const map = FIXED_PANES[0] as PaneSpec;
-  api.addPanel({ id: map.id, component: map.kind, title: map.title });
+  const map = FIXED_PANES.find((p) => p.kind === "map");
+  if (!map) return;
+  // Always rendered: hiding the map behind a tab would drop its WebGL context.
+  api.addPanel({ id: map.id, component: map.kind, title: map.title, renderer: "always" });
 }
 
 export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => void }) {
@@ -111,8 +153,10 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
     let restored = false;
     if (saved) {
       try {
-        api.fromJSON(saved as Parameters<DockviewApi["fromJSON"]>[0]);
-        restored = api.panels.length > 0;
+        if (isLayout(saved)) {
+          api.fromJSON(saved);
+          restored = api.panels.length > 0;
+        }
       } catch {
         api.clear();
       }

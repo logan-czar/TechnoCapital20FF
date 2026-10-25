@@ -2,11 +2,23 @@
 // date and hour, pause, speeds 1 to 5 (5 is max), the Skip menu, the alerts indicator and the
 // command bar button. Keys: Space pauses or resumes, 1 to 5 set the speed (and resume, D8).
 
-import { MAX_SPEED, QUARTER_PHASE_NAME, type SkipKind, weekdayShortName } from "@tc20ff/sim";
+import { MAX_SPEED, QUARTER_PHASE_NAME, weekdayShortName } from "@tc20ff/sim";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useClock, useNotices, useSim } from "../sim/hooks.ts";
 import { date as fmtDate } from "../widgets/cells.ts";
 import { SKIPS, skipName } from "./text.ts";
+
+/** A key press aimed at something the player is typing in or a dialog: not a game shortcut. */
+function isTypingTarget(t: EventTarget | null): boolean {
+  if (!(t instanceof HTMLElement)) return false;
+  return (
+    t.tagName === "INPUT" ||
+    t.tagName === "TEXTAREA" ||
+    t.tagName === "SELECT" ||
+    t.isContentEditable ||
+    t.closest("[role=dialog]") !== null
+  );
+}
 
 const SPEEDS = [1, 2, 3, 4, 5] as const;
 
@@ -41,14 +53,11 @@ function SpeedControls() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const t = e.target;
-      if (
-        t instanceof HTMLElement &&
-        (t.tagName === "INPUT" || t.tagName === "SELECT" || t.isContentEditable)
-      )
-        return;
+      if (e.repeat || isTypingTarget(e.target)) return;
       if (e.ctrlKey || e.metaKey || e.altKey) return;
+      // Space on a focused button activates that button; it is not also the pause key.
       if (e.code === "Space") {
+        if (e.target instanceof HTMLElement && e.target.closest("button, a, summary")) return;
         e.preventDefault();
         toggle();
       } else if (e.key >= "1" && e.key <= String(MAX_SPEED)) {
@@ -62,7 +71,7 @@ function SpeedControls() {
   useEffect(() => {
     if (!open) return;
     const close = (e: MouseEvent) => {
-      if (!menu.current?.contains(e.target as Node)) setOpen(false);
+      if (!(e.target instanceof Node && menu.current?.contains(e.target))) setOpen(false);
     };
     window.addEventListener("mousedown", close);
     return () => window.removeEventListener("mousedown", close);
@@ -98,7 +107,7 @@ function SpeedControls() {
                 key={kind}
                 onClick={() => {
                   setOpen(false);
-                  void sim.control({ kind: "SkipTo", skip: kind as SkipKind });
+                  void sim.control({ kind: "SkipTo", skip: kind });
                 }}
               >
                 {label}

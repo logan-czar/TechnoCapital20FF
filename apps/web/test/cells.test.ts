@@ -64,6 +64,13 @@ describe("formats", () => {
     expect(display({ k: "number", v: -0.04 })).toBe("0.0");
   });
 
+  it("rounds exact decimal ties to even, as Rust format does", () => {
+    expect(percent(0.00125)).toBe("0.1%");
+    expect(display({ k: "ratio", v: 0.125 })).toBe("0.12x");
+    expect(display({ k: "ratio", v: 0.375 })).toBe("0.38x");
+    expect(money(1.125e6)).toBe("$1.12M");
+  });
+
   it("shows bands as their range, a hyphen unless one end is negative", () => {
     expect(display(band(12e6, 18e6))).toBe("$12.0M-$18.0M");
     expect(display(band(-5e6, 3e6))).toBe("-$5.00M to $3.00M");
@@ -72,7 +79,7 @@ describe("formats", () => {
   it("colors gains, losses, links and bands", () => {
     expect(cellTone({ k: "gain", v: 1, unit: "percent" })).toBe("gain");
     expect(cellTone({ k: "gain", v: -1, unit: "percent" })).toBe("loss");
-    expect(cellTone({ k: "gain", v: 0, unit: "percent" })).toBeNull();
+    expect(cellTone({ k: "gain", v: 0, unit: "percent" })).toBe("muted");
     expect(cellTone({ k: "link", text: "x", page: { kind: "company", id: 1 } })).toBe("link");
     expect(cellTone({ k: "money", v: 1 })).toBeNull();
   });
@@ -107,6 +114,12 @@ describe("sorting", () => {
     expect(cmpCell(link("b"), { k: "text", v: "c" })).toBe(-1);
     expect(cmpCell({ k: "gain", v: -1, unit: "price" }, { k: "gain", v: 0.5, unit: "price" })).toBe(-1);
     expect(cmpCell({ k: "int", v: 2 }, { k: "int", v: 10 })).toBe(-1);
+  });
+
+  it("orders mixed columns numbers first, and floats by total order", () => {
+    expect(cmpCell({ k: "int", v: 5 }, { k: "text", v: "a" })).toBe(-1);
+    expect(cmpCell({ k: "text", v: "a" }, { k: "int", v: 5 })).toBe(1);
+    expect(cmpCell({ k: "number", v: -0 }, { k: "number", v: 0 })).toBe(-1);
   });
 
   it("puts unknown cells last in both directions and keeps ties in row order", () => {

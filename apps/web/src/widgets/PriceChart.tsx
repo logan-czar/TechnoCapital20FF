@@ -1,16 +1,18 @@
 // The chart widget (replaces crates/game/src/chart): TradingView lightweight-charts. Price bars
 // as candles with the estimated fair value and its +/-15% band (spec 3.14.2, 8 Pdoomberg F3), or
 // any line series. A new last bar is an `update`, not a reset, so a daily frame does not redraw the
-// whole history.
+// whole history; any other change (another company, a different first bar) resets the data.
 
 import type { DailyBar } from "@tc20ff/sim";
 import { formatSimDate } from "@tc20ff/sim";
 import {
+  type CandlestickData,
   CandlestickSeries,
   ColorType,
   createChart,
   type IChartApi,
   type ISeriesApi,
+  type LineData,
   LineSeries,
   LineStyle,
   type Time,
@@ -41,36 +43,47 @@ export interface PriceChartProps {
   seriesKey?: string | number;
 }
 
-const toTime = (d: DailyBar["date"]): Time => formatSimDate(d) as Time;
-
-function candle(b: DailyBar) {
-  return { time: toTime(b.date), open: b.open, high: b.high, low: b.low, close: b.close };
+/** What the chart last drew: its length and first time, to tell an appended bar from new data. */
+interface Drawn {
+  len: number;
+  first: Time | null;
+  key: string;
 }
 
-/** Sets a series' data, or only `update`s its last point when one bar was added or changed. */
-function sync<T extends { time: Time }>(series: ISeriesApi<"Candlestick" | "Line">, prev: number, next: T[]) {
-  const s = series as ISeriesApi<"Line">;
-  if (next.length === 0) {
-    s.setData([]);
-  } else if (prev > 0 && (next.length === prev || next.length === prev + 1)) {
-    s.update(next[next.length - 1] as never);
-  } else {
-    s.setData(next as never);
-  }
+const toTime = (d: DailyBar["date"]): Time => formatSimDate(d);
+
+/** True when `next` is `prev` with its last point changed or one point added. */
+function isAppend(prev: Drawn, next: readonly { time: Time }[]): boolean {
+  return (
+    prev.len > 0 && (next.length === prev.len || next.length === prev.len + 1) && next[0]?.time === prev.first
+  );
+}
+
+function syncCandles(series: ISeriesApi<"Candlestick">, prev: Drawn, next: CandlestickData<Time>[]): void {
+  const last = next[next.length - 1];
+  if (last && isAppend(prev, next)) series.update(last);
+  else series.setData(next);
+}
+
+function syncLine(series: ISeriesApi<"Line">, prev: Drawn, next: LineData<Time>[]): void {
+  const last = next[next.length - 1];
+  if (last && isAppend(prev, next)) series.update(last);
+  else series.setData(next);
+}
+
+interface Series {
+  candles: ISeriesApi<"Candlestick">;
+  mid: ISeriesApi<"Line">;
+  low: ISeriesApi<"Line">;
+  high: ISeriesApi<"Line">;
+  plain: ISeriesApi<"Line">;
+  drawn: Drawn;
 }
 
 export function PriceChart({ bars, efv = true, line, seriesKey }: PriceChartProps) {
   const host = useRef<HTMLDivElement>(null);
   const chart = useRef<IChartApi | null>(null);
-  const series = useRef<{
-    candles: ISeriesApi<"Candlestick">;
-    mid: ISeriesApi<"Line">;
-    low: ISeriesApi<"Line">;
-    high: ISeriesApi<"Line">;
-    plain: ISeriesApi<"Line">;
-    len: number;
-    key: string;
-  } | null>(null);
+  const series = useRef<Series | null>(null);
 
   useEffect(() => {
     const el = host.current;
@@ -102,8 +115,7 @@ export function PriceChart({ bars, efv = true, line, seriesKey }: PriceChartProp
       low: c.addSeries(LineSeries, dashed(AMBER)),
       high: c.addSeries(LineSeries, dashed(AMBER)),
       plain: c.addSeries(LineSeries, { color: CYAN, lineWidth: 2 }),
-      len: 0,
-      key: "",
+      drawn: { len: 0, first: null, key: "" },
     };
     chart.current = c;
     return () => {
@@ -118,25 +130,40 @@ export function PriceChart({ bars, efv = true, line, seriesKey }: PriceChartProp
     if (!s) return;
     const list = bars ?? [];
     const key = `${seriesKey ?? ""}|${efv}`;
-    if (s.key !== key) {
-      s.key = key;
-      s.len = 0;
-    }
-    sync(s.candles, s.len, list.map(candle));
-    sync(s.mid, s.len, efv ? list.map((b) => ({ time: toTime(b.date), value: b.efv })) : []);
-    sync(s.low, s.len, efv ? list.map((b) => ({ time: toTime(b.date), value: b.efv * (1 - EFV_BAND) })) : []);
-    sync(
+    // A new key (another company, the band toggled) redraws from scratch.
+    const prev: Drawn = s.drawn.key === key ? s.drawn : { len: 0, first: null, key };
+    const candles = list.map(
+      (b): CandlestickData<Time> => ({
+        time: toTime(b.date),
+        open: b.open,
+        high: b.high,
+        low: b.low,
+        close: b.close,
+      }),
+    );
+    const efvLine = (f: (b: DailyBar) => number): LineData<Time>[] =>
+      efv ? list.map((b) => ({ time: toTime(b.date), value: f(b) })) : [];
+    syncCandles(s.candles, prev, candles);
+    syncLine(
+      s.mid,
+      prev,
+      efvLine((b) => b.efv),
+    );
+    syncLine(
+      s.low,
+      prev,
+      efvLine((b) => b.efv * (1 - EFV_BAND)),
+    );
+    syncLine(
       s.high,
-      s.len,
-      efv ? list.map((b) => ({ time: toTime(b.date), value: b.efv * (1 + EFV_BAND) })) : [],
+      prev,
+      efvLine((b) => b.efv * (1 + EFV_BAND)),
     );
-    sync(
-      s.plain,
-      s.len,
-      (line ?? []).map((p) => ({ time: p.time as Time, value: p.value })),
-    );
-    if (s.len === 0 && list.length > 0) chart.current?.timeScale().fitContent();
-    s.len = list.length || (line?.length ?? 0);
+    const plain = (line ?? []).map((p): LineData<Time> => ({ time: p.time, value: p.value }));
+    syncLine(s.plain, prev, plain);
+    if (prev.len === 0 && list.length > 0) chart.current?.timeScale().fitContent();
+    const first = candles[0]?.time ?? plain[0]?.time ?? null;
+    s.drawn = { len: list.length || plain.length, first, key };
   }, [bars, efv, line, seriesKey]);
 
   return <div className="chart" ref={host} />;

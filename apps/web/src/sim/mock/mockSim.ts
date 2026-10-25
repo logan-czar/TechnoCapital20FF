@@ -8,11 +8,13 @@ import {
   ALERT_KIND_VALUES,
   type AlertKind,
   type AlertLevel,
+  barRows,
   type ClockView,
   type DateTime,
   type Headline,
   MAX_SPEED,
   type Notice,
+  postedViewsNone,
   type Quarter,
   type Reply,
   SECONDS_PER_HOUR,
@@ -21,10 +23,9 @@ import {
   type Skip,
   skipTarget,
   type UiControl,
-  VIEW_NAMES,
   type ViewName,
+  type ViewsPatch,
 } from "@tc20ff/sim";
-import type { UiViewsPatch } from "../patch.ts";
 import { isLockTick, isQuarterStartTick, isRecapTick, isReleaseTick } from "./calendar.ts";
 import {
   barHistory,
@@ -65,6 +66,21 @@ export interface MockSave {
   alerts: AlertLevel[];
 }
 
+/**
+ * The views the mock fills; the others stay placeholders and are never posted (views/patch.ts), as
+ * with the real sim until each view is ported.
+ */
+const MOCK_VIEWS: readonly ViewName[] = [
+  "clock",
+  "places",
+  "countries",
+  "quotes",
+  "price_bars",
+  "company_rows",
+  "industry_rows",
+  "news",
+];
+
 export class MockSim {
   readonly seed: number;
   now: DateTime = 0;
@@ -73,16 +89,12 @@ export class MockSim {
   skip: Skip | null = null;
   alerts: AlertLevel[] = ALERT_KIND_VALUES.map((k) => ALERT_KIND_DEFAULT_LEVEL[k]);
   views: SimViews;
-  /** The version of each view the host last posted, and how many headlines it has posted. */
-  private posted = new Map<ViewName, number>();
-  private postedNews = 0;
-  private postedRefresh = 0;
+  /** What the last frame posted (views/patch.ts), so each patch carries only what moved. */
+  private readonly posted = postedViewsNone();
   private readonly stocks: MockStock[];
   private readonly indexLevels: number[];
   private readonly rng: MockRng;
   private carryMs = 0;
-  /** A new mock sim is a new game or a load: its first frame replaces the client's news feed. */
-  private resetNews = true;
 
   constructor(
     readonly world: MockWorld,
@@ -112,35 +124,47 @@ export class MockSim {
   }
 
   /** The views whose version moved since the last `takePatch` (the protocol's Frame views). */
-  takePatch(): UiViewsPatch {
-    const patch: Record<string, unknown> = {};
-    for (const name of VIEW_NAMES) {
+  takePatch(): ViewsPatch {
+    // The semantics of views/patch.ts `viewsPatchSince`, over the views the mock fills (its builders
+    // are not on the public face): only moved views, news as an append, `news_reset` on the first
+    // patch of a game (a new MockSim is a new game or a load).
+    const posted = this.posted;
+    const patch: ViewsPatch = {};
+    if (this.views.refresh !== posted.refresh) {
+      patch.refresh = this.views.refresh;
+      posted.refresh = this.views.refresh;
+    }
+    if (this.views.omniscient !== posted.omniscient) {
+      patch.omniscient = this.views.omniscient;
+      posted.omniscient = this.views.omniscient;
+    }
+    for (const name of MOCK_VIEWS) {
       if (name === "news") continue;
       const v = this.views[name];
-      if (this.posted.get(name) !== v.version) {
-        patch[name] = v;
-        this.posted.set(name, v.version);
-      }
+      if (v.version === posted.versions[name]) continue;
+      posted.versions[name] = v.version;
+      this.take(patch, name);
     }
     const feed = this.views.news.data.feed;
-    const out = patch as UiViewsPatch;
-    if (this.resetNews) {
-      out.news_reset = true;
-      this.resetNews = false;
+    const reset = posted.news_len < 0 || feed.length < posted.news_len;
+    const from = reset ? 0 : posted.news_len;
+    if (reset || feed.length > from) {
+      patch.news_appended = feed.slice(from);
+      if (reset) patch.news_reset = true;
+      posted.news_len = feed.length;
+      patch.news_version = this.views.news.version;
+      posted.versions.news = this.views.news.version;
     }
-    if (feed.length > this.postedNews || this.posted.get("news") !== this.views.news.version) {
-      out.news_appended = feed.slice(this.postedNews);
-      out.news_version = this.views.news.version;
-      this.postedNews = feed.length;
-      this.posted.set("news", this.views.news.version);
-    }
-    this.postedRefresh = this.views.refresh;
-    return out;
+    return patch;
+  }
+
+  private take<K extends Exclude<ViewName, "news">>(patch: ViewsPatch, name: K): void {
+    patch[name] = this.views[name];
   }
 
   /** True when a patch would be non-empty. */
   hasPatch(): boolean {
-    return this.views.refresh !== this.postedRefresh || this.posted.size === 0;
+    return this.views.refresh !== this.posted.refresh;
   }
 
   /**
@@ -283,8 +307,8 @@ export class MockSim {
     kind: AlertKind,
     payload: Extract<Notice, { kind: "Alert" }>["payload"],
   ): void {
-    const level = this.alerts[ALERT_KIND_VALUES.indexOf(kind)] as AlertLevel;
-    if (level === "Off") return;
+    const level = this.alerts[ALERT_KIND_VALUES.indexOf(kind)];
+    if (level === undefined || level === "Off") return;
     out.push({ kind: "Alert", alert_kind: kind, level, payload });
     if (level === "Pause") {
       this.paused = true;
@@ -320,7 +344,7 @@ export class MockSim {
       data: {
         companies: keep.map((h) => {
           const bar = bars.get(h.id);
-          const old = h.bars.log.open.slots.slice(0, h.bars.log.open.len);
+          const old = barRows(h.bars);
           return { id: h.id, bars: barHistory(bar ? [...old, bar] : old) };
         }),
       },

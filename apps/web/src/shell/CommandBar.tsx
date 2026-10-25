@@ -5,7 +5,7 @@
 
 import { Command } from "cmdk";
 import Fuse from "fuse.js";
-import { memo, useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useViewData } from "../sim/hooks.ts";
 import type { PageRef } from "../widgets/cells.ts";
 import { FIXED_PANES, type PaneSpec, pageSpec } from "./panes.ts";
@@ -105,12 +105,15 @@ export function search(fuse: Fuse<Entry>, entries: Entry[], query: string): Entr
 }
 
 export interface CommandBarProps {
-  open: boolean;
   onClose: () => void;
   onOpenPane: (spec: PaneSpec) => void;
 }
 
-function CommandBarInner({ open, onClose, onOpenPane }: CommandBarProps) {
+/**
+ * The dialog. It is mounted only while open (App), so the index of every named thing is built when
+ * the player asks for it, not on every view change; cmdk and fuse.js load on first use too.
+ */
+export default function CommandBar({ onClose, onOpenPane }: CommandBarProps) {
   const companies = useViewData("company_rows");
   const industries = useViewData("industry_rows");
   const countries = useViewData("countries");
@@ -135,59 +138,52 @@ function CommandBarInner({ open, onClose, onOpenPane }: CommandBarProps) {
   useEffect(() => {
     setActive(results[0]?.key ?? "");
   }, [results]);
-  useEffect(() => {
-    if (open) setQuery("");
-  }, [open]);
-  if (!open) return null;
 
   const groups = [...new Set(results.map((r) => r.group))];
   return (
-    <div className="cmdk-overlay">
-      <button type="button" className="cmdk-backdrop" aria-label="Close" tabIndex={-1} onClick={onClose} />
-      <Command
-        className="cmdk"
-        shouldFilter={false}
-        value={active}
-        onValueChange={setActive}
-        label="Command bar"
-        onKeyDown={(e) => {
-          if (e.key === "Escape") onClose();
-        }}
-      >
-        <Command.Input
-          autoFocus
-          value={query}
-          onValueChange={setQuery}
-          placeholder="Open a pane, company, country, industry..."
-        />
-        <Command.List>
-          <Command.Empty>No match.</Command.Empty>
-          {groups.map((g) => (
-            <Command.Group key={g} heading={g}>
-              {results
-                .filter((r) => r.group === g)
-                .map((r) => (
-                  <Command.Item
-                    key={r.key}
-                    value={r.key}
-                    onSelect={() => {
-                      onOpenPane(r.spec);
-                      onClose();
-                    }}
-                  >
-                    <span>
-                      {r.label}
-                      {r.alias && <span className="detail"> {r.alias}</span>}
-                    </span>
-                    <span className="detail">{r.detail}</span>
-                  </Command.Item>
-                ))}
-            </Command.Group>
-          ))}
-        </Command.List>
-      </Command>
-    </div>
+    <Command.Dialog
+      open
+      onOpenChange={(o) => {
+        if (!o) onClose();
+      }}
+      label="Command bar"
+      shouldFilter={false}
+      value={active}
+      onValueChange={setActive}
+      className="cmdk"
+      overlayClassName="cmdk-overlay"
+      contentClassName="cmdk-content"
+    >
+      <Command.Input
+        value={query}
+        onValueChange={setQuery}
+        placeholder="Open a pane, company, country, industry..."
+      />
+      <Command.List>
+        <Command.Empty>No match.</Command.Empty>
+        {groups.map((g) => (
+          <Command.Group key={g} heading={g}>
+            {results
+              .filter((r) => r.group === g)
+              .map((r) => (
+                <Command.Item
+                  key={r.key}
+                  value={r.key}
+                  onSelect={() => {
+                    onOpenPane(r.spec);
+                    onClose();
+                  }}
+                >
+                  <span>
+                    {r.label}
+                    {r.alias && <span className="detail"> {r.alias}</span>}
+                  </span>
+                  <span className="detail">{r.detail}</span>
+                </Command.Item>
+              ))}
+          </Command.Group>
+        ))}
+      </Command.List>
+    </Command.Dialog>
   );
 }
-
-export const CommandBar = memo(CommandBarInner);

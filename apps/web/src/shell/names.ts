@@ -1,4 +1,5 @@
-// Names of things by id, from the views (spec 9.2: queries return ids, D426), memoized per view.
+// Names of things by id, from the views (spec 9.2: queries return ids, D426). One cache is shared
+// by every component: the lookup maps are built once per set of source views, not once per reader.
 
 import { useMemo } from "react";
 import { useViewData } from "../sim/hooks.ts";
@@ -10,21 +11,39 @@ export interface Names {
   province: (id: number) => string;
 }
 
+type Source = [unknown, unknown, unknown];
+let cachedSource: Source | null = null;
+let cached: Names | null = null;
+
+type Named = readonly { id: number; name: string }[];
+
+function build(rows: Named, industries: Named, countries: Named, provinces: Named): Names {
+  const of = (list: Named, kind: string) => {
+    const m = new Map(list.map((r) => [r.id, r.name]));
+    return (id: number) => m.get(id) ?? `${kind} ${id}`;
+  };
+  return {
+    company: of(rows, "Company"),
+    industry: of(industries, "Industry"),
+    country: of(countries, "Country"),
+    province: of(provinces, "Province"),
+  };
+}
+
 export function useNames(): Names {
   const rows = useViewData("company_rows");
   const industries = useViewData("industry_rows");
   const places = useViewData("places");
   return useMemo(() => {
-    const companies = new Map(rows?.rows.map((r) => [r.id as number, r.name]));
-    const inds = new Map(industries?.rows.map((r) => [r.id as number, r.name]));
-    const countries = new Map(places?.countries.map((c) => [c.id as number, c.name]));
-    const provinces = new Map(places?.provinces.map((p) => [p.id as number, p.name]));
-    const of = (m: Map<number, string>, kind: string) => (id: number) => m.get(id) ?? `${kind} ${id}`;
-    return {
-      company: of(companies, "Company"),
-      industry: of(inds, "Industry"),
-      country: of(countries, "Country"),
-      province: of(provinces, "Province"),
-    };
+    const src: Source = [rows, industries, places];
+    if (cached && cachedSource && src.every((s, i) => s === cachedSource?.[i])) return cached;
+    cachedSource = src;
+    cached = build(
+      rows?.rows ?? [],
+      industries?.rows ?? [],
+      places?.countries ?? [],
+      places?.provinces ?? [],
+    );
+    return cached;
   }, [rows, industries, places]);
 }

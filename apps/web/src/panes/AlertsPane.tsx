@@ -22,7 +22,8 @@ function AlertsPaneInner() {
             <select
               value={levels[k] ?? "default"}
               onChange={(e) => {
-                const level = e.target.value as AlertLevel;
+                const level = ALERT_LEVEL_VALUES.find((l) => l === e.target.value);
+                if (!level) return;
                 setLevels((l) => ({ ...l, [k]: level }));
                 void sim.control({ kind: "SetAlert", alert_kind: k, level });
               }}

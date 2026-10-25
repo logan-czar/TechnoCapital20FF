@@ -2,7 +2,7 @@
 // reset, and the mock clock's pacing against D8's speeds.
 
 import type { FromSim, SimViews, ToSim } from "@tc20ff/sim";
-import { ALERT_KIND_VALUES, MAX_SPEED, SECONDS_PER_HOUR } from "@tc20ff/sim";
+import { ALERT_KIND_VALUES, barRows, MAX_SPEED, SECONDS_PER_HOUR } from "@tc20ff/sim";
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
 import { SimClient, type SimTransport } from "../src/sim/client.ts";
@@ -22,6 +22,7 @@ beforeAll(() => {
 function wire(host: SimHost) {
   const log: FromSim[] = [];
   let deliver: (m: FromSim) => void = () => {};
+  let fail: (message: string) => void = () => {};
   const transport: SimTransport = {
     send(msg: ToSim) {
       for (const out of host.handle(msg)) {
@@ -34,12 +35,15 @@ function wire(host: SimHost) {
     onMessage(cb) {
       deliver = cb;
     },
+    onFailure(cb) {
+      fail = cb;
+    },
   };
   const post = (out: FromSim) => {
     log.push(out);
     deliver(out);
   };
-  return { transport, log, post };
+  return { transport, log, post, fail: (m: string) => fail(m) };
 }
 
 describe("client", () => {
@@ -150,6 +154,90 @@ describe("store", () => {
   });
 });
 
+describe("client failures and replies", () => {
+  it("settles every pending request when the worker fails, and reports it", async () => {
+    // A transport that never answers, then fails.
+    let fail: (m: string) => void = () => {};
+    const transport: SimTransport = {
+      send() {},
+      onMessage() {},
+      onFailure(cb) {
+        fail = cb;
+      },
+    };
+    const client = new SimClient(transport);
+    const a = client.control({ kind: "Pause" });
+    const b = client.save();
+    fail("boom");
+    expect(await a).toEqual({ kind: "Refused", message: "boom" });
+    expect(await b).toBeNull();
+    expect(client.store.status.fatal).toBe("boom");
+    // Later requests are refused at once instead of hanging.
+    expect((await client.control({ kind: "Resume" })).kind).toBe("Refused");
+    await client.ready;
+  });
+
+  it("a Fatal message settles pending requests too", async () => {
+    const host = new SimHost(world);
+    const { transport, post } = wire(host);
+    const client = new SimClient(transport);
+    const p = client.control({ kind: "Pause" });
+    post({ kind: "Fatal", message: "sim panic" });
+    expect((await p).kind).toBe("Refused");
+    expect(client.store.status.fatal).toBe("sim panic");
+  });
+
+  it("shows error replies as messages", async () => {
+    const host = new SimHost(world);
+    const { transport, post } = wire(host);
+    const client = new SimClient(transport);
+    post({ kind: "Ready" });
+    await client.newGame(1);
+    await client.control({ kind: "SetSpeed", speed: 9 });
+    await client.load(new Uint8Array([1]));
+    expect(client.store.messages.map((m) => m.level)).toEqual(["error", "error"]);
+    expect(client.store.messages[0]?.text).toContain("speed 9");
+  });
+
+  it("merges reply notices once, even when the frame repeated them", async () => {
+    const host = new SimHost(world);
+    const { transport, post } = wire(host);
+    const client = new SimClient(transport);
+    post({ kind: "Ready" });
+    await client.newGame(1);
+    await client.control({ kind: "Resume" });
+    await client.control({ kind: "Pause" });
+    const paused = client.store.notices.filter((e) => e.notice.kind === "Paused");
+    expect(paused).toHaveLength(1);
+    // A worker that puts a notice only in the Reply still gets it logged.
+    client.store.mergeReplyNotices(
+      [{ kind: "Paused", reason: { kind: "Loaded" } }],
+      client.store.noticeMark(),
+    );
+    expect(client.store.notices.filter((e) => e.notice.kind === "Paused")).toHaveLength(2);
+  });
+});
+
+describe("price bars", () => {
+  it("the mock keeps bars in monthly chunks and barRows flattens them all", () => {
+    const sim = new MockSim(world, 1);
+    const h = sim.views.price_bars.data.companies[0];
+    if (!h) throw new Error("no bars");
+    expect(h.bars.log.closed.len).toBeGreaterThan(3);
+    const rows = barRows(h.bars);
+    expect(rows).toHaveLength(180);
+
+    // Oldest first, across chunk borders.
+    const days = rows.map((b) => b.date.year * 10000 + b.date.month * 100 + b.date.day);
+    expect(days).toEqual([...days].sort((a, b) => a - b));
+    // A day closes: one more bar, still whole.
+    sim.paused = false;
+    for (let i = 0; i < 24; i++) sim.step();
+    const after = sim.views.price_bars.data.companies[0];
+    expect(barRows((after as NonNullable<typeof after>).bars)).toHaveLength(181);
+  });
+});
+
 describe("mock clock pacing (D8)", () => {
   const running = (speed: number) => {
     const sim = new MockSim(world, 1);
@@ -216,6 +304,6 @@ describe("mock clock pacing (D8)", () => {
     sim.takePatch();
     sim.step();
     const keys = Object.keys(sim.takePatch()).sort();
-    expect(keys).toEqual(["clock", "quotes"]);
+    expect(keys).toEqual(["clock", "quotes", "refresh"]);
   });
 });

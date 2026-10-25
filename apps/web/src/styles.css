@@ -154,26 +154,19 @@ input {
   inset: 0;
   z-index: 100;
   background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  padding-top: 12vh;
 }
-.cmdk-backdrop {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  cursor: default;
+.cmdk-content {
+  position: fixed;
+  z-index: 101;
+  top: 12vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(560px, 92vw);
 }
 .cmdk {
-  position: relative;
-  width: min(560px, 92vw);
   max-height: 60vh;
   display: flex;
   flex-direction: column;
-  align-self: flex-start;
   background: var(--panel);
   border: 1px solid var(--cyan);
   border-radius: 3px;
@@ -358,6 +351,9 @@ input {
 .cell.loss {
   color: var(--magenta);
 }
+.cell.muted {
+  color: var(--muted);
+}
 .cell.band {
   color: var(--amber);
 }
@@ -381,4 +377,28 @@ input {
 .chart {
   position: absolute;
   inset: 0;
+}
+
+.toasts {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: min(420px, 90vw);
+}
+.toast {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 10px;
+  background: var(--panel-raised);
+  border: 1px solid var(--cyan);
+  border-radius: 3px;
+}
+.toast.error {
+  border-color: var(--magenta);
 }

@@ -3,7 +3,7 @@
 // protocol's rules (types/protocol.ts): after each request a Frame with the views it changed
 // FIRST, then the Reply; while running, at most one Frame per FRAME_MS.
 
-import type { FromSim, Notice, Reply, ToSim } from "@tc20ff/sim";
+import { ALERT_LEVEL_VALUES, type FromSim, type Notice, type Reply, type ToSim } from "@tc20ff/sim";
 import { type MockSave, MockSim } from "./mockSim.ts";
 import type { MockWorld } from "./mockWorld.ts";
 
@@ -76,7 +76,11 @@ export class SimHost {
     try {
       const v: unknown = JSON.parse(decoder.decode(bytes));
       if (typeof v !== "object" || v === null || Reflect.get(v, "mock") !== 1) return null;
-      return v as MockSave;
+      const { seed, now, speed, alerts } = v as Record<string, unknown>;
+      if (typeof seed !== "number" || typeof now !== "number" || typeof speed !== "number") return null;
+      if (!Array.isArray(alerts) || !alerts.every((a) => ALERT_LEVEL_VALUES.some((l) => l === a)))
+        return null;
+      return { mock: 1, seed, now, speed, alerts };
     } catch {
       return null;
     }

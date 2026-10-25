@@ -1,6 +1,7 @@
 // The chart demo: daily bars of one company with the EFV band (spec 8 Pdoomberg F3), live from
 // v_price_bars (the mock keeps the 40 biggest listed companies' bars).
 
+import { barRows } from "@tc20ff/sim";
 import { memo, useMemo, useState } from "react";
 import { useNames } from "../shell/names.ts";
 import { useViewData } from "../sim/hooks.ts";
@@ -14,7 +15,7 @@ function ChartPaneInner({ company: initial }: { company: number | null }) {
   const id = chosen ?? history?.companies[0]?.id ?? null;
   const bars = useMemo(() => {
     const h = history?.companies.find((c) => c.id === id);
-    return h ? h.bars.log.open.slots.slice(0, h.bars.log.open.len) : [];
+    return h ? barRows(h.bars) : [];
   }, [history, id]);
   return (
     <div className="pane">

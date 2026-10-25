@@ -28,22 +28,23 @@ async function loadFiles(): Promise<Files> {
 async function main(): Promise<void> {
   const queued: ToSim[] = [];
   let host: SimHost | null = null;
-  const run = (msg: ToSim): void => {
-    for (const out of (host as SimHost).handle(msg)) scope.postMessage(out);
+  const run = (h: SimHost, msg: ToSim): void => {
+    for (const out of h.handle(msg)) scope.postMessage(out);
   };
-  scope.onmessage = (e) => (host ? run(e.data) : queued.push(e.data));
+  scope.onmessage = (e) => (host ? run(host, e.data) : queued.push(e.data));
   const parsed = parseWorld(await loadFiles());
   if (!parsed.ok) throw new Error(`starting data: ${JSON.stringify(parsed.error)}`);
-  host = new SimHost(buildMockWorld(parsed.value));
+  const ready = new SimHost(buildMockWorld(parsed.value));
+  host = ready;
   scope.postMessage({ kind: "Ready" });
-  for (const m of queued) run(m);
+  for (const m of queued) run(ready, m);
 
   let last = performance.now();
   setInterval(() => {
     const now = performance.now();
     const dt = now - last;
     last = now;
-    for (const out of (host as SimHost).tick(dt)) scope.postMessage(out);
+    for (const out of ready.tick(dt)) scope.postMessage(out);
   }, FRAME_MS);
 }
 
