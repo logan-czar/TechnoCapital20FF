@@ -16,25 +16,25 @@
 //                                  productiveCompute, startingLoadout
 //   ../../src/people/simple.ts     companySizeFromRevenue
 import { describe, expect, it } from "vitest";
-import { computeBill } from "../../src/ops/compute.ts";
+import { computeBill } from "../src/ops/compute.ts";
 import {
   conversionCapacity,
   type DataParams,
   dataBookAtLoad,
   dataBookFreeRdFraction,
   dataBookStoredTb,
-} from "../../src/ops/data.ts";
-import { laborUnits, openSeats } from "../../src/ops/labor.ts";
-import { idleDecay } from "../../src/ops/productivity.ts";
+} from "../src/ops/data.ts";
+import { laborUnits, openSeats } from "../src/ops/labor.ts";
+import { idleDecay } from "../src/ops/productivity.ts";
 import {
   ARROWHEAD_ENTERPRISE_SHARE,
   ARROWHEAD_KEY,
   pcBonus,
   productiveCompute,
   startingLoadout,
-} from "../../src/ops/stations.ts";
-import { companySizeFromRevenue } from "../../src/people/simple.ts";
-import { SEAT_LABOR } from "../../src/types/state/people.ts";
+} from "../src/ops/stations.ts";
+import { companySizeFromRevenue } from "../src/people/simple.ts";
+import { SEAT_LABOR } from "../src/types/state/people.ts";
 import { data } from "./common/index.ts";
 
 describe("spec 7.1 Arrowhead", () => {
