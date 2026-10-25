@@ -1,7 +1,6 @@
 // The view half of crates/sim/tests/m5_load.rs (the rest is test/m5_load.test.ts): every exchange
 // with a listing opens at 1,000 and the others show no level, and private companies show 70% of
-// fair value with no quote. Pending until the quotes, exchanges and company detail views are
-// ported (Step 3).
+// fair value with no quote.
 //
 // Expects:
 //   ../../src/lib.ts   simNew, simWorld, simViews, simApply (SetOmniscient needs { debug: true })
