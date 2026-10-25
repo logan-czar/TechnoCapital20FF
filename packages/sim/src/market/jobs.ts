@@ -45,7 +45,7 @@ import type { DrawSource } from "../types/draws.ts";
 import type { CompanyId, ZoneId } from "../types/ids.ts";
 import { ordinal } from "../types/ids.ts";
 import type { Notice } from "../types/notice.ts";
-import { maxF } from "../types/num.ts";
+import { assertCount, maxF } from "../types/num.ts";
 import type { FairValueBasis, Stock } from "../types/state/market.ts";
 import type { Headline } from "../types/state/news.ts";
 import type { Company, World } from "../types/world.ts";
@@ -686,7 +686,7 @@ export function listCompany(world: World, id: CompanyId, price: number, date: Si
  * same prices (D250), and V follows the new count.
  */
 export function setSharesOut(world: World, id: CompanyId, sharesOut: number): void {
-  (world.companies[id] as Company).shares_out = sharesOut;
+  (world.companies[id] as Company).shares_out = assertCount(sharesOut, "shares_out");
   syncShares(world, id);
   const s = world.market.stocks[id] as Stock;
   s.value = perShare(s.fair_value, sharesOut);
