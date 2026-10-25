@@ -22,7 +22,8 @@ import { appendBufFromRows } from "./world/log.ts";
 export type Sink = (piece: string) => void;
 
 // The writer. The encoder appends to `text` and hands it to `sink` (then empties it) whenever it
-// has grown past `chunk` code units, at a value boundary. One string built by `+=` and handed on
+// has grown past `chunk` code units, before an object, an array or an array element. Only a
+// single long string can make a piece much longer than `chunk`. One string built by `+=` and handed on
 // in large pieces costs far less than a callback per token: a hash of ten years of daily bars is
 // a third of a billion characters. Module state, saved and restored around each call, so an
 // encode started from inside a sink still works.
@@ -137,6 +138,13 @@ function encodeNonPlain(value: object): void {
   throw new TypeError("cannot encode a class instance in saved state");
 }
 
+/** Hands the text written so far to the sink, at a value boundary (so on ASCII punctuation). */
+function flush(): void {
+  const piece = text;
+  text = "";
+  sink(piece);
+}
+
 function encodeValue(value: unknown): void {
   switch (typeof value) {
     case "number":
@@ -157,15 +165,14 @@ function encodeValue(value: unknown): void {
     text += "null";
     return;
   }
-  if (text.length >= chunk) {
-    const piece = text;
-    text = "";
-    sink(piece);
-  }
+  if (text.length >= chunk) flush();
   if (Array.isArray(value)) {
     text += "[";
     for (let i = 0; i < value.length; i++) {
       if (i > 0) text += ",";
+      // Also between elements, so a long flat array of numbers or strings is cut too; the piece
+      // then ends at "[" or ",".
+      if (text.length >= chunk) flush();
       const v: unknown = value[i];
       if (typeof v === "number") text += numberText(v);
       else if (v === undefined) throw new TypeError(`undefined at index ${i} of an array in saved state`);

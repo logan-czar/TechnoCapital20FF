@@ -12,8 +12,8 @@
 // The hash is FNV-1a 64 run in two lanes over the same UTF-8 bytes, with different offset bases,
 // written in-house (no BigInt, no dependency, so no upgrade can move it): a tiny hand-assembled
 // WebAssembly module where it runs, else the same lanes in 16-bit limbs (D966); the canonical
-// text is hashed as it is written, in pieces, never held whole. The
-// 128 bits come out as 32 lowercase hex digits. Rust's was 256 bits (64 digits); 128 is plenty
+// text is hashed as it is written, in pieces of about 64K characters, never held whole. The 128
+// bits come out as 32 lowercase hex digits. Rust's was 256 bits (64 digits); 128 is plenty
 // for a test-only hash, and a longer one only costs more lanes.
 
 import { canonicalEncodeChunked } from "./canonical.ts";
@@ -300,6 +300,14 @@ interface TextLanes {
   hex(): string;
 }
 
+/** Whether the WebAssembly lanes run here (tests: Node must not silently fall back). */
+export function fnvWasmRuns(): boolean {
+  return fnvWasm() !== null;
+}
+
+// The module has one memory and one pair of globals, so only one set of WebAssembly lanes may be
+// open at a time. Hashing is synchronous and the sink only hashes, so one never starts inside
+// another; unlike the encoder, this is not re-entrant.
 function wasmLanes(w: FnvWasm): TextLanes {
   const encoder = new TextEncoder();
   w.init(BASIS_A[0], BASIS_A[1], BASIS_B[0], BASIS_B[1]);
