@@ -12,8 +12,8 @@
 //   ../../src/finance/balance.ts  type Books, booksTaxPayable(books)   [Books::tax_payable]
 //   ./finance_common/index.ts     data
 import { describe, expect, it } from "vitest";
-import { type Books, booksTaxPayable } from "../../src/finance/balance.ts";
-import { accrueMonth, closeQuarter, type QuarterTax, quarterTax } from "../../src/finance/tax.ts";
+import { type Books, booksTaxPayable } from "../src/finance/balance.ts";
+import { accrueMonth, closeQuarter, type QuarterTax, quarterTax } from "../src/finance/tax.ts";
 import { zeroTax } from "./common/defaults.ts";
 import { data } from "./finance_common/index.ts";
 

@@ -6,7 +6,7 @@
 // Expects:
 //   "@tc20ff/sim-data"            row types Company, Industry, CountryEconomy, FinancialZone,
 //                                 CompanyStart and WorldData (Rust names, snake_case fields)
-//   ../../../src/finance/rating.ts ratingParse(s) -> Rating | null   [Rating::parse; accepts the
+//   ../../src/finance/rating.ts ratingParse(s) -> Rating | null   [Rating::parse; accepts the
 //                                 CSV labels "AAA", "AA+", "BBB-" and so on]
 import type {
   Company,
@@ -17,8 +17,8 @@ import type {
   WorldData,
 } from "@tc20ff/sim-data";
 import { expect } from "vitest";
-import { ratingParse } from "../../../src/finance/rating.ts";
-import type { Rating } from "../../../src/types/state/finance.ts";
+import { ratingParse } from "../../src/finance/rating.ts";
+import type { Rating } from "../../src/types/state/finance.ts";
 import { fixtureText, lines } from "../common/fixtures.ts";
 
 export { data } from "../common/index.ts";

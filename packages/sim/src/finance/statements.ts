@@ -263,8 +263,8 @@ export function quarterStatement(
   return {
     period: { kind: "Quarter", quarter },
     lines: ledgerSum(months),
-    balance: closing,
-    key,
+    balance: { ...closing },
+    key: copyKey(key),
     synthetic: false,
   };
 }
