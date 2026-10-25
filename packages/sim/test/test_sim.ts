@@ -54,6 +54,7 @@ export function clockWorld(): World {
     units: [],
     market: { stocks: [], indices: [], index_history: [] },
     news: newsWireDefault(),
+    recaps: [],
     base_rate: 0.03,
     neutral_rate: 0.03,
     cycle: { phase: "Expansion", quarters_left: 1_000_000, g_t: 0, g_history: [], z_avg: 1 },

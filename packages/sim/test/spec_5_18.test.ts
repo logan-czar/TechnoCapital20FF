@@ -21,7 +21,7 @@
 //                               headlineConfidence(h) -> ConfidenceHeadline | null
 //                               (a { kind } union: Beat, BigBeat, Miss, BigMiss, Bankruptcy and
 //                               { kind: "RatingChange", notches });
-//                               newsWireNew(), newsWireQueue(wire, h), newsWirePostDay(wire, date)
+//                               newsWireDefault(), newsWireQueue(wire, h), newsWirePostDay(wire, date)
 //                               -> Headline[], newsWireSince(wire, date) -> Iterable<Headline>
 //   ../../src/recap.ts          expectedResultNew(company, projection, consensus), worldRecap(q,
 //                               phase, g_t, industries[], expected[]), companyRecap(q, expected,
@@ -34,13 +34,13 @@
 // NoNoise's draw (u = 0.5 -> index 2 of 5, candidate CompanyId 14) is a rule of NoNoise, not of the
 // generator, and stays exact.
 import { describe, expect, it } from "vitest";
-import * as news from "../../src/news.ts";
-import { companyRecap, expectedResultNew, ratingWatch, worldRecap } from "../../src/recap.ts";
-import { simDateYmd } from "../../src/time/calendar.ts";
-import type { CompanyId, IndustryId } from "../../src/types/ids.ts";
-import { BYLINE } from "../../src/types/state/news.ts";
-import type { Outlook } from "../../src/types/state/recap.ts";
-import { chunkLogLen } from "../../src/world/log.ts";
+import * as news from "../src/news.ts";
+import { companyRecap, expectedResultNew, ratingWatch, worldRecap } from "../src/recap.ts";
+import { simDateYmd } from "../src/time/calendar.ts";
+import type { CompanyId, IndustryId } from "../src/types/ids.ts";
+import { BYLINE } from "../src/types/state/news.ts";
+import type { Outlook } from "../src/types/state/recap.ts";
+import { chunkLogLen } from "../src/world/log.ts";
 import { newNoNoise, newRng } from "./common/rng.ts";
 
 const D = simDateYmd(2021, 4, 9);
@@ -166,7 +166,7 @@ describe("spec 5.18 news", () => {
   });
 
   it("the_wire_posts_the_days_queue", () => {
-    const w = news.newsWireNew();
+    const w = news.newsWireDefault();
     const later = simDateYmd(2021, 4, 10);
     news.newsWireQueue(w, news.bankruptcy(D, IND, CO, "A"));
     news.newsWireQueue(w, news.removal(later, IND, CO, "B"));
