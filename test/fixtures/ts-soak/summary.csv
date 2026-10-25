@@ -1,0 +1,22 @@
+target,evaluated,passed,pass_share,required_share,verdict,value_min,value_median,value_max
+start_alive_10y,50,50,1.00,1.00,MET,0.9585,0.9616,0.9662,85%+ of the 651 neither bankrupt nor removed after 10 years
+median_productivity_10y,50,50,1.00,1.00,MET,99.7000,99.7750,99.8440,median productivity 90 to 110 after 10 years
+industry_revenue_demand,50,50,1.00,1.00,MET,0.1582,0.1733,0.1919,industry revenue within ±30% of the industry's own demand path (D363; Cloud waived: D368)
+industry_revenue_demand_cloud_waived,50,49,0.98,1.00,WAIVED,0.1838,0.2184,0.3155,Cloud's revenue against its own demand path: waived until the spec 11.2 per-industry rework (D368)
+industry_demand_trend,50,45,0.90,0.85,MET,0.2399,0.3895,0.7515,each industry's demand within ±55% of its trend path in 85% of seeds (D363; D367)
+m_clamp_8q,50,50,1.00,1.00,MET,0.0000,0.0000,0.0000,no industry stuck at an M clamp for more than 8 quarters (Cloud waived: D366)
+m_clamp_8q_cloud_waived,50,48,0.96,1.00,WAIVED,0.0000,0.0000,17.0000,Cloud's M clamp runs: waived until the spec 11.2 per-industry rework (D366)
+beat_share,50,50,1.00,1.00,MET,0.3567,0.3642,0.3688,30% to 60% of releases are beats
+demand_growth_pooled,2100,2011,0.96,0.90,MET,0.8333,0.9762,1.0000,90% of industry-runs (industries x seeds) have 10-year average demand growth within ±3 pp of their long-term rate (D365)
+boom_share,50,50,1.00,1.00,MET,0.1161,0.1726,0.2327,10% to 25% of industry-quarters labeled Boom (2020-2029)
+bust_share,50,50,1.00,1.00,MET,0.0839,0.1440,0.1964,8% to 22% of industry-quarters labeled Bust (2020-2029; D364)
+startups_per_year,50,50,1.00,1.00,MET,7.8000,10.0000,13.2000,6 to 15 startups a year on average in 2020 to 2029
+ai_lab_startups_2030_2035,50,48,0.96,0.80,MET,19.0000,35.0000,54.0000,15 to 50 AI labs startups in 2030 to 2035 in 80% of seeds
+named_companies,50,50,1.00,1.00,MET,874.0000,922.0000,986.0000,named company count between 600 and 1100 in every year
+listings_30y,50,50,1.00,1.00,MET,63.0000,83.0000,98.0000,60 to 250 listings in 30 years
+listings_per_year,50,50,1.00,1.00,MET,5.0000,7.0000,10.0000,no more than 12 listings in any year
+start_private_listed_2024,50,50,1.00,0.90,MET,13.0000,19.0000,29.0000,10 to 30 starting private companies listed by the end of 2024 in 90% of seeds
+full_characters_per_decade,50,50,1.00,1.00,MET,102.0000,157.0000,279.0000,100 to 300 full characters made per decade
+full_characters_2050,50,50,1.00,1.00,MET,764.0000,860.0000,933.0000,under 1200 full characters in the world in 2050
+cast_sizes,50,50,1.00,1.00,MET,269.0000,316.0000,381.0000,every startup has 1 to 5 full and 1 to 5 partial characters
+no_empty_labor_seat,50,50,1.00,1.00,MET,0.0000,0.0000,0.0000,no labor seat of a born company is empty
