@@ -54,6 +54,7 @@ import {
 } from "../types/views/index.ts";
 import type { MapMode } from "../types/views/map_layers.ts";
 import type { World } from "../types/world.ts";
+import { buildBirths } from "./births.ts";
 import { buildCapTable } from "./cap_table.ts";
 import { buildCharacters } from "./characters.ts";
 import { buildClock, emptyClock } from "./clock.ts";
@@ -69,6 +70,7 @@ import { buildNews } from "./news.ts";
 import { buildPlaces } from "./places.ts";
 import { buildPriceBars } from "./price_bars.ts";
 import { buildProvinceCards } from "./province_cards.ts";
+import { buildQuotes } from "./quotes.ts";
 import { buildRates } from "./rates.ts";
 import { buildRatings } from "./ratings.ts";
 import { buildStatements, rebuildStatementsFrom } from "./statements.ts";
@@ -187,7 +189,7 @@ export const VIEW_BUILDERS: ViewBuilders = {
     empty: () => ({ companies: [] }),
     build: buildCapTable,
   },
-  quotes: unported("views::quotes::QuotesView", () => ({ rows: [], indices: [] })),
+  quotes: { rust: "views::quotes::QuotesView", empty: () => ({ rows: [], indices: [] }), build: buildQuotes },
   price_bars: {
     rust: "views::price_bars::PriceBarsView",
     empty: () => ({ companies: [] }),
@@ -213,15 +215,19 @@ export const VIEW_BUILDERS: ViewBuilders = {
     build: buildMarketStats,
   },
   news: { rust: "views::news::NewsView", empty: () => ({ feed: [] }), build: buildNews },
-  births: unported("views::births::BirthsView", () => ({
-    events: [],
-    births: [],
-    listings: [],
-    full_characters_made: 0,
-    full_characters: 0,
-    births_column_quarters: [],
-    births_by_industry: [],
-  })),
+  births: {
+    rust: "views::births::BirthsView",
+    empty: () => ({
+      events: [],
+      births: [],
+      listings: [],
+      full_characters_made: 0,
+      full_characters: 0,
+      births_column_quarters: [],
+      births_by_industry: [],
+    }),
+    build: buildBirths,
+  },
   projection: unported("views::projection::ProjectionView", () => ({ elapsed_share: 0, companies: [] })),
   company_rows: {
     rust: "views::company_rows::CompanyRowsView",

@@ -30,5 +30,12 @@ describe("statements view", () => {
     // The quarter released on 2 April is in, estimated afresh; the older ones are reused.
     const c = rebuilt.companies.find((x) => x.estimated)!;
     expect(c.estimated_quarters.at(-1)?.period).toEqual({ kind: "Quarter", quarter: { year: 2020, q: 1 } });
+    // An older quarter is the last build's estimate itself, not a fresh one.
+    const old = prev.companies[c.id]!;
+    const q4 = c.estimated_quarters.find(
+      (e) => e.period.kind === "Quarter" && e.period.quarter.year === 2019 && e.period.quarter.q === 4,
+    );
+    expect(q4).toBeDefined();
+    expect(old.estimated_quarters.includes(q4!)).toBe(true);
   }, 120_000);
 });

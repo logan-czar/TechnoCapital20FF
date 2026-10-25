@@ -280,5 +280,5 @@ describe("m4 quarters, years and the archive", () => {
     expect(ys.length).toBe(5);
     expect((ys[0] as Statement).period).toEqual({ kind: "Year", year: 2021 });
     expect((ys[4] as Statement).period).toEqual({ kind: "Year", year: 2025 });
-  }, 180_000); // Six years with the ported views built on their cadence (Step 3).
+  });
 });

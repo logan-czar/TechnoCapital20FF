@@ -19,8 +19,8 @@
 // Changed from the Rust:
 // - The seeds (1, 2) seed the new generator (D951). Every assertion is on the books and the
 //   views of them (statement periods, filings, ratings at load), not on draws, so none changes.
-// - `if cfg!(debug_assertions)` (Omniscient only in debug builds) becomes: the Omniscient block
-//   runs when SetOmniscient is accepted (the DebugOnly error skips it).
+// - `if cfg!(debug_assertions)` (Omniscient only in debug builds): the test runs a debug Sim
+//   (D961), so the Omniscient block always runs, as under Rust's debug test builds.
 // - The println of Andes Cobre's rating is dropped.
 import { describe, expect, it } from "vitest";
 import { corporateSpread } from "../../src/finance/rating.ts";
@@ -43,7 +43,7 @@ const q = (year: number, quarter: number): Period => ({
 
 describe("m4 views", () => {
   it("statements_are_published_at_the_release", () => {
-    const sim = unwrap(simNew(data(), 1), "Sim::new");
+    const sim = unwrap(simNew(data(), 1, { debug: true }), "Sim::new");
     const a = company(simWorld(sim), "CO-0001");
     // At load Q1 to Q3 2019 are history; Q4 2019 waits for the 2 January 2020 release (4.4).
     const quarters = (): Period[] =>
@@ -75,12 +75,11 @@ describe("m4 views", () => {
     // Monthly ledgers are not published; Omniscient (debug builds) shows the open quarter's.
     expect(statementsViewMonths(simViews(sim).statements.data, a, 3)).toEqual([]);
     runTo(sim, simDateYmd(2020, 6, 1));
-    if (simApply(sim, { kind: "SetOmniscient", on: true }).ok) {
-      // The view follows the toggle at once (D423).
-      const months = [...statementsViewMonths(simViews(sim).statements.data, a, 3)];
-      expect(months.length, "April and May").toBe(2);
-      expect(months[0]?.month.month).toBe(4);
-    }
+    unwrap(simApply(sim, { kind: "SetOmniscient", on: true }), "SetOmniscient");
+    // The view follows the toggle at once (D423).
+    const months = [...statementsViewMonths(simViews(sim).statements.data, a, 3)];
+    expect(months.length, "April and May").toBe(2);
+    expect(months[0]?.month.month).toBe(4);
   }, 120_000);
 
   it("ratings_and_company_detail_show_the_books", () => {

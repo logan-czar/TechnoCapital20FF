@@ -124,5 +124,5 @@ describe("long run", () => {
     // 2020 to 2029: 3 leap years.
     expect(ticks).toBe((365 * 10 + 3) * 24);
     expect([months, releases, locks, recaps]).toEqual([120, 40, 40, 40]);
-  }, 180_000); // Ten years with the ported views built on their cadence (Step 3).
+  });
 });
