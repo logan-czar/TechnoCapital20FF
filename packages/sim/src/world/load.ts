@@ -14,6 +14,22 @@
 
 import type { Company as CompanyRow, Industry as IndustryRow, WorldData } from "@tc20ff/sim-data";
 import { worldDataAllProvinces } from "@tc20ff/sim-data";
+import { archetypeAtLoad, rdPlanAtLoad, STATE_CONTROL_BASIS } from "../ai/archetype.ts";
+import { boomDate, POP_BASE_YEAR } from "../economy/ai_boom.ts";
+import { START_PHASE, zAvg } from "../economy/cycle.ts";
+import {
+  enterpriseShare,
+  fixedCostRateAtLoad,
+  sharedCostsAtLoadHook,
+  startLoadout,
+} from "../economy/start.ts";
+import { fringeAssetsAtLoad } from "../economy/supply.ts";
+import { ratingParse } from "../finance/rating.ts";
+import { companyFinanceAtLoad } from "../finance/state.ts";
+import { computeBill } from "../ops/compute.ts";
+import { conversionCapacity, dataBookAtLoad, dataBookFreeRdFraction, dataBookStoredTb } from "../ops/data.ts";
+import { fitStations, laborUnits } from "../ops/labor.ts";
+import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
 import { DATETIME_START, type SimDate } from "../types/calendar.ts";
 import { tableFromRows } from "../types/collections.ts";
 import type {
@@ -154,31 +170,31 @@ function unported(item: string): never {
 
 /** The default `LoadDeps` until Step 2 ports the modules: every member throws when called. */
 export const UNPORTED_LOAD_DEPS: LoadDeps = {
-  STATE_CONTROL_BASIS: "state", // ai/archetype.rs
-  archetypeAtLoad: () => unported("ai/archetype Archetype::at_load"),
-  rdPlanAtLoad: () => unported("ai/archetype rd_plan_at_load"),
+  STATE_CONTROL_BASIS, // ai/archetype.rs
+  archetypeAtLoad, // ai/archetype.rs Archetype::at_load
+  rdPlanAtLoad, // ai/archetype.rs
   birthsStateFromData: () => unported("births/state BirthsState::from_data"),
-  POP_BASE_YEAR: 2040, // economy/ai_boom.rs
-  boomDate: () => ({ year: 2030, month: 1, day: 1 }), // economy/ai_boom.rs BOOM_YEAR
-  START_PHASE: "Expansion", // economy/cycle.rs
-  zAvg: () => unported("economy/cycle z_avg"),
-  START_PRODUCTIVITY: 100.0, // ops/stations.rs
-  enterpriseShare: () => unported("economy/start enterprise_share"),
-  fixedCostRateAtLoad: () => unported("economy/start fixed_cost_rate_at_load"),
-  sharedCostsAtLoadHook: () => unported("economy/start shared_costs_at_load_hook"),
-  startLoadout: () => unported("economy/start start_loadout"),
-  fringeAssetsAtLoad: () => unported("economy/supply fringe_assets_at_load"),
-  ratingParse: () => unported("finance/rating Rating::parse"),
-  companyFinanceAtLoad: () => unported("finance/state CompanyFinance::at_load"),
+  POP_BASE_YEAR, // economy/ai_boom.rs
+  boomDate, // economy/ai_boom.rs
+  START_PHASE, // economy/cycle.rs
+  zAvg, // economy/cycle.rs z_avg
+  START_PRODUCTIVITY, // ops/stations.rs
+  enterpriseShare, // economy/start.rs
+  fixedCostRateAtLoad, // economy/start.rs
+  sharedCostsAtLoadHook, // economy/start.rs
+  startLoadout, // economy/start.rs
+  fringeAssetsAtLoad, // economy/supply.rs
+  ratingParse, // finance/rating.rs Rating::parse
+  companyFinanceAtLoad, // finance/state.rs CompanyFinance::at_load
   stockAtLoad: () => unported("market/state Stock::at_load"),
-  computeBill: () => unported("ops/compute compute_bill"),
-  dataBookAtLoad: () => unported("ops/data DataBook::at_load"),
-  dataBookStoredTb: () => unported("ops/data DataBook::stored_tb"),
-  dataBookFreeRdFraction: () => unported("ops/data DataBook::free_rd_fraction"),
-  conversionCapacity: () => unported("ops/data conversion_capacity"),
-  fitStations: () => unported("ops/labor fit_stations"),
-  laborUnits: () => unported("ops/labor labor_units"),
-  productiveCompute: () => unported("ops/stations productive_compute"),
+  computeBill, // ops/compute.rs
+  dataBookAtLoad, // ops/data.rs DataBook::at_load
+  dataBookStoredTb, // ops/data.rs DataBook::stored_tb
+  dataBookFreeRdFraction, // ops/data.rs DataBook::free_rd_fraction
+  conversionCapacity, // ops/data.rs
+  fitStations, // ops/labor.rs
+  laborUnits, // ops/labor.rs
+  productiveCompute, // ops/stations.rs
   nameBooksBuild: () => unported("people/names NameBooks::build"),
   traitFromName: () => unported("people/traits Trait::from_name"),
   newsWireDefault,

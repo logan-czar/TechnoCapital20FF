@@ -9,11 +9,11 @@
 // One file per view (`sim_views!` list order below); `ClockView` is in ./clock.ts and re-exported.
 // Types from other sim modules that views carry are in ./shared.ts.
 //
-// Not ported (logic): Cadence::is_periodic and ::is_due, ViewInput (the build input: World,
-// Controls, seed and MapData references, never data), the ViewData trait (its consts are
-// `VIEW_SPECS` below), View's build and refresh methods, Jobs and VIEW_WORKERS (D801: Rust
-// worker threads), and SimViews' build, rebuild, same_data, copy_changed_from,
-// refresh_after_tick, refresh_after_control, clock, get_map_layer and map_layer_versions (D700).
+// The logic (Cadence::is_periodic and ::is_due, ViewInput, the builders, View's build and refresh
+// methods and SimViews' build, rebuild, same_data, copy_changed_from, refresh_after_tick,
+// refresh_after_control, clock and map_layer_versions) is in src/views/index.ts; the ViewData
+// trait's consts are `VIEW_SPECS` below. Not ported: Jobs and VIEW_WORKERS (D801: Rust worker
+// threads) and get_map_layer (D700, with the map layers view in Step 3).
 
 import type { BirthsView } from "./births.ts";
 import type { CapTableView } from "./cap_table.ts";

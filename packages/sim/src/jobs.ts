@@ -34,6 +34,8 @@
 // swaps in (keep the line where it is: its position is its order). Once a module is ported, its
 // lines may move into that module's own `register(s)` called from here, in the same place.
 
+import { register as economyRegister } from "./economy/index.ts";
+import * as finance from "./finance/jobs.ts";
 import * as timeAlerts from "./time/alerts.ts";
 import { type JobFn, type Scheduler, schedulerNew, schedulerRegister } from "./time/scheduler.ts";
 
@@ -59,19 +61,7 @@ export function registerJobs(s: Scheduler): void {
   timeAlerts.register(s);
 
   // economy::register (crates/sim/src/economy/mod.rs)
-  // 4.3 step 1, on 1 Jan, Apr, Jul and Oct only, in its order.
-  r(s, "MonthlyAiEvents", "economy.ai_events", notPorted("economy::ai_boom::ai_events_job")); // economy/ai_boom aiEventsJob
-  r(s, "MonthlyIndustryLt", "economy.industry_lt", notPorted("economy::ai_boom::industry_lt_job")); // economy/ai_boom industryLtJob
-  r(s, "MonthlyCycle", "economy.cycle", notPorted("economy::cycle::cycle_job")); // economy/cycle cycleJob
-  r(s, "MonthlyZoneSpreads", "economy.zone_spreads", notPorted("economy::zones::zone_spreads_job")); // economy/zones zoneSpreadsJob
-  r(s, "MonthlyGrowthDraws", "economy.growth_draws", notPorted("economy::growth::growth_draws_job")); // economy/growth growthDrawsJob
-  // 4.3 steps 2, 3, 6, 7, 9 and 11.
-  r(s, "MonthlyDemand", "economy.demand", notPorted("economy::demand::demand_job")); // economy/demand demandJob
-  r(s, "MonthlyFringe", "economy.fringe", notPorted("economy::supply::fringe_job")); // economy/supply fringeJob
-  r(s, "MonthlySupply", "economy.supply", notPorted("economy::supply::supply_job")); // economy/supply supplyJob
-  r(s, "MonthlyRevenue", "economy.revenue", notPorted("economy::revenue::revenue_job")); // economy/revenue revenueJob
-  r(s, "MonthlyExpenses", "economy.expenses", notPorted("economy::revenue::expenses_job")); // economy/revenue expensesJob
-  r(s, "MonthlyAssets", "economy.assets", notPorted("economy::assets::assets_job")); // economy/assets assetsJob
+  economyRegister(s);
 
   // ops::register (crates/sim/src/ops/mod.rs)
   r(s, "MonthlyLaborSeats", "ops.labor_seats", notPorted("ops::jobs::labor_seats_job")); // ops/jobs laborSeatsJob
@@ -83,22 +73,17 @@ export function registerJobs(s: Scheduler): void {
   r(s, "MonthlyAssets", "people.new_seats", notPorted("people::seating::new_seats_job")); // people/seating newSeatsJob
 
   // finance::register (crates/sim/src/finance/jobs.rs)
-  r(s, "MonthlyExpenses", "finance.open_month", notPorted("finance::jobs::open_month_job")); // finance/jobs openMonthJob
-  r(s, "MonthlyAssets", "finance.post_assets", notPorted("finance::jobs::post_assets_job")); // finance/jobs postAssetsJob
-  r(s, "MonthlyInterest", "finance.interest", notPorted("finance::jobs::interest_job")); // finance/jobs interestJob
-  r(s, "MonthlyCashSettle", "finance.settle", notPorted("finance::jobs::settle_job")); // finance/jobs settleJob
-  r(s, "MonthlyLedger", "finance.ledger", notPorted("finance::jobs::ledger_job")); // finance/jobs ledgerJob
+  r(s, "MonthlyExpenses", "finance.open_month", finance.openMonthJob); // finance/jobs openMonthJob
+  r(s, "MonthlyAssets", "finance.post_assets", finance.postAssetsJob); // finance/jobs postAssetsJob
+  r(s, "MonthlyInterest", "finance.interest", finance.interestJob); // finance/jobs interestJob
+  r(s, "MonthlyCashSettle", "finance.settle", finance.settleJob); // finance/jobs settleJob
+  r(s, "MonthlyLedger", "finance.ledger", finance.ledgerJob); // finance/jobs ledgerJob
   // D122: the close pays the tax and then compiles, both here; the CloseTax slot stays empty.
-  r(s, "CloseStatements", "finance.close", notPorted("finance::jobs::close_job")); // finance/jobs closeJob
-  r(s, "ReleasePublish", "finance.removals", notPorted("finance::jobs::removals_job")); // finance/jobs removalsJob
-  r(s, "PriceMoveRatingReview", "finance.rating_review", notPorted("finance::jobs::rating_review_job")); // finance/jobs ratingReviewJob
-  r(s, "PriceMoveCreditLineReview", "finance.line_review", notPorted("finance::jobs::line_review_job")); // finance/jobs lineReviewJob
-  r(
-    s,
-    "YearlyAnnualStatements",
-    "finance.annual_statements",
-    notPorted("finance::jobs::annual_statements_job"),
-  ); // finance/jobs annualStatementsJob
+  r(s, "CloseStatements", "finance.close", finance.closeJob); // finance/jobs closeJob
+  r(s, "ReleasePublish", "finance.removals", finance.removalsJob); // finance/jobs removalsJob
+  r(s, "PriceMoveRatingReview", "finance.rating_review", finance.ratingReviewJob); // finance/jobs ratingReviewJob
+  r(s, "PriceMoveCreditLineReview", "finance.line_review", finance.lineReviewJob); // finance/jobs lineReviewJob
+  r(s, "YearlyAnnualStatements", "finance.annual_statements", finance.annualStatementsJob); // finance/jobs annualStatementsJob
 
   // market::register (crates/sim/src/market/jobs.rs)
   r(s, "SharePrices", "market.prices", notPorted("market::jobs::prices_job")); // market/jobs pricesJob

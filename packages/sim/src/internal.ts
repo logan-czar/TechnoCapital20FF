@@ -4,6 +4,9 @@
 export * from "./index.ts";
 // The clock and scheduler (time/) and every module's jobs in their slots (jobs.ts).
 export * from "./jobs.ts";
+// The whole Sim (lib.ts) with its test and soak hooks, the soak totals and the views framework.
+export * from "./lib.ts";
+export * from "./soak.ts";
 export * from "./time/index.ts";
 export * from "./types/calendar.ts";
 export * from "./types/collections.ts";
@@ -25,3 +28,4 @@ export * from "./types/state/recap.ts";
 // (as ./types/views/index.ts does) and the rating band stays `RatingBand`.
 export type { Band } from "./types/views/estimate.ts";
 export * from "./types/world.ts";
+export * from "./views/index.ts";

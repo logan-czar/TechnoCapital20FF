@@ -12,7 +12,7 @@ import {
   slotIndex,
 } from "../../src/time/scheduler.ts";
 import type { Notice } from "../../src/types/notice.ts";
-import { ClockHarness } from "./harness.ts";
+import { minimalSim } from "../test_sim.ts";
 
 describe("scheduler", () => {
   it("slots are in spec group order", () => {
@@ -36,12 +36,12 @@ describe("scheduler", () => {
 });
 
 // Not in the Rust file: the notice order of one tick (spec 9.3, D6, D10), through the clock part
-// of `Sim::step` (harness.ts).
+// of `Sim::step` (lib.ts), on a minimal world (test_sim.ts).
 describe("tick notices", () => {
   const q4_2019 = { year: 2019, q: 4 };
 
   it("the release tick posts its alert, the day and the release, then pauses", () => {
-    const sim = new ClockHarness();
+    const sim = minimalSim(1);
     sim.apply({ kind: "Resume" });
     for (let h = 1; h < 24; h++) expect(sim.step()).toEqual([{ kind: "TickDone", time: h }]);
     expect(sim.step()).toEqual([
@@ -56,14 +56,14 @@ describe("tick notices", () => {
       { kind: "Paused", reason: { kind: "Alert", alert_kind: "EarningsDay" } },
       { kind: "TickDone", time: 24 },
     ]);
-    expect(sim.controls.paused).toBe(true);
+    expect(sim.controls().paused).toBe(true);
   });
 
   it("a SkipTo posts alerts without pausing, then pauses on its target", () => {
-    const sim = new ClockHarness();
+    const sim = minimalSim(1);
     sim.apply({ kind: "SkipTo", skip: "NextLock" });
     const lock = dateTimeMidnight(simDateYmd(2020, 1, 9));
-    expect(sim.controls.skip?.target).toBe(lock);
+    expect(sim.controls().skip?.target).toBe(lock);
     const paused: Notice[][] = [];
     while (sim.now() < lock) {
       const n = sim.step();
@@ -83,17 +83,17 @@ describe("tick notices", () => {
         { kind: "TickDone", time: lock },
       ],
     ]);
-    expect(sim.controls.skip).toBeNull();
+    expect(sim.controls().skip).toBeNull();
   });
 
   it("the month and quarter start posts its alert before the month's close", () => {
-    const sim = new ClockHarness();
+    const sim = minimalSim(1);
     sim.apply({ kind: "Resume" });
     const apr1 = dateTimeMidnight(simDateYmd(2020, 4, 1));
     let last: Notice[] = [];
     while (sim.now() < apr1) {
       last = sim.step();
-      if (sim.controls.paused) sim.apply({ kind: "Resume" });
+      if (sim.controls().paused) sim.apply({ kind: "Resume" });
     }
     expect(last).toEqual([
       {

@@ -3,6 +3,9 @@
 // value exports are UI-safe constants and helpers (alert tables, speeds, calendar ordering, view
 // enums and names).
 
+// The Sim (lib.ts): built with `simNew`, driven through its SimApi methods. Test and soak hooks
+// (`simWorld`, `simRegisterTestJob`, `simSoakStats` ...) are in internal.ts only.
+export { Sim, type SimOptions, simErrorMessage, simNew } from "./lib.ts";
 // UI-safe clock helpers (time/): the date formats, the runner's speed, and the SkipTo target.
 export {
   formatDateTime,
@@ -21,3 +24,6 @@ export { cmpStr } from "./types/num.ts";
 export * from "./types/protocol.ts";
 export type * from "./types/sim-api.ts";
 export * from "./types/views/index.ts";
+// What the worker posts: view copies and patches by version (views/).
+export { simViewsCopyChangedFrom, simViewsMapLayerVersions } from "./views/index.ts";
+export { type PostedViews, postedViewsNone, postedViewsResetNews, viewsPatchSince } from "./views/patch.ts";
