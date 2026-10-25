@@ -3,13 +3,13 @@
 // news, -100, +100). Build-plan M5.7: it decays to 0 with no news. Pure formulas, no RNG.
 //
 // Expects:
-//   ../../src/market/confidence.ts   type ConfidenceHeadline = { kind: "BigBeat" } | { kind:
+//   ../src/market/confidence.ts   type ConfidenceHeadline = { kind: "BigBeat" } | { kind:
 //                                    "Beat" } | { kind: "Miss" } | { kind: "BigMiss" } | { kind:
 //                                    "Bankruptcy" } | { kind: "RatingChange"; notches: number },
 //                                    confidenceHeadlinePoints(h) [ConfidenceHeadline::points],
 //                                    newsPoints(headlines), updateConfidence(c, r, news)
-//   ../../src/market/fair_value.ts   exchangeFactor(confidence | null)
-//   ../../src/market/exchange_index.ts        exchangeIndexAtLoad(start) [ExchangeIndex::at_load],
+//   ../src/market/fair_value.ts   exchangeFactor(confidence | null)
+//   ../src/market/exchange_index.ts        exchangeIndexAtLoad(start) [ExchangeIndex::at_load],
 //                                    exchangeIndexCloseDay(index, r_input) -> number
 //                                    [ExchangeIndex::close_day]
 import { describe, expect, it } from "vitest";

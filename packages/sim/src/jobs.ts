@@ -29,12 +29,12 @@
 //   included).
 // - LockConsensus (4.4 plan lock): `market` (the projection and consensus, 5.16).
 //
-// Step 1 of the TS port: only `time` is ported. Every other job is a `notPorted` placeholder
-// under its Rust slot and name; the comment on each line names the Rust function a Step 2 builder
-// swaps in (keep the line where it is: its position is its order). Once a module is ported, its
-// lines may move into that module's own `register(s)` called from here, in the same place.
+// Every job is ported: each line registers the TS port of the Rust job under its Rust slot and
+// name, and the comment on it names the TS function (keep each line where it is: its position is
+// its order).
 
 import * as ai from "./ai/jobs.ts";
+import * as births from "./births/jobs.ts";
 import { register as economyRegister } from "./economy/index.ts";
 import * as finance from "./finance/jobs.ts";
 import * as market from "./market/jobs.ts";
@@ -43,17 +43,7 @@ import { register as opsRegister } from "./ops/index.ts";
 import { newSeatsJob } from "./people/seating.ts";
 import * as recap from "./recap/jobs.ts";
 import * as timeAlerts from "./time/alerts.ts";
-import { type JobFn, type Scheduler, schedulerNew, schedulerRegister } from "./time/scheduler.ts";
-
-/**
- * A placeholder for a job not ported yet: a no-op that records nothing. `rustPath` names the Rust
- * function it stands for.
- */
-function notPorted(rustPath: string): JobFn {
-  const job: JobFn = () => {};
-  Object.defineProperty(job, "name", { value: `notPorted(${rustPath})` });
-  return job;
-}
+import { type Scheduler, schedulerNew, schedulerRegister } from "./time/scheduler.ts";
 
 /**
  * Registers every module's jobs in their slots (spec 4), in Rust's `register_jobs` order: time,
@@ -103,13 +93,13 @@ export function registerJobs(s: Scheduler): void {
   r(s, "YearlyArchive", "market.archive_bars", market.archiveBarsJob); // market/jobs archiveBarsJob
 
   // births::jobs::register (crates/sim/src/births/jobs.rs)
-  r(s, "LockFixedStartupEvents", "births.fixed_events", notPorted("births::jobs::fixed_events_job")); // births/jobs fixedEventsJob
-  r(s, "LockRandomStartupEvents", "births.random_events", notPorted("births::jobs::random_events_job")); // births/jobs randomEventsJob
-  r(s, "LockIpoVotes", "births.ipo_votes_and_listings", notPorted("births::jobs::ipo_job")); // births/jobs ipoJob
+  r(s, "LockFixedStartupEvents", "births.fixed_events", births.fixedEventsJob); // births/jobs fixedEventsJob
+  r(s, "LockRandomStartupEvents", "births.random_events", births.randomEventsJob); // births/jobs randomEventsJob
+  r(s, "LockIpoVotes", "births.ipo_votes_and_listings", births.ipoJob); // births/jobs ipoJob
 
   // ai::jobs::register (crates/sim/src/ai/jobs.rs)
   r(s, "CloseStatements", "ai.loss_quarters", ai.lossQuartersJob); // ai/jobs lossQuartersJob
-  r(s, "LockAiPlans", "ai.plan_lock", notPorted("ai::jobs::plan_lock_job")); // ai/jobs planLockJob
+  r(s, "LockAiPlans", "ai.plan_lock", ai.planLockJob); // ai/jobs planLockJob
 
   // news::jobs::register (crates/sim/src/news/jobs.rs)
   r(s, "MonthlyAiEvents", "news.chatbot", news.chatbotNewsJob); // news/jobs chatbotNewsJob

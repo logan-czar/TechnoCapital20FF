@@ -4,16 +4,16 @@
 // index does not jump when a company lists or leaves).
 //
 // Expects (Rust methods are free functions named type + method, camelCased):
-//   ../../src/market/daily.ts   barBuilderStart(date, price) -> BarBuilder, barBuilderTick(b, p),
+//   ../src/market/daily.ts   barBuilderStart(date, price) -> BarBuilder, barBuilderTick(b, p),
 //                               barBuilderClose(b, efv) -> DailyBar | null, dailyBarEfvLow(bar),
 //                               dailyBarEfvHigh(bar)
-//   ../../src/market/exchange_index.ts  INDEX_BASE, marketCap(price, shares), exchangeIndexAtLoad(cap) ->
+//   ../src/market/exchange_index.ts  INDEX_BASE, marketCap(price, shares), exchangeIndexAtLoad(cap) ->
 //                               ExchangeIndex, exchangeIndexLevel(idx, cap) -> number | null,
 //                               exchangeIndexReweight(idx, before, after),
 //                               exchangeIndexCloseDay(idx, cap) -> number.
 //                               NAME TO CONFIRM: Rust market/index.rs collides with mod.rs, which
-//                               becomes market/index.ts; this file assumes index_.ts.
-//   ../../src/market/price.ts   MIN_PRICE_USD, SECTOR_BETA, SECTOR_VOLATILITY, type StockTick,
+//                               becomes market/index.ts; this file assumes exchange_index.ts.
+//   ../src/market/price.ts   MIN_PRICE_USD, SECTOR_BETA, SECTOR_VOLATILITY, type StockTick,
 //                               fatTailedNormal(draws), pricesMove(t), reactionVolatilityMult(t),
 //                               rho, sigmaHourly, stepPrice, stepPrices(t, stocks, draws) ->
 //                               number[], targetValue(v, buzz)
