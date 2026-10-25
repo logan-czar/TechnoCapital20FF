@@ -22,16 +22,16 @@ import {
   managementScore,
   memberSkill,
   mgmtFactor,
-} from "../../src/people/management.ts";
-import { nameBookForCountry } from "../../src/people/names.ts";
-import { generateSimple } from "../../src/people/simple.ts";
+} from "../src/people/management.ts";
+import { nameBookForCountry } from "../src/people/names.ts";
+import { generateSimple } from "../src/people/simple.ts";
 import {
   type CompanySize,
   SEAT_LABOR,
   type Seat,
   type Skills,
   type Trait,
-} from "../../src/types/state/people.ts";
+} from "../src/types/state/people.ts";
 import { data } from "./common/index.ts";
 import { newRng } from "./common/rng.ts";
 

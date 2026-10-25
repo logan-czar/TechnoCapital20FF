@@ -12,8 +12,8 @@ import {
   rngStreamsNew,
   type ScriptedDraws,
   scriptedDraws,
-} from "../../../src/rng.ts";
-import type { DrawSource, Stream } from "../../../src/types/draws.ts";
+} from "../../src/rng.ts";
+import type { DrawSource, Stream } from "../../src/types/draws.ts";
 
 /** RngStreams::new(seed) as plain state (for tests that save, clone or compare it). */
 export function newRngStreams(seed: number): RngStreams {

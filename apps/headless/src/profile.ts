@@ -6,9 +6,11 @@
 // starts and finishes and never reads a clock itself (build-plan 4.3). The observer sees no
 // state, so a profiled run makes the same world, draws and hashes as an unprofiled one.
 //
-// CONTRACT: Rust's `TickObserver`/`TickPart`/`Slot` live in the sim's time/ module and are not in
-// SimApi; they are declared here (slots by name) until `stepObserved` is exposed (see ObservedSim
-// in factory.ts).
+// `TickObserver` and `TickPart` are the sim's (time/scheduler.ts); the default factory serves
+// `simStepObserved` as `stepObserved` (ObservedSim, factory.ts).
+
+// Rust `TickPart` and `TickObserver`: the sim's (time/scheduler.ts).
+import type { TickObserver, TickPart } from "@tc20ff/sim/internal";
 import {
   cmpStr,
   type DateTime,
@@ -22,18 +24,7 @@ import {
   tickFactsNew,
 } from "@tc20ff/sim/internal";
 
-/** Rust `TickPart`. A slot is named by its Slot name (e.g. "Monthly 1"). */
-export type TickPart =
-  | { kind: "Slot"; slot: string }
-  | { kind: "Job"; slot: string; name: string }
-  | { kind: "Views" }
-  | { kind: "View"; name: string };
-
-/** Rust `TickObserver`: told when each part of a tick starts and finishes. */
-export interface TickObserver {
-  started(part: TickPart): void;
-  finished(part: TickPart): void;
-}
+export type { TickObserver, TickPart };
 
 /** Jobs listed under the slot table. */
 const TOP_JOBS = 15;

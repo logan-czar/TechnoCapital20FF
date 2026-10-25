@@ -12,7 +12,7 @@ import { MAP_FILES, MAP_PNG_FILES, type MapAssets, mapFixtureFiles, parseMap, ty
 import { parseWorld, WORLD_FILES, type WorldData } from "./world.ts";
 
 /** The repository root, found from this file location (packages/sim-data/src). */
-function repoRoot(): string {
+export function repoRoot(): string {
   return join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 }
 

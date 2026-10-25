@@ -38,8 +38,12 @@ for (const [year, yr] of [...byYear.entries()].sort((a, b) => Number(a[0]) - Num
   const out: Record<string, [number, number, number]> = {};
   header.forEach((name, i) => {
     if (NOT_METRICS.has(name)) return;
-    const vals = yr.map((r) => Number(r[i])).filter((v) => Number.isFinite(v));
-    if (vals.length !== yr.length) return;
+    // An empty cell is a missing value, not 0 (`Number("")` is 0): the quantiles are over the
+    // values present, and a metric with fewer than half its rows present, or any non-number, is
+    // left out (as parity.ts `yearlyMedians` reads a TS soak).
+    const cells = yr.map((r) => r[i] ?? "").filter((c) => c !== "");
+    const vals = cells.map(Number);
+    if (!vals.every((v) => Number.isFinite(v)) || vals.length === 0 || vals.length * 2 < yr.length) return;
     vals.sort((a, b) => a - b);
     out[name] = [quantile(vals, 0.1), quantile(vals, 0.5), quantile(vals, 0.9)];
   });

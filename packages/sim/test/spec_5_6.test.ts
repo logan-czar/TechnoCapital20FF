@@ -17,7 +17,7 @@ import {
   productivityInputsWithStations,
   researchMult,
   stepProductivity,
-} from "../../src/ops/productivity.ts";
+} from "../src/ops/productivity.ts";
 import { stationsOf } from "./common/defaults.ts";
 
 const RD_NORM = 0.05;

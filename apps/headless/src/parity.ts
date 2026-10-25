@@ -2,9 +2,14 @@
 // Rust reference in test/fixtures/rust-reference/. The gate:
 //
 // - every spec 10 target `summary.csv` marks MET in the Rust reference is MET in the TS soak;
+// - the TS soak has at least as many distinct seeds as the Rust reference (`bands.seeds`, 50) and
+//   a row for every band year for every seed: a smaller sample's medians stray outside the Rust
+//   p10..p90 bands by chance (25 seeds gave false failures, 50 none), so it fails as
+//   "insufficient seeds/years" before any metric is compared;
 // - each yearly metric's TS median (across seeds, from `years.csv`) lies inside the Rust
 //   p10..p90 band of `bands.json`; where the band has no width (a metric every seed shares, such
-//   as `ticks`) the TS median must equal it.
+//   as `ticks`) the TS median must equal it. An empty cell is a missing value: the median is over
+//   the values present, and a metric with fewer than half its rows present counts as missing.
 //
 // State hashes do not carry over (D953) and are not compared. The report also gives the largest
 // `shares_out` the TS soak saw (D951: share counts are plain numbers and must stay safe
@@ -12,7 +17,9 @@
 // metrics.ts) or, failing that, a `shares_out_max` column of `years.csv`.
 
 import { existsSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
+import { repoRoot } from "@tc20ff/sim-data/node";
+import { userPath } from "./args.ts";
 
 /** `bands.json`: per year and metric, [p10, p50, p90] across the Rust seeds. */
 export interface Bands {
@@ -24,7 +31,7 @@ export interface Bands {
 
 /** One way the TS soak differs from the Rust reference. */
 export interface ParityFailure {
-  kind: "target" | "metric" | "missing";
+  kind: "target" | "metric" | "missing" | "insufficient";
   /** The target id or the years.csv column. */
   metric: string;
   /** The year of a metric failure. */
@@ -90,8 +97,10 @@ export function summaryVerdicts(text: string): Map<string, string> {
 }
 
 /**
- * The yearly medians of a TS `years.csv`: year -> metric -> median across seeds. Columns that are
- * not numbers in every row (hash, phase, ratings) are skipped.
+ * The yearly medians of a TS `years.csv`: year -> metric -> median across seeds. An empty cell is
+ * a missing value (not 0): the median is over the values present, and a column with fewer than
+ * half its rows present that year is left out (reported missing). Columns with a non-number in
+ * any cell (hash, phase, ratings) are skipped.
  */
 export function yearlyMedians(yearsCsv: string): Map<number, Map<string, number>> {
   const { header, rows } = parseCsv(yearsCsv);
@@ -108,14 +117,41 @@ export function yearlyMedians(yearsCsv: string): Map<number, Map<string, number>
   for (const [y, yr] of byYear) {
     const m = new Map<string, number>();
     header.forEach((name, i) => {
-      const vals = yr.map((r) => Number(r[i]));
-      if (vals.every((x) => Number.isFinite(x)) && yr.every((r) => (r[i] ?? "") !== "")) {
-        m.set(name, median(vals));
-      }
+      const cells = yr.map((r) => r[i] ?? "").filter((c) => c !== "");
+      const vals = cells.map(Number);
+      if (!vals.every((x) => Number.isFinite(x))) return;
+      if (vals.length * 2 < yr.length || vals.length === 0) return;
+      m.set(name, median(vals));
     });
     out.set(y, m);
   }
   return out;
+}
+
+/**
+ * Why the TS soak is too small to compare (fewer distinct seeds than the reference, or a seed with
+ * no row for a band year), or null when it covers the reference.
+ */
+export function coverageShortfall(yearsCsv: string, bands: Bands): string | null {
+  const { header, rows } = parseCsv(yearsCsv);
+  const si = header.indexOf("seed");
+  const yi = header.indexOf("year");
+  if (si < 0 || yi < 0) return "years.csv needs `seed` and `year` columns";
+  const yearsBySeed = new Map<string, Set<string>>();
+  for (const r of rows) {
+    const seed = r[si] ?? "";
+    const set = yearsBySeed.get(seed) ?? new Set<string>();
+    set.add(String(Number(r[yi])));
+    yearsBySeed.set(seed, set);
+  }
+  const need = bands.seeds ?? 1;
+  if (yearsBySeed.size < need) return `${yearsBySeed.size} distinct seeds, the reference has ${need}`;
+  const bandYears = Object.keys(bands.years).sort((a, b) => Number(a) - Number(b));
+  for (const [seed, years] of [...yearsBySeed].sort((a, b) => Number(a[0]) - Number(b[0]))) {
+    const lacking = bandYears.filter((y) => !years.has(y));
+    if (lacking.length > 0) return `seed ${seed} has no row for ${lacking.join(", ")}`;
+  }
+  return null;
 }
 
 /** The largest value of a `max_shares_out` column in `shares_out.csv`, or of `shares_out_max` in years.csv. */
@@ -160,6 +196,24 @@ export function parityCheck(input: {
         message: `target ${id}: Rust MET, TS ${got ?? "missing"}`,
       });
     }
+  }
+  const short = coverageShortfall(input.tsYears, input.bands);
+  if (short !== null) {
+    failures.push({
+      kind: "insufficient",
+      metric: "years.csv",
+      year: null,
+      value: null,
+      band: null,
+      message: `insufficient seeds/years: ${short}`,
+    });
+    return {
+      ok: false,
+      failures,
+      targets_checked: targetsChecked,
+      metrics_checked: 0,
+      max_shares_out: maxSharesOut(input.tsShares ?? null, input.tsYears),
+    };
   }
   const medians = yearlyMedians(input.tsYears);
   let metricsChecked = 0;
@@ -227,17 +281,17 @@ export function formatParity(r: ParityReport): string[] {
 export const RUST_REFERENCE_DIR = "test/fixtures/rust-reference";
 
 /** `headless parity <dir> [--reference DIR]`: reads the files, prints the report. Returns the exit code. */
-export function parityCommand(args: string[], repoRoot = process.cwd()): number {
+export function parityCommand(args: string[], root = repoRoot()): number {
   let dir: string | null = null;
-  let ref = join(repoRoot, RUST_REFERENCE_DIR);
+  let ref = join(root, RUST_REFERENCE_DIR);
   for (let i = 0; i < args.length; i++) {
     const a = args[i] as string;
     if (a === "--reference") {
       const d = args[++i];
       if (d === undefined) return usageError();
-      ref = resolve(d);
+      ref = userPath(d);
     } else if (dir === null && !a.startsWith("--")) {
-      dir = a;
+      dir = userPath(a);
     } else {
       return usageError();
     }
