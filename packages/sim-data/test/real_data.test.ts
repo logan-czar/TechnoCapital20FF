@@ -2,17 +2,17 @@
 // expected counts and passes every check (build-plan M0.2, M0.4).
 //
 // Expects:
-//   "@tc20ff/sim-data": check, EXPECTED_COUNTS (array of [name, count] pairs), worldCounts
+//   "@tc20ff/sim-data": check, EXPECTED_COUNTS (array of [name, count] pairs), worldDataCounts
 //   (WorldData::counts, returns [name, count][]), type WorldData.
 //   "@tc20ff/sim-data/node": loadWorld, defaultDataDir (via ./helpers.ts)
 // EventTrigger::AfterBust is the string "AfterBust" (unit enums are string unions, D952).
-import { check, EXPECTED_COUNTS, worldCounts } from "@tc20ff/sim-data";
+import { check, EXPECTED_COUNTS, worldDataCounts } from "@tc20ff/sim-data";
 import { describe, expect, it } from "vitest";
 import { errText, worldOnce } from "./helpers.ts";
 
 describe("real data", () => {
   it("loads_with_expected_counts", () => {
-    const counts = worldCounts(worldOnce());
+    const counts = worldDataCounts(worldOnce());
     for (const [name, expected] of EXPECTED_COUNTS) {
       const hit = counts.find(([k]) => k === name);
       expect(hit, name).toBeDefined();

@@ -6,7 +6,7 @@
 //   "@tc20ff/sim-data": parseMap(files: Record<string, string>) ->
 //       Result<MapAssets | null, DataError>   (Rust load_map; null means no map: there is no
 //       map-meta.toml in the files; province-adjacency.csv is optional)
-//     mapIndexOf(map, id) -> number | null     (MapAssets::index_of)
+//     mapAssetsIndexOf(map, id) -> number | null     (MapAssets::index_of)
 //     check
 //     MapAssets { meta: {width,height,projection,tiny_px: number | null,coverage,sources:
 //       [string,string][]}, colors, centroids, adjacency } with Table-shaped members { rows, lines }
@@ -17,7 +17,7 @@
 // the not-a-PNG error, wrong-size province-index and province-borders) and the 4095-province bitmap
 // limit (MAX_MAP_PROVINCES) are dropped from this file; the label-point-outside-bitmap check
 // stays. If the TS map module keeps a bitmap size or province limit, port those cases back.
-import { check, mapIndexOf, parseMap } from "@tc20ff/sim-data";
+import { check, mapAssetsIndexOf, parseMap } from "@tc20ff/sim-data";
 import { describe, expect, it } from "vitest";
 import { world } from "./helpers.ts";
 import { mapFixtureFiles } from "./map-fixture.ts";
@@ -62,9 +62,9 @@ describe("map assets", () => {
     expect(m.meta.coverage).toEqual(["provinces-north-america.csv"]);
     expect(m.meta.sources).toEqual([["fixture", "1"]]);
     expect(m.colors.rows.length).toBe(4);
-    expect(mapIndexOf(m, "US-0001")).toBe(1);
-    expect(mapIndexOf(m, "US-0004")).toBe(4);
-    expect(mapIndexOf(m, "US-0099")).toBeNull();
+    expect(mapAssetsIndexOf(m, "US-0001")).toBe(1);
+    expect(mapAssetsIndexOf(m, "US-0004")).toBe(4);
+    expect(mapAssetsIndexOf(m, "US-0099")).toBeNull();
     const tiny = m.centroids.rows.filter((c) => c.tiny);
     expect(tiny.length).toBe(1);
     expect(tiny[0]?.province_id).toBe("US-0004");

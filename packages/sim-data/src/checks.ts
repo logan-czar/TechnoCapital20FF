@@ -18,7 +18,7 @@
 import { type DataError, dataErrorFile } from "./error.ts";
 import { type Table, tableErr, tableFileErr, tableIsEmpty, tableIter } from "./load.ts";
 import { MAP_META } from "./map.ts";
-import { type KeyCity, type NameKind, nameKindDebug } from "./rows.ts";
+import { type KeyCity, NAME_KIND_VALUES, type NameKind, nameKindDebug } from "./rows.ts";
 import { SUPERREGIONS, type WorldData, worldDataAllProvinces, worldDataCounts } from "./world.ts";
 
 /** Expected row counts (spec 10 M0, build-plan M0.2). */
@@ -472,7 +472,7 @@ function startupEvents(w: WorldData, ids: Ids, errors: DataError[]): void {
   let startups = 0;
   for (const [line, e] of tableIter(t)) {
     const id = e.id;
-    const dateOk = e.trigger === "date" ? isIsoDate(e.date) : e.date === "";
+    const dateOk = e.trigger === "Date" ? isIsoDate(e.date) : e.date === "";
     if (!dateOk) {
       errors.push(tableErr(t, line, "date", `${id}: \`${e.date}\` does not fit the trigger`));
     }
@@ -522,7 +522,7 @@ function isIsoDate(s: string): boolean {
  * in its superregion file; every industry has a company name suffix.
  */
 function names(w: WorldData, ids: Ids, errors: DataError[]): void {
-  const KINDS: readonly NameKind[] = ["male", "female", "surname", "company_prefix"];
+  const KINDS: readonly NameKind[] = NAME_KIND_VALUES;
   // Superregion name to the cultures its file covers.
   const covered = new Map<string, Set<string>>();
   w.names.forEach((t, i) => {
