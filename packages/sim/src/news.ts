@@ -12,14 +12,13 @@
 //
 // HeadlineKind, Headline and NewsWire (the data) are in types/state/news.ts.
 
-import { ratingLabel, notchesBetween } from "./finance/rating.ts";
+import { notchesBetween, ratingLabel } from "./finance/rating.ts";
 import { type ConfidenceHeadline, RATING_CHANGE_MIN_NOTCHES } from "./market/confidence.ts";
 import { surpriseTagFromSurprise } from "./market/earnings.ts";
-import { monthEq, type SimDate } from "./types/calendar.ts";
-import { cmpDate } from "./types/calendar.ts";
 import { simDateMonthOf } from "./time/calendar.ts";
+import { cmpDate, monthEq, type SimDate } from "./types/calendar.ts";
 import type { DrawSource } from "./types/draws.ts";
-import type { CompanyId, IndustryId, StartupEventId } from "./types/ids.ts";
+import type { CompanyId, HeadlineId, IndustryId, StartupEventId } from "./types/ids.ts";
 import { ordinal } from "./types/ids.ts";
 import { roundHalfAway, totalCmp } from "./types/num.ts";
 import type { RaiseMethod } from "./types/state/ai.ts";
@@ -28,8 +27,7 @@ import type { Headline, HeadlineKind, NewsWire } from "./types/state/news.ts";
 import { BYLINE } from "./types/state/news.ts";
 import type { PhaseLabel } from "./types/world.ts";
 import { phaseLabelName } from "./world/entities.ts";
-import { chunkLogLast, chunkLogNew, chunkLogPush, chunkLogIter } from "./world/log.ts";
-import type { HeadlineId } from "./types/ids.ts";
+import { chunkLogIter, chunkLogLast, chunkLogNew, chunkLogPush } from "./world/log.ts";
 
 export type { Headline, HeadlineKind, NewsWire };
 export { BYLINE };
@@ -260,7 +258,13 @@ export function fixedEvent(date: SimDate, eventId: string, eventName: string, st
 }
 
 /** Spec 5.18 F4: "[tipped lab]'s chatbot sets off a startup rush: [n] new AI labs". */
-export function chatbotRush(date: SimDate, eventId: string, aiLabs: IndustryId, tippedLab: string, n: number): Headline {
+export function chatbotRush(
+  date: SimDate,
+  eventId: string,
+  aiLabs: IndustryId,
+  tippedLab: string,
+  n: number,
+): Headline {
   return headline(
     date,
     aiLabs,
@@ -289,7 +293,13 @@ export function startupLaunch(
 }
 
 /** Spec 5.18: a hot cluster, "[n] startups launch in [industry] in [city]". */
-export function hotCluster(date: SimDate, industry: IndustryId, industryName: string, place: string, n: number): Headline {
+export function hotCluster(
+  date: SimDate,
+  industry: IndustryId,
+  industryName: string,
+  place: string,
+  n: number,
+): Headline {
   return headline(
     date,
     industry,
@@ -339,7 +349,12 @@ export function listing(
 }
 
 /** Spec 5.1.1, 5.18: the boom event, "[tipped lab] launches its chatbot". */
-export function chatbot(date: SimDate, aiLabs: IndustryId, company: CompanyId | null, tippedLab: string): Headline {
+export function chatbot(
+  date: SimDate,
+  aiLabs: IndustryId,
+  company: CompanyId | null,
+  tippedLab: string,
+): Headline {
   return headline(date, aiLabs, company, { kind: "Chatbot" }, `${tippedLab} launches its chatbot`);
 }
 
@@ -391,7 +406,9 @@ export function newsWirePostDay(w: NewsWire, today: SimDate): Headline[] {
   post.forEach((h, i) => {
     h.id = ordinal<HeadlineId>(first + i);
     // The feed keeps its own copy: the headline in `today` is not the one in the feed.
-    chunkLogPush(w.feed, structuredClone(h), (a, b) => monthEq(simDateMonthOf(a.date), simDateMonthOf(b.date)));
+    chunkLogPush(w.feed, structuredClone(h), (a, b) =>
+      monthEq(simDateMonthOf(a.date), simDateMonthOf(b.date)),
+    );
   });
   w.today = post.map((h) => structuredClone(h));
   return post;

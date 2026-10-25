@@ -9,7 +9,7 @@
 //                                    confidenceHeadlinePoints(h) [ConfidenceHeadline::points],
 //                                    newsPoints(headlines), updateConfidence(c, r, news)
 //   ../../src/market/fair_value.ts   exchangeFactor(confidence | null)
-//   ../../src/market/index.ts        exchangeIndexAtLoad(start) [ExchangeIndex::at_load],
+//   ../../src/market/exchange_index.ts        exchangeIndexAtLoad(start) [ExchangeIndex::at_load],
 //                                    exchangeIndexCloseDay(index, r_input) -> number
 //                                    [ExchangeIndex::close_day]
 import { describe, expect, it } from "vitest";
@@ -18,9 +18,9 @@ import {
   confidenceHeadlinePoints,
   newsPoints,
   updateConfidence,
-} from "../../src/market/confidence.ts";
-import { exchangeFactor } from "../../src/market/fair_value.ts";
-import { exchangeIndexAtLoad, exchangeIndexCloseDay } from "../../src/market/index.ts";
+} from "../src/market/confidence.ts";
+import { exchangeIndexAtLoad, exchangeIndexCloseDay } from "../src/market/exchange_index.ts";
+import { exchangeFactor } from "../src/market/fair_value.ts";
 
 function near(a: number, b: number): void {
   expect(Math.abs(a - b) <= 1e-12 * Math.max(Math.abs(a), Math.abs(b), 1.0), `${a} vs ${b}`).toBe(true);

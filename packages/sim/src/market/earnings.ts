@@ -40,7 +40,10 @@ export function surprise(actualNetIncome: number, consensus: number): number {
  * at most ±37.5%; never below $0.01.
  */
 export function jumpedPrice(p: number, s: number): number {
-  return maxF(p * (1.0 + OVERREACTION * clamp(JUMP_PER_SURPRISE * s, -JUMP_CLAMP, JUMP_CLAMP)), MIN_PRICE_USD);
+  return maxF(
+    p * (1.0 + OVERREACTION * clamp(JUMP_PER_SURPRISE * s, -JUMP_CLAMP, JUMP_CLAMP)),
+    MIN_PRICE_USD,
+  );
 }
 
 /** Buzz after the jump (spec 5.15, 3.10): `buzz + clamp(20 × s, −30, +30)`, kept in −100 to +100. */

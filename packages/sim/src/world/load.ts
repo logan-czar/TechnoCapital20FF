@@ -26,6 +26,8 @@ import {
 import { fringeAssetsAtLoad } from "../economy/supply.ts";
 import { ratingParse } from "../finance/rating.ts";
 import { booksCheckDefault, companyFinanceAtLoad } from "../finance/state.ts";
+import { stockAtLoad } from "../market/state.ts";
+import { newsWireDefault } from "../news.ts";
 import { computeBill } from "../ops/compute.ts";
 import { conversionCapacity, dataBookAtLoad, dataBookFreeRdFraction, dataBookStoredTb } from "../ops/data.ts";
 import { fitStations, laborUnits } from "../ops/labor.ts";
@@ -188,7 +190,7 @@ export const UNPORTED_LOAD_DEPS: LoadDeps = {
   fringeAssetsAtLoad, // economy/supply.rs
   ratingParse, // finance/rating.rs Rating::parse
   companyFinanceAtLoad, // finance/state.rs CompanyFinance::at_load
-  stockAtLoad: () => unported("market/state Stock::at_load"),
+  stockAtLoad, // market/state.rs Stock::at_load
   computeBill, // ops/compute.rs
   dataBookAtLoad, // ops/data.rs DataBook::at_load
   dataBookStoredTb, // ops/data.rs DataBook::stored_tb
@@ -199,7 +201,7 @@ export const UNPORTED_LOAD_DEPS: LoadDeps = {
   productiveCompute, // ops/stations.rs
   nameBooksBuild, // people/names.rs NameBooks::build
   traitFromName, // people/traits.rs Trait::from_name
-  newsWireDefault,
+  newsWireDefault, // news.rs NewsWire::default
 };
 
 // ---------------------------------------------------------------- errors
@@ -701,18 +703,6 @@ function marketStateAtLoad(stocks: Stock[]): MarketState {
 /** Rust `Board::default()` of the Company: the five labor seats, all closed. */
 function boardDefault(): null[] {
   return new Array<null>(LABOR_SEAT_COUNT).fill(null);
-}
-
-/** Rust `NewsWire::default()`: empty queue, feed, today and labels. */
-function newsWireDefault(): NewsWire {
-  // W3: replace with W3's chunkLogNew once world/log.ts lands.
-  const emptyBuf = <T>() => ({ slots: [] as T[], len: 0 });
-  return {
-    queued: [],
-    feed: { closed: emptyBuf(), open: emptyBuf() },
-    today: [],
-    labels: [],
-  };
 }
 
 /** The industries.csv tuning columns (spec 2.2). */

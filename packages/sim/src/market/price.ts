@@ -5,8 +5,9 @@
 // (21.3.1) and the market calendar: closed all of 1 January (3.1.0) and frozen on the 00:00
 // release tick (4.4, 21.2). Ported from crates/sim/src/market/price.rs.
 
-import { QUARTER_FIRST_MONTHS, dateTimeDate, dateTimeHour } from "../time/calendar.ts";
+import { dateTimeDate, dateTimeHour } from "../time/calendar.ts";
 import type { DateTime } from "../types/calendar.ts";
+import { QUARTER_FIRST_MONTHS } from "../types/calendar.ts";
 import { PRICE_MOVE_HOUR, REACTION_LAST_DAY, RELEASE_DAY } from "../types/control.ts";
 import type { DrawSource } from "../types/draws.ts";
 import { clamp, maxF, minF } from "../types/num.ts";
@@ -69,7 +70,9 @@ export function pricesMove(t: DateTime): boolean {
   const d = dateTimeDate(t);
   const holiday = d.month === 1 && d.day === 1;
   const release =
-    (QUARTER_FIRST_MONTHS as readonly number[]).includes(d.month) && d.day === RELEASE_DAY && dateTimeHour(t) === 0;
+    (QUARTER_FIRST_MONTHS as readonly number[]).includes(d.month) &&
+    d.day === RELEASE_DAY &&
+    dateTimeHour(t) === 0;
   return !holiday && !release;
 }
 
@@ -80,7 +83,11 @@ export function pricesMove(t: DateTime): boolean {
  */
 export function reactionVolatilityMult(t: DateTime): number {
   const d = dateTimeDate(t);
-  if (!(QUARTER_FIRST_MONTHS as readonly number[]).includes(d.month) || d.day < RELEASE_DAY || d.day > REACTION_LAST_DAY) {
+  if (
+    !(QUARTER_FIRST_MONTHS as readonly number[]).includes(d.month) ||
+    d.day < RELEASE_DAY ||
+    d.day > REACTION_LAST_DAY
+  ) {
     return REACTION_VOLATILITY_END;
   }
   if (d.day === RELEASE_DAY && dateTimeHour(t) < PRICE_MOVE_HOUR) return REACTION_VOLATILITY_END;
@@ -110,7 +117,13 @@ export function fatTailedNormal(draws: DrawSource): number {
  * The hourly noise of one stock (spec 5.14): `σh × m × (ρ × z_market + sqrt(1 − ρ²) × z_stock)`,
  * with m the `reactionVolatilityMult`.
  */
-export function noise(sigmaH: number, rhoV: number, volatilityMult: number, zMarket: number, zStock: number): number {
+export function noise(
+  sigmaH: number,
+  rhoV: number,
+  volatilityMult: number,
+  zMarket: number,
+  zStock: number,
+): number {
   return sigmaH * volatilityMult * (rhoV * zMarket + Math.sqrt(maxF(1.0 - rhoV * rhoV, 0.0)) * zStock);
 }
 

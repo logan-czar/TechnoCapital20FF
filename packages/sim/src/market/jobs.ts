@@ -11,31 +11,61 @@
 // 30-year run): it allocates nothing and draws exactly as `stepPrices` does (D135).
 
 import { companyIsFrozen } from "../economy/index.ts";
-import { companyHomeSpread, run_rate_alias, sheet } from "../finance/jobs.ts";
-import { ledgerEbit, ledgerNetIncome, trailingFour } from "../finance/statements.ts";
+import { companyHomeSpread, runRate, sheet } from "../finance/jobs.ts";
 import { companyFinanceQuarters } from "../finance/state.ts";
+import { ledgerEbit, ledgerNetIncome, trailingFour } from "../finance/statements.ts";
 import { scheduler } from "../jobs.ts";
 import { headlineConfidence } from "../news.ts";
 import { BAREBONES_REVENUE_USD } from "../ops/stations.ts";
 import { confidenceFactor } from "../people/management.ts";
 import { NoNoise } from "../rng.ts";
-import { dateTimeAt, dateTimeDate, dateTimeMidnight, monthFirstDay, monthNext, quarterFirstDay, quarterNext, simDateMonthOf, simDateQuarter, simDateYmd, EPOCH_YEAR } from "../time/calendar.ts";
-import { type JobCtx, schedulerRegister, schedulerRunSlots, tickFactsNew, type Scheduler } from "../time/scheduler.ts";
-import { cmpDate, type DateTime, type SimDate } from "../types/calendar.ts";
+import {
+  dateTimeDate,
+  dateTimeMidnight,
+  monthFirstDay,
+  monthNext,
+  quarterFirstDay,
+  quarterNext,
+  simDateMonthOf,
+  simDateQuarter,
+  simDateYmd,
+} from "../time/calendar.ts";
+import {
+  type JobCtx,
+  jobCtxDetached,
+  type Scheduler,
+  type Slot,
+  schedulerRegister,
+  schedulerRunSlots,
+  tickFactsNew,
+} from "../time/scheduler.ts";
+import { cmpDate, type DateTime, EPOCH_YEAR, type SimDate } from "../types/calendar.ts";
+
 import type { DrawSource } from "../types/draws.ts";
 import type { CompanyId, ZoneId } from "../types/ids.ts";
 import { ordinal } from "../types/ids.ts";
-import { maxF } from "../types/num.ts";
 import type { Notice } from "../types/notice.ts";
-import type { Headline } from "../types/state/news.ts";
+import { maxF } from "../types/num.ts";
 import type { FairValueBasis, Stock } from "../types/state/market.ts";
-import type { Slot } from "../types/control.ts";
+import type { Headline } from "../types/state/news.ts";
 import type { Company, World } from "../types/world.ts";
 import { chunkLogNew } from "../world/log.ts";
 import { type ConfidenceHeadline, newsPoints, updateConfidence } from "./confidence.ts";
-import { barBuilderClose, barBuilderStart, barBuilderTick, decayBuzz, isReversionDay, revertTowardValue } from "./daily.ts";
+import {
+  barBuilderClose,
+  barBuilderStart,
+  barBuilderTick,
+  decayBuzz,
+  isReversionDay,
+  revertTowardValue,
+} from "./daily.ts";
 import { jumpedBuzz, jumpedPrice, resultTags, surprise } from "./earnings.ts";
-import { type EngineValueInputs, engineValueAtLoad, LOAD_REVENUE_GROWTH, loadNetIncome } from "./engine_value.ts";
+import {
+  type EngineValueInputs,
+  engineValueAtLoad,
+  LOAD_REVENUE_GROWTH,
+  loadNetIncome,
+} from "./engine_value.ts";
 import {
   exchangeIndexAtLoad,
   exchangeIndexCloseDay,
@@ -48,8 +78,8 @@ import {
 } from "./exchange_index.ts";
 import {
   bookFloorShare,
-  fairValue,
   type FairValueInputs,
+  fairValue,
   fairValueBasisAtRelease,
   perShare,
   revenueGrowth,
@@ -94,7 +124,8 @@ export function fairValueInputs(world: World, id: CompanyId, basis: FairValueBas
     home_spread: companyHomeSpread(world, c, false),
     label: ind.phase_label,
     company_confidence: confidenceFactor(c.management_score),
-    listing_confidence: exchange === null ? null : (world.zones[exchange] as World["zones"][number]).confidence,
+    listing_confidence:
+      exchange === null ? null : (world.zones[exchange] as World["zones"][number]).confidence,
     book_floor_share: bookFloorShare(ind.key),
     shares_out: c.shares_out,
   };
@@ -135,7 +166,10 @@ export function exchangeCap(world: World, zone: ZoneId): number {
 
 /** The headline index level of an exchange now (spec 5.14): null with no quoted company. */
 export function indexLevel(world: World, zone: ZoneId): number | null {
-  return exchangeIndexLevel(world.market.indices[zone] as World["market"]["indices"][number], exchangeCap(world, zone));
+  return exchangeIndexLevel(
+    world.market.indices[zone] as World["market"]["indices"][number],
+    exchangeCap(world, zone),
+  );
 }
 
 /**
@@ -195,7 +229,8 @@ export function start(world: World, draws: DrawSource): void {
       g_sector: ind.lt,
       // D235: the zone's base spread at load.
       home_spread: companyHomeSpread(world, c, true),
-      listing_confidence: exchange === null ? null : (world.zones[exchange] as World["zones"][number]).confidence_start,
+      listing_confidence:
+        exchange === null ? null : (world.zones[exchange] as World["zones"][number]).confidence_start,
       book_floor_share: bookFloorShare(ind.key),
     };
     const value = engineValueAtLoad(inputs);
@@ -377,7 +412,11 @@ export function zoneConfidenceJob(world: World, ctx: JobCtx): void {
     const r = exchangeIndexCloseDay(index, caps[z] as number);
     // The day's close joins the index history (D540), a record only: nothing reads it back.
     if (index.prev_close !== null) {
-      indexHistoryRecord(world.market.index_history[z] as World["market"]["index_history"][number], ctx.facts.date, index.prev_close);
+      indexHistoryRecord(
+        world.market.index_history[z] as World["market"]["index_history"][number],
+        ctx.facts.date,
+        index.prev_close,
+      );
     }
     const news = confidenceNews(confidenceHeadlines(world, zid));
     const zone = world.zones[z] as World["zones"][number];
@@ -408,7 +447,11 @@ export function delistJob(world: World, ctx: JobCtx): void {
       const z = s0.exchange;
       const before = exchangeCap(world, z);
       const after = before - stockCap(s0);
-      exchangeIndexReweight(world.market.indices[z] as World["market"]["indices"][number], before, maxF(after, 0.0));
+      exchangeIndexReweight(
+        world.market.indices[z] as World["market"]["indices"][number],
+        before,
+        maxF(after, 0.0),
+      );
     }
     const s = world.market.stocks[i] as Stock;
     s.quoted = false;
@@ -518,7 +561,11 @@ function projectionClone(world: World): World {
   const stocks = world.market.stocks.map((s) => ({ ...s, bars: { log: chunkLogNew<never>() } }));
   const lite = {
     ...world,
-    market: { ...world.market, stocks, index_history: world.market.index_history.map(() => indexHistoryNew()) },
+    market: {
+      ...world.market,
+      stocks,
+      index_history: world.market.index_history.map(() => indexHistoryNew()),
+    },
     news: { ...world.news, feed: chunkLogNew<never>() },
     recaps: [],
   } as World;

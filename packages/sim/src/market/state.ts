@@ -5,9 +5,8 @@
 //
 // MarketState, Stock and BarHistory (the data) are in types/state/market.ts.
 
-import { monthEq, type SimDate } from "../types/calendar.ts";
-import { EPOCH_YEAR, simDateMonthOf, simDateYmd } from "../time/calendar.ts";
-import { cmpDate } from "../types/calendar.ts";
+import { simDateMonthOf, simDateYmd } from "../time/calendar.ts";
+import { cmpDate, EPOCH_YEAR, monthEq, type SimDate } from "../types/calendar.ts";
 import type { ZoneId } from "../types/ids.ts";
 import type { BarHistory, DailyBar, MarketState, Stock } from "../types/state/market.ts";
 import {
@@ -89,7 +88,11 @@ export function barHistoryLast(h: BarHistory): DailyBar | null {
 }
 
 /** The bars dated `from` to `to` inclusive, oldest first (spec 9.2 `get_price_history`). */
-export function* barHistoryRange(h: BarHistory, from: SimDate, to: SimDate): Generator<DailyBar, void, undefined> {
+export function* barHistoryRange(
+  h: BarHistory,
+  from: SimDate,
+  to: SimDate,
+): Generator<DailyBar, void, undefined> {
   for (const b of chunkLogIter(h.log)) {
     if (cmpDate(b.date, from) >= 0 && cmpDate(b.date, to) <= 0) yield b;
   }

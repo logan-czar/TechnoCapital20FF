@@ -6,14 +6,14 @@
 //
 // ExchangeIndex, IndexClose and IndexHistory (the data) are in types/state/market.ts.
 
-import { monthEq } from "../types/calendar.ts";
+import { simDateMonthOf } from "../time/calendar.ts";
 import type { SimDate } from "../types/calendar.ts";
-import { cmpDate, simDateMonthOf } from "../time/index.ts";
+import { cmpDate, monthEq } from "../types/calendar.ts";
 import type { ExchangeIndex, IndexClose, IndexHistory } from "../types/state/market.ts";
 import {
   chunkLogDropWhile,
-  chunkLogIter,
   chunkLogIsEmpty,
+  chunkLogIter,
   chunkLogLast,
   chunkLogLen,
   chunkLogNew,

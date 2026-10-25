@@ -13,6 +13,8 @@ import type { WorldData } from "@tc20ff/sim-data";
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
 import { RATING_WORST } from "../src/finance/rating.ts";
 import { companyFinanceAtLoad } from "../src/finance/state.ts";
+import { stockAtLoad } from "../src/market/state.ts";
+import { newsWireDefault } from "../src/news.ts";
 import { type Sim, type SimOptions, simFromWorld, simNew, simRegisterTestJob } from "../src/lib.ts";
 import { type JobCtx, jobCtxRaiseAlert } from "../src/time/scheduler.ts";
 import { DATETIME_START } from "../src/types/calendar.ts";
@@ -50,6 +52,8 @@ export function clockWorld(): World {
     companies: [],
     characters: [],
     units: [],
+    market: { stocks: [], indices: [], index_history: [] },
+    news: newsWireDefault(),
     base_rate: 0.03,
     neutral_rate: 0.03,
     cycle: { phase: "Expansion", quarters_left: 1_000_000, g_t: 0, g_history: [], z_avg: 1 },
@@ -83,6 +87,7 @@ export function minimalWorld(): World {
   const w = clockWorld();
   // The ledger job reads the HQ country's tax rate before it looks at the company's status.
   w.countries = [{ corp_tax_rate: 0 }] as unknown as World["countries"];
+  w.market.stocks = w.companies.map(() => stockAtLoad(null, 0, 0));
   w.companies = Array.from({ length: MINIMAL_COMPANIES }, (_, i) => ({
     revenue_usd: 1e6 * (i + 1),
     // The finance, ops and economy jobs walk the companies. A Removed company is out of the game
@@ -91,10 +96,12 @@ export function minimalWorld(): World {
     board: [],
     seats_to_fill: [],
     hq_country: 0,
+    shares_out: 0,
     units: [],
   })) as unknown as World["companies"];
   // ledgerJob reads the home country's tax rate before it checks the company is in the game.
   w.countries = [{ corp_tax_rate: 0 }] as unknown as World["countries"];
+  w.market.stocks = w.companies.map(() => stockAtLoad(null, 0, 0));
   return w;
 }
 

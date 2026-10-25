@@ -22,8 +22,8 @@ import {
   type RangeViewer,
   range,
   rangeWidth,
-} from "../../src/market/projection.ts";
-import { dateTimeAt, simDateYmd } from "../../src/time/calendar.ts";
+} from "../src/market/projection.ts";
+import { dateTimeAt, simDateYmd } from "../src/time/calendar.ts";
 import { newNoNoise, newRng, newScripted, scriptedPush } from "./common/rng.ts";
 
 function near(a: number, b: number): void {

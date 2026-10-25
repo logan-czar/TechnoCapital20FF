@@ -3,7 +3,14 @@
 // passes, ×2 for a company whose plan is secret, never under ±3%. Ported from
 // crates/sim/src/market/projection.rs.
 
-import { dateTimeDate, dateTimeHours, dateTimeMidnight, simDateQuarter, quarterFirstDay, quarterNext } from "../time/calendar.ts";
+import {
+  dateTimeDate,
+  dateTimeHours,
+  dateTimeMidnight,
+  quarterFirstDay,
+  quarterNext,
+  simDateQuarter,
+} from "../time/calendar.ts";
 import type { DateTime } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import { clamp, maxF } from "../types/num.ts";

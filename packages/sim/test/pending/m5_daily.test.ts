@@ -1,3 +1,5 @@
+// BLOCKED: needs simNew on real data, which waits for births/state BirthsState::from_data (lane W3b)
+// in START_DEPS / LoadDeps. Everything it exercises in market/ is ported; promote when births lands.
 // Port of crates/sim/tests/m5_daily.rs: build-plan M5.4 and M5.5 on the live engine, over the Q1
 // 2020 release (spec 4.2, 4.4, 5.13, 5.15, 21.3.1, 3.10; D248): run from load to the end of the
 // Q2 2020 reaction week, tick by tick.

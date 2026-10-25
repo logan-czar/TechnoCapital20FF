@@ -36,6 +36,7 @@
 
 import { register as economyRegister } from "./economy/index.ts";
 import * as finance from "./finance/jobs.ts";
+import * as market from "./market/jobs.ts";
 import { register as opsRegister } from "./ops/index.ts";
 import { newSeatsJob } from "./people/seating.ts";
 import * as timeAlerts from "./time/alerts.ts";
@@ -85,18 +86,18 @@ export function registerJobs(s: Scheduler): void {
   r(s, "YearlyAnnualStatements", "finance.annual_statements", finance.annualStatementsJob); // finance/jobs annualStatementsJob
 
   // market::register (crates/sim/src/market/jobs.rs)
-  r(s, "SharePrices", "market.prices", notPorted("market::jobs::prices_job")); // market/jobs pricesJob
-  r(s, "PriceMoveFairValue", "market.full_fair_value", notPorted("market::jobs::full_fair_value_job")); // market/jobs fullFairValueJob
-  r(s, "PriceMoveEarningsJump", "market.earnings_jump", notPorted("market::jobs::earnings_jump_job")); // market/jobs earningsJumpJob
-  r(s, "PriceMoveBuzz", "market.buzz", notPorted("market::jobs::buzz_job")); // market/jobs buzzJob
-  r(s, "DailyPriceBars", "market.bars", notPorted("market::jobs::bars_job")); // market/jobs barsJob
-  r(s, "DailyFairValue", "market.fair_value", notPorted("market::jobs::fair_value_job")); // market/jobs fairValueJob
-  r(s, "DailyReactionWeek", "market.reaction_week", notPorted("market::jobs::reaction_week_job")); // market/jobs reactionWeekJob
-  r(s, "DailyZoneConfidence", "market.zone_confidence", notPorted("market::jobs::zone_confidence_job")); // market/jobs zoneConfidenceJob
-  r(s, "MonthlyCashSettle", "market.delist", notPorted("market::jobs::delist_job")); // market/jobs delistJob
-  r(s, "CloseResultTags", "market.result_tags", notPorted("market::jobs::result_tags_job")); // market/jobs resultTagsJob
-  r(s, "LockConsensus", "market.consensus", notPorted("market::jobs::consensus_job")); // market/jobs consensusJob
-  r(s, "YearlyArchive", "market.archive_bars", notPorted("market::jobs::archive_bars_job")); // market/jobs archiveBarsJob
+  r(s, "SharePrices", "market.prices", market.pricesJob); // market/jobs pricesJob
+  r(s, "PriceMoveFairValue", "market.full_fair_value", market.fullFairValueJob); // market/jobs fullFairValueJob
+  r(s, "PriceMoveEarningsJump", "market.earnings_jump", market.earningsJumpJob); // market/jobs earningsJumpJob
+  r(s, "PriceMoveBuzz", "market.buzz", market.buzzJob); // market/jobs buzzJob
+  r(s, "DailyPriceBars", "market.bars", market.barsJob); // market/jobs barsJob
+  r(s, "DailyFairValue", "market.fair_value", market.fairValueJob); // market/jobs fairValueJob
+  r(s, "DailyReactionWeek", "market.reaction_week", market.reactionWeekJob); // market/jobs reactionWeekJob
+  r(s, "DailyZoneConfidence", "market.zone_confidence", market.zoneConfidenceJob); // market/jobs zoneConfidenceJob
+  r(s, "MonthlyCashSettle", "market.delist", market.delistJob); // market/jobs delistJob
+  r(s, "CloseResultTags", "market.result_tags", market.resultTagsJob); // market/jobs resultTagsJob
+  r(s, "LockConsensus", "market.consensus", market.consensusJob); // market/jobs consensusJob
+  r(s, "YearlyArchive", "market.archive_bars", market.archiveBarsJob); // market/jobs archiveBarsJob
 
   // births::jobs::register (crates/sim/src/births/jobs.rs)
   r(s, "LockFixedStartupEvents", "births.fixed_events", notPorted("births::jobs::fixed_events_job")); // births/jobs fixedEventsJob

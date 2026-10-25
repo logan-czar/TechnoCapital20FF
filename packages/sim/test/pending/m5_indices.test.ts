@@ -1,3 +1,5 @@
+// BLOCKED: needs simNew on real data, which waits for births/state BirthsState::from_data (lane W3b)
+// in START_DEPS / LoadDeps. Everything it exercises in market/ is ported; promote when births lands.
 // Port of crates/sim/tests/m5_indices.rs: build-plan M5.6 on the live engine (spec 5.14; batches
 // 152, 154; D250): 26 zone exchanges, each headline index the market-cap weighted level of its
 // quoted companies, kept by a divisor so it does not jump when the constituents change.

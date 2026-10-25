@@ -1,3 +1,5 @@
+// BLOCKED: needs simNew on real data, which waits for births/state BirthsState::from_data (lane W3b)
+// in START_DEPS / LoadDeps. Everything it exercises in market/ is ported; promote when births lands.
 // Port of crates/sim/tests/m5_consensus.rs: build-plan M5.5's consensus (spec 5.16, 21.5.1; D141,
 // D168, D252): at the plan lock the engine projects each company's quarter with no new rolls (a
 // clone runs the quarter's three month closes with NoNoise draws, each industry's supply, S and M
