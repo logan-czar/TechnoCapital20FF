@@ -20,6 +20,7 @@ import {
 import type { TickPart } from "../src/time/scheduler.ts";
 import type { CompanyId } from "../src/types/ids.ts";
 import type { LoadError, World } from "../src/types/world.ts";
+import { viewBuildersOnly } from "../src/views/index.ts";
 import { alertLevelsGet } from "../src/world/notice.ts";
 import { minimalSim, minimalWorld, NO_DRAWS } from "./test_sim.ts";
 
@@ -90,7 +91,7 @@ describe("startWorld", () => {
 
 describe("Sim", () => {
   it("NewGame keeps the alert levels and the views; the rest is a new game", () => {
-    const s = simFromWorld(minimalWorld(), 1, {});
+    const s = minimalSim(1);
     let ran = 0;
     simRegisterTestJob(s, "Alerts", "test.count", () => {
       ran += 1;
@@ -118,7 +119,7 @@ describe("Sim", () => {
     const calls: string[] = [];
     const fail = { on: false };
     const deps = recordingDeps(calls, fail);
-    const r = simNew(NO_DATA, 1, { deps: { start: deps } });
+    const r = simNew(NO_DATA, 1, { deps: { start: deps, views: viewBuildersOnly(["clock"]) } });
     if (!r.ok) throw new Error("builds");
     const s = r.value;
     for (let i = 0; i < 5; i++) s.step();

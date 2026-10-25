@@ -112,5 +112,5 @@ describe("m3 data", () => {
     expect(book.free_rd_pct).toBe(2);
     // 12-month retention (5.9 step 5): at most 12 buckets, the oldest a year old.
     expect(book.unstructured.length).toBe(12);
-  });
+  }, 180_000); // Years of ticks with the ported views built on their cadence (Step 3).
 });

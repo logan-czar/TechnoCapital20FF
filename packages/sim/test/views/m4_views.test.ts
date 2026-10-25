@@ -4,15 +4,15 @@
 // Overview tab). Statements are published at the release after their close (spec 4.4; D130).
 //
 // Expects:
-//   ../../../src/lib.ts                   simNew, simApply, simStep, simNow, simWorld, simViews
-//   ../../../src/views/statements.ts      statementsViewStatements(view, company, period, count)
+//   ../../src/lib.ts                   simNew, simApply, simStep, simNow, simWorld, simViews
+//   ../../src/views/statements.ts      statementsViewStatements(view, company, period, count)
 //                                         -> Statement[] (oldest first, newest `count`)
 //                                         [StatementsView::statements; period is "Quarter" | "Year"],
 //                                         statementsViewMonths(view, company, count) -> PostedMonth[]
 //                                         [StatementsView::months]
-//   ../../../src/views/estimate.ts        showsEstimates(world, company) [shows_estimates]
-//   ../../../src/finance/rating.ts        corporateSpread(rating)
-//   ../../../src/views/ratings.ts         ratingsViewBandCounts(view) -> [Band, number][]
+//   ../../src/views/estimate.ts        showsEstimates(world, company) [shows_estimates]
+//   ../../src/finance/rating.ts        corporateSpread(rating)
+//   ../../src/views/ratings.ts         ratingsViewBandCounts(view) -> [Band, number][]
 //   ../common/ops.ts                      company, runTo
 //   ../common/index.ts                    assertFigure
 //
@@ -23,15 +23,15 @@
 //   runs when SetOmniscient is accepted (the DebugOnly error skips it).
 // - The println of Andes Cobre's rating is dropped.
 import { describe, expect, it } from "vitest";
-import { corporateSpread } from "../../../src/finance/rating.ts";
-import { simApply, simNew, simNow, simStep, simViews, simWorld } from "../../../src/lib.ts";
-import { dateTimeAt, simDateYmd } from "../../../src/time/calendar.ts";
-import type { Quarter } from "../../../src/types/calendar.ts";
-import type { CompanyId } from "../../../src/types/ids.ts";
-import type { Period } from "../../../src/types/state/finance.ts";
-import { showsEstimates } from "../../../src/views/estimate.ts";
-import { ratingsViewBandCounts } from "../../../src/views/ratings.ts";
-import { statementsViewMonths, statementsViewStatements } from "../../../src/views/statements.ts";
+import { corporateSpread } from "../../src/finance/rating.ts";
+import { simApply, simNew, simNow, simStep, simViews, simWorld } from "../../src/lib.ts";
+import { dateTimeAt, simDateYmd } from "../../src/time/calendar.ts";
+import type { Quarter } from "../../src/types/calendar.ts";
+import type { CompanyId } from "../../src/types/ids.ts";
+import type { Period } from "../../src/types/state/finance.ts";
+import { showsEstimates } from "../../src/views/estimate.ts";
+import { ratingsViewBandCounts } from "../../src/views/ratings.ts";
+import { statementsViewMonths, statementsViewStatements } from "../../src/views/statements.ts";
 import { assertFigure, data, unwrap } from "../common/index.ts";
 import { company, runTo } from "../common/ops.ts";
 import { byField, byId, figBand, figExact, figShown } from "../common/views.ts";

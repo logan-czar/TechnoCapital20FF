@@ -62,7 +62,7 @@ import { dateTimeDate, quarterNext, quarterPrev, simDateQuarter } from "../time/
 import { releaseTick } from "../time/quarter.ts";
 import type { DateTime, Quarter } from "../types/calendar.ts";
 import type { CompanyId } from "../types/ids.ts";
-import { maxF } from "../types/num.ts";
+import { assertCount, maxF } from "../types/num.ts";
 import type { Period, Statement } from "../types/state/finance.ts";
 import {
   type Band,
@@ -358,8 +358,9 @@ type U64 = readonly [number, number];
 
 const TWO_32 = 4294967296;
 
-/** A whole number in 0..2^53 as a U64. */
+/** A whole number in 0..2^53 as a U64 (anything else throws: never a silent wrap). */
 function u64(x: number): U64 {
+  assertCount(x, "estimate hash input");
   return [Math.floor(x / TWO_32) >>> 0, x >>> 0];
 }
 
@@ -503,7 +504,7 @@ export function bandOf(truth: number, e: number, floor: number): Band {
 
 /** Makes the figures of the views: the seed, whether Omniscient is on, and the clock. */
 export function estimatorNew(seed: bigint | number, omniscient: boolean, now: DateTime): Estimator {
-  return { seed: typeof seed === "bigint" ? seed : BigInt(seed), omniscient, now };
+  return { seed: typeof seed === "bigint" ? seed : BigInt(assertCount(seed, "seed")), omniscient, now };
 }
 
 /** Rust `ViewInput::estimator`: the estimator of a view build (seed, Omniscient, clock). */

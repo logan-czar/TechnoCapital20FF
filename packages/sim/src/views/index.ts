@@ -53,7 +53,14 @@ import {
 } from "../types/views/index.ts";
 import type { MapMode } from "../types/views/map_layers.ts";
 import type { World } from "../types/world.ts";
+import { buildCapTable } from "./cap_table.ts";
+import { buildCharacters } from "./characters.ts";
 import { buildClock, emptyClock } from "./clock.ts";
+import { buildCompanyDetail } from "./company_detail.ts";
+import { buildCompanyRows } from "./company_rows.ts";
+import { buildFilings } from "./filings.ts";
+import { buildRatings } from "./ratings.ts";
+import { buildStatements, rebuildStatementsFrom } from "./statements.ts";
 
 // ---------------------------------------------------------------- Cadence
 
@@ -149,8 +156,16 @@ export const VIEW_BUILDERS: ViewBuilders = {
     sovereigns: [],
     rating_spreads: [],
   })),
-  characters: unported("views::characters::CharactersView", () => ({ full: [], partial: [] })),
-  cap_table: unported("views::cap_table::CapTableView", () => ({ companies: [] })),
+  characters: {
+    rust: "views::characters::CharactersView",
+    empty: () => ({ full: [], partial: [] }),
+    build: buildCharacters,
+  },
+  cap_table: {
+    rust: "views::cap_table::CapTableView",
+    empty: () => ({ companies: [] }),
+    build: buildCapTable,
+  },
   quotes: unported("views::quotes::QuotesView", () => ({ rows: [], indices: [] })),
   price_bars: unported("views::price_bars::PriceBarsView", () => ({ companies: [] })),
   exchanges: unported("views::exchanges::ExchangesView", () => ({ exchanges: [] })),
@@ -175,8 +190,16 @@ export const VIEW_BUILDERS: ViewBuilders = {
     births_by_industry: [],
   })),
   projection: unported("views::projection::ProjectionView", () => ({ elapsed_share: 0, companies: [] })),
-  company_rows: unported("views::company_rows::CompanyRowsView", () => ({ rows: [] })),
-  company_detail: unported("views::company_detail::CompanyDetailView", () => ({ companies: [] })),
+  company_rows: {
+    rust: "views::company_rows::CompanyRowsView",
+    empty: () => ({ rows: [] }),
+    build: buildCompanyRows,
+  },
+  company_detail: {
+    rust: "views::company_detail::CompanyDetailView",
+    empty: () => ({ companies: [] }),
+    build: buildCompanyDetail,
+  },
   units: unported("views::units::UnitsView", () => ({ units: [] })),
   tech: unported("views::tech::TechView", () => ({ companies: [] })),
   industry_rows: unported("views::industry_rows::IndustryRowsView", () => ({ rows: [] })),
@@ -205,9 +228,22 @@ export const VIEW_BUILDERS: ViewBuilders = {
     industry_names: [],
   })),
   province_cards: unported("views::province_cards::ProvinceCardsView", () => ({ cards: [] })),
-  statements: unported("views::statements::StatementsView", () => ({ companies: [] })),
-  filings: unported("views::filings::FilingsView", () => ({ quarter: null, filings: [] })),
-  ratings: unported("views::ratings::RatingsView", () => ({ companies: [], base_rate: 0 })),
+  statements: {
+    rust: "views::statements::StatementsView",
+    empty: () => ({ companies: [] }),
+    build: buildStatements,
+    rebuildFrom: rebuildStatementsFrom,
+  },
+  filings: {
+    rust: "views::filings::FilingsView",
+    empty: () => ({ quarter: null, filings: [] }),
+    build: buildFilings,
+  },
+  ratings: {
+    rust: "views::ratings::RatingsView",
+    empty: () => ({ companies: [], base_rate: 0 }),
+    build: buildRatings,
+  },
   recap: unported("views::recap::RecapView", () => ({ recaps: [], watchlist: [] })),
   map_static: unported("views::map_static::MapStaticView", () => ({
     provinces: [],
