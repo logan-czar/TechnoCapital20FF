@@ -16,6 +16,8 @@ export * from "./types/calendar.ts";
 export * from "./types/control.ts";
 export * from "./types/ids.ts";
 export * from "./types/notice.ts";
+// String order for ids (D4): the UI sorts CSV ids the same way the sim does.
+export { cmpStr } from "./types/num.ts";
 export * from "./types/protocol.ts";
 export type * from "./types/sim-api.ts";
 export * from "./types/views/index.ts";
