@@ -8,6 +8,7 @@ import {
   divInt,
   maxF,
   minF,
+  powi,
   remEuclid,
   roundHalfAway,
   roundTiesEven,
@@ -83,5 +84,15 @@ describe("num.ts keeps Rust semantics (D952)", () => {
     expect(clamp(5, 0, 1)).toBe(1);
     expect(Number.isNaN(clamp(Number.NaN, 0, 1))).toBe(true);
     expect(() => clamp(0, 1, 0)).toThrow();
+  });
+});
+
+describe("powi", () => {
+  it("is repeated squaring like f64::powi", () => {
+    expect(powi(2, 10)).toBe(1024);
+    expect(powi(1.5, 0)).toBe(1);
+    expect(powi(2, -2)).toBe(0.25);
+    expect(powi(1.05, 4)).toBe(1.05 * 1.05 * (1.05 * 1.05));
+    expect(powi(-3, 3)).toBe(-27);
   });
 });
