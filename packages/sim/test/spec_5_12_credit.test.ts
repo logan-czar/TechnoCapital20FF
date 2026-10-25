@@ -29,10 +29,10 @@ import {
   ownCash,
   planRepay,
   reviewLine,
-} from "../../src/finance/credit.ts";
-import { startingRating } from "../../src/finance/rating.ts";
-import { maxF, minF, roundHalfAway } from "../../src/types/num.ts";
-import { type CreditLine, RATING_VALUES } from "../../src/types/state/finance.ts";
+} from "../src/finance/credit.ts";
+import { startingRating } from "../src/finance/rating.ts";
+import { maxF, minF, roundHalfAway } from "../src/types/num.ts";
+import { type CreditLine, RATING_VALUES } from "../src/types/state/finance.ts";
 import {
   assertClose,
   BASE_RATE,

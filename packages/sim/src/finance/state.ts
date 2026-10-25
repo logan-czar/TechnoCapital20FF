@@ -7,6 +7,7 @@
 
 import type {
   Archive,
+  BooksCheck,
   CompanyFinance,
   CompanyStatus,
   ImpliedRating,
@@ -28,7 +29,7 @@ export function archiveDefault(): Archive {
 }
 
 /** Rust `BooksCheck::default()`. */
-export function booksCheckDefault(): { checked: number; failures: number; first_failure: string | null } {
+export function booksCheckDefault(): BooksCheck {
   return { checked: 0, failures: 0, first_failure: null };
 }
 

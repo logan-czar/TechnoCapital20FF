@@ -23,9 +23,9 @@
 // Rust Copy structs (DistressState, CreditLine, Books) are copied with a spread or structuredClone
 // where the test keeps using the original.
 import { describe, expect, it } from "vitest";
-import { saleFactor } from "../../src/economy/assets.ts";
-import { type Books, balanceSheet, checkMonth } from "../../src/finance/balance.ts";
-import { reviewLine } from "../../src/finance/credit.ts";
+import { saleFactor } from "../src/economy/assets.ts";
+import { type Books, balanceSheet, checkMonth } from "../src/finance/balance.ts";
+import { reviewLine } from "../src/finance/credit.ts";
 import {
   BANKRUPT_AFTER_DISTRESS_MONTHS,
   bankrupt,
@@ -39,10 +39,10 @@ import {
   type SettleInputs,
   settleMonth,
   settlementLineChange,
-} from "../../src/finance/distress.ts";
-import { REMOVAL_SALE_FACTOR } from "../../src/finance/sales.ts";
-import { ledgerBookSold } from "../../src/finance/statements.ts";
-import type { CreditLine, DistressState, Ledger, TaxBook } from "../../src/types/state/finance.ts";
+} from "../src/finance/distress.ts";
+import { REMOVAL_SALE_FACTOR } from "../src/finance/sales.ts";
+import { ledgerBookSold } from "../src/finance/statements.ts";
+import type { CreditLine, DistressState, Ledger, TaxBook } from "../src/types/state/finance.ts";
 import { zeroLedger, zeroTax } from "./common/defaults.ts";
 import { numbersDiffer, unwrap } from "./common/index.ts";
 

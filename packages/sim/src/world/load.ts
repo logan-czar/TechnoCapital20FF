@@ -25,7 +25,7 @@ import {
 } from "../economy/start.ts";
 import { fringeAssetsAtLoad } from "../economy/supply.ts";
 import { ratingParse } from "../finance/rating.ts";
-import { companyFinanceAtLoad } from "../finance/state.ts";
+import { booksCheckDefault, companyFinanceAtLoad } from "../finance/state.ts";
 import { computeBill } from "../ops/compute.ts";
 import { conversionCapacity, dataBookAtLoad, dataBookFreeRdFraction, dataBookStoredTb } from "../ops/data.ts";
 import { fitStations, laborUnits } from "../ops/labor.ts";
@@ -45,7 +45,7 @@ import { type Ordinal, ordinal } from "../types/ids.ts";
 import { cmpStr } from "../types/num.ts";
 import type { Archetype } from "../types/state/ai.ts";
 import type { BirthsState } from "../types/state/births.ts";
-import type { BooksCheck, CompanyFinance, Rating } from "../types/state/finance.ts";
+import type { CompanyFinance, Rating } from "../types/state/finance.ts";
 import type { MarketState, Stock } from "../types/state/market.ts";
 import type { NewsWire } from "../types/state/news.ts";
 import type { ComputeBill, DataBook, Stations } from "../types/state/ops.ts";
@@ -691,11 +691,6 @@ function marketStateAtLoad(stocks: Stock[]): MarketState {
 /** Rust `Board::default()` of the Company: the five labor seats, all closed. */
 function boardDefault(): null[] {
   return new Array<null>(LABOR_SEAT_COUNT).fill(null);
-}
-
-/** Rust `BooksCheck::default()`. */
-function booksCheckDefault(): BooksCheck {
-  return { checked: 0, failures: 0, first_failure: null };
 }
 
 /** Rust `NewsWire::default()`: empty queue, feed, today and labels. */

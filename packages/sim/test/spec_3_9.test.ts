@@ -30,9 +30,9 @@
 //   ./finance_common/index.ts        the fixture helpers
 // Rating::A is the string "A", Period::Quarter(q) is { kind: "Quarter", quarter: q }.
 import { describe, expect, it } from "vitest";
-import { type Books, balanceSheet, checkIdentity, checkMonth } from "../../src/finance/balance.ts";
-import { homeSpread, lineLimit, lineRate, monthlyCharges } from "../../src/finance/credit.ts";
-import { startingRating } from "../../src/finance/rating.ts";
+import { type Books, balanceSheet, checkIdentity, checkMonth } from "../src/finance/balance.ts";
+import { homeSpread, lineLimit, lineRate, monthlyCharges } from "../src/finance/credit.ts";
+import { startingRating } from "../src/finance/rating.ts";
 import {
   archivePush,
   ledgerBookSold,
@@ -51,9 +51,9 @@ import {
   syntheticHistory,
   trailingFour,
   yearStatement,
-} from "../../src/finance/statements.ts";
-import { quarterTax } from "../../src/finance/tax.ts";
-import { maxF, minF } from "../../src/types/num.ts";
+} from "../src/finance/statements.ts";
+import { quarterTax } from "../src/finance/tax.ts";
+import { maxF, minF } from "../src/types/num.ts";
 import {
   ARCHIVE_QUARTERS,
   type BalanceSheet,
@@ -62,7 +62,7 @@ import {
   type Rating,
   type Statement,
   type TaxBook,
-} from "../../src/types/state/finance.ts";
+} from "../src/types/state/finance.ts";
 import { data, unwrap } from "./common/index.ts";
 import {
   assertClose,
