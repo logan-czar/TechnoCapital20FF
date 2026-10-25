@@ -7,11 +7,11 @@
 // job's DrawSource, companies in id order and seats in opening order, so the seating is part of
 // the seeded run.
 //
-// NOT PORTED YET (needs finance/jobs.ts `trailingRevenue`, lane W3): `trailing_revenue` and
-// `new_seats_job` (4.3 step 11, the people.new_seats job). They land in a follow-up once finance
-// is on main.
-
+import { MONTHS_PER_YEAR } from "../economy/index.ts";
+import { trailingRevenue as financeTrailingRevenue } from "../finance/jobs.ts";
+import { companyFinanceQuarters } from "../finance/state.ts";
 import { openSeats } from "../ops/labor.ts";
+import type { JobCtx } from "../time/scheduler.ts";
 import type { DrawSource } from "../types/draws.ts";
 import type { CompanyId } from "../types/ids.ts";
 import { ordinal } from "../types/ids.ts";
@@ -65,6 +65,39 @@ export function seatIndex(seat: Seat): number {
   const i = (SEAT_LABOR as readonly Seat[]).indexOf(seat);
   if (i < 0) throw new Error("a labor seat");
   return i;
+}
+
+/**
+ * Trailing annual revenue for the 3.7.1 size of a seat opened in play: the trailing four
+ * quarters' revenue from the statements (D129, which replaces D116's run rate now that M4
+ * keeps them); the run rate of the month just closed, 12 x its units' revenue, for a company
+ * with no statements.
+ */
+export function trailingRevenue(world: World, company: Company): number {
+  if (companyFinanceQuarters(company.finance).length === 0) {
+    let sum = 0;
+    for (const u of company.units) sum += world.units[u]!.revenue_m;
+    return MONTHS_PER_YEAR * sum;
+  }
+  return financeTrailingRevenue(company);
+}
+
+/**
+ * 4.3 step 11 (people part, after the economy's asset step): a simple character for each seat
+ * this month's recount opened (spec 3.7.1, 5.10), companies in id order, seats in opening order.
+ */
+export function newSeatsJob(world: World, ctx: JobCtx): void {
+  for (let i = 0; i < world.companies.length; i++) {
+    const c = world.companies[i]!;
+    if (c.seats_to_fill.length === 0) continue;
+    const id = ordinal<CompanyId>(i);
+    const seats = c.seats_to_fill;
+    c.seats_to_fill = [];
+    const size = companySizeFromRevenue(trailingRevenue(world, c));
+    for (const seat of seats) {
+      seatSimple(world, id, seat, size, ctx.draws);
+    }
+  }
 }
 
 /**

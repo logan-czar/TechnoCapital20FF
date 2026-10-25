@@ -9,16 +9,16 @@
 //                            simRegisterTestJob(sim, slot, name, job)   [Sim::register_test_job]
 //   ../../../src/time        type JobCtx { facts: TickFacts, draws: DrawSource, ... },
 //                            raiseAlert(ctx, kind, payload) [JobCtx::raise_alert]
-//   ../../../src/views/estimate.ts  type Figure (the Figure::Exact / Figure::Band enum)
+//   ../../src/types/views/estimate.ts  type Figure (the Figure::Exact / Figure::Band enum)
 import type { WorldData } from "@tc20ff/sim-data";
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
 import { expect } from "vitest";
-import { type Sim, simNew, simRegisterTestJob } from "../../../src/lib.ts";
-import type { JobCtx } from "../../../src/time/scheduler.ts";
-import { jobCtxRaiseAlert } from "../../../src/time/scheduler.ts";
-import type { CompanyId, IndustryId } from "../../../src/types/ids.ts";
-import type { Result, World } from "../../../src/types/world.ts";
-import type { Figure } from "../../../src/views/estimate.ts";
+import { type Sim, simNew, simRegisterTestJob } from "../../src/lib.ts";
+import type { JobCtx } from "../../src/time/scheduler.ts";
+import { jobCtxRaiseAlert } from "../../src/time/scheduler.ts";
+import type { CompanyId, IndustryId } from "../../src/types/ids.ts";
+import type { Figure } from "../../src/types/views/estimate.ts";
+import type { Result, World } from "../../src/types/world.ts";
 
 /** Rust .unwrap() / .expect(): a Result in a test is its value or a thrown error. */
 export function unwrap<T, E>(r: Result<T, E>, what = "unwrap"): T {

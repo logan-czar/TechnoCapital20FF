@@ -11,11 +11,13 @@
 
 import type { WorldData } from "@tc20ff/sim-data";
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { companyFinanceAtLoad } from "../src/finance/state.ts";
 import { type Sim, type SimOptions, simFromWorld, simNew, simRegisterTestJob } from "../src/lib.ts";
 import { type JobCtx, jobCtxRaiseAlert } from "../src/time/scheduler.ts";
 import { DATETIME_START } from "../src/types/calendar.ts";
 import { type DrawSource, STREAM_VALUES } from "../src/types/draws.ts";
 import type { CompanyId } from "../src/types/ids.ts";
+import type { CompanyFinance } from "../src/types/state/finance.ts";
 import type { World } from "../src/types/world.ts";
 import { viewBuildersOnly } from "../src/views/index.ts";
 
@@ -61,6 +63,12 @@ export function clockWorld(): World {
   } as unknown as World;
 }
 
+function removedFinance(): CompanyFinance {
+  const f = companyFinanceAtLoad(0, "Bbb");
+  f.distress.status = "Removed";
+  return f;
+}
+
 /** Companies in `minimalWorld` (the tests watch companies 3, 4 and 9). */
 export const MINIMAL_COMPANIES = 12;
 
@@ -72,9 +80,18 @@ export const MINIMAL_COMPANIES = 12;
  */
 export function minimalWorld(): World {
   const w = clockWorld();
+  // The ledger job reads the HQ country's tax rate before it looks at the company's status.
+  w.countries = [{ corp_tax_rate: 0 }] as unknown as World["countries"];
   w.companies = Array.from({ length: MINIMAL_COMPANIES }, (_, i) => ({
     revenue_usd: 1e6 * (i + 1),
-  })) as World["companies"];
+    // The finance, ops and economy jobs walk the companies. A Removed company is out of the game
+    // (they all skip it), so the bare rows stay inert whatever else they lack.
+    finance: removedFinance(),
+    board: [],
+    seats_to_fill: [],
+    hq_country: 0,
+    units: [],
+  })) as unknown as World["companies"];
   return w;
 }
 

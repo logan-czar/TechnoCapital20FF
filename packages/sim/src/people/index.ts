@@ -5,9 +5,7 @@
 // Spec sections: 3.7, 3.7.1, 3.7.2, 5.7; simple characters are generated at load (7.1) and in
 // 4.3 step 11 (`seating`).
 //
-// The people job (`people.new_seats`, 4.3 step 11) is registered once `seating.newSeatsJob` is
-// ported (it needs finance/jobs.ts `trailingRevenue`, lane W3); until then jobs.ts keeps its
-// placeholder.
+// The people job (`people.new_seats`, 4.3 step 11) is `seating.newSeatsJob`, registered in jobs.ts.
 
 export * as board from "./board.ts";
 export * as full from "./full.ts";

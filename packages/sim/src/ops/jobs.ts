@@ -65,6 +65,7 @@ export function laborSeatsJob(world: World, _ctx: JobCtx): void {
 export function computeJob(world: World, _ctx: JobCtx): void {
   const { companies, industries } = world;
   for (const c of companies) {
+    // A frozen company (Bankrupt or Removed) runs no monthly step (spec 5.12 step 2, D123).
     if (companyIsFrozen(c)) continue;
     c.pc = productiveCompute(c.stations, industries[c.industry]!.params.pc_modifier);
     c.pc_bonus = pcBonus(c.pc);
@@ -82,6 +83,7 @@ export function computeJob(world: World, _ctx: JobCtx): void {
 export function dataJob(world: World, _ctx: JobCtx): void {
   const { companies, units, industries } = world;
   for (const c of companies) {
+    // A frozen company (Bankrupt or Removed) runs no monthly step (spec 5.12 step 2, D123).
     if (companyIsFrozen(c)) continue;
     const capacity = conversionCapacity(c.stations);
     for (const d of c.data) {
@@ -100,13 +102,15 @@ export function dataJob(world: World, _ctx: JobCtx): void {
  * 4.3 step 10 (spec 5.6, 5.7): every management score from the seated board (D115), then each
  * unit's productivity: the R&D effect of `rd_plan + free R&D` against the norm, times the
  * management factor and the research multiplier, less the idle decay, clamped to 30 to 200.
- * `rd_plan` is the plan the unit runs: R&D at the norm until the M6 plan lock (D105).
+ * `rd_plan` is the plan the unit runs: R&D at the norm until the M6 plan lock (D105,
+ * `economy::assets::placeholder_plan` in the Rust).
  */
 export function productivityJob(world: World, _ctx: JobCtx): void {
   setManagementScores(world);
   const { companies, industries } = world;
   for (const u of world.units) {
     const c = companies[u.company]!;
+    // A frozen company (Bankrupt or Removed) runs no monthly step (spec 5.12 step 2, D123).
     if (companyIsFrozen(c)) continue;
     const book = companyDataIn(c, u.industry);
     const freeRd = book === null ? 0.0 : dataBookFreeRdFraction(book);
