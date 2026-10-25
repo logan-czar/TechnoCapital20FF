@@ -14,6 +14,7 @@
 
 import type { Company as CompanyRow, Industry as IndustryRow, WorldData } from "@tc20ff/sim-data";
 import { worldDataAllProvinces } from "@tc20ff/sim-data";
+import { archetypeAtLoad, rdPlanAtLoad, STATE_CONTROL_BASIS } from "../ai/archetype.ts";
 import { boomDate, POP_BASE_YEAR } from "../economy/ai_boom.ts";
 import { START_PHASE, zAvg } from "../economy/cycle.ts";
 import {
@@ -23,6 +24,8 @@ import {
   startLoadout,
 } from "../economy/start.ts";
 import { fringeAssetsAtLoad } from "../economy/supply.ts";
+import { ratingParse } from "../finance/rating.ts";
+import { companyFinanceAtLoad } from "../finance/state.ts";
 import { computeBill } from "../ops/compute.ts";
 import { conversionCapacity, dataBookAtLoad, dataBookFreeRdFraction, dataBookStoredTb } from "../ops/data.ts";
 import { fitStations, laborUnits } from "../ops/labor.ts";
@@ -169,9 +172,9 @@ function unported(item: string): never {
 
 /** The default `LoadDeps` until Step 2 ports the modules: every member throws when called. */
 export const UNPORTED_LOAD_DEPS: LoadDeps = {
-  STATE_CONTROL_BASIS: "state", // ai/archetype.rs
-  archetypeAtLoad: () => unported("ai/archetype Archetype::at_load"),
-  rdPlanAtLoad: () => unported("ai/archetype rd_plan_at_load"),
+  STATE_CONTROL_BASIS, // ai/archetype.rs
+  archetypeAtLoad, // ai/archetype.rs Archetype::at_load
+  rdPlanAtLoad, // ai/archetype.rs
   birthsStateFromData: () => unported("births/state BirthsState::from_data"),
   POP_BASE_YEAR, // economy/ai_boom.rs
   boomDate, // economy/ai_boom.rs
@@ -183,8 +186,8 @@ export const UNPORTED_LOAD_DEPS: LoadDeps = {
   sharedCostsAtLoadHook, // economy/start.rs
   startLoadout, // economy/start.rs
   fringeAssetsAtLoad, // economy/supply.rs
-  ratingParse: () => unported("finance/rating Rating::parse"),
-  companyFinanceAtLoad: () => unported("finance/state CompanyFinance::at_load"),
+  ratingParse, // finance/rating.rs Rating::parse
+  companyFinanceAtLoad, // finance/state.rs CompanyFinance::at_load
   stockAtLoad: () => unported("market/state Stock::at_load"),
   computeBill, // ops/compute.rs
   dataBookAtLoad, // ops/data.rs DataBook::at_load
