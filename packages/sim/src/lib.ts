@@ -25,6 +25,7 @@
 
 import type { WorldData } from "@tc20ff/sim-data";
 import { start as economyStart } from "./economy/start.ts";
+import { start as financeStart } from "./finance/index.ts";
 import { stateHash } from "./hash.ts";
 import { scheduler } from "./jobs.ts";
 import { type RngStreams, rngStreamsDraws, rngStreamsNew, rngStreamsSeed } from "./rng.ts";
@@ -99,7 +100,7 @@ export const START_DEPS: StartDeps = {
   aiPlanAtLoad: () => notPorted("ai::jobs::plan_at_load"),
   peopleSeatingStart: () => notPorted("people::seating::start"),
   birthsDrawFirstVotes: () => notPorted("births::jobs::draw_first_votes"),
-  financeStart: () => notPorted("finance::start"),
+  financeStart, // finance/index.ts
   marketStart: () => notPorted("market::start"),
 };
 

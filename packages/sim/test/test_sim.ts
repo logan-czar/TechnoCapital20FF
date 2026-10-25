@@ -11,6 +11,8 @@
 
 import type { WorldData } from "@tc20ff/sim-data";
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { RATING_WORST } from "../src/finance/rating.ts";
+import { companyFinanceAtLoad } from "../src/finance/state.ts";
 import { type Sim, type SimOptions, simFromWorld, simNew, simRegisterTestJob } from "../src/lib.ts";
 import { type JobCtx, jobCtxRaiseAlert } from "../src/time/scheduler.ts";
 import { DATETIME_START } from "../src/types/calendar.ts";
@@ -64,6 +66,13 @@ export function clockWorld(): World {
 /** Companies in `minimalWorld` (the tests watch companies 3, 4 and 9). */
 export const MINIMAL_COMPANIES = 12;
 
+/** Finance books of a company that is out of the game. */
+function removedFinance() {
+  const f = companyFinanceAtLoad(0, RATING_WORST);
+  f.distress.status = "Removed";
+  return f;
+}
+
 /**
  * `clockWorld()` (so every registered job runs as a no-op on it) plus a few companies with only
  * `revenue_usd`: enough for the controls (WatchlistAdd checks the company table) and for the churn
@@ -74,7 +83,14 @@ export function minimalWorld(): World {
   const w = clockWorld();
   w.companies = Array.from({ length: MINIMAL_COMPANIES }, (_, i) => ({
     revenue_usd: 1e6 * (i + 1),
-  })) as World["companies"];
+    // The ported finance jobs walk every company's books; a Removed company is out of the game,
+    // so they skip it .
+    finance: removedFinance(),
+    units: [],
+    hq_country: 0,
+  })) as unknown as World["companies"];
+  // ledgerJob reads the home country's tax rate before it checks the company is in the game.
+  w.countries = [{ corp_tax_rate: 0 }] as unknown as World["countries"];
   return w;
 }
 
