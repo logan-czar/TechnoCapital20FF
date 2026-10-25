@@ -176,6 +176,47 @@ export function estimatedYear(
   };
 }
 
+/** A year's estimate with what it was made from besides the year statement itself. */
+interface YearEstimate {
+  readonly seed: bigint;
+  readonly id: CompanyId;
+  /** The year's quarter estimates it summed (the same objects), or null for a lone year. */
+  readonly ofYear: readonly EstimatedStatement[] | null;
+  readonly value: EstimatedStatement;
+}
+
+const yearEstimates = new WeakMap<Statement, YearEstimate>();
+
+/**
+ * `estimatedYear`, reusing the last build's estimate of the same archived year statement (an
+ * archived statement never changes) when it is of the same seed and company and sums the same
+ * quarter estimates (D435 reuses those): then it is the same estimate, so each quarterly rebuild
+ * does not sum ten years again. The result equals `estimatedYear`'s.
+ */
+function cachedYear(
+  est: Estimator,
+  id: CompanyId,
+  y: Statement,
+  quarters: readonly EstimatedStatement[],
+): EstimatedStatement {
+  if (y.period.kind !== "Year") return estimatedYear(est, id, y, quarters);
+  const year = y.period.year;
+  const ofYear = quarters.filter((q) => q.period.kind === "Quarter" && q.period.quarter.year === year);
+  const used = ofYear.length === QUARTERS_PER_YEAR ? ofYear : null;
+  const hit = yearEstimates.get(y);
+  if (
+    hit !== undefined &&
+    hit.seed === est.seed &&
+    hit.id === id &&
+    (hit.ofYear === null ? used === null : used !== null && hit.ofYear.every((q, k) => q === used[k]))
+  ) {
+    return hit.value;
+  }
+  const value = estimatedYear(est, id, y, quarters);
+  yearEstimates.set(y, { seed: est.seed, id, ofYear: used, value });
+  return value;
+}
+
 /**
  * A trailing-four-quarters revenue or net income (spec 5.13 TTM, D228) from the published
  * quarters, as `trailingFour` makes it: exact for a publishing company, else the sum of the
@@ -291,13 +332,24 @@ function buildWith(input: ViewInput, prev: readonly CompanyStatements[]): Statem
     const p = prev[id];
     const old: readonly EstimatedStatement[] =
       p !== undefined && p.id === id && p.estimated ? p.estimated_quarters : [];
+    // The archive and the last build's estimates are both oldest first, so the search for each
+    // quarter's old estimate starts where the last one was found (the same estimate `find` gives:
+    // a quarter appears once).
+    let from = 0;
+    const oldEstimate = (s: Statement): EstimatedStatement | undefined => {
+      for (let k = from; k < old.length; k++) {
+        if (periodEq(old[k]!.period, s.period)) {
+          from = k + 1;
+          return old[k];
+        }
+      }
+      return old.slice(0, from).find((e) => periodEq(e.period, s.period));
+    };
     const estimated_quarters = banded
-      ? allQuarters
-          .slice(0, quarters)
-          .map((s) => old.find((e) => periodEq(e.period, s.period)) ?? estimatedQuarter(est, id, s))
+      ? allQuarters.slice(0, quarters).map((s) => oldEstimate(s) ?? estimatedQuarter(est, id, s))
       : [];
     const estimated_years = banded
-      ? allYears.slice(0, years).map((y) => estimatedYear(est, id, y, estimated_quarters))
+      ? allYears.slice(0, years).map((y) => cachedYear(est, id, y, estimated_quarters))
       : [];
     return {
       id,

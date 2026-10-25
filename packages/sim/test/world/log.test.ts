@@ -6,6 +6,7 @@ import {
   appendBufPush,
   appendBufRows,
   appendBufSharesWith,
+  chunkLogAt,
   chunkLogClone,
   chunkLogDropWhile,
   chunkLogFindSorted,
@@ -18,6 +19,7 @@ import {
   chunkLogOpenChunk,
   chunkLogPush,
   chunkLogRows,
+  chunkLogRowsFrom,
   chunkLogSharesWith,
   chunkLogToRepr,
 } from "../../src/world/log.ts";
@@ -116,5 +118,19 @@ describe("world/log.ts", () => {
     const back = chunkLogFromRepr(JSON.parse(JSON.stringify(repr)));
     expect(chunkLogRows(back)).toEqual(chunkLogRows(log));
     expect(chunkLogToRepr(copy).open).toEqual([31, 32, 33]);
+  });
+  it("reads a row by index and the rows from an index", () => {
+    const log = chunkLogNew<number>();
+    for (const i of [1, 2, 11, 12, 13, 25, 31, 32]) chunkLogPush(log, i, byTen);
+    const rows = chunkLogRows(log);
+    for (let i = -1; i <= rows.length + 1; i++) {
+      expect(chunkLogAt(log, i)).toBe(rows[i] ?? null);
+      expect(chunkLogRowsFrom(log, Math.max(i, 0))).toEqual(rows.slice(Math.max(i, 0)));
+    }
+    expect(chunkLogAt(log, 1.5)).toBe(null);
+    const copy = chunkLogClone(log);
+    chunkLogPush(log, 33, byTen); // a row the copy does not own
+    expect(chunkLogRowsFrom(copy, 6)).toEqual([31, 32]);
+    expect(chunkLogAt(copy, 8)).toBe(null);
   });
 });

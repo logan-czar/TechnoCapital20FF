@@ -9,7 +9,7 @@ import { cmpDate, type SimDate } from "../types/calendar.ts";
 import type { HeadlineId, IndustryId } from "../types/ids.ts";
 import type { Headline } from "../types/state/news.ts";
 import type { NewsView } from "../types/views/news.ts";
-import { chunkLogIter } from "../world/log.ts";
+import { chunkLogAt, chunkLogIter, chunkLogRowsFrom } from "../world/log.ts";
 import type { ViewInput } from "./index.ts";
 
 /** Rust `NewsView::get`: the headline with id `id` (D544), a binary search by id. */
@@ -52,4 +52,23 @@ export function newsViewGetNews(v: NewsView, since: SimDate, industry: IndustryI
 /** Rust `impl ViewData for NewsView`: `build`. */
 export function buildNews(input: ViewInput): NewsView {
   return { feed: [...chunkLogIter(input.world.news.feed)] };
+}
+
+/**
+ * The daily rebuild from the last build (D148's sharing, the TS way): the wire's feed only grows
+ * (4.2 step 5 appends; nothing drops or rewrites a headline), so when the last build's feed is
+ * still the wire's first rows (the same headline objects at its first and last index; a load or
+ * a new game makes new ones) the new feed is the last one plus the headlines posted since: one
+ * array copy instead of walking ten years of chunks. Otherwise it is built afresh. Either way
+ * the feed equals `buildNews`'s; `prev` is read, never changed (D962).
+ */
+export function rebuildNewsFrom(prev: NewsView, input: ViewInput): NewsView {
+  const log = input.world.news.feed;
+  const n = prev.feed.length;
+  if (n === 0 || chunkLogAt(log, 0) !== prev.feed[0] || chunkLogAt(log, n - 1) !== prev.feed[n - 1]) {
+    return buildNews(input);
+  }
+  const added = chunkLogRowsFrom(log, n);
+  // No headline today: the last feed itself (a build is never changed, so two may share it).
+  return { feed: added.length === 0 ? prev.feed : prev.feed.concat(added) };
 }
