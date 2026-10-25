@@ -9,9 +9,9 @@
 //                               last_quarter_net_income, archetype_payout_mult, status },
 //                               financing(inputs) -> Financing
 import { describe, expect, it } from "vitest";
-import { archetypeParams } from "../../src/ai/archetype.ts";
-import { type Financing, type FinancingInputs, financing } from "../../src/ai/financing.ts";
-import type { Trait } from "../../src/types/state/people.ts";
+import { archetypeParams } from "../src/ai/archetype.ts";
+import { type Financing, type FinancingInputs, financing } from "../src/ai/financing.ts";
+import type { Trait } from "../src/types/state/people.ts";
 
 function close(a: number, b: number): boolean {
   return Math.abs(a - b) < 1e-6;
