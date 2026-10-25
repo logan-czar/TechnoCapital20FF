@@ -69,7 +69,7 @@ import { buildIndustryRows } from "./industry_rows.ts";
 import { buildMapLayers, mapLayersViewLayer } from "./map_layers.ts";
 import { buildMapStatic } from "./map_static.ts";
 import { buildMarketStats } from "./market_stats.ts";
-import { buildNews } from "./news.ts";
+import { buildNews, rebuildNewsFrom } from "./news.ts";
 import { buildPlaces } from "./places.ts";
 import { buildPriceBars } from "./price_bars.ts";
 import { buildProjection } from "./projection.ts";
@@ -145,9 +145,9 @@ export interface ViewBuilder<T> {
   /** Rust `ViewData::build`; null until Step 3 ports the view. Must not keep or change `input`. */
   readonly build: ((input: ViewInput) => T) | null;
   /**
-   * Rust `ViewData::rebuild_from` for a `rebuild_in_place` view (D402, D435): a rebuild that may
-   * read the last build `prev` but never changes it; the result must equal `build`'s. Omitted:
-   * the view is built anew.
+   * Rust `ViewData::rebuild_from` for a `rebuild_in_place` view (D402, D435), or a view whose
+   * history only grows (v_news): a rebuild after a tick that may read the last build `prev` but
+   * never changes it; the result must equal `build`'s. Omitted: the view is built anew.
    */
   readonly rebuildFrom?: ((prev: T, input: ViewInput) => T) | null;
 }
@@ -221,7 +221,12 @@ export const VIEW_BUILDERS: ViewBuilders = {
     }),
     build: buildMarketStats,
   },
-  news: { rust: "views::news::NewsView", empty: () => ({ feed: [] }), build: buildNews },
+  news: {
+    rust: "views::news::NewsView",
+    empty: () => ({ feed: [] }),
+    build: buildNews,
+    rebuildFrom: rebuildNewsFrom,
+  },
   births: {
     rust: "views::births::BirthsView",
     empty: () => ({
@@ -389,11 +394,10 @@ function viewAfterTick(
   if (build === null || !cadenceIsDue(spec.cadence, facts)) {
     return v.dirty ? { data: v.data, version: v.version, dirty: false } : v;
   }
+  // A view with a `rebuildFrom` rebuilds from its last build: the REBUILD_IN_PLACE views (D402,
+  // D435) and the news feed, which only grows (views/news.ts). Its result equals `build`'s.
   const rebuildFrom = b.rebuildFrom;
-  const data =
-    spec.rebuild_in_place && rebuildFrom !== undefined && rebuildFrom !== null
-      ? rebuildFrom(v.data, input)
-      : build(input);
+  const data = rebuildFrom !== undefined && rebuildFrom !== null ? rebuildFrom(v.data, input) : build(input);
   return { data, version, dirty: true };
 }
 

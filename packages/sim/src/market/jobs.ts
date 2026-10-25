@@ -559,8 +559,15 @@ export function heldAtLockRestoreProductivity(held: HeldAtLock, world: World): v
  */
 function projectionClone(world: World): World {
   const stocks = world.market.stocks.map((s) => ({ ...s, bars: { log: chunkLogNew<never>() } }));
+  // The statement archives (most of a company's size after ten years) are shared, not copied, as
+  // Rust shares them behind an `Arc`: an archive is copy on write (finance/state.ts, D130), so a
+  // month close in the projection that archives a statement makes a fresh archive in the copy
+  // and never touches the world's.
+  const archives = world.companies.map((c) => c.finance.archive);
+  const companies = world.companies.map((c) => ({ ...c, finance: { ...c.finance, archive: EMPTY_ARCHIVE } }));
   const lite = {
     ...world,
+    companies,
     market: {
       ...world.market,
       stocks,
@@ -569,8 +576,15 @@ function projectionClone(world: World): World {
     news: { ...world.news, feed: chunkLogNew<never>() },
     recaps: [],
   } as World;
-  return structuredClone(lite);
+  const clone = structuredClone(lite);
+  clone.companies.forEach((c, i) => {
+    c.finance.archive = archives[i] as (typeof archives)[number];
+  });
+  return clone;
 }
+
+/** The archive left in a company's place while the projection copy is made (never read). */
+const EMPTY_ARCHIVE: World["companies"][number]["finance"]["archive"] = { quarters: [], years: [] };
 
 /**
  * The engine's projection of each company's net income for the calendar quarter `lock` falls in

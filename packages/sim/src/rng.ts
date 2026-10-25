@@ -95,13 +95,6 @@ export function intInRange(lo: number, hi: number, nextU32: () => number): numbe
   }
 }
 
-/** The default `DrawSource::uniform`: two raw draws make 53 bits. */
-function uniformFromRaw(nextU32: () => number): number {
-  const hi = nextU32();
-  const lo = nextU32();
-  return unitFromU32Pair(hi, lo);
-}
-
 /**
  * A standard normal clamped to `lo..=hi` (a draw is always consumed, then bounded). Rust callers
  * clamp inline; this is the shared helper for them.
@@ -225,13 +218,21 @@ export function rngStreamsNextU32(rng: RngStreams, stream: Stream): number {
   return xoshiroNext(rng.state[STREAM_NUMBER[stream]]!);
 }
 
-/** A float in [0, 1) (Rust `DrawSource::uniform`). */
+/**
+ * A float in [0, 1) (Rust `DrawSource::uniform`): two raw draws make 53 bits, the high word
+ * first. No closure per draw (the prices draw millions a year).
+ */
 export function rngStreamsUniform(rng: RngStreams, stream: Stream): number {
   const s = rng.state[STREAM_NUMBER[stream]]!;
-  return uniformFromRaw(() => xoshiroNext(s));
+  const hi = xoshiroNext(s);
+  const lo = xoshiroNext(s);
+  return unitFromU32Pair(hi, lo);
 }
 
-/** A standard normal: Box-Muller in pairs, the second kept as a saved spare. */
+/**
+ * A standard normal: Box-Muller in pairs, the second kept as a saved spare. `boxMuller` written
+ * out (the same operations in the same order), so a draw allocates no pair.
+ */
 export function rngStreamsNormal(rng: RngStreams, stream: Stream): number {
   const i = STREAM_NUMBER[stream];
   const spare = rng.spare[i];
@@ -241,9 +242,10 @@ export function rngStreamsNormal(rng: RngStreams, stream: Stream): number {
   }
   const u1 = 1.0 - rngStreamsUniform(rng, stream); // (0, 1], so ln is finite
   const u2 = rngStreamsUniform(rng, stream);
-  const [z0, z1] = boxMuller(u1, u2);
-  rng.spare[i] = z1;
-  return z0;
+  const r = Math.sqrt(-2.0 * Math.log(u1));
+  const theta = TAU * u2;
+  rng.spare[i] = r * Math.sin(theta);
+  return r * Math.cos(theta);
 }
 
 /** A Poisson count with `mean` (Knuth). */

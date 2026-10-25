@@ -236,7 +236,7 @@ export function runSeed<D = unknown>(
       quarters: rec.quarters,
       ticks,
       wall_ms: Math.trunc(performance.now() - start),
-      state_hash: sim.stateHash(),
+      state_hash: recorderStateHash(rec, sim),
       end: formatDateTime(sim.now()),
       detail: rec.detail === null ? null : (rec.detail.out as D),
       max_shares_out: rec.max_shares_out,
@@ -442,6 +442,23 @@ interface Recorder {
   quarters: string;
   /** The `--detail` tables (D900), read after the metrics at each close. */
   detail: DetailHook | null;
+  /**
+   * The last state hash taken and the time it was taken at: a run only steps (no controls), so
+   * the state moves only with the clock, and the December close, `--hash-monthly` and the end of
+   * the run each hash the same state once (ten years of bars take seconds to hash).
+   */
+  hash_at: number | null;
+  hash: string;
+}
+
+/** The state hash now, reused while the clock has not moved (`Recorder.hash_at`). */
+function recorderStateHash(rec: Recorder, sim: SoakSimApi): string {
+  const now = sim.now();
+  if (rec.hash_at !== now) {
+    rec.hash = sim.stateHash();
+    rec.hash_at = now;
+  }
+  return rec.hash;
 }
 
 function recorderNew(sim: SoakSimApi, seed: number): Recorder {
@@ -465,6 +482,8 @@ function recorderNew(sim: SoakSimApi, seed: number): Recorder {
     years: "",
     quarters: "",
     detail: null,
+    hash_at: null,
+    hash: "",
   };
 }
 
@@ -485,7 +504,7 @@ function recorderNotice(rec: Recorder, sim: SoakSimApi, n: Notice, hashMonthly: 
     case "MonthDone": {
       const month = n.month;
       recorderMonthClose(rec, sim, month.month);
-      if (hashMonthly) console.log(`seed ${rec.seed} ${formatMonth(month)} ${sim.stateHash()}`);
+      if (hashMonthly) console.log(`seed ${rec.seed} ${formatMonth(month)} ${recorderStateHash(rec, sim)}`);
       if (month.month % QUARTER_MONTHS === 0) {
         recorderQuarterClose(rec, month.year, month.month / QUARTER_MONTHS);
       }
@@ -602,7 +621,7 @@ function recorderQuarterClose(rec: Recorder, year: number, quarter: number): voi
 }
 
 function recorderYearClose(rec: Recorder, sim: SoakSimApi, year: number): void {
-  const hash = sim.stateHash();
+  const hash = recorderStateHash(rec, sim);
   const econ = yearEconomyColumns(rec.economy, sim);
   const ops = operationsColumns(sim);
   const seen = rec.distressed_seen.filter((d) => d).length;

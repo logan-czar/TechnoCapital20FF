@@ -85,6 +85,43 @@ function expectedRow(est: Estimator, w: World, q: Quarter, e: ExpectedResult): E
   };
 }
 
+/**
+ * A shown row or page kept with what it was made from beyond its recap: the seed and whether its
+ * company's figures were bands. A recap on the World is never changed once built (recap/jobs
+ * pushes new ones and drops the oldest), and a row or page reads nothing else that moves: every
+ * figure is of the recap's quarter (`estimatorOfPeriod`, keyed by the seed, never the clock),
+ * and the range width is the recap tick's. So while the seed and the banding are the same, the
+ * row or page is the one built before, and a quarterly rebuild of the 20 recaps kept (D433)
+ * reuses it instead of recomputing every estimate (the result equals a fresh build's; a build is
+ * never changed once made, D962, so sharing it is safe).
+ */
+interface Shown<T> {
+  readonly seed: bigint;
+  readonly banded: boolean;
+  readonly value: T;
+}
+
+const shownRows = new WeakMap<ExpectedResult, Shown<ExpectedRow>>();
+const shownPages = new WeakMap<CompanyRecap, Shown<RecapPage>>();
+
+function cachedRow(est: Estimator, w: World, q: Quarter, e: ExpectedResult): ExpectedRow {
+  const banded = estimatorBanded(est, w, e.company);
+  const hit = shownRows.get(e);
+  if (hit !== undefined && hit.seed === est.seed && hit.banded === banded) return hit.value;
+  const value = expectedRow(est, w, q, e);
+  shownRows.set(e, { seed: est.seed, banded, value });
+  return value;
+}
+
+function cachedPage(est: Estimator, w: World, width: number, p: CompanyRecap): RecapPage {
+  const banded = estimatorBanded(est, w, p.company);
+  const hit = shownPages.get(p);
+  if (hit !== undefined && hit.seed === est.seed && hit.banded === banded) return hit.value;
+  const value = page(est, w, width, p);
+  shownPages.set(p, { seed: est.seed, banded, value });
+  return value;
+}
+
 function page(est: Estimator, w: World, width: number, p: CompanyRecap): RecapPage {
   const banded = estimatorBanded(est, w, p.company);
   const expected = expectedRow(est, w, p.quarter, p.expected);
@@ -108,7 +145,7 @@ function recapQuarter(est: Estimator, w: World, recap: Recap): RecapQuarter {
   // The observer's 5.16 width at the recap tick, as the recap used (D252).
   const width = rangeWidth(elapsedShare(recapTick(r.quarter)), RANGE_VIEWER_OBSERVER);
   const rows = (list: readonly ExpectedResult[]): ExpectedRow[] =>
-    list.map((e) => expectedRow(est, w, r.quarter, e));
+    list.map((e) => cachedRow(est, w, r.quarter, e));
   return {
     world: {
       quarter: r.quarter,
@@ -118,7 +155,7 @@ function recapQuarter(est: Estimator, w: World, recap: Recap): RecapQuarter {
       expected_beats: rows(r.expected_beats),
       expected_misses: rows(r.expected_misses),
     },
-    companies: recap.companies.map((p) => page(est, w, width, p)),
+    companies: recap.companies.map((p) => cachedPage(est, w, width, p)),
   };
 }
 

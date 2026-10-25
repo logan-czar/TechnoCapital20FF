@@ -173,6 +173,35 @@ export function chunkLogRows<T>(log: ChunkLog<T>): T[] {
   return [...chunkLogIter(log)];
 }
 
+/**
+ * The rows from index `start` on, oldest first, as a new array: the closed chunks wholly before
+ * `start` are skipped by their lengths, so a recent `start` reads only the recent rows. Not Rust.
+ */
+export function chunkLogRowsFrom<T>(log: ChunkLog<T>, start: number): T[] {
+  const out: T[] = [];
+  let at = 0;
+  for (const c of appendBufIter(log.closed)) {
+    if (at + c.length > start) {
+      for (let j = Math.max(start - at, 0); j < c.length; j++) out.push(c[j]!);
+    }
+    at += c.length;
+  }
+  const open = log.open;
+  for (let j = Math.max(start - at, 0); j < open.len; j++) out.push(open.slots[j]!);
+  return out;
+}
+
+/** The row at index `i` (oldest first), or null past the end. Not Rust. */
+export function chunkLogAt<T>(log: ChunkLog<T>, i: number): T | null {
+  if (!Number.isInteger(i) || i < 0) return null;
+  let at = 0;
+  for (const c of appendBufIter(log.closed)) {
+    if (i < at + c.length) return c[i - at]!;
+    at += c.length;
+  }
+  return appendBufGet(log.open, i - at);
+}
+
 /** The number of rows kept (Rust `ChunkLog::len`). */
 export function chunkLogLen<T>(log: ChunkLog<T>): number {
   let n = log.open.len;
