@@ -26,6 +26,15 @@ export function unwrap<T, E>(r: Result<T, E>, what = "unwrap"): T {
   return r.value;
 }
 
+/**
+ * One macrotask turn. Vitest's worker answers the runner's RPC only between macrotasks and fails
+ * the run when an answer waits 60 s, so a test that runs years of ticks is async and awaits this
+ * now and then (each simulated month, say). Rust has no such limit; the checks are unchanged.
+ */
+export function macrotask(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
 let cached: WorldData | undefined;
 
 /** The starting data, loaded once; every call returns its own copy (Rust loads a fresh value). */

@@ -1,6 +1,5 @@
 // The Sim for the lib.rs tests (controls, job order, notices, hash, save and load): `testSim(seed)`
-// is Rust's `Sim::new(data, seed)` on the real data (the minimal-world fallback below stays for a
-// branch where a START_DEPS or LoadDeps member throws "not ported yet"). `minimalSim` is a Sim on
+// is Rust's `Sim::new(data, seed)` on the real data. `minimalSim` is a Sim on
 // `minimalWorld()` running every registered job (`scheduler()`, as Rust's `Sim::new` does), with
 // only the clock view built: the world's tables are empty or bare, so the jobs find nothing to do;
 // the slots visited, the calendar alerts and the test jobs below are what its tests check.
@@ -117,34 +116,11 @@ export function data(): WorldData {
   return cachedData;
 }
 
-function isNotPorted(e: unknown): boolean {
-  return e instanceof Error && /not ported yet/.test(e.message);
-}
-
-let realData: boolean | undefined;
-
-/** Whether `simNew` builds a game from the real data yet (every Step 2 start call is wired). */
-export function simNewWorks(): boolean {
-  if (realData === undefined) {
-    try {
-      simNew(data(), 1);
-      realData = true;
-    } catch (e) {
-      if (!isNotPorted(e)) throw e;
-      realData = false;
-    }
-  }
-  return realData;
-}
-
-/** Rust `Sim::new(data, seed).unwrap()`, or the minimal-world Sim until `simNew` works. */
+/** Rust `Sim::new(data, seed).unwrap()`. */
 export function testSim(seed: number, opts: SimOptions = {}): Sim {
-  if (simNewWorks()) {
-    const r = simNew(data(), seed, opts);
-    if (!r.ok) throw new Error(`Sim::new: ${JSON.stringify(r.error)}`);
-    return r.value;
-  }
-  return minimalSim(seed, opts);
+  const r = simNew(data(), seed, opts);
+  if (!r.ok) throw new Error(`Sim::new: ${JSON.stringify(r.error)}`);
+  return r.value;
 }
 
 /**
