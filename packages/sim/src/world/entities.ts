@@ -1,6 +1,7 @@
 // Row types' methods for the world's entities (spec 3.5, 3.6, 3.7). Ported from
 // crates/sim/src/world/entities.rs; the types are in types/world.ts.
 
+import { RAMP_SHORTFALL } from "../economy/assets.ts";
 import type { IndustryId } from "../types/ids.ts";
 import type { DataBook } from "../types/state/ops.ts";
 import type { Seat } from "../types/state/people.ts";
@@ -8,13 +9,6 @@ import { LABOR_SEAT_COUNT, SEAT_LABOR } from "../types/state/people.ts";
 import type { BusinessUnit, Company, Origin, PhaseLabel, SeatHolder } from "../types/world.ts";
 
 export { PHASE_LABEL_VALUES } from "../types/world.ts";
-
-/**
- * Share of ramping assets that does not work yet: new assets work at 80% (spec 5.2, 10.0.4).
- * CONTRACT: Rust reads `economy::assets::RAMP_SHORTFALL`, owned by the economy/ port (lane W2).
- * This copy holds the same value until that module lands; then import it from there.
- */
-const RAMP_SHORTFALL = 0.2;
 
 /** Rust `PhaseLabel::name`: equals the variant. */
 export function phaseLabelName(label: PhaseLabel): string {
