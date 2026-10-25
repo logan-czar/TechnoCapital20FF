@@ -34,6 +34,7 @@
 // swaps in (keep the line where it is: its position is its order). Once a module is ported, its
 // lines may move into that module's own `register(s)` called from here, in the same place.
 
+import * as ai from "./ai/jobs.ts";
 import { register as economyRegister } from "./economy/index.ts";
 import * as finance from "./finance/jobs.ts";
 import { register as opsRegister } from "./ops/index.ts";
@@ -104,7 +105,7 @@ export function registerJobs(s: Scheduler): void {
   r(s, "LockIpoVotes", "births.ipo_votes_and_listings", notPorted("births::jobs::ipo_job")); // births/jobs ipoJob
 
   // ai::jobs::register (crates/sim/src/ai/jobs.rs)
-  r(s, "CloseStatements", "ai.loss_quarters", notPorted("ai::jobs::loss_quarters_job")); // ai/jobs lossQuartersJob
+  r(s, "CloseStatements", "ai.loss_quarters", ai.lossQuartersJob); // ai/jobs lossQuartersJob
   r(s, "LockAiPlans", "ai.plan_lock", notPorted("ai::jobs::plan_lock_job")); // ai/jobs planLockJob
 
   // news::jobs::register (crates/sim/src/news/jobs.rs)

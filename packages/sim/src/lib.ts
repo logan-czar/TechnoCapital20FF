@@ -24,6 +24,7 @@
 //   from internal.ts, never from index.ts.
 
 import type { WorldData } from "@tc20ff/sim-data";
+import { planAtLoad } from "./ai/jobs.ts";
 import { start as economyStart } from "./economy/start.ts";
 import { start as financeStart } from "./finance/index.ts";
 import { stateHash } from "./hash.ts";
@@ -98,7 +99,7 @@ export const START_DEPS: StartDeps = {
   worldFromData: (data) => buildWorld(data),
   economyStart, // economy/start.ts
   birthsDrawTippedLabAtLoad: () => notPorted("births::jobs::draw_tipped_lab_at_load"),
-  aiPlanAtLoad: () => notPorted("ai::jobs::plan_at_load"),
+  aiPlanAtLoad: planAtLoad, // ai/jobs.ts
   peopleSeatingStart: seatingStart, // people/seating.ts
   birthsDrawFirstVotes: () => notPorted("births::jobs::draw_first_votes"),
   financeStart, // finance/index.ts

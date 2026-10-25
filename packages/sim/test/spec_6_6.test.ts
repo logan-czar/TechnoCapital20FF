@@ -12,7 +12,7 @@
 //                          successChance(confidence_factor, label, method, failed_raises)
 //   ./common/rng.ts        newNoNoise (every uniform roll 0.5)
 import { describe, expect, it } from "vitest";
-import { type RaiseInputs, raisePlan, rollRaise, successChance } from "../../src/ai/raise.ts";
+import { type RaiseInputs, raisePlan, rollRaise, successChance } from "../src/ai/raise.ts";
 import { data } from "./common/index.ts";
 import { newNoNoise } from "./common/rng.ts";
 

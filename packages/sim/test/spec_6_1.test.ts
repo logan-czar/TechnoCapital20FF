@@ -12,12 +12,12 @@
 //                              null, born) -> Trait[], roa(ebit, gross_assets)
 //   ../../src/people/traits.ts traitFromName(name) -> Trait | null
 import { describe, expect, it } from "vitest";
-import { archetype, archetypeParams } from "../../src/ai/archetype.ts";
-import { gapFade, gDem, liquidity, minCash, nextLossQuarters, planTraits, roa } from "../../src/ai/inputs.ts";
-import { traitFromName } from "../../src/people/traits.ts";
-import type { Archetype } from "../../src/types/state/ai.ts";
-import type { CreditLine } from "../../src/types/state/finance.ts";
-import type { Trait } from "../../src/types/state/people.ts";
+import { archetype, archetypeParams } from "../src/ai/archetype.ts";
+import { gapFade, gDem, liquidity, minCash, nextLossQuarters, planTraits, roa } from "../src/ai/inputs.ts";
+import { traitFromName } from "../src/people/traits.ts";
+import type { Archetype } from "../src/types/state/ai.ts";
+import type { CreditLine } from "../src/types/state/finance.ts";
+import type { Trait } from "../src/types/state/people.ts";
 import { data } from "./common/index.ts";
 
 describe("spec 6 inputs", () => {
