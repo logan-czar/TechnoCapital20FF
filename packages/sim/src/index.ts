@@ -20,10 +20,13 @@ export * from "./types/control.ts";
 export * from "./types/ids.ts";
 export * from "./types/notice.ts";
 // String order for ids (D4): the UI sorts CSV ids the same way the sim does.
-export { cmpStr } from "./types/num.ts";
+// Number helpers the UI shares with the sim (D952): Rust's rounding and float order, and the
+// flattening of a bar history's chunks.
+export { cmpStr, roundHalfAway, roundTiesEven, totalCmp } from "./types/num.ts";
 export * from "./types/protocol.ts";
 export type * from "./types/sim-api.ts";
 export * from "./types/views/index.ts";
+export { barRows } from "./views/bars.ts";
 // What the worker posts: view copies and patches by version (views/).
 export { simViewsCopyChangedFrom, simViewsMapLayerVersions } from "./views/index.ts";
 export { type PostedViews, postedViewsNone, postedViewsResetNews, viewsPatchSince } from "./views/patch.ts";
