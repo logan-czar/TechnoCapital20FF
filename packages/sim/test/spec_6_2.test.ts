@@ -11,7 +11,7 @@
 //                              quarterPurchases(gross, d_eff, g), situationGrowth(loss_q, roa,
 //                              g_dem, supply_ratio, params), traitNudge(traits, tech)
 import { describe, expect, it } from "vitest";
-import { archetypeParams } from "../../src/ai/archetype.ts";
+import { archetypeParams } from "../src/ai/archetype.ts";
 import {
   type FundingInputs,
   fundingCap,
@@ -20,7 +20,7 @@ import {
   quarterPurchases,
   situationGrowth,
   traitNudge,
-} from "../../src/ai/growth.ts";
+} from "../src/ai/growth.ts";
 
 function close(a: number, b: number): boolean {
   return Math.abs(a - b) < 1e-12;

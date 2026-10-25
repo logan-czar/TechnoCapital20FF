@@ -15,6 +15,7 @@
 import type { Company as CompanyRow, Industry as IndustryRow, WorldData } from "@tc20ff/sim-data";
 import { worldDataAllProvinces } from "@tc20ff/sim-data";
 import { archetypeAtLoad, rdPlanAtLoad, STATE_CONTROL_BASIS } from "../ai/archetype.ts";
+import { birthsStateFromData } from "../births/state.ts";
 import { boomDate, POP_BASE_YEAR } from "../economy/ai_boom.ts";
 import { START_PHASE, zAvg } from "../economy/cycle.ts";
 import {
@@ -177,7 +178,7 @@ export const UNPORTED_LOAD_DEPS: LoadDeps = {
   STATE_CONTROL_BASIS, // ai/archetype.rs
   archetypeAtLoad, // ai/archetype.rs Archetype::at_load
   rdPlanAtLoad, // ai/archetype.rs
-  birthsStateFromData: () => unported("births/state BirthsState::from_data"),
+  birthsStateFromData, // births/state.ts BirthsState::from_data
   POP_BASE_YEAR, // economy/ai_boom.rs
   boomDate, // economy/ai_boom.rs
   START_PHASE, // economy/cycle.rs

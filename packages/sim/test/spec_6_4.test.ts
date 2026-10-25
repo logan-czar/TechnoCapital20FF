@@ -8,10 +8,10 @@
 //                              archetype_params, inflow_tb, traits) -> Stations
 //   ../../src/ops/stations.ts  stationsTotal(s)
 import { describe, expect, it } from "vitest";
-import { archetypeParams } from "../../src/ai/archetype.ts";
-import { monthlyInflowTb, planStations } from "../../src/ai/split.ts";
-import { stationsTotal } from "../../src/ops/stations.ts";
-import type { Stations } from "../../src/types/state/ops.ts";
+import { archetypeParams } from "../src/ai/archetype.ts";
+import { monthlyInflowTb, planStations } from "../src/ai/split.ts";
+import { stationsTotal } from "../src/ops/stations.ts";
+import type { Stations } from "../src/types/state/ops.ts";
 
 describe("spec 6.4 station split", () => {
   it("arrowhead_cash_cow_split", () => {

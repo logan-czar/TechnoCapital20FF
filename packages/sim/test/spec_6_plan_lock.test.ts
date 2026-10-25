@@ -18,11 +18,11 @@ import {
   PLAN_LOCK_ORDER,
   type PlanInputs,
   type PlanStep,
-} from "../../src/ai/plan.ts";
-import type { CompanyId } from "../../src/types/ids.ts";
-import type { CompanyStatus } from "../../src/types/state/finance.ts";
-import type { Stations } from "../../src/types/state/ops.ts";
-import type { Trait } from "../../src/types/state/people.ts";
+} from "../src/ai/plan.ts";
+import type { CompanyId } from "../src/types/ids.ts";
+import type { CompanyStatus } from "../src/types/state/finance.ts";
+import type { Stations } from "../src/types/state/ops.ts";
+import type { Trait } from "../src/types/state/people.ts";
 
 describe("spec 6 plan lock", () => {
   it("lock_order_follows_4_4", () => {
