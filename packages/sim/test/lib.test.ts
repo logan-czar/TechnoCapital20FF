@@ -65,9 +65,19 @@ describe("startWorld", () => {
     expect(r.ok && r.value.news.labels).toEqual(["Normal", "Normal", "Normal", "Normal", "Normal"]);
   });
 
-  it("the unported defaults throw until Step 2 wires them", () => {
-    const deps: StartDeps = { ...START_DEPS, worldFromData: () => ({ ok: true, value: minimalWorld() }) };
-    expect(() => startWorld(NO_DATA, NO_DRAWS, deps)).toThrow(/not ported yet/);
+  it("an unported default throws, naming the Rust function to wire", () => {
+    const unported = (Object.keys(START_DEPS) as (keyof StartDeps)[]).filter((k) => {
+      try {
+        (START_DEPS[k] as (...a: unknown[]) => unknown)(minimalWorld(), NO_DRAWS);
+        return false;
+      } catch (e) {
+        if (!(e instanceof Error) || !e.message.includes("not ported yet")) return false;
+        expect(e.message).toMatch(/^lib: \w+::.* is not ported yet/);
+        return true;
+      }
+    });
+    // Shrinks to nothing as Step 2 lands; worldFromData is buildWorld and never a placeholder.
+    expect(unported).not.toContain("worldFromData");
   });
 });
 
