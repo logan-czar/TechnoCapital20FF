@@ -78,6 +78,30 @@ function pid(sim: Sim, key: string): ProvinceId {
 }
 
 describe("m8 map views", () => {
+  // Waits on map_layers (Step 3, lane B chunk 3).
+  it("political_layer_is_the_country_and_the_contested_tag", () => {
+    const sim = unwrap(simNew(dataWithMap("political"), 1), "Sim::new");
+    const views = simViews(sim);
+    const layer = mapLayersViewGetMapLayer(views.map_layers.data, { kind: "Political" });
+    if (layer.values.kind !== "Categories") throw new Error("political is categorical");
+    const places = views.places.data.provinces;
+    expect(layer.values.values.length).toBe(places.length);
+    places.forEach((p, i) => {
+      expect(layer.values.values[i]).toBe(p.country);
+    });
+    const contested = places.filter((p) => layer.hatched[p.id]).map((p) => p.key);
+    expect(contested.length, "every province with a contested tag").toBe(67);
+    expect(contested.includes("TW-0001")).toBe(true);
+    expect(contested.includes("US-0001")).toBe(false);
+    // The legend: each country with a province once, named.
+    expect(layer.legend.length).toBe(views.places.data.countries.length);
+    const usa = views.countries.data.countries.find((c) => c.iso3 === "USA");
+    if (usa === undefined) throw new Error("no USA");
+    const row = layer.legend.find((l) => l.value === usa.id);
+    expect(row?.label).toBe(usa.name);
+  });
+
+  // Waits on company_detail and units (lane A).
   it("province_cards_show_the_spec_8_fields", () => {
     const sim = unwrap(simNew(data(), 1), "Sim::new");
     const views = simViews(sim);
