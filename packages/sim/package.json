@@ -12,6 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@tc20ff/sim-data": "workspace:*"
+    "@tc20ff/sim-data": "workspace:*",
+    "fflate": "0.8.3"
   }
 }

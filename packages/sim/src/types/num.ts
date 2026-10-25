@@ -86,6 +86,24 @@ export function divInt(a: number, b: number): number {
 }
 
 /**
+ * Rust `div_euclid` for whole numbers: the quotient q with a = q*b + r and 0 <= r < |b| (floors for
+ * a positive divisor, so -7 div_euclid 4 is -2). Throws on b = 0.
+ */
+export function divEuclid(a: number, b: number): number {
+  if (b === 0) throw new RangeError("integer division by zero");
+  const q = Math.trunc(a / b);
+  if (a - q * b < 0) return (b > 0 ? q - 1 : q + 1) + 0;
+  return q + 0;
+}
+
+/** Rust `rem_euclid` for whole numbers: never negative (-7 rem_euclid 4 is 1). Throws on b = 0. */
+export function remEuclid(a: number, b: number): number {
+  if (b === 0) throw new RangeError("integer division by zero");
+  const r = a % b;
+  return (r < 0 ? r + Math.abs(b) : r) + 0;
+}
+
+/**
  * Rust `f64::total_cmp` for sorting floats: -0 sorts before +0 and NaN sorts last (positive NaN).
  * Use it in place of `(a, b) => a - b`, which breaks a sort when a NaN slips in.
  */
