@@ -8,7 +8,8 @@
 
 import type { DateTime } from "../types/calendar.ts";
 import { type Controls, MAX_SPEED, SECONDS_PER_HOUR, START_SPEED } from "../types/control.ts";
-import { ALERT_KIND_DEFAULT_LEVEL, ALERT_KIND_VALUES, type SkipKind } from "../types/notice.ts";
+import type { SkipKind } from "../types/notice.ts";
+import { alertLevelsDefault } from "../world/notice.ts";
 import { dateTimeDate, dateTimeMidnight, monthFirstDay, monthNext, simDateMonthOf } from "./calendar.ts";
 import { nextPhaseStart } from "./quarter.ts";
 
@@ -21,9 +22,7 @@ export function controlsDefault(): Controls {
     speed: START_SPEED,
     paused: true,
     skip: null,
-    // CONTRACT: Rust `AlertLevels::default()` (world/notice.rs) has no TS helper yet; built here
-    // from the contract tables.
-    alerts: ALERT_KIND_VALUES.map((k) => ALERT_KIND_DEFAULT_LEVEL[k]),
+    alerts: alertLevelsDefault(),
     omniscient: false,
     watchlist: new Set(),
   };

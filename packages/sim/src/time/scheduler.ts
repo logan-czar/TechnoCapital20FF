@@ -23,14 +23,9 @@ import {
   RELEASE_DAY,
 } from "../types/control.ts";
 import type { DrawSource } from "../types/draws.ts";
-import {
-  ALERT_KIND_INDEX,
-  type AlertKind,
-  type AlertPayload,
-  type Notice,
-  type PauseReason,
-} from "../types/notice.ts";
+import type { AlertKind, AlertPayload, Notice, PauseReason } from "../types/notice.ts";
 import type { World } from "../types/world.ts";
+import { alertLevelsGet } from "../world/notice.ts";
 import {
   dateTimeDate,
   dateTimeHour,
@@ -391,9 +386,7 @@ export class JobCtx {
       if (payload.kind !== "Company") throw new Error("BankruptcyInWatchlist needs a company payload");
       if (!controls.watchlist.has(payload.company)) return;
     }
-    // CONTRACT: Rust `AlertLevels::get` (world/notice.rs) has no TS helper; indexed directly.
-    const level = controls.alerts[ALERT_KIND_INDEX[kind]];
-    if (level === undefined) throw new Error(`no alert level for ${kind}`);
+    const level = alertLevelsGet(controls.alerts, kind);
     if (level === "Off") return;
     this.#notices.push({ kind: "Alert", alert_kind: kind, level, payload });
     const skipping = controls.skip !== null;
