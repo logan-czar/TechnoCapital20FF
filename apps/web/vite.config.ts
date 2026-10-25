@@ -16,11 +16,13 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 function gameData(): Plugin {
   const sources = [
     { url: "data/map", dir: resolve(root, "assets/map"), keep: (f: string) => f === "provinces.topo.json" },
+    // The name lists sit in a subfolder; the mock sim feeds every starting CSV to sim-data parseWorld.
     {
-      url: "data/design",
-      dir: resolve(root, "docs/design/data"),
-      keep: (f: string) => f === "countries.csv" || /^provinces-[a-z-]+\.csv$/.test(f),
+      url: "data/design/names",
+      dir: resolve(root, "docs/design/data/names"),
+      keep: (f: string) => f.endsWith(".csv"),
     },
+    { url: "data/design", dir: resolve(root, "docs/design/data"), keep: (f: string) => f.endsWith(".csv") },
   ];
   const type = (f: string) => (f.endsWith(".csv") ? "text/csv" : "application/json");
   return {
@@ -33,7 +35,7 @@ function gameData(): Plugin {
           if (!path.startsWith(prefix)) continue;
           const name = path.slice(prefix.length);
           const file = resolve(s.dir, name);
-          if (!s.keep(name) || !existsSync(file)) break;
+          if (name.includes("/") || !s.keep(name) || !existsSync(file)) continue;
           res.setHeader("Content-Type", type(name));
           res.end(readFileSync(file));
           return;
@@ -43,7 +45,7 @@ function gameData(): Plugin {
     },
     generateBundle() {
       for (const s of sources) {
-        for (const name of readdirSync(s.dir).filter(s.keep)) {
+        for (const name of readdirSync(s.dir).filter((n) => n.includes(".") && s.keep(n))) {
           const source = readFileSync(resolve(s.dir, name));
           this.emitFile({ type: "asset", fileName: `${s.url}/${name}`, source });
           if (name.endsWith(".json")) {
