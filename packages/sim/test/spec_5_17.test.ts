@@ -9,9 +9,9 @@
 //                                   payout_ratio, status }, SECTOR_PAYOUT, dividend(inputs),
 //                                   payoutRatio(archetype_payout_mult)
 import { describe, expect, it } from "vitest";
-import { minCash } from "../../src/finance/credit.ts";
-import { type DividendInputs, dividend, payoutRatio, SECTOR_PAYOUT } from "../../src/finance/dividends.ts";
-import type { CompanyStatus } from "../../src/types/state/finance.ts";
+import { minCash } from "../src/finance/credit.ts";
+import { type DividendInputs, dividend, payoutRatio, SECTOR_PAYOUT } from "../src/finance/dividends.ts";
+import type { CompanyStatus } from "../src/types/state/finance.ts";
 
 function near(a: number, b: number): void {
   expect(Math.abs(a - b) < 1e-6, `${a} vs ${b}`).toBe(true);
