@@ -29,6 +29,7 @@ import { start as economyStart } from "./economy/start.ts";
 import { start as financeStart } from "./finance/index.ts";
 import { stateHash } from "./hash.ts";
 import { scheduler } from "./jobs.ts";
+import { mapDataBuild, mapDataDefault } from "./map.ts";
 import { start as marketStart } from "./market/jobs.ts";
 import { start as seatingStart } from "./people/seating.ts";
 import { type RngStreams, rngStreamsDraws, rngStreamsNew, rngStreamsSeed } from "./rng.ts";
@@ -108,8 +109,7 @@ export interface SimDeps {
   /** `start_world`'s calls. */
   start: StartDeps;
   /**
-   * map.rs `MapData::build(data, world)` (M8): the static map data the map views read. Not
-   * ported yet: the default builds nothing (`null`), which no ported view reads.
+   * map.rs `MapData::build(data, world)` (M8): the static map data the map views read.
    */
   mapDataBuild(data: WorldData, world: World): Result<MapData, LoadError>;
   /** Every view's builder (views/index.ts). */
@@ -119,7 +119,7 @@ export interface SimDeps {
 /** The default `SimDeps`. */
 export const SIM_DEPS: SimDeps = {
   start: START_DEPS,
-  mapDataBuild: () => ({ ok: true, value: null }),
+  mapDataBuild, // map.ts
   views: VIEW_BUILDERS,
 };
 
@@ -362,7 +362,7 @@ export function simFromWorld(world: World, seed: number, opts: SimFromWorldOptio
       data: null,
       start: () => ({ ok: true, value: structuredClone(start) }),
       makeScheduler: opts.makeScheduler ?? scheduler,
-      mapDataBuild: () => ({ ok: true, value: null }),
+      mapDataBuild: () => ({ ok: true, value: mapDataDefault() }),
       views,
       debug: opts.debug ?? false,
       files: opts.files ?? null,

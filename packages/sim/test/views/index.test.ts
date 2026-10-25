@@ -285,14 +285,17 @@ describe("viewsPatchSince", () => {
   it("never posts an unported view, news included", () => {
     const s = sim({});
     const posted = postedViewsNone();
-    expect(Object.keys(viewsPatchSince(simViews(s), posted)).sort()).toEqual([
+    expect(Object.keys(viewsPatchSince(simViews(s), posted, builders({}))).sort()).toEqual([
       "clock",
       "omniscient",
       "refresh",
     ]);
     while (s.now() < 24 * 40) s.step();
     expect(s.apply({ kind: "NewGame", seed: 3 }).ok).toBe(true);
-    expect(Object.keys(viewsPatchSince(simViews(s), posted)).sort()).toEqual(["clock", "refresh"]);
+    expect(Object.keys(viewsPatchSince(simViews(s), posted, builders({}))).sort()).toEqual([
+      "clock",
+      "refresh",
+    ]);
   });
 
   it("detects a rebuild by itself: a loaded save's longer feed resets, not appends", () => {
