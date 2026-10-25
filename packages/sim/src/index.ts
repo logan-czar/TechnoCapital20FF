@@ -8,9 +8,40 @@
 export { Sim, type SimOptions, simErrorMessage, simNew } from "./lib.ts";
 // UI-safe clock helpers (time/): the date formats and calendar math, the quarter phase and its
 // tick helpers (pure functions of a DateTime), the runner's speed and the SkipTo target.
-export * from "./time/calendar.ts";
+export {
+  dateTimeAddHours,
+  dateTimeAt,
+  dateTimeDate,
+  dateTimeFromHours,
+  dateTimeHour,
+  dateTimeHours,
+  dateTimeMidnight,
+  dateTimeNext,
+  dateTimeWeekday,
+  daysInMonth,
+  formatDateTime,
+  formatMonth,
+  formatQuarter,
+  formatSimDate,
+  simDateAddDays,
+  simDateDaysSinceEpoch,
+  simDateFromDaysSinceEpoch,
+  simDateIsQuarterFirstMonth,
+  simDateQuarter,
+  simDateWeekday,
+  simDateYmd,
+  weekdayShortName,
+} from "./time/calendar.ts";
 export { controlsEffectiveSpeed, controlsSecondsPerTick, skipTarget } from "./time/control.ts";
-export * from "./time/quarter.ts";
+export {
+  lockTick,
+  nextPhaseStart,
+  phaseAt,
+  phaseInfoDaysToNextPhase,
+  priceMoveTick,
+  recapTick,
+  releaseTick,
+} from "./time/quarter.ts";
 export * from "./types/calendar.ts";
 export * from "./types/control.ts";
 export * from "./types/ids.ts";

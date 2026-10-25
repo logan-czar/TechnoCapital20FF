@@ -42,8 +42,12 @@ function gameData(): Plugin {
     },
     generateBundle() {
       for (const [fileName, path] of files) {
-        // The adjacency file is optional (sim-data parseMap), so a missing one is skipped.
-        if (!existsSync(path)) continue;
+        if (!existsSync(path)) {
+          // Only the map files the sim reads may be missing (sim-data parseMap treats them as
+          // optional); a missing world CSV or the topology is a broken build.
+          if ((MAP_FILES as readonly string[]).includes(fileName.slice("data/map/".length))) continue;
+          this.error(`${fileName}: source file not found at ${path}`);
+        }
         const source = readFileSync(path);
         this.emitFile({ type: "asset", fileName, source });
         if (fileName.endsWith(".json")) {

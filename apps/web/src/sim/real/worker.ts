@@ -1,22 +1,28 @@
 // The real sim as a Web Worker: fetches the starting CSVs and the map CSVs (served by the Vite
 // plugin, exactly the files WORLD_FILES and MAP_FILES name), parses them with sim-data's pure core,
-// then speaks the protocol through a RealHost (host.ts): NewGame, Load, Save and Control, and the
-// clock's pacing on a FRAME_MS timer. Any uncaught error is posted as Fatal.
+// then speaks the protocol through a RealHost (host.ts) driven by a WorkerLoop (loop.ts).
 
-import type { FromSim, ToSim } from "@tc20ff/sim";
-import { FRAME_MS } from "@tc20ff/sim";
-import { type Files, MAP_FILES, parseMap, parseWorld, WORLD_FILES, type WorldData } from "@tc20ff/sim-data";
+import type { ToSim } from "@tc20ff/sim";
+import {
+  dataErrorToString,
+  type Files,
+  MAP_FILES,
+  parseMap,
+  parseWorld,
+  WORLD_FILES,
+  type WorldData,
+} from "@tc20ff/sim-data";
 import { RealHost } from "./host.ts";
-
-interface Scope {
-  postMessage(m: FromSim): void;
-  onmessage: ((e: MessageEvent<ToSim>) => void) | null;
-}
-const scope = self as unknown as Scope;
+import { WorkerLoop } from "./loop.ts";
 
 /** A text file the plugin serves, or null when it is not there (the SPA fallback is HTML). */
 async function fetchText(url: string): Promise<string | null> {
-  const res = await fetch(url);
+  let res: Response;
+  try {
+    res = await fetch(url);
+  } catch (e) {
+    throw new Error(`${url}: fetch failed: ${e instanceof Error ? e.message : String(e)}`);
+  }
   if (!res.ok || (res.headers.get("content-type") ?? "").includes("text/html")) return null;
   return res.text();
 }
@@ -41,43 +47,22 @@ async function loadData(): Promise<WorldData> {
     loadFiles(MAP_FILES, "/data/map/", true),
   ]);
   const world = parseWorld(worldFiles);
-  if (!world.ok) throw new Error(`starting data: ${JSON.stringify(world.error)}`);
+  if (!world.ok) throw new Error(`starting data: ${dataErrorToString(world.error)}`);
   const map = parseMap(mapFiles);
-  if (!map.ok) throw new Error(`map data: ${JSON.stringify(map.error)}`);
+  if (!map.ok) throw new Error(`map data: ${dataErrorToString(map.error)}`);
   return { ...world.value, map: map.value };
 }
 
-function fatal(e: unknown): void {
-  scope.postMessage({ kind: "Fatal", message: e instanceof Error ? (e.stack ?? e.message) : String(e) });
-}
-
-async function main(): Promise<void> {
-  const queued: ToSim[] = [];
-  let host: RealHost | null = null;
-  const run = (h: RealHost, msg: ToSim): void => {
-    try {
-      for (const out of h.handle(msg)) scope.postMessage(out);
-    } catch (e) {
-      fatal(e);
-    }
-  };
-  scope.onmessage = (e) => (host ? run(host, e.data) : queued.push(e.data));
-  const ready = new RealHost(await loadData());
-  host = ready;
-  scope.postMessage({ kind: "Ready" });
-  for (const m of queued) run(ready, m);
-
-  let last = performance.now();
-  setInterval(() => {
-    const now = performance.now();
-    const dt = now - last;
-    last = now;
-    try {
-      for (const out of ready.tick(dt)) scope.postMessage(out);
-    } catch (e) {
-      fatal(e);
-    }
-  }, FRAME_MS);
-}
-
-main().catch(fatal);
+const scope = self as unknown as {
+  postMessage: (m: unknown) => void;
+  onmessage: ((e: MessageEvent<ToSim>) => void) | null;
+};
+const loop = new WorkerLoop({
+  post: (m) => scope.postMessage(m),
+  load: async () => new RealHost(await loadData()),
+  now: () => performance.now(),
+  setInterval: (fn, ms) => setInterval(fn, ms),
+  clearInterval: (h) => clearInterval(h as ReturnType<typeof setInterval>),
+});
+scope.onmessage = (e) => loop.onMessage(e.data);
+void loop.start();

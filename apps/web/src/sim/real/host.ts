@@ -54,7 +54,11 @@ export class RealHost {
     this.budgetMs = opts.budgetMs ?? MAX_SPEED_BUDGET_MS;
   }
 
-  /** Handles one request: [Frame, Reply], or just a Reply when the sim did not change. */
+  /**
+   * Handles one request: [Frame, Reply], or just a Reply when the sim did not change. A throw
+   * from the sim (a panic in Rust terms) is not caught here: it is Fatal by design (protocol.ts),
+   * and the worker loop posts it once and stops.
+   */
   handle(msg: ToSim): FromSim[] {
     switch (msg.kind) {
       case "NewGame": {
@@ -90,12 +94,14 @@ export class RealHost {
         if (kind === "NewGame" || kind === "Save" || kind === "Load") {
           return [this.reply(msg.id, { kind: "Refused", message: `${kind} is a request, not a control` })];
         }
+        const before = this.pacing(this.sim);
         const result = this.sim.apply(msg.control);
         if (!result.ok) {
           return [this.reply(msg.id, { kind: "SimError", error: result.error })];
         }
-        // Pacing starts fresh after a control (a new speed, a resume): no debt carries over.
-        this.owedMs = 0;
+        // Pacing starts fresh only when the control changed it (a new speed, a pause or resume,
+        // a skip): a SetAlert or watchlist control must not drop the real time owed to the clock.
+        if (this.pacing(this.sim) !== before) this.owedMs = 0;
         return [this.frame(result.value), this.reply(msg.id, { kind: "Ok", notices: result.value })];
       }
     }
@@ -144,6 +150,12 @@ export class RealHost {
     }
     if (notices.length === 0) return [];
     return [this.frame(notices)];
+  }
+
+  /** What the clock's pacing depends on: paused, or the real seconds per tick (null at max). */
+  private pacing(sim: Sim): string {
+    const c = sim.controls();
+    return c.paused ? "paused" : `${controlsSecondsPerTick(c)}`;
   }
 
   private install(sim: Sim): void {
