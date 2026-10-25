@@ -4,25 +4,31 @@
 // content (clock, places, countries, zones, quotes, price_bars, company_rows, industry_rows, news);
 // the rest are valid and empty.
 
-import type {
-  ClockView,
-  CompanyId,
-  CompanyRow,
-  CountryId,
-  DailyBar,
-  DateTime,
-  Figure,
-  Headline,
-  IndustryId,
-  IndustryRow,
-  QuoteRow,
-  SimDate,
-  SimViews,
-  SkipKind,
-  View,
-  ZoneId,
+import {
+  type ClockView,
+  type CompanyId,
+  type CompanyRow,
+  type CountryId,
+  type DailyBar,
+  type DateTime,
+  dateTimeDate,
+  dateTimeHour,
+  dateTimeWeekday,
+  type Figure,
+  type Headline,
+  type IndustryId,
+  type IndustryRow,
+  nextPhaseStart,
+  phaseAt,
+  phaseInfoDaysToNextPhase,
+  type QuoteRow,
+  type SimDate,
+  type SimViews,
+  type SkipKind,
+  simDateFromDaysSinceEpoch,
+  type View,
+  type ZoneId,
 } from "@tc20ff/sim";
-import { dateOfDays, dateTimeDate, dateTimeHour, dateTimeWeekday, phaseAt } from "./calendar.ts";
 import { hashStr, type MockWorld, unitHash } from "./mockWorld.ts";
 
 /** A small seeded generator (sfc32): the mock's own, so mock numbers never touch the sim's streams. */
@@ -200,7 +206,7 @@ export function initialBars(stocks: MockStock[], w: MockWorld, rng: MockRng, end
       const open = i === 0 ? close : (closes[i - 1] as number);
       const spread = Math.abs(close - open) + close * vol * 0.5 * rng.next();
       return {
-        date: dateOfDays(endDay - MOCK_BAR_HISTORY_DAYS + i),
+        date: simDateFromDaysSinceEpoch(endDay - MOCK_BAR_HISTORY_DAYS + i),
         open,
         high: Math.max(open, close) + spread * 0.5,
         low: Math.max(0.1, Math.min(open, close) - spread * 0.5),
@@ -320,9 +326,9 @@ export function clockView(
     paused,
     skipping,
     quarter_phase: p.phase,
-    next_phase: p.nextPhase,
-    days_to_next_phase: p.daysToNextPhase,
-    next_release: p.nextRelease,
+    next_phase: p.next_phase,
+    days_to_next_phase: phaseInfoDaysToNextPhase(p, dateTimeDate(now)),
+    next_release: nextPhaseStart(now, "Release"),
   };
 }
 

@@ -1,6 +1,6 @@
-// Part of crates/sim/tests/m8_map_views.rs (the tests that read only map_static and places); the
-// Political layer and province card tests wait in pending/ for map_layers, company_detail and
-// units.
+// The tests of crates/sim/tests/m8_map_views.rs that read only map_static and places. The other
+// two are in pending/views/m8_map_views.test.ts: the Political layer test waits on map_layers
+// (lane B chunk 3), the province card test on company_detail and units (lane A).
 // Port of crates/sim/tests/m8_map_views.rs: M8 Phase A map views (spec 8 Map row, 9.2, 9.4):
 // v_map_static, v_map_layers (Political) and v_province_card, from the province files and a
 // fixture assets/map folder in the contract's format (docs/build/m8-map-assets.md). The map is
