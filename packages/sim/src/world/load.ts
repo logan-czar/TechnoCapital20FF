@@ -27,6 +27,8 @@ import { computeBill } from "../ops/compute.ts";
 import { conversionCapacity, dataBookAtLoad, dataBookFreeRdFraction, dataBookStoredTb } from "../ops/data.ts";
 import { fitStations, laborUnits } from "../ops/labor.ts";
 import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
+import { nameBooksBuild } from "../people/names.ts";
+import { traitFromName } from "../people/traits.ts";
 import { DATETIME_START, type SimDate } from "../types/calendar.ts";
 import { tableFromRows } from "../types/collections.ts";
 import type {
@@ -192,8 +194,8 @@ export const UNPORTED_LOAD_DEPS: LoadDeps = {
   fitStations, // ops/labor.rs
   laborUnits, // ops/labor.rs
   productiveCompute, // ops/stations.rs
-  nameBooksBuild: () => unported("people/names NameBooks::build"),
-  traitFromName: () => unported("people/traits Trait::from_name"),
+  nameBooksBuild, // people/names.rs NameBooks::build
+  traitFromName, // people/traits.rs Trait::from_name
   newsWireDefault,
 };
 
@@ -303,6 +305,14 @@ export function buildWorld(data: WorldData, deps: LoadDeps = UNPORTED_LOAD_DEPS)
     if (e instanceof LoadFailure) return { ok: false, error: e.loadError };
     throw e;
   }
+}
+
+/**
+ * Rust `World::from_data`: the start state tables from the loaded rows (spec 7), before the 7.3
+ * start draws. The same as `buildWorld` with the real module dependencies.
+ */
+export function worldFromData(data: WorldData): Result<World, LoadError> {
+  return buildWorld(data);
 }
 
 function buildWorldInner(data: WorldData, deps: LoadDeps): World {

@@ -35,6 +35,7 @@
 // lines may move into that module's own `register(s)` called from here, in the same place.
 
 import { register as economyRegister } from "./economy/index.ts";
+import { register as opsRegister } from "./ops/index.ts";
 import * as timeAlerts from "./time/alerts.ts";
 import { type JobFn, type Scheduler, schedulerNew, schedulerRegister } from "./time/scheduler.ts";
 
@@ -63,10 +64,7 @@ export function registerJobs(s: Scheduler): void {
   economyRegister(s);
 
   // ops::register (crates/sim/src/ops/mod.rs)
-  r(s, "MonthlyLaborSeats", "ops.labor_seats", notPorted("ops::jobs::labor_seats_job")); // ops/jobs laborSeatsJob
-  r(s, "MonthlyCompute", "ops.compute", notPorted("ops::jobs::compute_job")); // ops/jobs computeJob
-  r(s, "MonthlyData", "ops.data", notPorted("ops::jobs::data_job")); // ops/jobs dataJob
-  r(s, "MonthlyProductivity", "ops.productivity", notPorted("ops::jobs::productivity_job")); // ops/jobs productivityJob
+  opsRegister(s);
 
   // people::register (crates/sim/src/people/mod.rs)
   r(s, "MonthlyAssets", "people.new_seats", notPorted("people::seating::new_seats_job")); // people/seating newSeatsJob
