@@ -18,8 +18,8 @@
 // lanes to the JS lanes and to FNV-1a over TextEncoder's bytes.
 import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { canonicalString } from "../src/canonical.ts";
-import { fnv1a64Hex, hashOfCanonical, stateHashOfText } from "../src/hash.ts";
+import { canonicalEncodeChunked, canonicalString } from "../src/canonical.ts";
+import { fnv1a64Hex, fnvWasmRuns, hashOfCanonical, stateHashOfText } from "../src/hash.ts";
 import { simControls, simNew, simStateHash, simStep, simViews, simWorld } from "../src/lib.ts";
 import { dateTimeDate, dateTimeHour, dateTimeMidnight, simDateYmd } from "../src/time/calendar.ts";
 import { VIEW_NAMES } from "../src/types/views/index.ts";
@@ -210,6 +210,8 @@ describe("results pinned to main", () => {
   }, 60_000);
 
   it("the WebAssembly lanes hash the bytes the JS lanes and TextEncoder do", () => {
+    // Otherwise every comparison below would set the JS lanes against themselves.
+    expect(fnvWasmRuns()).toBe(true);
     const pieces = ["", "a", "foobar", "é", "漢字", "🎉", "\ud800", "x\udc00y", "\ud83c", '{"k":1.5}'];
     // A text longer than the WebAssembly memory, so it is fed in several pieces.
     let long = "";
@@ -221,5 +223,18 @@ describe("results pinned to main", () => {
       expect(wasm.slice(0, 16)).toBe(fnv1a64Hex(new TextEncoder().encode(s)));
     }
     expect(stateHashOfText("a", true).slice(0, 16)).toBe("af63dc4c8601ec8c");
+  });
+
+  it("the encoder cuts long flat arrays into pieces near the chunk size", () => {
+    const value = {
+      nums: Array.from({ length: 50_000 }, (_, i) => i * 0.25),
+      strs: Array(5_000).fill("é漢🎉"),
+    };
+    const pieces: string[] = [];
+    canonicalEncodeChunked(value, (p) => pieces.push(p), 1_000);
+    expect(pieces.join("")).toBe(canonicalString(value));
+    expect(pieces.length).toBeGreaterThan(100);
+    // A piece goes over the chunk by at most one element.
+    for (const p of pieces) expect(p.length).toBeLessThan(1_100);
   });
 });
