@@ -29,7 +29,7 @@ import {
   viewIsPorted,
 } from "../../src/views/index.ts";
 import { postedViewsNone, postedViewsResetNews, viewsPatchSince } from "../../src/views/patch.ts";
-import { calendarScheduler, minimalWorld } from "../test_sim.ts";
+import { minimalWorld } from "../test_sim.ts";
 
 const at = (y: number, m: number, d: number, h: number) => tickFactsNew(dateTimeAt(simDateYmd(y, m, d), h));
 
@@ -97,7 +97,6 @@ function builders(extra: Partial<ViewBuilders>): ViewBuilders {
 function sim(extra: Partial<ViewBuilders>, debug = false): Sim {
   return simFromWorld(minimalWorld(), 1, {
     debug,
-    makeScheduler: calendarScheduler,
     deps: { views: builders(extra) },
   });
 }
@@ -248,27 +247,73 @@ describe("SimViews", () => {
 });
 
 describe("viewsPatchSince", () => {
-  it("posts every view first, then only what moved, with news as appended headlines", () => {
-    const s = sim({ market_stats: marketStats, news });
+  const extra = { market_stats: marketStats, news };
+
+  it("posts the ported views first, then only what moved, with news as appended headlines", () => {
+    const s = sim(extra);
+    const b = builders(extra);
     const posted = postedViewsNone();
-    const first = viewsPatchSince(simViews(s), posted);
-    for (const n of VIEW_NAMES) if (n !== "news") expect(first[n], n).toBe(simViews(s)[n]);
-    expect(first).not.toHaveProperty("news");
+    const first = viewsPatchSince(simViews(s), posted, b);
+    expect(Object.keys(first).sort()).toEqual([
+      "clock",
+      "market_stats",
+      "news_appended",
+      "news_reset",
+      "news_version",
+      "omniscient",
+      "refresh",
+    ]);
+    expect(first.clock).toBe(simViews(s).clock);
     expect([first.news_appended, first.news_reset, first.news_version]).toEqual([[], true, 1]);
-    expect(viewsPatchSince(simViews(s), posted)).toEqual({});
+    expect(viewsPatchSince(simViews(s), posted, b)).toEqual({});
     s.step();
-    expect(Object.keys(viewsPatchSince(simViews(s), posted)).sort()).toEqual(["clock", "refresh"]);
+    expect(Object.keys(viewsPatchSince(simViews(s), posted, b)).sort()).toEqual(["clock", "refresh"]);
     while (s.now() < 48) s.step();
-    const p = viewsPatchSince(simViews(s), posted);
+    const p = viewsPatchSince(simViews(s), posted, b);
     expect(p.news_appended?.map((h) => h.id)).toEqual([0, 1]);
     expect(p.news_reset).toBeUndefined();
     expect(p.news_version).toBe(simViews(s).news.version);
     while (s.now() < 72) s.step();
-    expect(viewsPatchSince(simViews(s), posted).news_appended?.map((h) => h.id)).toEqual([2]);
-    // A new game replaces the feed: the worker marks it, and the next patch resets it.
+    expect(viewsPatchSince(simViews(s), posted, b).news_appended?.map((h) => h.id)).toEqual([2]);
+    // After a new game the worker may mark the feed; the next patch resets it either way.
     expect(s.apply({ kind: "NewGame", seed: 9 }).ok).toBe(true);
     postedViewsResetNews(posted);
-    const reset = viewsPatchSince(simViews(s), posted);
+    const reset = viewsPatchSince(simViews(s), posted, b);
     expect([reset.news_appended, reset.news_reset]).toEqual([[], true]);
+  });
+
+  it("never posts an unported view, news included", () => {
+    const s = sim({});
+    const posted = postedViewsNone();
+    expect(Object.keys(viewsPatchSince(simViews(s), posted)).sort()).toEqual([
+      "clock",
+      "omniscient",
+      "refresh",
+    ]);
+    while (s.now() < 24 * 40) s.step();
+    expect(s.apply({ kind: "NewGame", seed: 3 }).ok).toBe(true);
+    expect(Object.keys(viewsPatchSince(simViews(s), posted)).sort()).toEqual(["clock", "refresh"]);
+  });
+
+  it("detects a rebuild by itself: a loaded save's longer feed resets, not appends", () => {
+    const s = sim(extra);
+    const b = builders(extra);
+    while (s.now() < 24 * 5) s.step();
+    const save = s.saveBytes(); // a feed of 5
+    expect(s.apply({ kind: "NewGame", seed: 2 }).ok).toBe(true);
+    while (s.now() < 24 * 2) s.step();
+    const posted = postedViewsNone();
+    viewsPatchSince(simViews(s), posted, b);
+    expect(posted.news_len).toBe(2);
+    // No postedViewsResetNews: the worker forgot.
+    expect(s.loadBytes(save).ok).toBe(true);
+    const p = viewsPatchSince(simViews(s), posted, b);
+    expect(p.news_reset).toBe(true);
+    expect(p.news_appended?.map((h) => h.id)).toEqual([0, 1, 2, 3, 4]);
+    // A NewGame with a feed as long as the one posted resets too.
+    while (s.now() < 24 * 7) s.step();
+    viewsPatchSince(simViews(s), posted, b);
+    expect(s.apply({ kind: "NewGame", seed: 4 }).ok).toBe(true);
+    expect(viewsPatchSince(simViews(s), posted, b).news_reset).toBe(true);
   });
 });

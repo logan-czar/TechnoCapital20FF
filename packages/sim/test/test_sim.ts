@@ -1,9 +1,10 @@
 // The Sim for the lib.rs tests (controls, job order, notices, hash, save and load) while Step 2
 // lands: `testSim(seed)` is Rust's `Sim::new(data, seed)` once `simNew` builds the start state
 // from the real data; until then (a START_DEPS or LoadDeps member still throws "not ported yet")
-// it is a Sim on `minimalWorld()` with only the calendar alerts scheduled and only the clock view
-// built. Those read nothing but the clock and the controls, and the test jobs below read only a
-// company's revenue and an industry's size, so every test here runs the same on either.
+// it is a Sim on `minimalWorld()` running every registered job (`scheduler()`, as Rust's
+// `Sim::new` does), with only the clock view built. The world's tables are empty or bare, so the
+// ported jobs find nothing to do and the placeholders do nothing; the slots visited, the calendar
+// alerts and the test jobs below are what these tests check, the same on either.
 //
 // Also the shared bits of crates/sim/tests/common/mod.rs these tests use (churn, draw_only,
 // bankrupt_three_and_four), and the clock-only world and no-draw source of the scheduler tests.
@@ -11,8 +12,7 @@
 import type { WorldData } from "@tc20ff/sim-data";
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
 import { type Sim, type SimOptions, simFromWorld, simNew, simRegisterTestJob } from "../src/lib.ts";
-import { register as registerCalendarAlerts } from "../src/time/alerts.ts";
-import { type JobCtx, jobCtxRaiseAlert, type Scheduler, schedulerNew } from "../src/time/scheduler.ts";
+import { type JobCtx, jobCtxRaiseAlert } from "../src/time/scheduler.ts";
 import { DATETIME_START } from "../src/types/calendar.ts";
 import { type DrawSource, STREAM_VALUES } from "../src/types/draws.ts";
 import type { CompanyId } from "../src/types/ids.ts";
@@ -65,26 +65,17 @@ export function clockWorld(): World {
 export const MINIMAL_COMPANIES = 12;
 
 /**
- * The clock at the game start, a few companies (only `revenue_usd`) and industries (only
- * `world_size_2020_usd` and `phase_label`): enough for the controls (WatchlistAdd checks the
- * company table) and for the churn job to write into tables the hash and the save cover.
+ * `clockWorld()` (so every registered job runs as a no-op on it) plus a few companies with only
+ * `revenue_usd`: enough for the controls (WatchlistAdd checks the company table) and for the churn
+ * job to write into a table the hash and the save cover. No units and no industries, so the ported
+ * jobs, which walk units and industries, still find nothing to do.
  */
 export function minimalWorld(): World {
-  return {
-    clock: DATETIME_START,
-    companies: Array.from({ length: MINIMAL_COMPANIES }, (_, i) => ({ revenue_usd: 1e6 * (i + 1) })),
-    industries: Array.from({ length: 5 }, (_, i) => ({
-      world_size_2020_usd: 1e9 * (i + 1),
-      phase_label: "Normal",
-    })),
-  } as unknown as World;
-}
-
-/** A scheduler with only the calendar alerts (time::alerts), the jobs a minimal world can run. */
-export function calendarScheduler(): Scheduler {
-  const s = schedulerNew();
-  registerCalendarAlerts(s);
-  return s;
+  const w = clockWorld();
+  w.companies = Array.from({ length: MINIMAL_COMPANIES }, (_, i) => ({
+    revenue_usd: 1e6 * (i + 1),
+  })) as World["companies"];
+  return w;
 }
 
 let cachedData: WorldData | undefined;
@@ -136,7 +127,6 @@ export function testSim(seed: number, opts: SimOptions = {}): Sim {
 export function minimalSim(seed: number, opts: SimOptions = {}): Sim {
   return simFromWorld(minimalWorld(), seed, {
     ...opts,
-    makeScheduler: calendarScheduler,
     deps: { ...opts.deps, views: viewBuildersOnly(["clock"]) },
   });
 }
@@ -171,7 +161,9 @@ export function churn(world: World, ctx: JobCtx): void {
     d.intInclusive("Gen", -3, 3);
   const n = ctx.facts.now;
   world.companies[n % world.companies.length]!.revenue_usd += x;
-  world.industries[n % world.industries.length]!.world_size_2020_usd -= x;
+  // The minimal world has no industries (test_sim.ts header); the companies carry the draws there.
+  const industry = world.industries[n % Math.max(world.industries.length, 1)];
+  if (industry !== undefined) industry.world_size_2020_usd -= x;
 }
 
 /** Draws from every stream and writes nothing: only the RNG positions move. */
