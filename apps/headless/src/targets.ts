@@ -237,7 +237,16 @@ export type Kind =
   /** Reported per seed, never MET or NOT MET: a temporary waiver (D366). */
   | "Waived";
 
-/** Rust `{:.n}` for an f64: fixed decimals, `inf`, `-inf`, `NaN`. */
+/**
+ * Rust `{:.n}` for an f64: fixed decimals, `inf`, `-inf`, `NaN`.
+ *
+ * `toFixed` and Rust both round the exact binary value, so they agree except on an exact decimal
+ * tie (a value whose binary expansion ends exactly on a 5 at digit n+1, such as 0.125 to 2
+ * places): `toFixed` rounds the tie away from zero, Rust's formatter to even. Such ties are rare
+ * in the soak's figures (sums and ratios of measured values) and `check` on the Rust reference
+ * reproduces its targets.csv and summary.csv byte for byte (test/targets.test.ts); `toFixed` also
+ * switches to exponent form at 1e21 and above, which no soak figure reaches.
+ */
 export function fixed(x: number, digits: number): string {
   if (Number.isNaN(x)) return "NaN";
   if (x === Number.POSITIVE_INFINITY) return "inf";

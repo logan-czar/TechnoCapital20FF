@@ -20,7 +20,7 @@
 import { writeFileSync } from "node:fs";
 import { check, type DataError, dataErrorToString, type WorldData, worldDataCounts } from "@tc20ff/sim-data";
 import { defaultDataDir, defaultMapDir, loadMap, loadWorld } from "@tc20ff/sim-data/node";
-import { parseRecord, parseReplay, parseRun, parseSoak, type RunArgs, USAGE } from "./args.ts";
+import { parseRecord, parseReplay, parseRun, parseSoak, type RunArgs, USAGE, userPath } from "./args.ts";
 import { defaultFactory, isObservedSim } from "./factory.ts";
 import { type RunOptions, runSeed, type SimFactory, YEARS_HEADER } from "./metrics.ts";
 import { parityCommand } from "./parity.ts";
@@ -70,13 +70,13 @@ function checkDataCommand(args: string[]): number {
       case "--data-dir": {
         const d = args[++i];
         if (d === undefined) return usage();
-        dir = d;
+        dir = userPath(d);
         break;
       }
       case "--map-dir": {
         const d = args[++i];
         if (d === undefined) return usage();
-        mapDir = d;
+        mapDir = userPath(d);
         break;
       }
       default:
@@ -119,7 +119,7 @@ function checkAll(dir: string, mapDir: string): number {
   for (const e of errors) console.error(`error: ${dataErrorToString(e)}`);
   if (errors.length === 0) {
     // Step 2: the Rust also builds a `Sim` here (Sim::new(world, 0)) to prove the data starts;
-    // do it through the factory once `defaultFactory` is wired to simNew.
+    // do it through `defaultFactory` once simNew builds from the real data (lib.ts START_DEPS).
     console.log("OK");
     return 0;
   }
@@ -199,7 +199,7 @@ export async function main(args: string[], factory: SimFactory = defaultFactory)
     }
     case "check": {
       const dir = args[1];
-      return args.length === 2 && dir !== undefined ? report(() => checkDir(dir)) : usage();
+      return args.length === 2 && dir !== undefined ? report(() => checkDir(userPath(dir))) : usage();
     }
     case "parity":
       // Exit 1 when any target or yearly metric fails the parity gate (D951).

@@ -50,8 +50,8 @@ describe("detail helpers", () => {
 describe("profile tables", () => {
   it("lists the parts slowest first and the tick costs by kind", () => {
     const p = new Profiler();
-    p.started({ kind: "Slot", slot: "Daily" });
-    p.finished({ kind: "Slot", slot: "Daily" });
+    p.started({ kind: "Slot", slot: "DailyNews" });
+    p.finished({ kind: "Slot", slot: "DailyNews" });
     p.addStep(5);
     const t = p.table();
     expect(t).toMatch(/^part +seconds +share +calls +us per call\n/);
