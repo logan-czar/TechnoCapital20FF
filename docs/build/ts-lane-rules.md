@@ -50,6 +50,12 @@ Mirror Rust exactly, so tests and other lanes line up without coordinating:
 - Add a dependency only if you need it: `corepack pnpm@10.20.0 --filter <pkg> add -E <dep>`. Say so in your report; the orchestrator resolves lockfile conflicts.
 - Do not edit root config (`package.json`, `tsconfig*.json`, `biome.json`, `vitest.config.ts`, `.gitattributes`) or `docs/build/decisions.md` unless your brief says so. List any decisions you make in your report, and the orchestrator logs them.
 
+## Memory and CPU (Logan's PC)
+- The full gate starts several Vitest workers, and each holds a whole simulated world. While iterating, run only the test files you touched (`corepack pnpm@10.20.0 exec vitest run <files>`); run `bash scripts/check-ts.sh` once, at the end.
+- Reviewers run the gate once and only the affected tests otherwise. Never start a soak, a dev server or a second gate in parallel with another.
+- Stop what you started: no dev servers or watchers left running when you finish.
+- The orchestrator runs at most two agents at once (one builder and one reviewer).
+
 ## Finishing
 - `bash scripts/check-ts.sh` must pass.
 - Commit with a short imperative summary line, then the details, ending with `Co-Authored-By: Claude <your model, e.g. Sonnet 5.5> <noreply@anthropic.com>`.
