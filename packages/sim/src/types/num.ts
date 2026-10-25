@@ -146,3 +146,23 @@ export function clamp(x: number, lo: number, hi: number): number {
   if (!(lo <= hi)) throw new RangeError(`clamp bounds ${lo} > ${hi} or NaN`);
   return x < lo ? lo : x > hi ? hi : x;
 }
+
+/**
+ * Rust `f64::powi` for a whole exponent: repeated squaring (compiler-rt `__powidf2`), the same
+ * multiplications Rust does, where `Math.pow` may differ in the last bit.
+ */
+export function powi(base: number, exp: number): number {
+  if (!Number.isInteger(exp)) throw new RangeError(`powi exponent ${exp} is not an integer`);
+  let a = base;
+  let b = exp;
+  const recip = b < 0;
+  if (recip) b = -b;
+  let r = 1.0;
+  for (;;) {
+    if (b % 2 === 1) r *= a;
+    b = Math.trunc(b / 2);
+    if (b === 0) break;
+    a *= a;
+  }
+  return recip ? 1.0 / r : r;
+}

@@ -13,14 +13,20 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 // files the map needs are exposed, not whole folders. The build also writes .gz and .br copies of
 // the 5.8 MB topology (about 1.6 MB gzipped) for a static host to serve with Content-Encoding; the
 // dev server and `vite preview` send it plain.
+// A served file is a plain name in its folder: no separators of either kind (a backslash is one on
+// Windows) and no `..`.
+const SAFE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+
 function gameData(): Plugin {
   const sources = [
     { url: "data/map", dir: resolve(root, "assets/map"), keep: (f: string) => f === "provinces.topo.json" },
+    // The name lists sit in a subfolder; the mock sim feeds every starting CSV to sim-data parseWorld.
     {
-      url: "data/design",
-      dir: resolve(root, "docs/design/data"),
-      keep: (f: string) => f === "countries.csv" || /^provinces-[a-z-]+\.csv$/.test(f),
+      url: "data/design/names",
+      dir: resolve(root, "docs/design/data/names"),
+      keep: (f: string) => f.endsWith(".csv"),
     },
+    { url: "data/design", dir: resolve(root, "docs/design/data"), keep: (f: string) => f.endsWith(".csv") },
   ];
   const type = (f: string) => (f.endsWith(".csv") ? "text/csv" : "application/json");
   return {
@@ -33,7 +39,7 @@ function gameData(): Plugin {
           if (!path.startsWith(prefix)) continue;
           const name = path.slice(prefix.length);
           const file = resolve(s.dir, name);
-          if (!s.keep(name) || !existsSync(file)) break;
+          if (!SAFE_NAME.test(name) || !s.keep(name) || !existsSync(file)) continue;
           res.setHeader("Content-Type", type(name));
           res.end(readFileSync(file));
           return;
@@ -43,7 +49,7 @@ function gameData(): Plugin {
     },
     generateBundle() {
       for (const s of sources) {
-        for (const name of readdirSync(s.dir).filter(s.keep)) {
+        for (const name of readdirSync(s.dir).filter((n) => n.includes(".") && s.keep(n))) {
           const source = readFileSync(resolve(s.dir, name));
           this.emitFile({ type: "asset", fileName: `${s.url}/${name}`, source });
           if (name.endsWith(".json")) {

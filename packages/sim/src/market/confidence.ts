@@ -65,7 +65,8 @@ export function confidenceHeadlinePoints(h: ConfidenceHeadline): number {
 
 /** news_z (spec 5.1.2): the sum of the day's headline points. */
 export function newsPoints(headlines: readonly ConfidenceHeadline[]): number {
-  let sum = 0.0;
+  // Rust f64 sum starts at -0.0 (no observable effect here).
+  let sum = -0.0;
   for (const h of headlines) sum += confidenceHeadlinePoints(h);
   return sum;
 }

@@ -24,12 +24,12 @@ import {
   fixedEventIsDue,
   fixedEventStartupCount,
   regionContains,
-} from "../../src/births/fixed.ts";
-import { boomDate, stageAt } from "../../src/economy/ai_boom.ts";
-import { quarterFirstDay, quarterNext, simDateYmd } from "../../src/time/calendar.ts";
-import type { Quarter, SimDate } from "../../src/types/calendar.ts";
-import type { IndustryId, ProvinceId } from "../../src/types/ids.ts";
-import type { Region } from "../../src/types/state/births.ts";
+} from "../src/births/fixed.ts";
+import { boomDate, stageAt } from "../src/economy/ai_boom.ts";
+import { quarterFirstDay, quarterNext, simDateYmd } from "../src/time/calendar.ts";
+import type { Quarter, SimDate } from "../src/types/calendar.ts";
+import type { IndustryId, ProvinceId } from "../src/types/ids.ts";
+import type { Region } from "../src/types/state/births.ts";
 import { data, unwrap } from "./common/index.ts";
 import { newRng } from "./common/rng.ts";
 

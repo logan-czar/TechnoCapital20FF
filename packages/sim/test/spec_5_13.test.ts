@@ -22,13 +22,13 @@
 //   ../../src/people/management.ts    confidenceFactor(score)
 //   ../../src/finance/credit.ts       homeSpread
 import { describe, expect, it } from "vitest";
-import { homeSpread } from "../../src/finance/credit.ts";
+import { homeSpread } from "../src/finance/credit.ts";
 import {
   type EngineValueInputs,
   engineValueAtLoad,
   loadNetIncome,
   MIN_ENGINE_VALUE_USD,
-} from "../../src/market/engine_value.ts";
+} from "../src/market/engine_value.ts";
 import {
   bookFloorShare,
   clampGrowth,
@@ -44,8 +44,8 @@ import {
   revenueGrowth,
   shownValue,
   y10,
-} from "../../src/market/fair_value.ts";
-import { confidenceFactor } from "../../src/people/management.ts";
+} from "../src/market/fair_value.ts";
+import { confidenceFactor } from "../src/people/management.ts";
 import {
   type CompanyFacts,
   data,
