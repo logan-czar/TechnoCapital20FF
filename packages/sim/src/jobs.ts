@@ -35,6 +35,7 @@
 // lines may move into that module's own `register(s)` called from here, in the same place.
 
 import { register as economyRegister } from "./economy/index.ts";
+import * as finance from "./finance/jobs.ts";
 import * as timeAlerts from "./time/alerts.ts";
 import { type JobFn, type Scheduler, schedulerNew, schedulerRegister } from "./time/scheduler.ts";
 
@@ -72,22 +73,17 @@ export function registerJobs(s: Scheduler): void {
   r(s, "MonthlyAssets", "people.new_seats", notPorted("people::seating::new_seats_job")); // people/seating newSeatsJob
 
   // finance::register (crates/sim/src/finance/jobs.rs)
-  r(s, "MonthlyExpenses", "finance.open_month", notPorted("finance::jobs::open_month_job")); // finance/jobs openMonthJob
-  r(s, "MonthlyAssets", "finance.post_assets", notPorted("finance::jobs::post_assets_job")); // finance/jobs postAssetsJob
-  r(s, "MonthlyInterest", "finance.interest", notPorted("finance::jobs::interest_job")); // finance/jobs interestJob
-  r(s, "MonthlyCashSettle", "finance.settle", notPorted("finance::jobs::settle_job")); // finance/jobs settleJob
-  r(s, "MonthlyLedger", "finance.ledger", notPorted("finance::jobs::ledger_job")); // finance/jobs ledgerJob
+  r(s, "MonthlyExpenses", "finance.open_month", finance.openMonthJob); // finance/jobs openMonthJob
+  r(s, "MonthlyAssets", "finance.post_assets", finance.postAssetsJob); // finance/jobs postAssetsJob
+  r(s, "MonthlyInterest", "finance.interest", finance.interestJob); // finance/jobs interestJob
+  r(s, "MonthlyCashSettle", "finance.settle", finance.settleJob); // finance/jobs settleJob
+  r(s, "MonthlyLedger", "finance.ledger", finance.ledgerJob); // finance/jobs ledgerJob
   // D122: the close pays the tax and then compiles, both here; the CloseTax slot stays empty.
-  r(s, "CloseStatements", "finance.close", notPorted("finance::jobs::close_job")); // finance/jobs closeJob
-  r(s, "ReleasePublish", "finance.removals", notPorted("finance::jobs::removals_job")); // finance/jobs removalsJob
-  r(s, "PriceMoveRatingReview", "finance.rating_review", notPorted("finance::jobs::rating_review_job")); // finance/jobs ratingReviewJob
-  r(s, "PriceMoveCreditLineReview", "finance.line_review", notPorted("finance::jobs::line_review_job")); // finance/jobs lineReviewJob
-  r(
-    s,
-    "YearlyAnnualStatements",
-    "finance.annual_statements",
-    notPorted("finance::jobs::annual_statements_job"),
-  ); // finance/jobs annualStatementsJob
+  r(s, "CloseStatements", "finance.close", finance.closeJob); // finance/jobs closeJob
+  r(s, "ReleasePublish", "finance.removals", finance.removalsJob); // finance/jobs removalsJob
+  r(s, "PriceMoveRatingReview", "finance.rating_review", finance.ratingReviewJob); // finance/jobs ratingReviewJob
+  r(s, "PriceMoveCreditLineReview", "finance.line_review", finance.lineReviewJob); // finance/jobs lineReviewJob
+  r(s, "YearlyAnnualStatements", "finance.annual_statements", finance.annualStatementsJob); // finance/jobs annualStatementsJob
 
   // market::register (crates/sim/src/market/jobs.rs)
   r(s, "SharePrices", "market.prices", notPorted("market::jobs::prices_job")); // market/jobs pricesJob
