@@ -8,8 +8,9 @@
 //
 // STEP 2: `startWorld` calls modules ported in Step 2 (economy, births, ai, people, finance,
 // market). Those calls go through `StartDeps` below, one member per Rust function; `START_DEPS`
-// holds the ported functions, and a test may pass its own. The map build (crate::map, M8) goes through `SimDeps.mapDataBuild` the same way, and the view
-// builders through views/index.ts `VIEW_BUILDERS`.
+// holds the ported functions, and a test may pass its own. The map build (crate::map, M8) goes
+// through `SimDeps.mapDataBuild` the same way, and the view builders through views/index.ts
+// `VIEW_BUILDERS`.
 //
 // Differences from Rust:
 // - `cfg!(debug_assertions)` (SetOmniscient, and masking Omniscient on load) is the `debug` option

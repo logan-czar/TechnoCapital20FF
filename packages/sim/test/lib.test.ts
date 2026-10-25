@@ -72,7 +72,7 @@ describe("startWorld", () => {
     expect(r.ok && r.value.news.labels).toEqual(["Normal", "Normal", "Normal", "Normal", "Normal"]);
   });
 
-  it("an unported default throws, naming the Rust function to wire", () => {
+  it("every default is the ported function, none a not-ported placeholder", () => {
     const unported = (Object.keys(START_DEPS) as (keyof StartDeps)[]).filter((k) => {
       try {
         (START_DEPS[k] as (...a: unknown[]) => unknown)(minimalWorld(), NO_DRAWS);
@@ -83,8 +83,8 @@ describe("startWorld", () => {
         return true;
       }
     });
-    // Shrinks to nothing as Step 2 lands; worldFromData is buildWorld and never a placeholder.
-    expect(unported).not.toContain("worldFromData");
+    // Step 2 wired every member.
+    expect(unported).toEqual([]);
   });
 });
 

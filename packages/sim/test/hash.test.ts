@@ -5,6 +5,7 @@
 import { describe, expect, it } from "vitest";
 import { type Sim, simRegisterTestJob, simWorld } from "../src/lib.ts";
 import type { StateHash } from "../src/types/sim-api.ts";
+import { macrotask } from "./common/index.ts";
 import { churningSim, drawOnly, testSim } from "./test_sim.ts";
 
 function monthlyHashes(sim: Sim, months: number): StateHash[] {
@@ -45,9 +46,15 @@ describe("state hash", () => {
     expect(drawn.stateHash()).not.toBe(idle.stateHash());
   });
 
-  it("a replay with draws gives the same monthly hashes", () => {
+  // Three 14-month runs on the full world: a long timeout, and a macrotask turn between the runs
+  // (test/common/index.ts `macrotask`).
+  it("a replay with draws gives the same monthly hashes", { timeout: 300_000 }, async () => {
     const [a, b, c] = [churningSim(5), churningSim(5), churningSim(6)];
-    const [ha, hb, hc] = [monthlyHashes(a, 14), monthlyHashes(b, 14), monthlyHashes(c, 14)];
+    const ha = monthlyHashes(a, 14);
+    await macrotask();
+    const hb = monthlyHashes(b, 14);
+    await macrotask();
+    const hc = monthlyHashes(c, 14);
     expect(ha).toEqual(hb);
     expect(
       ha.every((x, i) => x !== hc[i]),
