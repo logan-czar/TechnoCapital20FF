@@ -33,10 +33,19 @@ export async function loadProvinceRows(): Promise<ProvinceRow[]> {
   );
 }
 
-export async function loadMapModel(): Promise<MapModel> {
-  const [topology, rows] = await Promise.all([
+export async function loadCountryCodes(): Promise<string[]> {
+  const text = await (await fetchOk("/data/design/countries.csv")).text();
+  return parseCsv(text).map((r) => r.iso3 ?? "");
+}
+
+let loading: Promise<MapModel> | undefined;
+
+/** Fetches and builds the model once; StrictMode's second effect run gets the same promise. */
+export function loadMapModel(): Promise<MapModel> {
+  loading ??= Promise.all([
     fetchOk(TOPOLOGY_URL).then((r) => r.json() as Promise<ProvinceTopology>),
     loadProvinceRows(),
-  ]);
-  return buildMapModel(topology, rows);
+    loadCountryCodes(),
+  ]).then(([topology, rows, countries]) => buildMapModel(topology, rows, countries));
+  return loading;
 }

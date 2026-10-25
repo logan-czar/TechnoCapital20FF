@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { brotliCompressSync, gzipSync } from "node:zlib";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 
@@ -9,14 +10,16 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 // The map reads two repo folders at runtime (D954): assets/map (provinces.topo.json) and
 // docs/design/data (the province CSVs). They live outside this app, so this plugin serves them in
 // dev under /data/map/* and /data/design/*, and copies the same files into the build. Only the
-// files the map needs are exposed, not whole folders.
+// files the map needs are exposed, not whole folders. The build also writes .gz and .br copies of
+// the 5.8 MB topology (about 1.6 MB gzipped) for a static host to serve with Content-Encoding; the
+// dev server and `vite preview` send it plain.
 function gameData(): Plugin {
   const sources = [
     { url: "data/map", dir: resolve(root, "assets/map"), keep: (f: string) => f === "provinces.topo.json" },
     {
       url: "data/design",
       dir: resolve(root, "docs/design/data"),
-      keep: (f: string) => /^provinces-[a-z-]+\.csv$/.test(f),
+      keep: (f: string) => f === "countries.csv" || /^provinces-[a-z-]+\.csv$/.test(f),
     },
   ];
   const type = (f: string) => (f.endsWith(".csv") ? "text/csv" : "application/json");
@@ -41,11 +44,17 @@ function gameData(): Plugin {
     generateBundle() {
       for (const s of sources) {
         for (const name of readdirSync(s.dir).filter(s.keep)) {
-          this.emitFile({
-            type: "asset",
-            fileName: `${s.url}/${name}`,
-            source: readFileSync(resolve(s.dir, name)),
-          });
+          const source = readFileSync(resolve(s.dir, name));
+          this.emitFile({ type: "asset", fileName: `${s.url}/${name}`, source });
+          if (name.endsWith(".json")) {
+            const gz = gzipSync(source, { level: 9 });
+            this.emitFile({ type: "asset", fileName: `${s.url}/${name}.gz`, source: gz });
+            this.emitFile({
+              type: "asset",
+              fileName: `${s.url}/${name}.br`,
+              source: brotliCompressSync(source),
+            });
+          }
         }
       }
     },
