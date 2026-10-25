@@ -4,9 +4,11 @@ import {
   assertCount,
   clamp,
   cmpStr,
+  divEuclid,
   divInt,
   maxF,
   minF,
+  remEuclid,
   roundHalfAway,
   roundTiesEven,
   saturatingSubCount,
@@ -45,6 +47,27 @@ describe("num.ts keeps Rust semantics (D952)", () => {
     expect(saturatingSubCount(2, 3)).toBe(0);
     expect(divInt(-7, 2)).toBe(-3);
     expect(() => divInt(1, 0)).toThrow();
+  });
+
+  it("divides like div_euclid and rem_euclid", () => {
+    // Rust: 7.div_euclid(4) = 1, (-7).div_euclid(4) = -2, 7.div_euclid(-4) = -1,
+    // (-7).div_euclid(-4) = 2; rem_euclid 3, 1, 3, 1.
+    const cases: [number, number][] = [
+      [7, 4],
+      [-7, 4],
+      [7, -4],
+      [-7, -4],
+      [8, 4],
+      [-8, 4],
+      [-1, 400],
+      [-1, -4],
+    ];
+    expect(cases.map(([a, b]) => divEuclid(a, b))).toEqual([1, -2, -1, 2, 2, -2, -1, 1]);
+    expect(cases.map(([a, b]) => remEuclid(a, b))).toEqual([3, 1, 3, 1, 0, 0, 399, 3]);
+    expect(Object.is(divEuclid(1, -4), 0)).toBe(true);
+    expect(Object.is(remEuclid(-8, 4), 0)).toBe(true);
+    expect(() => divEuclid(1, 0)).toThrow();
+    expect(() => remEuclid(1, 0)).toThrow();
   });
 
   it("sorts floats like total_cmp and strings by code unit", () => {

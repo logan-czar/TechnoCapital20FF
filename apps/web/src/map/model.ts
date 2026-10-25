@@ -3,14 +3,10 @@
 // (D4: `cmpStr`, the byte order of the Rust build), which is also the index into every per-province
 // array (colors, rows, parts).
 
+import { cmpStr } from "@tc20ff/sim";
 import type { FeatureCollection, MultiPolygon, Polygon, Position } from "geojson";
 import { feature, mesh } from "topojson-client";
 import type { GeometryCollection, GeometryObject, Topology } from "topojson-specification";
-
-// CONTRACT: the UI may not import @tc20ff/sim/internal, and the sim index does not export num.ts, so
-// cmpStr (types/num.ts) is repeated here. The sim index should re-export it (UTF-16 order, equal to
-// Rust byte order for ASCII ids, D4).
-const cmpStr = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
 
 /** A point in Miller units. */
 export type XY = [number, number];

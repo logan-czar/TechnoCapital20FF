@@ -18,4 +18,5 @@ root="$(pwd)"
 out="$(cd docs/design/tools/mvp-data && "$PY" -B validate.py "$root/docs/design/data")"
 echo "$out" | grep -E "^(ERROR|OK$|[0-9]+ errors)" || true
 echo "$out" | grep -qx "OK"
+step check-data; pnpm --filter @tc20ff/headless start --check-data
 echo; echo "check-ts: all steps passed"
