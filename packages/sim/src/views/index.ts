@@ -54,6 +54,7 @@ import {
 } from "../types/views/index.ts";
 import type { MapMode } from "../types/views/map_layers.ts";
 import type { World } from "../types/world.ts";
+import { buildBirths } from "./births.ts";
 import { buildClock, emptyClock } from "./clock.ts";
 import { buildCountries } from "./countries.ts";
 import { buildCycle } from "./cycle.ts";
@@ -64,6 +65,7 @@ import { buildNews } from "./news.ts";
 import { buildPlaces } from "./places.ts";
 import { buildPriceBars } from "./price_bars.ts";
 import { buildProvinceCards } from "./province_cards.ts";
+import { buildQuotes } from "./quotes.ts";
 import { buildRates } from "./rates.ts";
 import { buildZones } from "./zones.ts";
 
@@ -172,7 +174,7 @@ export const VIEW_BUILDERS: ViewBuilders = {
   },
   characters: unported("views::characters::CharactersView", () => ({ full: [], partial: [] })),
   cap_table: unported("views::cap_table::CapTableView", () => ({ companies: [] })),
-  quotes: unported("views::quotes::QuotesView", () => ({ rows: [], indices: [] })),
+  quotes: { rust: "views::quotes::QuotesView", empty: () => ({ rows: [], indices: [] }), build: buildQuotes },
   price_bars: {
     rust: "views::price_bars::PriceBarsView",
     empty: () => ({ companies: [] }),
@@ -198,15 +200,19 @@ export const VIEW_BUILDERS: ViewBuilders = {
     build: buildMarketStats,
   },
   news: { rust: "views::news::NewsView", empty: () => ({ feed: [] }), build: buildNews },
-  births: unported("views::births::BirthsView", () => ({
-    events: [],
-    births: [],
-    listings: [],
-    full_characters_made: 0,
-    full_characters: 0,
-    births_column_quarters: [],
-    births_by_industry: [],
-  })),
+  births: {
+    rust: "views::births::BirthsView",
+    empty: () => ({
+      events: [],
+      births: [],
+      listings: [],
+      full_characters_made: 0,
+      full_characters: 0,
+      births_column_quarters: [],
+      births_by_industry: [],
+    }),
+    build: buildBirths,
+  },
   projection: unported("views::projection::ProjectionView", () => ({ elapsed_share: 0, companies: [] })),
   company_rows: unported("views::company_rows::CompanyRowsView", () => ({ rows: [] })),
   company_detail: unported("views::company_detail::CompanyDetailView", () => ({ companies: [] })),
