@@ -14,8 +14,8 @@
     "format": "biome check --write .",
     "test": "vitest run",
     "check": "pnpm typecheck && pnpm lint && pnpm test",
-    "dev": "pnpm --filter @tc20ff/web dev",
-    "headless": "pnpm --filter @tc20ff/headless start"
+    "dev": "corepack pnpm@10.20.0 --filter @tc20ff/web dev",
+    "headless": "corepack pnpm@10.20.0 --filter @tc20ff/headless start"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",

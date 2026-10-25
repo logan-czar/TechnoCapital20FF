@@ -13,7 +13,7 @@ import argparse
 import sys
 import time
 
-STEPS = ["fetch", "crosswalk", "shapes", "simplify", "mapgen", "qa"]
+STEPS = ["fetch", "crosswalk", "shapes", "simplify", "topojson", "mapgen", "qa"]
 
 
 def main(argv: list[str]) -> int:
@@ -62,7 +62,7 @@ def main(argv: list[str]) -> int:
             continue
         # mapgen draws every built region at once, so `all` runs it once, after the last
         # region's simplify; every other step runs per region
-        todo = regions[-1:] if s == "mapgen" else regions
+        todo = regions[-1:] if s in ("mapgen", "topojson") else regions
         for region in todo:
             started = time.monotonic()
             print(f"== {s} {region.slug}", flush=True)
@@ -88,6 +88,10 @@ def run_step(s: str, region) -> None:
         from pipeline import simplify
 
         simplify.run(region)
+    elif s == "topojson":
+        from pipeline import topojson_step
+
+        topojson_step.run()
     elif s == "mapgen":
         from pipeline import mapgen_step
 

@@ -5,9 +5,13 @@
   "description": "The starting world CSVs: row types, loading and the load-time checks (build-plan 2.1 sim-data).",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./node": "./src/node.ts"
   },
   "scripts": {
     "test": "vitest run"
+  },
+  "dependencies": {
+    "smol-toml": "1.9.1"
   }
 }

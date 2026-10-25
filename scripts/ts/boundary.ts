@@ -36,6 +36,12 @@ const RULES: Rule[] = [
     why: "the sim reads no wall clock",
   },
   {
+    roots: ["packages/sim-data/src", "packages/sim/src"],
+    pattern: /(?:from|import\()\s*["']node:|require\(\s*["']node:/,
+    why: "the sim and the data core run in a Web Worker: node: imports belong in sim-data/src/node.ts only",
+    allow: ["packages/sim-data/src/node.ts"],
+  },
+  {
     roots: ["apps/web/src"],
     pattern: /@tc20ff\/sim\/internal/,
     why: "the UI reads only the views (spec 9)",
