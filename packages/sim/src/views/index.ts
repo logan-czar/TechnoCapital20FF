@@ -55,10 +55,15 @@ import {
 import type { MapMode } from "../types/views/map_layers.ts";
 import type { World } from "../types/world.ts";
 import { buildBirths } from "./births.ts";
+import { buildCapTable } from "./cap_table.ts";
+import { buildCharacters } from "./characters.ts";
 import { buildClock, emptyClock } from "./clock.ts";
+import { buildCompanyDetail } from "./company_detail.ts";
+import { buildCompanyRows } from "./company_rows.ts";
 import { buildCountries } from "./countries.ts";
 import { buildCycle } from "./cycle.ts";
 import { buildExchanges } from "./exchanges.ts";
+import { buildFilings } from "./filings.ts";
 import { buildMapStatic } from "./map_static.ts";
 import { buildMarketStats } from "./market_stats.ts";
 import { buildNews } from "./news.ts";
@@ -67,6 +72,8 @@ import { buildPriceBars } from "./price_bars.ts";
 import { buildProvinceCards } from "./province_cards.ts";
 import { buildQuotes } from "./quotes.ts";
 import { buildRates } from "./rates.ts";
+import { buildRatings } from "./ratings.ts";
+import { buildStatements, rebuildStatementsFrom } from "./statements.ts";
 import { buildZones } from "./zones.ts";
 
 // ---------------------------------------------------------------- Cadence
@@ -172,8 +179,16 @@ export const VIEW_BUILDERS: ViewBuilders = {
     }),
     build: buildRates,
   },
-  characters: unported("views::characters::CharactersView", () => ({ full: [], partial: [] })),
-  cap_table: unported("views::cap_table::CapTableView", () => ({ companies: [] })),
+  characters: {
+    rust: "views::characters::CharactersView",
+    empty: () => ({ full: [], partial: [] }),
+    build: buildCharacters,
+  },
+  cap_table: {
+    rust: "views::cap_table::CapTableView",
+    empty: () => ({ companies: [] }),
+    build: buildCapTable,
+  },
   quotes: { rust: "views::quotes::QuotesView", empty: () => ({ rows: [], indices: [] }), build: buildQuotes },
   price_bars: {
     rust: "views::price_bars::PriceBarsView",
@@ -214,8 +229,16 @@ export const VIEW_BUILDERS: ViewBuilders = {
     build: buildBirths,
   },
   projection: unported("views::projection::ProjectionView", () => ({ elapsed_share: 0, companies: [] })),
-  company_rows: unported("views::company_rows::CompanyRowsView", () => ({ rows: [] })),
-  company_detail: unported("views::company_detail::CompanyDetailView", () => ({ companies: [] })),
+  company_rows: {
+    rust: "views::company_rows::CompanyRowsView",
+    empty: () => ({ rows: [] }),
+    build: buildCompanyRows,
+  },
+  company_detail: {
+    rust: "views::company_detail::CompanyDetailView",
+    empty: () => ({ companies: [] }),
+    build: buildCompanyDetail,
+  },
   units: unported("views::units::UnitsView", () => ({ units: [] })),
   tech: unported("views::tech::TechView", () => ({ companies: [] })),
   industry_rows: unported("views::industry_rows::IndustryRowsView", () => ({ rows: [] })),
@@ -252,9 +275,22 @@ export const VIEW_BUILDERS: ViewBuilders = {
     empty: () => ({ cards: [] }),
     build: buildProvinceCards,
   },
-  statements: unported("views::statements::StatementsView", () => ({ companies: [] })),
-  filings: unported("views::filings::FilingsView", () => ({ quarter: null, filings: [] })),
-  ratings: unported("views::ratings::RatingsView", () => ({ companies: [], base_rate: 0 })),
+  statements: {
+    rust: "views::statements::StatementsView",
+    empty: () => ({ companies: [] }),
+    build: buildStatements,
+    rebuildFrom: rebuildStatementsFrom,
+  },
+  filings: {
+    rust: "views::filings::FilingsView",
+    empty: () => ({ quarter: null, filings: [] }),
+    build: buildFilings,
+  },
+  ratings: {
+    rust: "views::ratings::RatingsView",
+    empty: () => ({ companies: [], base_rate: 0 }),
+    build: buildRatings,
+  },
   recap: unported("views::recap::RecapView", () => ({ recaps: [], watchlist: [] })),
   map_static: {
     rust: "views::map_static::MapStaticView",
