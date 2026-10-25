@@ -64,6 +64,8 @@ import { buildCountries } from "./countries.ts";
 import { buildCycle } from "./cycle.ts";
 import { buildExchanges } from "./exchanges.ts";
 import { buildFilings } from "./filings.ts";
+import { buildIndustryDetail } from "./industry_detail.ts";
+import { buildIndustryRows } from "./industry_rows.ts";
 import { buildMapStatic } from "./map_static.ts";
 import { buildMarketStats } from "./market_stats.ts";
 import { buildNews } from "./news.ts";
@@ -74,6 +76,8 @@ import { buildQuotes } from "./quotes.ts";
 import { buildRates } from "./rates.ts";
 import { buildRatings } from "./ratings.ts";
 import { buildStatements, rebuildStatementsFrom } from "./statements.ts";
+import { buildTech } from "./tech.ts";
+import { buildUnits } from "./units.ts";
 import { buildZones } from "./zones.ts";
 
 // ---------------------------------------------------------------- Cadence
@@ -239,10 +243,18 @@ export const VIEW_BUILDERS: ViewBuilders = {
     empty: () => ({ companies: [] }),
     build: buildCompanyDetail,
   },
-  units: unported("views::units::UnitsView", () => ({ units: [] })),
-  tech: unported("views::tech::TechView", () => ({ companies: [] })),
-  industry_rows: unported("views::industry_rows::IndustryRowsView", () => ({ rows: [] })),
-  industry_detail: unported("views::industry_detail::IndustryDetailView", () => ({ industries: [] })),
+  units: { rust: "views::units::UnitsView", empty: () => ({ units: [] }), build: buildUnits },
+  tech: { rust: "views::tech::TechView", empty: () => ({ companies: [] }), build: buildTech },
+  industry_rows: {
+    rust: "views::industry_rows::IndustryRowsView",
+    empty: () => ({ rows: [] }),
+    build: buildIndustryRows,
+  },
+  industry_detail: {
+    rust: "views::industry_detail::IndustryDetailView",
+    empty: () => ({ industries: [] }),
+    build: buildIndustryDetail,
+  },
   cycle: {
     rust: "views::cycle::CycleView",
     empty: () => ({

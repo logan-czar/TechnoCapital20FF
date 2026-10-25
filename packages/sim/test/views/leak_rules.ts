@@ -9,20 +9,49 @@
 // will be full rows with money, and only the first is listed here.
 //
 // Every ported view must have an entry in `VIEW_RULES` (the test fails on one that has none), so
-// porting a view (v_units, v_tech, v_projection, v_recap, the industry views, v_map_layers)
-// means classifying it here: its company subtrees, its id leaves and what of a banded company
-// it may show as a plain number.
-import type { CompanyId } from "../../src/types/ids.ts";
+// porting a view (v_projection, v_recap, v_map_layers) means classifying it here: its subject
+// subtrees, its id leaves and what of a banded subject it may show as a plain number.
+//
+// A subtree's subject is a company, an industry or both (a unit, or a company's line in an
+// industry), and it is banded as the views band it: a company that does not publish (D420), an
+// industry in the estimated class (D432), and both for a unit's monthly figures and data book
+// (D436: a published company's are bands in an estimated industry); an industry history quarter
+// by the class it closed in (D437).
+import type { Quarter } from "../../src/types/calendar.ts";
+import type { CompanyId, IndustryId } from "../../src/types/ids.ts";
 import type { Figure } from "../../src/types/views/estimate.ts";
 import type { ViewName } from "../../src/types/views/index.ts";
 import { statementLineIndex } from "../../src/views/estimate.ts";
 
+/** How an array element names its subject (`OWNERS`' values; a string is a company field). */
+export interface OwnerRule {
+  /** The field holding the company's id. */
+  readonly company?: string;
+  /** The field holding the industry's id. */
+  readonly industry?: string;
+  /** The industry is the enclosing subtree's (a company's line in an industry). */
+  readonly parentIndustry?: true;
+  /** The industry is the company's own (v_tech, D436). */
+  readonly ownIndustry?: true;
+  /** The field holding the quarter whose close sets the industry's class (D437). */
+  readonly quarter?: string;
+}
+
+/** A subtree's subject, as `walkView` hands it to the `banded` resolver. */
+export interface Subject {
+  readonly company: CompanyId | null;
+  readonly industry: IndustryId | null;
+  /** The company's own industry is meant (resolved by the caller, who has the World). */
+  readonly ownIndustry: boolean;
+  readonly quarter: Quarter | null;
+}
+
 export interface ViewRules {
   /**
-   * The arrays whose elements are about one company: the element's normalized path, then the
-   * field that holds the company's id (a null id is about no company).
+   * The arrays whose elements are about one subject: the element's normalized path, then how
+   * it names its subject (a string: the field holding a company id; a null id is about none).
    */
-  readonly owners?: Readonly<Record<string, string>>;
+  readonly owners?: Readonly<Record<string, string | OwnerRule>>;
   /**
    * Leaves that are ids, counts, ticks or enum numbers, never a figure: the scan skips them.
    * Dates and quarters are skipped by their shape (`isDateLike`), not listed.
@@ -268,6 +297,71 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
       ),
     ),
   },
+  units: {
+    // A unit's figures are bands for a company that does not publish or in an estimated
+    // industry (D436).
+    owners: { "units.units[]": { company: "company", industry: "industry" } },
+    ids: [
+      "units.units[].id",
+      "units.units[].company",
+      "units.units[].industry",
+      "units.units[].base_province",
+    ],
+    // The growth and R&D plans are shown exactly (spec 8 Units tab, D420).
+    bandedPlain: ["units.units[].growth_plan", "units.units[].rd_plan"],
+  },
+  tech: {
+    owners: { "tech.companies[]": { company: "company", ownIndustry: true } },
+    ids: [
+      "tech.companies[].company",
+      "tech.companies[].labor_units",
+      "tech.companies[].pc_bonus",
+      "tech.companies[].data[].industry",
+      "tech.companies[].data[].buckets",
+      "tech.companies[].data[].free_rd_pct",
+      ...stations("tech.companies[]"),
+      "tech.companies[].compute.extra_base_compute",
+      "tech.companies[].compute.data_compute",
+      "tech.companies[].compute.licences",
+    ],
+    // What follows the published station counts and step tables (D434, D431): PC, the next PC
+    // bonus step (5.8), the compute bill, the next free R&D step (5.9) and the conversion
+    // capacity.
+    bandedPlain: [
+      "tech.companies[].pc",
+      "tech.companies[].next_bonus_pc",
+      "tech.companies[].compute.monthly_usd",
+      "tech.companies[].data[].next_step_tb",
+      "tech.companies[].data[].conversion_tb",
+    ],
+  },
+  industry_rows: {
+    owners: { "industry_rows.rows[]": { industry: "id" } },
+    ids: ["industry_rows.rows[].id", "industry_rows.rows[].top_companies[]"],
+    // Demand, its trend, the long-term rate and this quarter's growth stay exact in an estimated
+    // industry (D432).
+    bandedPlain: [
+      "industry_rows.rows[].demand",
+      "industry_rows.rows[].trend_demand",
+      "industry_rows.rows[].lt",
+      "industry_rows.rows[].growth_annual",
+    ],
+  },
+  industry_detail: {
+    owners: {
+      "industry_detail.industries[]": { industry: "id" },
+      // A company's line: its revenue and share are banded as its units' (D436).
+      "industry_detail.industries[].companies[]": { company: "company", parentIndustry: true },
+      // A history quarter's supply is banded by the class it closed in (D437).
+      "industry_detail.industries[].history[]": { parentIndustry: true, quarter: "quarter" },
+    },
+    ids: ["industry_detail.industries[].id", "industry_detail.industries[].companies[].company"],
+    bandedPlain: [
+      "industry_detail.industries[].history[].demand",
+      "industry_detail.industries[].history[].q_growth",
+      "industry_detail.industries[].history[].lt",
+    ],
+  },
   filings: {
     owners: { "filings.filings[]": "company" },
     ids: ["filings.filings[].company"],
@@ -305,6 +399,12 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
   },
 };
 
+function stations(prefix: string): string[] {
+  return ["productivity", "enterprise", "fifty_fifty", "research", "idle"].map(
+    (s) => `${prefix}.stations.${s}`,
+  );
+}
+
 function skills(prefix: string): string[] {
   return ["finance", "operations", "persuasion", "intrigue", "tech", "hustle"].map(
     (s) => `${prefix}.skills.${s}`,
@@ -316,16 +416,33 @@ function skills(prefix: string): string[] {
  * starting revenue can equal a country's GDP (country-economy.csv). These, a publishing company's
  * subtrees and a listed company's EFV are the only values dropped from the truths.
  */
-export const PUBLIC_PATHS: ReadonlySet<string> = new Set(["countries.countries[].gdp_usd"]);
+export const PUBLIC_PATHS: ReadonlySet<string> = new Set([
+  "countries.countries[].gdp_usd",
+  // What follows the published station counts and step tables (D434, D431; PR #91's
+  // PUBLIC_DATA): a banded company's are public too.
+  "tech.companies[].pc",
+  "tech.companies[].next_bonus_pc",
+  "tech.companies[].compute.monthly_usd",
+  "tech.companies[].data[].next_step_tb",
+  "tech.companies[].data[].conversion_tb",
+]);
 
 // ---------------------------------------------------------------- the walk
 
-/** Where a leaf is: its view, the company its subtree is about (null: none) and that row. */
+/**
+ * Where a leaf is: its view, the company and industry its subtree is about (null: none), whether
+ * that subject's figures are bands (null: no subject) and the subject's row.
+ */
 export interface Ctx {
   readonly view: ViewName;
   readonly owner: CompanyId | null;
+  readonly industry: IndustryId | null;
+  readonly banded: boolean | null;
   readonly row: Readonly<Record<string, unknown>> | null;
 }
+
+/** Whether a subject's figures are bands now (leak.test.ts has the World). */
+export type BandedOf = (s: Subject) => boolean;
 
 /** One leaf of a view: a Figure (whole), or a number, string, boolean or null. */
 export interface Leaf {
@@ -362,20 +479,43 @@ export function rulesOf(view: ViewName): ViewRules {
   return r;
 }
 
-/** Calls `visit` on every leaf of one view's data, in order. */
-export function walkView(view: ViewName, data: unknown, visit: (leaf: Leaf) => void): void {
+/** The subject an element names by its owner rule, within the enclosing `ctx`. */
+function subjectOf(rule: string | OwnerRule, y: Record<string, unknown>, ctx: Ctx): Subject | null {
+  const r: OwnerRule = typeof rule === "string" ? { company: rule } : rule;
+  const id = (f: string | undefined): number | null => {
+    const v = f === undefined ? null : y[f];
+    return typeof v === "number" ? v : null;
+  };
+  const company = id(r.company) as CompanyId | null;
+  const industry = (r.parentIndustry === true ? ctx.industry : id(r.industry)) as IndustryId | null;
+  if (company === null && industry === null && r.ownIndustry !== true) return null;
+  if (r.company !== undefined && company === null) return null;
+  const q = r.quarter === undefined ? null : y[r.quarter];
+  return {
+    company,
+    industry,
+    ownIndustry: r.ownIndustry === true,
+    quarter: isRecord(q) ? (q as Quarter) : null,
+  };
+}
+
+/** Calls `visit` on every leaf of one view's data, in order; `banded` classes its subjects. */
+export function walkView(view: ViewName, data: unknown, banded: BandedOf, visit: (leaf: Leaf) => void): void {
   const owners = rulesOf(view).owners ?? {};
   const go = (x: unknown, norm: string, raw: string, ctx: Ctx, date: boolean): void => {
     if (isFigure(x)) {
       visit({ norm, raw, ctx, figure: x, value: null, date: false });
     } else if (Array.isArray(x)) {
       const el = `${norm}[]`;
-      const field = owners[el];
+      const rule = owners[el];
       x.forEach((y, i) => {
         let c = ctx;
-        if (field !== undefined && isRecord(y)) {
-          const id = y[field];
-          c = { view, owner: typeof id === "number" ? (id as CompanyId) : null, row: y };
+        if (rule !== undefined && isRecord(y)) {
+          const s = subjectOf(rule, y, ctx);
+          c =
+            s === null
+              ? { view, owner: null, industry: null, banded: null, row: y }
+              : { view, owner: s.company, industry: s.industry, banded: banded(s), row: y };
         }
         go(y, el, `${raw}[${i}]`, c, false);
       });
@@ -387,7 +527,7 @@ export function walkView(view: ViewName, data: unknown, visit: (leaf: Leaf) => v
       visit({ norm, raw, ctx, figure: null, value: x, date });
     }
   };
-  go(data, view, view, { view, owner: null, row: null }, false);
+  go(data, view, view, { view, owner: null, industry: null, banded: null, row: null }, false);
 }
 
 /** An id, count, tick or date leaf: never a figure. */
@@ -420,13 +560,18 @@ const listed = (leaf: Leaf) => leaf.ctx.row !== null && leaf.ctx.row.exchange !=
  * The exact figures a banded company's subtree may hold, the documented exceptions to D420:
  * the compute and licences line of an estimated statement (D434: a published price list times
  * counts), and a listed company's value, its EFV (D140, already an estimate), even before its
- * first release.
+ * first release; a unit's compute and licences cost (D434); an estimated industry's S with no
+ * demand (nothing to divide the supply band by).
  */
 export function exactInBanded(leaf: Leaf): boolean {
   switch (leaf.norm) {
     case "statements.companies[].estimated_quarters[].lines[]":
     case "statements.companies[].estimated_years[].lines[]":
       return lastIndex(leaf.raw) === SHARED;
+    case "units.units[].shared_m":
+      return true;
+    case "industry_rows.rows[].supply_ratio":
+      return !((leaf.ctx.row?.demand as number) > 0);
     case "company_rows.rows[].value":
     case "company_detail.companies[].shown_value_per_share":
       return listed(leaf);
@@ -466,11 +611,39 @@ export function isListedEfv(leaf: Leaf): boolean {
 /**
  * The leaves the perturbation check (leak.test.ts, 4) lets change: a listed company's EFV (it is
  * V × (1 + error), D140, and V is in the perturbed books), and v_market_stats' gap statistics
- * over the quoted stocks' P ÷ V (the soak's diagnostics, never a screen; D144). Nothing else
- * that is not a band may follow a private company's books.
+ * over the quoted stocks' P ÷ V (the soak's diagnostics, never a screen; D144); an industry's
+ * exact named revenue and the exact shares of it, outside the estimated class (spec 1: the
+ * industry tables are published; D432 bands them below 3 banded companies); and the top 5, ranked
+ * by the revenue shown, so by the bands' estimates (D420). Nothing else that is not a band may
+ * follow a private company's books.
  */
 export function perturbExempt(leaf: Leaf): boolean {
-  return (
-    isListedEfv(leaf) || leaf.norm === "market_stats.median_gap" || leaf.norm === "market_stats.within_band"
-  );
+  switch (leaf.norm) {
+    case "market_stats.median_gap":
+    case "market_stats.within_band":
+    case "industry_rows.rows[].top_companies[]":
+      return true;
+    case "industry_rows.rows[].named_revenue_m":
+    case "industry_detail.industries[].companies[].share":
+    case "industry_detail.industries[].fringe_share":
+      return leaf.figure?.kind === "Exact";
+    default:
+      return isListedEfv(leaf);
+  }
+}
+
+/**
+ * A view's data in an order that does not follow the figures shown: v_industry_detail lists an
+ * industry's companies by the revenue shown (D420), so both builds' lists are put in company id
+ * order before they are compared (a band's estimate moves with its truth, and so may the order).
+ */
+export function canonical(view: ViewName, data: unknown): unknown {
+  if (view !== "industry_detail" || !isRecord(data) || !Array.isArray(data.industries)) return data;
+  return {
+    ...data,
+    industries: (data.industries as Record<string, unknown>[]).map((d) => ({
+      ...d,
+      companies: [...(d.companies as { company: number }[])].sort((a, b) => a.company - b.company),
+    })),
+  };
 }

@@ -62,8 +62,8 @@ import {
   simViews,
   simWorld,
 } from "../../src/lib.ts";
-import { simDateYmd } from "../../src/time/calendar.ts";
-import type { CompanyId } from "../../src/types/ids.ts";
+import { dateTimeMidnight, quarterFirstDay, quarterNext, simDateYmd } from "../../src/time/calendar.ts";
+import type { CompanyId, IndustryId } from "../../src/types/ids.ts";
 import { roundHalfAway } from "../../src/types/num.ts";
 import type { Period, Statement } from "../../src/types/state/finance.ts";
 import {
@@ -87,10 +87,13 @@ import {
   viewIsPorted,
 } from "../../src/views/index.ts";
 import { periodEq } from "../../src/views/statements.ts";
+import { worldIndustryEstimatedAt } from "../../src/world/index.ts";
 import { data, unwrap } from "../common/index.ts";
 import { runTo } from "../common/ops.ts";
 import { bandedCompanies, perturbBooks } from "./leak_perturb.ts";
 import {
+  type BandedOf,
+  canonical,
   exactInBanded,
   GUIDANCE_HIGH,
   isFigure,
@@ -116,8 +119,36 @@ const BAND_MIN_ERROR = 0.05;
 
 const PORTED: readonly ViewName[] = VIEW_NAMES.filter((n) => viewIsPorted(n));
 
+/** A value under this is small: a truth only within its own view (3). */
+const SMALL = 1000;
+
+/**
+ * Records a truth. Left out: 0, and a small round value (under `SMALL` with at most 3 significant
+ * digits: a 0.25 TB book, 1 point, a company id the two builds rank differently), which tax
+ * rates, weights, counts and ids hold by the data; a money figure is never that small, and every
+ * distinctive value stays in. (From PR #91.)
+ */
 function addTruth(truths: Truths, x: number, where: string): void {
-  if (x !== 0 && Number.isFinite(x) && !truths.has(x)) truths.set(x, where);
+  if (x === 0 || !Number.isFinite(x) || truths.has(x)) return;
+  const a = Math.abs(x);
+  if (a < SMALL && Number(a.toPrecision(3)) === a) return;
+  truths.set(x, where);
+}
+
+/**
+ * Whether a subject's figures are bands in the observer's build now (leak_rules.ts `Subject`): a
+ * company that does not publish (D420), an industry in the estimated class (D432; a history
+ * quarter by the class it closed in, D437), a unit or a company's line in either (D436).
+ */
+function bandedOf(w: World): BandedOf {
+  const estimated = w.industries.map((_, i) => worldIndustryEstimatedAt(w, i as IndustryId, w.clock));
+  return (s) => {
+    if (s.company !== null && showsEstimates(w, s.company)) return true;
+    const ind = s.ownIndustry && s.company !== null ? w.companies[s.company]!.industry : s.industry;
+    if (ind === null) return false;
+    if (s.quarter === null) return estimated[ind]!;
+    return worldIndustryEstimatedAt(w, ind, dateTimeMidnight(quarterFirstDay(quarterNext(s.quarter))));
+  };
 }
 
 /** A band against its truth (2): strictly inside, never the truth, far enough from it. */
@@ -200,21 +231,29 @@ function statementTruths(observer: SimViews, omniscient: SimViews, truths: Truth
   });
 }
 
-/** Every leaf of every ported view of `v`. */
-function leaves(v: SimViews, visit: (leaf: Leaf) => void): void {
-  for (const n of PORTED) walkView(n, v[n].data, visit);
+/** Every leaf of every ported view of `v`, its subjects classed by `w`. */
+function leaves(w: World, v: SimViews, visit: (leaf: Leaf) => void): void {
+  const banded = bandedOf(w);
+  for (const n of PORTED) walkView(n, v[n].data, banded, visit);
+}
+
+/** `v` with every view in `canonical` order (leak_rules.ts), so the builds pair row by row. */
+function canonViews(v: SimViews): SimViews {
+  const out = { ...v } as Record<string, unknown>;
+  for (const n of PORTED) out[n] = { ...v[n], data: canonical(n, v[n].data) };
+  return out as unknown as SimViews;
 }
 
 /**
- * The public values (2): every number of a publishing company's subtrees, a listed company's
- * EFV, and `PUBLIC_PATHS`. Nothing else: an exact value elsewhere is not made public by being
- * shown (it may be the leak).
+ * The public values (2): every number of a subject's subtrees that is not banded (a publishing
+ * company, an industry outside the estimated class: the published industry totals), a listed
+ * company's EFV, and `PUBLIC_PATHS`. Nothing else: an exact value elsewhere is not made public by
+ * being shown (it may be the leak).
  */
 function publicValues(w: World, observer: SimViews): Set<number> {
   const out = new Set<number>();
-  leaves(observer, (leaf) => {
-    const o = leaf.ctx.owner;
-    const pub = (o !== null && !showsEstimates(w, o)) || isListedEfv(leaf) || PUBLIC_PATHS.has(leaf.norm);
+  leaves(w, observer, (leaf) => {
+    const pub = leaf.ctx.banded === false || isListedEfv(leaf) || PUBLIC_PATHS.has(leaf.norm);
     if (pub) for (const x of leafNumbers(leaf)) out.add(x);
   });
   return out;
@@ -226,21 +265,21 @@ function shape(w: World, v: SimViews): string[] {
   for (const n of PORTED) {
     if (VIEW_RULES[n] === undefined) bad.push(`${n} is ported but has no leak rules`);
   }
-  leaves(v, (leaf) => {
-    const o = leaf.ctx.owner;
+  leaves(w, v, (leaf) => {
+    const banded = leaf.ctx.banded;
     const f = leaf.figure;
-    if (o === null) {
-      if (f !== null) bad.push(`${leaf.raw} is a figure about no company`);
+    if (banded === null) {
+      if (f !== null) bad.push(`${leaf.raw} is a figure about no subject`);
       return;
     }
-    const banded = showsEstimates(w, o);
+    const who = `company ${leaf.ctx.owner}, industry ${leaf.ctx.industry}`;
     if (f !== null) {
       const want = banded && !exactInBanded(leaf) ? "Band" : "Exact";
-      if (f.kind !== want) bad.push(`${leaf.raw} is ${f.kind}, wants ${want} (company ${o})`);
+      if (f.kind !== want) bad.push(`${leaf.raw} is ${f.kind}, wants ${want} (${who})`);
     } else if (leaf.norm.endsWith(".estimated") && leaf.value !== banded) {
-      bad.push(`${leaf.raw} is ${String(leaf.value)}, company ${o} shows estimates ${banded}`);
+      bad.push(`${leaf.raw} is ${String(leaf.value)}, ${who} banded ${banded}`);
     } else if (banded && typeof leaf.value === "number" && !isIdLeaf(leaf) && !plainInBanded(leaf)) {
-      bad.push(`${leaf.raw} = ${leaf.value} is a plain number of banded company ${o}`);
+      bad.push(`${leaf.raw} = ${leaf.value} is a plain number of a banded subject (${who})`);
     }
   });
   v.statements.data.companies.forEach((c, i) => {
@@ -268,11 +307,16 @@ function scan(w: World, observer: SimViews, omniscient: SimViews): Scan {
   statementTruths(observer, omniscient, truths, bad);
   for (const x of publicValues(w, observer)) truths.delete(x);
   const leaks: string[] = [];
-  leaves(observer, (leaf) => {
+  leaves(w, observer, (leaf) => {
     if (isIdLeaf(leaf)) return;
     for (const x of leafNumbers(leaf)) {
       const t = truths.get(x);
-      if (t !== undefined) leaks.push(`${leaf.raw} = ${x}, the truth of ${t}`);
+      if (t === undefined) continue;
+      // A small truth (TB, points, ratios, shares) counts only in its own view: across views such
+      // values meet skills, rates and weights by the data (from PR #91). A small figure carried
+      // into another view still fails the perturbation (4).
+      if (Math.abs(x) < SMALL && t.split(/[. []/, 1)[0] !== leaf.ctx.view) continue;
+      leaks.push(`${leaf.raw} = ${x}, the truth of ${t}`);
     }
   });
   return { shape: shape(w, observer), bad, leaks, truths: truths.size };
@@ -286,7 +330,7 @@ function builds(sim: Sim): [SimViews, SimViews] {
   unwrap(simApply(sim, { kind: "SetOmniscient", on: true }), "Omniscient on");
   const omniscient = simViewsClone(simViews(sim));
   unwrap(simApply(sim, { kind: "SetOmniscient", on: false }), "Omniscient off");
-  return [observer, omniscient];
+  return [canonViews(observer), canonViews(omniscient)];
 }
 
 // ---------------------------------------------------------------- the perturbation (4)
@@ -298,7 +342,7 @@ const sameLeaf = (a: unknown, b: unknown) =>
  * The leaves of view `n` that differ between two builds, bands left out (see the header), with
  * their `Leaf` in the first build for `perturbExempt`.
  */
-function changes(n: ViewName, a: unknown, b: unknown, out: string[]): void {
+function changes(w: World, n: ViewName, a: unknown, b: unknown, out: string[]): void {
   // `walkView` walks one build; the other is read at the same raw path.
   const at = (raw: string): unknown => {
     let x: unknown = { [n]: b };
@@ -331,7 +375,7 @@ function changes(n: ViewName, a: unknown, b: unknown, out: string[]): void {
   const before = out.length;
   lengths(a, b, n);
   if (out.length > before) return;
-  walkView(n, a, (leaf) => {
+  walkView(n, a, bandedOf(w), (leaf) => {
     if (perturbExempt(leaf)) return;
     const y = at(leaf.raw);
     const f = leaf.figure;
@@ -367,11 +411,11 @@ function perturbation(sim: Sim, builders: ViewBuilders = VIEW_BUILDERS): Perturb
   const off = { ...controls, omniscient: false };
   const on = { ...controls, omniscient: true };
   const p = perturbBooks(w);
-  const a = simViewsBuild({ world: w, controls: off, seed, map }, builders);
-  const b = simViewsBuild({ world: p, controls: off, seed, map }, builders);
-  const t = simViewsBuild({ world: p, controls: on, seed, map }, builders);
+  const a = canonViews(simViewsBuild({ world: w, controls: off, seed, map }, builders));
+  const b = canonViews(simViewsBuild({ world: p, controls: off, seed, map }, builders));
+  const t = canonViews(simViewsBuild({ world: p, controls: on, seed, map }, builders));
   const changed: string[] = [];
-  for (const n of PORTED) changes(n, a[n].data, b[n].data, changed);
+  for (const n of PORTED) changes(w, n, a[n].data, b[n].data, changed);
   return { changed, scan: scan(p, b, t) };
 }
 

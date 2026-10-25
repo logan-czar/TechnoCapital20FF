@@ -40,9 +40,11 @@
 //
 // Differences from Rust:
 // - The hash is 64-bit wrapping arithmetic (splitmix64). It runs on a pair of u32 halves held in
-//   plain numbers (`U64`), not on bigint, because the banded statements hash about a hundred
-//   thousand figures at a full build; the result is bit for bit Rust's (the unit tests check it
-//   against a bigint reference and against values worked out from the Rust code).
+//   plain numbers, allocating nothing, not on bigint, because the banded views hash about a
+//   hundred thousand figures at a full build; the (seed, subject, kind) prefix is memoised. The
+//   result is bit for bit Rust's (the unit tests check it against a bigint reference and against
+//   values worked out from the Rust code). The subject's code (Rust `Subject::code`: an industry
+//   sets bit 32) is in `hashPrefix`.
 // - The seed: `ViewInput.seed` is a number (the RNG's seeds are whole numbers below 2^53) and the
 //   contract `Estimator.seed` a bigint; `estimateHash` and `error` take the bigint.
 // - Rust's `ViewInput::estimator` is `viewInputEstimator` here, so views/index.ts stays the
@@ -229,11 +231,6 @@ export function kindCode(k: Kind): number {
   }
 }
 
-/** A subject's number in the hash, as a u64 (Rust `Subject::code`): an industry sets bit 32. */
-function subjectCode(s: Subject): U64 {
-  return s.kind === "Company" ? u64(s.company) : [1, s.industry >>> 0];
-}
-
 /** The line's label (spec 3.9). */
 export function statementLineLabel(l: StatementLine): string {
   return STATEMENT_LINE_LABELS[l];
@@ -353,82 +350,101 @@ function periodYear(p: Period): number {
 
 // ---------------------------------------------------------------- the hash (64-bit, as u32 halves)
 
-/** A u64 as its [high, low] u32 halves. */
-type U64 = readonly [number, number];
-
 const TWO_32 = 4294967296;
 
-/** A whole number in 0..2^53 as a U64 (anything else throws: never a silent wrap). */
-function u64(x: number): U64 {
+/**
+ * The result of `mul64` and `mix`, as its high and low u32 halves: module scratch, so the hash
+ * allocates nothing (a full banded build hashes about 10^5 figures).
+ */
+let outHi = 0;
+let outLo = 0;
+
+/** The high and low halves of a whole number in 0..2^53 (anything else throws: never a silent wrap). */
+function hiOf(x: number): number {
   assertCount(x, "estimate hash input");
-  return [Math.floor(x / TWO_32) >>> 0, x >>> 0];
+  return Math.floor(x / TWO_32) >>> 0;
 }
 
-function u64FromBig(x: bigint): U64 {
-  const v = BigInt.asUintN(64, x);
-  return [Number(v >> 32n), Number(v & 0xffff_ffffn)];
+function loOf(x: number): number {
+  return x >>> 0;
 }
 
-/** The low 64 bits of `a + b`. */
-function add64(a: U64, b: U64): U64 {
-  const lo = a[1] + b[1];
-  return [(a[0] + b[0] + (lo >= TWO_32 ? 1 : 0)) >>> 0, lo >>> 0];
-}
-
-/** `a ^ b`. */
-function xor64(a: U64, b: U64): U64 {
-  return [(a[0] ^ b[0]) >>> 0, (a[1] ^ b[1]) >>> 0];
-}
-
-/** `a >> n` for n in 1..32. */
-function shr64(a: U64, n: number): U64 {
-  return [a[0] >>> n, ((a[1] >>> n) | (a[0] << (32 - n))) >>> 0];
-}
-
-/** The low 64 bits of `a × b`. */
-function mul64(a: U64, b: U64): U64 {
+/** The low 64 bits of `a × b`, into `outHi`, `outLo`. */
+function mul64(aHi: number, aLo: number, bHi: number, bLo: number): void {
   // The full 64-bit product of the low halves, from 16-bit limbs (each partial below 2^32).
-  const a0 = a[1] & 0xffff;
-  const a1 = a[1] >>> 16;
-  const b0 = b[1] & 0xffff;
-  const b1 = b[1] >>> 16;
+  const a0 = aLo & 0xffff;
+  const a1 = aLo >>> 16;
+  const b0 = bLo & 0xffff;
+  const b1 = bLo >>> 16;
   const p00 = a0 * b0;
   const p01 = a0 * b1;
   const p10 = a1 * b0;
   const p11 = a1 * b1;
   const mid = (p00 >>> 16) + (p01 & 0xffff) + (p10 & 0xffff);
-  const lo = (((mid & 0xffff) << 16) | (p00 & 0xffff)) >>> 0;
+  outLo = (((mid & 0xffff) << 16) | (p00 & 0xffff)) >>> 0;
   const carry = p11 + (p01 >>> 16) + (p10 >>> 16) + (mid >>> 16);
   // The cross terms reach only the high half, mod 2^32.
-  const hi = (carry + Math.imul(a[0], b[1]) + Math.imul(a[1], b[0])) >>> 0;
-  return [hi, lo];
+  outHi = (carry + Math.imul(aHi, bLo) + Math.imul(aLo, bHi)) >>> 0;
 }
-
-const GOLDEN_GAMMA: U64 = [0x9e3779b9, 0x7f4a7c15];
-const MIX_1: U64 = [0xbf58476d, 0x1ce4e5b9];
-const MIX_2: U64 = [0x94d049bb, 0x133111eb];
-const SALT: U64 = u64FromBig(ESTIMATE_HASH_SALT);
 
 /**
  * splitmix64's finaliser (Steele, Lea and Flood 2014): a fixed bijection of u64 that spreads
- * every input bit over the output.
+ * every input bit over the output. Mixes `(hi, lo) ^ (xHi, xLo)` into `outHi`, `outLo`.
  */
-function mix(z0: U64): U64 {
-  let z = add64(z0, GOLDEN_GAMMA);
-  z = mul64(xor64(z, shr64(z, 30)), MIX_1);
-  z = mul64(xor64(z, shr64(z, 27)), MIX_2);
-  return xor64(z, shr64(z, 31));
+function mix(hi0: number, lo0: number, xHi: number, xLo: number): void {
+  // z = (h ^ x) + 0x9E37_79B9_7F4A_7C15
+  const zLo = ((lo0 ^ xLo) >>> 0) + 0x7f4a7c15;
+  let hi = (((hi0 ^ xHi) >>> 0) + 0x9e3779b9 + (zLo >= TWO_32 ? 1 : 0)) >>> 0;
+  let lo = zLo >>> 0;
+  // z = (z ^ (z >> 30)) × 0xBF58_476D_1CE4_E5B9
+  mul64((hi ^ (hi >>> 30)) >>> 0, (lo ^ ((lo >>> 30) | (hi << 2))) >>> 0, 0xbf58476d, 0x1ce4e5b9);
+  hi = outHi;
+  lo = outLo;
+  // z = (z ^ (z >> 27)) × 0x94D0_49BB_1331_11EB
+  mul64((hi ^ (hi >>> 27)) >>> 0, (lo ^ ((lo >>> 27) | (hi << 5))) >>> 0, 0x94d049bb, 0x133111eb);
+  hi = outHi;
+  lo = outLo;
+  // z ^ (z >> 31)
+  outLo = (lo ^ ((lo >>> 31) | (hi << 1))) >>> 0;
+  outHi = (hi ^ (hi >>> 31)) >>> 0;
 }
 
-function toBig(x: U64): bigint {
-  return (BigInt(x[0]) << 32n) | BigInt(x[1]);
+const SALT_HI = Number(BigInt.asUintN(64, ESTIMATE_HASH_SALT) >> 32n);
+const SALT_LO = Number(BigInt.asUintN(64, ESTIMATE_HASH_SALT) & 0xffff_ffffn);
+
+/** A (seed, subject, kind) prefix and the subject's sign for the kind (D429). */
+interface Prefix {
+  hi: number;
+  lo: number;
+  sign: number;
 }
 
-/** The hash's (seed, subject, kind) prefix (D435: computed once per figure). */
-function hashPrefix(seed: bigint, subject: Subject, kind: Kind): U64 {
-  let h = mix(xor64(SALT, u64FromBig(seed)));
-  h = mix(xor64(h, subjectCode(subject)));
-  return mix(xor64(h, u64(kindCode(kind))));
+/**
+ * The prefixes worked out so far (D435: the prefix is computed once per subject and kind). A
+ * pure function's memo: it never changes a result. Cleared when it grows past `PREFIX_CACHE_MAX`.
+ */
+const PREFIX_CACHE = new Map<string, Prefix>();
+const PREFIX_CACHE_MAX = 200_000;
+
+/** The hash's (seed, subject, kind) prefix. */
+function hashPrefix(seed: bigint, subject: Subject, kind: Kind): Prefix {
+  const k = kindCode(kind);
+  const sHi = subject.kind === "Company" ? hiOf(subject.company) : 1;
+  const sLo = subject.kind === "Company" ? loOf(subject.company) : loOf(assertCount(subject.industry));
+  const key = `${seed}:${sHi}:${sLo}:${k}`;
+  const hit = PREFIX_CACHE.get(key);
+  if (hit !== undefined) return hit;
+  const s = BigInt.asUintN(64, seed);
+  mix(SALT_HI, SALT_LO, Number(s >> 32n), Number(s & 0xffff_ffffn));
+  mix(outHi, outLo, sHi, sLo);
+  mix(outHi, outLo, 0, k);
+  const hi = outHi;
+  const lo = outLo;
+  mix(hi, lo, 0, TAG_SIGN);
+  const p: Prefix = { hi, lo, sign: (outLo & 1) === 1 ? 1.0 : -1.0 };
+  if (PREFIX_CACHE.size >= PREFIX_CACHE_MAX) PREFIX_CACHE.clear();
+  PREFIX_CACHE.set(key, p);
+  return p;
 }
 
 /**
@@ -441,28 +457,31 @@ export function estimateHash(
   kind: Kind,
   rest: readonly (number | bigint)[],
 ): bigint {
-  let h = hashPrefix(seed, subject, kind);
-  for (const x of rest) h = mix(xor64(h, typeof x === "bigint" ? u64FromBig(x) : u64(x)));
-  return toBig(h);
+  const p = hashPrefix(seed, subject, kind);
+  outHi = p.hi;
+  outLo = p.lo;
+  for (const x of rest) {
+    if (typeof x === "bigint") {
+      const v = BigInt.asUintN(64, x);
+      mix(outHi, outLo, Number(v >> 32n), Number(v & 0xffff_ffffn));
+    } else {
+      mix(outHi, outLo, hiOf(x), loOf(x));
+    }
+  }
+  return (BigInt(outHi) << 32n) | BigInt(outLo);
 }
 
-/** A uniform in [0, 1) from a hash's top 53 bits. */
-function unit(h: U64): number {
-  return (h[0] * 2097152 + (h[1] >>> 11)) / 9007199254740992;
-}
-
-/** An f64's bits (Rust `f64::to_bits`). */
-function f64Bits(x: number): U64 {
-  BITS_VIEW.setFloat64(0, x);
-  return [BITS_VIEW.getUint32(0), BITS_VIEW.getUint32(4)];
+/** A uniform in [0, 1) from the last hash's top 53 bits. */
+function unit(): number {
+  return (outHi * 2097152 + (outLo >>> 11)) / 9007199254740992;
 }
 
 const BITS_VIEW = new DataView(new ArrayBuffer(8));
 
 /** Hash tags of the three parts of the error. */
-const TAG_SIGN: U64 = [0, 1];
-const TAG_BIAS: U64 = [0, 2];
-const TAG_JITTER: U64 = [0, 3];
+const TAG_SIGN = 1;
+const TAG_BIAS = 2;
+const TAG_JITTER = 3;
 
 /**
  * The error of one estimate (D429): the subject's persistent sign for the kind, times the year's
@@ -477,16 +496,23 @@ export function error(
   truth: number,
 ): number {
   // The (seed, subject, kind) prefix once, then each part's own tail.
-  const prefix = hashPrefix(seed, subject, kind);
-  const sign = (mix(xor64(prefix, TAG_SIGN))[1] & 1) === 1 ? 1.0 : -1.0;
-  const y = u64(Math.abs(year));
-  const bias =
-    ESTIMATE_BIAS_MIN +
-    unit(mix(xor64(mix(xor64(prefix, TAG_BIAS)), y))) * (ESTIMATE_BIAS_MAX - ESTIMATE_BIAS_MIN);
-  let h = mix(xor64(prefix, TAG_JITTER));
-  for (const x of [y, u64(period), f64Bits(truth)]) h = mix(xor64(h, x));
-  const j = unit(h);
-  return sign * bias + (2.0 * j - 1.0) * ESTIMATE_JITTER;
+  const p = hashPrefix(seed, subject, kind);
+  const y = Math.abs(year);
+  const yHi = hiOf(y);
+  const yLo = loOf(y);
+  mix(p.hi, p.lo, 0, TAG_BIAS);
+  mix(outHi, outLo, yHi, yLo);
+  const bias = ESTIMATE_BIAS_MIN + unit() * (ESTIMATE_BIAS_MAX - ESTIMATE_BIAS_MIN);
+  // The tail: the year, the period and the true value's bits (Rust `f64::to_bits`).
+  BITS_VIEW.setFloat64(0, truth);
+  const tHi = BITS_VIEW.getUint32(0);
+  const tLo = BITS_VIEW.getUint32(4);
+  mix(p.hi, p.lo, 0, TAG_JITTER);
+  mix(outHi, outLo, yHi, yLo);
+  mix(outHi, outLo, hiOf(period), loOf(period));
+  mix(outHi, outLo, tHi, tLo);
+  const j = unit();
+  return p.sign * bias + (2.0 * j - 1.0) * ESTIMATE_JITTER;
 }
 
 /**
