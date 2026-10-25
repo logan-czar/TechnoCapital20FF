@@ -11,20 +11,20 @@
 // after that tick: the state it was built from.
 //
 // Expects:
-//   ../../../src/lib.ts                  simNew, simStep, simNow, simWorld, simViews, simControls
-//   ../../../src/economy/supply.ts       M_MAX, M_MIN, pPre(unit, company)
-//   ../../../src/finance/statements.ts   trailingFour(statements) -> Ledger | null, ledgerNetIncome
-//   ../../../src/market/fair_value.ts    shownValue(value, omniscient)
-//   ../../../src/market/projection.ts    range(consensus, width) -> [lo, hi]   [market::projection::range]
-//   ../../../src/ops/data.ts             RETENTION_MONTHS, decayRate(held, decay_base),
+//   ../../src/lib.ts                  simNew, simStep, simNow, simWorld, simViews, simControls
+//   ../../src/economy/supply.ts       M_MAX, M_MIN, pPre(unit, company)
+//   ../../src/finance/statements.ts   trailingFour(statements) -> Ledger | null, ledgerNetIncome
+//   ../../src/market/fair_value.ts    shownValue(value, omniscient)
+//   ../../src/market/projection.ts    range(consensus, width) -> [lo, hi]   [market::projection::range]
+//   ../../src/ops/data.ts             RETENTION_MONTHS, decayRate(held, decay_base),
 //                                        dataBookUnstructuredTb(book)          [DataBook::unstructured_tb]
-//   ../../../src/world/units.ts          USD_PER_MILLION, businessUnitAssetsEff(u), businessUnitEbitM(u)
-//   ../../../src/world/index.ts          worldIndustryEstimatedAt(world, industry, clock)
+//   ../../src/world/entities.ts       businessUnitAssetsEff(u), businessUnitEbitM(u)
+//   ../../src/world/index.ts          worldIndustryEstimatedAt(world, industry, clock)
 //                                        [World::industry_estimated_at]
-//   ../../../src/views/estimate.ts       showsEstimates(world, company), statementLineOf(line, st)
+//   ../../src/views/estimate.ts       showsEstimates(world, company), statementLineOf(line, st)
 //                                        [StatementLine::of], statementLineLabel(line)
-//   ../../../src/views/statements.ts     published(statement, clock)
-//   ../../../src/views/industry_rows.ts  companiesByRevenue(world) -> [CompanyId, number][][]
+//   ../../src/views/statements.ts     published(statement, clock)
+//   ../../src/views/industry_rows.ts  companiesByRevenue(world) -> [CompanyId, number][][]
 //                                        (per industry, revenue-ranked)
 //   ../common/index.ts                   assertFigure
 //
@@ -40,12 +40,12 @@
 //   m_shown_exact == 0, probe_fooled == probes) are properties of the estimate noise (D429, D436).
 // - Maps keyed by tuples use string keys.
 import { describe, expect, it } from "vitest";
-import { M_MAX, M_MIN, pPre } from "../../../src/economy/supply.ts";
-import { ledgerNetIncome, trailingFour } from "../../../src/finance/statements.ts";
-import { simNew, simNow, simStep, simViews, simWorld } from "../../../src/lib.ts";
-import { shownValue } from "../../../src/market/fair_value.ts";
-import { range as projectionRange } from "../../../src/market/projection.ts";
-import { dataBookUnstructuredTb, decayRate, RETENTION_MONTHS } from "../../../src/ops/data.ts";
+import { M_MAX, M_MIN, pPre } from "../../src/economy/supply.ts";
+import { ledgerNetIncome, trailingFour } from "../../src/finance/statements.ts";
+import { simNew, simNow, simStep, simViews, simWorld } from "../../src/lib.ts";
+import { shownValue } from "../../src/market/fair_value.ts";
+import { range as projectionRange } from "../../src/market/projection.ts";
+import { dataBookUnstructuredTb, decayRate, RETENTION_MONTHS } from "../../src/ops/data.ts";
 import {
   dateTimeDate,
   dateTimeHour,
@@ -54,21 +54,21 @@ import {
   simDateIsQuarterFirstMonth,
   simDateQuarter,
   simDateYmd,
-} from "../../../src/time/calendar.ts";
-import type { Quarter } from "../../../src/types/calendar.ts";
-import type { CompanyId, IndustryId, UnitId } from "../../../src/types/ids.ts";
-import type { Statement } from "../../../src/types/state/finance.ts";
-import type { Figure, StatementLine } from "../../../src/types/views/estimate.ts";
-import { STATEMENT_LINE_VALUES } from "../../../src/types/views/estimate.ts";
-import type { UnitRow } from "../../../src/types/views/units.ts";
-import { INDUSTRY_UNPUBLISHED_BELOW, type World } from "../../../src/types/world.ts";
-import { showsEstimates, statementLineLabel, statementLineOf } from "../../../src/views/estimate.ts";
-import { companiesByRevenue } from "../../../src/views/industry_rows.ts";
-import { published } from "../../../src/views/statements.ts";
-import { worldIndustryEstimatedAt } from "../../../src/world/index.ts";
-import { businessUnitAssetsEff, businessUnitEbitM, USD_PER_MILLION } from "../../../src/world/units.ts";
+} from "../../src/time/calendar.ts";
+import type { Quarter } from "../../src/types/calendar.ts";
+import type { CompanyId, IndustryId, UnitId } from "../../src/types/ids.ts";
+import type { Statement } from "../../src/types/state/finance.ts";
+import type { Figure, StatementLine } from "../../src/types/views/estimate.ts";
+import { STATEMENT_LINE_VALUES } from "../../src/types/views/estimate.ts";
+import type { UnitRow } from "../../src/types/views/units.ts";
+import { INDUSTRY_UNPUBLISHED_BELOW, USD_PER_MILLION, type World } from "../../src/types/world.ts";
+import { showsEstimates, statementLineLabel, statementLineOf } from "../../src/views/estimate.ts";
+import { companiesByRevenue } from "../../src/views/industry_rows.ts";
+import { published } from "../../src/views/statements.ts";
+import { businessUnitAssetsEff, businessUnitEbitM } from "../../src/world/entities.ts";
+import { worldIndustryEstimatedAt } from "../../src/world/index.ts";
 import { zeroLedger } from "../common/defaults.ts";
-import { assertFigure, data, unwrap } from "../common/index.ts";
+import { assertFigure, data, macrotask, unwrap } from "../common/index.ts";
 import { byField, byId, figExact, figIsBand, figShown } from "../common/views.ts";
 
 /** The numbers in a dump: runs of digits, '.', '-', '+' and 'e'. */
@@ -251,7 +251,7 @@ interface Book {
 }
 
 describe("m9 estimate bands", () => {
-  it("private_figures_are_bands_that_never_show_the_truth", () => {
+  it("private_figures_are_bands_that_never_show_the_truth", async () => {
     const sim = unwrap(simNew(data(), 6), "Sim::new");
     const end = dateTimeMidnight(simDateYmd(2022, 1, 3));
     const bandedSeen = new Set<CompanyId>();
@@ -282,6 +282,8 @@ describe("m9 estimate bands", () => {
     const key = (i: IndustryId, q: Quarter): string => `${i}|${q.year}|${q.q}`;
     while (simNow(sim) < end) {
       simStep(sim);
+      // Let the Vitest worker answer its RPC once a simulated day (common/index.ts `macrotask`).
+      if (dateTimeHour(simNow(sim)) === 0) await macrotask();
       const w = simWorld(sim);
       const v = simViews(sim);
       const clockDate = dateTimeDate(w.clock);
