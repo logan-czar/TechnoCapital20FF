@@ -28,35 +28,52 @@ const BASIS_A: readonly [number, number] = [0xcbf29ce4, 0x84222325];
 const BASIS_B: readonly [number, number] = [0x9e3779b9, 0x7f4a7c15];
 
 /**
- * FNV-1a 64 over bytes, as two 32-bit halves. The prime is 2^40 + 0x1b3, so `h * prime mod 2^64`
- * is `h * 0x1b3 + (h << 40)`; every partial product stays under 2^53, so the double math is exact.
+ * FNV-1a 64 over bytes, held as four 16-bit limbs (h0 lowest) so every step is small-integer math
+ * the JIT keeps in registers. The prime is 2^40 + 0x1b3, so `h * prime mod 2^64` is
+ * `h * 0x1b3 + (h << 40)`: each limb times 0x1b3, plus limbs 0 and 1 shifted up 8 bits into limbs
+ * 2 and 3, then the carries. Every partial stays under 2^31.
  */
 class Fnv64 {
-  hi: number;
-  lo: number;
+  h0: number;
+  h1: number;
+  h2: number;
+  h3: number;
 
   constructor(basis: readonly [number, number]) {
-    this.hi = basis[0];
-    this.lo = basis[1];
+    this.h3 = basis[0] >>> 16;
+    this.h2 = basis[0] & 0xffff;
+    this.h1 = basis[1] >>> 16;
+    this.h0 = basis[1] & 0xffff;
   }
 
   update(bytes: Uint8Array): void {
-    let hi = this.hi;
-    let lo = this.lo;
+    let h0 = this.h0;
+    let h1 = this.h1;
+    let h2 = this.h2;
+    let h3 = this.h3;
     for (let i = 0; i < bytes.length; i++) {
-      lo = (lo ^ bytes[i]!) >>> 0;
-      const p = lo * 0x1b3;
-      const carry = Math.floor(p / 0x1_0000_0000);
-      const newLo = p >>> 0;
-      hi = ((hi * 0x1b3 + carry + ((lo << 8) >>> 0)) % 0x1_0000_0000) >>> 0;
-      lo = newLo;
+      h0 ^= bytes[i] as number;
+      const t0 = h0 * 0x1b3;
+      let t1 = h1 * 0x1b3;
+      let t2 = h2 * 0x1b3 + (h0 << 8);
+      const t3 = h3 * 0x1b3 + (h1 << 8);
+      t1 += t0 >>> 16;
+      h0 = t0 & 0xffff;
+      t2 += t1 >>> 16;
+      h1 = t1 & 0xffff;
+      h3 = (t3 + (t2 >>> 16)) & 0xffff;
+      h2 = t2 & 0xffff;
     }
-    this.hi = hi;
-    this.lo = lo;
+    this.h0 = h0;
+    this.h1 = h1;
+    this.h2 = h2;
+    this.h3 = h3;
   }
 
   hex(): string {
-    return this.hi.toString(16).padStart(8, "0") + this.lo.toString(16).padStart(8, "0");
+    const hi = ((this.h3 << 16) | this.h2) >>> 0;
+    const lo = ((this.h1 << 16) | this.h0) >>> 0;
+    return hi.toString(16).padStart(8, "0") + lo.toString(16).padStart(8, "0");
   }
 }
 
