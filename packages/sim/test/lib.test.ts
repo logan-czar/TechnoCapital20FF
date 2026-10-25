@@ -21,7 +21,7 @@ import type { TickPart } from "../src/time/scheduler.ts";
 import type { CompanyId } from "../src/types/ids.ts";
 import type { LoadError, World } from "../src/types/world.ts";
 import { alertLevelsGet } from "../src/world/notice.ts";
-import { calendarScheduler, minimalSim, minimalWorld, NO_DRAWS } from "./test_sim.ts";
+import { minimalSim, minimalWorld, NO_DRAWS } from "./test_sim.ts";
 
 /** StartDeps that record their calls and build `minimalWorld()`, or fail once `fail` is set. */
 function recordingDeps(calls: string[], fail: { on: boolean }): StartDeps {
@@ -34,7 +34,14 @@ function recordingDeps(calls: string[], fail: { on: boolean }): StartDeps {
       calls.push("worldFromData");
       return fail.on
         ? { ok: false, error }
-        : { ok: true, value: { ...minimalWorld(), news: { labels: [] } } as unknown as World };
+        : {
+            ok: true,
+            value: {
+              ...minimalWorld(),
+              industries: Array.from({ length: 5 }, () => ({ phase_label: "Normal" })),
+              news: { labels: [] },
+            } as unknown as World,
+          };
     },
     economyStart: rec("economyStart"),
     birthsDrawTippedLabAtLoad: rec("birthsDrawTippedLabAtLoad"),
@@ -83,7 +90,7 @@ describe("startWorld", () => {
 
 describe("Sim", () => {
   it("NewGame keeps the alert levels and the views; the rest is a new game", () => {
-    const s = simFromWorld(minimalWorld(), 1, { makeScheduler: calendarScheduler });
+    const s = simFromWorld(minimalWorld(), 1, {});
     let ran = 0;
     simRegisterTestJob(s, "Alerts", "test.count", () => {
       ran += 1;
@@ -174,8 +181,12 @@ describe("Sim", () => {
     for (let i = 0; i < 24; i++) expect(simStepObserved(a, observer)).toEqual(b.step());
     expect(a.stateHash()).toBe(b.stateHash());
     // The 2 Jan 00:00 tick ends with its views: only the clock is ported here.
-    expect(parts.slice(-6)).toEqual([
+    expect(parts.slice(-10)).toEqual([
       "+ReleasePublish",
+      "+ReleasePublish/finance.removals",
+      "-ReleasePublish/finance.removals",
+      "+ReleasePublish/news.removals",
+      "-ReleasePublish/news.removals",
       "-ReleasePublish",
       "+Views",
       "+view clock",
