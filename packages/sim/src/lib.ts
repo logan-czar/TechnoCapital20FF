@@ -7,10 +7,8 @@
 // methods (`sim.step()`, ...), which call the free functions.
 //
 // STEP 2: `startWorld` calls modules ported in Step 2 (economy, births, ai, people, finance,
-// market). Those calls go through `StartDeps` below, one member per Rust function; the defaults in
-// `START_DEPS` throw "not ported yet", so `simNew` on real data throws until they are wired. A
-// builder that ports one of them replaces its line in `START_DEPS` with the real function. The
-// map build (crate::map, M8) goes through `SimDeps.mapDataBuild` the same way, and the view
+// market). Those calls go through `StartDeps` below, one member per Rust function; `START_DEPS`
+// holds the ported functions, and a test may pass its own. The map build (crate::map, M8) goes through `SimDeps.mapDataBuild` the same way, and the view
 // builders through views/index.ts `VIEW_BUILDERS`.
 //
 // Differences from Rust:
@@ -25,6 +23,7 @@
 
 import type { WorldData } from "@tc20ff/sim-data";
 import { planAtLoad } from "./ai/jobs.ts";
+import { drawFirstVotes, drawTippedLabAtLoad } from "./births/jobs.ts";
 import { start as economyStart } from "./economy/start.ts";
 import { start as financeStart } from "./finance/index.ts";
 import { stateHash } from "./hash.ts";
@@ -91,18 +90,14 @@ export interface StartDeps {
   marketStart(world: World, draws: DrawSource): void;
 }
 
-function notPorted(item: string): never {
-  throw new Error(`lib: ${item} is not ported yet (Step 2); wire it into START_DEPS`);
-}
-
-/** The default `StartDeps`: Step 2 replaces each `notPorted` line with the ported function. */
+/** The default `StartDeps`: every member is the ported Rust function. */
 export const START_DEPS: StartDeps = {
   worldFromData: (data) => buildWorld(data),
   economyStart, // economy/start.ts
-  birthsDrawTippedLabAtLoad: () => notPorted("births::jobs::draw_tipped_lab_at_load"),
+  birthsDrawTippedLabAtLoad: drawTippedLabAtLoad, // births/jobs.ts
   aiPlanAtLoad: planAtLoad, // ai/jobs.ts
   peopleSeatingStart: seatingStart, // people/seating.ts
-  birthsDrawFirstVotes: () => notPorted("births::jobs::draw_first_votes"),
+  birthsDrawFirstVotes: drawFirstVotes, // births/jobs.ts
   financeStart, // finance/index.ts
   marketStart, // market/jobs.ts start
 };
@@ -328,7 +323,7 @@ function simFromConfig(cfg: SimConfig, seed: number): Result<Sim, LoadError> {
 
 /**
  * A new game from the loaded data and a seed: the start state of spec 7, paused at 2020-01-01
- * 00:00 (spec 7.3). Rust `Sim::new`. Throws while a `START_DEPS` member is not ported.
+ * 00:00 (spec 7.3). Rust `Sim::new`.
  */
 export function simNew(data: WorldData, seed: number, opts: SimOptions = {}): Result<Sim, LoadError> {
   const deps: SimDeps = { ...SIM_DEPS, ...opts.deps };

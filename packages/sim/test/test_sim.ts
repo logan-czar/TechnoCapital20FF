@@ -1,16 +1,16 @@
-// The Sim for the lib.rs tests (controls, job order, notices, hash, save and load) while Step 2
-// lands: `testSim(seed)` is Rust's `Sim::new(data, seed)` once `simNew` builds the start state
-// from the real data; until then (a START_DEPS or LoadDeps member still throws "not ported yet")
-// it is a Sim on `minimalWorld()` running every registered job (`scheduler()`, as Rust's
-// `Sim::new` does), with only the clock view built. The world's tables are empty or bare, so the
-// ported jobs find nothing to do and the placeholders do nothing; the slots visited, the calendar
-// alerts and the test jobs below are what these tests check, the same on either.
+// The Sim for the lib.rs tests (controls, job order, notices, hash, save and load): `testSim(seed)`
+// is Rust's `Sim::new(data, seed)` on the real data (the minimal-world fallback below stays for a
+// branch where a START_DEPS or LoadDeps member throws "not ported yet"). `minimalSim` is a Sim on
+// `minimalWorld()` running every registered job (`scheduler()`, as Rust's `Sim::new` does), with
+// only the clock view built: the world's tables are empty or bare, so the jobs find nothing to do;
+// the slots visited, the calendar alerts and the test jobs below are what its tests check.
 //
 // Also the shared bits of crates/sim/tests/common/mod.rs these tests use (churn, draw_only,
 // bankrupt_three_and_four), and the clock-only world and no-draw source of the scheduler tests.
 
 import type { WorldData } from "@tc20ff/sim-data";
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { birthsStateDefault } from "../src/births/state.ts";
 import { RATING_WORST } from "../src/finance/rating.ts";
 import { companyFinanceAtLoad } from "../src/finance/state.ts";
 import { type Sim, type SimOptions, simFromWorld, simNew, simRegisterTestJob } from "../src/lib.ts";
@@ -55,6 +55,7 @@ export function clockWorld(): World {
     market: { stocks: [], indices: [], index_history: [] },
     news: newsWireDefault(),
     recaps: [],
+    births: birthsStateDefault(),
     base_rate: 0.03,
     neutral_rate: 0.03,
     cycle: { phase: "Expansion", quarters_left: 1_000_000, g_t: 0, g_history: [], z_avg: 1 },
@@ -88,7 +89,6 @@ export function minimalWorld(): World {
   const w = clockWorld();
   // The ledger job reads the HQ country's tax rate before it looks at the company's status.
   w.countries = [{ corp_tax_rate: 0 }] as unknown as World["countries"];
-  w.market.stocks = w.companies.map(() => stockAtLoad(null, 0, 0));
   w.companies = Array.from({ length: MINIMAL_COMPANIES }, (_, i) => ({
     revenue_usd: 1e6 * (i + 1),
     // The finance, ops and economy jobs walk the companies. A Removed company is out of the game
@@ -98,10 +98,9 @@ export function minimalWorld(): World {
     seats_to_fill: [],
     hq_country: 0,
     shares_out: 0,
+    ipo_next_vote: null,
     units: [],
   })) as unknown as World["companies"];
-  // ledgerJob reads the home country's tax rate before it checks the company is in the game.
-  w.countries = [{ corp_tax_rate: 0 }] as unknown as World["countries"];
   w.market.stocks = w.companies.map(() => stockAtLoad(null, 0, 0));
   return w;
 }

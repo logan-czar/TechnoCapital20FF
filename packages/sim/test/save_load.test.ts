@@ -6,7 +6,7 @@
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { type SaveFiles, type Sim, simWorld } from "../src/lib.ts";
 import { dateTimeHours } from "../src/time/calendar.ts";
 import type { CompanyId } from "../src/types/ids.ts";
@@ -30,37 +30,52 @@ const NODE_FILES: SaveFiles = {
 };
 
 describe("save and load", () => {
-  it("save, load, continue matches an unbroken run", () => {
-    const END = 24 * 400;
-    const straight = churningSim(77);
-    const want = monthlyHashes(straight, END);
-    // The churn bites: the same seed without it ends in another state.
+  // The Rust test is one function looping over the cuts. On the full world that is about a minute
+  // of synchronous work, longer than the per-test timeout and long enough to starve Vitest's
+  // worker RPC, so the unbroken run is made once and each cut is its own test; the checks are the
+  // same. Vitest only yields microtasks between tests, so each test ends with a macrotask turn to
+  // let the worker answer the runner's RPC.
+  const END = 24 * 400;
+  let straight: Sim;
+  let want: StateHash[];
+  beforeAll(() => {
+    straight = churningSim(77);
+    want = monthlyHashes(straight, END);
+  }, 120_000);
+  afterEach(() => new Promise<void>((resolve) => setTimeout(resolve, 0)));
+
+  it("the churn bites: the same seed without it ends in another state", () => {
     const idle = testSim(77);
     expect(monthlyHashes(idle, END)).not.toEqual(want);
     expect(simWorld(idle)).not.toEqual(simWorld(straight));
-
-    for (const cut of [1, 23, 24 * 31, 24 * 91 + 1, 5_555]) {
-      const first = churningSim(77);
-      const got = monthlyHashes(first, cut);
-      // Every cut has draws behind it: the state differs from the same seed with no job.
-      const idleAtCut = testSim(77);
-      monthlyHashes(idleAtCut, cut);
-      expect(first.stateHash(), `cut ${cut}`).not.toBe(idleAtCut.stateHash());
-      const bytes = first.saveBytes();
-      // Load into a game with another seed and clock, to show the save replaces everything.
-      const second = churningSim(999);
-      second.step();
-      expect(second.loadBytes(bytes)).toEqual({
-        ok: true,
-        value: [{ kind: "Paused", reason: { kind: "Loaded" } }],
-      });
-      expect(second.stateHash(), `cut ${cut}`).toBe(first.stateHash());
-      expect(second.now()).toBe(first.now());
-      got.push(...monthlyHashes(second, END));
-      expect(got, `cut ${cut}`).toEqual(want);
-      expect(second.stateHash()).toBe(straight.stateHash());
-    }
   });
+
+  it.each([1, 23, 24 * 31, 24 * 91 + 1, 5_555])(
+    "save, load, continue at tick %i matches an unbroken run",
+    (cut) => {
+      {
+        const first = churningSim(77);
+        const got = monthlyHashes(first, cut);
+        // Every cut has draws behind it: the state differs from the same seed with no job.
+        const idleAtCut = testSim(77);
+        monthlyHashes(idleAtCut, cut);
+        expect(first.stateHash(), `cut ${cut}`).not.toBe(idleAtCut.stateHash());
+        const bytes = first.saveBytes();
+        // Load into a game with another seed and clock, to show the save replaces everything.
+        const second = churningSim(999);
+        second.step();
+        expect(second.loadBytes(bytes)).toEqual({
+          ok: true,
+          value: [{ kind: "Paused", reason: { kind: "Loaded" } }],
+        });
+        expect(second.stateHash(), `cut ${cut}`).toBe(first.stateHash());
+        expect(second.now()).toBe(first.now());
+        got.push(...monthlyHashes(second, END));
+        expect(got, `cut ${cut}`).toEqual(want);
+        expect(second.stateHash()).toBe(straight.stateHash());
+      }
+    },
+  );
 
   it("saves and loads controls through files", () => {
     const path = join(mkdtempSync(join(tmpdir(), "tc20ff-saves-")), "m1.sav");
