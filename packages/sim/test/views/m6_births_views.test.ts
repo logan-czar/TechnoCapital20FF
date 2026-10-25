@@ -1,7 +1,6 @@
 // The view half of crates/sim/tests/m6_births.rs `births_follow_5_19_on_the_live_engine` (the rest
 // is test/m6_births.test.ts): after two years of births, the births view lists every birth (9.2
-// list_births) and the company rows list every newborn (list_companies). Pending until the births
-// and company row views are ported (Step 3).
+// list_births) and the company rows list every newborn (list_companies).
 //
 // Changed from the Rust: the same run (seed 21 to 10 January 2022) is made here on its own, so the
 // world-side checks do not wait for the views.

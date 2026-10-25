@@ -42,7 +42,7 @@
 import { describe, expect, it } from "vitest";
 import { M_MAX, M_MIN, pPre } from "../../src/economy/supply.ts";
 import { ledgerNetIncome, trailingFour } from "../../src/finance/statements.ts";
-import { simNew, simNow, simStep, simViews, simWorld } from "../../src/lib.ts";
+import { simControls, simNew, simNow, simStep, simViews, simWorld } from "../../src/lib.ts";
 import { shownValue } from "../../src/market/fair_value.ts";
 import { range as projectionRange } from "../../src/market/projection.ts";
 import { dataBookUnstructuredTb, decayRate, RETENTION_MONTHS } from "../../src/ops/data.ts";
@@ -284,6 +284,7 @@ describe("m9 estimate bands", () => {
       simStep(sim);
       // Let the Vitest worker answer its RPC once a simulated day (common/index.ts `macrotask`).
       if (dateTimeHour(simNow(sim)) === 0) await macrotask();
+      expect(simControls(sim).omniscient).toBe(false);
       const w = simWorld(sim);
       const v = simViews(sim);
       const clockDate = dateTimeDate(w.clock);

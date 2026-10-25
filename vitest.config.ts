@@ -3,8 +3,9 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     projects: ["packages/*", "apps/headless", "apps/web"],
-    // A quarter of the cores: each worker holds a whole simulated world with every view, so a
-    // worker per core used too much memory (and starved Vitest's RPC) when several gates ran.
-    maxWorkers: "25%",
+    // Four workers: each holds a whole simulated world with every view and years of history (up
+    // to about 2 GB), so one gate peaks near 8 GB. More workers, or two gates at once, ran the PC
+    // out of memory.
+    maxWorkers: 4,
   },
 });

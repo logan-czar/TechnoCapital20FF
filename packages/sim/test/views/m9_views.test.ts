@@ -1,13 +1,14 @@
 // Port of crates/sim/tests/m9_views.rs: the M9 views (docs/build/m9-plan.md section 2; spec 9.2,
 // 9.4): cap table, characters, countries, places, zones, rates, the clock's next release, the
-// company row additions, the births column and event names (the past-recaps test waits on v_recap, in pending/views/m9_views.test.ts), the Omniscient toggle, the EFV
-// history, and the rule that building views never moves an RNG stream. Expected values come from
-// the data tables and the spec.
+// company row additions, the births column and event names, the Omniscient toggle, the EFV
+// history, and the rule that building views never moves an RNG stream (the past-recaps test is in
+// pending/views/m9_views.test.ts). Expected values come from the data tables and the spec.
 //
 // Expects:
 //   ../../src/lib.ts                 simNew, simApply, simStep, simNow, simWorld, simViews,
 //                                       simClock, simControls, simStateHash; startWorld(data,
-//                                       draws) -> Result<World, LoadError>; scheduler()
+//                                       draws) -> Result<World, LoadError>
+//   ../../src/jobs.ts                scheduler()
 //   ../../src/time/scheduler.ts      schedulerRunTick(s, world, draws, notices, controls, null)
 //   ../../src/hash.ts                stateHash(world, rng)                    [hash::state_hash]
 //   ../../src/rng.ts                 rngStreamsNew, rngStreamsDraws (exist)
@@ -33,7 +34,7 @@
 //   *sim.world())` is numbersDiffer == null.
 // - `Trait::from_name(n.trim())` with filter_map drops names that are not traits (D113): the
 //   same filter on traitFromName.
-import type { Character as CharacterRow, WorldData } from "@tc20ff/sim-data";
+import { type Character as CharacterRow, type WorldData, worldDataAllProvinces } from "@tc20ff/sim-data";
 import { describe, expect, it } from "vitest";
 import { stateHash } from "../../src/hash.ts";
 import { scheduler } from "../../src/jobs.ts";
@@ -184,6 +185,7 @@ describe("m9 views", () => {
     expect(total).toBe(651);
 
     const places = v.places.data;
+    expect(places.provinces.length).toBe(worldDataAllProvinces(d).length);
     expect(places.provinces.length).toBe(3963);
     const edmonton = places.provinces.find((p) => p.key === "CA-0033");
     if (edmonton === undefined) throw new Error("no Edmonton");
