@@ -10,12 +10,12 @@
 // the neutral Pdoomberg Wire byline and posts at the next 00:00 daily job (D158).
 //
 // Expects:
-//   ../../src/lib.ts              simNew, simStep, simNow, simWorld, simViews
-//   ../../src/news.ts       headlineByline(h) -> string      [Headline::byline]
-//   ../../src/finance/rating.ts   notchesBetween(from, to) -> number
-//   ../../src/views/estimate.ts   showsEstimates(world, company) -> boolean
-//   ../../src/views/recap.ts      recapViewLatest(view) -> RecapQuarter | null   [RecapView::latest]
-//   ../../src/views/news.ts       newsViewGetNews(view, since, filter | null) -> Headline[]
+//   ../src/lib.ts              simNew, simStep, simNow, simWorld, simViews
+//   ../src/news.ts       headlineByline(h) -> string      [Headline::byline]
+//   ../src/finance/rating.ts   notchesBetween(from, to) -> number
+//   ../src/views/estimate.ts   showsEstimates(world, company) -> boolean
+//   ../src/views/recap.ts      recapViewLatest(view) -> RecapQuarter | null   [RecapView::latest]
+//   ../src/views/news.ts       newsViewGetNews(view, since, filter | null) -> Headline[]
 //                                 [NewsView::get_news]
 //
 // Changed from the Rust: the seed (41) seeds the new generator (D951), so which headlines post
@@ -23,25 +23,25 @@
 // a count from one seed. If a seed misses a type (a rating change of 2+ notches is the rarest)
 // move the seed rather than loosen the check. BYLINE is the types/state/news.ts constant.
 import { describe, expect, it } from "vitest";
-import { notchesBetween } from "../../src/finance/rating.ts";
-import { simNew, simNow, simStep, simViews, simWorld } from "../../src/lib.ts";
-import { headlineByline } from "../../src/news.ts";
+import { notchesBetween } from "../src/finance/rating.ts";
+import { simNew, simNow, simStep, simViews, simWorld } from "../src/lib.ts";
+import { headlineByline } from "../src/news.ts";
 import {
   dateTimeDate,
   dateTimeHour,
   dateTimeMidnight,
   simDateQuarter,
   simDateYmd,
-} from "../../src/time/calendar.ts";
-import { isRecapDay } from "../../src/time/quarter.ts";
-import type { SimDate } from "../../src/types/calendar.ts";
-import type { CompanyId } from "../../src/types/ids.ts";
-import { BYLINE, type Headline, type HeadlineKind } from "../../src/types/state/news.ts";
-import type { Notice } from "../../src/types/world.ts";
-import { showsEstimates } from "../../src/views/estimate.ts";
-import { newsViewGetNews } from "../../src/views/news.ts";
-import { recapViewLatest } from "../../src/views/recap.ts";
-import { chunkLogRows } from "../../src/world/log.ts";
+} from "../src/time/calendar.ts";
+import { isRecapDay } from "../src/time/quarter.ts";
+import type { SimDate } from "../src/types/calendar.ts";
+import type { CompanyId } from "../src/types/ids.ts";
+import { BYLINE, type Headline, type HeadlineKind } from "../src/types/state/news.ts";
+import type { Notice } from "../src/types/world.ts";
+import { showsEstimates } from "../src/views/estimate.ts";
+import { newsViewGetNews } from "../src/views/news.ts";
+import { recapViewLatest } from "../src/views/recap.ts";
+import { chunkLogRows } from "../src/world/log.ts";
 import { figureBand, figureExact, isFrozen, sameDate } from "./common/births.ts";
 import { data, rowOf, unwrap } from "./common/index.ts";
 

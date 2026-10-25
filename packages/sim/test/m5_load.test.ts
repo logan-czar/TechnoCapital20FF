@@ -4,7 +4,7 @@
 // $200), worked out here from the engine value with gen.py's id-seeded jitter; V = engine value
 // / shares sits at P up to the share rounding; the stored basis is the load basis (E_norm =
 // run-rate NI, G at g 0). The exchange and private-value checks read views and wait in
-// pending/views/m5_load_views.test.ts.
+// views/m5_load_views.test.ts.
 //
 // Expects:
 //   ../src/lib.ts                 simNew, simWorld

@@ -2,7 +2,7 @@
 // startup events at each plan lock (5.19.1), the fixed event F1 at its lock (5.19.2), and each
 // startup carved from the fringe with its cap table, seed cash and seated cast (5.19.3, 5.19.4),
 // registered in every table. The views' listing of the births waits in
-// pending/views/m6_births_views.test.ts.
+// views/m6_births_views.test.ts.
 //
 // Done lines: supply unchanged by a birth before PC bonuses; no empty labor seat. Expected values
 // come from the spec: the type table's ranges, the 2% fringe cap and $1M floor, Glut and Bust

@@ -6,7 +6,7 @@ export default defineProject({
   test: {
     name: "sim",
     include: ["test/**/*.test.ts"],
-    exclude: ["test/pending/**", "node_modules/**"],
+    exclude: ["node_modules/**"],
     testTimeout: 180_000,
   },
 });

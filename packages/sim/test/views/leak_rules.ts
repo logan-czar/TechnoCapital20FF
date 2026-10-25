@@ -30,7 +30,13 @@ import type { SimViews, ViewName } from "../../src/types/views/index.ts";
 import { TOP_COMPANIES } from "../../src/types/views/industry_rows.ts";
 import { TRACKING_BAND } from "../../src/types/views/market_stats.ts";
 import type { World } from "../../src/types/world.ts";
-import { figureShown, statementLineIndex } from "../../src/views/estimate.ts";
+import {
+  figureExactOf,
+  figureRatio,
+  figureShown,
+  figureSum,
+  statementLineIndex,
+} from "../../src/views/estimate.ts";
 import { gap } from "../../src/views/market_stats.ts";
 
 /** How an array element names its subject (`OWNERS`' values; a string is a company field). */
@@ -716,6 +722,34 @@ function namedRevenue(w: World, ind: number): number {
   return named;
 }
 
+/**
+ * An industry's units' revenue figures as build `v` shows them (v_units), biggest shown first,
+ * ties to the lower id: the order the industry views sum them in (src/views/industry_rows.ts
+ * `rankedAsShown`, so the float sums are the same).
+ */
+function shownRevenues(v: SimViews, ind: number): Figure[] {
+  const list = v.units.data.units
+    .filter((u) => u.industry === ind)
+    .map((u): [number, Figure] => [u.company, u.revenue_m]);
+  list.sort((a, b) => totalCmp(figureShown(b[1]), figureShown(a[1])) || a[0] - b[0]);
+  return list.map(([, f]) => f);
+}
+
+/**
+ * The bands `derivedOf` works out again from the build's shown parts (D430, D432): an estimated
+ * industry's named revenue is many companies' revenue bands summed, each with its own sign of
+ * error, and the detail's shares divide by that sum and the fringe again, so the errors can
+ * cancel and `BAND_MIN_ERROR` does not hold for them. Each part is a single subject's band,
+ * checked for distance itself, and the recomputation pins the sum to the parts, so a sum band
+ * centred on the truth fails `derivedOf`. Containment of the truth is still checked (leak.test.ts,
+ * 2).
+ */
+export const SUM_BAND_PATHS: ReadonlySet<string> = new Set([
+  "industry_rows.rows[].named_revenue_m",
+  "industry_detail.industries[].companies[].share",
+  "industry_detail.industries[].fringe_share",
+]);
+
 /** v_market_stats worked out from the World's quoted stocks and companies (D144, 3.14). */
 function marketStats(w: World): Record<string, number> {
   const gaps = w.market.stocks.filter((s) => s.quoted).map((s) => gap(s.price, s.value));
@@ -769,11 +803,18 @@ function shownSurprise(e: unknown): number | undefined {
  * - An industry's exact named revenue (spec 1; D432 outside the estimated class): the sum of its
  *   units' revenue; the detail's exact shares, a company's revenue and the fringe's over the
  *   named and fringe total.
+ * - An estimated industry's named revenue band (D432): the sum of its units' revenue figures as
+ *   the build's v_units shows them (src/views/industry_rows.ts `figureSum` of `rankedAsShown`);
+ *   the detail's share bands, the unit's shown figure and the shown fringe revenue over the sum
+ *   of those and the fringe (D430 interval division, src/views/industry_detail.ts); outside the
+ *   class, a private company's share band is its revenue band over the exact total. Their
+ *   distance from the truth is the parts' (`SUM_BAND_PATHS`), so a band centred on the truth
+ *   fails here instead.
  * - v_recap's banded expected surprise and reaction (D420, D430: worked out from the shown
  *   projection and consensus estimates, src/views/recap.ts `expectedRow`, `page`; a band's
  *   estimate moves with its truth, D421): from the shown bands of the same row.
  */
-export function derivedOf(leaf: Leaf, w: World): number | string | undefined {
+export function derivedOf(leaf: Leaf, w: World, v: SimViews): Figure | number | string | undefined {
   const row = leaf.ctx.row;
   const exact = leaf.figure !== null && leaf.figure.kind === "Exact";
   const field = leaf.norm.slice(leaf.norm.lastIndexOf(".") + 1);
@@ -795,11 +836,29 @@ export function derivedOf(leaf: Leaf, w: World): number | string | undefined {
       return (field === "value" ? s.fair_value : s.value) * (1.0 + s.efv_error);
     }
     case "industry_rows.rows[].named_revenue_m":
-      return exact ? namedRevenue(w, row?.id as number) : undefined;
+      if (exact) return namedRevenue(w, row?.id as number);
+      // A band only in an estimated industry (the shape check flags any other).
+      return leaf.figure !== null && row?.estimated === true
+        ? figureSum(shownRevenues(v, row.id as number))
+        : undefined;
     case "industry_detail.industries[].companies[].share":
     case "industry_detail.industries[].fringe_share": {
-      if (!exact || leaf.ctx.industry === null) return undefined;
+      if (leaf.figure === null || leaf.ctx.industry === null) return undefined;
       const ind = leaf.ctx.industry;
+      if (!exact) {
+        // A band: the shown part over the whole, the sum of what is shown in an estimated
+        // industry, else the exact named and fringe total (a private company's revenue band over
+        // it, D430).
+        const d = v.industry_detail.data.industries[ind];
+        if (d === undefined) return `no industry ${ind} in v_industry_detail`;
+        const total = d.estimated
+          ? figureSum([...shownRevenues(v, ind), d.fringe_revenue_m])
+          : figureExactOf(namedRevenue(w, ind) + w.industries[ind]!.fringe_revenue_m);
+        if (field !== "share") return figureRatio(d.fringe_revenue_m, total);
+        const u = v.units.data.units.find((x) => x.company === row?.company && x.industry === ind);
+        if (u === undefined) return `a share of company ${row?.company}, with no unit in industry ${ind}`;
+        return figureRatio(u.revenue_m, total);
+      }
       const fringe = w.industries[ind]!.fringe_revenue_m;
       const total = namedRevenue(w, ind) + fringe;
       let part = fringe;

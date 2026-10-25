@@ -23,7 +23,8 @@
 //    view must say whose it is); every `estimated` flag says whether its subject is banded; a
 //    banded company's statements hold no archive (D130). A wrong flag, the likeliest leak, fails.
 //    And every leaf that follows private books by a published formula (leak_rules.ts `derivedOf`:
-//    a quoted company's EFV, D140; v_market_stats, D144; an exact industry total and share, D432;
+//    a quoted company's EFV, D140; v_market_stats, D144; an industry's named revenue and shares,
+//    exact or summed from the shown unit bands, D432;
 //    v_recap's surprise and reaction from the shown estimates, D430) equals that formula worked
 //    out again from the build's World or bands (`derivedBad`), so a private value there fails.
 // 2. The truths: walking both builds side by side, a figure that is a band for the observer and
@@ -33,7 +34,8 @@
 //    away from it (D429: every error is at least ESTIMATE_BIAS_MIN − ESTIMATE_JITTER = 5.5% of
 //    the truth, sums and maps keep it, D430; so an estimate that is the truth rounded fails;
 //    not for the bands that sum or divide many subjects' errors, an estimated industry's named
-//    revenue and the detail's shares of its total, `NO_DISTANCE`).
+//    revenue and the detail's shares of its total, leak_rules.ts `SUM_BAND_PATHS`: `derivedOf`
+//    works those out again from the build's shown parts instead, in check 1).
 //    An id leaf is never a truth, and neither is 0 or a simple small value (`isSimpleSmall`).
 //    v_statements' banded companies hold estimates instead of the archive: their estimated
 //    statements are paired with Omniscient's by period, and every line (but Shared, D434), the
@@ -139,6 +141,7 @@ import {
   plainInBanded,
   rankingBad,
   rulesOf,
+  SUM_BAND_PATHS,
   type UnitAt,
   VIEW_RULES,
   walkView,
@@ -216,21 +219,6 @@ function checkBand(b: Band, t: number, where: string, bad: string[], distance = 
 }
 
 /**
- * The bands that sum or divide several subjects' bands (D430, D432): an estimated industry's named
- * revenue is many companies' revenues, each with its own sign of error, and the detail's total
- * (named and fringe) is that sum again, so its shares (a company's revenue or the fringe's over
- * the total, interval division) carry the total's error too. The truth stays strictly inside, but
- * the errors can cancel, so `BAND_MIN_ERROR` does not hold for them. Every other band, a single
- * subject's (an industry's supply, M, fringe revenue and share in v_industry_row, a history
- * quarter's supply, a company's revenue in the detail), is checked for distance too.
- */
-const NO_DISTANCE: ReadonlySet<string> = new Set([
-  "industry_rows.rows[].named_revenue_m",
-  "industry_detail.industries[].companies[].share",
-  "industry_detail.industries[].fringe_share",
-]);
-
-/**
  * Walks the observer's and Omniscient's builds of view `view` side by side (truths, 2). `norm`
  * is the normalized path: an id leaf (leak_rules.ts `ids`) is never a truth, so ids the two
  * builds list in another order are not paired as figures.
@@ -263,7 +251,7 @@ function pair(
   if (isFigure(shown) && isFigure(truth)) {
     if (shown.kind === "Band" && truth.kind === "Exact") {
       addTruth(truths, truth.value, where);
-      checkBand(shown.band, truth.value, where, bad, !NO_DISTANCE.has(norm));
+      checkBand(shown.band, truth.value, where, bad, !SUM_BAND_PATHS.has(norm));
     } else if (shown.kind === "Exact" && truth.kind === "Exact" && shown.value !== truth.value) {
       addTruth(truths, truth.value, where);
     }
@@ -366,7 +354,8 @@ function canonViews(v: SimViews): SimViews {
 function publicValues(w: World, observer: SimViews): Set<number> {
   const out = new Set<number>();
   leaves(w, observer, (leaf) => {
-    const efv = isEfvLeaf(leaf) && leafValue(leaf) !== undefined && derivedOf(leaf, w) === leafValue(leaf);
+    const efv =
+      isEfvLeaf(leaf) && leafValue(leaf) !== undefined && derivedOf(leaf, w, observer) === leafValue(leaf);
     const pub = leaf.ctx.banded === false || efv || PUBLIC_PATHS.has(leaf.norm);
     if (pub) for (const x of leafNumbers(leaf)) out.add(x);
   });
@@ -380,10 +369,16 @@ function publicValues(w: World, observer: SimViews): Set<number> {
 function derivedBad(w: World, v: SimViews, build: string): string[] {
   const bad: string[] = [];
   leaves(w, v, (leaf) => {
-    const want = derivedOf(leaf, w);
+    const want = derivedOf(leaf, w, v);
     if (want === undefined) return;
     if (typeof want === "string") bad.push(`${leaf.raw} (${build}): ${want}`);
-    else if (!sameLeaf(leafValue(leaf), want)) {
+    else if (typeof want === "object") {
+      if (!sameFigure(leaf.figure, want)) {
+        bad.push(
+          `${leaf.raw} (${build}): ${JSON.stringify(leaf.figure)}, worked out again ${JSON.stringify(want)}`,
+        );
+      }
+    } else if (!sameLeaf(leafValue(leaf), want)) {
       bad.push(`${leaf.raw} (${build}): ${String(leafValue(leaf))}, worked out again ${want}`);
     }
   });
@@ -470,11 +465,25 @@ function builds(sim: Sim): [SimViews, SimViews] {
 const sameLeaf = (a: unknown, b: unknown) =>
   a === b || (typeof a === "number" && typeof b === "number" && Number.isNaN(a) && Number.isNaN(b));
 
+/** Two figures of the same kind with the same numbers (`sameLeaf` on each). */
+function sameFigure(a: Figure | null, b: Figure): boolean {
+  if (a === null) return false;
+  if (a.kind === "Exact" && b.kind === "Exact") return sameLeaf(a.value, b.value);
+  if (a.kind === "Band" && b.kind === "Band") {
+    return (
+      sameLeaf(a.band.estimate, b.band.estimate) &&
+      sameLeaf(a.band.low, b.band.low) &&
+      sameLeaf(a.band.high, b.band.high)
+    );
+  }
+  return false;
+}
+
 /**
  * The leaves of view `n` that differ between two builds, bands left out (see the header), with
  * their `Leaf` in the first build for `perturbExempt`.
  */
-function changes(w: World, n: ViewName, a: unknown, b: unknown, out: string[]): void {
+function changes(w: World, va: SimViews, n: ViewName, a: unknown, b: unknown, out: string[]): void {
   // `walkView` walks one build; the other is read at the same raw path.
   const at = (raw: string): unknown => {
     let x: unknown = { [n]: b };
@@ -516,7 +525,7 @@ function changes(w: World, n: ViewName, a: unknown, b: unknown, out: string[]): 
     (leaf) => {
       // A leaf worked out again in each build (`derivedOf`, checked by `derivedBad`) or ranked by
       // the revenue shown (`rankingBad`) moves with the books or the bands: not compared.
-      if (perturbExempt(leaf) || derivedOf(leaf, w) !== undefined) return;
+      if (perturbExempt(leaf) || derivedOf(leaf, w, va) !== undefined) return;
       const y = at(leaf.raw);
       const f = leaf.figure;
       if (f !== null) {
@@ -598,7 +607,7 @@ function perturbation(sim: Sim, builders: ViewBuilders = VIEW_BUILDERS): Perturb
   const a = canonViews(rawA);
   const b = canonViews(rawB);
   const t = canonViews(simViewsBuild({ world: p, controls: on, seed, map }, builders));
-  for (const n of PORTED) changes(w, n, a[n].data, b[n].data, changed);
+  for (const n of PORTED) changes(w, a, n, a[n].data, b[n].data, changed);
   return { changed, scan: scan(p, b, t) };
 }
 
@@ -1040,7 +1049,7 @@ describe("leak test catches", () => {
 
   // The second adversarial review's misses (PR #96): leaves once exempted, and the band distance
   // switched off for whole views. Each is now worked out again in every build (`derivedOf`,
-  // `rankingBad`) or checked by its own path (`NO_DISTANCE`).
+  // `rankingBad`; the sum bands of leak_rules.ts `SUM_BAND_PATHS` from the shown parts).
   it("an EFV not a quoted company's (review hole 1)", () => {
     // A private company has a V and an EFV error (0 until a listing draws one), so an EFV.
     const priv = bandedCompanies(w).find(
@@ -1173,6 +1182,52 @@ describe("leak test catches", () => {
     for (const [what, plant] of plants) {
       expect(
         scanPlanted(plant).bad.filter((x) => x.includes(`within ${BAND_MIN_ERROR}`)),
+        what,
+      ).not.toEqual([]);
+    }
+  });
+  it("an estimated industry's sum bands centred on the truth (review hole 7)", () => {
+    /** A band whose estimate is the truth to 4 significant digits, the truth strictly inside. */
+    const near = (t: number): Figure => {
+      const e = Number(t.toPrecision(4)) === t ? t * 1.0001 : Number(t.toPrecision(4));
+      return { kind: "Band", band: { estimate: e, low: e - Math.abs(e) / 4, high: e + Math.abs(e) / 4 } };
+    };
+    const value = (f: Figure) => (f.kind === "Exact" ? f.value : Number.NaN);
+    // An estimated industry (D432) with a company in its detail list.
+    const ir = observer.industry_rows.data.rows.findIndex(
+      (r, i) => r.estimated && observer.industry_detail.data.industries[i]!.companies.length > 0,
+    );
+    expect(ir, "an estimated industry with companies").toBeGreaterThanOrEqual(0);
+    const trueNamed = value(omniscient.industry_rows.data.rows[ir]!.named_revenue_m);
+    const shownDetail = observer.industry_detail.data.industries[ir]!;
+    const trueDetail = omniscient.industry_detail.data.industries[ir]!;
+    const company = shownDetail.companies[0]!.company;
+    const trueShare = value(trueDetail.companies.find((c) => c.company === company)!.share);
+    const trueFringe = value(trueDetail.fringe_share);
+    const plants: Plant[] = [
+      [
+        "the named revenue band",
+        (v) => put(v.industry_rows.data.rows[ir]!, "named_revenue_m", near(trueNamed)),
+      ],
+      [
+        "a company's share band in the detail",
+        (v) => put(v.industry_detail.data.industries[ir]!.companies[0]!, "share", near(trueShare)),
+      ],
+      [
+        "the detail's fringe share band",
+        (v) => put(v.industry_detail.data.industries[ir]!, "fringe_share", near(trueFringe)),
+      ],
+    ];
+    for (const [what, plant] of plants) {
+      const r = scanPlanted(plant);
+      // The truth is inside and the distance is not checked for a sum band: only the recomputation
+      // from the shown unit bands catches it.
+      expect(
+        r.bad.filter((x) => x.includes("not strictly in")),
+        what,
+      ).toEqual([]);
+      expect(
+        r.shape.filter((x) => x.includes("worked out again")),
         what,
       ).not.toEqual([]);
     }
