@@ -1,6 +1,5 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": { "outDir": "../../node_modules/.tsbuild/sim-data", "types": ["node"] },
-  "include": ["src", "test"],
-  "exclude": ["test/pending"]
+  "include": ["src", "test"]
 }

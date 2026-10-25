@@ -1,8 +1,8 @@
 // Port of crates/sim/tests/m9_views.rs: the M9 views (docs/build/m9-plan.md section 2; spec 9.2,
 // 9.4): cap table, characters, countries, places, zones, rates, the clock's next release, the
 // company row additions, the births column and event names, the Omniscient toggle, the EFV
-// history, and the rule that building views never moves an RNG stream (the past-recaps test is in
-// pending/views/m9_views.test.ts). Expected values come from the data tables and the spec.
+// history, the past recaps by quarter, and the rule that building views never moves an RNG stream.
+// Expected values come from the data tables and the spec.
 //
 // Expects:
 //   ../../src/lib.ts                 simNew, simApply, simStep, simNow, simWorld, simViews,
@@ -18,6 +18,7 @@
 //   ../../src/views/statements.ts    companyStatementsQuarters(cs) -> Statement[] (published
 //                                       quarters when exact) [CompanyStatements::quarters; the
 //                                       estimated view holds none]
+//   ../../src/recap/jobs.ts          RECAPS_KEPT (20)
 //   ../../src/market/daily.ts        dailyBarEfvLow(bar), dailyBarEfvHigh(bar)
 //                                       [DailyBar::efv_low, ::efv_high]
 //   ../common/ops.ts                    company, companyRow, runTo
@@ -52,6 +53,7 @@ import {
 } from "../../src/lib.ts";
 import { dailyBarEfvHigh, dailyBarEfvLow } from "../../src/market/daily.ts";
 import { traitFromName } from "../../src/people/traits.ts";
+import { RECAPS_KEPT } from "../../src/recap/jobs.ts";
 import { rngStreamsDraws, rngStreamsNew } from "../../src/rng.ts";
 import { dateTimeAt, dateTimeMidnight, simDateQuarter, simDateYmd } from "../../src/time/calendar.ts";
 import { controlsDefault } from "../../src/time/control.ts";
@@ -367,4 +369,20 @@ describe("m9 views", () => {
     expect(numbersDiffer(world, simWorld(sim))).toBeNull();
     expect(simStateHash(sim)).toBe(stateHash(world, rng));
   }, 300_000);
+  it("past_recaps_open_by_quarter", () => {
+    // m9-plan section 1: past recaps are reachable by quarter; the World keeps the last 20 (D433)
+    // and v_recap serves each with the same banding.
+    const sim = unwrap(simNew(data(), 2), "Sim::new");
+    runTo(sim, simDateYmd(2021, 1, 2));
+    const v = simViews(sim).recap.data;
+    const quarters = v.recaps.map((r) => `${r.world.quarter.year} Q${r.world.quarter.q}`);
+    expect(v.recaps.length, `${quarters}`).toBe(4);
+    expect(simWorld(sim).recaps.length).toBe(4);
+    const page = v.recaps.find((r) => r.world.quarter.year === 2020 && r.world.quarter.q === 3);
+    if (page === undefined) throw new Error("Q3 2020");
+    const priv = company(simWorld(sim), "CO-0002");
+    expect(byField(page.companies, "company", priv)?.estimated).toBe(true);
+    expect(v.recaps.at(-1)?.world.quarter).toEqual({ year: 2020, q: 4 });
+    expect(RECAPS_KEPT).toBe(20);
+  }, 120_000);
 });

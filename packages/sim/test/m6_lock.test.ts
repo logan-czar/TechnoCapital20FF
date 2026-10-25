@@ -1,7 +1,7 @@
 // Port of crates/sim/tests/m6_lock.rs: build-plan M6.1 to M6.4 on the live engine: the plan at
 // load (D283), the Lite AI batch at the plan lock (spec 4.4 row 3, section 6), the order of the
 // lock's steps. The projection ranges (5.16) read the projection view and wait in
-// pending/views/m6_lock_views.test.ts.
+// views/m6_lock_views.test.ts.
 //
 // The expected plans are written here from the spec, not from lane F's functions: 6.1 (first
 // match in table order, D120), 6.2 (situation row with Logan's oversupply term, 1 point per 1%,
