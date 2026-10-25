@@ -2,10 +2,9 @@
 // (v_countries).
 
 import type { CountryRow, IndustryRow } from "@tc20ff/sim";
-import { memo, useMemo } from "react";
-import { pageSpec, useWorkspace } from "../shell/panes.ts";
+import { memo } from "react";
 import { useViewData } from "../sim/hooks.ts";
-import { figureCell, type PageRef } from "../widgets/cells.ts";
+import { figureCell } from "../widgets/cells.ts";
 import { type Column, DataTable } from "../widgets/DataTable.tsx";
 
 const INDUSTRY_COLUMNS: Column<IndustryRow>[] = [
@@ -44,25 +43,14 @@ const COUNTRY_COLUMNS: Column<CountryRow>[] = [
   { id: "hqs", header: "HQs", width: 60, cell: (r) => ({ k: "int", v: r.hq_companies.length }) },
 ];
 
-function useOpen() {
-  const ws = useWorkspace();
-  return useMemo(() => (page: PageRef, name: string) => ws.open(pageSpec(page, name)), [ws]);
-}
-
 function IndustriesPaneInner() {
   const view = useViewData("industry_rows");
-  const open = useOpen();
   const rows = view?.rows ?? [];
   return (
     <div className="pane">
       <div className="toolbar">{rows.length} industries</div>
       <div className="fill">
-        <DataTable
-          rows={rows}
-          columns={INDUSTRY_COLUMNS}
-          rowKey={(r) => r.id}
-          onOpen={(p) => open(p, rows.find((r) => r.id === p.id)?.name ?? "Industry")}
-        />
+        <DataTable rows={rows} columns={INDUSTRY_COLUMNS} rowKey={(r) => r.id} />
       </div>
     </div>
   );
@@ -70,18 +58,12 @@ function IndustriesPaneInner() {
 
 function CountriesPaneInner() {
   const view = useViewData("countries");
-  const open = useOpen();
   const rows = view?.countries ?? [];
   return (
     <div className="pane">
       <div className="toolbar">{rows.length} countries</div>
       <div className="fill">
-        <DataTable
-          rows={rows}
-          columns={COUNTRY_COLUMNS}
-          rowKey={(r) => r.id}
-          onOpen={(p) => open(p, rows.find((r) => r.id === p.id)?.name ?? "Country")}
-        />
+        <DataTable rows={rows} columns={COUNTRY_COLUMNS} rowKey={(r) => r.id} />
       </div>
     </div>
   );

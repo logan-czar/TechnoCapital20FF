@@ -4,9 +4,8 @@
 import type { CompanyRow, QuoteRow } from "@tc20ff/sim";
 import { memo, useMemo, useRef, useState } from "react";
 import { useNames } from "../shell/names.ts";
-import { pageSpec, useWorkspace } from "../shell/panes.ts";
 import { useViewData, useViewDataThrottled } from "../sim/hooks.ts";
-import { type Cell, figureCell, type PageRef } from "../widgets/cells.ts";
+import { type Cell, figureCell } from "../widgets/cells.ts";
 import { type Column, DataTable } from "../widgets/DataTable.tsx";
 
 interface Row {
@@ -80,7 +79,6 @@ function CompaniesPaneInner() {
   const companies = useViewData("company_rows");
   const quotes = useViewDataThrottled("quotes", QUOTE_MS);
   const names = useNames();
-  const ws = useWorkspace();
   const [size, setSize] = useState<(typeof SIZES)[number]>(0);
 
   // The live prices are read through a map at draw time, so a quote update redraws the rows in
@@ -102,13 +100,6 @@ function CompaniesPaneInner() {
     );
   }, [companies, size]);
 
-  const open = useMemo(
-    () => (page: PageRef) => {
-      const name = page.kind === "company" ? names.company(page.id) : `${page.kind} ${page.id}`;
-      ws.open(pageSpec(page, name));
-    },
-    [ws, names],
-  );
   return (
     <div className="pane">
       <div className="toolbar">
@@ -130,7 +121,6 @@ function CompaniesPaneInner() {
           rows={rows}
           columns={columns}
           rowKey={rowKey}
-          onOpen={open}
           version={quoteMap}
           initialSort={{ id: "value", desc: true }}
         />

@@ -1,4 +1,8 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { SettingsContext, useApplySettings, useSettings } from "./config/hooks.ts";
+import { type SettingsStore, settingsKey } from "./config/settings.ts";
+import type { OpenTarget } from "./links/nav.ts";
+import type { PageRef } from "./pages/ref.ts";
 import { FIXED_PANES, type PaneSpec, type WorkspaceControl } from "./shell/panes.ts";
 import { Toasts } from "./shell/Toasts.tsx";
 import { TopBar } from "./shell/TopBar.tsx";
@@ -14,6 +18,8 @@ const DEFAULT_SEED = 1;
 
 function Shell({ client }: { client: SimClient }) {
   const status = useStatus();
+  const settings = useSettings();
+  useApplySettings();
   const control = useRef<WorkspaceControl | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   // StrictMode runs effects twice in development: start the game once.
@@ -32,13 +38,19 @@ function Shell({ client }: { client: SimClient }) {
       if (!e.repeat && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setCommands((o) => !o);
+      } else if (settingsKey(e, settings, () => control.current?.openPage({ kind: "settings" }, "focused"))) {
+        e.preventDefault();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [settings]);
 
   const open = useCallback((spec: PaneSpec) => control.current?.open(spec), []);
+  const openPage = useCallback(
+    (page: PageRef, target: OpenTarget) => control.current?.openPage(page, target),
+    [],
+  );
   const closeCommands = useCallback(() => setCommands(false), []);
   const openAlerts = useCallback(() => {
     setSeen(client.store.notices.at(-1)?.seq ?? 0);
@@ -94,17 +106,19 @@ function Shell({ client }: { client: SimClient }) {
       <Toasts />
       {commands && (
         <Suspense fallback={null}>
-          <CommandBar onClose={closeCommands} onOpenPane={open} />
+          <CommandBar onClose={closeCommands} onOpenPane={open} onOpenPage={openPage} />
         </Suspense>
       )}
     </div>
   );
 }
 
-export function App({ client }: { client: SimClient }) {
+export function App({ client, settings }: { client: SimClient; settings: SettingsStore }) {
   return (
     <SimContext.Provider value={client}>
-      <Shell client={client} />
+      <SettingsContext.Provider value={settings}>
+        <Shell client={client} />
+      </SettingsContext.Provider>
     </SimContext.Provider>
   );
 }
