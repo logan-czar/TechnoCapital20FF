@@ -4,12 +4,12 @@
 // views it reads so the map redraws only when one of them moves.
 //
 // Expects:
-//   ../../../src/lib.ts                simNew, simApply, simStep, simViews
-//   ../../../src/types/views/index.ts  simViewsGetMapLayer(views, mode) -> MapLayer
+//   ../../src/lib.ts                simNew, simApply, simStep, simViews
+//   ../../src/views/index.ts        simViewsGetMapLayer(views, mode) -> MapLayer
 //                                      [SimViews::get_map_layer], simViewsMapLayerVersions(views,
 //                                      mode) -> number[] [SimViews::map_layer_versions: the
 //                                      versions of the views the mode reads, [v_map_layers, ...]]
-//   ../../../src/views/map_layers.ts   devTrackName(track), devTrackMax(track) [DevTrack::name,
+//   ../../src/views/map_layers.ts   devTrackName(track), devTrackMax(track) [DevTrack::name,
 //                                      ::max], mapLayersViewZoneOf(view, province) -> ZoneId | null
 //   (types: types/views/map_layers.ts; lookups are local helpers in ../common/views.ts)
 //
@@ -18,20 +18,17 @@
 // Math.fround(want). Seed 1 is the new generator (D951); every figure checked comes from the load
 // state or the bands built from it, not from a draw.
 import { describe, expect, it } from "vitest";
-import { simApply, simNew, simStep, simViews } from "../../../src/lib.ts";
-import type { IndustryId } from "../../../src/types/ids.ts";
-import {
-  type SimViews,
-  simViewsGetMapLayer,
-  simViewsMapLayerVersions,
-} from "../../../src/types/views/index.ts";
+import { simApply, simNew, simStep, simViews } from "../../src/lib.ts";
+import type { IndustryId } from "../../src/types/ids.ts";
+import type { SimViews } from "../../src/types/views/index.ts";
 import {
   DEV_TRACK_VALUES,
   type HqFilter,
   type LayerValues,
   type MapMode,
-} from "../../../src/types/views/map_layers.ts";
-import { devTrackMax, devTrackName, mapLayersViewZoneOf } from "../../../src/views/map_layers.ts";
+} from "../../src/types/views/map_layers.ts";
+import { simViewsGetMapLayer, simViewsMapLayerVersions } from "../../src/views/index.ts";
+import { devTrackMax, devTrackName, mapLayersViewZoneOf } from "../../src/views/map_layers.ts";
 import { data, unwrap } from "../common/index.ts";
 import { byId, figIsBand, figShown, maxOf } from "../common/views.ts";
 

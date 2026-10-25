@@ -5,25 +5,25 @@
 // no quote.
 //
 // Expects:
-//   ../../../src/lib.ts                  simNew, simApply, simStep, simNow, simWorld, simViews
-//   ../../../src/views/price_bars.ts     priceBarsViewGetPriceHistory(view, company, resolution,
+//   ../../src/lib.ts                  simNew, simApply, simStep, simNow, simWorld, simViews
+//   ../../src/views/price_bars.ts     priceBarsViewGetPriceHistory(view, company, resolution,
 //                                        from, to) -> DailyBar[] [PriceBarsView::get_price_history;
 //                                        weekly bars dated the Monday, monthly the first bar's
 //                                        month; open of the first, close of the last, high/low
 //                                        extremes, the last day's efv]
-//   ../../../src/world/log.ts            chunkLogRows, chunkLogIsEmpty (exist)
+//   ../../src/world/log.ts            chunkLogRows, chunkLogIsEmpty (exist)
 //
 // Changed from the Rust: the seed (8) seeds the new generator (D951); nothing asserted names a
 // draw. The EFV error checks (|e| <= 0.15, at least one nonzero) hold for any draws (3.14.2).
 // `if cfg!(debug_assertions)` becomes "when SetOmniscient is accepted".
 import { describe, expect, it } from "vitest";
-import { type Sim, simApply, simNew, simNow, simStep, simViews, simWorld } from "../../../src/lib.ts";
-import { dateTimeAt, simDateWeekday, simDateYmd, weekdayIndex } from "../../../src/time/calendar.ts";
-import { cmpDate, type DateTime } from "../../../src/types/calendar.ts";
-import type { CompanyId, ZoneId } from "../../../src/types/ids.ts";
-import type { DailyBar } from "../../../src/types/state/market.ts";
-import { priceBarsViewGetPriceHistory } from "../../../src/views/price_bars.ts";
-import { chunkLogIsEmpty, chunkLogRows } from "../../../src/world/log.ts";
+import { type Sim, simApply, simNew, simNow, simStep, simViews, simWorld } from "../../src/lib.ts";
+import { dateTimeAt, simDateWeekday, simDateYmd, weekdayIndex } from "../../src/time/calendar.ts";
+import { cmpDate, type DateTime } from "../../src/types/calendar.ts";
+import type { CompanyId, ZoneId } from "../../src/types/ids.ts";
+import type { DailyBar } from "../../src/types/state/market.ts";
+import { priceBarsViewGetPriceHistory } from "../../src/views/price_bars.ts";
+import { chunkLogIsEmpty, chunkLogRows } from "../../src/world/log.ts";
 import { data, unwrap } from "../common/index.ts";
 import { byField } from "../common/views.ts";
 
