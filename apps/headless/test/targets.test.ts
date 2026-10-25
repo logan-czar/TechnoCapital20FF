@@ -1,10 +1,14 @@
 // Port of the `#[cfg(test)] mod tests` of crates/headless/src/targets.rs: hand-made rows. A seed
 // inside every bound passes every target, and pushing one column past a bound fails exactly that
 // target.
+import { copyFileSync, mkdtempSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   AI_LABS_SEED_SHARE,
   ALL_SEEDS,
+  checkDir,
   DEMAND_TREND_SEED_SHARE,
   evaluate,
   type Kind,
@@ -336,5 +340,20 @@ describe("headless targets", () => {
       /years\.csv:5: column `named_companies`/,
     );
     expect(() => parse("seed,year\n1,2020\n", text(Q_HEADER, q))).toThrow(/no column `start_alive_share`/);
+  });
+});
+
+// The Rust soak's own tables through the TS `check`: targets.csv and summary.csv must come out
+// byte for byte as the Rust wrote them (line endings aside), so the TS fixed-decimal formatting
+// (`fixed`, `toFixed`) and the target rules match the Rust on real figures.
+describe("check on the Rust reference", () => {
+  it("rewrites the Rust targets.csv and summary.csv byte for byte", () => {
+    const ref = join(import.meta.dirname, "..", "..", "..", "test", "fixtures", "rust-reference");
+    const dir = mkdtempSync(join(tmpdir(), "tc20ff-check-"));
+    for (const n of ["years.csv", "quarters.csv"]) copyFileSync(join(ref, n), join(dir, n));
+    checkDir(dir);
+    const read = (d: string, n: string) => readFileSync(join(d, n), "utf8").replaceAll("\r", "");
+    expect(read(dir, "targets.csv")).toBe(read(ref, "targets.csv"));
+    expect(read(dir, "summary.csv")).toBe(read(ref, "summary.csv"));
   });
 });

@@ -7,14 +7,14 @@
 // iterates a hash map. Wall time is kept out of both tables (`SeedOutput.wall_ms`).
 //
 // Seams (the sim is built behind an interface so this typechecks before the Sim is ported):
-// - CONTRACT: `soak_stats()` (Rust feature `soak-stats`, D427) is not on `SimApi`. `SoakStats`
-//   below mirrors crates/sim/src/soak.rs; `SoakSimApi` is a `SimApi` that also serves it. The
-//   Sim port exposes it (e.g. a `soakStats` method from `@tc20ff/sim/internal`).
-// - `Sim::new(data, seed)` is the injected `SimFactory`.
+// - `soak_stats()` (Rust feature `soak-stats`, D427) is not on `SimApi`: `SoakSimApi` is a
+//   `SimApi` that also serves it; the default factory (factory.ts) serves the Sim's
+//   `simSoakStats` (@tc20ff/sim/internal).
+// - `Sim::new(data, seed)` is the injected `SimFactory` (factory.ts `defaultFactory`: `simNew`).
 // - `Sim::step_observed` (profiling) and the per-step timing of `--tick-costs` are the optional
 //   `stepper` and `onTick` of `RunOptions`; the `--detail` recorder is a `DetailHook`.
 
-import type { DateTime, LoadError, Rating } from "@tc20ff/sim/internal";
+import type { DateTime, LoadError, Rating, SoakIndustry, SoakStats } from "@tc20ff/sim/internal";
 import {
   type CompanyStatus,
   dateTimeMidnight,
@@ -130,35 +130,9 @@ const AI_LABS_KEY = "ai_labs";
  */
 const INDEX_COLUMNS = ["ATX", "CBX", "HSE", "ESE"] as const;
 
-/**
- * The engine's true totals for the headless soak (D427): crates/sim/src/soak.rs. Never a view:
- * a private company's figures are estimate bands in every view (D420, D432).
- */
-export interface SoakIndustry {
-  /** Last month's revenue of the named units, summed biggest first. */
-  named_revenue_m: number;
-  fringe_revenue_m: number;
-  supply_ratio: number;
-  market_factor: number;
-}
-
-export interface SoakStats {
-  /** Credit lines drawn, USD, summed over every company in id order (spec 5.12). */
-  line_drawn_usd: number;
-  /** Companies whose units' last-month EBIT (after R&D, spec 5.5) sums above 0. */
-  profitable_companies: number;
-  /** The mean productivity over every unit (spec 5.6). */
-  mean_productivity: number;
-  /**
-   * The median productivity of the units with gross assets above 0 of companies not frozen, the
-   * mean of the middle two for an even count; 0 with none (spec 10, D321).
-   */
-  median_productivity: number;
-  /** Data held plus unstructured over all companies, TB (spec 5.9). */
-  data_tb: number;
-  /** In industry id order. */
-  industries: SoakIndustry[];
-}
+// The engine's true totals for the headless soak (D427): packages/sim/src/soak.ts. Never a view:
+// a private company's figures are estimate bands in every view (D420, D432).
+export type { SoakIndustry, SoakStats } from "@tc20ff/sim/internal";
 
 /** A `SimApi` that also serves the soak totals (Rust `Sim` with the `soak-stats` feature). */
 export interface SoakSimApi extends SimApi {
@@ -423,7 +397,16 @@ function opt(v: number | undefined): string {
   return v === undefined ? "" : String(v);
 }
 
-/** Rust `{:.n}` for an f64: fixed decimals, `inf`, `-inf`, `NaN`. */
+/**
+ * Rust `{:.n}` for an f64: fixed decimals, `inf`, `-inf`, `NaN`.
+ *
+ * `toFixed` and Rust both round the exact binary value, so they agree except on an exact decimal
+ * tie (a value whose binary expansion ends exactly on a 5 at digit n+1, such as 0.125 to 2
+ * places): `toFixed` rounds the tie away from zero, Rust's formatter to even. Such ties are rare
+ * in the soak's figures (sums and ratios of measured values) and `check` on the Rust reference
+ * reproduces its targets.csv and summary.csv byte for byte (test/targets.test.ts); `toFixed` also
+ * switches to exponent form at 1e21 and above, which no soak figure reaches.
+ */
 function fx(x: number, digits: number): string {
   if (Number.isNaN(x)) return "NaN";
   if (x === Number.POSITIVE_INFINITY) return "inf";
