@@ -1,3 +1,5 @@
+// BLOCKED: needs simNew on real data, which waits for births/state BirthsState::from_data (lane W3b)
+// in START_DEPS / LoadDeps. Everything it exercises in market/ is ported; promote when births lands.
 // Port of crates/sim/tests/m5_confidence.rs: build-plan M5.7 on the live engine (spec 5.1.2;
 // batch 157, 2a; D251): each zone exchange's investor confidence moves once a day at 00:00 by
 // clamp(0.9 x c + 3 x r + news, -100, +100), r the headline index's return that day in %, written

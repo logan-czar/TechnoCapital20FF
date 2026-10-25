@@ -29,6 +29,7 @@ import { start as economyStart } from "./economy/start.ts";
 import { start as financeStart } from "./finance/index.ts";
 import { stateHash } from "./hash.ts";
 import { scheduler } from "./jobs.ts";
+import { start as marketStart } from "./market/jobs.ts";
 import { start as seatingStart } from "./people/seating.ts";
 import { type RngStreams, rngStreamsDraws, rngStreamsNew, rngStreamsSeed } from "./rng.ts";
 import { decode, encode, saveErrorMessage } from "./save.ts";
@@ -103,7 +104,7 @@ export const START_DEPS: StartDeps = {
   peopleSeatingStart: seatingStart, // people/seating.ts
   birthsDrawFirstVotes: () => notPorted("births::jobs::draw_first_votes"),
   financeStart, // finance/index.ts
-  marketStart: () => notPorted("market::start"),
+  marketStart, // market/jobs.ts start
 };
 
 /** Everything `Sim` calls outside lib.ts that Step 2 or 3 ports. */

@@ -7,7 +7,7 @@
 //   ../../src/market/daily.ts   barBuilderStart(date, price) -> BarBuilder, barBuilderTick(b, p),
 //                               barBuilderClose(b, efv) -> DailyBar | null, dailyBarEfvLow(bar),
 //                               dailyBarEfvHigh(bar)
-//   ../../src/market/index_.ts  INDEX_BASE, marketCap(price, shares), exchangeIndexAtLoad(cap) ->
+//   ../../src/market/exchange_index.ts  INDEX_BASE, marketCap(price, shares), exchangeIndexAtLoad(cap) ->
 //                               ExchangeIndex, exchangeIndexLevel(idx, cap) -> number | null,
 //                               exchangeIndexReweight(idx, before, after),
 //                               exchangeIndexCloseDay(idx, cap) -> number.
@@ -32,7 +32,7 @@ import {
   barBuilderTick,
   dailyBarEfvHigh,
   dailyBarEfvLow,
-} from "../../src/market/daily.ts";
+} from "../src/market/daily.ts";
 import {
   type ExchangeIndex,
   exchangeIndexAtLoad,
@@ -41,7 +41,7 @@ import {
   exchangeIndexReweight,
   INDEX_BASE,
   marketCap,
-} from "../../src/market/index_.ts";
+} from "../src/market/exchange_index.ts";
 import {
   fatTailedNormal,
   MIN_PRICE_USD,
@@ -55,11 +55,11 @@ import {
   stepPrice,
   stepPrices,
   targetValue,
-} from "../../src/market/price.ts";
-import { dateTimeAddHours, dateTimeAt, dateTimeMidnight, simDateYmd } from "../../src/time/calendar.ts";
-import type { DateTime } from "../../src/types/calendar.ts";
-import type { DrawSource } from "../../src/types/draws.ts";
-import { roundTiesEven } from "../../src/types/num.ts";
+} from "../src/market/price.ts";
+import { dateTimeAddHours, dateTimeAt, dateTimeMidnight, simDateYmd } from "../src/time/calendar.ts";
+import type { DateTime } from "../src/types/calendar.ts";
+import type { DrawSource } from "../src/types/draws.ts";
+import { roundTiesEven } from "../src/types/num.ts";
 import { newNoNoise, newRng, newScripted, scriptedPush } from "./common/rng.ts";
 
 function near(a: number, b: number): void {

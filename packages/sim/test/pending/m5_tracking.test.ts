@@ -1,3 +1,5 @@
+// BLOCKED: needs simNew on real data, which waits for births/state BirthsState::from_data (lane W3b)
+// in START_DEPS / LoadDeps. Everything it exercises in market/ is ported; promote when births lands.
 // Port of crates/sim/tests/m5_tracking.rs: build-plan M5.8, the spec M5 done line: "opening price
 // at V, $5 to $200; prices track V within +-30% over 10 years".
 //

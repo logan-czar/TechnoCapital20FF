@@ -1,3 +1,5 @@
+// BLOCKED: needs simNew on real data, which waits for births/state BirthsState::from_data (lane W3b)
+// in START_DEPS / LoadDeps. Everything it exercises in market/ is ported; promote when births lands.
 // Port of crates/sim/tests/m5_prices.rs: build-plan M5.3 on the live engine (spec 5.14; 3.3.3,
 // 3.1.0): every quoted stock steps each hour toward V*, P_next = P x (1 + 0.0003 x (V* / P - 1) +
 // noise), closed on 1 January and frozen on the release tick. Over a long run the noise each

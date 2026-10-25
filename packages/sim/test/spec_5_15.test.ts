@@ -13,7 +13,7 @@
 //                                 net_income, revenue, history), surprise(actual, consensus)
 //   ../../src/time/calendar.ts    simDateYmd
 import { describe, expect, it } from "vitest";
-import { decayBuzz, isReversionDay, revertTowardValue } from "../../src/market/daily.ts";
+import { decayBuzz, isReversionDay, revertTowardValue } from "../src/market/daily.ts";
 import {
   isRecordQuarter,
   jumpedBuzz,
@@ -23,8 +23,8 @@ import {
   surprise,
   surpriseTagFromSurprise,
   surpriseTagName,
-} from "../../src/market/earnings.ts";
-import { simDateYmd } from "../../src/time/calendar.ts";
+} from "../src/market/earnings.ts";
+import { simDateYmd } from "../src/time/calendar.ts";
 
 function near(a: number, b: number): void {
   expect(Math.abs(a - b) <= 1e-12 * Math.max(Math.abs(a), Math.abs(b), 1.0), `${a} vs ${b}`).toBe(true);

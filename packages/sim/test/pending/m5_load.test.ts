@@ -1,3 +1,5 @@
+// BLOCKED: needs simNew on real data, which waits for births/state BirthsState::from_data (lane W3b)
+// in START_DEPS / LoadDeps. Everything it exercises in market/ is ported; promote when births lands.
 // Port of crates/sim/tests/m5_load.rs: build-plan M5.1 and M5.2 on the live engine (spec 7.1
 // Shares row, 5.13, 5.14): the market the load builds. Every company's fair value at load is its
 // engine value and matches company-start.csv engine_value_usd; P is the 7.1 open price ($5 to
