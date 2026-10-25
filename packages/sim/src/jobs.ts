@@ -38,8 +38,10 @@ import * as ai from "./ai/jobs.ts";
 import { register as economyRegister } from "./economy/index.ts";
 import * as finance from "./finance/jobs.ts";
 import * as market from "./market/jobs.ts";
+import * as news from "./news/jobs.ts";
 import { register as opsRegister } from "./ops/index.ts";
 import { newSeatsJob } from "./people/seating.ts";
+import * as recap from "./recap/jobs.ts";
 import * as timeAlerts from "./time/alerts.ts";
 import { type JobFn, type Scheduler, schedulerNew, schedulerRegister } from "./time/scheduler.ts";
 
@@ -110,15 +112,15 @@ export function registerJobs(s: Scheduler): void {
   r(s, "LockAiPlans", "ai.plan_lock", notPorted("ai::jobs::plan_lock_job")); // ai/jobs planLockJob
 
   // news::jobs::register (crates/sim/src/news/jobs.rs)
-  r(s, "MonthlyAiEvents", "news.chatbot", notPorted("news::jobs::chatbot_news_job")); // news/jobs chatbotNewsJob
-  r(s, "MonthlyDemand", "news.phase_changes", notPorted("news::jobs::phase_news_job")); // news/jobs phaseNewsJob
-  r(s, "MonthlyCashSettle", "news.bankruptcies", notPorted("news::jobs::bankruptcy_news_job")); // news/jobs bankruptcyNewsJob
-  r(s, "ReleasePublish", "news.removals", notPorted("news::jobs::removal_news_job")); // news/jobs removalNewsJob
-  r(s, "PriceMoveResultHeadlines", "news.results_and_ratings", notPorted("news::jobs::result_news_job")); // news/jobs resultNewsJob
-  r(s, "DailyNews", "news.post", notPorted("news::jobs::daily_news_job")); // news/jobs dailyNewsJob
+  r(s, "MonthlyAiEvents", "news.chatbot", news.chatbotNewsJob); // news/jobs chatbotNewsJob
+  r(s, "MonthlyDemand", "news.phase_changes", news.phaseNewsJob); // news/jobs phaseNewsJob
+  r(s, "MonthlyCashSettle", "news.bankruptcies", news.bankruptcyNewsJob); // news/jobs bankruptcyNewsJob
+  r(s, "ReleasePublish", "news.removals", news.removalNewsJob); // news/jobs removalNewsJob
+  r(s, "PriceMoveResultHeadlines", "news.results_and_ratings", news.resultNewsJob); // news/jobs resultNewsJob
+  r(s, "DailyNews", "news.post", news.dailyNewsJob); // news/jobs dailyNewsJob
 
   // recap::jobs::register (crates/sim/src/recap/jobs.rs)
-  r(s, "RecapBuild", "recap.build", notPorted("recap::jobs::recap_job")); // recap/jobs recapJob
+  r(s, "RecapBuild", "recap.build", recap.recapJob); // recap/jobs recapJob
 }
 
 /**
