@@ -18,12 +18,20 @@
 // (D436: a published company's are bands in an estimated industry); an industry history quarter
 // by the class it closed in (D437).
 
+import { companyStatusIsFrozen } from "../../src/finance/distress.ts";
+import { companyFinanceQuarters, companyFinanceStatus } from "../../src/finance/state.ts";
 import { jumpedPrice, surprise } from "../../src/market/earnings.ts";
+import { EFV_ERROR_WIDTH } from "../../src/market/jobs.ts";
 import type { Quarter } from "../../src/types/calendar.ts";
 import type { CompanyId, IndustryId } from "../../src/types/ids.ts";
+import { totalCmp } from "../../src/types/num.ts";
 import type { Figure } from "../../src/types/views/estimate.ts";
-import type { ViewName } from "../../src/types/views/index.ts";
+import type { SimViews, ViewName } from "../../src/types/views/index.ts";
+import { TOP_COMPANIES } from "../../src/types/views/industry_rows.ts";
+import { TRACKING_BAND } from "../../src/types/views/market_stats.ts";
+import type { World } from "../../src/types/world.ts";
 import { figureShown, statementLineIndex } from "../../src/views/estimate.ts";
+import { gap } from "../../src/views/market_stats.ts";
 
 /** How an array element names its subject (`OWNERS`' values; a string is a company field). */
 export interface OwnerRule {
@@ -414,7 +422,7 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
       "recap.watchlist[]",
     ],
     // A banded company's expected surprise and reaction are worked out from the shown estimates
-    // (D420, D430: `derivedFromShown` recomputes them); confidence is shown as it is (5.7, 5.15).
+    // (D420, D430: `derivedOf` recomputes them); confidence is shown as it is (5.7, 5.15).
     bandedPlain: [
       "recap.recaps[].world.expected_beats[].expected_surprise",
       "recap.recaps[].world.expected_misses[].expected_surprise",
@@ -476,7 +484,8 @@ function skills(prefix: string): string[] {
 /**
  * Public world data that a private figure can equal by the data: a private company's round
  * starting revenue can equal a country's GDP (country-economy.csv). These, a publishing company's
- * subtrees and a listed company's EFV are the only values dropped from the truths.
+ * subtrees and a quoted company's EFV (`isEfvLeaf`, as `derivedOf` checks it) are the only values
+ * dropped from the truths.
  */
 export const PUBLIC_PATHS: ReadonlySet<string> = new Set([
   "countries.countries[].gdp_usd",
@@ -526,7 +535,7 @@ export const isFigure = (x: unknown): x is Figure =>
 const DATE_SHAPES = ["day,month,year", "month,year", "q,year"];
 
 /** A date or quarter by its shape, with whole numbers in range (else its numbers are scanned). */
-function isDateLike(x: Record<string, unknown>): boolean {
+export function isDateLike(x: Record<string, unknown>): boolean {
   const keys = Object.keys(x).sort().join(",");
   // A statement's year period (`{ kind: "Year", year }`) too.
   if (!DATE_SHAPES.includes(keys) && !(keys === "kind,year" && x.kind === "Year")) return false;
@@ -672,58 +681,69 @@ export function plainInBanded(leaf: Leaf): boolean {
   );
 }
 
-/** A listed company's EFV (D140): public, and its own V scaled by its EFV error. */
-export function isListedEfv(leaf: Leaf): boolean {
-  switch (leaf.norm) {
-    case "quotes.rows[].efv":
-    case "quotes.rows[].efv_low":
-    case "quotes.rows[].efv_high":
-      return true;
-    case "company_rows.rows[].value":
-    case "company_detail.companies[].shown_value_per_share":
-      return listed(leaf) && leaf.figure?.kind === "Exact";
-    default:
-      return false;
-  }
+// ---------------------------------------------------------------- the recomputations
+
+/** The leaves that hold a listed company's EFV (D140, 3.14.2). */
+const EFV_PATHS: ReadonlySet<string> = new Set([
+  "quotes.rows[].efv",
+  "quotes.rows[].efv_low",
+  "quotes.rows[].efv_high",
+  "company_rows.rows[].value",
+  "company_detail.companies[].shown_value_per_share",
+]);
+
+/** A leaf that holds an EFV (`derivedOf` checks it is a quoted company's, as the World has it). */
+export const isEfvLeaf = (leaf: Leaf): boolean => EFV_PATHS.has(leaf.norm);
+
+/** A leaf's own number: an exact figure's value or a plain number (else undefined). */
+export function leafValue(leaf: Leaf): number | undefined {
+  if (leaf.figure !== null) return leaf.figure.kind === "Exact" ? leaf.figure.value : undefined;
+  return typeof leaf.value === "number" ? leaf.value : undefined;
 }
 
 /**
- * The leaves the perturbation check (leak.test.ts, 4) lets change: a listed company's EFV (it is
- * V × (1 + error), D140, and V is in the perturbed books), and v_market_stats' gap statistics
- * over the quoted stocks' P ÷ V (the soak's diagnostics, never a screen; D144); an industry's
- * exact named revenue and the exact shares of it, outside the estimated class (spec 1: the
- * industry tables are published; D432 bands them below 3 banded companies); and the top 5, ranked
- * by the revenue shown, so by the bands' estimates (D420). Nothing else that is not a band may
- * follow a private company's books.
+ * An industry's named revenue as the published table sums it (spec 1, D432): every unit's last
+ * monthly revenue in the industry, biggest first (src/views/industry_rows.ts `companiesByRevenue`,
+ * the order the view sums in, so the float sum is the same).
  */
-export function perturbExempt(leaf: Leaf): boolean {
-  switch (leaf.norm) {
-    case "market_stats.median_gap":
-    case "market_stats.within_band":
-    case "industry_rows.rows[].top_companies[]":
-      return true;
-    case "industry_rows.rows[].named_revenue_m":
-    case "industry_detail.industries[].companies[].share":
-    case "industry_detail.industries[].fringe_share":
-      return leaf.figure?.kind === "Exact";
-    default:
-      return isListedEfv(leaf);
-  }
+function namedRevenue(w: World, ind: number): number {
+  const list = w.units
+    .filter((u) => u.industry === ind)
+    .map((u): [number, number] => [u.company, u.revenue_m]);
+  list.sort((a, b) => totalCmp(b[1], a[1]) || a[0] - b[0]);
+  let named = 0;
+  for (const [, r] of list) named += r;
+  return named;
 }
 
-/**
- * A view's data in an order that does not follow the figures shown: v_industry_detail lists an
- * industry's companies by the revenue shown (D420), so both builds' lists are put in company id
- * order before they are compared (a band's estimate moves with its truth, and so may the order).
- */
-export function canonical(view: ViewName, data: unknown): unknown {
-  if (view !== "industry_detail" || !isRecord(data) || !Array.isArray(data.industries)) return data;
+/** v_market_stats worked out from the World's quoted stocks and companies (D144, 3.14). */
+function marketStats(w: World): Record<string, number> {
+  const gaps = w.market.stocks.filter((s) => s.quoted).map((s) => gap(s.price, s.value));
+  gaps.sort(totalCmp);
+  const n = gaps.length;
+  const median = n === 0 ? 0 : n % 2 === 1 ? gaps[(n - 1) / 2]! : 0.5 * (gaps[n / 2 - 1]! + gaps[n / 2]!);
+  let reports = 0;
+  let beats = 0;
+  let misses = 0;
+  w.companies.forEach((c, i) => {
+    if (companyStatusIsFrozen(companyFinanceStatus(c.finance))) return;
+    if (companyFinanceQuarters(c.finance).length === 0) return;
+    reports++;
+    const t = w.market.stocks[i]!.tags.surprise;
+    if (t === "Beat" || t === "BigBeat") beats++;
+    if (t === "Miss" || t === "BigMiss") misses++;
+  });
+  let confidence = 0;
+  for (const z of w.zones) confidence += z.confidence;
   return {
-    ...data,
-    industries: (data.industries as Record<string, unknown>[]).map((d) => ({
-      ...d,
-      companies: [...(d.companies as { company: number }[])].sort((a, b) => a.company - b.company),
-    })),
+    listed: w.market.stocks.filter((s) => s.exchange !== null).length,
+    quoted: n,
+    median_gap: median,
+    within_band: gaps.filter((g) => g <= TRACKING_BAND).length,
+    mean_confidence: confidence / Math.max(w.zones.length, 1),
+    reports,
+    beats,
+    misses,
   };
 }
 
@@ -734,28 +754,135 @@ function shownSurprise(e: unknown): number | undefined {
 }
 
 /**
- * The plain numbers of a banded subject that v_recap works out from the shown estimates (D420,
- * D430; src/views/recap.ts `expectedRow`, `page`): the expected surprise, from the projection's
- * and the consensus's estimates (5.15), and the expected reaction, the 01:00 jump that surprise
- * makes (5.15). A band's estimate moves with its truth (D421), so these move too: the
- * perturbation check (leak.test.ts, 4) recomputes them from the shown bands of the same build
- * instead of comparing them across builds, so a value that follows the true books still fails.
- * Undefined for every other leaf (and for an unbanded subject, whose true values are public).
+ * The leaves that follow private books by a published formula, so they move when the books do
+ * and are not compared across the perturbation's builds (leak.test.ts, 4): each is worked out
+ * again from its own build's World or shown bands and must equal that, in every build (the shape
+ * check, 1, runs on every build), so a value that follows anything else (a private cash, a true
+ * revenue) fails. Gives the value the leaf must hold, a string saying why it may not be there, or
+ * undefined for every other leaf.
+ *
+ * - A quoted company's EFV and its ±15% band (D140, 3.14.2), and a listed company's value, EFV
+ *   × shares (v_company_row) or a share (v_company_detail): V × (1 + e) from its stock. An EFV of
+ *   a company that is not quoted fails (a private company has a V and an EFV error too).
+ * - v_market_stats (D144: the soak's aggregates, no screen): from the World's quoted stocks and
+ *   companies (the median and the count within ±30% of |P ÷ V − 1|, the report tags).
+ * - An industry's exact named revenue (spec 1; D432 outside the estimated class): the sum of its
+ *   units' revenue; the detail's exact shares, a company's revenue and the fringe's over the
+ *   named and fringe total.
+ * - v_recap's banded expected surprise and reaction (D420, D430: worked out from the shown
+ *   projection and consensus estimates, src/views/recap.ts `expectedRow`, `page`; a band's
+ *   estimate moves with its truth, D421): from the shown bands of the same row.
  */
-export function derivedFromShown(leaf: Leaf): number | undefined {
-  if (leaf.ctx.banded !== true || leaf.ctx.row === null) return undefined;
+export function derivedOf(leaf: Leaf, w: World): number | string | undefined {
   const row = leaf.ctx.row;
+  const exact = leaf.figure !== null && leaf.figure.kind === "Exact";
+  const field = leaf.norm.slice(leaf.norm.lastIndexOf(".") + 1);
   switch (leaf.norm) {
+    case "quotes.rows[].efv":
+    case "quotes.rows[].efv_low":
+    case "quotes.rows[].efv_high": {
+      const s = w.market.stocks[row?.id as number];
+      if (s === undefined || s.exchange === null || !s.quoted)
+        return `an EFV of company ${row?.id}, not quoted`;
+      const efv = s.value * (1.0 + s.efv_error);
+      if (field === "efv") return efv;
+      return field === "efv_low" ? efv * (1.0 - EFV_ERROR_WIDTH) : efv * (1.0 + EFV_ERROR_WIDTH);
+    }
+    case "company_rows.rows[].value":
+    case "company_detail.companies[].shown_value_per_share": {
+      const s = w.market.stocks[row?.id as number];
+      if (!exact || s === undefined || s.exchange === null) return undefined;
+      return (field === "value" ? s.fair_value : s.value) * (1.0 + s.efv_error);
+    }
+    case "industry_rows.rows[].named_revenue_m":
+      return exact ? namedRevenue(w, row?.id as number) : undefined;
+    case "industry_detail.industries[].companies[].share":
+    case "industry_detail.industries[].fringe_share": {
+      if (!exact || leaf.ctx.industry === null) return undefined;
+      const ind = leaf.ctx.industry;
+      const fringe = w.industries[ind]!.fringe_revenue_m;
+      const total = namedRevenue(w, ind) + fringe;
+      let part = fringe;
+      if (field === "share") {
+        const u = w.units.find((x) => x.company === row?.company && x.industry === ind);
+        if (u === undefined) return `a share of company ${row?.company}, with no unit in industry ${ind}`;
+        part = u.revenue_m;
+      }
+      return total > 0.0 ? part / total : 0.0;
+    }
     case "recap.recaps[].world.expected_beats[].expected_surprise":
     case "recap.recaps[].world.expected_misses[].expected_surprise":
-      return shownSurprise(row);
+      return leaf.ctx.banded === true ? shownSurprise(row) : undefined;
     case "recap.recaps[].companies[].expected.expected_surprise":
-      return shownSurprise(row.expected);
+      return leaf.ctx.banded === true ? shownSurprise(row?.expected) : undefined;
     case "recap.recaps[].companies[].expected_reaction": {
-      const s = shownSurprise(row.expected);
+      const s = leaf.ctx.banded === true ? shownSurprise(row?.expected) : undefined;
       return s === undefined ? undefined : jumpedPrice(1.0, s) - 1.0;
     }
     default:
-      return undefined;
+      return leaf.norm.startsWith("market_stats.") ? marketStats(w)[field] : undefined;
   }
+}
+
+/**
+ * The leaves the perturbation check (leak.test.ts, 4) does not compare across its builds, besides
+ * the bands and `derivedOf`'s: the top 5, ranked by the revenue shown, so by the bands' estimates
+ * (D420, D436). `rankingBad` checks that order in every build instead, with v_industry_detail's
+ * (whose list `canonical` puts in id order for the comparison).
+ */
+export function perturbExempt(leaf: Leaf): boolean {
+  return leaf.norm === "industry_rows.rows[].top_companies[]";
+}
+
+/**
+ * The rankings by revenue shown (D420, D436; src/views/industry_rows.ts `rankedAsShown`), in one
+ * build before `canonical`: every industry's companies in v_industry_detail are its units in
+ * v_units, each with the unit's revenue figure, biggest estimate first, ties to the lower id; and
+ * v_industry_row's top 5 are the first `TOP_COMPANIES` of them. A ranking by the true revenue
+ * fails wherever the two orders differ.
+ */
+export function rankingBad(v: SimViews): string[] {
+  const bad: string[] = [];
+  const shown = new Map<number, [number, Figure][]>();
+  for (const u of v.units.data.units) {
+    const list = shown.get(u.industry) ?? [];
+    list.push([u.company, u.revenue_m]);
+    shown.set(u.industry, list);
+  }
+  v.industry_detail.data.industries.forEach((d, i) => {
+    const want = [...(shown.get(i) ?? [])];
+    want.sort((a, b) => totalCmp(figureShown(b[1]), figureShown(a[1])) || a[0] - b[0]);
+    const ids = want.map(([c]) => c);
+    const got = d.companies.map((c) => c.company);
+    if (got.join(",") !== ids.join(",")) {
+      bad.push(`industry_detail[${i}] lists ${got.join(",")}, by the revenue shown ${ids.join(",")}`);
+    }
+    d.companies.forEach((c, k) => {
+      const u = want.find(([id]) => id === c.company);
+      if (u !== undefined && JSON.stringify(u[1]) !== JSON.stringify(c.revenue_m)) {
+        bad.push(`industry_detail[${i}].companies[${k}].revenue_m is not its unit's`);
+      }
+    });
+    const top = (v.industry_rows.data.rows[i]?.top_companies ?? []).join(",");
+    const top5 = ids.slice(0, TOP_COMPANIES).join(",");
+    if (top !== top5) bad.push(`industry_rows[${i}].top_companies ${top}, by the revenue shown ${top5}`);
+  });
+  return bad;
+}
+
+/**
+ * A view's data in an order that does not follow the figures shown: v_industry_detail lists an
+ * industry's companies by the revenue shown (D420), so both builds' lists are put in company id
+ * order before they are compared (a band's estimate moves with its truth, and so may the order;
+ * `rankingBad` checks the order itself in each build).
+ */
+export function canonical(view: ViewName, data: unknown): unknown {
+  if (view !== "industry_detail" || !isRecord(data) || !Array.isArray(data.industries)) return data;
+  return {
+    ...data,
+    industries: (data.industries as Record<string, unknown>[]).map((d) => ({
+      ...d,
+      companies: [...(d.companies as { company: number }[])].sort((a, b) => a.company - b.company),
+    })),
+  };
 }

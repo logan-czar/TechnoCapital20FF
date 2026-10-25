@@ -1,22 +1,21 @@
 // The leak test's perturbed world (leak.test.ts, check 4): a copy of the state in which every
 // company that shows estimates (D420) has other books. Not a Rust file.
 //
-// What is perturbed: a banded company's books, the figures D420 bands or keeps out of the views:
-// cash, the credit line (drawn and limit), the starting revenue (a birth's size), the tax book,
-// every ledger (the open month, the pending one, the posted months, the archived statements'
-// lines but `shared`), every balance sheet (the opening one, the archive's), a statement's held
-// TB and guidance, the data books (held and unstructured TB), its units' assets and monthly
-// figures (but `shared_m`), its stock's fair value, V, consensus and projection, and its recap
-// pages' consensus and projection (D433; the page's range, surprise and reaction follow). Not
-// perturbed: what D420 leaves exact (productivity, management score, stations, compute and the
-// compute and licences line, D434, labor units, the PC bonus, the free R&D step, ratings,
-// shares, the cap table), market data (price, prev close, buzz, the EFV error, the bars, the IPO
-// price) and every publishing company.
+// What is perturbed: every number of a banded company's state, its Company row (the finance
+// subtree too), its units and its stock, but those `KEPT` names with their reason (ids, dates,
+// shares and the cap table, what D420 leaves exact as operations, the compute and licences cost
+// of D434, the published rating and distress state, the board, market data); a number a later
+// field adds is perturbed until it is classed. So the cached values derived from the books (the
+// last surprise, E_norm and G, a plan's money, a birth's run rate, the loss quarter count) move
+// with them, and a view that shows one is caught. Two booleans and one tag that follow the books
+// are changed too (`FLIPPED`, the surprise tier). Not perturbed: every publishing company. The
+// recaps' pages (D433) are perturbed for a banded company: its consensus and projection, and what
+// follows (the range, surprise and reaction).
 //
-// How: each number x becomes x × k + c, k from `FACTORS` and c a small offset, both stepped by
-// the field's position and a counter of the objects perturbed so far. So the books change
-// unevenly: a ratio of two figures (a margin, a quarter-on-quarter growth) changes as well as
-// each figure, and a true 0 does not stay 0, so a derived value that follows the books (a
+// How: each number x becomes x × k + c, k from `FACTORS` and c a small offset in the field's
+// unit, both stepped by a counter of the numbers perturbed so far (a count gains 1 to 3). So the
+// books change unevenly: a ratio of two figures (a margin, a quarter-on-quarter growth) changes as
+// well as each figure, and a true 0 does not stay 0, so a derived value that follows the books (a
 // figure in $M, rounded to $1M, over the shares, a ratio) changes too. A year statement whose
 // four quarters are archived is rebuilt from the perturbed quarters (flows summed, the balance
 // sheet, held TB and guidance Q4's), so the perturbed books stay ones the estimated year can
@@ -24,25 +23,98 @@
 import { jumpedPrice, surprise } from "../../src/market/earnings.ts";
 import { range } from "../../src/market/projection.ts";
 import type { CompanyId } from "../../src/types/ids.ts";
+import type { SurpriseTag } from "../../src/types/state/market.ts";
 import type { ExpectedResult } from "../../src/types/state/recap.ts";
 import type { World } from "../../src/types/world.ts";
 import { showsEstimates } from "../../src/views/estimate.ts";
+import { isDateLike, isRecord } from "./leak_rules.ts";
 
 /** The scale factors (none is 1). */
 const FACTORS = [1.25, 0.8, 1.5, 1.125, 0.625, 1.375, 0.9];
 /**
- * The offsets' units: money in USD, data in TB (odd values, so a perturbed truth does not meet a
- * public number such as a 0.75 share or a 0.375 tax rate by chance).
+ * The offsets' units: money in USD, data in TB, a ratio (odd values, so a perturbed truth does
+ * not meet a public number such as a 0.75 share or a 0.375 tax rate by chance).
  */
 const OFFSET_USD = 1234.5678;
 const OFFSET_TB = 0.37129;
+const OFFSET_RATIO = 0.0123457;
+
+/**
+ * The numbers of a banded company's state left as they are, by normalized path (`company.`,
+ * `unit.` or `stock.`, then the fields, `[]` for an index), each with its reason. Everything else
+ * numeric is perturbed (see the header).
+ */
+export const KEPT: readonly (readonly [RegExp, string])[] = [
+  // Ids and enum numbers (dates are skipped by their shape).
+  [/^company\.(industry|hq_country|hq_province|units\[\]|controller|founders\[\]|origin\.event)$/, "an id"],
+  [/^company\.data\[\]\.industry$/, "an id"],
+  [/^company\.(board|directors)\[\]\.(character|seat\.id)$/, "an id"],
+  [/^company\.holders\[\]\.holder\.(character|company|country)$/, "an id"],
+  [/^company\.start_control\.(owner_of_record|controller\.(character|company|country))$/, "an id"],
+  [/^company\.ipo_last_vote\.result\.ballots\[\]\.voter\.(id|character)$/, "an id"],
+  [/^unit\.(company|industry|base_province)$/, "an id"],
+  [/^stock\.exchange$/, "an id"],
+  // Shares are not money, so a cap table is never banded (D420, D425).
+  [
+    /^company\.(shares_out|holders\[\]\.shares|start_control\.stake)$/,
+    "shares and the cap table (D420, D425)",
+  ],
+  [/^stock\.shares$/, "shares (D420, D147)"],
+  // Operations that follow the stations, not books (D420; productivity's D436 tension is
+  // leak.test.ts `knownExact`).
+  [/^company\.(labor_units|stations\.\w+|pc|pc_bonus|management_score)$/, "an operation (D420)"],
+  [/^company\.data\[\]\.book\.free_rd_pct$/, "the free R&D step, an operation (D420)"],
+  [
+    /^company\.finance\.archive\.(quarters|years)\[\]\.key\.(productivity|pc_bonus|labor_units|free_rd_pct|management_score)$/,
+    "an operation (D420)",
+  ],
+  [/^company\.birth_run_rate\.pc_bonus$/, "the PC bonus, an operation (D420)"],
+  [/^unit\.productivity$/, "productivity, an operation (D420; D436 bands it in v_units)"],
+  [/^unit\.location_bonus$/, "the province's location bonus (spec 5.2: published bonuses, D430)"],
+  // The plans are shown exactly (spec 8 Units tab, D420).
+  [/^unit\.(growth_plan|rd_plan)$/, "the plans (D420)"],
+  [/^company\.plan\.operating\.(growth|rd_plan|stations\.\w+)$/, "the plans and stations (D420)"],
+  // The compute bill: a published price list times counts (D434).
+  [/^company\.compute\.\w+$/, "the compute bill (D434)"],
+  [
+    /^company\.finance\.(pending|month|months\[\]\.lines|last_month\.lines|archive\.(quarters|years)\[\]\.lines)\.shared$/,
+    "the compute and licences line (D434)",
+  ],
+  [/^unit\.shared_m$/, "the compute and licences cost (D434)"],
+  // The rating, its breakdown and the distress state are published (F6, D157, D420): v_ratings
+  // shows every company's, the implied rating's notches too, so one copied elsewhere is no leak.
+  [
+    /^company\.finance\.(implied\.\w+_notches|last_review_notches|line\.excess_months_left|distress\.(distress_months|frozen_quarters))$/,
+    "the rating and distress state (F6, D157, D420)",
+  ],
+  // The board and its vote (spec 3.7, 5.20.1 step 3: phase, confidence and traits).
+  [/^company\.(board|directors)\[\]\.seat\.character\.(age|skills\.\w+)$/, "a board member (3.7)"],
+  [/^company\.ipo_last_vote\.result\.(yes|no|ballots\[\]\.chance)$/, "the IPO vote (5.20.1 step 3)"],
+  // Market data (3.10, 5.14; the EFV error, D140; the bars, D424).
+  [/^stock\.(price|prev_close|ipo_price|buzz|efv_error|bar\.\w+|bars\..+)$/, "market data (3.10, D140)"],
+];
+
+/** Booleans that follow the books (21.3.2 result tags): flipped. */
+const FLIPPED: ReadonlySet<string> = new Set(["stock.tags.loss", "stock.tags.record_quarter"]);
+
+/** The surprise tier follows the books (5.15): each moves to another. */
+const OTHER_TIER: Record<SurpriseTag, SurpriseTag> = {
+  BigBeat: "Miss",
+  Beat: "BigMiss",
+  Miss: "BigBeat",
+  BigMiss: "Beat",
+};
+
+const TB = /(\.book\.held|\.book\.unstructured\[\]|\.key\.held_tb)$/;
+const RATIO = /(growth_factor|_surprise|fixed_cost_rate|\.sale\.share)$/;
+const COUNT = /(loss_quarters|failed_raises|months_left)$/;
 
 const LEDGER_FIELDS = [
   "revenue",
   "variable",
   "fixed_cash",
   "rd",
-  // Not `shared`: the compute and licences cost is exact by D434.
+  // Not `shared`: it is kept (D434), so the year's stays its own.
   "depreciation",
   "line_interest",
   "line_fee",
@@ -57,33 +129,15 @@ const LEDGER_FIELDS = [
   "dividends",
 ] as const;
 
-const BALANCE_FIELDS = [
-  "cash",
-  "asset_book",
-  "total_assets",
-  "line_drawn",
-  "tax_payable",
-  "total_liabilities",
-  "estate",
-  "equity",
-] as const;
-
-const UNIT_FIELDS = [
-  "gross_assets",
-  "asset_book",
-  "revenue_m",
-  "variable_m",
-  "fixed_m",
-  "rd_m",
-  "dep_m",
-  "capex_m",
-  "sale_proceeds_m",
-  "sale_gain_m",
-] as const;
-
 /** The ids of the companies that show estimates now (D420). */
 export function bandedCompanies(w: World): CompanyId[] {
   return w.companies.map((_, i) => i as CompanyId).filter((id) => showsEstimates(w, id));
+}
+
+/** Why a banded company's number at `path` is kept, or null: it is perturbed. */
+export function keptWhy(path: string): string | null {
+  for (const [re, why] of KEPT) if (re.test(path)) return why;
+  return null;
 }
 
 /** A copy of `w` with every banded company's books perturbed (see the header). */
@@ -104,77 +158,69 @@ export function perturbBooks(w: World): World {
   });
   const seen = new Set<object>();
   let n = 0;
-  const bump = (o: object, fields: readonly string[], offset: number): void => {
-    if (seen.has(o)) return;
-    if (published.has(o)) throw new Error("a banded company's books are shared with a published one");
-    seen.add(o);
-    const r = o as Record<string, number>;
-    fields.forEach((f, i) => {
-      const x = r[f];
-      if (typeof x !== "number") throw new Error(`perturb: no number at ${f}`);
-      const j = i + n;
-      r[f] = x * FACTORS[j % FACTORS.length]! + offset * (1 + (j % 3));
-    });
-    n++;
+  /** Perturbs every number under `x` not `KEPT` (an object reached twice, once). */
+  const walk = (x: unknown, path: string): void => {
+    if (Array.isArray(x)) {
+      if (seen.has(x)) return;
+      seen.add(x);
+      x.forEach((y, i) => {
+        if (typeof y === "number") x[i] = bump(y, `${path}[]`);
+        else walk(y, `${path}[]`);
+      });
+      return;
+    }
+    if (!isRecord(x) || seen.has(x) || isDateLike(x)) return;
+    if (published.has(x))
+      throw new Error(`${path}: a banded company's books are shared with a published one`);
+    seen.add(x);
+    for (const k of Object.keys(x)) {
+      const y = x[k];
+      const at = `${path}.${k}`;
+      if (typeof y === "number") x[k] = bump(y, at);
+      else if (typeof y === "boolean" && FLIPPED.has(at)) x[k] = !y;
+      else walk(y, at);
+    }
+  };
+  const bump = (x: number, path: string): number => {
+    if (keptWhy(path) !== null) return x;
+    const j = n++;
+    if (COUNT.test(path)) return x + 1 + (j % 3);
+    const offset = TB.test(path) ? OFFSET_TB : RATIO.test(path) ? OFFSET_RATIO : OFFSET_USD;
+    return x * FACTORS[j % FACTORS.length]! + offset * (1 + (j % 3));
   };
   for (const id of banded) {
     const c = p.companies[id]!;
+    walk(c, "company");
+    for (const u of c.units) walk(p.units[u]!, "unit");
+    const s = p.market.stocks[id]!;
+    walk(s, "stock");
+    if (s.tags.surprise !== null) s.tags.surprise = OTHER_TIER[s.tags.surprise];
+    // A year with its four quarters stays their year (3.9, D430): its flows are their sums,
+    // its balance sheet, held TB and guidance Q4's, as the estimated year takes them.
     const f = c.finance;
-    bump(c, ["cash_usd", "revenue_usd"], OFFSET_USD);
-    bump(f.line, ["drawn", "limit"], OFFSET_USD);
-    bump(f.tax, ["carryforward", "quarter_pre_tax", "accrued"], OFFSET_USD);
-    bump(f.pending, LEDGER_FIELDS, OFFSET_USD);
-    bump(f.month, LEDGER_FIELDS, OFFSET_USD);
-    for (const m of f.months) bump(m.lines, LEDGER_FIELDS, OFFSET_USD);
-    if (f.last_month !== null) bump(f.last_month.lines, LEDGER_FIELDS, OFFSET_USD);
-    bump(f.opening, BALANCE_FIELDS, OFFSET_USD);
-    for (const s of f.archive.quarters) {
-      bump(s.lines, LEDGER_FIELDS, OFFSET_USD);
-      bump(s.balance, BALANCE_FIELDS, OFFSET_USD);
-      bump(s.key, ["held_tb"], OFFSET_TB);
-      bump(s.key.guidance, ["0", "1"], OFFSET_USD);
-    }
     for (const y of f.archive.years) {
       const year = y.period.kind === "Year" ? y.period.year : Number.NaN;
       const qs = f.archive.quarters.filter(
-        (s) => s.period.kind === "Quarter" && s.period.quarter.year === year,
+        (q) => q.period.kind === "Quarter" && q.period.quarter.year === year,
       );
-      if (qs.length !== 4) {
-        bump(y.lines, LEDGER_FIELDS, OFFSET_USD);
-        bump(y.balance, BALANCE_FIELDS, OFFSET_USD);
-        bump(y.key, ["held_tb"], OFFSET_TB);
-        bump(y.key.guidance, ["0", "1"], OFFSET_USD);
-        continue;
-      }
-      // A year with its four quarters stays their year (3.9, D430): its flows are their sums,
-      // its balance sheet, held TB and guidance Q4's, as the estimated year takes them.
-      for (const o of [y, y.lines, y.balance, y.key]) {
-        if (published.has(o)) throw new Error("a banded company's books are shared with a published one");
-      }
+      if (qs.length !== 4) continue;
       for (const l of LEDGER_FIELDS) y.lines[l] = qs.reduce((sum, q) => sum + q.lines[l], 0);
       const q4 = qs[3]!;
       y.balance = { ...q4.balance };
       y.key = { ...y.key, held_tb: q4.key.held_tb, guidance: [q4.key.guidance[0], q4.key.guidance[1]] };
     }
-    for (const d of c.data) {
-      bump(d.book, ["held"], OFFSET_TB);
-      bump(
-        d.book.unstructured,
-        d.book.unstructured.map((_, i) => String(i)),
-        OFFSET_TB,
-      );
-    }
-    for (const u of c.units) bump(p.units[u]!, UNIT_FIELDS, OFFSET_USD);
-    bump(p.market.stocks[id]!, ["fair_value", "value", "consensus_ni", "projection_ni"], OFFSET_USD);
   }
   // The recaps' pages (D433), which the views copy: a banded company's consensus and projection
   // are perturbed, and what the recap works out from them follows (src/recap.ts: the expected
   // surprise, 5.15; the reaction, its jump; the range, the 5.16 range at the page's width,
   // centred on the consensus), so the perturbed pages stay ones the view's bands can hold.
-  // Confidence and the outlook stay.
+  // Confidence and the outlook stay (shown as they are, as Rust).
   const expectedRow = (e: ExpectedResult): void => {
     if (!banded.has(e.company) || seen.has(e)) return;
-    bump(e, ["projection", "consensus"], OFFSET_USD);
+    seen.add(e);
+    const j = n++;
+    e.projection = e.projection * FACTORS[j % FACTORS.length]! + OFFSET_USD;
+    e.consensus = e.consensus * FACTORS[(j + 1) % FACTORS.length]! + 2 * OFFSET_USD;
     e.expected_surprise = surprise(e.projection, e.consensus);
   };
   for (const r of p.recaps) {
