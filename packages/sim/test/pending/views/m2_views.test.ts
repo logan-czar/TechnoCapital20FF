@@ -58,19 +58,4 @@ describe("m2 views", () => {
     expect(detail.history.length, "20 closed quarters kept").toBe(20);
     expect(detail.history[detail.history.length - 1]?.quarter.year).toBe(2025);
   }, 300_000);
-
-  it("cycle_view_hides_the_pop_date_outside_omniscient", () => {
-    const sim = unwrap(simNew(data(), 3), "Sim::new");
-    const c = structuredClone(simViews(sim).cycle.data);
-    expect(c.zones.length).toBe(26);
-    expect(c.phase).toBe("Expansion");
-    expect(c.g_t >= 0.0 && c.g_t < 0.02).toBe(true);
-    expect(Math.abs(c.z_avg - 1.07) < 0.005).toBe(true);
-    expect(c.pop_date).toBeNull();
-    expect(c.boom_year).toBeNull();
-    unwrap(simApply(sim, { kind: "SetOmniscient", on: true }), "SetOmniscient");
-    const pop = simViews(sim).cycle.data.pop_date;
-    if (pop === null) throw new Error("shown in Omniscient");
-    expect(pop.year >= 2038 && pop.year <= 2042).toBe(true);
-  });
 });

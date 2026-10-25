@@ -11,22 +11,26 @@ import {
   barRows,
   type ClockView,
   type DateTime,
+  dateTimeHour,
   type Headline,
+  lockTick,
   MAX_SPEED,
   type Notice,
   postedViewsNone,
   type Quarter,
   type Reply,
+  recapTick,
+  releaseTick,
   SECONDS_PER_HOUR,
   type SimDate,
   type SimViews,
   type Skip,
+  simDateIsQuarterFirstMonth,
   skipTarget,
   type UiControl,
   type ViewName,
   type ViewsPatch,
 } from "@tc20ff/sim";
-import { isLockTick, isQuarterStartTick, isRecapTick, isReleaseTick } from "./calendar.ts";
 import {
   barHistory,
   clockView,
@@ -227,16 +231,18 @@ export class MockSim {
         };
       }
     }
-    if (isReleaseTick(t)) {
+    const q = quarterOf(date);
+    if (releaseTick(q) === t) {
       notices.push({ kind: "EarningsReleased", quarter: quarterBefore(quarterOf(date)) });
       this.alert(notices, "EarningsDay", { kind: "Quarter", quarter: quarterBefore(quarterOf(date)) });
     }
-    if (isLockTick(t)) {
+    if (lockTick(q) === t) {
       notices.push({ kind: "PlanLocked", quarter: quarterOf(date) });
       this.alert(notices, "PlanLock", { kind: "Quarter", quarter: quarterOf(date) });
     }
-    if (isRecapTick(t)) this.alert(notices, "QuarterlyRecap", { kind: "Quarter", quarter: quarterOf(date) });
-    if (isQuarterStartTick(t))
+    if (recapTick(q) === t)
+      this.alert(notices, "QuarterlyRecap", { kind: "Quarter", quarter: quarterOf(date) });
+    if (dateTimeHour(t) === 0 && date.day === 1 && simDateIsQuarterFirstMonth(date))
       this.alert(notices, "QuarterStart", { kind: "Quarter", quarter: quarterOf(date) });
 
     if (this.skip !== null && t >= this.skip.target) {

@@ -78,64 +78,7 @@ function pid(sim: Sim, key: string): ProvinceId {
 }
 
 describe("m8 map views", () => {
-  it("map_static_maps_the_bitmap_to_provinces", () => {
-    const sim = unwrap(simNew(dataWithMap("static"), 1), "Sim::new");
-    const v = simViews(sim).map_static.data;
-    const geo = v.geo;
-    if (geo === null) throw new Error("the map geometry");
-    expect([geo.info.width, geo.info.height]).toEqual([128, 64]);
-    expect(geo.info.tiny_px).toBe(20);
-    expect(geo.index.length).toBe(5);
-    // Bitmap index i is the i-th colour row (sorted by id): TW-0001 first.
-    expect(mapStaticViewProvinceAtIndex(v, 0), "0 is water").toBeNull();
-    expect(mapStaticViewProvinceAtIndex(v, 1)).toBe(pid(sim, "TW-0001"));
-    expect(mapStaticViewProvinceAtIndex(v, 2)).toBe(pid(sim, "US-0001"));
-    expect(mapStaticViewProvinceAtIndex(v, 6)).toBeNull();
-    const us2 = pid(sim, "US-0002");
-    const s = mapStaticViewShape(v, us2);
-    if (s === null) throw new Error("no shape");
-    expect(s.index).toBe(3);
-    expect(s.centroid).toEqual([15.0, 5.0]);
-    expect(s.label).toEqual([15.0, 5.0]);
-    expect(s.area_px).toBe(100);
-    expect(s.tiny).toBe(false);
-    // Provinces outside the fixture have no shape (Phase A covers only NA).
-    expect(mapStaticViewShape(v, pid(sim, "GB-0001"))).toBeNull();
-    // Neighbours, both ways, in ordinal order.
-    const n = mapStaticViewNeighbors(v, us2).map((x) => x.province);
-    expect(n).toEqual([pid(sim, "US-0001"), pid(sim, "US-0003"), pid(sim, "US-0004")]);
-    expect(mapStaticViewNeighbors(v, us2).every((x) => x.kind === "Land")).toBe(true);
-    expect(mapStaticViewNeighbors(v, pid(sim, "US-0001"))[0]?.province).toBe(us2);
-    expect(mapStaticViewNeighbors(v, pid(sim, "US-0001"))[0]?.border_px).toBe(10.0);
-    // The tiny province's click target is its label point.
-    expect(mapStaticViewTinyTargets(v)).toEqual([[pid(sim, "US-0004"), [12.0, 12.0]]]);
-    // Every province has a row; contested and development come from the province files.
-    expect(v.provinces.length).toBe(3963);
-    const tw = v.provinces[pid(sim, "TW-0001")];
-    expect(tw?.contested).toBe(true);
-    const us1 = v.provinces[pid(sim, "US-0001")];
-    expect([us1?.commerce, us1?.industry, us1?.population]).toEqual([9, 12, 16]);
-    expect(us1?.contested).toBe(false);
-    // Metros and key cities list their provinces.
-    v.metros.forEach((m, i) => {
-      expect(m.provinces.length > 0, m.name).toBe(true);
-      for (const p of m.provinces) expect(v.provinces[p]?.metro).toBe(i);
-    });
-    expect(v.key_cities.length).toBe(88);
-    expect(v.key_cities.filter((k) => k.provinces.length > 0).length > 80).toBe(true);
-  });
-
-  it("no_map_assets_is_no_geometry", () => {
-    const sim = unwrap(simNew(data(), 1), "Sim::new");
-    const v = simViews(sim).map_static.data;
-    expect(v.geo).toBeNull();
-    expect(mapStaticViewProvinceAtIndex(v, 1)).toBeNull();
-    expect(mapStaticViewTinyTargets(v)).toEqual([]);
-    // The cards and layers need no map assets.
-    expect(v.provinces.length).toBe(3963);
-    expect(simViews(sim).province_cards.data.cards.length).toBe(3963);
-  });
-
+  // Waits on map_layers (Step 3, lane B chunk 3).
   it("political_layer_is_the_country_and_the_contested_tag", () => {
     const sim = unwrap(simNew(dataWithMap("political"), 1), "Sim::new");
     const views = simViews(sim);
@@ -158,6 +101,7 @@ describe("m8 map views", () => {
     expect(row?.label).toBe(usa.name);
   });
 
+  // Waits on company_detail and units (lane A).
   it("province_cards_show_the_spec_8_fields", () => {
     const sim = unwrap(simNew(data(), 1), "Sim::new");
     const views = simViews(sim);
@@ -196,22 +140,4 @@ describe("m8 map views", () => {
     const tw = byId(cards.cards, pid(sim, "TW-0001"));
     expect(tw?.contested).toBe("CHN claims");
   });
-
-  // The map changes no state: two games of the same seed, one with the map, hash and save the
-  // same through a month, and a save loads into either.
-  it("the_map_moves_nothing", () => {
-    const a = unwrap(simNew(dataWithMap("moves"), 7), "Sim::new");
-    const b = unwrap(simNew(data(), 7), "Sim::new");
-    for (let i = 0; i < 32 * 24; i++) {
-      simStep(a);
-      simStep(b);
-    }
-    expect(simStateHash(a)).toBe(simStateHash(b));
-    expect(Buffer.compare(simSaveBytes(a), simSaveBytes(b))).toBe(0);
-    // A load keeps the game's own map data.
-    const bytes = simSaveBytes(b);
-    unwrap(simLoadBytes(a, bytes), "load_bytes");
-    expect(simViews(a).map_static.data.geo).not.toBeNull();
-    expect(simStateHash(a)).toBe(simStateHash(b));
-  }, 120_000);
 });

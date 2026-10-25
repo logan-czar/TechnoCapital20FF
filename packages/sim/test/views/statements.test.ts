@@ -3,6 +3,7 @@
 // Omniscient toggle in tests/m9_estimate_bands.rs; here it is checked directly. Not a Rust file.
 import { describe, expect, it } from "vitest";
 import { simNew, simWorld } from "../../src/lib.ts";
+import { mapDataDefault } from "../../src/map.ts";
 import { simDateYmd } from "../../src/time/calendar.ts";
 import { plainEqual, type ViewInput } from "../../src/views/index.ts";
 import { buildStatements, rebuildStatementsFrom } from "../../src/views/statements.ts";
@@ -16,7 +17,7 @@ describe("statements view", () => {
       world: simWorld(sim),
       controls: sim.controls(),
       seed: sim.seed(),
-      map: null,
+      map: mapDataDefault(),
     });
     runTo(sim, simDateYmd(2020, 1, 3));
     const prev = buildStatements(input());

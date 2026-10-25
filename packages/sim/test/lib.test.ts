@@ -17,6 +17,7 @@ import {
   simWorld,
   startWorld,
 } from "../src/lib.ts";
+import { mapDataDefault } from "../src/map.ts";
 import type { TickPart } from "../src/time/scheduler.ts";
 import type { CompanyId } from "../src/types/ids.ts";
 import type { LoadError, World } from "../src/types/world.ts";
@@ -119,7 +120,13 @@ describe("Sim", () => {
     const calls: string[] = [];
     const fail = { on: false };
     const deps = recordingDeps(calls, fail);
-    const r = simNew(NO_DATA, 1, { deps: { start: deps, views: viewBuildersOnly(["clock"]) } });
+    const r = simNew(NO_DATA, 1, {
+      deps: {
+        start: deps,
+        mapDataBuild: () => ({ ok: true, value: mapDataDefault() }),
+        views: viewBuildersOnly(["clock"]),
+      },
+    });
     if (!r.ok) throw new Error("builds");
     const s = r.value;
     for (let i = 0; i < 5; i++) s.step();

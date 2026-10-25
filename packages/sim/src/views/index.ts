@@ -29,6 +29,7 @@
 // - `SimViews::get_map_layer` (D700) needs the map layers view's `layer` (Step 3); only
 //   `map_layer_versions` is here.
 
+import type { MapData } from "../map.ts";
 import {
   type TickFacts,
   type TickObserver,
@@ -58,9 +59,20 @@ import { buildCharacters } from "./characters.ts";
 import { buildClock, emptyClock } from "./clock.ts";
 import { buildCompanyDetail } from "./company_detail.ts";
 import { buildCompanyRows } from "./company_rows.ts";
+import { buildCountries } from "./countries.ts";
+import { buildCycle } from "./cycle.ts";
+import { buildExchanges } from "./exchanges.ts";
 import { buildFilings } from "./filings.ts";
+import { buildMapStatic } from "./map_static.ts";
+import { buildMarketStats } from "./market_stats.ts";
+import { buildNews } from "./news.ts";
+import { buildPlaces } from "./places.ts";
+import { buildPriceBars } from "./price_bars.ts";
+import { buildProvinceCards } from "./province_cards.ts";
+import { buildRates } from "./rates.ts";
 import { buildRatings } from "./ratings.ts";
 import { buildStatements, rebuildStatementsFrom } from "./statements.ts";
+import { buildZones } from "./zones.ts";
 
 // ---------------------------------------------------------------- Cadence
 
@@ -98,12 +110,9 @@ export function cadenceIsDue(c: Cadence, f: TickFacts): boolean {
 
 // ---------------------------------------------------------------- ViewInput and builders
 
-/**
- * The static map data the map views read (M8; Rust `crate::map::MapData`): built from the loaded
- * data next to the World, never saved or hashed. Not ported yet (its builder belongs with the map
- * views, Step 3): opaque here, `null` until then (lib.ts `SimDeps.mapDataBuild`).
- */
-export type MapData = unknown;
+// The static map data the map views read (M8; Rust `crate::map::MapData`, ../map.ts): built from
+// the loaded data next to the World, never saved or hashed (lib.ts `SimDeps.mapDataBuild`).
+export type { MapData };
 
 /**
  * What a view is built from: the state after the latest tick and the controls. Views read; they
@@ -147,15 +156,27 @@ function unported<T>(rust: string, empty: () => NoInfer<T>): ViewBuilder<T> {
  */
 export const VIEW_BUILDERS: ViewBuilders = {
   clock: { rust: "views::clock::ClockView", empty: emptyClock, build: buildClock },
-  places: unported("views::places::PlacesView", () => ({ provinces: [], countries: [] })),
-  countries: unported("views::countries::CountriesView", () => ({ countries: [] })),
-  zones: unported("views::zones::ZonesView", () => ({ zones: [] })),
-  rates: unported("views::rates::RatesView", () => ({
-    base_rate: 0,
-    zones: [],
-    sovereigns: [],
-    rating_spreads: [],
-  })),
+  places: {
+    rust: "views::places::PlacesView",
+    empty: () => ({ provinces: [], countries: [] }),
+    build: buildPlaces,
+  },
+  countries: {
+    rust: "views::countries::CountriesView",
+    empty: () => ({ countries: [] }),
+    build: buildCountries,
+  },
+  zones: { rust: "views::zones::ZonesView", empty: () => ({ zones: [] }), build: buildZones },
+  rates: {
+    rust: "views::rates::RatesView",
+    empty: () => ({
+      base_rate: 0,
+      zones: [],
+      sovereigns: [],
+      rating_spreads: [],
+    }),
+    build: buildRates,
+  },
   characters: {
     rust: "views::characters::CharactersView",
     empty: () => ({ full: [], partial: [] }),
@@ -167,19 +188,31 @@ export const VIEW_BUILDERS: ViewBuilders = {
     build: buildCapTable,
   },
   quotes: unported("views::quotes::QuotesView", () => ({ rows: [], indices: [] })),
-  price_bars: unported("views::price_bars::PriceBarsView", () => ({ companies: [] })),
-  exchanges: unported("views::exchanges::ExchangesView", () => ({ exchanges: [] })),
-  market_stats: unported("views::market_stats::MarketStatsView", () => ({
-    listed: 0,
-    quoted: 0,
-    median_gap: 0,
-    within_band: 0,
-    mean_confidence: 0,
-    reports: 0,
-    beats: 0,
-    misses: 0,
-  })),
-  news: unported("views::news::NewsView", () => ({ feed: [] })),
+  price_bars: {
+    rust: "views::price_bars::PriceBarsView",
+    empty: () => ({ companies: [] }),
+    build: buildPriceBars,
+  },
+  exchanges: {
+    rust: "views::exchanges::ExchangesView",
+    empty: () => ({ exchanges: [] }),
+    build: buildExchanges,
+  },
+  market_stats: {
+    rust: "views::market_stats::MarketStatsView",
+    empty: () => ({
+      listed: 0,
+      quoted: 0,
+      median_gap: 0,
+      within_band: 0,
+      mean_confidence: 0,
+      reports: 0,
+      beats: 0,
+      misses: 0,
+    }),
+    build: buildMarketStats,
+  },
+  news: { rust: "views::news::NewsView", empty: () => ({ feed: [] }), build: buildNews },
   births: unported("views::births::BirthsView", () => ({
     events: [],
     births: [],
@@ -204,19 +237,23 @@ export const VIEW_BUILDERS: ViewBuilders = {
   tech: unported("views::tech::TechView", () => ({ companies: [] })),
   industry_rows: unported("views::industry_rows::IndustryRowsView", () => ({ rows: [] })),
   industry_detail: unported("views::industry_detail::IndustryDetailView", () => ({ industries: [] })),
-  cycle: unported("views::cycle::CycleView", () => ({
-    phase: "Expansion",
-    g_t: 0,
-    quarters_left: 0,
-    z_avg: 0,
-    base_rate: 0,
-    zones: [],
-    ai_stage: "Preboom",
-    boom_year: null,
-    boom_date: { year: 2020, month: 1, day: 1 },
-    ai_labs_lt: 0,
-    pop_date: null,
-  })),
+  cycle: {
+    rust: "views::cycle::CycleView",
+    empty: () => ({
+      phase: "Expansion",
+      g_t: 0,
+      quarters_left: 0,
+      z_avg: 0,
+      base_rate: 0,
+      zones: [],
+      ai_stage: "Preboom",
+      boom_year: null,
+      boom_date: { year: 2020, month: 1, day: 1 },
+      ai_labs_lt: 0,
+      pop_date: null,
+    }),
+    build: buildCycle,
+  },
   map_layers: unported("views::map_layers::MapLayersView", () => ({
     political: { country: [], contested: [] },
     country_names: [],
@@ -227,7 +264,11 @@ export const VIEW_BUILDERS: ViewBuilders = {
     sectors: [],
     industry_names: [],
   })),
-  province_cards: unported("views::province_cards::ProvinceCardsView", () => ({ cards: [] })),
+  province_cards: {
+    rust: "views::province_cards::ProvinceCardsView",
+    empty: () => ({ cards: [] }),
+    build: buildProvinceCards,
+  },
   statements: {
     rust: "views::statements::StatementsView",
     empty: () => ({ companies: [] }),
@@ -245,13 +286,17 @@ export const VIEW_BUILDERS: ViewBuilders = {
     build: buildRatings,
   },
   recap: unported("views::recap::RecapView", () => ({ recaps: [], watchlist: [] })),
-  map_static: unported("views::map_static::MapStaticView", () => ({
-    provinces: [],
-    metros: [],
-    key_cities: [],
-    regions: [],
-    geo: null,
-  })),
+  map_static: {
+    rust: "views::map_static::MapStaticView",
+    empty: () => ({
+      provinces: [],
+      metros: [],
+      key_cities: [],
+      regions: [],
+      geo: null,
+    }),
+    build: buildMapStatic,
+  },
 };
 
 /**
