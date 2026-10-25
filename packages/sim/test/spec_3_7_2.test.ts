@@ -25,10 +25,10 @@ import {
   generateFull,
   type HomeChoice,
   pickCastSeat,
-} from "../../src/people/full.ts";
-import { nameBookForCountry } from "../../src/people/names.ts";
-import type { ProvinceId } from "../../src/types/ids.ts";
-import { SEAT_LABOR, type Seat, type Skills } from "../../src/types/state/people.ts";
+} from "../src/people/full.ts";
+import { nameBookForCountry } from "../src/people/names.ts";
+import type { ProvinceId } from "../src/types/ids.ts";
+import { SEAT_LABOR, type Seat, type Skills } from "../src/types/state/people.ts";
 import { data } from "./common/index.ts";
 import { newRng } from "./common/rng.ts";
 
