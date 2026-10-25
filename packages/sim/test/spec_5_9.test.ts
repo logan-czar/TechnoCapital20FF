@@ -22,7 +22,7 @@ import {
   decayRate,
   freeRdStep,
   steadyStateHeld,
-} from "../../src/ops/data.ts";
+} from "../src/ops/data.ts";
 import { emptyDataBook, stationsOf } from "./common/defaults.ts";
 
 const DEFAULT: DataParams = { tb_per_musd: 1.0, decay_base: 0.02 };

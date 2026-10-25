@@ -1,8 +1,8 @@
 // Rust Default values the tests build structs from (Ledger::default() and so on). The contracts
 // (types/state) fix every field, so these are plain literals and need no module that is not
 // ported yet.
-import type { BalanceSheet, Ledger, TaxBook } from "../../../src/types/state/finance.ts";
-import type { DataBook, Stations } from "../../../src/types/state/ops.ts";
+import type { BalanceSheet, Ledger, TaxBook } from "../../src/types/state/finance.ts";
+import type { DataBook, Stations } from "../../src/types/state/ops.ts";
 
 /** Ledger::default(): every line 0, with over applied (Rust struct update syntax). */
 export function zeroLedger(over: Partial<Ledger> = {}): Ledger {

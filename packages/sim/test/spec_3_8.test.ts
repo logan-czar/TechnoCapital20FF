@@ -9,9 +9,9 @@
 //                              [DataBook::at_load], conversionCapacity(stations),
 //                              dataBookStoredTb(book)
 import { describe, expect, it } from "vitest";
-import { computeBill, dataCompute, extraBaseCompute } from "../../src/ops/compute.ts";
-import { conversionCapacity, type DataParams, dataBookAtLoad, dataBookStoredTb } from "../../src/ops/data.ts";
-import type { Stations } from "../../src/types/state/ops.ts";
+import { computeBill, dataCompute, extraBaseCompute } from "../src/ops/compute.ts";
+import { conversionCapacity, type DataParams, dataBookAtLoad, dataBookStoredTb } from "../src/ops/data.ts";
+import type { Stations } from "../src/types/state/ops.ts";
 
 const OIL: DataParams = { tb_per_musd: 1.0, decay_base: 0.02 };
 

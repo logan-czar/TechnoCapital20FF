@@ -8,9 +8,9 @@
 //   ../../src/ops/stations.ts  stationsTotal(s)   [Stations::total]
 //   SEAT_LABOR from types/state/people.ts is Seat::LABOR
 import { describe, expect, it } from "vitest";
-import { fitStations, laborUnits, openSeats, seatChanges } from "../../src/ops/labor.ts";
-import { stationsTotal } from "../../src/ops/stations.ts";
-import { SEAT_LABOR } from "../../src/types/state/people.ts";
+import { fitStations, laborUnits, openSeats, seatChanges } from "../src/ops/labor.ts";
+import { stationsTotal } from "../src/ops/stations.ts";
+import { SEAT_LABOR } from "../src/types/state/people.ts";
 import { stationsOf } from "./common/defaults.ts";
 
 /** industries.csv labor_value_usd (every industry in the MVP). */
