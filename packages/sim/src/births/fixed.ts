@@ -67,7 +67,8 @@ function parseDate(s: string): SimDate | null {
   const m = parts[1] === undefined ? null : parseInteger(parts[1]);
   const d = parts[2] === undefined ? null : parseInteger(parts[2]);
   if (y === null || m === null || d === null) return null;
-  // m and d are u8 in Rust: out of range parses fail.
+  // y is i32 and m and d are u8 in Rust: out of range parses fail.
+  if (y < -2147483648 || y > 2147483647) return null;
   if (m < 0 || m > 255 || d < 0 || d > 255) return null;
   return simDateNew(y, m, d);
 }
