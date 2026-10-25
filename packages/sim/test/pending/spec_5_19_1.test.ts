@@ -14,7 +14,7 @@
 //                                StartupDraft { industry, hq, target_revenue_usd, full, partial }
 //   ../../src/births/weights.ts  developmentAboveFloor, fringeFactor, gdpPerHead, heat, hqWeight,
 //                                industryWeight, provinceWeight, wealthFactor, weightedPick
-//   ../../src/world/load.ts      worldFromData (ported)
+//   ../../src/world/load.ts      buildWorld (World::from_data)
 //   "@tc20ff/sim-data"           worldDataAllProvinces (ported)
 //
 // Changed from the Rust: the generator is new (D951), so the seeds (0..299, 7, 11, 5) do not
@@ -52,7 +52,7 @@ import { cmpStr, maxF } from "../../src/types/num.ts";
 import type { EventType } from "../../src/types/state/births.ts";
 import { EVENT_TYPE_VALUES } from "../../src/types/state/births.ts";
 import type { PhaseLabel } from "../../src/types/world.ts";
-import { worldFromData } from "../../src/world/load.ts";
+import { buildWorld } from "../../src/world/load.ts";
 import { data, unwrap } from "./common/index.ts";
 import { newNoNoise, newRngStreams, newScripted, scriptedPush } from "./common/rng.ts";
 
@@ -195,7 +195,7 @@ describe("spec 5.19.1 random startup events", () => {
     expect(developmentAboveFloor(1, 1, 1)).toBe(0);
     expect(developmentAboveFloor(9, 15, 16)).toBe(37);
     expect(developmentAboveFloor(0, 2, 1)).toBe(1);
-    const w = unwrap(worldFromData(data()), "World::from_data");
+    const w = unwrap(buildWorld(data()), "World::from_data");
     const sites = w.births.sites;
     expect(sites.hq_fallback_countries.length).toBe(0);
     const floor = worldDataAllProvinces(data()).filter(
