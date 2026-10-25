@@ -19,21 +19,26 @@
 //    Values that a published figure also holds are dropped: several starting companies share
 //    their starting books (company-start.csv), so a published company's 2019 lines can equal a
 //    private one's by the data, not by a view.
+//    So are values of public data (`PUBLIC_DATA`), and small round values (under 1,000, at most 3
+//    significant digits) are not truths at all.
 // 3. The scan: every number in the observer's views (every ported view) but the fields that are
-//    ids, counts, shares or dates (`NOT_FIGURES`) must differ from every truth.
+//    ids, counts, shares or dates (`NOT_FIGURES`) must differ from every truth; a truth under
+//    1,000 (TB, points, ratios, shares, never money) only within its own view, since across views
+//    such values meet skills and weights by the data.
 //
 // Run on seed 1 at load and after Q1 2020's release and the Q2 recap week. A planted leak and a
 // wrong flag are checked to fail (the test's own negative cases).
 import { describe, expect, it } from "vitest";
 import { type Sim, simApply, simNew, simViews, simWorld } from "../../src/lib.ts";
 import { simDateYmd } from "../../src/time/calendar.ts";
-import type { CompanyId } from "../../src/types/ids.ts";
+import type { CompanyId, IndustryId } from "../../src/types/ids.ts";
 import type { Statement } from "../../src/types/state/finance.ts";
 import { type Figure, STATEMENT_LINE_VALUES } from "../../src/types/views/estimate.ts";
 import { type SimViews, VIEW_NAMES } from "../../src/types/views/index.ts";
 import type { World } from "../../src/types/world.ts";
 import { showsEstimates, statementLineIndex, statementLineOf } from "../../src/views/estimate.ts";
 import { simViewsClone, viewIsPorted } from "../../src/views/index.ts";
+import { worldIndustryEstimatedAt } from "../../src/world/index.ts";
 import { data, unwrap } from "../common/index.ts";
 import { runTo } from "../common/ops.ts";
 
@@ -103,18 +108,28 @@ const NOT_FIGURES = new Set([
 ]);
 
 /**
- * Fields of public world data from the load (country-economy.csv's GDP): a private company's
- * round starting revenue can equal one by the data.
+ * Fields of public data: the load's world data (country-economy.csv's GDP) and the published step
+ * tables (the next PC bonus step, 5.8; the next free R&D step, 5.9) and what follows the published
+ * station counts (stations, PC, the compute bill, D434). A private company's round
+ * starting revenue or cash can equal one by the data.
  */
-const PUBLIC_DATA = new Set(["gdp_usd"]);
+const PUBLIC_DATA = new Set(["gdp_usd", "next_bonus_pc", "next_step_tb", "stations", "pc", "compute"]);
 
 const isRecord = (x: unknown): x is Record<string, unknown> => typeof x === "object" && x !== null;
 const isFigure = (x: unknown): x is Figure =>
   isRecord(x) &&
   ((x.kind === "Exact" && typeof x.value === "number") || (x.kind === "Band" && isRecord(x.band)));
 
+/**
+ * Records a truth. Left out: 0, and a small round value (under 1,000 with at most 3 significant
+ * digits: a 0.25 TB book, 1 point), which tax rates, weights and counts hold by the data; a
+ * money figure is never that small, and every distinctive value stays in.
+ */
 function addTruth(truths: Truths, x: number, where: string): void {
-  if (x !== 0 && Number.isFinite(x) && !truths.has(x)) truths.set(x, where);
+  if (x === 0 || !Number.isFinite(x) || truths.has(x)) return;
+  const a = Math.abs(x);
+  if (a < 1000 && Number(a.toPrecision(3)) === a) return;
+  truths.set(x, where);
 }
 
 /** Walks the observer's and Omniscient's builds of one view side by side (truths, 2). */
@@ -174,7 +189,7 @@ function publicValues(observer: SimViews): Set<number> {
       if (x.kind === "Exact" && typeof x.value === "number") out.add(x.value);
       else
         for (const [k, v] of Object.entries(x)) {
-          if (PUBLIC_DATA.has(k) && typeof v === "number") out.add(v);
+          if (PUBLIC_DATA.has(k)) walk(v, true);
           else walk(v, inStatement);
         }
     }
@@ -252,6 +267,34 @@ function shape(w: World, v: SimViews): string[] {
     const exact = d.exchange === null ? [] : ["shown_value_per_share"];
     figuresShaped(d as never, d.estimated, `company_detail[${d.id}]`, exact, bad);
   }
+  // The industry class (D432) and the unit figures it bands (D436).
+  const estimatedAt = w.industries.map((_, i) => worldIndustryEstimatedAt(w, i as IndustryId, w.clock));
+  const unitBanded = (c: CompanyId, i: IndustryId) => !pub(c) || estimatedAt[i]!;
+  for (const u of v.units.data.units) {
+    const where = `units[${u.id}]`;
+    if (u.estimated !== unitBanded(u.company, u.industry)) bad.push(`${where}.estimated is ${u.estimated}`);
+    figuresShaped(u as never, u.estimated, where, ["shared_m"], bad);
+  }
+  for (const t of v.tech.data.companies) {
+    const banded = unitBanded(t.company, w.companies[t.company]!.industry);
+    t.data.forEach((d, k) => {
+      figuresShaped(d as never, banded, `tech[${t.company}].data[${k}]`, [], bad);
+    });
+  }
+  for (const r of v.industry_rows.data.rows) {
+    const where = `industry_rows[${r.id}]`;
+    if (r.estimated !== estimatedAt[r.id]) bad.push(`${where}.estimated is ${r.estimated}`);
+    figuresShaped(r as never, r.estimated, where, r.demand > 0 ? [] : ["supply_ratio"], bad);
+  }
+  for (const d of v.industry_detail.data.industries) {
+    const where = `industry_detail[${d.id}]`;
+    if (d.estimated !== estimatedAt[d.id]) bad.push(`${where}.estimated is ${d.estimated}`);
+    if (d.fringe_revenue_m.kind !== (d.estimated ? "Band" : "Exact")) bad.push(`${where}.fringe_revenue_m`);
+    for (const c of d.companies) {
+      const want = unitBanded(c.company, d.id) ? "Band" : "Exact";
+      if (c.revenue_m.kind !== want) bad.push(`${where} company ${c.company} revenue is ${c.revenue_m.kind}`);
+    }
+  }
   return bad;
 }
 
@@ -275,7 +318,11 @@ function scan(w: World, observer: SimViews, omniscient: SimViews): Scan {
     numbers(observer[n].data, n, n, all);
     for (const [x, where] of all) {
       const t = truths.get(x);
-      if (t !== undefined) leaks.push(`${where} = ${x}, the truth of ${t}`);
+      if (t === undefined) continue;
+      // A figure under 1,000 (TB, points, ratios, shares) counts only in its own view: across
+      // views such small values meet skills, rates and weights by the data.
+      if (Math.abs(x) < 1000 && t.split(/[. []/, 1)[0] !== n) continue;
+      leaks.push(`${where} = ${x}, the truth of ${t}`);
     }
   }
   return { shape: shape(w, observer), bad, leaks, truths: truths.size };

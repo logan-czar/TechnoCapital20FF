@@ -3,12 +3,12 @@
 // the generated view copy the UI bridge uses.
 //
 // Expects:
-//   ../../../src/lib.ts                 simNew, simApply, simViews; (via ../common/ops.ts) simStep,
+//   ../../src/lib.ts                 simNew, simApply, simViews; (via ../common/ops.ts) simStep,
 //                                       simNow
-//   ../../../src/types/views/index.ts   simViewsSameData(a, b), simViewsCopyChangedFrom(dst, src)
+//   ../../src/views/index.ts         simViewsSameData(a, b), simViewsCopyChangedFrom(dst, src)
 //                                       [SimViews::same_data, ::copy_changed_from; D700 lists them
 //                                       as not ported logic]
-//   ../../../src/views/tech.ts          techRowStoredTb(row) -> Figure [TechRow::stored_tb]
+//   ../../src/views/tech.ts          techRowStoredTb(row) -> Figure [TechRow::stored_tb]
 //   ../common/ops.ts                    runTo, company
 //
 // Changed from the Rust: the seed (2) seeds the new generator (D951). Everything asserted comes
@@ -19,12 +19,12 @@
 // come from the gen stream, so card skills are not asserted, only the skill_used the cards
 // report, as in the Rust.
 import { describe, expect, it } from "vitest";
-import { simApply, simNew, simViews } from "../../../src/lib.ts";
-import { simDateYmd } from "../../../src/time/calendar.ts";
-import type { CompanyId } from "../../../src/types/ids.ts";
-import type { Seat } from "../../../src/types/state/people.ts";
-import { simViewsCopyChangedFrom, simViewsSameData } from "../../../src/types/views/index.ts";
-import { techRowStoredTb } from "../../../src/views/tech.ts";
+import { simApply, simNew, simViews } from "../../src/lib.ts";
+import { simDateYmd } from "../../src/time/calendar.ts";
+import type { CompanyId } from "../../src/types/ids.ts";
+import type { Seat } from "../../src/types/state/people.ts";
+import { simViewsCopyChangedFrom, simViewsSameData } from "../../src/views/index.ts";
+import { techRowStoredTb } from "../../src/views/tech.ts";
 import { stationsOf } from "../common/defaults.ts";
 import { data, unwrap } from "../common/index.ts";
 import { runTo } from "../common/ops.ts";
@@ -32,7 +32,7 @@ import { byField, figExactOrThrow, figShown } from "../common/views.ts";
 
 describe("m3 views", () => {
   it("company_units_and_tech_views_show_arrowhead", () => {
-    const sim = unwrap(simNew(data(), 2), "Sim::new");
+    const sim = unwrap(simNew(data(), 2, { debug: true }), "Sim::new");
     // Arrowhead is listed, but in an industry with one or two private companies its unit and
     // data figures are bands (D436); Omniscient shows the engine's values.
     unwrap(simApply(sim, { kind: "SetOmniscient", on: true }), "SetOmniscient");
