@@ -5,9 +5,9 @@
 // Expects:
 //   "@tc20ff/sim-data"       type WorldData
 //   "@tc20ff/sim-data/node"  loadWorld, defaultDataDir
-//   ../../../src/lib.ts      Sim (type), simNew(data, seed) -> Result<Sim, LoadError>,
+//   ../../src/lib.ts      Sim (type), simNew(data, seed) -> Result<Sim, LoadError>,
 //                            simRegisterTestJob(sim, slot, name, job)   [Sim::register_test_job]
-//   ../../../src/time        type JobCtx { facts: TickFacts, draws: DrawSource, ... },
+//   ../../src/time        type JobCtx { facts: TickFacts, draws: DrawSource, ... },
 //                            raiseAlert(ctx, kind, payload) [JobCtx::raise_alert]
 //   ../../src/types/views/estimate.ts  type Figure (the Figure::Exact / Figure::Band enum)
 import type { WorldData } from "@tc20ff/sim-data";

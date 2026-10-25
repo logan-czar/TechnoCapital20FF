@@ -1,6 +1,18 @@
 // Argument parsing of the headless commands (crates/headless/src/main.rs): each parser returns
 // null on a bad or missing argument, and main prints the usage (exit code 2).
+import { resolve } from "node:path";
 import { defaultDataDir } from "@tc20ff/sim-data/node";
+
+/**
+ * A path the user typed, resolved against the directory they ran the command from: `INIT_CWD`
+ * when run through pnpm (`pnpm --filter @tc20ff/headless start ...` runs in apps/headless), else
+ * the process's cwd. The defaults (data, map, Rust reference) are found from the repository root
+ * instead (sim-data `repoRoot`).
+ */
+export function userPath(p: string): string {
+  return resolve(process.env.INIT_CWD ?? process.cwd(), p);
+}
+
 import { DEFAULT_SEEDS, DEFAULT_YEARS, type SoakArgs } from "./soak.ts";
 
 export const USAGE = [
@@ -70,7 +82,7 @@ export function parseRun(args: readonly string[]): RunArgs | null {
       case "--out": {
         const v = args[++i];
         if (v === undefined) return null;
-        out = v;
+        out = userPath(v);
         break;
       }
       case "--hash-monthly":
@@ -85,7 +97,7 @@ export function parseRun(args: readonly string[]): RunArgs | null {
       case "--data-dir": {
         const v = args[++i];
         if (v === undefined) return null;
-        dir = v;
+        dir = userPath(v);
         break;
       }
       default:
@@ -129,7 +141,7 @@ export function parseSoak(args: readonly string[]): [SoakArgs, string] | null {
       case "--out": {
         const v = args[++i];
         if (v === undefined) return null;
-        out = v;
+        out = userPath(v);
         break;
       }
       case "--check":
@@ -141,7 +153,7 @@ export function parseSoak(args: readonly string[]): [SoakArgs, string] | null {
       case "--data-dir": {
         const v = args[++i];
         if (v === undefined) return null;
-        dir = v;
+        dir = userPath(v);
         break;
       }
       default:
@@ -170,13 +182,13 @@ export function parseRecord(args: readonly string[]): [number, number, string, s
       case "--out": {
         const v = args[++i];
         if (v === undefined) return null;
-        out = v;
+        out = userPath(v);
         break;
       }
       case "--data-dir": {
         const v = args[++i];
         if (v === undefined) return null;
-        dir = v;
+        dir = userPath(v);
         break;
       }
       default:
@@ -195,9 +207,9 @@ export function parseReplay(args: readonly string[]): [string, string] | null {
     if (a === "--data-dir") {
       const v = args[++i];
       if (v === undefined) return null;
-      dir = v;
+      dir = userPath(v);
     } else if (log === null && !a.startsWith("--")) {
-      log = a;
+      log = userPath(a);
     } else {
       return null;
     }

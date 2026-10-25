@@ -10,6 +10,7 @@ import {
   maxSharesOut,
   median,
   parityCheck,
+  parityCommand,
   yearlyMedians,
 } from "../src/parity.ts";
 
@@ -106,14 +107,49 @@ describe("headless parity", () => {
     expect(r.failures.map((f) => [f.metric, f.year])).toEqual([["ticks", 2020]]);
   });
 
-  it("a_missing_year_or_metric_fails", () => {
+  it("a_seed_missing_a_year_is_insufficient", () => {
     const r = parityCheck({
       tsYears: yearsCsv({ 2020: [[8784, 0.01, 650]] }),
       tsSummary,
       bands,
       rustSummary,
     });
-    expect(r.failures.filter((f) => f.kind === "missing" && f.year === 2021)).toHaveLength(3);
+    expect(r.ok).toBe(false);
+    expect(r.failures).toEqual([
+      expect.objectContaining({
+        kind: "insufficient",
+        message: "insufficient seeds/years: seed 1 has no row for 2021",
+      }),
+    ]);
+    expect(r.metrics_checked).toBe(0);
+  });
+
+  it("a_missing_metric_fails", () => {
+    const noNamed = goodYears
+      .split("\n")
+      .map((l) => l.split(",").slice(0, 5).join(","))
+      .join("\n");
+    const r = parityCheck({ tsYears: noNamed, tsSummary, bands, rustSummary });
+    expect(r.failures.filter((f) => f.kind === "missing").map((f) => [f.metric, f.year])).toEqual([
+      ["named", 2020],
+      ["named", 2021],
+    ]);
+  });
+
+  it("fewer_seeds_than_the_reference_is_insufficient", () => {
+    const r = parityCheck({ tsYears: goodYears, tsSummary, bands: { ...bands, seeds: 4 }, rustSummary });
+    expect(r.failures.map((f) => f.message)).toEqual([
+      "insufficient seeds/years: 3 distinct seeds, the reference has 4",
+    ]);
+  });
+
+  it("empty_cells_are_missing_not_zero", () => {
+    const csv = "seed,year,x,y\n1,2020,10,\n2,2020,,\n3,2020,30,5\n";
+    const m = yearlyMedians(csv).get(2020);
+    // x: 10 and 30 present (2 of 3): their median, not the median of 0, 10, 30.
+    expect(m?.get("x")).toBe(20);
+    // y: 1 of 3 present: too few, reported missing.
+    expect(m?.has("y")).toBe(false);
   });
 
   it("a_rust_met_target_that_is_not_met_in_ts_fails_but_waived_ones_are_skipped", () => {
@@ -164,5 +200,34 @@ describe("headless parity", () => {
     });
     expect(r.failures).toEqual([]);
     expect(r.targets_checked).toBe(19);
+  });
+
+  it("half_the_rust_seeds_is_insufficient", () => {
+    const ref = join(import.meta.dirname, "..", "..", "..", "test", "fixtures", "rust-reference");
+    const read = (n: string): string => readFileSync(join(ref, n), "utf8");
+    const lines = read("years.csv").split(/\r?\n/);
+    const half = [lines[0], ...lines.slice(1).filter((l) => l !== "" && Number(l.split(",")[0]) <= 25)].join(
+      "\n",
+    );
+    const r = parityCheck({
+      tsYears: half,
+      tsSummary: read("summary.csv"),
+      bands: JSON.parse(read("bands.json")) as Bands,
+      rustSummary: read("summary.csv"),
+    });
+    expect(r.failures.map((f) => f.kind)).toEqual(["insufficient"]);
+  });
+
+  it("the_command_finds_the_reference_from_any_directory", () => {
+    // pnpm --filter @tc20ff/headless start parity <dir> runs in apps/headless: the soak dir is the
+    // user's (INIT_CWD), the reference is the repository's.
+    const saved = process.env.INIT_CWD;
+    process.env.INIT_CWD = join(import.meta.dirname, "..");
+    try {
+      expect(parityCommand([join("..", "..", "test", "fixtures", "rust-reference")])).toBe(0);
+    } finally {
+      if (saved === undefined) delete process.env.INIT_CWD;
+      else process.env.INIT_CWD = saved;
+    }
   });
 });

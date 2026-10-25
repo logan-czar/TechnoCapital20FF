@@ -17,7 +17,7 @@
 //   Rating is the string union of types/state/finance.ts; Rust order is RATING_VALUES index.
 import { RATING_LABELS, ratingFactorOfLabel } from "@tc20ff/sim-data";
 import { describe, expect, it } from "vitest";
-import { homeSpread } from "../../src/finance/credit.ts";
+import { homeSpread } from "../src/finance/credit.ts";
 import {
   corporateSpread,
   coverNotches,
@@ -32,9 +32,9 @@ import {
   sizeNotches,
   sovereignCeiling,
   startingRating,
-} from "../../src/finance/rating.ts";
-import { roundHalfAway } from "../../src/types/num.ts";
-import { type ImpliedRating, RATING_VALUES, type Rating } from "../../src/types/state/finance.ts";
+} from "../src/finance/rating.ts";
+import { roundHalfAway } from "../src/types/num.ts";
+import { type ImpliedRating, RATING_VALUES, type Rating } from "../src/types/state/finance.ts";
 import {
   BASE_RATE,
   data,
