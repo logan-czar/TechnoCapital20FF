@@ -1,126 +1,143 @@
 // The sim-side half of crates/game/tests/m9_leak.rs (M9.8, D574): with Omniscient off, no view
 // may hold a true private figure. Rust scans the game's rendered text; here the view data itself
 // is scanned, which is stricter (every number, not its rounded rendering). Not a Rust file.
+// leak_rules.ts maps the views (company subtrees, id leaves, the allow-lists); leak_perturb.ts
+// makes the perturbed world of check 4.
 //
 // Two builds of one state: the observer's and Omniscient's (a debug Sim, D961). Omniscient is
 // toggled on and off first, so the observer's views are rebuilt at that tick too (D423), then on
 // again: the two builds differ only by Omniscient.
 //
-// 1. The shape: every company row says `estimated` exactly when the company does not publish
-//    (D420), a banded company's figures are all bands (but the compute and licences line, D434,
-//    and a listed company's EFV, D140), a publishing company's all exact, and a banded company's
-//    statements hold no archive (D130). A wrong flag, the likeliest leak, fails here.
+// 1. The shape, over every leaf of every ported view: a leaf in the subtree of a company that
+//    does not publish (D420; the subtrees are leak_rules.ts `owners`) is a band if it is a
+//    figure, but for the compute and licences line (D434) and a listed company's EFV (D140)
+//    (`exactInBanded`); a plain number there must be an id, a count, a date or one of the
+//    numbers D420 leaves exact (`bandedPlain`), so a money figure served as a bare number fails.
+//    A publishing company's figures are all exact; a figure about no company fails (a new view
+//    must say whose it is); every `estimated` flag says whether its company publishes; a banded
+//    company's statements hold no archive (D130). A wrong flag, the likeliest leak, fails here.
 // 2. The truths: walking both builds side by side, a figure that is a band for the observer and
-//    exact in Omniscient gives a truth, and the band must hold it strictly inside (D422); so does
-//    any plain number that differs between the builds (only private figures can, D574's rule,
-//    so a future view or derived value is covered without listing it). v_statements' banded
-//    companies hold estimates instead of the archive, so every line of their Omniscient
-//    statements (but Shared, D434), held TB and Omniscient's posted months are truths too.
-//    Values that a published figure also holds are dropped: several starting companies share
-//    their starting books (company-start.csv), so a published company's 2019 lines can equal a
-//    private one's by the data, not by a view.
-// 3. The scan: every number in the observer's views (every ported view) but the fields that are
-//    ids, counts, shares or dates (`NOT_FIGURES`) must differ from every truth.
+//    exact in Omniscient gives a truth; so does any plain number that differs between the builds
+//    (only private figures can, D574's rule) or that Omniscient alone shows (the true V). Every
+//    band must hold its truth strictly inside (D422) and sit at least `BAND_MIN_ERROR` × |truth|
+//    away from it (D429: every error is at least ESTIMATE_BIAS_MIN − ESTIMATE_JITTER = 5.5% of
+//    the truth, sums and maps keep it, D430; so an estimate that is the truth rounded fails).
+//    v_statements' banded companies hold estimates instead of the archive: their estimated
+//    statements are paired with Omniscient's by period, and every line (but Shared, D434), the
+//    held TB and Omniscient's posted months are truths. Values that public data also holds are
+//    dropped: several starting companies share their starting books (company-start.csv), so a
+//    published company's 2019 lines can equal a private one's. Only these are public: every
+//    number of a publishing company's subtrees, a listed company's EFV, and `PUBLIC_PATHS`.
+// 3. The scan: every number of the observer's views (every ported view, plain numbers, exact
+//    figures and band ends) must differ from every truth, but the id, count and date leaves
+//    (path-qualified: leak_rules.ts `ids`, and dates by their shape). Nothing else is skipped:
+//    an array of rows is always walked, and the operations D420 leaves exact are scanned too.
+// 4. The perturbation, for derived and rounded leaks that equal no truth: the observer's views
+//    are built twice by the view builders themselves (`simViewsBuild`, the same seed, controls
+//    and map data), once from the state and once from a copy in which every banded company's
+//    books are perturbed unevenly (leak_perturb.ts). Bands are left out of the comparison:
+//    a band's noise is a hash of the truth's bits (D421), so every band moves when its truth does,
+//    by design; each band is checked against its truth instead (2), in the perturbed build too.
+//    Every other leaf (plain numbers, exact figures, strings, flags, array lengths: anything
+//    a screen prints or a list's shape) must be the same in both builds, but `perturbExempt`
+//    (a listed company's EFV, D140, and v_market_stats' soak diagnostics, D144). A leaf that
+//    follows a private book (revenue in $M, cash rounded to $1M, cash over the shares, a margin,
+//    a name with a figure in it) changes, and is a leak. A future view that derives a plain number
+//    from a band's estimate (a sort order, a pin size) changes too: it must say so in
+//    `perturbExempt`, with its reason.
 //
-// Run on seed 1 at load and after Q1 2020's release and the Q2 recap week. A planted leak and a
-// wrong flag are checked to fail (the test's own negative cases).
+// Run on seed 1 at load, after the first listing in play (company 115 lists on 9 January 2020
+// and shows estimates until 2 April), after Q1 2020's release with three new listings in play
+// (9 April), and after the first annual close (2020's year statements publish on 2 January 2021;
+// born companies by then). Each hole the test once had is a negative case below.
 import { describe, expect, it } from "vitest";
-import { type Sim, simApply, simNew, simViews, simWorld } from "../../src/lib.ts";
+import {
+  SIM_DEPS,
+  type Sim,
+  simApply,
+  simControls,
+  simData,
+  simNew,
+  simSeed,
+  simViews,
+  simWorld,
+} from "../../src/lib.ts";
 import { simDateYmd } from "../../src/time/calendar.ts";
 import type { CompanyId } from "../../src/types/ids.ts";
-import type { Statement } from "../../src/types/state/finance.ts";
-import { type Figure, STATEMENT_LINE_VALUES } from "../../src/types/views/estimate.ts";
-import { type SimViews, VIEW_NAMES } from "../../src/types/views/index.ts";
-import type { World } from "../../src/types/world.ts";
+import { roundHalfAway } from "../../src/types/num.ts";
+import type { Period, Statement } from "../../src/types/state/finance.ts";
+import {
+  type Band,
+  ESTIMATE_BIAS_MIN,
+  ESTIMATE_JITTER,
+  type Figure,
+  STATEMENT_LINE_VALUES,
+} from "../../src/types/views/estimate.ts";
+import { type SimViews, VIEW_NAMES, type ViewName } from "../../src/types/views/index.ts";
+import type { EstimatedStatement } from "../../src/types/views/statements.ts";
+import type { Company, World } from "../../src/types/world.ts";
 import { showsEstimates, statementLineIndex, statementLineOf } from "../../src/views/estimate.ts";
-import { simViewsClone, viewIsPorted } from "../../src/views/index.ts";
+import {
+  simViewsBuild,
+  simViewsClone,
+  VIEW_BUILDERS,
+  type ViewBuilder,
+  type ViewBuilders,
+  type ViewInput,
+  viewIsPorted,
+} from "../../src/views/index.ts";
+import { periodEq } from "../../src/views/statements.ts";
 import { data, unwrap } from "../common/index.ts";
 import { runTo } from "../common/ops.ts";
+import { bandedCompanies, perturbBooks } from "./leak_perturb.ts";
+import {
+  exactInBanded,
+  GUIDANCE_HIGH,
+  isFigure,
+  isIdLeaf,
+  isListedEfv,
+  isRecord,
+  type Leaf,
+  leafNumbers,
+  PUBLIC_PATHS,
+  perturbExempt,
+  plainInBanded,
+  VIEW_RULES,
+  walkView,
+} from "./leak_rules.ts";
 
 type Truths = Map<number, string>;
 
-/** Fields that hold ids, counts, shares, dates or flags' numbers: never a figure. */
-const NOT_FIGURES = new Set([
-  "id",
-  "company",
-  "companies_count",
-  "industry",
-  "hq_country",
-  "hq_province",
-  "base_province",
-  "province",
-  "country",
-  "zone",
-  "exchange",
-  "character",
-  "partial_id",
-  "owner_of_record",
-  "founders",
-  "top_companies",
-  "watchlist",
-  "event",
-  "year",
-  "month",
-  "day",
-  "q",
-  "hour",
-  "age",
-  "shares",
-  "shares_out",
-  "labor_units",
-  "buckets",
-  "free_rd_pct",
-  "pc_bonus",
-  "distress_months",
-  "frozen_quarters",
-  "excess_months_left",
-  "last_review_notches",
-  "cover_notches",
-  "rating_notches",
-  "listed",
-  "quoted",
-  "reports",
-  "beats",
-  "misses",
-  "now",
-  "next_release",
-  "days_to_next_phase",
-  "provinces",
-  "members",
-  "skills",
-  "hq",
-  "volume",
-  "full_characters_made",
-  "full_characters",
-  "births_by_industry",
-  // Lists of ids.
-  "industries",
-  "startups",
-  "hq_companies",
-  "constituents",
-  "hqs",
-  "units",
-]);
-
 /**
- * Fields of public world data from the load (country-economy.csv's GDP): a private company's
- * round starting revenue can equal one by the data.
+ * How far every band's estimate sits from its truth at least, as a share of it (2): the floor of
+ * D429's error, ESTIMATE_BIAS_MIN − ESTIMATE_JITTER (5.5%), less a margin for D430's sums.
  */
-const PUBLIC_DATA = new Set(["gdp_usd"]);
+const BAND_MIN_ERROR = 0.05;
 
-const isRecord = (x: unknown): x is Record<string, unknown> => typeof x === "object" && x !== null;
-const isFigure = (x: unknown): x is Figure =>
-  isRecord(x) &&
-  ((x.kind === "Exact" && typeof x.value === "number") || (x.kind === "Band" && isRecord(x.band)));
+const PORTED: readonly ViewName[] = VIEW_NAMES.filter((n) => viewIsPorted(n));
 
 function addTruth(truths: Truths, x: number, where: string): void {
   if (x !== 0 && Number.isFinite(x) && !truths.has(x)) truths.set(x, where);
 }
 
+/** A band against its truth (2): strictly inside, never the truth, far enough from it. */
+function checkBand(b: Band, t: number, where: string, bad: string[], distance = true): void {
+  if (!(b.low < t && t < b.high && b.estimate !== t)) {
+    bad.push(`${where}: ${t} not strictly in ${JSON.stringify(b)}`);
+  } else if (distance && Math.abs(b.estimate - t) < BAND_MIN_ERROR * Math.abs(t)) {
+    bad.push(`${where}: estimate ${b.estimate} within ${BAND_MIN_ERROR} of ${t}`);
+  }
+}
+
 /** Walks the observer's and Omniscient's builds of one view side by side (truths, 2). */
 function pair(shown: unknown, truth: unknown, where: string, truths: Truths, bad: string[]): void {
-  if (typeof shown === "number" && typeof truth === "number") {
-    if (shown !== truth && !(Number.isNaN(shown) && Number.isNaN(truth))) addTruth(truths, truth, where);
+  if (typeof truth === "number") {
+    if (typeof shown === "number") {
+      if (shown !== truth && !(Number.isNaN(shown) && Number.isNaN(truth))) addTruth(truths, truth, where);
+    } else if (shown === null || shown === undefined) {
+      // Omniscient alone shows it (v_quotes' true V).
+      addTruth(truths, truth, where);
+    }
     return;
   }
   if (Array.isArray(shown) && Array.isArray(truth)) {
@@ -131,12 +148,8 @@ function pair(shown: unknown, truth: unknown, where: string, truths: Truths, bad
   if (!isRecord(shown) || !isRecord(truth)) return;
   if (isFigure(shown) && isFigure(truth)) {
     if (shown.kind === "Band" && truth.kind === "Exact") {
-      const b = shown.band;
-      const t = truth.value;
-      addTruth(truths, t, where);
-      if (!(b.low < t && t < b.high && b.estimate !== t)) {
-        bad.push(`${where}: ${t} not strictly in ${JSON.stringify(b)}`);
-      }
+      addTruth(truths, truth.value, where);
+      checkBand(shown.band, truth.value, where, bad);
     } else if (shown.kind === "Exact" && truth.kind === "Exact" && shown.value !== truth.value) {
       addTruth(truths, truth.value, where);
     }
@@ -147,13 +160,37 @@ function pair(shown: unknown, truth: unknown, where: string, truths: Truths, bad
   for (const k of Object.keys(s)) pair(s[k], t[k], `${where}.${k}`, truths, bad);
 }
 
-/** The truths of v_statements' banded companies (their archive is not in the observer's view). */
-function statementTruths(observer: SimViews, omniscient: SimViews, truths: Truths): void {
+/**
+ * The truths of v_statements' banded companies (their archive is not in the observer's view),
+ * and their estimated statements against Omniscient's, paired by period (2).
+ */
+function statementTruths(observer: SimViews, omniscient: SimViews, truths: Truths, bad: string[]): void {
+  const shared = statementLineIndex("Shared");
   observer.statements.data.companies.forEach((c, i) => {
     if (!c.estimated) return;
     const t = omniscient.statements.data.companies[i]!;
-    const all: Statement[] = [...t.quarters, ...t.years];
-    for (const s of all) {
+    const against = (shown: readonly EstimatedStatement[], all: readonly Statement[], what: string) => {
+      for (const e of shown) {
+        const s = all.find((x) => periodEq(x.period, e.period as Period));
+        const where = `statements ${c.key} ${what} ${JSON.stringify(e.period)}`;
+        if (s === undefined) {
+          bad.push(`${where}: no Omniscient statement`);
+          continue;
+        }
+        STATEMENT_LINE_VALUES.forEach((l, k) => {
+          const f = e.lines[k]!;
+          if (k === shared || f.kind !== "Band") return;
+          // GuidanceHigh is the low end's band moved by the width (D430): its error is the low
+          // end's, so only containment holds for it.
+          checkBand(f.band, statementLineOf(l, s), `${where} ${l}`, bad, k !== GUIDANCE_HIGH);
+        });
+        const h = e.operating.held_tb;
+        if (h.kind === "Band") checkBand(h.band, s.key.held_tb, `${where} held TB`, bad);
+      }
+    };
+    against(c.estimated_quarters, t.quarters, "quarter");
+    against(c.estimated_years, t.years, "year");
+    for (const s of [...t.quarters, ...t.years]) {
       for (const l of STATEMENT_LINE_VALUES) {
         if (l !== "Shared") addTruth(truths, statementLineOf(l, s), `statements ${c.key} ${l}`);
       }
@@ -163,95 +200,57 @@ function statementTruths(observer: SimViews, omniscient: SimViews, truths: Truth
   });
 }
 
-/** Every value a published figure holds: exact figures and the published statements. */
-function publicValues(observer: SimViews): Set<number> {
+/** Every leaf of every ported view of `v`. */
+function leaves(v: SimViews, visit: (leaf: Leaf) => void): void {
+  for (const n of PORTED) walkView(n, v[n].data, visit);
+}
+
+/**
+ * The public values (2): every number of a publishing company's subtrees, a listed company's
+ * EFV, and `PUBLIC_PATHS`. Nothing else: an exact value elsewhere is not made public by being
+ * shown (it may be the leak).
+ */
+function publicValues(w: World, observer: SimViews): Set<number> {
   const out = new Set<number>();
-  const walk = (x: unknown, inStatement: boolean): void => {
-    if (typeof x === "number") {
-      if (inStatement) out.add(x);
-    } else if (Array.isArray(x)) for (const y of x) walk(y, inStatement);
-    else if (isRecord(x)) {
-      if (x.kind === "Exact" && typeof x.value === "number") out.add(x.value);
-      else
-        for (const [k, v] of Object.entries(x)) {
-          if (PUBLIC_DATA.has(k) && typeof v === "number") out.add(v);
-          else walk(v, inStatement);
-        }
-    }
-  };
-  for (const n of VIEW_NAMES) if (viewIsPorted(n)) walk(observer[n].data, false);
-  for (const c of observer.statements.data.companies) walk([c.quarters, c.years], true);
+  leaves(observer, (leaf) => {
+    const o = leaf.ctx.owner;
+    const pub = (o !== null && !showsEstimates(w, o)) || isListedEfv(leaf) || PUBLIC_PATHS.has(leaf.norm);
+    if (pub) for (const x of leafNumbers(leaf)) out.add(x);
+  });
   return out;
 }
 
-/** Every number of a view's data that may be a figure (3), with its path. */
-function numbers(x: unknown, where: string, key: string, out: [number, string][]): void {
-  if (NOT_FIGURES.has(key)) return;
-  if (typeof x === "number") out.push([x, where]);
-  else if (Array.isArray(x)) {
-    for (let i = 0; i < x.length; i++) numbers(x[i], `${where}[${i}]`, key, out);
-  } else if (isRecord(x)) for (const k of Object.keys(x)) numbers(x[k], `${where}.${k}`, k, out);
-}
-
-/** The figures of one row: banded rows hold only bands, the others only exact figures (1). */
-function figuresShaped(
-  row: Record<string, unknown>,
-  banded: boolean,
-  where: string,
-  exactAnyway: readonly string[],
-  bad: string[],
-): void {
-  for (const [k, f] of Object.entries(row)) {
-    if (!isFigure(f)) continue;
-    const want = banded && !exactAnyway.includes(k) ? "Band" : "Exact";
-    if (f.kind !== want) bad.push(`${where}.${k} is ${f.kind}, wants ${want}`);
-  }
-}
-
-/** The shape check (1) over the company views. */
+/** The shape check (1) over every leaf of every ported view. */
 function shape(w: World, v: SimViews): string[] {
   const bad: string[] = [];
-  const pub = (id: CompanyId) => !showsEstimates(w, id);
-  const flag = (where: string, estimated: boolean, id: CompanyId) => {
-    if (estimated !== !pub(id)) bad.push(`${where}.estimated is ${estimated}, publishes ${pub(id)}`);
-  };
-  const shared = statementLineIndex("Shared");
+  for (const n of PORTED) {
+    if (VIEW_RULES[n] === undefined) bad.push(`${n} is ported but has no leak rules`);
+  }
+  leaves(v, (leaf) => {
+    const o = leaf.ctx.owner;
+    const f = leaf.figure;
+    if (o === null) {
+      if (f !== null) bad.push(`${leaf.raw} is a figure about no company`);
+      return;
+    }
+    const banded = showsEstimates(w, o);
+    if (f !== null) {
+      const want = banded && !exactInBanded(leaf) ? "Band" : "Exact";
+      if (f.kind !== want) bad.push(`${leaf.raw} is ${f.kind}, wants ${want} (company ${o})`);
+    } else if (leaf.norm.endsWith(".estimated") && leaf.value !== banded) {
+      bad.push(`${leaf.raw} is ${String(leaf.value)}, company ${o} shows estimates ${banded}`);
+    } else if (banded && typeof leaf.value === "number" && !isIdLeaf(leaf) && !plainInBanded(leaf)) {
+      bad.push(`${leaf.raw} = ${leaf.value} is a plain number of banded company ${o}`);
+    }
+  });
   v.statements.data.companies.forEach((c, i) => {
     const where = `statements[${i}]`;
-    flag(where, c.estimated, c.id);
     if (c.estimated && (c.quarters.length > 0 || c.years.length > 0)) bad.push(`${where} holds the archive`);
     if (!c.estimated && (c.estimated_quarters.length > 0 || c.estimated_years.length > 0)) {
       bad.push(`${where} holds estimates`);
     }
-    for (const s of [...c.estimated_quarters, ...c.estimated_years]) {
-      s.lines.forEach((f, l) => {
-        if (f.kind !== (l === shared ? "Exact" : "Band")) bad.push(`${where} line ${l} is ${f.kind}`);
-      });
-      if (s.operating.held_tb.kind !== "Band") bad.push(`${where} held TB is exact`);
-    }
+    if (c.months.length > 0) bad.push(`${where} holds the posted months`);
   });
-  for (const f of v.filings.data.filings) {
-    flag(`filings[${f.company}]`, f.estimated, f.company);
-    figuresShaped(f as never, f.estimated, `filings[${f.company}]`, [], bad);
-  }
-  for (const r of v.ratings.data.companies)
-    figuresShaped(r as never, !pub(r.id), `ratings[${r.id}]`, [], bad);
-  for (const r of v.company_rows.data.rows) {
-    flag(`company_rows[${r.id}]`, r.estimated, r.id);
-    // A listed company's value is its EFV, exact (D140), even before its first release.
-    figuresShaped(
-      r as never,
-      r.estimated,
-      `company_rows[${r.id}]`,
-      r.exchange === null ? [] : ["value"],
-      bad,
-    );
-  }
-  for (const d of v.company_detail.data.companies) {
-    flag(`company_detail[${d.id}]`, d.estimated, d.id);
-    const exact = d.exchange === null ? [] : ["shown_value_per_share"];
-    figuresShaped(d as never, d.estimated, `company_detail[${d.id}]`, exact, bad);
-  }
   return bad;
 }
 
@@ -265,19 +264,17 @@ interface Scan {
 function scan(w: World, observer: SimViews, omniscient: SimViews): Scan {
   const truths: Truths = new Map();
   const bad: string[] = [];
-  const ported = VIEW_NAMES.filter((n) => viewIsPorted(n));
-  for (const n of ported) pair(observer[n].data, omniscient[n].data, n, truths, bad);
-  statementTruths(observer, omniscient, truths);
-  for (const x of publicValues(observer)) truths.delete(x);
+  for (const n of PORTED) pair(observer[n].data, omniscient[n].data, n, truths, bad);
+  statementTruths(observer, omniscient, truths, bad);
+  for (const x of publicValues(w, observer)) truths.delete(x);
   const leaks: string[] = [];
-  for (const n of ported) {
-    const all: [number, string][] = [];
-    numbers(observer[n].data, n, n, all);
-    for (const [x, where] of all) {
+  leaves(observer, (leaf) => {
+    if (isIdLeaf(leaf)) return;
+    for (const x of leafNumbers(leaf)) {
       const t = truths.get(x);
-      if (t !== undefined) leaks.push(`${where} = ${x}, the truth of ${t}`);
+      if (t !== undefined) leaks.push(`${leaf.raw} = ${x}, the truth of ${t}`);
     }
-  }
+  });
   return { shape: shape(w, observer), bad, leaks, truths: truths.size };
 }
 
@@ -292,46 +289,308 @@ function builds(sim: Sim): [SimViews, SimViews] {
   return [observer, omniscient];
 }
 
-describe("leak", () => {
-  it("no view holds a true private figure with Omniscient off", () => {
-    const sim = unwrap(simNew(data(), 1, { debug: true }), "Sim::new");
-    const check = () => {
-      const w = simWorld(sim);
-      const [observer, omniscient] = builds(sim);
-      const r = scan(w, observer, omniscient);
-      expect(r.truths, "the scan has truths to look for").toBeGreaterThan(1000);
-      expect(r.shape.slice(0, 20)).toEqual([]);
-      expect(r.bad.slice(0, 20)).toEqual([]);
-      expect(r.leaks.slice(0, 20)).toEqual([]);
-    };
-    check();
-    // After Q1 2020's release (2 April) and the Q2 recap week.
-    runTo(sim, simDateYmd(2020, 6, 26));
-    check();
-  }, 300_000);
+// ---------------------------------------------------------------- the perturbation (4)
 
-  it("catches a planted leak and a wrong flag", () => {
-    const sim = unwrap(simNew(data(), 1, { debug: true }), "Sim::new");
+const sameLeaf = (a: unknown, b: unknown) =>
+  a === b || (typeof a === "number" && typeof b === "number" && Number.isNaN(a) && Number.isNaN(b));
+
+/**
+ * The leaves of view `n` that differ between two builds, bands left out (see the header), with
+ * their `Leaf` in the first build for `perturbExempt`.
+ */
+function changes(n: ViewName, a: unknown, b: unknown, out: string[]): void {
+  // `walkView` walks one build; the other is read at the same raw path.
+  const at = (raw: string): unknown => {
+    let x: unknown = { [n]: b };
+    for (const m of raw.matchAll(/([^.[\]]+)|\[(\d+)\]/g)) {
+      if (!isRecord(x)) return undefined;
+      x = (x as Record<string, unknown>)[m[1] ?? m[2]!];
+    }
+    return x;
+  };
+  const lengths = (x: unknown, y: unknown, raw: string): void => {
+    if (Array.isArray(x)) {
+      if (!Array.isArray(y) || x.length !== y.length) {
+        out.push(`${raw}: ${x.length} rows, then ${Array.isArray(y) ? y.length : "none"}`);
+        return;
+      }
+      x.forEach((e, i) => {
+        lengths(e, y[i], `${raw}[${i}]`);
+      });
+    } else if (isRecord(x) && !isFigure(x)) {
+      if (!isRecord(y)) {
+        out.push(`${raw}: an object, then ${String(y)}`);
+        return;
+      }
+      const kx = Object.keys(x).sort().join(",");
+      const ky = Object.keys(y).sort().join(",");
+      if (kx !== ky) out.push(`${raw}: fields ${kx}, then ${ky}`);
+      else for (const k of Object.keys(x)) lengths(x[k], y[k], `${raw}.${k}`);
+    }
+  };
+  const before = out.length;
+  lengths(a, b, n);
+  if (out.length > before) return;
+  walkView(n, a, (leaf) => {
+    if (perturbExempt(leaf)) return;
+    const y = at(leaf.raw);
+    const f = leaf.figure;
+    if (f !== null) {
+      if (!isFigure(y)) out.push(`${leaf.raw}: a figure, then ${JSON.stringify(y)}`);
+      else if (f.kind !== y.kind) out.push(`${leaf.raw}: ${f.kind}, then ${y.kind}`);
+      else if (f.kind === "Exact" && y.kind === "Exact" && !sameLeaf(f.value, y.value)) {
+        out.push(`${leaf.raw}: Exact ${f.value}, then ${y.value}`);
+      }
+    } else if (!sameLeaf(leaf.value, y)) {
+      out.push(`${leaf.raw}: ${JSON.stringify(leaf.value)}, then ${JSON.stringify(y)}`);
+    }
+  });
+}
+
+interface Perturbed {
+  /** The observer leaves that followed the perturbed books (leaks). */
+  changed: string[];
+  /** The scan of the perturbed state's observer and Omniscient builds (1 to 3). */
+  scan: Scan;
+}
+
+/**
+ * Check 4 at the state now: the observer's views of the state and of its perturbed copy, built
+ * by `builders` with the Sim's seed, controls and map data (Omniscient off); and Omniscient's of
+ * the copy, so its bands are checked against its truths.
+ */
+function perturbation(sim: Sim, builders: ViewBuilders = VIEW_BUILDERS): Perturbed {
+  const w = simWorld(sim);
+  const seed = simSeed(sim);
+  const controls = simControls(sim);
+  const map = unwrap(SIM_DEPS.mapDataBuild(simData(sim)!, w), "map data");
+  const off = { ...controls, omniscient: false };
+  const on = { ...controls, omniscient: true };
+  const p = perturbBooks(w);
+  const a = simViewsBuild({ world: w, controls: off, seed, map }, builders);
+  const b = simViewsBuild({ world: p, controls: off, seed, map }, builders);
+  const t = simViewsBuild({ world: p, controls: on, seed, map }, builders);
+  const changed: string[] = [];
+  for (const n of PORTED) changes(n, a[n].data, b[n].data, changed);
+  return { changed, scan: scan(p, b, t) };
+}
+
+// ---------------------------------------------------------------- the moments
+
+function expectClean(r: Scan): void {
+  expect(r.truths, "the scan has truths to look for").toBeGreaterThan(1000);
+  expect(r.shape.slice(0, 20)).toEqual([]);
+  expect(r.bad.slice(0, 20)).toEqual([]);
+  expect(r.leaks.slice(0, 20)).toEqual([]);
+}
+
+function checkNow(sim: Sim): void {
+  const w = simWorld(sim);
+  const [observer, omniscient] = builds(sim);
+  expectClean(scan(w, observer, omniscient));
+  const p = perturbation(sim);
+  expect(p.changed.slice(0, 20)).toEqual([]);
+  expectClean(p.scan);
+}
+
+/** Companies listed in play that still show estimates (before their first release). */
+function listedBanded(w: World): CompanyId[] {
+  return bandedCompanies(w).filter((id) => w.market.stocks[id]!.exchange !== null);
+}
+
+describe("leak", () => {
+  const sim = unwrap(simNew(data(), 1, { debug: true }), "Sim::new");
+
+  it("at load", () => {
+    checkNow(sim);
+  }, 120_000);
+
+  it("after the first listing in play", () => {
+    runTo(sim, simDateYmd(2020, 1, 20));
+    expect(listedBanded(simWorld(sim)).length).toBeGreaterThan(0);
+    checkNow(sim);
+  }, 120_000);
+
+  it("after Q1 2020's release, with new listings in play", () => {
+    runTo(sim, simDateYmd(2020, 4, 15));
     const w = simWorld(sim);
-    const [observer, omniscient] = builds(sim);
-    expect(scan(w, observer, omniscient).leaks).toEqual([]);
-    // A banded company with a whole-dollar cash (true of the starting books).
-    const k = omniscient.company_detail.data.companies.findIndex(
-      (d, i) =>
-        showsEstimates(w, i as CompanyId) &&
-        d.cash_usd.kind === "Exact" &&
-        Number.isInteger(d.cash_usd.value),
-    );
+    expect(simViews(sim).filings.data.quarter).toEqual({ year: 2020, q: 1 });
+    expect(listedBanded(w).length).toBeGreaterThan(0);
+    checkNow(sim);
+  }, 120_000);
+
+  it("after the first annual close", () => {
+    runTo(sim, simDateYmd(2021, 1, 20));
+    const w = simWorld(sim);
+    const years = simViews(sim).statements.data.companies[0]!.years;
+    expect(years[years.length - 1]!.period).toEqual({ kind: "Year", year: 2020 });
+    expect(w.companies.some((c) => c.origin.kind === "Born")).toBe(true);
+    checkNow(sim);
+  }, 120_000);
+});
+
+// ---------------------------------------------------------------- the negative cases
+
+/** Sets a field the view types may not have (a plant). */
+function put(target: object, key: string, value: unknown): void {
+  (target as Record<string, unknown>)[key] = value;
+}
+
+describe("leak test catches", () => {
+  const sim = unwrap(simNew(data(), 1, { debug: true }), "Sim::new");
+  runTo(sim, simDateYmd(2020, 1, 20));
+  const w = simWorld(sim);
+  const [observer, omniscient] = builds(sim);
+  // A banded company with a whole-dollar cash above $50M (true of the starting books).
+  const k = omniscient.company_detail.data.companies.findIndex(
+    (d, i) =>
+      showsEstimates(w, i as CompanyId) &&
+      d.cash_usd.kind === "Exact" &&
+      Number.isInteger(d.cash_usd.value) &&
+      d.cash_usd.value > 50e6,
+  );
+  const truthFig = omniscient.company_detail.data.companies[k]!.cash_usd;
+  const truth = truthFig.kind === "Exact" ? truthFig.value : Number.NaN;
+  const exact = (x: number): Figure => ({ kind: "Exact", value: x });
+  // A banded company with estimated statements (its operating figures).
+  const st = observer.statements.data.companies.findIndex((c) => c.estimated_quarters.length > 0);
+  type Plant = [string, (v: SimViews) => void];
+  /** The scan of the observer's views with one plant. */
+  const scanPlanted = (plant: (v: SimViews) => void): Scan => {
+    const v = structuredClone(observer);
+    plant(v);
+    return scan(w, v, omniscient);
+  };
+  const detail = (v: SimViews) => v.company_detail.data.companies[k]!;
+  const operating = (v: SimViews) => v.statements.data.companies[st]!.estimated_quarters[0]!.operating;
+
+  it("nothing on the clean views, with a banded company to plant in", () => {
     expect(k).toBeGreaterThanOrEqual(0);
-    const truth = omniscient.company_detail.data.companies[k]!.cash_usd;
-    if (truth.kind !== "Exact") throw new Error("Omniscient is exact");
-    // A raw copy into a plain number.
-    const planted = structuredClone(observer);
-    planted.company_detail.data.companies[k]!.buzz = truth.value;
-    expect(scan(w, planted, omniscient).leaks.length).toBeGreaterThan(0);
+    expect(st).toBeGreaterThanOrEqual(0);
+    expect(Number.isInteger(truth)).toBe(true);
+    const r = scan(w, observer, omniscient);
+    expect([...r.shape, ...r.bad, ...r.leaks]).toEqual([]);
+  });
+
+  it("a raw copy into a plain number, and a wrong flag", () => {
+    expect(scanPlanted((v) => put(detail(v), "buzz", truth)).leaks.length).toBeGreaterThan(0);
     // The truth served exact, as a wrong `banded` would.
-    const flagged = structuredClone(observer);
-    flagged.company_detail.data.companies[k]!.cash_usd = truth;
-    expect(scan(w, flagged, omniscient).shape.length).toBeGreaterThan(0);
+    expect(scanPlanted((v) => put(detail(v), "cash_usd", truthFig)).shape.length).toBeGreaterThan(0);
+    expect(scanPlanted((v) => put(detail(v), "estimated", false)).shape.length).toBeGreaterThan(0);
+  });
+
+  // Hole 1: every exact value the observer saw was public, so an Exact(truth) anywhere erased
+  // its own truth and passed.
+  it("an exact truth in a field no check names (hole 1)", () => {
+    const plants: Plant[] = [
+      ["a new cap table field", (v) => put(v.cap_table.data.companies[k]!, "book", exact(truth))],
+      ["a seat card", (v) => put(detail(v).board[0]!, "pay", exact(truth))],
+      ["a province card", (v) => put(v.province_cards.data.cards[0]!, "gdp", exact(truth))],
+      ["a ratings row", (v) => put(v.ratings.data.companies[k]!, "collateral", exact(truth))],
+    ];
+    for (const [what, plant] of plants) expect(scanPlanted(plant).leaks.length, what).toBeGreaterThan(0);
+  });
+
+  // Hole 2: the shape check read 5 views' top-level row fields only.
+  it("an exact figure or a plain money number deep in a banded subtree (hole 2)", () => {
+    const plants: Plant[] = [
+      ["an exact figure in a seat card", (v) => put(detail(v).board[0]!, "pay", exact(1234.5))],
+      ["a plain number in a seat card", (v) => put(detail(v).board[0]!, "pay", 1234.5)],
+      [
+        "an exact figure in the cap table",
+        (v) => put(v.cap_table.data.companies[k]!, "value", exact(1234.5)),
+      ],
+      ["a plain number in a holding", (v) => put(v.cap_table.data.companies[k]!.lines[0]!, "cost", 1234.5)],
+      ["a figure about no company", (v) => put(v.province_cards.data.cards[0]!, "gdp", exact(1234.5))],
+      [
+        "a statement's posted months",
+        (v) => {
+          const lines = omniscient.statements.data.companies[k]!.quarters[0]!.lines;
+          put(v.statements.data.companies[k]!, "months", [{ month: { year: 2020, month: 1 }, lines }]);
+        },
+      ],
+    ];
+    for (const [what, plant] of plants) expect(scanPlanted(plant).shape.length, what).toBeGreaterThan(0);
+  });
+
+  // Hole 3: a field name skipped its whole subtree at any depth, and the operations D420 leaves
+  // exact were never scanned.
+  it("a truth under a once-skipped name, or in an operation figure (hole 3)", () => {
+    const rows = [{ id: 0, revenue_usd: truth }];
+    const plants: Plant[] = [
+      ["units rows", (v) => put(v.province_cards.data.cards[0]!, "units", rows)],
+      ["hqs rows", (v) => put(v.province_cards.data.cards[0]!, "hqs", rows)],
+      ["industries rows", (v) => put(v.births.data.events[0]!, "industries", rows)],
+      ["provinces rows", (v) => put(v.map_static.data.metros[0]!, "provinces", rows)],
+      ["labor units", (v) => put(operating(v), "labor_units", truth)],
+      ["the PC bonus", (v) => put(operating(v), "pc_bonus", truth)],
+      ["the free R&D step", (v) => put(operating(v), "free_rd_pct", truth)],
+    ];
+    for (const [what, plant] of plants) expect(scanPlanted(plant).leaks.length, what).toBeGreaterThan(0);
+  });
+
+  it("an estimate that is the truth rounded (2)", () => {
+    expect(BAND_MIN_ERROR).toBeLessThan(ESTIMATE_BIAS_MIN - ESTIMATE_JITTER);
+    const r = roundHalfAway(truth / 1e6) * 1e6 + 1;
+    const band: Figure = { kind: "Band", band: { estimate: r, low: r * 0.75, high: r * 1.25 } };
+    const s = scanPlanted((v) => put(detail(v), "cash_usd", band));
+    expect(s.leaks).toEqual([]);
+    expect(s.bad.length).toBeGreaterThan(0);
+  });
+
+  // Hole 4: a derived or rounded figure equals no truth; only the perturbation sees it.
+  it("derived and rounded figures (hole 4)", () => {
+    /** The view builders with `plant` run on every banded row of view `name`. */
+    const leaky = (
+      name: "company_rows" | "company_detail",
+      plant: (row: Record<string, unknown>, c: Company) => void,
+    ): ViewBuilders => {
+      const b = VIEW_BUILDERS[name] as unknown as ViewBuilder<Record<string, Record<string, unknown>[]>>;
+      const build = b.build!;
+      const slot = {
+        ...b,
+        build: (input: ViewInput) => {
+          const v = build(input);
+          for (const row of v.rows ?? v.companies ?? []) {
+            const id = row.id as CompanyId;
+            if (showsEstimates(input.world, id)) plant(row, input.world.companies[id]!);
+          }
+          return v;
+        },
+      };
+      return { ...VIEW_BUILDERS, [name]: slot } as unknown as ViewBuilders;
+    };
+    // A born company has no quarter yet: its open month.
+    const last = (c: Company) => {
+      const q = c.finance.archive.quarters;
+      return q.length > 0 ? q[q.length - 1]!.lines : c.finance.month;
+    };
+    // Each into a field a banded row may hold as a plain number, so the shape check passes.
+    const plants: [string, ViewBuilders][] = [
+      [
+        "cash rounded to $1M",
+        leaky("company_detail", (r, c) => put(r, "buzz", roundHalfAway(c.cash_usd / 1e6) * 1e6)),
+      ],
+      [
+        "revenue in $M",
+        leaky("company_detail", (r, c) => put(r, "buzz", roundHalfAway(last(c).revenue / 1e5) / 10)),
+      ],
+      ["cash over the shares", leaky("company_detail", (r, c) => put(r, "price", c.cash_usd / c.shares_out))],
+      [
+        "a margin",
+        leaky("company_detail", (r, c) => put(r, "confidence_factor", last(c).tax / last(c).revenue)),
+      ],
+      [
+        "a figure in a name",
+        leaky("company_rows", (r, c) => put(r, "name", `${c.name} ($${roundHalfAway(c.cash_usd / 1e6)}M)`)),
+      ],
+    ];
+    for (const [what, builders] of plants) {
+      const p = perturbation(sim, builders);
+      expect(p.changed.length, what).toBeGreaterThan(0);
+      expect(p.scan.leaks, `${what}: the scan alone misses it`).toEqual([]);
+    }
+    // The clean builders, for contrast.
+    expect(perturbation(sim).changed).toEqual([]);
   }, 120_000);
 });
