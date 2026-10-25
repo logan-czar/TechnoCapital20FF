@@ -81,13 +81,17 @@ function removedFinance() {
  */
 export function minimalWorld(): World {
   const w = clockWorld();
+  // The ledger job reads the HQ country's tax rate before it looks at the company's status.
+  w.countries = [{ corp_tax_rate: 0 }] as unknown as World["countries"];
   w.companies = Array.from({ length: MINIMAL_COMPANIES }, (_, i) => ({
     revenue_usd: 1e6 * (i + 1),
-    // The ported finance jobs walk every company's books; a Removed company is out of the game,
-    // so they skip it .
+    // The finance, ops and economy jobs walk the companies. A Removed company is out of the game
+    // (they all skip it), so the bare rows stay inert whatever else they lack.
     finance: removedFinance(),
-    units: [],
+    board: [],
+    seats_to_fill: [],
     hq_country: 0,
+    units: [],
   })) as unknown as World["companies"];
   // ledgerJob reads the home country's tax rate before it checks the company is in the game.
   w.countries = [{ corp_tax_rate: 0 }] as unknown as World["countries"];

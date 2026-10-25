@@ -40,7 +40,7 @@ import type { DrawSource } from "../../../src/types/draws.ts";
 import type { IndustryId } from "../../../src/types/ids.ts";
 import type { Notice, World } from "../../../src/types/world.ts";
 import { worldFromData } from "../../../src/world/load.ts";
-import { unwrap } from "./index.ts";
+import { unwrap } from "../../common/index.ts";
 
 /** The world after load and the 7.3 start draws from draws. */
 export function worldAtLoad(d: WorldData, draws: DrawSource): World {

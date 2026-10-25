@@ -22,8 +22,8 @@ import {
   startingLoadout,
   stationSplit,
   stationsTotal,
-} from "../../src/ops/stations.ts";
-import type { Stations } from "../../src/types/state/ops.ts";
+} from "../src/ops/stations.ts";
+import type { Stations } from "../src/types/state/ops.ts";
 import { stationsOf } from "./common/defaults.ts";
 import { data } from "./common/index.ts";
 
