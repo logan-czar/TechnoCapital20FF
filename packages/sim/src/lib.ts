@@ -25,6 +25,7 @@
 import type { WorldData } from "@tc20ff/sim-data";
 import { planAtLoad } from "./ai/jobs.ts";
 import { drawFirstVotes, drawTippedLabAtLoad } from "./births/jobs.ts";
+import { DEFAULT_PROFILE_ID, LEGACY_PROFILE, profileById } from "./economy/profiles.ts";
 import { start as economyStart } from "./economy/start.ts";
 import { start as financeStart } from "./finance/index.ts";
 import { stateHash } from "./hash.ts";
@@ -50,7 +51,7 @@ import type { DrawSource } from "./types/draws.ts";
 import type { Notice, PauseReason } from "./types/notice.ts";
 import type { SaveError, SimApi, SimError, StateHash } from "./types/sim-api.ts";
 import type { ClockView, SimViews } from "./types/views/index.ts";
-import type { LoadError, Result, World } from "./types/world.ts";
+import type { EconomyProfile, LoadError, Result, World } from "./types/world.ts";
 import {
   type MapData,
   simViewsBuild,
@@ -139,10 +140,12 @@ export function startWorld(
   data: WorldData,
   draws: DrawSource,
   deps: StartDeps = START_DEPS,
+  profile: EconomyProfile = LEGACY_PROFILE,
 ): Result<World, LoadError> {
   const built = deps.worldFromData(data);
   if (!built.ok) return built;
   const world = built.value;
+  world.profile = profile;
   deps.economyStart(world, draws);
   deps.birthsDrawTippedLabAtLoad(world, draws);
   deps.aiPlanAtLoad(world);
@@ -192,6 +195,8 @@ export interface SimOptions {
   debug?: boolean;
   /** For the Save and Load controls (none by default: they fail with an Io save error). */
   files?: SaveFiles | null;
+  /** The growth profile id (economy/profiles.ts, D970); `DEFAULT_PROFILE_ID` when absent. */
+  profile?: string;
   /** Replaces some of the default `SIM_DEPS` (tests). */
   deps?: Partial<SimDeps>;
 }
@@ -328,10 +333,22 @@ function simFromConfig(cfg: SimConfig, seed: number): Result<Sim, LoadError> {
  */
 export function simNew(data: WorldData, seed: number, opts: SimOptions = {}): Result<Sim, LoadError> {
   const deps: SimDeps = { ...SIM_DEPS, ...opts.deps };
+  const profile = profileById(opts.profile ?? DEFAULT_PROFILE_ID);
+  if (profile === null) {
+    return {
+      ok: false,
+      error: {
+        kind: "BadValue",
+        table: "profile",
+        key: opts.profile ?? "",
+        message: "unknown growth profile",
+      },
+    };
+  }
   return simFromConfig(
     {
       data,
-      start: (draws) => startWorld(data, draws, deps.start),
+      start: (draws) => startWorld(data, draws, deps.start, profile),
       makeScheduler: scheduler,
       mapDataBuild: (world) => deps.mapDataBuild(data, world),
       views: deps.views,

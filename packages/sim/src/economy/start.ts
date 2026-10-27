@@ -31,6 +31,7 @@ import { setZoneEffects, startCycle } from "./cycle.ts";
 import { setEffectiveDemand, setPhaseLabels } from "./demand.ts";
 import { drawAllGrowth, ltQ } from "./growth.ts";
 import { MONTHS_PER_YEAR } from "./index.ts";
+import { NEVER_YEAR, profileOf } from "./profiles.ts";
 import { setExpenses, setRevenue } from "./revenue.ts";
 import { setSupply } from "./supply.ts";
 import { setZoneSpreads } from "./zones.ts";
@@ -115,6 +116,12 @@ export function start(world: World, draws: DrawSource): void {
   const today = dateTimeDate(DATETIME_START);
   // The AI boom (5.1.1): the pop date rolled at load; Preboom.
   world.ai.pop_date = rollPopDate(draws);
+  const profile = profileOf(world);
+  if (!profile.ai_boom) {
+    // No AI boom in this profile (D970): the rolled draws stay spent, the dates move past the run.
+    world.ai.boom_date = { year: NEVER_YEAR, month: 1, day: 1 };
+    world.ai.pop_date = { year: NEVER_YEAR, month: 1, day: 1 };
+  }
   const [stage, qIn] = stageAt(today, world.ai.boom_date, world.ai.pop_date);
   world.ai.stage = stage;
   world.ai.ai_labs_lt = aiLabsLt(world.ai.schedule, stage, qIn);
@@ -129,7 +136,7 @@ export function start(world: World, draws: DrawSource): void {
   // The cycle starts in Expansion with g_t and quarters left drawn (7.3).
   let maxLag = 0;
   for (const z of world.zones) maxLag = Math.max(maxLag, z.lag_quarters);
-  world.cycle = startCycle(maxLag, world.cycle.z_avg, draws);
+  world.cycle = startCycle(maxLag, world.cycle.z_avg, draws, profile);
   setZoneEffects(world, draws);
   setZoneSpreads(world);
   // The Q1 2020 growth draw (5.1, 7.3).

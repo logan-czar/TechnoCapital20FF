@@ -12,6 +12,7 @@ import { type JobCtx, jobCtxRaiseAlert } from "../time/scheduler.ts";
 import type { Quarter, SimDate } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import type { AiBoom, AiSchedule, AiStage, PhaseLabel, World } from "../types/world.ts";
+import { profileOf } from "./profiles.ts";
 
 /** The boom event: 00:00 on 1 January 2030 (spec 5.1.1, scripted). */
 export const BOOM_YEAR = 2030;
@@ -147,9 +148,11 @@ export function setIndustryLt(world: World, date: SimDate): void {
   const aiLt = aiLabsLt(world.ai.schedule, stage, quartersIn);
   world.ai.ai_labs_lt = aiLt;
   const pre = world.ai.schedule.preboom_lt;
+  // The growth profile scales the CSV rates (D970); 1 for legacy.
+  const scale = profileOf(world).lt_scale;
   for (const ind of world.industries) {
     ind.prev_lt = ind.lt;
-    ind.lt = linkedLt(ind.params.trend_growth, ind.params.boom_uplift, aiLt, pre);
+    ind.lt = linkedLt(ind.params.trend_growth * scale, ind.params.boom_uplift, aiLt, pre);
   }
 }
 
