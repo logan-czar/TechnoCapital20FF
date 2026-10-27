@@ -30,40 +30,41 @@ import { appendBufFromRows } from "../src/world/log.ts";
 import { referenceCanonicalString } from "./common/canonical_reference.ts";
 import { data, macrotask, unwrap } from "./common/index.ts";
 
+// Re-recorded for D974: LOW_PRODUCTIVITY_ADJ is +1.0 (was +0.5), so the R&D plan, productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D973: R&D above the norm has diminishing returns by default (spec 5.6 has no curve), so productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
-const GOLDEN_STATE = "cf19f87968ce8f1238c55bb2b2ebc962";
-const GOLDEN_MONTHLY = "e6bc9ce10ff280f969ca1848";
-const GOLDEN_PATCHES = "0f5afef72059a4582357798b";
+const GOLDEN_STATE = "d9d7a3ac9e6b8268317a85b20d3c65f8";
+const GOLDEN_MONTHLY = "31496954439fcec63e360d67";
+const GOLDEN_PATCHES = "21ec381f13a34346cf190ba5";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */
 const GOLDEN_VIEWS: Record<string, [string, number]> = {
   clock: ["7711de731a6e84765f70ffdc", 8785],
   places: ["0bbcb0e819952b7c5f894c81", 1],
   countries: ["c301b680d07687f003502ff1", 8785],
-  zones: ["926ce73edcb4396a90f782e3", 8785],
+  zones: ["d76cb24168a522eeb27c74f9", 8785],
   rates: ["efc3668ad8d3cca8ad0790ce", 8785],
-  characters: ["1104234c11f1c27b9981d087", 8785],
-  cap_table: ["bb093c557a30273a35adb9b5", 8785],
-  quotes: ["f02dd0a24e9c95292d45cc2f", 8785],
-  price_bars: ["a689e9259418eb19c87fcf9b", 8785],
-  exchanges: ["9306d24c4e30c7b9503470b1", 8785],
-  market_stats: ["02d07455d4f1e5e177f55098", 8785],
-  news: ["fc3f715907959c4ebac32573", 8785],
-  births: ["e32174dc57669999361cf5de", 8785],
-  projection: ["ac772e590bae2f3e674e3c66", 8785],
-  company_rows: ["37bac9283be0c1e4fd19e55f", 8785],
-  company_detail: ["9a513013cb9abf9e5e5c5f41", 8785],
-  units: ["64af1db1c9ebb19aa8c7ed57", 8785],
-  tech: ["f4ae363cf77d66af5cb62978", 8785],
-  industry_rows: ["8f70a114b8bf335142dc3d67", 8785],
-  industry_detail: ["7a3f97a373b30b214d48f4ae", 8785],
-  cycle: ["a5d063a7804f04e945868088", 8785],
-  map_layers: ["feaa4d639ffad377a3174044", 8785],
+  characters: ["6711368fd570d5be67b4907c", 8785],
+  cap_table: ["431cb986a2a22582a02c7a6b", 8785],
+  quotes: ["41ec241f7f471bd22f926d8b", 8785],
+  price_bars: ["5bf7fdf81de8b00d59e62ba8", 8785],
+  exchanges: ["d18ac097c3d27f7efcb07e5d", 8785],
+  market_stats: ["a1582f6405cdddfbecad511a", 8785],
+  news: ["bc2ffd401b4d07827d53a1b3", 8785],
+  births: ["b3db0f5c4a252cec3e1517c3", 8785],
+  projection: ["0c778df1102d9f85d7b4f70d", 8785],
+  company_rows: ["1f5cb5e7861bdfaf9d43d382", 8785],
+  company_detail: ["88d2f838c64882fc37512a34", 8785],
+  units: ["89153622085915ad4dcf3713", 8785],
+  tech: ["b0d0fee2792120332eb342fd", 8785],
+  industry_rows: ["2dc0da72c16ca74a2b9ef6d1", 8785],
+  industry_detail: ["9d77e1ffa2c3053b6d8370c5", 8785],
+  cycle: ["469076c6b66956ef69ed5fc8", 8785],
+  map_layers: ["1390cfbc031a839e20797d59", 8785],
   province_cards: ["8cf4549c5ca68b7068b6b210", 8785],
-  statements: ["874cd4ce7a76ed27402657d6", 8785],
-  filings: ["f6598f7b1b3a30cfb237d696", 8785],
-  ratings: ["fb5479be685271a205735cea", 8785],
-  recap: ["f1a168f695388c0c3d82fb6f", 8785],
+  statements: ["57735a2af1583dea573ab927", 8785],
+  filings: ["049b14e3e9a396103c33c3c9", 8785],
+  ratings: ["1a54c9b62e8689965e82403e", 8785],
+  recap: ["a92bb2a99f2107f1c5229475", 8785],
   map_static: ["5a7fcdac19a0f147f840d02c", 1],
 };
 

@@ -22,8 +22,10 @@ export const LOW_PRODUCTIVITY_BELOW = 100.0;
  * D360, pending Logan; design fix 108): with 5.6, an Incumbent at 1.25 × norm gains
  * `10 × 0.25 × mgmt_factor ÷ 12` ≈ 0.21 a month against 0.3 to 0.5 of decay, so productivity only
  * fell (median 87 after 10 years); at 1.5 × norm it gains about 0.42 and holds near 100.
+ * D974 raises it to +1.0 (pending Logan; design fix 974): a stronger defence of productivity makes a
+ * growth-led focus (D972) pay about as much as an R&D-led one (strategy tournament, 10 years).
  */
-export const LOW_PRODUCTIVITY_ADJ = 0.5;
+export const LOW_PRODUCTIVITY_ADJ = 1.0;
 /** Spec 6.3: −0.2 above productivity 110. */
 export const HIGH_PRODUCTIVITY_ABOVE = 110.0;
 export const HIGH_PRODUCTIVITY_ADJ = -0.2;
@@ -36,7 +38,7 @@ export const LOSS_CUT_FLOOR_NORMS = 0.5;
 export const PERCENT = 100.0;
 
 /**
- * The productivity adjustment (spec 6.3): +0.5 below 100 (D360; the spec says +0.25 below 95),
+ * The productivity adjustment (spec 6.3): +1.0 below 100 (D974, D360; the spec says +0.25 below 95),
  * −0.2 above 110, else 0.
  */
 export function productivityAdj(productivity: number): number {
