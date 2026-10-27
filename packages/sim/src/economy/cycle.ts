@@ -10,33 +10,18 @@
 import type { JobCtx } from "../time/scheduler.ts";
 import type { DrawSource } from "../types/draws.ts";
 import { clamp } from "../types/num.ts";
-import type { CyclePhase, GlobalCycle, World } from "../types/world.ts";
+import type { CyclePhase, EconomyProfile, GlobalCycle, PhaseSpec, World } from "../types/world.ts";
 import { globalCycleGLagged } from "../world/economy.ts";
+import { LEGACY_PROFILE, profileOf } from "./profiles.ts";
 
-/** What a phase draws on entry and where it goes next (spec 5.1 table, T). */
-export interface PhaseSpec {
-  /** g_t a year, drawn uniform in `lo..hi`. */
-  g_range: readonly [number, number];
-  /** Length in whole quarters, drawn uniform in `lo..=hi` (D101). */
-  length: readonly [number, number];
-  next: CyclePhase;
-}
+export type { PhaseSpec };
 
-/**
- * The spec 5.1 phase table (T). The Contraction and Recovery ranges are written low to high, as
- * validate.py draws them, so a replayed uniform gives the same g to the bit.
- */
-export function phaseSpec(phase: CyclePhase): PhaseSpec {
-  switch (phase) {
-    case "Expansion":
-      return { g_range: [0.0, 0.02], length: [12, 28], next: "Overheating" };
-    case "Overheating":
-      return { g_range: [0.02, 0.04], length: [2, 6], next: "Contraction" };
-    case "Contraction":
-      return { g_range: [-0.06, -0.03], length: [2, 8], next: "Recovery" };
-    case "Recovery":
-      return { g_range: [-0.02, 0.01], length: [4, 10], next: "Expansion" };
-  }
+/** The spec 5.1 phase table (T), the legacy profile's (D970). */
+export function phaseSpec(
+  phase: CyclePhase,
+  table: Record<CyclePhase, PhaseSpec> = LEGACY_PROFILE.phases,
+): PhaseSpec {
+  return table[phase];
 }
 
 /** The game starts in Expansion (spec 7.3). */
@@ -53,8 +38,12 @@ export const NORMAL_CLAMP = 3.0;
  * uniform, then the length as a uniform whole number of quarters (D101). Same order and formula
  * as validate.py's `rng.uniform` then `rng.randint`.
  */
-export function enterPhase(phase: CyclePhase, draws: DrawSource): [number, number] {
-  const spec = phaseSpec(phase);
+export function enterPhase(
+  phase: CyclePhase,
+  draws: DrawSource,
+  table: Record<CyclePhase, PhaseSpec> = LEGACY_PROFILE.phases,
+): [number, number] {
+  const spec = phaseSpec(phase, table);
   const [lo, hi] = spec.g_range;
   const g = lo + (hi - lo) * draws.uniform("Cycle");
   const [a, b] = spec.length;
@@ -67,10 +56,15 @@ export function enterPhase(phase: CyclePhase, draws: DrawSource): [number, numbe
  * The cycle at load (spec 7.3): Expansion with g_t and its quarters left drawn; the g history
  * holds the starting g_t for every lag (spec 5.1 "before the start, the starting g_t").
  */
-export function startCycle(maxLag: number, zAvgValue: number, draws: DrawSource): GlobalCycle {
-  const [g, len] = enterPhase(START_PHASE, draws);
+export function startCycle(
+  maxLag: number,
+  zAvgValue: number,
+  draws: DrawSource,
+  profile: EconomyProfile = LEGACY_PROFILE,
+): GlobalCycle {
+  const [g, len] = enterPhase(profile.start_phase, draws, profile.phases);
   return {
-    phase: START_PHASE,
+    phase: profile.start_phase,
     quarters_left: len,
     g_t: g,
     g_history: new Array<number>(maxLag + 1).fill(g),
@@ -82,11 +76,15 @@ export function startCycle(maxLag: number, zAvgValue: number, draws: DrawSource)
  * Advances the cycle one quarter (spec 4.3 step 1c): one quarter of the phase is used up; when
  * none is left the next phase starts with fresh draws. The g history shifts by one quarter.
  */
-export function advanceCycle(cycle: GlobalCycle, draws: DrawSource): void {
+export function advanceCycle(
+  cycle: GlobalCycle,
+  draws: DrawSource,
+  table: Record<CyclePhase, PhaseSpec> = LEGACY_PROFILE.phases,
+): void {
   cycle.quarters_left = Math.max(0, cycle.quarters_left - 1);
   if (cycle.quarters_left === 0) {
-    cycle.phase = phaseSpec(cycle.phase).next;
-    const [g, len] = enterPhase(cycle.phase, draws);
+    cycle.phase = phaseSpec(cycle.phase, table).next;
+    const [g, len] = enterPhase(cycle.phase, draws, table);
     cycle.g_t = g;
     cycle.quarters_left = len;
   }
@@ -136,6 +134,6 @@ export function setZoneEffects(world: World, draws: DrawSource): void {
 
 /** 4.3 step 1c: the global cycle advances one quarter, then the zone effects follow. */
 export function cycleJob(world: World, ctx: JobCtx): void {
-  advanceCycle(world.cycle, ctx.draws);
+  advanceCycle(world.cycle, ctx.draws, profileOf(world).phases);
   setZoneEffects(world, ctx.draws);
 }

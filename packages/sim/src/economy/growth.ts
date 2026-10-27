@@ -11,6 +11,7 @@ import type { DrawSource } from "../types/draws.ts";
 import { clamp, maxF } from "../types/num.ts";
 import type { Industry, PhaseLabel, World } from "../types/world.ts";
 import { QUARTERS_PER_YEAR } from "./index.ts";
+import { profileOf } from "./profiles.ts";
 
 /** φ: half of last quarter's gap from the long-term rate carries over (spec 5.1, T). */
 export const PHI = 0.5;
@@ -85,21 +86,29 @@ export function drawZ(draws: DrawSource): number {
  * Draws one industry's growth for the new quarter: this quarter's growth becomes
  * `prev_q_growth`, and the draw carries over from it (or from lt_q after a reset, D103).
  */
-export function drawIndustryGrowth(ind: Industry, zAvg: number, g: number, draws: DrawSource): void {
+export function drawIndustryGrowth(
+  ind: Industry,
+  zAvg: number,
+  g: number,
+  draws: DrawSource,
+  volScale = 1.0,
+): void {
   ind.prev_q_growth = ind.q_growth;
   const carry = ind.carry_reset ? ltQ(ind.lt) : ind.prev_q_growth;
   ind.carry_reset = false;
   const z = drawZ(draws);
   const p = ind.params;
-  ind.q_growth = quarterlyGrowth(ind.lt, carry, p.cycle_beta, p.volatility, zAvg, g, z);
+  ind.q_growth = quarterlyGrowth(ind.lt, carry, p.cycle_beta, p.volatility * volScale, zAvg, g, z);
 }
 
 /** Every industry's draw, in id order (spec 4.3 step 1e). */
 export function drawAllGrowth(world: World, draws: DrawSource): void {
   const zAvg = world.cycle.z_avg;
   const g = world.cycle.g_t;
+  // The growth profile scales the noise (D970); 1 for legacy.
+  const volScale = profileOf(world).volatility_scale;
   for (const ind of world.industries) {
-    drawIndustryGrowth(ind, zAvg, g, draws);
+    drawIndustryGrowth(ind, zAvg, g, draws, volScale);
   }
 }
 

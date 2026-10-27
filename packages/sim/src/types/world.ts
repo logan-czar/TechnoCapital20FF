@@ -96,6 +96,8 @@ export interface World {
   cycle: GlobalCycle;
   /** The AI boom and the bubble (spec 3.1, 5.1.1). */
   ai: AiBoom;
+  /** The growth profile in play (D970); a world without one plays `legacy`. */
+  profile: EconomyProfile;
   /**
    * Person names per country, built once at load (spec 3.7.1, 3.7.2): jobs see no CSVs and a
    * save loads without them (D13).
@@ -609,6 +611,34 @@ export interface Character {
 
 /** The global cycle's phases, in order (spec 5.1). */
 export type CyclePhase = "Expansion" | "Overheating" | "Contraction" | "Recovery";
+
+/** What a cycle phase draws on entry and where it goes next (spec 5.1 table, T). */
+export interface PhaseSpec {
+  /** g_t a year, drawn uniform in `lo..hi`. */
+  g_range: readonly [number, number];
+  /** Length in whole quarters, drawn uniform in `lo..=hi` (D101). */
+  length: readonly [number, number];
+  next: CyclePhase;
+}
+
+/**
+ * A growth profile (D970): the scenario the world's economy plays. Plain data, kept on the
+ * world so a save carries it. `legacy` is the spec 5.1 behaviour the Rust reference has.
+ */
+export interface EconomyProfile {
+  id: string;
+  name: string;
+  description: string;
+  /** Multiplies every industry's `trend_growth` before the AI boom link (1 = the CSV). */
+  lt_scale: number;
+  /** Multiplies every industry's quarterly volatility (1 = the CSV). */
+  volatility_scale: number;
+  /** False pins AI labs to their pre-boom rate for the whole run: no boom, no pop (spec 5.1.1). */
+  ai_boom: boolean;
+  start_phase: CyclePhase;
+  /** The four phase tables the global cycle draws from (spec 5.1). */
+  phases: Record<CyclePhase, PhaseSpec>;
+}
 
 /** Rust `CyclePhase::ALL`, in order. */
 export const CYCLE_PHASE_VALUES = ["Expansion", "Overheating", "Contraction", "Recovery"] as const;

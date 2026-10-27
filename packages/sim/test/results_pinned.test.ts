@@ -30,7 +30,8 @@ import { appendBufFromRows } from "../src/world/log.ts";
 import { referenceCanonicalString } from "./common/canonical_reference.ts";
 import { data, macrotask, unwrap } from "./common/index.ts";
 
-const GOLDEN_STATE = "6a04f7eff61994ac71d7944c64a40dbc";
+// Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
+const GOLDEN_STATE = "5ff6f11058ae178b7d4b24f908220c5b";
 const GOLDEN_MONTHLY = "686d3fbf8b3a5e00662f58cf";
 const GOLDEN_PATCHES = "5255589d8f89b3abce9997f7";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */

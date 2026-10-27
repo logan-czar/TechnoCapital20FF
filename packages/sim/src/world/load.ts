@@ -18,6 +18,7 @@ import { archetypeAtLoad, rdPlanAtLoad, STATE_CONTROL_BASIS } from "../ai/archet
 import { birthsStateFromData } from "../births/state.ts";
 import { boomDate, POP_BASE_YEAR } from "../economy/ai_boom.ts";
 import { START_PHASE, zAvg } from "../economy/cycle.ts";
+import { LEGACY_PROFILE } from "../economy/profiles.ts";
 import {
   enterpriseShare,
   fixedCostRateAtLoad,
@@ -672,6 +673,7 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
       g_history: new Array<number>(maxLag + 1).fill(0.0),
       z_avg: zAvg,
     },
+    profile: LEGACY_PROFILE,
     ai: {
       stage: "Preboom",
       boom_date: deps.boomDate(),

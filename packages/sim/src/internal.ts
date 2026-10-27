@@ -1,6 +1,7 @@
 // Test and headless access to the raw world (Rust's `test-hooks` and `soak-stats` features).
 // apps/web must never import this (Biome rule and scripts/ts/boundary.ts).
 
+export * from "./economy/profiles.ts";
 export * from "./index.ts";
 // The clock and scheduler (time/) and every module's jobs in their slots (jobs.ts).
 export * from "./jobs.ts";
