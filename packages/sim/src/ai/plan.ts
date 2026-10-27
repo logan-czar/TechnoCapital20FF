@@ -109,6 +109,8 @@ export interface PlanInputs {
   labor: number;
   /** Net income of the quarter just released (5.17). */
   last_quarter_net_income: number;
+  /** The experiment's debt aggression level (D971); 0 or absent is spec 6. */
+  debt_aggression?: number;
 }
 
 /**
@@ -131,6 +133,7 @@ export function planOperations(i: PlanInputs): OperatingPlan {
     liquidity: liquidity(i.cash, i.line),
     min_cash,
     purchases_stopped: !companyStatusMayBuyAssets(i.status) || i.raise_pending,
+    debt_aggression: i.debt_aggression ?? 0,
   };
   const growth = growthPlan({
     loss_q: i.loss_q,
@@ -141,6 +144,7 @@ export function planOperations(i: PlanInputs): OperatingPlan {
     traits,
     tech: i.tech,
     funding,
+    debt_aggression: i.debt_aggression ?? 0,
   });
   const rd = rdPlan({
     rd_norm: i.rd_norm,
@@ -175,6 +179,7 @@ export function planFinancing(i: PlanInputs, op: OperatingPlan, cash: number, li
     last_quarter_net_income: i.last_quarter_net_income,
     archetype_payout_mult: archetypeParams(op.archetype).payout_mult,
     status: i.status,
+    debt_aggression: i.debt_aggression ?? 0,
   });
 }
 

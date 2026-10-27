@@ -35,6 +35,10 @@ export const GROWTH_MIN = -0.2;
 export const GROWTH_MAX = 0.3;
 /** Spec 6.2 funding cap: the quarter's purchases use at most 50% of liquidity above min_cash. */
 export const FUNDING_CAP_SHARE = 0.5;
+/** D971: each debt aggression level adds this to g while profitable and not shrinking. */
+export const DEBT_GROWTH_NUDGE_PER_LEVEL = 0.01;
+/** D971: each debt aggression level lets the quarter's purchases use this much more liquidity. */
+export const DEBT_FUNDING_CAP_PER_LEVEL = 0.125;
 /** Quarters a year: the quarter's purchases are a quarter of the yearly rate (5.10). */
 export const QUARTERS_PER_YEAR = 4.0;
 
@@ -92,6 +96,8 @@ export interface FundingInputs {
    * succeeds, 6.2 holds g at −d_eff"): g is capped at −d_eff.
    */
   purchases_stopped: boolean;
+  /** The experiment's debt aggression level (D971); 0 or absent is spec 6.2. */
+  debt_aggression?: number;
 }
 
 /**
@@ -111,7 +117,8 @@ export function fundingCap(g: number, i: FundingInputs): number {
   const floor = -i.d_eff;
   if (i.purchases_stopped) return minF(g, floor);
   if (g <= floor || i.gross_assets <= 0.0) return g;
-  const budget = FUNDING_CAP_SHARE * maxF(i.liquidity - i.min_cash, 0.0);
+  const share = minF(1.0, FUNDING_CAP_SHARE + DEBT_FUNDING_CAP_PER_LEVEL * (i.debt_aggression ?? 0));
+  const budget = share * maxF(i.liquidity - i.min_cash, 0.0);
   if (quarterPurchases(i.gross_assets, i.d_eff, g) <= budget) return g;
   return clamp((budget * QUARTERS_PER_YEAR) / i.gross_assets - i.d_eff, floor, g);
 }
@@ -127,6 +134,8 @@ export interface GrowthInputs {
   traits: readonly Trait[];
   tech: boolean;
   funding: FundingInputs;
+  /** The experiment's debt aggression level (D971); 0 or absent is spec 6.2. */
+  debt_aggression?: number;
 }
 
 /**
@@ -134,7 +143,10 @@ export interface GrowthInputs {
  * to +30%, then the funding cap.
  */
 export function growthPlan(i: GrowthInputs): number {
-  const g =
+  let g =
     situationGrowth(i.loss_q, i.roa, i.g_dem, i.supply_ratio, i.archetype) + traitNudge(i.traits, i.tech);
+  // D971: a leveraged company expands harder while it is profitable and not shrinking.
+  const a = i.debt_aggression ?? 0;
+  if (a > 0 && i.roa >= 0.0 && i.loss_q < SHRINK_LOSS_QUARTERS) g += DEBT_GROWTH_NUDGE_PER_LEVEL * a;
   return fundingCap(clamp(g, GROWTH_MIN, GROWTH_MAX), i.funding);
 }

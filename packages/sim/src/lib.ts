@@ -141,11 +141,13 @@ export function startWorld(
   draws: DrawSource,
   deps: StartDeps = START_DEPS,
   profile: EconomyProfile = LEGACY_PROFILE,
+  debtLevels?: readonly number[],
 ): Result<World, LoadError> {
   const built = deps.worldFromData(data);
   if (!built.ok) return built;
   const world = built.value;
   world.profile = profile;
+  if (debtLevels !== undefined && debtLevels.length > 0) world.debt_levels = [...debtLevels];
   deps.economyStart(world, draws);
   deps.birthsDrawTippedLabAtLoad(world, draws);
   deps.aiPlanAtLoad(world);
@@ -195,6 +197,11 @@ export interface SimOptions {
   debug?: boolean;
   /** For the Save and Load controls (none by default: they fail with an Io save error). */
   files?: SaveFiles | null;
+  /**
+   * The debt aggression experiment (D971): company `id` plays level `debt_levels[id % length]`,
+   * 0 being spec 6.5. Absent leaves every company as it is.
+   */
+  debt_levels?: number[];
   /** The growth profile id (economy/profiles.ts, D970); `DEFAULT_PROFILE_ID` when absent. */
   profile?: string;
   /** Replaces some of the default `SIM_DEPS` (tests). */
@@ -348,7 +355,7 @@ export function simNew(data: WorldData, seed: number, opts: SimOptions = {}): Re
   return simFromConfig(
     {
       data,
-      start: (draws) => startWorld(data, draws, deps.start, profile),
+      start: (draws) => startWorld(data, draws, deps.start, profile, opts.debt_levels),
       makeScheduler: scheduler,
       mapDataBuild: (world) => deps.mapDataBuild(data, world),
       views: deps.views,
