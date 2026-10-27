@@ -24,6 +24,18 @@ export const PRODUCTIVITY_MIN = 30.0;
 export const PRODUCTIVITY_MAX = 200.0;
 /** Spec 5.6: research multiplier +0.01 per 10× of research labor (×1.01 at 1 to 9). */
 export const RESEARCH_MULT_STEP = 0.01;
+/**
+ * D973: R&D above the norm has diminishing returns. The overspend `x = rd_total ÷ rd_norm − 1` counts
+ * as `x ÷ (1 + x ÷ RD_DIMINISHING_X)`: half as much at x = RD_DIMINISHING_X, never more than it.
+ * Spending under the norm costs in full. Spec 5.6 has no such curve (a design fix for Logan).
+ */
+export const RD_DIMINISHING_X = 1.0;
+
+/** The R&D overspend that counts toward productivity (D973). `Infinity` is spec 5.6 as written. */
+export function rdEffect(x: number, diminishingX: number = RD_DIMINISHING_X): number {
+  return x > 0.0 ? x / (1.0 + x / diminishingX) : x;
+}
+
 /** Integer percent divisor. */
 const PERCENT = 100;
 
@@ -64,6 +76,8 @@ export interface ProductivityInputs {
   idle_units: number;
   /** Labor units L (u64). */
   labor: number;
+  /** The R&D curve (D973); absent plays RD_DIMINISHING_X. */
+  rd_diminishing_x?: number;
 }
 
 /** The inputs for `stations` (research and idle from it, L its total). Rust `ProductivityInputs::with_stations`. */
@@ -95,7 +109,7 @@ export function productivityDelta(inp: ProductivityInputs): number {
   const rdTotal = inp.rd_plan + inp.free_rd;
   return (
     (RD_EFFECT_POINTS_PER_YEAR *
-      (rdTotal / inp.rd_norm - 1.0) *
+      rdEffect(rdTotal / inp.rd_norm - 1.0, inp.rd_diminishing_x) *
       mgmtFactor(inp.management_score) *
       researchMult(inp.research_units)) /
       MONTHS_PER_YEAR -

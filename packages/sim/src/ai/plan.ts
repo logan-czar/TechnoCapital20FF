@@ -10,6 +10,7 @@ import type { CompanyStatus, CreditLine } from "../types/state/finance.ts";
 import type { Trait } from "../types/state/people.ts";
 import { archetype, archetypeParams } from "./archetype.ts";
 import { type Financing, financing } from "./financing.ts";
+import { applyFocus } from "./focus.ts";
 import { type FundingInputs, growthPlan, quarterPurchases } from "./growth.ts";
 import { gDem, liquidity, minCash, planTraits, roa } from "./inputs.ts";
 import { rdPlan } from "./rd.ts";
@@ -111,6 +112,8 @@ export interface PlanInputs {
   last_quarter_net_income: number;
   /** The experiment's debt aggression level (D971); 0 or absent is spec 6. */
   debt_aggression?: number;
+  /** The experiment's focus level (D972); 0 or absent is spec 6.2 and 6.3. */
+  focus?: number;
 }
 
 /**
@@ -154,13 +157,23 @@ export function planOperations(i: PlanInputs): OperatingPlan {
     loss_q: i.loss_q,
     free_rd_pct: i.free_rd_pct,
   });
+  const shared = applyFocus({
+    focus: i.focus ?? 0,
+    rd_plan: rd,
+    growth,
+    rd_norm: i.rd_norm,
+    ttm_revenue: i.ttm_revenue,
+    gross_assets: i.gross_assets,
+    loss_q: i.loss_q,
+    funding,
+  });
   const inflow = monthlyInflowTb(i.ttm_revenue, i.data_tb_per_musd);
   return {
     archetype: arch,
-    growth,
-    rd_plan: rd,
+    growth: shared.growth,
+    rd_plan: shared.rd_plan,
     stations: planStations(i.labor, params, inflow, traits),
-    planned_purchases: quarterPurchases(i.gross_assets, i.d_eff, growth),
+    planned_purchases: quarterPurchases(i.gross_assets, i.d_eff, shared.growth),
     min_cash,
   };
 }

@@ -47,7 +47,8 @@ import { data, rowOf, unwrap } from "./common/index.ts";
 
 describe("m6 news", () => {
   it("every_headline_type_posts_and_reports_its_event", () => {
-    const sim = unwrap(simNew(data(), 41), "Sim::new");
+    // Seed 42: D973 moved the random draws, and seed 41 no longer draws a hot cluster in the window.
+    const sim = unwrap(simNew(data(), 42), "Sim::new");
     const end = dateTimeMidnight(simDateYmd(2023, 1, 10));
     const notices: Notice[] = [];
     const recaps: SimDate[] = [];

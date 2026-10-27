@@ -31,6 +31,8 @@ function inputs(rdPlan: number, freeRd: number, score: number): ProductivityInpu
     research_units: 0,
     idle_units: 0,
     labor: 100,
+    // Spec 5.6 as written: the worked numbers below predate the D973 curve, which is the default.
+    rd_diminishing_x: Number.POSITIVE_INFINITY,
   };
 }
 
@@ -117,6 +119,17 @@ describe("spec 5.6 productivity", () => {
       q = stepProductivity(q, lots);
     }
     expect(q).toBe(200.0);
+  });
+
+  it("the default R&D curve (D973) halves an overspend of one norm", () => {
+    const { rd_diminishing_x: _spec, ...curved } = inputs(RD_NORM * 2.0, 0.0, 50.0);
+    expect(productivityDelta(inputs(RD_NORM * 2.0, 0.0, 50.0))).toBeGreaterThan(productivityDelta(curved));
+    expect(
+      close(
+        productivityDelta(curved) - productivityDelta(inputs(RD_NORM, 0.0, 50.0)),
+        (10.0 * 0.5 * 1.0) / 12.0,
+      ),
+    ).toBe(true);
   });
 
   it("inputs_from_stations", () => {

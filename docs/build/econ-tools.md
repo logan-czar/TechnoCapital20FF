@@ -22,3 +22,18 @@ pnpm --filter @tc20ff/headless exec tsx src/debt-tournament.ts summary <outDir>
 ```
 
 `levels` is a list such as `0,1,2,3,4,6`. The summary pools the seeds per profile: survival, share ever distressed, equity multiple (all, and median), revenue multiple, line drawn over limit, debt over equity, the debt trend by year, and the equity multiple by archetype. Only companies in the world at load are scored; one that goes Bankrupt or Removed ends with equity 0.
+
+## Strategy tournament (D971, D972)
+
+Plays debt aggression and R&D versus growth focus together. A cell is `debt/focus`; a company plays
+`cells[(id + seed) % n]`, so run a multiple of n seeds and each company plays each cell once.
+
+```
+tsx src/strategy-tournament.ts run vanilla 10 1 5 0/0,0/1,0/-1,3/1,3/-1 <outDir>
+tsx src/strategy-tournament.ts summary <outDir>
+```
+
+Focus above 0 moves reinvestment from growth into R&D, below 0 the other way (D972). The summary adds
+asset-weighted productivity to the debt tournament's columns.
+
+`RD_X=<x>` sets the R&D curve for a tournament run (D973); `RD_X=Infinity` plays spec 5.6 as written.

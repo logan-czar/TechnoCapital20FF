@@ -2,6 +2,7 @@
 // apps/web must never import this (Biome rule and scripts/ts/boundary.ts).
 
 export { DEBT_HOLD_SHARE_PER_LEVEL, debtAggressionOf } from "./ai/financing.ts";
+export { FOCUS_RD_SHIFT_PER_LEVEL, focusOf } from "./ai/focus.ts";
 export * from "./economy/profiles.ts";
 export {
   grossAssets as companyGrossAssets,

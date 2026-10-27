@@ -142,12 +142,16 @@ export function startWorld(
   deps: StartDeps = START_DEPS,
   profile: EconomyProfile = LEGACY_PROFILE,
   debtLevels?: readonly number[],
+  focusLevels?: readonly number[],
+  rdDiminishingX?: number,
 ): Result<World, LoadError> {
   const built = deps.worldFromData(data);
   if (!built.ok) return built;
   const world = built.value;
   world.profile = profile;
   if (debtLevels !== undefined && debtLevels.length > 0) world.debt_levels = [...debtLevels];
+  if (rdDiminishingX !== undefined) world.rd_diminishing_x = rdDiminishingX;
+  if (focusLevels !== undefined && focusLevels.length > 0) world.focus_levels = [...focusLevels];
   deps.economyStart(world, draws);
   deps.birthsDrawTippedLabAtLoad(world, draws);
   deps.aiPlanAtLoad(world);
@@ -202,6 +206,10 @@ export interface SimOptions {
    * 0 being spec 6.5. Absent leaves every company as it is.
    */
   debt_levels?: number[];
+  /** The focus experiment (D972): company `id` plays focus `focus_levels[id % length]`. */
+  focus_levels?: number[];
+  /** The R&D curve (D973); see `World.rd_diminishing_x`. Absent plays the default. */
+  rd_diminishing_x?: number;
   /** The growth profile id (economy/profiles.ts, D970); `DEFAULT_PROFILE_ID` when absent. */
   profile?: string;
   /** Replaces some of the default `SIM_DEPS` (tests). */
@@ -355,7 +363,16 @@ export function simNew(data: WorldData, seed: number, opts: SimOptions = {}): Re
   return simFromConfig(
     {
       data,
-      start: (draws) => startWorld(data, draws, deps.start, profile, opts.debt_levels),
+      start: (draws) =>
+        startWorld(
+          data,
+          draws,
+          deps.start,
+          profile,
+          opts.debt_levels,
+          opts.focus_levels,
+          opts.rd_diminishing_x,
+        ),
       makeScheduler: scheduler,
       mapDataBuild: (world) => deps.mapDataBuild(data, world),
       views: deps.views,

@@ -121,6 +121,7 @@ export function productivityJob(world: World, _ctx: JobCtx): void {
       c.management_score,
       c.stations,
     );
+    if (world.rd_diminishing_x !== undefined) inputs.rd_diminishing_x = world.rd_diminishing_x;
     u.productivity = stepProductivity(u.productivity, inputs);
   }
 }
