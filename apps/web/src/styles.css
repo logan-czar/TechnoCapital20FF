@@ -644,3 +644,129 @@ input {
   border-radius: 3px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
 }
+
+/* Lane B: market pages and full-screen Pdoomberg (pdoomberg/Pdoomberg.tsx, M9.4; 20-ui 20.5.2) */
+.tr.clickable {
+  cursor: pointer;
+}
+.pdoomberg {
+  --pdb-text: #ffb000;
+  --pdb-dim: #996b00;
+  --pdb-rule: #5a3d00;
+  position: fixed;
+  top: var(--top-bar);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: #050505;
+  color: var(--pdb-text);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+.pdb-head {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 14px;
+}
+.pdb-head .grow {
+  flex: 1;
+}
+.pdb-title {
+  font-size: 1.2em;
+  font-weight: 600;
+}
+.pdb-rule {
+  flex: none;
+  height: 1px;
+  background: var(--pdb-rule);
+}
+.pdb-text,
+.pdb-strong {
+  margin: 0;
+  color: var(--pdb-text);
+}
+.pdb-dim {
+  margin: 0;
+  color: var(--pdb-dim);
+}
+.pdb-security {
+  flex: none;
+  min-height: 1.3em;
+}
+.pdb-area {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+  overflow: hidden;
+}
+.pdb-filters {
+  flex: none;
+}
+.pdb-table {
+  flex: 1;
+  min-height: 0;
+}
+.pdb-table .tr {
+  background: #0a0a0a;
+}
+.pdb-table .tr.odd {
+  background: #121008;
+}
+.pdb-table .tr:hover {
+  background: #2a2000;
+}
+.pdb-table .thead,
+.pdb-table .th {
+  background: #1a1400;
+  color: var(--pdb-text);
+}
+.pdb-columns {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  min-height: 0;
+}
+.pdb-column {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  min-height: 0;
+}
+.pdb-column:last-child {
+  flex-grow: 0.6;
+}
+.pdb-charts {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  overflow: auto;
+}
+.pdb-lock {
+  margin: 0;
+  color: var(--muted);
+}
+.pdb-footer,
+.pdb-keys {
+  flex: none;
+}
+.pdb-key {
+  border: 0;
+  background: transparent;
+  color: var(--pdb-dim);
+  font-family: inherit;
+}
+.pdb-key.on {
+  color: var(--pdb-text);
+}
