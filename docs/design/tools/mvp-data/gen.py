@@ -244,6 +244,21 @@ TREND_NOTE = {
     'Defense': 'Trend +4% is war-driven in 10.3; flat 0.04 in the MVP (A)',
 }
 
+
+# Drift plan, lane G (D977): "Fade each industry's long-term rate to a mature rate." Past the 2020s an industry's
+# trend_growth fades exponentially toward mature_rate with a half life in years (mvp-spec 5.1, v1.5; T). An industry at
+# or under MATURE_RATE already sits there and does not fade (half life 0); the fastest (EVs, 25%) fade over 25 years,
+# a mild grower over 15. Only the `mature` growth profile reads these; the legacy profile keeps the CSV rates for good.
+MATURE_RATE = 0.035
+FADE_HALF_LIFE_MIN, FADE_HALF_LIFE_MAX = 15, 25
+
+def fade_columns(trend):
+    if trend <= MATURE_RATE:
+        return {'mature_rate': fmt(trend), 'fade_half_life_years': '0'}
+    excess = min(1.0, (trend - MATURE_RATE) / (0.25 - MATURE_RATE))
+    life = FADE_HALF_LIFE_MIN + (FADE_HALF_LIFE_MAX - FADE_HALF_LIFE_MIN) * excess
+    return {'mature_rate': fmt(MATURE_RATE), 'fade_half_life_years': fmt(life, 1)}
+
 def build_industries():
     if not PER_INDUSTRY:
         return build_default_industries()
@@ -258,7 +273,8 @@ def build_default_industries():
             notes.append(TREND_NOTE[name])
         rows.append({
             'id': slug(name), 'name': name, 'sector': sector, 'valuation_group': 'Default',
-            'world_size_2020_usd_bn': fmt(size), 'trend_growth': fmt(trend), 'cycle_beta': fmt(d['cycle_beta']),
+            'world_size_2020_usd_bn': fmt(size), 'trend_growth': fmt(trend), **fade_columns(trend),
+            'cycle_beta': fmt(d['cycle_beta']),
             'volatility': fmt(d['volatility']),
             'boom_uplift': fmt(BOOM_UPLIFT.get(name, 0)), 'crash_drop': fmt(CRASH_DROP.get(name, 0)),
             'rate_sensitivity': d['rate_sensitivity'], 'margin_full_use': fmt(d['margin_full_use']),
@@ -287,7 +303,8 @@ def build_tuned_industries():
             notes.append('Cash-burning on purpose (Logan, batch 146; mvp-spec 6.6)')
         rows.append({
             'id': slug(name), 'name': name, 'sector': sector, 'valuation_group': vg,
-            'world_size_2020_usd_bn': fmt(size), 'trend_growth': fmt(trend), 'cycle_beta': fmt(beta),
+            'world_size_2020_usd_bn': fmt(size), 'trend_growth': fmt(trend), **fade_columns(trend),
+            'cycle_beta': fmt(beta),
             'volatility': fmt(VOLATILITY),
             'boom_uplift': fmt(BOOM_UPLIFT.get(name, 0)), 'crash_drop': fmt(CRASH_DROP.get(name, 0)),
             'rate_sensitivity': RATE_SENS[rs], 'margin_full_use': fmt(m), 'fixed_cost_share': fmt(f),

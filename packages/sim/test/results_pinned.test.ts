@@ -34,7 +34,7 @@ import { data, macrotask, unwrap } from "./common/index.ts";
 // Re-recorded for D974: LOW_PRODUCTIVITY_ADJ is +1.0 (was +0.5), so the R&D plan, productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D973: R&D above the norm has diminishing returns by default (spec 5.6 has no curve), so productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
-const GOLDEN_STATE = "d9d7a3ac9e6b8268317a85b20d3c65f8";
+const GOLDEN_STATE = "a2398e39d3da8d5b4b3e4d3a8f5a248b";
 const GOLDEN_MONTHLY = "e8bbac3c479a262a85658fa9";
 const GOLDEN_PATCHES = "21ec381f13a34346cf190ba5";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */

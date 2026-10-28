@@ -12,7 +12,10 @@ import { type JobCtx, jobCtxRaiseAlert } from "../time/scheduler.ts";
 import type { Quarter, SimDate } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import type { AiBoom, AiSchedule, AiStage, PhaseLabel, World } from "../types/world.ts";
-import { profileOf } from "./profiles.ts";
+import { fadedTrend, growthFactor, profileOf } from "./profiles.ts";
+
+/** The fade counts years from 1 Jan 2020, the game's start (drift plan, D977). */
+const FADE_ORIGIN_YEAR = 2020;
 
 /** The boom event: 00:00 on 1 January 2030 (spec 5.1.1, scripted). */
 export const BOOM_YEAR = 2030;
@@ -148,11 +151,18 @@ export function setIndustryLt(world: World, date: SimDate): void {
   const aiLt = aiLabsLt(world.ai.schedule, stage, quartersIn);
   world.ai.ai_labs_lt = aiLt;
   const pre = world.ai.schedule.preboom_lt;
-  // The growth profile scales the CSV rates (D970); 1 for legacy.
-  const scale = profileOf(world).lt_scale;
+  // The growth profile scales the CSV rates (D970) and, with the drift plan (D977, D978), fades
+  // them to the mature rates, then applies the world growth scale and the slowdown. All 1 or off
+  // for legacy, so its rates are the CSV's.
+  const profile = profileOf(world);
+  const q = simDateQuarter(date);
+  const scale = profile.lt_scale * growthFactor(profile, q.year);
+  const years = (quarterIndex(q) - FADE_ORIGIN_YEAR * QUARTERS_IN_YEAR) / QUARTERS_IN_YEAR;
   for (const ind of world.industries) {
     ind.prev_lt = ind.lt;
-    ind.lt = linkedLt(ind.params.trend_growth * scale, ind.params.boom_uplift, aiLt, pre);
+    const p = ind.params;
+    const trend = fadedTrend(p.trend_growth, p.mature_rate, p.fade_half_life_years, years, profile.fade);
+    ind.lt = linkedLt(trend * scale, p.boom_uplift, aiLt, pre);
   }
 }
 

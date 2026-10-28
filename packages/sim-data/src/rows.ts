@@ -189,6 +189,8 @@ export interface Industry {
   valuation_group: string;
   world_size_2020_usd_bn: number;
   trend_growth: number;
+  mature_rate: number;
+  fade_half_life_years: number;
   cycle_beta: number;
   volatility: number;
   boom_uplift: number;
@@ -221,6 +223,8 @@ export const INDUSTRY_SPEC = rowSpec<Industry>({
   valuation_group: str,
   world_size_2020_usd_bn: f64,
   trend_growth: f64,
+  mature_rate: f64,
+  fade_half_life_years: f64,
   cycle_beta: f64,
   volatility: f64,
   boom_uplift: f64,
