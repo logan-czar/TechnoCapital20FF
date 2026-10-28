@@ -1,7 +1,15 @@
 // Test and headless access to the raw world (Rust's `test-hooks` and `soak-stats` features).
 // apps/web must never import this (Biome rule and scripts/ts/boundary.ts).
 
+export { DEBT_HOLD_SHARE_PER_LEVEL, debtAggressionOf } from "./ai/financing.ts";
+export { FOCUS_RD_SHIFT_PER_LEVEL, focusOf } from "./ai/focus.ts";
 export * from "./economy/profiles.ts";
+export {
+  grossAssets as companyGrossAssets,
+  sheet as companySheet,
+  trailingRevenue as companyTrailingRevenue,
+} from "./finance/jobs.ts";
+export { companyFinanceStatus } from "./finance/state.ts";
 export * from "./index.ts";
 // The clock and scheduler (time/) and every module's jobs in their slots (jobs.ts).
 export * from "./jobs.ts";

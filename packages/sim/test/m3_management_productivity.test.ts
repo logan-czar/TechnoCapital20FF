@@ -107,7 +107,10 @@ function specDelta(rdTotal: number, rdNorm: number, score: number, s: Stations):
   const l = s.productivity + s.enterprise + s.fifty_fifty + s.research + s.idle;
   const idle = s.idle / l;
   const decay = idle >= 0.25 ? 0.3 : idle >= 0.1 ? 0.4 : 0.5;
-  return (10.0 * (rdTotal / rdNorm - 1.0) * (0.5 + score / 100.0) * researchMult) / 12.0 - decay;
+  // D973: an overspend of x norms counts as x / (1 + x).
+  const x = rdTotal / rdNorm - 1.0;
+  const counted = x > 0.0 ? x / (1.0 + x) : x;
+  return (10.0 * counted * (0.5 + score / 100.0) * researchMult) / 12.0 - decay;
 }
 
 describe("m3 management", () => {
@@ -191,14 +194,15 @@ describe("m3 productivity", () => {
     // Twelve monthly jobs: 1 Feb 2020 to 1 Jan 2021.
     runTo(sim, simDateYmd(2021, 1, 1));
     const w = simWorld(sim);
-    // Spec 5.6 check (score 50): +4 a year at double the norm, -6 at the norm, -16 with none.
+    // Spec 5.6 check (score 50): -6 at the norm, -16 with none; at double the norm +4 a year in the
+    // spec, -1 with the D973 curve (an overspend of one norm counts as half).
     BAREBONES_PLANS.forEach(([key], i) => {
       const c = w.companies[company(w, key)] as Company;
       expect(Math.abs(c.management_score - 50.0) < 1e-9, key).toBe(true);
       expect(c.stations).toEqual({ productivity: 1, enterprise: 0, fifty_fifty: 0, research: 0, idle: 0 });
       expect((c.data[0] as (typeof c.data)[number]).book.free_rd_pct).toBe(0);
       const p = (w.units[c.units[0] as number] as (typeof w.units)[number]).productivity;
-      const want = [104.0, 94.0, 84.0][i] as number;
+      const want = [99.0, 94.0, 84.0][i] as number;
       expect(Math.abs(p - want) < 1e-9, `${key}: ${p} vs ${want}`).toBe(true);
     });
   });

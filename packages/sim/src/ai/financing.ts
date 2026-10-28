@@ -18,6 +18,17 @@ export const REPAY_FIRST_DRAWN_SHARE = 0.25;
 /** Spec 6.5: a Brave controller may keep up to 75% of the limit drawn to fund growth. */
 export const BRAVE_DRAWN_SHARE = 0.75;
 
+/**
+ * D971: each debt aggression level holds this share of the limit drawn (no repaying below it) and
+ * borrows up to it to fund the quarter's purchases.
+ */
+export const DEBT_HOLD_SHARE_PER_LEVEL = 0.2;
+
+/** The debt aggression of company `id` under the experiment's levels (D971); 0 with none. */
+export function debtAggressionOf(levels: readonly number[] | undefined, id: number): number {
+  return levels === undefined || levels.length === 0 ? 0 : (levels[id % levels.length] as number);
+}
+
 /** What 6.5 reads at the lock. */
 export interface FinancingInputs {
   /** Cash on hand at the lock, USD. */
@@ -37,6 +48,8 @@ export interface FinancingInputs {
   /** The archetype's payout mult (6.1). */
   archetype_payout_mult: number;
   status: CompanyStatus;
+  /** The experiment's debt aggression level (D971); 0 or absent is spec 6.5. */
+  debt_aggression?: number;
 }
 
 /** The financing moves and the dividend set at the lock (spec 6.5, 5.17). */
@@ -69,10 +82,14 @@ export function financing(i: FinancingInputs): Financing {
   const drawn = maxF(i.line.drawn, 0.0);
   const repay_first = has(i.traits, "Cautious") || has(i.traits, "Greedy");
   const brave = has(i.traits, "Brave");
+  const hold = DEBT_HOLD_SHARE_PER_LEVEL * (i.debt_aggression ?? 0) * i.line.limit;
 
   const out: Financing = { draw: 0.0, repay: 0.0, dividend: 0.0 };
-  if (cash_after < i.min_cash) {
-    out.draw = maxF(minF(i.min_cash - cash_after, creditLineAvailable(i.line)), 0.0);
+  // D971: a leveraged company borrows toward its hold share to fund the planned purchases.
+  const debt_draw = hold > drawn ? minF(purchases, hold - drawn) : 0.0;
+  if (cash_after < i.min_cash || debt_draw > 0.0) {
+    const gap = maxF(i.min_cash - cash_after, 0.0);
+    out.draw = maxF(minF(maxF(gap, debt_draw), creditLineAvailable(i.line)), 0.0);
   } else if (drawn > 0.0) {
     let repay = planRepay(cash_after, drawn, i.min_cash);
     if (repay_first) {
@@ -82,6 +99,7 @@ export function financing(i: FinancingInputs): Financing {
     } else if (brave) {
       repay = minF(repay, maxF(drawn - BRAVE_DRAWN_SHARE * i.line.limit, 0.0));
     }
+    if (hold > 0.0) repay = minF(repay, maxF(drawn - hold, 0.0));
     out.repay = maxF(minF(repay, drawn), 0.0);
   }
 

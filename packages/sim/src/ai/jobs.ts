@@ -23,6 +23,8 @@ import type { Company, World } from "../types/world.ts";
 import { companyDataIn, originIsBorn } from "../world/entities.ts";
 import { worldPublishes } from "../world/index.ts";
 import { STARTUP_SECTOR } from "./archetype.ts";
+import { debtAggressionOf } from "./financing.ts";
+import { focusOf } from "./focus.ts";
 import { gDem, nextLossQuarters } from "./inputs.ts";
 import { batchOrder, type PlanInputs, planFinancing, planOperations } from "./plan.ts";
 import { raisePlan, rollRaise } from "./raise.ts";
@@ -96,6 +98,8 @@ function planInputs(world: World, id: CompanyId): PlanInputs {
     free_rd_pct: companyDataIn(c, c.industry)?.free_rd_pct ?? 0,
     labor: c.labor_units,
     last_quarter_net_income: last === undefined ? 0.0 : ledgerNetIncome(last.lines),
+    debt_aggression: debtAggressionOf(world.debt_levels, id),
+    focus: focusOf(world.focus_levels, id),
   };
 }
 

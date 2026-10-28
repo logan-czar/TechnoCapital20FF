@@ -38,13 +38,13 @@ function inputs(mult: number, productivity: number, traits: Trait[], lossQ: numb
 
 describe("spec 6.3 R&D plan", () => {
   it("productivity_adjustment", () => {
-    // +0.5 below 100 (D360, the M10.7 tuning of the spec +0.25 below 95); -0.2 above 110.
-    expect(productivityAdj(99.9)).toBe(0.5);
+    // +1.0 below 100 (D974; D360 tuned the spec +0.25 below 95 to +0.5); -0.2 above 110.
+    expect(productivityAdj(99.9)).toBe(1.0);
     expect(productivityAdj(100.0)).toBe(0.0);
     expect(productivityAdj(110.0)).toBe(0.0);
     expect(productivityAdj(110.1)).toBe(-0.2);
-    // Incumbent at 90: 0.05 x 1.5; at 120: 0.05 x 0.8.
-    expect(close(rdTarget(inputs(1.0, 90.0, [], 0, 0)), 0.075)).toBe(true);
+    // Incumbent at 90: 0.05 x 2.0; at 120: 0.05 x 0.8.
+    expect(close(rdTarget(inputs(1.0, 90.0, [], 0, 0)), 0.1)).toBe(true);
     expect(close(rdTarget(inputs(1.0, 120.0, [], 0, 0)), 0.04)).toBe(true);
   });
 

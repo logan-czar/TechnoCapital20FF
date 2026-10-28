@@ -99,6 +99,15 @@ export interface World {
   /** The growth profile in play (D970); a world without one plays `legacy`. */
   profile: EconomyProfile;
   /**
+   * The debt aggression experiment (D971): company `id` plays level `debt_levels[id % length]`.
+   * Absent (the default) leaves every company on spec 6.5, and out of the state hash.
+   */
+  debt_levels?: number[];
+  /** The focus experiment (D972): company `id` plays focus `focus_levels[id % length]`. Absent is spec 6. */
+  focus_levels?: number[];
+  /** The R&D curve (D973): overspend above rd_norm has diminishing returns. Absent plays RD_DIMINISHING_X; Infinity is spec 5.6. */
+  rd_diminishing_x?: number;
+  /**
    * Person names per country, built once at load (spec 3.7.1, 3.7.2): jobs see no CSVs and a
    * save loads without them (D13).
    */

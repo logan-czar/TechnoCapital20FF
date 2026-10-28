@@ -10,6 +10,7 @@ import type { CompanyStatus, CreditLine } from "../types/state/finance.ts";
 import type { Trait } from "../types/state/people.ts";
 import { archetype, archetypeParams } from "./archetype.ts";
 import { type Financing, financing } from "./financing.ts";
+import { applyFocus } from "./focus.ts";
 import { type FundingInputs, growthPlan, quarterPurchases } from "./growth.ts";
 import { gDem, liquidity, minCash, planTraits, roa } from "./inputs.ts";
 import { rdPlan } from "./rd.ts";
@@ -109,6 +110,10 @@ export interface PlanInputs {
   labor: number;
   /** Net income of the quarter just released (5.17). */
   last_quarter_net_income: number;
+  /** The experiment's debt aggression level (D971); 0 or absent is spec 6. */
+  debt_aggression?: number;
+  /** The experiment's focus level (D972); 0 or absent is spec 6.2 and 6.3. */
+  focus?: number;
 }
 
 /**
@@ -131,6 +136,7 @@ export function planOperations(i: PlanInputs): OperatingPlan {
     liquidity: liquidity(i.cash, i.line),
     min_cash,
     purchases_stopped: !companyStatusMayBuyAssets(i.status) || i.raise_pending,
+    debt_aggression: i.debt_aggression ?? 0,
   };
   const growth = growthPlan({
     loss_q: i.loss_q,
@@ -141,6 +147,7 @@ export function planOperations(i: PlanInputs): OperatingPlan {
     traits,
     tech: i.tech,
     funding,
+    debt_aggression: i.debt_aggression ?? 0,
   });
   const rd = rdPlan({
     rd_norm: i.rd_norm,
@@ -150,13 +157,23 @@ export function planOperations(i: PlanInputs): OperatingPlan {
     loss_q: i.loss_q,
     free_rd_pct: i.free_rd_pct,
   });
+  const shared = applyFocus({
+    focus: i.focus ?? 0,
+    rd_plan: rd,
+    growth,
+    rd_norm: i.rd_norm,
+    ttm_revenue: i.ttm_revenue,
+    gross_assets: i.gross_assets,
+    loss_q: i.loss_q,
+    funding,
+  });
   const inflow = monthlyInflowTb(i.ttm_revenue, i.data_tb_per_musd);
   return {
     archetype: arch,
-    growth,
-    rd_plan: rd,
+    growth: shared.growth,
+    rd_plan: shared.rd_plan,
     stations: planStations(i.labor, params, inflow, traits),
-    planned_purchases: quarterPurchases(i.gross_assets, i.d_eff, growth),
+    planned_purchases: quarterPurchases(i.gross_assets, i.d_eff, shared.growth),
     min_cash,
   };
 }
@@ -175,6 +192,7 @@ export function planFinancing(i: PlanInputs, op: OperatingPlan, cash: number, li
     last_quarter_net_income: i.last_quarter_net_income,
     archetype_payout_mult: archetypeParams(op.archetype).payout_mult,
     status: i.status,
+    debt_aggression: i.debt_aggression ?? 0,
   });
 }
 
