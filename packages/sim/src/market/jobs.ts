@@ -11,6 +11,7 @@
 // 30-year run): it allocates nothing and draws exactly as `stepPrices` does (D135).
 
 import { companyIsFrozen } from "../economy/index.ts";
+import { profileOf } from "../economy/profiles.ts";
 import { companyHomeSpread, runRate, sheet } from "../finance/jobs.ts";
 import { companyFinanceQuarters } from "../finance/state.ts";
 import { ledgerEbit, ledgerNetIncome, trailingFour } from "../finance/statements.ts";
@@ -287,7 +288,8 @@ export function pricesJob(world: World, ctx: JobCtx): void {
   const t = ctx.facts.now;
   if (!pricesMove(t)) return;
   const mult = reactionVolatilityMult(t);
-  const sigmaH = sigmaHourly(SECTOR_VOLATILITY);
+  // The profile's price noise scale (D977); 1 except under a volatility level.
+  const sigmaH = sigmaHourly(SECTOR_VOLATILITY) * profileOf(world).price_noise_scale;
   const rhoV = rho(SECTOR_BETA);
   const draws = ctx.draws;
   const zMarket = fatTailedNormal(draws);

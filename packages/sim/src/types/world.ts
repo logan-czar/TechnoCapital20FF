@@ -224,6 +224,10 @@ export interface Province {
 export interface IndustryParams {
   /** The long-term growth rate a year before the AI boom (spec 5.1). */
   trend_growth: number;
+  /** The rate the long-term rate fades to under a fading profile (drift plan, D976). */
+  mature_rate: number;
+  /** Years for the gap to `mature_rate` to halve; 0 means no fade (drift plan, D976). */
+  fade_half_life_years: number;
   /** Multiplies the cycle term of the quarterly growth draw (spec 5.1). */
   cycle_beta: number;
   /** Standard deviation of the quarterly growth shock, per quarter (spec 5.1). */
@@ -634,6 +638,16 @@ export interface PhaseSpec {
  * A growth profile (D970): the scenario the world's economy plays. Plain data, kept on the
  * world so a save carries it. `legacy` is the spec 5.1 behaviour the Rust reference has.
  */
+/** A window of slow growth (drift plan, D977), a scenario setting. */
+export interface Slowdown {
+  /** The first calendar year of the slowdown. */
+  start_year: number;
+  /** Whole years it lasts: it ends with the quarter before `start_year + years`. */
+  years: number;
+  /** Multiplies every industry's trend while it lasts (1 = no slowdown, 1/3 = a third of normal). */
+  depth: number;
+}
+
 export interface EconomyProfile {
   id: string;
   name: string;
@@ -644,6 +658,19 @@ export interface EconomyProfile {
   volatility_scale: number;
   /** False pins AI labs to their pre-boom rate for the whole run: no boom, no pop (spec 5.1.1). */
   ai_boom: boolean;
+  /**
+   * Drift plan (D976, spec v1.5 5.1): each industry's trend fades from `trend_growth` to its
+   * `mature_rate` with its `fade_half_life_years`, counted from 1 Jan 2020. False keeps the CSV rate.
+   */
+  fade: boolean;
+  /** Drift plan (D976): multiplies every industry's long-term rate in every year (1 = the CSV). */
+  world_growth_scale: number;
+  /** Drift plan (D977): a window of slow growth, or null. A scenario setting, off in the baseline. */
+  slowdown: Slowdown | null;
+  /** Drift plan (D977): multiplies the global cycle's g draws and the zones' own shocks (1 = spec 5.1). */
+  cycle_scale: number;
+  /** Drift plan (D977): multiplies the hourly price noise (1 = spec 5.14). */
+  price_noise_scale: number;
   start_phase: CyclePhase;
   /** The four phase tables the global cycle draws from (spec 5.1). */
   phases: Record<CyclePhase, PhaseSpec>;

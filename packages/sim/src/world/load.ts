@@ -711,6 +711,8 @@ function boardDefault(): null[] {
 function industryParams(i: IndustryRow): IndustryParams {
   return {
     trend_growth: i.trend_growth,
+    mature_rate: i.mature_rate,
+    fade_half_life_years: i.fade_half_life_years,
     cycle_beta: i.cycle_beta,
     volatility: i.volatility,
     boom_uplift: i.boom_uplift,

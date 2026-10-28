@@ -42,10 +42,12 @@ export function enterPhase(
   phase: CyclePhase,
   draws: DrawSource,
   table: Record<CyclePhase, PhaseSpec> = LEGACY_PROFILE.phases,
+  scale = 1.0,
 ): [number, number] {
   const spec = phaseSpec(phase, table);
   const [lo, hi] = spec.g_range;
-  const g = lo + (hi - lo) * draws.uniform("Cycle");
+  // The profile's cycle scale (D977) stretches the drawn g; 1 except under a volatility level.
+  const g = (lo + (hi - lo) * draws.uniform("Cycle")) * scale;
   const [a, b] = spec.length;
   const len = draws.intInclusive("Cycle", a, b);
   if (len < 0) throw new RangeError("phase length is positive");
@@ -62,7 +64,7 @@ export function startCycle(
   draws: DrawSource,
   profile: EconomyProfile = LEGACY_PROFILE,
 ): GlobalCycle {
-  const [g, len] = enterPhase(profile.start_phase, draws, profile.phases);
+  const [g, len] = enterPhase(profile.start_phase, draws, profile.phases, profile.cycle_scale);
   return {
     phase: profile.start_phase,
     quarters_left: len,
@@ -80,11 +82,12 @@ export function advanceCycle(
   cycle: GlobalCycle,
   draws: DrawSource,
   table: Record<CyclePhase, PhaseSpec> = LEGACY_PROFILE.phases,
+  scale = 1.0,
 ): void {
   cycle.quarters_left = Math.max(0, cycle.quarters_left - 1);
   if (cycle.quarters_left === 0) {
     cycle.phase = phaseSpec(cycle.phase, table).next;
-    const [g, len] = enterPhase(cycle.phase, draws, table);
+    const [g, len] = enterPhase(cycle.phase, draws, table, scale);
     cycle.g_t = g;
     cycle.quarters_left = len;
   }
@@ -119,21 +122,23 @@ export function zoneEffect(intensity: number, gLagged: number, ownShock: number)
  * normal clamped to ±3. No draw is made for a zone with no own dynamics, so adding such a zone
  * never shifts the cycle stream (D102).
  */
-export function drawOwnShock(ownShockSd: number, draws: DrawSource): number {
+export function drawOwnShock(ownShockSd: number, draws: DrawSource, scale = 1.0): number {
   if (ownShockSd <= 0.0) return 0.0;
-  return ownShockSd * clamp(draws.normal("Cycle"), -NORMAL_CLAMP, NORMAL_CLAMP);
+  return ownShockSd * scale * clamp(draws.normal("Cycle"), -NORMAL_CLAMP, NORMAL_CLAMP);
 }
 
 /** Draws every zone's own shock (zone id order) and sets its effect from the lagged g. */
 export function setZoneEffects(world: World, draws: DrawSource): void {
+  const scale = profileOf(world).cycle_scale;
   for (const z of world.zones) {
-    z.own_shock = drawOwnShock(z.own_shock_sd, draws);
+    z.own_shock = drawOwnShock(z.own_shock_sd, draws, scale);
     z.effect = zoneEffect(z.intensity, globalCycleGLagged(world.cycle, z.lag_quarters), z.own_shock);
   }
 }
 
 /** 4.3 step 1c: the global cycle advances one quarter, then the zone effects follow. */
 export function cycleJob(world: World, ctx: JobCtx): void {
-  advanceCycle(world.cycle, ctx.draws, profileOf(world).phases);
+  const profile = profileOf(world);
+  advanceCycle(world.cycle, ctx.draws, profile.phases, profile.cycle_scale);
   setZoneEffects(world, ctx.draws);
 }
