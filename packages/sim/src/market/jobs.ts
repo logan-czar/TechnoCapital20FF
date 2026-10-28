@@ -288,7 +288,7 @@ export function pricesJob(world: World, ctx: JobCtx): void {
   const t = ctx.facts.now;
   if (!pricesMove(t)) return;
   const mult = reactionVolatilityMult(t);
-  // The profile's price noise scale (D977); 1 except under a volatility level.
+  // The profile's price noise scale (D978); 1 except under a volatility level.
   const sigmaH = sigmaHourly(SECTOR_VOLATILITY) * profileOf(world).price_noise_scale;
   const rhoV = rho(SECTOR_BETA);
   const draws = ctx.draws;

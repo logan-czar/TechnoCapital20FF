@@ -14,7 +14,7 @@ import type { DrawSource } from "../types/draws.ts";
 import type { AiBoom, AiSchedule, AiStage, PhaseLabel, World } from "../types/world.ts";
 import { fadedTrend, growthFactor, profileOf } from "./profiles.ts";
 
-/** The fade counts years from 1 Jan 2020, the game's start (drift plan, D976). */
+/** The fade counts years from 1 Jan 2020, the game's start (drift plan, D977). */
 const FADE_ORIGIN_YEAR = 2020;
 
 /** The boom event: 00:00 on 1 January 2030 (spec 5.1.1, scripted). */
@@ -151,7 +151,7 @@ export function setIndustryLt(world: World, date: SimDate): void {
   const aiLt = aiLabsLt(world.ai.schedule, stage, quartersIn);
   world.ai.ai_labs_lt = aiLt;
   const pre = world.ai.schedule.preboom_lt;
-  // The growth profile scales the CSV rates (D970) and, with the drift plan (D976, D977), fades
+  // The growth profile scales the CSV rates (D970) and, with the drift plan (D977, D978), fades
   // them to the mature rates, then applies the world growth scale and the slowdown. All 1 or off
   // for legacy, so its rates are the CSV's.
   const profile = profileOf(world);

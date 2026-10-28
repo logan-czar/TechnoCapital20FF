@@ -46,7 +46,7 @@ export function enterPhase(
 ): [number, number] {
   const spec = phaseSpec(phase, table);
   const [lo, hi] = spec.g_range;
-  // The profile's cycle scale (D977) stretches the drawn g; 1 except under a volatility level.
+  // The profile's cycle scale (D978) stretches the drawn g; 1 except under a volatility level.
   const g = (lo + (hi - lo) * draws.uniform("Cycle")) * scale;
   const [a, b] = spec.length;
   const len = draws.intInclusive("Cycle", a, b);

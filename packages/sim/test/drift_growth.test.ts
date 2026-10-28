@@ -1,4 +1,4 @@
-// D976, D977: the drift plan's lane G. Industries' long-term rates fade to mature rates under the
+// D977, D978: the drift plan's lane G. Industries' long-term rates fade to mature rates under the
 // `mature` profile, the slowdown and volatility levels are scenario tokens on a profile id, and the
 // legacy profile stays on the CSV rates.
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
@@ -30,7 +30,7 @@ function ltOf(w: World, key: string): number {
   return ind.lt;
 }
 
-describe("the fade (D976)", () => {
+describe("the fade (D977)", () => {
   it("halves the gap to the mature rate every half life", () => {
     expect(fadedTrend(0.25, 0.035, 25, 0, true)).toBeCloseTo(0.25, 12);
     expect(fadedTrend(0.25, 0.035, 25, 25, true)).toBeCloseTo(0.035 + 0.215 / 2, 12);
@@ -74,7 +74,7 @@ describe("the fade (D976)", () => {
   });
 });
 
-describe("scenario tokens on a profile id (D977)", () => {
+describe("scenario tokens on a profile id (D978)", () => {
   it("the baseline profiles carry no slowdown and the legacy volatility", () => {
     for (const p of PROFILES) {
       expect(p.slowdown, p.id).toBeNull();

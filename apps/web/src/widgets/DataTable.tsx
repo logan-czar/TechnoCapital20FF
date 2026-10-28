@@ -14,7 +14,7 @@
 
 import { type ColumnDef, getCoreRowModel, type SortingState, useReactTable } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { type MouseEvent, memo, useEffect, useMemo, useRef, useState } from "react";
 import { useRowHeight, useSettings } from "../config/hooks.ts";
 import { Link } from "../links/Link.tsx";
 import { type Cell, cellTone, display, isNumeric, sortOrder } from "./cells.ts";
@@ -42,6 +42,11 @@ export interface DataTableProps<R> {
   initialSort?: { id: string; desc: boolean };
   /** Changes when live cells changed: redraws the rows in view, and re-sorts a live sort column. */
   version?: unknown;
+  /**
+   * A click on a row outside its links: `button` is 0 (primary) or 2 (right-click, which opens no
+   * browser menu then). Pdoomberg's rows watch and load companies (pdoomberg/mod.rs row_clicks).
+   */
+  onRowClick?: (row: R, button: number) => void;
 }
 
 /** Row height in pixels at normal density (theme.rs size::ROW); the settings scale it. */
@@ -62,7 +67,15 @@ function CellView({ cell }: { cell: Cell }) {
   return <span className={cls}>{display(cell)}</span>;
 }
 
-function DataTableInner<R>({ rows, columns, rowKey, id, initialSort, version }: DataTableProps<R>) {
+function DataTableInner<R>({
+  rows,
+  columns,
+  rowKey,
+  id,
+  initialSort,
+  version,
+  onRowClick,
+}: DataTableProps<R>) {
   const settings = useSettings();
   const rowHeight = useRowHeight();
   const [sorting, setSortingState] = useState<SortingState>(() => {
@@ -149,8 +162,18 @@ function DataTableInner<R>({ rows, columns, rowKey, id, initialSort, version }: 
           return (
             <div
               key={row.id}
-              className={`tr${vr.index % 2 ? " odd" : ""}`}
+              className={`tr${vr.index % 2 ? " odd" : ""}${onRowClick ? " clickable" : ""}`}
               style={{ height: rowHeight, transform: `translateY(${vr.start}px)` }}
+              {...(onRowClick
+                ? {
+                    role: "row",
+                    onClick: () => onRowClick(row.original, 0),
+                    onContextMenu: (e: MouseEvent) => {
+                      e.preventDefault();
+                      onRowClick(row.original, 2);
+                    },
+                  }
+                : {})}
             >
               {columns.map((c) => {
                 // Read live (not from a cache), so a view that moves every frame redraws only these rows.

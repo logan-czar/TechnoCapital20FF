@@ -245,7 +245,7 @@ TREND_NOTE = {
 }
 
 
-# Drift plan, lane G (D976): "Fade each industry's long-term rate to a mature rate." Past the 2020s an industry's
+# Drift plan, lane G (D977): "Fade each industry's long-term rate to a mature rate." Past the 2020s an industry's
 # trend_growth fades exponentially toward mature_rate with a half life in years (mvp-spec 5.1, v1.5; T). An industry at
 # or under MATURE_RATE already sits there and does not fade (half life 0); the fastest (EVs, 25%) fade over 25 years,
 # a mild grower over 15. Only the `mature` growth profile reads these; the legacy profile keeps the CSV rates for good.

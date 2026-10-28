@@ -226,7 +226,7 @@ function industries(w: WorldData, ids: Ids, errors: DataError[]): void {
     // spec 5.1.1: boom uplift 0 to 1, crash drop 0 to under 1
     range("boom_uplift", within(r.boom_uplift, 0.0, 1.0), "out of 0 to 1");
     range("crash_drop", r.crash_drop >= 0.0 && r.crash_drop < 1.0, "out of 0 to under 1");
-    // drift plan (D976): the mature rate is a rate a year; a half life of 0 means no fade
+    // drift plan (D977): the mature rate is a rate a year; a half life of 0 means no fade
     range("mature_rate", within(r.mature_rate, -0.5, 1.0), "out of -50% to 100% a year");
     range("fade_half_life_years", r.fade_half_life_years >= 0.0, "negative");
   }

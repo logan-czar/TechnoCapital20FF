@@ -39,7 +39,7 @@ export const VANILLA_LT_SCALE = 0.695;
 /** Vanilla's quarterly noise is half the CSV's, so sustained growth reads as sustained (D970). */
 export const VANILLA_VOLATILITY_SCALE = 0.5;
 
-/** The drift-plan settings (D976, D977) a profile can leave out: the pre-v1.5 economy. */
+/** The drift-plan settings (D977, D978) a profile can leave out: the pre-v1.5 economy. */
 type DriftSettings = Pick<
   EconomyProfile,
   "fade" | "world_growth_scale" | "slowdown" | "cycle_scale" | "price_noise_scale"
@@ -170,14 +170,14 @@ export const LEGACY_PROFILE: EconomyProfile = PROFILES[0] as EconomyProfile;
 /** The profile a new game plays; stays legacy until the parity gate passes, then vanilla (D970). */
 export const DEFAULT_PROFILE_ID = "legacy";
 
-/** The slowdown of the `slow` scenario token: 2050 to 2080 at a third of normal growth (D977). */
+/** The slowdown of the `slow` scenario token: 2050 to 2080 at a third of normal growth (D978). */
 export const DEFAULT_SLOWDOWN: Slowdown = { start_year: 2050, years: 30, depth: 1.0 / 3.0 };
 
-/** The `vol-` scenario levels: a scale on the cycle, the industries' shocks and the price noise (D977). */
+/** The `vol-` scenario levels: a scale on the cycle, the industries' shocks and the price noise (D978). */
 export const VOLATILITY_LEVELS: Readonly<Record<string, number>> = { low: 0.5, normal: 1.0, high: 2.0 };
 
 /**
- * A profile id with scenario tokens (D977): a base id, then `+slow` (the default slowdown) or
+ * A profile id with scenario tokens (D978): a base id, then `+slow` (the default slowdown) or
  * `+slow-<start>-<years>-<depth>`, then `+vol-low`, `+vol-normal` or `+vol-high`. The tokens are
  * the headless runner's scenario settings; the baseline game carries none. Null for an unknown
  * base or token.
@@ -220,7 +220,7 @@ export function profileById(id: string): EconomyProfile | null {
 }
 
 /**
- * The factor on every trend in `year` (D976, D977): the world growth scale, times the slowdown's
+ * The factor on every trend in `year` (D977, D978): the world growth scale, times the slowdown's
  * depth inside its window. 1 for a profile with neither.
  */
 export function growthFactor(profile: EconomyProfile, year: number): number {
@@ -230,7 +230,7 @@ export function growthFactor(profile: EconomyProfile, year: number): number {
 }
 
 /**
- * An industry's trend after the fade (spec v1.5 5.1, D976):
+ * An industry's trend after the fade (spec v1.5 5.1, D977):
  * `mature + (trend - mature) * 0.5^(years / half_life)`, with `years` counted from 1 Jan 2020. The
  * CSV trend when the profile does not fade or the industry has no half life.
  */
