@@ -43,6 +43,8 @@ Fix the findings on the branch, then merge.
 
 ## 2. View gap: watchlist and Omniscient
 
+**Done (D975, `build/ts5-clock-watchlist`).**
+
 The recap, the news and industry filters and Pdoomberg need the runner's watchlist and the Omniscient
 flag. Neither is in any view or frame.
 

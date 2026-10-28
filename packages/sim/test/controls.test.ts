@@ -179,4 +179,25 @@ describe("controls", () => {
     expect(d.apply({ kind: "SetOmniscient", on: true }).ok).toBe(true);
     expect(d.controls().omniscient).toBe(true);
   });
+
+  // Not a Rust test: the clock view carries both controls, so the UI need not read Controls (D975).
+  it("the clock view shows the watchlist in id order and Omniscient", () => {
+    const s = newSim();
+    expect(s.clock().watchlist).toEqual([]);
+    expect(s.clock().omniscient).toBe(false);
+    s.apply({ kind: "WatchlistAdd", company: company(3) });
+    s.apply({ kind: "WatchlistAdd", company: company(1) });
+    expect(s.clock().watchlist).toEqual([1, 3]);
+    s.apply({ kind: "WatchlistAdd", company: company(100_000) });
+    expect(s.clock().watchlist).toEqual([1, 3]);
+    s.apply({ kind: "WatchlistRemove", company: company(3) });
+    expect(s.clock().watchlist).toEqual([1]);
+    s.step();
+    expect(s.clock().watchlist).toEqual([1]);
+    const d = testSim(1, { debug: true });
+    d.apply({ kind: "SetOmniscient", on: true });
+    expect(d.clock().omniscient).toBe(true);
+    d.apply({ kind: "SetOmniscient", on: false });
+    expect(d.clock().omniscient).toBe(false);
+  });
 });

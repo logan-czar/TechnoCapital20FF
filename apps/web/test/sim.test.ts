@@ -1,7 +1,7 @@
 // The protocol client and the mock sim: frame-before-reply ordering, patch merge, news append and
 // reset, and the mock clock's pacing against D8's speeds.
 
-import type { FromSim, SimViews, ToSim } from "@tc20ff/sim";
+import type { CompanyId, FromSim, SimViews, ToSim } from "@tc20ff/sim";
 import { ALERT_KIND_VALUES, barRows, MAX_SPEED, SECONDS_PER_HOUR } from "@tc20ff/sim";
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -305,5 +305,15 @@ describe("mock clock pacing (D8)", () => {
     sim.step();
     const keys = Object.keys(sim.takePatch()).sort();
     expect(keys).toEqual(["clock", "quotes", "refresh"]);
+  });
+
+  it("the clock view carries the watchlist in id order (D975)", () => {
+    const sim = new MockSim(world, 1);
+    sim.apply({ kind: "WatchlistAdd", company: 3 as CompanyId });
+    sim.apply({ kind: "WatchlistAdd", company: 1 as CompanyId });
+    expect(sim.views.clock.data.watchlist).toEqual([1, 3]);
+    sim.apply({ kind: "WatchlistRemove", company: 3 as CompanyId });
+    expect(sim.views.clock.data.watchlist).toEqual([1]);
+    expect(sim.views.clock.data.omniscient).toBe(false);
   });
 });

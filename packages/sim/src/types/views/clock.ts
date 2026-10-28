@@ -5,6 +5,7 @@
 
 import type { DateTime, SimDate, Weekday } from "../calendar.ts";
 import type { QuarterPhase } from "../control.ts";
+import type { CompanyId } from "../ids.ts";
 import type { SkipKind } from "../notice.ts";
 
 export interface ClockView {
@@ -28,4 +29,11 @@ export interface ClockView {
    * row 1, 8 Overview "next release").
    */
   next_release: DateTime;
+  /**
+   * The runner's watchlist (spec 8), in id order. Not in Rust's ClockView: the UI reads it here
+   * because it reads only the views (spec 9, D975).
+   */
+  watchlist: CompanyId[];
+  /** Omniscient is on (debug builds only, design fix 8). Not in Rust's ClockView (D975). */
+  omniscient: boolean;
 }

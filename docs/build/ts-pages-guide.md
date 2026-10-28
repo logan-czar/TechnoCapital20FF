@@ -159,9 +159,7 @@ There is no registry entry to add, so two lanes adding pages never touch the sam
 
 ## Known view gaps
 
-- The runner controls' **watchlist** (and the Omniscient flag) are in no view and no frame.
-  The recap's company pages, the news and industry filters and Pdoomberg read `Controls.watchlist`
-  in Rust. `v_recap.watchlist` holds only the watchlist companies with a page in the latest
-  recap. Proposed: `ClockView.watchlist: CompanyId[]` (id order) and `ClockView.omniscient:
-  boolean`; v_clock is already rebuilt after every control. Until then a page can keep its own
-  watchlist picks, or read `v_recap.watchlist`.
+- None open. The runner controls' **watchlist** and the **Omniscient** flag, which Rust pages read
+  from `Controls`, are `ClockView.watchlist` (id order) and `ClockView.omniscient` (D975); v_clock
+  is rebuilt after every control. `v_recap.watchlist` is narrower: only the watchlist companies with
+  a page in the latest recap.

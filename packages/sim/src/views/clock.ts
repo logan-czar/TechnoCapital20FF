@@ -1,11 +1,13 @@
 // v_clock: the clock (spec 9.1 `clock()`, the spec 8 top bar and quarter clock). Rebuilt every
 // tick and after every control (spec 9.4). Ported from crates/sim/src/views/clock.rs; the type is
 // in types/views/clock.ts. Ported with the views framework (lane W1) because `Sim::clock` and the
-// controls tests read it; it reads only the clock and the controls.
+// controls tests read it; it reads only the clock and the controls. The watchlist and Omniscient
+// are TS additions (D975): player controls, not private truth.
 
 import { dateTimeDate, dateTimeHour, dateTimeWeekday } from "../time/calendar.ts";
 import { controlsEffectiveSpeed } from "../time/control.ts";
 import { nextPhaseStart, phaseAt, phaseInfoDaysToNextPhase } from "../time/quarter.ts";
+import { sortedKeys } from "../types/collections.ts";
 import type { ClockView } from "../types/views/clock.ts";
 import type { ViewInput } from "./index.ts";
 
@@ -27,6 +29,8 @@ export function buildClock(input: ViewInput): ClockView {
     next_phase: phase.next_phase,
     days_to_next_phase: phaseInfoDaysToNextPhase(phase, dateTimeDate(now)),
     next_release: nextPhaseStart(now, "Release"),
+    watchlist: sortedKeys(controls.watchlist),
+    omniscient: controls.omniscient,
   };
 }
 
@@ -49,5 +53,7 @@ export function emptyClock(): ClockView {
     next_phase: "Release",
     days_to_next_phase: 1,
     next_release: 24,
+    watchlist: [],
+    omniscient: false,
   };
 }
