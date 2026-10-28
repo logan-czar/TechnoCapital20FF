@@ -96,6 +96,7 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
       "clock.selected_speed",
       "clock.days_to_next_phase",
       "clock.next_release",
+      "clock.watchlist[]",
     ],
   },
   places: { ids: ["places.provinces[].id", "places.provinces[].country", "places.countries[].id"] },

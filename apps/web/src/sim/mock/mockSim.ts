@@ -10,6 +10,7 @@ import {
   type AlertLevel,
   barRows,
   type ClockView,
+  type CompanyId,
   type DateTime,
   dateTimeHour,
   type Headline,
@@ -92,6 +93,7 @@ export class MockSim {
   paused = true;
   skip: Skip | null = null;
   alerts: AlertLevel[] = ALERT_KIND_VALUES.map((k) => ALERT_KIND_DEFAULT_LEVEL[k]);
+  readonly watchlist = new Set<CompanyId>();
   views: SimViews;
   /** What the last frame posted (views/patch.ts), so each patch carries only what moved. */
   private readonly posted = postedViewsNone();
@@ -124,7 +126,15 @@ export class MockSim {
   }
 
   clock(): ClockView {
-    return clockView(this.now, this.effectiveSpeed(), this.speed, this.paused, this.skip?.kind ?? null);
+    const watchlist = [...this.watchlist].sort((a, b) => a - b);
+    return clockView(
+      this.now,
+      this.effectiveSpeed(),
+      this.speed,
+      this.paused,
+      this.skip?.kind ?? null,
+      watchlist,
+    );
   }
 
   /** The views whose version moved since the last `takePatch` (the protocol's Frame views). */
@@ -293,8 +303,10 @@ export class MockSim {
         if (c.company >= this.world.companies.length) {
           return { kind: "SimError", error: { kind: "UnknownCompany", company: c.company } };
         }
+        this.watchlist.add(c.company);
         break;
       case "WatchlistRemove":
+        this.watchlist.delete(c.company);
         break;
     }
     // A control rebuilds the on_control views (clock; spec 9.4).

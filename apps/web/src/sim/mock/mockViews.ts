@@ -314,6 +314,7 @@ export function clockView(
   selected: number,
   paused: boolean,
   skipping: SkipKind | null,
+  watchlist: CompanyId[] = [],
 ): ClockView {
   const p = phaseAt(now);
   return {
@@ -329,6 +330,9 @@ export function clockView(
     next_phase: p.next_phase,
     days_to_next_phase: phaseInfoDaysToNextPhase(p, dateTimeDate(now)),
     next_release: nextPhaseStart(now, "Release"),
+    watchlist,
+    // The mock is a release build: Omniscient is never on (design fix 8).
+    omniscient: false,
   };
 }
 
