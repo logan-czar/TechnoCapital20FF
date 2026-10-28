@@ -5,6 +5,7 @@
 // pane: Alt+Left or Backspace goes back, Alt+Right forward.
 
 import "dockview-react/dist/styles/dockview.css";
+import { simDateQuarter } from "@tc20ff/sim";
 import {
   type DockviewApi,
   DockviewReact,
@@ -12,16 +13,27 @@ import {
   type IDockviewPanelProps,
   type SerializedDockview,
 } from "dockview-react";
-import { type FunctionComponent, lazy, Suspense, useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  type FunctionComponent,
+  lazy,
+  Suspense,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { HoverCards } from "../links/Link.tsx";
 import { NavContext, type PageNav } from "../links/nav.ts";
 import { historyFromSaved, historyNew, historyToSaved } from "../pages/history.ts";
+import { recapAlertQuarter } from "../pages/kinds/recap.tsx";
 import { PagePane } from "../pages/PagePane.tsx";
 import { type PageRef, pageEq } from "../pages/ref.ts";
 import { AlertsPane } from "../panes/AlertsPane.tsx";
 import { CompaniesPane } from "../panes/CompaniesPane.tsx";
 import { CountriesPane, IndustriesPane } from "../panes/ListPanes.tsx";
 import { NewsPane } from "../panes/NewsPane.tsx";
+import { SimContext } from "../sim/hooks.ts";
 import {
   FIXED_PANES,
   type PaneHandle,
@@ -139,6 +151,15 @@ function typing(e: KeyboardEvent): boolean {
   );
 }
 
+/**
+ * Where a recap opened by its alert goes (D513): the first page pane already on a recap, so the
+ * player's other pages stay; null for a new pane.
+ */
+export function recapPane(panes: Iterable<readonly [string, PageRef]>): string | null {
+  for (const [id, page] of panes) if (page.kind === "recap") return id;
+  return null;
+}
+
 export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => void }) {
   const apiRef = useRef<DockviewApi | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -233,6 +254,30 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
   }, [persist, focusedPane]);
 
   useEffect(() => onControl(control), [control, onControl]);
+
+  // The recap opens in a pane when its alert pauses the game (recap.rs open_on_alert, D513): the
+  // pane already on a recap, else a new pane.
+  const sim = useContext(SimContext);
+  useEffect(() => {
+    if (!sim) return;
+    const { store } = sim;
+    let mark = store.noticeMark();
+    return store.subscribe("notices", () => {
+      const clock = store.getView("clock")?.data;
+      const now = clock ? simDateQuarter(clock.date) : null;
+      for (const e of store.notices) {
+        if (e.seq <= mark) continue;
+        const q = recapAlertQuarter(e.notice, now);
+        if (!q) continue;
+        const page: PageRef = { kind: "recap", quarter: q };
+        const id = recapPane([...panes.current].map(([pid, h]) => [pid, h.current()] as const));
+        const pane = id === null ? undefined : panes.current.get(id);
+        if (pane) pane.open(page);
+        else control.openPage(page, "new");
+      }
+      mark = store.noticeMark();
+    });
+  }, [sim, control]);
   useEffect(
     () => () => {
       if (timer.current !== null) clearTimeout(timer.current);

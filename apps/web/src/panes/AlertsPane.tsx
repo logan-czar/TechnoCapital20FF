@@ -1,8 +1,18 @@
 // The alerts list: what happened (notices since the game began) and the alert levels (spec 8: each
-// alert is Pause, Notify, Log only or Off; design fix 8).
+// alert is Pause, Notify, Log only or Off; design fix 8). A quarterly recap alert is a link: a
+// click opens its recap in the focused pane (D304, D513).
 
-import { ALERT_KIND_VALUES, ALERT_LEVEL_VALUES, type AlertLevel, formatDateTime } from "@tc20ff/sim";
+import {
+  ALERT_KIND_VALUES,
+  ALERT_LEVEL_VALUES,
+  type AlertLevel,
+  dateTimeDate,
+  formatDateTime,
+  simDateQuarter,
+} from "@tc20ff/sim";
 import { memo, useState } from "react";
+import { Link } from "../links/Link.tsx";
+import { recapAlertQuarter } from "../pages/kinds/recap.tsx";
 import { useNames } from "../shell/names.ts";
 import { ALERT_LABEL, describeNotice, LEVEL_LABEL } from "../shell/text.ts";
 import { useNotices, useSim } from "../sim/hooks.ts";
@@ -43,10 +53,18 @@ function AlertsPaneInner() {
       <div className="scroll list">
         {[...notices].reverse().map((e) => {
           const d = describeNotice(e.notice, names.company);
+          const q = recapAlertQuarter(e.notice, simDateQuarter(dateTimeDate(e.time)), false);
+          const cls = d.severity === "alert" ? "warn" : "";
           return (
             <div className="item" key={e.seq}>
               <span className="when">{formatDateTime(e.time)}</span>
-              <span className={d.severity === "alert" ? "warn" : ""}>{d.text}</span>
+              {q ? (
+                <Link page={{ kind: "recap", quarter: q }} className={cls}>
+                  {d.text}
+                </Link>
+              ) : (
+                <span className={cls}>{d.text}</span>
+              )}
             </div>
           );
         })}
