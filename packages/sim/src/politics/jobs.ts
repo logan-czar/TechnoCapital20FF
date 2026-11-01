@@ -1,23 +1,17 @@
-// The US politics state and its daily job (D980 to D988; 4-politics 4.6, 4.7.3, 4.21.1): the start
-// world, November elections, the January handovers, retirements and appointments. Every draw comes
-// from the Politics stream and nothing else reads this state, so the economy is untouched.
+// The US politics daily job (D980 to D988; 4-politics 4.6, 4.7.3, 4.21.1): the start seats, November
+// elections, the January handovers, retirements and appointments. Every draw comes from the Politics
+// stream and nothing else reads this state, so the economy is untouched.
 
-import type { WorldData } from "@tc20ff/sim-data";
-import { worldDataAllProvinces } from "@tc20ff/sim-data";
 import { newsWireQueue, politicsHeadline } from "../news.ts";
 import { nameBooksGet } from "../people/names.ts";
 import { rangeDraw } from "../people/simple.ts";
 import { dateTimeDate } from "../time/calendar.ts";
 import type { JobCtx, Scheduler } from "../time/scheduler.ts";
 import { schedulerRegister } from "../time/scheduler.ts";
-import { dateEq, type SimDate } from "../types/calendar.ts";
+import type { SimDate } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
-import type { CountryId, ProvinceId } from "../types/ids.ts";
-import { cmpStr, totalCmp } from "../types/num.ts";
-import type { NameBook, Skills } from "../types/state/people.ts";
+import type { NameBook, SkillKind } from "../types/state/people.ts";
 import {
-  type CourtLevel,
-  type District,
   type ElectionResult,
   type Office,
   PARTY_VALUES,
@@ -29,8 +23,8 @@ import {
 import type { World } from "../types/world.ts";
 import {
   CONGRESS_HANDOVER_DAY,
-  electionDay,
-  isElectionYear,
+  isElectionDay,
+  isPoliticsDay,
   isPresidentYear,
   PRESIDENT_HANDOVER_DAY,
   senateClassUp,
@@ -48,6 +42,7 @@ import {
   politicsDraws,
   SENATE_RANGES,
 } from "./generate.ts";
+import { officeHolders, partySeats } from "./state.ts";
 import {
   type Contender,
   INCUMBENCY,
@@ -60,8 +55,6 @@ import {
   type VoteClimate,
 } from "./vote.ts";
 
-/** The one country of the POC. */
-export const POLITICS_COUNTRY_KEY = "USA";
 /** Two-term limit (D985). */
 export const PRESIDENT_TERM_LIMIT = 2;
 /** The 19.22 president's party at the start (Logan: the name is generated, D987). */
@@ -85,90 +78,12 @@ export const LEGISLATOR_RETIRE_FROM_AGE = 65;
 export const LEGISLATOR_RETIRE_PER_YEAR = 0.05;
 export const JUDGE_RETIRE_FROM_AGE = 68;
 export const JUDGE_RETIRE_PER_YEAR = 0.05;
-
 /** Senate seats that make a majority with the vice president's casting vote (D984). */
 export const SENATE_MAJORITY = 50;
 
 /** The other party. */
 export function otherParty(p: Party): Party {
-  return p === PARTY_VALUES[0] ? PARTY_VALUES[1] : PARTY_VALUES[0];
-}
-
-// ---------------------------------------------------------------- start
-
-/**
- * `total` split in proportion to `weights` by largest remainder, ties to the lower index (D982).
- * Every weight is positive.
- */
-export function largestRemainder(weights: readonly number[], total: number): number[] {
-  const sum = weights.reduce((n, w) => n + w, 0);
-  const quotas = weights.map((w) => (total * w) / sum);
-  const seats = quotas.map((q) => Math.floor(q));
-  const left = total - seats.reduce((n, s) => n + s, 0);
-  const order = quotas
-    .map((q, i) => [q - (seats[i] as number), i] as const)
-    .sort((a, b) => totalCmp(b[0], a[0]) || a[1] - b[1]);
-  for (let k = 0; k < left; k++) {
-    const i = (order[k] as readonly [number, number])[1];
-    seats[i] = (seats[i] as number) + 1;
-  }
-  return seats;
-}
-
-/** The static tables from the data, before any draw; null for a world without the USA (test worlds). */
-export function politicsStateFromData(
-  data: WorldData,
-  countryIds: ReadonlyMap<string, CountryId>,
-  provinceIds: ReadonlyMap<string, ProvinceId>,
-): PoliticsState | null {
-  const country = countryIds.get(POLITICS_COUNTRY_KEY);
-  if (country === undefined) return null;
-  const provinces = worldDataAllProvinces(data)
-    .map(([, , p]) => p)
-    .filter((p) => p.country === POLITICS_COUNTRY_KEY);
-  const states = data.politics_states.rows.map((s) => ({
-    name: s.state,
-    house_seats: s.house_seats,
-    senate_classes: s.senate_classes.map((c) => Number.parseInt(c, 10)),
-    lean_pts: s.dem_margin_pts,
-    weight: provinces.reduce((n, p) => (p.region === s.state ? n + p.population : n), 0),
-  }));
-  const posts: PoliticsPost[] = data.politics_offices.rows.map((o) => ({
-    key: o.id,
-    title: o.title,
-    kind: o.kind as PoliticsPost["kind"],
-    seats: o.seats,
-    skill: o.skill as keyof Skills,
-  }));
-  // D982: a state's districts sit in its provinces, by largest remainder of province population.
-  const districts: District[] = [];
-  states.forEach((s, si) => {
-    if (s.house_seats === 0) return;
-    const own = provinces.filter((p) => p.region === s.name).sort((a, b) => cmpStr(a.id, b.id));
-    const seats = largestRemainder(
-      own.map((p) => p.population),
-      s.house_seats,
-    );
-    let number = 1;
-    own.forEach((p, pi) => {
-      const province = provinceIds.get(p.id) as ProvinceId;
-      for (let k = 0; k < (seats[pi] as number); k++) {
-        districts.push({ state: si, number, lean_pts: s.lean_pts, home_province: province });
-        number++;
-      }
-    });
-  });
-  return {
-    country,
-    states,
-    districts,
-    posts,
-    politicians: [],
-    politicians_made: 0,
-    president_terms: 0,
-    pending: null,
-    elections: [],
-  };
+  return p === "Democrats" ? "Republicans" : "Democrats";
 }
 
 function usNames(world: World, p: PoliticsState): NameBook {
@@ -197,13 +112,14 @@ function seat(p: PoliticsState, d: Drawn, party: Party, office: Office, since: S
   };
 }
 
+// ---------------------------------------------------------------- start
+
 /**
  * The start seats (D987): a generated president of the 19.22 party in a first term, their VP and
  * cabinet, Congress filled by the D986 vote with no incumbency, and the courts. All Politics draws.
  */
 export function politicsStart(world: World, draws: DrawSource): void {
   const p = world.politics;
-  if (!p) return;
   const g = politicsDraws(draws);
   const names = usNames(world, p);
   const date = dateTimeDate(world.clock);
@@ -219,10 +135,10 @@ export function politicsStart(world: World, draws: DrawSource): void {
   p.politicians.push(president);
   p.president_terms = 1;
   const climate: VoteClimate = { incumbent_party: START_PRESIDENT_PARTY, growth: 0, swing: 0 };
-  // Congress, House then Senate in state order; the winner is seated at once.
+  // Congress, House then Senate in state order; with no holders every race seats a new member.
   for (const race of congressRaces(p, null)) {
-    const winner = runRace(p, g, names, race, climate, new Map(), date);
-    p.politicians.push(winner.seated as Politician);
+    const { seated } = runRace(p, g, names, race, climate, new Map(), date);
+    if (seated !== null) p.politicians.push(seated);
   }
   fillExecutive(p, g, names, president, date);
   fillCourtVacancies(p, g, names, president, date);
@@ -257,7 +173,7 @@ function congressRaces(p: PoliticsState, senateClass: number | null): Race[] {
   return races;
 }
 
-/** A legislator's seat as a lookup key (never iterated). */
+/** A legislator's seat as a lookup key (never iterated); "" for any other office. */
 function seatKey(o: Office): string {
   if (o.kind === "House") return `h${o.district}`;
   if (o.kind === "Senate") return `s${o.state}/${o.senate_class}`;
@@ -272,7 +188,7 @@ interface RaceOutcome {
 
 /**
  * One race (D986, 4.6.3): the sitting member runs for their party unless they retire; every other
- * side is a drawn candidate. Plurality; a tie goes to the Democrats (PARTY_VALUES order).
+ * side is a drawn candidate. Plurality; a tie goes to the Democrats.
  */
 function runRace(
   p: PoliticsState,
@@ -283,24 +199,22 @@ function runRace(
   holders: ReadonlyMap<string, Politician>,
   date: SimDate,
 ): RaceOutcome {
-  const holder = holders.get(seatKey(race.office)) ?? null;
-  const running = holder !== null && !g.chance("Politics", retireChance(holder.age)) ? holder : null;
-  const sides = PARTY_VALUES.map((party) =>
-    running !== null && running.party === party
-      ? { party, drawn: null }
-      : { party, drawn: drawPerson(g, names, race.ranges, "persuasion", party) },
-  );
-  const contender = (s: (typeof sides)[number]): Contender =>
-    s.drawn === null
-      ? { party: s.party, persuasion: (running as Politician).skills.persuasion, incumbency: INCUMBENCY }
-      : { party: s.party, persuasion: s.drawn.skills.persuasion, incumbency: 0 };
-  const a = sides[0] as (typeof sides)[number];
-  const b = sides[1] as (typeof sides)[number];
+  const holder = holders.get(seatKey(race.office));
+  const running = holder !== undefined && !g.chance("Politics", retireChance(holder.age)) ? holder : null;
+  const side = (party: Party): { person: Drawn; contender: Contender } => {
+    const person: Drawn =
+      running?.party === party ? running : drawPerson(g, names, race.ranges, "persuasion", party);
+    const incumbency = person === running ? INCUMBENCY : 0;
+    return { person, contender: { party, persuasion: person.skills.persuasion, incumbency } };
+  };
+  const [first, second] = PARTY_VALUES;
+  const a = side(first);
+  const b = side(second);
   const noise = g.normal("Politics") * (race.office.kind === "Senate" ? SENATE_NOISE_SD : RACE_NOISE_SD);
-  const [sa, sb] = shares(race.lean_pts, contender(a), contender(b), climate, noise);
+  const [sa, sb] = shares(race.lean_pts, a.contender, b.contender, climate, noise);
   const won = sa >= sb ? a : b;
-  if (won.drawn === null) return { seated: null, party: won.party };
-  return { seated: seat(p, won.drawn, won.party, race.office, date), party: won.party };
+  const party = won.contender.party;
+  return { seated: won.person === running ? null : seat(p, won.person, party, race.office, date), party };
 }
 
 /** D988: a legislator's chance of retiring at an election. */
@@ -315,32 +229,19 @@ export function judgeRetireChance(age: number): number {
   return over <= 0 ? 0 : over * JUDGE_RETIRE_PER_YEAR;
 }
 
-/** The sitting president; the politics state always has one once started. */
-export function sittingPresident(p: PoliticsState): Politician {
-  const found = p.politicians.find((c) => c.office.kind === "President");
+/** The sitting president; the state always has one once started. */
+function sittingPresident(p: PoliticsState): Politician {
+  const found = officeHolders(p, "President")[0];
   if (found === undefined) throw new Error("no sitting president");
   return found;
-}
-
-function officeHolders(p: PoliticsState, kind: Office["kind"]): Politician[] {
-  return p.politicians.filter((c) => c.office.kind === kind);
-}
-
-/** The seats each party would hold of `kind`, Democrats then Republicans. */
-export function partySeats(rows: readonly Politician[]): [number, number] {
-  let dem = 0;
-  for (const r of rows) if (r.party === PARTY_VALUES[0]) dem++;
-  return [dem, rows.length - dem];
 }
 
 /** A party's presidential nominee (D985): the eligible president, the VP, or the best senator. */
 interface Nominee {
   party: Party;
-  existing: Politician | null;
-  drawn: Drawn | null;
+  /** A politician when they already hold an office; drawn otherwise. */
+  person: Politician | Drawn;
   incumbent: boolean;
-  persuasion: number;
-  name: string;
 }
 
 function presidentialNominee(
@@ -351,18 +252,10 @@ function presidentialNominee(
   senateClass: number,
 ): Nominee {
   const president = sittingPresident(p);
-  const of = (c: Politician, incumbent: boolean): Nominee => ({
-    party,
-    existing: c,
-    drawn: null,
-    incumbent,
-    persuasion: c.skills.persuasion,
-    name: c.name,
-  });
   if (party === president.party) {
-    if (p.president_terms < PRESIDENT_TERM_LIMIT) return of(president, true);
+    if (p.president_terms < PRESIDENT_TERM_LIMIT) return { party, person: president, incumbent: true };
     const vp = officeHolders(p, "VicePresident")[0];
-    if (vp !== undefined) return of(vp, false);
+    if (vp !== undefined) return { party, person: vp, incumbent: false };
   }
   // Highest Persuasion among the party's senators not up this November (their seat is safe to
   // leave); ties to the lower id. The table is in id order.
@@ -372,38 +265,45 @@ function presidentialNominee(
     if (c.office.senate_class === senateClass || c.age < PRESIDENT_RANGES.age.lo) continue;
     if (best === null || c.skills.persuasion > best.skills.persuasion) best = c;
   }
-  if (best !== null) return of(best, false);
-  const d = drawPerson(g, names, PRESIDENT_RANGES, "persuasion", party);
-  return { party, existing: null, drawn: d, incumbent: false, persuasion: d.skills.persuasion, name: d.name };
+  const person = best ?? drawPerson(g, names, PRESIDENT_RANGES, "persuasion", party);
+  return { party, person, incumbent: false };
 }
 
-/** The national vote (4.6.2, 4.6.3): every state's shares weighted by its province population. */
-function presidentialVote(
+/** The nominees and the national vote (4.6.2, 4.6.3): every state's shares weighted by its population. */
+function presidentialRace(
   p: PoliticsState,
   g: DrawSource,
-  a: Nominee,
-  b: Nominee,
+  names: NameBook,
+  senateClass: number,
   climate: VoteClimate,
-): [number, number] {
+): { winner: Nominee; loser: Nominee; shares: [number, number] } {
+  const [first, second] = PARTY_VALUES;
+  const a = presidentialNominee(p, g, names, first, senateClass);
+  const b = presidentialNominee(p, g, names, second, senateClass);
+  const contender = (n: Nominee): Contender => ({
+    party: n.party,
+    persuasion: n.person.skills.persuasion,
+    incumbency: n.incumbent ? PRESIDENT_INCUMBENCY : 0,
+  });
+  const national: VoteClimate = {
+    ...climate,
+    swing: climate.swing + g.normal("Politics") * PRESIDENT_SWING_SD,
+  };
   let dem = 0;
   let total = 0;
-  const incumbency = (n: Nominee): number => (n.incumbent ? PRESIDENT_INCUMBENCY : 0);
-  const ca: Contender = { party: a.party, persuasion: a.persuasion, incumbency: incumbency(a) };
-  const cb: Contender = { party: b.party, persuasion: b.persuasion, incumbency: incumbency(b) };
-  const raceSwing = g.normal("Politics") * PRESIDENT_SWING_SD;
-  const national: VoteClimate = { ...climate, swing: climate.swing + raceSwing };
   for (const s of p.states) {
     const noise = g.normal("Politics") * RACE_NOISE_SD;
-    dem += s.weight * shares(s.lean_pts, ca, cb, national, noise)[0];
+    dem += s.weight * shares(s.lean_pts, contender(a), contender(b), national, noise)[0];
     total += s.weight;
   }
   const share = dem / total;
-  return [share, 1 - share];
+  return share >= 1 - share
+    ? { winner: a, loser: b, shares: [share, 1 - share] }
+    : { winner: b, loser: a, shares: [share, 1 - share] };
 }
 
 /** Election Day (D985): decides every race now; winners take office at the January handovers. */
-export function electionDayJob(world: World, p: PoliticsState, draws: DrawSource, date: SimDate): void {
-  const g = politicsDraws(draws);
+function electionDayJob(world: World, p: PoliticsState, g: DrawSource, date: SimDate): void {
   const names = usNames(world, p);
   const president = sittingPresident(p);
   const zone = world.zones[(world.countries[p.country] as World["countries"][number]).zone];
@@ -418,82 +318,63 @@ export function electionDayJob(world: World, p: PoliticsState, draws: DrawSource
     if (c.office.kind === "House" || c.office.kind === "Senate") holders.set(seatKey(c.office), c);
   }
   // The nominees are picked first, so a nominating senator's seat is not one being contested.
-  let presidency: {
-    a: Nominee;
-    b: Nominee;
-    shares: [number, number];
-  } | null = null;
-  if (isPresidentYear(date.year)) {
-    const a = presidentialNominee(p, g, names, PARTY_VALUES[0], senateClass);
-    const b = presidentialNominee(p, g, names, PARTY_VALUES[1], senateClass);
-    presidency = { a, b, shares: presidentialVote(p, g, a, b, climate) };
-  }
+  const presidency = isPresidentYear(date.year) ? presidentialRace(p, g, names, senateClass, climate) : null;
   const legislators: Politician[] = [];
-  let [houseDem, senateDem] = [0, 0];
-  let [houseAll, senateAll] = [0, 0];
-  const racedSenate = new Set<string>();
+  const house: { party: Party }[] = [];
+  // Senators not up carry over.
+  const senate: { party: Party }[] = officeHolders(p, "Senate").filter(
+    (c) => c.office.kind === "Senate" && c.office.senate_class !== senateClass,
+  );
   for (const race of congressRaces(p, senateClass)) {
     const out = runRace(p, g, names, race, climate, holders, date);
     if (out.seated !== null) legislators.push(out.seated);
-    const dem = out.party === PARTY_VALUES[0];
-    if (race.office.kind === "House") {
-      houseAll++;
-      if (dem) houseDem++;
-    } else {
-      racedSenate.add(seatKey(race.office));
-      senateAll++;
-      if (dem) senateDem++;
-    }
-  }
-  // Senators not up carry over.
-  for (const c of officeHolders(p, "Senate")) {
-    if (racedSenate.has(seatKey(c.office))) continue;
-    senateAll++;
-    if (c.party === PARTY_VALUES[0]) senateDem++;
+    (race.office.kind === "House" ? house : senate).push(out);
   }
   const result: ElectionResult = {
     date,
-    house: [houseDem, houseAll - houseDem],
-    senate: [senateDem, senateAll - senateDem],
+    house: partySeats(house),
+    senate: partySeats(senate),
     senate_class: senateClass,
     president: null,
   };
-  let presidentId: number | null = null;
-  let newcomer: Politician | null = null;
+  let presidentElect: Politician | null = null;
   if (presidency !== null) {
-    const { a, b, shares: s } = presidency;
-    const winner = (s[0] as number) >= (s[1] as number) ? a : b;
-    const loser = winner === a ? b : a;
-    if (winner.existing !== null) presidentId = winner.existing.id;
-    else newcomer = seat(p, winner.drawn as Drawn, winner.party, { kind: "President" }, date);
-    result.president = { winner: winner.name, party: winner.party, loser: loser.name, shares: s };
+    const { winner, loser } = presidency;
+    const person = winner.person;
+    // A copy of a sitting politician: pending must not alias the table, which a save would split apart.
+    presidentElect =
+      "id" in person ? { ...person } : seat(p, person, winner.party, { kind: "President" }, date);
+    result.president = {
+      winner: person.name,
+      party: winner.party,
+      loser: loser.person.name,
+      shares: presidency.shares,
+    };
     newsWireQueue(
       world.news,
-      politicsHeadline(date, winner.party, `${winner.name} (${winner.party}) wins the US presidency`),
+      politicsHeadline(date, `${person.name} (${winner.party}) wins the US presidency`),
     );
   }
   newsWireQueue(
     world.news,
     politicsHeadline(
       date,
-      result.house[0] >= result.house[1] ? PARTY_VALUES[0] : PARTY_VALUES[1],
       `US Congress after the vote: House ${result.house[0]} D, ${result.house[1]} R; Senate ${result.senate[0]} D, ${result.senate[1]} R`,
     ),
   );
   p.elections.push(result);
-  p.pending = { legislators, president_id: presidentId, newcomer };
+  p.pending = { legislators, president_elect: presidentElect };
 }
 
 // ---------------------------------------------------------------- handovers
 
 /** 3 January (D985): new members replace whoever held their seat. */
-function congressHandover(p: PoliticsState): void {
+function congressHandover(p: PoliticsState, date: SimDate): void {
   const pending = p.pending;
   if (pending === null || pending.legislators.length === 0) return;
+  for (const c of pending.legislators) c.since = date;
   const taken = new Set(pending.legislators.map((c) => seatKey(c.office)));
-  p.politicians = p.politicians.filter(
-    (c) => !((c.office.kind === "House" || c.office.kind === "Senate") && taken.has(seatKey(c.office))),
-  );
+  p.politicians = p.politicians.filter((c) => !taken.has(seatKey(c.office)));
   p.politicians.push(...pending.legislators);
   p.politicians.sort((a, b) => a.id - b.id);
   pending.legislators = [];
@@ -501,23 +382,19 @@ function congressHandover(p: PoliticsState): void {
 
 /** 20 January (D985): the president-elect takes office; a new president means a new cabinet. */
 function presidentHandover(world: World, p: PoliticsState, g: DrawSource, date: SimDate): void {
-  const pending = p.pending;
-  if (pending === null) return;
+  const elect = p.pending?.president_elect ?? null;
   p.pending = null;
-  if (pending.president_id === null && pending.newcomer === null) return;
+  if (elect === null) return;
   const outgoing = sittingPresident(p);
-  if (pending.president_id === outgoing.id) {
+  if (elect.id === outgoing.id) {
     p.president_terms += 1;
     return;
   }
   const names = usNames(world, p);
-  let incoming: Politician;
-  if (pending.newcomer !== null) {
-    incoming = pending.newcomer;
-    p.politicians.push(incoming);
-  } else {
-    incoming = p.politicians.find((c) => c.id === pending.president_id) as Politician;
-  }
+  // By id: the elect is a copy of the one in the table after a save and load.
+  const held = p.politicians.find((c) => c.id === elect.id);
+  const incoming = held ?? elect;
+  if (held === undefined) p.politicians.push(incoming);
   const leftSeat = incoming.office.kind === "Senate" ? incoming.office : null;
   // The old executive leaves, the president-elect excepted.
   p.politicians = p.politicians.filter(
@@ -542,10 +419,7 @@ function presidentHandover(world: World, p: PoliticsState, g: DrawSource, date: 
   }
   fillExecutive(p, g, names, incoming, date);
   p.politicians.sort((a, b) => a.id - b.id);
-  newsWireQueue(
-    world.news,
-    politicsHeadline(date, incoming.party, `${incoming.name} is sworn in as US president`),
-  );
+  newsWireQueue(world.news, politicsHeadline(date, `${incoming.name} is sworn in as US president`));
 }
 
 // ---------------------------------------------------------------- appointments
@@ -555,19 +429,21 @@ function bestCandidate(
   g: DrawSource,
   names: NameBook,
   ranges: OfficeRanges,
-  skill: keyof Skills,
+  skill: SkillKind,
   appointerParty: Party,
   sameChance: number,
 ): { drawn: Drawn; party: Party } {
-  let best: { drawn: Drawn; party: Party; score: number } | null = null;
-  for (let i = 0; i < APPOINTMENT_CANDIDATES; i++) {
+  const draw = () => {
     const party = g.chance("Politics", sameChance) ? appointerParty : otherParty(appointerParty);
     const drawn = drawPerson(g, names, ranges, skill, party);
-    const score = drawn.skills[skill] + (party === appointerParty ? SAME_PARTY_BONUS : 0);
-    if (best === null || score > best.score) best = { drawn, party, score };
+    return { drawn, party, score: drawn.skills[skill] + (party === appointerParty ? SAME_PARTY_BONUS : 0) };
+  };
+  let best = draw();
+  for (let i = 1; i < APPOINTMENT_CANDIDATES; i++) {
+    const next = draw();
+    if (next.score > best.score) best = next;
   }
-  const b = best as { drawn: Drawn; party: Party };
-  return { drawn: b.drawn, party: b.party };
+  return best;
 }
 
 /** The VP and cabinet for a new president (D983): no confirmation vote in the POC. */
@@ -579,19 +455,15 @@ function fillExecutive(
   date: SimDate,
 ): void {
   p.posts.forEach((post, i) => {
-    if (post.kind !== "vice_president" && post.kind !== "cabinet") return;
+    if (post.kind !== "VicePresident" && post.kind !== "Cabinet") return;
     const { drawn, party } = bestCandidate(g, names, CABINET_RANGES, post.skill, president.party, 1);
-    const office: Office =
-      post.kind === "vice_president" ? { kind: "VicePresident", post: i } : { kind: "Cabinet", post: i };
+    const office: Office = { kind: post.kind, post: i };
     p.politicians.push(seat(p, drawn, party, office, date));
   });
 }
 
-function courtLevel(post: PoliticsPost): CourtLevel | null {
-  if (post.kind === "supreme_court") return "Supreme";
-  if (post.kind === "appeals_court") return "Appeals";
-  if (post.kind === "trial_court") return "Trial";
-  return null;
+function isCourt(post: PoliticsPost): post is PoliticsPost & { kind: "Supreme" | "Appeals" | "Trial" } {
+  return post.kind === "Supreme" || post.kind === "Appeals" || post.kind === "Trial";
 }
 
 /** Fills every empty judge seat (4.7.3, 4.21.1): nominate, then the Senate confirms or rejects. */
@@ -602,27 +474,18 @@ function fillCourtVacancies(
   president: Politician,
   date: SimDate,
 ): void {
-  const senate = partySeats(officeHolders(p, "Senate"));
-  const presidentSeats = president.party === PARTY_VALUES[0] ? senate[0] : senate[1];
-  const friendly = presidentSeats >= SENATE_MAJORITY;
+  const friendly =
+    officeHolders(p, "Senate").filter((c) => c.party === president.party).length >= SENATE_MAJORITY;
   const confirm = friendly ? CONFIRM_CHANCE_FRIENDLY : CONFIRM_CHANCE_HOSTILE;
   p.posts.forEach((post, i) => {
-    const level = courtLevel(post);
-    if (level === null) return;
+    if (!isCourt(post)) return;
+    const nominate = () =>
+      bestCandidate(g, names, JUDGE_RANGES, post.skill, president.party, NOMINEE_SAME_PARTY_CHANCE);
     const sitting = p.politicians.filter((c) => c.office.kind === "Judge" && c.office.post === i).length;
     for (let s = sitting; s < post.seats; s++) {
-      let pick = bestCandidate(
-        g,
-        names,
-        JUDGE_RANGES,
-        post.skill,
-        president.party,
-        NOMINEE_SAME_PARTY_CHANCE,
-      );
-      for (let t = 1; t < CONFIRM_TRIES && !g.chance("Politics", confirm); t++) {
-        pick = bestCandidate(g, names, JUDGE_RANGES, post.skill, president.party, NOMINEE_SAME_PARTY_CHANCE);
-      }
-      const judge = seat(p, pick.drawn, pick.party, { kind: "Judge", post: i, level }, date);
+      let pick = nominate();
+      for (let t = 1; t < CONFIRM_TRIES && !g.chance("Politics", confirm); t++) pick = nominate();
+      const judge = seat(p, pick.drawn, pick.party, { kind: "Judge", post: i, level: post.kind }, date);
       judge.integrity = rangeDraw(JUDGE_INTEGRITY, g);
       judge.leaning = drawJudgeLeaning(g);
       p.politicians.push(judge);
@@ -633,6 +496,10 @@ function fillCourtVacancies(
 /** 1 January (D988): politicians age a year; judges may retire, and the president fills the seats. */
 function newYear(world: World, p: PoliticsState, g: DrawSource, date: SimDate): void {
   for (const c of p.politicians) c.age += 1;
+  // Winners waiting for their handover are a year older too.
+  for (const c of p.pending?.legislators ?? []) c.age += 1;
+  const elect = p.pending?.president_elect;
+  if (elect) elect.age += 1;
   p.politicians = p.politicians.filter(
     (c) => c.office.kind !== "Judge" || !g.chance("Politics", judgeRetireChance(c.age)),
   );
@@ -644,19 +511,14 @@ function newYear(world: World, p: PoliticsState, g: DrawSource, date: SimDate): 
 /** The daily job (D985): acts only on the politics days of `isPoliticsDay`. */
 export function politicsJob(world: World, ctx: JobCtx): void {
   const p = world.politics;
-  // Test worlds: no USA, or a world that skipped the start.
-  if (!p?.politicians.length) return;
   const date = ctx.facts.date;
-  if (date.month === 1) {
-    const g = politicsDraws(ctx.draws);
-    if (date.day === 1) newYear(world, p, g, date);
-    else if (date.day === CONGRESS_HANDOVER_DAY) congressHandover(p);
-    else if (date.day === PRESIDENT_HANDOVER_DAY) presidentHandover(world, p, g, date);
-    return;
-  }
-  if (isElectionYear(date.year) && dateEq(date, electionDay(date.year))) {
-    electionDayJob(world, p, ctx.draws, date);
-  }
+  // A world that skipped the start (tests) has nobody in office.
+  if (!isPoliticsDay(date) || p.politicians.length === 0) return;
+  const g = politicsDraws(ctx.draws);
+  if (isElectionDay(date)) electionDayJob(world, p, g, date);
+  else if (date.day === 1) newYear(world, p, g, date);
+  else if (date.day === CONGRESS_HANDOVER_DAY) congressHandover(p, date);
+  else if (date.day === PRESIDENT_HANDOVER_DAY) presidentHandover(world, p, g, date);
 }
 
 /** Registers the job (`jobs.ts`). */

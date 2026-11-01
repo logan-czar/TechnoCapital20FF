@@ -4,7 +4,7 @@
 
 import type { SimDate } from "../calendar.ts";
 import type { CountryId, ProvinceId } from "../ids.ts";
-import type { BaseCharacter, Skills } from "./people.ts";
+import type { BaseCharacter, SkillKind } from "./people.ts";
 
 /** The two starting parties (4.4.7; D981). */
 export type Party = "Democrats" | "Republicans";
@@ -85,25 +85,20 @@ export interface District {
 
 /** An appointed post (politics-usa-offices.csv; D983, D984). */
 export interface PoliticsPost {
-  key: string;
   title: string;
-  kind: "vice_president" | "cabinet" | "supreme_court" | "appeals_court" | "trial_court";
+  kind: "VicePresident" | "Cabinet" | CourtLevel;
   /** Whole number. */
   seats: number;
   /** The skill the 4.7.3 appointment score reads. */
-  skill: keyof Skills;
+  skill: SkillKind;
 }
 
 /** Winners who take office at the next handover (D985). */
 export interface PendingHandover {
   /** New legislators, taking their seats on 3 January; re-elected members are not here. */
   legislators: Politician[];
-  /**
-   * The president-elect on 20 January: their id when already in office (the incumbent, the VP, a
-   * senator); `newcomer` otherwise.
-   */
-  president_id: number | null;
-  newcomer: Politician | null;
+  /** Who takes the presidency on 20 January: maybe already in office (president, VP, a senator). */
+  president_elect: Politician | null;
 }
 
 /** One November's results (D985). */

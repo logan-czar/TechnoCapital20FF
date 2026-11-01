@@ -9,6 +9,7 @@
 import type { Figure } from "@tc20ff/sim";
 import type { Shown, Tone } from "../pages/doc.ts";
 import { kindName, type PageRef } from "../pages/ref.ts";
+import { politicianRows } from "../pages/tables.ts";
 import { byId, byKey, type ViewsData } from "../pages/views.ts";
 import {
   type Cell,
@@ -307,7 +308,7 @@ export function listLen(page: PageRef, v: ViewsData): number | null {
     case "events":
       return v.births?.events.length ?? null;
     case "characters":
-      return v.characters === undefined ? null : v.characters.full.length + v.characters.politicians.length;
+      return v.characters === undefined ? null : v.characters.full.length + politicianRows(v.politics).length;
     case "countries":
       return v.countries?.countries.length ?? null;
     default:
@@ -330,6 +331,7 @@ export const CARD_VIEWS = [
   "places",
   "province_cards",
   "units",
+  "politics",
 ] as const;
 
 /** A line's text and color, for the renderer. */

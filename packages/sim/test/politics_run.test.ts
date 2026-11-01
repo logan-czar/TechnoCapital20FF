@@ -4,7 +4,7 @@ import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import { type Sim, simNew, simStep, simViews, simWorld } from "../src/lib.ts";
 import { electionDay } from "../src/politics/calendar.ts";
-import { partySeats } from "../src/politics/jobs.ts";
+import { partySeats } from "../src/politics/state.ts";
 import { dateTimeDate } from "../src/time/calendar.ts";
 import { cmpDate } from "../src/types/calendar.ts";
 import type { PoliticsState } from "../src/types/state/politics.ts";

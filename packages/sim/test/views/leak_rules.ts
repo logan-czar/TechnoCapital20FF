@@ -114,7 +114,8 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
       "politics.senate[].id",
       "politics.courts[].judges[].id",
       "politics.president_terms",
-      "politics.next_senate_class",
+      "politics.country",
+      "politics.next.senate_class",
       "politics.elections[].senate_class",
     ],
   },
@@ -133,7 +134,6 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
       "characters.full[].holdings[]": "company",
       "characters.full[].roles[]": "company",
       "characters.partial[].roles[]": "company",
-      "characters.politicians[].roles[]": "company",
     },
     ids: [
       "characters.full[].id.id",

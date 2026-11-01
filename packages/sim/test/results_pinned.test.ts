@@ -3,7 +3,7 @@
 // and the news, recap and statements views reusing their last builds). Not a Rust test.
 //
 // The golden digests below were recorded on main 00564ee (before any of those changes) by
-// running exactly this loop, and re-recorded for the politics POC (D980: the state, `characters`,
+// running exactly this loop, and re-recorded for the politics POC (D980: the state and
 // `news` moved and `politics` is new; a 10-year main comparison kept the economy views
 // byte-identical). They change ONLY with an intended change of behaviour (a new job, a
 // new view field, a tuning value): then re-record them in the same commit and say why. A speed-up
@@ -36,9 +36,9 @@ import { data, macrotask, unwrap } from "./common/index.ts";
 // Re-recorded for D974: LOW_PRODUCTIVITY_ADJ is +1.0 (was +0.5), so the R&D plan, productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D973: R&D above the norm has diminishing returns by default (spec 5.6 has no curve), so productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
-const GOLDEN_STATE = "e1722eb1bed894ffc0570baddb71572f";
-const GOLDEN_MONTHLY = "7f1a205ef462f71e1f2693c5";
-const GOLDEN_PATCHES = "3cf0069062d867c65e5169bf";
+const GOLDEN_STATE = "1aafcec085bc041eea61dcd7061d1dce";
+const GOLDEN_MONTHLY = "3385b340bc86bdfb2ef3b550";
+const GOLDEN_PATCHES = "2fb3827df9abf5eb5c9e31d5";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */
 const GOLDEN_VIEWS: Record<string, [string, number]> = {
   clock: ["c1ac8c59305fb039b9c693fe", 8785],
@@ -46,13 +46,13 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   countries: ["c301b680d07687f003502ff1", 8785],
   zones: ["d76cb24168a522eeb27c74f9", 8785],
   rates: ["efc3668ad8d3cca8ad0790ce", 8785],
-  characters: ["5ad1dd8a1a8ecbeaf444dffe", 8785],
+  characters: ["6711368fd570d5be67b4907c", 8785],
   cap_table: ["431cb986a2a22582a02c7a6b", 8785],
   quotes: ["41ec241f7f471bd22f926d8b", 8785],
   price_bars: ["5bf7fdf81de8b00d59e62ba8", 8785],
   exchanges: ["d18ac097c3d27f7efcb07e5d", 8785],
   market_stats: ["a1582f6405cdddfbecad511a", 8785],
-  news: ["1533d7d05c08dd82a8f8a0e7", 8785],
+  news: ["63929f35ad5cc70321f05fac", 8785],
   births: ["b3db0f5c4a252cec3e1517c3", 8785],
   projection: ["0c778df1102d9f85d7b4f70d", 8785],
   company_rows: ["1f5cb5e7861bdfaf9d43d382", 8785],
@@ -69,7 +69,7 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   ratings: ["1a54c9b62e8689965e82403e", 8785],
   recap: ["a92bb2a99f2107f1c5229475", 8785],
   map_static: ["5a7fcdac19a0f147f840d02c", 1],
-  politics: ["d9835e0d3046a48b97bdc47b", 8785],
+  politics: ["caa00cde3b21fa9198792d48", 8785],
 };
 
 const sha = (s: string): string => createHash("sha256").update(s).digest("hex").slice(0, 24);

@@ -25,7 +25,6 @@ import type { RaiseMethod } from "./types/state/ai.ts";
 import type { Rating } from "./types/state/finance.ts";
 import type { Headline, HeadlineKind, NewsWire } from "./types/state/news.ts";
 import { BYLINE } from "./types/state/news.ts";
-import type { Party } from "./types/state/politics.ts";
 import type { PhaseLabel } from "./types/world.ts";
 import { phaseLabelName } from "./world/entities.ts";
 import { chunkLogIter, chunkLogLast, chunkLogNew, chunkLogPush } from "./world/log.ts";
@@ -350,8 +349,8 @@ export function listing(
 }
 
 /** A US election or inauguration headline (D985): no industry or company tag. */
-export function politicsHeadline(date: SimDate, party: Party, text: string): Headline {
-  return headline(date, null, null, { kind: "Politics", party }, text);
+export function politicsHeadline(date: SimDate, text: string): Headline {
+  return headline(date, null, null, { kind: "Politics" }, text);
 }
 
 /** Spec 5.1.1, 5.18: the boom event, "[tipped lab] launches its chatbot". */

@@ -132,8 +132,8 @@ export interface World {
    * (m9-plan section 1; D433). Rust `Vec<Arc<Recap>>`.
    */
   recaps: Recap[];
-  /** The US politics POC (D980); null for a world without the USA (test worlds). */
-  politics: PoliticsState | null;
+  /** The US politics POC (D980). */
+  politics: PoliticsState;
 }
 
 /**

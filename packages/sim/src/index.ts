@@ -60,3 +60,4 @@ export { figureSum, statementLineOf } from "./views/estimate.ts";
 // What the worker posts: view copies and patches by version (views/).
 export { simViewsCopyChangedFrom, simViewsGetMapLayer, simViewsMapLayerVersions } from "./views/index.ts";
 export { type PostedViews, postedViewsNone, postedViewsResetNews, viewsPatchSince } from "./views/patch.ts";
+export { emptyPolitics } from "./views/politics.ts";

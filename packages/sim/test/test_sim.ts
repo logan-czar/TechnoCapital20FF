@@ -54,6 +54,7 @@ export function clockWorld(): World {
     market: { stocks: [], indices: [], index_history: [] },
     news: newsWireDefault(),
     recaps: [],
+    politics: { politicians: [] },
     births: birthsStateDefault(),
     base_rate: 0.03,
     neutral_rate: 0.03,

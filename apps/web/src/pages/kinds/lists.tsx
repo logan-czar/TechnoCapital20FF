@@ -14,7 +14,7 @@ import { figureCell } from "../../widgets/cells.ts";
 import { type PageDoc, span, type TableDoc } from "../doc.ts";
 import { kindName, type PageOf, type PageRef } from "../ref.ts";
 import { definePage } from "../spec.ts";
-import { linkCell } from "../tables.ts";
+import { linkCell, politicianRows } from "../tables.ts";
 import { byId, type ViewsData } from "../views.ts";
 
 /** The list kinds this file registers. */
@@ -79,12 +79,12 @@ export function listTable(kind: ListKind, v: ViewsData, index: NameIndex): Table
     }
     case "characters": {
       // The full characters, then the politicians (D980), whose pages are the US politics page.
-      const politicians = (v.characters?.politicians ?? []).map((c): Cell[] => [
-        { k: "link", text: c.name, page: { kind: "politics" } },
-        { k: "int", v: c.age },
+      const politicians = politicianRows(v.politics).map((r): Cell[] => [
+        { k: "link", text: r.name, page: { kind: "politics" } },
+        { k: "int", v: r.age },
         { k: "text", v: "-" },
-        { k: "text", v: c.class ?? "-" },
-        { k: "text", v: c.office ?? "-" },
+        { k: "text", v: "Politician" },
+        { k: "text", v: r.title },
         { k: "int", v: 1 },
         { k: "int", v: 0 },
       ]);
@@ -223,7 +223,7 @@ export function listDoc(page: PageOf<ListKind>, v: ViewsData, index: NameIndex):
 /** The views each list reads (lists.rs; Characters and Companies add the names they show). */
 const LIST_VIEWS = {
   companies: ["company_rows", "quotes"],
-  characters: ["characters", "places", "company_rows"],
+  characters: ["characters", "places", "company_rows", "politics"],
   countries: ["countries"],
   exchanges: ["exchanges", "places"],
   zones: ["zones"],

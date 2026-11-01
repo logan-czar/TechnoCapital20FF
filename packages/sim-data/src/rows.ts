@@ -504,22 +504,45 @@ export const POLITICS_STATE_SPEC = rowSpec<PoliticsState>({
   notes: str,
 });
 
+/** What an appointed US post is (politics POC, D983, D984). */
+export type PoliticsOfficeKind = "VicePresident" | "Cabinet" | "Supreme" | "Appeals" | "Trial";
+
+export const POLITICS_OFFICE_KIND_SERDE: Readonly<Record<string, PoliticsOfficeKind>> = {
+  vice_president: "VicePresident",
+  cabinet: "Cabinet",
+  supreme_court: "Supreme",
+  appeals_court: "Appeals",
+  trial_court: "Trial",
+};
+
+/** The skill a post's appointment score reads (a `Skills` field). */
+export type PoliticsOfficeSkill = "finance" | "operations" | "persuasion" | "intrigue" | "tech" | "hustle";
+
+export const POLITICS_OFFICE_SKILL_SERDE: Readonly<Record<string, PoliticsOfficeSkill>> = {
+  finance: "finance",
+  operations: "operations",
+  persuasion: "persuasion",
+  intrigue: "intrigue",
+  tech: "tech",
+  hustle: "hustle",
+};
+
 /** politics-usa-offices.csv: one row per appointed US post (politics POC, D983, D984). */
 export interface PoliticsOffice {
   id: string;
   title: string;
-  kind: string;
+  kind: PoliticsOfficeKind;
   seats: number;
-  skill: string;
+  skill: PoliticsOfficeSkill;
   notes: string;
 }
 
 export const POLITICS_OFFICE_SPEC = rowSpec<PoliticsOffice>({
   id: str,
   title: str,
-  kind: str,
+  kind: enumOf(POLITICS_OFFICE_KIND_SERDE),
   seats: u32,
-  skill: str,
+  skill: enumOf(POLITICS_OFFICE_SKILL_SERDE),
   notes: str,
 });
 

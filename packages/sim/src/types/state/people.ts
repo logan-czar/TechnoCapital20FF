@@ -112,6 +112,9 @@ export type CompanySize = "Small" | "Mid" | "Large";
 /** CompanySize in declaration (Ord) order. */
 export const COMPANY_SIZE_VALUES = ["Small", "Mid", "Large"] as const;
 
+/** A skill by its field name in `Skills`. */
+export type SkillKind = keyof Skills;
+
 /** What a base character does (D980): a board filler or an office holder. */
 export type CharacterClass = "Executive" | "Politician";
 

@@ -2,14 +2,16 @@
 // the courts and every vote so far, from the politics view. Read only, like the rest of the MVP.
 // Judges hear no cases yet; no law, lobbying or money runs through any of this.
 
-import type { CourtRow, ElectionResult, Party, PoliticianRow, SimDate } from "@tc20ff/sim";
+import type { CourtRow, ElectionResult, NextVote, Party, PoliticianRow } from "@tc20ff/sim";
 import type { NameIndex } from "../../links/names.ts";
 import { type Cell, date } from "../../widgets/cells.ts";
 import { type Block, emptyDoc, field, type PageDoc, type Span, span, type TableDoc } from "../doc.ts";
 import { kindName, type PageRef } from "../ref.ts";
 import type { SectionSpec } from "../sections.ts";
 import { definePage } from "../spec.ts";
+import { linkCell } from "../tables.ts";
 import type { ViewsData } from "../views.ts";
+import { skillsText, traitsText } from "./company.tsx";
 
 export const SECTIONS: readonly SectionSpec[] = [
   { id: "executive", title: "Executive" },
@@ -49,11 +51,6 @@ function seatLine(label: string, seats: readonly [number, number]): Block {
   };
 }
 
-function skillsText(r: PoliticianRow): string {
-  const s = r.skills;
-  return `${s.finance}/${s.operations}/${s.persuasion}/${s.intrigue}/${s.tech}/${s.hustle}`;
-}
-
 /** The columns every office table shares. */
 const PERSON_COLUMNS = [
   { title: "Name", width: 180 },
@@ -61,7 +58,7 @@ const PERSON_COLUMNS = [
   { title: "Age", width: 45 },
   { title: "Ideology", width: 130 },
   { title: "Traits", width: 170 },
-  { title: "Skills", width: 120, hint: "Finance, operations, persuasion, intrigue, tech, hustle" },
+  { title: "Skills", width: 240 },
   { title: "Since", width: 96 },
 ];
 
@@ -71,8 +68,8 @@ function personCells(r: PoliticianRow): Cell[] {
     { k: "text", v: partyLetter(r.party) },
     { k: "int", v: r.age },
     { k: "text", v: r.ideology },
-    { k: "text", v: r.traits.join(", ") },
-    { k: "text", v: skillsText(r) },
+    { k: "text", v: traitsText(r.traits) },
+    { k: "text", v: skillsText(r.skills) },
     { k: "date", v: r.since },
   ];
 }
@@ -92,13 +89,7 @@ function chamberTable(id: string, rows: readonly PoliticianRow[], index: NameInd
     rows: rows.map((r): Cell[] => [
       { k: "text", v: r.title },
       ...personCells(r),
-      r.province === null
-        ? dash
-        : {
-            k: "link",
-            text: index.title({ kind: "province", id: r.province }),
-            page: { kind: "province", id: r.province },
-          },
+      r.province === null ? dash : linkCell(index, { kind: "province", id: r.province }),
     ]),
   };
 }
@@ -150,36 +141,29 @@ export function electionsTable(rows: readonly ElectionResult[]): TableDoc {
   };
 }
 
-function nextLine(next: SimDate | null, presidential: boolean, senateClass: number): string {
+function nextLine(next: NextVote | null): string {
   if (next === null) return "-";
-  const races = presidential ? "President, House" : "House";
-  return `${date(next)}: ${races}, Senate class ${senateClass}`;
+  const races = next.presidential ? "President, House" : "House";
+  return `${date(next.date)}: ${races}, Senate class ${next.senate_class}`;
 }
 
 /** The whole page as data. */
 export function politicsDoc(v: ViewsData, index: NameIndex): PageDoc {
   const doc = emptyDoc(PAGE, index.title(PAGE), kindName("politics"));
   const p = v.politics;
-  if (!p?.active) {
+  const pres = p?.president;
+  if (!p || !pres) {
     doc.head.push(note("No politics in this world."));
     return doc;
   }
-  const pres = p.president;
   doc.head.push({
     k: "fields",
     fields: [
-      field.text(
-        "President",
-        pres === null ? "-" : `${pres.name} (${partyLetter(pres.party)}), term ${p.president_terms}`,
-      ),
-      field.text("Next vote", nextLine(p.next_election, p.next_is_presidential, p.next_senate_class)),
+      field.text("President", `${pres.name} (${partyLetter(pres.party)}), term ${p.president_terms}`),
+      field.text("Next vote", nextLine(p.next)),
     ],
   });
-  const executive = [
-    ...(pres === null ? [] : [pres]),
-    ...(p.vice_president === null ? [] : [p.vice_president]),
-    ...p.cabinet,
-  ];
+  const executive = [pres, p.vice_president, ...p.cabinet].filter((r) => r !== null);
   doc.sections = [
     { id: "executive", blocks: [{ k: "table", table: executiveTable(executive) }] },
     {
@@ -217,7 +201,7 @@ export function politicsDoc(v: ViewsData, index: NameIndex): PageDoc {
 export const pages = [
   definePage({
     kind: "politics",
-    views: ["politics", "countries", "places"],
+    views: ["politics", "places"],
     sections: SECTIONS,
     tabs: true,
     doc: (_page, v, index) => politicsDoc(v, index),

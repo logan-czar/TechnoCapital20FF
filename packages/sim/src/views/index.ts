@@ -106,8 +106,8 @@ export function cadenceIsDue(c: Cadence, f: TickFacts): boolean {
       return tickFactsIsMonthStart(f);
     case "MonthlyAndLock":
       return tickFactsIsMonthStart(f) || tickFactsIsLockTick(f);
-    case "MonthlyAndPolitics":
-      return tickFactsIsMonthStart(f) || (tickFactsIsMidnight(f) && isPoliticsDay(f.date));
+    case "PoliticsDays":
+      return tickFactsIsMidnight(f) && isPoliticsDay(f.date);
     case "Quarterly":
       return (
         tickFactsIsQuarterStart(f) ||
@@ -192,7 +192,7 @@ export const VIEW_BUILDERS: ViewBuilders = {
   },
   characters: {
     rust: "views::characters::CharactersView",
-    empty: () => ({ full: [], partial: [], politicians: [] }),
+    empty: () => ({ full: [], partial: [] }),
     build: buildCharacters,
   },
   cap_table: {

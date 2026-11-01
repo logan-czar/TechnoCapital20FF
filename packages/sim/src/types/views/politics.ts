@@ -2,7 +2,7 @@
 // both chambers, the courts, the next vote and every past vote. All of it is public.
 
 import type { SimDate } from "../calendar.ts";
-import type { ProvinceId } from "../ids.ts";
+import type { CountryId, ProvinceId } from "../ids.ts";
 import type { CourtLevel, ElectionResult, Ideology, JudgeLeaning, Party } from "../state/politics.ts";
 import type { Skills, Trait } from "./shared.ts";
 
@@ -16,8 +16,6 @@ export interface PoliticianRow {
   ideology: Ideology;
   /** "President", "Secretary of State", "Texas 12", "Texas (class 1)", "Supreme Court". */
   title: string;
-  /** The state a legislator sits for. */
-  state: string | null;
   /** A House member's home province. */
   province: ProvinceId | null;
   skills: Skills;
@@ -35,9 +33,18 @@ export interface CourtRow {
   seats: [number, number];
 }
 
+/** The next November vote. */
+export interface NextVote {
+  date: SimDate;
+  /** It includes the president. */
+  presidential: boolean;
+  /** The Senate class up. */
+  senate_class: number;
+}
+
 export interface PoliticsView {
-  /** False for a world without the USA. */
-  active: boolean;
+  /** The country this government runs; null before the first build. */
+  country: CountryId | null;
   president: PoliticianRow | null;
   /** Terms won by the sitting president, the current one included. */
   president_terms: number;
@@ -49,11 +56,7 @@ export interface PoliticsView {
   senate: PoliticianRow[];
   senate_seats: [number, number];
   courts: CourtRow[];
-  next_election: SimDate | null;
-  /** The next vote includes the president. */
-  next_is_presidential: boolean;
-  /** The Senate class up next. */
-  next_senate_class: number;
+  next: NextVote | null;
   /** Newest first. */
   elections: ElectionResult[];
 }

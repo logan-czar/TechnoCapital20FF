@@ -2,7 +2,7 @@
 
 import { simDateWeekday, simDateYmd } from "../time/calendar.ts";
 import type { SimDate } from "../types/calendar.ts";
-import { dateEq } from "../types/calendar.ts";
+import { cmpDate, dateEq } from "../types/calendar.ts";
 
 /** The first November vote after the 1 January 2020 start (19-history 19.22). */
 export const FIRST_ELECTION_YEAR = 2020;
@@ -48,17 +48,18 @@ export function senateClassUp(year: number): number {
 /** The first election date strictly after `date`. */
 export function nextElectionAfter(date: SimDate): SimDate {
   let year = Math.max(date.year, FIRST_ELECTION_YEAR);
-  while (!isElectionYear(year) || cmpYmd(electionDay(year), date) <= 0) year++;
+  while (!isElectionYear(year) || cmpDate(electionDay(year), date) <= 0) year++;
   return electionDay(year);
 }
 
-function cmpYmd(a: SimDate, b: SimDate): number {
-  return a.year - b.year || a.month - b.month || a.day - b.day;
+/** Whether `d` is an Election Day. */
+export function isElectionDay(d: SimDate): boolean {
+  return d.month === NOVEMBER && isElectionYear(d.year) && dateEq(d, electionDay(d.year));
 }
 
 /** A day the politics job changes who holds what, so the politics view must rebuild. */
 export function isPoliticsDay(d: SimDate): boolean {
   if (d.month === 1)
     return d.day === 1 || d.day === CONGRESS_HANDOVER_DAY || d.day === PRESIDENT_HANDOVER_DAY;
-  return d.month === NOVEMBER && isElectionYear(d.year) && dateEq(d, electionDay(d.year));
+  return isElectionDay(d);
 }

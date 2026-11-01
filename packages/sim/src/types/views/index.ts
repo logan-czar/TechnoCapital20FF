@@ -95,8 +95,8 @@ export type Cadence =
   | "MonthlyAndLock"
   /** On the quarter's compile, release (and its 01:00 price move), lock and recap ticks. */
   | "Quarterly"
-  /** Monthly, and on the US political calendar's days (D985). */
-  | "MonthlyAndPolitics"
+  /** On the US political calendar's days (D985), and on load. */
+  | "PoliticsDays"
   /** Once at load. */
   | "OnceAtLoad";
 
@@ -248,5 +248,5 @@ export const VIEW_SPECS: Readonly<Record<ViewName, ViewSpec>> = {
   ratings: spec("Quarterly", { on_omniscient: true }),
   recap: spec("Quarterly", { on_control: true }),
   map_static: spec("OnceAtLoad"),
-  politics: spec("MonthlyAndPolitics"),
+  politics: spec("PoliticsDays"),
 };

@@ -2,11 +2,10 @@
 // the 3.7.1 draws through a DrawSource that sends them to the Politics stream, so politics never
 // moves the Gen stream the boards and startups read (D9).
 
-import { SKILL_KIND_ALL, skillsDefault } from "../people/board.ts";
-import { nameBookDraw } from "../people/names.ts";
-import { drawTrait, type Range, rangeDraw, rangeNew, TWO_TRAIT_CHANCE } from "../people/simple.ts";
+import { weightedPick } from "../births/weights.ts";
+import { drawBaseFields, type Range, rangeNew } from "../people/simple.ts";
 import type { DrawSource } from "../types/draws.ts";
-import type { NameBook, Skills, Trait } from "../types/state/people.ts";
+import type { BaseCharacter, NameBook, SkillKind, Trait } from "../types/state/people.ts";
 import type { Ideology, JudgeLeaning, Party } from "../types/state/politics.ts";
 
 /** Every draw of a politician comes from the Politics stream, whatever stream the helper names. */
@@ -107,11 +106,7 @@ export const PARTY_BLOCS: Readonly<Record<Party, readonly (readonly [Ideology, n
 };
 
 /** What every generated person has before they take a seat. */
-export interface Drawn {
-  name: string;
-  age: number;
-  skills: Skills;
-  traits: Trait[];
+export interface Drawn extends Omit<BaseCharacter, "class"> {
   ideology: Ideology;
 }
 
@@ -123,31 +118,21 @@ export function drawPerson(
   g: DrawSource,
   names: NameBook,
   ranges: OfficeRanges,
-  keySkill: keyof Skills,
+  keySkill: SkillKind,
   party: Party,
 ): Drawn {
-  const name = nameBookDraw(names, g);
-  const age = rangeDraw(ranges.age, g);
-  const skills = skillsDefault();
-  for (const kind of SKILL_KIND_ALL) {
-    skills[kind] = rangeDraw(kind === keySkill ? ranges.key_skill : ranges.other_skills, g);
-  }
-  const two = g.chance("Politics", TWO_TRAIT_CHANCE);
-  const first = drawTrait(g, ranges.traits, []);
-  const traits = [first];
-  if (two) traits.push(drawTrait(g, ranges.traits, [first]));
-  return { name, age, skills, traits, ideology: drawIdeology(g, party) };
+  const skillRange = (kind: SkillKind): Range => (kind === keySkill ? ranges.key_skill : ranges.other_skills);
+  const base = drawBaseFields(g, names, ranges.age, skillRange, ranges.traits);
+  return { ...base, ideology: drawIdeology(g, party) };
 }
 
 function drawIdeology(g: DrawSource, party: Party): Ideology {
-  const u = g.uniform("Politics");
   const blocs = PARTY_BLOCS[party];
-  let total = 0;
-  for (const [ideology, chance] of blocs) {
-    total += chance;
-    if (u < total) return ideology;
-  }
-  return (blocs[blocs.length - 1] as readonly [Ideology, number])[0];
+  const i = weightedPick(
+    blocs.map(([, chance]) => chance),
+    g,
+  ) as number;
+  return (blocs[i] as readonly [Ideology, number])[0];
 }
 
 /** The four leanings, equally likely (4.21.1, T). */

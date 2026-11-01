@@ -20,14 +20,13 @@ import {
 } from "../src/politics/generate.ts";
 import {
   judgeRetireChance,
-  largestRemainder,
   otherParty,
   PRESIDENT_TERM_LIMIT,
-  partySeats,
   politicsJob,
   retireChance,
   START_PRESIDENT_PARTY,
 } from "../src/politics/jobs.ts";
+import { largestRemainder, partySeats } from "../src/politics/state.ts";
 import { type Contender, shares, utility, type VoteClimate } from "../src/politics/vote.ts";
 import { rngStreamsDraws, rngStreamsNew } from "../src/rng.ts";
 import { simDateYmd } from "../src/time/calendar.ts";
