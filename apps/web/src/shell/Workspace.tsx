@@ -2,7 +2,8 @@
 // workspace, D450): dockview holds the panes, new panes split beside the active one, and the layout
 // persists in localStorage. Fixed panes open by command (`WorkspaceControl.open`); pages open in
 // page panes (`openPage`), each with its own history. The history keys act on the focused page
-// pane: Alt+Left or Backspace goes back, Alt+Right forward.
+// pane: Alt+Left or Backspace goes back, Alt+Right forward. Alt+Shift+R reopens the pane closed last
+// (D979).
 
 import "dockview-react/dist/styles/dockview.css";
 import { simDateQuarter } from "@tc20ff/sim";
@@ -25,7 +26,7 @@ import {
 } from "react";
 import { HoverCards } from "../links/Link.tsx";
 import { NavContext, type PageNav } from "../links/nav.ts";
-import { historyFromSaved, historyNew, historyToSaved } from "../pages/history.ts";
+import { type History, historyFromSaved, historyNew, historyToSaved } from "../pages/history.ts";
 import { recapAlertQuarter } from "../pages/kinds/recap.tsx";
 import { PagePane } from "../pages/PagePane.tsx";
 import { type PageRef, pageEq } from "../pages/ref.ts";
@@ -39,6 +40,7 @@ import {
   type PaneHandle,
   type PaneKind,
   type PaneSpec,
+  pushClosed,
   WorkspaceContext,
   type WorkspaceControl,
 } from "./panes.ts";
@@ -142,6 +144,16 @@ function defaultLayout(api: DockviewApi): void {
   api.addPanel({ id: map.id, component: map.kind, title: map.title, renderer: "always" });
 }
 
+/** With no panes left the workspace says how to get one back (D979). */
+function EmptyWorkspace() {
+  return (
+    <div className="center">
+      All panes are closed. Open one from the Panes menu or the command bar (Ctrl+K); Alt+Shift+R reopens the
+      last one.
+    </div>
+  );
+}
+
 /** True while the keyboard is in a text field (the history keys then edit text). */
 function typing(e: KeyboardEvent): boolean {
   const t = e.target as HTMLElement | null;
@@ -165,6 +177,10 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panes = useRef(new Map<string, PaneHandle>());
   const nextId = useRef(1);
+  /** Closed panes, most recent first (D979). */
+  const closed = useRef<readonly PaneSpec[]>([]);
+  /** True while a saved layout replaces the panes: those are not closed by the player. */
+  const restoring = useRef(false);
 
   const persist = useCallback(() => {
     const api = apiRef.current;
@@ -188,11 +204,18 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
   }, []);
 
   const control = useMemo<WorkspaceControl>(() => {
-    const addPage = (api: DockviewApi, page: PageRef) => {
+    /** Adds a page pane and returns its id; a full workspace gives the page to the focused one. */
+    const addPage = (
+      api: DockviewApi,
+      page: PageRef,
+      history: History = historyNew(page),
+      title?: string,
+    ) => {
       if (api.panels.length >= MAX_PANES) {
         // Full: the focused page pane takes it instead (or nothing, with no page pane focused).
-        focusedPane()?.open(page);
-        return;
+        const pane = focusedPane();
+        pane?.open(page);
+        return pane ? "" : null;
       }
       let id = `page-${nextId.current++}`;
       while (api.getPanel(id)) id = `page-${nextId.current++}`;
@@ -200,15 +223,19 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
       api.addPanel({
         id,
         component: "page",
-        title: page.kind,
-        params: { history: historyToSaved(historyNew(page)) },
+        title: title ?? page.kind,
+        params: { history: historyToSaved(history) },
         ...position(api),
       });
       // A new pane leaves the focus where it was (workspace.rs, D450).
       focused?.api.setActive();
       // With no page pane to focus yet, the new one is where the next "focused" page goes.
       if (!focusedPane()) lastPage.current = id;
+      return id;
     };
+    /** The closed list without the fixed panes open again (by a command or a loaded layout). */
+    const stillClosed = (api: DockviewApi) =>
+      closed.current.filter((c) => c.kind === "page" || !api.getPanel(c.id));
     return {
       open: (spec) => {
         if (apiRef.current) openIn(apiRef.current, spec);
@@ -232,6 +259,23 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
         }
         addPage(api, page);
       },
+      isOpen: (id) => !!apiRef.current?.getPanel(id),
+      closed: () => (apiRef.current ? stillClosed(apiRef.current) : []),
+      reopen: (given) => {
+        const api = apiRef.current;
+        if (!api) return;
+        const spec = given ?? stillClosed(api)[0];
+        if (!spec) return;
+        if (spec.kind === "page") {
+          const history = historyFromSaved(spec.params?.history);
+          const id = history && addPage(api, history.current, history, spec.title);
+          // Nowhere to put it (full, with no page pane focused): it stays on the list.
+          if (history && id === null) return;
+          // Unlike a new pane, a reopened one takes the focus: the player asked to see it.
+          if (id) api.getPanel(id)?.api.setActive();
+        } else openIn(api, spec);
+        closed.current = closed.current.filter((c) => c !== spec);
+      },
       registerPane: (id, handle) => {
         panes.current.set(id, handle);
         return () => {
@@ -243,11 +287,14 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
       restore: (layout) => {
         const api = apiRef.current;
         if (!api || !isLayout(layout)) return false;
+        restoring.current = true;
         try {
           api.fromJSON(layout);
           return true;
         } catch {
           return false;
+        } finally {
+          restoring.current = false;
         }
       },
     };
@@ -289,6 +336,12 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.repeat || typing(e) || e.ctrlKey || e.metaKey) return;
+      // By key code: Alt+Shift changes the letter on some layouts.
+      if (e.altKey && e.shiftKey && e.code === "KeyR") {
+        e.preventDefault();
+        control.reopen();
+        return;
+      }
       const pane = focusedPane();
       if (!pane) return;
       if ((e.altKey && e.key === "ArrowLeft") || (!e.altKey && !e.shiftKey && e.key === "Backspace")) {
@@ -301,7 +354,7 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [focusedPane]);
+  }, [focusedPane, control]);
 
   const onReady = useCallback(
     (e: DockviewReadyEvent) => {
@@ -325,6 +378,17 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
         const id = ev.panel?.id;
         if (id !== undefined && panes.current.has(id)) lastPage.current = id;
       });
+      // dockview does not fire this for a pane dragged to another group.
+      api.onDidRemovePanel((panel) => {
+        if (restoring.current) return;
+        const spec: PaneSpec = {
+          id: panel.id,
+          kind: panel.api.component as PaneKind,
+          title: panel.title ?? panel.id,
+          params: panel.params ?? {},
+        };
+        closed.current = pushClosed(closed.current, spec);
+      });
     },
     [persist],
   );
@@ -336,7 +400,12 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
     <WorkspaceContext.Provider value={control}>
       <NavContext.Provider value={nav}>
         <HoverCards>
-          <DockviewReact className="dockview-theme-tc" components={COMPONENTS} onReady={onReady} />
+          <DockviewReact
+            className="dockview-theme-tc"
+            components={COMPONENTS}
+            watermarkComponent={EmptyWorkspace}
+            onReady={onReady}
+          />
         </HoverCards>
       </NavContext.Provider>
     </WorkspaceContext.Provider>

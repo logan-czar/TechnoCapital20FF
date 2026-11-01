@@ -38,6 +38,7 @@ export const SHORTCUTS: readonly (readonly [string, string])[] = [
   ["Alt+Left, Backspace", "Back in the focused pane"],
   ["Alt+Right", "Forward in the focused pane"],
   ["Drag a tab", "Move, split or stack a pane"],
+  ["Alt+Shift+R", "Reopen the pane closed last (the Panes menu lists the rest)"],
   ["Ctrl+= / Ctrl+- / Ctrl+0", "Font larger / smaller / reset"],
   ["Ctrl+J", "Density compact or normal"],
   ["Ctrl+,", "This page"],

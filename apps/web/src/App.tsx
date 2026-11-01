@@ -82,6 +82,7 @@ function Shell({ client }: { client: SimClient }) {
   const onControl = useCallback((c: WorkspaceControl) => {
     control.current = c;
   }, []);
+  const workspace = useCallback(() => control.current, []);
 
   const save = useCallback(async () => {
     const bytes = await client.save();
@@ -110,6 +111,7 @@ function Shell({ client }: { client: SimClient }) {
         seen={seen}
         onOpenAlerts={openAlerts}
         onOpenCommands={() => setCommands(true)}
+        workspace={workspace}
         onSave={() => void save()}
         onLoad={() => fileInput.current?.click()}
       />

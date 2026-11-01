@@ -1,11 +1,13 @@
 // The top bar (ui/top_bar.rs; spec 8 main screen and time controls rows): the quarter clock, the
-// date and hour, pause, speeds 1 to 5 (5 is max), the Skip menu, the alerts indicator and the
-// command bar button. Keys: Space pauses or resumes, 1 to 5 set the speed (and resume, D8).
+// date and hour, pause, speeds 1 to 5 (5 is max), the Skip menu, the Panes menu (D979), the alerts
+// indicator and the command bar button. Keys: Space pauses or resumes, 1 to 5 set the speed (and
+// resume, D8).
 
 import { MAX_SPEED, QUARTER_PHASE_NAME, weekdayShortName } from "@tc20ff/sim";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useClock, useNotices, useSim } from "../sim/hooks.ts";
 import { date as fmtDate } from "../widgets/cells.ts";
+import { FIXED_PANES, type WorkspaceControl } from "./panes.ts";
 import { SKIPS, skipName } from "./text.ts";
 
 /** A key press aimed at something the player is typing in or a dialog: not a game shortcut. */
@@ -21,6 +23,20 @@ function isTypingTarget(t: EventTarget | null): boolean {
 }
 
 const SPEEDS = [1, 2, 3, 4, 5] as const;
+
+/** Closes a dropdown menu on a press outside it; returns the ref for the menu's root. */
+function useCloseOutside(open: boolean, close: () => void) {
+  const menu = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (!(e.target instanceof Node && menu.current?.contains(e.target))) close();
+    };
+    window.addEventListener("mousedown", onDown);
+    return () => window.removeEventListener("mousedown", onDown);
+  }, [open, close]);
+  return menu;
+}
 
 function Clock() {
   const clock = useClock();
@@ -44,7 +60,10 @@ function SpeedControls() {
   const paused = clock?.paused ?? true;
   const speed = clock?.selected_speed ?? 1;
   const [open, setOpen] = useState(false);
-  const menu = useRef<HTMLDivElement>(null);
+  const menu = useCloseOutside(
+    open,
+    useCallback(() => setOpen(false), []),
+  );
 
   const toggle = useCallback(() => {
     void sim.control(paused ? { kind: "Resume" } : { kind: "Pause" });
@@ -67,15 +86,6 @@ function SpeedControls() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [toggle, setSpeed]);
-
-  useEffect(() => {
-    if (!open) return;
-    const close = (e: MouseEvent) => {
-      if (!(e.target instanceof Node && menu.current?.contains(e.target))) setOpen(false);
-    };
-    window.addEventListener("mousedown", close);
-    return () => window.removeEventListener("mousedown", close);
-  }, [open]);
 
   return (
     <>
@@ -136,20 +146,71 @@ function AlertsButton({ seen, onOpen }: { seen: number; onOpen: () => void }) {
   );
 }
 
+/**
+ * The Panes menu (D979): reopens the pane closed last, opens or focuses a fixed pane, reopens a
+ * closed page. It reads the workspace when it opens, and any choice or outside press closes it.
+ */
+export function PanesMenu({ workspace }: { workspace: () => WorkspaceControl | null }) {
+  const [open, setOpen] = useState(false);
+  const menu = useCloseOutside(
+    open,
+    useCallback(() => setOpen(false), []),
+  );
+  const ws = open ? workspace() : null;
+  const closed = ws?.closed() ?? [];
+  const last = closed[0];
+  const act = (f: () => void) => {
+    setOpen(false);
+    f();
+  };
+  return (
+    <div className="menu" ref={menu}>
+      <button type="button" onClick={() => setOpen((o) => !o)} title="Open or reopen a pane">
+        Panes
+      </button>
+      {ws && (
+        <div className="items panes-menu">
+          <button type="button" disabled={!last} onClick={() => act(() => ws.reopen())}>
+            <span>{last ? `Reopen ${last.title}` : "Nothing to reopen"}</span>
+            <span className="detail">Alt+Shift+R</span>
+          </button>
+          <div className="heading">Panes</div>
+          {FIXED_PANES.map((spec) => (
+            <button type="button" key={spec.id} onClick={() => act(() => ws.open(spec))}>
+              <span>{spec.title}</span>
+              {ws.isOpen(spec.id) && <span className="detail">open</span>}
+            </button>
+          ))}
+          {closed.some((c) => c.kind === "page") && <div className="heading">Recently closed pages</div>}
+          {closed
+            .filter((c) => c.kind === "page")
+            .map((c) => (
+              <button type="button" key={c.id} onClick={() => act(() => ws.reopen(c))}>
+                <span>{c.title}</span>
+              </button>
+            ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export interface TopBarProps {
   seen: number;
   onOpenAlerts: () => void;
   onOpenCommands: () => void;
+  workspace: () => WorkspaceControl | null;
   onSave: () => void;
   onLoad: () => void;
 }
 
-function TopBarInner({ seen, onOpenAlerts, onOpenCommands, onSave, onLoad }: TopBarProps) {
+function TopBarInner({ seen, onOpenAlerts, onOpenCommands, workspace, onSave, onLoad }: TopBarProps) {
   return (
     <header className="topbar">
       <Clock />
       <SpeedControls />
       <span className="grow" />
+      <PanesMenu workspace={workspace} />
       <AlertsButton seen={seen} onOpen={onOpenAlerts} />
       <button type="button" onClick={onOpenCommands} title="Ctrl+K">
         Command...
