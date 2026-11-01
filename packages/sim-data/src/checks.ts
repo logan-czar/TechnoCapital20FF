@@ -21,23 +21,6 @@ import { MAP_META } from "./map.ts";
 import { type KeyCity, NAME_KIND_VALUES, type NameKind, nameKindDebug } from "./rows.ts";
 import { SUPERREGIONS, type WorldData, worldDataAllProvinces, worldDataCounts } from "./world.ts";
 
-/** Expected row counts (spec 10 M0, build-plan M0.2). */
-export const EXPECTED_COUNTS: readonly (readonly [string, number])[] = [
-  ["countries", 211],
-  ["provinces", 3963],
-  ["companies", 651],
-  ["characters", 296],
-  ["industries", 42],
-  ["country-economy", 211],
-  ["financial-zones", 26],
-  ["ai-boom", 15],
-  ["key-cities", 88],
-  ["company-start", 651],
-  ["startup-events", 9],
-  ["politics-usa", 51],
-  ["politics-usa-offices", 31],
-];
-
 /** Asset decay is 0% to 10% a year (validate.py; spec 5.10). */
 const ASSET_DECAY_MAX = 0.1;
 /** Quarterly growth volatility is 0% to 10% (validate.py; spec 5.1). */
@@ -116,10 +99,9 @@ const SENATE_CLASS_SEATS: readonly (readonly [string, number])[] = [
   ["3", 34],
 ];
 const NO_SENATE_STATE = "District of Columbia";
-/** The appointed US seats by kind (D983, D984). */
+/** The appointed US seats by kind (D983, D984); the cabinet's come from the manifest. */
 const POLITICS_OFFICE_SEATS: readonly (readonly [string, number])[] = [
   ["VicePresident", 1],
-  ["Cabinet", 15],
   ["Supreme", 9],
   ["Appeals", 13],
   ["Trial", 12],
@@ -212,7 +194,7 @@ function unique<T>(t: Table<T>, field: string, key: (r: T) => string, errors: Da
 
 function counts(w: WorldData, errors: DataError[]): void {
   const have = worldDataCounts(w);
-  for (const [name, expected] of EXPECTED_COUNTS) {
+  for (const [name, expected] of w.manifest.expected_counts) {
     const n = have.find(([k]) => k === name)?.[1] ?? 0;
     if (n !== expected) {
       errors.push(dataErrorFile(`${name}.csv`, `${n} rows, expected ${expected}`));
@@ -487,6 +469,10 @@ export function ratingFactorOfLabel(label: string): number | null {
 /** The fixed startup events F1 to F9 (spec 5.19.2, build-plan M0.5); the twin of validate.py. */
 function startupEvents(w: WorldData, ids: Ids, errors: DataError[]): void {
   const t = w.startup_events;
+  if (!w.manifest.features.fixed_events) {
+    if (!tableIsEmpty(t)) errors.push(tableFileErr(t, "this world plays no fixed events"));
+    return;
+  }
   const expected = Array.from({ length: 9 }, (_, i) => `F${i + 1}`);
   if (t.rows.length !== expected.length || t.rows.some((e, i) => e.id !== expected[i])) {
     errors.push(tableFileErr(t, "expected the 9 rows F1 to F9 in order"));
@@ -567,7 +553,11 @@ function politics(w: WorldData, errors: DataError[]): void {
   }
   const o = w.politics_offices;
   unique(o, "id", (r) => r.id, errors);
-  for (const [kind, n] of POLITICS_OFFICE_SEATS) {
+  const seats: readonly (readonly [string, number])[] = [
+    ...POLITICS_OFFICE_SEATS,
+    ["Cabinet", w.manifest.cabinet_seats],
+  ];
+  for (const [kind, n] of seats) {
     const got = o.rows.reduce((sum, r) => (r.kind === kind ? sum + r.seats : sum), 0);
     if (got !== n) errors.push(tableFileErr(o, `${kind} has ${got} seats, expected ${n}`));
   }

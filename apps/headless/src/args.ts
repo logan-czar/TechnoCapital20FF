@@ -1,7 +1,7 @@
 // Argument parsing of the headless commands (crates/headless/src/main.rs): each parser returns
 // null on a bad or missing argument, and main prints the usage (exit code 2).
 import { resolve } from "node:path";
-import { defaultDataDir } from "@tc20ff/sim-data/node";
+import { defaultDataDir, worldDataDir } from "@tc20ff/sim-data/node";
 
 /**
  * A path the user typed, resolved against the directory they ran the command from: `INIT_CWD`
@@ -17,14 +17,14 @@ import { DEFAULT_SEEDS, DEFAULT_YEARS, type SoakArgs } from "./soak.ts";
 
 export const USAGE = [
   "usage:",
-  "  headless --check-data [--data-dir DIR] [--map-dir DIR]",
-  "  headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--tick-costs] [--data-dir DIR]",
-  "  headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--detail] [--data-dir DIR]",
+  "  headless --check-data [--data-dir DIR | --world ID] [--map-dir DIR]",
+  "  headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--tick-costs] [--data-dir DIR | --world ID]",
+  "  headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--detail] [--data-dir DIR | --world ID]",
   "  headless check DIR",
   "  headless parity DIR [--reference DIR]",
-  "  headless record --years N --seed S --out LOG [--data-dir DIR]",
-  "  headless replay LOG [--data-dir DIR]",
-  "DIR defaults to the repository's docs/design/data; seeds A..B are inclusive (a single seed A also works);",
+  "  headless record --years N --seed S --out LOG [--data-dir DIR | --world ID]",
+  "  headless replay LOG [--data-dir DIR | --world ID]",
+  "DIR defaults to the repository's docs/design/data; --world ID is assets/worlds/ID; seeds A..B are inclusive (a single seed A also works);",
   "soak defaults to 30 years and seeds 1..50, jobs to half the cores",
 ].join("\n");
 
@@ -100,6 +100,12 @@ export function parseRun(args: readonly string[]): RunArgs | null {
         dir = userPath(v);
         break;
       }
+      case "--world": {
+        const v = args[++i];
+        if (v === undefined) return null;
+        dir = worldDataDir(v);
+        break;
+      }
       default:
         return null;
     }
@@ -156,6 +162,12 @@ export function parseSoak(args: readonly string[]): [SoakArgs, string] | null {
         dir = userPath(v);
         break;
       }
+      case "--world": {
+        const v = args[++i];
+        if (v === undefined) return null;
+        dir = worldDataDir(v);
+        break;
+      }
       default:
         return null;
     }
@@ -191,6 +203,12 @@ export function parseRecord(args: readonly string[]): [number, number, string, s
         dir = userPath(v);
         break;
       }
+      case "--world": {
+        const v = args[++i];
+        if (v === undefined) return null;
+        dir = worldDataDir(v);
+        break;
+      }
       default:
         return null;
     }
@@ -208,6 +226,10 @@ export function parseReplay(args: readonly string[]): [string, string] | null {
       const v = args[++i];
       if (v === undefined) return null;
       dir = userPath(v);
+    } else if (a === "--world") {
+      const v = args[++i];
+      if (v === undefined) return null;
+      dir = worldDataDir(v);
     } else if (log === null && !a.startsWith("--")) {
       log = userPath(a);
     } else {

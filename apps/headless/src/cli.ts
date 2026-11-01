@@ -19,7 +19,7 @@
 // stub and are wired to the real `simNew` in one place.
 import { writeFileSync } from "node:fs";
 import { check, type DataError, dataErrorToString, type WorldData, worldDataCounts } from "@tc20ff/sim-data";
-import { defaultDataDir, defaultMapDir, loadMap, loadWorld } from "@tc20ff/sim-data/node";
+import { defaultDataDir, defaultMapDir, loadMap, loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
 import { parseRecord, parseReplay, parseRun, parseSoak, type RunArgs, USAGE, userPath } from "./args.ts";
 import { defaultFactory, isObservedSim } from "./factory.ts";
 import { type RunOptions, runSeed, type SimFactory, YEARS_HEADER } from "./metrics.ts";
@@ -71,6 +71,12 @@ function checkDataCommand(args: string[]): number {
         const d = args[++i];
         if (d === undefined) return usage();
         dir = userPath(d);
+        break;
+      }
+      case "--world": {
+        const d = args[++i];
+        if (d === undefined) return usage();
+        dir = worldDataDir(d);
         break;
       }
       case "--map-dir": {

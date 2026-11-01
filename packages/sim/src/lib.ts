@@ -218,7 +218,7 @@ export interface SimOptions {
   rd_diminishing_x?: number;
   /** The growth profile id (economy/profiles.ts, D970); `DEFAULT_PROFILE_ID` when absent. */
   profile?: string;
-  /** The first day of the game (1995-rework 3.1); 1 January 2020 when absent. */
+  /** The first day of the game (1995-rework 3.1); the world's own start when absent. */
   start_date?: SimDate;
   /** Replaces some of the default `SIM_DEPS` (tests). */
   deps?: Partial<SimDeps>;
@@ -368,6 +368,8 @@ export function simNew(data: WorldData, seed: number, opts: SimOptions = {}): Re
       },
     };
   }
+  // A world without the scripted AI boom plays none under any profile (1995-rework 3.2).
+  const played = data.manifest.features.ai_boom ? profile : { ...profile, ai_boom: false };
   return simFromConfig(
     {
       data,
@@ -376,11 +378,11 @@ export function simNew(data: WorldData, seed: number, opts: SimOptions = {}): Re
           data,
           draws,
           deps.start,
-          profile,
+          played,
           opts.debt_levels,
           opts.focus_levels,
           opts.rd_diminishing_x,
-          opts.start_date,
+          opts.start_date ?? data.manifest.start_date,
         ),
       makeScheduler: scheduler,
       mapDataBuild: (world) => deps.mapDataBuild(data, world),

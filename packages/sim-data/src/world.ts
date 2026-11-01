@@ -4,6 +4,7 @@
 
 import { type DataError, ok, type Result } from "./error.ts";
 import { type Files, loadTable, type RowSpec, type Table, tableIter, tableLen } from "./load.ts";
+import { MANIFEST_2020, type WorldManifest } from "./manifest.ts";
 import type { MapAssets } from "./map.ts";
 import {
   AI_BOOM_STAGE_SPEC,
@@ -54,6 +55,8 @@ export const SUPERREGIONS: readonly (readonly [slug: string, name: string])[] = 
 
 /** Every table of the starting world. */
 export interface WorldData {
+  /** Which world this is (1995-rework 3.2). */
+  manifest: WorldManifest;
   countries: Table<Country>;
   /** One table per superregion, in SUPERREGIONS order. */
   provinces: Table<Province>[];
@@ -149,9 +152,12 @@ function perRegion<T>(files: Files, pattern: string, spec: RowSpec<T>): Result<T
 /**
  * Parses every table from `files` (WORLD_FILES, by relative path). Stops at the first file that
  * does not parse; the error names the file, line and field (spec 10 M0). Rust `load_world`, minus
- * the file reading.
+ * the file reading. `manifest` says which world the files are.
  */
-export function parseWorld(files: Files): Result<WorldData, DataError> {
+export function parseWorld(
+  files: Files,
+  manifest: WorldManifest = MANIFEST_2020,
+): Result<WorldData, DataError> {
   const countries = loadTable(files, "countries.csv", COUNTRY_SPEC);
   if (!countries.ok) return countries;
   const provinces = perRegion(files, "provinces-{}.csv", PROVINCE_SPEC);
@@ -185,6 +191,7 @@ export function parseWorld(files: Files): Result<WorldData, DataError> {
   const industrySuffixes = loadTable(files, "names/industry-suffixes.csv", INDUSTRY_SUFFIX_SPEC);
   if (!industrySuffixes.ok) return industrySuffixes;
   return ok({
+    manifest,
     countries: countries.value,
     provinces: provinces.value,
     companies: companies.value,

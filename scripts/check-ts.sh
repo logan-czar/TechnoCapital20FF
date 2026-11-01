@@ -19,4 +19,9 @@ out="$(cd docs/design/tools/mvp-data && "$PY" -B validate.py "$root/docs/design/
 echo "$out" | grep -E "^(ERROR|OK$|[0-9]+ errors)" || true
 echo "$out" | grep -qx "OK"
 step check-data; pnpm --filter @tc20ff/headless start --check-data
+step validate-1995
+out="$("$PY" -B tools/world-1995/validate.py)"
+echo "$out" | grep -E "^(ERROR|OK$|[0-9]+ errors)" || true
+echo "$out" | grep -qx "OK"
+step check-data-1995; pnpm --filter @tc20ff/headless start --check-data --world 1995
 echo; echo "check-ts: all steps passed"

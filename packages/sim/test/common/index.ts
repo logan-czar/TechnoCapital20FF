@@ -11,7 +11,7 @@
 //                            raiseAlert(ctx, kind, payload) [JobCtx::raise_alert]
 //   ../../src/types/views/estimate.ts  type Figure (the Figure::Exact / Figure::Band enum)
 import type { WorldData } from "@tc20ff/sim-data";
-import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
+import { defaultDataDir, loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
 import { expect } from "vitest";
 import { type Sim, simNew, simRegisterTestJob } from "../../src/lib.ts";
 import type { JobCtx } from "../../src/time/scheduler.ts";
@@ -36,6 +36,13 @@ export function macrotask(): Promise<void> {
 }
 
 let cached: WorldData | undefined;
+let cached1995: WorldData | undefined;
+
+/** The 1995 world's data (1995-rework 2), loaded once; every call returns its own copy. */
+export function data1995(): WorldData {
+  if (cached1995 === undefined) cached1995 = unwrap(loadWorld(worldDataDir("1995")), "1995 data loads");
+  return structuredClone(cached1995);
+}
 
 /** The starting data, loaded once; every call returns its own copy (Rust loads a fresh value). */
 export function data(): WorldData {

@@ -8,6 +8,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { type DataError, dataErrorFile, err, ok, type Result } from "./error.ts";
 import type { Files } from "./load.ts";
+import { MANIFEST_FILE, parseManifest } from "./manifest.ts";
 import { MAP_FILES, MAP_PNG_FILES, type MapAssets, mapFixtureFiles, parseMap, type Rect } from "./map.ts";
 import { parseWorld, WORLD_FILES, type WorldData } from "./world.ts";
 
@@ -19,6 +20,11 @@ export function repoRoot(): string {
 /** The data directory in this repository (`docs/design/data`). */
 export function defaultDataDir(): string {
   return join(repoRoot(), "docs", "design", "data");
+}
+
+/** The data directory of a world other than the 2020 one (`assets/worlds/<id>`, 1995-rework 3.2). */
+export function worldDataDir(id: string): string {
+  return join(repoRoot(), "assets", "worlds", id);
 }
 
 /** The repository map folder (`assets/map`). */
@@ -44,10 +50,19 @@ function readFiles(dir: string, names: readonly string[]): Result<Record<string,
   return ok(files);
 }
 
-/** Loads every table from `dir`. Stops at the first file that does not parse (spec 10 M0). */
+/**
+ * Loads every table from `dir`, as the world its `manifest.json` names (the 2020 world when it has
+ * none). Stops at the first file that does not parse (spec 10 M0).
+ */
 export function loadWorld(dir: string): Result<WorldData, DataError> {
   const files = readFiles(dir, WORLD_FILES);
-  return files.ok ? parseWorld(files.value) : files;
+  if (!files.ok) return files;
+  const read = readFiles(dir, [MANIFEST_FILE]);
+  if (!read.ok) return read;
+  const bytes = read.value[MANIFEST_FILE];
+  if (bytes === undefined) return parseWorld(files.value);
+  const manifest = parseManifest(new TextDecoder().decode(bytes));
+  return manifest.ok ? parseWorld(files.value, manifest.value) : manifest;
 }
 
 /** The first `n` bytes of a file, or null when it cannot be read. */

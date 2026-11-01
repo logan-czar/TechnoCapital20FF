@@ -22,4 +22,10 @@ Step 'validate'  {
     if (-not ($out -contains 'OK')) { $global:LASTEXITCODE = 1 } else { $global:LASTEXITCODE = 0 }
 }
 Step 'check-data' { corepack pnpm@10.20.0 --filter @tc20ff/headless start --check-data }
+Step 'validate-1995' {
+    $out = python -B tools/world-1995/validate.py
+    $out | Select-String -Pattern '^(ERROR|OK$|[0-9]+ errors)' | ForEach-Object { $_.Line }
+    if (-not ($out -contains 'OK')) { $global:LASTEXITCODE = 1 } else { $global:LASTEXITCODE = 0 }
+}
+Step 'check-data-1995' { corepack pnpm@10.20.0 --filter @tc20ff/headless start --check-data --world 1995 }
 Write-Host "`ncheck-ts: all steps passed"

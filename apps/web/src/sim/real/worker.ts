@@ -6,12 +6,17 @@ import type { ToSim } from "@tc20ff/sim";
 import {
   dataErrorToString,
   type Files,
+  MANIFEST_2020,
+  MANIFEST_FILE,
   MAP_FILES,
+  parseManifest,
   parseMap,
   parseWorld,
   WORLD_FILES,
   type WorldData,
+  type WorldManifest,
 } from "@tc20ff/sim-data";
+import { knownWorld, worldDataBase } from "../world.ts";
 import { RealHost } from "./host.ts";
 import { WorkerLoop } from "./loop.ts";
 
@@ -40,13 +45,26 @@ async function loadFiles(files: readonly string[], base: string, optional: boole
   return out;
 }
 
+/** The manifest of the world this worker was named after; the 2020 world's when it has no name. */
+async function loadManifest(world: string | null, base: string): Promise<WorldManifest> {
+  if (world === null) return MANIFEST_2020;
+  const text = await fetchText(`${base}${MANIFEST_FILE}`);
+  if (text === null) throw new Error(`${base}${MANIFEST_FILE}: not found`);
+  const manifest = parseManifest(text);
+  if (!manifest.ok) throw new Error(`starting data: ${dataErrorToString(manifest.error)}`);
+  return manifest.value;
+}
+
 async function loadData(): Promise<WorldData> {
-  const [worldFiles, mapFiles] = await Promise.all([
-    loadFiles(WORLD_FILES, "/data/design/", false),
+  const selected = knownWorld((self as unknown as { name?: string }).name);
+  const base = worldDataBase(selected);
+  const [manifest, worldFiles, mapFiles] = await Promise.all([
+    loadManifest(selected, base),
+    loadFiles(WORLD_FILES, base, false),
     // The map files are optional: no map-meta.toml means no map (parseMap gives null).
     loadFiles(MAP_FILES, "/data/map/", true),
   ]);
-  const world = parseWorld(worldFiles);
+  const world = parseWorld(worldFiles, manifest);
   if (!world.ok) throw new Error(`starting data: ${dataErrorToString(world.error)}`);
   const map = parseMap(mapFiles);
   if (!map.ok) throw new Error(`map data: ${dataErrorToString(map.error)}`);

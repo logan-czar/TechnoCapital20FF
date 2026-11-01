@@ -1,0 +1,25 @@
+{
+  "id": "1995",
+  "start_date": "1995-01-01",
+  "expected_counts": {
+    "countries": 199,
+    "provinces": 3963,
+    "companies": 300,
+    "characters": 296,
+    "industries": 42,
+    "country-economy": 199,
+    "financial-zones": 26,
+    "ai-boom": 15,
+    "key-cities": 88,
+    "company-start": 300,
+    "startup-events": 0,
+    "politics-usa": 51,
+    "politics-usa-offices": 30
+  },
+  "cabinet_seats": 14,
+  "features": {
+    "ai_boom": false,
+    "fixed_events": false,
+    "arrowhead": false
+  }
+}

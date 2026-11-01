@@ -539,14 +539,16 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
     // The 7.1 loadout (lane F's one implementation): labor units from the loaded gross assets, the
     // loadout's stations fitted to them (a no-op on today's data, D208), the starting data (5.9)
     // and the compute bill (3.8) that the fixed cost rate leaves room for.
-    const loadout = deps.startLoadout(c.id, revenue, locationBonus, params);
+    // A world without Arrowhead reads its CO-0001 as any other company (1995-rework 3.2).
+    const loadoutKey = data.manifest.features.arrowhead ? c.id : "";
+    const loadout = deps.startLoadout(loadoutKey, revenue, locationBonus, params);
     const labor = deps.laborUnits(gross, params.labor_value_usd);
     const stations = deps.fitStations(loadout.stations, labor);
     const book = deps.dataBookAtLoad(
       revenue,
       { tb_per_musd: params.data_tb_per_musd, decay_base: params.data_decay_base },
       deps.conversionCapacity(stations),
-      deps.enterpriseShare(c.id),
+      deps.enterpriseShare(loadoutKey),
     );
     const compute = deps.computeBill(stations, deps.dataBookStoredTb(book));
     const startCtl = startControl(c, controllerBook, countryKeys, companyKeys);
