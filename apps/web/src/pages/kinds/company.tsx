@@ -258,7 +258,7 @@ export function companyDoc(id: CompanyId, v: ViewsData, index: NameIndex): PageD
   doc.sections = [
     { id: "overview", blocks: overview(d, row, v) },
     { id: "chart", blocks: chart(id, d, v) },
-    { id: "board", blocks: board(d, v, index) },
+    { id: "board", blocks: board(d) },
     { id: "cap_table", blocks: capTable(id, v) },
     { id: "units", blocks: units(id, v, index) },
     { id: "financials", blocks: financials(id, d, v) },
@@ -406,7 +406,7 @@ function holderSpans(p: SeatPerson): Span[] {
   return [span.text(p.name), span.colored("(partial)", "muted")];
 }
 
-function seatCard(s: SeatCard, _index: NameIndex): CardDoc {
+function seatCard(s: SeatCard): CardDoc {
   const unit = laborUnit(s.seat) ?? 0;
   const head: Span[] = [span.colored(seatName(s.seat), "cyan"), span.muted(`labor unit ${unit}`)];
   if (!s.open) {
@@ -445,11 +445,11 @@ function voterLabel(role: VoterRole): string {
  * The Board tab (spec 8): seat cards for labor units 1 to 5 with the skill used, directors, and the last IPO vote with each member's vote and
  * the next vote date (5.20.1). Never the ballot odds (D482).
  */
-export function board(d: CompanyDetail, _v: ViewsData, index: NameIndex): Block[] {
+export function board(d: CompanyDetail): Block[] {
   const out: Block[] = [{ k: "heading", text: "Seats" }];
   out.push({
     k: "cards",
-    cards: d.board.filter((s) => laborUnit(s.seat) !== null).map((s) => seatCard(s, index)),
+    cards: d.board.filter((s) => laborUnit(s.seat) !== null).map((s) => seatCard(s)),
   });
   // The directors in seat position order, as the view lists them (D541).
   out.push({ k: "heading", text: `Directors (${d.directors.length})` });
@@ -467,7 +467,7 @@ export function board(d: CompanyDetail, _v: ViewsData, index: NameIndex): Block[
     });
   }
   out.push({ k: "heading", text: "IPO vote" });
-  out.push(...ipoVote(d, index));
+  out.push(...ipoVote(d));
   return out;
 }
 
@@ -495,7 +495,7 @@ function isVoter(p: SeatPerson, v: BallotVoter): boolean {
 }
 
 /** A ballot's voter: a partial one marked (D486), the named controller, the state. */
-function voterSpans(v: BallotVoter, _index: NameIndex): Span[] {
+function voterSpans(v: BallotVoter): Span[] {
   switch (v.kind) {
     case "Partial":
       return [span.text(v.name), span.colored("(partial)", "muted")];
@@ -511,7 +511,7 @@ function voterSpans(v: BallotVoter, _index: NameIndex): Span[] {
  * who cast it, and who holds the role today only when that is someone else (D542). The ballots'
  * odds stay in the view and are never shown (20-ui 20.1, D482).
  */
-export function ipoVote(d: CompanyDetail, index: NameIndex): Block[] {
+export function ipoVote(d: CompanyDetail): Block[] {
   const out: Block[] = [];
   const rec = d.ipo_last_vote;
   if (rec) {
@@ -526,7 +526,7 @@ export function ipoVote(d: CompanyDetail, index: NameIndex): Block[] {
       const value: Span[] = [b.yes ? span.colored("yes", "gain") : span.colored("no", "loss")];
       const now = holderNow(d, b.role);
       const voter = b.voter;
-      if (voter) value.push(...voterSpans(voter, index));
+      if (voter) value.push(...voterSpans(voter));
       // A director who voted and still sits, whatever position the directors before them
       // leaving moved them to, is no change.
       const stillDirector =

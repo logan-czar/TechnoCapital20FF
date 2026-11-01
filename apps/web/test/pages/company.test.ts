@@ -340,14 +340,14 @@ const oddsTexts = (chance: number) => [
 ];
 
 /** A doc of one board section, as b1_pages.rs builds it around `board`. */
-function boardDoc(d: CompanyDetail, v: ViewsData): PageDoc {
+function boardDoc(d: CompanyDetail): PageDoc {
   return {
     page: { kind: "company", id: d.id },
     title: d.name,
     kind: "Company",
     chips: [],
     head: [],
-    sections: [{ id: "board", blocks: board(d, v, buildNameIndex(v)) }],
+    sections: [{ id: "board", blocks: board(d) }],
   };
 }
 
@@ -412,7 +412,7 @@ describe("the Board tab", () => {
       capped: true,
     };
     d.ipo_next_vote = { year: 2020, q: 3 };
-    const doc = boardDoc(d, v);
+    const doc = boardDoc(d);
     const bt = texts(doc, v);
     for (const want of [
       "CEO",
@@ -478,7 +478,7 @@ describe("the Board tab", () => {
       },
       capped: false,
     };
-    const blocks = ipoVote(d, buildNameIndex(v));
+    const blocks = ipoVote(d);
     const fields = blocks.find((b) => b.k === "fields");
     if (fields?.k !== "fields") throw new Error("the ballots");
     const line = (label: string) => fields.fields.find((f) => f.label === label)?.value ?? [];
@@ -501,7 +501,7 @@ describe("the Board tab", () => {
       partial_id: partialId,
     });
     d.directors = [person("Ada Partial", 9_001), person("Bea Partial", 9_002)];
-    const doc = boardDoc(d, v);
+    const doc = boardDoc(d);
     const blocks = doc.sections[0]?.blocks ?? [];
     const at = blocks.findIndex((b) => b.k === "heading" && b.text === "Directors (2)");
     expect(at, "the directors heading").toBeGreaterThanOrEqual(0);

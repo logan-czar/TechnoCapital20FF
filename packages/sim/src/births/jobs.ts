@@ -79,7 +79,7 @@ import {
 import { companyNamesDraw, ticker } from "./names.ts";
 import { drawRandomEvents, type EventDraft, type StartupDraft } from "./random.ts";
 import { buildStartup, fringeRevenue, sizedRevenue } from "./startup.ts";
-import { birthsHomeOthers, birthsInRegions, sitesKeyCityLists, sitesPlace } from "./state.ts";
+import { birthsInRegions, sitesKeyCityLists, sitesPlace } from "./state.ts";
 import { hqWeight, industryWeight } from "./weights.ts";
 
 type Industry = World["industries"][number];
@@ -251,7 +251,6 @@ export function birth(
   );
   const names = nameBooksGet(world.name_books, country_id);
   if (names === null) throw new Error("every country has a name book (checked at load)");
-  const _others = birthsHomeOthers(world.births, country_id, draft.hq);
   const cast = seatCast(draws, names, b.labor, draft.partial);
 
   const simple = (character: SimpleSeat["character"]): SimpleSeat => {
