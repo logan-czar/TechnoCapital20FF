@@ -2,13 +2,13 @@
 // both chambers, the courts, the next vote and every past vote. All of it is public.
 
 import type { SimDate } from "../calendar.ts";
-import type { CountryId, ProvinceId } from "../ids.ts";
+import type { CountryId, PoliticianId, ProvinceId } from "../ids.ts";
 import type { CourtLevel, ElectionResult, Ideology, JudgeLeaning, Party } from "../state/politics.ts";
 import type { Skills, Trait } from "./shared.ts";
 
 /** One office holder. */
 export interface PoliticianRow {
-  id: number;
+  id: PoliticianId;
   name: string;
   /** u8. */
   age: number;

@@ -54,7 +54,9 @@ export function clockWorld(): World {
     market: { stocks: [], indices: [], index_history: [] },
     news: newsWireDefault(),
     recaps: [],
-    politics: { politicians: [] },
+    // No start, so the politics job's handovers find nothing pending. A run reaching Election Day or
+    // the next 1 January needs the real start: those throw with nobody in office.
+    politics: { politicians: [], pending: null },
     births: birthsStateDefault(),
     base_rate: 0.03,
     neutral_rate: 0.03,

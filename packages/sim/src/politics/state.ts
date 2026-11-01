@@ -3,7 +3,7 @@
 
 import type { WorldData } from "@tc20ff/sim-data";
 import { worldDataAllProvinces } from "@tc20ff/sim-data";
-import type { CountryId, ProvinceId } from "../types/ids.ts";
+import { type CountryId, ordinal, type ProvinceId, type UsStateId } from "../types/ids.ts";
 import { cmpStr, totalCmp } from "../types/num.ts";
 import type { District, Office, Party, Politician, PoliticsState } from "../types/state/politics.ts";
 
@@ -66,7 +66,12 @@ export function politicsStateFromData(
     own.forEach((p, pi) => {
       const province = provinceIds.get(p.id) as ProvinceId;
       for (let k = 0; k < (seats[pi] as number); k++) {
-        districts.push({ state: si, number, lean_pts: s.lean_pts, home_province: province });
+        districts.push({
+          state: ordinal<UsStateId>(si),
+          number,
+          lean_pts: s.lean_pts,
+          home_province: province,
+        });
         number++;
       }
     });

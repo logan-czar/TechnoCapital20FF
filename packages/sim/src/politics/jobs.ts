@@ -10,6 +10,13 @@ import type { JobCtx, Scheduler } from "../time/scheduler.ts";
 import { schedulerRegister } from "../time/scheduler.ts";
 import type { SimDate } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
+import {
+  type DistrictId,
+  ordinal,
+  type PoliticianId,
+  type PoliticsPostId,
+  type UsStateId,
+} from "../types/ids.ts";
 import type { NameBook, SkillKind } from "../types/state/people.ts";
 import {
   type ElectionResult,
@@ -94,7 +101,7 @@ function usNames(world: World, p: PoliticsState): NameBook {
 
 /** Turns a drawn person into an office holder, taking the next id. */
 function seat(p: PoliticsState, d: Drawn, party: Party, office: Office, since: SimDate): Politician {
-  const id = p.politicians_made;
+  const id = ordinal<PoliticianId>(p.politicians_made);
   p.politicians_made += 1;
   return {
     class: "Politician",
@@ -156,7 +163,7 @@ interface Race {
 /** Every race of a November, House then Senate; `senateClass` null fills all three classes. */
 function congressRaces(p: PoliticsState, senateClass: number | null): Race[] {
   const races: Race[] = p.districts.map((d, i) => ({
-    office: { kind: "House", state: d.state, district: i },
+    office: { kind: "House", state: d.state, district: ordinal<DistrictId>(i) },
     lean_pts: d.lean_pts,
     ranges: HOUSE_RANGES,
   }));
@@ -164,7 +171,7 @@ function congressRaces(p: PoliticsState, senateClass: number | null): Race[] {
     for (const c of s.senate_classes) {
       if (senateClass !== null && c !== senateClass) continue;
       races.push({
-        office: { kind: "Senate", state: si, senate_class: c },
+        office: { kind: "Senate", state: ordinal<UsStateId>(si), senate_class: c },
         lean_pts: s.lean_pts,
         ranges: SENATE_RANGES,
       });
@@ -223,6 +230,11 @@ export function retireChance(age: number): number {
   return LEGISLATOR_RETIRE_BASE + over * LEGISLATOR_RETIRE_PER_YEAR;
 }
 
+/** D988: past the age a legislator is certain to retire, so nobody runs for president either. */
+function pastRunning(c: Politician): boolean {
+  return retireChance(c.age) >= 1;
+}
+
 /** D988: a judge's yearly chance of retiring. */
 export function judgeRetireChance(age: number): number {
   const over = age - JUDGE_RETIRE_FROM_AGE;
@@ -253,16 +265,18 @@ function presidentialNominee(
 ): Nominee {
   const president = sittingPresident(p);
   if (party === president.party) {
-    if (p.president_terms < PRESIDENT_TERM_LIMIT) return { party, person: president, incumbent: true };
+    if (p.president_terms < PRESIDENT_TERM_LIMIT && !pastRunning(president)) {
+      return { party, person: president, incumbent: true };
+    }
     const vp = officeHolders(p, "VicePresident")[0];
     if (vp !== undefined) return { party, person: vp, incumbent: false };
   }
   // Highest Persuasion among the party's senators not up this November (their seat is safe to
-  // leave); ties to the lower id. The table is in id order.
+  // leave) and young enough to run; ties to the lower id. The table is in id order.
   let best: Politician | null = null;
   for (const c of p.politicians) {
     if (c.office.kind !== "Senate" || c.party !== party) continue;
-    if (c.office.senate_class === senateClass || c.age < PRESIDENT_RANGES.age.lo) continue;
+    if (c.office.senate_class === senateClass || c.age < PRESIDENT_RANGES.age.lo || pastRunning(c)) continue;
     if (best === null || c.skills.persuasion > best.skills.persuasion) best = c;
   }
   const person = best ?? drawPerson(g, names, PRESIDENT_RANGES, "persuasion", party);
@@ -457,7 +471,7 @@ function fillExecutive(
   p.posts.forEach((post, i) => {
     if (post.kind !== "VicePresident" && post.kind !== "Cabinet") return;
     const { drawn, party } = bestCandidate(g, names, CABINET_RANGES, post.skill, president.party, 1);
-    const office: Office = { kind: post.kind, post: i };
+    const office: Office = { kind: post.kind, post: ordinal<PoliticsPostId>(i) };
     p.politicians.push(seat(p, drawn, party, office, date));
   });
 }
@@ -485,7 +499,13 @@ function fillCourtVacancies(
     for (let s = sitting; s < post.seats; s++) {
       let pick = nominate();
       for (let t = 1; t < CONFIRM_TRIES && !g.chance("Politics", confirm); t++) pick = nominate();
-      const judge = seat(p, pick.drawn, pick.party, { kind: "Judge", post: i, level: post.kind }, date);
+      const judge = seat(
+        p,
+        pick.drawn,
+        pick.party,
+        { kind: "Judge", post: ordinal<PoliticsPostId>(i), level: post.kind },
+        date,
+      );
       judge.integrity = rangeDraw(JUDGE_INTEGRITY, g);
       judge.leaning = drawJudgeLeaning(g);
       p.politicians.push(judge);
@@ -512,8 +532,7 @@ function newYear(world: World, p: PoliticsState, g: DrawSource, date: SimDate): 
 export function politicsJob(world: World, ctx: JobCtx): void {
   const p = world.politics;
   const date = ctx.facts.date;
-  // A world that skipped the start (tests) has nobody in office.
-  if (!isPoliticsDay(date) || p.politicians.length === 0) return;
+  if (!isPoliticsDay(date)) return;
   const g = politicsDraws(ctx.draws);
   if (isElectionDay(date)) electionDayJob(world, p, g, date);
   else if (date.day === 1) newYear(world, p, g, date);

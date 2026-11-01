@@ -106,6 +106,24 @@ const SHARE_SUM_TOL = 1e-9;
 const FIXED_EVENT_STARTUPS = 32;
 /** Every startup brings 1 to 5 full and 1 to 5 partial characters (spec 5.19, batch 165). */
 const CAST_RANGE = [1, 5] as const;
+/** The US in politics-usa.csv (D980, D982): the real House, Senate classes and seatless DC. */
+const US_COUNTRY = "USA";
+const HOUSE_SEATS = 435;
+const SENATE_SEATS_PER_STATE = 2;
+const SENATE_CLASS_SEATS: readonly (readonly [string, number])[] = [
+  ["1", 33],
+  ["2", 33],
+  ["3", 34],
+];
+const NO_SENATE_STATE = "District of Columbia";
+/** The appointed US seats by kind (D983, D984). */
+const POLITICS_OFFICE_SEATS: readonly (readonly [string, number])[] = [
+  ["VicePresident", 1],
+  ["Cabinet", 15],
+  ["Supreme", 9],
+  ["Appeals", 13],
+  ["Trial", 12],
+];
 
 // sim-data cannot import the sim number helpers (sim depends on sim-data), so the few it needs are
 // here: byte order for strings (D4; ids are ASCII), and Rust f64 min/max (a NaN operand loses).
@@ -151,6 +169,7 @@ export function check(w: WorldData): DataError[] {
   companies(w, ids, errors);
   companyStart(w, errors);
   startupEvents(w, ids, errors);
+  politics(w, errors);
   names(w, ids, errors);
   map(w, ids, errors);
   return errors;
@@ -508,6 +527,49 @@ function startupEvents(w: WorldData, ids: Ids, errors: DataError[]): void {
   }
   if (!tableIsEmpty(t) && startups !== FIXED_EVENT_STARTUPS) {
     errors.push(tableFileErr(t, `${startups} startups, expected 32`));
+  }
+}
+
+/**
+ * The US politics tables (D980, D982 to D984); the twin of validate.py, plus each state's population,
+ * which is its share of the national vote and places its districts.
+ */
+function politics(w: WorldData, errors: DataError[]): void {
+  const t = w.politics_states;
+  unique(t, "state", (r) => r.state, errors);
+  const population = new Map<string, number>();
+  for (const [, , p] of worldDataAllProvinces(w)) {
+    if (p.country === US_COUNTRY) population.set(p.region, (population.get(p.region) ?? 0) + p.population);
+  }
+  const house = t.rows.reduce((n, s) => n + s.house_seats, 0);
+  if (house !== HOUSE_SEATS) errors.push(tableFileErr(t, `${house} House seats, expected ${HOUSE_SEATS}`));
+  for (const [line, s] of tableIter(t)) {
+    if (!((population.get(s.state) ?? 0) > 0)) {
+      errors.push(tableErr(t, line, "state", `${s.state}: no populated US province has this region`));
+    }
+    const want = s.state === NO_SENATE_STATE ? 0 : SENATE_SEATS_PER_STATE;
+    if (s.senate_classes.length !== want) {
+      errors.push(tableErr(t, line, "senate_classes", `${s.state}: expected ${want} Senate classes`));
+    }
+    for (const k of s.senate_classes) {
+      if (!SENATE_CLASS_SEATS.some(([known]) => known === k)) {
+        errors.push(tableErr(t, line, "senate_classes", `${s.state}: unknown Senate class ${k}`));
+      }
+    }
+  }
+  for (const [k, n] of SENATE_CLASS_SEATS) {
+    const got = t.rows.filter((s) => s.senate_classes.includes(k)).length;
+    if (got !== n) errors.push(tableFileErr(t, `Senate class ${k} has ${got} seats, expected ${n}`));
+  }
+  const named = new Set(t.rows.map((s) => s.state));
+  for (const region of sorted(population.keys())) {
+    if (!named.has(region)) errors.push(tableFileErr(t, `${region} is a US province region with no row`));
+  }
+  const o = w.politics_offices;
+  unique(o, "id", (r) => r.id, errors);
+  for (const [kind, n] of POLITICS_OFFICE_SEATS) {
+    const got = o.rows.reduce((sum, r) => (r.kind === kind ? sum + r.seats : sum), 0);
+    if (got !== n) errors.push(tableFileErr(o, `${kind} has ${got} seats, expected ${n}`));
   }
 }
 

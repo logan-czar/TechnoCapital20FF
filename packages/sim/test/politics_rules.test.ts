@@ -249,4 +249,31 @@ describe("fifty years of US government", () => {
     expect(houseFlips).toBeGreaterThan(3);
     expect(otherParty("Democrats")).toBe("Republicans");
   });
+
+  it("nominates nobody past the age a member is certain to retire (D985, D988)", () => {
+    const { p, run } = drive(1);
+    const senators = p.politicians.filter(
+      (c) =>
+        c.office.kind === "Senate" &&
+        c.office.senate_class !== senateClassUp(2020) &&
+        c.party === "Republicans",
+    );
+    const young = senators.reduce((a, b) => (b.skills.persuasion < a.skills.persuasion ? b : a));
+    for (const c of senators) c.age = 90;
+    young.age = 60;
+    run(electionDay(2020));
+    const vote = p.elections[0]?.president;
+    expect([vote?.winner, vote?.loser]).toContain(young.name);
+  });
+
+  it("does not run a sitting president past that age (D985, D988)", () => {
+    const { p, run } = drive(1);
+    const sitting = president(p);
+    sitting.age = 90;
+    const vp = p.politicians.find((c) => c.office.kind === "VicePresident") as Politician;
+    run(electionDay(2020));
+    const vote = p.elections[0]?.president;
+    expect([vote?.winner, vote?.loser]).toContain(vp.name);
+    expect([vote?.winner, vote?.loser]).not.toContain(sitting.name);
+  });
 });

@@ -486,7 +486,7 @@ export const STARTUP_EVENT_SPEC = rowSpec<StartupEvent>({
 });
 
 /** politics-usa.csv: one row per US state (politics POC, D980). */
-export interface PoliticsState {
+export interface PoliticsStateRow {
   state: string;
   house_seats: number;
   /** The real Senate classes, `1;2`; empty for DC. */
@@ -496,7 +496,7 @@ export interface PoliticsState {
   notes: string;
 }
 
-export const POLITICS_STATE_SPEC = rowSpec<PoliticsState>({
+export const POLITICS_STATE_SPEC = rowSpec<PoliticsStateRow>({
   state: str,
   house_seats: u32,
   senate_classes: semiList,

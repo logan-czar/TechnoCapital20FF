@@ -33,7 +33,7 @@ import {
   POLITICS_OFFICE_SPEC,
   POLITICS_STATE_SPEC,
   type PoliticsOffice,
-  type PoliticsState,
+  type PoliticsStateRow,
   PROVINCE_SPEC,
   type Province,
   STARTUP_EVENT_SPEC,
@@ -67,7 +67,7 @@ export interface WorldData {
   company_start: Table<CompanyStart>;
   startup_events: Table<StartupEvent>;
   /** The US states and appointed posts (politics POC, D980, D983, D984). */
-  politics_states: Table<PoliticsState>;
+  politics_states: Table<PoliticsStateRow>;
   politics_offices: Table<PoliticsOffice>;
   /** Name lists, one table per superregion, in SUPERREGIONS order. */
   names: Table<NameRow>[];

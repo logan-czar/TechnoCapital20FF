@@ -15,11 +15,26 @@ export function linkCell(index: NameIndex, page: PageRef): Cell {
   return { k: "link", text: index.title(page), page };
 }
 
-/** Every US office holder, top down (politics POC, D980). */
-export function politicianRows(p: PoliticsView | undefined): PoliticianRow[] {
+/** Every US office holder top down, with the role a mixed list names them by (politics POC, D980). */
+export function politicianRoles(p: PoliticsView | undefined): [PoliticianRow, string][] {
   if (!p) return [];
+  const named = (r: PoliticianRow): [PoliticianRow, string] => [r, r.title];
   const top = [p.president, p.vice_president].filter((r) => r !== null);
-  return [...top, ...p.cabinet, ...p.senate, ...p.house, ...p.courts.flatMap((c) => c.judges)];
+  return [
+    ...top.map(named),
+    ...p.cabinet.map(named),
+    ...p.senate.map((r): [PoliticianRow, string] => [r, `Senate, ${r.title}`]),
+    ...p.house.map((r): [PoliticianRow, string] => [r, `House, ${r.title}`]),
+    ...p.courts.flatMap((c) => c.judges.map(named)),
+  ];
+}
+
+/** How many US office holders there are, with no list built. */
+export function politicianCount(p: PoliticsView | undefined): number {
+  if (!p) return 0;
+  const top = (p.president === null ? 0 : 1) + (p.vice_president === null ? 0 : 1);
+  const judges = p.courts.reduce((n, c) => n + c.judges.length, 0);
+  return top + p.cabinet.length + p.senate.length + p.house.length + judges;
 }
 
 /** A company's status on screen (company.rs `status_text`). */

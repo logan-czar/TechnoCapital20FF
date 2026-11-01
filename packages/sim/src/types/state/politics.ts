@@ -3,7 +3,7 @@
 // outside politics/, the views and the news reads this state: the economy never sees it.
 
 import type { SimDate } from "../calendar.ts";
-import type { CountryId, ProvinceId } from "../ids.ts";
+import type { CountryId, DistrictId, PoliticianId, PoliticsPostId, ProvinceId, UsStateId } from "../ids.ts";
 import type { BaseCharacter, SkillKind } from "./people.ts";
 
 /** The two starting parties (4.4.7; D981). */
@@ -33,21 +33,20 @@ export type CourtLevel = "Supreme" | "Appeals" | "Trial";
 /** Court levels, top down. */
 export const COURT_LEVEL_VALUES = ["Supreme", "Appeals", "Trial"] as const;
 
-/** What a politician holds. `post` indexes `PoliticsState.posts`, `state` `.states`, `district` `.districts`. */
+/** What a politician holds. */
 export type Office =
   | { kind: "President" }
-  | { kind: "VicePresident"; post: number }
-  | { kind: "Cabinet"; post: number }
-  | { kind: "House"; state: number; district: number }
+  | { kind: "VicePresident"; post: PoliticsPostId }
+  | { kind: "Cabinet"; post: PoliticsPostId }
+  | { kind: "House"; state: UsStateId; district: DistrictId }
   /** `senate_class` is 1, 2 or 3. */
-  | { kind: "Senate"; state: number; senate_class: number }
-  | { kind: "Judge"; post: number; level: CourtLevel };
+  | { kind: "Senate"; state: UsStateId; senate_class: number }
+  | { kind: "Judge"; post: PoliticsPostId; level: CourtLevel };
 
 /** A base character holding a US office (D980). Removed from the table when they leave office. */
 export interface Politician extends BaseCharacter {
   class: "Politician";
-  /** The politics id, from `PoliticsState.politicians_made`. Whole number (u32). */
-  id: number;
+  id: PoliticianId;
   party: Party;
   ideology: Ideology;
   office: Office;
@@ -74,8 +73,7 @@ export interface PoliticsUsState {
 
 /** A House district (D982). */
 export interface District {
-  /** Index in `PoliticsState.states`. */
-  state: number;
+  state: UsStateId;
   /** 1 up within its state. */
   number: number;
   /** The state's lean plus this district's fixed offset, in points. */

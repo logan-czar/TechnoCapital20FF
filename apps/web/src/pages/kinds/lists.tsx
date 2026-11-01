@@ -14,7 +14,7 @@ import { figureCell } from "../../widgets/cells.ts";
 import { type PageDoc, span, type TableDoc } from "../doc.ts";
 import { kindName, type PageOf, type PageRef } from "../ref.ts";
 import { definePage } from "../spec.ts";
-import { linkCell, politicianRows } from "../tables.ts";
+import { linkCell, politicianRoles } from "../tables.ts";
 import { byId, type ViewsData } from "../views.ts";
 
 /** The list kinds this file registers. */
@@ -79,12 +79,12 @@ export function listTable(kind: ListKind, v: ViewsData, index: NameIndex): Table
     }
     case "characters": {
       // The full characters, then the politicians (D980), whose pages are the US politics page.
-      const politicians = politicianRows(v.politics).map((r): Cell[] => [
+      const politicians = politicianRoles(v.politics).map(([r, roleName]): Cell[] => [
         { k: "link", text: r.name, page: { kind: "politics" } },
         { k: "int", v: r.age },
-        { k: "text", v: "-" },
+        r.province === null ? { k: "text", v: "-" } : placeCell(v, r.province, "-"),
         { k: "text", v: "Politician" },
-        { k: "text", v: r.title },
+        { k: "text", v: roleName },
         { k: "int", v: 1 },
         { k: "int", v: 0 },
       ]);
