@@ -52,7 +52,6 @@ const GROUPS: Readonly<Record<PageKind, string>> = {
   settings: "Pages",
   company: "Companies",
   industry: "Industries",
-  character: "Characters",
   country: "Countries",
   province: "Provinces",
   zone: "Financial zones",

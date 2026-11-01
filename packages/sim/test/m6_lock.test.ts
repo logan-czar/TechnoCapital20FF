@@ -56,7 +56,9 @@ function row(a: Archetype): [number, number, number, number] {
 /** The traits the AI reads (spec 6, 5.19.5). */
 function traitsOf(w: World, c: Company): readonly Trait[] {
   if (c.origin.kind === "Born") return [];
-  return c.controller === null ? [] : rowOf(w.characters, c.controller).traits;
+  void w;
+  const ctl = c.start_control?.controller;
+  return ctl?.kind === "Character" ? ctl.character.traits : [];
 }
 
 /** Spec 6.1, first match in table order (D120). */

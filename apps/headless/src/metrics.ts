@@ -51,8 +51,8 @@ export const YEARS_HEADER =
   "tracking_share,mean_confidence,index_atx,index_cbx,index_hse,index_ese,events_in_year," +
   "startups_in_year,ai_lab_startups_in_year,listings_in_year,start_private_listed,named_companies," +
   "start_active_share,start_alive_share,beat_share,miss_share,boom_share,bust_share,m_clamp_over_8q," +
-  "max_m_clamp_quarters,full_characters_made,full_characters,median_productivity,demand_dev_max_pp," +
-  "demand_dev_out,casts_in_year,cast_full_min,cast_full_max,cast_simple_min,cast_simple_max," +
+  "max_m_clamp_quarters,median_productivity,demand_dev_max_pp," +
+  "demand_dev_out,casts_in_year,cast_simple_min,cast_simple_max," +
   "born_empty_seats_max";
 
 /**
@@ -363,30 +363,22 @@ export function quarterAccAddMonth(q: QuarterAcc, labels: PhaseLabel[], rows: re
 }
 
 /**
- * A cast's full and simple character counts from its board at birth (D326): the founders, and
- * the simple characters cast, which are the simple seat holders plus the directors who are not
- * unseated founders. With partials placed before seat fillers (5.19.4 step 3), that is
- * `max(partials drawn, open seats left after the seated founders)`.
+ * A cast's simple character count from its board at birth (D326, D989): the simple seat holders
+ * plus the directors. With partials placed before seat fillers (5.19.4 step 3), that is
+ * `max(partials drawn, open seats)`.
  */
-export function castSizes(
-  founders: number,
-  seatedFounders: number,
-  simpleSeats: number,
-  directors: number,
-): [number, number] {
-  const simpleDirectors = Math.max(directors - (founders - seatedFounders), 0);
-  return [founders, simpleSeats + simpleDirectors];
+export function castSize(simpleSeats: number, directors: number): number {
+  return simpleSeats + directors;
 }
 
 /** A born company's cast at birth (D326): the year's count and the min and max sizes. */
 interface CastStats {
   casts: number;
-  full: [number, number] | null;
   simple: [number, number] | null;
 }
 
 function castStatsNew(): CastStats {
-  return { casts: 0, full: null, simple: null };
+  return { casts: 0, simple: null };
 }
 
 function widen(range: [number, number] | null, n: number): [number, number] {
@@ -521,21 +513,16 @@ function recorderNotice(rec: Recorder, sim: SoakSimApi, n: Notice, hashMonthly: 
 }
 
 /**
- * Spec 5.19.4 and 10 ("every startup has 1 to 5 full and 1 to 5 partial characters, and no
+ * Spec 5.19.4 and 10 ("every startup has 1 to 5 partial characters, and no
  * labor seat of a born company is empty"), read from v_company_detail the tick it is born
  * (D159, D326).
  */
 function recorderAddBirth(rec: Recorder, sim: SoakSimApi, index: number): void {
   const c = sim.views().company_detail.data.companies[index];
   if (c === undefined) throw new Error(`no company ${index} in v_company_detail`);
-  const seatedFounders = c.board.filter((s) => {
-    const ch = s.holder?.character ?? null;
-    return ch !== null && c.founders.includes(ch);
-  }).length;
   const simpleSeats = c.board.filter((s) => s.holder?.partial === true).length;
-  const [full, simple] = castSizes(c.founders.length, seatedFounders, simpleSeats, c.directors.length);
+  const simple = castSize(simpleSeats, c.directors.length);
   rec.casts.casts += 1;
-  rec.casts.full = widen(rec.casts.full, full);
   rec.casts.simple = widen(rec.casts.simple, simple);
   const empty = c.board.filter((s) => s.open && s.holder === null).length;
   rec.empty_seats_max = Math.max(rec.empty_seats_max, empty);
@@ -653,7 +640,7 @@ function recorderM10Columns(rec: Recorder, sim: SoakSimApi, year: number): strin
   const maxDev = devs.reduce((a, b) => maxF(a, b), 0.0);
   const out = devs.filter((d) => d > DEMAND_GROWTH_BAND_PP).length;
   const c = rec.casts;
-  return `${fx(maxDev, 3)},${out},${c.casts},${opt(c.full?.[0])},${opt(c.full?.[1])},${opt(c.simple?.[0])},${opt(c.simple?.[1])},${rec.empty_seats_max}`;
+  return `${fx(maxDev, 3)},${out},${c.casts},${opt(c.simple?.[0])},${opt(c.simple?.[1])},${rec.empty_seats_max}`;
 }
 
 /**
@@ -763,8 +750,7 @@ function yearBirthsColumns(y: YearBirths, sim: SoakSimApi, year: number, clamp: 
     `${events},${startups},${aiLabs},${listings},${startListed},${named},${fx(startActive, 4)},` +
     `${fx(startAlive, 4)},${fx(share(y.beats, y.reports), 4)},${fx(share(y.misses, y.reports), 4)},` +
     `${fx(share(y.boom_months, y.industry_months), 4)},${fx(share(y.bust_months, y.industry_months), 4)},` +
-    `${clamp.over.filter((o) => o).length},${clamp.max_run},${births.full_characters_made},` +
-    `${births.full_characters},${fx(medianProductivity(sim), 3)}`;
+    `${clamp.over.filter((o) => o).length},${clamp.max_run},${fx(medianProductivity(sim), 3)}`;
   Object.assign(y, yearBirthsNew());
   return out;
 }

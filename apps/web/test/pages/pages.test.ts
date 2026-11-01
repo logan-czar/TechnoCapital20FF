@@ -174,17 +174,13 @@ describe("the name index", () => {
     const country = after.countries?.countries[0];
     const zone = after.zones?.zones[0];
     const exchange = after.exchanges?.exchanges[0];
-    const character = after.characters?.full[0];
     const event = after.births?.events[0];
     const province = after.places?.provinces[0];
-    if (!(company && country && zone && exchange && character && event && province)) throw new Error("views");
+    if (!(company && country && zone && exchange && event && province)) throw new Error("views");
     expect(index.title({ kind: "company", id: company.id })).toBe(company.name);
     expect(index.title({ kind: "country", id: country.id })).toBe(country.name);
     expect(index.title({ kind: "zone", id: zone.id })).toBe(zone.name);
     expect(index.title({ kind: "exchange", id: exchange.zone })).toBe(exchange.name);
-    expect(character.id.kind === "Full" && index.title({ kind: "character", id: character.id.id })).toBe(
-      character.name,
-    );
     expect(index.title({ kind: "event", id: event.id })).toContain(event.name);
     expect(index.title({ kind: "province", id: province.id })).toBe(province.name);
     expect(index.title({ kind: "recap", quarter: { year: 2020, q: 1 } })).toBe("Quarterly recap Q1 2020");

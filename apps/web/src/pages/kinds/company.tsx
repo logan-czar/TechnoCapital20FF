@@ -17,7 +17,6 @@ import {
   type Archetype,
   barRows,
   type CapHolder,
-  type CharacterId,
   type CompanyDetail,
   type CompanyId,
   type CompanyRow,
@@ -241,12 +240,6 @@ function laborUnit(seat: Seat): number | null {
   return seat === "Chair" ? null : (["Ceo", "Cfo", "Cio", "Cmo", "Coo"] as const).indexOf(seat) + 1;
 }
 
-/** A character's name as a link. */
-function characterSpan(index: NameIndex, id: CharacterId): Span {
-  const p: PageRef = { kind: "character", id };
-  return span.link(index.title(p), p);
-}
-
 // ---------------------------------------------------------------- the page
 
 /** The whole Company page as data. */
@@ -277,10 +270,6 @@ export function companyDoc(id: CompanyId, v: ViewsData, index: NameIndex): PageD
 /** The header: identity fields, then the Founded and Listed lines (spec 8; D428). */
 function header(d: CompanyDetail, row: CompanyRow | undefined, v: ViewsData, index: NameIndex): Block[] {
   const t = (p: PageRef) => span.link(index.title(p), p);
-  const owner =
-    row?.owner_of_record != null && row.owner_of_record_name != null
-      ? span.link(row.owner_of_record_name, { kind: "character", id: row.owner_of_record })
-      : span.muted("none named");
   const ctrlPage = row ? controllerPage(row.controller) : null;
   const controller =
     ctrlPage && row?.controller_name != null
@@ -290,7 +279,6 @@ function header(d: CompanyDetail, row: CompanyRow | undefined, v: ViewsData, ind
     field.text("Ticker", d.ticker === "" ? "-" : d.ticker),
     field.new("HQ", placeSpans(v, d.hq_province) ?? [t({ kind: "country", id: d.hq_country })]),
     field.new("Industry", [t({ kind: "industry", id: d.industry })]),
-    field.new("Owner of record", [owner]),
     field.new("Controller", [controller]),
     field.text("Archetype", ARCHETYPE_NAME[d.archetype]),
     field.text("Company id", d.key === "" ? "born in play" : d.key),
@@ -413,14 +401,12 @@ function personFields(p: SeatPerson): Field[] {
   ];
 }
 
-/** A seat's holder: a link for a full character; a partial one marked and not linked (spec 8). */
-function holderSpans(p: SeatPerson, index: NameIndex): Span[] {
-  return p.character !== null && !p.partial
-    ? [characterSpan(index, p.character)]
-    : [span.text(p.name), span.colored("(partial)", "muted")];
+/** A seat's holder: a partial character, marked and not linked (spec 8). */
+function holderSpans(p: SeatPerson): Span[] {
+  return [span.text(p.name), span.colored("(partial)", "muted")];
 }
 
-function seatCard(s: SeatCard, index: NameIndex): CardDoc {
+function seatCard(s: SeatCard, _index: NameIndex): CardDoc {
   const unit = laborUnit(s.seat) ?? 0;
   const head: Span[] = [span.colored(seatName(s.seat), "cyan"), span.muted(`labor unit ${unit}`)];
   if (!s.open) {
@@ -436,9 +422,7 @@ function seatCard(s: SeatCard, index: NameIndex): CardDoc {
     };
   }
   const fields: Field[] = [
-    s.holder
-      ? field.new("Holder", holderSpans(s.holder, index))
-      : field.new("Holder", [span.muted("vacant")]),
+    s.holder ? field.new("Holder", holderSpans(s.holder)) : field.new("Holder", [span.muted("vacant")]),
   ];
   if (s.holder) fields.push(...personFields(s.holder));
   fields.push(field.text("Skill used", fixed(s.skill_used, 1)));
@@ -458,52 +442,15 @@ function voterLabel(role: VoterRole): string {
 }
 
 /**
- * The Board tab (spec 8): seat cards for labor units 1 to 5 with the skill used, founders' cards
- * (skills, traits, home province), directors, and the last IPO vote with each member's vote and
+ * The Board tab (spec 8): seat cards for labor units 1 to 5 with the skill used, directors, and the last IPO vote with each member's vote and
  * the next vote date (5.20.1). Never the ballot odds (D482).
  */
-export function board(d: CompanyDetail, v: ViewsData, index: NameIndex): Block[] {
+export function board(d: CompanyDetail, _v: ViewsData, index: NameIndex): Block[] {
   const out: Block[] = [{ k: "heading", text: "Seats" }];
   out.push({
     k: "cards",
     cards: d.board.filter((s) => laborUnit(s.seat) !== null).map((s) => seatCard(s, index)),
   });
-  out.push({ k: "heading", text: "Founders" });
-  if (d.founders.length === 0) {
-    out.push({
-      k: "line",
-      spans: [span.muted("A starting company: no founders (founders come with a birth, 5.19.3).")],
-    });
-  } else {
-    const chars = v.characters?.full;
-    out.push({
-      k: "cards",
-      cards: d.founders.map((ch, i): CardDoc => {
-        const head = [characterSpan(index, ch)];
-        if (i === 0) head.push(span.muted("lead founder"));
-        const c = byKey(chars, (r) => r.id.id, ch);
-        const fields: Field[] = [];
-        if (c) {
-          fields.push(
-            field.text("Age", String(c.age)),
-            field.text("Skills", skillsText(c.skills)),
-            field.text("Traits", traitsText(c.traits)),
-          );
-          if (c.home) {
-            const pl = place(v, c.home.province);
-            fields.push(
-              field.new("Home", [
-                pl
-                  ? span.link(pl[0], pl[1])
-                  : span.link(c.home.country_name, { kind: "country", id: c.home.country }),
-              ]),
-            );
-          }
-        }
-        return { head, fields, bar: null, dim: false };
-      }),
-    });
-  }
   // The directors in seat position order, as the view lists them (D541).
   out.push({ k: "heading", text: `Directors (${d.directors.length})` });
   if (d.directors.length === 0) {
@@ -513,7 +460,7 @@ export function board(d: CompanyDetail, v: ViewsData, index: NameIndex): Block[]
       k: "fields",
       fields: d.directors.map((p, i) =>
         field.new(voterLabel({ kind: "Director", position: i }), [
-          ...holderSpans(p, index),
+          ...holderSpans(p),
           span.muted(`age ${p.age}, ${skillsText(p.skills)}`),
         ]),
       ),
@@ -539,22 +486,21 @@ function holderNow(d: CompanyDetail, role: VoterRole): SeatPerson | null {
 /** True if `p` is the member who cast the ballot. */
 function isVoter(p: SeatPerson, v: BallotVoter): boolean {
   switch (v.kind) {
-    case "Full":
-      return p.character === v.character;
     case "Partial":
       return p.partial_id === v.id;
     case "State":
+    case "Controller":
       return false;
   }
 }
 
-/** A ballot's voter: a full character linked, a partial one marked (D486), the state. */
-function voterSpans(v: BallotVoter, index: NameIndex): Span[] {
+/** A ballot's voter: a partial one marked (D486), the named controller, the state. */
+function voterSpans(v: BallotVoter, _index: NameIndex): Span[] {
   switch (v.kind) {
-    case "Full":
-      return [characterSpan(index, v.character)];
     case "Partial":
       return [span.text(v.name), span.colored("(partial)", "muted")];
+    case "Controller":
+      return [span.text(v.name)];
     case "State":
       return [span.text("the state")];
   }
@@ -626,8 +572,6 @@ function capKind(h: CapHolder): string {
       return "Controller";
     case "OtherHolders":
       return "Other holders";
-    case "Founder":
-      return "Founder";
     case "SeedInvestors":
       return "Seed investors";
     case "PublicFloat":
@@ -642,12 +586,7 @@ function capTable(id: CompanyId, v: ViewsData): Block[] {
   const ct = byKey(v.cap_table?.companies, (c) => c.company, id);
   if (!ct) return [{ k: "line", spans: [span.muted("No cap table.")] }];
   const rows = ct.lines.map((l): Cell[] => {
-    const page =
-      l.holder.kind === "Controller"
-        ? controllerPage(l.holder.controller)
-        : l.holder.kind === "Founder"
-          ? ({ kind: "character", id: l.holder.character } as PageRef)
-          : null;
+    const page = l.holder.kind === "Controller" ? controllerPage(l.holder.controller) : null;
     return [
       page ? { k: "link", text: l.name, page } : { k: "text", v: l.name },
       { k: "text", v: capKind(l.holder) },

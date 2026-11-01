@@ -7,7 +7,6 @@
 // builders are in registry.ts; the section config in sections.ts.
 
 import {
-  type CharacterId,
   type CompanyId,
   type CountryId,
   cmpQuarter,
@@ -26,7 +25,6 @@ export type PageRef =
   | { kind: "world" }
   | { kind: "company"; id: CompanyId }
   | { kind: "industry"; id: IndustryId }
-  | { kind: "character"; id: CharacterId }
   | { kind: "country"; id: CountryId }
   /** A province (spec 3.3; M8.7). */
   | { kind: "province"; id: ProvinceId }
@@ -72,7 +70,6 @@ export const PAGE_KINDS = [
   "world",
   "company",
   "industry",
-  "character",
   "country",
   "province",
   "zone",
@@ -96,7 +93,6 @@ const KINDS: Readonly<Record<PageKind, KindInfo>> = {
   world: { name: "World", tag: "MAP", list: false },
   company: { name: "Company", tag: "CO", list: false },
   industry: { name: "Industry", tag: "IND", list: false },
-  character: { name: "Character", tag: "CHR", list: false },
   country: { name: "Country", tag: "CTY", list: false },
   province: { name: "Province", tag: "PRV", list: false },
   zone: { name: "Financial zone", tag: "ZON", list: false },
@@ -203,7 +199,6 @@ export function pageFromKey(text: string): PageRef | null {
   switch (k) {
     case "company":
     case "industry":
-    case "character":
     case "country":
     case "zone":
     case "exchange":

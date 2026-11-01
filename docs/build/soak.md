@@ -35,7 +35,7 @@ If a seed fails (its child exits non-zero), the seeds that ran are still written
 `check DIR` reads `years.csv` and `quarters.csv` and writes:
 
 - `targets.csv`: `target, seed, result, measured, bound`, one row per target per seed (targets in the order below, seeds ascending). `result` is PASS, FAIL or NA (the run does not cover the target's window, for example a 1-year run and a year-10 target).
-- `summary.csv`: per target the seeds evaluated and passed, the pass share, the required share, the verdict (MET, NOT MET, WAIVED, n/a), and the min, median and max of the measured value over the seeds (the leading number of `measured`; for `industry_revenue_demand`, `industry_revenue_demand_cloud_waived` and `industry_demand_trend` the worst `|ratio − 1|`, for `demand_growth_pooled` the seed's share of industries within 3 pp, for `full_characters_per_decade` the decade count farthest from 200, for `cast_sizes` the number of casts, for `named_companies` the highest count). For the pooled target `demand_growth_pooled` (D365) "evaluated" and "passed" count industry-runs over all seeds, not seeds. A waived target (D366, D368) is reported per seed but its verdict is WAIVED, never MET or NOT MET.
+- `summary.csv`: per target the seeds evaluated and passed, the pass share, the required share, the verdict (MET, NOT MET, WAIVED, n/a), and the min, median and max of the measured value over the seeds (the leading number of `measured`; for `industry_revenue_demand`, `industry_revenue_demand_cloud_waived` and `industry_demand_trend` the worst `|ratio − 1|`, for `demand_growth_pooled` the seed's share of industries within 3 pp, for `cast_sizes` the number of casts, for `named_companies` the highest count). For the pooled target `demand_growth_pooled` (D365) "evaluated" and "passed" count industry-runs over all seeds, not seeds. A waived target (D366, D368) is reported per seed but its verdict is WAIVED, never MET or NOT MET.
 
 It prints the summary. It exits 0 whatever the verdicts (it is a report, not a gate).
 
@@ -76,12 +76,9 @@ It prints the summary. It exits 0 whatever the verdicts (it is a report, not a g
 | `beat_share`, `miss_share` | Over the reports of the releases dated in the year, the share tagged Beat or Big beat and Miss or Big miss (D166) |
 | `boom_share`, `bust_share` | Over the labels set at the year's twelve closes, the share Boom and Bust (D166; the checker reads `quarters.csv` instead, D325) |
 | `m_clamp_over_8q`, `max_m_clamp_quarters` | Industries whose M clamp run (below) has ever passed 8 quarters, and the longest run so far, any industry |
-| `full_characters_made` | Full characters made in play so far (spec 3.7.2) |
-| `full_characters` | Full characters in the world: the 296 and those made (D332) |
 | `median_productivity` | Median productivity of the units with gross assets above 0 of companies not frozen, mean of the middle two for an even count (D321) |
 | `demand_dev_max_pp`, `demand_dev_out` | Per industry, `\|CAGR(demand) − CAGR(trend demand)\|` from load to this close in percentage points; the largest, and how many industries are above 3 pp (D324) |
 | `casts_in_year` | Companies born in the year (each cast read at its birth, D326) |
-| `cast_full_min`, `cast_full_max` | The fewest and most founders (full characters) of a cast born in the year; empty with no birth |
 | `cast_simple_min`, `cast_simple_max` | The fewest and most simple characters cast at a birth in the year: simple seat holders plus simple directors (D326) |
 | `born_empty_seats_max` | The most open labor seats with no holder seen in the year among born companies not frozen, at each birth and each month close (D326) |
 
@@ -132,12 +129,10 @@ Spec 10's balance targets after 10 years, then its startup, character and listin
 | `listings_30y` | 60 to 250 listings in 30 years | Σ `listings_in_year` over 2020 to 2049 in 60 to 250 | all seeds |
 | `listings_per_year` | no more than 12 in any year | every row 2020 to 2049: `listings_in_year` ≤ 12 | all seeds |
 | `start_private_listed_2024` | 10 to 30 starting private companies listed by the end of 2024, in 90% of seeds | `start_private_listed` at the 2024 close in 10 to 30 (D334) | 90% |
-| `full_characters_per_decade` | 100 to 300 full characters made per decade | made in each decade the run covers (2020s: by the 2029 close; 2030s: 2039 close less 2029 close; 2040s likewise) in 100 to 300 (D332) | all seeds |
-| `full_characters_2050` | under 1,200 full characters in the world in 2050 | `full_characters` at the 2049 close (1 January 2050) below 1,200 (D332) | all seeds |
-| `cast_sizes` | every startup has 1 to 5 full and 1 to 5 partial characters | every birth's founders and simple cast in 1 to 5 (D326) | all seeds |
+| `cast_sizes` | every startup has 1 to 5 partial characters | every birth's simple cast in 1 to 5 (D326, D989) | all seeds |
 | `no_empty_labor_seat` | no labor seat of a born company is empty | `born_empty_seats_max` = 0 in every row 2020 to 2049 (D326) | all seeds |
 
-**Windows.** A target is NA for a seed when the run lacks a row it needs: the 2029 row, the 40 quarters of 2020 to 2029, the reported quarters Q1 2020 to Q4 2029 (the Q4 2029 release is on 2 January 2030, so the beat share needs a run past 10 years), the 2030 to 2035 rows, all 30 rows 2020 to 2049 (listings in 30 years, and the every-year targets `named_companies`, `listings_per_year` and `no_empty_labor_seat`, D329), the 2024 row, the 2049 row; `full_characters_per_decade` evaluates the decades the run covers, NA with none; `cast_sizes` is NA with no birth.
+**Windows.** A target is NA for a seed when the run lacks a row it needs: the 2029 row, the 40 quarters of 2020 to 2029, the reported quarters Q1 2020 to Q4 2029 (the Q4 2029 release is on 2 January 2030, so the beat share needs a run past 10 years), the 2030 to 2035 rows, all 30 rows 2020 to 2049 (listings in 30 years, and the every-year targets `named_companies`, `listings_per_year` and `no_empty_labor_seat`, D329), the 2024 row, the 2049 row; `cast_sizes` is NA with no birth.
 
 ## The detail tables (`--detail`, D900)
 

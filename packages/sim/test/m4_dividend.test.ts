@@ -66,7 +66,8 @@ describe("m4 dividend", () => {
       const minCash = 0.05 * ttm;
       const cash = c.cash_usd + plan.financing.draw - plan.financing.repay;
       const drawn = f.line.drawn + plan.financing.draw - plan.financing.repay;
-      const traits = c.controller === null ? [] : (before.characters[c.controller]?.traits ?? []);
+      const ctl = c.start_control?.controller;
+      const traits = ctl?.kind === "Character" ? ctl.character.traits : [];
       const repayFirst = traits.includes("Greedy") || traits.includes("Cautious");
       const blocked = repayFirst && drawn > 0.25 * f.line.limit;
       const d = 0.4 * specPayoutMult(a.archetype) * ni;

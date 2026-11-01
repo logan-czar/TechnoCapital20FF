@@ -85,28 +85,21 @@ export function role(r: Role): [string, CompanyId] {
       return [seatName(r.seat), r.company];
     case "Director":
       return ["Director", r.company];
-    case "Controller":
-      return ["Controls", r.company];
-    case "OwnerOfRecord":
-      return ["Owner of record", r.company];
-    case "Founder":
-      return [r.lead ? "Lead founder" : "Founder", r.company];
   }
 }
 
-/** A role as a line: "CEO of Arrowhead", "Controls Arrowhead". */
+/** A role as a line: "CEO of Arrowhead". */
 export function roleText(r: Role, company: string): string {
   const [label] = role(r);
-  return r.kind === "Controller" ? `${label} ${company}` : `${label} of ${company}`;
+  return `${label} of ${company}`;
 }
 
-/** The page a controller links to: a character's, a state's (its country) or a parent's. */
+/** The page a controller links to: a state's (its country) or a parent's; a named controller (a base character) has no page. */
 export function controllerPage(c: CompanyRow["controller"]): PageRef | null {
   switch (c.kind) {
     case "None":
-      return null;
     case "Character":
-      return { kind: "character", id: c.character };
+      return null;
     case "State":
       return { kind: "country", id: c.country };
     case "Company":
@@ -245,18 +238,6 @@ export function buildNameIndex(v: ViewsData): NameIndex {
         e.kind.kind === "Fixed" ? e.kind.id : "",
       ),
     );
-  }
-  // Every full character, described by its first role, else its tier.
-  const companyName = (id: number) => byId(v.company_rows?.rows, id)?.name ?? "?";
-  for (const c of v.characters?.full ?? []) {
-    if (c.id.kind !== "Full") continue;
-    const first = c.roles[0];
-    const detail = first
-      ? roleText(first, companyName(role(first)[1]))
-      : c.tier === ""
-        ? "Character"
-        : `Character, ${c.tier}`;
-    out.push(entry({ kind: "character", id: c.id.id }, c.name, detail));
   }
   // Provinces (M8.7, D707): searchable by name and id, "Province, Country" as detail.
   const places = v.places;

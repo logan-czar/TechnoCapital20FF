@@ -8,7 +8,7 @@
 
 import { type ProvinceId, roundHalfAway } from "@tc20ff/sim";
 import { listLen } from "../../links/cards.ts";
-import { type NameIndex, place, role, roleText } from "../../links/names.ts";
+import { type NameIndex, place } from "../../links/names.ts";
 import type { Cell } from "../../widgets/cells.ts";
 import { figureCell } from "../../widgets/cells.ts";
 import { type PageDoc, span, type TableDoc } from "../doc.ts";
@@ -78,48 +78,23 @@ export function listTable(kind: ListKind, v: ViewsData, index: NameIndex): Table
       };
     }
     case "characters": {
-      // The full characters, then the politicians (D980), whose pages are the US politics page.
+      // The politicians (D980), whose pages are the US politics page. Full characters are removed (D989).
       const politicians = politicianRoles(v.politics).map(([r, roleName]): Cell[] => [
         { k: "link", text: r.name, page: { kind: "politics" } },
         { k: "int", v: r.age },
         r.province === null ? { k: "text", v: "-" } : placeCell(v, r.province, "-"),
         { k: "text", v: "Politician" },
         { k: "text", v: roleName },
-        { k: "int", v: 1 },
-        { k: "int", v: 0 },
       ]);
-      const fullRows = (v.characters?.full ?? []).flatMap((c): Cell[][] => {
-        if (c.id.kind !== "Full") return [];
-        const first = c.roles[0];
-        let firstRole: Cell = { k: "text", v: "-" };
-        if (first) {
-          const co = role(first)[1];
-          const name = byId(v.company_rows?.rows, co)?.name ?? "?";
-          firstRole = { k: "link", text: roleText(first, name), page: { kind: "company", id: co } };
-        }
-        return [
-          [
-            { k: "link", text: c.name, page: { kind: "character", id: c.id.id } },
-            { k: "int", v: c.age },
-            c.home ? placeCell(v, c.home.province, c.home.province_name) : { k: "text", v: "-" },
-            { k: "text", v: c.tier },
-            firstRole,
-            { k: "int", v: c.roles.length },
-            { k: "int", v: c.holdings.length },
-          ],
-        ];
-      });
-      const rows = [...fullRows, ...politicians];
+      const rows = politicians;
       return {
         id: kind,
         columns: [
           { title: "Name", width: 200 },
           { title: "Age", width: 50 },
           { title: "Home", width: 200 },
-          { title: "Tier or class", width: 80 },
-          { title: "First role", width: 260 },
-          { title: "Roles", width: 60 },
-          { title: "Holdings", width: 70 },
+          { title: "Class", width: 80 },
+          { title: "Role", width: 260 },
         ],
         rows,
       };

@@ -11,7 +11,7 @@
 // `ViewData` build (logic).
 
 import type { Quarter } from "../calendar.ts";
-import type { CharacterId, CompanyId, CountryId, IndustryId, ProvinceId, ZoneId } from "../ids.ts";
+import type { CompanyId, CountryId, IndustryId, ProvinceId, ZoneId } from "../ids.ts";
 import type { IpoVoteRecord, Origin } from "../world.ts";
 import type { Figure } from "./estimate.ts";
 import type { Archetype, CompanyStatus, Rating, Seat, Skills, Trait } from "./shared.ts";
@@ -25,8 +25,6 @@ export interface SeatPerson {
   traits: Trait[];
   /** A simple (partial) character (spec 8 Board tab: "partial characters are marked"). */
   partial: boolean;
-  /** The full character's id, for a full character. */
-  character: CharacterId | null;
   /** The partial character's 3.7.1 id (u32), for a partial one (v_characters' `partial`). */
   partial_id: number | null;
 }
@@ -58,8 +56,7 @@ export interface CompanyDetail {
   industry: IndustryId;
   hq_country: CountryId;
   hq_province: ProvinceId;
-  /** The named controller when it is a full character. */
-  controller: CharacterId | null;
+  /** The named controller's, a state's or a parent's name; null when widely held. */
   controller_name: string | null;
   /** 0 to 100 (spec 5.7) and the investor confidence factor `0.8 + score ÷ 250`. */
   management_score: number;
@@ -76,11 +73,10 @@ export interface CompanyDetail {
   /** Spec 6.1. */
   archetype: Archetype;
   /**
-   * Start or Born (spec 8 header "Founded [date] ([event])"), its founders and directors, and
+   * Start or Born (spec 8 header "Founded [date] ([event])"), its directors, and
    * the last IPO vote with the next vote's quarter (spec 8 Board tab, 5.20.1).
    */
   origin: Origin;
-  founders: CharacterId[];
   /**
    * The directors (5.19.4 step 4: board seats with no labor unit) in seat position order,
    * Director 1 first, as the IPO ballots number them (`VoterRole::Director`, D541).

@@ -137,31 +137,30 @@ describe("m3 labor and seats", () => {
     expect(w.simple_characters_made).toBe(3207);
   });
 
-  it("full_characters_load_with_pair_traits_and_controllers", () => {
+  it("named_controllers_load_as_base_characters_with_pair_traits", () => {
+    // D989: characters.csv is not kept as a table; each CH- controller is a base character with the
+    // row's name, age, skills and the traits of the 12 pairs (1-corporate-core 1.1.2).
     const d = data();
     const w = simWorld(unwrap(simNew(structuredClone(d), 11), "Sim::new"));
-    expect(w.characters.length).toBe(296);
-    for (const ch of w.characters) {
-      const row = d.characters.rows.find((r) => r.id === ch.key);
-      if (row === undefined) throw new Error(`no row ${ch.key}`);
-      expect([ch.age, ch.skills.finance, ch.skills.hustle]).toEqual([row.age, row.finance, row.hustle]);
-      // Only the 24 traits of the 12 pairs (1-corporate-core 1.1.2) survive load.
+    expect("characters" in w).toBe(false);
+    const named = d.companies.rows.filter((c) => c.controller.startsWith("CH-"));
+    expect(named.length).toBe(253);
+    for (const c of named) {
+      const row = d.characters.rows.find((r) => r.id === c.controller);
+      if (row === undefined) throw new Error(`no row ${c.controller}`);
+      const ctl = (w.companies[company(w, c.id)] as (typeof w.companies)[number]).start_control?.controller;
+      if (ctl?.kind !== "Character") throw new Error(`${c.id} controller`);
+      const ch = ctl.character;
+      expect([ch.class, ch.name, ch.age]).toEqual(["Executive", row.name, row.age]);
+      expect([ch.skills.finance, ch.skills.hustle]).toEqual([row.finance, row.hustle]);
       const pairNames = row.traits
         .map((t) => t.trim())
         .filter((t) => (TRAIT_VALUES as readonly string[]).includes(t));
-      expect(ch.traits, ch.key).toEqual(pairNames);
+      expect(ch.traits, c.id).toEqual(pairNames);
     }
-    // CH-0001 John Techno holds only "Operational Excellence", a perk outside the pairs.
-    const john = w.characters.find((c) => c.key === "CH-0001");
-    expect(john?.traits).toEqual([]);
-    // Named controllers: companies.csv `controller` holding a CH- id.
-    const named = d.companies.rows.filter((c) => c.controller.startsWith("CH-")).length;
-    const linked = w.companies.filter((c) => c.controller !== null).length;
-    expect([linked, named]).toEqual([253, 253]);
     const a = w.companies[company(w, "CO-0001")] as (typeof w.companies)[number];
-    expect((w.characters[a.controller as number] as (typeof w.characters)[number]).name).toBe(
-      "Terry Tippacanoe",
-    );
+    const ctl = a.start_control?.controller;
+    expect(ctl?.kind === "Character" && ctl.character.name).toBe("Terry Tippacanoe");
   });
 });
 

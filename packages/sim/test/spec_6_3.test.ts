@@ -86,7 +86,8 @@ describe("spec 6.3 R&D plan", () => {
     if (u === undefined) throw new Error("no unit");
     const ind = w.industries[u.industry];
     if (ind === undefined) throw new Error("no industry");
-    const controller = a.controller === null ? null : (w.characters[a.controller]?.traits ?? null);
+    const ctl = a.start_control?.controller;
+    const controller = ctl?.kind === "Character" ? ctl.character.traits : null;
     const traits = planTraits(controller, false);
     const arch = archetype({
       state_controlled: false,

@@ -82,35 +82,19 @@ const levels = (w: World): (number | null)[] => w.zones.map((_, z) => indexLevel
 function voterTraits(w: World, id: CompanyId): [VoterRole, Trait[]][] {
   const c = rowOf(w.companies, id);
   const out: [VoterRole, Trait[]][] = [];
-  let seated = false;
   c.board.forEach((h, i) => {
     if (h === null) return;
     const seat = SEAT_LABOR[i];
     if (seat === undefined) throw new Error("board longer than the labor seats");
-    if (h.kind === "Simple") {
-      out.push([{ kind: "Seat", seat }, [...h.seat.character.traits]]);
-    } else {
-      seated ||= h.character === c.controller;
-      out.push([{ kind: "Seat", seat }, [...rowOf(w.characters, h.character).traits]]);
-    }
+    out.push([{ kind: "Seat", seat }, [...h.seat.character.traits]]);
   });
   c.directors.forEach((d, i) => {
-    let t: Trait[];
-    if (d.kind === "Simple") {
-      t = [...d.seat.character.traits];
-    } else {
-      seated ||= d.character === c.controller;
-      t = [...rowOf(w.characters, d.character).traits];
-    }
-    out.push([{ kind: "Director", position: i }, t]);
+    out.push([{ kind: "Director", position: i }, [...d.seat.character.traits]]);
   });
-  if (!seated) {
-    if (c.state_controlled) {
-      out.push([{ kind: "Controller" }, []]);
-    } else if (c.controller !== null) {
-      out.push([{ kind: "Controller" }, [...rowOf(w.characters, c.controller).traits]]);
-    }
-  }
+  // A state controller votes with no traits; a named controller (a base character, D989) with its own.
+  const ctl = c.start_control?.controller;
+  if (c.state_controlled) out.push([{ kind: "Controller" }, []]);
+  else if (ctl?.kind === "Character") out.push([{ kind: "Controller" }, [...ctl.character.traits]]);
   return out;
 }
 

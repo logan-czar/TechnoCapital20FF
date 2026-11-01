@@ -100,7 +100,6 @@ function samplePages(): PageRef[] {
     world: { kind: "world" },
     company: { kind: "company", id: company },
     industry: { kind: "industry", id: v.industry_rows?.rows[0]?.id as never },
-    character: { kind: "character", id: 0 as never },
     country: { kind: "country", id: 0 as CountryId },
     province: { kind: "province", id: 0 as never },
     zone: { kind: "zone", id: 0 as never },

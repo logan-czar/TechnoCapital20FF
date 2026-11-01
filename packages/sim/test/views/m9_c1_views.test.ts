@@ -182,19 +182,15 @@ describe("m9 c1 views", () => {
       d.directors.forEach((p, i) => {
         const dir = c.directors[i];
         if (dir === undefined) throw new Error("director");
-        if (dir.kind === "Full") {
-          expect(p.character).toBe(dir.character);
-          expect(!p.partial && p.partial_id === null).toBe(true);
-          expect(p.name).toBe(w.characters[dir.character]?.name);
-        } else {
-          expect(p.partial_id).toBe(dir.seat.id);
-          expect(p.partial && p.character === null).toBe(true);
-          expect(p.name).toBe(dir.seat.character.name);
-        }
+        expect(p.partial_id).toBe(dir.seat.id);
+        expect(p.partial).toBe(true);
+        expect(p.name).toBe(dir.seat.character.name);
       });
       withDirectors += c.directors.length > 0 ? 1 : 0;
     });
-    expect(withDirectors > 0, "a startup with directors").toBe(true);
+    // D989: with no founders a cast has at most 5 partials for the 5 labor seats, so no startup has
+    // a director now; the loop above still checks each list against the view.
+    expect(withDirectors).toBe(0);
   }, 120_000);
 
   // Each IPO ballot names who held the role at the vote (D542): right after the first lock the
@@ -216,8 +212,6 @@ describe("m9 c1 views", () => {
         if (voter === null) throw new Error("a voter");
         const same = (p: SeatPerson): boolean => {
           switch (voter.kind) {
-            case "Full":
-              return p.character === voter.character;
             case "Partial":
               return p.partial_id === voter.id && p.name === voter.name;
             default:
@@ -240,8 +234,10 @@ describe("m9 c1 views", () => {
           }
           case "Controller":
             if (voter.kind === "State") expect(c.state_controlled).toBe(true);
-            else if (voter.kind === "Full") expect(c.controller).toBe(voter.character);
-            else throw new Error("a controller is full or the state");
+            else if (voter.kind === "Controller") {
+              const ctl = c.start_control?.controller;
+              expect(ctl?.kind === "Character" && ctl.character.name).toBe(voter.name);
+            } else throw new Error("a controller is named or the state");
             break;
         }
       }

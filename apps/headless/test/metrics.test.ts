@@ -9,7 +9,7 @@ import {
   bandStatsWhere,
   type ClampRuns,
   cagr,
-  castSizes,
+  castSize,
   clampRunsAddQuarter,
   clampRunsCurrentMax,
   clampRunsNew,
@@ -112,21 +112,13 @@ describe("headless metrics", () => {
     expect(q.demand).toEqual([16.0, 16.0]);
   });
 
-  it("cast_sizes_give_max_of_partials_and_open_seats", () => {
-    // 5.19.4 placement with five open seats: the lead founder is CEO and the others take seats;
-    // partials fill the seats left in order, then sit as directors; fillers take the rest. A
-    // sixth founder (outside the spec's 1 to 5) would be an unseated director.
+  it("cast_size_is_simple_seats_plus_directors", () => {
+    // 5.19.4 placement with five open seats and no founders (D989): partials fill the seats in
+    // order, then sit as directors; fillers take the rest.
     const SEATS = 5;
-    for (let founders = 1; founders <= 6; founders++) {
-      for (let partials = 0; partials <= 7; partials++) {
-        const seated = Math.min(founders, SEATS);
-        const partialSeats = Math.min(partials, SEATS - seated);
-        const simpleSeats = SEATS - seated;
-        const directors = founders - seated + (partials - partialSeats);
-        const [full, simple] = castSizes(founders, seated, simpleSeats, directors);
-        expect(full).toBe(founders);
-        expect(simple, `${founders} ${partials}`).toBe(Math.max(partials, SEATS - seated));
-      }
+    for (let partials = 0; partials <= 7; partials++) {
+      const directors = Math.max(partials - SEATS, 0);
+      expect(castSize(SEATS, directors), `${partials}`).toBe(Math.max(partials, SEATS));
     }
   });
 
@@ -146,7 +138,13 @@ describe("headless metrics", () => {
     const { join } = await import("node:path");
     const ref = join(import.meta.dirname, "..", "..", "..", "test", "fixtures", "rust-reference");
     const first = (f: string): string => readFileSync(join(ref, f), "utf8").split(/\r?\n/)[0] as string;
-    expect(YEARS_HEADER).toBe(first("years.csv"));
+    // D989: the full-character columns of the Rust header are dropped.
+    const dropped = ["full_characters_made", "full_characters", "cast_full_min", "cast_full_max"];
+    const rustYears = first("years.csv")
+      .split(",")
+      .filter((c) => !dropped.includes(c))
+      .join(",");
+    expect(YEARS_HEADER).toBe(rustYears);
     expect(QUARTERS_HEADER).toBe(first("quarters.csv"));
   });
 
@@ -271,7 +269,7 @@ class StubSim {
       }),
       quotes: v({ rows: [], indices: [] }),
       exchanges: v({ exchanges: [] }),
-      births: v({ events: [], births: [], listings: [], full_characters_made: 0, full_characters: 296 }),
+      births: v({ events: [], births: [], listings: [] }),
       ratings: v({ companies: [{ rating: "A", status: "Active", bankrupt_on: null, removed_on: null }] }),
       cycle: v({ phase: "Expansion", g_t: 0.01 }),
     } as unknown as SimViews;

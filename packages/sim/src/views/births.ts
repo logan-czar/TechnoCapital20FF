@@ -6,7 +6,6 @@
 // types/views/births.ts.
 
 import { eventTypeName } from "../births/random.ts";
-import { GENERATED_TIER } from "../people/full.ts";
 import { dateTimeDate, quarterPrev, simDateQuarter } from "../time/calendar.ts";
 import { cmpDate, type Quarter, quarterEq, type SimDate } from "../types/calendar.ts";
 import { type CompanyId, type IndustryId, ordinal, type StartupEventId } from "../types/ids.ts";
@@ -131,8 +130,6 @@ export function buildBirths(input: ViewInput): BirthsView {
     events,
     births,
     listings,
-    full_characters_made: w.characters.filter((c) => c.tier === GENERATED_TIER).length,
-    full_characters: w.characters.length,
     births_column_quarters,
     births_by_industry,
   };

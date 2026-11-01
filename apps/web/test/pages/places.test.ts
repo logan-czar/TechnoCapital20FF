@@ -16,9 +16,8 @@ import { indexCloseRows, type Sim, simNew } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
 import { beforeAll, describe, expect, it } from "vitest";
-import { buildNameIndex, role } from "../../src/links/names.ts";
+import { buildNameIndex } from "../../src/links/names.ts";
 import { docLinks, docTable, docTexts, liveText, type PageDoc } from "../../src/pages/doc.ts";
-import { characterDoc } from "../../src/pages/kinds/character.tsx";
 import { countryDoc } from "../../src/pages/kinds/country.tsx";
 import { constituentsTable, exchangeDoc } from "../../src/pages/kinds/exchange.tsx";
 import { LIST_KINDS, listDoc, listTable } from "../../src/pages/kinds/lists.tsx";
@@ -68,45 +67,13 @@ const rowOf = (rows: Cell[][], page: PageRef) =>
 const col = (t: { columns: { title: string }[] }, title: string) =>
   t.columns.findIndex((c) => c.title === title);
 
-describe("the Character page", () => {
-  it("builds for every full character with its three sections (every_entity_page_builds)", () => {
-    for (const v of [fresh, after]) {
-      const index = buildNameIndex(v);
-      for (const c of v.characters?.full ?? []) {
-        if (c.id.kind !== "Full") throw new Error("full");
-        const d = characterDoc(c.id.id, v, index);
-        expect(d.title).toBe(c.name);
-        expect(d.sections.map((s) => s.id)).toEqual(["profile", "roles", "holdings"]);
-        expect(texts(d, v)).not.toContain("No such");
-      }
-    }
-  });
-
-  it("links home, roles and holdings (pages_link_their_names; m8_province home province)", () => {
-    const index = buildNameIndex(after);
-    for (const c of (after.characters?.full ?? []).slice(0, 60)) {
-      if (c.id.kind !== "Full") throw new Error("full");
-      const links = docLinks(characterDoc(c.id.id, after, index));
-      if (c.home) {
-        expect(has(links, { kind: "country", id: c.home.country })).toBe(true);
-        expect(has(links, { kind: "province", id: c.home.province })).toBe(true);
-      }
-      for (const r of c.roles) expect(has(links, { kind: "company", id: role(r)[1] })).toBe(true);
-      for (const h of c.holdings) expect(has(links, { kind: "company", id: h.company })).toBe(true);
-    }
-  });
-
-  it("a partial character has no page and is not indexed (board_lists_directors_by_position)", () => {
+describe("partial characters", () => {
+  it("have no page and are not indexed; full characters are removed (D989)", () => {
     const index = buildNameIndex(after);
     const p = after.characters?.partial[0];
     if (!p) throw new Error("a partial character");
-    expect(index.entries.some((e) => e.page.kind === "character" && e.name === p.name && !p.full)).toBe(
-      false,
-    );
-    // A seat holder who is partial shows marked on the Company page (company.test.ts covers it)
-    // and an id with no full character is a page that says so.
-    const d = characterDoc(999_999 as never, after, index);
-    expect(texts(d, after)).toContain("No such character in the views.");
+    expect(index.entries.some((e) => e.name === p.name && e.page.kind === "character")).toBe(false);
+    expect(after.characters && "full" in after.characters).toBe(false);
   });
 });
 
@@ -355,8 +322,6 @@ describe("the list pages", () => {
     const index = buildNameIndex(v);
     for (const c of v.countries?.countries ?? [])
       expect(index.title({ kind: "country", id: c.id })).toBe(c.name);
-    for (const c of v.characters?.full ?? [])
-      if (c.id.kind === "Full") expect(index.title({ kind: "character", id: c.id.id })).toBe(c.name);
     expect(index.entries.some((e) => e.name.includes("#"))).toBe(false);
     const canada = v.countries?.countries.find((c) => c.iso3 === "CAN");
     if (!canada) throw new Error("CAN");
@@ -374,28 +339,17 @@ describe("the list pages", () => {
       page: { kind: "country", id: canada.id },
     });
     const chars = listTable("characters", v, index);
-    expect(chars.rows.length).toBe((v.characters?.full.length ?? 0) + politicianCount(v.politics));
+    expect(chars.rows.length).toBe(politicianCount(v.politics));
     expect(politicianRoles(v.politics).length).toBe(politicianCount(v.politics));
     // A House member's home is their district's province, and their role names the chamber (D980, D982).
     const member = v.politics?.house[0];
     if (!member || member.province === null) throw new Error("a House member with a home");
     const memberRow = chars.rows.find(
-      (r) =>
-        r[col(chars, "First role")]?.k === "text" &&
-        r[col(chars, "First role")]?.v === `House, ${member.title}`,
+      (r) => r[col(chars, "Role")]?.k === "text" && r[col(chars, "Role")]?.v === `House, ${member.title}`,
     );
     expect(memberRow?.[col(chars, "Home")]).toMatchObject({
       k: "link",
       page: { kind: "province", id: member.province },
-    });
-    // A character's home is a place link to its province (M8.7, D707).
-    const c0 = v.characters?.full[0];
-    if (c0?.id.kind !== "Full" || !c0.home) throw new Error("a character with a home");
-    const h = c0.home;
-    expect(chars.rows[rowOf(chars.rows, { kind: "character", id: c0.id.id })]?.[col(chars, "Home")]).toEqual({
-      k: "link",
-      text: `${h.province_name}, ${h.country_name}`,
-      page: { kind: "province", id: h.province },
     });
   });
 });
@@ -426,8 +380,7 @@ describe("the open budget", () => {
     const z = zones[0];
     const x = exchanges[0];
     const p = provinces[0];
-    const c = v.characters?.full.find((r) => r.roles.length > 2)?.id;
-    if (!(z && x && p && c?.kind === "Full")) throw new Error("views");
+    if (!(z && x && p)) throw new Error("views");
     expect(
       slowest(() => zoneDoc(z.id, v, index)),
       "zone",
@@ -439,10 +392,6 @@ describe("the open budget", () => {
     expect(
       slowest(() => provinceDoc(p.id, v, index)),
       "province",
-    ).toBeLessThan(PAGE_BUDGET_MS);
-    expect(
-      slowest(() => characterDoc(c.id, v, index)),
-      "character",
     ).toBeLessThan(PAGE_BUDGET_MS);
     for (const kind of LIST_KINDS)
       expect(

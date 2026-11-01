@@ -9,7 +9,7 @@
 
 import { companyFinanceStatus } from "../finance/state.ts";
 import { confidenceFactor, EMPTY_SEAT_SKILL, memberSkill } from "../people/management.ts";
-import type { CharacterId, CompanyId } from "../types/ids.ts";
+import type { CompanyId } from "../types/ids.ts";
 import { SEAT_LABOR } from "../types/state/people.ts";
 import type {
   CompanyDetail,
@@ -17,7 +17,8 @@ import type {
   SeatCard,
   SeatPerson,
 } from "../types/views/company_detail.ts";
-import type { Director, SeatHolder, SimpleSeat, World } from "../types/world.ts";
+import type { Director, SeatHolder, SimpleSeat } from "../types/world.ts";
+import { controllerName, controllerOf } from "./cap_table.ts";
 import { valueShown } from "./company_rows.ts";
 import {
   estimatorBanded,
@@ -40,31 +41,17 @@ function simplePerson(s: SimpleSeat): SeatPerson {
     skills: { ...s.character.skills },
     traits: s.character.traits.slice(),
     partial: true,
-    character: null,
     partial_id: s.id,
   };
 }
 
-function fullPerson(w: World, id: CharacterId): SeatPerson {
-  const ch = w.characters[id]!;
-  return {
-    name: ch.name,
-    age: ch.age,
-    skills: { ...ch.skills },
-    traits: ch.traits.slice(),
-    partial: false,
-    character: id,
-    partial_id: null,
-  };
-}
-
-function person(w: World, holder: SeatHolder): SeatPerson {
-  return holder.kind === "Simple" ? simplePerson(holder.seat) : fullPerson(w, holder.character);
+function person(holder: SeatHolder): SeatPerson {
+  return simplePerson(holder.seat);
 }
 
 /** A director as a seat person (5.19.4 step 4). */
-function director(w: World, d: Director): SeatPerson {
-  return d.kind === "Simple" ? simplePerson(d.seat) : fullPerson(w, d.character);
+function director(d: Director): SeatPerson {
+  return simplePerson(d.seat);
 }
 
 /** Rust `ViewData::build`. */
@@ -75,7 +62,7 @@ export function buildCompanyDetail(input: ViewInput): CompanyDetailView {
     const id = i as CompanyId;
     const board: SeatCard[] = SEAT_LABOR.map((seat, k): SeatCard => {
       const h = c.board[k] ?? null;
-      const holder = h === null ? null : person(w, h);
+      const holder = h === null ? null : person(h);
       const skill_used =
         holder === null
           ? EMPTY_SEAT_SKILL
@@ -99,8 +86,7 @@ export function buildCompanyDetail(input: ViewInput): CompanyDetailView {
       industry: c.industry,
       hq_country: c.hq_country,
       hq_province: c.hq_province,
-      controller: c.controller,
-      controller_name: c.controller === null ? null : w.characters[c.controller]!.name,
+      controller_name: controllerName(w, controllerOf(c)),
       management_score: c.management_score,
       confidence_factor: confidenceFactor(c.management_score),
       cash_usd: estimatorCompanyNow(est, banded, id, { kind: "Line", line: "Cash" }, c.cash_usd),
@@ -116,8 +102,7 @@ export function buildCompanyDetail(input: ViewInput): CompanyDetailView {
       status: companyFinanceStatus(c.finance),
       archetype: c.archetype,
       origin: { ...c.origin },
-      founders: c.founders.slice(),
-      directors: c.directors.map((d) => director(w, d)),
+      directors: c.directors.map((d) => director(d)),
       ipo_last_vote: c.ipo_last_vote === null ? null : { ...c.ipo_last_vote },
       ipo_next_vote: c.ipo_next_vote,
       shares_out: c.shares_out,

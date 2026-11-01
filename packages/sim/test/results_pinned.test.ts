@@ -32,42 +32,43 @@ import { appendBufFromRows } from "../src/world/log.ts";
 import { referenceCanonicalString } from "./common/canonical_reference.ts";
 import { data, macrotask, unwrap } from "./common/index.ts";
 
+// Re-recorded for D989: full characters are removed (no founders, no character table; controllers are base characters), so startup draws and the births, characters, cap_table, company_rows and company_detail views moved and the economy after the first births with them.
 // Re-recorded for D975: v_clock gained the watchlist and Omniscient, so the clock and monthly digests moved; the state hash and patch digests are unchanged (controls are not hashed, D13).
 // Re-recorded for D974: LOW_PRODUCTIVITY_ADJ is +1.0 (was +0.5), so the R&D plan, productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D973: R&D above the norm has diminishing returns by default (spec 5.6 has no curve), so productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
-const GOLDEN_STATE = "1aafcec085bc041eea61dcd7061d1dce";
-const GOLDEN_MONTHLY = "3385b340bc86bdfb2ef3b550";
-const GOLDEN_PATCHES = "2fb3827df9abf5eb5c9e31d5";
+const GOLDEN_STATE = "6b5f86f405998f2b1294b54618c8197b";
+const GOLDEN_MONTHLY = "3f979537d01cecf64fdeb7d1";
+const GOLDEN_PATCHES = "8ba3c5ac439d2e51a7be48bb";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */
 const GOLDEN_VIEWS: Record<string, [string, number]> = {
   clock: ["c1ac8c59305fb039b9c693fe", 8785],
   places: ["0bbcb0e819952b7c5f894c81", 1],
-  countries: ["c301b680d07687f003502ff1", 8785],
-  zones: ["d76cb24168a522eeb27c74f9", 8785],
+  countries: ["9de3a27ea9c7d773796efa55", 8785],
+  zones: ["f5a9ead33682b6eadff6ec2a", 8785],
   rates: ["efc3668ad8d3cca8ad0790ce", 8785],
-  characters: ["6711368fd570d5be67b4907c", 8785],
-  cap_table: ["431cb986a2a22582a02c7a6b", 8785],
-  quotes: ["41ec241f7f471bd22f926d8b", 8785],
-  price_bars: ["5bf7fdf81de8b00d59e62ba8", 8785],
-  exchanges: ["d18ac097c3d27f7efcb07e5d", 8785],
-  market_stats: ["a1582f6405cdddfbecad511a", 8785],
-  news: ["63929f35ad5cc70321f05fac", 8785],
-  births: ["b3db0f5c4a252cec3e1517c3", 8785],
-  projection: ["0c778df1102d9f85d7b4f70d", 8785],
-  company_rows: ["1f5cb5e7861bdfaf9d43d382", 8785],
-  company_detail: ["88d2f838c64882fc37512a34", 8785],
-  units: ["89153622085915ad4dcf3713", 8785],
-  tech: ["b0d0fee2792120332eb342fd", 8785],
-  industry_rows: ["2dc0da72c16ca74a2b9ef6d1", 8785],
-  industry_detail: ["9d77e1ffa2c3053b6d8370c5", 8785],
-  cycle: ["469076c6b66956ef69ed5fc8", 8785],
-  map_layers: ["1390cfbc031a839e20797d59", 8785],
-  province_cards: ["8cf4549c5ca68b7068b6b210", 8785],
-  statements: ["57735a2af1583dea573ab927", 8785],
-  filings: ["049b14e3e9a396103c33c3c9", 8785],
-  ratings: ["1a54c9b62e8689965e82403e", 8785],
-  recap: ["a92bb2a99f2107f1c5229475", 8785],
+  characters: ["4e22b8cb324effaa5debfe43", 8785],
+  cap_table: ["a0e42ad318ea2122ca3376f4", 8785],
+  quotes: ["493e8991f053c61006873dd9", 8785],
+  price_bars: ["c6009fc44df02a5b8efe0ccf", 8785],
+  exchanges: ["f9ad17ddceb82daf963d9dc5", 8785],
+  market_stats: ["a4767a4f080e65d7ae867fa9", 8785],
+  news: ["a12bfa1a835b9ceb39410afb", 8785],
+  births: ["a25a57ae0f74c20a3e245545", 8785],
+  projection: ["c6ead432d10a12fb7292f298", 8785],
+  company_rows: ["c2fa4edb1243e15ddceaee77", 8785],
+  company_detail: ["94b36e84ab7e1705cbf2e0de", 8785],
+  units: ["cb69926b999a5370e0151a1c", 8785],
+  tech: ["873075c31033e457e97081cd", 8785],
+  industry_rows: ["d23253d17d86f236ddd85de4", 8785],
+  industry_detail: ["6835abecc510d882dd17e967", 8785],
+  cycle: ["b157722d749ca2fbcd91539e", 8785],
+  map_layers: ["3cad1ea7b12b8809ad9cbddf", 8785],
+  province_cards: ["99af44d8ca87df8c02fe718d", 8785],
+  statements: ["4b85ccb062ebd376e1b33ac8", 8785],
+  filings: ["a5919099c8619a549d618894", 8785],
+  ratings: ["5c79f5bdbb0789c46f43032d", 8785],
+  recap: ["c8717fb08e77f7127d3aefac", 8785],
   map_static: ["5a7fcdac19a0f147f840d02c", 1],
   politics: ["caa00cde3b21fa9198792d48", 8785],
 };

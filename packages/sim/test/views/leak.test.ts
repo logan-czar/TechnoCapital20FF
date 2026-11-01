@@ -653,12 +653,14 @@ describe("leak", () => {
     checkNow(sim);
   }, 120_000);
 
-  it("after Q1 2020's release, with new listings in play", () => {
-    runTo(sim, simDateYmd(2020, 4, 15));
+  it("after Q2 2020's release, with new listings in play", () => {
+    // D989: no IPO passes at the 9 April lock any more, so the first listings after a release are
+    // the 9 July ones.
+    runTo(sim, simDateYmd(2020, 7, 15));
     const w = simWorld(sim);
-    expect(simViews(sim).filings.data.quarter).toEqual({ year: 2020, q: 1 });
+    expect(simViews(sim).filings.data.quarter).toEqual({ year: 2020, q: 2 });
     expect(listedBanded(w).length).toBeGreaterThan(0);
-    // Q1's recap (built in its pre-quarter-end week) is in, with banded pages and projections.
+    // The recap (built in the pre-quarter-end week) is in, with banded pages and projections.
     const v = simViews(sim);
     expect(v.recap.data.recaps.some((q) => q.companies.some((p) => p.estimated))).toBe(true);
     expect(v.projection.data.companies.length).toBeGreaterThan(0);

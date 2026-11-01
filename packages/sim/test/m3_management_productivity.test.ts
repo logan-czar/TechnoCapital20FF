@@ -79,7 +79,7 @@ function specShift(t: Trait, seat: Seat): number {
 }
 
 /** Spec 5.7: `min(100, sum weight x skill / 20 x 100)`, empty seats (and the Chair) at skill 3. */
-function specScore(w: World, c: Company): number {
+function specScore(_w: World, c: Company): number {
   let sum = specWeight("Chair") * 3.0;
   SEAT_LABOR.forEach((seat, i) => {
     const h = c.board[i] ?? null;
@@ -87,8 +87,7 @@ function specScore(w: World, c: Company): number {
     if (h === null) {
       skill = 3.0;
     } else {
-      const who =
-        h.kind === "Simple" ? h.seat.character : (w.characters[h.character] as (typeof w.characters)[number]);
+      const who = h.seat.character;
       const shift = who.traits.reduce((a: number, t: Trait) => a + specShift(t, seat), 0);
       skill = Math.min(Math.max(specSeatSkill(who.skills, seat) + shift, 0.0), 30.0);
     }

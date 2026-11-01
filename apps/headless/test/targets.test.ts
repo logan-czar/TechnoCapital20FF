@@ -22,8 +22,8 @@ import {
 /** The columns the checker reads, in a smaller hand-made table. */
 const Y_HEADER =
   "seed,year,start_alive_share,median_productivity,demand_dev_max_pp,demand_dev_out,startups_in_year," +
-  "ai_lab_startups_in_year,named_companies,listings_in_year,start_private_listed,full_characters_made," +
-  "full_characters,casts_in_year,cast_full_min,cast_full_max,cast_simple_min,cast_simple_max," +
+  "ai_lab_startups_in_year,named_companies,listings_in_year,start_private_listed," +
+  "casts_in_year,cast_simple_min,cast_simple_max," +
   "born_empty_seats_max";
 const Q_HEADER =
   "seed,year,quarter,released,reports,beats,industries,industry_months,boom_months,bust_months," +
@@ -36,8 +36,7 @@ type Rows = string[][];
 
 /**
  * A good 30-year seed: 10 startups a year (4 AI labs in 2030 to 2035, 24 in all), 700 named
- * companies, 4 listings a year (120), 3 starting private companies listed a year to 2024 (15), 20
- * full characters made a year (200 a decade, 896 in 2050), casts of 1 to 4.
+ * companies, 4 listings a year (120), 3 starting private companies listed a year to 2024 (15), casts of 1 to 4.
  */
 function good(): [Rows, Rows] {
   const years: Rows = [];
@@ -56,11 +55,7 @@ function good(): [Rows, Rows] {
       "700",
       "4",
       String(3 * Math.min(n, 5)),
-      String(20 * n),
-      String(296 + 20 * n),
       "10",
-      "1",
-      "4",
       "2",
       "5",
       "0",
@@ -193,12 +188,6 @@ describe("headless targets", () => {
     failsOnly("listings_per_year", "y", "listings_in_year", [2031], "13");
     failsOnly("start_private_listed_2024", "y", "start_private_listed", [2024], "9");
     failsOnly("start_private_listed_2024", "y", "start_private_listed", [2024], "31");
-    // 20 a year, 200 a decade: a 2049 total of 490 leaves 90 made in the 2040s, 710 one of 310;
-    // the 2020s and 2030s still pass.
-    failsOnly("full_characters_per_decade", "y", "full_characters_made", [2049], "490");
-    failsOnly("full_characters_per_decade", "y", "full_characters_made", [2049], "710");
-    failsOnly("full_characters_2050", "y", "full_characters", [2049], "1200");
-    failsOnly("cast_sizes", "y", "cast_full_max", [2033], "6");
     failsOnly("cast_sizes", "y", "cast_simple_min", [2021], "0");
     failsOnly("no_empty_labor_seat", "y", "born_empty_seats_max", [2040], "1");
   });
@@ -353,7 +342,15 @@ describe("check on the Rust reference", () => {
     for (const n of ["years.csv", "quarters.csv"]) copyFileSync(join(ref, n), join(dir, n));
     checkDir(dir);
     const read = (d: string, n: string) => readFileSync(join(d, n), "utf8").replaceAll("\r", "");
-    expect(read(dir, "targets.csv")).toBe(read(ref, "targets.csv"));
-    expect(read(dir, "summary.csv")).toBe(read(ref, "summary.csv"));
+    // D989: the two full-character targets are gone and cast_sizes reads the simple cast only, so
+    // their rows are left out of both sides.
+    const gone = ["full_characters_per_decade", "full_characters_2050", "cast_sizes"];
+    const keep = (text: string) =>
+      text
+        .split("\n")
+        .filter((l) => !gone.some((g) => l.startsWith(`${g},`)))
+        .join("\n");
+    expect(keep(read(dir, "targets.csv"))).toBe(keep(read(ref, "targets.csv")));
+    expect(keep(read(dir, "summary.csv"))).toBe(keep(read(ref, "summary.csv")));
   });
 });

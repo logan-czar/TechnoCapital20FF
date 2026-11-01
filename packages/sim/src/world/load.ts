@@ -39,15 +39,7 @@ import { traitFromName } from "../people/traits.ts";
 import { politicsStateFromData } from "../politics/state.ts";
 import { DATETIME_START, type SimDate } from "../types/calendar.ts";
 import { tableFromRows } from "../types/collections.ts";
-import type {
-  CharacterId,
-  CompanyId,
-  CountryId,
-  IndustryId,
-  ProvinceId,
-  UnitId,
-  ZoneId,
-} from "../types/ids.ts";
+import type { CompanyId, CountryId, IndustryId, ProvinceId, UnitId, ZoneId } from "../types/ids.ts";
 import { type Ordinal, ordinal } from "../types/ids.ts";
 import { cmpStr } from "../types/num.ts";
 import type { Archetype } from "../types/state/ai.ts";
@@ -56,11 +48,16 @@ import type { CompanyFinance, Rating } from "../types/state/finance.ts";
 import type { MarketState, Stock } from "../types/state/market.ts";
 import type { NewsWire } from "../types/state/news.ts";
 import type { ComputeBill, DataBook, Stations } from "../types/state/ops.ts";
-import { LABOR_SEAT_COUNT, type NameBooks, type Skills, type Trait } from "../types/state/people.ts";
+import {
+  type BaseCharacter,
+  LABOR_SEAT_COUNT,
+  type NameBooks,
+  type Skills,
+  type Trait,
+} from "../types/state/people.ts";
 import {
   type AiSchedule,
   type BusinessUnit,
-  type Character,
   type Company,
   type ControllerRef,
   type Country,
@@ -263,11 +260,12 @@ const PERCENT = 100.0;
 
 /**
  * A starting company companies.csv control (spec 3.5, 8; D425): the controller (a CH- character, a
- * CO- company, an iso3 state or none), its stake, the control basis and a character owner of record.
+ * CO- company, an iso3 state or none), its stake and the control basis. A CH- controller is a base
+ * character (D989) built from its characters.csv row; the owner of record is not read.
  */
 function startControl(
   c: CompanyRow,
-  characters: Keys<CharacterId>,
+  controllers: ReadonlyMap<string, BaseCharacter>,
   countries: Keys<CountryId>,
   companies: Keys<CompanyId>,
 ): StartControl {
@@ -277,20 +275,30 @@ function startControl(
   if (v === "") {
     controller = { kind: "None" };
   } else if (v.startsWith("CH-")) {
-    controller = { kind: "Character", character: characters.get("companies", c.id, field, v, "character") };
+    const character = controllers.get(v);
+    if (character === undefined) {
+      throw new LoadFailure({
+        kind: "MissingRef",
+        table: "companies",
+        key: c.id,
+        field,
+        value: v,
+        target: "character",
+      });
+    }
+    controller = {
+      kind: "Character",
+      character: { ...character, skills: { ...character.skills }, traits: [...character.traits] },
+    };
   } else if (v.startsWith("CO-")) {
     controller = { kind: "Company", company: companies.get("companies", c.id, field, v, "company") };
   } else {
     controller = { kind: "State", country: countries.get("companies", c.id, field, v, "country") };
   }
-  const owner = c.owner_of_record;
-  const ownerOfRecord =
-    owner === "" ? null : characters.get("companies", c.id, "owner_of_record", owner, "character");
   return {
     controller,
     stake: c.controller_stake_pct === null ? null : c.controller_stake_pct / PERCENT,
     basis: c.control_basis,
-    owner_of_record: ownerOfRecord,
   };
 }
 
@@ -465,15 +473,11 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
     };
   });
 
-  // Full characters (spec 3.7.2): all 296 (decision D11), with the skills, traits, age, cash and
-  // home province the MVP reads. Traits outside the 12 pairs are dropped (D113).
-  const characterRows = sortedBy(data.characters.rows, (c) => c.id);
-  const characterKeys = new Keys<CharacterId>(
-    "characters",
-    characterRows.map((c) => c.id),
-  );
-  const characters: Character[] = [];
-  for (const c of characterRows) {
+  // The named controllers (spec 3.7.2 rows of characters.csv), kept as base characters (D989): the
+  // name, age, skills and the traits of the 12 pairs (D113). Nothing else of the row is read, and
+  // no character table is kept.
+  const controllerBook = new Map<string, BaseCharacter>();
+  for (const c of data.characters.rows) {
     const skills: Skills = {
       finance: c.finance,
       operations: c.operations,
@@ -487,16 +491,7 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
       const t = deps.traitFromName(name.trim());
       if (t !== null) traits.push(t);
     }
-    characters.push({
-      key: c.id,
-      name: c.name,
-      tier: c.tier,
-      age: c.age,
-      skills,
-      traits,
-      home_province: provinceKeys.get("characters", c.id, "origin_province", c.origin_province, "province"),
-      cash_usd: c.cash_usd,
-    });
+    controllerBook.set(c.id, { class: "Executive", name: c.name, age: c.age, skills, traits });
   }
 
   // Name books per country, in country id order (spec 3.7.1; D203), built once here.
@@ -545,9 +540,9 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
       deps.enterpriseShare(c.id),
     );
     const compute = deps.computeBill(stations, deps.dataBookStoredTb(book));
-    const controller = characterKeys.map.get(c.controller) ?? null;
+    const startCtl = startControl(c, controllerBook, countryKeys, companyKeys);
     const controllerTraits: readonly Trait[] =
-      controller === null ? [] : (characters[controller] as Character).traits;
+      startCtl.controller.kind === "Character" ? startCtl.controller.character.traits : [];
     const archetype = deps.archetypeAtLoad(
       c.control_basis,
       revenue,
@@ -609,7 +604,6 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
       revenue_usd: revenue,
       shares_out: sharesOut,
       units: [unitId],
-      controller,
       labor_units: labor,
       stations,
       pc: deps.productiveCompute(stations, params.pc_modifier),
@@ -627,7 +621,6 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
       finance: deps.companyFinanceAtLoad(start.credit_drawn_usd, rating),
       state_controlled: c.control_basis === deps.STATE_CONTROL_BASIS,
       origin: { kind: "Start" },
-      founders: [],
       directors: [],
       holders: [{ holder: { kind: "Existing" }, shares: sharesOut }],
       loss_quarters: 0,
@@ -638,7 +631,7 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
       ipo_next_vote: null,
       ipo_last_vote: null,
       birth_run_rate: null,
-      start_control: startControl(c, characterKeys, countryKeys, companyKeys),
+      start_control: startCtl,
     });
   }
   // Fringe pools (spec 5.3, 7.2): what named revenue leaves of the 2020 world size.
@@ -667,7 +660,6 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
     provinces: tableFromRows(provinces),
     industries: tableFromRows(industries),
     companies: tableFromRows(companies),
-    characters: tableFromRows(characters),
     units: tableFromRows(units),
     base_rate: BASE_RATE,
     neutral_rate: NEUTRAL_RATE,

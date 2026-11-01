@@ -83,7 +83,7 @@ describe("m3 views", () => {
       } else {
         const p = card.holder;
         if (p === null) throw new Error(`${card.seat} is empty`);
-        expect(card.open && p.partial && p.character === null).toBe(true);
+        expect(card.open && p.partial).toBe(true);
       }
     }
     // Spec 5.7: sum weight x skill / 20 x 100; confidence factor 0.8 + score / 250.

@@ -28,16 +28,7 @@
 
 import type { DateTime, Quarter, SimDate } from "./calendar.ts";
 import type { Table } from "./collections.ts";
-import type {
-  CharacterId,
-  CompanyId,
-  CountryId,
-  IndustryId,
-  ProvinceId,
-  StartupEventId,
-  UnitId,
-  ZoneId,
-} from "./ids.ts";
+import type { CompanyId, CountryId, IndustryId, ProvinceId, StartupEventId, UnitId, ZoneId } from "./ids.ts";
 import { MAX_SAFE_COUNT, roundHalfAway } from "./num.ts";
 import type { Archetype, LockedPlan } from "./state/ai.ts";
 import type { BirthsState, RunRate, VoteResult } from "./state/births.ts";
@@ -45,13 +36,12 @@ import type { BooksCheck, CompanyFinance, Rating } from "./state/finance.ts";
 import type { MarketState } from "./state/market.ts";
 import type { NewsWire } from "./state/news.ts";
 import type { ComputeBill, DataBook, Stations } from "./state/ops.ts";
-import type { NameBooks, Seat, SimpleCharacter, Skills, Trait } from "./state/people.ts";
+import type { BaseCharacter, NameBooks, Seat, SimpleCharacter } from "./state/people.ts";
 import type { PoliticsState } from "./state/politics.ts";
 import type { Recap } from "./state/recap.ts";
 
 export type { Table } from "./collections.ts";
 export type {
-  CharacterId,
   CompanyId,
   CountryId,
   HeadlineId,
@@ -86,7 +76,6 @@ export interface World {
   provinces: Table<ProvinceId, Province>;
   industries: Table<IndustryId, Industry>;
   companies: Table<CompanyId, Company>;
-  characters: Table<CharacterId, Character>;
   /** Business units (spec 3.6), one per company in the MVP. */
   units: Table<UnitId, BusinessUnit>;
   /** World base rate (spec 3.1), fixed in the MVP. */
@@ -352,11 +341,6 @@ export interface Company {
   shares_out: number;
   /** Business units (spec 3.5; one in the MVP). */
   units: UnitId[];
-  /**
-   * The named controller when it is a full character (companies.csv `controller` holds a CH- id;
-   * spec 3.5, 6 "traits"); null for companies, states and the widely held.
-   */
-  controller: CharacterId | null;
   /** Labor units L (spec 3.5, 5.10), recounted at 4.3 step 4. Whole number (u64). */
   labor_units: number;
   /** `labor_assignment` (spec 3.5): one station per labor unit, fitted to L at 4.3 step 4. */
@@ -410,8 +394,6 @@ export interface Company {
    * `event`).
    */
   origin: Origin;
-  /** The full characters of a born company, lead founder first (spec 3.5 `founders`). */
-  founders: CharacterId[];
   /** Board seats with no labor unit (spec 5.19.4 step 4), in cast order. */
   directors: Director[];
   /**
@@ -459,7 +441,11 @@ export interface Company {
 export type ControllerRef =
   /** Widely held: no controller. */
   | { kind: "None" }
-  | { kind: "Character"; character: CharacterId }
+  /**
+   * A named controller (a CH- id in companies.csv) as a base character: name, age, skills and
+   * traits, with no home, cash, id or page (D989). It owns and holds no seat.
+   */
+  | { kind: "Character"; character: BaseCharacter }
   /** A state (an iso3 in companies.csv). */
   | { kind: "State"; country: CountryId }
   /** Another company (a CO- id). */
@@ -472,8 +458,6 @@ export interface StartControl {
   stake: number | null;
   /** `control_basis`: majority, class_a, state, proxy, trust, subsidiary or widely_held. */
   basis: string;
-  /** `owner_of_record` (a proxy holder), when it names a character. */
-  owner_of_record: CharacterId | null;
 }
 
 /** Where a company came from (spec 3.5 `origin`). */
@@ -487,7 +471,7 @@ export type Origin =
  * A director: a board seat with no labor unit and no effect in the MVP except the IPO vote
  * (spec 5.19.4 step 4, 5.20.1 step 2).
  */
-export type Director = { kind: "Full"; character: CharacterId } | { kind: "Simple"; seat: SimpleSeat };
+export type Director = { kind: "Simple"; seat: SimpleSeat };
 
 /** Who holds shares (spec 3.5 `holders`). */
 export type Holder =
@@ -496,8 +480,6 @@ export type Holder =
    * other holders are not split out in the MVP (D153).
    */
   | { kind: "Existing" }
-  /** A founder of a born company (5.19.3). */
-  | { kind: "Founder"; character: CharacterId }
   /** The unnamed seed investors of a born company (5.19.3). */
   | { kind: "SeedInvestors" }
   /** The unnamed public float of a listing (5.20.1 Listing step 3). */
@@ -591,35 +573,8 @@ export interface SimpleSeat {
   character: SimpleCharacter;
 }
 
-/**
- * Who holds a labor seat (spec 3.7): a simple character (3.7.1), or a full character a startup
- * event seated (3.7.2, 5.19.4; from M6).
- */
-export type SeatHolder = { kind: "Simple"; seat: SimpleSeat } | { kind: "Full"; character: CharacterId };
-
-/**
- * A full character (spec 3.7.2): the 296 of characters.csv (D11) and, from M6, those made in
- * play. The MVP keeps what it reads: skills and traits for the management score, rolls and the
- * Lite AI's trait nudges.
- */
-export interface Character {
-  /** characters.csv `id`. */
-  key: string;
-  name: string;
-  /** player, rival or holder from characters.csv; generated for those made in play (3.7.2). */
-  tier: string;
-  /** Whole number (u8). */
-  age: number;
-  skills: Skills;
-  /**
-   * Traits of the 12 pairs (1-corporate-core 1.1.2). characters.csv's unique traits and perks
-   * outside the pairs (such as "Operational Excellence") are dropped at load (D113).
-   */
-  traits: Trait[];
-  /** characters.csv `origin_province` (spec 3.7.2 home province). */
-  home_province: ProvinceId;
-  cash_usd: number;
-}
+/** Who holds a labor seat (spec 3.7): a simple character (3.7.1). Full characters are removed (D989). */
+export type SeatHolder = { kind: "Simple"; seat: SimpleSeat };
 
 // ---------------------------------------------------------------- economy.rs
 // World-level economy state (spec 3.1): the global business cycle and the AI boom. The formulas
