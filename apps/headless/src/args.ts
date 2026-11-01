@@ -20,6 +20,7 @@ export const USAGE = [
   "  headless --check-data [--data-dir DIR | --world ID] [--map-dir DIR]",
   "  headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--tick-costs] [--data-dir DIR | --world ID] [--scenario ID]",
   "  headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--detail] [--data-dir DIR | --world ID] [--scenario ID]",
+  "  headless calibrate --world ID [--years N] --seeds A..B [--jobs N] --out DIR",
   "  headless check DIR",
   "  headless parity DIR [--reference DIR]",
   "  headless record --years N --seed S --out LOG [--data-dir DIR | --world ID]",
@@ -252,4 +253,10 @@ export function parseReplay(args: readonly string[]): [string, string] | null {
     }
   }
   return log === null ? null : [log, dir];
+}
+
+/** `calibrate --world ID --seeds A..B --out DIR`: the soak arguments and the data directory. */
+export function parseCalibrate(args: readonly string[]): [SoakArgs, string] | null {
+  if (!args.includes("--world") || !args.includes("--seeds")) return null;
+  return parseSoak(args);
 }

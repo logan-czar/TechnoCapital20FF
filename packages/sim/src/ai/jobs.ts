@@ -100,7 +100,15 @@ function planInputs(world: World, id: CompanyId): PlanInputs {
     last_quarter_net_income: last === undefined ? 0.0 : ledgerNetIncome(last.lines),
     debt_aggression: debtAggressionOf(world.debt_levels, id),
     focus: focusOf(world.focus_levels, id),
+    ...zoneTilt(world, c),
   };
+}
+
+/** An era world's zone growth on a company's plan; nothing in the 2020 world (1995-rework 6.4). */
+function zoneTilt(world: World, c: Company): { zone_tilt?: number } {
+  const zone = world.countries[c.hq_country]?.zone;
+  const tilt = zone === undefined ? undefined : world.era?.macro.zones[zone]?.tilt;
+  return tilt === undefined ? {} : { zone_tilt: tilt };
 }
 
 /**

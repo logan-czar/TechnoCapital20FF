@@ -14,4 +14,10 @@ export interface HistoryView {
   gdp_usd: number[];
   /** Named companies not removed at each year's close. */
   companies: number[];
+  /** The policy rate at each year's close (1995-rework 6.2). */
+  base_rate: number[];
+  /** Per year, each zone's GDP in zone id order, USD (1995-rework 6.4). */
+  zone_gdp_usd: number[][];
+  /** The year each recession started. */
+  recessions: number[];
 }

@@ -124,7 +124,7 @@ On `emerge_quarter`, the row takes its `target_size` (demand, trend and fringe),
 ## 6. Macro
 
 ### 6.1 GDP
-`GDP = K × Σ ind.demand`, with K fixed at load. GDP is derived and never a second driver, so calibration bands are bands on demand growth. The output gap is `Σ demand_core / Σ trend_demand − 1`.
+`GDP = K × Σ ind.demand`, with K fixed at load. GDP is derived and never a second driver, so calibration bands are bands on demand growth. The gap is this quarter's growth above the long-term rate, a year, weighted by demand. A level gap (`Σ demand_core / Σ trend_demand − 1`) drifts for good, because demand does not revert to trend (D995).
 
 ### 6.2 Policy rate
 `base += SMOOTH × (neutral + a × gap + b × g_t + bias − base)`, floored at a named constant. `world.base_rate` is the policy rate, so credit lines and cash interest follow with no new wiring. The rate also feeds:

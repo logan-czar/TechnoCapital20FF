@@ -12,6 +12,7 @@
 // (prices stream, D140, D150).
 
 import { quarterIndex } from "../economy/ai_boom.ts";
+import { zoneLocationFactor } from "../era/jobs.ts";
 import { balanceSheet } from "../finance/balance.ts";
 import { homeSpread, lineLimit } from "../finance/credit.ts";
 import {
@@ -77,7 +78,7 @@ import {
   voters,
 } from "./ipo.ts";
 import { companyNamesDraw, ticker } from "./names.ts";
-import { drawRandomEvents, type EventDraft, type StartupDraft } from "./random.ts";
+import { drawRandomEvents, type EventDraft, RANDOM_EVENTS_MEAN, type StartupDraft } from "./random.ts";
 import { buildStartup, fringeRevenue, sizedRevenue } from "./startup.ts";
 import { birthsInRegions, sitesKeyCityLists, sitesPlace } from "./state.ts";
 import { hqWeight, industryWeight } from "./weights.ts";
@@ -180,8 +181,14 @@ function hqCandidates(
   // D830: development above the floor; an event's regions whose provinces all sit at the
   // floor fall back to the 2.3.1 weight, so the event can still place its HQ
   const out = withBase(sites.hq_weight);
-  if (out.every(([, w]) => w <= 0.0)) return withBase(sites.weight);
-  return out;
+  const placed = out.every(([, w]) => w <= 0.0) ? withBase(sites.weight) : out;
+  const era = world.era;
+  if (era === undefined) return placed;
+  // A zone gaining share draws more of the startups (1995-rework 6.4).
+  return placed.map(([id, w]): [ProvinceId, number] => {
+    const country = world.countries[(world.provinces[id] as World["provinces"][number]).country];
+    return [id, w * zoneLocationFactor(era, country?.zone ?? 0)];
+  });
 }
 
 /** The 5.19.1 industry weights, every industry in id order. */
@@ -446,7 +453,12 @@ export function tippedLabName(world: World): string {
 export function randomEventsJob(world: World, ctx: JobCtx): void {
   const date = ctx.facts.date;
   const weights = industryWeights(world);
-  const drafts = drawRandomEvents(weights, (ind) => hqCandidates(world, ind, null), ctx.draws);
+  const drafts = drawRandomEvents(
+    weights,
+    (ind) => hqCandidates(world, ind, null),
+    ctx.draws,
+    world.era?.scenario.macro.startup_mean ?? RANDOM_EVENTS_MEAN,
+  );
   for (const draft of drafts) {
     const fired = fireEvent(world, ctx, draft);
     if (fired === null) continue;

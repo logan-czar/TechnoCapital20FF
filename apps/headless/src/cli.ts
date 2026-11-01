@@ -20,7 +20,16 @@
 import { writeFileSync } from "node:fs";
 import { check, type DataError, dataErrorToString, type WorldData, worldDataCounts } from "@tc20ff/sim-data";
 import { defaultDataDir, defaultMapDir, loadMap, loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
-import { parseRecord, parseReplay, parseRun, parseSoak, type RunArgs, USAGE, userPath } from "./args.ts";
+import {
+  parseCalibrate,
+  parseRecord,
+  parseReplay,
+  parseRun,
+  parseSoak,
+  type RunArgs,
+  USAGE,
+  userPath,
+} from "./args.ts";
 import { defaultFactory, factoryFor, isObservedSim } from "./factory.ts";
 import { type RunOptions, runSeed, type SimFactory, YEARS_HEADER } from "./metrics.ts";
 import { parityCommand } from "./parity.ts";
@@ -28,7 +37,7 @@ import { Profiler, TickCosts } from "./profile.ts";
 import { record, replay } from "./replay.ts";
 import { soak, workerRunner } from "./soak.ts";
 import { checkDir } from "./targets.ts";
-import { checkEraDir, isEraDir } from "./targets-1995.ts";
+import { calibrate, checkEraDir, isEraDir } from "./targets-1995.ts";
 
 /** Exit code 2 and the usage text (Rust `usage`). */
 function usage(): number {
@@ -188,6 +197,14 @@ export async function main(args: string[], factory: SimFactory = defaultFactory)
       return report(async () => {
         await soak(workerRunner(), dir, a);
         if (a.check) (isEraDir(a.out) ? checkEraDir : checkDir)(a.out);
+      });
+    }
+    case "calibrate": {
+      const p = parseCalibrate(args.slice(1));
+      if (p === null) return usage();
+      const [a, dir] = p;
+      return report(async () => {
+        await calibrate(workerRunner(), dir, a);
       });
     }
     case "record": {

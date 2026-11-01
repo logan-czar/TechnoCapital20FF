@@ -35,6 +35,11 @@ export interface WorldManifest {
   start_date: ManifestDate;
   /** Expected row counts by table name (`worldDataCounts`). */
   expected_counts: readonly (readonly [string, number])[];
+  /** The policy rate and neutral rate at the start (1995-rework 6.2). */
+  base_rate: number;
+  neutral_rate: number;
+  /** The 10-year yield's term over the policy rate, in an era world (1995-rework 6.2). */
+  y10_term: number;
   /** The US cabinet's seats in politics-usa-offices.csv. */
   cabinet_seats: number;
   features: WorldFeatures;
@@ -62,6 +67,9 @@ export const MANIFEST_2020: WorldManifest = {
   id: "2020",
   start_date: { year: 2020, month: 1, day: 1 },
   expected_counts: EXPECTED_COUNTS,
+  base_rate: 0.03,
+  neutral_rate: 0.03,
+  y10_term: 0.005,
   cabinet_seats: 15,
   features: { era: false, ai_boom: true, fixed_events: true, arrowhead: true },
 };
@@ -83,6 +91,9 @@ export function parseManifest(text: string): Result<WorldManifest, DataError> {
   const date = typeof m.start_date === "string" ? ISO_DATE.exec(m.start_date) : null;
   if (date === null) return bad("start_date: not YYYY-MM-DD");
   if (typeof m.cabinet_seats !== "number") return bad("cabinet_seats: not a number");
+  for (const k of ["base_rate", "neutral_rate", "y10_term"]) {
+    if (typeof m[k] !== "number") return bad(`${k}: not a number`);
+  }
   const counts = m.expected_counts;
   if (typeof counts !== "object" || counts === null) return bad("expected_counts: not an object");
   const pairs = Object.entries(counts).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
@@ -102,6 +113,9 @@ export function parseManifest(text: string): Result<WorldManifest, DataError> {
     id: m.id,
     start_date: { year: Number(date[1]), month: Number(date[2]), day: Number(date[3]) },
     expected_counts: pairs as [string, number][],
+    base_rate: m.base_rate as number,
+    neutral_rate: m.neutral_rate as number,
+    y10_term: m.y10_term as number,
     cabinet_seats: m.cabinet_seats,
     features: { era: f.era, ai_boom: f.ai_boom, fixed_events: f.fixed_events, arrowhead: f.arrowhead },
   });

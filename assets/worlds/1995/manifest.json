@@ -16,6 +16,9 @@
     "politics-usa": 51,
     "politics-usa-offices": 30
   },
+  "base_rate": 0.05,
+  "neutral_rate": 0.05,
+  "y10_term": 0.01,
   "cabinet_seats": 14,
   "features": {
     "era": true,

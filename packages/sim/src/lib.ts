@@ -158,7 +158,7 @@ export function startWorld(
   const world = built.value;
   world.profile = profile;
   // A historical world's scenario sets its profile, so it comes before the economy's draws.
-  if (data.manifest.features.era) eraStart(world, data.manifest.id, scenarioId, draws);
+  if (data.manifest.features.era) eraStart(world, data, scenarioId, draws);
   if (debtLevels !== undefined && debtLevels.length > 0) world.debt_levels = [...debtLevels];
   if (rdDiminishingX !== undefined) world.rd_diminishing_x = rdDiminishingX;
   if (focusLevels !== undefined && focusLevels.length > 0) world.focus_levels = [...focusLevels];

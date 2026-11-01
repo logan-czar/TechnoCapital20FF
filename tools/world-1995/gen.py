@@ -26,6 +26,9 @@ START_DATE = '1995-01-01'
 GDP_TARGET_USD_BN = 30000.0   # 1995-rework 2.2 (real 1995: about $31T)
 COMPANY_TARGET = 300          # 1995-rework 2.2
 PER_INDUSTRY_MIN = 5          # the largest of every industry stay, so each keeps named companies
+BASE_RATE = 0.05              # 1995-rework 6.2 (real 1995 policy rates: about 5.5%)
+NEUTRAL_RATE = 0.05
+Y10_TERM = 0.01
 CABINET_SEATS = 14            # 1995-rework 7.2: no Homeland Security until 2002
 DROPPED_OFFICES = {'USO-HOMELAND'}
 ARROWHEAD = 'Arrowhead Drilling'   # 1995-rework 7.7: not a fixed company in this world
@@ -213,6 +216,7 @@ def build_company_start(economy, zones):
     finally:
         sys.argv = argv
     mvp.DATA = str(OUT)
+    mvp.FV_Y10_BASE = BASE_RATE + Y10_TERM   # 6.2: starting prices at this world's rates
     rows = mvp.build_company_start(economy, zones)
     write(OUT / 'company-start.csv', list(rows[0].keys()), rows)
     return rows
@@ -223,6 +227,9 @@ def write_manifest(counts):
         'id': '1995',
         'start_date': START_DATE,
         'expected_counts': counts,
+        'base_rate': BASE_RATE,
+        'neutral_rate': NEUTRAL_RATE,
+        'y10_term': Y10_TERM,
         'cabinet_seats': CABINET_SEATS,
         'features': {'era': True, 'ai_boom': False, 'fixed_events': False, 'arrowhead': False},
     }

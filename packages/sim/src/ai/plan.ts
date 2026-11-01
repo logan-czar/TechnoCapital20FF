@@ -112,6 +112,8 @@ export interface PlanInputs {
   last_quarter_net_income: number;
   /** The experiment's debt aggression level (D971); 0 or absent is spec 6. */
   debt_aggression?: number;
+  /** How much faster than the world the HQ zone grows; absent in the 2020 world (1995-rework 6.4). */
+  zone_tilt?: number;
   /** The experiment's focus level (D972); 0 or absent is spec 6.2 and 6.3. */
   focus?: number;
 }
@@ -141,7 +143,7 @@ export function planOperations(i: PlanInputs): OperatingPlan {
   const growth = growthPlan({
     loss_q: i.loss_q,
     roa: roa(i.ttm_ebit, i.gross_assets),
-    g_dem: gDem(i.lt, i.q_growth),
+    g_dem: i.zone_tilt === undefined ? gDem(i.lt, i.q_growth) : gDem(i.lt, i.q_growth) + i.zone_tilt,
     supply_ratio: i.supply_ratio,
     archetype: params,
     traits,

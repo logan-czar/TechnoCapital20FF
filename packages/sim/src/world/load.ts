@@ -672,8 +672,8 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
     industries: tableFromRows(industries),
     companies: tableFromRows(companies),
     units: tableFromRows(units),
-    base_rate: BASE_RATE,
-    neutral_rate: NEUTRAL_RATE,
+    base_rate: data.manifest.base_rate,
+    neutral_rate: data.manifest.neutral_rate,
     // `economy::start` makes the cycle's draws (spec 7.3); until then g is 0.
     cycle: {
       phase: deps.START_PHASE,

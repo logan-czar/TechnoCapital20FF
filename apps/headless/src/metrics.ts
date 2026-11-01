@@ -202,13 +202,18 @@ export interface RunOptions<D = unknown> {
 }
 
 /** The header of `era.csv`: a historical world's long history, one row per seed per year (1995-rework 4.3). */
-export const ERA_HEADER = "seed,year,gdp_usd,companies";
+export const ERA_HEADER = "seed,year,gdp_usd,companies,base_rate,recessions_started,zone_gdp_usd";
 
 /** A run's `era.csv` rows, from its `history` view at the end. */
 function eraRows(sim: SoakSimApi, seed: number): string {
   const h = sim.views().history?.data;
   if (h === undefined) return "";
-  return h.years.map((y, i) => `${seed},${y},${h.gdp_usd[i]},${h.companies[i]}\n`).join("");
+  return h.years
+    .map((y, i) => {
+      const started = h.recessions.filter((r) => r === y).length;
+      return `${seed},${y},${h.gdp_usd[i]},${h.companies[i]},${h.base_rate[i]},${started},${(h.zone_gdp_usd[i] ?? []).join(";")}\n`;
+    })
+    .join("");
 }
 
 /**

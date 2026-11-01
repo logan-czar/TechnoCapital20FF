@@ -43,6 +43,8 @@ export interface EngineValueInputs {
    * (finance::credit::home_spread, D223, D235), a fraction.
    */
   home_spread: number;
+  /** The yield before the home spread; `Y10_BASE` when absent (1995-rework 6.2). */
+  y10_base?: number;
   /** The zone's `confidence_start` for a listed company; null for a private one. */
   listing_confidence: number | null;
   /** `bookFloorShare` of the industry (0.9 for Real estate). */
@@ -70,6 +72,7 @@ export function engineValueAtLoad(i: EngineValueInputs): number {
     book_equity: i.book_equity,
     sector_multiple: i.sector_multiple,
     home_spread: i.home_spread,
+    ...(i.y10_base === undefined ? {} : { y10_base: i.y10_base }),
     label: LOAD_LABEL,
     company_confidence: LOAD_COMPANY_CONFIDENCE,
     listing_confidence: i.listing_confidence,

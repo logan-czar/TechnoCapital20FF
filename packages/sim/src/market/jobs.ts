@@ -108,6 +108,11 @@ export const BAR_YEARS_KEPT = 10;
 // ---------------------------------------------------------------------------------------------
 // Reading the World.
 
+/** An era world's yield before the home spread; nothing in the 2020 world (1995-rework 6.2). */
+function eraYield(world: World): { y10_base?: number } {
+  return world.era === undefined ? {} : { y10_base: world.base_rate + world.era.y10_term };
+}
+
 /**
  * The 5.13 inputs of company `id` today on `basis` (D243): book equity from the balance sheet
  * (3.9), M_sector, the HQ home spread on the zone's effective spread (5.1.2, 5.12), the
@@ -123,6 +128,7 @@ export function fairValueInputs(world: World, id: CompanyId, basis: FairValueBas
     book_equity: sheet(world, c).equity,
     sector_multiple: ind.params.earnings_multiple,
     home_spread: companyHomeSpread(world, c, false),
+    ...eraYield(world),
     label: ind.phase_label,
     company_confidence: confidenceFactor(c.management_score),
     listing_confidence:
@@ -230,6 +236,7 @@ export function start(world: World, draws: DrawSource): void {
       g_sector: ind.lt,
       // D235: the zone's base spread at load.
       home_spread: companyHomeSpread(world, c, true),
+      ...eraYield(world),
       listing_confidence:
         exchange === null ? null : (world.zones[exchange] as World["zones"][number]).confidence_start,
       book_floor_share: bookFloorShare(ind.key),

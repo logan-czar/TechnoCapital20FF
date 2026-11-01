@@ -7,7 +7,17 @@ import type { ViewInput } from "./index.ts";
 
 /** The 2020 world's view. */
 export function emptyHistory(): HistoryView {
-  return { world_id: "2020", start_year: EPOCH_YEAR, scenario: null, years: [], gdp_usd: [], companies: [] };
+  return {
+    world_id: "2020",
+    start_year: EPOCH_YEAR,
+    scenario: null,
+    years: [],
+    gdp_usd: [],
+    companies: [],
+    base_rate: [],
+    zone_gdp_usd: [],
+    recessions: [],
+  };
 }
 
 export function buildHistory(input: ViewInput): HistoryView {
@@ -20,5 +30,8 @@ export function buildHistory(input: ViewInput): HistoryView {
     years: [...era.history.years],
     gdp_usd: [...era.history.gdp_usd],
     companies: [...era.history.companies],
+    base_rate: [...era.history.base_rate],
+    zone_gdp_usd: era.history.zone_gdp_usd.map((y) => [...y]),
+    recessions: [...era.history.recessions],
   };
 }

@@ -121,7 +121,7 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
   },
   // All public, with no company or industry subject: GDP reads only demand, exact in every class
   // (1995-rework 6.1, D432).
-  history: { ids: ["history.start_year", "history.years[]", "history.companies[]"] },
+  history: { ids: ["history.start_year", "history.years[]", "history.companies[]", "history.recessions[]"] },
   zones: { ids: ["zones.zones[].id", "zones.zones[].number", "zones.zones[].members[]"] },
   rates: {
     ids: [

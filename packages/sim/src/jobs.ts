@@ -36,7 +36,7 @@
 import * as ai from "./ai/jobs.ts";
 import * as births from "./births/jobs.ts";
 import { register as economyRegister } from "./economy/index.ts";
-import { eraYearCloseJob } from "./era/jobs.ts";
+import { eraMacroJob, eraYearCloseJob } from "./era/jobs.ts";
 import * as finance from "./finance/jobs.ts";
 import * as market from "./market/jobs.ts";
 import * as news from "./news/jobs.ts";
@@ -60,6 +60,8 @@ export function registerJobs(s: Scheduler): void {
 
   // economy::register (crates/sim/src/economy/mod.rs)
   economyRegister(s);
+
+  r(s, "MonthlyCycle", "era.macro", eraMacroJob); // era/jobs (1995-rework 6.3; no Rust twin)
 
   // ops::register (crates/sim/src/ops/mod.rs)
   opsRegister(s);
