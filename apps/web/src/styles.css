@@ -149,6 +149,27 @@ input {
   text-align: left;
   border-radius: 0;
 }
+.panes-menu {
+  min-width: 240px;
+  max-height: calc(100vh - var(--top-bar) - 8px);
+  overflow-y: auto;
+}
+.panes-menu button {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex: none;
+  white-space: nowrap;
+}
+.panes-menu .detail {
+  color: var(--muted);
+  font-size: 12px;
+}
+.panes-menu .heading {
+  padding: 4px 8px 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
 
 /* Command bar (cmdk) */
 .cmdk-overlay {

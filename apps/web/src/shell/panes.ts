@@ -1,11 +1,13 @@
 // The pane kinds a workspace can hold and how to open one. A fixed pane is identified by its id
 // (`kind`), so opening it twice focuses the first. Pages open in page panes (pages/PagePane.tsx),
 // each with its own history; `openPage` routes a page to the focused page pane or a new one
-// (D450: click opens in the focused pane, Shift+click or middle click in a new pane).
+// (D450: click opens in the focused pane, Shift+click or middle click in a new pane). A closed pane
+// goes on the closed list, so the Panes menu and Alt+Shift+R can bring it back (D979).
 
 import { createContext, useContext } from "react";
 import type { OpenTarget } from "../links/nav.ts";
-import type { PageRef } from "../pages/ref.ts";
+import { historyFromSaved } from "../pages/history.ts";
+import { type PageRef, pageId } from "../pages/ref.ts";
 
 export type PaneKind =
   | "map"
@@ -24,7 +26,7 @@ export interface PaneSpec {
   params?: Record<string, unknown>;
 }
 
-/** The fixed panes, as the command bar lists them. */
+/** The fixed panes, as the command bar and the Panes menu list them. */
 export const FIXED_PANES: readonly PaneSpec[] = [
   { id: "map", kind: "map", title: "Map" },
   { id: "companies", kind: "companies", title: "Companies" },
@@ -34,6 +36,21 @@ export const FIXED_PANES: readonly PaneSpec[] = [
   { id: "countries", kind: "countries", title: "Countries" },
   { id: "alerts", kind: "alerts", title: "Alerts" },
 ];
+
+/** Closed panes kept for reopening (D979). */
+export const MAX_CLOSED = 10;
+
+/** What makes two closed panes the same one: a fixed pane's id, a page pane's current page. */
+function closedKey(spec: PaneSpec): string {
+  const history = spec.kind === "page" ? historyFromSaved(spec.params?.history) : null;
+  return history ? pageId(history.current) : spec.id;
+}
+
+/** The closed list (most recent first) after `spec` closes: one entry per pane, at most MAX_CLOSED. */
+export function pushClosed(closed: readonly PaneSpec[], spec: PaneSpec): PaneSpec[] {
+  const key = closedKey(spec);
+  return [spec, ...closed.filter((c) => closedKey(c) !== key)].slice(0, MAX_CLOSED);
+}
 
 /** What a page pane lets the workspace do to it. */
 export interface PaneHandle {
@@ -49,6 +66,12 @@ export interface WorkspaceControl {
   open: (spec: PaneSpec) => void;
   /** Opens a page: "focused" in the focused page pane (or one showing it), "new" in a new pane. */
   openPage: (page: PageRef, target: OpenTarget) => void;
+  /** True while the pane with this id is open. */
+  isOpen: (id: string) => boolean;
+  /** The panes closed and not open again, most recent first. */
+  closed: () => readonly PaneSpec[];
+  /** Reopens a pane from `closed`, or the most recent with none given. */
+  reopen: (spec?: PaneSpec) => void;
   /** A page pane registers itself while mounted; the call returns its unregister. */
   registerPane: (id: string, handle: PaneHandle) => () => void;
   /** Saves the layout soon (a pane's params changed). */
@@ -62,6 +85,9 @@ export interface WorkspaceControl {
 const NONE: WorkspaceControl = {
   open: () => {},
   openPage: () => {},
+  isOpen: () => false,
+  closed: () => [],
+  reopen: () => {},
   registerPane: () => () => {},
   persist: () => {},
   layout: () => null,

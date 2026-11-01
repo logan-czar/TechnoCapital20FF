@@ -55,6 +55,9 @@ function noWorkspace(): WorkspaceControl {
   return {
     open: vi.fn(),
     openPage: vi.fn(),
+    isOpen: () => false,
+    closed: () => [],
+    reopen: vi.fn(),
     registerPane: () => () => {},
     persist: vi.fn(),
     layout: () => ({ grid: { root: {} }, panels: { map: {}, "page-1": {} } }),
