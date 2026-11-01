@@ -48,6 +48,7 @@ const GROUPS: Readonly<Record<PageKind, string>> = {
   exchanges: "Pages",
   zones: "Pages",
   events: "Pages",
+  politics: "Pages",
   settings: "Pages",
   company: "Companies",
   industry: "Industries",

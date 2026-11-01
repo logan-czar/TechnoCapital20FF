@@ -72,6 +72,10 @@ export function countryDoc(c: CountryId, v: ViewsData, index: NameIndex): PageDo
     fields: [
       field.text("ISO3", r.iso3),
       field.text("Superregion", r.superregion),
+      // The US government (politics POC, D980).
+      ...(v.politics?.country === r.id
+        ? [field.link("Government", "United States government", { kind: "politics" })]
+        : []),
       field.link("Zone", index.title(zone), zone),
       field.link("Exchange", index.title(exchange), exchange),
     ],
@@ -106,7 +110,7 @@ export function countryDoc(c: CountryId, v: ViewsData, index: NameIndex): PageDo
 export const pages = [
   definePage({
     kind: "country",
-    views: ["countries", "rates", "company_rows", "province_cards"],
+    views: ["countries", "rates", "company_rows", "province_cards", "politics"],
     sections: SECTIONS,
     doc: (page, v, index) => countryDoc(page.id, v, index),
   }),

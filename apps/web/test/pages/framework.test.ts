@@ -67,6 +67,7 @@ describe("PageRef", () => {
       { kind: "exchanges" },
       { kind: "zones" },
       { kind: "events" },
+      { kind: "politics" },
       { kind: "settings" },
     ];
     expect(new Set(pages.map((p) => p.kind)).size).toBe(PAGE_KINDS.length);

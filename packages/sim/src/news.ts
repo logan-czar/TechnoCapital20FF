@@ -348,6 +348,11 @@ export function listing(
   );
 }
 
+/** A US election or inauguration headline (D985): no industry or company tag. */
+export function politicsHeadline(date: SimDate, text: string): Headline {
+  return headline(date, null, null, { kind: "Politics" }, text);
+}
+
 /** Spec 5.1.1, 5.18: the boom event, "[tipped lab] launches its chatbot". */
 export function chatbot(
   date: SimDate,

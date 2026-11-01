@@ -27,6 +27,7 @@ import { indexChart, zoneDoc } from "../../src/pages/kinds/zone.tsx";
 import { PAGE_BUDGET_MS } from "../../src/pages/PagePane.tsx";
 import { type PageRef, pageEq, setProvinceKeys } from "../../src/pages/ref.ts";
 import { pageSpecOf } from "../../src/pages/registry.ts";
+import { politicianCount, politicianRoles } from "../../src/pages/tables.ts";
 import { type ViewsData, viewsData } from "../../src/pages/views.ts";
 import { buildEntries, makeFuse, search } from "../../src/shell/CommandBar.tsx";
 import { type Cell, cellNumber, date, display, money, number, sortOrder } from "../../src/widgets/cells.ts";
@@ -373,7 +374,20 @@ describe("the list pages", () => {
       page: { kind: "country", id: canada.id },
     });
     const chars = listTable("characters", v, index);
-    expect(chars.rows.length).toBe(v.characters?.full.length);
+    expect(chars.rows.length).toBe((v.characters?.full.length ?? 0) + politicianCount(v.politics));
+    expect(politicianRoles(v.politics).length).toBe(politicianCount(v.politics));
+    // A House member's home is their district's province, and their role names the chamber (D980, D982).
+    const member = v.politics?.house[0];
+    if (!member || member.province === null) throw new Error("a House member with a home");
+    const memberRow = chars.rows.find(
+      (r) =>
+        r[col(chars, "First role")]?.k === "text" &&
+        r[col(chars, "First role")]?.v === `House, ${member.title}`,
+    );
+    expect(memberRow?.[col(chars, "Home")]).toMatchObject({
+      k: "link",
+      page: { kind: "province", id: member.province },
+    });
     // A character's home is a place link to its province (M8.7, D707).
     const c0 = v.characters?.full[0];
     if (c0?.id.kind !== "Full" || !c0.home) throw new Error("a character with a home");

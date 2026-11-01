@@ -36,6 +36,7 @@ import { fitStations, laborUnits } from "../ops/labor.ts";
 import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
 import { nameBooksBuild } from "../people/names.ts";
 import { traitFromName } from "../people/traits.ts";
+import { politicsStateFromData } from "../politics/state.ts";
 import { DATETIME_START, type SimDate } from "../types/calendar.ts";
 import { tableFromRows } from "../types/collections.ts";
 import type {
@@ -166,6 +167,8 @@ export interface LoadDeps {
   nameBooksBuild(data: WorldData, countryKeys: readonly string[]): Result<NameBooks, string>;
   /** people/traits.rs `Trait::from_name(name)`: null for a trait outside the 12 pairs (D113). */
   traitFromName(name: string): Trait | null;
+  /** politics/state.ts: the US state's static tables (D980); null for data without the USA. */
+  politicsStateFromData: typeof politicsStateFromData;
   /** news.rs `NewsWire::default()`. */
   newsWireDefault(): NewsWire;
 }
@@ -202,6 +205,7 @@ export const UNPORTED_LOAD_DEPS: LoadDeps = {
   productiveCompute, // ops/stations.rs
   nameBooksBuild, // people/names.rs NameBooks::build
   traitFromName, // people/traits.rs Trait::from_name
+  politicsStateFromData, // politics/state.ts
   newsWireDefault, // news.rs NewsWire::default
 };
 
@@ -654,6 +658,8 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
     industryRows.map((i) => i.name),
   );
   if (!births.ok) throw badValue("startup-events", "", births.error);
+  const politics = deps.politicsStateFromData(data, countryKeys.map, provinceKeys.map);
+  if (politics === null) throw badValue("countries", "USA", "the politics POC needs the USA (D980)");
   return {
     clock: DATETIME_START,
     zones: tableFromRows(zones),
@@ -689,6 +695,7 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
     births: births.value,
     news: deps.newsWireDefault(),
     recaps: [],
+    politics,
   };
 }
 

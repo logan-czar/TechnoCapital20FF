@@ -485,6 +485,67 @@ export const STARTUP_EVENT_SPEC = rowSpec<StartupEvent>({
   notes: str,
 });
 
+/** politics-usa.csv: one row per US state (politics POC, D980). */
+export interface PoliticsStateRow {
+  state: string;
+  house_seats: number;
+  /** The real Senate classes, `1;2`; empty for DC. */
+  senate_classes: string[];
+  /** Party lean: Democrats minus Republicans, in points (A, T). */
+  dem_margin_pts: number;
+  notes: string;
+}
+
+export const POLITICS_STATE_SPEC = rowSpec<PoliticsStateRow>({
+  state: str,
+  house_seats: u32,
+  senate_classes: semiList,
+  dem_margin_pts: f64,
+  notes: str,
+});
+
+/** What an appointed US post is (politics POC, D983, D984). */
+export type PoliticsOfficeKind = "VicePresident" | "Cabinet" | "Supreme" | "Appeals" | "Trial";
+
+export const POLITICS_OFFICE_KIND_SERDE: Readonly<Record<string, PoliticsOfficeKind>> = {
+  vice_president: "VicePresident",
+  cabinet: "Cabinet",
+  supreme_court: "Supreme",
+  appeals_court: "Appeals",
+  trial_court: "Trial",
+};
+
+/** The skill a post's appointment score reads (a `Skills` field). */
+export type PoliticsOfficeSkill = "finance" | "operations" | "persuasion" | "intrigue" | "tech" | "hustle";
+
+export const POLITICS_OFFICE_SKILL_SERDE: Readonly<Record<string, PoliticsOfficeSkill>> = {
+  finance: "finance",
+  operations: "operations",
+  persuasion: "persuasion",
+  intrigue: "intrigue",
+  tech: "tech",
+  hustle: "hustle",
+};
+
+/** politics-usa-offices.csv: one row per appointed US post (politics POC, D983, D984). */
+export interface PoliticsOffice {
+  id: string;
+  title: string;
+  kind: PoliticsOfficeKind;
+  seats: number;
+  skill: PoliticsOfficeSkill;
+  notes: string;
+}
+
+export const POLITICS_OFFICE_SPEC = rowSpec<PoliticsOffice>({
+  id: str,
+  title: str,
+  kind: enumOf(POLITICS_OFFICE_KIND_SERDE),
+  seats: u32,
+  skill: enumOf(POLITICS_OFFICE_SKILL_SERDE),
+  notes: str,
+});
+
 /** What a name in a names file is for (spec 3.7.1, 5.19.3). */
 export type NameKind =
   | "Male"

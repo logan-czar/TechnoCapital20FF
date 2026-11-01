@@ -4,7 +4,15 @@
 // read quotes. A view the sim has not ported yet never arrives (views/patch.ts): readers see
 // `undefined` for it and must cope.
 
-import type { ClockView, FromSim, Notice, SimViews, ViewName, ViewsPatch } from "@tc20ff/sim";
+import {
+  type ClockView,
+  type FromSim,
+  type Notice,
+  type SimViews,
+  VIEW_NAMES,
+  type ViewName,
+  type ViewsPatch,
+} from "@tc20ff/sim";
 
 export type StoreKey = ViewName | "notices" | "messages" | "status";
 export type Frame = Extract<FromSim, { kind: "Frame" }>;
@@ -105,33 +113,7 @@ export class SimStore {
   applyFrame(frame: Frame): void {
     const patch = frame.views;
     const moved: StoreKey[] = [];
-    this.take(patch, "places", moved);
-    this.take(patch, "countries", moved);
-    this.take(patch, "zones", moved);
-    this.take(patch, "rates", moved);
-    this.take(patch, "characters", moved);
-    this.take(patch, "cap_table", moved);
-    this.take(patch, "quotes", moved);
-    this.take(patch, "price_bars", moved);
-    this.take(patch, "exchanges", moved);
-    this.take(patch, "market_stats", moved);
-    this.take(patch, "births", moved);
-    this.take(patch, "projection", moved);
-    this.take(patch, "company_rows", moved);
-    this.take(patch, "company_detail", moved);
-    this.take(patch, "units", moved);
-    this.take(patch, "tech", moved);
-    this.take(patch, "industry_rows", moved);
-    this.take(patch, "industry_detail", moved);
-    this.take(patch, "cycle", moved);
-    this.take(patch, "map_layers", moved);
-    this.take(patch, "province_cards", moved);
-    this.take(patch, "statements", moved);
-    this.take(patch, "filings", moved);
-    this.take(patch, "ratings", moved);
-    this.take(patch, "recap", moved);
-    this.take(patch, "map_static", moved);
-    this.take(patch, "clock", moved);
+    for (const name of VIEW_NAMES) if (name !== "news") this.take(patch, name, moved);
     if (patch.news_appended !== undefined) {
       const old = this.views.news;
       const feed =

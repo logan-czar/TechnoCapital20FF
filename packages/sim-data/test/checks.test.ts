@@ -18,6 +18,39 @@ function at<T>(a: readonly T[], i: number): T {
 }
 
 describe("sim-data checks", () => {
+  it("politics_state_without_a_province", () => {
+    expectError(
+      (w) => {
+        at(w.politics_states.rows, 0).state = "Alabamastan";
+      },
+      "politics-usa.csv",
+      2,
+      "state",
+    );
+  });
+
+  it("politics_unknown_senate_class", () => {
+    expectError(
+      (w) => {
+        at(w.politics_states.rows, 0).senate_classes = ["2", "4"];
+      },
+      "politics-usa.csv",
+      2,
+      "senate_classes",
+    );
+  });
+
+  it("politics_state_with_one_senate_class", () => {
+    expectError(
+      (w) => {
+        at(w.politics_states.rows, 0).senate_classes = ["2"];
+      },
+      "politics-usa.csv",
+      2,
+      "senate_classes",
+    );
+  });
+
   it("unknown_key_city_province", () => {
     expectError(
       (w) => at(w.key_cities.rows, 0).province_ids.push("XX-9999"),

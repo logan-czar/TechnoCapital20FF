@@ -176,6 +176,9 @@ const SLOT_TABLE = Object.freeze([
   ["DailyReactionWeek", "Daily", "3.reaction_week"],
   // Projection ranges (5.16).
   ["DailyProjections", "Daily", "4.projections"],
+  // US politics POC: elections, handovers, appointments (D985); before the post so its headlines
+  // go out the same day.
+  ["DailyPolitics", "Daily", "4b.politics"],
   // News: post the day's headlines (5.18).
   ["DailyNews", "Daily", "5.news"],
   // Zone exchange confidence (5.1.2).

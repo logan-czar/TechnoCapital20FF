@@ -103,6 +103,22 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
   countries: {
     ids: ["countries.countries[].id", "countries.countries[].zone", "countries.countries[].hq_companies[]"],
   },
+  // All public, with no company or industry subject (D980).
+  politics: {
+    ids: [
+      "politics.president.id",
+      "politics.vice_president.id",
+      "politics.cabinet[].id",
+      "politics.house[].id",
+      "politics.house[].province",
+      "politics.senate[].id",
+      "politics.courts[].judges[].id",
+      "politics.president_terms",
+      "politics.country",
+      "politics.next.senate_class",
+      "politics.elections[].senate_class",
+    ],
+  },
   zones: { ids: ["zones.zones[].id", "zones.zones[].number", "zones.zones[].members[]"] },
   rates: {
     ids: [

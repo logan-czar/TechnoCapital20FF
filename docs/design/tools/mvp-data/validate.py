@@ -660,6 +660,27 @@ def run(data):
                 errors.append(f'{eid}: {k} cast {e[f"{k}_min"]} to {e[f"{k}_max"]} not within 1 to 5 (5.19)')
     if events and n_startups != 32:
         errors.append(f'startup-events.csv: {n_startups} startups, expected 32 (5.19.2)')
+    # Politics POC (D980): real seat totals, and every state matches a US province's region column.
+    states = load(os.path.join(data, 'politics-usa.csv'))
+    offices = load(os.path.join(data, 'politics-usa-offices.csv'))
+    if sum(int(s['house_seats']) for s in states) != 435:
+        errors.append('politics-usa.csv: House seats do not total 435')
+    for k, n in (('1', 33), ('2', 33), ('3', 34)):
+        got = sum(k in s['senate_classes'].split(';') for s in states)
+        if got != n:
+            errors.append(f'politics-usa.csv: Senate class {k} has {got} seats, expected {n}')
+    regions = {p['region'] for p in load(os.path.join(data, 'provinces-north-america.csv')) if p['country'] == 'USA'}
+    if {s['state'] for s in states} != regions:
+        errors.append('politics-usa.csv: states differ from the US provinces\' regions')
+    for s in states:
+        want = 0 if s['state'] == 'District of Columbia' else 2
+        if len([c for c in s['senate_classes'].split(';') if c]) != want:
+            errors.append(f"politics-usa.csv: {s['state']} has the wrong number of Senate classes")
+    seats = {}
+    for o in offices:
+        seats[o['kind']] = seats.get(o['kind'], 0) + int(o['seats'])
+    if seats != {'vice_president': 1, 'cabinet': 15, 'supreme_court': 9, 'appeals_court': 13, 'trial_court': 12}:
+        errors.append(f'politics-usa-offices.csv: seats by kind {seats}')
     print(f'Rows: industries {len(inds)}, country-economy {len(ce)}, key-cities {len(kc)}, zones {len(zones)}, '
           f'ai-boom {len(sched)}, startup-events {len(events)} ({n_startups} startups)')
     for e in errors:

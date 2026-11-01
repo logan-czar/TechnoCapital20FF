@@ -46,6 +46,7 @@ import type { MarketState } from "./state/market.ts";
 import type { NewsWire } from "./state/news.ts";
 import type { ComputeBill, DataBook, Stations } from "./state/ops.ts";
 import type { NameBooks, Seat, SimpleCharacter, Skills, Trait } from "./state/people.ts";
+import type { PoliticsState } from "./state/politics.ts";
 import type { Recap } from "./state/recap.ts";
 
 export type { Table } from "./collections.ts";
@@ -131,6 +132,8 @@ export interface World {
    * (m9-plan section 1; D433). Rust `Vec<Arc<Recap>>`.
    */
   recaps: Recap[];
+  /** The US politics POC (D980). */
+  politics: PoliticsState;
 }
 
 /**

@@ -27,6 +27,15 @@ export type StartupEventId = Ordinal<"StartupEventId">;
 /** A posted Pdoomberg Wire headline (spec 5.18, 8): its place in post order, from 0 (D544). */
 export type HeadlineId = Ordinal<"HeadlineId">;
 
+/** A US politician (politics POC, D980), from `politicians_made`; never a place in the table. */
+export type PoliticianId = Ordinal<"PoliticianId">;
+/** A US state: its row in `PoliticsState.states` (D980). */
+export type UsStateId = Ordinal<"UsStateId">;
+/** A House district: its row in `PoliticsState.districts` (D982). */
+export type DistrictId = Ordinal<"DistrictId">;
+/** An appointed US post: its row in `PoliticsState.posts` (D983, D984). */
+export type PoliticsPostId = Ordinal<"PoliticsPostId">;
+
 /** Rust's `u32::try_from(index).expect(..)`: an ordinal is a whole number in 0..2^32. */
 export const MAX_ORDINAL = 0xffff_ffff;
 

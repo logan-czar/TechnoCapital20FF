@@ -41,6 +41,7 @@ import * as market from "./market/jobs.ts";
 import * as news from "./news/jobs.ts";
 import { register as opsRegister } from "./ops/index.ts";
 import { newSeatsJob } from "./people/seating.ts";
+import { register as politicsRegister } from "./politics/jobs.ts";
 import * as recap from "./recap/jobs.ts";
 import * as timeAlerts from "./time/alerts.ts";
 import { type Scheduler, schedulerNew, schedulerRegister } from "./time/scheduler.ts";
@@ -61,6 +62,9 @@ export function registerJobs(s: Scheduler): void {
 
   // ops::register (crates/sim/src/ops/mod.rs)
   opsRegister(s);
+
+  // politics (D980; no Rust twin)
+  politicsRegister(s);
 
   // people::register (crates/sim/src/people/mod.rs)
   r(s, "MonthlyAssets", "people.new_seats", newSeatsJob); // people/seating newSeatsJob

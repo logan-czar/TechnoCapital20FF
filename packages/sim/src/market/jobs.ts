@@ -577,6 +577,8 @@ function projectionClone(world: World): World {
     },
     news: { ...world.news, feed: chunkLogNew<never>() },
     recaps: [],
+    // Politics jobs are not projection slots: leave the people and the results out of the copy.
+    politics: { ...world.politics, politicians: [], districts: [], pending: null, elections: [] },
   } as World;
   const clone = structuredClone(lite);
   clone.companies.forEach((c, i) => {

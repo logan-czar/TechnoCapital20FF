@@ -54,6 +54,7 @@ export const KINDS: readonly (readonly [string, Pick])[] = [
   ["Phase changes", 5],
   ["Bankruptcies and removals", 6],
   ["Raises and other", 7],
+  ["Politics", 8],
 ];
 
 /** A headline's kind name and its filter group. */
@@ -85,6 +86,8 @@ export function kindOf(k: HeadlineKind): [string, Pick] {
       return ["Failed raise", 7];
     case "Chatbot":
       return ["Chatbot", 7];
+    case "Politics":
+      return ["Politics", 8];
   }
 }
 

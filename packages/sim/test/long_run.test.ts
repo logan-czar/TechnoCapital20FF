@@ -46,7 +46,7 @@ function specOrder(t: DateTime): Slot[] {
   // 4.2 daily; reaction week on the 3rd to the 8th of a release month.
   v.push("DailyPriceBars", "DailyFairValue");
   if (quarterMonth && d.day >= 3 && d.day <= 8) v.push("DailyReactionWeek");
-  v.push("DailyProjections", "DailyNews", "DailyZoneConfidence");
+  v.push("DailyProjections", "DailyPolitics", "DailyNews", "DailyZoneConfidence");
   // 4.3 monthly on the 1st; step 1 only at a quarter start.
   if (d.day === 1) {
     if (quarterMonth) {

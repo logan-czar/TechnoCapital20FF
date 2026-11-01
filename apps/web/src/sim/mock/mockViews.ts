@@ -14,6 +14,7 @@ import {
   dateTimeDate,
   dateTimeHour,
   dateTimeWeekday,
+  emptyPolitics,
   type Figure,
   type Headline,
   type IndustryId,
@@ -462,6 +463,7 @@ export function initialViews(
     ratings: view({ companies: [], base_rate: 0.02 }, v),
     recap: view({ recaps: [], watchlist: [] }, v),
     map_static: view({ provinces: [], metros: [], key_cities: [], regions: [], geo: null }, v),
+    politics: view(emptyPolitics(), v),
   };
 }
 

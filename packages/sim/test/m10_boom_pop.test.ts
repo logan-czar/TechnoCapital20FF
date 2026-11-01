@@ -42,6 +42,7 @@ import { scheduler } from "../src/jobs.ts";
 import { simNew, simWorld, startWorld } from "../src/lib.ts";
 import { start as marketStart } from "../src/market/index.ts";
 import { start as seatingStart } from "../src/people/seating.ts";
+import { politicsStart } from "../src/politics/jobs.ts";
 import { NoNoise, rngStreamsDraws, rngStreamsEq, rngStreamsNew } from "../src/rng.ts";
 import {
   dateTimeDate,
@@ -97,6 +98,7 @@ function startWorldWith(d: WorldData, draws: DrawSource, beforeDraws: (w: World)
   drawFirstVotes(world, draws);
   financeStart(world);
   marketStart(world, draws);
+  politicsStart(world, draws);
   world.news.labels = world.industries.map((i) => i.phase_label);
   return world;
 }

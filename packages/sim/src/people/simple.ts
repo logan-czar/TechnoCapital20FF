@@ -3,7 +3,14 @@
 // types/state/people.ts.
 
 import type { DrawSource } from "../types/draws.ts";
-import type { CompanySize, NameBook, Seat, SimpleCharacter, Trait } from "../types/state/people.ts";
+import type {
+  BaseCharacter,
+  CompanySize,
+  NameBook,
+  Seat,
+  SimpleCharacter,
+  Trait,
+} from "../types/state/people.ts";
 import { SKILL_KIND_ALL, type SkillKind, seatSkills, skillsDefault } from "./board.ts";
 import { nameBookDraw } from "./names.ts";
 import { traitPair } from "./traits.ts";
@@ -136,6 +143,30 @@ export function usesSkill(seat: Seat, kind: SkillKind): boolean {
 }
 
 /**
+ * The fields every base character draws (spec 3.7.1, D980), in a frozen order (D202): the name, the
+ * age, the six skills in column order, the trait count (two with `TWO_TRAIT_CHANCE`), then the traits
+ * from `list` with no opposite pair (the first uniform, the second uniform over the rest less its
+ * opposite).
+ */
+export function drawBaseFields(
+  draws: DrawSource,
+  names: NameBook,
+  age: Range,
+  skillRange: (kind: SkillKind) => Range,
+  list: readonly Trait[],
+): Omit<BaseCharacter, "class"> {
+  const name = nameBookDraw(names, draws);
+  const drawnAge = rangeDraw(age, draws);
+  const skills = skillsDefault();
+  for (const kind of SKILL_KIND_ALL) skills[kind] = rangeDraw(skillRange(kind), draws);
+  const two = draws.chance("Gen", TWO_TRAIT_CHANCE);
+  const first = drawTrait(draws, list, []);
+  const traits = [first];
+  if (two) traits.push(drawTrait(draws, list, [first]));
+  return { name, age: drawnAge, skills, traits };
+}
+
+/**
  * Generates the simple character for `seat` of a company of `size` (spec 3.7.1, T): uniform
  * integer draws from the gen stream, in a frozen order (D202): the name (`nameBookDraw`), the
  * age, the six skills in column order (each seat skill in the seat range, the rest in the other
@@ -150,17 +181,8 @@ export function generateSimple(
   seat: Seat,
 ): SimpleCharacter {
   const ranges = companySizeRanges(size);
-  const name = nameBookDraw(names, draws);
-  const age = rangeDraw(ranges.age, draws);
-  const skills = skillsDefault();
-  for (const kind of SKILL_KIND_ALL) {
-    const range = usesSkill(seat, kind) ? ranges.seat_skill : ranges.other_skills;
-    skills[kind] = rangeDraw(range, draws);
-  }
-  const list = roleTraits(seat);
-  const two = draws.chance("Gen", TWO_TRAIT_CHANCE);
-  const first = drawTrait(draws, list, []);
-  const traits = [first];
-  if (two) traits.push(drawTrait(draws, list, [first]));
-  return { name, age, skills, traits, seat, size };
+  const skillRange = (kind: SkillKind): Range =>
+    usesSkill(seat, kind) ? ranges.seat_skill : ranges.other_skills;
+  const base = drawBaseFields(draws, names, ranges.age, skillRange, roleTraits(seat));
+  return { class: "Executive", ...base, seat, size };
 }

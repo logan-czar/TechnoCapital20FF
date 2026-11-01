@@ -56,6 +56,7 @@ export const LIST_PAGES: readonly PageRef[] = [
   { kind: "exchanges" },
   { kind: "zones" },
   { kind: "events" },
+  { kind: "politics" },
   { kind: "settings" },
 ];
 
