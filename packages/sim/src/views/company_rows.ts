@@ -16,7 +16,7 @@ import type { Statement } from "../types/state/finance.ts";
 import type { CompanyRow, CompanyRowsView, Listing } from "../types/views/company_rows.ts";
 import type { Estimator, Figure } from "../types/views/estimate.ts";
 import type { World } from "../types/world.ts";
-import { controllerName, controllerOf } from "./cap_table.ts";
+import { controllerName, controllerOf, controllerView } from "./cap_table.ts";
 import { estimatorBanded, estimatorCompanyNow, figureExactOf, viewInputEstimator } from "./estimate.ts";
 import type { ViewInput } from "./index.ts";
 import { published, ttmLine } from "./statements.ts";
@@ -78,7 +78,6 @@ export function buildCompanyRows(input: ViewInput): CompanyRowsView {
         : s.listed_on === null
           ? { kind: "BeforeStart", exchange: s.exchange }
           : { kind: "InPlay", exchange: s.exchange, date: s.listed_on, ipo_price: s.ipo_price };
-    const owner = c.start_control?.owner_of_record ?? null;
     const controller = controllerOf(c);
     rows.push({
       id,
@@ -99,9 +98,7 @@ export function buildCompanyRows(input: ViewInput): CompanyRowsView {
       archetype: c.archetype,
       origin: { ...c.origin },
       listing,
-      owner_of_record: owner,
-      owner_of_record_name: owner === null ? null : w.characters[owner]!.name,
-      controller,
+      controller: controllerView(controller),
       controller_name: controllerName(w, controller),
       estimated: banded,
     });

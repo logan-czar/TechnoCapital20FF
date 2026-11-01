@@ -52,14 +52,13 @@ import {
   startWorld,
 } from "../../src/lib.ts";
 import { dailyBarEfvHigh, dailyBarEfvLow } from "../../src/market/daily.ts";
-import { traitFromName } from "../../src/people/traits.ts";
 import { RECAPS_KEPT } from "../../src/recap/jobs.ts";
 import { rngStreamsDraws, rngStreamsNew } from "../../src/rng.ts";
 import { dateTimeAt, dateTimeMidnight, simDateQuarter, simDateYmd } from "../../src/time/calendar.ts";
 import { controlsDefault } from "../../src/time/control.ts";
 import { schedulerRunTick } from "../../src/time/scheduler.ts";
 import { cmpQuarter } from "../../src/types/calendar.ts";
-import type { CharacterId, CompanyId } from "../../src/types/ids.ts";
+import type { CompanyId } from "../../src/types/ids.ts";
 import type { Notice } from "../../src/types/world.ts";
 import { placesViewPlaceName } from "../../src/views/places.ts";
 import { priceBarsViewGetPriceHistory } from "../../src/views/price_bars.ts";
@@ -114,54 +113,19 @@ describe("m9 views", () => {
     expect(halcyon?.lines[0]?.name).toBe(companyRow(d, "CO-0132").name);
   });
 
-  it("characters_list_terry_with_his_roles_and_holdings", () => {
+  it("characters_list_only_seated_simple_characters", () => {
     const d = data();
     const sim = unwrap(simNew(structuredClone(d), 1), "Sim::new");
     const w = simWorld(sim);
     const v = simViews(sim).characters.data;
-    expect(v.full.length).toBe(d.characters.rows.length);
-    const idOf = (key: string): CharacterId => {
-      const i = w.characters.findIndex((c) => c.key === key);
-      if (i < 0) throw new Error(`no character ${key}`);
-      return i as CharacterId;
-    };
-    const terryId = idOf("CH-0002");
-    const t = v.full.find((c) => c.id.kind === "Full" && c.id.id === terryId);
-    if (t === undefined) throw new Error("no Terry");
-    const csv = character(d, "CH-0002");
-    expect([t.name, t.age]).toEqual([csv.name, csv.age]);
-    expect([t.skills.finance, t.skills.operations, t.skills.persuasion]).toEqual([
-      csv.finance,
-      csv.operations,
-      csv.persuasion,
-    ]);
-    expect([t.skills.intrigue, t.skills.tech, t.skills.hustle]).toEqual([csv.intrigue, csv.tech, csv.hustle]);
-    const traits = csv.traits.map((n) => traitFromName(n.trim())).filter((x) => x !== null);
-    expect(t.traits).toEqual(traits);
-    expect(t.full && t.id.kind === "Full" && t.id.id === terryId).toBe(true);
-    const home = t.home;
-    if (home === null) throw new Error("no home");
-    expect([home.province_name, home.country_name]).toEqual(["Edmonton", "Canada"]);
-    // companies.csv: Terry controls CO-0001 to CO-0003 (60%, 100%, 100%).
-    const controls = t.roles.flatMap((r) => (r.kind === "Controller" ? [w.companies[r.company]?.key] : []));
-    expect(controls).toEqual(["CO-0001", "CO-0002", "CO-0003"]);
-    expect(t.holdings.length).toBe(3);
-    expect(Math.abs((t.holdings[0]?.share as number) - 0.6) < 1e-6).toBe(true);
-    expect(Math.abs((t.holdings[1]?.share as number) - 1.0) < 1e-12).toBe(true);
-    // A proxy: CH-0107 is the owner of record of CO-0031 and CO-0032 (companies.csv).
-    const proxyId = idOf("CH-0107");
-    const proxy = v.full.find((c) => c.id.kind === "Full" && c.id.id === proxyId);
-    const owned = (proxy?.roles ?? []).flatMap((r) =>
-      r.kind === "OwnerOfRecord" ? [w.companies[r.company]?.key] : [],
-    );
-    expect(owned).toEqual(["CO-0031", "CO-0032"]);
+    expect("full" in v).toBe(false);
     // Every seated simple character is listed once, as partial, with its seat.
     const seated = w.companies.reduce(
       (acc, c) => acc + c.board.filter((h) => h !== null && h.kind === "Simple").length,
       0,
     );
     expect(v.partial.length).toBe(seated);
-    expect(v.partial.every((p) => !p.full && p.home === null && p.roles.length === 1)).toBe(true);
+    expect(v.partial.every((p) => p.roles.length === 1)).toBe(true);
     for (let i = 0; i + 1 < v.partial.length; i++) {
       const [a, b] = [v.partial[i]?.id, v.partial[i + 1]?.id];
       expect(a?.kind === "Partial" && b?.kind === "Partial" && a.id < b.id).toBe(true);
@@ -240,13 +204,11 @@ describe("m9 views", () => {
     // Listing::date() is None before the start; Listing::exchange() is the row's exchange.
     expect(a.listing.kind === "BeforeStart" ? a.listing.exchange : null).toBe(a.exchange);
     expect(a.controller_name).toBe("Terry Tippacanoe");
-    expect(a.owner_of_record).toBeNull();
     expect(!a.estimated && figExact(a.revenue_ttm) !== null).toBe(true);
     // CO-0031 is private, held for CH-0011 by its owner of record CH-0107 (companies.csv).
     const b = row("CO-0031");
     expect(b.listing).toEqual({ kind: "Private" });
     expect(b.controller_name).toBe(character(d, "CH-0011").name);
-    expect(b.owner_of_record_name).toBe(character(d, "CH-0107").name);
     expect(b.estimated && figBand(b.revenue_ttm) !== null && figBand(b.value) !== null).toBe(true);
     // A widely held company has no controller.
     expect(row("CO-0123").controller).toEqual({ kind: "None" });
@@ -299,9 +261,7 @@ describe("m9 views", () => {
     expect(figExact(byField(v.company_detail.data.companies, "id", priv)?.cash_usd as never)).toBe(truth);
     unwrap(simApply(sim, { kind: "SetOmniscient", on: false }), "SetOmniscient");
     const s2 = byField(simViews(sim).statements.data.companies, "id", priv);
-    expect(
-      s2 !== undefined && s2.estimated && s2.quarters.length === 0 && s2.estimated_quarters.length > 0,
-    ).toBe(true);
+    expect(s2?.estimated && s2.quarters.length === 0 && s2.estimated_quarters.length > 0).toBe(true);
 
     // The quarterly rebuild reuses archived quarters' estimates (D435): after a year of
     // rebuilds, a fresh build (the toggle) gives the same view.

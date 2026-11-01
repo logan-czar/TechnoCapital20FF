@@ -140,9 +140,10 @@ export function trailingRevenue(c: Company): number {
   return l === null ? 0.0 : l.revenue;
 }
 
-/** The traits of the company's named controller, if it is a full character (spec 6 "traits"). */
-export function controllerTraits(world: World, c: Company): readonly Trait[] {
-  return c.controller === null ? [] : (world.characters[c.controller] as World["characters"][number]).traits;
+/** The traits of the company's named controller, a base character (spec 6 "traits"; D989). */
+export function controllerTraits(c: Company): readonly Trait[] {
+  const ctl = c.start_control?.controller;
+  return ctl !== undefined && ctl.kind === "Character" ? ctl.character.traits : [];
 }
 
 /**
@@ -190,7 +191,7 @@ export function keyFigures(world: World, c: Company): KeyFigures {
  * off R, enough to move a rating that D236 sizes to a band edge; the run rate does not.
  */
 export function runRate(world: World, c: Company): [Ledger, ImpliedRating, CreditLine] {
-  const traits = controllerTraits(world, c);
+  const traits = controllerTraits(c);
   const l = ledgerDefault();
   const sole = c.units.length === 1;
   for (const uid of c.units) {

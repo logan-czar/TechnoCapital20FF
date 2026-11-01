@@ -8,8 +8,8 @@
 // Tuple-variant field names (Rust tuple variants have none; the union tag is `kind`):
 // Trigger::Date(Date) is `date`, Region::Superregion(String) `slug`, Region::Country(String)
 // `iso3`, EventKind::Random(EventType) `event_type`, EventKind::Fixed(String) `id`,
-// VoterRole::Seat(Seat) `seat`, VoterRole::Director(u32) `position`, BallotVoter::Full(CharacterId)
-// `character`.
+// VoterRole::Seat(Seat) `seat`, VoterRole::Director(u32) `position`.
+
 //
 // Not ported (logic and types no World field reaches): BirthsState::{from_data, in_regions,
 // home_others}, Sites::{superregion_slug, key_city_lists, place}, BadBirthsData,
@@ -20,7 +20,7 @@
 // IpoTestInputs, Voter, Listing, the IPO tests, yes chances and the vote; weights.rs; jobs.rs.
 
 import type { SimDate } from "../calendar.ts";
-import type { CharacterId, CompanyId, CountryId, IndustryId, ProvinceId, StartupEventId } from "../ids.ts";
+import type { CompanyId, CountryId, IndustryId, ProvinceId, StartupEventId } from "../ids.ts";
 import type { Seat } from "./people.ts";
 
 // ---------------------------------------------------------------- state.rs
@@ -129,8 +129,6 @@ export interface FixedEvent {
   groups: FixedGroup[];
   /** Revenue each, USD a year, low and high. */
   revenue_usd: [number, number];
-  /** Full characters per startup (5.19.4). */
-  full: CountRange;
   /** Partial characters per startup (5.19.4). */
   partial: CountRange;
 }
@@ -196,13 +194,13 @@ export type VoterRole =
   | { kind: "Controller" };
 
 /**
- * Who cast a ballot, as the board stood at the vote (spec 5.20.1 step 2; D542): a full character
- * by id, a partial (simple) character by its 3.7.1 id (u32) with its name (a partial character
+ * Who cast a ballot, as the board stood at the vote (spec 5.20.1 step 2; D542): a partial (simple) character by its 3.7.1 id (u32) with its name (a partial character
  * can leave its seat and the views then no longer list it), or the state.
  */
 export type BallotVoter =
-  | { kind: "Full"; character: CharacterId }
   | { kind: "Partial"; id: number; name: string }
+  /** A named controller holding no seat (5.20.1 step 4), by name (D989). */
+  | { kind: "Controller"; name: string }
   /** A state controller holding no seat (5.20.1 step 4). */
   | { kind: "State" };
 

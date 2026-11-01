@@ -104,18 +104,13 @@ export function newSeatsJob(world: World, ctx: JobCtx): void {
  * The 5.7 board of a company: each filled labor seat with its holder's drawn skills and traits
  * (simple or full); closed and waiting seats and the Chair count skill 3 (D205).
  */
-export function boardOf(world: World, company: Company): Board {
+export function boardOf(_world: World, company: Company): Board {
   const board = boardDefault();
   for (let i = 0; i < company.board.length; i++) {
     const holder = company.board[i];
     if (holder === null || holder === undefined) continue;
     const seat = SEAT_LABOR[i] as Seat;
-    if (holder.kind === "Simple") {
-      boardSet(board, seat, { skills: holder.seat.character.skills, traits: holder.seat.character.traits });
-    } else {
-      const ch = world.characters[holder.character]!;
-      boardSet(board, seat, { skills: ch.skills, traits: ch.traits });
-    }
+    boardSet(board, seat, { skills: holder.seat.character.skills, traits: holder.seat.character.traits });
   }
   return board;
 }

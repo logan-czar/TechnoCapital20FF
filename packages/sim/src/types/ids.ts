@@ -18,8 +18,6 @@ export type ProvinceId = Ordinal<"ProvinceId">;
 export type IndustryId = Ordinal<"IndustryId">;
 /** A corporation (spec 3.5), from companies.csv `id`; companies born in play append (5.19). */
 export type CompanyId = Ordinal<"CompanyId">;
-/** A full character (spec 3.7.2), from characters.csv `id`; those made in play append. */
-export type CharacterId = Ordinal<"CharacterId">;
 /** A business unit (spec 3.6). One per company in the MVP; unit n is company n's starting unit. */
 export type UnitId = Ordinal<"UnitId">;
 /** A startup event that fired, fixed or random (spec 3.1 `startup_events`, 5.19). */

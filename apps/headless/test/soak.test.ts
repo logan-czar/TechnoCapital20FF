@@ -76,7 +76,13 @@ describe("soak orchestration", () => {
         readFileSync(join(import.meta.dirname, "../../../test/fixtures/rust-reference", name), "utf8").split(
           /\r?\n/,
         )[0] as string;
-      expect(y.split("\n")[0]).toBe(ref("years.csv"));
+      // D989: the full-character columns of the Rust header are dropped.
+      const dropped = ["full_characters_made", "full_characters", "cast_full_min", "cast_full_max"];
+      const rustYears = ref("years.csv")
+        .split(",")
+        .filter((c) => !dropped.includes(c))
+        .join(",");
+      expect(y.split("\n")[0]).toBe(rustYears);
       expect(q.split("\n")[0]).toBe(ref("quarters.csv"));
       expect(t.split("\n")[0]).toBe(ref("timing.csv"));
     } finally {

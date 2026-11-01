@@ -44,12 +44,12 @@ export function planAtLoad(world: World): void {
 }
 
 /**
- * The traits the batch passes as the controller's (spec 6 "traits"): the named controller's when
- * it is a full character; `planTraits` drops them for a company born in play (5.19.5).
+ * The traits the batch passes as the controller's (spec 6 "traits"): the named controller's, a
+ * base character (D989); `planTraits` drops them for a company born in play (5.19.5).
  */
 function controllerTraits(world: World, id: CompanyId): readonly Trait[] | null {
-  const ch = (world.companies[id] as Company).controller;
-  return ch === null ? null : (world.characters[ch] as World["characters"][number]).traits;
+  const ctl = (world.companies[id] as Company).start_control?.controller;
+  return ctl !== undefined && ctl.kind === "Character" ? ctl.character.traits : null;
 }
 
 /**

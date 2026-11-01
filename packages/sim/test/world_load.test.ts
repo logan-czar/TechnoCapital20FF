@@ -21,7 +21,7 @@ describe("world load", () => {
     expect(w.countries.length).toBe(211);
     expect(w.provinces.length).toBe(3963);
     expect(w.companies.length).toBe(651);
-    expect(w.characters.length).toBe(296);
+    expect("characters" in w).toBe(false);
     expect(w.industries.length).toBe(42);
     expect(w.zones.length).toBe(26);
   });
@@ -35,7 +35,6 @@ describe("world load", () => {
     expect(sorted(w.countries.map((c) => c.key))).toBe(true);
     expect(sorted(w.industries.map((c) => c.key))).toBe(true);
     expect(sorted(w.zones.map((c) => c.key))).toBe(true);
-    expect(sorted(w.characters.map((c) => c.key))).toBe(true);
     for (const [id, c] of idRows<CompanyId, (typeof w.companies)[number]>(w.companies)) {
       // CompanyId::from_index(id.index()) == id is the identity on branded numbers.
       expect(w.companies[id]).toBe(c);

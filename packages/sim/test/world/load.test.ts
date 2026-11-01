@@ -50,10 +50,10 @@ describe("buildWorld", () => {
     expect(w.provinces.length).toBe(3963);
     expect(w.industries.length).toBe(42);
     expect(w.companies.length).toBe(651);
-    expect(w.characters.length).toBe(296);
+    expect("characters" in w).toBe(false);
     expect(w.units.length).toBe(651);
     // Ids ascend (D4), so ordinals follow them.
-    for (const t of [w.zones, w.countries, w.provinces, w.industries, w.companies, w.characters]) {
+    for (const t of [w.zones, w.countries, w.provinces, w.industries, w.companies]) {
       for (let i = 1; i < t.length; i++)
         expect((t[i - 1] as { key: string }).key < (t[i] as { key: string }).key).toBe(true);
     }

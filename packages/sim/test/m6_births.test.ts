@@ -202,7 +202,6 @@ describe("m6 births", () => {
       const snap = snaps.find((s) => sameDate(s.date, e.date));
       if (snap === undefined) throw new Error("no snapshot for the event's lock");
       let range: [number, number];
-      let full: [number, number];
       let partial: [number, number];
       if (e.kind.kind === "Random") {
         const t = e.kind.event_type;
@@ -220,10 +219,10 @@ describe("m6 births", () => {
           expect(e.companies.length).toBe(1);
         }
         expect(e.industries.every((i) => i === e.industries[0])).toBe(true);
-        [range, full, partial] = typeRanges(t);
+        [range, , partial] = typeRanges(t);
       } else {
         expect(e.date, `${e.kind.id} fires at its plan lock`).toEqual(fixedDate(e.kind.id));
-        [range, full, partial] = fixedRanges(e.kind.id);
+        [range, , partial] = fixedRanges(e.kind.id);
       }
       for (const id of e.companies) {
         const c = rowOf(w.companies, id);
@@ -234,13 +233,8 @@ describe("m6 births", () => {
         expect(r >= 1.0e6 && r <= range[1] * 1e6 * (1.0 + 1e-12), `${c.key}: ${r}`).toBe(true);
         const cap = 0.02 * (snap.fringe_revenue_after_fixed[i] as number);
         expect(r >= range[0] * 1e6 * (1.0 - 1e-12) || r <= cap * (1.0 + 1e-9), c.key).toBe(true);
-        // The cast (5.19.4): founders within the event's range; the lead founder is CEO and the
-        // controller; every open labor seat held.
-        const f = c.founders.length;
-        expect(f >= full[0] && f <= full[1], `${c.key}: ${f} founders`).toBe(true);
-        const lead = c.founders[0];
-        expect(c.controller).toBe(lead);
-        expect(c.board[0]).toEqual({ kind: "Full", character: lead });
+        // The cast (5.19.4, D989): no founders and no named controller; every open labor seat held.
+        expect(c.board.every((h) => h === null || h.kind === "Simple")).toBe(true);
         const open = Math.min(c.labor_units, 5);
         expect(
           c.board.slice(0, open).every((h) => h !== null),
@@ -250,28 +244,9 @@ describe("m6 births", () => {
           c.board.filter((h) => h !== null && h.kind === "Simple").length +
           c.directors.filter((d) => d.kind === "Simple").length;
         expect(partials, c.key).toBeGreaterThanOrEqual(Math.min(partial[0], open - 1));
-        for (const ch of c.founders) {
-          const fc = rowOf(w.characters, ch);
-          expect(fc.tier).toBe("generated");
-          // CH-0001 style key: the character's id plus one, four digits.
-          expect(fc.key).toBe(`CH-${String(ch + 1).padStart(4, "0")}`);
-          expect(fc.traits.length).toBe(3);
-        }
-        // The cap table (5.19.3, D270): founders 60%, the lead half of it when there are
-        // several; seed investors the rest; it sums to shares_out.
-        const total = sum(c.holders.map((h) => h.shares));
+        // The cap table (D989): the seed investors hold all of it; it sums to shares_out.
         if (c.public) continue;
-        expect(total, c.key).toBe(c.shares_out);
-        const s = c.shares_out;
-        const leadShares = (c.holders[0] as { shares: number }).shares;
-        expect(c.holders[0]?.holder).toEqual({ kind: "Founder", character: lead });
-        const leadShare = f === 1 ? 0.6 : 0.3;
-        // Each founder's shares round down (D270): off by under a share each.
-        const rounding = (f + 1.0) / s;
-        expect(Math.abs(leadShares / s - leadShare) <= rounding, c.key).toBe(true);
-        const seed = c.holders[c.holders.length - 1];
-        expect(seed?.holder).toEqual({ kind: "SeedInvestors" });
-        expect(Math.abs((seed as { shares: number }).shares / s - 0.4) <= rounding, c.key).toBe(true);
+        expect(c.holders, c.key).toEqual([{ holder: { kind: "SeedInvestors" }, shares: c.shares_out }]);
         // The unit (5.19.3): gross = revenue x capital_per_dollar, book = gross, newly bought; its
         // company got a plan at the same lock (6, "new companies included").
         const u = rowOf(w.units, c.units[0] as (typeof c.units)[number]);

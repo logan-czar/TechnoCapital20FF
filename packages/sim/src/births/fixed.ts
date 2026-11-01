@@ -95,7 +95,6 @@ export function fixedEventFromRow(row: StartupEvent): Result<FixedEvent, BadEven
         regions: g.regions.map((r) => regionParse(r)),
       })),
       revenue_usd: [row.revenue_min_usd_m * USD_PER_MILLION, row.revenue_max_usd_m * USD_PER_MILLION],
-      full: countRangeNew(row.full_min, row.full_max),
       partial: countRangeNew(row.partial_min, row.partial_max),
     },
   };
@@ -172,7 +171,6 @@ export function drawFixedEvent(
         industry,
         hq: (sites[i] as [ProvinceId, number])[0],
         target_revenue_usd: drawTargetRevenue(event.revenue_usd[0], event.revenue_usd[1], draws),
-        full: countRangeDraw(event.full, draws),
         partial: countRangeDraw(event.partial, draws),
       });
     }

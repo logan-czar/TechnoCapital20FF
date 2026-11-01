@@ -128,12 +128,12 @@ describe("spec 5.19.1 random startup events", () => {
       "BackedVenture",
       "BackedVenture",
     ]);
-    // Rows: startups, revenue ($M), full and partial characters each.
+    // Rows: startups, revenue ($M), partial characters each (D989: no full characters).
     const hot = eventTypeRow("HotCluster");
     expect([hot.startups.lo, hot.startups.hi]).toEqual([2, 3]);
     expect(hot.revenue_musd).toEqual([5.0, 30.0]);
     const backed = eventTypeRow("BackedVenture");
-    expect([backed.full.lo, backed.full.hi, backed.partial.lo, backed.partial.hi]).toEqual([3, 5, 3, 5]);
+    expect([backed.partial.lo, backed.partial.hi]).toEqual([3, 5]);
     // NoNoise's Poisson is its rounded mean: 2.
     expect(eventCount(newNoNoise())).toBe(2);
   });
@@ -291,7 +291,6 @@ describe("spec 5.19.1 event rate", () => {
         expect(s.hq).toBe(hq0);
         const r = s.target_revenue_usd / 1e6;
         expect(r >= row.revenue_musd[0] - 1e-9 && r <= row.revenue_musd[1] + 1e-9).toBe(true);
-        expect(s.full >= row.full.lo && s.full <= row.full.hi).toBe(true);
         expect(s.partial >= row.partial.lo && s.partial <= row.partial.hi).toBe(true);
       }
       seenHot ||= t === "HotCluster";

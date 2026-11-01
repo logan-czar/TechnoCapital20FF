@@ -48,7 +48,6 @@ import {
 import { computeBill } from "../ops/compute.ts";
 import { dataBookDefault } from "../ops/data.ts";
 import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
-import { characterKey, GENERATED_TIER } from "../people/full.ts";
 import { managementScore } from "../people/management.ts";
 import { nameBooksGet } from "../people/names.ts";
 import { boardOf } from "../people/seating.ts";
@@ -56,7 +55,7 @@ import { quarterNext, simDateQuarter } from "../time/calendar.ts";
 import { type JobCtx, jobCtxNotice, type Scheduler, schedulerRegister } from "../time/scheduler.ts";
 import type { Quarter, SimDate } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
-import type { CharacterId, CompanyId, IndustryId, ProvinceId, StartupEventId, UnitId } from "../types/ids.ts";
+import type { CompanyId, IndustryId, ProvinceId, StartupEventId, UnitId } from "../types/ids.ts";
 import { saturatingSubCount } from "../types/num.ts";
 import type { BallotVoter, EventKind, Region, VoteResult, VoterRole } from "../types/state/births.ts";
 import type { Seat, Trait } from "../types/state/people.ts";
@@ -79,8 +78,8 @@ import {
 } from "./ipo.ts";
 import { companyNamesDraw, ticker } from "./names.ts";
 import { drawRandomEvents, type EventDraft, type StartupDraft } from "./random.ts";
-import { buildStartup, capTable, fringeRevenue, sizedRevenue } from "./startup.ts";
-import { birthsHomeOthers, birthsInRegions, sitesKeyCityLists, sitesPlace } from "./state.ts";
+import { buildStartup, fringeRevenue, sizedRevenue } from "./startup.ts";
+import { birthsInRegions, sitesKeyCityLists, sitesPlace } from "./state.ts";
 import { hqWeight, industryWeight } from "./weights.ts";
 
 type Industry = World["industries"][number];
@@ -252,52 +251,23 @@ export function birth(
   );
   const names = nameBooksGet(world.name_books, country_id);
   if (names === null) throw new Error("every country has a name book (checked at load)");
-  const others = birthsHomeOthers(world.births, country_id, draft.hq);
-  const cast = seatCast(
-    draws,
-    names,
-    (n) => world.characters.some((c) => c.name === n),
-    b.labor,
-    draft.full,
-    draft.partial,
-    { hq: draft.hq, others },
-  );
+  const cast = seatCast(draws, names, b.labor, draft.partial);
 
-  // The founders join the character table (spec 3.7.2: next CH- ids).
-  const founders: CharacterId[] = cast.founders.map((f) => {
-    const ch = world.characters.length as CharacterId;
-    world.characters.push({
-      key: characterKey(world.characters.length + 1),
-      name: f.name,
-      tier: GENERATED_TIER,
-      age: f.age,
-      skills: { ...f.skills },
-      traits: [...f.traits],
-      home_province: f.home_province,
-      cash_usd: f.cash_usd,
-    });
-    return ch;
-  });
   const simple = (character: SimpleSeat["character"]): SimpleSeat => {
     const sid = world.simple_characters_made;
     world.simple_characters_made += 1;
     return { id: sid, character };
   };
-  const founderAt = (i: number): CharacterId => founders[i] as CharacterId;
   const board: (SeatHolder | null)[] = new Array<SeatHolder | null>(LABOR_SEAT_COUNT).fill(null);
   cast.seats.forEach((seat, slot) => {
-    board[slot] = castHolder(seat, founderAt, simple);
+    board[slot] = castHolder(seat, simple);
   });
   const directors: Director[] = cast.directors.map((d): Director => {
-    if (d.kind === "Founder") return { kind: "Full", character: founderAt(d.index) };
     return { kind: "Simple", seat: simple(d.character) };
   });
-  const caps = capTable(b.shares_out, founders.length);
-  const holders: Holding[] = founders.map((ch, i) => ({
-    holder: { kind: "Founder", character: ch },
-    shares: caps.founders[i] as number,
-  }));
-  holders.push({ holder: { kind: "SeedInvestors" }, shares: caps.seed_investors });
+  // D989: no full characters, so no founders: the seed investors hold the whole cap table.
+  const holders: Holding[] = [];
+  holders.push({ holder: { kind: "SeedInvestors" }, shares: b.shares_out });
 
   // The unit (spec 5.19.3): asset_book = gross, no ramping, productivity 100.
   const unit_id = world.units.length as UnitId;
@@ -334,7 +304,6 @@ export function birth(
     { cash: b.cash, asset_book: b.asset_book, line_drawn: 0.0, tax: taxBookDefault() },
     "Active",
   );
-  const lead = founders[0] ?? null;
   let next_vote: Quarter = simDateQuarter(date);
   for (let k = 0; k < IPO_QUARTERS_AFTER_BIRTH; k++) next_vote = quarterNext(next_vote);
   world.companies.push({
@@ -348,7 +317,6 @@ export function birth(
     revenue_usd: revenue,
     shares_out: b.shares_out,
     units: [unit_id],
-    controller: lead,
     labor_units: b.labor,
     stations: { ...b.stations },
     pc: productiveCompute(b.stations, params.pc_modifier),
@@ -363,7 +331,6 @@ export function birth(
     finance,
     state_controlled: false,
     origin: { kind: "Born", date, event },
-    founders,
     directors,
     holders,
     loss_quarters: 0,
@@ -389,14 +356,12 @@ export function birth(
   return id;
 }
 
-/** A cast seat as the board holds it (spec 5.19.4): a founder full, a partial or filler simple. */
+/** A cast seat as the board holds it (spec 5.19.4): a partial or filler simple character. */
 function castHolder(
   seat: CastSeat | null,
-  founderAt: (i: number) => CharacterId,
   simple: (c: SimpleSeat["character"]) => SimpleSeat,
 ): SeatHolder | null {
   if (seat === null) return null;
-  if (seat.kind === "Founder") return { kind: "Full", character: founderAt(seat.index) };
   return { kind: "Simple", seat: simple(seat.character) };
 }
 
@@ -499,12 +464,6 @@ export function randomEventsJob(world: World, ctx: JobCtx): void {
   }
 }
 
-/** The traits of a seat holder (simple or full), and the full character's id. */
-function holderTraits(world: World, h: SeatHolder): [readonly Trait[], CharacterId | null] {
-  if (h.kind === "Simple") return [h.seat.character.traits, null];
-  return [(world.characters[h.character] as World["characters"][number]).traits, h.character];
-}
-
 /** Quarters from `from` to `to` (to − from), at least 0. */
 function quartersBetween(from: Quarter, to: Quarter): number {
   return Math.max(quarterIndex(to) - quarterIndex(from), 0);
@@ -538,28 +497,21 @@ function vote(world: World, id: CompanyId, q: Quarter, draws: DrawSource): VoteR
     return null;
   }
   // Voters (5.20.1 steps 2 and 4; D276): the seated labor seats, the directors, then a named or
-  // state controller holding no seat.
-  let seated_controller = false;
+  // state controller holding no seat. A named controller is a base character (D989) and holds no
+  // seat; a born company has none.
   const seats: [Seat, readonly Trait[], boolean][] = [];
   c.board.forEach((h, i) => {
     if (h === null) return;
-    const [traits, ch] = holderTraits(world, h);
-    const ctl = ch !== null && ch === c.controller;
-    seated_controller ||= ctl;
-    seats.push([SEAT_LABOR[i] as Seat, traits, ctl]);
+    seats.push([SEAT_LABOR[i] as Seat, h.seat.character.traits, false]);
   });
-  const directors: [readonly Trait[], boolean][] = c.directors.map((d): [readonly Trait[], boolean] => {
-    if (d.kind === "Simple") return [d.seat.character.traits, false];
-    const ctl = d.character === c.controller;
-    seated_controller ||= ctl;
-    return [(world.characters[d.character] as World["characters"][number]).traits, ctl];
-  });
-  let unseated: readonly Trait[] | null;
-  if (seated_controller) unseated = null;
-  else if (c.state_controlled) unseated = [];
-  else
-    unseated =
-      c.controller === null ? null : (world.characters[c.controller] as World["characters"][number]).traits;
+  const directors: [readonly Trait[], boolean][] = c.directors.map((d): [readonly Trait[], boolean] => [
+    d.seat.character.traits,
+    false,
+  ]);
+  const ctl = c.start_control?.controller;
+  let unseated: readonly Trait[] | null = null;
+  if (c.state_controlled) unseated = [];
+  else if (ctl !== undefined && ctl.kind === "Character") unseated = ctl.character.traits;
   const v = voters(seats, directors, unseated);
   const zone = (world.countries[c.hq_country] as World["countries"][number]).zone;
   const result = holdVote(v, label, (world.zones[zone] as World["zones"][number]).confidence, draws);
@@ -573,21 +525,24 @@ function vote(world: World, id: CompanyId, q: Quarter, draws: DrawSource): VoteR
  * the state's or the named controller's, as `vote` gives it.
  */
 function ballotVoter(c: Company, role: VoterRole): BallotVoter | null {
+  const ctl = c.start_control?.controller;
   const simple = (s: SimpleSeat): BallotVoter => ({ kind: "Partial", id: s.id, name: s.character.name });
   switch (role.kind) {
     case "Seat": {
       const h = companySeat(c, role.seat);
       if (h === null) return null;
-      return h.kind === "Simple" ? simple(h.seat) : { kind: "Full", character: h.character };
+      return simple(h.seat);
     }
     case "Director": {
       const d = c.directors[role.position];
       if (d === undefined) return null;
-      return d.kind === "Simple" ? simple(d.seat) : { kind: "Full", character: d.character };
+      return simple(d.seat);
     }
     case "Controller":
       if (c.state_controlled) return { kind: "State" };
-      return c.controller === null ? null : { kind: "Full", character: c.controller };
+      return ctl === undefined || ctl.kind !== "Character"
+        ? null
+        : { kind: "Controller", name: ctl.character.name };
   }
 }
 

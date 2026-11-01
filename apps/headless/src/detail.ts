@@ -392,8 +392,6 @@ export class DetailRecorder implements DetailHook<Detail> {
       hhiMean.toFixed(4),
       hhiMax.toFixed(4),
       top1Max.toFixed(4),
-      births.full_characters,
-      w.characters.length,
       w.books_check.checked,
       w.books_check.failures,
     ].join(",")}\n`;

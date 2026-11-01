@@ -7,8 +7,8 @@
 // controller stake (D425): the controller's line is `stake × block` (rounded to the nearest share,
 // half away from zero), and an "other holders" line holds the rest (the owner of record and the
 // other holders are not split out in the MVP). A widely held company (no controller) shows the
-// whole block as other holders. A born company shows its real blocks: founders, lead first, the
-// seed investors, then any public float and new investors (D153, D270). Shares are not money, so
+// whole block as other holders. A born company shows its real blocks: the seed
+// investors (all of it, D989), then any public float and new investors (D153, D270). Shares are not money, so
 // a cap table is never banded (D420).
 
 import type { CompanyId } from "../types/ids.ts";
@@ -18,6 +18,7 @@ import {
   type CapLine,
   type CapTable,
   type CapTableView,
+  type ControllerView,
   NEW_INVESTORS_LABEL,
   OTHER_HOLDERS_LABEL,
   PUBLIC_FLOAT_LABEL,
@@ -32,12 +33,16 @@ export function capTableViewGet(v: CapTableView, id: CompanyId): CapTable | unde
 }
 
 /**
- * A company's controller (spec 3.5): companies.csv's for a starting company (D425), the lead
- * founder for a born one (5.19.3).
+ * A company's controller (spec 3.5): companies.csv's for a starting company (D425), none for a
+ * born one (its founders are removed, D989).
  */
 export function controllerOf(c: Company): ControllerRef {
-  if (c.start_control !== null) return { ...c.start_control.controller };
-  return c.controller === null ? { kind: "None" } : { kind: "Character", character: c.controller };
+  return c.start_control === null ? { kind: "None" } : { ...c.start_control.controller };
+}
+
+/** A controller as the views show it: no character stats (D989). */
+export function controllerView(r: ControllerRef): ControllerView {
+  return r.kind === "Character" ? { kind: "Character" } : r;
 }
 
 /**
@@ -49,7 +54,7 @@ export function controllerName(w: World, r: ControllerRef): string | null {
     case "None":
       return null;
     case "Character":
-      return w.characters[r.character]!.name;
+      return r.character.name;
     case "State":
       return w.countries[r.country]!.name;
     case "Company":
@@ -81,17 +86,10 @@ export function capLines(w: World, c: Company): CapLine[] {
         const controller = controllerOf(c);
         const held = controllerShares(c, h.shares);
         const name = controllerName(w, controller);
-        if (name !== null) push({ kind: "Controller", controller }, name, held);
+        if (name !== null) push({ kind: "Controller", controller: controllerView(controller) }, name, held);
         push({ kind: "OtherHolders" }, OTHER_HOLDERS_LABEL, h.shares - held);
         break;
       }
-      case "Founder":
-        push(
-          { kind: "Founder", character: h.holder.character },
-          w.characters[h.holder.character]!.name,
-          h.shares,
-        );
-        break;
       case "SeedInvestors":
         push({ kind: "SeedInvestors" }, SEED_INVESTORS_LABEL, h.shares);
         break;

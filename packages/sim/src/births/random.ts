@@ -5,8 +5,8 @@
 //
 // Draw order, frozen (D267): the count; then per event: the industry pick, the type, the number of
 // startups (hot cluster only), the HQ province (one per event: a hot cluster puts all its startups
-// in one province); then per startup: the target revenue, the full count, the partial count. A
-// range of one value (a Garage founder's 1 full character) draws nothing.
+// in one province); then per startup: the target revenue, the partial count. A
+// range of one value draws nothing. Full characters are removed (D989).
 //
 // CountRange, EventType and EventKind are in types/state/births.ts.
 
@@ -43,7 +43,6 @@ export interface TypeRow {
   startups: CountRange;
   /** Revenue each, $M a year. */
   revenue_musd: [number, number];
-  full: CountRange;
   partial: CountRange;
 }
 
@@ -54,7 +53,6 @@ export const TYPE_TABLE: readonly TypeRow[] = [
     chance: 0.5,
     startups: countRangeNew(1, 1),
     revenue_musd: [5.0, 20.0],
-    full: countRangeNew(1, 1),
     partial: countRangeNew(1, 3),
   },
   {
@@ -62,7 +60,6 @@ export const TYPE_TABLE: readonly TypeRow[] = [
     chance: 0.3,
     startups: countRangeNew(1, 1),
     revenue_musd: [10.0, 50.0],
-    full: countRangeNew(2, 3),
     partial: countRangeNew(2, 4),
   },
   {
@@ -70,7 +67,6 @@ export const TYPE_TABLE: readonly TypeRow[] = [
     chance: 0.15,
     startups: countRangeNew(2, 3),
     revenue_musd: [5.0, 30.0],
-    full: countRangeNew(1, 2),
     partial: countRangeNew(1, 3),
   },
   {
@@ -78,7 +74,6 @@ export const TYPE_TABLE: readonly TypeRow[] = [
     chance: 0.05,
     startups: countRangeNew(1, 1),
     revenue_musd: [30.0, 50.0],
-    full: countRangeNew(3, 5),
     partial: countRangeNew(3, 5),
   },
 ];
@@ -137,8 +132,6 @@ export interface StartupDraft {
   /** Log-uniform in the event's range, USD a year, before the 2% fringe cap (5.19.3). */
   target_revenue_usd: number;
   /** Whole number (u8). */
-  full: number;
-  /** Whole number (u8). */
   partial: number;
 }
 
@@ -181,7 +174,6 @@ export function drawRandomEvent(
         row.revenue_musd[1] * USD_PER_MILLION,
         draws,
       ),
-      full: countRangeDraw(row.full, draws),
       partial: countRangeDraw(row.partial, draws),
     });
   }

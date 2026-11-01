@@ -85,21 +85,7 @@ export const LISTINGS_PER_YEAR_MAX = 12;
 export const START_PRIVATE_LISTED_BY = 2024;
 export const START_PRIVATE_LISTED: readonly [number, number] = [10, 30];
 export const START_PRIVATE_LISTED_SEED_SHARE = 0.9;
-/** Spec 10 world population check: "100 to 300 full characters made per decade" (D332). */
-export const DECADES: readonly (readonly [number, number])[] = [
-  [2020, 2029],
-  [2030, 2039],
-  [2040, 2049],
-];
-export const FULL_PER_DECADE: readonly [number, number] = [100, 300];
-/**
- * "Under 1,200 full characters in the world in 2050 (296 at start)": at the 1 January 2050
- * close (the 2049 row, D332).
- */
-export const FULL_CHARACTERS_YEAR = 2049;
-export const FULL_CHARACTERS_BELOW = 1200;
-/** "Every startup has 1 to 5 full and 1 to 5 partial characters" (D326). */
-export const CAST_FULL: readonly [number, number] = [1, 5];
+/** "Every startup has 1 to 5 partial characters" (D326, D989). */
 export const CAST_PARTIAL: readonly [number, number] = [1, 5];
 /** A target with no seed share in spec 10 must pass in every seed (D330). */
 export const ALL_SEEDS = 1.0;
@@ -116,10 +102,7 @@ export interface YearRow {
   named: number;
   listings: number;
   start_private_listed: number;
-  full_made: number;
-  full_characters: number;
   casts: number;
-  cast_full: [number, number] | null;
   cast_simple: [number, number] | null;
   born_empty_seats_max: number;
 }
@@ -562,54 +545,9 @@ export const TARGETS: readonly Target[] = [
     },
   },
   {
-    id: "full_characters_per_decade",
-    spec: "100 to 300 full characters made per decade",
-    bound: "100 to 300 made in each of the 2020s 2030s and 2040s the run covers",
-    required: ALL_SEEDS,
-    kind: "Seeds",
-    evaluate: (s) => {
-      const made: [number, number][] = [];
-      for (const [a, b] of DECADES) {
-        let before = 0;
-        if (a !== TEN_YEAR_FIRST) {
-          const prev = seedYear(s, a - 1);
-          if (prev === null) continue;
-          before = prev.full_made;
-        }
-        const last = seedYear(s, b);
-        // Rust checked_sub: a total below the year before is skipped.
-        if (last === null || last.full_made < before) continue;
-        made.push([a, last.full_made - before]);
-      }
-      if (made.length === 0) return null;
-      const ok = made.every(([, n]) => within(n, FULL_PER_DECADE));
-      // Rust min_by_key(Reverse(abs_diff(mid))): the first count furthest from the middle.
-      const mid = Math.trunc((FULL_PER_DECADE[0] + FULL_PER_DECADE[1]) / 2);
-      let worst = made[0]?.[1] ?? 0;
-      for (const [, n] of made) {
-        if (Math.abs(n - mid) > Math.abs(worst - mid)) worst = n;
-      }
-      const text = made.map(([a, n]) => `${a}s ${n}`);
-      return verdict(ok, worst, text.join("; "));
-    },
-  },
-  {
-    id: "full_characters_2050",
-    spec: "under 1200 full characters in the world in 2050",
-    bound: "< 1200 at the 1 January 2050 close",
-    required: ALL_SEEDS,
-    kind: "Seeds",
-    evaluate: (s) => {
-      const r = seedYear(s, FULL_CHARACTERS_YEAR);
-      if (r === null) return null;
-      const v = r.full_characters;
-      return verdict(v < FULL_CHARACTERS_BELOW, v, `${v}`);
-    },
-  },
-  {
     id: "cast_sizes",
-    spec: "every startup has 1 to 5 full and 1 to 5 partial characters",
-    bound: "founders 1 to 5 and simple cast 1 to 5 at every birth",
+    spec: "every startup has 1 to 5 partial characters",
+    bound: "simple cast 1 to 5 at every birth",
     required: ALL_SEEDS,
     kind: "Seeds",
     evaluate: (s) => {
@@ -623,18 +561,9 @@ export const TARGETS: readonly Target[] = [
         }
         return [minOf(r.map((x) => x[0])) ?? 0, maxOf(r.map((x) => x[1])) ?? 0];
       };
-      const full = span((y) => y.cast_full);
       const simple = span((y) => y.cast_simple);
-      const ok =
-        within(full[0], CAST_FULL) &&
-        within(full[1], CAST_FULL) &&
-        within(simple[0], CAST_PARTIAL) &&
-        within(simple[1], CAST_PARTIAL);
-      return verdict(
-        ok,
-        casts,
-        `${casts} casts; full ${full[0]} to ${full[1]}; simple ${simple[0]} to ${simple[1]}`,
-      );
+      const ok = within(simple[0], CAST_PARTIAL) && within(simple[1], CAST_PARTIAL);
+      return verdict(ok, casts, `${casts} casts; simple ${simple[0]} to ${simple[1]}`);
     },
   },
   {
@@ -765,10 +694,7 @@ export function parse(years: string, quarters: string): Map<number, SeedData> {
       named: fieldGet(f, "named_companies"),
       listings: fieldGet(f, "listings_in_year"),
       start_private_listed: fieldGet(f, "start_private_listed"),
-      full_made: fieldGet(f, "full_characters_made"),
-      full_characters: fieldGet(f, "full_characters"),
       casts: fieldGet(f, "casts_in_year"),
-      cast_full: fieldPair(f, "cast_full_min", "cast_full_max"),
       cast_simple: fieldPair(f, "cast_simple_min", "cast_simple_max"),
       born_empty_seats_max: fieldGet(f, "born_empty_seats_max"),
     };

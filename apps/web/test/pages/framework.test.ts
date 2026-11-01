@@ -3,15 +3,7 @@
 // helpers, and the history half of crates/game/tests/workspace.rs (panes_keep_their_own_history:
 // the pane model; the shell half is in pages-dom.test.tsx).
 
-import type {
-  CharacterId,
-  CompanyId,
-  CountryId,
-  HeadlineId,
-  ProvinceId,
-  StartupEventId,
-  ZoneId,
-} from "@tc20ff/sim";
+import type { CompanyId, CountryId, HeadlineId, ProvinceId, StartupEventId, ZoneId } from "@tc20ff/sim";
 import { afterEach, describe, expect, it } from "vitest";
 import { defaultConfig, type UiConfig } from "../../src/config/settings.ts";
 import {
@@ -51,7 +43,6 @@ describe("PageRef", () => {
       { kind: "world" },
       { kind: "company", id: 12 as CompanyId },
       { kind: "industry", id: 3 as never },
-      { kind: "character", id: 295 as CharacterId },
       { kind: "country", id: 40 as CountryId },
       { kind: "province", id: 3254 as ProvinceId },
       { kind: "zone", id: 2 as ZoneId },

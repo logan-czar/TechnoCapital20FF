@@ -57,11 +57,11 @@ describe("spec 5.19.2 fixed startup events", () => {
     ]);
     expect(regionContains({ kind: "Any" }, "europe", "DEU")).toBe(true);
     expect(regionContains({ kind: "Country", iso3: "CHN" }, "east-asia-oceania", "JPN")).toBe(false);
-    // F1: 2 AI labs in North America, $5M to $15M, cast 2 to 3 full and 1 to 2 partial.
+    // F1: 2 AI labs in North America, $5M to $15M, cast 1 to 2 partial.
     const f1 = ev[0] as FixedEvent;
     expect(f1.groups[0]?.industry_name).toBe("AI labs");
     expect(f1.revenue_usd).toEqual([5.0e6, 15.0e6]);
-    expect([f1.full.lo, f1.full.hi, f1.partial.lo, f1.partial.hi]).toEqual([2, 3, 1, 2]);
+    expect([f1.partial.lo, f1.partial.hi]).toEqual([1, 2]);
   });
 
   it("each_fires_once_at_its_plan_lock", () => {
@@ -125,7 +125,6 @@ describe("spec 5.19.2 fixed startup events", () => {
       for (const s of d.startups) {
         expect(s.target_revenue_usd).toBeGreaterThanOrEqual(e.revenue_usd[0] - 1e-6);
         expect(s.target_revenue_usd).toBeLessThanOrEqual(e.revenue_usd[1] + 1e-6);
-        expect(s.full >= e.full.lo && s.full <= e.full.hi).toBe(true);
         expect(s.partial >= e.partial.lo && s.partial <= e.partial.hi).toBe(true);
       }
     }

@@ -63,7 +63,7 @@ function shell(children: ReactNode) {
   return { settings, nav };
 }
 
-const LANE_A = ["company", "character", "zone", "exchange", "province", "recap"] as const;
+const LANE_A = ["company", "zone", "exchange", "province", "recap"] as const;
 const LISTS = ["companies", "characters", "countries", "exchanges", "zones"] as const;
 
 describe("lane A's pages", () => {

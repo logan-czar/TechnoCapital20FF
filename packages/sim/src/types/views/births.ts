@@ -52,10 +52,6 @@ export interface BirthsView {
   events: EventRow[];
   births: BirthRow[];
   listings: ListingRow[];
-  /** Full characters made in play so far (3.7.2; the spec 10 world population check). */
-  full_characters_made: number;
-  /** Full characters in the world: the 296 and those made in play. */
-  full_characters: number;
   /** The quarters the births column counts, oldest first: this quarter and the 3 before. */
   births_column_quarters: Quarter[];
   /** Companies born per industry in those quarters, in industry id order (spec 8). */

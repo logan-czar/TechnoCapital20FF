@@ -192,7 +192,7 @@ export const VIEW_BUILDERS: ViewBuilders = {
   },
   characters: {
     rust: "views::characters::CharactersView",
-    empty: () => ({ full: [], partial: [] }),
+    empty: () => ({ partial: [] }),
     build: buildCharacters,
   },
   cap_table: {

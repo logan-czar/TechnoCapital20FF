@@ -37,10 +37,6 @@ export const MIN_STARTUP_REVENUE_USD = 1.0e6;
 export const FRINGE_REVENUE_CAP_SHARE = 0.02;
 /** Spec 5.19.3 seed round: cash = 0.5 × gross_assets from the seed investors. */
 export const SEED_CASH_SHARE = 0.5;
-/** Spec 5.19.3 cap table: the founders hold 60% ... */
-export const FOUNDERS_SHARE = 0.6;
-/** ... the lead founder half of it, the others the rest in equal parts. */
-export const LEAD_SHARE_OF_FOUNDERS = 0.5;
 /**
  * Spec 7.1 Shares row (batch 161; gen.py `PRICE_*`): `open_price = clamp(round($25 × (engine
  * value ÷ $1B)^0.35 × jitter), $5, $200)`.
@@ -208,42 +204,6 @@ export function openPrice(engine_value: number, key: string): number {
 /** Shares for a value at a price (spec 7.1): `max(1, round(value ÷ open_price))`. Whole number (u64). */
 export function sharesFor(value: number, open_price: number): number {
   return Math.max(toU64Sat(roundTiesEven(value / open_price)), 1);
-}
-
-/**
- * The startup cap table (spec 5.19.3): founders 60% (the lead half of it, the others the rest in
- * equal parts), unnamed seed investors 40%. A lone founder holds all 60%; each founder's shares
- * round down and the seed investors take the remainder, so the parts sum to shares_out (D270).
- */
-export interface CapTable {
-  /** Shares per founder, lead first (u64). */
-  founders: number[];
-  seed_investors: number;
-}
-
-/** Rust `CapTable::total`. */
-export function capTableTotal(t: CapTable): number {
-  let n = 0;
-  for (const f of t.founders) n += f;
-  return n + t.seed_investors;
-}
-
-export function capTable(shares_out: number, founders: number): CapTable {
-  const s = shares_out;
-  let shares: number[];
-  if (founders === 0) {
-    shares = [];
-  } else if (founders === 1) {
-    shares = [toU64Sat(Math.floor(FOUNDERS_SHARE * s))];
-  } else {
-    const lead = toU64Sat(Math.floor(FOUNDERS_SHARE * LEAD_SHARE_OF_FOUNDERS * s));
-    const each = toU64Sat(Math.floor((FOUNDERS_SHARE * (1.0 - LEAD_SHARE_OF_FOUNDERS) * s) / (founders - 1)));
-    shares = [lead];
-    for (let k = 1; k < founders; k++) shares.push(each);
-  }
-  let held = 0;
-  for (const f of shares) held += f;
-  return { founders: shares, seed_investors: shares_out - held };
 }
 
 /** What one startup's build reads besides its draft (spec 5.19.3). */

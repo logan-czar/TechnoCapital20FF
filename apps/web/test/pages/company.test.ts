@@ -132,7 +132,7 @@ describe("the Company page", () => {
       const all = texts(doc, v);
       // Header (spec 8): name, ticker, HQ, industry, owner of record, controller.
       expect(doc.title).toBe(r.name);
-      for (const want of ["Ticker", "HQ", "Industry", "Owner of record", "Controller"])
+      for (const want of ["Ticker", "HQ", "Industry", "Controller"])
         expect(l.has(want), `${r.name}: header ${want}`).toBe(true);
       expect(all).toContain("Founded");
       expect(all.includes("Listed") || all.includes("Private: not listed"), r.name).toBe(true);
@@ -153,8 +153,7 @@ describe("the Company page", () => {
       expect(cards[0]?.length, "five seat cards").toBe(5);
       expect(cards[0]?.every((c) => c.fields.some((f) => f.label === "Skill used"))).toBe(true);
       const bt = sectionText(doc, "board", v);
-      for (const want of ["Seats", "Founders", "Directors", "IPO vote"])
-        expect(bt, `${r.name}: ${want}`).toContain(want);
+      for (const want of ["Seats", "Directors", "IPO vote"]) expect(bt, `${r.name}: ${want}`).toContain(want);
       // Cap table: the holders, summing to the shares out.
       const ct = docTable(doc, "company.cap_table");
       const sum = (ct?.rows ?? []).reduce((s, row) => {
@@ -203,8 +202,7 @@ describe("the Company page", () => {
       if (chart?.k === "chart") expect(chart.chart.labels.length > 0, `${r.name}: bars`).toBe(bars);
       expect(bars || r.listing.kind !== "BeforeStart").toBe(true);
     }
-    // Founded [date] ([event]): a born company names its event; founders' cards show skills,
-    // traits and the home province.
+    // Founded [date] ([event]): a born company names its event (it has no founders, D989).
     const doc = companyDoc(born.id, v, index);
     if (born.origin.kind !== "Born") throw new Error("born");
     const origin = born.origin;
@@ -216,9 +214,6 @@ describe("the Company page", () => {
     expect(
       founded?.spans.some((s) => s.k === "link" && pageEq(s.page, { kind: "event", id: origin.event })),
     ).toBe(true);
-    expect(sectionText(doc, "board", v)).toContain("lead founder");
-    for (const want of ["Skills", "Traits", "Home"])
-      expect(labels(doc).has(want), `founder card ${want}`).toBe(true);
     // Listed [date] on [exchange] at $[price].
     const listing = inPlay.listing;
     if (listing.kind !== "InPlay") throw new Error("in play");
@@ -327,20 +322,11 @@ describe("the Company page", () => {
       if (r.exchange !== null) expect(has(links, { kind: "exchange", id: r.exchange })).toBe(true);
       const cp = controllerPage(r.controller);
       if (cp) expect(has(links, cp), `${r.name}: controller`).toBe(true);
-      if (r.owner_of_record !== null)
-        expect(has(links, { kind: "character", id: r.owner_of_record })).toBe(true);
       if (r.origin.kind === "Born") {
         expect(has(links, { kind: "event", id: r.origin.event })).toBe(true);
-        for (const f of d.founders) expect(has(links, { kind: "character", id: f }), "founder").toBe(true);
       }
       for (const u of v.units?.units ?? [])
         if (u.company === r.id) expect(has(links, { kind: "province", id: u.base_province })).toBe(true);
-      // Full seat holders link; partial ones are marked and not linked.
-      for (const s of d.board) {
-        const p = s.holder;
-        if (p && p.character !== null && !p.partial)
-          expect(has(links, { kind: "character", id: p.character })).toBe(true);
-      }
     }
   });
 });
@@ -354,14 +340,14 @@ const oddsTexts = (chance: number) => [
 ];
 
 /** A doc of one board section, as b1_pages.rs builds it around `board`. */
-function boardDoc(d: CompanyDetail, v: ViewsData): PageDoc {
+function boardDoc(d: CompanyDetail): PageDoc {
   return {
     page: { kind: "company", id: d.id },
     title: d.name,
     kind: "Company",
     chips: [],
     head: [],
-    sections: [{ id: "board", blocks: board(d, v, buildNameIndex(v)) }],
+    sections: [{ id: "board", blocks: board(d) }],
   };
 }
 
@@ -385,7 +371,7 @@ describe("the Board tab", () => {
     }
     expect(voted, "votes at the first lock").toBeGreaterThan(0);
     // A hand-made vote with distinctive odds: the CEO who voted has since left (another partial),
-    // the CFO who voted still sits, Director 1 is a full character, and the controller's vote is
+    // the CFO who voted still sits, Director 1 is a partial who has left, and the controller's vote is
     // the state's.
     const d: CompanyDetail = structuredClone(v.company_detail?.companies[0] as CompanyDetail);
     const holder = (i: number) => {
@@ -394,10 +380,7 @@ describe("the Board tab", () => {
       return h;
     };
     const [ceo, cfo] = [holder(0), holder(1)];
-    const full = v.characters?.full[0];
-    if (full?.id.kind !== "Full" || cfo.partial_id === null)
-      throw new Error("a full character and a partial CFO");
-    const fullId = full.id.id;
+    if (cfo.partial_id === null) throw new Error("a partial CFO");
     d.ipo_last_vote = {
       date: { year: 2020, month: 4, day: 9 },
       result: {
@@ -418,7 +401,7 @@ describe("the Board tab", () => {
             role: { kind: "Director", position: 0 },
             chance: 0.2291,
             yes: false,
-            voter: { kind: "Full", character: fullId },
+            voter: { kind: "Partial", id: 9_998, name: "Dee Gone" },
           },
           { role: { kind: "Controller" }, chance: 0.8846, yes: true, voter: { kind: "State" } },
         ],
@@ -429,7 +412,7 @@ describe("the Board tab", () => {
       capped: true,
     };
     d.ipo_next_vote = { year: 2020, q: 3 };
-    const doc = boardDoc(d, v);
+    const doc = boardDoc(d);
     const bt = texts(doc, v);
     for (const want of [
       "CEO",
@@ -453,11 +436,7 @@ describe("the Board tab", () => {
     expect(line("CEO")).toContainEqual({ k: "muted", text: `(held now by ${ceo.name} (partial))` });
     expect(line("CFO")).toContainEqual({ k: "text", text: cfo.name });
     expect(held(line("CFO")), "the CFO who voted still sits").toBe(false);
-    expect(line("Director 1")).toContainEqual({
-      k: "link",
-      text: index.title({ kind: "character", id: fullId }),
-      page: { kind: "character", id: fullId },
-    });
+    expect(line("Director 1")).toContainEqual({ k: "text", text: "Dee Gone" });
     expect(line("Director 1"), "no director sits at position 1 now").toContainEqual({
       k: "muted",
       text: "(vacant now)",
@@ -478,7 +457,6 @@ describe("the Board tab", () => {
       skills: (d.board[0]?.holder as SeatPerson).skills,
       traits: [],
       partial: true,
-      character: null,
       partial_id: 8_002,
     };
     // At the vote: Director 1 was a partial who has since left, Director 2 was Bo. Now Bo is the
@@ -500,7 +478,7 @@ describe("the Board tab", () => {
       },
       capped: false,
     };
-    const blocks = ipoVote(d, buildNameIndex(v));
+    const blocks = ipoVote(d);
     const fields = blocks.find((b) => b.k === "fields");
     if (fields?.k !== "fields") throw new Error("the ballots");
     const line = (label: string) => fields.fields.find((f) => f.label === label)?.value ?? [];
@@ -510,24 +488,20 @@ describe("the Board tab", () => {
     expect(muted(line("Director 2")), "Bo still sits").toEqual([]);
   });
 
-  it("lists directors by seat position, a full one linked and a partial one marked (board_lists_directors_by_position)", () => {
+  it("lists directors by seat position, each partial one marked (board_lists_directors_by_position)", () => {
     const v = after;
-    const index = buildNameIndex(v);
     const d: CompanyDetail = structuredClone(v.company_detail?.companies[0] as CompanyDetail);
-    const full = v.characters?.full[0];
-    if (full?.id.kind !== "Full") throw new Error("a full character");
-    const fullId = full.id.id;
-    const person = (name: string, character: number | null, partialId: number | null): SeatPerson => ({
+    const skills = (d.board[0]?.holder as SeatPerson).skills;
+    const person = (name: string, partialId: number): SeatPerson => ({
       name,
       age: 41,
-      skills: full.skills,
+      skills,
       traits: [],
-      partial: partialId !== null,
-      character: character as SeatPerson["character"],
+      partial: true,
       partial_id: partialId,
     });
-    d.directors = [person("Ada Partial", null, 9_001), person(full.name, fullId, null)];
-    const doc = boardDoc(d, v);
+    d.directors = [person("Ada Partial", 9_001), person("Bea Partial", 9_002)];
+    const doc = boardDoc(d);
     const blocks = doc.sections[0]?.blocks ?? [];
     const at = blocks.findIndex((b) => b.k === "heading" && b.text === "Directors (2)");
     expect(at, "the directors heading").toBeGreaterThanOrEqual(0);
@@ -536,12 +510,8 @@ describe("the Board tab", () => {
     expect(f.fields.map((x) => x.label)).toEqual(["Director 1", "Director 2"]);
     expect(f.fields[0]?.value[0]).toEqual({ k: "text", text: "Ada Partial" });
     expect(f.fields[0]?.value[1]).toMatchObject({ k: "colored", text: "(partial)" });
-    expect(f.fields[1]?.value[0]).toEqual({
-      k: "link",
-      text: index.title({ kind: "character", id: fullId }),
-      page: { kind: "character", id: fullId },
-    });
-    expect(has(docLinks(doc), { kind: "character", id: fullId })).toBe(true);
+    expect(f.fields[1]?.value[0]).toEqual({ k: "text", text: "Bea Partial" });
+    expect(f.fields[1]?.value[1]).toMatchObject({ k: "colored", text: "(partial)" });
   });
 });
 

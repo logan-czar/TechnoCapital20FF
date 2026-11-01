@@ -6,23 +6,31 @@
 // controller stake (D425): the controller's line is `stake × block` (rounded to the nearest
 // share, half away from zero), and an "other holders" line holds the rest (the owner of record
 // and the other holders are not split out in the MVP). A widely held company (no controller)
-// shows the whole block as other holders. A born company shows its real blocks: founders, lead
-// first, the seed investors, then any public float and new investors (D153, D270). Shares are
+// shows the whole block as other holders. A born company shows its real blocks: the seed
+// investors (all of it, D989), then any public float and new investors (D153, D270). Shares are
 // not money, so a cap table is never banded (D420).
 //
 // Not ported: CapTableView::get, controller_of, controller_name, controller_shares, cap_lines
 // and the `ViewData` build (logic).
 
-import type { CharacterId, CompanyId } from "../ids.ts";
-import type { ControllerRef } from "../world.ts";
+import type { CompanyId, CountryId } from "../ids.ts";
+
+/**
+ * Who controls a company, as the views show it: a named controller (a base character, D989) is only
+ * flagged, its name is in the line's or row's `name`; no stats leave the sim.
+ */
+export type ControllerView =
+  | { kind: "None" }
+  | { kind: "Character" }
+  | { kind: "State"; country: CountryId }
+  | { kind: "Company"; company: CompanyId };
 
 /** Who a cap table line belongs to. */
 export type CapHolder =
   /** A starting company's controller with its companies.csv stake of the starting block. */
-  | { kind: "Controller"; controller: ControllerRef }
+  | { kind: "Controller"; controller: ControllerView }
   /** The rest of a starting company's starting block (D425). */
   | { kind: "OtherHolders" }
-  | { kind: "Founder"; character: CharacterId }
   | { kind: "SeedInvestors" }
   | { kind: "PublicFloat" }
   | { kind: "NewInvestors" };
@@ -31,7 +39,7 @@ export type CapHolder =
 export interface CapLine {
   holder: CapHolder;
   /**
-   * The holder's name as a page shows it (a character's, a state's, a company's) or the
+   * The holder's name as a page shows it (a state's, a company's) or the
    * block's label.
    */
   name: string;

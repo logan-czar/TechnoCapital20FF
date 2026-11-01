@@ -39,8 +39,6 @@ import {
   birthRunRate,
   birthStations,
   buildStartup,
-  capTable,
-  capTableTotal,
   carve,
   fringeRevenue,
   openPrice,
@@ -135,20 +133,6 @@ describe("spec 5.19.3 each startup", () => {
     const a = d.company_start.rows.find((r) => r.id === "CO-0001");
     if (a === undefined) throw new Error("no CO-0001");
     expect(openPrice(a.engine_value_usd, "CO-0001")).toBe(9.0);
-  });
-
-  it("cap_table_splits_60_40", () => {
-    // Lead founder 30%, the others 30% in equal parts, seed investors 40%.
-    let t = capTable(1_000_000, 3);
-    expect(t.founders).toEqual([300_000, 150_000, 150_000]);
-    expect(t.seed_investors).toBe(400_000);
-    // A lone founder holds all 60% (D270).
-    t = capTable(1_000_000, 1);
-    expect([t.founders, t.seed_investors]).toEqual([[600_000], 400_000]);
-    // Rounding goes to the seed investors; the parts always sum to shares_out.
-    t = capTable(1_000_001, 4);
-    expect(capTableTotal(t)).toBe(1_000_001);
-    expect(t.founders).toEqual([300_000, 100_000, 100_000, 100_000]);
   });
 
   it("archetype_without_trait_rows", () => {

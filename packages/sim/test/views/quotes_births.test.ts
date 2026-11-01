@@ -38,7 +38,6 @@ describe("quotes and births views", () => {
     expect(b.births).toEqual([]);
     expect(b.births_column_quarters.length).toBe(4);
     expect(b.births_by_industry.length).toBe(simWorld(sim).industries.length);
-    expect(b.full_characters).toBe(simWorld(sim).characters.length);
     expect(birthsViewListBirths(b, simDateYmd(2019, 1, 1))).toEqual([]);
     expect(birthsViewEvent(b, 0 as never)).toBeNull();
     expect(birthsViewBirthsLastFourQuarters(b, 0 as never)).toBe(0);

@@ -25,7 +25,7 @@ import {
   ratingLabel,
   type Unit,
 } from "../widgets/cells.ts";
-import { controllerPage, type NameIndex, place, role } from "./names.ts";
+import { controllerPage, type NameIndex, place } from "./names.ts";
 
 /** Most roles a character card lists before it sums the rest. */
 export const CARD_ROLES = 4;
@@ -148,26 +148,6 @@ export function card(page: PageRef, v: ViewsData, index: NameIndex): Card {
       lines.push(line("GDP", money(c.gdp_usd)), line("Corp tax", percent(c.corp_tax_rate)));
       lines.push(line("Sovereign", `${ratingLabel(c.sovereign_rating)} (+${percent(c.sovereign_spread)})`));
       lines.push(line("HQ companies", int(c.hq_companies.length)));
-      break;
-    }
-    case "character": {
-      const c = v.characters?.full.find((x) => x.id.kind === "Full" && x.id.id === page.id);
-      if (!c) break;
-      lines.push(line("Age", String(c.age)));
-      if (c.home) {
-        const home = place(v, c.home.province) ?? [
-          `${c.home.province_name}, ${c.home.country_name}`,
-          { kind: "country", id: c.home.country },
-        ];
-        lines.push(linkLine("Home", ...home));
-      }
-      if (c.tier !== "") lines.push(line("Tier", c.tier));
-      for (const r of c.roles.slice(0, CARD_ROLES)) {
-        const [label, co] = role(r);
-        lines.push(linkLine(label, ...name({ kind: "company", id: co })));
-      }
-      if (c.roles.length > CARD_ROLES) lines.push(line("Roles", `${c.roles.length} in all`));
-      if (c.holdings.length > 0) lines.push(line("Holdings", `${c.holdings.length} companies`));
       break;
     }
     case "event": {
@@ -308,7 +288,7 @@ export function listLen(page: PageRef, v: ViewsData): number | null {
     case "events":
       return v.births?.events.length ?? null;
     case "characters":
-      return v.characters === undefined ? null : v.characters.full.length + politicianCount(v.politics);
+      return v.characters === undefined ? null : politicianCount(v.politics);
     case "countries":
       return v.countries?.countries.length ?? null;
     default:

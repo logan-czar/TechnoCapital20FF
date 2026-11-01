@@ -11,8 +11,9 @@
 // (logic).
 
 import type { SimDate } from "../calendar.ts";
-import type { CharacterId, CompanyId, CountryId, IndustryId, ZoneId } from "../ids.ts";
-import type { ControllerRef, Origin } from "../world.ts";
+import type { CompanyId, CountryId, IndustryId, ZoneId } from "../ids.ts";
+import type { Origin } from "../world.ts";
+import type { ControllerView } from "./cap_table.ts";
 import type { Figure } from "./estimate.ts";
 import type { Archetype, CompanyStatus, Rating } from "./shared.ts";
 
@@ -61,14 +62,11 @@ export interface CompanyRow {
   origin: Origin;
   /** Private, listed before 2020, or listed in play with its date (F10 listing-date filter). */
   listing: Listing;
-  /** companies.csv `owner_of_record` and its name (spec 8 header; D425). */
-  owner_of_record: CharacterId | null;
-  owner_of_record_name: string | null;
   /**
-   * The controller (companies.csv's, or a startup's lead founder) and its name; widely held
+   * The controller (companies.csv's) and its name; widely held
    * companies have none (spec 8 header).
    */
-  controller: ControllerRef;
+  controller: ControllerView;
   controller_name: string | null;
   /** The figures are estimate bands (D420). */
   estimated: boolean;

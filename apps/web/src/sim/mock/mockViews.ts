@@ -242,8 +242,6 @@ export function companyRowsView(w: MockWorld, stocks: MockStock[]): CompanyRow[]
       archetype: "Incumbent",
       origin: { kind: "Start" },
       listing: s ? { kind: "BeforeStart", exchange: s.exchange } : { kind: "Private" },
-      owner_of_record: null,
-      owner_of_record_name: null,
       controller: { kind: "None" },
       controller_name: null,
       estimated: !c.public,

@@ -190,11 +190,7 @@ describe("SimViews", () => {
     const s = sim({ births }, true);
     const v = simViews(s);
     expect(s.apply({ kind: "SetOmniscient", on: true }).ok).toBe(true);
-    expect([v.births.version, v.births.data.full_characters_made, v.omniscient]).toEqual([
-      v.refresh,
-      1,
-      true,
-    ]);
+    expect([v.births.version, v.omniscient]).toEqual([v.refresh, true]);
   });
 
   it("a rebuild-in-place view is rebuilt from its last build, which stays as it was", () => {
