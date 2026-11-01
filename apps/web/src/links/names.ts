@@ -15,6 +15,7 @@ import {
   type CompanyId,
   type CompanyRow,
   cmpQuarter,
+  EPOCH_YEAR,
   type EventRow,
   formatQuarter,
   formatSimDate,
@@ -30,8 +31,15 @@ import { span } from "../pages/doc.ts";
 import { kindIsList, kindName, type PageRef, pageId, quarterPrev, setProvinceKeys } from "../pages/ref.ts";
 import { byId, usePageViews, type ViewsData } from "../pages/views.ts";
 
+/** The year the game started in (1995-rework 3.1); the 2020 world until `history` arrives. */
+export function startYear(v: ViewsData): number {
+  return v.history?.start_year ?? EPOCH_YEAR;
+}
+
 /** The first quarter of the game (spec 3.1). */
-export const FIRST_QUARTER: Quarter = { year: 2020, q: 1 };
+export function firstQuarter(v: ViewsData): Quarter {
+  return { year: startYear(v), q: 1 };
+}
 
 /** One named thing. */
 export interface IndexEntry {
@@ -71,6 +79,7 @@ export const NAME_VIEWS = [
   "characters",
   "places",
   "clock",
+  "history",
 ] as const satisfies readonly ViewName[];
 
 /** A board seat's title (spec 3.7). */
@@ -249,7 +258,7 @@ export function buildNameIndex(v: ViewsData): NameIndex {
   }
   // A recap for every quarter so far, newest first.
   if (v.clock) {
-    for (let q = simDateQuarter(v.clock.date); cmpQuarter(q, FIRST_QUARTER) >= 0; q = quarterPrev(q)) {
+    for (let q = simDateQuarter(v.clock.date); cmpQuarter(q, firstQuarter(v)) >= 0; q = quarterPrev(q)) {
       out.push(entry({ kind: "recap", quarter: q }, `Quarterly recap ${formatQuarter(q)}`, "Recap"));
     }
   }

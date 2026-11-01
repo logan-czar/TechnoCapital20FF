@@ -36,6 +36,7 @@
 import * as ai from "./ai/jobs.ts";
 import * as births from "./births/jobs.ts";
 import { register as economyRegister } from "./economy/index.ts";
+import { eraYearCloseJob } from "./era/jobs.ts";
 import * as finance from "./finance/jobs.ts";
 import * as market from "./market/jobs.ts";
 import * as news from "./news/jobs.ts";
@@ -94,6 +95,7 @@ export function registerJobs(s: Scheduler): void {
   r(s, "MonthlyCashSettle", "market.delist", market.delistJob); // market/jobs delistJob
   r(s, "CloseResultTags", "market.result_tags", market.resultTagsJob); // market/jobs resultTagsJob
   r(s, "LockConsensus", "market.consensus", market.consensusJob); // market/jobs consensusJob
+  r(s, "YearlyArchive", "era.year_close", eraYearCloseJob); // era/jobs (1995-rework 3.3; no Rust twin)
   r(s, "YearlyArchive", "market.archive_bars", market.archiveBarsJob); // market/jobs archiveBarsJob
 
   // births::jobs::register (crates/sim/src/births/jobs.rs)

@@ -119,6 +119,9 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
       "politics.elections[].senate_class",
     ],
   },
+  // All public, with no company or industry subject: GDP reads only demand, exact in every class
+  // (1995-rework 6.1, D432).
+  history: { ids: ["history.start_year", "history.years[]", "history.companies[]"] },
   zones: { ids: ["zones.zones[].id", "zones.zones[].number", "zones.zones[].members[]"] },
   rates: {
     ids: [

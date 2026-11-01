@@ -18,6 +18,7 @@
   },
   "cabinet_seats": 14,
   "features": {
+    "era": true,
     "ai_boom": false,
     "fixed_events": false,
     "arrowhead": false

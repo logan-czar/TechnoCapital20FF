@@ -18,8 +18,8 @@ import { DEFAULT_SEEDS, DEFAULT_YEARS, type SoakArgs } from "./soak.ts";
 export const USAGE = [
   "usage:",
   "  headless --check-data [--data-dir DIR | --world ID] [--map-dir DIR]",
-  "  headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--tick-costs] [--data-dir DIR | --world ID]",
-  "  headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--detail] [--data-dir DIR | --world ID]",
+  "  headless run --years N --seeds A..B [--out metrics.csv] [--hash-monthly] [--profile] [--tick-costs] [--data-dir DIR | --world ID] [--scenario ID]",
+  "  headless soak [--years N] [--seeds A..B] [--jobs N] --out DIR [--check] [--detail] [--data-dir DIR | --world ID] [--scenario ID]",
   "  headless check DIR",
   "  headless parity DIR [--reference DIR]",
   "  headless record --years N --seed S --out LOG [--data-dir DIR | --world ID]",
@@ -59,6 +59,7 @@ export interface RunArgs {
   profile: boolean;
   tickCosts: boolean;
   dir: string;
+  scenario: string | undefined;
 }
 
 export function parseRun(args: readonly string[]): RunArgs | null {
@@ -69,6 +70,7 @@ export function parseRun(args: readonly string[]): RunArgs | null {
   let profile = false;
   let tickCosts = false;
   let dir = defaultDataDir();
+  let scenario: string | undefined;
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
       case "--years":
@@ -106,13 +108,19 @@ export function parseRun(args: readonly string[]): RunArgs | null {
         dir = worldDataDir(v);
         break;
       }
+      case "--scenario": {
+        const v = args[++i];
+        if (v === undefined) return null;
+        scenario = v;
+        break;
+      }
       default:
         return null;
     }
   }
   return years === null || seeds === null
     ? null
-    : { years, seeds, out, hashMonthly, profile, tickCosts, dir };
+    : { years, seeds, out, hashMonthly, profile, tickCosts, dir, scenario };
 }
 
 /** The `soak` arguments and the data directory. */
@@ -124,6 +132,7 @@ export function parseSoak(args: readonly string[]): [SoakArgs, string] | null {
   let check = false;
   let detail = false;
   let dir = defaultDataDir();
+  let scenario: string | undefined;
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
       case "--years": {
@@ -168,11 +177,17 @@ export function parseSoak(args: readonly string[]): [SoakArgs, string] | null {
         dir = worldDataDir(v);
         break;
       }
+      case "--scenario": {
+        const v = args[++i];
+        if (v === undefined) return null;
+        scenario = v;
+        break;
+      }
       default:
         return null;
     }
   }
-  return out === null ? null : [{ years, seeds, jobs, out, check, detail }, dir];
+  return out === null ? null : [{ years, seeds, jobs, out, check, detail, scenario }, dir];
 }
 
 /** `record --years N --seed S --out LOG [--data-dir DIR]`: [seed, years, out, dir]. */

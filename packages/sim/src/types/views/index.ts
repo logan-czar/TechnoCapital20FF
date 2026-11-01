@@ -25,6 +25,7 @@ import type { CountriesView } from "./countries.ts";
 import type { CycleView } from "./cycle.ts";
 import type { ExchangesView } from "./exchanges.ts";
 import type { FilingsView } from "./filings.ts";
+import type { HistoryView } from "./history.ts";
 import type { IndustryDetailView } from "./industry_detail.ts";
 import type { IndustryRowsView } from "./industry_rows.ts";
 import type { MapLayersView } from "./map_layers.ts";
@@ -59,6 +60,7 @@ export type { Band } from "./estimate.ts";
 export * from "./estimate.ts";
 export * from "./exchanges.ts";
 export * from "./filings.ts";
+export * from "./history.ts";
 export * from "./industry_detail.ts";
 export * from "./industry_rows.ts";
 export * from "./map_layers.ts";
@@ -150,6 +152,7 @@ export interface SimViews {
   recap: View<RecapView>;
   map_static: View<MapStaticView>;
   politics: View<PoliticsView>;
+  history: View<HistoryView>;
 }
 
 /** A view's field name in `SimViews`. */
@@ -189,6 +192,7 @@ export const VIEW_NAMES = [
   "recap",
   "map_static",
   "politics",
+  "history",
 ] as const satisfies readonly ViewName[];
 
 /** One view's `ViewData` constants (Rust trait consts; defaults false). */
@@ -249,4 +253,5 @@ export const VIEW_SPECS: Readonly<Record<ViewName, ViewSpec>> = {
   recap: spec("Quarterly", { on_control: true }),
   map_static: spec("OnceAtLoad"),
   politics: spec("PoliticsDays"),
+  history: spec("Monthly"),
 };

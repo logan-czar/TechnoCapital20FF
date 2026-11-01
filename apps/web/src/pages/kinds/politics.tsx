@@ -191,7 +191,7 @@ export function politicsDoc(v: ViewsData, index: NameIndex): PageDoc {
       id: "elections",
       blocks:
         p.elections.length === 0
-          ? [note("No vote yet: the first is November 2020.")]
+          ? [note(p.next === null ? "No vote yet." : `No vote yet: the first is ${date(p.next.date)}.`)]
           : [{ k: "table", table: electionsTable(p.elections) }],
     },
   ];

@@ -12,11 +12,13 @@ import { join } from "node:path";
 import { Worker } from "node:worker_threads";
 import { FILES as DETAIL_FILES, type Detail, detailParts } from "./detail.ts";
 import {
+  ERA_HEADER,
   type SeedOutput as MetricsSeedOutput,
   QUARTERS_HEADER,
   sharesOutCsv,
   YEARS_HEADER,
 } from "./metrics.ts";
+import { ERA_FILE, RUN_FILE } from "./targets-1995.ts";
 
 /** Build-plan 4.4: "2020 to 2050 over 50 seeds (T)": the defaults when `--years` or `--seeds` is not given. */
 export const DEFAULT_YEARS = 30;
@@ -38,6 +40,8 @@ export interface SoakArgs {
   check: boolean;
   /** Also write the read-only detail tables (`--detail`, D900): industries.csv, companies.csv, world.csv and zones.csv. */
   detail: boolean;
+  /** A historical world's scenario (`--scenario`, 1995-rework 4.1). */
+  scenario?: string | undefined;
 }
 
 /** One seed's rows with the detail tables of `--detail` (D900). */
@@ -49,6 +53,7 @@ export interface SeedTask {
   seed: number;
   years: number;
   detail: boolean;
+  scenario?: string | undefined;
 }
 
 /** Runs one seed to completion (a worker thread, or a stub in tests); rejects with the seed's error. */
@@ -107,6 +112,7 @@ export async function runSeeds(
   jobs: number,
   detail: boolean,
   log: (line: string) => void = console.log,
+  scenario?: string,
 ): Promise<({ ok: true; value: SeedOutput } | { ok: false; error: string })[]> {
   const list: number[] = [];
   for (let s = seeds[0]; s <= seeds[1]; s++) list.push(s);
@@ -119,7 +125,7 @@ export async function runSeeds(
       const seed = list[i];
       if (seed === undefined) return;
       try {
-        const o = await run({ dataDir, seed, years, detail });
+        const o = await run({ dataDir, seed, years, detail, scenario });
         log(`seed ${seed}: ${years} years to ${o.end}, hash ${o.state_hash}, ${o.wall_ms} ms`);
         slots[i] = { ok: true, value: o };
       } catch (e) {
@@ -180,6 +186,14 @@ export function writeOutputs(dir: string, outputs: readonly SeedOutput[], years:
   writeFileSync(join(dir, "shares_out.csv"), sharesOutCsv(outputs));
 }
 
+/** A historical world's `era.csv` and `run.json` (1995-rework 4.3); nothing in the 2020 world. */
+function writeEraOutputs(dir: string, outputs: readonly SeedOutput[], scenario: string | undefined): void {
+  const rows = outputs.map((o) => o.era ?? "").join("");
+  if (rows === "") return;
+  writeFileSync(join(dir, ERA_FILE), `${ERA_HEADER}\n${rows}`);
+  writeFileSync(join(dir, RUN_FILE), `${JSON.stringify({ scenario: scenario ?? "stable" })}\n`);
+}
+
 /** Joins the seeds' detail tables in seed order under their headers (D900) and writes them. */
 export function writeDetail(dir: string, outputs: readonly SeedOutput[]): void {
   DETAIL_FILES.forEach(([name, header], k) => {
@@ -201,10 +215,11 @@ export async function soak(run: SeedRunner, dataDir: string, args: SoakArgs): Pr
   console.log(`soak: seeds ${args.seeds[0]}..${args.seeds[1]} (${n}), ${args.years} years, ${jobs} jobs`);
   const start = performance.now();
   const [outputs, failed] = splitFailures(
-    await runSeeds(run, dataDir, args.seeds, args.years, jobs, args.detail),
+    await runSeeds(run, dataDir, args.seeds, args.years, jobs, args.detail, console.log, args.scenario),
   );
   const wall = (performance.now() - start) / 1000;
   writeOutputs(args.out, outputs, args.years);
+  writeEraOutputs(args.out, outputs, args.scenario);
   if (args.detail) writeDetail(args.out, outputs);
   const ms = outputs.map((o) => o.wall_ms).sort((a, b) => a - b);
   const lo = ms[0];

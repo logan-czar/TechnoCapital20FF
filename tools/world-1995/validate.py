@@ -32,8 +32,8 @@ def main():
     manifest = json.loads((OUT / 'manifest.json').read_text(encoding='utf-8'))
     if manifest['id'] != '1995' or manifest['start_date'] != '1995-01-01':
         errors.append('manifest: not the 1995 world')
-    if any(manifest['features'].values()):
-        errors.append(f'manifest: this world has no scripted parts yet, got {manifest["features"]}')
+    if manifest['features'] != {'era': True, 'ai_boom': False, 'fixed_events': False, 'arrowhead': False}:
+        errors.append(f'manifest: expected an era world with no scripted parts, got {manifest["features"]}')
 
     countries = read(OUT / 'countries.csv')
     isos = {c['iso3'] for c in countries}

@@ -224,7 +224,7 @@ def write_manifest(counts):
         'start_date': START_DATE,
         'expected_counts': counts,
         'cabinet_seats': CABINET_SEATS,
-        'features': {'ai_boom': False, 'fixed_events': False, 'arrowhead': False},
+        'features': {'era': True, 'ai_boom': False, 'fixed_events': False, 'arrowhead': False},
     }
     with open(OUT / 'manifest.json', 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(manifest, fh, indent=2)

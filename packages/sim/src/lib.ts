@@ -26,7 +26,9 @@ import type { WorldData } from "@tc20ff/sim-data";
 import { planAtLoad } from "./ai/jobs.ts";
 import { drawFirstVotes, drawTippedLabAtLoad } from "./births/jobs.ts";
 import { DEFAULT_PROFILE_ID, LEGACY_PROFILE, profileById } from "./economy/profiles.ts";
+import { scenarioKnown } from "./economy/scenarios.ts";
 import { start as economyStart } from "./economy/start.ts";
+import { eraStart } from "./era/jobs.ts";
 import { start as financeStart } from "./finance/index.ts";
 import { stateHash } from "./hash.ts";
 import { scheduler } from "./jobs.ts";
@@ -149,11 +151,14 @@ export function startWorld(
   focusLevels?: readonly number[],
   rdDiminishingX?: number,
   startDate?: SimDate,
+  scenarioId?: string,
 ): Result<World, LoadError> {
   const built = deps.worldFromData(data, startDate);
   if (!built.ok) return built;
   const world = built.value;
   world.profile = profile;
+  // A historical world's scenario sets its profile, so it comes before the economy's draws.
+  if (data.manifest.features.era) eraStart(world, data.manifest.id, scenarioId, draws);
   if (debtLevels !== undefined && debtLevels.length > 0) world.debt_levels = [...debtLevels];
   if (rdDiminishingX !== undefined) world.rd_diminishing_x = rdDiminishingX;
   if (focusLevels !== undefined && focusLevels.length > 0) world.focus_levels = [...focusLevels];
@@ -220,6 +225,8 @@ export interface SimOptions {
   profile?: string;
   /** The first day of the game (1995-rework 3.1); the world's own start when absent. */
   start_date?: SimDate;
+  /** A historical world's scenario (economy/scenarios.ts, 1995-rework 4.1); stable when absent. */
+  scenario?: string;
   /** Replaces some of the default `SIM_DEPS` (tests). */
   deps?: Partial<SimDeps>;
 }
@@ -368,6 +375,17 @@ export function simNew(data: WorldData, seed: number, opts: SimOptions = {}): Re
       },
     };
   }
+  if (opts.scenario !== undefined && !(data.manifest.features.era && scenarioKnown(opts.scenario))) {
+    return {
+      ok: false,
+      error: {
+        kind: "BadValue",
+        table: "scenario",
+        key: opts.scenario,
+        message: "not a scenario of this world",
+      },
+    };
+  }
   // A world without the scripted AI boom plays none under any profile (1995-rework 3.2).
   const played = data.manifest.features.ai_boom ? profile : { ...profile, ai_boom: false };
   return simFromConfig(
@@ -383,6 +401,7 @@ export function simNew(data: WorldData, seed: number, opts: SimOptions = {}): Re
           opts.focus_levels,
           opts.rd_diminishing_x,
           opts.start_date ?? data.manifest.start_date,
+          opts.scenario,
         ),
       makeScheduler: scheduler,
       mapDataBuild: (world) => deps.mapDataBuild(data, world),

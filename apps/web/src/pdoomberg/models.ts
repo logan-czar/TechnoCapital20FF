@@ -28,7 +28,7 @@ import {
   WEEKDAY_VALUES,
   type ZoneId,
 } from "@tc20ff/sim";
-import type { NameIndex } from "../links/names.ts";
+import { type NameIndex, startYear } from "../links/names.ts";
 import type { ChartModel, DocColumn, Ohlc, TableDoc } from "../pages/doc.ts";
 import { type Filter, filterGet, filterId, sortedOptions } from "../pages/kinds/news.tsx";
 import { type Pick, pickOf } from "../pages/Picker.tsx";
@@ -296,7 +296,10 @@ export function filingsTable(v: ViewsData, index: NameIndex): TableDoc {
       m(f.line_drawn),
       m(f.equity),
       { k: "rating", v: f.rating },
-      { k: "text", v: f.estimated ? "estimates" : f.synthetic ? "synthetic 2019" : "published" },
+      {
+        k: "text",
+        v: f.estimated ? "estimates" : f.synthetic ? `synthetic ${startYear(v) - 1}` : "published",
+      },
     ];
   });
   const n = (title: string): DocColumn => ({ title, width: 110 });
@@ -529,7 +532,7 @@ export function screenerTable(v: ViewsData, index: NameIndex, f: Filter): TableD
       { k: "text", v: r.origin.kind === "Start" ? "start" : `born ${date(r.origin.date)}` },
       r.listing.kind === "InPlay"
         ? { k: "date", v: r.listing.date }
-        : { k: "text", v: r.listing.kind === "BeforeStart" ? "before 2020" : "-" },
+        : { k: "text", v: r.listing.kind === "BeforeStart" ? `before ${startYear(v)}` : "-" },
       figureCell(r.revenue_ttm, "money"),
       figureCell(r.net_income_ttm, "money"),
       figureCell(r.value, "money"),
@@ -571,14 +574,14 @@ export function screenerPickers(
   const archetypes = ARCHETYPES.map((a, i): [string, Pick] => [ARCHETYPE_NAMES[a], pickOf(i)]);
   const listing: [string, Pick][] = [
     ["Private", 1],
-    ["Listed before 2020", 2],
+    [`Listed before ${startYear(v)}`, 2],
     ["Listed in play", 3],
   ];
   const years = new Set<number>((v.births?.listings ?? []).map((l) => l.date.year));
   // The current year from the name index's newest recap: the page does not read v_clock.
   const recap = index.latestRecap();
-  const now = v.clock?.date.year ?? (recap?.kind === "recap" ? recap.quarter.year : 2020);
-  for (let y = 2020; y <= now; y++) years.add(y);
+  const now = v.clock?.date.year ?? (recap?.kind === "recap" ? recap.quarter.year : startYear(v));
+  for (let y = startYear(v); y <= now; y++) years.add(y);
   for (const y of [...years].sort((a, b) => a - b))
     listing.push([`Listed in ${y}`, LISTED_YEAR + Math.max(0, y)]);
   return [
@@ -679,9 +682,9 @@ export const FUNCTION_VIEWS = {
   F2: ["quotes", "company_rows", "exchanges", "clock", "industry_rows", "countries"],
   F3: ["quotes", "company_rows", "price_bars"],
   F4: [],
-  F5: ["filings", "company_rows"],
+  F5: ["filings", "company_rows", "history"],
   F6: ["ratings", "company_rows"],
   F7: ["rates"],
   F9: ["industry_rows", "births"],
-  F10: ["company_rows", "countries", "exchanges", "zones", "births", "industry_rows"],
+  F10: ["company_rows", "countries", "exchanges", "zones", "births", "industry_rows", "history"],
 } as const;

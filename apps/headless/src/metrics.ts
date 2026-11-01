@@ -179,6 +179,8 @@ export interface SeedOutput<D = unknown> {
    * safe integers). Not in either table; `sharesOutCsv` writes it for the parity checker.
    */
   max_shares_out: number;
+  /** A historical world's `era.csv` rows (no header); absent or empty in the 2020 world. */
+  era?: string;
 }
 
 /** `shares_out.csv`: the largest share count per seed, read by `headless parity` (D951). */
@@ -197,6 +199,16 @@ export interface RunOptions<D = unknown> {
   onTick?: (now: DateTime, elapsedMs: number) => void;
   /** The `soak --detail` recorder (D900), which changes no row or hash. */
   detail?: DetailHook<D> | null;
+}
+
+/** The header of `era.csv`: a historical world's long history, one row per seed per year (1995-rework 4.3). */
+export const ERA_HEADER = "seed,year,gdp_usd,companies";
+
+/** A run's `era.csv` rows, from its `history` view at the end. */
+function eraRows(sim: SoakSimApi, seed: number): string {
+  const h = sim.views().history?.data;
+  if (h === undefined) return "";
+  return h.years.map((y, i) => `${seed},${y},${h.gdp_usd[i]},${h.companies[i]}\n`).join("");
 }
 
 /**
@@ -238,6 +250,7 @@ export function runSeed<D = unknown>(
       wall_ms: Math.trunc(performance.now() - start),
       state_hash: recorderStateHash(rec, sim),
       end: formatDateTime(sim.now()),
+      era: eraRows(sim, seed),
       detail: rec.detail === null ? null : (rec.detail.out as D),
       max_shares_out: rec.max_shares_out,
     },

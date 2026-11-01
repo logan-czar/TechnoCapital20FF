@@ -19,6 +19,8 @@ export interface ManifestDate {
 
 /** Which of the 2020 world's scripted parts a world plays. */
 export interface WorldFeatures {
+  /** Plays a scenario and keeps a long history (1995-rework 3.3). */
+  era: boolean;
   /** The scripted AI boom and pop (spec 5.1.1). */
   ai_boom: boolean;
   /** The fixed startup events F1 to F9 (spec 5.19.2). */
@@ -61,7 +63,7 @@ export const MANIFEST_2020: WorldManifest = {
   start_date: { year: 2020, month: 1, day: 1 },
   expected_counts: EXPECTED_COUNTS,
   cabinet_seats: 15,
-  features: { ai_boom: true, fixed_events: true, arrowhead: true },
+  features: { era: false, ai_boom: true, fixed_events: true, arrowhead: true },
 };
 
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
@@ -89,17 +91,18 @@ export function parseManifest(text: string): Result<WorldManifest, DataError> {
   }
   const f = m.features as Record<string, unknown> | null | undefined;
   if (
-    typeof f?.ai_boom !== "boolean" ||
+    typeof f?.era !== "boolean" ||
+    typeof f.ai_boom !== "boolean" ||
     typeof f.fixed_events !== "boolean" ||
     typeof f.arrowhead !== "boolean"
   ) {
-    return bad("features: needs ai_boom, fixed_events and arrowhead as booleans");
+    return bad("features: needs era, ai_boom, fixed_events and arrowhead as booleans");
   }
   return ok({
     id: m.id,
     start_date: { year: Number(date[1]), month: Number(date[2]), day: Number(date[3]) },
     expected_counts: pairs as [string, number][],
     cabinet_seats: m.cabinet_seats,
-    features: { ai_boom: f.ai_boom, fixed_events: f.fixed_events, arrowhead: f.arrowhead },
+    features: { era: f.era, ai_boom: f.ai_boom, fixed_events: f.fixed_events, arrowhead: f.arrowhead },
   });
 }

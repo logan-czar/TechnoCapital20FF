@@ -47,7 +47,15 @@ import {
   WEEKDAY_VALUES,
 } from "@tc20ff/sim";
 import { signed } from "../../links/cards.ts";
-import { controllerPage, eventName, type NameIndex, place, placeSpans, seatName } from "../../links/names.ts";
+import {
+  controllerPage,
+  eventName,
+  type NameIndex,
+  place,
+  placeSpans,
+  seatName,
+  startYear,
+} from "../../links/names.ts";
 import { type Cell, date, figureCell, fixed, number, price } from "../../widgets/cells.ts";
 import {
   type Block,
@@ -108,6 +116,7 @@ export const VIEWS = [
   "cap_table",
   "characters",
   "births",
+  "history",
   "countries",
   "places",
   "price_bars",
@@ -299,9 +308,9 @@ function header(d: CompanyDetail, row: CompanyRow | undefined, v: ViewsData, ind
       ],
     });
   } else {
-    blocks.push({ k: "line", spans: [span.text("Founded before 2020 (a starting company)")] });
+    blocks.push({ k: "line", spans: [span.text(`Founded before ${startYear(v)} (a starting company)`)] });
   }
-  // "Listed [date] on [exchange] at $[price]", or "listed before 2020" (D428).
+  // "Listed [date] on [exchange] at $[price]", or "listed before" the start (D428).
   const listing = row?.listing ?? { kind: "Private" };
   switch (listing.kind) {
     case "Private":
@@ -310,7 +319,7 @@ function header(d: CompanyDetail, row: CompanyRow | undefined, v: ViewsData, ind
     case "BeforeStart":
       blocks.push({
         k: "line",
-        spans: [span.text("Listed before 2020 on"), t({ kind: "exchange", id: listing.exchange })],
+        spans: [span.text(`Listed before ${startYear(v)} on`), t({ kind: "exchange", id: listing.exchange })],
       });
       break;
     case "InPlay":
@@ -796,7 +805,7 @@ function financials(id: CompanyId, d: CompanyDetail, v: ViewsData): Block[] {
   out.push({ k: "fields", fields: q });
   out.push({
     k: "heading",
-    text: `Quarterly statements (last ${quarters.length}, newest first; * from the 2019 run rate)`,
+    text: `Quarterly statements (last ${quarters.length}, newest first; * from the ${startYear(v) - 1} run rate)`,
   });
   out.push({ k: "table", table: statementsTable("company.statements.quarters", quarters) });
   const years = statementCols(id, v, "Year", STATEMENT_YEARS);

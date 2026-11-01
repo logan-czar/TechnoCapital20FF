@@ -74,7 +74,12 @@ export function headlessSim(sim: Sim): HeadlessSim {
  * Rust `Sim::new(data, seed)` for the runner: the game build (not debug), with file access for the
  * Save and Load controls. Throws while a Step 2 start call is not ported (lib.ts `START_DEPS`).
  */
-export const defaultFactory: SimFactory = (data: WorldData, seed: number) => {
-  const r = simNew(data, seed, { files: NODE_FILES });
-  return r.ok ? { ok: true, value: headlessSim(r.value) } : r;
-};
+export const defaultFactory: SimFactory = factoryFor();
+
+/** The factory of a run: the game build, playing `scenario` in a historical world (1995-rework 4.1). */
+export function factoryFor(scenario?: string): SimFactory {
+  return (data: WorldData, seed: number) => {
+    const r = simNew(data, seed, { files: NODE_FILES, ...(scenario === undefined ? {} : { scenario }) });
+    return r.ok ? { ok: true, value: headlessSim(r.value) } : r;
+  };
+}

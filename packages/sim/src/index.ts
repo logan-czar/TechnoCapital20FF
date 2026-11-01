@@ -57,6 +57,7 @@ export * from "./types/views/index.ts";
 export { barRows, indexCloseRows } from "./views/bars.ts";
 // Pure figure and statement helpers the Company page shares with the views (spec 3.9, D420).
 export { figureSum, statementLineOf } from "./views/estimate.ts";
+export { emptyHistory } from "./views/history.ts";
 // What the worker posts: view copies and patches by version (views/).
 export { simViewsCopyChangedFrom, simViewsGetMapLayer, simViewsMapLayerVersions } from "./views/index.ts";
 export { type PostedViews, postedViewsNone, postedViewsResetNews, viewsPatchSince } from "./views/patch.ts";

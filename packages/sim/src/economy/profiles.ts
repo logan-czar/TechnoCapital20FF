@@ -23,7 +23,7 @@ function phases(p: Partial<Record<CyclePhase, PhaseSpec>>): Record<CyclePhase, P
 }
 
 /** The spec 5.1 phase table (T), as the Rust reference draws it. */
-const LEGACY_PHASES: Record<CyclePhase, PhaseSpec> = {
+export const LEGACY_PHASES: Record<CyclePhase, PhaseSpec> = {
   Expansion: { g_range: [0.0, 0.02], length: [12, 28], next: "Overheating" },
   Overheating: { g_range: [0.02, 0.04], length: [2, 6], next: "Contraction" },
   Contraction: { g_range: [-0.06, -0.03], length: [2, 8], next: "Recovery" },
@@ -44,7 +44,7 @@ type DriftSettings = Pick<
   EconomyProfile,
   "fade" | "world_growth_scale" | "slowdown" | "cycle_scale" | "price_noise_scale"
 >;
-const NO_DRIFT: DriftSettings = {
+export const NO_DRIFT: DriftSettings = {
   fade: false,
   world_growth_scale: 1.0,
   slowdown: null,

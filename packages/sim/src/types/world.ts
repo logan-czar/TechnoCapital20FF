@@ -32,6 +32,7 @@ import type { CompanyId, CountryId, IndustryId, ProvinceId, StartupEventId, Unit
 import { MAX_SAFE_COUNT, roundHalfAway } from "./num.ts";
 import type { Archetype, LockedPlan } from "./state/ai.ts";
 import type { BirthsState, RunRate, VoteResult } from "./state/births.ts";
+import type { EraState } from "./state/era.ts";
 import type { BooksCheck, CompanyFinance, Rating } from "./state/finance.ts";
 import type { MarketState } from "./state/market.ts";
 import type { NewsWire } from "./state/news.ts";
@@ -123,6 +124,11 @@ export interface World {
   recaps: Recap[];
   /** The US politics POC (D980). */
   politics: PoliticsState;
+  /**
+   * A historical world's run (1995-rework 3.3): its scenario and its long history. Absent in the
+   * 2020 world, and so out of its state hash.
+   */
+  era?: EraState;
 }
 
 /**

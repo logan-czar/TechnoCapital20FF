@@ -21,13 +21,14 @@ import { writeFileSync } from "node:fs";
 import { check, type DataError, dataErrorToString, type WorldData, worldDataCounts } from "@tc20ff/sim-data";
 import { defaultDataDir, defaultMapDir, loadMap, loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
 import { parseRecord, parseReplay, parseRun, parseSoak, type RunArgs, USAGE, userPath } from "./args.ts";
-import { defaultFactory, isObservedSim } from "./factory.ts";
+import { defaultFactory, factoryFor, isObservedSim } from "./factory.ts";
 import { type RunOptions, runSeed, type SimFactory, YEARS_HEADER } from "./metrics.ts";
 import { parityCommand } from "./parity.ts";
 import { Profiler, TickCosts } from "./profile.ts";
 import { record, replay } from "./replay.ts";
 import { soak, workerRunner } from "./soak.ts";
 import { checkDir } from "./targets.ts";
+import { checkEraDir, isEraDir } from "./targets-1995.ts";
 
 /** Exit code 2 and the usage text (Rust `usage`). */
 function usage(): number {
@@ -176,7 +177,9 @@ export async function main(args: string[], factory: SimFactory = defaultFactory)
   switch (args[0]) {
     case "run": {
       const a = parseRun(args.slice(1));
-      return a === null ? usage() : report(() => runCommand(a, factory));
+      return a === null
+        ? usage()
+        : report(() => runCommand(a, a.scenario === undefined ? factory : factoryFor(a.scenario)));
     }
     case "soak": {
       const p = parseSoak(args.slice(1));
@@ -184,7 +187,7 @@ export async function main(args: string[], factory: SimFactory = defaultFactory)
       const [a, dir] = p;
       return report(async () => {
         await soak(workerRunner(), dir, a);
-        if (a.check) checkDir(a.out);
+        if (a.check) (isEraDir(a.out) ? checkEraDir : checkDir)(a.out);
       });
     }
     case "record": {
@@ -205,7 +208,9 @@ export async function main(args: string[], factory: SimFactory = defaultFactory)
     }
     case "check": {
       const dir = args[1];
-      return args.length === 2 && dir !== undefined ? report(() => checkDir(userPath(dir))) : usage();
+      return args.length === 2 && dir !== undefined
+        ? report(() => (isEraDir(userPath(dir)) ? checkEraDir : checkDir)(userPath(dir)))
+        : usage();
     }
     case "parity":
       // Exit 1 when any target or yearly metric fails the parity gate (D951).
