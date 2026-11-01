@@ -46,7 +46,7 @@ import {
   schedulerRunTickObserved,
   type TickObserver,
 } from "./time/scheduler.ts";
-import type { DateTime } from "./types/calendar.ts";
+import type { DateTime, SimDate } from "./types/calendar.ts";
 import { type Control, type Controls, MAX_SPEED } from "./types/control.ts";
 import type { DrawSource } from "./types/draws.ts";
 import type { Notice, PauseReason } from "./types/notice.ts";
@@ -77,7 +77,7 @@ export type { SoakIndustry, SoakStats } from "./soak.ts";
  */
 export interface StartDeps {
   /** world/load.rs `World::from_data` (`buildWorld`, with its own `LoadDeps` defaults). */
-  worldFromData(data: WorldData): Result<World, LoadError>;
+  worldFromData(data: WorldData, startDate?: SimDate): Result<World, LoadError>;
   /** economy/mod.rs `start(world, draws)`: pop date, cycle start, zone shocks, Q1 2020 growth draw (7.3). */
   economyStart(world: World, draws: DrawSource): void;
   /** births/jobs.rs `draw_tipped_lab_at_load(world, draws)` (gen stream, D111, D281). */
@@ -98,7 +98,7 @@ export interface StartDeps {
 
 /** The default `StartDeps`: every member is the ported Rust function. */
 export const START_DEPS: StartDeps = {
-  worldFromData: (data) => buildWorld(data),
+  worldFromData: (data, startDate) => buildWorld(data, undefined, startDate),
   economyStart, // economy/start.ts
   birthsDrawTippedLabAtLoad: drawTippedLabAtLoad, // births/jobs.ts
   aiPlanAtLoad: planAtLoad, // ai/jobs.ts
@@ -148,8 +148,9 @@ export function startWorld(
   debtLevels?: readonly number[],
   focusLevels?: readonly number[],
   rdDiminishingX?: number,
+  startDate?: SimDate,
 ): Result<World, LoadError> {
-  const built = deps.worldFromData(data);
+  const built = deps.worldFromData(data, startDate);
   if (!built.ok) return built;
   const world = built.value;
   world.profile = profile;
@@ -217,6 +218,8 @@ export interface SimOptions {
   rd_diminishing_x?: number;
   /** The growth profile id (economy/profiles.ts, D970); `DEFAULT_PROFILE_ID` when absent. */
   profile?: string;
+  /** The first day of the game (1995-rework 3.1); 1 January 2020 when absent. */
+  start_date?: SimDate;
   /** Replaces some of the default `SIM_DEPS` (tests). */
   deps?: Partial<SimDeps>;
 }
@@ -377,6 +380,7 @@ export function simNew(data: WorldData, seed: number, opts: SimOptions = {}): Re
           opts.debt_levels,
           opts.focus_levels,
           opts.rd_diminishing_x,
+          opts.start_date,
         ),
       makeScheduler: scheduler,
       mapDataBuild: (world) => deps.mapDataBuild(data, world),

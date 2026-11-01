@@ -40,7 +40,7 @@ import {
   schedulerRunSlots,
   tickFactsNew,
 } from "../time/scheduler.ts";
-import { cmpDate, type DateTime, EPOCH_YEAR, type SimDate } from "../types/calendar.ts";
+import { cmpDate, type DateTime, type SimDate } from "../types/calendar.ts";
 
 import type { DrawSource } from "../types/draws.ts";
 import type { CompanyId, ZoneId } from "../types/ids.ts";
@@ -254,8 +254,8 @@ export function start(world: World, draws: DrawSource): void {
   }
   const caps = exchangeCaps(world);
   world.market.indices = world.zones.map((_, z) => exchangeIndexAtLoad(caps[z] as number));
-  // The index history starts with the load level on 1 January 2020 (D540).
-  const startDate = simDateYmd(EPOCH_YEAR, 1, 1);
+  // The index history starts with the load level on the start date (D540).
+  const startDate = dateTimeDate(world.clock);
   world.market.index_history = world.market.indices.map((i) => {
     const h = indexHistoryNew();
     if (i.prev_close !== null) indexHistoryRecord(h, startDate, i.prev_close);

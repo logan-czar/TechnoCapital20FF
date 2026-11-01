@@ -65,9 +65,9 @@ export interface Quarter {
 }
 
 /**
- * A point on the clock: whole hours since 2020-01-01 00:00 UTC (spec 3.1). One tick is one hour
- * (spec 4), so this is also the tick number. Whole number (u32); covers about 490,000 years.
- * Rust newtype `DateTime(u32)`; compare with `<` or `cmpDateTime`.
+ * A point on the clock: whole hours since 2020-01-01 00:00 UTC (spec 3.1), negative in a world
+ * that starts before the epoch (1995-rework 3.1, D990). One tick is one hour (spec 4), so this is
+ * also the tick number. Rust newtype `DateTime(u32)`; compare with `<` or `cmpDateTime`.
  */
 export type DateTime = number;
 

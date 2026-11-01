@@ -17,8 +17,8 @@
 import type { DateTime, LoadError, Rating, SoakIndustry, SoakStats } from "@tc20ff/sim/internal";
 import {
   type CompanyStatus,
+  dateTimeDate,
   dateTimeMidnight,
-  EPOCH_YEAR,
   formatDateTime,
   formatMonth,
   maxF,
@@ -200,7 +200,7 @@ export interface RunOptions<D = unknown> {
 }
 
 /**
- * Runs `seed` from the start state for `years` years (to 1 January of 2020 + years, 00:00)
+ * Runs `seed` from the start state for `years` years (to 1 January of the start year + years, 00:00)
  * through `step` only, recording both tables. Returns the load error's text if the sim cannot be
  * built (Rust `Result<_, String>`).
  */
@@ -215,7 +215,7 @@ export function runSeed<D = unknown>(
   const made = factory(structuredClone(data), seed);
   if (!made.ok) return { ok: false, error: loadErrorToString(made.error) };
   const sim = made.value;
-  const end = dateTimeMidnight(simDateYmd(EPOCH_YEAR + years, 1, 1));
+  const end = dateTimeMidnight(simDateYmd(dateTimeDate(sim.now()).year + years, 1, 1));
   const rec = recorderNew(sim, seed);
   rec.detail = opts.detail ?? null;
   const hashMonthly = opts.hashMonthly ?? false;
@@ -409,6 +409,8 @@ function fx(x: number, digits: number): string {
 /** Reads the views at the notices of each tick and writes the rows. */
 interface Recorder {
   seed: number;
+  /** The year the run started in. */
+  start_year: number;
   year_ticks: number;
   economy: YearEconomy;
   tracking: YearTracking;
@@ -457,6 +459,7 @@ function recorderNew(sim: SoakSimApi, seed: number): Recorder {
   const rows = sim.views().industry_rows.data.rows;
   return {
     seed,
+    start_year: dateTimeDate(sim.now()).year,
     year_ticks: 0,
     economy: yearEconomyNew(),
     tracking: yearTrackingNew(),
@@ -631,7 +634,7 @@ function recorderYearClose(rec: Recorder, sim: SoakSimApi, year: number): void {
  */
 function recorderM10Columns(rec: Recorder, sim: SoakSimApi, year: number): string {
   const rows = sim.views().industry_rows.data.rows;
-  const n = year + 1 - EPOCH_YEAR;
+  const n = year + 1 - rec.start_year;
   const devs = rows.map((r, i) => {
     const g = cagr(rec.demand0[i] as number, r.demand, n);
     const lt = cagr(rec.trend0[i] as number, r.trend_demand, n);

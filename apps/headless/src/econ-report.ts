@@ -19,8 +19,8 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
+  dateTimeDate,
   dateTimeMidnight,
-  EPOCH_YEAR,
   PROFILES,
   type SoakIndustry,
   simDateYmd,
@@ -113,9 +113,9 @@ export function runSeed(
   const economy: Row[] = [];
   const industries: Row[] = [];
   const stocks: Row[] = [];
-  let y = EPOCH_YEAR;
+  let y = dateTimeDate(sim.now()).year;
   let next = dateTimeMidnight(simDateYmd(y + 1, 1, 1));
-  const end = dateTimeMidnight(simDateYmd(EPOCH_YEAR + years, 1, 1));
+  const end = dateTimeMidnight(simDateYmd(y + years, 1, 1));
   while (sim.now() < end) {
     for (const n of sim.step()) {
       if (n.kind === "MonthDone" && n.month.month !== lastMonth) {
@@ -478,8 +478,8 @@ async function main(args: string[]): Promise<number> {
     const [, dir = "", f = "", t = ""] = args;
     if (!dir) return usage();
     const all = loadAll(dir);
-    const maxYear = Math.max(...all.flatMap((l) => l.economy.map((r) => num(r, "year"))));
-    const text = summarize(all, f ? Number(f) : EPOCH_YEAR, t ? Number(t) : maxYear);
+    const runYears = all.flatMap((l) => l.economy.map((r) => num(r, "year")));
+    const text = summarize(all, f ? Number(f) : Math.min(...runYears), t ? Number(t) : Math.max(...runYears));
     writeFileSync(join(dir, "summary.md"), text);
     console.log(text);
     return 0;

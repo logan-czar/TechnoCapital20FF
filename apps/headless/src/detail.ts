@@ -20,7 +20,7 @@ import type {
   Statement,
   World,
 } from "@tc20ff/sim/internal";
-import { EPOCH_YEAR, formatSimDate, maxF, roundHalfAway, totalCmp } from "@tc20ff/sim/internal";
+import { formatSimDate, maxF, roundHalfAway, totalCmp } from "@tc20ff/sim/internal";
 import { isSoakSim, type SoakSim } from "./factory.ts";
 import type { DetailHook, SoakSimApi } from "./metrics.ts";
 
@@ -33,7 +33,7 @@ export const INDUSTRIES_HEADER =
   "seed,year,industry,trend_growth,lt,q_growth,label,trend_demand,demand,supply,s,m,fringe_assets,named_revenue_year,fringe_revenue_year,named_share,companies,active,distressed,quoted,born_alive,births_in_year,bankruptcies_in_year,top1_share,top4_share,top10_share,hhi,mean_productivity,named_gross_assets,fair_value,market_cap";
 
 /**
- * `companies.csv`: every company not Removed, at the closes of 2020 and of every tenth year
+ * `companies.csv`: every company not Removed, at the closes of the first and of every tenth year
  * (2029, 2039, ...). TTM figures sum the last four quarterly statements.
  */
 export const COMPANIES_HEADER =
@@ -129,6 +129,8 @@ export class DetailRecorder implements DetailHook<Detail> {
   readonly out: Detail = detailNew();
 
   private readonly seed: number;
+  /** The first year closed: the run's start year. */
+  private firstYear: number | null = null;
 
   constructor(seed: number) {
     this.seed = seed;
@@ -255,9 +257,10 @@ export class DetailRecorder implements DetailHook<Detail> {
       ].join(",")}\n`;
     });
 
-    // Companies, at the 2020 close and every tenth year.
-    const yearsRun = year + 1 - EPOCH_YEAR;
-    if (year === EPOCH_YEAR || yearsRun % 10 === 0) {
+    // Companies, at the first year's close and every tenth year.
+    this.firstYear ??= year;
+    const yearsRun = year + 1 - this.firstYear;
+    if (year === this.firstYear || yearsRun % 10 === 0) {
       companies.forEach((c, i) => {
         if (!inGame(c)) return;
         const st = stocks[i];

@@ -51,7 +51,7 @@ import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
 import { managementScore } from "../people/management.ts";
 import { nameBooksGet } from "../people/names.ts";
 import { boardOf } from "../people/seating.ts";
-import { quarterNext, simDateQuarter } from "../time/calendar.ts";
+import { dateTimeDate, quarterNext, simDateQuarter } from "../time/calendar.ts";
 import { type JobCtx, jobCtxNotice, type Scheduler, schedulerRegister } from "../time/scheduler.ts";
 import type { Quarter, SimDate } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
@@ -121,11 +121,12 @@ export function drawTippedLabAtLoad(world: World, draws: DrawSource): void {
 
 /**
  * Each starting private company's first IPO vote (spec 5.20.1 step 1, A; D276): one of the four
- * 2020 plan locks, a gen draw each in company id order, made at load after the boards.
+ * plan locks of the start year, a gen draw each in company id order, made at load after the boards.
  */
 export function drawFirstVotes(world: World, draws: DrawSource): void {
+  const year = dateTimeDate(world.clock).year;
   for (const c of world.companies) {
-    if (!c.public) c.ipo_next_vote = drawFirstVote(draws);
+    if (!c.public) c.ipo_next_vote = drawFirstVote(draws, year);
   }
 }
 

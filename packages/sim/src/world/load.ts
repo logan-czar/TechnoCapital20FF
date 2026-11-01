@@ -37,6 +37,7 @@ import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
 import { nameBooksBuild } from "../people/names.ts";
 import { traitFromName } from "../people/traits.ts";
 import { politicsStateFromData } from "../politics/state.ts";
+import { dateTimeDate, dateTimeMidnight } from "../time/calendar.ts";
 import { DATETIME_START, type SimDate } from "../types/calendar.ts";
 import { tableFromRows } from "../types/collections.ts";
 import type { CompanyId, CountryId, IndustryId, ProvinceId, UnitId, ZoneId } from "../types/ids.ts";
@@ -138,7 +139,7 @@ export interface LoadDeps {
   /** finance/state.rs `CompanyFinance::at_load(credit_drawn, rating)`. */
   companyFinanceAtLoad(creditDrawn: number, rating: Rating): CompanyFinance;
   /** market/state.rs `Stock::at_load(exchange, open_price, shares_out)`. */
-  stockAtLoad(exchange: ZoneId | null, openPrice: number, sharesOut: number): Stock;
+  stockAtLoad(exchange: ZoneId | null, openPrice: number, sharesOut: number, date: SimDate): Stock;
   /** ops/compute.rs `compute_bill(stations, stored_tb)`. */
   computeBill(stations: Stations, storedTb: number): ComputeBill;
   /** ops/data.rs `DataBook::at_load(revenue, params, conversion_capacity, enterprise_share)`. */
@@ -307,18 +308,26 @@ function sortedBy<T>(rows: readonly T[], key: (r: T) => string): T[] {
   return [...rows].sort((a, b) => cmpStr(key(a), key(b)));
 }
 
+/** The 2020 world's start date (spec 3.1, 7.3). */
+const EPOCH_DATE: SimDate = dateTimeDate(DATETIME_START);
+
 /** World base rate, fixed in the MVP (spec 3.1, T). */
 export const BASE_RATE = 0.03;
 /** Neutral rate (spec 3.1, T). */
 export const NEUTRAL_RATE = 0.03;
 
 /**
- * The start state tables (spec 7) with the clock at 2020-01-01 00:00 (spec 3.1, 7.3). Rust
- * `build_world`; `deps` stands for the Step 2 modules it calls (see the file header).
+ * The start state tables (spec 7) with the clock at 00:00 on `startDate` (spec 3.1, 7.3;
+ * 1995-rework 3.1). Rust `build_world`; `deps` stands for the Step 2 modules it calls (see the file
+ * header).
  */
-export function buildWorld(data: WorldData, deps: LoadDeps = UNPORTED_LOAD_DEPS): Result<World, LoadError> {
+export function buildWorld(
+  data: WorldData,
+  deps: LoadDeps = UNPORTED_LOAD_DEPS,
+  startDate: SimDate = EPOCH_DATE,
+): Result<World, LoadError> {
   try {
-    return { ok: true, value: buildWorldInner(data, deps) };
+    return { ok: true, value: buildWorldInner(data, deps, startDate) };
   } catch (e) {
     if (e instanceof LoadFailure) return { ok: false, error: e.loadError };
     throw e;
@@ -329,11 +338,11 @@ export function buildWorld(data: WorldData, deps: LoadDeps = UNPORTED_LOAD_DEPS)
  * Rust `World::from_data`: the start state tables from the loaded rows (spec 7), before the 7.3
  * start draws. The same as `buildWorld` with the real module dependencies.
  */
-export function worldFromData(data: WorldData): Result<World, LoadError> {
-  return buildWorld(data);
+export function worldFromData(data: WorldData, startDate: SimDate = EPOCH_DATE): Result<World, LoadError> {
+  return buildWorld(data, UNPORTED_LOAD_DEPS, startDate);
 }
 
-function buildWorldInner(data: WorldData, deps: LoadDeps): World {
+function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): World {
   // Zones (spec 3.2.1).
   const zoneRows = sortedBy(data.financial_zones.rows, (z) => z.zone_id);
   const zoneKeys = new Keys<ZoneId>(
@@ -588,7 +597,7 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
     const shares = sharesFromCsv(start.shares);
     if (!shares.ok) throw bad(shares.error);
     const sharesOut = shares.value;
-    stocks.push(deps.stockAtLoad(exchange, c.public ? start.open_price : 0.0, sharesOut));
+    stocks.push(deps.stockAtLoad(exchange, c.public ? start.open_price : 0.0, sharesOut, startDate));
     const rating = deps.ratingParse(start.start_rating);
     if (rating === null) {
       throw bad(`start_rating \`${start.start_rating}\` is not on the AAA to CC scale`);
@@ -654,7 +663,7 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
   const politics = deps.politicsStateFromData(data, countryKeys.map, provinceKeys.map);
   if (politics === null) throw badValue("countries", "USA", "the politics POC needs the USA (D980)");
   return {
-    clock: DATETIME_START,
+    clock: dateTimeMidnight(startDate),
     zones: tableFromRows(zones),
     countries: tableFromRows(countries),
     provinces: tableFromRows(provinces),

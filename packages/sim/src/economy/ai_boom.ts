@@ -11,10 +11,14 @@ import { quarterFirstDay, simDateQuarter, simDateYmd } from "../time/calendar.ts
 import { type JobCtx, jobCtxRaiseAlert } from "../time/scheduler.ts";
 import type { Quarter, SimDate } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
+import { maxF } from "../types/num.ts";
 import type { AiBoom, AiSchedule, AiStage, PhaseLabel, World } from "../types/world.ts";
 import { fadedTrend, growthFactor, profileOf } from "./profiles.ts";
 
-/** The fade counts years from 1 Jan 2020, the game's start (drift plan, D977). */
+/**
+ * The fade counts years from 1 Jan 2020, the 2020 world's start (drift plan, D977), and not before
+ * it (1995-rework 3.1): a negative count would inflate a trend.
+ */
 const FADE_ORIGIN_YEAR = 2020;
 
 /** The boom event: 00:00 on 1 January 2030 (spec 5.1.1, scripted). */
@@ -157,7 +161,7 @@ export function setIndustryLt(world: World, date: SimDate): void {
   const profile = profileOf(world);
   const q = simDateQuarter(date);
   const scale = profile.lt_scale * growthFactor(profile, q.year);
-  const years = (quarterIndex(q) - FADE_ORIGIN_YEAR * QUARTERS_IN_YEAR) / QUARTERS_IN_YEAR;
+  const years = maxF((quarterIndex(q) - FADE_ORIGIN_YEAR * QUARTERS_IN_YEAR) / QUARTERS_IN_YEAR, 0.0);
   for (const ind of world.industries) {
     ind.prev_lt = ind.lt;
     const p = ind.params;

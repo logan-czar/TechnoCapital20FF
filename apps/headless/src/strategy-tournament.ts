@@ -14,8 +14,8 @@ import {
   companyFinanceStatus,
   companySheet,
   companyTrailingRevenue,
+  dateTimeDate,
   dateTimeMidnight,
-  EPOCH_YEAR,
   simDateYmd,
   simNew,
   simSoakWorld,
@@ -75,7 +75,7 @@ function runSeed(
   };
   const start = Array.from({ length: n0 }, (_, id) => snap(id));
   const ever = new Array<boolean>(n0).fill(false);
-  const end = dateTimeMidnight(simDateYmd(EPOCH_YEAR + years, 1, 1));
+  const end = dateTimeMidnight(simDateYmd(dateTimeDate(sim.now()).year + years, 1, 1));
   let lastMonth = -1;
   while (sim.now() < end) {
     for (const ev of sim.step()) {

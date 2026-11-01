@@ -37,7 +37,7 @@ import {
   type Control,
   type Controls,
   controlsEffectiveSpeed,
-  EPOCH_YEAR,
+  dateTimeDate,
   formatDateTime,
   formatMonth,
   MAX_SPEED,
@@ -343,7 +343,7 @@ export function runFrames(
   if (!made.ok) throw new Error(JSON.stringify(made.error));
   const sim = made.value;
   const saves = new Map<number, Uint8Array>();
-  const end = dateTimeMidnight(simDateYmd(EPOCH_YEAR + years, 1, 1));
+  const end = dateTimeMidnight(simDateYmd(dateTimeDate(sim.now()).year + years, 1, 1));
   let frame = 0;
   let step = 0;
   let nextLogged = 0;

@@ -21,7 +21,14 @@ import { variableCostShare } from "../economy/revenue.ts";
 import { pPre } from "../economy/supply.ts";
 import { dataBookFreeRdFraction } from "../ops/data.ts";
 import { BAREBONES_REVENUE_USD } from "../ops/stations.ts";
-import { formatMonth, monthPrev, quarterPrev, simDateMonthOf, simDateQuarter } from "../time/calendar.ts";
+import {
+  dateTimeDate,
+  formatMonth,
+  monthPrev,
+  quarterPrev,
+  simDateMonthOf,
+  simDateQuarter,
+} from "../time/calendar.ts";
 import {
   type JobCtx,
   jobCtxRaiseAlert,
@@ -80,7 +87,6 @@ import {
   MONTHS_PER_QUARTER,
   QUARTERS_PER_YEAR,
   quarterStatement,
-  SYNTHETIC_YEAR,
   syntheticHistory,
   trailingFour,
   yearStatement,
@@ -258,11 +264,12 @@ export function runRate(world: World, c: Company): [Ledger, ImpliedRating, Credi
 /**
  * The finance start state (spec 7.1, 4.4; build-plan M4.2, M4.4, M4.5): each company's run rate
  * and its implied rating (the starting rating itself is company-start.csv's, D241), its line
- * limit, the four synthetic 2019 quarters and the 2019 year, and the opening balance sheet of
- * January 2020. Call once, after the economy and the boards are set (their load month and
+ * limit, the four synthetic quarters and the year before the start, and the opening balance sheet
+ * of the start month. Call once, after the economy and the boards are set (their load month and
  * management scores feed it); it draws nothing.
  */
 export function start(world: World): void {
+  const syntheticYear = dateTimeDate(world.clock).year - 1;
   for (let id = 0; id < world.companies.length; id++) {
     const c = world.companies[id] as Company;
     const [annual, implied, line] = runRate(world, c);
@@ -276,8 +283,8 @@ export function start(world: World): void {
       },
       status,
     );
-    const history = syntheticHistory(annual, opening, keyFigures(world, c));
-    const year = yearStatement(SYNTHETIC_YEAR, history);
+    const history = syntheticHistory(annual, opening, keyFigures(world, c), syntheticYear);
+    const year = yearStatement(syntheticYear, history);
     const f = c.finance;
     f.implied = implied;
     f.line = line;

@@ -34,8 +34,8 @@ export const MIN_TTM_REVENUE_USD = 75.0e6;
 /** Spec 5.20: TTM net income above 0, or 4-quarter revenue growth of at least 20%. */
 export const MIN_REVENUE_GROWTH = 0.2;
 /**
- * Spec 5.20.1 step 1: a starting private company's first vote falls at one of the four 2020 plan
- * locks (A).
+ * Spec 5.20.1 step 1: a starting private company's first vote falls at one of the four plan locks
+ * of the start year (A); 2020 for the 2020 world.
  */
 export const FIRST_VOTE_YEAR = 2020;
 export const QUARTERS_PER_YEAR = 4;
@@ -120,13 +120,13 @@ export function passesIpoTests(i: IpoTestInputs): boolean {
 }
 
 /**
- * A starting private company's first vote (spec 5.20.1 step 1, A): one of the four 2020 plan locks,
- * uniform on the gen stream (D276: drawn at load for each starting private company in id order,
- * after the boards).
+ * A starting private company's first vote (spec 5.20.1 step 1, A): one of the four plan locks of
+ * the start year, uniform on the gen stream (D276: drawn at load for each starting private company
+ * in id order, after the boards).
  */
-export function drawFirstVote(draws: DrawSource): Quarter {
+export function drawFirstVote(draws: DrawSource, year: number = FIRST_VOTE_YEAR): Quarter {
   const q = draws.intInclusive("Gen", 1, QUARTERS_PER_YEAR);
-  return { year: FIRST_VOTE_YEAR, q };
+  return { year, q };
 }
 
 /**
