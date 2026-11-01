@@ -30,6 +30,10 @@ import {
   type KeyCity,
   NAME_ROW_SPEC,
   type NameRow,
+  POLITICS_OFFICE_SPEC,
+  POLITICS_STATE_SPEC,
+  type PoliticsOffice,
+  type PoliticsState,
   PROVINCE_SPEC,
   type Province,
   STARTUP_EVENT_SPEC,
@@ -62,6 +66,9 @@ export interface WorldData {
   key_cities: Table<KeyCity>;
   company_start: Table<CompanyStart>;
   startup_events: Table<StartupEvent>;
+  /** The US states and appointed posts (politics POC, D980, D983, D984). */
+  politics_states: Table<PoliticsState>;
+  politics_offices: Table<PoliticsOffice>;
   /** Name lists, one table per superregion, in SUPERREGIONS order. */
   names: Table<NameRow>[];
   country_cultures: Table<CountryCulture>;
@@ -95,6 +102,8 @@ export function worldDataCounts(w: WorldData): [string, number][] {
     ["key-cities", tableLen(w.key_cities)],
     ["company-start", tableLen(w.company_start)],
     ["startup-events", tableLen(w.startup_events)],
+    ["politics-usa", tableLen(w.politics_states)],
+    ["politics-usa-offices", tableLen(w.politics_offices)],
     ["names", sum(w.names)],
     ["country-cultures", tableLen(w.country_cultures)],
     ["industry-suffixes", tableLen(w.industry_suffixes)],
@@ -119,6 +128,8 @@ export const WORLD_FILES: readonly string[] = [
   "key-cities.csv",
   "company-start.csv",
   "startup-events.csv",
+  "politics-usa.csv",
+  "politics-usa-offices.csv",
   ...regionFiles("names/{}.csv"),
   "names/country-cultures.csv",
   "names/industry-suffixes.csv",
@@ -163,6 +174,10 @@ export function parseWorld(files: Files): Result<WorldData, DataError> {
   if (!companyStart.ok) return companyStart;
   const startupEvents = loadTable(files, "startup-events.csv", STARTUP_EVENT_SPEC);
   if (!startupEvents.ok) return startupEvents;
+  const politicsStates = loadTable(files, "politics-usa.csv", POLITICS_STATE_SPEC);
+  if (!politicsStates.ok) return politicsStates;
+  const politicsOffices = loadTable(files, "politics-usa-offices.csv", POLITICS_OFFICE_SPEC);
+  if (!politicsOffices.ok) return politicsOffices;
   const names = perRegion(files, "names/{}.csv", NAME_ROW_SPEC);
   if (!names.ok) return names;
   const countryCultures = loadTable(files, "names/country-cultures.csv", COUNTRY_CULTURE_SPEC);
@@ -181,6 +196,8 @@ export function parseWorld(files: Files): Result<WorldData, DataError> {
     key_cities: keyCities.value,
     company_start: companyStart.value,
     startup_events: startupEvents.value,
+    politics_states: politicsStates.value,
+    politics_offices: politicsOffices.value,
     names: names.value,
     country_cultures: countryCultures.value,
     industry_suffixes: industrySuffixes.value,

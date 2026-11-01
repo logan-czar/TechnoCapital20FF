@@ -145,6 +145,7 @@ describe("m3 management", () => {
  */
 function scoreFiftyCeo(): SeatHolder {
   const character: SimpleCharacter = {
+    class: "Executive",
     name: "Test Fifty",
     age: 40,
     skills: { finance: 27, operations: 26, persuasion: 26, intrigue: 3, tech: 3, hustle: 3 },

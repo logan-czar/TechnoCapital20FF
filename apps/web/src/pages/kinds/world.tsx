@@ -19,6 +19,7 @@ export const WORLD_LINKS: readonly PageRef[] = [
   { kind: "countries" },
   { kind: "characters" },
   { kind: "events" },
+  { kind: "politics" },
   { kind: "news" },
 ];
 

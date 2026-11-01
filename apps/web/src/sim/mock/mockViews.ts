@@ -389,7 +389,7 @@ export function initialViews(
     ),
     zones: view({ zones: [] }, v),
     rates: view({ base_rate: 0.02, zones: [], sovereigns: [], rating_spreads: [] }, v),
-    characters: view({ full: [], partial: [] }, v),
+    characters: view({ full: [], partial: [], politicians: [] }, v),
     cap_table: view({ companies: [] }, v),
     quotes: view(quotesView(stocks, w, indexLevels), v),
     price_bars: view({ companies: initialBars(stocks, w, rng, endDay) }, v),
@@ -462,6 +462,25 @@ export function initialViews(
     ratings: view({ companies: [], base_rate: 0.02 }, v),
     recap: view({ recaps: [], watchlist: [] }, v),
     map_static: view({ provinces: [], metros: [], key_cities: [], regions: [], geo: null }, v),
+    politics: view(
+      {
+        active: false,
+        president: null,
+        president_terms: 0,
+        vice_president: null,
+        cabinet: [],
+        house: [],
+        house_seats: [0, 0],
+        senate: [],
+        senate_seats: [0, 0],
+        courts: [],
+        next_election: null,
+        next_is_presidential: false,
+        next_senate_class: 0,
+        elections: [],
+      },
+      v,
+    ),
   };
 }
 

@@ -32,6 +32,7 @@ function recordingDeps(calls: string[], fail: { on: boolean }): StartDeps {
   };
   const error: LoadError = { kind: "BadValue", table: "t", key: "k", message: "m" };
   return {
+    politicsStart: rec("politicsStart"),
     worldFromData: () => {
       calls.push("worldFromData");
       return fail.on
@@ -70,6 +71,7 @@ describe("startWorld", () => {
       "birthsDrawFirstVotes",
       "financeStart",
       "marketStart",
+      "politicsStart",
     ]);
     expect(r.ok && r.value.news.labels).toEqual(["Normal", "Normal", "Normal", "Normal", "Normal"]);
   });

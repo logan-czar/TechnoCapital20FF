@@ -36,6 +36,7 @@ import { fitStations, laborUnits } from "../ops/labor.ts";
 import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
 import { nameBooksBuild } from "../people/names.ts";
 import { traitFromName } from "../people/traits.ts";
+import { politicsStateFromData } from "../politics/jobs.ts";
 import { DATETIME_START, type SimDate } from "../types/calendar.ts";
 import { tableFromRows } from "../types/collections.ts";
 import type {
@@ -689,6 +690,7 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
     births: births.value,
     news: deps.newsWireDefault(),
     recaps: [],
+    politics: politicsStateFromData(data, countryKeys.map, provinceKeys.map),
   };
 }
 

@@ -33,6 +33,7 @@ import { scheduler } from "./jobs.ts";
 import { mapDataBuild, mapDataDefault } from "./map.ts";
 import { start as marketStart } from "./market/jobs.ts";
 import { start as seatingStart } from "./people/seating.ts";
+import { politicsStart } from "./politics/jobs.ts";
 import { type RngStreams, rngStreamsDraws, rngStreamsNew, rngStreamsSeed } from "./rng.ts";
 import { decode, encode, saveErrorMessage } from "./save.ts";
 import { type SoakStats, soakStats } from "./soak.ts";
@@ -91,6 +92,8 @@ export interface StartDeps {
   financeStart(world: World): void;
   /** market/mod.rs `start(world, draws)`: engine value, V and P, indices, EFV errors (7.1, 5.14, D150). */
   marketStart(world: World, draws: DrawSource): void;
+  /** politics/jobs.ts `politicsStart(world, draws)`: the US office holders (Politics stream, D987). */
+  politicsStart(world: World, draws: DrawSource): void;
 }
 
 /** The default `StartDeps`: every member is the ported Rust function. */
@@ -103,6 +106,7 @@ export const START_DEPS: StartDeps = {
   birthsDrawFirstVotes: drawFirstVotes, // births/jobs.ts
   financeStart, // finance/index.ts
   marketStart, // market/jobs.ts start
+  politicsStart, // politics/jobs.ts
 };
 
 /** Everything `Sim` calls outside lib.ts that Step 2 or 3 ports. */
@@ -159,6 +163,7 @@ export function startWorld(
   deps.birthsDrawFirstVotes(world, draws);
   deps.financeStart(world);
   deps.marketStart(world, draws);
+  deps.politicsStart(world, draws);
   world.news.labels = world.industries.map((i) => i.phase_label);
   return { ok: true, value: world };
 }

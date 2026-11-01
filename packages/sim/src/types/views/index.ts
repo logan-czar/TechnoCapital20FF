@@ -32,6 +32,7 @@ import type { MapStaticView } from "./map_static.ts";
 import type { MarketStatsView } from "./market_stats.ts";
 import type { NewsView } from "./news.ts";
 import type { PlacesView } from "./places.ts";
+import type { PoliticsView } from "./politics.ts";
 import type { PriceBarsView } from "./price_bars.ts";
 import type { ProjectionView } from "./projection.ts";
 import type { ProvinceCardsView } from "./province_cards.ts";
@@ -65,6 +66,7 @@ export * from "./map_static.ts";
 export * from "./market_stats.ts";
 export * from "./news.ts";
 export * from "./places.ts";
+export * from "./politics.ts";
 export * from "./price_bars.ts";
 export * from "./projection.ts";
 export * from "./province_cards.ts";
@@ -93,6 +95,8 @@ export type Cadence =
   | "MonthlyAndLock"
   /** On the quarter's compile, release (and its 01:00 price move), lock and recap ticks. */
   | "Quarterly"
+  /** Monthly, and on the US political calendar's days (D985). */
+  | "MonthlyAndPolitics"
   /** Once at load. */
   | "OnceAtLoad";
 
@@ -145,6 +149,7 @@ export interface SimViews {
   ratings: View<RatingsView>;
   recap: View<RecapView>;
   map_static: View<MapStaticView>;
+  politics: View<PoliticsView>;
 }
 
 /** A view's field name in `SimViews`. */
@@ -183,6 +188,7 @@ export const VIEW_NAMES = [
   "ratings",
   "recap",
   "map_static",
+  "politics",
 ] as const satisfies readonly ViewName[];
 
 /** One view's `ViewData` constants (Rust trait consts; defaults false). */
@@ -242,4 +248,5 @@ export const VIEW_SPECS: Readonly<Record<ViewName, ViewSpec>> = {
   ratings: spec("Quarterly", { on_omniscient: true }),
   recap: spec("Quarterly", { on_control: true }),
   map_static: spec("OnceAtLoad"),
+  politics: spec("MonthlyAndPolitics"),
 };

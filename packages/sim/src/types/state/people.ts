@@ -112,11 +112,12 @@ export type CompanySize = "Small" | "Mid" | "Large";
 /** CompanySize in declaration (Ord) order. */
 export const COMPANY_SIZE_VALUES = ["Small", "Mid", "Large"] as const;
 
-/**
- * A simple character (spec 3.7.1). The id, company and seat are kept by whoever stores it
- * (`seat` is here because the draw depends on it).
- */
-export interface SimpleCharacter {
+/** What a base character does (D980): a board filler or an office holder. */
+export type CharacterClass = "Executive" | "Politician";
+
+/** A base character (spec 3.7.1; D980): the stats every generated filler has, and its class. */
+export interface BaseCharacter {
+  class: CharacterClass;
   name: string;
   /** Whole number (u8). */
   age: number;
@@ -127,6 +128,14 @@ export interface SimpleCharacter {
   skills: Skills;
   /** One or two role traits, never an opposite pair. */
   traits: Trait[];
+}
+
+/**
+ * A simple character (spec 3.7.1): the base character of class Executive. The id, company and seat
+ * are kept by whoever stores it (`seat` is here because the draw depends on it).
+ */
+export interface SimpleCharacter extends BaseCharacter {
+  class: "Executive";
   seat: Seat;
   size: CompanySize;
 }

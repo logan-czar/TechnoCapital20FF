@@ -52,6 +52,7 @@ export * from "./types/notice.ts";
 export { cmpStr, roundHalfAway, roundTiesEven, totalCmp } from "./types/num.ts";
 export * from "./types/protocol.ts";
 export type * from "./types/sim-api.ts";
+export type { ElectionResult, Ideology, JudgeLeaning, Party } from "./types/state/politics.ts";
 export * from "./types/views/index.ts";
 export { barRows, indexCloseRows } from "./views/bars.ts";
 // Pure figure and statement helpers the Company page shares with the views (spec 3.9, D420).

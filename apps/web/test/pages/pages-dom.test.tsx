@@ -113,6 +113,7 @@ function samplePages(): PageRef[] {
     exchanges: { kind: "exchanges" },
     zones: { kind: "zones" },
     events: { kind: "events" },
+    politics: { kind: "politics" },
     settings: { kind: "settings" },
   };
   return PAGE_KINDS.map((k) => pick[k]);

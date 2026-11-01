@@ -3,7 +3,7 @@
 // the generator, `RngStreams`, `NoNoise` ("no rolls", spec 5.16) and `ScriptedDraws` (replayed
 // validate.py draws, build-plan 4.2) belong to the rng.ts port.
 //
-// One independent stream per system: cycle, growth (the quarterly draws), prices, AI and gen.
+// One independent stream per system: cycle, growth (the quarterly draws), prices, AI, gen and politics.
 // All are seeded from the game seed and told apart by their stream number (D9), so a new draw in
 // one system never shifts another system's numbers. The TS port need not use ChaCha (Logan allows
 // a different seeded generator, e.g. sfc32 or xoshiro128**); only the stream split, the frozen
@@ -21,14 +21,15 @@
  * - Ai: Lite AI choices (spec 6; the 6.6 raise roll, D266). IPO votes are gen-stream draws
  *   (5.20.1, D276).
  * - Gen: world generation in play: simple characters, startups, names (spec 3.7.1, 5.19).
+ * - Politics: the US politics POC: politicians, votes, appointments (D980).
  */
-export type Stream = "Cycle" | "Growth" | "Prices" | "Ai" | "Gen";
+export type Stream = "Cycle" | "Growth" | "Prices" | "Ai" | "Gen" | "Politics";
 
 /** Number of streams. */
-export const STREAM_COUNT = 5;
+export const STREAM_COUNT = 6;
 
 /** Rust `Stream::ALL`, in stream-number order. */
-export const STREAM_VALUES = ["Cycle", "Growth", "Prices", "Ai", "Gen"] as const;
+export const STREAM_VALUES = ["Cycle", "Growth", "Prices", "Ai", "Gen", "Politics"] as const;
 
 /**
  * Each stream's number, frozen forever (D9): it seeds the stream and indexes per-stream state
@@ -40,6 +41,7 @@ export const STREAM_NUMBER: Readonly<Record<Stream, number>> = {
   Prices: 2,
   Ai: 3,
   Gen: 4,
+  Politics: 5,
 };
 
 /** Rust `Stream::name`: the lowercase name used in messages. */
@@ -49,6 +51,7 @@ export const STREAM_NAME: Readonly<Record<Stream, string>> = {
   Prices: "prices",
   Ai: "ai",
   Gen: "gen",
+  Politics: "politics",
 };
 
 /**

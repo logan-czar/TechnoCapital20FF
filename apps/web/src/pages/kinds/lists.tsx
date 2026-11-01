@@ -78,7 +78,17 @@ export function listTable(kind: ListKind, v: ViewsData, index: NameIndex): Table
       };
     }
     case "characters": {
-      const rows = (v.characters?.full ?? []).flatMap((c): Cell[][] => {
+      // The full characters, then the politicians (D980), whose pages are the US politics page.
+      const politicians = (v.characters?.politicians ?? []).map((c): Cell[] => [
+        { k: "link", text: c.name, page: { kind: "politics" } },
+        { k: "int", v: c.age },
+        { k: "text", v: "-" },
+        { k: "text", v: c.class ?? "-" },
+        { k: "text", v: c.office ?? "-" },
+        { k: "int", v: 1 },
+        { k: "int", v: 0 },
+      ]);
+      const fullRows = (v.characters?.full ?? []).flatMap((c): Cell[][] => {
         if (c.id.kind !== "Full") return [];
         const first = c.roles[0];
         let firstRole: Cell = { k: "text", v: "-" };
@@ -99,13 +109,14 @@ export function listTable(kind: ListKind, v: ViewsData, index: NameIndex): Table
           ],
         ];
       });
+      const rows = [...fullRows, ...politicians];
       return {
         id: kind,
         columns: [
           { title: "Name", width: 200 },
           { title: "Age", width: 50 },
           { title: "Home", width: 200 },
-          { title: "Tier", width: 80 },
+          { title: "Tier or class", width: 80 },
           { title: "First role", width: 260 },
           { title: "Roles", width: 60 },
           { title: "Holdings", width: 70 },

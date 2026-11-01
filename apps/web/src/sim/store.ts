@@ -131,6 +131,7 @@ export class SimStore {
     this.take(patch, "ratings", moved);
     this.take(patch, "recap", moved);
     this.take(patch, "map_static", moved);
+    this.take(patch, "politics", moved);
     this.take(patch, "clock", moved);
     if (patch.news_appended !== undefined) {
       const old = this.views.news;

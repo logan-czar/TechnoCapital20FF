@@ -11,19 +11,23 @@
 import { companyFinanceStatus } from "../finance/state.ts";
 import type { CharacterId, CompanyId } from "../types/ids.ts";
 import { SEAT_LABOR } from "../types/state/people.ts";
+import type { PoliticsState } from "../types/state/politics.ts";
 import type { CharacterRef, CharacterRow, CharactersView, Role } from "../types/views/characters.ts";
 import type { SimpleSeat } from "../types/world.ts";
 import { controllerShares } from "./cap_table.ts";
 import type { ViewInput } from "./index.ts";
+import { officeTitle } from "./politics.ts";
 
 /** `get_character(id)`. */
 export function charactersViewGet(v: CharactersView, id: CharacterId): CharacterRow | undefined {
   return v.full[id];
 }
 
-/** Rust `CharacterRef`'s order: every Full before every Partial, then by id. */
+const REF_ORDER: Readonly<Record<CharacterRef["kind"], number>> = { Full: 0, Partial: 1, Politician: 2 };
+
+/** Rust `CharacterRef`'s order: every Full before every Partial, then by id; politicians last (D980). */
 export function cmpCharacterRef(a: CharacterRef, b: CharacterRef): number {
-  if (a.kind !== b.kind) return a.kind === "Full" ? -1 : 1;
+  if (a.kind !== b.kind) return REF_ORDER[a.kind] - REF_ORDER[b.kind];
   return a.id - b.id;
 }
 
@@ -57,6 +61,8 @@ function partialRow(s: SimpleSeat, role: Role): CharacterRow {
     skills: { ...ch.skills },
     traits: ch.traits.slice(),
     full: false,
+    class: "Executive",
+    office: null,
     tier: "",
     home: null,
     roles: [role],
@@ -77,6 +83,8 @@ export function buildCharacters(input: ViewInput): CharactersView {
       skills: { ...ch.skills },
       traits: ch.traits.slice(),
       full: true,
+      class: null,
+      office: null,
       tier: ch.tier,
       home: {
         province: ch.home_province,
@@ -125,5 +133,21 @@ export function buildCharacters(input: ViewInput): CharactersView {
   });
   // Rust `sort_by_key(|r| r.id)`: a stable sort, every row Partial here.
   partial.sort((a, b) => cmpCharacterRef(a.id, b.id));
-  return { full, partial };
+  const pol = w.politics;
+  const politicians: CharacterRow[] = (pol?.politicians ?? []).map((c) => ({
+    id: { kind: "Politician", id: c.id },
+    key: "",
+    name: c.name,
+    age: c.age,
+    skills: { ...c.skills },
+    traits: c.traits.slice(),
+    full: false,
+    class: c.class,
+    office: officeTitle(pol as PoliticsState, c.office),
+    tier: "",
+    home: null,
+    roles: [],
+    holdings: [],
+  }));
+  return { full, partial, politicians };
 }

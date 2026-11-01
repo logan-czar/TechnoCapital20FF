@@ -30,6 +30,7 @@
 //   `map_layer_versions` is here.
 
 import type { MapData } from "../map.ts";
+import { isPoliticsDay } from "../politics/calendar.ts";
 import {
   type TickFacts,
   type TickObserver,
@@ -71,6 +72,7 @@ import { buildMapStatic } from "./map_static.ts";
 import { buildMarketStats } from "./market_stats.ts";
 import { buildNews, rebuildNewsFrom } from "./news.ts";
 import { buildPlaces } from "./places.ts";
+import { buildPolitics, emptyPolitics } from "./politics.ts";
 import { buildPriceBars } from "./price_bars.ts";
 import { buildProjection } from "./projection.ts";
 import { buildProvinceCards } from "./province_cards.ts";
@@ -104,6 +106,8 @@ export function cadenceIsDue(c: Cadence, f: TickFacts): boolean {
       return tickFactsIsMonthStart(f);
     case "MonthlyAndLock":
       return tickFactsIsMonthStart(f) || tickFactsIsLockTick(f);
+    case "MonthlyAndPolitics":
+      return tickFactsIsMonthStart(f) || (tickFactsIsMidnight(f) && isPoliticsDay(f.date));
     case "Quarterly":
       return (
         tickFactsIsQuarterStart(f) ||
@@ -188,7 +192,7 @@ export const VIEW_BUILDERS: ViewBuilders = {
   },
   characters: {
     rust: "views::characters::CharactersView",
-    empty: () => ({ full: [], partial: [] }),
+    empty: () => ({ full: [], partial: [], politicians: [] }),
     build: buildCharacters,
   },
   cap_table: {
@@ -335,6 +339,7 @@ export const VIEW_BUILDERS: ViewBuilders = {
     }),
     build: buildMapStatic,
   },
+  politics: { rust: "(none: politics POC, D980)", empty: emptyPolitics, build: buildPolitics },
 };
 
 /**

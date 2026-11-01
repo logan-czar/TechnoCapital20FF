@@ -373,7 +373,9 @@ describe("the list pages", () => {
       page: { kind: "country", id: canada.id },
     });
     const chars = listTable("characters", v, index);
-    expect(chars.rows.length).toBe(v.characters?.full.length);
+    expect(chars.rows.length).toBe(
+      (v.characters?.full.length ?? 0) + (v.characters?.politicians.length ?? 0),
+    );
     // A character's home is a place link to its province (M8.7, D707).
     const c0 = v.characters?.full[0];
     if (c0?.id.kind !== "Full" || !c0.home) throw new Error("a character with a home");

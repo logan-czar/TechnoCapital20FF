@@ -11,13 +11,18 @@
 // and the `ViewData` build (logic).
 
 import type { CharacterId, CompanyId, CountryId, ProvinceId } from "../ids.ts";
+import type { CharacterClass } from "../state/people.ts";
 import type { Seat, Skills, Trait } from "./shared.ts";
 
 /**
  * Which character a row is: a full one by id, or a partial one by its 3.7.1 `id` (u32). Rust
  * derives `Ord`: every Full sorts before every Partial, then by id.
  */
-export type CharacterRef = { kind: "Full"; id: CharacterId } | { kind: "Partial"; id: number };
+export type CharacterRef =
+  | { kind: "Full"; id: CharacterId }
+  | { kind: "Partial"; id: number }
+  /** A US office holder (D980), by politics id. */
+  | { kind: "Politician"; id: number };
 
 /** A full character's home (spec 3.7.2 home province). */
 export interface Home {
@@ -64,6 +69,10 @@ export interface CharacterRow {
    * are marked").
    */
   full: boolean;
+  /** A base character's class (D980); null for a full character, reworked later. */
+  class: CharacterClass | null;
+  /** A politician's US office, as the politics view titles it (D980); null otherwise. */
+  office: string | null;
   /** player, rival, holder or generated (full characters); empty for partial ones. */
   tier: string;
   home: Home | null;
@@ -78,4 +87,6 @@ export interface CharactersView {
   full: CharacterRow[];
   /** Every partial character seated now, in 3.7.1 id order. */
   partial: CharacterRow[];
+  /** Every US office holder now, in politics id order (D980). */
+  politicians: CharacterRow[];
 }

@@ -48,6 +48,8 @@ export type PageRef =
   | { kind: "exchanges" }
   | { kind: "zones" }
   | { kind: "events" }
+  /** The US government (politics POC, D980). */
+  | { kind: "politics" }
   /** Density, font size, saved layouts and the keyboard shortcuts. */
   | { kind: "settings" };
 
@@ -86,6 +88,7 @@ export const PAGE_KINDS = [
   "exchanges",
   "zones",
   "events",
+  "politics",
   "settings",
 ] as const satisfies readonly PageKind[];
 
@@ -109,6 +112,7 @@ const KINDS: Readonly<Record<PageKind, KindInfo>> = {
   exchanges: { name: "Exchanges", tag: "EXC", list: true },
   zones: { name: "Financial zones", tag: "ZON", list: true },
   events: { name: "Startup events", tag: "EVT", list: true },
+  politics: { name: "US politics", tag: "POL", list: false },
   settings: { name: "Settings", tag: "SET", list: false },
 };
 

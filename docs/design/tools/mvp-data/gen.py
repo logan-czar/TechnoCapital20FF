@@ -12,6 +12,8 @@ Writes into <design>/data/:
   company-start.csv    651 rows  (mvp-spec 7.1, G6; starting balance sheet, share count and opening price, Logan, batch 161;
                                  starting lines sized to the 5.12 limit, D15 and D16)
   startup-events.csv     9 rows  (mvp-spec 5.19.2: the fixed startup events F1 to F9; build-plan M0.5)
+  politics-usa.csv      51 rows  (politics POC, D980: House seats, Senate classes and party lean per US state)
+  politics-usa-offices.csv 31 rows (politics POC, D980: the US cabinet and courts; 4-politics 4.7.1, 4.21.1)
 
 Plain Python 3, no packages, no randomness (the price jitter is a hash of the company id): the same inputs always give the same files.
 Then runs validate.py, which checks ids and prints the margin and named-share checks.
@@ -963,6 +965,64 @@ def build_startup_events():
             'full_min', 'full_max', 'partial_min', 'partial_max']
     return [dict(zip(cols, e), notes='mvp-spec 5.19.2 (A, T)') for e in STARTUP_EVENTS]
 
+# Politics POC (Logan: USA first, D980). Seats are the 2010-census apportionment in force at the 1 January 2020 start and
+# the real Senate classes. dem_margin_pts is the state's party lean: Democrats minus Republicans in points, hand-set
+# from the 2016 two-party result as a starting tuning value (A, T). DC has no seats and votes for president only.
+#            state                   house  classes  dem_margin_pts
+POLITICS_STATES = [
+    ('Alabama', 7, '2;3', -28), ('Alaska', 1, '2;3', -15), ('Arizona', 9, '1;3', -4), ('Arkansas', 4, '2;3', -27),
+    ('California', 53, '1;3', 30), ('Colorado', 7, '2;3', 5), ('Connecticut', 5, '1;3', 14), ('Delaware', 1, '1;2', 11),
+    ('District of Columbia', 0, '', 86), ('Florida', 27, '1;3', -1), ('Georgia', 14, '2;3', -5), ('Hawaii', 2, '1;3', 32),
+    ('Idaho', 2, '2;3', -32), ('Illinois', 18, '2;3', 17), ('Indiana', 9, '1;3', -19), ('Iowa', 4, '2;3', -9),
+    ('Kansas', 4, '2;3', -21), ('Kentucky', 6, '2;3', -30), ('Louisiana', 6, '2;3', -20), ('Maine', 2, '1;2', 3),
+    ('Maryland', 8, '1;3', 26), ('Massachusetts', 9, '1;2', 27), ('Michigan', 14, '1;2', 0), ('Minnesota', 8, '1;2', 2),
+    ('Mississippi', 4, '1;2', -18), ('Missouri', 8, '1;3', -19), ('Montana', 1, '1;2', -20), ('Nebraska', 3, '1;2', -25),
+    ('Nevada', 4, '1;3', 2), ('New Hampshire', 2, '2;3', 0), ('New Jersey', 12, '1;2', 14), ('New Mexico', 3, '1;2', 8),
+    ('New York', 27, '1;3', 23), ('North Carolina', 13, '2;3', -4), ('North Dakota', 1, '1;3', -36), ('Ohio', 16, '1;3', -8),
+    ('Oklahoma', 5, '2;3', -36), ('Oregon', 5, '2;3', 11), ('Pennsylvania', 18, '1;3', -1), ('Rhode Island', 2, '1;2', 16),
+    ('South Carolina', 7, '2;3', -14), ('South Dakota', 1, '2;3', -30), ('Tennessee', 9, '1;2', -26), ('Texas', 36, '1;2', -9),
+    ('Utah', 4, '1;3', -18), ('Vermont', 1, '1;3', 26), ('Virginia', 11, '1;2', 5), ('Washington', 10, '1;3', 16),
+    ('West Virginia', 3, '1;2', -42), ('Wisconsin', 8, '1;3', -1), ('Wyoming', 1, '1;2', -46),
+]
+
+# The offices filled by appointment (4-politics 4.7.1, 4.21.1; D983, D984). Titles are flavor for ordinary ministers:
+# HUD is the Minister of Land and Housing and Homeland Security the Interior Minister (4.3.1). skill is what 4.7.3's
+# appointment score reads (A). Appeals seats one judge per real circuit and the district bench is the 4.21.1 largest
+# trial pool (A, T).
+POLITICS_OFFICES = [
+    ('USO-VP', 'Vice President', 'vice_president', 1, 'persuasion'),
+    ('USO-STATE', 'Secretary of State', 'cabinet', 1, 'persuasion'),
+    ('USO-TREASURY', 'Secretary of the Treasury', 'cabinet', 1, 'finance'),
+    ('USO-DEFENSE', 'Secretary of Defense', 'cabinet', 1, 'operations'),
+    ('USO-JUSTICE', 'Attorney General', 'cabinet', 1, 'intrigue'),
+    ('USO-INTERIOR', 'Secretary of the Interior', 'cabinet', 1, 'operations'),
+    ('USO-AGRICULTURE', 'Secretary of Agriculture', 'cabinet', 1, 'operations'),
+    ('USO-COMMERCE', 'Secretary of Commerce', 'cabinet', 1, 'finance'),
+    ('USO-LABOR', 'Secretary of Labor', 'cabinet', 1, 'persuasion'),
+    ('USO-HHS', 'Secretary of Health and Human Services', 'cabinet', 1, 'operations'),
+    ('USO-HUD', 'Secretary of Housing and Urban Development', 'cabinet', 1, 'operations'),
+    ('USO-TRANSPORT', 'Secretary of Transportation', 'cabinet', 1, 'operations'),
+    ('USO-ENERGY', 'Secretary of Energy', 'cabinet', 1, 'tech'),
+    ('USO-EDUCATION', 'Secretary of Education', 'cabinet', 1, 'persuasion'),
+    ('USO-VETERANS', 'Secretary of Veterans Affairs', 'cabinet', 1, 'operations'),
+    ('USO-HOMELAND', 'Secretary of Homeland Security', 'cabinet', 1, 'intrigue'),
+    ('USO-SCOTUS', 'Supreme Court', 'supreme_court', 9, 'persuasion'),
+] + [
+    (f'USO-CA{i:02d}', f'{c} Circuit Court of Appeals', 'appeals_court', 1, 'persuasion')
+    for i, c in enumerate(['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth',
+                           'Eleventh', 'DC', 'Federal'], 1)
+] + [
+    ('USO-DISTRICT', 'Federal District Court', 'trial_court', 12, 'persuasion'),
+]
+
+def build_politics_states():
+    return [dict(state=s, house_seats=h, senate_classes=c, dem_margin_pts=m, notes='D980 (A, T)')
+            for s, h, c, m in POLITICS_STATES]
+
+def build_politics_offices():
+    return [dict(id=i, title=t, kind=k, seats=n, skill=sk, notes='D983, D984 (A, T)')
+            for i, t, k, n, sk in POLITICS_OFFICES]
+
 def write(path, rows):
     with open(path, 'w', newline='', encoding='utf-8') as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()), lineterminator='\n')
@@ -981,6 +1041,8 @@ def main():
     write(os.path.join(DATA, 'ai-boom.csv'), build_ai_boom())
     write(os.path.join(DATA, 'company-start.csv'), build_company_start(ce_rows, zone_rows))
     write(os.path.join(DATA, 'startup-events.csv'), build_startup_events())
+    write(os.path.join(DATA, 'politics-usa.csv'), build_politics_states())
+    write(os.path.join(DATA, 'politics-usa-offices.csv'), build_politics_offices())
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import validate
     sys.exit(validate.run(DATA))

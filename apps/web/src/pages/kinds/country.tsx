@@ -72,6 +72,10 @@ export function countryDoc(c: CountryId, v: ViewsData, index: NameIndex): PageDo
     fields: [
       field.text("ISO3", r.iso3),
       field.text("Superregion", r.superregion),
+      // The US government (politics POC, D980).
+      ...(r.iso3 === "USA"
+        ? [field.link("Government", "United States government", { kind: "politics" })]
+        : []),
       field.link("Zone", index.title(zone), zone),
       field.link("Exchange", index.title(exchange), exchange),
     ],

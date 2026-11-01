@@ -307,7 +307,7 @@ export function listLen(page: PageRef, v: ViewsData): number | null {
     case "events":
       return v.births?.events.length ?? null;
     case "characters":
-      return v.characters?.full.length ?? null;
+      return v.characters === undefined ? null : v.characters.full.length + v.characters.politicians.length;
     case "countries":
       return v.countries?.countries.length ?? null;
     default:

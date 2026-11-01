@@ -34,6 +34,8 @@ export const EXPECTED_COUNTS: readonly (readonly [string, number])[] = [
   ["key-cities", 88],
   ["company-start", 651],
   ["startup-events", 9],
+  ["politics-usa", 51],
+  ["politics-usa-offices", 31],
 ];
 
 /** Asset decay is 0% to 10% a year (validate.py; spec 5.10). */

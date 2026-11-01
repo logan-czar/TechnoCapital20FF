@@ -162,5 +162,5 @@ export function generateSimple(
   const first = drawTrait(draws, list, []);
   const traits = [first];
   if (two) traits.push(drawTrait(draws, list, [first]));
-  return { name, age, skills, traits, seat, size };
+  return { class: "Executive", name, age, skills, traits, seat, size };
 }

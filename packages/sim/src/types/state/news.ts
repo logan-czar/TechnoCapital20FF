@@ -14,6 +14,7 @@ import type { PhaseLabel } from "../world.ts";
 import type { RaiseMethod } from "./ai.ts";
 import type { Rating } from "./finance.ts";
 import type { SurpriseTag } from "./market.ts";
+import type { Party } from "./politics.ts";
 
 /** Spec 5.18 (A): MVP headlines come from a neutral Pdoomberg Wire byline. */
 export const BYLINE = "Pdoomberg Wire";
@@ -48,7 +49,9 @@ export type HeadlineKind =
   /** A listing (5.20.1). */
   | { kind: "Listing"; exchange: string; price: number; net_usd: number }
   /** The boom event: the tipped lab launches its chatbot (5.1.1). */
-  | { kind: "Chatbot" };
+  | { kind: "Chatbot" }
+  /** A US election or inauguration (D985), with the party it favours. */
+  | { kind: "Politics"; party: Party };
 
 /**
  * One Pdoomberg Wire headline (spec 5.18; 8 News feed: date and industry tag). The byline is
