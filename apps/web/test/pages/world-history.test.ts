@@ -40,6 +40,7 @@ function history(over: Partial<HistoryView> = {}): HistoryView {
     run: {
       ended: false,
       reveal_year: 2020,
+      start_house_dem: 205,
       presidents: [{ year: 1995, name: "Pat", party: "Democrats" }],
       us_corp_tax: [0.35, 0.34],
       founders: [{ year: 1996, name: "Jo", company: 4 as CompanyId, company_name: "Jo Co" }],

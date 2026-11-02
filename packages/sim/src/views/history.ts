@@ -46,6 +46,7 @@ export function buildHistory(input: ViewInput): HistoryView {
     run: {
       ended: era.ended,
       reveal_year: era.reveal_date?.year ?? null,
+      start_house_dem: era.politics.states.reduce((n, s) => n + s.start_house_dem, 0),
       presidents: era.history.presidents.map((p) => ({ ...p })),
       us_corp_tax: [...era.history.us_corp_tax],
       founders: era.history.founders.map((f) => ({ ...f })),

@@ -33,7 +33,7 @@ const STABLE_PHASES: Record<CyclePhase, PhaseSpec> = {
 const UNSTABLE_PHASES: Record<CyclePhase, PhaseSpec> = {
   Expansion: { g_range: [0.01, 0.04], length: [6, 16], next: "Overheating" },
   Overheating: { g_range: [0.05, 0.1], length: [3, 8], next: "Contraction" },
-  Contraction: { g_range: [-0.3, -0.14], length: [3, 8], next: "Recovery" },
+  Contraction: { g_range: [-0.34, -0.16], length: [3, 8], next: "Recovery" },
   Recovery: { g_range: [-0.02, 0.03], length: [3, 8], next: "Expansion" },
 };
 
@@ -81,14 +81,14 @@ export const SCENARIOS: readonly ScenarioSpec[] = [
     id: "unstable",
     label: "Unstable growth",
     profile: profile("unstable", "Unstable growth", {
-      lt_scale: 0.95,
+      lt_scale: 1.14,
       volatility_scale: VANILLA_VOLATILITY_SCALE * 1.5,
       phases: UNSTABLE_PHASES,
     }),
     macro: {
       neutral_end: 0.03,
-      rate_gap_k: 0.6,
-      rate_g_k: 0.6,
+      rate_gap_k: 0.5,
+      rate_g_k: 0.45,
       catchup: 0.08,
       zone_shock_sd: 0.015,
       startup_mean: 2.0,
@@ -100,7 +100,7 @@ export const SCENARIOS: readonly ScenarioSpec[] = [
   {
     id: "stagnation",
     label: "Stagnation",
-    profile: profile("stagnation", "Stagnation", { lt_scale: 0.78, phases: STAGNATION_PHASES }),
+    profile: profile("stagnation", "Stagnation", { lt_scale: 0.84, phases: STAGNATION_PHASES }),
     macro: {
       neutral_end: 0.01,
       rate_gap_k: 0.5,

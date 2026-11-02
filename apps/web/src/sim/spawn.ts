@@ -1,6 +1,6 @@
 // The one place that names the worker. The real sim worker is the default; `?mock=1` in the page
-// URL selects the mock sim (sim/mock/), which the UI tests and design work use. `?world=1995` picks
-// a starting world (world.ts); the real worker learns it from its name.
+// URL selects the mock sim (sim/mock/), which the UI tests and design work use. `?world=2020` picks
+// another starting world (world.ts); the real worker learns it from its name.
 
 import { SimClient, workerTransport } from "./client.ts";
 import { selectedWorld } from "./world.ts";

@@ -22,6 +22,8 @@ import { ERA_FILE, RUN_FILE } from "./targets-1995.ts";
 
 /** Build-plan 4.4: "2020 to 2050 over 50 seeds (T)": the defaults when `--years` or `--seeds` is not given. */
 export const DEFAULT_YEARS = 30;
+/** The default world's run, 1995 to its reveal (1995-rework 2.1). */
+export const DEFAULT_ERA_YEARS = 25;
 export const DEFAULT_SEEDS: readonly [number, number] = [1, 50];
 
 /**

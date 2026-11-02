@@ -159,6 +159,8 @@ Election years and Senate classes are anchored at 2020 and extend in both direct
 ### 7.3 Lean drift
 Each 1 January: `Δ = REGION_SD × z_region + STATE_SD × z_state`, applied to the state and its districts. Realignments differ by run and need not match the real ones.
 
+Each November's national swing also carries a tide against the president's party, in this world only: a midterm penalty, and at a presidential vote a fatigue for each term beyond the party's first two (D1007).
+
 ### 7.4 Reapportionment
 1 January 2001 and 2011: equal-proportions seats (435 in total, minimum 1 per state) from the states' people. They apply at the next November vote's races and at the following 3 January's handover. Holders match by `(state, number)`, and a member whose seat is gone leaves. Supersedes D982's "no reapportionment" for this world.
 
@@ -233,7 +235,7 @@ Each is a PR cut from `main` as `build/1995-<slug>`, passing `scripts/check-ts`.
 
 **P2's re-record** must show in its commit message that all view digests other than the moved monthly and patch digests are unchanged, and that the economy columns of a 10-year soak are identical.
 
-**The default flips** when 20 seeds × 3 scenarios are all MET, the 1995 suite and leak test pass, and a manual browser run reaches 2020 at the new speed.
+**The default flips** when 20 seeds × 3 scenarios are all MET, the 1995 suite and leak test pass, and a manual browser run reaches 2020 at the new speed. With no world named, the web app and headless then play 1995; `?world=2020` and `--world 2020` play the 2020 world until it is retired, and the mock sim stays on it.
 
 P3–P6 bands against proto data are smoke tests. The real tuning is P10, on real data.
 

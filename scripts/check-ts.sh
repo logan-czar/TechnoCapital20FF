@@ -18,7 +18,7 @@ root="$(pwd)"
 out="$(cd docs/design/tools/mvp-data && "$PY" -B validate.py "$root/docs/design/data")"
 echo "$out" | grep -E "^(ERROR|OK$|[0-9]+ errors)" || true
 echo "$out" | grep -qx "OK"
-step check-data; pnpm --filter @tc20ff/headless start --check-data
+step check-data; pnpm --filter @tc20ff/headless start --check-data --world 2020
 step validate-1995
 out="$("$PY" -B tools/world-1995/validate.py)"
 echo "$out" | grep -E "^(ERROR|OK$|[0-9]+ errors)" || true

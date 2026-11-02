@@ -18,8 +18,15 @@
 // The sim is built only through a SimFactory (factory.ts), so these commands are testable with a
 // stub and are wired to the real `simNew` in one place.
 import { writeFileSync } from "node:fs";
-import { check, type DataError, dataErrorToString, type WorldData, worldDataCounts } from "@tc20ff/sim-data";
-import { defaultDataDir, defaultMapDir, loadMap, loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
+import {
+  check,
+  type DataError,
+  DEFAULT_WORLD_ID,
+  dataErrorToString,
+  type WorldData,
+  worldDataCounts,
+} from "@tc20ff/sim-data";
+import { defaultMapDir, loadMap, loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
 import {
   parseCalibrate,
   parseRecord,
@@ -70,7 +77,7 @@ function loadData(dir: string): WorldData {
 /** Rust `check_data_command`: parses the arguments of `--check-data`. */
 function checkDataCommand(args: string[]): number {
   let checkData = false;
-  let dir = defaultDataDir();
+  let dir = worldDataDir(DEFAULT_WORLD_ID);
   let mapDir = defaultMapDir();
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {

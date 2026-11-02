@@ -86,8 +86,8 @@ NEW_INDUSTRIES = {
     'appliances': ('Appliances', 'Consumer', 150, 0.015, 0.015, 0, 'plants', ['Appliance', 'Home', 'Electric Home']),
     'travel_leisure': ('Travel and leisure', 'Consumer', 500, 0.05, 0.05, 0, 'resorts', ['Resorts', 'Hotels', 'Cruises']),
     'online_services': ('Online services', 'Tech', 5, 0.51, 0.02, 5.0, 'dial-up networks', ['Online', 'Net', 'Connect']),
-    'wireless': ('Wireless', 'Tech', 40, 0.26, 0.04, 8.0, 'cell networks', ['Wireless', 'Cellular', 'Mobile']),
-    'biotech': ('Biotech', 'Health', 15, 0.17, 0.07, 10.0, 'labs', ['Biotech', 'Genetics', 'Therapeutics']),
+    'wireless': ('Wireless', 'Tech', 40, 0.2, 0.04, 6.0, 'cell networks', ['Wireless', 'Cellular', 'Mobile']),
+    'biotech': ('Biotech', 'Health', 15, 0.13, 0.06, 8.0, 'labs', ['Biotech', 'Genetics', 'Therapeutics']),
     'medical_devices': ('Medical devices', 'Health', 80, 0.07, 0.05, 15.0, 'plants', ['Medical', 'Devices', 'Surgical']),
     'search_portals': ('Search and portals', 'Tech', 0, 0.76, 0.08, 5.0, 'server farms', ['Search', 'Portal', 'Web']),
 }
@@ -95,6 +95,7 @@ NEW_PER_INDUSTRY_SHARES = (0.12, 0.08, 0.05, 0.03)   # named revenue of a new ro
 # 1995-rework 2.5: the 2020 firms left among the real ones (T).
 MAX_COUNTRY_FACTOR = 1.5          # a firm's country was at most this much larger in 1995 than now
 MAX_GENERATED_GDP_SHARE = 0.01    # and no such firm is more than this share of its country's GDP
+MAX_GENERATED_TECH_USD_M = 2000.0 # nor, in a Tech row, more than this revenue
 MAX_NAMED_SHARE = 0.7             # an industry's named firms leave at least the rest to its fringe
 NEW_HQ_COUNTRIES = ('USA', 'JPN', 'DEU', 'GBR', 'FRA', 'USA', 'CAN', 'ITA', 'KOR', 'USA')   # (T)
 NEW_NAME_PREFIXES = ('Ironbark', 'Redwater', 'Bluestem', 'Halyard', 'Meridian', 'Northgate', 'Stonebridge', 'Harrow',
@@ -123,7 +124,11 @@ SECTOR_PARAMS = {
 
 # 1995-rework 2.5: industries whose real firms earn far less per dollar than their sector's (T). Trading
 # houses took the largest revenues in the world on margins of about a percent.
-INDUSTRY_MARGINS = {'conglomerates': 0.02, 'autos': 0.05, 'retail': 0.04}
+INDUSTRY_MARGINS = {'conglomerates': 0.02, 'autos': 0.05, 'retail': 0.04, 'e_commerce': 0.11}
+# Trading houses own little: assets, book and value per revenue dollar (T).
+ASSET_LIGHT = {'conglomerates': (0.2, 0.08, 0.1)}
+# 1995-rework 2.5: the 2020 data's trends for rows it has already declining, which grew in this era (T).
+TRENDS_1995 = {'autos': 0.03, 'oil': 0.04, 'telecom': 0.03}
 
 REGION_SLUGS = ['east-asia-oceania', 'europe', 'latin-america', 'mena', 'north-america',
                 'russia-central-asia', 'south-asia', 'sub-saharan-africa']
@@ -270,6 +275,11 @@ def build_industries(scale):
                      fade_half_life_years=str(half))
         beta, vol, rate, margin = SECTOR_PARAMS[r['sector']]
         margin = INDUSTRY_MARGINS.get(r['id'], margin)
+        if r['id'] in TRENDS_1995:
+            r.update(trend_growth=str(TRENDS_1995[r['id']]), mature_rate=str(TRENDS_1995[r['id']]))
+        if r['id'] in ASSET_LIGHT:
+            capital = ASSET_LIGHT[r['id']][0]
+            r.update(capital_per_dollar=str(capital), asset_turnover=num(1.0 / capital))
         total = float(r['margin_full_use']) + float(r['variable_cost_share'])
         r.update(cycle_beta=str(beta), volatility=str(vol), rate_sensitivity=str(rate),
                  margin_full_use=str(margin), variable_cost_share=num(total - margin, 6))
@@ -303,6 +313,8 @@ def new_companies(fields, provinces_by_country, have, gdp):
             if have.get(name, 0) + k >= PER_INDUSTRY_MIN:
                 continue
             revenue = min(size * 1000.0 * share, MAX_GENERATED_GDP_SHARE * gdp[country] * 1000.0)
+            if NEW_INDUSTRIES[key][1] == 'Tech':
+                revenue = min(revenue, MAX_GENERATED_TECH_USD_M)
             row = {f: '' for f in fields}
             row.update(id=f'CO-9{n:03d}', name=label, ticker=f'N{n:03d}', industry=name, hq_country=country,
                        hq_province=provinces_by_country[country], public='Y', revenue_usd_m=num(revenue),
@@ -326,11 +338,15 @@ def country_factors(countries):
 
 
 def resize_to_country(rows, scale, factors, gdp):
-    """A 2020 firm at its country's 1995 weight, and no more than a share of its country's GDP."""
+    """A 2020 firm at its country's 1995 weight, and no more than a share of its country's GDP. Its tech
+    giants were small or unborn, so they take no slot in the top 10 from the first day."""
+    tech = {r['name'] for r in read(SRC / 'industries.csv')[1] if r['sector'] == 'Tech'}
     for r in rows:
         iso = FOLD.get(r['hq_country'], r['hq_country'])
         revenue = float(r['revenue_usd_m'] or 0) * scale * factors[iso]
         cap = MAX_GENERATED_GDP_SHARE * gdp[iso] * 1000.0
+        if r['industry'] in tech:
+            cap = min(cap, MAX_GENERATED_TECH_USD_M)
         by = (min(revenue, cap) / float(r['revenue_usd_m'])) if float(r['revenue_usd_m'] or 0) > 0 else scale
         for col in ('revenue_usd_m', 'book_value_usd_m', 'est_value_usd_m'):
             if r[col] != '':
@@ -368,6 +384,8 @@ def real_companies(fields, proto_rows):
     provinces = [p for s in REGION_SLUGS for p in read(OUT / f'provinces-{s}.csv')[1]]
     key_cities = read(SRC / 'key-cities.csv')[1]
     ratios = industry_ratios(proto_rows)
+    for key, (_, book, value) in ASSET_LIGHT.items():
+        ratios[NEW_INDUSTRIES[key][0]] = (book, value)
     out = []
     tickers = set()
     for n, a in enumerate(read(AUTHORING / 'companies-1995.csv')[1]):

@@ -8,7 +8,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { type DataError, dataErrorFile, err, ok, type Result } from "./error.ts";
 import type { Files } from "./load.ts";
-import { MANIFEST_FILE, parseManifest } from "./manifest.ts";
+import { MANIFEST_FILE, parseManifest, WORLD_2020_ID } from "./manifest.ts";
 import { MAP_FILES, MAP_PNG_FILES, type MapAssets, mapFixtureFiles, parseMap, type Rect } from "./map.ts";
 import { ERA_FILES, parseWorld, WORLD_FILES, type WorldData } from "./world.ts";
 
@@ -22,9 +22,9 @@ export function defaultDataDir(): string {
   return join(repoRoot(), "docs", "design", "data");
 }
 
-/** The data directory of a world other than the 2020 one (`assets/worlds/<id>`, 1995-rework 3.2). */
+/** A world's data directory: `assets/worlds/<id>`, or the 2020 world's own (1995-rework 3.2). */
 export function worldDataDir(id: string): string {
-  return join(repoRoot(), "assets", "worlds", id);
+  return id === WORLD_2020_ID ? defaultDataDir() : join(repoRoot(), "assets", "worlds", id);
 }
 
 /** The repository map folder (`assets/map`). */

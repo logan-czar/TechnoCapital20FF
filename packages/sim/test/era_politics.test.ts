@@ -11,7 +11,13 @@ import {
 import { simNew, simViews, simWorld } from "../src/lib.ts";
 import { electionDay, isElectionYear } from "../src/politics/calendar.ts";
 import { equalProportions, eraBlocs, HOUSE_SEATS, IDEOLOGY_WINDOWS } from "../src/politics/era.ts";
-import { politicsJob } from "../src/politics/jobs.ts";
+import {
+  eraTide,
+  FATIGUE_PER_TERM,
+  MIDTERM_PENALTY,
+  partyTermsHeld,
+  politicsJob,
+} from "../src/politics/jobs.ts";
 import { partySeats } from "../src/politics/state.ts";
 import { rngStreamsDraws, rngStreamsNew } from "../src/rng.ts";
 import { simDateYmd } from "../src/time/calendar.ts";
@@ -44,6 +50,51 @@ function runYears(w: World, seed: number, first: number, last: number): void {
     }
   }
 }
+
+describe("the tides of a November (1995-rework 7.3)", () => {
+  const dem = (year: number) => ({ year, party: "Democrats" as const });
+  const rep = (year: number) => ({ year, party: "Republicans" as const });
+
+  it("counts the whole terms the president's party has held", () => {
+    expect(partyTermsHeld([dem(1993)], 1996)).toBe(1);
+    expect(partyTermsHeld([dem(1993)], 2000)).toBe(2);
+    expect(partyTermsHeld([dem(1993), dem(1997), dem(2001)], 2004)).toBe(3);
+    expect(partyTermsHeld([dem(1993), rep(2001)], 2004)).toBe(1);
+  });
+
+  it("runs against the president's party at a midterm, whichever it is", () => {
+    const w = start(1);
+    const date = simDateYmd(1998, 11, 3);
+    expect(eraTide(w, "Democrats", date)).toBe(-MIDTERM_PENALTY);
+    expect(eraTide(w, "Republicans", date)).toBe(MIDTERM_PENALTY);
+  });
+
+  it("leaves a first re-election alone and grows against a party long in the White House", () => {
+    const w = start(1);
+    const era = w.era;
+    if (era === undefined) throw new Error("no era");
+    const name = "";
+    era.history.presidents = [{ ...dem(1993), name }];
+    expect(eraTide(w, "Democrats", simDateYmd(1996, 11, 5))).toBeCloseTo(0);
+    era.history.presidents = [
+      { ...dem(1993), name },
+      { ...dem(1997), name },
+    ];
+    expect(eraTide(w, "Democrats", simDateYmd(2000, 11, 7))).toBeCloseTo(-FATIGUE_PER_TERM);
+    era.history.presidents = [
+      { ...rep(1993), name },
+      { ...rep(1997), name },
+      { ...rep(2001), name },
+    ];
+    expect(eraTide(w, "Republicans", simDateYmd(2004, 11, 2))).toBeCloseTo(2 * FATIGUE_PER_TERM);
+  });
+
+  it("is not in the 2020 world", () => {
+    const made = simNew(data(), 1);
+    if (!made.ok) throw new Error("did not load");
+    expect(eraTide(simWorld(made.value), "Democrats", simDateYmd(2022, 11, 8))).toBe(0);
+  });
+});
 
 describe("the start (1995-rework 7.2)", () => {
   it("is the 104th Congress under a first-term Democrat", () => {

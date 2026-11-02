@@ -10,6 +10,12 @@ export const MANIFEST_FILE = "manifest.json";
 /** The worlds in this repository other than the 2020 world, each a folder of `assets/worlds`. */
 export const WORLD_IDS: readonly string[] = ["1995"];
 
+/** The 2020 world's id: it has no folder of `assets/worlds`, and stays until it is retired. */
+export const WORLD_2020_ID = "2020";
+
+/** The world played when none is named (1995-rework 10). */
+export const DEFAULT_WORLD_ID = "1995";
+
 /** A calendar date in a manifest (the sim's `SimDate`). */
 export interface ManifestDate {
   year: number;
@@ -66,7 +72,7 @@ export const EXPECTED_COUNTS: readonly (readonly [string, number])[] = [
 
 /** The 2020 world (D983: 15 departments). */
 export const MANIFEST_2020: WorldManifest = {
-  id: "2020",
+  id: WORLD_2020_ID,
   start_date: { year: 2020, month: 1, day: 1 },
   reveal_date: null,
   expected_counts: EXPECTED_COUNTS,

@@ -37,6 +37,7 @@ import {
   isPoliticsDay,
   isPresidentYear,
   PRESIDENT_HANDOVER_DAY,
+  PRESIDENT_TERM_YEARS,
   senateClassUp,
 } from "./calendar.ts";
 import {
@@ -102,6 +103,10 @@ export const JUDGE_RETIRE_PER_YEAR = 0.05;
 export const SENATE_MAJORITY = 50;
 /** House seats that make a majority (1995-rework 7.5). */
 export const HOUSE_MAJORITY = 218;
+/** A historical world's tides, in utility (1995-rework 7.3, T): against the president's party at a midterm. */
+export const MIDTERM_PENALTY = 0.03;
+/** And against a party seeking a further term after its first two, for each such term. */
+export const FATIGUE_PER_TERM = 0.06;
 /** Chance a state's one Democratic senator sits in its first class (1995-rework 7.2, T). */
 const FIRST_CLASS_CHANCE = 0.5;
 
@@ -384,6 +389,30 @@ function presidentialRace(
     : { winner: b, loser: a, shares: [share, 1 - share] };
 }
 
+/** Whole presidential terms the party has held since it last took the office, at this vote. */
+export function partyTermsHeld(presidents: readonly { year: number; party: Party }[], year: number): number {
+  const party = presidents.at(-1)?.party;
+  let first = year;
+  for (let i = presidents.length - 1; i >= 0 && presidents[i]?.party === party; i--) {
+    first = presidents[i]?.year ?? first;
+  }
+  return Math.floor((year - first + 1) / PRESIDENT_TERM_YEARS);
+}
+
+/**
+ * A historical world's swing from the tides of a November, toward Democrats (1995-rework 7.3): the
+ * president's party loses ground at a midterm, and a party long in the White House at a presidential
+ * vote. The 2020 world has neither, so its draws and results are as they were.
+ */
+export function eraTide(world: World, party: Party, date: SimDate): number {
+  const era = world.era;
+  if (era === undefined) return 0;
+  const presidential = isPresidentYear(date.year);
+  const terms = partyTermsHeld(era.history.presidents, date.year);
+  const against = presidential ? FATIGUE_PER_TERM * Math.max(0, terms - 1) : MIDTERM_PENALTY;
+  return party === "Democrats" ? -against : against;
+}
+
 /** Election Day (D985): decides every race now; winners take office at the January handovers. */
 function electionDayJob(world: World, ctx: JobCtx, p: PoliticsState, g: DrawSource, date: SimDate): void {
   const names = personPool(world, p, date.year);
@@ -392,7 +421,7 @@ function electionDayJob(world: World, ctx: JobCtx, p: PoliticsState, g: DrawSour
   const climate: VoteClimate = {
     incumbent_party: president.party,
     growth: (zone as World["zones"][number]).effect,
-    swing: g.normal("Politics") * NATIONAL_SWING_SD,
+    swing: g.normal("Politics") * NATIONAL_SWING_SD + eraTide(world, president.party, date),
   };
   const senateClass = senateClassUp(date.year);
   const holders = new Map<string, Politician>();

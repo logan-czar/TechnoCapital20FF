@@ -1,7 +1,8 @@
 // Argument parsing of the headless commands (crates/headless/src/main.rs): each parser returns
 // null on a bad or missing argument, and main prints the usage (exit code 2).
 import { resolve } from "node:path";
-import { defaultDataDir, worldDataDir } from "@tc20ff/sim-data/node";
+import { DEFAULT_WORLD_ID } from "@tc20ff/sim-data";
+import { worldDataDir } from "@tc20ff/sim-data/node";
 
 /**
  * A path the user typed, resolved against the directory they ran the command from: `INIT_CWD`
@@ -13,7 +14,7 @@ export function userPath(p: string): string {
   return resolve(process.env.INIT_CWD ?? process.cwd(), p);
 }
 
-import { DEFAULT_SEEDS, DEFAULT_YEARS, type SoakArgs } from "./soak.ts";
+import { DEFAULT_ERA_YEARS, DEFAULT_SEEDS, DEFAULT_YEARS, type SoakArgs } from "./soak.ts";
 
 export const USAGE = [
   "usage:",
@@ -25,8 +26,8 @@ export const USAGE = [
   "  headless parity DIR [--reference DIR]",
   "  headless record --years N --seed S --out LOG [--data-dir DIR | --world ID]",
   "  headless replay LOG [--data-dir DIR | --world ID]",
-  "DIR defaults to the repository's docs/design/data; --world ID is assets/worlds/ID; seeds A..B are inclusive (a single seed A also works);",
-  "soak defaults to 30 years and seeds 1..50, jobs to half the cores",
+  "the world defaults to 1995; --world ID is assets/worlds/ID, and --world 2020 is the repository's docs/design/data; seeds A..B are inclusive (a single seed A also works);",
+  "soak defaults to seeds 1..50 and 25 years, or 30 on any data other than 1995's, jobs to half the cores",
 ].join("\n");
 
 /** A whole number from an argument, or null (Rust `str::parse::<u64>().ok()`). */
@@ -70,7 +71,7 @@ export function parseRun(args: readonly string[]): RunArgs | null {
   let hashMonthly = false;
   let profile = false;
   let tickCosts = false;
-  let dir = defaultDataDir();
+  let dir = worldDataDir(DEFAULT_WORLD_ID);
   let scenario: string | undefined;
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
@@ -126,13 +127,13 @@ export function parseRun(args: readonly string[]): RunArgs | null {
 
 /** The `soak` arguments and the data directory. */
 export function parseSoak(args: readonly string[]): [SoakArgs, string] | null {
-  let years = DEFAULT_YEARS;
+  let years: number | null = null;
   let seeds: [number, number] = [DEFAULT_SEEDS[0], DEFAULT_SEEDS[1]];
   let jobs: number | null = null;
   let out: string | null = null;
   let check = false;
   let detail = false;
-  let dir = defaultDataDir();
+  let dir = worldDataDir(DEFAULT_WORLD_ID);
   let scenario: string | undefined;
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
@@ -188,7 +189,10 @@ export function parseSoak(args: readonly string[]): [SoakArgs, string] | null {
         return null;
     }
   }
-  return out === null ? null : [{ years, seeds, jobs, out, check, detail, scenario }, dir];
+  if (out === null) return null;
+  // A run of the default world ends at its reveal, and its targets read every year to there.
+  const span = years ?? (dir === worldDataDir(DEFAULT_WORLD_ID) ? DEFAULT_ERA_YEARS : DEFAULT_YEARS);
+  return [{ years: span, seeds, jobs, out, check, detail, scenario }, dir];
 }
 
 /** `record --years N --seed S --out LOG [--data-dir DIR]`: [seed, years, out, dir]. */
@@ -196,7 +200,7 @@ export function parseRecord(args: readonly string[]): [number, number, string, s
   let seed: number | null = null;
   let years: number | null = null;
   let out: string | null = null;
-  let dir = defaultDataDir();
+  let dir = worldDataDir(DEFAULT_WORLD_ID);
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
       case "--seed":
@@ -235,7 +239,7 @@ export function parseRecord(args: readonly string[]): [number, number, string, s
 /** `replay LOG [--data-dir DIR]`: [log, dir]. */
 export function parseReplay(args: readonly string[]): [string, string] | null {
   let log: string | null = null;
-  let dir = defaultDataDir();
+  let dir = worldDataDir(DEFAULT_WORLD_ID);
   for (let i = 0; i < args.length; i++) {
     const a = args[i] as string;
     if (a === "--data-dir") {

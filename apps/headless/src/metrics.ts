@@ -220,9 +220,12 @@ function eraRows(sim: SoakSimApi, seed: number): string {
   const turnover = last.length > 0 ? 1 - kept / last.length : 0;
   const rows = views.company_rows.data.rows;
   const born = last.filter((c) => rows[c.company]?.origin.kind === "Born").length;
+  // From the opening government: a party that wins every vote from the first has still taken over.
   const votes = views.politics.data.elections.slice().reverse();
-  const presidents = votes.flatMap((e) => (e.president === null ? [] : [e.president.party]));
-  const houses = votes.map((e) => e.house[0] >= HOUSE_MAJORITY);
+  const presidents = (h.run?.presidents ?? []).map((p) => p.party);
+  const houses = [h.run?.start_house_dem ?? 0, ...votes.map((e) => e.house[0])].map(
+    (d) => d >= HOUSE_MAJORITY,
+  );
   const changes = <T>(xs: readonly T[]): number => xs.filter((x, i) => i > 0 && x !== xs[i - 1]).length;
   return h.years
     .map((y, i) => {

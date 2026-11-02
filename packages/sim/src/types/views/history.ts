@@ -41,6 +41,8 @@ export interface RunHistory {
   ended: boolean;
   /** Whole number; null for a world with no end. */
   reveal_year: number | null;
+  /** Whole number: Democratic House seats on the first day (1995-rework 7.2). */
+  start_house_dem: number;
   /** Each president from the start, with the year they took office. */
   presidents: { year: number; name: string; party: Party }[];
   /** The US corporate tax rate at each year's close (1995-rework 7.5). */
