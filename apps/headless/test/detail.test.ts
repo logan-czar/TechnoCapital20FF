@@ -1,8 +1,11 @@
+import { loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
 import { describe, expect, it } from "vitest";
 import {
   COMPANIES_HEADER,
   clean,
   concentration,
+  DetailRecorder,
+  detailParts,
   INDUSTRIES_HEADER,
   inYear,
   quantile,
@@ -11,6 +14,7 @@ import {
   WORLD_HEADER,
   ZONES_HEADER,
 } from "../src/detail.ts";
+import { factoryFor } from "../src/factory.ts";
 import { Profiler, TickCosts, tickKind } from "../src/profile.ts";
 
 describe("detail helpers", () => {
@@ -26,6 +30,18 @@ describe("detail helpers", () => {
     for (const h of [INDUSTRIES_HEADER, COMPANIES_HEADER, WORLD_HEADER, ZONES_HEADER]) {
       expect(h.split(",").every((c) => c !== "" && !c.includes(" "))).toBe(true);
     }
+  });
+
+  it("writes a world row with one value per header column", () => {
+    const data = loadWorld(worldDataDir("1995"));
+    if (!data.ok) throw new Error("the 1995 world does not load");
+    const sim = factoryFor("stable")(data.value, 1);
+    if (!sim.ok) throw new Error("the 1995 world does not start");
+    const rec = new DetailRecorder(1);
+    rec.monthClose(sim.value);
+    rec.yearClose(sim.value, 1995);
+    const [, , world] = detailParts(rec.out);
+    expect(world.trimEnd().split(",")).toHaveLength(WORLD_HEADER.split(",").length);
   });
 
   it("formats like Rust", () => {

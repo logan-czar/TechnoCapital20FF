@@ -119,6 +119,8 @@ export interface PlanInputs {
   zone_tilt?: number;
   /** The growth ceiling; absent in the 2020 world (1995-rework 9). */
   growth_max?: number;
+  /** Growth toward a short market's demand; absent in the 2020 world (1995-rework 9). */
+  shortage_growth?: number;
   /** The experiment's focus level (D972); 0 or absent is spec 6.2 and 6.3. */
   focus?: number;
 }
@@ -148,7 +150,7 @@ export function planOperations(i: PlanInputs): OperatingPlan {
   const growth = growthPlan({
     loss_q: i.loss_q,
     roa: roa(i.ttm_ebit, i.gross_assets),
-    g_dem: i.zone_tilt === undefined ? gDem(i.lt, i.q_growth) : gDem(i.lt, i.q_growth) + i.zone_tilt,
+    g_dem: gDem(i.lt, i.q_growth) + (i.zone_tilt ?? 0.0) + (i.shortage_growth ?? 0.0),
     supply_ratio: i.supply_ratio,
     archetype: params,
     traits,

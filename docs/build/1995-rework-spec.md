@@ -201,12 +201,13 @@ At `reveal_date` the sim pauses, whatever the alerts or a skip say, opens the Wo
 No view carries the scenario id or label before the reveal under Random. `history.scenario` is null until then, unless picked openly. A leak test checks every serialised view.
 
 ## 9. Corporate turnover
-Sector lifecycle plus tuned failures. No M&A. Top-10 market-cap turnover is measured (4.3). Four rules apply in an era world only, because calibration showed the MVP's rules leave named firms insulated (D996):
+Sector lifecycle plus tuned failures. No M&A. Top-10 market-cap turnover is measured (4.3). Five rules apply in an era world only, because calibration showed the MVP's rules leave named firms insulated (D996):
 
-- **Sticky fringe.** The fringe grows on the long-term rate and closes 8% of its gap to demand a month. The spec 5.3 fringe shrinks in step with demand and takes the whole shock, so a downturn never reached a named firm. In a young industry (a half life above 0) it grows on the mature rate and closes 4% a month, so newcomers, not the fringe, take a new market.
+- **Sticky fringe.** The fringe grows on the long-term rate and closes 8% of its gap to demand a month. The spec 5.3 fringe shrinks in step with demand and takes the whole shock, so a downturn never reached a named firm. In a young industry (a half life above 0) it grows on the mature rate, so newcomers, not the fringe, take a new market, and still closes 8% of its gap a month (D1009).
 - **Exit rule.** The drift plan's: a firm exits as a bankruptcy after 12 straight losing quarters, or below $0.5M of assets, unless it is its industry's last. The AI otherwise sells down and lives on its cash for good.
 - **Credit squeeze.** A contraction withdraws a scenario share of each line's limit at its review.
 - **Growth.** A firm under its hurdle follows its market's growth, where spec 6.2 holds it at 2% whatever its market does, and the growth ceiling is 70%, not 30%.
+- **Shortage.** A firm in a short market adds `0.4 × clamp(1 ÷ S − 1, 0, 1)` to its market's growth, the mirror of 6.2's oversupply term (D1009). Without it a new market that opens short stays short, with M at its cap, for a decade.
 
 How a firm born in the run reaches the top 10, in order of what each one unblocked (D997):
 

@@ -44,7 +44,7 @@ export const COMPANIES_HEADER =
  * distribution (companies Active or Distressed with TTM revenue above 0).
  */
 export const WORLD_HEADER =
-  "seed,year,ai_stage,pop_date,ai_labs_lt,base_rate,demand,trend_demand,supply,companies_table,in_game,active,distressed,bankrupt,removed,start_alive,born_alive,quoted,private_alive,births_total,bankruptcies_total,cash,line_drawn,equity,gross_assets,fair_value_alive,market_cap,fair_value_quoted,rev_p10,rev_p50,rev_p90,rev_max,margin_p10,margin_p50,margin_p90,ni_positive_share,top10_rev_share,hhi_mean,hhi_max,top1_max,full_characters,characters_table,books_checked,books_failures";
+  "seed,year,ai_stage,pop_date,ai_labs_lt,base_rate,demand,trend_demand,supply,companies_table,in_game,active,distressed,bankrupt,removed,start_alive,born_alive,quoted,private_alive,births_total,bankruptcies_total,cash,line_drawn,equity,gross_assets,fair_value_alive,market_cap,fair_value_quoted,rev_p10,rev_p50,rev_p90,rev_max,margin_p10,margin_p50,margin_p90,ni_positive_share,top10_rev_share,hhi_mean,hhi_max,top1_max,books_checked,books_failures";
 
 /** `zones.csv`: one row per seed, year and zone exchange (zone id order). */
 export const ZONES_HEADER = "seed,year,exchange,level,quoted,market_cap,fair_value,confidence,credit_spread";

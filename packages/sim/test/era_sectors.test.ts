@@ -3,7 +3,7 @@
 
 import { check, dataErrorToString } from "@tc20ff/sim-data";
 import { describe, expect, it } from "vitest";
-import { situationGrowth } from "../src/ai/growth.ts";
+import { ERA_SHORTAGE_GAP_MAX, ERA_SHORTAGE_K, shortageGrowth, situationGrowth } from "../src/ai/growth.ts";
 import { fringeAfterMonth, stickyFringeAfterMonth } from "../src/economy/supply.ts";
 import { eraActivateSectorsJob } from "../src/era/jobs.ts";
 import { exitDue } from "../src/finance/distress.ts";
@@ -160,6 +160,16 @@ describe("a firm under its hurdle", () => {
   it("follows most of a booming market in a historical world", () => {
     expect(situationGrowth(0, 0.01, 0.5, 1.0, archetype, 0.8)).toBeCloseTo(0.4);
     expect(situationGrowth(0, 0.01, 0.01, 1.0, archetype, 0.8)).toBeCloseTo(0.01);
+  });
+});
+
+describe("a short market", () => {
+  it("pulls its firms' growth up in proportion to the gap, capped", () => {
+    expect(shortageGrowth(1.0)).toBe(0.0);
+    expect(shortageGrowth(1.3)).toBe(0.0);
+    expect(shortageGrowth(0.8)).toBeCloseTo(ERA_SHORTAGE_K * 0.25);
+    expect(shortageGrowth(0.1)).toBeCloseTo(ERA_SHORTAGE_K * ERA_SHORTAGE_GAP_MAX);
+    expect(shortageGrowth(0.0)).toBe(0.0);
   });
 });
 

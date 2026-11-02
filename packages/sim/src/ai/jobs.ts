@@ -31,6 +31,7 @@ import {
   ERA_GROWTH_MAX,
   FUNDING_CAP_SHARE,
   quarterPurchases,
+  shortageGrowth,
 } from "./growth.ts";
 import { gDem, nextLossQuarters } from "./inputs.ts";
 import { batchOrder, type PlanInputs, planFinancing, planOperations, unfundedGrowth } from "./plan.ts";
@@ -109,7 +110,9 @@ function planInputs(world: World, id: CompanyId): PlanInputs {
     debt_aggression: debtAggressionOf(world.debt_levels, id),
     focus: focusOf(world.focus_levels, id),
     ...zoneTilt(world, c),
-    ...(world.era === undefined ? {} : { growth_max: ERA_GROWTH_MAX }),
+    ...(world.era === undefined
+      ? {}
+      : { growth_max: ERA_GROWTH_MAX, shortage_growth: shortageGrowth(ind.supply_ratio) }),
   };
 }
 
