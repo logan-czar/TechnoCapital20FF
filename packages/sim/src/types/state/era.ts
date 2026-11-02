@@ -2,8 +2,9 @@
 // hash and saves carry none of this.
 
 import type { Quarter } from "../calendar.ts";
-import type { CompanyId } from "../ids.ts";
+import type { CompanyId, ProvinceId } from "../ids.ts";
 import type { CyclePhase } from "../world.ts";
+import type { District, Ideology, Party } from "./politics.ts";
 
 /** What a scenario sets beyond its growth profile (1995-rework 4.2, 6). All (T). */
 export interface ScenarioMacro {
@@ -97,6 +98,10 @@ export interface EraHistory {
   top10: EraTopSnapshot[];
   /** The year and name of each industry's emergence, in order (1995-rework 5.3). */
   emergences: { year: number; industry: string }[];
+  /** Each president from the start, with the year they took office (1995-rework 8.1). */
+  presidents: { year: number; name: string; party: Party }[];
+  /** The US corporate tax rate at each year's close (1995-rework 7.5). */
+  us_corp_tax: number[];
 }
 
 /** The macro layer's state (1995-rework 6). */
@@ -109,6 +114,42 @@ export interface EraMacro {
   zones: EraZone[];
   /** Each country's share of its zone's GDP, fixed at load, in country id order. */
   country_share: number[];
+}
+
+/** What a run knows of a US state beyond World.politics, in state order (1995-rework 7.2, 7.4). */
+export interface EraUsState {
+  /** Into `CENSUS_REGIONS`. */
+  region: number;
+  /** People now; its vote weight, and its seats at a census. */
+  population: number;
+  /** Its people's growth, a year. */
+  growth: number;
+  /** Whole numbers: the 104th Congress. */
+  start_house_dem: number;
+  start_senate_dem: number;
+  /** Its provinces in id order: where a census puts its districts. */
+  provinces: { id: ProvinceId; population: number }[];
+}
+
+/** An ideology not in US politics at the start (1995-rework 7.6). */
+export interface EraIdeology {
+  ideology: Ideology;
+  /** Whole number: the year it emerges, drawn at load. */
+  from_year: number;
+}
+
+/** The run's US politics (1995-rework 7). */
+export interface EraPolitics {
+  states: EraUsState[];
+  ideologies: EraIdeology[];
+  /** The fiscal push, as a share of US demand (7.5). */
+  fiscal: number;
+  /** Added to the policy rate's target (6.2, 7.5). */
+  rate_bias: number;
+  /** `1 + fiscal × US share`, on every industry's demand (7.5). */
+  demand_mult: number;
+  /** A census's House, until the handover after the first vote on it (7.4). */
+  next_districts: { table: District[]; voted: boolean } | null;
 }
 
 export interface EraState {
@@ -127,5 +168,6 @@ export interface EraState {
   y10_term: number;
   macro: EraMacro;
   sectors: EraSector[];
+  politics: EraPolitics;
   history: EraHistory;
 }

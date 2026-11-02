@@ -624,3 +624,27 @@ export const INDUSTRY_LIFECYCLE_SPEC = rowSpec<IndustryLifecycle>({
   wave_min: u32,
   wave_max: u32,
 });
+
+/** politics-usa-era.csv: what an era world knows of a US state beyond politics-usa.csv (1995-rework 7.2). */
+export interface PoliticsEraRow {
+  /** politics-usa.csv `state`. */
+  state: string;
+  /** Northeast, Midwest, South or West. */
+  census_region: string;
+  /** Democratic seats on the first day: the 104th Congress. */
+  start_house_dem: number;
+  start_senate_dem: number;
+  /** The 1990 census, millions. */
+  pop_1990_m: number;
+  /** A year, from the 1990 and 2010 censuses. */
+  pop_growth: number;
+}
+
+export const POLITICS_ERA_SPEC = rowSpec<PoliticsEraRow>({
+  state: str,
+  census_region: str,
+  start_house_dem: u32,
+  start_senate_dem: u32,
+  pop_1990_m: f64,
+  pop_growth: f64,
+});

@@ -1,52 +1,52 @@
 state,house_seats,senate_classes,dem_margin_pts,notes
-Alabama,7,2;3,-28,"D980 (A, T)"
-Alaska,1,2;3,-15,"D980 (A, T)"
-Arizona,9,1;3,-4,"D980 (A, T)"
-Arkansas,4,2;3,-27,"D980 (A, T)"
-California,53,1;3,30,"D980 (A, T)"
-Colorado,7,2;3,5,"D980 (A, T)"
-Connecticut,5,1;3,14,"D980 (A, T)"
-Delaware,1,1;2,11,"D980 (A, T)"
-District of Columbia,0,,86,"D980 (A, T)"
-Florida,27,1;3,-1,"D980 (A, T)"
-Georgia,14,2;3,-5,"D980 (A, T)"
-Hawaii,2,1;3,32,"D980 (A, T)"
-Idaho,2,2;3,-32,"D980 (A, T)"
-Illinois,18,2;3,17,"D980 (A, T)"
-Indiana,9,1;3,-19,"D980 (A, T)"
-Iowa,4,2;3,-9,"D980 (A, T)"
-Kansas,4,2;3,-21,"D980 (A, T)"
-Kentucky,6,2;3,-30,"D980 (A, T)"
-Louisiana,6,2;3,-20,"D980 (A, T)"
-Maine,2,1;2,3,"D980 (A, T)"
-Maryland,8,1;3,26,"D980 (A, T)"
-Massachusetts,9,1;2,27,"D980 (A, T)"
-Michigan,14,1;2,0,"D980 (A, T)"
-Minnesota,8,1;2,2,"D980 (A, T)"
-Mississippi,4,1;2,-18,"D980 (A, T)"
-Missouri,8,1;3,-19,"D980 (A, T)"
-Montana,1,1;2,-20,"D980 (A, T)"
-Nebraska,3,1;2,-25,"D980 (A, T)"
-Nevada,4,1;3,2,"D980 (A, T)"
-New Hampshire,2,2;3,0,"D980 (A, T)"
-New Jersey,12,1;2,14,"D980 (A, T)"
-New Mexico,3,1;2,8,"D980 (A, T)"
-New York,27,1;3,23,"D980 (A, T)"
-North Carolina,13,2;3,-4,"D980 (A, T)"
-North Dakota,1,1;3,-36,"D980 (A, T)"
-Ohio,16,1;3,-8,"D980 (A, T)"
-Oklahoma,5,2;3,-36,"D980 (A, T)"
-Oregon,5,2;3,11,"D980 (A, T)"
-Pennsylvania,18,1;3,-1,"D980 (A, T)"
-Rhode Island,2,1;2,16,"D980 (A, T)"
-South Carolina,7,2;3,-14,"D980 (A, T)"
-South Dakota,1,2;3,-30,"D980 (A, T)"
-Tennessee,9,1;2,-26,"D980 (A, T)"
-Texas,36,1;2,-9,"D980 (A, T)"
-Utah,4,1;3,-18,"D980 (A, T)"
-Vermont,1,1;3,26,"D980 (A, T)"
-Virginia,11,1;2,5,"D980 (A, T)"
-Washington,10,1;3,16,"D980 (A, T)"
-West Virginia,3,1;2,-42,"D980 (A, T)"
-Wisconsin,8,1;3,-1,"D980 (A, T)"
-Wyoming,1,1;2,-46,"D980 (A, T)"
+Alabama,7,2;3,-12.4,1990 census seats; 1992 presidential margin against the nation
+Alaska,1,2;3,-14.8,1990 census seats; 1992 presidential margin against the nation
+Arizona,6,1;3,-7.5,1990 census seats; 1992 presidential margin against the nation
+Arkansas,4,2;3,12.1,1990 census seats; 1992 presidential margin against the nation
+California,52,1;3,7.8,1990 census seats; 1992 presidential margin against the nation
+Colorado,6,2;3,-1.3,1990 census seats; 1992 presidential margin against the nation
+Connecticut,6,1;3,0.8,1990 census seats; 1992 presidential margin against the nation
+Delaware,1,1;2,2.6,1990 census seats; 1992 presidential margin against the nation
+District of Columbia,0,,70,1990 census seats; 1992 presidential margin against the nation
+Florida,23,1;3,-7.5,1990 census seats; 1992 presidential margin against the nation
+Georgia,11,2;3,-5,1990 census seats; 1992 presidential margin against the nation
+Hawaii,2,1;3,7.3,1990 census seats; 1992 presidential margin against the nation
+Idaho,2,2;3,-19.2,1990 census seats; 1992 presidential margin against the nation
+Illinois,20,2;3,8.6,1990 census seats; 1992 presidential margin against the nation
+Indiana,10,1;3,-11.7,1990 census seats; 1992 presidential margin against the nation
+Iowa,5,2;3,0.4,1990 census seats; 1992 presidential margin against the nation
+Kansas,4,2;3,-10.7,1990 census seats; 1992 presidential margin against the nation
+Kentucky,6,2;3,-2.4,1990 census seats; 1992 presidential margin against the nation
+Louisiana,7,2;3,-1,1990 census seats; 1992 presidential margin against the nation
+Maine,2,1;2,2.7,1990 census seats; 1992 presidential margin against the nation
+Maryland,8,1;3,8.6,1990 census seats; 1992 presidential margin against the nation
+Massachusetts,10,1;2,12.9,1990 census seats; 1992 presidential margin against the nation
+Michigan,16,1;2,1.8,1990 census seats; 1992 presidential margin against the nation
+Minnesota,8,1;2,6,1990 census seats; 1992 presidential margin against the nation
+Mississippi,5,1;2,-14.5,1990 census seats; 1992 presidential margin against the nation
+Missouri,9,1;3,4.6,1990 census seats; 1992 presidential margin against the nation
+Montana,1,1;2,-3.1,1990 census seats; 1992 presidential margin against the nation
+Nebraska,3,1;2,-22.8,1990 census seats; 1992 presidential margin against the nation
+Nevada,2,1;3,-3,1990 census seats; 1992 presidential margin against the nation
+New Hampshire,2,2;3,-4.4,1990 census seats; 1992 presidential margin against the nation
+New Jersey,13,1;2,-3.2,1990 census seats; 1992 presidential margin against the nation
+New Mexico,3,1;2,3,1990 census seats; 1992 presidential margin against the nation
+New York,31,1;3,10.3,1990 census seats; 1992 presidential margin against the nation
+North Carolina,12,2;3,-6.4,1990 census seats; 1992 presidential margin against the nation
+North Dakota,1,1;3,-17.6,1990 census seats; 1992 presidential margin against the nation
+Ohio,19,1;3,-3.8,1990 census seats; 1992 presidential margin against the nation
+Oklahoma,6,2;3,-14.2,1990 census seats; 1992 presidential margin against the nation
+Oregon,5,2;3,4.3,1990 census seats; 1992 presidential margin against the nation
+Pennsylvania,21,1;3,3.4,1990 census seats; 1992 presidential margin against the nation
+Rhode Island,2,1;2,12.4,1990 census seats; 1992 presidential margin against the nation
+South Carolina,6,2;3,-13.7,1990 census seats; 1992 presidential margin against the nation
+South Dakota,1,2;3,-9.1,1990 census seats; 1992 presidential margin against the nation
+Tennessee,9,1;2,-0.9,1990 census seats; 1992 presidential margin against the nation
+Texas,30,1;2,-9.1,1990 census seats; 1992 presidential margin against the nation
+Utah,3,1;3,-24.3,1990 census seats; 1992 presidential margin against the nation
+Vermont,1,1;3,10.1,1990 census seats; 1992 presidential margin against the nation
+Virginia,11,1;2,-10,1990 census seats; 1992 presidential margin against the nation
+Washington,9,1;3,5.8,1990 census seats; 1992 presidential margin against the nation
+West Virginia,3,1;2,7.4,1990 census seats; 1992 presidential margin against the nation
+Wisconsin,9,1;3,-1.2,1990 census seats; 1992 presidential margin against the nation
+Wyoming,1,1;2,-11.2,1990 census seats; 1992 presidential margin against the nation

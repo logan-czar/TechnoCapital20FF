@@ -13,6 +13,7 @@ Same input, same output: no random state, no clock.
 import csv
 import importlib.util
 import json
+import math
 import shutil
 import sys
 from pathlib import Path
@@ -150,6 +151,9 @@ def build_countries():
 def build_country_tables(countries):
     fields, rows = read(SRC / 'country-economy.csv')
     economy = [r for r in rows if r['iso3'] not in FOLD]
+    for r in economy:
+        if r['iso3'] == 'USA':
+            r['corp_tax_rate'] = US_CORP_TAX_1995
     write(OUT / 'country-economy.csv', fields, economy)
 
     fields, rows = read(SRC / 'names' / 'country-cultures.csv')
@@ -319,7 +323,7 @@ def build_companies(economy, scale):
 
 
 def copy_unchanged():
-    for name in ['characters.csv', 'ai-boom.csv', 'key-cities.csv', 'politics-usa.csv']:
+    for name in ['characters.csv', 'ai-boom.csv', 'key-cities.csv']:
         (OUT / name).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(SRC / name, OUT / name)
     for slug in REGION_SLUGS:
@@ -329,6 +333,148 @@ def copy_unchanged():
     write(OUT / 'startup-events.csv', fields, [])   # 3.2: no fixed events
     fields, rows = read(SRC / 'politics-usa-offices.csv')
     write(OUT / 'politics-usa-offices.csv', fields, [r for r in rows if r['id'] not in DROPPED_OFFICES])
+
+
+# 1995-rework 7.5: the federal rate the levers start from.
+US_CORP_TAX_1995 = '0.35'
+
+# 1995-rework 7.2: state: (1990-census House seats, 1992 Dem margin in points, census region,
+# Democratic House seats and Democratic senators on 3 January 1995, 1990 and 2010 census population).
+# House counts treat Vermont's independent as a Democrat. Checked against the 104th Congress roster
+# on Wikipedia, 1 November 2026. Margins and populations are from memory of the official results.
+POLITICS_1995 = {
+    'Alabama': (7, -6.8, 'South', 4, 1, 4040587, 4779736),
+    'Alaska': (1, -9.2, 'West', 0, 0, 550043, 710231),
+    'Arizona': (6, -1.9, 'West', 1, 0, 3665228, 6392017),
+    'Arkansas': (4, 17.7, 'South', 2, 2, 2350725, 2915918),
+    'California': (52, 13.4, 'West', 27, 2, 29760021, 37253956),
+    'Colorado': (6, 4.3, 'West', 2, 1, 3294394, 5029196),
+    'Connecticut': (6, 6.4, 'Northeast', 3, 2, 3287116, 3574097),
+    'Delaware': (1, 8.2, 'South', 0, 1, 666168, 897934),
+    'District of Columbia': (0, 75.6, 'South', 0, 0, 606900, 601723),
+    'Florida': (23, -1.9, 'South', 8, 1, 12937926, 18801310),
+    'Georgia': (11, 0.6, 'South', 4, 1, 6478216, 9687653),
+    'Hawaii': (2, 12.9, 'West', 2, 2, 1108229, 1360301),
+    'Idaho': (2, -13.6, 'West', 0, 0, 1006749, 1567582),
+    'Illinois': (20, 14.2, 'Midwest', 10, 2, 11430602, 12830632),
+    'Indiana': (10, -6.1, 'Midwest', 4, 0, 5544159, 6483802),
+    'Iowa': (5, 6.0, 'Midwest', 0, 1, 2776755, 3046355),
+    'Kansas': (4, -5.1, 'Midwest', 0, 0, 2477574, 2853118),
+    'Kentucky': (6, 3.2, 'South', 2, 1, 3685296, 4339367),
+    'Louisiana': (7, 4.6, 'South', 4, 2, 4219973, 4533372),
+    'Maine': (2, 8.3, 'Northeast', 1, 0, 1227928, 1328361),
+    'Maryland': (8, 14.2, 'South', 4, 2, 4781468, 5773552),
+    'Massachusetts': (10, 18.5, 'Northeast', 8, 2, 6016425, 6547629),
+    'Michigan': (16, 7.4, 'Midwest', 9, 1, 9295297, 9883640),
+    'Minnesota': (8, 11.6, 'Midwest', 6, 1, 4375099, 5303925),
+    'Mississippi': (5, -8.9, 'South', 4, 0, 2573216, 2967297),
+    'Missouri': (9, 10.2, 'Midwest', 6, 0, 5117073, 5988927),
+    'Montana': (1, 2.5, 'West', 1, 1, 799065, 989415),
+    'Nebraska': (3, -17.2, 'Midwest', 0, 2, 1578385, 1826341),
+    'Nevada': (2, 2.6, 'West', 0, 2, 1201833, 2700551),
+    'New Hampshire': (2, 1.2, 'Northeast', 0, 0, 1109252, 1316470),
+    'New Jersey': (13, 2.4, 'Northeast', 5, 2, 7730188, 8791894),
+    'New Mexico': (3, 8.6, 'West', 1, 1, 1515069, 2059179),
+    'New York': (31, 15.9, 'Northeast', 17, 1, 17990455, 19378102),
+    'North Carolina': (12, -0.8, 'South', 4, 0, 6628637, 9535483),
+    'North Dakota': (1, -12.0, 'Midwest', 1, 2, 638800, 672591),
+    'Ohio': (19, 1.8, 'Midwest', 6, 1, 10847115, 11536504),
+    'Oklahoma': (6, -8.6, 'South', 1, 0, 3145585, 3751351),
+    'Oregon': (5, 9.9, 'West', 3, 0, 2842321, 3831074),
+    'Pennsylvania': (21, 9.0, 'Northeast', 11, 0, 11881643, 12702379),
+    'Rhode Island': (2, 18.0, 'Northeast', 2, 1, 1003464, 1052567),
+    'South Carolina': (6, -8.1, 'South', 2, 1, 3486703, 4625364),
+    'South Dakota': (1, -3.5, 'Midwest', 1, 1, 696004, 814180),
+    'Tennessee': (9, 4.7, 'South', 4, 0, 4877185, 6346105),
+    'Texas': (30, -3.5, 'South', 19, 0, 16986510, 25145561),
+    'Utah': (3, -18.7, 'West', 1, 0, 1722850, 2763885),
+    'Vermont': (1, 15.7, 'Northeast', 1, 1, 562758, 625741),
+    'Virginia': (11, -4.4, 'South', 6, 1, 6187358, 8001024),
+    'Washington': (9, 11.4, 'West', 2, 1, 4866692, 6724540),
+    'West Virginia': (3, 13.0, 'South', 3, 2, 1793477, 1852994),
+    'Wisconsin': (9, 4.4, 'Midwest', 3, 2, 4891769, 5686986),
+    'Wyoming': (1, -5.6, 'West', 0, 0, 453588, 563626),
+}
+
+# A state's lean is its margin against the nation's: the vote adds each year's own swing, and with
+# 1992's Democratic win left in, Democrats held the House and presidency for most of a run (D998).
+NATIONAL_MARGIN_1992 = 5.6
+
+# 2020's name book has 24 surnames, too few for a Congress: the politics screen repeats them (7.2).
+US_CULTURE = 'anglo'
+US_MORE_MALE = ('Adam Alan Albert Andrew Anthony Arthur Benjamin Bruce Carl Charles Christopher Craig Daniel '
+                'Dennis Donald Douglas Edward Eric Eugene Frank Fred Gary George Gerald Gregory Harold Henry '
+                'Howard Jack Jeffrey Jerry Joe Jonathan Joseph Keith Kenneth Larry Lawrence Leonard Louis '
+                'Mark Martin Matthew Nathan Patrick Paul Peter Philip Ralph Raymond Richard Roger Ronald '
+                'Russell Samuel Scott Stanley Stephen Steven Terry Thomas Timothy Vincent Walter Wayne').split()
+US_MORE_FEMALE = ('Alice Amanda Amy Andrea Angela Ann Anne Barbara Betty Beverly Bonnie Brenda Carol Carolyn '
+                  'Catherine Cheryl Christine Cynthia Dana Deborah Denise Diane Donna Doris Dorothy Elaine '
+                  'Elizabeth Ellen Evelyn Frances Gail Gloria Helen Irene Janet Janice Jean Joan Joyce Judith '
+                  'Julia Karen Kathleen Katherine Laura Lillian Linda Lois Margaret Maria Marie Marilyn '
+                  'Martha Mary Michelle Nancy Pamela Patricia Paula Rebecca Rita Rose Ruth Sandra Sharon '
+                  'Shirley Stephanie Susan Teresa Theresa Virginia Wanda').split()
+US_MORE_SURNAMES = ('Abbott Adkins Aldrich Alvarez Andrews Armstrong Atkins Austin Avery Bailey Baldwin Ballard '
+                    'Barber Barlow Barnes Barrett Bates Baxter Beck Bell Bennett Benson Bishop Blair Blake '
+                    'Bowen Bowman Boyd Bradford Bradley Brady Brennan Brewer Briggs Brock Bryant Buchanan '
+                    'Burgess Burke Burnett Burton Butler Caldwell Campbell Cannon Carlson Carpenter Carroll '
+                    'Carson Casey Chambers Chandler Chapman Christensen Clayton Cobb Coleman Collins Conner '
+                    'Conway Cooper Copeland Cortez Crawford Cross Cummings Curtis Daniels Davidson Dawson '
+                    'Dean Delgado Dennis Dixon Donovan Dorsey Douglas Doyle Drake Duncan Dunn Edwards Elliott '
+                    'Ellis Emerson Erickson Estrada Evans Farmer Ferguson Fields Fisher Fitzgerald Fleming '
+                    'Fletcher Flynn Ford Foster Fowler Francis Franklin Frazier Freeman Fuller Gallagher '
+                    'Gardner Garrett Gibbs Gibson Gilbert Glover Goodman Gordon Graham Grant Graves Gregory '
+                    'Griffin Griffith Guerrero Hale Hammond Hampton Hancock Hardy Harmon Harper Harrington '
+                    'Hart Harvey Hawkins Hayes Henderson Hicks Higgins Hodges Hoffman Holland Holloway '
+                    'Holmes Hopkins Horton Houston Howell Hubbard Hudson Hughes Hunter Ingram Jacobs Jenkins '
+                    'Jennings Jensen Keller Kelley Kennedy Kerr Kirk Knight Lambert Lane Lawson Leonard '
+                    'Lindsey Little Lloyd Logan Love Lowe Lynch Mack Malone Mann Manning Marsh Marshall '
+                    'Mason Mathews Maxwell May McCarthy McCoy McDaniel McGee McKenzie McKinney Meyer Miles '
+                    'Mills Montgomery Moody Morrison Morse Morton Moss Mullins Murphy Nash Neal Newman '
+                    'Newton Nichols Norman Norris Obrien Oliver Olson Osborne Owens Padilla Palmer Parsons '
+                    'Patterson Patton Paul Payne Pearson Perkins Peters Peterson Phelps Pierce Porter Potter '
+                    'Powell Pratt Quinn Ramsey Reese Reeves Reynolds Rhodes Rice Richards Riley Robbins '
+                    'Rogers Rose Ross Rowe Rush Russell Ryan Sanders Saunders Schmidt Schneider Schultz '
+                    'Shaw Shelton Sherman Simmons Simpson Sims Singleton Snyder Spencer Stanley Steele '
+                    'Stephens Stevens Stewart Stone Sullivan Sutton Swanson Tate Terry Thornton Todd Tucker '
+                    'Tyler Vaughn Wade Wagner Wallace Walsh Walters Warner Warren Watkins Watson Watts '
+                    'Weaver Webb Weber Welch Wells West Wheeler Whitney Wilkins Wilkinson Willis Wolfe '
+                    'Woods Wyatt Yates York').split()
+
+
+def build_politics():
+    """politics-usa.csv with 1990-census seats and 1992 leans, and the era table (1995-rework 7.2)."""
+    fields, rows = read(SRC / 'politics-usa.csv')
+    era = []
+    for r in rows:
+        seats, margin, region, house_dem, senate_dem, pop_1990, pop_2010 = POLITICS_1995[r['state']]
+        r['house_seats'] = seats
+        r['dem_margin_pts'] = num(margin - NATIONAL_MARGIN_1992)
+        r['notes'] = '1990 census seats; 1992 presidential margin against the nation'
+        growth = math.log(pop_2010 / pop_1990) / (2010 - 1990)
+        era.append({
+            'state': r['state'],
+            'census_region': region,
+            'start_house_dem': house_dem,
+            'start_senate_dem': senate_dem,
+            'pop_1990_m': num(pop_1990 / 1e6),
+            'pop_growth': f'{growth:.6f}',
+        })
+    write(OUT / 'politics-usa.csv', fields, rows)
+    write(OUT / 'politics-usa-era.csv', list(era[0].keys()), era)
+
+
+def extend_us_names():
+    """More names for the USA's culture, after the rows it already has (1995-rework 7.2)."""
+    path = OUT / 'names' / 'north-america.csv'
+    fields, rows = read(path)
+    have = {(r['culture'], r['kind'], r['name']) for r in rows}
+    family_first = next(r['family_first'] for r in rows if r['culture'] == US_CULTURE)
+    for kind, names in (('male', US_MORE_MALE), ('female', US_MORE_FEMALE), ('surname', US_MORE_SURNAMES)):
+        for name in names:
+            if (US_CULTURE, kind, name) not in have:
+                rows.append({'culture': US_CULTURE, 'family_first': family_first, 'kind': kind, 'name': name})
+                have.add((US_CULTURE, kind, name))
+    write(path, fields, rows)
 
 
 def load_mvp():
@@ -386,6 +532,8 @@ def main():
     build_industries(scale)
     build_companies(economy, scale)
     copy_unchanged()
+    build_politics()
+    extend_us_names()
     build_company_start(economy, zones)
     write_manifest({
         'countries': count_rows('countries.csv'),

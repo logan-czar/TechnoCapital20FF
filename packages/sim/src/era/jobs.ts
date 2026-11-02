@@ -9,6 +9,7 @@ import { DEFAULT_SCENARIO_ID, RANDOM_SCENARIO_ID, SCENARIOS, scenarioById } from
 import { companyFinanceStatus } from "../finance/state.ts";
 import { stockCap } from "../market/state.ts";
 import { eraHeadline, newsWireQueue } from "../news.ts";
+import { startEraPolitics } from "../politics/era.ts";
 import { dateTimeDate, simDateQuarter } from "../time/calendar.ts";
 import type { JobCtx } from "../time/scheduler.ts";
 import { cmpQuarter, type Quarter } from "../types/calendar.ts";
@@ -193,6 +194,7 @@ export function eraStart(
     y10_term: data.manifest.y10_term,
     macro: startMacro(world, data, draws),
     sectors: startSectors(world, data, scenario.macro.emergence_shift_years, draws),
+    politics: startEraPolitics(world, data, draws),
     history: {
       years: [],
       gdp_usd: [],
@@ -204,6 +206,8 @@ export function eraStart(
       failures: [],
       top10: [],
       emergences: [],
+      presidents: [],
+      us_corp_tax: [],
     },
   };
 }
@@ -231,7 +235,7 @@ export function growthGapOfWorld(world: World): number {
 
 /**
  * Each quarter, after the cycle (1995-rework 6.2, 6.3): the policy rate moves toward
- * `neutral + a × gap + b × g_t`, and a contraction's first quarter starts a recession (4.2).
+ * `neutral + a × gap + b × g_t + rate_bias`, and a contraction's first quarter starts a recession (4.2).
  */
 export function eraMacroJob(world: World, ctx: JobCtx): void {
   const era = world.era;
@@ -240,7 +244,8 @@ export function eraMacroJob(world: World, ctx: JobCtx): void {
   const date = ctx.facts.date;
   era.macro.gap = growthGapOfWorld(world);
   world.neutral_rate = neutralRate(era, date.year);
-  const target = world.neutral_rate + m.rate_gap_k * era.macro.gap + m.rate_g_k * world.cycle.g_t;
+  const target =
+    world.neutral_rate + m.rate_gap_k * era.macro.gap + m.rate_g_k * world.cycle.g_t + era.politics.rate_bias;
   world.base_rate = maxF(world.base_rate + RATE_SMOOTH * (target - world.base_rate), RATE_FLOOR);
   if (world.cycle.phase === "Contraction" && era.macro.last_phase !== "Contraction") {
     era.history.recessions.push(date.year);
@@ -299,6 +304,7 @@ export function eraYearCloseJob(world: World, ctx: JobCtx): void {
   }
   h.companies.push(companies);
   h.failures.push(failures);
+  h.us_corp_tax.push((world.countries[world.politics.country] as World["countries"][number]).corp_tax_rate);
   const year = ctx.facts.date.year - 1;
   const age = year - era.start_year;
   if (age % TOP_EVERY_YEARS === 0 || age === RUN_YEARS - 1) h.top10.push(topSnapshot(world, year));

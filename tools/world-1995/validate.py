@@ -17,6 +17,8 @@ OUT = ROOT / 'assets' / 'worlds' / '1995'
 GDP_TARGET_USD_BN = 30000.0
 GDP_TOLERANCE = 0.03
 COMPANY_RANGE = (280, 320)
+HOUSE_SEATS = 435
+START_DEMS = (205, 47)   # 1995-rework 7.2: the 104th Congress, Vermont's independent as a Democrat
 PROVINCES = 3963
 REGION_SLUGS = ['east-asia-oceania', 'europe', 'latin-america', 'mena', 'north-america',
                 'russia-central-asia', 'south-asia', 'sub-saharan-africa']
@@ -51,6 +53,23 @@ def main():
     states = {s['state'] for s in read(OUT / 'politics-usa.csv')}
     if usa_regions != states:
         errors.append(f'politics-usa: differs from the USA province regions: {sorted(usa_regions ^ states)}')
+
+    # 1995-rework 7.2: the real 1990-census House and the 104th Congress on its first day.
+    us = read(OUT / 'politics-usa.csv')
+    era = read(OUT / 'politics-usa-era.csv')
+    if [s['state'] for s in era] != [s['state'] for s in us]:
+        errors.append('politics-usa-era: its states differ from politics-usa')
+    if sum(int(s['house_seats']) for s in us) != HOUSE_SEATS:
+        errors.append(f'politics-usa: House seats are not {HOUSE_SEATS}')
+    house_dem = sum(int(s['start_house_dem']) for s in era)
+    senate_dem = sum(int(s['start_senate_dem']) for s in era)
+    if (house_dem, senate_dem) != START_DEMS:
+        errors.append(f'politics-usa-era: {house_dem} House and {senate_dem} Senate Democrats, expected {START_DEMS}')
+    for s, e in zip(us, era):
+        if int(e['start_house_dem']) > int(s['house_seats']):
+            errors.append(f'politics-usa-era: {s["state"]} has more Democrats than House seats')
+        if int(e['start_senate_dem']) > len([c for c in s['senate_classes'].split(';') if c]):
+            errors.append(f'politics-usa-era: {s["state"]} has more Democrats than Senate seats')
 
     companies = read(OUT / 'companies.csv')
     if not COMPANY_RANGE[0] <= len(companies) <= COMPANY_RANGE[1]:

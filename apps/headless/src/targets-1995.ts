@@ -36,6 +36,10 @@ export interface EraBands {
   top10_turnover: readonly [number | null, number | null];
   /** How many of the end's top 10 listed companies were born in the run: turnover by newcomers. */
   top10_born: readonly [number | null, number | null];
+  /** Times the presidency changed party at the run's votes (1995-rework 7). */
+  president_changes: readonly [number | null, number | null];
+  /** Times House control changed party at the run's votes (1995-rework 7). */
+  house_changes: readonly [number | null, number | null];
 }
 
 export const ERA_BANDS: Readonly<Record<string, EraBands>> = {
@@ -51,6 +55,8 @@ export const ERA_BANDS: Readonly<Record<string, EraBands>> = {
     top_industry_share: [null, 0.3],
     top10_turnover: [0.3, null],
     top10_born: [2, null],
+    president_changes: [1, null],
+    house_changes: [1, null],
   },
   unstable: {
     gdp_2020_usd: [50e12, 110e12],
@@ -64,6 +70,8 @@ export const ERA_BANDS: Readonly<Record<string, EraBands>> = {
     top_industry_share: [null, 0.3],
     top10_turnover: [0.3, null],
     top10_born: [2, null],
+    president_changes: [1, null],
+    house_changes: [1, null],
   },
   stagnation: {
     gdp_2020_usd: [45e12, 60e12],
@@ -77,6 +85,8 @@ export const ERA_BANDS: Readonly<Record<string, EraBands>> = {
     top_industry_share: [null, 0.3],
     top10_turnover: [null, null],
     top10_born: [null, null],
+    president_changes: [1, null],
+    house_changes: [1, null],
   },
 };
 
@@ -101,6 +111,8 @@ interface EraRow {
   topIndustry: number;
   turnover: number;
   topBorn: number;
+  presidentChanges: number;
+  houseChanges: number;
 }
 
 /** Whether a soak's output is a historical world's. */
@@ -111,21 +123,37 @@ export function isEraDir(dir: string): boolean {
 function parseRows(text: string): Map<number, EraRow[]> {
   const bySeed = new Map<number, EraRow[]>();
   for (const line of text.trim().split(/\r?\n/).slice(1)) {
-    const [seed, year, gdp, companies, rate, started, zones, failures, tech, top, turnover, topBorn] =
-      line.split(",") as [
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-      ];
+    const [
+      seed,
+      year,
+      gdp,
+      companies,
+      rate,
+      started,
+      zones,
+      failures,
+      tech,
+      top,
+      turnover,
+      topBorn,
+      pres,
+      house,
+    ] = line.split(",") as [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+    ];
     const rows = bySeed.get(Number(seed)) ?? [];
     rows.push({
       year: Number(year),
@@ -139,6 +167,8 @@ function parseRows(text: string): Map<number, EraRow[]> {
       topIndustry: Number(top),
       turnover: Number(turnover),
       topBorn: Number(topBorn),
+      presidentChanges: Number(pres),
+      houseChanges: Number(house),
     });
     bySeed.set(Number(seed), rows);
   }
@@ -213,6 +243,8 @@ export function evaluateEra(text: string, scenario: string): EraResult[] {
       band(seed, "top_industry_share", z.topIndustry, bands.top_industry_share),
       band(seed, "top10_turnover", z.turnover, bands.top10_turnover),
       band(seed, "top10_born", z.topBorn, bands.top10_born),
+      band(seed, "president_changes", z.presidentChanges, bands.president_changes),
+      band(seed, "house_changes", z.houseChanges, bands.house_changes),
     );
   }
   return out;

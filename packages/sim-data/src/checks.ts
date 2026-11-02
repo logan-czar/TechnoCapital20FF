@@ -99,6 +99,8 @@ const SENATE_CLASS_SEATS: readonly (readonly [string, number])[] = [
   ["3", 34],
 ];
 const NO_SENATE_STATE = "District of Columbia";
+/** politics-usa-era.csv `census_region` (1995-rework 7.3). */
+const CENSUS_REGIONS: readonly string[] = ["Northeast", "Midwest", "South", "West"];
 /** The appointed US seats by kind (D983, D984); the cabinet's come from the manifest. */
 const POLITICS_OFFICE_SEATS: readonly (readonly [string, number])[] = [
   ["VicePresident", 1],
@@ -577,6 +579,27 @@ function politics(w: WorldData, errors: DataError[]): void {
   for (const [kind, n] of seats) {
     const got = o.rows.reduce((sum, r) => (r.kind === kind ? sum + r.seats : sum), 0);
     if (got !== n) errors.push(tableFileErr(o, `${kind} has ${got} seats, expected ${n}`));
+  }
+  const e = w.politics_era;
+  if (w.manifest.features.era && e.rows.length !== t.rows.length) {
+    errors.push(tableFileErr(e, `${e.rows.length} rows, expected one per state`));
+  }
+  for (const [line, r] of tableIter(e)) {
+    const s = t.rows.find((x) => x.state === r.state);
+    if (s === undefined) {
+      errors.push(tableErr(e, line, "state", `${r.state}: not in politics-usa.csv`));
+      continue;
+    }
+    if (r.start_house_dem > s.house_seats) {
+      errors.push(tableErr(e, line, "start_house_dem", `${r.state}: more than its House seats`));
+    }
+    if (r.start_senate_dem > s.senate_classes.length) {
+      errors.push(tableErr(e, line, "start_senate_dem", `${r.state}: more than its Senate seats`));
+    }
+    if (!(r.pop_1990_m > 0)) errors.push(tableErr(e, line, "pop_1990_m", `${r.state}: no people`));
+    if (!CENSUS_REGIONS.includes(r.census_region)) {
+      errors.push(tableErr(e, line, "census_region", `${r.state}: unknown region ${r.census_region}`));
+    }
   }
 }
 

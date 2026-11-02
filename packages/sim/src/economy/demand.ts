@@ -45,8 +45,10 @@ export function closingRates(ind: Industry, quarterStart: boolean): [number, num
 export function setEffectiveDemand(world: World): void {
   const base = world.base_rate;
   const neutral = world.neutral_rate;
+  // The fiscal push (1995-rework 7.5); 1 with no levers.
+  const mult = world.era?.politics.demand_mult ?? 1.0;
   for (const ind of world.industries) {
-    ind.demand = effectiveDemand(ind.demand_core, ind.params.rate_sensitivity, base, neutral);
+    ind.demand = mult * effectiveDemand(ind.demand_core, ind.params.rate_sensitivity, base, neutral);
   }
 }
 

@@ -33,8 +33,10 @@ import {
   type KeyCity,
   NAME_ROW_SPEC,
   type NameRow,
+  POLITICS_ERA_SPEC,
   POLITICS_OFFICE_SPEC,
   POLITICS_STATE_SPEC,
+  type PoliticsEraRow,
   type PoliticsOffice,
   type PoliticsStateRow,
   PROVINCE_SPEC,
@@ -76,6 +78,7 @@ export interface WorldData {
   politics_offices: Table<PoliticsOffice>;
   /** An era world's dormant industries (1995-rework 5.1); empty otherwise. */
   industry_lifecycle: Table<IndustryLifecycle>;
+  politics_era: Table<PoliticsEraRow>;
   /** Name lists, one table per superregion, in SUPERREGIONS order. */
   names: Table<NameRow>[];
   country_cultures: Table<CountryCulture>;
@@ -143,7 +146,7 @@ export const WORLD_FILES: readonly string[] = [
 ];
 
 /** The CSVs only an era world has (1995-rework 5.1), beside WORLD_FILES. */
-export const ERA_FILES: readonly string[] = ["industry-lifecycle.csv"];
+export const ERA_FILES: readonly string[] = ["industry-lifecycle.csv", "politics-usa-era.csv"];
 
 /** One table per superregion, from `pattern` with `{}` replaced by each slug. */
 function perRegion<T>(files: Files, pattern: string, spec: RowSpec<T>): Result<Table<T>[], DataError> {
@@ -201,6 +204,10 @@ export function parseWorld(
     ? loadTable(files, "industry-lifecycle.csv", INDUSTRY_LIFECYCLE_SPEC)
     : ok(tableNew<IndustryLifecycle>("industry-lifecycle.csv"));
   if (!lifecycle.ok) return lifecycle;
+  const politicsEra = manifest.features.era
+    ? loadTable(files, "politics-usa-era.csv", POLITICS_ERA_SPEC)
+    : ok(tableNew<PoliticsEraRow>("politics-usa-era.csv"));
+  if (!politicsEra.ok) return politicsEra;
   return ok({
     manifest,
     countries: countries.value,
@@ -217,6 +224,7 @@ export function parseWorld(
     politics_states: politicsStates.value,
     politics_offices: politicsOffices.value,
     industry_lifecycle: lifecycle.value,
+    politics_era: politicsEra.value,
     names: names.value,
     country_cultures: countryCultures.value,
     industry_suffixes: industrySuffixes.value,

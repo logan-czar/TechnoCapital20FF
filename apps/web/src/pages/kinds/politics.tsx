@@ -2,7 +2,7 @@
 // the courts and every vote so far, from the politics view. Read only, like the rest of the MVP.
 // Judges hear no cases yet; no law, lobbying or money runs through any of this.
 
-import type { CourtRow, ElectionResult, NextVote, Party, PoliticianRow } from "@tc20ff/sim";
+import type { CourtRow, ElectionResult, NextVote, Party, PoliticianRow, PoliticsView } from "@tc20ff/sim";
 import type { NameIndex } from "../../links/names.ts";
 import { type Cell, date } from "../../widgets/cells.ts";
 import { type Block, emptyDoc, field, type PageDoc, type Span, span, type TableDoc } from "../doc.ts";
@@ -62,39 +62,47 @@ const PERSON_COLUMNS = [
   { title: "Since", width: 96 },
 ];
 
-function personCells(r: PoliticianRow): Cell[] {
+/** What a historical world calls its ideologies (1995-rework 7.6). */
+type IdeologyNames = PoliticsView["ideology_names"];
+
+function personCells(r: PoliticianRow, names: IdeologyNames): Cell[] {
   return [
     { k: "text", v: r.name },
     { k: "text", v: partyLetter(r.party) },
     { k: "int", v: r.age },
-    { k: "text", v: r.ideology },
+    { k: "text", v: names?.[r.ideology] ?? r.ideology },
     { k: "text", v: traitsText(r.traits) },
     { k: "text", v: skillsText(r.skills) },
     { k: "date", v: r.since },
   ];
 }
 
-export function executiveTable(rows: readonly PoliticianRow[]): TableDoc {
+export function executiveTable(rows: readonly PoliticianRow[], names?: IdeologyNames): TableDoc {
   return {
     id: "politics.executive",
     columns: [{ title: "Office", width: 280 }, ...PERSON_COLUMNS],
-    rows: rows.map((r): Cell[] => [{ k: "text", v: r.title }, ...personCells(r)]),
+    rows: rows.map((r): Cell[] => [{ k: "text", v: r.title }, ...personCells(r, names)]),
   };
 }
 
-function chamberTable(id: string, rows: readonly PoliticianRow[], index: NameIndex): TableDoc {
+function chamberTable(
+  id: string,
+  rows: readonly PoliticianRow[],
+  index: NameIndex,
+  names: IdeologyNames,
+): TableDoc {
   return {
     id,
     columns: [{ title: "Seat", width: 190 }, ...PERSON_COLUMNS, { title: "Home", width: 170 }],
     rows: rows.map((r): Cell[] => [
       { k: "text", v: r.title },
-      ...personCells(r),
+      ...personCells(r, names),
       r.province === null ? dash : linkCell(index, { kind: "province", id: r.province }),
     ]),
   };
 }
 
-export function courtTable(c: CourtRow): TableDoc {
+export function courtTable(c: CourtRow, names?: IdeologyNames): TableDoc {
   return {
     id: `politics.court.${c.level}`,
     columns: [
@@ -105,7 +113,7 @@ export function courtTable(c: CourtRow): TableDoc {
     ],
     rows: c.judges.map((r): Cell[] => [
       { k: "text", v: r.title },
-      ...personCells(r),
+      ...personCells(r, names),
       r.integrity === null ? dash : { k: "int", v: r.integrity },
       { k: "text", v: r.leaning ?? "-" },
     ]),
@@ -165,16 +173,16 @@ export function politicsDoc(v: ViewsData, index: NameIndex): PageDoc {
   });
   const executive = [pres, p.vice_president, ...p.cabinet].filter((r) => r !== null);
   doc.sections = [
-    { id: "executive", blocks: [{ k: "table", table: executiveTable(executive) }] },
+    { id: "executive", blocks: [{ k: "table", table: executiveTable(executive, p.ideology_names) }] },
     {
       id: "legislature",
       blocks: [
         seatLine("House", p.house_seats),
         seatLine("Senate", p.senate_seats),
         { k: "heading", text: "Senate" },
-        { k: "table", table: chamberTable("politics.senate", p.senate, index) },
+        { k: "table", table: chamberTable("politics.senate", p.senate, index, p.ideology_names) },
         { k: "heading", text: "House" },
-        { k: "table", table: chamberTable("politics.house", p.house, index) },
+        { k: "table", table: chamberTable("politics.house", p.house, index, p.ideology_names) },
       ],
     },
     {
@@ -183,7 +191,7 @@ export function politicsDoc(v: ViewsData, index: NameIndex): PageDoc {
         note("Judges are appointed and confirmed, but they hear no cases yet."),
         ...p.courts.flatMap((c): Block[] => [
           seatLine(`${c.level} (appointees)`, c.seats),
-          { k: "table", table: courtTable(c) },
+          { k: "table", table: courtTable(c, p.ideology_names) },
         ]),
       ],
     },

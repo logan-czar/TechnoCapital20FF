@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { evaluateEra, maxDrawdown } from "../src/targets-1995.ts";
 
 const HEADER =
-  "seed,year,gdp_usd,companies,base_rate,recessions_started,zone_gdp_usd,failures,tech_share,top_industry_share,top10_turnover,top10_born";
+  "seed,year,gdp_usd,companies,base_rate,recessions_started,zone_gdp_usd,failures,tech_share,top_industry_share,top10_turnover,top10_born,president_changes,house_changes";
 
 /** A run from $30T to `gdpAtEnd`, with one zone gaining a share of 0.1 and one recession. */
 function run(seed: number, first: number, last: number, gdpAtEnd: number): string[] {
@@ -14,7 +14,7 @@ function run(seed: number, first: number, last: number, gdpAtEnd: number): strin
     const rate = y === last ? 0.03 : 0.05;
     const zones = `${gdp * (0.5 + 0.1 * t)};${gdp * (0.5 - 0.1 * t)}`;
     rows.push(
-      `${seed},${y},${gdp},${300 + 8 * (y - first)},${rate},${y === first + 5 ? 1 : 0},${zones},${y - first},0.2,0.2,0.4,3`,
+      `${seed},${y},${gdp},${300 + 8 * (y - first)},${rate},${y === first + 5 ? 1 : 0},${zones},${y - first},0.2,0.2,0.4,3,2,2`,
     );
   }
   return rows;
@@ -39,6 +39,8 @@ describe("the 1995 world's targets", () => {
       top_industry_share: true,
       top10_turnover: true,
       top10_born: true,
+      president_changes: true,
+      house_changes: true,
     });
   });
 

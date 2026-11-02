@@ -98,7 +98,7 @@ Checked in `apps/headless/src/targets-1995.ts`, windows 1995–2019, across seed
 | Unstable | $50–110T | Deep drawdowns and more failures |
 | Stagnation | $45–60T | Low rates and little entry |
 
-Also bands on sector shares, drawdown depth, failures, entries, zone-share movement, top-10 market-cap turnover and born firms in the top 10, from 1995 to 2020. Scenarios must separate clearly. Real-world reference: nominal world GDP from about $31T to $85T, about 4.1% a year.
+Also bands on sector shares, drawdown depth, failures, entries, zone-share movement, top-10 market-cap turnover, born firms in the top 10, and changes of the presidency's party and House control, from 1995 to 2020. Scenarios must separate clearly. Real-world reference: nominal world GDP from about $31T to $85T, about 4.1% a year.
 
 ## 5. Dormant sectors
 
@@ -149,14 +149,16 @@ Election years and Senate classes are anchored at 2020 and extend in both direct
 
 ### 7.2 Start
 - Democratic first-term president (a generated person), elected 1992.
-- The 104th Congress: per-state Democratic seat counts from data, with each state's most Democratic-leaning districts holding its Democratic seats. The 104th sits from 1 January, two days ahead of the real 3 January.
-- 1990-census seats and 1992 state leans. 14 departments (no Homeland Security).
+- The 104th Congress: per-state Democratic seat counts from data (205 D counting Vermont's independent, 230 R; 47 D, 53 R), with each state's most Democratic-leaning districts holding its Democratic seats and a split state's Democrat in a drawn Senate class. The 104th sits from 1 January, two days ahead of the real 3 January.
+- 1990-census seats and 1992 state leans, each lean taken against the national margin (D998). 14 departments (no Homeland Security).
+- A state's vote weight is its people, from the 1990 census, growing each year at its own rate plus a small shock.
+- Names in office are unique, from a wider name book than the 2020 world's.
 
 ### 7.3 Lean drift
 Each 1 January: `Δ = REGION_SD × z_region + STATE_SD × z_state`, applied to the state and its districts. Realignments differ by run and need not match the real ones.
 
 ### 7.4 Reapportionment
-1 January 2001 and 2011: equal-proportions seats (435 in total, minimum 1 per state) from population growth. They apply at the next November vote's races and at the following 3 January's handover. Holders match by `(state, number)`. Supersedes D982's "no reapportionment" for this world.
+1 January 2001 and 2011: equal-proportions seats (435 in total, minimum 1 per state) from the states' people. They apply at the next November vote's races and at the following 3 January's handover. Holders match by `(state, number)`, and a member whose seat is gone leaves. Supersedes D982's "no reapportionment" for this world.
 
 ### 7.5 Policy levers
 Quarter start. The president and chamber control set the step: unified moves at full step, one split chamber at a slow step, both opposed freezes. The levers move toward party targets, with a lag:
@@ -167,7 +169,7 @@ Quarter start. The president and chamber control set the step: unified moves at 
 No bills or laws as objects. Supersedes D980's one-way link for this world.
 
 ### 7.6 Ideologies
-A 1995 subset is active, and others emerge in seeded windows (`era.ideologies[i].from_year`), ramping bloc weights in `drawPerson`. The `Ideology` union stays; 1995 labels are display names in web.
+A 1995 subset is active, and others emerge in seeded windows (`era.politics.ideologies[i].from_year`), ramping bloc weights in `drawPerson`. The `Ideology` union stays; 1995 labels are display names, which the politics view hands to web (D999).
 
 ### 7.7 Character spawns
 No scripted events. Each character in `character-spawns.csv` has a spawn-year range, and the seed picks the year. A spawned character joins a queue. The next random startup fitting their region and sector takes them as controller. If nothing ever fits, they never appear in a company. John Techno is one such row, and Arrowhead stops being a fixed company.

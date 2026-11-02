@@ -7,6 +7,9 @@ import { type CountryId, ordinal, type ProvinceId, type UsStateId } from "../typ
 import { cmpStr, totalCmp } from "../types/num.ts";
 import type { District, Office, Party, Politician, PoliticsState } from "../types/state/politics.ts";
 
+/** A district's fixed offset from its state's lean, sd in points (D982, T). */
+export const DISTRICT_LEAN_SD_PTS = 16;
+
 /** The one country of the POC. */
 export const POLITICS_COUNTRY_KEY = "USA";
 
@@ -27,6 +30,25 @@ export function largestRemainder(weights: readonly number[], total: number): num
     seats[i] = (seats[i] as number) + 1;
   }
   return seats;
+}
+
+/**
+ * D982: a state's districts sit in its provinces, by largest remainder of province population. The
+ * home province of each district in number order.
+ */
+export function districtHomes(
+  provinces: readonly { id: ProvinceId; population: number }[],
+  seats: number,
+): ProvinceId[] {
+  const shares = largestRemainder(
+    provinces.map((p) => p.population),
+    seats,
+  );
+  const homes: ProvinceId[] = [];
+  provinces.forEach((p, pi) => {
+    for (let k = 0; k < (shares[pi] as number); k++) homes.push(p.id);
+  });
+  return homes;
 }
 
 /** The static tables from the data, before any draw; null for data without the USA. */
@@ -53,27 +75,20 @@ export function politicsStateFromData(
     seats: o.seats,
     skill: o.skill,
   }));
-  // D982: a state's districts sit in its provinces, by largest remainder of province population.
   const districts: District[] = [];
   states.forEach((s, si) => {
     if (s.house_seats === 0) return;
-    const own = provinces.filter((p) => p.region === s.name).sort((a, b) => cmpStr(a.id, b.id));
-    const seats = largestRemainder(
-      own.map((p) => p.population),
-      s.house_seats,
-    );
-    let number = 1;
-    own.forEach((p, pi) => {
-      const province = provinceIds.get(p.id) as ProvinceId;
-      for (let k = 0; k < (seats[pi] as number); k++) {
-        districts.push({
-          state: ordinal<UsStateId>(si),
-          number,
-          lean_pts: s.lean_pts,
-          home_province: province,
-        });
-        number++;
-      }
+    const own = provinces
+      .filter((p) => p.region === s.name)
+      .sort((a, b) => cmpStr(a.id, b.id))
+      .map((p) => ({ id: provinceIds.get(p.id) as ProvinceId, population: p.population }));
+    districtHomes(own, s.house_seats).forEach((home_province, k) => {
+      districts.push({
+        state: ordinal<UsStateId>(si),
+        number: k + 1,
+        lean_pts: s.lean_pts,
+        home_province,
+      });
     });
   });
   return {

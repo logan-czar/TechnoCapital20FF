@@ -201,9 +201,12 @@ export interface RunOptions<D = unknown> {
   detail?: DetailHook<D> | null;
 }
 
+/** House seats that make a majority (1995-rework 7.5). */
+const HOUSE_MAJORITY = 218;
+
 /** The header of `era.csv`: a historical world's long history, one row per seed per year (1995-rework 4.3). */
 export const ERA_HEADER =
-  "seed,year,gdp_usd,companies,base_rate,recessions_started,zone_gdp_usd,failures,tech_share,top_industry_share,top10_turnover,top10_born";
+  "seed,year,gdp_usd,companies,base_rate,recessions_started,zone_gdp_usd,failures,tech_share,top_industry_share,top10_turnover,top10_born,president_changes,house_changes";
 
 /** A run's `era.csv` rows, from its `history` view at the end. */
 function eraRows(sim: SoakSimApi, seed: number): string {
@@ -217,6 +220,10 @@ function eraRows(sim: SoakSimApi, seed: number): string {
   const turnover = last.length > 0 ? 1 - kept / last.length : 0;
   const rows = views.company_rows.data.rows;
   const born = last.filter((c) => rows[c.company]?.origin.kind === "Born").length;
+  const votes = views.politics.data.elections.slice().reverse();
+  const presidents = votes.flatMap((e) => (e.president === null ? [] : [e.president.party]));
+  const houses = votes.map((e) => e.house[0] >= HOUSE_MAJORITY);
+  const changes = <T>(xs: readonly T[]): number => xs.filter((x, i) => i > 0 && x !== xs[i - 1]).length;
   return h.years
     .map((y, i) => {
       const started = h.recessions.filter((r) => r === y).length;
@@ -224,7 +231,7 @@ function eraRows(sim: SoakSimApi, seed: number): string {
       const total = demand.reduce((a, b) => a + b, 0);
       const tech = demand.reduce((a, d, k) => (sectors[k] === "Tech" ? a + d : a), 0);
       const top = demand.reduce((a, b) => maxF(a, b), 0);
-      return `${seed},${y},${h.gdp_usd[i]},${h.companies[i]},${h.base_rate[i]},${started},${(h.zone_gdp_usd[i] ?? []).join(";")},${h.failures[i]},${total > 0 ? tech / total : 0},${total > 0 ? top / total : 0},${turnover},${born}\n`;
+      return `${seed},${y},${h.gdp_usd[i]},${h.companies[i]},${h.base_rate[i]},${started},${(h.zone_gdp_usd[i] ?? []).join(";")},${h.failures[i]},${total > 0 ? tech / total : 0},${total > 0 ? top / total : 0},${turnover},${born},${changes(presidents)},${changes(houses)}\n`;
     })
     .join("");
 }
