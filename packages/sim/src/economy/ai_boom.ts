@@ -176,7 +176,10 @@ export function setIndustryLt(world: World, date: SimDate): void {
       sinceStart,
       profile.fade || era !== undefined,
     );
-    ind.lt = linkedLt(trend * scale, p.boom_uplift, aiLt, pre);
+    // There the scenario leaves a young industry's path (a half life above 0) as its own, so a
+    // faster economy does not compound a new market's 60% years (1995-rework 4.2).
+    const scaled = era !== undefined && p.fade_half_life_years > 0.0 ? trend : trend * scale;
+    ind.lt = linkedLt(scaled, p.boom_uplift, aiLt, pre);
   });
 }
 

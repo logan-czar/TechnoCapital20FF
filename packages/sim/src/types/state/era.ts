@@ -15,7 +15,7 @@ export interface ScenarioMacro {
   rate_gap_k: number;
   /** b of `neutral + a × gap + b × g_t` (6.2). */
   rate_g_k: number;
-  /** How far a poor zone with the top draw outgrows the rest, a year (6.4). */
+  /** How much of each zone's track the run plays out: 1 as the data has it (6.4). */
   catchup: number;
   /** The standard deviation of a zone's yearly shock (6.4). */
   zone_shock_sd: number;
@@ -64,9 +64,7 @@ export interface EraZone {
   /** Its share of world GDP now, and at the start. */
   share: number;
   start_share: number;
-  /** 0 for the richest zone per head, near 1 for the poorest; fixed at load. */
-  poorness: number;
-  /** Its draw for the run, 0 to 1 and skewed low, so few zones take off. */
+  /** Its growth against the world's for the run, log a year: the data's, moved by the seed. */
   track: number;
   /** The AR(1) part of its yearly growth. */
   shock: number;

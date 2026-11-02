@@ -49,6 +49,21 @@ export function stickyFringeAfterMonth(fringeAssets: number, lt: number, s: numb
   return fringeAssets * trendMonthFactor(lt) * (1.0 + FRINGE_ADJUST_MONTHLY * gap);
 }
 
+/**
+ * A young industry's fringe (one that fades, a half life above 0) grows on its mature rate and closes
+ * this share of its gap a month, so newcomers, not the fringe, take a new market (1995-rework 9, T).
+ */
+export const YOUNG_FRINGE_ADJUST_MONTHLY = 0.04;
+
+/** The era fringe's month for `ind`: sticky, and slower still in a young industry (1995-rework 9). */
+export function eraFringeAfterMonth(ind: World["industries"][number], lt: number): number {
+  const p = ind.params;
+  if (p.fade_half_life_years <= 0.0) return stickyFringeAfterMonth(ind.fringe_assets, lt, ind.supply_ratio);
+  const s = ind.supply_ratio;
+  const gap = s > 0.0 ? clamp(1.0 / s - 1.0, -FRINGE_GAP_LIMIT, FRINGE_GAP_LIMIT) : 0.0;
+  return ind.fringe_assets * trendMonthFactor(p.mature_rate) * (1.0 + YOUNG_FRINGE_ADJUST_MONTHLY * gap);
+}
+
 /** The fringe's supply a year at productivity 100 (spec 5.2). */
 export function fringeSupply(fringeAssets: number, turnover: number): number {
   return fringeAssets * turnover;
@@ -110,9 +125,7 @@ export function fringeJob(world: World, ctx: JobCtx): void {
   for (const ind of world.industries) {
     const [q, lt] = closingRates(ind, quarterStart);
     ind.fringe_assets =
-      world.era === undefined
-        ? fringeAfterMonth(ind.fringe_assets, q)
-        : stickyFringeAfterMonth(ind.fringe_assets, lt, ind.supply_ratio);
+      world.era === undefined ? fringeAfterMonth(ind.fringe_assets, q) : eraFringeAfterMonth(ind, lt);
   }
 }
 

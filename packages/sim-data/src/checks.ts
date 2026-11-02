@@ -29,6 +29,8 @@ const VOLATILITY_MAX = 0.1;
 const WEALTH_INDEX_RANGE = [10, 95] as const;
 /** Zone base credit spread range in bps (batch 155; spec 5.1.2). */
 const CREDIT_SPREAD_MAX_BPS = 2500.0;
+/** A zone's track against the world, log a year (1995-rework 6.4; tools/world-1995/validate.py). */
+const ZONE_TRACK_MAX = 0.15;
 /** Zone confidence_start range (batch 155; spec 5.13). */
 const CONFIDENCE_RANGE = [-100.0, 100.0] as const;
 /** Opening share price range in whole dollars (batch 161; spec 7.1). */
@@ -149,6 +151,7 @@ export function check(w: WorldData): DataError[] {
   countries(w, errors);
   countryEconomy(w, ids, errors);
   zones(w, ids, errors);
+  zoneGrowth(w, ids, errors);
   keyCities(w, ids, errors);
   companies(w, ids, errors);
   companyStart(w, errors);
@@ -332,6 +335,21 @@ function zones(w: WorldData, ids: Ids, errors: DataError[]): void {
       errors.push(tableErr(t, line, "hub_province", `${id}: ${hp} lies in ${country}, outside the zone`));
     }
   }
+}
+
+/** An era world's zone paths (1995-rework 6.4): one row per zone, each within ZONE_TRACK_MAX. */
+function zoneGrowth(w: WorldData, ids: Ids, errors: DataError[]): void {
+  if (!w.manifest.features.era) return;
+  const t = w.zone_growth;
+  const have = unique(t, "zone_id", (r) => r.zone_id, errors);
+  for (const [line, r] of tableIter(t)) {
+    if (!ids.zones.has(r.zone_id)) errors.push(tableErr(t, line, "zone_id", `unknown zone ${r.zone_id}`));
+    if (!within(r.track, -ZONE_TRACK_MAX, ZONE_TRACK_MAX)) {
+      errors.push(tableErr(t, line, "track", `${r.zone_id}: out of -${ZONE_TRACK_MAX} to ${ZONE_TRACK_MAX}`));
+    }
+  }
+  const missing = sorted([...ids.zones].filter((z) => !have.has(z)));
+  if (missing.length > 0) errors.push(tableFileErr(t, `no track for ${debugStrs(missing)}`));
 }
 
 function keyCities(w: WorldData, ids: Ids, errors: DataError[]): void {

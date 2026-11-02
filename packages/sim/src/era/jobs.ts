@@ -40,12 +40,10 @@ export const TOP_COUNT = 10;
 const QUARTERS = 4;
 /** The AR(1) carry of a zone's shock (1995-rework 6.4, T). */
 export const ZONE_SHOCK_CARRY = 0.6;
-/** A zone's track is `u²`, so a few zones take off (1995-rework 6.4, T). */
-export const TRACK_EXP = 2.0;
+/** The seed moves a zone's track by up to this, log a year, either way (1995-rework 6.4, T). */
+export const ZONE_TRACK_SPREAD = 0.015;
 /** Companies' plans read this much of their zone's excess growth (1995-rework 6.4, T). */
 export const ZONE_TILT_K = 1.0;
-/** Startup location weights read a zone's gain in share to this power (1995-rework 6.4, T). */
-export const LOCATION_EXP = 1.0;
 
 /** Σ demand, USD a year (1995-rework 6.1). */
 function worldDemand(world: World): number {
@@ -54,29 +52,25 @@ function worldDemand(world: World): number {
   return sum;
 }
 
-/** The zones at load: shares from GDP, poorness from GDP per head, tracks from the seed (6.4). */
+/**
+ * The zones at load (1995-rework 6.4): shares from GDP, and each track the data's (zone-growth.csv)
+ * moved by the seed within ZONE_TRACK_SPREAD.
+ */
 function startMacro(world: World, data: WorldData, draws: DrawSource): EraMacro {
-  const people = new Map(data.countries.rows.map((c) => [c.iso3, c.population_m] as const));
+  const tracks = new Map(data.zone_growth.rows.map((r) => [r.zone_id, r.track] as const));
   const zoneGdp = new Array<number>(world.zones.length).fill(0.0);
-  const zonePeople = new Array<number>(world.zones.length).fill(0.0);
   let gdp = 0.0;
   for (const c of world.countries) {
     zoneGdp[c.zone] = (zoneGdp[c.zone] as number) + c.gdp_usd;
-    zonePeople[c.zone] = (zonePeople[c.zone] as number) + (people.get(c.key) ?? 0.0);
     gdp += c.gdp_usd;
   }
-  const perHead = zoneGdp.map((g, z) =>
-    (zonePeople[z] as number) > 0.0 ? g / (zonePeople[z] as number) : 0.0,
-  );
-  const richest = perHead.reduce((a, b) => maxF(a, b), 0.0);
-  const zones: EraZone[] = world.zones.map((_, z) => {
+  const zones: EraZone[] = world.zones.map((row, z) => {
     const share = (zoneGdp[z] as number) / gdp;
     const u = draws.uniform("Era");
     return {
       share,
       start_share: share,
-      poorness: richest > 0.0 ? clamp(1.0 - (perHead[z] as number) / richest, 0.0, 1.0) : 0.0,
-      track: u ** TRACK_EXP,
+      track: (tracks.get(row.key) ?? 0.0) + ZONE_TRACK_SPREAD * (2.0 * u - 1.0),
       shock: 0.0,
       tilt: 0.0,
     };
@@ -276,8 +270,8 @@ export function eraMacroJob(world: World, ctx: JobCtx): void {
 }
 
 /**
- * 1 January: each zone's growth against the world (1995-rework 6.4), `catchup × poorness × track`
- * plus an AR(1) shock. Shares renormalise, countries keep their share of their zone, and Z follows
+ * 1 January: each zone's growth against the world (1995-rework 6.4), `catchup × track` plus an
+ * AR(1) shock. Shares renormalise, countries keep their share of their zone, and Z follows
  * the new weights. Industry demand stays global, so world GDP does not move.
  */
 function advanceZones(world: World, era: EraState, gdp: number, draws: DrawSource): void {
@@ -285,7 +279,7 @@ function advanceZones(world: World, era: EraState, gdp: number, draws: DrawSourc
   const zones = era.macro.zones;
   const raw = zones.map((z) => {
     z.shock = ZONE_SHOCK_CARRY * z.shock + m.zone_shock_sd * draws.normal("Era");
-    return z.share * Math.exp(m.catchup * z.poorness * z.track + z.shock);
+    return z.share * Math.exp(m.catchup * z.track + z.shock);
   });
   const total = raw.reduce((a, b) => a + b, 0.0);
   zones.forEach((z, i) => {
@@ -344,10 +338,4 @@ export function eraRevealJob(world: World, ctx: JobCtx): void {
   era.ended = true;
   newsWireQueue(world.news, eraHeadline(date, `The run ends. This world was ${era.scenario.label}`));
   ctx.endRun();
-}
-
-/** A startup's HQ weight multiplier for a province in `zone` (1995-rework 6.4). */
-export function zoneLocationFactor(era: EraState, zone: number): number {
-  const z = era.macro.zones[zone];
-  return z === undefined || z.start_share <= 0.0 ? 1.0 : (z.share / z.start_share) ** LOCATION_EXP;
 }

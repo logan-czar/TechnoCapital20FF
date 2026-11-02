@@ -43,6 +43,8 @@ export const ERA_BELOW_HURDLE_DEMAND_SHARE = 1.0;
  * keep their share, so a market of trillions stays 97% fringe.
  */
 export const ERA_CAPTURE_K = 0.25;
+/** A firm holding this share of its market's supply stops taking the fringe's and grows with the market (1995-rework 9, T). */
+export const ERA_CAPTURE_SHARE_MAX = 0.15;
 /** Spec 6.2 funding cap: the quarter's purchases use at most 50% of liquidity above min_cash. */
 export const FUNDING_CAP_SHARE = 0.5;
 /** D971: each debt aggression level adds this to g while profitable and not shrinking. */

@@ -45,6 +45,8 @@ import {
   type Province,
   STARTUP_EVENT_SPEC,
   type StartupEvent,
+  ZONE_GROWTH_SPEC,
+  type ZoneGrowth,
 } from "./rows.ts";
 
 /** The 8 superregions: the slug used in file names and the name used in countries.csv. */
@@ -82,6 +84,8 @@ export interface WorldData {
   industry_lifecycle: Table<IndustryLifecycle>;
   politics_era: Table<PoliticsEraRow>;
   character_spawns: Table<CharacterSpawn>;
+  /** An era world's zone paths (1995-rework 6.4); empty otherwise. */
+  zone_growth: Table<ZoneGrowth>;
   /** Name lists, one table per superregion, in SUPERREGIONS order. */
   names: Table<NameRow>[];
   country_cultures: Table<CountryCulture>;
@@ -153,6 +157,7 @@ export const ERA_FILES: readonly string[] = [
   "industry-lifecycle.csv",
   "politics-usa-era.csv",
   "character-spawns.csv",
+  "zone-growth.csv",
 ];
 
 /** One table per superregion, from `pattern` with `{}` replaced by each slug. */
@@ -219,6 +224,10 @@ export function parseWorld(
     ? loadTable(files, "character-spawns.csv", CHARACTER_SPAWN_SPEC)
     : ok(tableNew<CharacterSpawn>("character-spawns.csv"));
   if (!characterSpawns.ok) return characterSpawns;
+  const zoneGrowth = manifest.features.era
+    ? loadTable(files, "zone-growth.csv", ZONE_GROWTH_SPEC)
+    : ok(tableNew<ZoneGrowth>("zone-growth.csv"));
+  if (!zoneGrowth.ok) return zoneGrowth;
   return ok({
     manifest,
     countries: countries.value,
@@ -237,6 +246,7 @@ export function parseWorld(
     industry_lifecycle: lifecycle.value,
     politics_era: politicsEra.value,
     character_spawns: characterSpawns.value,
+    zone_growth: zoneGrowth.value,
     names: names.value,
     country_cultures: countryCultures.value,
     industry_suffixes: industrySuffixes.value,

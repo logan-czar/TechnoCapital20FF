@@ -13,7 +13,7 @@
 
 import { quarterIndex } from "../economy/ai_boom.ts";
 import { eraAssignFounder } from "../era/characters.ts";
-import { eraSectorDormant, zoneLocationFactor } from "../era/jobs.ts";
+import { eraSectorDormant } from "../era/jobs.ts";
 import { balanceSheet } from "../finance/balance.ts";
 import { homeSpread, lineLimit } from "../finance/credit.ts";
 import {
@@ -190,12 +190,21 @@ function hqCandidates(
   // floor fall back to the 2.3.1 weight, so the event can still place its HQ
   const out = withBase(sites.hq_weight);
   const placed = out.every(([, w]) => w <= 0.0) ? withBase(sites.weight) : out;
-  const era = world.era;
-  if (era === undefined) return placed;
-  // A zone gaining share draws more of the startups (1995-rework 6.4).
+  return world.era === undefined ? placed : gdpWeighted(world, placed);
+}
+
+/**
+ * An era world's startups follow money (1995-rework 6.4): each country draws by its GDP now, so a
+ * rising zone draws more, and its provinces share that by their own weights.
+ */
+export function gdpWeighted(world: World, placed: readonly [ProvinceId, number][]): [ProvinceId, number][] {
+  const countryOf = (id: ProvinceId): number => (world.provinces[id] as World["provinces"][number]).country;
+  const inCountry = new Array<number>(world.countries.length).fill(0.0);
+  for (const [id, w] of placed) inCountry[countryOf(id)] = (inCountry[countryOf(id)] as number) + w;
   return placed.map(([id, w]): [ProvinceId, number] => {
-    const country = world.countries[(world.provinces[id] as World["provinces"][number]).country];
-    return [id, w * zoneLocationFactor(era, country?.zone ?? 0)];
+    const c = countryOf(id);
+    const total = inCountry[c] as number;
+    return [id, total > 0.0 ? (w / total) * (world.countries[c]?.gdp_usd ?? 0.0) : 0.0];
   });
 }
 

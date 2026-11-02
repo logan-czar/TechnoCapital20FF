@@ -7,6 +7,7 @@ generator. Prints each problem and then OK or a count; exits non-zero on any pro
 """
 import csv
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -25,6 +26,8 @@ COMPANY_RANGE = (280, 320)
 HOUSE_SEATS = 435
 START_DEMS = (205, 47)   # 1995-rework 7.2: the 104th Congress, Vermont's independent as a Democrat
 PROVINCES = 3963
+RUN_YEARS = 25
+ZONE_TRACK_MAX = 0.15   # sim-data checks.ts ZONE_TRACK_MAX
 REGION_SLUGS = ['east-asia-oceania', 'europe', 'latin-america', 'mena', 'north-america',
                 'russia-central-asia', 'south-asia', 'sub-saharan-africa']
 
@@ -114,6 +117,17 @@ def main():
             errors.append(f'character-spawns: {s["id"]} also controls a company at the start')
         if int(s['spawn_first']) > int(s['spawn_last']):
             errors.append(f'character-spawns: {s["id"]} has an empty window')
+
+    # 1995-rework 6.4: one track per zone, and the tracks end China's zone above Japan's.
+    zones = read(OUT / 'financial-zones.csv')
+    tracks = {r['zone_id']: float(r['track']) for r in read(OUT / 'zone-growth.csv')}
+    if sorted(tracks) != sorted(z['zone_id'] for z in zones):
+        errors.append('zone-growth: not one row per financial zone')
+    else:
+        end = {z['zone_id']: float(z['gdp_share']) * math.exp(RUN_YEARS * tracks[z['zone_id']]) for z in zones}
+        if end['CN'] <= end['JP']:
+            errors.append('zone-growth: China\'s zone does not pass Japan\'s by the end')
+    errors += [f'zone-growth: {k} is out of +-{ZONE_TRACK_MAX}' for k, v in tracks.items() if abs(v) > ZONE_TRACK_MAX]
 
     # 1995-rework 7.2: the real 1990-census House and the 104th Congress on its first day.
     us = read(OUT / 'politics-usa.csv')

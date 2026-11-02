@@ -625,6 +625,16 @@ export const INDUSTRY_LIFECYCLE_SPEC = rowSpec<IndustryLifecycle>({
   wave_max: u32,
 });
 
+/** zone-growth.csv: a financial zone's expected path through an era world's run (1995-rework 6.4). */
+export interface ZoneGrowth {
+  /** financial-zones.csv `zone_id`. */
+  zone_id: string;
+  /** Its growth against the world's, log a year, before the scenario and the seed's draw. */
+  track: number;
+}
+
+export const ZONE_GROWTH_SPEC = rowSpec<ZoneGrowth>({ zone_id: str, track: f64 });
+
 /** politics-usa-era.csv: what an era world knows of a US state beyond politics-usa.csv (1995-rework 7.2). */
 export interface PoliticsEraRow {
   /** politics-usa.csv `state`. */

@@ -65,7 +65,7 @@ The start of a world is `world.clock` at load, and nothing else is pinned to 202
 Web and headless text that says "2020" reads the start year from the `history` view, added with the era state (8.1). The web keeps its literals until then.
 
 ### 3.2 World manifest
-`assets/worlds/<id>/manifest.json` plus CSVs of the same names as `WORLD_FILES`, and era tables `industry-lifecycle.csv`, `character-spawns.csv`, `politics-usa-era.csv`.
+`assets/worlds/<id>/manifest.json` plus CSVs of the same names as `WORLD_FILES`, and era tables `industry-lifecycle.csv`, `character-spawns.csv`, `politics-usa-era.csv`, `zone-growth.csv`.
 
 ```
 { id, start_date, reveal_date, base_rate, neutral_rate, y10_term,
@@ -90,6 +90,8 @@ The new-game screen offers Stable, Unstable, Stagnation and Random. Under Random
 A scenario is code, in `economy/scenarios.ts`, following D978's rejection of a data table. `ScenarioSpec` extends `EconomyProfile` (`lt_scale`, `volatility_scale`, `cycle_scale`, phase tables) with macro coefficients, `emergence_shift`, `track_sd` and `startup_mean`. It is copied into `world.era.scenario`, so saves carry it.
 
 Crises are expressed only through scenario phase tables, with generic recession headlines (no shock catalog).
+
+`lt_scale` multiplies an industry's trend, except for an industry that fades (a half life above 0): a young market's path is its own, so a faster economy does not compound its 60% years.
 
 ### 4.3 Calibration targets
 Checked in `apps/headless/src/targets-1995.ts`, windows 1995–2019, across seeds.
@@ -140,9 +142,9 @@ Money is nominal. No inflation variable.
 `economy.cycle` → `era.policy` → `era.macro` → zone spreads → growth draws. All sit outside `PROJECTION_SLOTS`.
 
 ### 6.4 Zone growth tracks
-Each year each zone's relative growth is `catchup × poorness × u + AR(1)`, with `u` a persistent seeded draw. Shares renormalise, countries scale within their zone, and `cycle.z_avg` is recomputed.
+Each year each zone's relative growth is `catchup × track + AR(1)`. A zone's track is its row in `zone-growth.csv`, the real 1995–2019 change in its share of world GDP as log growth a year, moved by a seeded draw of up to `ZONE_TRACK_SPREAD` either way and fixed for the run. The scenario's `catchup` plays it out: 1 in Stable and Unstable, half in Stagnation. Shares renormalise, countries scale within their zone, and `cycle.z_avg` is recomputed. Poverty alone did not predict 1995–2019 (China, India and East Africa rose; Southern Africa and Latin America did not), so the track is data, not a function of GDP per head.
 
-Effects: GDP shares; startup location, multiplied by `(share / start_share)^LOC_EXP`; zone indices, through an optional `zone_tilt` on `PlanInputs`, so companies in a rising zone grow assets faster. Supply self-corrects. Industry demand stays global.
+Effects: GDP shares; startup location, where each country draws by its GDP now and its provinces share that by their own weights; zone indices, through an optional `zone_tilt` on `PlanInputs`, so companies in a rising zone grow assets faster. Supply self-corrects. Industry demand stays global.
 
 ## 7. Politics and characters
 
@@ -201,7 +203,7 @@ No view carries the scenario id or label before the reveal under Random. `histor
 ## 9. Corporate turnover
 Sector lifecycle plus tuned failures. No M&A. Top-10 market-cap turnover is measured (4.3). Four rules apply in an era world only, because calibration showed the MVP's rules leave named firms insulated (D996):
 
-- **Sticky fringe.** The fringe grows on the long-term rate and closes 8% of its gap to demand a month. The spec 5.3 fringe shrinks in step with demand and takes the whole shock, so a downturn never reached a named firm.
+- **Sticky fringe.** The fringe grows on the long-term rate and closes 8% of its gap to demand a month. The spec 5.3 fringe shrinks in step with demand and takes the whole shock, so a downturn never reached a named firm. In a young industry (a half life above 0) it grows on the mature rate and closes 4% a month, so newcomers, not the fringe, take a new market.
 - **Exit rule.** The drift plan's: a firm exits as a bankruptcy after 12 straight losing quarters, or below $0.5M of assets, unless it is its industry's last. The AI otherwise sells down and lives on its cash for good.
 - **Credit squeeze.** A contraction withdraws a scenario share of each line's limit at its review.
 - **Growth.** A firm under its hurdle follows its market's growth, where spec 6.2 holds it at 2% whatever its market does, and the growth ceiling is 70%, not 30%.
@@ -211,7 +213,7 @@ How a firm born in the run reaches the top 10, in order of what each one unblock
 - **Scale-up financing.** An Active firm in a hot market (g_dem at or above the scenario's floor, label not Bust or Glut) whose funding cap holds its plan back sells shares for four quarters of what is held back. It is the 6.6 share issue, with its price, 20% dilution cap, fees and success roll. A failure only leaves the plan as it was. Logan chose this on 1 November 2026, over moving to P5 and leaving the top-10 gap for real data to close.
 - **Earnings multiples.** Each row takes its design valuation group (mvp-data `PE`), which the MVP left at one value for all. Young markets are at 40. Without this a bank outvalues any growth firm.
 - **Listing.** A board's yes chance gains `min(60%, 20% × log10(TTM revenue ÷ $75M))`, since at 15% a $20B firm stayed private and could not count.
-- **Capture.** A hot market's firms plan to grow `0.25 × fringe share` above the market. Firms that only follow their market keep their share, and a market of trillions stayed 97% fringe.
+- **Capture.** A hot market's firms plan to grow `0.25 × fringe share` above the market, until a firm holds 15% of its market's supply. Firms that only follow their market keep their share, and a market of trillions stayed 97% fringe; with no limit, one firm took half of e-commerce.
 
 M&A remains out of scope.
 

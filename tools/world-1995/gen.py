@@ -60,7 +60,7 @@ HIGH_TAX_FROM = 0.3
 # 1995-rework 2.4, 5.1: dormant industries. id: (window first, last, size on emerging $bn, wave min, max,
 # trend, mature rate, fade half life in years). The early growth rates of a new market fade to mature.
 DORMANT = {
-    'e_commerce': (1995, 1998, 5.0, 3, 5, 0.62, 0.1, 8.0),
+    'e_commerce': (1995, 1998, 5.0, 3, 5, 0.62, 0.07, 8.0),
     'search_portals': (1996, 2000, 1.0, 2, 4, 0.76, 0.08, 5.0),
     'data_centers': (1997, 2003, 3.0, 2, 4, 0.45, 0.06, 6.0),
     'renewables': (1998, 2006, 5.0, 2, 4, 0.42, 0.08, 8.0),
@@ -124,11 +124,22 @@ SECTOR_PARAMS = {
 
 # 1995-rework 2.5: industries whose real firms earn far less per dollar than their sector's (T). Trading
 # houses took the largest revenues in the world on margins of about a percent.
-INDUSTRY_MARGINS = {'conglomerates': 0.02, 'autos': 0.05, 'retail': 0.04, 'e_commerce': 0.11}
+INDUSTRY_MARGINS = {'conglomerates': 0.02, 'autos': 0.05, 'retail': 0.04}
 # Trading houses own little: assets, book and value per revenue dollar (T).
 ASSET_LIGHT = {'conglomerates': (0.2, 0.08, 0.1)}
 # 1995-rework 2.5: the 2020 data's trends for rows it has already declining, which grew in this era (T).
 TRENDS_1995 = {'autos': 0.03, 'oil': 0.04, 'telecom': 0.03}
+
+# 1995-rework 6.4: each zone's growth against the world's, log a year: ln(2019 share / 1995 share) / 25,
+# from the World Bank's current-dollar GDP for each zone's 1995 members (A, from memory, within about
+# 20%). The seed spreads every zone around its track and the scenario scales it, so these are what a
+# Stable run expects, not a script.
+ZONE_TRACKS_1995 = {
+    'NA': 0.0, 'CAR': 0.018, 'CUB': 0.0, 'PRK': 0.0, 'EU': -0.0145, 'UK': -0.0116, 'CN': 0.077,
+    'KR': 0.0, 'HK': -0.0046, 'AU': 0.0113, 'MO': 0.042, 'SG': 0.021, 'IN': 0.04, 'AFS': 0.0,
+    'AFW': 0.0097, 'AFE': 0.041, 'AFN': 0.004, 'CH': -0.014, 'ME': 0.0196, 'UA': 0.0387,
+    'MX': 0.0085, 'BR': -0.0046, 'AR': -0.0088, 'CO': 0.0037, 'JP': -0.0427, 'RU': 0.0169,
+}
 
 REGION_SLUGS = ['east-asia-oceania', 'europe', 'latin-america', 'mena', 'north-america',
                 'russia-central-asia', 'south-asia', 'sub-saharan-africa']
@@ -235,6 +246,8 @@ def build_country_tables(countries):
         z['credit_spread_bps'] = str(round(weighted / zone_gdp)) if zone_gdp > 0 else z['credit_spread_bps']
         z['name'] = ZONE_NAMES_1995.get(z['zone_id'], z['name'])
     write(OUT / 'financial-zones.csv', fields, zones)
+    write(OUT / 'zone-growth.csv', ['zone_id', 'track'],
+          [dict(zone_id=z['zone_id'], track=num(ZONE_TRACKS_1995[z['zone_id']], 4)) for z in zones])
     return economy, zones
 
 

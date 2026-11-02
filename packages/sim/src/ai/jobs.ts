@@ -25,7 +25,13 @@ import { worldPublishes } from "../world/index.ts";
 import { STARTUP_SECTOR } from "./archetype.ts";
 import { debtAggressionOf } from "./financing.ts";
 import { focusOf } from "./focus.ts";
-import { ERA_CAPTURE_K, ERA_GROWTH_MAX, FUNDING_CAP_SHARE, quarterPurchases } from "./growth.ts";
+import {
+  ERA_CAPTURE_K,
+  ERA_CAPTURE_SHARE_MAX,
+  ERA_GROWTH_MAX,
+  FUNDING_CAP_SHARE,
+  quarterPurchases,
+} from "./growth.ts";
 import { gDem, nextLossQuarters } from "./inputs.ts";
 import { batchOrder, type PlanInputs, planFinancing, planOperations, unfundedGrowth } from "./plan.ts";
 import { growthRaisePlan, raisePlan, rollRaise } from "./raise.ts";
@@ -112,11 +118,14 @@ function zoneTilt(world: World, c: Company): { zone_tilt?: number } {
   const zone = world.countries[c.hq_country]?.zone;
   const tilt = zone === undefined ? undefined : world.era?.macro.zones[zone]?.tilt;
   if (tilt === undefined || world.era === undefined) return {};
-  // A hot market's firms also plan to take share from the fringe (1995-rework 9).
+  // A hot market's firms also plan to take share from the fringe, until one holds a large share
+  // of it (1995-rework 9).
   const ind = world.industries[c.industry] as World["industries"][number];
   const hot = gDem(ind.lt, ind.q_growth) >= world.era.scenario.macro.scaleup_min_growth;
-  const fringe = ind.supply > 0.0 ? (ind.fringe_assets * ind.params.asset_turnover) / ind.supply : 0.0;
-  return { zone_tilt: hot ? tilt + ERA_CAPTURE_K * fringe : tilt };
+  const turnover = ind.params.asset_turnover;
+  const own = ind.supply > 0.0 ? (grossAssets(world, c) * turnover) / ind.supply : 0.0;
+  const fringe = ind.supply > 0.0 ? (ind.fringe_assets * turnover) / ind.supply : 0.0;
+  return { zone_tilt: hot && own < ERA_CAPTURE_SHARE_MAX ? tilt + ERA_CAPTURE_K * fringe : tilt };
 }
 
 /**

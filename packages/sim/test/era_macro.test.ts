@@ -3,17 +3,19 @@
 // `headless calibrate`; here, that the machinery does what the spec says.
 
 import { describe, expect, it } from "vitest";
+import { gdpWeighted } from "../src/births/jobs.ts";
 import {
   eraMacroJob,
   growthGapOfWorld,
   neutralRate,
   RATE_FLOOR,
-  zoneLocationFactor,
+  ZONE_TRACK_SPREAD,
 } from "../src/era/jobs.ts";
 import { simNew, simViews, simWorld } from "../src/lib.ts";
 import { rateFactor, Y10_BASE } from "../src/market/fair_value.ts";
 import { dateTimeMidnight, simDateYmd } from "../src/time/calendar.ts";
 import type { JobCtx } from "../src/time/scheduler.ts";
+import type { ProvinceId } from "../src/types/ids.ts";
 import type { World } from "../src/types/world.ts";
 import { data, data1995, macrotask } from "./common/index.ts";
 
@@ -113,15 +115,32 @@ describe("the zones", () => {
     expect(tracks(1)).not.toEqual(tracks(2));
   });
 
-  it("weigh startups toward a zone gaining share", () => {
-    const era = simWorld(new1995(1)).era;
-    if (era === undefined) throw new Error("no era");
-    const z = era.macro.zones[0];
-    if (z === undefined) throw new Error("no zone");
-    expect(zoneLocationFactor(era, 0)).toBe(1);
-    z.share = z.start_share * 2;
-    expect(zoneLocationFactor(era, 0)).toBeCloseTo(2);
-    expect(zoneLocationFactor(era, 9999)).toBe(1);
+  it("follow the data's tracks, moved by the seed within the spread", () => {
+    const w = simWorld(new1995(1));
+    const want = new Map(data1995().zone_growth.rows.map((r) => [r.zone_id, r.track] as const));
+    w.zones.forEach((z, i) => {
+      const track = w.era?.macro.zones[i]?.track as number;
+      expect(Math.abs(track - (want.get(z.key) as number))).toBeLessThanOrEqual(ZONE_TRACK_SPREAD);
+    });
+    const at = (key: string) => w.era?.macro.zones[w.zones.findIndex((z) => z.key === key)]?.track as number;
+    expect(at("CN")).toBeGreaterThan(0.05);
+    expect(at("JP")).toBeLessThan(-0.02);
+  });
+
+  it("place startups by each country's GDP, split by province weight", () => {
+    const w = simWorld(new1995(1));
+    const usa = w.countries.findIndex((c) => c.key === "USA");
+    const ids = w.provinces.flatMap((p, id) => (p.country === usa ? [id as ProvinceId] : [])).slice(0, 2);
+    const [a, b] = ids as [ProvinceId, ProvinceId];
+    const out = gdpWeighted(w, [
+      [a, 1],
+      [b, 3],
+    ]);
+    const gdp = w.countries[usa]?.gdp_usd as number;
+    expect(out[0]?.[1]).toBeCloseTo(gdp / 4);
+    expect(out[1]?.[1]).toBeCloseTo((3 * gdp) / 4);
+    (w.countries[usa] as World["countries"][number]).gdp_usd = gdp * 2;
+    expect(gdpWeighted(w, [[a, 1]])[0]?.[1]).toBeCloseTo(gdp * 2);
   });
 });
 
