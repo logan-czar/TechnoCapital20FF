@@ -29,6 +29,8 @@ export interface IndustryRow {
   key: string;
   name: string;
   sector: string;
+  /** It waits to emerge, so pages leave it out; absent otherwise (1995-rework 5.2). */
+  dormant?: true;
   /** Effective demand, USD a year (spec 5.1). */
   demand: number;
   trend_demand: number;

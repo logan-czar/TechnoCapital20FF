@@ -13,7 +13,7 @@ import { quarterNext } from "../time/calendar.ts";
 import type { Quarter } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import type { CompanyId } from "../types/ids.ts";
-import { clamp, roundTiesEven, totalCmp, toU64Sat } from "../types/num.ts";
+import { clamp, minF, roundTiesEven, totalCmp, toU64Sat } from "../types/num.ts";
 import type { Ballot, VoteResult, VoterRole } from "../types/state/births.ts";
 import type { CompanyStatus, Rating } from "../types/state/finance.ts";
 import { SEAT_VALUES, type Seat, type Trait } from "../types/state/people.ts";
@@ -52,6 +52,18 @@ export const CONFIDENCE_DIVISOR = 1000.0;
 /** ... clamped 5% to 95%. */
 export const MIN_YES = 0.05;
 export const MAX_YES = 0.95;
+/**
+ * In a historical world a board is keener to list the larger its firm (1995-rework 9, T):
+ * `min(60%, 20% × log10(TTM revenue ÷ $75M))` points on each yes chance, so a $7.5B firm adds 40.
+ * At 15% a yes, a firm that big otherwise stays private for good.
+ */
+export const LISTING_SIZE_SLOPE = 0.2;
+export const LISTING_SIZE_MAX = 0.6;
+export function listingSizeBonus(ttm_revenue: number): number {
+  if (ttm_revenue <= MIN_TTM_REVENUE_USD) return 0.0;
+  return minF(LISTING_SIZE_MAX, LISTING_SIZE_SLOPE * Math.log10(ttm_revenue / MIN_TTM_REVENUE_USD));
+}
+
 /** Spec 5.20.1 step 6: at most 3 listings world-wide a quarter (T). */
 export const LISTINGS_PER_QUARTER = 3;
 /** Spec 5.20.1 Listing step 3: new shares equal to 20% of the re-split shares ... */
@@ -207,9 +219,10 @@ export function holdVote(
   label: PhaseLabel,
   confidence: number,
   draws: DrawSource,
+  bonus = 0.0,
 ): VoteResult {
   const ballots: Ballot[] = voters_.map((v) => {
-    const chance = yesChance(label, confidence, v.traits);
+    const chance = clamp(yesChance(label, confidence, v.traits) + bonus, MIN_YES, MAX_YES);
     return { role: v.role, chance, yes: draws.chance("Gen", chance), voter: null };
   });
   const yes = ballots.filter((b) => b.yes).length;

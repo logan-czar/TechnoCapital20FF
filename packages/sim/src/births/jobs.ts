@@ -12,7 +12,7 @@
 // (prices stream, D140, D150).
 
 import { quarterIndex } from "../economy/ai_boom.ts";
-import { zoneLocationFactor } from "../era/jobs.ts";
+import { eraSectorDormant, zoneLocationFactor } from "../era/jobs.ts";
 import { balanceSheet } from "../finance/balance.ts";
 import { homeSpread, lineLimit } from "../finance/credit.ts";
 import {
@@ -72,16 +72,23 @@ import {
   holdVote,
   listCompany,
   listingResplitHolding,
+  listingSizeBonus,
   MIN_QUARTERS_SINCE_BIRTH,
   nextVoteAfter,
   passesIpoTests,
   voters,
 } from "./ipo.ts";
 import { companyNamesDraw, ticker } from "./names.ts";
-import { drawRandomEvents, type EventDraft, RANDOM_EVENTS_MEAN, type StartupDraft } from "./random.ts";
+import {
+  drawRandomEvents,
+  drawTargetRevenue,
+  type EventDraft,
+  RANDOM_EVENTS_MEAN,
+  type StartupDraft,
+} from "./random.ts";
 import { buildStartup, fringeRevenue, sizedRevenue } from "./startup.ts";
 import { birthsInRegions, sitesKeyCityLists, sitesPlace } from "./state.ts";
-import { hqWeight, industryWeight } from "./weights.ts";
+import { hqWeight, industryWeight, weightedPick } from "./weights.ts";
 
 type Industry = World["industries"][number];
 type Stock = World["market"]["stocks"][number];
@@ -195,11 +202,14 @@ function hqCandidates(
 function industryWeights(world: World): [IndustryId, number][] {
   return world.industries.map((ind, id): [IndustryId, number] => [
     id as IndustryId,
-    industryWeight(
-      ind.q_growth,
-      fringeRevenue(ind.fringe_assets, ind.params.asset_turnover),
-      ind.phase_label,
-    ),
+    // A dormant industry draws no startups (1995-rework 5.2).
+    eraSectorDormant(world, id)
+      ? 0.0
+      : industryWeight(
+          ind.q_growth,
+          fringeRevenue(ind.fringe_assets, ind.params.asset_turnover),
+          ind.phase_label,
+        ),
   ]);
 }
 
@@ -222,6 +232,7 @@ export function birth(
   const revenue = sizedRevenue(
     draft.target_revenue_usd,
     fringeRevenue(ind.fringe_assets, ind.params.asset_turnover),
+    draft.fringe_cap_share,
   );
   if (revenue === null) return null;
   const id = world.companies.length as CompanyId;
@@ -445,6 +456,56 @@ export function tippedLabName(world: World): string {
   return c === null ? "An AI lab" : (world.companies[c] as Company).name;
 }
 
+/** A founding wave's firms start at this share of their industry's size each, log-uniform (T). */
+export const WAVE_SHARE: readonly [number, number] = [0.03, 0.15];
+/** A founding wave's firm may take this share of the fringe, where a startup may take 2% (T). */
+export const WAVE_FRINGE_CAP_SHARE = 0.3;
+/** The board seats a founding wave's firm fills. */
+const WAVE_PARTIAL = 2;
+
+/**
+ * Plan lock step 1 (1995-rework 5.3): each industry that has just emerged gets its founding wave, a
+ * larger group of firms than a startup event, placed by the HQ weights.
+ */
+export function eraFoundingWavesJob(world: World, ctx: JobCtx): void {
+  const era = world.era;
+  if (era === undefined) return;
+  const date = ctx.facts.date;
+  era.sectors.forEach((s, i) => {
+    if (!s.wave_pending) return;
+    s.wave_pending = false;
+    const industry = i as IndustryId;
+    const ind = world.industries[i] as Industry;
+    const sites = hqCandidates(world, industry, null);
+    const n = ctx.draws.intInclusive("Era", s.wave[0], s.wave[1]);
+    const startups: StartupDraft[] = [];
+    for (let k = 0; k < n; k++) {
+      const pick = weightedPick(
+        sites.map(([, w]) => w),
+        ctx.draws,
+      );
+      if (pick === null) continue;
+      startups.push({
+        industry,
+        hq: (sites[pick] as [ProvinceId, number])[0],
+        target_revenue_usd: drawTargetRevenue(
+          WAVE_SHARE[0] * s.target_size_usd,
+          WAVE_SHARE[1] * s.target_size_usd,
+          ctx.draws,
+        ),
+        partial: WAVE_PARTIAL,
+        fringe_cap_share: WAVE_FRINGE_CAP_SHARE,
+      });
+    }
+    const id = `E-${ind.key}`;
+    const fired = fireEvent(world, ctx, { kind: { kind: "Fixed", id }, startups });
+    if (fired === null) return;
+    const [eventId, made] = fired;
+    const headline = fixedEventHeadline(date, id, `${ind.name} takes off`, made.length);
+    newsWireQueue(world.news, headlineOfEvent(headline, eventId));
+  });
+}
+
 /**
  * Plan lock step 2 (spec 5.19.1): the Poisson count of random events, each placed by the industry
  * and HQ weights and built. A one-startup event posts "[Name] launches in [industry] in [city or
@@ -527,7 +588,15 @@ function vote(world: World, id: CompanyId, q: Quarter, draws: DrawSource): VoteR
   else if (ctl !== undefined && ctl.kind === "Character") unseated = ctl.character.traits;
   const v = voters(seats, directors, unseated);
   const zone = (world.countries[c.hq_country] as World["countries"][number]).zone;
-  const result = holdVote(v, label, (world.zones[zone] as World["zones"][number]).confidence, draws);
+  const result = holdVote(
+    v,
+    label,
+    (world.zones[zone] as World["zones"][number]).confidence,
+    draws,
+    world.era === undefined
+      ? 0.0
+      : listingSizeBonus(trailingFour(companyFinanceQuarters(c.finance))?.revenue ?? 0.0),
+  );
   // Who cast each ballot, as the board stands now (D542): the roles name the seats.
   for (const b of result.ballots) b.voter = ballotVoter(c, b.role);
   return result;

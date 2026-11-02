@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { brotliCompressSync, gzipSync } from "node:zlib";
-import { MANIFEST_FILE, MAP_FILES, WORLD_FILES, WORLD_IDS } from "@tc20ff/sim-data";
+import { ERA_FILES, MANIFEST_FILE, MAP_FILES, WORLD_FILES, WORLD_IDS } from "@tc20ff/sim-data";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 
@@ -24,7 +24,7 @@ function servedFiles(): Map<string, string> {
   for (const f of WORLD_FILES) files.set(`data/design/${f}`, resolve(root, "docs/design/data", f));
   // The other starting worlds (1995-rework 3.2), each with its manifest.
   for (const id of WORLD_IDS) {
-    for (const f of [...WORLD_FILES, MANIFEST_FILE]) {
+    for (const f of [...WORLD_FILES, ...ERA_FILES, MANIFEST_FILE]) {
       files.set(`data/worlds/${id}/${f}`, resolve(root, "assets/worlds", id, f));
     }
   }

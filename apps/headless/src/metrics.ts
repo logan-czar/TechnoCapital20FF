@@ -202,16 +202,29 @@ export interface RunOptions<D = unknown> {
 }
 
 /** The header of `era.csv`: a historical world's long history, one row per seed per year (1995-rework 4.3). */
-export const ERA_HEADER = "seed,year,gdp_usd,companies,base_rate,recessions_started,zone_gdp_usd";
+export const ERA_HEADER =
+  "seed,year,gdp_usd,companies,base_rate,recessions_started,zone_gdp_usd,failures,tech_share,top_industry_share,top10_turnover,top10_born";
 
 /** A run's `era.csv` rows, from its `history` view at the end. */
 function eraRows(sim: SoakSimApi, seed: number): string {
-  const h = sim.views().history?.data;
+  const views = sim.views();
+  const h = views.history?.data;
   if (h === undefined) return "";
+  const sectors = views.industry_rows.data.rows.map((r) => r.sector);
+  const first = new Set(h.top10[0]?.companies.map((c) => c.company) ?? []);
+  const last = h.top10.at(-1)?.companies ?? [];
+  const kept = last.filter((c) => first.has(c.company)).length;
+  const turnover = last.length > 0 ? 1 - kept / last.length : 0;
+  const rows = views.company_rows.data.rows;
+  const born = last.filter((c) => rows[c.company]?.origin.kind === "Born").length;
   return h.years
     .map((y, i) => {
       const started = h.recessions.filter((r) => r === y).length;
-      return `${seed},${y},${h.gdp_usd[i]},${h.companies[i]},${h.base_rate[i]},${started},${(h.zone_gdp_usd[i] ?? []).join(";")}\n`;
+      const demand = h.industry_demand_usd[i] ?? [];
+      const total = demand.reduce((a, b) => a + b, 0);
+      const tech = demand.reduce((a, d, k) => (sectors[k] === "Tech" ? a + d : a), 0);
+      const top = demand.reduce((a, b) => maxF(a, b), 0);
+      return `${seed},${y},${h.gdp_usd[i]},${h.companies[i]},${h.base_rate[i]},${started},${(h.zone_gdp_usd[i] ?? []).join(";")},${h.failures[i]},${total > 0 ? tech / total : 0},${total > 0 ? top / total : 0},${turnover},${born}\n`;
     })
     .join("");
 }
@@ -654,6 +667,8 @@ function recorderM10Columns(rec: Recorder, sim: SoakSimApi, year: number): strin
   const rows = sim.views().industry_rows.data.rows;
   const n = year + 1 - rec.start_year;
   const devs = rows.map((r, i) => {
+    // An industry that started dormant has no growth since load to measure (1995-rework 5.2).
+    if ((rec.demand0[i] as number) <= 0.0) return 0.0;
     const g = cagr(rec.demand0[i] as number, r.demand, n);
     const lt = cagr(rec.trend0[i] as number, r.trend_demand, n);
     return 100.0 * Math.abs(g - lt);

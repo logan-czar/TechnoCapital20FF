@@ -66,11 +66,15 @@ export function fringeRevenue(fringe_assets: number, turnover: number): number {
 }
 
 /**
- * The startup's revenue (spec 5.19.3): the target capped at 2% of the fringe's revenue; null
- * (skipped) under $1M.
+ * The startup's revenue (spec 5.19.3): the target capped at 2% of the fringe's revenue, or at a
+ * founding wave's own share (1995-rework 5.3); null (skipped) under $1M.
  */
-export function sizedRevenue(target_revenue: number, fringe_revenue: number): number | null {
-  const r = minF(target_revenue, FRINGE_REVENUE_CAP_SHARE * maxF(fringe_revenue, 0.0));
+export function sizedRevenue(
+  target_revenue: number,
+  fringe_revenue: number,
+  capShare: number = FRINGE_REVENUE_CAP_SHARE,
+): number | null {
+  const r = minF(target_revenue, capShare * maxF(fringe_revenue, 0.0));
   return r >= MIN_STARTUP_REVENUE_USD ? r : null;
 }
 

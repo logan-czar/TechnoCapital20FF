@@ -17,6 +17,10 @@ export function emptyHistory(): HistoryView {
     base_rate: [],
     zone_gdp_usd: [],
     recessions: [],
+    industry_demand_usd: [],
+    failures: [],
+    top10: [],
+    emergences: [],
   };
 }
 
@@ -33,5 +37,9 @@ export function buildHistory(input: ViewInput): HistoryView {
     base_rate: [...era.history.base_rate],
     zone_gdp_usd: era.history.zone_gdp_usd.map((y) => [...y]),
     recessions: [...era.history.recessions],
+    industry_demand_usd: era.history.industry_demand_usd.map((y) => [...y]),
+    failures: [...era.history.failures],
+    top10: era.history.top10.map((t) => ({ year: t.year, companies: t.companies.map((c) => ({ ...c })) })),
+    emergences: era.history.emergences.map((e) => ({ ...e })),
   };
 }

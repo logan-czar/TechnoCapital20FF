@@ -52,10 +52,14 @@ export function setEffectiveDemand(world: World): void {
 
 /** Sets every industry's phase label from this quarter's growth and last month's S (spec 5.1). */
 export function setPhaseLabels(world: World, date: SimDate): void {
-  for (const ind of world.industries) {
-    const forced = forcedLabel(ind.params.boom_uplift, world.ai, date);
+  world.industries.forEach((ind, i) => {
+    // A dormant industry's growth draws are noise on nothing: no phase, no headline (1995-rework 5.2).
+    const forced =
+      world.era?.sectors[i]?.status === "Dormant"
+        ? "Normal"
+        : forcedLabel(ind.params.boom_uplift, world.ai, date);
     ind.phase_label = phaseLabel(growthGap(ind.q_growth, ind.lt), ind.supply_ratio, ind.phase_label, forced);
-  }
+  });
 }
 
 /**

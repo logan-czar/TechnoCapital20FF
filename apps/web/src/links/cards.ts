@@ -278,7 +278,7 @@ export function listLen(page: PageRef, v: ViewsData): number | null {
     case "companies":
       return v.company_rows?.rows.filter((r) => r.status !== "Removed").length ?? null;
     case "industries":
-      return v.industry_rows?.rows.length ?? null;
+      return v.industry_rows?.rows.filter((r) => !r.dormant).length ?? null;
     case "news":
       return v.news?.feed.length ?? null;
     case "exchanges":

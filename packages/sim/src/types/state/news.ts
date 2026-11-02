@@ -50,7 +50,9 @@ export type HeadlineKind =
   /** The boom event: the tipped lab launches its chatbot (5.1.1). */
   | { kind: "Chatbot" }
   /** A US election or inauguration (D985). */
-  | { kind: "Politics" };
+  | { kind: "Politics" }
+  /** A historical world's recession or new industry (1995-rework 4.2, 5.3). */
+  | { kind: "World" };
 
 /**
  * One Pdoomberg Wire headline (spec 5.18; 8 News feed: date and industry tag). The byline is

@@ -1,0 +1,11 @@
+id,window_first,window_last,target_size_usd_bn,wave_min,wave_max
+ai_labs,2012,2018,0.5,2,4
+cloud,2004,2010,3.0,2,4
+data_centers,1997,2003,3.0,2,4
+drones,2008,2014,0.5,2,3
+e_commerce,1995,1998,5.0,3,5
+evs,2006,2012,2.0,2,3
+renewables,1998,2006,5.0,2,4
+saas,1999,2005,3.0,3,5
+search_portals,1996,2000,1.0,2,4
+social_media,2002,2008,1.0,2,4

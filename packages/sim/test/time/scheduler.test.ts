@@ -117,7 +117,7 @@ describe("registerJobs", () => {
     const s = scheduler();
     const names = (slot: Slot) => schedulerJobs(s, slot).map(([n]) => n);
     expect(names("Alerts")).toEqual(["time.calendar_alerts"]);
-    expect(names("MonthlyAiEvents")).toEqual(["economy.ai_events", "news.chatbot"]);
+    expect(names("MonthlyAiEvents")).toEqual(["economy.ai_events", "era.activate_sectors", "news.chatbot"]);
     expect(names("MonthlyDemand")).toEqual(["economy.demand", "news.phase_changes"]);
     expect(names("MonthlyExpenses")).toEqual(["economy.expenses", "finance.open_month"]);
     expect(names("MonthlyAssets")).toEqual(["economy.assets", "people.new_seats", "finance.post_assets"]);
@@ -125,6 +125,6 @@ describe("registerJobs", () => {
     expect(names("CloseStatements")).toEqual(["finance.close", "ai.loss_quarters"]);
     expect(names("CloseTax")).toEqual([]);
     expect(names("ReleasePublish")).toEqual(["finance.removals", "news.removals"]);
-    expect(SLOT_VALUES.reduce((n, slot) => n + names(slot).length, 0)).toBe(54);
+    expect(SLOT_VALUES.reduce((n, slot) => n + names(slot).length, 0)).toBe(56);
   });
 });

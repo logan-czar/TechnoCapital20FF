@@ -10,7 +10,7 @@ import { type DataError, dataErrorFile, err, ok, type Result } from "./error.ts"
 import type { Files } from "./load.ts";
 import { MANIFEST_FILE, parseManifest } from "./manifest.ts";
 import { MAP_FILES, MAP_PNG_FILES, type MapAssets, mapFixtureFiles, parseMap, type Rect } from "./map.ts";
-import { parseWorld, WORLD_FILES, type WorldData } from "./world.ts";
+import { ERA_FILES, parseWorld, WORLD_FILES, type WorldData } from "./world.ts";
 
 /** The repository root, found from this file location (packages/sim-data/src). */
 export function repoRoot(): string {
@@ -55,7 +55,7 @@ function readFiles(dir: string, names: readonly string[]): Result<Record<string,
  * none). Stops at the first file that does not parse (spec 10 M0).
  */
 export function loadWorld(dir: string): Result<WorldData, DataError> {
-  const files = readFiles(dir, WORLD_FILES);
+  const files = readFiles(dir, [...WORLD_FILES, ...ERA_FILES]);
   if (!files.ok) return files;
   const read = readFiles(dir, [MANIFEST_FILE]);
   if (!read.ok) return read;

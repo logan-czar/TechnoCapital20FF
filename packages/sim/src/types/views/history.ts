@@ -1,6 +1,8 @@
 // v_history (1995-rework 8.1): which world and when it started, for any page, and a historical
 // world's long history. The 2020 world's holds only its start.
 
+import type { CompanyId } from "../ids.ts";
+
 export interface HistoryView {
   /** The world's manifest id. */
   world_id: string;
@@ -20,4 +22,12 @@ export interface HistoryView {
   zone_gdp_usd: number[][];
   /** The year each recession started. */
   recessions: number[];
+  /** Per year, each industry's demand in id order, USD (1995-rework 8.1). */
+  industry_demand_usd: number[][];
+  /** Companies gone bankrupt or removed by each year's close. */
+  failures: number[];
+  /** Every fifth year and the run's last: the largest listed companies by market cap. */
+  top10: { year: number; companies: { company: CompanyId; name: string; cap_usd: number }[] }[];
+  /** When each industry emerged, in order (1995-rework 5.3). */
+  emergences: { year: number; industry: string }[];
 }

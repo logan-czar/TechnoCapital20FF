@@ -245,7 +245,7 @@ describe("m6 lock", () => {
     for (let i = 1; i < pos.length; i++) expect(pos[i - 1] as number).toBeLessThan(pos[i] as number);
     const sched = scheduler();
     const jobs = (s: Slot): string[] => schedulerJobs(sched, s).map(([n]) => n);
-    expect(jobs("LockFixedStartupEvents")).toEqual(["births.fixed_events"]);
+    expect(jobs("LockFixedStartupEvents")).toEqual(["births.fixed_events", "era.founding_waves"]);
     expect(jobs("LockRandomStartupEvents")).toEqual(["births.random_events"]);
     expect(jobs("LockIpoVotes")).toEqual(["births.ipo_votes_and_listings"]);
     expect(jobs("LockAiPlans")).toEqual(["ai.plan_lock"]);

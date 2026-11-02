@@ -353,6 +353,11 @@ export function politicsHeadline(date: SimDate, text: string): Headline {
   return headline(date, null, null, { kind: "Politics" }, text);
 }
 
+/** A historical world's news (1995-rework 4.2, 5.3): a recession, a new industry. No tags. */
+export function eraHeadline(date: SimDate, text: string): Headline {
+  return headline(date, null, null, { kind: "World" }, text);
+}
+
 /** Spec 5.1.1, 5.18: the boom event, "[tipped lab] launches its chatbot". */
 export function chatbot(
   date: SimDate,

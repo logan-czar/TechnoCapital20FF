@@ -85,9 +85,13 @@ def main():
     revenue = {}
     for c in companies:
         revenue[c['industry']] = revenue.get(c['industry'], 0.0) + float(c['revenue_usd_m'])
+    dormant = {l['id'] for l in read(OUT / 'industry-lifecycle.csv')}
     for i in industries:
         named = revenue.get(i['name'], 0.0)
-        if named == 0.0:
+        if i['id'] in dormant:
+            if named != 0.0 or float(i['world_size_2020_usd_bn']) != 0.0:
+                errors.append(f'{i["name"]}: dormant, but has companies or a size')
+        elif named == 0.0:
             errors.append(f'{i["name"]}: no company')
         elif named / 1000.0 >= float(i['world_size_2020_usd_bn']):
             errors.append(f'{i["name"]}: named revenue is at or above its world size')

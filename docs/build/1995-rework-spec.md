@@ -98,7 +98,7 @@ Checked in `apps/headless/src/targets-1995.ts`, windows 1995–2019, across seed
 | Unstable | $50–110T | Deep drawdowns and more failures |
 | Stagnation | $45–60T | Low rates and little entry |
 
-Also bands on sector shares, drawdown depth, failures, entries, zone-share movement and top-10 revenue turnover from 1995 to 2020. Scenarios must separate clearly. Real-world reference: nominal world GDP from about $31T to $85T, about 4.1% a year.
+Also bands on sector shares, drawdown depth, failures, entries, zone-share movement, top-10 market-cap turnover and born firms in the top 10, from 1995 to 2020. Scenarios must separate clearly. Real-world reference: nominal world GDP from about $31T to $85T, about 4.1% a year.
 
 ## 5. Dormant sectors
 
@@ -116,7 +116,7 @@ Each dormant row has a window, and the seed picks a quarter inside it, plus the 
 | SaaS | 1999–2005 | AI labs | 2012–2018 |
 
 ### 5.2 While dormant
-Size is zero and no company sits in the row. S and M are held at 1, the label is forced to Normal, the startup weight is zero, and web hides the row. Growth draws continue, so the Growth stream does not depend on emergence.
+Size is zero and no company sits in the row (the load-time checks enforce both). S and M are held at 1, the label is forced to Normal, the startup weight is zero, and web hides the row. Growth draws continue, so the Growth stream does not depend on emergence.
 
 ### 5.3 Activation
 On `emerge_quarter`, the row takes its `target_size` (demand, trend and fringe), posts a headline and raises a `NewSector` alert. At the next plan lock a founding wave of startups appears through the existing `hqCandidates` and `fireEvent` path. `sizedRevenue`'s 2% cap takes a wave parameter, because 2% of a $2B sector gives only $40M companies.
@@ -193,9 +193,21 @@ At `reveal_date` the sim pauses, opens the World History page and shows the scen
 No view carries the scenario id or label before the reveal under Random. `history.scenario` is null until then, unless picked openly. A leak test checks every serialised view.
 
 ## 9. Corporate turnover
-Sector lifecycle plus tuned failures. No M&A. Top-10 revenue turnover is measured (4.3).
+Sector lifecycle plus tuned failures. No M&A. Top-10 market-cap turnover is measured (4.3). Four rules apply in an era world only, because calibration showed the MVP's rules leave named firms insulated (D996):
 
-`GROWTH_MAX` of 30% caps how far a newcomer can climb: a $40M startup reaches about $28B in 25 years. If this leaves turnover short after wave-cap and era-clamp levers, M&A is the honest next step, and that goes to Logan rather than a weakened target.
+- **Sticky fringe.** The fringe grows on the long-term rate and closes 8% of its gap to demand a month. The spec 5.3 fringe shrinks in step with demand and takes the whole shock, so a downturn never reached a named firm.
+- **Exit rule.** The drift plan's: a firm exits as a bankruptcy after 12 straight losing quarters, or below $0.5M of assets, unless it is its industry's last. The AI otherwise sells down and lives on its cash for good.
+- **Credit squeeze.** A contraction withdraws a scenario share of each line's limit at its review.
+- **Growth.** A firm under its hurdle follows its market's growth, where spec 6.2 holds it at 2% whatever its market does, and the growth ceiling is 70%, not 30%.
+
+How a firm born in the run reaches the top 10, in order of what each one unblocked (D997):
+
+- **Scale-up financing.** An Active firm in a hot market (g_dem at or above the scenario's floor, label not Bust or Glut) whose funding cap holds its plan back sells shares for four quarters of what is held back. It is the 6.6 share issue, with its price, 20% dilution cap, fees and success roll. A failure only leaves the plan as it was. Logan chose this on 1 November 2026, over moving to P5 and leaving the top-10 gap for real data to close.
+- **Earnings multiples.** Each row takes its design valuation group (mvp-data `PE`), which the MVP left at one value for all. Young markets are at 40. Without this a bank outvalues any growth firm.
+- **Listing.** A board's yes chance gains `min(60%, 20% × log10(TTM revenue ÷ $75M))`, since at 15% a $20B firm stayed private and could not count.
+- **Capture.** A hot market's firms plan to grow `0.25 × fringe share` above the market. Firms that only follow their market keep their share, and a market of trillions stayed 97% fringe.
+
+M&A remains out of scope.
 
 ## 10. Build order
 

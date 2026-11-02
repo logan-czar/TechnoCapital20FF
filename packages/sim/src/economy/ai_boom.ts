@@ -162,12 +162,22 @@ export function setIndustryLt(world: World, date: SimDate): void {
   const q = simDateQuarter(date);
   const scale = profile.lt_scale * growthFactor(profile, q.year);
   const years = maxF((quarterIndex(q) - FADE_ORIGIN_YEAR * QUARTERS_IN_YEAR) / QUARTERS_IN_YEAR, 0.0);
-  for (const ind of world.industries) {
+  const era = world.era;
+  world.industries.forEach((ind, i) => {
     ind.prev_lt = ind.lt;
     const p = ind.params;
-    const trend = fadedTrend(p.trend_growth, p.mature_rate, p.fade_half_life_years, years, profile.fade);
+    // In a historical world an industry fades from its own emergence (1995-rework 5).
+    const sinceStart =
+      era === undefined ? years : maxF(q.year - (era.sectors[i]?.emerged_year ?? q.year), 0.0);
+    const trend = fadedTrend(
+      p.trend_growth,
+      p.mature_rate,
+      p.fade_half_life_years,
+      sinceStart,
+      profile.fade || era !== undefined,
+    );
     ind.lt = linkedLt(trend * scale, p.boom_uplift, aiLt, pre);
-  }
+  });
 }
 
 /** 4.3 step 1b: every industry's lt. */

@@ -133,6 +133,8 @@ export interface StartupDraft {
   target_revenue_usd: number;
   /** Whole number (u8). */
   partial: number;
+  /** The share of the fringe's revenue it may take; 2% when absent (5.19.3; 1995-rework 5.3). */
+  fringe_cap_share?: number;
 }
 
 /** An event before its startups are built (spec 5.19). */

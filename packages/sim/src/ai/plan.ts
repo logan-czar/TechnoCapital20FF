@@ -11,7 +11,7 @@ import type { Trait } from "../types/state/people.ts";
 import { archetype, archetypeParams } from "./archetype.ts";
 import { type Financing, financing } from "./financing.ts";
 import { applyFocus } from "./focus.ts";
-import { type FundingInputs, growthPlan, quarterPurchases } from "./growth.ts";
+import { ERA_BELOW_HURDLE_DEMAND_SHARE, type FundingInputs, growthPlan, quarterPurchases } from "./growth.ts";
 import { gDem, liquidity, minCash, planTraits, roa } from "./inputs.ts";
 import { rdPlan } from "./rd.ts";
 import { monthlyInflowTb, planStations } from "./split.ts";
@@ -70,6 +70,9 @@ export function batchOrder(companies: readonly (readonly [CompanyId, CompanyStat
 }
 
 /** Everything one company's plan reads at the lock (spec 6 inputs, 6.1 to 6.5). */
+/** More cash than any company's purchases, so the funding cap does not bind. */
+const UNLIMITED_CASH_USD = 1.0e18;
+
 export interface PlanInputs {
   /** companies.csv `control_basis` is `state`. */
   state_controlled: boolean;
@@ -114,6 +117,8 @@ export interface PlanInputs {
   debt_aggression?: number;
   /** How much faster than the world the HQ zone grows; absent in the 2020 world (1995-rework 6.4). */
   zone_tilt?: number;
+  /** The growth ceiling; absent in the 2020 world (1995-rework 9). */
+  growth_max?: number;
   /** The experiment's focus level (D972); 0 or absent is spec 6.2 and 6.3. */
   focus?: number;
 }
@@ -150,6 +155,9 @@ export function planOperations(i: PlanInputs): OperatingPlan {
     tech: i.tech,
     funding,
     debt_aggression: i.debt_aggression ?? 0,
+    ...(i.growth_max === undefined
+      ? {}
+      : { growth_max: i.growth_max, below_hurdle_demand_share: ERA_BELOW_HURDLE_DEMAND_SHARE }),
   });
   const rd = rdPlan({
     rd_norm: i.rd_norm,
@@ -196,6 +204,14 @@ export function planFinancing(i: PlanInputs, op: OperatingPlan, cash: number, li
     status: i.status,
     debt_aggression: i.debt_aggression ?? 0,
   });
+}
+
+/**
+ * The growth a company would plan with no funding limit: the same plan on cash the cap cannot bind.
+ * What a growth raise funds (1995-rework 9).
+ */
+export function unfundedGrowth(i: PlanInputs): number {
+  return planOperations({ ...i, cash: i.cash + UNLIMITED_CASH_USD }).growth;
 }
 
 /**

@@ -43,6 +43,66 @@ FOLD = {
     'SPM': 'FRA', 'PAP': 'ARG', 'VAT': 'ITA', 'SMR': 'ITA',
 }
 
+# 1995-rework 2.4, 5.1: dormant industries. id: (window first, last, size on emerging $bn, wave min, max,
+# trend, mature rate, fade half life in years). The early growth rates of a new market fade to mature.
+DORMANT = {
+    'e_commerce': (1995, 1998, 5.0, 3, 5, 0.62, 0.1, 8.0),
+    'search_portals': (1996, 2000, 1.0, 2, 4, 0.76, 0.08, 5.0),
+    'data_centers': (1997, 2003, 3.0, 2, 4, 0.45, 0.06, 6.0),
+    'renewables': (1998, 2006, 5.0, 2, 4, 0.42, 0.08, 8.0),
+    'saas': (1999, 2005, 3.0, 3, 5, 0.47, 0.1, 6.0),
+    'social_media': (2002, 2008, 1.0, 2, 4, 1.04, 0.1, 4.0),
+    'cloud': (2004, 2010, 3.0, 2, 4, 0.69, 0.15, 6.0),
+    'evs': (2006, 2012, 2.0, 2, 3, 0.73, 0.12, 6.0),
+    'drones': (2008, 2014, 0.5, 2, 3, 0.71, 0.08, 5.0),
+    'ai_labs': (2012, 2018, 0.5, 2, 4, 1.54, 0.2, 6.0),
+}
+
+# 1995-rework 2.4: new rows. id: (name, sector, size at the start $bn, trend, mature, half life, asset
+# label, name suffixes). Size 0 is dormant. Sunset rows have a flat or falling trend.
+NEW_INDUSTRIES = {
+    'computer_hardware': ('Computer hardware', 'Tech', 350, 0.0, 0.0, 0, 'assembly plants', ['Computer', 'Systems', 'Machines']),
+    'media_publishing': ('Media and publishing', 'Services', 350, -0.005, -0.005, 0, 'presses and studios', ['Media', 'Press', 'Broadcasting']),
+    'consumer_staples': ('Consumer staples and tobacco', 'Consumer', 900, 0.025, 0.025, 0, 'brands', ['Brands', 'Foods', 'Tobacco']),
+    'conglomerates': ('Conglomerates and trading houses', 'Industry', 1500, 0.02, 0.02, 0, 'divisions', ['Holdings', 'Trading', 'Group']),
+    'capital_goods': ('Capital goods', 'Industry', 900, 0.03, 0.03, 0, 'factories', ['Machinery', 'Heavy Industries', 'Electric']),
+    'rail': ('Rail', 'Industry', 120, 0.0, 0.0, 0, 'rail lines', ['Rail', 'Railway', 'Northern']),
+    'paper_forest': ('Paper and forest', 'Industry', 350, -0.005, -0.005, 0, 'mills', ['Paper', 'Timber', 'Forest']),
+    'apparel': ('Apparel', 'Consumer', 400, 0.025, 0.025, 0, 'brands', ['Apparel', 'Sportswear', 'Mills']),
+    'appliances': ('Appliances', 'Consumer', 150, 0.015, 0.015, 0, 'plants', ['Appliance', 'Home', 'Electric Home']),
+    'travel_leisure': ('Travel and leisure', 'Consumer', 500, 0.05, 0.05, 0, 'resorts', ['Resorts', 'Hotels', 'Cruises']),
+    'online_services': ('Online services', 'Tech', 5, 0.51, 0.02, 5.0, 'dial-up networks', ['Online', 'Net', 'Connect']),
+    'wireless': ('Wireless', 'Tech', 40, 0.26, 0.04, 8.0, 'cell networks', ['Wireless', 'Cellular', 'Mobile']),
+    'biotech': ('Biotech', 'Health', 15, 0.17, 0.07, 10.0, 'labs', ['Biotech', 'Genetics', 'Therapeutics']),
+    'medical_devices': ('Medical devices', 'Health', 80, 0.07, 0.05, 15.0, 'plants', ['Medical', 'Devices', 'Surgical']),
+    'search_portals': ('Search and portals', 'Tech', 0, 0.76, 0.08, 5.0, 'server farms', ['Search', 'Portal', 'Web']),
+}
+NEW_PER_INDUSTRY_SHARES = (0.12, 0.08, 0.05, 0.03)   # named revenue of a new row, largest first (T)
+NEW_HQ_COUNTRIES = ('USA', 'JPN', 'DEU', 'GBR', 'FRA', 'USA', 'CAN', 'ITA', 'KOR', 'USA')   # (T)
+NEW_NAME_PREFIXES = ('Ironbark', 'Redwater', 'Bluestem', 'Halyard', 'Meridian', 'Northgate', 'Stonebridge', 'Harrow',
+                     'Calder', 'Wexford', 'Larkspur', 'Tidewater', 'Sable', 'Briar', 'Kestrel', 'Ashgrove')   # (T)
+
+# 1995-rework 9: earnings multiples for the new rows, and the young markets investors pay up for (T).
+# The other rows take the design's valuation groups (mvp-data/gen.py PE), which the MVP left unused.
+EARNINGS_MULTIPLES = {
+    'computer_hardware': 22, 'media_publishing': 16, 'consumer_staples': 20, 'conglomerates': 17,
+    'capital_goods': 17, 'rail': 12, 'paper_forest': 11, 'apparel': 20, 'appliances': 17, 'travel_leisure': 20,
+    'medical_devices': 25, 'wireless': 30, 'biotech': 40, 'online_services': 40,
+}
+YOUNG_MULTIPLE = 40   # every dormant row
+
+# 1995-rework 2.4: cycle_beta, volatility, rate_sensitivity, margin_full_use by sector (T). The MVP
+# gives every industry the same; the variable cost share takes up the margin's change.
+SECTOR_PARAMS = {
+    'Tech': (1.3, 0.02, 0.8, 0.11),
+    'Finance': (1.1, 0.012, 1.5, 0.09),
+    'Energy': (0.8, 0.02, 0.6, 0.08),
+    'Industry': (1.1, 0.012, 1.2, 0.07),
+    'Consumer': (0.7, 0.008, 0.8, 0.07),
+    'Health': (0.4, 0.008, 0.3, 0.10),
+    'Services': (0.9, 0.01, 1.0, 0.07),
+}
+
 REGION_SLUGS = ['east-asia-oceania', 'europe', 'latin-america', 'mena', 'north-america',
                 'russia-central-asia', 'south-asia', 'sub-saharan-africa']
 
@@ -118,17 +178,79 @@ def build_provinces():
 
 def build_industries(scale):
     fields, rows = read(SRC / 'industries.csv')
+    template = rows[0]
     for r in rows:
         r['world_size_2020_usd_bn'] = num(float(r['world_size_2020_usd_bn']) * scale)
-    write(OUT / 'industries.csv', fields, rows)
+        r['fade_half_life_years'] = '0'   # a row live from the start keeps its trend (T)
+        r['boom_uplift'] = '0'            # 3.2: no AI boom in this world
+        r['crash_drop'] = '0'
+    for key, (name, sector, size, trend, mature, half, label, _) in NEW_INDUSTRIES.items():
+        row = dict(template)
+        row.update(id=key, name=name, sector=sector, world_size_2020_usd_bn=str(size), trend_growth=str(trend),
+                   mature_rate=str(mature), fade_half_life_years=str(half), boom_uplift='0', crash_drop='0',
+                   asset_label=label, notes='1995-rework 2.4 (T)')
+        rows.append(row)
+    mvp = load_mvp()
+    for r in rows:
+        if r['id'] in DORMANT:
+            r['earnings_multiple'] = str(YOUNG_MULTIPLE)
+        elif r['id'] in EARNINGS_MULTIPLES:
+            r['earnings_multiple'] = str(EARNINGS_MULTIPLES[r['id']])
+        else:
+            r['earnings_multiple'] = str(mvp.PE[mvp.VGROUP[r['name']]])
+        if r['id'] in DORMANT:
+            *_, trend, mature, half = DORMANT[r['id']]
+            r.update(world_size_2020_usd_bn='0', trend_growth=str(trend), mature_rate=str(mature),
+                     fade_half_life_years=str(half))
+        beta, vol, rate, margin = SECTOR_PARAMS[r['sector']]
+        total = float(r['margin_full_use']) + float(r['variable_cost_share'])
+        r.update(cycle_beta=str(beta), volatility=str(vol), rate_sensitivity=str(rate),
+                 margin_full_use=str(margin), variable_cost_share=num(total - margin, 6))
+    write(OUT / 'industries.csv', fields, sorted(rows, key=lambda r: r['id']))
+    write(OUT / 'industry-lifecycle.csv',
+          ['id', 'window_first', 'window_last', 'target_size_usd_bn', 'wave_min', 'wave_max'],
+          [dict(id=k, window_first=v[0], window_last=v[1], target_size_usd_bn=v[2], wave_min=v[3], wave_max=v[4])
+           for k, v in sorted(DORMANT.items())])
+    fields, suffixes = read(SRC / 'names' / 'industry-suffixes.csv')
+    for _, (name, *_rest, words) in NEW_INDUSTRIES.items():
+        suffixes.extend(dict(industry=name, suffix=w) for w in words)
+    write(OUT / 'names' / 'industry-suffixes.csv', fields, suffixes)
+    return rows
 
 
-def select_companies(rows, economy):
+def new_companies(rows, fields, provinces_by_country):
+    """Proto firms for the new live rows: a few named companies a row, listed, widely held. The real
+    ones replace them (spec 10, P9b)."""
+    out = []
+    used = set()
+    n = 0
+    for key, (name, _, size, _t, _m, _h, _l, words) in NEW_INDUSTRIES.items():
+        if size == 0:
+            continue
+        for k, share in enumerate(NEW_PER_INDUSTRY_SHARES):
+            prefix = NEW_NAME_PREFIXES[n % len(NEW_NAME_PREFIXES)]
+            country = NEW_HQ_COUNTRIES[n % len(NEW_HQ_COUNTRIES)]
+            label = f'{prefix} {words[k % len(words)]}'
+            n += 1
+            assert label not in used, label
+            used.add(label)
+            revenue = size * 1000.0 * share
+            row = {f: '' for f in fields}
+            row.update(id=f'CO-9{n:03d}', name=label, ticker=f'N{n:03d}', industry=name, hq_country=country,
+                       hq_province=provinces_by_country[country], public='Y', revenue_usd_m=num(revenue),
+                       book_value_usd_m=num(revenue * 0.5), est_value_usd_m=num(revenue * 0.8),
+                       control_basis='widely_held', notes='proto (1995-rework 10, P9b)')
+            out.append(row)
+    return out
+
+
+def select_companies(rows, economy, target):
     """About COMPANY_TARGET companies: the largest per industry, the largest listed of any zone left
     with none, then the largest overall, with each kept subsidiary's parent."""
     _, characters = read(SRC / 'characters.csv')
     player = next(c['id'] for c in characters if c['name'] == PLAYER)
-    pool = [r for r in rows if r['name'] != ARROWHEAD and r['controller'] != player]
+    dormant = {r['name'] for r in read(SRC / 'industries.csv')[1] if r['id'] in DORMANT}
+    pool = [r for r in rows if r['name'] != ARROWHEAD and r['controller'] != player and r['industry'] not in dormant]
     by_size = sorted(pool, key=lambda r: (-float(r['revenue_usd_m']), r['id']))
     kept = {}
 
@@ -153,7 +275,7 @@ def select_companies(rows, economy):
             keep(r)
             listed.add(z)
     for r in by_size:
-        if len(kept) >= COMPANY_TARGET:
+        if len(kept) >= target:
             break
         keep(r)
     return sorted(kept.values(), key=lambda r: r['id'])
@@ -163,7 +285,11 @@ def build_companies(economy, scale):
     """The kept companies, renumbered from CO-0001: a born company's key is the table length plus
     one (births/jobs.ts `companyKey`), so the ids must have no gaps."""
     fields, rows = read(SRC / 'companies.csv')
-    kept = select_companies(rows, economy)
+    by_country = {}
+    for r in rows:
+        by_country.setdefault(r['hq_country'], r['hq_province'])
+    new = new_companies(rows, fields, by_country)
+    kept = select_companies(rows, economy, COMPANY_TARGET - len(new)) + new
     new_id = {r['id']: f'CO-{i + 1:04d}' for i, r in enumerate(kept)}
 
     def holders(text):
@@ -193,7 +319,7 @@ def build_companies(economy, scale):
 
 
 def copy_unchanged():
-    for name in ['characters.csv', 'ai-boom.csv', 'key-cities.csv', 'politics-usa.csv', 'names/industry-suffixes.csv']:
+    for name in ['characters.csv', 'ai-boom.csv', 'key-cities.csv', 'politics-usa.csv']:
         (OUT / name).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(SRC / name, OUT / name)
     for slug in REGION_SLUGS:
@@ -205,8 +331,8 @@ def copy_unchanged():
     write(OUT / 'politics-usa-offices.csv', fields, [r for r in rows if r['id'] not in DROPPED_OFFICES])
 
 
-def build_company_start(economy, zones):
-    """company-start.csv by the 2020 generator's own rule, reading the files just written."""
+def load_mvp():
+    """The 2020 generator as a module; its path comes from argv at import."""
     argv = sys.argv
     sys.argv = [argv[0], str(ROOT / 'docs' / 'design')]
     try:
@@ -215,6 +341,12 @@ def build_company_start(economy, zones):
         spec.loader.exec_module(mvp)
     finally:
         sys.argv = argv
+    return mvp
+
+
+def build_company_start(economy, zones):
+    """company-start.csv by the 2020 generator's own rule, reading the files just written."""
+    mvp = load_mvp()
     mvp.DATA = str(OUT)
     mvp.FV_Y10_BASE = BASE_RATE + Y10_TERM   # 6.2: starting prices at this world's rates
     rows = mvp.build_company_start(economy, zones)

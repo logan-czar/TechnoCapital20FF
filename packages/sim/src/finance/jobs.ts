@@ -63,11 +63,14 @@ import {
   reviewLine,
 } from "./credit.ts";
 import {
+  bankrupt,
   companyStatusIsFrozen,
+  exitDue,
   onQuarterClose,
   removalDue,
   remove,
   type SettleInputs,
+  type Settlement,
   settleMonth,
   settlementLineChange,
 } from "./distress.ts";
@@ -369,6 +372,17 @@ export function interestJob(world: World, _ctx: JobCtx): void {
 }
 
 /**
+ * A historical world's exit (1995-rework 9): due by its losses or size, unless it is the last active
+ * company of its industry, which keeps the industry named.
+ */
+function mustExit(world: World, c: Company, s: Settlement): boolean {
+  if (companyStatusIsFrozen(s.state.status) || !exitDue(c.loss_quarters, s.gross_assets)) return false;
+  return world.companies.some(
+    (o) => o !== c && o.industry === c.industry && !companyStatusIsFrozen(companyFinanceStatus(o.finance)),
+  );
+}
+
+/**
  * 4.3 step 13 (spec 5.12): cash settles with the month's flows (operating cash, purchases and
  * growth plan sales; D124), then `settleMonth`: auto-draw, the review excess, the plan's
  * auto-repay (6.5), forced sales at the industry's sale factor (5.10) and the distress count and
@@ -395,6 +409,10 @@ export function settleJob(world: World, ctx: JobCtx): void {
       state: c.finance.distress,
     };
     const s = settleMonth(inputs);
+    if (world.era !== undefined && !s.went_bankrupt && mustExit(world, c, s)) {
+      s.state = bankrupt(s.state);
+      s.went_bankrupt = true;
+    }
     const share = s.forced_sale.share;
     if (share > 0.0) {
       for (const uid of c.units) {
@@ -583,9 +601,14 @@ export function ratingReviewJob(world: World, _ctx: JobCtx): void {
  * the new rating; a company over it gets 3 months to repay the excess (D224).
  */
 export function lineReviewJob(world: World, _ctx: JobCtx): void {
+  // In a historical world lenders pull back in a contraction (1995-rework 9): 1 in the 2020 world.
+  const era = world.era;
+  const squeeze =
+    era !== undefined && world.cycle.phase === "Contraction" ? 1.0 - era.scenario.macro.credit_squeeze : 1.0;
   for (const c of world.companies) {
     if (companyStatusIsFrozen(companyFinanceStatus(c.finance))) continue;
-    const limit = lineLimit(assetBook(world, c), c.cash_usd, c.finance.line.drawn, c.finance.rating);
+    const limit =
+      squeeze * lineLimit(assetBook(world, c), c.cash_usd, c.finance.line.drawn, c.finance.rating);
     const f = c.finance;
     f.line = reviewLine(f.line, limit);
   }

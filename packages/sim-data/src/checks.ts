@@ -207,8 +207,25 @@ function industries(w: WorldData, ids: Ids, errors: DataError[]): void {
   unique(t, "id", (r) => r.id, errors);
   // Industry names match companies.csv exactly (validate.py; spec 10.3 42 industries).
   const used = new Set(w.companies.rows.map((c) => c.industry));
+  // A dormant industry has no companies until it emerges (1995-rework 5.1).
+  const dormant = new Set(w.industry_lifecycle.rows.map((l) => l.id));
+  const nameIsDormant = (name: string): boolean => t.rows.some((r) => r.name === name && dormant.has(r.id));
+  for (const [line, l] of tableIter(w.industry_lifecycle)) {
+    const row = t.rows.find((r) => r.id === l.id);
+    const lt = w.industry_lifecycle;
+    if (row === undefined) errors.push(tableErr(lt, line, "id", `unknown industry ${l.id}`));
+    else if (used.has(row.name))
+      errors.push(tableErr(lt, line, "id", `${l.id} is dormant but has companies`));
+    else if (row.world_size_2020_usd_bn !== 0.0)
+      errors.push(tableErr(lt, line, "id", `${l.id} is dormant but has a size`));
+    if (l.window_first > l.window_last)
+      errors.push(tableErr(lt, line, "window_last", `${l.id}: empty window`));
+    if (l.wave_min > l.wave_max) errors.push(tableErr(lt, line, "wave_max", `${l.id}: empty wave`));
+    if (!(l.target_size_usd_bn > 0.0))
+      errors.push(tableErr(lt, line, "target_size_usd_bn", `${l.id}: no size`));
+  }
   const diff = sorted([
-    ...[...ids.industries].filter((i) => !used.has(i)),
+    ...[...ids.industries].filter((i) => !used.has(i) && !nameIsDormant(i)),
     ...[...used].filter((i) => !ids.industries.has(i)),
   ]);
   if (diff.length > 0) {

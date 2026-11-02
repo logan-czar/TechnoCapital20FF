@@ -33,6 +33,19 @@ export const BANKRUPT_AFTER_DISTRESS_MONTHS = 6;
  */
 export const FROZEN_QUARTERS = 2;
 
+/**
+ * In a historical world a company exits after this many straight losing quarters, or below the
+ * asset floor (drift plan's exit rule, 1995-rework 9, T): the AI otherwise sells down and lives on
+ * its cash for good, so nothing fails.
+ */
+export const EXIT_LOSS_QUARTERS = 12;
+export const EXIT_ASSET_FLOOR_USD = 0.5e6;
+
+/** Whether a company has lost for long enough, or shrunk far enough, to exit (1995-rework 9). */
+export function exitDue(lossQuarters: number, grossAssets: number): boolean {
+  return lossQuarters >= EXIT_LOSS_QUARTERS || grossAssets < EXIT_ASSET_FLOOR_USD;
+}
+
 /** Frozen or gone: the monthly jobs skip the company (spec 5.12 step 2; D231). */
 export function companyStatusIsFrozen(s: CompanyStatus): boolean {
   return s === "Bankrupt" || s === "Removed";

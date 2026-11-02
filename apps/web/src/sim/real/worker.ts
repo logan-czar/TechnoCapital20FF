@@ -5,6 +5,7 @@
 import type { ToSim } from "@tc20ff/sim";
 import {
   dataErrorToString,
+  ERA_FILES,
   type Files,
   MANIFEST_2020,
   MANIFEST_FILE,
@@ -60,7 +61,7 @@ async function loadData(): Promise<WorldData> {
   const base = worldDataBase(selected);
   const [manifest, worldFiles, mapFiles] = await Promise.all([
     loadManifest(selected, base),
-    loadFiles(WORLD_FILES, base, false),
+    loadFiles(selected === null ? WORLD_FILES : [...WORLD_FILES, ...ERA_FILES], base, false),
     // The map files are optional: no map-meta.toml means no map (parseMap gives null).
     loadFiles(MAP_FILES, "/data/map/", true),
   ]);

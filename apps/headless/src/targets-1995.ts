@@ -1,6 +1,5 @@
 // The calibration targets of a historical world's run (1995-rework 4.3), read from a soak's era.csv
-// and run.json. These read the macro layer; the bands on sector shares and top-10 turnover arrive
-// with the sector lifecycle (spec 10).
+// and run.json. The GDP, drawdown, sector, failure and turnover bands all read era.csv.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { SCENARIOS } from "@tc20ff/sim/internal";
@@ -27,6 +26,16 @@ export interface EraBands {
   recessions: readonly [number | null, number | null];
   /** The largest gain in a zone's share of world GDP over the run. */
   top_zone_gain: readonly [number | null, number | null];
+  /** Companies gone bankrupt or removed by the end. */
+  failures: readonly [number | null, number | null];
+  /** The Tech sector's share of world demand at the end. */
+  tech_share: readonly [number | null, number | null];
+  /** The largest industry's share of world demand at the end: no runaway. */
+  top_industry_share: readonly [number | null, number | null];
+  /** The share of the top 10 listed companies not there at the start. */
+  top10_turnover: readonly [number | null, number | null];
+  /** How many of the end's top 10 listed companies were born in the run: turnover by newcomers. */
+  top10_born: readonly [number | null, number | null];
 }
 
 export const ERA_BANDS: Readonly<Record<string, EraBands>> = {
@@ -37,6 +46,11 @@ export const ERA_BANDS: Readonly<Record<string, EraBands>> = {
     entries: [150, null],
     recessions: [1, 5],
     top_zone_gain: [0.02, null],
+    failures: [8, null],
+    tech_share: [0.09, 0.5],
+    top_industry_share: [null, 0.3],
+    top10_turnover: [0.3, null],
+    top10_born: [2, null],
   },
   unstable: {
     gdp_2020_usd: [50e12, 110e12],
@@ -45,6 +59,11 @@ export const ERA_BANDS: Readonly<Record<string, EraBands>> = {
     entries: [100, null],
     recessions: [3, null],
     top_zone_gain: [0.02, null],
+    failures: [12, null],
+    tech_share: [0.08, 0.5],
+    top_industry_share: [null, 0.3],
+    top10_turnover: [0.3, null],
+    top10_born: [2, null],
   },
   stagnation: {
     gdp_2020_usd: [45e12, 60e12],
@@ -53,6 +72,11 @@ export const ERA_BANDS: Readonly<Record<string, EraBands>> = {
     entries: [null, 120],
     recessions: [1, null],
     top_zone_gain: [null, null],
+    failures: [8, null],
+    tech_share: [0.06, 0.5],
+    top_industry_share: [null, 0.3],
+    top10_turnover: [null, null],
+    top10_born: [null, null],
   },
 };
 
@@ -72,6 +96,11 @@ interface EraRow {
   rate: number;
   started: number;
   zones: number[];
+  failures: number;
+  tech: number;
+  topIndustry: number;
+  turnover: number;
+  topBorn: number;
 }
 
 /** Whether a soak's output is a historical world's. */
@@ -82,15 +111,21 @@ export function isEraDir(dir: string): boolean {
 function parseRows(text: string): Map<number, EraRow[]> {
   const bySeed = new Map<number, EraRow[]>();
   for (const line of text.trim().split(/\r?\n/).slice(1)) {
-    const [seed, year, gdp, companies, rate, started, zones] = line.split(",") as [
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-      string,
-    ];
+    const [seed, year, gdp, companies, rate, started, zones, failures, tech, top, turnover, topBorn] =
+      line.split(",") as [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+      ];
     const rows = bySeed.get(Number(seed)) ?? [];
     rows.push({
       year: Number(year),
@@ -99,6 +134,11 @@ function parseRows(text: string): Map<number, EraRow[]> {
       rate: Number(rate),
       started: Number(started),
       zones: zones.split(";").map(Number),
+      failures: Number(failures),
+      tech: Number(tech),
+      topIndustry: Number(top),
+      turnover: Number(turnover),
+      topBorn: Number(topBorn),
     });
     bySeed.set(Number(seed), rows);
   }
@@ -168,6 +208,11 @@ export function evaluateEra(text: string, scenario: string): EraResult[] {
         bands.recessions,
       ),
       band(seed, "top_zone_gain", gain, bands.top_zone_gain),
+      band(seed, "failures", z.failures, bands.failures),
+      band(seed, "tech_share", z.tech, bands.tech_share),
+      band(seed, "top_industry_share", z.topIndustry, bands.top_industry_share),
+      band(seed, "top10_turnover", z.turnover, bands.top10_turnover),
+      band(seed, "top10_born", z.topBorn, bands.top10_born),
     );
   }
   return out;

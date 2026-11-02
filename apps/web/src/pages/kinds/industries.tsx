@@ -75,26 +75,28 @@ const dash: Cell = { k: "text", v: "-" };
 
 /** The table of 42 (spec 8 Industries; M9.7 births column). */
 export function industriesTable(v: ViewsData, index: NameIndex, id = "industries"): TableDoc {
-  const rows = (v.industry_rows?.rows ?? []).map((r): Cell[] => {
-    const row: Cell[] = [
-      linkCell(index, { kind: "industry", id: r.id }),
-      { k: "text", v: r.sector },
-      { k: "money", v: r.demand },
-      figureCell(r.supply, "money"),
-      figureCell(r.supply_ratio, "ratio"),
-      figureCell(r.market_factor, "ratio"),
-      { k: "text", v: r.phase_label },
-      { k: "percent", v: r.lt },
-      { k: "gain", v: r.growth_annual, unit: "percent" },
-      figureCell(r.fringe_share, "percent"),
-      { k: "int", v: birthsLastFourQuarters(v, r.id) },
-    ];
-    for (let i = 0; i < TOP_SHOWN; i++) {
-      const c = r.top_companies[i];
-      row.push(c === undefined ? dash : linkCell(index, { kind: "company", id: c }));
-    }
-    return row;
-  });
+  const rows = (v.industry_rows?.rows ?? [])
+    .filter((r) => !r.dormant)
+    .map((r): Cell[] => {
+      const row: Cell[] = [
+        linkCell(index, { kind: "industry", id: r.id }),
+        { k: "text", v: r.sector },
+        { k: "money", v: r.demand },
+        figureCell(r.supply, "money"),
+        figureCell(r.supply_ratio, "ratio"),
+        figureCell(r.market_factor, "ratio"),
+        { k: "text", v: r.phase_label },
+        { k: "percent", v: r.lt },
+        { k: "gain", v: r.growth_annual, unit: "percent" },
+        figureCell(r.fringe_share, "percent"),
+        { k: "int", v: birthsLastFourQuarters(v, r.id) },
+      ];
+      for (let i = 0; i < TOP_SHOWN; i++) {
+        const c = r.top_companies[i];
+        row.push(c === undefined ? dash : linkCell(index, { kind: "company", id: c }));
+      }
+      return row;
+    });
   const columns: DocColumn[] = [
     { title: "Industry", width: 200 },
     { title: "Sector", width: 120 },
@@ -121,7 +123,7 @@ export function industriesTable(v: ViewsData, index: NameIndex, id = "industries
 
 /** The Industries page as data. */
 export function industriesDoc(v: ViewsData, index: NameIndex): PageDoc {
-  const rows = v.industry_rows?.rows ?? [];
+  const rows = (v.industry_rows?.rows ?? []).filter((r) => !r.dormant);
   const estimated = rows.filter((r) => r.estimated).length;
   const doc = emptyDoc({ kind: "industries" }, kindName("industries"), `${rows.length} industries`);
   if (estimated > 0)

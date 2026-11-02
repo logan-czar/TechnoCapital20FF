@@ -3,7 +3,7 @@
 // a browser Web Worker as well as in Node; Node file reading is `loadWorld` in ./node.ts.
 
 import { type DataError, ok, type Result } from "./error.ts";
-import { type Files, loadTable, type RowSpec, type Table, tableIter, tableLen } from "./load.ts";
+import { type Files, loadTable, type RowSpec, type Table, tableIter, tableLen, tableNew } from "./load.ts";
 import { MANIFEST_2020, type WorldManifest } from "./manifest.ts";
 import type { MapAssets } from "./map.ts";
 import {
@@ -23,9 +23,11 @@ import {
   type CountryEconomy,
   FINANCIAL_ZONE_SPEC,
   type FinancialZone,
+  INDUSTRY_LIFECYCLE_SPEC,
   INDUSTRY_SPEC,
   INDUSTRY_SUFFIX_SPEC,
   type Industry,
+  type IndustryLifecycle,
   type IndustrySuffix,
   KEY_CITY_SPEC,
   type KeyCity,
@@ -72,6 +74,8 @@ export interface WorldData {
   /** The US states and appointed posts (politics POC, D980, D983, D984). */
   politics_states: Table<PoliticsStateRow>;
   politics_offices: Table<PoliticsOffice>;
+  /** An era world's dormant industries (1995-rework 5.1); empty otherwise. */
+  industry_lifecycle: Table<IndustryLifecycle>;
   /** Name lists, one table per superregion, in SUPERREGIONS order. */
   names: Table<NameRow>[];
   country_cultures: Table<CountryCulture>;
@@ -138,6 +142,9 @@ export const WORLD_FILES: readonly string[] = [
   "names/industry-suffixes.csv",
 ];
 
+/** The CSVs only an era world has (1995-rework 5.1), beside WORLD_FILES. */
+export const ERA_FILES: readonly string[] = ["industry-lifecycle.csv"];
+
 /** One table per superregion, from `pattern` with `{}` replaced by each slug. */
 function perRegion<T>(files: Files, pattern: string, spec: RowSpec<T>): Result<Table<T>[], DataError> {
   const tables: Table<T>[] = [];
@@ -190,6 +197,10 @@ export function parseWorld(
   if (!countryCultures.ok) return countryCultures;
   const industrySuffixes = loadTable(files, "names/industry-suffixes.csv", INDUSTRY_SUFFIX_SPEC);
   if (!industrySuffixes.ok) return industrySuffixes;
+  const lifecycle = manifest.features.era
+    ? loadTable(files, "industry-lifecycle.csv", INDUSTRY_LIFECYCLE_SPEC)
+    : ok(tableNew<IndustryLifecycle>("industry-lifecycle.csv"));
+  if (!lifecycle.ok) return lifecycle;
   return ok({
     manifest,
     countries: countries.value,
@@ -205,6 +216,7 @@ export function parseWorld(
     startup_events: startupEvents.value,
     politics_states: politicsStates.value,
     politics_offices: politicsOffices.value,
+    industry_lifecycle: lifecycle.value,
     names: names.value,
     country_cultures: countryCultures.value,
     industry_suffixes: industrySuffixes.value,

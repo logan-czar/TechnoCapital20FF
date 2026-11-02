@@ -7,20 +7,28 @@ import { zAvg } from "../economy/cycle.ts";
 import { growthGap } from "../economy/growth.ts";
 import { DEFAULT_SCENARIO_ID, RANDOM_SCENARIO_ID, SCENARIOS, scenarioById } from "../economy/scenarios.ts";
 import { companyFinanceStatus } from "../finance/state.ts";
-import { newsWireQueue, politicsHeadline } from "../news.ts";
-import { dateTimeDate } from "../time/calendar.ts";
+import { stockCap } from "../market/state.ts";
+import { eraHeadline, newsWireQueue } from "../news.ts";
+import { dateTimeDate, simDateQuarter } from "../time/calendar.ts";
 import type { JobCtx } from "../time/scheduler.ts";
+import { cmpQuarter, type Quarter } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
-import { clamp, maxF } from "../types/num.ts";
-import type { EraMacro, EraState, EraZone } from "../types/state/era.ts";
-import type { World } from "../types/world.ts";
+import { type CompanyId, ordinal } from "../types/ids.ts";
+import { clamp, maxF, totalCmp } from "../types/num.ts";
+import type { EraMacro, EraSector, EraState, EraTopSnapshot, EraZone } from "../types/state/era.ts";
+import { usdFromBillions, type World } from "../types/world.ts";
 
 /** How much of the gap to its target the policy rate closes each quarter (1995-rework 6.2, T). */
 export const RATE_SMOOTH = 0.35;
 /** The policy rate's floor (1995-rework 6.2, T). */
 export const RATE_FLOOR = 0.0025;
-/** The years over which the neutral rate drifts to the scenario's (1995-rework 6.2). */
-export const NEUTRAL_DRIFT_YEARS = 25;
+/** The years of a run, over which the neutral rate drifts to the scenario's (1995-rework 2.1, 6.2). */
+export const RUN_YEARS = 25;
+/** Top-10 snapshots this often, and at the run's last close (1995-rework 8.1). */
+export const TOP_EVERY_YEARS = 5;
+export const TOP_COUNT = 10;
+/** Quarters a year. */
+const QUARTERS = 4;
 /** The AR(1) carry of a zone's shock (1995-rework 6.4, T). */
 export const ZONE_SHOCK_CARRY = 0.6;
 /** A zone's track is `u²`, so a few zones take off (1995-rework 6.4, T). */
@@ -76,6 +84,88 @@ function startMacro(world: World, data: WorldData, draws: DrawSource): EraMacro 
 }
 
 /**
+ * Every industry's life (1995-rework 5.1): live from the start, or dormant with an emergence quarter
+ * drawn inside its window, plus the scenario's shift, on the Era stream in id order.
+ */
+function startSectors(world: World, data: WorldData, shiftYears: number, draws: DrawSource): EraSector[] {
+  const startYear = dateTimeDate(world.clock).year;
+  return world.industries.map((ind): EraSector => {
+    const l = data.industry_lifecycle.rows.find((r) => r.id === ind.key);
+    if (l === undefined) {
+      return {
+        status: "Live",
+        emerge_quarter: null,
+        emerged_year: startYear,
+        target_size_usd: 0.0,
+        wave: [0, 0],
+        wave_pending: false,
+      };
+    }
+    const first = l.window_first + shiftYears;
+    const last = l.window_last + shiftYears;
+    const i = draws.intInclusive("Era", first * QUARTERS, last * QUARTERS + QUARTERS - 1);
+    // Never before the first quarter that can activate it, the start's next.
+    const quarter: Quarter = { year: Math.floor(i / QUARTERS), q: (i % QUARTERS) + 1 };
+    const earliest: Quarter = { year: startYear, q: 2 };
+    return {
+      status: "Dormant",
+      emerge_quarter: cmpQuarter(quarter, earliest) < 0 ? earliest : quarter,
+      emerged_year: startYear,
+      target_size_usd: usdFromBillions(l.target_size_usd_bn),
+      wave: [l.wave_min, l.wave_max],
+      wave_pending: false,
+    };
+  });
+}
+
+/** Whether this industry waits to emerge (1995-rework 5.2); false in the 2020 world. */
+export function eraSectorDormant(world: World, industry: number): boolean {
+  return world.era?.sectors[industry]?.status === "Dormant";
+}
+
+/**
+ * Each quarter (1995-rework 5.3): an industry whose quarter has come takes its size, in demand, trend
+ * and fringe, and posts a headline. Its founding wave follows at the next plan lock.
+ */
+export function eraActivateSectorsJob(world: World, ctx: JobCtx): void {
+  const era = world.era;
+  if (era === undefined) return;
+  const date = ctx.facts.date;
+  const now = simDateQuarter(date);
+  era.sectors.forEach((s, i) => {
+    if (s.status !== "Dormant" || s.emerge_quarter === null || cmpQuarter(now, s.emerge_quarter) < 0) return;
+    const ind = world.industries[i] as World["industries"][number];
+    ind.demand_core = s.target_size_usd;
+    ind.trend_demand = s.target_size_usd;
+    ind.demand = s.target_size_usd;
+    ind.fringe_assets = s.target_size_usd / ind.params.asset_turnover;
+    ind.carry_reset = true;
+    s.status = "Live";
+    s.emerged_year = date.year;
+    s.wave_pending = true;
+    era.history.emergences.push({ year: date.year, industry: ind.name });
+    newsWireQueue(world.news, eraHeadline(date, `A new industry takes shape: ${ind.name}`));
+  });
+}
+
+/** The listed companies with the largest market caps now, largest first; ties to the lower id. */
+function topSnapshot(world: World, year: number): EraTopSnapshot {
+  const ranked: [number, number][] = [];
+  world.market.stocks.forEach((s, id) => {
+    if (s.quoted) ranked.push([id, stockCap(s)]);
+  });
+  ranked.sort((a, b) => totalCmp(b[1], a[1]) || a[0] - b[0]);
+  return {
+    year,
+    companies: ranked.slice(0, TOP_COUNT).map(([id, cap_usd]) => ({
+      company: ordinal<CompanyId>(id),
+      name: world.companies[id]?.name ?? "",
+      cap_usd,
+    })),
+  };
+}
+
+/**
  * Starts the run on a world fresh from the data, before the economy's draws: the scenario sets the
  * growth profile. `random` draws it on the Era stream and keeps its name back (1995-rework 4.1).
  */
@@ -102,13 +192,25 @@ export function eraStart(
     neutral_start: world.neutral_rate,
     y10_term: data.manifest.y10_term,
     macro: startMacro(world, data, draws),
-    history: { years: [], gdp_usd: [], companies: [], base_rate: [], zone_gdp_usd: [], recessions: [] },
+    sectors: startSectors(world, data, scenario.macro.emergence_shift_years, draws),
+    history: {
+      years: [],
+      gdp_usd: [],
+      companies: [],
+      base_rate: [],
+      zone_gdp_usd: [],
+      recessions: [],
+      industry_demand_usd: [],
+      failures: [],
+      top10: [],
+      emergences: [],
+    },
   };
 }
 
 /** The neutral rate in `year`: a straight drift to the scenario's (1995-rework 6.2). */
 export function neutralRate(era: EraState, year: number): number {
-  const t = clamp((year - era.start_year) / NEUTRAL_DRIFT_YEARS, 0.0, 1.0);
+  const t = clamp((year - era.start_year) / RUN_YEARS, 0.0, 1.0);
   return era.neutral_start + (era.scenario.macro.neutral_end - era.neutral_start) * t;
 }
 
@@ -142,7 +244,7 @@ export function eraMacroJob(world: World, ctx: JobCtx): void {
   world.base_rate = maxF(world.base_rate + RATE_SMOOTH * (target - world.base_rate), RATE_FLOOR);
   if (world.cycle.phase === "Contraction" && era.macro.last_phase !== "Contraction") {
     era.history.recessions.push(date.year);
-    newsWireQueue(world.news, politicsHeadline(date, "The world economy slips into recession"));
+    newsWireQueue(world.news, eraHeadline(date, "The world economy slips into recession"));
   }
   era.macro.last_phase = world.cycle.phase;
 }
@@ -187,11 +289,19 @@ export function eraYearCloseJob(world: World, ctx: JobCtx): void {
   h.gdp_usd.push(gdp);
   h.base_rate.push(world.base_rate);
   h.zone_gdp_usd.push(world.zones.map((z) => z.gdp_usd));
+  h.industry_demand_usd.push(world.industries.map((i) => i.demand));
   let companies = 0;
+  let failures = 0;
   for (const c of world.companies) {
-    if (companyFinanceStatus(c.finance) !== "Removed") companies += 1;
+    const status = companyFinanceStatus(c.finance);
+    if (status !== "Removed") companies += 1;
+    if (status === "Removed" || status === "Bankrupt") failures += 1;
   }
   h.companies.push(companies);
+  h.failures.push(failures);
+  const year = ctx.facts.date.year - 1;
+  const age = year - era.start_year;
+  if (age % TOP_EVERY_YEARS === 0 || age === RUN_YEARS - 1) h.top10.push(topSnapshot(world, year));
 }
 
 /** A startup's HQ weight multiplier for a province in `zone` (1995-rework 6.4). */

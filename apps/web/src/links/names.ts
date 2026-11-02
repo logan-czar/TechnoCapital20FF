@@ -210,6 +210,7 @@ export function buildNameIndex(v: ViewsData): NameIndex {
     out.push(e);
   }
   for (const r of v.industry_rows?.rows ?? []) {
+    if (r.dormant) continue;
     out.push(entry({ kind: "industry", id: r.id }, r.name, `Industry, ${r.sector}`));
   }
   for (const c of v.countries?.countries ?? []) {

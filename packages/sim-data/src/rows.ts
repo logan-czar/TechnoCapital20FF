@@ -601,3 +601,26 @@ export interface IndustrySuffix {
 }
 
 export const INDUSTRY_SUFFIX_SPEC = rowSpec<IndustrySuffix>({ industry: str, suffix: str });
+
+/** industry-lifecycle.csv: a dormant industry of an era world (1995-rework 5.1). */
+export interface IndustryLifecycle {
+  /** industries.csv `id`. */
+  id: string;
+  /** The years its emergence is drawn in, inclusive. */
+  window_first: number;
+  window_last: number;
+  /** Its world demand on emerging. */
+  target_size_usd_bn: number;
+  /** The startups of its founding wave, inclusive. */
+  wave_min: number;
+  wave_max: number;
+}
+
+export const INDUSTRY_LIFECYCLE_SPEC = rowSpec<IndustryLifecycle>({
+  id: str,
+  window_first: u32,
+  window_last: u32,
+  target_size_usd_bn: f64,
+  wave_min: u32,
+  wave_max: u32,
+});

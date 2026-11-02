@@ -131,6 +131,7 @@ export function buildIndustryRows(input: ViewInput): IndustryRowsView {
       key: ind.key,
       name: ind.name,
       sector: ind.sector,
+      ...(w.era?.sectors[id]?.status === "Dormant" ? { dormant: true as const } : {}),
       demand: ind.demand,
       trend_demand: ind.trend_demand,
       supply,

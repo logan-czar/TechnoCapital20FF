@@ -25,9 +25,10 @@ import { worldPublishes } from "../world/index.ts";
 import { STARTUP_SECTOR } from "./archetype.ts";
 import { debtAggressionOf } from "./financing.ts";
 import { focusOf } from "./focus.ts";
+import { ERA_CAPTURE_K, ERA_GROWTH_MAX, FUNDING_CAP_SHARE, quarterPurchases } from "./growth.ts";
 import { gDem, nextLossQuarters } from "./inputs.ts";
-import { batchOrder, type PlanInputs, planFinancing, planOperations } from "./plan.ts";
-import { raisePlan, rollRaise } from "./raise.ts";
+import { batchOrder, type PlanInputs, planFinancing, planOperations, unfundedGrowth } from "./plan.ts";
+import { growthRaisePlan, raisePlan, rollRaise } from "./raise.ts";
 
 /**
  * The plan at load (spec 6.5 last line, 7.1 Plan row; D283): each unit's growth is g_dem of the Q1
@@ -101,6 +102,7 @@ function planInputs(world: World, id: CompanyId): PlanInputs {
     debt_aggression: debtAggressionOf(world.debt_levels, id),
     focus: focusOf(world.focus_levels, id),
     ...zoneTilt(world, c),
+    ...(world.era === undefined ? {} : { growth_max: ERA_GROWTH_MAX }),
   };
 }
 
@@ -108,7 +110,12 @@ function planInputs(world: World, id: CompanyId): PlanInputs {
 function zoneTilt(world: World, c: Company): { zone_tilt?: number } {
   const zone = world.countries[c.hq_country]?.zone;
   const tilt = zone === undefined ? undefined : world.era?.macro.zones[zone]?.tilt;
-  return tilt === undefined ? {} : { zone_tilt: tilt };
+  if (tilt === undefined || world.era === undefined) return {};
+  // A hot market's firms also plan to take share from the fringe (1995-rework 9).
+  const ind = world.industries[c.industry] as World["industries"][number];
+  const hot = gDem(ind.lt, ind.q_growth) >= world.era.scenario.macro.scaleup_min_growth;
+  const fringe = ind.supply > 0.0 ? (ind.fringe_assets * ind.params.asset_turnover) / ind.supply : 0.0;
+  return { zone_tilt: hot ? tilt + ERA_CAPTURE_K * fringe : tilt };
 }
 
 /**
@@ -172,6 +179,49 @@ function tryRaise(world: World, ctx: JobCtx, id: CompanyId): void {
 }
 
 /**
+ * Scale-up financing (1995-rework 9): a growth raise, by the 6.6 share issue and its success roll. A
+ * failure only leaves the plan as it was: the firm is not short of cash, so it is not held at
+ * `raise_pending`. True when cash came in.
+ */
+function tryGrowthRaise(world: World, ctx: JobCtx, id: CompanyId, funded: number): boolean {
+  const era = world.era;
+  if (era === undefined) return false;
+  const inputs = planInputs(world, id);
+  const wanted = unfundedGrowth(inputs);
+  if (wanted <= funded) return false;
+  const c = world.companies[id] as Company;
+  const ind = world.industries[c.industry] as World["industries"][number];
+  const s = world.market.stocks[id] as World["market"]["stocks"][number];
+  const plan = growthRaisePlan({
+    status: inputs.status,
+    listed: s.quoted,
+    price: s.price,
+    shares_out: c.shares_out,
+    value_per_share: s.value,
+    confidence_factor: confidenceFactor(c.management_score),
+    label: ind.phase_label,
+    failed_raises: c.failed_raises,
+    g_dem: gDem(ind.lt, ind.q_growth) + (inputs.zone_tilt ?? 0.0),
+    min_g_dem: era.scenario.macro.scaleup_min_growth,
+    wanted_purchases: quarterPurchases(inputs.gross_assets, inputs.d_eff, wanted),
+    funded_purchases: quarterPurchases(inputs.gross_assets, inputs.d_eff, funded),
+    funding_share: FUNDING_CAP_SHARE,
+  });
+  if (plan === null || !rollRaise(plan, ctx.draws)) return false;
+  setSharesOut(world, id, c.shares_out + plan.new_shares);
+  // One line for the new investors, so a firm's cap table stays short however often it raises.
+  const line = c.holders.find((h) => h.holder.kind === "NewInvestors");
+  if (line === undefined) c.holders.push({ holder: { kind: "NewInvestors" }, shares: plan.new_shares });
+  else line.shares += plan.new_shares;
+  c.cash_usd += plan.net;
+  c.finance.pending.shares_issued_net += plan.net;
+  if (s.quoted) s.price = plan.price_after;
+  const net = worldPublishes(world, id) ? plan.net : null;
+  newsWireQueue(world.news, raise(ctx.facts.date, c.industry, id, c.name, plan.method, net));
+  return true;
+}
+
+/**
  * Writes an operating plan (spec 6.1 to 6.4): the archetype over the stored one (M4 set it at
  * load, D120), the growth and R&D plans to every unit, the 6.4 split to the company (4.3 step 4
  * fits it to L from now on, D118).
@@ -200,7 +250,11 @@ export function planLockJob(world: World, ctx: JobCtx): void {
     (c, id) => [id as CompanyId, companyFinanceStatus(c.finance)] as const,
   );
   for (const id of batchOrder(statuses)) {
-    const op = planOperations(planInputs(world, id));
+    let op = planOperations(planInputs(world, id));
+    // A hot market's firm sells shares to fund what its cash cannot, then plans again (1995-rework 9).
+    if (world.era !== undefined && tryGrowthRaise(world, ctx, id, op.growth)) {
+      op = planOperations(planInputs(world, id));
+    }
     applyOperating(world, id, op);
     tryRaise(world, ctx, id);
     const c = world.companies[id] as Company;
