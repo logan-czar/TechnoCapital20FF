@@ -12,11 +12,18 @@ import { eraHeadline, newsWireQueue } from "../news.ts";
 import { startEraPolitics } from "../politics/era.ts";
 import { dateTimeDate, simDateQuarter } from "../time/calendar.ts";
 import { type JobCtx, jobCtxRaiseAlert } from "../time/scheduler.ts";
-import { cmpQuarter, type Quarter } from "../types/calendar.ts";
+import { cmpDate, cmpQuarter, type Quarter } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import { type CompanyId, ordinal } from "../types/ids.ts";
 import { clamp, maxF, totalCmp } from "../types/num.ts";
-import type { EraMacro, EraSector, EraState, EraTopSnapshot, EraZone } from "../types/state/era.ts";
+import type {
+  EraHistory,
+  EraMacro,
+  EraSector,
+  EraState,
+  EraTopSnapshot,
+  EraZone,
+} from "../types/state/era.ts";
 import { usdFromBillions, type World } from "../types/world.ts";
 import { eraCharactersYear, startCharacters } from "./characters.ts";
 
@@ -168,6 +175,27 @@ function topSnapshot(world: World, year: number): EraTopSnapshot {
   };
 }
 
+/** A run's history before its first close. */
+export function eraHistoryNew(): EraHistory {
+  return {
+    years: [],
+    gdp_usd: [],
+    companies: [],
+    base_rate: [],
+    zone_gdp_usd: [],
+    recessions: [],
+    industry_demand_usd: [],
+    failures: [],
+    top10: [],
+    emergences: [],
+    presidents: [],
+    us_corp_tax: [],
+    founders: [],
+    successions: [],
+    major_failures: [],
+  };
+}
+
 /**
  * Starts the run on a world fresh from the data, before the economy's draws: the scenario sets the
  * growth profile. `random` draws it on the Era stream and keeps its name back (1995-rework 4.1).
@@ -189,6 +217,8 @@ export function eraStart(
   world.era = {
     world_id: data.manifest.id,
     start_year: dateTimeDate(world.clock).year,
+    reveal_date: data.manifest.reveal_date,
+    ended: false,
     scenario: { id: scenario.id, label: scenario.label, macro: { ...scenario.macro } },
     scenario_hidden: hidden,
     gdp_per_demand: gdp / worldDemand(world),
@@ -198,22 +228,7 @@ export function eraStart(
     sectors: startSectors(world, data, scenario.macro.emergence_shift_years, draws),
     politics: startEraPolitics(world, data, draws),
     characters: startCharacters(data, draws),
-    history: {
-      years: [],
-      gdp_usd: [],
-      companies: [],
-      base_rate: [],
-      zone_gdp_usd: [],
-      recessions: [],
-      industry_demand_usd: [],
-      failures: [],
-      top10: [],
-      emergences: [],
-      presidents: [],
-      us_corp_tax: [],
-      founders: [],
-      successions: [],
-    },
+    history: eraHistoryNew(),
   };
 }
 
@@ -315,6 +330,20 @@ export function eraYearCloseJob(world: World, ctx: JobCtx): void {
   const age = year - era.start_year;
   if (age % TOP_EVERY_YEARS === 0 || age === RUN_YEARS - 1) h.top10.push(topSnapshot(world, year));
   eraCharactersYear(world, era, ctx.facts.date, ctx.draws);
+}
+
+/**
+ * 1 January, after the year's close (1995-rework 8.3): at the reveal date the run ends. The game
+ * pauses, the scenario shows, and it may carry on, untuned.
+ */
+export function eraRevealJob(world: World, ctx: JobCtx): void {
+  const era = world.era;
+  if (era === undefined || era.ended || era.reveal_date === null) return;
+  const date = ctx.facts.date;
+  if (cmpDate(date, era.reveal_date) < 0) return;
+  era.ended = true;
+  newsWireQueue(world.news, eraHeadline(date, `The run ends. This world was ${era.scenario.label}`));
+  ctx.endRun();
 }
 
 /** A startup's HQ weight multiplier for a province in `zone` (1995-rework 6.4). */

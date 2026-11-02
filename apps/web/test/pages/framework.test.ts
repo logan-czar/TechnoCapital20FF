@@ -59,6 +59,7 @@ describe("PageRef", () => {
       { kind: "zones" },
       { kind: "events" },
       { kind: "politics" },
+      { kind: "world-history" },
       { kind: "settings" },
     ];
     expect(new Set(pages.map((p) => p.kind)).size).toBe(PAGE_KINDS.length);

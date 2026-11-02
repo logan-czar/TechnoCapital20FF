@@ -10,9 +10,12 @@ import {
   type NewGameChoices,
   type Notice,
   newGameChoices,
+  type PostedBars,
   type PostedViews,
+  postedBarsNone,
   postedViewsNone,
   postedViewsResetNews,
+  priceBarsCompact,
   type Reply,
   type Sim,
   simNew,
@@ -38,11 +41,19 @@ export interface RealHostOptions {
   now?: () => number;
   /** The max-speed budget per frame in ms. */
   budgetMs?: number;
+  /** Hold the next running frame until the UI answers `FrameDone` (D1004); the worker sets this. */
+  waitForFrameDone?: boolean;
 }
 
 export class RealHost {
   sim: Sim | null = null;
   private posted: PostedViews = postedViewsNone();
+  private postedBars: PostedBars = postedBarsNone();
+  private readonly waitForFrameDone: boolean;
+  /** Frames the UI has not answered yet. */
+  private unread = 0;
+  /** Notices of ticks run while a frame was unread: the next frame carries them first. */
+  private held: Notice[] = [];
   /** Real milliseconds owed to the clock at speeds 1 to 4. */
   private owedMs = 0;
   private readonly now: () => number;
@@ -54,6 +65,7 @@ export class RealHost {
   ) {
     this.now = opts.now ?? (() => performance.now());
     this.budgetMs = opts.budgetMs ?? MAX_SPEED_BUDGET_MS;
+    this.waitForFrameDone = opts.waitForFrameDone ?? false;
   }
 
   /** What a new game of this world can be, for `Ready`; null when it needs no picking. */
@@ -68,6 +80,9 @@ export class RealHost {
    */
   handle(msg: ToSim): FromSim[] {
     switch (msg.kind) {
+      case "FrameDone":
+        this.unread = Math.max(0, this.unread - 1);
+        return [];
       case "NewGame": {
         const made = simNew(this.data, msg.seed, {
           debug: false,
@@ -130,9 +145,7 @@ export class RealHost {
     const first = controlsSecondsPerTick(sim.controls());
     if (sim.controls().paused) {
       this.owedMs = 0;
-      return [];
-    }
-    if (first === null) {
+    } else if (first === null) {
       // Max speed (also a SkipTo): as many ticks as fit in the budget, stopping when it pauses.
       this.owedMs = 0;
       const start = this.now();
@@ -158,7 +171,11 @@ export class RealHost {
         ran++;
       }
     }
-    if (notices.length === 0) return [];
+    if (notices.length === 0 && this.held.length === 0) return [];
+    if (this.waitForFrameDone && this.unread > 0) {
+      this.held.push(...notices);
+      return [];
+    }
     return [this.frame(notices)];
   }
 
@@ -172,12 +189,19 @@ export class RealHost {
     this.sim = sim;
     this.posted = postedViewsNone();
     postedViewsResetNews(this.posted);
+    this.postedBars = postedBarsNone();
+    this.held = [];
     this.owedMs = 0;
   }
 
   private frame(notices: Notice[]): FromSim {
     const sim = this.sim as Sim;
-    return { kind: "Frame", notices, clock: sim.clock(), views: viewsPatchSince(sim.views(), this.posted) };
+    const views = viewsPatchSince(sim.views(), this.posted);
+    priceBarsCompact(views, this.postedBars);
+    this.unread += 1;
+    const all = this.held.length === 0 ? notices : [...this.held, ...notices];
+    this.held = [];
+    return { kind: "Frame", notices: all, clock: sim.clock(), views };
   }
 
   private reply(id: number, result: Reply): FromSim {

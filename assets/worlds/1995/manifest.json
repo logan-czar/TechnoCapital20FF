@@ -1,6 +1,7 @@
 {
   "id": "1995",
   "start_date": "1995-01-01",
+  "reveal_date": "2020-01-01",
   "expected_counts": {
     "countries": 199,
     "provinces": 3963,

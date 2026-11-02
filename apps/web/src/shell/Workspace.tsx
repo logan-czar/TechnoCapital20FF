@@ -314,6 +314,11 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
       const now = clock ? simDateQuarter(clock.date) : null;
       for (const e of store.notices) {
         if (e.seq <= mark) continue;
+        // The end of a run opens its history (1995-rework 8.3).
+        if (e.notice.kind === "Paused" && e.notice.reason.kind === "RunEnded") {
+          control.openPage({ kind: "world-history" }, "focused");
+          continue;
+        }
         const q = recapAlertQuarter(e.notice, now);
         if (!q) continue;
         const page: PageRef = { kind: "recap", quarter: q };

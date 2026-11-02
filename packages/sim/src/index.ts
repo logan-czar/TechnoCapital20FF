@@ -55,6 +55,7 @@ export type * from "./types/sim-api.ts";
 export type { ElectionResult, Ideology, JudgeLeaning, Party } from "./types/state/politics.ts";
 export * from "./types/views/index.ts";
 export { barRows, indexCloseRows } from "./views/bars.ts";
+export { type PostedBars, postedBarsNone, priceBarsApply, priceBarsCompact } from "./views/bars_patch.ts";
 // Pure figure and statement helpers the Company page shares with the views (spec 3.9, D420).
 export { figureSum, statementLineOf } from "./views/estimate.ts";
 export { emptyHistory } from "./views/history.ts";

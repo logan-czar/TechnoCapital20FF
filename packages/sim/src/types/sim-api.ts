@@ -50,7 +50,9 @@ export type SaveError =
   | { kind: "BadMagic" }
   /** The save's version. Whole number (u32). */
   | { kind: "Version"; found: number }
-  | { kind: "Format"; message: string };
+  | { kind: "Format"; message: string }
+  /** The save is from another starting world, which this page did not load (1995-rework 3.2). */
+  | { kind: "WrongWorld"; save: string; world: string };
 
 /** A control that could not be applied. */
 export type SimError =

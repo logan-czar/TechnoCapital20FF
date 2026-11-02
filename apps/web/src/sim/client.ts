@@ -64,6 +64,8 @@ export class SimClient {
         break;
       case "Frame":
         this.store.applyFrame(m);
+        // Read: the worker may post the next one (D1004).
+        this.transport.send({ kind: "FrameDone" });
         break;
       case "Reply": {
         const p = this.pending.get(m.id);

@@ -22,7 +22,7 @@
 //   free functions `simWorld`, `simRegisterTestJob`, `simSoakStats` and `simSoakWorld`, exported
 //   from internal.ts, never from index.ts.
 
-import type { WorldData } from "@tc20ff/sim-data";
+import { MANIFEST_2020, type WorldData } from "@tc20ff/sim-data";
 import { planAtLoad } from "./ai/jobs.ts";
 import { drawFirstVotes, drawTippedLabAtLoad } from "./births/jobs.ts";
 import { DEFAULT_PROFILE_ID, LEGACY_PROFILE, profileById } from "./economy/profiles.ts";
@@ -491,7 +491,11 @@ function stepInner(i: SimInner, observer: TickObserver | null): Notice[] {
   // Pauses go in just before the final TickDone.
   const done = notices.pop();
   const skip = s.controls.skip;
-  if (skip !== null && s.world.clock >= skip.target) {
+  if (alertPause?.kind === "RunEnded") {
+    // The end of a run stops a skip too (1995-rework 8.3).
+    s.controls.skip = null;
+    pause(s, notices, alertPause);
+  } else if (skip !== null && s.world.clock >= skip.target) {
     s.controls.skip = null;
     pause(s, notices, { kind: "SkipDone", skip: skip.kind });
   } else if (alertPause !== null) {
@@ -635,6 +639,12 @@ export function simLoadBytes(sim: Sim, bytes: Uint8Array): Result<Notice[], SimE
 function loadBytesInner(i: SimInner, bytes: Uint8Array): Result<Notice[], SimError> {
   const state = decode(bytes);
   if (!state.ok) return fail({ kind: "Save", error: state.error });
+  // A save belongs to the world that wrote it: the loaded data is this one's (1995-rework 3.2).
+  const here = i.cfg.data?.manifest.id;
+  const saved = state.value.world.era?.world_id ?? MANIFEST_2020.id;
+  if (here !== undefined && here !== saved) {
+    return fail({ kind: "Save", error: { kind: "WrongWorld", save: saved, world: here } });
+  }
   const s = i.s;
   s.world = state.value.world;
   s.rng = state.value.rng;

@@ -118,6 +118,30 @@ describe("the Company page", () => {
     }
   });
 
+  it("names a character controller in the header, who has no page, and says widely held only with none", () => {
+    const v = after;
+    const index = buildNameIndex(v);
+    const r = rows(v).find((x) => x.origin.kind === "Born");
+    if (!r) throw new Error("a born company");
+    const controllerSpans = (row: typeof r) => {
+      const views = {
+        ...v,
+        company_rows: { ...v.company_rows, rows: rows(v).map((x) => (x.id === r.id ? row : x)) },
+      } as typeof v;
+      for (const b of companyDoc(r.id, views, index).head) {
+        const f = b.k === "fields" ? b.fields.find((x) => x.label === "Controller") : undefined;
+        if (f) return f.value;
+      }
+      throw new Error("no Controller field");
+    };
+    expect(
+      controllerSpans({ ...r, controller: { kind: "Character" }, controller_name: "Jo Founder" }),
+    ).toEqual([{ k: "text", text: "Jo Founder" }]);
+    expect(controllerSpans({ ...r, controller: { kind: "None" }, controller_name: null })).toEqual([
+      { k: "muted", text: "widely held" },
+    ]);
+  });
+
   it("shows every spec 8 field on a listed, a private, a born and a listing-in-play company (company_pages_show_every_spec8_field)", () => {
     const v = after;
     const index = buildNameIndex(v);

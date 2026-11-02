@@ -9,6 +9,7 @@ import {
   type FromSim,
   type NewGameChoices,
   type Notice,
+  priceBarsApply,
   type SimViews,
   VIEW_NAMES,
   type ViewName,
@@ -117,6 +118,10 @@ export class SimStore {
     const patch = frame.views;
     const moved: StoreKey[] = [];
     for (const name of VIEW_NAMES) if (name !== "news") this.take(patch, name, moved);
+    if (patch.price_bars_delta !== undefined) {
+      this.views.price_bars = priceBarsApply(this.views.price_bars, patch.price_bars_delta);
+      moved.push("price_bars");
+    }
     if (patch.news_appended !== undefined) {
       const old = this.views.news;
       const feed =

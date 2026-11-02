@@ -72,7 +72,9 @@ export function describeNotice(
             ? `by ${ALERT_LABEL[r.alert_kind]}`
             : r.kind === "SkipDone"
               ? `skip done (${skipName(r.skip)})`
-              : "save loaded";
+              : r.kind === "RunEnded"
+                ? "the end of the run"
+                : "save loaded";
       return { text: `Paused ${why}`, severity: "info" };
     }
     case "EarningsReleased":

@@ -1,7 +1,7 @@
 // A historical world's run (1995-rework 3.3): `World.era`. Absent in the 2020 world, so its state
 // hash and saves carry none of this.
 
-import type { Quarter } from "../calendar.ts";
+import type { Quarter, SimDate } from "../calendar.ts";
 import type { CompanyId, ProvinceId } from "../ids.ts";
 import type { CyclePhase } from "../world.ts";
 import type { BaseCharacter } from "./people.ts";
@@ -104,9 +104,11 @@ export interface EraHistory {
   /** The US corporate tax rate at each year's close (1995-rework 7.5). */
   us_corp_tax: number[];
   /** Each named character's founding (1995-rework 7.7). */
-  founders: { year: number; name: string; company: CompanyId }[];
+  founders: { year: number; name: string; company: CompanyId; company_name: string }[];
   /** Each controller's death and heir (1995-rework 7.8). */
-  successions: { year: number; company: CompanyId; from: string; to: string }[];
+  successions: { year: number; company: CompanyId; company_name: string; from: string; to: string }[];
+  /** Each large company's bankruptcy (1995-rework 8.1, 8.2). */
+  major_failures: { year: number; company: CompanyId; company_name: string }[];
 }
 
 /** The macro layer's state (1995-rework 6). */
@@ -181,6 +183,10 @@ export interface EraState {
   world_id: string;
   /** Whole number: the year the run started in. */
   start_year: number;
+  /** When the run ends (1995-rework 8.3); null for a world with no end. */
+  reveal_date: SimDate | null;
+  /** It has ended: the scenario shows, and past here is untuned (1995-rework 8.3). */
+  ended: boolean;
   scenario: EraScenario;
   /** The seed picked the scenario, so views keep its name back until the reveal (1995-rework 8.4). */
   scenario_hidden: boolean;

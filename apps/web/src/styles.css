@@ -825,3 +825,9 @@ input {
 .new-game-foot input[aria-invalid="true"] {
   outline: 1px solid var(--warn, #d9a441);
 }
+
+/* A historical world after its run's end (1995-rework 8.3). */
+.untuned {
+  margin-left: 8px;
+  color: var(--amber, #ffb000);
+}

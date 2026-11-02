@@ -344,6 +344,9 @@ def copy_unchanged():
     write(OUT / 'politics-usa-offices.csv', fields, [r for r in rows if r['id'] not in DROPPED_OFFICES])
 
 
+# 1995-rework 8.3: the run ends here.
+REVEAL_DATE = '2020-01-01'
+
 # 1995-rework 7.5: the federal rate the levers start from.
 US_CORP_TAX_1995 = '0.35'
 
@@ -561,6 +564,7 @@ def write_manifest(counts):
     manifest = {
         'id': '1995',
         'start_date': START_DATE,
+        'reveal_date': REVEAL_DATE,
         'expected_counts': counts,
         'base_rate': BASE_RATE,
         'neutral_rate': NEUTRAL_RATE,

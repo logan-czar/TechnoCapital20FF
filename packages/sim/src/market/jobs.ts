@@ -12,6 +12,7 @@
 
 import { companyIsFrozen } from "../economy/index.ts";
 import { profileOf } from "../economy/profiles.ts";
+import { eraHistoryNew } from "../era/jobs.ts";
 import { companyHomeSpread, runRate, sheet } from "../finance/jobs.ts";
 import { companyFinanceQuarters } from "../finance/state.ts";
 import { ledgerEbit, ledgerNetIncome, trailingFour } from "../finance/statements.ts";
@@ -586,6 +587,17 @@ function projectionClone(world: World): World {
     recaps: [],
     // Politics jobs are not projection slots: leave the people and the results out of the copy.
     politics: { ...world.politics, politicians: [], districts: [], pending: null, elections: [] },
+    // Nor are the run's yearly jobs: it keeps what the month closes read (1995-rework 3.3).
+    ...(world.era === undefined
+      ? {}
+      : {
+          era: {
+            ...world.era,
+            history: eraHistoryNew(),
+            characters: { pool: [], queue: [] },
+            politics: { ...world.era.politics, states: [], next_districts: null },
+          },
+        }),
   } as World;
   const clone = structuredClone(lite);
   clone.companies.forEach((c, i) => {

@@ -78,7 +78,7 @@ const scope = self as unknown as {
 };
 const loop = new WorkerLoop({
   post: (m) => scope.postMessage(m),
-  load: async () => new RealHost(await loadData()),
+  load: async () => new RealHost(await loadData(), { waitForFrameDone: true }),
   now: () => performance.now(),
   setInterval: (fn, ms) => setInterval(fn, ms),
   clearInterval: (h) => clearInterval(h as ReturnType<typeof setInterval>),

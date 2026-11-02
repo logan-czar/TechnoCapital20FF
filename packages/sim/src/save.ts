@@ -52,6 +52,8 @@ export function saveErrorMessage(e: SaveError): string {
       return versionMessage(e.found);
     case "Format":
       return `save data: ${e.message}`;
+    case "WrongWorld":
+      return `this save is from the ${e.save} world, and this game plays the ${e.world} world`;
   }
 }
 

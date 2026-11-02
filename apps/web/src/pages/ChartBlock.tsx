@@ -161,7 +161,18 @@ export function ChartBlock({ chart }: { chart: ChartModel }) {
       timeScale: { borderColor: GRID },
     });
     draw(c, chart);
-    return () => c.remove();
+    // A chart drawn in a small pane must fit its data again when the pane grows.
+    let width = el.clientWidth;
+    const refit = new ResizeObserver(() => {
+      if (el.clientWidth === width) return;
+      width = el.clientWidth;
+      c.timeScale().fitContent();
+    });
+    refit.observe(el);
+    return () => {
+      refit.disconnect();
+      c.remove();
+    };
   }, [chart]);
   return (
     <figure className="chart-box">

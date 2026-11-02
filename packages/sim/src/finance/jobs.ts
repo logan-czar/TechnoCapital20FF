@@ -444,6 +444,11 @@ export function settleJob(world: World, ctx: JobCtx): void {
       jobCtxRaiseAlert(ctx, "BankruptcyInWatchlist", { kind: "Company", company: id as CompanyId });
       if (world.era !== undefined && trailingRevenue(c) >= MAJOR_FAILURE_REVENUE_USD) {
         jobCtxRaiseAlert(ctx, "MajorFailure", { kind: "Company", company: id as CompanyId });
+        world.era.history.major_failures.push({
+          year: today.year,
+          company: id as CompanyId,
+          company_name: c.name,
+        });
       }
     }
   }

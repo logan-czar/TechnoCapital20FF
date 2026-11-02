@@ -76,7 +76,12 @@ export function eraAssignFounder(world: World, date: SimDate, id: CompanyId): vo
     stake: FOUNDER_STAKE,
     basis: FOUNDER_BASIS,
   };
-  era.history.founders.push({ year: date.year, name: character.name, company: id });
+  era.history.founders.push({
+    year: date.year,
+    name: character.name,
+    company: id,
+    company_name: company.name,
+  });
   newsWireQueue(world.news, eraHeadline(date, `${character.name} founds ${company.name}`));
 }
 
@@ -117,6 +122,7 @@ function ageControllers(world: World, era: EraState, date: SimDate, draws: DrawS
     era.history.successions.push({
       year: date.year,
       company: id as CompanyId,
+      company_name: c.name,
       from: r.character.name,
       to: heir.name,
     });

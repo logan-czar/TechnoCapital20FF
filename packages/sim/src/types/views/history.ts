@@ -2,6 +2,7 @@
 // world's long history. The 2020 world's holds only its start.
 
 import type { CompanyId } from "../ids.ts";
+import type { Party } from "../state/politics.ts";
 
 export interface HistoryView {
   /** The world's manifest id. */
@@ -30,4 +31,28 @@ export interface HistoryView {
   top10: { year: number; companies: { company: CompanyId; name: string; cap_usd: number }[] }[];
   /** When each industry emerged, in order (1995-rework 5.3). */
   emergences: { year: number; industry: string }[];
+  /** A historical world's run beyond those series; absent in the 2020 world (1995-rework 8.1). */
+  run?: RunHistory;
+}
+
+/** What only a historical world's history has. */
+export interface RunHistory {
+  /** The run has reached its end, so the scenario shows and past here is untuned (1995-rework 8.3). */
+  ended: boolean;
+  /** Whole number; null for a world with no end. */
+  reveal_year: number | null;
+  /** Each president from the start, with the year they took office. */
+  presidents: { year: number; name: string; party: Party }[];
+  /** The US corporate tax rate at each year's close (1995-rework 7.5). */
+  us_corp_tax: number[];
+  /** Each named character's founding (1995-rework 7.7). */
+  founders: { year: number; name: string; company: CompanyId; company_name: string }[];
+  /** Each controller's death and heir (1995-rework 7.8). */
+  successions: { year: number; company: CompanyId; company_name: string; from: string; to: string }[];
+  /** Each large company's bankruptcy (1995-rework 8.1). */
+  major_failures: { year: number; company: CompanyId; company_name: string }[];
+  /** Each industry's sector, in id order. */
+  sectors: string[];
+  /** Companies removed from the game, whose pages are gone. */
+  removed: CompanyId[];
 }

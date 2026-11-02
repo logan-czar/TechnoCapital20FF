@@ -189,7 +189,7 @@ Base characters age each 1 January and roll age-based death: 1% a year at 60, do
 A new speed of about one game year per real minute (`60 / 8760` s per tick), so a run takes about 25 minutes. Toggleable auto-pause through the existing alert system, with new kinds `Election`, `NewSector`, `Recession`, `MajorFailure`. Era worlds default the calendar alerts to Log, since a quarterly pause would stall this speed.
 
 ### 8.3 End of run
-At `reveal_date` the sim pauses, opens the World History page and shows the scenario. The player may continue, with an "untuned" notice.
+At `reveal_date` the sim pauses, whatever the alerts or a skip say, opens the World History page and shows the scenario. The player may continue, with an "untuned" notice. A save loads only in the world that wrote it.
 
 ### 8.4 Hidden scenario
 No view carries the scenario id or label before the reveal under Random. `history.scenario` is null until then, unless picked openly. A leak test checks every serialised view.

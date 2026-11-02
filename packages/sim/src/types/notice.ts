@@ -174,4 +174,6 @@ export type PauseReason =
   /** A SkipTo reached its tick. */
   | { kind: "SkipDone"; skip: SkipKind }
   /** A save was loaded (D13). */
-  | { kind: "Loaded" };
+  | { kind: "Loaded" }
+  /** A historical world's run reached its end, which no setting skips (1995-rework 8.3). */
+  | { kind: "RunEnded" };

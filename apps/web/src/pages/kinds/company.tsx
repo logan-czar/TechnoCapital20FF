@@ -280,10 +280,13 @@ export function companyDoc(id: CompanyId, v: ViewsData, index: NameIndex): PageD
 function header(d: CompanyDetail, row: CompanyRow | undefined, v: ViewsData, index: NameIndex): Block[] {
   const t = (p: PageRef) => span.link(index.title(p), p);
   const ctrlPage = row ? controllerPage(row.controller) : null;
+  // A named character has a name but no page (D989).
   const controller =
-    ctrlPage && row?.controller_name != null
-      ? span.link(row.controller_name, ctrlPage)
-      : span.muted("widely held");
+    row?.controller_name == null
+      ? span.muted("widely held")
+      : ctrlPage
+        ? span.link(row.controller_name, ctrlPage)
+        : span.text(row.controller_name);
   const f: Field[] = [
     field.text("Ticker", d.ticker === "" ? "-" : d.ticker),
     field.new("HQ", placeSpans(v, d.hq_province) ?? [t({ kind: "country", id: d.hq_country })]),

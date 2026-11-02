@@ -33,6 +33,8 @@ export interface WorldManifest {
   id: string;
   /** The first day of the game (1995-rework 2.1). */
   start_date: ManifestDate;
+  /** When a run ends and shows its scenario (1995-rework 8.3); null for a world with no end. */
+  reveal_date: ManifestDate | null;
   /** Expected row counts by table name (`worldDataCounts`). */
   expected_counts: readonly (readonly [string, number])[];
   /** The policy rate and neutral rate at the start (1995-rework 6.2). */
@@ -66,6 +68,7 @@ export const EXPECTED_COUNTS: readonly (readonly [string, number])[] = [
 export const MANIFEST_2020: WorldManifest = {
   id: "2020",
   start_date: { year: 2020, month: 1, day: 1 },
+  reveal_date: null,
   expected_counts: EXPECTED_COUNTS,
   base_rate: 0.03,
   neutral_rate: 0.03,
@@ -90,6 +93,8 @@ export function parseManifest(text: string): Result<WorldManifest, DataError> {
   if (typeof m.id !== "string" || m.id === "") return bad("id: not a name");
   const date = typeof m.start_date === "string" ? ISO_DATE.exec(m.start_date) : null;
   if (date === null) return bad("start_date: not YYYY-MM-DD");
+  const reveal = typeof m.reveal_date === "string" ? ISO_DATE.exec(m.reveal_date) : null;
+  if (m.reveal_date !== undefined && reveal === null) return bad("reveal_date: not YYYY-MM-DD");
   if (typeof m.cabinet_seats !== "number") return bad("cabinet_seats: not a number");
   for (const k of ["base_rate", "neutral_rate", "y10_term"]) {
     if (typeof m[k] !== "number") return bad(`${k}: not a number`);
@@ -112,6 +117,8 @@ export function parseManifest(text: string): Result<WorldManifest, DataError> {
   return ok({
     id: m.id,
     start_date: { year: Number(date[1]), month: Number(date[2]), day: Number(date[3]) },
+    reveal_date:
+      reveal === null ? null : { year: Number(reveal[1]), month: Number(reveal[2]), day: Number(reveal[3]) },
     expected_counts: pairs as [string, number][],
     base_rate: m.base_rate as number,
     neutral_rate: m.neutral_rate as number,
