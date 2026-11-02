@@ -45,6 +45,14 @@ export const ERA_BELOW_HURDLE_DEMAND_SHARE = 1.0;
 export const ERA_CAPTURE_K = 0.25;
 /** A firm holding this share of its market's supply stops taking the fringe's and grows with the market (1995-rework 9, T). */
 export const ERA_CAPTURE_SHARE_MAX = 0.15;
+/**
+ * In a historical world a short market's firms build toward its demand, the mirror of 6.2's
+ * oversupply term (1995-rework 9, T): this much growth a year per unit of `1 ÷ S − 1`. Without it a
+ * new market that opens short stays short, at M's cap, for a decade.
+ */
+export const ERA_SHORTAGE_K = 0.4;
+/** The shortage a firm reads, `1 ÷ S − 1`, is clamped to this (1995-rework 9, T). */
+export const ERA_SHORTAGE_GAP_MAX = 1.0;
 /** Spec 6.2 funding cap: the quarter's purchases use at most 50% of liquidity above min_cash. */
 export const FUNDING_CAP_SHARE = 0.5;
 /** D971: each debt aggression level adds this to g while profitable and not shrinking. */
@@ -80,6 +88,12 @@ export function situationGrowth(
   // In a historical world a firm under its hurdle still follows most of its market (1995-rework 9).
   if (roa >= 0.0) return minF(maxF(BELOW_HURDLE_MAX_GROWTH, belowHurdleDemandShare * g_dem), demand_led);
   return LOSS_HOLD_GROWTH;
+}
+
+/** A historical world's shortage growth: `K × clamp(1 ÷ S − 1, 0, max)` (1995-rework 9). */
+export function shortageGrowth(supply_ratio: number): number {
+  if (supply_ratio <= 0.0) return 0.0;
+  return ERA_SHORTAGE_K * clamp(1.0 / supply_ratio - 1.0, 0.0, ERA_SHORTAGE_GAP_MAX);
 }
 
 /**

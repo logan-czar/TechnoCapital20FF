@@ -50,18 +50,14 @@ export function stickyFringeAfterMonth(fringeAssets: number, lt: number, s: numb
 }
 
 /**
- * A young industry's fringe (one that fades, a half life above 0) grows on its mature rate and closes
- * this share of its gap a month, so newcomers, not the fringe, take a new market (1995-rework 9, T).
+ * The era fringe's month for `ind`: sticky (1995-rework 9). A young industry's (one that fades, a half
+ * life above 0) grows on its mature rate, not its market's, so newcomers, not the fringe, take a new
+ * market; it still closes its gap like any other, so a market that opens short does not stay short.
  */
-export const YOUNG_FRINGE_ADJUST_MONTHLY = 0.04;
-
-/** The era fringe's month for `ind`: sticky, and slower still in a young industry (1995-rework 9). */
 export function eraFringeAfterMonth(ind: World["industries"][number], lt: number): number {
   const p = ind.params;
-  if (p.fade_half_life_years <= 0.0) return stickyFringeAfterMonth(ind.fringe_assets, lt, ind.supply_ratio);
-  const s = ind.supply_ratio;
-  const gap = s > 0.0 ? clamp(1.0 / s - 1.0, -FRINGE_GAP_LIMIT, FRINGE_GAP_LIMIT) : 0.0;
-  return ind.fringe_assets * trendMonthFactor(p.mature_rate) * (1.0 + YOUNG_FRINGE_ADJUST_MONTHLY * gap);
+  const rate = p.fade_half_life_years > 0.0 ? p.mature_rate : lt;
+  return stickyFringeAfterMonth(ind.fringe_assets, rate, ind.supply_ratio);
 }
 
 /** The fringe's supply a year at productivity 100 (spec 5.2). */
