@@ -16,6 +16,10 @@ export const ALERT_LABEL: Readonly<Record<AlertKind, string>> = {
   BankruptcyInWatchlist: "Bankruptcy in watchlist",
   WorldEvent: "World event",
   QuarterStart: "Quarter start",
+  Election: "US election",
+  NewSector: "New industry",
+  Recession: "Recession",
+  MajorFailure: "Major failure",
 };
 
 export const LEVEL_LABEL: Readonly<Record<AlertLevel, string>> = {

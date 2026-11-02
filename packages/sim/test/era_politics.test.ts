@@ -33,7 +33,7 @@ function holders(p: PoliticsState, kind: Politician["office"]["kind"]): Politici
 function runYears(w: World, seed: number, first: number, last: number): void {
   const draws = rngStreamsDraws(rngStreamsNew(seed + 1000));
   const run = (y: number, m: number, d: number): void =>
-    politicsJob(w, { facts: { date: simDateYmd(y, m, d) }, draws } as never);
+    politicsJob(w, { facts: { date: simDateYmd(y, m, d) }, draws, raiseAlert: () => {} } as never);
   for (let y = first; y <= last; y++) {
     run(y, 1, 1);
     run(y, 1, 3);

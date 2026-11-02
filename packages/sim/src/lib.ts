@@ -26,7 +26,7 @@ import type { WorldData } from "@tc20ff/sim-data";
 import { planAtLoad } from "./ai/jobs.ts";
 import { drawFirstVotes, drawTippedLabAtLoad } from "./births/jobs.ts";
 import { DEFAULT_PROFILE_ID, LEGACY_PROFILE, profileById } from "./economy/profiles.ts";
-import { scenarioKnown } from "./economy/scenarios.ts";
+import { RANDOM_SCENARIO_ID, RANDOM_SCENARIO_LABEL, SCENARIOS, scenarioKnown } from "./economy/scenarios.ts";
 import { start as economyStart } from "./economy/start.ts";
 import { eraStart } from "./era/jobs.ts";
 import { start as financeStart } from "./finance/index.ts";
@@ -52,6 +52,7 @@ import type { DateTime, SimDate } from "./types/calendar.ts";
 import { type Control, type Controls, MAX_SPEED } from "./types/control.ts";
 import type { DrawSource } from "./types/draws.ts";
 import type { Notice, PauseReason } from "./types/notice.ts";
+import type { NewGameChoices } from "./types/protocol.ts";
 import type { SaveError, SimApi, SimError, StateHash } from "./types/sim-api.ts";
 import type { ClockView, SimViews } from "./types/views/index.ts";
 import type { EconomyProfile, LoadError, Result, World } from "./types/world.ts";
@@ -334,7 +335,7 @@ function freshState(cfg: SimConfig, seed: number): Result<SimState, LoadError> {
   // boards (7.1).
   const world = cfg.start(draws);
   if (!world.ok) return world;
-  const controls = controlsDefault();
+  const controls = controlsDefault(world.value.era !== undefined);
   const map = cfg.mapDataBuild(world.value);
   if (!map.ok) return map;
   const s: SimState = {
@@ -355,6 +356,18 @@ function simFromConfig(cfg: SimConfig, seed: number): Result<Sim, LoadError> {
   const s = freshState(cfg, seed);
   if (!s.ok) return s;
   return { ok: true, value: new Sim(cfg, s.value) };
+}
+
+/** What a new game of this data can be (1995-rework 4.1); null for a world with one start. */
+export function newGameChoices(data: WorldData): NewGameChoices | null {
+  if (!data.manifest.features.era) return null;
+  return {
+    world_id: data.manifest.id,
+    scenarios: [
+      ...SCENARIOS.map((s) => ({ id: s.id, label: s.label })),
+      { id: RANDOM_SCENARIO_ID, label: RANDOM_SCENARIO_LABEL },
+    ],
+  };
 }
 
 /**

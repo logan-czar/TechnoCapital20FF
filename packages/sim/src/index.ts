@@ -5,7 +5,7 @@
 
 // The Sim (lib.ts): built with `simNew`, driven through its SimApi methods. Test and soak hooks
 // (`simWorld`, `simRegisterTestJob`, `simSoakStats` ...) are in internal.ts only.
-export { Sim, type SimOptions, simErrorMessage, simNew } from "./lib.ts";
+export { newGameChoices, Sim, type SimOptions, simErrorMessage, simNew } from "./lib.ts";
 // UI-safe clock helpers (time/): the date formats and calendar math, the quarter phase and its
 // tick helpers (pure functions of a DateTime), the runner's speed and the SkipTo target.
 export {

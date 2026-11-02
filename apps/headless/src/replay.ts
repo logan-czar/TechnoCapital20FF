@@ -12,7 +12,7 @@
 // D9), seeded by the game seed.
 //
 // The controls the log can hold are every `Control` the MVP's player can send except NewGame (a
-// log is one game) and SetOmniscient (debug builds only): speed 0 to 5, pause, resume, the four
+// log is one game) and SetOmniscient (debug builds only): speed 0 to 6, pause, resume, the four
 // SkipTos, alert levels, the watchlist, and Save and Load. In TS a save is the sim's `saveBytes`
 // kept in memory (the Rust wrote numbered files beside the log); a Load loads the latest one,
 // which rewinds the game to it.
@@ -58,11 +58,11 @@ const FNV_PRIME = 0x0000_0100_0000_01b3n;
 const U64 = 0xffff_ffff_ffff_ffffn;
 
 /**
- * Ticks the headless frame loop runs in one frame at each effective speed, 0 (paused) to 5 (max,
+ * Ticks the headless frame loop runs in one frame at each effective speed, 0 (paused) to 6 (max,
  * and while skipping). The game's own frame budget is wall-clock based (spec 8, 9.1); the replay
  * needs only a fixed one, so these stand in for it (D403). Length MAX_SPEED + 1.
  */
-export const TICKS_PER_FRAME: readonly number[] = [0, 1, 2, 4, 8, 24];
+export const TICKS_PER_FRAME: readonly number[] = [0, 1, 2, 4, 8, 16, 24];
 
 /** The scripted player sends a control in a frame with this chance while the game runs... */
 const PLAYER_ACT_CHANCE = 0.004;

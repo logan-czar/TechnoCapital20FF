@@ -7,7 +7,9 @@
 import {
   controlsSecondsPerTick,
   type FromSim,
+  type NewGameChoices,
   type Notice,
+  newGameChoices,
   type PostedViews,
   postedViewsNone,
   postedViewsResetNews,
@@ -54,6 +56,11 @@ export class RealHost {
     this.budgetMs = opts.budgetMs ?? MAX_SPEED_BUDGET_MS;
   }
 
+  /** What a new game of this world can be, for `Ready`; null when it needs no picking. */
+  choices(): NewGameChoices | null {
+    return newGameChoices(this.data);
+  }
+
   /**
    * Handles one request: [Frame, Reply], or just a Reply when the sim did not change. A throw
    * from the sim (a panic in Rust terms) is not caught here: it is Fatal by design (protocol.ts),
@@ -62,7 +69,10 @@ export class RealHost {
   handle(msg: ToSim): FromSim[] {
     switch (msg.kind) {
       case "NewGame": {
-        const made = simNew(this.data, msg.seed, { debug: false });
+        const made = simNew(this.data, msg.seed, {
+          debug: false,
+          ...(msg.scenario === undefined ? {} : { scenario: msg.scenario }),
+        });
         if (!made.ok) {
           return [this.reply(msg.id, { kind: "SimError", error: { kind: "Load", error: made.error } })];
         }

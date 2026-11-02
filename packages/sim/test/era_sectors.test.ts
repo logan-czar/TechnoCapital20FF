@@ -82,10 +82,13 @@ describe("a dormant industry", () => {
     const i = indexOf(w, "cloud");
     const s = w.era?.sectors[i];
     if (s?.emerge_quarter == null) throw new Error("no quarter");
-    const before = { facts: { date: simDateYmd(2003, 1, 1) } } as unknown as JobCtx;
+    const before = { facts: { date: simDateYmd(2003, 1, 1) }, raiseAlert: () => {} } as unknown as JobCtx;
     eraActivateSectorsJob(w, before);
     expect(s.status).toBe("Dormant");
-    const at = { facts: { date: simDateYmd(s.emerge_quarter.year, 1 + (s.emerge_quarter.q - 1) * 3, 1) } };
+    const at = {
+      facts: { date: simDateYmd(s.emerge_quarter.year, 1 + (s.emerge_quarter.q - 1) * 3, 1) },
+      raiseAlert: () => {},
+    };
     eraActivateSectorsJob(w, at as unknown as JobCtx);
     const ind = w.industries[i];
     expect(s.status).toBe("Live");

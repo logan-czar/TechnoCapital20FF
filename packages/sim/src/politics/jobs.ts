@@ -9,7 +9,7 @@ import { nameBooksGet } from "../people/names.ts";
 import { rangeDraw } from "../people/simple.ts";
 import { dateTimeDate } from "../time/calendar.ts";
 import type { JobCtx, Scheduler } from "../time/scheduler.ts";
-import { schedulerRegister } from "../time/scheduler.ts";
+import { jobCtxRaiseAlert, schedulerRegister } from "../time/scheduler.ts";
 import type { SimDate } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import {
@@ -385,7 +385,7 @@ function presidentialRace(
 }
 
 /** Election Day (D985): decides every race now; winners take office at the January handovers. */
-function electionDayJob(world: World, p: PoliticsState, g: DrawSource, date: SimDate): void {
+function electionDayJob(world: World, ctx: JobCtx, p: PoliticsState, g: DrawSource, date: SimDate): void {
   const names = personPool(world, p, date.year);
   const president = sittingPresident(p);
   const zone = world.zones[(world.countries[p.country] as World["countries"][number]).zone];
@@ -462,6 +462,7 @@ function electionDayJob(world: World, p: PoliticsState, g: DrawSource, date: Sim
   );
   p.elections.push(result);
   p.pending = { legislators, president_elect: presidentElect };
+  if (world.era !== undefined) jobCtxRaiseAlert(ctx, "Election", { kind: "None" });
 }
 
 // ---------------------------------------------------------------- handovers
@@ -640,7 +641,7 @@ export function politicsJob(world: World, ctx: JobCtx): void {
   const date = ctx.facts.date;
   if (!isPoliticsDay(date)) return;
   const g = politicsDraws(ctx.draws);
-  if (isElectionDay(date)) electionDayJob(world, p, g, date);
+  if (isElectionDay(date)) electionDayJob(world, ctx, p, g, date);
   else if (date.day === 1) newYear(world, p, g, date);
   else if (date.day === CONGRESS_HANDOVER_DAY) congressHandover(p, world.era, date);
   else if (date.day === PRESIDENT_HANDOVER_DAY) presidentHandover(world, p, g, date);

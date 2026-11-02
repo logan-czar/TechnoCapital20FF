@@ -3,7 +3,7 @@
 // pacing against D8's speeds, the loop's timer and queue-until-Ready, and the single Fatal.
 
 import type { FromSim, Reply, ToSim } from "@tc20ff/sim";
-import { FRAME_MS, SECONDS_PER_HOUR } from "@tc20ff/sim";
+import { FRAME_MS, MAX_SPEED, SECONDS_PER_HOUR } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -147,7 +147,7 @@ describe("RealHost", () => {
     // The budget clock advances 1 ms per read, a 12 ms budget: 12 ticks, then the frame ends.
     const h = new RealHost(data, { now: fakeNow(1), budgetMs: 12 });
     send(h, { kind: "NewGame", seed: 7 });
-    send(h, { kind: "Control", control: { kind: "SetSpeed", speed: 5 } });
+    send(h, { kind: "Control", control: { kind: "SetSpeed", speed: MAX_SPEED } });
     const out = h.tick(FRAME_MS);
     expect(out).toHaveLength(1);
     expect(clockNow(out)).toBe(12);

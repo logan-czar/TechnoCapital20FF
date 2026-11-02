@@ -140,6 +140,9 @@ export function companyHomeSpread(world: World, c: Company, base: boolean): numb
   return homeSpread(zone_spread, country.sovereign_spread);
 }
 
+/** A bankruptcy this large raises Major failure in a historical world (1995-rework 8.2, T). */
+export const MAJOR_FAILURE_REVENUE_USD = 1.0e9;
+
 /**
  * Trailing annual revenue (spec 6 min_cash, 3.7.1 company size): the trailing four quarters'
  * revenue (D129); 0 with no statements.
@@ -439,6 +442,9 @@ export function settleJob(world: World, ctx: JobCtx): void {
     if (s.went_bankrupt) {
       f.bankrupt_on = today;
       jobCtxRaiseAlert(ctx, "BankruptcyInWatchlist", { kind: "Company", company: id as CompanyId });
+      if (world.era !== undefined && trailingRevenue(c) >= MAJOR_FAILURE_REVENUE_USD) {
+        jobCtxRaiseAlert(ctx, "MajorFailure", { kind: "Company", company: id as CompanyId });
+      }
     }
   }
 }

@@ -29,7 +29,8 @@ export class WorkerLoop {
       const host = await this.deps.load();
       if (this.dead) return;
       this.host = host;
-      this.deps.post({ kind: "Ready" });
+      const choices = host.choices();
+      this.deps.post(choices === null ? { kind: "Ready" } : { kind: "Ready", choices });
       const queued = this.queued;
       this.queued = [];
       for (const m of queued) this.handle(m);

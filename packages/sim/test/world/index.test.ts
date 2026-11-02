@@ -74,7 +74,18 @@ describe("world helpers", () => {
 
   it("alert levels", () => {
     const d = alertLevelsDefault();
-    expect(d).toEqual(["Pause", "Pause", "Pause", "Notify", "Pause", "Pause"]);
+    expect(d).toEqual([
+      "Pause",
+      "Pause",
+      "Pause",
+      "Notify",
+      "Pause",
+      "Pause",
+      "Notify",
+      "Notify",
+      "Notify",
+      "Notify",
+    ]);
     expect(alertKindDefaultLevel("BankruptcyInWatchlist")).toBe("Notify");
     expect(alertKindIndex("QuarterStart")).toBe(5);
     const off = alertLevelsAllOff();

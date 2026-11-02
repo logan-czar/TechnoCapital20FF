@@ -7,22 +7,23 @@
 // but not part of the state hash (D13).
 
 import type { DateTime } from "../types/calendar.ts";
-import { type Controls, MAX_SPEED, SECONDS_PER_HOUR, START_SPEED } from "../types/control.ts";
+import { type Controls, MAX_SPEED, SECONDS_PER_HOUR, START_SPEED, WATCH_SPEED } from "../types/control.ts";
 import type { SkipKind } from "../types/notice.ts";
-import { alertLevelsDefault } from "../world/notice.ts";
+import { alertLevelsDefault, alertLevelsHistorical } from "../world/notice.ts";
 import { dateTimeDate, dateTimeMidnight, monthFirstDay, monthNext, simDateMonthOf } from "./calendar.ts";
 import { nextPhaseStart } from "./quarter.ts";
 
 /**
  * Rust `Controls::default`: a new game, paused at speed 1 with the default alert levels (spec
- * 7.3, 8).
+ * 7.3, 8). A historical world starts at the speed it is watched at, with alerts that do not stop it
+ * every quarter (1995-rework 8.2).
  */
-export function controlsDefault(): Controls {
+export function controlsDefault(historical = false): Controls {
   return {
-    speed: START_SPEED,
+    speed: historical ? WATCH_SPEED : START_SPEED,
     paused: true,
     skip: null,
-    alerts: alertLevelsDefault(),
+    alerts: historical ? alertLevelsHistorical() : alertLevelsDefault(),
     omniscient: false,
     watchlist: new Set(),
   };

@@ -16,6 +16,8 @@ export interface ScenarioSpec {
 
 /** The new-game choice that lets the seed pick, keeping the name back (1995-rework 4.1). */
 export const RANDOM_SCENARIO_ID = "random";
+/** What the new-game picker calls it. */
+export const RANDOM_SCENARIO_LABEL = "Random";
 /** The scenario when none is asked for. */
 export const DEFAULT_SCENARIO_ID = "stable";
 

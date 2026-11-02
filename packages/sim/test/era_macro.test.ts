@@ -34,7 +34,7 @@ async function runTo(sim: ReturnType<typeof new1995>, year: number): Promise<voi
 }
 
 function ctxAt(date: { year: number; month: number; day: number }): JobCtx {
-  return { facts: { date } } as unknown as JobCtx;
+  return { facts: { date }, raiseAlert: () => {} } as unknown as JobCtx;
 }
 
 describe("the policy rate", () => {

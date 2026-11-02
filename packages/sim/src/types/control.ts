@@ -28,20 +28,22 @@ export type { AlertKind, AlertLevel, AlertLevels, AlertPayload, SkipKind } from 
 // ---------------------------------------------------------------- control.rs
 
 /** Fastest speed; 0 is paused (spec 3.1 `speed`, 9.1). */
-export const MAX_SPEED = 5;
+export const MAX_SPEED = 6;
 /** The speed a new game is set to; it starts paused (spec 7.3; D8). */
 export const START_SPEED = 1;
+/** About a game year per real minute, and the speed a historical world starts at (1995-rework 8.2). */
+export const WATCH_SPEED = 5;
 /**
- * Real seconds per game hour at speeds 1 to 5 (index speed - 1); speed 5 runs as fast as it can
- * (null) (spec 8, 9.1). Length MAX_SPEED.
+ * Real seconds per game hour at speeds 1 to 6 (index speed - 1); the last runs as fast as it can
+ * (null) (spec 8, 9.1; 1995-rework 8.2). Length MAX_SPEED.
  */
-export const SECONDS_PER_HOUR: readonly (number | null)[] = [2.0, 1.0, 0.5, 0.2, null];
+export const SECONDS_PER_HOUR: readonly (number | null)[] = [2.0, 1.0, 0.5, 0.2, 60 / 8760, null];
 
 /** A control event from the UI (spec 9.1, plus design fix 8). */
 export type Control =
   /** A new game from the same data (spec 7). `seed` is a whole number (u64; a safe integer here). */
   | { kind: "NewGame"; seed: number }
-  /** 0 pauses; 1 to 5 set the speed and resume (D8). Whole number (u8). */
+  /** 0 pauses; 1 to 6 set the speed and resume (D8). Whole number (u8). */
   | { kind: "SetSpeed"; speed: number }
   | { kind: "Pause" }
   | { kind: "Resume" }
@@ -72,7 +74,7 @@ export interface Skip {
  * omniscient, an empty watchlist (spec 7.3, 8).
  */
 export interface Controls {
-  /** 1 to 5, kept while paused. Whole number (u8). */
+  /** 1 to 6, kept while paused. Whole number (u8). */
   speed: number;
   paused: boolean;
   skip: Skip | null;

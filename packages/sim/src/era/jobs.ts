@@ -11,7 +11,7 @@ import { stockCap } from "../market/state.ts";
 import { eraHeadline, newsWireQueue } from "../news.ts";
 import { startEraPolitics } from "../politics/era.ts";
 import { dateTimeDate, simDateQuarter } from "../time/calendar.ts";
-import type { JobCtx } from "../time/scheduler.ts";
+import { type JobCtx, jobCtxRaiseAlert } from "../time/scheduler.ts";
 import { cmpQuarter, type Quarter } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import { type CompanyId, ordinal } from "../types/ids.ts";
@@ -147,6 +147,7 @@ export function eraActivateSectorsJob(world: World, ctx: JobCtx): void {
     s.wave_pending = true;
     era.history.emergences.push({ year: date.year, industry: ind.name });
     newsWireQueue(world.news, eraHeadline(date, `A new industry takes shape: ${ind.name}`));
+    jobCtxRaiseAlert(ctx, "NewSector", { kind: "None" });
   });
 }
 
@@ -254,6 +255,7 @@ export function eraMacroJob(world: World, ctx: JobCtx): void {
   if (world.cycle.phase === "Contraction" && era.macro.last_phase !== "Contraction") {
     era.history.recessions.push(date.year);
     newsWireQueue(world.news, eraHeadline(date, "The world economy slips into recession"));
+    jobCtxRaiseAlert(ctx, "Recession", { kind: "None" });
   }
   era.macro.last_phase = world.cycle.phase;
 }
