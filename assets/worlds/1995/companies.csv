@@ -5,7 +5,7 @@ CO-0003,Kremnev Security Group,,Professional services,RUS,RU-0001,N,52.295,2.684
 CO-0004,Jinghua Land,JILA,Real estate,CHN,CN-0002,Y,1045.897,1294.123,1816.025,CH-0014,55,proxy,CH-0109,CH-0168:9,
 CO-0005,Comptoir Kipushi,,Black market,COD,CD-0024,N,13.945,2.127,12.342,CH-0033,70,majority,,,artisanal cobalt and arms
 CO-0006,Peak Fortune Properties,PFP,Real estate,HKG,HK-0002,Y,209.179,329.109,384.193,CH-0044,15,class_a,,,
-CO-0007,Kowloon Remittance,,Black market,HKG,HK-0003,N,41.836,7.844,37.652,CH-0044,80,majority,,,the underground bank
+CO-0007,Kowloon Remittance,,Black market,HKG,HK-0003,N,41.836,7.844,37.652,,,widely_held,,,the underground bank
 CO-0008,Chu Pacific Developments,,Real estate,CAN,CA-0026,N,697.264,710.164,1164.78,CH-0102,55,majority,,,Vancouver condo towers (drafts) (A)
 CO-0009,Halcyon Search,HASE,Ads,USA,US-0019,Y,20708.755,4237.625,73027.299,,,widely_held,,CO-0019:3,big tech search and ads giant; parent of a tip-pool lab (A)
 CO-0010,Ghawar National Oil Company,GNOC,Oil,SAU,SA-0014,Y,80495.002,96753.815,124110.988,SAU,98,state,,,state firm; the largest oil company in the world
@@ -45,7 +45,7 @@ CO-0043,Listrik Nusantara Negara,,Power utilities,IDN,ID-0001,N,31367.14,69341.5
 CO-0044,Narodny Savings Bank,NSB,Banking,RUS,RU-0001,Y,52202.798,66958.309,110528.973,RUS,50,state,,CO-0019:3,state firm
 CO-0045,Rossiya Defense Industries,,Defense,RUS,RU-0001,N,7072.354,3389.403,5918.032,RUS,100,state,,,state firm; drone war orders
 CO-0046,Orinoco Gold Trading,,Black market,VEN,VE-0001,N,8.82,1.987,8.019,CH-0053,74,majority,,,
-CO-0047,Inmobiliaria Meseta,INME,Real estate,ESP,ES-0001,Y,993.602,1005.107,1657.746,CH-0059,31,class_a,,,
+CO-0047,Inmobiliaria Meseta,INME,Real estate,ESP,ES-0001,Y,993.602,1005.107,1657.746,,,widely_held,,,
 CO-0048,Lagoon Cement,LACE,Construction,NGA,NG-0002,Y,5726.285,1198.598,2013.003,CH-0080,29,class_a,,CH-0272:10,
 CO-0049,Naniwa Robotics,NARO,Robotics,JPN,JP-0037,Y,2787.315,1294.472,1998.011,CH-0095,30,class_a,,,
 CO-0050,Kestrel Digital,KEDI,Consumer electronics,KOR,KR-0005,Y,19317.364,5202.29,19410.1,,,widely_held,,CH-0203:5;CH-0290:5,key-city starting business (Seoul-Pyeongtaek)

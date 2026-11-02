@@ -5,20 +5,14 @@
 import { weightedPick } from "../births/weights.ts";
 import { nameBookDrawUnique } from "../people/names.ts";
 import { drawBaseFields, type Range, rangeNew } from "../people/simple.ts";
+import { pinnedDraws } from "../rng.ts";
 import type { DrawSource } from "../types/draws.ts";
 import type { BaseCharacter, NameBook, SkillKind, Trait } from "../types/state/people.ts";
 import type { Ideology, JudgeLeaning, Party } from "../types/state/politics.ts";
 
 /** Every draw of a politician comes from the Politics stream, whatever stream the helper names. */
 export function politicsDraws(draws: DrawSource): DrawSource {
-  return {
-    nextU32: () => draws.nextU32("Politics"),
-    uniform: () => draws.uniform("Politics"),
-    normal: () => draws.normal("Politics"),
-    poisson: (_s, mean) => draws.poisson("Politics", mean),
-    intInclusive: (_s, lo, hi) => draws.intInclusive("Politics", lo, hi),
-    chance: (_s, p) => draws.chance("Politics", p),
-  };
+  return pinnedDraws(draws, "Politics");
 }
 
 /** The generation ranges of a kind of office (T). */

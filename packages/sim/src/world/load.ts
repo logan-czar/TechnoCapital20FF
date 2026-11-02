@@ -35,7 +35,6 @@ import { conversionCapacity, dataBookAtLoad, dataBookFreeRdFraction, dataBookSto
 import { fitStations, laborUnits } from "../ops/labor.ts";
 import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
 import { nameBooksBuild } from "../people/names.ts";
-import { traitFromName } from "../people/traits.ts";
 import { politicsStateFromData } from "../politics/state.ts";
 import { dateTimeDate, dateTimeMidnight } from "../time/calendar.ts";
 import { DATETIME_START, type SimDate } from "../types/calendar.ts";
@@ -49,13 +48,7 @@ import type { CompanyFinance, Rating } from "../types/state/finance.ts";
 import type { MarketState, Stock } from "../types/state/market.ts";
 import type { NewsWire } from "../types/state/news.ts";
 import type { ComputeBill, DataBook, Stations } from "../types/state/ops.ts";
-import {
-  type BaseCharacter,
-  LABOR_SEAT_COUNT,
-  type NameBooks,
-  type Skills,
-  type Trait,
-} from "../types/state/people.ts";
+import { type BaseCharacter, LABOR_SEAT_COUNT, type NameBooks, type Trait } from "../types/state/people.ts";
 import {
   type AiSchedule,
   type BusinessUnit,
@@ -76,6 +69,7 @@ import {
   type World,
   type Zone,
 } from "../types/world.ts";
+import { controllerBook } from "./controllers.ts";
 
 // ---------------------------------------------------------------- Step 2 dependencies
 
@@ -163,8 +157,6 @@ export interface LoadDeps {
   productiveCompute(stations: Stations, pcModifier: number): number;
   /** people/names.rs `NameBooks::build(data, country_keys)`; the error is the country key. */
   nameBooksBuild(data: WorldData, countryKeys: readonly string[]): Result<NameBooks, string>;
-  /** people/traits.rs `Trait::from_name(name)`: null for a trait outside the 12 pairs (D113). */
-  traitFromName(name: string): Trait | null;
   /** politics/state.ts: the US state's static tables (D980); null for data without the USA. */
   politicsStateFromData: typeof politicsStateFromData;
   /** news.rs `NewsWire::default()`. */
@@ -202,7 +194,6 @@ export const UNPORTED_LOAD_DEPS: LoadDeps = {
   laborUnits, // ops/labor.rs
   productiveCompute, // ops/stations.rs
   nameBooksBuild, // people/names.rs NameBooks::build
-  traitFromName, // people/traits.rs Trait::from_name
   politicsStateFromData, // politics/state.ts
   newsWireDefault, // news.rs NewsWire::default
 };
@@ -482,26 +473,7 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
     };
   });
 
-  // The named controllers (spec 3.7.2 rows of characters.csv), kept as base characters (D989): the
-  // name, age, skills and the traits of the 12 pairs (D113). Nothing else of the row is read, and
-  // no character table is kept.
-  const controllerBook = new Map<string, BaseCharacter>();
-  for (const c of data.characters.rows) {
-    const skills: Skills = {
-      finance: c.finance,
-      operations: c.operations,
-      persuasion: c.persuasion,
-      intrigue: c.intrigue,
-      tech: c.tech,
-      hustle: c.hustle,
-    };
-    const traits: Trait[] = [];
-    for (const name of c.traits) {
-      const t = deps.traitFromName(name.trim());
-      if (t !== null) traits.push(t);
-    }
-    controllerBook.set(c.id, { class: "Executive", name: c.name, age: c.age, skills, traits });
-  }
+  const controllers = controllerBook(data);
 
   // Name books per country, in country id order (spec 3.7.1; D203), built once here.
   const nameBooks = deps.nameBooksBuild(
@@ -551,7 +523,7 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
       deps.enterpriseShare(loadoutKey),
     );
     const compute = deps.computeBill(stations, deps.dataBookStoredTb(book));
-    const startCtl = startControl(c, controllerBook, countryKeys, companyKeys);
+    const startCtl = startControl(c, controllers, countryKeys, companyKeys);
     const controllerTraits: readonly Trait[] =
       startCtl.controller.kind === "Character" ? startCtl.controller.character.traits : [];
     const archetype = deps.archetypeAtLoad(

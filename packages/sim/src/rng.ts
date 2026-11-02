@@ -351,3 +351,18 @@ export function scriptedDraws(): ScriptedDraws {
     },
   };
 }
+
+/**
+ * Sends every draw to `stream`, whatever stream a helper names: reuses the generation helpers without
+ * moving the stream they name (D9).
+ */
+export function pinnedDraws(draws: DrawSource, stream: Stream): DrawSource {
+  return {
+    nextU32: () => draws.nextU32(stream),
+    uniform: () => draws.uniform(stream),
+    normal: () => draws.normal(stream),
+    poisson: (_s, mean) => draws.poisson(stream, mean),
+    intInclusive: (_s, lo, hi) => draws.intInclusive(stream, lo, hi),
+    chance: (_s, p) => draws.chance(stream, p),
+  };
+}

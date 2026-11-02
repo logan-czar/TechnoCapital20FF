@@ -78,7 +78,8 @@ function planInputs(world: World, id: CompanyId): PlanInputs {
   return {
     state_controlled: c.state_controlled,
     controller_traits: controllerTraits(world, id),
-    born_in_play: originIsBorn(c.origin),
+    // A named founder runs their firm by their traits (1995-rework 7.7); 5.19.5 has no founders.
+    born_in_play: originIsBorn(c.origin) && c.start_control === null,
     tech: ind.sector === STARTUP_SECTOR,
     ttm_revenue,
     ttm_ebit,

@@ -12,6 +12,7 @@
 // (prices stream, D140, D150).
 
 import { quarterIndex } from "../economy/ai_boom.ts";
+import { eraAssignFounder } from "../era/characters.ts";
 import { eraSectorDormant, zoneLocationFactor } from "../era/jobs.ts";
 import { balanceSheet } from "../finance/balance.ts";
 import { homeSpread, lineLimit } from "../finance/credit.ts";
@@ -395,7 +396,10 @@ function fireEvent(world: World, ctx: JobCtx, draft: EventDraft): [StartupEventI
   const made: CompanyId[] = [];
   for (const s of draft.startups) {
     const id = birth(world, ctx.draws, s, event, date);
-    if (id !== null) made.push(id);
+    if (id !== null) {
+      made.push(id);
+      eraAssignFounder(world, date, id);
+    }
   }
   if (made.length === 0) return null;
   world.births.events.push({

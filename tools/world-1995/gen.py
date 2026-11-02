@@ -318,12 +318,21 @@ def build_companies(economy, scale):
         if r['owner_of_record'].startswith('CO-'):
             r['owner_of_record'] = new_id.get(r['owner_of_record'], '')
         r['other_holders'] = holders(r['other_holders'])
+    # 1995-rework 7.8: each named controller runs one company, since each company ages its own copy.
+    seen = set()
+    for r in sorted(kept, key=lambda r: (-float(r['revenue_usd_m']), r['id'])):
+        if r['controller'].startswith('CH-'):
+            if r['controller'] in seen:
+                r['controller'] = ''
+                r['controller_stake_pct'] = ''
+                r['control_basis'] = 'widely_held'
+            seen.add(r['controller'])
     write(OUT / 'companies.csv', fields, kept)
     return kept
 
 
 def copy_unchanged():
-    for name in ['characters.csv', 'ai-boom.csv', 'key-cities.csv']:
+    for name in ['ai-boom.csv', 'key-cities.csv']:
         (OUT / name).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(SRC / name, OUT / name)
     for slug in REGION_SLUGS:
@@ -441,6 +450,54 @@ US_MORE_SURNAMES = ('Abbott Adkins Aldrich Alvarez Andrews Armstrong Atkins Aust
                     'Woods Wyatt Yates York').split()
 
 
+# 1995-rework 7.7: characters.csv's ages are 2020's. A character who runs a company at the start is
+# at least this old in 1995, and a founder at least this old on spawning, except the one below.
+START_CONTROLLER_MIN_AGE = 30
+FOUNDER_MIN_AGE = 22
+SPAWN_WINDOW_YEARS = 8
+FIRST_SPAWN_YEAR = 1996
+LAST_SPAWN_YEAR = 2019
+YEARS_BEFORE_2020 = 25
+# John Techno, 22 in 2020, can spawn from 18, in any sector: he has no company in the 2020 data to
+# read one from (7.7).
+PLAYER_MIN_AGE = 18
+
+
+def build_characters():
+    """characters.csv at 1995's ages, and who spawns when (1995-rework 7.7)."""
+    fields, rows = read(SRC / 'characters.csv')
+    companies = read(OUT / 'companies.csv')[1]
+    start = {c['controller'] for c in companies}
+    age_2020 = {r['id']: int(r['age']) for r in rows}
+    for r in rows:
+        floor = START_CONTROLLER_MIN_AGE if r['id'] in start else PLAYER_MIN_AGE
+        r['age'] = max(floor, int(r['age']) - YEARS_BEFORE_2020)
+    write(OUT / 'characters.csv', fields, rows)
+
+    sectors = {i['name']: i['sector'] for i in read(SRC / 'industries.csv')[1]}
+    largest = {}
+    for c in sorted(read(SRC / 'companies.csv')[1], key=lambda c: (-float(c['revenue_usd_m'] or 0), c['id'])):
+        if c['controller'].startswith('CH-'):
+            largest.setdefault(c['controller'], c)
+    spawns = []
+    for r in rows:
+        player = r['name'] == PLAYER
+        if r['id'] in start or not (player or r['id'] in largest):
+            continue
+        age = age_2020[r['id']]
+        floor = PLAYER_MIN_AGE if player else FOUNDER_MIN_AGE
+        first = min(LAST_SPAWN_YEAR, max(FIRST_SPAWN_YEAR, 2020 - (age - floor)))
+        spawns.append({
+            'id': r['id'],
+            'spawn_first': first,
+            'spawn_last': min(LAST_SPAWN_YEAR, first + SPAWN_WINDOW_YEARS),
+            'born_year': 2020 - age,
+            'superregion': r['superregion'],
+            'sector': '' if player else sectors[largest[r['id']]['industry']],
+        })
+    write(OUT / 'character-spawns.csv', list(spawns[0].keys()), spawns)
+
+
 def build_politics():
     """politics-usa.csv with 1990-census seats and 1992 leans, and the era table (1995-rework 7.2)."""
     fields, rows = read(SRC / 'politics-usa.csv')
@@ -532,6 +589,7 @@ def main():
     build_industries(scale)
     build_companies(economy, scale)
     copy_unchanged()
+    build_characters()
     build_politics()
     extend_us_names()
     build_company_start(economy, zones)

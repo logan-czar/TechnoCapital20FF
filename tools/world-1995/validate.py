@@ -54,6 +54,23 @@ def main():
     if usa_regions != states:
         errors.append(f'politics-usa: differs from the USA province regions: {sorted(usa_regions ^ states)}')
 
+    # 1995-rework 7.7, 7.8: one company per named controller, and nobody both starts and spawns.
+    bosses = [c['controller'] for c in read(OUT / 'companies.csv') if c['controller'].startswith('CH-')]
+    errors += [f'companies: {b} controls more than one company' for b in sorted(set(bosses)) if bosses.count(b) > 1]
+    spawns = read(OUT / 'character-spawns.csv')
+    names = {c['id']: c['name'] for c in read(OUT / 'characters.csv')}
+    if len({s['id'] for s in spawns}) != len(spawns):
+        errors.append('character-spawns: an id appears twice')
+    if 'John Techno' not in {names.get(s['id']) for s in spawns}:
+        errors.append('character-spawns: no John Techno')
+    for s in spawns:
+        if s['id'] not in names:
+            errors.append(f'character-spawns: {s["id"]} is not in characters.csv')
+        if s['id'] in bosses:
+            errors.append(f'character-spawns: {s["id"]} also controls a company at the start')
+        if int(s['spawn_first']) > int(s['spawn_last']):
+            errors.append(f'character-spawns: {s["id"]} has an empty window')
+
     # 1995-rework 7.2: the real 1990-census House and the 104th Congress on its first day.
     us = read(OUT / 'politics-usa.csv')
     era = read(OUT / 'politics-usa-era.csv')

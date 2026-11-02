@@ -18,6 +18,7 @@ import { type CompanyId, ordinal } from "../types/ids.ts";
 import { clamp, maxF, totalCmp } from "../types/num.ts";
 import type { EraMacro, EraSector, EraState, EraTopSnapshot, EraZone } from "../types/state/era.ts";
 import { usdFromBillions, type World } from "../types/world.ts";
+import { eraCharactersYear, startCharacters } from "./characters.ts";
 
 /** How much of the gap to its target the policy rate closes each quarter (1995-rework 6.2, T). */
 export const RATE_SMOOTH = 0.35;
@@ -195,6 +196,7 @@ export function eraStart(
     macro: startMacro(world, data, draws),
     sectors: startSectors(world, data, scenario.macro.emergence_shift_years, draws),
     politics: startEraPolitics(world, data, draws),
+    characters: startCharacters(data, draws),
     history: {
       years: [],
       gdp_usd: [],
@@ -208,6 +210,8 @@ export function eraStart(
       emergences: [],
       presidents: [],
       us_corp_tax: [],
+      founders: [],
+      successions: [],
     },
   };
 }
@@ -308,6 +312,7 @@ export function eraYearCloseJob(world: World, ctx: JobCtx): void {
   const year = ctx.facts.date.year - 1;
   const age = year - era.start_year;
   if (age % TOP_EVERY_YEARS === 0 || age === RUN_YEARS - 1) h.top10.push(topSnapshot(world, year));
+  eraCharactersYear(world, era, ctx.facts.date, ctx.draws);
 }
 
 /** A startup's HQ weight multiplier for a province in `zone` (1995-rework 6.4). */

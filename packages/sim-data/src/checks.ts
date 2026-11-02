@@ -154,6 +154,7 @@ export function check(w: WorldData): DataError[] {
   companyStart(w, errors);
   startupEvents(w, ids, errors);
   politics(w, errors);
+  characterSpawns(w, errors);
   names(w, ids, errors);
   map(w, ids, errors);
   return errors;
@@ -599,6 +600,34 @@ function politics(w: WorldData, errors: DataError[]): void {
     if (!(r.pop_1990_m > 0)) errors.push(tableErr(e, line, "pop_1990_m", `${r.state}: no people`));
     if (!CENSUS_REGIONS.includes(r.census_region)) {
       errors.push(tableErr(e, line, "census_region", `${r.state}: unknown region ${r.census_region}`));
+    }
+  }
+}
+
+/** An era world's named characters (1995-rework 7.7, 7.8): the twin of tools/world-1995/validate.py. */
+function characterSpawns(w: WorldData, errors: DataError[]): void {
+  if (!w.manifest.features.era) return;
+  const t = w.character_spawns;
+  unique(t, "id", (r) => r.id, errors);
+  const known = new Set(w.characters.rows.map((c) => c.id));
+  const sectors = new Set(w.industries.rows.map((i) => i.sector));
+  const regions = new Set(w.countries.rows.map((c) => c.superregion));
+  const bosses = w.companies.rows.map((c) => c.controller).filter((b) => b.startsWith("CH-"));
+  for (const b of sorted(new Set(bosses))) {
+    if (bosses.indexOf(b) !== bosses.lastIndexOf(b)) {
+      errors.push(tableFileErr(w.companies, `${b} controls more than one company (1995-rework 7.8)`));
+    }
+  }
+  for (const [line, r] of tableIter(t)) {
+    if (!known.has(r.id)) errors.push(tableErr(t, line, "id", `${r.id}: not in characters.csv`));
+    if (bosses.includes(r.id))
+      errors.push(tableErr(t, line, "id", `${r.id}: controls a company at the start`));
+    if (r.spawn_first > r.spawn_last) errors.push(tableErr(t, line, "spawn_last", `${r.id}: empty window`));
+    if (!regions.has(r.superregion)) {
+      errors.push(tableErr(t, line, "superregion", `${r.id}: unknown superregion ${r.superregion}`));
+    }
+    if (r.sector !== "" && !sectors.has(r.sector)) {
+      errors.push(tableErr(t, line, "sector", `${r.id}: unknown sector ${r.sector}`));
     }
   }
 }

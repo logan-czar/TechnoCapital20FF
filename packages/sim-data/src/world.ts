@@ -9,8 +9,10 @@ import type { MapAssets } from "./map.ts";
 import {
   AI_BOOM_STAGE_SPEC,
   type AiBoomStage,
+  CHARACTER_SPAWN_SPEC,
   CHARACTER_SPEC,
   type Character,
+  type CharacterSpawn,
   COMPANY_SPEC,
   COMPANY_START_SPEC,
   COUNTRY_CULTURE_SPEC,
@@ -79,6 +81,7 @@ export interface WorldData {
   /** An era world's dormant industries (1995-rework 5.1); empty otherwise. */
   industry_lifecycle: Table<IndustryLifecycle>;
   politics_era: Table<PoliticsEraRow>;
+  character_spawns: Table<CharacterSpawn>;
   /** Name lists, one table per superregion, in SUPERREGIONS order. */
   names: Table<NameRow>[];
   country_cultures: Table<CountryCulture>;
@@ -146,7 +149,11 @@ export const WORLD_FILES: readonly string[] = [
 ];
 
 /** The CSVs only an era world has (1995-rework 5.1), beside WORLD_FILES. */
-export const ERA_FILES: readonly string[] = ["industry-lifecycle.csv", "politics-usa-era.csv"];
+export const ERA_FILES: readonly string[] = [
+  "industry-lifecycle.csv",
+  "politics-usa-era.csv",
+  "character-spawns.csv",
+];
 
 /** One table per superregion, from `pattern` with `{}` replaced by each slug. */
 function perRegion<T>(files: Files, pattern: string, spec: RowSpec<T>): Result<Table<T>[], DataError> {
@@ -208,6 +215,10 @@ export function parseWorld(
     ? loadTable(files, "politics-usa-era.csv", POLITICS_ERA_SPEC)
     : ok(tableNew<PoliticsEraRow>("politics-usa-era.csv"));
   if (!politicsEra.ok) return politicsEra;
+  const characterSpawns = manifest.features.era
+    ? loadTable(files, "character-spawns.csv", CHARACTER_SPAWN_SPEC)
+    : ok(tableNew<CharacterSpawn>("character-spawns.csv"));
+  if (!characterSpawns.ok) return characterSpawns;
   return ok({
     manifest,
     countries: countries.value,
@@ -225,6 +236,7 @@ export function parseWorld(
     politics_offices: politicsOffices.value,
     industry_lifecycle: lifecycle.value,
     politics_era: politicsEra.value,
+    character_spawns: characterSpawns.value,
     names: names.value,
     country_cultures: countryCultures.value,
     industry_suffixes: industrySuffixes.value,

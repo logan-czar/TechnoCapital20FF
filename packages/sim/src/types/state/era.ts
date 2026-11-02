@@ -4,6 +4,7 @@
 import type { Quarter } from "../calendar.ts";
 import type { CompanyId, ProvinceId } from "../ids.ts";
 import type { CyclePhase } from "../world.ts";
+import type { BaseCharacter } from "./people.ts";
 import type { District, Ideology, Party } from "./politics.ts";
 
 /** What a scenario sets beyond its growth profile (1995-rework 4.2, 6). All (T). */
@@ -102,6 +103,10 @@ export interface EraHistory {
   presidents: { year: number; name: string; party: Party }[];
   /** The US corporate tax rate at each year's close (1995-rework 7.5). */
   us_corp_tax: number[];
+  /** Each named character's founding (1995-rework 7.7). */
+  founders: { year: number; name: string; company: CompanyId }[];
+  /** Each controller's death and heir (1995-rework 7.8). */
+  successions: { year: number; company: CompanyId; from: string; to: string }[];
 }
 
 /** The macro layer's state (1995-rework 6). */
@@ -138,6 +143,25 @@ export interface EraIdeology {
   from_year: number;
 }
 
+/** A named character who has yet to join the run, or waits to found a startup (1995-rework 7.7). */
+export interface EraSpawn {
+  character: BaseCharacter;
+  /** Whole numbers. */
+  spawn_year: number;
+  born_year: number;
+  superregion: string;
+  /** Empty fits any sector. */
+  sector: string;
+}
+
+/** The run's named characters (1995-rework 7.7). Controllers are in `Company.start_control`. */
+export interface EraCharacters {
+  /** Not yet spawned, in file order. */
+  pool: EraSpawn[];
+  /** Spawned and waiting for a startup that fits, first come first. */
+  queue: EraSpawn[];
+}
+
 /** The run's US politics (1995-rework 7). */
 export interface EraPolitics {
   states: EraUsState[];
@@ -169,5 +193,6 @@ export interface EraState {
   macro: EraMacro;
   sectors: EraSector[];
   politics: EraPolitics;
+  characters: EraCharacters;
   history: EraHistory;
 }

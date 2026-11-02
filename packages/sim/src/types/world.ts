@@ -438,7 +438,8 @@ export interface Company {
   birth_run_rate: RunRate | null;
   /**
    * A starting company's control as companies.csv gives it (spec 3.5, 8 Company header and Cap
-   * table; D425): read by the views only, never by a job. null for a born company.
+   * table; D425): read by the views only, never by a job. null for a born company, except one a
+   * named character founded in a historical world (1995-rework 7.7).
    */
   start_control: StartControl | null;
 }

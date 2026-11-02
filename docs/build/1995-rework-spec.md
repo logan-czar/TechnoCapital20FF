@@ -172,10 +172,10 @@ No bills or laws as objects. Supersedes D980's one-way link for this world.
 A 1995 subset is active, and others emerge in seeded windows (`era.politics.ideologies[i].from_year`), ramping bloc weights in `drawPerson`. The `Ideology` union stays; 1995 labels are display names, which the politics view hands to web (D999).
 
 ### 7.7 Character spawns
-No scripted events. Each character in `character-spawns.csv` has a spawn-year range, and the seed picks the year. A spawned character joins a queue. The next random startup fitting their region and sector takes them as controller. If nothing ever fits, they never appear in a company. John Techno is one such row, and Arrowhead stops being a fixed company.
+No scripted events. Each character in `character-spawns.csv` has a spawn-year range, and the seed picks the year. A spawned character joins a queue. The next startup fitting their region and sector, founding waves included, takes them as controller, with half the seed investors' block, and its plans read their traits (D1001). If nothing ever fits, they never appear in a company. John Techno is one such row, fitting any sector in North America, and Arrowhead stops being a fixed company.
 
 ### 7.8 Aging and heirs
-Base characters age each 1 January and roll age-based death. On death, a new heir from the HQ country's name book takes the same stake, with a headline. No succession politics. Executives remain board filler. Amends D988 for this world. Each CH- id controls exactly one company, because per-company copies would die independently.
+Base characters age each 1 January and roll age-based death: 1% a year at 60, doubling every 8 years. On death, a new heir from the HQ country's name book takes the same stake, with a headline. No succession politics. Executives remain board filler. Amends D988 for this world. Each CH- id controls exactly one company, because per-company copies would die independently.
 
 ## 8. UI
 
