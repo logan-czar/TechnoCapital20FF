@@ -14,8 +14,10 @@ ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / 'docs' / 'design' / 'data'
 OUT = ROOT / 'assets' / 'worlds' / '1995'
 
-GDP_TARGET_USD_BN = 30000.0
+GDP_TARGET_USD_BN = 31338.0   # 1995-rework 2.2: the World Bank's 1995 world
 GDP_TOLERANCE = 0.03
+SOURCED_TOLERANCE = 0.2       # 1995-rework 2.5
+AUTHORING = Path(__file__).resolve().parent / 'authoring'
 COMPANY_RANGE = (280, 320)
 HOUSE_SEATS = 435
 START_DEMS = (205, 47)   # 1995-rework 7.2: the 104th Congress, Vermont's independent as a Democrat
@@ -49,6 +51,24 @@ def main():
     if len(provinces) != PROVINCES or ids != source_ids:
         errors.append(f'provinces: {len(provinces)} rows, and the ids must be the map\'s {PROVINCES}')
     errors += [f'{p["id"]}: unknown country {p["country"]}' for p in provinces if p['country'] not in isos]
+    # 1995-rework 2.5: every major country is sourced, within about 20%, with its source named.
+    source = {r['iso3']: r for r in read(AUTHORING / 'countries-1995.csv')}
+    economy_source = {r['iso3'] for r in read(AUTHORING / 'economy-1995.csv')}
+    for c in countries:
+        if c['major'] != 'Y':
+            continue
+        s = source.get(c['iso3'])
+        if s is None or not s['source'] or not s['gdp_usd_bn'] or not s['population_m']:
+            errors.append(f'{c["iso3"]}: a major country with no sourced GDP and population')
+            continue
+        for col in ('gdp_usd_bn', 'population_m'):
+            want = float(s[col])
+            if abs(float(c[col]) - want) > SOURCED_TOLERANCE * want:
+                errors.append(f'{c["iso3"]}: {col} {c[col]} is more than 20% from its source {want}')
+        if c['iso3'] not in economy_source:
+            errors.append(f'{c["iso3"]}: a major country with no tax rate or rating row')
+    if any(c['subject_of'] for c in countries):
+        errors.append('countries: the 2020 vassals are not in 1995')
     usa_regions = {p['region'] for p in provinces if p['country'] == 'USA'}
     states = {s['state'] for s in read(OUT / 'politics-usa.csv')}
     if usa_regions != states:

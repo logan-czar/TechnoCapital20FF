@@ -24,7 +24,10 @@ OUT = ROOT / 'assets' / 'worlds' / '1995'
 MVP_GEN = ROOT / 'docs' / 'design' / 'tools' / 'mvp-data' / 'gen.py'
 
 START_DATE = '1995-01-01'
-GDP_TARGET_USD_BN = 30000.0   # 1995-rework 2.2 (real 1995: about $31T)
+# What the 2020 data's companies and industries scale to, until P9b replaces them (1995-rework 2.2).
+PROTO_GDP_USD_BN = 30000.0
+AUTHORING = Path(__file__).resolve().parent / 'authoring'
+MIN_GDP_USD_BN = 0.05         # the smallest rows round to 0 in the source, and a share must be positive
 COMPANY_TARGET = 300          # 1995-rework 2.2
 PER_INDUSTRY_MIN = 5          # the largest of every industry stay, so each keeps named companies
 BASE_RATE = 0.05              # 1995-rework 6.2 (real 1995 policy rates: about 5.5%)
@@ -43,6 +46,15 @@ FOLD = {
     'GIB': 'GBR', 'IMN': 'GBR', 'FRO': 'DNK', 'GRL': 'DNK',
     'SPM': 'FRA', 'PAP': 'ARG', 'VAT': 'ITA', 'SMR': 'ITA',
 }
+
+# 1995-rework 2.5: what the 2020 alternate history changed. Its vassals return to their own zones.
+ZONES_1995 = {'DJI': 'AFE', 'ZMB': 'AFS', 'PAK': 'IN', 'LKA': 'IN', 'KHM': 'SG', 'LAO': 'SG'}
+ZONE_NAMES_1995 = {'CN': 'China'}
+NAMES_1995 = {'COD': 'Zaire', 'SRB': 'Yugoslavia'}
+EXTRA_RATING_SPREADS = {'AA+': '8'}   # no 2020 country has this rating (T)
+# corp_tax_level from the rate (T).
+LOW_TAX_BELOW = 0.2
+HIGH_TAX_FROM = 0.3
 
 # 1995-rework 2.4, 5.1: dormant industries. id: (window first, last, size on emerging $bn, wave min, max,
 # trend, mature rate, fade half life in years). The early growth rates of a new market fade to mature.
@@ -128,32 +140,68 @@ def num(x, places=3):
     return s.rstrip('0').rstrip('.') if '.' in s else s
 
 
+def world_1995_figures(rows):
+    """Each row's 1995 GDP and people: sourced, or the 2020 figure scaled by the world's change."""
+    source = {r['iso3']: r for r in read(AUTHORING / 'countries-1995.csv')[1]}
+    world = source['WLD']
+    gdp_scale = float(world['gdp_usd_bn']) / sum(float(r['gdp_usd_bn']) for r in rows)
+    people_scale = float(world['population_m']) / sum(float(r['population_m']) for r in rows)
+    out = {}
+    for r in rows:
+        s = source.get(r['iso3'], {})
+        gdp = float(s['gdp_usd_bn']) if s.get('gdp_usd_bn') else float(r['gdp_usd_bn']) * gdp_scale
+        people = float(s['population_m']) if s.get('population_m') else float(r['population_m']) * people_scale
+        out[r['iso3']] = (max(gdp, MIN_GDP_USD_BN), people)
+    return out
+
+
 def build_countries():
     fields, rows = read(SRC / 'countries.csv')
     by_iso = {r['iso3']: r for r in rows}
+    figures = world_1995_figures(rows)
+    proto_total = sum(float(r['gdp_usd_bn']) for r in rows)
     for child, parent in FOLD.items():
-        c, p = by_iso[child], by_iso[parent]
-        p['gdp_usd_bn'] = str(float(p['gdp_usd_bn']) + float(c['gdp_usd_bn']))
-        p['population_m'] = str(float(p['population_m']) + float(c['population_m']))
-        p['provinces_planned'] = str(int(p['provinces_planned']) + int(c['provinces_planned']))
+        p = by_iso[parent]
+        p['provinces_planned'] = str(int(p['provinces_planned']) + int(by_iso[child]['provinces_planned']))
+        gdp, people = figures[parent]
+        figures[parent] = (gdp + figures[child][0], people + figures[child][1])
     kept = [r for r in rows if r['iso3'] not in FOLD]
-    total = sum(float(r['gdp_usd_bn']) for r in kept)
-    scale = GDP_TARGET_USD_BN / total
     for r in kept:
-        r['gdp_usd_bn'] = num(float(r['gdp_usd_bn']) * scale)
-        r['population_m'] = num(float(r['population_m']))
-        if r['subject_of'] in FOLD:
-            r['subject_of'] = FOLD[r['subject_of']]
+        gdp, people = figures[r['iso3']]
+        r['gdp_usd_bn'] = num(gdp)
+        r['population_m'] = num(people)
+        r['name'] = NAMES_1995.get(r['iso3'], r['name'])
+        # The 2020 data's vassals and its notes are its own alternate history (1995-rework 2.5).
+        r['subject_of'] = ''
+        r['notes'] = ''
     write(OUT / 'countries.csv', fields, kept)
-    return kept, scale
+    return kept, PROTO_GDP_USD_BN / proto_total
+
+
+def rating_spreads(rows):
+    """The 2020 data's spread for each rating, which it uses for every country of that rating."""
+    spreads = dict(EXTRA_RATING_SPREADS)
+    for r in rows:
+        spreads.setdefault(r['sovereign_rating'], r['sovereign_spread_bps'])
+    return spreads
 
 
 def build_country_tables(countries):
     fields, rows = read(SRC / 'country-economy.csv')
     economy = [r for r in rows if r['iso3'] not in FOLD]
+    spreads = rating_spreads(rows)
+    majors = {r['iso3']: r for r in read(AUTHORING / 'economy-1995.csv')[1]}
     for r in economy:
-        if r['iso3'] == 'USA':
-            r['corp_tax_rate'] = US_CORP_TAX_1995
+        r['financial_zone'] = ZONES_1995.get(r['iso3'], r['financial_zone'])
+        r['notes'] = ''
+        m = majors.get(r['iso3'])
+        if m is None:
+            continue
+        rate = float(m['corp_tax_rate'])
+        r['corp_tax_rate'] = m['corp_tax_rate']
+        r['corp_tax_level'] = 'Low' if rate < LOW_TAX_BELOW else 'Moderate' if rate < HIGH_TAX_FROM else 'High'
+        r['sovereign_rating'] = m['sovereign_rating']
+        r['sovereign_spread_bps'] = spreads[m['sovereign_rating']]
     write(OUT / 'country-economy.csv', fields, economy)
 
     fields, rows = read(SRC / 'names' / 'country-cultures.csv')
@@ -163,11 +211,15 @@ def build_country_tables(countries):
     world = sum(gdp.values())
     fields, zones = read(SRC / 'financial-zones.csv')
     for z in zones:
-        members = [e['iso3'] for e in economy if e['financial_zone'] == z['zone_id']]
-        zone_gdp = sum(gdp[m] for m in members)
+        members = [e for e in economy if e['financial_zone'] == z['zone_id']]
+        zone_gdp = sum(gdp[m['iso3']] for m in members)
         z['countries'] = str(len(members))
         z['gdp_usd_bn'] = num(zone_gdp, 1)
         z['gdp_share'] = num(zone_gdp / world, 4)
+        # Mvp-data's rule for a zone with no spread set by hand, now for all (1995-rework 2.5).
+        weighted = sum(gdp[m['iso3']] * float(m['sovereign_spread_bps']) for m in members)
+        z['credit_spread_bps'] = str(round(weighted / zone_gdp)) if zone_gdp > 0 else z['credit_spread_bps']
+        z['name'] = ZONE_NAMES_1995.get(z['zone_id'], z['name'])
     write(OUT / 'financial-zones.csv', fields, zones)
     return economy, zones
 
@@ -346,9 +398,6 @@ def copy_unchanged():
 
 # 1995-rework 8.3: the run ends here.
 REVEAL_DATE = '2020-01-01'
-
-# 1995-rework 7.5: the federal rate the levers start from.
-US_CORP_TAX_1995 = '0.35'
 
 # 1995-rework 7.2: state: (1990-census House seats, 1992 Dem margin in points, census region,
 # Democratic House seats and Democratic senators on 3 January 1995, 1990 and 2010 census population).

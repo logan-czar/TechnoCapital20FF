@@ -21,7 +21,7 @@ The MVP rule stands: the player watches, and companies are run by the lite AI.
 - A run has a `reveal_date` of 1 January 2020 (8.3). Nothing after it is calibrated.
 
 ### 2.2 Scale
-- World GDP about $30T (real 1995: about $31T).
+- World GDP about $31T, the real 1995 figure.
 - About 300 named companies, covering the Global 500 leaders per sector, mid-caps and regional champions.
 - Fewer countries: micro-territories and post-1995 states fold into their 1995 parent by reassigning province rows and dropping the country rows. All 3,963 province ids and all map assets stay. Puerto Rico stays its own country row, because the politics checks read every USA province's `region` as a state.
 - No border changes during a run. Remaining anachronisms are logged as design fixes.
@@ -48,6 +48,7 @@ Live rows are above today's 42. What shrinks is the 2020-era tech set, not the r
 ### 2.5 Data sourcing
 - Top ~100 companies and the 33 major countries: public sources, within about 20%, with a citation in the authoring row.
 - The rest: generated or scaled from sourced totals.
+- Countries: `tools/world-1995/authoring/` holds 1995 GDP and population for every economy the World Bank covers. The 33 majors' tax rates and ratings there are approximate (D1005).
 
 ## 3. Clock and loading
 
