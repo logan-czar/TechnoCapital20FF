@@ -49,6 +49,7 @@ Live rows are above today's 42. What shrinks is the 2020-era tech set, not the r
 - Top ~100 companies and the 33 major countries: public sources, within about 20%, with a citation in the authoring row.
 - The rest: generated or scaled from sourced totals.
 - Countries: `tools/world-1995/authoring/` holds 1995 GDP and population for every economy the World Bank covers. The 33 majors' tax rates and ratings there are approximate (D1005).
+- Companies: about 135 real firms at their 1994 sales, under fictional names, of which 30 are read from a 1995 reprint of the Fortune list and the rest are from memory, marked as such (D1006). The other firms are the 2020 data's, resized to their country's 1995 economy.
 
 ## 3. Clock and loading
 

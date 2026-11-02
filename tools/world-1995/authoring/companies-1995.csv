@@ -1,0 +1,135 @@
+analogue,name,industry,hq_country,hq_city,revenue_usd_m,public,control,source
+General Motors,Wolf River Motor Works,Autos,USA,Detroit,154951,Y,,AP
+Ford Motor,Northwind Motors,Autos,USA,Detroit,128439,Y,,AP
+Exxon,Bayou Standard Oil,Oil,USA,Dallas,101459,Y,,AP
+Wal-Mart Stores,Quarry Hill Mart,Retail,USA,Little Rock,83412,Y,,AP
+AT&T,Saltgrass Networks,Telecom,USA,New York,75094,Y,,AP
+General Electric,Wexford Electric,Capital goods,USA,Hartford,64687,Y,,AP
+International Business Machines,Graystone Machines,Computer hardware,USA,New York,64052,Y,,AP
+Mobil,Fairhaven Oil,Oil,USA,Washington,59621,Y,,AP
+"Sears, Roebuck",Lakeshore Stores,Retail,USA,Chicago,54559,Y,,AP
+Philip Morris,Ironbark Tobacco,Consumer staples and tobacco,USA,New York,53776,Y,,AP
+Chrysler,Great Lakes Motor,Autos,USA,Detroit,52224,Y,,AP
+State Farm,Chinook Assurance,Insurance,USA,Chicago,38850,N,,AP
+Prudential Insurance,Lodestar Insurance,Insurance,USA,Newark,36946,N,,AP
+E.I. du Pont de Nemours,Highmoor Chemicals,Chemicals,USA,Wilmington,34968,Y,,AP
+Kmart,Kingsbridge Stores,Retail,USA,Detroit,34313,Y,,AP
+Texaco,Gulf Star Oil,Oil,USA,New York,33768,Y,,AP
+Citicorp,Bridgeport Bank,Banking,USA,New York,31650,Y,,AP
+Chevron,Sierra Standard Oil,Oil,USA,San Francisco,31064,Y,,AP
+Procter & Gamble,Kestrel Brands,Consumer staples and tobacco,USA,Cincinnati,30296,Y,,AP
+Pepsico,Northwind Foods,Consumer staples and tobacco,USA,New York,28472,Y,,AP
+Amoco,Prairie Standard Oil,Oil,USA,Chicago,26953,Y,,AP
+Hewlett-Packard,Copperline Systems,Computer hardware,USA,San Francisco,24991,Y,,AP
+ITT,Harrow Consolidated,Capital goods,USA,New York,23767,Y,,AP
+Conagra,Waverly Grain,Agriculture,USA,Omaha,23512,Y,,AP
+Kroger,Buckeye Markets,Retail,USA,Cincinnati,22959,Y,,AP
+American International Group,Hollowell Re,Insurance,USA,New York,22386,Y,,AP
+Metropolitan Life Insurance,Empire Mutual,Insurance,USA,New York,22258,N,,AP
+Motorola,Juniper Ridge Devices,Consumer electronics,USA,Chicago,22245,Y,,AP
+Boeing,Steelhead Aero,Aerospace,USA,Seattle,21924,Y,,AP
+Dayton Hudson,Twin Rivers Stores,Retail,USA,Minneapolis,21311,Y,,AP
+Mitsubishi,Sakuragi Shoji,Conglomerates and trading houses,JPN,Tokyo,175836,Y,,F
+Mitsui,Kitahama Bussan,Conglomerates and trading houses,JPN,Tokyo,171491,Y,,F
+Itochu,Naniwa Shoji,Conglomerates and trading houses,JPN,Osaka,167825,Y,,F
+Sumitomo,Izumi Shoji,Conglomerates and trading houses,JPN,Osaka,162476,Y,,F
+Marubeni,Marunouchi Trading,Conglomerates and trading houses,JPN,Tokyo,150187,Y,,F
+Nissho Iwai,Shinonome Trading,Conglomerates and trading houses,JPN,Osaka,100876,Y,,F
+Royal Dutch Shell,Oranjewoud Petroleum,Oil,NLD,The Hague,94881,Y,,F
+Tomen,Asahina Trading,Conglomerates and trading houses,JPN,Tokyo,69902,Y,,M
+Toyota Motor,Fujimi Motors,Autos,JPN,Nagoya,88159,Y,,M
+Hitachi,Hoshizora Electric,Capital goods,JPN,Tokyo,76431,Y,,M
+Nippon Life,Shiranami Mutual,Insurance,JPN,Osaka,75350,N,,M
+Nippon Telegraph and Telephone,Kanto Telephone,Telecom,JPN,Tokyo,70844,Y,JPN:65,M
+Matsushita Electric,Yamabuki Electric,Consumer electronics,JPN,Osaka,69947,Y,,M
+Daimler-Benz,Kaiserstuhl Motoren,Autos,DEU,Stuttgart,64169,Y,,M
+Nissan Motor,Hinode Motors,Autos,JPN,Tokyo,58732,Y,,M
+Nichimen,Tokiwa Trading,Conglomerates and trading houses,JPN,Osaka,56875,Y,,M
+Kanematsu,Kurama Trading,Conglomerates and trading houses,JPN,Tokyo,55856,Y,,M
+Dai-ichi Mutual Life,Daiichi Sakura Mutual,Insurance,JPN,Tokyo,53000,N,,M
+Samsung,Kestrel Group,Conglomerates and trading houses,KOR,Seoul,51345,Y,,M
+Siemens,Rheinwerk Elektro,Capital goods,DEU,Munich,51055,Y,,M
+Allianz,Spreeufer Allgemeine,Insurance,DEU,Munich,51000,Y,,M
+Volkswagen,Brandberg Motorenwerke,Autos,DEU,Hanover,49350,Y,,M
+British Petroleum,Gallowglass Petroleum,Oil,GBR,London,50737,Y,,M
+Toshiba,Azuma Electric,Capital goods,JPN,Tokyo,48228,Y,,M
+Unilever,Hollandse Kust Brands,Consumer staples and tobacco,NLD,Rotterdam,45451,Y,,M
+Tokyo Electric Power,Kanto Denryoku,Power utilities,JPN,Tokyo,45000,Y,,M
+Dai-Ichi Kangyo Bank,Kazaguruma Bank,Banking,JPN,Tokyo,44000,Y,,M
+Metro,Brandberg Markets,Retail,DEU,Cologne,48000,N,,M
+Cargill,Vandergriff Elevators,Agriculture,USA,Minneapolis,47000,N,,M
+NEC,Kaminari Electric,Computer hardware,JPN,Tokyo,41097,Y,,M
+Fiat,Monte Rosa Motors,Autos,ITA,Turin,40851,Y,,M
+Sony,Kazaguruma Electronics,Consumer electronics,JPN,Tokyo,40101,Y,,M
+Honda Motor,Akatsuki Motors,Autos,JPN,Tokyo,39927,Y,,M
+Nestle,Alpenglut Foods,Consumer staples and tobacco,CHE,Geneva,38000,Y,,M
+Deutsche Bank,Mainblick Bank,Banking,DEU,Frankfurt,38000,Y,,M
+Deutsche Telekom,Spreeufer Telekom,Telecom,DEU,Bonn,37000,Y,DEU:100,M
+Elf Aquitaine,Grand Large Petroles,Oil,FRA,Paris,37016,Y,,M
+Fujitsu,Fujimi Computing,Computer hardware,JPN,Tokyo,36000,Y,,M
+HSBC,Peak Fortune Bank,Banking,GBR,London,34000,Y,,M
+Electricite de France,Reseau Atomique de France,Power utilities,FRA,Paris,34000,N,FRA:100,M
+Philips Electronics,Kempenlicht Electronics,Consumer electronics,NLD,Amsterdam,33517,Y,,M
+Renault,Valmont Automobiles,Autos,FRA,Paris,32188,Y,FRA:50,M
+Eni,Energia Adriatica,Oil,ITA,Rome,30000,Y,ITA:80,M
+Nippon Steel,Hoshizora Steel,Metals,JPN,Tokyo,30000,Y,,M
+Hoechst,Rheinwerk Chemie,Chemicals,DEU,Frankfurt,30000,Y,,M
+ABB,Helvetia Brown,Capital goods,CHE,Zurich,29718,Y,,M
+Bayer,Mainblick Chemie,Chemicals,DEU,Cologne,28000,Y,,M
+Basf,Kurpfalz Chemie,Chemicals,DEU,Mannheim,28000,Y,,M
+Pemex,Petroleos de la Nacion Mexicana,Oil,MEX,Mexico City,28000,N,MEX:100,M
+Enel,Energia Tirrenica,Power utilities,ITA,Rome,27000,N,ITA:100,M
+Daiei,Benten Department Stores,Retail,JPN,Osaka,28000,Y,,M
+Carrefour,Grand Large Marche,Retail,FRA,Paris,30000,Y,,M
+France Telecom,Tricolore Telecom,Telecom,FRA,Paris,25000,N,FRA:100,M
+Lockheed Martin,Coalbrook Dynamics,Defense,USA,Washington,22853,Y,,M
+Thyssen,Rheinwerk Metals,Metals,DEU,Cologne,23000,Y,,M
+Saudi Aramco,Ghawar National Oil Company,Oil,SAU,Riyadh,32000,N,SAU:100,M
+PDVSA,Petroleo del Orinoco,Oil,VEN,Caracas,22000,N,VEN:100,M
+Sinopec,China Continental Petroleum,Oil,CHN,Beijing,20000,N,CHN:100,M
+Petrobras,Petroleo Atlantico Brasileiro,Oil,BRA,Rio de Janeiro,18000,Y,BRA:60,M
+GTE,Old Post Road Telephone,Telecom,USA,New York,19900,Y,,M
+United Parcel Service,Waverly Logistics,Logistics,USA,Atlanta,19500,N,,M
+USX,Cold Spring Metals,Metals,USA,Pittsburgh,19000,Y,,M
+Daewoo,Arirang Group,Conglomerates and trading houses,KOR,Seoul,30893,Y,,M
+BT,Kingsway Telecom,Telecom,GBR,London,21000,Y,,M
+Tesco,Kingsway Stores,Retail,GBR,London,21000,Y,,M
+AMR,Lodestar Air,Airlines,USA,Dallas,16100,Y,,M
+Coca-Cola,Peachtree Beverages,Consumer staples and tobacco,USA,Atlanta,16172,Y,,M
+Johnson & Johnson,Windward Laboratories,Pharma,USA,Newark,15734,Y,,M
+Time Warner,Fairhaven Media,Media and publishing,USA,New York,15000,Y,,M
+International Paper,Tamarack Paper,Paper and forest,USA,New York,15000,Y,,M
+Merck,Old Post Road Therapeutics,Pharma,USA,Newark,14970,Y,,M
+Lufthansa,Edelweiss Air,Airlines,DEU,Frankfurt,14000,Y,DEU:35,M
+BHP,Outback Ore,Mining,AUS,Melbourne,13000,Y,,M
+Bertelsmann,Brandberg Verlag,Media and publishing,DEU,Cologne,12000,N,,M
+Raytheon,Windward Arms,Defense,USA,Boston,12000,Y,,M
+Intel,Crossfield Semiconductor,Semiconductors,USA,San Francisco,11521,Y,,M
+Gazprom,Sibirgaz,Gas,RUS,Moscow,11000,N,RUS:40,M
+Roche,Alpenglut Therapeutics,Pharma,CHE,Basel,11000,Y,,M
+Compaq,Lone Star Computer,Computer hardware,USA,Houston,10866,Y,,M
+Texas Instruments,Copperline Foundry,Semiconductors,USA,Dallas,10315,Y,,M
+Walt Disney,Tamarack Studios,Media and publishing,USA,Los Angeles,10055,Y,,M
+Alcoa,Harrowgate Aluminum,Metals,USA,Pittsburgh,9900,Y,,M
+Apple Computer,Orchard Computer,Computer hardware,USA,San Francisco,9189,Y,,M
+McDonald's,Hawthorne Noodle House,Fast food,USA,Chicago,8321,Y,,M
+Marriott,Ashgrove Hotels,Travel and leisure,USA,Washington,8000,Y,,M
+Bechtel,Bitterroot Builders,Construction,USA,San Francisco,8000,N,,M
+Union Pacific,Great Lakes and Western Railway,Rail,USA,Omaha,7800,Y,,M
+Arthur Andersen,Brandt Strategies,Professional services,USA,Chicago,6700,N,,M
+Levi Strauss,Barbary Coast Apparel,Apparel,USA,San Francisco,6000,N,,M
+Baxter,Clearwater Medical,Medical devices,USA,Chicago,5000,Y,,M
+Nintendo,Hoshizora Play,Gaming,JPN,Osaka,4700,Y,,M
+Microsoft,Thunder Bay Logic,Software,USA,Seattle,4649,Y,,M
+LVMH,Maison Pont-Neuf,Luxury,FRA,Paris,4400,Y,,M
+Nike,Cascade Sportswear,Apparel,USA,Portland,3800,Y,,M
+Mitsui Fudosan,Marunouchi Estates,Real estate,JPN,Tokyo,3500,Y,,M
+Fidelity Investments,Beacon Hill Investors,Asset management,USA,Boston,3000,N,,M
+WPP,Kingsway Advertising,Ads,GBR,London,2700,Y,,M
+Whirlpool,Lake Erie Appliance,Appliances,USA,Chicago,8100,Y,,M
+Amgen,Pacific Rim Biologics,Biotech,USA,Los Angeles,1650,Y,,M
+Medtronic,Twin Rivers Medical,Medical devices,USA,Minneapolis,1400,Y,,M
+Caesars World,Silver State Casinos,Gambling,USA,Las Vegas,1400,Y,,M
+AirTouch,Golden Gate Cellular,Wireless,USA,San Francisco,1200,Y,,M
+America Online,Potomac Online,Online services,USA,Washington,115,Y,,M
+Maersk,Kattegat Lines,Shipping,DNK,Copenhagen,7000,Y,,M

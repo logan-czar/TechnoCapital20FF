@@ -1,301 +1,301 @@
 id,name,ticker,industry,hq_country,hq_province,public,revenue_usd_m,book_value_usd_m,est_value_usd_m,controller,controller_stake_pct,control_basis,owner_of_record,other_holders,notes
-CO-0001,Tri-State Carting,,Black market,USA,US-0088,N,10.459,1.534,9.239,CH-0105,55,majority,,CH-0003:25,a waste-hauling front that washes money for the crew; Antone holds a silent 25% (7.3.1)
-CO-0002,Creekside Marine Services,,Black market,NGA,NG-0004,N,31.377,5.892,28.135,CH-0007,60,majority,,,oil bunkering: crude stolen from Delta pipelines (A)
-CO-0003,Kremnev Security Group,,Professional services,RUS,RU-0001,N,52.295,2.684,54.387,CH-0011,60,proxy,CH-0108,,
-CO-0004,Jinghua Land,JILA,Real estate,CHN,CN-0002,Y,1045.897,1294.123,1816.025,CH-0014,55,proxy,CH-0109,CH-0168:9,
-CO-0005,Comptoir Kipushi,,Black market,COD,CD-0024,N,13.945,2.127,12.342,CH-0033,70,majority,,,artisanal cobalt and arms
-CO-0006,Peak Fortune Properties,PFP,Real estate,HKG,HK-0002,Y,209.179,329.109,384.193,CH-0044,15,class_a,,,
-CO-0007,Kowloon Remittance,,Black market,HKG,HK-0003,N,41.836,7.844,37.652,,,widely_held,,,the underground bank
-CO-0008,Chu Pacific Developments,,Real estate,CAN,CA-0026,N,697.264,710.164,1164.78,CH-0102,55,majority,,,Vancouver condo towers (drafts) (A)
-CO-0009,Halcyon Search,HASE,Ads,USA,US-0019,Y,20708.755,4237.625,73027.299,,,widely_held,,CO-0019:3,big tech search and ads giant; parent of a tip-pool lab (A)
-CO-0010,Ghawar National Oil Company,GNOC,Oil,SAU,SA-0014,Y,80495.002,96753.815,124110.988,SAU,98,state,,,state firm; the largest oil company in the world
-CO-0011,Volga-Ural Neft,VUN,Oil,RUS,RU-0001,Y,18323.065,33290.893,31631.404,RUS,55,state,,CO-0027:2,state firm; sanctioned since 2005; sells through grey fleets
-CO-0012,Sibirgaz,SIBI,Gas,RUS,RU-0015,Y,28512.54,50077.187,44661.883,RUS,51,state,,CO-0027:1,state firm; pipeline gas to Europe cut long ago (7.2.0)
-CO-0013,China Continental Petroleum,CCP,Oil,CHN,CN-0001,Y,105461.254,158401.758,172096.73,CHN,80,state,,CO-0040:1,state firm
-CO-0014,China Unified Mobile,CUM,Telecom,CHN,CN-0001,Y,55223.348,83027.118,139717.51,CHN,72,state,,,state firm
-CO-0015,People's Commerce Bank of China,PCBO,Banking,CHN,CN-0001,Y,65543.56,104549.93,144919.103,CHN,70,state,,CO-0031:5,state firm
-CO-0016,China Central Grid Corporation,,Power utilities,CHN,CN-0001,N,57524.321,101679.292,81343.573,CHN,100,state,,,state firm
-CO-0017,China Rail and Bridge Engineering,CRAB,Construction,CHN,CN-0001,Y,69796.176,11649.546,23648.423,CHN,60,state,,CO-0019:4,state firm; Belt and Road builder
-CO-0018,Huaxia Iron and Steel,HIAS,Metals,CHN,CN-0063,Y,27611.674,31910.309,28708.122,CHN,70,state,,,state firm
-CO-0019,Zhonghua Reserve Investment,,Asset management,CHN,CN-0001,N,9470.595,7838.647,18759.553,CHN,100,state,,,state firm; sovereign fund
-CO-0020,Huanghai Ocean Shipping,HOS,Shipping,CHN,CN-0008,Y,13422.341,13671.962,10937.639,CHN,60,state,,,state firm
-CO-0021,Capital Phoenix Airlines,CPA,Airlines,CHN,CN-0002,Y,5346.624,5020.653,4016.592,CHN,55,state,,CH-0271:11,state firm
-CO-0022,Northern Ordnance Group,,Defense,CHN,CN-0001,N,5891.885,3116.772,5018.213,CHN,100,state,,,state firm
-CO-0023,Shenzhou Aerospace Corporation,,Aerospace,CHN,CN-0001,N,22434.485,9709.059,15868.694,CHN,100,state,,,state firm
-CO-0024,Petroleo Atlantico Brasileiro,PAB,Oil,BRA,BR-0010,Y,20310.269,23958.705,31179.228,BRA,51,state,,CO-0019:6,state firm; offshore oil
-CO-0025,Petroleos de la Nacion Mexicana,,Oil,MEX,MX-0001,N,33696.701,55727.47,56522.352,MEX,100,state,,,state firm
-CO-0026,Nordsjo Energi,NOEN,Oil,NOR,NO-0001,Y,14670.096,26801.104,25369.271,NOR,67,state,,,state firm
-CO-0027,Norwegian Petroleum Reserve Fund,,Asset management,NOR,NO-0001,N,9587.387,9029.227,19318.759,NOR,100,state,,,state firm; sovereign fund
-CO-0028,Liwa National Oil Company,,Oil,ARE,AE-0001,N,31879.978,61632.254,56147.92,ARE,100,state,,,state firm
-CO-0029,Abu Dhabi Sovereign Holdings,,Asset management,ARE,AE-0002,N,5934.418,8637.015,12872.548,ARE,100,state,,,state firm; sovereign fund; AI investment
-CO-0030,Ras Laffan Gas Company,,Gas,QAT,QA-0008,N,34514.592,47961.338,50266.494,QAT,100,state,,,state firm; the largest LNG exporter
-CO-0031,Saudi Public Wealth Fund,,Asset management,SAU,SA-0001,N,3477.955,3762.091,7154.282,SAU,100,state,,,state firm; sovereign fund; backs the megaprojects
-CO-0032,Persian Gulf National Oil,,Oil,IRN,IR-0001,N,49001.308,63854.088,77039.011,IRN,100,state,,,"state firm; Iran, the one holdout (7.2.0)"
-CO-0033,Basra-Kirkuk Oil Company,,Oil,IRQ,IQ-0001,N,24714.191,33531.798,39253.202,IRQ,100,state,,,state firm; a stable US-aligned exporter (7.2.0)
-CO-0034,Nigerian National Hydrocarbon Corporation,,Oil,NGA,NG-0001,N,9403.658,14453.944,15444.408,NGA,100,state,,,state firm
-CO-0035,Bharat Urja Petroleum,BUP,Oil,IND,IN-0051,Y,26955.548,35127.488,42379.387,IND,55,state,,,state firm
-CO-0036,State Bank of Bharat,SBOB,Banking,IND,IN-0013,Y,27675.822,41915.009,60522.907,IND,57,state,,CO-0019:4,state firm
-CO-0037,Reseau Atomique de France,RADF,Power utilities,FRA,FR-0001,Y,15989.321,37357.34,29885.802,FRA,84,state,,CO-0027:1,state firm; nuclear fleet
-CO-0038,Energia Tirrenica,ENTI,Power utilities,ITA,IT-0007,Y,40558.481,73620.671,58896.537,ITA,24,state,,,"state firm; golden share (State-Linked charter, 1.5)"
-CO-0039,Gasdotti Italiani Nazionali,GIN,Gas,ITA,IT-0007,Y,11306.492,21843.553,18306.331,ITA,30,state,,,"state firm; golden share (State-Linked charter, 1.5)"
-CO-0040,Lion City Investment Holdings,,Asset management,SGP,SG-0001,N,3176.388,3318.282,6498.505,SGP,100,state,,,state firm; sovereign fund
-CO-0041,Hassi R'Mel Hydrocarbures,,Gas,DZA,DZ-0001,N,18522.831,26635.504,27245.261,DZA,100,state,,,state firm
-CO-0042,Semenanjung Petroleum Nasional,,Oil,MYS,MY-0001,N,12068.254,21860.636,20813.694,MYS,100,state,,,state firm
-CO-0043,Listrik Nusantara Negara,,Power utilities,IDN,ID-0001,N,31367.14,69341.559,55473.317,IDN,100,state,,,state firm
-CO-0044,Narodny Savings Bank,NSB,Banking,RUS,RU-0001,Y,52202.798,66958.309,110528.973,RUS,50,state,,CO-0019:3,state firm
-CO-0045,Rossiya Defense Industries,,Defense,RUS,RU-0001,N,7072.354,3389.403,5918.032,RUS,100,state,,,state firm; drone war orders
-CO-0046,Orinoco Gold Trading,,Black market,VEN,VE-0001,N,8.82,1.987,8.019,CH-0053,74,majority,,,
-CO-0047,Inmobiliaria Meseta,INME,Real estate,ESP,ES-0001,Y,993.602,1005.107,1657.746,,,widely_held,,,
-CO-0048,Lagoon Cement,LACE,Construction,NGA,NG-0002,Y,5726.285,1198.598,2013.003,CH-0080,29,class_a,,CH-0272:10,
-CO-0049,Naniwa Robotics,NARO,Robotics,JPN,JP-0037,Y,2787.315,1294.472,1998.011,CH-0095,30,class_a,,,
-CO-0050,Kestrel Digital,KEDI,Consumer electronics,KOR,KR-0005,Y,19317.364,5202.29,19410.1,,,widely_held,,CH-0203:5;CH-0290:5,key-city starting business (Seoul-Pyeongtaek)
-CO-0051,Wanli Ore,WAOR,Mining,CHN,CN-0116,Y,5684.1,6822.384,7955.439,CHN,70,state,,CH-0275:6,state firm
-CO-0052,Haixia Metals,HAME,Metals,CHN,CN-0116,Y,10947.401,10994.815,10884.996,CHN,51,state,,CH-0228:9,state firm
-CO-0053,Ironbark Polymers,IRPO,Chemicals,USA,US-0123,Y,18273.211,14494.734,14901.239,,,widely_held,,CO-0019:6;CH-0145:5,key-city starting business (Houston)
-CO-0054,Windward Laboratories,WILA,Pharma,USA,US-0064,Y,37582.556,17462.641,79032.141,,,widely_held,,,key-city starting business (Boston)
-CO-0055,Coalbrook Mechatronics,COME,Robotics,USA,US-0064,Y,643.226,313.42,465.424,,,widely_held,,CH-0142:7,key-city starting business (Boston)
-CO-0056,Gallowglass Aero,GAAE,Aerospace,USA,US-0140,Y,8432.717,3531.993,5929.537,,,widely_held,,,key-city starting business (Seattle)
-CO-0057,Old Post Road Wireless,OPRW,Telecom,USA,US-0119,Y,39099.804,43905.351,94460.164,,,widely_held,,CO-0027:2,key-city starting business (Dallas-Fort Worth)
-CO-0058,Bridgeport Bank,BRBA,Banking,USA,US-0118,Y,67111.707,125107.727,153803.299,,,widely_held,,CO-0027:2,key-city starting business (Dallas-Fort Worth)
-CO-0059,Waverly Logistics,WALO,Logistics,USA,US-0119,Y,7720.461,5090.379,4647.965,,,widely_held,,,key-city starting business (Dallas-Fort Worth)
-CO-0060,Big Sky Airways,BSA,Airlines,USA,US-0039,Y,9364.611,9607.607,7685.946,,,widely_held,,,key-city starting business (Atlanta)
-CO-0061,Foxhollow Trust Bank,FTB,Banking,USA,US-0031,Y,27542.296,48186.206,62172.983,,,widely_held,,CO-0029:5;CO-0027:4,key-city starting business (Miami)
-CO-0062,Fenmore Properties,FEPR,Real estate,USA,US-0033,Y,23009.728,29160.996,40156.508,,,widely_held,,,key-city starting business (Miami)
-CO-0063,Thunder Bay Logic,TBL,Software,USA,US-0126,Y,13422.341,1995.92,39355.7,,,widely_held,,CO-0019:2,key-city starting business (Austin)
-CO-0064,Northwind Motors,NOMO,Autos,USA,US-0066,Y,26135.565,10883.95,12321.012,,,widely_held,,CH-0257:6,key-city starting business (Detroit)
-CO-0065,Granite Falls Lines,GFL,Shipping,CAN,CA-0026,Y,4248.084,5491.307,4393.115,,,widely_held,,,key-city starting business (Vancouver)
-CO-0066,Ashgrove Networks,ASNE,Telecom,CAN,CA-0010,Y,9840.842,13431.755,24488.626,,,widely_held,,,key-city starting business (Ottawa)
-CO-0067,Laguna Verde Builders,LVB,Construction,MEX,MX-0013,Y,46192.378,9841.888,16290.539,,,widely_held,,,key-city starting business (Monterrey)
-CO-0068,Puerto Viejo Systems,PVS,Software,MEX,MX-0008,Y,9114.293,1196.506,26676.642,,,widely_held,,,key-city starting business (Guadalajara)
-CO-0069,Mar del Sur Savings Bank,MDSS,Banking,ARG,AR-0001,Y,22463.422,41112.109,51251.381,,,widely_held,,,key-city starting business (Buenos Aires)
-CO-0070,Rio Hondo Mining,RHM,Mining,CHL,CL-0009,Y,7484.088,11574.939,11252.106,,,widely_held,,CH-0211:6;CH-0259:6,key-city starting business (Santiago)
-CO-0071,Oranjewoud Trust Bank,OTB,Banking,NLD,NL-0001,Y,22404.503,39690.735,50722.854,,,widely_held,,,key-city starting business (Amsterdam)
-CO-0072,Kalahari Grain,KAGR,Agriculture,ZAF,ZA-0006,Y,27145.901,30912.524,24950.564,,,widely_held,,,key-city starting business (Cape Town)
-CO-0073,Kailash Motors,KAMO,Autos,IND,IN-0001,Y,10823.985,4254.708,5026.928,,,widely_held,,CH-0199:16,key-city starting business (Delhi NCR)
-CO-0074,Himgiri Code,HICO,Software,IND,IN-0002,Y,6305.014,806.735,18447.875,,,widely_held,,CO-0040:6;CH-0168:5,key-city starting business (Delhi NCR)
-CO-0075,Rajhans Mobile,RAMO,Telecom,IND,IN-0005,Y,8078.158,10890.923,20061.694,IND,70,state,,CO-0027:5,state firm
-CO-0076,Sindhu Pharma,SIPH,Pharma,IND,IN-0031,Y,8150.673,2464.83,16743.412,,,widely_held,,CH-0156:5;CO-0027:1,key-city starting business (Hyderabad)
-CO-0077,Narmada Code,NACO,Software,IND,IN-0030,Y,4770.684,566.179,13945.29,,,widely_held,,CH-0250:7,key-city starting business (Hyderabad)
-CO-0078,Suryodaya Motor Works,SMW,Autos,IND,IN-0035,Y,27111.735,10157.4,12441.29,,,widely_held,,CH-0280:8,key-city starting business (Chennai)
-CO-0079,Vindhya Electronics,VIEL,Consumer electronics,IND,IN-0034,Y,6704.895,1211.148,6558.818,,,widely_held,,CH-0170:10,key-city starting business (Chennai)
-CO-0080,Wanli Electronics,WAEL,Consumer electronics,CHN,CN-0085,Y,13982.593,4357.554,14227.333,,,widely_held,,CO-0019:5,key-city starting business (Chengdu)
-CO-0081,Fenghuang Interactive,FEIN,Gaming,CHN,CN-0086,Y,2384.645,691.686,6267.013,,,widely_held,,CH-0220:8,key-city starting business (Chengdu)
-CO-0082,Baiyun Cars,BACA,Autos,CHN,CN-0064,Y,13011.304,5389.157,6125.12,,,widely_held,,,key-city starting business (Wuhan)
-CO-0083,Songshan Communications,SOCO,Telecom,CHN,CN-0064,Y,21995.906,26002.039,53530.041,CHN,70,state,,,state firm
-CO-0084,Yamabuki Electric,YAEL,Consumer electronics,JPN,JP-0042,Y,12318.92,3069.01,12303.232,,,widely_held,,CH-0271:8,key-city starting business (Osaka-Kobe)
-CO-0085,Benten Maritime,BEMA,Shipping,JPN,JP-0040,Y,11061.055,11460.936,9168.679,,,widely_held,,,key-city starting business (Osaka-Kobe)
-CO-0086,Kenanga Farms,KEFA,Agriculture,MYS,MY-0001,Y,11246.876,13403.515,10722.882,,,widely_held,,,key-city starting business (Kuala Lumpur)
-CO-0087,Mekong Electric,MEEL,Consumer electronics,VNM,VN-0027,Y,5563.473,1731.656,5660.045,,,widely_held,,CH-0238:11,key-city starting business (Hanoi)
-CO-0088,Chinook Assurance,CHAS,Insurance,USA,US-0027,Y,35612.435,12829.318,20301.902,,,widely_held,,,key-city starting business (New York)
-CO-0089,Steelhead Aero,STAE,Aerospace,USA,US-0014,Y,10585.172,6441.329,8045.386,,,widely_held,,CH-0222:10,key-city starting business (Los Angeles-Long Beach)
-CO-0090,Bitterroot Shipyards,BISH,Shipping,USA,US-0010,Y,4889.567,7082.115,5665.623,,,widely_held,,CH-0246:18,key-city starting business (Los Angeles-Long Beach)
-CO-0091,Wolf River Foundry,WRF,Semiconductors,USA,US-0006,Y,5730.12,3925.948,19047.174,,,widely_held,,CO-0027:4;CO-0029:2,key-city starting business (Phoenix)
-CO-0092,Cerro Azul Automotive,CAA,Autos,MEX,MX-0004,Y,36749.674,19017.54,18439.159,,,widely_held,,,key-city starting business (Mexico City)
-CO-0093,Kamchatka Steel,KAST,Metals,RUS,RU-0004,Y,5392.644,4827.162,5185.207,RUS,67,state,,,state firm
-CO-0094,Kapadokya Markets,KAMA,Retail,TUR,TR-0002,Y,48871.966,9891.743,19388.485,,,widely_held,,CO-0040:3,key-city starting business (Istanbul)
-CO-0095,Kalahari Mining,KAMI,Mining,ZAF,ZA-0023,Y,14430.237,18561.529,20568.605,,,widely_held,,,key-city starting business (Johannesburg)
-CO-0096,Yuntai Motor Works,YMW,Autos,CHN,CN-0012,Y,24816.689,11979.004,12192.716,,,widely_held,,,key-city starting business (Shanghai)
-CO-0097,Red Mesa Automotive,RMA,Autos,JPN,JP-0010,Y,12927.632,5969.979,6270.5,,,widely_held,,CH-0289:8,key-city starting business (Tokyo-Yokohama)
-CO-0098,Fujimi Robot Works,FRW,Robotics,JPN,JP-0010,Y,285.53,105.636,196.629,,,widely_held,,CH-0185:20,key-city starting business (Tokyo-Yokohama)
-CO-0099,Merapi Department Stores,MDS,Retail,IDN,ID-0005,Y,16641.96,3606.949,6673.867,,,widely_held,,CH-0251:7,key-city starting business (Jakarta)
-CO-0100,Song Hong Devices,SHD,Consumer electronics,VNM,VN-0004,Y,5520.592,1726.078,5618.906,,,widely_held,,,key-city starting business (Ho Chi Minh City)
-CO-0101,Rockledge Fund,ROFU,Asset management,CHE,CH-0001,Y,278.209,365.715,591.629,CH-0028,42,class_a,,CH-0266:8,
-CO-0102,Anatolia Realty,ANRE,Real estate,TUR,TR-0016,Y,546.307,727.247,963.968,CH-0031,31,class_a,,,
-CO-0103,Larkspur Farms,LAFA,Agriculture,CUB,CU-0008,Y,14.12,13.213,12.132,CH-0056,24,class_a,,,
-CO-0104,Cerro Azul Construction,CAC,Construction,ESP,ES-0004,Y,6414.136,1160.597,2200.218,CH-0059,24,class_a,,,
-CO-0105,Volga-Don Smelting,VDS,Metals,RUS,RU-0005,Y,5741.276,7514.071,6232.847,CH-0061,17,class_a,,CH-0140:16,
-CO-0106,Krasny Yar Gas Transmission,KYGT,Gas,KAZ,KZ-0022,Y,2477.729,3115.726,3510.378,CH-0063,17,class_a,,,
-CO-0107,Copperline Foundry,COFO,Semiconductors,USA,US-0032,Y,6180.552,4285.388,20559.541,,,widely_held,,,
-CO-0108,Tianma Silicon,TISI,Semiconductors,CHN,CN-0087,Y,9233.176,9564.028,31662.781,,,widely_held,,,
-CO-0109,Crossfield Semiconductor,CRSE,Semiconductors,USA,US-0014,Y,16916.682,12964.587,56644.024,,,widely_held,,CO-0019:1;CO-0029:1,
-CO-0110,Pinecrest Foundry,PIFO,Semiconductors,CHN,CN-0010,Y,18983.026,14443.834,63531.603,,,widely_held,,,
-CO-0111,Bialowieza Software,BISO,Software,HUN,HU-0001,Y,8467.929,1297.958,24840.396,,,widely_held,,,
-CO-0112,Huaxing Ad Network,HAN,Ads,CHN,CN-0003,Y,12190.275,2503.18,42990.191,,,widely_held,,,
-CO-0113,Fairhaven Media Exchange,FME,Ads,USA,US-0086,Y,9750.198,2320.845,34480.775,,,widely_held,,CO-0027:1,
-CO-0114,Kazaguruma Media Exchange,KME,Ads,JPN,JP-0002,Y,9567.515,1566.405,33621.397,,,widely_held,,,
-CO-0115,Arava Media Exchange,ARME,Ads,ISR,IL-0004,Y,8688.264,1434.622,30535.304,,,widely_held,,,
-CO-0116,Polyarny Digital,PODI,Consumer electronics,RUS,RU-0016,Y,10801.324,3202.536,10941.126,,,widely_held,,CH-0136:8,
-CO-0117,Juniper Ridge Devices,JRD,Consumer electronics,USA,US-0020,Y,46402.952,11209.224,46239.095,,,widely_held,,CO-0019:4,
-CO-0118,Gallowglass Electronics,GAEL,Consumer electronics,GBR,GB-0040,Y,15825.812,3167.324,15573.402,,,widely_held,,CO-0019:6,
-CO-0119,Taunus Digital,TADI,Consumer electronics,AUT,AT-0009,Y,6645.977,2116.895,6776.016,,,widely_held,,,
-CO-0120,Hoshizora Devices,HODE,Consumer electronics,JPN,JP-0006,Y,8357.761,1936.303,8303.374,,,widely_held,,CH-0244:8,
-CO-0121,Jinlong Digital,JIDI,Consumer electronics,CHN,CN-0025,Y,36016.5,8152.416,35725.044,,,widely_held,,,
-CO-0122,Daxing Telecom,DATE,Telecom,SGP,SG-0003,Y,11412.477,15967.705,28516.723,SGP,60,state,,,state firm
-CO-0123,Tianfu Communications,TICO,Telecom,CHN,CN-0022,Y,15617.679,15709.718,37181.978,CHN,67,state,,,state firm
-CO-0124,Ironbark Mobile,IRMO,Telecom,DEU,DE-0032,Y,7688.038,10477.794,19126.662,,,widely_held,,CH-0159:5;CO-0027:3,
-CO-0125,Pampa Norte Mobile,PNM,Telecom,MEX,MX-0012,Y,6157.194,8839.571,15452.776,,,widely_held,,,
-CO-0126,Saltgrass Networks,SANE,Telecom,USA,US-0097,Y,24974.271,37051.938,63037.242,,,widely_held,,,
-CO-0127,Hoshizora Mobile,HOMO,Telecom,JPN,JP-0038,Y,10337.992,14961.204,25981.121,,,widely_held,,CO-0029:3,
-CO-0128,Val d'Orcia Studios,VADO,Gaming,ITA,IT-0001,Y,4440.18,988.721,11579.123,,,widely_held,,CH-0294:8,
-CO-0129,Tamarack Studios,TAST,Gaming,USA,US-0062,Y,7669.909,1807.658,20031.363,,,widely_held,,,
-CO-0130,Sahyadri Interactive,SAIN,Gaming,IND,IN-0001,Y,3216.83,755.486,8400.643,,,widely_held,,CH-0226:10;CH-0291:8,
-CO-0131,Valmont Interactive,VAIN,Gaming,LUX,LU-0001,Y,1629.158,296.686,4228.561,,,widely_held,,CH-0165:14;CH-0160:9,
-CO-0132,Crossfield Sportsbook,CRSP,Gambling,USA,US-0140,Y,9203.891,2438.334,24118.727,,,widely_held,,,
-CO-0133,Qasr Al Bahr Lottery,QABL,Gambling,IRQ,IQ-0009,Y,3355.585,1009.29,8829.46,,,widely_held,,CH-0218:9,
-CO-0134,Changjiang Bet,CHBE,Gambling,CHN,CN-0140,Y,5201.244,1777.676,13749.707,,,widely_held,,CO-0029:6,
-CO-0135,Quarry Hill Gaming Holdings,QHGH,Gambling,GBR,GB-0002,Y,5590.318,1732.005,14724.483,,,widely_held,,CH-0296:6,
-CO-0136,Volta Casino Resorts,VCR,Gambling,GHA,GH-0001,Y,3224.5,993.253,8491.287,,,widely_held,,CH-0136:12;CH-0215:9,
-CO-0137,Kano Gate Insurance,KGI,Insurance,NGA,NG-0001,Y,18699.588,7813.546,10983.31,,,widely_held,,CH-0130:8,
-CO-0138,Shiranami Mutual,SHMU,Insurance,JPN,JP-0006,Y,66274.293,20864.943,36878.319,,,widely_held,,CO-0031:6,
-CO-0139,Victoria Crest Assurance,VCA,Insurance,CHN,CN-0009,Y,26864.555,13735.762,16532.141,CHN,55,state,,CH-0226:5,state firm
-CO-0140,Hollowell Re,HORE,Insurance,USA,US-0044,Y,92038.913,30223.278,51588.857,,,widely_held,,CO-0019:1;CO-0040:1,
-CO-0141,Polyarny Mutual,POMU,Insurance,RUS,RU-0015,Y,14443.834,5861.205,8431.322,,,widely_held,,CH-0139:7,
-CO-0142,Amur Insurance,AMIN,Insurance,RUS,RU-0053,Y,14471.376,5574.281,8358.109,,,widely_held,,CH-0150:12;CH-0201:5,
-CO-0143,Kivu Bleu Insurance,KBI,Insurance,COD,CD-0023,Y,25537.312,12355.178,15504.722,,,widely_held,,CH-0163:5,
-CO-0144,Lotus Bay Mutual,LBM,Insurance,CHN,CN-0009,Y,22593.81,12467.786,14178.525,,,widely_held,,CH-0252:7;CO-0029:2,
-CO-0145,Lodestar Insurance,LOIN,Insurance,USA,US-0122,Y,33207.221,16580.95,20316.196,,,widely_held,,CO-0027:4,
-CO-0146,Najm Re,NARE,Insurance,LBY,LY-0012,Y,15033.72,5268.879,8526.15,,,widely_held,,CH-0272:7,
-CO-0147,Ponte Vecchio Crude,PVC,Oil,ITA,IT-0003,Y,11111.258,14183.406,17380.363,ITA,67,state,,,state firm
-CO-0148,Hawthorne Drilling,HADR,Oil,USA,US-0011,Y,14389.099,25229.47,24566.023,,,widely_held,,CO-0029:2,
-CO-0149,Driftwood Energy,DREN,Oil,USA,US-0011,Y,13978.41,16999.657,21612.062,,,widely_held,,,
-CO-0150,Baiyun Midstream,BAMI,Gas,CHN,CN-0007,Y,16797.102,23612.513,24544.407,CHN,51,state,,,state firm
-CO-0151,Tianma Gas,TIGA,Gas,CHN,CN-0009,Y,8969.61,15197.228,13883.233,CHN,67,state,,,state firm
-CO-0152,Al Burj LNG,ABL,Gas,DZA,DZ-0016,Y,5641.567,7815.289,8208.895,DZA,60,state,,CH-0237:10;CH-0197:8,state firm
-CO-0153,Oakhurst Gas,OAGA,Gas,CAN,CA-0001,Y,15027.793,21634.723,22111.652,,,widely_held,,,
-CO-0154,Vindhya Power,VIPO,Power utilities,IND,IN-0036,Y,8683.035,18487.271,14789.677,IND,60,state,,CO-0040:6;CO-0019:5;CO-0101:3,state firm
-CO-0155,Negev Energy Grid,NEG,Power utilities,ISR,IL-0004,Y,7888.153,12620.836,10096.738,,,widely_held,,CH-0198:9,
-CO-0156,Old Post Road Utilities,OPRU,Power utilities,ESP,ES-0003,Y,5999.264,11684.061,9347.179,,,widely_held,,CH-0239:8,
-CO-0157,Elbstern Electric,ELEL,Power utilities,DEU,DE-0028,Y,7299.313,11894.984,9515.917,,,widely_held,,,
-CO-0158,Xinghe Energy Grid,XEG,Power utilities,CHN,CN-0008,Y,20481.447,28568.321,23086.776,CHN,75,state,,,state firm
-CO-0159,Daxing Utilities,DAUT,Power utilities,CHN,CN-0020,Y,11387.026,26071.417,20857.273,CHN,60,state,,,state firm
-CO-0160,Hengshan Power,HEPO,Power utilities,CHN,CN-0016,Y,13406.653,27947.755,22358.135,CHN,75,state,,CO-0019:1,state firm
-CO-0161,Coldwater Energy Grid,CEG,Power utilities,USA,US-0122,Y,9174.258,13399.332,10719.396,,,widely_held,,CH-0133:9,
-CO-0162,Chateaurouge Electric,CHEL,Power utilities,FRA,FR-0002,Y,5713.734,12415.143,9932.184,FRA,70,state,,CH-0234:7,state firm
-CO-0163,Tidewater Ore,TIOR,Mining,USA,US-0088,Y,24543.71,40514.205,37667.274,,,widely_held,,CO-0029:6,
-CO-0164,Ipe Amarelo Mining,IAM,Mining,BRA,BR-0045,Y,10302.432,16503.902,15660.56,,,widely_held,,CH-0164:6;CO-0031:3,
-CO-0165,Sandstone Minerals,SAMI,Mining,CHN,CN-0080,Y,16099.488,21523.858,23192.412,CHN,60,state,,CO-0027:4;CO-0029:2,state firm
-CO-0166,Huangshan Steel,HUAS,Metals,CHN,CN-0019,Y,10869.656,14625.82,11920.434,CHN,51,state,,,state firm
-CO-0167,Harrowgate Metals,HARM,Metals,CHN,CN-0012,Y,6828.66,8367.523,7242.486,CHN,60,state,,,state firm
-CO-0168,Rheinwerk Metals,RHME,Metals,DEU,DE-0024,Y,5870.27,6072.825,5889.793,,,widely_held,,,
-CO-0169,Amur Metals,AMME,Metals,RUS,RU-0017,Y,6123.377,5327.798,5841.682,RUS,67,state,,,state firm
-CO-0170,Cold Spring Metals,CSM,Metals,USA,US-0123,Y,19226.371,15827.555,18072.05,,,widely_held,,,
-CO-0171,Oakhurst Petrochemical,OAPE,Chemicals,USA,US-0010,Y,9085.356,6593.682,7225.055,,,widely_held,,CH-0187:12,
-CO-0172,Grand Large Polymers,GLP,Chemicals,FRA,FR-0003,Y,6006.236,3385.916,4484.457,,,widely_held,,CH-0160:10;CH-0153:5,
-CO-0173,Highmoor Chemicals,HIGC,Chemicals,USA,US-0066,Y,30679.638,25515.697,25372.06,,,widely_held,,,
-CO-0174,Huaxing Chemicals,HUCH,Chemicals,CHN,CN-0010,Y,21656.686,18821.958,18153.281,CHN,75,state,,,state firm
-CO-0175,Oakhurst Polymers,OAPO,Chemicals,USA,US-0020,Y,10164.722,9633.058,8760.082,,,widely_held,,,
-CO-0176,Lingnan Polymers,LIPO,Chemicals,CHN,CN-0099,Y,6245.049,5747.203,5330.587,CHN,67,state,,CH-0288:16,state firm
-CO-0177,Kilimanjaro Grain,KIGR,Agriculture,ETH,ET-0024,Y,10056.994,8123.829,8245.153,,,widely_held,,CH-0149:11,
-CO-0178,Kaiserstuhl Harvest,KAHA,Agriculture,DEU,DE-0019,Y,16946.316,17484.256,15031.628,,,widely_held,,CO-0019:6;CO-0027:1;CO-0040:1,
-CO-0179,Waverly Grain,WAGR,Agriculture,USA,US-0069,Y,30679.638,23897.695,24886.764,,,widely_held,,,
-CO-0180,Tatra Agribusiness,TAAG,Agriculture,CZE,CZ-0004,Y,9025.74,10368.323,8322.898,,,widely_held,,CH-0138:10;CH-0223:8;CH-0294:5,
-CO-0181,Fujimi Motors,FUMO,Autos,JPN,JP-0012,Y,52121.915,25218.314,25625.865,,,widely_held,,CO-0040:5,
-CO-0182,Jinqiao Automotive,JIAU,Autos,CHN,CN-0045,Y,54316.555,24577.876,26194.135,,,widely_held,,,
-CO-0183,Wolf River Motor Works,WRMW,Autos,USA,US-0119,Y,33615.121,20861.108,17906.101,,,widely_held,,CO-0027:4;CO-0031:1,
-CO-0184,Midnattsol Automotive,MIAU,Autos,NOR,NO-0016,Y,10989.237,5408.332,5430.296,,,widely_held,,,
-CO-0185,Shenzhou Motors,SHMO,Autos,TWN,TW-0002,Y,19093.194,7031.215,8725.219,,,widely_held,,CH-0203:8,
-CO-0186,Halyard Motor Works,HMW,Autos,CHN,CN-0011,Y,109679.705,45717.89,51719.245,,,widely_held,,,
-CO-0187,Haixia Aero,,Aerospace,CHN,CN-0086,N,19470.762,7605.412,13525.885,CHN,100,state,,,state firm
-CO-0188,Saltgrass Aerospace,SAAE,Aerospace,USA,US-0123,Y,6826.917,4083.529,5167.776,,,widely_held,,CH-0225:14,
-CO-0189,Coalbrook Dynamics,CODY,Defense,USA,US-0006,Y,14764.576,6771.135,12263.139,,,widely_held,,CH-0152:6,
-CO-0190,Fairhaven Arms,FAAR,Defense,USA,US-0080,Y,4177.312,2418.113,3620.197,,,widely_held,,CH-0126:13,
-CO-0191,Windward Arms,WIAR,Defense,USA,US-0005,Y,7746.609,3812.294,6512.102,,,widely_held,,CH-0115:11,
-CO-0192,Hoshizora Mechatronics,HOME,Robotics,JPN,JP-0004,Y,1248.103,566.179,890.755,,,widely_held,,CH-0213:8,
-CO-0193,Faro Rojo Mechatronics,FRM,Robotics,VEN,VE-0009,Y,232.189,83.323,158.976,,,widely_held,,,
-CO-0194,Rinjani Maritime,RIMA,Shipping,IDN,ID-0036,Y,5661.788,8358.458,6686.766,,,widely_held,,CH-0253:13,
-CO-0195,Cutbank Haulage,CUHA,Logistics,CAN,CA-0012,Y,4032.629,2858.436,2487.84,,,widely_held,,CH-0187:29,
-CO-0196,Clearwater Basin Freight,CBF,Logistics,USA,US-0137,Y,17257.296,8065.258,9395.988,,,widely_held,,CH-0177:9,
-CO-0197,Fleur-de-Sel Logistics,FDSL,Logistics,FRA,FR-0003,Y,5223.906,3913.048,3285.51,,,widely_held,,,
-CO-0198,Navratna Haulage,NAHA,Logistics,IND,IN-0046,Y,12229.671,8737.073,7564.971,,,widely_held,,CH-0134:6;CH-0198:5,
-CO-0199,Jindo Air,JIAI,Airlines,KOR,KR-0004,Y,4865.86,3580.802,2864.711,,,widely_held,,CH-0247:16,
-CO-0200,Lodestar Air,LOAI,Airlines,USA,US-0072,Y,15339.819,14748.539,11798.761,,,widely_held,,CH-0217:8,
-CO-0201,Oakhurst Airlines,OAAI,Airlines,USA,US-0046,Y,11590.279,8527.196,6821.687,,,widely_held,,,
-CO-0202,Bitterroot Builders,BIBU,Construction,CAN,CA-0002,Y,35292.74,7866.887,12550.761,,,widely_held,,CH-0231:5;CO-0027:3,
-CO-0203,Baiyun Infrastructure,BAIN,Construction,CHN,CN-0086,Y,69796.176,16630.107,25142.66,CHN,67,state,,,state firm
-CO-0204,Baiyun Markets,BAMA,Retail,CHN,CN-0033,Y,73554.78,20587.083,30890.56,,,widely_held,,,
-CO-0205,Benten Department Stores,BDS,Retail,JPN,JP-0055,Y,44261.304,13944.593,19055.193,,,widely_held,,CO-0031:1,
-CO-0206,Huaxing Stores,HUAX,Retail,CHN,CN-0085,Y,153398.188,43448.642,64576.454,,,widely_held,,,
-CO-0207,Deccan Markets,DEMA,Retail,IND,IN-0003,Y,34931.557,8959.5,14425.008,,,widely_held,,CH-0180:6,
-CO-0208,Quarry Hill Mart,QHM,Retail,USA,US-0086,Y,110871.33,21015.552,43557.416,,,widely_held,,,
-CO-0209,Haetae Markets,HAMA,Retail,KOR,KR-0002,Y,25025.869,7734.755,10729.157,,,widely_held,,,
-CO-0210,Atalaya Mart,ATMA,Retail,COL,CO-0005,Y,41080.383,11494.057,17251.369,,,widely_held,,CH-0188:5;CH-0261:5,
-CO-0211,Gilded Age Retail,GAR,Retail,AUS,AU-0035,Y,35182.92,8451.194,14356.676,,,widely_held,,,
-CO-0212,Caspian Department Stores,CDS,Retail,IRN,IR-0019,Y,20131.072,5937.904,8545.325,,,widely_held,,CH-0236:9,
-CO-0213,Graystone Markets,GRMA,Retail,BGD,BD-0009,Y,27710.337,6954.516,11397.137,,,widely_held,,,
-CO-0214,Hawthorne Noodle House,HNH,Fast food,USA,US-0044,Y,15339.819,5489.912,14532.387,,,widely_held,,CH-0286:7,
-CO-0215,Northwind Foods,NOFO,Fast food,USA,US-0126,Y,11252.803,3130.369,10391.333,,,widely_held,,CH-0274:8,
-CO-0216,Kestrel Foods,KEFO,Fast food,USA,US-0018,Y,4769.638,1451.705,4441.923,,,widely_held,,CH-0263:19,
-CO-0217,Rheinwerk Foods,RHFO,Fast food,DEU,DE-0019,Y,5717.917,1767.914,5333.376,,,widely_held,,CH-0241:5,
-CO-0218,Kingsbridge Grill,KING,Fast food,USA,US-0006,Y,6610.765,2255.302,6229.71,,,widely_held,,CH-0277:15;CH-0219:6,
-CO-0219,Yenisei Jewellers,YEJE,Luxury,RUS,RU-0004,Y,4919.201,1804.521,10871.748,,,widely_held,,CH-0125:9,
-CO-0220,Maison Tsubasa,MATS,Luxury,JPN,JP-0003,Y,12080.107,4299.333,26658.165,,,widely_held,,,
-CO-0221,Sertao Jewellers,SEJE,Luxury,BRA,BR-0010,Y,6078.055,2272.734,13445.7,,,widely_held,,CO-0027:6;CO-0029:4,
-CO-0222,Maison Pont-Neuf,MPN,Luxury,FRA,FR-0001,Y,10778.315,3343.383,23637.615,,,widely_held,,,
-CO-0223,Atelier Volga-Don,AVD,Luxury,RUS,UA-0020,Y,3514.213,1272.508,7761.6,,,widely_held,,,
-CO-0224,Bluewater Laboratories,BLLA,Pharma,USA,US-0019,Y,17705.637,6333.253,36664.956,,,widely_held,,,
-CO-0225,Cerro Azul Biologics,CAB,Pharma,ESP,ES-0004,Y,6132.093,1808.007,12582.835,,,widely_held,,CH-0245:6,
-CO-0226,Shinonome Laboratories,SHLA,Pharma,JPN,JP-0006,Y,5389.157,1626.369,11069.422,,,widely_held,,CH-0262:9,
-CO-0227,Old Post Road Therapeutics,OPRT,Pharma,USA,US-0044,Y,36089.016,13757.377,74988.007,,,widely_held,,,
-CO-0228,Midorigaoka Therapeutics,MITH,Pharma,JPN,JP-0006,Y,11623.05,4490.383,24168.93,,,widely_held,,CO-0029:5,
-CO-0229,Tsubasa Biologics,TSBI,Pharma,JPN,JP-0003,Y,6925.231,2764.305,14427.1,,,widely_held,,CO-0040:4,
-CO-0230,Kaiserstuhl Therapeutics,KATH,Pharma,DEU,DE-0014,Y,5785.552,2736.414,12180.862,,,widely_held,,CH-0266:5,
-CO-0231,Northgate Hospitals,NOHO,Healthcare services,ITA,IT-0007,Y,16349.806,5688.632,13380.506,,,widely_held,,,
-CO-0232,Sidra Medical Group,SIME,Healthcare services,EGY,EG-0009,Y,10806.554,4627.744,9104.182,,,widely_held,,CH-0258:9,
-CO-0233,Caspian Hospitals,CAHO,Healthcare services,IRN,IR-0020,Y,13373.184,6385.548,11464.074,,,widely_held,,,
-CO-0234,Muskeg Health,MUHE,Healthcare services,ESP,ES-0001,Y,7020.408,3353.145,6018.438,,,widely_held,,,
-CO-0235,Marmara Health,MAHE,Healthcare services,TUR,TR-0001,Y,23821.693,11622.005,20495.392,,,widely_held,,CH-0212:5,
-CO-0236,Bayt Al Hikma Hospitals,BAHH,Healthcare services,SAU,SA-0001,Y,5636.338,2692.138,4832.043,,,widely_held,,CH-0132:6,
-CO-0237,Fujimi Medical Group,FMG,Healthcare services,JPN,JP-0042,Y,8884.196,3194.517,7301.754,,,widely_held,,,
-CO-0238,Boa Vista Health,BVH,Healthcare services,BRA,BR-0001,Y,5390.9,2312.129,4542.678,,,widely_held,,,
-CO-0239,Riverbend Health,RIHE,Healthcare services,GBR,GB-0025,Y,36815.565,19383.604,32101.36,,,widely_held,,CO-0019:4;CO-0027:1,
-CO-0240,Daxing Health,DAHE,Healthcare services,CHN,CN-0086,Y,5791.828,2487.84,4881.549,,,widely_held,,,
-CO-0241,Baiyun Consulting,BACO,Professional services,CHN,CN-0057,Y,18407.783,986.629,19140.956,,,widely_held,,CH-0279:5,
-CO-0242,Rinjani Consulting,RINC,Professional services,MYS,MY-0001,Y,10747.635,504.471,11154.14,,,widely_held,,CH-0167:9,
-CO-0243,Morava Associates,MOAS,Professional services,GBR,GI-0001,Y,17259.737,1183.955,18024.984,,,widely_held,,,
-CO-0244,Porto Novo Advisory,PNA,Professional services,BRA,BR-0053,Y,14736.336,673.906,15288.57,,,widely_held,,CO-0031:6;CO-0027:2,
-CO-0245,Ironbark Computer,N001,Computer hardware,USA,US-0086,Y,14642.554,7321.277,11714.043,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0246,Redwater Systems,N002,Computer hardware,JPN,JP-0001,Y,9761.703,4880.851,7809.362,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0247,Bluestem Machines,N003,Computer hardware,DEU,DE-0006,Y,6101.064,3050.532,4880.851,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0248,Halyard Computer,N004,Computer hardware,GBR,GB-0001,Y,3660.639,1830.319,2928.511,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0249,Meridian Media,N005,Media and publishing,FRA,FR-0001,Y,14642.554,7321.277,11714.043,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0250,Northgate Press,N006,Media and publishing,USA,US-0086,Y,9761.703,4880.851,7809.362,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0251,Stonebridge Broadcasting,N007,Media and publishing,CAN,CA-0033,Y,6101.064,3050.532,4880.851,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0252,Harrow Media,N008,Media and publishing,ITA,IT-0001,Y,3660.639,1830.319,2928.511,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0253,Calder Brands,N009,Consumer staples and tobacco,KOR,KR-0002,Y,37652.283,18826.141,30121.826,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0254,Wexford Foods,N010,Consumer staples and tobacco,USA,US-0086,Y,25101.522,12550.761,20081.217,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0255,Larkspur Tobacco,N011,Consumer staples and tobacco,USA,US-0086,Y,15688.451,7844.226,12550.761,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0256,Tidewater Brands,N012,Consumer staples and tobacco,JPN,JP-0001,Y,9413.071,4706.535,7530.457,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0257,Sable Holdings,N013,Conglomerates and trading houses,DEU,DE-0006,Y,62753.804,31376.902,50203.043,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0258,Briar Trading,N014,Conglomerates and trading houses,GBR,GB-0001,Y,41835.87,20917.935,33468.696,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0259,Kestrel Group,N015,Conglomerates and trading houses,FRA,FR-0001,Y,26147.418,13073.709,20917.935,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0260,Ashgrove Holdings,N016,Conglomerates and trading houses,USA,US-0086,Y,15688.451,7844.226,12550.761,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0261,Ironbark Machinery,N017,Capital goods,CAN,CA-0033,Y,37652.283,18826.141,30121.826,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0262,Redwater Heavy Industries,N018,Capital goods,ITA,IT-0001,Y,25101.522,12550.761,20081.217,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0263,Bluestem Electric,N019,Capital goods,KOR,KR-0002,Y,15688.451,7844.226,12550.761,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0264,Halyard Machinery,N020,Capital goods,USA,US-0086,Y,9413.071,4706.535,7530.457,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0265,Meridian Rail,N021,Rail,USA,US-0086,Y,5020.304,2510.152,4016.243,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0266,Northgate Railway,N022,Rail,JPN,JP-0001,Y,3346.87,1673.435,2677.496,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0267,Stonebridge Northern,N023,Rail,DEU,DE-0006,Y,2091.793,1045.897,1673.435,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0268,Harrow Rail,N024,Rail,GBR,GB-0001,Y,1255.076,627.538,1004.061,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0269,Calder Paper,N025,Paper and forest,FRA,FR-0001,Y,14642.554,7321.277,11714.043,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0270,Wexford Timber,N026,Paper and forest,USA,US-0086,Y,9761.703,4880.851,7809.362,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0271,Larkspur Forest,N027,Paper and forest,CAN,CA-0033,Y,6101.064,3050.532,4880.851,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0272,Tidewater Paper,N028,Paper and forest,ITA,IT-0001,Y,3660.639,1830.319,2928.511,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0273,Sable Apparel,N029,Apparel,KOR,KR-0002,Y,16734.348,8367.174,13387.478,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0274,Briar Sportswear,N030,Apparel,USA,US-0086,Y,11156.232,5578.116,8924.985,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0275,Kestrel Mills,N031,Apparel,USA,US-0086,Y,6972.645,3486.322,5578.116,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0276,Ashgrove Apparel,N032,Apparel,JPN,JP-0001,Y,4183.587,2091.793,3346.87,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0277,Ironbark Appliance,N033,Appliances,DEU,DE-0006,Y,6275.38,3137.69,5020.304,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0278,Redwater Home,N034,Appliances,GBR,GB-0001,Y,4183.587,2091.793,3346.87,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0279,Bluestem Electric Home,N035,Appliances,FRA,FR-0001,Y,2614.742,1307.371,2091.793,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0280,Halyard Appliance,N036,Appliances,USA,US-0086,Y,1568.845,784.423,1255.076,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0281,Meridian Resorts,N037,Travel and leisure,CAN,CA-0033,Y,20917.935,10458.967,16734.348,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0282,Northgate Hotels,N038,Travel and leisure,ITA,IT-0001,Y,13945.29,6972.645,11156.232,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0283,Stonebridge Cruises,N039,Travel and leisure,KOR,KR-0002,Y,8715.806,4357.903,6972.645,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0284,Harrow Resorts,N040,Travel and leisure,USA,US-0086,Y,5229.484,2614.742,4183.587,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0285,Calder Online,N041,Online services,USA,US-0086,Y,209.179,104.59,167.343,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0286,Wexford Net,N042,Online services,JPN,JP-0001,Y,139.453,69.726,111.562,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0287,Larkspur Connect,N043,Online services,DEU,DE-0006,Y,87.158,43.579,69.726,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0288,Tidewater Online,N044,Online services,GBR,GB-0001,Y,52.295,26.147,41.836,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0289,Sable Wireless,N045,Wireless,FRA,FR-0001,Y,1673.435,836.717,1338.748,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0290,Briar Cellular,N046,Wireless,USA,US-0086,Y,1115.623,557.812,892.499,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0291,Kestrel Mobile,N047,Wireless,CAN,CA-0033,Y,697.264,348.632,557.812,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0292,Ashgrove Wireless,N048,Wireless,ITA,IT-0001,Y,418.359,209.179,334.687,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0293,Ironbark Biotech,N049,Biotech,KOR,KR-0002,Y,627.538,313.769,502.03,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0294,Redwater Genetics,N050,Biotech,USA,US-0086,Y,418.359,209.179,334.687,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0295,Bluestem Therapeutics,N051,Biotech,USA,US-0086,Y,261.474,130.737,209.179,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0296,Halyard Biotech,N052,Biotech,JPN,JP-0001,Y,156.885,78.442,125.508,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0297,Meridian Medical,N053,Medical devices,DEU,DE-0006,Y,3346.87,1673.435,2677.496,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0298,Northgate Devices,N054,Medical devices,GBR,GB-0001,Y,2231.246,1115.623,1784.997,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0299,Stonebridge Surgical,N055,Medical devices,FRA,FR-0001,Y,1394.529,697.264,1115.623,,,widely_held,,,"proto (1995-rework 10, P9b)"
-CO-0300,Harrow Medical,N056,Medical devices,USA,US-0086,Y,836.717,418.359,669.374,,,widely_held,,,"proto (1995-rework 10, P9b)"
+CO-0001,Tri-State Carting,,Black market,USA,US-0088,N,9.342,1.37,8.253,CH-0105,55,majority,,CH-0003:25,
+CO-0002,Creekside Marine Services,,Black market,NGA,NG-0004,N,26.994,5.069,24.205,CH-0007,60,majority,,,
+CO-0003,Kempenlicht Systems,KESY,Semiconductors,NLD,NL-0009,Y,4530,3010.185,15029.785,CH-0008,10,class_a,,,
+CO-0004,Brabant Precision,,Robotics,NLD,NL-0009,N,313.769,146.948,225.391,,,widely_held,,,
+CO-0005,Pampa Soberana,PASO,Agriculture,ARG,AR-0001,Y,1045.897,868.617,864.434,CH-0020,43,class_a,,CH-0164:7;CH-0183:6,
+CO-0006,Ellwangen Motorenwerke,ELMO,Autos,DEU,DE-0006,Y,6275.38,3446.23,3208.288,CH-0029,21,class_a,,CH-0194:7,
+CO-0007,Reef Recovery Syndicate,,Black market,ZAF,ZA-0004,N,9.399,2.209,8.553,CH-0034,100,majority,,,
+CO-0008,Peak Fortune Properties,PFP,Real estate,HKG,HK-0002,Y,229.11,360.467,420.799,CH-0044,15,class_a,,,
+CO-0009,Kowloon Remittance,,Black market,HKG,HK-0003,N,45.822,8.592,41.24,,,widely_held,,,
+CO-0010,Vale Resorts International,VRI,Gambling,USA,US-0076,Y,1307.944,381.795,3438.023,,,widely_held,,CH-0098:45,
+CO-0011,Chu Pacific Developments,,Real estate,CAN,CA-0026,N,663.431,675.705,1108.262,CH-0102,55,majority,,,
+CO-0012,Halcyon Search,HASE,Ads,USA,US-0019,Y,18498.06,3785.251,65231.509,,,widely_held,,CO-0017:3,
+CO-0013,China Unified Mobile,CUM,Telecom,CHN,CN-0001,Y,7382,11098.679,18676.786,CHN,72,state,,,
+CO-0014,People's Commerce Bank of China,PCBO,Banking,CHN,CN-0001,Y,7382,11775.186,16321.86,CHN,70,state,,CO-0019:5,
+CO-0015,China Central Grid Corporation,,Power utilities,CHN,CN-0001,N,7382,13048.334,10438.685,CHN,100,state,,,
+CO-0016,China Rail and Bridge Engineering,CRAB,Construction,CHN,CN-0001,Y,7382,1232.116,2501.178,CHN,60,state,,CO-0017:4,
+CO-0017,Zhonghua Reserve Investment,,Asset management,CHN,CN-0001,N,1372.104,1135.667,2717.892,CHN,100,state,,,
+CO-0018,Norwegian Petroleum Reserve Fund,,Asset management,NOR,NO-0001,N,1511,1423.032,3044.692,NOR,100,state,,,
+CO-0019,Saudi Public Wealth Fund,,Asset management,SAU,SA-0001,N,1433,1550.07,2947.734,SAU,100,state,,,
+CO-0020,Gasdotti Italiani Nazionali,GIN,Gas,ITA,IT-0007,Y,11779.61,22757.592,19072.355,ITA,30,state,,,
+CO-0021,Lion City Investment Holdings,,Asset management,SGP,SG-0001,N,878,917.221,1796.281,SGP,100,state,,,
+CO-0022,Rossiya Defense Industries,,Defense,RUS,RU-0001,N,3955,1895.421,3309.481,RUS,100,state,,,
+CO-0023,Orinoco Gold Trading,,Black market,VEN,VE-0001,N,10.421,2.348,9.474,CH-0053,74,majority,,,
+CO-0024,Inmobiliaria Meseta,INME,Real estate,ESP,ES-0001,Y,1490.403,1507.66,2486.619,,,widely_held,,,
+CO-0025,Steppe Commercial Bank,SCB,Banking,KAZ,KZ-0002,Y,204,294.496,441.744,CH-0063,31,class_a,,,
+CO-0026,Simba Pay,SIPA,Banking,KEN,KE-0001,Y,90,137.731,197.256,CH-0079,31,class_a,,,
+CO-0027,Lagoon Cement,LACE,Construction,NGA,NG-0002,Y,1409,294.925,495.316,CH-0080,29,class_a,,CH-0272:10,
+CO-0028,Naniwa Robotics,NARO,Robotics,JPN,JP-0037,Y,4180.972,1941.707,2997.017,CH-0095,30,class_a,,,
+CO-0029,Wildrose Gas Transmission,WGT,Gas,AUS,AU-0035,Y,3268.239,3822.742,4544.252,,,widely_held,,CH-0158:11,
+CO-0030,Ironbark Polymers,IRPO,Chemicals,USA,US-0123,Y,16322.514,12947.396,13310.506,,,widely_held,,CO-0017:6;CH-0145:5,
+CO-0031,Coalbrook Mechatronics,COME,Robotics,USA,US-0064,Y,574.561,279.962,415.739,,,widely_held,,CH-0142:7,
+CO-0032,Gallowglass Aero,GAAE,Aerospace,USA,US-0140,Y,7532.51,3154.947,5296.549,,,widely_held,,,
+CO-0033,Old Post Road Wireless,OPRW,Telecom,USA,US-0119,Y,34925.832,39218.379,84376.379,,,widely_held,,CO-0018:2,
+CO-0034,Big Sky Airways,BSA,Airlines,USA,US-0039,Y,8364.922,8581.979,6865.458,,,widely_held,,,
+CO-0035,Foxhollow Trust Bank,FTB,Banking,USA,US-0031,Y,24602.108,43042.245,55535.91,,,widely_held,,CO-0018:4,
+CO-0036,Fenmore Properties,FEPR,Real estate,USA,US-0033,Y,20553.4,26048.009,35869.732,,,widely_held,,,
+CO-0037,Granite Falls Lines,GFL,Shipping,CAN,CA-0026,Y,4041.954,5224.852,4179.948,,,widely_held,,,
+CO-0038,Ashgrove Networks,ASNE,Telecom,CAN,CA-0010,Y,6060,8271.287,15080.119,,,widely_held,,,
+CO-0039,Saltgrass Logic,SALO,Software,CAN,CA-0010,Y,3072.018,459.758,9008.4,,,widely_held,,CH-0219:9,
+CO-0040,Laguna Verde Builders,LVB,Construction,MEX,MX-0013,Y,3802,810.066,1340.841,,,widely_held,,,
+CO-0041,Puerto Viejo Systems,PVS,Software,MEX,MX-0008,Y,3802,499.119,11128.082,,,widely_held,,,
+CO-0042,Kalahari Grain,KAGR,Agriculture,ZAF,ZA-0006,Y,1717,1955.242,1578.143,,,widely_held,,,
+CO-0043,Himgiri Code,HICO,Software,IND,IN-0002,Y,2190.127,280.23,6408.103,,,widely_held,,CO-0021:6;CH-0168:5,
+CO-0044,Narmada Code,NACO,Software,IND,IN-0030,Y,1657.157,196.669,4844.073,,,widely_held,,CH-0250:7,
+CO-0045,Shinonome Therapeutics,SHTH,Pharma,JPN,JP-0038,Y,6951.03,2127.354,14286.426,,,widely_held,,,
+CO-0046,Benten Maritime,BEMA,Shipping,JPN,JP-0040,Y,16591.583,17191.405,13753.019,,,widely_held,,,
+CO-0047,Halyard Semiconductor,HALS,Semiconductors,TWN,TW-0016,Y,2791,1973.31,9295.722,,,widely_held,,,
+CO-0048,Bitterroot Shipyards,BISH,Shipping,USA,US-0010,Y,4367.598,6326.087,5060.808,,,widely_held,,CH-0246:18,
+CO-0049,Wolf River Foundry,WRF,Semiconductors,USA,US-0006,Y,5118.419,3506.846,17013.855,,,widely_held,,CO-0018:4,
+CO-0050,Kapadokya Markets,KAMA,Retail,TUR,TR-0002,Y,2347,475.036,931.102,,,widely_held,,CO-0021:3,
+CO-0051,Red Mesa Automotive,RMA,Autos,JPN,JP-0010,Y,19391.448,8954.968,9405.749,,,widely_held,,CH-0289:8,
+CO-0052,Fujimi Robot Works,FRW,Robotics,JPN,JP-0010,Y,428.295,158.453,294.943,,,widely_held,,CH-0185:20,
+CO-0053,Tamarack Estates,TAES,Real estate,GBR,GB-0001,Y,575.555,842.39,1038.164,CH-0027,34,class_a,,,
+CO-0054,Larkspur Farms,LAFA,Agriculture,CUB,CU-0008,Y,11.45,10.715,9.839,CH-0056,24,class_a,,,
+CO-0055,Cerro Azul Construction,CAC,Construction,ESP,ES-0004,Y,6142,1111.355,2106.868,CH-0059,24,class_a,,,
+CO-0056,Fairhaven Media Exchange,FME,Ads,USA,US-0086,Y,8709.348,2073.091,30799.893,,,widely_held,,CO-0018:1,
+CO-0057,Kazaguruma Media Exchange,KME,Ads,JPN,JP-0002,Y,14351.272,2349.607,50432.095,,,widely_held,,,
+CO-0058,Rub Al Khali Media Exchange,RAKM,Ads,DZA,DZ-0003,Y,418,93.195,1476.337,,,widely_held,,CO-0019:1,
+CO-0059,Cielo Abierto Ad Network,CAAN,Ads,MEX,MX-0048,Y,3802,611.472,13357.302,,,widely_held,,,
+CO-0060,Gallowglass Electronics,GAEL,Consumer electronics,GBR,GB-0040,Y,13510.2,2703.885,13294.723,,,widely_held,,CO-0017:6,
+CO-0061,Hoshizora Devices,HODE,Consumer electronics,JPN,JP-0006,Y,12536.641,2904.455,12455.061,,,widely_held,,CH-0244:8,
+CO-0062,Ironbark Mobile,IRMO,Telecom,DEU,DE-0032,Y,11532.057,15716.69,28689.993,,,widely_held,,CH-0159:5;CO-0018:3,
+CO-0063,Hoshizora Mobile,HOMO,Telecom,JPN,JP-0038,Y,15506.988,22441.806,38971.681,,,widely_held,,,
+CO-0064,Atalaya Wireless,ATWI,Telecom,COL,CO-0006,Y,925,1350.415,2328.211,,,widely_held,,CH-0254:6,
+CO-0065,Val d'Orcia Studios,VADO,Gaming,ITA,IT-0001,Y,6660.27,1483.082,17368.684,,,widely_held,,CH-0294:8,
+CO-0066,Huangshan Studios,HUST,Gaming,TWN,TW-0004,Y,1732.998,502.718,4554.269,,,widely_held,,CH-0267:18;CH-0244:11,
+CO-0067,Fujimi Play,FUPL,Gaming,JPN,JP-0001,Y,1356.005,256.245,3522.58,,,widely_held,,CH-0273:21;CH-0129:5,
+CO-0068,Sierra Alta Interactive,SAI,Gaming,MEX,MX-0001,Y,1289.861,311.758,3371.062,,,widely_held,,,
+CO-0069,Crossfield Sportsbook,CRSP,Gambling,USA,US-0140,Y,8221.36,2178.038,21544.012,,,widely_held,,,
+CO-0070,Quarry Hill Gaming Holdings,QHGH,Gambling,GBR,GB-0002,Y,7546.218,2337.986,19876.178,,,widely_held,,CH-0296:6,
+CO-0071,Mistral Bet,MIBE,Gambling,FRA,FR-0001,Y,2942.63,731.082,7696.754,,,widely_held,,CH-0163:5,
+CO-0072,Ponte Vecchio Crude,PVC,Oil,ITA,IT-0003,Y,11779.61,15036.55,18425.807,ITA,67,state,,,
+CO-0073,Hawthorne Drilling,HADR,Oil,USA,US-0011,Y,12853.038,22536.18,21943.557,,,widely_held,,,
+CO-0074,Driftwood Energy,DREN,Oil,USA,US-0011,Y,12486.191,15184.914,19304.937,,,widely_held,,,
+CO-0075,Baiyun Midstream,BAMI,Gas,CHN,CN-0007,Y,2433.571,3420.991,3556.004,CHN,51,state,,,
+CO-0076,Oakhurst Gas,OAGA,Gas,CAN,CA-0001,Y,6060,8724.263,8916.586,,,widely_held,,,
+CO-0077,Old Post Road Utilities,OPRU,Power utilities,ESP,ES-0003,Y,6142,11962.052,9569.57,,,widely_held,,CH-0239:8,
+CO-0078,Elbstern Electric,ELEL,Power utilities,DEU,DE-0028,Y,10948.97,17842.475,14273.876,,,widely_held,,,
+CO-0079,Coldwater Energy Grid,CEG,Power utilities,USA,US-0122,Y,8194.89,11968.93,9575.082,,,widely_held,,CH-0133:9,
+CO-0080,Chateaurouge Electric,CHEL,Power utilities,FRA,FR-0002,Y,8570.601,18622.714,14898.276,FRA,70,state,,CH-0234:7,
+CO-0081,Kittiwake Mining,KIMI,Mining,CAN,CA-0001,Y,4248.281,6129.109,6254.829,,,widely_held,,CH-0255:12,
+CO-0082,Tidewater Ore,TIOR,Mining,USA,US-0088,Y,21923.627,36189.243,33646.227,,,widely_held,,,
+CO-0083,Ipe Amarelo Mining,IAM,Mining,BRA,BR-0045,Y,7693,12323.743,11694.006,,,widely_held,,CH-0164:6;CO-0019:3,
+CO-0084,Sandstone Minerals,SAMI,Mining,CHN,CN-0080,Y,2332.501,3118.386,3360.127,CHN,60,state,,CO-0018:4,
+CO-0085,Cumbre Alloys,CUAL,Metals,ESP,ES-0028,Y,5481.545,7001.756,5899.381,,,widely_held,,CH-0265:8,
+CO-0086,Oakhurst Petrochemical,OAPE,Chemicals,USA,US-0010,Y,8115.479,5889.795,6453.768,,,widely_held,,CH-0187:12,
+CO-0087,Grand Large Polymers,GLP,Chemicals,FRA,FR-0003,Y,9009.355,5078.875,6726.685,,,widely_held,,CH-0160:10;CH-0153:5,
+CO-0088,Oakhurst Polymers,OAPO,Chemicals,USA,US-0020,Y,9079.62,8604.712,7824.929,,,widely_held,,,
+CO-0089,Kaiserstuhl Harvest,KAHA,Agriculture,DEU,DE-0019,Y,25419.474,26226.384,22547.442,,,widely_held,,CO-0017:6;CO-0018:1;CO-0021:1,
+CO-0090,Jinqiao Automotive,JIAU,Autos,CHN,CN-0045,Y,7382,3340.305,3559.966,,,widely_held,,,
+CO-0091,Halyard Motor Works,HMW,Autos,CHN,CN-0011,Y,7382,3077.046,3480.967,,,widely_held,,,
+CO-0092,Clearwater Basin Aerospace,CBA,Aerospace,USA,US-0123,Y,3922.897,2499.107,3015.122,,,widely_held,,CH-0173:11,
+CO-0093,Big Sky Aerospace,BISK,Aerospace,USA,US-0136,Y,3964.938,1630.881,2779.069,,,widely_held,,CH-0148:10,
+CO-0094,Saltgrass Aerospace,SAAE,Aerospace,USA,US-0123,Y,6098.132,3647.606,4616.107,,,widely_held,,CH-0225:14,
+CO-0095,Granite Peak Dynamics,GPD,Defense,GBR,GB-0004,Y,3924.88,1578.894,3193.554,,,widely_held,,,
+CO-0096,Fairhaven Arms,FAAR,Defense,USA,US-0080,Y,3731.376,2159.975,3233.735,,,widely_held,,CH-0126:13,
+CO-0097,Hoshizora Mechatronics,HOME,Robotics,JPN,JP-0004,Y,1872.155,849.268,1336.133,,,widely_held,,CH-0213:8,
+CO-0098,Rinjani Maritime,RIMA,Shipping,IDN,ID-0036,Y,2024,2988.017,2390.414,,,widely_held,,CH-0253:13,
+CO-0099,Cutbank Haulage,CUHA,Logistics,CAN,CA-0012,Y,3836.954,2719.736,2367.122,,,widely_held,,CH-0187:29,
+CO-0100,Ipe Amarelo Express,IAE,Logistics,BRA,BR-0003,Y,4485.721,2482.463,2558.148,,,widely_held,,,
+CO-0101,Clearwater Basin Freight,CBF,Logistics,USA,US-0137,Y,15415.05,7204.278,8392.95,,,widely_held,,CH-0177:9,
+CO-0102,Fleur-de-Sel Logistics,FDSL,Logistics,FRA,FR-0003,Y,7835.858,5869.572,4928.265,,,widely_held,,,
+CO-0103,Jindo Air,JIAI,Airlines,KOR,KR-0004,Y,4750.719,3496.069,2796.923,,,widely_held,,CH-0247:16,
+CO-0104,Oakhurst Airlines,OAAI,Airlines,USA,US-0046,Y,10352.997,7616.903,6093.46,,,widely_held,,,
+CO-0105,Baiyun Infrastructure,BAIN,Construction,CHN,CN-0086,Y,7382,1758.885,2659.216,CHN,67,state,,,
+CO-0106,Baiyun Markets,BAMA,Retail,CHN,CN-0033,Y,7382,2066.131,3100.194,,,widely_held,,,
+CO-0107,Huaxing Stores,HUAX,Retail,CHN,CN-0085,Y,7382,2090.884,3107.621,,,widely_held,,,
+CO-0108,Kestrel Foods,KEFO,Fast food,USA,US-0018,Y,4260.471,1296.733,3967.74,,,widely_held,,CH-0263:19,
+CO-0109,Rheinwerk Foods,RHFO,Fast food,DEU,DE-0019,Y,8576.876,2651.871,8000.064,,,widely_held,,CH-0241:5,
+CO-0110,Kingsbridge Grill,KING,Fast food,USA,US-0006,Y,5905.054,2014.545,5564.677,,,widely_held,,CH-0277:15;CH-0219:6,
+CO-0111,Rijnmond Noodle House,RNH,Fast food,NLD,NL-0009,Y,4530,1233.035,4175.285,,,widely_held,,,
+CO-0112,Yenisei Jewellers,YEJE,Luxury,RUS,RU-0004,Y,3955,1450.821,8740.802,,,widely_held,,CH-0125:9,
+CO-0113,Maison Tsubasa,MATS,Luxury,JPN,JP-0003,Y,18120.161,6448.999,39987.247,,,widely_held,,,
+CO-0114,Sertao Jewellers,SEJE,Luxury,BRA,BR-0010,Y,6944.682,2596.787,15362.828,,,widely_held,,CO-0018:6,
+CO-0115,Atelier Volga-Don,AVD,Luxury,RUS,UA-0020,Y,3182.417,1152.363,7028.784,,,widely_held,,,
+CO-0116,Bluewater Laboratories,BLLA,Pharma,USA,US-0019,Y,15815.53,5657.168,32750.909,,,widely_held,,,
+CO-0117,Cerro Azul Biologics,CAB,Pharma,ESP,ES-0004,Y,6142,1810.928,12603.165,,,widely_held,,CH-0245:6,
+CO-0118,Shinonome Laboratories,SHLA,Pharma,JPN,JP-0006,Y,8083.736,2439.554,16604.134,,,widely_held,,CH-0262:9,
+CO-0119,Midorigaoka Therapeutics,MITH,Pharma,JPN,JP-0006,Y,17434.576,6735.575,36253.396,,,widely_held,,,
+CO-0120,Tsubasa Biologics,TSBI,Pharma,JPN,JP-0003,Y,10387.846,4146.458,21640.649,,,widely_held,,CO-0021:4,
+CO-0121,Kaiserstuhl Therapeutics,KATH,Pharma,DEU,DE-0014,Y,8678.328,4104.622,18271.293,,,widely_held,,CH-0266:5,
+CO-0122,Northgate Hospitals,NOHO,Healthcare services,ITA,IT-0007,Y,11779.61,4098.512,9640.306,,,widely_held,,,
+CO-0123,Muskeg Health,MUHE,Healthcare services,ESP,ES-0001,Y,6142,2933.593,5265.399,,,widely_held,,,
+CO-0124,Fujimi Medical Group,FMG,Healthcare services,JPN,JP-0042,Y,13326.293,4791.776,10952.631,,,widely_held,,,
+CO-0125,Boa Vista Health,BVH,Healthcare services,BRA,BR-0001,Y,6159.551,2641.799,5190.387,,,widely_held,,,
+CO-0126,Riverbend Health,RIHE,Healthcare services,GBR,GB-0025,Y,13510.2,7113.197,11780.229,,,widely_held,,CO-0017:4;CO-0018:1,
+CO-0127,Baiyun Consulting,BACO,Professional services,CHN,CN-0057,Y,2666.928,142.943,2773.15,,,widely_held,,CH-0279:5,
+CO-0128,Rinjani Consulting,RINC,Professional services,MYS,MY-0001,Y,887,41.634,920.549,,,widely_held,,CH-0167:9,
+CO-0129,Morava Associates,MOAS,Professional services,GBR,GI-0001,Y,13510.2,926.751,14109.204,,,widely_held,,,
+CO-0130,Porto Novo Advisory,PNA,Professional services,BRA,BR-0053,Y,7693,351.808,7981.29,,,widely_held,,CO-0019:6;CO-0018:2,
+CO-0131,Meridian Media,N005,Media and publishing,FRA,FR-0001,Y,15952.76,7976.38,12762.208,,,widely_held,,,
+CO-0132,Northgate Press,N006,Media and publishing,USA,US-0086,Y,28000,14000,22400,,,widely_held,,,
+CO-0133,Meridian Rail,N021,Rail,USA,US-0086,Y,14400,7200,11520,,,widely_held,,,
+CO-0134,Northgate Railway,N022,Rail,JPN,JP-0001,Y,9600,4800,7680,,,widely_held,,,
+CO-0135,Stonebridge Northern,N023,Rail,DEU,DE-0006,Y,6000,3000,4800,,,widely_held,,,
+CO-0136,Harrow Rail,N024,Rail,GBR,GB-0001,Y,3600,1800,2880,,,widely_held,,,
+CO-0137,Calder Paper,N025,Paper and forest,FRA,FR-0001,Y,15952.76,7976.38,12762.208,,,widely_held,,,
+CO-0138,Wexford Timber,N026,Paper and forest,USA,US-0086,Y,28000,14000,22400,,,widely_held,,,
+CO-0139,Larkspur Forest,N027,Paper and forest,CAN,CA-0033,Y,6060,3030,4848,,,widely_held,,,
+CO-0140,Tidewater Paper,N028,Paper and forest,ITA,IT-0001,Y,10500,5250,8400,,,widely_held,,,
+CO-0141,Sable Apparel,N029,Apparel,KOR,KR-0002,Y,5863,2931.5,4690.4,,,widely_held,,,
+CO-0142,Briar Sportswear,N030,Apparel,USA,US-0086,Y,32000,16000,25600,,,widely_held,,,
+CO-0143,Kestrel Mills,N031,Apparel,USA,US-0086,Y,20000,10000,16000,,,widely_held,,,
+CO-0144,Ironbark Appliance,N033,Appliances,DEU,DE-0006,Y,18000,9000,14400,,,widely_held,,,
+CO-0145,Redwater Home,N034,Appliances,GBR,GB-0001,Y,12000,6000,9600,,,widely_held,,,
+CO-0146,Bluestem Electric Home,N035,Appliances,FRA,FR-0001,Y,7500,3750,6000,,,widely_held,,,
+CO-0147,Halyard Appliance,N036,Appliances,USA,US-0086,Y,4500,2250,3600,,,widely_held,,,
+CO-0148,Meridian Resorts,N037,Travel and leisure,CAN,CA-0033,Y,6060,3030,4848,,,widely_held,,,
+CO-0149,Northgate Hotels,N038,Travel and leisure,ITA,IT-0001,Y,11779.61,5889.805,9423.688,,,widely_held,,,
+CO-0150,Stonebridge Cruises,N039,Travel and leisure,KOR,KR-0002,Y,5863,2931.5,4690.4,,,widely_held,,,
+CO-0151,Harrow Resorts,N040,Travel and leisure,USA,US-0086,Y,15000,7500,12000,,,widely_held,,,
+CO-0152,Calder Online,N041,Online services,USA,US-0086,Y,600,300,480,,,widely_held,,,
+CO-0153,Wexford Net,N042,Online services,JPN,JP-0001,Y,400,200,320,,,widely_held,,,
+CO-0154,Larkspur Connect,N043,Online services,DEU,DE-0006,Y,250,125,200,,,widely_held,,,
+CO-0155,Tidewater Online,N044,Online services,GBR,GB-0001,Y,150,75,120,,,widely_held,,,
+CO-0156,Sable Wireless,N045,Wireless,FRA,FR-0001,Y,4800,2400,3840,,,widely_held,,,
+CO-0157,Briar Cellular,N046,Wireless,USA,US-0086,Y,3200,1600,2560,,,widely_held,,,
+CO-0158,Kestrel Mobile,N047,Wireless,CAN,CA-0033,Y,2000,1000,1600,,,widely_held,,,
+CO-0159,Ashgrove Wireless,N048,Wireless,ITA,IT-0001,Y,1200,600,960,,,widely_held,,,
+CO-0160,Ironbark Biotech,N049,Biotech,KOR,KR-0002,Y,1800,900,1440,,,widely_held,,,
+CO-0161,Redwater Genetics,N050,Biotech,USA,US-0086,Y,1200,600,960,,,widely_held,,,
+CO-0162,Bluestem Therapeutics,N051,Biotech,USA,US-0086,Y,750,375,600,,,widely_held,,,
+CO-0163,Halyard Biotech,N052,Biotech,JPN,JP-0001,Y,450,225,360,,,widely_held,,,
+CO-0164,Meridian Medical,N053,Medical devices,DEU,DE-0006,Y,9600,4800,7680,,,widely_held,,,
+CO-0165,Northgate Devices,N054,Medical devices,GBR,GB-0001,Y,6400,3200,5120,,,widely_held,,,
+CO-0166,Stonebridge Surgical,N055,Medical devices,FRA,FR-0001,Y,4000,2000,3200,,,widely_held,,,
+CO-0167,Wolf River Motor Works,WOLF,Autos,USA,US-0066,Y,154951,70835.317,74941.727,,,widely_held,,,
+CO-0168,Northwind Motors,NORT,Autos,USA,US-0066,Y,128439,58715.447,62119.254,,,widely_held,,,
+CO-0169,Bayou Standard Oil,BAYO,Oil,USA,US-0118,Y,101459,161870.306,168410.193,,,widely_held,,,
+CO-0170,Quarry Hill Mart,QUAR,Retail,USA,US-0008,Y,83412,22322.64,34715.28,,,widely_held,,,
+CO-0171,Saltgrass Networks,SALT,Telecom,USA,US-0091,Y,75094,101241.27,186492.13,,,widely_held,,,
+CO-0172,Wexford Electric,WEXF,Capital goods,USA,US-0086,Y,64687,32343.5,51749.6,,,widely_held,,,
+CO-0173,Graystone Machines,GRAY,Computer hardware,USA,US-0091,Y,64052,32026,51241.6,,,widely_held,,,
+CO-0174,Fairhaven Oil,FAIR,Oil,USA,US-0030,Y,59621,95120.881,98963.957,,,widely_held,,,
+CO-0175,Lakeshore Stores,LAKE,Retail,USA,US-0044,Y,54559,14601.028,22706.936,,,widely_held,,,
+CO-0176,Ironbark Tobacco,IRON,Consumer staples and tobacco,USA,US-0091,Y,53776,26888,43020.8,,,widely_held,,,
+CO-0177,Great Lakes Motor,GREA,Autos,USA,US-0066,Y,52224,23874.022,25258.028,,,widely_held,,,
+CO-0178,Chinook Assurance,,Insurance,USA,US-0044,N,38850,15765.054,22677.972,,,widely_held,,,
+CO-0179,Lodestar Insurance,,Insurance,USA,US-0080,N,36946,14992.425,21566.548,,,widely_held,,,
+CO-0180,Highmoor Chemicals,HIGH,Chemicals,USA,US-0086,Y,34968,28062.543,28610.437,,,widely_held,,,
+CO-0181,Kingsbridge Stores,KING,Retail,USA,US-0066,Y,34313,9182.812,14280.744,,,widely_held,,,
+CO-0182,Gulf Star Oil,GULF,Oil,USA,US-0091,Y,33768,53874.338,56050.97,,,widely_held,,,
+CO-0183,Bridgeport Bank,BRID,Banking,USA,US-0091,Y,31650,48184.627,69291.09,,,widely_held,,,
+CO-0184,Sierra Standard Oil,SIER,Oil,USA,US-0018,Y,31064,49560.307,51562.643,,,widely_held,,,
+CO-0185,Kestrel Brands,KEST,Consumer staples and tobacco,USA,US-0101,Y,30296,15148,24236.8,,,widely_held,,,
+CO-0186,Northwind Foods,NORS,Consumer staples and tobacco,USA,US-0091,Y,28472,14236,22777.6,,,widely_held,,,
+CO-0187,Prairie Standard Oil,PRAI,Oil,USA,US-0044,Y,26953,43001.511,44738.859,,,widely_held,,,
+CO-0188,Copperline Systems,COPP,Computer hardware,USA,US-0018,Y,24991,12495.5,19992.8,,,widely_held,,,
+CO-0189,Harrow Consolidated,HARR,Capital goods,USA,US-0091,Y,23767,11883.5,19013.6,,,widely_held,,,
+CO-0190,Waverly Grain,WAVE,Agriculture,USA,US-0086,Y,23512,23938.616,20740.96,,,widely_held,,,
+CO-0191,Buckeye Markets,BUCK,Retail,USA,US-0101,Y,22959,6144.266,9555.317,,,widely_held,,,
+CO-0192,Hollowell Re,HOLL,Insurance,USA,US-0091,Y,22386,9084.08,13067.415,,,widely_held,,,
+CO-0193,Empire Mutual,,Insurance,USA,US-0091,N,22258,9032.138,12992.698,,,widely_held,,,
+CO-0194,Juniper Ridge Devices,JUNI,Consumer electronics,USA,US-0044,Y,22245,5551.571,22230.835,,,widely_held,,,
+CO-0195,Steelhead Aero,STEE,Aerospace,USA,US-0140,Y,21924,11042.015,15972.914,,,widely_held,,,
+CO-0196,Twin Rivers Stores,TWIN,Retail,USA,US-0069,Y,21311,5703.23,8869.435,,,widely_held,,,
+CO-0197,Sakuragi Shoji,SAKU,Conglomerates and trading houses,JPN,JP-0001,Y,175836,87918,140668.8,,,widely_held,,,
+CO-0198,Kitahama Bussan,KITA,Conglomerates and trading houses,JPN,JP-0001,Y,171491,85745.5,137192.8,,,widely_held,,,
+CO-0199,Naniwa Shoji,NANI,Conglomerates and trading houses,JPN,JP-0037,Y,167825,83912.5,134260,,,widely_held,,,
+CO-0200,Izumi Shoji,IZUM,Conglomerates and trading houses,JPN,JP-0037,Y,162476,81238,129980.8,,,widely_held,,,
+CO-0201,Marunouchi Trading,MARU,Conglomerates and trading houses,JPN,JP-0001,Y,150187,75093.5,120149.6,,,widely_held,,,
+CO-0202,Shinonome Trading,SHIN,Conglomerates and trading houses,JPN,JP-0037,Y,100876,50438,80700.8,,,widely_held,,,
+CO-0203,Oranjewoud Petroleum,ORAN,Oil,NLD,NL-0005,Y,94881,151375.595,157491.475,,,widely_held,,,
+CO-0204,Asahina Trading,ASAH,Conglomerates and trading houses,JPN,JP-0001,Y,69902,34951,55921.6,,,widely_held,,,
+CO-0205,Fujimi Motors,FUJI,Autos,JPN,JP-0034,Y,88159,40301.584,42637.916,,,widely_held,,,
+CO-0206,Hoshizora Electric,HOSH,Capital goods,JPN,JP-0001,Y,76431,38215.5,61144.8,,,widely_held,,,
+CO-0207,Shiranami Mutual,,Insurance,JPN,JP-0037,N,75350,30576.495,43984.176,,,widely_held,,,
+CO-0208,Kanto Telephone,KANT,Telecom,JPN,JP-0001,Y,70844,95511.446,175937.471,JPN,65,state,,,
+CO-0209,Yamabuki Electric,YAMA,Consumer electronics,JPN,JP-0037,Y,69947,17456.315,69902.46,,,widely_held,,,
+CO-0210,Kaiserstuhl Motoren,KAIS,Autos,DEU,DE-0001,Y,64169,29334.638,31035.203,,,widely_held,,,
+CO-0211,Hinode Motors,HINO,Autos,JPN,JP-0001,Y,58732,26849.132,28405.609,,,widely_held,,,
+CO-0212,Tokiwa Trading,TOKI,Conglomerates and trading houses,JPN,JP-0037,Y,56875,28437.5,45500,,,widely_held,,,
+CO-0213,Kurama Trading,KURA,Conglomerates and trading houses,JPN,JP-0001,Y,55856,27928,44684.8,,,widely_held,,,
+CO-0214,Daiichi Sakura Mutual,,Insurance,JPN,JP-0001,N,53000,21507.024,30937.775,,,widely_held,,,
+CO-0215,Kestrel Group,KESP,Conglomerates and trading houses,KOR,KR-0001,Y,51345,25672.5,41076,,,widely_held,,,
+CO-0216,Rheinwerk Elektro,RHEI,Capital goods,DEU,DE-0006,Y,51055,25527.5,40844,,,widely_held,,,
+CO-0217,Spreeufer Allgemeine,SPRE,Insurance,DEU,DE-0006,Y,51000,20695.438,29770.311,,,widely_held,,,
+CO-0218,Brandberg Motorenwerke,BRAN,Autos,DEU,DE-0035,Y,49350,22560.183,23868.024,,,widely_held,,,
+CO-0219,Gallowglass Petroleum,GALL,Oil,GBR,GB-0001,Y,50737,80947.119,84217.546,,,widely_held,,,
+CO-0220,Azuma Electric,AZUM,Capital goods,JPN,JP-0001,Y,48228,24114,38582.4,,,widely_held,,,
+CO-0221,Hollandse Kust Brands,HOLS,Consumer staples and tobacco,NLD,NL-0004,Y,45451,22725.5,36360.8,,,widely_held,,,
+CO-0222,Kanto Denryoku,KANU,Power utilities,JPN,JP-0001,Y,45000,84543.931,67641.474,,,widely_held,,,
+CO-0223,Kazaguruma Bank,KAZA,Banking,JPN,JP-0001,Y,44000,66986.527,96328.845,,,widely_held,,,
+CO-0224,Brandberg Markets,,Retail,DEU,DE-0028,N,48000,12845.714,19977.143,,,widely_held,,,
+CO-0225,Vandergriff Elevators,,Agriculture,USA,US-0069,N,47000,47852.796,41460.749,,,widely_held,,,
+CO-0226,Kaminari Electric,KAMI,Computer hardware,JPN,JP-0001,Y,41097,20548.5,32877.6,,,widely_held,,,
+CO-0227,Monte Rosa Motors,MONT,Autos,ITA,IT-0009,Y,40851,18674.894,19757.501,,,widely_held,,,
+CO-0228,Kazaguruma Electronics,KAZS,Consumer electronics,JPN,JP-0001,Y,40101,10007.801,40075.465,,,widely_held,,,
+CO-0229,Akatsuki Motors,AKAT,Autos,JPN,JP-0001,Y,39927,18252.491,19310.61,,,widely_held,,,
+CO-0230,Alpenglut Foods,ALPE,Consumer staples and tobacco,CHE,CH-0004,Y,38000,19000,30400,,,widely_held,,,
+CO-0231,Mainblick Bank,MAIN,Banking,DEU,DE-0019,Y,38000,57852.001,83193.094,,,widely_held,,,
+CO-0232,Spreeufer Telekom,SPRM,Telecom,DEU,DE-0028,Y,37000,49883.173,91887.618,DEU,100,state,,,
+CO-0233,Grand Large Petroles,GRAN,Oil,FRA,FR-0001,Y,37016,59056.281,61442.274,,,widely_held,,,
+CO-0234,Fujimi Computing,FUJG,Computer hardware,JPN,JP-0001,Y,36000,18000,28800,,,widely_held,,,
+CO-0235,Peak Fortune Bank,PEAK,Banking,GBR,GB-0001,Y,34000,51762.317,74435.926,,,widely_held,,,
+CO-0236,Reseau Atomique de France,,Power utilities,FRA,FR-0001,N,34000,63877.637,51106.891,FRA,100,state,,,
+CO-0237,Kempenlicht Electronics,KEMP,Consumer electronics,NLD,NL-0001,Y,33517,8364.666,33495.658,,,widely_held,,,
+CO-0238,Valmont Automobiles,VALM,Autos,FRA,FR-0001,Y,32188,14714.633,15567.659,FRA,50,state,,,
+CO-0239,Energia Adriatica,ENER,Oil,ITA,IT-0007,Y,30000,47862.774,49796.527,ITA,80,state,,,
+CO-0240,Hoshizora Steel,HOSL,Metals,JPN,JP-0001,Y,30000,33969.835,30980.767,,,widely_held,,,
+CO-0241,Rheinwerk Chemie,RHEE,Chemicals,DEU,DE-0019,Y,30000,24075.62,24545.674,,,widely_held,,,
+CO-0242,Helvetia Brown,HELV,Capital goods,CHE,CH-0001,Y,29718,14859,23774.4,,,widely_held,,,
+CO-0243,Mainblick Chemie,MAIE,Chemicals,DEU,DE-0028,Y,28000,22470.579,22909.295,,,widely_held,,,
+CO-0244,Kurpfalz Chemie,KURP,Chemicals,DEU,DE-0003,Y,28000,22470.579,22909.295,,,widely_held,,,
+CO-0245,Petroleos de la Nacion Mexicana,,Oil,MEX,MX-0001,N,28000,44671.922,46476.758,MEX,100,state,,,
+CO-0246,Energia Tirrenica,,Power utilities,ITA,IT-0007,N,27000,50726.358,40584.884,ITA,100,state,,,
+CO-0247,Benten Department Stores,BENT,Retail,JPN,JP-0037,Y,28000,7493.333,11653.333,,,widely_held,,,
+CO-0248,Grand Large Marche,GRAE,Retail,FRA,FR-0001,Y,30000,8028.571,12485.714,,,widely_held,,,
+CO-0249,Tricolore Telecom,,Telecom,FRA,FR-0001,N,25000,33704.847,62086.228,FRA,100,state,,,
+CO-0250,Coalbrook Dynamics,COAL,Defense,USA,US-0030,Y,22853,10952.226,19123.024,,,widely_held,,,
+CO-0251,Rheinwerk Metals,RHES,Metals,DEU,DE-0028,Y,23000,26043.54,23751.922,,,widely_held,,,
+CO-0252,Ghawar National Oil Company,,Oil,SAU,SA-0001,N,32000,51053.625,53116.295,SAU,100,state,,,
+CO-0253,Petroleo del Orinoco,,Oil,VEN,VE-0001,N,22000,35099.367,36517.453,VEN,100,state,,,
+CO-0254,China Continental Petroleum,,Oil,CHN,CN-0001,N,20000,31908.516,33197.684,CHN,100,state,,,
+CO-0255,Petroleo Atlantico Brasileiro,PETR,Oil,BRA,BR-0010,Y,18000,28717.664,29877.916,BRA,60,state,,,
+CO-0256,Old Post Road Telephone,OLDP,Telecom,USA,US-0091,Y,19900,26829.058,49420.638,,,widely_held,,,
+CO-0257,Waverly Logistics,,Logistics,USA,US-0038,N,19500,11375,11375,,,widely_held,,,
+CO-0258,Cold Spring Metals,COLD,Metals,USA,US-0110,Y,19000,21514.229,19621.153,,,widely_held,,,
+CO-0259,Arirang Group,ARIR,Conglomerates and trading houses,KOR,KR-0001,Y,30893,15446.5,24714.4,,,widely_held,,,
+CO-0260,Kingsway Telecom,KINM,Telecom,GBR,GB-0001,Y,21000,28312.071,52152.432,,,widely_held,,,
+CO-0261,Kingsway Stores,KINS,Retail,GBR,GB-0001,Y,21000,5620,8740,,,widely_held,,,
+CO-0262,Lodestar Air,LODE,Airlines,USA,US-0118,Y,16100,15245.623,12197.602,,,widely_held,,,
+CO-0263,Peachtree Beverages,PEAC,Consumer staples and tobacco,USA,US-0038,Y,16172,8086,12937.6,,,widely_held,,,
+CO-0264,Windward Laboratories,WIND,Pharma,USA,US-0080,Y,15734,5812.956,32637.581,,,widely_held,,,
+CO-0265,Fairhaven Media,FAIA,Media and publishing,USA,US-0091,Y,15000,7500,12000,,,widely_held,,,
+CO-0266,Tamarack Paper,TAMA,Paper and forest,USA,US-0091,Y,15000,7500,12000,,,widely_held,,,
+CO-0267,Old Post Road Therapeutics,OLDS,Pharma,USA,US-0080,Y,14970,5530.695,31052.79,,,widely_held,,,
+CO-0268,Edelweiss Air,EDEL,Airlines,DEU,DE-0019,Y,14000,13257.063,10606.611,DEU,35,state,,,
+CO-0269,Outback Ore,OUTB,Mining,AUS,AU-0015,Y,13000,16741.111,18532.222,,,widely_held,,,
+CO-0270,Brandberg Verlag,,Media and publishing,DEU,DE-0028,N,12000,6000,9600,,,widely_held,,,
+CO-0271,Windward Arms,WINS,Defense,USA,US-0064,Y,12000,5750.961,10041.408,,,widely_held,,,
+CO-0272,Crossfield Semiconductor,CROS,Semiconductors,USA,US-0018,Y,11521,9600.833,38558.005,,,widely_held,,,
+CO-0273,Sibirgaz,,Gas,RUS,RU-0001,N,11000,16500,16353.333,RUS,40,state,,,
+CO-0274,Alpenglut Therapeutics,ALPS,Pharma,CHE,CH-0012,Y,11000,4063.971,22817.681,,,widely_held,,,
+CO-0275,Lone Star Computer,LONE,Computer hardware,USA,US-0122,Y,10866,5433,8692.8,,,widely_held,,,
+CO-0276,Copperline Foundry,COPY,Semiconductors,USA,US-0118,Y,10315,8595.833,34521.814,,,widely_held,,,
+CO-0277,Tamarack Studios,TAMS,Media and publishing,USA,US-0010,Y,10055,5027.5,8044,,,widely_held,,,
+CO-0278,Harrowgate Aluminum,HARM,Metals,USA,US-0110,Y,9900,11210.045,10223.653,,,widely_held,,,
+CO-0279,Orchard Computer,ORCH,Computer hardware,USA,US-0018,Y,9189,4594.5,7351.2,,,widely_held,,,
+CO-0280,Hawthorne Noodle House,HAWT,Fast food,USA,US-0044,Y,8321,2590.788,7766.463,,,widely_held,,,
+CO-0281,Ashgrove Hotels,ASHG,Travel and leisure,USA,US-0030,Y,8000,4000,6400,,,widely_held,,,
+CO-0282,Bitterroot Builders,,Construction,USA,US-0018,N,8000,1542.136,2772.828,,,widely_held,,,
+CO-0283,Great Lakes and Western Railway,GREY,Rail,USA,US-0086,Y,7800,3900,6240,,,widely_held,,,
+CO-0284,Brandt Strategies,,Professional services,USA,US-0044,N,6700,405.962,6972.94,,,widely_held,,,
+CO-0285,Barbary Coast Apparel,,Apparel,USA,US-0018,N,6000,3000,4800,,,widely_held,,,
+CO-0286,Clearwater Medical,CLEA,Medical devices,USA,US-0044,Y,5000,2500,4000,,,widely_held,,,
+CO-0287,Hoshizora Play,HOSY,Gaming,JPN,JP-0037,Y,4700,1173.838,12295.113,,,widely_held,,,
+CO-0288,Thunder Bay Logic,THUN,Software,USA,US-0140,Y,4649,602.579,13630.725,,,widely_held,,,
+CO-0289,Maison Pont-Neuf,MAIS,Luxury,FRA,FR-0001,Y,4400,1409.053,9662.787,,,widely_held,,,
+CO-0290,Cascade Sportswear,CASC,Apparel,USA,US-0104,Y,3800,1900,3040,,,widely_held,,,
+CO-0291,Marunouchi Estates,MARS,Real estate,JPN,JP-0001,Y,3500,4435.667,6108.189,,,widely_held,,,
+CO-0292,Beacon Hill Investors,,Asset management,USA,US-0064,N,3000,3134.014,6120,,,widely_held,,,
+CO-0293,Kingsway Advertising,R126,Ads,GBR,GB-0001,Y,2700,540,9521.273,,,widely_held,,,
+CO-0294,Lake Erie Appliance,LACE,Appliances,USA,US-0044,Y,8100,4050,6480,,,widely_held,,,
+CO-0295,Pacific Rim Biologics,PACI,Biotech,USA,US-0010,Y,1650,825,1320,,,widely_held,,,
+CO-0296,Twin Rivers Medical,TWIL,Medical devices,USA,US-0069,Y,1400,700,1120,,,widely_held,,,
+CO-0297,Silver State Casinos,SILV,Gambling,USA,US-0076,Y,1400,407.361,3679.53,,,widely_held,,,
+CO-0298,Golden Gate Cellular,GOLD,Wireless,USA,US-0018,Y,1200,600,960,,,widely_held,,,
+CO-0299,Potomac Online,POTO,Online services,USA,US-0030,Y,115,57.5,92,,,widely_held,,,
+CO-0300,Kattegat Lines,KATT,Shipping,DNK,DK-0001,Y,7000,9413.6,7530.6,,,widely_held,,,

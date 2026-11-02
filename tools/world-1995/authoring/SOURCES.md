@@ -18,3 +18,15 @@ An empty GDP means the source has none for 1995. The generator scales those rows
 ## `economy-1995.csv`
 
 Corporate tax rates and sovereign ratings of the 33 major countries. **These are approximate and from memory, not checked against a source**, marked `(A)` as elsewhere in the design data. The spreads follow from the ratings. Replace them with sourced values if tax or spreads start to matter in calibration.
+
+## `companies-1995.csv`
+
+The real firms behind the largest fictional companies. `analogue` must never reach a game CSV, which `validate.py` enforces. Revenues are 1994 sales in USD millions, the basis of the lists published in 1995. The `source` column says how far to trust each row:
+
+- `AP`: read directly from the Associated Press reprint of the 1995 Fortune 500, "Fortune 500", Spokesman-Review, 26 April 1995: `https://www.spokesman.com/stories/1995/apr/26/fortune-500/`. Thirty rows, the top 30 of that list.
+- `F`: the firm's rank is confirmed by `https://fortune.com/ranking/global500/1995/`, whose page gives no revenues. The figure is **from memory**, except Mitsubishi's, which a Fortune article of August 1995 gives as $176 billion.
+- `M`: **from memory, not checked against any source.** The AP rows that could be compared matched memory, but that is not a citation.
+
+Fortune's own archive pages for 1995 returned errors on 1 November 2026 (`money.cnn.com` 503, `archive.fortune.com` 400). When they return, they can upgrade the `F` and `M` rows.
+
+`control` is the state's stake, as `iso3:percent`, also from memory.

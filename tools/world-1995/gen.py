@@ -15,6 +15,7 @@ import importlib.util
 import json
 import math
 import shutil
+import statistics
 import sys
 from pathlib import Path
 
@@ -91,6 +92,10 @@ NEW_INDUSTRIES = {
     'search_portals': ('Search and portals', 'Tech', 0, 0.76, 0.08, 5.0, 'server farms', ['Search', 'Portal', 'Web']),
 }
 NEW_PER_INDUSTRY_SHARES = (0.12, 0.08, 0.05, 0.03)   # named revenue of a new row, largest first (T)
+# 1995-rework 2.5: the 2020 firms left among the real ones (T).
+MAX_COUNTRY_FACTOR = 1.5          # a firm's country was at most this much larger in 1995 than now
+MAX_GENERATED_GDP_SHARE = 0.01    # and no such firm is more than this share of its country's GDP
+MAX_NAMED_SHARE = 0.7             # an industry's named firms leave at least the rest to its fringe
 NEW_HQ_COUNTRIES = ('USA', 'JPN', 'DEU', 'GBR', 'FRA', 'USA', 'CAN', 'ITA', 'KOR', 'USA')   # (T)
 NEW_NAME_PREFIXES = ('Ironbark', 'Redwater', 'Bluestem', 'Halyard', 'Meridian', 'Northgate', 'Stonebridge', 'Harrow',
                      'Calder', 'Wexford', 'Larkspur', 'Tidewater', 'Sable', 'Briar', 'Kestrel', 'Ashgrove')   # (T)
@@ -115,6 +120,10 @@ SECTOR_PARAMS = {
     'Health': (0.4, 0.008, 0.3, 0.10),
     'Services': (0.9, 0.01, 1.0, 0.07),
 }
+
+# 1995-rework 2.5: industries whose real firms earn far less per dollar than their sector's (T). Trading
+# houses took the largest revenues in the world on margins of about a percent.
+INDUSTRY_MARGINS = {'conglomerates': 0.02, 'autos': 0.05, 'retail': 0.04}
 
 REGION_SLUGS = ['east-asia-oceania', 'europe', 'latin-america', 'mena', 'north-america',
                 'russia-central-asia', 'south-asia', 'sub-saharan-africa']
@@ -229,6 +238,7 @@ def build_provinces():
         fields, rows = read(SRC / f'provinces-{slug}.csv')
         for r in rows:
             r['country'] = FOLD.get(r['country'], r['country'])
+            r['notes'] = ''   # 2.3: they name real firms, and describe 2020
         write(OUT / f'provinces-{slug}.csv', fields, rows)
 
 
@@ -259,6 +269,7 @@ def build_industries(scale):
             r.update(world_size_2020_usd_bn='0', trend_growth=str(trend), mature_rate=str(mature),
                      fade_half_life_years=str(half))
         beta, vol, rate, margin = SECTOR_PARAMS[r['sector']]
+        margin = INDUSTRY_MARGINS.get(r['id'], margin)
         total = float(r['margin_full_use']) + float(r['variable_cost_share'])
         r.update(cycle_beta=str(beta), volatility=str(vol), rate_sensitivity=str(rate),
                  margin_full_use=str(margin), variable_cost_share=num(total - margin, 6))
@@ -274,9 +285,8 @@ def build_industries(scale):
     return rows
 
 
-def new_companies(rows, fields, provinces_by_country):
-    """Proto firms for the new live rows: a few named companies a row, listed, widely held. The real
-    ones replace them (spec 10, P9b)."""
+def new_companies(fields, provinces_by_country, have, gdp):
+    """Firms for a new live row with too few real ones: a few named companies, listed, widely held."""
     out = []
     used = set()
     n = 0
@@ -290,33 +300,122 @@ def new_companies(rows, fields, provinces_by_country):
             n += 1
             assert label not in used, label
             used.add(label)
-            revenue = size * 1000.0 * share
+            if have.get(name, 0) + k >= PER_INDUSTRY_MIN:
+                continue
+            revenue = min(size * 1000.0 * share, MAX_GENERATED_GDP_SHARE * gdp[country] * 1000.0)
             row = {f: '' for f in fields}
             row.update(id=f'CO-9{n:03d}', name=label, ticker=f'N{n:03d}', industry=name, hq_country=country,
                        hq_province=provinces_by_country[country], public='Y', revenue_usd_m=num(revenue),
                        book_value_usd_m=num(revenue * 0.5), est_value_usd_m=num(revenue * 0.8),
-                       control_basis='widely_held', notes='proto (1995-rework 10, P9b)')
+                       control_basis='widely_held', notes='')
             out.append(row)
     return out
 
 
-def select_companies(rows, economy, target):
-    """About COMPANY_TARGET companies: the largest per industry, the largest listed of any zone left
-    with none, then the largest overall, with each kept subsidiary's parent."""
+def country_factors(countries):
+    """How much larger each country's economy was in 1995 than the proto scale makes it (1995-rework 2.5)."""
+    now = {c['iso3']: float(c['gdp_usd_bn']) for c in countries}
+    _, rows = read(SRC / 'countries.csv')
+    then = {r['iso3']: float(r['gdp_usd_bn']) for r in rows}
+    total_now = sum(now.values())
+    total_then = sum(then.values())
+    out = {}
+    for iso, gdp in now.items():
+        out[iso] = min(MAX_COUNTRY_FACTOR, (gdp / total_now) / (then[iso] / total_then))
+    return out, now
+
+
+def resize_to_country(rows, scale, factors, gdp):
+    """A 2020 firm at its country's 1995 weight, and no more than a share of its country's GDP."""
+    for r in rows:
+        iso = FOLD.get(r['hq_country'], r['hq_country'])
+        revenue = float(r['revenue_usd_m'] or 0) * scale * factors[iso]
+        cap = MAX_GENERATED_GDP_SHARE * gdp[iso] * 1000.0
+        by = (min(revenue, cap) / float(r['revenue_usd_m'])) if float(r['revenue_usd_m'] or 0) > 0 else scale
+        for col in ('revenue_usd_m', 'book_value_usd_m', 'est_value_usd_m'):
+            if r[col] != '':
+                r[col] = num(float(r[col]) * by)
+
+
+def province_for(city, iso, provinces, key_cities):
+    """A real firm's HQ: the province named for its city, its key city's first, or its country's busiest."""
+    own = [p for p in provinces if p['country'] == iso]
+    named = [p for p in own if city.lower() in p['name'].lower()]
+    if named:
+        return named[0]['id']
+    for k in key_cities:
+        if k['country'] == iso and city.lower() in k['city'].lower():
+            return k['province_ids'].split(';')[0]
+    return max(own, key=lambda p: (float(p['commerce'] or 0), p['id']))['id']
+
+
+def industry_ratios(rows):
+    """The median book and value per revenue dollar of each industry's 2020 firms."""
+    out = {}
+    by = {}
+    for r in rows:
+        revenue = float(r['revenue_usd_m'] or 0)
+        if revenue > 0 and r['book_value_usd_m'] and r['est_value_usd_m']:
+            by.setdefault(r['industry'], []).append(
+                (float(r['book_value_usd_m']) / revenue, float(r['est_value_usd_m']) / revenue))
+    for name, pairs in by.items():
+        out[name] = (statistics.median(p[0] for p in pairs), statistics.median(p[1] for p in pairs))
+    return out
+
+
+def real_companies(fields, proto_rows):
+    """The sourced firms (1995-rework 2.5): real revenue under a fictional name. The real name stays here."""
+    provinces = [p for s in REGION_SLUGS for p in read(OUT / f'provinces-{s}.csv')[1]]
+    key_cities = read(SRC / 'key-cities.csv')[1]
+    ratios = industry_ratios(proto_rows)
+    out = []
+    tickers = set()
+    for n, a in enumerate(read(AUTHORING / 'companies-1995.csv')[1]):
+        revenue = float(a['revenue_usd_m'])
+        book, value = ratios.get(a['industry'], (0.5, 0.8))
+        letters = ''.join(ch for ch in a['name'].upper() if ch.isalpha())
+        ticker = next(t for t in (letters[:4], letters[:3] + letters[-1], letters[:2] + letters[-2:], f'R{n:03d}')
+                      if t not in tickers) if a['public'] == 'Y' else ''
+        tickers.add(ticker)
+        row = {f: '' for f in fields}
+        row.update(id=f'CO-8{n:03d}', name=a['name'], ticker=ticker, industry=a['industry'], hq_country=a['hq_country'],
+                   hq_province=province_for(a['hq_city'], a['hq_country'], provinces, key_cities), public=a['public'],
+                   revenue_usd_m=num(revenue), book_value_usd_m=num(revenue * book), est_value_usd_m=num(revenue * value),
+                   control_basis='widely_held')
+        if a['control']:
+            state, stake = a['control'].split(':')
+            row.update(controller=state, controller_stake_pct=stake, control_basis='state')
+        out.append(row)
+    return out
+
+
+def select_companies(rows, economy, target, real):
+    """About COMPANY_TARGET companies: the real ones, the largest of the rest per industry, the largest
+    listed of any zone left with none, then the largest overall, with each kept subsidiary's parent."""
     _, characters = read(SRC / 'characters.csv')
     player = next(c['id'] for c in characters if c['name'] == PLAYER)
     dormant = {r['name'] for r in read(SRC / 'industries.csv')[1] if r['id'] in DORMANT}
-    pool = [r for r in rows if r['name'] != ARROWHEAD and r['controller'] != player and r['industry'] not in dormant]
-    by_size = sorted(pool, key=lambda r: (-float(r['revenue_usd_m']), r['id']))
+    taken = {r['name'] for r in real}
+    pool = [r for r in rows if r['name'] != ARROWHEAD and r['name'] not in taken and r['controller'] != player
+            and r['industry'] not in dormant]
+    by_size = sorted(pool, key=lambda r: (-float(r['revenue_usd_m'] or 0), r['id']))
     kept = {}
 
     def keep(r):
         kept[r['id']] = r
         parent = r['controller']
         if parent.startswith('CO-') and parent not in kept:
-            keep(next(p for p in pool if p['id'] == parent))
+            found = next((p for p in pool if p['id'] == parent), None)
+            if found is None:
+                r['controller'] = ''
+                r['controller_stake_pct'] = ''
+                r['control_basis'] = 'widely_held'
+            else:
+                keep(found)
 
     seen = {}
+    for r in real:
+        seen[r['industry']] = seen.get(r['industry'], 0) + 1
     for r in by_size:
         n = seen.get(r['industry'], 0)
         if n < PER_INDUSTRY_MIN:
@@ -324,7 +423,7 @@ def select_companies(rows, economy, target):
             seen[r['industry']] = n + 1
     zone_of = {e['iso3']: e['financial_zone'] for e in economy}
     zone_of.update({child: zone_of[parent] for child, parent in FOLD.items()})
-    listed = {zone_of[r['hq_country']] for r in kept.values() if r['public'] == 'Y'}
+    listed = {zone_of[FOLD.get(r['hq_country'], r['hq_country'])] for r in list(kept.values()) + real if r['public'] == 'Y'}
     for r in by_size:
         z = zone_of[r['hq_country']]
         if r['public'] == 'Y' and z not in listed:
@@ -337,15 +436,22 @@ def select_companies(rows, economy, target):
     return sorted(kept.values(), key=lambda r: r['id'])
 
 
-def build_companies(economy, scale):
-    """The kept companies, renumbered from CO-0001: a born company's key is the table length plus
-    one (births/jobs.ts `companyKey`), so the ids must have no gaps."""
+def build_companies(economy, countries, scale):
+    """The real firms and the kept rest, renumbered from CO-0001: a born company's key is the table
+    length plus one (births/jobs.ts `companyKey`), so the ids must have no gaps."""
     fields, rows = read(SRC / 'companies.csv')
+    ratios_from = [dict(r) for r in rows]
+    factors, gdp = country_factors(countries)
+    resize_to_country(rows, scale, factors, gdp)
     by_country = {}
     for r in rows:
-        by_country.setdefault(r['hq_country'], r['hq_province'])
-    new = new_companies(rows, fields, by_country)
-    kept = select_companies(rows, economy, COMPANY_TARGET - len(new)) + new
+        by_country.setdefault(FOLD.get(r['hq_country'], r['hq_country']), r['hq_province'])
+    real = real_companies(fields, ratios_from)
+    have = {}
+    for r in real:
+        have[r['industry']] = have.get(r['industry'], 0) + 1
+    new = new_companies(fields, by_country, have, gdp)
+    kept = select_companies(rows, economy, COMPANY_TARGET - len(new) - len(real), real) + new + real
     new_id = {r['id']: f'CO-{i + 1:04d}' for i, r in enumerate(kept)}
 
     def holders(text):
@@ -362,9 +468,7 @@ def build_companies(economy, scale):
     for r in kept:
         r['id'] = new_id[r['id']]
         r['hq_country'] = FOLD.get(r['hq_country'], r['hq_country'])
-        for col in ('revenue_usd_m', 'book_value_usd_m', 'est_value_usd_m'):
-            if r[col] != '':
-                r[col] = num(float(r[col]) * scale)
+        r['notes'] = ''
         if r['controller'].startswith('CO-'):
             r['controller'] = new_id[r['controller']]
         if r['owner_of_record'].startswith('CO-'):
@@ -372,7 +476,7 @@ def build_companies(economy, scale):
         r['other_holders'] = holders(r['other_holders'])
     # 1995-rework 7.8: each named controller runs one company, since each company ages its own copy.
     seen = set()
-    for r in sorted(kept, key=lambda r: (-float(r['revenue_usd_m']), r['id'])):
+    for r in sorted(kept, key=lambda r: (-float(r['revenue_usd_m'] or 0), r['id'])):
         if r['controller'].startswith('CH-'):
             if r['controller'] in seen:
                 r['controller'] = ''
@@ -381,6 +485,19 @@ def build_companies(economy, scale):
             seen.add(r['controller'])
     write(OUT / 'companies.csv', fields, kept)
     return kept
+
+
+def resize_industries(kept):
+    """An industry its real firms overflow grows, so it keeps a fringe (1995-rework 2.5)."""
+    named = {}
+    for r in kept:
+        named[r['industry']] = named.get(r['industry'], 0.0) + float(r['revenue_usd_m'] or 0) / 1000.0
+    fields, rows = read(OUT / 'industries.csv')
+    for r in rows:
+        need = named.get(r['name'], 0.0) / MAX_NAMED_SHARE
+        if r['id'] not in DORMANT and float(r['world_size_2020_usd_bn']) < need:
+            r['world_size_2020_usd_bn'] = num(need)
+    write(OUT / 'industries.csv', fields, rows)
 
 
 def copy_unchanged():
@@ -640,7 +757,7 @@ def main():
     economy, zones = build_country_tables(countries)
     build_provinces()
     build_industries(scale)
-    build_companies(economy, scale)
+    resize_industries(build_companies(economy, countries, scale))
     copy_unchanged()
     build_characters()
     build_politics()

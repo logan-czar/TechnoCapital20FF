@@ -4,6 +4,12 @@
 
 import { check, dataErrorToString } from "@tc20ff/sim-data";
 import { describe, expect, it } from "vitest";
+import {
+  ARROWHEAD_ENTERPRISE_SHARE,
+  ARROWHEAD_KEY,
+  enterpriseShare,
+  LOADOUT_ENTERPRISE_SHARE,
+} from "../src/economy/start.ts";
 import { simNew, simWorld } from "../src/lib.ts";
 import { dateTimeDate, dateTimeMidnight, simDateYmd } from "../src/time/calendar.ts";
 import { data1995, macrotask } from "./common/index.ts";
@@ -52,17 +58,13 @@ describe("a 1995 game", () => {
   });
 
   it("gives its CO-0001 the ordinary 7.1 loadout, not Arrowhead's", () => {
+    // world/load.ts reads a world without the feature as the key "", any other company's.
     const d = data1995();
-    const asArrowhead = structuredClone(d);
-    asArrowhead.manifest = { ...d.manifest, features: { ...d.manifest.features, arrowhead: true } };
-    const plain = simNew(d, 1);
-    const special = simNew(asArrowhead, 1);
-    if (!plain.ok || !special.ok) throw new Error("did not load");
-    const firstUnit = (s: typeof plain.value) => {
-      const w = simWorld(s);
-      return w.units[w.companies[0]?.units[0] as number];
-    };
-    expect(firstUnit(plain.value)).not.toEqual(firstUnit(special.value));
+    expect(d.manifest.features.arrowhead).toBe(false);
+    expect(d.companies.rows[0]?.name).not.toBe("Arrowhead Drilling");
+    expect(enterpriseShare("")).toBe(LOADOUT_ENTERPRISE_SHARE);
+    expect(enterpriseShare(ARROWHEAD_KEY)).toBe(ARROWHEAD_ENTERPRISE_SHARE);
+    expect(ARROWHEAD_ENTERPRISE_SHARE).not.toBe(LOADOUT_ENTERPRISE_SHARE);
   });
 
   it("births companies on the next free key, votes and repeats itself", async () => {

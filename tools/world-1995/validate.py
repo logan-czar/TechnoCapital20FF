@@ -7,6 +7,7 @@ generator. Prints each problem and then OK or a count; exits non-zero on any pro
 """
 import csv
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -18,6 +19,8 @@ GDP_TARGET_USD_BN = 31338.0   # 1995-rework 2.2: the World Bank's 1995 world
 GDP_TOLERANCE = 0.03
 SOURCED_TOLERANCE = 0.2       # 1995-rework 2.5
 AUTHORING = Path(__file__).resolve().parent / 'authoring'
+AUTHORED_MIN = 100
+ORDINARY_WORDS = {'Metro', 'BT', 'Baxter'}
 COMPANY_RANGE = (280, 320)
 HOUSE_SEATS = 435
 START_DEMS = (205, 47)   # 1995-rework 7.2: the 104th Congress, Vermont's independent as a Democrat
@@ -73,6 +76,27 @@ def main():
     states = {s['state'] for s in read(OUT / 'politics-usa.csv')}
     if usa_regions != states:
         errors.append(f'politics-usa: differs from the USA province regions: {sorted(usa_regions ^ states)}')
+
+    # 1995-rework 2.3, 2.5: the real firms are in, at their revenue, and no real name is in any game CSV.
+    authored = read(AUTHORING / 'companies-1995.csv')
+    if len(authored) < AUTHORED_MIN:
+        errors.append(f'authoring: {len(authored)} real companies, expected at least {AUTHORED_MIN}')
+    by_name = {c['name']: c for c in read(OUT / 'companies.csv')}
+    for a in authored:
+        c = by_name.get(a['name'])
+        if not a['source']:
+            errors.append(f'authoring: {a["name"]} has no source')
+        if c is None:
+            errors.append(f'companies: {a["name"]} is missing')
+        elif abs(float(c['revenue_usd_m']) - float(a['revenue_usd_m'])) > SOURCED_TOLERANCE * float(a['revenue_usd_m']):
+            errors.append(f'companies: {a["name"]} is more than 20% from its source')
+    patterns = [(a['analogue'], re.compile(r'\b' + re.escape(a['analogue']) + r'\b')) for a in authored]
+    for path in sorted(OUT.rglob('*.csv')):
+        text = path.read_text(encoding='utf-8')
+        for name, pat in patterns:
+            # An ordinary word or surname counts only among the companies.
+            if (name not in ORDINARY_WORDS or path.name == 'companies.csv') and pat.search(text):
+                errors.append(f'{path.name}: names the real firm {name}')
 
     # 1995-rework 7.7, 7.8: one company per named controller, and nobody both starts and spawns.
     bosses = [c['controller'] for c in read(OUT / 'companies.csv') if c['controller'].startswith('CH-')]
