@@ -2,7 +2,7 @@
 // (v_countries).
 
 import type { CountryRow, IndustryRow } from "@tc20ff/sim";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { useViewData } from "../sim/hooks.ts";
 import { figureCell } from "../widgets/cells.ts";
 import { type Column, DataTable } from "../widgets/DataTable.tsx";
@@ -45,7 +45,8 @@ const COUNTRY_COLUMNS: Column<CountryRow>[] = [
 
 function IndustriesPaneInner() {
   const view = useViewData("industry_rows");
-  const rows = view?.rows ?? [];
+  // A dormant industry stays out of every list until it emerges (1995-rework 5.2).
+  const rows = useMemo(() => (view?.rows ?? []).filter((r) => !r.dormant), [view]);
   return (
     <div className="pane">
       <div className="toolbar">{rows.length} industries</div>

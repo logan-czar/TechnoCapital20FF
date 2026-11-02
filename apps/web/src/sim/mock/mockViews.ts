@@ -14,6 +14,7 @@ import {
   dateTimeDate,
   dateTimeHour,
   dateTimeWeekday,
+  emptyHistory,
   emptyPolitics,
   type Figure,
   type Headline,
@@ -462,6 +463,7 @@ export function initialViews(
     recap: view({ recaps: [], watchlist: [] }, v),
     map_static: view({ provinces: [], metros: [], key_cities: [], regions: [], geo: null }, v),
     politics: view(emptyPolitics(), v),
+    history: view(emptyHistory(), v),
   };
 }
 

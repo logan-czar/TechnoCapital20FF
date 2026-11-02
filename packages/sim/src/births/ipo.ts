@@ -13,7 +13,7 @@ import { quarterNext } from "../time/calendar.ts";
 import type { Quarter } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import type { CompanyId } from "../types/ids.ts";
-import { clamp, roundTiesEven, totalCmp, toU64Sat } from "../types/num.ts";
+import { clamp, minF, roundTiesEven, totalCmp, toU64Sat } from "../types/num.ts";
 import type { Ballot, VoteResult, VoterRole } from "../types/state/births.ts";
 import type { CompanyStatus, Rating } from "../types/state/finance.ts";
 import { SEAT_VALUES, type Seat, type Trait } from "../types/state/people.ts";
@@ -34,8 +34,8 @@ export const MIN_TTM_REVENUE_USD = 75.0e6;
 /** Spec 5.20: TTM net income above 0, or 4-quarter revenue growth of at least 20%. */
 export const MIN_REVENUE_GROWTH = 0.2;
 /**
- * Spec 5.20.1 step 1: a starting private company's first vote falls at one of the four 2020 plan
- * locks (A).
+ * Spec 5.20.1 step 1: a starting private company's first vote falls at one of the four plan locks
+ * of the start year (A); 2020 for the 2020 world.
  */
 export const FIRST_VOTE_YEAR = 2020;
 export const QUARTERS_PER_YEAR = 4;
@@ -52,6 +52,18 @@ export const CONFIDENCE_DIVISOR = 1000.0;
 /** ... clamped 5% to 95%. */
 export const MIN_YES = 0.05;
 export const MAX_YES = 0.95;
+/**
+ * In a historical world a board is keener to list the larger its firm (1995-rework 9, T):
+ * `min(60%, 20% × log10(TTM revenue ÷ $75M))` points on each yes chance, so a $7.5B firm adds 40.
+ * At 15% a yes, a firm that big otherwise stays private for good.
+ */
+export const LISTING_SIZE_SLOPE = 0.2;
+export const LISTING_SIZE_MAX = 0.6;
+export function listingSizeBonus(ttm_revenue: number): number {
+  if (ttm_revenue <= MIN_TTM_REVENUE_USD) return 0.0;
+  return minF(LISTING_SIZE_MAX, LISTING_SIZE_SLOPE * Math.log10(ttm_revenue / MIN_TTM_REVENUE_USD));
+}
+
 /** Spec 5.20.1 step 6: at most 3 listings world-wide a quarter (T). */
 export const LISTINGS_PER_QUARTER = 3;
 /** Spec 5.20.1 Listing step 3: new shares equal to 20% of the re-split shares ... */
@@ -120,13 +132,13 @@ export function passesIpoTests(i: IpoTestInputs): boolean {
 }
 
 /**
- * A starting private company's first vote (spec 5.20.1 step 1, A): one of the four 2020 plan locks,
- * uniform on the gen stream (D276: drawn at load for each starting private company in id order,
- * after the boards).
+ * A starting private company's first vote (spec 5.20.1 step 1, A): one of the four plan locks of
+ * the start year, uniform on the gen stream (D276: drawn at load for each starting private company
+ * in id order, after the boards).
  */
-export function drawFirstVote(draws: DrawSource): Quarter {
+export function drawFirstVote(draws: DrawSource, year: number = FIRST_VOTE_YEAR): Quarter {
   const q = draws.intInclusive("Gen", 1, QUARTERS_PER_YEAR);
-  return { year: FIRST_VOTE_YEAR, q };
+  return { year, q };
 }
 
 /**
@@ -207,9 +219,10 @@ export function holdVote(
   label: PhaseLabel,
   confidence: number,
   draws: DrawSource,
+  bonus = 0.0,
 ): VoteResult {
   const ballots: Ballot[] = voters_.map((v) => {
-    const chance = yesChance(label, confidence, v.traits);
+    const chance = clamp(yesChance(label, confidence, v.traits) + bonus, MIN_YES, MAX_YES);
     return { role: v.role, chance, yes: draws.chance("Gen", chance), voter: null };
   });
   const yes = ballots.filter((b) => b.yes).length;

@@ -18,3 +18,6 @@ test/fixtures/** text eol=lf
 /*.ts text eol=lf
 /pnpm-lock.yaml text eol=lf
 /pnpm-workspace.yaml text eol=lf
+# The generated 1995 world; tools/world-1995/gen.py writes LF, so a rerun shows no change.
+assets/worlds/**/*.csv text eol=lf
+assets/worlds/**/*.json text eol=lf

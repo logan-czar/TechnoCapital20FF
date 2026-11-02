@@ -5,7 +5,8 @@ A cyberpunk grand strategy game: CK3-style corporate feudalism on a Wall Street 
 ## Where things live
 
 - `docs/design/`: the design docs. Start with `docs/design/mvp/mvp-spec.md` (what the MVP does) and `docs/design/mvp/build-plan.md` (crates, milestones, tasks). Code PRs do not edit design prose (spec, README, design notes) unless the PR is about the docs; a prose error goes in `docs/build/design-fixes.md` instead. Code PRs may edit `docs/design/tools/*.py` and regenerate `docs/design/data/` when a task needs it (for example a golden fixture export). The build follows mvp-spec v1.4; spec changes land between milestones.
-- `docs/design/data/`: the starting world CSVs the game loads. `docs/design/tools/mvp-data/` generates and validates them (`python3 gen.py && python3 validate.py`).
+- `assets/worlds/1995/`: the default world's CSVs, generated and validated by `tools/world-1995/` (`python -B gen.py`, then `python -B validate.py`). `docs/build/1995-rework-spec.md` is its spec.
+- `docs/design/data/`: the 2020 world's CSVs, played with `?world=2020` in the web app and `--world 2020` in headless until that world is retired. `docs/design/tools/mvp-data/` generates and validates them (`python3 gen.py && python3 validate.py`).
 - `scripts/sync-design.sh [folder]`: refreshes `docs/design/` from a design folder (default `/mnt/project-files/design`, the cloud container's) and runs both data checkers. On Logan's PC, main's `docs/design` is the source.
 - `docs/build/decisions.md`: choices made where the spec is silent or ambiguous (pick, log, keep going); each names its constant. `docs/build/design-fixes.md`: prose errors for Logan.
 - TypeScript code: one pnpm workspace at the repo root: `packages/sim-data`, `packages/sim` (contracts in `packages/sim/src/types/`), `apps/web`, `apps/headless`. Run pnpm through corepack (`corepack pnpm@10.20.0 ...`) if it is not on PATH.

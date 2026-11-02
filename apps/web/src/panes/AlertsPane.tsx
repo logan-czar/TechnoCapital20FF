@@ -8,6 +8,7 @@ import {
   type AlertLevel,
   dateTimeDate,
   formatDateTime,
+  HISTORICAL_ALERT_KINDS,
   simDateQuarter,
 } from "@tc20ff/sim";
 import { memo, useState } from "react";
@@ -15,7 +16,7 @@ import { Link } from "../links/Link.tsx";
 import { recapAlertQuarter } from "../pages/kinds/recap.tsx";
 import { useNames } from "../shell/names.ts";
 import { ALERT_LABEL, describeNotice, LEVEL_LABEL } from "../shell/text.ts";
-import { useNotices, useSim } from "../sim/hooks.ts";
+import { useNotices, useSim, useViewData } from "../sim/hooks.ts";
 
 function AlertsPaneInner() {
   const sim = useSim();
@@ -23,10 +24,13 @@ function AlertsPaneInner() {
   const names = useNames();
   // Levels as the player set them in this session (the mock's start in the defaults).
   const [levels, setLevels] = useState<Partial<Record<(typeof ALERT_KIND_VALUES)[number], AlertLevel>>>({});
+  // A historical world's alerts mean nothing in the 2020 world (1995-rework 8.2).
+  const world = useViewData("history")?.world_id;
+  const kinds = ALERT_KIND_VALUES.filter((k) => world !== "2020" || !HISTORICAL_ALERT_KINDS.includes(k));
   return (
     <div className="pane">
       <div className="toolbar">
-        {ALERT_KIND_VALUES.map((k) => (
+        {kinds.map((k) => (
           <label key={k}>
             {ALERT_LABEL[k]}{" "}
             <select

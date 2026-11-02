@@ -22,11 +22,13 @@
 //   free functions `simWorld`, `simRegisterTestJob`, `simSoakStats` and `simSoakWorld`, exported
 //   from internal.ts, never from index.ts.
 
-import type { WorldData } from "@tc20ff/sim-data";
+import { MANIFEST_2020, type WorldData } from "@tc20ff/sim-data";
 import { planAtLoad } from "./ai/jobs.ts";
 import { drawFirstVotes, drawTippedLabAtLoad } from "./births/jobs.ts";
 import { DEFAULT_PROFILE_ID, LEGACY_PROFILE, profileById } from "./economy/profiles.ts";
+import { RANDOM_SCENARIO_ID, RANDOM_SCENARIO_LABEL, SCENARIOS, scenarioKnown } from "./economy/scenarios.ts";
 import { start as economyStart } from "./economy/start.ts";
+import { eraStart } from "./era/jobs.ts";
 import { start as financeStart } from "./finance/index.ts";
 import { stateHash } from "./hash.ts";
 import { scheduler } from "./jobs.ts";
@@ -46,10 +48,11 @@ import {
   schedulerRunTickObserved,
   type TickObserver,
 } from "./time/scheduler.ts";
-import type { DateTime } from "./types/calendar.ts";
+import type { DateTime, SimDate } from "./types/calendar.ts";
 import { type Control, type Controls, MAX_SPEED } from "./types/control.ts";
 import type { DrawSource } from "./types/draws.ts";
 import type { Notice, PauseReason } from "./types/notice.ts";
+import type { NewGameChoices } from "./types/protocol.ts";
 import type { SaveError, SimApi, SimError, StateHash } from "./types/sim-api.ts";
 import type { ClockView, SimViews } from "./types/views/index.ts";
 import type { EconomyProfile, LoadError, Result, World } from "./types/world.ts";
@@ -77,7 +80,7 @@ export type { SoakIndustry, SoakStats } from "./soak.ts";
  */
 export interface StartDeps {
   /** world/load.rs `World::from_data` (`buildWorld`, with its own `LoadDeps` defaults). */
-  worldFromData(data: WorldData): Result<World, LoadError>;
+  worldFromData(data: WorldData, startDate?: SimDate): Result<World, LoadError>;
   /** economy/mod.rs `start(world, draws)`: pop date, cycle start, zone shocks, Q1 2020 growth draw (7.3). */
   economyStart(world: World, draws: DrawSource): void;
   /** births/jobs.rs `draw_tipped_lab_at_load(world, draws)` (gen stream, D111, D281). */
@@ -98,7 +101,7 @@ export interface StartDeps {
 
 /** The default `StartDeps`: every member is the ported Rust function. */
 export const START_DEPS: StartDeps = {
-  worldFromData: (data) => buildWorld(data),
+  worldFromData: (data, startDate) => buildWorld(data, undefined, startDate),
   economyStart, // economy/start.ts
   birthsDrawTippedLabAtLoad: drawTippedLabAtLoad, // births/jobs.ts
   aiPlanAtLoad: planAtLoad, // ai/jobs.ts
@@ -148,11 +151,15 @@ export function startWorld(
   debtLevels?: readonly number[],
   focusLevels?: readonly number[],
   rdDiminishingX?: number,
+  startDate?: SimDate,
+  scenarioId?: string,
 ): Result<World, LoadError> {
-  const built = deps.worldFromData(data);
+  const built = deps.worldFromData(data, startDate);
   if (!built.ok) return built;
   const world = built.value;
   world.profile = profile;
+  // A historical world's scenario sets its profile, so it comes before the economy's draws.
+  if (data.manifest.features.era) eraStart(world, data, scenarioId, draws);
   if (debtLevels !== undefined && debtLevels.length > 0) world.debt_levels = [...debtLevels];
   if (rdDiminishingX !== undefined) world.rd_diminishing_x = rdDiminishingX;
   if (focusLevels !== undefined && focusLevels.length > 0) world.focus_levels = [...focusLevels];
@@ -217,6 +224,10 @@ export interface SimOptions {
   rd_diminishing_x?: number;
   /** The growth profile id (economy/profiles.ts, D970); `DEFAULT_PROFILE_ID` when absent. */
   profile?: string;
+  /** The first day of the game (1995-rework 3.1); the world's own start when absent. */
+  start_date?: SimDate;
+  /** A historical world's scenario (economy/scenarios.ts, 1995-rework 4.1); stable when absent. */
+  scenario?: string;
   /** Replaces some of the default `SIM_DEPS` (tests). */
   deps?: Partial<SimDeps>;
 }
@@ -324,7 +335,7 @@ function freshState(cfg: SimConfig, seed: number): Result<SimState, LoadError> {
   // boards (7.1).
   const world = cfg.start(draws);
   if (!world.ok) return world;
-  const controls = controlsDefault();
+  const controls = controlsDefault(world.value.era !== undefined);
   const map = cfg.mapDataBuild(world.value);
   if (!map.ok) return map;
   const s: SimState = {
@@ -347,6 +358,18 @@ function simFromConfig(cfg: SimConfig, seed: number): Result<Sim, LoadError> {
   return { ok: true, value: new Sim(cfg, s.value) };
 }
 
+/** What a new game of this data can be (1995-rework 4.1); null for a world with one start. */
+export function newGameChoices(data: WorldData): NewGameChoices | null {
+  if (!data.manifest.features.era) return null;
+  return {
+    world_id: data.manifest.id,
+    scenarios: [
+      ...SCENARIOS.map((s) => ({ id: s.id, label: s.label })),
+      { id: RANDOM_SCENARIO_ID, label: RANDOM_SCENARIO_LABEL },
+    ],
+  };
+}
+
 /**
  * A new game from the loaded data and a seed: the start state of spec 7, paused at 2020-01-01
  * 00:00 (spec 7.3). Rust `Sim::new`.
@@ -365,6 +388,19 @@ export function simNew(data: WorldData, seed: number, opts: SimOptions = {}): Re
       },
     };
   }
+  if (opts.scenario !== undefined && !(data.manifest.features.era && scenarioKnown(opts.scenario))) {
+    return {
+      ok: false,
+      error: {
+        kind: "BadValue",
+        table: "scenario",
+        key: opts.scenario,
+        message: "not a scenario of this world",
+      },
+    };
+  }
+  // A world without the scripted AI boom plays none under any profile (1995-rework 3.2).
+  const played = data.manifest.features.ai_boom ? profile : { ...profile, ai_boom: false };
   return simFromConfig(
     {
       data,
@@ -373,10 +409,12 @@ export function simNew(data: WorldData, seed: number, opts: SimOptions = {}): Re
           data,
           draws,
           deps.start,
-          profile,
+          played,
           opts.debt_levels,
           opts.focus_levels,
           opts.rd_diminishing_x,
+          opts.start_date ?? data.manifest.start_date,
+          opts.scenario,
         ),
       makeScheduler: scheduler,
       mapDataBuild: (world) => deps.mapDataBuild(data, world),
@@ -453,7 +491,11 @@ function stepInner(i: SimInner, observer: TickObserver | null): Notice[] {
   // Pauses go in just before the final TickDone.
   const done = notices.pop();
   const skip = s.controls.skip;
-  if (skip !== null && s.world.clock >= skip.target) {
+  if (alertPause?.kind === "RunEnded") {
+    // The end of a run stops a skip too (1995-rework 8.3).
+    s.controls.skip = null;
+    pause(s, notices, alertPause);
+  } else if (skip !== null && s.world.clock >= skip.target) {
     s.controls.skip = null;
     pause(s, notices, { kind: "SkipDone", skip: skip.kind });
   } else if (alertPause !== null) {
@@ -597,6 +639,12 @@ export function simLoadBytes(sim: Sim, bytes: Uint8Array): Result<Notice[], SimE
 function loadBytesInner(i: SimInner, bytes: Uint8Array): Result<Notice[], SimError> {
   const state = decode(bytes);
   if (!state.ok) return fail({ kind: "Save", error: state.error });
+  // A save belongs to the world that wrote it: the loaded data is this one's (1995-rework 3.2).
+  const here = i.cfg.data?.manifest.id;
+  const saved = state.value.world.era?.world_id ?? MANIFEST_2020.id;
+  if (here !== undefined && here !== saved) {
+    return fail({ kind: "Save", error: { kind: "WrongWorld", save: saved, world: here } });
+  }
   const s = i.s;
   s.world = state.value.world;
   s.rng = state.value.rng;

@@ -21,8 +21,8 @@ import {
   companyFinanceStatus,
   companySheet,
   companyTrailingRevenue,
+  dateTimeDate,
   dateTimeMidnight,
-  EPOCH_YEAR,
   simDateYmd,
   simNew,
   simSoakWorld,
@@ -107,9 +107,9 @@ export function runSeed(
   const start = snapshot(world, n0, levels);
   const everDistressed = new Array<boolean>(n0).fill(false);
   const rows: YearRow[] = [];
-  let y = EPOCH_YEAR;
+  let y = dateTimeDate(sim.now()).year;
   let next = dateTimeMidnight(simDateYmd(y + 1, 1, 1));
-  const end = dateTimeMidnight(simDateYmd(EPOCH_YEAR + years, 1, 1));
+  const end = dateTimeMidnight(simDateYmd(y + years, 1, 1));
   let lastMonth = -1;
   const level = (id: number): number => played[id % played.length] as number;
   const yearRows = (): void => {

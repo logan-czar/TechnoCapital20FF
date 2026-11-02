@@ -23,8 +23,9 @@ export const MONTHS_PER_QUARTER = 3;
 /** A synthetic quarter is a quarter of the yearly run rate (spec 4.4 "revenue ÷ 4 and so on"). */
 export const RUN_RATE_QUARTER_SHARE = 0.25;
 /**
- * The year of the synthetic history: four quarters of 2019, the last released on 2 January 2020
- * as Q4 2019 (spec 4.4, 7.1).
+ * The year of the 2020 world's synthetic history: four quarters of 2019, the last released on
+ * 2 January 2020 as Q4 2019 (spec 4.4, 7.1). A world's own is the year before it starts
+ * (1995-rework 3.1).
  */
 export const SYNTHETIC_YEAR = 2019;
 
@@ -288,14 +289,20 @@ export function yearStatement(year: number, quarters: readonly Statement[]): Sta
 }
 
 /**
- * The synthetic history (spec 4.4, 7.1): four quarters of 2019 at the starting run rate, each a
- * quarter of `annual` (revenue ÷ 4 and so on), all with the starting balance sheet and key
- * figures (D228). The last is the Q4 2019 statement released on 2 January 2020.
+ * The synthetic history (spec 4.4, 7.1): four quarters of the year before the start at the
+ * starting run rate, each a quarter of `annual` (revenue ÷ 4 and so on), all with the starting
+ * balance sheet and key figures (D228). The last is the Q4 statement released on 2 January of the
+ * start year.
  */
-export function syntheticHistory(annual: Ledger, start: BalanceSheet, key: KeyFigures): Statement[] {
+export function syntheticHistory(
+  annual: Ledger,
+  start: BalanceSheet,
+  key: KeyFigures,
+  year: number = SYNTHETIC_YEAR,
+): Statement[] {
   const lines = ledgerScaled(annual, RUN_RATE_QUARTER_SHARE);
   return Array.from({ length: QUARTERS_PER_YEAR }, (_, i) => {
-    const period: Period = { kind: "Quarter", quarter: { year: SYNTHETIC_YEAR, q: i + 1 } };
+    const period: Period = { kind: "Quarter", quarter: { year, q: i + 1 } };
     return { period, lines: { ...lines }, balance: { ...start }, key: copyKey(key), synthetic: true };
   });
 }

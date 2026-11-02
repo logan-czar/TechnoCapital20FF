@@ -4,6 +4,7 @@ import { type SettingsStore, settingsKey } from "./config/settings.ts";
 import type { OpenTarget } from "./links/nav.ts";
 import type { PageRef } from "./pages/ref.ts";
 import { DEFAULT_ROUTE, type PdoombergRoute } from "./pdoomberg/models.ts";
+import { NewGamePicker } from "./shell/NewGamePicker.tsx";
 import { FIXED_PANES, type PaneSpec, type WorkspaceControl } from "./shell/panes.ts";
 import { Toasts } from "./shell/Toasts.tsx";
 import { TopBar } from "./shell/TopBar.tsx";
@@ -42,7 +43,10 @@ function Shell({ client }: { client: SimClient }) {
   useEffect(() => {
     if (started.current) return;
     started.current = true;
-    void client.ready.then(() => client.newGame(DEFAULT_SEED));
+    // A world with a new-game picker waits for the player's choice (1995-rework 4.1).
+    void client.ready.then(() => {
+      if (client.store.status.choices === null) void client.newGame(DEFAULT_SEED);
+    });
   }, [client]);
 
   useEffect(() => {
@@ -104,6 +108,15 @@ function Shell({ client }: { client: SimClient }) {
   );
 
   if (status.fatal) return <p className="center error">The simulation stopped: {status.fatal}</p>;
+  if (!status.started && status.choices !== null) {
+    return (
+      <NewGamePicker
+        choices={status.choices}
+        onStart={(seed, scenario) => void client.newGame(seed, scenario)}
+        onLoad={(file) => void load(file)}
+      />
+    );
+  }
   if (!status.started) return <p className="center">Starting the simulation...</p>;
   return (
     <div className="app">

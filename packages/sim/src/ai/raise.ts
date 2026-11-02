@@ -133,37 +133,19 @@ export function successChance(
 }
 
 /**
- * The raise the company would try (spec 6.6), or null: not a cash-burning industry (every
- * industry with today's data), not Active or Distressed, no burn, or a runway of 4 quarters or
- * more. Method: a line draw of the target when rated B or better (rating factor above 0) and the
- * undrawn line covers it; else a share issue: listed at `P × (1 − 4% or 8%)` with the
+ * A share issue for `target` net (spec 6.6, D266): listed at `P × (1 − 4% or 8%)` with the
  * announcement effect, private at `0.7 × V × (1 − 8%)` with none; new shares enough to net the
- * target after 3% fees, capped at 20% of shares_out (D266).
+ * target after 3% fees, capped at 20% of shares_out.
  */
-export function raisePlan(i: RaiseInputs): RaisePlan | null {
-  if (!i.cash_burning || !(i.status === "Active" || i.status === "Distressed") || i.last_quarter_fcf >= 0.0) {
-    return null;
-  }
-  const burn = -i.last_quarter_fcf;
-  const own = ownCash(i.cash, i.line.drawn);
-  const runway = own / burn;
-  if (runway >= RUNWAY_TRIGGER_QUARTERS) return null;
-  const target = TARGET_RUNWAY_QUARTERS * burn - own;
-  if (ratingFactor(i.rating) > 0.0 && creditLineAvailable(i.line) >= target) {
-    return {
-      burn,
-      runway_quarters: runway,
-      target,
-      method: "CreditLine",
-      new_shares: 0,
-      issue_price: 0.0,
-      gross: target,
-      fees: 0.0,
-      net: target,
-      price_after: i.price,
-      chance: successChance(i.confidence_factor, i.label, "CreditLine", i.failed_raises),
-    };
-  }
+function shareIssuePlan(
+  i: Pick<
+    RaiseInputs,
+    "listed" | "price" | "shares_out" | "value_per_share" | "confidence_factor" | "label" | "failed_raises"
+  >,
+  target: number,
+  burn: number,
+  runway: number,
+): RaisePlan {
   let issue_price: number;
   if (i.listed) {
     const market_value = i.price * i.shares_out;
@@ -198,6 +180,84 @@ export function raisePlan(i: RaiseInputs): RaisePlan | null {
     price_after,
     chance: successChance(i.confidence_factor, i.label, "ShareIssue", i.failed_raises),
   };
+}
+
+/** A growth raise funds this many quarters of what the funding cap holds back (1995-rework 9, T). */
+export const SCALEUP_QUARTERS = 4.0;
+
+/** What a growth raise reads at the lock (1995-rework 9). */
+export interface GrowthRaiseInputs
+  extends Pick<
+    RaiseInputs,
+    | "status"
+    | "listed"
+    | "price"
+    | "shares_out"
+    | "value_per_share"
+    | "confidence_factor"
+    | "label"
+    | "failed_raises"
+  > {
+  /** The market's projected growth, a year (spec 6 g_dem). */
+  g_dem: number;
+  /** The scenario's floor on g_dem for investors to fund a firm's growth. */
+  min_g_dem: number;
+  /** The quarter's purchases the plan wants, and the ones the funding cap leaves. */
+  wanted_purchases: number;
+  funded_purchases: number;
+  /** The share of liquidity a quarter's purchases may use (spec 6.2). */
+  funding_share: number;
+}
+
+/**
+ * Scale-up financing (1995-rework 9), or null: an Active firm in a hot market whose growth plan the
+ * funding cap holds back sells shares to fund it. Spec 6.6's raise answers a cash burn, so a
+ * profitable firm in a booming market could only grow on its own earnings and never catch up.
+ * It reuses the 6.6 share issue, so its price, dilution cap, fees and success roll are spec 6.6's.
+ */
+export function growthRaisePlan(i: GrowthRaiseInputs): RaisePlan | null {
+  if (i.status !== "Active" || i.g_dem < i.min_g_dem) return null;
+  if (i.label === "Bust" || i.label === "Glut") return null;
+  const held_back = i.wanted_purchases - i.funded_purchases;
+  if (held_back <= 0.0) return null;
+  const target = (SCALEUP_QUARTERS * held_back) / i.funding_share;
+  const plan = shareIssuePlan(i, target, 0.0, 0.0);
+  return plan.new_shares > 0 ? plan : null;
+}
+
+/**
+ * The raise the company would try (spec 6.6), or null: not a cash-burning industry (every
+ * industry with today's data), not Active or Distressed, no burn, or a runway of 4 quarters or
+ * more. Method: a line draw of the target when rated B or better (rating factor above 0) and the
+ * undrawn line covers it; else a share issue: listed at `P × (1 − 4% or 8%)` with the
+ * announcement effect, private at `0.7 × V × (1 − 8%)` with none; new shares enough to net the
+ * target after 3% fees, capped at 20% of shares_out (D266).
+ */
+export function raisePlan(i: RaiseInputs): RaisePlan | null {
+  if (!i.cash_burning || !(i.status === "Active" || i.status === "Distressed") || i.last_quarter_fcf >= 0.0) {
+    return null;
+  }
+  const burn = -i.last_quarter_fcf;
+  const own = ownCash(i.cash, i.line.drawn);
+  const runway = own / burn;
+  if (runway >= RUNWAY_TRIGGER_QUARTERS) return null;
+  const target = TARGET_RUNWAY_QUARTERS * burn - own;
+  if (ratingFactor(i.rating) > 0.0 && creditLineAvailable(i.line) >= target) {
+    return {
+      burn,
+      runway_quarters: runway,
+      target,
+      method: "CreditLine",
+      new_shares: 0,
+      issue_price: 0.0,
+      gross: target,
+      fees: 0.0,
+      net: target,
+      price_after: i.price,
+      chance: successChance(i.confidence_factor, i.label, "CreditLine", i.failed_raises),
+    };
+  }
+  return shareIssuePlan(i, target, burn, runway);
 }
 
 /**

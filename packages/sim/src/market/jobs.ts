@@ -12,6 +12,7 @@
 
 import { companyIsFrozen } from "../economy/index.ts";
 import { profileOf } from "../economy/profiles.ts";
+import { eraHistoryNew } from "../era/jobs.ts";
 import { companyHomeSpread, runRate, sheet } from "../finance/jobs.ts";
 import { companyFinanceQuarters } from "../finance/state.ts";
 import { ledgerEbit, ledgerNetIncome, trailingFour } from "../finance/statements.ts";
@@ -40,7 +41,7 @@ import {
   schedulerRunSlots,
   tickFactsNew,
 } from "../time/scheduler.ts";
-import { cmpDate, type DateTime, EPOCH_YEAR, type SimDate } from "../types/calendar.ts";
+import { cmpDate, type DateTime, type SimDate } from "../types/calendar.ts";
 
 import type { DrawSource } from "../types/draws.ts";
 import type { CompanyId, ZoneId } from "../types/ids.ts";
@@ -108,6 +109,11 @@ export const BAR_YEARS_KEPT = 10;
 // ---------------------------------------------------------------------------------------------
 // Reading the World.
 
+/** An era world's yield before the home spread; nothing in the 2020 world (1995-rework 6.2). */
+function eraYield(world: World): { y10_base?: number } {
+  return world.era === undefined ? {} : { y10_base: world.base_rate + world.era.y10_term };
+}
+
 /**
  * The 5.13 inputs of company `id` today on `basis` (D243): book equity from the balance sheet
  * (3.9), M_sector, the HQ home spread on the zone's effective spread (5.1.2, 5.12), the
@@ -123,6 +129,7 @@ export function fairValueInputs(world: World, id: CompanyId, basis: FairValueBas
     book_equity: sheet(world, c).equity,
     sector_multiple: ind.params.earnings_multiple,
     home_spread: companyHomeSpread(world, c, false),
+    ...eraYield(world),
     label: ind.phase_label,
     company_confidence: confidenceFactor(c.management_score),
     listing_confidence:
@@ -230,6 +237,7 @@ export function start(world: World, draws: DrawSource): void {
       g_sector: ind.lt,
       // D235: the zone's base spread at load.
       home_spread: companyHomeSpread(world, c, true),
+      ...eraYield(world),
       listing_confidence:
         exchange === null ? null : (world.zones[exchange] as World["zones"][number]).confidence_start,
       book_floor_share: bookFloorShare(ind.key),
@@ -254,8 +262,8 @@ export function start(world: World, draws: DrawSource): void {
   }
   const caps = exchangeCaps(world);
   world.market.indices = world.zones.map((_, z) => exchangeIndexAtLoad(caps[z] as number));
-  // The index history starts with the load level on 1 January 2020 (D540).
-  const startDate = simDateYmd(EPOCH_YEAR, 1, 1);
+  // The index history starts with the load level on the start date (D540).
+  const startDate = dateTimeDate(world.clock);
   world.market.index_history = world.market.indices.map((i) => {
     const h = indexHistoryNew();
     if (i.prev_close !== null) indexHistoryRecord(h, startDate, i.prev_close);
@@ -579,6 +587,17 @@ function projectionClone(world: World): World {
     recaps: [],
     // Politics jobs are not projection slots: leave the people and the results out of the copy.
     politics: { ...world.politics, politicians: [], districts: [], pending: null, elections: [] },
+    // Nor are the run's yearly jobs: it keeps what the month closes read (1995-rework 3.3).
+    ...(world.era === undefined
+      ? {}
+      : {
+          era: {
+            ...world.era,
+            history: eraHistoryNew(),
+            characters: { pool: [], queue: [] },
+            politics: { ...world.era.politics, states: [], next_districts: null },
+          },
+        }),
   } as World;
   const clone = structuredClone(lite);
   clone.companies.forEach((c, i) => {

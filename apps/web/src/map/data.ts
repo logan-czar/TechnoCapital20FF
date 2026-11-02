@@ -1,7 +1,8 @@
 // Loading the map data at runtime: the TopoJSON shapes and the province CSV rows. Both are
 // served from the repo folders (see the gameData plugin in vite.config.ts): the shapes
-// from assets/map, the CSVs from docs/design/data.
+// from assets/map, the CSVs from this page's world.
 
+import { selectedWorld, worldDataBase } from "../sim/world.ts";
 import { parseCsv } from "./csv.ts";
 import { buildMapModel, type MapModel, type ProvinceRow, type ProvinceTopology } from "./model.ts";
 
@@ -18,6 +19,9 @@ export const REGION_SLUGS = [
   "sub-saharan-africa",
 ] as const;
 
+/** This page's world's CSV folder (the provinces' countries differ by world, 1995-rework 2.2). */
+const WORLD_BASE = (): string => worldDataBase(selectedWorld());
+
 async function fetchOk(url: string): Promise<Response> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`${url}: ${res.status} ${res.statusText}`);
@@ -26,7 +30,7 @@ async function fetchOk(url: string): Promise<Response> {
 
 export async function loadProvinceRows(): Promise<ProvinceRow[]> {
   const texts = await Promise.all(
-    REGION_SLUGS.map(async (slug) => (await fetchOk(`/data/design/provinces-${slug}.csv`)).text()),
+    REGION_SLUGS.map(async (slug) => (await fetchOk(`${WORLD_BASE()}provinces-${slug}.csv`)).text()),
   );
   return texts.flatMap((t) =>
     parseCsv(t).map((r) => ({ id: r.id ?? "", name: r.name ?? "", country: r.country ?? "" })),
@@ -34,7 +38,7 @@ export async function loadProvinceRows(): Promise<ProvinceRow[]> {
 }
 
 export async function loadCountryCodes(): Promise<string[]> {
-  const text = await (await fetchOk("/data/design/countries.csv")).text();
+  const text = await (await fetchOk(`${WORLD_BASE()}countries.csv`)).text();
   return parseCsv(text).map((r) => r.iso3 ?? "");
 }
 

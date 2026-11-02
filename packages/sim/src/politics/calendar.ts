@@ -3,9 +3,10 @@
 import { simDateWeekday, simDateYmd } from "../time/calendar.ts";
 import type { SimDate } from "../types/calendar.ts";
 import { cmpDate, dateEq } from "../types/calendar.ts";
+import { remEuclid } from "../types/num.ts";
 
-/** The first November vote after the 1 January 2020 start (19-history 19.22). */
-export const FIRST_ELECTION_YEAR = 2020;
+/** A presidential year the cycles count from, in both directions (19.22; 1995-rework 7.1). */
+export const ELECTION_ANCHOR_YEAR = 2020;
 /** House term (4.2.4), and so every November election's spacing. */
 export const ELECTION_EVERY_YEARS = 2;
 /** Head of state term (4.2.4). */
@@ -31,23 +32,23 @@ export function electionDay(year: number): SimDate {
 
 /** Whether `year` holds a November vote. */
 export function isElectionYear(year: number): boolean {
-  return year >= FIRST_ELECTION_YEAR && (year - FIRST_ELECTION_YEAR) % ELECTION_EVERY_YEARS === 0;
+  return remEuclid(year - ELECTION_ANCHOR_YEAR, ELECTION_EVERY_YEARS) === 0;
 }
 
 /** Whether `year`'s vote includes the president (direct national vote; 4.6.2). */
 export function isPresidentYear(year: number): boolean {
-  return year >= FIRST_ELECTION_YEAR && (year - FIRST_ELECTION_YEAR) % PRESIDENT_TERM_YEARS === 0;
+  return remEuclid(year - ELECTION_ANCHOR_YEAR, PRESIDENT_TERM_YEARS) === 0;
 }
 
 /** The Senate class up in election year `year` (D982). */
 export function senateClassUp(year: number): number {
-  const i = (year - FIRST_ELECTION_YEAR) / ELECTION_EVERY_YEARS;
-  return SENATE_CLASS_CYCLE[i % SENATE_CLASS_CYCLE.length] as number;
+  const i = (year - ELECTION_ANCHOR_YEAR) / ELECTION_EVERY_YEARS;
+  return SENATE_CLASS_CYCLE[remEuclid(i, SENATE_CLASS_CYCLE.length)] as number;
 }
 
 /** The first election date strictly after `date`. */
 export function nextElectionAfter(date: SimDate): SimDate {
-  let year = Math.max(date.year, FIRST_ELECTION_YEAR);
+  let year = date.year;
   while (!isElectionYear(year) || cmpDate(electionDay(year), date) <= 0) year++;
   return electionDay(year);
 }

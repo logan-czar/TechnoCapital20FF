@@ -98,14 +98,17 @@ export function growthFactor(g: number, gSector: number): number {
   return clamp(1.0 + G_SLOPE * (clampGrowth(g) - gSector), G_MIN, G_MAX);
 }
 
-/** The 10-year yield (spec 5.13 step 2, C24): `3.5% + home_spread`. */
-export function y10(homeSpread: number): number {
-  return Y10_BASE + homeSpread;
+/**
+ * The 10-year yield (spec 5.13 step 2, C24): `3.5% + home_spread`. In an era world the 3.5% is
+ * the policy rate plus a term (1995-rework 6.2).
+ */
+export function y10(homeSpread: number, base: number = Y10_BASE): number {
+  return base + homeSpread;
 }
 
 /** Rate factor (spec 5.13 step 2): `clamp(9% ÷ (y10 + 5%), 0.4, 1.6)`. */
-export function rateFactor(homeSpread: number): number {
-  return clamp(R_NUMERATOR / (y10(homeSpread) + R_YIELD_ADD), R_MIN, R_MAX);
+export function rateFactor(homeSpread: number, y10Base: number = Y10_BASE): number {
+  return clamp(R_NUMERATOR / (y10(homeSpread, y10Base) + R_YIELD_ADD), R_MIN, R_MAX);
 }
 
 /**
@@ -165,6 +168,8 @@ export interface FairValueInputs {
   sector_multiple: number;
   /** The HQ home spread (5.12, D223), a fraction. */
   home_spread: number;
+  /** The yield before the home spread; `Y10_BASE` when absent (1995-rework 6.2). */
+  y10_base?: number;
   /** The company's industry phase label (5.1). */
   label: PhaseLabel;
   /** The company's own confidence factor (5.7): `0.8 + score ÷ 250`. */
@@ -191,7 +196,7 @@ export function fairValue(i: FairValueInputs): number {
   const e = i.basis.e_norm;
   let value: number;
   if (e !== null && e > 0.0) {
-    const multiple = i.sector_multiple * i.basis.growth_factor * rateFactor(i.home_spread);
+    const multiple = i.sector_multiple * i.basis.growth_factor * rateFactor(i.home_spread, i.y10_base);
     value = (BOOK_WEIGHT * i.book_equity + EARNINGS_WEIGHT * e * multiple * cycle * i.company_confidence) * x;
   } else {
     value = i.book_equity * cycle * x;

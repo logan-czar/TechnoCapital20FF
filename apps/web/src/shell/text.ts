@@ -16,6 +16,10 @@ export const ALERT_LABEL: Readonly<Record<AlertKind, string>> = {
   BankruptcyInWatchlist: "Bankruptcy in watchlist",
   WorldEvent: "World event",
   QuarterStart: "Quarter start",
+  Election: "US election",
+  NewSector: "New industry",
+  Recession: "Recession",
+  MajorFailure: "Major failure",
 };
 
 export const LEVEL_LABEL: Readonly<Record<AlertLevel, string>> = {
@@ -68,7 +72,9 @@ export function describeNotice(
             ? `by ${ALERT_LABEL[r.alert_kind]}`
             : r.kind === "SkipDone"
               ? `skip done (${skipName(r.skip)})`
-              : "save loaded";
+              : r.kind === "RunEnded"
+                ? "the end of the run"
+                : "save loaded";
       return { text: `Paused ${why}`, severity: "info" };
     }
     case "EarningsReleased":

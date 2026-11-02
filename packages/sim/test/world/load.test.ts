@@ -29,7 +29,6 @@ const STUBS: LoadDeps = {
   laborUnits: () => 1,
   productiveCompute: () => 0,
   nameBooksBuild: () => ({ ok: true, value: { books: [], by_country: [] } }),
-  traitFromName: (n) => (n === "Greedy" ? "Greedy" : null),
 };
 
 function world(): WorldData {

@@ -45,17 +45,23 @@ export function closingRates(ind: Industry, quarterStart: boolean): [number, num
 export function setEffectiveDemand(world: World): void {
   const base = world.base_rate;
   const neutral = world.neutral_rate;
+  // The fiscal push (1995-rework 7.5); 1 with no levers.
+  const mult = world.era?.politics.demand_mult ?? 1.0;
   for (const ind of world.industries) {
-    ind.demand = effectiveDemand(ind.demand_core, ind.params.rate_sensitivity, base, neutral);
+    ind.demand = mult * effectiveDemand(ind.demand_core, ind.params.rate_sensitivity, base, neutral);
   }
 }
 
 /** Sets every industry's phase label from this quarter's growth and last month's S (spec 5.1). */
 export function setPhaseLabels(world: World, date: SimDate): void {
-  for (const ind of world.industries) {
-    const forced = forcedLabel(ind.params.boom_uplift, world.ai, date);
+  world.industries.forEach((ind, i) => {
+    // A dormant industry's growth draws are noise on nothing: no phase, no headline (1995-rework 5.2).
+    const forced =
+      world.era?.sectors[i]?.status === "Dormant"
+        ? "Normal"
+        : forcedLabel(ind.params.boom_uplift, world.ai, date);
     ind.phase_label = phaseLabel(growthGap(ind.q_growth, ind.lt), ind.supply_ratio, ind.phase_label, forced);
-  }
+  });
 }
 
 /**

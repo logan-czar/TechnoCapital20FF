@@ -6,7 +6,7 @@
 // reverts to the base as the cycle does. Confidence (daily, 4.2 step 6) is M5's.
 
 import type { JobCtx } from "../time/scheduler.ts";
-import { clamp, roundHalfAway } from "../types/num.ts";
+import { clamp, maxF, roundHalfAway } from "../types/num.ts";
 import { BPS_PER_UNIT, type World } from "../types/world.ts";
 
 /** k of the spread formula: how far one point of zone effect moves the spread (spec 5.1.2, T). */
@@ -14,6 +14,8 @@ export const SPREAD_CYCLE_K = 8.0;
 /** The effective spread stays within these multiples of the base (spec 5.1.2, T). */
 export const SPREAD_MIN_MULT = 0.5;
 export const SPREAD_MAX_MULT = 2.0;
+/** In an era world, a policy rate above neutral widens the base spread by this (1995-rework 6.2, T). */
+export const SPREAD_RATE_K = 10.0;
 
 /**
  * The effective zone spread in whole bps from the base in bps and the zone effect (spec 5.1.2).
@@ -31,8 +33,11 @@ export function effectiveSpread(base: number, zoneEffect: number): number {
 
 /** Recomputes every zone's effective credit spread from its effect. */
 export function setZoneSpreads(world: World): void {
+  // 1 in the 2020 world, where the base rate is fixed at neutral.
+  const rateMult =
+    world.era === undefined ? 1.0 : maxF(1.0 + SPREAD_RATE_K * (world.base_rate - world.neutral_rate), 0.0);
   for (const z of world.zones) {
-    z.credit_spread = effectiveSpread(z.credit_spread_base, z.effect);
+    z.credit_spread = effectiveSpread(z.credit_spread_base * rateMult, z.effect);
   }
 }
 

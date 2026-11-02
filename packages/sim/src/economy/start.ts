@@ -21,7 +21,6 @@ import {
   startingLoadout,
 } from "../ops/stations.ts";
 import { dateTimeDate } from "../time/calendar.ts";
-import { DATETIME_START } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import type { ComputeBill } from "../types/state/ops.ts";
 import type { IndustryParams, World } from "../types/world.ts";
@@ -113,7 +112,7 @@ export function sharedCostsAtLoadHook(bill: ComputeBill): number {
  * month. Call once on a world fresh from `worldFromData`.
  */
 export function start(world: World, draws: DrawSource): void {
-  const today = dateTimeDate(DATETIME_START);
+  const today = dateTimeDate(world.clock);
   // The AI boom (5.1.1): the pop date rolled at load; Preboom.
   world.ai.pop_date = rollPopDate(draws);
   const profile = profileOf(world);

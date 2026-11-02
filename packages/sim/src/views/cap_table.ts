@@ -34,7 +34,7 @@ export function capTableViewGet(v: CapTableView, id: CompanyId): CapTable | unde
 
 /**
  * A company's controller (spec 3.5): companies.csv's for a starting company (D425), none for a
- * born one (its founders are removed, D989).
+ * born one (its founders are removed, D989) unless a named character founded it (1995-rework 7.7).
  */
 export function controllerOf(c: Company): ControllerRef {
   return c.start_control === null ? { kind: "None" } : { ...c.start_control.controller };
@@ -80,18 +80,22 @@ export function capLines(w: World, c: Company): CapLine[] {
   const push = (holder: CapHolder, name: string, shares: number): void => {
     if (shares > 0) lines.push({ holder, name, shares: assertCount(shares), share: shares / total });
   };
+  // The controller's line out of a block; returns the shares it took.
+  const pushController = (block: number): number => {
+    const controller = controllerOf(c);
+    const held = controllerShares(c, block);
+    const name = controllerName(w, controller);
+    if (name !== null) push({ kind: "Controller", controller: controllerView(controller) }, name, held);
+    return held;
+  };
   for (const h of c.holders) {
     switch (h.holder.kind) {
-      case "Existing": {
-        const controller = controllerOf(c);
-        const held = controllerShares(c, h.shares);
-        const name = controllerName(w, controller);
-        if (name !== null) push({ kind: "Controller", controller: controllerView(controller) }, name, held);
-        push({ kind: "OtherHolders" }, OTHER_HOLDERS_LABEL, h.shares - held);
+      case "Existing":
+        push({ kind: "OtherHolders" }, OTHER_HOLDERS_LABEL, h.shares - pushController(h.shares));
         break;
-      }
       case "SeedInvestors":
-        push({ kind: "SeedInvestors" }, SEED_INVESTORS_LABEL, h.shares);
+        // A named founder holds part of the block (1995-rework 7.7); none in the 2020 world.
+        push({ kind: "SeedInvestors" }, SEED_INVESTORS_LABEL, h.shares - pushController(h.shares));
         break;
       case "PublicFloat":
         push({ kind: "PublicFloat" }, PUBLIC_FLOAT_LABEL, h.shares);

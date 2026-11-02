@@ -21,7 +21,14 @@ import { variableCostShare } from "../economy/revenue.ts";
 import { pPre } from "../economy/supply.ts";
 import { dataBookFreeRdFraction } from "../ops/data.ts";
 import { BAREBONES_REVENUE_USD } from "../ops/stations.ts";
-import { formatMonth, monthPrev, quarterPrev, simDateMonthOf, simDateQuarter } from "../time/calendar.ts";
+import {
+  dateTimeDate,
+  formatMonth,
+  monthPrev,
+  quarterPrev,
+  simDateMonthOf,
+  simDateQuarter,
+} from "../time/calendar.ts";
 import {
   type JobCtx,
   jobCtxRaiseAlert,
@@ -56,11 +63,14 @@ import {
   reviewLine,
 } from "./credit.ts";
 import {
+  bankrupt,
   companyStatusIsFrozen,
+  exitDue,
   onQuarterClose,
   removalDue,
   remove,
   type SettleInputs,
+  type Settlement,
   settleMonth,
   settlementLineChange,
 } from "./distress.ts";
@@ -80,7 +90,6 @@ import {
   MONTHS_PER_QUARTER,
   QUARTERS_PER_YEAR,
   quarterStatement,
-  SYNTHETIC_YEAR,
   syntheticHistory,
   trailingFour,
   yearStatement,
@@ -130,6 +139,9 @@ export function companyHomeSpread(world: World, c: Company, base: boolean): numb
   const zone_spread = base ? zone.credit_spread_base : zone.credit_spread;
   return homeSpread(zone_spread, country.sovereign_spread);
 }
+
+/** A bankruptcy this large raises Major failure in a historical world (1995-rework 8.2, T). */
+export const MAJOR_FAILURE_REVENUE_USD = 1.0e9;
 
 /**
  * Trailing annual revenue (spec 6 min_cash, 3.7.1 company size): the trailing four quarters'
@@ -258,11 +270,12 @@ export function runRate(world: World, c: Company): [Ledger, ImpliedRating, Credi
 /**
  * The finance start state (spec 7.1, 4.4; build-plan M4.2, M4.4, M4.5): each company's run rate
  * and its implied rating (the starting rating itself is company-start.csv's, D241), its line
- * limit, the four synthetic 2019 quarters and the 2019 year, and the opening balance sheet of
- * January 2020. Call once, after the economy and the boards are set (their load month and
+ * limit, the four synthetic quarters and the year before the start, and the opening balance sheet
+ * of the start month. Call once, after the economy and the boards are set (their load month and
  * management scores feed it); it draws nothing.
  */
 export function start(world: World): void {
+  const syntheticYear = dateTimeDate(world.clock).year - 1;
   for (let id = 0; id < world.companies.length; id++) {
     const c = world.companies[id] as Company;
     const [annual, implied, line] = runRate(world, c);
@@ -276,8 +289,8 @@ export function start(world: World): void {
       },
       status,
     );
-    const history = syntheticHistory(annual, opening, keyFigures(world, c));
-    const year = yearStatement(SYNTHETIC_YEAR, history);
+    const history = syntheticHistory(annual, opening, keyFigures(world, c), syntheticYear);
+    const year = yearStatement(syntheticYear, history);
     const f = c.finance;
     f.implied = implied;
     f.line = line;
@@ -362,6 +375,17 @@ export function interestJob(world: World, _ctx: JobCtx): void {
 }
 
 /**
+ * A historical world's exit (1995-rework 9): due by its losses or size, unless it is the last active
+ * company of its industry, which keeps the industry named.
+ */
+function mustExit(world: World, c: Company, s: Settlement): boolean {
+  if (companyStatusIsFrozen(s.state.status) || !exitDue(c.loss_quarters, s.gross_assets)) return false;
+  return world.companies.some(
+    (o) => o !== c && o.industry === c.industry && !companyStatusIsFrozen(companyFinanceStatus(o.finance)),
+  );
+}
+
+/**
  * 4.3 step 13 (spec 5.12): cash settles with the month's flows (operating cash, purchases and
  * growth plan sales; D124), then `settleMonth`: auto-draw, the review excess, the plan's
  * auto-repay (6.5), forced sales at the industry's sale factor (5.10) and the distress count and
@@ -388,6 +412,10 @@ export function settleJob(world: World, ctx: JobCtx): void {
       state: c.finance.distress,
     };
     const s = settleMonth(inputs);
+    if (world.era !== undefined && !s.went_bankrupt && mustExit(world, c, s)) {
+      s.state = bankrupt(s.state);
+      s.went_bankrupt = true;
+    }
     const share = s.forced_sale.share;
     if (share > 0.0) {
       for (const uid of c.units) {
@@ -414,6 +442,14 @@ export function settleJob(world: World, ctx: JobCtx): void {
     if (s.went_bankrupt) {
       f.bankrupt_on = today;
       jobCtxRaiseAlert(ctx, "BankruptcyInWatchlist", { kind: "Company", company: id as CompanyId });
+      if (world.era !== undefined && trailingRevenue(c) >= MAJOR_FAILURE_REVENUE_USD) {
+        jobCtxRaiseAlert(ctx, "MajorFailure", { kind: "Company", company: id as CompanyId });
+        world.era.history.major_failures.push({
+          year: today.year,
+          company: id as CompanyId,
+          company_name: c.name,
+        });
+      }
     }
   }
 }
@@ -576,9 +612,14 @@ export function ratingReviewJob(world: World, _ctx: JobCtx): void {
  * the new rating; a company over it gets 3 months to repay the excess (D224).
  */
 export function lineReviewJob(world: World, _ctx: JobCtx): void {
+  // In a historical world lenders pull back in a contraction (1995-rework 9): 1 in the 2020 world.
+  const era = world.era;
+  const squeeze =
+    era !== undefined && world.cycle.phase === "Contraction" ? 1.0 - era.scenario.macro.credit_squeeze : 1.0;
   for (const c of world.companies) {
     if (companyStatusIsFrozen(companyFinanceStatus(c.finance))) continue;
-    const limit = lineLimit(assetBook(world, c), c.cash_usd, c.finance.line.drawn, c.finance.rating);
+    const limit =
+      squeeze * lineLimit(assetBook(world, c), c.cash_usd, c.finance.line.drawn, c.finance.rating);
     const f = c.finance;
     f.line = reviewLine(f.line, limit);
   }

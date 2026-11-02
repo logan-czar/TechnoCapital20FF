@@ -6,6 +6,7 @@
 export * from "./checks.ts";
 export * from "./error.ts";
 export * from "./load.ts";
+export * from "./manifest.ts";
 export * from "./map.ts";
 export * from "./rows.ts";
 export * from "./world.ts";

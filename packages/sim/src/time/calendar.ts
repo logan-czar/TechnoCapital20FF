@@ -223,25 +223,25 @@ export function formatQuarter(q: Quarter): string {
 
 /** Largest DateTime (Rust `u32::MAX`). */
 const DATETIME_MAX = 0xffff_ffff;
+/** Smallest DateTime: a world may start before the epoch (1995-rework 3.1, D990). */
+const DATETIME_MIN = -0x8000_0000;
 
 export function dateTimeFromHours(hours: number): DateTime {
-  if (!Number.isInteger(hours) || hours < 0 || hours > DATETIME_MAX) {
-    throw new RangeError(`${hours} is not a u32 hour count`);
+  if (!Number.isInteger(hours) || hours < DATETIME_MIN || hours > DATETIME_MAX) {
+    throw new RangeError(`${hours} is not an hour count`);
   }
   return hours;
 }
 
-/** Hours since 2020-01-01 00:00. */
+/** Hours since 2020-01-01 00:00 (negative before it). */
 export function dateTimeHours(t: DateTime): number {
   return t;
 }
 
-/** `hour` (0 to 23) on `date`; throws before the epoch. */
+/** `hour` (0 to 23) on `date`. */
 export function dateTimeAt(date: SimDate, hour: number): DateTime {
   if (!(hour >= 0 && hour < HOURS_PER_DAY)) throw new RangeError(`hour ${hour} out of range`);
-  const days = simDateDaysSinceEpoch(date);
-  if (days < 0) throw new RangeError("date before the game epoch");
-  return dateTimeFromHours(days * HOURS_PER_DAY + hour);
+  return dateTimeFromHours(simDateDaysSinceEpoch(date) * HOURS_PER_DAY + hour);
 }
 
 /** 00:00 on `date`. */
@@ -255,7 +255,7 @@ export function dateTimeDate(t: DateTime): SimDate {
 
 /** 0 to 23. */
 export function dateTimeHour(t: DateTime): number {
-  return t % HOURS_PER_DAY;
+  return remEuclid(t, HOURS_PER_DAY);
 }
 
 export function dateTimeWeekday(t: DateTime): Weekday {
@@ -264,7 +264,7 @@ export function dateTimeWeekday(t: DateTime): Weekday {
 
 export function dateTimeAddHours(t: DateTime, n: number): DateTime {
   // Rust's `n` is a u32, and the sum panics on u32 overflow (debug builds).
-  if (!Number.isInteger(n) || n < 0) throw new RangeError(`${n} is not a u32 hour count`);
+  if (!Number.isInteger(n) || n < 0) throw new RangeError(`${n} is not a whole number of hours to add`);
   return dateTimeFromHours(t + n);
 }
 

@@ -398,6 +398,11 @@ export class JobCtx {
     }
   }
 
+  /** A historical world's run has ended: pauses after this tick, whatever else is set (1995-rework 8.3). */
+  endRun(): void {
+    if (this.#controls !== null) this.#pause = { kind: "RunEnded" };
+  }
+
   /** Rust `JobCtx::pause_request`. Use `jobCtxPauseRequest`. */
   pauseRequest(): PauseReason | null {
     return this.#pause;

@@ -10,6 +10,7 @@ import {
   type AlertKind,
   type AlertLevel,
   type AlertLevels,
+  HISTORICAL_ALERT_DEFAULT_LEVEL,
 } from "../types/notice.ts";
 
 export {
@@ -37,6 +38,11 @@ export function alertKindDefaultLevel(kind: AlertKind): AlertLevel {
 /** The spec 8 defaults (Rust `AlertLevels::default`). */
 export function alertLevelsDefault(): AlertLevels {
   return ALERT_KIND_VALUES.map(alertKindDefaultLevel);
+}
+
+/** A historical world's defaults (1995-rework 8.2). */
+export function alertLevelsHistorical(): AlertLevels {
+  return ALERT_KIND_VALUES.map((k) => HISTORICAL_ALERT_DEFAULT_LEVEL[k]);
 }
 
 /** Every alert Off: for runs whose alerts nobody sees, such as projections (spec 5.16). */

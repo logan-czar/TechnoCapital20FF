@@ -2,6 +2,7 @@
 // US political calendar's days, the only days it changes (D985).
 
 import { isPresidentYear, nextElectionAfter, senateClassUp } from "../politics/calendar.ts";
+import { ERA_IDEOLOGY_NAMES } from "../politics/era.ts";
 import { officeHolders, partySeats } from "../politics/state.ts";
 import { dateTimeDate } from "../time/calendar.ts";
 import {
@@ -94,6 +95,7 @@ export function buildPolitics(input: ViewInput): PoliticsView {
   const judges = of("Judge");
   const date = nextElectionAfter(dateTimeDate(input.world.clock));
   return {
+    ...(input.world.era === undefined ? {} : { ideology_names: { ...ERA_IDEOLOGY_NAMES } }),
     country: p.country,
     president: rows(of("President"))[0] ?? null,
     president_terms: p.president_terms,

@@ -21,23 +21,6 @@ import { MAP_META } from "./map.ts";
 import { type KeyCity, NAME_KIND_VALUES, type NameKind, nameKindDebug } from "./rows.ts";
 import { SUPERREGIONS, type WorldData, worldDataAllProvinces, worldDataCounts } from "./world.ts";
 
-/** Expected row counts (spec 10 M0, build-plan M0.2). */
-export const EXPECTED_COUNTS: readonly (readonly [string, number])[] = [
-  ["countries", 211],
-  ["provinces", 3963],
-  ["companies", 651],
-  ["characters", 296],
-  ["industries", 42],
-  ["country-economy", 211],
-  ["financial-zones", 26],
-  ["ai-boom", 15],
-  ["key-cities", 88],
-  ["company-start", 651],
-  ["startup-events", 9],
-  ["politics-usa", 51],
-  ["politics-usa-offices", 31],
-];
-
 /** Asset decay is 0% to 10% a year (validate.py; spec 5.10). */
 const ASSET_DECAY_MAX = 0.1;
 /** Quarterly growth volatility is 0% to 10% (validate.py; spec 5.1). */
@@ -46,6 +29,8 @@ const VOLATILITY_MAX = 0.1;
 const WEALTH_INDEX_RANGE = [10, 95] as const;
 /** Zone base credit spread range in bps (batch 155; spec 5.1.2). */
 const CREDIT_SPREAD_MAX_BPS = 2500.0;
+/** A zone's track against the world, log a year (1995-rework 6.4; tools/world-1995/validate.py). */
+const ZONE_TRACK_MAX = 0.15;
 /** Zone confidence_start range (batch 155; spec 5.13). */
 const CONFIDENCE_RANGE = [-100.0, 100.0] as const;
 /** Opening share price range in whole dollars (batch 161; spec 7.1). */
@@ -116,10 +101,11 @@ const SENATE_CLASS_SEATS: readonly (readonly [string, number])[] = [
   ["3", 34],
 ];
 const NO_SENATE_STATE = "District of Columbia";
-/** The appointed US seats by kind (D983, D984). */
+/** politics-usa-era.csv `census_region` (1995-rework 7.3). */
+const CENSUS_REGIONS: readonly string[] = ["Northeast", "Midwest", "South", "West"];
+/** The appointed US seats by kind (D983, D984); the cabinet's come from the manifest. */
 const POLITICS_OFFICE_SEATS: readonly (readonly [string, number])[] = [
   ["VicePresident", 1],
-  ["Cabinet", 15],
   ["Supreme", 9],
   ["Appeals", 13],
   ["Trial", 12],
@@ -165,11 +151,13 @@ export function check(w: WorldData): DataError[] {
   countries(w, errors);
   countryEconomy(w, ids, errors);
   zones(w, ids, errors);
+  zoneGrowth(w, ids, errors);
   keyCities(w, ids, errors);
   companies(w, ids, errors);
   companyStart(w, errors);
   startupEvents(w, ids, errors);
   politics(w, errors);
+  characterSpawns(w, errors);
   names(w, ids, errors);
   map(w, ids, errors);
   return errors;
@@ -212,7 +200,7 @@ function unique<T>(t: Table<T>, field: string, key: (r: T) => string, errors: Da
 
 function counts(w: WorldData, errors: DataError[]): void {
   const have = worldDataCounts(w);
-  for (const [name, expected] of EXPECTED_COUNTS) {
+  for (const [name, expected] of w.manifest.expected_counts) {
     const n = have.find(([k]) => k === name)?.[1] ?? 0;
     if (n !== expected) {
       errors.push(dataErrorFile(`${name}.csv`, `${n} rows, expected ${expected}`));
@@ -225,8 +213,25 @@ function industries(w: WorldData, ids: Ids, errors: DataError[]): void {
   unique(t, "id", (r) => r.id, errors);
   // Industry names match companies.csv exactly (validate.py; spec 10.3 42 industries).
   const used = new Set(w.companies.rows.map((c) => c.industry));
+  // A dormant industry has no companies until it emerges (1995-rework 5.1).
+  const dormant = new Set(w.industry_lifecycle.rows.map((l) => l.id));
+  const nameIsDormant = (name: string): boolean => t.rows.some((r) => r.name === name && dormant.has(r.id));
+  for (const [line, l] of tableIter(w.industry_lifecycle)) {
+    const row = t.rows.find((r) => r.id === l.id);
+    const lt = w.industry_lifecycle;
+    if (row === undefined) errors.push(tableErr(lt, line, "id", `unknown industry ${l.id}`));
+    else if (used.has(row.name))
+      errors.push(tableErr(lt, line, "id", `${l.id} is dormant but has companies`));
+    else if (row.world_size_2020_usd_bn !== 0.0)
+      errors.push(tableErr(lt, line, "id", `${l.id} is dormant but has a size`));
+    if (l.window_first > l.window_last)
+      errors.push(tableErr(lt, line, "window_last", `${l.id}: empty window`));
+    if (l.wave_min > l.wave_max) errors.push(tableErr(lt, line, "wave_max", `${l.id}: empty wave`));
+    if (!(l.target_size_usd_bn > 0.0))
+      errors.push(tableErr(lt, line, "target_size_usd_bn", `${l.id}: no size`));
+  }
   const diff = sorted([
-    ...[...ids.industries].filter((i) => !used.has(i)),
+    ...[...ids.industries].filter((i) => !used.has(i) && !nameIsDormant(i)),
     ...[...used].filter((i) => !ids.industries.has(i)),
   ]);
   if (diff.length > 0) {
@@ -330,6 +335,21 @@ function zones(w: WorldData, ids: Ids, errors: DataError[]): void {
       errors.push(tableErr(t, line, "hub_province", `${id}: ${hp} lies in ${country}, outside the zone`));
     }
   }
+}
+
+/** An era world's zone paths (1995-rework 6.4): one row per zone, each within ZONE_TRACK_MAX. */
+function zoneGrowth(w: WorldData, ids: Ids, errors: DataError[]): void {
+  if (!w.manifest.features.era) return;
+  const t = w.zone_growth;
+  const have = unique(t, "zone_id", (r) => r.zone_id, errors);
+  for (const [line, r] of tableIter(t)) {
+    if (!ids.zones.has(r.zone_id)) errors.push(tableErr(t, line, "zone_id", `unknown zone ${r.zone_id}`));
+    if (!within(r.track, -ZONE_TRACK_MAX, ZONE_TRACK_MAX)) {
+      errors.push(tableErr(t, line, "track", `${r.zone_id}: out of -${ZONE_TRACK_MAX} to ${ZONE_TRACK_MAX}`));
+    }
+  }
+  const missing = sorted([...ids.zones].filter((z) => !have.has(z)));
+  if (missing.length > 0) errors.push(tableFileErr(t, `no track for ${debugStrs(missing)}`));
 }
 
 function keyCities(w: WorldData, ids: Ids, errors: DataError[]): void {
@@ -487,6 +507,10 @@ export function ratingFactorOfLabel(label: string): number | null {
 /** The fixed startup events F1 to F9 (spec 5.19.2, build-plan M0.5); the twin of validate.py. */
 function startupEvents(w: WorldData, ids: Ids, errors: DataError[]): void {
   const t = w.startup_events;
+  if (!w.manifest.features.fixed_events) {
+    if (!tableIsEmpty(t)) errors.push(tableFileErr(t, "this world plays no fixed events"));
+    return;
+  }
   const expected = Array.from({ length: 9 }, (_, i) => `F${i + 1}`);
   if (t.rows.length !== expected.length || t.rows.some((e, i) => e.id !== expected[i])) {
     errors.push(tableFileErr(t, "expected the 9 rows F1 to F9 in order"));
@@ -567,9 +591,62 @@ function politics(w: WorldData, errors: DataError[]): void {
   }
   const o = w.politics_offices;
   unique(o, "id", (r) => r.id, errors);
-  for (const [kind, n] of POLITICS_OFFICE_SEATS) {
+  const seats: readonly (readonly [string, number])[] = [
+    ...POLITICS_OFFICE_SEATS,
+    ["Cabinet", w.manifest.cabinet_seats],
+  ];
+  for (const [kind, n] of seats) {
     const got = o.rows.reduce((sum, r) => (r.kind === kind ? sum + r.seats : sum), 0);
     if (got !== n) errors.push(tableFileErr(o, `${kind} has ${got} seats, expected ${n}`));
+  }
+  const e = w.politics_era;
+  if (w.manifest.features.era && e.rows.length !== t.rows.length) {
+    errors.push(tableFileErr(e, `${e.rows.length} rows, expected one per state`));
+  }
+  for (const [line, r] of tableIter(e)) {
+    const s = t.rows.find((x) => x.state === r.state);
+    if (s === undefined) {
+      errors.push(tableErr(e, line, "state", `${r.state}: not in politics-usa.csv`));
+      continue;
+    }
+    if (r.start_house_dem > s.house_seats) {
+      errors.push(tableErr(e, line, "start_house_dem", `${r.state}: more than its House seats`));
+    }
+    if (r.start_senate_dem > s.senate_classes.length) {
+      errors.push(tableErr(e, line, "start_senate_dem", `${r.state}: more than its Senate seats`));
+    }
+    if (!(r.pop_1990_m > 0)) errors.push(tableErr(e, line, "pop_1990_m", `${r.state}: no people`));
+    if (!CENSUS_REGIONS.includes(r.census_region)) {
+      errors.push(tableErr(e, line, "census_region", `${r.state}: unknown region ${r.census_region}`));
+    }
+  }
+}
+
+/** An era world's named characters (1995-rework 7.7, 7.8): the twin of tools/world-1995/validate.py. */
+function characterSpawns(w: WorldData, errors: DataError[]): void {
+  if (!w.manifest.features.era) return;
+  const t = w.character_spawns;
+  unique(t, "id", (r) => r.id, errors);
+  const known = new Set(w.characters.rows.map((c) => c.id));
+  const sectors = new Set(w.industries.rows.map((i) => i.sector));
+  const regions = new Set(w.countries.rows.map((c) => c.superregion));
+  const bosses = w.companies.rows.map((c) => c.controller).filter((b) => b.startsWith("CH-"));
+  for (const b of sorted(new Set(bosses))) {
+    if (bosses.indexOf(b) !== bosses.lastIndexOf(b)) {
+      errors.push(tableFileErr(w.companies, `${b} controls more than one company (1995-rework 7.8)`));
+    }
+  }
+  for (const [line, r] of tableIter(t)) {
+    if (!known.has(r.id)) errors.push(tableErr(t, line, "id", `${r.id}: not in characters.csv`));
+    if (bosses.includes(r.id))
+      errors.push(tableErr(t, line, "id", `${r.id}: controls a company at the start`));
+    if (r.spawn_first > r.spawn_last) errors.push(tableErr(t, line, "spawn_last", `${r.id}: empty window`));
+    if (!regions.has(r.superregion)) {
+      errors.push(tableErr(t, line, "superregion", `${r.id}: unknown superregion ${r.superregion}`));
+    }
+    if (r.sector !== "" && !sectors.has(r.sector)) {
+      errors.push(tableErr(t, line, "sector", `${r.id}: unknown sector ${r.sector}`));
+    }
   }
 }
 

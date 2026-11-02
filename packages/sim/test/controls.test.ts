@@ -151,9 +151,9 @@ describe("controls", () => {
     expect(controlsEffectiveSpeed(s.controls())).toBe(1);
     s.apply({ kind: "SetSpeed", speed: 0 });
     expect(s.controls().paused).toBe(true);
-    expect(s.apply({ kind: "SetSpeed", speed: 6 })).toEqual({
+    expect(s.apply({ kind: "SetSpeed", speed: MAX_SPEED + 1 })).toEqual({
       ok: false,
-      error: { kind: "BadSpeed", speed: 6 },
+      error: { kind: "BadSpeed", speed: MAX_SPEED + 1 },
     });
     // Pause cancels a skip.
     s.apply({ kind: "SkipTo", skip: "NextLock" });

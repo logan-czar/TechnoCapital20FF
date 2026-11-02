@@ -2,16 +2,16 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { brotliCompressSync, gzipSync } from "node:zlib";
-import { MAP_FILES, WORLD_FILES } from "@tc20ff/sim-data";
+import { ERA_FILES, MANIFEST_FILE, MAP_FILES, WORLD_FILES, WORLD_IDS } from "@tc20ff/sim-data";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 // The game reads repo folders at runtime (D954): assets/map (the topology for the map, plus the
-// map CSVs the sim reads) and docs/design/data (the starting-world CSVs). They live outside this
-// app, so this plugin serves them in dev under /data/map/* and /data/design/*, and copies the same
-// files into the build. It exposes exactly the files the code names, nothing else: sim-data's
+// map CSVs the sim reads), docs/design/data (the 2020 world's CSVs) and assets/worlds (the others).
+// They live outside this app, so this plugin serves them in dev under /data/map/*, /data/design/*
+// and /data/worlds/*, and copies the same files into the build. It exposes exactly the files the code names, nothing else: sim-data's
 // WORLD_FILES (the world worker's CSVs, which the map pane reads too) and MAP_FILES, plus the
 // topology. The build also writes .gz and .br copies of the 5.8 MB topology (about 1.6 MB
 // gzipped) for a static host to serve with Content-Encoding; the dev server and `vite preview`
@@ -22,6 +22,12 @@ const TOPOLOGY = "provinces.topo.json";
 function servedFiles(): Map<string, string> {
   const files = new Map<string, string>();
   for (const f of WORLD_FILES) files.set(`data/design/${f}`, resolve(root, "docs/design/data", f));
+  // The other starting worlds (1995-rework 3.2), each with its manifest.
+  for (const id of WORLD_IDS) {
+    for (const f of [...WORLD_FILES, ...ERA_FILES, MANIFEST_FILE]) {
+      files.set(`data/worlds/${id}/${f}`, resolve(root, "assets/worlds", id, f));
+    }
+  }
   for (const f of [...MAP_FILES, TOPOLOGY]) files.set(`data/map/${f}`, resolve(root, "assets/map", f));
   return files;
 }

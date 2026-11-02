@@ -1,0 +1,52 @@
+state,census_region,start_house_dem,start_senate_dem,pop_1990_m,pop_growth
+Alabama,South,4,1,4.041,0.008400
+Alaska,West,0,0,0.55,0.012780
+Arizona,West,1,0,3.665,0.027808
+Arkansas,South,2,2,2.351,0.010773
+California,West,27,2,29.76,0.011230
+Colorado,West,2,1,3.294,0.021152
+Connecticut,Northeast,3,2,3.287,0.004185
+Delaware,South,0,1,0.666,0.014928
+District of Columbia,South,0,0,0.607,-0.000428
+Florida,South,8,1,12.938,0.018688
+Georgia,South,4,1,6.478,0.020120
+Hawaii,West,2,2,1.108,0.010247
+Idaho,West,0,0,1.007,0.022140
+Illinois,Midwest,10,2,11.431,0.005777
+Indiana,Midwest,4,0,5.544,0.007828
+Iowa,Midwest,0,1,2.777,0.004633
+Kansas,Midwest,0,0,2.478,0.007057
+Kentucky,South,2,1,3.685,0.008169
+Louisiana,South,4,2,4.22,0.003582
+Maine,Northeast,1,0,1.228,0.003931
+Maryland,South,4,2,4.781,0.009427
+Massachusetts,Northeast,8,2,6.016,0.004230
+Michigan,Midwest,9,1,9.295,0.003069
+Minnesota,Midwest,6,1,4.375,0.009626
+Mississippi,South,4,0,2.573,0.007125
+Missouri,Midwest,6,0,5.117,0.007866
+Montana,West,1,1,0.799,0.010684
+Nebraska,Midwest,0,2,1.578,0.007296
+Nevada,West,0,2,1.202,0.040480
+New Hampshire,Northeast,0,0,1.109,0.008563
+New Jersey,Northeast,5,2,7.73,0.006435
+New Mexico,West,1,1,1.515,0.015342
+New York,Northeast,17,1,17.99,0.003715
+North Carolina,South,4,0,6.629,0.018181
+North Dakota,Midwest,1,2,0.639,0.002577
+Ohio,Midwest,6,1,10.847,0.003081
+Oklahoma,South,1,0,3.146,0.008806
+Oregon,West,3,0,2.842,0.014926
+Pennsylvania,Northeast,11,0,11.882,0.003340
+Rhode Island,Northeast,2,1,1.003,0.002389
+South Carolina,South,2,1,3.487,0.014130
+South Dakota,Midwest,1,1,0.696,0.007841
+Tennessee,South,4,0,4.877,0.013164
+Texas,South,19,0,16.987,0.019613
+Utah,West,1,0,1.723,0.023633
+Vermont,Northeast,1,1,0.563,0.005304
+Virginia,South,6,1,6.187,0.012853
+Washington,West,2,1,4.867,0.016167
+West Virginia,South,3,2,1.793,0.001632
+Wisconsin,Midwest,3,2,4.892,0.007531
+Wyoming,West,0,0,0.454,0.010860

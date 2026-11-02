@@ -32,14 +32,17 @@ import { appendBufFromRows } from "../src/world/log.ts";
 import { referenceCanonicalString } from "./common/canonical_reference.ts";
 import { data, macrotask, unwrap } from "./common/index.ts";
 
+// Re-recorded for D996: v_history gained the sector series, so its digest and the monthly digest moved; the state hash, the patch digest and every other view are unchanged.
+// Re-recorded for D995: v_history gained the macro series, so its digest and the monthly digest moved; the state hash, the patch digest and every other view are unchanged.
+// Re-recorded for D994: the Era stream joined the saved RNG (the state hash moved) and v_history is new (the monthly and patch digests moved); every other view digest is unchanged, and a 10-year soak's economy columns are identical.
 // Re-recorded for D989: full characters are removed (no founders, no character table; controllers are base characters), so startup draws and the births, characters, cap_table, company_rows and company_detail views moved and the economy after the first births with them.
 // Re-recorded for D975: v_clock gained the watchlist and Omniscient, so the clock and monthly digests moved; the state hash and patch digests are unchanged (controls are not hashed, D13).
 // Re-recorded for D974: LOW_PRODUCTIVITY_ADJ is +1.0 (was +0.5), so the R&D plan, productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D973: R&D above the norm has diminishing returns by default (spec 5.6 has no curve), so productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
-const GOLDEN_STATE = "6b5f86f405998f2b1294b54618c8197b";
-const GOLDEN_MONTHLY = "3f979537d01cecf64fdeb7d1";
-const GOLDEN_PATCHES = "8ba3c5ac439d2e51a7be48bb";
+const GOLDEN_STATE = "f04cf40ef9d70de3b1548bd383acd3f3";
+const GOLDEN_MONTHLY = "d7d84581a03b2f6844e20a4e";
+const GOLDEN_PATCHES = "a8c30b5b8333e63d248f5595";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */
 const GOLDEN_VIEWS: Record<string, [string, number]> = {
   clock: ["c1ac8c59305fb039b9c693fe", 8785],
@@ -71,6 +74,7 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   recap: ["c8717fb08e77f7127d3aefac", 8785],
   map_static: ["5a7fcdac19a0f147f840d02c", 1],
   politics: ["caa00cde3b21fa9198792d48", 8785],
+  history: ["0259c604ed0adc2b0ebe9e35", 8785],
 };
 
 const sha = (s: string): string => createHash("sha256").update(s).digest("hex").slice(0, 24);

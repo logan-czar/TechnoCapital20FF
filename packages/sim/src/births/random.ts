@@ -115,8 +115,8 @@ export function drawType(draws: DrawSource): EventType {
 }
 
 /** The number of random events at a plan lock (spec 5.19.1): Poisson with mean 2 (Knuth, gen stream). */
-export function eventCount(draws: DrawSource): number {
-  return draws.poisson("Gen", RANDOM_EVENTS_MEAN);
+export function eventCount(draws: DrawSource, mean: number = RANDOM_EVENTS_MEAN): number {
+  return draws.poisson("Gen", mean);
 }
 
 /** A target revenue log-uniform in `lo..hi` USD (spec 5.19.3), from one gen uniform. */
@@ -133,6 +133,8 @@ export interface StartupDraft {
   target_revenue_usd: number;
   /** Whole number (u8). */
   partial: number;
+  /** The share of the fringe's revenue it may take; 2% when absent (5.19.3; 1995-rework 5.3). */
+  fringe_cap_share?: number;
 }
 
 /** An event before its startups are built (spec 5.19). */
@@ -188,8 +190,9 @@ export function drawRandomEvents(
   industry_weights: readonly (readonly [IndustryId, number])[],
   hq_candidates: (industry: IndustryId) => [ProvinceId, number][],
   draws: DrawSource,
+  mean: number = RANDOM_EVENTS_MEAN,
 ): EventDraft[] {
-  const count = eventCount(draws);
+  const count = eventCount(draws, mean);
   const out: EventDraft[] = [];
   for (let k = 0; k < count; k++) {
     const e = drawRandomEvent(industry_weights, hq_candidates, draws);

@@ -59,11 +59,13 @@ export class SimClient {
   private receive(m: FromSim): void {
     switch (m.kind) {
       case "Ready":
-        this.store.setStatus({ ready: true });
+        this.store.setStatus({ ready: true, choices: m.choices ?? null });
         this.resolveReady();
         break;
       case "Frame":
         this.store.applyFrame(m);
+        // Read: the worker may post the next one (D1004).
+        this.transport.send({ kind: "FrameDone" });
         break;
       case "Reply": {
         const p = this.pending.get(m.id);
@@ -102,8 +104,10 @@ export class SimClient {
     });
   }
 
-  async newGame(seed: number): Promise<Reply> {
-    const r = await this.request((id) => ({ kind: "NewGame", id, seed }));
+  async newGame(seed: number, scenario?: string): Promise<Reply> {
+    const r = await this.request((id) =>
+      scenario === undefined ? { kind: "NewGame", id, seed } : { kind: "NewGame", id, seed, scenario },
+    );
     if (r.kind === "Ok") this.store.setStatus({ started: true });
     return r;
   }

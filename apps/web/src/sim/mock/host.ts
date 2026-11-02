@@ -22,6 +22,8 @@ export class SimHost {
   /** Handles one request: [Frame, Reply], or just a Reply when nothing changed. */
   handle(msg: ToSim): FromSim[] {
     switch (msg.kind) {
+      case "FrameDone":
+        return [];
       case "NewGame": {
         this.sim = new MockSim(this.world, msg.seed);
         return [frame(this.sim, []), this.reply(msg.id, { kind: "Ok", notices: [] })];

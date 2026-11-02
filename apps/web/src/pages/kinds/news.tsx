@@ -55,6 +55,7 @@ export const KINDS: readonly (readonly [string, Pick])[] = [
   ["Bankruptcies and removals", 6],
   ["Raises and other", 7],
   ["Politics", 8],
+  ["World", 9],
 ];
 
 /** A headline's kind name and its filter group. */
@@ -88,6 +89,8 @@ export function kindOf(k: HeadlineKind): [string, Pick] {
       return ["Chatbot", 7];
     case "Politics":
       return ["Politics", 8];
+    case "World":
+      return ["World", 9];
   }
 }
 
@@ -294,7 +297,9 @@ export function sortedOptions(o: [string, Pick][]): [string, Pick][] {
 
 /** The industry options of a picker: the 42 by name (the Picker adds "All"). */
 export function industryOptions(v: ViewsData): [string, Pick][] {
-  return sortedOptions((v.industry_rows?.rows ?? []).map((r) => [r.name, pickOf(r.id)]));
+  return sortedOptions(
+    (v.industry_rows?.rows ?? []).filter((r) => !r.dormant).map((r) => [r.name, pickOf(r.id)]),
+  );
 }
 
 /** The companies the feed names, by name: the headlines' and the events' startups. */

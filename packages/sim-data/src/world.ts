@@ -3,13 +3,16 @@
 // a browser Web Worker as well as in Node; Node file reading is `loadWorld` in ./node.ts.
 
 import { type DataError, ok, type Result } from "./error.ts";
-import { type Files, loadTable, type RowSpec, type Table, tableIter, tableLen } from "./load.ts";
+import { type Files, loadTable, type RowSpec, type Table, tableIter, tableLen, tableNew } from "./load.ts";
+import { MANIFEST_2020, type WorldManifest } from "./manifest.ts";
 import type { MapAssets } from "./map.ts";
 import {
   AI_BOOM_STAGE_SPEC,
   type AiBoomStage,
+  CHARACTER_SPAWN_SPEC,
   CHARACTER_SPEC,
   type Character,
+  type CharacterSpawn,
   COMPANY_SPEC,
   COMPANY_START_SPEC,
   COUNTRY_CULTURE_SPEC,
@@ -22,22 +25,28 @@ import {
   type CountryEconomy,
   FINANCIAL_ZONE_SPEC,
   type FinancialZone,
+  INDUSTRY_LIFECYCLE_SPEC,
   INDUSTRY_SPEC,
   INDUSTRY_SUFFIX_SPEC,
   type Industry,
+  type IndustryLifecycle,
   type IndustrySuffix,
   KEY_CITY_SPEC,
   type KeyCity,
   NAME_ROW_SPEC,
   type NameRow,
+  POLITICS_ERA_SPEC,
   POLITICS_OFFICE_SPEC,
   POLITICS_STATE_SPEC,
+  type PoliticsEraRow,
   type PoliticsOffice,
   type PoliticsStateRow,
   PROVINCE_SPEC,
   type Province,
   STARTUP_EVENT_SPEC,
   type StartupEvent,
+  ZONE_GROWTH_SPEC,
+  type ZoneGrowth,
 } from "./rows.ts";
 
 /** The 8 superregions: the slug used in file names and the name used in countries.csv. */
@@ -54,6 +63,8 @@ export const SUPERREGIONS: readonly (readonly [slug: string, name: string])[] = 
 
 /** Every table of the starting world. */
 export interface WorldData {
+  /** Which world this is (1995-rework 3.2). */
+  manifest: WorldManifest;
   countries: Table<Country>;
   /** One table per superregion, in SUPERREGIONS order. */
   provinces: Table<Province>[];
@@ -69,6 +80,12 @@ export interface WorldData {
   /** The US states and appointed posts (politics POC, D980, D983, D984). */
   politics_states: Table<PoliticsStateRow>;
   politics_offices: Table<PoliticsOffice>;
+  /** An era world's dormant industries (1995-rework 5.1); empty otherwise. */
+  industry_lifecycle: Table<IndustryLifecycle>;
+  politics_era: Table<PoliticsEraRow>;
+  character_spawns: Table<CharacterSpawn>;
+  /** An era world's zone paths (1995-rework 6.4); empty otherwise. */
+  zone_growth: Table<ZoneGrowth>;
   /** Name lists, one table per superregion, in SUPERREGIONS order. */
   names: Table<NameRow>[];
   country_cultures: Table<CountryCulture>;
@@ -135,6 +152,14 @@ export const WORLD_FILES: readonly string[] = [
   "names/industry-suffixes.csv",
 ];
 
+/** The CSVs only an era world has (1995-rework 5.1), beside WORLD_FILES. */
+export const ERA_FILES: readonly string[] = [
+  "industry-lifecycle.csv",
+  "politics-usa-era.csv",
+  "character-spawns.csv",
+  "zone-growth.csv",
+];
+
 /** One table per superregion, from `pattern` with `{}` replaced by each slug. */
 function perRegion<T>(files: Files, pattern: string, spec: RowSpec<T>): Result<Table<T>[], DataError> {
   const tables: Table<T>[] = [];
@@ -149,9 +174,12 @@ function perRegion<T>(files: Files, pattern: string, spec: RowSpec<T>): Result<T
 /**
  * Parses every table from `files` (WORLD_FILES, by relative path). Stops at the first file that
  * does not parse; the error names the file, line and field (spec 10 M0). Rust `load_world`, minus
- * the file reading.
+ * the file reading. `manifest` says which world the files are.
  */
-export function parseWorld(files: Files): Result<WorldData, DataError> {
+export function parseWorld(
+  files: Files,
+  manifest: WorldManifest = MANIFEST_2020,
+): Result<WorldData, DataError> {
   const countries = loadTable(files, "countries.csv", COUNTRY_SPEC);
   if (!countries.ok) return countries;
   const provinces = perRegion(files, "provinces-{}.csv", PROVINCE_SPEC);
@@ -184,7 +212,24 @@ export function parseWorld(files: Files): Result<WorldData, DataError> {
   if (!countryCultures.ok) return countryCultures;
   const industrySuffixes = loadTable(files, "names/industry-suffixes.csv", INDUSTRY_SUFFIX_SPEC);
   if (!industrySuffixes.ok) return industrySuffixes;
+  const lifecycle = manifest.features.era
+    ? loadTable(files, "industry-lifecycle.csv", INDUSTRY_LIFECYCLE_SPEC)
+    : ok(tableNew<IndustryLifecycle>("industry-lifecycle.csv"));
+  if (!lifecycle.ok) return lifecycle;
+  const politicsEra = manifest.features.era
+    ? loadTable(files, "politics-usa-era.csv", POLITICS_ERA_SPEC)
+    : ok(tableNew<PoliticsEraRow>("politics-usa-era.csv"));
+  if (!politicsEra.ok) return politicsEra;
+  const characterSpawns = manifest.features.era
+    ? loadTable(files, "character-spawns.csv", CHARACTER_SPAWN_SPEC)
+    : ok(tableNew<CharacterSpawn>("character-spawns.csv"));
+  if (!characterSpawns.ok) return characterSpawns;
+  const zoneGrowth = manifest.features.era
+    ? loadTable(files, "zone-growth.csv", ZONE_GROWTH_SPEC)
+    : ok(tableNew<ZoneGrowth>("zone-growth.csv"));
+  if (!zoneGrowth.ok) return zoneGrowth;
   return ok({
+    manifest,
     countries: countries.value,
     provinces: provinces.value,
     companies: companies.value,
@@ -198,6 +243,10 @@ export function parseWorld(files: Files): Result<WorldData, DataError> {
     startup_events: startupEvents.value,
     politics_states: politicsStates.value,
     politics_offices: politicsOffices.value,
+    industry_lifecycle: lifecycle.value,
+    politics_era: politicsEra.value,
+    character_spawns: characterSpawns.value,
+    zone_growth: zoneGrowth.value,
     names: names.value,
     country_cultures: countryCultures.value,
     industry_suffixes: industrySuffixes.value,

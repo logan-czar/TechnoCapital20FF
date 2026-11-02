@@ -3,21 +3,16 @@
 // moves the Gen stream the boards and startups read (D9).
 
 import { weightedPick } from "../births/weights.ts";
+import { nameBookDrawUnique } from "../people/names.ts";
 import { drawBaseFields, type Range, rangeNew } from "../people/simple.ts";
+import { pinnedDraws } from "../rng.ts";
 import type { DrawSource } from "../types/draws.ts";
 import type { BaseCharacter, NameBook, SkillKind, Trait } from "../types/state/people.ts";
 import type { Ideology, JudgeLeaning, Party } from "../types/state/politics.ts";
 
 /** Every draw of a politician comes from the Politics stream, whatever stream the helper names. */
 export function politicsDraws(draws: DrawSource): DrawSource {
-  return {
-    nextU32: () => draws.nextU32("Politics"),
-    uniform: () => draws.uniform("Politics"),
-    normal: () => draws.normal("Politics"),
-    poisson: (_s, mean) => draws.poisson("Politics", mean),
-    intInclusive: (_s, lo, hi) => draws.intInclusive("Politics", lo, hi),
-    chance: (_s, p) => draws.chance("Politics", p),
-  };
+  return pinnedDraws(draws, "Politics");
 }
 
 /** The generation ranges of a kind of office (T). */
@@ -92,7 +87,9 @@ export const JUDGE_RANGES: OfficeRanges = {
 };
 
 /** Each party's blocs, 1 to 3 (4.4.7), with the chance a member believes in each (D981, T). */
-export const PARTY_BLOCS: Readonly<Record<Party, readonly (readonly [Ideology, number])[]>> = {
+export type BlocTable = Readonly<Record<Party, readonly (readonly [Ideology, number])[]>>;
+
+export const PARTY_BLOCS: BlocTable = {
   Democrats: [
     ["Liberals", 0.7],
     ["EffectiveAltruists", 0.15],
@@ -110,24 +107,37 @@ export interface Drawn extends Omit<BaseCharacter, "class"> {
   ideology: Ideology;
 }
 
+/** Who a person can be: the name book and the party blocs. */
+export interface PersonPool {
+  names: NameBook;
+  blocs: BlocTable;
+  /** The names in office, kept unique in a historical world (1995-rework 7.2); null leaves the draws frozen. */
+  taken: Set<string> | null;
+}
+
 /**
  * Draws a person for a kind of office, in a frozen order: name, age, skills in column order, trait
- * count, traits, ideology. `g` is a `politicsDraws` source.
+ * count, traits, ideology. `g` is a `politicsDraws` source. A name in use is drawn again last.
  */
 export function drawPerson(
   g: DrawSource,
-  names: NameBook,
+  pool: PersonPool,
   ranges: OfficeRanges,
   keySkill: SkillKind,
   party: Party,
 ): Drawn {
   const skillRange = (kind: SkillKind): Range => (kind === keySkill ? ranges.key_skill : ranges.other_skills);
-  const base = drawBaseFields(g, names, ranges.age, skillRange, ranges.traits);
-  return { ...base, ideology: drawIdeology(g, party) };
+  const base = drawBaseFields(g, pool.names, ranges.age, skillRange, ranges.traits);
+  const taken = pool.taken;
+  if (taken !== null) {
+    if (taken.has(base.name)) base.name = nameBookDrawUnique(pool.names, g, (n) => taken.has(n));
+    taken.add(base.name);
+  }
+  return { ...base, ideology: drawIdeology(g, pool.blocs, party) };
 }
 
-function drawIdeology(g: DrawSource, party: Party): Ideology {
-  const blocs = PARTY_BLOCS[party];
+function drawIdeology(g: DrawSource, table: BlocTable, party: Party): Ideology {
+  const blocs = table[party];
   const i = weightedPick(
     blocs.map(([, chance]) => chance),
     g,

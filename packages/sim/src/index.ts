@@ -5,7 +5,7 @@
 
 // The Sim (lib.ts): built with `simNew`, driven through its SimApi methods. Test and soak hooks
 // (`simWorld`, `simRegisterTestJob`, `simSoakStats` ...) are in internal.ts only.
-export { Sim, type SimOptions, simErrorMessage, simNew } from "./lib.ts";
+export { newGameChoices, Sim, type SimOptions, simErrorMessage, simNew } from "./lib.ts";
 // UI-safe clock helpers (time/): the date formats and calendar math, the quarter phase and its
 // tick helpers (pure functions of a DateTime), the runner's speed and the SkipTo target.
 export {
@@ -55,8 +55,10 @@ export type * from "./types/sim-api.ts";
 export type { ElectionResult, Ideology, JudgeLeaning, Party } from "./types/state/politics.ts";
 export * from "./types/views/index.ts";
 export { barRows, indexCloseRows } from "./views/bars.ts";
+export { type PostedBars, postedBarsNone, priceBarsApply, priceBarsCompact } from "./views/bars_patch.ts";
 // Pure figure and statement helpers the Company page shares with the views (spec 3.9, D420).
 export { figureSum, statementLineOf } from "./views/estimate.ts";
+export { emptyHistory } from "./views/history.ts";
 // What the worker posts: view copies and patches by version (views/).
 export { simViewsCopyChangedFrom, simViewsGetMapLayer, simViewsMapLayerVersions } from "./views/index.ts";
 export { type PostedViews, postedViewsNone, postedViewsResetNews, viewsPatchSince } from "./views/patch.ts";

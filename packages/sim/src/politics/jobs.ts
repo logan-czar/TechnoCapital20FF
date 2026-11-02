@@ -1,13 +1,15 @@
 // The US politics daily job (D980 to D988; 4-politics 4.6, 4.7.3, 4.21.1): the start seats, November
 // elections, the January handovers, retirements and appointments. Every draw comes from the Politics
-// stream and nothing else reads this state, so the economy is untouched.
+// stream, and in the 2020 world nothing else reads this state, so the economy is untouched. A
+// historical world starts from the real Congress and adds drift, a census and new ideologies
+// (1995-rework 7), and its levers read this state (era/policy.ts).
 
 import { newsWireQueue, politicsHeadline } from "../news.ts";
 import { nameBooksGet } from "../people/names.ts";
 import { rangeDraw } from "../people/simple.ts";
 import { dateTimeDate } from "../time/calendar.ts";
 import type { JobCtx, Scheduler } from "../time/scheduler.ts";
-import { schedulerRegister } from "../time/scheduler.ts";
+import { jobCtxRaiseAlert, schedulerRegister } from "../time/scheduler.ts";
 import type { SimDate } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import {
@@ -17,6 +19,7 @@ import {
   type PoliticsPostId,
   type UsStateId,
 } from "../types/ids.ts";
+import type { EraPolitics, EraState, EraUsState } from "../types/state/era.ts";
 import type { NameBook, SkillKind } from "../types/state/people.ts";
 import {
   type ElectionResult,
@@ -34,8 +37,19 @@ import {
   isPoliticsDay,
   isPresidentYear,
   PRESIDENT_HANDOVER_DAY,
+  PRESIDENT_TERM_YEARS,
   senateClassUp,
 } from "./calendar.ts";
+import {
+  applyDistricts,
+  CENSUS_YEARS,
+  districtIndex,
+  drawCensus,
+  driftYear,
+  ERA_IDEOLOGY_NAMES,
+  eraBlocs,
+  startDemDistricts,
+} from "./era.ts";
 import {
   CABINET_RANGES,
   type Drawn,
@@ -45,11 +59,13 @@ import {
   JUDGE_INTEGRITY,
   JUDGE_RANGES,
   type OfficeRanges,
+  PARTY_BLOCS,
+  type PersonPool,
   PRESIDENT_RANGES,
   politicsDraws,
   SENATE_RANGES,
 } from "./generate.ts";
-import { officeHolders, partySeats } from "./state.ts";
+import { DISTRICT_LEAN_SD_PTS, officeHolders, partySeats } from "./state.ts";
 import {
   type Contender,
   INCUMBENCY,
@@ -77,8 +93,6 @@ export const CONFIRM_CHANCE_FRIENDLY = 0.95;
 export const CONFIRM_CHANCE_HOSTILE = 0.6;
 /** After this many rejections the seat takes the next nominee (D984). */
 export const CONFIRM_TRIES = 5;
-/** A district's fixed offset from its state's lean, sd in points (D982, T). */
-export const DISTRICT_LEAN_SD_PTS = 16;
 /** Retirement (D988, T): a chance by age, reaching certainty at about 85 for a member, 88 for a judge. */
 export const LEGISLATOR_RETIRE_BASE = 0.05;
 export const LEGISLATOR_RETIRE_FROM_AGE = 65;
@@ -87,6 +101,14 @@ export const JUDGE_RETIRE_FROM_AGE = 68;
 export const JUDGE_RETIRE_PER_YEAR = 0.05;
 /** Senate seats that make a majority with the vice president's casting vote (D984). */
 export const SENATE_MAJORITY = 50;
+/** House seats that make a majority (1995-rework 7.5). */
+export const HOUSE_MAJORITY = 218;
+/** A historical world's tides, in utility (1995-rework 7.3, T): against the president's party at a midterm. */
+export const MIDTERM_PENALTY = 0.03;
+/** And against a party seeking a further term after its first two, for each such term. */
+export const FATIGUE_PER_TERM = 0.06;
+/** Chance a state's one Democratic senator sits in its first class (1995-rework 7.2, T). */
+const FIRST_CLASS_CHANCE = 0.5;
 
 /** The other party. */
 export function otherParty(p: Party): Party {
@@ -97,6 +119,17 @@ function usNames(world: World, p: PoliticsState): NameBook {
   const book = nameBooksGet(world.name_books, p.country);
   if (book === null) throw new Error("no name book for the USA");
   return book;
+}
+
+/** Who can be drawn now: a historical world's blocs in `year`, and its names in office (1995-rework 7.2, 7.6). */
+function personPool(world: World, p: PoliticsState, year: number): PersonPool {
+  const names = usNames(world, p);
+  const era = world.era;
+  if (era === undefined) return { names, blocs: PARTY_BLOCS, taken: null };
+  const taken = new Set(p.politicians.map((c) => c.name));
+  for (const c of p.pending?.legislators ?? []) taken.add(c.name);
+  if (p.pending?.president_elect) taken.add(p.pending.president_elect.name);
+  return { names, blocs: eraBlocs(era.politics.ideologies, year), taken };
 }
 
 /** Turns a drawn person into an office holder, taking the next id. */
@@ -128,8 +161,8 @@ function seat(p: PoliticsState, d: Drawn, party: Party, office: Office, since: S
 export function politicsStart(world: World, draws: DrawSource): void {
   const p = world.politics;
   const g = politicsDraws(draws);
-  const names = usNames(world, p);
   const date = dateTimeDate(world.clock);
+  const names = personPool(world, p, date.year);
   // D982: each district's fixed offset.
   for (const d of p.districts) d.lean_pts += g.normal("Politics") * DISTRICT_LEAN_SD_PTS;
   const president = seat(
@@ -141,14 +174,50 @@ export function politicsStart(world: World, draws: DrawSource): void {
   );
   p.politicians.push(president);
   p.president_terms = 1;
-  const climate: VoteClimate = { incumbent_party: START_PRESIDENT_PARTY, growth: 0, swing: 0 };
-  // Congress, House then Senate in state order; with no holders every race seats a new member.
-  for (const race of congressRaces(p, null)) {
-    const { seated } = runRace(p, g, names, race, climate, new Map(), date);
-    if (seated !== null) p.politicians.push(seated);
+  const era = world.era;
+  if (era !== undefined) {
+    seatStartCongress(p, g, names, era.politics, date);
+    era.history.presidents.push({ year: date.year, name: president.name, party: president.party });
+  } else {
+    const climate: VoteClimate = { incumbent_party: START_PRESIDENT_PARTY, growth: 0, swing: 0 };
+    // Congress, House then Senate in state order; with no holders every race seats a new member.
+    for (const race of congressRaces(p, p.districts, null)) {
+      const { seated } = runRace(p, g, names, race, climate, new Map(), date);
+      if (seated !== null) p.politicians.push(seated);
+    }
   }
   fillExecutive(p, g, names, president, date);
   fillCourtVacancies(p, g, names, president, date);
+}
+
+/**
+ * A historical world's first Congress (1995-rework 7.2): the real seats by state and party, with no
+ * vote. A state's Democrats hold its most Democratic-leaning districts.
+ */
+function seatStartCongress(
+  p: PoliticsState,
+  g: DrawSource,
+  pool: PersonPool,
+  era: EraPolitics,
+  date: SimDate,
+): void {
+  const demDistricts = startDemDistricts(p, era);
+  // A split state's Democrat sits in either of its classes.
+  const demClass = p.states.map((s, i) => {
+    const dem = (era.states[i] as EraUsState).start_senate_dem;
+    if (dem === 1) return [s.senate_classes[g.chance("Politics", FIRST_CLASS_CHANCE) ? 0 : 1]];
+    return dem === 0 ? [] : s.senate_classes;
+  });
+  for (const race of congressRaces(p, p.districts, null)) {
+    const o = race.office;
+    const dem =
+      o.kind === "House"
+        ? demDistricts.has(o.district)
+        : o.kind === "Senate" && demClass[o.state]?.includes(o.senate_class);
+    const party: Party = dem ? "Democrats" : "Republicans";
+    const person = drawPerson(g, pool, race.ranges, "persuasion", party);
+    p.politicians.push(seat(p, person, party, o, date));
+  }
 }
 
 // ---------------------------------------------------------------- elections
@@ -161,8 +230,12 @@ interface Race {
 }
 
 /** Every race of a November, House then Senate; `senateClass` null fills all three classes. */
-function congressRaces(p: PoliticsState, senateClass: number | null): Race[] {
-  const races: Race[] = p.districts.map((d, i) => ({
+function congressRaces(
+  p: PoliticsState,
+  districts: readonly PoliticsState["districts"][number][],
+  senateClass: number | null,
+): Race[] {
+  const races: Race[] = districts.map((d, i) => ({
     office: { kind: "House", state: d.state, district: ordinal<DistrictId>(i) },
     lean_pts: d.lean_pts,
     ranges: HOUSE_RANGES,
@@ -200,7 +273,7 @@ interface RaceOutcome {
 function runRace(
   p: PoliticsState,
   g: DrawSource,
-  names: NameBook,
+  names: PersonPool,
   race: Race,
   climate: VoteClimate,
   holders: ReadonlyMap<string, Politician>,
@@ -259,7 +332,7 @@ interface Nominee {
 function presidentialNominee(
   p: PoliticsState,
   g: DrawSource,
-  names: NameBook,
+  names: PersonPool,
   party: Party,
   senateClass: number,
 ): Nominee {
@@ -287,7 +360,7 @@ function presidentialNominee(
 function presidentialRace(
   p: PoliticsState,
   g: DrawSource,
-  names: NameBook,
+  names: PersonPool,
   senateClass: number,
   climate: VoteClimate,
 ): { winner: Nominee; loser: Nominee; shares: [number, number] } {
@@ -316,20 +389,60 @@ function presidentialRace(
     : { winner: b, loser: a, shares: [share, 1 - share] };
 }
 
+/** Whole presidential terms the party has held since it last took the office, at this vote. */
+export function partyTermsHeld(presidents: readonly { year: number; party: Party }[], year: number): number {
+  const party = presidents.at(-1)?.party;
+  let first = year;
+  for (let i = presidents.length - 1; i >= 0 && presidents[i]?.party === party; i--) {
+    first = presidents[i]?.year ?? first;
+  }
+  return Math.floor((year - first + 1) / PRESIDENT_TERM_YEARS);
+}
+
+/**
+ * A historical world's swing from the tides of a November, toward Democrats (1995-rework 7.3): the
+ * president's party loses ground at a midterm, and a party long in the White House at a presidential
+ * vote. The 2020 world has neither, so its draws and results are as they were.
+ */
+export function eraTide(world: World, party: Party, date: SimDate): number {
+  const era = world.era;
+  if (era === undefined) return 0;
+  const presidential = isPresidentYear(date.year);
+  const terms = partyTermsHeld(era.history.presidents, date.year);
+  const against = presidential ? FATIGUE_PER_TERM * Math.max(0, terms - 1) : MIDTERM_PENALTY;
+  return party === "Democrats" ? -against : against;
+}
+
 /** Election Day (D985): decides every race now; winners take office at the January handovers. */
-function electionDayJob(world: World, p: PoliticsState, g: DrawSource, date: SimDate): void {
-  const names = usNames(world, p);
+function electionDayJob(world: World, ctx: JobCtx, p: PoliticsState, g: DrawSource, date: SimDate): void {
+  const names = personPool(world, p, date.year);
   const president = sittingPresident(p);
   const zone = world.zones[(world.countries[p.country] as World["countries"][number]).zone];
   const climate: VoteClimate = {
     incumbent_party: president.party,
     growth: (zone as World["zones"][number]).effect,
-    swing: g.normal("Politics") * NATIONAL_SWING_SD,
+    swing: g.normal("Politics") * NATIONAL_SWING_SD + eraTide(world, president.party, date),
   };
   const senateClass = senateClassUp(date.year);
   const holders = new Map<string, Politician>();
   for (const c of p.politicians) {
     if (c.office.kind === "House" || c.office.kind === "Senate") holders.set(seatKey(c.office), c);
+  }
+  // A census's House is voted on here: members run for their (state, number) in it (1995-rework 7.4).
+  const next = world.era?.politics.next_districts ?? null;
+  if (next !== null) {
+    next.voted = true;
+    const at = districtIndex(next.table);
+    for (const c of p.politicians) {
+      if (c.office.kind !== "House") continue;
+      holders.delete(seatKey(c.office));
+    }
+    for (const c of p.politicians) {
+      if (c.office.kind !== "House") continue;
+      const d = p.districts[c.office.district] as PoliticsState["districts"][number];
+      const i = at.get(`${d.state}/${d.number}`);
+      if (i !== undefined) holders.set(`h${i}`, c);
+    }
   }
   // The nominees are picked first, so a nominating senator's seat is not one being contested.
   const presidency = isPresidentYear(date.year) ? presidentialRace(p, g, names, senateClass, climate) : null;
@@ -339,7 +452,7 @@ function electionDayJob(world: World, p: PoliticsState, g: DrawSource, date: Sim
   const senate: { party: Party }[] = officeHolders(p, "Senate").filter(
     (c) => c.office.kind === "Senate" && c.office.senate_class !== senateClass,
   );
-  for (const race of congressRaces(p, senateClass)) {
+  for (const race of congressRaces(p, next?.table ?? p.districts, senateClass)) {
     const out = runRace(p, g, names, race, climate, holders, date);
     if (out.seated !== null) legislators.push(out.seated);
     (race.office.kind === "House" ? house : senate).push(out);
@@ -378,12 +491,18 @@ function electionDayJob(world: World, p: PoliticsState, g: DrawSource, date: Sim
   );
   p.elections.push(result);
   p.pending = { legislators, president_elect: presidentElect };
+  if (world.era !== undefined) jobCtxRaiseAlert(ctx, "Election", { kind: "None" });
 }
 
 // ---------------------------------------------------------------- handovers
 
 /** 3 January (D985): new members replace whoever held their seat. */
-function congressHandover(p: PoliticsState, date: SimDate): void {
+function congressHandover(p: PoliticsState, era: EraState | undefined, date: SimDate): void {
+  const next = era?.politics.next_districts ?? null;
+  if (era !== undefined && next?.voted) {
+    applyDistricts(p, next.table);
+    era.politics.next_districts = null;
+  }
   const pending = p.pending;
   if (pending === null || pending.legislators.length === 0) return;
   for (const c of pending.legislators) c.since = date;
@@ -404,7 +523,7 @@ function presidentHandover(world: World, p: PoliticsState, g: DrawSource, date: 
     p.president_terms += 1;
     return;
   }
-  const names = usNames(world, p);
+  const names = personPool(world, p, date.year);
   // By id: the elect is a copy of the one in the table after a save and load.
   const held = p.politicians.find((c) => c.id === elect.id);
   const incoming = held ?? elect;
@@ -434,6 +553,7 @@ function presidentHandover(world: World, p: PoliticsState, g: DrawSource, date: 
   fillExecutive(p, g, names, incoming, date);
   p.politicians.sort((a, b) => a.id - b.id);
   newsWireQueue(world.news, politicsHeadline(date, `${incoming.name} is sworn in as US president`));
+  world.era?.history.presidents.push({ year: date.year, name: incoming.name, party: incoming.party });
 }
 
 // ---------------------------------------------------------------- appointments
@@ -441,7 +561,7 @@ function presidentHandover(world: World, p: PoliticsState, g: DrawSource, date: 
 /** The best of the drawn candidates by the 4.7.3 score, simplified (D984); ties to the first drawn. */
 function bestCandidate(
   g: DrawSource,
-  names: NameBook,
+  names: PersonPool,
   ranges: OfficeRanges,
   skill: SkillKind,
   appointerParty: Party,
@@ -464,7 +584,7 @@ function bestCandidate(
 function fillExecutive(
   p: PoliticsState,
   g: DrawSource,
-  names: NameBook,
+  names: PersonPool,
   president: Politician,
   date: SimDate,
 ): void {
@@ -484,7 +604,7 @@ function isCourt(post: PoliticsPost): post is PoliticsPost & { kind: "Supreme" |
 function fillCourtVacancies(
   p: PoliticsState,
   g: DrawSource,
-  names: NameBook,
+  names: PersonPool,
   president: Politician,
   date: SimDate,
 ): void {
@@ -523,7 +643,23 @@ function newYear(world: World, p: PoliticsState, g: DrawSource, date: SimDate): 
   p.politicians = p.politicians.filter(
     (c) => c.office.kind !== "Judge" || !g.chance("Politics", judgeRetireChance(c.age)),
   );
-  fillCourtVacancies(p, g, usNames(world, p), sittingPresident(p), date);
+  fillCourtVacancies(p, g, personPool(world, p, date.year), sittingPresident(p), date);
+  const era = world.era?.politics;
+  if (era === undefined) return;
+  // 1995-rework 7.3, 7.4, 7.6.
+  driftYear(p, era, g);
+  if (CENSUS_YEARS.includes(date.year)) {
+    const moved = drawCensus(p, era, g);
+    newsWireQueue(
+      world.news,
+      politicsHeadline(date, `The US census moves ${moved} House seats between states`),
+    );
+  }
+  for (const i of era.ideologies) {
+    if (i.from_year !== date.year) continue;
+    const name = ERA_IDEOLOGY_NAMES[i.ideology] ?? i.ideology;
+    newsWireQueue(world.news, politicsHeadline(date, `${name} emerge as a force in US politics`));
+  }
 }
 
 // ---------------------------------------------------------------- the job
@@ -534,9 +670,9 @@ export function politicsJob(world: World, ctx: JobCtx): void {
   const date = ctx.facts.date;
   if (!isPoliticsDay(date)) return;
   const g = politicsDraws(ctx.draws);
-  if (isElectionDay(date)) electionDayJob(world, p, g, date);
+  if (isElectionDay(date)) electionDayJob(world, ctx, p, g, date);
   else if (date.day === 1) newYear(world, p, g, date);
-  else if (date.day === CONGRESS_HANDOVER_DAY) congressHandover(p, date);
+  else if (date.day === CONGRESS_HANDOVER_DAY) congressHandover(p, world.era, date);
   else if (date.day === PRESIDENT_HANDOVER_DAY) presidentHandover(world, p, g, date);
 }
 

@@ -65,6 +65,7 @@ import { buildCountries } from "./countries.ts";
 import { buildCycle } from "./cycle.ts";
 import { buildExchanges } from "./exchanges.ts";
 import { buildFilings } from "./filings.ts";
+import { buildHistory, emptyHistory } from "./history.ts";
 import { buildIndustryDetail } from "./industry_detail.ts";
 import { buildIndustryRows } from "./industry_rows.ts";
 import { buildMapLayers, mapLayersViewLayer } from "./map_layers.ts";
@@ -340,6 +341,7 @@ export const VIEW_BUILDERS: ViewBuilders = {
     build: buildMapStatic,
   },
   politics: { rust: "(none: politics POC, D980)", empty: emptyPolitics, build: buildPolitics },
+  history: { rust: "(none: 1995-rework 8.1)", empty: emptyHistory, build: buildHistory },
 };
 
 /**

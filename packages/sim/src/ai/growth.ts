@@ -33,6 +33,18 @@ export const NUDGE_VISIONARY_TECH = 0.01;
 /** Spec 6.2 clamp. */
 export const GROWTH_MIN = -0.2;
 export const GROWTH_MAX = 0.3;
+/** In a historical world a firm in a young market may outrun this, or newcomers never catch incumbents (1995-rework 9, T). */
+export const ERA_GROWTH_MAX = 0.7;
+/** The share of its market's growth a firm under its hurdle follows in a historical world (1995-rework 9, T). */
+export const ERA_BELOW_HURDLE_DEMAND_SHARE = 1.0;
+/**
+ * In a historical world a hot market consolidates (1995-rework 9, T): its firms plan to grow this
+ * much above the market, times the share the unnamed fringe still holds. Named firms otherwise only
+ * keep their share, so a market of trillions stays 97% fringe.
+ */
+export const ERA_CAPTURE_K = 0.25;
+/** A firm holding this share of its market's supply stops taking the fringe's and grows with the market (1995-rework 9, T). */
+export const ERA_CAPTURE_SHARE_MAX = 0.15;
 /** Spec 6.2 funding cap: the quarter's purchases use at most 50% of liquidity above min_cash. */
 export const FUNDING_CAP_SHARE = 0.5;
 /** D971: each debt aggression level adds this to g while profitable and not shrinking. */
@@ -59,12 +71,14 @@ export function situationGrowth(
   g_dem: number,
   supply_ratio: number,
   archetype: ArchetypeRow,
+  belowHurdleDemandShare = 0.0,
 ): number {
   if (loss_q >= SELL_DOWN_LOSS_QUARTERS) return SELL_DOWN_GROWTH;
   if (loss_q >= SHRINK_LOSS_QUARTERS) return SHRINK_GROWTH;
   const demand_led = g_dem - OVERSUPPLY_GROWTH_PENALTY * maxF(supply_ratio - 1.0, 0.0);
   if (roa >= archetype.hurdle_roa) return demand_led + archetype.growth_adj;
-  if (roa >= 0.0) return minF(BELOW_HURDLE_MAX_GROWTH, demand_led);
+  // In a historical world a firm under its hurdle still follows most of its market (1995-rework 9).
+  if (roa >= 0.0) return minF(maxF(BELOW_HURDLE_MAX_GROWTH, belowHurdleDemandShare * g_dem), demand_led);
   return LOSS_HOLD_GROWTH;
 }
 
@@ -129,6 +143,10 @@ export interface GrowthInputs {
   loss_q: number;
   roa: number;
   g_dem: number;
+  /** The growth ceiling; `GROWTH_MAX` when absent (1995-rework 9). */
+  growth_max?: number;
+  /** A firm under its hurdle may follow this share of g_dem above 2%; 0 when absent (1995-rework 9). */
+  below_hurdle_demand_share?: number;
   supply_ratio: number;
   archetype: ArchetypeRow;
   traits: readonly Trait[];
@@ -144,9 +162,10 @@ export interface GrowthInputs {
  */
 export function growthPlan(i: GrowthInputs): number {
   let g =
-    situationGrowth(i.loss_q, i.roa, i.g_dem, i.supply_ratio, i.archetype) + traitNudge(i.traits, i.tech);
+    situationGrowth(i.loss_q, i.roa, i.g_dem, i.supply_ratio, i.archetype, i.below_hurdle_demand_share) +
+    traitNudge(i.traits, i.tech);
   // D971: a leveraged company expands harder while it is profitable and not shrinking.
   const a = i.debt_aggression ?? 0;
   if (a > 0 && i.roa >= 0.0 && i.loss_q < SHRINK_LOSS_QUARTERS) g += DEBT_GROWTH_NUDGE_PER_LEVEL * a;
-  return fundingCap(clamp(g, GROWTH_MIN, GROWTH_MAX), i.funding);
+  return fundingCap(clamp(g, GROWTH_MIN, i.growth_max ?? GROWTH_MAX), i.funding);
 }

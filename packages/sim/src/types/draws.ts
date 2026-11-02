@@ -22,14 +22,15 @@
  *   (5.20.1, D276).
  * - Gen: world generation in play: simple characters, startups, names (spec 3.7.1, 5.19).
  * - Politics: the US politics POC: politicians, votes, appointments (D980).
+ * - Era: a historical world's run: its scenario and what the seed picks for it (1995-rework 3.3).
  */
-export type Stream = "Cycle" | "Growth" | "Prices" | "Ai" | "Gen" | "Politics";
+export type Stream = "Cycle" | "Growth" | "Prices" | "Ai" | "Gen" | "Politics" | "Era";
 
 /** Number of streams. */
-export const STREAM_COUNT = 6;
+export const STREAM_COUNT = 7;
 
 /** Rust `Stream::ALL`, in stream-number order. */
-export const STREAM_VALUES = ["Cycle", "Growth", "Prices", "Ai", "Gen", "Politics"] as const;
+export const STREAM_VALUES = ["Cycle", "Growth", "Prices", "Ai", "Gen", "Politics", "Era"] as const;
 
 /**
  * Each stream's number, frozen forever (D9): it seeds the stream and indexes per-stream state
@@ -42,6 +43,7 @@ export const STREAM_NUMBER: Readonly<Record<Stream, number>> = {
   Ai: 3,
   Gen: 4,
   Politics: 5,
+  Era: 6,
 };
 
 /** Rust `Stream::name`: the lowercase name used in messages. */
@@ -52,6 +54,7 @@ export const STREAM_NAME: Readonly<Record<Stream, string>> = {
   Ai: "ai",
   Gen: "gen",
   Politics: "politics",
+  Era: "era",
 };
 
 /**

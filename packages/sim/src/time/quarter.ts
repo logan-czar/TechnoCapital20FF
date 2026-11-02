@@ -125,7 +125,7 @@ export function nextPhaseStart(t: DateTime, phase: QuarterPhase): DateTime {
   let q = simDateQuarter(dateTimeDate(t));
   for (;;) {
     for (const [p, [date, hour]] of phaseStarts(q)) {
-      if (p === phase && simDateDaysSinceEpoch(date) >= 0) {
+      if (p === phase) {
         const at = dateTimeAt(date, hour);
         if (at > t) return at;
       }

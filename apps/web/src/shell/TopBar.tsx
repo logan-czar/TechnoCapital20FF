@@ -1,11 +1,11 @@
 // The top bar (ui/top_bar.rs; spec 8 main screen and time controls rows): the quarter clock, the
-// date and hour, pause, speeds 1 to 5 (5 is max), the Skip menu, the Panes menu (D979), the alerts
-// indicator and the command bar button. Keys: Space pauses or resumes, 1 to 5 set the speed (and
+// date and hour, pause, speeds 1 to 6 (5 is a game year a minute, 6 is max), the Skip menu, the Panes menu (D979), the alerts
+// indicator and the command bar button. Keys: Space pauses or resumes, 1 to 6 set the speed (and
 // resume, D8).
 
-import { MAX_SPEED, QUARTER_PHASE_NAME, weekdayShortName } from "@tc20ff/sim";
+import { MAX_SPEED, QUARTER_PHASE_NAME, WATCH_SPEED, weekdayShortName } from "@tc20ff/sim";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { useClock, useNotices, useSim } from "../sim/hooks.ts";
+import { useClock, useNotices, useSim, useViewData } from "../sim/hooks.ts";
 import { date as fmtDate } from "../widgets/cells.ts";
 import { FIXED_PANES, type WorkspaceControl } from "./panes.ts";
 import { SKIPS, skipName } from "./text.ts";
@@ -22,7 +22,7 @@ function isTypingTarget(t: EventTarget | null): boolean {
   );
 }
 
-const SPEEDS = [1, 2, 3, 4, 5] as const;
+const SPEEDS = [1, 2, 3, 4, 5, 6] as const;
 
 /** Closes a dropdown menu on a press outside it; returns the ref for the menu's root. */
 function useCloseOutside(open: boolean, close: () => void) {
@@ -51,6 +51,17 @@ function Clock() {
         {QUARTER_PHASE_NAME[clock.next_phase]}
       </span>
     </div>
+  );
+}
+
+/** After a run's end the game carries on, but nothing past there is tuned (1995-rework 8.3). */
+function Untuned() {
+  const run = useViewData("history")?.run;
+  if (!run?.ended) return null;
+  return (
+    <span className="untuned" title="The run has ended. Nothing past here is tuned.">
+      Past {run.reveal_year}: untuned
+    </span>
   );
 }
 
@@ -99,7 +110,7 @@ function SpeedControls() {
             key={n}
             className={!paused && speed === n ? "on" : ""}
             onClick={() => setSpeed(n)}
-            title={`Speed ${n}`}
+            title={n === WATCH_SPEED ? "About a game year per minute" : `Speed ${n}`}
           >
             {n === MAX_SPEED ? "Max" : n}
           </button>
@@ -209,6 +220,7 @@ function TopBarInner({ seen, onOpenAlerts, onOpenCommands, workspace, onSave, on
     <header className="topbar">
       <Clock />
       <SpeedControls />
+      <Untuned />
       <span className="grow" />
       <PanesMenu workspace={workspace} />
       <AlertsButton seen={seen} onOpen={onOpenAlerts} />

@@ -17,8 +17,8 @@
 import type { DateTime, LoadError, Rating, SoakIndustry, SoakStats } from "@tc20ff/sim/internal";
 import {
   type CompanyStatus,
+  dateTimeDate,
   dateTimeMidnight,
-  EPOCH_YEAR,
   formatDateTime,
   formatMonth,
   maxF,
@@ -179,6 +179,8 @@ export interface SeedOutput<D = unknown> {
    * safe integers). Not in either table; `sharesOutCsv` writes it for the parity checker.
    */
   max_shares_out: number;
+  /** A historical world's `era.csv` rows (no header); absent or empty in the 2020 world. */
+  era?: string;
 }
 
 /** `shares_out.csv`: the largest share count per seed, read by `headless parity` (D951). */
@@ -199,8 +201,46 @@ export interface RunOptions<D = unknown> {
   detail?: DetailHook<D> | null;
 }
 
+/** House seats that make a majority (1995-rework 7.5). */
+const HOUSE_MAJORITY = 218;
+
+/** The header of `era.csv`: a historical world's long history, one row per seed per year (1995-rework 4.3). */
+export const ERA_HEADER =
+  "seed,year,gdp_usd,companies,base_rate,recessions_started,zone_gdp_usd,failures,tech_share,top_industry_share,top10_turnover,top10_born,president_changes,house_changes";
+
+/** A run's `era.csv` rows, from its `history` view at the end. */
+function eraRows(sim: SoakSimApi, seed: number): string {
+  const views = sim.views();
+  const h = views.history?.data;
+  if (h === undefined) return "";
+  const sectors = views.industry_rows.data.rows.map((r) => r.sector);
+  const first = new Set(h.top10[0]?.companies.map((c) => c.company) ?? []);
+  const last = h.top10.at(-1)?.companies ?? [];
+  const kept = last.filter((c) => first.has(c.company)).length;
+  const turnover = last.length > 0 ? 1 - kept / last.length : 0;
+  const rows = views.company_rows.data.rows;
+  const born = last.filter((c) => rows[c.company]?.origin.kind === "Born").length;
+  // From the opening government: a party that wins every vote from the first has still taken over.
+  const votes = views.politics.data.elections.slice().reverse();
+  const presidents = (h.run?.presidents ?? []).map((p) => p.party);
+  const houses = [h.run?.start_house_dem ?? 0, ...votes.map((e) => e.house[0])].map(
+    (d) => d >= HOUSE_MAJORITY,
+  );
+  const changes = <T>(xs: readonly T[]): number => xs.filter((x, i) => i > 0 && x !== xs[i - 1]).length;
+  return h.years
+    .map((y, i) => {
+      const started = h.recessions.filter((r) => r === y).length;
+      const demand = h.industry_demand_usd[i] ?? [];
+      const total = demand.reduce((a, b) => a + b, 0);
+      const tech = demand.reduce((a, d, k) => (sectors[k] === "Tech" ? a + d : a), 0);
+      const top = demand.reduce((a, b) => maxF(a, b), 0);
+      return `${seed},${y},${h.gdp_usd[i]},${h.companies[i]},${h.base_rate[i]},${started},${(h.zone_gdp_usd[i] ?? []).join(";")},${h.failures[i]},${total > 0 ? tech / total : 0},${total > 0 ? top / total : 0},${turnover},${born},${changes(presidents)},${changes(houses)}\n`;
+    })
+    .join("");
+}
+
 /**
- * Runs `seed` from the start state for `years` years (to 1 January of 2020 + years, 00:00)
+ * Runs `seed` from the start state for `years` years (to 1 January of the start year + years, 00:00)
  * through `step` only, recording both tables. Returns the load error's text if the sim cannot be
  * built (Rust `Result<_, String>`).
  */
@@ -215,7 +255,7 @@ export function runSeed<D = unknown>(
   const made = factory(structuredClone(data), seed);
   if (!made.ok) return { ok: false, error: loadErrorToString(made.error) };
   const sim = made.value;
-  const end = dateTimeMidnight(simDateYmd(EPOCH_YEAR + years, 1, 1));
+  const end = dateTimeMidnight(simDateYmd(dateTimeDate(sim.now()).year + years, 1, 1));
   const rec = recorderNew(sim, seed);
   rec.detail = opts.detail ?? null;
   const hashMonthly = opts.hashMonthly ?? false;
@@ -238,6 +278,7 @@ export function runSeed<D = unknown>(
       wall_ms: Math.trunc(performance.now() - start),
       state_hash: recorderStateHash(rec, sim),
       end: formatDateTime(sim.now()),
+      era: eraRows(sim, seed),
       detail: rec.detail === null ? null : (rec.detail.out as D),
       max_shares_out: rec.max_shares_out,
     },
@@ -409,6 +450,8 @@ function fx(x: number, digits: number): string {
 /** Reads the views at the notices of each tick and writes the rows. */
 interface Recorder {
   seed: number;
+  /** The year the run started in. */
+  start_year: number;
   year_ticks: number;
   economy: YearEconomy;
   tracking: YearTracking;
@@ -457,6 +500,7 @@ function recorderNew(sim: SoakSimApi, seed: number): Recorder {
   const rows = sim.views().industry_rows.data.rows;
   return {
     seed,
+    start_year: dateTimeDate(sim.now()).year,
     year_ticks: 0,
     economy: yearEconomyNew(),
     tracking: yearTrackingNew(),
@@ -631,8 +675,10 @@ function recorderYearClose(rec: Recorder, sim: SoakSimApi, year: number): void {
  */
 function recorderM10Columns(rec: Recorder, sim: SoakSimApi, year: number): string {
   const rows = sim.views().industry_rows.data.rows;
-  const n = year + 1 - EPOCH_YEAR;
+  const n = year + 1 - rec.start_year;
   const devs = rows.map((r, i) => {
+    // An industry that started dormant has no growth since load to measure (1995-rework 5.2).
+    if ((rec.demand0[i] as number) <= 0.0) return 0.0;
     const g = cagr(rec.demand0[i] as number, r.demand, n);
     const lt = cagr(rec.trend0[i] as number, r.trend_demand, n);
     return 100.0 * Math.abs(g - lt);

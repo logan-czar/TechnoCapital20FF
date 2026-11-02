@@ -43,6 +43,8 @@ export interface NextVote {
 }
 
 export interface PoliticsView {
+  /** What a historical world calls these ideologies (1995-rework 7.6); absent in the 2020 world. */
+  ideology_names?: Partial<Record<Ideology, string>>;
   /** The country this government runs; null before the first build. */
   country: CountryId | null;
   president: PoliticianRow | null;

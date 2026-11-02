@@ -11,10 +11,14 @@ import { quarterFirstDay, simDateQuarter, simDateYmd } from "../time/calendar.ts
 import { type JobCtx, jobCtxRaiseAlert } from "../time/scheduler.ts";
 import type { Quarter, SimDate } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
+import { maxF } from "../types/num.ts";
 import type { AiBoom, AiSchedule, AiStage, PhaseLabel, World } from "../types/world.ts";
 import { fadedTrend, growthFactor, profileOf } from "./profiles.ts";
 
-/** The fade counts years from 1 Jan 2020, the game's start (drift plan, D977). */
+/**
+ * The fade counts years from 1 Jan 2020, the 2020 world's start (drift plan, D977), and not before
+ * it (1995-rework 3.1): a negative count would inflate a trend.
+ */
 const FADE_ORIGIN_YEAR = 2020;
 
 /** The boom event: 00:00 on 1 January 2030 (spec 5.1.1, scripted). */
@@ -157,13 +161,26 @@ export function setIndustryLt(world: World, date: SimDate): void {
   const profile = profileOf(world);
   const q = simDateQuarter(date);
   const scale = profile.lt_scale * growthFactor(profile, q.year);
-  const years = (quarterIndex(q) - FADE_ORIGIN_YEAR * QUARTERS_IN_YEAR) / QUARTERS_IN_YEAR;
-  for (const ind of world.industries) {
+  const years = maxF((quarterIndex(q) - FADE_ORIGIN_YEAR * QUARTERS_IN_YEAR) / QUARTERS_IN_YEAR, 0.0);
+  const era = world.era;
+  world.industries.forEach((ind, i) => {
     ind.prev_lt = ind.lt;
     const p = ind.params;
-    const trend = fadedTrend(p.trend_growth, p.mature_rate, p.fade_half_life_years, years, profile.fade);
-    ind.lt = linkedLt(trend * scale, p.boom_uplift, aiLt, pre);
-  }
+    // In a historical world an industry fades from its own emergence (1995-rework 5).
+    const sinceStart =
+      era === undefined ? years : maxF(q.year - (era.sectors[i]?.emerged_year ?? q.year), 0.0);
+    const trend = fadedTrend(
+      p.trend_growth,
+      p.mature_rate,
+      p.fade_half_life_years,
+      sinceStart,
+      profile.fade || era !== undefined,
+    );
+    // There the scenario leaves a young industry's path (a half life above 0) as its own, so a
+    // faster economy does not compound a new market's 60% years (1995-rework 4.2).
+    const scaled = era !== undefined && p.fade_half_life_years > 0.0 ? trend : trend * scale;
+    ind.lt = linkedLt(scaled, p.boom_uplift, aiLt, pre);
+  });
 }
 
 /** 4.3 step 1b: every industry's lt. */

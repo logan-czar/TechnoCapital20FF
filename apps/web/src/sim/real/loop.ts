@@ -29,7 +29,8 @@ export class WorkerLoop {
       const host = await this.deps.load();
       if (this.dead) return;
       this.host = host;
-      this.deps.post({ kind: "Ready" });
+      const choices = host.choices();
+      this.deps.post(choices === null ? { kind: "Ready" } : { kind: "Ready", choices });
       const queued = this.queued;
       this.queued = [];
       for (const m of queued) this.handle(m);
@@ -49,6 +50,7 @@ export class WorkerLoop {
   /** The worker's `onmessage`. */
   onMessage(msg: ToSim): void {
     if (this.dead) {
+      if (msg.kind === "FrameDone") return;
       const result = { kind: "Refused" as const, message: "the sim worker stopped" };
       this.deps.post({ kind: "Reply", id: msg.id, result });
     } else if (this.host === null) {

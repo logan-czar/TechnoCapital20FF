@@ -13,7 +13,7 @@ import { type JobCtx, tickFactsIsQuarterStart } from "../time/scheduler.ts";
 import { clamp, maxF } from "../types/num.ts";
 import type { BusinessUnit, Company, World } from "../types/world.ts";
 import { businessUnitAssetsEff } from "../world/entities.ts";
-import { closingRates, monthFactor } from "./demand.ts";
+import { closingRates, monthFactor, trendMonthFactor } from "./demand.ts";
 import { companyIsFrozen, MONTHS_PER_YEAR, PRODUCTIVITY_SCALE } from "./index.ts";
 
 /** M's clamp (spec 5.2, T). */
@@ -21,6 +21,10 @@ export const M_MIN = 0.7;
 export const M_MAX = 1.3;
 /** M = (1 ÷ S)^0.5 (spec 5.2, T). */
 export const M_EXPONENT = 0.5;
+/** The share of its gap to demand a sticky fringe closes a month (1995-rework 9, T). */
+export const FRINGE_ADJUST_MONTHLY = 0.08;
+/** The gap a sticky fringe reads is clamped to this (1995-rework 9, T). */
+export const FRINGE_GAP_LIMIT = 0.5;
 /** The industry screen keeps 20 closed quarters (spec 8, 4.5). */
 export const HISTORY_QUARTERS = 20;
 
@@ -32,6 +36,32 @@ export function fringeAssetsAtLoad(worldSize: number, namedRevenue: number, turn
 /** The fringe's month: `fringe_assets × (1 + q_growth)^(1/3)` (spec 5.3). */
 export function fringeAfterMonth(fringeAssets: number, qGrowth: number): number {
   return fringeAssets * monthFactor(qGrowth);
+}
+
+/**
+ * In a historical world the fringe's capacity is sticky (1995-rework 9): it grows on the long-term
+ * rate and closes a share of its gap to demand each month. So a downturn leaves capacity above demand
+ * and squeezes every firm's margin through M, where the spec 5.3 fringe shrinks in step and takes
+ * the whole shock.
+ */
+export function stickyFringeAfterMonth(fringeAssets: number, lt: number, s: number): number {
+  const gap = s > 0.0 ? clamp(1.0 / s - 1.0, -FRINGE_GAP_LIMIT, FRINGE_GAP_LIMIT) : 0.0;
+  return fringeAssets * trendMonthFactor(lt) * (1.0 + FRINGE_ADJUST_MONTHLY * gap);
+}
+
+/**
+ * A young industry's fringe (one that fades, a half life above 0) grows on its mature rate and closes
+ * this share of its gap a month, so newcomers, not the fringe, take a new market (1995-rework 9, T).
+ */
+export const YOUNG_FRINGE_ADJUST_MONTHLY = 0.04;
+
+/** The era fringe's month for `ind`: sticky, and slower still in a young industry (1995-rework 9). */
+export function eraFringeAfterMonth(ind: World["industries"][number], lt: number): number {
+  const p = ind.params;
+  if (p.fade_half_life_years <= 0.0) return stickyFringeAfterMonth(ind.fringe_assets, lt, ind.supply_ratio);
+  const s = ind.supply_ratio;
+  const gap = s > 0.0 ? clamp(1.0 / s - 1.0, -FRINGE_GAP_LIMIT, FRINGE_GAP_LIMIT) : 0.0;
+  return ind.fringe_assets * trendMonthFactor(p.mature_rate) * (1.0 + YOUNG_FRINGE_ADJUST_MONTHLY * gap);
 }
 
 /** The fringe's supply a year at productivity 100 (spec 5.2). */
@@ -76,6 +106,13 @@ export function setSupply(world: World): void {
   }
   for (let id = 0; id < world.industries.length; id++) {
     const ind = world.industries[id]!;
+    // A dormant industry has no market yet: neither over nor under supplied (1995-rework 5.2).
+    if (world.era?.sectors[id]?.status === "Dormant") {
+      ind.supply = 0.0;
+      ind.supply_ratio = 1.0;
+      ind.market_factor = 1.0;
+      continue;
+    }
     ind.supply = fringeSupply(ind.fringe_assets, ind.params.asset_turnover) + named[id]!;
     ind.supply_ratio = supplyRatio(ind.supply, ind.demand);
     ind.market_factor = marketFactor(ind.supply_ratio);
@@ -86,8 +123,9 @@ export function setSupply(world: World): void {
 export function fringeJob(world: World, ctx: JobCtx): void {
   const quarterStart = tickFactsIsQuarterStart(ctx.facts);
   for (const ind of world.industries) {
-    const [q] = closingRates(ind, quarterStart);
-    ind.fringe_assets = fringeAfterMonth(ind.fringe_assets, q);
+    const [q, lt] = closingRates(ind, quarterStart);
+    ind.fringe_assets =
+      world.era === undefined ? fringeAfterMonth(ind.fringe_assets, q) : eraFringeAfterMonth(ind, lt);
   }
 }
 

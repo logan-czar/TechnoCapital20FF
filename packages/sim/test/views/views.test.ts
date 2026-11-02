@@ -35,6 +35,7 @@ import { dateTimeAt, dateTimeMidnight, simDateYmd } from "../../src/time/calenda
 import type { TickObserver } from "../../src/time/scheduler.ts";
 import type { DateTime } from "../../src/types/calendar.ts";
 import { DATETIME_START } from "../../src/types/calendar.ts";
+import { MAX_SPEED } from "../../src/types/control.ts";
 import { VIEW_SPECS } from "../../src/types/views/index.ts";
 import { unwrap } from "../common/index.ts";
 
@@ -66,7 +67,7 @@ describe("views", () => {
 
     // Controls show at once, between ticks.
     unwrap(simApply(s, { kind: "SkipTo", skip: "NextLock" }), "SkipTo");
-    expect(simClock(s).speed).toBe(5);
+    expect(simClock(s).speed).toBe(MAX_SPEED);
     expect(simClock(s).skipping).toBe("NextLock");
   });
 

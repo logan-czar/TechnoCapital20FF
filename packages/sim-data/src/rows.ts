@@ -601,3 +601,83 @@ export interface IndustrySuffix {
 }
 
 export const INDUSTRY_SUFFIX_SPEC = rowSpec<IndustrySuffix>({ industry: str, suffix: str });
+
+/** industry-lifecycle.csv: a dormant industry of an era world (1995-rework 5.1). */
+export interface IndustryLifecycle {
+  /** industries.csv `id`. */
+  id: string;
+  /** The years its emergence is drawn in, inclusive. */
+  window_first: number;
+  window_last: number;
+  /** Its world demand on emerging. */
+  target_size_usd_bn: number;
+  /** The startups of its founding wave, inclusive. */
+  wave_min: number;
+  wave_max: number;
+}
+
+export const INDUSTRY_LIFECYCLE_SPEC = rowSpec<IndustryLifecycle>({
+  id: str,
+  window_first: u32,
+  window_last: u32,
+  target_size_usd_bn: f64,
+  wave_min: u32,
+  wave_max: u32,
+});
+
+/** zone-growth.csv: a financial zone's expected path through an era world's run (1995-rework 6.4). */
+export interface ZoneGrowth {
+  /** financial-zones.csv `zone_id`. */
+  zone_id: string;
+  /** Its growth against the world's, log a year, before the scenario and the seed's draw. */
+  track: number;
+}
+
+export const ZONE_GROWTH_SPEC = rowSpec<ZoneGrowth>({ zone_id: str, track: f64 });
+
+/** politics-usa-era.csv: what an era world knows of a US state beyond politics-usa.csv (1995-rework 7.2). */
+export interface PoliticsEraRow {
+  /** politics-usa.csv `state`. */
+  state: string;
+  /** Northeast, Midwest, South or West. */
+  census_region: string;
+  /** Democratic seats on the first day: the 104th Congress. */
+  start_house_dem: number;
+  start_senate_dem: number;
+  /** The 1990 census, millions. */
+  pop_1990_m: number;
+  /** A year, from the 1990 and 2010 censuses. */
+  pop_growth: number;
+}
+
+export const POLITICS_ERA_SPEC = rowSpec<PoliticsEraRow>({
+  state: str,
+  census_region: str,
+  start_house_dem: u32,
+  start_senate_dem: u32,
+  pop_1990_m: f64,
+  pop_growth: f64,
+});
+
+/** character-spawns.csv: a named character who joins an era world's run (1995-rework 7.7). */
+export interface CharacterSpawn {
+  /** characters.csv `id`. */
+  id: string;
+  /** The years its spawn is drawn in, inclusive. */
+  spawn_first: number;
+  spawn_last: number;
+  born_year: number;
+  /** A startup's HQ must be in this superregion. */
+  superregion: string;
+  /** A startup's industry must be in this sector; empty fits any. */
+  sector: string;
+}
+
+export const CHARACTER_SPAWN_SPEC = rowSpec<CharacterSpawn>({
+  id: str,
+  spawn_first: u32,
+  spawn_last: u32,
+  born_year: u32,
+  superregion: str,
+  sector: str,
+});

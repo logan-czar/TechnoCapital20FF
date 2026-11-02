@@ -33,7 +33,7 @@ import {
   roundHalfAway,
   simDateQuarter,
 } from "@tc20ff/sim";
-import { FIRST_QUARTER, type NameIndex } from "../../links/names.ts";
+import { firstQuarter, type NameIndex } from "../../links/names.ts";
 import { type Cell, date, figureCell, gain } from "../../widgets/cells.ts";
 import { type Block, emptyDoc, type PageDoc, type Span, span, type TableDoc } from "../doc.ts";
 import { kindName, type PageRef } from "../ref.ts";
@@ -171,8 +171,8 @@ export function recapDoc(q: Quarter, v: ViewsData, index: NameIndex): PageDoc {
     ),
   );
   if (!r) {
-    // A quarter before the game has no recap tick on the clock (it starts 1 Jan 2020).
-    const when = cmpQuarter(q, FIRST_QUARTER) >= 0 ? recapTick(q) : null;
+    // A quarter before the game has no recap tick on the clock.
+    const when = cmpQuarter(q, firstQuarter(v)) >= 0 ? recapTick(q) : null;
     const text =
       when !== null && clock && cmpDateTime(when, clock.now) > 0
         ? `The ${formatQuarter(q)} recap opens in its pre-quarter-end week, on ${date(dateTimeDate(when))}.`
@@ -237,7 +237,7 @@ export const pages = [
     // recap.rs read v_recap and v_industry_row, and the runner controls for the watchlist; the
     // watchlist and the clock are v_clock's here (D975). The doc is small, so following v_clock
     // at the page pace is cheap.
-    views: ["recap", "industry_rows", "clock"],
+    views: ["recap", "industry_rows", "clock", "history"],
     sections: SECTIONS,
     doc: (page, v, index) => recapDoc(page.quarter, v, index),
   }),

@@ -35,8 +35,8 @@ import { conversionCapacity, dataBookAtLoad, dataBookFreeRdFraction, dataBookSto
 import { fitStations, laborUnits } from "../ops/labor.ts";
 import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
 import { nameBooksBuild } from "../people/names.ts";
-import { traitFromName } from "../people/traits.ts";
 import { politicsStateFromData } from "../politics/state.ts";
+import { dateTimeDate, dateTimeMidnight } from "../time/calendar.ts";
 import { DATETIME_START, type SimDate } from "../types/calendar.ts";
 import { tableFromRows } from "../types/collections.ts";
 import type { CompanyId, CountryId, IndustryId, ProvinceId, UnitId, ZoneId } from "../types/ids.ts";
@@ -48,13 +48,7 @@ import type { CompanyFinance, Rating } from "../types/state/finance.ts";
 import type { MarketState, Stock } from "../types/state/market.ts";
 import type { NewsWire } from "../types/state/news.ts";
 import type { ComputeBill, DataBook, Stations } from "../types/state/ops.ts";
-import {
-  type BaseCharacter,
-  LABOR_SEAT_COUNT,
-  type NameBooks,
-  type Skills,
-  type Trait,
-} from "../types/state/people.ts";
+import { type BaseCharacter, LABOR_SEAT_COUNT, type NameBooks, type Trait } from "../types/state/people.ts";
 import {
   type AiSchedule,
   type BusinessUnit,
@@ -75,6 +69,7 @@ import {
   type World,
   type Zone,
 } from "../types/world.ts";
+import { controllerBook } from "./controllers.ts";
 
 // ---------------------------------------------------------------- Step 2 dependencies
 
@@ -138,7 +133,7 @@ export interface LoadDeps {
   /** finance/state.rs `CompanyFinance::at_load(credit_drawn, rating)`. */
   companyFinanceAtLoad(creditDrawn: number, rating: Rating): CompanyFinance;
   /** market/state.rs `Stock::at_load(exchange, open_price, shares_out)`. */
-  stockAtLoad(exchange: ZoneId | null, openPrice: number, sharesOut: number): Stock;
+  stockAtLoad(exchange: ZoneId | null, openPrice: number, sharesOut: number, date: SimDate): Stock;
   /** ops/compute.rs `compute_bill(stations, stored_tb)`. */
   computeBill(stations: Stations, storedTb: number): ComputeBill;
   /** ops/data.rs `DataBook::at_load(revenue, params, conversion_capacity, enterprise_share)`. */
@@ -162,8 +157,6 @@ export interface LoadDeps {
   productiveCompute(stations: Stations, pcModifier: number): number;
   /** people/names.rs `NameBooks::build(data, country_keys)`; the error is the country key. */
   nameBooksBuild(data: WorldData, countryKeys: readonly string[]): Result<NameBooks, string>;
-  /** people/traits.rs `Trait::from_name(name)`: null for a trait outside the 12 pairs (D113). */
-  traitFromName(name: string): Trait | null;
   /** politics/state.ts: the US state's static tables (D980); null for data without the USA. */
   politicsStateFromData: typeof politicsStateFromData;
   /** news.rs `NewsWire::default()`. */
@@ -201,7 +194,6 @@ export const UNPORTED_LOAD_DEPS: LoadDeps = {
   laborUnits, // ops/labor.rs
   productiveCompute, // ops/stations.rs
   nameBooksBuild, // people/names.rs NameBooks::build
-  traitFromName, // people/traits.rs Trait::from_name
   politicsStateFromData, // politics/state.ts
   newsWireDefault, // news.rs NewsWire::default
 };
@@ -307,18 +299,26 @@ function sortedBy<T>(rows: readonly T[], key: (r: T) => string): T[] {
   return [...rows].sort((a, b) => cmpStr(key(a), key(b)));
 }
 
+/** The 2020 world's start date (spec 3.1, 7.3). */
+const EPOCH_DATE: SimDate = dateTimeDate(DATETIME_START);
+
 /** World base rate, fixed in the MVP (spec 3.1, T). */
 export const BASE_RATE = 0.03;
 /** Neutral rate (spec 3.1, T). */
 export const NEUTRAL_RATE = 0.03;
 
 /**
- * The start state tables (spec 7) with the clock at 2020-01-01 00:00 (spec 3.1, 7.3). Rust
- * `build_world`; `deps` stands for the Step 2 modules it calls (see the file header).
+ * The start state tables (spec 7) with the clock at 00:00 on `startDate` (spec 3.1, 7.3;
+ * 1995-rework 3.1). Rust `build_world`; `deps` stands for the Step 2 modules it calls (see the file
+ * header).
  */
-export function buildWorld(data: WorldData, deps: LoadDeps = UNPORTED_LOAD_DEPS): Result<World, LoadError> {
+export function buildWorld(
+  data: WorldData,
+  deps: LoadDeps = UNPORTED_LOAD_DEPS,
+  startDate: SimDate = EPOCH_DATE,
+): Result<World, LoadError> {
   try {
-    return { ok: true, value: buildWorldInner(data, deps) };
+    return { ok: true, value: buildWorldInner(data, deps, startDate) };
   } catch (e) {
     if (e instanceof LoadFailure) return { ok: false, error: e.loadError };
     throw e;
@@ -329,11 +329,11 @@ export function buildWorld(data: WorldData, deps: LoadDeps = UNPORTED_LOAD_DEPS)
  * Rust `World::from_data`: the start state tables from the loaded rows (spec 7), before the 7.3
  * start draws. The same as `buildWorld` with the real module dependencies.
  */
-export function worldFromData(data: WorldData): Result<World, LoadError> {
-  return buildWorld(data);
+export function worldFromData(data: WorldData, startDate: SimDate = EPOCH_DATE): Result<World, LoadError> {
+  return buildWorld(data, UNPORTED_LOAD_DEPS, startDate);
 }
 
-function buildWorldInner(data: WorldData, deps: LoadDeps): World {
+function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): World {
   // Zones (spec 3.2.1).
   const zoneRows = sortedBy(data.financial_zones.rows, (z) => z.zone_id);
   const zoneKeys = new Keys<ZoneId>(
@@ -473,26 +473,7 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
     };
   });
 
-  // The named controllers (spec 3.7.2 rows of characters.csv), kept as base characters (D989): the
-  // name, age, skills and the traits of the 12 pairs (D113). Nothing else of the row is read, and
-  // no character table is kept.
-  const controllerBook = new Map<string, BaseCharacter>();
-  for (const c of data.characters.rows) {
-    const skills: Skills = {
-      finance: c.finance,
-      operations: c.operations,
-      persuasion: c.persuasion,
-      intrigue: c.intrigue,
-      tech: c.tech,
-      hustle: c.hustle,
-    };
-    const traits: Trait[] = [];
-    for (const name of c.traits) {
-      const t = deps.traitFromName(name.trim());
-      if (t !== null) traits.push(t);
-    }
-    controllerBook.set(c.id, { class: "Executive", name: c.name, age: c.age, skills, traits });
-  }
+  const controllers = controllerBook(data);
 
   // Name books per country, in country id order (spec 3.7.1; D203), built once here.
   const nameBooks = deps.nameBooksBuild(
@@ -530,17 +511,19 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
     // The 7.1 loadout (lane F's one implementation): labor units from the loaded gross assets, the
     // loadout's stations fitted to them (a no-op on today's data, D208), the starting data (5.9)
     // and the compute bill (3.8) that the fixed cost rate leaves room for.
-    const loadout = deps.startLoadout(c.id, revenue, locationBonus, params);
+    // A world without Arrowhead reads its CO-0001 as any other company (1995-rework 3.2).
+    const loadoutKey = data.manifest.features.arrowhead ? c.id : "";
+    const loadout = deps.startLoadout(loadoutKey, revenue, locationBonus, params);
     const labor = deps.laborUnits(gross, params.labor_value_usd);
     const stations = deps.fitStations(loadout.stations, labor);
     const book = deps.dataBookAtLoad(
       revenue,
       { tb_per_musd: params.data_tb_per_musd, decay_base: params.data_decay_base },
       deps.conversionCapacity(stations),
-      deps.enterpriseShare(c.id),
+      deps.enterpriseShare(loadoutKey),
     );
     const compute = deps.computeBill(stations, deps.dataBookStoredTb(book));
-    const startCtl = startControl(c, controllerBook, countryKeys, companyKeys);
+    const startCtl = startControl(c, controllers, countryKeys, companyKeys);
     const controllerTraits: readonly Trait[] =
       startCtl.controller.kind === "Character" ? startCtl.controller.character.traits : [];
     const archetype = deps.archetypeAtLoad(
@@ -588,7 +571,7 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
     const shares = sharesFromCsv(start.shares);
     if (!shares.ok) throw bad(shares.error);
     const sharesOut = shares.value;
-    stocks.push(deps.stockAtLoad(exchange, c.public ? start.open_price : 0.0, sharesOut));
+    stocks.push(deps.stockAtLoad(exchange, c.public ? start.open_price : 0.0, sharesOut, startDate));
     const rating = deps.ratingParse(start.start_rating);
     if (rating === null) {
       throw bad(`start_rating \`${start.start_rating}\` is not on the AAA to CC scale`);
@@ -654,15 +637,15 @@ function buildWorldInner(data: WorldData, deps: LoadDeps): World {
   const politics = deps.politicsStateFromData(data, countryKeys.map, provinceKeys.map);
   if (politics === null) throw badValue("countries", "USA", "the politics POC needs the USA (D980)");
   return {
-    clock: DATETIME_START,
+    clock: dateTimeMidnight(startDate),
     zones: tableFromRows(zones),
     countries: tableFromRows(countries),
     provinces: tableFromRows(provinces),
     industries: tableFromRows(industries),
     companies: tableFromRows(companies),
     units: tableFromRows(units),
-    base_rate: BASE_RATE,
-    neutral_rate: NEUTRAL_RATE,
+    base_rate: data.manifest.base_rate,
+    neutral_rate: data.manifest.neutral_rate,
     // `economy::start` makes the cycle's draws (spec 7.3); until then g is 0.
     cycle: {
       phase: deps.START_PHASE,

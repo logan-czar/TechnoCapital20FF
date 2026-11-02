@@ -7,7 +7,9 @@
 import {
   type ClockView,
   type FromSim,
+  type NewGameChoices,
   type Notice,
+  priceBarsApply,
   type SimViews,
   VIEW_NAMES,
   type ViewName,
@@ -42,6 +44,8 @@ export interface Status {
   ready: boolean;
   /** A game exists (NewGame or Load succeeded). */
   started: boolean;
+  /** This world's new game needs picking (1995-rework 4.1). */
+  choices: NewGameChoices | null;
   /** The worker's Fatal message, or a worker error. */
   fatal: string | null;
 }
@@ -60,7 +64,7 @@ export class SimStore {
   private messageId = 0;
   notices: readonly NoticeEntry[] = [];
   messages: readonly Message[] = [];
-  status: Status = { ready: false, started: false, fatal: null };
+  status: Status = { ready: false, started: false, choices: null, fatal: null };
 
   getView<K extends ViewName>(name: K): SimViews[K] | undefined {
     return this.views[name];
@@ -114,6 +118,10 @@ export class SimStore {
     const patch = frame.views;
     const moved: StoreKey[] = [];
     for (const name of VIEW_NAMES) if (name !== "news") this.take(patch, name, moved);
+    if (patch.price_bars_delta !== undefined) {
+      this.views.price_bars = priceBarsApply(this.views.price_bars, patch.price_bars_delta);
+      moved.push("price_bars");
+    }
     if (patch.news_appended !== undefined) {
       const old = this.views.news;
       const feed =

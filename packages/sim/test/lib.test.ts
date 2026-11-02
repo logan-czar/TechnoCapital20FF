@@ -2,7 +2,7 @@
 // observer and the test hooks. Not a Rust file: Rust covered these through controls.rs,
 // save_load.rs and the M10 profiling tests; these pin the parts those leave implicit.
 
-import type { WorldData } from "@tc20ff/sim-data";
+import { MANIFEST_2020, type WorldData } from "@tc20ff/sim-data";
 import { describe, expect, it } from "vitest";
 import {
   START_DEPS,
@@ -56,7 +56,7 @@ function recordingDeps(calls: string[], fail: { on: boolean }): StartDeps {
   };
 }
 
-const NO_DATA = {} as WorldData;
+const NO_DATA = { manifest: MANIFEST_2020 } as WorldData;
 
 describe("startWorld", () => {
   it("runs the load's calls in their frozen order (D163) and starts the wire from the labels", () => {

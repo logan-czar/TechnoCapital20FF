@@ -44,7 +44,9 @@ export type Notice =
  * - BankruptcyInWatchlist: a watchlist company went bankrupt (spec 8, 5.12).
  * - WorldEvent: a scripted world event: the AI boom and the pop (spec 5.1.1).
  * - QuarterStart: the quarter's first tick, 00:00 on the 1st (spec 4.4): the month's and the
- *   quarter's close, the costliest tick (D800). Last, so the other kinds keep their saved order.
+ *   quarter's close, the costliest tick (D800). After the older kinds, so they keep their saved order.
+ * - Election, NewSector, Recession, MajorFailure: a historical world's run (1995-rework 8.2): a US
+ *   November vote, an industry emerging, a recession starting, a large company failing.
  */
 export type AlertKind =
   | "EarningsDay"
@@ -52,7 +54,11 @@ export type AlertKind =
   | "PlanLock"
   | "BankruptcyInWatchlist"
   | "WorldEvent"
-  | "QuarterStart";
+  | "QuarterStart"
+  | "Election"
+  | "NewSector"
+  | "Recession"
+  | "MajorFailure";
 
 /** Rust `AlertKind::ALL`, in declaration order (the saved order; `AlertLevels` is indexed by it). */
 export const ALERT_KIND_VALUES = [
@@ -62,7 +68,19 @@ export const ALERT_KIND_VALUES = [
   "BankruptcyInWatchlist",
   "WorldEvent",
   "QuarterStart",
+  "Election",
+  "NewSector",
+  "Recession",
+  "MajorFailure",
 ] as const;
+
+/** The kinds only a historical world raises (1995-rework 8.2). */
+export const HISTORICAL_ALERT_KINDS: readonly AlertKind[] = [
+  "Election",
+  "NewSector",
+  "Recession",
+  "MajorFailure",
+];
 
 /** Rust `AlertKind::index` (`self as usize`): the slot in `AlertLevels`. */
 export const ALERT_KIND_INDEX: Readonly<Record<AlertKind, number>> = {
@@ -72,6 +90,10 @@ export const ALERT_KIND_INDEX: Readonly<Record<AlertKind, number>> = {
   BankruptcyInWatchlist: 3,
   WorldEvent: 4,
   QuarterStart: 5,
+  Election: 6,
+  NewSector: 7,
+  Recession: 8,
+  MajorFailure: 9,
 };
 
 /**
@@ -99,11 +121,27 @@ export const ALERT_KIND_DEFAULT_LEVEL: Readonly<Record<AlertKind, AlertLevel>> =
   BankruptcyInWatchlist: "Notify",
   WorldEvent: "Pause",
   QuarterStart: "Pause",
+  Election: "Notify",
+  NewSector: "Notify",
+  Recession: "Notify",
+  MajorFailure: "Notify",
+};
+
+/**
+ * A historical world's calendar alerts only go to the log, since a quarterly pause would stall the
+ * watching speed; its own alerts show and can be set to pause (1995-rework 8.2).
+ */
+export const HISTORICAL_ALERT_DEFAULT_LEVEL: Readonly<Record<AlertKind, AlertLevel>> = {
+  ...ALERT_KIND_DEFAULT_LEVEL,
+  EarningsDay: "Log",
+  QuarterlyRecap: "Log",
+  PlanLock: "Log",
+  QuarterStart: "Log",
 };
 
 /**
  * The level set for each alert kind (spec 8; changed by `Control::SetAlert`). Rust newtype
- * `AlertLevels([AlertLevel; 6])`: length ALERT_KIND_VALUES.length (6), indexed by
+ * `AlertLevels([AlertLevel; 6])`, longer here: length ALERT_KIND_VALUES.length, indexed by
  * `ALERT_KIND_INDEX`. Default: `ALERT_KIND_VALUES.map(k => ALERT_KIND_DEFAULT_LEVEL[k])`; every
  * Off (`AlertLevels::all_off`) for runs whose alerts nobody sees, such as projections (spec 5.16).
  */
@@ -136,4 +174,6 @@ export type PauseReason =
   /** A SkipTo reached its tick. */
   | { kind: "SkipDone"; skip: SkipKind }
   /** A save was loaded (D13). */
-  | { kind: "Loaded" };
+  | { kind: "Loaded" }
+  /** A historical world's run reached its end, which no setting skips (1995-rework 8.3). */
+  | { kind: "RunEnded" };

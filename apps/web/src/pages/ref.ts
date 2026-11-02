@@ -48,6 +48,8 @@ export type PageRef =
   | { kind: "events" }
   /** The US government (politics POC, D980). */
   | { kind: "politics" }
+  /** How a historical world's run went (1995-rework 8.1). */
+  | { kind: "world-history" }
   /** Density, font size, saved layouts and the keyboard shortcuts. */
   | { kind: "settings" };
 
@@ -86,6 +88,7 @@ export const PAGE_KINDS = [
   "zones",
   "events",
   "politics",
+  "world-history",
   "settings",
 ] as const satisfies readonly PageKind[];
 
@@ -109,6 +112,7 @@ const KINDS: Readonly<Record<PageKind, KindInfo>> = {
   zones: { name: "Financial zones", tag: "ZON", list: true },
   events: { name: "Startup events", tag: "EVT", list: true },
   politics: { name: "US politics", tag: "POL", list: false },
+  "world-history": { name: "World History", tag: "HIS", list: false },
   settings: { name: "Settings", tag: "SET", list: false },
 };
 

@@ -3,7 +3,7 @@
 // a Web Worker; the UI sends requests in and receives notices and views out. Every message is
 // plain data (structured clone): no classes, functions or symbols.
 //
-// Pacing: the worker owns the clock. At speeds 1 to 4 it runs one game hour per D8's real-time
+// Pacing: the worker owns the clock. Below max speed it runs one game hour per D8's real-time
 // step; at max it runs as many ticks as fit in a frame budget. It posts at most one `Frame` per
 // FRAME_MS while running, carrying every notice since the last frame and every view whose
 // `version` differs from the version it last posted (Rust `SimViews::copy_changed_from`,
@@ -15,10 +15,16 @@
 // views/mod.rs). So after each request the worker posts a Frame with those changes FIRST, then
 // the Reply: when the UI's awaited reply resolves, its views are already current. A paused game
 // posts nothing else.
+//
+// The UI answers each Frame with `FrameDone` once it has read it, and a running worker holds the next
+// frame until then, so frames cannot queue faster than the UI reads them (D1004). The sim keeps
+// running meanwhile; the next frame carries everything since.
 
 import type { Control } from "./control.ts";
+import type { CompanyId } from "./ids.ts";
 import type { Notice } from "./notice.ts";
 import type { SimError } from "./sim-api.ts";
+import type { DailyBar } from "./state/market.ts";
 import type { Headline } from "./state/news.ts";
 import type { ClockView, SimViews } from "./views/index.ts";
 
@@ -34,30 +40,71 @@ export type RequestId = number;
  */
 export type UiControl = Exclude<Control, { kind: "NewGame" | "Save" | "Load" }>;
 
+/** What a historical world's new game can be (1995-rework 4.1). */
+export interface NewGameChoices {
+  world_id: string;
+  scenarios: { id: string; label: string }[];
+}
+
 /** UI → worker. */
 export type ToSim =
   /**
    * A new game from the starting data (spec 7), paused at 2020-01-01 00:00 (spec 7.3). The seed
    * is a safe integer (Rust takes any u64; seeds above 2^53 - 1 are out of scope, D952).
    */
-  | { kind: "NewGame"; id: RequestId; seed: number }
+  | {
+      kind: "NewGame";
+      id: RequestId;
+      seed: number;
+      /** A historical world's scenario, one of `Ready`'s choices (1995-rework 4.1). */
+      scenario?: string;
+    }
   /** Load a save (D13, D953): pauses and drops any skip. */
   | { kind: "Load"; id: RequestId; bytes: Uint8Array }
   /** Write a save; the reply carries its bytes. */
   | { kind: "Save"; id: RequestId }
   /** A spec 9.1 control (speed, pause, skip, alerts, watchlist), applied at once (D5). */
-  | { kind: "Control"; id: RequestId; control: UiControl };
+  | { kind: "Control"; id: RequestId; control: UiControl }
+  /** The UI has read a Frame (D1004). It has no reply. */
+  | { kind: "FrameDone" };
 
 /** Worker → UI. */
 export type FromSim =
-  /** Sent once the worker has loaded the data and is ready for NewGame or Load. */
-  | { kind: "Ready" }
+  /**
+   * Sent once the worker has loaded the data and is ready for NewGame or Load. `choices` says this
+   * world's new game needs picking (1995-rework 4.1); absent, the UI starts one at once.
+   */
+  | { kind: "Ready"; choices?: NewGameChoices }
   /** The answer to one request, posted after the Frame carrying the views it changed. */
   | { kind: "Reply"; id: RequestId; result: Reply }
   /** Notices in order since the last frame, the clock, and the views whose version moved. */
   | { kind: "Frame"; notices: Notice[]; clock: ClockView; views: ViewsPatch }
   /** The worker hit an error it cannot recover from (a sim panic in Rust terms). */
   | { kind: "Fatal"; message: string };
+
+/** One company's new bars in a frame (D1004). */
+export interface PriceBarsDeltaRow {
+  id: CompanyId;
+  /** Forget what was held for it: `closed` is its whole list of closed chunks. */
+  reset: boolean;
+  /** Closed chunks that fell off the front, at the 10-year limit. */
+  drop: number;
+  /** Chunks closed since the last frame. */
+  closed: DailyBar[][];
+  /** `open` is the whole open chunk, and not rows to add to it. */
+  open_reset: boolean;
+  open: DailyBar[];
+}
+
+/** v_price_bars as a frame carries it (D1004). */
+export interface PriceBarsDelta {
+  version: number;
+  dirty: boolean;
+  /** Only the companies with new bars. */
+  rows: PriceBarsDeltaRow[];
+  /** Companies the view no longer has. */
+  removed: CompanyId[];
+}
 
 /** What a request produced. */
 export type Reply =
@@ -78,6 +125,8 @@ export type Reply =
  * builder lands, the UI keeps its own (mock) data for that view.
  */
 export type ViewsPatch = Partial<Omit<SimViews, "news">> & {
+  /** v_price_bars' new bars since the last frame, in place of the whole view (D1004). */
+  price_bars_delta?: PriceBarsDelta;
   news_appended?: Headline[];
   /**
    * The feed was replaced (a new game or a load): `news_appended` is the whole new feed, and the

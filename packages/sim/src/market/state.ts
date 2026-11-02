@@ -29,7 +29,12 @@ export type { BarHistory, MarketState, Stock };
  * A company's row before the load values are set (spec 7.1): `price` is company-start.csv
  * `open_price` for a listed company, 0 for a private one. Rust `Stock::at_load`.
  */
-export function stockAtLoad(exchange: ZoneId | null, price: number, shares: number): Stock {
+export function stockAtLoad(
+  exchange: ZoneId | null,
+  price: number,
+  shares: number,
+  date: SimDate = simDateYmd(EPOCH_YEAR, 1, 1),
+): Stock {
   return {
     shares,
     exchange,
@@ -48,7 +53,7 @@ export function stockAtLoad(exchange: ZoneId | null, price: number, shares: numb
     tags: resultTagsDefault(),
     efv_error: 0.0,
     prev_close: price,
-    bar: barBuilderStart(simDateYmd(EPOCH_YEAR, 1, 1), price),
+    bar: barBuilderStart(date, price),
     bars: barHistoryNew(),
   };
 }

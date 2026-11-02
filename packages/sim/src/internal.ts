@@ -4,6 +4,7 @@
 export { DEBT_HOLD_SHARE_PER_LEVEL, debtAggressionOf } from "./ai/financing.ts";
 export { FOCUS_RD_SHIFT_PER_LEVEL, focusOf } from "./ai/focus.ts";
 export * from "./economy/profiles.ts";
+export * from "./economy/scenarios.ts";
 export {
   grossAssets as companyGrossAssets,
   sheet as companySheet,
