@@ -10,7 +10,14 @@
 //                                   payoutRatio(archetype_payout_mult)
 import { describe, expect, it } from "vitest";
 import { minCash } from "../src/finance/credit.ts";
-import { type DividendInputs, dividend, payoutRatio, SECTOR_PAYOUT } from "../src/finance/dividends.ts";
+import {
+  type DividendInputs,
+  dividend,
+  ERA_DIVIDEND_RATING_FLOOR,
+  eraDividendOnCash,
+  payoutRatio,
+  SECTOR_PAYOUT,
+} from "../src/finance/dividends.ts";
 import type { CompanyStatus } from "../src/types/state/finance.ts";
 
 function near(a: number, b: number): void {
@@ -82,5 +89,24 @@ describe("spec 5.17 dividends", () => {
     near(dividend(i), 0.4e6);
     // Own cash exactly the dividend leaves 0, not above 0.
     expect(dividend({ ...i, cash: 0.4e6 })).toBe(0.0);
+  });
+});
+
+describe("1995-rework 9 era dividends (D1011)", () => {
+  it("an_investment_grade_era_firm_pays_from_cash_on_hand", () => {
+    // 60M cash with 55M drawn: 5M own cash fails 5.17's test, but cash on hand 60M - 4M stays
+    // above min_cash 10M.
+    expect(dividend(base({ line_drawn: 55.0e6 }))).toBe(0.0);
+    near(dividend(base({ line_drawn: 55.0e6, on_cash: true })), 4.0e6);
+    // Cash on hand still keeps min_cash: 13M - 4M is under 10M.
+    expect(dividend(base({ cash: 13.0e6, line_drawn: 55.0e6, on_cash: true }))).toBe(0.0);
+  });
+
+  it("only_firms_rated_bbb_minus_or_better_test_cash_on_hand", () => {
+    expect(ERA_DIVIDEND_RATING_FLOOR).toBe("BbbMinus");
+    expect(eraDividendOnCash("Aaa")).toBe(true);
+    expect(eraDividendOnCash("BbbMinus")).toBe(true);
+    expect(eraDividendOnCash("BbPlus")).toBe(false);
+    expect(eraDividendOnCash("Ccc")).toBe(false);
   });
 });

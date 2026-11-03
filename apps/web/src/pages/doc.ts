@@ -323,8 +323,14 @@ export interface Ohlc {
 }
 
 /** One series of a chart (chart/data.rs `Series`); every series has one value per x slot. */
+/**
+ * A chart's categorical series colors, in their fixed order (dataviz): the theme's hues stepped into
+ * the dark band, so five lines read apart. Charts only; text keeps the theme tones.
+ */
+export type SeriesTone = "series1" | "series2" | "series3" | "series4" | "series5";
+
 export type ChartSeries =
-  | { k: "line"; name: string; values: number[]; tone: Tone }
+  | { k: "line"; name: string; values: number[]; tone: Tone | SeriesTone }
   /** Bars from zero; a null tone colors them by sign (gains cyan, losses magenta). */
   | { k: "bars"; name: string; values: number[]; tone: Tone | null }
   /** Candles, drawn over their EFV band. */

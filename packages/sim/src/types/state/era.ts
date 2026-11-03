@@ -49,6 +49,8 @@ export interface EraSector {
   wave: [number, number];
   /** It has emerged, and its founding wave waits for the next plan lock. */
   wave_pending: boolean;
+  /** The net debt its firms pay out toward, in years of EBITDA (1995-rework 9). */
+  net_debt_ebitda: number;
 }
 
 /** The listed companies with the largest market caps at a year's close (1995-rework 8.1). */

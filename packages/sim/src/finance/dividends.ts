@@ -4,9 +4,21 @@
 // payout mult (6.1). Ported from crates/sim/src/finance/dividends.rs.
 
 import { maxF } from "../types/num.ts";
-import type { CompanyStatus } from "../types/state/finance.ts";
+import type { CompanyStatus, Rating } from "../types/state/finance.ts";
 import { ownCash } from "./credit.ts";
 import { companyStatusMayPayDividends } from "./distress.ts";
+import { ratingNotch } from "./rating.ts";
+
+/**
+ * 1995-rework 9 (D1011): an era firm rated at or above this pays its dividend from cash on hand,
+ * as a firm that carries debt does; below it, 5.17's own-cash test holds it to repaying first.
+ */
+export const ERA_DIVIDEND_RATING_FLOOR: Rating = "BbbMinus";
+
+/** Whether an era firm at this rating tests cash on hand for its dividend (1995-rework 9). */
+export function eraDividendOnCash(rating: Rating): boolean {
+  return ratingNotch(rating) <= ratingNotch(ERA_DIVIDEND_RATING_FLOOR);
+}
 
 /**
  * The sector table's typical payout ratio (3-markets 3.3.2), one shared default for all 42
@@ -34,6 +46,8 @@ export interface DividendInputs {
   /** `payoutRatio`. */
   payout_ratio: number;
   status: CompanyStatus;
+  /** Test cash on hand rather than own cash (1995-rework 9); absent in the 2020 world. */
+  on_cash?: boolean;
 }
 
 /**
@@ -45,6 +59,7 @@ export interface DividendInputs {
 export function dividend(i: DividendInputs): number {
   if (!companyStatusMayPayDividends(i.status) || i.net_income <= 0.0) return 0.0;
   const d = maxF(i.payout_ratio, 0.0) * i.net_income;
-  if (d > 0.0 && ownCash(i.cash, i.line_drawn) - d > i.min_cash) return d;
+  const free = i.on_cash === true ? i.cash : ownCash(i.cash, i.line_drawn);
+  if (d > 0.0 && free - d > i.min_cash) return d;
   return 0.0;
 }

@@ -19,6 +19,10 @@ An empty GDP means the source has none for 1995. The generator scales those rows
 
 Corporate tax rates and sovereign ratings of the 33 major countries. **These are approximate and from memory, not checked against a source**, marked `(A)` as elsewhere in the design data. The spreads follow from the ratings. Replace them with sourced values if tax or spreads start to matter in calibration.
 
+## `provinces-1995.csv`
+
+The 1995 commerce, industry and population scores and city rank of the provinces that changed most by 2020: China's coastal boom districts and new areas, India's IT and car corridors, and the Gulf's newer districts. Every other province keeps the 2020 data's scores. **These are from memory, marked `(M)`, not checked against a source.** The scores only rank provinces within their country (startup sites, 1995-rework 6.4) and color the map, so a rough order is what matters.
+
 ## `companies-1995.csv`
 
 The real firms behind the largest fictional companies. `analogue` must never reach a game CSV, which `validate.py` enforces. Revenues are 1994 sales in USD millions, the basis of the lists published in 1995. The `source` column says how far to trust each row:
@@ -30,3 +34,7 @@ The real firms behind the largest fictional companies. `analogue` must never rea
 Fortune's own archive pages for 1995 returned errors on 1 November 2026 (`money.cnn.com` 503, `archive.fortune.com` 400). When they return, they can upgrade the `F` and `M` rows.
 
 `control` is the state's stake, as `iso3:percent`, also from memory.
+
+## Starting debt
+
+`gen.py`'s `SECTOR_NET_DEBT` and `INDUSTRY_NET_DEBT` give each firm's starting net debt in years of EBITDA. **They are from memory of mid-1990s balance sheets, not checked against a source**: utilities, telecoms, airlines, shipping and property borrowed most, and software and chip firms held net cash. The generator writes them to `industry-leverage.csv`, so they set both the spread of starting credit ratings and the net debt firms pay out toward through the run. A rough level per sector is what matters.

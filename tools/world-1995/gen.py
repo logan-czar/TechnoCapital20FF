@@ -129,6 +129,19 @@ INDUSTRY_MARGINS = {'conglomerates': 0.02, 'autos': 0.05, 'retail': 0.04}
 ASSET_LIGHT = {'conglomerates': (0.2, 0.08, 0.1)}
 # 1995-rework 2.5: the 2020 data's trends for rows it has already declining, which grew in this era (T).
 TRENDS_1995 = {'autos': 0.03, 'oil': 0.04, 'telecom': 0.03}
+# 1995-rework 2.5: a starting firm's net debt in years of run-rate EBITDA, by sector, and for the industries
+# far from their sector (M: utilities, telecoms, airlines and property borrowed most in the mid-1990s;
+# software and chip firms held net cash). The 2020 data's book values leave most firms net cash, which
+# 5.12 rates AAA.
+SECTOR_NET_DEBT = {'Tech': 0.5, 'Finance': 1.5, 'Energy': 1.5, 'Industry': 2.0, 'Consumer': 2.0, 'Health': 1.0,
+                   'Services': 2.0}
+INDUSTRY_NET_DEBT = {
+    'power_utilities': 4.0, 'telecom': 2.5, 'wireless': 3.0, 'airlines': 3.5, 'shipping': 3.5, 'rail': 3.0,
+    'real_estate': 5.0, 'media_publishing': 3.0, 'paper_forest': 3.0, 'metals': 2.5, 'software': 0.0,
+    'semiconductors': 0.0, 'pharma': 0.5, 'asset_management': 0.5, 'professional_services': 1.0,
+}
+NET_DEBT_SPREAD = 0.6   # each firm's multiple is its row's times 1 +- up to this, from a hash of its id (T)
+NET_DEBT_BOOK_MAX = 0.5   # no 5.12 limit passes half the asset book, so no more is drawn
 
 # 1995-rework 6.4: each zone's growth against the world's, log a year: ln(2019 share / 1995 share) / 25,
 # from the World Bank's current-dollar GDP for each zone's 1995 members (A, from memory, within about
@@ -252,11 +265,16 @@ def build_country_tables(countries):
 
 
 def build_provinces():
+    """The map's provinces, with 1995 scores where a place changed most by 2020 (1995-rework 2.5)."""
+    scores = {r['id']: r for r in read(AUTHORING / 'provinces-1995.csv')[1]}
     for slug in REGION_SLUGS:
         fields, rows = read(SRC / f'provinces-{slug}.csv')
         for r in rows:
             r['country'] = FOLD.get(r['country'], r['country'])
             r['notes'] = ''   # 2.3: they name real firms, and describe 2020
+            s = scores.get(r['id'])
+            if s is not None:
+                r.update({k: s[k] for k in ('commerce', 'industry', 'population', 'city_rank')})
         write(OUT / f'provinces-{slug}.csv', fields, rows)
 
 
@@ -297,6 +315,8 @@ def build_industries(scale):
         r.update(cycle_beta=str(beta), volatility=str(vol), rate_sensitivity=str(rate),
                  margin_full_use=str(margin), variable_cost_share=num(total - margin, 6))
     write(OUT / 'industries.csv', fields, sorted(rows, key=lambda r: r['id']))
+    write(OUT / 'industry-leverage.csv', ['id', 'net_debt_ebitda'],
+          [dict(id=r['id'], net_debt_ebitda=num(net_debt_years(r))) for r in sorted(rows, key=lambda r: r['id'])])
     write(OUT / 'industry-lifecycle.csv',
           ['id', 'window_first', 'window_last', 'target_size_usd_bn', 'wave_min', 'wave_max'],
           [dict(id=k, window_first=v[0], window_last=v[1], target_size_usd_bn=v[2], wave_min=v[3], wave_max=v[4])
@@ -747,6 +767,42 @@ def load_mvp():
     return mvp
 
 
+def net_debt_years(ind):
+    """An industry's net debt in years of EBITDA (1995-rework 2.5, 9): the start's, and the run's target."""
+    return INDUSTRY_NET_DEBT.get(ind['id'], SECTOR_NET_DEBT[ind['sector']])
+
+
+def seed_debt():
+    """1995-rework 2.5: lower each firm's book value until it starts with its sector's net debt, which the
+    2020 rule (7.1, D15) draws as a line and caps at the 5.12 limit. A firm with more debt keeps its own."""
+    import zlib
+    sys.path.insert(0, str(MVP_GEN.parent))
+    import validate
+    fields, cos = read(OUT / 'companies.csv')
+    inds = {r['name']: r for r in read(OUT / 'industries.csv')[1]}
+    traits = {c['id']: c['traits'].split(';') for c in read(OUT / 'characters.csv')[1]}
+    for c in cos:
+        r_usd = float(c['revenue_usd_m']) * 1e6
+        if r_usd < 1e5:   # the barebones loadout (7.1)
+            continue
+        ind = inds[c['industry']]
+        # gross business assets as mvp-data/gen.py build_company_start sizes them (7.1 loadout)
+        cap, lv = float(ind['capital_per_dollar']), float(ind['labor_value_usd'])
+        b = validate.pc_bonus(r_usd * cap, lv)
+        b = validate.pc_bonus(r_usd * cap * 100 / (100 + b), lv)
+        gross = r_usd * cap * 100 / (100 + b)
+        asset_book = 0.5 * gross
+        _, ebit, dep = validate.run_rate(c, ind, traits, round(gross), round(asset_book))
+        if ebit + dep <= 0:
+            continue
+        h = zlib.crc32(('debt:' + c['id']).encode()) % 10001 / 10000
+        years = net_debt_years(ind) * (1 + NET_DEBT_SPREAD * (2 * h - 1))
+        book = asset_book - min(years * (ebit + dep), NET_DEBT_BOOK_MAX * asset_book)
+        if book < float(c['book_value_usd_m']) * 1e6:
+            c['book_value_usd_m'] = num(book / 1e6)
+    write(OUT / 'companies.csv', fields, cos)
+
+
 def build_company_start(economy, zones):
     """company-start.csv by the 2020 generator's own rule, reading the files just written."""
     mvp = load_mvp()
@@ -793,6 +849,7 @@ def main():
     build_characters()
     build_politics()
     extend_us_names()
+    seed_debt()
     build_company_start(economy, zones)
     write_manifest({
         'countries': count_rows('countries.csv'),

@@ -18,10 +18,13 @@ import {
 } from "lightweight-charts";
 import { useEffect, useRef } from "react";
 import { money, percent, price } from "../widgets/cells.ts";
-import type { ChartModel, Tone, ValueFormat } from "./doc.ts";
+import type { ChartModel, SeriesTone, Tone, ValueFormat } from "./doc.ts";
 
-/** The theme palette (styles.css), for the canvas. */
-const TONES: Readonly<Record<Tone, string>> = {
+/**
+ * The theme palette (styles.css), for the canvas, and the series colors: cyan, amber, magenta, green
+ * and violet at OKLCH L 0.60 to 0.66, which pass the dataviz checks on the chart surface.
+ */
+const TONES: Readonly<Record<Tone | SeriesTone, string>> = {
   text: "#e6e8ee",
   muted: "#8d98ae",
   link: "#8ec5ff",
@@ -32,9 +35,20 @@ const TONES: Readonly<Record<Tone, string>> = {
   gain: "#00e5ff",
   loss: "#ff2bd6",
   band: "#ffb000",
+  series1: "#05a5b3",
+  series2: "#c68206",
+  series3: "#cd509f",
+  series4: "#01a84d",
+  series5: "#796ae5",
 };
 const GRID = "#1e2430";
 const DAY = 86_400;
+/**
+ * lightweight-charts rejects values beyond ±MAX_SAFE_INTEGER / 100 (about $90T), which a 1995 run's
+ * world GDP passes, so a chart with values above SCALE_ABOVE is drawn in millions and labelled back.
+ */
+const SCALE_ABOVE = 1e12;
+const SCALE = 1e6;
 
 /** The height a chart block takes (doc.rs CHART_HEIGHT). */
 export const CHART_HEIGHT = 230;
@@ -54,8 +68,22 @@ function formatValue(f: ValueFormat, v: number): string {
 
 const slotTime = (i: number): Time => ((i + 1) * DAY) as UTCTimestamp;
 
+/** The divisor the chart's values are drawn with: SCALE when any value passes SCALE_ABOVE, else 1. */
+function valueScale(m: ChartModel): number {
+  const values = m.series.flatMap((s) =>
+    s.k === "candles"
+      ? s.bars.flatMap((b) => [b.high, b.low, ...(b.band ?? [])])
+      : s.k === "band"
+        ? s.bands.flatMap((b) => b ?? [])
+        : s.values,
+  );
+  return values.some((v) => Math.abs(v) > SCALE_ABOVE) ? SCALE : 1;
+}
+
 function draw(c: IChartApi, m: ChartModel): void {
   const dated = m.series.some((s) => s.k === "candles");
+  const k = valueScale(m);
+  const at = (v: number) => v / k;
   const dashed = (color: string) => ({
     color,
     lineWidth: 1 as const,
@@ -82,20 +110,20 @@ function draw(c: IChartApi, m: ChartModel): void {
         series.setData(
           s.bars.map((b) => ({
             time: formatSimDate(b.date),
-            open: b.open,
-            high: b.high,
-            low: b.low,
-            close: b.close,
+            open: at(b.open),
+            high: at(b.high),
+            low: at(b.low),
+            close: at(b.close),
           })),
         );
         low.setData(
           s.bars.map((b) =>
-            b.band ? { time: formatSimDate(b.date), value: b.band[0] } : { time: formatSimDate(b.date) },
+            b.band ? { time: formatSimDate(b.date), value: at(b.band[0]) } : { time: formatSimDate(b.date) },
           ),
         );
         high.setData(
           s.bars.map((b) =>
-            b.band ? { time: formatSimDate(b.date), value: b.band[1] } : { time: formatSimDate(b.date) },
+            b.band ? { time: formatSimDate(b.date), value: at(b.band[1]) } : { time: formatSimDate(b.date) },
           ),
         );
         first ??= series;
@@ -103,7 +131,7 @@ function draw(c: IChartApi, m: ChartModel): void {
       }
       case "line": {
         const series = c.addSeries(LineSeries, { color: TONES[s.tone], lineWidth: 2, title: s.name });
-        series.setData(s.values.map((value, i) => ({ time: slotTime(i), value })));
+        series.setData(s.values.map((value, i) => ({ time: slotTime(i), value: at(value) })));
         first ??= series;
         break;
       }
@@ -112,7 +140,7 @@ function draw(c: IChartApi, m: ChartModel): void {
         series.setData(
           s.values.map((value, i) => ({
             time: slotTime(i),
-            value,
+            value: at(value),
             color: s.tone ? TONES[s.tone] : value < 0 ? TONES.loss : TONES.gain,
           })),
         );
@@ -122,28 +150,33 @@ function draw(c: IChartApi, m: ChartModel): void {
       case "band": {
         const low = c.addSeries(LineSeries, dashed(TONES[s.tone]));
         const high = c.addSeries(LineSeries, dashed(TONES[s.tone]));
-        low.setData(s.bands.map((b, i) => (b ? { time: slotTime(i), value: b[0] } : { time: slotTime(i) })));
-        high.setData(s.bands.map((b, i) => (b ? { time: slotTime(i), value: b[1] } : { time: slotTime(i) })));
+        low.setData(
+          s.bands.map((b, i) => (b ? { time: slotTime(i), value: at(b[0]) } : { time: slotTime(i) })),
+        );
+        high.setData(
+          s.bands.map((b, i) => (b ? { time: slotTime(i), value: at(b[1]) } : { time: slotTime(i) })),
+        );
         break;
       }
     }
   }
   if (m.reference && first) {
     first.createPriceLine({
-      price: m.reference.value,
+      price: at(m.reference.value),
       color: TONES[m.reference.tone],
       lineStyle: LineStyle.Dotted,
     });
   }
+  const priceFormatter = (v: number) => formatValue(m.format, v * k);
   if (!dated) {
     // Slot labels on the axis and in the readout.
     const label = (t: Time) => m.labels[Math.round(Number(t) / DAY) - 1] ?? "";
     c.applyOptions({
       timeScale: { tickMarkFormatter: label },
-      localization: { timeFormatter: label, priceFormatter: (v: number) => formatValue(m.format, v) },
+      localization: { timeFormatter: label, priceFormatter },
     });
   } else {
-    c.applyOptions({ localization: { priceFormatter: (v: number) => formatValue(m.format, v) } });
+    c.applyOptions({ localization: { priceFormatter } });
   }
   c.timeScale().fitContent();
 }

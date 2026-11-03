@@ -11,9 +11,9 @@ import {
   emptyDoc,
   field,
   type PageDoc,
+  type SeriesTone,
   span,
   type TableDoc,
-  type Tone,
 } from "../doc.ts";
 import { kindName, type PageRef } from "../ref.ts";
 import type { SectionSpec } from "../sections.ts";
@@ -34,8 +34,8 @@ const PAGE: PageRef = { kind: "world-history" };
 const CHART_SERIES = 5;
 /** Industries in the movers table. */
 const TOP_INDUSTRIES = 10;
-/** The theme's series colors, in a fixed order. */
-const SERIES_TONES: readonly Tone[] = ["cyan", "amber", "magenta", "green", "link"];
+/** The chart series colors, in their fixed order. */
+const SERIES_TONES: readonly SeriesTone[] = ["series1", "series2", "series3", "series4", "series5"];
 const dash: Cell = { k: "text", v: "-" };
 
 const note = (text: string): Block => ({ k: "line", spans: [span.muted(text)] });
@@ -46,14 +46,14 @@ const table = (t: TableDoc): Block => ({ k: "table", table: t });
  * A tone for each key, held by the key and not by its rank, so a line keeps its color as others come
  * and go: its key's own slot, or the next free one when another key took that.
  */
-export function tonesByKey(keys: readonly number[]): Map<number, Tone> {
-  const out = new Map<number, Tone>();
+export function tonesByKey(keys: readonly number[]): Map<number, SeriesTone> {
+  const out = new Map<number, SeriesTone>();
   const free = new Set(SERIES_TONES.keys());
   for (const key of [...keys].sort((a, b) => a - b)) {
     let slot = key % SERIES_TONES.length;
     while (!free.has(slot)) slot = (slot + 1) % SERIES_TONES.length;
     free.delete(slot);
-    out.set(key, SERIES_TONES[slot] as Tone);
+    out.set(key, SERIES_TONES[slot] as SeriesTone);
   }
   return out;
 }
@@ -87,7 +87,7 @@ function shareSeries(rows: readonly { key: number; name: string; shares: number[
     k: "line",
     name: r.name,
     values: r.shares,
-    tone: tones.get(r.key) as Tone,
+    tone: tones.get(r.key) as SeriesTone,
   }));
 }
 

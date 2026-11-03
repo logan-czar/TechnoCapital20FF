@@ -25,6 +25,8 @@ import { SUPERREGIONS, type WorldData, worldDataAllProvinces, worldDataCounts } 
 const ASSET_DECAY_MAX = 0.1;
 /** Quarterly growth volatility is 0% to 10% (validate.py; spec 5.1). */
 const VOLATILITY_MAX = 0.1;
+/** An era industry's net debt is 0 to 8 years of EBITDA, 5.12's CCC edge (1995-rework 9). */
+const NET_DEBT_EBITDA_MAX = 8.0;
 /** Equality index range (batch 158). */
 const WEALTH_INDEX_RANGE = [10, 95] as const;
 /** Zone base credit spread range in bps (batch 155; spec 5.1.2). */
@@ -229,6 +231,19 @@ function industries(w: WorldData, ids: Ids, errors: DataError[]): void {
     if (l.wave_min > l.wave_max) errors.push(tableErr(lt, line, "wave_max", `${l.id}: empty wave`));
     if (!(l.target_size_usd_bn > 0.0))
       errors.push(tableErr(lt, line, "target_size_usd_bn", `${l.id}: no size`));
+  }
+  // An era world gives every industry one net-debt row (1995-rework 9).
+  const lev = w.industry_leverage;
+  unique(lev, "id", (r) => r.id, errors);
+  for (const [line, l] of tableIter(lev)) {
+    if (!t.rows.some((r) => r.id === l.id))
+      errors.push(tableErr(lev, line, "id", `unknown industry ${l.id}`));
+    if (!within(l.net_debt_ebitda, 0.0, NET_DEBT_EBITDA_MAX))
+      errors.push(tableErr(lev, line, "net_debt_ebitda", `${l.id}: out of 0 to ${NET_DEBT_EBITDA_MAX}`));
+  }
+  if (w.manifest.features.era) {
+    const missing = t.rows.filter((r) => !lev.rows.some((l) => l.id === r.id)).map((r) => r.id);
+    if (missing.length > 0) errors.push(tableFileErr(lev, `no row for ${debugStrs(missing)}`));
   }
   const diff = sorted([
     ...[...ids.industries].filter((i) => !used.has(i) && !nameIsDormant(i)),

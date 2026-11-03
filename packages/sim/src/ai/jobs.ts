@@ -9,15 +9,23 @@
 
 import { dEff } from "../economy/assets.ts";
 import { companyStatusIsFrozen } from "../finance/distress.ts";
+import { eraDividendOnCash } from "../finance/dividends.ts";
 import { grossAssets, payDividend, trailingRevenue } from "../finance/jobs.ts";
 import { companyFinanceQuarters, companyFinanceStatus } from "../finance/state.ts";
-import { ledgerEbit, ledgerFreeCashFlow, ledgerNetIncome, trailingFour } from "../finance/statements.ts";
+import {
+  ledgerEbit,
+  ledgerEbitda,
+  ledgerFreeCashFlow,
+  ledgerNetIncome,
+  trailingFour,
+} from "../finance/statements.ts";
 import { setSharesOut } from "../market/jobs.ts";
 import { failedRaise, newsWireQueue, raise } from "../news.ts";
 import { confidenceFactor } from "../people/management.ts";
 import { type JobCtx, type Scheduler, schedulerRegister } from "../time/scheduler.ts";
 import type { CompanyId } from "../types/ids.ts";
 import type { OperatingPlan } from "../types/state/ai.ts";
+import type { Ledger } from "../types/state/finance.ts";
 import type { Trait } from "../types/state/people.ts";
 import type { Company, World } from "../types/world.ts";
 import { companyDataIn, originIsBorn } from "../world/entities.ts";
@@ -112,8 +120,24 @@ function planInputs(world: World, id: CompanyId): PlanInputs {
     ...zoneTilt(world, c),
     ...(world.era === undefined
       ? {}
-      : { growth_max: ERA_GROWTH_MAX, shortage_growth: shortageGrowth(ind.supply_ratio) }),
+      : {
+          growth_max: ERA_GROWTH_MAX,
+          shortage_growth: shortageGrowth(ind.supply_ratio),
+          dividend_on_cash: eraDividendOnCash(c.finance.rating),
+          ...leverageTarget(world, c, ttm),
+        }),
   };
+}
+
+/**
+ * An era firm's net debt target: its industry's years of TTM EBITDA (1995-rework 9), while it is
+ * rated investment grade and earns EBITDA; nothing otherwise.
+ */
+function leverageTarget(world: World, c: Company, ttm: Ledger | null): { leverage_target?: number } {
+  const years = world.era?.sectors[c.industry]?.net_debt_ebitda ?? 0.0;
+  if (ttm === null || years <= 0.0 || !eraDividendOnCash(c.finance.rating)) return {};
+  const ebitda = ledgerEbitda(ttm);
+  return ebitda > 0.0 ? { leverage_target: years * ebitda } : {};
 }
 
 /** An era world's zone growth on a company's plan; nothing in the 2020 world (1995-rework 6.4). */

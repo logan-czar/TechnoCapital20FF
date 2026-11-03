@@ -57,6 +57,14 @@ def main():
     if len(provinces) != PROVINCES or ids != source_ids:
         errors.append(f'provinces: {len(provinces)} rows, and the ids must be the map\'s {PROVINCES}')
     errors += [f'{p["id"]}: unknown country {p["country"]}' for p in provinces if p['country'] not in isos]
+    # 1995-rework 2.5: the 1995 province scores are in, each with its source.
+    by_id = {p['id']: p for p in provinces}
+    for s in read(AUTHORING / 'provinces-1995.csv'):
+        p = by_id.get(s['id'])
+        if p is None or p['name'] != s['name']:
+            errors.append(f'provinces-1995: {s["id"]} is not the map\'s {s["name"]}')
+        elif not s['source'] or any(p[k] != s[k] for k in ('commerce', 'industry', 'population', 'city_rank')):
+            errors.append(f'provinces-1995: {s["id"]} has no source or is not in the game data')
     # 1995-rework 2.5: every major country is sourced, within about 20%, with its source named.
     source = {r['iso3']: r for r in read(AUTHORING / 'countries-1995.csv')}
     economy_source = {r['iso3'] for r in read(AUTHORING / 'economy-1995.csv')}
