@@ -4,6 +4,7 @@
 // crates/sim/src/ai/financing.rs.
 
 import { creditLineAvailable, ownCash, planRepay } from "../finance/credit.ts";
+import { companyStatusMayPayDividends } from "../finance/distress.ts";
 import { dividend, payoutRatio } from "../finance/dividends.ts";
 import { maxF, minF } from "../types/num.ts";
 import type { CompanyStatus, CreditLine } from "../types/state/finance.ts";
@@ -23,6 +24,14 @@ export const BRAVE_DRAWN_SHARE = 0.75;
  * borrows up to it to fund the quarter's purchases.
  */
 export const DEBT_HOLD_SHARE_PER_LEVEL = 0.2;
+
+/**
+ * 1995-rework 9 (D1012): an era firm under its industry's net debt pays out this share of the gap
+ * a quarter, as a special dividend.
+ */
+export const ERA_LEVERAGE_PAYOUT_SHARE = 0.25;
+/** 1995-rework 9 (D1012): it draws its line to fund that only up to this share of the limit. */
+export const ERA_LEVERAGE_LINE_SHARE = 0.6;
 
 /** The debt aggression of company `id` under the experiment's levels (D971); 0 with none. */
 export function debtAggressionOf(levels: readonly number[] | undefined, id: number): number {
@@ -50,6 +59,13 @@ export interface FinancingInputs {
   status: CompanyStatus;
   /** The experiment's debt aggression level (D971); 0 or absent is spec 6.5. */
   debt_aggression?: number;
+  /** The dividend tests cash on hand (1995-rework 9, `eraDividendOnCash`); absent in the 2020 world. */
+  dividend_on_cash?: boolean;
+  /**
+   * The net debt it pays out toward, USD (1995-rework 9); absent in the 2020 world and for a firm
+   * below investment grade or without EBITDA.
+   */
+  leverage_target?: number;
 }
 
 /** The financing moves and the dividend set at the lock (spec 6.5, 5.17). */
@@ -114,9 +130,39 @@ export function financing(i: FinancingInputs): Financing {
       min_cash: i.min_cash,
       payout_ratio: payoutRatio(i.archetype_payout_mult),
       status: i.status,
+      ...(i.dividend_on_cash === undefined ? {} : { on_cash: i.dividend_on_cash }),
     });
   }
+  if (
+    i.leverage_target !== undefined &&
+    !repay_first &&
+    payoutRatio(i.archetype_payout_mult) > 0.0 &&
+    companyStatusMayPayDividends(i.status)
+  ) {
+    leveragePayout(out, i, i.leverage_target);
+  }
   return out;
+}
+
+/**
+ * 1995-rework 9 (D1012): a firm whose net debt after the quarter's purchases is under its target
+ * pays `ERA_LEVERAGE_PAYOUT_SHARE` of the gap with the dividend, from cash above min_cash first,
+ * then by drawing its line up to `ERA_LEVERAGE_LINE_SHARE` of the limit. Repaying moves cash and
+ * the line together, so a firm that pays out keeps its line instead.
+ */
+function leveragePayout(out: Financing, i: FinancingInputs, target: number): void {
+  const purchases = maxF(i.planned_purchases, 0.0);
+  const drawn = maxF(i.line.drawn, 0.0) + out.draw;
+  const cash = i.cash + out.draw - out.dividend - purchases;
+  const gap = target - (drawn - cash);
+  if (gap <= 0.0) return;
+  out.repay = 0.0;
+  const spare = maxF(cash - i.min_cash, 0.0);
+  const headroom = maxF(ERA_LEVERAGE_LINE_SHARE * i.line.limit - drawn, 0.0);
+  const pay = minF(ERA_LEVERAGE_PAYOUT_SHARE * gap, spare + headroom);
+  if (pay <= 0.0) return;
+  out.draw += maxF(pay - spare, 0.0);
+  out.dividend += pay;
 }
 
 /** Own cash after the moves (spec 5.12, C10), for checks. */

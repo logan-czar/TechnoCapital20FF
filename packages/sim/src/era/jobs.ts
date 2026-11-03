@@ -94,6 +94,7 @@ function startSectors(world: World, data: WorldData, shiftYears: number, draws: 
   const startYear = dateTimeDate(world.clock).year;
   return world.industries.map((ind): EraSector => {
     const l = data.industry_lifecycle.rows.find((r) => r.id === ind.key);
+    const net_debt_ebitda = data.industry_leverage.rows.find((r) => r.id === ind.key)?.net_debt_ebitda ?? 0.0;
     if (l === undefined) {
       return {
         status: "Live",
@@ -102,6 +103,7 @@ function startSectors(world: World, data: WorldData, shiftYears: number, draws: 
         target_size_usd: 0.0,
         wave: [0, 0],
         wave_pending: false,
+        net_debt_ebitda,
       };
     }
     const first = l.window_first + shiftYears;
@@ -117,6 +119,7 @@ function startSectors(world: World, data: WorldData, shiftYears: number, draws: 
       target_size_usd: usdFromBillions(l.target_size_usd_bn),
       wave: [l.wave_min, l.wave_max],
       wave_pending: false,
+      net_debt_ebitda,
     };
   });
 }

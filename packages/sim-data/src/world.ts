@@ -25,10 +25,12 @@ import {
   type CountryEconomy,
   FINANCIAL_ZONE_SPEC,
   type FinancialZone,
+  INDUSTRY_LEVERAGE_SPEC,
   INDUSTRY_LIFECYCLE_SPEC,
   INDUSTRY_SPEC,
   INDUSTRY_SUFFIX_SPEC,
   type Industry,
+  type IndustryLeverage,
   type IndustryLifecycle,
   type IndustrySuffix,
   KEY_CITY_SPEC,
@@ -86,6 +88,8 @@ export interface WorldData {
   character_spawns: Table<CharacterSpawn>;
   /** An era world's zone paths (1995-rework 6.4); empty otherwise. */
   zone_growth: Table<ZoneGrowth>;
+  /** An era world's net debt by industry (1995-rework 9); empty otherwise. */
+  industry_leverage: Table<IndustryLeverage>;
   /** Name lists, one table per superregion, in SUPERREGIONS order. */
   names: Table<NameRow>[];
   country_cultures: Table<CountryCulture>;
@@ -158,6 +162,7 @@ export const ERA_FILES: readonly string[] = [
   "politics-usa-era.csv",
   "character-spawns.csv",
   "zone-growth.csv",
+  "industry-leverage.csv",
 ];
 
 /** One table per superregion, from `pattern` with `{}` replaced by each slug. */
@@ -228,6 +233,10 @@ export function parseWorld(
     ? loadTable(files, "zone-growth.csv", ZONE_GROWTH_SPEC)
     : ok(tableNew<ZoneGrowth>("zone-growth.csv"));
   if (!zoneGrowth.ok) return zoneGrowth;
+  const leverage = manifest.features.era
+    ? loadTable(files, "industry-leverage.csv", INDUSTRY_LEVERAGE_SPEC)
+    : ok(tableNew<IndustryLeverage>("industry-leverage.csv"));
+  if (!leverage.ok) return leverage;
   return ok({
     manifest,
     countries: countries.value,
@@ -247,6 +256,7 @@ export function parseWorld(
     politics_era: politicsEra.value,
     character_spawns: characterSpawns.value,
     zone_growth: zoneGrowth.value,
+    industry_leverage: leverage.value,
     names: names.value,
     country_cultures: countryCultures.value,
     industry_suffixes: industrySuffixes.value,

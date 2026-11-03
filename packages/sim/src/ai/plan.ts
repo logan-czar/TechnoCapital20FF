@@ -123,6 +123,10 @@ export interface PlanInputs {
   shortage_growth?: number;
   /** The experiment's focus level (D972); 0 or absent is spec 6.2 and 6.3. */
   focus?: number;
+  /** The dividend tests cash on hand; absent in the 2020 world (1995-rework 9). */
+  dividend_on_cash?: boolean;
+  /** The net debt it pays out toward, USD; absent in the 2020 world (1995-rework 9). */
+  leverage_target?: number;
 }
 
 /**
@@ -205,6 +209,8 @@ export function planFinancing(i: PlanInputs, op: OperatingPlan, cash: number, li
     archetype_payout_mult: archetypeParams(op.archetype).payout_mult,
     status: i.status,
     debt_aggression: i.debt_aggression ?? 0,
+    ...(i.dividend_on_cash === undefined ? {} : { dividend_on_cash: i.dividend_on_cash }),
+    ...(i.leverage_target === undefined ? {} : { leverage_target: i.leverage_target }),
   });
 }
 

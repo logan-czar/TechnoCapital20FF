@@ -625,6 +625,16 @@ export const INDUSTRY_LIFECYCLE_SPEC = rowSpec<IndustryLifecycle>({
   wave_max: u32,
 });
 
+/** industry-leverage.csv: the net debt an era world's firms hold, by industry (1995-rework 9, D1012). */
+export interface IndustryLeverage {
+  /** industries.csv `id`. */
+  id: string;
+  /** Net debt in years of EBITDA: what its firms start with and pay out toward. */
+  net_debt_ebitda: number;
+}
+
+export const INDUSTRY_LEVERAGE_SPEC = rowSpec<IndustryLeverage>({ id: str, net_debt_ebitda: f64 });
+
 /** zone-growth.csv: a financial zone's expected path through an era world's run (1995-rework 6.4). */
 export interface ZoneGrowth {
   /** financial-zones.csv `zone_id`. */

@@ -50,6 +50,9 @@ Live rows are above today's 42. What shrinks is the 2020-era tech set, not the r
 - The rest: generated or scaled from sourced totals.
 - Countries: `tools/world-1995/authoring/` holds 1995 GDP and population for every economy the World Bank covers. The 33 majors' tax rates and ratings there are approximate (D1005).
 - Companies: about 135 real firms at their 1994 sales, under fictional names, of which 30 are read from a 1995 reprint of the Fortune list and the rest are from memory, marked as such (D1006). The other firms are the 2020 data's, resized to their country's 1995 economy.
+- Debt: each firm starts with its industry's typical net debt in years of EBITDA (`industry-leverage.csv`, from memory), spread by a hash of its id. Its book value is lowered to match, so the 2020 rule (7.1, D15) draws that debt as a line, capped at the 5.12 limit (D1010). The same table is what firms pay out toward through the run (9, D1012).
+- Provinces: the 2020 data's, except about 40 that changed most by 2020 (China's coastal boom districts and new areas, India's IT and car corridors, the Gulf's newer districts), which take 1995 commerce, industry and population scores from memory (D1010). The scores rank provinces within a country, for startup sites and the map.
+- Country scores (wealth, state security, legislature, judiciary, restriction) keep the 2020 data's values. Nothing in the sim or the UI reads them.
 
 ## 3. Clock and loading
 
@@ -65,7 +68,7 @@ The start of a world is `world.clock` at load, and nothing else is pinned to 202
 Web and headless text that says "2020" reads the start year from the `history` view, added with the era state (8.1). The web keeps its literals until then.
 
 ### 3.2 World manifest
-`assets/worlds/<id>/manifest.json` plus CSVs of the same names as `WORLD_FILES`, and era tables `industry-lifecycle.csv`, `character-spawns.csv`, `politics-usa-era.csv`, `zone-growth.csv`.
+`assets/worlds/<id>/manifest.json` plus CSVs of the same names as `WORLD_FILES`, and era tables `industry-lifecycle.csv`, `character-spawns.csv`, `politics-usa-era.csv`, `zone-growth.csv`, `industry-leverage.csv`.
 
 ```
 { id, start_date, reveal_date, base_rate, neutral_rate, y10_term,
@@ -187,7 +190,7 @@ Base characters age each 1 January and roll age-based death: 1% a year at 60, do
 
 ### 8.1 World History page
 `pages/kinds/world-history.tsx`, on a new `history` view backed by `era.history` (yearly series kept for the whole run; existing short rings stay):
-- Long-run charts: world GDP, policy rate, top sectors, zone shares.
+- Long-run charts: world GDP, policy rate, top sectors, zone shares. A chart's lines take five chart-only series colors, the theme's hues stepped to pass the dataviz checks on the chart surface (D1010). Values above $1T are drawn in millions and labelled in dollars, because the chart library rejects values beyond about $90T (D1010).
 - Chronology: presidents and Congresses, sector emergences, recessions, major failures.
 - Top-10 snapshots every 5 years.
 
@@ -201,13 +204,15 @@ At `reveal_date` the sim pauses, whatever the alerts or a skip say, opens the Wo
 No view carries the scenario id or label before the reveal under Random. `history.scenario` is null until then, unless picked openly. A leak test checks every serialised view.
 
 ## 9. Corporate turnover
-Sector lifecycle plus tuned failures. No M&A. Top-10 market-cap turnover is measured (4.3). Five rules apply in an era world only, because calibration showed the MVP's rules leave named firms insulated (D996):
+Sector lifecycle plus tuned failures. No M&A. Top-10 market-cap turnover is measured (4.3). Seven rules apply in an era world only, because calibration showed the MVP's rules leave named firms insulated (D996):
 
 - **Sticky fringe.** The fringe grows on the long-term rate and closes 8% of its gap to demand a month. The spec 5.3 fringe shrinks in step with demand and takes the whole shock, so a downturn never reached a named firm. In a young industry (a half life above 0) it grows on the mature rate, so newcomers, not the fringe, take a new market, and still closes 8% of its gap a month (D1009).
 - **Exit rule.** The drift plan's: a firm exits as a bankruptcy after 12 straight losing quarters, or below $0.5M of assets, unless it is its industry's last. The AI otherwise sells down and lives on its cash for good.
 - **Credit squeeze.** A contraction withdraws a scenario share of each line's limit at its review.
 - **Growth.** A firm under its hurdle follows its market's growth, where spec 6.2 holds it at 2% whatever its market does, and the growth ceiling is 70%, not 30%.
 - **Shortage.** A firm in a short market adds `0.4 × clamp(1 ÷ S − 1, 0, 1)` to its market's growth, the mirror of 6.2's oversupply term (D1009). Without it a new market that opens short stays short, with M at its cap, for a decade.
+- **Dividends.** A firm rated BBB- or better pays its 5.17 dividend while cash on hand, not own cash, stays above min_cash (D1011). Under 5.17 a firm with any net debt has no own cash, so it paid nothing until it held net cash, which 5.12 rates AAA.
+- **Leverage target.** A firm rated BBB- or better whose net debt, after the quarter's planned purchases, is under its industry's `net_debt_ebitda` × TTM EBITDA pays a quarter of the gap with its dividend: from cash above min_cash, then by drawing its line up to 60% of the limit, and it keeps its line rather than repaying (D1012). It stands in for buybacks, which the sim does not have. Startups, Cautious or Greedy controllers and Distressed firms do not. Without it mature firms keep most of their profit, drift to net cash, and half of them rate AAA.
 
 How a firm born in the run reaches the top 10, in order of what each one unblocked (D997):
 

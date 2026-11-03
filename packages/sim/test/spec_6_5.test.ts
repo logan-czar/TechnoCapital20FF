@@ -117,3 +117,59 @@ describe("spec 6.5 financing", () => {
     expect(close(financing(i).dividend, 1.0e6)).toBe(true);
   });
 });
+
+describe("1995-rework 9 era leverage payout (D1012)", () => {
+  const era = (
+    cash: number,
+    drawn: number,
+    limit: number,
+    target: number,
+    traits: Trait[] = [],
+  ): FinancingInputs => ({
+    ...base(cash, drawn, limit, traits),
+    leverage_target: target,
+  });
+
+  it("pays_a_quarter_of_the_gap_from_spare_cash", () => {
+    // Cash 60M, nothing drawn, target 40M: net debt -60M, gap 100M, pays 25M from the 50M above
+    // min_cash.
+    const f = financing(era(60.0e6, 0.0, 100.0e6, 40.0e6));
+    expect(f).toEqual({ draw: 0.0, repay: 0.0, dividend: 25.0e6 });
+  });
+
+  it("draws_the_line_for_what_spare_cash_does_not_cover", () => {
+    // Cash 12M, 10M drawn of 50M, target 30M: net debt -2M, gap 32M, pays 8M: 2M spare cash and
+    // 6M drawn, inside 60% of the limit (30M less 10M drawn).
+    const f = financing(era(12.0e6, 10.0e6, 50.0e6, 30.0e6));
+    expect(close(f.dividend, 8.0e6) && close(f.draw, 6.0e6) && f.repay === 0.0).toBe(true);
+  });
+
+  it("keeps_the_line_instead_of_repaying", () => {
+    // Cash 60M, 20M drawn: 6.5 would repay 20M, but repaying leaves net debt where it is. Net
+    // debt -40M, target 50M: gap 90M, pays 22.5M and repays nothing.
+    const f = financing(era(60.0e6, 20.0e6, 100.0e6, 50.0e6));
+    expect(close(f.dividend, 22.5e6) && f.repay === 0.0 && f.draw === 0.0).toBe(true);
+  });
+
+  it("counts_the_quarter_purchases", () => {
+    // Cash 60M less 50M of purchases: net debt -10M after them, target 10M: gap 20M, pays 5M,
+    // all drawn, since no cash is left above min_cash.
+    const f = financing({ ...era(60.0e6, 0.0, 100.0e6, 10.0e6), planned_purchases: 50.0e6 });
+    expect(close(f.dividend, 5.0e6) && close(f.draw, 5.0e6)).toBe(true);
+  });
+
+  it("pays_nothing_at_its_target_or_without_room", () => {
+    // Net debt 30M already at the 30M target: 6.5 alone.
+    expect(financing(era(10.0e6, 40.0e6, 100.0e6, 30.0e6))).toEqual({ draw: 0.0, repay: 0.0, dividend: 0.0 });
+    // Under target, but no spare cash and 30M drawn is already 60% of 50M.
+    expect(financing(era(10.0e6, 30.0e6, 50.0e6, 100.0e6)).dividend).toBe(0.0);
+  });
+
+  it("skips_repay_first_controllers_startups_and_distress", () => {
+    expect(financing(era(60.0e6, 0.0, 100.0e6, 40.0e6, ["Greedy"])).dividend).toBe(0.0);
+    expect(financing({ ...era(60.0e6, 0.0, 100.0e6, 40.0e6), archetype_payout_mult: 0.0 }).dividend).toBe(
+      0.0,
+    );
+    expect(financing({ ...era(60.0e6, 0.0, 100.0e6, 40.0e6), status: "Distressed" }).dividend).toBe(0.0);
+  });
+});
