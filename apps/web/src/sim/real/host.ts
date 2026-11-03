@@ -43,6 +43,11 @@ export interface RealHostOptions {
   budgetMs?: number;
   /** Hold the next running frame until the UI answers `FrameDone` (D1004); the worker sets this. */
   waitForFrameDone?: boolean;
+  /**
+   * Build the sim as a debug sim (D961), so SetOmniscient works: the dev server's worker sets this,
+   * as Rust's debug builds allowed Omniscient (spec 1, D1014). False in a production build.
+   */
+  debug?: boolean;
 }
 
 export class RealHost {
@@ -50,6 +55,7 @@ export class RealHost {
   private posted: PostedViews = postedViewsNone();
   private postedBars: PostedBars = postedBarsNone();
   private readonly waitForFrameDone: boolean;
+  private readonly debug: boolean;
   /** Frames the UI has not answered yet. */
   private unread = 0;
   /** Notices of ticks run while a frame was unread: the next frame carries them first. */
@@ -66,6 +72,7 @@ export class RealHost {
     this.now = opts.now ?? (() => performance.now());
     this.budgetMs = opts.budgetMs ?? MAX_SPEED_BUDGET_MS;
     this.waitForFrameDone = opts.waitForFrameDone ?? false;
+    this.debug = opts.debug ?? false;
   }
 
   /** What a new game of this world can be, for `Ready`; null when it needs no picking. */
@@ -85,7 +92,7 @@ export class RealHost {
         return [];
       case "NewGame": {
         const made = simNew(this.data, msg.seed, {
-          debug: false,
+          debug: this.debug,
           ...(msg.scenario === undefined ? {} : { scenario: msg.scenario }),
         });
         if (!made.ok) {
@@ -98,7 +105,7 @@ export class RealHost {
         // A load before any game builds the sim from the data first (the loaded data stays, D13).
         let target = this.sim;
         if (target === null) {
-          const made = simNew(this.data, 0, { debug: false });
+          const made = simNew(this.data, 0, { debug: this.debug });
           if (!made.ok) {
             return [this.reply(msg.id, { kind: "SimError", error: { kind: "Load", error: made.error } })];
           }

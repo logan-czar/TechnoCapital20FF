@@ -1,6 +1,7 @@
 // The POC vote (D986): 4-politics 4.6.3 with only the terms whose systems exist. The strata,
 // ideology fit, campaign, media, ads, psyops and scandal terms wait for those systems.
 
+import { expF } from "../types/libm.ts";
 import { PARTY_VALUES, type Party } from "../types/state/politics.ts";
 
 /** 4.6.3 and D986: the weight on a place's party lean (4.6.3 Ideology weight, 5.6.4 says 2). */
@@ -80,7 +81,7 @@ export function shares(
 ): [number, number] {
   const ua = utility(leanPts, a, climate) + noise;
   const ub = utility(leanPts, b, climate) - noise;
-  const ea = Math.exp(ua);
-  const eb = Math.exp(ub);
+  const ea = expF(ua);
+  const eb = expF(ub);
   return [ea / (ea + eb), eb / (ea + eb)];
 }

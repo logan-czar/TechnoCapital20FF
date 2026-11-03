@@ -831,3 +831,12 @@ input {
   margin-left: 8px;
   color: var(--amber, #ffb000);
 }
+
+/* The dev server's Omniscient toggle (D1014): amber, and filled while it shows the truth. */
+.topbar .omniscient {
+  color: var(--amber);
+}
+.topbar .omniscient.on {
+  background: var(--amber);
+  color: var(--bg, #0b0e14);
+}

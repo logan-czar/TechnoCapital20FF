@@ -15,6 +15,7 @@ import { type JobCtx, jobCtxRaiseAlert } from "../time/scheduler.ts";
 import { cmpDate, cmpQuarter, type Quarter } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import { type CompanyId, ordinal } from "../types/ids.ts";
+import { expF, logF } from "../types/libm.ts";
 import { clamp, maxF, totalCmp } from "../types/num.ts";
 import type {
   EraHistory,
@@ -282,12 +283,12 @@ function advanceZones(world: World, era: EraState, gdp: number, draws: DrawSourc
   const zones = era.macro.zones;
   const raw = zones.map((z) => {
     z.shock = ZONE_SHOCK_CARRY * z.shock + m.zone_shock_sd * draws.normal("Era");
-    return z.share * Math.exp(m.catchup * z.track + z.shock);
+    return z.share * expF(m.catchup * z.track + z.shock);
   });
   const total = raw.reduce((a, b) => a + b, 0.0);
   zones.forEach((z, i) => {
     const share = (raw[i] as number) / total;
-    z.tilt = ZONE_TILT_K * Math.log(share / z.share);
+    z.tilt = ZONE_TILT_K * logF(share / z.share);
     z.share = share;
     const row = world.zones[i] as World["zones"][number];
     row.gdp_share = share;

@@ -29,11 +29,8 @@ import { NavContext, type PageNav } from "../links/nav.ts";
 import { type History, historyFromSaved, historyNew, historyToSaved } from "../pages/history.ts";
 import { recapAlertQuarter } from "../pages/kinds/recap.tsx";
 import { PagePane } from "../pages/PagePane.tsx";
-import { type PageRef, pageEq } from "../pages/ref.ts";
+import { kindName, type PageRef, pageEq } from "../pages/ref.ts";
 import { AlertsPane } from "../panes/AlertsPane.tsx";
-import { CompaniesPane } from "../panes/CompaniesPane.tsx";
-import { CountriesPane, IndustriesPane } from "../panes/ListPanes.tsx";
-import { NewsPane } from "../panes/NewsPane.tsx";
 import { SimContext } from "../sim/hooks.ts";
 import {
   FIXED_PANES,
@@ -41,6 +38,7 @@ import {
   type PaneKind,
   type PaneSpec,
   pushClosed,
+  RETIRED_PANES,
   WorkspaceContext,
   type WorkspaceControl,
 } from "./panes.ts";
@@ -66,20 +64,39 @@ const COMPONENTS: Record<PaneKind, FunctionComponent<PaneProps>> = {
       <MapPane />
     </Suspense>
   ),
-  companies: () => <CompaniesPane />,
   chart: ({ params }) => (
     <Suspense fallback={loading}>
       <ChartPane company={typeof params.company === "number" ? params.company : null} />
     </Suspense>
   ),
-  news: () => <NewsPane />,
-  industries: () => <IndustriesPane />,
-  countries: () => <CountriesPane />,
   alerts: () => <AlertsPane />,
   page: (props) => <PagePane {...props} />,
 };
 
 const isRecord = (x: unknown): x is Record<string, unknown> => typeof x === "object" && x !== null;
+
+/**
+ * A saved layout with each retired pane (D1014) turned into a page pane on the list page that
+ * replaced it, in its place in the grid; anything else as it was.
+ */
+export function migrateLayout(x: unknown): unknown {
+  if (!isRecord(x) || !isRecord(x.panels)) return x;
+  const panels: Record<string, unknown> = {};
+  for (const [id, p] of Object.entries(x.panels)) {
+    const page =
+      isRecord(p) && typeof p.contentComponent === "string" ? RETIRED_PANES[p.contentComponent] : undefined;
+    panels[id] =
+      isRecord(p) && page
+        ? {
+            ...p,
+            contentComponent: "page",
+            title: kindName(page.kind),
+            params: { history: historyToSaved(historyNew(page)) },
+          }
+        : p;
+  }
+  return { ...x, panels };
+}
 
 /**
  * A saved layout we trust to hand to dockview: its panels name known components and a page pane
@@ -259,6 +276,21 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
         }
         addPage(api, page);
       },
+      showPage: (page) => {
+        const api = apiRef.current;
+        if (!api) return;
+        // By the history each page pane keeps in its params (PagePane), mounted or not.
+        const showing = api.panels.find((p) => {
+          const h = p.api.component === "page" ? historyFromSaved(p.params?.history) : null;
+          return h !== null && pageEq(h.current, page);
+        });
+        if (showing) {
+          showing.api.setActive();
+          return;
+        }
+        const id = addPage(api, page, historyNew(page), kindName(page.kind));
+        if (id) api.getPanel(id)?.api.setActive();
+      },
       isOpen: (id) => !!apiRef.current?.getPanel(id),
       closed: () => (apiRef.current ? stillClosed(apiRef.current) : []),
       reopen: (given) => {
@@ -284,8 +316,9 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
       },
       persist,
       layout: () => apiRef.current?.toJSON() ?? null,
-      restore: (layout) => {
+      restore: (given) => {
         const api = apiRef.current;
+        const layout = migrateLayout(given);
         if (!api || !isLayout(layout)) return false;
         restoring.current = true;
         try {
@@ -314,9 +347,10 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
       const now = clock ? simDateQuarter(clock.date) : null;
       for (const e of store.notices) {
         if (e.seq <= mark) continue;
-        // The end of a run opens its history (1995-rework 8.3).
+        // The end of a run shows its history (1995-rework 8.3): the pane already on it, else a new
+        // one, so the player's focused page stays (D1014).
         if (e.notice.kind === "Paused" && e.notice.reason.kind === "RunEnded") {
-          control.openPage({ kind: "world-history" }, "focused");
+          control.showPage({ kind: "world-history" });
           continue;
         }
         const q = recapAlertQuarter(e.notice, now);
@@ -365,7 +399,7 @@ export function Workspace({ onControl }: { onControl: (c: WorkspaceControl) => v
     (e: DockviewReadyEvent) => {
       const api = e.api;
       apiRef.current = api;
-      const saved = readLayout();
+      const saved = migrateLayout(readLayout());
       let restored = false;
       if (saved) {
         try {

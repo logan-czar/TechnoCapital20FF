@@ -4,6 +4,7 @@
 // 2-map 2.3.1 (`total development × $0.3B × G`). Ported from crates/sim/src/births/weights.rs.
 
 import type { DrawSource } from "../types/draws.ts";
+import { log10F } from "../types/libm.ts";
 import { clamp, maxF, powi } from "../types/num.ts";
 import type { PhaseLabel } from "../types/world.ts";
 
@@ -40,7 +41,7 @@ export function heat(q_growth: number): number {
  */
 export function fringeFactor(fringe_revenue_usd: number): number {
   if (fringe_revenue_usd <= 0.0) return FRINGE_FACTOR_MIN;
-  return clamp(1.0 + Math.log10(fringe_revenue_usd / USD_PER_BILLION), FRINGE_FACTOR_MIN, FRINGE_FACTOR_MAX);
+  return clamp(1.0 + log10F(fringe_revenue_usd / USD_PER_BILLION), FRINGE_FACTOR_MIN, FRINGE_FACTOR_MAX);
 }
 
 /** The industry weight w (spec 5.19.1): `f × (0.02 + h)²`, 0 for industries labeled Glut or Bust. */

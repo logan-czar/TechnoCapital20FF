@@ -80,7 +80,8 @@ the gate passes.
 ## 4. Finish (plan Step 6)
 
 1. **Retire the fixed panes** (Companies, Industries, Countries, Wire) in favour of the list pages, or
-   keep them as default layout entries. Pick one and log it.
+   keep them as default layout entries. **Done (D1014, `build/ts6-finish-web`):** retired; the Panes
+   menu opens the list pages, and old saved layouts turn them into page panes.
 2. **Leak test for the UI:** port `crates/game/tests/m9_leak.rs` as a test over every page's rendered
    doc, so that a banded company never shows an exact private figure. The view-level leak test already
    exists.
@@ -89,13 +90,22 @@ the gate passes.
      30-year world;
    - check that the map holds 60 fps while panning at max sim speed;
    - check that the window stays responsive at max speed (the `pace.rs` / `s5_pace.rs` behaviour).
-4. **Browser walk-through** in the in-app browser:
+
+   **Found (D1014):** on a production build every page opens in 7 to 35 ms. At max speed the main
+   thread has long tasks of up to about 200 ms even with no pane open: the worker's frames cost too
+   much to handle. Still to do: profile and fix that, then measure the map's frame rate while panning
+   with the browser pane showing.
+4. **Browser walk-through** in the in-app browser. **Done (D1014):** a map click now opens the
+   Province page, the 2020 reveal no longer replaces the focused page, and the dev server has an
+   Omniscient toggle:
    - every page and map mode;
    - province hover and click;
    - save and load;
    - new game;
    - the Omniscient toggle.
 5. **Determinism:** the same seed gives the same state hash in Node and in the browser worker.
+   **Done (D1015):** it did not (Chrome and Node differ in the last bit of exp, log, log10, sin and
+   cos); the sim now has its own fdlibm port, and the hashes and saves match.
 6. **Delete Rust:**
    - `crates/`, `Cargo.toml`, `Cargo.lock`, `rust-toolchain.toml`, `assets/shaders/`;
    - `scripts/check.ps1` and `scripts/check.sh`;

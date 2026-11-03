@@ -1,7 +1,7 @@
 // The sim boundary scan (D952, CLAUDE.md rules): sim code is deterministic and has no DOM, so a
 // few globals are banned outright in packages/sim/src and packages/sim-data/src. Biome catches the
-// globals; this catches the members it cannot (Math.round, Math.random, localeCompare) and the
-// UI importing raw tables. Exits 1 with file:line for every hit.
+// globals; this catches the members it cannot (Math.round, Math.random, localeCompare, and the
+// engine-dependent Math.exp/log/log10/sin/cos of D1015) and the UI importing raw tables. Exits 1 with file:line for every hit.
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
@@ -24,6 +24,12 @@ const RULES: Rule[] = [
     pattern: /\bMath\.round\b/,
     why: "use roundHalfAway or roundTiesEven from types/num.ts (D952)",
     allow: ["packages/sim/src/types/num.ts"],
+  },
+  {
+    roots: ["packages/sim/src", "packages/sim-data/src"],
+    pattern: /\bMath\.(?:exp|log|log10|sin|cos)\b/,
+    why: "Node and browser engines differ in the last bit; use expF, logF, log10F, sinF, cosF from types/libm.ts (D1015)",
+    allow: ["packages/sim/src/types/libm.ts"],
   },
   {
     roots: ["packages/sim/src", "packages/sim-data/src"],

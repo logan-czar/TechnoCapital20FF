@@ -5,9 +5,10 @@
 
 import { MAX_SPEED, QUARTER_PHASE_NAME, WATCH_SPEED, weekdayShortName } from "@tc20ff/sim";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { kindName } from "../pages/ref.ts";
 import { useClock, useNotices, useSim, useViewData } from "../sim/hooks.ts";
 import { date as fmtDate } from "../widgets/cells.ts";
-import { FIXED_PANES, type WorkspaceControl } from "./panes.ts";
+import { FIXED_PANES, MENU_PAGES, type WorkspaceControl } from "./panes.ts";
 import { SKIPS, skipName } from "./text.ts";
 
 /** A key press aimed at something the player is typing in or a dialog: not a game shortcut. */
@@ -62,6 +63,27 @@ function Untuned() {
     <span className="untuned" title="The run has ended. Nothing past here is tuned.">
       Past {run.reveal_year}: untuned
     </span>
+  );
+}
+
+/**
+ * The Omniscient toggle (crates/game/src/ui/outliner.rs, spec 1): every true value instead of the
+ * estimate bands. Only on the dev server, whose sim is a debug sim (D961, D1014); a production
+ * build has neither.
+ */
+function OmniscientToggle() {
+  const sim = useSim();
+  const on = useClock()?.omniscient ?? false;
+  if (!import.meta.env.DEV) return null;
+  return (
+    <button
+      type="button"
+      className={on ? "omniscient on" : "omniscient"}
+      title="Dev server only: show every true value (spec 1)"
+      onClick={() => void sim.control({ kind: "SetOmniscient", on: !on })}
+    >
+      Omniscient: {on ? "on" : "off"}
+    </button>
   );
 }
 
@@ -192,6 +214,12 @@ export function PanesMenu({ workspace }: { workspace: () => WorkspaceControl | n
               {ws.isOpen(spec.id) && <span className="detail">open</span>}
             </button>
           ))}
+          <div className="heading">Pages</div>
+          {MENU_PAGES.map((page) => (
+            <button type="button" key={page.kind} onClick={() => act(() => ws.showPage(page))}>
+              <span>{kindName(page.kind)}</span>
+            </button>
+          ))}
           {closed.some((c) => c.kind === "page") && <div className="heading">Recently closed pages</div>}
           {closed
             .filter((c) => c.kind === "page")
@@ -222,6 +250,7 @@ function TopBarInner({ seen, onOpenAlerts, onOpenCommands, workspace, onSave, on
       <SpeedControls />
       <Untuned />
       <span className="grow" />
+      <OmniscientToggle />
       <PanesMenu workspace={workspace} />
       <AlertsButton seen={seen} onOpen={onOpenAlerts} />
       <button type="button" onClick={onOpenCommands} title="Ctrl+K">
