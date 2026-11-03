@@ -92,9 +92,11 @@ the gate passes.
    - check that the window stays responsive at max speed (the `pace.rs` / `s5_pace.rs` behaviour).
 
    **Found (D1014):** on a production build every page opens in 7 to 35 ms. At max speed the main
-   thread has long tasks of up to about 200 ms even with no pane open: the worker's frames cost too
-   much to handle. Still to do: profile and fix that, then measure the map's frame rate while panning
-   with the browser pane showing.
+   thread had long tasks of up to about 200 ms even with no pane open: the worker's frames cost too
+   much to handle. **Fixed (D1016):** the worker posts only what the UI reads, and the heavy archives
+   as slices on demand; with the map alone there is no long task at max speed, with five heavy pages
+   about 2 a second of 50 to 70 ms. Still to do: measure the map's frame rate while panning, with the
+   browser pane showing.
 4. **Browser walk-through** in the in-app browser. **Done (D1014):** a map click now opens the
    Province page, the 2020 reveal no longer replaces the focused page, and the dev server has an
    Omniscient toggle:

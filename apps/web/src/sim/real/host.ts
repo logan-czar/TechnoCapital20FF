@@ -20,6 +20,8 @@ import {
   type Sim,
   simNew,
   type ToSim,
+  type ViewsPatch,
+  type ViewWant,
   viewsPatchSince,
 } from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
@@ -56,6 +58,8 @@ export class RealHost {
   private postedBars: PostedBars = postedBarsNone();
   private readonly waitForFrameDone: boolean;
   private readonly debug: boolean;
+  /** What the UI reads (D1016); null until its first `Want`: every view then, whole. */
+  private want: ViewWant | null = null;
   /** Frames the UI has not answered yet. */
   private unread = 0;
   /** Notices of ticks run while a frame was unread: the next frame carries them first. */
@@ -90,6 +94,13 @@ export class RealHost {
       case "FrameDone":
         this.unread = Math.max(0, this.unread - 1);
         return [];
+      case "Want": {
+        this.want = { views: new Set(msg.views), slices: msg.slices };
+        if (this.sim === null) return [];
+        // Whatever is newly wanted goes out now, even while paused (no frame would carry it).
+        const views = this.patch();
+        return Object.keys(views).length > 0 ? [this.frameOf(views, [])] : [];
+      }
       case "NewGame": {
         const made = simNew(this.data, msg.seed, {
           debug: this.debug,
@@ -201,10 +212,19 @@ export class RealHost {
     this.owedMs = 0;
   }
 
-  private frame(notices: Notice[]): FromSim {
-    const sim = this.sim as Sim;
-    const views = viewsPatchSince(sim.views(), this.posted);
+  /** The views to post: those that moved since the last frame, as the UI wants them (D1016). */
+  private patch(): ViewsPatch {
+    const views = viewsPatchSince((this.sim as Sim).views(), this.posted, undefined, this.want);
     priceBarsCompact(views, this.postedBars);
+    return views;
+  }
+
+  private frame(notices: Notice[]): FromSim {
+    return this.frameOf(this.patch(), notices);
+  }
+
+  private frameOf(views: ViewsPatch, notices: Notice[]): FromSim {
+    const sim = this.sim as Sim;
     this.unread += 1;
     const all = this.held.length === 0 ? notices : [...this.held, ...notices];
     this.held = [];

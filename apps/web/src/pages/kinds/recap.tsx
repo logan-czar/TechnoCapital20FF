@@ -238,6 +238,7 @@ export const pages = [
     // watchlist and the clock are v_clock's here (D975). The doc is small, so following v_clock
     // at the page pace is cheap.
     views: ["recap", "industry_rows", "clock", "history"],
+    slices: (page) => [{ view: "recap", quarter: page.quarter }],
     sections: SECTIONS,
     doc: (page, v, index) => recapDoc(page.quarter, v, index),
   }),

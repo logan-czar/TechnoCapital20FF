@@ -886,6 +886,7 @@ export const pages = [
   definePage({
     kind: "company",
     views: VIEWS,
+    slices: (page) => [{ view: "statements", company: page.id }],
     sections: SECTIONS,
     tabs: true,
     doc: (page, v, index) => companyDoc(page.id, v, index),

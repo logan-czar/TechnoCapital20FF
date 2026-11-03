@@ -19,14 +19,24 @@
 // The UI answers each Frame with `FrameDone` once it has read it, and a running worker holds the next
 // frame until then, so frames cannot queue faster than the UI reads them (D1004). The sim keeps
 // running meanwhile; the next frame carries everything since.
+//
+// What the UI reads (D1016): once the UI sends `Want`, the worker posts only the views it names,
+// and three heavy views in a light form: v_statements with no companies, v_recap with each
+// quarter's company pages left out, v_exchanges with empty index histories. The heavy parts go as
+// slices, each only while wanted: one company's statements, one quarter's whole recap, one
+// exchange's index history. A view or slice posted once is posted again when its version moves.
+// Before any `Want` (tests, the mock) every view is posted whole, as before.
 
+import type { Quarter } from "./calendar.ts";
 import type { Control } from "./control.ts";
-import type { CompanyId } from "./ids.ts";
+import type { CompanyId, ZoneId } from "./ids.ts";
 import type { Notice } from "./notice.ts";
 import type { SimError } from "./sim-api.ts";
-import type { DailyBar } from "./state/market.ts";
+import type { DailyBar, IndexHistory } from "./state/market.ts";
 import type { Headline } from "./state/news.ts";
-import type { ClockView, SimViews } from "./views/index.ts";
+import type { ClockView, SimViews, ViewName } from "./views/index.ts";
+import type { RecapQuarter } from "./views/recap.ts";
+import type { CompanyStatements } from "./views/statements.ts";
 
 /** The worker posts at most one frame this often while running (60 a second). */
 export const FRAME_MS = 1000 / 60;
@@ -66,7 +76,44 @@ export type ToSim =
   /** A spec 9.1 control (speed, pause, skip, alerts, watchlist), applied at once (D5). */
   | { kind: "Control"; id: RequestId; control: UiControl }
   /** The UI has read a Frame (D1004). It has no reply. */
-  | { kind: "FrameDone" };
+  | { kind: "FrameDone" }
+  /**
+   * What the UI reads now (D1016): the views its mounted parts read, and the heavy views' slices
+   * its pages read. It has no reply; a frame follows when something wanted is not posted yet.
+   */
+  | { kind: "Want"; views: ViewName[]; slices: SliceKey[] };
+
+/** A slice of a heavy view (D1016). */
+export type SliceKey =
+  | { view: "statements"; company: CompanyId }
+  | { view: "recap"; quarter: Quarter }
+  | { view: "exchanges"; zone: ZoneId };
+
+/** A slice's data: the company's statements, the quarter's recap, the exchange's index history; null when the view has none. */
+export type SliceData<K extends SliceKey = SliceKey> = K extends { view: "statements" }
+  ? CompanyStatements | null
+  : K extends { view: "recap" }
+    ? RecapQuarter | null
+    : IndexHistory | null;
+
+/** One slice in a frame, at its view's version. */
+export interface SlicePatch {
+  key: SliceKey;
+  version: number;
+  data: SliceData;
+}
+
+/** A slice's identity, for maps: "statements/12", "recap/1997-Q3", "exchanges/4". */
+export function sliceId(k: SliceKey): string {
+  switch (k.view) {
+    case "statements":
+      return `statements/${k.company}`;
+    case "recap":
+      return `recap/${k.quarter.year}-Q${k.quarter.q}`;
+    case "exchanges":
+      return `exchanges/${k.zone}`;
+  }
+}
 
 /** Worker → UI. */
 export type FromSim =
@@ -135,4 +182,6 @@ export type ViewsPatch = Partial<Omit<SimViews, "news">> & {
   news_reset?: true;
   /** The news view's version after the append. */
   news_version?: number;
+  /** The wanted slices whose view moved since they were last posted, or newly wanted (D1016). */
+  slices?: SlicePatch[];
 };

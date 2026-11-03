@@ -114,6 +114,7 @@ export const pages = [
     // chart on v_exchanges (daily) priced from v_quotes. Here the page lists v_exchanges and
     // v_quotes, so the constituents' prices follow at the page pace (PAGE_REFRESH_MS).
     views: ["company_rows", "countries", "zones", "exchanges", "quotes", "places"],
+    slices: (page) => [{ view: "exchanges", zone: page.id }],
     sections: SECTIONS,
     doc: (page, v, index) => exchangeDoc(page.id, v, index),
   }),

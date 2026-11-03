@@ -50,7 +50,7 @@ export class WorkerLoop {
   /** The worker's `onmessage`. */
   onMessage(msg: ToSim): void {
     if (this.dead) {
-      if (msg.kind === "FrameDone") return;
+      if (msg.kind === "FrameDone" || msg.kind === "Want") return;
       const result = { kind: "Refused" as const, message: "the sim worker stopped" };
       this.deps.post({ kind: "Reply", id: msg.id, result });
     } else if (this.host === null) {

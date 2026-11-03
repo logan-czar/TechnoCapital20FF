@@ -291,8 +291,9 @@ function Status() {
 /** The footer: each view's version and cadence. */
 function Footer() {
   const { store } = useSim();
-  // Re-read with the quotes (every tick, paced): the versions are plain numbers.
-  usePageViews(["quotes"], QUOTES_REFRESH_MS);
+  // Re-read with the quotes (every tick, paced): the versions are plain numbers. Reading every
+  // footer view keeps it posted (D1016), so its version here is current.
+  usePageViews(FOOTER_VIEWS, QUOTES_REFRESH_MS);
   return (
     <div className="chip-row pdb-footer">
       {FOOTER_VIEWS.map((n) => {
