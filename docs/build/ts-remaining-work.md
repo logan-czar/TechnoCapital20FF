@@ -81,12 +81,12 @@ the gate passes.
 
 1. **Retire the fixed panes** (Companies, Industries, Countries, Wire) in favour of the list pages, or
    keep them as default layout entries. Pick one and log it.
-2. **Leak test for the UI:** port `crates/game/tests/m9_leak.rs` as a test over every page's rendered
-   doc, so that a banded company never shows an exact private figure. The view-level leak test already
-   exists.
+2. **Leak test for the UI:** **done (D1013, `build/ts6-ui-guards`):**
+   `apps/web/test/pages/ui-leak.test.ts`, in the gate.
 3. **Speed:**
-   - port `page_bench.rs` and `bench.rs` as a Vitest bench: every page opens in under 100 ms on a
-     30-year world;
+   - port `page_bench.rs` as a page bench: every page opens in under 100 ms on a 30-year world.
+     **Done (D1013):** `apps/web/bench/pages.test.tsx`, run on demand with `bench:pages`.
+     `bench.rs`'s frame benches go with the next two checks;
    - check that the map holds 60 fps while panning at max sim speed;
    - check that the window stays responsive at max speed (the `pace.rs` / `s5_pace.rs` behaviour).
 4. **Browser walk-through** in the in-app browser:

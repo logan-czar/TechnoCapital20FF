@@ -24,7 +24,9 @@ import {
   display,
   figureCell,
   fixed,
+  money,
   type PageRef,
+  percent,
   price,
   type Unit,
 } from "../widgets/cells.ts";
@@ -310,6 +312,36 @@ export interface TableDoc {
 
 /** How a chart's values read on the axis and in the readout (chart/data.rs ValueFormat). */
 export type ValueFormat = "Price" | "Money" | "Percent" | "Number";
+
+/** A chart value as its axis and readout show it (chart/data.rs ValueFormat). */
+export function chartValueText(f: ValueFormat, v: number): string {
+  switch (f) {
+    case "Price":
+      return price(v);
+    case "Money":
+      return money(v);
+    case "Percent":
+      return percent(v);
+    case "Number":
+      return v.toFixed(2);
+  }
+}
+
+/**
+ * Every value a chart can show in its readout, as text: each series' value at each slot, each
+ * candle's open, high, low and close and its EFV band, each band's ends and the reference line.
+ */
+export function chartTexts(m: ChartModel): string[] {
+  const values: number[] = [];
+  for (const s of m.series) {
+    if (s.k === "candles")
+      for (const b of s.bars) values.push(b.open, b.high, b.low, b.close, ...(b.band ?? []));
+    else if (s.k === "band") for (const b of s.bands) values.push(...(b ?? []));
+    else values.push(...s.values);
+  }
+  if (m.reference) values.push(m.reference.value);
+  return values.filter(Number.isFinite).map((v) => chartValueText(m.format, v));
+}
 
 /** One bar: a day's, or a week's when aggregated, with the EFV band at its close when known. */
 export interface Ohlc {
