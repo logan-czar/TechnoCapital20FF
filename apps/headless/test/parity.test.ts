@@ -11,8 +11,12 @@ import {
   median,
   parityCheck,
   parityCommand,
+  RETIRED,
   yearlyMedians,
 } from "../src/parity.ts";
+
+/** The synthetic cases test the plain checks: nothing retired. */
+const NONE = { targets: {}, metrics: {} };
 
 const bands: Bands = {
   years: {
@@ -64,7 +68,7 @@ describe("headless parity", () => {
   });
 
   it("a_matching_run_passes", () => {
-    const r = parityCheck({ tsYears: goodYears, tsSummary, bands, rustSummary });
+    const r = parityCheck({ tsYears: goodYears, tsSummary, bands, rustSummary, retired: NONE });
     expect(r.failures).toEqual([]);
     expect(r.ok).toBe(true);
     expect(r.targets_checked).toBe(2);
@@ -85,7 +89,7 @@ describe("headless parity", () => {
         [8760, 0.01, 660],
       ],
     });
-    const r = parityCheck({ tsYears: bad, tsSummary, bands, rustSummary });
+    const r = parityCheck({ tsYears: bad, tsSummary, bands, rustSummary, retired: NONE });
     expect(r.ok).toBe(false);
     expect(r.failures).toHaveLength(1);
     expect(r.failures[0]).toMatchObject({
@@ -103,7 +107,7 @@ describe("headless parity", () => {
       2020: [[8783, 0.01, 650]],
       2021: [[8760, 0.01, 660]],
     });
-    const r = parityCheck({ tsYears: bad, tsSummary, bands, rustSummary });
+    const r = parityCheck({ tsYears: bad, tsSummary, bands, rustSummary, retired: NONE });
     expect(r.failures.map((f) => [f.metric, f.year])).toEqual([["ticks", 2020]]);
   });
 
@@ -113,6 +117,7 @@ describe("headless parity", () => {
       tsSummary,
       bands,
       rustSummary,
+      retired: NONE,
     });
     expect(r.ok).toBe(false);
     expect(r.failures).toEqual([
@@ -129,7 +134,7 @@ describe("headless parity", () => {
       .split("\n")
       .map((l) => l.split(",").slice(0, 5).join(","))
       .join("\n");
-    const r = parityCheck({ tsYears: noNamed, tsSummary, bands, rustSummary });
+    const r = parityCheck({ tsYears: noNamed, tsSummary, bands, rustSummary, retired: NONE });
     expect(r.failures.filter((f) => f.kind === "missing").map((f) => [f.metric, f.year])).toEqual([
       ["named", 2020],
       ["named", 2021],
@@ -137,7 +142,13 @@ describe("headless parity", () => {
   });
 
   it("fewer_seeds_than_the_reference_is_insufficient", () => {
-    const r = parityCheck({ tsYears: goodYears, tsSummary, bands: { ...bands, seeds: 4 }, rustSummary });
+    const r = parityCheck({
+      tsYears: goodYears,
+      tsSummary,
+      bands: { ...bands, seeds: 4 },
+      rustSummary,
+      retired: NONE,
+    });
     expect(r.failures.map((f) => f.message)).toEqual([
       "insufficient seeds/years: 3 distinct seeds, the reference has 4",
     ]);
@@ -154,7 +165,7 @@ describe("headless parity", () => {
 
   it("a_rust_met_target_that_is_not_met_in_ts_fails_but_waived_ones_are_skipped", () => {
     const ts = tsSummary.replace("c,3,3,1.00,1.00,MET", "c,3,2,0.67,1.00,NOT MET");
-    const r = parityCheck({ tsYears: goodYears, tsSummary: ts, bands, rustSummary });
+    const r = parityCheck({ tsYears: goodYears, tsSummary: ts, bands, rustSummary, retired: NONE });
     expect(r.failures).toHaveLength(1);
     expect(r.failures[0]).toMatchObject({ kind: "target", metric: "c", value: "NOT MET" });
     // A target missing from the TS summary also fails.
@@ -163,6 +174,7 @@ describe("headless parity", () => {
       tsSummary: "target,verdict\na,MET\n",
       bands,
       rustSummary,
+      retired: NONE,
     });
     expect(none.failures.map((f) => f.metric)).toEqual(["c"]);
   });
@@ -178,6 +190,7 @@ describe("headless parity", () => {
       bands,
       rustSummary,
       tsShares: "seed,max_shares_out\n1,7\n",
+      retired: NONE,
     });
     expect(r.max_shares_out).toBe(7);
     expect(formatParity(r).join("\n")).toContain("max shares_out: 7 (safe integer)");
@@ -199,7 +212,31 @@ describe("headless parity", () => {
       rustSummary: read("summary.csv"),
     });
     expect(r.failures).toEqual([]);
-    expect(r.targets_checked).toBe(19);
+    // 19 Rust-MET targets less the two D989 retired.
+    expect(r.targets_checked).toBe(17);
+  });
+
+  it("retired_targets_and_columns_are_skipped_and_named", () => {
+    // A TS soak with neither target c nor column named passes when D989-style retirement covers both.
+    const noNamed = goodYears
+      .split("\n")
+      .map((l) => l.split(",").slice(0, 5).join(","))
+      .join("\n");
+    const retired = { targets: { c: "D989" }, metrics: { named: "D989" } };
+    const r = parityCheck({
+      tsYears: noNamed,
+      tsSummary: "target,verdict\na,MET\n",
+      bands,
+      rustSummary,
+      retired,
+    });
+    expect(r.failures).toEqual([]);
+    expect(r.targets_checked).toBe(1);
+    expect(r.metrics_checked).toBe(4);
+    expect(r.retired).toEqual(["c (D989)", "named (D989)"]);
+    expect(formatParity(r)).toContain("skipped as retired: c (D989), named (D989)");
+    // The real list: what D989 took out.
+    expect(Object.keys(RETIRED.targets)).toEqual(["full_characters_per_decade", "full_characters_2050"]);
   });
 
   it("half_the_rust_seeds_is_insufficient", () => {

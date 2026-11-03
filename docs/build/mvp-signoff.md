@@ -1,5 +1,7 @@
 # MVP sign-off summary
 
+> **For the TypeScript game, read [ts-port-review.md](ts-port-review.md) first.** This page was written for the Rust MVP, whose code is now deleted (D1017). The review classifies every part of it for the TS game (holds, obsolete, gap or yours), lists the gaps, and its section 7 gives a TS status and checklist that replace sections 1 and 7 here. The rows below are unchanged.
+
 For Logan, 2026-10-24. This page covers every row of [decisions.md](decisions.md) (365 rows) and [design-fixes.md](design-fixes.md) (79 rows), so you can sign off the MVP build in one sitting. It changes no decision; the logs stay the source.
 
 How to read it:

@@ -6,7 +6,7 @@ commit 878ccd5 (branch `build/ts3-integrate`, PR #98). Its sim and headless code
 22f77f3; PR #98 changes only tests. Logan's PC, Windows 11, Node via tsx:
 
 ```
-corepack pnpm@10.20.0 headless soak --years 30 --seeds 1..50 --jobs 4 --out soak-out --check
+corepack pnpm@10.20.0 headless soak --world 2020 --years 30 --seeds 1..50 --jobs 4 --out soak-out --check
 corepack pnpm@10.20.0 headless parity soak-out
 ```
 

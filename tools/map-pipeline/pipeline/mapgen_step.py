@@ -1,4 +1,4 @@
-"""P7: run the Rust `mapgen` tool (release build; cargo is on PATH).
+"""P7: run the `mapgen` tool (apps/mapgen, TypeScript run by Node; D1017).
 
 The bitmaps hold every region built so far, not only the one being run: mapgen gets each
 built region's work/<region>/provinces.geojson and CSV, and map-meta.toml `coverage` lists
@@ -26,7 +26,7 @@ def run(region: config.Region) -> None:
     if region not in regions:
         raise SystemExit(f"mapgen: {region.slug} has no provinces.geojson; run its simplify step first")
     cmd = [
-        "cargo", "run", "--release", "--quiet", "-p", "mapgen", "--",
+        "node", str(config.REPO_ROOT / "apps" / "mapgen" / "src" / "main.ts"),
         "build",
         # the land mask is the whole world, the same for every region
         "--land", str(work / "land.geojson"),

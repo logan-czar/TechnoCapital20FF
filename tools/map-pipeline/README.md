@@ -2,7 +2,8 @@
 
 Builds `assets/map/` (the format is [docs/build/m8-map-assets.md](../../docs/build/m8-map-assets.md)) from
 Natural Earth and geoBoundaries, region CSV by region CSV of `docs/design/data/` (all eight files are built:
-3,255 provinces). Python prepares the geodata; the Rust `mapgen` crate rasterizes it. Build-plan 3.3 (P1 to P9),
+3,963 provinces). Python prepares the geodata; `mapgen` (`apps/mapgen`, TypeScript run by Node; D1017)
+rasterizes it. Build-plan 3.3 (P1 to P9),
 map-sources.md, docs/build/m8-plan.md.
 
 ## Run it
@@ -14,11 +15,11 @@ tools/map-pipeline/run.ps1 -Region europe -Steps crosswalk,shapes,simplify,mapge
 
 or `tools/map-pipeline/run.sh [region] [steps]`. Both run `uv sync --frozen` (Python 3.13 venv in
 `tools/map-pipeline/.venv`, pinned by `uv.lock`) and `npm ci` (mapshaper, pinned by `package-lock.json`),
-then `uv run python run.py --region <slug|all>`. Needs uv, Node and cargo on PATH. A region runs on its own
+then `uv run python run.py --region <slug|all>`. Needs uv and Node 24 on PATH. A region runs on its own
 (its crosswalk, shapes and QA rows are its own; mapgen always draws every region built so far, so the bitmaps
 keep the others); `all` runs each step for every region in turn and mapgen once. A full world run takes
-about nine minutes once the cache is filled (North America's shapes take four, mapgen about 15 seconds),
-with peaks of about 0.5 GB in Python and 0.7 GB in mapgen. Two runs give byte-identical assets.
+about nine minutes once the cache is filled (North America's shapes take four, mapgen about 40 seconds),
+with peaks of about 0.5 GB in Python and 1.1 GB in mapgen. Two runs give byte-identical assets.
 
 | Step | Module | Does |
 |---|---|---|
@@ -27,7 +28,7 @@ with peaks of about 0.5 GB in Python and 0.7 GB in mapgen. Two runs give byte-id
 | shapes (P4) | `shapes.py` | Dissolves whole units, Voronoi-splits shared ones, clips to the region, fills seams; also the land mask for the coastal check |
 | simplify (P5, P6) | `simplify.py` | mapshaper `snap`, `-clean`, `-simplify interval=500 keep-shapes`; writes `provinces.geojson` (degrees; mapgen applies Miller, D602) |
 | topojson (D954) | `pipeline/topojson_step.py` | Combines every built region's `provinces.geojson`, clips the north at `LAT_MAX_DEG` (84), projects to Miller in mapgen's frame units (`+proj=mill +R=1`: x = longitude in radians), keeps only `province_id` and writes `assets/map/provinces.topo.json` (TopoJSON, quantization 150,000; about 5.8 MB) for the deck.gl map of `apps/web`. Fails on a duplicate id or a CSV province without a shape. Runs once per `run.py` call, after the last region's simplify |
-| mapgen (P7) | `mapgen_step.py` | `cargo run --release -p mapgen -- build ...`: every bitmap and table of the contract, for every region built so far (one `--geojson` each) |
+| mapgen (P7) | `mapgen_step.py` | `node apps/mapgen/src/main.ts build ...`: every bitmap and table of the contract, for every region built so far (one `--geojson` each) |
 | qa (P8) | `qa.py` | `assets/map/qa/report-<region>.md`, a preview PNG, `assets/map/CREDITS.md`; fails on a province without pixels, a license problem, a city probe mismatch (`checks/city-points.txt`, D686), an unchecked NE label row (D687), a hint seed outside its region (D690), an unexplained land exclave (D691) or a `sea_only` pair with a land row (D692) |
 
 `run.py giants` measures every province of the last run (geodesic area of the final shapes) and lists the
@@ -77,9 +78,11 @@ Add a `checks/city-points.txt` point (with the expected province id) for every p
 ## mapgen alone
 
 ```
-cargo run --release -p mapgen -- build --geojson provinces.geojson --land land.geojson \
+node apps/mapgen/src/main.ts build --geojson provinces.geojson --land land.geojson \
     --csv docs/design/data/provinces-north-america.csv --out assets/map --qa mapgen-qa.csv
-cargo run --release -p mapgen -- synthetic --csv a.csv [--csv b.csv ...] --out DIR
 ```
 
-`synthetic` lays every CSV province out as a grid cell (real ids, fake shapes) for testing the game's map code.
+It needs Node 24 (it runs the TypeScript as is) and no packages. It was ported from the Rust crate (D1017)
+and gives the same tables byte for byte and the same bitmaps pixel for pixel; the PNG bytes differ (another
+compressor), so the first run after the port rewrites the three PNGs with unchanged pixels. The Rust
+`synthetic` mode (a grid-cell test world for the Bevy game) was not ported.

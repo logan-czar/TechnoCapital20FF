@@ -11,10 +11,11 @@
 //   as `ticks`) the TS median must equal it. An empty cell is a missing value: the median is over
 //   the values present, and a metric with fewer than half its rows present counts as missing.
 //
-// State hashes do not carry over (D953) and are not compared. The report also gives the largest
-// `shares_out` the TS soak saw (D951: share counts are plain numbers and must stay safe
-// integers), read from the optional `shares_out.csv` (`seed,max_shares_out`, `sharesOutCsv` in
-// metrics.ts) or, failing that, a `shares_out_max` column of `years.csv`.
+// Targets and columns a later decision retired from the game (`RETIRED`, D1018) are skipped, and
+// the report names them. State hashes do not carry over (D953) and are not compared. The report
+// also gives the largest `shares_out` the TS soak saw (D951: share counts are plain numbers and
+// must stay safe integers), read from the optional `shares_out.csv` (`seed,max_shares_out`,
+// `sharesOutCsv` in metrics.ts) or, failing that, a `shares_out_max` column of `years.csv`.
 
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -43,11 +44,32 @@ export interface ParityFailure {
   message: string;
 }
 
+/**
+ * Rust-reference targets and `years.csv` columns that a later decision took out of the game, each
+ * with that decision (D1018). The frozen reference still holds them; parity skips them. D989 removed
+ * the full characters: their two targets and four columns have no TS counterpart (`cast_sizes` stays,
+ * reading the simple cast).
+ */
+export const RETIRED: {
+  targets: Readonly<Record<string, string>>;
+  metrics: Readonly<Record<string, string>>;
+} = {
+  targets: { full_characters_per_decade: "D989", full_characters_2050: "D989" },
+  metrics: {
+    full_characters: "D989",
+    full_characters_made: "D989",
+    cast_full_min: "D989",
+    cast_full_max: "D989",
+  },
+};
+
 export interface ParityReport {
   ok: boolean;
   failures: ParityFailure[];
   targets_checked: number;
   metrics_checked: number;
+  /** The retired targets and columns skipped, as `name (decision)`, targets first. */
+  retired: string[];
   /** The largest `shares_out` the TS soak saw, when recorded. */
   max_shares_out: number | null;
 }
@@ -177,13 +199,21 @@ export function parityCheck(input: {
   bands: Bands;
   rustSummary: string;
   tsShares?: string | null;
+  retired?: typeof RETIRED;
 }): ParityReport {
+  const retiredList = input.retired ?? RETIRED;
   const failures: ParityFailure[] = [];
   const rust = summaryVerdicts(input.rustSummary);
   const ts = summaryVerdicts(input.tsSummary);
+  const retired: string[] = [];
   let targetsChecked = 0;
   for (const [id, verdict] of rust) {
     if (verdict !== "MET") continue;
+    const by = retiredList.targets[id];
+    if (by !== undefined) {
+      retired.push(`${id} (${by})`);
+      continue;
+    }
     targetsChecked += 1;
     const got = ts.get(id);
     if (got !== "MET") {
@@ -212,6 +242,7 @@ export function parityCheck(input: {
       failures,
       targets_checked: targetsChecked,
       metrics_checked: 0,
+      retired,
       max_shares_out: maxSharesOut(input.tsShares ?? null, input.tsYears),
     };
   }
@@ -220,10 +251,15 @@ export function parityCheck(input: {
   const years = Object.keys(input.bands.years)
     .map(Number)
     .sort((a, b) => a - b);
+  const retiredMetrics = new Set<string>();
   for (const year of years) {
     const band = input.bands.years[String(year)] as Record<string, [number, number, number]>;
     const row = medians.get(year);
     for (const metric of Object.keys(band).sort()) {
+      if (retiredList.metrics[metric] !== undefined) {
+        retiredMetrics.add(metric);
+        continue;
+      }
       const b = band[metric] as [number, number, number];
       metricsChecked += 1;
       const m = row?.get(metric);
@@ -248,11 +284,13 @@ export function parityCheck(input: {
       }
     }
   }
+  for (const m of [...retiredMetrics].sort()) retired.push(`${m} (${retiredList.metrics[m]})`);
   return {
     ok: failures.length === 0,
     failures,
     targets_checked: targetsChecked,
     metrics_checked: metricsChecked,
+    retired,
     max_shares_out: maxSharesOut(input.tsShares ?? null, input.tsYears),
   };
 }
@@ -265,6 +303,7 @@ function fmtBand(b: readonly [number, number, number]): string {
 export function formatParity(r: ParityReport): string[] {
   const lines: string[] = [];
   for (const f of r.failures) lines.push(`FAIL ${f.message}`);
+  if (r.retired.length > 0) lines.push(`skipped as retired: ${r.retired.join(", ")}`);
   lines.push(
     `${r.targets_checked} Rust-MET targets and ${r.metrics_checked} yearly metric bands checked: ${r.failures.length} failure(s)`,
   );

@@ -1,7 +1,7 @@
 {
   "name": "technocapital20ff",
   "private": true,
-  "description": "TechnoCapital20FF in TypeScript (docs/build/ts-migration-plan.md). The Rust crates stay as the reference until the parity gate passes.",
+  "description": "TechnoCapital20FF in TypeScript (docs/build/ts-migration-plan.md).",
   "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "packageManager": "pnpm@10.20.0",

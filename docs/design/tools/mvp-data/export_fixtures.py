@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export validate.py's growth and boom runs as golden fixtures for the Rust engine (build-plan 4.2, M2.10).
+"""Export validate.py's growth and boom runs as golden fixtures for the sim (build-plan 4.2, M2.10).
 
     python3 export_fixtures.py [design/data dir] [output dir]
 
@@ -13,7 +13,7 @@ Nothing in validate.py changes: the draws are recorded by swapping `random.Rando
 `uniform`, `randint` and `gauss` return while validate.growth_run runs (uniform is re-implemented with CPython's own
 formula `a + (b - a) * random()`, so the logged value is the raw uniform the engine scales the same way).
 
-Files written (default output dir: crates/sim/tests/fixtures):
+Files written (default output dir: packages/sim/test/fixtures):
   validate-growth-seed150.csv  rows `z_avg,Z`; `cycle,q,u,length` (a phase draw made in quarter q, q 0 = load);
                                `z,q,industry_id,z` (raw gauss, before the +-3 clamp); `path,q,phase,g`;
                                `avg,industry_id,compound average yearly growth over the 40 quarters`.
@@ -28,7 +28,7 @@ import validate  # noqa: E402
 
 SEED, QUARTERS = 150, 40
 HERE = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_OUT = os.path.normpath(os.path.join(HERE, '..', '..', '..', '..', 'crates', 'sim', 'tests', 'fixtures'))
+DEFAULT_OUT = os.path.normpath(os.path.join(HERE, '..', '..', '..', '..', 'packages', 'sim', 'test', 'fixtures'))
 
 
 class Recorder(random.Random):

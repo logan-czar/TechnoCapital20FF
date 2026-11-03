@@ -34,6 +34,8 @@ importers:
         specifier: 4.20.5
         version: 4.20.5
 
+  apps/mapgen: {}
+
   apps/web:
     dependencies:
       '@deck.gl/core':
