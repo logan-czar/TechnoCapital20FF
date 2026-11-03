@@ -83,6 +83,24 @@ describe("RealHost", () => {
     }
   });
 
+  it("allows Omniscient only in a debug host (the dev server's, D961, D1014), across a load too", () => {
+    send(host, { kind: "NewGame", seed: 7 });
+    const refused = replyOf(send(host, { kind: "Control", control: { kind: "SetOmniscient", on: true } }));
+    expect(refused.kind).toBe("SimError");
+    const debug = new RealHost(data, { debug: true });
+    send(debug, { kind: "NewGame", seed: 7 });
+    const on = send(debug, { kind: "Control", control: { kind: "SetOmniscient", on: true } });
+    expect(replyOf(on).kind).toBe("Ok");
+    expect(frameOf(on).clock.omniscient).toBe(true);
+    const saved = replyOf(send(debug, { kind: "Save" }));
+    if (saved.kind !== "Saved") throw new Error("no save");
+    const loaded = new RealHost(data, { debug: true });
+    send(loaded, { kind: "Load", bytes: saved.bytes });
+    expect(
+      replyOf(send(loaded, { kind: "Control", control: { kind: "SetOmniscient", on: true } })).kind,
+    ).toBe("Ok");
+  });
+
   it("refuses requests before any game", () => {
     expect(replyOf(send(host, { kind: "Save" })).kind).toBe("Refused");
     expect(replyOf(send(host, { kind: "Control", control: { kind: "Pause" } })).kind).toBe("Refused");

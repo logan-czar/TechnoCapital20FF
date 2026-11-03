@@ -2,6 +2,7 @@
 // 10.0.11.7), and the steady-state held data used at load (7.1). Ported from
 // crates/sim/src/ops/data.rs. The `DataBook` type is in types/state/ops.ts.
 
+import { log10F } from "../types/libm.ts";
 import { maxF, minF } from "../types/num.ts";
 import type { DataBook, Stations } from "../types/state/ops.ts";
 import { RETENTION_MONTHS as RETENTION_MONTHS_TYPE } from "../types/state/ops.ts";
@@ -55,7 +56,7 @@ export function nextFreeRdTb(pct: number): number {
  * held ≥ 1, else base.
  */
 export function decayRate(heldTb: number, base: number): number {
-  return heldTb >= DECAY_LOG_FROM_TB ? base * (1.0 + Math.log10(heldTb)) : base;
+  return heldTb >= DECAY_LOG_FROM_TB ? base * (1.0 + log10F(heldTb)) : base;
 }
 
 /**

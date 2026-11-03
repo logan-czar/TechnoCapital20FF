@@ -1,13 +1,17 @@
 // The vector map (D954): province polygons drawn by deck.gl in OrthographicViews over
 // pre-projected Miller coordinates (y up). Geometry layers are built once per model; a color
 // change goes through updateTriggers, hover and selection through two tiny overlay layers, so none
-// of them rebuilds the 3,963-polygon geometry.
+// of them rebuilds the 3,963-polygon geometry. A click selects a province and opens its page in the
+// focused pane, Shift+click in a new pane (D637; links do the same, D454). A province's ordinal here
+// is its ProvinceId: both are its id's place in ascending byte order (D4).
 
 import type { Color, PickingInfo } from "@deck.gl/core";
 import { OrthographicView } from "@deck.gl/core";
 import { PathLayer, PolygonLayer, SolidPolygonLayer } from "@deck.gl/layers";
 import DeckGL from "@deck.gl/react";
+import type { ProvinceId } from "@tc20ff/sim";
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { BUTTON_PRIMARY, clickTarget, useNav } from "../links/nav.ts";
 import { politicalColors } from "./colors.ts";
 import type { MapModel, ProvincePart, XY } from "./model.ts";
 import {
@@ -161,9 +165,17 @@ export function ProvinceMap({ model }: ProvinceMapProps) {
     setHover((prev) => (prev === next ? prev : next));
   }, []);
 
-  const onClick = useCallback((info: PickingInfo) => {
-    setSelected(pickedOrdinal(info));
-  }, []);
+  const nav = useNav();
+  const onClick = useCallback(
+    (info: PickingInfo, event: { srcEvent?: { shiftKey?: boolean } }) => {
+      const picked = pickedOrdinal(info);
+      setSelected(picked);
+      const target = clickTarget(BUTTON_PRIMARY, event.srcEvent?.shiftKey === true);
+      if (picked !== null && target !== null)
+        nav.open({ kind: "province", id: picked as ProvinceId }, target);
+    },
+    [nav],
+  );
 
   const onViewStateChange = useCallback(
     ({ viewId: id, viewState }: { viewId: string; viewState: unknown }) => {

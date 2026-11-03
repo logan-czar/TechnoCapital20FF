@@ -12,6 +12,7 @@
 
 import type { DrawSource } from "../types/draws.ts";
 import type { IndustryId, ProvinceId } from "../types/ids.ts";
+import { expF, logF } from "../types/libm.ts";
 import type { CountRange, EventKind, EventType } from "../types/state/births.ts";
 import { USD_PER_MILLION } from "../types/world.ts";
 import { weightedPick } from "./weights.ts";
@@ -122,7 +123,7 @@ export function eventCount(draws: DrawSource, mean: number = RANDOM_EVENTS_MEAN)
 /** A target revenue log-uniform in `lo..hi` USD (spec 5.19.3), from one gen uniform. */
 export function drawTargetRevenue(lo_usd: number, hi_usd: number, draws: DrawSource): number {
   const u = draws.uniform("Gen");
-  return Math.exp(Math.log(lo_usd) + u * (Math.log(hi_usd) - Math.log(lo_usd)));
+  return expF(logF(lo_usd) + u * (logF(hi_usd) - logF(lo_usd)));
 }
 
 /** One startup an event asks for, before the 5.19.3 size cap and build. */

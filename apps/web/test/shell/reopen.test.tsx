@@ -1,30 +1,26 @@
 // @vitest-environment happy-dom
 // Reopening closed panes (D979): the real workspace and dockview with stub pane bodies. Close any
-// tab, all of them too, and bring it back from the Panes menu or Alt+Shift+R.
+// tab, all of them too, and bring it back from the Panes menu or Alt+Shift+R. The menu's list pages
+// and the saved layouts of the retired panes (D1014).
 
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { historyFromSaved, historyNew, historyOpen, historyToSaved } from "../../src/pages/history.ts";
-import type { PageRef } from "../../src/pages/ref.ts";
+import { kindName, type PageRef } from "../../src/pages/ref.ts";
 import {
   FIXED_PANES,
   MAX_CLOSED,
+  MENU_PAGES,
   type PaneSpec,
   pushClosed,
   type WorkspaceControl,
 } from "../../src/shell/panes.ts";
 import { PanesMenu } from "../../src/shell/TopBar.tsx";
-import { LAYOUT_KEY, Workspace } from "../../src/shell/Workspace.tsx";
+import { LAYOUT_KEY, migrateLayout, Workspace } from "../../src/shell/Workspace.tsx";
 
 vi.mock("../../src/panes/MapPane.tsx", () => ({ MapPane: () => <div>map body</div> }));
 vi.mock("../../src/panes/ChartPane.tsx", () => ({ ChartPane: () => <div>chart body</div> }));
-vi.mock("../../src/panes/CompaniesPane.tsx", () => ({ CompaniesPane: () => <div>companies body</div> }));
-vi.mock("../../src/panes/NewsPane.tsx", () => ({ NewsPane: () => <div>news body</div> }));
 vi.mock("../../src/panes/AlertsPane.tsx", () => ({ AlertsPane: () => <div>alerts body</div> }));
-vi.mock("../../src/panes/ListPanes.tsx", () => ({
-  IndustriesPane: () => <div>industries body</div>,
-  CountriesPane: () => <div>countries body</div>,
-}));
 // A page pane shows the page its saved history is on, and how many pages are behind it.
 vi.mock("../../src/pages/PagePane.tsx", () => ({
   PagePane: ({ params }: { params: { history?: unknown } }) => {
@@ -57,7 +53,7 @@ describe("the closed list", () => {
     c = pushClosed(c, pageSpec("page-2", WORLD));
     expect(c.map((s) => s.id)).toEqual(["page-2", "map"]);
     for (const p of FIXED_PANES) c = pushClosed(c, p);
-    for (let i = 0; i < MAX_CLOSED; i++) c = pushClosed(c, { id: `x${i}`, kind: "companies", title: "x" });
+    for (let i = 0; i < MAX_CLOSED; i++) c = pushClosed(c, { id: `x${i}`, kind: "chart", title: "x" });
     expect(c).toHaveLength(MAX_CLOSED);
     expect(c[0]?.id).toBe(`x${MAX_CLOSED - 1}`);
   });
@@ -184,22 +180,58 @@ describe("reopening in the workspace", () => {
     expect(ws.closed()).toEqual([]);
     openMenu();
     expect(menuItem("Map").textContent).toContain("open");
-    expect(menuItem("Companies").textContent).not.toContain("open");
+    expect(menuItem("Alerts").textContent).not.toContain("open");
   });
 
   it("does not count panes a loaded layout replaced as closed, and reopens beside the loaded panes", () => {
-    act(() => ws.open(fixed("companies")));
+    act(() => ws.open(fixed("chart")));
     const saved = ws.layout();
-    closeTab("Companies");
-    act(() => ws.open(fixed("news")));
+    closeTab("Price chart");
+    act(() => ws.open(fixed("alerts")));
     const before = ws.closed().map((c) => c.id);
     act(() => {
       expect(ws.restore(saved)).toBe(true);
     });
+    expect(tabs().sort()).toEqual(["Map", "Price chart"]);
+    expect(ws.closed().map((c) => c.id)).toEqual(before.filter((id) => id !== "chart"));
+    pick("Alerts");
+    expect(tabs().sort()).toEqual(["Alerts", "Map", "Price chart"]);
+  });
+
+  it("opens the list pages from the menu, focusing a pane already on one (D1014)", () => {
+    for (const p of MENU_PAGES) pick(kindName(p.kind));
+    expect(tabs().sort()).toEqual(["Companies", "Countries", "Industries", "Map", "News feed"]);
+    expect(screen.getByText("page companies back 0")).toBeTruthy();
+    // Again: the pane on it takes the focus, and no second pane opens.
+    pick("Companies");
+    expect(tabs()).toHaveLength(5);
+    expect(document.querySelector(".dv-active-group .dv-active-tab")?.textContent).toContain("Companies");
+  });
+
+  it("loads a saved layout with a retired pane as a page pane on its list page (D1014)", () => {
+    act(() => ws.open(fixed("chart")));
+    const layout = ws.layout() as { panels: Record<string, Record<string, unknown>> };
+    // A layout saved before D1014: the chart pane stands in for a retired Companies pane.
+    const chart = layout.panels.chart as Record<string, unknown>;
+    layout.panels.chart = { ...chart, contentComponent: "companies", title: "Companies" };
+    act(() => {
+      expect(ws.restore(layout)).toBe(true);
+    });
     expect(tabs().sort()).toEqual(["Companies", "Map"]);
-    expect(ws.closed().map((c) => c.id)).toEqual(before.filter((id) => id !== "companies"));
-    pick("Pdoomberg Wire");
-    expect(tabs().sort()).toEqual(["Companies", "Map", "Pdoomberg Wire"]);
+    expect(screen.getByText("page companies back 0")).toBeTruthy();
+    // Every retired pane maps to its page; other panels and other values pass through.
+    const panels = Object.fromEntries(
+      ["companies", "industries", "countries", "news", "map"].map((c) => [c, { contentComponent: c }]),
+    );
+    const out = migrateLayout({ grid: {}, panels }) as {
+      panels: Record<string, { contentComponent: string; params?: { history?: unknown } }>;
+    };
+    for (const k of ["companies", "industries", "countries", "news"]) {
+      expect(out.panels[k]?.contentComponent).toBe("page");
+      expect(historyFromSaved(out.panels[k]?.params?.history)?.current).toEqual({ kind: k });
+    }
+    expect(out.panels.map).toEqual({ contentComponent: "map" });
+    expect(migrateLayout(null)).toBeNull();
   });
 
   it("restarts from the map when the saved layout has no panes", () => {

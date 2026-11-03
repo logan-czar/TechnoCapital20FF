@@ -2,22 +2,16 @@
 // (`kind`), so opening it twice focuses the first. Pages open in page panes (pages/PagePane.tsx),
 // each with its own history; `openPage` routes a page to the focused page pane or a new one
 // (D450: click opens in the focused pane, Shift+click or middle click in a new pane). A closed pane
-// goes on the closed list, so the Panes menu and Alt+Shift+R can bring it back (D979).
+// goes on the closed list, so the Panes menu and Alt+Shift+R can bring it back (D979). The
+// Companies, Industries, Countries and Pdoomberg Wire panes were retired for their list pages
+// (D1014): the Panes menu opens those pages, and a saved layout's retired pane becomes a page pane.
 
 import { createContext, useContext } from "react";
 import type { OpenTarget } from "../links/nav.ts";
 import { historyFromSaved } from "../pages/history.ts";
 import { type PageRef, pageId } from "../pages/ref.ts";
 
-export type PaneKind =
-  | "map"
-  | "companies"
-  | "chart"
-  | "news"
-  | "industries"
-  | "countries"
-  | "alerts"
-  | "page";
+export type PaneKind = "map" | "chart" | "alerts" | "page";
 
 export interface PaneSpec {
   id: string;
@@ -29,13 +23,25 @@ export interface PaneSpec {
 /** The fixed panes, as the command bar and the Panes menu list them. */
 export const FIXED_PANES: readonly PaneSpec[] = [
   { id: "map", kind: "map", title: "Map" },
-  { id: "companies", kind: "companies", title: "Companies" },
   { id: "chart", kind: "chart", title: "Price chart" },
-  { id: "news", kind: "news", title: "Pdoomberg Wire" },
-  { id: "industries", kind: "industries", title: "Industries" },
-  { id: "countries", kind: "countries", title: "Countries" },
   { id: "alerts", kind: "alerts", title: "Alerts" },
 ];
+
+/** The list pages the Panes menu opens, where the retired panes were (D1014). */
+export const MENU_PAGES: readonly PageRef[] = [
+  { kind: "companies" },
+  { kind: "industries" },
+  { kind: "countries" },
+  { kind: "news" },
+];
+
+/** Each retired pane's component name in a saved layout, and the page that replaces it (D1014). */
+export const RETIRED_PANES: Readonly<Record<string, PageRef>> = {
+  companies: { kind: "companies" },
+  industries: { kind: "industries" },
+  countries: { kind: "countries" },
+  news: { kind: "news" },
+};
 
 /** Closed panes kept for reopening (D979). */
 export const MAX_CLOSED = 10;
@@ -66,6 +72,8 @@ export interface WorkspaceControl {
   open: (spec: PaneSpec) => void;
   /** Opens a page: "focused" in the focused page pane (or one showing it), "new" in a new pane. */
   openPage: (page: PageRef, target: OpenTarget) => void;
+  /** Focuses a page pane showing `page`, else opens it in a new pane (the Panes menu's pages). */
+  showPage: (page: PageRef) => void;
   /** True while the pane with this id is open. */
   isOpen: (id: string) => boolean;
   /** The panes closed and not open again, most recent first. */
@@ -85,6 +93,7 @@ export interface WorkspaceControl {
 const NONE: WorkspaceControl = {
   open: () => {},
   openPage: () => {},
+  showPage: () => {},
   isOpen: () => false,
   closed: () => [],
   reopen: () => {},

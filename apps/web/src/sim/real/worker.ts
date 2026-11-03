@@ -78,7 +78,8 @@ const scope = self as unknown as {
 };
 const loop = new WorkerLoop({
   post: (m) => scope.postMessage(m),
-  load: async () => new RealHost(await loadData(), { waitForFrameDone: true }),
+  // The dev server's sim is a debug sim, so the top bar's Omniscient toggle works there (D1014).
+  load: async () => new RealHost(await loadData(), { waitForFrameDone: true, debug: import.meta.env.DEV }),
   now: () => performance.now(),
   setInterval: (fn, ms) => setInterval(fn, ms),
   clearInterval: (h) => clearInterval(h as ReturnType<typeof setInterval>),

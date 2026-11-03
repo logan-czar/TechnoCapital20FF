@@ -15,7 +15,7 @@ A cyberpunk grand strategy game: CK3-style corporate feudalism on a Wall Street 
 ## Rules
 
 - The MVP is read-only: the player watches; companies are run by the lite AI (mvp-spec section 6).
-- `sim` has no DOM and reads no wall clock. It is deterministic on one machine: seeded RNG, fixed iteration order (tables are arrays in id order; a `BTreeMap` port iterates `sortedEntries`), plain f64. Sim code never calls `Math.round`, `Math.random`, `Date` or `localeCompare`; Rust rounding, casts and float sorts go through `packages/sim/src/types/num.ts` (D952).
+- `sim` has no DOM and reads no wall clock. It is deterministic on one machine: seeded RNG, fixed iteration order (tables are arrays in id order; a `BTreeMap` port iterates `sortedEntries`), plain f64. Sim code never calls `Math.round`, `Math.random`, `Date` or `localeCompare`; Rust rounding, casts and float sorts go through `packages/sim/src/types/num.ts` (D952). Nor `Math.exp`, `Math.log`, `Math.log10`, `Math.sin` or `Math.cos`, which differ between Node and the browser: use `expF`, `logF`, `log10F`, `sinF`, `cosF` from `packages/sim/src/types/libm.ts` (D1015).
 - Data fields keep Rust's snake_case names; `Option` is `T | null`; enums are string or `kind` unions; ids are branded numbers (D952).
 - The UI reads only the views (spec 9): `apps/web` never imports `@tc20ff/sim/internal`.
 - Every formula cites its mvp-spec section in a comment. Tuning values come from the data tables or a named constant, not inline literals.

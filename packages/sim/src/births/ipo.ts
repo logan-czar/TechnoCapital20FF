@@ -13,6 +13,7 @@ import { quarterNext } from "../time/calendar.ts";
 import type { Quarter } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import type { CompanyId } from "../types/ids.ts";
+import { log10F } from "../types/libm.ts";
 import { clamp, minF, roundTiesEven, totalCmp, toU64Sat } from "../types/num.ts";
 import type { Ballot, VoteResult, VoterRole } from "../types/state/births.ts";
 import type { CompanyStatus, Rating } from "../types/state/finance.ts";
@@ -61,7 +62,7 @@ export const LISTING_SIZE_SLOPE = 0.2;
 export const LISTING_SIZE_MAX = 0.6;
 export function listingSizeBonus(ttm_revenue: number): number {
   if (ttm_revenue <= MIN_TTM_REVENUE_USD) return 0.0;
-  return minF(LISTING_SIZE_MAX, LISTING_SIZE_SLOPE * Math.log10(ttm_revenue / MIN_TTM_REVENUE_USD));
+  return minF(LISTING_SIZE_MAX, LISTING_SIZE_SLOPE * log10F(ttm_revenue / MIN_TTM_REVENUE_USD));
 }
 
 /** Spec 5.20.1 step 6: at most 3 listings world-wide a quarter (T). */

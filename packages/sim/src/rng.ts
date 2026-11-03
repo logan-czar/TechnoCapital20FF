@@ -18,6 +18,7 @@
 
 import type { DrawSource, Stream } from "./types/draws.ts";
 import { POISSON_MAX_MEAN, STREAM_COUNT, STREAM_NAME, STREAM_NUMBER, STREAM_VALUES } from "./types/draws.ts";
+import { cosF, expF, logF, sinF } from "./types/libm.ts";
 import { clamp, roundHalfAway, toI64Sat, toU32Sat } from "./types/num.ts";
 
 /** Rust `Stream::index`: the stream's number, the slot in per-stream state (D9). */
@@ -45,9 +46,9 @@ export function unitFromU32Pair(hi: number, lo: number): number {
 
 /** Box-Muller: two independent standard normals from `u1` in (0, 1] and `u2` in [0, 1). */
 export function boxMuller(u1: number, u2: number): [number, number] {
-  const r = Math.sqrt(-2.0 * Math.log(u1));
+  const r = Math.sqrt(-2.0 * logF(u1));
   const theta = TAU * u2;
-  return [r * Math.cos(theta), r * Math.sin(theta)];
+  return [r * cosF(theta), r * sinF(theta)];
 }
 
 /** Knuth's Poisson draw with `mean` (0 to POISSON_MAX_MEAN) from a uniform [0, 1) source. */
@@ -56,7 +57,7 @@ export function knuthPoisson(mean: number, uniform: () => number): number {
   if (!(mean >= 0 && mean <= POISSON_MAX_MEAN)) {
     throw new RangeError(`Poisson mean ${mean} outside 0 to ${POISSON_MAX_MEAN}`);
   }
-  const limit = Math.exp(-mean);
+  const limit = expF(-mean);
   let k = 0;
   let p = 1.0;
   for (;;) {
@@ -242,10 +243,10 @@ export function rngStreamsNormal(rng: RngStreams, stream: Stream): number {
   }
   const u1 = 1.0 - rngStreamsUniform(rng, stream); // (0, 1], so ln is finite
   const u2 = rngStreamsUniform(rng, stream);
-  const r = Math.sqrt(-2.0 * Math.log(u1));
+  const r = Math.sqrt(-2.0 * logF(u1));
   const theta = TAU * u2;
-  rng.spare[i] = r * Math.sin(theta);
-  return r * Math.cos(theta);
+  rng.spare[i] = r * sinF(theta);
+  return r * cosF(theta);
 }
 
 /** A Poisson count with `mean` (Knuth). */

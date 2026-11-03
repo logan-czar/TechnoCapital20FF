@@ -6,6 +6,7 @@ import type { WorldData } from "@tc20ff/sim-data";
 import { worldDataAllProvinces } from "@tc20ff/sim-data";
 import type { DrawSource } from "../types/draws.ts";
 import { ordinal, type ProvinceId, type UsStateId } from "../types/ids.ts";
+import { expF } from "../types/libm.ts";
 import { clamp, cmpStr } from "../types/num.ts";
 import type { EraIdeology, EraPolitics, EraUsState } from "../types/state/era.ts";
 import type { District, Ideology, Party, PoliticsState } from "../types/state/politics.ts";
@@ -152,7 +153,7 @@ export function driftYear(p: PoliticsState, era: EraPolitics, g: DrawSource): vo
     const row = era.states[i] as EraUsState;
     const d = (swing[row.region] as number) + g.normal("Politics") * STATE_DRIFT_SD_PTS;
     s.lean_pts += d;
-    row.population *= Math.exp(row.growth + g.normal("Politics") * POP_SHOCK_SD);
+    row.population *= expF(row.growth + g.normal("Politics") * POP_SHOCK_SD);
     s.weight = row.population;
     return d;
   });
