@@ -114,11 +114,40 @@ the gate passes.
    - the mapgen step in `tools/map-pipeline/`, replaced by the TopoJSON export.
 
    Keep `test/fixtures/rust-reference/`: it is the parity reference.
+
+   **Done (D1017, `build/ts6-delete-rust`):** all of it, and `.cargo/`. The TopoJSON export replaced only
+   the drawing: the sim still reads mapgen's tables, so mapgen is ported to `apps/mapgen` (TypeScript),
+   whose tables match the Rust tool's byte for byte and its bitmaps pixel for pixel.
 7. **Docs:**
    - update CLAUDE.md (no Rust; the gate is `check-ts`);
    - update build-plan section 2 through a docs PR or `scripts/sync-design.sh`, per design-fixes row 950;
    - update the memory notes, which still describe Rust lane slots, warm `target/` and `check.ps1`.
+
+   **Done (D1017):** CLAUDE.md, README.md and the map pipeline's README; a note atop `release.md`,
+   `soak.md`, `ts-lane-rules.md` and the Rust reference's README; the memory notes. Build-plan section 2
+   is design prose, so it is design-fixes row 1017 for Logan.
 8. **Final Opus review** of the whole port against [mvp-signoff.md](mvp-signoff.md).
+
+   **Done (D1017):** [ts-port-review.md](ts-port-review.md). Of the 268 sign-off rows, 209 hold, 35 are
+   obsolete (Bevy, the Rust build), 6 still need Logan, 5 were changed on purpose by D989, and 13 are gaps.
+   The sim port is faithful: every numeric constant matches the Rust except four logged ones. The gate on
+   this branch: 186 test files, 1,055 tests, about 7 minutes. The gaps, still open:
+   - **Parity fails for today's code (D1018).** The committed TS soak (`test/fixtures/ts-soak/`) ran
+     before D973, D974 and D989, and the gate never compares a TS soak with the reference (its parity
+     test checks the Rust reference against itself). `parity.ts` now skips what D989 retired, and a new
+     50-seed, 30-year soak of the 2020 world fails: 16 of 17 targets MET (`listings_30y` at 92% of
+     seeds) and 635 of 1,470 yearly bands out, from 2020 on (profitable share 0.94 to 0.85, distressed
+     1 to 8). Traced: Logan's D974 (most of it: the 2020 world starts at productivity about 99.3, so
+     nearly every company gets the doubled low-productivity R&D adjustment in year one), then D973 and
+     D989. **Done (D1019):** Logan accepted it; that soak is the new parity baseline
+     (`test/fixtures/ts-soak/`), and `--reference test/fixtures/rust-reference` still compares with Rust.
+   - **The map draws only the Political mode:** no other modes or legends, pins, labels, hover card,
+     tiny-province click targets or W A S D / Q E keys (D640, D700, D702 to D706). The sim side of the
+     modes is ported (`v_map_layers`).
+   - **D635:** page windows were to float over the map; the TS has a tiling workspace with the map as a
+     pane, and no decision logs the change. Logan's call.
+   - **Speed at max:** the map's frame rate while panning is unmeasured (4.3).
+   - **D151's yearly tracking floor** is 96% in TS (D974), 97% in the Rust.
 
 **Done when:** no Rust is left in the repo, the gate passes, the soak and parity still pass, and the
 sign-off list is checked in TS.

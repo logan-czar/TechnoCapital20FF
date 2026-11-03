@@ -1,5 +1,7 @@
 # Release builds (build-plan M10.8)
 
+> **Rust-era doc.** The Rust workspace was deleted in D1017, so nothing here builds any more; it records how the MVP's Bevy binaries were built and checked. The game is now the TypeScript web app (`corepack pnpm@10.20.0 --filter @tc20ff/web build`), and the gate is `scripts/check-ts.ps1` or `scripts/check-ts.sh`.
+
 The two binaries are the desktop game (`game`, Bevy) and the headless runner (`headless`: the data check, the soak and its checker, profiling, record and replay). Both are plain Cargo release builds of this workspace; there is no installer or packaging step in the MVP.
 
 ## Build

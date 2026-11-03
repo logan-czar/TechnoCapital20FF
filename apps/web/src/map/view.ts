@@ -1,4 +1,4 @@
-// Map frame and camera limits. The frame matches the Rust bitmap (crates/mapgen/src/miller.rs):
+// Map frame and camera limits. The frame matches mapgen's bitmap (apps/mapgen/src/miller.ts):
 // Miller units with x = longitude in radians (so 2 pi wide), a 2:1 frame topped at LAT_MAX_DEG.
 // Pure maths, tested in node.
 
@@ -6,7 +6,7 @@ export const LAT_MAX_DEG = 84;
 export const FRAME_WIDTH = 2 * Math.PI;
 export const FRAME_HEIGHT = Math.PI;
 
-/** Miller y for a latitude in degrees (crates/mapgen/src/miller.rs `miller_y`). */
+/** Miller y for a latitude in degrees (apps/mapgen/src/miller.ts `millerY`). */
 export function millerY(latDeg: number): number {
   return 1.25 * Math.log(Math.tan(Math.PI / 4 + 0.4 * ((latDeg * Math.PI) / 180)));
 }
@@ -67,7 +67,7 @@ export function clampView(view: MapViewState, width: number, height: number): Ma
   return { zoom, target: [wrapX(view.target[0]), y, 0] };
 }
 
-/** The pixels of the Rust 8192 x 4096 bitmap frame (province-centroids.csv columns) as Miller units. */
+/** The pixels of mapgen's 8192 x 4096 bitmap frame (province-centroids.csv columns) as Miller units. */
 export const BITMAP_WIDTH = 8192;
 export function pxToMiller(x: number, y: number): [number, number] {
   const perPx = FRAME_WIDTH / BITMAP_WIDTH;

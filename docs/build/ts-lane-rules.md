@@ -1,5 +1,7 @@
 # TS port: rules for builder, tester and orchestrator lanes
 
+> **Done.** The port is finished and the Rust code was deleted (D1017). `crates/...` paths here and in the TypeScript's comments name the last tree that had them (main 334ee6d).
+
 _The working rules every agent lane follows (docs/build/ts-migration-plan.md, "Implementation plan"). Written for Step 1, extended for Step 2._
 
 The game's deterministic economic sim is being ported from Rust (`crates/`) to TypeScript (a pnpm workspace). Before starting, read these:

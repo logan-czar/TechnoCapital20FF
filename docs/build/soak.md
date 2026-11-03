@@ -1,5 +1,7 @@
 # The 30-year soak and the target checker
 
+> **Rust-era paths.** The rules and targets below still hold, but the Rust code was deleted in D1017: the runner is now `apps/headless` (`corepack pnpm@10.20.0 --filter @tc20ff/headless start soak ...`; `headless` with no arguments prints the usage), with the same file names under `src/`. `crates/...` paths name the last tree that had them (main 334ee6d).
+
 Build-plan M10.1 to M10.3 and 4.4: the headless runner plays many seeds from the 2020 start state through the public `Sim` API and `SimViews` only (spec 9), writes one row per seed per year and per seed per quarter, and a checker marks every spec 10 target per seed. Code: `crates/headless/src/metrics.rs` (the rows), `soak.rs` (the runner), `targets.rs` (the checker). Choices where spec 10 is ambiguous are D320 to D334 in [decisions.md](decisions.md).
 
 ## Running it

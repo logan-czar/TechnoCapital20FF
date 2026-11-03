@@ -1,0 +1,11 @@
+{
+  "name": "@tc20ff/mapgen",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Offline tool: the province-ID bitmaps, centroids, adjacency and borders of assets/map from provinces.geojson (build-plan P7, D1017). Run by tools/map-pipeline; never shipped with the game.",
+  "type": "module",
+  "scripts": {
+    "start": "node src/main.ts",
+    "test": "vitest run"
+  }
+}

@@ -1,8 +1,9 @@
-// Builds test/fixtures/rust-reference/bands.json from the Rust soak's years.csv (D951): for each
-// year and each numeric metric, the p10, p50 and p90 across seeds. The TS parity gate (plan Step 4)
-// checks that each TS yearly median lands inside the Rust p10..p90 band.
+// Builds a soak directory's bands.json from its years.csv (D951): for each year and each numeric
+// metric, the p10, p50 and p90 across seeds. The parity gate checks that each yearly median of a new
+// soak lands inside its reference's p10..p90 band. Written first for the Rust reference; since D1019
+// the default reference is the TS baseline soak, test/fixtures/ts-soak/.
 //
-//   node scripts/ts/rust-reference-bands.ts [test/fixtures/rust-reference]
+//   node scripts/ts/rust-reference-bands.ts [test/fixtures/rust-reference] [--source "what ran it"]
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -20,7 +21,13 @@ function quantile(sorted: number[], q: number): number {
   return a + (b - a) * (pos - lo);
 }
 
-const dir = process.argv[2] ?? "test/fixtures/rust-reference";
+const args = process.argv.slice(2);
+const sourceAt = args.indexOf("--source");
+const source =
+  sourceAt >= 0
+    ? (args.splice(sourceAt, 2)[1] ?? "")
+    : "Rust headless soak, main 17349f3 (2026-10-24), `headless soak --check`, default seeds and years";
+const dir = args[0] ?? "test/fixtures/rust-reference";
 const lines = readFileSync(join(dir, "years.csv"), "utf8").trim().split(/\r?\n/);
 const header = (lines[0] ?? "").split(",");
 const rows = lines.slice(1).map((l) => l.split(","));
@@ -52,7 +59,7 @@ for (const [year, yr] of [...byYear.entries()].sort((a, b) => Number(a[0]) - Num
 
 const seeds = new Set(rows.map((r) => r[seedCol])).size;
 const bands = {
-  source: "Rust headless soak, main 17349f3 (2026-10-24), `headless soak --check`, default seeds and years",
+  source,
   seeds,
   quantiles: ["p10", "p50", "p90"],
   years,

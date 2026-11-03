@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Export the starting run rate of the 651 companies with their starting ratings and synthetic Q4 2019
-statements, as a golden fixture for the Rust finance formulas (build-plan M4.2, M4.4, M4.5; lane F, F4).
+statements, as a golden fixture for the finance formulas (build-plan M4.2, M4.4, M4.5; lane F, F4).
 
     python3 export_finance_fixtures.py [design/data dir] [output dir]
 
@@ -36,7 +36,7 @@ import validate  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_DATA = os.path.normpath(os.path.join(HERE, '..', '..', 'data'))
-DEFAULT_OUT = os.path.normpath(os.path.join(HERE, '..', '..', '..', '..', 'crates', 'sim', 'tests', 'fixtures'))
+DEFAULT_OUT = os.path.normpath(os.path.join(HERE, '..', '..', '..', '..', 'packages', 'sim', 'test', 'fixtures'))
 
 # The 5.12 rating and limit at load live in validate.py, shared with gen.py, which sizes the starting lines
 # to the 5.12 limit with them (D15, D16).

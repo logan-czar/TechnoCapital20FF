@@ -3,7 +3,7 @@
 The Rust game drew a province-ID bitmap rasterized by mapgen; the TypeScript game draws the province
 polygons with deck.gl instead. This step reads the simplified WGS84 shapes (simplify step), projects
 them to Miller in mapgen's frame units (radians: x = lon, y = 1.25 ln tan(pi/4 + 0.4 lat), see
-crates/mapgen/src/miller.rs), keeps only `province_id` and writes `assets/map/provinces.topo.json`.
+apps/mapgen/src/miller.ts), keeps only `province_id` and writes `assets/map/provinces.topo.json`.
 mapshaper keeps the shared arcs, so neighbours stay gap-free and country borders are a mesh.
 
 The north edge is cut at LAT_MAX_DEG (D600) so the frame matches mapgen's; nothing is cut in the south

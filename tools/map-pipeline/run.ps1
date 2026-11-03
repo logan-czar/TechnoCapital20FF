@@ -1,7 +1,7 @@
 # Runs the province map pipeline (build-plan track P) end to end for one region file, or all of them.
 #   tools/map-pipeline/run.ps1                        # every region file (all), every step
 #   tools/map-pipeline/run.ps1 -Region europe -Steps crosswalk,shapes,simplify,mapgen,qa
-# Needs uv and Node (npm) on PATH, and cargo for the mapgen step. See README.md.
+# Needs uv and Node (npm) on PATH. See README.md.
 param(
     [string]$Region = "all",
     [string]$Steps = ""

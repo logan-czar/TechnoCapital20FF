@@ -1,6 +1,6 @@
 # TechnoCapital20FF
 
-A cyberpunk grand strategy game: CK3-style corporate feudalism on a Wall Street Raider economy. The MVP was built in Rust with Bevy; it is being ported to TypeScript in the browser (D950, [docs/build/ts-migration-plan.md](docs/build/ts-migration-plan.md)). New work goes into the TypeScript workspace; the Rust crates are a frozen reference until the parity gate (D951) passes, then they are deleted.
+A cyberpunk grand strategy game: CK3-style corporate feudalism on a Wall Street Raider economy. The MVP was built in Rust with Bevy, then ported to TypeScript in the browser (D950, [docs/build/ts-migration-plan.md](docs/build/ts-migration-plan.md)). The port passed its parity gate (D951) on main 22f77f3; Logan's later R&D rulings moved the 2020 world (D1018), so parity now compares with a TS baseline soak, `test/fixtures/ts-soak/` (D1019); the Rust code is deleted (D1017); `crates/...` paths in comments and docs name the last tree that had them (main 334ee6d). `test/fixtures/rust-reference/` keeps the Rust soak as the parity reference.
 
 ## Where things live
 
@@ -9,8 +9,7 @@ A cyberpunk grand strategy game: CK3-style corporate feudalism on a Wall Street 
 - `docs/design/data/`: the 2020 world's CSVs, played with `?world=2020` in the web app and `--world 2020` in headless until that world is retired. `docs/design/tools/mvp-data/` generates and validates them (`python3 gen.py && python3 validate.py`).
 - `scripts/sync-design.sh [folder]`: refreshes `docs/design/` from a design folder (default `/mnt/project-files/design`, the cloud container's) and runs both data checkers. On Logan's PC, main's `docs/design` is the source.
 - `docs/build/decisions.md`: choices made where the spec is silent or ambiguous (pick, log, keep going); each names its constant. `docs/build/design-fixes.md`: prose errors for Logan.
-- TypeScript code: one pnpm workspace at the repo root: `packages/sim-data`, `packages/sim` (contracts in `packages/sim/src/types/`), `apps/web`, `apps/headless`. Run pnpm through corepack (`corepack pnpm@10.20.0 ...`) if it is not on PATH.
-- Rust code (frozen reference): one Cargo workspace with the crates `sim`, `sim-data`, `game`, `headless` and `mapgen` (build-plan section 2). Port from it; do not change it, except to export reference data.
+- Code: one pnpm workspace at the repo root: `packages/sim-data`, `packages/sim` (contracts in `packages/sim/src/types/`), `apps/web`, `apps/headless`, and `apps/mapgen` (the offline map rasterizer `tools/map-pipeline` runs; never shipped). Run pnpm through corepack (`corepack pnpm@10.20.0 ...`) if it is not on PATH. Build-plan section 2 still describes the Rust crates (design-fixes row 1017).
 
 ## Rules
 
@@ -20,7 +19,7 @@ A cyberpunk grand strategy game: CK3-style corporate feudalism on a Wall Street 
 - The UI reads only the views (spec 9): `apps/web` never imports `@tc20ff/sim/internal`.
 - Every formula cites its mvp-spec section in a comment. Tuning values come from the data tables or a named constant, not inline literals.
 - Money is f64 USD (CSV $M, $bn and bps converted once at load); share counts are u64. Ties with no spec rule go to the lower id.
-- There is no CI. Before a TypeScript PR, run the local gate: `scripts/check-ts.sh` or `scripts/check-ts.ps1` (typecheck, Biome, Vitest, sim boundary scan, validate.py). The Rust gate (`scripts/check.ps1` / `check.sh`) is needed only for a PR that touches `crates/`.
+- There is no CI. Before a PR, run the local gate: `scripts/check-ts.sh` or `scripts/check-ts.ps1` (typecheck, Biome, sim boundary scan, Vitest, both worlds' data checks).
 
 ## Git
 
