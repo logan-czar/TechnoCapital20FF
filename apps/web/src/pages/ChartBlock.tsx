@@ -17,8 +17,7 @@ import {
   type UTCTimestamp,
 } from "lightweight-charts";
 import { useEffect, useRef } from "react";
-import { money, percent, price } from "../widgets/cells.ts";
-import type { ChartModel, SeriesTone, Tone, ValueFormat } from "./doc.ts";
+import { type ChartModel, chartValueText, type SeriesTone, type Tone } from "./doc.ts";
 
 /**
  * The theme palette (styles.css), for the canvas, and the series colors: cyan, amber, magenta, green
@@ -52,19 +51,6 @@ const SCALE = 1e6;
 
 /** The height a chart block takes (doc.rs CHART_HEIGHT). */
 export const CHART_HEIGHT = 230;
-
-function formatValue(f: ValueFormat, v: number): string {
-  switch (f) {
-    case "Price":
-      return price(v);
-    case "Money":
-      return money(v);
-    case "Percent":
-      return percent(v);
-    case "Number":
-      return v.toFixed(2);
-  }
-}
 
 const slotTime = (i: number): Time => ((i + 1) * DAY) as UTCTimestamp;
 
@@ -167,7 +153,7 @@ function draw(c: IChartApi, m: ChartModel): void {
       lineStyle: LineStyle.Dotted,
     });
   }
-  const priceFormatter = (v: number) => formatValue(m.format, v * k);
+  const priceFormatter = (v: number) => chartValueText(m.format, v * k);
   if (!dated) {
     // Slot labels on the axis and in the readout.
     const label = (t: Time) => m.labels[Math.round(Number(t) / DAY) - 1] ?? "";

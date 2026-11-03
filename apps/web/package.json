@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "bench:pages": "vitest run --config vitest.bench.config.ts"
   },
   "dependencies": {
     "@deck.gl/core": "9.4.0",
