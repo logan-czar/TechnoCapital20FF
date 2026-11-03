@@ -1,5 +1,7 @@
 # TS port: remaining work (as of 2026-10-25)
 
+> **The port is done (TS Step 6 merged as #116 to #119, 2026-11-03).** What is left now, in order, is [resume-plan.md](resume-plan.md); this page stays as the record.
+
 What is left of the Rust → TypeScript port ([ts-migration-plan.md](ts-migration-plan.md)) after
 Steps 0–3 and the perf pass. Each item says what done looks like. Lane rules:
 [ts-lane-rules.md](ts-lane-rules.md). On Logan's PC, run at most two agents at a time and one gate or
