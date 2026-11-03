@@ -1,5 +1,7 @@
-// `headless parity <dir>` (D951, ts-migration-plan Step 4): compares a TS soak directory with the
-// Rust reference in test/fixtures/rust-reference/. The gate:
+// `headless parity <dir>` (D951, ts-migration-plan Step 4): compares a TS soak directory with a
+// reference soak. Since D1019 the default reference is the TS baseline, test/fixtures/ts-soak/ (the
+// 2020 world after Logan's D973, D974 and D989); `--reference test/fixtures/rust-reference` compares
+// with the frozen Rust soak instead. "Rust" below means the reference. The gate:
 //
 // - every spec 10 target `summary.csv` marks MET in the Rust reference is MET in the TS soak;
 // - the TS soak has at least as many distinct seeds as the Rust reference (`bands.seeds`, 50) and
@@ -223,7 +225,7 @@ export function parityCheck(input: {
         year: null,
         value: got ?? "missing",
         band: null,
-        message: `target ${id}: Rust MET, TS ${got ?? "missing"}`,
+        message: `target ${id}: reference MET, soak ${got ?? "missing"}`,
       });
     }
   }
@@ -279,7 +281,7 @@ export function parityCheck(input: {
           year,
           value: m,
           band: b,
-          message: `${metric} ${year}: TS median ${m} outside Rust ${fmtBand(b)}`,
+          message: `${metric} ${year}: soak median ${m} outside reference ${fmtBand(b)}`,
         });
       }
     }
@@ -305,7 +307,7 @@ export function formatParity(r: ParityReport): string[] {
   for (const f of r.failures) lines.push(`FAIL ${f.message}`);
   if (r.retired.length > 0) lines.push(`skipped as retired: ${r.retired.join(", ")}`);
   lines.push(
-    `${r.targets_checked} Rust-MET targets and ${r.metrics_checked} yearly metric bands checked: ${r.failures.length} failure(s)`,
+    `${r.targets_checked} reference-MET targets and ${r.metrics_checked} yearly metric bands checked: ${r.failures.length} failure(s)`,
   );
   lines.push(
     r.max_shares_out === null
@@ -316,13 +318,16 @@ export function formatParity(r: ParityReport): string[] {
   return lines;
 }
 
-/** Where the Rust reference lives, relative to the repository root. */
+/** Where the frozen Rust reference lives, relative to the repository root. */
 export const RUST_REFERENCE_DIR = "test/fixtures/rust-reference";
+
+/** The default reference since D1019: the TS baseline soak of the 2020 world. */
+export const TS_REFERENCE_DIR = "test/fixtures/ts-soak";
 
 /** `headless parity <dir> [--reference DIR]`: reads the files, prints the report. Returns the exit code. */
 export function parityCommand(args: string[], root = repoRoot()): number {
   let dir: string | null = null;
-  let ref = join(root, RUST_REFERENCE_DIR);
+  let ref = join(root, TS_REFERENCE_DIR);
   for (let i = 0; i < args.length; i++) {
     const a = args[i] as string;
     if (a === "--reference") {

@@ -43,7 +43,7 @@ New calls for Logan since the doc: the default economy profile (`legacy`; D970 s
 - D989 dropped two soak targets (`full_characters_per_decade`, `full_characters_2050`) and four yearly columns (`full_characters`, `full_characters_made`, `cast_full_min`, `cast_full_max`). The frozen reference still has them: `rust-reference/summary.csv` marks both targets MET, and `bands.json` holds the four columns for 30 years (120 bands). `apps/headless/src/parity.ts:185-198` fails any Rust-MET target the TS soak lacks, and `:229-238` fails any band with no TS value. A fresh soak at the tip would report 2 target and 120 missing-band failures.
 - CLAUDE.md says "The port passed its parity gate (D951)", and ts-remaining-work 4 says done needs "the soak and parity still pass". Neither is shown for the current code.
 - **Fix:** give `parity.ts` a logged list of the targets and columns retired by D989, then run the 50-seed, 30-year soak of the 2020 world at the tip and commit it as the new `test/fixtures/ts-soak/`.
-- **Done since (D1018):** `parity.ts` skips the D989 retirements, and the soak at the tip **fails** parity: 16 of 17 targets MET (`listings_30y` at 92%), 635 of 1,470 yearly bands out from 2020 on. The 2020 world's company results moved after 22f77f3; the cause is not traced yet.
+- **Done since (D1018):** `parity.ts` skips the D989 retirements, and the soak at the tip **fails** parity: 16 of 17 targets MET (`listings_30y` at 92%), 635 of 1,470 yearly bands out from 2020 on. Traced to Logan's D974 (most of it), D973 and D989 (D1018). Logan accepted it, and that soak is the new parity baseline (D1019).
 
 ### G2. The map is Political only (high, UI)
 

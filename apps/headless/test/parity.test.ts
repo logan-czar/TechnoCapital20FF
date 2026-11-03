@@ -216,6 +216,22 @@ describe("headless parity", () => {
     expect(r.targets_checked).toBe(17);
   });
 
+  it("the_ts_baseline_passes_its_own_gate", () => {
+    // D1019: the 2020 soak after D973, D974 and D989 is the default reference. It meets 16 of the 17
+    // targets Rust met (listings_30y is NOT MET, accepted with D974), so parity requires those 16.
+    const dir = join(import.meta.dirname, "..", "..", "..", "test", "fixtures", "ts-soak");
+    const read = (n: string): string => readFileSync(join(dir, n), "utf8");
+    const r = parityCheck({
+      tsYears: read("years.csv"),
+      tsSummary: read("summary.csv"),
+      bands: JSON.parse(read("bands.json")) as Bands,
+      rustSummary: read("summary.csv"),
+    });
+    expect(r.failures).toEqual([]);
+    expect(r.targets_checked).toBe(16);
+    expect(r.retired).toEqual([]);
+  });
+
   it("retired_targets_and_columns_are_skipped_and_named", () => {
     // A TS soak with neither target c nor column named passes when D989-style retirement covers both.
     const noNamed = goodYears
@@ -257,11 +273,13 @@ describe("headless parity", () => {
 
   it("the_command_finds_the_reference_from_any_directory", () => {
     // pnpm --filter @tc20ff/headless start parity <dir> runs in apps/headless: the soak dir is the
-    // user's (INIT_CWD), the reference is the repository's.
+    // user's (INIT_CWD), the reference is the repository's (the TS baseline by default, D1019).
     const saved = process.env.INIT_CWD;
     process.env.INIT_CWD = join(import.meta.dirname, "..");
     try {
-      expect(parityCommand([join("..", "..", "test", "fixtures", "rust-reference")])).toBe(0);
+      expect(parityCommand([join("..", "..", "test", "fixtures", "ts-soak")])).toBe(0);
+      const rust = join("..", "..", "test", "fixtures", "rust-reference");
+      expect(parityCommand([rust, "--reference", rust])).toBe(0);
     } finally {
       if (saved === undefined) delete process.env.INIT_CWD;
       else process.env.INIT_CWD = saved;

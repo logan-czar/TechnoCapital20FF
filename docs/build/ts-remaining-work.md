@@ -137,8 +137,10 @@ the gate passes.
      test checks the Rust reference against itself). `parity.ts` now skips what D989 retired, and a new
      50-seed, 30-year soak of the 2020 world fails: 16 of 17 targets MET (`listings_30y` at 92% of
      seeds) and 635 of 1,470 yearly bands out, from 2020 on (profitable share 0.94 to 0.85, distressed
-     1 to 8). The 2020 world's company results moved after 22f77f3; next is to find which change moved
-     them, then for Logan to accept the new behaviour (and re-baseline) or fix it.
+     1 to 8). Traced: Logan's D974 (most of it: the 2020 world starts at productivity about 99.3, so
+     nearly every company gets the doubled low-productivity R&D adjustment in year one), then D973 and
+     D989. **Done (D1019):** Logan accepted it; that soak is the new parity baseline
+     (`test/fixtures/ts-soak/`), and `--reference test/fixtures/rust-reference` still compares with Rust.
    - **The map draws only the Political mode:** no other modes or legends, pins, labels, hover card,
      tiny-province click targets or W A S D / Q E keys (D640, D700, D702 to D706). The sim side of the
      modes is ported (`v_map_layers`).

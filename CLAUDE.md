@@ -1,6 +1,6 @@
 # TechnoCapital20FF
 
-A cyberpunk grand strategy game: CK3-style corporate feudalism on a Wall Street Raider economy. The MVP was built in Rust with Bevy, then ported to TypeScript in the browser (D950, [docs/build/ts-migration-plan.md](docs/build/ts-migration-plan.md)). The port passed its parity gate (D951) on main 22f77f3, but the 2020 world has drifted since and fails it today (D1018, not yet traced); the Rust code is deleted (D1017); `crates/...` paths in comments and docs name the last tree that had them (main 334ee6d). `test/fixtures/rust-reference/` keeps the Rust soak as the parity reference.
+A cyberpunk grand strategy game: CK3-style corporate feudalism on a Wall Street Raider economy. The MVP was built in Rust with Bevy, then ported to TypeScript in the browser (D950, [docs/build/ts-migration-plan.md](docs/build/ts-migration-plan.md)). The port passed its parity gate (D951) on main 22f77f3; Logan's later R&D rulings moved the 2020 world (D1018), so parity now compares with a TS baseline soak, `test/fixtures/ts-soak/` (D1019); the Rust code is deleted (D1017); `crates/...` paths in comments and docs name the last tree that had them (main 334ee6d). `test/fixtures/rust-reference/` keeps the Rust soak as the parity reference.
 
 ## Where things live
 

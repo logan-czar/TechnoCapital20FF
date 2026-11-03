@@ -1,6 +1,6 @@
 # Rust reference soak (D951)
 
-> **Frozen.** The Rust code was deleted in D1017 (its last tree is main 334ee6d), so this snapshot can no longer be regenerated; it stays as the parity reference.
+> **Frozen.** The Rust code was deleted in D1017 (its last tree is main 334ee6d), so this snapshot can no longer be regenerated. Since D1019 it is history: parity compares with the TS baseline in `test/fixtures/ts-soak/` by default, and with this soak only through `headless parity <dir> --reference test/fixtures/rust-reference`.
 
 The parity oracle for the TypeScript port (docs/build/ts-migration-plan.md, Step 4). Written by the
 Rust headless runner on main 17349f3 (2026-10-24), the last Rust build:
