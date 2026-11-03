@@ -161,6 +161,7 @@ export const pages = [
     // zone.rs rebuilt on the monthly views and followed the daily ones with live values and a
     // live chart; here the page lists v_zones and v_exchanges (daily) so the chart follows.
     views: ["countries", "rates", "province_cards", "zones", "exchanges"],
+    slices: (page) => [{ view: "exchanges", zone: page.id }],
     sections: SECTIONS,
     doc: (page, v, index) => zoneDoc(page.id, v, index),
   }),

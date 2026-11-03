@@ -23,6 +23,8 @@ export class SimHost {
   handle(msg: ToSim): FromSim[] {
     switch (msg.kind) {
       case "FrameDone":
+      // The mock posts every view whole (D1016 applies to the real sim only).
+      case "Want":
         return [];
       case "NewGame": {
         this.sim = new MockSim(this.world, msg.seed);

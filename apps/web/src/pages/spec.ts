@@ -2,7 +2,7 @@
 // how it is drawn. Page files (./kinds/*.tsx) import this file, never registry.ts (which imports
 // them), so a test can load one page file alone.
 
-import type { ViewName } from "@tc20ff/sim";
+import type { SliceKey, ViewName } from "@tc20ff/sim";
 import type { ComponentType } from "react";
 import type { UiConfig } from "../config/settings.ts";
 import type { NameIndex } from "../links/names.ts";
@@ -28,6 +28,11 @@ export interface PageSpec<K extends PageKind = PageKind> {
    * Refresh::OnViewChange; the settings it reads re-render it too, Refresh::OnConfigChange).
    */
   views: readonly ViewName[];
+  /**
+   * The heavy views' slices the page reads (D1016): the worker posts v_statements, v_recap and
+   * v_exchanges light, and these parts on demand; they are merged back into `views`.
+   */
+  slices?: (page: PageOf<K>) => SliceKey[];
   /** Its sections in default order (D460); the player reorders, folds and hides them. */
   sections: readonly SectionSpec[];
   /** A tab strip over the sections: one shown at a time (D481). */

@@ -54,6 +54,9 @@ export class SimClient {
     });
     transport.onMessage((m) => this.receive(m));
     transport.onFailure((message) => this.fail(message));
+    // The worker posts only what the UI reads (D1016).
+    this.store.onWant = (views, slices) => transport.send({ kind: "Want", views, slices });
+    this.store.resendWant();
   }
 
   private receive(m: FromSim): void {

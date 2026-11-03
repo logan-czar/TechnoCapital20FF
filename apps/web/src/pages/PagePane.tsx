@@ -28,7 +28,7 @@ import { PendingPage } from "./PendingPage.tsx";
 import { kindTag, type PageRef, pageId } from "./ref.ts";
 import { pageSpecOf } from "./registry.ts";
 import type { AnyPageSpec } from "./spec.ts";
-import { usePageViews } from "./views.ts";
+import { mergeSlices, usePageSlices, usePageViews } from "./views.ts";
 
 /** The open budget per page, in ms (ts-migration-plan Step 5: each screen < 100 ms). */
 export const PAGE_BUDGET_MS = 100;
@@ -37,7 +37,10 @@ export const CRUMBS = 4;
 
 /** The body of a registered page: its views, its doc or component, its sections. */
 function RegisteredPage({ spec, page, index }: { spec: AnyPageSpec; page: PageRef; index: NameIndex }) {
-  const views = usePageViews(spec.views);
+  const pageViews = usePageViews(spec.views);
+  const keys = useMemo(() => spec.slices?.(page) ?? [], [spec, page]);
+  const slices = usePageSlices(keys);
+  const views = useMemo(() => mergeSlices(pageViews, slices), [pageViews, slices]);
   const config = useUiConfig();
   const doc = useMemo(() => {
     if (!spec.doc) return null;
