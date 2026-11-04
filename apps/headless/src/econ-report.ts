@@ -27,6 +27,7 @@ import {
   simNew,
   simSoakStats,
   simViews,
+  simWorld,
 } from "@tc20ff/sim/internal";
 import { defaultDataDir, loadWorld } from "@tc20ff/sim-data/node";
 
@@ -57,6 +58,23 @@ const ECONOMY_COLS = [
   "bust_inds",
   "glut_inds",
   "line_drawn_usd",
+  // The drift measures (D1025): concentration, productivity spread and the board-seat events (D1024).
+  "top10_share",
+  "prod_p10",
+  "prod_p50",
+  "prod_p90",
+  "prod_max",
+  "prod_at_cap_share",
+  "seat_ceo_ok",
+  "seat_ceo_fail",
+  "seat_cfo_ok",
+  "seat_cfo_fail",
+  "seat_cio_ok",
+  "seat_cio_fail",
+  "seat_cmo_ok",
+  "seat_cmo_fail",
+  "seat_coo_ok",
+  "seat_coo_fail",
 ];
 const INDUSTRY_COLS = [
   "year",
@@ -91,6 +109,43 @@ function median(xs: number[]): number {
 
 const r4 = (x: number): number => Number(x.toFixed(4));
 const pct = (x: number): number => Number((100 * x).toFixed(3));
+
+/** The unit productivity at or above this counts as at the cap (spec 5.6 clamp 200). */
+const AT_CAP = 199.5;
+/** The labor seats in `SEAT_LABOR` order, as the seat tally holds them (D1024). */
+const SEAT_COLS = ["ceo", "cfo", "cio", "cmo", "coo"] as const;
+
+/**
+ * The drift measures from the world (drift plan 4, section 10's long-run measures; D1025): the top
+ * 10 units' share of named revenue, the productivity spread of the live units, and the cumulative
+ * board-seat event tallies (D1024).
+ */
+function driftColumns(w: ReturnType<typeof simWorld>): Row {
+  const live = w.units.filter((u) => {
+    const st = w.companies[u.company]?.finance.distress.status;
+    return st !== undefined && st !== "Bankrupt" && st !== "Removed" && u.revenue_m > 0;
+  });
+  const rev = live.map((u) => u.revenue_m).sort((a, b) => b - a);
+  const total = rev.reduce((a, b) => a + b, 0);
+  const top10 = rev.slice(0, 10).reduce((a, b) => a + b, 0);
+  const prod = live.map((u) => u.productivity).sort((a, b) => a - b);
+  const at = (f: number): number => prod[Math.min(prod.length - 1, Math.floor(f * prod.length))] ?? 0;
+  const row: Row = {
+    top10_share: r4(total > 0 ? top10 / total : 0),
+    prod_p10: Number(at(0.1).toFixed(1)),
+    prod_p50: Number(at(0.5).toFixed(1)),
+    prod_p90: Number(at(0.9).toFixed(1)),
+    prod_max: Number((prod[prod.length - 1] ?? 0).toFixed(1)),
+    prod_at_cap_share: r4(prod.filter((p) => p >= AT_CAP).length / Math.max(prod.length, 1)),
+  };
+  // The seat events' running tallies (D1024), in labor seat order; absent without seat events.
+  const tally = (w as { seat_tally?: { ok: number[]; fail: number[] } }).seat_tally;
+  SEAT_COLS.forEach((seat, i) => {
+    row[`seat_${seat}_ok`] = tally?.ok[i] ?? 0;
+    row[`seat_${seat}_fail`] = tally?.fail[i] ?? 0;
+  });
+  return row;
+}
 
 /** One seed under one profile: the three tables. */
 export function runSeed(
@@ -162,6 +217,7 @@ export function runSeed(
       bust_inds: rows.filter((r) => r.phase_label === "Bust").length,
       glut_inds: rows.filter((r) => r.phase_label === "Glut").length,
       line_drawn_usd: Math.round(soak.line_drawn_usd),
+      ...driftColumns(simWorld(sim)),
     });
     rows.forEach((r, i) => {
       const mine = cs.filter((c) => c.industry === r.id);
