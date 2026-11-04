@@ -636,6 +636,11 @@ export interface EconomyProfile {
   cycle_scale: number;
   /** Drift plan (D978): multiplies the hourly price noise (1 = spec 5.14). */
   price_noise_scale: number;
+  /**
+   * Drift plan lane X (D1022, spec v1.5 5.12): a company exits after `EXIT_LOSS_QUARTERS` losing
+   * quarters or below `EXIT_ASSET_FLOOR_USD`, as in an era world (D996). False keeps spec 5.12.
+   */
+  exits: boolean;
   start_phase: CyclePhase;
   /** The four phase tables the global cycle draws from (spec 5.1). */
   phases: Record<CyclePhase, PhaseSpec>;
