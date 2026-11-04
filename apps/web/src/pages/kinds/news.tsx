@@ -87,6 +87,8 @@ export function kindOf(k: HeadlineKind): [string, Pick] {
       return ["Failed raise", 7];
     case "Chatbot":
       return ["Chatbot", 7];
+    case "SeatEvent":
+      return ["Board", 7];
     case "Politics":
       return ["Politics", 8];
     case "World":

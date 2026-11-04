@@ -33,6 +33,7 @@ import { MAX_SAFE_COUNT, roundHalfAway } from "./num.ts";
 import type { Archetype, LockedPlan } from "./state/ai.ts";
 import type { BirthsState, RunRate, VoteResult } from "./state/births.ts";
 import type { EraState } from "./state/era.ts";
+import type { SeatEffect, SeatTally } from "./state/events.ts";
 import type { BooksCheck, CompanyFinance, Rating } from "./state/finance.ts";
 import type { MarketState } from "./state/market.ts";
 import type { NewsWire } from "./state/news.ts";
@@ -129,6 +130,11 @@ export interface World {
    * 2020 world, and so out of its state hash.
    */
   era?: EraState;
+  /**
+   * The board-seat events so far (D1024): set by the first plan lock under a profile with
+   * `seat_events`, absent otherwise, and so out of a legacy world's state hash.
+   */
+  seat_tally?: SeatTally;
 }
 
 /**
@@ -413,6 +419,11 @@ export interface Company {
    */
   loss_quarters: number;
   /**
+   * The seat events still fading (D1024), oldest first. Absent until the company's first event, so
+   * a world that plays none hashes as before.
+   */
+  seat_effects?: SeatEffect[];
+  /**
    * The plan locked at the last plan lock (spec 3.5 `plan`, section 6); null before the first
    * lock (the plan at load is D283's, on the units).
    */
@@ -647,6 +658,11 @@ export interface EconomyProfile {
    * spec 5.6 and 5.9.
    */
   winners: boolean;
+  /**
+   * Drift plan lane W (D1024, spec v1.5 5.21): each quarter every open labor seat rolls an event
+   * against its skill, harder for bigger companies. False plays none.
+   */
+  seat_events: boolean;
   start_phase: CyclePhase;
   /** The four phase tables the global cycle draws from (spec 5.1). */
   phases: Record<CyclePhase, PhaseSpec>;

@@ -125,6 +125,7 @@ describe("registerJobs", () => {
     expect(names("CloseStatements")).toEqual(["finance.close", "ai.loss_quarters"]);
     expect(names("CloseTax")).toEqual([]);
     expect(names("ReleasePublish")).toEqual(["finance.removals", "news.removals"]);
-    expect(SLOT_VALUES.reduce((n, slot) => n + names(slot).length, 0)).toBe(58);
+    expect(names("LockAiPlans")).toEqual(["events.seats", "ai.plan_lock"]);
+    expect(SLOT_VALUES.reduce((n, slot) => n + names(slot).length, 0)).toBe(59);
   });
 });

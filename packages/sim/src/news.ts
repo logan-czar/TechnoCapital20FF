@@ -25,6 +25,7 @@ import type { RaiseMethod } from "./types/state/ai.ts";
 import type { Rating } from "./types/state/finance.ts";
 import type { Headline, HeadlineKind, NewsWire } from "./types/state/news.ts";
 import { BYLINE } from "./types/state/news.ts";
+import type { Seat } from "./types/state/people.ts";
 import type { PhaseLabel } from "./types/world.ts";
 import { phaseLabelName } from "./world/entities.ts";
 import { chunkLogIter, chunkLogLast, chunkLogNew, chunkLogPush } from "./world/log.ts";
@@ -232,6 +233,35 @@ export function raise(
       ? `${name} raises $${fmtFixed(netUsd / USD_PER_MILLION, 1)}M ${how}`
       : `${name} raises money ${how}`;
   return headline(date, industry, company, { kind: "Raise", method, net_usd: netUsd }, text);
+}
+
+/** The wire's line for a seat event, by seat and outcome (spec v1.5 5.21, D1024). */
+const SEAT_EVENT_TEXT: Readonly<Record<Seat, readonly [string, string]>> = {
+  Ceo: ["'s CEO lands a growth push", "'s CEO stumbles on strategy"],
+  Cfo: [" refinances on better terms", "'s credit costs rise after a CFO misstep"],
+  Cio: ["'s data platform pays off", " is hit by a data breach"],
+  Cmo: ["'s campaign lifts sales", " takes a reputation hit"],
+  Coo: [" streamlines its operations", " suffers an outage"],
+  Chair: [" names a new chair", " loses its chair"],
+};
+
+/** Spec v1.5 5.21 (D1024): a big company's critical seat event. */
+export function seatEvent(
+  date: SimDate,
+  industry: IndustryId,
+  company: CompanyId,
+  name: string,
+  seat: Seat,
+  success: boolean,
+): Headline {
+  const [ok, fail] = SEAT_EVENT_TEXT[seat];
+  return headline(
+    date,
+    industry,
+    company,
+    { kind: "SeatEvent", seat, success },
+    `${name}${success ? ok : fail}`,
+  );
 }
 
 /** Spec 5.18, 6.6: a raise that failed. */
