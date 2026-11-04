@@ -8,6 +8,9 @@
 //       merges the seeds (means), prints and writes <outDir>/summary.md: the economy by profile,
 //       each industry's demand, revenue, margin factor and share price by profile, and the
 //       exchanges' index growth by profile
+//   tsx src/econ-report.ts drift <outDir>
+//       the drift plan's long-run measures by profile at 2030, 2040, 2050, 2080 and 2120:
+//       writes <outDir>/drift.md and drift.json (D1025; scripts/drift-matrix.sh runs the matrix)
 //   tsx src/econ-report.ts profiles
 //       lists the profile ids
 //
@@ -508,6 +511,128 @@ export function summarize(all: Loaded[], from: number, to: number): string {
   return out.join("\n");
 }
 
+/** The year-ends the drift report compares (drift plan 6: 2030, 2040, 2050, 2080 and 2120). */
+export const DRIFT_YEARS = [2030, 2040, 2050, 2080, 2120];
+
+/** One profile's drift measures at one year-end, the mean across its seeds (D1025). */
+export interface DriftPoint {
+  year: number;
+  /** World demand as a multiple of the first year-end's. */
+  demand_x: number;
+  /** The largest industry's share of world demand, and its key in most seeds. */
+  top_industry_share: number;
+  top_industry: string;
+  top10_share: number;
+  companies: number;
+  active: number;
+  /** Bankrupt plus removed so far. */
+  exited: number;
+  profitable_share: number;
+  prod_p90: number;
+  prod_at_cap_share: number;
+  /** The board-seat events' success share so far; null without seat events. */
+  seat_ok_share: number | null;
+}
+
+/**
+ * The drift measures by profile at each of `years` (drift plan 4 and 6, D1025). A row written at
+ * 1 January `y` holds year `y - 1`, so "2030" reads the row for 2029.
+ */
+export function driftPoints(all: Loaded[], years: readonly number[]): Record<string, DriftPoint[]> {
+  const out: Record<string, DriftPoint[]> = {};
+  for (const profile of [...new Set(all.map((l) => l.profile))].sort()) {
+    const runs = all.filter((l) => l.profile === profile);
+    out[profile] = years.flatMap((y): DriftPoint[] => {
+      const rows = runs.flatMap((l) => {
+        const e = l.economy.find((r) => num(r, "year") === y - 1);
+        const first = l.economy[0];
+        if (e === undefined || first === undefined) return [];
+        const inds = l.industries.filter((r) => num(r, "year") === y - 1);
+        const total = inds.reduce((a, r) => a + num(r, "demand_usd"), 0);
+        const top = inds.reduce<Row | undefined>(
+          (a, r) => (a === undefined || num(r, "demand_usd") > num(a, "demand_usd") ? r : a),
+          undefined,
+        );
+        const seat = SEAT_COLS.reduce<[number, number]>(
+          ([ok, fail], s) => [ok + num(e, `seat_${s}_ok`), fail + num(e, `seat_${s}_fail`)],
+          [0, 0],
+        );
+        return [{ e, first, top, total, seat }];
+      });
+      if (rows.length === 0) return [];
+      const keys = rows.map((r) => String(r.top?.key ?? ""));
+      const mode =
+        keys.sort((a, b) => keys.filter((k) => k === b).length - keys.filter((k) => k === a).length)[0] ?? "";
+      const seatAll = rows.reduce((a, r) => a + r.seat[0] + r.seat[1], 0);
+      return [
+        {
+          year: y,
+          demand_x: r4(
+            mean(rows.map((r) => num(r.e, "demand_usd") / Math.max(num(r.first, "demand_usd"), 1))),
+          ),
+          top_industry_share: r4(
+            mean(rows.map((r) => (r.total > 0 ? num(r.top ?? {}, "demand_usd") / r.total : 0))),
+          ),
+          top_industry: mode,
+          top10_share: r4(mean(rows.map((r) => num(r.e, "top10_share")))),
+          companies: Math.round(mean(rows.map((r) => num(r.e, "companies")))),
+          active: Math.round(mean(rows.map((r) => num(r.e, "active")))),
+          exited: Math.round(mean(rows.map((r) => num(r.e, "bankrupt") + num(r.e, "removed")))),
+          profitable_share: r4(mean(rows.map((r) => num(r.e, "profitable_share")))),
+          prod_p90: Number(mean(rows.map((r) => num(r.e, "prod_p90"))).toFixed(1)),
+          prod_at_cap_share: r4(mean(rows.map((r) => num(r.e, "prod_at_cap_share")))),
+          seat_ok_share: seatAll === 0 ? null : r4(rows.reduce((a, r) => a + r.seat[0], 0) / seatAll),
+        },
+      ];
+    });
+  }
+  return out;
+}
+
+/** The drift report as markdown: one table per measure, profiles down and years across. */
+export function driftReport(
+  points: Record<string, DriftPoint[]>,
+  years: readonly number[],
+  seeds: number,
+): string {
+  const profiles = Object.keys(points);
+  const at = (p: string, y: number) => points[p]?.find((d) => d.year === y);
+  const measure = (title: string, cell: (d: DriftPoint) => string): string =>
+    [
+      `## ${title}`,
+      "",
+      table(
+        ["Profile", ...years.map(String)],
+        profiles.map((p) => [
+          p,
+          ...years.map((y) => {
+            const d = at(p, y);
+            return d === undefined ? "-" : cell(d);
+          }),
+        ]),
+      ),
+      "",
+    ].join("\n");
+  const pc = (x: number): string => `${(100 * x).toFixed(1)}%`;
+  return [
+    "# Long-run drift by scenario (drift plan, D1025)",
+    "",
+    `Year-ends, means across ${seeds} seeds. \`legacy\` is the economy before the drift fixes; the \`mature\` ids carry the fixes (D977, D1022 to D1024) and the scenario tokens (D978).`,
+    "",
+    measure("World demand, multiple of the first year", (d) => `${d.demand_x.toFixed(1)}x`),
+    measure("Largest industry's share of demand", (d) => `${pc(d.top_industry_share)} ${d.top_industry}`),
+    measure("Top 10 companies' share of named revenue", (d) => pc(d.top10_share)),
+    measure("Companies (all, active)", (d) => `${d.companies}, ${d.active}`),
+    measure("Exited so far (bankrupt or removed)", (d) => String(d.exited)),
+    measure("Profitable share", (d) => pc(d.profitable_share)),
+    measure(
+      "Productivity p90, share at the cap",
+      (d) => `${d.prod_p90.toFixed(0)}, ${pc(d.prod_at_cap_share)}`,
+    ),
+    measure("Board-seat success share", (d) => (d.seat_ok_share === null ? "-" : pc(d.seat_ok_share))),
+  ].join("\n");
+}
+
 async function main(args: string[]): Promise<number> {
   const [cmd = ""] = args;
   if (cmd === "profiles") {
@@ -540,12 +665,27 @@ async function main(args: string[]): Promise<number> {
     console.log(text);
     return 0;
   }
+  if (cmd === "drift") {
+    const [, dir = ""] = args;
+    if (!dir) return usage();
+    const all = loadAll(dir);
+    const points = driftPoints(all, DRIFT_YEARS);
+    const seeds = new Set(all.map((l) => l.seed)).size;
+    const text = driftReport(points, DRIFT_YEARS, seeds);
+    writeFileSync(join(dir, "drift.md"), text);
+    writeFileSync(
+      join(dir, "drift.json"),
+      `${JSON.stringify({ seeds, years: DRIFT_YEARS, points }, null, 1)}\n`,
+    );
+    console.log(text);
+    return 0;
+  }
   return usage();
 }
 
 function usage(): number {
   console.error(
-    "usage: econ-report run <profile> <years> <seedLo> <seedHi> <outDir> | summary <outDir> [from to] | profiles",
+    "usage: econ-report run <profile> <years> <seedLo> <seedHi> <outDir> | summary <outDir> [from to] | drift <outDir> | profiles",
   );
   return 2;
 }
