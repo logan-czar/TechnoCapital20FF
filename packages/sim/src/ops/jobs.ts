@@ -8,6 +8,7 @@
 // (people/seating.ts `newSeatsJob`).
 
 import { companyIsFrozen } from "../economy/index.ts";
+import { profileOf } from "../economy/profiles.ts";
 import { seatIndex, setManagementScores } from "../people/seating.ts";
 import type { JobCtx } from "../time/scheduler.ts";
 import type { IndustryParams, World } from "../types/world.ts";
@@ -19,6 +20,7 @@ import {
   dataBookFreeRdFraction,
   dataBookMonth,
   dataBookStoredTb,
+  freeRdCapPct,
 } from "./data.ts";
 import { fitStations, laborUnits, seatChanges } from "./labor.ts";
 import { productivityInputsWithStations, stepProductivity } from "./productivity.ts";
@@ -82,6 +84,7 @@ export function computeJob(world: World, _ctx: JobCtx): void {
  */
 export function dataJob(world: World, _ctx: JobCtx): void {
   const { companies, units, industries } = world;
+  const capped = profileOf(world).winners === true;
   for (const c of companies) {
     // A frozen company (Bankrupt or Removed) runs no monthly step (spec 5.12 step 2, D123).
     if (companyIsFrozen(c)) continue;
@@ -93,7 +96,10 @@ export function dataJob(world: World, _ctx: JobCtx): void {
         if (u.industry === d.industry) revenue += u.revenue_m;
       }
       const cap = d.industry === c.industry ? capacity : 0.0;
-      dataBookMonth(d.book, revenue, dataParams(industries[d.industry]!.params), cap);
+      const p = industries[d.industry]!.params;
+      const params = dataParams(p);
+      if (capped) params.free_rd_cap_pct = freeRdCapPct(p.rd_norm);
+      dataBookMonth(d.book, revenue, params, cap);
     }
   }
 }
@@ -108,6 +114,8 @@ export function dataJob(world: World, _ctx: JobCtx): void {
 export function productivityJob(world: World, _ctx: JobCtx): void {
   setManagementScores(world);
   const { companies, industries } = world;
+  // Lane W's productivity taper (D1023) plays under a profile with `winners`.
+  const capped = profileOf(world).winners === true;
   for (const u of world.units) {
     const c = companies[u.company]!;
     // A frozen company (Bankrupt or Removed) runs no monthly step (spec 5.12 step 2, D123).
@@ -122,6 +130,7 @@ export function productivityJob(world: World, _ctx: JobCtx): void {
       c.stations,
     );
     if (world.rd_diminishing_x !== undefined) inputs.rd_diminishing_x = world.rd_diminishing_x;
+    if (capped) inputs.taper = true;
     u.productivity = stepProductivity(u.productivity, inputs);
   }
 }

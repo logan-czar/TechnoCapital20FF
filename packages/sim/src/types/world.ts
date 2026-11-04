@@ -653,6 +653,12 @@ export interface EconomyProfile {
    */
   exits: boolean;
   /**
+   * Drift plan lane W (D1023, spec v1.5 5.6, 5.9): free R&D is capped at `FREE_RD_CAP_NORMS` of the
+   * industry's R&D norm, and productivity gains taper above `PRODUCTIVITY_TAPER_FROM`. False keeps
+   * spec 5.6 and 5.9.
+   */
+  winners: boolean;
+  /**
    * Drift plan lane W (D1024, spec v1.5 5.21): each quarter every open labor seat rolls an event
    * against its skill, harder for bigger companies. False plays none.
    */

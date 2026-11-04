@@ -78,6 +78,26 @@ export interface ProductivityInputs {
   labor: number;
   /** The R&D curve (D973); absent plays RD_DIMINISHING_X. */
   rd_diminishing_x?: number;
+  /** Lane W's taper on gains near the top (D1023); absent is spec 5.6. */
+  taper?: boolean;
+}
+
+/** Drift plan lane W (D1023, T): the productivity at which gains start to shrink. */
+export const PRODUCTIVITY_TAPER_FROM = 120.0;
+/** Drift plan lane W (D1023, T): the share of a gain kept at PRODUCTIVITY_MAX. */
+export const PRODUCTIVITY_TAPER_FLOOR = 0.25;
+
+/**
+ * The share of a month's gain a unit keeps at `productivity` (D1023): 1 up to 120, then falling
+ * linearly to 0.25 at 200. Losses are never tapered.
+ */
+export function taperShare(productivity: number): number {
+  const t = clamp(
+    (productivity - PRODUCTIVITY_TAPER_FROM) / (PRODUCTIVITY_MAX - PRODUCTIVITY_TAPER_FROM),
+    0.0,
+    1.0,
+  );
+  return 1.0 - (1.0 - PRODUCTIVITY_TAPER_FLOOR) * t;
 }
 
 /** The inputs for `stations` (research and idle from it, L its total). Rust `ProductivityInputs::with_stations`. */
@@ -117,7 +137,9 @@ export function productivityDelta(inp: ProductivityInputs): number {
   );
 }
 
-/** Productivity after one month (spec 5.6), clamped to 30 to 200. */
+/** Productivity after one month (spec 5.6), clamped to 30 to 200; a gain tapers under D1023. */
 export function stepProductivity(productivity: number, inp: ProductivityInputs): number {
-  return clamp(productivity + productivityDelta(inp), PRODUCTIVITY_MIN, PRODUCTIVITY_MAX);
+  const delta = productivityDelta(inp);
+  const kept = inp.taper === true && delta > 0.0 ? delta * taperShare(productivity) : delta;
+  return clamp(productivity + kept, PRODUCTIVITY_MIN, PRODUCTIVITY_MAX);
 }

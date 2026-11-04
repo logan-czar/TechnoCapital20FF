@@ -33,7 +33,8 @@ import { referenceCanonicalString } from "./common/canonical_reference.ts";
 import { data, macrotask, unwrap } from "./common/index.ts";
 
 // Re-recorded for D1022: the profile gained `exits`, so the state hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
-// Re-recorded for D1024: the Events stream joined the saved RNG and the profile gained `seat_events` (after D1022's `exits`), so the state hash moved; every view, monthly and patch digest below is unchanged (legacy plays no seat event).
+// Re-recorded for D1023: the profile gained `winners` (after D1022's `exits`), so the state hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
+// Re-recorded for D1024: the Events stream joined the saved RNG and the profile gained `seat_events` (after D1022's `exits` and D1023's `winners`), so the state hash moved; every view, monthly and patch digest below is unchanged (legacy plays no seat event).
 // Re-recorded for D996: v_history gained the sector series, so its digest and the monthly digest moved; the state hash, the patch digest and every other view are unchanged.
 // Re-recorded for D995: v_history gained the macro series, so its digest and the monthly digest moved; the state hash, the patch digest and every other view are unchanged.
 // Re-recorded for D994: the Era stream joined the saved RNG (the state hash moved) and v_history is new (the monthly and patch digests moved); every other view digest is unchanged, and a 10-year soak's economy columns are identical.
@@ -42,7 +43,7 @@ import { data, macrotask, unwrap } from "./common/index.ts";
 // Re-recorded for D974: LOW_PRODUCTIVITY_ADJ is +1.0 (was +0.5), so the R&D plan, productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D973: R&D above the norm has diminishing returns by default (spec 5.6 has no curve), so productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
-const GOLDEN_STATE = "990ce938b962e9d370fe249f960c9a03";
+const GOLDEN_STATE = "a56475a84805444ae625018f75a3481a";
 const GOLDEN_MONTHLY = "d7d84581a03b2f6844e20a4e";
 const GOLDEN_PATCHES = "a8c30b5b8333e63d248f5595";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */
