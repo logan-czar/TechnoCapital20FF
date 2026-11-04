@@ -67,6 +67,69 @@ export function clampView(view: MapViewState, width: number, height: number): Ma
   return { zoom, target: [wrapX(view.target[0]), y, 0] };
 }
 
+/** A view wider than this many degrees is World zoom (camera.rs WORLD_ABOVE_DEG, D636). */
+export const WORLD_ABOVE_DEG = 110;
+
+/** The named zoom levels (spec 8 Map row: World, Country, Province), by the degrees the view spans. */
+export type ZoomLevel = "World" | "Country" | "Province";
+
+/** The zoom level of a view `span` degrees wide (camera.rs `level`). */
+export function zoomLevel(span: number): ZoomLevel {
+  return span > WORLD_ABOVE_DEG ? "World" : span < PROVINCE_BELOW_DEG ? "Province" : "Country";
+}
+
+/** One wheel notch, or a Q / E press, zooms by this factor (camera.rs WHEEL_STEP, D636). */
+export const WHEEL_STEP = 1.25;
+/** Keyboard panning, logical pixels a second (camera.rs KEY_PAN_PX_PER_S, D636). */
+export const KEY_PAN_PX_PER_S = 900;
+
+/** A view and the canvas size it is drawn at: what the screen projections need. */
+export interface Viewport {
+  view: MapViewState;
+  width: number;
+  height: number;
+}
+
+/** Screen pixels per bitmap pixel of mapgen's frame: the Rust camera's 1 / `scale` (D640, D706 thresholds). */
+export function pxPerBitmapPx(zoom: number): number {
+  return (2 ** zoom * FRAME_WIDTH) / BITMAP_WIDTH;
+}
+
+/** Where Miller point `p` shows on screen (y down): the copy nearest the centre (camera.rs `to_view`). */
+export function toScreen(vp: Viewport, p: readonly [number, number]): [number, number] {
+  const k = 2 ** vp.view.zoom;
+  const dx = wrapX(p[0] - vp.view.target[0]);
+  return [vp.width / 2 + dx * k, vp.height / 2 - (p[1] - vp.view.target[1]) * k];
+}
+
+/** The Miller point under screen point `s` (x wrapped into the frame; camera.rs `to_map`). */
+export function toMap(vp: Viewport, s: readonly [number, number]): [number, number] {
+  const k = 2 ** vp.view.zoom;
+  return [
+    wrapX(vp.view.target[0] + (s[0] - vp.width / 2) / k),
+    vp.view.target[1] - (s[1] - vp.height / 2) / k,
+  ];
+}
+
+/** The view zoomed by `steps` notches (positive in) about its centre, clamped (camera.rs `zoom`, Q / E). */
+export function zoomBy(vp: Viewport, steps: number): MapViewState {
+  return clampView(
+    { target: vp.view.target, zoom: vp.view.zoom + steps * Math.log2(WHEEL_STEP) },
+    vp.width,
+    vp.height,
+  );
+}
+
+/** The view panned by a screen delta (px, y down; the map moves with it), clamped (camera.rs `pan`). */
+export function panBy(vp: Viewport, dx: number, dy: number): MapViewState {
+  const k = 2 ** vp.view.zoom;
+  return clampView(
+    { target: [vp.view.target[0] - dx / k, vp.view.target[1] + dy / k, 0], zoom: vp.view.zoom },
+    vp.width,
+    vp.height,
+  );
+}
+
 /** The pixels of mapgen's 8192 x 4096 bitmap frame (province-centroids.csv columns) as Miller units. */
 export const BITMAP_WIDTH = 8192;
 export function pxToMiller(x: number, y: number): [number, number] {

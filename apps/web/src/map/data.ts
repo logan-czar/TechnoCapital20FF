@@ -4,9 +4,16 @@
 
 import { selectedWorld, worldDataBase } from "../sim/world.ts";
 import { parseCsv } from "./csv.ts";
-import { buildMapModel, type MapModel, type ProvinceRow, type ProvinceTopology } from "./model.ts";
+import {
+  buildMapModel,
+  type CentroidRow,
+  type MapModel,
+  type ProvinceRow,
+  type ProvinceTopology,
+} from "./model.ts";
 
 export const TOPOLOGY_URL = "/data/map/provinces.topo.json";
+export const CENTROIDS_URL = "/data/map/province-centroids.csv";
 /** The region files of docs/design/data, as `provinces-<slug>.csv`. */
 export const REGION_SLUGS = [
   "east-asia-oceania",
@@ -42,6 +49,19 @@ export async function loadCountryCodes(): Promise<string[]> {
   return parseCsv(text).map((r) => r.iso3 ?? "");
 }
 
+/** province-centroids.csv rows: label points, areas and the tiny flag (served from assets/map). */
+export function parseCentroids(text: string): CentroidRow[] {
+  return parseCsv(text).map((r) => ({
+    id: r.province_id ?? "",
+    x: Number(r.x),
+    y: Number(r.y),
+    label_x: Number(r.label_x),
+    label_y: Number(r.label_y),
+    area_px: Number(r.area_px),
+    tiny: r.tiny === "Y",
+  }));
+}
+
 let loading: Promise<MapModel> | undefined;
 
 /** Fetches and builds the model once; StrictMode's second effect run gets the same promise. */
@@ -50,6 +70,7 @@ export function loadMapModel(): Promise<MapModel> {
     fetchOk(TOPOLOGY_URL).then((r) => r.json() as Promise<ProvinceTopology>),
     loadProvinceRows(),
     loadCountryCodes(),
-  ]).then(([topology, rows, countries]) => buildMapModel(topology, rows, countries));
+    fetchOk(CENTROIDS_URL).then(async (r) => parseCentroids(await r.text())),
+  ]).then(([topology, rows, countries, centroids]) => buildMapModel(topology, rows, countries, centroids));
   return loading;
 }

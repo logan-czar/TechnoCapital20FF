@@ -2,12 +2,9 @@
 // compact facts and links for each page kind, read from the views only (spec 9). Every money
 // figure goes through figureCell (D461): a company that does not publish shows estimate bands, as
 // the views serve them (D420), and never the estimate inside a band.
-//
-// Not ported here: zone_hover_card (the map's Financial zones mode card): it belongs to the map
-// lane with the other map modes.
 
-import type { Figure } from "@tc20ff/sim";
-import type { Shown, Tone } from "../pages/doc.ts";
+import type { Figure, ProvinceId, ZoneId } from "@tc20ff/sim";
+import { bps, type Shown, type Tone } from "../pages/doc.ts";
 import { kindName, type PageRef } from "../pages/ref.ts";
 import { politicianCount } from "../pages/tables.ts";
 import { byId, byKey, type ViewsData } from "../pages/views.ts";
@@ -31,6 +28,8 @@ import { controllerPage, type NameIndex, place } from "./names.ts";
 export const CARD_ROLES = 4;
 /** HQs a province card names before it sums the rest. */
 export const CARD_HQS = 3;
+/** Member countries a zone hover card names before it sums the rest. */
+export const CARD_MEMBERS = 4;
 
 /** One fact: a label and a value, maybe colored or a link. */
 export interface CardLine {
@@ -177,6 +176,51 @@ export function card(page: PageRef, v: ViewsData, index: NameIndex): Card {
       if (n !== null) lines.push(line("Entries", int(n)));
     }
   }
+  return { title: index.title(page), kind: kindName(page.kind), lines };
+}
+
+/**
+ * The Financial zones map mode's hover card (spec 8 Map row; D704): the province hovered, then
+ * its zone's number and key, members, cycle settings and effect (v_cycle), exchange and listed
+ * count (v_exchanges), spreads and confidence. Rust `zone_hover_card`.
+ */
+export function zoneHoverCard(
+  zone: ZoneId,
+  province: ProvinceId | null,
+  v: ViewsData,
+  index: NameIndex,
+): Card {
+  const lines: CardLine[] = [];
+  if (province !== null) {
+    const pr: PageRef = { kind: "province", id: province };
+    lines.push(linkLine("Province", index.title(pr), pr));
+  }
+  const cycle = v.cycle?.zones.find((z) => z.id === zone);
+  const row = byId(v.zones?.zones, zone);
+  if (cycle) lines.push(line("Zone", `${cycle.number} (${cycle.key})`));
+  if (row) {
+    const names = row.members.slice(0, CARD_MEMBERS).map((c) => index.title({ kind: "country", id: c }));
+    const more = row.members.length - CARD_MEMBERS;
+    const list = `${row.members.length}: ${names.join(", ")}`;
+    lines.push(line("Members", more > 0 ? `${list} and ${more} more` : list));
+  }
+  if (cycle) {
+    lines.push(line("Intensity", fixed(cycle.intensity, 2)));
+    lines.push(line("Lag", `${cycle.lag_quarters} quarters`));
+    lines.push(line("Contagion", fixed(cycle.contagion, 2)));
+    lines.push(line("Effect", `${signed(cycle.effect, 3)} a year`));
+  }
+  const x = byKey(v.exchanges?.exchanges, (e) => e.zone, zone);
+  if (x) {
+    lines.push(linkLine("Exchange", x.code, { kind: "exchange", id: zone }));
+    lines.push(line("Listed", int(x.listed_count)));
+  }
+  if (cycle) {
+    lines.push(line("Base spread", bps(cycle.credit_spread_base)));
+    lines.push(line("Credit spread", bps(cycle.credit_spread)));
+    lines.push(line("Confidence", signed(cycle.confidence, 0)));
+  }
+  const page: PageRef = { kind: "zone", id: zone };
   return { title: index.title(page), kind: kindName(page.kind), lines };
 }
 

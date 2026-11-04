@@ -18,7 +18,7 @@ import {
 } from "react";
 import type { PageRef } from "../pages/ref.ts";
 import { usePageViews } from "../pages/views.ts";
-import { CARD_VIEWS, card, lineShown } from "./cards.ts";
+import { CARD_VIEWS, type Card, card, lineShown } from "./cards.ts";
 import { useNameIndex } from "./names.ts";
 import { BUTTON_MIDDLE, clickTarget, useNav } from "./nav.ts";
 
@@ -29,7 +29,7 @@ export const HOVER_GRACE_MS = 250;
 /** The card's width in pixels. */
 export const CARD_WIDTH = 320;
 
-interface HoverApi {
+export interface HoverApi {
   enter: (page: PageRef, x: number, y: number) => void;
   leave: () => void;
   /** Hides the card now (a click, or the hovered link went away). */
@@ -94,11 +94,25 @@ function LinkInner({ page, children, className, title }: LinkProps) {
 
 export const Link = memo(LinkInner);
 
+/** The hover card API of the HoverCards around this part (null outside one): the map's pins use it. */
+export function useHoverCards(): HoverApi | null {
+  return useContext(HoverContext);
+}
+
 /** The card itself, with the views it reads. */
 function NameCard({ page }: { page: PageRef }) {
   const v = usePageViews(CARD_VIEWS);
   const index = useNameIndex();
-  const c = card(page, v, index);
+  return (
+    <>
+      <CardView card={card(page, v, index)} page={page} />
+      <div className="muted small">Click: open | Shift+click or middle: new pane</div>
+    </>
+  );
+}
+
+/** A card's head and lines (the name card's, and the map's hover card's, D704). */
+export function CardView({ card: c, page }: { card: Card; page: PageRef }) {
   return (
     <>
       <div className="card-head">
@@ -121,7 +135,6 @@ function NameCard({ page }: { page: PageRef }) {
           </div>
         );
       })}
-      <div className="muted small">Click: open | Shift+click or middle: new pane</div>
     </>
   );
 }
