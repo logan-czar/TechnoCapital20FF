@@ -641,6 +641,12 @@ export interface EconomyProfile {
    * quarters or below `EXIT_ASSET_FLOOR_USD`, as in an era world (D996). False keeps spec 5.12.
    */
   exits: boolean;
+  /**
+   * Drift plan lane W (D1023, spec v1.5 5.6, 5.9): free R&D is capped at `FREE_RD_CAP_NORMS` of the
+   * industry's R&D norm, and productivity gains taper above `PRODUCTIVITY_TAPER_FROM`. False keeps
+   * spec 5.6 and 5.9.
+   */
+  winners: boolean;
   start_phase: CyclePhase;
   /** The four phase tables the global cycle draws from (spec 5.1). */
   phases: Record<CyclePhase, PhaseSpec>;
