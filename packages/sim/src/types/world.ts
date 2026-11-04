@@ -637,6 +637,11 @@ export interface EconomyProfile {
   /** Drift plan (D978): multiplies the hourly price noise (1 = spec 5.14). */
   price_noise_scale: number;
   /**
+   * Drift plan lane X (D1022, spec v1.5 5.12): a company exits after `EXIT_LOSS_QUARTERS` losing
+   * quarters or below `EXIT_ASSET_FLOOR_USD`, as in an era world (D996). False keeps spec 5.12.
+   */
+  exits: boolean;
+  /**
    * Drift plan lane W (D1023, spec v1.5 5.6, 5.9): free R&D is capped at `FREE_RD_CAP_NORMS` of the
    * industry's R&D norm, and productivity gains taper above `PRODUCTIVITY_TAPER_FROM`. False keeps
    * spec 5.6 and 5.9.

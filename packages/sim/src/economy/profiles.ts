@@ -42,7 +42,7 @@ export const VANILLA_VOLATILITY_SCALE = 0.5;
 /** The drift-plan settings (D977, D978) a profile can leave out: the pre-v1.5 economy. */
 type DriftSettings = Pick<
   EconomyProfile,
-  "fade" | "world_growth_scale" | "slowdown" | "cycle_scale" | "price_noise_scale" | "winners"
+  "fade" | "world_growth_scale" | "slowdown" | "cycle_scale" | "price_noise_scale" | "exits" | "winners"
 >;
 export const NO_DRIFT: DriftSettings = {
   fade: false,
@@ -50,6 +50,7 @@ export const NO_DRIFT: DriftSettings = {
   slowdown: null,
   cycle_scale: 1.0,
   price_noise_scale: 1.0,
+  exits: false,
   winners: false,
 };
 
@@ -157,11 +158,12 @@ export const PROFILES: readonly EconomyProfile[] = [
     id: "mature",
     name: "Mature",
     description:
-      "Legacy, then every industry's growth fades to its mature rate over decades, and leaders' free R&D and productivity gains are capped (drift plan, spec v1.5 5.1, 5.6, 5.9).",
+      "Legacy, then every industry's growth fades to its mature rate over decades, losers exit, and leaders' free R&D and productivity gains are capped (drift plan, spec v1.5 5.1, 5.6, 5.9, 5.12).",
     lt_scale: 1.0,
     volatility_scale: 1.0,
     ai_boom: true,
     fade: true,
+    exits: true,
     winners: true,
     start_phase: "Expansion",
     phases: LEGACY_PHASES,
