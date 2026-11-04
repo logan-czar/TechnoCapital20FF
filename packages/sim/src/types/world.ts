@@ -648,6 +648,11 @@ export interface EconomyProfile {
   /** Drift plan (D978): multiplies the hourly price noise (1 = spec 5.14). */
   price_noise_scale: number;
   /**
+   * Drift plan lane X (D1022, spec v1.5 5.12): a company exits after `EXIT_LOSS_QUARTERS` losing
+   * quarters or below `EXIT_ASSET_FLOOR_USD`, as in an era world (D996). False keeps spec 5.12.
+   */
+  exits: boolean;
+  /**
    * Drift plan lane W (D1024, spec v1.5 5.21): each quarter every open labor seat rolls an event
    * against its skill, harder for bigger companies. False plays none.
    */

@@ -17,6 +17,7 @@
 import { rdPlanAtLoad } from "../ai/archetype.ts";
 import { saleFactor } from "../economy/assets.ts";
 import { PRODUCTIVITY_SCALE, QUARTERS_PER_YEAR as QUARTERS_PER_YEAR_F64 } from "../economy/index.ts";
+import { profileOf } from "../economy/profiles.ts";
 import { variableCostShare } from "../economy/revenue.ts";
 import { pPre } from "../economy/supply.ts";
 import { seatEffectNow } from "../events/effects.ts";
@@ -398,6 +399,9 @@ function mustExit(world: World, c: Company, s: Settlement): boolean {
  */
 export function settleJob(world: World, ctx: JobCtx): void {
   const today = ctx.facts.date;
+  // The exit rule runs in an era world (D996) and under a profile with `exits` (D1022); an old save's
+  // profile has no flag and plays spec 5.12.
+  const exitsOn = world.era !== undefined || profileOf(world).exits === true;
   for (let id = 0; id < world.companies.length; id++) {
     const c = world.companies[id] as Company;
     if (!c.finance.month_active) continue;
@@ -414,7 +418,7 @@ export function settleJob(world: World, ctx: JobCtx): void {
       state: c.finance.distress,
     };
     const s = settleMonth(inputs);
-    if (world.era !== undefined && !s.went_bankrupt && mustExit(world, c, s)) {
+    if (exitsOn && !s.went_bankrupt && mustExit(world, c, s)) {
       s.state = bankrupt(s.state);
       s.went_bankrupt = true;
     }
