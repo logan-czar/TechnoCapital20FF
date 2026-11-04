@@ -38,6 +38,7 @@ import * as births from "./births/jobs.ts";
 import { register as economyRegister } from "./economy/index.ts";
 import { eraActivateSectorsJob, eraMacroJob, eraRevealJob, eraYearCloseJob } from "./era/jobs.ts";
 import { eraPolicyJob } from "./era/policy.ts";
+import { seatEventsJob } from "./events/seats.ts";
 import * as finance from "./finance/jobs.ts";
 import * as market from "./market/jobs.ts";
 import * as news from "./news/jobs.ts";
@@ -112,6 +113,7 @@ export function registerJobs(s: Scheduler): void {
 
   // ai::jobs::register (crates/sim/src/ai/jobs.rs)
   r(s, "CloseStatements", "ai.loss_quarters", ai.lossQuartersJob); // ai/jobs lossQuartersJob
+  r(s, "LockAiPlans", "events.seats", seatEventsJob); // events/seats (spec v1.5 5.21, D1024; no Rust twin)
   r(s, "LockAiPlans", "ai.plan_lock", ai.planLockJob); // ai/jobs planLockJob
 
   // news::jobs::register (crates/sim/src/news/jobs.rs)

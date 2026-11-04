@@ -19,6 +19,7 @@ import { saleFactor } from "../economy/assets.ts";
 import { PRODUCTIVITY_SCALE, QUARTERS_PER_YEAR as QUARTERS_PER_YEAR_F64 } from "../economy/index.ts";
 import { variableCostShare } from "../economy/revenue.ts";
 import { pPre } from "../economy/supply.ts";
+import { seatEffectNow } from "../events/effects.ts";
 import { dataBookFreeRdFraction } from "../ops/data.ts";
 import { BAREBONES_REVENUE_USD } from "../ops/stations.ts";
 import {
@@ -360,7 +361,8 @@ export function interestJob(world: World, _ctx: JobCtx): void {
       f.line.drawn,
       f.line.limit,
       c.cash_usd,
-      lineRate(world.base_rate, home, f.rating),
+      // A CFO's seat event moves the rate while it fades (D1024).
+      maxF(lineRate(world.base_rate, home, f.rating) + seatEffectNow(c, "Spread"), 0.0),
       world.base_rate,
     );
   });
