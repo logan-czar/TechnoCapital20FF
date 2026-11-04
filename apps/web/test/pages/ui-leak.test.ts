@@ -22,21 +22,49 @@
 // Run on the 2020 world (m9_leak.rs's) and on the default 1995 world, each fresh and after its first
 // quarter's recap.
 //
+// The map (m9_leak.rs M8, D701, D705), from the layer the map draws (`mapLayersViewLayer` on the
+// plain views) and the pure helpers it draws with, on both states: every mode (Political, each
+// development track, the Industry track, every industry's assets, the HQ pins unfiltered, listed,
+// private, by each industry and by each HQ country, and the zones) has its bar and legend texts
+// (`legendDoc`) and hub labels scanned (an HQ mode as about every banded company; any other as about
+// no subject: an industry heat map's printed stops are its own scale, a function of the shown
+// values, so the scale is checked raw); every HQ pin's size is the plain row's shown revenue, never
+// the twin's truth, and its diameter (`pinLayout`) follows it; every industry heat value of a
+// province with a banded unit is the sum of the shown unit assets, never the twin's true sum, its
+// colour (`layerColors`) follows it, and the scale's top is the shown values'; with a canary for
+// the pins and the heat. Every zone's hover card (`zoneHoverCard`, at its hub) is scanned as about
+// every banded company. The map's province hover card is the Province card, scanned above.
+//
 // Not ported, with the reason:
-// - The map screens (m9_leak.rs M8: the mode legends, HQ pin sizes, heat values and the map's hover
-//   cards). The TS map draws the provinces in their countries' colors and nothing from v_map_layers;
-//   the page and hover card of every province with a banded HQ or unit are scanned instead.
+// - The map's place labels: names only, from v_places and v_map_static, no figure.
 // - Each Company tab alone. The doc holds every section and a tab only folds the others (D481), so
 //   scanning the whole doc covers every tab.
 // - The Settings page: it reads no view.
 // - The statements' bands against the archive, period by period: the view leak test's check 2.
 
-import { type Figure, type Quarter, recapTick, type Sim, simNew, type ViewName } from "@tc20ff/sim";
+import {
+  DEV_TRACK_VALUES,
+  type Figure,
+  type IndustryId,
+  type MapLayer,
+  type MapMode,
+  mapLayersViewLayer,
+  mapModeName,
+  type Quarter,
+  recapTick,
+  type Sim,
+  simNew,
+  type ViewName,
+} from "@tc20ff/sim";
 import type { WorldData } from "@tc20ff/sim-data";
 import { defaultDataDir, loadWorld, worldDataDir } from "@tc20ff/sim-data/node";
 import { afterAll, describe, expect, it } from "vitest";
-import { type Card, card } from "../../src/links/cards.ts";
+import { type Card, card, zoneHoverCard } from "../../src/links/cards.ts";
 import { buildNameIndex, LIST_PAGES, type NameIndex } from "../../src/links/names.ts";
+import { layerColors, scalarColor, unitOf } from "../../src/map/colors.ts";
+import { legendDoc } from "../../src/map/legend.ts";
+import { DEFAULT_MODE_STATE, hqCountries, listedLabel, MODE_KINDS, modeOf } from "../../src/map/modes.ts";
+import { hubLabel, PIN_MAX_PX, PIN_MIN_PX, pinLayout, pinPx } from "../../src/map/pins.ts";
 import {
   bps,
   type ChartModel,
@@ -504,9 +532,9 @@ interface World {
   q1: Quarter;
   /**
    * The least the scan must cover in each state, so a scan that found nothing to check fails: banded
-   * companies, subjects with a truth, and bands checked.
+   * companies, subjects with a truth, bands checked, and banded HQ pins and heat values on the map.
    */
-  min: { banded: number; subjects: number; bands: number };
+  min: { banded: number; subjects: number; bands: number; pins: number; heat: number };
 }
 
 function loaded(dir: string): WorldData {
@@ -638,6 +666,244 @@ function scanState(label: string, v: ViewsData, t: Truths, leaks: Leak[]): numbe
   return screens;
 }
 
+// ---- The map (m9_leak.rs M8, D701, D705) ----
+
+/** A figure as the views show it: the exact value, or a band's estimate (sim `figureShown`). */
+const shown = (f: Figure): number => (f.kind === "Exact" ? f.value : f.band.estimate);
+
+function layersOf(v: ViewsData): NonNullable<ViewsData["map_layers"]> {
+  if (!v.map_layers) throw new Error("v_map_layers is built");
+  return v.map_layers;
+}
+
+/**
+ * Every mode the scan shows (m9_leak.rs `scan_modes`): each development track, the Industry track
+ * and every industry's assets, the HQ pins unfiltered, listed, private, by each industry and by
+ * each HQ country, and the zones.
+ */
+function scanModes(v: ViewsData): MapMode[] {
+  const l = layersOf(v);
+  const industries = l.industry_names.map((_, i) => i as IndustryId);
+  const hq = DEFAULT_MODE_STATE.hq;
+  return [
+    { kind: "Political" },
+    ...DEV_TRACK_VALUES.map((track): MapMode => ({ kind: "Development", track })),
+    { kind: "Industry", industry: null },
+    ...industries.map((industry): MapMode => ({ kind: "Industry", industry })),
+    ...[null, true, false].map((listed): MapMode => ({ kind: "CompanyHqs", filter: { ...hq, listed } })),
+    ...industries.map((industry): MapMode => ({ kind: "CompanyHqs", filter: { ...hq, industry } })),
+    ...hqCountries(l).map((country): MapMode => ({ kind: "CompanyHqs", filter: { ...hq, country } })),
+    { kind: "FinancialZones" },
+  ];
+}
+
+/** The layer the map draws for `mode` (ProvinceMap: the zones mode reads v_cycle and v_exchanges too). */
+function layerOf(v: ViewsData, mode: MapMode): MapLayer {
+  const z =
+    mode.kind === "FinancialZones" && v.cycle && v.exchanges ? ([v.cycle, v.exchanges] as const) : null;
+  return mapLayersViewLayer(layersOf(v), mode, z);
+}
+
+/** The mode bar's texts (MapOverlays `ModeBar`): the modes, Metros, then the mode's parameter. */
+function barTexts(v: ViewsData, mode: MapMode): string[] {
+  const l = layersOf(v);
+  const out = [...MODE_KINDS.map((k) => mapModeName(modeOf(DEFAULT_MODE_STATE, k))), "Metros"];
+  const industry = (i: IndustryId | null, none: string) => (i === null ? none : (l.industry_names[i] ?? ""));
+  if (mode.kind === "Development") out.push(...DEV_TRACK_VALUES);
+  else if (mode.kind === "Industry") out.push("Show", industry(mode.industry, "Industry track"));
+  else if (mode.kind === "CompanyHqs") {
+    const c = mode.filter.country;
+    out.push(
+      "Industry",
+      industry(mode.filter.industry, "All"),
+      "Country",
+      c === null ? "All" : (v.places?.countries[c]?.name ?? ""),
+      listedLabel(mode.filter.listed),
+    );
+  }
+  return out;
+}
+
+/** The map node: the bar, the legend as `legendDoc` writes it (Metros on, its longest), the hub labels and the HQ pins' links. */
+function mapScreen(v: ViewsData, layer: MapLayer): Screen {
+  const s = emptyScreen();
+  const doc = legendDoc(layer, true);
+  s.texts.push(...barTexts(v, layer.mode), doc.title, ...doc.rows.map(([, text]) => text));
+  for (const p of layer.pins) {
+    if (p.target.kind === "Exchange") s.texts.push(hubLabel(p));
+    else s.links.push({ kind: "company", id: p.target.company });
+  }
+  return s;
+}
+
+/** What the map checks counted, and what they found wrong that is not a leak (a broken invariant). */
+interface MapStats {
+  modes: number;
+  pins: number;
+  heat: number;
+  zoneCards: number;
+  wrong: string[];
+}
+
+/**
+ * Every HQ pin is sized by the revenue the views show (D701): its size is the plain row's shown
+ * revenue, never the Omniscient truth of a banded company, and its diameter (`pinLayout`) follows
+ * it. Between the smallest and largest pin the diameter grows strictly with the revenue, so a
+ * diameter equal to the truth's would be sized by it. Returns how many banded pins it checked.
+ */
+function checkPins(
+  what: string,
+  layer: MapLayer,
+  n: ViewsData,
+  o: ViewsData,
+  leaks: Leak[],
+  m: MapStats,
+): number {
+  const rows = new Map((n.company_rows?.rows ?? []).map((r) => [r.id as number, r]));
+  const truth = new Map((o.company_rows?.rows ?? []).map((r) => [r.id as number, r]));
+  let checked = 0;
+  for (const p of layer.pins) {
+    if (p.target.kind !== "Company") continue;
+    const id = p.target.company;
+    const r = rows.get(id);
+    if (!r) {
+      m.wrong.push(`${what}: company ${id}'s pin has no row`);
+      continue;
+    }
+    if (p.size !== shown(r.revenue_ttm))
+      m.wrong.push(`${what}: ${r.name}'s pin is ${p.size}, its row shows ${shown(r.revenue_ttm)}`);
+    if (!r.estimated) continue;
+    const t = truth.get(id)?.revenue_ttm;
+    if (t?.kind !== "Exact") {
+      m.wrong.push(`${what}: the twin's revenue of ${r.name} is not exact`);
+      continue;
+    }
+    const d = pinPx(t.value);
+    const clamped = d <= PIN_MIN_PX || d >= PIN_MAX_PX;
+    if (p.size === t.value || (pinPx(p.size) === d && !clamped))
+      leaks.push(`${what}: ${r.name}'s pin is sized by its true revenue ${t.value}`);
+    checked++;
+  }
+  for (const pp of pinLayout(layer.pins))
+    if (pp.pin.target.kind === "Company" && pp.diameter !== pinPx(pp.pin.size))
+      m.wrong.push(
+        `${what}: company ${pp.pin.target.company}'s pin is ${pp.diameter} px, not ${pinPx(pp.pin.size)}`,
+      );
+  return checked;
+}
+
+/**
+ * An industry heat map colours a province by its units' assets as shown (D701): each value is the
+ * sum of the province's units' gross assets as v_units shows them; where a banded unit is, never
+ * the true sum (the Omniscient twin's layer), and its colour (`layerColors`) is the shown value's.
+ * The legend's scale is the shown values' (its top their largest), never the truth's. Returns how
+ * many banded provinces it checked.
+ */
+function checkHeat(
+  what: string,
+  layer: MapLayer,
+  i: IndustryId,
+  n: ViewsData,
+  o: ViewsData,
+  leaks: Leak[],
+  m: MapStats,
+): number {
+  const truthLayer = layerOf(o, layer.mode);
+  const scale = layer.scale;
+  if (layer.values.kind !== "Scalars" || truthLayer.values.kind !== "Scalars" || scale === null)
+    throw new Error(`${what}: a heat map`);
+  const vals = layer.values.values;
+  const truth = truthLayer.values.values;
+  const sums: number[] = new Array<number>(vals.length).fill(0);
+  const banded = new Set<number>();
+  for (const u of n.units?.units ?? []) {
+    if (u.industry !== i) continue;
+    sums[u.base_province] = (sums[u.base_province] as number) + Math.max(shown(u.gross_assets), 0);
+    if (u.gross_assets.kind === "Band") banded.add(u.base_province);
+  }
+  sums.forEach((x, p) => {
+    if (Math.fround(x) !== vals[p]) m.wrong.push(`${what}: province ${p} is ${vals[p]}, its units show ${x}`);
+  });
+  const colors = layerColors(layer, vals.length);
+  for (const p of banded) {
+    const x = vals[p] as number;
+    const tx = truth[p] as number;
+    if (x === tx && tx !== 0) leaks.push(`${what}: province ${p} is coloured by its true assets ${tx}`);
+    const c = scalarColor(layer.style, layer.mode, unitOf(scale, x));
+    if (colors[p * 3] !== c[0] || colors[p * 3 + 1] !== c[1] || colors[p * 3 + 2] !== c[2])
+      m.wrong.push(`${what}: province ${p}'s colour is not its shown value's`);
+  }
+  const top = vals.reduce((a, x) => Math.max(a, x), 0);
+  if (Math.fround(scale.high) !== top) m.wrong.push(`${what}: the scale's top ${scale.high} is not ${top}`);
+  const trueTop = truth.reduce((a, x) => Math.max(a, x), 0);
+  const atTop = vals.indexOf(top);
+  if (atTop >= 0 && banded.has(atTop) && Math.fround(scale.high) === trueTop)
+    leaks.push(`${what}: the legend's top is the true ${trueTop}`);
+  return banded.size;
+}
+
+/**
+ * The map checks find a truth: a banded pin sized by its true revenue and a banded province
+ * coloured by its true assets are reported.
+ */
+function mapCanary(n: ViewsData, o: ViewsData, private_: readonly number[]): void {
+  const pins = layerOf(n, { kind: "CompanyHqs", filter: { ...DEFAULT_MODE_STATE.hq, listed: false } });
+  const isPrivate = new Set(private_);
+  const k = pins.pins.findIndex((p) => p.target.kind === "Company" && isPrivate.has(p.target.company));
+  const pin = pins.pins[k];
+  if (!pin || pin.target.kind !== "Company") throw new Error("a banded HQ pin");
+  const id = pin.target.company;
+  const t = o.company_rows?.rows.find((r) => r.id === id)?.revenue_ttm;
+  if (t?.kind !== "Exact") throw new Error("the twin's revenue is exact");
+  const m: MapStats = { modes: 0, pins: 0, heat: 0, zoneCards: 0, wrong: [] };
+  const found: Leak[] = [];
+  checkPins("pin canary", { ...pins, pins: [{ ...pin, size: t.value }] }, n, o, found, m);
+  expect(found.length, `the pin canary: ${found}`).toBe(1);
+  const unit = (n.units?.units ?? []).find((u) => u.gross_assets.kind === "Band");
+  if (!unit) throw new Error("a banded unit");
+  const mode: MapMode = { kind: "Industry", industry: unit.industry };
+  const heat = layerOf(n, mode);
+  const truth = layerOf(o, mode);
+  const heatFound: Leak[] = [];
+  checkHeat("heat canary", { ...heat, values: truth.values }, unit.industry, n, o, heatFound, m);
+  expect(
+    heatFound.some((l) => l.includes(`province ${unit.base_province} `)),
+    `the heat canary: ${heatFound}`,
+  ).toBe(true);
+}
+
+/** Scans the map's screens of one state (D705) and checks its pins and heat values. */
+function scanMap(label: string, n: ViewsData, o: ViewsData, t: Truths, leaks: Leak[]): MapStats {
+  const index = buildNameIndex(n);
+  const private_ = banded(n);
+  const everyPrivate: PageRef[] = private_.map((id) => ({ kind: "company", id }));
+  const m: MapStats = { modes: 0, pins: 0, heat: 0, zoneCards: 0, wrong: [] };
+  mapCanary(n, o, private_);
+  for (const mode of scanModes(n)) {
+    const what = `${label} map ${JSON.stringify(mode)}`;
+    const layer = layerOf(n, mode);
+    // The HQ modes are about every banded company they pin; any other as about no subject (D705).
+    check(t, what, mode.kind === "CompanyHqs" ? everyPrivate : [], mapScreen(n, layer), leaks);
+    if (mode.kind === "Industry" && mode.industry !== null)
+      m.heat += checkHeat(what, layer, mode.industry, n, o, leaks, m);
+    m.pins += checkPins(what, layer, n, o, leaks, m);
+    m.modes++;
+  }
+  // The zone hover card of every zone, at its hub (D704), as about every banded company: it shows
+  // only public figures.
+  for (const x of n.exchanges?.exchanges ?? []) {
+    check(
+      t,
+      `${label} map zone card ${x.code}`,
+      everyPrivate,
+      cardScreen(zoneHoverCard(x.zone, x.hub_province, n, index)),
+      leaks,
+    );
+    m.zoneCards++;
+  }
+  return m;
+}
+
 function scanWorld(w: World): void {
   const fresh = newSim(w.data);
   const later = newSim(w.data);
@@ -655,11 +921,17 @@ function scanWorld(w: World): void {
     if (first === undefined) throw new Error(`${label}: no banded company has a truth`);
     canary(t, { kind: "company", id: first });
     const screens = scanState(label, n, t, leaks);
+    const map = scanMap(label, n, o, t, leaks);
     const renderingsN = [...t.hidden.values()].reduce((a, h) => a + h.size, 0);
     report.push(
       `${label}: ${screens} screens, ${banded(n).length} banded companies, ${t.hidden.size} subjects, ` +
-        `${renderingsN} true renderings, ${t.bands} bands checked, ${t.unpaired.length} entries unpaired`,
+        `${renderingsN} true renderings, ${t.bands} bands checked, ${t.unpaired.length} entries unpaired; ` +
+        `map: ${map.modes} modes, ${map.pins} banded HQ pins, ${map.heat} banded heat values, ` +
+        `${map.zoneCards} zone cards`,
     );
+    expect(map.wrong, `${label}: the map does not draw what the views show`).toEqual([]);
+    expect(map.pins, `${label}: banded HQ pins`).toBeGreaterThanOrEqual(w.min.pins);
+    expect(map.heat, `${label}: banded heat values`).toBeGreaterThanOrEqual(w.min.heat);
     expect(t.badBands, `${label}: bands at or past their truth`).toEqual([]);
     expect(t.closeEnds, `${label}: band ends that read as the truth`).toEqual([]);
     expect(banded(n).length, `${label}: banded companies`).toBeGreaterThanOrEqual(w.min.banded);
@@ -679,7 +951,7 @@ describe("no true private value on any screen (m9_leak.rs, D574)", () => {
       label: "2020",
       data: loaded(defaultDataDir()),
       q1: { year: 2020, q: 1 },
-      min: { banded: 100, subjects: 100, bands: 1000 },
+      min: { banded: 100, subjects: 100, bands: 1000, pins: 500, heat: 250 },
     });
   }, 600_000);
 
@@ -688,7 +960,7 @@ describe("no true private value on any screen (m9_leak.rs, D574)", () => {
       label: "1995",
       data: loaded(worldDataDir("1995")),
       q1: { year: 1995, q: 1 },
-      min: { banded: 30, subjects: 40, bands: 1000 },
+      min: { banded: 30, subjects: 40, bands: 1000, pins: 100, heat: 60 },
     });
   }, 600_000);
 });

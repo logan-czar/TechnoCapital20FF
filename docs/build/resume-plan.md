@@ -24,7 +24,7 @@ Where to pick the work up, as of 2026-11-03 (main 5b03196, after PR #119). Read 
 
 ## Next, in order
 
-### 1. Map layers (build; the largest gap from the port)
+### 1. Map layers (build; the largest gap from the port) — done (D1020)
 
 The map draws only the Political mode. The Rust map also had:
 - the other map modes and their legends (D700, D702);
@@ -40,7 +40,7 @@ layers in `apps/web/src/map/` on `v_map_layers`, which the map pane then asks fo
 `pins.rs`, `labels.rs`, `card.rs`, `picking.rs`. Then run the UI leak test on the modes (it skips the
 map today, D1013) and bring back a click test of every province (D740).
 
-### 2. Measure the map at max speed (a check)
+### 2. Measure the map at max speed (a check) — map alone done (D1021); the five-heavy-pages run is left
 
 The map's frame rate while panning at max speed has never been measured, because the browser
 pane was hidden. With the pane showing (Ctrl+Shift+B), measure on a production build

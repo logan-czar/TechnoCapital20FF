@@ -7,6 +7,7 @@ import { cmpStr } from "@tc20ff/sim";
 import type { FeatureCollection, MultiPolygon, Polygon, Position } from "geojson";
 import { feature, mesh } from "topojson-client";
 import type { GeometryCollection, GeometryObject, Topology } from "topojson-specification";
+import { pxToMiller } from "./view.ts";
 
 /** A point in Miller units. */
 export type XY = [number, number];
@@ -41,9 +42,33 @@ export interface ProvincePart {
   polygon: XY[][];
 }
 
+/** province-centroids.csv's columns the map reads, in mapgen's 8192 x 4096 bitmap pixels. */
+export interface CentroidRow {
+  id: string;
+  x: number;
+  y: number;
+  label_x: number;
+  label_y: number;
+  area_px: number;
+  tiny: boolean;
+}
+
+/** A province's place on the map (v_map_static `ProvinceShape`), in Miller units. */
+export interface ProvinceShape {
+  centroid: XY;
+  /** The label point: pins, labels and tiny targets sit here (D640, D703, D706). */
+  label: XY;
+  /** Its area in bitmap pixels (D640's and D706's thresholds divide by the scale squared). */
+  areaPx: number;
+  /** Under mapgen's click-target threshold: a dot and a click target at its label point (D640). */
+  tiny: boolean;
+}
+
 export interface MapModel {
   /** Province rows by ordinal. */
   rows: ProvinceRow[];
+  /** Shapes by ordinal; null for a province province-centroids.csv does not list. */
+  shapes: (ProvinceShape | null)[];
   /** Country codes in ascending order; the index in this list is the country ordinal. */
   countries: string[];
   /** Country ordinal of each province, by province ordinal. */
@@ -56,6 +81,11 @@ export interface MapModel {
   borders: XY[][];
   /** Only the boundaries between provinces of different countries. */
   countryBorders: XY[][];
+  /**
+   * The outline of groups of provinces (the Metros, spec 8): the boundaries where `group` differs,
+   * coasts of grouped provinces included; null is no group.
+   */
+  groupBorders: (group: (ordinal: number) => number | null) => XY[][];
 }
 
 /** Province ordinals: ids in ascending byte order (D4). Throws on a duplicate id. */
@@ -79,6 +109,7 @@ export function buildMapModel(
   topology: ProvinceTopology,
   csvRows: readonly ProvinceRow[],
   countryCodes: readonly string[],
+  centroids: readonly CentroidRow[] = [],
 ): MapModel {
   const ordinals = provinceOrdinals(csvRows.map((r) => r.id));
   const rows: ProvinceRow[] = new Array(ordinals.size);
@@ -129,13 +160,32 @@ export function buildMapModel(
   const lines = (filter?: (a: GeometryObject, b: GeometryObject) => boolean) =>
     asRings(mesh(topology, collection, filter).coordinates);
   const countryAt = (g: GeometryObject) => countryOf[geomOrdinal.get(g) as number];
+  const shapes: (ProvinceShape | null)[] = rows.map(() => null);
+  for (const c of centroids) {
+    const o = ordinals.get(c.id);
+    if (o === undefined) continue;
+    shapes[o] = {
+      centroid: pxToMiller(c.x, c.y),
+      label: pxToMiller(c.label_x, c.label_y),
+      areaPx: c.area_px,
+      tiny: c.tiny,
+    };
+  }
   return {
     rows,
+    shapes,
     countries,
     countryOf,
     parts,
     partsOf,
     borders: lines(),
     countryBorders: lines((a, b) => a !== b && countryAt(a) !== countryAt(b)),
+    groupBorders: (group) => {
+      const g = (x: GeometryObject) => group(geomOrdinal.get(x) as number);
+      return lines((a, b) => {
+        const [ga, gb] = [g(a), g(b)];
+        return a === b ? ga !== null : ga !== gb && (ga !== null || gb !== null);
+      });
+    },
   };
 }

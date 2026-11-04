@@ -58,6 +58,7 @@ New calls for Logan since the doc: the default economy profile (`legacy`; D970 s
 - The checks that went with these are gone too: D705 (map modes, cards and pins), D740 (a click on every province; `apps/web/test/map.test.ts:158` checks one known point), D743 (leak test on the map).
 - The port plan put modes, labels, pins and the card in Step 5, lane W4 (`ts-migration-plan.md:107`, `:195`). ts-remaining-work dropped them with no decision. Its 4.4 walk-through still lists "every page and map mode".
 - **Fix:** port `modes.rs`, `pins.rs`, `labels.rs` and `card.rs` as deck.gl layers on `v_map_layers` (add the view to the map pane's `Want`), with a pick radius for tiny provinces. Then rerun the UI leak test on the modes. If Logan defers this, log the deferral as a decision.
+- **Done since (D1020):** the five modes with their bar and legend, the Metro outlines, contested provinces, HQ and hub pins, labels by zoom, the province and zone hover cards, tiny-province dots and targets, and W A S D / Q / E are ported. D740's every-province click is back in `map.test.ts`; the map modes are back in the UI leak test (D705). Region lines are still not drawn (D960).
 
 ### G3. Floating windows over the map became a tiling workspace (medium, Logan's choice)
 
@@ -219,7 +220,7 @@ The Python pipeline is unchanged except that its mapgen step now calls `apps/map
 | D573 (timing harness for every page kind) | holds, not gated | `apps/web/bench/pages.test.tsx`, on demand (D1013). Rust's failed the run on a miss; TS's does too, but only when run by hand. |
 | D574 (leak test with an Omniscient twin) | holds | `ui-leak.test.ts` in the gate (D1013). |
 | D693 (cold-open retry) | needs Logan (low) | The retry is kept in TS (D1013); the revisit still stands. |
-| D705, D740, D743 (map checks, every-province click, leak test on the map) | gap | G2: they go with the missing map features. |
+| D705, D740, D743 (map checks, every-province click, leak test on the map) | done (D1020) | G2: back with the map features: `map.test.ts` (D740), `ui-leak.test.ts` (D705, on the committed world map as D743 says). |
 | D805 (speed 5 reported, not gated) | gap (TS form) | G4. |
 | D438 (boundary check builds each binary), D459, D519, D639, D741, D742, D744, D778, D779, D790, D802, D870 | obsolete | Rust build, Bevy benches, window and shader. Replaced by `scripts/ts/boundary.ts`, the page bench and the D1014/D1016 browser measurements. |
 

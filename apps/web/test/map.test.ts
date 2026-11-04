@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { countryColor, politicalColors } from "../src/map/colors.ts";
 import { parseCsv } from "../src/map/csv.ts";
+import { parseCentroids } from "../src/map/data.ts";
 import {
   buildMapModel,
   type ProvinceRow,
@@ -11,6 +12,7 @@ import {
   provinceOrdinals,
   type XY,
 } from "../src/map/model.ts";
+import { pick, provinceIndex, tinyTargets } from "../src/map/picking.ts";
 import {
   clampView,
   FRAME_BOTTOM,
@@ -22,6 +24,9 @@ import {
   provinceLineAlpha,
   pxToMiller,
   spanDeg,
+  toMap,
+  toScreen,
+  WHEEL_STEP,
   wrapX,
 } from "../src/map/view.ts";
 
@@ -170,6 +175,63 @@ describe("map model on the committed assets", () => {
     }
     expect(checked).toBeGreaterThan(3000);
     expect(hits / checked).toBeGreaterThan(0.99);
+  });
+});
+
+describe("every province is clickable (D740)", () => {
+  // Rust every_world_province_is_clickable (crates/game/tests/m8_map.rs at 334ee6d): for each
+  // province, a point of its own (the label point, or a point inside its largest part when the
+  // simplified outline leaves the label point outside), clicked at every wheel step from the
+  // farthest zoom to the closest, must pick it at some zoom: tiny provinces through their targets
+  // (D640), the rest through their polygons. `provinceIndex` stands in for deck's GPU pick.
+  const centroids = parseCentroids(readFileSync(resolve(repo, "assets/map/province-centroids.csv"), "utf8"));
+  const model = buildMapModel(topology, rows, countryCodes, centroids);
+  const under = provinceIndex(model);
+  const tiny = tinyTargets(model);
+  const [width, height] = [1600, 900];
+
+  /** A point of province `o`: its label point if the outline holds it, else one inside its largest part. */
+  function pointOf(o: number): XY | null {
+    const label = model.shapes[o]?.label;
+    if (label && under(label) === o) return label;
+    const parts = [...(model.partsOf[o] ?? [])].sort(
+      (a, b) => (b.polygon[0]?.length ?? 0) - (a.polygon[0]?.length ?? 0),
+    );
+    for (const part of parts) {
+      const ring = part.polygon[0] ?? [];
+      const xs = ring.map((p) => p[0]);
+      const ys = ring.map((p) => p[1]);
+      const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+      for (let i = 1; i < 16; i++)
+        for (let j = 1; j < 16; j++) {
+          const p: XY = [x0 + ((x1 - x0) * i) / 16, y0 + ((y1 - y0) * j) / 16];
+          if (under(p) === o) return p;
+        }
+    }
+    return label ?? null;
+  }
+
+  it("has a shape row for every province", () => {
+    expect(model.shapes.every((s) => s !== null)).toBe(true);
+    expect(tiny.length).toBeGreaterThan(300);
+  });
+
+  it("picks every province at some zoom", () => {
+    const fit = fitZoom(width, height);
+    const step = Math.log2(WHEEL_STEP);
+    const missed: string[] = [];
+    for (let o = 0; o < model.rows.length; o++) {
+      const p = pointOf(o);
+      let ok = false;
+      for (let z = fit; z <= MAX_ZOOM + 1e-9 && p && !ok; z += step) {
+        const view = clampView({ target: [p[0], p[1], 0], zoom: z }, width, height);
+        const vp = { view, width, height };
+        const s = toScreen(vp, p);
+        ok = pick(vp, s, under(toMap(vp, s)), model, tiny) === o;
+      }
+      if (!ok) missed.push(model.rows[o]?.id ?? String(o));
+    }
+    expect(missed).toEqual([]);
   });
 });
 

@@ -61,6 +61,15 @@ export { figureSum, statementLineOf } from "./views/estimate.ts";
 export { emptyHistory } from "./views/history.ts";
 // What the worker posts: view copies and patches by version (views/).
 export { simViewsCopyChangedFrom, simViewsGetMapLayer, simViewsMapLayerVersions } from "./views/index.ts";
+// The map's layer from the views' data (spec 9.2 `get_map_layer`): the UI holds the views, not a
+// SimViews, so it calls `mapLayersViewLayer` with v_map_layers (and v_cycle and v_exchanges).
+export {
+  devTrackMax,
+  hqFilterAdmits,
+  mapLayersViewLayer,
+  mapLayersViewZoneOf,
+  mapModeName,
+} from "./views/map_layers.ts";
 export {
   HEAVY_VIEWS,
   lightView,
