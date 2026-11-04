@@ -1,8 +1,8 @@
 // Board-seat events (drift plan lane W, spec v1.5 5.21, D1024). Types only; the rules are in
 // events/seats.ts.
 
-/** What a seat event moves while it lasts: one per labor seat's role, the CIO's applied at once. */
-export type SeatEffectKind = "Growth" | "Spread" | "Revenue" | "Margin";
+/** What a seat event moves while it lasts: one per labor seat's role. */
+export type SeatEffectKind = "Growth" | "Spread" | "Productivity" | "Revenue" | "Margin";
 
 /**
  * A temporary multiplier from a seat event: its full `value` when it lands, fading linearly to

@@ -2,16 +2,15 @@
 // `seat_events`, every open labor seat of every company not frozen rolls d30 plus the seat's skill
 // (5.7's seat skill; an open seat with no holder counts 3) against a difficulty that rises with the
 // log of the company's trailing revenue. A success helps and a failure hurts, through its role:
-// the CEO the growth plan, the CFO the line rate, the CIO productivity and held data (at once), the
+// the CEO the growth plan, the CFO the line rate, the CIO productivity (and held data, at once), the
 // CMO revenue and the COO the variable cost share. Gains shrink with size and harms grow with it.
-// Every effect but the CIO's is a temporary multiplier that fades over a few plan locks, so events
-// steer the trend without breaking the books. A natural 30 or 1 is critical (doubled), and a big
+// Each effect is a temporary multiplier that fades over a few plan locks, so events steer the trend
+// without breaking the books. A natural 30 or 1 is critical (doubled), and a big
 // company's critical roll posts a Wire headline (5.18). All draws are on the Events stream.
 
 import { companyIsFrozen } from "../economy/index.ts";
 import { profileOf } from "../economy/profiles.ts";
 import { newsWireQueue, seatEvent } from "../news.ts";
-import { PRODUCTIVITY_MAX, PRODUCTIVITY_MIN } from "../ops/productivity.ts";
 import { EMPTY_SEAT_SKILL, memberSkill } from "../people/management.ts";
 import { trailingRevenue } from "../people/seating.ts";
 import type { JobCtx } from "../time/scheduler.ts";
@@ -43,20 +42,22 @@ export const SEAT_FAILURE_LARGE = 1.5;
 /** A natural 30 or 1 doubles the outcome (T). */
 export const SEAT_CRITICAL_SCALE = 2.0;
 /** The CEO's effect on the growth plan, a fraction a year, and the plan locks it fades over (T). */
-export const SEAT_CEO_GROWTH = 0.04;
+export const SEAT_CEO_GROWTH = 0.02;
 export const SEAT_CEO_QUARTERS = 4;
 /** The CFO's effect on the line rate, a fraction a year (a success lowers it), and its plan locks (T). */
-export const SEAT_CFO_SPREAD = 0.005;
+export const SEAT_CFO_SPREAD = 0.0025;
 export const SEAT_CFO_QUARTERS = 4;
+/** The CIO's effect on productivity, points on p_pre, and its plan locks (T). */
+export const SEAT_CIO_PRODUCTIVITY = 3.0;
+export const SEAT_CIO_QUARTERS = 4;
+/** The CIO's share of held data gained or lost at once (data regrows; T). */
+export const SEAT_CIO_DATA_SHARE = 0.05;
 /** The CMO's effect on revenue, a fraction, and its plan locks (T). */
-export const SEAT_CMO_REVENUE = 0.03;
+export const SEAT_CMO_REVENUE = 0.01;
 export const SEAT_CMO_QUARTERS = 4;
 /** The COO's effect on the variable cost share, a fraction of revenue, and its plan locks (T). */
-export const SEAT_COO_MARGIN = 0.015;
+export const SEAT_COO_MARGIN = 0.005;
 export const SEAT_COO_QUARTERS = 3;
-/** The CIO's productivity points and share of held data, applied at once (T). */
-export const SEAT_CIO_PRODUCTIVITY = 4.0;
-export const SEAT_CIO_DATA_SHARE = 0.1;
 /** A critical roll posts a headline from this much trailing revenue (T). */
 export const SEAT_HEADLINE_MIN_REVENUE_USD = 50e9;
 
@@ -100,16 +101,9 @@ function push(c: Company, kind: SeatEffectKind, value: number, quarters: number)
   else c.seat_effects.push(e);
 }
 
-/** The CIO's outcome, at once: productivity points on every unit and a share of held data. */
-function applyCio(world: World, c: Company, outcome: number): void {
-  for (const uid of c.units) {
-    const u = world.units[uid] as World["units"][number];
-    u.productivity = clamp(
-      u.productivity + SEAT_CIO_PRODUCTIVITY * outcome,
-      PRODUCTIVITY_MIN,
-      PRODUCTIVITY_MAX,
-    );
-  }
+/** The CIO's outcome: fading productivity points on p_pre, and a share of held data at once. */
+function applyCio(c: Company, outcome: number): void {
+  push(c, "Productivity", SEAT_CIO_PRODUCTIVITY * outcome, SEAT_CIO_QUARTERS);
   for (const d of c.data) d.book.held *= maxF(1.0 + SEAT_CIO_DATA_SHARE * outcome, 0.0);
 }
 
@@ -122,7 +116,7 @@ function apply(world: World, c: Company, seat: Seat, outcome: number): void {
       push(c, "Spread", -SEAT_CFO_SPREAD * outcome, SEAT_CFO_QUARTERS);
       break;
     case "Cio":
-      applyCio(world, c, outcome);
+      applyCio(c, outcome);
       break;
     case "Cmo":
       push(c, "Revenue", SEAT_CMO_REVENUE * outcome, SEAT_CMO_QUARTERS);
