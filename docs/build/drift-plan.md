@@ -1,6 +1,6 @@
 # Long-run drift plan: fixes for the economy past 2050
 
-_Draft for Logan, 2026-10-24. Built from the 100-year report (the "Economy Left Alone" dashboard; soak data in `.claude/scratch/w3`), mvp-spec v1.4 sections 5 and 6, and Logan's answers. Nothing here is built yet. These are spec changes: they move mvp-spec past v1.4 to v1.5._
+_Draft for Logan, 2026-10-24. Built from the 100-year report (the "Economy Left Alone" dashboard; soak data in `.claude/scratch/w3`), mvp-spec v1.4 sections 5 and 6, and Logan's answers. **Built** (2026-11-04): lane G as D977 and D978, lane X as D1022, lane W as D1023 and D1024, lane S as D1025; the results are in [drift-report.md](drift-report.md). These are spec changes: they move mvp-spec past v1.4 to v1.5._
 
 ## 1. What the 100-year run showed
 

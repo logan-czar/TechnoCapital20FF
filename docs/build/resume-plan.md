@@ -66,7 +66,7 @@ since the layers add cost.
 
 ### 4. Later, already planned
 
-- **Spec v1.5 drift fixes** ([drift-plan.md](drift-plan.md)), built in TS.
+- **Spec v1.5 drift fixes** ([drift-plan.md](drift-plan.md)): done (D1022 to D1025, all behind the `mature` profile; results in [drift-report.md](drift-report.md)). Left for you: whether `mature` becomes the default, and design fixes 1022 to 1025.
 - **Optional:** the headless year-close state hash costs about 2.2 s a year after year 10.
 
 ## Housekeeping left on Logan's PC
