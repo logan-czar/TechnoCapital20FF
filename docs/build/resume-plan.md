@@ -40,7 +40,7 @@ layers in `apps/web/src/map/` on `v_map_layers`, which the map pane then asks fo
 `pins.rs`, `labels.rs`, `card.rs`, `picking.rs`. Then run the UI leak test on the modes (it skips the
 map today, D1013) and bring back a click test of every province (D740).
 
-### 2. Measure the map at max speed (a check) — done (D1021); the five-pages run fails: Companies, Industries and Countries re-render too much at Max
+### 2. Measure the map at max speed (a check) — done (D1021): about 50 fps at Max with the map alone and with five heavy pages, after charts stopped being remade on every page rebuild
 
 The map's frame rate while panning at max speed has never been measured, because the browser
 pane was hidden. With the pane showing (Ctrl+Shift+B), measure on a production build
