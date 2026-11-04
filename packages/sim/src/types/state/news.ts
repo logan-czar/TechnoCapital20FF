@@ -14,6 +14,7 @@ import type { PhaseLabel } from "../world.ts";
 import type { RaiseMethod } from "./ai.ts";
 import type { Rating } from "./finance.ts";
 import type { SurpriseTag } from "./market.ts";
+import type { Seat } from "./people.ts";
 
 /** Spec 5.18 (A): MVP headlines come from a neutral Pdoomberg Wire byline. */
 export const BYLINE = "Pdoomberg Wire";
@@ -52,7 +53,9 @@ export type HeadlineKind =
   /** A US election or inauguration (D985). */
   | { kind: "Politics" }
   /** A historical world's recession or new industry (1995-rework 4.2, 5.3). */
-  | { kind: "World" };
+  | { kind: "World" }
+  /** A big company's board-seat event, a critical roll (spec v1.5 5.21, D1024). */
+  | { kind: "SeatEvent"; seat: Seat; success: boolean };
 
 /**
  * One Pdoomberg Wire headline (spec 5.18; 8 News feed: date and industry tag). The byline is

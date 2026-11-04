@@ -3,7 +3,7 @@
 // crates/sim/src/ops/data.rs. The `DataBook` type is in types/state/ops.ts.
 
 import { log10F } from "../types/libm.ts";
-import { maxF, minF } from "../types/num.ts";
+import { maxF, minF, trunc } from "../types/num.ts";
 import type { DataBook, Stations } from "../types/state/ops.ts";
 import { RETENTION_MONTHS as RETENTION_MONTHS_TYPE } from "../types/state/ops.ts";
 import { USD_PER_MILLION } from "../types/world.ts";
@@ -107,6 +107,16 @@ export interface DataParams {
   tb_per_musd: number;
   /** Base monthly decay of held data (`data_decay_base`). */
   decay_base: number;
+  /** The most free R&D a month may give, whole percent (D1023); absent is spec 5.9's uncapped step. */
+  free_rd_cap_pct?: number;
+}
+
+/** Drift plan lane W (D1023, T): free R&D is capped at this many of the industry's R&D norm. */
+export const FREE_RD_CAP_NORMS = 2.0;
+
+/** The free R&D cap for an industry's R&D norm, whole percent (D1023): `trunc(2 × rd_norm × 100)`. */
+export function freeRdCapPct(rdNorm: number): number {
+  return trunc(FREE_RD_CAP_NORMS * rdNorm * PERCENT);
 }
 
 /** What one month did (spec 5.9), for screens and checks. */
@@ -172,8 +182,9 @@ export function dataBookMonth(
   params: DataParams,
   capacityTb: number,
 ): DataMonth {
-  // 1. Free R&D for this month.
-  const step = freeRdStep(book.held);
+  // 1. Free R&D for this month, under the lane W cap when the profile sets one (D1023).
+  const uncapped = freeRdStep(book.held);
+  const step = params.free_rd_cap_pct === undefined ? uncapped : Math.min(uncapped, params.free_rd_cap_pct);
   if (step < book.free_rd_pct && !book.grace) {
     // The first month below: keep the old step for the grace month.
     book.grace = true;
