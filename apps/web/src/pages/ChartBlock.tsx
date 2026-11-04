@@ -11,8 +11,10 @@ import {
   createChart,
   HistogramSeries,
   type IChartApi,
+  type ISeriesApi,
   LineSeries,
   LineStyle,
+  type SeriesType,
   type Time,
   type UTCTimestamp,
 } from "lightweight-charts";
@@ -66,7 +68,8 @@ function valueScale(m: ChartModel): number {
   return values.some((v) => Math.abs(v) > SCALE_ABOVE) ? SCALE : 1;
 }
 
-function draw(c: IChartApi, m: ChartModel): void {
+/** Draws `m` on `c` and returns the series it added, so the next model can remove them. */
+function draw(c: IChartApi, m: ChartModel): ISeriesApi<SeriesType>[] {
   const dated = m.series.some((s) => s.k === "candles");
   const k = valueScale(m);
   const at = (v: number) => v / k;
@@ -80,12 +83,18 @@ function draw(c: IChartApi, m: ChartModel): void {
   let first: {
     createPriceLine: (o: { price: number; color: string; lineStyle: LineStyle }) => unknown;
   } | null = null;
+  const added: ISeriesApi<SeriesType>[] = [];
+  const add: IChartApi["addSeries"] = (def, options) => {
+    const series = c.addSeries(def, options);
+    added.push(series as ISeriesApi<SeriesType>);
+    return series;
+  };
   for (const s of m.series) {
     switch (s.k) {
       case "candles": {
-        const low = c.addSeries(LineSeries, dashed(TONES.amber));
-        const high = c.addSeries(LineSeries, dashed(TONES.amber));
-        const series = c.addSeries(CandlestickSeries, {
+        const low = add(LineSeries, dashed(TONES.amber));
+        const high = add(LineSeries, dashed(TONES.amber));
+        const series = add(CandlestickSeries, {
           upColor: TONES.cyan,
           borderUpColor: TONES.cyan,
           wickUpColor: TONES.cyan,
@@ -116,13 +125,13 @@ function draw(c: IChartApi, m: ChartModel): void {
         break;
       }
       case "line": {
-        const series = c.addSeries(LineSeries, { color: TONES[s.tone], lineWidth: 2, title: s.name });
+        const series = add(LineSeries, { color: TONES[s.tone], lineWidth: 2, title: s.name });
         series.setData(s.values.map((value, i) => ({ time: slotTime(i), value: at(value) })));
         first ??= series;
         break;
       }
       case "bars": {
-        const series = c.addSeries(HistogramSeries, { title: s.name, priceLineVisible: false });
+        const series = add(HistogramSeries, { title: s.name, priceLineVisible: false });
         series.setData(
           s.values.map((value, i) => ({
             time: slotTime(i),
@@ -134,8 +143,8 @@ function draw(c: IChartApi, m: ChartModel): void {
         break;
       }
       case "band": {
-        const low = c.addSeries(LineSeries, dashed(TONES[s.tone]));
-        const high = c.addSeries(LineSeries, dashed(TONES[s.tone]));
+        const low = add(LineSeries, dashed(TONES[s.tone]));
+        const high = add(LineSeries, dashed(TONES[s.tone]));
         low.setData(
           s.bands.map((b, i) => (b ? { time: slotTime(i), value: at(b[0]) } : { time: slotTime(i) })),
         );
@@ -165,10 +174,15 @@ function draw(c: IChartApi, m: ChartModel): void {
     c.applyOptions({ localization: { priceFormatter } });
   }
   c.timeScale().fitContent();
+  return added;
 }
 
 export function ChartBlock({ chart }: { chart: ChartModel }) {
   const host = useRef<HTMLDivElement>(null);
+  const api = useRef<IChartApi | null>(null);
+  // The chart is made once per block: making one lays out the whole page (getClientRects), and a
+  // page rebuilds its doc up to every PAGE_REFRESH_MS at max speed, so a new model only swaps the
+  // series (D1021).
   useEffect(() => {
     const el = host.current;
     if (!el) return;
@@ -179,7 +193,7 @@ export function ChartBlock({ chart }: { chart: ChartModel }) {
       rightPriceScale: { borderColor: GRID },
       timeScale: { borderColor: GRID },
     });
-    draw(c, chart);
+    api.current = c;
     // A chart drawn in a small pane must fit its data again when the pane grows.
     let width = el.clientWidth;
     const refit = new ResizeObserver(() => {
@@ -190,7 +204,17 @@ export function ChartBlock({ chart }: { chart: ChartModel }) {
     refit.observe(el);
     return () => {
       refit.disconnect();
+      api.current = null;
       c.remove();
+    };
+  }, []);
+  useEffect(() => {
+    const c = api.current;
+    if (!c) return;
+    const series = draw(c, chart);
+    return () => {
+      if (api.current !== c) return;
+      for (const s of series) c.removeSeries(s);
     };
   }, [chart]);
   return (
