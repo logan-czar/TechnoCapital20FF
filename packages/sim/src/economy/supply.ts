@@ -8,6 +8,7 @@
 //   `p_pre = productivity + PC bonus + location_bonus` (C12).
 // - `S = supply ÷ demand`; `M = clamp((1 ÷ S)^0.5, 0.7, 1.3)`.
 
+import { seatEffectNow } from "../events/effects.ts";
 import { quarterPrev, simDateQuarter } from "../time/calendar.ts";
 import { type JobCtx, tickFactsIsQuarterStart } from "../time/scheduler.ts";
 import { clamp, maxF } from "../types/num.ts";
@@ -67,7 +68,8 @@ export function fringeSupply(fringeAssets: number, turnover: number): number {
 
 /** `p_pre = productivity + PC bonus + location_bonus` (spec 5.2, C12). */
 export function pPre(unit: BusinessUnit, company: Company): number {
-  return unit.productivity + company.pc_bonus + unit.location_bonus;
+  // A CIO's seat event moves productivity while it fades (D1024); 0 with none.
+  return unit.productivity + company.pc_bonus + unit.location_bonus + seatEffectNow(company, "Productivity");
 }
 
 /** One unit's supply a year: `assets_eff × turnover × p_pre ÷ 100` (spec 5.2). */

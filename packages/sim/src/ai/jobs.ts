@@ -8,6 +8,7 @@
 // parked: no industry is cash_burning, so it draws nothing with today's data.
 
 import { dEff } from "../economy/assets.ts";
+import { seatEffectNow } from "../events/effects.ts";
 import { companyStatusIsFrozen } from "../finance/distress.ts";
 import { eraDividendOnCash } from "../finance/dividends.ts";
 import { grossAssets, payDividend, trailingRevenue } from "../finance/jobs.ts";
@@ -24,6 +25,7 @@ import { failedRaise, newsWireQueue, raise } from "../news.ts";
 import { confidenceFactor } from "../people/management.ts";
 import { type JobCtx, type Scheduler, schedulerRegister } from "../time/scheduler.ts";
 import type { CompanyId } from "../types/ids.ts";
+import { maxF, minF } from "../types/num.ts";
 import type { OperatingPlan } from "../types/state/ai.ts";
 import type { Ledger } from "../types/state/finance.ts";
 import type { Trait } from "../types/state/people.ts";
@@ -292,6 +294,10 @@ export function planLockJob(world: World, ctx: JobCtx): void {
     if (world.era !== undefined && tryGrowthRaise(world, ctx, id, op.growth)) {
       op = planOperations(planInputs(world, id));
     }
+    // A CEO's seat event moves the growth plan while it fades (D1024), never under 0 unless the
+    // plan already is; the financing below funds the plan as moved.
+    const ceo = seatEffectNow(world.companies[id] as Company, "Growth");
+    if (ceo !== 0.0) op = { ...op, growth: maxF(op.growth + ceo, minF(op.growth, 0.0)) };
     applyOperating(world, id, op);
     tryRaise(world, ctx, id);
     const c = world.companies[id] as Company;

@@ -12,6 +12,7 @@
 // with R&D at the norm (`margin_full_use = rd_norm`, C18) a company at productivity 100 and
 // M 1.0 breaks even.
 
+import { seatEffectNow } from "../events/effects.ts";
 import type { JobCtx } from "../time/scheduler.ts";
 import { maxF, minF } from "../types/num.ts";
 import type { BusinessUnit, IndustryParams, World } from "../types/world.ts";
@@ -98,12 +99,11 @@ export function setRevenue(world: World): void {
       continue;
     }
     const p = pPre(unit, company);
-    unit.revenue_m = unitRevenueMonth(
-      businessUnitAssetsEff(unit),
-      ind.params.asset_turnover,
-      p,
-      ind.market_factor,
-    );
+    // A CMO's seat event moves revenue while it fades (D1024); 0 with none.
+    const cmo = seatEffectNow(company, "Revenue");
+    unit.revenue_m =
+      unitRevenueMonth(businessUnitAssetsEff(unit), ind.params.asset_turnover, p, ind.market_factor) *
+      maxF(1.0 + cmo, 0.0);
   }
   for (const ind of world.industries) {
     ind.fringe_revenue_m = fringeRevenueMonth(
@@ -138,7 +138,9 @@ export function setExpenses(world: World): void {
       params,
       shared[id]!,
     );
-    unit.variable_m = e.variable;
+    // A COO's seat event moves the variable cost share while it fades (D1024); 0 with none.
+    const coo = seatEffectNow(world.companies[unit.company]!, "Margin");
+    unit.variable_m = coo === 0.0 ? e.variable : unit.revenue_m * maxF(variableCostShare(params) - coo, 0.0);
     unit.fixed_m = e.fixed;
     unit.dep_m = e.depreciation;
     unit.rd_m = e.rd;

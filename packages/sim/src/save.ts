@@ -25,7 +25,7 @@ export const SAVE_MAGIC: Uint8Array = new TextEncoder().encode("TC20FFJS");
  * Bumped whenever the saved layout changes (any new field in any table). The TS port starts at 1
  * (D953); Rust's versions (up to 11) do not carry over.
  */
-export const SAVE_VERSION = 4;
+export const SAVE_VERSION = 5;
 
 /** The decoded state of a save. */
 export interface SaveState {

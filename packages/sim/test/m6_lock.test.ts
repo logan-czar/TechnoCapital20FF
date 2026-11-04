@@ -248,7 +248,7 @@ describe("m6 lock", () => {
     expect(jobs("LockFixedStartupEvents")).toEqual(["births.fixed_events", "era.founding_waves"]);
     expect(jobs("LockRandomStartupEvents")).toEqual(["births.random_events"]);
     expect(jobs("LockIpoVotes")).toEqual(["births.ipo_votes_and_listings"]);
-    expect(jobs("LockAiPlans")).toEqual(["ai.plan_lock"]);
+    expect(jobs("LockAiPlans")).toEqual(["events.seats", "ai.plan_lock"]);
     expect(jobs("LockConsensus")).toEqual(["market.consensus"]);
   });
 });
