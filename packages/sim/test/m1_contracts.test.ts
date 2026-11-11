@@ -286,12 +286,16 @@ describe("M1 contracts: the pivot views", () => {
     simApply(sim, { kind: "Resume" });
     for (let i = 0; i < 48; i++) simStep(sim);
     const views = simViews(sim);
-    // The M2 lanes port theirs: v_people is lane C's (D1041), the two geo views lane G's (D1039).
-    const unported = PIVOT_VIEWS.filter((n) => n !== "people" && n !== "districts" && n !== "usmap_layers");
+    // The M2 lanes port theirs: v_people is lane C's (D1041), the two geo views lane G's (D1039),
+    // the account and notifications lane P's (D1042): with no player those two hold their empty values.
+    const ported: readonly string[] = ["people", "districts", "usmap_layers", "account", "notifications"];
+    const unported = PIVOT_VIEWS.filter((n) => !ported.includes(n));
     expect(viewIsPorted("people")).toBe(true);
+    for (const n of ["account", "notifications"] as const) {
+      expect(views[n].data, n).toEqual(VIEW_BUILDERS[n].empty());
+    }
     for (const n of unported) {
       expect(viewIsPorted(n), n).toBe(false);
-      expect(views[n].data, n).toEqual(VIEW_BUILDERS[n].empty());
       expect(views[n].version, n).toBe(1);
     }
     const patch = viewsPatchSince(views, postedViewsNone());

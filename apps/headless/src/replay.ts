@@ -17,12 +17,22 @@
 // kept in memory (the Rust wrote numbered files beside the log); a Load loads the latest one,
 // which rewinds the game to it.
 //
+// Player actions (pivot 16.1, D1027; lane P, D1042): a run may open the player's account at its
+// start (`record`'s `player` option; the world must be Full, and one that never hydrates has no
+// player otherwise) and then log every action the scripted trader sent that the sim applied, with
+// its frame. A frame applies its controls, then its actions, then runs its ticks. The actions are
+// inside the state hash, so a replay that drops or changes one fails at the next hash line. The
+// trader draws from a stream of its own (`TRADER_SALT`), and only once the account is open, so a
+// run without a player makes the same choices as before.
+//
 // The log is plain text, one record per line:
 //
 //   version 2
 //   seed 7
 //   years 2
+//   player <difficulty>            optional: the account opens at the start (e.g. "player Normal")
 //   control <frame> <control>      e.g. "control 120 speed 4", "control 300 skip next-lock"
+//   act <frame> <action as JSON>   e.g. "act 40 {"kind":"Transfer","from":"Brokerage",...}"
 //   hash <frame> <step> <month> <state hash>
 //   end <frame> <step> <clock> <state hash> controls <digest>
 //
@@ -31,22 +41,28 @@
 // moves no frame, step or hash (a watchlist change, say) still fails the replay (D403).
 import { readFileSync, writeFileSync } from "node:fs";
 import {
+  type ActError,
   type AlertKind,
   type AlertLevel,
   type CompanyId,
   type Control,
   type Controls,
   controlsEffectiveSpeed,
+  DIFFICULTY_VALUES,
+  type Difficulty,
   dateTimeDate,
   formatDateTime,
   formatMonth,
   MAX_SPEED,
+  type PlayerAction,
   type SimApi,
   type SimError,
   type SkipKind,
+  stockInstrument,
 } from "@tc20ff/sim";
-import { dateTimeMidnight, simDateYmd } from "@tc20ff/sim/internal";
+import { dateTimeMidnight, playerOpen, simDateYmd } from "@tc20ff/sim/internal";
 import type { WorldData } from "@tc20ff/sim-data";
+import { isSoakSim } from "./factory.ts";
 import type { SimFactory } from "./metrics.ts";
 
 /** The log format version written on the first line (2: the end line carries the controls digest). */
@@ -72,11 +88,28 @@ const PLAYER_RESUME_CHANCE = 0.25;
 const PLAYER_MIX: readonly number[] = [30, 10, 20, 15, 12, 9];
 /** Salt mixed into the game seed for the player's own stream (not a sim stream, D9). */
 const PLAYER_SALT = 0x5245_504c_4159_4c4fn;
+/** Salt for the scripted trader's stream, apart from the controls' so they draw as before (D1042). */
+const TRADER_SALT = 0x5452_4144_4552_5f50n;
+/** The trader sends an action in a frame with this chance while the account is open (D1042). */
+const TRADE_CHANCE = 0.02;
+/**
+ * The trader's mix, in parts per hundred: buy, sell, cancel, transfer, follow, alert; the rest
+ * marks the notifications read.
+ */
+const TRADE_MIX: readonly number[] = [35, 25, 10, 10, 8, 7];
+/** Most shares the trader buys in one order. */
+const TRADE_MAX_QTY = 50;
 
 /** One recorded control and the frame it was sent in. */
 export interface LoggedControl {
   frame: number;
   control: LogControl;
+}
+
+/** One player action the sim applied, and the frame it was sent in (D1042). */
+export interface LoggedAction {
+  frame: number;
+  action: PlayerAction;
 }
 
 /** The controls a log holds. Save and Load name a save by its number in the run. */
@@ -214,13 +247,145 @@ export function logControlToControl(c: LogControl): Control | null {
   }
 }
 
+/** splitmix64 from `state`: the next state and the draw. */
+function splitmix(state: bigint): [bigint, bigint] {
+  const next = (state + 0x9e37_79b9_7f4a_7c15n) & U64;
+  let z = next;
+  z = ((z ^ (z >> 30n)) * 0xbf58_476d_1ce4_e5b9n) & U64;
+  z = ((z ^ (z >> 27n)) * 0x94d0_49bb_1331_11ebn) & U64;
+  return [next, z ^ (z >> 31n)];
+}
+
+/** The scripted trader (D1042): player actions from its own splitmix64 stream. */
+export class Trader {
+  private state: bigint;
+
+  constructor(seed: number) {
+    this.state = BigInt(seed) ^ TRADER_SALT;
+  }
+
+  private draw(): bigint {
+    const [s, z] = splitmix(this.state);
+    this.state = s;
+    return z;
+  }
+
+  private unit(): number {
+    return Number(this.draw() >> 11n) / 2 ** 53;
+  }
+
+  private below(n: number): number {
+    return Number(this.draw() % BigInt(n));
+  }
+
+  private pick<T>(xs: readonly T[]): T | undefined {
+    return xs.length === 0 ? undefined : xs[this.below(xs.length)];
+  }
+
+  /** A market order (null) half the time, else a limit `lo` to `lo + 6%` of `price`. */
+  private limitOr(price: number, lo: number): number | null {
+    return this.below(2) === 0 ? null : price * (lo + 0.06 * this.unit());
+  }
+
+  /**
+   * This frame's action, if any: only while the account is open and the run goes on, so it draws
+   * nothing in a game with no player. It reads only the views, as the player does; the sim may
+   * still refuse what it sends (not enough cash, say), and only what it applies is logged.
+   */
+  act(sim: SimApi): PlayerAction | null {
+    const views = sim.views();
+    const account = views.account?.data;
+    if (account === undefined || !account.open || account.bankrupt) return null;
+    if (this.unit() >= TRADE_CHANCE) return null;
+    const quotes = views.quotes.data.rows;
+    let roll = this.below(100);
+    let kind = TRADE_MIX.length;
+    for (let i = 0; i < TRADE_MIX.length; i++) {
+      const part = TRADE_MIX[i] as number;
+      if (roll < part) {
+        kind = i;
+        break;
+      }
+      roll -= part;
+    }
+    switch (kind) {
+      case 0: {
+        const q = this.pick(quotes);
+        if (q === undefined) return null;
+        return {
+          kind: "PlaceOrder",
+          venue: "Brokerage",
+          instrument: stockInstrument(q.id),
+          side: "Buy",
+          qty: 1 + this.below(TRADE_MAX_QTY),
+          limit: this.limitOr(q.last, 0.97),
+          tif: this.below(2) === 0 ? "Day" : "Gtc",
+        };
+      }
+      case 1: {
+        const pos = this.pick(account.positions);
+        if (pos === undefined) return null;
+        return {
+          kind: "PlaceOrder",
+          venue: "Brokerage",
+          instrument: pos.instrument,
+          side: "Sell",
+          qty: 1 + this.below(pos.qty),
+          limit: this.limitOr(pos.mark, 0.97),
+          tif: this.below(2) === 0 ? "Day" : "Gtc",
+        };
+      }
+      case 2: {
+        const o = this.pick(account.orders.filter((x) => x.status === "Open"));
+        return o === undefined ? null : { kind: "CancelOrder", order: o.id };
+      }
+      case 3: {
+        const out = this.below(2) === 0;
+        const from = out ? "Brokerage" : "Exchange";
+        const cash = account.cash.find((c) => c.venue === from);
+        const free = cash === undefined ? 0 : cash.cash - cash.reserved;
+        const amount = free * (0.05 + 0.2 * this.unit());
+        return free < 1 ? null : { kind: "Transfer", from, to: out ? "Exchange" : "Brokerage", amount };
+      }
+      case 4: {
+        const q = this.pick(quotes);
+        if (q === undefined) return null;
+        const followed = account.follows.some((f) => f.kind === "Company" && f.id === q.id);
+        return { kind: followed ? "Unfollow" : "Follow", target: { kind: "Company", id: q.id } };
+      }
+      case 5: {
+        const q = this.pick(quotes);
+        if (q === undefined) return null;
+        const up = this.below(2) === 0;
+        const price = q.last * (up ? 1.02 : 0.98);
+        const pause = this.below(2) === 0;
+        return {
+          kind: "AlertRuleAdd",
+          rule: {
+            target: { kind: "Company", id: q.id },
+            when: { kind: up ? "PriceAbove" : "PriceBelow", price },
+            pause,
+          },
+        };
+      }
+      default: {
+        const n = views.notifications.data.items.length;
+        return n === 0 ? null : { kind: "NotificationsRead", through: n - 1 };
+      }
+    }
+  }
+}
+
 /** splitmix64: the scripted player's own stream. */
 export class Player {
   private state: bigint;
   saves = 0;
+  /** The trader that sends the player actions (D1042). */
+  readonly trader: Trader;
 
   constructor(seed: number) {
     this.state = BigInt(seed) ^ PLAYER_SALT;
+    this.trader = new Trader(seed);
   }
 
   next(): bigint {
@@ -282,11 +447,20 @@ export class Player {
   }
 }
 
-/** What a run of the frame loop saw: its controls and hash lines, in order. */
+/** What a run of the frame loop saw: its controls, player actions and hash lines, in order. */
 export interface RunLog {
   controls: LoggedControl[];
   /** `hash` and `end` lines, as written. */
   hashes: string[];
+  /** The player actions applied (D1042); absent in a run that sent none. */
+  actions?: LoggedAction[];
+  /** The player's account opened at the start at this difficulty (D1042); absent for none. */
+  player?: Difficulty;
+}
+
+function logAction(run: RunLog, a: LoggedAction): void {
+  if (run.actions === undefined) run.actions = [];
+  run.actions.push(a);
 }
 
 function runLogNew(): RunLog {
@@ -330,10 +504,22 @@ export function simErrorToString(e: SimError): string {
   }
 }
 
+/** Opens the player's account in the sim's world at the start of a run (D1042). */
+function openPlayer(sim: SimApi, difficulty: Difficulty): void {
+  if (!isSoakSim(sim)) throw new Error("this sim cannot open a player (no world access)");
+  const world = sim.soakWorld();
+  if (world.fidelity !== "Full") throw new Error("the player opens only in a Full world (pivot 3.3)");
+  playerOpen(world, difficulty);
+}
+
+function actErrorText(e: ActError): string {
+  return e.kind === "NotAvailable" ? `${e.action} is not available` : e.message;
+}
+
 /**
  * The headless frame loop (see the file comment) from a new game of `seed` to 1 January of
  * 2020 + `years`, 00:00. `out` is filled as it goes, so a caller sees what the run did even when
- * it stopped on a thrown error.
+ * it stopped on a thrown error. With `out.player` set the account opens at the start.
  */
 export function runFrames(
   out: RunLog,
@@ -346,11 +532,14 @@ export function runFrames(
   const made = factory(structuredClone(data), seed);
   if (!made.ok) throw new Error(JSON.stringify(made.error));
   const sim = made.value;
+  if (out.player !== undefined) openPlayer(sim, out.player);
   const saves = new Map<number, Uint8Array>();
   const end = dateTimeMidnight(simDateYmd(dateTimeDate(sim.now()).year + years, 1, 1));
+  const logged = source.kind === "Log" ? (source.log.actions ?? []) : [];
   let frame = 0;
   let step = 0;
   let nextLogged = 0;
+  let nextAction = 0;
   while (sim.now() < end) {
     const controls: LogControl[] = [];
     if (source.kind === "Player") {
@@ -367,9 +556,27 @@ export function runFrames(
       applyLogControl(sim, c, saves, frame);
       out.controls.push({ frame, control: c });
     }
+    // The frame's player actions, after its controls (D1042).
+    if (source.kind === "Player") {
+      const a = source.player.trader.act(sim);
+      if (a !== null && sim.act(a).ok) logAction(out, { frame, action: a });
+    } else {
+      for (let a = logged[nextAction]; a !== undefined && a.frame === frame; a = logged[nextAction]) {
+        const r = sim.act(a.action);
+        if (!r.ok)
+          throw new Error(`frame ${frame}: act ${JSON.stringify(a.action)}: ${actErrorText(r.error)}`);
+        logAction(out, a);
+        nextAction += 1;
+      }
+    }
     const ticks = TICKS_PER_FRAME[controlsEffectiveSpeed(sim.controls())] ?? 0;
-    // A paused replay with no control left would wait for ever: the log does not match.
-    if (ticks === 0 && source.kind === "Log" && nextLogged === source.log.controls.length) {
+    // A paused replay with nothing left to send would wait for ever: the log does not match.
+    if (
+      ticks === 0 &&
+      source.kind === "Log" &&
+      nextLogged === source.log.controls.length &&
+      nextAction === logged.length
+    ) {
       throw new Error(
         `the game is paused at ${formatDateTime(sim.now())} (frame ${frame}) and the log has no control left`,
       );
@@ -390,6 +597,11 @@ export function runFrames(
   if (source.kind === "Log" && nextLogged < source.log.controls.length) {
     throw new Error(
       `the run ended at frame ${frame} with ${source.log.controls.length - nextLogged} logged controls unsent`,
+    );
+  }
+  if (nextAction < logged.length) {
+    throw new Error(
+      `the run ended at frame ${frame} with ${logged.length - nextAction} logged actions unsent`,
     );
   }
   const line = `end ${frame} ${step} ${formatDateTime(sim.now())} ${sim.stateHash()} controls ${controlsDigest(sim.controls())}`;
@@ -443,22 +655,42 @@ export function controlsDigest(c: Controls): string {
 /** The log text of a run. */
 export function logText(seed: number, years: number, run: RunLog): string {
   let s = `version ${LOG_VERSION}\nseed ${seed}\nyears ${years}\n`;
-  // Controls and hashes in run order: a control sent in frame f comes before the hashes of that
-  // frame's ticks.
+  if (run.player !== undefined) s += `player ${run.player}\n`;
+  // Controls, actions and hashes in run order: a control or action sent in frame f comes before
+  // the hashes of that frame's ticks, and a frame's controls before its actions.
   const frameOf = (line: string): number => {
     const f = parseUint(line.split(" ")[1]);
     return f === undefined ? Number.MAX_SAFE_INTEGER : f;
   };
+  const sent: { frame: number; line: string }[] = [
+    ...run.controls.map((c) => ({ frame: c.frame, line: `control ${c.frame} ${logControlText(c.control)}` })),
+    ...(run.actions ?? []).map((a) => ({
+      frame: a.frame,
+      line: `act ${a.frame} ${JSON.stringify(a.action)}`,
+    })),
+  ];
+  // A stable sort by frame keeps a frame's controls ahead of its actions.
+  sent.sort((a, b) => a.frame - b.frame);
   let h = 0;
-  for (const c of run.controls) {
+  for (const c of sent) {
     while (h < run.hashes.length && frameOf(run.hashes[h] as string) < c.frame) {
       s += `${run.hashes[h]}\n`;
       h += 1;
     }
-    s += `control ${c.frame} ${logControlText(c.control)}\n`;
+    s += `${c.line}\n`;
   }
   for (; h < run.hashes.length; h++) s += `${run.hashes[h]}\n`;
   return s;
+}
+
+/** An `act` line's action: a JSON object with a `kind`, or undefined. The sim checks the rest. */
+function parseAction(text: string): PlayerAction | undefined {
+  try {
+    const a: unknown = JSON.parse(text);
+    return typeof a === "object" && a !== null && "kind" in a ? (a as PlayerAction) : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /** A parsed log. */
@@ -499,6 +731,16 @@ export function parseLog(text: string): Log {
         run.controls.push({ frame: num(words[1]), control });
         break;
       }
+      case "player": {
+        const d = (words.length === 2 ? DIFFICULTY_VALUES.find((v) => v === words[1]) : undefined) ?? bad();
+        run.player = d;
+        break;
+      }
+      case "act": {
+        const action = parseAction(words.slice(2).join(" ")) ?? bad();
+        logAction(run, { frame: num(words[1]), action });
+        break;
+      }
       case "hash":
       case "end":
         run.hashes.push(words.join(" "));
@@ -518,18 +760,30 @@ export function parseLog(text: string): Log {
 }
 
 function summary(run: RunLog): string {
-  return `${run.controls.length} controls, ${run.hashes.length} hash lines, ${run.hashes.at(-1) ?? ""}`;
+  const acts = run.actions === undefined ? "" : `${run.actions.length} actions, `;
+  return `${run.controls.length} controls, ${acts}${run.hashes.length} hash lines, ${run.hashes.at(-1) ?? ""}`;
 }
 
-/** `record --years N --seed S --out LOG`: plays the scripted player and writes the log. */
+/** How `record` plays (D1042). */
+export interface RecordOptions {
+  /** Open the player's account at the start at this difficulty, and trade (a Full world only). */
+  player?: Difficulty;
+}
+
+/**
+ * `record --years N --seed S --out LOG`: plays the scripted player and writes the log. With
+ * `opts.player` it opens the account and the scripted trader sends player actions too.
+ */
 export function record(
   factory: SimFactory,
   data: WorldData,
   seed: number,
   years: number,
   out: string,
+  opts: RecordOptions = {},
 ): string {
   const run = runLogNew();
+  if (opts.player !== undefined) run.player = opts.player;
   runFrames(run, factory, data, seed, years, { kind: "Player", player: new Player(seed) });
   writeFileSync(out, logText(seed, years, run));
   return summary(run);
@@ -542,6 +796,7 @@ export function record(
 export function replay(factory: SimFactory, data: WorldData, logPath: string): string {
   const log = parseLog(readFileSync(logPath, "utf8"));
   const run = runLogNew();
+  if (log.run.player !== undefined) run.player = log.run.player;
   runFrames(run, factory, data, log.seed, log.years, { kind: "Log", log: log.run });
   return summary(run);
 }

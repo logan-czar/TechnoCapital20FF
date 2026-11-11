@@ -18,6 +18,9 @@ export * from "./index.ts";
 export * from "./jobs.ts";
 // The whole Sim (lib.ts) with its test and soak hooks, the soak totals and the views framework.
 export * from "./lib.ts";
+// Opening the player's account in a world that never hydrates (lane P, D1042): the headless
+// `record` and the tests.
+export { DEFAULT_DIFFICULTY, DIFFICULTY_PRESETS, playerOpen } from "./player/index.ts";
 // The save version, for the start index the headless `bake` writes (pivot 3.5).
 export { SAVE_VERSION } from "./save.ts";
 export * from "./soak.ts";

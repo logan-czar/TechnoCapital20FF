@@ -34,6 +34,7 @@ import { data, macrotask, unwrap } from "./common/index.ts";
 
 // Re-recorded for D1041 (lane C, careers): the world's persons table is filled at load and run by the careers job every day, so the state hash moved; their draws come after the politics POC's on the Politics stream, so the POC's later elections and appointments moved, and with them v_politics and its headlines in v_news; v_people is now built (version 8785). The monthly and patch digests moved with those three views; every other view digest (the whole economy) is unchanged.
 // Re-recorded for D1039 (lane G): v_districts and v_usmap_layers are built now, monthly, so their versions, the usmap_layers digest (its states' rows from the politics table; this world has no counties) and the monthly and patch digests moved; the state hash and every other view are unchanged (a world with no counties draws and changes nothing in geo).
+// Re-recorded for D1042 (lane P, the player): v_account and v_notifications have builders now, rebuilt every tick, so their versions (1 to 8785), the monthly digest and the patch digest moved; their data (empty: this world never hydrates, so it has no player), the state hash and every other view are unchanged.
 // Re-recorded for D1037 (the pivot's M2 contracts): the world gained `persons`, `elections`, `player` and four geo tables, so the state hash moved; v_clock gained `fixed_pauses` and five pivot views' empty values gained fields (forecast `states`, people `chambers`, account `settlements`, notifications `read_through`, usmap_layers `turnout` and `last_votes`), so those digests and the monthly digest moved; the patch digest is unchanged. A probe of 24 month starts of this world and 36 of the 1995 world found the state hash without the new fields, and the 30 older views (the clock without `fixed_pauses`), equal to the base's at every one.
 // Re-recorded for D1029 (the pivot's M1 contracts): the world gained `fidelity`, `levers` and `geo`, each industry `row_assets`, and the saved RNG five streams, so the state hash moved; 13 unported pivot views joined the list, each empty at version 1, so the monthly digest moved. The hash of the state without those fields and streams is still a56475a84805444ae625018f75a3481a, and the 30 older views' digests, the monthly digest over those 30 (d7d84581a03b2f6844e20a4e) and the patch digest are unchanged.
 // Re-recorded for D1022: the profile gained `exits`, so the state hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
@@ -90,8 +91,8 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   people: ["7cd800faf4054b407f4c7108", 8785],
   records: ["6df68f989ab8c28290a21f7d", 1],
   markets: ["3312b062bb7ccfa55b0b7d0a", 1],
-  account: ["39647396081a417498294a57", 1],
-  notifications: ["924140588434f28477897e50", 1],
+  account: ["39647396081a417498294a57", 8785],
+  notifications: ["924140588434f28477897e50", 8785],
   districts: ["d2162f6f6799d28562484c4a", 8785],
   usmap_layers: ["f8d2720c54256356ab2fe980", 8785],
   returns: ["2492e5a3c809942bb06a61ed", 1],

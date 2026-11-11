@@ -72,7 +72,7 @@ describe("M2 contracts: state", () => {
     expect([h.geo.censuses, h.geo.challenges, h.geo.history]).toEqual([[], [], []]);
   });
 
-  it("the lanes' slots follow DailyPolitics in G, C, E order, the player's are hourly and daily, and all are empty", () => {
+  it("the lanes' slots follow DailyPolitics in G, C, E order, the player's are hourly and daily and hold its jobs, the rest are empty", () => {
     const at = (s: (typeof SLOT_VALUES)[number]) => SLOT_VALUES.indexOf(s);
     expect(at("DailyGeo")).toBe(at("DailyPolitics") + 1);
     expect(at("DailyCareers")).toBe(at("DailyGeo") + 1);
@@ -88,9 +88,12 @@ describe("M2 contracts: state", () => {
     ]);
     // DailyGeo holds lane G's job (D1039).
     expect(schedulerJobs(s, "DailyGeo").map(([name]) => name)).toEqual(["geo.calendar"]);
-    for (const slot of ["DailyElections", "HourlyPlayer", "DailyPlayer", "WeeklyJobs"] as const) {
+    for (const slot of ["DailyElections", "WeeklyJobs"] as const) {
       expect(schedulerJobs(s, slot), slot).toEqual([]);
     }
+    // Lane P (D1042) filled the player's slots, Full fidelity only.
+    expect(schedulerJobs(s, "HourlyPlayer").map(([n, , f]) => [n, f])).toEqual([["player.hourly", "Full"]]);
+    expect(schedulerJobs(s, "DailyPlayer").map(([n, , f]) => [n, f])).toEqual([["player.daily", "Full"]]);
   });
 });
 
