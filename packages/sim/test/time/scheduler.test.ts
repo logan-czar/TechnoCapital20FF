@@ -126,6 +126,7 @@ describe("registerJobs", () => {
     expect(names("CloseTax")).toEqual([]);
     expect(names("ReleasePublish")).toEqual(["finance.removals", "news.removals"]);
     expect(names("LockAiPlans")).toEqual(["events.seats", "ai.plan_lock"]);
-    expect(SLOT_VALUES.reduce((n, slot) => n + names(slot).length, 0)).toBe(59);
+    // 59 before M2, and lane G's `geo.calendar` (D1039).
+    expect(SLOT_VALUES.reduce((n, slot) => n + names(slot).length, 0)).toBe(60);
   });
 });

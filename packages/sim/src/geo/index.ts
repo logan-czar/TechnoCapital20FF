@@ -24,7 +24,7 @@ import type { DrawSource } from "../types/draws.ts";
 import type { UsStateId } from "../types/ids.ts";
 import type { Census, Challenge, County, District, DistrictPlan, GeoState } from "../types/state/geo.ts";
 import type { World } from "../types/world.ts";
-import { type DrawStats, SWEEP_ANGLES } from "./district.ts";
+import { SWEEP_ANGLES } from "./district.ts";
 import { driftCountiesYear } from "./drift.ts";
 import { countiesByState, drawStatePlan, drawStatsNew, stateId } from "./plans.ts";
 import {
@@ -46,9 +46,6 @@ export const CENSUS_DAY = 1;
 /** The redraw's day in the year after a census (pivot 5.5, T). */
 export const REDRAW_MONTH = 7;
 export const REDRAW_DAY = 1;
-
-/** Work counters of the last draws, for the measurements; not world state. */
-export const GEO_STATS: DrawStats = drawStatsNew();
 
 /** The angle a map's sweep fan starts at (district.ts): one Governing draw per multi-seat map. */
 function drawTheta(g: DrawSource): number {
@@ -103,7 +100,7 @@ export function redrawAll(
     const s = stateId(si);
     const d = n > 1 ? drawer(s) : { party: null, strength: 0.0 };
     const theta = n > 1 ? drawTheta(g) : 0.0;
-    plans.push(drawStatePlan(geo, ids, s, n, d.party, d.strength, theta, censusYear, since, GEO_STATS));
+    plans.push(drawStatePlan(geo, ids, s, n, d.party, d.strength, theta, censusYear, since, drawStatsNew()));
   });
   for (const p of geo.plans) geo.history.push(p);
   geo.plans = plans;
@@ -165,7 +162,7 @@ function rule(world: World, c: Challenge, date: SimDate, g: DrawSource): void {
     drawTheta(g),
     plan.census_year,
     date,
-    GEO_STATS,
+    drawStatsNew(),
   );
   geo.history.push(plan);
   geo.plans[at] = redrawn;
