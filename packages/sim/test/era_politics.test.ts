@@ -164,17 +164,20 @@ describe("25 years of government (1995-rework 7.3, 7.6; pivot 6)", () => {
     expect(p.states.map((s) => s.house_seats).reduce((a, b) => a + b, 0)).toBe(HOUSE_SEATS);
     expect(p.districts.length).toBe(HOUSE_SEATS);
     const house = holders(p, "House");
-    expect(house.length).toBe(HOUSE_SEATS);
+    // Every seat is held but those waiting for a special election (a member who died, resigned or
+    // joined the new cabinet; lane C's vacancies, D1052).
+    const waiting = w.persons.vacancies.filter((v) => v.seat.kind === "House").length;
+    expect(house.length + waiting).toBe(HOUSE_SEATS);
     const seated = house.map((c) => (c.office.kind === "House" ? c.office.district : -1));
-    expect(new Set(seated).size).toBe(HOUSE_SEATS);
+    expect(new Set(seated).size).toBe(house.length);
     house.forEach((c) => {
       if (c.office.kind !== "House") return;
       expect(p.districts[c.office.district]?.state).toBe(c.office.state);
     });
-    // A senator who became president leaves a seat empty until its special election.
-    expect(holders(p, "Senate").length).toBeGreaterThanOrEqual(99);
+    // A Senate seat left empty is filled by the governor's appointment the same day (lane C).
+    expect(holders(p, "Senate").length).toBe(100);
     const last = p.elections.at(-1);
-    expect(partySeats(house)).toEqual(last?.house);
+    expect((last?.house[0] ?? 0) + (last?.house[1] ?? 0)).toBe(HOUSE_SEATS);
     expect(p.elections).toHaveLength(13);
   });
 

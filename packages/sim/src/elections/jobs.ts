@@ -5,10 +5,9 @@
 // yearly vote (politics/jobs.ts), so its seats and draws are as they were.
 
 import { isElectionDay } from "../politics/calendar.ts";
-import { challengerFor } from "../politics/careers.ts";
-import { SENATE_RANGES } from "../politics/generate.ts";
+import { careersHandover } from "../politics/careers.ts";
 import { eraTide } from "../politics/jobs.ts";
-import { officeHolderOf, officeTake, personAdd, personGet } from "../politics/people.ts";
+import { personGet } from "../politics/people.ts";
 import { CANDIDATE_PERSUASION_BASE, type Contender, type VoteClimate } from "../politics/vote.ts";
 import { dateTimeDate, simDateAddDays } from "../time/calendar.ts";
 import type { JobCtx } from "../time/scheduler.ts";
@@ -17,23 +16,19 @@ import type { SimDate } from "../types/calendar.ts";
 import { cmpDate, dateEq } from "../types/calendar.ts";
 import type { DrawSource } from "../types/draws.ts";
 import { type CountyId, ordinal, type PersonId, type UsStateId } from "../types/ids.ts";
-import { expF } from "../types/libm.ts";
 import type { CountyResult, ElectoralCollege, Race } from "../types/state/elections.ts";
 import type { CountyShare } from "../types/state/geo.ts";
-import type { OfficeSeat } from "../types/state/persons.ts";
 import { PARTY_VALUES, type Party } from "../types/state/politics.ts";
 import type { World } from "../types/world.ts";
 import {
   CONGRESS_HANDOVER_DAY,
   federalGeneralOnOrAfter,
   governorCycles,
-  governorUp,
   handoverDate,
   isElectionYear,
   isPresidentYear,
   PRESIDENT_HANDOVER_DAY,
   senateClassUp,
-  senateClassYear,
 } from "./calendar.ts";
 import {
   collegeTotals,
@@ -49,9 +44,8 @@ import {
   sumCount,
 } from "./count.ts";
 import { countiesByState, districtUnits, electors, houseSeats, shareSize, wholeUnits } from "./geography.ts";
-import { mirrorElection, mirrorOffices, mirrorReelected } from "./mirror.ts";
+import { mirrorElection, mirrorSync } from "./mirror.ts";
 import {
-  benchIfIdle,
   campaignWeek,
   dropLostDistricts,
   filingDeadline,
@@ -59,6 +53,7 @@ import {
   liveRaces,
   openCycle,
   presidentParty,
+  raceDecided,
   replaceDeadNominees,
   runPrimaries,
   scheduleSpecials,
@@ -198,8 +193,8 @@ export function countDay(
     for (const c of race.candidacies) {
       if (c.status !== "Nominee") continue;
       c.status = c.person === race.result.winner ? "Won" : "Lost";
-      if (c.status === "Lost") benchIfIdle(world, c.person);
     }
+    raceDecided(world, race, draws);
     if (!race.special) county.push({ race: race.id, counties: count.counties, votes: count.votes });
   }
   return { county, college };
@@ -222,93 +217,10 @@ function keepCountyResults(world: World, fresh: CountyResult[], general: SimDate
 
 // ---------------------------------------------------------------- the start
 
-/** A started office holder's integrity when the POC had none (pivot 5.11, T): the middle. */
-export const START_INTEGRITY = 50;
-/** How sharply a state's lean decides its starting governor's party (T): a logistic in lean points. */
-export const START_GOVERNOR_LEAN_SCALE = 0.1;
-
-/** The first general for an office on or after `year`, for a started holder's term end. */
-function nextRegularYear(seat: OfficeSeat, year: number, cycles: readonly (number | null)[]): number {
-  let y = year;
-  switch (seat.kind) {
-    case "President":
-      while (!(isElectionYear(y) && isPresidentYear(y))) y++;
-      return y;
-    case "Senate":
-      return senateClassYear(seat.senate_class, year);
-    case "Governor":
-      while (!governorUp(cycles[seat.state] ?? null, y)) y++;
-      return y;
-    default:
-      while (!isElectionYear(y)) y++;
-      return y;
-  }
-}
-
 /**
- * Persons from the POC's start (D1040), while lane C's `personsStart` seats nobody: the president,
- * the senators and the members become persons holding their seats ("Start"), and each state's
- * governor is drawn (`challengerFor`, the party by the state's lean on the Campaign stream). Runs
- * only when the offices table is empty, so lane C's start, once it seats people, replaces it.
- */
-function bridgeStart(world: World, draws: DrawSource, date: SimDate): void {
-  const s = world.persons;
-  if (s.offices.length > 0) return;
-  const p = world.politics;
-  const cycles = world.elections.calendar.governor_cycle;
-  const year = date.year;
-  for (const c of p.politicians) {
-    let seat: OfficeSeat;
-    if (c.office.kind === "President") seat = { kind: "President" };
-    else if (c.office.kind === "Senate")
-      seat = { kind: "Senate", state: c.office.state, senate_class: c.office.senate_class };
-    else if (c.office.kind === "House") {
-      const d = p.districts[c.office.district];
-      if (d === undefined) continue;
-      seat = { kind: "House", state: d.state, district: d.number };
-    } else continue;
-    const person = personAdd(s, (id) => ({
-      id,
-      name: c.name,
-      born: year - c.age,
-      skills: { ...c.skills },
-      traits: c.traits.slice(),
-      integrity: c.integrity ?? START_INTEGRITY,
-      ideology: c.ideology,
-      party: c.party,
-      home_state: seat.kind === "President" ? ordinal<UsStateId>(0) : seat.state,
-      status: "InOffice",
-      origin: "Start",
-      company: null,
-      xp: 0,
-      level: 0,
-      career: [],
-      left: null,
-    }));
-    const office = seat.kind === "President" ? "President" : seat.kind === "Senate" ? "Senate" : "House";
-    officeTake(s, person.id, seat, "Start", date, handoverDate(office, nextRegularYear(seat, year, cycles)));
-  }
-  p.states.forEach((st, i) => {
-    if (cycles[i] === null || cycles[i] === undefined) return;
-    const state = ordinal<UsStateId>(i);
-    const dem = 1 / (1 + expF(-START_GOVERNOR_LEAN_SCALE * st.lean_pts));
-    const party: Party = draws.chance("Campaign", dem) ? "Democrats" : "Republicans";
-    const person = challengerFor(world, draws, { state, party, ranges: SENATE_RANGES, origin: "Start" });
-    const seat: OfficeSeat = { kind: "Governor", state };
-    officeTake(
-      s,
-      person.id,
-      seat,
-      "Start",
-      date,
-      handoverDate("Governor", nextRegularYear(seat, year, cycles)),
-    );
-  });
-}
-
-/**
- * The elections at a world's start (pivot 6.1): each state's governor cycle, the bridge from the
- * POC's seats while lane C seats nobody, and the start year's races if its general is still ahead.
+ * The elections at a world's start (pivot 6.1): each state's governor cycle, the mirror of lane C's
+ * start offices in the POC's table (D1052: `personsStart` has seated every office, the POC's holders
+ * among them), and the start year's races if its general is still ahead.
  */
 export function startElections(world: World, draws: DrawSource): void {
   if (!electionsActive(world)) return;
@@ -316,7 +228,7 @@ export function startElections(world: World, draws: DrawSource): void {
   const date = dateTimeDate(world.clock);
   e.calendar.governor_cycle = governorCycles(world.politics.states.map((s) => s.name));
   e.calendar.next_general = federalGeneralOnOrAfter(date);
-  bridgeStart(world, draws, date);
+  mirrorSync(world, date, true);
   openCycle(world, draws, date.year, date);
 }
 
@@ -361,17 +273,18 @@ export function electionsDailyJob(world: World, ctx: JobCtx): void {
     e.calendar.next_general = federalGeneralOnOrAfter(simDateAddDays(date, 1));
   }
   // Certification; a special's winner is seated at once.
-  let mirror = false;
+  let seated = false;
   for (const r of live) {
     if (r.status !== "Counting" || cmpDate(date, r.certify) < 0) continue;
     r.status = "Certified";
     if (r.result !== null) r.result.certified = r.certify;
     if (r.special) {
       seatWinners(world, [r], date, "Special");
-      mirror = true;
+      seated = true;
     }
   }
   // The January handovers (pivot 6.1).
+  let house = false;
   if (date.month === 1 && (date.day === CONGRESS_HANDOVER_DAY || date.day === PRESIDENT_HANDOVER_DAY)) {
     const president = date.day === PRESIDENT_HANDOVER_DAY;
     const batch = live.filter(
@@ -383,15 +296,16 @@ export function electionsDailyJob(world: World, ctx: JobCtx): void {
         dateEq(handoverDate(r.office, r.cycle), date),
     );
     if (batch.length > 0) {
-      const before = officeHolderOf(world.persons, { kind: "President" })?.person ?? null;
       seatWinners(world, batch, date, "Elected");
-      if (batch.some((r) => r.office === "House")) dropLostDistricts(world, date);
-      if (president && batch[0]?.result?.winner === before) mirrorReelected(world);
-      mirrorOffices(world, draws, date, president);
-      mirror = false;
+      house = batch.some((r) => r.office === "House");
+      if (house) dropLostDistricts(world, date);
+      seated = true;
     }
   }
-  if (mirror) mirrorOffices(world, draws, date, false);
+  // Lane C fills what a seating opened (a new president's administration, a seat its winner left)
+  // the same day (D1052); the POC's table mirrors the offices (mirror.ts).
+  if (seated) careersHandover(world, draws, date);
+  mirrorSync(world, date, house);
   scheduleSpecials(world, draws, date);
 }
 

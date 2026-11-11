@@ -21,8 +21,8 @@ export { electionDay, isElectionYear, isPresidentYear, PRESIDENT_TERM_YEARS, sen
 
 /** Years between a governor's generals (pivot 6.1: "Governors serve four years"). */
 export const GOVERNOR_TERM_YEARS = 4;
-/** Consecutive terms a governor may serve (D1040, T: most states limit governors to two). */
-export const GOVERNOR_TERM_LIMIT = 2;
+// Who may run again (term limits, retirement, the ladder) is lane C's (politics/careers.ts
+// `declareCycle`, `termLimited`; D1052): this file holds only the dates. Lane C's term ends read them.
 /** Years in a House, Senate and presidential term (pivot 5.8). */
 export const HOUSE_TERM_YEARS = 2;
 export const SENATE_TERM_YEARS = 6;
@@ -60,11 +60,14 @@ export const GOVERNOR_MIDTERM_CYCLE = 2;
 /** The one place without a governor (and without senators): its name in politics-usa.csv. */
 export const NO_GOVERNOR_STATE = "District of Columbia";
 
+/** A state's governor cycle by its name (pivot 6.1; D1040): the real pattern, else the midterm. */
+export function governorCycleByName(name: string): number {
+  return GOVERNOR_CYCLE_BY_STATE[name] ?? GOVERNOR_MIDTERM_CYCLE;
+}
+
 /** Each state's governor cycle (`ElectionCalendar.governor_cycle`), by `UsStateId`; null for DC. */
 export function governorCycles(stateNames: readonly string[]): (number | null)[] {
-  return stateNames.map((name) =>
-    name === NO_GOVERNOR_STATE ? null : (GOVERNOR_CYCLE_BY_STATE[name] ?? GOVERNOR_MIDTERM_CYCLE),
-  );
+  return stateNames.map((name) => (name === NO_GOVERNOR_STATE ? null : governorCycleByName(name)));
 }
 
 /** Whether a state of governor cycle `cycle` elects its governor in `year`. */

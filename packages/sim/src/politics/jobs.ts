@@ -45,7 +45,14 @@ import {
   PRESIDENT_TERM_YEARS,
   senateClassUp,
 } from "./calendar.ts";
-import { applyDistricts, districtIndex, ERA_IDEOLOGY_NAMES, eraBlocs, startDemDistricts } from "./era.ts";
+import {
+  applyDistricts,
+  districtIndex,
+  driftYear,
+  ERA_IDEOLOGY_NAMES,
+  eraBlocs,
+  startDemDistricts,
+} from "./era.ts";
 import {
   CABINET_RANGES,
   type Drawn,
@@ -552,30 +559,7 @@ function presidentHandover(world: World, p: PoliticsState, g: DrawSource, date: 
   world.era?.history.presidents.push({ year: date.year, name: incoming.name, party: incoming.party });
 }
 
-/**
- * A new president in a world with counties (D1040): lane E's elections seat them (elections/) and
- * keep this table as a mirror; here the POC's executive follows as at its own handover: the old vice
- * president and cabinet leave, the new president's are drawn (Politics stream), the headline and the
- * era's list of presidents. Lane C's careers replace the appointments (pivot-lanes.md).
- */
-export function executiveHandover(
-  world: World,
-  incoming: Politician,
-  draws: DrawSource,
-  date: SimDate,
-): void {
-  const p = world.politics;
-  const g = politicsDraws(draws);
-  p.politicians = p.politicians.filter(
-    (c) => c.office.kind !== "VicePresident" && c.office.kind !== "Cabinet",
-  );
-  fillExecutive(p, g, personPool(world, p, date.year), incoming, date);
-  p.politicians.sort((a, b) => a.id - b.id);
-  newsWireQueue(world.news, politicsHeadline(date, `${incoming.name} is sworn in as US president`));
-  world.era?.history.presidents.push({ year: date.year, name: incoming.name, party: incoming.party });
-}
-
-/** A new office holder for the mirror (D1040): the next politician id, as the POC's own `seat`. */
+/** A new office holder for the mirror (D1040, D1052): the next politician id, as the POC's own `seat`. */
 export function mirrorPolitician(
   p: PoliticsState,
   d: Drawn,
@@ -674,9 +658,18 @@ function newYear(world: World, p: PoliticsState, g: DrawSource, date: SimDate): 
     (c) => c.office.kind !== "Judge" || !g.chance("Politics", judgeRetireChance(c.age)),
   );
   fillCourtVacancies(p, g, personPool(world, p, date.year), sittingPresident(p), date);
+  eraNewYear(world, p, g, date);
+}
+
+/**
+ * A historical world's 1 January (1995-rework 7.3, 7.6): the states' leans drift by region and state
+ * (`driftYear`, Politics stream; lane G's county drift then re-centres each state's counties on it,
+ * D1039) and the era's new ideologies are announced. The census is lane G's (pivot 5.3).
+ */
+function eraNewYear(world: World, p: PoliticsState, g: DrawSource, date: SimDate): void {
   const era = world.era?.politics;
   if (era === undefined) return;
-  // 1995-rework 7.6. The lean drift and the census (7.3, 7.4) are lane G's (geo/, pivot 5.2, 5.3).
+  driftYear(p, era, g);
   for (const i of era.ideologies) {
     if (i.from_year !== date.year) continue;
     const name = ERA_IDEOLOGY_NAMES[i.ideology] ?? i.ideology;
@@ -688,9 +681,10 @@ function newYear(world: World, p: PoliticsState, g: DrawSource, date: SimDate): 
 
 /**
  * The daily job (D985): acts only on the politics days of `isPoliticsDay`. In a world with counties
- * the vote and the handovers are lane E's (elections/, D1040), which keeps `politicians` as a mirror
- * of who holds the elected seats; this job keeps only the new year's ageing, the courts and the era's
- * ideologies (lane C's careers replace those).
+ * (D1040, D1052) the vote, the specials and the handovers are lane E's (elections/), the
+ * appointments, the courts, ageing and exits lane C's (careers.ts), the census lane G's (geo/), and
+ * `politicians` is only a mirror of the offices table (elections/mirror.ts); this job keeps the
+ * era's 1 January there: the states' lean drift and the new ideologies.
  */
 export function politicsJob(world: World, ctx: JobCtx): void {
   const p = world.politics;
@@ -698,7 +692,7 @@ export function politicsJob(world: World, ctx: JobCtx): void {
   if (!isPoliticsDay(date)) return;
   const g = politicsDraws(ctx.draws);
   if (world.geo.counties.length > 0) {
-    if (date.month === 1 && date.day === 1) newYear(world, p, g, date);
+    if (date.month === 1 && date.day === 1) eraNewYear(world, p, g, date);
     return;
   }
   if (isElectionDay(date)) electionDayJob(world, ctx, p, g, date);

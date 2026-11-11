@@ -1,18 +1,19 @@
-// 25 years of careers (pivot 5.7 to 5.10; D1041) from the 1995 world: the careers job every day and
-// a stand-in for lane E's generals every November (common.ts), with no economy. The Person table
-// must stay bounded and consistent; the test prints its size, the living, retired and dead, and the
-// save bytes it adds.
+// 25 years of careers (pivot 5.7 to 5.10; D1041, D1052) from the 1995 world: the politics days as
+// the game runs them (the era's drift, lane G's geo, lane C's careers and lane E's real elections;
+// elections/harness.ts), with no economy. The Person table must stay bounded and consistent; the test
+// prints its size, the living, retired and dead, and the save bytes it adds.
 
 import { describe, expect, it } from "vitest";
-import { careersDay, officeSeats } from "../../src/politics/careers.ts";
+import { liveRaces } from "../../src/elections/races.ts";
+import { officeSeats } from "../../src/politics/careers.ts";
 import { personGet, personsStateEmpty, seatKey } from "../../src/politics/people.ts";
-import { rngStreamsDraws, rngStreamsNew } from "../../src/rng.ts";
+import { rngStreamsNew } from "../../src/rng.ts";
 import { encode } from "../../src/save.ts";
-import { simDateAddDays, simDateYmd } from "../../src/time/calendar.ts";
+import { simDateYmd } from "../../src/time/calendar.ts";
 import { controlsDefault } from "../../src/time/control.ts";
-import { cmpDate } from "../../src/types/calendar.ts";
 import type { World } from "../../src/types/world.ts";
-import { standInGeneral, world1995 } from "./common.ts";
+import { runDays, runDraws } from "../elections/harness.ts";
+import { world1995 } from "./common.ts";
 
 /** Gzipped save bytes the persons table adds to `w`. */
 function personsBytes(w: World): number {
@@ -25,13 +26,7 @@ function personsBytes(w: World): number {
 
 function run(seed: number, lastYear: number): World {
   const w = world1995(seed);
-  const careers = rngStreamsDraws(rngStreamsNew(seed + 100));
-  const pick = rngStreamsDraws(rngStreamsNew(seed + 200));
-  const end = simDateYmd(lastYear + 1, 1, 1);
-  for (let d = simDateYmd(1995, 1, 2); cmpDate(d, end) <= 0; d = simDateAddDays(d, 1)) {
-    careersDay(w, careers, d);
-    if (d.month === 11 && d.day === 5) standInGeneral(w, careers, d, pick);
-  }
+  runDays(w, runDraws(seed), simDateYmd(1995, 1, 2), simDateYmd(lastYear, 12, 31));
   return w;
 }
 
@@ -57,7 +52,9 @@ describe("25 years of careers", () => {
       `careers 1995-2020: ${JSON.stringify(counts)}; persons save bytes (gzip) ${startBytes} at start, ${endBytes} at 2020; raw JSON ${raw}; ${ms.toFixed(0)} ms`,
     );
     expect(counts.persons).toBeLessThan(8000);
-    expect(counts.candidate).toBe(0);
+    // A candidate is running in a race not yet seated (2019's governors-elect take office in January).
+    const running = new Set(liveRaces(w, 2019).flatMap((r) => r.candidacies.map((c) => c.person)));
+    for (const p of s.persons) if (p.status === "Candidate") expect(running.has(p.id), p.name).toBe(true);
     // Every seat held once, but House seats waiting for a special election (lane E's).
     const seats = officeSeats(w).map(seatKey);
     const held = s.offices.map((o) => seatKey(o.seat));

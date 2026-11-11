@@ -1,12 +1,23 @@
-// Races (pivot 6.1, 6.2, 6.6; D1040): a cycle's races opened on 1 January of a general's year, their
-// candidates (incumbents, the ladder, the people waiting on the bench, lane C's `challengerFor`),
-// each party's primary, the Coarse strength number, special elections for vacancies, and the
-// January handovers through lane C's `officeLeave` and `officeTake`. Draws: the Campaign stream
-// for who runs, primaries and strength; lane C's Politics stream inside `challengerFor`.
+// Races (pivot 6.1, 6.2, 6.6; D1040, D1052): a cycle's races opened on 1 January of a general's
+// year, their candidates, each party's primary, the Coarse strength number, special elections for
+// vacancies, and the January handovers through lane C's `officeLeave` and `officeTake`.
+//
+// Who runs is lane C's (D1052): `declareCycle` (politics/careers.ts) decides each seat's field, the
+// incumbents running again or not (term limits, retirement, seeking a higher office) and the seekers
+// from the rung below, on the Politics stream; a candidate who loses goes back to the bench with
+// `candidacyLost`; wins earn XP through `personAward`. This file files them, runs the primaries and
+// seats the winners. Draws: the Campaign stream for strength and primaries; lane C's Politics
+// stream inside `declareCycle`, `challengerFor` and `personAward`.
 
-import { challengerFor } from "../politics/careers.ts";
+import {
+  candidacyLost,
+  challengerFor,
+  type Declared,
+  declareCycle,
+  personAward,
+  termLimited,
+} from "../politics/careers.ts";
 import { HOUSE_RANGES, type OfficeRanges, PRESIDENT_RANGES, SENATE_RANGES } from "../politics/generate.ts";
-import { PRESIDENT_TERM_LIMIT, retireChance } from "../politics/jobs.ts";
 import {
   officeHolderOf,
   officeLeave,
@@ -14,6 +25,7 @@ import {
   officeTake,
   personGet,
   seatKey,
+  vacancyFillOf,
 } from "../politics/people.ts";
 import { simDateAddDays } from "../time/calendar.ts";
 import type { SimDate } from "../types/calendar.ts";
@@ -31,14 +43,12 @@ import {
   electionDay,
   FILING_LEAD_DAYS,
   federalGeneralOnOrAfter,
-  GOVERNOR_TERM_LIMIT,
   GOVERNOR_TERM_YEARS,
   governorUp,
   handoverDate,
   hasGeneral,
   isElectionYear,
   isPresidentYear,
-  PRESIDENT_TERM_YEARS,
   pollsClose,
   presidentPrimary,
   SENATE_SPECIAL_MIN_DAYS,
@@ -71,24 +81,6 @@ export const HOUSE_INCUMBENCY = 0.15;
 export const SENATE_INCUMBENCY = 0.08;
 export const GOVERNOR_INCUMBENCY = 0.08;
 export const PRESIDENT_INCUMBENCY = 0.05;
-/** Chance an incumbent draws a primary challenger (pivot 6.2, T). */
-export const PRIMARY_CHALLENGE_CHANCE = 0.15;
-/** Extra candidates in an open seat's primary: 0 to this many beyond the first (T). */
-export const OPEN_PRIMARY_EXTRA = 2;
-/** Chance the challenging party's primary has a second candidate (T). */
-export const CHALLENGER_PRIMARY_EXTRA_CHANCE = 0.3;
-/** Chance an open Senate or governor primary's slot goes to a House member of the party (pivot 5.9 "the usual ladder", T). */
-export const LADDER_CHANCE = 0.5;
-/** Chance a slot is filled from the people waiting on the bench rather than a new challenger (pivot 5.9, T). */
-export const BENCH_CHANCE = 0.6;
-/** Nobody older than this files, and a president this old does not run again (T). */
-export const MAX_CANDIDATE_AGE = 80;
-/** Presidential candidates per party with no incumbent running: 2 to this many (T). */
-export const PRESIDENT_FIELD_MAX = 4;
-export const PRESIDENT_FIELD_MIN = 2;
-/** Score points a presidential hopeful's ambition and the vice presidency add (T). */
-export const AMBITION_BONUS = 3;
-export const VP_BONUS = 4;
 /** A primary's share of the race's expected electorate per party (pivot 6.1, T). */
 export const PRIMARY_TURNOUT_SHARE = 0.12;
 /** Spread of a primary: noise sd and how sharply strength divides the vote (T). */
@@ -136,11 +128,6 @@ export function raceSeat(r: Race): OfficeSeat {
   }
 }
 
-/** A person's age in `year`. */
-export function ageIn(p: Person, year: number): number {
-  return year - p.born;
-}
-
 /** The race with `id` (races are in id order and never removed). */
 export function raceGet(world: World, id: RaceId): Race | undefined {
   return world.elections.races[id];
@@ -157,13 +144,11 @@ export function liveRaces(world: World, year: number): Race[] {
   return races.slice(i);
 }
 
-/** The president's party now (persons first, the POC's table while lane C has not seated one). */
+/** The president's party now (the persons table; the first party while the seat is empty). */
 export function presidentParty(world: World): Party {
   const holder = officeHolderOf(world.persons, { kind: "President" });
   const p = holder === undefined ? undefined : personGet(world.persons, holder.person);
-  if (p?.party) return p.party;
-  const poc = world.politics.politicians.find((c) => c.office.kind === "President");
-  return poc?.party ?? PARTY_VALUES[0];
+  return p?.party ?? (PARTY_VALUES[0] as Party);
 }
 
 /** Coarse strength (pivot 6.6): skills, the money proxy and incumbency, plus a Campaign draw. */
@@ -174,76 +159,6 @@ export function drawStrength(p: Person, incumbent: boolean, draws: DrawSource): 
     (incumbent ? INCUMBENT_MONEY : 0) +
     draws.normal("Campaign") * STRENGTH_SD
   );
-}
-
-// ---------------------------------------------------------------- recruiting
-
-/** Who can still be drawn into a race this cycle: the bench by state and party, and who has filed. */
-interface Recruiter {
-  /** Persons on the bench (status Bench), by `${state}/${party}`, in id order. */
-  pool: Map<string, PersonId[]>;
-  /** Everyone who filed in a race of this cycle. */
-  filed: Set<PersonId>;
-}
-
-function recruiterNew(world: World, year: number): Recruiter {
-  const pool = new Map<string, PersonId[]>();
-  for (const p of world.persons.persons) {
-    if (p.status !== "Bench" || p.party === null || ageIn(p, year) > MAX_CANDIDATE_AGE) continue;
-    const key = `${p.home_state}/${p.party}`;
-    const list = pool.get(key);
-    if (list === undefined) pool.set(key, [p.id]);
-    else list.push(p.id);
-  }
-  const filed = new Set<PersonId>();
-  for (const r of liveRaces(world, year)) for (const c of r.candidacies) filed.add(c.person);
-  return { pool, filed };
-}
-
-/**
- * A new candidate for `party` in `state` (pivot 5.9): with `BENCH_CHANCE` someone waiting on the
- * bench (a uniform pick), else lane C's `challengerFor`.
- */
-function recruit(
-  world: World,
-  draws: DrawSource,
-  rec: Recruiter,
-  state: UsStateId,
-  party: Party,
-  office: RaceOffice,
-): Person {
-  const list = rec.pool.get(`${state}/${party}`);
-  if (list !== undefined && list.length > 0 && draws.chance("Campaign", BENCH_CHANCE)) {
-    const at = draws.intInclusive("Campaign", 0, list.length - 1);
-    const id = list.splice(at, 1)[0] as PersonId;
-    const p = personGet(world.persons, id) as Person;
-    p.status = "Candidate";
-    return p;
-  }
-  return challengerFor(world, draws, { state, party, ranges: officeRanges(office), origin: "Challenger" });
-}
-
-/** The best House member of `party` in `state` not yet filed (pivot 5.9 ladder), or null. */
-function ladderPick(
-  world: World,
-  rec: Recruiter,
-  state: UsStateId,
-  party: Party,
-  year: number,
-): Person | null {
-  let best: Person | null = null;
-  let score = Number.NEGATIVE_INFINITY;
-  for (const o of world.persons.offices) {
-    if (o.seat.kind !== "House" || o.seat.state !== state || rec.filed.has(o.person)) continue;
-    const p = personGet(world.persons, o.person);
-    if (p === undefined || p.party !== party || ageIn(p, year) > MAX_CANDIDATE_AGE) continue;
-    const s = p.skills.persuasion + (p.traits.includes("Ambitious") ? AMBITION_BONUS : 0);
-    if (s > score) {
-      best = p;
-      score = s;
-    }
-  }
-  return best;
 }
 
 // ---------------------------------------------------------------- opening a cycle
@@ -289,10 +204,15 @@ function raceNew(
   return race;
 }
 
-/** Files `p` in `race` for `party` on `date` with a fresh strength. */
-function file(race: Race, p: Person, party: Party, date: SimDate, draws: DrawSource, rec: Recruiter): void {
-  const incumbent = race.incumbent === p.id;
-  const c: Candidacy = {
+/** A new candidacy of `p` for `party` filed on `date`, with a fresh strength (Campaign). */
+function candidacyNew(
+  p: Person,
+  party: Party,
+  date: SimDate,
+  incumbent: boolean,
+  draws: DrawSource,
+): Candidacy {
+  return {
     person: p.id,
     party,
     filed: date,
@@ -303,36 +223,6 @@ function file(race: Race, p: Person, party: Party, date: SimDate, draws: DrawSou
     spent: 0,
     cash: 0,
   };
-  race.candidacies.push(c);
-  rec.filed.add(p.id);
-  if (p.status === "Bench") p.status = "Candidate";
-}
-
-/** Terms a holder has served by `year`'s general, the one being served included (from `since`). */
-function termsServed(since: SimDate, year: number, termYears: number): number {
-  return Math.floor((year - since.year) / termYears) + 1;
-}
-
-/**
- * Whether the seat's holder runs again (pivot 5.9): alive, not past `MAX_CANDIDATE_AGE`, not term
- * limited, not filed elsewhere, and not retiring (D988's chance by age, a Campaign draw; a
- * president never retires from a second run).
- */
-function holderRuns(world: World, race: Race, draws: DrawSource, rec: Recruiter): Person | null {
-  if (race.incumbent === null) return null;
-  const p = personGet(world.persons, race.incumbent);
-  if (p === undefined || p.status === "Dead" || p.party === null || rec.filed.has(p.id)) return null;
-  const year = race.cycle;
-  const holder = officeHolderOf(world.persons, raceSeat(race));
-  if (race.office === "President") {
-    if (holder === undefined || ageIn(p, year) > MAX_CANDIDATE_AGE) return null;
-    return termsServed(holder.since, year, PRESIDENT_TERM_YEARS) < PRESIDENT_TERM_LIMIT ? p : null;
-  }
-  if (race.office === "Governor" && holder !== undefined) {
-    if (termsServed(holder.since, year, GOVERNOR_TERM_YEARS) >= GOVERNOR_TERM_LIMIT) return null;
-  }
-  if (ageIn(p, year) > MAX_CANDIDATE_AGE) return null;
-  return draws.chance("Campaign", Math.min(1, retireChance(ageIn(p, year)))) ? null : p;
 }
 
 /** The primary day of a race (pivot 6.1). */
@@ -352,95 +242,52 @@ function openPrimaries(race: Race): void {
   }
 }
 
-/**
- * A statewide or House race's field (pivot 6.2, 5.9): the holder runs for their party unless they
- * stop; each other party's primary gets one or more candidates, an open Senate or governor seat
- * drawing on the state's House members (the ladder).
- */
-function fillField(world: World, race: Race, draws: DrawSource, rec: Recruiter, date: SimDate): void {
-  const state = race.state as UsStateId;
-  const running = holderRuns(world, race, draws, rec);
-  const open = running === null;
-  for (const party of PARTY_VALUES) {
-    let n: number;
-    if (running !== null && running.party === party) {
-      file(race, running, party, date, draws, rec);
-      n = draws.chance("Campaign", PRIMARY_CHALLENGE_CHANCE) ? 1 : 0;
-    } else if (open) {
-      n = 1 + draws.intInclusive("Campaign", 0, OPEN_PRIMARY_EXTRA);
-    } else {
-      n = 1 + (draws.chance("Campaign", CHALLENGER_PRIMARY_EXTRA_CHANCE) ? 1 : 0);
-    }
-    for (let k = 0; k < n; k++) {
-      let p: Person | null = null;
-      if (open && race.office !== "House" && draws.chance("Campaign", LADDER_CHANCE)) {
-        p = ladderPick(world, rec, state, party, race.cycle);
-      }
-      file(race, p ?? recruit(world, draws, rec, state, party, race.office), party, date, draws, rec);
-    }
+/** Everyone running in a live race not yet counted, but `races` (a person runs in one race at a time). */
+function runningElsewhere(world: World, year: number, races: readonly Race[]): Set<PersonId> {
+  const out = new Set<PersonId>();
+  for (const r of liveRaces(world, year)) {
+    if (r.result !== null || races.includes(r)) continue;
+    for (const c of r.candidacies) if (c.status === "Running" || c.status === "Nominee") out.add(c.person);
   }
-  openPrimaries(race);
+  return out;
 }
 
 /**
- * The presidency's field (pivot 5.9, 6.2): a sitting president who may run is the party's only
- * candidate unless challenged; otherwise the party's senators and governors not up this year and its
- * vice president, best by persuasion with ambition and the vice presidency counting (ties to the
- * lower id), `PRESIDENT_FIELD_MIN` to `PRESIDENT_FIELD_MAX` of them.
+ * Files the fields of `races` on `date` (pivot 5.9, 6.2; D1052): lane C's `declareCycle` decides who
+ * runs for each seat (the races' seats in their order; it settles the ladder from the President down,
+ * so a member who runs higher leaves their seat open), each declared candidate of a party is filed
+ * for it, and each party's primary is opened. A candidate already running in another live race is
+ * not filed twice; a party left with nobody gets a challenger (`challengerFor`).
  */
-function fillPresidentField(
-  world: World,
-  race: Race,
-  draws: DrawSource,
-  rec: Recruiter,
-  date: SimDate,
-): void {
-  const year = race.cycle;
-  const running = holderRuns(world, race, draws, rec);
-  const cycles = world.elections.calendar.governor_cycle;
-  const hopefuls = (party: Party): Person[] => {
-    const scored: [number, Person][] = [];
-    for (const o of world.persons.offices) {
-      const s = o.seat;
-      const ok =
-        s.kind === "VicePresident" ||
-        (s.kind === "Senate" && !(isElectionYear(year) && senateClassUp(year) === s.senate_class)) ||
-        (s.kind === "Governor" && !governorUp(cycles[s.state] ?? null, year));
-      if (!ok || rec.filed.has(o.person)) continue;
-      const p = personGet(world.persons, o.person);
-      if (p === undefined || p.party !== party) continue;
-      const age = ageIn(p, year);
-      if (age < PRESIDENT_RANGES.age.lo || age > MAX_CANDIDATE_AGE) continue;
-      const score =
-        p.skills.persuasion +
-        (p.traits.includes("Ambitious") ? AMBITION_BONUS : 0) +
-        (s.kind === "VicePresident" ? VP_BONUS : 0);
-      if (!scored.some(([, q]) => q.id === p.id)) scored.push([score, p]);
+function fileFields(world: World, draws: DrawSource, races: readonly Race[], date: SimDate): void {
+  if (races.length === 0) return;
+  const busy = runningElsewhere(world, date.year, races);
+  const declared = declareCycle(world, draws, races.map(raceSeat), date);
+  races.forEach((race, i) => {
+    const decl = declared[i]?.candidates ?? [];
+    const filed = new Set<PersonId>();
+    const fileOne = (c: Declared): void => {
+      if (c.party === null || filed.has(c.person) || (!c.incumbent && busy.has(c.person))) return;
+      const p = personGet(world.persons, c.person);
+      if (p === undefined) return;
+      race.candidacies.push(candidacyNew(p, c.party, date, c.incumbent && race.incumbent === p.id, draws));
+      filed.add(p.id);
+      busy.add(p.id);
+      if (p.status === "Bench") p.status = "Candidate";
+    };
+    for (const c of decl) fileOne(c);
+    for (const party of PARTY_VALUES) {
+      if (race.candidacies.some((c) => c.party === party)) continue;
+      const p = challengerFor(world, draws, {
+        state: race.state ?? ordinal<UsStateId>(0),
+        party,
+        ranges: officeRanges(race.office),
+        origin: "Challenger",
+      });
+      fileOne({ person: p.id, party, incumbent: false });
     }
-    scored.sort((a, b) => b[0] - a[0] || a[1].id - b[1].id);
-    return scored.map(([, p]) => p);
-  };
-  for (const party of PARTY_VALUES) {
-    const pool = hopefuls(party);
-    let want: number;
-    if (running !== null && running.party === party) {
-      file(race, running, party, date, draws, rec);
-      want = draws.chance("Campaign", PRIMARY_CHALLENGE_CHANCE) ? 1 : 0;
-    } else {
-      want = draws.intInclusive("Campaign", PRESIDENT_FIELD_MIN, PRESIDENT_FIELD_MAX);
-    }
-    for (let k = 0; k < want; k++) {
-      const p = pool.shift();
-      if (p !== undefined) {
-        file(race, p, party, date, draws, rec);
-        continue;
-      }
-      const states = world.politics.states.length;
-      const state = ordinal<UsStateId>(draws.intInclusive("Campaign", 0, states - 1));
-      file(race, recruit(world, draws, rec, state, party, "President"), party, date, draws, rec);
-    }
-  }
-  openPrimaries(race);
+    openPrimaries(race);
+  });
 }
 
 /** Whether `year`'s regular races are open already. */
@@ -450,9 +297,8 @@ function cycleOpened(world: World, year: number): boolean {
 
 /**
  * Opens `year`'s regular races on `date` (pivot 6.1, 6.2): the presidency, then the Senate class up,
- * the House and the governors in state order (that is their id order); fields are filled in ladder
- * order (president, Senate, governors, House) so a member who runs higher leaves their seat open.
- * Sets the calendar's primaries and next federal general.
+ * the House and the governors in state order (that is their id order); their fields are lane C's
+ * `declareCycle` (`fileFields`). Sets the calendar's primaries and next federal general.
  */
 export function openCycle(world: World, draws: DrawSource, year: number, date: SimDate): Race[] {
   const e = world.elections;
@@ -481,15 +327,7 @@ export function openCycle(world: World, draws: DrawSource, year: number, date: S
       made.push(raceNew(world, "Governor", ordinal<UsStateId>(i), null, null, general, false));
     }
   });
-  const rec = recruiterNew(world, year);
-  const order: RaceOffice[] = ["President", "Senate", "Governor", "House"];
-  for (const office of order) {
-    for (const r of made) {
-      if (r.office !== office) continue;
-      if (office === "President") fillPresidentField(world, r, draws, rec, date);
-      else fillField(world, r, draws, rec, date);
-    }
-  }
+  fileFields(world, draws, made, date);
   e.calendar.primaries = states.map((_, i) =>
     made.some((r) => r.state === i) ? statePrimary(i, year) : null,
   );
@@ -543,9 +381,7 @@ function openSpecial(
     general,
     true,
   );
-  const rec = recruiterNew(world, general.year);
-  rec.filed.delete(race.incumbent ?? (-1 as PersonId));
-  fillField(world, race, draws, rec, date);
+  fileFields(world, draws, [race], date);
   if (race.incumbent_party === null) {
     // A vacant seat: the party of whoever held it last.
     const key = seatKey(seat);
@@ -561,15 +397,16 @@ function openSpecial(
 }
 
 /**
- * Schedules special elections (pivot 6.1): for a vacant House seat (`Special`), and for a Senate
- * seat vacant or held by an appointee (the governor's appointment lasts until a special). Sets the
- * vacancy's `special` day.
+ * Schedules special elections (pivot 6.1): for a vacant House seat (`Special`, lane C's
+ * `vacancyFillOf`), and for a Senate seat held by a governor's appointee (lane C appoints the day the
+ * seat opens; the appointment lasts until a special). Sets the vacancy's `special` day.
  */
 export function scheduleSpecials(world: World, draws: DrawSource, date: SimDate): void {
   const s = world.persons;
   for (const v of s.vacancies) {
     if (v.special !== null || (v.seat.kind !== "House" && v.seat.kind !== "Senate")) continue;
-    if (seatRaced(world, v.seat, date) !== undefined) continue;
+    // A district a redraw has taken away waits empty for the House handover (`dropLostDistricts`).
+    if (lostDistrict(world, v.seat) || seatRaced(world, v.seat, date) !== undefined) continue;
     const day = specialDate(world, v.seat, v.since);
     if (day === null || cmpDate(day, date) <= 0) continue;
     v.special = day;
@@ -628,9 +465,10 @@ function countPrimary(
 }
 
 /**
- * A race's day of primaries (pivot 6.1): each party's is counted, its winner is the nominee, the
- * others lose it (and go back to the bench if they hold nothing); a party with nobody alive gets a
- * new challenger. The general's ballot is the nominees in `PARTY_VALUES` order.
+ * A race's day of primaries (pivot 6.1): each party's is counted, its winner is the nominee (a
+ * contested one earns lane C's `PrimaryWon` XP, pivot 5.10), the others lose it (and go back to the
+ * bench with `candidacyLost` if they hold nothing); a party with nobody alive gets a new challenger.
+ * The general's ballot is the nominees in `PARTY_VALUES` order.
  */
 export function runPrimaries(world: World, race: Race, electorate: number, draws: DrawSource): void {
   const ballot: PersonId[] = [];
@@ -639,13 +477,14 @@ export function runPrimaries(world: World, race: Race, electorate: number, draws
     let nominee: PersonId | null = null;
     if (pr?.ballot.some((id) => personGet(world.persons, id)?.status !== "Dead")) {
       nominee = countPrimary(world, race, pr, electorate, draws);
+      if (pr.ballot.length > 1) personAward(world, draws, nominee, "PrimaryWon");
     }
     for (const c of race.candidacies) {
       if (c.party !== party) continue;
       if (c.person === nominee) c.status = "Nominee";
       else {
         c.status = personGet(world.persons, c.person)?.status === "Dead" ? "DroppedOut" : "LostPrimary";
-        benchIfIdle(world, c.person);
+        candidacyLost(world, c.person);
       }
     }
     if (nominee === null) {
@@ -656,15 +495,8 @@ export function runPrimaries(world: World, race: Race, electorate: number, draws
         origin: "Challenger",
       });
       race.candidacies.push({
-        person: p.id,
-        party,
-        filed: pr?.date ?? race.general,
+        ...candidacyNew(p, party, pr?.date ?? race.general, false, draws),
         status: "Nominee",
-        incumbent: false,
-        strength: drawStrength(p, false, draws),
-        raised: 0,
-        spent: 0,
-        cash: 0,
       });
       nominee = p.id;
     }
@@ -672,13 +504,6 @@ export function runPrimaries(world: World, race: Race, electorate: number, draws
   }
   race.ballot = ballot;
   race.status = "General";
-}
-
-/** A candidate who holds no office goes back to the bench (pivot 5.9: they may run again). */
-export function benchIfIdle(world: World, id: PersonId): void {
-  const p = personGet(world.persons, id);
-  if (p === undefined || p.status !== "Candidate") return;
-  if (officesOf(world.persons, id).length === 0) p.status = "Bench";
 }
 
 /**
@@ -697,17 +522,7 @@ export function replaceDeadNominees(world: World, race: Race, draws: DrawSource)
       ranges: officeRanges(race.office),
       origin: "Challenger",
     });
-    race.candidacies.push({
-      person: p.id,
-      party,
-      filed: race.general,
-      status: "Nominee",
-      incumbent: false,
-      strength: drawStrength(p, false, draws),
-      raised: 0,
-      spent: 0,
-      cash: 0,
-    });
+    race.candidacies.push({ ...candidacyNew(p, party, race.general, false, draws), status: "Nominee" });
     race.ballot[i] = p.id;
   });
 }
@@ -724,21 +539,40 @@ export function campaignWeek(world: World, draws: DrawSource, date: SimDate): vo
   }
 }
 
+/**
+ * After a race is counted (pivot 5.9, 5.10): the winner earns lane C's XP (a special `SpecialWon`, a
+ * sitting holder `ReElected`, anyone else `ElectionWon`) and every losing nominee goes back to the
+ * bench if they hold nothing (`candidacyLost`).
+ */
+export function raceDecided(world: World, race: Race, draws: DrawSource): void {
+  const winner = race.result?.winner;
+  if (winner === undefined) return;
+  for (const c of race.candidacies) if (c.status === "Lost") candidacyLost(world, c.person);
+  if (personGet(world.persons, winner) === undefined) return;
+  const achievement = race.special ? "SpecialWon" : race.incumbent === winner ? "ReElected" : "ElectionWon";
+  personAward(world, draws, winner, achievement);
+}
+
 // ---------------------------------------------------------------- seating
 
-/** How a seat's holder left when someone else won it (pivot 5.9). */
-function exitOf(world: World, race: Race, holder: PersonId): OfficeExit {
-  const c = race.candidacies.find((k) => k.person === holder);
-  if (c !== undefined) return "Defeated";
-  if (race.office === "President" || race.office === "Governor") return "TermEnded";
+/**
+ * How a seat's holder left when someone else won it (pivot 5.9): beaten on the ballot; their term
+ * over when they ran for something else or were term-limited (lane C's `termLimited`); otherwise they
+ * retired, as `declareCycle` decided (they leave public life).
+ */
+function exitOf(world: World, race: Race, holder: PersonId, date: SimDate): OfficeExit {
+  if (race.candidacies.some((k) => k.person === holder)) return "Defeated";
   const elsewhere = liveRaces(world, race.cycle).some((r) => r.candidacies.some((k) => k.person === holder));
-  return elsewhere ? "TermEnded" : "Retired";
+  if (elsewhere) return "TermEnded";
+  const p = personGet(world.persons, holder);
+  if (p !== undefined && termLimited(p, raceSeat(race), date)) return "TermEnded";
+  return "Retired";
 }
 
 /**
  * Seats the certified winners of `races` on `date` (pivot 6.1): first every losing or leaving
- * holder steps down, then a winner who still holds another seat leaves it (raising its vacancy),
- * then each winner takes the seat, or keeps it with the new term's end.
+ * holder steps down, then a winner who still holds another seat leaves it (raising its vacancy,
+ * which lane C fills), then each winner takes the seat, or keeps it with the new term's end.
  */
 export function seatWinners(world: World, races: readonly Race[], date: SimDate, how: OfficeHow): void {
   const s = world.persons;
@@ -748,7 +582,7 @@ export function seatWinners(world: World, races: readonly Race[], date: SimDate,
     const holder = officeHolderOf(s, seat);
     const winner = (r.result as RaceResult).winner;
     if (holder !== undefined && holder.person !== winner) {
-      officeLeave(s, seat, exitOf(world, r, holder.person), date, false);
+      officeLeave(s, seat, exitOf(world, r, holder.person, date), date, false);
     }
   }
   for (const r of ready) {
@@ -768,12 +602,10 @@ export function seatWinners(world: World, races: readonly Race[], date: SimDate,
       continue;
     }
     if (personGet(s, winner)?.status === "Dead") {
-      s.vacancies.push({
-        seat,
-        since: date,
-        fill: seat.kind === "House" ? "Special" : "Appointment",
-        special: null,
-      });
+      // The seat stays vacant (once: a holder who died before the handover already raised it).
+      if (!s.vacancies.some((v) => seatKey(v.seat) === seatKey(seat))) {
+        s.vacancies.push({ seat, since: date, fill: vacancyFillOf(seat), special: null });
+      }
       continue;
     }
     officeTake(s, winner, seat, how, date, ends);
@@ -790,13 +622,19 @@ function regularTermEnd(seat: OfficeSeat, year: number): SimDate {
 
 /**
  * After a House handover: members of districts a census removed leave (pivot 5.3; the POC's
- * 1995-rework 7.4 "a member whose seat is gone leaves").
+ * 1995-rework 7.4 "a member whose seat is gone leaves"). Until then a sitting member keeps their
+ * district number through a redraw (D1052): the number names the new plan's district of that number.
  */
 export function dropLostDistricts(world: World, date: SimDate): void {
-  const gone = world.persons.offices.filter(
-    (o) => o.seat.kind === "House" && o.seat.district > houseSeats(world, o.seat.state),
-  );
-  for (const o of gone) officeLeave(world.persons, o.seat, "TermEnded", date, false);
+  const s = world.persons;
+  const gone = s.offices.filter((o) => o.seat.kind === "House" && lostDistrict(world, o.seat));
+  for (const o of gone) officeLeave(s, o.seat, "TermEnded", date, false);
+  s.vacancies = s.vacancies.filter((v) => !lostDistrict(world, v.seat));
+}
+
+/** A House seat whose district the plan in force no longer has (a census took it; pivot 5.3). */
+export function lostDistrict(world: World, seat: OfficeSeat): boolean {
+  return seat.kind === "House" && seat.district > houseSeats(world, seat.state);
 }
 
 /** Whether `year` is a governor year for some state (for tests and the calendar view). */

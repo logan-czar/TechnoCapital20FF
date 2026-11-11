@@ -1,6 +1,7 @@
 // v_usmap_layers (pivot 15.3, 5.1; D1037), owned by lane G (geo): the county columns and the states
 // from `World.geo`, the last certified presidential vote by county from `World.elections`
-// (`county_results`, kept for the latest general only) and by state from its college, and each
+// (`county_results`, which keeps the latest general's and the latest presidential race's columns,
+// D1040, D1052) and by state from its college, and each
 // governor's party from `World.persons`. A county's true lean is hidden (pivot 5.11): null unless
 // Omniscient.
 

@@ -11,10 +11,11 @@
 // contracts. Lane E also owns the politics POC's removal (politics/jobs.ts and its views).
 
 //
-// Lane E's build (D1040): calendar.ts (dates), geography.ts (where a race is voted), count.ts (the
-// vote), races.ts (fields, primaries, specials, seating), jobs.ts (the daily and weekly jobs) and
-// mirror.ts (the POC's table kept as a mirror for its readers). Elections act only in a world with
-// counties; a world without keeps the POC's vote.
+// Lane E's build (D1040, D1052): calendar.ts (dates), geography.ts (where a race is voted, on lane
+// G's plans), count.ts (the vote), races.ts (filing lane C's `declareCycle` fields, primaries,
+// specials, seating), jobs.ts (the daily and weekly jobs) and mirror.ts (the POC's table kept as a
+// mirror of the offices table for its readers). Elections act only in a world with counties; a world
+// without keeps the POC's vote.
 
 import { type Scheduler, schedulerRegister } from "../time/scheduler.ts";
 import type { DrawSource } from "../types/draws.ts";
@@ -48,9 +49,9 @@ export function registerElectionJobs(s: Scheduler): void {
 }
 
 /**
- * The elections at a world's start (pivot 6.1): the governor cycles, the start year's races, and
- * (while lane C seats nobody at the start) persons from the POC's seats. Runs after `geoStart` and
- * `personsStart`. Campaign stream (and lane C's Politics stream inside `challengerFor`).
+ * The elections at a world's start (pivot 6.1): the governor cycles, the POC's table mirrored from
+ * lane C's offices, and the start year's races. Runs after `geoStart` and `personsStart` (which
+ * seats every office; D1052). Campaign stream (and lane C's Politics stream inside `declareCycle`).
  */
 export function electionsStart(world: World, draws: DrawSource): void {
   startElections(world, draws);

@@ -1,16 +1,11 @@
 // Where a race is voted (pivot 5.4, 6.7; D1040): its counties and county shares. A House race reads
 // its district from lane G's plan in force (`geoPlanOf`); a statewide race and the presidency read
 // whole counties. The House seats per state are lane G's `GeoState.seats` once set, else the
-// data's apportionment (`PoliticsState.states`).
-//
-// While a state with more than one seat has no plan of the right size (lane G has not drawn one
-// yet), its districts are cut here by `fallbackPlan`: counties swept along the state's longer axis
-// and cut into equal populations, the cut county split into `CountyShare` intervals. It is never
-// stored; lane G's plan replaces it as soon as one is in force.
+// data's apportionment (`PoliticsState.states`). Every state with seats has a plan from the start
+// (lane G's `geoStart`; D1052), so there is no fallback districting.
 
 import { geoPlanOf } from "../geo/index.ts";
 import { type CountyId, ordinal, type UsStateId } from "../types/ids.ts";
-import { totalCmp } from "../types/num.ts";
 import type { County, CountyShare } from "../types/state/geo.ts";
 import type { World } from "../types/world.ts";
 
@@ -53,8 +48,10 @@ export function wholeUnits(counties: readonly CountyId[]): CountyShare[] {
 }
 
 /**
- * The units of House district `number` of `state` (pivot 5.4): lane G's plan when it is in force
- * with `seats` districts, the whole state for one seat, else `fallbackPlan`.
+ * The units of House district `number` of `state` (pivot 5.4): lane G's plan in force, the whole
+ * state for one seat. A world with counties has a plan per state from its start (`geoStart`), and the
+ * seats take force with the plans (`redrawAll`), so a plan of another size is a broken world: it
+ * throws (D1052; lane E's `fallbackPlan` for a world without plans is gone).
  */
 export function districtUnits(
   world: World,
@@ -65,107 +62,18 @@ export function districtUnits(
 ): CountyShare[] {
   if (seats <= 1) return wholeUnits(counties);
   const plan = geoPlanOf(world.geo, state);
-  if (plan !== undefined && plan.districts.length === seats) {
-    return plan.districts[number - 1]?.shares ?? [];
+  if (plan === undefined || plan.districts.length !== seats) {
+    throw new Error(`districtUnits: state ${state} has no plan of ${seats} districts`);
   }
-  return cachedFallback(world.geo.counties, state, counties, seats)[number - 1] ?? [];
+  return plan.districts[number - 1]?.shares ?? [];
 }
 
-/**
- * The fallback plans already cut, per county table: a plan is a pure function of the state's
- * counties (their people and centroids) and its seats, so it is kept under a key holding the seats
- * and the people of each county. Never saved; a cache only.
- */
-const FALLBACK_CACHE = new WeakMap<readonly County[], Map<number, { key: string; plan: CountyShare[][] }>>();
-
-function cachedFallback(
-  all: readonly County[],
-  state: UsStateId,
-  counties: readonly CountyId[],
-  seats: number,
-): CountyShare[][] {
-  let byState = FALLBACK_CACHE.get(all);
-  if (byState === undefined) {
-    byState = new Map();
-    FALLBACK_CACHE.set(all, byState);
-  }
-  const key = `${seats}:${counties.map((c) => (all[c] as County).population).join(",")}`;
-  const hit = byState.get(state);
-  if (hit !== undefined && hit.key === key) return hit.plan;
-  const plan = fallbackPlan(all, counties, seats);
-  byState.set(state, { key, plan });
-  return plan;
-}
-
-/**
- * Equal-population districts with no lane G plan (D1040), by recursive bisection: the counties
- * (or their shares) are sorted along the region's longer axis by centroid (ties to the lower id,
- * then the earlier interval) and cut where the first `floor(seats / 2)` districts' people end; each
- * side is cut again until one district is left. A county a cut falls in is split into consecutive
- * intervals of its people order, so the shares of a county cover it once. Compact, so a district
- * keeps the political geography of its region. Each district's shares are in county id order.
- */
-export function fallbackPlan(
-  all: readonly County[],
-  counties: readonly CountyId[],
-  seats: number,
-): CountyShare[][] {
-  const out: CountyShare[][] = [];
-  bisect(all, wholeUnits(counties), seats, out);
-  for (const d of out) d.sort((a, b) => a.county - b.county || a.from - b.from);
-  return out;
-}
-
-function bisect(all: readonly County[], pieces: CountyShare[], seats: number, out: CountyShare[][]): void {
-  if (seats <= 1) {
-    out.push(pieces);
-    return;
-  }
-  const at = (s: CountyShare): County => all[s.county] as County;
-  const span = (k: 0 | 1): number => {
-    let lo = Number.POSITIVE_INFINITY;
-    let hi = Number.NEGATIVE_INFINITY;
-    for (const s of pieces) {
-      lo = Math.min(lo, at(s).centroid[k]);
-      hi = Math.max(hi, at(s).centroid[k]);
-    }
-    return hi - lo;
-  };
-  const axis: 0 | 1 = span(0) >= span(1) ? 0 : 1;
-  const order = pieces
-    .slice()
-    .sort(
-      (a, b) =>
-        totalCmp(at(a).centroid[axis], at(b).centroid[axis]) || a.county - b.county || a.from - b.from,
-    );
-  const first = Math.floor(seats / 2);
-  const total = order.reduce((n, s) => n + shareSize(at(s), s), 0);
-  const target = (total * first) / seats;
-  const left: CountyShare[] = [];
-  const right: CountyShare[] = [];
-  let acc = 0;
-  for (const s of order) {
-    const size = shareSize(at(s), s);
-    if (acc >= target) right.push(s);
-    else if (acc + size <= target || size <= 0) {
-      left.push(s);
-      acc += size;
-    } else {
-      const cut = s.from + (target - acc) / at(s).population;
-      left.push({ county: s.county, from: s.from, to: cut });
-      right.push({ county: s.county, from: cut, to: s.to });
-      acc = target;
-    }
-  }
-  bisect(all, left, first, out);
-  bisect(all, right, seats - first, out);
-}
-/** A share's people (pivot 5.4): `(to âˆ’ from) Ã— population`. */
+/** A share's people (pivot 5.4): `(to - from) * population`. */
 export function shareSize(c: County, s: CountyShare): number {
   return (s.to - s.from) * c.population;
 }
 
-/** A share's mean lean (pivot 5.4): `lean + spread Ã— (1 âˆ’ from âˆ’ to)`. */
+/** A share's mean lean (pivot 5.4): `lean + spread * (1 - from - to)`. */
 export function shareLean(c: County, s: CountyShare): number {
   return c.lean + c.spread * (1 - s.from - s.to);
 }

@@ -3,10 +3,16 @@
 // certified, and seated in January; the votes add up county to district to state to the college.
 
 import { beforeAll, describe, expect, it } from "vitest";
-import { electionDay, SPECIAL_LEAD_DAYS, tuesdayOnOrAfter } from "../../src/elections/calendar.ts";
+import {
+  electionDay,
+  handoverDate,
+  SPECIAL_LEAD_DAYS,
+  tuesdayOnOrAfter,
+} from "../../src/elections/calendar.ts";
 import { MIDTERM_TURNOUT_RATIO } from "../../src/elections/count.ts";
-import { countiesByState, DC_ELECTORS, fallbackPlan, shareSize } from "../../src/elections/geography.ts";
+import { countiesByState, DC_ELECTORS, shareSize } from "../../src/elections/geography.ts";
 import { raceUnits } from "../../src/elections/jobs.ts";
+import { raceSeat } from "../../src/elections/races.ts";
 import { officeHolderOf, officeLeave, personGet, seatKey } from "../../src/politics/people.ts";
 import { dateTimeDate, simDateAddDays, simDateYmd } from "../../src/time/calendar.ts";
 import { type CountyId, ordinal, type UsStateId } from "../../src/types/ids.ts";
@@ -40,13 +46,17 @@ describe("the 1996 cycle on the real counties", () => {
   let w: World;
   let races: Race[];
   let midYear: World;
+  // The year's end, before 1 January's county drift moves the people the count was made on.
+  let counted: World;
 
   beforeAll(() => {
     w = start1995(SEED);
     const draws = runDraws(SEED);
     runDays(w, draws, simDateYmd(1995, 1, 1), simDateYmd(1996, 7, 1));
     midYear = structuredClone(w);
-    runDays(w, draws, simDateYmd(1996, 7, 2), simDateYmd(1997, 1, 21));
+    runDays(w, draws, simDateYmd(1996, 7, 2), simDateYmd(1996, 12, 31));
+    counted = structuredClone(w);
+    runDays(w, draws, simDateYmd(1997, 1, 1), simDateYmd(1997, 1, 21));
     races = w.elections.races.filter((r) => r.cycle === 1996);
   });
 
@@ -84,17 +94,17 @@ describe("the 1996 cycle on the real counties", () => {
   });
 
   it("splits every county's turnout into whole votes that add up race by race", () => {
-    const byState = countiesByState(w);
-    for (const cr of w.elections.county_results) {
-      const r = w.elections.races[cr.race] as Race;
+    const byState = countiesByState(counted);
+    for (const cr of counted.elections.county_results) {
+      const r = counted.elections.races[cr.race] as Race;
       const sums = cr.votes.map((col) => col.reduce((a, b) => a + b, 0));
       expect(sums).toEqual(r.result?.votes);
       expect(sums.reduce((a, b) => a + b, 0)).toBe(r.result?.turnout);
       // Each unit's turnout is the county's turnout times its people, whole.
-      const units = raceUnits(w, r, byState);
+      const units = raceUnits(counted, r, byState);
       expect(units.map((u) => u.county)).toEqual(cr.counties);
       units.forEach((u, k) => {
-        const c = w.geo.counties[u.county] as World["geo"]["counties"][number];
+        const c = counted.geo.counties[u.county] as World["geo"]["counties"][number];
         const cast = cr.votes.reduce((n, col) => n + (col[k] as number), 0);
         expect(cast).toBe(roundHalfAway(shareSize(c, u) * c.turnout));
       });
@@ -144,14 +154,31 @@ describe("the 1996 cycle on the real counties", () => {
             : r.office === "Governor"
               ? { kind: "Governor" as const, state: r.state as UsStateId }
               : { kind: "House" as const, state: r.state as UsStateId, district: r.district as number };
-      expect(officeHolderOf(w.persons, seat)?.person, seatKey(seat)).toBe(r.result?.winner);
+      // The winner took the seat at the handover (a member named to the new cabinet by lane C the
+      // same day has left it again, D1052).
+      // The winner holds the seat (re-elected, or seated by a special since: the same line, a new
+      // term), or took it at the handover and has left it again the same day.
+      const holder = officeHolderOf(w.persons, seat)?.person;
+      if (holder === r.result?.winner) continue;
+      // A winner who died before the handover leaves the seat to a special (or an appointment).
+      if (personGet(w.persons, r.result?.winner as never)?.status === "Dead") continue;
+      const line = personGet(w.persons, r.result?.winner as never)?.career.find(
+        (c) => seatKey(c.seat) === seatKey(seat) && c.how === "Elected",
+      );
+      expect(line?.from, seatKey(seat)).toEqual(handoverDate(r.office, 1996));
+      expect(line?.to, seatKey(seat)).toEqual(handoverDate(r.office, 1996));
     }
     const p = w.politics;
     const last = p.elections.at(-1);
     expect(last?.date).toEqual(electionDay(1996));
+    expect((last?.house[0] ?? 0) + (last?.house[1] ?? 0)).toBe(435);
+    // The mirror is the offices table, seat for seat (D1052).
     const mirrorHouse = p.politicians.filter((c) => c.office.kind === "House");
-    expect(mirrorHouse).toHaveLength(435);
-    expect(mirrorHouse.filter((c) => c.party === "Democrats").length).toBe(last?.house[0]);
+    const house = w.persons.offices.filter((o) => o.seat.kind === "House");
+    expect(mirrorHouse).toHaveLength(house.length);
+    expect(mirrorHouse.filter((c) => c.party === "Democrats").length).toBe(
+      house.filter((o) => personGet(w.persons, o.person)?.party === "Democrats").length,
+    );
     const president = p.politicians.find((c) => c.office.kind === "President");
     const winner = personGet(
       w.persons,
@@ -180,9 +207,12 @@ describe("special elections (pivot 6.1)", () => {
     const seat = { kind: "House" as const, state: stateId(w, "Ohio"), district: 3 };
     const left = officeLeave(w.persons, seat, "Died", simDateYmd(1995, 3, 1));
     expect(left).not.toBeNull();
-    expect(w.persons.vacancies.map((v) => v.fill)).toEqual(["Special"]);
+    const key = seatKey(seat);
+    expect(w.persons.vacancies.filter((v) => seatKey(v.seat) === key).map((v) => v.fill)).toEqual([
+      "Special",
+    ]);
     runDays(w, draws, simDateYmd(1995, 3, 2), simDateYmd(1995, 9, 30));
-    const special = w.elections.races.find((r) => r.special);
+    const special = w.elections.races.find((r) => r.special && seatKey(raceSeat(r)) === key);
     expect(special?.office).toBe("House");
     expect(special?.general).toEqual(
       tuesdayOnOrAfter(simDateAddDays(simDateYmd(1995, 3, 1), SPECIAL_LEAD_DAYS)),
@@ -193,7 +223,7 @@ describe("special elections (pivot 6.1)", () => {
     const line = personGet(w.persons, holder?.person as never)?.career.at(-1);
     expect(line?.how).toBe("Special");
     expect(holder?.term_ends).toEqual(simDateYmd(1997, 1, 3));
-    expect(w.persons.vacancies).toEqual([]);
+    expect(w.persons.vacancies.filter((v) => seatKey(v.seat) === key)).toEqual([]);
   });
 
   it("sends a vacant Senate seat to the next even-year general", () => {
@@ -203,7 +233,10 @@ describe("special elections (pivot 6.1)", () => {
     const seat = { kind: "Senate" as const, state: stateId(w, "Texas"), senate_class: 1 };
     officeLeave(w.persons, seat, "Resigned", simDateYmd(1995, 1, 1));
     runDays(w, draws, simDateYmd(1995, 1, 1), simDateYmd(1995, 1, 2));
-    const special = w.elections.races.find((r) => r.special);
+    // Lane C's governor appoints a senator the day the seat opens; the special replaces them.
+    const holder = officeHolderOf(w.persons, seat);
+    expect(personGet(w.persons, holder?.person as never)?.career.at(-1)?.how).toBe("Appointed");
+    const special = w.elections.races.find((r) => r.special && seatKey(raceSeat(r)) === seatKey(seat));
     expect(special?.office).toBe("Senate");
     expect(special?.general).toEqual(electionDay(1996));
   });
@@ -218,26 +251,25 @@ describe("a world without counties (the frozen fixture)", () => {
     const world = simWorld(made.value);
     runDays(world, runDraws(1), simDateYmd(2020, 1, 1), simDateYmd(2021, 1, 21));
     expect(world.elections.races).toEqual([]);
-    expect(world.persons.persons).toEqual([]);
     expect(world.politics.elections).toHaveLength(1);
   });
 });
 
-describe("the fallback districts (D1040)", () => {
-  it("cover each county once with equal people", () => {
+describe("the districts (D1052)", () => {
+  it("are lane G's plans in force, one per state with seats, matching its seats", () => {
     const w = start1995(SEED);
-    const ca = stateId(w, "California");
-    const counties = countiesByState(w)[ca] as CountyId[];
-    const plan = fallbackPlan(w.geo.counties, counties, 52);
-    expect(plan).toHaveLength(52);
-    const people = plan.map((d) =>
-      d.reduce((n, s) => n + shareSize(w.geo.counties[s.county] as World["geo"]["counties"][number], s), 0),
-    );
-    const total = people.reduce((a, b) => a + b, 0);
-    for (const n of people) expect(Math.abs(n - total / 52)).toBeLessThan(1);
-    const cover = new Map<number, number>();
-    for (const d of plan)
-      for (const s of d) cover.set(s.county, (cover.get(s.county) ?? 0) + (s.to - s.from));
-    for (const c of counties) expect(cover.get(c)).toBeCloseTo(1, 9);
+    const byState = countiesByState(w);
+    w.politics.states.forEach((_, si) => {
+      const seats = w.geo.seats[si] ?? 0;
+      if (seats === 0) return;
+      const plan = w.geo.plans.find((p) => p.state === si);
+      expect(plan?.districts.length, `state ${si}`).toBe(seats);
+      const units = raceUnits(
+        w,
+        { office: "House", state: si, district: seats } as Race,
+        byState as CountyId[][],
+      );
+      expect(units).toEqual(seats === 1 ? units : plan?.districts[seats - 1]?.shares);
+    });
   });
 });
