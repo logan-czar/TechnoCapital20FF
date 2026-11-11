@@ -1,6 +1,7 @@
 // Argument parsing of the headless commands (crates/headless/src/main.rs): each parser returns
 // null on a bad or missing argument, and main prints the usage (exit code 2).
 import { resolve } from "node:path";
+import { DIFFICULTY_VALUES, type Difficulty } from "@tc20ff/sim";
 import { DEFAULT_WORLD_ID } from "@tc20ff/sim-data";
 import { worldDataDir } from "@tc20ff/sim-data/node";
 
@@ -24,7 +25,7 @@ export const USAGE = [
   "  headless calibrate --world ID [--years N] --seeds A..B [--jobs N] --out DIR",
   "  headless check DIR",
   "  headless parity DIR [--reference DIR]",
-  "  headless record --years N --seed S --out LOG [--data-dir DIR | --world ID]",
+  "  headless record --years N --seed S --out LOG [--player Easy|Normal|Hard] [--data-dir DIR | --world ID]",
   "  headless replay LOG [--data-dir DIR | --world ID]",
   "  headless bake --seed N [--scenario ID] --out DIR [--name NAME] [--label TEXT] [--data-dir DIR | --world ID]",
   "the world defaults to 1995; --world ID is assets/worlds/ID, and --world 2020 is the repository's docs/design/data; seeds A..B are inclusive (a single seed A also works);",
@@ -196,14 +197,24 @@ export function parseSoak(args: readonly string[]): [SoakArgs, string] | null {
   return [{ years: span, seeds, jobs, out, check, detail, scenario }, dir];
 }
 
-/** `record --years N --seed S --out LOG [--data-dir DIR]`: [seed, years, out, dir]. */
-export function parseRecord(args: readonly string[]): [number, number, string, string] | null {
+/** `record --years N --seed S --out LOG [--player D] [--data-dir DIR]`: [seed, years, out, dir, player]. */
+export function parseRecord(
+  args: readonly string[],
+): [number, number, string, string, Difficulty | undefined] | null {
   let seed: number | null = null;
   let years: number | null = null;
   let out: string | null = null;
   let dir = worldDataDir(DEFAULT_WORLD_ID);
+  let player: Difficulty | undefined;
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
+      case "--player": {
+        // The player's account opens at the start at this difficulty (D1042, D1052).
+        const v = args[++i];
+        if (!DIFFICULTY_VALUES.includes(v as Difficulty)) return null;
+        player = v as Difficulty;
+        break;
+      }
       case "--seed":
         seed = parseCount(args[++i]);
         if (seed === null) return null;
@@ -234,7 +245,7 @@ export function parseRecord(args: readonly string[]): [number, number, string, s
         return null;
     }
   }
-  return seed === null || years === null || out === null ? null : [seed, years, out, dir];
+  return seed === null || years === null || out === null ? null : [seed, years, out, dir, player];
 }
 
 /** `replay LOG [--data-dir DIR]`: [log, dir]. */

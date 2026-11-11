@@ -61,6 +61,10 @@ describe("argument parsing", () => {
       userPath("l"),
     ]);
     expect(parseRecord(["--years", "2", "--seed", "7"])).toBeNull();
+    // The player's account at a difficulty (D1052); none by default.
+    expect(parseRecord(["--years", "2", "--seed", "7", "--out", "l"])?.[4]).toBeUndefined();
+    expect(parseRecord(["--years", "2", "--seed", "7", "--out", "l", "--player", "Hard"])?.[4]).toBe("Hard");
+    expect(parseRecord(["--years", "2", "--seed", "7", "--out", "l", "--player", "Brutal"])).toBeNull();
     expect(parseReplay(["run.log"])?.[0]).toBe(userPath("run.log"));
     expect(parseReplay(["a.log", "b.log"])).toBeNull();
     expect(parseReplay(["--data-dir"])).toBeNull();

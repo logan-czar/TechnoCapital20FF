@@ -220,9 +220,10 @@ export async function main(args: string[], factory: SimFactory = defaultFactory)
     case "record": {
       const p = parseRecord(args.slice(1));
       if (p === null) return usage();
-      const [seed, years, out, dir] = p;
+      const [seed, years, out, dir, player] = p;
       return report(() => {
-        console.log(`recorded ${out}: ${record(factory, loadData(dir), seed, years, out)}`);
+        const opts = player === undefined ? {} : { player };
+        console.log(`recorded ${out}: ${record(factory, loadData(dir), seed, years, out, opts)}`);
       });
     }
     case "replay": {
