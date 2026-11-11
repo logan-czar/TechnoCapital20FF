@@ -14,6 +14,8 @@
 // - `run --tick-costs` prints the wall time of whole steps by the kind of tick (D801).
 // - `record` and `replay` (M10.4) write a run's seed, command log and monthly hashes, and replay
 //   such a log checking every hash (D403).
+// - `bake` (pivot 3.5) pre-simulates the 1995 world to 2020, hydrates it and writes the save and
+//   the start index (bake.ts).
 //
 // The sim is built only through a SimFactory (factory.ts), so these commands are testable with a
 // stub and are wired to the real `simNew` in one place.
@@ -37,6 +39,7 @@ import {
   USAGE,
   userPath,
 } from "./args.ts";
+import { bakeCommand, parseBake } from "./bake.ts";
 import { defaultFactory, factoryFor, isObservedSim } from "./factory.ts";
 import { type RunOptions, runSeed, type SimFactory, YEARS_HEADER } from "./metrics.ts";
 import { parityCommand } from "./parity.ts";
@@ -235,6 +238,10 @@ export async function main(args: string[], factory: SimFactory = defaultFactory)
       return args.length === 2 && dir !== undefined
         ? report(() => (isEraDir(userPath(dir)) ? checkEraDir : checkDir)(userPath(dir)))
         : usage();
+    }
+    case "bake": {
+      const a = parseBake(args.slice(1));
+      return a === null ? usage() : report(() => bakeCommand(loadData(a.dir), a));
     }
     case "parity":
       // Exit 1 when any target or yearly metric fails the parity gate (D951).
