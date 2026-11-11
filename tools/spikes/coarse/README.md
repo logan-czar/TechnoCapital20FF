@@ -1,5 +1,10 @@
 # Spike: a 25-year "Coarse" pre-sim in Node
 
+> The measuring script (`spike.ts`) and the two `simSpike*` functions it used were removed in M1
+> (lane S4, D1030): the game's own path is now `simRunTicks` and `packages/sim/src/fidelity/`, and
+> the headless `bake` command prints the same timings. The script is in git history (last at
+> a5b060a). The findings below stand as measured then.
+
 Throwaway measurement code. It asks whether the 1995 world can be run forward to 2020 with no UI
 inside 60 to 120 seconds once it also carries county-level politics, and what the save, load and
 hash cost at that point.

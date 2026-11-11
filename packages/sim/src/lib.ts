@@ -29,6 +29,7 @@ import { DEFAULT_PROFILE_ID, LEGACY_PROFILE, profileById } from "./economy/profi
 import { RANDOM_SCENARIO_ID, RANDOM_SCENARIO_LABEL, SCENARIOS, scenarioKnown } from "./economy/scenarios.ts";
 import { start as economyStart } from "./economy/start.ts";
 import { eraStart } from "./era/jobs.ts";
+import { type HydrateReport, hydrateFull } from "./fidelity/hydrate.ts";
 import { start as financeStart } from "./finance/index.ts";
 import { stateHash } from "./hash.ts";
 import { scheduler } from "./jobs.ts";
@@ -519,28 +520,6 @@ function stepInner(i: SimInner, observer: TickObserver | null): Notice[] {
   return notices;
 }
 
-// ---------------------------------------------------------------- SPIKE (tools/spikes/coarse)
-// Throwaway prototype of a view-free "Coarse" run path, for measurement only: nothing in the
-// game or the headless runner calls these. See tools/spikes/coarse/README.md.
-
-/**
- * SPIKE: one tick of jobs with no view refresh and no pause handling. The notices are built by
- * the scheduler into `scratch` and dropped. The world and the draws are the same as `simStep`'s;
- * the views are stale until `simSpikeRebuildViews`. Returns true when the run has ended.
- */
-export function simSpikeStepNoViews(sim: Sim, scratch: Notice[]): boolean {
-  const s = inner(sim).s;
-  scratch.length = 0;
-  const p = schedulerRunTickObserved(s.scheduler, s.world, s.draws, scratch, s.controls, null, null);
-  return p?.kind === "RunEnded";
-}
-
-/** SPIKE: rebuilds every view once, after a run of `simSpikeStepNoViews`. */
-export function simSpikeRebuildViews(sim: Sim): void {
-  const i = inner(sim);
-  simViewsRebuild(i.s.views, viewInput(i.s), i.cfg.views);
-}
-
 // ---------------------------------------------------------------- the pre-simulation (pivot 3.2)
 
 /** What `simRunUntil` tells its caller as it runs. */
@@ -609,6 +588,54 @@ export function simRunUntil(
   if (ticks > 0) simViewsRebuild(s.views, viewInput(s), i.cfg.views);
   onProgress?.({ done: ticks, total, date: dateTimeDate(s.world.clock) });
   return { ticks, ended, cancelled };
+}
+
+/** How a `simRunTicks` call ended. */
+export interface RunTicksResult {
+  /** Ticks run. Whole number. */
+  ticks: number;
+  /** A historical world's run ended on one of them (1995-rework 8.3); the ticks went on past it. */
+  ended: boolean;
+}
+
+/**
+ * `simRunUntil`'s ticks in a chunk a host chooses (pivot 3.5): runs ticks until the clock reaches
+ * `target` or `maxTicks` have run, with no view refresh, no notices and no pause handling. The
+ * world and the draws are exactly `simStep`'s, so any split of a run into chunks reaches the same
+ * state hash. The views are stale afterwards until `simRebuildViews`: the pre-simulation
+ * (fidelity/presim.ts) rebuilds them once, at its end. A run's end does not stop it (the caller
+ * owns where it stops). Reads no wall clock.
+ */
+export function simRunTicks(sim: Sim, target: DateTime, maxTicks: number): RunTicksResult {
+  const s = inner(sim).s;
+  const scratch: Notice[] = [];
+  let ticks = 0;
+  let ended = false;
+  while (ticks < maxTicks && s.world.clock < target) {
+    scratch.length = 0;
+    const p = schedulerRunTickObserved(s.scheduler, s.world, s.draws, scratch, s.controls, null, null);
+    ticks += 1;
+    if (p?.kind === "RunEnded") ended = true;
+  }
+  return { ticks, ended };
+}
+
+/** Rebuilds every view once, after a run of `simRunTicks` (spec 9.4). */
+export function simRebuildViews(sim: Sim): void {
+  const i = inner(sim);
+  simViewsRebuild(i.s.views, viewInput(i.s), i.cfg.views);
+}
+
+/**
+ * Switches this game's world to Full fidelity where it stands (pivot 3.4; fidelity/hydrate.ts
+ * `hydrateFull`) and rebuilds every view. The controls are not touched: a game that has only been
+ * pre-simulated is still paused, as a new game is. Throws on a world that cannot be hydrated.
+ */
+export function simHydrate(sim: Sim): HydrateReport {
+  const i = inner(sim);
+  const report = hydrateFull(i.s.world);
+  simViewsRebuild(i.s.views, viewInput(i.s), i.cfg.views);
+  return report;
 }
 
 /** Pauses (once: a second pause posts nothing). */

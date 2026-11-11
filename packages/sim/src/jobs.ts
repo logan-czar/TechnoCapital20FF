@@ -102,7 +102,8 @@ export function registerJobs(s: Scheduler): void {
   r(s, "CloseResultTags", "market.result_tags", market.resultTagsJob); // market/jobs resultTagsJob
   r(s, "LockConsensus", "market.consensus", market.consensusJob); // market/jobs consensusJob
   r(s, "YearlyArchive", "era.year_close", eraYearCloseJob); // era/jobs (1995-rework 3.3; no Rust twin)
-  r(s, "YearlyArchive", "era.reveal", eraRevealJob); // era/jobs (1995-rework 8.3; no Rust twin)
+  // Coarse only (pivot 3.3): the run that ends is the pre-history; a hydrated world has no run end.
+  r(s, "YearlyArchive", "era.reveal", eraRevealJob, { fidelity: "Coarse" }); // era/jobs (1995-rework 8.3; no Rust twin)
   r(s, "YearlyArchive", "market.archive_bars", market.archiveBarsJob); // market/jobs archiveBarsJob
 
   // births::jobs::register (crates/sim/src/births/jobs.rs)

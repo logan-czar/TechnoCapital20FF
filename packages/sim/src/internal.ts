@@ -5,6 +5,8 @@ export { DEBT_HOLD_SHARE_PER_LEVEL, debtAggressionOf } from "./ai/financing.ts";
 export { FOCUS_RD_SHIFT_PER_LEVEL, focusOf } from "./ai/focus.ts";
 export * from "./economy/profiles.ts";
 export * from "./economy/scenarios.ts";
+// The Coarse pre-simulation and the hydration to Full (pivot 3.2 to 3.5).
+export * from "./fidelity/index.ts";
 export {
   grossAssets as companyGrossAssets,
   sheet as companySheet,
@@ -16,6 +18,8 @@ export * from "./index.ts";
 export * from "./jobs.ts";
 // The whole Sim (lib.ts) with its test and soak hooks, the soak totals and the views framework.
 export * from "./lib.ts";
+// The save version, for the start index the headless `bake` writes (pivot 3.5).
+export { SAVE_VERSION } from "./save.ts";
 export * from "./soak.ts";
 export * from "./time/index.ts";
 export * from "./types/calendar.ts";
