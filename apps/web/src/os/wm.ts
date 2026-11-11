@@ -37,6 +37,8 @@ export interface Win {
   app: string;
   /** Where in the app the window is (AppProps.route). */
   route: string | null;
+  /** The title the app set (AppProps.setTitle; D1037); absent or null shows `AppSpec.title`. */
+  title?: string | null;
   rect: Rect;
   /** Stacking order: higher is in front. */
   z: number;
@@ -87,6 +89,8 @@ export type WmAction =
   | { kind: "close"; id: string }
   /** The app navigated inside the window. */
   | { kind: "route"; id: string; route: string | null }
+  /** The app set its window's title (AppProps.setTitle; D1037); null is the app's own. */
+  | { kind: "title"; id: string; title: string | null }
   /** The taskbar button: restores a minimised window, minimises the focused one, focuses any other. */
   | { kind: "toggle"; id: string }
   /** The desktop was measured or resized. */
@@ -269,6 +273,8 @@ export function wmReduce(s: WmState, a: WmAction): WmState {
     }
     case "route":
       return update(s, a.id, (w) => (w.route === a.route ? w : { ...w, route: a.route }));
+    case "title":
+      return update(s, a.id, (w) => ((w.title ?? null) === a.title ? w : { ...w, title: a.title }));
     case "toggle": {
       const w = findWin(s, a.id);
       if (!w) return s;

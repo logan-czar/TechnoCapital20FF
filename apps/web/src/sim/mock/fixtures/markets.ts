@@ -4,24 +4,27 @@
 // people contracts), and an order book around that price.
 //
 // A row carries the best bid and ask. A contract's depth and price history are `contractBook` and
-// `contractHistory`, the slices the view's type describes; the protocol cannot carry them yet
-// (README). The mock has no cohorts (pivot 11.3): one market belief per contract stands in for them.
+// `contractHistory`, the slices `{ view: "markets", slice: "book" | "history", contract }` (D1037).
+// The mock has no cohorts (pivot 11.3): one market belief per contract stands in for them.
 
-import type {
-  BookLevel,
-  ContractBook,
-  ContractId,
-  ContractKind,
-  ContractRow,
-  ContractStatus,
-  DateTime,
-  EntityRef,
-  InstrumentId,
-  MarketsView,
-  OrderRow,
-  OrderSide,
-  Party,
-  SimDate,
+import {
+  type BookLevel,
+  CONTRACT_CLOSES_KEPT,
+  type ContractBook,
+  type ContractHistory,
+  type ContractId,
+  type ContractKind,
+  type ContractRow,
+  type ContractStatus,
+  type DateTime,
+  type EntityRef,
+  type InstrumentId,
+  type MarketsView,
+  type OrderRow,
+  type OrderSide,
+  type Party,
+  type PersonId,
+  type SimDate,
 } from "@tc20ff/sim";
 import {
   ballotOdds,
@@ -94,16 +97,16 @@ export interface MockContract {
   /** The price each hour from `history_start`, in whole cents. */
   history_start: DateTime;
   history: number[];
+  /** Who, which party and what range it is about (D1037). */
+  person: PersonId | null;
+  party: Party | null;
+  bracket: { lo: number | null; hi: number | null } | null;
+  /** Each day's closing price, oldest first, the last `CONTRACT_CLOSES_KEPT`. */
+  closes: number[];
 }
 
-/** A contract's hourly prices: the mock's own slice (the view types have none for it; README). */
-export interface MockContractHistory {
-  contract: ContractId;
-  /** The tick of `prices[0]`; one price an hour after it. */
-  start: DateTime;
-  /** Whole cents. */
-  prices: number[];
-}
+/** A contract's hourly prices: the `history` slice (D1037). */
+export type MockContractHistory = ContractHistory;
 
 export interface MarketState {
   contracts: MockContract[];
@@ -125,6 +128,10 @@ export interface NewContract {
   fair: Fair;
   liquidity: number;
   status?: ContractStatus;
+  /** Who, which party and what range it is about; read from `fair` when absent. */
+  person?: PersonId | null;
+  party?: Party | null;
+  bracket?: { lo: number | null; hi: number | null } | null;
 }
 
 const NO_REFUND = "There are no refunds.";
@@ -164,6 +171,10 @@ export function listContract(
     asks: [],
     history_start: t,
     history: [],
+    person: def.person ?? null,
+    party: def.party ?? null,
+    bracket: def.bracket ?? null,
+    closes: [],
   };
   ms.contracts.push(c);
   if (name !== undefined) ms.named[name] = id;
@@ -264,9 +275,14 @@ export function marketStep(
   return changed;
 }
 
-/** A new day: the day's volume starts again. */
+/** A new day: the day's volume starts again, and an open contract's close is kept (D1037). */
 export function marketNewDay(ms: MarketState): void {
-  for (const c of ms.contracts) c.volume = 0;
+  for (const c of ms.contracts) {
+    c.volume = 0;
+    if (c.status !== "Open") continue;
+    c.closes.push(c.last ?? Math.min(99, Math.max(1, Math.floor(c.mid + 0.5))));
+    if (c.closes.length > CONTRACT_CLOSES_KEPT) c.closes.shift();
+  }
 }
 
 /**
@@ -344,6 +360,9 @@ function row(c: MockContract, orders: readonly OrderRow[]): ContractRow {
     title: c.title,
     rule: c.rule,
     subject: c.subject,
+    person: c.person,
+    party: c.party,
+    bracket: c.bracket,
     status: c.status,
     listed: c.listed,
     deadline: c.deadline,
@@ -351,6 +370,8 @@ function row(c: MockContract, orders: readonly OrderRow[]): ContractRow {
     bid,
     ask,
     last: c.last,
+    prev_close: c.closes.at(-1) ?? null,
+    closes: c.closes.slice(),
     volume: c.volume,
     open_interest: c.open_interest,
   };
@@ -418,8 +439,33 @@ export function genMarkets(
   const t = MOCK_HISTORY_START;
   const name = (id: number) => (pol.people[id] as { name: string }).name;
   const jan = ymd(1, 6);
+  // Who, which party and what range a contract is about, from what it is read from (D1037).
+  const about = (def: NewContract): NewContract => {
+    const f = def.fair;
+    const open = (v: number, edge: number) => (v === edge ? null : v);
+    switch (f.kind) {
+      case "RaceWinner": {
+        const cand = ballotCandidate(pol.races[f.race] as MockRace, f.ballot);
+        return { ...def, person: cand.person, party: cand.party };
+      }
+      case "Chamber":
+        return { ...def, party: f.party };
+      case "SenateSeats":
+        return {
+          ...def,
+          party: "Democrats",
+          bracket: { lo: open(f.lo, 0), hi: open(f.hi, pol.senators.length) },
+        };
+      case "Ev":
+        return { ...def, party: "Democrats", bracket: { lo: open(f.lo, 0), hi: open(f.hi, totalEv(geo)) } };
+      case "PopVote":
+        return { ...def, party: "Democrats", bracket: { lo: open(f.lo, -200), hi: open(f.hi, 200) } };
+      case "Script":
+        return def;
+    }
+  };
   const add = (def: NewContract, key?: string) => {
-    const c = listContract(ms, def, 0.5, t, key);
+    const c = listContract(ms, about(def), 0.5, t, key);
     c.belief = Math.min(1 - BELIEF_MIN, Math.max(BELIEF_MIN, fairOf(c, ms, pol, start)));
     return c;
   };
@@ -438,6 +484,8 @@ export function genMarkets(
       listed: jan,
       fair: { kind: "Script", key: "settled" },
       liquidity: 800,
+      person: cand.person,
+      party: cand.party,
     });
     resolveContract(c, cand.person === pol.challenger);
     c.open_interest = 0;

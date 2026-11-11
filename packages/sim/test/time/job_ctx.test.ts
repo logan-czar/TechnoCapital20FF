@@ -160,6 +160,8 @@ describe("scheduler", () => {
     expect(parts).toEqual([
       "+AdvanceClock",
       "-AdvanceClock",
+      "+HourlyPlayer",
+      "-HourlyPlayer",
       "+Alerts",
       "+Alerts/one",
       "-Alerts/one",

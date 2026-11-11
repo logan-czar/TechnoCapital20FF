@@ -1,7 +1,7 @@
 // v_races (pivot 6.1, 6.2): the races of the open cycle and their candidates, as public record.
-// Type only: the builder arrives with the electorate (M2).
+// Lane E builds it (views/races.ts; D1037).
 
-import type { SimDate } from "../calendar.ts";
+import type { DateTime, SimDate } from "../calendar.ts";
 import type { PersonId, RaceId, UsStateId } from "../ids.ts";
 import type { Party } from "../state/politics.ts";
 
@@ -34,6 +34,16 @@ export interface CandidateRow {
   strength: number | null;
 }
 
+/** A party's primary in a race (pivot 6.1, 6.2). */
+export interface PrimaryRow {
+  party: Party;
+  date: SimDate;
+  /** Its ballot in filing order: the primary's candidate order (D1037). */
+  ballot: PersonId[];
+  /** Who won it, once counted. */
+  winner: PersonId | null;
+}
+
 export interface RaceRow {
   id: RaceId;
   office: ElectedOffice;
@@ -43,14 +53,30 @@ export interface RaceRow {
   district: number | null;
   /** A Senate race's class. */
   senate_class: number | null;
+  /** A special election for a vacancy (pivot 6.1). */
+  special: boolean;
   /** "Texas 12", "Ohio Senate", "President". */
   title: string;
   status: RaceStatus;
-  /** Each party's primary day (pivot 6.1). */
-  primaries: { party: Party; date: SimDate }[];
+  /** Each party's primary (pivot 6.1), in `PARTY_VALUES` order. */
+  primaries: PrimaryRow[];
   general: SimDate;
+  /** When its last polls close on general day (pivot 9.1). */
+  polls_close: DateTime;
+  /** When it is to be certified (pivot 9.4). */
+  certify: SimDate;
+  /** The party holding the seat when the race opened, open seat or not; null for none. */
+  incumbent_party: Party | null;
+  /** The presidency's electoral votes to win (a majority of the college); null for other races. */
+  electoral_votes: number | null;
   /** In filing order. */
   candidates: CandidateRow[];
+  /**
+   * The general's ballot: the race's **candidate order** (D1037). `Poll.shares`, `RaceForecast.odds`
+   * and `RaceReturns.votes` list exactly these people in this order; empty until the nominees are
+   * known.
+   */
+  ballot: PersonId[];
   /** The certified winner (pivot 9.4). */
   winner: PersonId | null;
 }

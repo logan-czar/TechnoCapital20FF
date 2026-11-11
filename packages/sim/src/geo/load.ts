@@ -10,7 +10,12 @@ import type { LoadError, Result } from "../types/world.ts";
 
 /** A world with no counties and no plans. */
 export function geoStateEmpty(): GeoState {
-  return { counties: [], plans: [] };
+  return geoStateOf([]);
+}
+
+/** `counties` with no plans, censuses, seats or challenges yet (D1037): lane G fills the rest. */
+export function geoStateOf(counties: County[]): GeoState {
+  return { counties, plans: [], history: [], censuses: [], seats: [], challenges: [] };
 }
 
 /**
@@ -77,5 +82,5 @@ export function geoStateFromData(
     if (from !== to && !list.includes(to)) list.push(to);
   }
   for (const c of counties) c.neighbours.sort((x, y) => x - y);
-  return { ok: true, value: { counties, plans: [] } };
+  return { ok: true, value: geoStateOf(counties) };
 }

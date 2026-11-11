@@ -106,6 +106,7 @@ describe("controls digest", () => {
     alerts: ["Pause", "Notify", "Log", "Off", "Pause", "Pause"],
     omniscient: false,
     watchlist: new Set([3, 1] as never[]),
+    fixed_pauses: { OwnFill: true, MarginCall: true, ElectionDay: true, Holding: true },
   });
   it("is 16 hex digits, order-free for the watchlist, and sees every field", () => {
     const d = controlsDigest(base());

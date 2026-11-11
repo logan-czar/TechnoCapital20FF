@@ -961,7 +961,9 @@ describe("no true private value on any screen (m9_leak.rs, D574)", () => {
       label: "1995",
       data: loaded(worldDataDir("1995")),
       q1: { year: 1995, q: 1 },
-      min: { banded: 30, subjects: 40, bands: 1000, pins: 100, heat: 60 },
+      // The world is cut to the USA (pivot 4.1; D1038): 103 of its 300 companies at load, so
+      // fewer private (banded) companies, pins and heat values (measured 10, 17, 460, 40, 14).
+      min: { banded: 8, subjects: 12, bands: 350, pins: 30, heat: 10 },
     });
   }, 600_000);
 });

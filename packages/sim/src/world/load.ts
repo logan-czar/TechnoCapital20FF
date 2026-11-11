@@ -26,6 +26,7 @@ import {
   startLoadout,
 } from "../economy/start.ts";
 import { fringeAssetsAtLoad, rowAssetsAtLoad } from "../economy/supply.ts";
+import { electionsStateEmpty } from "../elections/index.ts";
 import { ratingParse } from "../finance/rating.ts";
 import { booksCheckDefault, companyFinanceAtLoad } from "../finance/state.ts";
 import { geoStateEmpty, geoStateFromData } from "../geo/load.ts";
@@ -37,6 +38,7 @@ import { conversionCapacity, dataBookAtLoad, dataBookFreeRdFraction, dataBookSto
 import { fitStations, laborUnits } from "../ops/labor.ts";
 import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
 import { nameBooksBuild } from "../people/names.ts";
+import { personsStateEmpty } from "../politics/people.ts";
 import { POLITICS_COUNTRY_KEY, politicsStateFromData } from "../politics/state.ts";
 import { dateTimeDate, dateTimeMidnight } from "../time/calendar.ts";
 import { DATETIME_START, type SimDate } from "../types/calendar.ts";
@@ -664,17 +666,10 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
     industryRows.map((i) => i.name),
   );
   if (!births.ok) throw badValue("startup-events", "", births.error);
-  // pivot 4.1: with `features.usa_only` a startup's headquarters is drawn in the USA only, so no
-  // foreign company is born during play. The other countries, zones and provinces stay as rows.
-  if (usaOnly) {
-    const usa = countryKeys.map.get(POLITICS_COUNTRY_KEY);
-    const sites = births.value.sites;
-    provinces.forEach((p, id) => {
-      if (p.country === usa) return;
-      sites.weight[id] = 0.0;
-      sites.hq_weight[id] = 0.0;
-    });
-  }
+  // pivot 4.1, 4.2 (D1038): with `features.usa_only` a startup's headquarters is still drawn over
+  // every country by the uncut world's weights, so the USA gets the share of the startups it would
+  // have had; one drawn abroad is not born but joins its industry's rest-of-world block
+  // (`births/jobs.ts` `startupToRowBlock`). The other countries, zones and provinces stay as rows.
   const politics = deps.politicsStateFromData(data, countryKeys.map, provinceKeys.map);
   if (politics === null) throw badValue("countries", "USA", "the politics POC needs the USA (D980)");
   // Counties (pivot 5.1), for a world that has the file.
@@ -729,6 +724,10 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
       (countries[politics.country] as Country).corp_tax_rate,
     ),
     geo: geo.value,
+    // pivot 5.7, 6, 14 (D1037): empty until lanes C, E and P fill them at the start (lib.ts `startWorld`).
+    persons: personsStateEmpty(),
+    elections: electionsStateEmpty(),
+    player: null,
   };
 }
 
