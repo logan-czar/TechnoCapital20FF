@@ -3,7 +3,8 @@
 # (committed, uncommitted and untracked) and runs only: install (if a lockfile or package.json
 # changed), incremental tsc -b, Biome on the changed files, the sim boundary scan, Vitest for the
 # projects the change can reach (without the *.slow.test.* files), and the data checks of a world
-# whose data or generator changed.
+# whose data or generator changed. With no arguments it also runs the desktop app's end-to-end smoke
+# suite (`pnpm e2e:smoke`: mock sim, under a minute) when apps/desktop or apps/web/src/os changed.
 #
 #   scripts/check-fast.ps1                     detect from git
 #   scripts/check-fast.ps1 sim web             these Vitest projects (sim-data sim sim-host headless web desktop mapgen)
@@ -102,6 +103,12 @@ if ($paths.Count -gt 0) {
     }
 } else {
     Skip 'test' 'no project touched'
+}
+
+if ($args.Count -eq 0 -and (Has '^(apps/desktop/|apps/web/src/os/)')) {
+    Step 'e2e smoke' { corepack pnpm@10.20.0 e2e:smoke }
+} else {
+    Skip 'e2e smoke' 'arguments given, or apps/desktop and apps/web/src/os unchanged'
 }
 
 if (Has '^docs/design/(data|tools/mvp-data)/') {

@@ -19,6 +19,10 @@
 #   $env:HEAVY_LOCK_HELD = '1'      set for the command; under it a nested heavy.ps1 just runs its command
 #
 # The exit code is the command's. scripts/heavy.sh is the same thing for bash.
+#
+# When this script's output is redirected (`*>`, `2>&1`), Windows PowerShell 5.1 writes each line
+# the command sent to stderr as a NativeCommandError record. Those are the command's own lines, not
+# failures of this script; the exit code says how the command ended.
 $ErrorActionPreference = 'Stop'
 
 if ($args.Count -eq 0) {

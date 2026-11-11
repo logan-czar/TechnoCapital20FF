@@ -1,0 +1,14 @@
+[
+  { "click": "tb-launcher" },
+  { "click": "launch-debug" },
+  { "wait": { "testId": "debug-workspace" } },
+  { "drag": { "from": { "testId": "win-debug-edge-nw", "at": [7, 7] }, "to": [420, 180] } },
+  { "drag": { "from": { "testId": "win-debug", "at": [120, 14] }, "to": [300, 80] } },
+  { "eval": "JSON.stringify(document.querySelector('[data-testid=win-debug]').getBoundingClientRect())" },
+  { "click": "tb-speed-6" },
+  { "wait": { "expr": "sim.clock.paused && sim.clock.now > 0" } },
+  { "click": "tb-phone" },
+  { "wait": { "testId": "phone-notifications" } },
+  { "screenshot": "apps/desktop/.scratch/drive/mock-tour.png" },
+  { "eval": "({ now: sim.clock.now, date: sim.clock.date, hour: sim.clock.hour, frames: sim.frames })" }
+]
