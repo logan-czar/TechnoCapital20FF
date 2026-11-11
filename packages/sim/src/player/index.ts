@@ -88,16 +88,16 @@ export function playerOpen(world: World, difficulty: Difficulty = DEFAULT_DIFFIC
 }
 
 /**
- * The player at a world's start (D1037, D1042): the account opens at Normal when a historical world
- * has become Full, that is at hydration on 2020-01-01 (pivot 3.4; M3's hydration calls this after
- * `hydrateFull`). At load a historical world is Coarse, so nothing opens; a world with no
- * pre-history (the frozen test world, the 2020 world) is Full from its load but never hydrates, and
- * stays without a player unless a test or the headless tool opens one with `playerOpen`. Draws
- * nothing.
+ * The player at a world's start (D1037, D1042): the account opens at `difficulty` (Normal when
+ * absent) when a historical world has become Full, that is at hydration on 2020-01-01 (pivot 3.4;
+ * lib.ts `simHydrate` calls this after `hydrateFull`, D1052). At load a historical world is Coarse,
+ * so nothing opens; a world with no pre-history (the frozen test world, the 2020 world) is Full from
+ * its load but never hydrates, and stays without a player unless a test or the headless tool opens
+ * one with `playerOpen`. Draws nothing.
  */
-export function playerStart(world: World): void {
+export function playerStart(world: World, difficulty: Difficulty = DEFAULT_DIFFICULTY): void {
   if (world.fidelity === "Full" && world.era !== undefined && world.player === null) {
-    playerOpen(world, DEFAULT_DIFFICULTY);
+    playerOpen(world, difficulty);
   }
 }
 

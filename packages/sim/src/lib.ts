@@ -61,6 +61,7 @@ import type { DrawSource } from "./types/draws.ts";
 import { FIXED_PAUSE_SWITCHABLE, type Notice, type PauseReason } from "./types/notice.ts";
 import type { NewGameChoices, SliceData, SliceKey } from "./types/protocol.ts";
 import type { SaveError, SimApi, SimError, StateHash } from "./types/sim-api.ts";
+import type { Difficulty } from "./types/state/player.ts";
 import type { ClockView, SimViews } from "./types/views/index.ts";
 import type { EconomyProfile, LoadError, Result, World } from "./types/world.ts";
 import {
@@ -658,14 +659,33 @@ export function simRebuildViews(sim: Sim): void {
 
 /**
  * Switches this game's world to Full fidelity where it stands (pivot 3.4; fidelity/hydrate.ts
- * `hydrateFull`) and rebuilds every view. The controls are not touched: a game that has only been
- * pre-simulated is still paused, as a new game is. Throws on a world that cannot be hydrated.
+ * `hydrateFull`), opens the player's account at `difficulty` (pivot 3.6; player/index.ts
+ * `playerStart`, Normal when absent; D1052) and rebuilds every view. The controls are not touched: a
+ * game that has only been pre-simulated is still paused, as a new game is. Throws on a world that
+ * cannot be hydrated.
  */
-export function simHydrate(sim: Sim): HydrateReport {
+export function simHydrate(sim: Sim, difficulty?: Difficulty): HydrateReport {
   const i = inner(sim);
   const report = hydrateFull(i.s.world);
+  playerStart(i.s.world, difficulty);
   simViewsRebuild(i.s.views, viewInput(i.s), i.cfg.views);
   return report;
+}
+
+/**
+ * A new game's difficulty on a hydrated start that was saved with another (pivot 3.5, 3.6; D1052): a
+ * baked start is hydrated at Normal, so a game of it at another difficulty opens a fresh account at
+ * that preset. Does nothing when the account already plays `difficulty`, when the player has acted,
+ * or in a world with no account (one never hydrated). Returns whether the account was reopened.
+ */
+export function simSetDifficulty(sim: Sim, difficulty: Difficulty): boolean {
+  const i = inner(sim);
+  const p = i.s.world.player;
+  if (p === null || p.difficulty.id === difficulty || p.actions.length > 0) return false;
+  i.s.world.player = null;
+  playerStart(i.s.world, difficulty);
+  simViewsRebuild(i.s.views, viewInput(i.s), i.cfg.views);
+  return true;
 }
 
 /** Pauses (once: a second pause posts nothing). */

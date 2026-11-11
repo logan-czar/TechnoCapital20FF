@@ -27,6 +27,8 @@ const KIND_LABEL: Readonly<Record<NotificationRow["kind"], string>> = {
   ElectionDay: "Election day",
   Holding: "Your holding",
   Alert: "Alert",
+  Tax: "Tax",
+  Bankruptcy: "Bankruptcy",
 };
 
 /** One notification: its text (a link when it names something), its kind, its time. */

@@ -2,11 +2,10 @@
 // `World.player.notifications` (world state, the same whatever the settings), and for a row that
 // asks to pause, `jobCtxNotify`, which pauses the runner unless that fixed pause is switched off.
 //
-// The kinds (types/views/notifications.ts) have no row for the account's own notices yet, so until
-// the contracts change adds one (D1042): a tax bill paid in full is an `Alert` with no rule that
-// does not pause; a forced sale to pay it, and the bankruptcy, are a `MarginCall` (the fixed pause
-// of pivot 2.4 item 2, which cannot be switched off); a delisting of a held stock is a `Holding`
-// (item 4: a resolution naming a company the player holds).
+// The account's own notices (D1042, D1052): a tax bill paid in full is a `Tax` that does not pause;
+// a forced sale to pay it is a `Tax` and the bankruptcy a `Bankruptcy`, both on the `MarginCall`
+// fixed pause (pivot 2.4 item 2, which cannot be switched off); a delisting of a held stock is a
+// `Holding` (item 4: a resolution naming a company the player holds).
 
 import { type JobCtx, jobCtxNotify } from "../time/scheduler.ts";
 import type { AlertRuleId } from "../types/action.ts";

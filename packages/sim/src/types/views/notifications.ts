@@ -19,7 +19,11 @@ export type NotificationKind =
   /** A scandal, roll call or resolution naming something the player holds a position on (pivot 2.4 item 4). */
   | "Holding"
   /** One of the player's alert rules fired. */
-  | "Alert";
+  | "Alert"
+  /** The April tax bill (pivot 14.2): paid, or covered by forced sales (D1042, D1052). */
+  | "Tax"
+  /** The run ended in bankruptcy (pivot 14.5; D1042, D1052). */
+  | "Bankruptcy";
 
 export interface NotificationRow {
   /** Its place in the order they were raised, from 0. */

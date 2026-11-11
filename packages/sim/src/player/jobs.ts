@@ -30,8 +30,8 @@
 // 3. Day orders placed before today expire.
 // 4. On 15 April the bill is paid from cash, the brokerage first. If the cash is short, every open
 //    order is cancelled and the positions are sold at the bid, in instrument order, until it is
-//    covered (a `MarginCall` notice that pauses); if all of it cannot pay, the run ends (pivot
-//    14.5): the player is bankrupt from that day.
+//    covered (a `Tax` notice on the `MarginCall` fixed pause); if all of it cannot pay, the run ends
+//    (pivot 14.5, a `Bankruptcy` notice): the player is bankrupt from that day.
 
 import { dateTimeMidnight, daysInYear, simDateAddDays } from "../time/calendar.ts";
 import {
@@ -296,7 +296,7 @@ function taxBill(world: World, p: PlayerState, ctx: JobCtx): void {
   if (free >= due) {
     p.tax_due -= payFromCash(p, due);
     notify(p, ctx, now, {
-      kind: "Alert",
+      kind: "Tax",
       text: `Tax bill for ${year} paid: ${usd(due)}`,
       refs: [],
       paused: false,
@@ -318,7 +318,7 @@ function taxBill(world: World, p: PlayerState, ctx: JobCtx): void {
   }
   p.tax_due -= payFromCash(p, due);
   notify(p, ctx, now, {
-    kind: "MarginCall",
+    kind: "Tax",
     text: `Tax bill for ${year} of ${usd(due)}: ${sold} position${sold === 1 ? "" : "s"} sold to pay it, ${usd(p.tax_due)} unpaid`,
     refs: [],
     paused: true,
@@ -328,7 +328,7 @@ function taxBill(world: World, p: PlayerState, ctx: JobCtx): void {
     p.bankrupt = true;
     p.ended = ctx.facts.date;
     notify(p, ctx, now, {
-      kind: "MarginCall",
+      kind: "Bankruptcy",
       text: `Bankrupt: net worth ${usd(netWorth(world, p))} after selling everything. The run is over.`,
       refs: [],
       paused: true,
