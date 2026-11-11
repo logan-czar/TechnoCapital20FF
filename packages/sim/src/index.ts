@@ -15,6 +15,8 @@ export {
   simNew,
   simRunUntil,
 } from "./lib.ts";
+// The save format's version (D1029): a host names it in its save listings.
+export { SAVE_VERSION } from "./save.ts";
 // UI-safe clock helpers (time/): the date formats and calendar math, the quarter phase and its
 // tick helpers (pure functions of a DateTime), the runner's speed and the SkipTo target.
 export {

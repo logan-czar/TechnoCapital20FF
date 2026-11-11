@@ -25,7 +25,9 @@ function Shell({ client, settings }: { client: SimClient; settings: SettingsStor
     started.current = true;
     // A world with a new-game picker waits for the player's choice (1995-rework 4.1).
     void client.ready.then(() => {
-      if (client.store.status.choices === null) void client.newGame(DEFAULT_SEED);
+      // A game the host already started (the desktop app's `--save`) is kept.
+      const { choices, started: running } = client.store.status;
+      if (choices === null && !running) void client.newGame(DEFAULT_SEED);
     });
   }, [client]);
 

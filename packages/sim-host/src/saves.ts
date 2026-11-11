@@ -3,9 +3,7 @@
 // it none, and answers the slot requests as unsupported; tests use the in-memory store here.
 
 import type { BakedStart, DateTime, SaveInfo } from "@tc20ff/sim";
-// The public face of the sim does not export SAVE_VERSION yet (it is a contract file, D1029), so
-// this one import reaches past it. Replace it with the package import once index.ts exports it.
-import { SAVE_VERSION } from "../../sim/src/save.ts";
+import { SAVE_VERSION } from "@tc20ff/sim";
 
 export { SAVE_VERSION };
 
