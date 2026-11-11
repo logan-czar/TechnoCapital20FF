@@ -7,8 +7,15 @@ import { useState } from "react";
 import { useSlice } from "../../sim/hooks.ts";
 import { formatDay, formatMargin, formatPct } from "../_shared/format.ts";
 import { EntityLink } from "../_shared/index.ts";
-import { type FeedIndex, frontPageStories, latestFrontDate, outletArchive, PAGE_SIZE } from "./model.ts";
-import { OutletTag, Pane, SectionTag, StoryLink, useNewsNav, When } from "./parts.tsx";
+import {
+  type FeedIndex,
+  frontPageStories,
+  latestFrontDate,
+  OUTLET_KIND_LABEL,
+  outletArchive,
+  PAGE_SIZE,
+} from "./model.ts";
+import { Pane, SectionTag, StoryLink, useNewsNav, When } from "./parts.tsx";
 import { addDays, formatIsoDate, outletRoute, parseIsoDate } from "./route.ts";
 
 function cmpDay(a: SimDate, b: SimDate): number {
@@ -54,7 +61,9 @@ export default function OutletView({
     <div className="news-outlet" data-testid={`news-outlet-${id}`}>
       <header className="news-outlet-head">
         <h2 className="news-h2">{outlet.name}</h2>
-        <OutletTag outlet={outlet} id={id} />
+        <span className={`news-kind kind-${outlet.kind.toLowerCase()}`}>
+          {OUTLET_KIND_LABEL[outlet.kind]}
+        </span>
         {outlet.state === null ? null : (
           <span className="news-dim">
             <EntityLink to={{ kind: "State", id: outlet.state }}>Home state</EntityLink>

@@ -109,7 +109,8 @@ export default function ArticleView({ id, feed, index }: { id: number; feed: Fee
   }
   const { text, note } = splitCorrection(article.body);
   const dek = dekOf(text);
-  const body = paragraphs(text);
+  // The standfirst is the text's first sentence: the body goes on from there, so it is not read twice.
+  const body = paragraphs(dek === null ? text : text.trim().slice(dek.length));
   const corrections = correctionsOf(article.id, feed.articles);
   const corrects = article.source?.kind === "Article" ? index.articles.get(article.source.id) : undefined;
   const related = relatedStories(article, feed.articles);

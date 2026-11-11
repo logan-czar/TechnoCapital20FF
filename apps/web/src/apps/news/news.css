@@ -148,10 +148,11 @@
   }
   .news-quick {
     margin-left: 0;
-    flex: 1;
+    flex: 1 1 120px;
   }
   .news-quick input {
     width: 100%;
+    min-width: 100px;
   }
   .news-main {
     padding: 8px 8px 14px;
@@ -641,6 +642,10 @@
 
 .news-phone .news-card {
   margin-bottom: 8px;
+}
+
+.news-phone .news-card .news-outlet-link {
+  align-self: flex-start;
 }
 
 .news-phone .news-story.is-lead {
