@@ -3,7 +3,14 @@
 // protocol's rules (types/protocol.ts): after each request a Frame with the views it changed
 // FIRST, then the Reply; while running, at most one Frame per FRAME_MS.
 
-import { ALERT_LEVEL_VALUES, type FromSim, type Notice, type Reply, type ToSim } from "@tc20ff/sim";
+import {
+  ALERT_LEVEL_VALUES,
+  type FromSim,
+  type Notice,
+  type Reply,
+  type ToSim,
+  unsupportedMessage,
+} from "@tc20ff/sim";
 import { type MockSave, MockSim } from "./mockSim.ts";
 import type { MockWorld } from "./mockWorld.ts";
 
@@ -25,8 +32,28 @@ export class SimHost {
       case "FrameDone":
       // The mock posts every view whole (D1016 applies to the real sim only).
       case "Want":
+      // Nothing the mock does takes long enough to cancel.
+      case "Cancel":
         return [];
+      case "SaveSlot":
+      case "LoadSlot":
+      case "ListSaves":
+      case "DeleteSave":
+        return [this.reply(msg.id, { kind: "Refused", message: unsupportedMessage(msg.kind) })];
+      case "Act":
+        // As the real sim in M1: no player yet (types/action.ts). Lane U3 gives the mock one.
+        if (this.sim === null) return [this.refuse(msg.id)];
+        return [
+          this.reply(msg.id, {
+            kind: "ActError",
+            error: { kind: "NotAvailable", action: msg.action.kind },
+          }),
+        ];
       case "NewGame": {
+        // The mock has one start (pivot 3.5 arrives with lane U3's fixtures).
+        if (msg.start !== undefined) {
+          return [this.reply(msg.id, { kind: "Refused", message: unsupportedMessage(msg.kind) })];
+        }
         this.sim = new MockSim(this.world, msg.seed);
         return [frame(this.sim, []), this.reply(msg.id, { kind: "Ok", notices: [] })];
       }

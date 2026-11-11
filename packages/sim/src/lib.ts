@@ -39,6 +39,7 @@ import { politicsStart } from "./politics/jobs.ts";
 import { type RngStreams, rngStreamsDraws, rngStreamsNew, rngStreamsSeed } from "./rng.ts";
 import { decode, encode, saveErrorMessage } from "./save.ts";
 import { type SoakStats, soakStats } from "./soak.ts";
+import { dateTimeAddHours, dateTimeDate, dateTimeHour, dateTimeMidnight } from "./time/calendar.ts";
 import { controlsDefault, skipTarget } from "./time/control.ts";
 import {
   type JobFn,
@@ -48,8 +49,9 @@ import {
   schedulerRunTickObserved,
   type TickObserver,
 } from "./time/scheduler.ts";
+import type { ActError, PlayerAction } from "./types/action.ts";
 import type { DateTime, SimDate } from "./types/calendar.ts";
-import { type Control, type Controls, MAX_SPEED } from "./types/control.ts";
+import { type Control, type Controls, MAX_SPEED, MAX_STEP_HOURS } from "./types/control.ts";
 import type { DrawSource } from "./types/draws.ts";
 import type { Notice, PauseReason } from "./types/notice.ts";
 import type { NewGameChoices } from "./types/protocol.ts";
@@ -185,6 +187,8 @@ export function simErrorMessage(e: SimError): string {
   switch (e.kind) {
     case "BadSpeed":
       return `speed ${e.speed} is outside 0 to ${MAX_SPEED}`;
+    case "BadStep":
+      return `a step of ${e.hours} hours is outside 1 to ${MAX_STEP_HOURS}`;
     case "UnknownCompany":
       return `no company ${e.company}`;
     case "DebugOnly":
@@ -288,6 +292,10 @@ export class Sim implements SimApi {
 
   apply(control: Control): Result<Notice[], SimError> {
     return simApply(this, control);
+  }
+
+  act(action: PlayerAction): Result<Notice[], ActError> {
+    return simAct(this, action);
   }
 
   saveBytes(): Uint8Array {
@@ -497,8 +505,11 @@ function stepInner(i: SimInner, observer: TickObserver | null): Notice[] {
     pause(s, notices, alertPause);
   } else if (skip !== null && s.world.clock >= skip.target) {
     s.controls.skip = null;
-    pause(s, notices, { kind: "SkipDone", skip: skip.kind });
+    pause(s, notices, skip.kind === "Step" ? { kind: "StepDone" } : { kind: "SkipDone", skip: skip.kind });
   } else if (alertPause !== null) {
+    // Only a Step lets an alert pause through while a skip is set (scheduler.ts `raiseAlert`): the
+    // alert ends it (pivot 2.4).
+    s.controls.skip = null;
     pause(s, notices, alertPause);
   }
   if (done !== undefined) notices.push(done);
@@ -528,6 +539,76 @@ export function simSpikeStepNoViews(sim: Sim, scratch: Notice[]): boolean {
 export function simSpikeRebuildViews(sim: Sim): void {
   const i = inner(sim);
   simViewsRebuild(i.s.views, viewInput(i.s), i.cfg.views);
+}
+
+// ---------------------------------------------------------------- the pre-simulation (pivot 3.2)
+
+/** What `simRunUntil` tells its caller as it runs. */
+export interface RunProgress {
+  /** Ticks run so far and in the whole run. Whole numbers. */
+  done: number;
+  total: number;
+  /** The game day reached. */
+  date: SimDate;
+}
+
+/** How a `simRunUntil` ended. */
+export interface RunResult {
+  /** Ticks run. Whole number. */
+  ticks: number;
+  /** A historical world's run reached its end before `until` (1995-rework 8.3). */
+  ended: boolean;
+  /** `onProgress` returned false, so the run stopped early; the state is a whole number of ticks. */
+  cancelled: boolean;
+}
+
+/** `simRunUntil` reports progress at each 00:00 this many game days apart. */
+export const RUN_PROGRESS_DAYS = 30;
+
+/**
+ * Runs ticks until the clock reaches `until` (00:00 of that day), with no view refresh, no notices
+ * and no pause handling, then rebuilds every view once: the pre-simulation of pivot 3.2 (D1026).
+ * The world and the draws are exactly `simStep`'s, so the state hash after it is the hash the same
+ * number of `simStep` calls gives (tools/spikes/coarse/README.md measured it at about half the
+ * time). The controls are not touched: an alert never pauses it and nothing is posted.
+ *
+ * `onProgress` is called every `RUN_PROGRESS_DAYS` game days and at the end; returning false
+ * cancels the run at that tick (pivot 3.5). It reads no wall clock: the caller owns any timing.
+ * Does nothing when the clock is already at or past `until`.
+ */
+export function simRunUntil(
+  sim: Sim,
+  until: SimDate,
+  onProgress?: (progress: RunProgress) => boolean | undefined,
+): RunResult {
+  const i = inner(sim);
+  const s = i.s;
+  const target = dateTimeMidnight(until);
+  const total = Math.max(0, target - s.world.clock);
+  const scratch: Notice[] = [];
+  let ticks = 0;
+  let ended = false;
+  let cancelled = false;
+  let days = 0;
+  while (s.world.clock < target) {
+    scratch.length = 0;
+    const p = schedulerRunTickObserved(s.scheduler, s.world, s.draws, scratch, s.controls, null, null);
+    ticks += 1;
+    if (p?.kind === "RunEnded") {
+      ended = true;
+      break;
+    }
+    if (onProgress === undefined || dateTimeHour(s.world.clock) !== 0) continue;
+    days += 1;
+    if (days % RUN_PROGRESS_DAYS !== 0 || s.world.clock >= target) continue;
+    if (onProgress({ done: ticks, total, date: dateTimeDate(s.world.clock) }) === false) {
+      cancelled = true;
+      break;
+    }
+  }
+  if (ticks > 0) simViewsRebuild(s.views, viewInput(s), i.cfg.views);
+  onProgress?.({ done: ticks, total, date: dateTimeDate(s.world.clock) });
+  return { ticks, ended, cancelled };
 }
 
 /** Pauses (once: a second pause posts nothing). */
@@ -583,6 +664,14 @@ export function simApply(sim: Sim, control: Control): Result<Notice[], SimError>
       c.skip = { kind: control.skip, target: skipTarget(i.s.world.clock, control.skip) };
       c.paused = false;
       break;
+    case "Step":
+      // pivot 2.2: run that many hours, then pause (`stepInner` posts StepDone).
+      if (!Number.isInteger(control.hours) || control.hours < 1 || control.hours > MAX_STEP_HOURS) {
+        return fail({ kind: "BadStep", hours: control.hours });
+      }
+      c.skip = { kind: "Step", target: dateTimeAddHours(i.s.world.clock, control.hours) };
+      c.paused = false;
+      break;
     case "Save": {
       const r = saveFile(i, control.path);
       if (!r.ok) return r;
@@ -613,6 +702,17 @@ export function simApply(sim: Sim, control: Control): Result<Notice[], SimError>
   }
   simViewsRefreshAfterControl(i.s.views, viewInput(i.s), i.cfg.views);
   return { ok: true, value: notices };
+}
+
+/**
+ * Applies a player action (types/action.ts; D1027). M1 has no player and no exchange, so every
+ * action is refused with `NotAvailable` and the world is not touched. The lanes that add the
+ * player (M2) and the exchange (M5) apply the action to the world here, inside the state hash,
+ * and refresh the views that follow it.
+ */
+export function simAct(sim: Sim, action: PlayerAction): Result<Notice[], ActError> {
+  inner(sim);
+  return { ok: false, error: { kind: "NotAvailable", action: action.kind } };
 }
 
 /** The state as save bytes (spec 9.1 `Save`; build-plan M1.7). */

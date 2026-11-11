@@ -39,6 +39,9 @@ export const WATCH_SPEED = 5;
  */
 export const SECONDS_PER_HOUR: readonly (number | null)[] = [2.0, 1.0, 0.5, 0.2, 60 / 8760, null];
 
+/** The most hours one `Step` control runs (pivot 2.2): a week. */
+export const MAX_STEP_HOURS = 168;
+
 /** A control event from the UI (spec 9.1, plus design fix 8). */
 export type Control =
   /** A new game from the same data (spec 7). `seed` is a whole number (u64; a safe integer here). */
@@ -49,6 +52,11 @@ export type Control =
   | { kind: "Resume" }
   /** Run at max speed until that tick, then pause (spec 9.1). */
   | { kind: "SkipTo"; skip: SkipKind }
+  /**
+   * Run `hours` game hours, then pause (pivot 2.2 "step one hour"). A whole number, 1 to
+   * MAX_STEP_HOURS. Unlike a SkipTo, an alert set to pause stops it early (pivot 2.4).
+   */
+  | { kind: "Step"; hours: number }
   /** Rust `Save(PathBuf)`: write a save file. In the browser the runner saves via `saveBytes`. */
   | { kind: "Save"; path: string }
   /** Rust `Load(PathBuf)`: read a save file. In the browser the runner loads via `loadBytes`. */
@@ -61,9 +69,9 @@ export type Control =
   | { kind: "WatchlistAdd"; company: CompanyId }
   | { kind: "WatchlistRemove"; company: CompanyId };
 
-/** A SkipTo in progress. */
+/** A SkipTo or a Step (pivot 2.2) in progress. */
 export interface Skip {
-  kind: SkipKind;
+  kind: SkipKind | "Step";
   /** The tick it stops after. */
   target: DateTime;
 }

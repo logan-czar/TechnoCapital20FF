@@ -24,7 +24,8 @@ export function buildClock(input: ViewInput): ClockView {
     speed: controlsEffectiveSpeed(controls),
     selected_speed: controls.speed,
     paused: controls.paused,
-    skipping: controls.skip === null ? null : controls.skip.kind,
+    // A Step (pivot 2.2) is not a SkipTo: the clock shows it as running.
+    skipping: controls.skip === null || controls.skip.kind === "Step" ? null : controls.skip.kind,
     quarter_phase: phase.phase,
     next_phase: phase.next_phase,
     days_to_next_phase: phaseInfoDaysToNextPhase(phase, dateTimeDate(now)),

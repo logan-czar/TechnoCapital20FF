@@ -16,6 +16,7 @@ import {
   type Headline,
   lockTick,
   MAX_SPEED,
+  MAX_STEP_HOURS,
   type Notice,
   postedViewsNone,
   type Quarter,
@@ -84,6 +85,21 @@ const MOCK_VIEWS: readonly ViewName[] = [
   "company_rows",
   "industry_rows",
   "news",
+  // The pivot's views (D1029): posted empty, so an app built on the mock reads a real shape. Lane
+  // U3 fills them from per-domain fixtures.
+  "feed",
+  "social",
+  "polls",
+  "forecast",
+  "races",
+  "people",
+  "records",
+  "markets",
+  "account",
+  "notifications",
+  "districts",
+  "usmap_layers",
+  "returns",
 ];
 
 export class MockSim {
@@ -132,7 +148,7 @@ export class MockSim {
       this.effectiveSpeed(),
       this.speed,
       this.paused,
-      this.skip?.kind ?? null,
+      this.skip === null || this.skip.kind === "Step" ? null : this.skip.kind,
       watchlist,
     );
   }
@@ -259,7 +275,10 @@ export class MockSim {
       const kind = this.skip.kind;
       this.skip = null;
       this.paused = true;
-      notices.push({ kind: "Paused", reason: { kind: "SkipDone", skip: kind } });
+      notices.push({
+        kind: "Paused",
+        reason: kind === "Step" ? { kind: "StepDone" } : { kind: "SkipDone", skip: kind },
+      });
     }
     this.views.clock = { data: this.clock(), version: refresh, dirty: true };
     notices.push({ kind: "TickDone", time: t });
@@ -291,6 +310,14 @@ export class MockSim {
         break;
       case "SkipTo":
         this.skip = { kind: c.skip, target: skipTarget(this.now, c.skip) };
+        this.paused = false;
+        break;
+      case "Step":
+        // pivot 2.2: run that many hours, then pause.
+        if (!Number.isInteger(c.hours) || c.hours < 1 || c.hours > MAX_STEP_HOURS) {
+          return { kind: "SimError", error: { kind: "BadStep", hours: c.hours } };
+        }
+        this.skip = { kind: "Step", target: this.now + c.hours };
         this.paused = false;
         break;
       case "SetAlert":

@@ -56,6 +56,7 @@ export function headlessSim(sim: Sim): HeadlessSim {
   return {
     step: () => sim.step(),
     apply: (control) => sim.apply(control),
+    act: (action) => sim.act(action),
     saveBytes: () => sim.saveBytes(),
     loadBytes: (bytes) => sim.loadBytes(bytes),
     now: () => sim.now(),
