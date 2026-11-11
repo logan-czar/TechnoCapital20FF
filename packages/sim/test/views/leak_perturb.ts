@@ -1,4 +1,4 @@
-// The leak test's perturbed world (leak.test.ts, check 4): a copy of the state in which every
+// The leak test's perturbed world (leak.slow.test.ts, check 4): a copy of the state in which every
 // company that shows estimates (D420) has other books. Not a Rust file.
 //
 // What is perturbed: every number of a banded company's state, its Company row (the finance
@@ -61,7 +61,7 @@ export const KEPT: readonly (readonly [RegExp, string])[] = [
   ],
   [/^stock\.shares$/, "shares (D420, D147)"],
   // Operations that follow the stations, not books (D420; productivity's D436 tension is
-  // leak.test.ts `knownExact`).
+  // leak.slow.test.ts `knownExact`).
   [/^company\.(labor_units|stations\.\w+|pc|pc_bonus|management_score)$/, "an operation (D420)"],
   [/^company\.data\[\]\.book\.free_rd_pct$/, "the free R&D step, an operation (D420)"],
   [

@@ -235,7 +235,7 @@ class Fnv64Pair {
  *
  * The text reaches the memory through `TextEncoder.encodeInto`, so the bytes are the UTF-8 the JS
  * lanes hash. Integer math is exact on every engine, so the digests are the JS lanes' (tested in
- * results_pinned.test.ts); where WebAssembly cannot run, the JS lanes do.
+ * results_pinned.slow.test.ts); where WebAssembly cannot run, the JS lanes do.
  */
 const FNV_WASM: readonly number[] = [
   0, 97, 115, 109, 1, 0, 0, 0, 1, 16, 3, 96, 4, 127, 127, 127, 127, 0, 96, 1, 127, 0, 96, 0, 1, 127, 3, 7, 6,

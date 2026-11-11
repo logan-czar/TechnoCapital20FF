@@ -8,7 +8,7 @@
 // one shows. It also checks every band of a subject's view rows against its truth: strictly inside,
 // and no money end that reads as the truth.
 //
-// The view leak test (packages/sim/test/views/leak.test.ts) already proves no view holds a truth.
+// The view leak test (packages/sim/test/views/leak.slow.test.ts) already proves no view holds a truth.
 // This one checks what the UI makes of the views: a sum, a ratio or a rounding that lands on a
 // truth, or a band end printed like it. It reads the pages as data (PageDoc, the cards, the
 // Pdoomberg and command bar models), as m9_leak.rs read the Bevy tree's texts and table models

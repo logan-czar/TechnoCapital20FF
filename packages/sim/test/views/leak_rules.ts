@@ -1,4 +1,4 @@
-// The leak test's map of the views (leak.test.ts): which subtrees belong to a company, which
+// The leak test's map of the views (leak.slow.test.ts): which subtrees belong to a company, which
 // leaves are ids, counts or dates, and which plain numbers a banded company's subtree may hold.
 // Not a Rust file: crates/game/tests/m9_leak.rs (D574) scans rendered text and knows its subjects
 // from the screens; here the view data is walked, so the subjects come from these rules.
@@ -55,7 +55,7 @@ export interface OwnerRule {
   readonly unitOrdinal?: true;
 }
 
-/** The company and industry of the k-th unit a view lists (leak.test.ts has the World). */
+/** The company and industry of the k-th unit a view lists (leak.slow.test.ts has the World). */
 export type UnitAt = (k: number) => { company: CompanyId; industry: IndustryId } | null;
 
 /** A subtree's subject, as `walkView` hands it to the `banded` resolver. */
@@ -549,7 +549,7 @@ export interface Ctx {
   readonly row: Readonly<Record<string, unknown>> | null;
 }
 
-/** Whether a subject's figures are bands now (leak.test.ts has the World). */
+/** Whether a subject's figures are bands now (leak.slow.test.ts has the World). */
 export type BandedOf = (s: Subject) => boolean;
 
 /** One leaf of a view: a Figure (whole), or a number, string, boolean or null. */
@@ -772,7 +772,7 @@ function shownRevenues(v: SimViews, ind: number): Figure[] {
  * error, and the detail's shares divide by that sum and the fringe again, so the errors can
  * cancel and `BAND_MIN_ERROR` does not hold for them. Each part is a single subject's band,
  * checked for distance itself, and the recomputation pins the sum to the parts, so a sum band
- * centred on the truth fails `derivedOf`. Containment of the truth is still checked (leak.test.ts,
+ * centred on the truth fails `derivedOf`. Containment of the truth is still checked (leak.slow.test.ts,
  * 2).
  */
 export const SUM_BAND_PATHS: ReadonlySet<string> = new Set([
@@ -820,7 +820,7 @@ function shownSurprise(e: unknown): number | undefined {
 
 /**
  * The leaves that follow private books by a published formula, so they move when the books do
- * and are not compared across the perturbation's builds (leak.test.ts, 4): each is worked out
+ * and are not compared across the perturbation's builds (leak.slow.test.ts, 4): each is worked out
  * again from its own build's World or shown bands and must equal that, in every build (the shape
  * check, 1, runs on every build), so a value that follows anything else (a private cash, a true
  * revenue) fails. Gives the value the leaf must hold, a string saying why it may not be there, or
@@ -915,7 +915,7 @@ export function derivedOf(leaf: Leaf, w: World, v: SimViews): Figure | number | 
 }
 
 /**
- * The leaves the perturbation check (leak.test.ts, 4) does not compare across its builds, besides
+ * The leaves the perturbation check (leak.slow.test.ts, 4) does not compare across its builds, besides
  * the bands and `derivedOf`'s: the top 5, ranked by the revenue shown, so by the bands' estimates
  * (D420, D436). `rankingBad` checks that order in every build instead, with v_industry_detail's
  * (whose list `canonical` puts in id order for the comparison).

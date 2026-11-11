@@ -1,6 +1,6 @@
 // The canonical encoder as main had it before the speed-up (ts4 perf): one callback per token,
 // keys sorted on every object, no shape cache. Kept here, unchanged, as the reference that
-// test/results_pinned.test.ts holds src/canonical.ts to, byte for byte. Never "fix" it to match
+// test/results_pinned.slow.test.ts holds src/canonical.ts to, byte for byte. Never "fix" it to match
 // src: a difference is a change to every save and state hash.
 
 type Sink = (piece: string) => void;
