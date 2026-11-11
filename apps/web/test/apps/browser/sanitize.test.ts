@@ -163,6 +163,9 @@ describe("the list and index pages", () => {
       (r) => r.hq_country === us?.id && r.status !== "Removed",
     ).length;
     expect(cleanRows).toBe(usListed);
+    // The count after the title is the count shown, not the world's.
+    expect(clean.kind).toBe(`${cleanRows} entries`);
+    expect(raw.kind).toBe(`${rawRows} entries`);
   });
 
   it("the exchanges list has only the USA's exchanges", () => {

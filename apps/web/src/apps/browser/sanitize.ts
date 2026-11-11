@@ -85,6 +85,9 @@ const REDUNDANT_COLUMNS: Readonly<Record<string, readonly string[]>> = {
   exchanges: ["Zone"],
 };
 
+/** The list pages whose doc names a count of its entries. */
+const LIST_KINDS: ReadonlySet<string> = new Set(["companies", "exchanges"]);
+
 const asText = (text: string): Span => ({ k: "text", text });
 
 function spanOf(s: Span, cov: Coverage): Span {
@@ -170,10 +173,12 @@ export function sanitizeDoc(doc: PageDoc, cov: Coverage): PageDoc {
   const sections: SectionDoc[] = doc.sections
     .filter((s) => !hidden?.has(s.id))
     .map((s) => ({ id: s.id, blocks: s.blocks.map((b) => blockOf(b, cov)) }));
-  return {
-    ...doc,
-    chips: doc.chips.map((s) => spanOf(s, cov)),
-    head: doc.head.map((b) => blockOf(b, cov)),
-    sections,
-  };
+  const head = doc.head.map((b) => blockOf(b, cov));
+  // A list page names its entry count after the kind ("651 entries"): the count of what is shown.
+  const list = head.find((b) => b.k === "table");
+  const kind =
+    cov.known && LIST_KINDS.has(doc.page.kind) && list?.k === "table"
+      ? `${list.table.rows.length} ${list.table.rows.length === 1 ? "entry" : "entries"}`
+      : doc.kind;
+  return { ...doc, kind, chips: doc.chips.map((s) => spanOf(s, cov)), head, sections };
 }

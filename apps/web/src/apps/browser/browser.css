@@ -310,7 +310,7 @@
 /* Narrow: the infobox goes above the text and a table's cells stack their labels. */
 @container br (max-width: 760px) {
   .br-root .br-body {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
   .br-root .br-infobox {
     flex: none;

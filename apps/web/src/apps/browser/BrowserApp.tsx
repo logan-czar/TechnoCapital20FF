@@ -197,7 +197,7 @@ function SearchBox({ go }: { go: Go }) {
         type="search"
         data-testid="browser-search"
         aria-label="Search the Almanac"
-        placeholder="Search people, states, races, companies"
+        placeholder="Search the Almanac"
         value={text}
         onChange={(e) => {
           setText(e.target.value);
@@ -290,6 +290,13 @@ export default function BrowserApp({ route, onRoute, setTitle }: AppProps) {
     return () => el.removeEventListener("keydown", onKey);
   }, []);
 
+  // Another page starts at its top.
+  const pageBox = useRef<HTMLDivElement>(null);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: a new `current` is a new page
+  useEffect(() => {
+    if (pageBox.current !== null) pageBox.current.scrollTop = 0;
+  }, [current]);
+
   const address = typed ?? addressOf(formatRoute(parsed));
   return (
     <div className="br-root" data-testid="app-root-browser" ref={root}>
@@ -347,7 +354,7 @@ export default function BrowserApp({ route, onRoute, setTitle }: AppProps) {
         />
         <SearchBox go={go} />
       </header>
-      <div className="br-page" data-testid="browser-page">
+      <div className="br-page" data-testid="browser-page" ref={pageBox}>
         <Page key={current ?? ""} route={parsed} go={go} onTitle={onTitle} />
       </div>
     </div>
