@@ -112,6 +112,22 @@ const POLITICS_OFFICE_SEATS: readonly (readonly [string, number])[] = [
   ["Appeals", 13],
   ["Trial", 12],
 ];
+/** counties.csv `fips`: five digits (pivot 5.1). */
+const COUNTY_FIPS = /^[0-9]{5}$/;
+/** A county's lean, and its lean plus or minus its spread, in points (pivot 5.4; counties/build.py). */
+const COUNTY_LEAN_MAX_PTS = 95.0;
+const COUNTY_LEAN_LIMIT_PTS = 100.0;
+const COUNTY_SPREAD_MAX_PTS = 45.0;
+/** A county's turnout is a share of its people; its elasticity scales persuasion (pivot 5.1). */
+const COUNTY_TURNOUT_RANGE = [0.15, 0.7] as const;
+const COUNTY_ELASTICITY_RANGE = [0.25, 4.0] as const;
+/**
+ * A state's counties sum to politics-usa-era.csv `pop_1990_m` within this share (it is written in
+ * millions to three places), and their people-weighted mean lean is the state's `dem_margin_pts`
+ * within this many points (leans are written to two places). tools/world-1995/counties/validate.py.
+ */
+const COUNTY_STATE_POP_TOLERANCE = 0.002;
+const COUNTY_LEAN_MEAN_TOLERANCE_PTS = 0.01;
 
 // sim-data cannot import the sim number helpers (sim depends on sim-data), so the few it needs are
 // here: byte order for strings (D4; ids are ASCII), and Rust f64 min/max (a NaN operand loses).
@@ -159,6 +175,7 @@ export function check(w: WorldData): DataError[] {
   companyStart(w, errors);
   startupEvents(w, ids, errors);
   politics(w, errors);
+  counties(w, errors);
   characterSpawns(w, errors);
   names(w, ids, errors);
   map(w, ids, errors);
@@ -633,6 +650,125 @@ function politics(w: WorldData, errors: DataError[]): void {
     if (!(r.pop_1990_m > 0)) errors.push(tableErr(e, line, "pop_1990_m", `${r.state}: no people`));
     if (!CENSUS_REGIONS.includes(r.census_region)) {
       errors.push(tableErr(e, line, "census_region", `${r.state}: unknown region ${r.census_region}`));
+    }
+  }
+}
+
+/**
+ * The county tables of a world that has them (pivot 5.1, 5.4): the twin of
+ * tools/world-1995/counties/validate.py. Every county is in a state of politics-usa.csv and every
+ * state has one; a state's counties sum to its 1990 people and average to its lean; the adjacency
+ * rows name known counties, come in both orders, and leave no state in pieces (a district is
+ * contiguous, pivot 5.4).
+ */
+function counties(w: WorldData, errors: DataError[]): void {
+  const t = w.counties;
+  const a = w.county_adjacency;
+  if (!w.manifest.features.counties) {
+    if (!tableIsEmpty(t) || !tableIsEmpty(a)) errors.push(tableFileErr(t, "this world has no counties"));
+    return;
+  }
+  const known = unique(t, "fips", (r) => r.fips, errors);
+  const states = new Map(w.politics_states.rows.map((s) => [s.state, s.dem_margin_pts] as const));
+  const people = new Map<string, number>();
+  const leanSum = new Map<string, number>();
+  const members = new Map<string, string[]>();
+  for (const [line, r] of tableIter(t)) {
+    const bad = (field: string, what: string): void => {
+      errors.push(tableErr(t, line, field, `${r.fips}: ${what}`));
+    };
+    if (!COUNTY_FIPS.test(r.fips)) bad("fips", "not a five-digit code");
+    if (!states.has(r.state)) bad("state", `${r.state} is not in politics-usa.csv`);
+    if (r.name === "") bad("name", "no name");
+    if (r.pop_1990 < 1) bad("pop_1990", "no people");
+    if (!within(r.lean_pts, -COUNTY_LEAN_MAX_PTS, COUNTY_LEAN_MAX_PTS)) {
+      bad("lean_pts", `${r.lean_pts} is beyond ${COUNTY_LEAN_MAX_PTS} points`);
+    }
+    if (
+      !within(r.spread, 0.0, COUNTY_SPREAD_MAX_PTS) ||
+      !(Math.abs(r.lean_pts) + r.spread <= COUNTY_LEAN_LIMIT_PTS + SHARE_SUM_TOL)
+    ) {
+      bad("spread", `${r.spread} is out of 0 to ${COUNTY_SPREAD_MAX_PTS}, or lean and spread pass 100`);
+    }
+    if (!within(r.elasticity, COUNTY_ELASTICITY_RANGE[0], COUNTY_ELASTICITY_RANGE[1])) {
+      bad("elasticity", `${r.elasticity} is out of ${COUNTY_ELASTICITY_RANGE.join(" to ")}`);
+    }
+    if (!within(r.turnout, COUNTY_TURNOUT_RANGE[0], COUNTY_TURNOUT_RANGE[1])) {
+      bad("turnout", `${r.turnout} is out of ${COUNTY_TURNOUT_RANGE.join(" to ")}`);
+    }
+    if (!Number.isFinite(r.centroid_x) || !Number.isFinite(r.centroid_y)) bad("centroid_x", "no centroid");
+    people.set(r.state, (people.get(r.state) ?? 0) + r.pop_1990);
+    leanSum.set(r.state, (leanSum.get(r.state) ?? 0) + r.pop_1990 * r.lean_pts);
+    const list = members.get(r.state);
+    if (list === undefined) members.set(r.state, [r.fips]);
+    else list.push(r.fips);
+  }
+  const era = new Map(w.politics_era.rows.map((e) => [e.state, e.pop_1990_m * 1e6] as const));
+  for (const s of w.politics_states.rows) {
+    const n = people.get(s.state);
+    if (n === undefined || !(n > 0)) {
+      errors.push(tableFileErr(t, `${s.state} has no county`));
+      continue;
+    }
+    const want = era.get(s.state);
+    if (want !== undefined && Math.abs(n - want) > COUNTY_STATE_POP_TOLERANCE * want) {
+      errors.push(
+        tableFileErr(
+          t,
+          `${s.state}: its counties have ${n} people, politics-usa-era.csv says ${fixed0(want)}`,
+        ),
+      );
+    }
+    const mean = (leanSum.get(s.state) ?? 0) / n;
+    if (!(Math.abs(mean - s.dem_margin_pts) <= COUNTY_LEAN_MEAN_TOLERANCE_PTS)) {
+      errors.push(
+        tableFileErr(
+          t,
+          `${s.state}: mean county lean ${mean.toFixed(3)}, the state's is ${s.dem_margin_pts}`,
+        ),
+      );
+    }
+  }
+  const pairs = new Set<string>();
+  const neighbours = new Map<string, string[]>();
+  for (const [line, r] of tableIter(a)) {
+    const key = `${r.fips}-${r.neighbour_fips}`;
+    if (!known.has(r.fips)) errors.push(tableErr(a, line, "fips", `unknown county ${r.fips}`));
+    else if (!known.has(r.neighbour_fips)) {
+      errors.push(tableErr(a, line, "neighbour_fips", `unknown county ${r.neighbour_fips}`));
+    } else if (r.fips === r.neighbour_fips) {
+      errors.push(tableErr(a, line, "neighbour_fips", `${r.fips} is its own neighbour`));
+    } else if (pairs.has(key)) errors.push(tableErr(a, line, "neighbour_fips", `${key} appears twice`));
+    else {
+      pairs.add(key);
+      const list = neighbours.get(r.fips);
+      if (list === undefined) neighbours.set(r.fips, [r.neighbour_fips]);
+      else list.push(r.neighbour_fips);
+    }
+  }
+  for (const [line, r] of tableIter(a)) {
+    if (pairs.has(`${r.fips}-${r.neighbour_fips}`) && !pairs.has(`${r.neighbour_fips}-${r.fips}`)) {
+      errors.push(tableErr(a, line, "neighbour_fips", `no row ${r.neighbour_fips}-${r.fips}`));
+    }
+  }
+  // Each state's counties are one piece: a walk from its first county through in-state neighbours.
+  for (const s of w.politics_states.rows) {
+    const mine = members.get(s.state);
+    if (mine === undefined) continue;
+    const inState = new Set(mine);
+    const reached = new Set<string>([mine[0] as string]);
+    const queue = [mine[0] as string];
+    for (let i = 0; i < queue.length; i++) {
+      for (const n of neighbours.get(queue[i] as string) ?? []) {
+        if (inState.has(n) && !reached.has(n)) {
+          reached.add(n);
+          queue.push(n);
+        }
+      }
+    }
+    if (reached.size !== inState.size) {
+      const cut = sorted(mine.filter((c) => !reached.has(c))).slice(0, 5);
+      errors.push(tableFileErr(a, `${s.state} is in pieces: no path to ${debugStrs(cut)}`));
     }
   }
 }
