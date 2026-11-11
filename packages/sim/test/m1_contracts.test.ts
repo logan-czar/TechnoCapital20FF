@@ -286,13 +286,17 @@ describe("M1 contracts: the pivot views", () => {
     simApply(sim, { kind: "Resume" });
     for (let i = 0; i < 48; i++) simStep(sim);
     const views = simViews(sim);
-    for (const n of PIVOT_VIEWS) {
+    // Lane P (M2, D1042) ported the account and notifications: in a world with no player they are
+    // built every tick and hold their empty values.
+    const ported: readonly string[] = ["account", "notifications"];
+    const unported = PIVOT_VIEWS.filter((n) => !ported.includes(n));
+    for (const n of PIVOT_VIEWS) expect(views[n].data, n).toEqual(VIEW_BUILDERS[n].empty());
+    for (const n of unported) {
       expect(viewIsPorted(n), n).toBe(false);
-      expect(views[n].data, n).toEqual(VIEW_BUILDERS[n].empty());
       expect(views[n].version, n).toBe(1);
     }
     const patch = viewsPatchSince(views, postedViewsNone());
-    for (const n of PIVOT_VIEWS) expect(n in patch, n).toBe(false);
+    for (const n of unported) expect(n in patch, n).toBe(false);
     expect(data().counties.rows).toEqual([]);
   });
 });

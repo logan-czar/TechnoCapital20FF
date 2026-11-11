@@ -47,10 +47,13 @@ export function registerPlayerJobs(s: Scheduler): void {
  * Opens the player's account in `world` with a difficulty preset (pivot 3.6, 14.1): the preset's
  * cash at the brokerage, none on the exchange, the tax year the clock's. If the player-scope tax
  * levers are still neutral they take their starting rates (pivot 4.3, 14.2; D1042). Replaces any
- * player already there. For a world that is never hydrated (tests, the headless tool) and for
- * hydration itself (M3). Draws nothing.
+ * player already there. The explicit way in for a world that is never hydrated (the frozen test
+ * world, the headless tool's `record`), and what `playerStart` calls at hydration. Throws in a
+ * Coarse world (pivot 3.3: the player exists only at Full fidelity). Draws nothing.
  */
 export function playerOpen(world: World, difficulty: Difficulty = DEFAULT_DIFFICULTY): PlayerState {
+  if (world.fidelity !== "Full")
+    throw new Error("playerOpen: the player exists only in a Full world (pivot 3.3)");
   const preset = DIFFICULTY_PRESETS[difficulty];
   const p: PlayerState = {
     difficulty: { ...preset },
@@ -85,13 +88,17 @@ export function playerOpen(world: World, difficulty: Difficulty = DEFAULT_DIFFIC
 }
 
 /**
- * The player at a world's start, last of the start's steps (D1037, D1042): a world that is Full
- * from its load (one with no pre-history, which never hydrates) opens the account at Normal; a
- * historical world loads Coarse and has no player until hydration opens it (pivot 3.4, M3). Draws
+ * The player at a world's start (D1037, D1042): the account opens at Normal when a historical world
+ * has become Full, that is at hydration on 2020-01-01 (pivot 3.4; M3's hydration calls this after
+ * `hydrateFull`). At load a historical world is Coarse, so nothing opens; a world with no
+ * pre-history (the frozen test world, the 2020 world) is Full from its load but never hydrates, and
+ * stays without a player unless a test or the headless tool opens one with `playerOpen`. Draws
  * nothing.
  */
 export function playerStart(world: World): void {
-  if (world.fidelity === "Full" && world.player === null) playerOpen(world, DEFAULT_DIFFICULTY);
+  if (world.fidelity === "Full" && world.era !== undefined && world.player === null) {
+    playerOpen(world, DEFAULT_DIFFICULTY);
+  }
 }
 
 /**

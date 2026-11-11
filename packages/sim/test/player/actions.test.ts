@@ -1,8 +1,9 @@
 // Each player action's accept and reject cases (pivot 1.3, 13.1, 14.1, 14.4; D1027, D1042): an
 // applied action changes `World.player` and is recorded with the clock; a refused one changes
-// nothing and is not recorded. On the frozen test world, whose player opens at load at Normal.
+// nothing and is not recorded. On the frozen test world, its player opened at Normal (common.ts).
 
 import { describe, expect, it } from "vitest";
+import { simWorld } from "../../src/lib.ts";
 import { playerAct, playerOpen, playerStart } from "../../src/player/index.ts";
 import {
   DIFFICULTY_PRESETS,
@@ -14,6 +15,7 @@ import type { ActError, PlayerAction } from "../../src/types/action.ts";
 import { stockInstrument } from "../../src/types/action.ts";
 import type { CompanyId, InstrumentId, OrderId } from "../../src/types/ids.ts";
 import type { World } from "../../src/types/world.ts";
+import { testSim } from "../test_sim.ts";
 import {
   act,
   brokerage,
@@ -35,7 +37,7 @@ function refused(world: World, action: PlayerAction, kind: ActError["kind"]): vo
   expect(JSON.stringify(world.player)).toBe(before);
 }
 
-describe("the account at load (pivot 3.6, 14.1)", () => {
+describe("opening the account (pivot 3.3, 3.4, 3.6, 14.1)", () => {
   it("opens at Normal with $50,000 at the brokerage, nothing on the exchange, the starting tax rates", () => {
     const w = freshWorld();
     const p = player(w);
@@ -50,7 +52,7 @@ describe("the account at load (pivot 3.6, 14.1)", () => {
     expect(w.levers.gains_tax).toBe(START_GAINS_TAX);
   });
 
-  it("each preset opens with its own cash, and a Coarse world gets no player at its start", () => {
+  it("each preset opens with its own cash; a Coarse world cannot have a player", () => {
     for (const d of ["Easy", "Normal", "Hard"] as const) {
       const w = freshWorld();
       playerOpen(w, d);
@@ -60,10 +62,28 @@ describe("the account at load (pivot 3.6, 14.1)", () => {
     const w = freshWorld();
     w.player = null;
     w.fidelity = "Coarse";
-    playerStart(w);
-    expect(w.player).toBeNull();
+    expect(() => playerOpen(w)).toThrow(/Full/);
     // With no player every action is not available.
     refused(w, { kind: "Transfer", from: "Brokerage", to: "Exchange", amount: 1 }, "NotAvailable");
+  });
+
+  it("opens at the start only in a hydrated historical world, never in one that never hydrates", () => {
+    // The frozen test world is Full from its load and never hydrates: no player, neutral levers.
+    const loaded = simWorld(testSim(1));
+    expect(loaded.player).toBeNull();
+    expect(loaded.levers.gains_tax).toBe(0);
+    const w = freshWorld();
+    w.player = null;
+    playerStart(w);
+    expect(w.player).toBeNull();
+    // A historical world is Coarse until hydration, then Full: playerStart opens it there (M3).
+    w.era = {} as never;
+    w.fidelity = "Coarse";
+    playerStart(w);
+    expect(w.player).toBeNull();
+    w.fidelity = "Full";
+    playerStart(w);
+    expect(player(w).difficulty.id).toBe("Normal");
   });
 });
 

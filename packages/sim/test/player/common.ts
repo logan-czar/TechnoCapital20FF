@@ -1,10 +1,11 @@
 // Shared helpers for the player tests (pivot 13.1, 14; D1042). They use the frozen test world
-// (test/fixtures/world-mini), which loads Full, so its player opens at load at Normal: one world is
-// built once and each test takes a deep copy, sets the prices it needs and runs the player's jobs
-// directly on a tick of its choosing. The whole-sim tests (run.test.ts) step a real Sim.
+// (test/fixtures/world-mini), which loads Full and never hydrates, so the tests open its player
+// explicitly (`playerOpen`, at Normal): one world is built once and each test takes a deep copy,
+// sets the prices it needs and runs the player's jobs directly on a tick of its choosing. The
+// whole-sim tests (run.test.ts) step a real Sim (`traderSim`).
 
-import { simWorld } from "../../src/lib.ts";
-import { playerAct } from "../../src/player/index.ts";
+import { type Sim, simRebuildViews, simWorld } from "../../src/lib.ts";
+import { playerAct, playerOpen } from "../../src/player/index.ts";
 import { playerDailyJob, playerHourlyJob } from "../../src/player/jobs.ts";
 import { dateTimeAt, simDateYmd } from "../../src/time/calendar.ts";
 import { controlsDefault } from "../../src/time/control.ts";
@@ -22,8 +23,19 @@ let base: World | undefined;
 
 /** A copy of the mini world at its start, with the player open at Normal. */
 export function freshWorld(): World {
-  if (base === undefined) base = simWorld(testSim(1));
+  if (base === undefined) {
+    base = simWorld(testSim(1));
+    playerOpen(base, "Normal");
+  }
   return structuredClone(base);
+}
+
+/** A new game of the mini world with the player open at Normal and the views rebuilt. */
+export function traderSim(seed: number): Sim {
+  const sim = testSim(seed);
+  playerOpen(simWorld(sim), "Normal");
+  simRebuildViews(sim);
+  return sim;
 }
 
 export function player(world: World): PlayerState {
