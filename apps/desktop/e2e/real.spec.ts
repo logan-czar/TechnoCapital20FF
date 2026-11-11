@@ -115,6 +115,9 @@ test(
     await expect(page.getByTestId("new-game-progress")).toBeVisible();
     await expect(page.getByTestId("new-game-phase")).not.toHaveText("Starting", { timeout: 30_000 });
     await expect(page.getByTestId("new-game-date")).toContainText(/\d{4}/, { timeout: 30_000 });
+    // The 25 years with every M2 sim lane at work (geo, careers, elections) take about 15 s here
+    // (D1052): more than the default wait.
+    await expect(page.getByTestId("desktop")).toBeVisible({ timeout: 60_000 });
     await desktop(page);
     const seconds = (Date.now() - began) / 1000;
     console.log(`generated a new history in ${seconds.toFixed(1)} s`);
