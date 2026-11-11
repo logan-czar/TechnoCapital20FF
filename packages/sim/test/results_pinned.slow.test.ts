@@ -32,6 +32,7 @@ import { appendBufFromRows } from "../src/world/log.ts";
 import { referenceCanonicalString } from "./common/canonical_reference.ts";
 import { data, macrotask, unwrap } from "./common/index.ts";
 
+// Re-recorded for D1041 (lane C, careers): the world's persons table is filled at load and run by the careers job every day, so the state hash moved; their draws come after the politics POC's on the Politics stream, so the POC's later elections and appointments moved, and with them v_politics and its headlines in v_news; v_people is now built (version 8785). The monthly and patch digests moved with those three views; every other view digest (the whole economy) is unchanged.
 // Re-recorded for D1037 (the pivot's M2 contracts): the world gained `persons`, `elections`, `player` and four geo tables, so the state hash moved; v_clock gained `fixed_pauses` and five pivot views' empty values gained fields (forecast `states`, people `chambers`, account `settlements`, notifications `read_through`, usmap_layers `turnout` and `last_votes`), so those digests and the monthly digest moved; the patch digest is unchanged. A probe of 24 month starts of this world and 36 of the 1995 world found the state hash without the new fields, and the 30 older views (the clock without `fixed_pauses`), equal to the base's at every one.
 // Re-recorded for D1029 (the pivot's M1 contracts): the world gained `fidelity`, `levers` and `geo`, each industry `row_assets`, and the saved RNG five streams, so the state hash moved; 13 unported pivot views joined the list, each empty at version 1, so the monthly digest moved. The hash of the state without those fields and streams is still a56475a84805444ae625018f75a3481a, and the 30 older views' digests, the monthly digest over those 30 (d7d84581a03b2f6844e20a4e) and the patch digest are unchanged.
 // Re-recorded for D1022: the profile gained `exits`, so the state hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
@@ -45,9 +46,9 @@ import { data, macrotask, unwrap } from "./common/index.ts";
 // Re-recorded for D974: LOW_PRODUCTIVITY_ADJ is +1.0 (was +0.5), so the R&D plan, productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D973: R&D above the norm has diminishing returns by default (spec 5.6 has no curve), so productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
-const GOLDEN_STATE = "17bb726a620fc38aa6dd8b7c34df917a";
-const GOLDEN_MONTHLY = "79e5e4d93b42914dc9f4fe67";
-const GOLDEN_PATCHES = "a8c30b5b8333e63d248f5595";
+const GOLDEN_STATE = "4a2b98bb64a7c722b3f20fcd881f3ab2";
+const GOLDEN_MONTHLY = "153c65407bae50675480b4fc";
+const GOLDEN_PATCHES = "6a7b9d690930eba8d156666b";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */
 const GOLDEN_VIEWS: Record<string, [string, number]> = {
   clock: ["f7cc508c07c87cda3927d6d8", 8785],
@@ -61,7 +62,7 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   price_bars: ["c6009fc44df02a5b8efe0ccf", 8785],
   exchanges: ["f9ad17ddceb82daf963d9dc5", 8785],
   market_stats: ["a4767a4f080e65d7ae867fa9", 8785],
-  news: ["a12bfa1a835b9ceb39410afb", 8785],
+  news: ["c8cb1e476932cf08d7052a25", 8785],
   births: ["a25a57ae0f74c20a3e245545", 8785],
   projection: ["c6ead432d10a12fb7292f298", 8785],
   company_rows: ["c2fa4edb1243e15ddceaee77", 8785],
@@ -78,14 +79,14 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   ratings: ["5c79f5bdbb0789c46f43032d", 8785],
   recap: ["c8717fb08e77f7127d3aefac", 8785],
   map_static: ["5a7fcdac19a0f147f840d02c", 1],
-  politics: ["caa00cde3b21fa9198792d48", 8785],
+  politics: ["fbef1e4d03e2551c0f836ca3", 8785],
   history: ["0259c604ed0adc2b0ebe9e35", 8785],
   feed: ["8440424e3e953d9ce88266ab", 1],
   social: ["41acd9a2c224b075b28c0aaf", 1],
   polls: ["66f490e3432976fdbfc95485", 1],
   forecast: ["e3ae3632c2838aeb6d729301", 1],
   races: ["59923a8a46fcb9581c1acb8a", 1],
-  people: ["26707fe6db39003d15281499", 1],
+  people: ["7cd800faf4054b407f4c7108", 8785],
   records: ["6df68f989ab8c28290a21f7d", 1],
   markets: ["3312b062bb7ccfa55b0b7d0a", 1],
   account: ["39647396081a417498294a57", 1],

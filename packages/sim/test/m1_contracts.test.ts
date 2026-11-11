@@ -286,13 +286,16 @@ describe("M1 contracts: the pivot views", () => {
     simApply(sim, { kind: "Resume" });
     for (let i = 0; i < 48; i++) simStep(sim);
     const views = simViews(sim);
-    for (const n of PIVOT_VIEWS) {
+    // The M2 lanes port theirs: v_people is lane C's (D1041).
+    const unported = PIVOT_VIEWS.filter((n) => n !== "people");
+    expect(viewIsPorted("people")).toBe(true);
+    for (const n of unported) {
       expect(viewIsPorted(n), n).toBe(false);
       expect(views[n].data, n).toEqual(VIEW_BUILDERS[n].empty());
       expect(views[n].version, n).toBe(1);
     }
     const patch = viewsPatchSince(views, postedViewsNone());
-    for (const n of PIVOT_VIEWS) expect(n in patch, n).toBe(false);
+    for (const n of unported) expect(n in patch, n).toBe(false);
     expect(data().counties.rows).toEqual([]);
   });
 });

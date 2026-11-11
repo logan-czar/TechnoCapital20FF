@@ -119,6 +119,18 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
       "politics.elections[].senate_class",
     ],
   },
+  // Public records with no company or industry subject (pivot 5.7, D1041); the hidden stats are
+  // null without Omniscient (pivot 5.11), so they hold no number to classify.
+  people: {
+    ids: [
+      "people.people[].id",
+      "people.people[].age",
+      "people.people[].home_state",
+      "people.chambers[].parties[].seats",
+      "people.chambers[].independents",
+      "people.chambers[].vacant",
+    ],
+  },
   // All public, with no company or industry subject: GDP reads only demand, exact in every class
   // (1995-rework 6.1, D432).
   history: {
