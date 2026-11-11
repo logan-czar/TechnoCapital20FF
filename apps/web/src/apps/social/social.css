@@ -1,0 +1,467 @@
+/* Murmur, the Social app (apps/social): its own ink-violet room inside the OS window. Everything
+   hangs off .soc and its variables; nothing here touches the OS's or another app's styles. */
+
+.soc {
+  --soc-bg: #12101f;
+  --soc-raised: #1a1730;
+  --soc-line: #2c2848;
+  --soc-ink: #e8e4f4;
+  --soc-dim: #a39dc0;
+  --soc-accent: #b69cff;
+  --soc-accent-ink: #1b1233;
+  --soc-open: #f0b455;
+  --soc-confirmed: #6fd6a0;
+  --soc-debunked: #ff8f8a;
+  container-type: inline-size;
+  container-name: soc;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--soc-bg);
+  color: var(--soc-ink);
+  font-family: var(--os-face, system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+:where(.soc) button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+:where(.soc) button:focus-visible {
+  outline: 2px solid var(--soc-accent);
+  outline-offset: 1px;
+}
+.soc p {
+  margin: 0;
+}
+
+/* ---- masthead and tabs */
+
+.soc-mast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  background: var(--soc-raised);
+  border-bottom: 1px solid var(--soc-line);
+}
+.soc-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.soc-logo {
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--soc-accent);
+}
+.soc-nav {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--soc-line);
+  background: transparent;
+  line-height: 1;
+}
+.soc-nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.soc-tabs {
+  display: flex;
+  gap: 4px;
+}
+.soc-tab {
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 14px;
+  padding: 3px 11px;
+  color: var(--soc-dim);
+}
+.soc-tab:hover {
+  color: var(--soc-ink);
+}
+.soc-tab-on {
+  background: var(--soc-accent);
+  color: var(--soc-accent-ink);
+  font-weight: 600;
+}
+.soc-tab-on:hover {
+  color: var(--soc-accent-ink);
+}
+.soc-tab-n {
+  margin-left: 5px;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: var(--soc-open);
+  color: #2b1d00;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ---- the body and its scroll */
+
+.soc-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.soc-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  position: relative;
+}
+.soc-lede {
+  padding: 8px 14px;
+  color: var(--soc-dim);
+  font-size: 12px;
+}
+.soc-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.soc-newbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  padding: 7px;
+  border: none;
+  border-bottom: 1px solid var(--soc-line);
+  background: var(--soc-accent);
+  color: var(--soc-accent-ink);
+  font-weight: 700;
+}
+.soc-newbar:hover {
+  filter: brightness(1.08);
+}
+
+/* ---- a post */
+
+.soc-post {
+  display: flex;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--soc-line);
+}
+.soc-post-focus {
+  background: var(--soc-raised);
+  border-left: 3px solid var(--soc-accent);
+  font-size: 15px;
+}
+.soc-post-compact {
+  padding: 7px 10px;
+}
+.soc-post-main {
+  flex: 1;
+  min-width: 0;
+}
+.soc-post-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.soc-handle {
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.soc-handle:hover {
+  color: var(--soc-accent);
+  text-decoration: underline;
+}
+.soc-kind {
+  color: var(--soc-dim);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.soc-when {
+  margin-left: auto;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--soc-dim);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.soc-when:hover {
+  color: var(--soc-ink);
+  text-decoration: underline;
+}
+.soc-text {
+  margin-top: 2px;
+  overflow-wrap: anywhere;
+}
+.soc-mentions {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+.soc-mention {
+  display: inline-block;
+  padding: 0 8px;
+  border: 1px solid var(--soc-line);
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--soc-accent);
+  background: transparent;
+}
+.soc-mention .app-link {
+  text-decoration: none;
+}
+.soc-mention .app-link:hover {
+  text-decoration: underline;
+}
+button.soc-mention:hover {
+  border-color: var(--soc-accent);
+}
+
+.soc-rumour {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 1px 8px;
+  border-radius: 4px;
+  border: 1px solid currentColor;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.soc-rumour-open {
+  color: var(--soc-open);
+}
+.soc-rumour-confirmed {
+  color: var(--soc-confirmed);
+}
+.soc-rumour-debunked {
+  color: var(--soc-debunked);
+}
+
+/* ---- avatars */
+
+.soc-avatar {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #14102a;
+  background: var(--soc-accent);
+}
+.soc-avatar-big {
+  width: 56px;
+  height: 56px;
+  font-size: 24px;
+}
+.soc-kind-politician {
+  background: #8fb8ff;
+}
+.soc-kind-campaign {
+  background: #ff9bc2;
+}
+.soc-kind-pundit {
+  background: #ffd27a;
+}
+.soc-kind-pollster {
+  background: #7fe3d0;
+}
+.soc-kind-outlet {
+  background: #c9c4e0;
+}
+.soc-kind-anonymous {
+  background: #6c6786;
+  color: var(--soc-ink);
+}
+
+/* ---- profile, lens, buttons, states */
+
+.soc-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid var(--soc-line);
+  background: var(--soc-raised);
+}
+.soc-profile-main {
+  flex: 1;
+  min-width: 0;
+}
+.soc-profile-name {
+  margin: 0;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+.soc-profile-kind,
+.soc-profile-owner {
+  color: var(--soc-dim);
+  font-size: 12px;
+}
+.soc-profile-owner .app-link {
+  color: var(--soc-accent);
+}
+.soc-follow-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.soc-follow {
+  min-width: 92px;
+  padding: 5px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--soc-accent);
+  background: var(--soc-accent);
+  color: var(--soc-accent-ink);
+  font-weight: 700;
+}
+.soc-following {
+  background: transparent;
+  color: var(--soc-accent);
+}
+.soc-follow:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.soc-error {
+  color: var(--soc-debunked);
+  font-size: 12px;
+  max-width: 180px;
+  text-align: right;
+}
+
+.soc-lens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--soc-line);
+}
+.soc-chip {
+  border: 1px solid var(--soc-line);
+  background: transparent;
+  border-radius: 14px;
+  padding: 2px 10px;
+  color: var(--soc-dim);
+}
+.soc-chip-on {
+  border-color: var(--soc-accent);
+  color: var(--soc-ink);
+  background: var(--soc-raised);
+}
+.soc-chip-n {
+  margin-left: 3px;
+  color: var(--soc-accent);
+  font-weight: 700;
+}
+
+.soc-thread-title {
+  margin: 0;
+  padding: 10px 14px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--soc-dim);
+}
+
+.soc-more {
+  margin: 12px auto;
+  display: block;
+  padding: 5px 14px;
+  border: 1px solid var(--soc-line);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--soc-accent);
+}
+.soc-more:hover {
+  border-color: var(--soc-accent);
+}
+.soc-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--soc-dim);
+}
+.soc-empty-title {
+  color: var(--soc-ink);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ---- narrow windows (a 480px window, the phone) */
+
+@container soc (max-width: 520px) {
+  .soc-mast {
+    padding: 6px 8px;
+  }
+  .soc-post {
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  .soc-avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .soc-kind {
+    display: none;
+  }
+  .soc-profile {
+    flex-wrap: wrap;
+    padding: 10px;
+  }
+  .soc-avatar-big {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+  .soc-follow-wrap {
+    flex-direction: row;
+    align-items: center;
+    margin-left: auto;
+  }
+}
+
+.soc-phone .soc-scroll {
+  max-width: none;
+}
+.soc-phone .soc-mast {
+  padding: 6px 10px;
+}
+
+fieldset.soc-lens {
+  margin: 0;
+  min-width: 0;
+  border: none;
+  border-bottom: 1px solid var(--soc-line);
+}
