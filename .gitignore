@@ -9,3 +9,6 @@ __pycache__/
 
 # Map pipeline (track P): project-local venv
 tools/map-pipeline/.venv/
+
+# District spike: raw downloads and derived tables (tools/spikes/districts/fetch.py, prep.py)
+tools/spikes/districts/raw/
