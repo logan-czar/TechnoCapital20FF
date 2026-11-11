@@ -21,7 +21,7 @@
 import type { DateTime, SimDate } from "./calendar.ts";
 import type { BTreeSet } from "./collections.ts";
 import type { CompanyId } from "./ids.ts";
-import type { AlertKind, AlertLevel, AlertLevels, SkipKind } from "./notice.ts";
+import type { AlertKind, AlertLevel, AlertLevels, FixedPause, FixedPauses, SkipKind } from "./notice.ts";
 
 export type { AlertKind, AlertLevel, AlertLevels, AlertPayload, SkipKind } from "./notice.ts";
 
@@ -65,6 +65,11 @@ export type Control =
   | { kind: "SetAlert"; alert_kind: AlertKind; level: AlertLevel }
   /** Show every true value (spec 1, Information). Debug builds only (design fix 8). */
   | { kind: "SetOmniscient"; on: boolean }
+  /**
+   * Switch one fixed auto-pause on or off (pivot 2.4; D1037). Only `FIXED_PAUSE_SWITCHABLE` can be
+   * switched off; turning off another is `BadFixedPause`.
+   */
+  | { kind: "SetFixedPause"; pause: FixedPause; on: boolean }
   /** Watchlist (spec 8 outliner; design fix 8). */
   | { kind: "WatchlistAdd"; company: CompanyId }
   | { kind: "WatchlistRemove"; company: CompanyId };
@@ -89,6 +94,8 @@ export interface Controls {
   alerts: AlertLevels;
   omniscient: boolean;
   watchlist: BTreeSet<CompanyId>;
+  /** Which fixed auto-pauses of pivot 2.4 are on (D1037): every one in a new game. */
+  fixed_pauses: FixedPauses;
 }
 
 // ---------------------------------------------------------------- quarter.rs

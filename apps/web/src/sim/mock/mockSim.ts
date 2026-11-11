@@ -17,12 +17,16 @@ import {
   type CompanyId,
   type DateTime,
   dateTimeHour,
+  FIXED_PAUSE_SWITCHABLE,
+  type FixedPauses,
+  fixedPausesDefault,
   type Headline,
   lockTick,
   MAX_SPEED,
   MAX_STEP_HOURS,
   type Notice,
   type PlayerAction,
+  type PortedViews,
   postedViewsNone,
   type Quarter,
   type Reply,
@@ -32,11 +36,16 @@ import {
   type SimDate,
   type SimViews,
   type Skip,
+  type SliceData,
+  type SliceKey,
   simDateIsQuarterFirstMonth,
   skipTarget,
   type UiControl,
+  VIEW_NAMES,
   type ViewName,
   type ViewsPatch,
+  type ViewWant,
+  viewsPatchSince,
 } from "@tc20ff/sim";
 import { clockView } from "./fixtures/clock.ts";
 import { companyRowsView, industryRowsView } from "./fixtures/companies.ts";
@@ -125,6 +134,11 @@ const MOCK_VIEWS: readonly ViewName[] = [
   "returns",
 ];
 
+/** Which views the mock fills, as `viewsPatchSince` asks (a non-null `build` is a filled view). */
+const MOCK_PORTED = Object.fromEntries(
+  VIEW_NAMES.map((n) => [n, { build: MOCK_VIEWS.includes(n) ? true : null }]),
+) as unknown as PortedViews;
+
 export class MockSim {
   readonly seed: number;
   now: DateTime = 0;
@@ -133,6 +147,8 @@ export class MockSim {
   skip: Skip | null = null;
   alerts: AlertLevel[] = ALERT_KIND_VALUES.map((k) => ALERT_KIND_DEFAULT_LEVEL[k]);
   omniscient = false;
+  /** Which fixed auto-pauses of pivot 2.4 are on (`SetFixedPause`; D1037). */
+  fixed_pauses: FixedPauses = fixedPausesDefault();
   readonly watchlist = new Set<CompanyId>();
   views: SimViews;
   /** The pivot world; null in the pre-pivot mock. */
@@ -156,7 +172,8 @@ export class MockSim {
     this.rng = new MockRng(seed);
     this.debug = opts.debug ?? false;
     const pivotStart = start?.pivot?.start ?? opts.start ?? MOCK_START;
-    if (opts.pivot) this.now = pivotStart;
+    const pivot = opts.pivot ?? true;
+    if (pivot) this.now = pivotStart;
     if (start) {
       this.now = start.now;
       this.speed = start.speed;
@@ -166,7 +183,7 @@ export class MockSim {
     for (const s of this.stocks) this.stockById.set(s.id, s);
     this.indexLevels = world.data.financial_zones.rows.map(() => INDEX_START);
     this.views = initialViews(world, this.stocks, this.rng, this.clock(), this.indexLevels);
-    if (opts.pivot) {
+    if (pivot) {
       const largest = this.stocks
         .slice()
         .sort((a, b) => b.price * b.shares - a.price * a.shares || a.id - b.id)
@@ -204,6 +221,7 @@ export class MockSim {
       this.skip === null || this.skip.kind === "Step" ? null : this.skip.kind,
       watchlist,
       this.omniscient,
+      { ...this.fixed_pauses },
     );
   }
 
@@ -211,43 +229,16 @@ export class MockSim {
    * The views whose version moved since the last `takePatch` (the protocol's Frame views). With a
    * `want` (D1016) only the views it names: the others wait, and go out when they are wanted.
    */
-  takePatch(want: ReadonlySet<ViewName> | null = null): ViewsPatch {
-    // The semantics of views/patch.ts `viewsPatchSince`, over the views the mock fills (its builders
-    // are not on the public face): only moved views, news as an append, `news_reset` on the first
-    // patch of a game (a new MockSim is a new game or a load).
-    const posted = this.posted;
-    const patch: ViewsPatch = {};
-    if (this.views.refresh !== posted.refresh) {
-      patch.refresh = this.views.refresh;
-      posted.refresh = this.views.refresh;
-    }
-    if (this.views.omniscient !== posted.omniscient) {
-      patch.omniscient = this.views.omniscient;
-      posted.omniscient = this.views.omniscient;
-    }
-    for (const name of MOCK_VIEWS) {
-      if (name === "news" || (want !== null && !want.has(name))) continue;
-      const v = this.views[name];
-      if (v.version === posted.versions[name]) continue;
-      posted.versions[name] = v.version;
-      this.take(patch, name);
-    }
-    if (want !== null && !want.has("news")) return patch;
-    const feed = this.views.news.data.feed;
-    const reset = posted.news_len < 0 || feed.length < posted.news_len;
-    const from = reset ? 0 : posted.news_len;
-    if (reset || feed.length > from) {
-      patch.news_appended = feed.slice(from);
-      if (reset) patch.news_reset = true;
-      posted.news_len = feed.length;
-      patch.news_version = this.views.news.version;
-      posted.versions.news = this.views.news.version;
-    }
-    return patch;
+  takePatch(want: ViewWant | null = null): ViewsPatch {
+    // The real host's patch (views/patch.ts `viewsPatchSince`; D1037) over the views the mock fills:
+    // only moved views, news and the pivot views' append lists as appends (with a reset on the first
+    // patch of a game: a new MockSim is a new game or a load), changed rows, and the wanted slices.
+    return viewsPatchSince(this.views, this.posted, MOCK_PORTED, want, (key) => this.slice(key));
   }
 
-  private take<K extends Exclude<ViewName, "news">>(patch: ViewsPatch, name: K): void {
-    patch[name] = this.views[name];
+  /** A slice of a pivot view now (protocol.ts `SliceKey`; D1037); null without the pivot world. */
+  slice(key: SliceKey): SliceData {
+    return this.pivot?.slice(key) ?? null;
   }
 
   /** True when a patch would be non-empty. */
@@ -387,6 +378,14 @@ export class MockSim {
       case "SetAlert":
         this.alerts[ALERT_KIND_VALUES.indexOf(c.alert_kind)] = c.level;
         break;
+      case "SetFixedPause":
+        // pivot 2.4: items 1 and 2 cannot be switched off (D1037).
+        if (!c.on && !FIXED_PAUSE_SWITCHABLE.includes(c.pause)) {
+          return { kind: "SimError", error: { kind: "BadFixedPause", pause: c.pause } };
+        }
+        this.fixed_pauses = { ...this.fixed_pauses, [c.pause]: c.on };
+        this.pivot?.setFixedPauses(this.fixed_pauses);
+        break;
       case "SetOmniscient":
         // Debug builds only (design fix 8): a release mock refuses, as the real sim does.
         if (!this.debug) return { kind: "SimError", error: { kind: "DebugOnly" } };
@@ -460,9 +459,9 @@ export class MockSim {
   }
 
   /**
-   * The pivot world raised a notice that pauses the game (pivot 2.4). `PauseReason` has no kind for
-   * a fill, a resolution or a holding yet (README, contract requests): election day pauses as the
-   * `Election` alert and the rest as `Player`, and the v_notifications row says why.
+   * The pivot world raised a notification that pauses the game (pivot 2.4, 12): it pauses with
+   * `{ kind: "Notification", id }` (D1037). Election day also raises the `Election` alert, as the
+   * real sim's politics do.
    */
   private pivotPause(notices: Notice[]): void {
     const why = this.pivot?.takePause() ?? null;
@@ -470,12 +469,10 @@ export class MockSim {
     const was = this.paused;
     this.paused = true;
     this.skip = null;
-    if (why === "ElectionDay") {
+    if (why.election) {
       notices.push({ kind: "Alert", alert_kind: "Election", level: "Pause", payload: { kind: "None" } });
-      notices.push({ kind: "Paused", reason: { kind: "Alert", alert_kind: "Election" } });
-    } else if (!was) {
-      notices.push({ kind: "Paused", reason: { kind: "Player" } });
     }
+    if (!was || why.election) notices.push({ kind: "Paused", reason: { kind: "Notification", id: why.id } });
   }
 
   private alert(

@@ -23,7 +23,7 @@ import {
   RELEASE_DAY,
 } from "../types/control.ts";
 import type { DrawSource } from "../types/draws.ts";
-import type { AlertKind, AlertPayload, Notice, PauseReason } from "../types/notice.ts";
+import type { AlertKind, AlertPayload, FixedPause, Notice, PauseReason } from "../types/notice.ts";
 import type { Fidelity, World } from "../types/world.ts";
 import { alertLevelsGet } from "../world/notice.ts";
 import {
@@ -175,6 +175,9 @@ const SLOT_TABLE = Object.freeze([
   ["PriceMoveCreditLineReview", "PriceMove", "5.credit_line_review"],
   // Result headlines (5.18).
   ["PriceMoveResultHeadlines", "PriceMove", "6.result_headlines"],
+  // The player (pivot 13.1, 14; lane P, D1037): orders fill at the hour's price once it is set,
+  // price alerts; before the alerts so a fill's pause lands this tick. Full fidelity only.
+  ["HourlyPlayer", "Hourly", "3b.player"],
   // 4.1 step 4: alerts due this hour; auto-pause (D6).
   ["Alerts", "Hourly", "4.alerts"],
 
@@ -190,14 +193,24 @@ const SLOT_TABLE = Object.freeze([
   // US politics POC: elections, handovers, appointments (D985); before the post so its headlines
   // go out the same day.
   ["DailyPolitics", "Daily", "4b.politics"],
+  // The M2 lanes' daily jobs (D1037), in this order and before the post, so their headlines go out
+  // the same day: counties, the census, districting and court rulings (lane G, pivot 5.1 to 5.6);
+  // careers, deaths, vacancies and appointments (lane C, pivot 5.7 to 5.12); the calendar, filing,
+  // primaries, generals, counts, certification and handovers (lane E, pivot 6, 9.4).
+  ["DailyGeo", "Daily", "4c.geo"],
+  ["DailyCareers", "Daily", "4d.careers"],
+  ["DailyElections", "Daily", "4e.elections"],
   // News: post the day's headlines (5.18).
   ["DailyNews", "Daily", "5.news"],
+  // The player's day (lane P, D1037; pivot 14.2, 14.3): interest, the April tax bill, Day orders
+  // expiring. Full fidelity only.
+  ["DailyPlayer", "Daily", "5b.player"],
   // Zone exchange confidence (5.1.2).
   ["DailyZoneConfidence", "Daily", "6.zone_confidence"],
 
   // Weekly (00:00 on a Monday; pivot 2.3), after the day's jobs and before a month's: fundraising,
   // endorsements, the forecast, contract listings (M2 on). One slot; its jobs run in registration
-  // order. Empty in M1.
+  // order (jobs.ts: lane E's first, D1037).
   ["WeeklyJobs", "Weekly", "1.jobs"],
 
   // 4.3 Monthly (00:00 on the 1st). Step 1 only on 1 Jan, Apr, Jul and Oct, in its order.
@@ -417,6 +430,15 @@ export class JobCtx {
     }
   }
 
+  /** A player notification asked to pause. Use `jobCtxNotify`. */
+  notify(id: number, fixed: FixedPause | null): void {
+    const controls = this.#controls;
+    if (controls === null) return;
+    if (fixed !== null && !controls.fixed_pauses[fixed]) return;
+    const skipping = controls.skip !== null && controls.skip.kind !== "Step";
+    if (!skipping && this.#pause === null) this.#pause = { kind: "Notification", id };
+  }
+
   /** A historical world's run has ended: pauses after this tick, whatever else is set (1995-rework 8.3). */
   endRun(): void {
     if (this.#controls !== null) this.#pause = { kind: "RunEnded" };
@@ -458,6 +480,17 @@ export function jobCtxNotice(ctx: JobCtx, notice: Notice): void {
  */
 export function jobCtxRaiseAlert(ctx: JobCtx, kind: AlertKind, payload: AlertPayload): void {
   ctx.raiseAlert(kind, payload);
+}
+
+/**
+ * A player notification that asks to pause (pivot 2.4, 12; D1037): lane P raises the row in
+ * `World.player.notifications` (world state, the same whatever the settings) and then calls this
+ * for a row whose `paused` is set. The game pauses after this tick with `{ kind: "Notification",
+ * id }`, unless `fixed` names a fixed pause the player switched off, a SkipTo is running (D6), or
+ * the run is detached (projections). The first pause of a tick wins.
+ */
+export function jobCtxNotify(ctx: JobCtx, id: number, fixed: FixedPause | null): void {
+  ctx.notify(id, fixed);
 }
 
 /** The pause an alert asked for this tick, if any. */

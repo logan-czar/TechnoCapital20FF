@@ -46,6 +46,7 @@ function controls(): Controls {
     alerts: alertLevelsDefault(),
     omniscient: false,
     watchlist: new Set([9, 2, 5]) as Controls["watchlist"],
+    fixed_pauses: { OwnFill: true, MarginCall: true, ElectionDay: true, Holding: true },
   };
 }
 

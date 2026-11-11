@@ -1,14 +1,36 @@
 // v_districts (pivot 5.4 to 5.6, 8.6): the House map as public record. Each state's plan and each
-// district's counties, which the USA map outlines and the records app lists. Type only: the
-// builder arrives with the electorate (M2). It changes only when a plan does (after a census or a
-// court ruling), so it is rebuilt rarely.
+// district's counties, which the USA map outlines and the records app lists. Lane G builds it
+// (views/districts.ts; D1037). It changes only when a plan does (after a census or a court
+// ruling), so it is rebuilt rarely.
 
 import type { SimDate } from "../calendar.ts";
 import type { PersonId, UsStateId } from "../ids.ts";
 import type { CountyShare } from "../state/geo.ts";
 import type { Party } from "../state/politics.ts";
 
+/**
+ * A district's id in an `EntityRef` of kind "District" and in `DistrictRow.id` (D1037): its state
+ * times this, plus its number. It names "Texas 12" whichever plan is in force, so a link survives a
+ * redraw (the district it names may have moved). No state has this many seats.
+ */
+export const DISTRICT_REF_STRIDE = 100;
+
+/** The `EntityRef` id of district `number` (1 up) of `state`. */
+export function districtRefId(state: UsStateId, number: number): number {
+  return state * DISTRICT_REF_STRIDE + number;
+}
+
+/** The state and number a district ref id names. */
+export function districtRefParts(id: number): { state: UsStateId; number: number } {
+  return {
+    state: Math.floor(id / DISTRICT_REF_STRIDE) as UsStateId,
+    number: id % DISTRICT_REF_STRIDE,
+  };
+}
+
 export interface DistrictRow {
+  /** `districtRefId(state, number)`: what an `EntityRef` of kind "District" names. */
+  id: number;
   state: UsStateId;
   /** 1 up within its state. */
   number: number;

@@ -237,9 +237,11 @@ const round1 = (x: number) => Math.floor(x * 10 + 0.5) / 10;
 export function forecastView(
   m: ForecastModel | null,
   pol: MockPolitics,
+  geo: MockGeo,
   updated: SimDate | null,
 ): ForecastView {
-  if (m === null) return { updated: null, races: [], chambers: [], electoral_votes: null };
+  if (m === null) return { updated: null, races: [], chambers: [], states: [], electoral_votes: null };
+  const pres = pol.races.find((r) => r.office === "President");
   const seats = (dist: number[], size: number, control: number) =>
     PARTIES.map((party) => {
       const [lo, mid, hi] = distRange(dist);
@@ -269,6 +271,23 @@ export function forecastView(
       { chamber: "House", parties: seats(m.house, pol.reps.length, m.house_dem) },
       { chamber: "Senate", parties: seats(m.senate, pol.senators.length, m.senate_dem) },
     ],
+    // The presidency state by state (D1037): each state's chance, in the race's candidate order.
+    states:
+      pres === undefined
+        ? []
+        : geo.states.map((st, i) => {
+            const o = m.pres_states[i] as Outlook;
+            const lead = Math.abs(o.margin);
+            return {
+              state: st.id,
+              electoral_votes: st.electoral_votes,
+              odds: ballotOdds(pres, pDem(o)).map((win, k) => ({
+                person: ballotCandidate(pres, k).person,
+                win: round3(win),
+              })),
+              margin: [round1(lead - 1.28 * o.sigma), round1(lead), round1(lead + 1.28 * o.sigma)],
+            };
+          }),
     electoral_votes: distRange(m.ev),
   };
 }

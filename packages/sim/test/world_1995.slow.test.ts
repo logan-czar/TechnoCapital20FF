@@ -16,6 +16,8 @@ import { data1995, macrotask } from "./common/index.ts";
 
 const START = simDateYmd(1995, 1, 1);
 const SHORT_RUN_END = simDateYmd(1997, 2, 1);
+/** The US-headquartered rows of companies.csv: the world is cut to the USA (pivot 4.1; D1038). */
+const US_COMPANIES = (): number => data1995().companies.rows.filter((c) => c.hq_country === "USA").length;
 /** A year's ticks between yields, so the Vitest worker can answer its runner. */
 const TICKS_PER_YIELD = 8760;
 
@@ -51,7 +53,8 @@ describe("a 1995 game", () => {
     const sim = new1995(1);
     const w = simWorld(sim);
     expect(dateTimeDate(sim.now())).toEqual(START);
-    expect(w.companies.length).toBe(300);
+    expect(w.companies.length).toBe(US_COMPANIES());
+    expect(w.companies.length).toBeLessThan(300);
     expect(w.profile.ai_boom).toBe(false);
     expect(w.companies[0]?.name).not.toBe("Arrowhead Drilling");
     expect(w.births.fixed).toEqual([]);
@@ -84,7 +87,7 @@ describe("a 1995 game", () => {
     expect(w.politics.elections[0]?.date).toEqual(simDateYmd(1996, 11, 5));
     const keys = w.companies.map((c) => c.key);
     expect(new Set(keys).size).toBe(keys.length);
-    expect(w.companies.length).toBeGreaterThan(300);
+    expect(w.companies.length).toBeGreaterThan(US_COMPANIES());
     expect((await run()).stateHash()).toBe(a.stateHash());
   }, 300_000);
 

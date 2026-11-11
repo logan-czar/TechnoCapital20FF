@@ -8,8 +8,9 @@
 // imports this file for the types only (`import type`), never for a value, since this file
 // imports it.
 //
-// M1 has the contract and an empty ../apps/: lane U2 builds the window manager that reads this
-// registry (os/wm.ts, Desktop, Window, Taskbar, the phone), and the M2 app lanes add the apps.
+// The M2 contracts change (D1037) put a placeholder app in each M2 app lane's folder (news, social,
+// polls, records, browser, usmap, terminal) and the helpers they share in ../apps/_shared/; each
+// lane edits only its own folder.
 
 import type { EntityRef } from "@tc20ff/sim";
 import type { ComponentType, LazyExoticComponent } from "react";
@@ -24,6 +25,13 @@ export interface AppProps {
   route: string | null;
   /** Tells the window manager the route changed inside the app. */
   onRoute: (route: string | null) => void;
+  /** Closes the app's window (D1037). On the phone it goes back to the phone's home. */
+  close: () => void;
+  /**
+   * Sets the window's title, shown in place of `AppSpec.title` ("Ohio Senate - Polls"); null goes
+   * back to the app's own (D1037). The phone shows no title.
+   */
+  setTitle: (title: string | null) => void;
 }
 
 /** A lazily loaded app component. */
