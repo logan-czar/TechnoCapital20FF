@@ -24,6 +24,7 @@ import {
 } from "../finance/state.ts";
 import { ledgerNetIncome, trailingFour } from "../finance/statements.ts";
 import { taxBookDefault } from "../finance/tax.ts";
+import { corpTaxRate } from "../governing/levers.ts";
 import { barBuilderStart } from "../market/daily.ts";
 import {
   bookFloorShare,
@@ -109,6 +110,19 @@ export const IPO_QUARTERS_AFTER_BIRTH = MIN_QUARTERS_SINCE_BIRTH;
 /** The key of the `n`th company, 1-based (CO-0001 to CO-0651 load; born companies append). */
 export function companyKey(n: number): string {
   return `${COMPANY_KEY_PREFIX}${String(n).padStart(4, "0")}`;
+}
+
+/**
+ * The number of the next company born: one past the companies there are, or past the last one's key
+ * where that is higher. The keys loaded run CO-0001 up with no gap, so the two agree, except in a
+ * world cut to the USA (pivot 4.1, `features.usa_only`): the companies kept keep their keys, the
+ * last of them is the highest (they load in key order and the born append), and a born company
+ * must not take a key one of them holds.
+ */
+export function nextCompanyNumber(world: World): number {
+  const last = world.companies[world.companies.length - 1];
+  const n = last === undefined ? 0 : Number(last.key.slice(COMPANY_KEY_PREFIX.length));
+  return Math.max(world.companies.length, Number.isInteger(n) ? n : 0) + 1;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -246,7 +260,7 @@ export function birth(
   );
   if (revenue === null) return null;
   const id = world.companies.length as CompanyId;
-  const key = companyKey(world.companies.length + 1);
+  const key = companyKey(nextCompanyNumber(world));
   const country_id = (world.provinces[draft.hq] as World["provinces"][number]).country;
   const country = world.countries[country_id] as World["countries"][number];
   const zone = world.zones[country.zone] as World["zones"][number];
@@ -260,7 +274,7 @@ export function birth(
     industry_key: ind.key,
     sector: ind.sector,
     fringe_assets: ind.fringe_assets,
-    tax_rate: country.corp_tax_rate,
+    tax_rate: corpTaxRate(world, country_id),
     sovereign: country.sovereign_rating,
     base_rate: world.base_rate,
     home_spread: home,

@@ -7,8 +7,12 @@
 // - `supply = fringe_assets × turnover + Σ units (assets_eff × turnover × p_pre ÷ 100)`, with
 //   `p_pre = productivity + PC bonus + location_bonus` (C12).
 // - `S = supply ÷ demand`; `M = clamp((1 ÷ S)^0.5, 0.7, 1.3)`.
+// - The rest-of-world block (pivot 4.2): `row_assets` supplies like the fringe, at productivity 100,
+//   less what a tariff keeps out (pivot 4.3): `+ row_assets × turnover × (1 − tariff)`. It grows on
+//   the industry's long-term rate. 0 in a world that keeps its foreign companies.
 
 import { seatEffectNow } from "../events/effects.ts";
+import { tariffPass } from "../governing/levers.ts";
 import { quarterPrev, simDateQuarter } from "../time/calendar.ts";
 import { type JobCtx, tickFactsIsQuarterStart } from "../time/scheduler.ts";
 import { clamp, maxF } from "../types/num.ts";
@@ -61,6 +65,29 @@ export function eraFringeAfterMonth(ind: World["industries"][number], lt: number
   return stickyFringeAfterMonth(ind.fringe_assets, rate, ind.supply_ratio);
 }
 
+/**
+ * What a removed foreign unit adds to its industry's rest-of-world block at load (pivot 4.2): its
+ * supply at load in the fringe's terms, assets at productivity 100, `gross × p_pre ÷ 100`. So the
+ * block supplies exactly what the unit would have (`unitSupply`), and the industry's supply at load
+ * is what it was with the foreign companies present.
+ */
+export function rowAssetsAtLoad(grossAssets: number, pPreValue: number): number {
+  return (grossAssets * pPreValue) / PRODUCTIVITY_SCALE;
+}
+
+/** The rest-of-world block's month (pivot 4.2): it grows on the industry's long-term rate. */
+export function rowAfterMonth(rowAssets: number, lt: number): number {
+  return rowAssets * trendMonthFactor(lt);
+}
+
+/**
+ * The rest-of-world block's supply a year (pivot 4.2, 4.3): like the fringe's, at productivity 100,
+ * times the share `pass = 1 − tariff` a tariff lets in.
+ */
+export function rowSupply(rowAssets: number, turnover: number, pass: number): number {
+  return rowAssets * turnover * pass;
+}
+
 /** The fringe's supply a year at productivity 100 (spec 5.2). */
 export function fringeSupply(fringeAssets: number, turnover: number): number {
   return fringeAssets * turnover;
@@ -111,19 +138,30 @@ export function setSupply(world: World): void {
       ind.market_factor = 1.0;
       continue;
     }
-    ind.supply = fringeSupply(ind.fringe_assets, ind.params.asset_turnover) + named[id]!;
+    let supply = fringeSupply(ind.fringe_assets, ind.params.asset_turnover) + named[id]!;
+    // The rest-of-world block (pivot 4.2), scaled by `1 − tariff` (pivot 4.3); a world with no
+    // block adds nothing, so its supply is as before.
+    if (ind.row_assets !== 0.0) {
+      supply += rowSupply(ind.row_assets, ind.params.asset_turnover, tariffPass(world, id));
+    }
+    ind.supply = supply;
     ind.supply_ratio = supplyRatio(ind.supply, ind.demand);
     ind.market_factor = marketFactor(ind.supply_ratio);
   }
 }
 
-/** 4.3 step 3: fringe pools grow or shrink with the closed month's growth (D100). */
+/**
+ * 4.3 step 3: fringe pools grow or shrink with the closed month's growth (D100), and the
+ * rest-of-world block grows on the long-term rate (pivot 4.2).
+ */
 export function fringeJob(world: World, ctx: JobCtx): void {
   const quarterStart = tickFactsIsQuarterStart(ctx.facts);
   for (const ind of world.industries) {
     const [q, lt] = closingRates(ind, quarterStart);
     ind.fringe_assets =
       world.era === undefined ? fringeAfterMonth(ind.fringe_assets, q) : eraFringeAfterMonth(ind, lt);
+    // pivot 4.2: the rest-of-world block grows on the industry's long-term rate.
+    if (ind.row_assets !== 0.0) ind.row_assets = rowAfterMonth(ind.row_assets, lt);
   }
 }
 

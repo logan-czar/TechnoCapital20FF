@@ -168,12 +168,12 @@ export interface EraCharacters {
 export interface EraPolitics {
   states: EraUsState[];
   ideologies: EraIdeology[];
-  /** The fiscal push, as a share of US demand (7.5). */
-  fiscal: number;
-  /** Added to the policy rate's target (6.2, 7.5). */
-  rate_bias: number;
-  /** `1 + fiscal × US share`, on every industry's demand (7.5). */
-  demand_mult: number;
+  /**
+   * The USA's share of world GDP as the policy job took it at the quarter's start (7.5): what turns
+   * the `fiscal` lever (`World.levers`, pivot 4.3) into the push on world demand,
+   * `1 + fiscal × us_share`. The levers themselves are no longer here.
+   */
+  us_share: number;
   /** A census's House, until the handover after the first vote on it (7.4). */
   next_districts: { table: District[]; voted: boolean } | null;
 }

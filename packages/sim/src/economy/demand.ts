@@ -6,6 +6,7 @@
 // the month just ended, so the growth used is that month's quarter's (D100): on a quarter's first
 // day, after step 1 has drawn the new quarter, it is last quarter's `prev_q_growth` and `prev_lt`.
 
+import { fiscalDemandMult, subsidisedDemand } from "../governing/levers.ts";
 import { type JobCtx, tickFactsIsQuarterStart } from "../time/scheduler.ts";
 import type { SimDate } from "../types/calendar.ts";
 import type { Industry, World } from "../types/world.ts";
@@ -45,11 +46,16 @@ export function closingRates(ind: Industry, quarterStart: boolean): [number, num
 export function setEffectiveDemand(world: World): void {
   const base = world.base_rate;
   const neutral = world.neutral_rate;
-  // The fiscal push (1995-rework 7.5); 1 with no levers.
-  const mult = world.era?.politics.demand_mult ?? 1.0;
-  for (const ind of world.industries) {
-    ind.demand = mult * effectiveDemand(ind.demand_core, ind.params.rate_sensitivity, base, neutral);
-  }
+  // The fiscal push (pivot 4.3 `fiscal`; 1995-rework 7.5); exactly 1 with the lever neutral.
+  const mult = fiscalDemandMult(world);
+  world.industries.forEach((ind, id) => {
+    // pivot 4.3 `subsidy`: raises this industry's demand; untouched at neutral.
+    ind.demand = subsidisedDemand(
+      world,
+      id,
+      mult * effectiveDemand(ind.demand_core, ind.params.rate_sensitivity, base, neutral),
+    );
+  });
 }
 
 /** Sets every industry's phase label from this quarter's growth and last month's S (spec 5.1). */

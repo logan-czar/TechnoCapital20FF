@@ -20,6 +20,7 @@ import {
   ledgerNetIncome,
   trailingFour,
 } from "../finance/statements.ts";
+import { leverGrowthPlan, planLevers } from "../governing/levers.ts";
 import { setSharesOut } from "../market/jobs.ts";
 import { failedRaise, newsWireQueue, raise } from "../news.ts";
 import { confidenceFactor } from "../people/management.ts";
@@ -288,6 +289,7 @@ export function planLockJob(world: World, ctx: JobCtx): void {
   const statuses = world.companies.map(
     (c, id) => [id as CompanyId, companyFinanceStatus(c.finance)] as const,
   );
+  const levers = planLevers(world);
   for (const id of batchOrder(statuses)) {
     let op = planOperations(planInputs(world, id));
     // A hot market's firm sells shares to fund what its cash cannot, then plans again (1995-rework 9).
@@ -298,6 +300,10 @@ export function planLockJob(world: World, ctx: JobCtx): void {
     // plan already is; the financing below funds the plan as moved.
     const ceo = seatEffectNow(world.companies[id] as Company, "Growth");
     if (ceo !== 0.0) op = { ...op, growth: maxF(op.growth + ceo, minF(op.growth, 0.0)) };
+    // pivot 4.3: `state_growth` shifts the plan of a firm headquartered in the state and `antitrust`
+    // caps the plan of its industry's largest firm; the plan is untouched with both neutral.
+    const levered = leverGrowthPlan(world, levers, id, op.growth);
+    if (levered !== op.growth) op = { ...op, growth: levered };
     applyOperating(world, id, op);
     tryRaise(world, ctx, id);
     const c = world.companies[id] as Company;
