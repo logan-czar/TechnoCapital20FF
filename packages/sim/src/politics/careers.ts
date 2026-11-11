@@ -75,6 +75,7 @@ import {
   HOUSE_RANGES,
   JUDGE_INTEGRITY,
   JUDGE_RANGES,
+  type NameSet,
   type OfficeRanges,
   PARTY_BLOCS,
   PRESIDENT_RANGES,
@@ -451,7 +452,7 @@ interface Pool {
   book: NameBook;
   blocs: BlocTable;
   /** A historical world keeps living public figures' names unique (1995-rework 7.2); null leaves draws frozen. */
-  taken: Set<string> | null;
+  taken: NameSet | null;
 }
 
 function poolOf(world: World, year: number): Pool {
@@ -459,10 +460,33 @@ function poolOf(world: World, year: number): Pool {
   if (book === null) throw new Error("no name book for the USA");
   const era = world.era;
   if (era === undefined) return { book, blocs: PARTY_BLOCS, taken: null };
-  const taken = new Set<string>();
-  for (const p of world.persons.persons) if (p.status !== "Dead") taken.add(p.name);
-  for (const c of world.politics.politicians) taken.add(c.name);
-  return { book, blocs: eraBlocs(era.politics.ideologies, year), taken };
+  return { book, blocs: eraBlocs(era.politics.ideologies, year), taken: takenNames(world) };
+}
+
+/**
+ * The names in use when a pool is made (the living persons and the POC's table) plus those it has
+ * drawn since (D1052): looked up where they live rather than copied into a set each time, since a
+ * pool is made for every challenger and most draws ask about one name. The same answers as the copy
+ * (nobody dies while a pool is in use; persons added since are the pool's own draws).
+ */
+function takenNames(world: World): NameSet {
+  const persons = world.persons.persons;
+  const known = persons.length;
+  const politicians = world.politics.politicians;
+  const added = new Set<string>();
+  return {
+    has(name: string): boolean {
+      if (added.has(name)) return true;
+      for (let i = 0; i < known; i++) {
+        const p = persons[i] as Person;
+        if (p.name === name && p.status !== "Dead") return true;
+      }
+      return politicians.some((c) => c.name === name);
+    },
+    add(name: string): void {
+      added.add(name);
+    },
+  };
 }
 
 function draw(

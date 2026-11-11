@@ -337,19 +337,44 @@ export function openCycle(world: World, draws: DrawSource, year: number, date: S
 
 // ---------------------------------------------------------------- specials
 
-/** Whether a race (regular or special) for `seat` will be counted on or after `date`. */
-function seatRaced(world: World, seat: OfficeSeat, date: SimDate): Race | undefined {
-  const key = seatKey(seat);
-  return liveRaces(world, date.year).find(
-    (r) => r.result === null && cmpDate(r.general, date) >= 0 && seatKey(raceSeat(r)) === key,
-  );
+/** The races not yet counted, by their seat's key: built once per day of specials (a lookup only). */
+type RaceIndex = Map<string, Race[]>;
+
+function raceIndexOf(world: World, year: number): RaceIndex {
+  const out: RaceIndex = new Map();
+  for (const r of liveRaces(world, year)) {
+    if (r.result === null) raceIndexAdd(out, r);
+  }
+  return out;
+}
+
+function raceIndexAdd(index: RaceIndex, r: Race): void {
+  const key = seatKey(raceSeat(r));
+  const list = index.get(key);
+  if (list === undefined) index.set(key, [r]);
+  else list.push(r);
+}
+
+/**
+ * Whether a race (regular or special) for `seat` will be counted on or after `date`. A race not yet
+ * counted is always one of the live races of today's year, so `index` (today's) answers for an
+ * earlier `date` too.
+ */
+function seatRaced(world: World, seat: OfficeSeat, date: SimDate, index?: RaceIndex): Race | undefined {
+  const list = (index ?? raceIndexOf(world, date.year)).get(seatKey(seat)) ?? [];
+  return list.find((r) => r.result === null && cmpDate(r.general, date) >= 0);
 }
 
 /** When a special for `seat`, vacant or held by an appointee since `since`, is voted (pivot 6.1); null for none. */
-export function specialDate(world: World, seat: OfficeSeat, since: SimDate): SimDate | null {
+export function specialDate(
+  world: World,
+  seat: OfficeSeat,
+  since: SimDate,
+  index?: RaceIndex,
+): SimDate | null {
   if (seat.kind === "House") {
     const day = tuesdayOnOrAfter(simDateAddDays(since, SPECIAL_LEAD_DAYS));
-    const regular = seatRaced(world, seat, since);
+    const regular = seatRaced(world, seat, since, index);
     if (regular !== undefined && cmpDate(regular.general, day) <= 0) return null;
     // The next regular general fills it: a special after that day's handover is not needed.
     const next = federalGeneralOnOrAfter(since);
@@ -403,24 +428,32 @@ function openSpecial(
  */
 export function scheduleSpecials(world: World, draws: DrawSource, date: SimDate): void {
   const s = world.persons;
+  let index: RaceIndex | null = null;
+  const races = (): RaceIndex => {
+    index ??= raceIndexOf(world, date.year);
+    return index;
+  };
+  const open = (seat: OfficeSeat, day: SimDate): void => {
+    raceIndexAdd(races(), openSpecial(world, draws, seat, day, date));
+  };
   for (const v of s.vacancies) {
     if (v.special !== null || (v.seat.kind !== "House" && v.seat.kind !== "Senate")) continue;
     // A district a redraw has taken away waits empty for the House handover (`dropLostDistricts`).
-    if (lostDistrict(world, v.seat) || seatRaced(world, v.seat, date) !== undefined) continue;
-    const day = specialDate(world, v.seat, v.since);
+    if (lostDistrict(world, v.seat) || seatRaced(world, v.seat, date, races()) !== undefined) continue;
+    const day = specialDate(world, v.seat, v.since, races());
     if (day === null || cmpDate(day, date) <= 0) continue;
     v.special = day;
-    openSpecial(world, draws, v.seat, day, date);
+    open(v.seat, day);
   }
   for (const o of s.offices) {
     if (o.seat.kind !== "Senate") continue;
     const p = personGet(s, o.person);
     const line = p?.career.at(-1);
     if (line === undefined || line.how !== "Appointed" || line.to !== null) continue;
-    if (seatRaced(world, o.seat, o.since) !== undefined) continue;
-    const day = specialDate(world, o.seat, o.since);
+    if (seatRaced(world, o.seat, o.since, races()) !== undefined) continue;
+    const day = specialDate(world, o.seat, o.since, races());
     if (day === null || cmpDate(day, date) <= 0) continue;
-    openSpecial(world, draws, o.seat, day, date);
+    open(o.seat, day);
   }
 }
 

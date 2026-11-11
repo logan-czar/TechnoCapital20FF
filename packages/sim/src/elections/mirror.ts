@@ -121,22 +121,21 @@ function yearsBetween(from: SimDate, to: SimDate): number {
 const SYNCED = new WeakMap<World, string>();
 
 /**
- * What the mirror copies, as a cheap fingerprint: each seat's holder, start and level (a level-up
- * raises a skill), the year (ages) and the districts' count. Equal fingerprints mean equal rows.
+ * What the mirror copies, as a cheap fingerprint: each seat's holder and start, the year (ages) and
+ * the districts' count. Equal fingerprints mean equal rows (a row's skills are its person's when the
+ * row is made, so a level-up later changes nothing here).
  */
 function fingerprint(world: World, year: number): string {
   let h = year;
   let n = 0;
   for (const o of world.persons.offices) {
-    if (seatPocKey(o.seat) === null) continue;
-    const level = personGet(world.persons, o.person)?.level ?? 0;
+    if (o.seat.kind === "Governor" || o.seat.kind === "FedChair") continue;
     h =
       (Math.imul(h, 31) +
         o.person * 7 +
         o.since.year * 13 +
         o.since.month * 17 +
         o.since.day +
-        level * 19 +
         officeTag(o.seat)) |
       0;
     n += 1;
@@ -168,7 +167,8 @@ function presidentTerms(world: World, date: SimDate): void {
 
 /**
  * Rewrites the mirror's rows from `World.persons` on `date` (D1040, D1052): every office the POC
- * knows, its holders' ages, skills, party and integrity; a row whose person (by name) and place are
+ * knows, its holders' ages, party and integrity (skills as they were when the row was made); a row
+ * whose person (by name) and place are
  * unchanged keeps its id, the others are new rows. `districts` rebuilds the POC's districts to the
  * plans in force first (at the start, a House handover, a redraw). A new president is sworn in: the
  * headline and the era's list of presidents (the tides read it); `president_terms` counts the sitting
@@ -237,7 +237,6 @@ function mirrorRows(world: World, date: SimDate, districts: boolean): void {
     row.office = office;
     row.party = person.party;
     row.age = year - person.born;
-    row.skills = { ...person.skills };
     row.integrity = person.integrity;
     rows.push(row);
   }
