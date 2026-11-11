@@ -30,6 +30,14 @@ export const SAVE_MAGIC: Uint8Array = new TextEncoder().encode("TC20FFJS");
  */
 export const SAVE_VERSION = 6;
 
+/**
+ * The gzip level saves are written at (fflate's 0 to 9; D1030). Level 1 writes a 2020 save's 250 MB
+ * of text in 2.3 s where fflate's default 6 took 6.0 s, for a file 5% larger (68.2 MB against
+ * 64.7 MB). It is still gzip: a save written at any level loads, and the state and its hash do not
+ * depend on it.
+ */
+export const SAVE_GZIP_LEVEL = 1;
+
 /** The decoded state of a save. */
 export interface SaveState {
   world: World;
@@ -68,7 +76,7 @@ export function encodeVersioned(
   controls: Controls,
 ): Uint8Array {
   const json = canonicalString({ version, state: { controls, rng, world } });
-  const body = gzipSync(new TextEncoder().encode(json), { mtime: 0 });
+  const body = gzipSync(new TextEncoder().encode(json), { mtime: 0, level: SAVE_GZIP_LEVEL });
   const out = new Uint8Array(SAVE_MAGIC.length + body.length);
   out.set(SAVE_MAGIC, 0);
   out.set(body, SAVE_MAGIC.length);
