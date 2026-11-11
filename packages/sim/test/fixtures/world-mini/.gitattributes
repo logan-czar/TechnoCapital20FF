@@ -1,0 +1,2 @@
+# A frozen copy: the bytes are the test data, so git never converts line endings here.
+*.csv -text
