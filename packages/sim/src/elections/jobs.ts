@@ -92,11 +92,20 @@ export function raceElectorate(world: World, race: Race, byState: readonly Count
 
 // ---------------------------------------------------------------- the count
 
-/** The US zone's cycle effect (pivot 6.7 "the economy"; the POC's 4.6.3 term). */
+/**
+ * The range of the US zone's effect the vote reads (D1052, T): the business cycle's own, -6% to +4%
+ * (politics/vote.ts `ECONOMY_PER_POINT`, which was tuned on it). A historical world's scenario crises
+ * take the zone far below it (-20% in an unstable 1998), and read whole they swung a House race's
+ * margin 25 points against the president's party, a chamber past 80%.
+ */
+export const ECONOMY_EFFECT_MIN = -0.06;
+export const ECONOMY_EFFECT_MAX = 0.04;
+
+/** The US zone's cycle effect (pivot 6.7 "the economy"; the POC's 4.6.3 term), held to the cycle's range. */
 function usGrowth(world: World): number {
   const country = world.countries[world.politics.country];
   const zone = country === undefined ? undefined : world.zones[country.zone];
-  return zone?.effect ?? 0;
+  return Math.min(ECONOMY_EFFECT_MAX, Math.max(ECONOMY_EFFECT_MIN, zone?.effect ?? 0));
 }
 
 /** Each party's House seats now (persons), Democrats then Republicans. */
