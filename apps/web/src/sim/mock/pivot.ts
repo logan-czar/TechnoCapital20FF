@@ -461,7 +461,7 @@ export class MockPivot {
       rankFrontPages(this.feed, t);
       this.dirty.add("feed");
     }
-    this.priceAlerts(t);
+    this.priceAlerts();
     if (this.account.positions.length > 0) this.dirty.add("account");
     this.drain();
   }
@@ -569,11 +569,12 @@ export class MockPivot {
         { kind: "Person", id: lead.person },
         { kind: "Person", id: trail.person },
       ];
+      const pct = (ballot: number) => Math.floor((p.shares[ballot]?.share ?? 0) * 100);
       const handle = this.social.of_pollster.get(p.pollster);
       if (handle !== undefined) {
         this.say(
           handle,
-          `NEW ${r.title}: ${this.name(lead.person)} ${((p.shares[margin >= 0 ? r.dem : r.rep]?.share ?? 0) * 100) | 0}%, ${this.name(trail.person)} ${((p.shares[margin >= 0 ? r.rep : r.dem]?.share ?? 0) * 100) | 0}% (n=${p.sample}, MoE ${p.margin_of_error})`,
+          `NEW ${r.title}: ${this.name(lead.person)} ${pct(margin >= 0 ? r.dem : r.rep)}%, ${this.name(trail.person)} ${pct(margin >= 0 ? r.rep : r.dem)}% (n=${p.sample}, MoE ${p.margin_of_error})`,
           refs,
         );
       }
@@ -1358,7 +1359,7 @@ export class MockPivot {
   // ---------------------------------------------------------------- the player
 
   /** The player's price alerts (pivot 14.4): each fires once as its price crosses. */
-  private priceAlerts(_t: DateTime): void {
+  private priceAlerts(): void {
     for (const r of this.account.rules) {
       const w = r.rule.when;
       if (w.kind === "Any") continue;
