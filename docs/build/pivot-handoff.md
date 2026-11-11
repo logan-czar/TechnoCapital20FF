@@ -12,9 +12,9 @@ The game is a stock and prediction market sim on a deep US political sim: the pl
 fake desktop OS ("Orrery") who advances time (hourly ticks), reads published news, bets on politics
 and trades stocks. Play always starts in 2020, produced by pre-simulating the 1995 world for 25 years
 at Coarse fidelity. The app is Electron (React UI, sim in a Node utility process). Milestones M0, M1
-and M2 are built and merged on branch `claude/stock-market-prediction-game-7c4f97`, which carries
-about 140 commits and is **pull request #127** against `main` (it was opened at M1 and now carries
-M0 to M2). M3 to M6 are not started.
+and M2 are built. M0 and M1 are in `main` (pull request #127, merged by Logan 2026-11-11). **M2 is
+not in `main`:** it is 88 commits on branch `claude/stock-market-prediction-game-7c4f97`, in its own
+pull request (see the PR list; it was opened after #127 merged). M3 to M6 are not started.
 
 ## What is real and what is only a mock (read this before demoing anything)
 
@@ -35,7 +35,7 @@ Polls and Records apps are empty until M3 and M4 produce their data.
 
 ## Branch, PR and tree state
 
-- Branch `claude/stock-market-prediction-game-7c4f97`, PR #127. Save version 7.
+- Branch `claude/stock-market-prediction-game-7c4f97`: M0 and M1 are in `main` via #127; M2 and this handoff are the open pull request. Save version 7.
 - The playable 2020 world (`docs/design/data`, `?world=2020`, `--world 2020`) still exists; tests run
   on a frozen copy, `packages/sim/test/fixtures/world-mini/` (id "2020"). Removal steps are in
   [pivot-2020-removal.md](pivot-2020-removal.md): the 1995 generator and the map pipeline read the 2020
@@ -75,7 +75,7 @@ The three gate failures and where they stand:
 
 ## Pending, in the order I would do it
 
-### A. Before merging PR #127
+### A. Before merging the M2 pull request
 
 1. Read the verification block above. Anything not shown as passing there is unverified. First job: the two open gate failures (`era_sectors.slow`, `m1_usa_only_run.slow`), then re-run `scripts/check-ts.sh` and `pnpm e2e` whole.
 2. The soaks with sanity bands that the plan puts in every milestone gate have **not been run**
