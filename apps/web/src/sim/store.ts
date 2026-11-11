@@ -11,6 +11,7 @@
 
 import {
   APPEND_LISTS,
+  type BakedStart,
   type ClockView,
   type FromSim,
   type NewGameChoices,
@@ -62,6 +63,8 @@ export interface Status {
   fatal: string | null;
   /** The running request's progress (a generated history); null when nothing long is running. */
   progress: ProgressInfo | null;
+  /** The baked starts the host offers (`Ready.starts`, pivot 3.5); empty when it has none. */
+  starts: readonly BakedStart[];
 }
 
 /** Notices kept in the log; older ones drop off. */
@@ -93,7 +96,14 @@ export class SimStore {
   private messageId = 0;
   notices: readonly NoticeEntry[] = [];
   messages: readonly Message[] = [];
-  status: Status = { ready: false, started: false, choices: null, fatal: null, progress: null };
+  status: Status = {
+    ready: false,
+    started: false,
+    choices: null,
+    fatal: null,
+    progress: null,
+    starts: [],
+  };
 
   getView<K extends ViewName>(name: K): SimViews[K] | undefined {
     return this.views[name];

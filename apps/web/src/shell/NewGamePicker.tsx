@@ -48,7 +48,7 @@ export const PHASE_LABEL: Readonly<Record<ProgressInfo["phase"], string>> = {
  * once the contracts change adds it (design proposal in D1050); until then there are none.
  */
 export function startsOf(status: Status): readonly BakedStart[] {
-  return (status as Status & { starts?: readonly BakedStart[] }).starts ?? [];
+  return status.starts;
 }
 
 /** What the picker asks of the game. Each answers with the sim's reply. */

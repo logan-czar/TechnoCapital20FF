@@ -79,7 +79,7 @@ export class SimClient {
   private receive(m: FromSim): void {
     switch (m.kind) {
       case "Ready":
-        this.store.setStatus({ ready: true, choices: m.choices ?? null });
+        this.store.setStatus({ ready: true, choices: m.choices ?? null, starts: m.starts ?? [] });
         this.resolveReady();
         break;
       case "Frame":
