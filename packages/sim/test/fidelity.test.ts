@@ -21,6 +21,7 @@ import {
   simControls,
   simHydrate,
   simNew,
+  simSetDifficulty,
   simStateHash,
   simStep,
   simViews,
@@ -122,8 +123,11 @@ describe("hydration", () => {
     const queued = JSON.stringify(world.news);
     const before = simStateHash(sim);
 
+    expect(world.player).toBeNull();
     const report = simHydrate(sim);
     expect(world.fidelity).toBe("Full");
+    // The player's account opens at hydration, at Normal by default (D1052).
+    expect(world.player?.difficulty.id).toBe("Normal");
     expect(report).toMatchObject({ date: UNTIL, ended_here: true, scenario: world.era?.scenario.label });
     expect(world.era?.ended).toBe(true);
     expect(world.era?.reveal_date).toEqual(UNTIL);
@@ -151,6 +155,17 @@ describe("hydration", () => {
     simHydrate(a);
     simHydrate(b);
     expect(simStateHash(a)).toBe(simStateHash(b));
+  }, 120_000);
+
+  it("opens the account at the new game's difficulty, and a baked start's can be reopened at another", () => {
+    const a = presimTo(3, [720]);
+    simHydrate(a, "Hard");
+    expect(simWorld(a).player?.difficulty.id).toBe("Hard");
+    const b = presimTo(3, [720]);
+    simHydrate(b);
+    expect(simSetDifficulty(b, "Normal")).toBe(false);
+    expect(simSetDifficulty(b, "Hard")).toBe(true);
+    expect(simStateHash(b)).toBe(simStateHash(a));
   }, 120_000);
 
   it("leaves a run its own reveal has ended as it is", () => {
