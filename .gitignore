@@ -12,3 +12,7 @@ tools/map-pipeline/.venv/
 
 # District spike: raw downloads and derived tables (tools/spikes/districts/fetch.py, prep.py)
 tools/spikes/districts/raw/
+
+# Baked starts (scripts/bake-starts.*, pivot 3.5): tens of MB each, made on the machine that needs them
+assets/starts/*.tcsave
+assets/starts/index.json

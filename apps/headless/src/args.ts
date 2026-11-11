@@ -26,6 +26,7 @@ export const USAGE = [
   "  headless parity DIR [--reference DIR]",
   "  headless record --years N --seed S --out LOG [--data-dir DIR | --world ID]",
   "  headless replay LOG [--data-dir DIR | --world ID]",
+  "  headless bake --seed N [--scenario ID] --out DIR [--name NAME] [--label TEXT] [--data-dir DIR | --world ID]",
   "the world defaults to 1995; --world ID is assets/worlds/ID, and --world 2020 is the repository's docs/design/data; seeds A..B are inclusive (a single seed A also works);",
   "soak defaults to seeds 1..50 and 25 years, or 30 on any data other than 1995's, jobs to half the cores",
 ].join("\n");
