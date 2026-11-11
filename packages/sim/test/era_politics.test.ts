@@ -8,6 +8,7 @@ import {
   leverStep,
   PARTY_LEVERS,
 } from "../src/era/policy.ts";
+import { fiscalDemandMult } from "../src/governing/levers.ts";
 import { simNew, simViews, simWorld } from "../src/lib.ts";
 import { electionDay, isElectionYear } from "../src/politics/calendar.ts";
 import { equalProportions, eraBlocs, HOUSE_SEATS, IDEOLOGY_WINDOWS } from "../src/politics/era.ts";
@@ -261,8 +262,9 @@ describe("the levers (1995-rework 7.5)", () => {
     const tax = usa(w).corp_tax_rate;
     job(w);
     expect(usa(w).corp_tax_rate).toBe(tax);
-    expect(w.era?.politics.demand_mult).toBe(1);
-    expect(w.era?.politics.rate_bias).toBe(0);
+    expect(w.levers.corp_tax).toBe(tax);
+    expect(fiscalDemandMult(w)).toBe(1);
+    expect(w.levers.rate_bias).toBe(0);
   });
 
   it("move toward the president's party, and the fiscal push lifts demand", () => {
@@ -271,10 +273,11 @@ describe("the levers (1995-rework 7.5)", () => {
     giveChamber(w, "Senate", "Democrats");
     const core = w.industries.map((i) => i.demand_core);
     job(w);
-    const e = w.era?.politics;
-    expect(e?.fiscal).toBeCloseTo(LEVER_STEP_UNIFIED * PARTY_LEVERS.Democrats.fiscal);
-    expect(e?.rate_bias).toBeLessThan(0);
-    expect(e?.demand_mult).toBeGreaterThan(1);
+    // The drift writes the levers (pivot 4.3), and the USA's row shows the tax lever.
+    expect(w.levers.fiscal).toBeCloseTo(LEVER_STEP_UNIFIED * PARTY_LEVERS.Democrats.fiscal);
+    expect(w.levers.rate_bias).toBeLessThan(0);
+    expect(fiscalDemandMult(w)).toBeGreaterThan(1);
+    expect(usa(w).corp_tax_rate).toBe(w.levers.corp_tax);
     expect(w.industries.map((i) => i.demand_core)).toEqual(core);
   });
 

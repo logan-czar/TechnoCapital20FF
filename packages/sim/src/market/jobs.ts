@@ -16,6 +16,7 @@ import { eraHistoryNew } from "../era/jobs.ts";
 import { companyHomeSpread, runRate, sheet } from "../finance/jobs.ts";
 import { companyFinanceQuarters } from "../finance/state.ts";
 import { ledgerEbit, ledgerNetIncome, trailingFour } from "../finance/statements.ts";
+import { corpTaxRate } from "../governing/levers.ts";
 import { scheduler } from "../jobs.ts";
 import { headlineConfidence } from "../news.ts";
 import { BAREBONES_REVENUE_USD } from "../ops/stations.ts";
@@ -223,16 +224,15 @@ export function start(world: World, draws: DrawSource): void {
     const cid = ordinal<CompanyId>(id);
     const c = world.companies[id] as Company;
     const ind = world.industries[c.industry] as World["industries"][number];
-    const country = world.countries[c.hq_country] as World["countries"][number];
     // 7.1 values the run rate at companies.csv revenue R: a company below $0.1M (the barebones
     // loadout, D107) has R 0 and so EBIT 0, and values at its book (D244, D145).
     const ebit = c.revenue_usd < BAREBONES_REVENUE_USD ? 0.0 : ledgerEbit(runRate(world, c)[0]);
     const exchange = (world.market.stocks[id] as Stock).exchange;
-    const ni = loadNetIncome(ebit, country.corp_tax_rate);
+    const ni = loadNetIncome(ebit, corpTaxRate(world, c.hq_country));
     const inputs: EngineValueInputs = {
       book_equity: sheet(world, c).equity,
       run_rate_ebit: ebit,
-      tax_rate: country.corp_tax_rate,
+      tax_rate: corpTaxRate(world, c.hq_country),
       sector_multiple: ind.params.earnings_multiple,
       g_sector: ind.lt,
       // D235: the zone's base spread at load.

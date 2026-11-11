@@ -1,7 +1,13 @@
-// The policy levers (1995-rework 7.5): each quarter the president and the chambers move the US
+// The policy drift (1995-rework 7.5): each quarter the president and the chambers move the US
 // corporate tax rate, a fiscal push and a bias on the policy rate toward the president's party's
 // targets. No bills or laws as objects. Does nothing in the 2020 world.
+//
+// The three values are levers (pivot 4.3): the drift reads `World.levers` and writes it only through
+// `leversApply`, the function M3's laws and executive actions will call. Pivot 4.3 removes the drift
+// when bills exist; what stays then is the quarterly reading of the USA's share of world GDP, which
+// turns the `fiscal` lever into the push on world demand.
 
+import { leversApply, usGdpShare } from "../governing/levers.ts";
 import { HOUSE_MAJORITY, SENATE_MAJORITY } from "../politics/jobs.ts";
 import { officeHolders } from "../politics/state.ts";
 import type { JobCtx } from "../time/scheduler.ts";
@@ -36,8 +42,9 @@ export function leverStep(holdsHouse: boolean, holdsSenate: boolean): number {
 }
 
 /**
- * Quarter start, before the policy rate (1995-rework 6.3, 7.5): the levers move, and the fiscal push
- * sets `demand_mult = 1 + fiscal × US share`.
+ * Quarter start, before the policy rate (1995-rework 6.3, 7.5): the party drift moves the three
+ * national levers through `leversApply` (pivot 4.3), and the USA's share of world GDP is read for the
+ * fiscal push, `1 + fiscal × US share` (governing/levers.ts `fiscalDemandMult`).
  */
 export function eraPolicyJob(world: World, _ctx: JobCtx): void {
   const era = world.era;
@@ -49,12 +56,11 @@ export function eraPolicyJob(world: World, _ctx: JobCtx): void {
     officeHolders(p, kind).filter((c) => c.party === president.party).length;
   const step = leverStep(seats("House") >= HOUSE_MAJORITY, seats("Senate") >= SENATE_MAJORITY);
   const want = PARTY_LEVERS[president.party];
-  const usa = world.countries[p.country] as World["countries"][number];
-  const e = era.politics;
-  usa.corp_tax_rate += step * (want.corp_tax_rate - usa.corp_tax_rate);
-  e.fiscal += step * (want.fiscal - e.fiscal);
-  e.rate_bias += step * (want.rate_bias - e.rate_bias);
-  let gdp = 0.0;
-  for (const c of world.countries) gdp += c.gdp_usd;
-  e.demand_mult = 1.0 + e.fiscal * (gdp > 0.0 ? usa.gdp_usd / gdp : 0.0);
+  const l = world.levers;
+  leversApply(world, {
+    corp_tax: l.corp_tax + step * (want.corp_tax_rate - l.corp_tax),
+    fiscal: l.fiscal + step * (want.fiscal - l.fiscal),
+    rate_bias: l.rate_bias + step * (want.rate_bias - l.rate_bias),
+  });
+  era.politics.us_share = usGdpShare(world);
 }
