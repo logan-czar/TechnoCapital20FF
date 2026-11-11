@@ -187,7 +187,7 @@ describe("hydration", () => {
 });
 
 describe("fidelity tags", () => {
-  it("the run's end is the one Coarse-only job; no job is Full-only yet", () => {
+  it("the run's end and the Coarse campaigns are the Coarse-only jobs; no job is Full-only yet", () => {
     const s = scheduler();
     const tagged: string[] = [];
     for (const slot of SLOT_VALUES) {
@@ -195,7 +195,11 @@ describe("fidelity tags", () => {
         if (fidelity !== null) tagged.push(`${slot} ${name} ${fidelity}`);
       }
     }
-    expect(tagged).toEqual(["YearlyArchive era.reveal Coarse"]);
+    // Lane E's weekly Coarse campaigns too (pivot 6.6; D1040).
+    expect(tagged).toEqual([
+      "WeeklyJobs elections.coarse_campaigns Coarse",
+      "YearlyArchive era.reveal Coarse",
+    ]);
   });
 
   /** A 1995 game one day before a reveal date of 1 January 1996, in `fidelity`. */

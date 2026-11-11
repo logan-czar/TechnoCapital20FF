@@ -1,6 +1,7 @@
 // A historical world's controls (1995-rework 4.1, 8.2): the speed it is watched at, alert defaults
 // that do not stall it, its own alerts, and what a new game can be.
 import { describe, expect, it } from "vitest";
+import { electionsDailyJob } from "../src/elections/jobs.ts";
 import { eraActivateSectorsJob, eraMacroJob } from "../src/era/jobs.ts";
 import { newGameChoices, simApply, simControls, simNew, simWorld } from "../src/lib.ts";
 import { electionDay } from "../src/politics/calendar.ts";
@@ -95,7 +96,9 @@ describe("the alerts raised (1995-rework 8.2)", () => {
     const raised: AlertKind[] = [];
     const w = simWorld(start(2));
     const e = electionDay(1996);
+    // The vote is lane E's in a world with counties (D1040).
     politicsJob(w, ctxAt(e, raised));
+    electionsDailyJob(w, ctxAt(e, raised));
     expect(raised).toEqual(["Election"]);
     const old = simNew(data(), 1);
     if (!old.ok) throw new Error("did not load");

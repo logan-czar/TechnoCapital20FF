@@ -64,8 +64,8 @@ describe("M2 contracts: state", () => {
     expect(w.elections.calendar.next_general).toBeNull();
     expect(w.player).toBeNull();
     expect(w.geo).toEqual(geoStateEmpty());
+    // The 1995 world's start seats its office holders as persons and opens 1995's races (D1040).
     const h = simWorld(unwrap(simNew(data1995(), 1), "1995 world"));
-    expect(h.persons).toEqual(personsStateEmpty());
     expect(h.player).toBeNull();
     expect({ ...h.geo, counties: [] }).toEqual(geoStateEmpty());
   });
@@ -80,14 +80,8 @@ describe("M2 contracts: state", () => {
     expect(at("HourlyPlayer")).toBe(at("Alerts") - 1);
     expect(slotGroup("HourlyPlayer")).toBe("Hourly");
     const s = scheduler();
-    for (const slot of [
-      "DailyGeo",
-      "DailyCareers",
-      "DailyElections",
-      "HourlyPlayer",
-      "DailyPlayer",
-      "WeeklyJobs",
-    ] as const) {
+    // Lane E's DailyElections and WeeklyJobs hold its jobs (D1040).
+    for (const slot of ["DailyGeo", "DailyCareers", "HourlyPlayer", "DailyPlayer"] as const) {
       expect(schedulerJobs(s, slot), slot).toEqual([]);
     }
   });

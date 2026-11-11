@@ -286,13 +286,16 @@ describe("M1 contracts: the pivot views", () => {
     simApply(sim, { kind: "Resume" });
     for (let i = 0; i < 48; i++) simStep(sim);
     const views = simViews(sim);
+    // Ported since: v_races and v_returns (lane E, D1040). In this world without counties they stay
+    // empty, though rebuilt (so posted) on their cadence.
+    const ported = new Set<string>(["races", "returns"]);
     for (const n of PIVOT_VIEWS) {
-      expect(viewIsPorted(n), n).toBe(false);
+      expect(viewIsPorted(n), n).toBe(ported.has(n));
       expect(views[n].data, n).toEqual(VIEW_BUILDERS[n].empty());
-      expect(views[n].version, n).toBe(1);
+      if (!ported.has(n)) expect(views[n].version, n).toBe(1);
     }
     const patch = viewsPatchSince(views, postedViewsNone());
-    for (const n of PIVOT_VIEWS) expect(n in patch, n).toBe(false);
+    for (const n of PIVOT_VIEWS) expect(n in patch, n).toBe(ported.has(n));
     expect(data().counties.rows).toEqual([]);
   });
 });

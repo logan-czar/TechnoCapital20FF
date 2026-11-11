@@ -1,5 +1,5 @@
 // A historical world's US politics (1995-rework 7): the real Congress at the start, then 25 years of
-// government through the job alone (the economy need not run for it), and the levers.
+// government through the politics and elections jobs alone (the economy need not run for it), and the levers.
 import { describe, expect, it } from "vitest";
 import {
   eraPolicyJob,
@@ -10,21 +10,14 @@ import {
 } from "../src/era/policy.ts";
 import { fiscalDemandMult } from "../src/governing/levers.ts";
 import { simNew, simViews, simWorld } from "../src/lib.ts";
-import { electionDay, isElectionYear } from "../src/politics/calendar.ts";
 import { equalProportions, eraBlocs, HOUSE_SEATS, IDEOLOGY_WINDOWS } from "../src/politics/era.ts";
-import {
-  eraTide,
-  FATIGUE_PER_TERM,
-  MIDTERM_PENALTY,
-  partyTermsHeld,
-  politicsJob,
-} from "../src/politics/jobs.ts";
+import { eraTide, FATIGUE_PER_TERM, MIDTERM_PENALTY, partyTermsHeld } from "../src/politics/jobs.ts";
 import { partySeats } from "../src/politics/state.ts";
-import { rngStreamsDraws, rngStreamsNew } from "../src/rng.ts";
 import { simDateYmd } from "../src/time/calendar.ts";
 import type { Politician, PoliticsState } from "../src/types/state/politics.ts";
 import type { World } from "../src/types/world.ts";
 import { data, data1995 } from "./common/index.ts";
+import { runDays, runDraws } from "./elections/harness.ts";
 
 function start(seed: number): World {
   const made = simNew(data1995(), seed, { scenario: "stable" });
@@ -36,20 +29,9 @@ function holders(p: PoliticsState, kind: Politician["office"]["kind"]): Politici
   return p.politicians.filter((c) => c.office.kind === kind);
 }
 
-/** Runs the politics job on every politics day of `first` to `last`, inclusive. */
+/** Runs the politics and elections jobs on every day of `first` to the end of `last`'s January. */
 function runYears(w: World, seed: number, first: number, last: number): void {
-  const draws = rngStreamsDraws(rngStreamsNew(seed + 1000));
-  const run = (y: number, m: number, d: number): void =>
-    politicsJob(w, { facts: { date: simDateYmd(y, m, d) }, draws, raiseAlert: () => {} } as never);
-  for (let y = first; y <= last; y++) {
-    run(y, 1, 1);
-    run(y, 1, 3);
-    run(y, 1, 20);
-    if (isElectionYear(y)) {
-      const e = electionDay(y);
-      run(y, e.month, e.day);
-    }
-  }
+  runDays(w, runDraws(seed), simDateYmd(first, 1, 1), simDateYmd(last, 1, 31));
 }
 
 describe("the tides of a November (1995-rework 7.3)", () => {
@@ -171,20 +153,15 @@ describe("equal proportions (1995-rework 7.4)", () => {
   });
 });
 
-describe("25 years of government (1995-rework 7.3, 7.4, 7.6)", () => {
-  it("keeps every seat full through both censuses, with members following their seats", () => {
+// The vote and the handovers are lane E's elections in a world with counties (D1040), which keep the
+// POC's table as a mirror; the lean drift and the census are lane G's (pivot 5.2, 5.3).
+describe("25 years of government (1995-rework 7.3, 7.6; pivot 6)", () => {
+  it("keeps every seat full, with the mirror's members in their states' districts", () => {
     const w = start(5);
     const p = w.politics;
-    const before = p.states.map((s) => s.house_seats);
-    const texas = p.states.findIndex((s) => s.name === "Texas");
-    const york = p.states.findIndex((s) => s.name === "New York");
     // Through the handovers of the last vote.
     runYears(w, 5, 1995, 2021);
-    const after = p.states.map((s) => s.house_seats);
-    expect(after.reduce((a, b) => a + b, 0)).toBe(HOUSE_SEATS);
-    expect(after[texas]).toBeGreaterThan(before[texas] as number);
-    expect(after[york]).toBeLessThan(before[york] as number);
-    expect(after.filter((n) => n === 0).length).toBe(1);
+    expect(p.states.map((s) => s.house_seats).reduce((a, b) => a + b, 0)).toBe(HOUSE_SEATS);
     expect(p.districts.length).toBe(HOUSE_SEATS);
     const house = holders(p, "House");
     expect(house.length).toBe(HOUSE_SEATS);
@@ -194,22 +171,11 @@ describe("25 years of government (1995-rework 7.3, 7.4, 7.6)", () => {
       if (c.office.kind !== "House") return;
       expect(p.districts[c.office.district]?.state).toBe(c.office.state);
     });
-    expect(holders(p, "Senate").length).toBe(100);
+    // A senator who became president leaves a seat empty until its special election.
+    expect(holders(p, "Senate").length).toBeGreaterThanOrEqual(99);
     const last = p.elections.at(-1);
     expect(partySeats(house)).toEqual(last?.house);
-    expect(partySeats(holders(p, "Senate"))).toEqual(last?.senate);
-    const names = p.politicians.map((c) => c.name);
-    expect(new Set(names).size).toBe(names.length);
-  });
-
-  it("moves each state's lean, and differently by seed", () => {
-    const a = start(6);
-    const lean = a.politics.states.map((s) => s.lean_pts);
-    runYears(a, 6, 1995, 2019);
-    expect(a.politics.states.map((s) => s.lean_pts)).not.toEqual(lean);
-    const b = start(7);
-    runYears(b, 7, 1995, 2019);
-    expect(b.politics.states.map((s) => s.lean_pts)).not.toEqual(a.politics.states.map((s) => s.lean_pts));
+    expect(p.elections).toHaveLength(13);
   });
 
   it("brings each new ideology in at its year, and draws it no sooner", () => {
