@@ -813,7 +813,12 @@ def build_company_start(economy, zones):
     return rows
 
 
-def write_manifest(counts):
+# The county tables (pivot 5.1) are built by tools/world-1995/counties/build.py from downloads, after
+# this script: a rerun keeps the ones on disk. Rerun counties/build.py if a state's lean changed.
+COUNTY_FILES = {'counties': 'counties.csv', 'county-adjacency': 'county-adjacency.csv'}
+
+
+def write_manifest(counts, counties):
     manifest = {
         'id': '1995',
         'start_date': START_DATE,
@@ -823,7 +828,8 @@ def write_manifest(counts):
         'neutral_rate': NEUTRAL_RATE,
         'y10_term': Y10_TERM,
         'cabinet_seats': CABINET_SEATS,
-        'features': {'era': True, 'ai_boom': False, 'fixed_events': False, 'arrowhead': False},
+        'features': {'era': True, 'ai_boom': False, 'fixed_events': False, 'arrowhead': False,
+                     'counties': counties},
     }
     with open(OUT / 'manifest.json', 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(manifest, fh, indent=2)
@@ -837,9 +843,13 @@ def count_rows(name):
 def main():
     if sys.argv[1:] not in ([], ['--stage', 'proto']):
         sys.exit(__doc__)
+    kept = {name: (OUT / name).read_bytes() for name in COUNTY_FILES.values() if (OUT / name).exists()}
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
+    for name, data in kept.items():
+        (OUT / name).write_bytes(data)
+    counties = len(kept) == len(COUNTY_FILES)
     countries, scale = build_countries()
     economy, zones = build_country_tables(countries)
     build_provinces()
@@ -865,7 +875,8 @@ def main():
         'startup-events': 0,
         'politics-usa': count_rows('politics-usa.csv'),
         'politics-usa-offices': count_rows('politics-usa-offices.csv'),
-    })
+        **({key: count_rows(name) for key, name in COUNTY_FILES.items()} if counties else {}),
+    }, counties)
     print(f'wrote {OUT}: {count_rows("countries.csv")} countries, {count_rows("companies.csv")} companies')
 
 

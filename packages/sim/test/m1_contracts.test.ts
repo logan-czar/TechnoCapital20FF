@@ -96,7 +96,8 @@ describe("M1 contracts: World fields", () => {
   it("a historical world is Coarse", () => {
     const w = simWorld(unwrap(simNew(data1995(), 1), "1995 world"));
     expect(w.fidelity).toBe("Coarse");
-    expect(w.geo.counties).toEqual([]);
+    // Lane S1's county data (pivot 5.1): geo_1995.test.ts holds the rest.
+    expect(w.geo.counties.length).toBe(3142);
     expect(w.levers.fiscal).toBe(0);
   });
 

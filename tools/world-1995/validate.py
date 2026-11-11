@@ -6,6 +6,7 @@ generator. Prints each problem and then OK or a count; exits non-zero on any pro
     python tools/world-1995/validate.py
 """
 import csv
+import importlib.util
 import json
 import math
 import re
@@ -28,6 +29,8 @@ START_DEMS = (205, 47)   # 1995-rework 7.2: the 104th Congress, Vermont's indepe
 PROVINCES = 3963
 RUN_YEARS = 25
 ZONE_TRACK_MAX = 0.15   # sim-data checks.ts ZONE_TRACK_MAX
+# The county tables (pivot 5.1): tools/world-1995/counties builds and checks them; real place names.
+COUNTY_FILES = {'counties.csv', 'county-adjacency.csv'}
 REGION_SLUGS = ['east-asia-oceania', 'europe', 'latin-america', 'mena', 'north-america',
                 'russia-central-asia', 'south-asia', 'sub-saharan-africa']
 
@@ -37,13 +40,25 @@ def read(path):
         return list(csv.DictReader(fh))
 
 
+def county_errors():
+    """tools/world-1995/counties/validate.py's problems with the county tables (pivot 5.1, 5.4)."""
+    path = Path(__file__).resolve().parent / 'counties' / 'validate.py'
+    spec = importlib.util.spec_from_file_location('counties_validate', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.check()
+
+
 def main():
     errors = []
     manifest = json.loads((OUT / 'manifest.json').read_text(encoding='utf-8'))
     if manifest['id'] != '1995' or manifest['start_date'] != '1995-01-01':
         errors.append('manifest: not the 1995 world')
-    if manifest['features'] != {'era': True, 'ai_boom': False, 'fixed_events': False, 'arrowhead': False}:
-        errors.append(f'manifest: expected an era world with no scripted parts, got {manifest["features"]}')
+    if manifest['features'] != {'era': True, 'ai_boom': False, 'fixed_events': False, 'arrowhead': False,
+                                'counties': True}:
+        errors.append('manifest: expected an era world with counties and no scripted parts, '
+                      f'got {manifest["features"]}')
+    errors += county_errors()
 
     countries = read(OUT / 'countries.csv')
     isos = {c['iso3'] for c in countries}
@@ -103,6 +118,8 @@ def main():
             errors.append(f'companies: {a["name"]} is more than 20% from its source')
     patterns = [(a['analogue'], re.compile(r'\b' + re.escape(a['analogue']) + r'\b')) for a in authored]
     for path in sorted(OUT.rglob('*.csv')):
+        if path.name in COUNTY_FILES:
+            continue   # real counties, some named like a firm (Ford County, Marathon County)
         text = path.read_text(encoding='utf-8')
         for name, pat in patterns:
             # An ordinary word or surname counts only among the companies.
