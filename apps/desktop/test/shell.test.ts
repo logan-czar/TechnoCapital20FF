@@ -26,6 +26,7 @@ describe("parseFlags", () => {
       testHooks: false,
       devServer: null,
       hidden: false,
+      background: false,
     });
   });
 
