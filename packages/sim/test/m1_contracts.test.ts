@@ -286,8 +286,8 @@ describe("M1 contracts: the pivot views", () => {
     simApply(sim, { kind: "Resume" });
     for (let i = 0; i < 48; i++) simStep(sim);
     const views = simViews(sim);
-    // The M2 lanes port theirs: v_people is lane C's (D1041).
-    const unported = PIVOT_VIEWS.filter((n) => n !== "people");
+    // The M2 lanes port theirs: v_people is lane C's (D1041), the two geo views lane G's (D1039).
+    const unported = PIVOT_VIEWS.filter((n) => n !== "people" && n !== "districts" && n !== "usmap_layers");
     expect(viewIsPorted("people")).toBe(true);
     for (const n of unported) {
       expect(viewIsPorted(n), n).toBe(false);

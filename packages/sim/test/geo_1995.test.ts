@@ -21,11 +21,11 @@ describe("1995 world: counties", () => {
   const at = (id: CountyId): County => counties[id] as County;
   const byFips = new Map(counties.map((c, i) => [c.fips, i as CountyId] as const));
 
-  it("loads 3,142 counties in FIPS order, with no plan yet", () => {
+  it("loads 3,142 counties in FIPS order", () => {
     expect(counties.length).toBe(COUNTY_COUNT);
     const fips = counties.map((c) => c.fips);
     expect(fips).toEqual([...new Set(fips)].sort());
-    expect(w.geo.plans).toEqual([]);
+    // The start's plans are lane G's (test/geo/districts.test.ts, D1039).
     expect(counties.reduce((n, c) => n + c.population, 0)).toBe(US_POP_1990);
   });
 
