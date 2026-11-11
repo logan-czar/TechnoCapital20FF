@@ -17,7 +17,9 @@
     "dev": "corepack pnpm@10.20.0 --filter @tc20ff/web dev",
     "headless": "corepack pnpm@10.20.0 --filter @tc20ff/headless start",
     "desktop:dev": "corepack pnpm@10.20.0 --filter @tc20ff/desktop dev",
-    "desktop:build": "corepack pnpm@10.20.0 --filter @tc20ff/desktop build"
+    "desktop:build": "corepack pnpm@10.20.0 --filter @tc20ff/desktop build",
+    "e2e": "corepack pnpm@10.20.0 --filter @tc20ff/desktop e2e",
+    "e2e:smoke": "corepack pnpm@10.20.0 --filter @tc20ff/desktop e2e:smoke"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",

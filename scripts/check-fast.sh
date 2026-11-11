@@ -4,7 +4,8 @@
 # (committed, uncommitted and untracked) and runs only: install (if a lockfile or package.json
 # changed), incremental tsc -b, Biome on the changed files, the sim boundary scan, Vitest for the
 # projects the change can reach (without the *.slow.test.* files), and the data checks of a world
-# whose data or generator changed.
+# whose data or generator changed. With no arguments it also runs the desktop app's end-to-end smoke
+# suite (`pnpm e2e:smoke`: mock sim, under a minute) when apps/desktop or apps/web/src/os changed.
 #
 #   scripts/check-fast.sh                     detect from git
 #   scripts/check-fast.sh sim web             these Vitest projects (sim-data sim sim-host headless web desktop mapgen)
@@ -51,6 +52,7 @@ if has '^(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|vitest\.config\.ts|
 fi
 
 # Arguments override the detection: project names, test paths, `all` or `none`.
+nargs=$#
 paths=()
 if [ $# -gt 0 ]; then
   projects=""
@@ -100,6 +102,12 @@ elif [ -n "$projects" ]; then
   CHECK_FAST_SKIP_SLOW=1 pnpm exec vitest run "${args[@]}"
 else
   skip test "no project touched"
+fi
+
+if [ "$nargs" -eq 0 ] && has '^(apps/desktop/|apps/web/src/os/)'; then
+  step "e2e smoke"; pnpm e2e:smoke
+else
+  skip "e2e smoke" "arguments given, or apps/desktop and apps/web/src/os unchanged"
 fi
 
 if has '^docs/design/(data|tools/mvp-data)/'; then

@@ -1,0 +1,10 @@
+[
+  { "wait": { "text": "New game: 1995" } },
+  { "type": { "css": ".new-game-foot input", "value": "7" } },
+  { "click": { "css": ".new-game-choices button", "nth": 0 } },
+  { "wait": { "testId": "desktop" } },
+  { "eval": "sim.control({ kind: 'Step', hours: 168 })" },
+  { "wait": { "expr": "sim.clock.paused && sim.ticks >= 168", "timeout": 60000 } },
+  { "eval": "sim.saveSlot('drive-example')" },
+  { "eval": "({ now: sim.clock.now, date: sim.clock.date })" }
+]

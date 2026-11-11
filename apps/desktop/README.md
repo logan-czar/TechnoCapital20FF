@@ -113,3 +113,107 @@ A running sim holds each Frame until the page has answered the one before, so N 
 - `--mock` plays the 2020 world and starts no sim process.
 
 Playwright's Electron launcher takes the same arguments: the app folder (`apps/desktop`) followed by the flags.
+
+## End-to-end tests
+
+`apps/desktop/e2e` holds Playwright tests that drive the built app itself, through Playwright's Electron launcher. No browser is downloaded or used: the scripts set `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1`, and `@playwright/test` only fetches a browser when asked with `playwright install`, which nothing here does.
+
+From the repository root:
+
+| Command | What it does |
+|---|---|
+| `corepack pnpm@10.20.0 e2e:smoke` | The smoke suite, `@smoke`: the mock sim, about 20 s. |
+| `corepack pnpm@10.20.0 e2e` | Everything: `@smoke`, the screenshot checks `@visual`, and the real-sim suite `@real`. It takes the machine lock (`scripts/heavy`), because it launches the real sim. |
+| `corepack pnpm@10.20.0 e2e -- --visual` | One suite: `--smoke`, `--visual` or `--real`. Anything else goes to Playwright: `--update-snapshots`, `--repeat-each 3`, `-g "phone"`. |
+
+Each test launches its own app with `--user-data-dir=<a fresh folder under apps/desktop/.scratch/e2e/ud> --window-size=1600x900 --force-device-scale-factor=1 --test-hooks`, plus `--mock` for the smoke and screenshot suites. One worker runs them in turn. The window is shown: a `--hidden` window draws no frames by itself, so a click waits about 1.5 s and a screenshot can time out. A test's app is closed when the test ends, the process tree is killed if the close hangs, and the run fails if any process of it is still alive at the end. A failed test leaves its user-data folder, and Playwright's report of it, under `apps/desktop/.scratch/e2e`.
+
+| Suite | File | What it checks |
+|---|---|---|
+| `@smoke` | `e2e/smoke.spec.ts` | The app boots to the desktop. The Debug workspace opens from its icon and from the launcher. A window is focused, minimised, restored, maximised and closed. A real pointer resizes a window, drags it by its title bar, cannot take it off the desktop, and snaps it to each half and to the whole. Step, the speeds and Pause move the taskbar clock. The phone goes up and down and shows a notification once the mock has run. A relaunch keeps the window layout. |
+| `@visual` | `e2e/visual.spec.ts` | Screenshots of a mock game that has not moved: the empty desktop, the taskbar, the launcher's menu, the empty phone, the Debug workspace's window (its map and the clock covered). |
+| `@real` | `e2e/real.spec.ts` | The 1995 world on the real sim: a new game from the picker, a day stepped, a save to a slot, a relaunch with `--save`, the same clock. |
+
+One smoke test is marked as expected to fail, "KNOWN FAULT: a bottom resize handle cannot be pressed inside the frame": the list shows it with a cross and the run still passes. When the shell fixes the fault the run fails with "expected to fail, but passed"; delete the test's `test.fail()` line then.
+
+The screenshot baselines are in `e2e/__screenshots__`, named by platform (`desktop-win32.png`). Only Windows has them so far; on another platform the first run writes its own and fails, and the second compares. After a change that is meant to be seen, write them again with `corepack pnpm@10.20.0 e2e -- --visual --update-snapshots` and look at the new files before committing them. `E2E_SCREENSHOT_STRICT=1` allows no pixel to differ, to measure how steady they are.
+
+Both commands build the app first when its build is missing or stale, and only then. `e2e/run.ts` keeps a hash of every file the build reads in `dist/.e2e-inputs`: the sources of the shell, of `apps/web` and of the three sim packages, their `package.json` files and the lockfile, by name and content. The build is stale when one of its four main outputs is missing or the hash differs. A build made by hand with `desktop:build` has no hash file; it is judged by time (stale when any input is newer than its oldest main output) and given a hash file if it is good. The world and map data are not inputs, since the unpackaged app reads them from the repository. `--build` and `--no-build` overrule the check.
+
+`scripts/check-fast` runs the smoke suite when it is called with no arguments and a file under `apps/desktop/` or `apps/web/src/os/` changed.
+
+The test files are checked by their own `e2e/tsconfig.json`, which the root `tsc -b` does not reference: `corepack pnpm@10.20.0 exec tsc -p apps/desktop/e2e`.
+
+## Driving the app by hand
+
+`scripts/drive.ts` launches the built app, does a list of steps in it and prints one line of JSON per step. It is for an agent (or a person) who wants to look at the running game without writing a test. It always closes the app: after the last step, after a step that fails, when the whole run times out, and on Ctrl+C. Then it kills anything of the app that is still alive and says so in its last line.
+
+```
+node apps/desktop/scripts/drive.ts --mock | --save=<file> [options] --steps <file.json | inline JSON>
+```
+
+It is plain erasable TypeScript: Node 24 runs it as it is, and so does `tsx`.
+
+| Option | Effect |
+|---|---|
+| `--mock` | The mock sim: the 2020 world, started by itself, paused at hour 0. |
+| `--save=<file>` | The real sim, loaded from this save, paused. |
+| neither | The real sim at the new-game picker of the 1995 world. |
+| `--size WxH` | The window's content size. The default is 1600x900. |
+| `--timeout <ms>` | The limit for the whole run. The default is 180000. One step may take 15 s. |
+| `--user-data-dir=<dir>` | Keeps the app's files (its saves, the desktop's layout) in this folder. Without it a fresh folder under `apps/desktop/.scratch/drive` is used and removed afterwards. |
+| any other `--flag` | Goes to the app: `--world=2020`, `--paused`. |
+
+Anything but `--mock` launches the real sim: run it through the machine lock, `scripts/heavy.sh node apps/desktop/scripts/drive.ts ...`.
+
+A step is an object with one key. A target is a `data-testid` given as a bare string, or `{"testId": ...}`, `{"text": ...}` (add `"exact": true` for the whole text) or `{"css": ...}`; `"nth"` picks one of several matches, counting from 0.
+
+| Step | What it does |
+|---|---|
+| `{"click": target}`, `{"dblclick": target}` | A real click or double click in the middle of the target. |
+| `{"type": "text"}` | Types with the keyboard into whatever has the focus. `{"type": {"css": "input", "value": "7"}}` puts the value in that field in place of what it held. |
+| `{"press": "Space"}` | A key or chord by Playwright's names: `"."`, `"Escape"`, `"Control+ArrowLeft"`. With a target and `"key"`, the target is focused first. |
+| `{"wait": 300}` | Waits that many milliseconds. `{"wait": {"testId": "win-debug"}}` waits for a target to be visible (`"state": "hidden"` for gone). `{"wait": {"expr": "sim.clock.paused"}}` waits for an expression to be true. `"timeout"` changes the 15 s limit. |
+| `{"drag": {"from": point, "to": point}}` | Presses at `from`, moves to `to` and releases: a real pointer drag. A point is `[x, y]` in page pixels, or a target, held in its middle or at `"at": [x, y]` from its top left. |
+| `{"screenshot": "path.png"}` | A PNG of the page; with a target, of that element. A relative path is from the current folder. |
+| `{"eval": "expr"}` | Evaluates JavaScript in the page with `sim` set to `window.__tcSim`, waits for it if it is a promise, and prints its value. `document` and `tcHost` are in reach too. |
+
+The output is one JSON object per line. The first says the app is up: its process id, the window's size, and `state`: `game` when the desktop is up, `picker` at the new-game picker, `fatal` when the sim stopped. Then one per step with `ok`, the milliseconds it took and what it found (`value`, `path`, the drag's two points). A failed step has `error` and a `screenshot` of the page as it was (`apps/desktop/.scratch/drive/failure.png`), and the steps after it do not run. The last line has `done`, `ok`, how many steps ran, and `closed`: whether the app closed when asked, which processes had to be killed, and `stray`, which is empty unless a kill failed. The exit code is 0 when every step passed and nothing was left running, 1 otherwise, 2 for bad arguments.
+
+Things to know when writing steps:
+
+- Test ids of the shell: `desktop`, `taskbar`, `app-<id>` (a desktop icon: double click it), `tb-launcher` and `launch-<id>`, `win-<id>` with `-min`, `-max`, `-close`, `-address` and `-edge-<n|s|e|w|ne|nw|se|sw>`, `tb-win-<id>`, `tb-step`, `tb-pause`, `tb-speed-<1 to 6>`, `tb-clock`, `tb-phone`, `phone`, `phone-down`, `phone-notifications`, `debug-workspace`. The only app so far is `debug`.
+- `sim.clock` is the clock of the last Frame: `now` (game hours from 00:00 on 1 Jan 2020, so negative in the 1995 world), `date`, `hour`, `paused`, `selected_speed`. `sim.ticks` counts the hours run since the launch. `sim.control({kind: "Step", hours: 24})`, `sim.saveSlot("name")` and the other calls of `apps/web/src/sim/client.ts` return their reply.
+- The mock pauses itself at hour 24 for its first alert.
+- A title bar is dragged by its left part: `{"testId": "win-debug", "at": [120, 14]}`. Released within 12 px of the left or right edge of the desktop the window takes that half; at the top edge it is maximised.
+- In PowerShell, put the steps in a file: Windows PowerShell 5.1 drops the double quotes of inline JSON handed to a program.
+
+### Example: a look round the mock
+
+`e2e/examples/mock-tour.json` opens the Debug workspace from the launcher, makes its window smaller by the top left corner, drags it by the title bar, runs the mock at full speed until its first alert pauses it, picks up the phone, takes a screenshot and reads the clock:
+
+```
+node apps/desktop/scripts/drive.ts --mock --steps apps/desktop/e2e/examples/mock-tour.json
+```
+
+It takes about 4 s. The window ends at x 180, y 66, 1167 wide and 677 high; the last step prints `{"now":24,"date":{"year":2020,"month":1,"day":2},"hour":0,"frames":3}`. The screenshot, `apps/desktop/.scratch/drive/mock-tour.png`, shows the Debug workspace's window with the political map, part of the wallpaper's orrery round it, the phone up on the right with two notifications ("Paused by Earnings day", "Earnings day (Q4 2019)"), and the taskbar with Max picked and the clock at 00:00 on Thu 02 Jan 2020.
+
+### Example: make a save, then start from it
+
+`e2e/examples/new-game-save.json` starts a 1995 game with seed 7 from the picker, steps a week and saves it to the slot `drive-example`. The user-data folder is named, so the save outlives the run:
+
+```
+scripts/heavy.sh node apps/desktop/scripts/drive.ts --user-data-dir=apps/desktop/.scratch/drive/example-ud --steps apps/desktop/e2e/examples/new-game-save.json
+```
+
+Its last step prints `{"now":-218976,"date":{"year":1995,"month":1,"day":8}}`, and the save is `apps/desktop/.scratch/drive/example-ud/saves/drive-example.tcsave` (about 650 KB). `e2e/examples/load-save.json` then starts from that file, reads the clock, opens the Debug workspace, switches it to Pdoomberg and takes a screenshot:
+
+```
+scripts/heavy.sh node apps/desktop/scripts/drive.ts --save=apps/desktop/.scratch/drive/example-ud/saves/drive-example.tcsave --steps apps/desktop/e2e/examples/load-save.json
+```
+
+Its second step prints `{"now":-218976,"date":{"year":1995,"month":1,"day":8},"paused":true}`: the clock that was saved. The screenshot, `apps/desktop/.scratch/drive/load-save.png`, shows the Debug workspace's window filled by Pdoomberg's quotes page: about thirty companies of the 1995 world with ticker, industry, country, exchange, last price, estimate band and rating, its status line reading "SUN 08 JAN 1995 00:00 PAUSED", and the taskbar clock at 00:00 on Sun 08 Jan 1995. The two runs take about 2 s and 4 s.
+
+## The machine lock
+
+`scripts/heavy.sh <command...>` and `scripts/heavy.ps1 <command...>` run a command while holding the machine-wide lock for heavy work, so that only one such job runs at a time across every worktree. The lock is the directory `.claude/scratch/heavy.lock` under the main repository's root, made with `mkdir`; `HEAVY_LOCK_DIR` names another. While someone else holds it the script waits and says who has it. It removes the lock when the command ends, however it ends. A lock that nobody has touched for two hours is removed with a warning. The scripts' headers list the other settings. `pnpm e2e` goes through it by itself; a command run under it sees `HEAVY_LOCK_HELD=1` and does not wait for the lock again.
