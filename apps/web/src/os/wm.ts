@@ -47,6 +47,12 @@ export interface Win {
   prev: "normal" | "maximised";
   /** The rect from before a snap, which `restore` brings back; null when not snapped. */
   restore: Rect | null;
+  /**
+   * The half of the desktop the window is snapped to, while it is (D1050). A snapped window is
+   * given the half of every new desktop size, so it is not left at the old pixel width; a move or
+   * resize ends the snap. Absent in a desktop saved before M2.
+   */
+  snap?: SnapSide | null;
 }
 
 export interface WmState {
@@ -102,12 +108,16 @@ export function wmInit(bounds: Size = DEFAULT_BOUNDS): WmState {
 
 const clamp = (v: number, lo: number, hi: number): number => (v < lo ? lo : v > hi ? hi : v);
 
-/** `rect` brought wholly inside `bounds`, no smaller than the minimum (unless the desktop is). */
+/**
+ * `rect` brought wholly inside `bounds`, no smaller than the minimum (unless the desktop is), in
+ * whole pixels: a pointer on a scaled display reports fractions, which the window manager does not
+ * keep (D1050).
+ */
 export function fitRect(rect: Rect, bounds: Size): Rect {
-  const w = clamp(rect.w, Math.min(MIN_W, bounds.w), bounds.w);
-  const h = clamp(rect.h, Math.min(MIN_H, bounds.h), bounds.h);
-  const x = clamp(rect.x, 0, bounds.w - w);
-  const y = clamp(rect.y, 0, bounds.h - h);
+  const w = clamp(Math.round(rect.w), Math.min(MIN_W, bounds.w), bounds.w);
+  const h = clamp(Math.round(rect.h), Math.min(MIN_H, bounds.h), bounds.h);
+  const x = clamp(Math.round(rect.x), 0, bounds.w - w);
+  const y = clamp(Math.round(rect.y), 0, bounds.h - h);
   return x === rect.x && y === rect.y && w === rect.w && h === rect.h ? rect : { x, y, w, h };
 }
 
@@ -115,7 +125,10 @@ export function fitRect(rect: Rect, bounds: Size): Rect {
  * `start` with edge `edge` dragged by (dx, dy): the opposite edge stays where it is, the window
  * never gets smaller than the minimum and the dragged edge never leaves the desktop.
  */
-export function resizeBy(start: Rect, edge: Edge, dx: number, dy: number, bounds: Size): Rect {
+export function resizeBy(start: Rect, edge: Edge, dxRaw: number, dyRaw: number, bounds: Size): Rect {
+  // Whole pixels, so the edge that does not move stays where it is (D1050).
+  const dx = Math.round(dxRaw);
+  const dy = Math.round(dyRaw);
   const minW = Math.min(MIN_W, bounds.w);
   const minH = Math.min(MIN_H, bounds.h);
   let left = start.x;
@@ -131,10 +144,10 @@ export function resizeBy(start: Rect, edge: Edge, dx: number, dy: number, bounds
 
 /** The rect of a window snapped to a half of the desktop. */
 export function snapRect(side: SnapSide, bounds: Size): Rect {
-  const half = Math.floor(bounds.w / 2);
-  return side === "left"
-    ? { x: 0, y: 0, w: half, h: bounds.h }
-    : { x: half, y: 0, w: bounds.w - half, h: bounds.h };
+  const width = Math.round(bounds.w);
+  const height = Math.round(bounds.h);
+  const half = Math.floor(width / 2);
+  return side === "left" ? { x: 0, y: 0, w: half, h: height } : { x: half, y: 0, w: width - half, h: height };
 }
 
 /** Where a new window of `size` opens: each one a step down and right of the last, wrapping. */
@@ -220,7 +233,7 @@ export function wmReduce(s: WmState, a: WmAction): WmState {
       return update(s, a.id, (w) => {
         if (w.state !== "normal") return w;
         const rect = fitRect({ ...w.rect, x: a.x, y: a.y }, s.bounds);
-        return rect.x === w.rect.x && rect.y === w.rect.y ? w : { ...w, rect };
+        return rect.x === w.rect.x && rect.y === w.rect.y ? w : { ...w, rect, snap: null };
       });
     case "resize":
       return update(s, a.id, (w) => {
@@ -228,7 +241,7 @@ export function wmReduce(s: WmState, a: WmAction): WmState {
         const rect = fitRect(a.rect, s.bounds);
         const same = rect.x === w.rect.x && rect.y === w.rect.y && rect.w === w.rect.w && rect.h === w.rect.h;
         // A size the player chose replaces the one a snap would bring back.
-        return same ? w : { ...w, rect, restore: null };
+        return same ? w : { ...w, rect, restore: null, snap: null };
       });
     case "minimise":
       return update(s, a.id, (w) =>
@@ -251,7 +264,7 @@ export function wmReduce(s: WmState, a: WmAction): WmState {
         (w) => {
           if (w.state === "minimised") return shown(w);
           if (w.state === "maximised") return { ...w, state: "normal" };
-          return w.restore ? { ...w, rect: fitRect(w.restore, s.bounds), restore: null } : w;
+          return w.restore ? { ...w, rect: fitRect(w.restore, s.bounds), restore: null, snap: null } : w;
         },
         true,
       );
@@ -264,6 +277,7 @@ export function wmReduce(s: WmState, a: WmAction): WmState {
           state: "normal",
           rect: snapRect(a.side, s.bounds),
           restore: w.restore ?? w.rect,
+          snap: a.side,
         }),
         true,
       );
@@ -283,21 +297,28 @@ export function wmReduce(s: WmState, a: WmAction): WmState {
       return wmReduce(s, { kind: "focus", id: a.id });
     }
     case "bounds": {
-      if (a.size.w === s.bounds.w && a.size.h === s.bounds.h) return s;
+      const size = { w: Math.round(a.size.w), h: Math.round(a.size.h) };
+      if (size.w === s.bounds.w && size.h === s.bounds.h) return s;
       const windows = s.windows.map((w) => {
-        // A snapped window stays a half of the desktop, whatever the desktop's size.
-        const snapped =
-          w.restore !== null && w.rect.y === 0 && w.rect.h === s.bounds.h
-            ? w.rect.x === 0
-              ? snapRect("left", a.size)
-              : snapRect("right", a.size)
-            : null;
-        const rect = snapped ?? fitRect(w.rect, a.size);
+        // A snapped window stays a half of the desktop, whatever the desktop's size (D1050).
+        const side = snappedSide(w, s.bounds);
+        const rect = side === null ? fitRect(w.rect, size) : snapRect(side, size);
         return rect === w.rect ? w : { ...w, rect };
       });
-      return { ...s, bounds: a.size, windows };
+      return { ...s, bounds: size, windows };
     }
   }
+}
+
+/**
+ * The half a window is snapped to: its `snap`, or for a window saved before that field existed (a
+ * rect to restore, and a full-height half of `bounds`) the half it fills.
+ */
+function snappedSide(w: Win, bounds: Size): SnapSide | null {
+  if (w.snap !== undefined) return w.snap;
+  if (w.restore === null || w.rect.y !== 0 || w.rect.h !== bounds.h) return null;
+  if (w.rect.x === 0) return "left";
+  return w.rect.x + w.rect.w === bounds.w ? "right" : null;
 }
 
 // ---------------------------------------------------------------- saved desktops
@@ -331,15 +352,17 @@ export function wmFromSaved(x: unknown, bounds: Size, known: (app: string) => bo
     const rect = rectOf(w.rect);
     if (!rect) continue;
     const state: WinState = w.state === "minimised" || w.state === "maximised" ? w.state : "normal";
+    const snap: SnapSide | undefined = w.snap === "left" || w.snap === "right" ? w.snap : undefined;
     wins.push({
       id: w.id,
       app: w.app,
       route: typeof w.route === "string" ? w.route : null,
-      rect: fitRect(rect, bounds),
+      rect: snap === undefined ? fitRect(rect, bounds) : snapRect(snap, bounds),
       z: num(w.z) ? w.z : 0,
       state,
       prev: w.prev === "maximised" ? "maximised" : "normal",
       restore: rectOf(w.restore),
+      ...(snap === undefined ? {} : { snap }),
     });
   }
   // Renumber the stacking order from 1, ties to the earlier window.
