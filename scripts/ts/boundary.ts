@@ -48,9 +48,21 @@ const RULES: Rule[] = [
     allow: ["packages/sim-data/src/node.ts"],
   },
   {
+    roots: ["packages/sim-host/src"],
+    pattern: /(?:from|import\()\s*["']node:|require\(\s*["']node:/,
+    why: "the host also runs in the browser's Web Worker: node: imports belong in sim-host/src/node.ts only (D1037)",
+    allow: ["packages/sim-host/src/node.ts"],
+  },
+  {
     roots: ["apps/web/src"],
     pattern: /@tc20ff\/sim\/internal/,
     why: "the UI reads only the views (spec 9)",
+  },
+  {
+    // The M2 app lanes (D1037): an app imports another app only through the shared helpers.
+    roots: ["apps/web/src/apps"],
+    pattern: /from\s+["']\.\.\/(?!_shared\/)[a-z]+\//,
+    why: "an app imports only its own folder and apps/_shared (pivot-lanes.md, D1037)",
   },
 ];
 

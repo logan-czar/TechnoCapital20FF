@@ -10,6 +10,7 @@
 
 import {
   type ActError,
+  type ChamberRow,
   type CompanyId,
   type ContractBook,
   type ContractId,
@@ -17,7 +18,10 @@ import {
   dateTimeDate,
   dateTimeHour,
   dateTimeWeekday,
+  districtRefParts,
   type EntityRef,
+  type FixedPauses,
+  fixedPausesDefault,
   type HandleId,
   type InstrumentId,
   type NotificationRow,
@@ -31,6 +35,8 @@ import {
   type RollCallVotes,
   type SimDate,
   type SimViews,
+  type SliceData,
+  type SliceKey,
 } from "@tc20ff/sim";
 import {
   type AccountState,
@@ -58,6 +64,7 @@ import {
   coverage,
   type FeedState,
   feedView,
+  frontPagesOf,
   genFeed,
   type MockOutlet,
   OUTLET,
@@ -114,6 +121,7 @@ import {
   pollsDue,
   pollsView,
   primaryPolls,
+  statePollsDue,
 } from "./fixtures/polls.ts";
 import {
   ballotCandidate,
@@ -150,6 +158,7 @@ import { MockRng, unitHash } from "./fixtures/rng.ts";
 import {
   CERTIFICATION_DATE,
   MOCK_HISTORY_START,
+  PARTIES,
   RECOUNT_CERTIFICATION_DATE,
   SCRIPT,
   ymd,
@@ -203,7 +212,11 @@ export interface PivotHooks {
 }
 
 /** Why the pivot world pauses the game (pivot 2.4): election day at 00:00, or any other pausing notice. */
-export type PivotPause = "ElectionDay" | "Notice";
+/** A notification that pauses the game (pivot 2.4): its v_notifications row, and whether it is election day. */
+export interface PivotPause {
+  id: number;
+  election: boolean;
+}
 
 /** A player action and the tick it was applied after (pivot 16.1: actions are recorded for replay). */
 export interface RecordedAction {
@@ -250,6 +263,7 @@ export class MockPivot {
   private readonly rng: MockRng;
   private readonly dirty = new Set<PivotViewName>(PIVOT_VIEWS);
   private paused: PivotPause | null = null;
+  private fixedPauses: FixedPauses = fixedPausesDefault();
   private readonly queue: ScriptedAction[];
   private readonly rumourPosts = { real: -1, fake: -1 };
   private fakeArticle = -1;
@@ -289,7 +303,8 @@ export class MockPivot {
     // The map starts with the last presidential vote: each county's lean, a little off (pivot 15.3).
     this.lastCounty = this.geo.counties.map((c) => {
       const margin = round((c.lean - 1.5 + 6 * (unitHash(c.fips, 3) - 0.5)) * 10) / 10;
-      return { winner: (margin >= 0 ? "Democrats" : "Republicans") as Party, margin };
+      const votes = round(c.population * c.turnout);
+      return { winner: (margin >= 0 ? "Democrats" : "Republicans") as Party, margin, votes };
     });
     this.callers = this.feed.outlets
       .filter((o) => o.kind !== "National" || o.reliability > 0.5 || o.id === OUTLET.careless)
@@ -340,6 +355,11 @@ export class MockPivot {
     return p;
   }
 
+  /** The fixed pauses the player has on (`SetFixedPause`; D1037): a notification of one switched off does not pause. */
+  setFixedPauses(on: FixedPauses): void {
+    this.fixedPauses = { ...on };
+  }
+
   setOmniscient(on: boolean): void {
     if (on === this.omniscient) return;
     this.omniscient = on;
@@ -360,11 +380,16 @@ export class MockPivot {
       case "polls":
         return pollsView(this.polling, this.polls, o);
       case "forecast":
-        return forecastView(this.forecastDate === null ? null : this.model, this.pol, this.forecastDate);
+        return forecastView(
+          this.forecastDate === null ? null : this.model,
+          this.pol,
+          this.geo,
+          this.forecastDate,
+        );
       case "races":
         return racesView(this.pol, this.geo, o);
       case "people":
-        return peopleView(this.pol.people, o);
+        return peopleView(this.pol.people, o, this.chambers());
       case "records":
         return recordsView(this.records);
       case "markets":
@@ -382,7 +407,48 @@ export class MockPivot {
     }
   }
 
-  // The slices the view types describe but the protocol cannot carry yet (README).
+  /** The chambers' make-up now (v_people `chambers`; D1037): a Senate tie goes to the president's party. */
+  private chambers(): ChamberRow[] {
+    const partyOf = (id: PersonId) => (this.pol.people[id] as MockPerson).party;
+    const row = (chamber: "House" | "Senate", parties: (Party | null)[], tie: Party | null): ChamberRow => {
+      const seats = PARTIES.map((party) => ({ party, seats: parties.filter((p) => p === party).length }));
+      const [a, b] = seats as [{ party: Party; seats: number }, { party: Party; seats: number }];
+      return {
+        chamber,
+        parties: seats,
+        independents: parties.filter((p) => p === null).length,
+        vacant: 0,
+        majority: a.seats > b.seats ? a.party : b.seats > a.seats ? b.party : tie,
+      };
+    };
+    return [
+      row("House", this.pol.reps.map(partyOf), null),
+      row(
+        "Senate",
+        this.pol.senators.map((s) => s.party),
+        this.pol.incumbent_party,
+      ),
+    ];
+  }
+
+  // The slices of the pivot views (protocol.ts `SliceKey`; D1037).
+
+  /** The slice `key` names now; null for a key of a view the mock does not slice. */
+  slice(key: SliceKey): SliceData {
+    if (!("slice" in key)) return null;
+    switch (key.slice) {
+      case "book":
+        return this.book(key.contract);
+      case "history":
+        return this.history(key.contract);
+      case "counties":
+        return this.countyReturns(key.race);
+      case "votes":
+        return this.rollCall(key.roll_call);
+      case "front_pages":
+        return frontPagesOf(this.feed, key.date);
+    }
+  }
 
   /** A contract's depth (`ContractBook`, the slice of v_markets). */
   book(contract: ContractId): ContractBook | null {
@@ -428,8 +494,13 @@ export class MockPivot {
         return this.geo.states.some((s) => s.id === n);
       case "County":
         return n < this.geo.counties.length;
-      case "District":
-        return n < this.geo.districts.length;
+      case "District": {
+        // D1037: a district's ref id is its state's id times DISTRICT_REF_STRIDE plus its number.
+        const { state, number } = districtRefParts(n);
+        return this.geo.districts.some(
+          (d) => (this.geo.states[d.state] as MockState).id === state && d.number === number,
+        );
+      }
       case "Outlet":
         return n < this.feed.outlets.length;
       case "Pollster":
@@ -486,7 +557,7 @@ export class MockPivot {
     this.dirty.add("markets");
     for (const o of this.account.orders) {
       if (o.status === "Open" && o.tif === "Day") {
-        closeOrder(this.account, o.id, "Expired");
+        closeOrder(this.account, o.id, "Expired", this.now);
         this.dirty.add("account");
       }
     }
@@ -531,10 +602,13 @@ export class MockPivot {
     paused: boolean,
     rule: number | null = null,
   ): void {
-    notify(this.account, this.now, kind, text, refs, paused, rule);
+    const n = notify(this.account, this.now, kind, text, refs, paused, rule);
     this.dirty.add("notifications");
-    if (paused && this.paused !== "ElectionDay")
-      this.paused = kind === "ElectionDay" ? "ElectionDay" : "Notice";
+    // A fixed pause the player switched off notifies without pausing (pivot 2.4; D1037). Election
+    // day's pause wins over the others of its tick.
+    if (!paused || (n.fixed !== null && !this.fixedPauses[n.fixed]) || this.paused?.election) return;
+    if (this.paused === null || kind === "ElectionDay")
+      this.paused = { id: n.id, election: kind === "ElectionDay" };
   }
 
   /** A scandal, roll call or resolution names something the player holds a position on (pivot 2.4 item 4). */
@@ -551,7 +625,16 @@ export class MockPivot {
 
   // ---------------------------------------------------------------- polls and the forecast
 
+  /** The presidency's state polls (D1037): published, but not read by the forecast or the stories. */
+  private releaseStatePolls(t: DateTime): void {
+    const fresh = statePollsDue(this.polling, this.pol, this.geo, t, this.polls.length);
+    if (fresh.length === 0) return;
+    this.polls.push(...fresh);
+    this.dirty.add("polls");
+  }
+
   private releasePolls(t: DateTime): void {
+    this.releaseStatePolls(t);
     const fresh = pollsDue(this.polling, this.pol, t, this.polls.length, this.rng);
     if (fresh.length === 0) return;
     const dense = t >= DENSE_FROM;
@@ -824,7 +907,7 @@ export class MockPivot {
     resolveContract(c, outcome);
     this.dirty.add("markets");
     this.cancelOrdersOnClosed();
-    const done = settle(this.account, c.id as number as InstrumentId, outcome);
+    const done = settle(this.account, c.id as number as InstrumentId, outcome, this.now);
     if (done === null) return;
     this.dirty.add("account");
     this.tell(
@@ -839,7 +922,7 @@ export class MockPivot {
     for (const o of this.account.orders) {
       if (o.status !== "Open" || o.venue !== "Exchange") continue;
       if (this.markets.contracts[o.instrument]?.status !== "Open") {
-        closeOrder(this.account, o.id, "Cancelled");
+        closeOrder(this.account, o.id, "Cancelled", this.now, "MarketClosed");
         this.dirty.add("account");
       }
     }
@@ -1488,7 +1571,7 @@ export class MockPivot {
           const o = newOrder(a, this.now, venue, instrument, side, qty, limit, tif);
           const filled = this.take(o, c);
           // A market order does not rest: what the book could not fill is cancelled.
-          if (limit === null && filled < qty) closeOrder(a, o.id, "Cancelled");
+          if (limit === null && filled < qty) closeOrder(a, o.id, "Cancelled", this.now);
           this.dirty.add("account");
           this.dirty.add("markets");
           return null;
@@ -1523,7 +1606,7 @@ export class MockPivot {
         const o = a.orders.find((x) => x.id === action.order);
         if (o === undefined) return invalid(`no order ${action.order}`);
         if (o.status !== "Open") return rejected("that order is no longer open");
-        closeOrder(a, o.id, "Cancelled");
+        closeOrder(a, o.id, "Cancelled", this.now);
         this.dirty.add("account");
         this.dirty.add("markets");
         return null;
@@ -1570,6 +1653,16 @@ export class MockPivot {
         if (i < 0) return invalid(`no alert rule ${action.rule}`);
         a.rules.splice(i, 1);
         this.dirty.add("account");
+        return null;
+      }
+      case "NotificationsRead": {
+        const { through } = action;
+        if (!Number.isInteger(through) || through < -1 || through >= a.notifications.length)
+          return invalid(`no notification ${through}`);
+        if (through > a.read_through) {
+          a.read_through = through;
+          this.dirty.add("notifications");
+        }
         return null;
       }
     }

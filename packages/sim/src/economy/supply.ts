@@ -9,7 +9,8 @@
 // - `S = supply ÷ demand`; `M = clamp((1 ÷ S)^0.5, 0.7, 1.3)`.
 // - The rest-of-world block (pivot 4.2): `row_assets` supplies like the fringe, at productivity 100,
 //   less what a tariff keeps out (pivot 4.3): `+ row_assets × turnover × (1 − tariff)`. It grows on
-//   the industry's long-term rate. 0 in a world that keeps its foreign companies.
+//   the industry's long-term rate, and a startup drawn abroad adds what it carves from the fringe
+//   (D1038). 0 in a world that keeps its foreign companies.
 
 import { seatEffectNow } from "../events/effects.ts";
 import { tariffPass } from "../governing/levers.ts";
@@ -73,6 +74,27 @@ export function eraFringeAfterMonth(ind: World["industries"][number], lt: number
  */
 export function rowAssetsAtLoad(grossAssets: number, pPreValue: number): number {
   return (grossAssets * pPreValue) / PRODUCTIVITY_SCALE;
+}
+
+/**
+ * Whether the world was cut to the USA (pivot 4.1, `features.usa_only`) and so has a rest-of-world
+ * block (pivot 4.2): the cut is the only thing that fills `row_assets`, and the block never shrinks
+ * to 0 (it grows on the long-term rate, and a tariff scales its supply, not its assets). The World
+ * keeps no copy of the manifest's flag, so this is how the births jobs know that a startup drawn
+ * abroad is the block's, not a company (D1038).
+ */
+export function worldHasRowBlock(world: World): boolean {
+  return world.industries.some((ind) => ind.row_assets > 0.0);
+}
+
+/**
+ * What a startup drawn abroad adds to its industry's block in a world cut to the USA (pivot 4.2;
+ * D1038): the assets it would have carved from the fringe (spec 5.19.3), which supply at
+ * productivity 100 in the block as they did in the fringe, so the industry's supply is unchanged by
+ * the birth. Its PC bonus is left out: a startup's is small and comes from a plan the block has not.
+ */
+export function rowAssetsOfStartup(grossAssets: number): number {
+  return grossAssets;
 }
 
 /** The rest-of-world block's month (pivot 4.2): it grows on the industry's long-term rate. */

@@ -20,6 +20,10 @@
 // copying it into the UI's thread took 300 to 500 ms.
 
 import {
+  APPEND_LISTS,
+  type AppendPatch,
+  type AppendView,
+  type ChangedPatch,
   type SliceData,
   type SliceKey,
   type SlicePatch,
@@ -29,7 +33,7 @@ import {
 import type { IndexHistory } from "../types/state/market.ts";
 import { type SimViews, VIEW_NAMES, VIEW_SPECS, type View, type ViewName } from "../types/views/index.ts";
 import { chunkLogNew } from "../world/log.ts";
-import { VIEW_BUILDERS, type ViewBuilders } from "./index.ts";
+import { VIEW_BUILDERS } from "./index.ts";
 
 /** What the UI reads now (protocol.ts `Want`). */
 export interface ViewWant {
@@ -68,7 +72,11 @@ export function lightView<K extends ViewName>(name: K, v: SimViews[K]): SimViews
   }
 }
 
-/** A slice's data from the views: the company's statements, the quarter's recap, the exchange's closes. */
+/**
+ * A slice's data from the views: the company's statements, the quarter's recap, the exchange's
+ * closes. The pivot's slices are not in the views' data (D1037): they come from the view's builder
+ * (views/index.ts `simViewsSlice`, lib.ts `simSlice`), so here they are null.
+ */
 export function sliceData(views: SimViews, k: SliceKey): SliceData {
   switch (k.view) {
     case "statements":
@@ -81,7 +89,47 @@ export function sliceData(views: SimViews, k: SliceKey): SliceData {
       );
     case "exchanges":
       return views.exchanges.data.exchanges.find((e) => e.zone === k.zone)?.closes ?? null;
+    default:
+      return null;
   }
+}
+
+/** Which views have a builder: `ViewBuilders` or any table with a `build` (null when unported) per view. */
+export type PortedViews = { readonly [N in ViewName]: { readonly build: unknown } };
+
+/**
+ * Splits a posted view's append lists out of it (`APPEND_LISTS`; D1037): returns the view with
+ * those lists empty, and pushes onto `appended` and `changed` what the UI needs to rebuild them
+ * from what it holds. `posted.lists` keeps the arrays last sent; `reset` sends each list whole.
+ */
+function splitAppendLists(
+  name: AppendView,
+  v: View<unknown>,
+  posted: PostedViews,
+  reset: boolean,
+  appended: AppendPatch[],
+  changed: ChangedPatch[],
+): View<unknown> {
+  const data = { ...(v.data as Record<string, unknown>) };
+  for (const field of APPEND_LISTS[name] as readonly string[]) {
+    const cur = (data[field] ?? []) as readonly unknown[];
+    const key = `${name}.${field}`;
+    const prev = posted.lists[key];
+    data[field] = [];
+    posted.lists[key] = cur;
+    if (reset || prev === undefined || cur.length < prev.length) {
+      appended.push({ view: name, field, reset: true, rows: cur.slice() } as AppendPatch);
+      continue;
+    }
+    if (cur === prev) continue;
+    const rows: { index: number; row: unknown }[] = [];
+    for (let i = 0; i < prev.length; i++) if (cur[i] !== prev[i]) rows.push({ index: i, row: cur[i] });
+    if (rows.length > 0) changed.push({ view: name, field, rows } as ChangedPatch);
+    if (cur.length > prev.length) {
+      appended.push({ view: name, field, reset: false, rows: cur.slice(prev.length) } as AppendPatch);
+    }
+  }
+  return { data, version: v.version, dirty: v.dirty };
 }
 
 /** What the worker last posted: each view's version, the refresh, and the news feed's length. */
@@ -98,13 +146,15 @@ export interface PostedViews {
   load_key: string | null;
   /** Each wanted slice's version last posted, by `sliceId` (D1016). */
   slices: Record<string, number>;
+  /** Each append list as last posted, by "view.field" (D1037): the array itself, compared by row identity. */
+  lists: Record<string, readonly unknown[]>;
 }
 
 /** Nothing posted yet: the first patch carries every view and the whole feed. */
 export function postedViewsNone(): PostedViews {
   const versions = {} as Record<ViewName, number>;
   for (const n of VIEW_NAMES) versions[n] = -1;
-  return { versions, refresh: -1, omniscient: null, news_len: -1, load_key: null, slices: {} };
+  return { versions, refresh: -1, omniscient: null, news_len: -1, load_key: null, slices: {}, lists: {} };
 }
 
 /**
@@ -128,8 +178,9 @@ export function postedViewsResetNews(posted: PostedViews): void {
 export function viewsPatchSince(
   views: SimViews,
   posted: PostedViews,
-  builders: ViewBuilders = VIEW_BUILDERS,
+  builders: PortedViews = VIEW_BUILDERS,
   want: ViewWant | null = null,
+  sliceOf: (key: SliceKey) => SliceData = (key) => sliceData(views, key),
 ): ViewsPatch {
   const patch: Record<string, unknown> = {};
   // A once-at-load view changes version only when every view is rebuilt (views/index.ts
@@ -148,15 +199,23 @@ export function viewsPatchSince(
     posted.omniscient = views.omniscient;
   }
   const newsMoved = views.news.version !== posted.versions.news;
+  const appended: AppendPatch[] = [];
+  const changed: ChangedPatch[] = [];
   for (const n of VIEW_NAMES) {
     const v = views[n];
     if (v.version === posted.versions[n]) continue;
     if (want !== null && n !== "news" && !want.views.has(n)) continue;
     posted.versions[n] = v.version;
     if (n === "news" || builders[n].build === null) continue;
+    if (n in APPEND_LISTS) {
+      patch[n] = splitAppendLists(n as AppendView, v as View<unknown>, posted, rebuilt, appended, changed);
+      continue;
+    }
     patch[n] = want !== null && HEAVY_VIEWS.includes(n) ? lightView(n, v as never) : v;
   }
   const out = patch as ViewsPatch;
+  if (appended.length > 0) out.appended = appended;
+  if (changed.length > 0) out.changed = changed;
   if (want !== null) {
     const slices: SlicePatch[] = [];
     const kept: Record<string, number> = {};
@@ -165,7 +224,7 @@ export function viewsPatchSince(
       const version = views[key.view].version;
       kept[id] = version;
       if (posted.slices[id] === version || builders[key.view].build === null) continue;
-      slices.push({ key, version, data: sliceData(views, key) });
+      slices.push({ key, version, data: sliceOf(key) });
     }
     // A slice no longer wanted is forgotten, so it goes out again if it is wanted later.
     posted.slices = kept;

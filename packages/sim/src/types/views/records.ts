@@ -4,8 +4,9 @@
 // governing (M3) and the information layer (M4).
 //
 // A roll call's row carries the tally only. How each member voted (`RollCallVotes`, up to 435
-// rows) is heavy, so it will travel as a slice of this view for the roll call a page shows
-// (protocol.ts `SliceKey`, D1016), added when the builder is.
+// rows) is heavy, so it travels as the slice `{ view: "records", slice: "votes", roll_call }` for
+// the roll call a page shows (protocol.ts `SliceKey`; D1016, D1037). Roll calls, actions and
+// filings only grow: a frame carries the new rows (protocol.ts `APPEND_LISTS`).
 
 import type { SimDate } from "../calendar.ts";
 import type { BillId, PersonId, RaceId } from "../ids.ts";
@@ -31,13 +32,28 @@ export interface LeverChange {
   to: number;
 }
 
+/** One step in a bill's history, as the records site lists it (pivot 7.1, 8.6; D1037). */
+export interface BillAction {
+  date: SimDate;
+  /** Where it happened; null for the president or the conference. */
+  chamber: Chamber | null;
+  /** "Introduced", "Referred to committee", "Passed the House 218 to 210". */
+  text: string;
+  /** The roll call it was, if any. */
+  roll_call: number | null;
+}
+
 export interface BillRow {
   id: BillId;
   title: string;
   summary: string;
   sponsor: PersonId;
   subject: string;
+  /** The chamber it was introduced in. */
+  chamber_of_origin: Chamber;
   stage: BillStage;
+  /** Oldest first. */
+  actions: BillAction[];
   changes: LeverChange[];
   introduced: SimDate;
   last_action: SimDate;
@@ -72,7 +88,7 @@ export interface ExecActionRow {
   /** Its place in the order they were taken, from 0. */
   id: number;
   date: SimDate;
-  kind: "Nomination" | "Confirmation" | "Order" | "Veto" | "Shutdown" | "Impeachment";
+  kind: "Nomination" | "Confirmation" | "Order" | "Veto" | "Shutdown" | "Impeachment" | "Resignation";
   /** Who took it and who it names. */
   actor: PersonId | null;
   subject: PersonId | null;

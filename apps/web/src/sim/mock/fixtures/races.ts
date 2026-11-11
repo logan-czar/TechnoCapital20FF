@@ -19,7 +19,14 @@ import type { MockWorld } from "../mockWorld.ts";
 import { type MockCounty, type MockGeo, type MockState, shareLean } from "./geo.ts";
 import { held, type MockPerson, PeopleGen, past } from "./people.ts";
 import type { MockRng } from "./rng.ts";
-import { MOCK_CYCLE, PARTIES, SCRIPT, ymd } from "./script.ts";
+import {
+  CERTIFICATION_DATE,
+  MOCK_CYCLE,
+  PARTIES,
+  RECOUNT_CERTIFICATION_DATE,
+  SCRIPT,
+  ymd,
+} from "./script.ts";
 
 /** A margin under this many points is recounted (pivot 9.4 `RECOUNT_MARGIN`; a mock number). */
 export const RECOUNT_MARGIN = 0.5;
@@ -611,6 +618,20 @@ export function genPolitics(base: MockWorld, geo: MockGeo, rng: MockRng): MockPo
 /** The sign of a party's side of a margin: +1 for party A. */
 export const partySign = sign;
 
+/**
+ * The party holding a seat whose holder is not running (D1037): the presidency's incumbent party, a
+ * Senate seat's holder by state and class, a House seat's sitting member; null when unknown.
+ */
+function incumbentPartyOf(pol: MockPolitics, r: MockRace): Party | null {
+  if (r.office === "President") return pol.incumbent_party;
+  if (r.office === "House" && r.district_idx !== null) {
+    const id = pol.reps[r.district_idx];
+    return id === undefined ? null : ((pol.people[id] as { party: Party | null }).party ?? null);
+  }
+  if (r.office === "Senate") return pol.senators.find((s) => s.state === r.state && s.up)?.party ?? null;
+  return null;
+}
+
 /** v_races: public record, with the strength number only for Omniscient (pivot 5.11). */
 export function racesView(pol: MockPolitics, geo: MockGeo, omniscient: boolean): RacesView {
   return {
@@ -621,10 +642,32 @@ export function racesView(pol: MockPolitics, geo: MockGeo, omniscient: boolean):
       state: r.state === null ? null : (geo.states[r.state] as MockState).id,
       district: r.district,
       senate_class: r.senate_class,
+      special: false,
       title: r.title,
       status: r.status,
-      primaries: r.primaries,
+      // Each primary's ballot is its party's candidates in filing order; the winner its nominee (D1037).
+      primaries: r.primaries.map((p) => {
+        const field = r.candidates.filter((c) => c.party === p.party);
+        const nominee = field.find((c) => c.status !== "LostPrimary" && c.status !== "DroppedOut");
+        return {
+          party: p.party,
+          date: p.date,
+          ballot: field.map((c) => c.person),
+          winner: nominee?.person ?? null,
+        };
+      }),
       general: ymd(11, 3),
+      polls_close:
+        SCRIPT.election_day +
+        (r.state === null
+          ? Math.max(...geo.states.map((s) => s.close_hour))
+          : (geo.states[r.state] as MockState).close_hour),
+      certify: r.id === pol.recount_race ? RECOUNT_CERTIFICATION_DATE : CERTIFICATION_DATE,
+      incumbent_party: r.candidates.find((c) => c.incumbent)?.party ?? incumbentPartyOf(pol, r),
+      electoral_votes:
+        r.office === "President"
+          ? Math.floor(geo.states.reduce((a, s) => a + s.electoral_votes, 0) / 2) + 1
+          : null,
       candidates: r.candidates.map((c) => ({
         person: c.person,
         party: c.party,
@@ -634,6 +677,7 @@ export function racesView(pol: MockPolitics, geo: MockGeo, omniscient: boolean):
         cash: c.cash,
         strength: omniscient ? c.strength : null,
       })),
+      ballot: r.ballot.map((i) => (r.candidates[i] as MockCandidate).person),
       winner: r.winner,
     })),
   };
