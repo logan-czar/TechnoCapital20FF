@@ -1,9 +1,10 @@
 // `pnpm e2e` and `pnpm e2e:smoke`: build the app if its build is missing or stale, then run the
 // Playwright suites in this folder.
 //
-//   node e2e/run.ts                 everything: @smoke, @visual and @real
+//   node e2e/run.ts                 everything: @smoke, @visual, @tour and @real
 //   node e2e/run.ts --smoke         only @smoke (mock sim; under a minute)
 //   node e2e/run.ts --visual        only the screenshot checks
+//   node e2e/run.ts --tour          only the tour of every app's routes (mock sim)
 //   node e2e/run.ts --real          only the real-sim suite
 //   node e2e/run.ts --build | --no-build     build whatever the check says | never build
 //   anything else goes to Playwright: --update-snapshots, --repeat-each 3, -g "phone"
@@ -102,7 +103,12 @@ function build(): void {
   console.log(`e2e: built in ${((Date.now() - started) / 1000).toFixed(1)} s`);
 }
 
-const TAGS: Record<string, string> = { "--smoke": "@smoke", "--visual": "@visual", "--real": "@real" };
+const TAGS: Record<string, string> = {
+  "--smoke": "@smoke",
+  "--visual": "@visual",
+  "--tour": "@tour",
+  "--real": "@real",
+};
 let grep: string | null = null;
 let buildMode: "auto" | "always" | "never" = "auto";
 const passed: string[] = [];
