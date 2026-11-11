@@ -28,6 +28,7 @@
     "ai_boom": false,
     "fixed_events": false,
     "arrowhead": false,
-    "counties": true
+    "counties": true,
+    "usa_only": true
   }
 }

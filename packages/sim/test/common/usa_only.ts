@@ -1,13 +1,21 @@
 // Helpers for the tests of the USA cut (pivot 4.1, 4.2; `features.usa_only`): the 1995 data with the
-// flag on, which no shipped manifest sets, and a scan for numbers that are not finite.
+// flag on, as the shipped manifest has it (D1038), the same data with it off (the uncut world the cut
+// is measured against), and a scan for numbers that are not finite.
 
 import type { WorldData } from "@tc20ff/sim-data";
 import { data1995 } from "./index.ts";
 
-/** The 1995 data with `features.usa_only` on: a test-only override of the manifest. */
+/** The 1995 data with `features.usa_only` on, as shipped (D1038). */
 export function usaOnly1995(): WorldData {
   const d = data1995();
   d.manifest = { ...d.manifest, features: { ...d.manifest.features, usa_only: true } };
+  return d;
+}
+
+/** The 1995 data with `features.usa_only` off: every company simulated (a test-only override). */
+export function whole1995(): WorldData {
+  const d = data1995();
+  d.manifest = { ...d.manifest, features: { ...d.manifest.features, usa_only: false } };
   return d;
 }
 

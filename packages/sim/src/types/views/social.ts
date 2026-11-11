@@ -1,5 +1,7 @@
 // v_social (pivot 8.3): the social feed app. Its accounts and every post so far. Type only: the
-// builder arrives with the information layer (M4). The posts only grow, oldest first.
+// builder arrives with the information layer (M4). The posts only grow, oldest first: a frame
+// carries the new ones (protocol.ts `APPEND_LISTS`) and a post whose rumour was confirmed or
+// debunked since as a changed row (`ViewsPatch.changed`; D1037).
 
 import type { DateTime } from "../calendar.ts";
 import type { HandleId } from "../ids.ts";

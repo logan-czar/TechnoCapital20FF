@@ -7,6 +7,8 @@ import {
   dateTimeDate,
   dateTimeHour,
   dateTimeWeekday,
+  type FixedPauses,
+  fixedPausesDefault,
   nextPhaseStart,
   phaseAt,
   phaseInfoDaysToNextPhase,
@@ -21,6 +23,7 @@ export function clockView(
   skipping: SkipKind | null,
   watchlist: CompanyId[] = [],
   omniscient = false,
+  fixed_pauses: FixedPauses = fixedPausesDefault(),
 ): ClockView {
   const p = phaseAt(now);
   return {
@@ -39,5 +42,6 @@ export function clockView(
     watchlist,
     // The mock is a release build: Omniscient is never on (design fix 8).
     omniscient,
+    fixed_pauses,
   };
 }

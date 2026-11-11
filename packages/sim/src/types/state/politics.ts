@@ -1,6 +1,12 @@
 // Politics POC types the World holds (D980 to D988; 4-politics 4.2.1, 4.4.7, 4.6, 4.7, 4.21.1). USA
 // only. Office holders are base characters of class Politician (people.ts `BaseCharacter`). Nothing
 // outside politics/, the views and the news reads this state: the economy never sees it.
+//
+// The pivot (D1037) keeps `states`, `posts`, `country`, `Party`, `Ideology` and the court types, and
+// replaces the rest: `politicians`, `District`, `pending`, `president_terms` and `elections` give
+// way to `World.persons` (./persons.ts, lane C) and `World.elections` (./elections.ts, lane E), the
+// POC's `District` to geo.ts's. They stay until those lanes switch over (pivot-lanes.md "The
+// politics POC"); the M3 contracts change deletes what is left.
 
 import type { SimDate } from "../calendar.ts";
 import type { CountryId, DistrictId, PoliticianId, PoliticsPostId, ProvinceId, UsStateId } from "../ids.ts";
@@ -23,6 +29,19 @@ export type Ideology =
   | "Sovereigntists"
   | "Landites"
   | "Chuds";
+
+/** The nine ideologies in declaration order (pivot 5.12: a party's factions). */
+export const IDEOLOGY_VALUES = [
+  "Liberals",
+  "Communists",
+  "Accelerationists",
+  "EffectiveAltruists",
+  "Transhumanists",
+  "NeoLuddites",
+  "Sovereigntists",
+  "Landites",
+  "Chuds",
+] as const satisfies readonly Ideology[];
 
 /** A judge's bias in cases between these sides (4.21.1). */
 export type JudgeLeaning = "Business" | "Neutral" | "State" | "Labor";

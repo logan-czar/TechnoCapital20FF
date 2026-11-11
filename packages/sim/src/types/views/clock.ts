@@ -6,7 +6,7 @@
 import type { DateTime, SimDate, Weekday } from "../calendar.ts";
 import type { QuarterPhase } from "../control.ts";
 import type { CompanyId } from "../ids.ts";
-import type { SkipKind } from "../notice.ts";
+import type { FixedPauses, SkipKind } from "../notice.ts";
 
 export interface ClockView {
   now: DateTime;
@@ -36,4 +36,6 @@ export interface ClockView {
   watchlist: CompanyId[];
   /** Omniscient is on (debug builds only, design fix 8). Not in Rust's ClockView (D975). */
   omniscient: boolean;
+  /** Which fixed auto-pauses of pivot 2.4 are on (`Control` SetFixedPause; D1037). */
+  fixed_pauses: FixedPauses;
 }

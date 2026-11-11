@@ -3,29 +3,35 @@
 // follows and alert rules. The bookkeeping only: orders meet the book and the script in ../pivot.ts.
 //
 // Contract prices are whole cents and a contract pays $1 (pivot 10.1). Selling Yes with none held
-// is buying No at 100 minus the price (pivot 10.5): the mock shows that as a negative `qty` whose
-// collateral has left the cash.
+// is buying No at 100 minus the price (pivot 10.5): the mock books that as a negative `qty` whose
+// collateral has left the cash, and shows it as a `No` position (D1037).
 
 import {
   type AccountView,
   type AlertRule,
   type AlertRuleId,
-  type CompanyId,
   type ContractId,
   type DateTime,
   type EntityRef,
   type FillRow,
+  type FixedPause,
   type InstrumentId,
+  instrumentTarget,
   type NotificationKind,
   type NotificationRow,
   type NotificationsView,
+  type OrderCloseReason,
   type OrderId,
   type OrderRow,
   type OrderSide,
   type PositionRow,
+  type SettlementRow,
   VENUE_VALUES,
   type Venue,
 } from "@tc20ff/sim";
+
+// The instrument rule is the sim's (types/action.ts, D1037).
+export { contractInstrument, STOCK_INSTRUMENT_BASE, stockInstrument } from "@tc20ff/sim";
 
 /** Starting cash (pivot 3.6 `START_CASH`), all of it at the brokerage. */
 export const START_CASH = 50_000;
@@ -38,23 +44,11 @@ export const STOCK_COMMISSION = 1;
 export const PLAYER_MAX_STAKE = 0.05;
 /** The rate on realised gains (pivot 14.2 `gains_tax`; a mock number). */
 export const GAINS_TAX = 0.2;
-/**
- * A stock's instrument is this plus its company id; a contract's is its contract id. No view says
- * how a company maps to an instrument yet (README, contract requests), so the mock fixes it here.
- */
-export const STOCK_INSTRUMENT_BASE = 1_000_000;
 /** Closed orders the view keeps after the open ones. */
 const CLOSED_ORDERS_SHOWN = 20;
 
-export const stockInstrument = (c: CompanyId): InstrumentId => (STOCK_INSTRUMENT_BASE + c) as InstrumentId;
-export const contractInstrument = (c: ContractId): InstrumentId => c as number as InstrumentId;
-
 /** What an instrument is, from its number. */
-export function instrumentRef(i: InstrumentId): EntityRef {
-  return i >= STOCK_INSTRUMENT_BASE
-    ? { kind: "Company", id: i - STOCK_INSTRUMENT_BASE }
-    : { kind: "Contract", id: i };
-}
+export const instrumentRef = instrumentTarget;
 
 export interface Position {
   venue: Venue;
@@ -71,11 +65,14 @@ export interface AccountState {
   positions: Position[];
   orders: OrderRow[];
   fills: FillRow[];
+  settlements: SettlementRow[];
   realised: number;
   follows: EntityRef[];
   rules: { id: AlertRuleId; rule: AlertRule; armed: boolean }[];
   next_rule: number;
   notifications: NotificationRow[];
+  /** The last notification read (`NotificationsRead`); -1 for none. */
+  read_through: number;
 }
 
 export function newAccount(): AccountState {
@@ -85,11 +82,13 @@ export function newAccount(): AccountState {
     positions: [],
     orders: [],
     fills: [],
+    settlements: [],
     realised: 0,
     follows: [],
     rules: [],
     next_rule: 0,
     notifications: [],
+    read_through: -1,
   };
 }
 
@@ -139,12 +138,33 @@ function recordFill(
   qty: number,
   price: number,
   fee: number,
+  realised: number,
 ): FillRow {
   const i = a.orders.findIndex((x) => x.id === o.id);
   const filled = o.filled + qty;
-  const next: OrderRow = { ...o, filled, status: filled >= o.qty ? "Filled" : o.status };
+  const avg_price = ((o.avg_price ?? 0) * o.filled + price * qty) / filled;
+  const done = filled >= o.qty;
+  const next: OrderRow = {
+    ...o,
+    filled,
+    avg_price,
+    status: done ? "Filled" : o.status,
+    closed: done ? t : o.closed,
+    reason: done ? "Filled" : o.reason,
+  };
   if (i >= 0) a.orders[i] = next;
-  const f: FillRow = { order: o.id, time: t, qty, price, fee };
+  const f: FillRow = {
+    order: o.id,
+    time: t,
+    venue: o.venue,
+    instrument: o.instrument,
+    what: instrumentRef(o.instrument),
+    side: o.side,
+    qty,
+    price,
+    fee,
+    realised,
+  };
   a.fills.push(f);
   return f;
 }
@@ -158,6 +178,7 @@ export function fillContract(
   price: number,
 ): OrderRow {
   const p = position(a, "Exchange", order.instrument);
+  const before = a.realised;
   let left = qty;
   if (order.side === "Buy") {
     // First close any No side: buying the Yes back pairs with it and the pair pays $1.
@@ -187,7 +208,7 @@ export function fillContract(
       p.qty -= left;
     }
   }
-  recordFill(a, order, t, qty, price, 0);
+  recordFill(a, order, t, qty, price, 0, a.realised - before);
   drop(a);
   return a.orders.find((x) => x.id === order.id) as OrderRow;
 }
@@ -195,6 +216,7 @@ export function fillContract(
 /** Books a stock fill at `price` USD a share, the spread included, plus the commission (pivot 13.1). */
 export function fillStock(a: AccountState, order: OrderRow, t: DateTime, price: number): void {
   const p = position(a, "Brokerage", order.instrument);
+  const before = a.realised;
   if (order.side === "Buy") {
     a.cash.Brokerage -= order.qty * price + STOCK_COMMISSION;
     p.avg_cost = (p.avg_cost * p.qty + price * order.qty) / (p.qty + order.qty);
@@ -205,7 +227,7 @@ export function fillStock(a: AccountState, order: OrderRow, t: DateTime, price: 
     p.qty -= order.qty;
   }
   a.realised -= STOCK_COMMISSION;
-  recordFill(a, order, t, order.qty, price, STOCK_COMMISSION);
+  recordFill(a, order, t, order.qty, price, STOCK_COMMISSION, a.realised - before);
   drop(a);
 }
 
@@ -217,6 +239,7 @@ export function settle(
   a: AccountState,
   instrument: InstrumentId,
   outcome: boolean,
+  t: DateTime,
 ): { payout: number; fee: number; gain: number } | null {
   const p = positionOf(a, instrument);
   if (p === undefined || p.qty === 0) return null;
@@ -227,10 +250,29 @@ export function settle(
   const fee = BET_FEE * Math.max(0, payout - cost);
   a.cash.Exchange += payout - fee;
   a.realised += payout - fee - cost;
+  a.settlements.push({
+    contract: instrument as number as ContractId,
+    time: t,
+    side: yes ? "Yes" : "No",
+    qty: n,
+    outcome,
+    payout: payout - fee,
+    fee,
+  });
   p.qty = 0;
   drop(a);
   return { payout, fee, gain: payout - fee - cost };
 }
+
+/** The fixed pause of pivot 2.4 each kind is (D1037); an alert rule's is none. */
+const FIXED_OF: Readonly<Record<NotificationKind, FixedPause | null>> = {
+  Fill: "OwnFill",
+  Resolution: "OwnFill",
+  MarginCall: "MarginCall",
+  ElectionDay: "ElectionDay",
+  Holding: "Holding",
+  Alert: null,
+};
 
 export function notify(
   a: AccountState,
@@ -241,7 +283,16 @@ export function notify(
   paused: boolean,
   rule: AlertRuleId | null = null,
 ): NotificationRow {
-  const n: NotificationRow = { id: a.notifications.length, time: t, kind, text, refs, rule, paused };
+  const n: NotificationRow = {
+    id: a.notifications.length,
+    time: t,
+    kind,
+    text,
+    refs,
+    rule,
+    paused,
+    fixed: FIXED_OF[kind],
+  };
   a.notifications.push(n);
   return n;
 }
@@ -256,6 +307,7 @@ export function accountView(a: AccountState, mark: (i: InstrumentId) => number):
       positions: [],
       orders: [],
       fills: [],
+      settlements: [],
       realised_gains: 0,
       tax_due: 0,
       follows: [],
@@ -267,16 +319,22 @@ export function accountView(a: AccountState, mark: (i: InstrumentId) => number):
   const positions: PositionRow[] = a.positions.map((p) => {
     const m = mark(p.instrument);
     const unit = p.venue === "Exchange" ? 0.01 : 1;
-    // A No side is worth 100 minus the price a contract (pivot 10.5).
-    worth += p.venue === "Exchange" && p.qty < 0 ? -p.qty * (100 - m) * unit : p.qty * m * unit;
+    // A No side is worth 100 minus the price a contract (pivot 10.5) and cost 100 minus what Yes sold at.
+    const no = p.venue === "Exchange" && p.qty < 0;
+    const qty = Math.abs(p.qty);
+    const cost = no ? 100 - p.avg_cost : p.avg_cost;
+    const value = no ? 100 - m : m;
+    worth += qty * value * unit;
     return {
       venue: p.venue,
       instrument: p.instrument,
       what: instrumentRef(p.instrument),
-      qty: p.qty,
-      avg_cost: p.avg_cost,
-      mark: m,
-      unrealised: p.qty * (m - p.avg_cost) * unit,
+      side: p.venue === "Brokerage" ? "Long" : no ? "No" : "Yes",
+      qty,
+      avg_cost: cost,
+      mark: value,
+      unrealised: qty * (value - cost) * unit,
+      collateral: p.venue === "Exchange" ? qty * cost * unit : 0,
     };
   });
   const open = a.orders.filter((o) => o.status === "Open");
@@ -286,11 +344,16 @@ export function accountView(a: AccountState, mark: (i: InstrumentId) => number):
     .reverse();
   return {
     open: true,
-    cash: VENUE_VALUES.map((venue) => ({ venue, cash: a.cash[venue] })),
+    cash: VENUE_VALUES.map((venue) => ({
+      venue,
+      cash: a.cash[venue],
+      reserved: venue === "Exchange" ? reserved(a) : 0,
+    })),
     net_worth: worth,
     positions,
     orders: [...open, ...closed],
     fills: a.fills.slice(),
+    settlements: a.settlements.slice(),
     realised_gains: a.realised,
     tax_due: Math.max(0, a.realised) * GAINS_TAX,
     follows: a.follows.slice(),
@@ -300,7 +363,7 @@ export function accountView(a: AccountState, mark: (i: InstrumentId) => number):
 }
 
 export function notificationsView(a: AccountState): NotificationsView {
-  return { items: a.notifications.slice() };
+  return { items: a.notifications.slice(), read_through: a.read_through };
 }
 
 export function newOrder(
@@ -321,17 +384,26 @@ export function newOrder(
     side,
     qty,
     filled: 0,
+    avg_price: null,
     limit,
     tif,
     placed: t,
     status: "Open",
+    closed: null,
+    reason: null,
   };
   a.orders.push(o);
   return o;
 }
 
-export function closeOrder(a: AccountState, id: OrderId, status: "Cancelled" | "Expired"): void {
+export function closeOrder(
+  a: AccountState,
+  id: OrderId,
+  status: "Cancelled" | "Expired",
+  t: DateTime,
+  reason: OrderCloseReason = status,
+): void {
   const i = a.orders.findIndex((o) => o.id === id);
   const o = a.orders[i];
-  if (o !== undefined && o.status === "Open") a.orders[i] = { ...o, status };
+  if (o !== undefined && o.status === "Open") a.orders[i] = { ...o, status, closed: t, reason };
 }
