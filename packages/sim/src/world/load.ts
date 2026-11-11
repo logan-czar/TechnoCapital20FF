@@ -26,6 +26,7 @@ import {
   startLoadout,
 } from "../economy/start.ts";
 import { fringeAssetsAtLoad, rowAssetsAtLoad } from "../economy/supply.ts";
+import { electionsStateEmpty } from "../elections/index.ts";
 import { ratingParse } from "../finance/rating.ts";
 import { booksCheckDefault, companyFinanceAtLoad } from "../finance/state.ts";
 import { geoStateEmpty, geoStateFromData } from "../geo/load.ts";
@@ -37,6 +38,7 @@ import { conversionCapacity, dataBookAtLoad, dataBookFreeRdFraction, dataBookSto
 import { fitStations, laborUnits } from "../ops/labor.ts";
 import { productiveCompute, START_PRODUCTIVITY } from "../ops/stations.ts";
 import { nameBooksBuild } from "../people/names.ts";
+import { personsStateEmpty } from "../politics/people.ts";
 import { POLITICS_COUNTRY_KEY, politicsStateFromData } from "../politics/state.ts";
 import { dateTimeDate, dateTimeMidnight } from "../time/calendar.ts";
 import { DATETIME_START, type SimDate } from "../types/calendar.ts";
@@ -729,6 +731,10 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
       (countries[politics.country] as Country).corp_tax_rate,
     ),
     geo: geo.value,
+    // pivot 5.7, 6, 14 (D1037): empty until lanes C, E and P fill them at the start (lib.ts `startWorld`).
+    persons: personsStateEmpty(),
+    elections: electionsStateEmpty(),
+    player: null,
   };
 }
 

@@ -263,17 +263,20 @@ export interface ViewSpec {
   on_omniscient: boolean;
   /** Rebuilt in place, reusing its last build's allocations (D402) or archived estimates (D435). */
   rebuild_in_place: boolean;
+  /** Also rebuilt after a player action (lib.ts `simAct`; D1037): the player's own views and the books. */
+  on_act: boolean;
 }
 
 function spec(
   cadence: Cadence,
-  flags: { on_control?: true; on_omniscient?: true; rebuild_in_place?: true } = {},
+  flags: { on_control?: true; on_omniscient?: true; rebuild_in_place?: true; on_act?: true } = {},
 ): ViewSpec {
   return {
     cadence,
     on_control: flags.on_control ?? false,
     on_omniscient: flags.on_omniscient ?? false,
     rebuild_in_place: flags.rebuild_in_place ?? false,
+    on_act: flags.on_act ?? false,
   };
 }
 
@@ -317,9 +320,9 @@ export const VIEW_SPECS: Readonly<Record<ViewName, ViewSpec>> = {
   races: spec("Daily", { on_omniscient: true }),
   people: spec("Daily", { on_omniscient: true }),
   records: spec("Daily"),
-  markets: spec("EveryTick"),
-  account: spec("EveryTick"),
-  notifications: spec("EveryTick"),
+  markets: spec("EveryTick", { on_act: true }),
+  account: spec("EveryTick", { on_act: true }),
+  notifications: spec("EveryTick", { on_act: true }),
   districts: spec("Monthly", { on_omniscient: true }),
   usmap_layers: spec("Monthly", { on_omniscient: true }),
   returns: spec("EveryTick"),

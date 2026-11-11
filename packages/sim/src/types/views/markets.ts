@@ -2,11 +2,13 @@
 // and the top of its book. Type only: the builder arrives with the prediction market (M5).
 //
 // A row carries the best bid and ask only. A contract's depth (`ContractBook`) and its price
-// history are heavy across thousands of contracts, so they will travel as slices of this view for
-// the contract a page shows (protocol.ts `SliceKey`, D1016), added when the builder is.
+// history (`ContractHistory`) are heavy across thousands of contracts, so they travel as the slices
+// `{ view: "markets", slice: "book" | "history", contract }` for the contract a page shows
+// (protocol.ts `SliceKey`; D1016, D1037).
 
 import type { DateTime, SimDate } from "../calendar.ts";
-import type { ContractId, InstrumentId } from "../ids.ts";
+import type { ContractId, InstrumentId, PersonId } from "../ids.ts";
+import type { Party } from "../state/politics.ts";
 import type { EntityRef } from "./entity.ts";
 
 /** The kinds of contract (pivot 10.2). */
@@ -33,6 +35,12 @@ export interface ContractRow {
   rule: string;
   /** The race, bill or person it is about. */
   subject: EntityRef | null;
+  /** A race-winner or people contract's person (pivot 10.2; D1037). */
+  person: PersonId | null;
+  /** A chamber, bracket or candidate contract's party. */
+  party: Party | null;
+  /** A bracket contract's range, each end included; null for an open end (pivot 10.2). */
+  bracket: { lo: number | null; hi: number | null } | null;
   status: ContractStatus;
   listed: SimDate;
   /** A by-date contract's date (pivot 10.4). */
@@ -43,6 +51,10 @@ export interface ContractRow {
   bid: number | null;
   ask: number | null;
   last: number | null;
+  /** Yesterday's closing price, whole cents; null before its first close. */
+  prev_close: number | null;
+  /** The last `CONTRACT_CLOSES_KEPT` daily closes, oldest first (a sparkline). */
+  closes: number[];
   /** Contracts traded today and outstanding. Whole numbers. */
   volume: number;
   open_interest: number;
@@ -63,6 +75,18 @@ export interface ContractBook {
   /** Best first. */
   bids: BookLevel[];
   asks: BookLevel[];
+}
+
+/** Daily closes a `ContractRow` carries (D1037). */
+export const CONTRACT_CLOSES_KEPT = 30;
+
+/** A contract's price history (pivot 10, 11): the slice `{ view: "markets", slice: "history", contract }`. */
+export interface ContractHistory {
+  contract: ContractId;
+  /** The tick of `prices[0]`: its listing. */
+  start: DateTime;
+  /** The price at each hour from `start` on, oldest first: the last trade, else the mid. Whole cents. */
+  prices: number[];
 }
 
 export interface MarketsView {

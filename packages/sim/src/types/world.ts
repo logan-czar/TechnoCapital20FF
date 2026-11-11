@@ -32,6 +32,7 @@ import type { CompanyId, CountryId, IndustryId, ProvinceId, StartupEventId, Unit
 import { MAX_SAFE_COUNT, roundHalfAway } from "./num.ts";
 import type { Archetype, LockedPlan } from "./state/ai.ts";
 import type { BirthsState, RunRate, VoteResult } from "./state/births.ts";
+import type { ElectionsState } from "./state/elections.ts";
 import type { EraState } from "./state/era.ts";
 import type { SeatEffect, SeatTally } from "./state/events.ts";
 import type { BooksCheck, CompanyFinance, Rating } from "./state/finance.ts";
@@ -41,6 +42,8 @@ import type { MarketState } from "./state/market.ts";
 import type { NewsWire } from "./state/news.ts";
 import type { ComputeBill, DataBook, Stations } from "./state/ops.ts";
 import type { BaseCharacter, NameBooks, Seat, SimpleCharacter } from "./state/people.ts";
+import type { PersonsState } from "./state/persons.ts";
+import type { PlayerState } from "./state/player.ts";
 import type { PoliticsState } from "./state/politics.ts";
 import type { Recap } from "./state/recap.ts";
 
@@ -142,6 +145,18 @@ export interface World {
   levers: Levers;
   /** Counties and district plans (pivot 5.1 to 5.6); empty tables in a world with no counties file. */
   geo: GeoState;
+  /**
+   * The people of politics and their offices (pivot 5.7 to 5.12; D1037). Empty at load until lane C
+   * fills it; the politics POC's `politics.politicians` holds the offices until then.
+   */
+  persons: PersonsState;
+  /** Races, the calendar and results (pivot 6; D1037). Empty at load until lane E fills it. */
+  elections: ElectionsState;
+  /**
+   * The player (pivot 14; D1027, D1037): null in a Coarse world and until lane P opens the account
+   * (at a Full world's start, and at hydration in M3).
+   */
+  player: PlayerState | null;
   /**
    * A historical world's run (1995-rework 3.3): its scenario and its long history. Absent in the
    * 2020 world, and so out of its state hash.
