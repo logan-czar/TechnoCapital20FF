@@ -691,3 +691,52 @@ export const CHARACTER_SPAWN_SPEC = rowSpec<CharacterSpawn>({
   superregion: str,
   sector: str,
 });
+
+/**
+ * counties.csv: a US county of the frozen vintage (pivot 5.1, D1028). Only a world whose manifest
+ * sets `features.counties` has the file (lane S1 generates it).
+ */
+export interface CountyRow {
+  /** The five-digit FIPS code with its leading zero; rows are loaded in this order. */
+  fips: string;
+  /** politics-usa.csv `state`. */
+  state: string;
+  name: string;
+  /** The 1990 census, people. */
+  pop_1990: number;
+  /** Party lean: Democrats minus Republicans, in points, as politics-usa.csv `dem_margin_pts`. */
+  lean_pts: number;
+  /** Half the range of lean inside the county, in points (pivot 5.4). */
+  spread: number;
+  elasticity: number;
+  /** The share of its people who vote, 0 to 1. */
+  turnout: number;
+  /** A point inside it on the map's plane. */
+  centroid_x: number;
+  centroid_y: number;
+}
+
+export const COUNTY_SPEC = rowSpec<CountyRow>({
+  fips: str,
+  state: str,
+  name: str,
+  pop_1990: u32,
+  lean_pts: f64,
+  spread: f64,
+  elasticity: f64,
+  turnout: f64,
+  centroid_x: f64,
+  centroid_y: f64,
+});
+
+/**
+ * county-adjacency.csv: one row per ordered pair of counties that touch (pivot 5.4), so each pair
+ * appears twice. Beside counties.csv.
+ */
+export interface CountyAdjacencyRow {
+  /** counties.csv `fips`. */
+  fips: string;
+  neighbour_fips: string;
+}
+
+export const COUNTY_ADJACENCY_SPEC = rowSpec<CountyAdjacencyRow>({ fips: str, neighbour_fips: str });

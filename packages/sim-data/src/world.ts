@@ -18,11 +18,15 @@ import {
   COUNTRY_CULTURE_SPEC,
   COUNTRY_ECONOMY_SPEC,
   COUNTRY_SPEC,
+  COUNTY_ADJACENCY_SPEC,
+  COUNTY_SPEC,
   type Company,
   type CompanyStart,
   type Country,
   type CountryCulture,
   type CountryEconomy,
+  type CountyAdjacencyRow,
+  type CountyRow,
   FINANCIAL_ZONE_SPEC,
   type FinancialZone,
   INDUSTRY_LEVERAGE_SPEC,
@@ -90,6 +94,9 @@ export interface WorldData {
   zone_growth: Table<ZoneGrowth>;
   /** An era world's net debt by industry (1995-rework 9); empty otherwise. */
   industry_leverage: Table<IndustryLeverage>;
+  /** The US counties and which touch (pivot 5.1, 5.4); empty unless `manifest.features.counties`. */
+  counties: Table<CountyRow>;
+  county_adjacency: Table<CountyAdjacencyRow>;
   /** Name lists, one table per superregion, in SUPERREGIONS order. */
   names: Table<NameRow>[];
   country_cultures: Table<CountryCulture>;
@@ -128,6 +135,8 @@ export function worldDataCounts(w: WorldData): [string, number][] {
     ["names", sum(w.names)],
     ["country-cultures", tableLen(w.country_cultures)],
     ["industry-suffixes", tableLen(w.industry_suffixes)],
+    ["counties", tableLen(w.counties)],
+    ["county-adjacency", tableLen(w.county_adjacency)],
   ];
 }
 
@@ -164,6 +173,12 @@ export const ERA_FILES: readonly string[] = [
   "zone-growth.csv",
   "industry-leverage.csv",
 ];
+
+/**
+ * The CSVs only a world with counties has (`manifest.features.counties`; pivot 5.1), beside
+ * WORLD_FILES. A manifest's `expected_counts` may name `counties` and `county-adjacency`.
+ */
+export const GEO_FILES: readonly string[] = ["counties.csv", "county-adjacency.csv"];
 
 /** One table per superregion, from `pattern` with `{}` replaced by each slug. */
 function perRegion<T>(files: Files, pattern: string, spec: RowSpec<T>): Result<Table<T>[], DataError> {
@@ -237,6 +252,14 @@ export function parseWorld(
     ? loadTable(files, "industry-leverage.csv", INDUSTRY_LEVERAGE_SPEC)
     : ok(tableNew<IndustryLeverage>("industry-leverage.csv"));
   if (!leverage.ok) return leverage;
+  const counties = manifest.features.counties
+    ? loadTable(files, "counties.csv", COUNTY_SPEC)
+    : ok(tableNew<CountyRow>("counties.csv"));
+  if (!counties.ok) return counties;
+  const countyAdjacency = manifest.features.counties
+    ? loadTable(files, "county-adjacency.csv", COUNTY_ADJACENCY_SPEC)
+    : ok(tableNew<CountyAdjacencyRow>("county-adjacency.csv"));
+  if (!countyAdjacency.ok) return countyAdjacency;
   return ok({
     manifest,
     countries: countries.value,
@@ -257,6 +280,8 @@ export function parseWorld(
     character_spawns: characterSpawns.value,
     zone_growth: zoneGrowth.value,
     industry_leverage: leverage.value,
+    counties: counties.value,
+    county_adjacency: countyAdjacency.value,
     names: names.value,
     country_cultures: countryCultures.value,
     industry_suffixes: industrySuffixes.value,
