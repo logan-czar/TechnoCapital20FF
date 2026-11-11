@@ -11,8 +11,9 @@ import {
   type PollsView,
   simDateAddDays,
 } from "@tc20ff/sim";
+import type { MockGeo } from "./geo.ts";
 import { ballotCandidate, type MockPolitics, type MockRace, other, raceMarginAt } from "./races.ts";
-import type { MockRng } from "./rng.ts";
+import { type MockRng, unitHash } from "./rng.ts";
 import { MOCK_HISTORY_START, SCRIPT, ymd } from "./script.ts";
 
 /** name, house effect in points toward party A, sample size, likely-voter error in points. */
@@ -109,6 +110,7 @@ function generalPoll(pg: MockPolling, p: PollPlan, r: MockRace, t: DateTime, id:
     race: r.id,
     stage: "General",
     party: null,
+    state: null,
     from: simDateAddDays(published, -FIELD_DAYS),
     to: simDateAddDays(published, -1),
     published,
@@ -138,6 +140,7 @@ export function primaryPolls(pg: MockPolling, pol: MockPolitics, rng: MockRng): 
       race: pres.id,
       stage: "Primary",
       party,
+      state: null,
       from: simDateAddDays(published, -FIELD_DAYS),
       to: simDateAddDays(published, -1),
       published,
@@ -168,6 +171,69 @@ export function pollsDue(
     if ((day + p.phase) % p.every !== 0) continue;
     out.push(generalPoll(pg, p, pol.races[p.race] as MockRace, t, nextId + out.length, rng));
   }
+  return out;
+}
+
+/** A state of the presidency is polled every this many days, each on its own day (D1037). */
+export const STATE_POLL_EVERY = 9;
+
+/**
+ * The presidential polls of single states published at tick `t` (pivot 8.4; `Poll.state`, D1037):
+ * each state every `STATE_POLL_EVERY` days by a firm in turn, sampling the state's true margin that
+ * day (its final margin moved by the national trend). Drawn from hashes, not the mock's generator,
+ * so the rest of the mock's draws are as they were; the forecast does not read them.
+ */
+export function statePollsDue(
+  pg: MockPolling,
+  pol: MockPolitics,
+  geo: MockGeo,
+  t: DateTime,
+  nextId: number,
+): Poll[] {
+  if (dateTimeHour(t) !== POLL_HOUR || t >= SCRIPT.election_day) return [];
+  const r = pol.races.find((x) => x.office === "President");
+  if (r === undefined) return [];
+  const day = Math.floor((t - MOCK_HISTORY_START) / 24);
+  const published = dateTimeDate(t);
+  const out: Poll[] = [];
+  geo.states.forEach((st, s) => {
+    if ((day + s) % STATE_POLL_EVERY !== 0) return;
+    let lead = 0;
+    let all = 0;
+    for (const u of r.units) {
+      if (u.state !== s) continue;
+      lead += (u.votes[r.dem] as number) - (u.votes[r.rep] as number);
+      all += u.votes.reduce((a, b) => a + b, 0);
+    }
+    if (all === 0) return;
+    const id = nextId + out.length;
+    const firm = pg.pollsters[(day + s) % pg.pollsters.length] as MockPollster;
+    const sample = Math.floor(firm.sample * (0.6 + 0.4 * unitHash(`${st.name}/${day}`, 1)));
+    const noise = (unitHash(`${st.name}/${day}`, 2) - 0.5) * 2 * (100 / Math.sqrt(sample));
+    const margin =
+      (lead / all) * 100 + (raceMarginAt(r, t - 24) - r.final_margin) + firm.house_effect + noise;
+    const undecided = 0.06;
+    const dem = Math.min(96, Math.max(4, 50 + margin / 2));
+    const shares = r.ballot.map((_, i) => {
+      const pct = i === r.dem ? dem : i === r.rep ? 100 - dem : 0;
+      return { person: ballotCandidate(r, i).person, share: round3((pct / 100) * (1 - undecided)) };
+    });
+    out.push({
+      id,
+      pollster: firm.id,
+      race: r.id,
+      stage: "General",
+      party: null,
+      state: st.id,
+      from: simDateAddDays(published, -FIELD_DAYS),
+      to: simDateAddDays(published, -1),
+      published,
+      sample,
+      shares,
+      undecided,
+      margin_of_error: Math.floor(980 / Math.sqrt(sample) + 0.5) / 10,
+    });
+  });
   return out;
 }
 

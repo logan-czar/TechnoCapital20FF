@@ -4,6 +4,7 @@
 
 import {
   type CareerEntry,
+  type ChamberRow,
   type Ideology,
   type Party,
   type PeopleView,
@@ -277,10 +278,16 @@ export class PeopleGen {
 
 /** A career line held now, from 3 January of `year`. */
 export function held(title: string, year: number): CareerEntry {
-  return { title, from: { year, month: 1, day: 3 }, to: null };
+  return { title, how: "Elected", from: { year, month: 1, day: 3 }, to: null, exit: null };
 }
 export function past(title: string, from: number, to: number): CareerEntry {
-  return { title, from: { year: from, month: 1, day: 3 }, to: { year: to, month: 1, day: 3 } };
+  return {
+    title,
+    how: "Elected",
+    from: { year: from, month: 1, day: 3 },
+    to: { year: to, month: 1, day: 3 },
+    exit: "TermEnded",
+  };
 }
 
 /** A person leaves their office on `date` (a resignation: pivot 5.9). */
@@ -289,13 +296,18 @@ export function leaveOffice(p: MockPerson, date: SimDate): MockPerson {
     ...p,
     status: "Retired",
     office: null,
-    career: p.career.map((c) => (c.to === null ? { ...c, to: date } : c)),
+    career: p.career.map((c) => (c.to === null ? { ...c, to: date, exit: "Resigned" } : c)),
   };
 }
 
 /** v_people: hidden stats null unless Omniscient (pivot 5.11). */
-export function peopleView(people: MockPerson[], omniscient: boolean): PeopleView {
+export function peopleView(
+  people: MockPerson[],
+  omniscient: boolean,
+  chambers: ChamberRow[] = [],
+): PeopleView {
   return {
+    chambers,
     people: people.map((p) => ({
       id: p.id,
       name: p.name,

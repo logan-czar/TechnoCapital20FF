@@ -14,12 +14,12 @@ something another view holds), which `apps/web/test/mock/invariants.ts` checks.
 
 - In the browser: `?mock=1` (`sim/spawn.ts`). The worker runs the pivot world; the dev server's
   worker is a debug sim, so the Omniscient control works there.
-- In a test: `new SimHost(world, MOCK_PIVOT)`; `apps/web/test/mock/common.ts` has a `newGame` helper
-  that does it and gives `control`, `act`, `runTo` and `views`.
+- In a test: `new SimHost(world)`; `apps/web/test/mock/common.ts` has a `newGame` helper that does it
+  and gives `control`, `act`, `runTo` and `views`.
 
-`new SimHost(world)` with no options is still the pre-pivot mock: it starts on 2020-01-01, the pivot
-views are empty, every action is `NotAvailable` and `Want` is ignored. That is what the tests
-written before this lane pin. Pass `MOCK_PIVOT` to get the world described below.
+The pivot world is the default (D1037). `new SimHost(world, { pivot: false })` is the plain mock: it
+starts on 2020-01-01, the pivot views are empty, every action is `NotAvailable` and `Want` is
+ignored (the clock-pacing tests use it, since no scripted pause lands there).
 
 With the pivot world the host honours `Want` as the real host does: before the first `Want` it
 posts every view, and after it only the views named. A `SimClient` sends a `Want` as soon as it
@@ -30,7 +30,7 @@ attaches, so a test that reads a view through a client's store must subscribe to
 
 | Option | What it does |
 |---|---|
-| `pivot` | Run the pivot world. |
+| `pivot` | Run the pivot world: true unless set to false. |
 | `start` | The tick a new game starts at. Default `MOCK_START`, 2020-10-20 00:00. Any tick from `MOCK_HISTORY_START` (2020-08-21) on works; before the default the player has an account and has done nothing with it. |
 | `debug` | Allow `SetOmniscient`, which fills the hidden fields (pivot 5.11). Without it the control answers `DebugOnly`, as the real sim does. |
 
@@ -100,11 +100,13 @@ calendar.
   party control of each chamber, Senate seat, electoral vote and popular vote brackets, five
   governing contracts (one already resolved) and three people contracts at the start, with two more
   listed during play.
-  A group's quotes sum to about 100. `ContractRow.instrument` equals the contract id.
+  A group's quotes sum to about 100. `ContractRow.instrument` equals the contract id, and each row
+  says its person, party and bracket and carries up to 30 daily closes.
 - **The player:** $50,000 to start, all at the brokerage. By 20 October the script has moved $15,000
   to the exchange, bought two stocks and five contract positions (one of them a No side, shown as a
-  negative `qty`), left one open order, one cancelled and one expired, followed six things and set
-  three alerts. A stock's instrument is `STOCK_INSTRUMENT_BASE` (1,000,000) plus its company id.
+  `No` position), left one open order, one cancelled and one expired, followed six things and set
+  three alerts. A stock's instrument is the sim's `STOCK_INSTRUMENT_BASE` (1,000,000,000) plus its
+  company id (types/action.ts `stockInstrument`, D1037).
 
 ## What moves, and when
 
@@ -171,24 +173,32 @@ A refused action answers `ActError` (`Invalid` or `Rejected`, with a message for
 changes nothing and posts no frame. An applied one posts a frame with the views it moved, then `Ok`.
 
 Notices: every fill and every resolution of a contract the player holds raises a v_notifications
-row with `paused: true` and pauses the game; so does a roll call or a resignation naming something
-the player holds a position on, election day, and any alert rule set to pause. An `Any` rule fires
+row with `paused: true` and pauses the game with `{ kind: "Notification", id }`; so does a roll call
+or a resignation naming something the player holds a position on, election day (which also raises
+the `Election` alert), and any alert rule set to pause. A fixed pause the player switched off with
+`SetFixedPause` notifies without pausing. `NotificationsRead` moves `read_through`. An `Any` rule fires
 when an article, a post or a roll call names its target; a price rule fires once each time its
 price crosses.
 
 A save records the player's actions and replays them on load (pivot 16.1).
 
-## Slices
+## Slices and append lists
 
-Four things the view types describe as slices have no `SliceKey` in the protocol yet, so no frame
-carries them. `MockPivot` and `SimHost.slice` serve them in process:
+The pivot slices (protocol.ts `SliceKey`, D1037) go out in frames while wanted, as the real host
+sends them, and `SimHost.slice` reads one in process:
 
-| `SimHost.slice(key)` | Returns |
+| `SliceKey` | Returns |
 |---|---|
-| `{ view: "markets", contract }` | `ContractBook`: six levels a side, the player's orders included. |
-| `{ view: "markets_history", contract }` | `MockContractHistory`: the price each hour since listing. |
-| `{ view: "returns", race }` | `RaceCountyReturns`: reporting and votes by county. |
-| `{ view: "records", roll_call }` | `RollCallVotes`: every member's vote. |
+| `{ view: "markets", slice: "book", contract }` | `ContractBook`: six levels a side, the player's orders included. |
+| `{ view: "markets", slice: "history", contract }` | `ContractHistory`: the price each hour since listing. |
+| `{ view: "returns", slice: "counties", race }` | `RaceCountyReturns`: reporting and votes by county. |
+| `{ view: "records", slice: "votes", roll_call }` | `RollCallVotes`: every member's vote. |
+| `{ view: "feed", slice: "front_pages", date }` | `FrontPage[]`: every outlet's front page of that day. |
+
+The mock's frames are the real host's (`viewsPatchSince`): the append lists (`APPEND_LISTS`:
+articles, posts, polls, notifications, fills, roll calls, actions, filings) travel as appended rows,
+and a row replaced since (an article corrected, a rumour settled) as a changed row. The mock never
+changes a row in place, so a row object that is the same is a row that did not change.
 
 ## Frame sizes
 
@@ -204,16 +214,16 @@ Measured by `apps/web/test/mock/pivot-views.test.ts`, as JSON bytes, seed 7:
 | An hour's frame when the UI wants only clock and markets | 65,464 |
 
 The pre-pivot views are most of it (price bars 1.2 MB, company rows 350 KB, places 270 KB, quotes
-96 KB an hour). The mock honours `Want`, so an app receives only the views it reads. The pivot
-views have no append or row delta in the protocol yet, so a list that grows is resent whole when it
-changes.
+96 KB an hour). The mock honours `Want`, so an app receives only the views it reads. These numbers
+are from before the append lists (D1037): a list that grows now travels as its new rows.
 
 ## What the mock does not do
 
 - No cohorts, campaigns, spending or governing logic: prices follow one market belief per contract,
   and bills move on the script.
-- No state polls or state calls of the presidency: the view types cannot carry them. The electoral
-  votes in v_returns are the states the wire has called.
+- State polls of the presidency (`Poll.state`) are drawn from hashes, every state every nine days,
+  and the forecast and the stories do not read them. v_returns' `states` are the presidency's
+  counties summed by state, with the wire's calls.
 - The stock walk is not saved, as before this lane: after a load, stock prices restart from their
   opening values.
 - No stop orders, no margin, no bankruptcy.

@@ -828,8 +828,10 @@ def write_manifest(counts, counties):
         'neutral_rate': NEUTRAL_RATE,
         'y10_term': Y10_TERM,
         'cabinet_seats': CABINET_SEATS,
+        # usa_only (pivot 4.1, D1038): only the US companies are simulated; the CSVs keep every
+        # company, and the sim folds the others into each industry's rest-of-world block at load.
         'features': {'era': True, 'ai_boom': False, 'fixed_events': False, 'arrowhead': False,
-                     'counties': counties},
+                     'counties': counties, 'usa_only': True},
     }
     with open(OUT / 'manifest.json', 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(manifest, fh, indent=2)
