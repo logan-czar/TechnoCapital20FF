@@ -132,6 +132,8 @@ export class RealHost {
   private readonly generate: GenerateStart;
   /** When the last autosave was written, on `now`'s clock; null before the first. */
   private lastAutosaveMs: number | null = null;
+  /** `boot` started a game and no Frame has gone out since. */
+  private booted = false;
 
   constructor(
     private readonly data: WorldData,
@@ -170,17 +172,24 @@ export class RealHost {
       });
       if (!made.ok) return simErrorMessage({ kind: "Load", error: made.error });
       this.install(made.value);
+      this.booted = true;
       return null;
     }
     const loaded = this.loadInto(boot.bytes);
-    return loaded.ok ? null : simErrorMessage(loaded.error);
+    if (!loaded.ok) return simErrorMessage(loaded.error);
+    this.booted = true;
+    return null;
   }
 
-  /** A Frame with whatever the UI wants and has not been posted, or nothing: after a `boot`. */
+  /**
+   * The booted game's first Frame, once: the loop posts it after `Ready`. It goes out even when the
+   * UI wants no view yet, because a Frame is how the UI learns that a game it did not ask for is
+   * running. Nothing when no game was booted, or on a second call.
+   */
   refresh(): FromSim[] {
-    if (this.sim === null) return [];
-    const views = this.patch();
-    return Object.keys(views).length > 0 ? [this.frameOf(views, [])] : [];
+    if (this.sim === null || !this.booted) return [];
+    this.booted = false;
+    return [this.frameOf(this.patch(), [])];
   }
 
   /** What a new game of this world can be, for `Ready`; null when it needs no picking. */
@@ -461,6 +470,8 @@ export class RealHost {
   private frameOf(views: ViewsPatch, notices: Notice[]): FromSim {
     const sim = this.sim as Sim;
     this.unread += 1;
+    // Any Frame tells the UI of a booted game: `refresh` need not post another.
+    this.booted = false;
     const all = this.held.length === 0 ? notices : [...this.held, ...notices];
     this.held = [];
     return { kind: "Frame", notices: all, clock: sim.clock(), views };

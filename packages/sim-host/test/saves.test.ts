@@ -317,6 +317,28 @@ describe("a booted game", () => {
     expect(frame.clock.paused).toBe(true);
   });
 
+  it("is posted even to a UI that wants no view yet: the Frame is how it learns of the game", async () => {
+    const posted: FromSim[] = [];
+    const loop = new WorkerLoop({
+      post: (m) => posted.push(m),
+      load: async () => {
+        const host = new RealHost(data);
+        expect(host.boot({ kind: "new", seed: 5, scenario: "stable" })).toBeNull();
+        return host;
+      },
+      now: () => 0,
+      setInterval: () => 0,
+      clearInterval: () => {},
+    });
+    // The page's first Want is queued before the host exists, and names nothing.
+    loop.onMessage({ kind: "Want", views: [], slices: [] });
+    await loop.start();
+    expect(posted.map((m) => m.kind)).toEqual(["Ready", "Frame"]);
+    const frame = posted[1];
+    if (frame?.kind !== "Frame") throw new Error("no frame");
+    expect(frame.clock.paused).toBe(true);
+  });
+
   it("says what is wrong with a save that does not load", () => {
     const host = new RealHost(data);
     expect(host.boot({ kind: "load", bytes: new Uint8Array([1, 2, 3]) })).toMatch(/save/i);

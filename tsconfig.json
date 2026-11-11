@@ -1,26 +1,12 @@
 {
   "files": [],
   "references": [
-    {
-      "path": "packages/sim-data"
-    },
-    {
-      "path": "packages/sim"
-    },
-    {
-      "path": "packages/sim-host"
-    },
-    {
-      "path": "apps/headless"
-    },
-    {
-      "path": "apps/web"
-    },
-    {
-      "path": "apps/mapgen"
-    },
-    {
-      "path": "apps/desktop"
-    }
+    { "path": "packages/sim-data" },
+    { "path": "packages/sim" },
+    { "path": "packages/sim-host" },
+    { "path": "apps/headless" },
+    { "path": "apps/web" },
+    { "path": "apps/desktop" },
+    { "path": "apps/mapgen" }
   ]
 }
