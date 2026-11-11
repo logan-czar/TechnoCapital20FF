@@ -48,6 +48,10 @@
 .term-root[data-page="F8"] .pdb-key.on {
   color: var(--term-dim);
 }
+/* Its command line would read "F4 ORDER" over the Account page. */
+.term-root[data-page="F8"] .pdb-command {
+  visibility: hidden;
+}
 .term-root .pdb-key {
   cursor: pointer;
 }
@@ -218,7 +222,7 @@
 /* The order ticket: the form, the quote beside it, the open orders under both. */
 .term-order {
   display: grid;
-  grid-template-columns: minmax(16em, 22em) minmax(0, 1fr);
+  grid-template-columns: minmax(15em, 20em) minmax(0, 1fr);
   grid-template-rows: auto 1fr;
   align-content: start;
   gap: 10px 24px;
@@ -285,7 +289,7 @@
 .term-orders {
   grid-column: 1 / -1;
 }
-@container term (max-width: 760px) {
+@container term (max-width: 560px) {
   .term-order {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: none;
