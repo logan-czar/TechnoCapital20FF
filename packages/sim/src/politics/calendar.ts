@@ -1,6 +1,6 @@
 // The US political calendar (4-politics 4.6.1 with real US terms; D982, D985): pure date rules.
 
-import { simDateWeekday, simDateYmd } from "../time/calendar.ts";
+import { simDateAddDays, simDateWeekday, simDateYmd } from "../time/calendar.ts";
 import type { SimDate } from "../types/calendar.ts";
 import { cmpDate, dateEq } from "../types/calendar.ts";
 import { remEuclid } from "../types/num.ts";
@@ -58,9 +58,13 @@ export function isElectionDay(d: SimDate): boolean {
   return d.month === NOVEMBER && isElectionYear(d.year) && dateEq(d, electionDay(d.year));
 }
 
-/** A day the politics job changes who holds what, so the politics view must rebuild. */
+/**
+ * A day the politics job changes who holds what, so the politics view must rebuild: the January
+ * handovers, Election Day, and the day after it, when lane E's count (at the first midnight after
+ * the polls close, D1040) writes the results.
+ */
 export function isPoliticsDay(d: SimDate): boolean {
   if (d.month === 1)
     return d.day === 1 || d.day === CONGRESS_HANDOVER_DAY || d.day === PRESIDENT_HANDOVER_DAY;
-  return isElectionDay(d);
+  return isElectionDay(d) || (d.month === NOVEMBER && isElectionDay(simDateAddDays(d, -1)));
 }

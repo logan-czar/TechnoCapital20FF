@@ -15,6 +15,21 @@
 // election; every other vacancy is filled here, the day it opens.
 
 import { weightedPick } from "../births/weights.ts";
+import {
+  CONGRESS_HANDOVER_DAY,
+  GOVERNOR_HANDOVER_DAY,
+  GOVERNOR_MIDTERM_CYCLE,
+  GOVERNOR_TERM_YEARS,
+  governorCycleByName,
+  governorUp,
+  HOUSE_TERM_YEARS,
+  isElectionYear,
+  isPresidentYear,
+  PRESIDENT_HANDOVER_DAY,
+  PRESIDENT_TERM_YEARS,
+  SENATE_TERM_YEARS,
+  senateClassUp,
+} from "../elections/calendar.ts";
 import { deathChance } from "../era/characters.ts";
 import { geoDistrict } from "../geo/index.ts";
 import { usStateOfProvinces } from "../governing/levers.ts";
@@ -60,6 +75,7 @@ import {
   HOUSE_RANGES,
   JUDGE_INTEGRITY,
   JUDGE_RANGES,
+  type NameSet,
   type OfficeRanges,
   PARTY_BLOCS,
   PRESIDENT_RANGES,
@@ -93,11 +109,9 @@ export const START_PRESIDENT_PARTY: Party = "Democrats";
 export const PRESIDENT_TERM_LIMIT = 2;
 /** Consecutive governor's terms, one rule for every state (D1041, T). */
 export const GOVERNOR_TERM_LIMIT = 2;
-/** Years a term lasts. */
-export const HOUSE_TERM_YEARS = 2;
-export const SENATE_TERM_YEARS = 6;
-export const PRESIDENT_TERM_YEARS = 4;
-export const GOVERNOR_TERM_YEARS = 4;
+// Years a term lasts and the January handover days are the election calendar's (lane E,
+// elections/calendar.ts; D1052): one table for both lanes.
+export { GOVERNOR_TERM_YEARS, HOUSE_TERM_YEARS, PRESIDENT_TERM_YEARS, SENATE_TERM_YEARS };
 /** A Fed chair's term (pivot 5.8; the real four years). */
 export const FED_CHAIR_TERM_YEARS = 4;
 /** Chance the president keeps a Fed chair whose term ends (T); none past `FED_CHAIR_MAX_AGE`. */
@@ -181,27 +195,6 @@ export const PRIOR_OFFICE_CHANCE: Readonly<Partial<Record<OfficeSeat["kind"], nu
   Cabinet: 0.2,
   Judge: 0.5,
 };
-/** The governors whose cycle is not the midterm's (by `year % 4` of their general; T, real 2020 cycles). */
-export const GOVERNOR_CYCLE_EXCEPTIONS: Readonly<Record<string, number>> = {
-  Delaware: 0,
-  Indiana: 0,
-  Missouri: 0,
-  Montana: 0,
-  "New Hampshire": 0,
-  "North Carolina": 0,
-  "North Dakota": 0,
-  Utah: 0,
-  Vermont: 0,
-  Washington: 0,
-  "West Virginia": 0,
-  "New Jersey": 1,
-  Virginia: 1,
-  Kentucky: 3,
-  Louisiana: 3,
-  Mississippi: 3,
-};
-/** The cycle of every other governor: elected at the midterms. */
-export const GOVERNOR_CYCLE_DEFAULT = 2;
 
 // ---------------------------------------------------------------- XP and levels (pivot 5.10)
 
@@ -276,38 +269,56 @@ function nextOn(date: SimDate, month: number, day: number, ok: (y: number) => bo
   }
 }
 
-/** A House term's end: 3 January of the next odd year (pivot 6.1). */
+// The term ends below follow lane E's calendar (elections/calendar.ts: the handover days, the Senate
+// classes, the governor cycles; D1052), so a seat taken by appointment or succession ends where the
+// elections hand it over.
+
+/** A House term's end: the Congress handover (3 January) of the next odd year (pivot 6.1). */
 export function houseTermEnds(date: SimDate): SimDate {
-  return nextOn(date, 1, 3, (y) => y % 2 === 1);
+  return nextOn(date, 1, CONGRESS_HANDOVER_DAY, (y) => isElectionYear(y - 1));
 }
 
-/** A Senate class's term end: 3 January after its next general (class 1 ended terms in 1995, 2001...). */
+/** A Senate class's term end: the Congress handover after the class's next general (D982's classes). */
 export function senateTermEnds(senateClass: number, date: SimDate): SimDate {
-  return nextOn(date, 1, 3, (y) => (((y - 1995 - 2 * (senateClass - 1)) % 6) + 6) % 6 === 0);
+  return nextOn(
+    date,
+    1,
+    CONGRESS_HANDOVER_DAY,
+    (y) => isElectionYear(y - 1) && senateClassUp(y - 1) === senateClass,
+  );
 }
 
 /** The presidency's term end: 20 January after the next presidential general. */
 export function presidentTermEnds(date: SimDate): SimDate {
-  return nextOn(date, 1, 20, (y) => y % 4 === 1);
+  return nextOn(date, 1, PRESIDENT_HANDOVER_DAY, (y) => isElectionYear(y - 1) && isPresidentYear(y - 1));
 }
 
-/** A governor's term end (15 January after their next general, T) on cycle `cycle` (`year % 4`). */
+/** A governor's term end: the governors' handover after their next general on cycle `cycle` (`year % 4`). */
 export function governorTermEnds(cycle: number, date: SimDate): SimDate {
-  return nextOn(date, 1, 15, (y) => (y - 1) % 4 === cycle);
+  return nextOn(date, 1, GOVERNOR_HANDOVER_DAY, (y) => governorUp(cycle, y - 1));
 }
 
 /** The handover after the next November general (3 January of the next odd year after a November). */
 export function nextGeneralHandover(date: SimDate): SimDate {
-  return nextOn(date, 1, 3, (y) => y % 2 === 1 && cmpDate(simDateYmd(y - 1, 11, 1), date) > 0);
+  return nextOn(
+    date,
+    1,
+    CONGRESS_HANDOVER_DAY,
+    (y) => isElectionYear(y - 1) && cmpDate(simDateYmd(y - 1, 11, 1), date) > 0,
+  );
 }
 
-/** A state's governor cycle (`year % 4` of its general): lane E's calendar once set, else D1041's table. */
+/**
+ * A state's governor cycle (`year % 4` of its general): lane E's calendar once set, else the same
+ * table by state name (elections/calendar.ts `governorCycleByName`; a world without counties has no
+ * election calendar). Null for a place without a governor (DC).
+ */
 export function governorCycleOf(world: World, state: UsStateId): number | null {
   const s = world.politics.states[state];
   if (s === undefined || s.senate_classes.length === 0) return null;
   const set = world.elections.calendar.governor_cycle[state];
   if (set !== undefined && set !== null) return set;
-  return GOVERNOR_CYCLE_EXCEPTIONS[s.name] ?? GOVERNOR_CYCLE_DEFAULT;
+  return governorCycleByName(s.name);
 }
 
 /** When a seat taken on `date` ends its term (null for a life or pleasure post). */
@@ -324,7 +335,7 @@ export function termEndsOf(world: World, seat: OfficeSeat, date: SimDate): SimDa
     case "House":
       return houseTermEnds(date);
     case "Governor":
-      return governorTermEnds(governorCycleOf(world, seat.state) ?? GOVERNOR_CYCLE_DEFAULT, date);
+      return governorTermEnds(governorCycleOf(world, seat.state) ?? GOVERNOR_MIDTERM_CYCLE, date);
     case "FedChair":
       return simDateYmd(date.year + FED_CHAIR_TERM_YEARS, date.month, Math.min(date.day, 28));
     case "Cabinet":
@@ -441,7 +452,7 @@ interface Pool {
   book: NameBook;
   blocs: BlocTable;
   /** A historical world keeps living public figures' names unique (1995-rework 7.2); null leaves draws frozen. */
-  taken: Set<string> | null;
+  taken: NameSet | null;
 }
 
 function poolOf(world: World, year: number): Pool {
@@ -449,10 +460,33 @@ function poolOf(world: World, year: number): Pool {
   if (book === null) throw new Error("no name book for the USA");
   const era = world.era;
   if (era === undefined) return { book, blocs: PARTY_BLOCS, taken: null };
-  const taken = new Set<string>();
-  for (const p of world.persons.persons) if (p.status !== "Dead") taken.add(p.name);
-  for (const c of world.politics.politicians) taken.add(c.name);
-  return { book, blocs: eraBlocs(era.politics.ideologies, year), taken };
+  return { book, blocs: eraBlocs(era.politics.ideologies, year), taken: takenNames(world) };
+}
+
+/**
+ * The names in use when a pool is made (the living persons and the POC's table) plus those it has
+ * drawn since (D1052): looked up where they live rather than copied into a set each time, since a
+ * pool is made for every challenger and most draws ask about one name. The same answers as the copy
+ * (nobody dies while a pool is in use; persons added since are the pool's own draws).
+ */
+function takenNames(world: World): NameSet {
+  const persons = world.persons.persons;
+  const known = persons.length;
+  const politicians = world.politics.politicians;
+  const added = new Set<string>();
+  return {
+    has(name: string): boolean {
+      if (added.has(name)) return true;
+      for (let i = 0; i < known; i++) {
+        const p = persons[i] as Person;
+        if (p.name === name && p.status !== "Dead") return true;
+      }
+      return politicians.some((c) => c.name === name);
+    },
+    add(name: string): void {
+      added.add(name);
+    },
+  };
 }
 
 function draw(
@@ -604,13 +638,21 @@ function startParty(
     }
     case "House": {
       if (era !== undefined) {
+        // The state's real Democrats less those already seated (the POC's members, D1052) go to
+        // the most Democratic-leaning of its seats still empty.
         const dem = era.politics.states[seat.state]?.start_house_dem ?? 0;
         const n = houseSeatsOf(world, seat.state);
-        const rank = [...Array(n).keys()]
-          .map((i) => [districtLean(world, seat.state, i + 1), i + 1] as const)
+        let seatedDem = 0;
+        const open: [number, number][] = [];
+        for (let k = 1; k <= n; k++) {
+          const h = officeHolderOf(world.persons, { kind: "House", state: seat.state, district: k });
+          if (h === undefined) open.push([districtLean(world, seat.state, k), k]);
+          else if (personGet(world.persons, h.person)?.party === "Democrats") seatedDem++;
+        }
+        const rank = open
           .sort((a, b) => b[0] - a[0] || a[1] - b[1])
           .findIndex(([, num]) => num === seat.district);
-        return rank < dem ? "Democrats" : "Republicans";
+        return rank < dem - seatedDem ? "Democrats" : "Republicans";
       }
       return partyForLean(g, seatLean(world, seat));
     }
@@ -745,6 +787,41 @@ function priorCareer(
   return [{ seat: prior, how, from: yearsBefore(from, years), to: from, exit: "Promoted" }];
 }
 
+/**
+ * Where the POC's House members sit in a world with lane G's plans (D1052): the POC placed them in
+ * its own districts (D982), which are not lane G's, so each state's members are seated anew in the
+ * plan's districts, its Democrats in the most Democratic-leaning ones (1995-rework 7.2), then its
+ * Republicans, each party in the POC's district order. A state whose apportionment from the counties'
+ * people (D1039) has fewer seats than the POC's leaves its last members unseated (null; Republicans
+ * first); one with more leaves seats for `startParty`. Empty in a world without plans, whose members
+ * keep the POC's district numbers.
+ */
+function startHouseSeats(world: World): Map<Politician, OfficeSeat | null> {
+  const out = new Map<Politician, OfficeSeat | null>();
+  const p = world.politics;
+  if (world.geo.plans.length === 0) return out;
+  const number = (c: Politician): number =>
+    c.office.kind === "House" ? (p.districts[c.office.district]?.number ?? 0) : 0;
+  p.states.forEach((_, si) => {
+    const state = ordinal<UsStateId>(si);
+    const members = p.politicians
+      .filter((c) => c.office.kind === "House" && p.districts[c.office.district]?.state === si)
+      .sort(
+        (a, b) =>
+          (a.party === "Democrats" ? 0 : 1) - (b.party === "Democrats" ? 0 : 1) || number(a) - number(b),
+      );
+    const n = houseSeatsOf(world, state);
+    const byLean = [...Array(n).keys()]
+      .map((k) => [districtLean(world, state, k + 1), k + 1] as const)
+      .sort((a, b) => b[0] - a[0] || a[1] - b[1]);
+    members.forEach((c, i) => {
+      const d = byLean[i];
+      out.set(c, d === undefined ? null : { kind: "House", state, district: d[1] });
+    });
+  });
+  return out;
+}
+
 /** Seats a start holder: the career record, then the office from its backdated start. */
 function seatAtStart(world: World, g: DrawSource, person: Person, seat: OfficeSeat, start: SimDate): void {
   const ends = termEndsOf(world, seat, start);
@@ -773,8 +850,11 @@ export function personsStart(world: World, draws: DrawSource): void {
   const president = p.politicians.find((c) => c.office.kind === "President") ?? null;
   const ordered =
     president === null ? p.politicians : [president, ...p.politicians.filter((c) => c !== president)];
+  const housePlaced = startHouseSeats(world);
   for (const c of ordered) {
-    const seat = seatOfPolitician(world, c, judgeSeats);
+    const placed = housePlaced.get(c);
+    if (placed === null) continue;
+    const seat = placed ?? seatOfPolitician(world, c, judgeSeats);
     const home = seatState(seat) ?? drawHomeState(world, g);
     const integrity = c.integrity ?? drawIntegrity(g, c.traits);
     const person = personAdd(s, (id) => ({
@@ -1560,6 +1640,21 @@ export function careersDay(world: World, draws: DrawSource, date: SimDate): void
   if (newYear) benchRefresh(world, g, poolOf(world, date.year), date);
   benchSync(world);
   s.platforms = platformsOf(s);
+}
+
+/**
+ * What careers does the day lane E seats winners (D1052), called by the elections job after the
+ * handover: a newly elected president's administration (`executiveTurnover`) and every vacancy the
+ * handover opened (a senator elected president, a governor elected senator) are filled the same
+ * day rather than the next, so the offices are whole at the day's end. Politics stream.
+ */
+export function careersHandover(world: World, draws: DrawSource, date: SimDate): void {
+  if (world.persons.persons.length === 0) return;
+  const g = politicsDraws(draws);
+  executiveTurnover(world, date);
+  fillVacancies(world, g, date);
+  benchSync(world);
+  world.persons.platforms = platformsOf(world.persons);
 }
 
 /** The careers job (`DailyCareers`, 00:00 every day). */

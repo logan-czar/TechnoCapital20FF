@@ -61,6 +61,24 @@ describe("a generated history", () => {
     expect(again.sim?.stateHash()).toBe(sim.stateHash());
   }, 60_000);
 
+  it("opens the player's account at the request's difficulty (D1052)", () => {
+    const run = (msg: ToSim): string => {
+      const host = hostOf();
+      host.handle(msg);
+      while (host.isGenerating()) host.tick(16);
+      const sim = host.sim;
+      if (sim === null) throw new Error("no game");
+      return `${sim.stateHash()} ${JSON.stringify(sim.views().account.data)}`;
+    };
+    const normal = run(generate);
+    const hard = run({ ...generate, difficulty: "Hard" } as ToSim);
+    expect(run({ ...generate, difficulty: "Normal" } as ToSim)).toBe(normal);
+    expect(hard).not.toBe(normal);
+    // Hard's preset: $25,000 at the brokerage (D1042).
+    expect(hard).toContain("25000");
+    expect(normal).toContain("50000");
+  }, 60_000);
+
   it("stops on Cancel between chunks, and a new game replaces a running one", () => {
     const host = hostOf();
     host.handle(generate);

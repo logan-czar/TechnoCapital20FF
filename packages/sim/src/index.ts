@@ -31,6 +31,7 @@ export {
   simHydrate,
   simNew,
   simRunUntil,
+  simSetDifficulty,
   simSlice,
 } from "./lib.ts";
 // The save format's version (D1029): a host names it in its save listings.

@@ -45,6 +45,7 @@ import type { Notice } from "./notice.ts";
 import type { SimError, StateHash } from "./sim-api.ts";
 import type { DailyBar, IndexHistory } from "./state/market.ts";
 import type { Headline } from "./state/news.ts";
+import type { Difficulty } from "./state/player.ts";
 import type { FrontPage } from "./views/feed.ts";
 import type { ClockView, SimViews, ViewName } from "./views/index.ts";
 import type { ContractBook, ContractHistory } from "./views/markets.ts";
@@ -149,6 +150,11 @@ export type ToSim =
        * pivot (the 1995 world in 1995, the 2020 world in 2020).
        */
       start?: GameStart;
+      /**
+       * The player's difficulty preset (pivot 3.6; D1052) for a start that opens an account (a
+       * generated or baked 2020 start). Absent: Normal. A world's own first day has no account.
+       */
+      difficulty?: Difficulty;
     }
   /** Load a save (D13, D953): pauses and drops any skip. */
   | { kind: "Load"; id: RequestId; bytes: Uint8Array }

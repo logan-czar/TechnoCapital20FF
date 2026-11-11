@@ -287,11 +287,22 @@ describe("M1 contracts: the pivot views", () => {
     for (let i = 0; i < 48; i++) simStep(sim);
     const views = simViews(sim);
     // The M2 lanes port theirs: v_people is lane C's (D1041), the two geo views lane G's (D1039),
-    // the account and notifications lane P's (D1042): with no player those two hold their empty values.
-    const ported: readonly string[] = ["people", "districts", "usmap_layers", "account", "notifications"];
+    // the account and notifications lane P's (D1042): with no player those two hold their empty
+    // values; v_races and v_returns lane E's (D1040): in this world without counties they stay empty,
+    // though rebuilt (so posted) on their cadence.
+    const ported: readonly string[] = [
+      "people",
+      "districts",
+      "usmap_layers",
+      "account",
+      "notifications",
+      "races",
+      "returns",
+    ];
     const unported = PIVOT_VIEWS.filter((n) => !ported.includes(n));
     expect(viewIsPorted("people")).toBe(true);
-    for (const n of ["account", "notifications"] as const) {
+    for (const n of ["account", "notifications", "races", "returns"] as const) {
+      expect(viewIsPorted(n), n).toBe(true);
       expect(views[n].data, n).toEqual(VIEW_BUILDERS[n].empty());
     }
     for (const n of unported) {
@@ -300,6 +311,7 @@ describe("M1 contracts: the pivot views", () => {
     }
     const patch = viewsPatchSince(views, postedViewsNone());
     for (const n of unported) expect(n in patch, n).toBe(false);
+    for (const n of ["races", "returns"] as const) expect(n in patch, n).toBe(true);
     expect(data().counties.rows).toEqual([]);
   });
 });

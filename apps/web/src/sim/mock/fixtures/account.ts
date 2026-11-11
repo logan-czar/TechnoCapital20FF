@@ -272,6 +272,9 @@ const FIXED_OF: Readonly<Record<NotificationKind, FixedPause | null>> = {
   ElectionDay: "ElectionDay",
   Holding: "Holding",
   Alert: null,
+  // The account's own notices (D1052): the forced sale and the bankruptcy pause as a margin call.
+  Tax: "MarginCall",
+  Bankruptcy: "MarginCall",
 };
 
 export function notify(

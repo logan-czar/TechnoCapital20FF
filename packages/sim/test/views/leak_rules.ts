@@ -153,6 +153,72 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
       "usmap_layers.states[].electoral_votes",
     ],
   },
+  // Public records with no company or industry subject (pivot 6.2, 9.4; D1040, D1052): the races
+  // and their returns; a candidate's money and strength are null at Coarse, the votes are counts.
+  races: {
+    ids: [
+      "races.cycle",
+      "races.races[].id",
+      "races.races[].state",
+      "races.races[].district",
+      "races.races[].senate_class",
+      "races.races[].electoral_votes",
+      "races.races[].candidates[].person",
+      "races.races[].primaries[].ballot[]",
+      "races.races[].primaries[].winner",
+      "races.races[].ballot[]",
+      "races.races[].winner",
+    ],
+  },
+  returns: {
+    ids: [
+      "returns.races[].race",
+      "returns.races[].reporting",
+      "returns.races[].votes[].person",
+      "returns.races[].votes[].votes",
+      "returns.races[].electoral_votes[].person",
+      "returns.races[].electoral_votes[].votes",
+      "returns.races[].states[].state",
+      "returns.races[].states[].reporting",
+      "returns.races[].states[].votes[].person",
+      "returns.races[].states[].votes[].votes",
+      "returns.races[].states[].electoral_votes",
+      "returns.races[].states[].called",
+      "returns.races[].calls[].outlet",
+      "returns.races[].calls[].person",
+    ],
+  },
+  // The player's own account and notices (pivot 14; D1042, D1052): their figures are the player's
+  // (what they paid, hold and owe) and the market's public prices, about no banded subject, so no
+  // subtree is a company's here.
+  account: {
+    ids: [
+      "account.positions[].instrument",
+      "account.positions[].what.id",
+      "account.positions[].qty",
+      "account.orders[].id",
+      "account.orders[].instrument",
+      "account.orders[].what.id",
+      "account.orders[].qty",
+      "account.orders[].filled",
+      "account.fills[].order",
+      "account.fills[].instrument",
+      "account.fills[].what.id",
+      "account.fills[].qty",
+      "account.settlements[].contract",
+      "account.settlements[].qty",
+      "account.follows[].id",
+      "account.alert_rules[].id",
+    ],
+  },
+  notifications: {
+    ids: [
+      "notifications.items[].id",
+      "notifications.items[].refs[].id",
+      "notifications.items[].rule",
+      "notifications.read_through",
+    ],
+  },
   // All public, with no company or industry subject: GDP reads only demand, exact in every class
   // (1995-rework 6.1, D432).
   history: {

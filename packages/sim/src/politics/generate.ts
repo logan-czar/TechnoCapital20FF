@@ -108,12 +108,18 @@ export interface Drawn extends Omit<BaseCharacter, "class"> {
   ideology: Ideology;
 }
 
+/** A set of names a draw must avoid: a `Set`, or a lookup that reads them where they live (D1052). */
+export interface NameSet {
+  has(name: string): boolean;
+  add(name: string): void;
+}
+
 /** Who a person can be: the name book and the party blocs. */
 export interface PersonPool {
   names: NameBook;
   blocs: BlocTable;
   /** The names in office, kept unique in a historical world (1995-rework 7.2); null leaves the draws frozen. */
-  taken: Set<string> | null;
+  taken: NameSet | null;
 }
 
 /**

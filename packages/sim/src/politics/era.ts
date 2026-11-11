@@ -167,13 +167,26 @@ export function equalProportions(people: readonly number[], total: number): numb
  */
 export function driftYear(p: PoliticsState, era: EraPolitics, g: DrawSource): void {
   const swing = CENSUS_REGIONS.map(() => g.normal("Politics") * REGION_DRIFT_SD_PTS);
-  const by = p.states.map((s, i) => {
+  const by = p.states.map((_, i) => {
     const row = era.states[i] as EraUsState;
     const d = (swing[row.region] as number) + g.normal("Politics") * STATE_DRIFT_SD_PTS;
-    s.lean_pts += d;
     row.population *= expF(row.growth + g.normal("Politics") * POP_SHOCK_SD);
-    s.weight = row.population;
     return d;
+  });
+  // The nation's people-weighted lean holds (D1052): the drift moves regions and states against
+  // each other, and party competition keeps the whole near where it was; the national mood of a
+  // November is the elections' swing and tides (pivot 6.7).
+  let total = 0;
+  let mean = 0;
+  p.states.forEach((s, i) => {
+    total += s.weight;
+    mean += s.weight * (by[i] as number);
+  });
+  const shift = total > 0 ? mean / total : 0;
+  p.states.forEach((s, i) => {
+    by[i] = (by[i] as number) - shift;
+    s.lean_pts += by[i] as number;
+    s.weight = (era.states[i] as EraUsState).population;
   });
   const move = (districts: District[]): void => {
     for (const d of districts) d.lean_pts += by[d.state] as number;

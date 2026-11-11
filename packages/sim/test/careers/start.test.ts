@@ -74,7 +74,9 @@ describe("personsStart in the real 1995 world (pivot 5.8)", () => {
       expect(p.status).toBe("InOffice");
       expect(p.career.at(-1)?.seat.kind).toBe(c.office.kind);
     }
-    // The 1995 Congress keeps its real party split (1995-rework 7.2): 204 Democrats in the House.
+    // The 1995 Congress keeps its real party split (1995-rework 7.2): 204 Democrats in the House,
+    // each state's in its most Democratic-leaning districts of lane G's plan (D1052). A seat lane G's
+    // apportionment moves between states (D1039) costs or gains its state a Republican.
     const dems = s.offices.filter(
       (o) => o.seat.kind === "House" && personGet(s, o.person)?.party === "Democrats",
     );
@@ -119,7 +121,8 @@ describe("personsStart in the real 1995 world (pivot 5.8)", () => {
       expect(bench.length, st.name).toBe(st.senate_classes.length > 0 ? BENCH_PER_STATE : 0);
       for (const id of bench) {
         const p = personGet(s, id) as Person;
-        expect(p.status).toBe("Bench");
+        // The start's own races (1995's governors, lane E) have declared some of them (D1052).
+        expect(["Bench", "Candidate"]).toContain(p.status);
         expect(p.home_state).toBe(i);
         expect(["Mayor", "StateLegislator", "Business", "Celebrity"]).toContain(p.origin);
         expect(p.career).toEqual([]);

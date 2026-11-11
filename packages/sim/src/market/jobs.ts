@@ -12,15 +12,18 @@
 
 import { companyIsFrozen } from "../economy/index.ts";
 import { profileOf } from "../economy/profiles.ts";
+import { electionsStateEmpty } from "../elections/index.ts";
 import { eraHistoryNew } from "../era/jobs.ts";
 import { companyHomeSpread, runRate, sheet } from "../finance/jobs.ts";
 import { companyFinanceQuarters } from "../finance/state.ts";
 import { ledgerEbit, ledgerNetIncome, trailingFour } from "../finance/statements.ts";
+import { geoStateEmpty } from "../geo/load.ts";
 import { corpTaxRate } from "../governing/levers.ts";
 import { scheduler } from "../jobs.ts";
 import { headlineConfidence } from "../news.ts";
 import { BAREBONES_REVENUE_USD } from "../ops/stations.ts";
 import { confidenceFactor } from "../people/management.ts";
+import { personsStateEmpty } from "../politics/people.ts";
 import { NoNoise } from "../rng.ts";
 import {
   dateTimeDate,
@@ -600,6 +603,12 @@ function projectionClone(world: World): World {
     recaps: [],
     // Politics jobs are not projection slots: leave the people and the results out of the copy.
     politics: { ...world.politics, politicians: [], districts: [], pending: null, elections: [] },
+    // Nor are the pivot's geo, careers, elections and player jobs (D1052): the month closes read none
+    // of their tables, which are most of a pre-simulated world's size.
+    geo: geoStateEmpty(),
+    persons: personsStateEmpty(),
+    elections: electionsStateEmpty(),
+    player: null,
     // Nor are the run's yearly jobs: it keeps what the month closes read (1995-rework 3.3).
     ...(world.era === undefined
       ? {}

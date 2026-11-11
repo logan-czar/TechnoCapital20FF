@@ -10,10 +10,18 @@
 // the POC's and lane C's starts) and `electionsStateEmpty` (the load). Their signatures are
 // contracts. Lane E also owns the politics POC's removal (politics/jobs.ts and its views).
 
-import type { Scheduler } from "../time/scheduler.ts";
+//
+// Lane E's build (D1040, D1052): calendar.ts (dates), geography.ts (where a race is voted, on lane
+// G's plans), count.ts (the vote), races.ts (filing lane C's `declareCycle` fields, primaries,
+// specials, seating), jobs.ts (the daily and weekly jobs) and mirror.ts (the POC's table kept as a
+// mirror of the offices table for its readers). Elections act only in a world with counties; a world
+// without keeps the POC's vote.
+
+import { type Scheduler, schedulerRegister } from "../time/scheduler.ts";
 import type { DrawSource } from "../types/draws.ts";
 import type { ElectionsState } from "../types/state/elections.ts";
 import type { World } from "../types/world.ts";
+import { electionsDailyJob, electionsWeeklyJob, startElections } from "./jobs.ts";
 
 /** No races, no calendar (D1037): every world's at load until lane E opens a cycle. */
 export function electionsStateEmpty(): ElectionsState {
@@ -31,12 +39,20 @@ export function electionsStateEmpty(): ElectionsState {
  * Lane E's jobs. Pivot 3.3: the vote count runs at both fidelities (at once at Coarse; election
  * night's batches are M5's, tagged Full), Coarse campaigns are tagged `{ fidelity: "Coarse" }`
  * and Full campaigns (M3) `{ fidelity: "Full" }`. Registered by jobs.ts: the daily jobs in the
- * `DailyElections` slot, the weekly ones in `WeeklyJobs` (first there). Empty until lane E adds them.
+ * `DailyElections` slot, the weekly ones in `WeeklyJobs` (first there).
  */
-export function registerElectionJobs(_s: Scheduler): void {}
+export function registerElectionJobs(s: Scheduler): void {
+  schedulerRegister(s, "DailyElections", "elections.calendar", electionsDailyJob);
+  schedulerRegister(s, "WeeklyJobs", "elections.coarse_campaigns", electionsWeeklyJob, {
+    fidelity: "Coarse",
+  });
+}
 
 /**
- * The elections at a world's start (pivot 6.1): nothing until lane E sets the calendar and opens the
- * cycle. Runs after `geoStart` and `personsStart`. Count and Campaign streams only.
+ * The elections at a world's start (pivot 6.1): the governor cycles, the POC's table mirrored from
+ * lane C's offices, and the start year's races. Runs after `geoStart` and `personsStart` (which
+ * seats every office; D1052). Campaign stream (and lane C's Politics stream inside `declareCycle`).
  */
-export function electionsStart(_world: World, _draws: DrawSource): void {}
+export function electionsStart(world: World, draws: DrawSource): void {
+  startElections(world, draws);
+}

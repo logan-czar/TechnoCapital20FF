@@ -14,6 +14,7 @@
 import {
   type BakedStart,
   controlsSecondsPerTick,
+  type Difficulty,
   dateTimeDate,
   dateTimeHour,
   type FromSim,
@@ -44,6 +45,7 @@ import {
   simErrorMessage,
   simHydrate,
   simNew,
+  simSetDifficulty,
   type ToSim,
   unsupportedMessage,
   type ViewsPatch,
@@ -66,6 +68,8 @@ export interface GenerateRequest {
   id: RequestId;
   seed: number;
   scenario?: string;
+  /** The player's preset at hydration (pivot 3.6); Normal when absent. */
+  difficulty?: Difficulty;
 }
 
 /** A generated history being run (pivot 3.2 to 3.5; D1037): the host drives it a chunk at a time. */
@@ -93,8 +97,9 @@ export const generateUnsupported: GenerateStart = () => ({ ok: false, error: uns
 /**
  * The pre-simulation of `data` (packages/sim fidelity/presim.ts; pivot 3.2, 3.4): a new game of the
  * historical world under the hidden random scenario (or the request's), run at Coarse fidelity to
- * the first day of play, then hydrated (`simHydrate`). A world that is not historical is refused.
- * `opts.until` ends it earlier (tests).
+ * the first day of play, then hydrated (`simHydrate`, which opens the player's account at the
+ * request's difficulty). A world that is not historical is refused. `opts.until` ends it earlier
+ * (tests).
  */
 export function presimGenerate(data: WorldData, opts: PresimOptions = {}): GenerateStart {
   return (req) => {
@@ -115,7 +120,7 @@ export function presimGenerate(data: WorldData, opts: PresimOptions = {}): Gener
           if (hydrated !== null) return hydrated;
           const sim = presimSim(p);
           if (sim === null) return null;
-          simHydrate(sim);
+          simHydrate(sim, req.difficulty);
           hydrated = sim;
           return sim;
         },
@@ -341,12 +346,15 @@ export class RealHost {
             id: msg.id,
             seed: msg.seed,
             ...(msg.scenario === undefined ? {} : { scenario: msg.scenario }),
+            ...(msg.difficulty === undefined ? {} : { difficulty: msg.difficulty }),
           });
           if (!job.ok) return [...stopped, this.reply(msg.id, { kind: "Refused", message: job.error })];
           this.generating = { id: msg.id, job: job.value };
           return [...stopped, this.progressOf(msg.id, job.value.progress())];
         }
-        if (msg.start?.kind === "baked") return [...stopped, ...this.newGameBaked(msg.id, msg.start.id)];
+        if (msg.start?.kind === "baked") {
+          return [...stopped, ...this.newGameBaked(msg.id, msg.start.id, msg.difficulty)];
+        }
         const made = simNew(this.data, msg.seed, {
           debug: this.debug,
           ...(msg.scenario === undefined ? {} : { scenario: msg.scenario }),
@@ -403,15 +411,22 @@ export class RealHost {
     return [this.frame(loaded.value), this.reply(id, { kind: "Ok", notices: loaded.value })];
   }
 
-  /** A new game from a baked start (pivot 3.5): its save, loaded. The request's seed is not used. */
-  private newGameBaked(id: RequestId, start: string): FromSim[] {
+  /**
+   * A new game from a baked start (pivot 3.5): its save, loaded, with the player's account reopened
+   * at `difficulty` when the start was baked at another (`simSetDifficulty`; a start is baked at
+   * Normal). The request's seed is not used.
+   */
+  private newGameBaked(id: RequestId, start: string, difficulty?: Difficulty): FromSim[] {
     const starts = this.starts();
     if (starts === null || this.startStore === null) {
       return [this.reply(id, { kind: "Refused", message: unsupportedMessage("NewGame") })];
     }
     const bytes = starts.some((s) => s.id === start) ? this.startStore.read(start) : null;
     if (bytes === null) return [this.reply(id, { kind: "Refused", message: `no baked start "${start}"` })];
-    return this.load(id, bytes);
+    const loaded = this.loadInto(bytes);
+    if (!loaded.ok) return [this.reply(id, { kind: "SimError", error: loaded.error })];
+    if (difficulty !== undefined && this.sim !== null) simSetDifficulty(this.sim, difficulty);
+    return [this.frame(loaded.value), this.reply(id, { kind: "Ok", notices: loaded.value })];
   }
 
   /** The four slot requests (pivot 15.4). A store that throws is answered, not Fatal: the game is whole. */
