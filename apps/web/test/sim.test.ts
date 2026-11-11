@@ -52,6 +52,8 @@ describe("client", () => {
     const host = new SimHost(world);
     const { transport, log, post } = wire(host);
     const client = new SimClient(transport);
+    // The pivot mock honours Want (D1016, D1037): read the company rows, so they are posted.
+    client.store.subscribe("company_rows", () => {});
     post({ kind: "Ready" });
     await client.ready;
     expect(client.store.getView("clock")).toBeUndefined();
@@ -87,12 +89,13 @@ describe("client", () => {
     const client = new SimClient(transport);
     post({ kind: "Ready" });
     await client.newGame(3);
+    const t0 = host.sim?.now ?? 0;
     host.sim?.step();
     const bytes = await client.save();
     expect(bytes).not.toBeNull();
     const loaded = await client.load(bytes as Uint8Array);
     expect(loaded.kind).toBe("Ok");
-    expect(client.store.getView("clock")?.data.now).toBe(1);
+    expect(client.store.getView("clock")?.data.now).toBe(t0 + 1);
     expect(client.store.getView("clock")?.data.paused).toBe(true);
     expect((await client.load(new Uint8Array([1, 2, 3]))).kind).toBe("SimError");
   });
@@ -113,14 +116,15 @@ describe("store", () => {
 
     hits.length = 0;
     const sim = host.sim as MockSim;
+    const t0 = sim.now;
     sim.step();
-    // The step moved the clock and quotes (nothing else is due at 01:00).
+    // The step moved the clock and quotes (nothing else read here is due at 01:00).
     const frame = host.tick(0)[0];
     if (frame?.kind !== "Frame") throw new Error("expected a frame");
     store.applyFrame(frame);
     expect(hits).toEqual(["quotes"]);
     expect(store.getView("company_rows")).toBe(rows);
-    expect(store.getView("clock")?.data.now).toBe(1);
+    expect(store.getView("clock")?.data.now).toBe(t0 + 1);
   });
 
   it("appends news_appended to the feed and replaces it on news_reset", () => {
@@ -239,16 +243,20 @@ describe("price bars", () => {
   });
 });
 
+// The clock's mechanics, which the pivot world shares, on the plain mock (`pivot: false`): it starts
+// on 2020-01-01 and no scripted pause lands in these runs (D1037 made the pivot world the default).
+const PLAIN = { pivot: false } as const;
+
 describe("mock clock pacing (D8)", () => {
   const running = (speed: number) => {
-    const sim = new MockSim(world, 1);
+    const sim = new MockSim(world, 1, undefined, PLAIN);
     sim.apply({ kind: "SetSpeed", speed });
     return sim;
   };
   const ticks = (sim: MockSim, dtMs: number) => sim.advance(dtMs).filter((n) => n.kind === "TickDone").length;
 
   it("starts paused at 2020-01-01 00:00 and does not move while paused", () => {
-    const sim = new MockSim(world, 1);
+    const sim = new MockSim(world, 1, undefined, PLAIN);
     expect(sim.paused).toBe(true);
     expect(sim.now).toBe(0);
     expect(sim.advance(100_000)).toEqual([]);
@@ -287,7 +295,7 @@ describe("mock clock pacing (D8)", () => {
   });
 
   it("skips to a target at max speed, then pauses with SkipDone", () => {
-    const sim = new MockSim(world, 1);
+    const sim = new MockSim(world, 1, undefined, PLAIN);
     for (const alert_kind of ALERT_KIND_VALUES) sim.apply({ kind: "SetAlert", alert_kind, level: "Off" });
     sim.apply({ kind: "SkipTo", skip: "MonthEnd" });
     expect(sim.effectiveSpeed()).toBe(MAX_SPEED);
