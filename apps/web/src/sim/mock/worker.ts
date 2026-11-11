@@ -6,6 +6,7 @@ import type { FromSim, ToSim } from "@tc20ff/sim";
 import { FRAME_MS } from "@tc20ff/sim";
 import { type Files, parseWorld, WORLD_FILES } from "@tc20ff/sim-data";
 import { SimHost } from "./host.ts";
+import { MOCK_PIVOT } from "./mockSim.ts";
 import { buildMockWorld } from "./mockWorld.ts";
 
 interface Scope {
@@ -34,7 +35,8 @@ async function main(): Promise<void> {
   scope.onmessage = (e) => (host ? run(host, e.data) : queued.push(e.data));
   const parsed = parseWorld(await loadFiles());
   if (!parsed.ok) throw new Error(`starting data: ${JSON.stringify(parsed.error)}`);
-  const ready = new SimHost(buildMockWorld(parsed.value));
+  // The worker runs the pivot world (./pivot.ts); the dev server's is a debug sim, so Omniscient works (D1014).
+  const ready = new SimHost(buildMockWorld(parsed.value), { ...MOCK_PIVOT, debug: import.meta.env.DEV });
   host = ready;
   scope.postMessage({ kind: "Ready" });
   for (const m of queued) run(ready, m);
