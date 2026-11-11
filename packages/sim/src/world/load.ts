@@ -28,6 +28,8 @@ import {
 import { fringeAssetsAtLoad } from "../economy/supply.ts";
 import { ratingParse } from "../finance/rating.ts";
 import { booksCheckDefault, companyFinanceAtLoad } from "../finance/state.ts";
+import { geoStateEmpty, geoStateFromData } from "../geo/load.ts";
+import { leversNeutral } from "../governing/levers.ts";
 import { stockAtLoad } from "../market/state.ts";
 import { newsWireDefault } from "../news.ts";
 import { computeBill } from "../ops/compute.ts";
@@ -465,6 +467,8 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
       carry_reset: false,
       phase_label: "Normal",
       fringe_assets: 0.0,
+      // The rest-of-world block (pivot 4.2): split from the fringe by lane S3.
+      row_assets: 0.0,
       supply: 0.0,
       supply_ratio: 1.0,
       market_factor: 1.0,
@@ -636,8 +640,18 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
   if (!births.ok) throw badValue("startup-events", "", births.error);
   const politics = deps.politicsStateFromData(data, countryKeys.map, provinceKeys.map);
   if (politics === null) throw badValue("countries", "USA", "the politics POC needs the USA (D980)");
+  // Counties (pivot 5.1), for a world that has the file.
+  const geo = data.manifest.features.counties
+    ? geoStateFromData(
+        data,
+        politics.states.map((s) => s.name),
+      )
+    : { ok: true as const, value: geoStateEmpty() };
+  if (!geo.ok) throw new LoadFailure(geo.error);
   return {
     clock: dateTimeMidnight(startDate),
+    // pivot 3.3: a historical world is the Coarse pre-simulation; no job reads this yet (D1029).
+    fidelity: data.manifest.features.era ? "Coarse" : "Full",
     zones: tableFromRows(zones),
     countries: tableFromRows(countries),
     provinces: tableFromRows(provinces),
@@ -671,6 +685,13 @@ function buildWorldInner(data: WorldData, deps: LoadDeps, startDate: SimDate): W
     news: deps.newsWireDefault(),
     recaps: [],
     politics,
+    // pivot 4.3: neutral, so the economy with levers is the economy without.
+    levers: leversNeutral(
+      industries.length,
+      politics.states.length,
+      (countries[politics.country] as Country).corp_tax_rate,
+    ),
+    geo: geo.value,
   };
 }
 

@@ -32,6 +32,7 @@ import { appendBufFromRows } from "../src/world/log.ts";
 import { referenceCanonicalString } from "./common/canonical_reference.ts";
 import { data, macrotask, unwrap } from "./common/index.ts";
 
+// Re-recorded for D1029 (the pivot's M1 contracts): the world gained `fidelity`, `levers` and `geo`, each industry `row_assets`, and the saved RNG five streams, so the state hash moved; 13 unported pivot views joined the list, each empty at version 1, so the monthly digest moved. The hash of the state without those fields and streams is still a56475a84805444ae625018f75a3481a, and the 30 older views' digests, the monthly digest over those 30 (d7d84581a03b2f6844e20a4e) and the patch digest are unchanged.
 // Re-recorded for D1022: the profile gained `exits`, so the state hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
 // Re-recorded for D1023: the profile gained `winners` (after D1022's `exits`), so the state hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
 // Re-recorded for D1024: the Events stream joined the saved RNG and the profile gained `seat_events` (after D1022's `exits` and D1023's `winners`), so the state hash moved; every view, monthly and patch digest below is unchanged (legacy plays no seat event).
@@ -43,8 +44,8 @@ import { data, macrotask, unwrap } from "./common/index.ts";
 // Re-recorded for D974: LOW_PRODUCTIVITY_ADJ is +1.0 (was +0.5), so the R&D plan, productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D973: R&D above the norm has diminishing returns by default (spec 5.6 has no curve), so productivity and everything after it moved: the state hash, the monthly and patch digests and the views that carry the economy.
 // Re-recorded for D970: the world gained a `profile` field, so its hash moved; every view, monthly and patch digest below is unchanged (legacy behaviour is identical).
-const GOLDEN_STATE = "a56475a84805444ae625018f75a3481a";
-const GOLDEN_MONTHLY = "d7d84581a03b2f6844e20a4e";
+const GOLDEN_STATE = "3b6fa8616ce1ad5d2f88521f4faf466d";
+const GOLDEN_MONTHLY = "a39601da724dd0de050ab118";
 const GOLDEN_PATCHES = "a8c30b5b8333e63d248f5595";
 /** Each view's canonical JSON digest and version at 2021-01-01 00:00, seed 1. */
 const GOLDEN_VIEWS: Record<string, [string, number]> = {
@@ -78,6 +79,19 @@ const GOLDEN_VIEWS: Record<string, [string, number]> = {
   map_static: ["5a7fcdac19a0f147f840d02c", 1],
   politics: ["caa00cde3b21fa9198792d48", 8785],
   history: ["0259c604ed0adc2b0ebe9e35", 8785],
+  feed: ["8440424e3e953d9ce88266ab", 1],
+  social: ["41acd9a2c224b075b28c0aaf", 1],
+  polls: ["66f490e3432976fdbfc95485", 1],
+  forecast: ["f832441a5efdc82489142765", 1],
+  races: ["59923a8a46fcb9581c1acb8a", 1],
+  people: ["cf385940451b8505bd31e7a3", 1],
+  records: ["6df68f989ab8c28290a21f7d", 1],
+  markets: ["3312b062bb7ccfa55b0b7d0a", 1],
+  account: ["45ab5f212f0c04ee69c341e3", 1],
+  notifications: ["eef46741adfc3a9f76294d3b", 1],
+  districts: ["d2162f6f6799d28562484c4a", 1],
+  usmap_layers: ["1e77db0b8329010df748c51b", 1],
+  returns: ["2492e5a3c809942bb06a61ed", 1],
 };
 
 const sha = (s: string): string => createHash("sha256").update(s).digest("hex").slice(0, 24);

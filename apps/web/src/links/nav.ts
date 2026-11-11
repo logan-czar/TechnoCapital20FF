@@ -19,6 +19,31 @@ export function useNav(): PageNav {
   return useContext(NavContext);
 }
 
+// ---------------------------------------------------------------- the desktop's apps (pivot 15.2)
+
+/** Opens an app's window at a route (os/apps.ts `AppSpec.id`, `AppProps.route`). */
+export type AppOpener = (appId: string, route: string | null) => void;
+
+let appOpener: AppOpener | null = null;
+
+/**
+ * Sets what `openApp` calls: the window manager installs its opener when the desktop mounts and
+ * passes null when it unmounts (lane U2). One desktop at a time.
+ */
+export function setAppOpener(opener: AppOpener | null): void {
+  appOpener = opener;
+}
+
+/**
+ * Opens app `appId` at `route` (null for its home): what a link to another app, a notification or
+ * the taskbar calls. Safe anywhere: with no desktop mounted it does nothing and returns false.
+ */
+export function openApp(appId: string, route: string | null = null): boolean {
+  if (appOpener === null) return false;
+  appOpener(appId, route);
+  return true;
+}
+
 /** Pointer buttons as MouseEvent.button numbers them. */
 export const BUTTON_PRIMARY = 0;
 export const BUTTON_MIDDLE = 1;

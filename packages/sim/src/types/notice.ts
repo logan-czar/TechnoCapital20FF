@@ -173,6 +173,8 @@ export type PauseReason =
   | { kind: "Alert"; alert_kind: AlertKind }
   /** A SkipTo reached its tick. */
   | { kind: "SkipDone"; skip: SkipKind }
+  /** A `Step` control ran its hours (pivot 2.2). */
+  | { kind: "StepDone" }
   /** A save was loaded (D13). */
   | { kind: "Loaded" }
   /** A historical world's run reached its end, which no setting skips (1995-rework 8.3). */

@@ -4,6 +4,7 @@
 // A request never hangs: a Fatal message or a worker error settles every pending one as Refused.
 
 import {
+  actErrorMessage,
   type FromSim,
   type Reply,
   type RequestId,
@@ -29,6 +30,8 @@ export function replyProblem(r: Reply): string | null {
       return simErrorMessage(r.error satisfies SimError);
     case "Refused":
       return r.message;
+    case "ActError":
+      return actErrorMessage(r.error);
     default:
       return null;
   }
@@ -80,6 +83,9 @@ export class SimClient {
         p.resolve(m.result);
         break;
       }
+      // A long request's progress (pivot 3.5): nothing sends one before lane S4; lane U1 shows it.
+      case "Progress":
+        break;
       case "Fatal":
         this.fail(m.message);
         break;

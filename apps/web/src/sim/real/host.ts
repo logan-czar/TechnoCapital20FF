@@ -20,6 +20,7 @@ import {
   type Sim,
   simNew,
   type ToSim,
+  unsupportedMessage,
   type ViewsPatch,
   type ViewWant,
   viewsPatchSince,
@@ -101,7 +102,26 @@ export class RealHost {
         const views = this.patch();
         return Object.keys(views).length > 0 ? [this.frameOf(views, [])] : [];
       }
+      // No request here runs long enough to cancel (pivot 3.5 arrives with lane S4's pre-simulation).
+      case "Cancel":
+        return [];
+      // Slot saves are written by the sim's own process (pivot 15.4; lane U1).
+      case "SaveSlot":
+      case "LoadSlot":
+      case "ListSaves":
+      case "DeleteSave":
+        return [this.reply(msg.id, { kind: "Refused", message: unsupportedMessage(msg.kind) })];
+      case "Act": {
+        if (this.sim === null) return [this.refuse(msg.id)];
+        const result = this.sim.act(msg.action);
+        if (!result.ok) return [this.reply(msg.id, { kind: "ActError", error: result.error })];
+        return [this.frame(result.value), this.reply(msg.id, { kind: "Ok", notices: result.value })];
+      }
       case "NewGame": {
+        // Baked and generated starts (pivot 3.5) arrive with lane S4; absent is the world's own start.
+        if (msg.start !== undefined) {
+          return [this.reply(msg.id, { kind: "Refused", message: unsupportedMessage(msg.kind) })];
+        }
         const made = simNew(this.data, msg.seed, {
           debug: this.debug,
           ...(msg.scenario === undefined ? {} : { scenario: msg.scenario }),

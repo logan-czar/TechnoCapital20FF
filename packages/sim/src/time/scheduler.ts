@@ -1,6 +1,6 @@
 // The scheduler (spec 4; build-plan M1.3). One tick is one hour. Each tick advances the clock,
-// then visits the named `Slot`s in spec 4 order (hourly, daily, monthly, quarterly, yearly),
-// running every slot that is due at the new time. Each job reads the state the one before left.
+// then visits the named `Slot`s in spec 4 order (hourly, daily, weekly (pivot 2.3), monthly,
+// quarterly, yearly), running every slot that is due at the new time. Each job reads the state the one before left.
 // Ported from crates/sim/src/time/scheduler.rs.
 //
 // The order of slots is fixed here, now, for every milestone. A later milestone fills a slot by
@@ -24,7 +24,7 @@ import {
 } from "../types/control.ts";
 import type { DrawSource } from "../types/draws.ts";
 import type { AlertKind, AlertPayload, Notice, PauseReason } from "../types/notice.ts";
-import type { World } from "../types/world.ts";
+import type { Fidelity, World } from "../types/world.ts";
 import { alertLevelsGet } from "../world/notice.ts";
 import {
   dateTimeDate,
@@ -36,11 +36,15 @@ import {
   simDateIsQuarterFirstMonth,
   simDateMonthOf,
   simDateQuarter,
+  simDateWeekday,
 } from "./calendar.ts";
 import { isRecapDay } from "./quarter.ts";
 
 /** A scheduled job (the pure step contract). */
 export type JobFn = (world: World, ctx: JobCtx) => void;
+
+/** The day a week starts on: the weekly jobs run at its 00:00 (pivot 2.3). */
+export const WEEK_START = "Mon";
 
 // ---------------------------------------------------------------- TickFacts
 
@@ -59,6 +63,11 @@ export function tickFactsNew(now: DateTime): TickFacts {
 /** 00:00: the daily, monthly, quarterly and yearly jobs may run (spec 4). */
 export function tickFactsIsMidnight(f: TickFacts): boolean {
   return f.hour === 0;
+}
+
+/** 00:00 on a Monday: the weekly jobs (pivot 2.3). */
+export function tickFactsIsWeekStart(f: TickFacts): boolean {
+  return tickFactsIsMidnight(f) && simDateWeekday(f.date) === WEEK_START;
 }
 
 /** 00:00 on the 1st: the monthly job (spec 4.3). */
@@ -121,6 +130,7 @@ export type Group =
   | "Hourly"
   | "PriceMove"
   | "Daily"
+  | "Weekly"
   | "Monthly"
   | "Close"
   | "Release"
@@ -133,6 +143,7 @@ export const GROUP_LABEL: Readonly<Record<Group, string>> = Object.freeze({
   Hourly: "hourly",
   PriceMove: "quarterly.price_move",
   Daily: "daily",
+  Weekly: "weekly",
   Monthly: "monthly",
   Close: "quarterly.close",
   Release: "quarterly.release",
@@ -183,6 +194,11 @@ const SLOT_TABLE = Object.freeze([
   ["DailyNews", "Daily", "5.news"],
   // Zone exchange confidence (5.1.2).
   ["DailyZoneConfidence", "Daily", "6.zone_confidence"],
+
+  // Weekly (00:00 on a Monday; pivot 2.3), after the day's jobs and before a month's: fundraising,
+  // endorsements, the forecast, contract listings (M2 on). One slot; its jobs run in registration
+  // order. Empty in M1.
+  ["WeeklyJobs", "Weekly", "1.jobs"],
 
   // 4.3 Monthly (00:00 on the 1st). Step 1 only on 1 Jan, Apr, Jul and Oct, in its order.
   // Scripted AI events due today (5.1.1).
@@ -297,6 +313,8 @@ export function slotIsDue(slot: Slot, f: TickFacts): boolean {
       return tickFactsIsPriceMoveTick(f);
     case "Daily":
       return slot === "DailyReactionWeek" ? tickFactsIsReactionWeekDay(f) : tickFactsIsMidnight(f);
+    case "Weekly":
+      return tickFactsIsWeekStart(f);
     case "Monthly":
       switch (slot) {
         case "MonthlyAiEvents":
@@ -392,7 +410,8 @@ export class JobCtx {
     const level = alertLevelsGet(controls.alerts, kind);
     if (level === "Off") return;
     this.#notices.push({ kind: "Alert", alert_kind: kind, level, payload });
-    const skipping = controls.skip !== null;
+    // A SkipTo runs through alert pauses (D6); a Step does not (pivot 2.4).
+    const skipping = controls.skip !== null && controls.skip.kind !== "Step";
     if (level === "Pause" && !skipping && this.#pause === null) {
       this.#pause = { kind: "Alert", alert_kind: kind };
     }
@@ -472,8 +491,20 @@ export interface TickObserver {
 
 // ---------------------------------------------------------------- Scheduler
 
-/** One registered job: its name and function. */
-export type NamedJob = readonly [name: string, job: JobFn];
+/**
+ * One registered job: its name, its function, and the fidelity it runs in (pivot 3.3), null for a
+ * job that runs in both.
+ */
+export type NamedJob = readonly [name: string, job: JobFn, fidelity: Fidelity | null];
+
+/** How a job is registered. */
+export interface JobOptions {
+  /**
+   * The job runs only while `World.fidelity` is this (pivot 3.3): Coarse for the pre-simulation's
+   * one-number campaigns and quarterly agenda, Full for what only play has. Absent: it runs in both.
+   */
+  fidelity?: Fidelity;
+}
 
 /**
  * The registered jobs of every slot. Rust's `&mut self` forbids registering while a tick runs;
@@ -496,10 +527,24 @@ export function schedulerClone(s: Scheduler): Scheduler {
   return { jobs: s.jobs.map((js) => js.slice()), running: false };
 }
 
-/** Adds `job` to `slot`. Jobs in one slot run in registration order. */
-export function schedulerRegister(s: Scheduler, slot: Slot, name: string, job: JobFn): void {
+/**
+ * Adds `job` to `slot`. Jobs in one slot run in registration order. With `opts.fidelity` the job is
+ * skipped on a tick whose world has the other fidelity (pivot 3.3); the slot is still visited.
+ */
+export function schedulerRegister(
+  s: Scheduler,
+  slot: Slot,
+  name: string,
+  job: JobFn,
+  opts: JobOptions = {},
+): void {
   if (s.running) throw new Error(`cannot register ${name} while the scheduler is running`);
-  s.jobs[slotIndex(slot)]!.push(Object.freeze([name, job] as const));
+  s.jobs[slotIndex(slot)]!.push(Object.freeze([name, job, opts.fidelity ?? null] as const));
+}
+
+/** Whether a job registered for `fidelity` runs in `world` (pivot 3.3): null runs in both. */
+function jobRuns(fidelity: Fidelity | null, world: World): boolean {
+  return fidelity === null || fidelity === world.fidelity;
 }
 
 /** The jobs registered in `slot`, with their names (a frozen copy). */
@@ -568,10 +613,11 @@ function runTick(
     trace?.push(slot);
     const jobs = schedulerJobs(s, slot);
     if (observer === null) {
-      for (const [, job] of jobs) job(world, ctx);
+      for (const [, job, fidelity] of jobs) if (jobRuns(fidelity, world)) job(world, ctx);
     } else {
       observer.started({ kind: "Slot", slot });
-      for (const [name, job] of jobs) {
+      for (const [name, job, fidelity] of jobs) {
+        if (!jobRuns(fidelity, world)) continue;
         observer.started({ kind: "Job", slot, name });
         job(world, ctx);
         observer.finished({ kind: "Job", slot, name });
@@ -594,7 +640,7 @@ function runTick(
 export function schedulerRunSlots(s: Scheduler, slots: readonly Slot[], world: World, ctx: JobCtx): void {
   whileRunning(s, () => {
     for (const slot of slots) {
-      for (const [, job] of schedulerJobs(s, slot)) job(world, ctx);
+      for (const [, job, fidelity] of schedulerJobs(s, slot)) if (jobRuns(fidelity, world)) job(world, ctx);
     }
   });
 }

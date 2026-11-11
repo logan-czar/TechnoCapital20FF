@@ -1,8 +1,8 @@
 // Seeded RNG streams (spec 3.1 `rng_streams`, 12.3; build-plan 2.2, M1.2). Ported from
 // crates/sim/src/rng.rs.
 //
-// One xoshiro128** stream per system: cycle, growth (the quarterly draws), prices, AI and gen.
-// All five are derived from the game seed and told apart by their stream number (decision D9), so
+// One xoshiro128** stream per system (types/draws.ts `Stream`).
+// All are derived from the game seed and told apart by their stream number (decision D9), so
 // a new draw in one system never shifts another system's numbers. D951 (Logan): the TS sim need
 // not match Rust's ChaCha8 draws; the same gameplay outcomes is the bar. xoshiro128** (Blackman
 // and Vigna, 128 bits of state) is implemented here in 32-bit integer math, with no dependency,
@@ -170,7 +170,7 @@ function xoshiroNext(s: number[]): number {
 // ---------------------------------------------------------------- RngStreams
 
 /**
- * The game's five seeded streams, as plain data (saved and hashed as is, so a loaded game
+ * The game's seeded streams, as plain data (saved and hashed as is, so a loaded game
  * continues with exactly the draws it would have made). Rust kept the seed, each ChaCha word
  * position and the spare normals; here the position IS the 4-word generator state.
  */
@@ -183,7 +183,7 @@ export interface RngStreams {
   spare: (number | null)[];
 }
 
-/** The five streams for a game seed (D9). */
+/** Every stream for a game seed (D9). */
 export function rngStreamsNew(seed: number): RngStreams {
   return {
     seed,

@@ -7,6 +7,7 @@ import {
   dataErrorToString,
   ERA_FILES,
   type Files,
+  GEO_FILES,
   MANIFEST_2020,
   MANIFEST_FILE,
   MAP_FILES,
@@ -59,12 +60,15 @@ async function loadManifest(world: string | null, base: string): Promise<WorldMa
 async function loadData(): Promise<WorldData> {
   const selected = knownWorld((self as unknown as { name?: string }).name);
   const base = worldDataBase(selected);
-  const [manifest, worldFiles, mapFiles] = await Promise.all([
+  const [manifest, baseFiles, mapFiles] = await Promise.all([
     loadManifest(selected, base),
     loadFiles(selected === null ? WORLD_FILES : [...WORLD_FILES, ...ERA_FILES], base, false),
     // The map files are optional: no map-meta.toml means no map (parseMap gives null).
     loadFiles(MAP_FILES, "/data/map/", true),
   ]);
+  // The county files, for a world that has them (pivot 5.1).
+  const geoFiles = manifest.features.counties ? await loadFiles(GEO_FILES, base, false) : {};
+  const worldFiles = { ...baseFiles, ...geoFiles };
   const world = parseWorld(worldFiles, manifest);
   if (!world.ok) throw new Error(`starting data: ${dataErrorToString(world.error)}`);
   const map = parseMap(mapFiles);

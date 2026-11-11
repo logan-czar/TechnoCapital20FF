@@ -47,6 +47,9 @@ function specOrder(t: DateTime): Slot[] {
   v.push("DailyPriceBars", "DailyFairValue");
   if (quarterMonth && d.day >= 3 && d.day <= 8) v.push("DailyReactionWeek");
   v.push("DailyProjections", "DailyPolitics", "DailyNews", "DailyZoneConfidence");
+  // Weekly on Mondays (pivot 2.3; D1029). 2020-01-01 is a Wednesday and day 0, so Mondays are the
+  // days 5, 12, 19...
+  if (Math.floor(t / 24) % 7 === 5) v.push("WeeklyJobs");
   // 4.3 monthly on the 1st; step 1 only at a quarter start.
   if (d.day === 1) {
     if (quarterMonth) {

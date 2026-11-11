@@ -5,7 +5,16 @@
 
 // The Sim (lib.ts): built with `simNew`, driven through its SimApi methods. Test and soak hooks
 // (`simWorld`, `simRegisterTestJob`, `simSoakStats` ...) are in internal.ts only.
-export { newGameChoices, Sim, type SimOptions, simErrorMessage, simNew } from "./lib.ts";
+export {
+  newGameChoices,
+  type RunProgress,
+  type RunResult,
+  Sim,
+  type SimOptions,
+  simErrorMessage,
+  simNew,
+  simRunUntil,
+} from "./lib.ts";
 // UI-safe clock helpers (time/): the date formats and calendar math, the quarter phase and its
 // tick helpers (pure functions of a DateTime), the runner's speed and the SkipTo target.
 export {
@@ -42,6 +51,8 @@ export {
   recapTick,
   releaseTick,
 } from "./time/quarter.ts";
+// Player actions (pivot 1.2; D1027): what `SimApi.act` and the protocol's `Act` carry.
+export * from "./types/action.ts";
 export * from "./types/calendar.ts";
 export * from "./types/control.ts";
 export * from "./types/ids.ts";
@@ -52,6 +63,8 @@ export * from "./types/notice.ts";
 export { cmpStr, roundHalfAway, roundTiesEven, totalCmp } from "./types/num.ts";
 export * from "./types/protocol.ts";
 export type * from "./types/sim-api.ts";
+export type { CountyShare } from "./types/state/geo.ts";
+export type { Levers } from "./types/state/governing.ts";
 export type { ElectionResult, Ideology, JudgeLeaning, Party } from "./types/state/politics.ts";
 export * from "./types/views/index.ts";
 export { barRows, indexCloseRows } from "./views/bars.ts";
@@ -80,4 +93,6 @@ export {
   type ViewWant,
   viewsPatchSince,
 } from "./views/patch.ts";
+// The pivot views' empty values (unported in M1): what a host or a mock holds until they are built.
+export * from "./views/pivot.ts";
 export { emptyPolitics } from "./views/politics.ts";

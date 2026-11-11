@@ -23,9 +23,12 @@ export const SAVE_MAGIC: Uint8Array = new TextEncoder().encode("TC20FFJS");
 
 /**
  * Bumped whenever the saved layout changes (any new field in any table). The TS port starts at 1
- * (D953); Rust's versions (up to 11) do not carry over.
+ * (D953); Rust's versions (up to 11) do not carry over. From the pivot on it moves once per
+ * milestone, in that milestone's contracts change (D1029): 6 is M1 (13 RNG streams where 5 had 8,
+ * `World.fidelity`, `World.levers`, `World.geo`, `Industry.row_assets`). An older save is refused
+ * by its version, before its RNG state is looked at.
  */
-export const SAVE_VERSION = 5;
+export const SAVE_VERSION = 6;
 
 /** The decoded state of a save. */
 export interface SaveState {
