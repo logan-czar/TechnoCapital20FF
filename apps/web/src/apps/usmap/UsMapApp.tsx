@@ -245,12 +245,18 @@ export default function UsMapApp({ route, onRoute, setTitle }: AppProps) {
     const set = new Set(area);
     return outlineOf(geometry.edges, (c) => set.has(c));
   }, [geometry, area, sel?.kind]);
+  // The view fits the selection; a county is shown in its state, so it keeps its surroundings.
+  const focusArea = useMemo(() => {
+    if (sel?.kind !== "county" || selCounty < 0 || !layers) return area;
+    const st = layers.counties.state[selCounty];
+    return layers.counties.state.flatMap((s, i) => (s === st ? [i] : []));
+  }, [area, sel?.kind, selCounty, layers]);
   const focus = useMemo(() => {
     const whole: [number, number, number, number] = [0, 0, geometry?.width ?? 975, geometry?.height ?? 610];
-    if (!geometry || area === null) return { box: whole, key: "whole" };
-    const box = boundsOf(geometry, area);
-    return box ? { box, key: `${formatRoute({ ...r, layer })}` } : { box: whole, key: "whole" };
-  }, [geometry, area, r, layer]);
+    if (!geometry || focusArea === null) return { box: whole, key: "whole" };
+    const box = boundsOf(geometry, focusArea);
+    return box ? { box, key: box.join(",") } : { box: whole, key: "whole" };
+  }, [geometry, focusArea]);
 
   const selTitle =
     !sel || !layers

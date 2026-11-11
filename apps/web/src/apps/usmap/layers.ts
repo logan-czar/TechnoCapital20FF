@@ -35,6 +35,9 @@ export const TURNOUT_HI = 0.6;
 export const LIVE_ALPHA_MIN = 46;
 /** Counties outside the race shown: dimmed to this opacity. */
 export const OUTSIDE_ALPHA = 70;
+/** Live returns: a county in the race with nothing reported yet, a lighter grey than no data. */
+export const AWAITING_RGB: Rgb = [0x4a, 0x53, 0x66];
+export const AWAITING_ALPHA = 150;
 
 export function partyRgb(party: Party | null): Rgb {
   if (party === null) return PARTY_NONE_RGB;
@@ -204,7 +207,7 @@ export function paintLive(
     }
     const l = leaderOf(c.votes);
     if (l === null) {
-      put(out, i, NO_DATA_RGB, LIVE_ALPHA_MIN);
+      put(out, i, AWAITING_RGB, AWAITING_ALPHA);
       continue;
     }
     const colour = mix(GROUND_RGB, partyRgb(ballotParty[l.lead] ?? null), marginStrength(l.margin));

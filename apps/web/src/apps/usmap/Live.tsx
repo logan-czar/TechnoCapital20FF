@@ -273,13 +273,18 @@ function ElectoralTally(p: {
   );
 }
 
+/** A call's hour, with its day when it came after election day. */
+function callTime(t: number, closed: number | null): string {
+  return closed !== null && Math.floor(t / 24) !== Math.floor(closed / 24) ? formatWhen(t) : formatHour(t);
+}
+
 function Calls(p: { ret: RaceReturns; outlets: Map<number, string>; byId: ReturnType<typeof peopleById> }) {
   if (p.ret.calls.length === 0) return <p className="um-calls-none">No outlet has called it.</p>;
   return (
     <ul className="um-calls" data-testid="usmap-calls">
       {p.ret.calls.map((c) => (
         <li key={`${c.outlet}-${c.time}-${c.person}`} className={c.retracted ? "um-retracted" : undefined}>
-          <span className="um-call-time">{formatHour(c.time)}</span>{" "}
+          <span className="um-call-time">{callTime(c.time, p.ret.polls_closed)}</span>{" "}
           <EntityLink to={{ kind: "Outlet", id: c.outlet }}>
             {p.outlets.get(c.outlet) ?? `Outlet ${c.outlet}`}
           </EntityLink>{" "}

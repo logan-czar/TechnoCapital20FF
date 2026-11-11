@@ -304,6 +304,8 @@ const HEX_FILL = 0.92;
 /** Each try shrinks the cells by this much until enough centres fall inside the state. */
 const HEX_SHRINK = 0.9;
 const HEX_TRIES = 40;
+/** How far out a cell's corners must still be inside its state, as a share of its radius. */
+const HEX_FIT = 0.8;
 /** sqrt(3), the pointy-top hexagon's width over its radius. */
 const SQRT3 = 1.7320508075688772;
 /** Where a state the topology does not know is put: a row along the plane's bottom right. */
@@ -394,7 +396,14 @@ export function schematicGeometry(base: BaseGeometry, fips: readonly string[]): 
         });
       let r = Math.sqrt(area / (n * 1.5 * SQRT3)) * HEX_FILL;
       for (let t = 0; t < HEX_TRIES && r > 0; t++, r *= HEX_SHRINK) {
-        const hits = gridCentres(anchor, r, box).filter(inside);
+        // A cell fits when its centre and most of its corners are inside, so neighbours' cells
+        // do not overlap across a state line.
+        const fits = (c: XY) =>
+          inside(c) &&
+          hexagon(c, r * HEX_FIT)
+            .slice(0, 6)
+            .every(inside);
+        const hits = gridCentres(anchor, r, box).filter(fits);
         if (hits.length < n) continue;
         // The n cells nearest the state's centre, then in reading order.
         const near = hits

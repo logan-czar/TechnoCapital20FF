@@ -25,7 +25,9 @@ const MARKER_FILL: Color = [22, 29, 43, 230];
 const MARKER_LINE: Color = [239, 230, 207, 255];
 const LABEL_COLOR: Color = [239, 230, 207, 235];
 const LABEL_HALO: Color = [10, 14, 22, 240];
-const LABEL_FONT = "Bahnschrift, 'DIN Alternate', 'Segoe UI', sans-serif";
+// The map pane's label face (map/ProvinceMap.tsx): its SDF atlas renders thin glyphs cleanly at
+// small sizes, where the app's display face dropped strokes.
+const LABEL_FONT = "'Fira Mono', ui-monospace, monospace";
 /** The view's zoom range, in powers of two over the fitted map. */
 const MIN_ZOOM_BELOW_FIT = 1;
 const MAX_ZOOM_ABOVE_FIT = 7;
@@ -184,7 +186,7 @@ export default function MapCanvas(p: MapCanvasProps) {
         data: p.districtLines,
         getPath: (d) => d,
         getColor: DISTRICT_LINE,
-        getWidth: 1.4,
+        getWidth: 1.8,
         widthUnits: "pixels",
         jointRounded: true,
       }),
@@ -252,11 +254,10 @@ export default function MapCanvas(p: MapCanvasProps) {
         data: p.labels,
         getPosition: (d) => d.at,
         getText: (d) => d.text,
-        getSize: 11,
+        getSize: 12,
         sizeUnits: "pixels",
         getColor: LABEL_COLOR,
         fontFamily: LABEL_FONT,
-        fontWeight: 600,
         characterSet: "auto",
         fontSettings: { sdf: true },
         outlineWidth: 3,
