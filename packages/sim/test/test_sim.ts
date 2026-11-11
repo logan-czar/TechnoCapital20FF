@@ -10,12 +10,15 @@
 import type { WorldData } from "@tc20ff/sim-data";
 import { loadWorld } from "@tc20ff/sim-data/node";
 import { birthsStateDefault } from "../src/births/state.ts";
+import { electionsStateEmpty } from "../src/elections/index.ts";
 import { RATING_WORST } from "../src/finance/rating.ts";
 import { companyFinanceAtLoad } from "../src/finance/state.ts";
+import { geoStateEmpty } from "../src/geo/load.ts";
 import { leversNeutral } from "../src/governing/levers.ts";
 import { type Sim, type SimOptions, simFromWorld, simNew, simRegisterTestJob } from "../src/lib.ts";
 import { stockAtLoad } from "../src/market/state.ts";
 import { newsWireDefault } from "../src/news.ts";
+import { personsStateEmpty } from "../src/politics/people.ts";
 import { type JobCtx, jobCtxRaiseAlert } from "../src/time/scheduler.ts";
 import { DATETIME_START } from "../src/types/calendar.ts";
 import { type DrawSource, STREAM_VALUES } from "../src/types/draws.ts";
@@ -72,6 +75,11 @@ export function clockWorld(): World {
     },
     // The jobs read the levers (pivot 4.3): neutral, for no industries and no states.
     levers: leversNeutral(0, 0, 0),
+    // The M2 lanes' state (D1037), empty as at load.
+    geo: geoStateEmpty(),
+    persons: personsStateEmpty(),
+    elections: electionsStateEmpty(),
+    player: null,
   } as unknown as World;
 }
 

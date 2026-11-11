@@ -216,7 +216,11 @@ export class DiskSaveStore implements SaveStore {
 /** The index of the baked starts, in their folder (`assets/starts/index.json`; pivot 3.5). */
 export const STARTS_INDEX = "index.json";
 
-function isStart(v: unknown): v is BakedStart & { file?: string } {
+/** A row of the index: a `BakedStart`, whose details (D1037) an older index may not have. */
+type StartRow = Pick<BakedStart, "id" | "label" | "seed" | "save_version" | "hash"> &
+  Partial<Pick<BakedStart, "scenario" | "date" | "file" | "bytes">>;
+
+function isStart(v: unknown): v is StartRow {
   const s = v as Partial<BakedStart> | null;
   return (
     typeof s === "object" &&
@@ -238,7 +242,7 @@ function isStart(v: unknown): v is BakedStart & { file?: string } {
 export class DiskStartStore implements StartStore {
   constructor(readonly dir: string) {}
 
-  private rows(): (BakedStart & { file?: string })[] {
+  private rows(): StartRow[] {
     let v: unknown;
     try {
       v = JSON.parse(readFileSync(join(this.dir, STARTS_INDEX), "utf8"));
@@ -249,13 +253,18 @@ export class DiskStartStore implements StartStore {
     return Array.isArray(rows) ? rows.filter(isStart) : [];
   }
 
+  /** Each start as `Ready` lists it; a row written before D1037 gets its file's default name and blank details. */
   list(): BakedStart[] {
-    return this.rows().map(({ id, label, seed, save_version, hash }) => ({
-      id,
-      label,
-      seed,
-      save_version,
-      hash,
+    return this.rows().map((r) => ({
+      id: r.id,
+      label: r.label,
+      seed: r.seed,
+      save_version: r.save_version,
+      hash: r.hash,
+      scenario: typeof r.scenario === "string" ? r.scenario : "hidden",
+      date: typeof r.date === "string" ? r.date : "",
+      file: typeof r.file === "string" ? r.file : `${r.id}${SAVE_EXT}`,
+      bytes: typeof r.bytes === "number" && Number.isSafeInteger(r.bytes) ? r.bytes : 0,
     }));
   }
 

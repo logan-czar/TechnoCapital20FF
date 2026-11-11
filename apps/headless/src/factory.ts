@@ -60,6 +60,7 @@ export function headlessSim(sim: Sim): HeadlessSim {
     saveBytes: () => sim.saveBytes(),
     loadBytes: (bytes) => sim.loadBytes(bytes),
     now: () => sim.now(),
+    slice: (key) => sim.slice(key),
     stateHash: () => sim.stateHash(),
     seed: () => sim.seed(),
     views: () => sim.views(),
