@@ -63,6 +63,13 @@ const GLYPHS: Readonly<Record<string, ReactNode>> = {
       <path d="M10.5 17.5h3" />
     </>
   ),
+  // The pause settings (the taskbar's popover of the fixed pauses, pivot 2.4): a bell.
+  bell: (
+    <>
+      <path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 1.5H5z" />
+      <path d="M10 20.5h4" />
+    </>
+  ),
   // The launcher: the desktop's own mark, two orbits and a body.
   orrery: (
     <>

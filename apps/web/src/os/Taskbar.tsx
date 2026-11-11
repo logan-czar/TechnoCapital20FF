@@ -3,13 +3,21 @@
 // speeds. Keys, as before: Space pauses or resumes and 1 to 6 set the speed (and resume, D8); new
 // here, the full stop steps one hour. A key typed into a field or a dialog is not a shortcut.
 
-import { MAX_SPEED, QUARTER_PHASE_NAME, WATCH_SPEED, weekdayShortName } from "@tc20ff/sim";
+import {
+  FIXED_PAUSE_SWITCHABLE,
+  FIXED_PAUSE_VALUES,
+  type FixedPause,
+  MAX_SPEED,
+  QUARTER_PHASE_NAME,
+  WATCH_SPEED,
+  weekdayShortName,
+} from "@tc20ff/sim";
 import { type Dispatch, memo, useCallback, useEffect, useRef, useState } from "react";
 import { useClock, useSim } from "../sim/hooks.ts";
 import { date as fmtDate } from "../widgets/cells.ts";
 import type { AppSpec } from "./apps.ts";
 import { Icon } from "./icons.tsx";
-import { useUnread } from "./phone/Phone.tsx";
+import { usePausingNotification, useUnread } from "./phone/notifications.ts";
 import type { Win, WmAction } from "./wm.ts";
 
 /** The desktop's name, on the launcher. */
@@ -31,10 +39,86 @@ function isTypingTarget(t: EventTarget | null): boolean {
   );
 }
 
+/** What each fixed pause is, as the settings popover says it (pivot 2.4 items 1 to 4). */
+const FIXED_PAUSE_LABEL: Readonly<Record<FixedPause, string>> = {
+  OwnFill: "A fill or resolution of your own order or contract",
+  MarginCall: "A margin call on you",
+  ElectionDay: "Midnight on a federal general election day",
+  Holding: "A scandal, roll call or resolution naming something you hold",
+};
+
+/**
+ * The settings popover of the fixed auto-pauses (pivot 2.4): one switch each, `SetFixedPause`. The
+ * two that cannot be turned off (a fill, a margin call) are shown on and locked. It is a plain
+ * group, not a dialog, so the game's keys keep working while it is open.
+ */
+function PauseSettings() {
+  const sim = useSim();
+  const fixed = useClock()?.fixed_pauses;
+  const [open, setOpen] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (!(e.target instanceof Node && root.current?.contains(e.target))) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("pointerdown", onDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+  return (
+    <div className="os-pauses" ref={root}>
+      <button
+        type="button"
+        className={open ? "os-tb-button os-tb-pauses on" : "os-tb-button os-tb-pauses"}
+        data-testid="tb-pauses"
+        aria-expanded={open}
+        aria-haspopup="true"
+        aria-label="Pause settings"
+        title="When the game pauses by itself"
+        onClick={() => setOpen((o) => !o)}
+      >
+        <Icon name="bell" size={18} />
+      </button>
+      {open && (
+        // biome-ignore lint/a11y/useSemanticElements: a fieldset would bring its own frame; the group is named
+        <div className="os-pauses-menu" role="group" aria-label="Pause settings" data-testid="pause-settings">
+          <p className="os-dim">The game also pauses on any alert you set to pause, and always on:</p>
+          {FIXED_PAUSE_VALUES.map((p) => {
+            const locked = !FIXED_PAUSE_SWITCHABLE.includes(p);
+            return (
+              <label key={p} data-locked={locked}>
+                <input
+                  type="checkbox"
+                  data-testid={`pause-${p}`}
+                  checked={locked ? true : (fixed?.[p] ?? true)}
+                  disabled={locked}
+                  onChange={(e) =>
+                    void sim.control({ kind: "SetFixedPause", pause: p, on: e.target.checked })
+                  }
+                />
+                <span>{FIXED_PAUSE_LABEL[p]}</span>
+                {locked && <span className="os-pauses-lock">cannot be turned off</span>}
+              </label>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** The game clock and its controls (pivot 2.2). */
-function ClockCluster() {
+function ClockCluster({ onShowNotification }: { onShowNotification: (id: number) => void }) {
   const sim = useSim();
   const clock = useClock();
+  const pausedBy = usePausingNotification(clock);
   const paused = clock?.paused ?? true;
   const speed = clock?.selected_speed ?? 1;
 
@@ -66,6 +150,19 @@ function ClockCluster() {
   const running = clock?.skipping ? "Skipping ahead" : paused ? "Paused" : `Running at speed ${speed}`;
   return (
     <div className="os-clock-cluster" data-paused={paused}>
+      {pausedBy !== null && (
+        <button
+          type="button"
+          className="os-pause-note"
+          data-testid="tb-pause-note"
+          title={`Paused by: ${pausedBy.text}. Show it on the phone.`}
+          onClick={() => onShowNotification(pausedBy.id)}
+        >
+          <span className="os-pause-note-label">Paused by</span>
+          <span className="os-pause-note-text">{pausedBy.text}</span>
+        </button>
+      )}
+      <PauseSettings />
       <button
         type="button"
         className="os-tb-button os-tb-step"
@@ -217,9 +314,9 @@ export interface TaskbarProps {
   dispatch: Dispatch<WmAction>;
   onOpenApp: (id: string) => void;
   phoneOpen: boolean;
-  /** The last notice the player has seen on the phone (its number in the store). */
-  seen: number;
   onTogglePhone: () => void;
+  /** The pause note's jump: picks the phone up at that notification (v_notifications row id). */
+  onShowNotification: (id: number) => void;
 }
 
 function TaskbarInner({
@@ -230,10 +327,10 @@ function TaskbarInner({
   dispatch,
   onOpenApp,
   phoneOpen,
-  seen,
   onTogglePhone,
+  onShowNotification,
 }: TaskbarProps) {
-  const unread = useUnread(seen);
+  const unread = useUnread();
   return (
     <footer className="os-taskbar" data-testid="taskbar">
       <Launcher apps={apps} onOpen={onOpenApp} />
@@ -259,7 +356,7 @@ function TaskbarInner({
         })}
       </nav>
       <OmniscientToggle />
-      <ClockCluster />
+      <ClockCluster onShowNotification={onShowNotification} />
       <button
         type="button"
         className={phoneOpen ? "os-tb-phone on" : "os-tb-phone"}

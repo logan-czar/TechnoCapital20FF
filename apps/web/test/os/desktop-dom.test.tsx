@@ -8,7 +8,7 @@
 // use the real registry and the real root. happy-dom has no layout, so the desktop keeps the
 // bounds it guesses from the page size (1024 by 768 less the taskbar).
 
-import type { ClockView, Notice, UiControl } from "@tc20ff/sim";
+import type { ClockView, Notice, NotificationRow, PlayerAction, UiControl } from "@tc20ff/sim";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { lazy, useEffect } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -70,6 +70,7 @@ const apps = (debug: boolean) => APPS.filter((s) => debug || s.debugOnly !== tru
 
 let store: SimStore;
 let control: ReturnType<typeof vi.fn<(c: UiControl) => Promise<unknown>>>;
+let acted: ReturnType<typeof vi.fn<(a: PlayerAction) => Promise<unknown>>>;
 let client: SimClient;
 let tick: number;
 
@@ -89,8 +90,39 @@ function clock(over: Partial<ClockView>): ClockView {
     next_release: 0,
     watchlist: [],
     omniscient: false,
+    fixed_pauses: { OwnFill: true, MarginCall: true, ElectionDay: true, Holding: true },
     ...over,
   } as ClockView;
+}
+
+/** v_notifications rows as the sim appends them (a notification of the player's, with the given overrides). */
+function note(id: number, over: Partial<NotificationRow> = {}): NotificationRow {
+  return {
+    id,
+    time: 100 + id,
+    kind: "Fill",
+    text: `Notification ${id}`,
+    refs: [],
+    rule: null,
+    paused: false,
+    fixed: null,
+    ...over,
+  };
+}
+
+/** A frame that appends `rows` to the notifications held (the first one posts the view), and says how far the player has read. */
+function notify(rows: NotificationRow[], readThrough = -1, notices: Notice[] = []): void {
+  act(() =>
+    store.applyFrame({
+      kind: "Frame",
+      notices,
+      clock: clock({}),
+      views: {
+        notifications: { data: { items: [], read_through: readThrough }, version: ++tick, dirty: false },
+        appended: [{ view: "notifications", field: "items", reset: false, rows }],
+      },
+    } as unknown as Frame),
+  );
 }
 
 /** A frame from the sim: the clock, and the notices that came with it. */
@@ -123,7 +155,8 @@ beforeEach(() => {
   store = new SimStore();
   store.setStatus({ ready: true, started: true });
   control = vi.fn(async () => ({ kind: "Ok", notices: [] }));
-  client = { store, control, ready: Promise.resolve(), newGame: vi.fn() } as unknown as SimClient;
+  acted = vi.fn(async () => ({ kind: "Ok", notices: [] }));
+  client = { store, control, act: acted, ready: Promise.resolve(), newGame: vi.fn() } as unknown as SimClient;
   frame();
 });
 
@@ -443,13 +476,6 @@ describe("the taskbar's clock (pivot 2.2)", () => {
 });
 
 describe("the phone (pivot 12)", () => {
-  const alert = (level: "Notify" | "Log" | "Pause"): Notice => ({
-    kind: "Alert",
-    alert_kind: "WorldEvent",
-    level,
-    payload: { kind: "None" },
-  });
-
   it("is put down at first, and picked up and put down from the taskbar", () => {
     desktop();
     expect(screen.getByTestId("phone").dataset.open).toBe("false");
@@ -461,36 +487,84 @@ describe("the phone (pivot 12)", () => {
     expect(screen.getByTestId("phone").dataset.open).toBe("false");
   });
 
-  it("counts new notifications on the taskbar and lists them, newest first", () => {
+  it("counts unread notifications on the taskbar, from the view's read_through", () => {
     desktop();
-    frame({}, [alert("Notify"), alert("Log"), { kind: "Paused", reason: { kind: "Player" } }]);
-    frame({}, [
-      { kind: "Paused", reason: { kind: "Alert", alert_kind: "Recession" } },
-      { kind: "EarningsReleased", quarter: { year: 2019, quarter: 4 } } as Notice,
-    ]);
-    // An alert to notify and a pause the game made: two. The log-only alert, the player's own
-    // pause and the plain notice are not notifications.
+    expect(screen.getByTestId("tb-phone").getAttribute("aria-label")).toBe("Phone");
+    notify([note(0), note(1), note(2)], 0);
+    // Two are after the last one read.
     expect(screen.getByTestId("tb-phone").getAttribute("aria-label")).toBe("Phone, 2 new");
+    expect(screen.getByTestId("tb-phone").textContent).toContain("2");
+    notify([], 2);
+    expect(screen.getByTestId("tb-phone").getAttribute("aria-label")).toBe("Phone");
+  });
+
+  it("lists the notifications newest first, marks the unread and the pausing ones, and reads them", () => {
+    desktop();
+    notify(
+      [
+        note(0, { kind: "Alert", text: "Price alert" }),
+        note(1, { kind: "Holding", text: "Roll call on H.R. 7", paused: true, fixed: "Holding" }),
+        note(2, { kind: "Resolution", text: "Contract resolved Yes", paused: true, fixed: "OwnFill" }),
+      ],
+      0,
+    );
     fireEvent.click(screen.getByTestId("tb-phone"));
     const items = within(screen.getByTestId("phone-notifications")).getAllByRole("listitem");
     expect(items.map((li) => li.querySelector(".os-phone-note-text")?.textContent)).toEqual([
-      "Paused by Recession",
-      "World event",
+      "Contract resolved Yes",
+      "Roll call on H.R. 7",
+      "Price alert",
     ]);
-    // Seen now; one that arrives while the phone is up is seen too.
-    expect(screen.getByTestId("tb-phone").getAttribute("aria-label")).toBe("Phone");
-    frame({}, [alert("Pause")]);
-    expect(within(screen.getByTestId("phone-notifications")).getAllByRole("listitem")).toHaveLength(3);
+    // Newer than read_through when the list came up: marked new. The ones that paused say so.
+    expect(items.map((li) => li.getAttribute("data-unread"))).toEqual(["true", "true", "false"]);
+    expect(items.map((li) => li.getAttribute("data-paused"))).toEqual(["true", "true", "false"]);
+    expect(screen.getByTestId("phone-note-2").textContent).toContain("Paused the game");
+    expect(screen.getByTestId("phone-note-0").textContent).not.toContain("Paused the game");
+    // Seeing the list reads it, up to the newest.
+    expect(acted).toHaveBeenCalledWith({ kind: "NotificationsRead", through: 2 });
+    expect(acted).toHaveBeenCalledTimes(1);
+    // One that arrives while it is up is read too, and is marked new.
+    notify([note(3, { text: "Fill of your order" })], 2);
+    expect(acted).toHaveBeenLastCalledWith({ kind: "NotificationsRead", through: 3 });
+    expect(screen.getByTestId("phone-note-3").getAttribute("data-unread")).toBe("true");
+  });
+
+  it("does not read the notifications while the phone is down, and says nothing when there are none", () => {
+    desktop();
     fireEvent.click(screen.getByTestId("tb-phone"));
-    expect(screen.getByTestId("tb-phone").getAttribute("aria-label")).toBe("Phone");
-    frame({}, [alert("Notify")]);
+    expect(screen.getByTestId("phone").textContent).toContain("Nothing yet");
+    expect(acted).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId("phone-down"));
+    notify([note(0)]);
+    expect(acted).not.toHaveBeenCalled();
     expect(screen.getByTestId("tb-phone").getAttribute("aria-label")).toBe("Phone, 1 new");
   });
 
-  it("shows an app's compact view in its slot, and no dock without one", async () => {
+  it("does not call a notification a pause once its fixed pause is switched off", () => {
+    desktop();
+    notify([note(0, { kind: "ElectionDay", text: "Election day", paused: true, fixed: "ElectionDay" })]);
+    frame({ fixed_pauses: { OwnFill: true, MarginCall: true, ElectionDay: false, Holding: true } });
+    fireEvent.click(screen.getByTestId("tb-phone"));
+    expect(screen.getByTestId("phone-note-0").getAttribute("data-paused")).toBe("false");
+  });
+
+  it("opens what a notification names, in the app that shows it", async () => {
+    const opened: [string, string | null][] = [];
+    const { setAppOpener } = await import("../../src/links/nav.ts");
+    desktop();
+    // The desktop's own opener is replaced to see where the link goes.
+    act(() => setAppOpener((app, route) => void opened.push([app, route])));
+    notify([note(0, { kind: "Holding", text: "Roll call on H.R. 7", refs: [{ kind: "Bill", id: 7 }] })]);
+    fireEvent.click(screen.getByTestId("tb-phone"));
+    fireEvent.click(screen.getByTestId("link-bill-7"));
+    expect(opened).toEqual([["records", "bill/7"]]);
+  });
+
+  it("lists on its home screen the apps that have a compact view, and shows the one chosen with a back gesture", async () => {
     desktop();
     fireEvent.click(screen.getByTestId("tb-phone"));
-    expect(screen.queryByTestId("phone-home")).toBeNull();
+    // No app has a compact view: no tiles, only the notifications.
+    expect(screen.queryByTestId("phone-apps")).toBeNull();
     cleanup();
 
     const Compact = lazy(async () => ({
@@ -510,11 +584,127 @@ describe("the phone (pivot 12)", () => {
     expect(view.textContent).toBe("compact polls at home");
     fireEvent.click(view);
     expect(screen.getByTestId("compact").textContent).toBe("compact polls at contract/7");
-    // Home and back: the app keeps its place while the phone is up.
-    fireEvent.click(screen.getByTestId("phone-home"));
+    // Back and in again: the app keeps its place while the phone is up.
+    fireEvent.click(screen.getByTestId("phone-back"));
     expect(screen.queryByTestId("compact")).toBeNull();
+    expect(screen.getByTestId("phone-apps")).toBeTruthy();
     fireEvent.click(screen.getByTestId("phone-app-polls"));
     expect((await screen.findByTestId("compact")).textContent).toBe("compact polls at contract/7");
+  });
+});
+
+describe("the pause note and the pause settings (pivot 2.4)", () => {
+  it("names the notification that paused the game, and jumps to it on the phone", () => {
+    desktop();
+    expect(screen.queryByTestId("tb-pause-note")).toBeNull();
+    notify([note(0), note(1, { text: "Roll call on H.R. 7", paused: true, fixed: "Holding" })]);
+    frame({}, [{ kind: "Paused", reason: { kind: "Notification", id: 1 } }]);
+    const banner = screen.getByTestId("tb-pause-note");
+    expect(banner.textContent).toContain("Roll call on H.R. 7");
+    expect(screen.getByTestId("phone").dataset.open).toBe("false");
+
+    fireEvent.click(banner);
+    expect(screen.getByTestId("phone").dataset.open).toBe("true");
+    expect(screen.getByTestId("phone-note-1").getAttribute("data-current")).toBe("true");
+    expect(screen.getByTestId("phone-note-0").getAttribute("data-current")).toBe("false");
+  });
+
+  it("goes when the game runs again, or paused for another reason", () => {
+    desktop();
+    notify([note(0, { text: "Fill of your order", paused: true, fixed: "OwnFill" })]);
+    frame({ paused: true }, [{ kind: "Paused", reason: { kind: "Notification", id: 0 } }]);
+    expect(screen.getByTestId("tb-pause-note")).toBeTruthy();
+    frame({ paused: false, speed: 2 });
+    expect(screen.queryByTestId("tb-pause-note")).toBeNull();
+    // Paused again by the player: not the notification's doing.
+    frame({ paused: true }, [{ kind: "Paused", reason: { kind: "Player" } }]);
+    expect(screen.queryByTestId("tb-pause-note")).toBeNull();
+  });
+
+  it("shows no note for a pause of another kind", () => {
+    desktop();
+    notify([note(0)]);
+    frame({}, [{ kind: "Paused", reason: { kind: "StepDone" } }]);
+    expect(screen.queryByTestId("tb-pause-note")).toBeNull();
+  });
+
+  it("sets a fixed pause from the settings, and shows the two that cannot be turned off locked", () => {
+    desktop();
+    expect(screen.queryByTestId("pause-settings")).toBeNull();
+    fireEvent.click(screen.getByTestId("tb-pauses"));
+    const box = (p: string) => screen.getByTestId(`pause-${p}`) as HTMLInputElement;
+    // A fill and a margin call are always on (pivot 2.4).
+    for (const p of ["OwnFill", "MarginCall"]) {
+      expect(box(p).checked).toBe(true);
+      expect(box(p).disabled).toBe(true);
+    }
+    for (const p of ["ElectionDay", "Holding"]) {
+      expect(box(p).checked).toBe(true);
+      expect(box(p).disabled).toBe(false);
+    }
+    expect(screen.getAllByText("cannot be turned off")).toHaveLength(2);
+
+    fireEvent.click(box("ElectionDay"));
+    expect(controls()).toEqual([{ kind: "SetFixedPause", pause: "ElectionDay", on: false }]);
+    // The state is the clock view's: it shows what the sim says.
+    frame({ fixed_pauses: { OwnFill: true, MarginCall: true, ElectionDay: false, Holding: true } });
+    expect(box("ElectionDay").checked).toBe(false);
+    fireEvent.click(box("ElectionDay"));
+    expect(controls().at(-1)).toEqual({ kind: "SetFixedPause", pause: "ElectionDay", on: true });
+    fireEvent.click(box("OwnFill"));
+    expect(controls()).toHaveLength(2);
+
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(screen.queryByTestId("pause-settings")).toBeNull();
+  });
+});
+
+describe("the first run (D1050)", () => {
+  it("opens the first app on an empty desktop, and leaves a saved desktop alone", async () => {
+    render(
+      <SimContext.Provider value={client}>
+        <Desktop storage={null} apps={apps} firstApp="news" />
+      </SimContext.Provider>,
+    );
+    expect(await screen.findByTestId("body-news")).toBeTruthy();
+    expect(screen.getByTestId("win-news")).toBeTruthy();
+    // Closed by the player, it stays closed.
+    fireEvent.click(screen.getByTestId("win-news-close"));
+    expect(screen.queryByTestId("win-news")).toBeNull();
+  });
+
+  it("does not open it over windows the player had", async () => {
+    const storage = {
+      data: new Map<string, string>(),
+      getItem(k: string) {
+        return this.data.get(k) ?? null;
+      },
+      setItem(k: string, v: string) {
+        this.data.set(k, v);
+      },
+      removeItem(k: string) {
+        this.data.delete(k);
+      },
+    };
+    const first = desktop(storage);
+    await openIcon("polls");
+    first.unmount();
+    render(
+      <SimContext.Provider value={client}>
+        <Desktop storage={storage} apps={apps} firstApp="news" />
+      </SimContext.Provider>,
+    );
+    expect(await screen.findByTestId("win-polls")).toBeTruthy();
+    expect(screen.queryByTestId("win-news")).toBeNull();
+  });
+
+  it("opens nothing when the app is not there", () => {
+    render(
+      <SimContext.Provider value={client}>
+        <Desktop storage={null} apps={apps} firstApp="nosuchapp" />
+      </SimContext.Provider>,
+    );
+    expect(screen.queryByTestId("win-nosuchapp")).toBeNull();
   });
 });
 
@@ -596,11 +786,21 @@ describe("the desktop between visits", () => {
 });
 
 describe("the real registry and root", () => {
-  it("registers the debug workspace, listed without Omniscient for now, opening large", () => {
-    const debug = registeredApps(false).find((s) => s.id === "debug");
-    expect(debug).toMatchObject({ title: "Debug workspace", singleton: true, debugOnly: false });
+  it("lists the debug workspace only with Omniscient, opening large", () => {
+    expect(registeredApps(false).find((s) => s.id === "debug")).toBeUndefined();
+    const debug = registeredApps(true).find((s) => s.id === "debug");
+    expect(debug).toMatchObject({ title: "Debug workspace", singleton: true, debugOnly: true });
     expect(debug?.defaultSize.width).toBeGreaterThanOrEqual(1366);
   });
+
+  it("opens the news app on the first run, with no debug workspace on the desktop", async () => {
+    localStorage.clear();
+    render(<App client={client} settings={new SettingsStore(null)} />);
+    expect(screen.getByTestId("desktop")).toBeTruthy();
+    expect(await screen.findByTestId("win-news-1", undefined, { timeout: 10000 })).toBeTruthy();
+    expect(screen.queryByTestId("app-debug")).toBeNull();
+    expect(screen.queryByTestId("win-debug")).toBeNull();
+  }, 20000);
 
   it("draws the desktop as the root once the game has started, with the workspace in a window", async () => {
     localStorage.clear();
@@ -609,6 +809,9 @@ describe("the real registry and root", () => {
     expect(screen.getByTestId("taskbar")).toBeTruthy();
     // The old full-screen layout is not the root: no top bar until the workspace's window opens.
     expect(document.querySelector(".topbar")).toBeNull();
+    // The debug workspace is listed once Omniscient is on (pivot 15.3).
+    expect(screen.queryByTestId("app-debug")).toBeNull();
+    frame({ omniscient: true });
     fireEvent.doubleClick(screen.getByTestId("app-debug"));
     const workspace = await screen.findByTestId("debug-workspace", undefined, { timeout: 10000 });
     expect(screen.getByTestId("win-debug").contains(workspace)).toBe(true);

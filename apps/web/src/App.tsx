@@ -1,18 +1,30 @@
 // The page's root: starts the game, then draws the desktop (pivot 15.2; os/Desktop.tsx). Before a
 // game is running it shows the start-up line, the new-game picker of a world that has one
-// (1995-rework 4.1), or what stopped the sim. Everything a player does after that is in a window.
+// (pivot 3.5, 1995-rework 4.1), or what stopped the sim. Everything a player does after that is in a window.
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { SettingsContext, useApplySettings } from "./config/hooks.ts";
 import type { SettingsStore } from "./config/settings.ts";
 import { Desktop } from "./os/Desktop.tsx";
-import { NewGamePicker } from "./shell/NewGamePicker.tsx";
+import { type NewGameApi, NewGamePicker, startsOf } from "./shell/NewGamePicker.tsx";
 import { Toasts } from "./shell/Toasts.tsx";
 import type { SimClient } from "./sim/client.ts";
 import { SimContext, useStatus } from "./sim/hooks.ts";
 
 /** The seed of the first game. */
 const DEFAULT_SEED = 1;
+/** The app a new game opens on an empty desktop (D1050). */
+export const FIRST_APP = "news";
+
+/**
+ * True where the developer's scenario and seed picker is offered: the dev server, and the app run
+ * with the end-to-end test hooks (the Electron shell sets `tcHost.flags.testHooks`). A production
+ * player does not choose the hidden scenario (pivot 3.2).
+ */
+function developerStart(): boolean {
+  const host = (globalThis as { tcHost?: { flags?: { testHooks?: boolean } } }).tcHost;
+  return import.meta.env.DEV || host?.flags?.testHooks === true;
+}
 
 function Shell({ client, settings }: { client: SimClient; settings: SettingsStore }) {
   const status = useStatus();
@@ -40,20 +52,35 @@ function Shell({ client, settings }: { client: SimClient; settings: SettingsStor
     [client],
   );
 
+  // What the picker asks of the game (pivot 3.5): a baked start, a generated history, or the 1995
+  // world's own first day under a scenario.
+  const api = useMemo<NewGameApi>(
+    () => ({
+      baked: (id) => client.newGame(DEFAULT_SEED, undefined, { kind: "baked", id }),
+      generate: (seed) => client.newGame(seed, undefined, { kind: "generate" }),
+      scenario: (seed, scenario) => client.newGame(seed, scenario),
+      cancel: () => void client.cancel(),
+      load: (file) => void load(file),
+    }),
+    [client, load],
+  );
+
   if (status.fatal) return <p className="center error">The simulation stopped: {status.fatal}</p>;
   if (!status.started && status.choices !== null) {
     return (
       <NewGamePicker
         choices={status.choices}
-        onStart={(seed, scenario) => void client.newGame(seed, scenario)}
-        onLoad={(file) => void load(file)}
+        starts={startsOf(status)}
+        progress={status.progress}
+        dev={developerStart()}
+        api={api}
       />
     );
   }
   if (!status.started) return <p className="center">Starting the simulation...</p>;
   // The desktop is kept between visits only when the settings are (tests keep neither).
   return (
-    <Desktop storage={settings.persistent ? undefined : null}>
+    <Desktop storage={settings.persistent ? undefined : null} firstApp={FIRST_APP}>
       <Toasts />
     </Desktop>
   );

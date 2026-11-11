@@ -1,0 +1,37 @@
+/* The new-game screen's additions to styles.css (shell/NewGamePicker.tsx): the problem line, the
+   developer's fold-out, and the progress screen of a generated history. */
+.new-game-problem {
+  margin: 12px 0 0;
+  padding: 8px 10px;
+  border-left: 3px solid var(--amber, #ffb000);
+  background: var(--panel-raised, #1e2430);
+}
+.new-game-choices button:disabled {
+  opacity: 0.55;
+}
+.new-game-dev {
+  margin: 0 0 16px;
+}
+.new-game-dev summary {
+  cursor: pointer;
+  color: var(--muted, #8d98ae);
+}
+.new-game-busy progress {
+  display: block;
+  width: 100%;
+  height: 14px;
+  margin: 12px 0 8px;
+  accent-color: var(--cyan, #00e5ff);
+}
+.new-game-phase {
+  margin: 0;
+  color: var(--muted, #8d98ae);
+}
+.new-game-detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 1.4em;
+  margin: 0 0 16px;
+  font-variant-numeric: tabular-nums;
+}

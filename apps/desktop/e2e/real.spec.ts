@@ -32,16 +32,13 @@ test(
       world: null,
     });
 
-    // The 1995 world has a new-game picker: set the seed, pick the scenario.
-    await expect(page.getByRole("heading", { name: "New game: 1995" })).toBeVisible();
-    // By its place in the list: one label ("Stable growth") is inside another ("Unstable growth").
-    const index = await sim<number>(
-      page,
-      `sim.store.status.choices.scenarios.findIndex((s) => s.id === ${JSON.stringify(SCENARIO)})`,
-    );
-    expect(index).toBeGreaterThanOrEqual(0);
-    await page.getByLabel("Seed").fill(SEED);
-    await page.locator(".new-game-choices button").nth(index).click();
+    // The 1995 world has a new-game picker. The developer's start (a scenario and a seed) is in
+    // the picker's fold-out, which the test hooks switch on; each scenario has its own test id
+    // ("Stable growth" is a substring of "Unstable growth", so a label would match both).
+    await expect(page.getByTestId("new-game")).toBeVisible();
+    await page.getByTestId("new-game-seed").fill(SEED);
+    await page.getByTestId("new-game-dev").locator("summary").click();
+    await page.getByTestId(`new-game-scenario-${SCENARIO}`).click();
     await desktop(page);
     const clock = page.getByTestId("tb-clock");
     await expect(clock).toContainText("00:00");
@@ -93,5 +90,41 @@ test(
       paused: true,
     });
     expect(await page.getByTestId("tb-clock").innerText()).toBe(text);
+  },
+);
+
+test(
+  "generates a new history from the picker, cancelling once, and starts in 2020 on the news app",
+  real,
+  async ({ game }) => {
+    const page = await game.launch([]);
+    await expect(page.getByTestId("new-game")).toBeVisible();
+
+    // Cancel: the progress screen comes up, Cancel stops it, the picker is back and says so.
+    await page.getByTestId("new-game-generate").click();
+    await expect(page.getByTestId("new-game-progress")).toBeVisible();
+    await page.getByTestId("new-game-cancel").click();
+    await expect(page.getByTestId("new-game-generate")).toBeVisible();
+    await expect(page.getByTestId("new-game-error")).toContainText("Cancelled");
+    expect(await sim<boolean>(page, "sim.store.status.started")).toBe(false);
+
+    // Generate for real: the screen reports the phase and the date it has reached, then the desktop
+    // comes up on 1 January 2020 with the news app open.
+    const began = Date.now();
+    await page.getByTestId("new-game-generate").click();
+    await expect(page.getByTestId("new-game-progress")).toBeVisible();
+    await expect(page.getByTestId("new-game-phase")).not.toHaveText("Starting", { timeout: 30_000 });
+    await expect(page.getByTestId("new-game-date")).toContainText(/\d{4}/, { timeout: 30_000 });
+    await desktop(page);
+    const seconds = (Date.now() - began) / 1000;
+    console.log(`generated a new history in ${seconds.toFixed(1)} s`);
+    await expect(page.getByTestId("tb-clock")).toContainText("2020");
+    await expect(page.getByTestId("tb-pause")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByTestId("win-news-1")).toBeVisible();
+    expect(await sim<boolean>(page, "sim.store.status.progress === null")).toBe(true);
+    // It plays: one hour from the taskbar moves the clock.
+    const now = await sim<number>(page, "sim.clock.now");
+    await page.getByTestId("tb-step").click();
+    await expect.poll(() => sim<number>(page, "sim.clock.now")).toBe(now + 1);
   },
 );

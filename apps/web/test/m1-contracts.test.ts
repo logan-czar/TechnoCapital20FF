@@ -131,7 +131,8 @@ describe("the app registry", () => {
 
   it("holds the apps that registered (the debug workspace and the M2 apps' placeholders), and is safe to ask", () => {
     const apps = ["browser", "debug", "news", "polls", "records", "social", "terminal", "usmap"];
-    expect(registeredApps().map((s) => s.id)).toEqual(apps);
+    // The debug workspace is debug-only (D1050): listed only with Omniscient.
+    expect(registeredApps().map((s) => s.id)).toEqual(apps.filter((id) => id !== "debug"));
     expect(registeredApps(true).map((s) => s.id)).toEqual(apps);
     expect(appSpecOf("debug")?.title).toBe("Debug workspace");
     expect(appSpecOf("news")?.PhoneView).toBeDefined();
