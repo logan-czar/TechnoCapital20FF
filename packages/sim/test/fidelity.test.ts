@@ -187,7 +187,7 @@ describe("hydration", () => {
 });
 
 describe("fidelity tags", () => {
-  it("the run's end is the one Coarse-only job; the player's are the Full-only ones", () => {
+  it("the run's end and the Coarse campaigns are the Coarse-only jobs; the player's are the Full-only ones", () => {
     const s = scheduler();
     const tagged: string[] = [];
     for (const slot of SLOT_VALUES) {
@@ -195,9 +195,11 @@ describe("fidelity tags", () => {
         if (fidelity !== null) tagged.push(`${slot} ${name} ${fidelity}`);
       }
     }
+    // Lane E's weekly Coarse campaigns too (pivot 6.6; D1040).
     expect(tagged).toEqual([
       "HourlyPlayer player.hourly Full",
       "DailyPlayer player.daily Full",
+      "WeeklyJobs elections.coarse_campaigns Coarse",
       "YearlyArchive era.reveal Coarse",
     ]);
   });

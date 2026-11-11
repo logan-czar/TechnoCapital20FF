@@ -65,8 +65,10 @@ describe("M2 contracts: state", () => {
     expect(w.elections.calendar.next_general).toBeNull();
     expect(w.player).toBeNull();
     expect(w.geo).toEqual(geoStateEmpty());
+    // The 1995 world's start seats its office holders as persons and opens 1995's races (D1040).
     const h = simWorld(unwrap(simNew(data1995(), 1), "1995 world"));
     expect(h.persons.offices.length).toBeGreaterThan(0);
+    expect(h.elections.races.length).toBeGreaterThan(0);
     expect(h.player).toBeNull();
     // Lane G fills the 1995 world's seats and plans at load (D1039); no census or challenge yet.
     expect([h.geo.censuses, h.geo.challenges, h.geo.history]).toEqual([[], [], []]);
@@ -88,9 +90,11 @@ describe("M2 contracts: state", () => {
     ]);
     // DailyGeo holds lane G's job (D1039).
     expect(schedulerJobs(s, "DailyGeo").map(([name]) => name)).toEqual(["geo.calendar"]);
-    for (const slot of ["DailyElections", "WeeklyJobs"] as const) {
-      expect(schedulerJobs(s, slot), slot).toEqual([]);
-    }
+    // Lane E's DailyElections and the head of WeeklyJobs hold its jobs (D1040).
+    expect(schedulerJobs(s, "DailyElections").map(([n, , f]) => [n, f])).toEqual([
+      ["elections.calendar", null],
+    ]);
+    expect(schedulerJobs(s, "WeeklyJobs")[0]?.[0]).toBe("elections.coarse_campaigns");
     // Lane P (D1042) filled the player's slots, Full fidelity only.
     expect(schedulerJobs(s, "HourlyPlayer").map(([n, , f]) => [n, f])).toEqual([["player.hourly", "Full"]]);
     expect(schedulerJobs(s, "DailyPlayer").map(([n, , f]) => [n, f])).toEqual([["player.daily", "Full"]]);

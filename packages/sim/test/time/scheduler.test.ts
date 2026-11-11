@@ -126,7 +126,8 @@ describe("registerJobs", () => {
     expect(names("CloseTax")).toEqual([]);
     expect(names("ReleasePublish")).toEqual(["finance.removals", "news.removals"]);
     expect(names("LockAiPlans")).toEqual(["events.seats", "ai.plan_lock"]);
-    // 59 before M2, plus careers.daily (D1041), geo.calendar (D1039) and the player's two (D1042).
-    expect(SLOT_VALUES.reduce((n, slot) => n + names(slot).length, 0)).toBe(63);
+    // 59 before M2, plus careers.daily (D1041), geo.calendar (D1039), the player's two (D1042) and
+    // lane E's two election jobs (D1040).
+    expect(SLOT_VALUES.reduce((n, slot) => n + names(slot).length, 0)).toBe(65);
   });
 });

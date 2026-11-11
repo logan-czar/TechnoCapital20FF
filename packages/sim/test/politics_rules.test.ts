@@ -68,7 +68,9 @@ describe("the calendar (D982, D985)", () => {
     expect(isPoliticsDay(simDateYmd(2021, 1, 20))).toBe(true);
     expect(isPoliticsDay(simDateYmd(2020, 11, 3))).toBe(true);
     expect(isPoliticsDay(simDateYmd(2021, 11, 2))).toBe(false);
-    expect(isPoliticsDay(simDateYmd(2020, 11, 4))).toBe(false);
+    // The day after Election Day: lane E's count lands at its first midnight (D1040).
+    expect(isPoliticsDay(simDateYmd(2020, 11, 4))).toBe(true);
+    expect(isPoliticsDay(simDateYmd(2020, 11, 5))).toBe(false);
   });
 
   it("finds the next vote strictly after a date", () => {
