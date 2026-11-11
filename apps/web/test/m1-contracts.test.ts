@@ -117,9 +117,10 @@ describe("the app registry", () => {
     ...extra,
   });
 
-  it("is empty until an app registers, and safe to ask", () => {
-    expect(registeredApps()).toEqual([]);
-    expect(registeredApps(true)).toEqual([]);
+  it("holds the apps that registered (the debug workspace, lane U2), and is safe to ask", () => {
+    expect(registeredApps().map((s) => s.id)).toEqual(["debug"]);
+    expect(registeredApps(true).map((s) => s.id)).toEqual(["debug"]);
+    expect(appSpecOf("debug")?.title).toBe("Debug workspace");
     expect(appSpecOf("news")).toBeUndefined();
   });
 
