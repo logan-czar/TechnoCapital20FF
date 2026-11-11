@@ -119,6 +119,28 @@ export const VIEW_RULES: Partial<Record<ViewName, ViewRules>> = {
       "politics.elections[].senate_class",
     ],
   },
+  // No company or industry subject (pivot 5.4, 15.3; D1039); the hidden lean and strength are null
+  // unless Omniscient.
+  districts: {
+    ids: [
+      "districts.plans[].state",
+      "districts.plans[].census_year",
+      "districts.districts[].id",
+      "districts.districts[].state",
+      "districts.districts[].number",
+      "districts.districts[].member",
+      "districts.districts[].shares[].county",
+    ],
+  },
+  usmap_layers: {
+    ids: [
+      "usmap_layers.counties.state[]",
+      "usmap_layers.counties.district[]",
+      "usmap_layers.states[].id",
+      "usmap_layers.states[].house_seats",
+      "usmap_layers.states[].electoral_votes",
+    ],
+  },
   // All public, with no company or industry subject: GDP reads only demand, exact in every class
   // (1995-rework 6.1, D432).
   history: {
