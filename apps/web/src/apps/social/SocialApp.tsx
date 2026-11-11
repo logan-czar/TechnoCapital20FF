@@ -10,7 +10,13 @@ import { useClock, useViewData } from "../../sim/hooks.ts";
 import { EntityLink } from "../_shared/index.ts";
 import { HANDLE_KIND_LABEL, handleIndex, RUMOUR_LABEL, rumourCounts, sameSubject } from "./model.ts";
 import { FollowButton, LabelsProvider, type Nav, PostCard, Timeline } from "./parts.tsx";
-import { canonicalRoute, parseSocialRoute, type SocialRoute } from "./route.ts";
+import {
+  canonicalRoute,
+  formatSocialRoute,
+  parseSocialRoute,
+  personOfRoute,
+  type SocialRoute,
+} from "./route.ts";
 import "./social.css";
 
 /** The most posts a post page lists on its subject (D1044). */
@@ -267,6 +273,14 @@ export default function SocialApp({ route, onRoute, setTitle }: AppProps) {
   const view = useViewData("social");
   const clock = useClock();
   const parsed = parseSocialRoute(route);
+  // `person/<id>` is how other apps ask for a person's account (the encyclopedia's "posts on
+  // Social"): it becomes that person's handle page, or the home timeline when they have none.
+  const personId = personOfRoute(route);
+  useEffect(() => {
+    if (personId === null || view === undefined) return;
+    const handle = view.handles.find((h) => h.owner?.kind === "Person" && h.owner.id === personId);
+    onRoute(handle === undefined ? "home" : formatSocialRoute({ page: "handle", id: handle.id }));
+  }, [personId, view, onRoute]);
   const hist = useHistory(route, onRoute);
   const nav = useMemo<Nav>(() => ({ go: (r) => onRoute(r) }), [onRoute]);
   const title = titleOf(parsed, view);

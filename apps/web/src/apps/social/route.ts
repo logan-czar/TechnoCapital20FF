@@ -20,6 +20,15 @@ export function parseSocialRoute(route: string | null): SocialRoute {
   return { page: "home" };
 }
 
+/**
+ * The person of a `person/<id>` route, which other apps write to reach a person's account; null for
+ * any other route. It is not a page of its own: the app turns it into the person's handle page.
+ */
+export function personOfRoute(route: string | null): number | null {
+  const m = route === null ? null : /^person\/(\d+)$/.exec(route);
+  return m === null ? null : Number(m[1]);
+}
+
 /** The route string of `r`: parseSocialRoute(formatSocialRoute(r)) gives `r` back. */
 export function formatSocialRoute(r: SocialRoute): string {
   return r.page === "handle" || r.page === "post" ? `${r.page}/${r.id}` : r.page;

@@ -665,7 +665,7 @@ function readable(app: string, route: string): boolean {
     case "news":
       return /^(home|outlet\/\d+(\/\d{4}-\d{2}-\d{2})?|article\/\d+|latest(\?.*)?)$/.test(route);
     case "social":
-      return /^(home|all|rumours|(handle|post)\/\d+)$/.test(route);
+      return /^(home|all|rumours|(handle|post|person)\/\d+)$/.test(route);
     case "usmap":
       return /^(race\/\d+\/live(\/|$)|(state|district|county)\/\d+)/.test(route);
     case "terminal":
@@ -751,7 +751,10 @@ async function followLinks(s: Session, app: string, routes: readonly (string | n
       else if (verdict.textLength < 40) problem = "empty root";
       else if (!readable(target, targetRoute))
         problem = `the app does not read "${targetRoute}" and shows its home`;
-      else if (address !== addressOf(target, targetRoute === "home" ? null : targetRoute)) {
+      else if (target === "social" && /^person\/\d+$/.test(targetRoute)) {
+        // Social turns a person route into that person's handle page (or its home): either is right.
+        if (!/^orr:\/\/social(\/handle\/\d+)?$/.test(address)) problem = `opened ${address} for a person`;
+      } else if (address !== addressOf(target, targetRoute === "home" ? null : targetRoute)) {
         problem = `opened ${address}, expected ${addressOf(target, targetRoute)}`;
       }
       landings.push({ from: `${here} -> ${tid}`, to, problem });
@@ -979,11 +982,8 @@ test.describe("tour: the start (20 Oct 2020)", () => {
   });
 
   test("a person's encyclopedia article links to their posts in social", tour, async () => {
-    // KNOWN FAULT: the article's "Posts about them on Social" reference opens `orr://social/person/<id>`
-    // (browser/articles.ts, the person article's `elsewhere`), but the social route grammar has no
-    // `person/<id>` (social/route.ts parseSocialRoute: only home, all, rumours, handle/<id>,
-    // post/<id>), so the window opens on the home timeline. Remove test.fail() when either side moves.
-    test.fail();
+    // The article's "Posts about them on Social" reference opens `orr://social/person/<id>`, which
+    // social turns into that person's handle page (social/route.ts personOfRoute).
     const s = await session();
     await advanceTo(s, START);
     const ids = await readIds(s.page);

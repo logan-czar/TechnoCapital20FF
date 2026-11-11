@@ -115,6 +115,8 @@ test(
     await expect(page.getByTestId("new-game-progress")).toBeVisible();
     await expect(page.getByTestId("new-game-phase")).not.toHaveText("Starting", { timeout: 30_000 });
     await expect(page.getByTestId("new-game-date")).toContainText(/\d{4}/, { timeout: 30_000 });
+    // The pre-simulation takes 10 to 20 s in the app: wait for it before the desktop's own checks.
+    await expect(page.getByTestId("desktop")).toBeVisible({ timeout: 90_000 });
     await desktop(page);
     const seconds = (Date.now() - began) / 1000;
     console.log(`generated a new history in ${seconds.toFixed(1)} s`);
